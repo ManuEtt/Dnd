@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "id": "aetheria-1791849600000000-5",
+  "name": "Das Herz der Ewigkeit",
+  "world": "Aetheria",
+  "sessionId": "session-1791849600000000-6",
+  "hero": {
+    "schemaVersion": 1,
+    "id": "arescan-1791849600000000-4",
+    "name": "Arescan",
+    "species": "Mensch",
+    "className": "Waldläufer",
+    "level": 1,
+    "subclass": "",
+    "background": "",
+    "backstory": "",
+    "abilities": {
+      "strength": null,
+      "dexterity": null,
+      "constitution": null,
+      "intelligence": null,
+      "wisdom": null,
+      "charisma": null
+    },
+    "hitPoints": null,
+    "maxHitPoints": null,
+    "armorClass": null,
+    "speed": null,
+    "skills": [],
+    "savingThrowProficiencies": [],
+    "features": [],
+    "spells": [],
+    "inventory": [],
+    "gold": null,
+    "experience": null,
+    "conditions": [],
+    "weaponDamage": "",
+    "weaponAbility": "strength",
+    "weaponProficient": false,
+    "deathSuccesses": 0,
+    "deathFailures": 0,
+    "unverifiedNotes": [
+      "Attribute, Trefferpunkte, Rüstungsklasse, Bewegung, Ausrüstung und Waffenwerte sind nicht bestätigt.",
+      "Gold und Erfahrungspunkte sind unbekannt. Leere Listen für Fertigkeiten, Zauber und Ausrüstung bedeuten nicht, dass Arescan diese nachweislich nicht besitzt.",
+      "Historischer Angriff: Gesamtergebnis 19; erzählter Schaden 14. Kein natürlicher W20 bekannt.",
+      "Der früher verwendete Geschicklichkeitsmodifikator +7 ist ungeprüft und wird NICHT angewendet."
+    ]
+  },
+  "scene": "Arescan steht auf dem Marktplatz von Silberhain neben der Elfenmagierin. Der verletzte Schattenritter liegt nach dem Sturz vom Dach auf dem Marktplatz. An seiner Brust leuchtet ein rotes Amulett: das Zeichen des Schattenkönigs. Du kannst ihn untersuchen, verhören oder die Elfin befragen. Regelaktionen benötigen zuerst einen bestätigten Charakterbogen.",
+  "messages": [
+    {
+      "id": "message-1791849600000000-8",
+      "role": "gm",
+      "text": "Arescan steht auf dem Marktplatz von Silberhain neben der Elfenmagierin. Der verletzte Schattenritter liegt nach dem Sturz vom Dach auf dem Marktplatz. An seiner Brust leuchtet ein rotes Amulett: das Zeichen des Schattenkönigs. Du kannst ihn untersuchen, verhören oder die Elfin befragen. Regelaktionen benötigen zuerst einen bestätigten Charakterbogen.",
+      "timestamp": "2026-10-13T00:00:00.000Z"
+    }
+  ],
+  "facts": {
+    "origin": "arescan",
+    "location": "Silberhain",
+    "sternentempel": "Der Sternentempel ist nach tausend Jahren erwacht.",
+    "herz": "Das Herz der Ewigkeit wurde gestohlen; ein goldener Drache verkündete es.",
+    "portal": "In Silberhain erschien ein Portal. Eine Elfenmagierin warnte vor Schattenrittern.",
+    "rettung": "Arescan warnte die Elfin und zog sie hinter den Brunnen in Deckung.",
+    "angriff": "Historischer Angriff Gesamt 19, erzählter Schaden 14; Regelwerte ungeprüft.",
+    "amulett": "Das rote Amulett am verletzten Schattenritter ist das Zeichen des Schattenkönigs.",
+    "schattenritter": "Verletzt nach dem Sturz vom Dach; genaue Trefferpunkte und Kampfwerte unbekannt."
+  },
+  "quests": [
+    {
+      "id": "heart",
+      "title": "Das Herz der Ewigkeit",
+      "description": "Finde das gestohlene Herz und erforsche das Zeichen des Schattenkönigs.",
+      "status": "active"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "elf",
+      "name": "Elfenmagierin",
+      "description": "Von Arescan gerettet; kennt das Zeichen des Schattenkönigs.",
+      "alive": true,
+      "relationship": "dankbar"
+    },
+    {
+      "id": "shadow-knight",
+      "name": "Verletzter Schattenritter",
+      "description": "Vom Dach gestürzt. Kampfwerte unbestätigt.",
+      "alive": true,
+      "relationship": "neutral"
+    }
+  ],
+  "places": [
+    {
+      "id": "silberhain",
+      "name": "Silberhain",
+      "description": "Marktplatz mit Brunnen und magischem Portal."
+    }
+  ],
+  "events": [
+    {
+      "id": "history-1791849600000000-7",
+      "campaignId": "aetheria-1791849600000000-5",
+      "sessionId": "session-1791849600000000-6",
+      "timestamp": "2026-10-13T00:00:00.000Z",
+      "type": "history.imported",
+      "entities": [
+        "arescan-1791849600000000-4",
+        "shadow-knight"
+      ],
+      "payload": {
+        "attackTotal": 19,
+        "narratedDamage": 14,
+        "naturalRoll": null,
+        "unverifiedDexterityModifier": 7,
+        "mechanicallyVerified": false,
+        "history": [
+          "Der Sternentempel erwacht nach tausend Jahren.",
+          "Ein goldener Drache verkündet, dass das Herz der Ewigkeit gestohlen wurde.",
+          "In Silberhain erscheint ein Portal. Eine Elfenmagierin warnt vor Schattenrittern.",
+          "Ein vermummter Bogenschütze greift vom Dach an. Arescan warnt die Elfin und zieht sie hinter einen Brunnen.",
+          "Arescan greift mit seinem Bogen an: historisches Gesamtergebnis 19 und erzählter Schaden 14.",
+          "Der Schattenritter stürzt vom Dach. Sein rotes Amulett zeigt das Zeichen des Schattenkönigs."
+        ]
+      }
+    }
+  ],
+  "pendingRoll": null,
+  "encounter": null,
+  "revision": 0
+}

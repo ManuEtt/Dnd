@@ -1,0 +1,102 @@
+import Fastify from 'fastify';
+import type { Config } from './config.js';
+import { bearerToken, issueSession, secureEqual, verifySession } from './auth.js';
+import { WindowLimiter } from './limits.js';
+import { createNarrator, type NarrationInput, type Narrator } from './providers.js';
+
+interface AppDependencies {
+  clock?: () => number;
+  narrator?: Narrator;
+}
+const nonBlankString = (maxLength: number) => ({ type: 'string', minLength: 1, maxLength, pattern: '\\S' });
+const narrationSchema = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['campaignId', 'playerName', 'action', 'scene'],
+  properties: {
+    campaignId: { type: 'string', minLength: 1, maxLength: 128, pattern: '^[a-zA-Z0-9_-]+$' },
+    playerName: nonBlankString(80),
+    action: nonBlankString(2000),
+    scene: nonBlankString(4000),
+    memories: { type: 'array', maxItems: 20, items: nonBlankString(400) },
+  },
+};
+
+export function buildApp(config: Config, dependencies: AppDependencies = {}) {
+  const app = Fastify({
+    logger: false,
+    bodyLimit: 32768,
+    trustProxy: false,
+    ajv: { customOptions: { removeAdditional: false, coerceTypes: false, useDefaults: false } },
+  });
+  const clock = dependencies.clock ?? Date.now;
+  const narrator = dependencies.narrator ?? createNarrator(config);
+  const sessionLimiter = new WindowLimiter();
+  const minuteLimiter = new WindowLimiter();
+  const dayLimiter = new WindowLimiter();
+
+  app.addHook('onSend', async (_request, reply) => {
+    reply.header('Cache-Control', 'no-store');
+    reply.header('X-Content-Type-Options', 'nosniff');
+    reply.header('Content-Security-Policy', "default-src 'none'");
+  });
+  app.setErrorHandler((error, _request, reply) => {
+    const reportedStatus = error && typeof error === 'object' && 'statusCode' in error && typeof error.statusCode === 'number' ? error.statusCode : 500;
+    const status = reportedStatus >= 400 && reportedStatus < 500 ? reportedStatus : 500;
+    reply.code(status).send({
+      error: status === 400 ? 'invalid_request' : status === 413 ? 'request_too_large' : status < 500 ? 'request_rejected' : 'internal_error',
+      message: status === 400 ? 'Die Eingabe ist ungültig oder unvollständig.' : 'Die Anfrage konnte nicht verarbeitet werden.',
+    });
+  });
+
+  app.get('/health', async () => ({ status: 'ok', provider: config.provider, version: '0.1.0' }));
+
+  app.post('/v1/session', {
+    schema: { body: { type: 'object', additionalProperties: false, properties: {} } },
+  }, async (request, reply) => {
+    if (!sessionLimiter.take(request.ip, clock(), 60000, 10)) {
+      reply.header('Retry-After', '60');
+      return reply.code(429).send({ error: 'rate_limit', message: 'Bitte warte eine Minute vor der nächsten Anmeldung.' });
+    }
+    if (!config.accessToken) return reply.code(503).send({ error: 'auth_not_configured', message: 'Der lokale Serverzugang ist noch nicht konfiguriert.' });
+    const supplied = bearerToken(request.headers.authorization);
+    if (!supplied || !secureEqual(supplied, config.accessToken)) {
+      return reply.code(401).send({ error: 'unauthorized', message: 'Der Serverzugang ist ungültig.' });
+    }
+    const session = issueSession(config.sessionSecret, 'local-player', clock(), config.sessionTtlSeconds);
+    return {
+      token: session.token,
+      tokenType: 'Bearer',
+      expiresAt: new Date(session.claims.expiresAt * 1000).toISOString(),
+      expiresIn: config.sessionTtlSeconds,
+      provider: config.provider,
+      scope: 'narration:read-only',
+    };
+  });
+
+  app.post<{ Body: NarrationInput }>('/v1/narrate', {
+    schema: { body: narrationSchema },
+    preHandler: async (request, reply) => {
+      const token = bearerToken(request.headers.authorization);
+      const session = token ? verifySession(token, config.sessionSecret, clock()) : undefined;
+      if (!session) return reply.code(401).send({ error: 'invalid_session', message: 'Die Sitzung ist abgelaufen. Bitte verbinde dich erneut.' });
+      const now = clock();
+      if (!minuteLimiter.take(session.subject, now, 60000, config.requestsPerMinute)) {
+        reply.header('Retry-After', '60');
+        return reply.code(429).send({ error: 'rate_limit', message: 'Das Minutenlimit ist erreicht. Bitte warte kurz.' });
+      }
+      if (!dayLimiter.take(session.subject, now, 86400000, config.requestsPerDay)) {
+        reply.header('Retry-After', '86400');
+        return reply.code(429).send({ error: 'daily_limit', message: 'Das tägliche Anfragelimit ist erreicht.' });
+      }
+    },
+  }, async (request, reply) => {
+    try {
+      return await narrator.narrate(request.body);
+    } catch {
+      // Provider errors can contain API keys, input and account details. Never forward them.
+      return reply.code(502).send({ error: 'provider_unavailable', message: 'Der Spielleiterdienst ist vorübergehend nicht erreichbar. Nutze den lokalen Demo-Modus oder versuche es später erneut.' });
+    }
+  });
+  return app;
+}

@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "id": "demo-1791849600000000-1",
+  "name": "Das Licht von Mooswacht",
+  "world": "Lunaris",
+  "sessionId": "session-1791849600000000-2",
+  "hero": {
+    "schemaVersion": 1,
+    "id": "hero-1791849600000000-0",
+    "name": "Liora",
+    "species": "Mensch",
+    "className": "Kämpfer",
+    "level": 1,
+    "subclass": "",
+    "background": "Wächterin",
+    "backstory": "Eine wandernde Beschützerin der Waldwege.",
+    "abilities": {
+      "strength": 16,
+      "dexterity": 14,
+      "constitution": 14,
+      "intelligence": 10,
+      "wisdom": 12,
+      "charisma": 8
+    },
+    "hitPoints": 12,
+    "maxHitPoints": 12,
+    "armorClass": 16,
+    "speed": 9,
+    "skills": [
+      "Athletik",
+      "Wahrnehmung"
+    ],
+    "savingThrowProficiencies": [
+      "strength",
+      "constitution"
+    ],
+    "features": [
+      "Demo-Testbogen: Schwertangriff"
+    ],
+    "spells": [],
+    "inventory": [
+      {
+        "id": "sword",
+        "name": "Langschwert",
+        "quantity": 1,
+        "description": ""
+      },
+      {
+        "id": "armor",
+        "name": "Kettenhemd",
+        "quantity": 1,
+        "description": ""
+      },
+      {
+        "id": "potion",
+        "name": "Heiltrank",
+        "quantity": 1,
+        "description": "Heilt 2W4+2 Trefferpunkte."
+      }
+    ],
+    "gold": 10,
+    "experience": 0,
+    "conditions": [],
+    "weaponDamage": "1d8",
+    "weaponAbility": "strength",
+    "weaponProficient": true,
+    "deathSuccesses": 0,
+    "deathFailures": 0,
+    "unverifiedNotes": []
+  },
+  "scene": "Liora, vor dir liegt Mooswacht am Rand des Sternenwaldes. Die Hüterin Mira bittet dich, das erloschene Waldlicht im alten Schrein zu entzünden. Am Dorfbrunnen glitzert etwas zwischen den Steinen. Was möchtest du tun?",
+  "messages": [
+    {
+      "id": "message-1791849600000000-3",
+      "role": "gm",
+      "text": "Liora, vor dir liegt Mooswacht am Rand des Sternenwaldes. Die Hüterin Mira bittet dich, das erloschene Waldlicht im alten Schrein zu entzünden. Am Dorfbrunnen glitzert etwas zwischen den Steinen. Was möchtest du tun?",
+      "timestamp": "2026-10-13T00:00:00.000Z"
+    }
+  ],
+  "facts": {
+    "origin": "demo",
+    "location": "Mooswacht",
+    "waldlicht": "Das Waldlicht ist erloschen. Mira bittet um Hilfe."
+  },
+  "quests": [
+    {
+      "id": "waldlicht",
+      "title": "Das Waldlicht entzünden",
+      "description": "Finde den Messingschlüssel, überwinde den Dornenwächter und öffne den Schrein.",
+      "status": "active"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "mira",
+      "name": "Mira",
+      "description": "Freundliche Hüterin von Mooswacht.",
+      "alive": true,
+      "relationship": "freundlich"
+    }
+  ],
+  "places": [
+    {
+      "id": "mooswacht",
+      "name": "Mooswacht",
+      "description": "Walddorf mit einem alten Brunnen."
+    }
+  ],
+  "events": [],
+  "pendingRoll": null,
+  "encounter": null,
+  "revision": 0
+}

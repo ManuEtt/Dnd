@@ -1,0 +1,850 @@
+/// Versioned, provider-independent game data. Unknown historical values stay null.
+const abilityNames = <String>[
+  'strength',
+  'dexterity',
+  'constitution',
+  'intelligence',
+  'wisdom',
+  'charisma',
+];
+const _unchanged = Object();
+
+Map<String, dynamic> _map(dynamic value, String name) {
+  if (value is! Map<String, dynamic>) {
+    throw FormatException('$name muss ein Objekt sein.');
+  }
+  return value;
+}
+
+String _string(dynamic value, String name, {String? fallback}) {
+  if (value == null && fallback != null) return fallback;
+  if (value is! String || value.length > 50000) {
+    throw FormatException('$name ist ungültig.');
+  }
+  return value;
+}
+
+int _int(
+  dynamic value,
+  String name, {
+  int? fallback,
+  int min = 0,
+  int max = 1000000,
+}) {
+  if (value == null && fallback != null) return fallback;
+  if (value is! int || value < min || value > max) {
+    throw FormatException('$name ist ungültig.');
+  }
+  return value;
+}
+
+int? _nullableInt(
+  dynamic value,
+  String name, {
+  int min = 0,
+  int max = 1000000,
+}) => value == null ? null : _int(value, name, min: min, max: max);
+List<dynamic> _list(dynamic value, String name) {
+  if (value == null) return [];
+  if (value is! List || value.length > 10000) {
+    throw FormatException('$name ist ungültig.');
+  }
+  return value;
+}
+
+List<String> _strings(dynamic value, String name) =>
+    _list(value, name).map((e) => _string(e, name)).toList();
+bool _bool(dynamic value, String name, {bool fallback = false}) {
+  if (value == null) return fallback;
+  if (value is! bool) throw FormatException('$name ist ungültig.');
+  return value;
+}
+
+void _version(Map<String, dynamic> json) {
+  if (json['schemaVersion'] != 1) {
+    throw const FormatException('Nicht unterstützte Schema-Version.');
+  }
+}
+
+class InventoryItem {
+  const InventoryItem({
+    required this.id,
+    required this.name,
+    this.quantity = 1,
+    this.description = '',
+  });
+  final String id, name, description;
+  final int quantity;
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'quantity': quantity,
+    'description': description,
+  };
+  factory InventoryItem.fromJson(Map<String, dynamic> j) => InventoryItem(
+    id: _string(j['id'], 'Gegenstand-ID'),
+    name: _string(j['name'], 'Gegenstand'),
+    quantity: _int(j['quantity'], 'Anzahl', fallback: 1, min: 1),
+    description: _string(j['description'], 'Beschreibung', fallback: ''),
+  );
+}
+
+class HeroCharacter {
+  HeroCharacter({
+    required this.id,
+    required this.name,
+    this.species = 'Mensch',
+    this.className = 'Kämpfer',
+    this.level = 1,
+    this.subclass = '',
+    this.background = '',
+    this.backstory = '',
+    Map<String, int?>? abilities,
+    this.hitPoints,
+    this.maxHitPoints,
+    this.armorClass,
+    this.speed,
+    List<String> skills = const [],
+    List<String> savingThrowProficiencies = const [],
+    List<String> features = const [],
+    List<String> spells = const [],
+    List<InventoryItem> inventory = const [],
+    this.gold,
+    this.experience,
+    List<String> conditions = const [],
+    this.weaponDamage = '',
+    this.weaponAbility = 'strength',
+    this.weaponProficient = false,
+    this.deathSuccesses = 0,
+    this.deathFailures = 0,
+    List<String> unverifiedNotes = const [],
+  }) : abilities = Map.unmodifiable(
+         abilities ?? {for (final key in abilityNames) key: null},
+       ),
+       skills = List.unmodifiable(skills),
+       savingThrowProficiencies = List.unmodifiable(savingThrowProficiencies),
+       features = List.unmodifiable(features),
+       spells = List.unmodifiable(spells),
+       inventory = List.unmodifiable(inventory),
+       conditions = List.unmodifiable(conditions),
+       unverifiedNotes = List.unmodifiable(unverifiedNotes);
+  final String id, name, species, className, subclass, background, backstory;
+  final int level, deathSuccesses, deathFailures;
+  final int? gold, experience;
+  final Map<String, int?> abilities;
+  final int? hitPoints, maxHitPoints, armorClass, speed;
+  final List<String> skills,
+      savingThrowProficiencies,
+      features,
+      spells,
+      conditions,
+      unverifiedNotes;
+  final List<InventoryItem> inventory;
+  final String weaponDamage, weaponAbility;
+  final bool weaponProficient;
+  List<String> get incompleteFields => [
+    for (final key in abilityNames)
+      if (abilities[key] == null) key,
+    if (hitPoints == null) 'Trefferpunkte',
+    if (maxHitPoints == null) 'Maximale Trefferpunkte',
+    if (armorClass == null) 'Rüstungsklasse',
+    if (speed == null) 'Bewegung',
+    if (weaponDamage.isEmpty) 'Waffenschaden',
+  ];
+  bool get isComplete => incompleteFields.isEmpty;
+  bool get isDead => conditions.contains('tot');
+  HeroCharacter copyWith({
+    String? id,
+    String? name,
+    String? species,
+    String? className,
+    int? level,
+    String? subclass,
+    String? background,
+    String? backstory,
+    Map<String, int?>? abilities,
+    Object? hitPoints = _unchanged,
+    Object? maxHitPoints = _unchanged,
+    Object? armorClass = _unchanged,
+    Object? speed = _unchanged,
+    List<String>? skills,
+    List<String>? savingThrowProficiencies,
+    List<String>? features,
+    List<String>? spells,
+    List<InventoryItem>? inventory,
+    Object? gold = _unchanged,
+    Object? experience = _unchanged,
+    List<String>? conditions,
+    String? weaponDamage,
+    String? weaponAbility,
+    bool? weaponProficient,
+    int? deathSuccesses,
+    int? deathFailures,
+    List<String>? unverifiedNotes,
+  }) => HeroCharacter(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    species: species ?? this.species,
+    className: className ?? this.className,
+    level: level ?? this.level,
+    subclass: subclass ?? this.subclass,
+    background: background ?? this.background,
+    backstory: backstory ?? this.backstory,
+    abilities: abilities ?? this.abilities,
+    hitPoints: identical(hitPoints, _unchanged)
+        ? this.hitPoints
+        : hitPoints as int?,
+    maxHitPoints: identical(maxHitPoints, _unchanged)
+        ? this.maxHitPoints
+        : maxHitPoints as int?,
+    armorClass: identical(armorClass, _unchanged)
+        ? this.armorClass
+        : armorClass as int?,
+    speed: identical(speed, _unchanged) ? this.speed : speed as int?,
+    skills: skills ?? this.skills,
+    savingThrowProficiencies:
+        savingThrowProficiencies ?? this.savingThrowProficiencies,
+    features: features ?? this.features,
+    spells: spells ?? this.spells,
+    inventory: inventory ?? this.inventory,
+    gold: identical(gold, _unchanged) ? this.gold : gold as int?,
+    experience: identical(experience, _unchanged)
+        ? this.experience
+        : experience as int?,
+    conditions: conditions ?? this.conditions,
+    weaponDamage: weaponDamage ?? this.weaponDamage,
+    weaponAbility: weaponAbility ?? this.weaponAbility,
+    weaponProficient: weaponProficient ?? this.weaponProficient,
+    deathSuccesses: deathSuccesses ?? this.deathSuccesses,
+    deathFailures: deathFailures ?? this.deathFailures,
+    unverifiedNotes: unverifiedNotes ?? this.unverifiedNotes,
+  );
+  Map<String, dynamic> toJson() => {
+    'schemaVersion': 1,
+    'id': id,
+    'name': name,
+    'species': species,
+    'className': className,
+    'level': level,
+    'subclass': subclass,
+    'background': background,
+    'backstory': backstory,
+    'abilities': abilities,
+    'hitPoints': hitPoints,
+    'maxHitPoints': maxHitPoints,
+    'armorClass': armorClass,
+    'speed': speed,
+    'skills': skills,
+    'savingThrowProficiencies': savingThrowProficiencies,
+    'features': features,
+    'spells': spells,
+    'inventory': inventory.map((e) => e.toJson()).toList(),
+    'gold': gold,
+    'experience': experience,
+    'conditions': conditions,
+    'weaponDamage': weaponDamage,
+    'weaponAbility': weaponAbility,
+    'weaponProficient': weaponProficient,
+    'deathSuccesses': deathSuccesses,
+    'deathFailures': deathFailures,
+    'unverifiedNotes': unverifiedNotes,
+  };
+  factory HeroCharacter.fromJson(Map<String, dynamic> j) {
+    _version(j);
+    final a = _map(j['abilities'], 'Attribute');
+    if (a.keys.any((key) => !abilityNames.contains(key))) {
+      throw const FormatException('Unbekanntes Attribut.');
+    }
+    final hp = _nullableInt(j['hitPoints'], 'Trefferpunkte');
+    final maxHp = _nullableInt(
+      j['maxHitPoints'],
+      'Maximale Trefferpunkte',
+      min: 1,
+    );
+    if (hp != null && maxHp != null && hp > maxHp) {
+      throw const FormatException('Trefferpunkte über Maximum.');
+    }
+    final weaponAbility = _string(
+      j['weaponAbility'],
+      'Waffenattribut',
+      fallback: 'strength',
+    );
+    if (!abilityNames.contains(weaponAbility)) {
+      throw const FormatException('Unbekanntes Waffenattribut.');
+    }
+    final weaponDamage = _string(
+      j['weaponDamage'],
+      'Waffenschaden',
+      fallback: '',
+    );
+    if (weaponDamage.isNotEmpty &&
+        !RegExp(
+          r'^([1-9][0-9]?)[dDwW](4|6|8|10|12|20|100)(\s*[+-]\s*[0-9]{1,3})?$',
+        ).hasMatch(weaponDamage)) {
+      throw const FormatException('Ungültiger Waffenschaden.');
+    }
+    return HeroCharacter(
+      id: _string(j['id'], 'Charakter-ID'),
+      name: _string(j['name'], 'Name'),
+      species: _string(j['species'], 'Spezies'),
+      className: _string(j['className'], 'Klasse'),
+      level: _int(j['level'], 'Stufe', min: 1, max: 20),
+      subclass: _string(j['subclass'], 'Unterklasse', fallback: ''),
+      background: _string(j['background'], 'Hintergrund', fallback: ''),
+      backstory: _string(j['backstory'], 'Geschichte', fallback: ''),
+      abilities: {
+        for (final key in abilityNames)
+          key: _nullableInt(a[key], key, min: 1, max: 30),
+      },
+      hitPoints: hp,
+      maxHitPoints: maxHp,
+      armorClass: _nullableInt(
+        j['armorClass'],
+        'Rüstungsklasse',
+        min: 1,
+        max: 100,
+      ),
+      speed: _nullableInt(j['speed'], 'Bewegung', max: 1000),
+      skills: _strings(j['skills'], 'Fertigkeiten'),
+      savingThrowProficiencies: _strings(
+        j['savingThrowProficiencies'],
+        'Rettungswürfe',
+      ),
+      features: _strings(j['features'], 'Fähigkeiten'),
+      spells: _strings(j['spells'], 'Zauber'),
+      inventory: _list(
+        j['inventory'],
+        'Inventar',
+      ).map((e) => InventoryItem.fromJson(_map(e, 'Gegenstand'))).toList(),
+      gold: _nullableInt(j['gold'], 'Gold'),
+      experience: _nullableInt(j['experience'], 'Erfahrung'),
+      conditions: _strings(j['conditions'], 'Zustände'),
+      weaponDamage: weaponDamage,
+      weaponAbility: weaponAbility,
+      weaponProficient: _bool(j['weaponProficient'], 'Waffenübung'),
+      deathSuccesses: _int(
+        j['deathSuccesses'],
+        'Todeserfolge',
+        fallback: 0,
+        max: 3,
+      ),
+      deathFailures: _int(
+        j['deathFailures'],
+        'Todesfehlschläge',
+        fallback: 0,
+        max: 3,
+      ),
+      unverifiedNotes: _strings(j['unverifiedNotes'], 'Ungeprüfte Angaben'),
+    );
+  }
+}
+
+class NarrativeMessage {
+  const NarrativeMessage({
+    required this.id,
+    required this.role,
+    required this.text,
+    required this.timestamp,
+  });
+  final String id, role, text;
+  final DateTime timestamp;
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'role': role,
+    'text': text,
+    'timestamp': timestamp.toUtc().toIso8601String(),
+  };
+  factory NarrativeMessage.fromJson(Map<String, dynamic> j) {
+    final role = _string(j['role'], 'Sprecher');
+    if (!['player', 'gm', 'system'].contains(role)) {
+      throw const FormatException('Ungültiger Sprecher.');
+    }
+    return NarrativeMessage(
+      id: _string(j['id'], 'Nachricht-ID'),
+      role: role,
+      text: _string(j['text'], 'Nachricht'),
+      timestamp: DateTime.parse(_string(j['timestamp'], 'Zeitstempel')),
+    );
+  }
+}
+
+class Quest {
+  const Quest({
+    required this.id,
+    required this.title,
+    this.description = '',
+    this.status = 'active',
+  });
+  final String id, title, description, status;
+  Quest copyWith({String? status, String? description}) => Quest(
+    id: id,
+    title: title,
+    description: description ?? this.description,
+    status: status ?? this.status,
+  );
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'title': title,
+    'description': description,
+    'status': status,
+  };
+  factory Quest.fromJson(Map<String, dynamic> j) {
+    final status = _string(j['status'], 'Queststatus', fallback: 'active');
+    if (!['active', 'completed', 'failed'].contains(status)) {
+      throw const FormatException('Ungültiger Queststatus.');
+    }
+    return Quest(
+      id: _string(j['id'], 'Quest-ID'),
+      title: _string(j['title'], 'Quest'),
+      description: _string(j['description'], 'Beschreibung', fallback: ''),
+      status: status,
+    );
+  }
+}
+
+class WorldNpc {
+  const WorldNpc({
+    required this.id,
+    required this.name,
+    this.description = '',
+    this.alive = true,
+    this.relationship = 'neutral',
+  });
+  final String id, name, description, relationship;
+  final bool alive;
+  WorldNpc copyWith({bool? alive, String? relationship}) => WorldNpc(
+    id: id,
+    name: name,
+    description: description,
+    alive: alive ?? this.alive,
+    relationship: relationship ?? this.relationship,
+  );
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'description': description,
+    'alive': alive,
+    'relationship': relationship,
+  };
+  factory WorldNpc.fromJson(Map<String, dynamic> j) => WorldNpc(
+    id: _string(j['id'], 'NPC-ID'),
+    name: _string(j['name'], 'NPC'),
+    description: _string(j['description'], 'Beschreibung', fallback: ''),
+    alive: _bool(j['alive'], 'Lebendig', fallback: true),
+    relationship: _string(j['relationship'], 'Beziehung', fallback: 'neutral'),
+  );
+}
+
+class Place {
+  const Place({required this.id, required this.name, this.description = ''});
+  final String id, name, description;
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'description': description,
+  };
+  factory Place.fromJson(Map<String, dynamic> j) => Place(
+    id: _string(j['id'], 'Ort-ID'),
+    name: _string(j['name'], 'Ort'),
+    description: _string(j['description'], 'Beschreibung', fallback: ''),
+  );
+}
+
+class GameEvent {
+  GameEvent({
+    required this.id,
+    required this.campaignId,
+    required this.sessionId,
+    required this.timestamp,
+    required this.type,
+    List<String> entities = const [],
+    Map<String, dynamic> payload = const {},
+  }) : entities = List.unmodifiable(entities),
+       payload = Map.unmodifiable(payload);
+  final String id, campaignId, sessionId, type;
+  final DateTime timestamp;
+  final List<String> entities;
+  final Map<String, dynamic> payload;
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'campaignId': campaignId,
+    'sessionId': sessionId,
+    'timestamp': timestamp.toUtc().toIso8601String(),
+    'type': type,
+    'entities': entities,
+    'payload': payload,
+  };
+  factory GameEvent.fromJson(Map<String, dynamic> j) => GameEvent(
+    id: _string(j['id'], 'Ereignis-ID'),
+    campaignId: _string(j['campaignId'], 'Kampagnen-ID'),
+    sessionId: _string(j['sessionId'], 'Sitzungs-ID'),
+    timestamp: DateTime.parse(_string(j['timestamp'], 'Zeitstempel')),
+    type: _string(j['type'], 'Ereignistyp'),
+    entities: _strings(j['entities'], 'Objekte'),
+    payload: _map(j['payload'], 'Ereignisdaten'),
+  );
+}
+
+class PendingRoll {
+  const PendingRoll({
+    required this.id,
+    required this.type,
+    required this.modifier,
+    required this.difficulty,
+    this.targetId = '',
+    this.targetName = '',
+    this.expression = '1d20',
+  });
+  final String id, type, targetId, targetName, expression;
+  final int modifier, difficulty;
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'type': type,
+    'modifier': modifier,
+    'difficulty': difficulty,
+    'targetId': targetId,
+    'targetName': targetName,
+    'expression': expression,
+  };
+  factory PendingRoll.fromJson(Map<String, dynamic> j) {
+    final type = _string(j['type'], 'Probeart');
+    final expression = _string(j['expression'], 'Würfel', fallback: '1d20');
+    if (!['attack', 'death', 'escape', 'perception'].contains(type) ||
+        expression != '1d20') {
+      throw const FormatException('Unbekannte Probe oder Würfelanweisung.');
+    }
+    return PendingRoll(
+      id: _string(j['id'], 'Probe-ID'),
+      type: type,
+      modifier: _int(j['modifier'], 'Modifikator', min: -20, max: 30),
+      difficulty: _int(j['difficulty'], 'Schwierigkeit', min: 1, max: 100),
+      targetId: _string(j['targetId'], 'Ziel-ID', fallback: ''),
+      targetName: _string(j['targetName'], 'Ziel', fallback: ''),
+      expression: expression,
+    );
+  }
+}
+
+class Encounter {
+  const Encounter({
+    required this.id,
+    required this.enemyName,
+    required this.enemyHitPoints,
+    required this.enemyMaxHitPoints,
+    this.enemyArmorClass = 12,
+    this.enemyAttackBonus = 2,
+    this.enemyDamage = '1d4',
+    this.round = 1,
+    this.activeParticipant = 'hero',
+    this.heroInitiative = 0,
+    this.enemyInitiative = 0,
+    this.movementRemaining = 9,
+    this.actionUsed = false,
+    this.bonusActionUsed = false,
+    this.reactionUsed = false,
+  });
+  final String id, enemyName, enemyDamage, activeParticipant;
+  final int enemyHitPoints,
+      enemyMaxHitPoints,
+      enemyArmorClass,
+      enemyAttackBonus,
+      round,
+      heroInitiative,
+      enemyInitiative,
+      movementRemaining;
+  final bool actionUsed, bonusActionUsed, reactionUsed;
+  bool get isFinished => enemyHitPoints == 0;
+  Encounter copyWith({
+    int? enemyHitPoints,
+    int? round,
+    String? activeParticipant,
+    int? heroInitiative,
+    int? enemyInitiative,
+    int? movementRemaining,
+    bool? actionUsed,
+    bool? bonusActionUsed,
+    bool? reactionUsed,
+  }) => Encounter(
+    id: id,
+    enemyName: enemyName,
+    enemyHitPoints: enemyHitPoints ?? this.enemyHitPoints,
+    enemyMaxHitPoints: enemyMaxHitPoints,
+    enemyArmorClass: enemyArmorClass,
+    enemyAttackBonus: enemyAttackBonus,
+    enemyDamage: enemyDamage,
+    round: round ?? this.round,
+    activeParticipant: activeParticipant ?? this.activeParticipant,
+    heroInitiative: heroInitiative ?? this.heroInitiative,
+    enemyInitiative: enemyInitiative ?? this.enemyInitiative,
+    movementRemaining: movementRemaining ?? this.movementRemaining,
+    actionUsed: actionUsed ?? this.actionUsed,
+    bonusActionUsed: bonusActionUsed ?? this.bonusActionUsed,
+    reactionUsed: reactionUsed ?? this.reactionUsed,
+  );
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'enemyName': enemyName,
+    'enemyHitPoints': enemyHitPoints,
+    'enemyMaxHitPoints': enemyMaxHitPoints,
+    'enemyArmorClass': enemyArmorClass,
+    'enemyAttackBonus': enemyAttackBonus,
+    'enemyDamage': enemyDamage,
+    'round': round,
+    'activeParticipant': activeParticipant,
+    'heroInitiative': heroInitiative,
+    'enemyInitiative': enemyInitiative,
+    'movementRemaining': movementRemaining,
+    'actionUsed': actionUsed,
+    'bonusActionUsed': bonusActionUsed,
+    'reactionUsed': reactionUsed,
+  };
+  factory Encounter.fromJson(Map<String, dynamic> j) {
+    final maxHp = _int(j['enemyMaxHitPoints'], 'Gegnermaximum', min: 1);
+    final hp = _int(j['enemyHitPoints'], 'Gegner-TP', max: maxHp);
+    final damage = _string(j['enemyDamage'], 'Gegnerschaden', fallback: '1d4');
+    if (!RegExp(
+      r'^([1-9][0-9]?)[dDwW](4|6|8|10|12|20|100)(\s*[+-]\s*[0-9]{1,3})?$',
+    ).hasMatch(damage)) {
+      throw const FormatException('Ungültiger Gegnerschaden.');
+    }
+    final active = _string(
+      j['activeParticipant'],
+      'Aktiver Teilnehmer',
+      fallback: 'hero',
+    );
+    if (!['hero', 'enemy'].contains(active)) {
+      throw const FormatException('Unbekannter aktiver Teilnehmer.');
+    }
+    return Encounter(
+      id: _string(j['id'], 'Begegnung-ID'),
+      enemyName: _string(j['enemyName'], 'Gegner'),
+      enemyHitPoints: hp,
+      enemyMaxHitPoints: maxHp,
+      enemyArmorClass: _int(
+        j['enemyArmorClass'],
+        'Gegner-RK',
+        fallback: 12,
+        min: 1,
+        max: 100,
+      ),
+      enemyAttackBonus: _int(
+        j['enemyAttackBonus'],
+        'Gegnerbonus',
+        fallback: 2,
+        min: -20,
+        max: 30,
+      ),
+      enemyDamage: damage,
+      round: _int(j['round'], 'Runde', fallback: 1, min: 1),
+      activeParticipant: active,
+      heroInitiative: _int(
+        j['heroInitiative'],
+        'Initiative',
+        fallback: 0,
+        min: -20,
+      ),
+      enemyInitiative: _int(
+        j['enemyInitiative'],
+        'Initiative',
+        fallback: 0,
+        min: -20,
+      ),
+      movementRemaining: _int(j['movementRemaining'], 'Bewegung', fallback: 9),
+      actionUsed: _bool(j['actionUsed'], 'Aktion'),
+      bonusActionUsed: _bool(j['bonusActionUsed'], 'Bonusaktion'),
+      reactionUsed: _bool(j['reactionUsed'], 'Reaktion'),
+    );
+  }
+}
+
+class Campaign {
+  Campaign({
+    required this.id,
+    required this.name,
+    required this.world,
+    required this.sessionId,
+    required this.hero,
+    required this.scene,
+    List<NarrativeMessage> messages = const [],
+    Map<String, String> facts = const {},
+    List<Quest> quests = const [],
+    List<WorldNpc> npcs = const [],
+    List<Place> places = const [],
+    List<GameEvent> events = const [],
+    this.pendingRoll,
+    this.encounter,
+    this.revision = 0,
+  }) : messages = List.unmodifiable(messages),
+       facts = Map.unmodifiable(facts),
+       quests = List.unmodifiable(quests),
+       npcs = List.unmodifiable(npcs),
+       places = List.unmodifiable(places),
+       events = List.unmodifiable(events);
+  final String id, name, world, sessionId, scene;
+  final HeroCharacter hero;
+  final List<NarrativeMessage> messages;
+  final Map<String, String> facts;
+  final List<Quest> quests;
+  final List<WorldNpc> npcs;
+  final List<Place> places;
+  final List<GameEvent> events;
+  final PendingRoll? pendingRoll;
+  final Encounter? encounter;
+  final int revision;
+  Campaign copyWith({
+    String? name,
+    String? scene,
+    HeroCharacter? hero,
+    List<NarrativeMessage>? messages,
+    Map<String, String>? facts,
+    List<Quest>? quests,
+    List<WorldNpc>? npcs,
+    List<Place>? places,
+    List<GameEvent>? events,
+    Object? pendingRoll = _unchanged,
+    Object? encounter = _unchanged,
+    int? revision,
+  }) => Campaign(
+    id: id,
+    name: name ?? this.name,
+    world: world,
+    sessionId: sessionId,
+    hero: hero ?? this.hero,
+    scene: scene ?? this.scene,
+    messages: messages ?? this.messages,
+    facts: facts ?? this.facts,
+    quests: quests ?? this.quests,
+    npcs: npcs ?? this.npcs,
+    places: places ?? this.places,
+    events: events ?? this.events,
+    pendingRoll: identical(pendingRoll, _unchanged)
+        ? this.pendingRoll
+        : pendingRoll as PendingRoll?,
+    encounter: identical(encounter, _unchanged)
+        ? this.encounter
+        : encounter as Encounter?,
+    revision: revision ?? this.revision,
+  );
+  Map<String, dynamic> toJson() => {
+    'schemaVersion': 1,
+    'id': id,
+    'name': name,
+    'world': world,
+    'sessionId': sessionId,
+    'hero': hero.toJson(),
+    'scene': scene,
+    'messages': messages.map((e) => e.toJson()).toList(),
+    'facts': facts,
+    'quests': quests.map((e) => e.toJson()).toList(),
+    'npcs': npcs.map((e) => e.toJson()).toList(),
+    'places': places.map((e) => e.toJson()).toList(),
+    'events': events.map((e) => e.toJson()).toList(),
+    'pendingRoll': pendingRoll?.toJson(),
+    'encounter': encounter?.toJson(),
+    'revision': revision,
+  };
+  factory Campaign.fromJson(Map<String, dynamic> j) {
+    _version(j);
+    final id = _string(j['id'], 'Kampagnen-ID');
+    final session = _string(j['sessionId'], 'Sitzungs-ID');
+    final events = _list(
+      j['events'],
+      'Ereignisse',
+    ).map((e) => GameEvent.fromJson(_map(e, 'Ereignis'))).toList();
+    if (events.any((e) => e.campaignId != id) ||
+        events.map((e) => e.id).toSet().length != events.length) {
+      throw const FormatException('Ungültiges Ereignisprotokoll.');
+    }
+    final facts = _map(j['facts'], 'Erinnerungen');
+    final hero = HeroCharacter.fromJson(_map(j['hero'], 'Charakter'));
+    final pending = j['pendingRoll'] == null
+        ? null
+        : PendingRoll.fromJson(_map(j['pendingRoll'], 'Probe'));
+    final encounter = j['encounter'] == null
+        ? null
+        : Encounter.fromJson(_map(j['encounter'], 'Kampf'));
+    if (pending != null) {
+      if (!hero.isComplete) {
+        throw const FormatException(
+          'Eine offene Probe benötigt bestätigte Charakterwerte.',
+        );
+      }
+      final prof = 2 + (hero.level - 1) ~/ 4;
+      int modifier(String key) => ((hero.abilities[key]! - 10) / 2).floor();
+      final expected = switch (pending.type) {
+        'attack' =>
+          modifier(hero.weaponAbility) + (hero.weaponProficient ? prof : 0),
+        'perception' =>
+          modifier('wisdom') + (hero.skills.contains('Wahrnehmung') ? prof : 0),
+        'escape' => modifier('dexterity'),
+        _ => 0,
+      };
+      if (pending.modifier != expected) {
+        throw const FormatException(
+          'Die gespeicherte Probe enthält einen falschen Bonus.',
+        );
+      }
+      if (pending.type == 'attack' &&
+          (encounter == null ||
+              encounter.isFinished ||
+              encounter.id != pending.targetId ||
+              encounter.enemyArmorClass != pending.difficulty)) {
+        throw const FormatException(
+          'Das Angriffsziel stimmt nicht mit der Probe überein.',
+        );
+      }
+      if (pending.type == 'escape' && encounter == null) {
+        throw const FormatException('Fluchtprobe ohne Kampf.');
+      }
+      if (pending.type == 'death' &&
+          (hero.hitPoints != 0 ||
+              hero.isDead ||
+              hero.conditions.contains('stabil'))) {
+        throw const FormatException('Ungültiger Todesrettungswurf.');
+      }
+      if (pending.type != 'attack' && pending.difficulty != 10) {
+        throw const FormatException('Ungültige Schwierigkeit.');
+      }
+    }
+    return Campaign(
+      id: id,
+      name: _string(j['name'], 'Kampagnenname'),
+      world: _string(j['world'], 'Welt'),
+      sessionId: session,
+      hero: hero,
+      scene: _string(j['scene'], 'Szene'),
+      messages: _list(
+        j['messages'],
+        'Nachrichten',
+      ).map((e) => NarrativeMessage.fromJson(_map(e, 'Nachricht'))).toList(),
+      facts: {
+        for (final e in facts.entries) e.key: _string(e.value, 'Erinnerung'),
+      },
+      quests: _list(
+        j['quests'],
+        'Quests',
+      ).map((e) => Quest.fromJson(_map(e, 'Quest'))).toList(),
+      npcs: _list(
+        j['npcs'],
+        'NPCs',
+      ).map((e) => WorldNpc.fromJson(_map(e, 'NPC'))).toList(),
+      places: _list(
+        j['places'],
+        'Orte',
+      ).map((e) => Place.fromJson(_map(e, 'Ort'))).toList(),
+      events: events,
+      pendingRoll: pending,
+      encounter: encounter,
+      revision: _int(j['revision'], 'Revision', fallback: 0),
+    );
+  }
+}
+
+class GameUpdate {
+  GameUpdate({required this.campaign, required List<GameEvent> events})
+    : events = List.unmodifiable(events);
+  final Campaign campaign;
+  final List<GameEvent> events;
+  String get narration =>
+      campaign.messages.isEmpty ? '' : campaign.messages.last.text;
+}

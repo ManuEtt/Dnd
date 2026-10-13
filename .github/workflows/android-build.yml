@@ -1,50 +1,90 @@
-name: Android Alpha Build
+name: Android-Alpha bauen
+
 on:
   push:
-    branches: [main, 'feat/**']
+    paths:
+      - 'app/**'
+      - 'backend/**'
+      - '.github/workflows/android-build.yml'
   pull_request:
+    paths:
+      - 'app/**'
+      - 'backend/**'
+      - '.github/workflows/android-build.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: android-alpha-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  android:
+  quality-and-apk:
+    name: Prüfen und Debug-APK erstellen
     runs-on: ubuntu-24.04
-    timeout-minutes: 35
-    permissions:
-      contents: read
+    timeout-minutes: 45
+    env:
+      CI: 'true'
     steps:
-      - uses: actions/checkout@v4
-      - name: Java 17
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+      - name: Java 17 installieren
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-      - name: Flutter 3.47.0
+      - name: Flutter 3.35.7 installieren
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.47.0'
+          flutter-version: '3.35.7'
           channel: stable
           cache: true
-      - name: Generate Android host and apply microphone permissions
-        run: bash tool/setup_android.sh
-      - name: Flutter dependencies
-        run: flutter pub get
-      - name: Dart analyzer
-        run: flutter analyze
-      - name: Flutter unit tests
-        run: flutter test
-      - name: Node.js 22
+      - name: Node.js 22.14.0 installieren
         uses: actions/setup-node@v4
         with:
-          node-version: '22.16.0'
-      - name: Backend pure logic tests
-        run: cd backend && node --experimental-strip-types --test test/*.test.mjs
-      - name: Backend install and build
-        run: cd backend && npm install --no-audit --no-fund && npm run build
-      - name: Build debug APK
-        run: flutter build apk --debug
-      - name: Publish APK
+          node-version: '22.14.0'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Backend-Abhängigkeiten installieren
+        working-directory: backend
+        run: npm ci
+      - name: Backend-Typen prüfen
+        working-directory: backend
+        run: npm run typecheck
+      - name: Backend bauen
+        working-directory: backend
+        run: npm run build
+      - name: Backend testen
+        working-directory: backend
+        run: npm test
+      - name: SQLite für Linux-Tests installieren
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsqlite3-dev
+      - name: Flutter-Abhängigkeiten installieren
+        working-directory: app
+        run: flutter pub get
+      - name: Flutter-Code analysieren
+        working-directory: app
+        run: flutter analyze
+      - name: Flutter-Tests ausführen
+        working-directory: app
+        run: flutter test
+      - name: Benötigte Android-SDK-Versionen installieren
+        run: |
+          sdkmanager "platforms;android-34" "platforms;android-35" "platforms;android-36" "build-tools;35.0.0" "ndk;27.0.12077973" "cmake;3.22.1"
+      - name: Android-Debug-APK bauen
+        working-directory: app
+        run: |
+          chmod +x android/gradlew
+          flutter build apk --debug
+      - name: APK bereitstellen
         uses: actions/upload-artifact@v4
         with:
-          name: aetheria-android-debug
-          path: build/app/outputs/flutter-apk/app-debug.apk
+          name: lebendiger-spielleiter-android-debug
+          path: app/build/app/outputs/flutter-apk/app-debug.apk
           if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
