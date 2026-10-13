@@ -1,0 +1,25 @@
+{
+  "format": "aetheria-save-v1",
+  "character": {
+    "id": "arescan", "name": "Arescan", "species": "Mensch", "characterClass": "Waldläufer",
+    "level": 1, "background": "Unbestätigt", "backstory": "",
+    "abilities": {"Stärke": null, "Geschicklichkeit": null, "Konstitution": null, "Intelligenz": null, "Weisheit": null, "Charisma": null},
+    "maxHp": null, "hp": null, "armorClass": null, "gold": null, "experience": 0, "inventory": []
+  },
+  "campaign": {
+    "id": "heart-eternity", "title": "Das Herz der Ewigkeit", "heroId": "arescan",
+    "scene": "Der verletzte Schattenritter liegt auf dem Marktplatz. Sein Amulett leuchtet rot. Die Elfenmagierin steht bei Arescan.",
+    "location": "Silberhain – Marktplatz", "turn": 0
+  },
+  "history": [
+    "Der Sternentempel erwacht nach tausend Jahren.",
+    "Ein goldener Drache verkündet: Das Herz der Ewigkeit wurde gestohlen.",
+    "In Silberhain öffnet sich ein magisches Portal; eine Elfenmagierin warnt vor Schattenrittern.",
+    "Ein vermummter Bogenschütze auf einem Dach greift die Elfenmagierin an.",
+    "Arescan warnt die Elfin und zieht sie hinter den Brunnen in Deckung.",
+    "Arescan schießt mit seinem Bogen zurück. Historisches Gesamtergebnis des Angriffs: 19 (natürlicher Wurf 10 berichtet; Modifikatoren und Charakterwerte unbestätigt).",
+    "Historisch erzählter Schaden: 14 TP; nicht nachträglich als regelkonformer Schaden bestätigt.",
+    "Der Schattenritter wird getroffen, stürzt vom Dach und sein rotes Amulett beginnt zu leuchten.",
+    "Die Elfenmagierin erkennt das Zeichen des Schattenkönigs."
+  ]
+}
