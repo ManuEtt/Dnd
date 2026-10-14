@@ -1,8 +1,13 @@
 # Entwicklungsstatus
 
-Stand: 14. Oktober 2026. Aktuelle Etappe: App 0.3.0 mit geprüfter SRD-Attributstarthilfe; Attributshilfe und kleine APKs geprüft; Übergabe gesichert; autonome Entwicklung mit gesicherten Inkrementen für `ManuEtt/Dnd`.
+Stand: 14. Oktober 2026. Aktuelle Etappe: App 0.3.1 mit Android-Sprachkorrekturen, Geräte-Rückmeldung und nachgewiesener GitHub-CI-Ursache; autonome Entwicklung mit gesicherten Inkrementen für `ManuEtt/Dnd`.
 
-Die vorhandene GitHub-Codebasis war während der Entwicklung nicht verfügbar. Dieses Paket wurde neu aufgebaut und noch nicht mit einer älteren Repositoryversion verglichen. Ein Push, ein Pull Request und eine Ausführung des Workflows auf GitHub sind deshalb nicht Bestandteil des nachgewiesenen Stands.
+Der Lesezugriff auf GitHub ist jetzt vorhanden. Der hochgeladene main-Stand
+`bc6c942483189acdcd82b37005de1040b49b36b8` stimmt in allen Dateiinhalten mit dem
+gesicherten lokalen 0.3.0-Stand überein; nur vier Ausführungsrechte unterscheiden
+sich. Der bestehende Actions-Lauf ist geprüft, direkte Schreiboperationen
+erhalten weiterhin HTTP 403. Neue Korrekturen sind deshalb zusätzlich als ZIP
+zu übernehmen; ein neuer GitHub-Lauf oder Pull Request ist noch nicht bestätigt.
 
 ## IMPLEMENTIERT
 
@@ -17,7 +22,7 @@ Die vorhandene GitHub-Codebasis war während der Entwicklung nicht verfügbar. D
 - Regelgrundlagen für Attributmodifikatoren, Übungsbonus, Initiative, Angriffe, kritischen Schaden, Trefferpunkte, Heilung und Todesrettung. Demo-Kampf mit automatischer Gegenrunde; kein vollständiges SRD-Kampfsystem.
 - SQLite-Schema 1, gemeinsame Speicherung von Snapshot und Ereignissen, Revisionsjournal, Konfliktprüfung, Idempotenz und Wiederherstellung bestätigter Zustände.
 - Grundlegender Kurzzeitkontext, faktengestützte Sitzungsübersicht und Langzeitfakten zu NPCs, Quests und Inventar; Checkpoint-Ereignisrekonstruktion.
-- Deutsche Systemspracherkennung mit bearbeitbarem Transkript, TTS, Stimmwahl, optionale automatische Ausgabe und Unterbrechung. Tatsächliche Gerätefunktion noch nicht geprüft.
+- Deutsche Systemspracherkennung mit bearbeitbarem Transkript, TTS, Stimmwahl, optionaler automatischer Ausgabe und Unterbrechung. Seit 0.3.1 geprüfte Anbieterergebnisse, deutsche Locale-Rangfolge, deduplizierte Stimmmetadaten und erneute Prüfung ohne Mikrofonzugriff. Fehlende Daten/Netzwerkprobleme erhalten verständliche Meldungen; nicht antwortende Dienste und Wiedergabe haben Zeitgrenzen. Lokale Oberfläche startet vor der Sprachdienstprüfung. Kein automatischer Mikrofon-Neustart.
 - Fastify-/TypeScript-Backend mit validierter, ausschließlich erzählender API, eigenen kurzlebigen Read-only-Tokens, In-Memory-Anfragelimits und kostenlosem Mock. Optionaler OpenAI-Responses-Provider ausschließlich serverseitig und mit ausdrücklichem Kosten-Opt-in. Kein Realtime-Token.
 
 Zusätzlich seit 0.2.0: HTTPS-Transport mit begrenzten JSON-Antworten, verweigerten Weiterleitungen, Ablaufprüfung, ausdrücklicher Kostenfreigabe und lokalem Anfragenversuchslimit. Token und Kostenfreigabe werden nicht gespeichert. Sitzungstest per authentifiziertem GET ohne Modellaufruf; neue Server-CLI gibt nur kurzlebige Sitzungstokens aus. Fehler führen ohne automatischen POST-Retry zur lokalen Demo. Ein Replay-Fehler durch unterschiedliche JSON-Objektschlüsselreihenfolge wurde behoben, ohne veränderte Werte oder Listen als identisch zuzulassen. Seit App 0.2.1 wählt MemoryEngine.retrieve bis zu 20 bestätigte Fakten, NPC-, Quest-, Inventar- und Ortsinformationen anhand deutscher Worttreffer und wichtiger Zustände aus. Keine Modelltexte oder Spielerbehauptungen werden als Faktenquelle verwendet; Datenbankschema und Importe bleiben Version 1.
@@ -26,7 +31,46 @@ Seit App 0.2.2 trennt BackupFiles die Dateiverarbeitung von Oberfläche und Repo
 
 Der Workflow `.github/workflows/android-build.yml`, Projekt- und Übergabedokumentation liegen vor. CI verwendet Flutter 3.35.7, Dart 3.9.2, Java 17 und Node.js 22.14.0.
 
+Seit 0.3.1 installiert CI Android Commandline Tools mit
+android-actions/setup-android@v3, festgelegtem Build 12266719, vor dem
+sdkmanager-Aufruf. Die Ursache des alten APK-Ausfalls ist durch GitHub-Logs
+bestätigt, der korrigierte Workflow bleibt bis zur Übernahme separat zu prüfen.
+
+## GERÄTERÜCKMELDUNG
+
+Der Benutzer berichtet funktionierenden App-Betrieb auf einem **Samsung Galaxy
+S26 Ultra**, aber Probleme bei einigen Sprachen. Das ist ein Benutzerbericht,
+kein vollständig dokumentierter Entwickler-Gerätetest. App-/Android-/One-UI-
+Version, Sprachdienst, genaue betroffene Sprache und Eingabe beziehungsweise
+Ausgabe sind noch offen. 0.3.1 verbessert konkrete im Paketcode bestätigte
+Fehlerpfade; deren Behebung auf dem Samsung ist noch nicht bestätigt. Die
+Hauptsprache ist Deutsch, weitere Spielsprachen sind nicht implementiert.
+Anleitung und Diagnosedaten: docs/SPEECH_TROUBLESHOOTING.md.
+
 ## GETESTET
+
+Gezielte Sprachprüfung 0.3.1: **31 Controller-Tests** (24 neu) und **7 neue
+Widgettests** bestanden, gezielte Analyse ohne Befunde. Geprüft sind 0/false
+bei TTS-Kommandos, fehlende/doppelte Stimmendaten, lokale/Netzwerk-Metadaten,
+gespeicherte entfernte Stimmen, Wiederholung nach Paketinstallation,
+hängende Sprachabfrage/Wiedergabe, Fehlercallbacks, Abbruch und verzögerte
+Ergebnisse. Die Einstellungen bestehen auf 360 px mit 1,3- und 2-facher
+Schriftgröße. Die neue Startprüfung mit echter temporärer SQLite-Datenbank
+zeigt die lokale Oberfläche während einer offenen nativen Stimmabfrage.
+
+Abschließende Prüfungen für 0.3.1: **254 Flutter-Tests** einschließlich lokalem
+Node-/Dart-Protokolltest erfolgreich mit Node 22.14.0 und RUN_BACKEND_SMOKE=1;
+**22 Backend- und 22 Python-Tests**, Backend-Typecheck/Build und saubere
+Flutter-Analyse. Insgesamt 32 neue Flutter-Tests. Universeller Debug-Build
+0.3.1+7 erfolgreich; Version, API 24/36 und gleiche lokale Testsignatur geprüft.
+Keine kostenpflichtigen Modellaufrufe. Native Dateisicherungsquellen unverändert,
+deren bestehender Nachweis bleibt 12 JVM-Tests.
+
+Der reale GitHub-Lauf **38560369343** auf main `bc6c942` besteht Strukturprüfung,
+22 Python-, 22 Backend- und 222 Flutter-Tests sowie Codeanalyse. Job
+115839661846 scheitert danach beim SDK-Schritt mit **sdkmanager: command not
+found**, Exit 127. Alle APK-Schritte sind übersprungen. Dies ist ein tatsächlich
+beobachteter Remote-Testlauf, aber kein erfolgreicher Remote-APK-Build.
 
 Gesamter scripts/check.sh-Lauf für 0.3.0 erfolgreich: **222 Flutter-Tests** einschließlich lokalem Node-/Dart-Protokolltest, **22 Backend-Tests**, **22 Python-Paket-/Strukturtests** und Flutter-Analyse ohne Befunde mit der festgehaltenen Toolchain/Node 22.14.0. Zusätzlich nach Ergänzung der beiden neuen Pflichtdateien Python-Prüfer und alle 22 zugehörigen Tests erneut bestanden. 44 neue Flutter-Tests: 24 Domain-Regeltests, 7 echte SQLite-/Controller-Tests und 13 Widgettests. Der Debug-APK-Build 0.3.0+6 ist erfolgreich, Metadaten und Testsignatur geprüft.
 
@@ -46,16 +90,16 @@ Die Abschlusskorrektur ist ebenfalls abgenommen: Trennung und Dispose beenden au
 
 ## NICHT GETESTET
 
-- Installieren und vollständiger End-to-End-Ablauf auf einem echten Android-Gerät, einschließlich neuer Attributshilfe mit großer Schrift/Screenreader.
+- Vollständig dokumentierter End-to-End-Ablauf auf einem echten Android-Gerät, einschließlich neuer Attributshilfe mit großer Schrift/Screenreader; Benutzer meldet App-Betrieb auf Samsung Galaxy S26 Ultra.
 - Echte Android-Dokumentauswahl, Dokumentanbieter, Berechtigungsübergabe, Schreibfehler und Aktivitätsende während einer Dateisicherung. Die Dateibrücke ist kompiliert; Dart-Kanal, Oberfläche und native I/O-Helfer werden getrennt automatisiert geprüft.
 - Deutsche Mikrofoneingabe und Sprachausgabe mit einem konkreten Android-Sprachanbieter.
 - Unterbrechung, Berechtigungsablehnung und Ausfall von echten Gerätesprachdiensten; die zugehörige App-Logik ist mit Mocks getestet.
-- GitHub-Actions-Lauf und Herunterladen eines APK-Artefakts.
+- GitHub-Actions-Lauf mit der SDK-Korrektur 0.3.1 und Herunterladen eines neuen APK-Artefakts; bisheriger Lauf scheitert nach erfolgreichen Tests.
 - Reale, kostenpflichtige OpenAI-Aufrufe und eine mobile HTTPS-Verbindung zu einem produktiven Server.
 
 ## BLOCKIERT
 
-- Zugriff auf die vorhandene GitHub-Codebasis und direkte Übertragung der Änderungen: Erneute Prüfung als ManuEtt: Connector-Repositoryabruf404, keine sichtbaren App-Installationen/Konten und keine Dnd-Suchtreffer; Git-Lesen403. Bestehender Pushversuch des geprüften Standes nach origin/feat/solo-alpha wurde mit HTTP 403 „Write access to repository not granted“ abgewiesen. Das beweist keine Löschung oder Umbenennung. Eine genaue Web-Upload-/Actions-Fehlerursache ist ohne Benutzerfehlertext und Repo-Zugriff nicht bestätigt. Das flache Korrektur-ZIP und die Anleitung in docs/UPLOAD_TO_GITHUB.md ermöglichen die Übernahme und Zugriffsreparatur durch den Eigentümer.
+- Direkte Übertragung der Änderungen: Lesen funktioniert, tatsächlicher Push auf fix/android-voice-reliability erhält HTTP 403 „Permission to ManuEtt/Dnd.git denied to ManuEtt“. Connector-Branchanlage erhält ebenfalls403 „Resource not accessible by integration“. Allgemeines push:true in Repository-Metadaten bestätigt nicht die Integrationsberechtigung. ZIP und docs/UPLOAD_TO_GITHUB.md ermöglichen die Übernahme durch den Eigentümer. Actions-Ursache ist inzwischen bestätigt und lokal korrigiert.
 - Eine vollständige Prüfung auf einem Android-Gerät benötigt ein Gerät beziehungsweise einen geeigneten Emulator mit Sprachdiensten.
 - Produktive KI-Anbindung benötigt sichere Serverkonfiguration und Anbieterzugang; der Demo-Modus bleibt unabhängig davon.
 
@@ -72,6 +116,14 @@ Die Abschlusskorrektur ist ebenfalls abgenommen: Trennung und Dispose beenden au
 
 ## Letzter Build und nächste Aufgabe
 
+**App 0.3.1+7: universeller Android-Debug-Build erfolgreich**, API 24+, Ziel 36,
+gleiche Paket-ID und verifizierte lokale Testsignatur wie 0.3.0. Drei optimierte
+Alpha-APKs erfolgreich gebaut und geprüft: ARM64 17.447.960 Byte, ARM32
+14.927.604 Byte, x86_64 18.685.754 Byte. Alle normaler Buildcode 7, richtige ABI,
+gleiche lokale Testsignatur; neue Sprachtexte im kompilierten AOT-Code geprüft.
+Toolchain unverändert;
+kein Entwickler-Gerätetest und kein erfolgreicher neuer Remote-APK-Build.
+
 **App 0.3.0+6: universeller Android-Debug-Build erfolgreich**, API 24+, Ziel 36, gleiche Paket-ID, Metadaten und Debug-Signatur geprüft. Drei optimierte kleine Alpha-APKs wurden mit normaler Buildnummer 6 erstellt und per Metadaten, Architektur und gleicher lokaler Testsignatur geprüft; alle unter 25 MiB. Toolchain unverändert wie im historischen Debugnachweis unten; letzte Gerätemessung weiterhin nicht vorhanden.
 
 **App 0.2.3+5: drei optimierte kleine Alpha-APKs erfolgreich gebaut**, Release-AOT mit interner Debug-Testsignatur; Toolchain wie im folgenden Debugnachweis. Die CI-Konfiguration baut zusätzlich weiterhin die universelle Debug-APK, prüft die Struktur früh und hält die kleinen Artefakte 30 Tage bereit. YAML und lokale Befehle sind geprüft; der tatsächliche GitHub-Lauf ist weiterhin blockiert.
@@ -82,10 +134,10 @@ Anfangs fehlten ein vollständiger Java-Compiler, die Sprachplugin-SDKs und CMak
 
 ## Gesicherter Stand und Fortsetzung
 
-- Letzter gesicherter Funktionsstand: `c0611e15134449b50ab856facb03a49514dbeda4` (0.3.0), Branch `feat/solo-alpha`.
-- Zuletzt fertiggestellt: App 0.3.0-Attributshilfe mit Standardsatz/Punktekauf und ausdrücklicher SRD-Hintergrundsteigerung. 222 Flutter-, 22 Backend- und 22 Python-Tests sowie Analyse und Debug-Build erfolgreich. Bestehende native I/O-Tests bleiben 12 bestanden, unveränderter Code.
-- Aktueller Abschluss: neue Regeln, Editor und Persistenz geprüft. Optimierte APKs geprüft und Code committet. ARM64 und ARM32 privat auf Drive per Metadaten bestätigt; ARM64 heruntergeladen und byteidentisch per SHA-256 geprüft. Flaches Quell-ZIP mit genau 100 versionierten Dateien, CRC/Quellbytes und entpackter Strukturprüfung abgenommen; endgültige ZIP-Übernahme/Links/Prüfsummen im externen Checkpoint. Keine Schemaänderung oder neue Laufzeitabhängigkeit. Die Hintergrundhilfe vergibt noch keine Talente, Fertigkeiten, Werkzeuge oder Ausrüstung.
-- Bekannte Grenzen: kein automatischer Token-Refresh, keine abgenommenen Geräte-/OpenAI-/GitHub-Actions-Tests, begrenzte Regel- und Demo-Interpretation. Bei einem unterbrochenen Export kann eine bereits vollständig geschriebene Datei trotz fehlender Erfolgsantwort erhalten bleiben; auch die Entfernung einer fehlgeschlagenen neuen Datei hängt vom Dokumentanbieter ab. Kein Verlust bestätigter SQLite-Spielstände in den ausgeführten Tests.
-- Nächster konkreter Entwicklungsschritt ohne Gerätezugriff: Stufe-1-Trefferpunkte aus ausdrücklich gewählter Klasse und bestätigtem Konstitutionsmodifikator vorschlagen. Offizielle SRD 5.2.1-Klassenquellen vorher lesen; bestehende/historische TP erst nach Bestätigung ändern, Klassen-/Modifikatorgrenzen und Speicherung testen. Sobald Gerät/Zugriff bereitsteht, Dateisicherung, HTTPS-/Sprachpfad und GitHub Actions separat abnehmen.
-- Übergabepakete: Dnd-Projekt-0.3.0.zip mit Dateien direkt in der Wurzel sowie Der-lebendige-Spielleiter-0.3.0-arm64.apk/arm32.apk. Externer Dnd-0.3.0-status.json erfasst abschließenden Git-HEAD, SHA-256 und bestätigte private Drive-Links. Alte Übergabepakete bleiben erhalten.
+- Letzter gesicherter Funktionsstand: `07c98db` (0.3.1), davor `8dc38b6` für CI-Werkzeuge. Branch `fix/android-voice-reliability` basiert auf dem tatsächlich gelesenen GitHub-main `bc6c942`; keine fremden Dateiinhalte überschrieben. Die frühere unabhängige Historie bleibt lokal als feat/solo-alpha erhalten. Abschließende Dokumentationscommits stehen im tatsächlichen Git-HEAD.
+- Zuletzt fertiggestellt: Sprachkorrekturen, robuste Einstellungen und unabhängiger lokaler App-Start 0.3.1; fehlendes sdkmanager als echte CI-Ursache korrigiert. 254 Flutter-, 22 Backend- und 22 Python-Tests, Analyse und Debug-/drei optimierte APK-Builds erfolgreich. Bestehende native I/O-Tests bleiben 12 bestanden, unveränderter Code.
+- Aktueller Abschluss: Code, Anbieterfehler und Historie geprüft; lokale APKs mit Version/Architektur/Signatur und neuen Sprachtexten im AOT-Code abgenommen. ARM64 und ARM32 privat auf Drive erstellt und per Größe/MIME/Rechten bestätigt. ARM64 erneut heruntergeladen und byteidentisch per SHA-256 geprüft. Flaches Quell-ZIP enthält 103 Dateien; Webupload in mindestens zwei Stapeln. Keine Schemaänderung, neue Laufzeitabhängigkeit oder kostenpflichtige Modellaufrufe. ZIP-Prüfung und endgültige Downloadlinks/Prüfsummen im externen Checkpoint.
+- Bekannte Grenzen: genaue betroffene Sprache und Android-Anbieter unbekannt; Samsung-Sprachkorrektur nicht am Gerät bestätigt. Native TTS-Callbacks besitzen keine Wiedergabe-ID, sehr späte Ereignisse lassen sich deshalb nicht perfekt zuordnen. Kein automatischer Token-Refresh, kein vollständiges Regelwerk, keine abgenommenen produktiven OpenAI-/neuen Actions-APK-Tests. Bestätigte Spielstände bleiben in den ausgeführten Tests erhalten.
+- Nächster konkreter Schritt: 0.3.1 auf dem Samsung getrennt für Erkennung und Vorlesen prüfen und ZIP mit CI-Korrektur übernehmen; neuen GitHub-Lauf/Artefakte abnehmen. Ohne Geräte-/Schreibzugriff anschließend Stufe-1-Trefferpunkte aus ausdrücklich gewählter Klasse und bestätigtem Konstitutionsmodifikator vorschlagen: vorher offizielle SRD-Quellen lesen, historische Werte erhalten, Vorschlag/Bestätigung/Persistenz testen.
+- Übergabepakete: Dnd-Projekt-0.3.1.zip mit Dateien direkt in der Wurzel sowie Der-lebendige-Spielleiter-0.3.1-arm64.apk/arm32.apk. Externer Dnd-0.3.1-status.json erfasst abschließenden Git-HEAD, SHA-256 und bestätigte private Drive-Links. Alte Übergabepakete bleiben erhalten.
 - Der tatsächliche Git-HEAD wird vor jeder Fortsetzung mit `git log -1 --oneline` geprüft. Keine zusätzlichen Credits oder Limit-Zurücksetzungen wurden ausgelöst. Ein erkennbares Kontingentlimit wird nicht aus nicht vorhandenen Messwerten abgeleitet.

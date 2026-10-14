@@ -122,3 +122,17 @@ Die vier Hintergrundbezeichnungen sind keine vollständige Hintergrundimplementa
 Talente, Fertigkeiten, Ausrüstung und Klassenwerte werden weiterhin separat
 bestätigt. Neue Ergänzungen an diesen Regeln vor Implementierung im offiziellen
 SRD 5.2.1 prüfen und mit Domain-/Persistenztests absichern.
+
+## Sprachdienste seit 0.3.1
+
+Die Hauptsprache bleibt Deutsch. Native FlutterTts-Ergebnisse 0/false dürfen
+nicht als Erfolg gespeichert werden. Stimmmetadaten für Netzwerkbedarf und
+bekannt fehlende Daten erhalten; native Namen/Locale-IDs nicht umschreiben.
+Locale-Normalisierung ausschließlich für Vergleich und Rangfolge verwenden.
+Die Android-Erkennung kann bei der Sprachabfrage hängen; Abfragen begrenzen
+und fehlende Listeneinträge nicht als Beweis fehlender Online-Unterstützung
+interpretieren. Keine automatische erneute Mikrofonöffnung. TTS-Fehler können
+native Futures offen lassen; lokale Abbruch-/Zeitgrenzen mit Mocks prüfen.
+Eine Stimmensuche fordert keine Mikrofonberechtigung. Der Samsung-Gerätebericht
+ist eine Benutzerrückmeldung, keine vollständige Entwicklerabnahme. Anleitung
+und Paketquellen: docs/SPEECH_TROUBLESHOOTING.md.

@@ -1253,10 +1253,46 @@ class _SettingsPage extends StatelessWidget {
         voices.any((v) => '${v['locale']}|${v['name']}' == voice.selectedVoice)
         ? voice.selectedVoice
         : null;
+    final canChooseVoice = voice.ttsAvailable && !voice.refreshingVoices;
+    final voiceItemHeight = MediaQuery.textScalerOf(context).scale(48) + 16;
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
         Text('Sprache & Audio', style: Theme.of(context).textTheme.titleLarge),
+        const SizedBox(height: 12),
+        Text(
+          voice.refreshingVoices
+              ? 'Sprachausgabe wird geprüft …'
+              : voice.ttsAvailable
+              ? 'Sprachausgabe: Anbieter meldet Deutsch'
+              : 'Sprachausgabe: Deutsch nicht verfügbar',
+        ),
+        if (voice.ttsLocale != null)
+          Text('Ausgabe-Sprache: ${voice.ttsLocale}'),
+        if (voice.ttsEngine != null) Text('Sprachdienst: ${voice.ttsEngine}'),
+        Text(
+          voice.recognitionLocale == null
+              ? 'Spracheingabe wird beim Mikrofontipp geprüft.'
+              : 'Eingabe-Sprache: ${voice.recognitionLocale}',
+        ),
+        const SizedBox(height: 12),
+        OutlinedButton.icon(
+          key: const ValueKey('refresh-voices'),
+          onPressed: voice.refreshingVoices ? null : voice.refreshVoices,
+          icon: Icon(
+            voice.refreshingVoices ? Icons.hourglass_top : Icons.refresh,
+          ),
+          label: Text(
+            voice.refreshingVoices
+                ? 'Stimmen werden geprüft …'
+                : 'Stimmen neu prüfen',
+          ),
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          'Nach der Installation eines deutschen Sprachpakets hier erneut '
+          'prüfen. Dabei wird das Mikrofon nicht gestartet.',
+        ),
         const SizedBox(height: 12),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
@@ -1269,7 +1305,11 @@ class _SettingsPage extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         DropdownButtonFormField<String>(
+          key: ValueKey('voice-choice-${value ?? 'system'}'),
           initialValue: value,
+          isExpanded: true,
+          isDense: false,
+          itemHeight: voiceItemHeight,
           decoration: const InputDecoration(labelText: 'Deutsche Stimme'),
           items: [
             const DropdownMenuItem<String>(
@@ -1279,26 +1319,51 @@ class _SettingsPage extends StatelessWidget {
             for (final entry in voices)
               DropdownMenuItem(
                 value: '${entry['locale']}|${entry['name']}',
-                child: Text(
-                  '${entry['name']} (${entry['locale']})',
-                  overflow: TextOverflow.ellipsis,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      entry['name']!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      '${entry['locale']} · ${_voiceNetworkLabel(entry)}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
               ),
           ],
-          onChanged: voice.setVoice,
+          onChanged: canChooseVoice ? voice.setVoice : null,
         ),
+        if (voices.isEmpty && voice.ttsAvailable)
+          const Padding(
+            padding: EdgeInsets.only(top: 8),
+            child: Text(
+              'Der Anbieter meldet keine einzelnen deutschen Stimmen. '
+              'Du kannst den Systemstandard testen.',
+            ),
+          ),
         const SizedBox(height: 12),
         Wrap(
           spacing: 12,
           children: [
             OutlinedButton.icon(
-              onPressed: () => voice.speak(
-                'Willkommen in Aetheria. Deine Geschichte wartet auf dich.',
-              ),
+              key: const ValueKey('test-voice'),
+              onPressed: canChooseVoice
+                  ? () => voice.speak(
+                      'Willkommen in Aetheria. Deine Geschichte wartet auf dich.',
+                    )
+                  : null,
               icon: const Icon(Icons.volume_up_outlined),
               label: const Text('Stimme testen'),
             ),
             TextButton(
+              key: const ValueKey('stop-voice'),
               onPressed: voice.stopSpeaking,
               child: const Text('Wiedergabe stoppen'),
             ),
@@ -1316,10 +1381,12 @@ class _SettingsPage extends StatelessWidget {
         const _Notice(
           icon: Icons.mic_none,
           text:
-              'Spracheingabe verwendet den Spracherkennungsdienst des Geräts auf Deutsch '
-              '(de-DE). Je nach Gerät benötigt dieser Internet und überträgt Sprache an seinen '
-              'Anbieter. Textspiel, Würfel und Speicherung sind im Demo-Modus offline verfügbar. '
-              'Die Sprachausgabe kann nach Installation einer deutschen Systemstimme offline funktionieren.',
+              'Das Spiel und die Sprachfunktionen sind auf Deutsch ausgerichtet. '
+              'Spracheingabe verwendet den Spracherkennungsdienst des Geräts. '
+              'Je nach Anbieter benötigt dieser Internet und überträgt Sprache an ihn. '
+              '„Lokal laut Anbieter“ beschreibt nur die ausgewählte Stimme; '
+              'es garantiert keinen Offlinebetrieb der Spracheingabe. '
+              'Textspiel, Würfel und Speicherung sind im Demo-Modus offline verfügbar.',
         ),
         const SizedBox(height: 24),
         Text('KI & Kosten', style: Theme.of(context).textTheme.titleLarge),
@@ -1395,6 +1462,13 @@ class _SettingsPage extends StatelessWidget {
     );
   }
 }
+
+String _voiceNetworkLabel(Map<String, String> voice) =>
+    switch (voice['network_required']) {
+      '0' => 'lokal laut Anbieter',
+      '1' => 'Internet benötigt',
+      _ => 'Netzwerkstatus unbekannt',
+    };
 
 class _Notice extends StatelessWidget {
   const _Notice({required this.icon, required this.text, this.action});

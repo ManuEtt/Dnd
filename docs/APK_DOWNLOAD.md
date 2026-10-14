@@ -37,12 +37,13 @@ und `.github/` müssen direkt in der Repositorywurzel liegen. Details:
 ## Installation und Updates
 
 Die optimierten Alpha-APKs verwenden weiterhin eine Debug-Testsignatur.
-Sie sind kein Produktions-/Store-Release. Die lokale 0.2.3-Signatur wird vor
+Sie sind kein Produktions-/Store-Release. Die lokale Signatur wird vor
 der Übergabe mit der bisherigen lokalen APK verglichen; derselbe GitHub-Runner
 oder ein neuer Runner verwendet möglicherweise eine andere Debug-Signatur.
 
-Bei einer passenden Signatur und höherer Buildnummer ist ein Update vorgesehen;
-die tatsächliche Installation ist noch nicht auf einem Gerät abgenommen.
+Bei einer passenden Signatur und höherer Buildnummer ist ein Update vorgesehen.
+Der Benutzer meldet App-Betrieb auf einem Samsung Galaxy S26 Ultra; ein
+Update auf 0.3.1 und die korrigierten Sprachfunktionen sind separat abzunehmen.
 Bei einem Signaturkonflikt wichtige Spielstände vor einer Deinstallation
 exportieren. Eine Deinstallation kann lokale Daten entfernen. Meldet Android
 eine inkompatible App, zuerst Prozessorarchitektur und Mindestversion prüfen.
@@ -50,3 +51,5 @@ eine inkompatible App, zuerst Prozessorarchitektur und Mindestversion prüfen.
 Android kann die Freigabe der verwendeten Installationsquelle verlangen.
 Nur die tatsächlich bereitgestellte Datei installieren. Fehlertext, Gerät,
 Android-Version und ausgewählte APK helfen bei der weiteren Prüfung.
+
+Bei Sprachproblemen: [SPEECH_TROUBLESHOOTING.md](SPEECH_TROUBLESHOOTING.md).

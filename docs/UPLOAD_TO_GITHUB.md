@@ -1,22 +1,25 @@
 # Korrektur-ZIP in ManuEtt/Dnd übernehmen
 
-Das neue **Dnd-Projekt-0.3.0.zip** enthält die Projektdateien direkt
+Das neue **Dnd-Projekt-0.3.1.zip** enthält die Projektdateien direkt
 in der ZIP-Wurzel. Nach dem Entpacken müssen `README.md`, `app/`, `backend/`,
 `scripts/` und `.github/` nebeneinander liegen. Das ältere Paket mit äußerem
 `Dnd/`-Ordner bleibt lesbar; beim Übertragen sind dessen **Inhalte** zu wählen.
 
-Die bestehende GitHub-Codebasis konnte noch nicht gelesen werden. Deshalb ist
-dieses Paket ein geprüfter lokaler Stand und kein geprüfter Merge mit einer
-älteren Repositoryversion. Bestehende Dateien zuerst vergleichen und auf einem
-neuen Branch arbeiten. Die ZIP selbst allein als Datei im Repository startet
-keinen Flutter-Build.
+Die bestehende GitHub-Codebasis ist inzwischen zugänglich. Der hochgeladene
+0.3.0-Stand auf main (`bc6c942`) stimmt in allen Dateiinhalten mit dem bisherigen
+lokalen Stand überein; vier Ausführungsrechte unterscheiden sich. Korrekturen
+werden auf dieser Historie in einem neuen Entwicklungsbranch vorbereitet.
+Bei einer späteren manuellen Übernahme bestehende Dateien erneut vergleichen.
+Die ZIP selbst allein als Datei im Repository startet keinen Flutter-Build.
 
 ## Zugriff herstellen
 
-Bei der erneuten Prüfung ist die Verbindung als `ManuEtt` angemeldet, sieht
-aber keine installierten GitHub-App-Konten/Installationen. `ManuEtt/Dnd` liefert
-über den Connector HTTP 404; Git liefert HTTP 403 „Write access to repository
-not granted“. Das beweist keine Löschung oder Umbenennung des Repositorys.
+Repositoryabruf und `git ls-remote` sind jetzt erfolgreich. Schreiben ist
+weiterhin blockiert: Der tatsächliche Branch-Push erhält HTTP 403
+„Permission to ManuEtt/Dnd.git denied to ManuEtt“, die Connector-Branchanlage
+HTTP 403 „Resource not accessible by integration“. Die allgemeine
+Repository-Metadatenangabe `push: true` bestätigt also nicht die Berechtigung
+der konkreten Integration. Für direkte Übertragung folgende Verbindung prüfen:
 
 1. Mit dem Eigentümerkonto [ManuEtt/Dnd](https://github.com/ManuEtt/Dnd) öffnen.
 2. Unter [GitHub-App-Installationen](https://github.com/settings/installations)
@@ -28,7 +31,7 @@ not granted“. Das beweist keine Löschung oder Umbenennung des Repositorys.
 
 ## Über die GitHub-Webseite
 
-1. **Dnd-Projekt-0.3.0.zip entpacken**. In den Ordner wechseln, der
+1. **Dnd-Projekt-0.3.1.zip entpacken**. In den Ordner wechseln, der
    direkt `README.md` und `app/` enthält.
 2. Im Repository einen Entwicklungsbranch erstellen, beispielsweise
    `fix/upload-and-alpha-download`. Vorhandene Dateien vergleichen.
@@ -43,9 +46,10 @@ not granted“. Das beweist keine Löschung oder Umbenennung des Repositorys.
 5. Änderungen committen. Bei mehreren Uploads denselben Entwicklungsbranch
    verwenden; anschließend den Workflow neu starten.
 
-Das vollständige 0.3.0-Paket enthält 100 Dateien. Bei Problemen im Browser zwei
-Stapel auf demselben Entwicklungsbranch übertragen; vorhandene Dateien zuvor
-vergleichen und `.github/` ausdrücklich mitnehmen.
+Das vollständige 0.3.1-Paket enthält mehr als 100 Dateien. Für den Browserupload
+mindestens zwei Stapel auf demselben Entwicklungsbranch übertragen, etwa zuerst
+`app/`, danach die übrigen Dateien. Vorhandene Dateien zuvor vergleichen und
+`.github/` ausdrücklich mitnehmen.
 
 GitHub begrenzt einzelne Web-Uploads auf 25 MiB pro Datei und einen Stapel auf
 100 Dateien. Bei mehr Dateien kleinere Stapel verwenden. Das Quell-ZIP enthält
@@ -54,6 +58,20 @@ Die frühere universelle Debug-APK mit etwa 136 MiB gehört nicht in den
 Quellcode-Upload. Git ist für viele Dateien zuverlässiger.
 
 Referenz: https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository
+
+## Bestätigter Actions-Fehler und Korrektur
+
+Der Lauf [38560369343](https://github.com/ManuEtt/Dnd/actions/runs/38560369343)
+auf `bc6c942` hat Strukturprüfung, 22 Python-, 22 Backend- und 222 Flutter-Tests
+sowie Codeanalyse bestanden. Danach scheiterte die SDK-Installation mit
+`sdkmanager: command not found` (Exit 127); die APK-Schritte wurden übersprungen.
+Das erklärt den fehlenden APK-Nachweis dieses Laufs.
+
+0.3.1 installiert deshalb vor dem Paketaufruf die Android Commandline Tools
+mit `android-actions/setup-android@v3`, festgehaltenem Tools-Build `12266719`
+und Java 17. SDK-Lizenztexte werden nicht ins Log übernommen. Ein neuer Lauf
+muss anschließend tatsächlich bestehen und Artefakte bereitstellen.
+Quelle: https://github.com/android-actions/setup-android/tree/v3.
 
 ## Mit Git
 

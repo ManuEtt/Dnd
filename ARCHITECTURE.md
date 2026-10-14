@@ -57,6 +57,19 @@ Der Testspielstand hält die bekannte Erzählung und markiert fehlende Charakter
 
 Push-to-Talk erkennt Sprache auf Deutsch und zeigt sie vor dem Absenden als bearbeitbaren Text. TTS liest Erzählungen vor und lässt sich stoppen. Verfügbarkeit und Offlinebetrieb hängen von Android und den installierten Sprachanbietern ab. Dauerhafte Audioaufzeichnungen sind in der Alpha nicht vorgesehen; Kampagnengedächtnis besteht aus Text und strukturierten Daten.
 
+VoiceController prüft Anbieterergebnisse und erhält Stimmmetadaten. Er
+vergleicht deutsche Locale-Tags normalisiert, bewahrt für native Stimmwahl
+jedoch die ursprünglichen IDs. Die lokale Oberfläche startet vor der
+Sprachdienstprüfung. Eine erneute TTS-Prüfung startet kein Mikrofon.
+Bekannt fehlende Stimmendaten werden nicht angeboten, Netzwerkbedarf wird
+sichtbar. Zeitgrenzen und Abbruchgenerationen verhindern, dass offene native
+Futures den Ablauf unbegrenzt blockieren. Die Erkennungs-Sprachliste kann nur
+lokale Modelle enthalten; bei einem Abfragefehler wird Deutsch ausdrücklich
+versucht, ohne Unterstützung oder Offlinebetrieb zu behaupten. Native
+TTS-Callbacks enthalten keine Wiedergabe-ID, weshalb perfekte Zuordnung sehr
+später Anbieter-Callbacks weiterhin nicht garantiert werden kann. Details:
+docs/SPEECH_TROUBLESHOOTING.md.
+
 Die App startet mit dem lokalen Demo-Spielleiter. Optional verbindet `BackendNarrator` einen eigenen HTTPS-Erzähler über einen kurzlebigen Sitzungstoken. Der Bootstrap-Serverzugang und OpenAI-Schlüssel bleiben auf dem Server; nur URL und Anfragenlimit werden als App-Präferenzen gespeichert. Token und Kostenfreigabe überleben keinen App-Neustart. `GET /v1/session` prüft Signatur, Ablauf und Provider ohne Modellaufruf. Weiterleitungen, unverschlüsseltes HTTP, Token-Echos, übergroße Antworten und nichtleere `stateChanges` werden abgewiesen. Das lokale Versuchslimit ist kein Euro-Kostendeckel.
 
 `GameController` lässt zuerst die lokale Engine entscheiden. Nur ein validierter `narrative.turn` wird mit bestätigtem Kontext und verbindlichem `outcome` an das Backend gegeben. Würfel-, Kampf-, Charakter-, Inventar- und Queständerungen werden nicht extern erzählt. `replaceNarration` ersetzt ausschließlich die neue GM-Nachricht und deren Ereignis-Checkpoint; frühere Ereignisse und sämtliche mechanischen Werte bleiben erhalten. Snapshot und Erzähl-Checkpoint werden gemeinsam bestätigt. Bei Verbindungsfehler, Ablauf, ausgeschöpftem Limit oder unzulässiger Antwort wird derselbe lokale Turn gespeichert, ohne automatischen Netzwerk-Retry. Ein Wiederholungsereignis wird strukturell verglichen; eine unterschiedliche JSON-Objektschlüsselreihenfolge ist keine Zustandsänderung.

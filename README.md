@@ -1,12 +1,12 @@
 # Der lebendige Spielleiter
 
-Deutschsprachiger Fantasy-Spielleiter für Android mit Flutter, lokalem Kampagnengedächtnis und einem kostenlosen Demo-Modus. Dieses Paket ist ein eigenständiger Alpha-Prototyp zum Übertragen in [ManuEtt/Dnd](https://github.com/ManuEtt/Dnd). Der vorhandene Repositoryinhalt konnte während dieser Entwicklung nicht gelesen werden; das Paket wurde deshalb nicht mit bestehendem Code zusammengeführt.
+Deutschsprachiger Fantasy-Spielleiter für Android mit Flutter, lokalem Kampagnengedächtnis und einem kostenlosen Demo-Modus in [ManuEtt/Dnd](https://github.com/ManuEtt/Dnd). Der zunächst unabhängig erstellte Stand wurde nach Wiederherstellung des Zugriffs mit dem hochgeladenen 0.3.0-Repository verglichen: Die Dateiinhalte stimmen überein, lediglich vier Ausführungsrechte unterscheiden sich. Neue Korrekturen bauen auf diesem Repositorystand auf.
 
 Der Schwerpunkt liegt auf einem spielbaren Solo-Ablauf: Charakter und Kampagne anlegen, Entscheidungen eingeben, mit einem deterministischen Spielleiter interagieren, würfeln, einfache Kämpfe austragen und den bestätigten Zustand wieder laden. Der Demo-Spielleiter verarbeitet einige Handlungsarten und liefert passende Szenen; frei formulierte Texte sind möglich, die Antworttiefe ist jedoch begrenzt. Eine umfassende generative KI und eine vollständige Umsetzung aller SRD-Regeln sind weitere Entwicklungsschritte.
 
 ## ZIP nach GitHub übertragen
 
-Das Korrektur-ZIP **Dnd-Projekt-0.3.0.zip entpacken und seine Projektinhalte einschließlich `.github/`** direkt in die Repositorywurzel übertragen; das neue Paket enthält keinen äußeren `Dnd/`-Ordner. Nur die ZIP-Datei hochzuladen startet keinen Android-Build. Vorhandene Dateien vorher vergleichen und in einem neuen Branch arbeiten. Die [Schritt-für-Schritt-Anleitung](docs/UPLOAD_TO_GITHUB.md) erklärt Zugriff, Upload und APK-Download. Vor dem Build prüft `python3 scripts/verify_project.py` die Vollständigkeit ohne Flutter/Android SDK.
+Das Korrektur-ZIP **Dnd-Projekt-0.3.1.zip entpacken und seine Projektinhalte einschließlich `.github/`** direkt in die Repositorywurzel übertragen; das neue Paket enthält keinen äußeren `Dnd/`-Ordner. Nur die ZIP-Datei hochzuladen startet keinen Android-Build. Vorhandene Dateien vorher vergleichen und in einem neuen Branch arbeiten. Die [Schritt-für-Schritt-Anleitung](docs/UPLOAD_TO_GITHUB.md) erklärt Zugriff, Upload und APK-Download. Vor dem Build prüft `python3 scripts/verify_project.py` die Vollständigkeit ohne Flutter/Android SDK.
 
 ## Starten und prüfen
 
@@ -25,6 +25,15 @@ Für SQLite-Tests unter Linux wird zusätzlich `libsqlite3-dev` benötigt, unter
 Der Demo-Modus benötigt keinen Server, keinen OpenAI-Schlüssel und keine kostenpflichtigen API-Aufrufe. Ab Version **0.2.0** lässt sich unter Einstellungen zusätzlich ein eigener HTTPS-Backend-Erzähler mit kurzlebigem Sitzungstoken verbinden. Der Token bleibt ausschließlich im Arbeitsspeicher. Kostenpflichtige Anbieter benötigen eine ausdrückliche Freigabe; bei Ausfall erzählt die lokale Demo weiter. Regeln, Würfel und bestätigter Spielzustand bleiben lokal. Einrichtung und Grenzen stehen in [docs/BACKEND_CONNECTION.md](docs/BACKEND_CONNECTION.md).
 
 Die Android-Spracherkennung und Textausgabe nutzen die auf dem Gerät verfügbaren Systemdienste. Deutsche Sprachpakete müssen vorhanden sein; die Spracherkennung kann je nach Android-Dienst eine Internetverbindung benötigen. Eine vollständige Offline-Sprachfunktion wird nicht garantiert. Erkannte Eingaben lassen sich vor dem Absenden bearbeiten. Audiodateien werden von dieser App nicht dauerhaft gespeichert.
+
+Seit **0.3.1** lassen sich Stimmen nach einer Sprachpaketinstallation neu prüfen.
+Die Auswahl zeigt vom Anbieter gemeldete Netzwerkabhängigkeit; fehlende
+Sprachdaten und abgewiesene Stimmen erhalten verständliche Rückmeldungen.
+Wartezeiten für nicht antwortende Dienste sind begrenzt; die lokale Oberfläche
+startet bereits während der Sprachdienstprüfung. Die App unterstützt
+derzeit Deutsch; eine Stimmwahl übersetzt keine Spieltexte. Gerätehilfe und
+der Benutzerbericht zum Samsung Galaxy S26 Ultra stehen in
+[docs/SPEECH_TROUBLESHOOTING.md](docs/SPEECH_TROUBLESHOOTING.md).
 
 Optionales Backend:
 

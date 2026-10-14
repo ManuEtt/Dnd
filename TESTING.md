@@ -96,7 +96,7 @@ flutter build apk --release --target-platform android-arm64
 
 Ausgabe `build/app/outputs/flutter-apk/app-release.apk` sofort sichern, bevor
 für android-arm oder android-x64 erneut gebaut wird. Die CI kopiert jede
-Architektur separat nach build/alpha. Metadaten müssen App 0.3.0, Buildcode 6,
+Architektur separat nach build/alpha. Metadaten müssen App 0.3.1, Buildcode 7,
 API 24 und die ausgewählte ABI zeigen; Signatur mit einer bisherigen lokalen
 APK vergleichen. Ein eigener APK-Build und Metadatenprüfung ersetzen weiterhin
 keine Installation. Je Architektur außerdem Start, Sprache, SQLite-Neustart und
@@ -118,3 +118,33 @@ regelkonforme Modifikatoren, keine wiederholten Boni und historischen Arescan.
 Ein realer SQLite-Triggerfehler nach begonnenem Schreiben muss Transaktion
 und angezeigten Zustand unverändert lassen. Aktuelle Gesamtergebnisse stehen
 in DEVELOPMENT_STATUS.md; diese Tests ersetzen keine Geräteprüfung.
+
+## Sprachkorrekturen 0.3.1
+
+Controller-Mocks prüfen TTS-Ergebnisse 0/false, fehlende Stimmendaten,
+Netzwerk-Metadaten, deutsche regionale Locales, Paket-Neusuche, Anbieterfehler,
+offene Futures, Stop und verspätete Ergebnisse. Die Android-Sprachliste darf
+unvollständig sein; ein fehlender deutscher Eintrag führt zu einem begrenzten
+expliziten de-DE-Versuch. Keine Mikrofonaufnahme wird automatisch wiederholt.
+Widgettests prüfen Neusuche ohne Mikrofon, entfernte gespeicherte Auswahl und
+lange Anbieter-IDs bei 360 px mit bis zu doppelter Schriftgröße.
+
+Die Startprüfung verwendet echte temporäre SQLite-Daten und eine offene
+native Stimmabfrage: Die lokale Startseite muss bereits bedienbar sein. Nach
+der Antwort des simulierten Dienstes erscheint dessen Status in Einstellungen.
+Gezielte Befehle:
+
+```bash
+cd app
+flutter test test/voice_controller_test.dart test/ui_voice_settings_test.dart test/bootstrap_voice_test.dart
+```
+
+Der Benutzerbericht bestätigt App-Betrieb auf Samsung Galaxy S26 Ultra, aber
+keine vollständige Sprachabnahme. Am Gerät getrennt deutsche Eingabe und
+Vorlesen, Anbietername, Pakete, Netzwerk, Unterbrechung, erneute Stimmensuche
+und Update von der vorherigen APK prüfen. Anleitung:
+[docs/SPEECH_TROUBLESHOOTING.md](docs/SPEECH_TROUBLESHOOTING.md).
+
+Der alte GitHub-Lauf 38560369343 besteht alle Tests und scheitert anschließend
+am fehlenden sdkmanager. Die neue Tools-Installation muss auf GitHub gesondert
+bestehen; lokale Builds ersetzen diesen Nachweis nicht.

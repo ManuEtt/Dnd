@@ -50,7 +50,6 @@ class _BootstrapAppState extends State<BootstrapApp>
         },
       );
       voice.configure(await repository.loadSettings());
-      await voice.initialize();
       if (!mounted) {
         controller.dispose();
         voice.dispose();
@@ -61,6 +60,9 @@ class _BootstrapAppState extends State<BootstrapApp>
         _controller = controller;
         _voice = voice;
       });
+      // Local play is ready even if the device speech provider is unresponsive.
+      // VoiceController reports bounded initialization failures in settings.
+      unawaited(voice.initialize());
     } catch (_) {
       await _repository?.close();
       _repository = null;

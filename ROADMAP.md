@@ -4,9 +4,16 @@ Die Reihenfolge folgt dem Ziel eines dauerhaft fortsetzbaren Android-Abenteuers.
 
 ## Nächster Entwicklungsschritt
 
-Das ZIP in einem neuen Branch von `ManuEtt/Dnd` integrieren, den GitHub-Workflow ausführen und seine Logs prüfen. Danach die Debug-APK auf einem Android-Gerät installieren und den dokumentierten Sprach-, Speicher- und Kampfablauf aus [TESTING.md](TESTING.md) durchführen. Erkenntnisse vor zusätzlichen Funktionen beheben.
+Die Sprachkorrekturen 0.3.1 auf dem Samsung Galaxy S26 Ultra mit dokumentiertem
+Sprachanbieter, deutscher Stimme und Android-Version abnehmen. Der Benutzer
+meldet funktionierenden App-Betrieb, aber Probleme bei einigen Sprachen; die
+betroffene Eingabe beziehungsweise Ausgabe ist noch nicht eindeutig bestimmt.
+Lesezugriff auf `ManuEtt/Dnd` ist wieder vorhanden. Der bestehende
+GitHub-Actions-Fehler ist als fehlendes `sdkmanager` bestätigt; Korrektur liegt
+vor. Schreibzugriff erhält weiter HTTP 403. ZIP im Eigentümerkonto auf einem
+Entwicklungsbranch übernehmen und den neuen Workflow samt APK-Artefakten prüfen.
 
-Standardwerte und Punktekauf mit expliziten Hintergrundsteigerungen sind seit 0.3.0 implementiert und automatisiert geprüft; die Geräteabnahme folgt. Der nächste begrenzte Code-Schritt ist ein Vorschlag für Stufe-1-Trefferpunkte aus Klasse und bestätigtem Konstitutionsmodifikator anhand SRD 5.2.1. Vor Implementierung die offizielle Quelle lesen; bestehende/historische TP nie stillschweigend überschreiben.
+Standardwerte und Punktekauf mit expliziten Hintergrundsteigerungen sind seit 0.3.0 implementiert und automatisiert geprüft; die Geräteabnahme folgt. Nach den Sprach- und Buildkorrekturen ist der nächste begrenzte Code-Schritt ein Vorschlag für Stufe-1-Trefferpunkte aus Klasse und bestätigtem Konstitutionsmodifikator anhand SRD 5.2.1. Vor Implementierung die offizielle Quelle lesen; bestehende/historische TP nie stillschweigend überschreiben.
 
 ## Phase 1 und 2: Solo-Alpha absichern
 
