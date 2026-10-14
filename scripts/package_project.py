@@ -18,8 +18,8 @@ EXCLUDED_SUFFIXES = {
     '.apk', '.aab', '.log', '.iml', '.jks', '.keystore', '.db', '.sqlite', '.sqlite3',
 }
 
-def include(path: Path) -> bool:
-    relative = path.relative_to(ROOT)
+def include(path: Path, root: Path = ROOT) -> bool:
+    relative = path.relative_to(root)
     if any(part in EXCLUDED_DIRS for part in relative.parts):
         return False
     if path.name in EXCLUDED_NAMES or path.suffix in EXCLUDED_SUFFIXES:
@@ -30,36 +30,53 @@ def include(path: Path) -> bool:
         return False
     return True
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('output', type=Path)
-    args = parser.parse_args()
-    output = args.output.resolve()
-    if output.is_relative_to(ROOT):
-        parser.error('Write the archive outside the project directory.')
+REQUIRED_FILES = {
+    'app/lib/main.dart', 'app/pubspec.lock', 'backend/package-lock.json',
+    '.github/workflows/android-build.yml', 'app/assets/arescan.json', 'README.md',
+}
+
+def create_archive(root: Path, output: Path, *, layout: str = 'folder') -> tuple[int, str]:
+    """A root layout can be copied straight into a GitHub repository."""
+    if layout not in {'folder', 'root'}:
+        raise ValueError('Unknown archive layout.')
+    root, output = root.resolve(), output.resolve()
+    if output.is_relative_to(root):
+        raise ValueError('Write the archive outside the project directory.')
+    paths = sorted(p for p in root.rglob('*') if p.is_file() and include(p, root))
+    # Never copy contents through a link to another filesystem location.
+    if any(p.is_symlink() for p in paths):
+        raise ValueError('Source archive must not contain symlinked files.')
+    relative_names = {p.relative_to(root).as_posix() for p in paths}
+    missing = REQUIRED_FILES - relative_names
+    if missing:
+        raise ValueError(f'Missing required project files: {sorted(missing)}')
     output.parent.mkdir(parents=True, exist_ok=True)
-    paths = sorted(p for p in ROOT.rglob('*') if p.is_file() and include(p))
+    prefix = Path('Dnd') if layout == 'folder' else Path()
     with zipfile.ZipFile(output, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
         for path in paths:
-            archive.write(path, Path('Dnd') / path.relative_to(ROOT))
+            archive.write(path, prefix / path.relative_to(root))
     with zipfile.ZipFile(output) as archive:
         bad = archive.testzip()
         if bad:
             raise RuntimeError(f'Corrupt ZIP entry: {bad}')
-        required = {
-            'Dnd/app/lib/main.dart', 'Dnd/app/pubspec.lock',
-            'Dnd/backend/package-lock.json',
-            'Dnd/.github/workflows/android-build.yml',
-            'Dnd/app/assets/arescan.json', 'Dnd/README.md',
-        }
-        missing = required - set(archive.namelist())
-        if missing:
-            raise RuntimeError(f'Missing required project files: {sorted(missing)}')
     digest = hashlib.sha256(output.read_bytes()).hexdigest()
     output.with_suffix(output.suffix + '.sha256').write_text(
         f'{digest}  {output.name}\n', encoding='utf-8',
     )
-    print(f'{output}: {len(paths)} files, {output.stat().st_size} bytes, SHA256 {digest}')
+    return len(paths), digest
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('output', type=Path)
+    parser.add_argument('--layout', choices=('folder', 'root'), default='folder',
+                        help='root: no outer Dnd folder; suitable for GitHub upload')
+    args = parser.parse_args()
+    try:
+        count, digest = create_archive(ROOT, args.output, layout=args.layout)
+    except ValueError as error:
+        parser.error(str(error))
+    output = args.output.resolve()
+    print(f'{output}: {count} files, {output.stat().st_size} bytes, SHA256 {digest}')
 
 if __name__ == '__main__':
     main()

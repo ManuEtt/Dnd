@@ -6,7 +6,7 @@ Der Schwerpunkt liegt auf einem spielbaren Solo-Ablauf: Charakter und Kampagne a
 
 ## ZIP nach GitHub übertragen
 
-Die ZIP **entpacken und ihre Projektinhalte einschließlich `.github/`** in das Repository übertragen. Nur die ZIP-Datei hochzuladen startet keinen Android-Build. Vorhandene Dateien vorher vergleichen und in einem neuen Branch arbeiten. Die [Schritt-für-Schritt-Anleitung](docs/UPLOAD_TO_GITHUB.md) erklärt den Upload und den APK-Download.
+Das Korrektur-ZIP **Dnd-GitHub-Korrektur-0.2.3.zip entpacken und seine Projektinhalte einschließlich `.github/`** direkt in die Repositorywurzel übertragen; das neue Paket enthält keinen äußeren `Dnd/`-Ordner. Nur die ZIP-Datei hochzuladen startet keinen Android-Build. Vorhandene Dateien vorher vergleichen und in einem neuen Branch arbeiten. Die [Schritt-für-Schritt-Anleitung](docs/UPLOAD_TO_GITHUB.md) erklärt Zugriff, Upload und APK-Download. Vor dem Build prüft `python3 scripts/verify_project.py` die Vollständigkeit ohne Flutter/Android SDK.
 
 ## Starten und prüfen
 
@@ -41,7 +41,7 @@ Die Backend-Konfiguration steht in [backend/.env.example](backend/.env.example).
 
 ## Android installieren
 
-Nach Übertragung der Projektdateien läuft der Workflow **Android-Alpha bauen**. Unter **Actions → erfolgreicher Lauf → Artifacts** das Artefakt `lebendiger-spielleiter-android-debug` herunterladen und entpacken. Die enthaltene `app-debug.apk` ist ein Debug-Build für interne Tests. Android kann für die Installation eine Freigabe der verwendeten Installationsquelle verlangen. Es handelt sich nicht um einen signierten Store-Release.
+Nach Übertragung der Projektdateien läuft der Workflow **Android-Alpha bauen**. Unter **Actions → erfolgreicher Lauf → Artifacts** das Artefakt `lebendiger-spielleiter-alpha-kleine-apks` herunterladen und entpacken. Für übliche 64-Bit-Android-Geräte `app-arm64-v8a-alpha.apk` wählen; ältere 32-Bit-Geräte benötigen `app-armeabi-v7a-alpha.apk`. Das zusätzliche große Debug-Artefakt bleibt verfügbar. Die kleinen APKs sind optimierte interne Alpha-Builds mit Testsignatur. Downloadhilfe: [docs/APK_DOWNLOAD.md](docs/APK_DOWNLOAD.md). Android kann für die Installation eine Freigabe der verwendeten Installationsquelle verlangen. Es handelt sich nicht um einen signierten Store-Release.
 
 Ein lokaler Build ist ebenfalls möglich:
 

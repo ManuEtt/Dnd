@@ -49,3 +49,17 @@ Das eigene signierte Token mit Scope `narration:read-only` ist kein OpenAI-Realt
 ## Mehrspieler und Betrieb
 
 Kampagnen und Sitzungen erhalten eigene IDs, damit spätere Synchronisierung ergänzt werden kann. Lokale Solo-Daten gelten nicht als fertiges Mehrspieler-Autorisierungssystem. Der öffentliche Betrieb benötigt vorab Kontenverwaltung, dauerhafte serverseitige Mitgliedschaften, PostgreSQL-Migrationen, Rollenprüfung, TLS-Bereitstellung und eine Sicherheitsprüfung. API-Schlüssel, Sitzungsgeheimnisse und persönliche Exportdateien gehören niemals ins Repository. Die bestehenden Backendquoten liegen im Arbeitsspeicher und werden bei Neustart zurückgesetzt; sie sind Anfragelimits und kein Euro-Kostendeckel.
+
+## Übergabe und Buildvarianten
+
+Das Quellpaket kann direkt mit app/, backend/, scripts/ und .github/ in seiner
+Wurzel erstellt werden. Ein eigenständiger Python-Prüfer erkennt typische
+unvollständige Uploads vor SDK-Installation; er ersetzt keine Tests oder Builds.
+Pakettests prüfen Ausschlüsse, Wurzelstruktur, Byte-Erhalt und Symlinkablehnung.
+
+Die zusätzliche kleine Alpha pro ABI nutzt Flutter-AOT/Releaseoptimierung,
+bleibt aber mit der Debug-Testsignatur versehen. Jede Architektur wird einzeln
+über --target-platform gebaut und behält dieselbe normale Buildnummer. Dadurch
+verhindern ABI-Offsets keinen späteren Wechsel zwischen internem Alpha- und
+Debug-Build. Die ursprüngliche universelle Debug-APK bleibt ein eigenes
+CI-Artefakt. Store-Signierung und echte Geräteabnahme bleiben getrennte Aufgaben.

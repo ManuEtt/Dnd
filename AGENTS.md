@@ -87,3 +87,23 @@ ausschließlich eine Testoption, die mobile Oberfläche akzeptiert nur HTTPS.
 ## Dateisicherung seit App 0.2.2
 
 Android-JSON-Dokumente ausschließlich über die austauschbare BackupFiles-Schnittstelle und das Storage Access Framework öffnen beziehungsweise speichern. Keine allgemeine Speicherberechtigung und keine dauerhaften URI-Rechte ergänzen. Beide Kanalseiten prüfen Dateinamen und eine 10-MiB-Grenze. Importdateien zunächst im bearbeitbaren Dialog zeigen; vor ausdrücklicher Bestätigung keine Datenbankänderung. Bestehende versionierte Repositoryvalidierung erhalten. Abbruch, fehlerhafte Dateien, parallele Auswahl und UTF-8 mit Mocks beziehungsweise JVM testen; eine echte Dateiauswahl erfordert weiterhin Geräteabnahme. Details: docs/SAVE_BACKUPS.md.
+
+## Upload und kleine APKs seit 0.2.3
+
+Vor Analyse/Build `python3 scripts/verify_project.py` und
+`python3 -m unittest discover -s scripts/tests -v` ausführen. Das Korrektur-ZIP
+wird mit `python3 scripts/package_project.py <Ziel-außerhalb-des-Projekts>
+--layout root` ohne zusätzlichen Dnd-Ordner erzeugt. Quellcode-ZIPs enthalten
+keine APKs. ZIP-Integrität und Pflichtdateien prüfen; frühere Dateien nicht
+ungeprüft überschreiben.
+
+Kleine interne Alpha-APKs mit `flutter build apk --release --target-platform
+android-arm64` beziehungsweise `android-arm`/`android-x64` bauen und die jeweilige
+app-release.apk vor dem nächsten Build unter eigenem Namen sichern. Keine
+ABI-Versionscodeoffsets aus `--split-per-abi` übernehmen: Die bereitgestellten
+Sideload-Versionen sollen die normale Buildnummer behalten. Releasemodus bleibt
+mit Debug-Testsignatur; echte Release-Signierung ist weiterhin offen. APK-Metadaten,
+Signatur und Architektur prüfen. Neue Downloadlinks müssen aus bestätigten
+Datei-/Artefaktergebnissen stammen; ein Workspacepfad allein beweist keinen
+funktionierenden Benutzerdownload. Drive-Dateien privat halten; vorhandene
+Freigaben nicht ändern. Details: docs/APK_DOWNLOAD.md.

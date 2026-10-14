@@ -1,47 +1,117 @@
-# Projekt-ZIP in ManuEtt/Dnd übernehmen
+# Korrektur-ZIP in ManuEtt/Dnd übernehmen
 
-Dieses ZIP enthält einen eigenständigen Projektstand. Weil das bestehende Repository nicht gelesen werden konnte, müssen bestehende Dateien vor der Übernahme verglichen werden. Die ZIP selbst als einzelne Datei im Repository ist kein ausführbares Flutter-Projekt und löst den vorgesehenen Build nicht aus.
+Das neue **Dnd-GitHub-Korrektur-0.2.3.zip** enthält die Projektdateien direkt
+in der ZIP-Wurzel. Nach dem Entpacken müssen `README.md`, `app/`, `backend/`,
+`scripts/` und `.github/` nebeneinander liegen. Das ältere Paket mit äußerem
+`Dnd/`-Ordner bleibt lesbar; beim Übertragen sind dessen **Inhalte** zu wählen.
+
+Die bestehende GitHub-Codebasis konnte noch nicht gelesen werden. Deshalb ist
+dieses Paket ein geprüfter lokaler Stand und kein geprüfter Merge mit einer
+älteren Repositoryversion. Bestehende Dateien zuerst vergleichen und auf einem
+neuen Branch arbeiten. Die ZIP selbst allein als Datei im Repository startet
+keinen Flutter-Build.
+
+## Zugriff herstellen
+
+Bei der erneuten Prüfung ist die Verbindung als `ManuEtt` angemeldet, sieht
+aber keine installierten GitHub-App-Konten/Installationen. `ManuEtt/Dnd` liefert
+über den Connector HTTP 404; Git liefert HTTP 403 „Write access to repository
+not granted“. Das beweist keine Löschung oder Umbenennung des Repositorys.
+
+1. Mit dem Eigentümerkonto [ManuEtt/Dnd](https://github.com/ManuEtt/Dnd) öffnen.
+2. Unter [GitHub-App-Installationen](https://github.com/settings/installations)
+   die ChatGPT-/Codex-Verbindung prüfen und bei einer vorhandenen Installation
+   `ManuEtt/Dnd` in **Repository access** freigeben. Ist keine passende
+   Installation vorhanden, die GitHub-Verbindung in ChatGPT neu einrichten.
+3. Nach der Freigabe den Repositoryabruf erneut prüfen. Keine Zugangstokens,
+   privaten SSH-Schlüssel oder Passwörter im Chat ausgeben.
 
 ## Über die GitHub-Webseite
 
-1. ZIP herunterladen und vollständig entpacken; die Projektdateien liegen im enthaltenen Ordner `Dnd/`. Der richtige Projektordner enthält `README.md`, `app/`, `backend/` und den versteckten Ordner `.github/`.
-2. [ManuEtt/Dnd](https://github.com/ManuEtt/Dnd) öffnen. Bei einem bestehenden Projekt einen neuen Branch, beispielsweise `feat/solo-alpha`, von dessen aktuellem Standardbranch erstellen.
-3. Bestehende Dateien vergleichen. Änderungen bei Überschneidungen zusammenführen; keine funktionierende ältere App unüberprüft ersetzen.
-4. Über **Add file → Upload files** die entpackten Projektinhalte in die Repositorywurzel hochladen. Nicht den äußeren ZIP-Ordner als zusätzliche Ebene hochladen. Bei Bedarf mehrere Uploads verwenden.
-5. Sicherstellen, dass `.github/workflows/android-build.yml` vorhanden ist. Dateimanager blenden Punktordner häufig aus. In GitHub lässt sich der Workflow auch über **Add file → Create new file** unter genau diesem Pfad anlegen und mit dem Inhalt aus dem ZIP füllen.
-6. Änderungen auf dem neuen Branch committen. Danach einen Pull Request zum Standardbranch anlegen und die Prüfungen abwarten.
+1. **Dnd-GitHub-Korrektur-0.2.3.zip entpacken**. In den Ordner wechseln, der
+   direkt `README.md` und `app/` enthält.
+2. Im Repository einen Entwicklungsbranch erstellen, beispielsweise
+   `fix/upload-and-alpha-download`. Vorhandene Dateien vergleichen.
+3. Über **Add file → Upload files** die entpackten **Projektinhalte** übertragen.
+   Weder die ZIP-Datei allein noch den gesamten äußeren Entpackordner als
+   zusätzliche Ebene hochladen. Unter der Repositorywurzel muss
+   `app/pubspec.yaml` liegen, nicht `Dnd/app/pubspec.yaml`.
+4. `.github/workflows/android-build.yml`, `.gitignore` und `.gitattributes`
+   ausdrücklich mit übernehmen. Manche Dateimanager blenden Punktdateien aus.
+   Fehlt der Workflow, ihn über **Add file → Create new file** mit genau diesem
+   Namen anlegen und seinen Inhalt aus der entpackten Datei kopieren.
+5. Änderungen committen. Bei mehreren Uploads denselben Entwicklungsbranch
+   verwenden; anschließend den Workflow neu starten.
 
-Der Web-Upload kann Dateigrößen- und Mengenbeschränkungen haben. Für viele Dateien oder die Übernahme versteckter Dateien ist Git zuverlässiger.
+GitHub begrenzt einzelne Web-Uploads auf 25 MiB pro Datei und einen Stapel auf
+100 Dateien. Bei mehr Dateien kleinere Stapel verwenden. Das Quell-ZIP enthält
+keine APKs, SDKs, Buildordner, persönliche Spielstände oder Geheimnisse.
+Die frühere universelle Debug-APK mit etwa 136 MiB gehört nicht in den
+Quellcode-Upload. Git ist für viele Dateien zuverlässiger.
+
+Referenz: https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository
 
 ## Mit Git
 
-Voraussetzung ist ein Git-Client mit dem bereits sicher eingerichteten GitHub-Zugriff. Keine privaten Schlüssel oder Tokens ausgeben.
+Voraussetzung: vorhandener sicher eingerichteter GitHub-Zugriff.
 
 ```bash
 git clone git@github.com:ManuEtt/Dnd.git
 cd Dnd
-git switch -c feat/solo-alpha
+git switch -c fix/upload-and-alpha-download
 ```
 
-Die entpackten Projektinhalte einschließlich `.github/` anschließend in dieses Verzeichnis kopieren. Vorhandene Dateien prüfen und Unterschiede zusammenführen. Das ZIP enthält keine Git-Historie und soll keinen vorhandenen `.git/`-Ordner ersetzen.
+Die entpackten **Inhalte** des Korrektur-ZIPs in diesen Checkout kopieren;
+vorhandene Dateien vorher vergleichen. `.git/` erhalten. Das ZIP enthält keine
+Git-Historie.
 
 ```bash
+python3 scripts/verify_project.py
+python3 -m unittest discover -s scripts/tests -v
 git status --short
 git diff --check
 git add README.md ARCHITECTURE.md DEVELOPMENT_STATUS.md ROADMAP.md CHANGELOG.md TESTING.md AGENTS.md THIRD_PARTY_NOTICES.md app backend docs scripts .github .gitignore .gitattributes
 git diff --cached --stat
-git commit -m "feat: add German solo-alpha application and Android build"
-git push -u origin feat/solo-alpha
+git commit -m "fix: repair project upload and provide smaller alpha APKs"
+git push -u origin fix/upload-and-alpha-download
 ```
 
-Vor dem Commit prüfen, dass keine `.env`, API-Schlüssel, Benutzerdaten, `node_modules/`, `.dart_tool/` oder `build/`-Verzeichnisse hinzugefügt wurden. Die beabsichtigten Lockdateien und der Android-Gradle-Wrapper gehören dagegen zum Projekt.
+Die Projektprüfung braucht Python 3, aber kein Flutter oder Android SDK.
+Sie erklärt fehlende Dateien, einen zusätzlichen `Dnd/`-Ordner, ungültige
+Lock-JSON-Dateien oder einen beschädigten Gradle-Wrapper. Sie ersetzt weder
+Flutter-Analyse noch Tests und Android-Build. Ohne Python kann der vorhandene
+CI-Workflow diese Prüfung übernehmen, sobald `.github/` korrekt hochgeladen ist.
 
-## Build ausführen und APK herunterladen
+## APK aus GitHub Actions herunterladen
 
-1. Im Repository **Actions** öffnen und gegebenenfalls Workflows für das Repository aktivieren.
-2. **Android-Alpha bauen** auswählen. Nach einem relevanten Push oder Pull Request startet der Workflow automatisch. Mit **Run workflow** kann der ausgewählte Branch manuell gebaut werden.
-3. Der Workflow installiert Java 17, Flutter 3.35.7 und Node.js 22.14.0. Er führt Backend-Typprüfung, Build und Tests sowie Flutter-Analyse und Tests aus; danach baut er die Debug-APK und prüft die native Dateisicherungslogik auf der JVM.
-4. Bei einem grünen Lauf das Artefakt **lebendiger-spielleiter-android-debug** herunterladen und entpacken. Darin liegt `app-debug.apk`.
-5. APK auf ein Android-Gerät übertragen, installieren und die Gerätetests aus [TESTING.md](../TESTING.md) durchführen.
+1. In GitHub anmelden, **Actions → Android-Alpha bauen** öffnen. Workflows
+   gegebenenfalls für das Repository aktivieren.
+2. Nach dem vollständigen Upload **Run workflow** für den richtigen Branch
+   starten. Fehlt dieser Knopf/Workflow, zuerst den Pfad `.github/workflows/`
+   prüfen. Ein ausschließlich verschachtelter Workflow startet keinen Lauf.
+3. Bei einem roten Lauf den fehlgeschlagenen Schritt und dessen Fehlertext
+   öffnen. Nur diesen Text, Branch und Commit weitergeben; keine Geheimnisse.
+4. Bei einem grünen Lauf das Artefakt
+   **lebendiger-spielleiter-alpha-kleine-apks** herunterladen. Es enthält drei
+   optimierte, weiterhin mit der Debug-Testsignatur versehene Alpha-APKs:
+   `app-arm64-v8a-alpha.apk` für übliche 64-Bit-Android-Geräte,
+   `app-armeabi-v7a-alpha.apk` für ältere 32-Bit-ARM-Geräte und
+   `app-x86_64-alpha.apk` für passende Emulatoren/Intel-Geräte.
+5. Das heruntergeladene **Artefakt-ZIP entpacken** und die passende `.apk`
+   installieren. Die ZIP selbst ist keine installierbare Android-App.
 
-Ein Fehler beim Workflow wird unter dem betroffenen Schritt angezeigt. Für eine weitere Entwicklung die relevante Fehlermeldung zusammen mit Branch und Commit bereitstellen; keine Geheimnisse aus Umgebungsvariablen kopieren. Ein GitHub-Artefakt ist zeitlich befristet und kein Store-Release.
+Die kleinen Alpha-APKs werden 30 Tage aufbewahrt. Das zusätzliche große Artefakt
+**lebendiger-spielleiter-android-debug** bleibt 14 Tage verfügbar.
+Ältere abgelaufene Artefakte brauchen einen neuen erfolgreichen Build. Ein
+fehlgeschlagener Lauf erzeugt keine neue installierbare APK. Artefaktdownloads
+benötigen Zugriff auf das Repository und eine GitHub-Anmeldung.
+
+Die kleinen APKs verwenden alle die normale App-Buildnummer, damit sich spätere
+Alpha-/Debug-Versionen mit derselben Signatur aktualisieren lassen. Sie sind
+kein Store-Release. Die Debug-Signatur eines fremden GitHub-Runners kann von der
+lokal bereitgestellten APK abweichen; bei einem Signaturkonflikt Spielstände
+zuerst exportieren. Eine Deinstallation entfernt lokale Appdaten.
+
+Referenz: https://docs.github.com/en/actions/managing-workflow-runs/downloading-workflow-artifacts
+Gerätetest: [TESTING.md](../TESTING.md). Downloadhilfe:
+[APK_DOWNLOAD.md](APK_DOWNLOAD.md).

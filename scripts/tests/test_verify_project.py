@@ -1,0 +1,130 @@
+"""Regression tests for incomplete uploads; no Flutter, Java or network required."""
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import tempfile
+import unittest
+import zipfile
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from verify_project import REQUIRED_FILES, ROOT, WRAPPER_MAIN, verify_project
+
+
+class VerifyProjectTests(unittest.TestCase):
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name) / 'repository'
+        self.root.mkdir()
+        for name in REQUIRED_FILES:
+            destination = self.root / name
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(ROOT / name, destination)
+
+    def test_complete_source_and_additional_files_are_allowed(self):
+        (self.root / 'other-existing-project.txt').write_text('retain me')
+        self.assertEqual(verify_project(self.root), [])
+
+    def test_outer_zip_directory_has_specific_actionable_error(self):
+        nested = self.root.parent / 'nested'
+        nested.mkdir()
+        shutil.move(str(self.root), nested / 'Dnd')
+        errors = verify_project(nested)
+        self.assertEqual(len(errors), 1)
+        self.assertIn('Zusätzlicher Ordner Dnd/', errors[0])
+        self.assertIn('Repositorywurzel', errors[0])
+
+    def test_missing_hidden_workflow_explains_hidden_files(self):
+        (self.root / '.github/workflows/android-build.yml').unlink()
+        errors = verify_project(self.root)
+        self.assertTrue(any('android-build.yml' in error and 'Versteckte Dateien' in error for error in errors))
+
+    def test_missing_flutter_and_backend_lockfiles_are_reported(self):
+        for name in ('app/pubspec.lock', 'backend/package-lock.json'):
+            (self.root / name).unlink()
+        errors = verify_project(self.root)
+        self.assertEqual(len(errors), 2)
+        self.assertTrue(any('app/pubspec.lock' in error for error in errors))
+        self.assertTrue(any('backend/package-lock.json' in error for error in errors))
+
+    def test_empty_required_file_is_rejected(self):
+        (self.root / 'app/lib/main.dart').write_bytes(b'')
+        self.assertTrue(any('Pflichtdatei ist leer' in error for error in verify_project(self.root)))
+
+    def test_truncated_json_is_rejected_without_echoing_contents(self):
+        marker = 'private-do-not-print'
+        (self.root / 'backend/package-lock.json').write_text('{"secret":"' + marker)
+        errors = verify_project(self.root)
+        self.assertTrue(any('Ungültige JSON-Datei' in error for error in errors))
+        self.assertNotIn(marker, '\n'.join(errors))
+
+    def test_missing_wrapper_is_reported(self):
+        (self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar').unlink()
+        self.assertTrue(any('Pflichtdatei fehlt' in error and 'gradle-wrapper.jar' in error for error in verify_project(self.root)))
+
+    def test_text_instead_of_wrapper_is_rejected(self):
+        (self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar').write_text('not a binary JAR')
+        self.assertTrue(any('Gradle-Wrapper-JAR' in error for error in verify_project(self.root)))
+
+    def test_valid_zip_without_start_class_is_rejected(self):
+        path = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(path, 'w') as archive:
+            archive.writestr('README.txt', 'wrong archive')
+        self.assertTrue(any('Gradle-Wrapper-JAR' in error for error in verify_project(self.root)))
+
+    def test_start_class_replaced_by_text_is_rejected(self):
+        path = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(path, 'w') as archive:
+            archive.writestr(WRAPPER_MAIN, 'incorrect upload')
+        self.assertTrue(any('Gradle-Wrapper-JAR' in error for error in verify_project(self.root)))
+
+    def test_changed_jar_bytes_fail_crc_validation(self):
+        path = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(path, 'w', zipfile.ZIP_STORED) as archive:
+            archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbeoriginal')
+        content = path.read_bytes().replace(b'original', b'modified')
+        path.write_bytes(content)
+        self.assertTrue(any('Gradle-Wrapper-JAR' in error for error in verify_project(self.root)))
+
+    def test_damaged_compressed_jar_has_actionable_error(self):
+        path = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(path, 'w', zipfile.ZIP_DEFLATED) as archive:
+            archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbe' + b'original' * 100)
+        content = bytearray(path.read_bytes())
+        # The first local ZIP header contains no extra fields; corrupt deflate data.
+        content[30 + len(WRAPPER_MAIN)] = 0xff
+        path.write_bytes(content)
+        self.assertTrue(any('Gradle-Wrapper-JAR' in error for error in verify_project(self.root)))
+
+    def test_distribution_requires_checksum_and_fixed_https_version(self):
+        path = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        path.write_text('distributionUrl=http://example.test/gradle-latest-all.zip\n')
+        errors = verify_project(self.root)
+        self.assertTrue(any('prüfsumme' in error for error in errors))
+        self.assertTrue(any('HTTPS-Distribution' in error for error in errors))
+
+    def test_windows_shebang_is_rejected(self):
+        (self.root / 'app/android/gradlew').write_bytes(b'#!/usr/bin/env bash\r\n')
+        self.assertTrue(any('LF-Zeilenende' in error for error in verify_project(self.root)))
+
+    def test_cli_nonzero_for_missing_directory_with_german_message(self):
+        result = subprocess.run(
+            [sys.executable, str(ROOT / 'scripts/verify_project.py'), str(self.root / 'absent')],
+            capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(result.returncode, 1)
+        self.assertIn('Projektübertragung unvollständig', result.stderr)
+        self.assertIn('existiert nicht', result.stderr)
+
+    def test_cli_success_without_build_tools(self):
+        result = subprocess.run(
+            [sys.executable, str(ROOT / 'scripts/verify_project.py'), str(self.root)],
+            capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('vollständig', result.stdout)
+
+
+if __name__ == '__main__':
+    unittest.main()

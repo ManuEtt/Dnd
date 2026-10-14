@@ -1,0 +1,86 @@
+import importlib.util
+from pathlib import Path
+import tempfile
+import unittest
+import zipfile
+
+
+SPEC = importlib.util.spec_from_file_location(
+    'package_project', Path(__file__).resolve().parents[1] / 'package_project.py',
+)
+packaging = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(packaging)
+
+
+class ProjectArchiveTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.base = Path(self.temp.name)
+        self.root = self.base / 'project'
+        self.root.mkdir()
+        for name in packaging.REQUIRED_FILES:
+            path = self.root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text('fixture: ' + name, encoding='utf-8')
+
+    def test_root_and_folder_archives_preserve_same_source_without_double_nesting(self):
+        for layout, prefix in [('root', ''), ('folder', 'Dnd/')]:
+            output = self.base / f'{layout}.zip'
+            count, digest = packaging.create_archive(self.root, output, layout=layout)
+            with zipfile.ZipFile(output) as archive:
+                self.assertEqual(set(archive.namelist()),
+                                 {prefix + n for n in packaging.REQUIRED_FILES})
+                for name in packaging.REQUIRED_FILES:
+                    self.assertEqual(archive.read(prefix + name),
+                                     (self.root / name).read_bytes())
+                self.assertIsNone(archive.testzip())
+            self.assertEqual(count, len(packaging.REQUIRED_FILES))
+            self.assertEqual(output.with_suffix('.zip.sha256').read_text(),
+                             f'{digest}  {output.name}\n')
+
+    def test_secrets_personal_saves_and_build_outputs_never_enter_archive(self):
+        for name in ['.env', 'backend/.env.production', 'save.db', 'save.db-wal',
+                     'signing.keystore', 'app/build/app-debug.apk',
+                     'app/android/local.properties', 'node_modules/private.txt',
+                     '__pycache__/secret.pyc']:
+            path = self.root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text('private fixture')
+        (self.root / 'backend/.env.example').write_text('EXAMPLE=')
+        output = self.base / 'safe.zip'
+        packaging.create_archive(self.root, output, layout='root')
+        with zipfile.ZipFile(output) as archive:
+            self.assertEqual(set(archive.namelist()),
+                             packaging.REQUIRED_FILES | {'backend/.env.example'})
+
+    def test_missing_workflow_rejects_export_before_replacing_existing_file(self):
+        (self.root / '.github/workflows/android-build.yml').unlink()
+        output = self.base / 'existing.zip'
+        output.write_bytes(b'previous archive')
+        with self.assertRaisesRegex(ValueError, 'Missing required'):
+            packaging.create_archive(self.root, output)
+        self.assertEqual(output.read_bytes(), b'previous archive')
+
+    def test_output_inside_source_is_rejected_without_recursive_archive(self):
+        output = self.root / 'backup.zip'
+        with self.assertRaisesRegex(ValueError, 'outside'):
+            packaging.create_archive(self.root, output)
+        self.assertFalse(output.exists())
+
+    def test_symlink_to_external_file_is_rejected(self):
+        outside = self.base / 'external.txt'
+        outside.write_text('external fixture')
+        (self.root / 'linked.txt').symlink_to(outside)
+        output = self.base / 'linked.zip'
+        with self.assertRaisesRegex(ValueError, 'symlinked'):
+            packaging.create_archive(self.root, output)
+        self.assertFalse(output.exists())
+
+    def test_invalid_layout_cannot_create_an_ambiguous_archive(self):
+        with self.assertRaisesRegex(ValueError, 'layout'):
+            packaging.create_archive(self.root, self.base / 'bad.zip', layout='nested')
+
+
+if __name__ == '__main__':
+    unittest.main()

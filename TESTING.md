@@ -6,6 +6,17 @@ Tests verwenden kontrollierbare Zufallsquellen und Anbieter-Mocks. Es sind keine
 
 Unter Linux benötigen SQLite-Tests die Entwicklungsbibliothek `libsqlite3-dev` (Debian/Ubuntu: `sudo apt-get install libsqlite3-dev`). Der CI-Workflow installiert sie vor den Flutter-Tests.
 
+Vor dem Installieren der Buildwerkzeuge die Übertragung prüfen:
+
+```bash
+python3 scripts/verify_project.py
+python3 -m unittest discover -s scripts/tests -v
+```
+
+Diese Tests benötigen nur Python 3. Sie prüfen insbesondere Wurzelstruktur,
+Dateiausschlüsse, fehlende Lock-/Workflowdateien, Gradle-JAR-CRC und beschädigte
+Uploads. Der CI-Workflow führt sie ebenfalls vor Flutter/Node aus.
+
 Im Projektverzeichnis:
 
 ```bash
@@ -74,4 +85,25 @@ Diese Schritte sind eine noch separat durchzuführende Abnahme. Gerät, Android-
 | Realer Gerätetest | Prüft tatsächliche Installation, Sprache, Berechtigungen und Wiederherstellung auf dem Gerät |
 | GitHub-Actions-Lauf | Belegt das Verhalten der eingecheckten CI-Konfiguration auf GitHub |
 
-Stand App 0.2.2/Backend 0.2.0: **178 Flutter-Tests** einschließlich echtem lokalem Node-/Dart-Protokolltest, **12 native JVM-Tests** sowie **22 Backend-Tests** des unveränderten Backends bestanden; Flutter-Analyse ohne Befunde und Android-Debug-APK erfolgreich gebaut. Die echten OpenAI- und Android-HTTPS-/Sprachpfade sind weiterhin separat abzunehmen. Details und Werkzeuge stehen in DEVELOPMENT_STATUS.md. Es wurden keine kostenpflichtigen API-Aufrufe ausgeführt.
+Bisheriger Funktionsnachweis App 0.2.2/Backend 0.2.0: **178 Flutter-Tests** einschließlich echtem lokalem Node-/Dart-Protokolltest, **12 native JVM-Tests** sowie **22 Backend-Tests** des unveränderten Backends bestanden; Flutter-Analyse ohne Befunde und Android-Debug-APK erfolgreich gebaut. Die echten OpenAI- und Android-HTTPS-/Sprachpfade sind weiterhin separat abzunehmen. Details und Werkzeuge stehen in DEVELOPMENT_STATUS.md. Es wurden keine kostenpflichtigen API-Aufrufe ausgeführt.
+
+## Kleine Alpha-APKs
+
+```bash
+cd app
+flutter build apk --release --target-platform android-arm64
+```
+
+Ausgabe `build/app/outputs/flutter-apk/app-release.apk` sofort sichern, bevor
+für android-arm oder android-x64 erneut gebaut wird. Die CI kopiert jede
+Architektur separat nach build/alpha. Metadaten müssen App 0.2.3, Buildcode 5,
+API 24 und die ausgewählte ABI zeigen; Signatur mit einer bisherigen lokalen
+APK vergleichen. Ein eigener APK-Build und Metadatenprüfung ersetzen weiterhin
+keine Installation. Je Architektur außerdem Start, Sprache, SQLite-Neustart und
+Update von der alten Debug-App auf einem passenden Gerät abnehmen.
+
+Stand 0.2.3: 22 Python-Paket-/Strukturtests bestanden; drei kleine Alpha-APKs
+lokal erfolgreich gebaut, Metadaten, ABI und gleiche lokale Testsignatur
+verifiziert. Der vollständige scripts/check.sh-Lauf ist erfolgreich: 22 Python-Tests,
+22 Backend-Tests, 178 Flutter-Tests einschließlich realem lokalem Protokolltest
+und saubere Flutter-Analyse. Remote-CI und Gerätetests bleiben offen.

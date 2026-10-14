@@ -6,11 +6,13 @@ on:
       - 'app/**'
       - 'backend/**'
       - '.github/workflows/android-build.yml'
+      - 'scripts/**'
   pull_request:
     paths:
       - 'app/**'
       - 'backend/**'
       - '.github/workflows/android-build.yml'
+      - 'scripts/**'
   workflow_dispatch:
 
 permissions:
@@ -30,6 +32,18 @@ jobs:
     steps:
       - name: Repository auschecken
         uses: actions/checkout@v4
+      - name: Upload-Struktur und Projektdateien prüfen
+        run: |
+          if [ -f scripts/verify_project.py ]; then
+            python3 scripts/verify_project.py .
+          elif [ -f Dnd/scripts/verify_project.py ]; then
+            python3 Dnd/scripts/verify_project.py .
+          else
+            echo "Projektdateien fehlen: ZIP entpacken und app/, backend/, scripts/ sowie .github/ direkt in die Repositorywurzel übertragen."
+            exit 1
+          fi
+      - name: Paket- und Strukturtests ausführen
+        run: python3 -m unittest discover -s scripts/tests -v
       - name: Java 17 installieren
         uses: actions/setup-java@v4
         with:
@@ -85,6 +99,24 @@ jobs:
       - name: Native Dateisicherungslogik testen
         working-directory: app/android
         run: ./gradlew :app:testDebugUnitTest --no-daemon
+      - name: Kleine Alpha-APKs bauen
+        working-directory: app
+        run: |
+          mkdir -p build/alpha
+          flutter build apk --release --target-platform android-arm64
+          cp build/app/outputs/flutter-apk/app-release.apk build/alpha/app-arm64-v8a-alpha.apk
+          flutter build apk --release --target-platform android-arm
+          cp build/app/outputs/flutter-apk/app-release.apk build/alpha/app-armeabi-v7a-alpha.apk
+          flutter build apk --release --target-platform android-x64
+          cp build/app/outputs/flutter-apk/app-release.apk build/alpha/app-x86_64-alpha.apk
+      - name: Kleine Alpha-APKs bereitstellen
+        uses: actions/upload-artifact@v4
+        with:
+          name: lebendiger-spielleiter-alpha-kleine-apks
+          path: app/build/alpha/app-*-alpha.apk
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
       - name: APK bereitstellen
         uses: actions/upload-artifact@v4
         with:

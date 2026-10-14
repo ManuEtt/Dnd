@@ -1,12 +1,13 @@
 # Entwicklungsstatus
 
-Stand: 14. Oktober 2026. Aktuelle Etappe: App 0.2.2 mit Android-Dateisicherungen, optionalem Backend-Erzähler und relevantem Erinnerungsabruf; autonome Entwicklung mit gesicherten Inkrementen für `ManuEtt/Dnd`.
+Stand: 14. Oktober 2026. Aktuelle Etappe: App 0.2.3 mit korrigierter ZIP-Übergabe, kleinen Alpha-APKs, Android-Dateisicherungen und relevantem Erinnerungsabruf; autonome Entwicklung mit gesicherten Inkrementen für `ManuEtt/Dnd`.
 
 Die vorhandene GitHub-Codebasis war während der Entwicklung nicht verfügbar. Dieses Paket wurde neu aufgebaut und noch nicht mit einer älteren Repositoryversion verglichen. Ein Push, ein Pull Request und eine Ausführung des Workflows auf GitHub sind deshalb nicht Bestandteil des nachgewiesenen Stands.
 
 ## IMPLEMENTIERT
 
 - Flutter-/Android-Projekt mit Material 3 und deutscher Navigation: Start, Charaktere, Abenteuer, Journal und Einstellungen.
+- Flaches Korrektur-ZIP ohne äußeren Dnd-Ordner, Projektprüfung vor SDK-Installation und 22 Python-Paket-/Strukturtests. Kleine optimierte interne Alpha-APKs für ARM64, ARM32 und x86_64, weiterhin mit Testsignatur.
 - Charaktereditor mit nullable, ausdrücklich unbestätigten Werten; JSON-Export/-Import, Kampagnenauswahl und lokale Löschfunktionen. Seit 0.2.2 direkte Android-Dokumentauswahl und Dateisicherung, explizite Importbestätigung sowie Zwischenablage als Fallback.
 - Deterministischer deutscher Spielleiter als kostenlose Voreinstellung. Optionaler HTTPS-Backend-Erzähler für freie Texte; lokale Regeln, Würfel und bestätigte Daten bleiben maßgeblich. Anbieterantworten ersetzen ausschließlich die neue Erzählung und ihren Ereignis-Checkpoint.
 - Demo „Das Licht von Mooswacht“ in Lunaris mit Liora, Erkundung, Schlüssel, Quest und einfacher Gegnerbegegnung.
@@ -26,9 +27,13 @@ Der Workflow `.github/workflows/android-build.yml`, Projekt- und Übergabedokume
 
 ## GETESTET
 
+Erneuter kompletter scripts/check.sh-Lauf für 0.2.3 erfolgreich: Projektstrukturprüfung, **22 Python-Paket-/Strukturtests**, Backend-Typecheck/Build und **22 Backend-Tests** mit Node.js 22.14.0, saubere Flutter-Analyse sowie **178 Flutter-Tests** mit RUN_BACKEND_SMOKE=1. Neue Tests prüfen beide ZIP-Wurzeln, Byte-Erhalt, Geheimnis-/Cache-Ausschluss, Symlinkablehnung, unvollständige Uploads, Gradle-JAR-CRC und Unix-Zeilenenden. Keine kostenpflichtigen Modellaufrufe.
+
+Drei optimierte Alpha-APKs lokal erfolgreich gebaut und geprüft: arm64-v8a 17.382.068 Byte, armeabi-v7a 14.861.712 Byte, x86_64 18.554.326 Byte. Alle Version 0.2.3, Buildcode 5, API 24+, richtige ABI und gleiche verifizierte lokale Debug-Testsignatur wie die bisherige 0.2.2-APK. Je ABI --target-platform verwendet, damit keine ABI-Codeoffsets spätere Updates verhindern. Kein Store-Release. ARM64 und ARM32 privat auf Google Drive erstellt und per Metadaten mit korrekter Größe/MIME/Owner-Recht gelesen; ARM64 zusätzlich über die Drive-Download-API abgerufen und byteidentisch per SHA-256 mit dem Original verglichen. Der Benutzerdownload und die Installation auf einem echten Gerät bleiben separat abzunehmen.
+
 Flutter 3.35.7/Dart 3.9.2: Codeanalyse ohne Befunde und **178 Tests bestanden** mit RUN_BACKEND_SMOKE=1. Enthalten sind 74 bisherige Tests, 23 Transporttests, 13 Erzähl-/Replay-Tests, 13 SQLite-/Backend-Controller-Tests, 7 Backend-Widgettests, 13 Abruf-/Konsistenztests, 21 Dateikanal-/UTF-8-Tests, 13 Datei-Widgettests und ein echter lokaler Protokolltest. Der aktuelle Gesamtlauf verwendet Node 22.14.0 auch für den realen Protokolltest. Der Protokolltest startet den kompilierten Node-Server, stellt mit der Server-CLI einen synthetischen Sitzungstoken aus und prüft Dart-Transport, Backend-Erzählung, SQLite-Bestätigung und den Rückfall nach Serverabschaltung. Er verwendet ausschließlich lokale Mock-Dienste und Testdaten.
 
-Backend unverändert seit 0.2.0: letzter Typecheck, Produktionsbuild und **22 Tests** erfolgreich mit Node.js 22.14.0 und 24.19.0. Geprüft sind neue Sitzungsprüfung, verbindliches outcome, Provider-/Tool-Abweisung, Authentifizierung, Eingabevalidierung, Nutzungslimits und sichere Fehler. Die historischen 0.1.0-Prüfungen und Quellenangaben bleiben im Änderungsprotokoll nachvollziehbar. Es wurden keine kostenpflichtigen Modellaufrufe ausgeführt.
+Backendquellen unverändert seit 0.2.0: Typecheck, Produktionsbuild und **22 Tests** erfolgreich mit Node.js 22.14.0 und 24.19.0. Geprüft sind neue Sitzungsprüfung, verbindliches outcome, Provider-/Tool-Abweisung, Authentifizierung, Eingabevalidierung, Nutzungslimits und sichere Fehler. Die historischen 0.1.0-Prüfungen und Quellenangaben bleiben im Änderungsprotokoll nachvollziehbar. Es wurden keine kostenpflichtigen Modellaufrufe ausgeführt.
 
 Native Android-JVM-Prüfung mit Java 17 und Gradle 8.12: **12 Tests bestanden**, keine Fehler, keine übersprungenen Fälle. Geprüft sind reale Byte-Grenze statt Provider-Metadaten, Dateinamen, Lesen/Schreiben, Streamschluss und I/O- beziehungsweise Abbruchfehler. Lebenszyklus und SAF-Ergebniszustellung sind statisch geprüft, nicht durch diese JVM-Tests oder auf einem Gerät nachgewiesen.
 
@@ -45,7 +50,7 @@ Die Abschlusskorrektur ist ebenfalls abgenommen: Trennung und Dispose beenden au
 
 ## BLOCKIERT
 
-- Zugriff auf die vorhandene GitHub-Codebasis und direkte Übertragung der Änderungen: Lesen liefert weiterhin HTTP 404. Der Pushversuch des geprüften Standes nach origin/feat/solo-alpha wurde mit HTTP 403 „Write access to repository not granted“ abgewiesen. Die ZIP-Übergabe ermöglicht die Übernahme durch den Eigentümer.
+- Zugriff auf die vorhandene GitHub-Codebasis und direkte Übertragung der Änderungen: Erneute Prüfung als ManuEtt: Connector-Repositoryabruf404, keine sichtbaren App-Installationen/Konten und keine Dnd-Suchtreffer; Git-Lesen403. Bestehender Pushversuch des geprüften Standes nach origin/feat/solo-alpha wurde mit HTTP 403 „Write access to repository not granted“ abgewiesen. Das beweist keine Löschung oder Umbenennung. Eine genaue Web-Upload-/Actions-Fehlerursache ist ohne Benutzerfehlertext und Repo-Zugriff nicht bestätigt. Das flache Korrektur-ZIP und die Anleitung in docs/UPLOAD_TO_GITHUB.md ermöglichen die Übernahme und Zugriffsreparatur durch den Eigentümer.
 - Eine vollständige Prüfung auf einem Android-Gerät benötigt ein Gerät beziehungsweise einen geeigneten Emulator mit Sprachdiensten.
 - Produktive KI-Anbindung benötigt sichere Serverkonfiguration und Anbieterzugang; der Demo-Modus bleibt unabhängig davon.
 
@@ -62,16 +67,18 @@ Die Abschlusskorrektur ist ebenfalls abgenommen: Trennung und Dispose beenden au
 
 ## Letzter Build und nächste Aufgabe
 
+**App 0.2.3+5: drei optimierte kleine Alpha-APKs erfolgreich gebaut**, Release-AOT mit interner Debug-Testsignatur; Toolchain wie im folgenden Debugnachweis. Die CI-Konfiguration baut zusätzlich weiterhin die universelle Debug-APK, prüft die Struktur früh und hält die kleinen Artefakte 30 Tage bereit. YAML und lokale Befehle sind geprüft; der tatsächliche GitHub-Lauf ist weiterhin blockiert.
+
 **App 0.2.2+4: Android-Debug-Build erfolgreich** mit Flutter 3.35.7/Dart 3.9.2, Temurin-JDK 17.0.20.1, Gradle 8.12, AGP 8.9.1, Kotlin 2.1.0, SDKs 34/35/36, Build Tools 35.0.0, NDK 27.0.12077973 und CMake 3.22.1. Paket-ID `de.aetheria.lebendiger_spielleiter`, Android ab API 24 (7.0), Ziel-API 36. APK-Metadaten (Version 0.2.2, Code 4), erforderliche Rechte und Debug-Signatur wurden geprüft. Keine allgemeine Speicherberechtigung hinzugefügt. Die Debug-Signatur entspricht der vorherigen 0.2.0-APK; ein Update ist damit grundsätzlich möglich, aber noch nicht auf einem Gerät geprüft. Der abschließende Build nach Dateiintegration war erfolgreich.
 
 Anfangs fehlten ein vollständiger Java-Compiler, die Sprachplugin-SDKs und CMake. Diese Entwicklungswerkzeuge wurden installiert. Proxy-/CA-Vertrauen wurde ausschließlich in der lokalen Cloud-Werkzeugumgebung konfiguriert, ohne TLS-Prüfung zu deaktivieren. Lokale Werkzeugpfade und Cloud-Konfiguration gehören nicht zum ZIP. Die CI installiert die benötigten SDK-Komponenten ausdrücklich. Der erfolgreiche lokale Build ist **kein** ausgeführter GitHub-Actions-, Emulator- oder Gerätetest.
 
 ## Gesicherter Stand und Fortsetzung
 
-- Letzter gesicherter Funktionsstand: `b8a07e0bcafa31b210c411a1e31508bb477e8294` (0.2.2), Branch `feat/solo-alpha`.
-- Zuletzt fertiggestellt: App 0.2.2 mit Android-JSON-Dateiexport/-import, austauschbarer Schnittstelle und Abbruch-/Sicherheitstests. 178 Flutter-Tests, 12 native JVM-Tests, Codeanalyse, echter lokaler Protokolltest und Android-Debug-Build erfolgreich; der unveränderte Backendstand hat 22 bestandene Tests.
-- Aktueller Abschluss: Dateiexport/-import fertig, 178 Flutter- und 12 native JVM-Tests bestanden; APK gebaut und signaturgeprüft. Der Funktionsstand ist committet; das Übergabepaket wird aus diesem geprüften Stand und dem abschließenden Status-Commit erstellt. Keine Schemaänderung, keine neuen Laufzeitabhängigkeiten oder externen Dienste.
+- Letzter gesicherter Funktionsstand: `7d4144a76671c1151bee6db2508912d29499b4de` (0.2.3), Branch `feat/solo-alpha`.
+- Zuletzt fertiggestellt: App 0.2.3 mit flacher ZIP-Übergabe, Projektprüfer, 22 Paket-/Strukturtests und kleinen Alpha-APKs mit normalen Versionscodes. Vollständiger Check mit 22 Python-, 22 Backend- und 178 Flutter-Tests sowie Analyse erfolgreich. Bestehende native I/O-Tests bleiben 12 bestanden, unveränderter Code. Die drei optimierten APKs sind gebaut/signaturgeprüft; Dateidownloads werden über private Drive-Dateien bereitgestellt.
+- Aktueller Abschluss: Korrekturen getestet und committet. Flaches Quell-ZIP enthält genau 94 versionierte Dateien, CRC und alle Quellbytes stimmen, entpackte Strukturprüfung bestanden. ARM64-Drive-Download ist byteidentisch bestätigt. Die abschließende ZIP-Übernahme und konkreten Dateilinks/Prüfsummen stehen im externen Übergabe-Checkpoint. Keine Schemaänderung oder neue App-Laufzeitabhängigkeiten. Drive-Dateien bleiben privat; keine öffentliche Freigabe geändert.
 - Bekannte Grenzen: kein automatischer Token-Refresh, keine abgenommenen Geräte-/OpenAI-/GitHub-Actions-Tests, begrenzte Regel- und Demo-Interpretation. Bei einem unterbrochenen Export kann eine bereits vollständig geschriebene Datei trotz fehlender Erfolgsantwort erhalten bleiben; auch die Entfernung einer fehlgeschlagenen neuen Datei hängt vom Dokumentanbieter ab. Kein Verlust bestätigter SQLite-Spielstände in den ausgeführten Tests.
 - Nächster konkreter Entwicklungsschritt ohne Gerätezugriff: regelkonforme Attributverteilung bei der Charaktererstellung (Standardwerte und Punkte-Kauf) anhand SRD 5.2.1 implementieren und mit Grenz-/Charaktertests prüfen. Vorher offizielle Regelquelle lesen. Historische unbestätigte Arescan-Werte nicht automatisch ergänzen. Sobald Gerät/Zugriff bereitsteht, Dateisicherung, HTTPS-/Sprachpfad und GitHub Actions separat abnehmen.
-- Übergabepakete: `Dnd-Solo-Alpha-0.2.2.zip` (Quellcode) und `Der-lebendige-Spielleiter-0.2.2-debug.apk` (lokaler Debug-Build). Der begleitende `Dnd-0.2.2-status.json` hält den tatsächlichen abschließenden Git-HEAD und SHA-256-Prüfsummen außerhalb des Quellcode-ZIPs fest.
+- Übergabepakete: `Dnd-GitHub-Korrektur-0.2.3.zip` mit Dateien direkt in der Wurzel; `Der-lebendige-Spielleiter-0.2.3-arm64.apk` beziehungsweise `-arm32.apk` als kleine interne Alpha. Der begleitende `Dnd-0.2.3-status.json` hält abschließenden Git-HEAD, SHA-256 und bestätigte private Drive-Links außerhalb des Quellcode-ZIPs fest. Die bisherigen Archive bleiben erhalten.
 - Der tatsächliche Git-HEAD wird vor jeder Fortsetzung mit `git log -1 --oneline` geprüft. Keine zusätzlichen Credits oder Limit-Zurücksetzungen wurden ausgelöst. Ein erkennbares Kontingentlimit wird nicht aus nicht vorhandenen Messwerten abgeleitet.
