@@ -71,6 +71,8 @@ jobs:
         run: flutter analyze
       - name: Flutter-Tests ausführen
         working-directory: app
+        env:
+          RUN_BACKEND_SMOKE: '1'
         run: flutter test
       - name: Benötigte Android-SDK-Versionen installieren
         run: |
@@ -80,6 +82,9 @@ jobs:
         run: |
           chmod +x android/gradlew
           flutter build apk --debug
+      - name: Native Dateisicherungslogik testen
+        working-directory: app/android
+        run: ./gradlew :app:testDebugUnitTest --no-daemon
       - name: APK bereitstellen
         uses: actions/upload-artifact@v4
         with:

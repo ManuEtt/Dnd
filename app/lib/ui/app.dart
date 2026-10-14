@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../domain/models.dart';
+import '../services/backup_files.dart';
 import '../services/game_controller.dart';
 import '../services/voice_controller.dart';
+import 'backend_settings_panel.dart';
+import 'backup_dialogs.dart';
 import 'character_editor.dart';
 
 const _gold = Color(0xffddb96c);
@@ -61,9 +63,11 @@ class LivingGameApp extends StatefulWidget {
     super.key,
     required this.controller,
     required this.voice,
+    this.backupFiles,
   });
   final GameController controller;
   final VoiceController voice;
+  final BackupFiles? backupFiles;
 
   @override
   State<LivingGameApp> createState() => _LivingGameAppState();
@@ -71,6 +75,13 @@ class LivingGameApp extends StatefulWidget {
 
 class _LivingGameAppState extends State<LivingGameApp> {
   int _page = 0;
+  late final BackupFiles _backupFiles;
+
+  @override
+  void initState() {
+    super.initState();
+    _backupFiles = widget.backupFiles ?? AndroidBackupFiles();
+  }
 
   Future<void> _run(Future<void> Function() action, {bool play = false}) async {
     await action();
@@ -89,23 +100,33 @@ class _LivingGameAppState extends State<LivingGameApp> {
       debugShowCheckedModeBanner: false,
       theme: fantasyTheme(),
       home: AnimatedBuilder(
-        animation: Listenable.merge([widget.controller, widget.voice]),
+        animation: Listenable.merge([
+          widget.controller,
+          widget.voice,
+          widget.controller.narrator,
+        ]),
         builder: (context, _) {
           final controller = widget.controller;
           final pages = <Widget>[
             _HomePage(
               controller: controller,
+              backupFiles: _backupFiles,
               onPlay: (action) => _run(action, play: true),
               onCharacters: () => setState(() => _page = 2),
             ),
             _AdventurePage(
               controller: controller,
+              backupFiles: _backupFiles,
               voice: widget.voice,
               onHome: () => setState(() => _page = 0),
             ),
-            _CharactersPage(controller: controller),
+            _CharactersPage(controller: controller, backupFiles: _backupFiles),
             _JournalPage(campaign: controller.currentCampaign),
-            _SettingsPage(controller: controller, voice: widget.voice),
+            _SettingsPage(
+              controller: controller,
+              voice: widget.voice,
+              backupFiles: _backupFiles,
+            ),
           ];
           return Scaffold(
             appBar: AppBar(
@@ -203,7 +224,9 @@ class _HomePage extends StatelessWidget {
     required this.controller,
     required this.onPlay,
     required this.onCharacters,
+    required this.backupFiles,
   });
+  final BackupFiles backupFiles;
   final GameController controller;
   final _Play onPlay;
   final VoidCallback onCharacters;
@@ -383,8 +406,9 @@ class _HomePage extends StatelessWidget {
                   final json = await _importText(
                     context,
                     'Kampagne importieren',
+                    backupFiles,
                   );
-                  if (json != null) {
+                  if (context.mounted && json != null) {
                     onPlay(() => controller.importCampaign(json));
                   }
                 },
@@ -397,8 +421,9 @@ class _HomePage extends StatelessWidget {
 }
 
 class _CharactersPage extends StatelessWidget {
-  const _CharactersPage({required this.controller});
+  const _CharactersPage({required this.controller, required this.backupFiles});
   final GameController controller;
+  final BackupFiles backupFiles;
 
   Future<void> _edit(BuildContext context, HeroCharacter? hero) async {
     final result = await Navigator.of(context).push<HeroCharacter>(
@@ -428,8 +453,11 @@ class _CharactersPage extends StatelessWidget {
                       final json = await _importText(
                         context,
                         'Charakter importieren',
+                        backupFiles,
                       );
-                      if (json != null) await controller.importHero(json);
+                      if (context.mounted && json != null) {
+                        await controller.importHero(json);
+                      }
                     },
               icon: const Icon(Icons.file_upload_outlined),
               label: const Text('Importieren'),
@@ -484,6 +512,8 @@ class _CharactersPage extends StatelessWidget {
                           context,
                           '${hero.name} exportieren',
                           controller.exportHero(hero),
+                          backupFiles,
+                          backupFileName(hero.name, kind: 'charakter'),
                         ),
                         icon: const Icon(Icons.file_download_outlined),
                         label: const Text('Exportieren'),
@@ -520,7 +550,9 @@ class _AdventurePage extends StatefulWidget {
     required this.controller,
     required this.voice,
     required this.onHome,
+    required this.backupFiles,
   });
+  final BackupFiles backupFiles;
   final GameController controller;
   final VoiceController voice;
   final VoidCallback onHome;
@@ -696,12 +728,15 @@ class _AdventurePageState extends State<_AdventurePage> {
                   context,
                   'Spielstand exportieren',
                   widget.controller.exportCampaign(),
+                  widget.backupFiles,
+                  backupFileName(campaign.name),
                 ),
                 tooltip: 'Spielstand exportieren',
                 icon: const Icon(Icons.file_download_outlined),
               ),
             ],
           ),
+          BackendAdventureStatus(controller: widget.controller),
           if (!campaign.hero.isComplete)
             Padding(
               padding: const EdgeInsets.only(top: 8),
@@ -1202,7 +1237,12 @@ class _JournalSection extends StatelessWidget {
 }
 
 class _SettingsPage extends StatelessWidget {
-  const _SettingsPage({required this.controller, required this.voice});
+  const _SettingsPage({
+    required this.controller,
+    required this.voice,
+    required this.backupFiles,
+  });
+  final BackupFiles backupFiles;
   final GameController controller;
   final VoiceController voice;
 
@@ -1284,15 +1324,7 @@ class _SettingsPage extends StatelessWidget {
         const SizedBox(height: 24),
         Text('KI & Kosten', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 12),
-        const ListTile(
-          contentPadding: EdgeInsets.zero,
-          leading: Icon(Icons.offline_bolt),
-          title: Text('Aktiver Spielleiter: lokale Demo'),
-          subtitle: Text(
-            'Keine API-Kosten. Kein KI-Schlüssel wird im Client gespeichert. '
-            'Ein eigener OpenAI-Backenddienst ist vorbereitet; die App verwendet derzeit die lokale Erzählengine.',
-          ),
-        ),
+        BackendSettingsPanel(controller: controller),
         const SizedBox(height: 24),
         Text(
           'Datenschutz & Spielstände',
@@ -1311,21 +1343,21 @@ class _SettingsPage extends StatelessWidget {
               context,
               'Spielstand sichern',
               controller.exportCampaign(),
+              backupFiles,
+              backupFileName(controller.currentCampaign!.name),
             ),
             icon: const Icon(Icons.file_download_outlined),
             label: const Text('Aktuelle Kampagne exportieren'),
           ),
         const SizedBox(height: 12),
         OutlinedButton.icon(
-          onPressed:
-              controller.busy ||
-                  (controller.campaigns.isEmpty &&
-                      controller.characters.isEmpty)
+          onPressed: controller.busy
               ? null
               : () async {
                   if (await _confirmDelete(
                         context,
-                        'Alle lokalen Kampagnen und Charaktere unwiderruflich löschen? '
+                        'Alle lokalen Kampagnen, Charaktere und Einstellungen unwiderruflich löschen? '
+                        'Die Backend-Verbindung wird getrennt. '
                         'Exportiere deine Spielstände vorher.',
                       ) !=
                       true) {
@@ -1333,12 +1365,8 @@ class _SettingsPage extends StatelessWidget {
                   }
                   await voice.stopListening();
                   await voice.stopSpeaking();
-                  for (final campaign in controller.campaigns.toList()) {
-                    await controller.deleteCampaign(campaign.id);
-                  }
-                  for (final character in controller.characters.toList()) {
-                    await controller.deleteCharacter(character.id);
-                  }
+                  await controller.deleteAllData();
+                  if (controller.error == null) voice.configure({});
                 },
           icon: const Icon(Icons.delete_forever_outlined),
           label: const Text('Alle lokalen Spieldaten löschen'),
@@ -1719,102 +1747,24 @@ Future<bool?> _confirmDelete(BuildContext context, String message) =>
       ),
     );
 
-Future<String?> _importText(BuildContext context, String title) async {
-  final controller = TextEditingController();
-  final result = await showDialog<String>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text(title),
-      content: SizedBox(
-        width: 600,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Füge den exportierten JSON-Spielstand ein. Fehlerhafte Daten werden abgewiesen.',
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: controller,
-                minLines: 8,
-                maxLines: 16,
-                decoration: const InputDecoration(
-                  labelText: 'JSON-Spielstand',
-                  alignLabelWithHint: true,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Abbrechen'),
-        ),
-        FilledButton(
-          onPressed: () => Navigator.pop(context, controller.text),
-          child: const Text('Importieren'),
-        ),
-      ],
-    ),
-  );
-  // Wait until the dialog's route has finished its closing animation before disposing
-  // the controller; the TextField still exists during that animation.
-  Future<void>.delayed(const Duration(milliseconds: 400), controller.dispose);
-  return result;
-}
+Future<String?> _importText(
+  BuildContext context,
+  String title,
+  BackupFiles files,
+) => showImportBackupDialog(context, title: title, files: files);
 
 Future<void> _showExport(
   BuildContext context,
   String title,
   String json,
-) => showDialog<void>(
-  context: context,
-  builder: (context) => AlertDialog(
-    title: Text(title),
-    content: SizedBox(
-      width: 600,
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Kopiere diese Daten in eine Textdatei mit der Endung .json. '
-              'Die Datei enthält deinen vollständigen Charakter oder Spielstand.',
-            ),
-            const SizedBox(height: 12),
-            SelectableText(
-              json,
-              style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
-            ),
-          ],
-        ),
-      ),
-    ),
-    actions: [
-      TextButton(
-        onPressed: () => Navigator.pop(context),
-        child: const Text('Schließen'),
-      ),
-      FilledButton.icon(
-        onPressed: () async {
-          await Clipboard.setData(ClipboardData(text: json));
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('JSON in die Zwischenablage kopiert.'),
-              ),
-            );
-          }
-        },
-        icon: const Icon(Icons.copy),
-        label: const Text('Kopieren'),
-      ),
-    ],
-  ),
+  BackupFiles files,
+  String name,
+) => showExportBackupDialog(
+  context,
+  title: title,
+  json: json,
+  files: files,
+  name: name,
 );
 
 Future<void> _showInventory(BuildContext context, HeroCharacter hero) {

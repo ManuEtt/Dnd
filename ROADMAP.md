@@ -6,10 +6,12 @@ Die Reihenfolge folgt dem Ziel eines dauerhaft fortsetzbaren Android-Abenteuers.
 
 Das ZIP in einem neuen Branch von `ManuEtt/Dnd` integrieren, den GitHub-Workflow ausführen und seine Logs prüfen. Danach die Debug-APK auf einem Android-Gerät installieren und den dokumentierten Sprach-, Speicher- und Kampfablauf aus [TESTING.md](TESTING.md) durchführen. Erkenntnisse vor zusätzlichen Funktionen beheben.
 
+Ohne Geräte-/Repositoryzugriff ist der nächste begrenzte Code-Schritt die SRD-konforme Attributverteilung bei der Charaktererstellung: Standardwerte und Punkte-Kauf, offizielle Quelle vor Implementierung prüfen, historische unbestätigte Werte erhalten und Grenzfälle testen.
+
 ## Phase 1 und 2: Solo-Alpha absichern
 
 - Charakterbearbeitung und Importvalidierung anhand der tatsächlich unterstützten Regeloptionen erweitern.
-- Verlässliche Export-, Lösch- und Wiederherstellungsabläufe auf Android nachweisen.
+- Dateibasierte JSON-Sicherungen aus App 0.2.2 auf Android mit lokalem und optionalem Cloud-Dokumentanbieter abnehmen; Export, Abbruch, ungültige Importe und Wiederherstellung prüfen.
 - Automatischen und manuellen Würfelmodus einschließlich natürlichem Wert und Gesamtwert prüfen.
 - Kampfgrenzen sichtbar machen und weitere Zustände, Aktionen, Ressourcen und Todesrettungswürfe schrittweise ergänzen.
 - Regeloptionen und Charakterfortschritt aus rechtmäßig nutzbarem SRD-Inhalt implementieren; jede Regeländerung mit Referenz und Test versehen.
@@ -19,7 +21,8 @@ Das ZIP in einem neuen Branch von `ManuEtt/Dnd` integrieren, den GitHub-Workflow
 
 - Deutsche Android-Erkennung und TTS auf einem Gerät mit dokumentiertem Anbieter und Sprachpaket prüfen.
 - Fehler bei verweigerter Mikrofonfreigabe, fehlendem Sprachdienst und Verbindungsabbruch prüfen.
-- Optionalen Text-KI-Pfad gegen das Backend durchgängig integrieren und testen.
+- Den optionalen Backend-Erzähler mit echten Android-HTTPS-Verbindungen abnehmen; die Textintegration und lokalen Protokolltests liegen seit 0.2.0 vor.
+- Sichere Sitzungserneuerung und Benutzerkonten ergänzen, ohne dauerhafte Anbieter-Schlüssel im Client.
 - Offizielle OpenAI-Dokumentation unmittelbar vor der Realtime-Integration erneut prüfen.
 - Realtime über WebRTC mit sicherer kurzlebiger Token-Ausstellung implementieren; Transkription/Text/TTS als Fallback behalten.
 - Ausgaben für Sprache begrenzen und Zustandsvorschläge strikt validieren.
@@ -27,7 +30,7 @@ Das ZIP in einem neuen Branch von `ManuEtt/Dnd` integrieren, den GitHub-Workflow
 ## Phase 4: Kampagnengedächtnis
 
 - Kurzzeit-, Sitzungs- und Langzeitgedächtnis als eigenständige Abrufebenen vervollständigen.
-- NPC-Beziehungen, Questfortschritt, inventarbezogene Fakten und offene Handlungsstränge gezielt abrufen.
+- Den seit 0.2.1 vorhandenen lexikalischen Abruf um überprüfbare Sitzungszusammenfassungen und offene Handlungsstränge erweitern.
 - Regeln für Zusammenfassungen und dauerhafte Fakten durch Konsistenztests absichern.
 - Abbruchtests auf einem Gerät ergänzen und Schema-Migrationen mit alten Exporten prüfen.
 

@@ -27,9 +27,12 @@ Alternativ: `npm run build` und `npm start`. Standardadresse: `http://127.0.0.1:
 | --- | --- | --- |
 | `GET /health` | Keine | Status, aktiver Provider, Version |
 | `POST /v1/session` | `Authorization: Bearer <LOCAL_ACCESS_TOKEN>` | Kurzlebiger signierter Sitzungstoken |
+| `GET /v1/session` | `Authorization: Bearer <Sitzungstoken>` | Prüft Sitzung, Provider und Ablauf ohne Modellaufruf |
 | `POST /v1/narrate` | `Authorization: Bearer <Sitzungstoken>` | Deutscher Erzähltext mit `stateChanges: []` |
 
 `POST /v1/session` erwartet den JSON-Body `{}`. Die Antwort enthält `token`, `tokenType`, `expiresAt`, `expiresIn`, `provider` und `scope: "narration:read-only"`. Standardlaufzeit: fünf Minuten, maximal 15 Minuten. Das ist ein eigenes Token für dieses Backend; es ist **kein OpenAI-Realtime-Token**.
+
+`GET /v1/session` liefert `provider`, `expiresAt` und `scope: "narration:read-only"`. Seit App 0.2.0 ist die optionale mobile Anbindung vorhanden; Einrichtung: [BACKEND_CONNECTION.md](../docs/BACKEND_CONNECTION.md). Der Server-CLI-Befehl `node --env-file-if-exists=.env scripts/issue-session.mjs` stellt auf dem Backendhost einen kurzlebigen Token aus.
 
 `POST /v1/narrate` akzeptiert folgende Eingabe:
 
@@ -51,7 +54,7 @@ Alternativ: `npm run build` und `npm start`. Standardadresse: `http://127.0.0.1:
 }
 ```
 
-Felder sind begrenzt: `campaignId` 128 Zeichen aus Buchstaben, Ziffern, `_`, `-`; `playerName` 80; `action` 2.000; `scene` 4.000. Bis zu 20 Erinnerungen mit je 400 Zeichen. Unbekannte Felder werden abgewiesen. Der Client muss Erinnerungen aus seinem bestätigten Speicher beziehen; der Server bestätigt deren Echtheit nicht selbst.
+Felder sind begrenzt: `campaignId` 128 Zeichen aus Buchstaben, Ziffern, `_`, `-`; `playerName` 80; `action` 2.000; `scene` 4.000. Optionales verbindliches `outcome` bis 4.000 Zeichen: Der Mock gibt dieses lokale Ergebnis exakt zurück; OpenAI darf es nur umformulieren. Bis zu 20 Erinnerungen mit je 400 Zeichen. Unbekannte Felder werden abgewiesen. Der Client muss Erinnerungen aus seinem bestätigten Speicher beziehen; der Server bestätigt deren Echtheit nicht selbst.
 
 Fehler: `400` ungültige Eingabe, `401` fehlender oder abgelaufener Token, `413` zu großer Body, `429` Nutzungslimit, `502` Providerfehler, `503` fehlende lokale Zugangskonfiguration. Bei `401` kann der Client erneut eine Sitzung anfordern. Bei `502` steht weiterhin der lokale Demo-Modus zur Verfügung. Providerdetails und Eingabetexte werden nicht protokolliert oder in Fehlermeldungen zurückgegeben.
 
@@ -87,6 +90,8 @@ npm run build
 npm audit
 ```
 
-**GETESTET am 13.10.2026:** TypeScript-Typecheck, Produktionskompilierung und 17 deterministische Tests mit Fastify-HTTP-Injection: Authentifizierung, Tokenmanipulation und Ablauf, Validierung, Mock-Erzählung, Read-only-Ergebnisse, Erinnerungsinput, Minuten-/Tageslimits, Anmeldebegrenzung, sichere Providerfehler, Responses-Request und Auswertung mit gemocktem Fetch, Konfiguration und begrenzter Limiter. Zusätzlich wurde der kompilierte Server auf Loopback gestartet und `/health`, `/v1/session` und `/v1/narrate` über echte HTTP-Anfragen geprüft. `npm ci` reproduziert die Installation; `npm audit` meldete null bekannte Schwachstellen. Alle 17 Tests, Typecheck und Build bestanden auch mit der CI-Version Node 22.14.0. Keine bezahlten API-Aufrufe.
+**Historisch GETESTET am 13.10.2026 (0.1.0):** TypeScript-Typecheck, Produktionskompilierung und 17 deterministische Tests mit Fastify-HTTP-Injection: Authentifizierung, Tokenmanipulation und Ablauf, Validierung, Mock-Erzählung, Read-only-Ergebnisse, Erinnerungsinput, Minuten-/Tageslimits, Anmeldebegrenzung, sichere Providerfehler, Responses-Request und Auswertung mit gemocktem Fetch, Konfiguration und begrenzter Limiter. Zusätzlich wurde der kompilierte Server auf Loopback gestartet und `/health`, `/v1/session` und `/v1/narrate` über echte HTTP-Anfragen geprüft. `npm ci` reproduziert die Installation; `npm audit` meldete null bekannte Schwachstellen. Alle 17 Tests, Typecheck und Build bestanden auch mit der CI-Version Node 22.14.0. Keine bezahlten API-Aufrufe.
 
 **NICHT GETESTET:** echter OpenAI-Account, ausgewähltes Live-Modell, Android-Client-zu-Backend-Verbindung, öffentlicher HTTPS-Reverse-Proxy, Mehrspielerbetrieb und Realtime.
+
+**0.2.0:** Typecheck, Build und 22 Tests erfolgreich unter Node.js 22.14.0 und 24.19.0. Ein zusätzlicher echter Node-/Dart-Protokolltest prüft die Server-CLI, Sitzung, Erzählung und den lokalen Fallback. Keine bezahlten API-Aufrufe.

@@ -30,7 +30,20 @@ cd app
 flutter build apk --debug
 ```
 
-Der GitHub-Workflow führt diese Prüfungen in derselben Reihenfolge aus und stellt die APK nur nach erfolgreichem Build bereit. Er benötigt für Demo-Tests keine API-Schlüssel.
+Die native Dateisicherungslogik wird nach einem Android-Build zusätzlich auf der JVM geprüft:
+
+```bash
+cd app/android
+./gradlew :app:testDebugUnitTest --no-daemon
+```
+
+Diese JVM-Tests prüfen Dateinamen und begrenztes Lesen. Dart-Kanal- und Widgettests simulieren die Systemdateiauswahl; sie ersetzen keinen Gerätetest. Der GitHub-Workflow führt auch diese Prüfungen aus und stellt die APK nur nach erfolgreichem Build und erfolgreichen Tests bereit. Er benötigt für Demo-Tests keine API-Schlüssel.
+
+Der zusätzliche echte Node-/Dart-Protokolltest benötigt zuvor `npm run build`
+im Backend und wird mit `RUN_BACKEND_SMOKE=1 flutter test` aktiviert.
+`scripts/check.sh` und GitHub Actions aktivieren ihn nach dem Backend-Build.
+Er verwendet ausschließlich synthetische Zugangsdaten und den lokalen Mock;
+unverschlüsseltes Loopback-HTTP ist nur für diesen Entwicklungstest freigeschaltet.
 
 Die Testabdeckung soll natürliche Würfelwerte und Gesamtwerte, Attributmodifikatoren, Angriffe, Schaden und Heilung, unvollständige Charakterdaten, Speicherung und Neustart, Transaktionsrollback, doppelte Ereignisse, Importvalidierung, Demo-Erzählung, zentrale Widgets und Backend-Authentifizierung beziehungsweise Validierung prüfen. Die tatsächlich vorhandenen Tests und ausgeführten Ergebnisse stehen in [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md).
 
@@ -45,7 +58,7 @@ Diese Schritte sind eine noch separat durchzuführende Abnahme. Gerät, Android-
 5. Einen einfachen Kampf bis zum Ende durchführen. Treffer, Fehlschlag, kritischen Treffer, Trefferpunkte und gespeichertes Ergebnis prüfen.
 6. Die App nach einer bestätigten Aktion beenden und neu starten. Szene, Verlauf und Charakterzustand müssen erhalten bleiben. Einen kontrollierten Abbruch während einer Aktion zusätzlich prüfen.
 7. Historische Kampagne „Das Herz der Ewigkeit“ laden. Die Geschichte, Gesamtangriff 19 und erzählter Schaden 14 müssen erhalten sein. Fehlende Werte und der ungeprüfte Modifikator +7 dürfen nicht automatisch als neue Regelwerte gelten.
-8. Charakter und Kampagne als JSON exportieren, über die Zwischenablage selbst in einer `.json`-Datei sichern und anschließend deren Inhalt über den JSON-Importdialog importieren. Ungültige beziehungsweise nicht unterstützte Dateien ablehnen; vorhandene Daten dabei erhalten.
+8. Charakter und Kampagne über **Als Datei speichern** als `.json` sichern; im Android-Systemdialog Zielordner und Dateinamen auswählen. Nach dem Speichern die Datei außerhalb der App prüfen. Beim Import über **Datei wählen** zunächst laden und dann ausdrücklich **Importieren** drücken. Jeweils die Systemauswahl abbrechen: vorhandene Daten müssen unverändert bleiben. Ungültige, fremde, übergroße und nicht UTF-8-codierte Dateien abweisen. Vorhandene Kampagnen nicht überschreiben; für den Wiederherstellungstest ein gesichertes Testexemplar zuerst lokal löschen. Zwischenablage und Texteingabe als Fallback prüfen. Einen Schreibfehler, fehlenden Dokumentanbieter und Aktivitätsende separat testen. Auch den gewählten Dokumentanbieter und Offline-Verfügbarkeit im Bericht nennen.
 9. Deutsche Sprachpakete installieren beziehungsweise prüfen. Mikrofonfreigabe zunächst ablehnen und danach erlauben; beide Abläufe müssen verständliche Rückmeldung liefern.
 10. Push-to-Talk verwenden. Erkanntes Deutsch anzeigen, Text manuell korrigieren und erst danach senden. TTS abspielen und unterbrechen; automatische Wiedergabe und verfügbare Stimmen prüfen.
 11. Den Sprachdienst ohne Netzwerk testen. Das Ergebnis dokumentieren; vollständige Offline-Spracherkennung wird nicht zugesichert. Textspiel muss weiterhin verfügbar sein.
@@ -61,4 +74,4 @@ Diese Schritte sind eine noch separat durchzuführende Abnahme. Gerät, Android-
 | Realer Gerätetest | Prüft tatsächliche Installation, Sprache, Berechtigungen und Wiederherstellung auf dem Gerät |
 | GitHub-Actions-Lauf | Belegt das Verhalten der eingecheckten CI-Konfiguration auf GitHub |
 
-Am 13. Oktober 2026 bestanden alle 74 Flutter-Tests sowie alle 17 Backend-Tests. Die Flutter-Analyse war ohne Befunde. Sprachlogik wird mit Plugin-Mocks getestet; Mikrofon und TTS auf Android benötigen weiterhin einen Gerätetest. Der Android-Debug-Build war mit JDK 17.0.20.1 erfolgreich; APK-Metadaten und Debug-Signatur wurden geprüft. Ein erfolgreicher APK-Build bedeutet nicht automatisch, dass Mikrofon, TTS oder alle Abläufe auf einem Gerät funktionieren. GitHub-Actions-, Emulator- und Gerätetests sind noch offen.
+Stand App 0.2.2/Backend 0.2.0: **178 Flutter-Tests** einschließlich echtem lokalem Node-/Dart-Protokolltest, **12 native JVM-Tests** sowie **22 Backend-Tests** des unveränderten Backends bestanden; Flutter-Analyse ohne Befunde und Android-Debug-APK erfolgreich gebaut. Die echten OpenAI- und Android-HTTPS-/Sprachpfade sind weiterhin separat abzunehmen. Details und Werkzeuge stehen in DEVELOPMENT_STATUS.md. Es wurden keine kostenpflichtigen API-Aufrufe ausgeführt.

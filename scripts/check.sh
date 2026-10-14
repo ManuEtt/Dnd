@@ -9,6 +9,6 @@ npm run build
 cd "$PROJECT_ROOT/app"
 flutter pub get
 flutter analyze
-flutter test
+RUN_BACKEND_SMOKE=1 flutter test
 # APK building is separate so tests also run without a local Android SDK:
 # flutter build apk --debug

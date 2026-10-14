@@ -5,14 +5,20 @@ import 'package:flutter/foundation.dart';
 import '../data/campaign_repository.dart';
 import '../domain/game_engine.dart';
 import '../domain/models.dart';
+import 'backend_narrator.dart';
 
 /// UI state changes only after an atomic repository commit succeeds.
 class GameController extends ChangeNotifier {
-  GameController({required this.repository, GameEngine? engine})
-    : engine = engine ?? GameEngine();
+  GameController({
+    required this.repository,
+    GameEngine? engine,
+    BackendNarrator? narrator,
+  }) : engine = engine ?? GameEngine(),
+       narrator = narrator ?? BackendNarrator();
 
   final CampaignRepository repository;
   final GameEngine engine;
+  final BackendNarrator narrator;
   List<Campaign> campaigns = [];
   List<HeroCharacter> characters = [];
   Campaign? currentCampaign;
@@ -59,6 +65,14 @@ class GameController extends ChangeNotifier {
   Future<void> initialize() => _run(() async {
     await _reload();
     final settings = await repository.loadSettings();
+    // A saved address is a preference, never permission to transmit a campaign.
+    // Session tokens and paid-provider consent deliberately do not survive restart.
+    final url = settings['backendUrl'];
+    if (url is String && url.length <= 2048) narrator.backendUrl = url;
+    final limit = settings['backendRequestLimit'];
+    if (limit is int && limit >= 1 && limit <= 100) {
+      narrator.requestLimit = limit;
+    }
     final id = settings['lastCampaignId'];
     if (id is String) currentCampaign = await repository.getCampaign(id);
   });
@@ -113,8 +127,71 @@ class GameController extends ChangeNotifier {
         'Gib eine Handlung mit 1 bis 4000 Zeichen ein.',
       );
     }
-    await _commit(engine.act(campaign, text));
+    final update = engine.act(campaign, text);
+    await _commit(await _withNarration(update, text));
   });
+
+  Future<GameUpdate> _withNarration(GameUpdate update, String action) async {
+    // Mechanical results and roll requests always use the authoritative local
+    // text. External narration can enrich only a validated narrative turn.
+    if (!narrator.enabled ||
+        update.events.length != 1 ||
+        update.events.single.type != 'narrative.turn') {
+      return update;
+    }
+    final campaign = update.campaign;
+    final memories = MemoryEngine.retrieve(campaign, action);
+    try {
+      final response = await narrator.narrate(
+        campaignId: campaign.id,
+        playerName: campaign.hero.name,
+        action: action,
+        scene: campaign.scene,
+        outcome: update.narration,
+        memories: memories,
+      );
+      if (response == null) return update;
+      return engine.replaceNarration(
+        update,
+        text: response.text,
+        provider: response.provider,
+      );
+    } catch (_) {
+      narrator.statusMessage =
+          'Die Backendantwort konnte nicht sicher übernommen werden. '
+          'Deine Handlung wird mit der lokalen Demo fortgesetzt.';
+      return update;
+    }
+  }
+
+  Future<void> connectNarrator({
+    required String url,
+    required String sessionToken,
+    bool allowPaidProvider = false,
+    int requestLimit = 20,
+  }) => _run(() async {
+    await narrator.connect(
+      url: url,
+      sessionToken: sessionToken,
+      allowPaidProvider: allowPaidProvider,
+      requestLimit: requestLimit,
+    );
+    if (!narrator.enabled) return;
+    try {
+      final settings = await repository.loadSettings();
+      settings['backendUrl'] = narrator.backendUrl;
+      settings['backendRequestLimit'] = narrator.requestLimit;
+      await repository.saveSettings(settings);
+    } catch (_) {
+      narrator.disconnect();
+      rethrow;
+    }
+  });
+
+  Future<void> disconnectNarrator() async {
+    narrator.disconnect();
+    _changed();
+  }
 
   Future<void> resolveRoll({int? natural, int? total}) => _run(() async {
     final campaign = currentCampaign;
@@ -195,6 +272,7 @@ class GameController extends ChangeNotifier {
       const JsonEncoder.withIndent('  ').convert(hero.toJson());
 
   Future<void> deleteAllData() => _run(() async {
+    narrator.disconnect();
     for (final campaign in await repository.loadCampaigns()) {
       await repository.deleteCampaign(campaign.id);
     }
@@ -209,6 +287,7 @@ class GameController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    narrator.dispose();
     super.dispose();
   }
 }

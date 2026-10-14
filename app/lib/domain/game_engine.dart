@@ -16,6 +16,88 @@ class GameEngine {
   String _id(String prefix) =>
       '$prefix-${_clock().microsecondsSinceEpoch}-${_sequence++}';
 
+  /// Replaces the narration of the latest unconfirmed free turn, never rules.
+  /// Its existing checkpoint is rewritten with the same confirmed game state.
+  GameUpdate replaceNarration(
+    GameUpdate update, {
+    required String text,
+    required String provider,
+  }) {
+    final narration = text.trim();
+    if (narration.isEmpty || narration.length > 4000) {
+      throw const FormatException(
+        'Die Erzählung muss 1 bis 4000 Zeichen enthalten.',
+      );
+    }
+    if (!const ['mock', 'openai'].contains(provider)) {
+      throw const FormatException('Unbekannter Erzählanbieter.');
+    }
+    final campaign = update.campaign;
+    if (update.events.length != 1 || campaign.events.isEmpty) {
+      throw const FormatException(
+        'Nur ein einzelnes neues Erzählereignis darf ersetzt werden.',
+      );
+    }
+    final original = update.events.single;
+    if (original.type != 'narrative.turn' ||
+        original.campaignId != campaign.id ||
+        original.sessionId != campaign.sessionId ||
+        campaign.events.last.id != original.id ||
+        _canonicalJson(campaign.events.last.toJson()) !=
+            _canonicalJson(original.toJson())) {
+      throw const FormatException(
+        'Nur die aktuelle freie Erzählung darf ersetzt werden.',
+      );
+    }
+    if (campaign.messages.isEmpty || campaign.messages.last.role != 'gm') {
+      throw const FormatException('Die aktuelle Spielleiterantwort fehlt.');
+    }
+    final checkpoint = original.payload['stateAfter'];
+    if (checkpoint is! Map<String, dynamic> ||
+        _canonicalJson(checkpoint) !=
+            _canonicalJson(campaign.copyWith(events: const []).toJson())) {
+      throw const FormatException(
+        'Das Erzählereignis gehört nicht zum aktuellen Spielzustand.',
+      );
+    }
+    // Validate the incoming state before retaining all of its rule fields.
+    Campaign.fromJson(campaign.toJson());
+    final last = campaign.messages.last;
+    final narrated = campaign.copyWith(
+      messages: [
+        ...campaign.messages.take(campaign.messages.length - 1),
+        NarrativeMessage(
+          id: last.id,
+          role: last.role,
+          text: narration,
+          timestamp: last.timestamp,
+        ),
+      ],
+    );
+    // Deep-copy JSON payloads so an external provider cannot retain or mutate
+    // nested maps from the original audit event.
+    final payload =
+        jsonDecode(jsonEncode(original.payload)) as Map<String, dynamic>;
+    payload['narrationProvider'] = provider;
+    payload['stateAfter'] = jsonDecode(
+      jsonEncode(narrated.copyWith(events: const []).toJson()),
+    );
+    final event = GameEvent(
+      id: original.id,
+      campaignId: original.campaignId,
+      sessionId: original.sessionId,
+      timestamp: original.timestamp,
+      type: original.type,
+      entities: original.entities,
+      payload: payload,
+    );
+    final result = narrated.copyWith(
+      events: [...campaign.events.take(campaign.events.length - 1), event],
+    );
+    Campaign.fromJson(result.toJson());
+    return GameUpdate(campaign: result, events: [event]);
+  }
+
   GameUpdate rollDice(Campaign campaign, String expression) {
     final result = dice.roll(expression);
     final natural = result.natural == null
@@ -1076,6 +1158,120 @@ class _EnemyTurn {
 
 /// Explicitly separates scene context, session recap and persistent world facts.
 class MemoryEngine {
+  /// Selects confirmed memories by lexical relevance without model inference.
+  /// Dialogue and generated narration are deliberately never memory sources.
+  static List<String> retrieve(
+    Campaign campaign,
+    String action, {
+    int limit = 20,
+    int maxCharacters = 400,
+  }) {
+    if (limit < 1 || limit > 20 || maxCharacters < 40 || maxCharacters > 400) {
+      throw const FormatException(
+        'Gedächtnisabruf benötigt 1 bis 20 Einträge mit 40 bis 400 Zeichen.',
+      );
+    }
+    final query = _memoryTokens(action);
+    final candidates =
+        <({String text, String identity, int score, int order})>[];
+    void add(
+      String label,
+      String description, {
+      required int priority,
+      String? identity,
+    }) {
+      final titleTokens = _memoryTokens(label);
+      final bodyTokens = _memoryTokens(description);
+      int matches(Set<String> words) => query.where((token) {
+        if (words.contains(token)) return true;
+        // German compounds and inflections: Schlüssel / Messingschlüssel,
+        // Amulett / Amuletts. Short words require an exact token match.
+        return token.length >= 4 &&
+            words.any((word) => word.startsWith(token) || word.endsWith(token));
+      }).length;
+      final titleHits = matches(titleTokens);
+      final bodyHits = matches(bodyTokens);
+      final score =
+          priority +
+          (titleHits + bodyHits > 0 ? 1000 : 0) +
+          titleHits * 200 +
+          bodyHits * 40;
+      final text = description.trim().isEmpty
+          ? label.trim()
+          : '${label.trim()}${label.trim().endsWith(':') ? ' ' : '. '}${description.trim()}';
+      if (text.isEmpty) return;
+      candidates.add((
+        text: text,
+        identity: _memoryNormalize(identity ?? text),
+        score: score,
+        order: candidates.length,
+      ));
+    }
+
+    for (final entry in campaign.facts.entries) {
+      if (entry.value.trim().isNotEmpty) {
+        final value = _memoryNormalize(entry.value);
+        // Flags, numbers and short labels only have meaning with their key.
+        // Longer, self-contained sentences can be deduplicated across keys.
+        final selfContained =
+            value.length >= 20 && value.split(' ').length >= 3;
+        add(
+          'Fakt ${entry.key}:',
+          entry.value,
+          priority: 0,
+          identity: selfContained
+              ? entry.value
+              : '${entry.key}: ${entry.value}',
+        );
+      }
+    }
+    for (final item in campaign.hero.inventory) {
+      add(
+        'Inventar (Anzahl ${item.quantity}): ${item.name}',
+        item.description,
+        priority: 300,
+      );
+    }
+    for (final quest in campaign.quests) {
+      final status = switch (quest.status) {
+        'completed' => 'abgeschlossen',
+        'failed' => 'gescheitert',
+        'active' => 'aktiv',
+        _ => quest.status,
+      };
+      add(
+        'Quest $status: ${quest.title}',
+        quest.description,
+        priority: quest.status == 'active' ? 200 : 400,
+      );
+    }
+    for (final npc in campaign.npcs) {
+      add(
+        'NPC ${npc.alive ? 'lebendig' : 'tot'}: ${npc.name}',
+        'Beziehung: ${npc.relationship}. ${npc.description}',
+        priority: npc.alive ? 100 : 500,
+      );
+    }
+    for (final place in campaign.places) {
+      add('Ort: ${place.name}', place.description, priority: 50);
+    }
+    candidates.sort((a, b) {
+      final score = b.score.compareTo(a.score);
+      return score == 0 ? a.order.compareTo(b.order) : score;
+    });
+    final seen = <String>{};
+    final displayed = <String>{};
+    final results = <String>[];
+    for (final candidate in candidates) {
+      if (!seen.add(candidate.identity)) continue;
+      final text = _memoryTruncate(candidate.text, maxCharacters);
+      if (!displayed.add(_memoryNormalize(text))) continue;
+      results.add(text);
+      if (results.length == limit) break;
+    }
+    return List.unmodifiable(results);
+  }
+
   static Map<String, dynamic> context(Campaign campaign) => {
     'shortTerm': {
       'scene': campaign.scene,
@@ -1107,7 +1303,7 @@ class MemoryEngine {
       }
       final prior = seen[event.id];
       if (prior != null) {
-        if (jsonEncode(prior.toJson()) != jsonEncode(event.toJson())) {
+        if (_canonicalJson(prior.toJson()) != _canonicalJson(event.toJson())) {
           throw const FormatException(
             'Ereignis-ID mit verändertem Inhalt wiederverwendet.',
           );
@@ -1130,4 +1326,118 @@ class MemoryEngine {
     }
     return state;
   }
+}
+
+/// Object key order can change in storage; list order and number types cannot.
+String _canonicalJson(Object? value) {
+  Object? ordered(Object? item) {
+    if (item is Map) {
+      final keys = item.keys.cast<String>().toList()..sort();
+      return {for (final key in keys) key: ordered(item[key])};
+    }
+    if (item is List) return item.map(ordered).toList();
+    return item;
+  }
+
+  return jsonEncode(ordered(value));
+}
+
+String _memoryNormalize(String text) => text
+    .toLowerCase()
+    .replaceAll('ä', 'ae')
+    .replaceAll('ö', 'oe')
+    .replaceAll('ü', 'ue')
+    .replaceAll('ß', 'ss')
+    .replaceAll(RegExp(r'\s+'), ' ')
+    .trim();
+
+Set<String> _memoryTokens(String text) {
+  const stopWords = {
+    'ich',
+    'der',
+    'die',
+    'das',
+    'ein',
+    'eine',
+    'einen',
+    'einem',
+    'einer',
+    'und',
+    'oder',
+    'mit',
+    'den',
+    'dem',
+    'des',
+    'ist',
+    'sind',
+    'war',
+    'waren',
+    'wird',
+    'werden',
+    'zum',
+    'zur',
+    'von',
+    'fuer',
+    'auf',
+    'aus',
+    'bei',
+    'ueber',
+    'unter',
+    'nach',
+    'vor',
+    'als',
+    'was',
+    'wie',
+    'wer',
+    'bitte',
+    'moechte',
+    'moechtest',
+    'will',
+    'kann',
+    'koennte',
+    'kannst',
+    'habe',
+    'hast',
+    'hat',
+    'mich',
+    'mir',
+    'mein',
+    'meine',
+    'meinen',
+    'seine',
+    'ihr',
+    'ihre',
+    'uns',
+    'euch',
+    'sich',
+    'noch',
+    'wieder',
+    'jetzt',
+    'dann',
+    'dort',
+    'hier',
+    'nun',
+    'auch',
+    'man',
+    'diese',
+    'dieser',
+    'dieses',
+    'gehe',
+    'tun',
+    'frage',
+    'fragen',
+  };
+  return RegExp(r'[a-z0-9]+')
+      .allMatches(_memoryNormalize(text))
+      .map((match) => match.group(0)!)
+      .where((token) => token.length > 2 && !stopWords.contains(token))
+      .toSet();
+}
+
+String _memoryTruncate(String text, int maximum) {
+  if (text.length <= maximum) return text;
+  var end = maximum - 1;
+  final last = text.codeUnitAt(end - 1);
+  if (last >= 0xD800 && last <= 0xDBFF) end--;
+  return '${text.substring(0, end).trimRight()}…';
 }

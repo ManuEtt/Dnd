@@ -18,6 +18,7 @@ const narrationSchema = {
     playerName: nonBlankString(80),
     action: nonBlankString(2000),
     scene: nonBlankString(4000),
+    outcome: nonBlankString(4000),
     memories: { type: 'array', maxItems: 20, items: nonBlankString(400) },
   },
 };
@@ -49,7 +50,7 @@ export function buildApp(config: Config, dependencies: AppDependencies = {}) {
     });
   });
 
-  app.get('/health', async () => ({ status: 'ok', provider: config.provider, version: '0.1.0' }));
+  app.get('/health', async () => ({ status: 'ok', provider: config.provider, version: '0.2.0' }));
 
   app.post('/v1/session', {
     schema: { body: { type: 'object', additionalProperties: false, properties: {} } },
@@ -71,6 +72,19 @@ export function buildApp(config: Config, dependencies: AppDependencies = {}) {
       expiresIn: config.sessionTtlSeconds,
       provider: config.provider,
       scope: 'narration:read-only',
+    };
+  });
+
+  // Checks an existing short-lived token without invoking a paid provider.
+  // Mobile clients receive no bootstrap secret and never mint sessions themselves.
+  app.get('/v1/session', async (request, reply) => {
+    const token = bearerToken(request.headers.authorization);
+    const session = token ? verifySession(token, config.sessionSecret, clock()) : undefined;
+    if (!session) return reply.code(401).send({ error: 'invalid_session', message: 'Die Sitzung ist abgelaufen. Bitte verbinde dich erneut.' });
+    return {
+      scope: 'narration:read-only',
+      provider: config.provider,
+      expiresAt: new Date(session.expiresAt * 1000).toISOString(),
     };
   });
 

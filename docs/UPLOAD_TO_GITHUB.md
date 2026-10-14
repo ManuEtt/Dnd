@@ -40,7 +40,7 @@ Vor dem Commit prüfen, dass keine `.env`, API-Schlüssel, Benutzerdaten, `node_
 
 1. Im Repository **Actions** öffnen und gegebenenfalls Workflows für das Repository aktivieren.
 2. **Android-Alpha bauen** auswählen. Nach einem relevanten Push oder Pull Request startet der Workflow automatisch. Mit **Run workflow** kann der ausgewählte Branch manuell gebaut werden.
-3. Der Workflow installiert Java 17, Flutter 3.35.7 und Node.js 22.14.0. Er führt Backend-Typprüfung, Build und Tests sowie Flutter-Analyse und Tests aus; erst danach baut er die Debug-APK.
+3. Der Workflow installiert Java 17, Flutter 3.35.7 und Node.js 22.14.0. Er führt Backend-Typprüfung, Build und Tests sowie Flutter-Analyse und Tests aus; danach baut er die Debug-APK und prüft die native Dateisicherungslogik auf der JVM.
 4. Bei einem grünen Lauf das Artefakt **lebendiger-spielleiter-android-debug** herunterladen und entpacken. Darin liegt `app-debug.apk`.
 5. APK auf ein Android-Gerät übertragen, installieren und die Gerätetests aus [TESTING.md](../TESTING.md) durchführen.
 

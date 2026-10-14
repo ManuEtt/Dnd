@@ -56,3 +56,34 @@ Flutter 3.35.7, Dart 3.9.2, Java 17 und Node.js 22.14.0 bilden die CI-Grundlage.
 ## Abschluss eines Inkrements
 
 Relevante Analyse, Tests und Build ausführen, Fehler beheben und `DEVELOPMENT_STATUS.md`, `CHANGELOG.md` sowie nötige technische Dokumentation aktualisieren. Klar zwischen **IMPLEMENTIERT**, **GETESTET**, **NICHT GETESTET**, **BLOCKIERT** und **NOCH NICHT IMPLEMENTIERT** unterscheiden. Build, Emulator und reales Gerät getrennt aufführen. Bei fehlendem Zugriff eine konkrete Übergabe erstellen und unabhängig mögliche Arbeiten fortführen. Geprüfte Änderungen mit aussagekräftiger Nachricht auf einem Entwicklungsbranch committen; nur bei vorhandener Berechtigung pushen.
+
+## Autonomer Modus und Limit-Pause
+
+Normale technische Entscheidungen selbst treffen und in kleinen, abgeschlossenen
+Schritten entwickeln. Keine Credits kaufen und keine kostenpflichtigen
+Limit-Zurücksetzungen auslösen. Bei einer tatsächlichen Limitwarnung keine große
+neue Aufgabe oder zusätzliche Agentengruppe starten; zuerst den laufenden
+Schritt testen, speichern und soweit möglich committen. Vor einer Pause den
+fertigen Schritt, gesicherten Code-Commit, offene Aufgaben, bekannte Fehler und
+den konkreten nächsten Schritt in DEVELOPMENT_STATUS.md dokumentieren. Ein
+Kontingentstand darf nicht erfunden werden. Eine neue Sitzung liest zuerst den
+Status und prüft anschließend den tatsächlichen Git-HEAD; automatische
+Sitzungswiederaufnahme wird nicht vorausgesetzt.
+
+## Backend-Erzähler seit 0.2.0
+
+Sitzungstokens und Kostenfreigaben bleiben im Arbeitsspeicher. Die App darf nach
+einem Neustart keinen Backendaufruf automatisch autorisieren. Nur validierte
+freie Erzählungen werden extern ausgestaltet; Regelaktionen und historische
+Werte bleiben lokal. Externe `stateChanges` sind unzulässig. Neue Erzählungen
+und deren Checkpoints gemeinsam speichern. Weiterleitungen dürfen kein
+Bearer-Token erhalten. Kein automatischer POST-Retry, da bereits übermittelte
+Anfragen Kosten verursachen können. Hinweise: docs/BACKEND_CONNECTION.md.
+
+Der zusätzliche Node-/Dart-Protokolltest läuft mit RUN_BACKEND_SMOKE=1 nach dem
+Backend-Build. `scripts/check.sh` und CI aktivieren ihn; sein Loopback-HTTP ist
+ausschließlich eine Testoption, die mobile Oberfläche akzeptiert nur HTTPS.
+
+## Dateisicherung seit App 0.2.2
+
+Android-JSON-Dokumente ausschließlich über die austauschbare BackupFiles-Schnittstelle und das Storage Access Framework öffnen beziehungsweise speichern. Keine allgemeine Speicherberechtigung und keine dauerhaften URI-Rechte ergänzen. Beide Kanalseiten prüfen Dateinamen und eine 10-MiB-Grenze. Importdateien zunächst im bearbeitbaren Dialog zeigen; vor ausdrücklicher Bestätigung keine Datenbankänderung. Bestehende versionierte Repositoryvalidierung erhalten. Abbruch, fehlerhafte Dateien, parallele Auswahl und UTF-8 mit Mocks beziehungsweise JVM testen; eine echte Dateiauswahl erfordert weiterhin Geräteabnahme. Details: docs/SAVE_BACKUPS.md.

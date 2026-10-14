@@ -22,7 +22,9 @@ flutter run
 
 Für SQLite-Tests unter Linux wird zusätzlich `libsqlite3-dev` benötigt, unter Debian/Ubuntu beispielsweise über `sudo apt-get install libsqlite3-dev`.
 
-Der Demo-Modus benötigt keinen Server, keinen OpenAI-Schlüssel und keine kostenpflichtigen API-Aufrufe. Die App verwendet in diesem Stand den deterministischen Demo-Spielleiter; die optionale Backend-Erzählung ist noch nicht an die mobile Oberfläche angebunden. Die Android-Spracherkennung und Textausgabe nutzen die auf dem Gerät verfügbaren Systemdienste. Deutsche Sprachpakete müssen vorhanden sein; die Spracherkennung kann je nach Android-Dienst eine Internetverbindung benötigen. Eine vollständige Offline-Sprachfunktion wird nicht garantiert. Erkannte Eingaben lassen sich vor dem Absenden bearbeiten. Audiodateien werden von dieser App nicht dauerhaft gespeichert.
+Der Demo-Modus benötigt keinen Server, keinen OpenAI-Schlüssel und keine kostenpflichtigen API-Aufrufe. Ab Version **0.2.0** lässt sich unter Einstellungen zusätzlich ein eigener HTTPS-Backend-Erzähler mit kurzlebigem Sitzungstoken verbinden. Der Token bleibt ausschließlich im Arbeitsspeicher. Kostenpflichtige Anbieter benötigen eine ausdrückliche Freigabe; bei Ausfall erzählt die lokale Demo weiter. Regeln, Würfel und bestätigter Spielzustand bleiben lokal. Einrichtung und Grenzen stehen in [docs/BACKEND_CONNECTION.md](docs/BACKEND_CONNECTION.md).
+
+Die Android-Spracherkennung und Textausgabe nutzen die auf dem Gerät verfügbaren Systemdienste. Deutsche Sprachpakete müssen vorhanden sein; die Spracherkennung kann je nach Android-Dienst eine Internetverbindung benötigen. Eine vollständige Offline-Sprachfunktion wird nicht garantiert. Erkannte Eingaben lassen sich vor dem Absenden bearbeiten. Audiodateien werden von dieser App nicht dauerhaft gespeichert.
 
 Optionales Backend:
 
@@ -54,7 +56,9 @@ Ausgabe: `app/build/app/outputs/flutter-apk/app-debug.apk`. Der lokale Android-D
 
 **Das Herz der Ewigkeit** übernimmt die vorgegebene Geschichte in Aetheria mit Arescan in Silberhain. Der Angriffsgesamtwert 19 und der erzählte Schaden 14 bleiben historische Angaben. Fehlende Attribute, Trefferpunkte, Gold, Erfahrungspunkte, Ausrüstung und der ungeprüfte frühere Geschicklichkeitsmodifikator +7 werden nicht als bestätigte Regelwerte übernommen. Die Geschichte bleibt lesbar; vor neuen regelabhängigen Aktionen muss der Charakter vervollständigt werden. Auch die Kampfwerte des Schattenritters sind unbekannt: Der historische Kampf kann noch nicht regelkonform fortgesetzt werden, solange diese nicht ausdrücklich bestätigt werden.
 
-Charaktere und Kampagnen lassen sich als JSON anzeigen und in die Zwischenablage kopieren. Für ein dauerhaftes Backup den Text selbst in einer `.json`-Datei sichern; Importe erfolgen über den JSON-Eingabedialog. Die lokale Datenbank ist nicht zusätzlich verschlüsselt. Android-App-Backups sind deaktiviert; vor einer Deinstallation wichtige Spielstände exportieren.
+Seit App **0.2.2** lassen sich Charaktere und Kampagnen über **Als Datei speichern** direkt als JSON sichern. Android fragt nach dem Zielordner; die App benötigt dafür keine allgemeine Speicherberechtigung. Beim Import öffnet **Datei wählen** die Android-Dateiauswahl. Der geladene Text wird erst mit **Importieren** bestätigt und gespeichert. Abbrechen und fehlerhafte Dateien verändern den vorhandenen Spielstand nicht. JSON-Anzeige, manuelle Texteingabe und Zwischenablage bleiben verfügbar. Details und Dateigrenzen stehen in [docs/SAVE_BACKUPS.md](docs/SAVE_BACKUPS.md).
+
+Sicherungsdateien und die lokale Datenbank sind nicht zusätzlich verschlüsselt. Wähle einen geeigneten Speicherort; ein Cloud-Dateianbieter kann Daten zu seinem Dienst übertragen. Android-App-Backups sind deaktiviert; vor einer Deinstallation wichtige Spielstände exportieren.
 
 Die separate Demo-Kampagne **Das Licht von Mooswacht** beginnt in der Welt Lunaris mit **Liora**, einer menschlichen Kämpferin der Stufe 1. Sie enthält ausdrücklich festgelegte Demo-Werte und führt über einen Brunnen, einen Schlüssel und einen Waldschrein zu einer einfachen Begegnung. Sie dient zum Prüfen des Ablaufs ohne externe KI-Dienste. Importierbare Ausgangsspielstände liegen unter `app/assets/arescan.json` und `app/assets/demo.json`.
 
