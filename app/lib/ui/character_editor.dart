@@ -2,15 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 import '../domain/models.dart';
-
-const _abilityNames = <String, String>{
-  'strength': 'Stärke',
-  'dexterity': 'Geschicklichkeit',
-  'constitution': 'Konstitution',
-  'intelligence': 'Intelligenz',
-  'wisdom': 'Weisheit',
-  'charisma': 'Charisma',
-};
+import 'ability_assignment_dialog.dart';
 
 /// Edits nullable values explicitly: an imported unknown score stays unknown.
 class CharacterEditor extends StatefulWidget {
@@ -72,7 +64,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
       );
     }
     final scores = _original['abilities'] as Map? ?? <String, dynamic>{};
-    for (final key in _abilityNames.keys) {
+    for (final key in abilityLabels.keys) {
       _scores[key] = TextEditingController(text: scores[key]?.toString() ?? '');
     }
   }
@@ -221,6 +213,25 @@ class _CharacterEditorState extends State<CharacterEditor> {
     }
   }
 
+  Future<void> _assignAbilities() async {
+    final result = await showDialog<AbilityAssignment>(
+      context: context,
+      builder: (_) => AbilityAssignmentDialog(
+        hasExistingValues:
+            _scores.values.any((field) => field.text.trim().isNotEmpty) ||
+            _fields['background']!.text.trim().isNotEmpty,
+        level: int.tryParse(_fields['level']!.text.trim()) ?? 1,
+      ),
+    );
+    if (result == null || !mounted) return;
+    setState(() {
+      for (final entry in result.scores.entries) {
+        _scores[entry.key]!.text = entry.value.toString();
+      }
+      _fields['background']!.text = result.background;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -272,14 +283,22 @@ class _CharacterEditorState extends State<CharacterEditor> {
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 10),
                   child: Text(
-                    'Standardverteilung zur Auswahl: 15, 14, 13, 12, 10, 8. '
-                    'Modifikatoren und Übungsbonus werden aus bestätigten Werten berechnet.',
+                    'Startwerte für Stufe 1 mit Standardverteilung oder '
+                    'Punkte-Kauf bestimmen. Unbekannte Werte können auch '
+                    'weiterhin einzeln bestätigt werden.',
                   ),
                 ),
+                OutlinedButton.icon(
+                  key: const ValueKey('open-ability-assignment'),
+                  onPressed: _assignAbilities,
+                  icon: const Icon(Icons.auto_fix_high_outlined),
+                  label: const Text('Attribute ermitteln'),
+                ),
+                const SizedBox(height: 14),
                 Wrap(
                   spacing: 14,
                   children: [
-                    for (final ability in _abilityNames.entries)
+                    for (final ability in abilityLabels.entries)
                       _number(ability.key, ability.value, min: 1, max: 30),
                   ],
                 ),
@@ -305,7 +324,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
                     labelText: 'Attribut der verwendeten Waffe',
                   ),
                   items: [
-                    for (final ability in _abilityNames.entries)
+                    for (final ability in abilityLabels.entries)
                       DropdownMenuItem(
                         value: ability.key,
                         child: Text(ability.value),

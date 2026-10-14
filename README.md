@@ -6,7 +6,7 @@ Der Schwerpunkt liegt auf einem spielbaren Solo-Ablauf: Charakter und Kampagne a
 
 ## ZIP nach GitHub übertragen
 
-Das Korrektur-ZIP **Dnd-GitHub-Korrektur-0.2.3.zip entpacken und seine Projektinhalte einschließlich `.github/`** direkt in die Repositorywurzel übertragen; das neue Paket enthält keinen äußeren `Dnd/`-Ordner. Nur die ZIP-Datei hochzuladen startet keinen Android-Build. Vorhandene Dateien vorher vergleichen und in einem neuen Branch arbeiten. Die [Schritt-für-Schritt-Anleitung](docs/UPLOAD_TO_GITHUB.md) erklärt Zugriff, Upload und APK-Download. Vor dem Build prüft `python3 scripts/verify_project.py` die Vollständigkeit ohne Flutter/Android SDK.
+Das Korrektur-ZIP **Dnd-Projekt-0.3.0.zip entpacken und seine Projektinhalte einschließlich `.github/`** direkt in die Repositorywurzel übertragen; das neue Paket enthält keinen äußeren `Dnd/`-Ordner. Nur die ZIP-Datei hochzuladen startet keinen Android-Build. Vorhandene Dateien vorher vergleichen und in einem neuen Branch arbeiten. Die [Schritt-für-Schritt-Anleitung](docs/UPLOAD_TO_GITHUB.md) erklärt Zugriff, Upload und APK-Download. Vor dem Build prüft `python3 scripts/verify_project.py` die Vollständigkeit ohne Flutter/Android SDK.
 
 ## Starten und prüfen
 
@@ -51,6 +51,23 @@ flutter build apk --debug
 ```
 
 Ausgabe: `app/build/app/outputs/flutter-apk/app-debug.apk`. Der lokale Android-Debug-Build wurde erfolgreich geprüft; die APK benötigt mindestens Android 7.0 (API 24). Tatsächlich durchgeführte Prüfungen und verbleibende Grenzen stehen in [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) und [TESTING.md](TESTING.md). Ein erfolgreicher Build ersetzt keinen Test auf einem Android-Gerät.
+
+## Attribute erstellen
+
+Ab **0.3.0** öffnet **Attribute ermitteln** im Charaktereditor eine
+Stufe-1-Starthilfe. Weise den Standardsatz 15, 14, 13, 12, 10, 8 zu oder kaufe
+Grundwerte von 8 bis 15 mit bis zu 27 Punkten. Wähle anschließend ausdrücklich
+Akolyth, Krimineller, Weiser oder Soldat sowie dessen zulässige
+Attributssteigerungen. Die Vorschau zeigt Grundwert, Bonus, Endwert und
+Modifikator. Erst **Attribute übernehmen** ändert den Editor, und erst
+**Charakter speichern** bestätigt die Daten dauerhaft. Vorhandene Werte
+benötigen eine zusätzliche Bestätigung zum Ersetzen; Abbrechen erhält sie.
+
+Die Hilfe vergibt Attribute und die gewählte Hintergrundbezeichnung.
+Fertigkeiten, Talente, Ausrüstung, Trefferpunkte und Klassenfortschritt brauchen
+weiter eigene bestätigte Angaben. Historische Arescan-Werte werden nicht
+abgeleitet oder automatisch ergänzt. Regeln und Quellen:
+[docs/ABILITY_RULES.md](docs/ABILITY_RULES.md).
 
 ## Die beiden Ausgangskampagnen
 

@@ -63,7 +63,7 @@ Die Testabdeckung soll natürliche Würfelwerte und Gesamtwerte, Attributmodifik
 Diese Schritte sind eine noch separat durchzuführende Abnahme. Gerät, Android-Version, APK-Commit und Sprachdienst im Testbericht festhalten.
 
 1. APK installieren und App starten. Im Demo-Modus ohne Backend und ohne API-Schlüssel beginnen.
-2. Charakter anlegen, speichern und anzeigen; Werte bearbeiten. Die App schließen und neu öffnen, anschließend denselben Charakter prüfen.
+2. Charakter anlegen. **Attribute ermitteln** öffnen und Standardwerte beziehungsweise Punkte-Kauf testen. Hintergrund und Steigerung ausdrücklich wählen; Vorschau und Modifikatoren prüfen. Abbrechen muss eingegebene/historische Werte bewahren, bekannte Werte benötigen Ersetzbestätigung. Hilfe übernehmen, übrige Daten bestätigen, speichern und anzeigen; Werte bearbeiten. Die App schließen und neu öffnen, anschließend denselben Charakter prüfen.
 3. Neue Demo-Kampagne starten. Texteingabe senden, Antwort lesen und mehrere freie Handlungen durchführen. Den Umfang der Demo-Interpretation dabei berücksichtigen.
 4. Automatisch und manuell würfeln. Natürliches Ergebnis und Gesamtergebnis prüfen; sicherstellen, dass Boni genau einmal angewendet werden.
 5. Einen einfachen Kampf bis zum Ende durchführen. Treffer, Fehlschlag, kritischen Treffer, Trefferpunkte und gespeichertes Ergebnis prüfen.
@@ -96,7 +96,7 @@ flutter build apk --release --target-platform android-arm64
 
 Ausgabe `build/app/outputs/flutter-apk/app-release.apk` sofort sichern, bevor
 für android-arm oder android-x64 erneut gebaut wird. Die CI kopiert jede
-Architektur separat nach build/alpha. Metadaten müssen App 0.2.3, Buildcode 5,
+Architektur separat nach build/alpha. Metadaten müssen App 0.3.0, Buildcode 6,
 API 24 und die ausgewählte ABI zeigen; Signatur mit einer bisherigen lokalen
 APK vergleichen. Ein eigener APK-Build und Metadatenprüfung ersetzen weiterhin
 keine Installation. Je Architektur außerdem Start, Sprache, SQLite-Neustart und
@@ -107,3 +107,14 @@ lokal erfolgreich gebaut, Metadaten, ABI und gleiche lokale Testsignatur
 verifiziert. Der vollständige scripts/check.sh-Lauf ist erfolgreich: 22 Python-Tests,
 22 Backend-Tests, 178 Flutter-Tests einschließlich realem lokalem Protokolltest
 und saubere Flutter-Analyse. Remote-CI und Gerätetests bleiben offen.
+
+## Attributshilfe 0.3.0
+
+Neue Domain-Tests prüfen Standardsatz, alle 720 Zuweisungen, Punktekosten,
+Höchstbudget und zulässige Hintergrundsteigerungen. Die Widgettests prüfen
+unter anderem 360-Pixel-Breite, explizite Auswahl, Punktgrenzen, Vorschau,
+Bestätigung und Abbruch. SQLite-Integration prüft Neustart, Export/Import,
+regelkonforme Modifikatoren, keine wiederholten Boni und historischen Arescan.
+Ein realer SQLite-Triggerfehler nach begonnenem Schreiben muss Transaktion
+und angezeigten Zustand unverändert lassen. Aktuelle Gesamtergebnisse stehen
+in DEVELOPMENT_STATUS.md; diese Tests ersetzen keine Geräteprüfung.

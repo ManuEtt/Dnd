@@ -107,3 +107,18 @@ Signatur und Architektur prüfen. Neue Downloadlinks müssen aus bestätigten
 Datei-/Artefaktergebnissen stammen; ein Workspacepfad allein beweist keinen
 funktionierenden Benutzerdownload. Drive-Dateien privat halten; vorhandene
 Freigaben nicht ändern. Details: docs/APK_DOWNLOAD.md.
+
+## Attributstarthilfe seit 0.3.0
+
+Grundwerte und Hintergrundsteigerungen getrennt halten. Standardsatz muss jeden
+Wert genau einmal enthalten; Punktekauf validiert nur die neuen Basiswerte von 8 bis 15
+und das Höchstbudget von 27 Punkten. Nicht ausgegebene Punkte werden sichtbar angezeigt und
+nicht als ausdrücklich verbotener Regelverstoß dargestellt. Regelquelle und
+Auslegung: docs/ABILITY_RULES.md. Hintergrundboni niemals auf bereits bestätigte
+Endwerte erneut addieren. Die Oberfläche übernimmt nur ausdrücklich gewählte
+Hintergrundsteigerungen, bewahrt bestehende Werte bis zur Bestätigung und lässt
+manuelle/historische Charakterbearbeitung zu. Schema 1 bleibt kompatibel.
+Die vier Hintergrundbezeichnungen sind keine vollständige Hintergrundimplementation:
+Talente, Fertigkeiten, Ausrüstung und Klassenwerte werden weiterhin separat
+bestätigt. Neue Ergänzungen an diesen Regeln vor Implementierung im offiziellen
+SRD 5.2.1 prüfen und mit Domain-/Persistenztests absichern.

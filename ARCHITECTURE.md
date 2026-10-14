@@ -18,6 +18,23 @@ Erzähltext ist kein Datenbankbefehl. Ein Spielleiter darf keine Trefferpunkte, 
 
 Natürliche Würfelwerte und Gesamtwerte werden getrennt modelliert. Bei einer manuell eingegebenen Gesamtsumme dürfen Modifikatoren nicht erneut addiert werden. Für Tests wird die Zufallsquelle kontrolliert. Unvollständige Charaktere dürfen nicht mit erfundenen Werten in neue Regelproben gelangen.
 
+## Explizite Attributerstellung
+
+AbilityAllocation und BackgroundAbilityBoost bilden die SRD 5.2.1-Startwerte
+in einer UI-/speicherunabhängigen Domäne ab. Grundwerte und gewählte
+Hintergrundsteigerungen werden getrennt gehalten; die Komposition erzeugt
+unveränderliche Endwerte und addiert niemals auf ein früheres Ergebnis.
+Die Attributsmodifikatoren berechnet weiterhin RulesEngine aus den Endwerten.
+
+Der Charaktereditor öffnet einen separaten Entwurf. Hintergrund und
+Steigerungsmethode werden ausdrücklich gewählt, bekannte Werte vor dem Ersetzen
+bestätigt. Erst die Übernahme setzt die sechs Editorfelder und Hintergrundname;
+die eigentliche Speicherung erfolgt weiter über die bestehende Charakter-
+beziehungsweise Kampagnentransaktion. Historie und unbekannte weitere Werte
+werden nicht daraus abgeleitet. JSON-/SQLite-Schema bleibt Version 1.
+Die Hilfe ist kein vollständiger Hintergrund-, Klassen- oder Charaktergenerator;
+Regelquelle und Auslegung: docs/ABILITY_RULES.md.
+
 ## SQLite und Wiederherstellung
 
 Die Datenbank verwendet eine Schema-Version. Änderungen an einem veröffentlichten Schema benötigen eine Migration und einen Test mit bestehendem Datenbestand. Importdateien besitzen ebenfalls eine Formatversion und werden vor dem Speichern geprüft. Ein ungültiger Import darf den bestehenden Zustand nicht überschreiben.

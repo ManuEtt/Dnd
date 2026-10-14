@@ -1,6 +1,6 @@
 # Korrektur-ZIP in ManuEtt/Dnd übernehmen
 
-Das neue **Dnd-GitHub-Korrektur-0.2.3.zip** enthält die Projektdateien direkt
+Das neue **Dnd-Projekt-0.3.0.zip** enthält die Projektdateien direkt
 in der ZIP-Wurzel. Nach dem Entpacken müssen `README.md`, `app/`, `backend/`,
 `scripts/` und `.github/` nebeneinander liegen. Das ältere Paket mit äußerem
 `Dnd/`-Ordner bleibt lesbar; beim Übertragen sind dessen **Inhalte** zu wählen.
@@ -28,7 +28,7 @@ not granted“. Das beweist keine Löschung oder Umbenennung des Repositorys.
 
 ## Über die GitHub-Webseite
 
-1. **Dnd-GitHub-Korrektur-0.2.3.zip entpacken**. In den Ordner wechseln, der
+1. **Dnd-Projekt-0.3.0.zip entpacken**. In den Ordner wechseln, der
    direkt `README.md` und `app/` enthält.
 2. Im Repository einen Entwicklungsbranch erstellen, beispielsweise
    `fix/upload-and-alpha-download`. Vorhandene Dateien vergleichen.
@@ -42,6 +42,10 @@ not granted“. Das beweist keine Löschung oder Umbenennung des Repositorys.
    Namen anlegen und seinen Inhalt aus der entpackten Datei kopieren.
 5. Änderungen committen. Bei mehreren Uploads denselben Entwicklungsbranch
    verwenden; anschließend den Workflow neu starten.
+
+Das vollständige 0.3.0-Paket enthält 100 Dateien. Bei Problemen im Browser zwei
+Stapel auf demselben Entwicklungsbranch übertragen; vorhandene Dateien zuvor
+vergleichen und `.github/` ausdrücklich mitnehmen.
 
 GitHub begrenzt einzelne Web-Uploads auf 25 MiB pro Datei und einen Stapel auf
 100 Dateien. Bei mehr Dateien kleinere Stapel verwenden. Das Quell-ZIP enthält

@@ -6,10 +6,11 @@ Die Reihenfolge folgt dem Ziel eines dauerhaft fortsetzbaren Android-Abenteuers.
 
 Das ZIP in einem neuen Branch von `ManuEtt/Dnd` integrieren, den GitHub-Workflow ausführen und seine Logs prüfen. Danach die Debug-APK auf einem Android-Gerät installieren und den dokumentierten Sprach-, Speicher- und Kampfablauf aus [TESTING.md](TESTING.md) durchführen. Erkenntnisse vor zusätzlichen Funktionen beheben.
 
-Ohne Geräte-/Repositoryzugriff ist der nächste begrenzte Code-Schritt die SRD-konforme Attributverteilung bei der Charaktererstellung: Standardwerte und Punkte-Kauf, offizielle Quelle vor Implementierung prüfen, historische unbestätigte Werte erhalten und Grenzfälle testen.
+Standardwerte und Punktekauf mit expliziten Hintergrundsteigerungen sind seit 0.3.0 implementiert und automatisiert geprüft; die Geräteabnahme folgt. Der nächste begrenzte Code-Schritt ist ein Vorschlag für Stufe-1-Trefferpunkte aus Klasse und bestätigtem Konstitutionsmodifikator anhand SRD 5.2.1. Vor Implementierung die offizielle Quelle lesen; bestehende/historische TP nie stillschweigend überschreiben.
 
 ## Phase 1 und 2: Solo-Alpha absichern
 
+- Attributshilfe 0.3.0 auf einem Gerät abnehmen und Charaktererstellung um geprüfte Klassen-Startwerte erweitern.
 - Charakterbearbeitung und Importvalidierung anhand der tatsächlich unterstützten Regeloptionen erweitern.
 - Dateibasierte JSON-Sicherungen aus App 0.2.2 auf Android mit lokalem und optionalem Cloud-Dokumentanbieter abnehmen; Export, Abbruch, ungültige Importe und Wiederherstellung prüfen.
 - Automatischen und manuellen Würfelmodus einschließlich natürlichem Wert und Gesamtwert prüfen.

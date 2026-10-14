@@ -8,6 +8,12 @@ Die erforderliche Namensnennung wurde am 13. Oktober 2026 anhand der offiziellen
 
 Dieses Projekt implementiert eine ausgewählte Regelteilmenge und eigene deutsche Oberflächentexte; es ist keine vollständige Reproduktion des SRD. Fantasy-Demotexte und Weltbestandteile werden im Projekt getrennt von Regeldefinitionen gehalten. Es werden keine offiziellen Illustrationen oder weiteren nicht freigegebenen Publikationsinhalte gebündelt. Die eigenständige Produktbezeichnung lautet „Der lebendige Spielleiter“.
 
+Die Attributshilfe seit App 0.3.0 wurde am 14. Oktober 2026 anhand der englischen
+Seiten 21/83 und deutschen Seiten 24/93 erneut geprüft. Sie setzt Standardsatz,
+Punktkostentabelle und die Attributssteigerungen von vier freigegebenen
+Hintergründen um. Die verwendete eigene UI und dokumentierte Auslegung zur
+ungenutzten Punktmenge stehen in [docs/ABILITY_RULES.md](docs/ABILITY_RULES.md).
+
 ## Softwareabhängigkeiten
 
 Flutter, Dart, Fastify und die in den Lockdateien festgehaltenen Pakete besitzen jeweils eigene Lizenzen. Diese bleiben maßgeblich. Das ZIP enthält Projektquellcode und Lockdateien, keine Kopie der installierten Paketverzeichnisse. Flutter zeigt die Lizenztexte der eingebundenen Flutter-Pakete über die dafür vorgesehenen Lizenzinformationen an beziehungsweise kann sie über die Paketquellen beziehen. Vor einer Veröffentlichung sind Lizenzhinweise für die tatsächlich gebündelten Abhängigkeiten erneut zu prüfen.

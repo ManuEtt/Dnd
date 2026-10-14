@@ -1,6 +1,6 @@
 # Entwicklungsstatus
 
-Stand: 14. Oktober 2026. Aktuelle Etappe: App 0.2.3 mit korrigierter ZIP-Übergabe, kleinen Alpha-APKs, Android-Dateisicherungen und relevantem Erinnerungsabruf; autonome Entwicklung mit gesicherten Inkrementen für `ManuEtt/Dnd`.
+Stand: 14. Oktober 2026. Aktuelle Etappe: App 0.3.0 mit geprüfter SRD-Attributstarthilfe; Attributshilfe und kleine APKs geprüft; Übergabe gesichert; autonome Entwicklung mit gesicherten Inkrementen für `ManuEtt/Dnd`.
 
 Die vorhandene GitHub-Codebasis war während der Entwicklung nicht verfügbar. Dieses Paket wurde neu aufgebaut und noch nicht mit einer älteren Repositoryversion verglichen. Ein Push, ein Pull Request und eine Ausführung des Workflows auf GitHub sind deshalb nicht Bestandteil des nachgewiesenen Stands.
 
@@ -8,6 +8,7 @@ Die vorhandene GitHub-Codebasis war während der Entwicklung nicht verfügbar. D
 
 - Flutter-/Android-Projekt mit Material 3 und deutscher Navigation: Start, Charaktere, Abenteuer, Journal und Einstellungen.
 - Flaches Korrektur-ZIP ohne äußeren Dnd-Ordner, Projektprüfung vor SDK-Installation und 22 Python-Paket-/Strukturtests. Kleine optimierte interne Alpha-APKs für ARM64, ARM32 und x86_64, weiterhin mit Testsignatur.
+- Explizite Attributstarthilfe: Standardsatz oder Punktekauf bis 27 Punkte, vier SRD-Hintergründe, getrennte Grund-/Bonus-/Endwerte mit Modifikatorvorschau. Bekannte Werte benötigen Ersetzbestätigung; Öffnen/Abbruch bewahrt historische und ungespeicherte Eingaben. Nur Attribute und Hintergrundname werden übernommen.
 - Charaktereditor mit nullable, ausdrücklich unbestätigten Werten; JSON-Export/-Import, Kampagnenauswahl und lokale Löschfunktionen. Seit 0.2.2 direkte Android-Dokumentauswahl und Dateisicherung, explizite Importbestätigung sowie Zwischenablage als Fallback.
 - Deterministischer deutscher Spielleiter als kostenlose Voreinstellung. Optionaler HTTPS-Backend-Erzähler für freie Texte; lokale Regeln, Würfel und bestätigte Daten bleiben maßgeblich. Anbieterantworten ersetzen ausschließlich die neue Erzählung und ihren Ereignis-Checkpoint.
 - Demo „Das Licht von Mooswacht“ in Lunaris mit Liora, Erkundung, Schlüssel, Quest und einfacher Gegnerbegegnung.
@@ -27,6 +28,10 @@ Der Workflow `.github/workflows/android-build.yml`, Projekt- und Übergabedokume
 
 ## GETESTET
 
+Gesamter scripts/check.sh-Lauf für 0.3.0 erfolgreich: **222 Flutter-Tests** einschließlich lokalem Node-/Dart-Protokolltest, **22 Backend-Tests**, **22 Python-Paket-/Strukturtests** und Flutter-Analyse ohne Befunde mit der festgehaltenen Toolchain/Node 22.14.0. Zusätzlich nach Ergänzung der beiden neuen Pflichtdateien Python-Prüfer und alle 22 zugehörigen Tests erneut bestanden. 44 neue Flutter-Tests: 24 Domain-Regeltests, 7 echte SQLite-/Controller-Tests und 13 Widgettests. Der Debug-APK-Build 0.3.0+6 ist erfolgreich, Metadaten und Testsignatur geprüft.
+
+Die Regeltests prüfen alle 720 Standardsatz-Zuweisungen, Punktekostentabelle, Budget und jede erlaubte Hintergrundsteigerung. Die UI-Prüfung umfasst 360 px, explizite Auswahl, Restpunkte, Basis-/Bonusvorschau, Modifikator 17→+3, Bestätigung und Abbruch. SQLite prüft Neustart/Export/Import, keine doppelten Boni, Arescan 19/14 und unbestätigten +7 sowie unveränderte Welt-/Inventardaten und ungültig gewordene alte Würfelproben. Ein echter später SQLite-Triggerfehler bestätigt vollständigen Rollback von Ereignis/Snapshot und Anzeige; erneutes Speichern gelingt. Statische zusätzliche Regel-/UI-Prüfung ohne Blocker. Kein realer Geräte-/Sprach-/GitHub-Test dadurch behauptet.
+
 Erneuter kompletter scripts/check.sh-Lauf für 0.2.3 erfolgreich: Projektstrukturprüfung, **22 Python-Paket-/Strukturtests**, Backend-Typecheck/Build und **22 Backend-Tests** mit Node.js 22.14.0, saubere Flutter-Analyse sowie **178 Flutter-Tests** mit RUN_BACKEND_SMOKE=1. Neue Tests prüfen beide ZIP-Wurzeln, Byte-Erhalt, Geheimnis-/Cache-Ausschluss, Symlinkablehnung, unvollständige Uploads, Gradle-JAR-CRC und Unix-Zeilenenden. Keine kostenpflichtigen Modellaufrufe.
 
 Drei optimierte Alpha-APKs lokal erfolgreich gebaut und geprüft: arm64-v8a 17.382.068 Byte, armeabi-v7a 14.861.712 Byte, x86_64 18.554.326 Byte. Alle Version 0.2.3, Buildcode 5, API 24+, richtige ABI und gleiche verifizierte lokale Debug-Testsignatur wie die bisherige 0.2.2-APK. Je ABI --target-platform verwendet, damit keine ABI-Codeoffsets spätere Updates verhindern. Kein Store-Release. ARM64 und ARM32 privat auf Google Drive erstellt und per Metadaten mit korrekter Größe/MIME/Owner-Recht gelesen; ARM64 zusätzlich über die Drive-Download-API abgerufen und byteidentisch per SHA-256 mit dem Original verglichen. Der Benutzerdownload und die Installation auf einem echten Gerät bleiben separat abzunehmen.
@@ -41,7 +46,7 @@ Die Abschlusskorrektur ist ebenfalls abgenommen: Trennung und Dispose beenden au
 
 ## NICHT GETESTET
 
-- Installieren und vollständiger End-to-End-Ablauf auf einem echten Android-Gerät.
+- Installieren und vollständiger End-to-End-Ablauf auf einem echten Android-Gerät, einschließlich neuer Attributshilfe mit großer Schrift/Screenreader.
 - Echte Android-Dokumentauswahl, Dokumentanbieter, Berechtigungsübergabe, Schreibfehler und Aktivitätsende während einer Dateisicherung. Die Dateibrücke ist kompiliert; Dart-Kanal, Oberfläche und native I/O-Helfer werden getrennt automatisiert geprüft.
 - Deutsche Mikrofoneingabe und Sprachausgabe mit einem konkreten Android-Sprachanbieter.
 - Unterbrechung, Berechtigungsablehnung und Ausfall von echten Gerätesprachdiensten; die zugehörige App-Logik ist mit Mocks getestet.
@@ -67,6 +72,8 @@ Die Abschlusskorrektur ist ebenfalls abgenommen: Trennung und Dispose beenden au
 
 ## Letzter Build und nächste Aufgabe
 
+**App 0.3.0+6: universeller Android-Debug-Build erfolgreich**, API 24+, Ziel 36, gleiche Paket-ID, Metadaten und Debug-Signatur geprüft. Drei optimierte kleine Alpha-APKs wurden mit normaler Buildnummer 6 erstellt und per Metadaten, Architektur und gleicher lokaler Testsignatur geprüft; alle unter 25 MiB. Toolchain unverändert wie im historischen Debugnachweis unten; letzte Gerätemessung weiterhin nicht vorhanden.
+
 **App 0.2.3+5: drei optimierte kleine Alpha-APKs erfolgreich gebaut**, Release-AOT mit interner Debug-Testsignatur; Toolchain wie im folgenden Debugnachweis. Die CI-Konfiguration baut zusätzlich weiterhin die universelle Debug-APK, prüft die Struktur früh und hält die kleinen Artefakte 30 Tage bereit. YAML und lokale Befehle sind geprüft; der tatsächliche GitHub-Lauf ist weiterhin blockiert.
 
 **App 0.2.2+4: Android-Debug-Build erfolgreich** mit Flutter 3.35.7/Dart 3.9.2, Temurin-JDK 17.0.20.1, Gradle 8.12, AGP 8.9.1, Kotlin 2.1.0, SDKs 34/35/36, Build Tools 35.0.0, NDK 27.0.12077973 und CMake 3.22.1. Paket-ID `de.aetheria.lebendiger_spielleiter`, Android ab API 24 (7.0), Ziel-API 36. APK-Metadaten (Version 0.2.2, Code 4), erforderliche Rechte und Debug-Signatur wurden geprüft. Keine allgemeine Speicherberechtigung hinzugefügt. Die Debug-Signatur entspricht der vorherigen 0.2.0-APK; ein Update ist damit grundsätzlich möglich, aber noch nicht auf einem Gerät geprüft. Der abschließende Build nach Dateiintegration war erfolgreich.
@@ -75,10 +82,10 @@ Anfangs fehlten ein vollständiger Java-Compiler, die Sprachplugin-SDKs und CMak
 
 ## Gesicherter Stand und Fortsetzung
 
-- Letzter gesicherter Funktionsstand: `7d4144a76671c1151bee6db2508912d29499b4de` (0.2.3), Branch `feat/solo-alpha`.
-- Zuletzt fertiggestellt: App 0.2.3 mit flacher ZIP-Übergabe, Projektprüfer, 22 Paket-/Strukturtests und kleinen Alpha-APKs mit normalen Versionscodes. Vollständiger Check mit 22 Python-, 22 Backend- und 178 Flutter-Tests sowie Analyse erfolgreich. Bestehende native I/O-Tests bleiben 12 bestanden, unveränderter Code. Die drei optimierten APKs sind gebaut/signaturgeprüft; Dateidownloads werden über private Drive-Dateien bereitgestellt.
-- Aktueller Abschluss: Korrekturen getestet und committet. Flaches Quell-ZIP enthält genau 94 versionierte Dateien, CRC und alle Quellbytes stimmen, entpackte Strukturprüfung bestanden. ARM64-Drive-Download ist byteidentisch bestätigt. Die abschließende ZIP-Übernahme und konkreten Dateilinks/Prüfsummen stehen im externen Übergabe-Checkpoint. Keine Schemaänderung oder neue App-Laufzeitabhängigkeiten. Drive-Dateien bleiben privat; keine öffentliche Freigabe geändert.
+- Letzter gesicherter Funktionsstand: `c0611e15134449b50ab856facb03a49514dbeda4` (0.3.0), Branch `feat/solo-alpha`.
+- Zuletzt fertiggestellt: App 0.3.0-Attributshilfe mit Standardsatz/Punktekauf und ausdrücklicher SRD-Hintergrundsteigerung. 222 Flutter-, 22 Backend- und 22 Python-Tests sowie Analyse und Debug-Build erfolgreich. Bestehende native I/O-Tests bleiben 12 bestanden, unveränderter Code.
+- Aktueller Abschluss: neue Regeln, Editor und Persistenz geprüft. Optimierte APKs geprüft und Code committet. ARM64 und ARM32 privat auf Drive per Metadaten bestätigt; ARM64 heruntergeladen und byteidentisch per SHA-256 geprüft. Flaches Quell-ZIP mit genau 100 versionierten Dateien, CRC/Quellbytes und entpackter Strukturprüfung abgenommen; endgültige ZIP-Übernahme/Links/Prüfsummen im externen Checkpoint. Keine Schemaänderung oder neue Laufzeitabhängigkeit. Die Hintergrundhilfe vergibt noch keine Talente, Fertigkeiten, Werkzeuge oder Ausrüstung.
 - Bekannte Grenzen: kein automatischer Token-Refresh, keine abgenommenen Geräte-/OpenAI-/GitHub-Actions-Tests, begrenzte Regel- und Demo-Interpretation. Bei einem unterbrochenen Export kann eine bereits vollständig geschriebene Datei trotz fehlender Erfolgsantwort erhalten bleiben; auch die Entfernung einer fehlgeschlagenen neuen Datei hängt vom Dokumentanbieter ab. Kein Verlust bestätigter SQLite-Spielstände in den ausgeführten Tests.
-- Nächster konkreter Entwicklungsschritt ohne Gerätezugriff: regelkonforme Attributverteilung bei der Charaktererstellung (Standardwerte und Punkte-Kauf) anhand SRD 5.2.1 implementieren und mit Grenz-/Charaktertests prüfen. Vorher offizielle Regelquelle lesen. Historische unbestätigte Arescan-Werte nicht automatisch ergänzen. Sobald Gerät/Zugriff bereitsteht, Dateisicherung, HTTPS-/Sprachpfad und GitHub Actions separat abnehmen.
-- Übergabepakete: `Dnd-GitHub-Korrektur-0.2.3.zip` mit Dateien direkt in der Wurzel; `Der-lebendige-Spielleiter-0.2.3-arm64.apk` beziehungsweise `-arm32.apk` als kleine interne Alpha. Der begleitende `Dnd-0.2.3-status.json` hält abschließenden Git-HEAD, SHA-256 und bestätigte private Drive-Links außerhalb des Quellcode-ZIPs fest. Die bisherigen Archive bleiben erhalten.
+- Nächster konkreter Entwicklungsschritt ohne Gerätezugriff: Stufe-1-Trefferpunkte aus ausdrücklich gewählter Klasse und bestätigtem Konstitutionsmodifikator vorschlagen. Offizielle SRD 5.2.1-Klassenquellen vorher lesen; bestehende/historische TP erst nach Bestätigung ändern, Klassen-/Modifikatorgrenzen und Speicherung testen. Sobald Gerät/Zugriff bereitsteht, Dateisicherung, HTTPS-/Sprachpfad und GitHub Actions separat abnehmen.
+- Übergabepakete: Dnd-Projekt-0.3.0.zip mit Dateien direkt in der Wurzel sowie Der-lebendige-Spielleiter-0.3.0-arm64.apk/arm32.apk. Externer Dnd-0.3.0-status.json erfasst abschließenden Git-HEAD, SHA-256 und bestätigte private Drive-Links. Alte Übergabepakete bleiben erhalten.
 - Der tatsächliche Git-HEAD wird vor jeder Fortsetzung mit `git log -1 --oneline` geprüft. Keine zusätzlichen Credits oder Limit-Zurücksetzungen wurden ausgelöst. Ein erkennbares Kontingentlimit wird nicht aus nicht vorhandenen Messwerten abgeleitet.
