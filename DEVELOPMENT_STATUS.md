@@ -1,5 +1,30 @@
 # Entwicklungsstatus
 
+## Entwicklungsinkrement: SRD-5.2.1-Start-Trefferpunkte (0.3.2+8, im Quellstand integriert)
+
+- Neue reine Dart-Regellogik `StartingHitPoints.propose` für die zwölf
+  SRD-5.2.1-Klassen (deutsche/englische Namen): Stufe 1 = maximaler
+  Klassen-Trefferwürfel + bestätigter Konstitutionsmodifikator, mindestens 1 TP.
+- Im Charaktereditor ein separater, ausdrücklich zu bestätigender Vorschlag.
+  Abbrechen, unbekannte Werte und Stufen größer 1 ändern keine Charakterwerte.
+- Neue Domänen- und Widgettests hinzugefügt; **in diesem Übergabepaket nicht
+  ausgeführt**, da die aktuelle Arbeitssitzung keine Flutter-/Dart-Toolchain hat.
+- **Vollständiger Quellstand direkt integriert**: Alle 103 Originaldateien aus
+  GitHub-main `4a8cfe9` über ihre Git-Blob-SHA geprüft, dazu fünf direkte
+  HP-Code-/Test-/Statusänderungen und die Versions-/Dokumentationsaktualisierung.
+  Projektstrukturprüfung und 22 Python-Tests erfolgreich.
+- **Noch nicht nach GitHub geschrieben**: Die GitHub-Integration verweigert
+  Branch-Erstellung mit 403. Nach Import `flutter analyze`, `flutter test`
+  und GitHub-CI ausführen; erst danach als getestet melden.
+- Nächstes Inkrement: Verteilungsmethode/Basiswerte/Boni persistieren und
+  freie Attributbearbeitung bei regelkonform neu erstellten Charakteren
+  gegen Umgehung des 27-Punkte-Budgets absichern, Altimporte schützen.
+
+Hinweis zum vorherigen Stand: Der GitHub-Actions-Lauf `38582180726`
+auf `4a8cfe9` war tatsächlich erfolgreich: 254 Flutter-Tests, Backend- und
+Python-Tests sowie Debug-/ARM64-/ARM32-/x86_64-APKs. Diese Ergebnisse
+gelten für 0.3.1, **nicht** als Abnahme des neuen 0.3.2-Codes.
+
 Stand: 14. Oktober 2026. Aktuelle Etappe: App 0.3.1 mit Android-Sprachkorrekturen, Geräte-Rückmeldung und nachgewiesener GitHub-CI-Ursache; autonome Entwicklung mit gesicherten Inkrementen für `ManuEtt/Dnd`.
 
 Der Lesezugriff auf GitHub ist jetzt vorhanden. Der hochgeladene main-Stand

@@ -1,5 +1,14 @@
 # Der lebendige Spielleiter
 
+**Neuer Quellstand 0.3.2+8 (noch ohne Flutter-Buildabnahme):** Ein
+regelkonformer Stufe-1-Trefferpunktevorschlag aus Klasse und Konstitution ist
+direkt im Charaktereditor integriert und erfordert ausdrückliche Bestätigung.
+Das vollständige ZIP enthält `app/`, `backend/`, `scripts/`, die versteckte
+`.github/`-Struktur und die ursprünglichen Projektdateien unmittelbar an
+der Wurzel. Für GitHub den ZIP-Inhalt entpacken und die enthaltenen Dateien
+hochladen, nicht das ZIP selbst als einzige Repositorydatei ablegen.
+
+
 Deutschsprachiger Fantasy-Spielleiter für Android mit Flutter, lokalem Kampagnengedächtnis und einem kostenlosen Demo-Modus in [ManuEtt/Dnd](https://github.com/ManuEtt/Dnd). Der zunächst unabhängig erstellte Stand wurde nach Wiederherstellung des Zugriffs mit dem hochgeladenen 0.3.0-Repository verglichen: Die Dateiinhalte stimmen überein, lediglich vier Ausführungsrechte unterscheiden sich. Neue Korrekturen bauen auf diesem Repositorystand auf.
 
 Der Schwerpunkt liegt auf einem spielbaren Solo-Ablauf: Charakter und Kampagne anlegen, Entscheidungen eingeben, mit einem deterministischen Spielleiter interagieren, würfeln, einfache Kämpfe austragen und den bestätigten Zustand wieder laden. Der Demo-Spielleiter verarbeitet einige Handlungsarten und liefert passende Szenen; frei formulierte Texte sind möglich, die Antworttiefe ist jedoch begrenzt. Eine umfassende generative KI und eine vollständige Umsetzung aller SRD-Regeln sind weitere Entwicklungsschritte.

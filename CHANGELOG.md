@@ -1,5 +1,15 @@
 # Änderungsprotokoll
 
+## 0.3.2 – Vorbereitung, 14. Oktober 2026 (Start-Trefferpunkte nach SRD 5.2.1)
+
+- Regelklasse `StartingHitPoints`: maximaler Klassen-Trefferwürfel plus KO-Modifikator für Stufe 1; zwölf SRD-Klassen, mindestens 1 TP.
+- Neuer Button „Start-TP nach D&D vorschlagen“ im Charaktereditor mit eigener Vorschau und ausdrücklicher Bestätigung.
+- Bisherige, importierte oder historische Trefferpunkte werden nur nach Bestätigung ersetzt; keine automatische Neuberechnung bei höherer Stufe.
+- 19 neue Dart-Domänentests und ein Flutter-Widgettest im Quellcode; **Flutter-Test und Android-Build für 0.3.2 noch nicht ausgeführt**.
+- Vollständiger Quellstand aus GitHub-Commit `4a8cfe9` geprüft und in das direkt importierbare ZIP integriert. Strukturprüfung und 22 Python-Tests nach Integration bestanden.
+- Kein zusätzlicher API-Aufruf, keine neue Laufzeitabhängigkeit, keine SQLite-Schemaänderung.
+
+
 ## 0.3.1 — 14. Oktober 2026 (Sprache und CI; Backend bleibt 0.2.0)
 
 - Abgewiesene TTS-Kommandos (0/false) werden als Fehler behandelt. Fehlgeschlagene Stimmwahl speichert keine ungültige Auswahl; entfernte Stimmen fallen bei der Neusuche auf einen verfügbaren deutschen Standard zurück.

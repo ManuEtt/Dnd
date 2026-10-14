@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 import '../domain/models.dart';
+import '../domain/starting_hit_points.dart';
 import 'ability_assignment_dialog.dart';
 
 /// Edits nullable values explicitly: an imported unknown score stays unknown.
@@ -213,6 +214,60 @@ class _CharacterEditorState extends State<CharacterEditor> {
     }
   }
 
+  /// Calculate, preview and explicitly confirm SRD level-1 hit points.
+  /// Existing characters and imported unknown values remain untouched on cancel.
+  Future<void> _suggestStartingHitPoints() async {
+    final proposal = (() {
+      try {
+        return StartingHitPoints.propose(
+          className: _fields['className']!.text,
+          constitutionScore: int.tryParse(_scores['constitution']!.text.trim()),
+          characterLevel: int.tryParse(_fields['level']!.text.trim()),
+        );
+      } catch (error) {
+        setState(() => _error = error.toString());
+        return null;
+      }
+    })();
+    if (proposal == null || !mounted) return;
+
+    final previousHp = _fields['hitPoints']!.text.trim();
+    final previousMax = _fields['maxHitPoints']!.text.trim();
+    final overwrites = previousHp.isNotEmpty || previousMax.isNotEmpty;
+    final sign = proposal.constitutionModifier >= 0 ? '+' : '';
+    final accepted = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Start-Trefferpunkte berechnen'),
+        content: Text(
+          '${proposal.characterClass}: W${proposal.hitDie} '
+          '$sign${proposal.constitutionModifier} Konstitution = '
+          '${proposal.maximum} TP.\n\n'
+          '${overwrites ? 'Achtung: Die bisher eingetragenen Trefferpunkte '
+              'werden nur bei Bestätigung ersetzt. ' : ''}'
+          'Für andere Stufen und bestehende Verletzungen darf dieser '
+          'Startwert nicht automatisch verwendet werden.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Abbrechen'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Trefferpunkte übernehmen'),
+          ),
+        ],
+      ),
+    );
+    if (accepted != true || !mounted) return;
+    setState(() {
+      _fields['hitPoints']!.text = proposal.maximum.toString();
+      _fields['maxHitPoints']!.text = proposal.maximum.toString();
+      _error = null;
+    });
+  }
+
   Future<void> _assignAbilities() async {
     final result = await showDialog<AbilityAssignment>(
       context: context,
@@ -317,6 +372,13 @@ class _CharacterEditorState extends State<CharacterEditor> {
                     _number('speed', 'Bewegung', min: 1, max: 200, suffix: 'm'),
                   ],
                 ),
+                OutlinedButton.icon(
+                  key: const ValueKey('suggest-level1-hit-points'),
+                  onPressed: _suggestStartingHitPoints,
+                  icon: const Icon(Icons.favorite_outline),
+                  label: const Text('Start-TP nach D&D vorschlagen'),
+                ),
+                const SizedBox(height: 12),
                 _text('weaponDamage', 'Waffenschaden (z. B. 1d8)'),
                 DropdownButtonFormField<String>(
                   initialValue: _original['weaponAbility'] as String,

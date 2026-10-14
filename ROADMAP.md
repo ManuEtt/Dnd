@@ -4,6 +4,16 @@ Die Reihenfolge folgt dem Ziel eines dauerhaft fortsetzbaren Android-Abenteuers.
 
 ## Nächster Entwicklungsschritt
 
+**Neuer integrierter Quellstand 0.3.2+8:** Die zwölf SRD-Klassen besitzen
+einen bestätigungspflichtigen Stufe-1-Trefferpunktevorschlag. Zuerst diesen
+Code nach GitHub importieren, 19 neue Domänentests und den Widgettest mit
+Flutter sowie den Android-Build tatsächlich ausführen; bestehende Spielstände
+und bisherige Werte nicht ungefragt verändern. Anschließend die Attribut-
+Basismethode/Boni dauerhaft nachvollziehbar speichern und die Umgehung des
+27-Punkte-Budgets im regulären Stufe-1-Editor verhindern, bei Altimporten
+explizite Sonderbehandlung beibehalten.
+
+
 Die Sprachkorrekturen 0.3.1 auf dem Samsung Galaxy S26 Ultra mit dokumentiertem
 Sprachanbieter, deutscher Stimme und Android-Version abnehmen. Der Benutzer
 meldet funktionierenden App-Betrieb, aber Probleme bei einigen Sprachen; die
