@@ -4,13 +4,17 @@ Die Reihenfolge folgt dem Ziel eines dauerhaft fortsetzbaren Android-Abenteuers.
 
 ## Nächster Entwicklungsschritt
 
-**0.3.5+11 vorbereitet:** Themenbezogener lokaler Rückblick und bestätigte,
-questabhängige Mira-Dialoge im Demo-Spiel. Nächste Priorität nach grüner CI:
-Android-Geräteabnahme des Rückblick-Buttons (auch mit bereits getipptem Text),
-anschließend echte persistierte Sitzungszusammenfassungen mit Konfliktprüfung
-und systematische Dialogvarianten für andere bestätigte NPCs. Die lokale
-Faktensuche ist noch keine semantische KI oder vollständige Spielleiterlogik.
+**0.3.6+12 als GitHub-Import vorbereitet:** Persistente, ausdrücklich bestätigte
+Sitzungsrückblicke, dokumentierte NPC-Beziehungsverläufe und statusgeführte
+Handlungsstränge sind im Tagebuch eingebaut. Für den nächsten Schritt stehen
+zuerst die vollständige Flutter-/Android-CI und die Geräteabnahme dieser drei
+Dialoge an. Danach folgen bessere Dialogvarianten auf Grundlage tatsächlich
+bestätigter Beziehungen und Quests, konfliktfreie Bearbeitung über mehrere
+Spieler hinweg und später echte semantische Erinnerungssuche.
 
+GitHub `main`-Basis: `6e967080baba7de252fac378d51758a20f6556ae`;
+letzter CI-Test dieses Basisstandes 290 bestanden/1 UI-Hit-Test fehlgeschlagen.
+Die Testkorrektur ist enthalten, aber der neue Lauf steht aus.
 
 **Version 0.3.3+9 vorbereitet:** Zwölf SRD-Klassen sind mit Level-1-Skills, Rettungswürfen und wählbarer Ausrüstung/Startgold in einen Bestätigungsdialog eingebaut. Manueller Ausnahmeweg bei neuen Startattributen ist nun sichtbar. Die bereits 0.3.2 bestätigte Trefferpunktfunktion bleibt nutzbar.
 

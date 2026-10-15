@@ -1,3 +1,13 @@
+## 0.3.6+12 – 15.10.2026 – Dauerhaftes Kampagnengedächtnis
+
+- Im Tagebuch drei neue Bereiche: Sitzungsrückblicke dauerhaft speichern, Handlungsstränge mit Offen/Gelöst/Aufgegeben verwalten und Veränderungen der NPC-Beziehungen samt Notiz dokumentieren.
+- Rückblicke werden ausschließlich aus strukturierten, bestätigten Quests, NPCs, Fakten und Handlungssträngen gebildet; freie KI-Erzähltexte und rohe Nutzereingaben sind keine Faktenquelle. Einträge gelangen in die lokale Erinnerungssuche und den Kontext des optionalen Backend-Erzählers.
+- Neue optionale Felder `sessionRecaps`, `storyThreads`, `npcRelationshipNotes` in der bestehenden Kampagnen-JSON-Struktur. Vorhandene Sicherungen bleiben mit dem Parser kompatibel, SQLite-Schema bleibt Version 1. Maximal 60 Rückblicke, 100 Handlungsstränge und 300 Beziehungsnotizen.
+- Alle Notizänderungen werden mit Revision und überprüfbarem Ereignis-Checkpoint atomar gespeichert. Regelwerte, HP, Würfel- und Questbelohnungen werden durch diese Verwaltungsaktionen nicht verändert.
+- Zusätzliche Domänen-, Widget- und SQLite-Tests mit Testcode für Altimporte, Begrenzungen, Wiederherstellung, Replay, Beziehungshistorie und Eingabevalidierung.
+- Vorherigen GitHub-CI-Fehler im Test `ui_app_test.dart` (Button „Vervollständigen“ auf 360-px-Bildschirm überlagert) durch Scrollen vor der Interaktion korrigiert. Auf Basis-Commit `6e967080baba7de252fac378d51758a20f6556ae` waren 290 Flutter-Tests erfolgreich, einer fehlgeschlagen; Flutter-Analyse, Python und Backend bestanden, APK-Schritte übersprungen.
+- **Prüfstatus dieser Version:** Projektstruktur und alle 22 Python-Tests lokal bestanden. Mangels Flutter-/Dart-SDK und offline nicht verfügbarer npm-Abhängigkeiten sind Flutter/Backend-/APK-Prüfungen für 0.3.6 noch offen. Erfolgreiche CI vor Verwendung als installierbare APK erforderlich.
+
 ## 0.3.5+11 – 15.10.2026 – Kampagnenrückblick und NPC-Reaktionen
 
 - Im Abenteuer gibt es einen direkt erreichbaren Button **Rückblick**. Ein noch nicht abgesendeter Handlungstext bleibt unverändert; Spracheingabe/-ausgabe wird vor der Aktion kontrolliert gestoppt.

@@ -1,4 +1,4 @@
-# Projekt-Import – Aetheria 0.3.5+11
+# Projekt-Import – Aetheria 0.3.6+12
 
 Vollständiger Projektquellstand zur GitHub-Übertragung, ohne äußeren `Dnd/`-Ordner.
 
@@ -6,14 +6,15 @@ Vollständiger Projektquellstand zur GitHub-Übertragung, ohne äußeren `Dnd/`-
 2. Einen **neuen Branch** ab `main` verwenden; vorhandene Dateien mit den neuen Versionen ersetzen, keine fremden Commits überschreiben.
 3. Die versteckten `.github`-Dateien und Build-Wrapper ebenfalls übertragen. **Nicht die ZIP selbst als einzige Datei hochladen**.
 4. Unter GitHub **Actions → Android-Alpha bauen** die vollständige Prüfung (Python, Backend, Flutter Analyse, Flutter Tests, APK und JVM-Tests) abwarten.
-5. Nur wenn alle Jobs grün sind mergen; unter **Artifacts** kannst du die neue APK laden. Auf Android zusätzlich Rückblick und Mira-Dialoge prüfen.
+5. Nur wenn alle Jobs grün sind mergen; unter **Artifacts** kannst du die neue APK laden. Auf Android zusätzlich Tagebuchfunktionen, Rückblicke, NPC-Notizen und Handlungsstränge prüfen.
 
-Basis: GitHub `main` Commit `239ee5f7d333a6388159e7d431039abb92e936b7` (0.3.4+10).
-Änderungen: `app/lib/domain/game_engine.dart`, `app/lib/ui/app.dart`,
-`app/pubspec.yaml`, `app/test/memory_recall_test.dart`,
-`app/test/ui_app_test.dart` und begleitende Dokumentation.
+Basis: GitHub `main` Commit `6e967080baba7de252fac378d51758a20f6556ae` (0.3.5+11).
+Änderungen: Modell und Engine für Sitzungsrückblicke, Handlungsstränge und
+NPC-Notizen; Controller, neuer Tagebuchdialog `campaign_memory_panel.dart`,
+Tests (Domain, Widget, SQLite) und Dokumentation. Zudem korrigierter
+`ui_app_test.dart`-Scrollfall aus dem letzten fehlgeschlagenen CI-Lauf.
 
-Kein SQLite-Schemawechsel, keine neuen Abhängigkeiten, kein neuer API-Schlüssel.
-Lokale Python-Strukturtests sind möglich; Flutter/Dart und Android SDK sind
-in der Paketumgebung nicht vorhanden. Der neue Stand darf daher vor erfolgreicher
-GitHub-CI nicht als vollständig getestet oder installierbar bezeichnet werden.
+Wichtig: **Nach Upload Flutter/Android über GitHub Actions ausführen.**
+Ein früherer 0.3.5-CI-Lauf scheiterte nach 290 bestandenen Flutter-Tests;
+für 0.3.6 gibt es noch keinen erfolgreichen Flutter- oder APK-Nachweis.
+Kein SQLite-Schemawechsel, keine neuen Abhängigkeiten, kein API-Schlüssel.

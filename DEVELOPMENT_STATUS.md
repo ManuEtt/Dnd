@@ -1,3 +1,15 @@
+## 0.3.6+12 – Erweiterung des Kampagnengedächtnisses (15.10.2026)
+
+**Implementiert:** Drei neue Bereiche im Tagebuch für speicherbare Sitzungsschnappschüsse, Status und Beschreibung offener Handlungsstränge sowie protokollierte NPC-Beziehungen. Alle Änderungen erfordern eine Benutzeraktion. Neue Ereignistypen `memory.sessionRecapSaved`, `memory.npcRelationshipRecorded`, `memory.storyThreadSaved`; Änderungen liegen im bestätigten SQLite-Revisionsjournal und JSON-Export. Die lokale Erinnerungssuche berücksichtigt diese Einträge. Automatische generative Lore- und Beziehungsentscheidungen bleiben ausgeschlossen.
+
+**Kompatibilität:** Alte `schemaVersion: 1`-Kampagnen dürfen die neuen optionalen Felder weglassen; dann werden leere Sammlungen angenommen. Keine SQLite-Migration und keine neuen Laufzeitabhängigkeiten. Maximal 60 Zusammenfassungen, 100 Handlungsstränge, 300 Beziehungseinträge sowie strenge Text-/Statusvalidierung. Es handelt sich um benutzergeführte Notizen, nicht um eine autonome semantische Gedächtnis-KI.
+
+**Bekannter Vorfehler:** GitHub Actions für `6e967080baba7de252fac378d51758a20f6556ae` (`https://github.com/ManuEtt/Dnd/actions/runs/38683059572/job/116251682233`) zeigte erfolgreiche Analyse und 290 bestandene Flutter-Tests, aber einen Hit-Test-Fehler in `ui_app_test.dart` beim Button „Vervollständigen“ auf 360 px. Der Test scrollt nun kontrolliert zu diesem Button. Kein neuer GitHub-CI-Lauf für die 0.3.6-Änderungen erfolgt.
+
+**Prüfungen:** Vollständige Projektstrukturprüfung und 22 Python-Tests erfolgreich. Neue Dart-Domain-, Widget- und SQLite-Testfälle sind im Quellcode vorhanden, jedoch ohne Flutter-SDK in dieser Umgebung noch nicht ausführbar; Android-APK-Build und reale Geräteabnahme stehen aus.
+
+**Basis:** GitHub `main` Commit `6e967080baba7de252fac378d51758a20f6556ae` (0.3.5+11). Vollständige ZIP-Übergabe, der Hauptbranch wurde nicht verändert.
+
 ## 0.3.5+11 – Neues Inkrement (15.10.2026)
 
 **IMPLEMENTIERT:** Lokaler Rückblick via GameEngine/MemoryEngine, thematisch gefilterte bestätigte Erinnerungen für D&D-Kampagnen, Schaltfläche „Rückblick“ mit Erhalt eines ungesendeten Entwurfs, und zustandsabhängige Mira-Antworten im Demo-Abenteuer.

@@ -216,7 +216,17 @@ void main() {
       expect(find.textContaining('TP ?/?'), findsOneWidget);
       expect(controller.currentCampaign!.hero.hitPoints, isNull);
       expect(tester.takeException(), isNull);
-      await tester.tap(find.text('Vervollständigen'));
+      final completeButton = find.text('Vervollständigen');
+      // The persistent composer can otherwise obscure the notice on 360 px.
+      await tester.scrollUntilVisible(
+        completeButton,
+        220,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.ensureVisible(completeButton);
+      await tester.pumpAndSettle();
+      expect(completeButton.hitTestable(), findsOneWidget);
+      await tester.tap(completeButton);
       await tester.pumpAndSettle();
       expect(find.text('Charakter bearbeiten'), findsOneWidget);
       expect(tester.takeException(), isNull);

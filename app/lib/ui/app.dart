@@ -9,6 +9,7 @@ import '../services/voice_controller.dart';
 import 'backend_settings_panel.dart';
 import 'backup_dialogs.dart';
 import 'character_editor.dart';
+import 'campaign_memory_panel.dart';
 
 const _gold = Color(0xffddb96c);
 const _ink = Color(0xff0d1927);
@@ -121,7 +122,7 @@ class _LivingGameAppState extends State<LivingGameApp> {
               onHome: () => setState(() => _page = 0),
             ),
             _CharactersPage(controller: controller, backupFiles: _backupFiles),
-            _JournalPage(campaign: controller.currentCampaign),
+            _JournalPage(controller: controller),
             _SettingsPage(
               controller: controller,
               voice: widget.voice,
@@ -1147,11 +1148,12 @@ class _CombatView extends StatelessWidget {
 }
 
 class _JournalPage extends StatelessWidget {
-  const _JournalPage({required this.campaign});
-  final Campaign? campaign;
+  const _JournalPage({required this.controller});
+  final GameController controller;
 
   @override
   Widget build(BuildContext context) {
+    final campaign = controller.currentCampaign;
     if (campaign == null) {
       return const _Empty(
         icon: Icons.menu_book_outlined,
@@ -1160,22 +1162,23 @@ class _JournalPage extends StatelessWidget {
             'Öffne eine Kampagne, um Erinnerungen, Quests und Ereignisse zu sehen.',
       );
     }
-    final data = campaign!.toJson();
+    final data = campaign.toJson();
     final facts = _map(data['facts']);
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        Text(campaign!.name, style: Theme.of(context).textTheme.headlineSmall),
+        Text(campaign.name, style: Theme.of(context).textTheme.headlineSmall),
         const SizedBox(height: 8),
         Text(
-          'Welt: ${campaign!.world} · Bestätigter Stand: ${campaign!.revision}',
+          'Welt: ${campaign.world} · Bestätigter Stand: ${campaign.revision}',
         ),
         const SizedBox(height: 18),
         _JournalSection(
           title: 'Aktuelle Szene',
           icon: Icons.landscape_outlined,
-          children: [Text(campaign!.scene)],
+          children: [Text(campaign.scene)],
         ),
+        CampaignMemoryPanel(controller: controller),
         _JournalSection(
           title: 'Dauerhafte Erinnerungen',
           icon: Icons.psychology_outlined,

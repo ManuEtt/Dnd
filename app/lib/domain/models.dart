@@ -435,6 +435,116 @@ class WorldNpc {
   );
 }
 
+/// Confirmed, deterministic snapshot of known campaign information.
+/// Separate from free-form narrator dialogue or unverified player claims.
+class SessionRecap {
+  const SessionRecap({
+    required this.id,
+    required this.title,
+    required this.summary,
+    required this.createdAt,
+  });
+  final String id, title, summary;
+  final DateTime createdAt;
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'title': title,
+    'summary': summary,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+  };
+  factory SessionRecap.fromJson(Map<String, dynamic> j) {
+    final title = _string(j['title'], 'Rückblickstitel');
+    final summary = _string(j['summary'], 'Sitzungsrückblick');
+    if (title.trim().isEmpty || title.length > 100 ||
+        summary.trim().isEmpty || summary.length > 2400) {
+      throw const FormatException('Ungültiger Sitzungsrückblick.');
+    }
+    return SessionRecap(
+      id: _string(j['id'], 'Rückblick-ID'),
+      title: title,
+      summary: summary,
+      createdAt: DateTime.parse(_string(j['createdAt'], 'Rückblickdatum')),
+    );
+  }
+}
+
+/// A user-managed story hook. Status changes never imply a quest reward.
+class StoryThread {
+  const StoryThread({
+    required this.id,
+    required this.title,
+    this.description = '',
+    this.status = 'open',
+  });
+  final String id, title, description, status;
+  StoryThread copyWith({String? title, String? description, String? status}) =>
+      StoryThread(
+        id: id,
+        title: title ?? this.title,
+        description: description ?? this.description,
+        status: status ?? this.status,
+      );
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'title': title,
+    'description': description,
+    'status': status,
+  };
+  factory StoryThread.fromJson(Map<String, dynamic> j) {
+    final title = _string(j['title'], 'Handlungsstrang');
+    final description = _string(
+      j['description'], 'Handlungsnotiz', fallback: '',
+    );
+    final status = _string(j['status'], 'Handlungsstatus', fallback: 'open');
+    if (title.trim().isEmpty || title.length > 120 ||
+        description.length > 1000 ||
+        !const ['open', 'resolved', 'abandoned'].contains(status)) {
+      throw const FormatException('Ungültiger Handlungsstrang.');
+    }
+    return StoryThread(
+      id: _string(j['id'], 'Handlungs-ID'),
+      title: title,
+      description: description,
+      status: status,
+    );
+  }
+}
+
+/// Explicitly recorded NPC relationship, retained as an auditable timeline.
+class NpcRelationshipNote {
+  const NpcRelationshipNote({
+    required this.id,
+    required this.npcId,
+    required this.relationship,
+    required this.note,
+    required this.recordedAt,
+  });
+  final String id, npcId, relationship, note;
+  final DateTime recordedAt;
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'npcId': npcId,
+    'relationship': relationship,
+    'note': note,
+    'recordedAt': recordedAt.toUtc().toIso8601String(),
+  };
+  factory NpcRelationshipNote.fromJson(Map<String, dynamic> j) {
+    final relationship = _string(j['relationship'], 'NPC-Beziehung');
+    final note = _string(j['note'], 'Beziehungsnotiz');
+    if (relationship.trim().isEmpty || relationship.length > 80 ||
+        note.trim().isEmpty || note.length > 500) {
+      throw const FormatException('Ungültige Beziehungsnotiz.');
+    }
+    return NpcRelationshipNote(
+      id: _string(j['id'], 'Notiz-ID'),
+      npcId: _string(j['npcId'], 'NPC-ID'),
+      relationship: relationship,
+      note: note,
+      recordedAt: DateTime.parse(_string(j['recordedAt'], 'Notizdatum')),
+    );
+  }
+}
+
 class Place {
   const Place({required this.id, required this.name, this.description = ''});
   final String id, name, description;
@@ -668,6 +778,9 @@ class Campaign {
     List<NarrativeMessage> messages = const [],
     Map<String, String> facts = const {},
     List<Quest> quests = const [],
+    List<SessionRecap> sessionRecaps = const [],
+    List<StoryThread> storyThreads = const [],
+    List<NpcRelationshipNote> npcRelationshipNotes = const [],
     List<WorldNpc> npcs = const [],
     List<Place> places = const [],
     List<GameEvent> events = const [],
@@ -677,6 +790,9 @@ class Campaign {
   }) : messages = List.unmodifiable(messages),
        facts = Map.unmodifiable(facts),
        quests = List.unmodifiable(quests),
+       sessionRecaps = List.unmodifiable(sessionRecaps),
+       storyThreads = List.unmodifiable(storyThreads),
+       npcRelationshipNotes = List.unmodifiable(npcRelationshipNotes),
        npcs = List.unmodifiable(npcs),
        places = List.unmodifiable(places),
        events = List.unmodifiable(events);
@@ -685,6 +801,9 @@ class Campaign {
   final List<NarrativeMessage> messages;
   final Map<String, String> facts;
   final List<Quest> quests;
+  final List<SessionRecap> sessionRecaps;
+  final List<StoryThread> storyThreads;
+  final List<NpcRelationshipNote> npcRelationshipNotes;
   final List<WorldNpc> npcs;
   final List<Place> places;
   final List<GameEvent> events;
@@ -698,6 +817,9 @@ class Campaign {
     List<NarrativeMessage>? messages,
     Map<String, String>? facts,
     List<Quest>? quests,
+    List<SessionRecap>? sessionRecaps,
+    List<StoryThread>? storyThreads,
+    List<NpcRelationshipNote>? npcRelationshipNotes,
     List<WorldNpc>? npcs,
     List<Place>? places,
     List<GameEvent>? events,
@@ -714,6 +836,9 @@ class Campaign {
     messages: messages ?? this.messages,
     facts: facts ?? this.facts,
     quests: quests ?? this.quests,
+    sessionRecaps: sessionRecaps ?? this.sessionRecaps,
+    storyThreads: storyThreads ?? this.storyThreads,
+    npcRelationshipNotes: npcRelationshipNotes ?? this.npcRelationshipNotes,
     npcs: npcs ?? this.npcs,
     places: places ?? this.places,
     events: events ?? this.events,
@@ -736,6 +861,10 @@ class Campaign {
     'messages': messages.map((e) => e.toJson()).toList(),
     'facts': facts,
     'quests': quests.map((e) => e.toJson()).toList(),
+    'sessionRecaps': sessionRecaps.map((e) => e.toJson()).toList(),
+    'storyThreads': storyThreads.map((e) => e.toJson()).toList(),
+    'npcRelationshipNotes':
+        npcRelationshipNotes.map((e) => e.toJson()).toList(),
     'npcs': npcs.map((e) => e.toJson()).toList(),
     'places': places.map((e) => e.toJson()).toList(),
     'events': events.map((e) => e.toJson()).toList(),
@@ -763,6 +892,29 @@ class Campaign {
     final encounter = j['encounter'] == null
         ? null
         : Encounter.fromJson(_map(j['encounter'], 'Kampf'));
+    // Existing 0.3.5 saves omit these optional collections; no migration.
+    final recaps = _list(j['sessionRecaps'], 'Sitzungsrückblicke')
+        .map((e) => SessionRecap.fromJson(_map(e, 'Sitzungsrückblick')))
+        .toList();
+    final threads = _list(j['storyThreads'], 'Handlungsstränge')
+        .map((e) => StoryThread.fromJson(_map(e, 'Handlungsstrang')))
+        .toList();
+    final relationshipNotes = _list(j['npcRelationshipNotes'], 'NPC-Notizen')
+        .map((e) => NpcRelationshipNote.fromJson(_map(e, 'NPC-Notiz')))
+        .toList();
+    final npcs = _list(j['npcs'], 'NPCs')
+        .map((e) => WorldNpc.fromJson(_map(e, 'NPC')))
+        .toList();
+    if (recaps.length > 60 || threads.length > 100 ||
+        relationshipNotes.length > 300 ||
+        recaps.map((e) => e.id).toSet().length != recaps.length ||
+        threads.map((e) => e.id).toSet().length != threads.length ||
+        relationshipNotes.map((e) => e.id).toSet().length !=
+            relationshipNotes.length ||
+        relationshipNotes.any((e) =>
+            !npcs.any((npc) => npc.id == e.npcId))) {
+      throw const FormatException('Ungültiges Kampagnengedächtnis.');
+    }
     if (pending != null) {
       if (!hero.isComplete) {
         throw const FormatException(
@@ -824,10 +976,10 @@ class Campaign {
         j['quests'],
         'Quests',
       ).map((e) => Quest.fromJson(_map(e, 'Quest'))).toList(),
-      npcs: _list(
-        j['npcs'],
-        'NPCs',
-      ).map((e) => WorldNpc.fromJson(_map(e, 'NPC'))).toList(),
+      sessionRecaps: recaps,
+      storyThreads: threads,
+      npcRelationshipNotes: relationshipNotes,
+      npcs: npcs,
       places: _list(
         j['places'],
         'Orte',

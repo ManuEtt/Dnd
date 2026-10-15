@@ -1,6 +1,6 @@
 # Der lebendige Spielleiter
 
-**Aktueller Quellstand 0.3.5+11 (Flutter-CI noch abzunehmen):** Ein
+**Aktueller Quellstand 0.3.6+12 (Flutter-CI noch abzunehmen):** Ein
 regelkonformer Stufe-1-Trefferpunktevorschlag aus Klasse und Konstitution ist
 direkt im Charaktereditor integriert und erfordert ausdrückliche Bestätigung.
 Das vollständige ZIP enthält `app/`, `backend/`, `scripts/`, die versteckte
@@ -12,6 +12,16 @@ hochladen, nicht das ZIP selbst als einzige Repositorydatei ablegen.
 Deutschsprachiger Fantasy-Spielleiter für Android mit Flutter, lokalem Kampagnengedächtnis und einem kostenlosen Demo-Modus in [ManuEtt/Dnd](https://github.com/ManuEtt/Dnd). Der zunächst unabhängig erstellte Stand wurde nach Wiederherstellung des Zugriffs mit dem hochgeladenen 0.3.0-Repository verglichen: Die Dateiinhalte stimmen überein, lediglich vier Ausführungsrechte unterscheiden sich. Neue Korrekturen bauen auf diesem Repositorystand auf.
 
 Der Schwerpunkt liegt auf einem spielbaren Solo-Ablauf: Charakter und Kampagne anlegen, Entscheidungen eingeben, mit einem deterministischen Spielleiter interagieren, würfeln, einfache Kämpfe austragen und den bestätigten Zustand wieder laden. Der Demo-Spielleiter verarbeitet einige Handlungsarten und liefert passende Szenen; frei formulierte Texte sind möglich, die Antworttiefe ist jedoch begrenzt. Eine umfassende generative KI und eine vollständige Umsetzung aller SRD-Regeln sind weitere Entwicklungsschritte.
+
+## Dauerhaftes Kampagnengedächtnis in Version 0.3.6
+
+Im Bereich **Tagebuch** lassen sich jetzt **Sitzungsrückblicke speichern**, **Handlungsstränge verwalten** und **NPC-Beziehungen mit Begründung festhalten**. Dazu wird immer ausdrücklich eine Aktion in der Oberfläche ausgeführt. Der Spielleiter übernimmt niemals bloße KI-Erzählungen oder gesprochene Spielerbehauptungen automatisch als bestätigte Weltfakten.
+
+- **Sitzungsrückblick:** Erstellt eine dauerhaft gespeicherte, begrenzte Momentaufnahme aus bekannten Quests, NPCs, Fakten und verwalteten Handlungssträngen. Ältere Rückblicke bleiben für spätere Sitzungen erhalten.
+- **Handlungsstränge:** Titel, Notiz und Status „Offen“, „Gelöst“ oder „Aufgegeben“ können hinzugefügt und aktualisiert werden. Ein gelöster Handlungsstrang löst ausdrücklich keine Questbelohnung aus.
+- **NPC-Beziehungen:** Bestehende Personen können eine bestätigte Beziehungsänderung mit erläuternder Notiz erhalten. Die vorherigen Änderungen bleiben als Verlauf abrufbar.
+
+Alle neuen Informationen liegen im bestehenden lokalen Kampagnen-JSON und SQLite-Revisionsjournal und werden beim normalen Spielstandexport mitgesichert. Ältere Version-1-Exporte ohne diese Felder bleiben importierbar. Die Suche bleibt deterministisch/lexikalisch, also noch ohne semantische KI-Suche. **Flutter-, Backend- und Android-Tests für diesen neuen Stand müssen über GitHub Actions bestanden werden**; die hier ausgeführten Python-Strukturprüfungen sind kein Ersatz dafür.
 
 ## Neuer Kampagnenrückblick in Version 0.3.5
 
@@ -55,7 +65,7 @@ Noch **nicht** Teil dieses Inkrements: Vollständige Herkunfts-Fertigkeits-/Tale
 
 ## ZIP nach GitHub übertragen
 
-Das vollständige aktuelle 0.3.5+11-ZIP entpacken und seine Projektinhalte einschließlich `.github/` direkt in die Repositorywurzel übertragen; das neue Paket enthält keinen äußeren `Dnd/`-Ordner. Nur die ZIP-Datei hochzuladen startet keinen Android-Build. Vorhandene Dateien vorher vergleichen und in einem neuen Branch arbeiten. Die [Schritt-für-Schritt-Anleitung](docs/UPLOAD_TO_GITHUB.md) erklärt Zugriff, Upload und APK-Download. Vor dem Build prüft `python3 scripts/verify_project.py` die Vollständigkeit ohne Flutter/Android SDK.
+Das vollständige aktuelle 0.3.6+12-ZIP entpacken und seine Projektinhalte einschließlich `.github/` direkt in die Repositorywurzel übertragen; das neue Paket enthält keinen äußeren `Dnd/`-Ordner. Nur die ZIP-Datei hochzuladen startet keinen Android-Build. Vorhandene Dateien vorher vergleichen und in einem neuen Branch arbeiten. Die [Schritt-für-Schritt-Anleitung](docs/UPLOAD_TO_GITHUB.md) erklärt Zugriff, Upload und APK-Download. Vor dem Build prüft `python3 scripts/verify_project.py` die Vollständigkeit ohne Flutter/Android SDK.
 
 ## Starten und prüfen
 

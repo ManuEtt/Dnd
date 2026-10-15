@@ -199,6 +199,38 @@ class GameController extends ChangeNotifier {
     await _commit(engine.resolveRoll(campaign, natural: natural, total: total));
   });
 
+  Future<void> saveSessionRecap() => _run(() async {
+    final campaign = currentCampaign;
+    if (campaign == null) throw const FormatException('Keine aktive Kampagne.');
+    await _commit(engine.saveSessionRecap(campaign));
+  });
+
+  Future<void> recordNpcRelationship({
+    required String npcId,
+    required String relationship,
+    required String note,
+  }) => _run(() async {
+    final campaign = currentCampaign;
+    if (campaign == null) throw const FormatException('Keine aktive Kampagne.');
+    await _commit(engine.recordNpcRelationship(
+      campaign, npcId: npcId, relationship: relationship, note: note,
+    ));
+  });
+
+  Future<void> saveStoryThread({
+    String? threadId,
+    required String title,
+    required String description,
+    required String status,
+  }) => _run(() async {
+    final campaign = currentCampaign;
+    if (campaign == null) throw const FormatException('Keine aktive Kampagne.');
+    await _commit(engine.saveStoryThread(
+      campaign, threadId: threadId, title: title,
+      description: description, status: status,
+    ));
+  });
+
   Future<void> rollDice(String expression) => _run(() async {
     final campaign = currentCampaign;
     if (campaign == null) throw const FormatException('Keine aktive Kampagne.');

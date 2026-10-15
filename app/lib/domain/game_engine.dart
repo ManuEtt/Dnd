@@ -98,6 +98,117 @@ class GameEngine {
     return GameUpdate(campaign: result, events: [event]);
   }
 
+  /// Saves a bounded summary of structured, already confirmed world state.
+  /// Free player speech and generated prose are intentionally not sources.
+  GameUpdate saveSessionRecap(Campaign campaign) {
+    if (campaign.sessionRecaps.length >= 60) {
+      throw const FormatException('Maximal 60 Sitzungsrückblicke möglich.');
+    }
+    final summary = MemoryEngine.buildSessionSummary(campaign);
+    final recap = SessionRecap(
+      id: _id('recap'),
+      title: 'Rückblick ${campaign.sessionRecaps.length + 1}',
+      summary: summary,
+      createdAt: _clock(),
+    );
+    return _commit(
+      campaign,
+      campaign.copyWith(sessionRecaps: [...campaign.sessionRecaps, recap]),
+      'Ein neuer Sitzungsrückblick wurde im Tagebuch bestätigt und gespeichert.',
+      type: 'memory.sessionRecapSaved',
+      payload: {'recapId': recap.id},
+    );
+  }
+
+  /// Relationship changes are explicit editorial choices, never AI actions.
+  GameUpdate recordNpcRelationship(
+    Campaign campaign, {
+    required String npcId,
+    required String relationship,
+    required String note,
+  }) {
+    final npc = campaign.npcs.where((entry) => entry.id == npcId).toList();
+    if (npc.length != 1) {
+      throw const FormatException('Der ausgewählte NPC existiert nicht.');
+    }
+    final normalized = relationship.trim();
+    final description = note.trim();
+    if (normalized.isEmpty || normalized.length > 80 ||
+        description.isEmpty || description.length > 500) {
+      throw const FormatException(
+        'Beziehung (1–80 Zeichen) und Notiz (1–500 Zeichen) angeben.',
+      );
+    }
+    if (campaign.npcRelationshipNotes.length >= 300) {
+      throw const FormatException('Maximal 300 NPC-Notizen möglich.');
+    }
+    final entry = NpcRelationshipNote(
+      id: _id('npc-note'),
+      npcId: npcId,
+      relationship: normalized,
+      note: description,
+      recordedAt: _clock(),
+    );
+    return _commit(
+      campaign,
+      campaign.copyWith(
+        npcs: [
+          for (final current in campaign.npcs)
+            current.id == npcId
+                ? current.copyWith(relationship: normalized)
+                : current,
+        ],
+        npcRelationshipNotes: [...campaign.npcRelationshipNotes, entry],
+      ),
+      'Deine bestätigte Beziehungsnotiz zu ${npc.single.name} wurde gespeichert.',
+      type: 'memory.npcRelationshipRecorded',
+      payload: {'npcId': npcId, 'noteId': entry.id},
+    );
+  }
+
+  /// Story threads are leads, not mechanically rewarded quests.
+  GameUpdate saveStoryThread(
+    Campaign campaign, {
+    String? threadId,
+    required String title,
+    required String description,
+    required String status,
+  }) {
+    final cleanTitle = title.trim();
+    final cleanDescription = description.trim();
+    if (cleanTitle.isEmpty || cleanTitle.length > 120 ||
+        cleanDescription.length > 1000 ||
+        !const ['open', 'resolved', 'abandoned'].contains(status)) {
+      throw const FormatException('Titel, Notiz oder Handlungsstatus ungültig.');
+    }
+    if (threadId == null && campaign.storyThreads.length >= 100) {
+      throw const FormatException('Maximal 100 Handlungsstränge möglich.');
+    }
+    if (threadId != null &&
+        campaign.storyThreads.where((thread) => thread.id == threadId).length != 1) {
+      throw const FormatException('Handlungsstrang nicht gefunden.');
+    }
+    final thread = StoryThread(
+      id: threadId ?? _id('thread'),
+      title: cleanTitle,
+      description: cleanDescription,
+      status: status,
+    );
+    final threads = threadId == null
+        ? [...campaign.storyThreads, thread]
+        : [
+            for (final old in campaign.storyThreads)
+              old.id == threadId ? thread : old,
+          ];
+    return _commit(
+      campaign,
+      campaign.copyWith(storyThreads: threads),
+      'Der Handlungsstrang „${thread.title}“ wurde im Tagebuch gespeichert.',
+      type: 'memory.storyThreadSaved',
+      payload: {'threadId': thread.id, 'status': status},
+    );
+  }
+
   GameUpdate rollDice(Campaign campaign, String expression) {
     final result = dice.roll(expression);
     final natural = result.natural == null
@@ -1276,6 +1387,29 @@ class MemoryEngine {
         );
       }
     }
+    // Full snapshots can contain many unrelated topics; do not insert them
+    // into a narrowly targeted recall merely because a name matches once.
+    if (!matchingOnly || query.isEmpty) {
+      for (final recap in campaign.sessionRecaps.reversed) {
+        add('Sitzungsrückblick: ${recap.title}', recap.summary, priority: 90);
+      }
+    }
+    for (final thread in campaign.storyThreads) {
+      final status = switch (thread.status) {
+        'open' => 'offen',
+        'resolved' => 'gelöst',
+        'abandoned' => 'aufgegeben',
+        _ => thread.status,
+      };
+      add('Handlungsstrang $status: ${thread.title}',
+          thread.description, priority: thread.status == 'open' ? 210 : 70);
+    }
+    for (final note in campaign.npcRelationshipNotes.reversed) {
+      final npc = campaign.npcs.where((entry) => entry.id == note.npcId);
+      if (npc.isEmpty) continue;
+      add('Beziehung zu ${npc.first.name}: ${note.relationship}',
+          note.note, priority: 220);
+    }
     for (final item in campaign.hero.inventory) {
       add(
         'Inventar (Anzahl ${item.quantity}): ${item.name}',
@@ -1323,6 +1457,50 @@ class MemoryEngine {
     return List.unmodifiable(results);
   }
 
+  /// Human-readable confirmed summary; no unverified chat or model prose.
+  static String buildSessionSummary(Campaign campaign) {
+    String questStatus(String status) => switch (status) {
+      'active' => 'offen',
+      'completed' => 'abgeschlossen',
+      'failed' => 'gescheitert',
+      _ => status,
+    };
+    String threadStatus(String status) => switch (status) {
+      'open' => 'offen',
+      'resolved' => 'gelöst',
+      'abandoned' => 'aufgegeben',
+      _ => status,
+    };
+    final lines = <String>[
+      'Kampagne: ${campaign.name}.',
+      'Held: ${campaign.hero.name}.',
+      if (campaign.quests.isNotEmpty)
+        'Quests: ${campaign.quests.map((q) =>
+            '${q.title} (${questStatus(q.status)})').join('; ')}.',
+      if (campaign.npcs.isNotEmpty)
+        'Bekannte NPCs: ${campaign.npcs.map((n) =>
+            '${n.name} (${n.alive ? 'lebendig' : 'tot'}, ${n.relationship})').join('; ')}.',
+      if (campaign.storyThreads.isNotEmpty)
+        'Handlungsstränge: ${campaign.storyThreads.map((t) =>
+            '${t.title} (${threadStatus(t.status)})').join('; ')}.',
+      if (campaign.facts.isNotEmpty)
+        'Bestätigte Fakten: ${campaign.facts.entries.map((f) =>
+            '${f.key}: ${f.value}').join('; ')}.',
+    ];
+    final whole = lines.join('\n');
+    // Both import validation and JSON limits use UTF-16 code units. Avoid
+    // splitting surrogate pairs when truncating an unusually long recap.
+    final result = StringBuffer();
+    var units = 0;
+    for (final rune in whole.runes) {
+      final size = rune > 0xffff ? 2 : 1;
+      if (units + size > 2400) break;
+      result.writeCharCode(rune);
+      units += size;
+    }
+    return result.toString();
+  }
+
   static Map<String, dynamic> context(Campaign campaign) => {
     'shortTerm': {
       'scene': campaign.scene,
@@ -1339,6 +1517,10 @@ class MemoryEngine {
     'longTerm': {
       'facts': campaign.facts,
       'quests': campaign.quests.map((e) => e.toJson()).toList(),
+      'sessionRecaps': campaign.sessionRecaps.map((e) => e.toJson()).toList(),
+      'storyThreads': campaign.storyThreads.map((e) => e.toJson()).toList(),
+      'npcRelationshipNotes':
+          campaign.npcRelationshipNotes.map((e) => e.toJson()).toList(),
       'npcs': campaign.npcs.map((e) => e.toJson()).toList(),
       'inventory': campaign.hero.inventory.map((e) => e.toJson()).toList(),
     },

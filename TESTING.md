@@ -68,6 +68,26 @@ Texte prüfen. Auf dem Gerät Rückblick bei aktiver Tastatur und Push-to-Talk,
 sowie das erneute Ansprechen Miras nach Schlüssel, Wächter und Questabschluss
 prüfen. Ein bestandener CI-Test ersetzt diesen Gerätetest nicht.
 
+## Persistentes Kampagnengedächtnis (0.3.6)
+
+Nach GitHub-Import zusätzlich:
+
+```bash
+cd app
+flutter analyze
+flutter test test/campaign_memory_v036_test.dart test/campaign_memory_storage_test.dart test/campaign_memory_panel_test.dart test/ui_app_test.dart
+```
+
+Im Tagebuch einen Sitzungsrückblick speichern, einen offenen Handlungsstrang
+anlegen und als gelöst markieren, Miras Beziehung mit Begründung ändern.
+Das Gerät neu starten, Kampagne laden und dieselben Daten einschließlich der
+alten Beziehungsnotiz sowie JSON-Export prüfen. Den Aktionsrückblick mit
+Fragen zu NPCs und Handlungssträngen vergleichen. Eine Verwaltungsnotiz darf
+keine TP, Würfel, Questbelohnung oder ausstehende Probe verändern.
+Alten 0.3.5-Export ohne die drei neuen JSON-Felder importieren und den
+360-px-Button „Vervollständigen“ überprüfen. Die eingereichten Dart-Tests
+sind ohne erfolgreichen CI-Lauf nur Quellcode, keine bestandenen Tests.
+
 ## Android-Gerätetest
 
 Diese Schritte sind eine noch separat durchzuführende Abnahme. Gerät, Android-Version, APK-Commit und Sprachdienst im Testbericht festhalten.
