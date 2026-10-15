@@ -1,3 +1,5 @@
+> **Aetheria 0.4.3+19:** Attributkarten mit skalierter Mindesthöhe und eindeutigen Widget-Test-Selektoren statt Seitenverhältnis-/`GridView`-Fehler. GitHub-Actions-Abnahme noch ausstehend.
+
  > **Aetheria 0.4.2+18 (15.10.2026):** Korrigiert den `flutter analyze`-Fehler aus 0.4.1: `mainAxisExtent` gehört in den Grid-Delegate und nicht in den `GridView.count`-Konstruktor. Die Anpassung der Kachelhöhe und Regressionstests für Smartphones und größere Schrift bleiben erhalten. Dieses Quellpaket muss noch vollständig in GitHub Actions geprüft werden.
 
 > **UI-Fix 0.4.1+17:** Die drei aus GitHub Actions bekannten Überlauffehler in den Statistik-Kacheln des Fantasy-Charakterbogens wurden im Quellcode behoben. Tests für 320/360/400 dp und große Systemschrift sind enthalten. Die vollständige CI-/APK-Abnahme steht noch aus. Details: `CHANGELOG.md`.

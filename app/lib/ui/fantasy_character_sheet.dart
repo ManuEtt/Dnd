@@ -236,6 +236,7 @@ class _SummaryGrid extends StatelessWidget {
       // SliverGridDelegateWithFixedCrossAxisCount supports fixed row heights
       // and prevents narrow-screen RenderFlex overflow without clipping text.
       return GridView(
+        key: const ValueKey('sheet-summary-grid'),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: columns,
           mainAxisExtent: tileHeight,
@@ -347,11 +348,20 @@ class _AbilitiesSection extends StatelessWidget {
         const SizedBox(height: 12),
         LayoutBuilder(builder: (context, constraints) {
           final columns = constraints.maxWidth >= 560 ? 3 : 2;
-          return GridView.count(
-            crossAxisCount: columns,
-            childAspectRatio: columns == 3 ? 1.35 : 1.05,
-            mainAxisSpacing: 11,
-            crossAxisSpacing: 11,
+          // A fixed childAspectRatio shrinks the six ability cards to roughly
+          // 112 dp on narrow screens. Icon, label, modifier and score need
+          // independent vertical space (especially with large system text).
+          // Size the rows from the active text scaler, not the tile width.
+          final scaler = MediaQuery.textScalerOf(context);
+          final abilityHeight = 80.0 + scaler.scale(90);
+          return GridView(
+            key: const ValueKey('sheet-abilities-grid'),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: columns,
+              mainAxisExtent: abilityHeight,
+              mainAxisSpacing: 11,
+              crossAxisSpacing: 11,
+            ),
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             children: [

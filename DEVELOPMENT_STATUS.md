@@ -1,3 +1,7 @@
+## Aktuell: 0.4.3+19 – Attributkartenlayout korrigiert
+
+**Basis:** GitHub `main` `9a75719b07fb2607f49818e12018a277e0b5f5dc`. Der letzte CI-Lauf stoppte nach 319 bestandenen, vier fehlgeschlagenen Widgettests (`fantasy_character_sheet_test.dart`); Ursache und Testselektor im Quellcode korrigiert. Kotlin/Android-APK noch nicht überprüft. Kein direkter GitHub-Push ausgeführt.
+
 ## Stand 0.4.2+18 – Flutter-Compilefix, noch nicht CI-validiert (15.10.2026)
 
 Das Release 0.4.1+17 erreichte `flutter analyze` nicht: `mainAxisExtent` wurde irrtümlich an `GridView.count` übergeben (GitHub Actions Run 38691911056). 0.4.2+18 setzt stattdessen `GridView(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(mainAxisExtent: ...))` ein. Regressionstest ergänzt. Die neuen Zeilenhöhen gegen UI-Überlauf bleiben erhalten. Backend, Datenbank und Spiellogik unverändert. Vollständig grüner CI-Lauf steht für dieses Inkrement aus.

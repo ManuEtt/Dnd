@@ -1,3 +1,7 @@
+## Neue Regression 0.4.3+19
+
+`app/test/fantasy_character_sheet_test.dart` testet die tatsächlichen Attributkarten auf 320/360/400 dp, die Einzigartigkeit der Grid-Keys und 1.4x-Systemschrift. Der vorherige CI-Lauf erreichte 319 bestandene / 4 fehlgeschlagene Flutter-Tests; diese Änderungen müssen in GitHub Actions neu nachgewiesen werden. Prüfe `flutter analyze`, `flutter test` und `flutter build apk --debug`.
+
 ## Regression für 0.4.2+18 – Flutter-Analyse
 
 In 0.4.1 schlug GitHub Actions mit `undefined_named_parameter: mainAxisExtent` in `fantasy_character_sheet.dart:237` fehl. Die Syntax ist jetzt `GridView(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(..., mainAxisExtent: tileHeight))`. Bitte insbesondere `flutter analyze`, `flutter test` und den Android-Build im CI prüfen. Widgettests enthalten Fälle für 320, 360 und 400 logische Pixel sowie 1,4-fache Schrift; ein Test überprüft explizit den Grid-Delegate. Kein Fehler wird absichtlich unterdrückt.

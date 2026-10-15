@@ -5,7 +5,7 @@ import 'package:lebendiger_spielleiter/ui/fantasy_character_sheet.dart';
 
 void main() {
   for (final width in [320.0, 360.0, 400.0]) {
-    testWidgets('Statistikkacheln bei ${width.toInt()} dp ohne Überlauf',
+    testWidgets('Statistik- und Attributkarten bei ${width.toInt()} dp ohne Überlauf',
         (tester) async {
       tester.view.physicalSize = Size(width, 800);
       tester.view.devicePixelRatio = 1;
@@ -29,15 +29,28 @@ void main() {
       expect(find.text('ÜBUNGSBONUS'), findsOneWidget);
       // Regression: the explicit delegate is required for mainAxisExtent.
       // Passing mainAxisExtent to GridView.count breaks flutter analyze.
-      final grid = tester.widget<GridView>(find.byType(GridView));
-      final delegate = grid.gridDelegate
+      // The sheet deliberately has separate summary, abilities and saves
+      // grids. Looking up an arbitrary GridView is ambiguous on phones.
+      final summary = tester.widget<GridView>(
+        find.byKey(const ValueKey('sheet-summary-grid')),
+      );
+      final summaryDelegate = summary.gridDelegate
           as SliverGridDelegateWithFixedCrossAxisCount;
-      expect(delegate.crossAxisCount, 2);
-      expect(delegate.mainAxisExtent, greaterThanOrEqualTo(124));
+      expect(summaryDelegate.crossAxisCount, 2);
+      expect(summaryDelegate.mainAxisExtent, greaterThanOrEqualTo(124));
       expect(tester.takeException(), isNull);
+      // Scroll the full section into view to exercise the six actual cards,
+      // not only the four summary stats above them.
       await tester.scrollUntilVisible(find.text('Rettungswürfe'.toUpperCase()),
           240, scrollable: find.byType(Scrollable).first);
       await tester.pumpAndSettle();
+      final abilities = tester.widget<GridView>(
+        find.byKey(const ValueKey('sheet-abilities-grid')),
+      );
+      final abilitiesDelegate = abilities.gridDelegate
+          as SliverGridDelegateWithFixedCrossAxisCount;
+      expect(abilitiesDelegate.crossAxisCount, 2);
+      expect(abilitiesDelegate.mainAxisExtent, greaterThanOrEqualTo(160));
       expect(tester.takeException(), isNull);
     });
   }
@@ -62,6 +75,17 @@ void main() {
     ));
     await tester.pumpAndSettle();
     expect(find.text('RÜSTUNGSKLASSE'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.scrollUntilVisible(find.text('Rettungswürfe'.toUpperCase()),
+        240, scrollable: find.byType(Scrollable).first);
+    await tester.pumpAndSettle();
+    final abilities = tester.widget<GridView>(
+      find.byKey(const ValueKey('sheet-abilities-grid')),
+    );
+    final delegate = abilities.gridDelegate
+        as SliverGridDelegateWithFixedCrossAxisCount;
+    // 1.4x system text needs more vertical space than normal text; no clips.
+    expect(delegate.mainAxisExtent, greaterThan(200));
     expect(tester.takeException(), isNull);
   });
   testWidgets('Deutscher Charakterbogen berechnet Übungsbonus und Rettungswürfe',

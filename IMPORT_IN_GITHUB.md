@@ -1,3 +1,7 @@
+## Hinweis zu 0.4.3+19
+
+Dieses ZIP behebt die CI-Fehler des hochgeladenen Standes 0.4.2+18. Projektdateien aus dem ZIP direkt in die Repositorywurzel entpacken, einschließlich `.github/`. Keine andere Versionskopie mischen. Erst nach vollständig grünem GitHub-Actions-Lauf die APK einsetzen.
+
 # Aetheria 0.4.2+18 – Import und Abnahme
 
 **Basis:** GitHub `main` Commit `35a7b4062c5248b288598b587da6c606bf80122d` (0.4.1+17). Enthält die vollständigen 131 Projektdateien.

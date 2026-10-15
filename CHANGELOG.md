@@ -1,3 +1,11 @@
+## 0.4.3+19 – CI-Fix: überlaufende Attributkarten und mehrdeutige Widgettests (15.10.2026)
+
+- GitHub Actions `38692820652`: Flutter-Analyse erfolgreich, 319 Tests erfolgreich, vier neue Layouttests rot. Drei Ursachen: `_AbilityCard`-Spalten bei 320 dp und 1.4x-Schrift überlaufen; bei 360/400 dp suchten Tests mehrdeutig nach `GridView` und warfen `Bad state: Too many elements`.
+- Die sechs Attributkarten verwenden jetzt statt `GridView.count(childAspectRatio: ...)` einen expliziten `SliverGridDelegateWithFixedCrossAxisCount(mainAxisExtent: ...)`. Die Höhe passt sich mittels `MediaQuery.textScalerOf` an Systemschriftgrößen an. Keine Werte werden abgeschnitten oder verworfen.
+- Übersichts- und Attributgrids haben eindeutige `ValueKey`s; Widgettests suchen gezielt das jeweilige Grid und scrollen bis zu den Rettungswürfen, um alle sechs Attributkarten zu rendern. Extra Test für TextScaler 1.4.
+- Keine Änderungen an Spielregeln, Speicher, Backend oder Sicherheitsmodell; keine neuen Pakete.
+- Prüfstatus: Projektstruktur, Python-Tests und ZIP-Integrität lokal; `flutter analyze`, `flutter test` und APK-Build erst durch GitHub Actions belegbar.
+
 ## 0.4.2+18 – Korrektur des CI-Kompilierfehlers (15.10.2026)
 
 - `app/lib/ui/fantasy_character_sheet.dart`: `GridView.count` durch `GridView` mit `SliverGridDelegateWithFixedCrossAxisCount` ersetzt. Der Parameter `mainAxisExtent` befindet sich nun am richtigen Delegate.
