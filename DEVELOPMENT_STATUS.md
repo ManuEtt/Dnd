@@ -1,3 +1,8 @@
+## 0.3.3 – CI-Korrektur (15. Oktober 2026)
+
+- Im offiziellen GitHub-Actions-Lauf [38675268449](https://github.com/ManuEtt/Dnd/actions/runs/38675268449) für Commit `02380c2180f98de9a31d1759fee8566d7575f3ce` wurden Projektstruktur, 22 Python- und 22 Backend-Tests erfolgreich geprüft. `flutter analyze` stoppte mit genau einem Dart-Hinweis `dangling_library_doc_comments` in `app/lib/domain/srd_character_classes.dart:1:1`; nachfolgende Flutter-Tests und APK-Builds wurden übersprungen.
+- Diese ZIP behebt den Kommentarfehler ohne eine fachliche Codeänderung. Der Korrekturstand muss erneut in GitHub importiert und durch die gesamte Actions-CI geprüft werden. Ein Erfolg der noch ausstehenden Flutter-Tests und APK-Builds wird nicht behauptet.
+
 ## 0.3.3 – Stand der ergänzten Klassenwahl, 14. Oktober 2026
 
 - BASIS: vollständig exportierte 0.3.2-Version aus GitHub `4007b2b65f3413238c0a828813d57b98c4498732`, bereits durch Actions für Flutter/Android getestet. Letzter freigegebener Gerätebericht: Attributverteilung, Spracheingabe, Sprachausgabe, Stufe-1-TP funktionieren.

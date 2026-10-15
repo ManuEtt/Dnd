@@ -2,6 +2,9 @@
 
 ## 0.3.3 – Klassenwahl, Fertigkeiten und Startausrüstung (14. Oktober 2026)
 
+- CI-Korrektur (15. Oktober 2026): Ungebundenen Dart-Dokumentationskommentar am Dateianfang von `app/lib/domain/srd_character_classes.dart` in reguläre Kommentare umgewandelt. GitHub-Actions-Lauf 38675268449 scheiterte ausschließlich an `dangling_library_doc_comments`. Flutter-Tests und Android-Build für diesen korrigierten Stand stehen nach Upload noch aus. Keine Änderungen an Spielregeln, Charakterdaten oder SQLite.
+
+
 - Neue Klasse `SrdCharacterClass` mit den zwölf SRD-5.2.1-Klassen: Trefferwürfel, beide Rettungswurf-Übungen, zulässige Fertigkeitslisten und Auswahlanzahl (2–4) sowie Startpakete bzw. Startgold.
 - Neuer Assistent „D&D-Klasse und Fertigkeiten wählen“ im Charaktereditor für Stufe-1-Charaktere. Ungültige oder doppelte Fertigkeitswahlen können nicht übernommen werden.
 - Charakterausrüstung mit Inventargegenständen und Startgold kann **optional nur bei neuen noch unversorgten Charakteren** explizit übernommen werden; Wahl wird weder automatisch wiederholt noch Rüstung direkt angelegt.

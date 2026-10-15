@@ -1,7 +1,7 @@
-/// Starting class choices from the Creative Commons D&D SRD 5.2.1, "Classes".
-/// https://www.dndbeyond.com/srd
-/// Only level-1 single-class proficiencies are implemented here. Multiclass
-/// proficiencies, origin feats, tool choices and class features are separate.
+// Starting class choices from the Creative Commons D&D SRD 5.2.1, "Classes".
+// https://www.dndbeyond.com/srd
+// Only level-1 single-class proficiencies are implemented here. Multiclass
+// proficiencies, origin feats, tool choices and class features are separate.
 import 'models.dart';
 
 class SrdStartingItem {
