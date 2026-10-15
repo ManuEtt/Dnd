@@ -1,3 +1,10 @@
+## 0.6.0+30 – SRD-Waffen und -Rüstungen anlegen (15.10.2026)
+
+- Reine Vorschau plus bestätigte Übernahme von Katalog-Waffen/Rüstungen/Schilden in Kampfwerte. Waffenattribute, Würfel, Übung, RK-Berechnung, STR-Grenzen, Finesse, Wurf-/Zweihand-/schwere Waffen mit Regeln und Warnungen.
+- Optionale Instanzreferenzen/Übungsbestätigungen für Savegames; alte Schema-1-Daten bleiben ohne Änderung lesbar. Ungültige Referenzen blockieren Importe; keine Magie-/Gold-/Munitionsbuchung.
+- Regeltests und Widgettest für Dialog ergänzt. Flutter-/Android-CI und Geräteabnahme für diesen Stand noch offen, siehe docs/EQUIPMENT_RULES.md.
+- Eigener Entwicklungsstand aus vollständigem ZIP 0.5.9+29. Keine Übernahme auf Codex-Branch oder GitHub behauptet; GitHub-Schreibberechtigung noch nicht bestätigt.
+
 ## 0.5.9+29 – SRD 5.2.1: Waffen-, Rüstungs- und Gegenstandskatalog (15.10.2026)
 
 - **Ausrüstung:** 38/38 Standardwaffen, 13/13 Rüstungen/Schilde sowie Werkzeuge, Abenteuerausrüstung, Munition, Foki, Reittiere, Fahrzeuge und eine ausdrücklich unvollständige Magie-Gegenstandsauswahl: insgesamt **272 Einträge**.

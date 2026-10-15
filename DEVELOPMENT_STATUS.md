@@ -1,3 +1,10 @@
+## 0.6.0+30 – Bestätigtes SRD-Ausrüsten (15.10.2026)
+
+- **IMPLEMENTIERT:** Domain-Modul `equipment_rules.dart` mit reiner Vorschau und erneuter Berechnung bei Bestätigung; Inventory-basiertes Anlegen von Rüstungen/Schilden/Waffen und RK-/Waffenwert-Updates im Editor; optionale Felder für ausgerüstete Inventar-Instanz-IDs. Kein heimlicher Goldabzug/Magieeffekt. Quellen/Ausnahmen: `docs/EQUIPMENT_RULES.md`.
+- **TESTS ERGÄNZT:** Unit-/Widgettests für AC, Trainingsfolgen, Waffenauswahl, Fähigkeitsschwellen, ungültige Referenzen und Savegames. Sie sind **noch nicht mit Dart/Flutter ausgeführt**.
+- **VOR FREIGABE:** Vollständige Flutter-Analyse, alle Widget-/Domain-Tests, Backend, Android-APK-Build, Installations- und Spielstandsprüfung. Codebasis ist das vorherige lokale 0.5.9+29-ZIP; es kann Codex-Änderungen überschneiden, daher kein blinder Merge.
+- **ALS NÄCHSTES:** SRD-Effekte von Erschöpfung und Zuständen implementieren; danach begrenzte Zauber- und Klassenressourcen. Vorher neue Tests grün bekommen.
+
 ## 0.5.9+29 – SRD-Ausrüstungskatalog (15.10.2026)
 
 - **Ausgang:** Separater Projektzweig auf dem Quellstand `0.5.8+28`, basierend auf GitHub `main` `c635ee376649d02ec37017c01805f2fa4d1a9806`. Parallel zu einer möglichen Codex-Weiterentwicklung, **nicht** direkt in GitHub eingecheckt.

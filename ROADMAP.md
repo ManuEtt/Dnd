@@ -1,3 +1,9 @@
+## Schwerpunkt ab 0.6.0+30: Angelegte SRD-Waffen und Rüstungen
+
+- Implementiert, CI ausstehend: Bestätigte RK-/Angriffs-Vorschau, Inventar-Slotreferenzen und Altspeicherkompatibilität. Quellen und Grenzen: `docs/EQUIPMENT_RULES.md`.
+- Zuerst vollständige Flutter-CI, Widgettests und Android-APK durchlaufen lassen; danach Geräteabnahme der Anlegen-/Ablegen-Abläufe und Persistenz.
+- Als Nächstes: Erschöpfung und Zustände in Checks/Kämpfen, echte Munition und Aktionsökonomie, Ausrüstungsgewicht sowie Klassen-/Zauberressourcen.
+
 ## Schwerpunkt 0.5.9+29: SRD-Waffen, Rüstung und Inventar
 
 - **Erster Katalogbau abgeschlossen, Flutter-CI offen:** Waffen-, Rüstungs- und Materialdaten, deutsch/englisch suchbarer Charaktereditor, optionale Katalogkennungen. Quelle und Grenzen: [docs/SRD_AUSRUESTUNGSKATALOG.md](docs/SRD_AUSRUESTUNGSKATALOG.md).

@@ -1,3 +1,5 @@
+> **0.6.0+30 (Entwicklungsstand):** SRD-Waffen und Rüstungen können im Charaktereditor mit bestätigter RK-/Waffenvorschau angelegt werden. Ein vollständiger Flutter-/Android-Build steht für diese Version noch aus. Details: `docs/EQUIPMENT_RULES.md`.
+
 ## Neue Ausrüstungssuche (0.5.9+29 – CI ausstehend)
 
 Im Charaktereditor unter „Inventar & Ausrüstung“ gibt es „Aus SRD-Ausrüstungskatalog wählen“. Der Katalog enthält 272 Waffen, Rüstungen, Gegenstände, Werkzeuge und namentliche magische Referenzeinträge; 38 Waffen und 13 Rüstungstypen aus der SRD-Tabelle sind vollständig mit Basisdaten erfasst. Freies Inventar bleibt nutzbar, bestehende Spielstände bleiben kompatibel. Beim Hinzufügen werden keine Goldkosten berechnet, keine Waffen oder Rüstungen stillschweigend angelegt und keine magischen Effekte automatisch verwendet. [Details, Quellen, Tests und Grenzen](docs/SRD_AUSRUESTUNGSKATALOG.md).
