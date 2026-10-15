@@ -22,3 +22,7 @@ Der Assistent unterstützt **höchstens zwei Klassen**. Für die Zweitklasse kö
 ## Datenformat
 
 Die optionalen Felder `secondaryClassName` und `secondaryClassLevel` erweitern die vorhandene `schemaVersion:1`-Heldendatenstruktur ohne Datenbankmigration. `level` bleibt die **Gesamtstufe**; die Stufe der Ausgangsklasse ist `level-secondaryClassLevel`. Alte JSON-Dateien ohne Zweitklasse bleiben gültig.
+
+## Zusätzliche Bestätigungssicherheit seit 0.5.4+24
+
+Aufstiegsvorschläge sind nun an die Charakter-ID und den bestätigten Zustand bei der Berechnung gebunden: Fähigkeiten/Attribute, Fertigkeiten, bestehende maximale Trefferpunkte und Klassenstufen. Wenn sich dieser Zustand während einer geöffneten Bestätigung verändert, muss der Vorschlag neu berechnet werden und darf nicht stillschweigend auf eine andere oder inzwischen geänderte Figur angewandt werden. Ein zwischenzeitlicher Verlust aktueller TP verhindert den Levelaufstieg nicht und wird nicht rückgängig gemacht: Der nach SRD berechnete TP-Zuwachs erhöht den neuen aktuellen und maximalen Wert jeweils um denselben Betrag. Unplausible direkt konstruierte Klassenstufen werden zurückgewiesen. Das Datenbankschema bleibt 1.

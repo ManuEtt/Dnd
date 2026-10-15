@@ -1,4 +1,22 @@
-# Import / Release – Würfelraunen 0.5.3+23
+# GitHub Actions: Codex-Entwicklung entfernen (Version 0.5.4+24)
+
+Dieses **vollständige Quellarchiv** enthält keine `.github/workflows/autonomous-development.yml` mehr. Alle normalen Builds bleiben in `.github/workflows/android-build.yml` erhalten.
+
+**Achtung:** Ein Upload der ZIP-Dateien in ein GitHub-Repository löscht bereits vorhandene Dateien nicht automatisch. Um die Codex-Action auf GitHub wirklich zu entfernen:
+
+```bash
+git checkout -b remove-codex-actions
+git rm .github/workflows/autonomous-development.yml
+# anschließend die dokumentierten Änderungen aus dem vollständigen Archiv übernehmen
+git add .
+git commit -m "ci: automatische Codex-Entwicklung aus Actions entfernen"
+git push -u origin remove-codex-actions
+# PR gegen main erstellen und mergen
+```
+
+**Nur wenn GitHub mit neueren Änderungen aktualisiert wurde:** Vor der Übernahme der Dateien den aktuellen Stand von `main` prüfen, damit keine neueren Funktionen versehentlich überschrieben werden. Für die reine Abschaltung genügt es, nur die Workflow-Datei mit `git rm` zu löschen.
+
+# Import / Release – Würfelraunen 0.5.4+24
 
 **Änderung:** Die Schnellaktionen sind nun in einer fixierten unteren Leiste direkt oberhalb der Navigation statt im Abenteuer-Scrollbereich. Die zuletzt auf GitHub registrierte YAML-Fehlermeldung in `app/pubspec.yaml` ist zusätzlich korrigiert.
 

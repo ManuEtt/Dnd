@@ -62,7 +62,12 @@ class MulticlassRules {
     if (hero.level >= 20) {
       throw const FormatException('Die maximale Gesamtstufe beträgt 20.');
     }
-    if (hero.level < 1) throw const FormatException('Ungültige Charakterstufe.');
+    if (hero.level < 1 ||
+        (hero.hasSecondClass &&
+            (hero.secondaryClassLevel < 1 || hero.primaryClassLevel < 1)) ||
+        (!hero.hasSecondClass && hero.secondaryClassLevel != 0)) {
+      throw const FormatException('Ungültige Klassenstufen.');
+    }
     final first = findSrdClass(hero.className);
     final next = findSrdClass(newClass);
     if (first == null || next == null) {
@@ -104,6 +109,10 @@ class MulticlassRules {
       hitDie: next.hitDie,
       hpGain: hpGain,
       gainedSkill: selectedSkill,
+      sourceHeroId: hero.id,
+      sourceAbilities: Map<String, int?>.unmodifiable(hero.abilities),
+      sourceSkills: List<String>.unmodifiable(hero.skills),
+      sourceMaxHitPoints: hero.maxHitPoints,
     );
   }
 
@@ -157,13 +166,39 @@ class MulticlassProposal {
     required this.hitDie,
     required this.hpGain,
     this.gainedSkill,
+    required this.sourceHeroId,
+    required this.sourceAbilities,
+    required this.sourceSkills,
+    required this.sourceMaxHitPoints,
   });
   final String firstClass, secondClass;
   final int totalLevel, secondaryLevel, hitDie, hpGain;
   final String? gainedSkill;
+  // The proposal belongs to exactly one confirmed character-sheet snapshot.
+  // HP damage taken meanwhile is permitted, but maximum HP, attributes and
+  // existing trained skills must still match the values used for the proposal.
+  final String sourceHeroId;
+  final Map<String, int?> sourceAbilities;
+  final List<String> sourceSkills;
+  final int? sourceMaxHitPoints;
+
+  bool _hasOriginalSkills(List<String> current) {
+    if (current.length != sourceSkills.length) return false;
+    for (var i = 0; i < current.length; i++) {
+      if (current[i] != sourceSkills[i]) return false;
+    }
+    return true;
+  }
 
   HeroCharacter applyTo(HeroCharacter hero) {
-    if (hero.level + 1 != totalLevel ||
+    if (hero.id != sourceHeroId ||
+        hero.maxHitPoints != sourceMaxHitPoints ||
+        hero.abilities.length != sourceAbilities.length ||
+        sourceAbilities.entries.any((entry) =>
+            !hero.abilities.containsKey(entry.key) ||
+            hero.abilities[entry.key] != entry.value) ||
+        !_hasOriginalSkills(hero.skills) ||
+        hero.level + 1 != totalLevel ||
         hero.className != firstClass ||
         (hero.hasSecondClass && (hero.secondaryClassName != secondClass ||
           hero.secondaryClassLevel + 1 != secondaryLevel)) ||

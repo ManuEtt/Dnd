@@ -139,4 +139,48 @@ void main() {
     expect(MulticlassRules.combinedSpellcasterLevel(
         hero(first:'Hexenmeister',level:3,second:'Magier',secondLevel:1)),1);
   });
+  test('proposal belongs to original hero, not another with same class level', () {
+    final source = hero();
+    final proposal = MulticlassRules.propose(hero: source, newClass: 'Magier');
+    expect(() => proposal.applyTo(source.copyWith(id: 'other-hero')),
+        throwsFormatException);
+  });
+
+  test('proposal rejects altered prerequisites or hit point basis', () {
+    final source = hero();
+    final proposal = MulticlassRules.propose(hero: source, newClass: 'Magier');
+    final lostPrerequisite = source.copyWith(abilities: {
+      ...source.abilities, 'intelligence': 8,
+    });
+    expect(() => proposal.applyTo(lostPrerequisite), throwsFormatException);
+    expect(() => proposal.applyTo(source.copyWith(maxHitPoints: 35)),
+        throwsFormatException);
+  });
+
+  test('proposal refuses stale proficiency changes without duplicates', () {
+    final source = hero();
+    final proposal = MulticlassRules.propose(
+        hero: source, newClass: 'Barde', selectedSkill: 'Auftreten');
+    final changed = source.copyWith(skills: [...source.skills, 'Auftreten']);
+    expect(() => proposal.applyTo(changed), throwsFormatException);
+  });
+
+  test('damage since proposal retains damage on confirmed level-up', () {
+    final source = hero();
+    final proposal = MulticlassRules.propose(hero: source, newClass: 'Magier');
+    final wounded = source.copyWith(hitPoints: 9);
+    final leveled = proposal.applyTo(wounded);
+    expect(leveled.maxHitPoints, 28); // W6 fixed 4 + CON 2 = 6
+    expect(leveled.hitPoints, 15);
+  });
+
+  test('impossible directly constructed class levels are rejected', () {
+    final bad = hero(level: 3, second: 'Magier', secondLevel: 3);
+    expect(() => MulticlassRules.propose(hero: bad, newClass: 'Magier'),
+        throwsFormatException);
+    final inconsistent = hero(second: '', secondLevel: 1);
+    expect(() => MulticlassRules.propose(hero: inconsistent, newClass: 'Magier'),
+        throwsFormatException);
+  });
+
 }

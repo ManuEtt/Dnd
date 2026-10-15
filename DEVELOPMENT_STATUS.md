@@ -1,3 +1,22 @@
+## CI-Anpassung 15.10.2026 – Codex aus GitHub Actions entfernt (0.5.4+24)
+
+- **IMPLEMENTIERT:** Nur der normale Android-Build bleibt im vollständigen ZIP unter `.github/workflows/`; der separate autonome Codex-Workflow wurde entfernt.
+- **ERHALTEN:** Python-, Backend-, Flutter-, Android-Tests, APK-Release und nicht freigegebene Quellcode-Checkpoints.
+- **GETESTET:** Projektstruktur, Python-Tests und ZIP-Prüfung. Flutter-/Android-Abnahme weiterhin offen.
+- **GitHub:** Der Löschversuch via Connector auf `main` scheiterte an HTTP 403; das GitHub-Repository bleibt unverändert. Für die wirksame Abschaltung bestehender Actions bei GitHub ist ein Lösch-Commit der dort vorhandenen Datei nötig.
+
+## 0.5.4+24 – Bestätigungsschutz und vollständige ARM64-Release-Artefakte (15.10.2026)
+
+**Quelle:** Verifizierbares vollständiges Arbeitsarchiv 0.5.3+23 aus dem letzten Entwicklungszyklus, **nicht** als GitHub-Commit veröffentlicht. Android-Paket-ID und Datenbankschema unverändert. Ein GitHub-Schreibversuch wurde zuvor mit HTTP 403 verweigert; daher keine Behauptung eines Pushs.
+
+**IMPLEMENTIERT:** Zweitklassen-Vorschläge binden sich an den Helden und die regelrelevanten bestätigten Eingangsdaten. Wird der Charakter zwischen Vorschlag und Bestätigung verändert, wird der veraltete Vorschlag sicher abgelehnt; zwischenzeitlicher Schaden darf übernommen werden. Inkompatible direkt konstruierte Mehrklassenstufen werden abgewiesen.
+
+**IMPLEMENTIERT:** GitHub-CI kann nach komplett grüner Test- und Buildkette ein gemeinsam versioniertes ZIP/APK/SHA256/ReleaseNotes-Artefakt mit Architektur-/ZIP-Prüfung ausgeben; `scripts/prepare_alpha_release.py` ist ohne Flutter separat testbar. Release-APKs bleiben intern mit **Debug-Testschlüssel** signiert und sind keine produktiven, langfristig verlässlich aktualisierbaren Builds. Quellen-Checkpoint bei CI-Fehlschlag bleibt erhalten.
+
+**GETESTET:** Python-Archiv-, Struktur-, Paket- und Release-Tests lokal; Projektstruktur erfolgreich. Alle sieben neuen Paket-/Fehlerfalltests bestanden (zusätzlich zu den bisherigen 25). **NICHT GETESTET:** fünf neue Dart-Tests, Flutter-Analyse und Flutter-Widgets, native Android-Tests, Geräteinstallation und neue APK; dafür wird GitHub Actions benötigt. Offline-Backend-Abhängigkeiten konnten wegen fehlendem `undici-types`-Cache nicht installiert werden; deshalb keine Behauptung bestandener Backend-Tests.
+
+**Version:** `0.5.4+24` (neues vollständiges Import-ZIP, noch kein CI-bestätigter Release). **Letzter grüner GitHub-Build:** 0.5.1+21 / Actions #23 vom 15.10.2026. **Nächster Schritt:** Import des ganzen Archivs auf neuem Branch, vollständigen CI-Lauf prüfen und gegebenenfalls korrigieren; erst dann ARM64-APK freigeben.
+
 ## Komplette Quellcode-Übergabe – 15.10.2026 (0.5.3+23)
 
 Alle zuvor gesicherten Dateien der 0.5.3+23-Quelle inklusive neuer UI-Schnellaktionsleiste sind in diesem ZIP enthalten. Zusätzlich wurden Codex-/Checkpoint-Workflows, ein `pubspec.yaml`-Regressionstest sowie Fortsetzungs- und Importdokumentation ergänzt. **Keine verifizierte neue Android-APK** und **kein GitHub-Push**; GitHub-`main` war 0.5.2+22. Letzter grüner CI-Build ist weiterhin 0.5.1+21. Für Details siehe `docs/AUTONOMOUS_DEVELOPMENT_STATE.md`.

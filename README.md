@@ -1,6 +1,8 @@
 # Würfelraunen – Der lebendige Spielleiter
 
-> **Vollständiges Quellarchiv 0.5.3+23:** Die gesonderte Importanleitung steht in [docs/VOLLSTAENDIGES_PROJEKT_IMPORTIEREN.md](docs/VOLLSTAENDIGES_PROJEKT_IMPORTIEREN.md). Der Codex-Automatismus ist vorbereitet, aber nicht aktiviert; der Android-Build dieses Archivstands ist noch nicht CI-validiert.
+> **Neu 0.5.4+24 – vollständiger Importstand (CI ausstehend):** Mehrklassenaufstiege werden gegen veraltete Charakterwerte abgesichert. Nach vollständig bestandenem GitHub-CI erstellt ein neuer Release-Schritt automatisch ein vollständiges, versioniertes Projekt-ZIP, eine ARM64-APK, Release-Notizen und SHA-256-Prüfsummen. Die APK wird weiterhin mit einer internen Debug-Testsignatur erstellt. Dieser ZIP-Quellstand ist **noch keine freigegebene APK**; die zuvor fest fixierten Schnellaktionen bleiben erhalten. Siehe [Release-Prozess](docs/ALPHA_RELEASES.md).
+
+> **Vollständiges Quellarchiv 0.5.3+23:** Die gesonderte Importanleitung steht in [docs/VOLLSTAENDIGES_PROJEKT_IMPORTIEREN.md](docs/VOLLSTAENDIGES_PROJEKT_IMPORTIEREN.md). Der automatische Codex-Workflow wurde auf Wunsch entfernt; GitHub Actions enthält nur reguläre Projektprüfungen und Android-APKs. Der Android-Build dieses Archivstands ist noch nicht CI-validiert.
 
 > **Neu 0.5.3+23:** Die vier Schnellaktionen **Sprache, Untersuchen, Angriff und W20** sind nun als kompakte, **fixierte Leiste oberhalb der unteren Navigation** erreichbar – auch beim Scrollen durch die Geschichte und in der Kampfübersicht. Bei geöffneter Bildschirmtastatur bleibt die Leiste sichtbar. Außerdem ist der bekannte `pubspec.yaml`-YAML-Fehler der Vorversion korrigiert. Siehe [Prüfanleitung](TESTING.md).
 

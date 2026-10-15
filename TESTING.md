@@ -1,3 +1,12 @@
+## 0.5.4+24 – Zusätzliche Abnahme der Multiclass- und ARM64-Freigabe
+
+- Python: `python3 scripts/verify_project.py .` und `python3 -m unittest discover -s scripts/tests -v`, inklusive der sieben `test_prepare_alpha_release.py`-Fälle.
+- Dart: `flutter test test/multiclass_rules_test.dart` zusätzlich zum vollständigen `flutter test`; insbesondere Heldentausch, nachträglich geänderte Klassenvoraussetzungen/HP/Fertigkeiten und zwischenzeitlicher TP-Schaden.
+- Backend: `npm ci && npm run typecheck && npm run build && npm test` mit online verfügbaren Paketen, nicht anhand eines unvollständigen Offline-Caches.
+- Android: `flutter build apk --debug`, Kotlin-JVM-Tests und anschließend ARM64-AOT-APK erstellen; die neue Release-Paketierung liest `app/build/alpha/app-arm64-v8a-alpha.apk`. Nur nach erfolgreichen Prüfungen als Alpha freigeben.
+- GitHub-Artefakt prüfen: ZIP-Pflichtdateien (`README.md`, `app/`, `backend/`, `.github/`, `scripts/`) im Archiv-Root; `Wuerfelraunen_vVERSION_BUILD_arm64.apk` enthält `lib/arm64-v8a/libapp.so`, `libflutter.so` und Manifest; `SHA256.txt` verifiziert ZIP, APK, Notizen.
+- Vor einem Gerätetest vorhandene Spielstände sichern; Debug-Signatur kann sich zwischen unabhängig gebauten Release-Dateien unterscheiden.
+
 ## Pflichtprüfung 0.5.3+23 – Feste Abenteuer-Schnellaktionen
 
 Neuer Hauptzweck: Die Schnellaktionen **Sprache / Untersuchen / Angriff / W20** müssen direkt oberhalb der unteren Navigation fixiert bleiben, während die Szene und Nachrichten scrollbar sind. Nach Aktivierung eines Kampfes bleiben die Aktionen ebenfalls verfügbar. Bei geöffneter Android-Tastatur bleiben die vier kompakten Aktionsfelder sichtbar, während doppelte Eingabebuttons eingespart werden. Die alte horizontale Schnellaktionsleiste in der Szenenliste existiert nicht mehr.

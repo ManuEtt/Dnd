@@ -1,3 +1,10 @@
+## Aktueller Schwerpunkt – 0.5.4+24 (15.10.2026)
+
+- **Implementiert, CI offen:** Übernahme einer zweiten Klassenstufe an unveränderte Regel-/Heldenbasis gebunden; fünf Dart-Regressionstests für veraltete Bestätigungen, doppelte Fertigkeiten, HP-Schaden und ungültige Klassenstufen.
+- **Implementiert, CI offen:** Versioniertes vollständig importierbares Projekt-ZIP und ARM64-APK plus SHA-256/ReleaseNotes nach grünem Android-GitHub-Workflow; Fehler-Checkpoints bleiben klar getrennt. Siehe `docs/ALPHA_RELEASES.md`.
+- **Jetzt erforderlich:** vollständigen Quellstand auf eigenem GitHub-Branch importieren (GitHub-Schreibzugriff derzeit 403), `flutter analyze`, `flutter test`, Kotlin-/Backend-Tests und APK-Build im CI validieren, Android-Installation und Persistenz auf echtem Gerät prüfen.
+- **Danach:** Mehrklassen-Proficiency-/Ressourcenmodell weiter vervollständigen; vor neuen weitreichenden Spiellogikänderungen gültige SRD-Regeln und Spielstandkompatibilität testen.
+
 ## 0.3.8+14 – 15.10.2026 – spielbare dynamische Abenteuer und geprüfte KI-Angebote
 
 - Narrative KI kann **genau eine optionale spielbare Herausforderung** pro Antwort vorschlagen, mit Quest, Begegnung und lokal ausgewähltem Gegnerprofil oder einer Wahrnehmungsaufgabe. KI-Daten werden auf Backend und Gerät validiert; der Provider kann keine Regel- oder Inventarwerte setzen.

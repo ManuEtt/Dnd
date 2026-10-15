@@ -1,3 +1,18 @@
+## 0.5.4+24 – GitHub Actions ohne automatische Codex-Entwicklung (15.10.2026)
+
+- `.github/workflows/autonomous-development.yml` aus dem vollständigen Projekt entfernt. Es gibt im neuen Archiv keinen Zeitplan, keinen `openai/codex-action`-Aufruf und keinen automatischen Codex-PR-Job mehr.
+- `.github/workflows/android-build.yml` und die regulären Flutter-, Backend-, Python-, Android- und Release-/Checkpoint-Jobs unverändert erhalten. Manuelle Codex-Verwendung außerhalb von GitHub Actions bleibt möglich.
+- Import- und Fortsetzungsdokumentation aktualisiert; ein neuer Python-Regressionstest verhindert, dass versehentlich wieder ein Codex-Workflow in `.github/workflows` landet.
+- **Keine App-Änderung und keine neue APK-Abnahme.** Die Versionsnummer `0.5.4+24` bleibt unverändert. GitHub-Commit nicht ausgeführt: Contents-API gibt HTTP 403 zurück. Bestehende Workflow-Datei auf GitHub muss gesondert mit `git rm` entfernt werden.
+
+## 0.5.4+24 – Mehrklassen-Aufstieg absichern und versionierte Alpha-Auslieferung vorbereiten (15.10.2026)
+
+- **Mehrklassen:** Vor dem Übernehmen einer Zweitklassen-Stufe wird jetzt überprüft, ob der Vorschlag noch zum selben Helden und zu denselben bestätigten Attributen, Fertigkeiten, maximalen Trefferpunkten und Klassenstufen gehört. Nachträglich ungültige Vorschläge werden ohne stillen Charakterfehler zurückgewiesen. Erlittener Schaden zwischen Vorschlag und Bestätigung bleibt erhalten und wird korrekt zum TP-Zuwachs berücksichtigt.
+- **Defensive Validierung:** Direkte inkonsistente Primär-/Sekundärklassenstufen werden abgewiesen. Fünf Dart-Regressionstests ergänzen die bestehenden Mehrklassen-Tests.
+- **Release-Automatisierung:** Neues `scripts/prepare_alpha_release.py` erzeugt nach **vollständig erfolgreichem CI-Lauf** ein versioniertes vollständiges Quellarchiv, die zuvor gebaute ARM64-APK, Release-Notizen und SHA-256-Prüfsummen. ARM64-Bibliotheken und APK-ZIP-Integrität werden vor Freigabe geprüft; die bestehende interne Debug-Testsignierung ist eindeutig gekennzeichnet.
+- **Tests:** Sieben neue Python-Fälle decken die sichere Auslieferung ab. GitHub-Actions-Workflow nutzt das Skript und lädt die versionierten Dateien als gemeinsames Release-Artefakt hoch. Fehlerhafte Builds behalten die bisherige gesonderte **nicht freigegebene** Quell-Checkpoint-Veröffentlichung.
+- **Abnahme:** Lokale Python- und Projektstrukturtests bestanden; Flutter-/Dart-Tests und Android-Build sind ohne SDK lokal **nicht ausgeführt**. Backend-`npm ci --offline` war wegen fehlendem Cache für `undici-types` nicht ausführbar. GitHub-`main` wurde nicht verändert. Dieser Entwicklungsstand bleibt ein *unverifizierter Quellcode-Checkpoint*, bis CI vollständig erfolgreich ist.
+
 ## Ergänzung zur Quellcodeübergabe 0.5.3+23 – 15.10.2026
 
 - Vollständigen Quellstand mit bereits vorhandenen fixierten Schnellaktionen (0.5.3+23) übernommen; keine Spielstands-/Schemaänderung.

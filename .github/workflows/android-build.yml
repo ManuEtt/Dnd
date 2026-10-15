@@ -132,6 +132,22 @@ jobs:
           retention-days: 14
           compression-level: 0
 
+      - name: Vollständiges versioniertes Alpha-Release vorbereiten
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/prepare_alpha_release.py "$RUNNER_TEMP/wuerfelraunen-release" \
+            --commit "$GITHUB_SHA" \
+            --run-url "https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+      - name: Vollständiges Alpha-Release bereitstellen (nur bei erfolgreichen Builds)
+        uses: actions/upload-artifact@v4
+        with:
+          name: wuerfelraunen-alpha-${{ github.run_number }}-${{ github.sha }}
+          path: ${{ runner.temp }}/wuerfelraunen-release/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+
       - name: Vollständigen Quellcode-Checkpoint erstellen (auch bei fehlgeschlagenem Build)
         if: always()
         shell: bash
