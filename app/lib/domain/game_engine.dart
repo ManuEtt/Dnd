@@ -5,6 +5,7 @@ import 'ai_story.dart';
 import 'adventure_catalog.dart';
 import 'models.dart';
 import 'rules_engine.dart';
+import 'rest_rules.dart';
 
 /// A free-text, deterministic narrator. It cannot execute SQL or provider tools.
 /// Every accepted turn produces a validated state checkpoint and an audit event.
@@ -750,6 +751,70 @@ class GameEngine {
         type: 'roll.requested',
       );
     }
+    // Both deterministic demo and AI campaigns use the SAME local rest rules.
+    // No external storyteller can restore Hit Dice or Hit Points directly.
+    if (RegExp(r'rast|ausruh|\bruhe\b').hasMatch(words)) {
+      if (!current.hero.isComplete) {
+        return _commit(campaign, current,
+          'Eine Rast benötigt einen vollständigen Charakterbogen.',
+          type: 'rules.blocked');
+      }
+      if (current.encounter != null && !current.encounter!.isFinished) {
+        return _commit(campaign, current,
+          'Während eines laufenden Kampfes ist keine Rast möglich.',
+          type: 'rules.blocked');
+      }
+      final short = RegExp(r'kurz\w*\s+rast').hasMatch(words);
+      final long = RegExp(r'lang\w*\s+rast').hasMatch(words);
+      if (!short && !long) {
+        return _commit(campaign, current,
+          'Bitte bestätige ausdrücklich „kurze Rast“ (mindestens 1 Stunde) '
+          'oder „lange Rast“ (mindestens 8 Stunden).',
+          type: 'rules.blocked');
+      }
+      try {
+        if (short) {
+          final requested = RegExp(r'(\d{1,2})\s*[wd](6|8|10|12)').firstMatch(words);
+          final count = requested == null ? 1 : int.parse(requested.group(1)!);
+          final sides = requested == null ? null : int.parse(requested.group(2)!);
+          if (current.hero.hitPoints == current.hero.maxHitPoints) {
+            return _commit(campaign, current,
+              'Deine Trefferpunkte sind bereits vollständig. '
+              'Es werden keine Trefferwürfel automatisch verbraucht.',
+              type: 'rules.blocked');
+          }
+          final rest = RestRules.shortRest(current.hero, dice: dice,
+            dieSides: sides, count: count);
+          return _commit(campaign,
+            current.copyWith(hero: rest.hero),
+            'Nach einer kurzen Rast (mindestens 1 Stunde) verbrauchst du '
+            '$count Trefferwürfel ${rest.dieType.toUpperCase()}. '
+            'Du erhältst ${rest.recovered} Trefferpunkte zurück '
+            '(jetzt ${rest.hero.hitPoints}/${rest.hero.maxHitPoints}).',
+            type: 'character.shortRest',
+            payload: {'hitDice': rest.dieType, 'count': count,
+              'rolls': [for (final roll in rest.dice) roll.toJson()],
+              'constitutionBonus': rest.constitutionBonus,
+              'healed': rest.recovered});
+        }
+        final hero = RestRules.longRest(current.hero);
+        return _commit(campaign, current.copyWith(hero: hero),
+          'Nach einer langen Rast (mindestens 8 Stunden) sind deine '
+          'Trefferpunkte und verbrauchten Trefferwürfel wiederhergestellt. '
+          'Klassenspezifische Fähigkeiten und Erschöpfung werden separat geführt.',
+          type: 'character.longRest',
+          payload: {'hitPoints': hero.hitPoints, 'spentHitDice': hero.spentHitDice});
+      } on StateError catch (error) {
+        return _commit(campaign, current, error.message.toString(),
+          type: 'rules.blocked');
+      } on FormatException catch (error) {
+        return _commit(campaign, current, error.message,
+          type: 'rules.blocked');
+      } on RangeError {
+        return _commit(campaign, current, 'Ungültige Anzahl Trefferwürfel.',
+          type: 'rules.blocked');
+      }
+    }
     if (current.facts['origin'] == 'arescan') {
       return _arescan(campaign, current, words);
     }
@@ -762,18 +827,6 @@ class GameEngine {
       }
       if (RegExp(r'heiltrank|trank.*trink|trink.*trank').hasMatch(words)) {
         return _drinkPotion(campaign, current);
-      }
-      if (RegExp(r'rast|ausruhen|ruhe').hasMatch(words)) {
-        if (!current.hero.isComplete) {
-          return _commit(campaign, current,
-            'Für eine regelkonforme Rast musst du den Charakterbogen vervollständigen.',
-            type: 'rules.blocked');
-        }
-        return _commit(campaign,
-          current.copyWith(hero: RulesEngine.heal(
-            current.hero, current.hero.maxHitPoints!)),
-          'Nach einer bestätigten sicheren Rast sind deine Trefferpunkte wiederhergestellt.',
-          type: 'character.rested');
       }
       if (RegExp(r'angreif|attackier|schieß|schies|kämpf|kaempf').hasMatch(words)) {
         return _commit(campaign, current,
@@ -789,23 +842,6 @@ class GameEngine {
     }
     if (RegExp(r'heiltrank|trank.*trink|trink.*trank').hasMatch(words)) {
       return _drinkPotion(campaign, current);
-    }
-    if (RegExp(r'rast|ausruhen|ruhe').hasMatch(words)) {
-      if (!current.hero.isComplete) {
-        return _commit(
-          campaign,
-          current,
-          'Bitte vervollständige zunächst den Charakterbogen.',
-          type: 'rules.blocked',
-        );
-      }
-      final healed = RulesEngine.heal(current.hero, current.hero.maxHitPoints!);
-      return _commit(
-        campaign,
-        current.copyWith(hero: healed),
-        'Nach einer sicheren langen Rast bist du wieder bei Kräften. Deine Trefferpunkte sind vollständig hergestellt. Was möchtest du tun?',
-        type: 'character.rested',
-      );
     }
     if (RegExp(r'brunnen|schlüssel|schluessel').hasMatch(words) &&
         current.facts['keyFound'] == 'true') {

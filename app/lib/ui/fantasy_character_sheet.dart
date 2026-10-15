@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../domain/models.dart';
 import '../domain/multiclass_rules.dart';
+import '../domain/rest_rules.dart';
 import 'fantasy_art.dart';
 
 // A read-only presentation of the actual, confirmed character data. No state,
@@ -588,7 +589,18 @@ class _DefensesSection extends StatelessWidget {
   const _DefensesSection({required this.hero});
   final HeroCharacter hero;
   @override
-  Widget build(BuildContext context) => Column(
+  Widget build(BuildContext context) {
+    String diceText;
+    try {
+      final available = RestRules.availableHitDice(hero);
+      diceText = available.entries.map((entry) {
+        final maximum = entry.value + (hero.spentHitDice[entry.key] ?? 0);
+        return '${entry.key.toUpperCase()}: ${entry.value}/$maximum';
+      }).join(' · ');
+    } on FormatException {
+      diceText = 'Nicht erfasst';
+    }
+    return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const _OrnateHeading('Verteidigung', icon: Icons.shield_outlined),
@@ -596,6 +608,7 @@ class _DefensesSection extends StatelessWidget {
           _DetailRow(icon: Icons.shield_outlined, label: 'Rüstungsklasse', value: hero.armorClass?.toString() ?? 'Nicht erfasst'),
           _DetailRow(icon: Icons.favorite_outline, label: 'Aktuelle Trefferpunkte', value: hero.hitPoints?.toString() ?? 'Nicht erfasst'),
           _DetailRow(icon: Icons.favorite_border, label: 'Maximale Trefferpunkte', value: hero.maxHitPoints?.toString() ?? 'Nicht erfasst'),
+          _DetailRow(icon: Icons.casino_outlined, label: 'Verfügbare Trefferwürfel', value: diceText),
           _DetailRow(icon: Icons.directions_run, label: 'Bewegung', value: hero.speed == null ? 'Nicht erfasst' : '${hero.speed} m'),
           _DetailRow(icon: Icons.check_circle_outline, label: 'Erfolgreiche Todesrettungswürfe', value: '${hero.deathSuccesses} / 3'),
           _DetailRow(icon: Icons.cancel_outlined, label: 'Fehlgeschlagene Todesrettungswürfe', value: '${hero.deathFailures} / 3'),
@@ -603,6 +616,7 @@ class _DefensesSection extends StatelessWidget {
           const _EmptyDetails('Resistenzen und Immunitäten sind im aktuellen Charaktermodell nicht gesondert erfasst.'),
         ],
       );
+  }
 }
 
 class _DetailRow extends StatelessWidget {

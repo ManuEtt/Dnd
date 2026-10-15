@@ -1,3 +1,12 @@
+## 0.5.8+28 – Rast- und Trefferwürfelregeln (15.10.2026)
+
+- **Ausgangsstand:** GitHub `main` `96ae347f61ad4e1c132caa848c1904444976f7d5` (0.5.7+27); die wesentlichen Model-/Engine-Quelldateien anhand ihrer Git-Blob-SHAs mit dem vollständigen lokalen Quellarchiv abgeglichen. Der GitHub-CI-Lauf #38731206833 für **0.5.7+27 ist inzwischen erfolgreich abgeschlossen** (Flutter, Backend und Android-APK). 0.5.8+28 bleibt ungeprüft.
+- **IMPLEMENTIERT:** Kurze Rast mit begrenztem klassenspezifischem Trefferwürfelpool (auch zwei Klassen), Konstitution, HP-Maximum und Würfeljournal. Lange Rast regeneriert TP und alle verbrauchten Trefferwürfel. Blockade bei 0 TP, Tod, Kampf, ausstehender Probe, fehlenden Werten und unklarer Rast. Neues Character-Sheet-Detail für freie/gesamte Würfel.
+- **Speicher:** Optionale Karte `spentHitDice` mit Sicherheitsvalidierung; alte Schema-1-Daten bleiben lesbar. Die KI kann keinen der Werte setzen.
+- **TESTS:** Neue Dart-Domain-, GameEngine- und Flutter-Widgettests geschrieben, aber Flutter/Dart hier nicht installiert. Lokale Python-Tests/Struktur sowie ZIP/Prüfsumme getrennt zu dokumentieren. Keine neue Android-APK als bestanden melden.
+- **Offene Arbeit:** Flutter-Analyse und alle Dart-Tests in GitHub Actions; Arbeitszeit/Rastunterbrechungen, 16-h-Regel, Erschöpfung und aufladen klassenspezifischer Ressourcen fehlen noch.
+- **Nächster Schritt:** Quelländerungen auf einem neuen GitHub-Branch übernehmen, CI vollständig ausführen, Fehler beheben; bei grüner Pipeline ARM64-APK freigeben.
+
 ## Version 0.5.7+27 – CI-Inventartest-Fix (15.10.2026)
 
 - **Ausgangs-HEAD:** `42b9ad37efcfce29bab62a1eae6fcbcc47a7ef73` (`main`), GitHub Actions #38729844876.

@@ -1,3 +1,9 @@
+## Schwerpunkt ab 0.5.8+28: Trefferwürfel und Rasten
+
+- **Implementiert, CI ausstehend:** Kurze Rast mit klassenabhängigem Trefferwürfelverbrauch, langer Rast und persistierten Ressourcen für Ein-/Zweitklassencharaktere; Details `docs/REST_RULES.md`.
+- **Vor weiterer Freigabe:** Neue Dart-Domain-, UI- und Integrationsfälle in Flutter CI ausführen; Android-APK und Speicherstände auf Gerät prüfen.
+- **Danach:** 16-Stunden-Langrast-Sperre und unterbrochene Rasten auf Basis einer expliziten In-Game-Zeit, Erschöpfungsstufen, Zustände, Zauberplätze sowie Klassenressourcen automatisieren.
+
 ## Nächstes Arbeitspaket nach 0.5.6+26 (CI noch ausstehend)
 
 1. GitHub-CI 0.5.6+26 ausführen; sämtliche Flutter-Widgettests, Analyse und ARM64-Build müssen erfolgreich sein.

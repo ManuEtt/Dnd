@@ -1,3 +1,11 @@
+## 0.5.8+28 – SRD-Rastregeln (CI noch ausstehend)
+
+- `flutter test test/rest_rules_test.dart`: Einzel-/Mehrklassenpool, Konstitutionsbonus, Mindestheilung, HP-Obergrenze, Ressourcenerschöpfung, alte JSONs, ungültige Importe, GameEngine-Journal, lange Rast und Sperren.
+- `flutter test test/fantasy_character_sheet_test.dart`: neue Anzeige verfügbarer Trefferwürfel im Verteidigungsbereich.
+- `flutter test test/domain_game_test.dart`: bestehende Demo-Heilung mit expliziter langer Rast.
+- Vollständiges `flutter analyze` und `flutter test` vor Android-Build zwingend ausführen. Flutter/Dart-SDK in der lokalen Packaging-Umgebung nicht vorhanden; **keine grünen Dart-Testläufe erfunden**.
+- Auf Android testen: kurze Rast mit 2W10, Neustart/Speicherung/Export/Import, erneute kurze Rast nach ausgeschöpftem Pool, lange Rast, Kampf-/Todesblockade, Mehrklassen 2W10 + 1W6.
+
 ## Regression 0.5.6+26 – drei vorherige CI-Fehler
 
 CI-Ausgangslage: https://github.com/ManuEtt/Dnd/actions/runs/38728029583 (349 Tests bestanden, 3 fehlgeschlagen).

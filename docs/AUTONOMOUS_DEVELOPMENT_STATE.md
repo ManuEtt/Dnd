@@ -1,3 +1,11 @@
+## Aktuelle Übergabe: 0.5.8+28 – Rastregeln (15.10.2026)
+
+- Basis: GitHub `96ae347f61ad4e1c132caa848c1904444976f7d5`, vorherige Version 0.5.7+27. GitHub Actions #38731206833 hat **0.5.7+27** mit APK erfolgreich gebaut; 0.5.8+28 ist noch nicht geprüft.
+- Implementiert: `RestRules`, klassenabhängiger Pool, optionale `spentHitDice`-Speicherung, Spieljournal und Charakterbogenanzeige; neue Dart-Tests.
+- Externe KI darf TP oder Würfel nicht verändern. Nur `android-build.yml`, keine Codex-Actions.
+- Offen: Flutter-/Dart-Test und Android-APK durch GitHub Actions bestätigen, danach auf Android prüfen; tatsächliche Rastzeit, Rastunterbrechungen und Klassenressourcen folgen später.
+- Kein automatischer GitHub-Push/CI als erledigt behaupten; letzter GitHub-Connector-Schreibversuch zuvor 403.
+
 ## Aktuelle Fortsetzung 0.5.6+26 – 15.10.2026
 
 GitHub-Basis `a8e77778c171132c9d9cabdb56d5a19c9e170953`, CI-Lauf `38728029583`: 349 Flutter-Tests bestanden, 3 fehlgeschlagen. Diese drei Probleme wurden im vollständigen Quellpaket korrigiert (IME-Insets, vergrößerte Schrift, Inventar-Testscrolling); neue GitHub-Abnahme ausstehend. Bei neuem Start zuerst den tatsächlichen HEAD vergleichen, vollständiges Flutter CI ausführen, erst dann ARM64-APK freigeben. Automatische Codex-Action bleibt entfernt.

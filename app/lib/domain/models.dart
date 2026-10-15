@@ -114,6 +114,7 @@ class HeroCharacter {
     this.gold,
     this.experience,
     List<String> conditions = const [],
+    Map<String, int> spentHitDice = const {},
     this.weaponDamage = '',
     this.weaponAbility = 'strength',
     this.weaponProficient = false,
@@ -129,6 +130,7 @@ class HeroCharacter {
        spells = List.unmodifiable(spells),
        inventory = List.unmodifiable(inventory),
        conditions = List.unmodifiable(conditions),
+       spentHitDice = Map.unmodifiable(spentHitDice),
        unverifiedNotes = List.unmodifiable(unverifiedNotes);
   final String id, name, species, className, secondaryClassName, subclass, background, backstory;
   final int secondaryClassLevel;
@@ -148,6 +150,9 @@ class HeroCharacter {
       conditions,
       unverifiedNotes;
   final List<InventoryItem> inventory;
+  /// Already spent class Hit Dice, keyed by die type (d6/d8/d10/d12).
+  /// Optional in schemaVersion 1 for backwards-compatible older saves.
+  final Map<String, int> spentHitDice;
   final String weaponDamage, weaponAbility;
   final bool weaponProficient;
   List<String> get incompleteFields => [
@@ -185,6 +190,7 @@ class HeroCharacter {
     Object? gold = _unchanged,
     Object? experience = _unchanged,
     List<String>? conditions,
+    Map<String, int>? spentHitDice,
     String? weaponDamage,
     String? weaponAbility,
     bool? weaponProficient,
@@ -224,6 +230,7 @@ class HeroCharacter {
         ? this.experience
         : experience as int?,
     conditions: conditions ?? this.conditions,
+    spentHitDice: spentHitDice ?? this.spentHitDice,
     weaponDamage: weaponDamage ?? this.weaponDamage,
     weaponAbility: weaponAbility ?? this.weaponAbility,
     weaponProficient: weaponProficient ?? this.weaponProficient,
@@ -256,6 +263,7 @@ class HeroCharacter {
     'gold': gold,
     'experience': experience,
     'conditions': conditions,
+    if (spentHitDice.isNotEmpty) 'spentHitDice': spentHitDice,
     'weaponDamage': weaponDamage,
     'weaponAbility': weaponAbility,
     'weaponProficient': weaponProficient,
@@ -301,6 +309,24 @@ class HeroCharacter {
     final secondaryLevel = _int(j['secondaryClassLevel'], 'Zweitklassenstufe',
         fallback: 0, min: 0, max: 19);
     final totalLevel = _int(j['level'], 'Stufe', min: 1, max: 20);
+    final diceRecord = j['spentHitDice'];
+    if (diceRecord != null && diceRecord is! Map<String, dynamic>) {
+      throw const FormatException('Verbrauchte Trefferwürfel sind ungültig.');
+    }
+    final spent = <String, int>{};
+    if (diceRecord != null) {
+      for (final entry in diceRecord.entries) {
+        if (!const ['d6', 'd8', 'd10', 'd12'].contains(entry.key) ||
+            entry.value is! int || entry.value < 0 || entry.value > totalLevel) {
+          throw const FormatException('Ungültiger Trefferwürfelbestand.');
+        }
+        if (entry.value > 0) spent[entry.key] = entry.value as int;
+      }
+      if (spent.values.fold<int>(0, (sum, count) => sum + count) > totalLevel) {
+        throw const FormatException('Mehr Trefferwürfel verbraucht als Stufen vorhanden.');
+      }
+    }
+
     if ((secondary.isEmpty && secondaryLevel != 0) ||
         (secondary.isNotEmpty && (secondaryLevel < 1 || secondaryLevel >= totalLevel)) ||
         (secondary.isNotEmpty && secondary.toLowerCase() ==
@@ -345,6 +371,7 @@ class HeroCharacter {
       gold: _nullableInt(j['gold'], 'Gold'),
       experience: _nullableInt(j['experience'], 'Erfahrung'),
       conditions: _strings(j['conditions'], 'Zustände'),
+      spentHitDice: spent,
       weaponDamage: weaponDamage,
       weaponAbility: weaponAbility,
       weaponProficient: _bool(j['weaponProficient'], 'Waffenübung'),

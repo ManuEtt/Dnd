@@ -1,3 +1,9 @@
+# Importhinweis Würfelraunen 0.5.8+28
+
+Das vollständige ZIP enthält den Quellcode direkt in der Projektwurzel (`app/`, `backend/`, `scripts/`, `.github/`). Für ein neues lokales Projekt: ZIP in ein leeres Verzeichnis entpacken und dieses im Editor öffnen. Für einen vorhandenen Git-Checkout: Änderungen zunächst auf einem separaten Branch mit `git diff` vergleichen; vorhandene neuere Commits nicht pauschal überschreiben.
+
+Die neue D&D-Rastfunktion ist unter `docs/REST_RULES.md` beschrieben. Die Build- und Testautomatisierung bleibt in `.github/workflows/android-build.yml`; es gibt keine automatische Codex-Action. Flutter- und Android-Build für 0.5.8+28 sind noch nicht bestätigt.
+
 # GitHub Actions: Codex-Entwicklung entfernen (Version 0.5.4+24)
 
 Dieses **vollständige Quellarchiv** enthält keine `.github/workflows/autonomous-development.yml` mehr. Alle normalen Builds bleiben in `.github/workflows/android-build.yml` erhalten.

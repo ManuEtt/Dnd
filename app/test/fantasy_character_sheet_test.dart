@@ -180,4 +180,26 @@ void main() {
     expect(edits, 1);
     expect(tester.takeException(), isNull);
   });
+  testWidgets('Charakterbogen zeigt verbliebene Trefferwürfel der Mehrklassen',
+      (tester) async {
+    final hero = HeroCharacter(
+      id: 'rest-sheet', name: 'Elowen', className: 'Kämpfer',
+      level: 3, secondaryClassName: 'Magier', secondaryClassLevel: 1,
+      hitPoints: 11, maxHitPoints: 18, armorClass: 15, speed: 9,
+      spentHitDice: const {'d10': 1},
+    );
+    await tester.pumpWidget(MaterialApp(home: CharacterSheetPage(hero: hero)));
+    await tester.pumpAndSettle();
+    final section = find.byKey(const ValueKey('sheet-tab-2'));
+    await tester.scrollUntilVisible(section, 180,
+        scrollable: find.byType(Scrollable).first);
+    await tester.ensureVisible(section);
+    await tester.pumpAndSettle();
+    await tester.tap(section);
+    await tester.pumpAndSettle();
+    expect(find.text('Verfügbare Trefferwürfel'), findsOneWidget);
+    expect(find.text('D10: 1/2 · D6: 1/1'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
 }

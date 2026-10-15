@@ -1,6 +1,13 @@
+Im Abenteuer kannst du eine **kurze Rast** (`Ich mache eine kurze Rast 2W10.`) zur Heilung mit verfügbaren Trefferwürfeln oder eine **lange Rast** (`Ich mache eine lange Rast.`) zur Wiederherstellung von TP und Trefferwürfelvorrat bestätigen. Die Ressourcen bleiben im Spielstand erhalten und werden im Charakterbogen unter **Verteidigung** angezeigt. Die Regelumsetzung ist auf den dokumentierten Teilumfang begrenzt; siehe [Rast-Regeln](docs/REST_RULES.md). Flutter-/Android-CI für diese neue Version noch ausstehend.
+
 > Entwicklungsstand `0.5.7+27` (15.10.2026): Inventar-Widgettest stabilisiert. Noch keine CI-/Android-Abnahme für diesen Stand. Die letzte GitHub-Abnahme zu `0.5.6+26` meldete 351 erfolgreiche und einen fehlgeschlagenen Flutter-Test.
 
 # Würfelraunen – Der lebendige Spielleiter
+
+## Neu in 0.5.8+28: D&D-Rasten und Trefferwürfel
+
+Im Abenteuer kannst du eine **kurze Rast** (`Ich mache eine kurze Rast 2W10.`) zur Heilung mit verfügbaren Trefferwürfeln oder eine **lange Rast** (`Ich mache eine lange Rast.`) zur Wiederherstellung von TP und Trefferwürfelvorrat bestätigen. Die Ressourcen bleiben im Spielstand erhalten und werden im Charakterbogen unter **Verteidigung** angezeigt. Die Regelumsetzung ist auf den dokumentierten Teilumfang begrenzt; siehe [Rast-Regeln](docs/REST_RULES.md). Flutter-/Android-CI für diese neue Version noch ausstehend.
+
 > **Neuer Quellstand 0.5.6+26 (CI ausstehend):** Drei konkrete Fehler aus dem GitHub-Lauf für 0.5.5+25 korrigiert: Android-Tastatur-Erkennung der unteren Schnellaktionen, Overflow bei 320dp/großer Schrift und Antippbarkeit der Inventarschaltfläche im Widgettest. Alle vier Schnellaktionen bleiben fest unten. Keine Änderungen an Spielständen oder dem KI-Backend.
 
 ### Schnellaktionen unten fest angedockt (0.5.5+25)

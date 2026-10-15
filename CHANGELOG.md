@@ -1,3 +1,12 @@
+## 0.5.8+28 – SRD-5.2.1-Rasten und Trefferwürfel (15.10.2026)
+
+- Eigenständiges `RestRules`-Modul implementiert kurze Rast mit klassenspezifischen Trefferwürfeln, Konstitutionsbonus, Mindestheilung und TP-Limit; keine unbegrenzte Pauschalheilung mehr.
+- Lange Rast stellt TP und ausgegebene Trefferwürfel wieder her. Rasten bei 0 TP, Tod, aktiver Begegnung und offener Würfelprobe blockiert; unklare Rastbefehle erfordern explizite Wahl.
+- Optionale `spentHitDice`-Karte in bestehenden JSON-Spielständen (Schema 1) und SQLite-Snapshots; keine Datenmigration, vorhandene Speicherstände laden ohne Würfelverlust.
+- Neue Journalereignisse `character.shortRest` / `character.longRest` sowie Trefferwürfelanzeige im Charakterbogen. Dart-Tests für Mehrklassen, Speicherung, Sicherheitsgrenzen und Spielaktionen hinzugefügt.
+- **Status:** Projektstruktur und Python-Tests lokal geprüft. Flutter/Dart-Analyse, Widgettests, Android-APK und Gerätetest für diesen Stand nicht durchgeführt. Nur Android-Actions-Workflow, keine Codex-Action.
+- **Referenz:** `docs/REST_RULES.md`, SRD 5.2.1 unter CC BY 4.0.
+
 ## 0.5.7+27 – Inventar-Widgettest robuster gemacht (15.10.2026)
 
 - **CI-Ursache (Lauf #38729844876, Commit `42b9ad37`):** 351 Flutter-Tests erfolgreich, ein Inventar-Widgettest fehlgeschlagen (`StateError: Bad state: No element`). Flutter-Analyse und Backend-Prüfungen waren erfolgreich.

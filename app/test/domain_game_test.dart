@@ -203,7 +203,7 @@ void main() {
     expect(game.hero.inventory.any((e) => e.id == 'potion'), isFalse);
     game = gm.act(game, 'Ich trinke einen Heiltrank.').campaign;
     expect(game.hero.hitPoints, 6);
-    game = gm.act(game, 'Ich raste.').campaign;
+    game = gm.act(game, 'Ich mache eine lange Rast.').campaign;
     expect(game.hero.hitPoints, 12);
   });
 
