@@ -1,3 +1,29 @@
+## 0.6.4+34 – Zauberressourcen in der gemeinsamen Regelengine (15.10.2026)
+
+- **BASIS:** vollständiges 0.6.3+33-Quell-ZIP; Entwicklung unabhängig von Codex.
+- **IMPLEMENTIERT:** `SpellcastingRules`, getrennte Verbrauchspools für normalen Zauberplatz und Paktmagie, persistierte Konzentration; Eingabe über Charaktereditor; Anzeige im Charakterbogen, Rast- und Kampfintegration, Einbeziehung bestehender Modifikatoren für Konzentrationsrettungswürfe; Sicherung und Importvalidierung ohne Schemawechsel.
+- **TESTS ERGÄNZT:** `spellcasting_rules_test.dart` und `spellcasting_dialog_test.dart`.
+- **NICHT GETESTET:** Neue Dart-Tests, Flutter-Analyse, Android-/Geräte-Build. Kein Flutter SDK vor Ort. Projekt-/Python-Tests getrennt prüfen.
+- **OFFEN:** SRD-Zauberkatalog und Zaubergradvalidierung, Aktionsökonomie, Zauberwirkungen, manuelle Konzentrationsrettungen, sonstige Schadensquellen. `docs/SPELLCASTING_RESOURCES.md`.
+- **GITHUB:** Kein Push behauptet, keine Codex-Action hinzufügen.
+
+## 0.6.3+33 – bereichsübergreifende D&D-Regelengine (15.10.2026)
+
+- **AUSGANGSBASIS:** Vollständiges Quell-ZIP 0.6.2+32; unabhängig von Codex fortgeführt. Keine GitHub-Änderungen vorgenommen.
+- **IMPLEMENTIERT:** Gemeinsamer `CharacterRuleEngine`-Zugriff auf bestätigte Charakterdaten für Initiative, Angriffe, Fertigkeits-/Attributsproben, Rettungswürfe und effektive Bewegung. Erschöpfung, wichtige Zustandsfolgen, Rüstungs-/Waffen-Grenzen und Vorteils-/Nachteilsregeln werden berücksichtigt.
+- **KOMPONENTEN:** `GameEngine`, `DiceEngine` via versioniertem `PendingRoll`, Charakterbogen, Ausrüstungsvorschau, Charaktermodell und Eventjournal angeschlossen. Ältere PendingRoll-JSON-Daten enthalten keine neuen Pflichtfelder. Ein AI-Erzähler kann keine eigenen Regelwerte bestätigen.
+- **GETESTET:** Projektstruktur und 38 Python-Tests lokal. Neue Dart-Domain- und Widgettests vorhanden. **NICHT GETESTET:** Flutter Analyze, Flutter Unit-/Widgettests, Backend-CI, neue APK und physische Geräteabnahme; Flutter-SDK fehlt in lokaler Umgebung.
+- **OFFEN:** Kontextabhängige Zustände/Zauber, Konzentration, begrenzte Zauberplätze, Ressourcen, vollständige Aktionsökonomie, alle SRD-Monster-/Klassenaktionen; schrittweise mit auditierbaren Tests ergänzen.
+- **DETAILS:** `docs/UNIFIED_RULE_ENGINE.md`.
+
+## 0.6.2+32 – SRD-Zustände und Erschöpfung (15.10.2026)
+
+- **Basis:** Vollständiges ZIP 0.6.1+31, mit aktuellem GitHub-`main` 45862495f9da abgeglichen. Android CI #38749928875 für 0.6.1+31 war erfolgreich.
+- **IMPLEMENTIERT:** Optionale Erschöpfungsstufe 0–6 im Charaktermodell, sichere Importvalidierung, Unveränderlichkeit historischer Snapshots, Tod bei Stufe 6; W20-Mali bei Angriff/Initiative/Wahrnehmung/Todesrettung und reduziertes Kampfbewegungsbudget. Lange Rast reduziert Erschöpfung um eine Stufe. Konservative Auflistung von 14 weiteren SRD-Zuständen mit ausgewählten Aktions-/Bewegungsblockaden; eigener Editorbereich.
+- **EINGESCHRÄNKT:** Keine automatisch bestätigte Spielzeit/Dauer, keine automatische Erschöpfungsursache, nicht alle Zauber/Rettungswürfe/Zustandsregeln flächendeckend in jeder Engineaktion angebunden; siehe `docs/CONDITIONS_EXHAUSTION.md`.
+- **GETESTET:** Python-Projektstruktur und 38 Python-Regressionstests; neue Dart-Tests ergänzt. **NICHT GETESTET:** Dart-Analyse, neue Dart-Tests, Android-APK und reale Geräteinstallation mangels Flutter-Toolchain.
+- **Nächster Schritt:** Gegen laufende Codex-Änderungen auf eigenem Branch zusammenführen, GitHub-CI ausführen, Fehler beheben, danach Gerätetest.
+
 ## 0.6.1+31 – Flutter-Analyzer und Rast-Testfixtures (15.10.2026)
 
 - **BEHOBEN:** `srd_equipment_catalog.dart` verwendet für das Gewicht eine einfache Stringinterpolation (`$weightLb`), wodurch der in CI reproduzierte Analyzer-Lint `unnecessary_brace_in_string_interps` entfällt. Keine Änderung der Ausrüstungswerte.

@@ -1,3 +1,24 @@
+## Nach 0.6.4+34 – Zauberressourcen
+
+1. **Zuerst:** Flutter-Analyse, alle Dart-/Widgettests und Android-APK-Build für 0.6.4+34 grün bekommen; bei Fehlern die Logs auswerten und beheben.
+2. SRD-Zauberkatalog mit bestätigten Grad-/Konzentrations- und Klassenzuordnungen ergänzen, danach Komponenten/Ritual/Zauberwirkungs-Engine, Vorbereitung und Aktionen.
+3. Weitere Schadensquellen und manuelle Rettungswürfe an Konzentration anschließen; Tests für Kampfprotokoll und Persistenz.
+4. Klassenressourcen, Rundenaktionen, Monstereffekte und Szenenkontext fortsetzen.
+
+## Nächster Schritt nach 0.6.3+33 – zentrale Regelengine
+
+1. Gesamte Flutter- und Backend-CI sowie Android-APK aus dem importierten Quellstand erfolgreich durchführen. Falls Tests fehlschlagen: tatsächliche Logs auswerten und beheben.
+2. Regelkern an kontextsensitive Zustände mit eindeutiger Quelle/Entfernung anbinden; keine unbestätigten narrativen Tatsachen erfinden.
+3. SRD-Zauberplätze, Konzentration, klassenbasierte Ressourcen, sichere Verbräuche und bedingte Erholungsintervalle vollständig versioniert implementieren.
+4. Mobile UI- und Geräteszenarien, insbesondere Charakterbogen/Bestätigung/Schnellaktionen, testen.
+
+## Nächste Schritte nach 0.6.2+32
+
+1. Neue Erschöpfungs-/Zustandsregeln in Flutter-CI und auf Android prüfen, besonders D20-Mali, Rest-Rückgewinnung und 1,5-m-Bewegung.
+2. 14 weitere SRD-Zustände mit Quellen, Dauern, Rettungswürfen, Vor-/Nachteil und Schaden in der zustandsabhängigen Regelengine vollständig integrieren.
+3. Weltzeit, Rastunterbrechungen und Langrast-Sperre; danach Zauberkonzentration, Zauberplätze und Klassenressourcen.
+4. Automatische Codex-Entwicklung bleibt aus GitHub Actions entfernt.
+
 ## Schwerpunkt ab 0.6.0+30: Angelegte SRD-Waffen und Rüstungen
 
 - Implementiert, CI ausstehend: Bestätigte RK-/Angriffs-Vorschau, Inventar-Slotreferenzen und Altspeicherkompatibilität. Quellen und Grenzen: `docs/EQUIPMENT_RULES.md`.

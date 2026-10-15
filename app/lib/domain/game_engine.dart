@@ -1,11 +1,14 @@
 import 'dart:convert';
 
 import 'dice_engine.dart';
+import 'condition_rules.dart';
+import 'character_rule_engine.dart';
 import 'ai_story.dart';
 import 'adventure_catalog.dart';
 import 'models.dart';
 import 'rules_engine.dart';
 import 'rest_rules.dart';
+import 'spellcasting_rules.dart';
 
 /// A free-text, deterministic narrator. It cannot execute SQL or provider tools.
 /// Every accepted turn produces a validated state checkpoint and an audit event.
@@ -228,15 +231,16 @@ class GameEngine {
       throw const FormatException('Diese Begegnung wurde bereits gespielt oder das Questlimit ist erreicht.');
     }
     if (valid.archetype == 'investigation') {
-      final bonus = RulesEngine.abilityModifier(campaign.hero.abilities['wisdom']!) +
-          (campaign.hero.skills.contains('Wahrnehmung')
-            ? RulesEngine.proficiencyBonus(campaign.hero.level) : 0);
+      final perception = CharacterRuleEngine.perception(campaign.hero);
+      final bonus = perception.modifier;
       final next = campaign.copyWith(
         adventureOffer: null, scene: valid.description,
         quests: [...campaign.quests, Quest(id: questId, title: valid.questTitle,
           description: valid.questDescription)],
         pendingRoll: PendingRoll(id: _id('roll'), type: 'perception',
-          modifier: bonus, difficulty: 10),
+          modifier: bonus, difficulty: 10,
+          advantage: perception.advantage,
+          disadvantage: perception.disadvantage),
         facts: {...campaign.facts, 'aiEncounterQuestId': questId,
           'aiEncounterOfferId': valid.id, 'aiEncounterLoot': 'Spurenkarte'},
       );
@@ -248,7 +252,10 @@ class GameEngine {
         });
     }
     final foe = AdventureCatalog.forHero(valid.archetype, campaign.hero);
-    final heroInitiative = dice.check(modifier: RulesEngine.initiativeBonus(campaign.hero));
+    final initiative = CharacterRuleEngine.initiative(campaign.hero);
+    final heroInitiative = dice.check(modifier: initiative.modifier,
+        advantage: initiative.advantage,
+        disadvantage: initiative.disadvantage);
     final enemyInitiative = dice.check(modifier: 0);
     var next = campaign.copyWith(
       adventureOffer: null,
@@ -259,7 +266,7 @@ class GameEngine {
         enemyArmorClass: foe.armorClass, enemyAttackBonus: foe.attackBonus,
         enemyDamage: foe.damage, heroInitiative: heroInitiative.total,
         enemyInitiative: enemyInitiative.total,
-        movementRemaining: campaign.hero.speed!),
+        movementRemaining: CharacterRuleEngine.movementWholeMeters(campaign.hero)!),
       scene: valid.description,
       facts: {...campaign.facts,
         'aiEncounterQuestId': questId,
@@ -778,10 +785,29 @@ class GameEngine {
           final count = requested == null ? 1 : int.parse(requested.group(1)!);
           final sides = requested == null ? null : int.parse(requested.group(2)!);
           if (current.hero.hitPoints == current.hero.maxHitPoints) {
+            if (current.hero.spentPactSlots > 0 && requested == null) {
+              final refreshed = SpellcastingRules.afterShortRest(current.hero);
+              return _commit(campaign, current.copyWith(hero: refreshed),
+                'Nach der kurzen Rast sind deine Paktmagieplätze wiederhergestellt. '
+                'Es wurden keine Trefferwürfel verbraucht.',
+                type: 'character.shortRest',
+                payload: {'hitDice': null, 'count': 0, 'rolls': <dynamic>[],
+                  'pactSlotsRecovered': current.hero.spentPactSlots});
+            }
             return _commit(campaign, current,
               'Deine Trefferpunkte sind bereits vollständig. '
               'Es werden keine Trefferwürfel automatisch verbraucht.',
               type: 'rules.blocked');
+          }
+          if (requested == null && current.hero.spentPactSlots > 0 &&
+              !RestRules.availableHitDice(current.hero).values.any((n) => n > 0)) {
+            final refreshed = SpellcastingRules.afterShortRest(current.hero);
+            return _commit(campaign, current.copyWith(hero: refreshed),
+              'Nach der kurzen Rast sind deine Paktmagieplätze wiederhergestellt. '
+              'Die Trefferwürfel sind bereits verbraucht.',
+              type: 'character.shortRest',
+              payload: {'hitDice': null, 'count': 0, 'rolls': <dynamic>[],
+                'pactSlotsRecovered': current.hero.spentPactSlots});
           }
           final rest = RestRules.shortRest(current.hero, dice: dice,
             dieSides: sides, count: count);
@@ -795,15 +821,21 @@ class GameEngine {
             payload: {'hitDice': rest.dieType, 'count': count,
               'rolls': [for (final roll in rest.dice) roll.toJson()],
               'constitutionBonus': rest.constitutionBonus,
-              'healed': rest.recovered});
+              'healed': rest.recovered,
+              'pactSlotsRecovered': current.hero.spentPactSlots});
         }
         final hero = RestRules.longRest(current.hero);
         return _commit(campaign, current.copyWith(hero: hero),
           'Nach einer langen Rast (mindestens 8 Stunden) sind deine '
           'Trefferpunkte und verbrauchten Trefferwürfel wiederhergestellt. '
-          'Klassenspezifische Fähigkeiten und Erschöpfung werden separat geführt.',
+          'Erschöpfung: ${current.hero.exhaustionLevel} → ${hero.exhaustionLevel}. '
+          'Klassenspezifische Fähigkeiten werden separat geführt.',
           type: 'character.longRest',
-          payload: {'hitPoints': hero.hitPoints, 'spentHitDice': hero.spentHitDice});
+          payload: {'hitPoints': hero.hitPoints, 'spentHitDice': hero.spentHitDice,
+              'spellSlotsRestored': current.hero.spentSpellSlots,
+              'pactSlotsRestored': current.hero.spentPactSlots,
+              'exhaustionBefore': current.hero.exhaustionLevel,
+              'exhaustionAfter': hero.exhaustionLevel});
       } on StateError catch (error) {
         return _commit(campaign, current, error.message.toString(),
           type: 'rules.blocked');
@@ -964,8 +996,11 @@ class GameEngine {
           type: 'rules.blocked',
         );
       }
+      final initiative = CharacterRuleEngine.initiative(current.hero);
       final heroInit = dice.check(
-        modifier: RulesEngine.initiativeBonus(current.hero),
+        modifier: initiative.modifier,
+        advantage: initiative.advantage,
+        disadvantage: initiative.disadvantage,
       );
       final foeInit = dice.check(modifier: 0);
       var next = current.copyWith(
@@ -989,7 +1024,7 @@ class GameEngine {
           enemyMaxHitPoints: 10,
           heroInitiative: heroInit.total,
           enemyInitiative: foeInit.total,
-          movementRemaining: current.hero.speed!,
+          movementRemaining: CharacterRuleEngine.movementWholeMeters(current.hero)!,
         ),
       );
       var narration =
@@ -1026,11 +1061,8 @@ class GameEngine {
           type: 'rules.blocked',
         );
       }
-      final bonus =
-          RulesEngine.abilityModifier(current.hero.abilities['wisdom']!) +
-          (current.hero.skills.contains('Wahrnehmung')
-              ? RulesEngine.proficiencyBonus(current.hero.level)
-              : 0);
+      final perception = CharacterRuleEngine.perception(current.hero);
+      final bonus = perception.modifier;
       return _commit(
         campaign,
         current.copyWith(
@@ -1039,6 +1071,8 @@ class GameEngine {
             type: 'perception',
             modifier: bonus,
             difficulty: 10,
+            advantage: perception.advantage,
+            disadvantage: perception.disadvantage,
           ),
         ),
         'Bitte würfle einen W20 für deine Wahrnehmung. Dein bestätigter Modifikator ist ${_signed(bonus)}; die Schwierigkeit beträgt 10.',
@@ -1135,11 +1169,18 @@ class GameEngine {
   }
 
   GameUpdate _combatAction(Campaign before, Campaign current, String words) {
+    if (!ConditionRules.canTakeActions(current.hero) &&
+        !RegExp(r'beweg|lauf|geh').hasMatch(words)) {
+      return _commit(before, current,
+        'Dein aktueller Zustand verhindert diese Kampfhandlung.',
+        type: 'rules.blocked');
+    }
     final encounter = current.encounter!;
     if (RegExp(
       r'angreif|attackier|greif\w*.*\ban(?:[.!?]|$)|schieß|schies|schlag|hieb|bogen|schwert',
     ).hasMatch(words)) {
-      final bonus = RulesEngine.attackBonus(current.hero);
+      final attack = CharacterRuleEngine.attack(current.hero);
+      final bonus = attack.modifier;
       return _commit(
         before,
         current.copyWith(
@@ -1147,23 +1188,28 @@ class GameEngine {
             id: _id('roll'),
             type: 'attack',
             modifier: bonus,
+            advantage: attack.advantage,
+            disadvantage: attack.disadvantage,
             difficulty: encounter.enemyArmorClass,
             targetId: encounter.id,
             targetName: encounter.enemyName,
           ),
         ),
-        '${current.hero.name}, würfle einen W20 für deinen Angriff auf den ${encounter.enemyName}. Dein Angriffsbonus ist ${_signed(bonus)}; seine Rüstungsklasse beträgt ${encounter.enemyArmorClass}.',
+        '${current.hero.name}, würfle einen W20 für deinen Angriff auf den ${encounter.enemyName}. Dein Angriffsbonus ist ${_signed(bonus)} (${attack.rollHint}); seine Rüstungsklasse beträgt ${encounter.enemyArmorClass}.',
         type: 'roll.requested',
       );
     }
     if (RegExp(r'flieh|flucht|wegrenn').hasMatch(words)) {
+      final escape = CharacterRuleEngine.abilityCheck(current.hero, 'dexterity');
       return _commit(
         before,
         current.copyWith(
           pendingRoll: PendingRoll(
             id: _id('roll'),
             type: 'escape',
-            modifier: RulesEngine.initiativeBonus(current.hero),
+            modifier: escape.modifier,
+            advantage: escape.advantage,
+            disadvantage: escape.disadvantage,
             difficulty: 10,
           ),
         ),
@@ -1185,12 +1231,17 @@ class GameEngine {
       );
     }
     if (RegExp(r'beweg|lauf|geh').hasMatch(words)) {
+      if ((CharacterRuleEngine.movementWholeMeters(current.hero) ?? 0) <= 0) {
+        return _commit(before, current,
+          'Dein Zustand oder deine Bewegungsrate erlaubt keine Bewegung.',
+          type: 'rules.blocked');
+      }
       final amount =
           int.tryParse(
             RegExp(r'(\d+)\s*(?:m|meter)').firstMatch(words)?.group(1) ?? '',
           ) ??
           3;
-      if (amount > encounter.movementRemaining) {
+      if (amount <= 0 || amount > encounter.movementRemaining) {
         return _commit(
           before,
           current,
@@ -1229,6 +1280,8 @@ class GameEngine {
       modifier: pending.modifier,
       natural: natural,
       total: total,
+      advantage: pending.advantage,
+      disadvantage: pending.disadvantage,
     );
     var next = campaign.copyWith(pendingRoll: null);
     if (input != null) {
@@ -1497,6 +1550,7 @@ class GameEngine {
     final foe = campaign.encounter!;
     final result = dice.check(
       modifier: foe.enemyAttackBonus,
+      advantage: ConditionRules.hasUnconditionalAttackerAdvantage(campaign.hero),
       disadvantage: disadvantage,
     );
     final outcome = RulesEngine.attack(
@@ -1516,6 +1570,25 @@ class GameEngine {
       final damage =
           damageRoll.total + (extra == null ? 0 : extra.total - extra.modifier);
       hero = RulesEngine.damage(hero, damage, critical: outcome.critical);
+      if (campaign.hero.concentratingOn.isNotEmpty && damage > 0) {
+        if (hero.concentratingOn.isEmpty) {
+          details['concentrationLost'] = true;
+          narration += ' Deine Konzentration endet.';
+        } else {
+          final rule = CharacterRuleEngine.savingThrow(hero, 'constitution');
+          final save = dice.check(modifier: rule.modifier,
+            advantage: rule.advantage, disadvantage: rule.disadvantage);
+          final concentration = SpellcastingRules.saveAfterDamage(hero,
+              damage: damage, d20: save.natural!);
+          hero = concentration.hero;
+          details['concentrationSave'] = save.toJson();
+          details['concentrationDc'] = concentration.dc;
+          details['concentrationMaintained'] = concentration.maintained;
+          narration += concentration.maintained
+              ? ' Konzentrationsrettungswurf geschafft (${concentration.total} gegen SG ${concentration.dc}).'
+              : ' Konzentration verloren (${concentration.total} gegen SG ${concentration.dc}).';
+        }
+      }
       details['damageRoll'] = damageRoll.toJson();
       details['criticalExtra'] = extra?.toJson();
       details['damage'] = damage;
@@ -1530,7 +1603,7 @@ class GameEngine {
         encounter: foe.copyWith(
           round: foe.round + (advanceRound ? 1 : 0),
           activeParticipant: 'hero',
-          movementRemaining: hero.speed!,
+          movementRemaining: CharacterRuleEngine.movementWholeMeters(hero)!,
           actionUsed: false,
           bonusActionUsed: false,
           reactionUsed: false,

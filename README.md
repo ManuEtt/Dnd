@@ -1,3 +1,14 @@
+**Neue Regelengine 0.6.4+34:** Zauberplätze und Hexenmeister-Paktmagie werden jetzt getrennt verbraucht und gespeichert, Konzentration wird verfolgt, Rasten stellen Ressourcen wieder her. Im Charaktereditor unter „Fertigkeiten, Fähigkeiten & Zauber“ den Ressourcen-Dialog öffnen. Das sind bewusst noch **keine automatischen Zauberwirkungen**; siehe [docs/SPELLCASTING_RESOURCES.md](docs/SPELLCASTING_RESOURCES.md).
+
+### Gemeinsame D&D-Regelengine ab 0.6.3+33
+
+Spielhandlungen und Charakterbogen verwenden dieselben bestätigten Regeln für Erschöpfung, Initiative, Trefferwürfe, Rettungswürfe, Bewegung und zentrale Zustände. Vorteils- und Nachteilinformationen werden bei offenen Würfen gespeichert. Regelbasis und bekannte Grenzen: [Einheitliche Regelengine](docs/UNIFIED_RULE_ENGINE.md). Der neue Flutter-/Android-Build muss noch im CI bestätigt werden.
+
+**Neues Regelpaket 0.6.2+32:** D&D-SRD-5.2.1-Erschöpfung
+(W20-Abzüge, Bewegung, Rast, Tod) und konservative Zustandsauswertung.
+Details: [docs/CONDITIONS_EXHAUSTION.md](docs/CONDITIONS_EXHAUSTION.md).
+Vor APK-Freigabe CI bestätigen.
+
 > **0.6.0+30 (Entwicklungsstand):** SRD-Waffen und Rüstungen können im Charaktereditor mit bestätigter RK-/Waffenvorschau angelegt werden. Ein vollständiger Flutter-/Android-Build steht für diese Version noch aus. Details: `docs/EQUIPMENT_RULES.md`.
 
 ## Neue Ausrüstungssuche (0.5.9+29 – CI ausstehend)

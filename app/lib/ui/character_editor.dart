@@ -7,12 +7,14 @@ import '../domain/equipment_rules.dart';
 import '../domain/multiclass_rules.dart';
 import '../domain/rules_engine.dart';
 import '../domain/starting_hit_points.dart';
+import '../domain/spellcasting_rules.dart';
 import 'ability_assignment_dialog.dart';
 import 'srd_class_selection_dialog.dart';
 import 'fantasy_ui.dart';
 import 'multiclass_selection_dialog.dart';
 import 'equipment_catalog_dialog.dart';
 import 'equipment_loadout_dialog.dart';
+import 'spellcasting_dialog.dart';
 
 /// Edits nullable values explicitly: an imported unknown score stays unknown.
 class CharacterEditor extends StatefulWidget {
@@ -59,9 +61,10 @@ class _CharacterEditorState extends State<CharacterEditor> {
       'experience',
       'gold',
       'weaponDamage',
+      'exhaustionLevel',
     ]) {
       _fields[key] = TextEditingController(
-        text: _original[key]?.toString() ?? '',
+        text: _original[key]?.toString() ?? (key == 'exhaustionLevel' ? '0' : ''),
       );
     }
     for (final key in [
@@ -144,7 +147,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
             helperText: modifierPreview ??
                 (required ? null : 'Leer = nicht bestätigt'),
           ),
-          onChanged: isAbilityScore
+          onChanged: isAbilityScore || key == 'exhaustionLevel'
               ? (_) => setState(() => _error = null)
               : null,
           validator: (value) {
@@ -184,6 +187,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
         'speed',
         'experience',
         'gold',
+        'exhaustionLevel',
       ]) {
         json[key] = int.tryParse(_fields[key]!.text.trim());
       }
@@ -333,6 +337,59 @@ class _CharacterEditorState extends State<CharacterEditor> {
       });
     } catch (error) {
       setState(() => _error = 'Ausrüstung konnte nicht angewendet werden: $error');
+    }
+  }
+
+  /// Persist resource changes only after the user confirms the complete editor.
+  /// Revalidate against current field values rather than a stale dialog state.
+  HeroCharacter _draftForSpellcasting() {
+    final json = Map<String, dynamic>.from(_original);
+    json['name'] = _fields['name']!.text.trim();
+    json['className'] = _fields['className']!.text.trim();
+    json['level'] = int.tryParse(_fields['level']!.text.trim());
+    json['hitPoints'] = int.tryParse(_fields['hitPoints']!.text.trim());
+    json['maxHitPoints'] = int.tryParse(_fields['maxHitPoints']!.text.trim());
+    json['spells'] = _fields['spells']!.text.split('\n')
+        .map((x) => x.trim()).where((x) => x.isNotEmpty).toList();
+    json['conditions'] = _fields['conditions']!.text.split('\n')
+        .map((x) => x.trim()).where((x) => x.isNotEmpty).toList();
+    json['exhaustionLevel'] =
+        int.tryParse(_fields['exhaustionLevel']!.text.trim());
+    json['abilities'] = {
+      for (final entry in _scores.entries)
+        entry.key: int.tryParse(entry.value.text.trim()),
+    };
+    return HeroCharacter.fromJson(json);
+  }
+
+  Future<void> _manageSpellcasting() async {
+    HeroCharacter draft;
+    try {
+      draft = _draftForSpellcasting();
+      SpellcastingRules.availableSlots(draft);
+      SpellcastingRules.availablePactSlots(draft);
+    } catch (error) {
+      setState(() => _error = 'Zauberressourcen: $error');
+      return;
+    }
+    final choice = await showDialog<SpellcastingChoice>(context: context,
+        builder: (_) => SpellcastingDialog(hero: draft));
+    if (!mounted || choice == null) return;
+    try {
+      final current = _draftForSpellcasting();
+      final hero = choice.level == -1
+          ? SpellcastingRules.endConcentration(current)
+          : SpellcastingRules.cast(current, spellName: choice.name,
+              spellLevel: choice.level, pactMagic: choice.pact,
+              concentration: choice.concentration).hero;
+      setState(() {
+        _original['spentSpellSlots'] = Map<String, int>.from(hero.spentSpellSlots);
+        _original['spentPactSlots'] = hero.spentPactSlots;
+        _original['concentratingOn'] = hero.concentratingOn;
+        _error = null;
+      });
+    } catch (error) {
+      setState(() => _error = 'Zauberressourcen konnten nicht bestätigt werden: $error');
     }
   }
 
@@ -711,7 +768,33 @@ class _CharacterEditorState extends State<CharacterEditor> {
                     ),
                     _text('features', 'Klassenfähigkeiten', lines: 3),
                     _text('spells', 'Bekannte Zauber', lines: 3),
+                    OutlinedButton.icon(
+                      key: const ValueKey('open-spellcasting-resources'),
+                      onPressed: _manageSpellcasting,
+                      icon: const Icon(Icons.auto_awesome_outlined),
+                      label: const Text('Zauberplätze und Konzentration verwalten'),
+                    ),
+                    if ((_original['concentratingOn'] as String? ?? '').isNotEmpty)
+                      Text('Aktive Konzentration: ${_original['concentratingOn']}'),
                     _text('conditions', 'Aktuelle Zustände', lines: 2),
+                    _number('exhaustionLevel', 'Erschöpfung (0–6)',
+                      min: 0, max: 6, required: true),
+                    Builder(builder: (context) {
+                      final level = int.tryParse(
+                          _fields['exhaustionLevel']!.text.trim());
+                      if (level == null || level < 0 || level > 6) {
+                        return const SizedBox.shrink();
+                      }
+                      final speed = int.tryParse(_fields['speed']!.text.trim());
+                      final remaining = speed == null ? null :
+                          (speed - level * 1.5).clamp(0, 1000);
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Text('SRD 5.2.1: W20-Tests ${level == 0 ? 'ohne Abzug' : '−${level * 2}'}'
+                          ' · Bewegung ${remaining == null ? 'nicht bestätigt' : '$remaining m'}'
+                          '${level == 6 ? ' · Stufe 6: Tod' : ''}.'),
+                      );
+                    }),
                   ],
                 ),
                 const SizedBox(height: 20),

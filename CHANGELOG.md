@@ -1,3 +1,26 @@
+## 0.6.4+34 – Zauberplätze, Paktmagie und Konzentration (15.10.2026)
+
+- Persistente und stufenvalidierte Zauberplatzverbräuche, separate Hexenmeister-Paktmagie und aktiver Konzentrationszauber im weiterhin kompatiblen Schema 1.
+- Charaktereditor-Dialog mit bestätigter Zauber-/Gradwahl, Charakterbogen zeigt verbleibende Plätze; keine unbestätigte Zauberwirkung.
+- Kurze Rast erneuert Paktmagie, lange Rast alle Plätze; Kampfschaden löst dokumentierte Konzentrationsrettungswürfe aus. 0 TP/Tod beendet Konzentration.
+- Tests ergänzt, Flutter-/Android-CI ausstehend; lokale Python-/Strukturprüfungen werden separat aufgeführt. Grenzen und SRD-Quellen: `docs/SPELLCASTING_RESOURCES.md`.
+
+## 0.6.3+33 – gemeinsame Regelengine für Spiel und Oberfläche (15.10.2026)
+
+- `CharacterRuleEngine` als rein lesende Quelle für Kampf-, Proben-, Rettungswurf- und Bewegungsmodifikatoren einschließlich Erschöpfung, Zustand und bestätigter Ausrüstung.
+- Kampf, Initiative, Wahrnehmung, Flucht und Gegenangriffe mit dokumentierten Vorteils-/Nachteilquellen verbunden. PendingRoll speichert Vorteil/Nachteil optional, ältere Spielstände bleiben lesbar.
+- Charakterbogen zeigt effektive Initiative, effektive Bewegung, erschöpfungsbereinigte Rettungswürfe und Zustandserklärungen; Ausrüstungsvorschau erläutert vorübergehende Angriffsabzüge.
+- Achtung: Nicht alle situativen SRD-Effekte werden ohne zusätzliche bestätigte Eingabedaten erraten. Datenbank und Backend-Verträge unverändert.
+- Neue Domain- und Widgettests ergänzt; 38 Python-Tests und Projektstruktur lokal erfolgreich. Flutter-/Android-CI für diese Version **noch ausstehend**. Details: `docs/UNIFIED_RULE_ENGINE.md`.
+
+## 0.6.2+32 – Zustände und Erschöpfung (15.10.2026)
+
+- Persistente, validierte Erschöpfungsstufen 0–6 nach SRD 5.2.1: −2/Stufe auf W20-Tests, −1,5 m/Stufe, Tod bei Stufe 6 und Wiederherstellung um eine Stufe nach langer Rast.
+- Charaktereditor mit Anzeige der Erschöpfung und der rechnerischen Auswirkungen; alte Spielstände bleiben kompatibel.
+- Initiative, Waffenangriff, Wahrnehmung und Todesrettungen nutzen den bestätigten W20-Abzug; Kampftempo und elementare Zustandsverbote werden berücksichtigt.
+- `ConditionRules` enthält 14 SRD-Zustandsüberblicke; kontextabhängige Effekte bleiben ausdrücklich offen.
+- Neue Domänentests; Flutter-/Android-CI für diesen Stand noch ausstehend. Siehe `docs/CONDITIONS_EXHAUSTION.md`.
+
 ## 0.6.1+31 – Flutter-Analyzer und Rast-Testfixtures (15.10.2026)
 
 - **BEHOBEN:** `srd_equipment_catalog.dart` verwendet für das Gewicht eine einfache Stringinterpolation (`$weightLb`), wodurch der in CI reproduzierte Analyzer-Lint `unnecessary_brace_in_string_interps` entfällt. Keine Änderung der Ausrüstungswerte.

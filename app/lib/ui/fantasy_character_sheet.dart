@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../domain/character_rule_engine.dart';
+import '../domain/condition_rules.dart';
 import '../domain/models.dart';
 import '../domain/multiclass_rules.dart';
 import '../domain/rest_rules.dart';
+import '../domain/spellcasting_rules.dart';
+import '../domain/rules_engine.dart';
 import 'fantasy_art.dart';
 
 // A read-only presentation of the actual, confirmed character data. No state,
@@ -223,12 +227,14 @@ class _SummaryGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final level = hero.level;
-    final proficiency = level >= 1 && level <= 20 ? 2 + (level - 1) ~/ 4 : null;
+    final proficiency = level >= 1 && level <= 20 ? RulesEngine.proficiencyBonus(level) : null;
     final dex = _modifier(hero.abilities['dexterity']);
     final values = <({String label, String value, IconData icon})>[
       (label: 'ÜBUNGSBONUS', value: proficiency == null ? '–' : _signed(proficiency), icon: Icons.stars_outlined),
-      (label: 'BEWEGUNG', value: hero.speed == null ? '–' : '${hero.speed} m', icon: Icons.directions_run_outlined),
-      (label: 'INITIATIVE', value: dex == null ? '–' : _signed(dex), icon: Icons.casino_outlined),
+      (label: 'BEWEGUNG', value: CharacterRuleEngine.speedMeters(hero) == null
+          ? '–' : '${CharacterRuleEngine.speedMeters(hero)} m', icon: Icons.directions_run_outlined),
+      (label: 'INITIATIVE', value: dex == null ? '–' :
+          _signed(RulesEngine.initiativeBonus(hero)), icon: Icons.casino_outlined),
       (label: 'RÜSTUNGSKLASSE', value: hero.armorClass?.toString() ?? '–', icon: Icons.shield_outlined),
     ];
     return LayoutBuilder(builder: (context, constraints) {
@@ -349,16 +355,34 @@ class _AbilitiesSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final proficiency = hero.level >= 1 && hero.level <= 20
-        ? 2 + (hero.level - 1) ~/ 4
+        ? RulesEngine.proficiencyBonus(hero.level)
         : null;
-    final spellSlotSummary = MulticlassRules.spellSlots(hero)
-        .asMap().entries
-        .where((entry) => entry.value > 0)
-        .map((entry) => '${entry.key + 1}. Grad: ${entry.value}')
-        .join(', ');
+    final remainingSlots = SpellcastingRules.availableSlots(hero);
+    final regularSummary = remainingSlots.entries
+        .map((e) => '${e.key}. Grad: ${e.value}/${MulticlassRules.spellSlots(hero)[e.key - 1]}')
+        .join(' · ');
+    final pactMax = SpellcastingRules.pactSlotCount(hero);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        if (remainingSlots.isNotEmpty || pactMax > 0 || hero.concentratingOn.isNotEmpty) ...[
+          const _OrnateHeading('Zauberei', icon: Icons.auto_awesome_outlined),
+          const SizedBox(height: 8),
+          _FantasyFrame(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (remainingSlots.isNotEmpty) Text('Freie Zauberplätze: $regularSummary',
+                  style: const TextStyle(color: _ivory)),
+              if (pactMax > 0) Text('Paktmagie (Grad ${SpellcastingRules.pactSlotLevel(hero)}): '
+                  '${SpellcastingRules.availablePactSlots(hero)}/$pactMax frei',
+                  style: const TextStyle(color: _ivory)),
+              Text('Konzentration: ${hero.concentratingOn.isEmpty ? 'keine' : hero.concentratingOn}',
+                  style: const TextStyle(color: _muted)),
+              const Text('Zauberwirkungen und vorbereitete Zauber werden separat bestätigt.',
+                  style: TextStyle(color: _muted, fontSize: 11)),
+            ],
+          )),
+          const SizedBox(height: 22),
+        ],
         if (hero.hasSecondClass) ...[
           const _OrnateHeading('Mehrklassen', icon: Icons.auto_awesome_outlined),
           const SizedBox(height: 8),
@@ -372,14 +396,6 @@ class _AbilitiesSection extends StatelessWidget {
               Text('Gesamtstufe ${hero.level} · Übungsbonus '
                   '${proficiency == null ? '–' : _signed(proficiency)}',
                 style: const TextStyle(color: _muted)),
-              if (MulticlassRules.combinedSpellcasterLevel(hero) > 0) ...[
-                const SizedBox(height: 8),
-                Text('Zauberplätze (Regelvorschau): $spellSlotSummary',
-                  style: const TextStyle(color: _muted, fontSize: 12)),
-                const Text('Nicht als verbrauchte/verfügbare Zauberressource gespeichert. '
-                    'Paktmagie bleibt getrennt.',
-                  style: TextStyle(color: _muted, fontSize: 11)),
-              ],
             ],
           )),
           const SizedBox(height: 22),
@@ -433,9 +449,8 @@ class _AbilitiesSection extends StatelessWidget {
                   label: ability.label,
                   icon: ability.icon,
                   color: ability.color,
-                  score: hero.abilities[ability.id],
+                  total: CharacterRuleEngine.savingThrowBonus(hero, ability.id),
                   trained: hero.savingThrowProficiencies.contains(ability.id),
-                  proficiency: proficiency,
                 ),
             ],
           );
@@ -443,7 +458,7 @@ class _AbilitiesSection extends StatelessWidget {
         const SizedBox(height: 12),
         const Text(
           'Angezeigt werden die gespeicherten Attribute und der Übungsbonus. '
-          'Zusätzliche Effekte aus Zaubern oder Gegenständen sind nicht eingerechnet.',
+          'Erschöpfung ist eingerechnet. Vorteile/Nachteile und nicht bestätigte Zaubereffekte sind hier nicht als Zahlen dargestellt.',
           style: TextStyle(color: _muted, fontSize: 12),
         ),
         const SizedBox(height: 24),
@@ -513,20 +528,16 @@ class _AbilityCard extends StatelessWidget {
 class _SavingThrowTile extends StatelessWidget {
   const _SavingThrowTile({
     required this.label, required this.icon, required this.color,
-    required this.score, required this.trained, required this.proficiency,
+    required this.total, required this.trained,
   });
   final String label;
   final IconData icon;
   final Color color;
-  final int? score;
+  final int? total;
   final bool trained;
-  final int? proficiency;
 
   @override
   Widget build(BuildContext context) {
-    final base = _modifier(score);
-    final total = base == null || (trained && proficiency == null)
-        ? null : base + (trained ? proficiency! : 0);
     return Container(
       decoration: BoxDecoration(
         color: _panel,
@@ -564,6 +575,13 @@ class _ConditionsSection extends StatelessWidget {
         children: [
           const _OrnateHeading('Zustände', icon: Icons.healing_outlined),
           const SizedBox(height: 12),
+          if (hero.exhaustionLevel > 0)
+            _FantasyFrame(child: Text(
+              'Erschöpfung ${hero.exhaustionLevel}/6 · W20-Tests '
+              '−${hero.exhaustionLevel * 2} · Bewegung '
+              '${CharacterRuleEngine.speedMeters(hero) ?? 'nicht bestätigt'} m',
+              key: const ValueKey('sheet-exhaustion-effects'))),
+
           if (hero.conditions.isEmpty)
             const _EmptyDetails('Keine Zustände eingetragen.')
           else
@@ -571,7 +589,15 @@ class _ConditionsSection extends StatelessWidget {
               _FantasyFrame(child: Row(children: [
                 const Icon(Icons.warning_amber_outlined, color: _gold),
                 const SizedBox(width: 10),
-                Expanded(child: Text(condition)),
+                Expanded(child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(condition),
+                    if (ConditionRules.descriptions.containsKey(condition))
+                      Text(ConditionRules.descriptions[condition]!,
+                        style: const TextStyle(color: _muted, fontSize: 12)),
+                  ],
+                )),
               ])),
           const SizedBox(height: 20),
           const _OrnateHeading('Charaktermerkmale', icon: Icons.auto_awesome_outlined),
@@ -609,7 +635,9 @@ class _DefensesSection extends StatelessWidget {
           _DetailRow(icon: Icons.favorite_outline, label: 'Aktuelle Trefferpunkte', value: hero.hitPoints?.toString() ?? 'Nicht erfasst'),
           _DetailRow(icon: Icons.favorite_border, label: 'Maximale Trefferpunkte', value: hero.maxHitPoints?.toString() ?? 'Nicht erfasst'),
           _DetailRow(icon: Icons.casino_outlined, label: 'Verfügbare Trefferwürfel', value: diceText),
-          _DetailRow(icon: Icons.directions_run, label: 'Bewegung', value: hero.speed == null ? 'Nicht erfasst' : '${hero.speed} m'),
+          _DetailRow(icon: Icons.directions_run, label: 'Bewegung (effektiv)', value:
+            CharacterRuleEngine.speedMeters(hero) == null ? 'Nicht erfasst'
+            : '${CharacterRuleEngine.speedMeters(hero)} m (Basis ${hero.speed} m)'),
           _DetailRow(icon: Icons.check_circle_outline, label: 'Erfolgreiche Todesrettungswürfe', value: '${hero.deathSuccesses} / 3'),
           _DetailRow(icon: Icons.cancel_outlined, label: 'Fehlgeschlagene Todesrettungswürfe', value: '${hero.deathFailures} / 3'),
           const SizedBox(height: 20),

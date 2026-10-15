@@ -1,4 +1,5 @@
 import 'srd_equipment_catalog.dart';
+import 'spellcasting_rules.dart';
 
 /// Versioned, provider-independent game data. Unknown historical values stay null.
 const abilityNames = <String>[
@@ -121,7 +122,11 @@ class HeroCharacter {
     this.gold,
     this.experience,
     List<String> conditions = const [],
+    this.exhaustionLevel = 0,
     Map<String, int> spentHitDice = const {},
+    Map<String, int> spentSpellSlots = const {},
+    this.spentPactSlots = 0,
+    this.concentratingOn = '',
     this.weaponDamage = '',
     this.weaponAbility = 'strength',
     this.weaponProficient = false,
@@ -143,6 +148,7 @@ class HeroCharacter {
        inventory = List.unmodifiable(inventory),
        conditions = List.unmodifiable(conditions),
        spentHitDice = Map.unmodifiable(spentHitDice),
+       spentSpellSlots = Map.unmodifiable(spentSpellSlots),
        unverifiedNotes = List.unmodifiable(unverifiedNotes);
   final String id, name, species, className, secondaryClassName, subclass, background, backstory;
   final int secondaryClassLevel;
@@ -151,7 +157,7 @@ class HeroCharacter {
   String get classSummary => hasSecondClass
       ? '$className $primaryClassLevel / $secondaryClassName $secondaryClassLevel'
       : className;
-  final int level, deathSuccesses, deathFailures;
+  final int level, exhaustionLevel, deathSuccesses, deathFailures;
   final int? gold, experience;
   final Map<String, int?> abilities;
   final int? hitPoints, maxHitPoints, armorClass, speed;
@@ -165,6 +171,11 @@ class HeroCharacter {
   /// Already spent class Hit Dice, keyed by die type (d6/d8/d10/d12).
   /// Optional in schemaVersion 1 for backwards-compatible older saves.
   final Map<String, int> spentHitDice;
+  /// Spent Spellcasting slots per spell level; Pact Magic is separate.
+  final Map<String, int> spentSpellSlots;
+  final int spentPactSlots;
+  /// Explicitly declared current concentration, not a claimed spell effect.
+  final String concentratingOn;
   final String weaponDamage, weaponAbility;
   final bool weaponProficient;
   /// Optional inventory-instance references. Old saves default to no equipment.
@@ -181,7 +192,7 @@ class HeroCharacter {
     if (weaponDamage.isEmpty) 'Waffenschaden',
   ];
   bool get isComplete => incompleteFields.isEmpty;
-  bool get isDead => conditions.contains('tot');
+  bool get isDead => conditions.contains('tot') || exhaustionLevel >= 6;
   HeroCharacter copyWith({
     String? id,
     String? name,
@@ -206,7 +217,11 @@ class HeroCharacter {
     Object? gold = _unchanged,
     Object? experience = _unchanged,
     List<String>? conditions,
+    int? exhaustionLevel,
     Map<String, int>? spentHitDice,
+    Map<String, int>? spentSpellSlots,
+    int? spentPactSlots,
+    String? concentratingOn,
     String? weaponDamage,
     String? weaponAbility,
     bool? weaponProficient,
@@ -251,7 +266,11 @@ class HeroCharacter {
         ? this.experience
         : experience as int?,
     conditions: conditions ?? this.conditions,
+    exhaustionLevel: exhaustionLevel ?? this.exhaustionLevel,
     spentHitDice: spentHitDice ?? this.spentHitDice,
+    spentSpellSlots: spentSpellSlots ?? this.spentSpellSlots,
+    spentPactSlots: spentPactSlots ?? this.spentPactSlots,
+    concentratingOn: concentratingOn ?? this.concentratingOn,
     weaponDamage: weaponDamage ?? this.weaponDamage,
     weaponAbility: weaponAbility ?? this.weaponAbility,
     weaponProficient: weaponProficient ?? this.weaponProficient,
@@ -289,7 +308,11 @@ class HeroCharacter {
     'gold': gold,
     'experience': experience,
     'conditions': conditions,
+    if (exhaustionLevel > 0) 'exhaustionLevel': exhaustionLevel,
     if (spentHitDice.isNotEmpty) 'spentHitDice': spentHitDice,
+    if (spentSpellSlots.isNotEmpty) 'spentSpellSlots': spentSpellSlots,
+    if (spentPactSlots > 0) 'spentPactSlots': spentPactSlots,
+    if (concentratingOn.isNotEmpty) 'concentratingOn': concentratingOn,
     'weaponDamage': weaponDamage,
     'weaponAbility': weaponAbility,
     'weaponProficient': weaponProficient,
@@ -358,6 +381,31 @@ class HeroCharacter {
       }
     }
 
+    final spellsRecord = j['spentSpellSlots'];
+    if (spellsRecord != null && spellsRecord is! Map<String, dynamic>) {
+      throw const FormatException('Zauberplatzverbrauch ist ungültig.');
+    }
+    const maxima = [4, 3, 3, 3, 3, 2, 2, 1, 1];
+    final spentSlots = <String, int>{};
+    if (spellsRecord != null) {
+      for (final entry in spellsRecord.entries) {
+        final slot = int.tryParse(entry.key);
+        if (slot == null || slot < 1 || slot > 9 ||
+            entry.key != '$slot' || entry.value is! int ||
+            entry.value < 0 || entry.value > maxima[slot - 1]) {
+          throw const FormatException('Ungültiger verbrauchter Zauberplatz.');
+        }
+        if (entry.value > 0) spentSlots[entry.key] = entry.value as int;
+      }
+    }
+    final spentPact = _int(j['spentPactSlots'], 'Verbrauchte Paktplätze',
+        fallback: 0, min: 0, max: 4);
+    final concentration = _string(j['concentratingOn'], 'Konzentrationszauber',
+        fallback: '');
+    if (concentration.length > 200 || concentration != concentration.trim()) {
+      throw const FormatException('Ungültiger Konzentrationszauber.');
+    }
+
     if ((secondary.isEmpty && secondaryLevel != 0) ||
         (secondary.isNotEmpty && (secondaryLevel < 1 || secondaryLevel >= totalLevel)) ||
         (secondary.isNotEmpty && secondary.toLowerCase() ==
@@ -399,7 +447,7 @@ class HeroCharacter {
         (shieldId.isEmpty && _bool(j['equippedShieldTrained'], 'Schildübung'))) {
       throw const FormatException('Ausrüstungsübung ohne angelegten Gegenstand.');
     }
-    return HeroCharacter(
+    final parsed = HeroCharacter(
       id: _string(j['id'], 'Charakter-ID'),
       name: _string(j['name'], 'Name'),
       species: _string(j['species'], 'Spezies'),
@@ -434,7 +482,12 @@ class HeroCharacter {
       gold: _nullableInt(j['gold'], 'Gold'),
       experience: _nullableInt(j['experience'], 'Erfahrung'),
       conditions: _strings(j['conditions'], 'Zustände'),
+      exhaustionLevel: _int(j['exhaustionLevel'], 'Erschöpfung',
+          fallback: 0, min: 0, max: 6),
       spentHitDice: spent,
+      spentSpellSlots: spentSlots,
+      spentPactSlots: spentPact,
+      concentratingOn: concentration,
       weaponDamage: weaponDamage,
       weaponAbility: weaponAbility,
       weaponProficient: _bool(j['weaponProficient'], 'Waffenübung'),
@@ -457,6 +510,15 @@ class HeroCharacter {
       ),
       unverifiedNotes: _strings(j['unverifiedNotes'], 'Ungeprüfte Angaben'),
     );
+    // Reject forged/unavailable slots during import, before persisting any
+    // partial campaign state. Existing saves without these fields stay valid.
+    SpellcastingRules.availableSlots(parsed);
+    SpellcastingRules.availablePactSlots(parsed);
+    if (parsed.concentratingOn.isNotEmpty &&
+        (parsed.isDead || parsed.hitPoints == 0)) {
+      throw const FormatException('Bewusstlose oder tote Helden können nicht konzentrieren.');
+    }
+    return parsed;
   }
 }
 
@@ -761,9 +823,12 @@ class PendingRoll {
     this.targetId = '',
     this.targetName = '',
     this.expression = '1d20',
+    this.advantage = false,
+    this.disadvantage = false,
   });
   final String id, type, targetId, targetName, expression;
   final int modifier, difficulty;
+  final bool advantage, disadvantage;
   Map<String, dynamic> toJson() => {
     'id': id,
     'type': type,
@@ -772,6 +837,8 @@ class PendingRoll {
     'targetId': targetId,
     'targetName': targetName,
     'expression': expression,
+    if (advantage) 'advantage': true,
+    if (disadvantage) 'disadvantage': true,
   };
   factory PendingRoll.fromJson(Map<String, dynamic> j) {
     final type = _string(j['type'], 'Probeart');
@@ -788,6 +855,8 @@ class PendingRoll {
       targetId: _string(j['targetId'], 'Ziel-ID', fallback: ''),
       targetName: _string(j['targetName'], 'Ziel', fallback: ''),
       expression: expression,
+      advantage: _bool(j['advantage'], 'Vorteil'),
+      disadvantage: _bool(j['disadvantage'], 'Nachteil'),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../domain/equipment_rules.dart';
+import '../domain/condition_rules.dart';
 import '../domain/models.dart';
 import '../domain/srd_equipment_catalog.dart';
 
@@ -124,10 +125,17 @@ class _EquipmentLoadoutDialogState extends State<EquipmentLoadoutDialog> {
                   Text('Rüstungsklasse: ${preview.armorClass}'),
                 if (preview.weaponDamage != null)
                   Text('Waffenschaden: ${preview.weaponDamage}; '
-                    'Angriff: ${preview.attackBonus! >= 0 ? '+' : ''}${preview.attackBonus} '
+                    'Angriff (Grundwert): ${preview.attackBonus! >= 0 ? '+' : ''}${preview.attackBonus} '
                     '(${preview.weaponAbility == 'dexterity' ? 'GE' : 'ST'})'),
+                if (preview.weaponDamage != null && widget.hero.exhaustionLevel > 0)
+                  Text('Im Spiel mit Erschöpfung: Angriff '
+                    '${preview.attackBonus! - widget.hero.exhaustionLevel * 2} '
+                    '(−${widget.hero.exhaustionLevel * 2} auf W20-Tests).'),
                 if (preview.speedPenaltyFeet != 0)
                   Text('Bewegungsabzug: ${preview.speedPenaltyFeet} Fuß'),
+                if (preview.weaponDamage != null &&
+                    ConditionRules.hasUnconditionalAttackDisadvantage(widget.hero))
+                  const Text('Aktueller Zustand: Waffenangriff mit Nachteil.'),
                 for (final note in preview.warnings)
                   Padding(padding: const EdgeInsets.only(top: 4),
                     child: Text('• $note')),

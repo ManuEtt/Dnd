@@ -1,3 +1,24 @@
+## Zaubersystem 0.6.4+34
+
+- `app/test/spellcasting_rules_test.dart`: vollständige Zauberklassen-/Pakt-Pools, Verbrauch und alte Speicherdaten, Zaubertrick, bestätigte Konzentration, lange/kurze Rast, Konzentration nach Schaden, manipulierte Speicherstände.
+- `app/test/spellcasting_dialog_test.dart`: sichtbare Zauberplatzvorräte, ausdrückliche Buchung/Abbruchverhalten im Dialog.
+- Lokal: `python3 scripts/verify_project.py` und `python3 -m unittest discover -s scripts/tests -v`. Vollständiges Flutter/Android CI nach Import.
+
+## Einheitliche Regelengine – 0.6.3+33
+
+- `character_rule_engine_test.dart`: Erschöpfung einmal; Rettungswurfübung; Initiative/Vorteil/Nachteil; Vergiftung, liegend, blind; schwere Waffen; Stärkeanforderungen schwerer Rüstung; ungeübte Ausrüstung; PendingRoll-Speicherkompatibilität; Kampfereignis-Integration.
+- `character_rule_engine_widget_test.dart`: Der Charakterbogen zeigt abgeleitete Bewegung und Erschöpfung konsistent im Zustandsbereich.
+- `scripts/verify_project.py` und 38 Python-Tests bestanden. Dart/Flutter/Android-SDK steht hier nicht bereit; neue Flutter-Tests und APK noch nicht ausgeführt.
+
+## 0.6.2+32 – Erschöpfung und Zustände
+
+- Neue Domain-Datei `app/lib/domain/condition_rules.dart`, Tests `app/test/exhaustion_conditions_test.dart`.
+- Prüffälle: Rückwärtskompatibilität, ungültige Stufen, 2024- statt 2014-Mali,
+  Bewegung im Meter-Modell, Zustand Tod, Rast um eine Stufe, Todesrettungen,
+  Handlungs-/Bewegungsverbote und situationsabhängige Ausnahmen.
+- Vor Freigabe `flutter analyze`, `flutter test` und `flutter build apk --debug`.
+- Python-/Strukturtests sind keine Aussage zur Dart-Kompilierbarkeit.
+
 ## Korrekturprüfung 0.6.1+31
 
 Auf Basis der Logausgaben aus GitHub Actions #38746011222 und #38734808085:

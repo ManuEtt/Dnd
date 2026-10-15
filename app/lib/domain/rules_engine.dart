@@ -1,5 +1,6 @@
 import 'dice_engine.dart';
 import 'models.dart';
+import 'condition_rules.dart';
 
 class AttackOutcome {
   const AttackOutcome({required this.hit, required this.critical});
@@ -29,9 +30,11 @@ class RulesEngine {
 
   static int attackBonus(HeroCharacter hero) =>
       _ability(hero, hero.weaponAbility) +
-      (hero.weaponProficient ? proficiencyBonus(hero.level) : 0);
+      (hero.weaponProficient ? proficiencyBonus(hero.level) : 0) +
+      ExhaustionRules.d20Modifier(hero);
 
-  static int initiativeBonus(HeroCharacter hero) => _ability(hero, 'dexterity');
+  static int initiativeBonus(HeroCharacter hero) =>
+      _ability(hero, 'dexterity') + ExhaustionRules.d20Modifier(hero);
 
   static int initiative(HeroCharacter hero) => initiativeBonus(hero);
 
@@ -80,7 +83,7 @@ class RulesEngine {
   }) {
     _validateHitPoints(hero);
     _validateAmount(amount);
-    if (amount == 0 || hero.conditions.contains(dead)) return hero;
+    if (amount == 0 || hero.isDead) return hero;
     final hp = hero.hitPoints!;
     final maxHp = hero.maxHitPoints!;
     final conditions = [...hero.conditions]..remove(stable);
@@ -91,6 +94,7 @@ class RulesEngine {
       return hero.copyWith(
         hitPoints: 0,
         conditions: conditions,
+        concentratingOn: '',
         deathSuccesses: 0,
         deathFailures: 3,
       );
@@ -101,6 +105,7 @@ class RulesEngine {
       if (failures >= 3) _addCondition(conditions, dead);
       return hero.copyWith(
         conditions: conditions,
+        concentratingOn: '',
         deathFailures: failures > 3 ? 3 : failures,
       );
     }
@@ -110,6 +115,7 @@ class RulesEngine {
       return hero.copyWith(
         hitPoints: 0,
         conditions: conditions,
+        concentratingOn: '',
         deathSuccesses: 0,
         deathFailures: 0,
       );
@@ -120,7 +126,7 @@ class RulesEngine {
   static HeroCharacter heal(HeroCharacter hero, int amount) {
     _validateHitPoints(hero);
     _validateAmount(amount);
-    if (hero.conditions.contains(dead)) {
+    if (hero.isDead) {
       throw StateError('Ein toter Charakter kann nicht normal geheilt werden.');
     }
     if (amount == 0) return hero;
@@ -141,7 +147,7 @@ class RulesEngine {
       throw RangeError.range(natural, 1, 20, 'natural');
     }
     if (hero.hitPoints != 0 ||
-        hero.conditions.contains(dead) ||
+        hero.isDead ||
         hero.conditions.contains(stable)) {
       throw StateError('Dieser Charakter benötigt keinen Todesrettungswurf.');
     }
@@ -150,7 +156,7 @@ class RulesEngine {
     _addCondition(conditions, unconscious);
     var successes = hero.deathSuccesses;
     var failures = hero.deathFailures;
-    if (natural >= 10) {
+    if (natural + ExhaustionRules.d20Modifier(hero) >= 10) {
       successes++;
     } else {
       failures += natural == 1 ? 2 : 1;

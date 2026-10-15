@@ -1,7 +1,9 @@
 import 'dice_engine.dart';
 import 'models.dart';
+import 'condition_rules.dart';
 import 'rules_engine.dart';
 import 'srd_character_classes.dart';
+import 'spellcasting_rules.dart';
 
 /// Mechanically confirmed portion of the SRD 5.2.1 rest rules.
 /// Tracks spent Hit Dice without changing the existing save schema version.
@@ -70,7 +72,7 @@ class RestRules {
       final gain = roll.rolls.single + bonus;
       healed = RulesEngine.heal(healed, gain < 1 ? 1 : gain);
     }
-    healed = healed.copyWith(spentHitDice: {
+    healed = SpellcastingRules.afterShortRest(healed).copyWith(spentHitDice: {
       ...hero.spentHitDice,
       requested: (hero.spentHitDice[requested] ?? 0) + count,
     });
@@ -87,9 +89,11 @@ class RestRules {
     _ensureRestPossible(hero);
     // The SRD restores all lost HP and all spent Hit Dice after a Long Rest.
     // No class-specific charges are fabricated by this generic rule.
-    return hero.copyWith(
-      hitPoints: hero.maxHitPoints,
-      spentHitDice: const {},
+    return SpellcastingRules.afterLongRest(
+      ExhaustionRules.afterLongRest(hero).copyWith(
+        hitPoints: hero.maxHitPoints,
+        spentHitDice: const {},
+      ),
     );
   }
 
