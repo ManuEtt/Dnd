@@ -1,3 +1,9 @@
+## 0.5.5+25 – Schnellaktionen dauerhaft am unteren Bildschirmrand
+
+- `app/test/ui_app_test.dart`: echte Abenteueransicht nutzt `Scaffold.bottomNavigationBar`; Leiste bleibt unter dem Editor und oberhalb der Hauptnavigation, wird beim Scrollen nicht verschoben und kann Aktionen auslösen.
+- `app/test/fantasy_pinned_actions_test.dart`: vier Aktionen bei 320/360/400 dp, mit geöffneter Tastatur und neu bei 320 dp/1,8-facher Schriftgröße erreichbar.
+- `flutter analyze`/`flutter test`/`flutter build apk --debug` stehen bis zur GitHub-CI offen; im lokalen Container ist kein Flutter-SDK vorhanden. 35 Python-Tests prüfen weiterhin Projekt- und Packaging-Sicherheit. Gerätetest mit Android-Navigationsleiste und Bildschirmtastatur empfohlen.
+
 ## 0.5.4+24 – Zusätzliche Abnahme der Multiclass- und ARM64-Freigabe
 
 - Python: `python3 scripts/verify_project.py .` und `python3 -m unittest discover -s scripts/tests -v`, inklusive der sieben `test_prepare_alpha_release.py`-Fälle.

@@ -1,3 +1,10 @@
+## 0.5.5+25 – untere Schnellaktionsleiste (15.10.2026)
+
+- **Implementiert:** Abenteuer-Schnellaktionen `Sprache`, `Untersuchen`, `Angriff`, `W20` als feste `Scaffold.bottomNavigationBar` auf der Abenteuerseite, zwischen Eingabebereich und Hauptnavigation. Doppelte `Sprechen`- und `Würfeln`-Bedienelemente im Composer entfernt. `Rückblick` bleibt verfügbar.
+- **Tests:** Widgettests für Klicks/Scrollen/Tastatur bereits vorhanden und an eindeutige Schnellaktions-Keys angepasst. Vollständige Flutter-/Android-Abnahme steht mangels Flutter SDK in dieser Ausführungsumgebung aus. Nicht als kompilierte APK deklarieren.
+- **Speicher:** Keine Änderungen an SQLite, Modellen, Versionierung der gespeicherten Daten oder KI-Schnittstellen.
+- **GitHub:** Direkter Schreibzugriff zuvor 403; ZIP muss bei Verwendung mit dem aktuellen Branch abgeglichen werden. Codex-Action bleibt aus den Workflows entfernt.
+
 ## CI-Anpassung 15.10.2026 – Codex aus GitHub Actions entfernt (0.5.4+24)
 
 - **IMPLEMENTIERT:** Nur der normale Android-Build bleibt im vollständigen ZIP unter `.github/workflows/`; der separate autonome Codex-Workflow wurde entfernt.

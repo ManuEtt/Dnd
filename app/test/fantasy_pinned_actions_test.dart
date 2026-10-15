@@ -80,4 +80,41 @@ void main() {
     expect(find.byKey(const ValueKey('adventure-shortcut-inspect')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('Schnellaktionen bleiben bei 320 dp und großer Schrift erreichbar',
+      (tester) async {
+    tester.view.physicalSize = const Size(320, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    var dice = 0;
+    await tester.pumpWidget(MaterialApp(
+      theme: buildFantasyTheme(),
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(
+          textScaler: const TextScaler.linear(1.8)),
+        child: child!,
+      ),
+      home: Scaffold(
+        body: const Center(child: Text('Abenteuerinhalt')),
+        bottomNavigationBar: FantasyPinnedActionBar(
+          busy: false,
+          listening: false,
+          onSpeech: () {},
+          onInspect: () {},
+          onAttack: () {},
+          onRoll: () => dice++,
+        ),
+      ),
+    ));
+    await tester.pumpAndSettle();
+    for (final action in ['speech', 'inspect', 'attack', 'roll']) {
+      expect(find.byKey(ValueKey('adventure-shortcut-$action')).hitTestable(),
+        findsOneWidget);
+    }
+    await tester.tap(find.byKey(const ValueKey('adventure-shortcut-roll')));
+    expect(dice, 1);
+    expect(tester.takeException(), isNull);
+  });
+
 }

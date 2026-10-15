@@ -1,4 +1,8 @@
 # Würfelraunen – Der lebendige Spielleiter
+### Schnellaktionen unten fest angedockt (0.5.5+25)
+
+In der Abenteueransicht liegen **Sprache / Stopp**, **Untersuchen**, **Angriff** und **W20** unterhalb des Texteingabefelds **fest über der unteren App-Navigation**. Beim Scrollen durch Geschichte oder Kampf bewegen sie sich nicht mit. Die Sprach- und Würfelknöpfe werden nicht zusätzlich im Texteingabebereich wiederholt. Der `Rückblick` bleibt dort erreichbar. Ein fertiger Android-Build dieser Quellversion muss erst durch GitHub Actions bestätigt werden.
+
 
 > **Neu 0.5.4+24 – vollständiger Importstand (CI ausstehend):** Mehrklassenaufstiege werden gegen veraltete Charakterwerte abgesichert. Nach vollständig bestandenem GitHub-CI erstellt ein neuer Release-Schritt automatisch ein vollständiges, versioniertes Projekt-ZIP, eine ARM64-APK, Release-Notizen und SHA-256-Prüfsummen. Die APK wird weiterhin mit einer internen Debug-Testsignatur erstellt. Dieser ZIP-Quellstand ist **noch keine freigegebene APK**; die zuvor fest fixierten Schnellaktionen bleiben erhalten. Siehe [Release-Prozess](docs/ALPHA_RELEASES.md).
 

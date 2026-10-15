@@ -912,7 +912,13 @@ class _AdventurePageState extends State<_AdventurePage> {
         ),
       ),
     );
-    return Column(
+    // The story and composer belong to the body. The bottom dock belongs to
+    // Scaffold.bottomNavigationBar so it cannot scroll away with the scene.
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      // The surrounding app Scaffold already adjusts for Android's keyboard.
+      resizeToAvoidBottomInset: false,
+      body: Column(
       children: [
         Expanded(
           child: _combat && encounter.isNotEmpty
@@ -1068,64 +1074,28 @@ class _AdventurePageState extends State<_AdventurePage> {
                   ),
                 ],
               ),
-              // The fixed shortcuts remain available while the keyboard
-              // is open; save vertical space by hiding duplicate composer
-              // buttons until the player finishes editing text.
+              // Secondary action stays by the text composer. Speech and
+              // dice are available exactly once in the fixed bottom dock.
               if (MediaQuery.viewInsetsOf(context).bottom == 0) ...[
-              const SizedBox(height: 8),
-              Wrap(
-                alignment: WrapAlignment.center,
-                spacing: 14,
-                runSpacing: 8,
-                children: [
-                  OutlinedButton.icon(
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: OutlinedButton.icon(
                     key: const ValueKey('adventure-memory-recap'),
                     onPressed: widget.controller.busy ? null : _recap,
                     icon: const Icon(Icons.history),
                     label: const Text('Rückblick'),
                   ),
-                  OutlinedButton.icon(
-                    onPressed: widget.controller.busy ? null : _roll,
-                    icon: const Icon(Icons.casino),
-                    label: const Text('Würfeln'),
-                  ),
-                  Semantics(
-                    label: widget.voice.listening
-                        ? 'Mikrofon stoppen'
-                        : 'Push-to-Talk. Halten zum Sprechen oder tippen zum Umschalten.',
-                    button: true,
-                    child: GestureDetector(
-                      onLongPressStart: (_) {
-                        if (!widget.voice.listening) _toggleMic();
-                      },
-                      onLongPressEnd: (_) => widget.voice.stopListening(),
-                      child: FilledButton.icon(
-                        style: FilledButton.styleFrom(
-                          minimumSize: const Size(150, 56),
-                          backgroundColor: widget.voice.listening
-                              ? Theme.of(context).colorScheme.error
-                              : null,
-                        ),
-                        onPressed: widget.controller.busy ? null : _toggleMic,
-                        icon: Icon(
-                          widget.voice.listening ? Icons.mic : Icons.mic_none,
-                        ),
-                        label: Text(
-                          widget.voice.listening ? 'Stopp' : 'Sprechen',
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
               ],
             ],
             ),
           ),
         ),
-        // Fixed footer: these controls are siblings of (not children of) the
-        // scrolling story ListView. They stay visible above bottom navigation.
-        FantasyPinnedActionBar(
+      ],
+      ),
+      // Permanently docked below the composer and above main navigation.
+      bottomNavigationBar: FantasyPinnedActionBar(
           busy: widget.controller.busy,
           listening: widget.voice.listening,
           onSpeech: _toggleMic,
@@ -1139,7 +1109,6 @@ class _AdventurePageState extends State<_AdventurePage> {
           },
           onRoll: _roll,
         ),
-      ],
     );
   }
 }

@@ -16,3 +16,7 @@ Die vier bestehenden Aktionen (`Sprache`, `Untersuchen`, `Angriff`, `W20`) werde
 Der Test `app/test/fantasy_pinned_actions_test.dart` prüft die Position trotz Scrollen, alle vier Callback-Aktionen, Bildschirmgrößen von 320/360/400 dp sowie die Sichtbarkeit bei geöffneter Tastatur. Ein zusätzlicher Test in `app/test/ui_app_test.dart` kontrolliert das Verhalten in der tatsächlichen Abenteuerseite.
 
 Bitte in GitHub Actions `flutter analyze`, `flutter test` und `flutter build apk --debug` ausführen. Ohne erfolgreichen Lauf gilt dieses Quellpaket nicht als Android-abgenommen.
+
+## Präzisierung in Version 0.5.5+25
+
+`_AdventurePageState` verankert die vier Aktionen jetzt explizit in `Scaffold.bottomNavigationBar`. Die Hauptnavigation gehört zum äußeren App-Scaffold; die Abenteuerleiste sitzt in der inneren Scaffold-Leiste und bleibt daher außerhalb des Story-Scrollcontainers. Die Text-Eingabe bleibt oberhalb der festen Leiste. Es gibt keine doppelten Sprach-/Würfelbuttons im Eingabeformular mehr. `Rückblick` bleibt im Eingabeformular. Widgettests `fantasy_pinned_actions_test.dart` und `ui_app_test.dart` prüfen Ausrichtung, Scrollposition und Funktion; Android-Tastatur und reale Geräte sind zusätzlich abzunehmen.

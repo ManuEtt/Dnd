@@ -1,3 +1,11 @@
+## 0.5.5+25 – feste Schnellaktionen am unteren Bildschirmrand (15.10.2026)
+
+- Die Abenteuer-Schnellaktionen sind nun im `Scaffold.bottomNavigationBar` der Abenteueransicht verankert, nicht im scrollbaren Inhalt oder im Composer. Sie stehen unter dem Texteingabefeld und direkt über der allgemeinen App-Navigation.
+- Die doppelten Sprach- und Würfel-Schaltflächen aus dem Composer entfernt. **Sprache/Stopp**, **Untersuchen**, **Angriff** und **W20** bleiben unten einheitlich erreichbar; **Rückblick** bleibt separat neben dem Eingabebereich.
+- Bei offener Android-Tastatur bleibt die Leiste angedockt; die vorhandene Tastaturkompaktansicht bleibt erhalten. Funktionalität und gespeicherte Spielstände unverändert.
+- Flutter-Widgettests auf die neuen Schnellaktions-Selektoren umgestellt und Integrationstest erweitert. Python- und Projektstrukturprüfungen werden getrennt protokolliert; Flutter-CI-Abnahme für 0.5.5 noch erforderlich.
+- Keine Codex-Entwicklung in GitHub Actions; regulärer Android-/Release-Workflow bleibt vorhanden.
+
 ## Prüf- und Analysekorrekturen 0.5.4+24 – 15.10.2026 (nicht Flutter-CI-validiert)
 
 - Automatischer Codex-Workflow bleibt aus dem vollständigen Import-ZIP ausgeschlossen; normaler Android-Workflow erhalten.

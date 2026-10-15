@@ -8,6 +8,7 @@ import 'package:lebendiger_spielleiter/data/sqlite_campaign_repository.dart';
 import 'package:lebendiger_spielleiter/services/game_controller.dart';
 import 'package:lebendiger_spielleiter/services/voice_controller.dart';
 import 'package:lebendiger_spielleiter/ui/app.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_art.dart';
 
 class _SilentVoice extends VoiceController {
   final spoken = <String>[];
@@ -138,7 +139,7 @@ void main() {
       expect(tester.takeException(), isNull);
       // The text command in the persistent composer is independent of the
       // new illustrated action cards further up in the scene list.
-      await tester.tap(find.text('Sprechen'));
+      await tester.tap(find.byKey(const ValueKey('adventure-shortcut-speech')));
       await tester.pumpAndSettle();
       expect(find.text('Ich untersuche den Wald.'), findsOneWidget);
       await tester.tap(find.byTooltip('Handlung senden'));
@@ -186,6 +187,14 @@ void main() {
 
       final shortcuts = find.byKey(const ValueKey('adventure-fixed-shortcuts'));
       expect(shortcuts, findsOneWidget);
+      // The dock must be a real, non-scrolling Scaffold.bottomNavigationBar.
+      final dockScaffolds = tester.widgetList<Scaffold>(find.byType(Scaffold))
+          .where((scaffold) => scaffold.bottomNavigationBar is FantasyPinnedActionBar);
+      expect(dockScaffolds, hasLength(1));
+      // Only the dock offers microphone and the generic W20 shortcut.
+      expect(find.byKey(const ValueKey('adventure-shortcut-speech')), findsOneWidget);
+      expect(find.byKey(const ValueKey('adventure-shortcut-roll')), findsOneWidget);
+      expect(find.text('Sprechen'), findsNothing);
       final before = tester.getTopLeft(shortcuts);
       final navigationTop = tester.getTopLeft(find.byType(NavigationBar)).dy;
       expect(tester.getBottomLeft(shortcuts).dy, closeTo(navigationTop, 1));
@@ -449,7 +458,7 @@ void main() {
     );
     await tester.tap(find.text('Abenteuer'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Sprechen'));
+    await tester.tap(find.byKey(const ValueKey('adventure-shortcut-speech')));
     await tester.pumpAndSettle();
     expect(voice.microphoneActive, isTrue);
     await tester.tap(find.text('Start'));
