@@ -1,3 +1,12 @@
+## 0.5.6+26 – CI-Fixes: Schnellaktionen und Inventar (15.10.2026)
+
+- **Schnellaktionen:** Beim Öffnen der Android-Tastatur erkennt der feste Dock über `View.of(context).viewInsets` den tatsächlichen IME-Bereich auch hinter einem verschachtelten `Scaffold`. Die Überschrift wird ausgeblendet, die vier Aktionen bleiben erhalten.
+- **Große Schrift:** Die Docküberschrift verwendet ein flexibles, auf eine Zeile begrenztes Textfeld; die Höhe der vier Buttons skaliert ausreichend mit bis zu zwei Zeilen großer Schrift. Behebt die CI-Overflows bei 320dp/180%.
+- **Charaktereditor:** Der Inventartest scrollt den tatsächlichen `OutlinedButton` vollständig ins sichtbare Fenster und prüft vor dem Antippen die Trefferfläche. Keine Funktion oder Inventarlogik geändert.
+- **Regression:** Der Tastaturtest prüft nun alle vier betätigbaren Schnellaktionen.
+- **Eingangslage:** CI #38728029583 für 0.5.5+25: 349 Flutter-Tests grün, 3 rot; Flutter-Analyse, Backend und Python erfolgreich. **Neuer Flutter-CI-Lauf für 0.5.6 steht aus**, eine APK-Freigabe wird nicht behauptet.
+- **Workflow:** Nur `.github/workflows/android-build.yml`; kein Codex in Actions. Datenbankschema 1 und historische Spielstände unverändert.
+
 ## 0.5.5+25 – feste Schnellaktionen am unteren Bildschirmrand (15.10.2026)
 
 - Die Abenteuer-Schnellaktionen sind nun im `Scaffold.bottomNavigationBar` der Abenteueransicht verankert, nicht im scrollbaren Inhalt oder im Composer. Sie stehen unter dem Texteingabefeld und direkt über der allgemeinen App-Navigation.

@@ -257,9 +257,11 @@ class FantasyShortcutTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) => SizedBox(
     width: width,
+    // Two-line labels must remain readable at enlarged Android text scales.
+    // The old 92dp minimum could be shorter than icon + scaled labels.
     height: compact
-        ? (70 + MediaQuery.textScalerOf(context).scale(11) * 2)
-            .clamp(92.0, 150.0).toDouble()
+        ? (74 + MediaQuery.textScalerOf(context).scale(11) * 3.2)
+            .clamp(110.0, 190.0).toDouble()
         : null,
     child: Material(
       color: FantasyPalette.ink,
@@ -312,7 +314,10 @@ class FantasyPinnedActionBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
+    // Scaffold can consume the body's MediaQuery.viewInsets. Inspect the
+    // underlying FlutterView as well, so a nested Scaffold still detects IME.
+    final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0 ||
+        View.of(context).viewInsets.bottom > 0;
     return DecoratedBox(
       key: const ValueKey('adventure-fixed-shortcuts'),
       decoration: const BoxDecoration(
@@ -327,9 +332,11 @@ class FantasyPinnedActionBar extends StatelessWidget {
             const Row(children: [
               Icon(Icons.auto_awesome, size: 15, color: FantasyPalette.gold),
               SizedBox(width: 7),
-              Text('Schnellaktionen', style: TextStyle(
-                color: FantasyPalette.gold, fontWeight: FontWeight.bold,
-                fontSize: 12, letterSpacing: .6)),
+              Flexible(child: Text('Schnellaktionen',
+                maxLines: 1, overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: FantasyPalette.gold,
+                  fontWeight: FontWeight.bold, fontSize: 12,
+                  letterSpacing: .6))),
             ]),
             const SizedBox(height: 7),
           ],

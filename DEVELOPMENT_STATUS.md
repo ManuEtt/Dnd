@@ -1,3 +1,14 @@
+## Stand 0.5.6+26 – lokale Korrektur der drei CI-Widgettestfehler (15.10.2026)
+
+- **GitHub-Basis:** `main` `a8e77778c171132c9d9cabdb56d5a19c9e170953` (0.5.5+25), Actions-Lauf https://github.com/ManuEtt/Dnd/actions/runs/38728029583. Keine externen Dateien überschrieben.
+- **Bestätigter Vorfehler:** 349 bestandene und drei fehlgeschlagene Flutter-Tests. Fehler: Tastatur-Erkennung der Docküberschrift; Layout-Overflow bei 320dp und Schrift 180%; Inventar-Button außerhalb 800x600-Testviewport.
+- **Implementiert:** Behebung der drei Ursachen in `fantasy_art.dart`, `ui_character_editor_test.dart` sowie erweiterten Schnellaktions-Regressionstests. Eine separate `app/pubspec.yaml`-Versionsnummer `0.5.6+26` identifiziert diesen Quellstand. Keine Änderungen an Regellogik, SQLite-Daten, API-Verträgen oder App-Paket-ID.
+- **Getestet:** Python-Projektstruktur, Python-Regressionstests, Archive-/SHA-256-Integrität lokal zu prüfen und separat zu dokumentieren. **Flutter SDK und Android SDK nicht verfügbar; Flutter-Test/Analyse und Android-APK dieser Version in CI noch offen.**
+- **Letzter grüner GitHub-CI-Stand:** 0.5.1+21, Lauf https://github.com/ManuEtt/Dnd/actions/runs/38706060048. Neuere Alpha-Versionen nicht als bestätigt bezeichnen.
+- **Codex:** Workflow `autonomous-development.yml` ist auf dem GitHub-Branch entfernt, nur regulärer Android-Workflow vorhanden.
+- **Nächster Schritt:** Vollständiges Projekt auf eigenem Branch einspielen, GitHub Actions prüfen. Falls weiterer Widgettest scheitert, Logs lesen und nachbessern. Danach ARM64-APK aus dem bestätigten Build abrufen und Android-Gerätetest durchführen.
+- **Schreibberechtigung:** GitHub-Connector hatte bei früheren Create/Delete-Versuchen HTTP 403; es wird kein Push als erfolgreich behauptet.
+
 ## 0.5.5+25 – untere Schnellaktionsleiste (15.10.2026)
 
 - **Implementiert:** Abenteuer-Schnellaktionen `Sprache`, `Untersuchen`, `Angriff`, `W20` als feste `Scaffold.bottomNavigationBar` auf der Abenteuerseite, zwischen Eingabebereich und Hauptnavigation. Doppelte `Sprechen`- und `Würfeln`-Bedienelemente im Composer entfernt. `Rückblick` bleibt verfügbar.

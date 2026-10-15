@@ -1,3 +1,13 @@
+## Regression 0.5.6+26 – drei vorherige CI-Fehler
+
+CI-Ausgangslage: https://github.com/ManuEtt/Dnd/actions/runs/38728029583 (349 Tests bestanden, 3 fehlgeschlagen).
+
+- `flutter test test/fantasy_pinned_actions_test.dart`: bei 360dp simulierten IME-Inset erkennen, Überschrift entfernen und alle vier Schnellaktionen hit-testbar halten. Bei 320dp und 180% Schrift keinerlei RenderFlex-Overflow; W20 antippbar.
+- `flutter test test/ui_character_editor_test.dart`: Inventar-Button bis ins sichtbare Testfenster scrollen; Itemname, Anzahl und Save korrekt speichern. Kein Unterdrücken von Hit-Test-Warnungen.
+- Danach `flutter analyze`, `flutter test` vollständig sowie Android-Debug- und ARM64-Build via `.github/workflows/android-build.yml`.
+
+Der lokale Quellcode wurde **noch nicht mit Flutter ausgeführt**; Tests sind zur Abnahme vorbereitet.
+
 ## 0.5.5+25 – Schnellaktionen dauerhaft am unteren Bildschirmrand
 
 - `app/test/ui_app_test.dart`: echte Abenteueransicht nutzt `Scaffold.bottomNavigationBar`; Leiste bleibt unter dem Editor und oberhalb der Hauptnavigation, wird beim Scrollen nicht verschoben und kann Aktionen auslösen.

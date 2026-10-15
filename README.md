@@ -1,4 +1,6 @@
 # Würfelraunen – Der lebendige Spielleiter
+> **Neuer Quellstand 0.5.6+26 (CI ausstehend):** Drei konkrete Fehler aus dem GitHub-Lauf für 0.5.5+25 korrigiert: Android-Tastatur-Erkennung der unteren Schnellaktionen, Overflow bei 320dp/großer Schrift und Antippbarkeit der Inventarschaltfläche im Widgettest. Alle vier Schnellaktionen bleiben fest unten. Keine Änderungen an Spielständen oder dem KI-Backend.
+
 ### Schnellaktionen unten fest angedockt (0.5.5+25)
 
 In der Abenteueransicht liegen **Sprache / Stopp**, **Untersuchen**, **Angriff** und **W20** unterhalb des Texteingabefelds **fest über der unteren App-Navigation**. Beim Scrollen durch Geschichte oder Kampf bewegen sie sich nicht mit. Die Sprach- und Würfelknöpfe werden nicht zusätzlich im Texteingabebereich wiederholt. Der `Rückblick` bleibt dort erreichbar. Ein fertiger Android-Build dieser Quellversion muss erst durch GitHub Actions bestätigt werden.

@@ -134,12 +134,19 @@ void main() {
         HeroCharacter(id: 'hero', name: 'Elowen'),
         (hero) => result = hero,
       );
+      final addItemButton =
+          find.widgetWithText(OutlinedButton, 'Gegenstand hinzufügen');
       await tester.scrollUntilVisible(
-        find.text('Gegenstand hinzufügen'),
+        addItemButton,
         500,
         scrollable: find.byType(Scrollable).first,
       );
-      await tester.tap(find.text('Gegenstand hinzufügen'));
+      // scrollUntilVisible may stop while the button's center is just below
+      // the 600dp test viewport. Ensure the real interactive target is visible.
+      await tester.ensureVisible(addItemButton);
+      await tester.pumpAndSettle();
+      expect(addItemButton.hitTestable(), findsOneWidget);
+      await tester.tap(addItemButton);
       await tester.pumpAndSettle();
       await tester.enterText(field('Name'), 'Seil');
       await tester.enterText(field('Anzahl'), '2');

@@ -77,7 +77,11 @@ void main() {
     ));
     await tester.pumpAndSettle();
     expect(find.text('Schnellaktionen'), findsNothing);
-    expect(find.byKey(const ValueKey('adventure-shortcut-inspect')), findsOneWidget);
+    // All four controls must actually receive taps while the IME is showing.
+    for (final action in ['speech', 'inspect', 'attack', 'roll']) {
+      expect(find.byKey(ValueKey('adventure-shortcut-$action')).hitTestable(),
+          findsOneWidget);
+    }
     expect(tester.takeException(), isNull);
   });
 

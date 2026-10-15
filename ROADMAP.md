@@ -1,3 +1,9 @@
+## Nächstes Arbeitspaket nach 0.5.6+26 (CI noch ausstehend)
+
+1. GitHub-CI 0.5.6+26 ausführen; sämtliche Flutter-Widgettests, Analyse und ARM64-Build müssen erfolgreich sein.
+2. Reale Android-Geräteprüfung der unteren Schnellaktionen, auch mit Tastatur, Querformat und großer Schrift.
+3. Anschließend D&D-Zweitklassenregeln sowie Kampagnengedächtnis gezielt erweitern.
+
 ## Aktueller Schwerpunkt – 0.5.4+24 (15.10.2026)
 
 - **Implementiert, CI offen:** Übernahme einer zweiten Klassenstufe an unveränderte Regel-/Heldenbasis gebunden; fünf Dart-Regressionstests für veraltete Bestätigungen, doppelte Fertigkeiten, HP-Schaden und ungültige Klassenstufen.

@@ -1,3 +1,7 @@
+## Aktuelle Fortsetzung 0.5.6+26 – 15.10.2026
+
+GitHub-Basis `a8e77778c171132c9d9cabdb56d5a19c9e170953`, CI-Lauf `38728029583`: 349 Flutter-Tests bestanden, 3 fehlgeschlagen. Diese drei Probleme wurden im vollständigen Quellpaket korrigiert (IME-Insets, vergrößerte Schrift, Inventar-Testscrolling); neue GitHub-Abnahme ausstehend. Bei neuem Start zuerst den tatsächlichen HEAD vergleichen, vollständiges Flutter CI ausführen, erst dann ARM64-APK freigeben. Automatische Codex-Action bleibt entfernt.
+
 # Fortsetzungsstand der autonomen Entwicklung – 15.10.2026
 
 - **Produkt:** Würfelraunen – Der lebendige Spielleiter (historisch Aetheria).
