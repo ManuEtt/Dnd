@@ -206,7 +206,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('test-voice')));
     await tester.pumpAndSettle();
     expect(voice.spoken, [
-      'Willkommen in Aetheria. Deine Geschichte wartet auf dich.',
+      'Willkommen bei Würfelraunen. Deine Geschichte wartet auf dich.',
     ]);
     expect(voice.microphoneStarts, 0);
     expect(tester.takeException(), isNull);

@@ -1,3 +1,9 @@
+# Import / Release – Würfelraunen 0.5.2+22
+
+Diese Version ändert den sichtbaren App-Namen und führt einen D&D-SRD-5.2.1-Assistenten für die zweite Klasse ein. **Die Android-applicationId bleibt gleich**, um App-Updates und alte SQLite-Daten nicht zu gefährden.
+
+ZIP-Inhalt direkt in die GitHub-Repositorywurzel übertragen (einschließlich `.github`). Anschließend den vollständigen Workflow abwarten: Strukturprüfung, 22 Python-Tests, Backend, `flutter analyze`, `flutter test` und APK-Build. Stand bei Erstellung: keine Flutter-/Android-Abnahme für 0.5.2.
+
 > **Importstand 0.5.1+21:** Quelle ist der geprüfte GitHub-Commit `a3a05d3888a9c0e19d3e43d2469cc849f5e1a4eb` plus CI-Fix in zwei Widgettests. Die Dateistruktur einschließlich Bilder und `.github/` muss vollständig hochgeladen werden. Bitte warten, bis die Android-GitHub-Action erfolgreich abgeschlossen ist.
 
 ## Neues Grafik-Redesign 0.5.0+20

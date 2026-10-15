@@ -1,3 +1,12 @@
+## 0.5.2+22 – Neuer Name und SRD-Zweitklassen-Assistent (15.10.2026)
+
+- Neuer Produktname **Würfelraunen – Der lebendige Spielleiter** in Startseite, Android-Launcher, App-Titel, Sprecherprobe, Lizenzansicht und KI-Prompt; technische App-ID bleibt zur Update-Kompatibilität unverändert.
+- Automatisierte Zweitklasse beim Stufenaufstieg (maximal zwei Klassen, Gesamtstufe bis 20): Primärattribut-Voraussetzungen beider Klassen, feste zusätzliche TP nach Trefferwürfel und Konstitution, gezielte neue Klassenfertigkeit bei Barde/Schurke/Waldläufer.
+- Optionale Mehrklassenfelder in den bestehenden `schemaVersion:1`-Heldendaten; vorhandene Speicherstände und Importe bleiben lesbar, keine SQLite-Migration.
+- Kein fälschliches Gewähren von Startausrüstung, neuem Start-TP-Maximum oder Rettungswurf-Übungen. Anzeige im Charakterbogen, Heldenliste und KI-Kontext; Regel-/Widgettests ergänzt.
+- Grenzen: Klassenspezialfähigkeiten, Rüstung-/Waffen- und Werkzeugübungen sowie Zauberressourcen sind nicht vollständig automatisiert; ermittelte Zauberplätze dienen vorerst der Vorschau.
+- Neues Quellpaket erstellt, Flutter/Android-CI für diese Version noch nicht ausgeführt.
+
 ## 0.5.1+21 – Flutter-CI-Abnahme des illustrierten Designs (15.10.2026)
 
 - **CI-Ursache:** Letzter GitHub-Actions-Lauf für `0.5.0+20` (`a3a05d3888a9c0e19d3e43d2469cc849f5e1a4eb`) scheiterte trotz 328 bestandener Flutter-Tests an zwei veralteten Widgettest-Interaktionen.

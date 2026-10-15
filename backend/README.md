@@ -4,7 +4,7 @@
 
 # Spielleiter-Backend
 
-Optionaler Fastify-/TypeScript-Dienst für **Der lebendige Spielleiter**. Die App kann ihren lokalen Demo-Spielleiter ohne diesen Dienst verwenden. Der Server liefert Erzähltext und **validierte, unverbindliche Story-Vorschläge**; er hat keinen Datenbankzugriff und darf weder Trefferpunkte noch Inventare oder andere bestätigte Regelzustände verändern. Die lokale App nimmt nur erlaubte erzählerische Änderungen selbst an.
+Optionaler Fastify-/TypeScript-Dienst für **Würfelraunen – Der lebendige Spielleiter**. Die App kann ihren lokalen Demo-Spielleiter ohne diesen Dienst verwenden. Der Server liefert Erzähltext und **validierte, unverbindliche Story-Vorschläge**; er hat keinen Datenbankzugriff und darf weder Trefferpunkte noch Inventare oder andere bestätigte Regelzustände verändern. Die lokale App nimmt nur erlaubte erzählerische Änderungen selbst an.
 
 ## Lokal starten
 

@@ -63,7 +63,7 @@ class _LivingGameAppState extends State<LivingGameApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Aetheria – Der lebendige Spielleiter',
+      title: 'Würfelraunen – Der lebendige Spielleiter',
       debugShowCheckedModeBanner: false,
       theme: fantasyTheme(),
       home: AnimatedBuilder(
@@ -105,7 +105,7 @@ class _LivingGameAppState extends State<LivingGameApp> {
                 const SizedBox(width: 9),
                 Expanded(child: Text(
                   const [
-                    'AETHERIA',
+                    'WÜRFELRAUNEN',
                     'Abenteuer',
                     'Deine Helden',
                     'Kampagnen-Tagebuch',
@@ -254,7 +254,7 @@ class _HomePage extends StatelessWidget {
               child: ListTile(
                 title: Text(hero.name),
                 subtitle: Text(
-                  '${hero.species} · ${hero.className} · Stufe ${hero.level}',
+                  '${hero.species} · ${hero.classSummary} · Stufe ${hero.level}',
                 ),
                 trailing: Icon(
                   hero.isComplete
@@ -322,7 +322,7 @@ class _HomePage extends StatelessWidget {
         FantasyIllustratedBanner(
           key: const ValueKey('home-illustrated-banner'),
           image: FantasyArtwork.ruins,
-          eyebrow: current == null ? 'Aetheria · Deine Reise beginnt' : 'Kampagne fortsetzen',
+          eyebrow: current == null ? 'Würfelraunen · Deine Reise beginnt' : 'Kampagne fortsetzen',
           title: current?.name ?? 'Deine Geschichte wartet.',
           description: current == null
               ? 'Erkunde geheimnisvolle Welten und entscheide selbst, wohin dein Abenteuer führt.'
@@ -583,7 +583,7 @@ class _CharactersPage extends StatelessWidget {
                     Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(hero.name, style: Theme.of(context).textTheme.titleLarge),
-                        Text('${hero.species} · ${hero.className} · Stufe ${hero.level}'),
+                        Text('${hero.species} · ${hero.classSummary} · Stufe ${hero.level}'),
                       ],
                     )),
                   ]),
@@ -1594,7 +1594,7 @@ class _SettingsPage extends StatelessWidget {
               key: const ValueKey('test-voice'),
               onPressed: canChooseVoice
                   ? () => voice.speak(
-                      'Willkommen in Aetheria. Deine Geschichte wartet auf dich.',
+                      'Willkommen bei Würfelraunen. Deine Geschichte wartet auf dich.',
                     )
                   : null,
               icon: const Icon(Icons.volume_up_outlined),
@@ -1691,7 +1691,7 @@ class _SettingsPage extends StatelessWidget {
         OutlinedButton.icon(
           onPressed: () => showLicensePage(
             context: context,
-            applicationName: 'Der lebendige Spielleiter',
+            applicationName: 'Würfelraunen',
           ),
           icon: const Icon(Icons.description_outlined),
           label: const Text('Softwarelizenzen anzeigen'),

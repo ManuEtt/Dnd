@@ -111,7 +111,7 @@ class GameController extends ChangeNotifier {
     }
     final valid = HeroCharacter.fromJson(hero.toJson());
     final response = await narrator.planStory(
-      heroName: valid.name, heroClass: valid.className, theme: theme,
+      heroName: valid.name, heroClass: valid.classSummary, theme: theme,
     );
     if (response == null) {
       throw const FormatException(

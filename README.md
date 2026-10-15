@@ -1,3 +1,7 @@
+# Würfelraunen – Der lebendige Spielleiter
+
+> **Neu 0.5.2+22:** Sichtbarer App-Name von Aetheria auf **Würfelraunen** umgestellt. Der Android-Paketname `de.aetheria.lebendiger_spielleiter`, die lokalen Backup-Kanäle und historische Kampagnendaten bleiben aus Update-Kompatibilitätsgründen unverändert. Die Mehrklassen-Erweiterung ermöglicht eine ausdrücklich bestätigte zweite D&D-SRD-Klasse beim Stufenaufstieg einschließlich Voraussetzungen, Trefferpunkten und ausgewählten Fertigkeiten. Klassenfähigkeiten und Spezialressourcen sind noch nicht vollständig automatisiert. Siehe [Mehrklassen](docs/MULTICLASSING.md) und [Namenswechsel](docs/RENAMING.md).
+
 > **Aetheria 0.5.1+21:** Zwei CI-Fehler nach illustriertem Design-Update behoben: zuvor nicht erreichbare Schaltflächen im Charakterbogen-/Startseiten-Widgettest werden jetzt sichtbar gescrollt und auf Hit-Test geprüft. Eine neue Android-APK ist erst nach bestandener GitHub Actions Pipeline freigegeben.
 
 > **Aetheria 0.5.0+20 – Illustratives Fantasy-Redesign:** Die vier abgestimmten Design-Entwürfe sind als echte Flutter-Widgets umgesetzt. Neue lokale WebP-Illustrationen für Ruinen/Burgen/Wälder, Kampagnenkarten und Inventargegenstände. Start, Abenteuer, Helden, Chronik und Charakterbogen werden bildgestützt dargestellt. Keine erfundenen Spielwerte; keine Regel- oder Schemaänderungen. **Flutter/Android-CI für diese neue Version steht noch aus.** Siehe [Designumsetzung](docs/ILLUSTRATED_UI.md).
@@ -32,7 +36,7 @@ Der KI-Spielleiter kann passende Quests und Gegnerbegegnungen oder Erkundungsauf
 
 Bei Ausfall des Backends wird ein lokaler Erzähltext verwendet und kein KI-Fortschritt behauptet. Eine abgebrochene Generierung erzeugt keinen leeren Spielstand. Kostenfreigabe und Sitzungstoken werden nicht dauerhaft gespeichert. **„Lernend“ bedeutet hier ein wachsendes gespeichertes Kampagnengedächtnis, nicht das Trainieren eines neuen KI-Modells.**
 
-# Der lebendige Spielleiter
+# Der lebendige Spielleiter (ältere Projektdokumentation)
 
 **Aktueller Quellstand 0.3.6+12 (Flutter-CI noch abzunehmen):** Ein
 regelkonformer Stufe-1-Trefferpunktevorschlag aus Klasse und Konstitution ist

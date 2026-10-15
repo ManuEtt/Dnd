@@ -95,6 +95,8 @@ class HeroCharacter {
     required this.name,
     this.species = 'Mensch',
     this.className = 'Kämpfer',
+    this.secondaryClassName = '',
+    this.secondaryClassLevel = 0,
     this.level = 1,
     this.subclass = '',
     this.background = '',
@@ -128,7 +130,13 @@ class HeroCharacter {
        inventory = List.unmodifiable(inventory),
        conditions = List.unmodifiable(conditions),
        unverifiedNotes = List.unmodifiable(unverifiedNotes);
-  final String id, name, species, className, subclass, background, backstory;
+  final String id, name, species, className, secondaryClassName, subclass, background, backstory;
+  final int secondaryClassLevel;
+  int get primaryClassLevel => level - secondaryClassLevel;
+  bool get hasSecondClass => secondaryClassName.isNotEmpty;
+  String get classSummary => hasSecondClass
+      ? '$className $primaryClassLevel / $secondaryClassName $secondaryClassLevel'
+      : className;
   final int level, deathSuccesses, deathFailures;
   final int? gold, experience;
   final Map<String, int?> abilities;
@@ -158,6 +166,8 @@ class HeroCharacter {
     String? name,
     String? species,
     String? className,
+    String? secondaryClassName,
+    int? secondaryClassLevel,
     int? level,
     String? subclass,
     String? background,
@@ -186,6 +196,8 @@ class HeroCharacter {
     name: name ?? this.name,
     species: species ?? this.species,
     className: className ?? this.className,
+    secondaryClassName: secondaryClassName ?? this.secondaryClassName,
+    secondaryClassLevel: secondaryClassLevel ?? this.secondaryClassLevel,
     level: level ?? this.level,
     subclass: subclass ?? this.subclass,
     background: background ?? this.background,
@@ -225,6 +237,8 @@ class HeroCharacter {
     'name': name,
     'species': species,
     'className': className,
+    if (secondaryClassName.isNotEmpty) 'secondaryClassName': secondaryClassName,
+    if (secondaryClassLevel > 0) 'secondaryClassLevel': secondaryClassLevel,
     'level': level,
     'subclass': subclass,
     'background': background,
@@ -283,12 +297,24 @@ class HeroCharacter {
         ).hasMatch(weaponDamage)) {
       throw const FormatException('Ungültiger Waffenschaden.');
     }
+    final secondary = _string(j['secondaryClassName'], 'Zweitklasse', fallback: '');
+    final secondaryLevel = _int(j['secondaryClassLevel'], 'Zweitklassenstufe',
+        fallback: 0, min: 0, max: 19);
+    final totalLevel = _int(j['level'], 'Stufe', min: 1, max: 20);
+    if ((secondary.isEmpty && secondaryLevel != 0) ||
+        (secondary.isNotEmpty && (secondaryLevel < 1 || secondaryLevel >= totalLevel)) ||
+        (secondary.isNotEmpty && secondary.toLowerCase() ==
+            _string(j['className'], 'Klasse').toLowerCase())) {
+      throw const FormatException('Ungültige Zweitklassenstufe oder Klassenkombination.');
+    }
     return HeroCharacter(
       id: _string(j['id'], 'Charakter-ID'),
       name: _string(j['name'], 'Name'),
       species: _string(j['species'], 'Spezies'),
       className: _string(j['className'], 'Klasse'),
-      level: _int(j['level'], 'Stufe', min: 1, max: 20),
+      secondaryClassName: secondary,
+      secondaryClassLevel: secondaryLevel,
+      level: totalLevel,
       subclass: _string(j['subclass'], 'Unterklasse', fallback: ''),
       background: _string(j['background'], 'Hintergrund', fallback: ''),
       backstory: _string(j['backstory'], 'Geschichte', fallback: ''),

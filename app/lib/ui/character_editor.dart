@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 import '../domain/models.dart';
+import '../domain/multiclass_rules.dart';
 import '../domain/rules_engine.dart';
 import '../domain/starting_hit_points.dart';
 import 'ability_assignment_dialog.dart';
 import 'srd_class_selection_dialog.dart';
 import 'fantasy_ui.dart';
+import 'multiclass_selection_dialog.dart';
 
 /// Edits nullable values explicitly: an imported unknown score stays unknown.
 class CharacterEditor extends StatefulWidget {
@@ -305,6 +307,47 @@ class _CharacterEditorState extends State<CharacterEditor> {
     });
   }
 
+  Future<void> _configureSecondClass() async {
+    // New characters first finish their initial level-1 character creation.
+    if (widget.hero == null) {
+      setState(() => _error = 'Erstelle und speichere zuerst deinen '
+          'Startcharakter. Die zweite Klasse kommt bei einem Stufenaufstieg hinzu.');
+      return;
+    }
+    try {
+      // Work with the current confirmed fields, not stale initial values.
+      final current = widget.hero!.copyWith(
+        className: _fields['className']!.text.trim(),
+        level: int.tryParse(_fields['level']!.text.trim()),
+        abilities: {for (final entry in _scores.entries)
+          entry.key: int.tryParse(entry.value.text.trim())},
+        skills: _listFieldValues('skills'),
+        hitPoints: int.tryParse(_fields['hitPoints']!.text.trim()),
+        maxHitPoints: int.tryParse(_fields['maxHitPoints']!.text.trim()),
+      );
+      // Refuse inconsistent manual changes to multi-class metadata.
+      HeroCharacter.fromJson(current.toJson());
+      final proposal = await showDialog<MulticlassProposal>(
+        context: context,
+        builder: (_) => MulticlassSelectionDialog(hero: current),
+      );
+      if (proposal == null || !mounted) return;
+      final result = proposal.applyTo(current);
+      setState(() {
+        _original['secondaryClassName'] = result.secondaryClassName;
+        _original['secondaryClassLevel'] = result.secondaryClassLevel;
+        _fields['level']!.text = result.level.toString();
+        _fields['hitPoints']!.text = result.hitPoints?.toString() ?? '';
+        _fields['maxHitPoints']!.text = result.maxHitPoints?.toString() ?? '';
+        _fields['skills']!.text = result.skills.join('\n');
+        _error = null;
+      });
+    } catch (error) {
+      if (mounted) setState(() => _error = 'Zweitklasse konnte nicht hinzugefügt '
+          'werden: $error');
+    }
+  }
+
   Future<void> _configureSrdClass() async {
     if (int.tryParse(_fields['level']!.text.trim()) != 1) {
       setState(() => _error =
@@ -430,6 +473,28 @@ class _CharacterEditorState extends State<CharacterEditor> {
                   onPressed: _configureSrdClass,
                   icon: const Icon(Icons.shield_outlined),
                   label: const Text('D&D-Klasse und Fertigkeiten wählen'),
+                ),
+                if ((_original['secondaryClassName'] as String? ?? '').isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Text('Mehrklassenheld: ${_fields['className']!.text} '
+                        'Stufe ${((int.tryParse(_fields['level']!.text) ?? 1) -
+                          ((_original['secondaryClassLevel'] as int?) ?? 0))} '
+                        '/ ${_original['secondaryClassName']} '
+                        'Stufe ${_original['secondaryClassLevel']}'),
+                  ),
+                OutlinedButton.icon(
+                  key: const ValueKey('open-multiclass-selection'),
+                  onPressed: _configureSecondClass,
+                  icon: const Icon(Icons.auto_awesome_outlined),
+                  label: const Text('Zweitklasse automatisch hinzufügen / steigern'),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 5, bottom: 12),
+                  child: Text('Mehrklassen nach D&D SRD 5.2.1: Voraussetzungen '
+                      'prüfen, zusätzliche Fertigkeit wählen und TP-Zuwachs '
+                      'erst nach Bestätigung übernehmen. Stufe 20 ist das Maximum.',
+                      style: TextStyle(fontSize: 12)),
                 ),
                 _text('subclass', 'Unterklasse'),
                 _text('background', 'Hintergrund'),

@@ -6,7 +6,7 @@ This work includes material from the System Reference Document 5.2.1 (“SRD 5.2
 
 Die erforderliche Namensnennung wurde am 13. Oktober 2026 anhand der offiziellen [SRD-Seite](https://www.dndbeyond.com/srd) und der ersten Seite des [englischen SRD-5.2.1-PDF](https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf) geprüft. Eine [deutsche SRD-5.2.1-Ausgabe](https://media.dndbeyond.com/compendium-images/srd/5.2/DE_SRD_CC_v5.2.1.pdf) ist dort ebenfalls verfügbar.
 
-Dieses Projekt implementiert eine ausgewählte Regelteilmenge und eigene deutsche Oberflächentexte; es ist keine vollständige Reproduktion des SRD. Fantasy-Demotexte und Weltbestandteile werden im Projekt getrennt von Regeldefinitionen gehalten. Es werden keine offiziellen Illustrationen oder weiteren nicht freigegebenen Publikationsinhalte gebündelt. Die eigenständige Produktbezeichnung lautet „Der lebendige Spielleiter“.
+Dieses Projekt implementiert eine ausgewählte Regelteilmenge und eigene deutsche Oberflächentexte; es ist keine vollständige Reproduktion des SRD. Fantasy-Demotexte und Weltbestandteile werden im Projekt getrennt von Regeldefinitionen gehalten. Es werden keine offiziellen Illustrationen oder weiteren nicht freigegebenen Publikationsinhalte gebündelt. Die eigenständige Produktbezeichnung lautet „Würfelraunen – Der lebendige Spielleiter“.
 
 Die Attributshilfe seit App 0.3.0 wurde am 14. Oktober 2026 anhand der englischen
 Seiten 21/83 und deutschen Seiten 24/93 erneut geprüft. Sie setzt Standardsatz,

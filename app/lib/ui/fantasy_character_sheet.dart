@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../domain/models.dart';
+import '../domain/multiclass_rules.dart';
 import 'fantasy_art.dart';
 
 // A read-only presentation of the actual, confirmed character data. No state,
@@ -116,7 +117,7 @@ class _CharacterHeader extends StatelessWidget {
           ),
           const SizedBox(height: 5),
           Text(
-            '${hero.species}  •  ${hero.className}  •  Stufe ${hero.level}',
+            '${hero.species}  •  ${hero.classSummary}  •  Stufe ${hero.level}',
             textAlign: TextAlign.center,
             style: const TextStyle(color: _muted, fontSize: 12, letterSpacing: .75),
           ),
@@ -349,9 +350,39 @@ class _AbilitiesSection extends StatelessWidget {
     final proficiency = hero.level >= 1 && hero.level <= 20
         ? 2 + (hero.level - 1) ~/ 4
         : null;
+    final spellSlotSummary = MulticlassRules.spellSlots(hero)
+        .asMap().entries
+        .where((entry) => entry.value > 0)
+        .map((entry) => '${entry.key + 1}. Grad: ${entry.value}')
+        .join(', ');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        if (hero.hasSecondClass) ...[
+          const _OrnateHeading('Mehrklassen', icon: Icons.auto_awesome_outlined),
+          const SizedBox(height: 8),
+          _FantasyFrame(child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('${hero.className} ${hero.primaryClassLevel} / '
+                  '${hero.secondaryClassName} ${hero.secondaryClassLevel}',
+                style: const TextStyle(color: _ivory, fontSize: 16)),
+              const SizedBox(height: 5),
+              Text('Gesamtstufe ${hero.level} · Übungsbonus '
+                  '${proficiency == null ? '–' : _signed(proficiency)}',
+                style: const TextStyle(color: _muted)),
+              if (MulticlassRules.combinedSpellcasterLevel(hero) > 0) ...[
+                const SizedBox(height: 8),
+                Text('Zauberplätze (Regelvorschau): $spellSlotSummary',
+                  style: const TextStyle(color: _muted, fontSize: 12)),
+                const Text('Nicht als verbrauchte/verfügbare Zauberressource gespeichert. '
+                    'Paktmagie bleibt getrennt.',
+                  style: TextStyle(color: _muted, fontSize: 11)),
+              ],
+            ],
+          )),
+          const SizedBox(height: 22),
+        ],
         const _OrnateHeading('Attribute', icon: Icons.auto_awesome),
         const SizedBox(height: 12),
         LayoutBuilder(builder: (context, constraints) {

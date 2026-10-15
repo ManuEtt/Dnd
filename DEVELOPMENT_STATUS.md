@@ -1,3 +1,7 @@
+## 0.5.2+22 – Würfelraunen / Zweitklasse
+
+Der Projektname wurde in den Benutzeroberflächen zu **Würfelraunen** geändert. Die technische Paket-ID und historischen Weltdaten bleiben erhalten. Mehrklassenregeln (zwei Klassen, Voraussetzungen, fester Trefferpunkte-Zuwachs, Fertigkeitswahl) sind in `app/lib/domain/multiclass_rules.dart` implementiert und an den Charaktereditor angebunden. Vollständige Klassenfähigkeiten sowie Ressourcen- und Rüstungsregeln fehlen noch und müssen in weiteren Zyklen ergänzt werden. Aktuell steht die Flutter-/Android-CI-Abnahme für 0.5.2+22 aus.
+
 ## 0.5.1+21 – Flutter-CI-Abnahme des illustrierten Designs (15.10.2026)
 
 - **CI-Ursache:** Letzter GitHub-Actions-Lauf für `0.5.0+20` (`a3a05d3888a9c0e19d3e43d2469cc849f5e1a4eb`) scheiterte trotz 328 bestandener Flutter-Tests an zwei veralteten Widgettest-Interaktionen.
