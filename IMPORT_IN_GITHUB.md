@@ -1,3 +1,13 @@
+# UI-Korrektur 0.4.1+17
+
+Das vollständige Projektpaket basiert auf `main`-Commit `c4d0dedd851ae1085d01a26afb6c0c7ff78c8830`.
+Die Änderung korrigiert Layout-Überläufe des Fantasy-Charakterbogens und enthält zusätzliche Widgettests.
+Die Dateien `app/`, `backend/`, `scripts/`, `.github/` und alle Root-Dateien gehören direkt in die Repositorywurzel.
+
+Prüfung nach dem Hochladen: GitHub Actions → „Android-Alpha bauen“; insbesondere `flutter test`, `flutter analyze` und Android-APK.
+
+---
+
 # GitHub-Import – Aetheria 0.4.0+16 (komplettes Fantasy-Redesign)
 
 **GitHub-Basis:** `ManuEtt/Dnd` / `main` / `ce64d5bd10288611bd3a8482b01a32939a309f76` (0.3.9+15).

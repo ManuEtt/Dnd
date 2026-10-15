@@ -4,6 +4,59 @@ import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_character_sheet.dart';
 
 void main() {
+  for (final width in [320.0, 360.0, 400.0]) {
+    testWidgets('Statistikkacheln bei ${width.toInt()} dp ohne Überlauf',
+        (tester) async {
+      tester.view.physicalSize = Size(width, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final hero = HeroCharacter(
+        id: 'narrow-screen',
+        name: 'Elowen',
+        level: 5,
+        hitPoints: 30,
+        maxHitPoints: 30,
+        armorClass: 15,
+        speed: 9,
+        abilities: const {'dexterity': 15},
+      );
+      await tester.pumpWidget(MaterialApp(
+        home: CharacterSheetPage(hero: hero),
+      ));
+      await tester.pumpAndSettle();
+      expect(find.text('RÜSTUNGSKLASSE'), findsOneWidget);
+      expect(find.text('ÜBUNGSBONUS'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.scrollUntilVisible(find.text('Rettungswürfe'.toUpperCase()),
+          240, scrollable: find.byType(Scrollable).first);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets('Statistikkacheln respektieren größere Systemschrift',
+      (tester) async {
+    tester.view.physicalSize = const Size(360, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(MaterialApp(
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(
+          textScaler: const TextScaler.linear(1.4),
+        ),
+        child: child!,
+      ),
+      home: CharacterSheetPage(hero: HeroCharacter(
+        id: 'large-font', name: 'Elowen', level: 1,
+        hitPoints: 8, maxHitPoints: 8, speed: 9, armorClass: 12,
+      )),
+    ));
+    await tester.pumpAndSettle();
+    expect(find.text('RÜSTUNGSKLASSE'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
   testWidgets('Deutscher Charakterbogen berechnet Übungsbonus und Rettungswürfe',
       (tester) async {
     tester.view.physicalSize = const Size(360, 800);

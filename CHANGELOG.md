@@ -1,3 +1,10 @@
+## 0.4.1+17 – Korrektur der Charakterbogen-Kacheln (15.10.2026)
+
+- Die vier Statistik-Kacheln verwenden jetzt eine von Schriftgröße und Layout unabhängige Mindesthöhe statt eines festen Seitenverhältnisses. Dies behebt die drei `RenderFlex overflowed`-Fehler aus GitHub Actions beim Charakterbogen und beim Öffnen des Bogens aus dem Abenteuer.
+- Große Textdarstellung wird durch eine an den TextScaler gekoppelte Höhe berücksichtigt. Lange Beschriftungen dürfen auf zwei Zeilen umbrechen; Zahlen werden bei Platzmangel horizontal skaliert.
+- Zusätzliche Widget-Regressionstests für 320, 360, 400 logische Pixel und 140 % Schriftgröße.
+- Keine Änderung an Regeln, Datenbank, KI-Backend oder gesicherten Charakterwerten. Der GitHub-Actions-Build muss die Korrektur bestätigen.
+
 ## 0.4.0+16 – 15.10.2026 – Gesamtes App-Design vereinheitlicht
 
 - Das vollständige bestehende Flutter-UI orientiert sich jetzt am deutschen Dark-Fantasy-Charakterbogen. Zentrales Material-3-Theme und wiederverwendbare Widgets in `app/lib/ui/fantasy_ui.dart`.

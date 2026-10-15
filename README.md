@@ -1,3 +1,5 @@
+> **UI-Fix 0.4.1+17:** Die drei aus GitHub Actions bekannten Überlauffehler in den Statistik-Kacheln des Fantasy-Charakterbogens wurden im Quellcode behoben. Tests für 320/360/400 dp und große Systemschrift sind enthalten. Die vollständige CI-/APK-Abnahme steht noch aus. Details: `CHANGELOG.md`.
+
 > **Aetheria 0.4.0+16:** Einheitliches deutsches Dark-Fantasy-Design für alle vorhandenen Bildschirme. Smartphone-Navigation unten, große Bildschirme mit Seitenleiste, gemeinsame Panel-/Dialog- und Formular-Gestaltung. Siehe [Design-System](docs/UI_DESIGN_SYSTEM.md). GitHub-Actions-Abnahme steht für diesen Stand noch aus.
 
 ## Neu in 0.3.9+15: Deutsches Fantasy-Design und Charakterbogen

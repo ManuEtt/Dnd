@@ -223,9 +223,18 @@ class _SummaryGrid extends StatelessWidget {
     ];
     return LayoutBuilder(builder: (context, constraints) {
       final columns = constraints.maxWidth < 580 ? 2 : 4;
+      // A width-derived aspect ratio makes these tiles too short on phones:
+      // the icon, score and label overflow by a few pixels at 320/360 dp.
+      // Reserve two label lines and scale the row height with system text size
+      // instead of clipping text or ignoring Flutter's overflow reports.
+      final scaler = MediaQuery.textScalerOf(context);
+      final tileHeight = (20 + 22 + 5 + scaler.scale(23) * 1.35 + 2 +
+              scaler.scale(10) * 1.45 * 2 + 12)
+          .clamp(124.0, 320.0)
+          .toDouble();
       return GridView.count(
         crossAxisCount: columns,
-        childAspectRatio: columns == 2 ? 1.45 : 1.48,
+        mainAxisExtent: tileHeight,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         mainAxisSpacing: 9,
@@ -239,15 +248,19 @@ class _SummaryGrid extends StatelessWidget {
                 children: [
                   Icon(item.icon, size: 22, color: _gold),
                   const SizedBox(height: 5),
-                  Text(
-                    item.value,
-                    maxLines: 1,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: _ivory, fontSize: 23, fontWeight: FontWeight.bold),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      item.value,
+                      maxLines: 1,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: _ivory, fontSize: 23, fontWeight: FontWeight.bold),
+                    ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     item.label,
+                    maxLines: 2,
                     textAlign: TextAlign.center,
                     style: const TextStyle(color: _muted, fontSize: 10, letterSpacing: .6),
                   ),

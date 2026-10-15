@@ -1,3 +1,10 @@
+## Aktueller Stand: 0.4.1+17 – Fehlerkorrektur im Charakterbogen
+
+Aufbauend auf `main`-Commit `c4d0dedd851ae1085d01a26afb6c0c7ff78c8830`.
+Der CI-Lauf `38690872031` hatte 22 erfolgreiche Python-, 29 erfolgreiche Backend- und 316 erfolgreiche Flutter-Tests, aber drei Layout-Fehler durch zu niedrige Statistik-Kacheln in `fantasy_character_sheet.dart`. Die Kachelhöhe wurde vom starren Seitenverhältnis auf eine skalierbare feste Hauptachsengröße umgestellt; die Widgettests wurden erweitert.
+
+**Status:** Quellcode-Korrektur und ZIP fertig; Flutter/Android-Tests müssen noch über GitHub Actions laufen. Keine Veränderungen an Spielregeln, KI oder Datenformaten.
+
 ## Aktueller Stand: 0.4.0+16 (vollständiger UI-Redesign-Stand)
 
 Die deutsche Dark-Fantasy-Designsprache des Charakterbogens ist im existierenden App-UI vereinheitlicht. Status: vollstaendiges Quellcode-Inkrement für GitHub-Import, **nicht als grüner Flutter-/Android-Build nachgewiesen**. In dieser Umgebung bestanden die Strukturprüfung und 22 Python-Tests. Die Widgettests und Android-APK müssen in GitHub Actions laufen. Siehe `docs/UI_DESIGN_SYSTEM.md`.
