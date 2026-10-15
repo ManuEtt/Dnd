@@ -109,7 +109,7 @@ class EquipmentEntry {
     if (isArmor) parts.add('Basis-RK $armorBaseAc${dexCap == 0 ? '' : ' + GE'}');
     if (strengthMin != null) parts.add('ST $strengthMin erforderlich, sonst -10 Fuß');
     if (stealthDisadvantage) parts.add('Heimlichkeit: Nachteil');
-    if (weightLb != null) parts.add('$weightLb lb');
+    if (weightLb != null) parts.add('${weightLb} lb');
     parts.add(priceLabel);
     if (note != null) parts.add(note!);
     return parts.join(' · ');
