@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 import '../domain/models.dart';
+import '../domain/srd_equipment_catalog.dart';
 import '../domain/multiclass_rules.dart';
 import '../domain/rules_engine.dart';
 import '../domain/starting_hit_points.dart';
@@ -9,6 +10,7 @@ import 'ability_assignment_dialog.dart';
 import 'srd_class_selection_dialog.dart';
 import 'fantasy_ui.dart';
 import 'multiclass_selection_dialog.dart';
+import 'equipment_catalog_dialog.dart';
 
 /// Edits nullable values explicitly: an imported unknown score stays unknown.
 class CharacterEditor extends StatefulWidget {
@@ -251,6 +253,23 @@ class _CharacterEditorState extends State<CharacterEditor> {
         }
       });
     }
+  }
+
+  Future<void> _addFromCatalog() async {
+    final selected = await showDialog<EquipmentEntry>(
+      context: context,
+      builder: (_) => const EquipmentCatalogDialog(),
+    );
+    if (!mounted || selected == null) return;
+    setState(() {
+      (_original['inventory'] as List).add(InventoryItem(
+        id: const Uuid().v4(),
+        name: selected.name,
+        quantity: 1,
+        description: selected.detail,
+        catalogId: selected.id,
+      ).toJson());
+    });
   }
 
   /// Calculate, preview and explicitly confirm SRD level-1 hit points.
@@ -635,6 +654,13 @@ class _CharacterEditorState extends State<CharacterEditor> {
                     ),
                   ),
                 OutlinedButton.icon(
+                  key: const ValueKey('character-catalog-open'),
+                  onPressed: _addFromCatalog,
+                  icon: const Icon(Icons.menu_book_outlined),
+                  label: const Text('Aus SRD-Ausrüstungskatalog wählen'),
+                ),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
                   key: const ValueKey('character-inventory-add'),
                   onPressed: () => _editInventory(),
                   icon: const Icon(Icons.add),
@@ -761,6 +787,8 @@ class _InventoryItemDialogState extends State<_InventoryItemDialog> {
               name: _name.text.trim(),
               quantity: int.parse(_quantity.text),
               description: _description.text.trim(),
+              catalogId: _name.text.trim() == widget.item?.name
+                  ? (widget.item?.catalogId ?? '') : '',
             ),
           );
         },

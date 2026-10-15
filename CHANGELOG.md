@@ -1,3 +1,11 @@
+## 0.5.9+29 – SRD 5.2.1: Waffen-, Rüstungs- und Gegenstandskatalog (15.10.2026)
+
+- **Ausrüstung:** 38/38 Standardwaffen, 13/13 Rüstungen/Schilde sowie Werkzeuge, Abenteuerausrüstung, Munition, Foki, Reittiere, Fahrzeuge und eine ausdrücklich unvollständige Magie-Gegenstandsauswahl: insgesamt **272 Einträge**.
+- **SRD-Werte:** Waffen mit Schaden, Typ, Eigenschaften, Meisterschaft, Reichweite, Kosten und Gewicht; Rüstung mit Basis-RK, GE-Beschränkung, ST-Mindestwert und Heimlichkeitsnachteil. Reine, explizite RK-Vorschau ohne ungeprüfte Boni.
+- **Charaktereditor:** Such-/Kategoriedialog auf Deutsch und Englisch, bewusstes Hinzufügen aus dem Katalog; bestehender Freitext-Inventardialog bleibt erhalten. Optionale `catalogId` ohne Änderung der bisherigen gespeicherten Pflichtfelder; ältere Daten bleiben kompatibel.
+- **Sicherheit:** Kein automatischer Goldabzug, kein automatisches Anlegen oder Überschreiben von AC/Waffenwerten; magische Effekte, Ladungen und Einstimmung sind noch nicht automatisiert. Lizenz/Quellen: `docs/SRD_AUSRUESTUNGSKATALOG.md` und `THIRD_PARTY_NOTICES.md`.
+- **Tests:** Dart-Domain-, Widget- und Editor-Tests angelegt (Flutter CI ausstehend); 38 lokale Python-Tests und Strukturprüfung bestanden. Ausgangsbasis 0.5.8+28; deren GitHub-CI hatte sieben fehlschlagende Rast-Tests. Neue Änderungen auf GitHub noch nicht übertragen.
+
 ## 0.5.8+28 – SRD-5.2.1-Rasten und Trefferwürfel (15.10.2026)
 
 - Eigenständiges `RestRules`-Modul implementiert kurze Rast mit klassenspezifischen Trefferwürfeln, Konstitutionsbonus, Mindestheilung und TP-Limit; keine unbegrenzte Pauschalheilung mehr.

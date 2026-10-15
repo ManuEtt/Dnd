@@ -1,3 +1,12 @@
+## 0.5.9+29 – SRD-Ausrüstungskatalog (15.10.2026)
+
+- **Ausgang:** Separater Projektzweig auf dem Quellstand `0.5.8+28`, basierend auf GitHub `main` `c635ee376649d02ec37017c01805f2fa4d1a9806`. Parallel zu einer möglichen Codex-Weiterentwicklung, **nicht** direkt in GitHub eingecheckt.
+- **IMPLEMENTIERT:** 38 Standardwaffen, 13 Rüstung/Schild-Einträge, Abenteuerausrüstung/Werkzeuge sowie 79 katalogisierte magische Namen, Suchfunktion nach Deutsch/Englisch, Kategorienfilter, Item-Auswahl, optionale Inventar-`catalogId`, Preise in Kupferstücken und reine Rüstungs-KV/RK-Berechnungs-Vorschau.
+- **NICHT IMPLEMENTIERT:** Automatisches Anlegen, Rüstungsübung/Einschränkungen in Kämpfen, Einkaufs-Geldtransaktion, vollständige magische Gegenstandseffekte und alle Items aus nicht-SRD-Quellen. Magische Namen sind ausdrücklich nur Katalog/Referenz.
+- **GETESTET:** Python-Projektstruktur + 38 Python-Tests, ohne Flutter-SDK. Zusätzliche Dart-Unit- und Widgettests sind erstellt, aber **NICHT ausgeführt**. ZIP, SHA-256 nach Verpackung prüfen.
+- **BESTEHENDER CI-BLOCKER AUF BASIS 0.5.8:** GitHub-Lauf #38734808085 mit 355 Flutter-Tests bestanden, 7 Rast-Tests fehlgeschlagen. Der vorherige Quellstand 0.5.7+27 war erfolgreich. Diese Rast-Testfehler wurden im Item-Inkrement nicht bearbeitet.
+- **NÄCHSTER SCHRITT:** Katalogänderungen auf einem eigenen Branch mit dem aktuellen Codex-HEAD konfliktbewusst zusammenführen, erst dann `flutter analyze`, alle `flutter test` und Android-APK-Build; die Rast-Testfehler getrennt beheben. Magic-Item-Metadaten pro Eintrag gegen das SRD verifizieren, bevor automatisierte Effekte aktiviert werden.
+
 ## 0.5.8+28 – Rast- und Trefferwürfelregeln (15.10.2026)
 
 - **Ausgangsstand:** GitHub `main` `96ae347f61ad4e1c132caa848c1904444976f7d5` (0.5.7+27); die wesentlichen Model-/Engine-Quelldateien anhand ihrer Git-Blob-SHAs mit dem vollständigen lokalen Quellarchiv abgeglichen. Der GitHub-CI-Lauf #38731206833 für **0.5.7+27 ist inzwischen erfolgreich abgeschlossen** (Flutter, Backend und Android-APK). 0.5.8+28 bleibt ungeprüft.

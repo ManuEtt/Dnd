@@ -72,7 +72,10 @@ class InventoryItem {
     required this.name,
     this.quantity = 1,
     this.description = '',
+    this.catalogId = '',
   });
+  /// Optional catalog reference; legacy and user-defined items leave it empty.
+  final String catalogId;
   final String id, name, description;
   final int quantity;
   Map<String, dynamic> toJson() => {
@@ -80,12 +83,14 @@ class InventoryItem {
     'name': name,
     'quantity': quantity,
     'description': description,
+    if (catalogId.isNotEmpty) 'catalogId': catalogId,
   };
   factory InventoryItem.fromJson(Map<String, dynamic> j) => InventoryItem(
     id: _string(j['id'], 'Gegenstand-ID'),
     name: _string(j['name'], 'Gegenstand'),
     quantity: _int(j['quantity'], 'Anzahl', fallback: 1, min: 1),
     description: _string(j['description'], 'Beschreibung', fallback: ''),
+    catalogId: _string(j['catalogId'], 'Katalog-ID', fallback: ''),
   );
 }
 
