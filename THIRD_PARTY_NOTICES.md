@@ -27,3 +27,7 @@ Flutter, Dart, Fastify und die in den Lockdateien festgehaltenen Pakete besitzen
 ## Eigenständiger Projektquellcode
 
 Eine Veröffentlichungslizenz für den selbst erstellten Projektquellcode ist noch nicht festgelegt. Dieses Dokument vergibt keine MIT-Lizenz oder andere pauschale Lizenz für den gesamten Quellcode. Die Entscheidung liegt beim Projekteigentümer; die separat geltenden SRD- und Paketlizenzen werden dadurch nicht verändert.
+
+## SRD-Ausrüstung seit Version 0.5.9
+
+Der erweiterte Katalog enthält regeltechnische Basisdaten für 38 Waffen und 13 Rüstungseinträge sowie die SRD-Ausrüstungstabellen und eine nicht vollständige Auswahl magischer Gegenstände. Die englischen Referenznamen, selbst formulierten deutschen Oberflächenbezeichnungen und Katalogwerte unterliegen dem oben angegebenen SRD-5.2.1-Lizenzhinweis. Der Code und die Daten werden nicht als offizielle Herausgabe oder Übernahme aller D&D-Bücher bezeichnet. Quelle und Bearbeitung: `docs/SRD_AUSRUESTUNGSKATALOG.md`.

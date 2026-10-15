@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 import '../domain/models.dart';
+import '../domain/srd_equipment_catalog.dart';
+import '../domain/equipment_rules.dart';
 import '../domain/multiclass_rules.dart';
 import '../domain/rules_engine.dart';
 import '../domain/starting_hit_points.dart';
@@ -9,6 +11,8 @@ import 'ability_assignment_dialog.dart';
 import 'srd_class_selection_dialog.dart';
 import 'fantasy_ui.dart';
 import 'multiclass_selection_dialog.dart';
+import 'equipment_catalog_dialog.dart';
+import 'equipment_loadout_dialog.dart';
 
 /// Edits nullable values explicitly: an imported unknown score stays unknown.
 class CharacterEditor extends StatefulWidget {
@@ -247,10 +251,110 @@ class _CharacterEditorState extends State<CharacterEditor> {
         if (index == null) {
           inventory.add(result.toJson());
         } else {
+          if (item!.catalogId != result.catalogId) {
+            for (final slot in ['equippedArmorId', 'equippedShieldId', 'equippedWeaponId']) {
+              if (_original[slot] == item.id) {
+                _original[slot] = '';
+                if (slot == 'equippedArmorId') _original['equippedArmorTrained'] = false;
+                if (slot == 'equippedShieldId') _original['equippedShieldTrained'] = false;
+                _error = 'Bearbeiteter Gegenstand ist nicht mehr kataloggebunden. '
+                    'Ausrüstungswerte erneut prüfen.';
+              }
+            }
+          }
           inventory[index] = result.toJson();
         }
       });
     }
+  }
+
+  Future<void> _addFromCatalog() async {
+    final selected = await showDialog<EquipmentEntry>(
+      context: context,
+      builder: (_) => const EquipmentCatalogDialog(),
+    );
+    if (!mounted || selected == null) return;
+    setState(() {
+      (_original['inventory'] as List).add(InventoryItem(
+        id: const Uuid().v4(),
+        name: selected.name,
+        quantity: 1,
+        description: selected.detail,
+        catalogId: selected.id,
+      ).toJson());
+    });
+  }
+
+  /// A snapshot of the current editor values, not only the originally loaded
+  /// character. Invalid or unconfirmed attributes may not be silently guessed.
+  HeroCharacter _draftForEquipment() {
+    final json = Map<String, dynamic>.from(_original);
+    json['name'] = _fields['name']!.text.trim();
+    json['level'] = int.tryParse(_fields['level']!.text.trim());
+    json['armorClass'] = int.tryParse(_fields['armorClass']!.text.trim());
+    json['weaponDamage'] = _fields['weaponDamage']!.text.trim();
+    json['abilities'] = {
+      for (final entry in _scores.entries)
+        entry.key: int.tryParse(entry.value.text.trim()),
+    };
+    return HeroCharacter.fromJson(json);
+  }
+
+  Future<void> _equipFromInventory() async {
+    HeroCharacter draft;
+    try {
+      draft = _draftForEquipment();
+    } catch (error) {
+      setState(() => _error = 'Ausrüstung: $error');
+      return;
+    }
+    final proposal = await showDialog<EquipmentRulePreview>(
+      context: context,
+      builder: (_) => EquipmentLoadoutDialog(hero: draft),
+    );
+    if (!mounted || proposal == null) return;
+    try {
+      final confirmed = EquipmentRules.confirm(_draftForEquipment(), proposal);
+      setState(() {
+        _original['equippedArmorId'] = confirmed.equippedArmorId;
+        _original['equippedShieldId'] = confirmed.equippedShieldId;
+        _original['equippedWeaponId'] = confirmed.equippedWeaponId;
+        _original['equippedArmorTrained'] = confirmed.equippedArmorTrained;
+        _original['equippedShieldTrained'] = confirmed.equippedShieldTrained;
+        _original['weaponAbility'] = confirmed.weaponAbility;
+        _original['weaponProficient'] = confirmed.weaponProficient;
+        if (proposal.armorClass != null) {
+          _fields['armorClass']!.text = '${confirmed.armorClass}';
+        }
+        if (proposal.weaponDamage != null) {
+          _fields['weaponDamage']!.text = confirmed.weaponDamage;
+        }
+        _error = null;
+      });
+    } catch (error) {
+      setState(() => _error = 'Ausrüstung konnte nicht angewendet werden: $error');
+    }
+  }
+
+  bool _isEquippedItem(dynamic id) =>
+      ['equippedArmorId', 'equippedShieldId', 'equippedWeaponId']
+          .any((slot) => _original[slot] == id);
+
+  void _removeInventoryItem(int index) {
+    final inventory = _original['inventory'] as List;
+    final id = (inventory[index] as Map)['id'];
+    setState(() {
+      for (final slot in ['equippedArmorId', 'equippedShieldId', 'equippedWeaponId']) {
+        if (_original[slot] == id) {
+          _original[slot] = '';
+          if (slot == 'equippedArmorId') _original['equippedArmorTrained'] = false;
+          if (slot == 'equippedShieldId') _original['equippedShieldTrained'] = false;
+          _error = 'Ausrüstung wurde abgelegt. Manuell bestätigte RK- und '
+              'Waffenwerte bitte erneut prüfen.';
+        }
+      }
+      inventory.removeAt(index);
+    });
   }
 
   /// Calculate, preview and explicitly confirm SRD level-1 hit points.
@@ -568,6 +672,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
                 const SizedBox(height: 12),
                 _text('weaponDamage', 'Waffenschaden (z. B. 1d8)'),
                 DropdownButtonFormField<String>(
+                  key: ValueKey('weapon-ability-${_original['weaponAbility']}'),
                   initialValue: _original['weaponAbility'] as String,
                   decoration: const InputDecoration(
                     labelText: 'Attribut der verwendeten Waffe',
@@ -623,17 +728,45 @@ class _CharacterEditorState extends State<CharacterEditor> {
                       (_original['inventory'] as List)[index]['name'] as String,
                     ),
                     subtitle: Text(
-                      'Anzahl: ${(_original['inventory'] as List)[index]['quantity']}',
+                      'Anzahl: ${(_original['inventory'] as List)[index]['quantity']}'
+                      '${_isEquippedItem((_original['inventory'] as List)[index]['id']) ? ' · angelegt' : ''}',
                     ),
                     onTap: () => _editInventory(index: index),
                     trailing: IconButton(
                       tooltip: 'Gegenstand entfernen',
                       icon: const Icon(Icons.delete_outline),
-                      onPressed: () => setState(
-                        () => (_original['inventory'] as List).removeAt(index),
-                      ),
+                      onPressed: () => _removeInventoryItem(index),
                     ),
                   ),
+                OutlinedButton.icon(
+                  key: const ValueKey('character-loadout-open'),
+                  onPressed: _equipFromInventory,
+                  icon: const Icon(Icons.shield_outlined),
+                  label: const Text('Waffen und Rüstung anlegen / RK berechnen'),
+                ),
+                const SizedBox(height: 8),
+                TextButton.icon(
+                  key: const ValueKey('character-loadout-clear'),
+                  onPressed: () => setState(() {
+                    _original['equippedArmorId'] = '';
+                    _original['equippedShieldId'] = '';
+                    _original['equippedWeaponId'] = '';
+                    _original['equippedArmorTrained'] = false;
+                    _original['equippedShieldTrained'] = false;
+                    _error = 'Ausrüstung abgelegt. Bisher manuell bestätigte '
+                        'Rüstungs- und Waffenwerte bitte prüfen.';
+                  }),
+                  icon: const Icon(Icons.remove_circle_outline),
+                  label: const Text('Ausrüstung ablegen (Werte manuell prüfen)'),
+                ),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  key: const ValueKey('character-catalog-open'),
+                  onPressed: _addFromCatalog,
+                  icon: const Icon(Icons.menu_book_outlined),
+                  label: const Text('Aus SRD-Ausrüstungskatalog wählen'),
+                ),
+                const SizedBox(height: 8),
                 OutlinedButton.icon(
                   key: const ValueKey('character-inventory-add'),
                   onPressed: () => _editInventory(),
@@ -761,6 +894,8 @@ class _InventoryItemDialogState extends State<_InventoryItemDialog> {
               name: _name.text.trim(),
               quantity: int.parse(_quantity.text),
               description: _description.text.trim(),
+              catalogId: _name.text.trim() == widget.item?.name
+                  ? (widget.item?.catalogId ?? '') : '',
             ),
           );
         },

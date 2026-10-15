@@ -1,3 +1,9 @@
+> **0.6.0+30 (Entwicklungsstand):** SRD-Waffen und Rüstungen können im Charaktereditor mit bestätigter RK-/Waffenvorschau angelegt werden. Ein vollständiger Flutter-/Android-Build steht für diese Version noch aus. Details: `docs/EQUIPMENT_RULES.md`.
+
+## Neue Ausrüstungssuche (0.5.9+29 – CI ausstehend)
+
+Im Charaktereditor unter „Inventar & Ausrüstung“ gibt es „Aus SRD-Ausrüstungskatalog wählen“. Der Katalog enthält 272 Waffen, Rüstungen, Gegenstände, Werkzeuge und namentliche magische Referenzeinträge; 38 Waffen und 13 Rüstungstypen aus der SRD-Tabelle sind vollständig mit Basisdaten erfasst. Freies Inventar bleibt nutzbar, bestehende Spielstände bleiben kompatibel. Beim Hinzufügen werden keine Goldkosten berechnet, keine Waffen oder Rüstungen stillschweigend angelegt und keine magischen Effekte automatisch verwendet. [Details, Quellen, Tests und Grenzen](docs/SRD_AUSRUESTUNGSKATALOG.md).
+
 Im Abenteuer kannst du eine **kurze Rast** (`Ich mache eine kurze Rast 2W10.`) zur Heilung mit verfügbaren Trefferwürfeln oder eine **lange Rast** (`Ich mache eine lange Rast.`) zur Wiederherstellung von TP und Trefferwürfelvorrat bestätigen. Die Ressourcen bleiben im Spielstand erhalten und werden im Charakterbogen unter **Verteidigung** angezeigt. Die Regelumsetzung ist auf den dokumentierten Teilumfang begrenzt; siehe [Rast-Regeln](docs/REST_RULES.md). Flutter-/Android-CI für diese neue Version noch ausstehend.
 
 > Entwicklungsstand `0.5.7+27` (15.10.2026): Inventar-Widgettest stabilisiert. Noch keine CI-/Android-Abnahme für diesen Stand. Die letzte GitHub-Abnahme zu `0.5.6+26` meldete 351 erfolgreiche und einen fehlgeschlagenen Flutter-Test.
