@@ -1,3 +1,7 @@
+## Neues Grafik-Redesign 0.5.0+20
+
+Die ZIP enthält zusätzlich `app/assets/art/` und `app/lib/ui/fantasy_art.dart`. Bitte **alle** Unterordner unverändert hochladen. Die Grafikdateien werden über `app/pubspec.yaml` als lokale Flutter-Assets eingebunden. Nach Import `flutter analyze`, `flutter test` und den Android-Workflow ausführen. Der grüne GitHub-Workflow von 0.4.3 bestätigt nicht automatisch diese neue Version.
+
 ## Hinweis zu 0.4.3+19
 
 Dieses ZIP behebt die CI-Fehler des hochgeladenen Standes 0.4.2+18. Projektdateien aus dem ZIP direkt in die Repositorywurzel entpacken, einschließlich `.github/`. Keine andere Versionskopie mischen. Erst nach vollständig grünem GitHub-Actions-Lauf die APK einsetzen.

@@ -1,3 +1,13 @@
+## Illustrierte Oberfläche 0.5.0+20 – Pflichtchecks nach GitHub-Import
+
+- `python3 scripts/verify_project.py .`
+- `python3 -m unittest discover -s scripts/tests -v`
+- `cd app && flutter pub get && flutter analyze && flutter test`
+- `cd app && flutter build apk --debug`
+- Android: auf 320/360/400 dp, vergrößerter Schrift und im Hoch-/Querformat testen, insbesondere die Aktionsleiste und den Inventardialog.
+- End-to-End: Demo starten, Aktion eingeben/diktieren, Würfeln, Charakterbogen öffnen, Inventar anzeigen, Kampagne speichern/exportieren und App erneut starten.
+- Die Art-Dateien sind lokal und brauchen keine Netzverbindung. Der CI-Status von v0.4.3 darf nicht als Erfolgsnachweis für v0.5.0 ausgegeben werden.
+
 ## Neue Regression 0.4.3+19
 
 `app/test/fantasy_character_sheet_test.dart` testet die tatsächlichen Attributkarten auf 320/360/400 dp, die Einzigartigkeit der Grid-Keys und 1.4x-Systemschrift. Der vorherige CI-Lauf erreichte 319 bestandene / 4 fehlgeschlagene Flutter-Tests; diese Änderungen müssen in GitHub Actions neu nachgewiesen werden. Prüfe `flutter analyze`, `flutter test` und `flutter build apk --debug`.

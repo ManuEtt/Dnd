@@ -11,6 +11,7 @@ import 'backup_dialogs.dart';
 import 'character_editor.dart';
 import 'fantasy_character_sheet.dart';
 import 'fantasy_ui.dart';
+import 'fantasy_art.dart';
 import 'campaign_memory_panel.dart';
 
 const _gold = Color(0xffddb96c);
@@ -62,7 +63,7 @@ class _LivingGameAppState extends State<LivingGameApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Der lebendige Spielleiter',
+      title: 'Aetheria – Der lebendige Spielleiter',
       debugShowCheckedModeBanner: false,
       theme: fantasyTheme(),
       home: AnimatedBuilder(
@@ -79,6 +80,8 @@ class _LivingGameAppState extends State<LivingGameApp> {
               backupFiles: _backupFiles,
               onPlay: (action) => _run(action, play: true),
               onCharacters: () => setState(() => _page = 2),
+              onAdventure: () => setState(() => _page = 1),
+              onJournal: () => setState(() => _page = 3),
             ),
             _AdventurePage(
               controller: controller,
@@ -96,17 +99,23 @@ class _LivingGameAppState extends State<LivingGameApp> {
           ];
           return Scaffold(
             appBar: AppBar(
-              title: Text(
-                const [
-                  'Der lebendige Spielleiter',
-                  'Abenteuer',
-                  'Deine Helden',
-                  'Kampagnen-Tagebuch',
-                  'Einstellungen',
-                ][_page],
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
+              title: Row(children: [
+                const Icon(Icons.explore_outlined,
+                  color: FantasyPalette.gold, size: 26),
+                const SizedBox(width: 9),
+                Expanded(child: Text(
+                  const [
+                    'AETHERIA',
+                    'Abenteuer',
+                    'Deine Helden',
+                    'Kampagnen-Tagebuch',
+                    'Einstellungen',
+                  ][_page],
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: FantasyPalette.gold),
+                )),
+              ]),
               actions: [
                 if (controller.busy)
                   const Padding(
@@ -222,12 +231,16 @@ class _HomePage extends StatelessWidget {
     required this.controller,
     required this.onPlay,
     required this.onCharacters,
+    required this.onAdventure,
+    required this.onJournal,
     required this.backupFiles,
   });
   final BackupFiles backupFiles;
   final GameController controller;
   final _Play onPlay;
   final VoidCallback onCharacters;
+  final VoidCallback onAdventure;
+  final VoidCallback onJournal;
 
   Future<void> _newCampaign(BuildContext context, {bool ai = false}) async {
     final hero = await showDialog<HeroCharacter>(
@@ -301,9 +314,25 @@ class _HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final current = controller.currentCampaign ??
+        (controller.campaigns.isEmpty ? null : controller.campaigns.first);
     return ListView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       children: [
+        FantasyIllustratedBanner(
+          key: const ValueKey('home-illustrated-banner'),
+          image: FantasyArtwork.ruins,
+          eyebrow: current == null ? 'Aetheria · Deine Reise beginnt' : 'Kampagne fortsetzen',
+          title: current?.name ?? 'Deine Geschichte wartet.',
+          description: current == null
+              ? 'Erkunde geheimnisvolle Welten und entscheide selbst, wohin dein Abenteuer führt.'
+              : current.scene,
+          actionLabel: current == null ? 'Demo entdecken' : 'Fortsetzen',
+          onPressed: controller.busy ? null : () => current == null
+              ? onPlay(controller.createDemo)
+              : onPlay(() => controller.openCampaign(current.id)),
+        ),
+        const SizedBox(height: 18),
         FantasyPanel(
           padding: const EdgeInsets.all(24),
           child: Column(
@@ -357,6 +386,25 @@ class _HomePage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 18),
+        const FantasySectionTitle(title: 'Schnellzugriff', icon: Icons.explore_outlined),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(children: [
+            FantasyShortcutTile(label: 'Neues Abenteuer', icon: Icons.sports_martial_arts,
+              color: FantasyPalette.danger, onTap: controller.busy ? null : () => _newCampaign(context)),
+            const SizedBox(width: 9),
+            FantasyShortcutTile(label: 'Helden', icon: Icons.groups_outlined,
+              color: FantasyPalette.gold, onTap: onCharacters),
+            const SizedBox(width: 9),
+            FantasyShortcutTile(label: 'Chronik', icon: Icons.menu_book_outlined,
+              color: FantasyPalette.blue, onTap: onJournal),
+            const SizedBox(width: 9),
+            FantasyShortcutTile(label: 'Weiterspielen', icon: Icons.auto_stories_outlined,
+              color: const Color(0xffbc8dde),
+              onTap: current == null ? null : onAdventure),
+          ]),
+        ),
+        const SizedBox(height: 20),
         if (!controller.narrator.enabled) const _Notice(
           icon: Icons.auto_awesome_outlined,
           text: 'Für eine frei entwickelte KI-Kampagne zuerst unter „Optionen“ '
@@ -386,42 +434,25 @@ class _HomePage extends StatelessWidget {
               ),
             ),
           ),
-        for (final campaign in controller.campaigns)
-          FantasyPanel(
-            padding: EdgeInsets.zero,
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 10,
-              ),
-              leading: const Icon(Icons.auto_stories, color: _gold),
-              title: Text(campaign.name),
-              subtitle: Text(
-                '${campaign.world} · ${campaign.hero.name}\n${campaign.scene}',
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-              ),
-              isThreeLine: true,
-              onTap: controller.busy
-                  ? null
-                  : () => onPlay(() => controller.openCampaign(campaign.id)),
-              trailing: IconButton(
-                icon: const Icon(Icons.delete_outline),
-                tooltip: 'Kampagne löschen',
-                onPressed: controller.busy
-                    ? null
-                    : () async {
-                        if (await _confirmDelete(
-                              context,
-                              '„${campaign.name}“ unwiderruflich löschen?',
-                            ) ==
-                            true) {
-                          await controller.deleteCampaign(campaign.id);
-                        }
-                      },
-              ),
-            ),
-          ),
+        for (var index = 0; index < controller.campaigns.length; index++)
+          Builder(builder: (context) {
+            final campaign = controller.campaigns[index];
+            return FantasyCampaignCard(
+              key: ValueKey('illustrated-campaign-${campaign.id}'),
+              name: campaign.name,
+              detail: '${campaign.world} · ${campaign.hero.name}\n${campaign.scene}',
+              image: FantasyArtwork.campaign(index),
+              accent: index % 3 == 1 ? FantasyPalette.danger
+                  : index % 3 == 2 ? FantasyPalette.success : FantasyPalette.gold,
+              onTap: controller.busy ? null : () => onPlay(() => controller.openCampaign(campaign.id)),
+              onDelete: controller.busy ? null : () async {
+                if (await _confirmDelete(context,
+                    '„${campaign.name}“ unwiderruflich löschen?') == true) {
+                  await controller.deleteCampaign(campaign.id);
+                }
+              },
+            );
+          }),
         const SizedBox(height: 20),
         const FantasySectionTitle(
           title: 'Das Herz der Ewigkeit', icon: Icons.history_edu_outlined,
@@ -493,6 +524,13 @@ class _CharactersPage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
+        const FantasyIllustratedBanner(
+          image: FantasyArtwork.castle,
+          eyebrow: 'Heldenchronik', title: 'Deine Helden',
+          description: 'Bewahre die Geschichten deiner Charaktere und führe ihre Abenteuer fort.',
+          icon: Icons.shield_outlined, height: 145,
+        ),
+        const SizedBox(height: 17),
         const FantasySectionTitle(
           title: 'Heldenarchiv', icon: Icons.shield_outlined,
           subtitle: 'Charaktere ansehen, bearbeiten und sicher verwalten.',
@@ -539,13 +577,16 @@ class _CharactersPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    hero.name,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  Text(
-                    '${hero.species} · ${hero.className} · Stufe ${hero.level}',
-                  ),
+                  Row(children: [
+                    FantasyHeroMedallion(name: hero.name),
+                    const SizedBox(width: 14),
+                    Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(hero.name, style: Theme.of(context).textTheme.titleLarge),
+                        Text('${hero.species} · ${hero.className} · Stufe ${hero.level}'),
+                      ],
+                    )),
+                  ]),
                   const SizedBox(height: 12),
                   _HeroStats(hero: hero),
                   if (!hero.isComplete)
@@ -890,22 +931,42 @@ class _AdventurePageState extends State<_AdventurePage> {
                   padding: const EdgeInsets.all(16),
                   children: [
                     header,
-                    FantasyPanel(
-                      child: Padding(
-                        padding: EdgeInsets.zero,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const FantasySectionTitle(
-                              title: 'Aktuelle Szene',
-                              icon: Icons.landscape_outlined,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(campaign.scene),
-                          ],
-                        ),
-                      ),
+                    FantasyScenePanel(
+                      key: const ValueKey('adventure-illustrated-scene'),
+                      scene: campaign.scene,
+                      image: FantasyArtwork.ruins,
                     ),
+                    const SizedBox(height: 14),
+                    const FantasySectionTitle(title: 'Schnellaktionen',
+                      icon: Icons.sports_martial_arts),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(children: [
+                  FantasyShortcutTile(label: 'Sprache', icon: Icons.chat_bubble_outline,
+                    color: FantasyPalette.gold, width: 98,
+                    onTap: widget.controller.busy ? null : _toggleMic),
+                  const SizedBox(width: 7),
+                  FantasyShortcutTile(label: 'Untersuchen', icon: Icons.search,
+                    color: FantasyPalette.blue, width: 98,
+                    onTap: widget.controller.busy ? null : () {
+                      _input.text = 'Ich untersuche die Umgebung.';
+                      _send();
+                    }),
+                  const SizedBox(width: 7),
+                  FantasyShortcutTile(label: 'Angriff', icon: Icons.sports_martial_arts,
+                    color: FantasyPalette.danger, width: 98,
+                    onTap: widget.controller.busy ? null : () {
+                      _input.text = 'Ich greife an.';
+                      _send();
+                    }),
+                  const SizedBox(width: 7),
+                  FantasyShortcutTile(label: 'W20', icon: Icons.casino_outlined,
+                    color: const Color(0xffae90d8), width: 98,
+                    onTap: widget.controller.busy ? null : _roll),
+                ]),
+              ),
+              const SizedBox(height: 12),
+                    const SizedBox(height: 14),
                     if (campaign.adventureOffer != null)
                       FantasyPanel(
                         key: const ValueKey('adventure-offer-card'),
@@ -1324,6 +1385,13 @@ class _JournalPage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
+        FantasyIllustratedBanner(
+          image: FantasyArtwork.forgottenWoods,
+          eyebrow: 'Deine Chronik', title: campaign.name,
+          description: 'Alle bestätigten Erlebnisse und Erinnerungen deiner Reise.',
+          icon: Icons.auto_stories_outlined, height: 138,
+        ),
+        const SizedBox(height: 16),
         FantasySectionTitle(
           title: campaign.name,
           icon: Icons.auto_stories_outlined,
@@ -2043,8 +2111,11 @@ Future<void> _showInventory(BuildContext context, HeroCharacter hero) {
             ]),
           ),
           const SizedBox(height: 20),
+          const FantasySectionTitle(title: 'Gegenstände & Ausrüstung',
+            icon: Icons.inventory_2_outlined),
+          FantasyPanel(child: FantasyInventoryCards(items: hero.inventory)),
+          const SizedBox(height: 20),
           for (final entry in const <String, String>{
-            'inventory': 'Gegenstände, Waffen & Ausrüstung',
             'spells': 'Zauber',
             'features': 'Klassenfähigkeiten',
             'conditions': 'Zustände',

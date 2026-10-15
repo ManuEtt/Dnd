@@ -1,3 +1,9 @@
+## Aktuell: Aetheria 0.5.0+20 – Illustriertes Dark-Fantasy-UI
+
+Basierend auf dem nachweislich erfolgreichen GitHub-CI-Stand `a85cf97c113d397259677d7a3612f3b229045315` (0.4.3+19). Erweitert wurde ausschließlich die Präsentationsschicht durch 12 lokal eingebundene WebP-Grafiken, ein responsives Bild-/Rahmen-/Aktions-Widgetsystem und Anpassungen an Startseite, Kampagnen, Abenteuer, Helden, Charakterbogen, Chronik und Inventar. Neue Regressionstests in `app/test/fantasy_art_ui_test.dart`. Details: `docs/ILLUSTRATED_UI.md`.
+
+**Status:** Quellcode erstellt und ZIP-Struktur/Python-Tests geprüft; Flutter SDK und Android SDK in dieser Arbeitsumgebung nicht vorhanden. Ein erfolgreicher Flutter-/Android-Build dieses neuen Stands wurde **nicht** behauptet. GitHub `main` unverändert.
+
 ## Aktuell: 0.4.3+19 – Attributkartenlayout korrigiert
 
 **Basis:** GitHub `main` `9a75719b07fb2607f49818e12018a277e0b5f5dc`. Der letzte CI-Lauf stoppte nach 319 bestandenen, vier fehlgeschlagenen Widgettests (`fantasy_character_sheet_test.dart`); Ursache und Testselektor im Quellcode korrigiert. Kotlin/Android-APK noch nicht überprüft. Kein direkter GitHub-Push ausgeführt.

@@ -6,6 +6,7 @@ import 'data/sqlite_campaign_repository.dart';
 import 'services/game_controller.dart';
 import 'services/voice_controller.dart';
 import 'ui/app.dart';
+import 'ui/fantasy_ui.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -91,9 +92,9 @@ class _BootstrapAppState extends State<BootstrapApp>
     }
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark(useMaterial3: true),
+      theme: buildFantasyTheme(),
       home: Scaffold(
-        body: Center(
+        body: FantasyBackdrop(child: Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: _failure == null
@@ -117,7 +118,7 @@ class _BootstrapAppState extends State<BootstrapApp>
                     ],
                   ),
           ),
-        ),
+        )),
       ),
     );
   }

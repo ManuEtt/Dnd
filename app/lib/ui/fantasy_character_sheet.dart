@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../domain/models.dart';
+import 'fantasy_art.dart';
 
 // A read-only presentation of the actual, confirmed character data. No state,
 // rule changes, generated portrait, or assumed missing character values.
@@ -95,6 +96,13 @@ class _CharacterHeader extends StatelessWidget {
     return _FantasyFrame(
       child: Column(
         children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(9),
+            child: Image.asset(FantasyArtwork.castle,
+              height: 80, width: double.infinity, fit: BoxFit.cover,
+              semanticLabel: 'Illustration einer Fantasy-Burg'),
+          ),
+          const SizedBox(height: 12),
           Text(
             hero.name.isEmpty ? 'Unbenannter Held' : hero.name,
             key: const ValueKey('sheet-hero-name'),
@@ -622,6 +630,9 @@ class _FantasyFrame extends StatelessWidget {
           border: Border.all(color: _gold.withValues(alpha: .35)),
           boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .18), blurRadius: 8, offset: const Offset(0, 3))],
         ),
-        child: child,
+        child: CustomPaint(
+          foregroundPainter: const FantasyOrnamentPainter(),
+          child: child,
+        ),
       );
 }

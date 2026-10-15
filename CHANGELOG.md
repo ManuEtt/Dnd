@@ -1,3 +1,15 @@
+## 0.5.0+20 – Illustriertes Aetheria-Design (15.10.2026)
+
+- Echte, kompakte App-Grafiken aus den zuvor entworfenen Aetheria-Illustrationen als lokale WebP-Assets (`app/assets/art/`, 12 Motive). Keine eingebetteten Bildschirm-Screenshots als UI.
+- Neues `FantasyIllustratedBanner` mit realen Kampagnendaten und Fortsetzen-Aktion; gerahmte Kampagnenkarten mit regionalen Motiven; horizontale Schnellzugriffe zu bestehenden Funktionen.
+- Abenteueransicht mit atmosphärischer Szene, weiterhin gespeicherter Szenentext und bestehende Spielaktionen. Zusätzliche Aktionskacheln verwenden die realen Spiel-/Sprach-/Würfelmethoden.
+- Heldenarchiv mit individuellen Initialenmedaillons (kein erfundenes Porträt); Charakterbogen mit Burgenillustration, dekorativen Rahmen.
+- Inventar mit einzelnen bebilderten Gegenständen auf Basis von `hero.inventory`: Anzahl und Name aus gespeicherten Daten, Detaildialog nur informativ, keine vorgetäuschte Anlegen-/Ablegen-Funktion.
+- Chronik-Banner und einheitlicher Fantasy-Startbildschirm.
+- Neues Testmodul zu Bild-Assets, Darstellung bei 320/360/400/950 dp und echten Inventargegenständen.
+- Keine Änderungen an Backend, SQLite, Spielregeln oder den vorhandenen Import-/Exportformaten.
+- Paket-/Strukturtests erfolgreich. Flutter-Analyse, Flutter-Widgettests und Android-APK müssen über GitHub Actions noch bestätigt werden.
+
 ## 0.4.3+19 – CI-Fix: überlaufende Attributkarten und mehrdeutige Widgettests (15.10.2026)
 
 - GitHub Actions `38692820652`: Flutter-Analyse erfolgreich, 319 Tests erfolgreich, vier neue Layouttests rot. Drei Ursachen: `_AbilityCard`-Spalten bei 320 dp und 1.4x-Schrift überlaufen; bei 360/400 dp suchten Tests mehrdeutig nach `GridView` und warfen `Bad state: Too many elements`.
