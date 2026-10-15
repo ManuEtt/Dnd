@@ -1,3 +1,18 @@
+# Aetheria 0.4.2+18 – Import und Abnahme
+
+**Basis:** GitHub `main` Commit `35a7b4062c5248b288598b587da6c606bf80122d` (0.4.1+17). Enthält die vollständigen 131 Projektdateien.
+
+1. ZIP **entpacken** und sämtliche Dateien einschließlich `.github` in einen neuen Branch des Repositories `ManuEtt/Dnd` übernehmen. Die ZIP nicht als einzige Datei hochladen.
+2. Bei Versionskonflikten zuerst die neueren Änderungen prüfen und nicht unbesehen überschreiben.
+3. GitHub Actions → `Android-Alpha bauen` ausführen bzw. auf den automatischen Lauf warten.
+4. Erst nach grünen Flutter-Tests, nativen Tests und APK-Build das Android-Artefakt herunterladen.
+
+**Korrigiert:** `GridView.count(mainAxisExtent: ...)` war kein gültiger Konstruktoraufruf; jetzt `GridView(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(mainAxisExtent: ...))`. Das verhindert den Fehler `undefined_named_parameter`.
+
+**Einschränkung:** Ein Flutter-SDK steht in der lokalen Umgebung nicht bereit; die neue Version ist noch nicht auf einem Android-Gerät oder in GitHub Actions bestätigt.
+
+---
+
 # UI-Korrektur 0.4.1+17
 
 Das vollständige Projektpaket basiert auf `main`-Commit `c4d0dedd851ae1085d01a26afb6c0c7ff78c8830`.

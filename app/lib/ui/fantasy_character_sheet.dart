@@ -232,13 +232,18 @@ class _SummaryGrid extends StatelessWidget {
               scaler.scale(10) * 1.45 * 2 + 12)
           .clamp(124.0, 320.0)
           .toDouble();
-      return GridView.count(
-        crossAxisCount: columns,
-        mainAxisExtent: tileHeight,
+      // GridView.count has no mainAxisExtent parameter. An explicit
+      // SliverGridDelegateWithFixedCrossAxisCount supports fixed row heights
+      // and prevents narrow-screen RenderFlex overflow without clipping text.
+      return GridView(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: columns,
+          mainAxisExtent: tileHeight,
+          mainAxisSpacing: 9,
+          crossAxisSpacing: 9,
+        ),
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        mainAxisSpacing: 9,
-        crossAxisSpacing: 9,
         children: [
           for (final item in values)
             _FantasyFrame(

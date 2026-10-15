@@ -1,3 +1,7 @@
+## Stand 0.4.2+18 – Flutter-Compilefix, noch nicht CI-validiert (15.10.2026)
+
+Das Release 0.4.1+17 erreichte `flutter analyze` nicht: `mainAxisExtent` wurde irrtümlich an `GridView.count` übergeben (GitHub Actions Run 38691911056). 0.4.2+18 setzt stattdessen `GridView(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(mainAxisExtent: ...))` ein. Regressionstest ergänzt. Die neuen Zeilenhöhen gegen UI-Überlauf bleiben erhalten. Backend, Datenbank und Spiellogik unverändert. Vollständig grüner CI-Lauf steht für dieses Inkrement aus.
+
 ## Aktueller Stand: 0.4.1+17 – Fehlerkorrektur im Charakterbogen
 
 Aufbauend auf `main`-Commit `c4d0dedd851ae1085d01a26afb6c0c7ff78c8830`.

@@ -27,6 +27,13 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('RÜSTUNGSKLASSE'), findsOneWidget);
       expect(find.text('ÜBUNGSBONUS'), findsOneWidget);
+      // Regression: the explicit delegate is required for mainAxisExtent.
+      // Passing mainAxisExtent to GridView.count breaks flutter analyze.
+      final grid = tester.widget<GridView>(find.byType(GridView));
+      final delegate = grid.gridDelegate
+          as SliverGridDelegateWithFixedCrossAxisCount;
+      expect(delegate.crossAxisCount, 2);
+      expect(delegate.mainAxisExtent, greaterThanOrEqualTo(124));
       expect(tester.takeException(), isNull);
       await tester.scrollUntilVisible(find.text('Rettungswürfe'.toUpperCase()),
           240, scrollable: find.byType(Scrollable).first);

@@ -1,3 +1,7 @@
+## Regression für 0.4.2+18 – Flutter-Analyse
+
+In 0.4.1 schlug GitHub Actions mit `undefined_named_parameter: mainAxisExtent` in `fantasy_character_sheet.dart:237` fehl. Die Syntax ist jetzt `GridView(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(..., mainAxisExtent: tileHeight))`. Bitte insbesondere `flutter analyze`, `flutter test` und den Android-Build im CI prüfen. Widgettests enthalten Fälle für 320, 360 und 400 logische Pixel sowie 1,4-fache Schrift; ein Test überprüft explizit den Grid-Delegate. Kein Fehler wird absichtlich unterdrückt.
+
 ## Zusätzliche Prüfung für 0.4.0+16
 
 - Neues `app/test/fantasy_design_system_test.dart`: Theme-Farben und gerahmte Komponenten bei 320, 360 und 1000 logischen Pixeln.

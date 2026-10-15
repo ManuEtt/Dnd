@@ -1,3 +1,12 @@
+## 0.4.2+18 – Korrektur des CI-Kompilierfehlers (15.10.2026)
+
+- `app/lib/ui/fantasy_character_sheet.dart`: `GridView.count` durch `GridView` mit `SliverGridDelegateWithFixedCrossAxisCount` ersetzt. Der Parameter `mainAxisExtent` befindet sich nun am richtigen Delegate.
+- Bestehender Schutz vor `RenderFlex overflow` auf schmalen Displays und bei größerer Systemschrift bleibt erhalten.
+- Regressionstest prüft Grid-Delegate, Anzahl Spalten und feste Kachelhöhe.
+- Basiert auf `main` Commit `35a7b4062c5248b288598b587da6c606bf80122d` (0.4.1+17).
+- Auslöser: GitHub Actions Build 38691911056 schlug am 15.10.2026 bei `flutter analyze` fehl (`undefined_named_parameter` in Zeile 237).
+- Projektstruktur/Python-Tests hier geprüft; vollständige Flutter-/Android-Abnahme über GitHub Actions steht aus.
+
 ## 0.4.1+17 – Korrektur der Charakterbogen-Kacheln (15.10.2026)
 
 - Die vier Statistik-Kacheln verwenden jetzt eine von Schriftgröße und Layout unabhängige Mindesthöhe statt eines festen Seitenverhältnisses. Dies behebt die drei `RenderFlex overflowed`-Fehler aus GitHub Actions beim Charakterbogen und beim Öffnen des Bogens aus dem Abenteuer.
