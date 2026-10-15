@@ -468,4 +468,39 @@ void main() {
     voice.dispose();
     await tester.runAsync(repository.close);
   });
+  testWidgets('deutscher Fantasy-Charakterbogen öffnet aus dem Abenteuer', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final repository = (await tester.runAsync(
+      () => SqliteCampaignRepository.open(
+        factory: databaseFactoryFfi,
+        path: inMemoryDatabasePath,
+      ),
+    ))!;
+    final controller = GameController(repository: repository);
+    final voice = _SilentVoice();
+    await tester.runAsync(controller.createDemo);
+    await tester.pumpWidget(
+      LivingGameApp(controller: controller, voice: voice),
+    );
+    await tester.tap(find.text('Abenteuer'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('adventure-open-character-sheet')));
+    await tester.pumpAndSettle();
+    expect(find.text('Charakterbogen'), findsOneWidget);
+    expect(find.text('RÜSTUNGSKLASSE'), findsOneWidget);
+    expect(find.text('Attribute'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.text('Was möchtest du tun?'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox.shrink());
+    controller.dispose();
+    voice.dispose();
+    await tester.runAsync(repository.close);
+  });
 }

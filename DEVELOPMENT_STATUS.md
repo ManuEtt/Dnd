@@ -1,3 +1,9 @@
+## Status 0.3.9+15 – Oberflächengestaltung (15.10.2026)
+
+**Integriert:** Neue native, responsive Flutter-Charakterbogenansicht mit vollständigen deutschen Labels und drei Bereichen; App-Farb- und Typografie-Thema angepasst. Einstieg aus Heldenliste und aktiver Kampagne, Weiterleitung zum bisherigen Editor. Kein geändertes Speicherformat, keine Hintergrundmigration, keine neuen Laufzeitabhängigkeiten. Das Mockup ist eine visuelle Referenz; die Android-App zeigt weiterhin echte, gespeicherte Daten.
+
+**Ausstehend:** Flutter-/Dart-Analyse, vollständige Widgettests, Android-APK-Build, Smartphone-Abnahme und Prüfung des Designs mit Schriftgrößen-/Barrierefreiheitseinstellungen. Der jüngste GitHub-Workflow von `125fc3630722002a955a4e3479395edd6bfb6635` stoppte im Backend-Test durch eine veraltete Versionserwartung `0.3.0` statt `0.3.1`; diese Assertion ist in dieser ZIP korrigiert. CI muss diesen und die neuen UI-Tests bestätigen.
+
 ## 0.3.8+14 – 15.10.2026 – spielbare dynamische Abenteuer und geprüfte KI-Angebote
 
 - Narrative KI kann **genau eine optionale spielbare Herausforderung** pro Antwort vorschlagen, mit Quest, Begegnung und lokal ausgewähltem Gegnerprofil oder einer Wahrnehmungsaufgabe. KI-Daten werden auf Backend und Gerät validiert; der Provider kann keine Regel- oder Inventarwerte setzen.

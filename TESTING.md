@@ -1,3 +1,12 @@
+## 0.3.9+15 – UI-Akzeptanz
+
+1. `flutter analyze` und `flutter test`: insbesondere `fantasy_character_sheet_test.dart` und `ui_app_test.dart` auf einem 320-/360-dp-Fenster.
+2. **Helden** → **Bogen ansehen**: gespeicherte Werte, farbige sechs Attribute, Übungsbonus und Rettungswürfe müssen stimmen; „Charakter bearbeiten“ öffnet den bisherigen Editor.
+3. **Abenteuer** → **Charakterbogen ansehen**: die aktiven Kampagnenwerte anzeigen, ohne Spielerhandlung/Würfelwurf zu verändern.
+4. Einen unvollständigen importierten Helden öffnen: unbekannte Werte bleiben „–“/„Nicht erfasst“, und in allen Ansichten gibt es keine überlaufende Typografie.
+5. **Zustände/Verteidigung** wechseln; dabei dürfen keine Regeln oder Spielstände verändert werden.
+6. Verifikation auf einem echten Android-Gerät, auch mit großer Systemschrift und aktiver Bildschirmvorlesefunktion, vor Freigabe.
+
 ## 0.3.8+14 – 15.10.2026 – spielbare dynamische Abenteuer und geprüfte KI-Angebote
 
 - Narrative KI kann **genau eine optionale spielbare Herausforderung** pro Antwort vorschlagen, mit Quest, Begegnung und lokal ausgewähltem Gegnerprofil oder einer Wahrnehmungsaufgabe. KI-Daten werden auf Backend und Gerät validiert; der Provider kann keine Regel- oder Inventarwerte setzen.

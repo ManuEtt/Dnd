@@ -1,3 +1,14 @@
+## 0.3.9+15 – 15.10.2026 – Neuer deutscher Fantasy-Charakterbogen
+
+- Eigenständiger, deutschsprachiger Charakterbogen nach der abgestimmten Dark-Fantasy-Vorlage: dunkelblaue Flächen, goldene Kanten, farbige Attributkarten, Trefferpunktebalken und responsive Karten für Übungsbonus, Bewegung, Initiative und Rüstungsklasse.
+- Aus der **Heldenverwaltung** („Bogen ansehen“) und aus dem **Abenteuer** („Charakterbogen ansehen“) erreichbar; vom Bogen aus ist der bisherige Charaktereditor weiterhin verfügbar.
+- Abschnitte für Attribute/Rettungswürfe/Fertigkeiten, Zustände/Merkmale und Verteidigungsinformationen. Alle Informationen stammen aus dem echten `HeroCharacter`; unbekannte Werte bleiben als Strich bzw. „Nicht erfasst“ stehen. Mangels gespeicherter Portraitdaten wird ein Initialen-Avatar gezeigt, kein erfundenes Charakterporträt.
+- Übungsbonus wird ausschließlich aus gültiger Stufe 1–20 berechnet, Attributmodifikatoren aus bestätigten Werten. Rettungswürfe addieren nur die explizit gespeicherte Übung; andere Effekte werden nicht erfunden. Die bestehende Bewegungseinheit bleibt **Meter**.
+- Globales Designsystem an die neue Ansicht angepasst: marineblaue Karten/Hintergründe, Goldakzent, kontrastreichere Schriften und Buttons; Datenbankformat, Sprachausgabe, Kampagnen und Regel-Engine unverändert.
+- Neue Flutter-Widgettests für deutsche Bezeichnungen, responsives Layout bei 320/360 px, Modifikatoren, fehlende Werte und Bearbeitungsaktion. Tests können hier mangels Flutter-SDK nur als Quellcode geprüft werden; sie müssen in GitHub Actions laufen.
+- Korrektur des vorherigen Backend-CI-Testfehlers: Versionsassertion im Health-Test auf die tatsächliche Backend-Version `0.3.1` aktualisiert (vorher erwartete `0.3.0`).
+- GitHub-Basis `125fc3630722002a955a4e3479395edd6bfb6635` (0.3.8+14). Kein direkter Push in `main`.
+
 ## 0.3.8+14 – 15.10.2026 – spielbare dynamische Abenteuer und geprüfte KI-Angebote
 
 - Narrative KI kann **genau eine optionale spielbare Herausforderung** pro Antwort vorschlagen, mit Quest, Begegnung und lokal ausgewähltem Gegnerprofil oder einer Wahrnehmungsaufgabe. KI-Daten werden auf Backend und Gerät validiert; der Provider kann keine Regel- oder Inventarwerte setzen.

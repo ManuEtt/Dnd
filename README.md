@@ -1,3 +1,11 @@
+## Neu in 0.3.9+15: Deutsches Fantasy-Design und Charakterbogen
+
+Die Charakteransicht orientiert sich an der gewählten Dark-Fantasy-Vorlage: dunkles Blau, Goldakzente, farbige Attributkarten und große Trefferpunkteanzeige. **Alle UI-Texte sind auf Deutsch.** Der Bogen ist über **Helden → Bogen ansehen** sowie im **Abenteuer → Charakterbogen ansehen** erreichbar. Das Bearbeiten bleibt möglich.
+
+Die Darstellung ist an die echten Spieldaten gebunden; fehlende Attribute/TP/RK werden nicht geraten. Speziell: Bewegung wird entsprechend den vorhandenen Spielwerten in **Metern** angezeigt; der Übungsbonus ist stufenabhängig, Rettungswürfe verwenden nur dokumentierte Fertigkeiten. Da das Datenmodell noch keine Porträtbilder verwaltet, steht ein stilisierter Initialen-Avatar anstelle eines festen Beispielbilds. Details: [UI-Design und Bedienung](docs/UI_DESIGN.md).
+
+Hinweis: Der neue Quellstand muss noch `flutter analyze`, `flutter test` und den Android-Build bei GitHub Actions bestehen. Ein fertig getestetes APK liegt für 0.3.9 noch nicht vor.
+
 ## Neu in Aetheria 0.3.8+14 – spielbare KI-Abenteuer
 
 Der KI-Spielleiter kann passende Quests und Gegnerbegegnungen oder Erkundungsaufgaben vorschlagen. **Erst nach Bestätigung** durch den Spieler aktiviert die App eine Aufgabe. Initiative, Gegnerwerte, Proben, Treffer, Questabschluss und einmalige Beute werden **nur lokal** bestimmt und gespeichert. Der KI-Erzähler erhält keine Regelautorität. Details, Testablauf und Grenzen: [Dynamische Abenteuer](docs/AI_ADVENTURES.md). Die App erfordert weiterhin einen für echte Story-Generierung verbundenen KI-Backend-Server und ausdrückliche Kostenfreigabe.

@@ -9,11 +9,12 @@ import '../services/voice_controller.dart';
 import 'backend_settings_panel.dart';
 import 'backup_dialogs.dart';
 import 'character_editor.dart';
+import 'fantasy_character_sheet.dart';
 import 'campaign_memory_panel.dart';
 
 const _gold = Color(0xffddb96c);
 const _ink = Color(0xff0d1927);
-const _forest = Color(0xff19382f);
+const _forest = Color(0xff234157);
 const _parchment = Color(0xffeee6cf);
 const _srdAttribution =
     'This work includes material from the System Reference Document 5.2.1 '
@@ -29,34 +30,69 @@ ThemeData fantasyTheme() => ThemeData(
     seedColor: _gold,
     brightness: Brightness.dark,
     primary: _gold,
-    secondary: const Color(0xff84b3a1),
+    secondary: const Color(0xff7eacbd),
     surface: _ink,
     onSurface: _parchment,
   ),
-  scaffoldBackgroundColor: const Color(0xff08121e),
+  scaffoldBackgroundColor: const Color(0xff09121f),
+  textTheme: const TextTheme(
+    headlineMedium: TextStyle(fontFamily: 'serif', fontSize: 28,
+        fontWeight: FontWeight.bold, color: _parchment),
+    titleLarge: TextStyle(fontFamily: 'serif', fontSize: 23,
+        fontWeight: FontWeight.bold, color: _parchment),
+    titleMedium: TextStyle(fontFamily: 'serif', fontSize: 19,
+        fontWeight: FontWeight.w600, color: _parchment),
+  ),
   appBarTheme: const AppBarTheme(
     backgroundColor: _ink,
     foregroundColor: _parchment,
+    titleTextStyle: TextStyle(fontFamily: 'serif', fontSize: 21,
+        fontWeight: FontWeight.bold, color: _parchment),
   ),
   cardTheme: CardThemeData(
-    color: _forest.withValues(alpha: .6),
+    color: const Color(0xff17283a),
     margin: const EdgeInsets.only(bottom: 12),
+    elevation: 1,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+      side: BorderSide(color: _gold.withValues(alpha: .23)),
+    ),
   ),
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
-    fillColor: _ink,
+    fillColor: const Color(0xff111f30),
+    labelStyle: const TextStyle(color: _parchment),
     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: _gold),
+    ),
+  ),
+  chipTheme: ChipThemeData(
+    backgroundColor: const Color(0xff1a3043),
+    side: BorderSide(color: _gold.withValues(alpha: .25)),
+    labelStyle: const TextStyle(color: _parchment),
   ),
   filledButtonTheme: FilledButtonThemeData(
-    style: FilledButton.styleFrom(minimumSize: const Size(48, 48)),
+    style: FilledButton.styleFrom(
+      minimumSize: const Size(48, 48),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ),
   ),
   outlinedButtonTheme: OutlinedButtonThemeData(
-    style: OutlinedButton.styleFrom(minimumSize: const Size(48, 48)),
+    style: OutlinedButton.styleFrom(
+      minimumSize: const Size(48, 48),
+      side: BorderSide(color: _gold.withValues(alpha: .55)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ),
   ),
   textButtonTheme: TextButtonThemeData(
     style: TextButton.styleFrom(minimumSize: const Size(48, 48)),
   ),
-  navigationBarTheme: const NavigationBarThemeData(backgroundColor: _ink),
+  navigationBarTheme: NavigationBarThemeData(
+    backgroundColor: _ink,
+    indicatorColor: _gold.withValues(alpha: .21),
+  ),
 );
 
 class LivingGameApp extends StatefulWidget {
@@ -482,6 +518,20 @@ class _CharactersPage extends StatelessWidget {
     if (result != null) await controller.saveStandaloneHero(result);
   }
 
+  Future<void> _showSheet(BuildContext context, HeroCharacter hero) async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (sheetContext) => CharacterSheetPage(
+          hero: hero,
+          onEdit: controller.busy ? null : () async {
+            Navigator.of(sheetContext).pop();
+            if (context.mounted) await _edit(context, hero);
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -550,6 +600,12 @@ class _CharactersPage extends StatelessWidget {
                   Wrap(
                     spacing: 10,
                     children: [
+                      OutlinedButton.icon(
+                        key: ValueKey('open-character-sheet-${hero.id}'),
+                        onPressed: () => _showSheet(context, hero),
+                        icon: const Icon(Icons.auto_stories_outlined),
+                        label: const Text('Bogen ansehen'),
+                      ),
                       TextButton.icon(
                         onPressed: controller.busy
                             ? null
@@ -734,6 +790,22 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (result != null) await widget.controller.saveHero(result);
   }
 
+  Future<void> _showHeroSheet() async {
+    final hero = widget.controller.currentCampaign?.hero;
+    if (hero == null) return;
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (sheetContext) => CharacterSheetPage(
+          hero: hero,
+          onEdit: widget.controller.busy ? null : () {
+            Navigator.of(sheetContext).pop();
+            if (mounted) _editHero();
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final campaign = widget.controller.currentCampaign;
@@ -771,6 +843,12 @@ class _AdventurePageState extends State<_AdventurePage> {
                     Text(
                       '${campaign.hero.name} · TP ${campaign.hero.hitPoints ?? '?'}/${campaign.hero.maxHitPoints ?? '?'} '
                       '· RK ${campaign.hero.armorClass ?? '?'}',
+                    ),
+                    TextButton.icon(
+                      key: const ValueKey('adventure-open-character-sheet'),
+                      onPressed: _showHeroSheet,
+                      icon: const Icon(Icons.auto_stories_outlined, size: 17),
+                      label: const Text('Charakterbogen ansehen'),
                     ),
                   ],
                 ),
