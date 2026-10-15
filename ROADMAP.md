@@ -1,3 +1,16 @@
+## Schwerpunkt ab 0.6.0+30: Angelegte SRD-Waffen und Rüstungen
+
+- Implementiert, CI ausstehend: Bestätigte RK-/Angriffs-Vorschau, Inventar-Slotreferenzen und Altspeicherkompatibilität. Quellen und Grenzen: `docs/EQUIPMENT_RULES.md`.
+- Zuerst vollständige Flutter-CI, Widgettests und Android-APK durchlaufen lassen; danach Geräteabnahme der Anlegen-/Ablegen-Abläufe und Persistenz.
+- Als Nächstes: Erschöpfung und Zustände in Checks/Kämpfen, echte Munition und Aktionsökonomie, Ausrüstungsgewicht sowie Klassen-/Zauberressourcen.
+
+## Schwerpunkt 0.5.9+29: SRD-Waffen, Rüstung und Inventar
+
+- **Erster Katalogbau abgeschlossen, Flutter-CI offen:** Waffen-, Rüstungs- und Materialdaten, deutsch/englisch suchbarer Charaktereditor, optionale Katalogkennungen. Quelle und Grenzen: [docs/SRD_AUSRUESTUNGSKATALOG.md](docs/SRD_AUSRUESTUNGSKATALOG.md).
+- **Nächste Priorität:** Fehlende Rast-Tests der Basisversion 0.5.8 korrigieren und alle neuen Katalogtests grün bauen.
+- **Danach:** Verifizierte magische SRD-Gegenstände mit Seltenheit/Einstimmung/Ladungen/Effekten; SRD-komplette Liste, gemischte Inventare, ausgerüstete Gegenstände, gewollte RK-Bestätigung, Waffenmunition/Verbrauch, regelkonforme Kampf- und Kostenautomatik. Niemals magische Boni automatisch schätzen.
+- **Rechte:** Außerhalb des SRD liegende Buchinhalte nur mit eigener Nutzungsberechtigung oder als klar separates benutzergeschriebenes Homebrew-Format.
+
 ## Schwerpunkt ab 0.5.8+28: Trefferwürfel und Rasten
 
 - **Implementiert, CI ausstehend:** Kurze Rast mit klassenabhängigem Trefferwürfelverbrauch, langer Rast und persistierten Ressourcen für Ein-/Zweitklassencharaktere; Details `docs/REST_RULES.md`.

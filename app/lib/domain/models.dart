@@ -1,3 +1,5 @@
+import 'srd_equipment_catalog.dart';
+
 /// Versioned, provider-independent game data. Unknown historical values stay null.
 const abilityNames = <String>[
   'strength',
@@ -72,7 +74,10 @@ class InventoryItem {
     required this.name,
     this.quantity = 1,
     this.description = '',
+    this.catalogId = '',
   });
+  /// Optional catalog reference; legacy and user-defined items leave it empty.
+  final String catalogId;
   final String id, name, description;
   final int quantity;
   Map<String, dynamic> toJson() => {
@@ -80,12 +85,14 @@ class InventoryItem {
     'name': name,
     'quantity': quantity,
     'description': description,
+    if (catalogId.isNotEmpty) 'catalogId': catalogId,
   };
   factory InventoryItem.fromJson(Map<String, dynamic> j) => InventoryItem(
     id: _string(j['id'], 'Gegenstand-ID'),
     name: _string(j['name'], 'Gegenstand'),
     quantity: _int(j['quantity'], 'Anzahl', fallback: 1, min: 1),
     description: _string(j['description'], 'Beschreibung', fallback: ''),
+    catalogId: _string(j['catalogId'], 'Katalog-ID', fallback: ''),
   );
 }
 
@@ -118,6 +125,11 @@ class HeroCharacter {
     this.weaponDamage = '',
     this.weaponAbility = 'strength',
     this.weaponProficient = false,
+    this.equippedArmorId = '',
+    this.equippedShieldId = '',
+    this.equippedWeaponId = '',
+    this.equippedArmorTrained = false,
+    this.equippedShieldTrained = false,
     this.deathSuccesses = 0,
     this.deathFailures = 0,
     List<String> unverifiedNotes = const [],
@@ -155,6 +167,10 @@ class HeroCharacter {
   final Map<String, int> spentHitDice;
   final String weaponDamage, weaponAbility;
   final bool weaponProficient;
+  /// Optional inventory-instance references. Old saves default to no equipment.
+  final String equippedArmorId, equippedShieldId, equippedWeaponId;
+  /// Explicitly confirmed training for the currently equipped armor and shield.
+  final bool equippedArmorTrained, equippedShieldTrained;
   List<String> get incompleteFields => [
     for (final key in abilityNames)
       if (abilities[key] == null) key,
@@ -194,6 +210,11 @@ class HeroCharacter {
     String? weaponDamage,
     String? weaponAbility,
     bool? weaponProficient,
+    String? equippedArmorId,
+    String? equippedShieldId,
+    String? equippedWeaponId,
+    bool? equippedArmorTrained,
+    bool? equippedShieldTrained,
     int? deathSuccesses,
     int? deathFailures,
     List<String>? unverifiedNotes,
@@ -234,6 +255,11 @@ class HeroCharacter {
     weaponDamage: weaponDamage ?? this.weaponDamage,
     weaponAbility: weaponAbility ?? this.weaponAbility,
     weaponProficient: weaponProficient ?? this.weaponProficient,
+    equippedArmorId: equippedArmorId ?? this.equippedArmorId,
+    equippedShieldId: equippedShieldId ?? this.equippedShieldId,
+    equippedWeaponId: equippedWeaponId ?? this.equippedWeaponId,
+    equippedArmorTrained: equippedArmorTrained ?? this.equippedArmorTrained,
+    equippedShieldTrained: equippedShieldTrained ?? this.equippedShieldTrained,
     deathSuccesses: deathSuccesses ?? this.deathSuccesses,
     deathFailures: deathFailures ?? this.deathFailures,
     unverifiedNotes: unverifiedNotes ?? this.unverifiedNotes,
@@ -267,6 +293,11 @@ class HeroCharacter {
     'weaponDamage': weaponDamage,
     'weaponAbility': weaponAbility,
     'weaponProficient': weaponProficient,
+    if (equippedArmorId.isNotEmpty) 'equippedArmorId': equippedArmorId,
+    if (equippedShieldId.isNotEmpty) 'equippedShieldId': equippedShieldId,
+    if (equippedWeaponId.isNotEmpty) 'equippedWeaponId': equippedWeaponId,
+    if (equippedArmorTrained) 'equippedArmorTrained': true,
+    if (equippedShieldTrained) 'equippedShieldTrained': true,
     'deathSuccesses': deathSuccesses,
     'deathFailures': deathFailures,
     'unverifiedNotes': unverifiedNotes,
@@ -333,6 +364,41 @@ class HeroCharacter {
             _string(j['className'], 'Klasse').toLowerCase())) {
       throw const FormatException('Ungültige Zweitklassenstufe oder Klassenkombination.');
     }
+    final items = _list(j['inventory'], 'Inventar')
+        .map((item) => InventoryItem.fromJson(_map(item, 'Gegenstand')))
+        .toList();
+    final armorId = _string(j['equippedArmorId'], 'Rüstungs-Referenz', fallback: '');
+    final shieldId = _string(j['equippedShieldId'], 'Schild-Referenz', fallback: '');
+    final weaponId = _string(j['equippedWeaponId'], 'Waffen-Referenz', fallback: '');
+    final equipped = [armorId, shieldId, weaponId].where((id) => id.isNotEmpty);
+    if (equipped.length != equipped.toSet().length ||
+        equipped.any((id) => items.where((item) => item.id == id &&
+            item.catalogId.isNotEmpty).length != 1)) {
+      throw const FormatException('Ausrüstung verweist auf fehlende oder doppelte Inventareinträge.');
+    }
+    for (final (id, type) in [(armorId, 'armor'),
+      (shieldId, 'shield'), (weaponId, 'weapon')]) {
+      if (id.isEmpty) continue;
+      final match = items.singleWhere((item) => item.id == id);
+      final entry = SrdEquipmentCatalog.byId(match.catalogId);
+      if (entry == null ||
+          (type == 'armor' && !entry.isArmor) ||
+          (type == 'shield' && !entry.isShield) ||
+          (type == 'weapon' && !entry.isWeapon)) {
+        throw const FormatException('Nicht unterstützter ausgerüsteter Gegenstand.');
+      }
+    }
+    if (shieldId.isNotEmpty && weaponId.isNotEmpty) {
+      final weapon = SrdEquipmentCatalog.byId(
+        items.singleWhere((item) => item.id == weaponId).catalogId);
+      if (weapon!.hasProperty('two-handed')) {
+        throw const FormatException('Schild und Zweihandwaffe dürfen nicht gleichzeitig ausgerüstet sein.');
+      }
+    }
+    if ((armorId.isEmpty && _bool(j['equippedArmorTrained'], 'Rüstungsübung')) ||
+        (shieldId.isEmpty && _bool(j['equippedShieldTrained'], 'Schildübung'))) {
+      throw const FormatException('Ausrüstungsübung ohne angelegten Gegenstand.');
+    }
     return HeroCharacter(
       id: _string(j['id'], 'Charakter-ID'),
       name: _string(j['name'], 'Name'),
@@ -364,10 +430,7 @@ class HeroCharacter {
       ),
       features: _strings(j['features'], 'Fähigkeiten'),
       spells: _strings(j['spells'], 'Zauber'),
-      inventory: _list(
-        j['inventory'],
-        'Inventar',
-      ).map((e) => InventoryItem.fromJson(_map(e, 'Gegenstand'))).toList(),
+      inventory: items,
       gold: _nullableInt(j['gold'], 'Gold'),
       experience: _nullableInt(j['experience'], 'Erfahrung'),
       conditions: _strings(j['conditions'], 'Zustände'),
@@ -375,6 +438,11 @@ class HeroCharacter {
       weaponDamage: weaponDamage,
       weaponAbility: weaponAbility,
       weaponProficient: _bool(j['weaponProficient'], 'Waffenübung'),
+      equippedArmorId: armorId,
+      equippedShieldId: shieldId,
+      equippedWeaponId: weaponId,
+      equippedArmorTrained: _bool(j['equippedArmorTrained'], 'Rüstungsübung'),
+      equippedShieldTrained: _bool(j['equippedShieldTrained'], 'Schildübung'),
       deathSuccesses: _int(
         j['deathSuccesses'],
         'Todeserfolge',

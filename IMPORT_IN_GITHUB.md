@@ -1,3 +1,7 @@
+## Paralleler Katalog-Entwicklungsstand 0.5.9+29
+
+Dieses Archiv enthält sämtliche Projektdateien, wurde aber unabhängig von möglichen Codex-Änderungen auf Basis von 0.5.8+28 bearbeitet. Beim Übertragen auf GitHub nicht `main` blind überschreiben: zunächst Arbeitsbranch, Änderungen per `git diff`, Konflikte in `app/lib/domain/models.dart`, `app/lib/ui/character_editor.dart` und in den Dokus prüfen, alle Dart-/Backendtests ausführen. Nicht als neuen grünen Android-Build ausgeben. Der separate Codex-Workflow bleibt entfernt.
+
 # Importhinweis Würfelraunen 0.5.8+28
 
 Das vollständige ZIP enthält den Quellcode direkt in der Projektwurzel (`app/`, `backend/`, `scripts/`, `.github/`). Für ein neues lokales Projekt: ZIP in ein leeres Verzeichnis entpacken und dieses im Editor öffnen. Für einen vorhandenen Git-Checkout: Änderungen zunächst auf einem separaten Branch mit `git diff` vergleichen; vorhandene neuere Commits nicht pauschal überschreiben.

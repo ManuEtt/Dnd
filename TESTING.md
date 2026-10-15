@@ -1,3 +1,17 @@
+## SRD-Ausrüstung 0.6.0+30
+
+- `app/test/equipment_rules_test.dart`: Waffen- und Rüstungsvorschau, Stärke-/Geschicklichkeits-Grenzen, Übung, Finesse, Schild-/Zweihand-Ausschlüsse, Sicherheitsvalidierung, Altspeicher und veraltete Vorschläge.
+- `app/test/ui_equipment_loadout_test.dart`: Dialog-Auswahl, explicit confirm, unverändertes Ursprungsobjekt.
+- Befehle: `cd app && flutter pub get && flutter analyze && flutter test` und `flutter build apk --debug`; vollständige Projekt-CI vor Veröffentlichung erforderlich. Lokal ohne Flutter/Dart nicht ausführbar.
+
+## Zusätzliche Tests für SRD-Ausrüstung 0.5.9+29
+
+- `app/test/srd_equipment_catalog_test.dart`: Genau 38 SRD-Waffen + 13 Rüstung/Schild, eindeutige IDs, englisch/deutsche Suche, Waffenmeisterschaft, Reichweite/Munition, Rüstungs-RK und negative GE, magische Gegenstände ohne automatische Regelwirkung, optionale `catalogId` mit Legacy-Import.
+- `app/test/ui_equipment_catalog_test.dart`: Suche, explizite Wahl und Abbruch ohne Inventaränderung.
+- `app/test/ui_character_editor_test.dart`: Zusätzlicher Editor-Integrationstest mit Katalogauswahl und Round-Trip-Persistenz.
+- `scripts/tests/test_srd_equipment_source.py`: Basistabellen-/Lizenz-Schutz ohne Flutter SDK.
+- **Prüfstatus:** 38 Python-Tests und Strukturprüfung lokal bestanden. Vollständiges `flutter analyze` und `flutter test` stehen in der Android-CI aus; keine APK für 0.5.9 als freigegeben ausgeben.
+
 ## 0.5.8+28 – SRD-Rastregeln (CI noch ausstehend)
 
 - `flutter test test/rest_rules_test.dart`: Einzel-/Mehrklassenpool, Konstitutionsbonus, Mindestheilung, HP-Obergrenze, Ressourcenerschöpfung, alte JSONs, ungültige Importe, GameEngine-Journal, lange Rast und Sperren.
