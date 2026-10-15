@@ -30,7 +30,7 @@ void main() {
               onRoll: () => dice++,
             ),
           ]),
-          bottomNavigationBar: const NavigationBar(destinations: [
+          bottomNavigationBar: NavigationBar(destinations: const [
             NavigationDestination(icon: Icon(Icons.home), label: 'Start'),
             NavigationDestination(icon: Icon(Icons.book), label: 'Abenteuer'),
           ]),

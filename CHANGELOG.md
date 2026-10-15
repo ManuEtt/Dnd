@@ -1,3 +1,11 @@
+## Prüf- und Analysekorrekturen 0.5.4+24 – 15.10.2026 (nicht Flutter-CI-validiert)
+
+- Automatischer Codex-Workflow bleibt aus dem vollständigen Import-ZIP ausgeschlossen; normaler Android-Workflow erhalten.
+- Flutter-Analysefehler im Test der fixierten Schnellaktionen (`const NavigationBar`) korrigiert.
+- Zwei Dart-Lint-Hinweise zu fehlenden Blockklammern in Charaktereditor und Zweitklassen-Dialog korrigiert.
+- Projektprüfung und 35 Python-Tests erfolgreich; Flutter/Android-Build bleibt ausstehend.
+- Live-GitHub enthält die alte Codex-Datei weiterhin; dortige Löschung noch erforderlich.
+
 ## 0.5.4+24 – GitHub Actions ohne automatische Codex-Entwicklung (15.10.2026)
 
 - `.github/workflows/autonomous-development.yml` aus dem vollständigen Projekt entfernt. Es gibt im neuen Archiv keinen Zeitplan, keinen `openai/codex-action`-Aufruf und keinen automatischen Codex-PR-Job mehr.

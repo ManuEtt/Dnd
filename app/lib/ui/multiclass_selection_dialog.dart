@@ -71,11 +71,13 @@ class _MulticlassSelectionDialogState extends State<MulticlassSelectionDialog> {
                 items: [for (final name in classNames)
                   DropdownMenuItem(value: name, child: Text(name))],
                 onChanged: hero.hasSecondClass ? null : (value) {
-                  if (value != null) setState(() {
-                    _className = value;
-                    _skill = null;
-                    _error = null;
-                  });
+                  if (value != null) {
+                    setState(() {
+                      _className = value;
+                      _skill = null;
+                      _error = null;
+                    });
+                  }
                 },
               ),
               if (chooseSkill && skills.isNotEmpty) ...[

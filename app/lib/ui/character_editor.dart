@@ -343,8 +343,10 @@ class _CharacterEditorState extends State<CharacterEditor> {
         _error = null;
       });
     } catch (error) {
-      if (mounted) setState(() => _error = 'Zweitklasse konnte nicht hinzugefügt '
-          'werden: $error');
+      if (mounted) {
+        setState(() => _error = 'Zweitklasse konnte nicht hinzugefügt '
+            'werden: $error');
+      }
     }
   }
 
