@@ -635,6 +635,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
                     ),
                   ),
                 OutlinedButton.icon(
+                  key: const ValueKey('character-inventory-add'),
                   onPressed: () => _editInventory(),
                   icon: const Icon(Icons.add),
                   label: const Text('Gegenstand hinzufügen'),

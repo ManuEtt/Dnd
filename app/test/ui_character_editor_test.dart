@@ -135,16 +135,17 @@ void main() {
         (hero) => result = hero,
       );
       final addItemButton =
-          find.widgetWithText(OutlinedButton, 'Gegenstand hinzufügen');
-      await tester.scrollUntilVisible(
-        addItemButton,
-        500,
-        scrollable: find.byType(Scrollable).first,
-      );
-      // scrollUntilVisible may stop while the button's center is just below
-      // the 600dp test viewport. Ensure the real interactive target is visible.
-      await tester.ensureVisible(addItemButton);
-      await tester.pumpAndSettle();
+          find.byKey(const ValueKey('character-inventory-add'));
+      final editorList = find.byType(ListView).first;
+      // Inventory is near the end of a lazily built ListView. Large
+      // scrollUntilVisible steps can move past the short button before it is
+      // built, resulting in StateError: Bad state: No element. Advance the
+      // actual editor list in small increments and wait for each layout.
+      for (var step = 0; step < 60; step++) {
+        if (addItemButton.hitTestable().evaluate().isNotEmpty) break;
+        await tester.drag(editorList, const Offset(0, -160));
+        await tester.pumpAndSettle();
+      }
       expect(addItemButton.hitTestable(), findsOneWidget);
       await tester.tap(addItemButton);
       await tester.pumpAndSettle();

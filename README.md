@@ -1,3 +1,5 @@
+> Entwicklungsstand `0.5.7+27` (15.10.2026): Inventar-Widgettest stabilisiert. Noch keine CI-/Android-Abnahme für diesen Stand. Die letzte GitHub-Abnahme zu `0.5.6+26` meldete 351 erfolgreiche und einen fehlgeschlagenen Flutter-Test.
+
 # Würfelraunen – Der lebendige Spielleiter
 > **Neuer Quellstand 0.5.6+26 (CI ausstehend):** Drei konkrete Fehler aus dem GitHub-Lauf für 0.5.5+25 korrigiert: Android-Tastatur-Erkennung der unteren Schnellaktionen, Overflow bei 320dp/großer Schrift und Antippbarkeit der Inventarschaltfläche im Widgettest. Alle vier Schnellaktionen bleiben fest unten. Keine Änderungen an Spielständen oder dem KI-Backend.
 

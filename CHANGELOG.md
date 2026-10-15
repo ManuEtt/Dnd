@@ -1,3 +1,10 @@
+## 0.5.7+27 – Inventar-Widgettest robuster gemacht (15.10.2026)
+
+- **CI-Ursache (Lauf #38729844876, Commit `42b9ad37`):** 351 Flutter-Tests erfolgreich, ein Inventar-Widgettest fehlgeschlagen (`StateError: Bad state: No element`). Flutter-Analyse und Backend-Prüfungen waren erfolgreich.
+- **Korrektur:** Die Aktion „Gegenstand hinzufügen“ besitzt einen stabilen `ValueKey`. Der Test scrollt die tatsächliche Charaktereditor-`ListView` mit kleinen Schritten bis die Schaltfläche wirklich antippbar ist. Er verschluckt keine Fehler und deaktiviert keine Tests.
+- **Status:** Quellcode korrigiert, Projektstruktur und Python-Tests lokal geprüft. Flutter-Testlauf und Android-APK auf GitHub noch **nicht** bestätigt. Datenmodell und Spielstandschema unverändert.
+- **GitHub:** Änderungen nur lokal gesichert; bei verweigerten Schreibrechten kein Commit auf `main`.
+
 ## 0.5.6+26 – CI-Fixes: Schnellaktionen und Inventar (15.10.2026)
 
 - **Schnellaktionen:** Beim Öffnen der Android-Tastatur erkennt der feste Dock über `View.of(context).viewInsets` den tatsächlichen IME-Bereich auch hinter einem verschachtelten `Scaffold`. Die Überschrift wird ausgeblendet, die vier Aktionen bleiben erhalten.

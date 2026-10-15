@@ -1,3 +1,12 @@
+## Version 0.5.7+27 – CI-Inventartest-Fix (15.10.2026)
+
+- **Ausgangs-HEAD:** `42b9ad37efcfce29bab62a1eae6fcbcc47a7ef73` (`main`), GitHub Actions #38729844876.
+- **Vorbefund:** Flutter-Analyse, Backend und Struktur erfolgreich, 351 Flutter-Tests bestanden, 1 Test fehlgeschlagen (`ui_character_editor_test.dart`: „Inventory can be added with quantity through accessible fields“). Die zuvor gescheiterten Schnellaktionstests sind bereits grün.
+- **Ursache/Behebung:** Schrittweite 500 beim `scrollUntilVisible` des kurzen Inventarbuttons in langer `ListView` konnte dessen Aufbau/Sichtbarkeit verfehlen. UI-Inventarbutton mit stabilem Key identifizierbar, Test scrollt den Editor mit kurzen Schritten und prüft Hit-Testbarkeit vor `tap`.
+- **Lokale Prüfungen:** Projektstruktur, Python-Unittests, Archivintegrität. Flutter/Android-SDK vor Ort nicht vorhanden; kompletter Flutter-/Android-Build erst nach GitHub-Import.
+- **Nächster Schritt:** Änderungen gegen den aktuellen GitHub-HEAD prüfen/importieren, anschließend `flutter analyze`, `flutter test`, Android-Build und native Tests in Actions. Bei Fehlschlag Logs ansehen, keine APK als fertig behaupten.
+- **Codex:** Der separate automatische Codex-Workflow bleibt gelöscht; nur normaler Android-Build unter `.github/workflows/android-build.yml`.
+
 ## Stand 0.5.6+26 – lokale Korrektur der drei CI-Widgettestfehler (15.10.2026)
 
 - **GitHub-Basis:** `main` `a8e77778c171132c9d9cabdb56d5a19c9e170953` (0.5.5+25), Actions-Lauf https://github.com/ManuEtt/Dnd/actions/runs/38728029583. Keine externen Dateien überschrieben.
