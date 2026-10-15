@@ -1,3 +1,22 @@
+## 0.3.4+10 – Fehlerkorrektur und Attribut-Modifikatorvorschau (15. Oktober 2026)
+
+Basis fuer diesen Quellstand ist der per Git-Tree-SHA bestaetigte main-Commit
+`3b91a9778abe14184f35ac1db16f5acf121a84b5`. Dessen GitHub-Actions-Job
+`116229696416` schlug im Flutter-Test `new manually changed score requires explicit
+house-rule consent` fehl: `scrollUntilVisible` suchte vorwaerts, obwohl die
+Hausregel-Checkbox nach einem Speicherversuch oberhalb lag (281 erfolgreich,
+1 fehlgeschlagen). Der Test verwendet nun einen negativen Scroll-Schritt.
+
+Weiterentwicklung: Gueltige Attributwerte zeigen ihre regelkonform berechneten
+Modifikatoren direkt im Charaktereditor. Vorschau, keine neue Spielzustandsquelle;
+bei leeren oder ungueltigen Attributen wird kein Wert angenommen. Ein separater
+Widgettest prueft `14/+2`, `9/-1`, Zuruecksetzen auf leer und kein Speichern.
+
+Status: Quellcode integriert, Python-/Backend-Pruefungen separat dokumentiert.
+Flutter-Analyse, Widgettests und Android-APK dieser Version sind **nicht**
+lokal verifiziert. GitHub-Actions erneut durchlaufen lassen. Bei Erfolg APK
+auf einem echten Android-Geraet einschliesslich Import/Export und Sprache pruefen.
+
 ## 0.3.3 – CI-Korrektur (15. Oktober 2026)
 
 - Im offiziellen GitHub-Actions-Lauf [38675268449](https://github.com/ManuEtt/Dnd/actions/runs/38675268449) für Commit `02380c2180f98de9a31d1759fee8566d7575f3ce` wurden Projektstruktur, 22 Python- und 22 Backend-Tests erfolgreich geprüft. `flutter analyze` stoppte mit genau einem Dart-Hinweis `dangling_library_doc_comments` in `app/lib/domain/srd_character_classes.dart:1:1`; nachfolgende Flutter-Tests und APK-Builds wurden übersprungen.

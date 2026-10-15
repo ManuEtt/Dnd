@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 import '../domain/models.dart';
+import '../domain/rules_engine.dart';
 import '../domain/starting_hit_points.dart';
 import 'ability_assignment_dialog.dart';
 import 'srd_class_selection_dialog.dart';
@@ -103,6 +104,14 @@ class _CharacterEditorState extends State<CharacterEditor> {
     );
   }
 
+  /// Pure preview only: invalid or missing values never become rule defaults.
+  String? _abilityModifierPreview(String value) {
+    final score = int.tryParse(value.trim());
+    if (score == null || score < 1 || score > 30) return null;
+    final modifier = RulesEngine.abilityModifier(score);
+    return 'Modifikator: ${modifier >= 0 ? '+' : ''}$modifier';
+  }
+
   Widget _number(
     String key,
     String label, {
@@ -111,6 +120,10 @@ class _CharacterEditorState extends State<CharacterEditor> {
     bool required = false,
     String? suffix,
   }) {
+    final isAbilityScore = _scores.containsKey(key);
+    final modifierPreview = isAbilityScore
+        ? _abilityModifierPreview(_scores[key]!.text)
+        : null;
     return SizedBox(
       width: 195,
       child: Padding(
@@ -121,8 +134,12 @@ class _CharacterEditorState extends State<CharacterEditor> {
           decoration: InputDecoration(
             labelText: label,
             suffixText: suffix,
-            helperText: required ? null : 'Leer = nicht bestätigt',
+            helperText: modifierPreview ??
+                (required ? null : 'Leer = nicht bestätigt'),
           ),
+          onChanged: isAbilityScore
+              ? (_) => setState(() => _error = null)
+              : null,
           validator: (value) {
             if (value == null || value.trim().isEmpty) {
               return required ? 'Bitte einen Wert eintragen.' : null;

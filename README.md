@@ -1,6 +1,6 @@
 # Der lebendige Spielleiter
 
-**Neuer Quellstand 0.3.2+8 (noch ohne Flutter-Buildabnahme):** Ein
+**Aktueller Quellstand 0.3.4+10 (Flutter-CI noch abzunehmen):** Ein
 regelkonformer Stufe-1-Trefferpunktevorschlag aus Klasse und Konstitution ist
 direkt im Charaktereditor integriert und erfordert ausdrückliche Bestätigung.
 Das vollständige ZIP enthält `app/`, `backend/`, `scripts/`, die versteckte
@@ -13,6 +13,18 @@ Deutschsprachiger Fantasy-Spielleiter für Android mit Flutter, lokalem Kampagne
 
 Der Schwerpunkt liegt auf einem spielbaren Solo-Ablauf: Charakter und Kampagne anlegen, Entscheidungen eingeben, mit einem deterministischen Spielleiter interagieren, würfeln, einfache Kämpfe austragen und den bestätigten Zustand wieder laden. Der Demo-Spielleiter verarbeitet einige Handlungsarten und liefert passende Szenen; frei formulierte Texte sind möglich, die Antworttiefe ist jedoch begrenzt. Eine umfassende generative KI und eine vollständige Umsetzung aller SRD-Regeln sind weitere Entwicklungsschritte.
 
+## Korrektur und Weiterentwicklung in Version 0.3.4
+
+Der fehlgeschlagene Widgettest zur manuellen Hausregel-Bestätigung scrollt
+nun gezielt zurueck zur Checkbox. Im Charaktereditor wird direkt unter jedem
+bestätigten gültigen Attribut (1–30) der berechnete Modifikator angezeigt,
+z. B. `14 → +2`. Diese Anzeige ist eine Vorschau: Sie ändert weder Regeln,
+Würfelergebnisse noch einen gespeicherten Charakter automatisch.
+Ein neuer Widgettest prüft die Vorschau auch bei Änderungen und leeren Werten.
+Der letzte bekannte GitHub-Workflow zum Stand 0.3.3+9 vom 15.10.2026 hatte
+**281 bestandene Tests und einen fehlgeschlagenen Widgettest**. Es gibt
+für 0.3.4+10 noch keine Flutter-CI-/APK-Abnahme.
+
 ## Neue Funktionen in Version 0.3.3
 
 Der Stufe-1-Charaktereditor besitzt einen Assistenten **„D&D-Klasse und Fertigkeiten wählen“**. Es stehen zwölf Klassen des SRD 5.2.1 mit jeweils passenden Rettungswurf-Übungen und auswählbaren Klassenfertigkeiten zur Verfügung. Auf Wunsch werden Start-TP vorgeschlagen und ein SRD-Startpaket bzw. Startgold in den bislang leeren Charakterbogen übernommen. Bei älteren Charakteren werden Fertigkeiten, TP und Ausrüstung nicht heimlich überschrieben.
@@ -23,7 +35,7 @@ Noch **nicht** Teil dieses Inkrements: Vollständige Herkunfts-Fertigkeits-/Tale
 
 ## ZIP nach GitHub übertragen
 
-Das vollständige aktuelle 0.3.3-CI-Fix-ZIP entpacken und seine Projektinhalte einschließlich `.github/` direkt in die Repositorywurzel übertragen; das neue Paket enthält keinen äußeren `Dnd/`-Ordner. Nur die ZIP-Datei hochzuladen startet keinen Android-Build. Vorhandene Dateien vorher vergleichen und in einem neuen Branch arbeiten. Die [Schritt-für-Schritt-Anleitung](docs/UPLOAD_TO_GITHUB.md) erklärt Zugriff, Upload und APK-Download. Vor dem Build prüft `python3 scripts/verify_project.py` die Vollständigkeit ohne Flutter/Android SDK.
+Das vollständige aktuelle 0.3.4+10-ZIP entpacken und seine Projektinhalte einschließlich `.github/` direkt in die Repositorywurzel übertragen; das neue Paket enthält keinen äußeren `Dnd/`-Ordner. Nur die ZIP-Datei hochzuladen startet keinen Android-Build. Vorhandene Dateien vorher vergleichen und in einem neuen Branch arbeiten. Die [Schritt-für-Schritt-Anleitung](docs/UPLOAD_TO_GITHUB.md) erklärt Zugriff, Upload und APK-Download. Vor dem Build prüft `python3 scripts/verify_project.py` die Vollständigkeit ohne Flutter/Android SDK.
 
 ## Starten und prüfen
 

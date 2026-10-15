@@ -137,3 +137,17 @@ zuerst exportieren. Eine Deinstallation entfernt lokale Appdaten.
 Referenz: https://docs.github.com/en/actions/managing-workflow-runs/downloading-workflow-artifacts
 Gerätetest: [TESTING.md](../TESTING.md). Downloadhilfe:
 [APK_DOWNLOAD.md](APK_DOWNLOAD.md).
+
+## Aktualisierung 0.3.4+10: Vollstaendiges Projekt-ZIP
+
+Das Archiv enthaelt die Projektdateien unmittelbar an der Wurzel. **Nicht die
+ZIP selbst als einzelne Datei einchecken**: Lokal entpacken und `app/`,
+`backend/`, `scripts/`, `docs/`, `.github/` und die Wurzeldateien ins
+Repository uebernehmen (bestehende Pfade ersetzen, andere Dateien behalten).
+Vorzugsweise in einem neuen Branch importieren und erst nach erfolgreichem
+GitHub-Actions-Lauf in `main` mergen. Der Build erzeugt das APK-Artefakt.
+
+Basiscommit fuer diese Aktualisierung:
+`3b91a9778abe14184f35ac1db16f5acf121a84b5` (15.10.2026).
+Unabhaengige Aenderungen, die spaeter auf GitHub eingecheckt wurden,
+vor dem Ueberschreiben vergleichen.

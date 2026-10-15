@@ -19,8 +19,11 @@ Future<void> openClassEditor(WidgetTester tester, HeroCharacter? original,
   await tester.pumpAndSettle();
 }
 
-Future<void> tapInEditor(WidgetTester tester, Finder finder) async {
-  await tester.scrollUntilVisible(finder, 320,
+Future<void> tapInEditor(WidgetTester tester, Finder finder,
+    {double scrollDelta = 320}) async {
+  // The editor is a lazily built ListView. Moving to an earlier field from
+  // the save button needs a negative delta; scrolling only down cannot find it.
+  await tester.scrollUntilVisible(finder, scrollDelta,
       scrollable: find.byType(Scrollable).first);
   await tester.ensureVisible(finder);
   await tester.pumpAndSettle();
@@ -68,6 +71,27 @@ void main() {
     expect(saved?.toJson(), original.toJson());
   });
 
+  testWidgets('ability modifier preview follows edits without saving', (tester) async {
+    HeroCharacter? saved;
+    await openClassEditor(tester, null, (hero) => saved = hero);
+    final strength = find.widgetWithText(TextFormField, 'Stärke');
+    await tester.scrollUntilVisible(strength, 300,
+        scrollable: find.byType(Scrollable).first);
+
+    await tester.enterText(strength, '14');
+    await tester.pumpAndSettle();
+    expect(find.text('Modifikator: +2'), findsOneWidget);
+
+    await tester.enterText(strength, '9');
+    await tester.pumpAndSettle();
+    expect(find.text('Modifikator: -1'), findsOneWidget);
+
+    await tester.enterText(strength, '');
+    await tester.pumpAndSettle();
+    expect(find.text('Modifikator: -1'), findsNothing);
+    expect(saved, isNull);
+  });
+
   testWidgets('new manually changed score requires explicit house-rule consent', (tester) async {
     HeroCharacter? saved;
     await openClassEditor(tester, null, (hero) => saved = hero);
@@ -79,7 +103,9 @@ void main() {
     await tapInEditor(tester, find.text('Charakter speichern'));
     expect(saved, isNull);
     expect(find.textContaining('Hausregel-Ausnahme'), findsOneWidget);
-    await tapInEditor(tester, find.byKey(const ValueKey('allow-manual-abilities')));
+    await tapInEditor(tester,
+        find.byKey(const ValueKey('allow-manual-abilities')),
+        scrollDelta: -320);
     await tapInEditor(tester, find.text('Charakter speichern'));
     expect(saved?.abilities['strength'], 20);
   });

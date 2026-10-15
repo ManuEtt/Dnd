@@ -1,3 +1,11 @@
+## 0.3.4+10 – 15.10.2026 – Widgettest-Fix und Attribut-Vorschau
+
+- Behebt den fehlerhaften Scrollweg im Widgettest `ui_srd_class_selection_test.dart`, der nach einem blockierten Speicherversuch die Hausregel-Checkbox nicht mehr fand (`StateError: Bad state: No element`). Bei Rueckspruengen wird jetzt negativ gescrollt.
+- Neuer Komfort: Sofortige, unverbindliche Modifikatoranzeige unter Attributwerten im Charaktereditor, ueber dieselbe `RulesEngine.abilityModifier` berechnet wie regelgebundene Proben; unbestaetigte/ungueltige Werte bekommen keinen fiktiven Modifikator.
+- Widgettest zur Aenderung, negativen Modifikatoren und Leereingabe ergaenzt.
+- Basis ist unveraendert der GitHub-main-Commit `3b91a9778abe14184f35ac1db16f5acf121a84b5`. Keine Aenderung am Datenbankschema, Backend, Charakter-Speicherformat oder an bestehenden Charakterwerten.
+- **Pruefung:** Python-Pakettests und Backend-Tests nach Moeglichkeit lokal; Flutter/Dart und Android SDK sind in dieser Ausfuehrungsumgebung nicht installiert. Neuer GitHub-Actions-Lauf nach Import erforderlich.
+
 # Änderungsprotokoll
 
 ## 0.3.3 – Klassenwahl, Fertigkeiten und Startausrüstung (14. Oktober 2026)
