@@ -1,3 +1,18 @@
+## Ergänzung zur Quellcodeübergabe 0.5.3+23 – 15.10.2026
+
+- Vollständigen Quellstand mit bereits vorhandenen fixierten Schnellaktionen (0.5.3+23) übernommen; keine Spielstands-/Schemaänderung.
+- Python-Regressionstest gegen ungültige `pubspec.yaml`-Beschreibung ergänzt.
+- GitHub-Actions-Quellencheckpoint und einen getrennten, zunächst deaktivierten Codex-Workflow vorbereitet.
+- `docs/AUTONOMOUS_DEVELOPMENT_STATE.md` und Importanleitung ergänzt. Neue APK/Flutter-CI-Abnahme noch ausstehend.
+
+## 0.5.3+23 – Fixierte Schnellaktionen im Abenteuer (15.10.2026)
+
+- **Navigation:** Die vier Schnellaktionen **Sprache, Untersuchen, Angriff und W20** wurden aus der scrollbaren Abenteuerszene in eine stets am unteren Rand sichtbare Aktionsleiste direkt **über der Hauptnavigation** verschoben. Sie sind auch in der Kampfübersicht erreichbar.
+- **Responsive Darstellung:** Kompakte Fantasy-Kacheln passen nebeneinander auf 320/360/400 dp; bei eingeblendeter Tastatur entfällt nur die Leistenüberschrift. Doppelte Buttons im Eingabebereich werden bei geöffneter Tastatur ausgeblendet, um Platz zu schaffen.
+- **Bestehende Funktionalität:** Die Schnellaktionen verwenden dieselben Methoden zur Mikrofonsteuerung, Untersuchung, Angriffseingabe und Würfelfunktion. Keine Änderungen an D&D-Regeln, KI, SQLite oder Spielstandformat.
+- **Buildblocker korrigiert:** `app/pubspec.yaml` hatte seit der Umbenennung eine nicht maskierte zweite Doppelpunkt-Sequenz in `description`. Die Beschreibung ist jetzt gültig in Anführungszeichen gesetzt, damit `flutter pub get` nicht mehr bei der YAML-Analyse scheitert. Ursprünglicher Fehler: GitHub Actions Commit `bb5383b7a52b5052a5c2e8ce4714fe16b0e600da`.
+- **Tests:** Neue Widgettests für fixierte Position bei Scrollbewegungen, Bedienbarkeit, schmale Bildschirme und geöffnetes Keyboard; Integrationstest mit echter Kampagnenseite. 22 Python-Tests und Strukturprüfung bestanden, YAML erfolgreich geparst. Flutter-Tests und APK-Build stehen auf GitHub Actions noch aus.
+
 ## 0.5.2+22 – Neuer Name und SRD-Zweitklassen-Assistent (15.10.2026)
 
 - Neuer Produktname **Würfelraunen – Der lebendige Spielleiter** in Startseite, Android-Launcher, App-Titel, Sprecherprobe, Lizenzansicht und KI-Prompt; technische App-ID bleibt zur Update-Kompatibilität unverändert.

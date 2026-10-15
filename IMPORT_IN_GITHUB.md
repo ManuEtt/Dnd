@@ -1,3 +1,13 @@
+# Import / Release – Würfelraunen 0.5.3+23
+
+**Änderung:** Die Schnellaktionen sind nun in einer fixierten unteren Leiste direkt oberhalb der Navigation statt im Abenteuer-Scrollbereich. Die zuletzt auf GitHub registrierte YAML-Fehlermeldung in `app/pubspec.yaml` ist zusätzlich korrigiert.
+
+**Grundlage:** `ManuEtt/Dnd` Commit `bb5383b7a52b5052a5c2e8ce4714fe16b0e600da` (0.5.2+22), vor der Korrektur. Alle bestehenden Quelldateien und Illustrationen sind enthalten. Die technische Android-App-ID bleibt aus Update-Gründen unverändert.
+
+ZIP entpacken und sämtliche Dateien einschließlich `.github/` direkt in die Repositorywurzel übernehmen, vorzugsweise in einen Entwicklungsbranch. Danach GitHub Actions abwarten. Nach einer erfolgreichen APK-Ausgabe auf dem Gerät prüfen, dass die Schnellaktionen beim Scrollen immer im unteren Bereich bleiben und nicht von der Tastatur verdeckt werden. **Flutter-Tests und APK-Build wurden hier mangels lokalem Flutter-SDK noch nicht durchgeführt.**
+
+---
+
 # Import / Release – Würfelraunen 0.5.2+22
 
 Diese Version ändert den sichtbaren App-Namen und führt einen D&D-SRD-5.2.1-Assistenten für die zweite Klasse ein. **Die Android-applicationId bleibt gleich**, um App-Updates und alte SQLite-Daten nicht zu gefährden.

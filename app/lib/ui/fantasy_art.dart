@@ -245,16 +245,22 @@ class FantasyCampaignCard extends StatelessWidget {
 class FantasyShortcutTile extends StatelessWidget {
   const FantasyShortcutTile({super.key, required this.label,
     required this.icon, required this.color, required this.onTap,
-    this.width = 112});
+    this.width = 112, this.compact = false});
   final String label;
   final IconData icon;
   final Color color;
   final VoidCallback? onTap;
   final double width;
+  /// Short, consistently sized tile for a persistent mobile action bar.
+  final bool compact;
 
   @override
   Widget build(BuildContext context) => SizedBox(
     width: width,
+    height: compact
+        ? (70 + MediaQuery.textScalerOf(context).scale(11) * 2)
+            .clamp(92.0, 150.0).toDouble()
+        : null,
     child: Material(
       color: FantasyPalette.ink,
       shape: RoundedRectangleBorder(
@@ -266,14 +272,20 @@ class FantasyShortcutTile extends StatelessWidget {
         child: CustomPaint(
           foregroundPainter: FantasyOrnamentPainter(color: color),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 13),
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              CircleAvatar(radius: 24, backgroundColor: color.withValues(alpha: .14),
-                child: Icon(icon, color: color, size: 29)),
-              const SizedBox(height: 9),
+            padding: EdgeInsets.symmetric(
+              horizontal: compact ? 4 : 8, vertical: compact ? 8 : 13),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+              CircleAvatar(radius: compact ? 17 : 24,
+                backgroundColor: color.withValues(alpha: .14),
+                child: Icon(icon, color: color, size: compact ? 21 : 29)),
+              SizedBox(height: compact ? 4 : 9),
               Text(label, maxLines: 2, textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(color: FantasyPalette.ivory, fontSize: 13,
+                style: TextStyle(color: FantasyPalette.ivory,
+                  fontSize: compact ? 11 : 13,
                   fontWeight: FontWeight.w600)),
             ]),
           ),
@@ -281,6 +293,76 @@ class FantasyShortcutTile extends StatelessWidget {
       ),
     ),
   );
+}
+
+/// Always-present quick actions along the bottom of an active adventure.
+/// Its parent must place it outside the story scrollable and immediately above
+/// the app's navigation. The keyboard reduces its chrome but not its actions.
+class FantasyPinnedActionBar extends StatelessWidget {
+  const FantasyPinnedActionBar({super.key, required this.busy,
+    required this.listening, required this.onSpeech,
+    required this.onInspect, required this.onAttack, required this.onRoll});
+
+  final bool busy;
+  final bool listening;
+  final VoidCallback onSpeech;
+  final VoidCallback onInspect;
+  final VoidCallback onAttack;
+  final VoidCallback onRoll;
+
+  @override
+  Widget build(BuildContext context) {
+    final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
+    return DecoratedBox(
+      key: const ValueKey('adventure-fixed-shortcuts'),
+      decoration: const BoxDecoration(
+        color: FantasyPalette.night,
+        border: Border(top: BorderSide(color: Color(0x77ddb96c))),
+      ),
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(12, keyboardOpen ? 4 : 8,
+          12, keyboardOpen ? 4 : 8),
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          if (!keyboardOpen) ...[
+            const Row(children: [
+              Icon(Icons.auto_awesome, size: 15, color: FantasyPalette.gold),
+              SizedBox(width: 7),
+              Text('Schnellaktionen', style: TextStyle(
+                color: FantasyPalette.gold, fontWeight: FontWeight.bold,
+                fontSize: 12, letterSpacing: .6)),
+            ]),
+            const SizedBox(height: 7),
+          ],
+          Row(children: [
+            Expanded(child: FantasyShortcutTile(
+              key: const ValueKey('adventure-shortcut-speech'),
+              label: listening ? 'Stopp' : 'Sprache',
+              icon: listening ? Icons.mic_off_outlined : Icons.chat_bubble_outline,
+              color: FantasyPalette.gold, width: double.infinity, compact: true,
+              onTap: busy ? null : onSpeech)),
+            const SizedBox(width: 7),
+            Expanded(child: FantasyShortcutTile(
+              key: const ValueKey('adventure-shortcut-inspect'),
+              label: 'Untersuchen', icon: Icons.search,
+              color: FantasyPalette.blue, width: double.infinity, compact: true,
+              onTap: busy ? null : onInspect)),
+            const SizedBox(width: 7),
+            Expanded(child: FantasyShortcutTile(
+              key: const ValueKey('adventure-shortcut-attack'),
+              label: 'Angriff', icon: Icons.sports_martial_arts,
+              color: FantasyPalette.danger, width: double.infinity, compact: true,
+              onTap: busy ? null : onAttack)),
+            const SizedBox(width: 7),
+            Expanded(child: FantasyShortcutTile(
+              key: const ValueKey('adventure-shortcut-roll'),
+              label: 'W20', icon: Icons.casino_outlined,
+              color: Color(0xffae90d8), width: double.infinity, compact: true,
+              onTap: busy ? null : onRoll)),
+          ]),
+        ]),
+      ),
+    );
+  }
 }
 
 class FantasyHeroMedallion extends StatelessWidget {

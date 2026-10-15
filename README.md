@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+> **Vollständiges Quellarchiv 0.5.3+23:** Die gesonderte Importanleitung steht in [docs/VOLLSTAENDIGES_PROJEKT_IMPORTIEREN.md](docs/VOLLSTAENDIGES_PROJEKT_IMPORTIEREN.md). Der Codex-Automatismus ist vorbereitet, aber nicht aktiviert; der Android-Build dieses Archivstands ist noch nicht CI-validiert.
+
+> **Neu 0.5.3+23:** Die vier Schnellaktionen **Sprache, Untersuchen, Angriff und W20** sind nun als kompakte, **fixierte Leiste oberhalb der unteren Navigation** erreichbar – auch beim Scrollen durch die Geschichte und in der Kampfübersicht. Bei geöffneter Bildschirmtastatur bleibt die Leiste sichtbar. Außerdem ist der bekannte `pubspec.yaml`-YAML-Fehler der Vorversion korrigiert. Siehe [Prüfanleitung](TESTING.md).
+
 > **Neu 0.5.2+22:** Sichtbarer App-Name von Aetheria auf **Würfelraunen** umgestellt. Der Android-Paketname `de.aetheria.lebendiger_spielleiter`, die lokalen Backup-Kanäle und historische Kampagnendaten bleiben aus Update-Kompatibilitätsgründen unverändert. Die Mehrklassen-Erweiterung ermöglicht eine ausdrücklich bestätigte zweite D&D-SRD-Klasse beim Stufenaufstieg einschließlich Voraussetzungen, Trefferpunkten und ausgewählten Fertigkeiten. Klassenfähigkeiten und Spezialressourcen sind noch nicht vollständig automatisiert. Siehe [Mehrklassen](docs/MULTICLASSING.md) und [Namenswechsel](docs/RENAMING.md).
 
 > **Aetheria 0.5.1+21:** Zwei CI-Fehler nach illustriertem Design-Update behoben: zuvor nicht erreichbare Schaltflächen im Charakterbogen-/Startseiten-Widgettest werden jetzt sichtbar gescrollt und auf Hit-Test geprüft. Eine neue Android-APK ist erst nach bestandener GitHub Actions Pipeline freigegeben.

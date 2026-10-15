@@ -131,3 +131,24 @@ jobs:
           if-no-files-found: error
           retention-days: 14
           compression-level: 0
+
+      - name: Vollständigen Quellcode-Checkpoint erstellen (auch bei fehlgeschlagenem Build)
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/wuerfelraunen-source"
+          python3 scripts/package_project.py "$RUNNER_TEMP/wuerfelraunen-source/Wuerfelraunen_${GITHUB_SHA:0:8}_Source_Checkpoint.zip" --layout root
+          {
+            echo "Quellcode-Checkpoint, Commit $GITHUB_SHA"
+            echo "GitHub-Lauf $GITHUB_RUN_ID"
+            echo 'Bei fehlgeschlagenem Workflow: NICHT als getestete Alpha freigeben.'
+          } > "$RUNNER_TEMP/wuerfelraunen-source/REPORT.txt"
+      - name: Quellcode-ZIP, SHA256 und Fehlerbericht bereitstellen
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wuerfelraunen-source-checkpoint-${{ github.sha }}
+          path: ${{ runner.temp }}/wuerfelraunen-source/
+          if-no-files-found: warn
+          retention-days: 30

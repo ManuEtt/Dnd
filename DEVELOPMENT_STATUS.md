@@ -1,3 +1,13 @@
+## Komplette Quellcode-Übergabe – 15.10.2026 (0.5.3+23)
+
+Alle zuvor gesicherten Dateien der 0.5.3+23-Quelle inklusive neuer UI-Schnellaktionsleiste sind in diesem ZIP enthalten. Zusätzlich wurden Codex-/Checkpoint-Workflows, ein `pubspec.yaml`-Regressionstest sowie Fortsetzungs- und Importdokumentation ergänzt. **Keine verifizierte neue Android-APK** und **kein GitHub-Push**; GitHub-`main` war 0.5.2+22. Letzter grüner CI-Build ist weiterhin 0.5.1+21. Für Details siehe `docs/AUTONOMOUS_DEVELOPMENT_STATE.md`.
+
+## Aktuell: Würfelraunen 0.5.3+23 – Untere Schnellaktionsleiste
+
+Die vier Schnellaktionen befinden sich nun als nicht scrollbar mit dem Abenteuerinhalt verknüpfter Footer direkt oberhalb der Hauptnavigation. Die Erzählung ist separat scrollbar; der Eingabebereich bleibt an Ort und Stelle. Die Aktionen bleiben auch bei geöffnetem Keyboard sichtbar, mit kompakter Darstellung. Ein Buildfehler aus der Vorversion wegen YAML-Doppelpunkt in `app/pubspec.yaml` wurde korrigiert.
+
+**Verifiziert:** Projektstruktur, 22 Python-Tests, gültiges `pubspec.yaml`, vollständiges Quellcode-Paket. **Noch nicht verifiziert:** Flutter-Analyse, Widgettests und Android-APK in GitHub Actions. Neue Tests in `app/test/fantasy_pinned_actions_test.dart` und `app/test/ui_app_test.dart`.
+
 ## 0.5.2+22 – Würfelraunen / Zweitklasse
 
 Der Projektname wurde in den Benutzeroberflächen zu **Würfelraunen** geändert. Die technische Paket-ID und historischen Weltdaten bleiben erhalten. Mehrklassenregeln (zwei Klassen, Voraussetzungen, fester Trefferpunkte-Zuwachs, Fertigkeitswahl) sind in `app/lib/domain/multiclass_rules.dart` implementiert und an den Charaktereditor angebunden. Vollständige Klassenfähigkeiten sowie Ressourcen- und Rüstungsregeln fehlen noch und müssen in weiteren Zyklen ergänzt werden. Aktuell steht die Flutter-/Android-CI-Abnahme für 0.5.2+22 aus.

@@ -1,0 +1,278 @@
+name: Codex-Entwicklung (manuell freizuschalten)
+
+on:
+  schedule:
+    - cron: '0 18 * * 1,4'
+      timezone: 'Europe/Berlin'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aetheria-codex-development
+  cancel-in-progress: false
+
+jobs:
+  guard:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      ready: ${{ steps.gate.outputs.ready }}
+    steps:
+      - name: Kostenfreigabe, Secret und laufende Entwicklungs-PR prüfen
+        id: gate
+        env:
+          ENABLE_PAID_CODEX: ${{ vars.ENABLE_PAID_CODEX }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_REF" != refs/heads/main ]]; then
+            echo 'Nur main darf Entwicklungszyklen starten.'
+            echo 'ready=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [[ "$ENABLE_PAID_CODEX" != true || -z "$OPENAI_API_KEY" ]]; then
+            echo 'Nicht aktiviert: benötigte Variable ENABLE_PAID_CODEX=true und OPENAI_API_KEY-Secret fehlen oder sind deaktiviert.'
+            echo 'ready=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          open_prs="$(gh pr list --repo "$GITHUB_REPOSITORY" --state open --json headRefName --jq '[.[] | select(.headRefName | startswith("auto-development/"))] | length')"
+          if [[ "$open_prs" != 0 ]]; then
+            echo 'Noch eine offene autonome Entwicklungs-PR: keine überlappenden Änderungen.'
+            echo 'ready=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo 'ready=true' >> "$GITHUB_OUTPUT"
+
+  codex:
+    needs: guard
+    if: needs.guard.outputs.ready == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    permissions:
+      contents: read
+    steps:
+      - name: Vertrauenswürdige Basis auschecken, ohne Push-Credentials
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Ausgangszustand prüfen
+        run: |
+          python3 scripts/verify_project.py .
+          python3 -m unittest discover -s scripts/tests -v
+      - name: Begrenzter Codex-Entwicklungszyklus
+        id: run_codex
+        uses: openai/codex-action@v1
+        timeout-minutes: 55
+        continue-on-error: true
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          permission-profile: ':workspace'
+          prompt-file: docs/CODEX_AUTONOMOUS_CYCLE.md
+      - name: Quelländerungen als dauerhaften Checkpoint erfassen
+        if: always()
+        shell: bash
+        env:
+          CODEX_OUTCOME: ${{ steps.run_codex.outcome }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/codex-checkpoint"
+          git add -N -- app backend docs scripts .github README.md ARCHITECTURE.md ROADMAP.md DEVELOPMENT_STATUS.md TESTING.md CHANGELOG.md AGENTS.md THIRD_PARTY_NOTICES.md
+          git diff --binary HEAD > "$RUNNER_TEMP/codex-checkpoint/changes.patch"
+          git diff --check HEAD || true
+          {
+            echo '# Entwicklungscheckpoint'
+            echo "Basis-Commit: $GITHUB_SHA"
+            echo "Codex-Ergebnis: $CODEX_OUTCOME"
+            echo "Workflow-Lauf: $GITHUB_RUN_ID"
+            echo 'Der Patch ist ungetestet, bis die unabhängige Validierung erfolgreich ist.'
+          } > "$RUNNER_TEMP/codex-checkpoint/report.md"
+          sha256sum "$RUNNER_TEMP/codex-checkpoint/changes.patch" > "$RUNNER_TEMP/codex-checkpoint/SHA256.txt"
+      - name: Checkpoint auch bei fehlgeschlagenem Codex sichern
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codex-checkpoint-${{ github.run_id }}
+          path: ${{ runner.temp }}/codex-checkpoint/
+          if-no-files-found: warn
+          retention-days: 30
+
+  validate:
+    needs: [guard, codex]
+    if: always() && needs.guard.outputs.ready == 'true' && needs.codex.result != 'skipped'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    steps:
+      - name: Unveränderten Ausgangscommit auschecken
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Codex-Checkpoint abrufen
+        uses: actions/download-artifact@v4
+        with:
+          name: codex-checkpoint-${{ github.run_id }}
+          path: ${{ runner.temp }}/codex-checkpoint
+      - name: Patch kontrolliert anwenden
+        id: patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'has_changes=false' >> "$GITHUB_OUTPUT"
+          patch_file="$RUNNER_TEMP/codex-checkpoint/changes.patch"
+          if [[ ! -s "$patch_file" ]]; then
+            echo 'Keine neuen Änderungen vorhanden.'
+            exit 0
+          fi
+          git apply --check "$patch_file"
+          git apply "$patch_file"
+          echo 'has_changes=true' >> "$GITHUB_OUTPUT"
+      - name: Java 17 vorbereiten
+        if: steps.patch.outputs.has_changes == 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Flutter 3.35.7 vorbereiten
+        if: steps.patch.outputs.has_changes == 'true'
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Node.js 22.14.0 vorbereiten
+        if: steps.patch.outputs.has_changes == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.14.0'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Python- und Strukturtests
+        if: steps.patch.outputs.has_changes == 'true'
+        run: |
+          python3 scripts/verify_project.py .
+          python3 -m unittest discover -s scripts/tests -v
+      - name: Backend prüfen
+        if: steps.patch.outputs.has_changes == 'true'
+        working-directory: backend
+        run: |
+          npm ci
+          npm run typecheck
+          npm run build
+          npm test
+      - name: SQLite für Flutter-Tests bereitstellen
+        if: steps.patch.outputs.has_changes == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsqlite3-dev
+      - name: Flutter prüfen
+        if: steps.patch.outputs.has_changes == 'true'
+        working-directory: app
+        env:
+          RUN_BACKEND_SMOKE: '1'
+        run: |
+          flutter pub get
+          flutter analyze
+          flutter test
+      - name: Android-SDK vorbereiten
+        if: steps.patch.outputs.has_changes == 'true'
+        uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: '12266719'
+          packages: 'platform-tools'
+          log-accepted-android-sdk-licenses: 'false'
+      - name: SDK-Plattformen installieren
+        if: steps.patch.outputs.has_changes == 'true'
+        run: sdkmanager "platforms;android-34" "platforms;android-35" "platforms;android-36" "build-tools;35.0.0" "ndk;27.0.12077973" "cmake;3.22.1"
+      - name: APK und native Tests
+        if: steps.patch.outputs.has_changes == 'true'
+        working-directory: app
+        run: |
+          chmod +x android/gradlew
+          flutter build apk --debug
+          ( cd android && ./gradlew :app:testDebugUnitTest --no-daemon )
+          flutter build apk --release --target-platform android-arm64
+          mkdir -p build/alpha
+          cp build/app/outputs/flutter-apk/app-release.apk build/alpha/Wuerfelraunen-arm64-alpha.apk
+      - name: Source-Checkpoint und Prüfbericht erstellen
+        if: always() && steps.patch.outputs.has_changes == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/verified-artifacts"
+          python3 scripts/package_project.py "$RUNNER_TEMP/verified-artifacts/Wuerfelraunen_Source_Checkpoint_${GITHUB_SHA:0:8}.zip" --layout root
+          {
+            echo '# Entwicklungsprüfung'
+            echo "Commit: $GITHUB_SHA"
+            echo "Workflow: $GITHUB_RUN_ID"
+            echo 'Status: Nur bei grünem Gesamt-Job als erfolgreich getestet betrachten.'
+            echo 'Bei rotem Job sind APK und Quellen nicht freigegeben.'
+          } > "$RUNNER_TEMP/verified-artifacts/report.md"
+      - name: Vollständigen Projekt-Checkpoint auch bei Testfehlern hochladen
+        if: always() && steps.patch.outputs.has_changes == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: codex-source-${{ github.run_id }}
+          path: ${{ runner.temp }}/verified-artifacts/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Nur bei erfolgreicher Validierung die ARM64-APK freigeben
+        if: success() && steps.patch.outputs.has_changes == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: codex-android-arm64-${{ github.run_id }}
+          path: app/build/alpha/Wuerfelraunen-arm64-alpha.apk
+          if-no-files-found: error
+          retention-days: 30
+
+  publish_pr:
+    needs: [guard, codex, validate]
+    if: always() && needs.guard.outputs.ready == 'true' && needs.codex.result != 'skipped'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Basis für eigenen Entwicklungsbranch auschecken
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Codex-Checkpoint abrufen
+        uses: actions/download-artifact@v4
+        with:
+          name: codex-checkpoint-${{ github.run_id }}
+          path: ${{ runner.temp }}/codex-checkpoint
+      - name: Geprüften/ungeprüften Entwicklungsstand als Draft-PR sichern
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VALIDATION_STATUS: ${{ needs.validate.result }}
+        run: |
+          set -euo pipefail
+          patch_file="$RUNNER_TEMP/codex-checkpoint/changes.patch"
+          if [[ ! -s "$patch_file" ]]; then
+            echo 'Keine Änderung: kein unnötiger Commit.'
+            exit 0
+          fi
+          branch="auto-development/run-${GITHUB_RUN_ID}"
+          git switch -c "$branch"
+          git apply --check "$patch_file"
+          git apply "$patch_file"
+          git add -- app backend docs scripts .github README.md ARCHITECTURE.md ROADMAP.md DEVELOPMENT_STATUS.md TESTING.md CHANGELOG.md AGENTS.md THIRD_PARTY_NOTICES.md
+          if git diff --cached --quiet; then
+            echo 'Keine commitbaren Dateien.'
+            exit 0
+          fi
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+            commit -m "chore: autonomer Entwicklungscheckpoint ${GITHUB_RUN_ID}"
+          git push origin "HEAD:refs/heads/$branch"
+          gh pr create --repo "$GITHUB_REPOSITORY" --head "$branch" --base main --draft \
+            --title "Autonome Entwicklung ${GITHUB_RUN_ID} (${VALIDATION_STATUS})" \
+            --body "Autonomer Entwicklungscheckpoint auf Basis $GITHUB_SHA. Unabhängige Validierung: $VALIDATION_STATUS. Bitte vor Merge CI, Änderungen und Spielstandkompatibilität prüfen. Keine automatische Freigabe oder Zusammenführung."

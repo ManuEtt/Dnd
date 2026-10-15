@@ -165,6 +165,49 @@ void main() {
   );
 
   testWidgets(
+    'Schnellaktionen bleiben unter der Erzählung auch nach Scrollen fixiert',
+    (tester) async {
+      tester.view.physicalSize = const Size(360, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final repository = (await tester.runAsync(
+        () => SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: inMemoryDatabasePath,
+        ),
+      ))!;
+      final controller = GameController(repository: repository);
+      final voice = _SilentVoice();
+      await tester.runAsync(controller.createDemo);
+      await tester.pumpWidget(LivingGameApp(controller: controller, voice: voice));
+      await tester.tap(find.text('Abenteuer'));
+      await tester.pumpAndSettle();
+
+      final shortcuts = find.byKey(const ValueKey('adventure-fixed-shortcuts'));
+      expect(shortcuts, findsOneWidget);
+      final before = tester.getTopLeft(shortcuts);
+      final navigationTop = tester.getTopLeft(find.byType(NavigationBar)).dy;
+      expect(tester.getBottomLeft(shortcuts).dy, closeTo(navigationTop, 1));
+      await tester.drag(find.byType(ListView).first, const Offset(0, -360));
+      await tester.pumpAndSettle();
+      expect(tester.getTopLeft(shortcuts).dy, closeTo(before.dy, 1));
+      expect(find.byKey(const ValueKey('adventure-shortcut-inspect')).hitTestable(),
+        findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('adventure-shortcut-inspect')));
+      await waitForController(tester, controller);
+      await tester.pumpAndSettle();
+      expect(controller.currentCampaign!.messages.last.text, isNotEmpty);
+      expect(find.byKey(const ValueKey('adventure-fixed-shortcuts')), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+      controller.dispose();
+      voice.dispose();
+      await tester.runAsync(repository.close);
+    },
+  );
+
+  testWidgets(
     'adventure recap preserves an unfinished action and confirmed state',
     (tester) async {
       tester.view.physicalSize = const Size(360, 800);

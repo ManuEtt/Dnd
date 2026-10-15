@@ -937,36 +937,6 @@ class _AdventurePageState extends State<_AdventurePage> {
                       image: FantasyArtwork.ruins,
                     ),
                     const SizedBox(height: 14),
-                    const FantasySectionTitle(title: 'Schnellaktionen',
-                      icon: Icons.sports_martial_arts),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(children: [
-                  FantasyShortcutTile(label: 'Sprache', icon: Icons.chat_bubble_outline,
-                    color: FantasyPalette.gold, width: 98,
-                    onTap: widget.controller.busy ? null : _toggleMic),
-                  const SizedBox(width: 7),
-                  FantasyShortcutTile(label: 'Untersuchen', icon: Icons.search,
-                    color: FantasyPalette.blue, width: 98,
-                    onTap: widget.controller.busy ? null : () {
-                      _input.text = 'Ich untersuche die Umgebung.';
-                      _send();
-                    }),
-                  const SizedBox(width: 7),
-                  FantasyShortcutTile(label: 'Angriff', icon: Icons.sports_martial_arts,
-                    color: FantasyPalette.danger, width: 98,
-                    onTap: widget.controller.busy ? null : () {
-                      _input.text = 'Ich greife an.';
-                      _send();
-                    }),
-                  const SizedBox(width: 7),
-                  FantasyShortcutTile(label: 'W20', icon: Icons.casino_outlined,
-                    color: const Color(0xffae90d8), width: 98,
-                    onTap: widget.controller.busy ? null : _roll),
-                ]),
-              ),
-              const SizedBox(height: 12),
-                    const SizedBox(height: 14),
                     if (campaign.adventureOffer != null)
                       FantasyPanel(
                         key: const ValueKey('adventure-offer-card'),
@@ -1098,6 +1068,10 @@ class _AdventurePageState extends State<_AdventurePage> {
                   ),
                 ],
               ),
+              // The fixed shortcuts remain available while the keyboard
+              // is open; save vertical space by hiding duplicate composer
+              // buttons until the player finishes editing text.
+              if (MediaQuery.viewInsetsOf(context).bottom == 0) ...[
               const SizedBox(height: 8),
               Wrap(
                 alignment: WrapAlignment.center,
@@ -1144,9 +1118,26 @@ class _AdventurePageState extends State<_AdventurePage> {
                   ),
                 ],
               ),
+              ],
             ],
             ),
           ),
+        ),
+        // Fixed footer: these controls are siblings of (not children of) the
+        // scrolling story ListView. They stay visible above bottom navigation.
+        FantasyPinnedActionBar(
+          busy: widget.controller.busy,
+          listening: widget.voice.listening,
+          onSpeech: _toggleMic,
+          onInspect: () {
+            _input.text = 'Ich untersuche die Umgebung.';
+            _send();
+          },
+          onAttack: () {
+            _input.text = 'Ich greife an.';
+            _send();
+          },
+          onRoll: _roll,
         ),
       ],
     );

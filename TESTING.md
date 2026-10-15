@@ -1,3 +1,17 @@
+## Pflichtprüfung 0.5.3+23 – Feste Abenteuer-Schnellaktionen
+
+Neuer Hauptzweck: Die Schnellaktionen **Sprache / Untersuchen / Angriff / W20** müssen direkt oberhalb der unteren Navigation fixiert bleiben, während die Szene und Nachrichten scrollbar sind. Nach Aktivierung eines Kampfes bleiben die Aktionen ebenfalls verfügbar. Bei geöffneter Android-Tastatur bleiben die vier kompakten Aktionsfelder sichtbar, während doppelte Eingabebuttons eingespart werden. Die alte horizontale Schnellaktionsleiste in der Szenenliste existiert nicht mehr.
+
+Wichtige automatisierte Prüfschritte nach GitHub-Import:
+
+- `cd app && flutter pub get` (war zuvor durch `description: Würfelraunen: ...` ungültig; Beschreibung nun gequotet)
+- `cd app && flutter analyze`
+- `cd app && flutter test test/fantasy_pinned_actions_test.dart test/ui_app_test.dart`
+- `cd app && flutter test`
+- `cd app && flutter build apk --debug`
+
+Beim manuellen Test auf dem Smartphone: Abenteuer öffnen, nach unten scrollen, Schnellaktionen positionstreu und bedienbar prüfen, Bildschirmtastatur öffnen, W20 und Mikrofonschaltfläche überprüfen. Besonders 320/360/400 dp und erhöhte Textskalierung prüfen. Keine Änderung der Regeln oder Speicherformate. Flutter-/APK-Lauf steht für diese Version noch aus.
+
 ## Aktuelle CI-Fix-Abnahme 0.5.1+21
 
 Vorversion 0.5.0+20: 328 Flutter-Tests erfolgreich; zwei fehlgeschlagen (`fantasy_character_sheet_test.dart` offscreen/lazy Tab und `ui_app_test.dart` offscreen Demo). Teständerungen verwenden explizite echte Scroll-Gesten, `ensureVisible` und `.hitTestable()`, statt Tests oder Warnungen zu deaktivieren.
