@@ -1,4 +1,15 @@
-# GitHub-Import – Aetheria 0.3.9+15
+# GitHub-Import – Aetheria 0.4.0+16 (komplettes Fantasy-Redesign)
+
+**GitHub-Basis:** `ManuEtt/Dnd` / `main` / `ce64d5bd10288611bd3a8482b01a32939a309f76` (0.3.9+15).
+
+1. Die ZIP **entpacken**, nicht als einzelne ZIP-Datei in GitHub committen.
+2. Empfohlen: einen neuen Branch vom angegebenen Commit erstellen. Falls `main` inzwischen weiter ist, Unterschiede prüfen und zusammenführen.
+3. **Sämtliche entpackten Inhalte** direkt in die Repository-Wurzel übertragen, insbesondere `.github/` und die neue Datei `app/lib/ui/fantasy_ui.dart`, die Tests sowie `docs/UI_DESIGN_SYSTEM.md`.
+4. Den GitHub-Actions-Workflow abwarten: Python, Backend, `flutter analyze`, `flutter test`, Android-APK. Ein lokal erfolgreiches Python-Testergebnis ist kein Ersatz für einen erfolgreichen Flutter-Build.
+5. Auf dem Gerät Start, Heldentab, Charaktereditor/Bogen, Abenteuer/Begegnung, Inventar, Tagebuch/Handlungsstränge, Optionen und Import-/Exportdialog testen. Auch Spracheingabe, Scrollen bei geöffneter Tastatur und Sicherungen testen.
+
+**Wichtig:** Dieses ZIP enthält vollständigen Quellcode und keine fertige APK. `main` wurde nicht direkt verändert. Es enthält keine persönlichen Spielstände oder API-Schlüssel. Die Unterschiede sind in `CHANGELOG.md` aufgelistet.
+
 
 Basis: `ManuEtt/Dnd`, `main`, Commit `125fc3630722002a955a4e3479395edd6bfb6635` (0.3.8+14).
 

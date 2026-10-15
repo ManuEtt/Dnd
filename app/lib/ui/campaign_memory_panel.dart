@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../domain/models.dart';
 import '../services/game_controller.dart';
+import 'fantasy_ui.dart';
 
 /// Editable, confirmed campaign notes. Never calls a narrator or changes rules.
 class CampaignMemoryPanel extends StatelessWidget {
@@ -170,21 +171,14 @@ class CampaignMemoryPanel extends StatelessWidget {
   }
 
   Widget _section(BuildContext context, String title, IconData icon,
-      List<Widget> children) => Card(
-    child: Padding(
-      padding: const EdgeInsets.all(18),
+      List<Widget> children) => Padding(
+    padding: const EdgeInsets.only(bottom: 12),
+    child: FantasyPanel(
+      title: title,
+      icon: icon,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(children: [
-            Icon(icon),
-            const SizedBox(width: 10),
-            Expanded(child: Text(title,
-                style: Theme.of(context).textTheme.titleLarge)),
-          ]),
-          const SizedBox(height: 10),
-          ...children,
-        ],
+        children: children,
       ),
     ),
   );

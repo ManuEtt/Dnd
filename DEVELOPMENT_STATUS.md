@@ -1,3 +1,7 @@
+## Aktueller Stand: 0.4.0+16 (vollständiger UI-Redesign-Stand)
+
+Die deutsche Dark-Fantasy-Designsprache des Charakterbogens ist im existierenden App-UI vereinheitlicht. Status: vollstaendiges Quellcode-Inkrement für GitHub-Import, **nicht als grüner Flutter-/Android-Build nachgewiesen**. In dieser Umgebung bestanden die Strukturprüfung und 22 Python-Tests. Die Widgettests und Android-APK müssen in GitHub Actions laufen. Siehe `docs/UI_DESIGN_SYSTEM.md`.
+
 ## Status 0.3.9+15 – Oberflächengestaltung (15.10.2026)
 
 **Integriert:** Neue native, responsive Flutter-Charakterbogenansicht mit vollständigen deutschen Labels und drei Bereichen; App-Farb- und Typografie-Thema angepasst. Einstieg aus Heldenliste und aktiver Kampagne, Weiterleitung zum bisherigen Editor. Kein geändertes Speicherformat, keine Hintergrundmigration, keine neuen Laufzeitabhängigkeiten. Das Mockup ist eine visuelle Referenz; die Android-App zeigt weiterhin echte, gespeicherte Daten.

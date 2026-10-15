@@ -1,3 +1,10 @@
+## Zusätzliche Prüfung für 0.4.0+16
+
+- Neues `app/test/fantasy_design_system_test.dart`: Theme-Farben und gerahmte Komponenten bei 320, 360 und 1000 logischen Pixeln.
+- Vorhandene UI-/Dialogtests bleiben Teil der CI, insbesondere Scroll-/Tap-Tests unter 360 Pixeln, deren antippbare Elemente durch Gestaltung nicht überdeckt werden dürfen.
+- Manuelle Geräteabnahme: untere Navigation, Landscape/Tablet-Seitenleiste, Abenteuer-Eingabe mit Tastatur, Scrollen, Inventar, Heldeneditor, Speichern, Import/Export.
+- Lokal konnten Struktur und Python getestet werden; **Flutter-/Android-SDK fehlen**. Neue Widgets und mögliche Layout-/Compileprobleme erfordern die GitHub-CI.
+
 ## 0.3.9+15 – UI-Akzeptanz
 
 1. `flutter analyze` und `flutter test`: insbesondere `fantasy_character_sheet_test.dart` und `ui_app_test.dart` auf einem 320-/360-dp-Fenster.

@@ -1,3 +1,5 @@
+> **Aetheria 0.4.0+16:** Einheitliches deutsches Dark-Fantasy-Design für alle vorhandenen Bildschirme. Smartphone-Navigation unten, große Bildschirme mit Seitenleiste, gemeinsame Panel-/Dialog- und Formular-Gestaltung. Siehe [Design-System](docs/UI_DESIGN_SYSTEM.md). GitHub-Actions-Abnahme steht für diesen Stand noch aus.
+
 ## Neu in 0.3.9+15: Deutsches Fantasy-Design und Charakterbogen
 
 Die Charakteransicht orientiert sich an der gewählten Dark-Fantasy-Vorlage: dunkles Blau, Goldakzente, farbige Attributkarten und große Trefferpunkteanzeige. **Alle UI-Texte sind auf Deutsch.** Der Bogen ist über **Helden → Bogen ansehen** sowie im **Abenteuer → Charakterbogen ansehen** erreichbar. Das Bearbeiten bleibt möglich.

@@ -6,6 +6,7 @@ import '../domain/rules_engine.dart';
 import '../domain/starting_hit_points.dart';
 import 'ability_assignment_dialog.dart';
 import 'srd_class_selection_dialog.dart';
+import 'fantasy_ui.dart';
 
 /// Edits nullable values explicitly: an imported unknown score stays unknown.
 class CharacterEditor extends StatefulWidget {
@@ -403,7 +404,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
               : 'Charakter bearbeiten',
         ),
       ),
-      body: Align(
+      body: FantasyBackdrop(
+        child: Align(
         alignment: Alignment.topCenter,
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
@@ -412,10 +414,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
             child: ListView(
               padding: const EdgeInsets.all(20),
               children: [
-                Text(
-                  'Dein Held',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
+                const FantasySectionTitle(title: 'Dein Held',
+                  icon: Icons.person_outline),
                 const SizedBox(height: 8),
                 const Text(
                   'Unbekannte Werte dürfen leer bleiben. Für regelgebundene '
@@ -443,10 +443,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Text(
-                  'Attribute',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
+                const FantasySectionTitle(title: 'Attribute',
+                  icon: Icons.auto_awesome_outlined),
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 10),
                   child: Text(
@@ -482,10 +480,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
                         '27-Punkte-System abweichen.'),
                   ),
                 const SizedBox(height: 16),
-                Text(
-                  'Kampfwerte',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
+                const FantasySectionTitle(title: 'Kampfwerte',
+                  icon: Icons.shield_outlined),
                 const SizedBox(height: 12),
                 Wrap(
                   spacing: 14,
@@ -547,10 +543,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
                   ],
                 ),
                 const SizedBox(height: 20),
-                Text(
-                  'Inventar & Ausrüstung',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
+                const FantasySectionTitle(title: 'Inventar & Ausrüstung',
+                  icon: Icons.backpack_outlined),
                 for (
                   var index = 0;
                   index < (_original['inventory'] as List).length;
@@ -610,6 +604,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
               ],
             ),
           ),
+        ),
         ),
       ),
     );

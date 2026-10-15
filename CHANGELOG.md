@@ -1,3 +1,13 @@
+## 0.4.0+16 – 15.10.2026 – Gesamtes App-Design vereinheitlicht
+
+- Das vollständige bestehende Flutter-UI orientiert sich jetzt am deutschen Dark-Fantasy-Charakterbogen. Zentrales Material-3-Theme und wiederverwendbare Widgets in `app/lib/ui/fantasy_ui.dart`.
+- Einheitliche Farben, Serif-Überschriften, goldene/silberblaue Rahmen, einheitliche Buttons, Panels, Formulare, Dialoge, Chips, Listen, Erweiterungsfelder und Bottom Sheets.
+- Hauptansichten **Start/Kampagnen**, **Abenteuer/Kampf**, **Helden/Charakterbogen**, **Tagebuch/Gedächtnis** und **Einstellungen/Backend** optisch angepasst. Inventar-Bottom-Sheet und Charaktereditor ebenfalls einbezogen.
+- Responsive Navigation: unter 920 Pixel unten, ab 920 Pixel mit seitlicher Navigationsleiste. Keine künstlichen Inhalte oder nicht vorhandenen Karten-/Regel-Seiten.
+- Zusätzliche Widgettests für Theme und Komponenten auf 320/360/1000 Pixeln sowie Dokumentation `docs/UI_DESIGN_SYSTEM.md`.
+- Keine Spielregel-, Kampagnen-, Speicher-, API-, Kosten- oder Paketabhängigkeitsänderungen. Weiterhin echte bestätigte Daten und sichere Exportfunktionen.
+- GitHub-Basis `ce64d5bd10288611bd3a8482b01a32939a309f76` (0.3.9+15). Strukturprüfung und 22 Python-Tests hier erfolgreich. **Flutter-/Android-Tests nicht lokal durchführbar.** Kein direkter Push auf `main`.
+
 ## 0.3.9+15 – 15.10.2026 – Neuer deutscher Fantasy-Charakterbogen
 
 - Eigenständiger, deutschsprachiger Charakterbogen nach der abgestimmten Dark-Fantasy-Vorlage: dunkelblaue Flächen, goldene Kanten, farbige Attributkarten, Trefferpunktebalken und responsive Karten für Übungsbonus, Bewegung, Initiative und Rüstungsklasse.

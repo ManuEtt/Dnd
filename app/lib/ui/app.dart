@@ -10,12 +10,11 @@ import 'backend_settings_panel.dart';
 import 'backup_dialogs.dart';
 import 'character_editor.dart';
 import 'fantasy_character_sheet.dart';
+import 'fantasy_ui.dart';
 import 'campaign_memory_panel.dart';
 
 const _gold = Color(0xffddb96c);
 const _ink = Color(0xff0d1927);
-const _forest = Color(0xff234157);
-const _parchment = Color(0xffeee6cf);
 const _srdAttribution =
     'This work includes material from the System Reference Document 5.2.1 '
     '(“SRD 5.2.1”) by Wizards of the Coast LLC, available at '
@@ -23,77 +22,7 @@ const _srdAttribution =
     'Creative Commons Attribution 4.0 International License, available at '
     'https://creativecommons.org/licenses/by/4.0/legalcode.';
 
-ThemeData fantasyTheme() => ThemeData(
-  useMaterial3: true,
-  brightness: Brightness.dark,
-  colorScheme: ColorScheme.fromSeed(
-    seedColor: _gold,
-    brightness: Brightness.dark,
-    primary: _gold,
-    secondary: const Color(0xff7eacbd),
-    surface: _ink,
-    onSurface: _parchment,
-  ),
-  scaffoldBackgroundColor: const Color(0xff09121f),
-  textTheme: const TextTheme(
-    headlineMedium: TextStyle(fontFamily: 'serif', fontSize: 28,
-        fontWeight: FontWeight.bold, color: _parchment),
-    titleLarge: TextStyle(fontFamily: 'serif', fontSize: 23,
-        fontWeight: FontWeight.bold, color: _parchment),
-    titleMedium: TextStyle(fontFamily: 'serif', fontSize: 19,
-        fontWeight: FontWeight.w600, color: _parchment),
-  ),
-  appBarTheme: const AppBarTheme(
-    backgroundColor: _ink,
-    foregroundColor: _parchment,
-    titleTextStyle: TextStyle(fontFamily: 'serif', fontSize: 21,
-        fontWeight: FontWeight.bold, color: _parchment),
-  ),
-  cardTheme: CardThemeData(
-    color: const Color(0xff17283a),
-    margin: const EdgeInsets.only(bottom: 12),
-    elevation: 1,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(16),
-      side: BorderSide(color: _gold.withValues(alpha: .23)),
-    ),
-  ),
-  inputDecorationTheme: InputDecorationTheme(
-    filled: true,
-    fillColor: const Color(0xff111f30),
-    labelStyle: const TextStyle(color: _parchment),
-    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: _gold),
-    ),
-  ),
-  chipTheme: ChipThemeData(
-    backgroundColor: const Color(0xff1a3043),
-    side: BorderSide(color: _gold.withValues(alpha: .25)),
-    labelStyle: const TextStyle(color: _parchment),
-  ),
-  filledButtonTheme: FilledButtonThemeData(
-    style: FilledButton.styleFrom(
-      minimumSize: const Size(48, 48),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    ),
-  ),
-  outlinedButtonTheme: OutlinedButtonThemeData(
-    style: OutlinedButton.styleFrom(
-      minimumSize: const Size(48, 48),
-      side: BorderSide(color: _gold.withValues(alpha: .55)),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    ),
-  ),
-  textButtonTheme: TextButtonThemeData(
-    style: TextButton.styleFrom(minimumSize: const Size(48, 48)),
-  ),
-  navigationBarTheme: NavigationBarThemeData(
-    backgroundColor: _ink,
-    indicatorColor: _gold.withValues(alpha: .21),
-  ),
-);
+ThemeData fantasyTheme() => buildFantasyTheme();
 
 class LivingGameApp extends StatefulWidget {
   const LivingGameApp({
@@ -195,8 +124,29 @@ class _LivingGameAppState extends State<LivingGameApp> {
                 ),
               ],
             ),
-            body: SafeArea(
-              child: Column(
+            body: Row(
+              children: [
+                if (MediaQuery.sizeOf(context).width >= 920)
+                  NavigationRail(
+                    selectedIndex: _page,
+                    onDestinationSelected: (value) => setState(() => _page = value),
+                    labelType: NavigationRailLabelType.all,
+                    leading: const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20),
+                      child: Icon(Icons.auto_awesome, color: FantasyPalette.gold, size: 34),
+                    ),
+                    destinations: const [
+                      NavigationRailDestination(icon: Icon(Icons.home_outlined), label: Text('Start')),
+                      NavigationRailDestination(icon: Icon(Icons.auto_stories_outlined), label: Text('Abenteuer')),
+                      NavigationRailDestination(icon: Icon(Icons.person_outline), label: Text('Helden')),
+                      NavigationRailDestination(icon: Icon(Icons.menu_book_outlined), label: Text('Tagebuch')),
+                      NavigationRailDestination(icon: Icon(Icons.tune), label: Text('Optionen')),
+                    ],
+                  ),
+                Expanded(
+                  child: FantasyBackdrop(
+                    child: SafeArea(
+                      child: Column(
                 children: [
                   if (controller.error != null)
                     MaterialBanner(
@@ -217,10 +167,20 @@ class _LivingGameAppState extends State<LivingGameApp> {
                       ),
                     ),
                   ),
-                ],
-              ),
+                      ],
+                    ),
+                  ),
+                ),
+                ),
+              ],
             ),
-            bottomNavigationBar: NavigationBar(
+            bottomNavigationBar: MediaQuery.sizeOf(context).width >= 920
+                ? null
+                : Container(
+                    decoration: const BoxDecoration(
+                      border: Border(top: BorderSide(color: Color(0x55ddb96c))),
+                    ),
+                    child: NavigationBar(
               selectedIndex: _page,
               onDestinationSelected: (value) => setState(() => _page = value),
               destinations: const [
@@ -246,7 +206,8 @@ class _LivingGameAppState extends State<LivingGameApp> {
                   label: 'Optionen',
                 ),
               ],
-            ),
+                    ),
+                  ),
           );
         },
       ),
@@ -343,13 +304,8 @@ class _HomePage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        Container(
+        FantasyPanel(
           padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(colors: [_forest, _ink]),
-            borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: _gold.withValues(alpha: .4)),
-          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -419,7 +375,7 @@ class _HomePage extends StatelessWidget {
               'Spracherkennung kann je nach Android-Dienst eine Internetverbindung benötigen.',
         ),
         const SizedBox(height: 16),
-        Text('Deine Kampagnen', style: Theme.of(context).textTheme.titleLarge),
+        const FantasySectionTitle(title: 'Deine Kampagnen', icon: Icons.auto_stories_outlined),
         const SizedBox(height: 12),
         if (controller.campaigns.isEmpty)
           const Card(
@@ -431,7 +387,8 @@ class _HomePage extends StatelessWidget {
             ),
           ),
         for (final campaign in controller.campaigns)
-          Card(
+          FantasyPanel(
+            padding: EdgeInsets.zero,
             child: ListTile(
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
@@ -466,9 +423,8 @@ class _HomePage extends StatelessWidget {
             ),
           ),
         const SizedBox(height: 20),
-        Text(
-          'Das Herz der Ewigkeit',
-          style: Theme.of(context).textTheme.titleLarge,
+        const FantasySectionTitle(
+          title: 'Das Herz der Ewigkeit', icon: Icons.history_edu_outlined,
         ),
         const SizedBox(height: 8),
         const Text(
@@ -537,6 +493,10 @@ class _CharactersPage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
+        const FantasySectionTitle(
+          title: 'Heldenarchiv', icon: Icons.shield_outlined,
+          subtitle: 'Charaktere ansehen, bearbeiten und sicher verwalten.',
+        ),
         Wrap(
           spacing: 12,
           runSpacing: 10,
@@ -573,7 +533,7 @@ class _CharactersPage extends StatelessWidget {
                 'Erstelle deinen eigenen Charakter oder starte die Demo mit einem vorbereiteten Waldläufer.',
           ),
         for (final hero in controller.characters)
-          Card(
+          FantasyPanel(
             child: Padding(
               padding: const EdgeInsets.all(18),
               child: Column(
@@ -828,7 +788,8 @@ class _AdventurePageState extends State<_AdventurePage> {
     // reachable on small screens while the software keyboard is open.
     final header = Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: Column(
+      child: FantasyPanel(
+        child: Column(
         children: [
           Row(
             children: [
@@ -907,6 +868,7 @@ class _AdventurePageState extends State<_AdventurePage> {
               ],
             ),
         ],
+        ),
       ),
     );
     return Column(
@@ -928,17 +890,15 @@ class _AdventurePageState extends State<_AdventurePage> {
                   padding: const EdgeInsets.all(16),
                   children: [
                     header,
-                    Card(
+                    FantasyPanel(
                       child: Padding(
-                        padding: const EdgeInsets.all(16),
+                        padding: EdgeInsets.zero,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Aktuelle Szene',
-                              style: Theme.of(
-                                context,
-                              ).textTheme.labelLarge?.copyWith(color: _gold),
+                            const FantasySectionTitle(
+                              title: 'Aktuelle Szene',
+                              icon: Icons.landscape_outlined,
                             ),
                             const SizedBox(height: 8),
                             Text(campaign.scene),
@@ -947,15 +907,18 @@ class _AdventurePageState extends State<_AdventurePage> {
                       ),
                     ),
                     if (campaign.adventureOffer != null)
-                      Card(
+                      FantasyPanel(
                         key: const ValueKey('adventure-offer-card'),
+                        accent: FantasyPalette.blue,
                         child: Padding(
-                          padding: const EdgeInsets.all(16),
+                          padding: EdgeInsets.zero,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Neue spielbare Begegnung',
-                                style: Theme.of(context).textTheme.titleMedium),
+                              const FantasySectionTitle(
+                                title: 'Neue spielbare Begegnung',
+                                icon: Icons.sports_martial_arts,
+                              ),
                               const SizedBox(height: 8),
                               Text(campaign.adventureOffer!.title,
                                 style: Theme.of(context).textTheme.titleSmall),
@@ -995,9 +958,10 @@ class _AdventurePageState extends State<_AdventurePage> {
                         onSpeak: (text) => widget.voice.speak(text),
                       ),
                     if (pending.isNotEmpty)
-                      Card(
+                      FantasyPanel(
+                        accent: FantasyPalette.gold,
                         child: Padding(
-                          padding: const EdgeInsets.all(16),
+                          padding: EdgeInsets.zero,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -1040,8 +1004,11 @@ class _AdventurePageState extends State<_AdventurePage> {
             label: const Text('Vorlesen unterbrechen'),
           ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
-          child: Column(
+          padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
+          child: FantasyPanel(
+            padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
+            accent: FantasyPalette.blue,
+            child: Column(
             children: [
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -1117,6 +1084,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                 ],
               ),
             ],
+            ),
           ),
         ),
       ],
@@ -1140,11 +1108,11 @@ class _MessageBubble extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: player ? _forest : _ink,
+          color: player ? const Color(0xff1e3c4d) : _ink,
           border: Border.all(
             color: player
-                ? const Color(0xff375c49)
-                : _gold.withValues(alpha: .2),
+                ? FantasyPalette.blue.withValues(alpha: .47)
+                : _gold.withValues(alpha: .4),
           ),
           borderRadius: BorderRadius.circular(16),
         ),
@@ -1183,27 +1151,46 @@ class _HeroStats extends StatelessWidget {
   final HeroCharacter hero;
 
   @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: [
-        Chip(
-          label: Text(
-            'TP ${hero.hitPoints ?? '?'}/${hero.maxHitPoints ?? '?'}',
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Wrap(
+        spacing: 9,
+        runSpacing: 9,
+        children: [
+          FantasyStatTile(
+            icon: Icons.favorite_outline,
+            title: 'Trefferpunkte',
+            value: 'TP ${hero.hitPoints ?? '?'}/${hero.maxHitPoints ?? '?'}',
+            color: FantasyPalette.danger,
           ),
-        ),
-        Chip(label: Text('RK ${hero.armorClass ?? '?'}')),
-        Chip(label: Text('Bewegung ${hero.speed ?? '?'} m')),
-        for (final entry in hero.abilities.entries)
-          Chip(
-            label: Text(
+          FantasyStatTile(
+            icon: Icons.shield_outlined,
+            title: 'Rüstungsklasse',
+            value: 'RK ${hero.armorClass ?? '?'}',
+            color: FantasyPalette.gold,
+          ),
+          FantasyStatTile(
+            icon: Icons.directions_run_outlined,
+            title: 'Bewegung',
+            value: '${hero.speed ?? '?'} m',
+            color: FantasyPalette.blue,
+          ),
+        ],
+      ),
+      const SizedBox(height: 10),
+      Wrap(
+        spacing: 7,
+        runSpacing: 7,
+        children: [
+          for (final entry in hero.abilities.entries)
+            Chip(label: Text(
               '${const {'strength': 'STÄ', 'dexterity': 'GES', 'constitution': 'KON', 'intelligence': 'INT', 'wisdom': 'WEI', 'charisma': 'CHA'}[entry.key] ?? entry.key} ${entry.value ?? '?'}',
-            ),
-          ),
-      ],
-    );
-  }
+            )),
+        ],
+      ),
+    ],
+  );
 }
 
 class _CombatView extends StatelessWidget {
@@ -1226,9 +1213,9 @@ class _CombatView extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       children: [
         header,
-        Text(
-          'Runde ${encounter.round}',
-          style: Theme.of(context).textTheme.headlineSmall,
+        FantasySectionTitle(
+          title: 'Kampfrunde ${encounter.round}',
+          icon: Icons.shield_outlined,
         ),
         const SizedBox(height: 10),
         Text(
@@ -1279,7 +1266,7 @@ class _CombatView extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 20),
-        Text('Deine Handlung', style: Theme.of(context).textTheme.titleLarge),
+        const FantasySectionTitle(title: 'Deine Handlung', icon: Icons.sports_martial_arts),
         const SizedBox(height: 10),
         const Text(
           'Beschreibe deinen Angriff oder deine Entscheidung. Trefferpunkte '
@@ -1337,7 +1324,11 @@ class _JournalPage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        Text(campaign.name, style: Theme.of(context).textTheme.headlineSmall),
+        FantasySectionTitle(
+          title: campaign.name,
+          icon: Icons.auto_stories_outlined,
+          subtitle: 'Die Chronik deines Abenteuers',
+        ),
         const SizedBox(height: 8),
         Text(
           'Welt: ${campaign.world} · Bestätigter Stand: ${campaign.revision}',
@@ -1401,30 +1392,18 @@ class _JournalSection extends StatelessWidget {
   final List<Widget> children;
 
   @override
-  Widget build(BuildContext context) => Card(
-    child: Padding(
-      padding: const EdgeInsets.all(18),
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: 12),
+    child: FantasyPanel(
+      title: title,
+      icon: icon,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, color: _gold),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          ...children,
-        ],
+        children: children,
       ),
     ),
   );
+
 }
 
 class _SettingsPage extends StatelessWidget {
@@ -1449,7 +1428,7 @@ class _SettingsPage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        Text('Sprache & Audio', style: Theme.of(context).textTheme.titleLarge),
+        const FantasySectionTitle(title: 'Sprache & Audio', icon: Icons.record_voice_over_outlined),
         const SizedBox(height: 12),
         Text(
           voice.refreshingVoices
@@ -1580,14 +1559,15 @@ class _SettingsPage extends StatelessWidget {
               'Textspiel, Würfel und Speicherung sind im Demo-Modus offline verfügbar.',
         ),
         const SizedBox(height: 24),
-        Text('KI & Kosten', style: Theme.of(context).textTheme.titleLarge),
+        const FantasySectionTitle(title: 'KI & Kosten', icon: Icons.auto_awesome_outlined),
         const SizedBox(height: 12),
-        BackendSettingsPanel(controller: controller),
-        const SizedBox(height: 24),
-        Text(
-          'Datenschutz & Spielstände',
-          style: Theme.of(context).textTheme.titleLarge,
+        FantasyPanel(
+          accent: FantasyPalette.blue,
+          child: BackendSettingsPanel(controller: controller),
         ),
+        const SizedBox(height: 24),
+        const FantasySectionTitle(title: 'Datenschutz & Spielstände',
+            icon: Icons.shield_outlined),
         const SizedBox(height: 12),
         const Text(
           'Charaktere und Kampagnen bleiben lokal in der App. Du kannst sie einzeln '
@@ -1630,7 +1610,7 @@ class _SettingsPage extends StatelessWidget {
           label: const Text('Alle lokalen Spieldaten löschen'),
         ),
         const SizedBox(height: 24),
-        Text('Lizenz & Inhalte', style: Theme.of(context).textTheme.titleLarge),
+        const FantasySectionTitle(title: 'Lizenz & Inhalte', icon: Icons.menu_book_outlined),
         const SizedBox(height: 10),
         const Text(
           'Eigenständiges Fantasy-Rollenspiel mit einem ausgewählten Regelkern des '
@@ -2038,21 +2018,29 @@ Future<void> _showInventory(BuildContext context, HeroCharacter hero) {
     context: context,
     isScrollControlled: true,
     showDragHandle: true,
-    builder: (context) => SizedBox(
+    builder: (context) => FantasyBackdrop(
+      child: SizedBox(
       height: MediaQuery.sizeOf(context).height * .75,
       child: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          Text(
-            'Inventar · ${hero.name}',
-            style: Theme.of(context).textTheme.headlineSmall,
+          FantasySectionTitle(
+            title: 'Inventar · ${hero.name}',
+            icon: Icons.backpack_outlined,
           ),
-          const SizedBox(height: 10),
-          Text('Gold: ${data['gold'] ?? 'unbekannt'}'),
-          const SizedBox(height: 12),
-          Text(
-            'Waffenschaden: ${hero.weaponDamage.isEmpty ? 'Nicht bestätigt' : hero.weaponDamage} · '
-            'Waffenübung: ${hero.weaponProficient ? 'ja' : 'nein'}',
+          FantasyPanel(
+            child: Wrap(spacing: 10, runSpacing: 10, children: [
+              FantasyStatTile(icon: Icons.monetization_on_outlined,
+                title: 'Gold', value: '${data['gold'] ?? '–'}'),
+              FantasyStatTile(icon: Icons.sports_martial_arts,
+                title: 'Waffenschaden',
+                value: hero.weaponDamage.isEmpty ? '–' : hero.weaponDamage,
+                color: FantasyPalette.blue),
+              FantasyStatTile(icon: Icons.verified_outlined,
+                title: 'Waffenübung',
+                value: hero.weaponProficient ? 'Ja' : 'Nein',
+                color: FantasyPalette.success),
+            ]),
           ),
           const SizedBox(height: 20),
           for (final entry in const <String, String>{
@@ -2061,11 +2049,18 @@ Future<void> _showInventory(BuildContext context, HeroCharacter hero) {
             'features': 'Klassenfähigkeiten',
             'conditions': 'Zustände',
           }.entries) ...[
-            Text(entry.value, style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 8),
-            ..._journalItems(data[entry.key]),
+            FantasySectionTitle(title: entry.value,
+                icon: entry.key == 'inventory' ? Icons.inventory_2_outlined
+                  : entry.key == 'spells' ? Icons.auto_awesome_outlined
+                  : entry.key == 'conditions' ? Icons.healing_outlined
+                  : Icons.military_tech_outlined),
+            FantasyPanel(child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: _journalItems(data[entry.key]),
+            )),
           ],
         ],
+      ),
       ),
     ),
   );
