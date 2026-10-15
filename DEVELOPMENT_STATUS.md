@@ -1,3 +1,11 @@
+## 0.6.1+31 – Flutter-Analyzer und Rast-Testfixtures (15.10.2026)
+
+- **BEHOBEN:** `srd_equipment_catalog.dart` verwendet für das Gewicht eine einfache Stringinterpolation (`$weightLb`), wodurch der in CI reproduzierte Analyzer-Lint `unnecessary_brace_in_string_interps` entfällt. Keine Änderung der Ausrüstungswerte.
+- **BEHOBEN:** Die `HeroCharacter.fromJson`-Fixture in `app/test/rest_rules_test.dart` enthält wieder die erforderliche `species`-Angabe `Mensch`. Sieben vorangegangene Testfehler waren `FormatException: Spezies ist ungültig.` beim Aufbau der Fixture, nicht Regel-Aussagen. Der produktive Importvalidator bleibt unverändert.
+- **BASIS:** `main` `0963303fe4802aae9c42739b267e6d33057ef63d`, GitHub Actions #38746011222 (Analyzer-Fehler); früherer Rast-Testlauf #38734808085. Die geänderten Ausgangsdateien wurden gegen ihre Git-Blob-SHAs geprüft.
+- **PRÜFUNG:** Projektstruktur, Python-Tests, ZIP/SHA256 sowie saubere Anwendung des Git-Patches auf `0.6.0+30`. Flutter SDK ist in dieser Umgebung nicht vorhanden: `flutter analyze`, `flutter test` und Android-APK-Build sind für 0.6.1+31 **noch nicht nachgewiesen**.
+- **NÄCHSTES:** Auf separatem Branch übernehmen, kompletten GitHub-CI-Lauf ausführen; bei neuen Testproblemen Logs analysieren und beheben; bei grünem Lauf APK verwenden. Codex-Actions nicht reaktivieren.
+
 ## 0.6.0+30 – Bestätigtes SRD-Ausrüsten (15.10.2026)
 
 - **IMPLEMENTIERT:** Domain-Modul `equipment_rules.dart` mit reiner Vorschau und erneuter Berechnung bei Bestätigung; Inventory-basiertes Anlegen von Rüstungen/Schilden/Waffen und RK-/Waffenwert-Updates im Editor; optionale Felder für ausgerüstete Inventar-Instanz-IDs. Kein heimlicher Goldabzug/Magieeffekt. Quellen/Ausnahmen: `docs/EQUIPMENT_RULES.md`.

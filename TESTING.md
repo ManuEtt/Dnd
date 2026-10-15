@@ -1,3 +1,13 @@
+## Korrekturprüfung 0.6.1+31
+
+Auf Basis der Logausgaben aus GitHub Actions #38746011222 und #38734808085:
+
+1. `flutter analyze` darf kein `unnecessary_brace_in_string_interps` in `lib/domain/srd_equipment_catalog.dart` mehr melden.
+2. `flutter test test/rest_rules_test.dart` muss die Rast-Tests einschließlich `HeroCharacter.fromJson` ausführen, ohne `FormatException: Spezies ist ungültig.` beim Fixture-Aufbau.
+3. Anschließend das vollständige `flutter test`, Backend-Tests und den Android-APK-Build ausführen.
+
+**Status:** Diese Flutter-/APK-Befehle konnten lokal mangels Flutter SDK nicht ausgeführt werden. Ein grüner CI-Build ist erst nach separater Übernahme auf GitHub belegbar.
+
 ## SRD-Ausrüstung 0.6.0+30
 
 - `app/test/equipment_rules_test.dart`: Waffen- und Rüstungsvorschau, Stärke-/Geschicklichkeits-Grenzen, Übung, Finesse, Schild-/Zweihand-Ausschlüsse, Sicherheitsvalidierung, Altspeicher und veraltete Vorschläge.

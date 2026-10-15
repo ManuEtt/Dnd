@@ -20,6 +20,7 @@ HeroCharacter wounded({int hp = 3, int maxHp = 15, int constitution = 14}) =>
       'schemaVersion': 1,
       'id': 'fighter-rest',
       'name': 'Liora',
+      'species': 'Mensch',
       'className': 'Kämpfer',
       'level': 2,
       'abilities': {
