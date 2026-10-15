@@ -1,3 +1,11 @@
+## 0.3.3 – Stand der ergänzten Klassenwahl, 14. Oktober 2026
+
+- BASIS: vollständig exportierte 0.3.2-Version aus GitHub `4007b2b65f3413238c0a828813d57b98c4498732`, bereits durch Actions für Flutter/Android getestet. Letzter freigegebener Gerätebericht: Attributverteilung, Spracheingabe, Sprachausgabe, Stufe-1-TP funktionieren.
+- IMPLEMENTIERT (0.3.3): 12 SRD-5.2.1-Klassenprofile mit Rettungswurf-Übungen, Fertigkeitswahl, optionalem Startpaket/Startgold; UI-Klassenassistent mit Vorschau/Bestätigung, bestehende Werte nicht automatisch überschreiben; neuer manueller Hausregelweg für abweichende Startattribute bei neuen Charakteren. Keine Schema- oder Backend-Änderung.
+- SOURCE-QA: neues Paket mit zusätzlichen Unit-/Widgettests; Gesamtprojektstruktur und vorhandene Python-Tests werden vor ZIP-Abgabe separat geprüft.
+- OFFEN: Flutter-Analyse, Flutter-Tests und Android-Build für Version 0.3.3 können in der aktuellen Dateiumgebung ohne Flutter-SDK nicht ausgeführt werden. Nach GitHub-Import über Actions prüfen; 0.3.3 nicht bereits als Gerätetest ausgeben.
+- REGELGRENZE: keine automatische Hintergrunderfahrung, Klassenmerkmale, aufgenommene Ausrüstung/Rüstungsklasse, Zauberplätze, Level-Ups oder Mehrklassenregeln. Mit zusätzlichen Stufe-1-Klassenübungen werden bestehende Einträge optional zusammengeführt; Ursprung der üblichen Mehrfach-Übungen ist in den bestehenden Listen noch nicht separat nachverfolgbar.
+
 # Entwicklungsstatus
 
 ## Entwicklungsinkrement: SRD-5.2.1-Start-Trefferpunkte (0.3.2+8, im Quellstand integriert)

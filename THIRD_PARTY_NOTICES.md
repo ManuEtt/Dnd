@@ -14,6 +14,12 @@ Punktkostentabelle und die Attributssteigerungen von vier freigegebenen
 Hintergründen um. Die verwendete eigene UI und dokumentierte Auslegung zur
 ungenutzten Punktmenge stehen in [docs/ABILITY_RULES.md](docs/ABILITY_RULES.md).
 
+Die Klassenwahl 0.3.3 verwendet zusätzlich die SRD-5.2.1-Klassentabellen:
+Trefferwürfel, Rettungswurf-Übungen, zulässige und benötigte Klassenfertigkeiten,
+Startausrüstung und Startgold. Deutsche UI-Bezeichnungen wurden für diese App
+formuliert; optionale Werkzeug- und Klassenmerkmale sind nicht vollständig umgesetzt.
+Regelquelle: https://www.dndbeyond.com/srd (Abschnitt „Classes“, Version 5.2.1).
+
 ## Softwareabhängigkeiten
 
 Flutter, Dart, Fastify und die in den Lockdateien festgehaltenen Pakete besitzen jeweils eigene Lizenzen. Diese bleiben maßgeblich. Das ZIP enthält Projektquellcode und Lockdateien, keine Kopie der installierten Paketverzeichnisse. Flutter zeigt die Lizenztexte der eingebundenen Flutter-Pakete über die dafür vorgesehenen Lizenzinformationen an beziehungsweise kann sie über die Paketquellen beziehen. Vor einer Veröffentlichung sind Lizenzhinweise für die tatsächlich gebündelten Abhängigkeiten erneut zu prüfen.

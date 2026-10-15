@@ -1,5 +1,17 @@
 # Änderungsprotokoll
 
+## 0.3.3 – Klassenwahl, Fertigkeiten und Startausrüstung (14. Oktober 2026)
+
+- Neue Klasse `SrdCharacterClass` mit den zwölf SRD-5.2.1-Klassen: Trefferwürfel, beide Rettungswurf-Übungen, zulässige Fertigkeitslisten und Auswahlanzahl (2–4) sowie Startpakete bzw. Startgold.
+- Neuer Assistent „D&D-Klasse und Fertigkeiten wählen“ im Charaktereditor für Stufe-1-Charaktere. Ungültige oder doppelte Fertigkeitswahlen können nicht übernommen werden.
+- Charakterausrüstung mit Inventargegenständen und Startgold kann **optional nur bei neuen noch unversorgten Charakteren** explizit übernommen werden; Wahl wird weder automatisch wiederholt noch Rüstung direkt angelegt.
+- Start-TP-Vorschlag aus 0.3.2 im Assistenten nutzbar; vorhandene TP werden nur auf ausdrückliche Bestätigung ersetzt. Bestehende Fertigkeiten und Rettungswürfe bleiben beim Ergänzen erhalten; vollständiger Ersatz ist eine bewusste Option.
+- Im neuen Charaktereditor werden freihändige Startattribute bzw. nachträgliche manuelle Änderungen an einer regelkonformen Verteilung nur nach Kennzeichnung als Hausregel gespeichert. Leere noch unbestätigte Attribute und historische/importierte Charaktere bleiben zulässig.
+- Neue Domänen- und UI-Tests für sämtliche Klassentabellen, Fertigkeitsvalidierung, Aliasnamen, Altcharaktere und neue UI-Flows.
+- Kein neues Backend, keine neuen Laufzeitabhängigkeiten und **keine Änderung am persistenten Charakter-JSON-Schema**. Klasse, Fertigkeiten, Rettungswürfe, Gold und Gegenstände verwenden die bereits vorhandenen Felder.
+- Neue 0.3.3-Funktionen in dieser Übergabe **nicht mit Flutter auf Android kompiliert oder auf einem Gerät geprüft**; GitHub Actions führt die verbindlichen Flutter- und Android-Prüfungen nach dem Import aus.
+
+
 ## 0.3.2 – Vorbereitung, 14. Oktober 2026 (Start-Trefferpunkte nach SRD 5.2.1)
 
 - Regelklasse `StartingHitPoints`: maximaler Klassen-Trefferwürfel plus KO-Modifikator für Stufe 1; zwölf SRD-Klassen, mindestens 1 TP.

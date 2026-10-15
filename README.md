@@ -13,6 +13,14 @@ Deutschsprachiger Fantasy-Spielleiter für Android mit Flutter, lokalem Kampagne
 
 Der Schwerpunkt liegt auf einem spielbaren Solo-Ablauf: Charakter und Kampagne anlegen, Entscheidungen eingeben, mit einem deterministischen Spielleiter interagieren, würfeln, einfache Kämpfe austragen und den bestätigten Zustand wieder laden. Der Demo-Spielleiter verarbeitet einige Handlungsarten und liefert passende Szenen; frei formulierte Texte sind möglich, die Antworttiefe ist jedoch begrenzt. Eine umfassende generative KI und eine vollständige Umsetzung aller SRD-Regeln sind weitere Entwicklungsschritte.
 
+## Neue Funktionen in Version 0.3.3
+
+Der Stufe-1-Charaktereditor besitzt einen Assistenten **„D&D-Klasse und Fertigkeiten wählen“**. Es stehen zwölf Klassen des SRD 5.2.1 mit jeweils passenden Rettungswurf-Übungen und auswählbaren Klassenfertigkeiten zur Verfügung. Auf Wunsch werden Start-TP vorgeschlagen und ein SRD-Startpaket bzw. Startgold in den bislang leeren Charakterbogen übernommen. Bei älteren Charakteren werden Fertigkeiten, TP und Ausrüstung nicht heimlich überschrieben.
+
+Neue Charaktere können die vorhandene 27-Punkte-/Standardwert-Attributshilfe verwenden. Freie Startwerte außerhalb dieser Verteilung benötigen im Editor eine ausdrücklich gewählte Hausregel-Ausnahme. Nicht bestätigte/leere Attribute bleiben für Entwürfe möglich.
+
+Noch **nicht** Teil dieses Inkrements: Vollständige Herkunfts-Fertigkeits-/Talentauswahl, Klassenmerkmale, Zauberplätze, Rüstungsanlegen, vollständiger Kampf und automatisierte Stufenaufstiege. Siehe `ROADMAP.md` und [Anleitung für Klassenwahl](docs/CLASS_CREATION.md).
+
 ## ZIP nach GitHub übertragen
 
 Das Korrektur-ZIP **Dnd-Projekt-0.3.1.zip entpacken und seine Projektinhalte einschließlich `.github/`** direkt in die Repositorywurzel übertragen; das neue Paket enthält keinen äußeren `Dnd/`-Ordner. Nur die ZIP-Datei hochzuladen startet keinen Android-Build. Vorhandene Dateien vorher vergleichen und in einem neuen Branch arbeiten. Die [Schritt-für-Schritt-Anleitung](docs/UPLOAD_TO_GITHUB.md) erklärt Zugriff, Upload und APK-Download. Vor dem Build prüft `python3 scripts/verify_project.py` die Vollständigkeit ohne Flutter/Android SDK.

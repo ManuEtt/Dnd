@@ -4,26 +4,13 @@ Die Reihenfolge folgt dem Ziel eines dauerhaft fortsetzbaren Android-Abenteuers.
 
 ## Nächster Entwicklungsschritt
 
-**Neuer integrierter Quellstand 0.3.2+8:** Die zwölf SRD-Klassen besitzen
-einen bestätigungspflichtigen Stufe-1-Trefferpunktevorschlag. Zuerst diesen
-Code nach GitHub importieren, 19 neue Domänentests und den Widgettest mit
-Flutter sowie den Android-Build tatsächlich ausführen; bestehende Spielstände
-und bisherige Werte nicht ungefragt verändern. Anschließend die Attribut-
-Basismethode/Boni dauerhaft nachvollziehbar speichern und die Umgehung des
-27-Punkte-Budgets im regulären Stufe-1-Editor verhindern, bei Altimporten
-explizite Sonderbehandlung beibehalten.
+**Version 0.3.3+9 vorbereitet:** Zwölf SRD-Klassen sind mit Level-1-Skills, Rettungswürfen und wählbarer Ausrüstung/Startgold in einen Bestätigungsdialog eingebaut. Manueller Ausnahmeweg bei neuen Startattributen ist nun sichtbar. Die bereits 0.3.2 bestätigte Trefferpunktfunktion bleibt nutzbar.
 
+Nach Import: GitHub Actions (Flutter Analyze, alle Unit-/Widgettests, Backend, Android APKs) ausführen und den Klassenassistenten einschließlich Abbruch, Klassenauswahl, Ausrüstung und 27-Punkte-Dialog auf Samsung Galaxy S26 Ultra abnehmen. Noch offene Facharbeit: Hintergrund-Fertigkeits-/Werkzeugübung, Talente, Klassenmerkmale, Ausrüstungsanlegen/RK, langfristige Trennung von automatischen und manuellen Attribut-Quellen; sichere Stufenaufstiege. Keine unbewiesene Vollständigkeit der SRD-Engine behaupten.
 
-Die Sprachkorrekturen 0.3.1 auf dem Samsung Galaxy S26 Ultra mit dokumentiertem
-Sprachanbieter, deutscher Stimme und Android-Version abnehmen. Der Benutzer
-meldet funktionierenden App-Betrieb, aber Probleme bei einigen Sprachen; die
-betroffene Eingabe beziehungsweise Ausgabe ist noch nicht eindeutig bestimmt.
-Lesezugriff auf `ManuEtt/Dnd` ist wieder vorhanden. Der bestehende
-GitHub-Actions-Fehler ist als fehlendes `sdkmanager` bestätigt; Korrektur liegt
-vor. Schreibzugriff erhält weiter HTTP 403. ZIP im Eigentümerkonto auf einem
-Entwicklungsbranch übernehmen und den neuen Workflow samt APK-Artefakten prüfen.
+Abgenommen in der Nutzer-Rückmeldung zur 0.3.2: 27-Punkte-Verteilung, Spracheingabe, Sprachausgabe und Start-TP-Vorschlag funktionieren auf dem Samsung Galaxy S26 Ultra. Ein detaillierter Gerätestand ist für 0.3.3 noch offen.
 
-Standardwerte und Punktekauf mit expliziten Hintergrundsteigerungen sind seit 0.3.0 implementiert und automatisiert geprüft; die Geräteabnahme folgt. Nach den Sprach- und Buildkorrekturen ist der nächste begrenzte Code-Schritt ein Vorschlag für Stufe-1-Trefferpunkte aus Klasse und bestätigtem Konstitutionsmodifikator anhand SRD 5.2.1. Vor Implementierung die offizielle Quelle lesen; bestehende/historische TP nie stillschweigend überschreiben.
+GitHub-Zugang: Lesezugriff bestätigt; letzter bekannter Schreibversuch wurde durch GitHub 403 abgelehnt. Änderungen als direkt importierbares vollständiges Quell-ZIP bereitstellen.
 
 ## Phase 1 und 2: Solo-Alpha absichern
 

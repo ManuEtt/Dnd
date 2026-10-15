@@ -1,0 +1,33 @@
+# Klassenwahl und Startpakete – Aetheria 0.3.3
+
+Quelle: SRD 5.2.1, Abschnitt „Classes“: https://www.dndbeyond.com/srd
+
+## Verwendung auf Android
+
+1. **Neuen Helden erschaffen** öffnen. Name, Spezies und Stufe 1 eintragen.
+2. Über **Attribute ermitteln** die offiziellen Grundwerte bestimmen (Standardsatz oder 27-Punkte-Kauf); Hintergrundboni ausdrücklich zuweisen.
+3. **D&D-Klasse und Fertigkeiten wählen** öffnen und eine der zwölf unterstützten Klassen auswählen.
+4. Die vorgeschriebene Anzahl unterschiedlicher, für diese Klasse erlaubter Fertigkeiten wählen. Die zwei passenden Rettungswurf-Übungen werden angezeigt.
+5. Optional den Start-TP-Vorschlag einschalten, sobald ein bestätigter KO-Wert vorliegt. Bei einer neuen, noch nicht ausgestatteten Figur kann auch die SRD-Startausrüstung oder ein Startgoldpaket gewählt werden.
+6. **Klasse und Fertigkeiten übernehmen** bestätigen, danach **Charakter speichern** wählen.
+
+Auf Stufe 2–20 ist der neue Klassenauswahlassistent **nicht** als Stufenaufstiegs- oder Mehrklassen-Funktion verwendbar.
+
+## Sicherer Umgang mit alten Charakteren
+
+- Der Assistent verändert den Charakter erst nach Bestätigung. Abbruch lässt alles unverändert.
+- Vorhandene Fertigkeiten und Rettungswurf-Übungen werden standardmäßig um neue ergänzt. **Bestehende Übungen ersetzen** überschreibt die Listen ausdrücklich und kann eingetragene Hintergrundübungen entfernen.
+- Vorhandene Trefferpunkte werden nur dann überschrieben, wenn die entsprechende Checkbox bewusst aktiviert wird.
+- Vorhandene Ausrüstung und Gold werden bei bestehenden Charakteren nicht angetastet. Startpakete sind nur für neu angelegte Charaktere verfügbar, solange noch keine Gegenstände oder Gold ausgewählt wurden.
+- Ein Ausrüstungsgegenstand im Inventar wird nicht automatisch angelegt. Eine Rüstungsklasse wird nicht aufgrund dieses Pakets gesetzt.
+- Fremde und alte Klassenbezeichnungen bleiben beim Öffnen des bestehenden Charakters erhalten. Die Auswahl einer SRD-Klasse ist freiwillig.
+
+## Attributregeln
+
+Bei neuen Charakteren schützt der Editor die durch den Standardsatz oder den Punktekauf einschließlich Hintergrundboni ermittelten Endwerte vor stillen manuellen Änderungen. Wer direkt eigene Attributwerte eintragen will, muss **Manuelle Attribute als Hausregel zulassen** aktivieren. Für historische Charaktere gilt diese neue Einschränkung nicht. Eine dauerhafte Herkunfts-/Regelversion-Metadatenerfassung steht noch aus.
+
+## Unterstützter Umfang und Grenzen
+
+Der Assistent setzt die Startlisten aus dem SRD 5.2.1 um: zwölf Klassen, Rettungswurf-Übungen, Klassenfertigkeiten, Trefferwürfel und optionale Ausrüstung/Startgold. Er implementiert noch **keine** Charaktermerkmale, Werkzeugauswahl, Hintergrund-Fertigkeiten, Talente, Zauberauswahl, automatische Rüstungsberechnung, Mehrklassenregeln oder automatische Stufenaufstiege.
+
+Regeltexte sind für die Benutzeroberfläche vereinfacht und in eigene deutsche Bezeichnungen übersetzt. Vorrang hat das zitierte SRD. Automatische Python-Projektprüfungen sind kein Ersatz für Flutter-Analyse und Android-Gerätetests.
