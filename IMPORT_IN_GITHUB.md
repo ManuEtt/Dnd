@@ -1,22 +1,19 @@
-# Projekt-Import – Aetheria 0.3.4+10
+# Projekt-Import – Aetheria 0.3.5+11
 
-1. Das ZIP auf dem Rechner entpacken. Der Inhalt hat **keinen** aeusseren Dnd-Ordner.
-2. Auf https://github.com/ManuEtt/Dnd einen neuen Branch von `main` erstellen.
-3. Den Inhalt dieses Verzeichnisses in die Repository-Wurzel hochladen. Bei
-   bereits vorhandenen Pfaden die neue Dateiversion uebernehmen.
-   Achtung: `.github/workflows/android-build.yml` ist versteckt; mit uebertragen.
-4. Nicht nur das ZIP als einzelne Datei in GitHub ablegen.
-5. Unter **Actions** den Workflow **Android-Alpha bauen** pruefen.
-6. Nur bei gruener CI mergen; APKs unter **Artifacts** herunterladen.
+Vollständiger Projektquellstand zur GitHub-Übertragung, ohne äußeren `Dnd/`-Ordner.
 
-Verifizierte Ausgangsbasis: commit `3b91a9778abe14184f35ac1db16f5acf121a84b5`
-(Treeshash `fffbdeeb9624263cd7e2caa1427b11e5cea11e22`).
+1. Dieses ZIP lokal entpacken und die enthaltenen Unterordner `app/`, `backend/`, `scripts/`, `docs/` und `.github/` in die Wurzel von https://github.com/ManuEtt/Dnd übernehmen.
+2. Einen **neuen Branch** ab `main` verwenden; vorhandene Dateien mit den neuen Versionen ersetzen, keine fremden Commits überschreiben.
+3. Die versteckten `.github`-Dateien und Build-Wrapper ebenfalls übertragen. **Nicht die ZIP selbst als einzige Datei hochladen**.
+4. Unter GitHub **Actions → Android-Alpha bauen** die vollständige Prüfung (Python, Backend, Flutter Analyse, Flutter Tests, APK und JVM-Tests) abwarten.
+5. Nur wenn alle Jobs grün sind mergen; unter **Artifacts** kannst du die neue APK laden. Auf Android zusätzlich Rückblick und Mira-Dialoge prüfen.
 
-Anpassungen:
-- Test zur Hausregel-Checkbox scrollt in die korrekte Richtung.
-- Live-Vorschau fuer Staerke, Geschicklichkeit, Konstitution, Intelligenz,
-  Weisheit und Charisma mit denselben Berechnungen wie RulesEngine.
-- Neuer Widgettest sowie Versions- und Statusdokumentation.
+Basis: GitHub `main` Commit `239ee5f7d333a6388159e7d431039abb92e936b7` (0.3.4+10).
+Änderungen: `app/lib/domain/game_engine.dart`, `app/lib/ui/app.dart`,
+`app/pubspec.yaml`, `app/test/memory_recall_test.dart`,
+`app/test/ui_app_test.dart` und begleitende Dokumentation.
 
-Keine Flutter-/Android-Laufzeittests in der Paketumgebung: CI muss den
-neuen Quellstand pruefen. Vor einem produktiven Einsatz Spielstaende sichern.
+Kein SQLite-Schemawechsel, keine neuen Abhängigkeiten, kein neuer API-Schlüssel.
+Lokale Python-Strukturtests sind möglich; Flutter/Dart und Android SDK sind
+in der Paketumgebung nicht vorhanden. Der neue Stand darf daher vor erfolgreicher
+GitHub-CI nicht als vollständig getestet oder installierbar bezeichnet werden.

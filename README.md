@@ -1,6 +1,6 @@
 # Der lebendige Spielleiter
 
-**Aktueller Quellstand 0.3.4+10 (Flutter-CI noch abzunehmen):** Ein
+**Aktueller Quellstand 0.3.5+11 (Flutter-CI noch abzunehmen):** Ein
 regelkonformer Stufe-1-Trefferpunktevorschlag aus Klasse und Konstitution ist
 direkt im Charaktereditor integriert und erfordert ausdrückliche Bestätigung.
 Das vollständige ZIP enthält `app/`, `backend/`, `scripts/`, die versteckte
@@ -12,6 +12,26 @@ hochladen, nicht das ZIP selbst als einzige Repositorydatei ablegen.
 Deutschsprachiger Fantasy-Spielleiter für Android mit Flutter, lokalem Kampagnengedächtnis und einem kostenlosen Demo-Modus in [ManuEtt/Dnd](https://github.com/ManuEtt/Dnd). Der zunächst unabhängig erstellte Stand wurde nach Wiederherstellung des Zugriffs mit dem hochgeladenen 0.3.0-Repository verglichen: Die Dateiinhalte stimmen überein, lediglich vier Ausführungsrechte unterscheiden sich. Neue Korrekturen bauen auf diesem Repositorystand auf.
 
 Der Schwerpunkt liegt auf einem spielbaren Solo-Ablauf: Charakter und Kampagne anlegen, Entscheidungen eingeben, mit einem deterministischen Spielleiter interagieren, würfeln, einfache Kämpfe austragen und den bestätigten Zustand wieder laden. Der Demo-Spielleiter verarbeitet einige Handlungsarten und liefert passende Szenen; frei formulierte Texte sind möglich, die Antworttiefe ist jedoch begrenzt. Eine umfassende generative KI und eine vollständige Umsetzung aller SRD-Regeln sind weitere Entwicklungsschritte.
+
+## Neuer Kampagnenrückblick in Version 0.3.5
+
+Im Abenteuer findest du neben **Würfeln** und **Sprechen** die Schaltfläche
+**Rückblick**. Sie erstellt einen auf bestätigten Spieldaten basierenden
+Überblick, ohne deinen möglicherweise noch ungesendeten Handlungstext zu
+überschreiben. Alternativ kannst du etwa „Was weißt du über Mira?“, „Erinnere
+dich an den Waldschrein“ oder „Fasse unsere bisherige Geschichte zusammen“
+eingeben oder diktieren. Bei thematischen Fragen gibt es nur passende
+Erinnerungen. Ohne passenden bestätigten Inhalt benennt der Spielleiter die
+Lücke, statt Fakten zu erfinden.
+
+Die kostenlose Demo lässt Mira auf den gespeicherten Fortschritt reagieren:
+Sie fordert weder einen bereits gefundenen Schlüssel noch einen erledigten
+Auftrag erneut an. Spieler-/KI-Erzähltext wird weiterhin nicht als bestätigter
+Regel- oder Weltzustand interpretiert. Diese Verbesserung ist eine
+**deterministische lokale Regel-/Erinnerungsfunktion**, noch keine frei
+handelnde generative KI. Neue Flutter-Tests und der neue Android-Build müssen
+nach dem Import erfolgreich in GitHub Actions durchlaufen. Details:
+[CHANGELOG.md](CHANGELOG.md) und [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md).
 
 ## Korrektur und Weiterentwicklung in Version 0.3.4
 
@@ -35,7 +55,7 @@ Noch **nicht** Teil dieses Inkrements: Vollständige Herkunfts-Fertigkeits-/Tale
 
 ## ZIP nach GitHub übertragen
 
-Das vollständige aktuelle 0.3.4+10-ZIP entpacken und seine Projektinhalte einschließlich `.github/` direkt in die Repositorywurzel übertragen; das neue Paket enthält keinen äußeren `Dnd/`-Ordner. Nur die ZIP-Datei hochzuladen startet keinen Android-Build. Vorhandene Dateien vorher vergleichen und in einem neuen Branch arbeiten. Die [Schritt-für-Schritt-Anleitung](docs/UPLOAD_TO_GITHUB.md) erklärt Zugriff, Upload und APK-Download. Vor dem Build prüft `python3 scripts/verify_project.py` die Vollständigkeit ohne Flutter/Android SDK.
+Das vollständige aktuelle 0.3.5+11-ZIP entpacken und seine Projektinhalte einschließlich `.github/` direkt in die Repositorywurzel übertragen; das neue Paket enthält keinen äußeren `Dnd/`-Ordner. Nur die ZIP-Datei hochzuladen startet keinen Android-Build. Vorhandene Dateien vorher vergleichen und in einem neuen Branch arbeiten. Die [Schritt-für-Schritt-Anleitung](docs/UPLOAD_TO_GITHUB.md) erklärt Zugriff, Upload und APK-Download. Vor dem Build prüft `python3 scripts/verify_project.py` die Vollständigkeit ohne Flutter/Android SDK.
 
 ## Starten und prüfen
 

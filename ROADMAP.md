@@ -4,6 +4,14 @@ Die Reihenfolge folgt dem Ziel eines dauerhaft fortsetzbaren Android-Abenteuers.
 
 ## Nächster Entwicklungsschritt
 
+**0.3.5+11 vorbereitet:** Themenbezogener lokaler Rückblick und bestätigte,
+questabhängige Mira-Dialoge im Demo-Spiel. Nächste Priorität nach grüner CI:
+Android-Geräteabnahme des Rückblick-Buttons (auch mit bereits getipptem Text),
+anschließend echte persistierte Sitzungszusammenfassungen mit Konfliktprüfung
+und systematische Dialogvarianten für andere bestätigte NPCs. Die lokale
+Faktensuche ist noch keine semantische KI oder vollständige Spielleiterlogik.
+
+
 **Version 0.3.3+9 vorbereitet:** Zwölf SRD-Klassen sind mit Level-1-Skills, Rettungswürfen und wählbarer Ausrüstung/Startgold in einen Bestätigungsdialog eingebaut. Manueller Ausnahmeweg bei neuen Startattributen ist nun sichtbar. Die bereits 0.3.2 bestätigte Trefferpunktfunktion bleibt nutzbar.
 
 Nach Import: GitHub Actions (Flutter Analyze, alle Unit-/Widgettests, Backend, Android APKs) ausführen und den Klassenassistenten einschließlich Abbruch, Klassenauswahl, Ausrüstung und 27-Punkte-Dialog auf Samsung Galaxy S26 Ultra abnehmen. Noch offene Facharbeit: Hintergrund-Fertigkeits-/Werkzeugübung, Talente, Klassenmerkmale, Ausrüstungsanlegen/RK, langfristige Trennung von automatischen und manuellen Attribut-Quellen; sichere Stufenaufstiege. Keine unbewiesene Vollständigkeit der SRD-Engine behaupten.

@@ -58,6 +58,16 @@ unverschlüsseltes Loopback-HTTP ist nur für diesen Entwicklungstest freigescha
 
 Die Testabdeckung soll natürliche Würfelwerte und Gesamtwerte, Attributmodifikatoren, Angriffe, Schaden und Heilung, unvollständige Charakterdaten, Speicherung und Neustart, Transaktionsrollback, doppelte Ereignisse, Importvalidierung, Demo-Erzählung, zentrale Widgets und Backend-Authentifizierung beziehungsweise Validierung prüfen. Die tatsächlich vorhandenen Tests und ausgeführten Ergebnisse stehen in [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md).
 
+## Rückblick und konsistente NPCs (0.3.5)
+
+Nach GitHub-Import zusätzlich `cd app && flutter test test/memory_recall_test.dart test/ui_app_test.dart`
+und `flutter analyze` ausführen. Automatische Tests sollen thematische
+Filterung, leere/unbekannte Erinnerungen, bestätigte NPC-/Quest-/Inventarstatus,
+reproduzierbares Ereignisjournal, erhaltene ausstehende Würfel und ungesendete
+Texte prüfen. Auf dem Gerät Rückblick bei aktiver Tastatur und Push-to-Talk,
+sowie das erneute Ansprechen Miras nach Schlüssel, Wächter und Questabschluss
+prüfen. Ein bestandener CI-Test ersetzt diesen Gerätetest nicht.
+
 ## Android-Gerätetest
 
 Diese Schritte sind eine noch separat durchzuführende Abnahme. Gerät, Android-Version, APK-Commit und Sprachdienst im Testbericht festhalten.

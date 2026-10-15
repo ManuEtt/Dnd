@@ -1,3 +1,12 @@
+## 0.3.5+11 – 15.10.2026 – Kampagnenrückblick und NPC-Reaktionen
+
+- Im Abenteuer gibt es einen direkt erreichbaren Button **Rückblick**. Ein noch nicht abgesendeter Handlungstext bleibt unverändert; Spracheingabe/-ausgabe wird vor der Aktion kontrolliert gestoppt.
+- Erinnerung an bestätigte Fakten, NPC-Zustände, Queststatus, Inventar und bekannte Orte aus SQLite. Bei gezielten Fragen („Was weißt du über Mira?“, „Erinnere dich an den Waldschrein“) werden **nur thematisch passende** Erinnerungen ausgegeben, niemals ungefragte, unrelated Ereignisse.
+- Bei allgemeinen Rückblicken werden bis zu vier relevante bestätigte Einträge angezeigt; die Ausgabe ist begrenzt und liefert explizit „keine passende Erinnerung“, wenn keine bestätigten Fakten zur Frage existieren. Unbestätigte Erzähltexte, Nutzereingaben und externe KI-Antworten werden nicht als bestätigte Fakten gelesen.
+- Mira spricht im Demo-Modus jetzt abhängig vom bestätigten Verlauf: Schlüssel bereits gefunden, Dornenwächter besiegt, Waldlicht wieder entzündet. Erledigte Aufgaben werden nicht erneut verlangt.
+- Neue Domänen- und Widgettests für thematische Abfragen, unbekannte Fakten, Unveränderlichkeit von Charakter-/Kampfwerten und Questzuständen sowie den Rückblick-Button.
+- Ausgangsbasis `ManuEtt/Dnd` main `239ee5f7d333a6388159e7d431039abb92e936b7` (0.3.4+10); keine Schema-, Backend-, API- oder Paketabhängigkeitsänderungen. Flutter-/Android-Abnahme für dieses Inkrement muss nach GitHub-Import erfolgen.
+
 ## 0.3.4+10 – 15.10.2026 – Widgettest-Fix und Attribut-Vorschau
 
 - Behebt den fehlerhaften Scrollweg im Widgettest `ui_srd_class_selection_test.dart`, der nach einem blockierten Speicherversuch die Hausregel-Checkbox nicht mehr fand (`StateError: Bad state: No element`). Bei Rueckspruengen wird jetzt negativ gescrollt.

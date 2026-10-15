@@ -358,14 +358,27 @@ class GameEngine {
         ),
       ],
     );
-    if (RegExp(
-      r'erinner|bisher|geschichte|tagebuch|zusammenfass',
-    ).hasMatch(words)) {
-      final facts = current.facts.values.take(8).join(' ');
+    if (MemoryEngine.isRecallRequest(text)) {
+      // Only explicitly confirmed structured sources can answer a recall.
+      // Free narrative, player claims and model text are not evidence.
+      final memories = MemoryEngine.retrieve(
+        current,
+        text,
+        limit: 4,
+        maxCharacters: 280,
+        matchingOnly: true,
+      );
+      final narration = memories.isEmpty
+          ? '${current.hero.name}, dazu finde ich in deinem bestätigten '
+              'Abenteuer noch keine passende Erinnerung. '
+              'Was möchtest du genauer untersuchen?'
+          : '${current.hero.name}, das ist aus deinem Abenteuer bestätigt:\n'
+              '${memories.map((entry) => '• $entry').join('\n')}\n'
+              'Woran möchtest du anknüpfen?';
       return _commit(
         campaign,
         current,
-        '${current.hero.name}, $facts Was möchtest du als Nächstes tun?',
+        narration,
         type: 'memory.recalled',
       );
     }
@@ -496,11 +509,27 @@ class GameEngine {
       );
     }
     if (RegExp(r'mira|hüterin|hueterin|befrag|spreche|reden').hasMatch(words)) {
-      return _commit(
-        campaign,
-        current,
-        'Mira lächelt dir zu. Der Schrein liegt jenseits des Waldpfades; ein Dornenwächter versperrt den Zugang. Suche den Messingschlüssel am Brunnen und bringe das Licht zurück. Was möchtest du tun?',
-      );
+      // Dialogue reflects only confirmed quest flags. Repeated conversations
+      // must not reset progress or send the hero after consumed items.
+      final answer = current.facts['questCompleted'] == 'true'
+          ? 'Mira dankt dir für das erneuerte Waldlicht. Der Schrein ist '
+              'bereits geöffnet, und du hast ihren Auftrag erfüllt. '
+              'Was möchtest du als Nächstes unternehmen?'
+          : current.facts['guardianDefeated'] == 'true'
+          ? 'Mira weiß, dass der Dornenwächter besiegt ist. '
+              '${current.facts['keyFound'] == 'true'
+                  ? 'Mit dem gefundenen Messingschlüssel kannst du den Schrein öffnen.'
+                  : 'Der Messingschlüssel am Dorfbrunnen fehlt dir noch.'} '
+              'Wie möchtest du fortfahren?'
+          : current.facts['keyFound'] == 'true'
+          ? 'Mira erkennt den Messingschlüssel, den du bereits gefunden hast. '
+              'Jetzt erwartet dich der Dornenwächter am Waldschrein. '
+              'Wie möchtest du vorgehen?'
+          : 'Mira lächelt dir zu. Der Schrein liegt jenseits des Waldpfades; '
+              'ein Dornenwächter versperrt den Zugang. Suche den '
+              'Messingschlüssel am Brunnen und bringe das Licht zurück. '
+              'Was möchtest du tun?';
+      return _commit(campaign, current, answer);
     }
     if (RegExp(
           r'schrein|tor|öffne|oeffne|entzünd|entzuend|licht',
@@ -1158,13 +1187,30 @@ class _EnemyTurn {
 
 /// Explicitly separates scene context, session recap and persistent world facts.
 class MemoryEngine {
+  /// Recognizes explicit requests for established adventure memories.
+  /// Free player actions mentioning historical nouns are not recall commands.
+  static bool isRecallRequest(String text) {
+    final normalized = _memoryNormalize(text);
+    return RegExp(
+      r'\b(?:erinner\w*|bisher\w*|tagebuch|'
+      r'zusammenfass\w*|rueckblick)\b',
+    ).hasMatch(normalized) ||
+        RegExp(r'\b(?:meine|unsere|bisherige)\s+geschichte\b')
+            .hasMatch(normalized) ||
+        RegExp(r'\bwas\s+weisst\s+du\b').hasMatch(normalized) ||
+        RegExp(r'\berzaehl\w*\s+(?:mir\s+)?(?:etwas\s+)?(?:ueber|von)\b')
+            .hasMatch(normalized);
+  }
+
   /// Selects confirmed memories by lexical relevance without model inference.
   /// Dialogue and generated narration are deliberately never memory sources.
+  /// With matchingOnly, nonmatching memories are excluded from topical recall.
   static List<String> retrieve(
     Campaign campaign,
     String action, {
     int limit = 20,
     int maxCharacters = 400,
+    bool matchingOnly = false,
   }) {
     if (limit < 1 || limit > 20 || maxCharacters < 40 || maxCharacters > 400) {
       throw const FormatException(
@@ -1191,6 +1237,11 @@ class MemoryEngine {
       }).length;
       final titleHits = matches(titleTokens);
       final bodyHits = matches(bodyTokens);
+      // Targeted recall must not fill missing matches with unrelated facts.
+      // An empty topical query is a general recap and uses the normal ranking.
+      if (matchingOnly && query.isNotEmpty && titleHits + bodyHits == 0) {
+        return;
+      }
       final score =
           priority +
           (titleHits + bodyHits > 0 ? 1000 : 0) +
@@ -1354,6 +1405,42 @@ String _memoryNormalize(String text) => text
 Set<String> _memoryTokens(String text) {
   const stopWords = {
     'ich',
+    'du',
+    'dich',
+    'an',
+    'erinnere',
+    'erinnerst',
+    'erinnern',
+    'erinnerung',
+    'erinnerungen',
+    'erzaehl',
+    'erzaehle',
+    'erzaehlen',
+    'erzaehlst',
+    'weisst',
+    'weiss',
+    'wissen',
+    'weissst',
+    'bisher',
+    'bisherige',
+    'bisherigen',
+    'bisheriges',
+    'geschichte',
+    'tagebuch',
+    'zusammenfassung',
+    'zusammenfassen',
+    'zusammen',
+    'fass',
+    'fasse',
+    'rueckblick',
+    'unsere',
+    'unser',
+    'unserer',
+    'passiert',
+    'geschehen',
+    'daran',
+    'dazu',
+    'darueber',
     'der',
     'die',
     'das',

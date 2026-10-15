@@ -1,3 +1,13 @@
+## 0.3.5+11 – Neues Inkrement (15.10.2026)
+
+**IMPLEMENTIERT:** Lokaler Rückblick via GameEngine/MemoryEngine, thematisch gefilterte bestätigte Erinnerungen für D&D-Kampagnen, Schaltfläche „Rückblick“ mit Erhalt eines ungesendeten Entwurfs, und zustandsabhängige Mira-Antworten im Demo-Abenteuer.
+
+**SICHERHEIT/DATEN:** Abfragen verwenden ausschließlich bereits bestätigte Kampagnenfakten, NPCs, Quests, Inventar und Orte. Unbestätigte Szene-/Nachrichtentexte werden nicht übernommen; Rückblicke verändern weder TP, Würfel, Inventar, Quests noch ausstehende Proben. Speicherung/Import/Export bleiben Version 1; keine neuen Server- oder Netzwerkrechte. Komplexe, freie KI-Erzählungen und semantische Gedächtnissuche sind weiterhin nicht implementiert.
+
+**CODETESTS:** `app/test/memory_recall_test.dart` ergänzt; `app/test/ui_app_test.dart` erweitert. **Vorbereitete** Dart-/Flutter-Tests sind noch keine bestandenen Laufzeittests. Python-Projektprüfungen und Backend-Prüfungen sind separat nach Ausführung zu dokumentieren. Lokale Umgebung hat kein Flutter/Dart-/Android-SDK. GitHub Actions muss die neuen Dart-Tests und APK-Builds nach Import ausführen.
+
+**GITHUB-BASIS:** `239ee5f7d333a6388159e7d431039abb92e936b7` vom 15.10.2026. Keine Änderungen direkt in den Hauptbranch geschrieben; ZIP kann in einem neuen Branch importiert werden. Vor Merge prüfen, ob GitHub seit dem Basisstand weiterentwickelt wurde.
+
 ## 0.3.4+10 – Fehlerkorrektur und Attribut-Modifikatorvorschau (15. Oktober 2026)
 
 Basis fuer diesen Quellstand ist der per Git-Tree-SHA bestaetigte main-Commit

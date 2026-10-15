@@ -589,6 +589,18 @@ class _AdventurePageState extends State<_AdventurePage> {
     }
   }
 
+  /// Read-only in-game recap; it never replaces an unfinished typed action.
+  Future<void> _recap() async {
+    if (widget.controller.busy) return;
+    await widget.voice.stopListening();
+    await widget.voice.stopSpeaking();
+    final previousMessageId = _lastMessageId;
+    await widget.controller.sendAction(
+      'Fasse unsere bisherige Geschichte zusammen.',
+    );
+    if (mounted) await _afterTurn(previousMessageId);
+  }
+
   String? get _lastMessageId {
     final messages = widget.controller.currentCampaign?.messages;
     return messages == null || messages.isEmpty ? null : messages.last.id;
@@ -893,6 +905,12 @@ class _AdventurePageState extends State<_AdventurePage> {
                 spacing: 14,
                 runSpacing: 8,
                 children: [
+                  OutlinedButton.icon(
+                    key: const ValueKey('adventure-memory-recap'),
+                    onPressed: widget.controller.busy ? null : _recap,
+                    icon: const Icon(Icons.history),
+                    label: const Text('Rückblick'),
+                  ),
                   OutlinedButton.icon(
                     onPressed: widget.controller.busy ? null : _roll,
                     icon: const Icon(Icons.casino),
