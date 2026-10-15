@@ -1,3 +1,7 @@
+## 0.3.7+13 – eigener KI-Spielleiter (implementiert, CI ausstehend)
+
+Generative Kampagnenplanung, dauerhafte Story-Bibel, von Spielerentscheidungen abgeleitete Handlungsstränge und NPC-Beziehungsänderungen sind als optionale Backend-Funktion umgesetzt. Nächste Schritte: GitHub-CI und Android-Abnahme mit Mock; echter OpenAI-End-to-End-Test mit bewusstem Kostenlimit; weitere D&D-Kampfregeln für frei entwickelte Gegner, transparente Bestätigung erzählerischer Behauptungen, größere kontextsensitive Erinnerungen und mehrteilige Kampagnen-„Akte“ über mehrere Sessions. Ohne Verbindung bleibt die Demo verfügbar. Kein permanentes selbstlernendes Modell.
+
 # Roadmap
 
 Die Reihenfolge folgt dem Ziel eines dauerhaft fortsetzbaren Android-Abenteuers. Jede Aufgabe wird mit einem funktionierenden Ergebnis und passenden Tests abgeschlossen. Der tatsächliche Stand und die erfolgreich durchgeführten Prüfungen stehen in [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md).

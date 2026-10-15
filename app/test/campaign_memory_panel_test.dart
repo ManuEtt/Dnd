@@ -34,7 +34,7 @@ void main() {
     await tester.ensureVisible(create);
     await tester.tap(create);
     await tester.pumpAndSettle();
-    expect(find.text('Handlungsstrang anlegen'), findsOneWidget);
+    expect(find.byType(AlertDialog), findsOneWidget);
     expect(find.byKey(const ValueKey('story-thread-title')), findsOneWidget);
     await tester.tap(find.text('Abbrechen'));
     await tester.pumpAndSettle();

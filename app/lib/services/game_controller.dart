@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import '../data/campaign_repository.dart';
 import '../domain/game_engine.dart';
+import '../domain/ai_story.dart';
 import '../domain/models.dart';
 import 'backend_narrator.dart';
 
@@ -97,6 +98,31 @@ class GameController extends ChangeNotifier {
     await _create(engine.createDemo(hero: valid));
   });
 
+  /// Opt-in generative campaign creation. No story is saved on network,
+  /// validation or provider failure; the hero sheet is kept unchanged.
+  Future<void> newAiCampaign(HeroCharacter hero, {required String theme}) =>
+      _run(() async {
+    if (!narrator.enabled) {
+      throw const FormatException(
+        'Verbinde unter Optionen einen KI-Spielleiter-Server.');
+    }
+    if (theme.trim().isEmpty || theme.length > 300) {
+      throw const FormatException('Das Thema muss 1 bis 300 Zeichen enthalten.');
+    }
+    final valid = HeroCharacter.fromJson(hero.toJson());
+    final response = await narrator.planStory(
+      heroName: valid.name, heroClass: valid.className, theme: theme,
+    );
+    if (response == null) {
+      throw const FormatException(
+        'Die Geschichte konnte nicht erzeugt werden. Es wurde keine Kampagne gespeichert.');
+    }
+    final plan = AiStoryPlan.fromJson(response);
+    final campaign = engine.createAiCampaign(valid, plan,
+      provider: narrator.provider ?? 'mock');
+    await _create(campaign);
+  });
+
   Future<void> openCampaign(String id) => _run(() async {
     final loaded = await repository.getCampaign(id);
     if (loaded == null) {
@@ -141,6 +167,40 @@ class GameController extends ChangeNotifier {
     }
     final campaign = update.campaign;
     final memories = MemoryEngine.retrieve(campaign, action);
+    if (campaign.storyBible['mode'] == 'ai') {
+      try {
+        final context = campaign.storyBible;
+        final recent = campaign.messages
+            .where((message) => message.role == 'player')
+            .map((message) => message.text)
+            .where((value) => value.trim().isNotEmpty)
+            .toList();
+        final response = await narrator.advanceStory(
+          campaignId: campaign.id, heroName: campaign.hero.name,
+          action: action.length > 2000 ? action.substring(0, 2000) : action,
+          scene: campaign.scene, premise: context['premise'] ?? '',
+          goal: context['goal'] ?? '', secret: context['secret'] ?? '',
+          threads: [for (final t in campaign.storyThreads)
+            {'id': t.id, 'title': t.title, 'description': t.description,
+              'status': t.status}],
+          npcs: [for (final npc in campaign.npcs)
+            {'id': npc.id, 'name': npc.name, 'relationship': npc.relationship}],
+          memories: memories.take(12).map((value) =>
+              value.length > 400 ? value.substring(0, 400) : value).toList(),
+          recentActions: recent.reversed.take(6).toList().reversed
+              .map((value) => value.length > 2000
+                  ? value.substring(0, 2000) : value).toList(),
+        );
+        if (response == null) return update;
+        final step = AiStoryStep.fromJson(response, campaign);
+        return engine.applyAiStoryStep(update, step,
+          provider: narrator.provider ?? 'mock', decision: action);
+      } catch (_) {
+        narrator.statusMessage =
+            'Der KI-Fortschritt wurde nicht übernommen. Der bestätigte lokale Spielzug bleibt erhalten.';
+        return update;
+      }
+    }
     try {
       final response = await narrator.narrate(
         campaignId: campaign.id,

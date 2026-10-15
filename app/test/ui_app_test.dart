@@ -135,6 +135,10 @@ void main() {
       expect(controller.currentCampaign!.messages.length, greaterThan(1));
       await tester.tap(find.text('Tagebuch'));
       await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.text('Dauerhafte Erinnerungen'), 280,
+        scrollable: find.byType(Scrollable).first,
+      );
       expect(find.text('Dauerhafte Erinnerungen'), findsOneWidget);
       expect(tester.takeException(), isNull);
       await tester.tap(find.text('Helden'));

@@ -432,6 +432,112 @@ class BackendNarrator extends ChangeNotifier {
     }
   }
 
+  /// The same short-lived session and user-approved request limit also bound
+  /// generative campaign planning. The story provider cannot access SQLite.
+  Future<Map<String, dynamic>?> _storyRequest(
+    String route, Map<String, Object?> input, String resultKey,
+  ) async {
+    if (_disposed || !enabled || _sessionToken == null || _baseUri == null) {
+      statusMessage = 'Verbinde zuerst einen Spielleiter-Server.';
+      _changed();
+      return null;
+    }
+    if (expiresAt == null || !expiresAt!.isAfter(_clock())) {
+      disconnect();
+      statusMessage = _failure(401);
+      _changed();
+      return null;
+    }
+    if (requestsUsed >= requestLimit) {
+      statusMessage = 'Das bestätigte KI-Anfragelimit ist erreicht.';
+      _changed();
+      return null;
+    }
+    final generation = _generation;
+    ++requestsUsed;
+    _changed();
+    try {
+      final response = await _request(
+        generation: generation, method: 'POST',
+        uri: _endpoint(_baseUri!, route), bearerToken: _sessionToken!,
+        body: input,
+      );
+      if (!_current(generation) || response == null) return null;
+      if (expiresAt == null || !expiresAt!.isAfter(_clock())) {
+        disconnect();
+        statusMessage = _failure(401);
+        _changed();
+        return null;
+      }
+      if (response.statusCode != 200) {
+        if (response.statusCode == 401) {
+          ++_generation;
+          _clearSession();
+          _cancelPending();
+        }
+        statusMessage = _failure(response.statusCode);
+        _changed();
+        return null;
+      }
+      final body = response.body;
+      if (body is! Map || body['provider'] != _authorizedProvider ||
+          body['stateChanges'] is! List ||
+          (body['stateChanges'] as List).isNotEmpty ||
+          body[resultKey] is! Map<String, dynamic> ||
+          jsonEncode(body[resultKey]).contains(_sessionToken!)) {
+        statusMessage = 'Ungültiger KI-Vorschlag. Keine Änderung übernommen.';
+        _changed();
+        return null;
+      }
+      return Map<String, dynamic>.from(body[resultKey] as Map);
+    } catch (_) {
+      if (_current(generation)) {
+        statusMessage = 'Der KI-Dienst ist nicht erreichbar. Dein letzter Spielstand bleibt erhalten.';
+        _changed();
+      }
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>?> planStory({
+    required String heroName, required String heroClass,
+    required String theme,
+  }) {
+    if (heroName.isEmpty || heroName.length > 80 ||
+        heroClass.isEmpty || heroClass.length > 80 ||
+        theme.trim().isEmpty || theme.length > 300) {
+      throw const FormatException('Ungültiges Kampagnenthema.');
+    }
+    return _storyRequest('/v1/story/start', {
+      'heroName': heroName, 'heroClass': heroClass, 'theme': theme,
+    }, 'story');
+  }
+
+  Future<Map<String, dynamic>?> advanceStory({
+    required String campaignId, required String heroName,
+    required String action, required String scene,
+    required String premise, required String goal, required String secret,
+    required List<Map<String, String>> threads,
+    required List<Map<String, String>> npcs,
+    required List<String> memories, required List<String> recentActions,
+  }) {
+    if (!RegExp(r'^[a-zA-Z0-9_-]{1,128}$').hasMatch(campaignId) ||
+        action.trim().isEmpty || action.length > 2000 ||
+        premise.isEmpty || goal.isEmpty || secret.isEmpty ||
+        scene.isEmpty || scene.length > 4000 ||
+        threads.length > 100 || npcs.length > 50 ||
+        memories.length > 20 || recentActions.length > 8) {
+      throw const FormatException('KI-Geschichtenkontext ungültig.');
+    }
+    return _storyRequest('/v1/story/advance', {
+      'campaignId': campaignId, 'heroName': heroName,
+      'action': action, 'scene': scene, 'premise': premise,
+      'goal': goal, 'secret': secret,
+      'threads': threads, 'npcs': npcs,
+      'memories': memories, 'recentActions': recentActions,
+    }, 'turn');
+  }
+
   @override
   void dispose() {
     _disposed = true;

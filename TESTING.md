@@ -1,3 +1,9 @@
+## KI-Geschichtenmodul 0.3.7+13
+
+Neue Tests: `app/test/ai_story_test.dart`, `app/test/ai_story_integration_test.dart`, `backend/test/story.test.ts`. Zusammen mit `app/test/campaign_memory_panel_test.dart` und `app/test/ui_app_test.dart` nach Import in GitHub Actions ausführen. Die Integrationstests nutzen nur einen simulierten Story-Provider und echte lokale SQLite-Revisionsspeicherung. Behauptet wird kein bestandener Flutter-Test, solange der Lauf nicht erfolgreich abgeschlossen wurde.
+
+Zusätzlich auf Android prüfen: KI-Start mit Mock und OpenAI (ausdrückliche Kostenfreigabe), mehrere verschiedene Themen, Neustart nach drei Entscheidungen, NPC- und Queststatus, unterbrochene Sitzung, volles lokales Kontingent, fehlerhafte Providerantwort, PDF-freier JSON-Export/Import, alte 0.3.6-Spielstände und Abgrenzung der Mooswacht-Demo. Der narrative KI-Spielzug darf niemals Gegenstände, HP oder Würfel verändern. Die Backend-Endpunkte `/v1/story/start` und `/v1/story/advance` teilen sich Limits mit `/v1/narrate`.
+
 # Tests und Abnahme
 
 Tests verwenden kontrollierbare Zufallsquellen und Anbieter-Mocks. Es sind keine kostenpflichtigen Modellaufrufe erforderlich. Ein Test gilt erst nach einem tatsächlich beobachteten erfolgreichen Lauf als bestanden; implementierter Testcode allein ist kein Testergebnis.

@@ -35,7 +35,7 @@ test('health is public, identifies mock, disables cache', async (t) => {
   const result = await app.inject('/health');
   assert.equal(result.statusCode, 200);
   assert.equal(result.json().provider, 'mock');
-  assert.equal(result.json().version, '0.2.0');
+  assert.equal(result.json().version, '0.3.0');
   assert.equal(result.headers['cache-control'], 'no-store');
 });
 

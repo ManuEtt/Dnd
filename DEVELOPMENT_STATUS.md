@@ -1,3 +1,11 @@
+## 0.3.7+13 – KI-Kampagnen (15.10.2026)
+
+Die neue Funktion erfordert einen verbundenen Backend-Erzähler. Im Testmodus erzeugt der Mock lediglich eine feste Story-Variante; kreative Kampagnen benötigen den ausdrücklich genehmigten OpenAI-Anbieter (`AI_PROVIDER=openai`, `ALLOW_PAID_AI=true`, serverseitig API-Key und Modell). Die App verbraucht pro Start und freiem Zug eine freigegebene Backend-Anfrage, zählt sie lokal mit und nutzt serverseitige Limits. Bei Abbruch bleibt der letzte bestätigte Spielstand erhalten.
+
+Aktuelle Grenzen: kein autonomes Training der Modellgewichte, keine Live-Sprach-KI, kein KI-berechneter Kampf und keine garantierte Korrektheit freier KI-Prosa. Stattdessen kontextbasierte Story-Entwicklung aus persistenter Story-Bibel, NPC- und Handlungsstrangstatus und begrenzten früheren Entscheidungen. Die „geheime“ Wendung bleibt im lokalen gespeicherten Story-Kontext und damit beim Export sichtbar.
+
+Grundlage: Repository `main` Commit `ea486481d28856228abf65dd209857028b3b3c45`. Dieser Stand scheiterte im CI mit 299 erfolgreichen und 2 fehlerhaften Flutter-Tests (Widget-Selektor / Tagebuch-Scrollen); die betreffenden Tests wurden im Quellpaket korrigiert. Die Korrekturen sind mangels Flutter noch nicht in CI bestätigt. Vor Übergabe lokal 22 Python-Tests und TypeScript-Syntax erfolgreich; vollständige Test- und APK-Abnahme ausschließlich in GitHub Actions.
+
 ## 0.3.6+12 – Erweiterung des Kampagnengedächtnisses (15.10.2026)
 
 **Implementiert:** Drei neue Bereiche im Tagebuch für speicherbare Sitzungsschnappschüsse, Status und Beschreibung offener Handlungsstränge sowie protokollierte NPC-Beziehungen. Alle Änderungen erfordern eine Benutzeraktion. Neue Ereignistypen `memory.sessionRecapSaved`, `memory.npcRelationshipRecorded`, `memory.storyThreadSaved`; Änderungen liegen im bestätigten SQLite-Revisionsjournal und JSON-Export. Die lokale Erinnerungssuche berücksichtigt diese Einträge. Automatische generative Lore- und Beziehungsentscheidungen bleiben ausgeschlossen.

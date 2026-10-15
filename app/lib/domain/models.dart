@@ -780,6 +780,7 @@ class Campaign {
     List<Quest> quests = const [],
     List<SessionRecap> sessionRecaps = const [],
     List<StoryThread> storyThreads = const [],
+    Map<String, String> storyBible = const {},
     List<NpcRelationshipNote> npcRelationshipNotes = const [],
     List<WorldNpc> npcs = const [],
     List<Place> places = const [],
@@ -792,6 +793,7 @@ class Campaign {
        quests = List.unmodifiable(quests),
        sessionRecaps = List.unmodifiable(sessionRecaps),
        storyThreads = List.unmodifiable(storyThreads),
+       storyBible = Map.unmodifiable(storyBible),
        npcRelationshipNotes = List.unmodifiable(npcRelationshipNotes),
        npcs = List.unmodifiable(npcs),
        places = List.unmodifiable(places),
@@ -803,6 +805,7 @@ class Campaign {
   final List<Quest> quests;
   final List<SessionRecap> sessionRecaps;
   final List<StoryThread> storyThreads;
+  final Map<String, String> storyBible;
   final List<NpcRelationshipNote> npcRelationshipNotes;
   final List<WorldNpc> npcs;
   final List<Place> places;
@@ -819,6 +822,7 @@ class Campaign {
     List<Quest>? quests,
     List<SessionRecap>? sessionRecaps,
     List<StoryThread>? storyThreads,
+    Map<String, String>? storyBible,
     List<NpcRelationshipNote>? npcRelationshipNotes,
     List<WorldNpc>? npcs,
     List<Place>? places,
@@ -838,6 +842,7 @@ class Campaign {
     quests: quests ?? this.quests,
     sessionRecaps: sessionRecaps ?? this.sessionRecaps,
     storyThreads: storyThreads ?? this.storyThreads,
+    storyBible: storyBible ?? this.storyBible,
     npcRelationshipNotes: npcRelationshipNotes ?? this.npcRelationshipNotes,
     npcs: npcs ?? this.npcs,
     places: places ?? this.places,
@@ -863,6 +868,7 @@ class Campaign {
     'quests': quests.map((e) => e.toJson()).toList(),
     'sessionRecaps': sessionRecaps.map((e) => e.toJson()).toList(),
     'storyThreads': storyThreads.map((e) => e.toJson()).toList(),
+    'storyBible': storyBible,
     'npcRelationshipNotes':
         npcRelationshipNotes.map((e) => e.toJson()).toList(),
     'npcs': npcs.map((e) => e.toJson()).toList(),
@@ -899,6 +905,11 @@ class Campaign {
     final threads = _list(j['storyThreads'], 'Handlungsstränge')
         .map((e) => StoryThread.fromJson(_map(e, 'Handlungsstrang')))
         .toList();
+    final rawBible = j['storyBible'] == null ? <String, dynamic>{} : _map(j['storyBible'], 'KI-Geschichtenbuch');
+    if (rawBible.length > 12 || rawBible.keys.any((key) => key.length > 60) ||
+        rawBible.values.any((value) => value is! String || value.length > 1500)) {
+      throw const FormatException('Ungültiges KI-Geschichtenbuch.');
+    }
     final relationshipNotes = _list(j['npcRelationshipNotes'], 'NPC-Notizen')
         .map((e) => NpcRelationshipNote.fromJson(_map(e, 'NPC-Notiz')))
         .toList();
@@ -978,6 +989,7 @@ class Campaign {
       ).map((e) => Quest.fromJson(_map(e, 'Quest'))).toList(),
       sessionRecaps: recaps,
       storyThreads: threads,
+      storyBible: {for (final entry in rawBible.entries) entry.key: entry.value as String},
       npcRelationshipNotes: relationshipNotes,
       npcs: npcs,
       places: _list(

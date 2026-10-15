@@ -1,6 +1,6 @@
 # Spielleiter-Backend
 
-Optionaler Fastify-/TypeScript-Dienst für **Der lebendige Spielleiter**. Die App kann ihren lokalen Demo-Spielleiter ohne diesen Dienst verwenden. Der Server liefert ausschließlich Erzähltext; er hat keinen Datenbankzugriff und darf weder Trefferpunkte noch Inventare oder andere bestätigte Zustände verändern.
+Optionaler Fastify-/TypeScript-Dienst für **Der lebendige Spielleiter**. Die App kann ihren lokalen Demo-Spielleiter ohne diesen Dienst verwenden. Der Server liefert Erzähltext und **validierte, unverbindliche Story-Vorschläge**; er hat keinen Datenbankzugriff und darf weder Trefferpunkte noch Inventare oder andere bestätigte Regelzustände verändern. Die lokale App nimmt nur erlaubte erzählerische Änderungen selbst an.
 
 ## Lokal starten
 
@@ -29,6 +29,8 @@ Alternativ: `npm run build` und `npm start`. Standardadresse: `http://127.0.0.1:
 | `POST /v1/session` | `Authorization: Bearer <LOCAL_ACCESS_TOKEN>` | Kurzlebiger signierter Sitzungstoken |
 | `GET /v1/session` | `Authorization: Bearer <Sitzungstoken>` | Prüft Sitzung, Provider und Ablauf ohne Modellaufruf |
 | `POST /v1/narrate` | `Authorization: Bearer <Sitzungstoken>` | Deutscher Erzähltext mit `stateChanges: []` |
+| `POST /v1/story/start` | `Authorization: Bearer <Sitzungstoken>` | Kampagnenplan mit Titel, Welt, Auftakt, geheimem Plot, NPCs, Orten und Handlungssträngen |
+| `POST /v1/story/advance` | `Authorization: Bearer <Sitzungstoken>` | Neue Szene, Handlungsstrang-Status und NPC-Beziehungs-Vorschläge, **keine Regeländerungen** |
 
 `POST /v1/session` erwartet den JSON-Body `{}`. Die Antwort enthält `token`, `tokenType`, `expiresAt`, `expiresIn`, `provider` und `scope: "narration:read-only"`. Standardlaufzeit: fünf Minuten, maximal 15 Minuten. Das ist ein eigenes Token für dieses Backend; es ist **kein OpenAI-Realtime-Token**.
 
@@ -58,6 +60,20 @@ Felder sind begrenzt: `campaignId` 128 Zeichen aus Buchstaben, Ziffern, `_`, `-`
 
 Fehler: `400` ungültige Eingabe, `401` fehlender oder abgelaufener Token, `413` zu großer Body, `429` Nutzungslimit, `502` Providerfehler, `503` fehlende lokale Zugangskonfiguration. Bei `401` kann der Client erneut eine Sitzung anfordern. Bei `502` steht weiterhin der lokale Demo-Modus zur Verfügung. Providerdetails und Eingabetexte werden nicht protokolliert oder in Fehlermeldungen zurückgegeben.
 
+## Eigenständige KI-Kampagnen (0.3.0)
+
+Der bestehende Zugang und das Anfragelimit gelten auch für die beiden neuen Endpunkte. Zum Einstieg sendet der Client:
+
+```json
+{"heroName":"Arescan","heroClass":"Waldläufer","theme":"Dunkle Fantasy und politische Intrigen"}
+```
+
+Antwort `POST /v1/story/start`: `{ "provider": "openai", "stateChanges": [], "story": { ... } }`. Das vollständige `story`-Objekt besteht aus `title`, `world`, `opening`, `premise`, `secret`, `goal`, `threads`, `npcs`, `places`. Diese Felder werden vor der Aufnahme im Client erneut validiert. Die geplante geheime Wendung bleibt lokal und ist im Export sichtbar.
+
+An `POST /v1/story/advance` sendet der Client `campaignId`, `heroName`, `action`, `scene`, `premise`, `goal`, `secret`, `threads` (IDs, Titel, Beschreibungen, Status), `npcs` (IDs, Namen, Beziehungen), passende bestätigte `memories` und höchstens acht `recentActions`. Die Antwort enthält `{ "provider": "openai", "stateChanges": [], "turn": { "narration": "...", "threadUpdates": [], "newThreads": [], "npcUpdates": [] } }`. IDs müssen bekannt oder bei neuen Fäden eindeutig sein. Nur die App kann die bestätigte Revision ändern; Backend-Anfragen verändern nie Datenbanken oder Regelwerte.
+
+Im Offline-Testmodus (`AI_PROVIDER=mock`) sind der Plot und die Reaktionen **regelbasiert und nicht frei generiert**. Der OpenAI-Modus ruft `POST /v1/responses` mit `text.format.type=json_schema`, `strict=true` und `store=false` auf; strukturierte Ausgaben werden zusätzlich server- und clientseitig geprüft. Beide Endpunkte teilen sich das Minuten- und Tageslimit mit `/v1/narrate`. **Ein Anfragelimit ist kein Euro-Kostenlimit.**
+
 ## Optionale OpenAI-Anbindung
 
 Default ist `AI_PROVIDER=mock`: keine externe KI-Verbindung, keine Kosten. Ein echter Aufruf benötigt gleichzeitig:
@@ -69,7 +85,7 @@ OPENAI_API_KEY=<nur auf dem Server setzen>
 OPENAI_MODEL=<im eigenen Konto verfügbares Responses-Textmodell auswählen>
 ```
 
-Der Provider verwendet `POST https://api.openai.com/v1/responses`, `instructions`, Textinput, `max_output_tokens=600` und `store=false`. Keine Tools, keine Zustandsänderungen, 20 Sekunden Timeout. `store=false` deaktiviert die Speicherung einer abrufbaren Responses-Antwort; es ersetzt keine Prüfung der Datenschutz- und Aufbewahrungsbedingungen des API-Anbieters. Nutzereingaben werden bei diesem Provider an OpenAI übertragen. Die Modellantwort ist Erzähltext; die lokale Regelengine bleibt allein für Zustandsänderungen zuständig.
+Der Provider verwendet `POST https://api.openai.com/v1/responses`, `instructions`, Textinput und `store=false` (klassische Erzählung maximal 600 Tokens; strukturierter Story-Vorschlag maximal 2400 Tokens). Keine Tools, keine Zustandsänderungen, 20 Sekunden Timeout. `store=false` deaktiviert die Speicherung einer abrufbaren Responses-Antwort; es ersetzt keine Prüfung der Datenschutz- und Aufbewahrungsbedingungen des API-Anbieters. Nutzereingaben werden bei diesem Provider an OpenAI übertragen. Die Modellantwort ist Erzähltext; die lokale Regelengine bleibt allein für Zustandsänderungen zuständig.
 
 Die offiziellen [Text-Dokumentation](https://developers.openai.com/api/docs/guides/text), [OpenAPI-Spezifikation](https://github.com/openai/openai-openapi/blob/master/openapi.yaml) und [Realtime-WebRTC-Dokumentation](https://developers.openai.com/api/docs/guides/realtime-webrtc) wurden am 13.10.2026 gelesen. Der dokumentierte Realtime-Endpunkt für ephemere Credentials lautet `/v1/realtime/client_secrets`; WebRTC und dessen Tokenausstellung sind hier **noch nicht implementiert**.
 
@@ -95,3 +111,5 @@ npm audit
 **NICHT GETESTET:** echter OpenAI-Account, ausgewähltes Live-Modell, Android-Client-zu-Backend-Verbindung, öffentlicher HTTPS-Reverse-Proxy, Mehrspielerbetrieb und Realtime.
 
 **0.2.0:** Typecheck, Build und 22 Tests erfolgreich unter Node.js 22.14.0 und 24.19.0. Ein zusätzlicher echter Node-/Dart-Protokolltest prüft die Server-CLI, Sitzung, Erzählung und den lokalen Fallback. Keine bezahlten API-Aufrufe.
+
+**0.3.0:** Zwei strukturierte Story-Endpunkte neu. Isolierte Validatoren und Mock-Laufzeitprüfung sind lokal bestanden; vollständige Fastify-/TypeScript-Tests erst nach `npm ci` und CI, echte OpenAI-Responses nicht abgenommen.

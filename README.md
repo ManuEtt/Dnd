@@ -1,3 +1,13 @@
+## Neu in 0.3.7: Eine eigene KI-Kampagne beginnen
+
+1. In **Helden** einen Charakter anlegen und speichern.
+2. Unter **Optionen** einen eigenen HTTPS-Backend-Spielleiter verbinden. Für echte kreative KI muss dessen OpenAI-Anbieter serverseitig eingerichtet und die kostenpflichtige Nutzung ausdrücklich freigegeben sein. Der lokale `mock`-Anbieter bietet nur eine fest vorgegebene Testgeschichte.
+3. Unter **Kampagnen** den Button **KI-Kampagne erstellen** wählen, Held und Wunschthema angeben. Die KI liefert Welt, Einstieg, verborgenes Ziel, NPCs und offene Handlungsstränge; die App validiert und speichert sie in SQLite.
+4. Freie Aktionen im Abenteuer verändern erzählerische Handlungsstränge und Beziehungen. Die KI erhält nur den begrenzten Kontext und gibt **Vorschläge** zurück. Würfelergebnisse, Kämpfe, HP, Inventar und Belohnungen bleiben bei der lokalen Regelengine.
+5. Im **Tagebuch** findest du den sichtbaren Kampagnenplan, den Entscheidungszähler, offene/gelöste Geschichten und NPC-Beziehungsnotizen. Der interne Twist wird beim Spielen nicht vorzeitig angezeigt, kann aber im vollständigen JSON-Export gelesen werden.
+
+Bei Ausfall des Backends wird ein lokaler Erzähltext verwendet und kein KI-Fortschritt behauptet. Eine abgebrochene Generierung erzeugt keinen leeren Spielstand. Kostenfreigabe und Sitzungstoken werden nicht dauerhaft gespeichert. **„Lernend“ bedeutet hier ein wachsendes gespeichertes Kampagnengedächtnis, nicht das Trainieren eines neuen KI-Modells.**
+
 # Der lebendige Spielleiter
 
 **Aktueller Quellstand 0.3.6+12 (Flutter-CI noch abzunehmen):** Ein

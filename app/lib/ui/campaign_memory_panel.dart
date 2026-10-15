@@ -195,6 +195,19 @@ class CampaignMemoryPanel extends StatelessWidget {
     if (campaign == null) return const SizedBox.shrink();
     return Column(
       children: [
+        if (campaign.storyBible['mode'] == 'ai')
+          _section(context, 'KI-Kampagnenchronik', Icons.auto_awesome, [
+            Text('Ausgangslage: ${campaign.storyBible['premise'] ?? ''}'),
+            const SizedBox(height: 8),
+            Text('Übergeordnetes Ziel: ${campaign.storyBible['goal'] ?? ''}'),
+            const SizedBox(height: 8),
+            Text('Fortgeschriebene Entscheidungen: '
+              '${campaign.storyBible['turnCount'] ?? '0'}'),
+            const SizedBox(height: 8),
+            const Text('Die KI berücksichtigt frühere Spielerentscheidungen, '
+              'NPC-Beziehungen und Handlungsstränge. Sie trainiert dabei kein '
+              'eigenes Modell. Das geheime Story-Ziel bleibt vorerst verborgen.'),
+          ]),
         _section(context, 'Sitzungsrückblicke', Icons.auto_stories_outlined, [
           const Text('Aus bestätigten Fakten, Quest- und NPC-Status; '
               'keine KI-Erfindungen oder unverifizierten Dialoge.'),

@@ -232,7 +232,7 @@ class _HomePage extends StatelessWidget {
   final _Play onPlay;
   final VoidCallback onCharacters;
 
-  Future<void> _newCampaign(BuildContext context) async {
+  Future<void> _newCampaign(BuildContext context, {bool ai = false}) async {
     final hero = await showDialog<HeroCharacter>(
       context: context,
       builder: (context) => SimpleDialog(
@@ -267,7 +267,39 @@ class _HomePage extends StatelessWidget {
         ],
       ),
     );
-    if (hero != null) onPlay(() => controller.newCampaign(hero));
+    if (hero == null || !context.mounted) return;
+    if (!ai) {
+      onPlay(() => controller.newCampaign(hero));
+      return;
+    }
+    var prompt = 'Epische Fantasy mit Geheimnissen, lebendigen NPCs und moralischen Entscheidungen';
+    final theme = await showDialog<String>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Eigene KI-Geschichte'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Der verbundene Erzähldienst entwickelt eine neue Geschichte. '
+                'Jeder weitere KI-Zug zählt zum vereinbarten Anfragelimit. '
+                'Die Geschichte bleibt lokal gespeichert.'),
+              const SizedBox(height: 14),
+              TextFormField(initialValue: prompt, maxLength: 300, maxLines: 3,
+                onChanged: (value) => prompt = value,
+                decoration: const InputDecoration(labelText: 'Wunschthema')),
+            ],
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context),
+              child: const Text('Abbrechen')),
+            FilledButton(onPressed: () => Navigator.pop(context, prompt),
+              child: const Text('Geschichte erstellen')),
+          ],
+        ),
+      );
+    if (theme != null && theme.trim().isNotEmpty) {
+      onPlay(() => controller.newAiCampaign(hero, theme: theme.trim()));
+    }
   }
 
   @override
@@ -315,6 +347,13 @@ class _HomePage extends StatelessWidget {
                     icon: const Icon(Icons.add),
                     label: const Text('Neue Kampagne'),
                   ),
+                  OutlinedButton.icon(
+                    onPressed: controller.busy || !controller.narrator.enabled
+                        ? null : () => _newCampaign(context, ai: true),
+                    icon: const Icon(Icons.auto_awesome),
+                    label: Text(controller.narrator.provider == 'mock'
+                        ? 'Testgeschichte starten' : 'KI-Kampagne erstellen'),
+                  ),
                   TextButton.icon(
                     onPressed: onCharacters,
                     icon: const Icon(Icons.person_add_alt),
@@ -326,6 +365,16 @@ class _HomePage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 18),
+        if (!controller.narrator.enabled) const _Notice(
+          icon: Icons.auto_awesome_outlined,
+          text: 'Für eine frei entwickelte KI-Kampagne zuerst unter „Optionen“ '
+            'einen Spielleiter-Server verbinden und bei Bedarf ausdrücklich '
+            'den kostenpflichtigen KI-Anbieter freigeben. Ohne Server bleibt die Demo verfügbar.',
+        ),
+        if (controller.narrator.enabled && controller.narrator.provider == 'mock')
+          const _Notice(icon: Icons.science_outlined,
+            text: 'Der verbundene Mock-Dienst erzeugt nur eine regelbasierte Testgeschichte. '
+              'Für eine wirklich generierte Geschichte ist der OpenAI-Anbieter erforderlich.'),
         const _Notice(
           icon: Icons.offline_bolt_outlined,
           text:

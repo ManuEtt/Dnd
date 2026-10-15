@@ -3,6 +3,7 @@ import type { Config } from './config.js';
 import { bearerToken, issueSession, secureEqual, verifySession } from './auth.js';
 import { WindowLimiter } from './limits.js';
 import { createNarrator, type NarrationInput, type Narrator } from './providers.js';
+import { parseStoryPlan, parseStoryTurn, type StoryStartInput, type StoryTurnInput } from './story.js';
 
 interface AppDependencies {
   clock?: () => number;
@@ -50,7 +51,7 @@ export function buildApp(config: Config, dependencies: AppDependencies = {}) {
     });
   });
 
-  app.get('/health', async () => ({ status: 'ok', provider: config.provider, version: '0.2.0' }));
+  app.get('/health', async () => ({ status: 'ok', provider: config.provider, version: '0.3.0' }));
 
   app.post('/v1/session', {
     schema: { body: { type: 'object', additionalProperties: false, properties: {} } },
@@ -86,6 +87,62 @@ export function buildApp(config: Config, dependencies: AppDependencies = {}) {
       provider: config.provider,
       expiresAt: new Date(session.expiresAt * 1000).toISOString(),
     };
+  });
+
+  // Shared provider budget: creative generation counts just like narration.
+  const storyRateLimit = async (request: { ip: string; headers: { authorization?: string } }, reply: {
+    header: (name: string, value: string) => unknown;
+    code: (status: number) => { send: (body: unknown) => unknown };
+  }) => {
+    const token = bearerToken(request.headers.authorization);
+    const session = token ? verifySession(token, config.sessionSecret, clock()) : undefined;
+    if (!session) return reply.code(401).send({ error: 'invalid_session', message: 'Die Sitzung ist abgelaufen.' });
+    const now = clock();
+    if (!minuteLimiter.take(session.subject, now, 60000, config.requestsPerMinute)) {
+      reply.header('Retry-After', '60');
+      return reply.code(429).send({ error: 'rate_limit', message: 'Das Minutenlimit ist erreicht.' });
+    }
+    if (!dayLimiter.take(session.subject, now, 86400000, config.requestsPerDay)) {
+      reply.header('Retry-After', '86400');
+      return reply.code(429).send({ error: 'daily_limit', message: 'Das Tageslimit ist erreicht.' });
+    }
+  };
+  const threadSchema = { type: 'object', additionalProperties: false,
+    required: ['id', 'title', 'description', 'status'], properties: {
+      id: nonBlankString(64), title: nonBlankString(120),
+      description: { type: 'string', maxLength: 1000 },
+      status: { type: 'string', enum: ['open', 'resolved', 'abandoned'] },
+    } };
+  const npcSchema = { type: 'object', additionalProperties: false,
+    required: ['id', 'name', 'relationship'], properties: {
+      id: nonBlankString(64), name: nonBlankString(80), relationship: nonBlankString(80),
+    } };
+  app.post<{ Body: StoryStartInput }>('/v1/story/start', {
+    schema: { body: { type: 'object', additionalProperties: false,
+      required: ['heroName', 'heroClass', 'theme'], properties: {
+        heroName: nonBlankString(80), heroClass: nonBlankString(80), theme: nonBlankString(300),
+      } } }, preHandler: storyRateLimit,
+  }, async (request, reply) => {
+    if (!narrator.startStory) return reply.code(503).send({ error: 'story_unavailable' });
+    try { return { provider: config.provider, stateChanges: [], story: parseStoryPlan(await narrator.startStory(request.body)) }; }
+    catch { return reply.code(502).send({ error: 'provider_unavailable' }); }
+  });
+  app.post<{ Body: StoryTurnInput }>('/v1/story/advance', {
+    schema: { body: { type: 'object', additionalProperties: false,
+      required: ['campaignId', 'heroName', 'action', 'scene', 'premise', 'goal', 'secret', 'threads', 'npcs', 'memories', 'recentActions'],
+      properties: {
+        campaignId: { type: 'string', minLength: 1, maxLength: 128, pattern: '^[a-zA-Z0-9_-]+$' },
+        heroName: nonBlankString(80), action: nonBlankString(2000), scene: nonBlankString(4000),
+        premise: nonBlankString(1000), goal: nonBlankString(500), secret: nonBlankString(1000),
+        threads: { type: 'array', maxItems: 100, items: threadSchema },
+        npcs: { type: 'array', maxItems: 50, items: npcSchema },
+        memories: { type: 'array', maxItems: 20, items: nonBlankString(400) },
+        recentActions: { type: 'array', maxItems: 8, items: nonBlankString(2000) },
+      } } }, preHandler: storyRateLimit,
+  }, async (request, reply) => {
+    if (!narrator.advanceStory) return reply.code(503).send({ error: 'story_unavailable' });
+    try { return { provider: config.provider, stateChanges: [], turn: parseStoryTurn(await narrator.advanceStory(request.body), request.body) }; }
+    catch { return reply.code(502).send({ error: 'provider_unavailable' }); }
   });
 
   app.post<{ Body: NarrationInput }>('/v1/narrate', {
