@@ -558,7 +558,7 @@ class _SavingThrowTile extends StatelessWidget {
               padding: const EdgeInsets.only(right: 6),
               child: Tooltip(message: 'Rettungswurf geübt', child: Icon(Icons.verified, color: _gold, size: 16)),
             ),
-          Text(total == null ? '–' : _signed(total),
+          Text(total == null ? '–' : _signed(total!),
               style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: _ivory)),
         ],
       ),
