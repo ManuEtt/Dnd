@@ -33,8 +33,13 @@ export interface StoryPlan {
   npcs: StoryNpcDraft[];
   places: StoryPlaceDraft[];
 }
+export interface AdventureDraft {
+  id: string; title: string; description: string; archetype: string;
+  questTitle: string; questDescription: string;
+}
 export interface StoryTurn {
   narration: string;
+  adventure: AdventureDraft | null;
   threadUpdates: Array<{ id: string; status: 'open' | 'resolved' | 'abandoned'; description: string }>;
   newThreads: StoryThreadDraft[];
   npcUpdates: Array<{ id: string; relationship: string; note: string }>;
@@ -82,6 +87,17 @@ export function parseStoryPlan(raw: unknown): StoryPlan {
     threads, npcs, places,
   };
 }
+const allowedArchetypes = ['bandit', 'wolf', 'skeleton', 'goblin', 'orc', 'investigation'];
+export function parseAdventureDraft(raw: unknown): AdventureDraft {
+  const o = object(raw);
+  const archetype = string(o.archetype, 32);
+  if (!allowedArchetypes.includes(archetype)) throw new Error('unknown_adventure_archetype');
+  return { id: id(o.id), title: string(o.title, 120),
+    description: string(o.description, 500), archetype,
+    questTitle: string(o.questTitle, 120),
+    questDescription: string(o.questDescription, 500) };
+}
+
 export function parseStoryTurn(raw: unknown, input: StoryTurnInput): StoryTurn {
   const o = object(raw);
   const knownThreads = new Set(input.threads.map(x => x.id));
@@ -102,7 +118,8 @@ export function parseStoryTurn(raw: unknown, input: StoryTurnInput): StoryTurn {
   });
   unique(threadUpdates.map(x => x.id)); unique(newThreads.map(x => x.id)); unique(npcUpdates.map(x => x.id));
   if (newThreads.some(x => knownThreads.has(x.id)) || input.threads.length + newThreads.length > 100) throw new Error('story_thread_collision');
-  return { narration: string(o.narration, 4000), threadUpdates, newThreads, npcUpdates };
+  const adventure = o.adventure == null ? null : parseAdventureDraft(o.adventure);
+  return { narration: string(o.narration, 4000), threadUpdates, newThreads, npcUpdates, adventure };
 }
 
 /** Offline mock is deterministic and explicitly not a generative AI. */
@@ -127,5 +144,18 @@ export function mockStoryTurn(input: StoryTurnInput): StoryTurn {
     narration: `${input.heroName}, deine Entscheidung „${input.action.slice(0, 110)}“ bleibt nicht unbemerkt. In ${input.scene.slice(0, 140)} zeichnet sich eine neue Spur ab. Was möchtest du als Nächstes tun?`,
     threadUpdates: first ? [{ id: first.id, status: 'open', description: first.description }] : [],
     newThreads: [], npcUpdates: [],
+    adventure: /gefahr|hinterhalt|begegnung|gegner|kampf|spur|untersuch|geheimnis/i.test(input.action)
+      ? /spur|untersuch|geheimnis/i.test(input.action)
+        ? { id: `spur_${Math.max(1, input.recentActions.length + 1)}`,
+            title: 'Die verlorenen Zeichen',
+            description: 'Ein verwitterter Stein birgt Hinweise auf eine verborgene Route.',
+            archetype: 'investigation', questTitle: 'Entziffere die Zeichen',
+            questDescription: 'Untersuche die Spuren mit einer bestätigten Wahrnehmungsprobe.' }
+        : { id: `mission_${Math.max(1, input.recentActions.length + 1)}`,
+            title: 'Der Späher am Nebelpfad',
+            description: 'Ein Wegelagerer versperrt die Passage zum Küstenpfad.',
+            archetype: 'bandit', questTitle: 'Sichere den Nebelpfad',
+            questDescription: 'Überwinde den Wegelagerer und sichere die Passage.' }
+      : null,
   }, input);
 }

@@ -1,3 +1,7 @@
+## 0.3.1 – bestätigbare Abenteuerangebote
+
+`POST /v1/story/advance` antwortet zusätzlich mit `turn.adventure: null` oder einem narrativen Vorschlag `{id,title,description,archetype,questTitle,questDescription}`. Zulässige Profile sind `bandit`, `wolf`, `skeleton`, `goblin`, `orc`, `investigation`; sämtliche Monsterwerte und Beute stammen von der **lokalen App**. Der neue Rückgabetyp erfordert aktualisierte Android-/Flutter-App 0.3.8+14. Backend liest/schreibt keine Kampagnendaten. Kostenzustimmung und Sitzungs-Ratelimits bleiben erhalten.
+
 # Spielleiter-Backend
 
 Optionaler Fastify-/TypeScript-Dienst für **Der lebendige Spielleiter**. Die App kann ihren lokalen Demo-Spielleiter ohne diesen Dienst verwenden. Der Server liefert Erzähltext und **validierte, unverbindliche Story-Vorschläge**; er hat keinen Datenbankzugriff und darf weder Trefferpunkte noch Inventare oder andere bestätigte Regelzustände verändern. Die lokale App nimmt nur erlaubte erzählerische Änderungen selbst an.

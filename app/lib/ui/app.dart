@@ -868,6 +868,49 @@ class _AdventurePageState extends State<_AdventurePage> {
                         ),
                       ),
                     ),
+                    if (campaign.adventureOffer != null)
+                      Card(
+                        key: const ValueKey('adventure-offer-card'),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Neue spielbare Begegnung',
+                                style: Theme.of(context).textTheme.titleMedium),
+                              const SizedBox(height: 8),
+                              Text(campaign.adventureOffer!.title,
+                                style: Theme.of(context).textTheme.titleSmall),
+                              Text(campaign.adventureOffer!.description),
+                              const SizedBox(height: 6),
+                              Text('Auftrag: ${campaign.adventureOffer!.questTitle}'),
+                              Text('Gegnerprofil: ${campaign.adventureOffer!.archetype}. '
+                                'Werte und Beute kommen nur aus der lokalen Regelengine.'),
+                              const SizedBox(height: 10),
+                              Wrap(spacing: 8, children: [
+                                FilledButton(
+                                  key: const ValueKey('adventure-accept'),
+                                  onPressed: widget.controller.busy ? null : () async {
+                                    final prior = _lastMessageId;
+                                    await widget.controller.acceptAdventure();
+                                    if (mounted) await _afterTurn(prior);
+                                  },
+                                  child: const Text('Begegnung annehmen'),
+                                ),
+                                OutlinedButton(
+                                  key: const ValueKey('adventure-reject'),
+                                  onPressed: widget.controller.busy ? null : () async {
+                                    final prior = _lastMessageId;
+                                    await widget.controller.rejectAdventure();
+                                    if (mounted) await _afterTurn(prior);
+                                  },
+                                  child: const Text('Anderen Weg wählen'),
+                                ),
+                              ]),
+                            ],
+                          ),
+                        ),
+                      ),
                     for (final item in messages)
                       _MessageBubble(
                         message: _map(item),

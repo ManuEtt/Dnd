@@ -1,4 +1,4 @@
-import Fastify from 'fastify';
+import Fastify, { type FastifyRequest, type FastifyReply } from 'fastify';
 import type { Config } from './config.js';
 import { bearerToken, issueSession, secureEqual, verifySession } from './auth.js';
 import { WindowLimiter } from './limits.js';
@@ -51,7 +51,7 @@ export function buildApp(config: Config, dependencies: AppDependencies = {}) {
     });
   });
 
-  app.get('/health', async () => ({ status: 'ok', provider: config.provider, version: '0.3.0' }));
+  app.get('/health', async () => ({ status: 'ok', provider: config.provider, version: '0.3.1' }));
 
   app.post('/v1/session', {
     schema: { body: { type: 'object', additionalProperties: false, properties: {} } },
@@ -90,10 +90,7 @@ export function buildApp(config: Config, dependencies: AppDependencies = {}) {
   });
 
   // Shared provider budget: creative generation counts just like narration.
-  const storyRateLimit = async (request: { ip: string; headers: { authorization?: string } }, reply: {
-    header: (name: string, value: string) => unknown;
-    code: (status: number) => { send: (body: unknown) => unknown };
-  }) => {
+  const storyRateLimit = async (request: FastifyRequest, reply: FastifyReply) => {
     const token = bearerToken(request.headers.authorization);
     const session = token ? verifySession(token, config.sessionSecret, clock()) : undefined;
     if (!session) return reply.code(401).send({ error: 'invalid_session', message: 'Die Sitzung ist abgelaufen.' });

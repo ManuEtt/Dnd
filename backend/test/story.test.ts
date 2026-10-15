@@ -101,3 +101,30 @@ test('OpenAI story calls use Responses structured JSON schema, no tools and stor
   assert.equal(format.name, 'story_plan');
   assert.equal(format.strict, true);
 });
+
+test('adventure proposals are bounded fiction and never pass through arbitrary combat stats', () => {
+  const valid = { id:'bridge_1', title:'Die Brücke',
+    description:'Ein Wegelagerer tritt hervor.', archetype:'bandit',
+    questTitle:'Die Brücke sichern', questDescription:'Sichere den Weg.' };
+  const response = { narration:'Ein Schatten fällt.', threadUpdates: [],
+    newThreads: [], npcUpdates: [], adventure: valid };
+  const approved = parseStoryTurn({ ...response,
+    adventure: {...valid, hitPoints:9999, attackBonus:200, gold:9000} }, action);
+  assert.equal(approved.adventure?.archetype, 'bandit');
+  assert.equal('hitPoints' in (approved.adventure ?? {}), false);
+  assert.equal('gold' in (approved.adventure ?? {}), false);
+  assert.throws(() => parseStoryTurn({...response,
+    adventure: {...valid, archetype:'ancient_red_dragon'}}, action));
+  assert.throws(() => parseStoryTurn({...response,
+    adventure: {...valid, id:'../../evil'}}, action));
+  assert.equal(parseStoryTurn({...response, adventure:null}, action).adventure, null);
+});
+
+test('mock narrator proposes a playable encounter and a skill challenge deterministically', () => {
+  const encounter = mockStoryTurn({...action, action:'Ich suche eine Begegnung.'});
+  assert.equal(encounter.adventure?.archetype, 'bandit');
+  const investigation = mockStoryTurn({...action, action:'Ich untersuche die Spuren.'});
+  assert.equal(investigation.adventure?.archetype, 'investigation');
+  const neutral = mockStoryTurn({...action, action:'Ich spreche mit Tela.'});
+  assert.equal(neutral.adventure, null);
+});

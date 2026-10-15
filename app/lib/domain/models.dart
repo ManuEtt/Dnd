@@ -402,6 +402,42 @@ class Quest {
   }
 }
 
+/// AI proposal, never an active encounter, reward or completed quest.
+/// Its enemy archetype is resolved exclusively against the local catalogue.
+class AdventureOffer {
+  const AdventureOffer({required this.id, required this.title,
+    required this.description, required this.archetype,
+    required this.questTitle, required this.questDescription});
+  final String id, title, description, archetype, questTitle, questDescription;
+  Map<String, dynamic> toJson() => {
+    'id': id, 'title': title, 'description': description,
+    'archetype': archetype, 'questTitle': questTitle,
+    'questDescription': questDescription,
+  };
+  factory AdventureOffer.fromJson(Map<String, dynamic> j) {
+    String bounded(String key, int max) {
+      final value = _string(j[key], key).trim();
+      if (value.isEmpty || value.length > max) {
+        throw const FormatException('Ungültiger Begegnungsvorschlag.');
+      }
+      return value;
+    }
+    final id = bounded('id', 64);
+    if (!RegExp(r'^[a-z][a-z0-9_-]{0,63}$').hasMatch(id)) {
+      throw const FormatException('Ungültige Begegnungs-ID.');
+    }
+    final archetype = bounded('archetype', 32);
+    if (!const ['bandit', 'wolf', 'skeleton', 'goblin', 'orc', 'investigation']
+        .contains(archetype)) {
+      throw const FormatException('Unbekanntes Gegnerprofil.');
+    }
+    return AdventureOffer(id: id, title: bounded('title', 120),
+      description: bounded('description', 500), archetype: archetype,
+      questTitle: bounded('questTitle', 120),
+      questDescription: bounded('questDescription', 500));
+  }
+}
+
 class WorldNpc {
   const WorldNpc({
     required this.id,
@@ -787,6 +823,7 @@ class Campaign {
     List<GameEvent> events = const [],
     this.pendingRoll,
     this.encounter,
+    this.adventureOffer,
     this.revision = 0,
   }) : messages = List.unmodifiable(messages),
        facts = Map.unmodifiable(facts),
@@ -812,6 +849,7 @@ class Campaign {
   final List<GameEvent> events;
   final PendingRoll? pendingRoll;
   final Encounter? encounter;
+  final AdventureOffer? adventureOffer;
   final int revision;
   Campaign copyWith({
     String? name,
@@ -829,6 +867,7 @@ class Campaign {
     List<GameEvent>? events,
     Object? pendingRoll = _unchanged,
     Object? encounter = _unchanged,
+    Object? adventureOffer = _unchanged,
     int? revision,
   }) => Campaign(
     id: id,
@@ -853,6 +892,9 @@ class Campaign {
     encounter: identical(encounter, _unchanged)
         ? this.encounter
         : encounter as Encounter?,
+    adventureOffer: identical(adventureOffer, _unchanged)
+        ? this.adventureOffer
+        : adventureOffer as AdventureOffer?,
     revision: revision ?? this.revision,
   );
   Map<String, dynamic> toJson() => {
@@ -876,6 +918,7 @@ class Campaign {
     'events': events.map((e) => e.toJson()).toList(),
     'pendingRoll': pendingRoll?.toJson(),
     'encounter': encounter?.toJson(),
+    'adventureOffer': adventureOffer?.toJson(),
     'revision': revision,
   };
   factory Campaign.fromJson(Map<String, dynamic> j) {
@@ -898,6 +941,9 @@ class Campaign {
     final encounter = j['encounter'] == null
         ? null
         : Encounter.fromJson(_map(j['encounter'], 'Kampf'));
+    final adventureOffer = j['adventureOffer'] == null
+        ? null
+        : AdventureOffer.fromJson(_map(j['adventureOffer'], 'Begegnungsvorschlag'));
     // Existing 0.3.5 saves omit these optional collections; no migration.
     final recaps = _list(j['sessionRecaps'], 'Sitzungsrückblicke')
         .map((e) => SessionRecap.fromJson(_map(e, 'Sitzungsrückblick')))
@@ -999,6 +1045,7 @@ class Campaign {
       events: events,
       pendingRoll: pending,
       encounter: encounter,
+      adventureOffer: adventureOffer,
       revision: _int(j['revision'], 'Revision', fallback: 0),
     );
   }

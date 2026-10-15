@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'dice_engine.dart';
 import 'ai_story.dart';
+import 'adventure_catalog.dart';
 import 'models.dart';
 import 'rules_engine.dart';
 
@@ -150,6 +151,7 @@ class GameEngine {
       'newThreads': [for (final t in step.newThreads) t.toJson()],
       'npcUpdates': [for (final n in step.npcUpdates)
         {'id': n.id, 'relationship': n.relationship, 'note': n.note}],
+      'adventure': step.adventure?.toJson(),
     }, current);
     final now = _clock();
     final changes = {for (final t in replay.threadUpdates) t.id: t};
@@ -179,6 +181,7 @@ class GameEngine {
       ],
       storyBible: {...current.storyBible,
         'turnCount': '${pastTurns + 1}'},
+      adventureOffer: replay.adventure ?? current.adventureOffer,
     );
     final oldEvent = update.events.single;
     final payload = jsonDecode(jsonEncode(oldEvent.payload))
@@ -189,6 +192,7 @@ class GameEngine {
     payload['threadUpdates'] = [for (final e in replay.threadUpdates) e.id];
     payload['newThreads'] = [for (final e in replay.newThreads) e.id];
     payload['npcUpdates'] = [for (final e in replay.npcUpdates) e.id];
+    payload['adventureOffer'] = replay.adventure?.id;
     payload['stateAfter'] = jsonDecode(jsonEncode(
       next.copyWith(events: const []).toJson()));
     final event = GameEvent(
@@ -200,6 +204,94 @@ class GameEngine {
       ...current.events.take(current.events.length - 1), event]);
     Campaign.fromJson(result.toJson());
     return GameUpdate(campaign: result, events: [event]);
+  }
+
+  /// Player opt-in converts the untrusted AI proposal into exactly one local
+  /// quest + one vetted enemy encounter. Initiatives are rolled locally.
+  GameUpdate acceptAdventure(Campaign campaign) {
+    final offer = campaign.adventureOffer;
+    if (offer == null || campaign.storyBible['mode'] != 'ai' ||
+        campaign.pendingRoll != null ||
+        (campaign.encounter != null && !campaign.encounter!.isFinished)) {
+      throw const FormatException('Keine annehmbare Begegnung vorhanden.');
+    }
+    if (!campaign.hero.isComplete || campaign.hero.isDead ||
+        campaign.hero.hitPoints == 0) {
+      throw const FormatException('Vor der Begegnung muss der Held kampffähig und sein Charakterbogen vollständig sein.');
+    }
+    final valid = AdventureOffer.fromJson(offer.toJson());
+    final questId = 'ai-${valid.id}';
+    if (campaign.quests.length >= 100 ||
+        campaign.quests.any((q) => q.id == questId) ||
+        campaign.hero.inventory.any((item) => item.id == 'loot-${valid.id}')) {
+      throw const FormatException('Diese Begegnung wurde bereits gespielt oder das Questlimit ist erreicht.');
+    }
+    if (valid.archetype == 'investigation') {
+      final bonus = RulesEngine.abilityModifier(campaign.hero.abilities['wisdom']!) +
+          (campaign.hero.skills.contains('Wahrnehmung')
+            ? RulesEngine.proficiencyBonus(campaign.hero.level) : 0);
+      final next = campaign.copyWith(
+        adventureOffer: null, scene: valid.description,
+        quests: [...campaign.quests, Quest(id: questId, title: valid.questTitle,
+          description: valid.questDescription)],
+        pendingRoll: PendingRoll(id: _id('roll'), type: 'perception',
+          modifier: bonus, difficulty: 10),
+        facts: {...campaign.facts, 'aiEncounterQuestId': questId,
+          'aiEncounterOfferId': valid.id, 'aiEncounterLoot': 'Spurenkarte'},
+      );
+      return _commit(campaign, next,
+        '${valid.title}: ${valid.description} Würfle einen W20 für Wahrnehmung '
+        'mit ${_signed(bonus)}; die Schwierigkeit beträgt 10.',
+        type: 'adventure.investigationStarted', payload: {
+          'questId': questId, 'template': 'investigation', 'difficulty': 10,
+        });
+    }
+    final foe = AdventureCatalog.forHero(valid.archetype, campaign.hero);
+    final heroInitiative = dice.check(modifier: RulesEngine.initiativeBonus(campaign.hero));
+    final enemyInitiative = dice.check(modifier: 0);
+    var next = campaign.copyWith(
+      adventureOffer: null,
+      quests: [...campaign.quests, Quest(id: questId, title: valid.questTitle,
+        description: valid.questDescription)],
+      encounter: Encounter(id: _id('encounter'), enemyName: foe.name,
+        enemyHitPoints: foe.hitPoints, enemyMaxHitPoints: foe.hitPoints,
+        enemyArmorClass: foe.armorClass, enemyAttackBonus: foe.attackBonus,
+        enemyDamage: foe.damage, heroInitiative: heroInitiative.total,
+        enemyInitiative: enemyInitiative.total,
+        movementRemaining: campaign.hero.speed!),
+      scene: valid.description,
+      facts: {...campaign.facts,
+        'aiEncounterQuestId': questId,
+        'aiEncounterOfferId': valid.id,
+        'aiEncounterLoot': foe.loot,
+      },
+    );
+    var narration = '${valid.title}: ${valid.description} '
+      'Die Initiative beträgt ${heroInitiative.total} für ${campaign.hero.name} '
+      'und ${enemyInitiative.total} für ${foe.name}. ';
+    final details = <String, dynamic>{'questId': questId,
+      'template': valid.archetype, 'heroInitiative': heroInitiative.toJson(),
+      'enemyInitiative': enemyInitiative.toJson()};
+    if (enemyInitiative.total > heroInitiative.total) {
+      final turn = _enemyTurn(next, advanceRound: false);
+      next = turn.campaign;
+      narration += '${turn.narration} ';
+      details['enemyTurn'] = turn.details;
+    }
+    narration += 'Angreifen, ausweichen oder fliehen?';
+    return _commit(campaign, next, narration,
+      type: 'adventure.accepted', payload: details);
+  }
+
+  /// A rejected offer has no mechanical side effects.
+  GameUpdate rejectAdventure(Campaign campaign) {
+    final offer = campaign.adventureOffer;
+    if (offer == null) {
+      throw const FormatException('Es gibt keinen offenen Vorschlag.');
+    }
+    return _commit(campaign, campaign.copyWith(adventureOffer: null),
+      'Du entscheidest dich gegen ${offer.title}. Die Welt bleibt offen für andere Wege.',
+      type: 'adventure.rejected', payload: {'offerId': offer.id});
   }
 
   /// Saves a bounded summary of structured, already confirmed world state.
@@ -1039,7 +1131,7 @@ class GameEngine {
             difficulty: 10,
           ),
         ),
-        'Bitte würfle einen W20 für die Flucht durch die Dornen. Die Schwierigkeit beträgt 10.',
+        'Bitte würfle einen W20 für die Flucht. Die Schwierigkeit beträgt 10.',
       );
     }
     if (RegExp(r'heiltrank|trank.*trink|trink.*trank').hasMatch(words)) {
@@ -1168,7 +1260,8 @@ class GameEngine {
         payload['damage'] = damage;
         next = next.copyWith(
           encounter: foe.copyWith(enemyHitPoints: hp, actionUsed: true),
-          facts: {...next.facts, 'guardianHitPoints': '$hp'},
+          facts: next.storyBible['mode'] == 'ai'
+              ? next.facts : {...next.facts, 'guardianHitPoints': '$hp'},
         );
         narration +=
             '${outcome.critical ? 'Ein kritischer Treffer! ' : ''}Du verursachst $damage Schaden; der ${foe.enemyName} hat noch $hp Trefferpunkte. ';
@@ -1177,16 +1270,48 @@ class GameEngine {
         narration += 'Dein Angriff verfehlt den ${foe.enemyName}. ';
       }
       if (next.encounter!.isFinished) {
-        next = next.copyWith(
-          facts: {
-            ...next.facts,
-            'guardianDefeated': 'true',
-            'dornenwächter':
-                'Der Dornenwächter wurde im bestätigten Kampf überwunden.',
-          },
-        );
-        narration +=
-            'Der Dornenwächter zerfällt in Blätter. Der Weg zum Schrein ist frei. Was möchtest du tun?';
+        if (next.storyBible['mode'] == 'ai') {
+          final questId = next.facts['aiEncounterQuestId'];
+          final offerId = next.facts['aiEncounterOfferId'];
+          final lootName = next.facts['aiEncounterLoot'];
+          final valid = questId != null && offerId != null &&
+              lootName != null && next.quests.any((q) =>
+                  q.id == questId && q.status == 'active');
+          if (valid) {
+            final lootId = 'loot-$offerId';
+            final inventory = next.hero.inventory.any((e) => e.id == lootId)
+                ? next.hero.inventory
+                : [...next.hero.inventory, InventoryItem(id: lootId,
+                    name: lootName, description: 'Beute der bestätigten Begegnung.')];
+            next = next.copyWith(
+              hero: next.hero.copyWith(inventory: inventory),
+              quests: [for (final q in next.quests)
+                q.id == questId ? q.copyWith(status: 'completed') : q],
+              encounter: null,
+              facts: {...next.facts,
+                'aiEncounterQuestId': '', 'aiEncounterOfferId': '',
+                'aiEncounterLoot': '', 'aiQuestCompleted:$questId': 'true'},
+            );
+            payload['completedQuestId'] = questId;
+            payload['rewardItemId'] = lootId;
+            narration += 'Die Begegnung ist gewonnen. Dein Auftrag ist '
+              'abgeschlossen; als bestätigte Beute erhältst du $lootName. ';
+          } else {
+            next = next.copyWith(encounter: null);
+            narration += 'Du hast den Gegner überwunden. ';
+          }
+        } else {
+          next = next.copyWith(
+            facts: {
+              ...next.facts,
+              'guardianDefeated': 'true',
+              'dornenwächter':
+                  'Der Dornenwächter wurde im bestätigten Kampf überwunden.',
+            },
+          );
+          narration += 'Der Dornenwächter zerfällt in Blätter. '
+              'Der Weg zum Schrein ist frei. Was möchtest du tun?';
+        }
       } else {
         final turn = _enemyTurn(next);
         next = turn.campaign;
@@ -1195,13 +1320,24 @@ class GameEngine {
       }
     } else if (pending.type == 'escape') {
       if (result.total >= pending.difficulty) {
-        next = next.copyWith(
-          encounter: null,
-          scene: 'Du bist zum sicheren Dorf Mooswacht zurückgekehrt.',
-          facts: {...next.facts, 'location': 'Mooswacht'},
-        );
-        narration +=
-            'Du entkommst den Dornen und erreichst das Dorf. Der Wächter bewacht weiterhin den Schrein. Was möchtest du tun?';
+        if (next.storyBible['mode'] == 'ai') {
+          final questId = next.facts['aiEncounterQuestId'];
+          next = next.copyWith(encounter: null,
+            quests: [for (final q in next.quests)
+              q.id == questId ? q.copyWith(status: 'failed') : q],
+            facts: {...next.facts, 'aiEncounterQuestId': '',
+              'aiEncounterOfferId': '', 'aiEncounterLoot': ''});
+          narration += 'Du entkommst dem Kampf. Der Auftrag gilt als gescheitert; '
+            'du erhältst keine Kampfbelohnung. Was möchtest du tun?';
+        } else {
+          next = next.copyWith(
+            encounter: null,
+            scene: 'Du bist zum sicheren Dorf Mooswacht zurückgekehrt.',
+            facts: {...next.facts, 'location': 'Mooswacht'},
+          );
+          narration += 'Du entkommst den Dornen und erreichst das Dorf. '
+            'Der Wächter bewacht weiterhin den Schrein. Was möchtest du tun?';
+        }
       } else {
         final turn = _enemyTurn(next);
         next = turn.campaign;
@@ -1210,7 +1346,32 @@ class GameEngine {
             'Die Dornen halten dich auf. ${turn.narration} ${_nextInstruction(next)}';
       }
     } else if (pending.type == 'perception') {
-      if (result.total >= pending.difficulty) {
+      if (next.storyBible['mode'] == 'ai' &&
+          (next.facts['aiEncounterQuestId'] ?? '').isNotEmpty &&
+          next.encounter == null) {
+        final questId = next.facts['aiEncounterQuestId']!;
+        final offerId = next.facts['aiEncounterOfferId']!;
+        final success = result.total >= pending.difficulty;
+        final lootId = 'loot-$offerId';
+        next = next.copyWith(
+          quests: [for (final q in next.quests) q.id == questId
+            ? q.copyWith(status: success ? 'completed' : 'failed') : q],
+          hero: success && !next.hero.inventory.any((item) => item.id == lootId)
+            ? next.hero.copyWith(inventory: [...next.hero.inventory,
+                InventoryItem(id: lootId, name: 'Spurenkarte',
+                  description: 'Fund einer bestätigten Wahrnehmungsprobe.')])
+            : next.hero,
+          facts: {...next.facts, 'aiEncounterQuestId': '',
+            'aiEncounterOfferId': '', 'aiEncounterLoot': '',
+            if (success) 'aiQuestCompleted:$questId': 'true'},
+        );
+        payload['completedQuestId'] = success ? questId : null;
+        narration += success
+          ? 'Du findest die entscheidende Spur! Der Auftrag ist abgeschlossen. '
+            'Du erhältst eine Spurenkarte als erzählerische Belohnung.'
+          : 'Die Spur bleibt verborgen. Der Auftrag ist gescheitert; '
+            'es gibt keine Belohnung. Du kannst einen anderen Weg wählen.';
+      } else if (result.total >= pending.difficulty) {
         next = next.copyWith(
           facts: {
             ...next.facts,
@@ -1325,7 +1486,7 @@ class GameEngine {
       narration +=
           'Du erleidest $damage Schaden und hast noch ${hero.hitPoints} Trefferpunkte.';
     } else {
-      narration += 'Seine Dornen verfehlen dich.';
+      narration += 'Der Angriff verfehlt dich.';
     }
     return _EnemyTurn(
       campaign.copyWith(

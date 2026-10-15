@@ -79,11 +79,12 @@ class AiNpcUpdate {
   final String id, relationship, note;
 }
 class AiStoryStep {
-  AiStoryStep._(this.narration, this.threadUpdates, this.newThreads, this.npcUpdates);
+  AiStoryStep._(this.narration, this.threadUpdates, this.newThreads, this.npcUpdates, this.adventure);
   final String narration;
   final List<AiThreadUpdate> threadUpdates;
   final List<StoryThread> newThreads;
   final List<AiNpcUpdate> npcUpdates;
+  final AdventureOffer? adventure;
 
   factory AiStoryStep.fromJson(Map<String, dynamic> json, Campaign campaign) {
     final knownThreads = campaign.storyThreads.map((e) => e.id).toSet();
@@ -119,8 +120,15 @@ class AiStoryStep {
         campaign.npcRelationshipNotes.length + npcUpdates.length > 300) {
       throw const FormatException('KI-Handlungsstränge überschneiden sich.');
     }
+    final proposed = json['adventure'];
+    final offer = proposed == null || campaign.adventureOffer != null || campaign.pendingRoll != null ||
+        (campaign.encounter != null && !campaign.encounter!.isFinished)
+        ? null : AdventureOffer.fromJson(_obj(proposed));
+    if (offer != null && campaign.quests.any((q) => q.id == 'ai-${offer.id}')) {
+      throw const FormatException('Bereits benutzte Quest-ID.');
+    }
     return AiStoryStep._(_text(json['narration'], 4000),
       List.unmodifiable(threadUpdates), List.unmodifiable(newThreads),
-      List.unmodifiable(npcUpdates));
+      List.unmodifiable(npcUpdates), offer);
   }
 }

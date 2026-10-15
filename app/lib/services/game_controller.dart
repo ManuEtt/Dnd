@@ -123,6 +123,18 @@ class GameController extends ChangeNotifier {
     await _create(campaign);
   });
 
+  Future<void> acceptAdventure() => _run(() async {
+    final current = currentCampaign;
+    if (current == null) throw const FormatException('Keine Kampagne geöffnet.');
+    await _commit(engine.acceptAdventure(current));
+  });
+
+  Future<void> rejectAdventure() => _run(() async {
+    final current = currentCampaign;
+    if (current == null) throw const FormatException('Keine Kampagne geöffnet.');
+    await _commit(engine.rejectAdventure(current));
+  });
+
   Future<void> openCampaign(String id) => _run(() async {
     final loaded = await repository.getCampaign(id);
     if (loaded == null) {

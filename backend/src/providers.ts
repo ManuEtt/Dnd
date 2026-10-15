@@ -94,6 +94,11 @@ const turnShape = schemaObject({
   npcUpdates: { type: 'array', items: schemaObject({
     id: stringField, relationship: stringField, note: stringField,
   }) },
+  adventure: { anyOf: [schemaObject({
+    id: stringField, title: stringField, description: stringField,
+    archetype: { type: 'string', enum: ['bandit', 'wolf', 'skeleton', 'goblin', 'orc', 'investigation'] },
+    questTitle: stringField, questDescription: stringField,
+  }), { type: 'null' }] },
 });
 
 /** Uses the documented Responses endpoint; no tool calls and no model write privileges. */
@@ -143,12 +148,17 @@ export class OpenAiNarrator implements Narrator {
     Entwickle die vorhandene Geschichte kreativ, konsequent und überraschend anhand der letzten Spielerentscheidung.
     Berücksichtige premise, goal, secret, offene Handlungsstränge, NPCs und bestätigte Erinnerungen.
     Greife Entscheidungen auf und biete neue Konsequenzen. Halte die Spielerhandlung offen, keine Zwangslösung.
-    Du darfst ausschließlich erzählerische Handlungsstränge und Beziehungen vorschlagen.
+    Du darfst erzählerische Handlungsstränge, Beziehungen und optionale einzelne Abenteuerbegegnungen vorschlagen.
+    Eine Abenteuerbegegnung muss einen Questtitel, eine Questbeschreibung und genau EIN Profil aus bandit, wolf, skeleton, goblin, orc oder investigation enthalten. investigation ist eine nicht-kämpferische, lokal gewürfelte Wahrnehmungsprobe.
+    Du darfst niemals Gegnerwerte, Trefferpunkte, Rüstungsklasse, Würfel, Erfahrung, Geldbeträge oder Ausrüstungswerte erzeugen.
+    Begegnungen sind nur unverbindliche Angebote; der Spieler muss sie in der App bestätigen.
+    Biete pro Antwort höchstens eine Begegnung an, und nicht bei jeder Kleinigkeit.
     Regelmechanik, Trefferpunkte, Quests, Inventar, Würfel, Schaden und Charakterwerte bleiben strikt lokal.
     Bestätige keine nicht ausgeführten Würfe oder mechanischen Konsequenzen.
     Gib nur ein JSON-Objekt ohne Markdown aus mit narration (2-5 deutsche Sätze, Spieler direkt ansprechen,
     mit offener Frage enden), threadUpdates:[{id,status,description}], newThreads:[{id,title,description}],
-    npcUpdates:[{id,relationship,note}]. Status nur open, resolved, abandoned. Existierende IDs benutzen.
+    npcUpdates:[{id,relationship,note}], adventure: null oder {id,title,description,archetype,questTitle,questDescription}.
+    Status nur open, resolved, abandoned. Existierende IDs benutzen.
     Höchstens zwei neue Handlungsstränge. Bei fehlenden Änderungen leere Arrays. Keine zusätzlichen Felder.`;
     return parseStoryTurn(await this.storyJson(instructions, input, 'story_turn', turnShape), input);
   }

@@ -1,3 +1,7 @@
+## Neu in Aetheria 0.3.8+14 – spielbare KI-Abenteuer
+
+Der KI-Spielleiter kann passende Quests und Gegnerbegegnungen oder Erkundungsaufgaben vorschlagen. **Erst nach Bestätigung** durch den Spieler aktiviert die App eine Aufgabe. Initiative, Gegnerwerte, Proben, Treffer, Questabschluss und einmalige Beute werden **nur lokal** bestimmt und gespeichert. Der KI-Erzähler erhält keine Regelautorität. Details, Testablauf und Grenzen: [Dynamische Abenteuer](docs/AI_ADVENTURES.md). Die App erfordert weiterhin einen für echte Story-Generierung verbundenen KI-Backend-Server und ausdrückliche Kostenfreigabe.
+
 ## Neu in 0.3.7: Eine eigene KI-Kampagne beginnen
 
 1. In **Helden** einen Charakter anlegen und speichern.
