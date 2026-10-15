@@ -120,12 +120,24 @@ void main() {
         LivingGameApp(controller: controller, voice: voice),
       );
       expect(tester.takeException(), isNull);
-      await tester.tap(find.text('Kostenlose Demo starten'));
+      // The illustrated home header increases the content height on 360 dp.
+      // Scroll the *visible* home list to the real demo action before tapping.
+      // Disabling hit-test warnings would hide a genuine navigation failure.
+      final demoStart = find.text('Kostenlose Demo starten');
+      await tester.scrollUntilVisible(
+        demoStart, 180, scrollable: find.byType(Scrollable).first,
+      );
+      await tester.ensureVisible(demoStart);
+      await tester.pumpAndSettle();
+      expect(demoStart.hitTestable(), findsOneWidget);
+      await tester.tap(demoStart);
       await waitForController(tester, controller);
       await tester.pumpAndSettle();
       expect(controller.currentCampaign, isNotNull);
       expect(find.text('Was möchtest du tun?'), findsOneWidget);
       expect(tester.takeException(), isNull);
+      // The text command in the persistent composer is independent of the
+      // new illustrated action cards further up in the scene list.
       await tester.tap(find.text('Sprechen'));
       await tester.pumpAndSettle();
       expect(find.text('Ich untersuche den Wald.'), findsOneWidget);

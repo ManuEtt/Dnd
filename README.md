@@ -1,3 +1,5 @@
+> **Aetheria 0.5.1+21:** Zwei CI-Fehler nach illustriertem Design-Update behoben: zuvor nicht erreichbare Schaltflächen im Charakterbogen-/Startseiten-Widgettest werden jetzt sichtbar gescrollt und auf Hit-Test geprüft. Eine neue Android-APK ist erst nach bestandener GitHub Actions Pipeline freigegeben.
+
 > **Aetheria 0.5.0+20 – Illustratives Fantasy-Redesign:** Die vier abgestimmten Design-Entwürfe sind als echte Flutter-Widgets umgesetzt. Neue lokale WebP-Illustrationen für Ruinen/Burgen/Wälder, Kampagnenkarten und Inventargegenstände. Start, Abenteuer, Helden, Chronik und Charakterbogen werden bildgestützt dargestellt. Keine erfundenen Spielwerte; keine Regel- oder Schemaänderungen. **Flutter/Android-CI für diese neue Version steht noch aus.** Siehe [Designumsetzung](docs/ILLUSTRATED_UI.md).
 
 > **Aetheria 0.4.3+19:** Attributkarten mit skalierter Mindesthöhe und eindeutigen Widget-Test-Selektoren statt Seitenverhältnis-/`GridView`-Fehler. GitHub-Actions-Abnahme noch ausstehend.

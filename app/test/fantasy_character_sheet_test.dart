@@ -143,11 +143,27 @@ void main() {
     )));
     expect(find.text('– / –'), findsOneWidget);
     expect(find.text('Noch nicht erfasst'), findsOneWidget);
-    await tester.ensureVisible(find.byKey(const ValueKey('sheet-tab-1')));
-    await tester.tap(find.byKey(const ValueKey('sheet-tab-1')));
+    // On 320 dp the illustrated character header makes the tab navigation
+    // a lazily built child below the viewport. ensureVisible requires the
+    // widget to exist already, so first scroll until it is built and visible.
+    final conditionsTab = find.byKey(const ValueKey('sheet-tab-1'));
+    await tester.scrollUntilVisible(
+      conditionsTab, 180, scrollable: find.byType(Scrollable).first,
+    );
+    await tester.ensureVisible(conditionsTab);
+    await tester.pumpAndSettle();
+    expect(conditionsTab.hitTestable(), findsOneWidget);
+    await tester.tap(conditionsTab);
     await tester.pumpAndSettle();
     expect(find.text('Keine Zustände eingetragen.'), findsOneWidget);
-    await tester.tap(find.byKey(const ValueKey('sheet-tab-2')));
+    final defensesTab = find.byKey(const ValueKey('sheet-tab-2'));
+    await tester.scrollUntilVisible(
+      defensesTab, 180, scrollable: find.byType(Scrollable).first,
+    );
+    await tester.ensureVisible(defensesTab);
+    await tester.pumpAndSettle();
+    expect(defensesTab.hitTestable(), findsOneWidget);
+    await tester.tap(defensesTab);
     await tester.pumpAndSettle();
     expect(find.text('Resistenzen und Immunitäten sind im aktuellen Charaktermodell nicht gesondert erfasst.'), findsOneWidget);
     expect(find.text('Nicht erfasst'), findsWidgets);

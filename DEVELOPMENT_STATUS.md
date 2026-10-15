@@ -1,3 +1,11 @@
+## 0.5.1+21 – Flutter-CI-Abnahme des illustrierten Designs (15.10.2026)
+
+- **CI-Ursache:** Letzter GitHub-Actions-Lauf für `0.5.0+20` (`a3a05d3888a9c0e19d3e43d2469cc849f5e1a4eb`) scheiterte trotz 328 bestandener Flutter-Tests an zwei veralteten Widgettest-Interaktionen.
+- **Charakterbogen:** Der Test für unbekannte Angaben scrollt zur verzögert aufgebauten Tab-Navigation, bevor er die Tabs antippt. `ensureVisible` allein konnte den zunächst noch nicht aufgebauten Tab nicht finden.
+- **Startseite:** Der 360-dp-Navigationstest scrollt zum echten Demo-Button unter dem illustrierten Header, überprüft die Antippbarkeit und startet dann die Demo. Keine Hit-Test-Warnungen unterdrückt und keine Tests deaktiviert.
+- **Umfang:** Nur Widgettests, Versionsnummer und Dokumentation geändert. Alle zwölf neuen Illustrationen, UI-Widgets, Spiellogik, Backend und gespeicherte Daten bleiben unverändert.
+- **Status:** Lokale Python-/Paketprüfungen durchgeführt; Flutter-Analyse, Flutter-Tests und APK-Build müssen die neue Version in GitHub Actions bestätigen. Ohne grünen Build noch keine Freigabe.
+
 ## Aktuell: Aetheria 0.5.0+20 – Illustriertes Dark-Fantasy-UI
 
 Basierend auf dem nachweislich erfolgreichen GitHub-CI-Stand `a85cf97c113d397259677d7a3612f3b229045315` (0.4.3+19). Erweitert wurde ausschließlich die Präsentationsschicht durch 12 lokal eingebundene WebP-Grafiken, ein responsives Bild-/Rahmen-/Aktions-Widgetsystem und Anpassungen an Startseite, Kampagnen, Abenteuer, Helden, Charakterbogen, Chronik und Inventar. Neue Regressionstests in `app/test/fantasy_art_ui_test.dart`. Details: `docs/ILLUSTRATED_UI.md`.

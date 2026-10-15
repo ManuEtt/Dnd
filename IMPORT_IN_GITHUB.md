@@ -1,3 +1,5 @@
+> **Importstand 0.5.1+21:** Quelle ist der geprüfte GitHub-Commit `a3a05d3888a9c0e19d3e43d2469cc849f5e1a4eb` plus CI-Fix in zwei Widgettests. Die Dateistruktur einschließlich Bilder und `.github/` muss vollständig hochgeladen werden. Bitte warten, bis die Android-GitHub-Action erfolgreich abgeschlossen ist.
+
 ## Neues Grafik-Redesign 0.5.0+20
 
 Die ZIP enthält zusätzlich `app/assets/art/` und `app/lib/ui/fantasy_art.dart`. Bitte **alle** Unterordner unverändert hochladen. Die Grafikdateien werden über `app/pubspec.yaml` als lokale Flutter-Assets eingebunden. Nach Import `flutter analyze`, `flutter test` und den Android-Workflow ausführen. Der grüne GitHub-Workflow von 0.4.3 bestätigt nicht automatisch diese neue Version.

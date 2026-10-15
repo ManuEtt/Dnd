@@ -1,3 +1,11 @@
+## Aktuelle CI-Fix-Abnahme 0.5.1+21
+
+Vorversion 0.5.0+20: 328 Flutter-Tests erfolgreich; zwei fehlgeschlagen (`fantasy_character_sheet_test.dart` offscreen/lazy Tab und `ui_app_test.dart` offscreen Demo). Teständerungen verwenden explizite echte Scroll-Gesten, `ensureVisible` und `.hitTestable()`, statt Tests oder Warnungen zu deaktivieren.
+
+Testprotokoll: https://github.com/ManuEtt/Dnd/actions/runs/38704528398/job/116320523742
+
+Die neue Version muss in GitHub Actions erneut sämtliche Schritte einschließlich Android-Build bestehen. Für einen schnellen ersten Check: `cd app && flutter test test/fantasy_character_sheet_test.dart test/ui_app_test.dart` und `flutter analyze`.
+
 ## Illustrierte Oberfläche 0.5.0+20 – Pflichtchecks nach GitHub-Import
 
 - `python3 scripts/verify_project.py .`
