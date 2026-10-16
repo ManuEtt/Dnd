@@ -30,7 +30,11 @@ class CharacterRuleEngine {
   static int? savingThrowBonus(HeroCharacter hero, String ability) {
     final mod = attributeModifier(hero, ability);
     if (mod == null) return null;
-    return mod + (hero.savingThrowProficiencies.contains(ability)
+    // SRD 5.2.1 Monk 14, Disciplined Survivor: proficiency in all saves.
+    // This is a computed proficiency, not a mutation of the saved list.
+    final proficient = hero.savingThrowProficiencies.contains(ability) ||
+        ClassResourceRules.level(hero, 'Mönch') >= 14;
+    return mod + (proficient
         ? RulesEngine.proficiencyBonus(hero.level) : 0) +
         ExhaustionRules.d20Modifier(hero);
   }

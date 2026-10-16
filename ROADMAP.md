@@ -1,3 +1,10 @@
+## Ab 0.7.3+43 – Klassenfähigkeiten, Stabilität und nächster Build
+
+1. `flutter analyze` und alle Dart-/Widgettests in GitHub Actions auf dem neuen Quellstand ausführen; insbesondere die CI-Regression um `monk_flurry_rules.dart` (int?/int) und Mönchs-Selbstwiederherstellung prüfen. Danach eine echte ARM64-APK erstellen und auf Android testen.
+2. Bestätigte Rettungswürfe um die optionale Mönch-14-Wiederholung mit einem Fokuspunkt erweitern; keine automatisch angenommenen Spielerentscheidungen.
+3. Die noch nicht ausführbaren Merkmale aus `srd_class_feature_catalog.dart` schrittweise in Klassenaktionen überführen, jeweils mit Ressourcen-/Runden-/Persistenztests und Regelquellennachweis.
+4. Hunger/Durst und entsprechende Erschöpfungsursachen ausschließlich mit validierten Spielzeit- und Weltzuständen verknüpfen.
+
 ## Nach 0.6.4+34 – Zauberressourcen
 
 1. **Zuerst:** Flutter-Analyse, alle Dart-/Widgettests und Android-APK-Build für 0.6.4+34 grün bekommen; bei Fehlern die Logs auswerten und beheben.

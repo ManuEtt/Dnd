@@ -86,6 +86,25 @@ void main() {
     expect(strikes.first.damage, 15);
   });
 
+  test('Only one confirmed attack ability is enough for Martial Arts', () {
+    final both = monk();
+    final onlyStrength = both.copyWith(abilities: {
+      ...both.abilities, 'dexterity': null,
+    });
+    final onlyDexterity = both.copyWith(abilities: {
+      ...both.abilities, 'strength': null,
+    });
+    expect(MonkFlurryRules.use(onlyStrength, enemy(),
+        DiceEngine(random: FixedRandom(false))).strikes, hasLength(2));
+    expect(MonkFlurryRules.use(onlyDexterity, enemy(),
+        DiceEngine(random: FixedRandom(false))).strikes, hasLength(2));
+    final neither = both.copyWith(abilities: {
+      ...both.abilities, 'strength': null, 'dexterity': null,
+    });
+    expect(() => MonkFlurryRules.use(neither, enemy(),
+        DiceEngine(random: FixedRandom(false))), throwsStateError);
+  });
+
   test('focus, class level, armor, conditions, turn ownership fail closed', () {
     final dice = DiceEngine(random: FixedRandom(false));
     expect(() => MonkFlurryRules.use(monk(monkLevel: 1), enemy(), dice),

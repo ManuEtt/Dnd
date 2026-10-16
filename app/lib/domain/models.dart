@@ -937,8 +937,11 @@ class Encounter {
     this.sneakAttackUsedThisTurn = false,
     this.rageUntilRound = 0,
     this.rageStartedRound = 0,
+    this.selfRestorationChoice = '',
   });
   final String id, enemyName, enemyDamage, enemyDamageType, activeParticipant;
+  /// Pending player choice for the Monk's end-of-turn Self-Restoration.
+  final String selfRestorationChoice;
   final int enemyHitPoints,
       enemyMaxHitPoints,
       enemyArmorClass,
@@ -980,6 +983,7 @@ class Encounter {
     bool? sneakAttackUsedThisTurn,
     int? rageUntilRound,
     int? rageStartedRound,
+    String? selfRestorationChoice,
   }) => Encounter(
     id: id,
     enemyName: enemyName,
@@ -1006,6 +1010,7 @@ class Encounter {
     sneakAttackUsedThisTurn: sneakAttackUsedThisTurn ?? this.sneakAttackUsedThisTurn,
     rageUntilRound: rageUntilRound ?? this.rageUntilRound,
     rageStartedRound: rageStartedRound ?? this.rageStartedRound,
+    selfRestorationChoice: selfRestorationChoice ?? this.selfRestorationChoice,
   );
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -1033,6 +1038,8 @@ class Encounter {
     if (sneakAttackUsedThisTurn) 'sneakAttackUsedThisTurn': true,
     if (rageUntilRound > 0) 'rageUntilRound': rageUntilRound,
     if (rageStartedRound > 0) 'rageStartedRound': rageStartedRound,
+    if (selfRestorationChoice.isNotEmpty)
+      'selfRestorationChoice': selfRestorationChoice,
   };
   factory Encounter.fromJson(Map<String, dynamic> j) {
     final maxHp = _int(j['enemyMaxHitPoints'], 'Gegnermaximum', min: 1);
@@ -1073,6 +1080,12 @@ class Encounter {
          rageEnd < currentRound || rageEnd < rageStart ||
          rageEnd > rageStart + 99))) {
       throw const FormatException('Ungültige Kampfrausch-Dauer.');
+    }
+    final restoration = _string(j['selfRestorationChoice'],
+        'Selbstwiederherstellung', fallback: '');
+    if (restoration.isNotEmpty && !const {
+        'bezaubert', 'verängstigt', 'vergiftet'}.contains(restoration)) {
+      throw const FormatException('Ungültige Selbstwiederherstellungs-Auswahl.');
     }
     return Encounter(
       id: _string(j['id'], 'Begegnung-ID'),
@@ -1124,6 +1137,7 @@ class Encounter {
           'Hinterhältiger Angriff bereits genutzt'),
       rageUntilRound: rageEnd,
       rageStartedRound: rageStart,
+      selfRestorationChoice: restoration,
     );
   }
 }

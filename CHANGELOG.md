@@ -1,3 +1,18 @@
+## 0.7.4+44 – Klassenaktionen, Rettungswürfe und Ressourcen (16.10.2026)
+
+- Paladin-Handauflegen als ausführbare Heil-/Entgiftungs-Bonusaktion, eigener Heilpunktevorrat, UI-Schaltflächen, Rastregeneration und Ereignisjournal.
+- Mönch 15: Perfekter Fokus beim Initiativewurf, für Demo- und KI-Begegnungen mit überprüfbaren Freischalt-/Regenerationsbedingungen.
+- Manuelle, explizit angeforderte Rettungswürfe samt optionalem Mönch-14-/Kämpfer-9-Wiederholungswurf; Ressource `indomitable` nach Kämpfer-Klassenstufe und verbindlichem Zweitergebnis.
+- Charakterbogen zeigt Handauflegen und Unbeugsam. Legacy-Speicherschema unverändert; neue Dart-Domain-/Integrationsfälle hinzugefügt.
+- Python-Tests und Integritätsprüfungen ausgeführt; Flutter- und APK-Verifikation steht noch aus. Keine Behauptung vollständiger 1.247-SRD-Anforderungen.
+
+## 0.7.3+43 – Mönch-Selbstwiederherstellung und disziplinierter Überlebender (16.10.2026)
+
+- Selbstwiederherstellung ab Mönchsstufe 10 zur gezielten Entfernung eines von drei Zuständen am Ende des eigenen Zugs, mit Entscheidung bei mehreren Zuständen, UI-Auswahl, Kampfjournaleintrag und rückwärtskompatiblem Encounter-JSON.
+- Alle sechs Rettungswurfübungen ab Mönchsstufe 14 berechnet, ohne Proficiency zu verdoppeln oder vorhandene Charakterbögen umzuschreiben.
+- GitHub-Actions-Compilerfehler `monk_flurry_rules.dart` (`int?` statt `int`, Commit 91ffddd) gezielt korrigiert; Regressionen für nur ein bestätigtes Angriffsattribut ergänzt.
+- Flutter-/Android-Test noch ausstehend. Dokumentation `docs/MONK_SELF_RESTORATION_0_7_3.md`.
+
 ## 0.7.2+42 – Temporäre TP und Mönch: erhöhter Fokus (16.10.2026)
 
 - Verstärkte Geduldige Verteidigung ab Mönchsstufe 10: zwei Kampfkunstwürfel temporäre TP für einen Fokuspunkt; Kampfrunden- und Ereignisintegration.

@@ -10,6 +10,10 @@ import 'class_combat_features.dart';
 import 'combat_class_actions.dart';
 import 'monk_focus_actions.dart';
 import 'monk_flurry_rules.dart';
+import 'monk_self_restoration.dart';
+import 'monk_perfect_focus.dart';
+import 'paladin_lay_on_hands.dart';
+import 'saving_throw_class_actions.dart';
 import 'ai_story.dart';
 import 'adventure_catalog.dart';
 import 'models.dart';
@@ -264,7 +268,9 @@ class GameEngine {
         advantage: initiative.advantage,
         disadvantage: initiative.disadvantage);
     final enemyInitiative = dice.check(modifier: 0);
+    final focus = MonkPerfectFocus.onInitiative(campaign.hero);
     var next = campaign.copyWith(
+      hero: focus.hero,
       adventureOffer: null,
       quests: [...campaign.quests, Quest(id: questId, title: valid.questTitle,
         description: valid.questDescription)],
@@ -286,7 +292,8 @@ class GameEngine {
       'und ${enemyInitiative.total} für ${foe.name}. ';
     final details = <String, dynamic>{'questId': questId,
       'template': valid.archetype, 'heroInitiative': heroInitiative.toJson(),
-      'enemyInitiative': enemyInitiative.toJson()};
+      'enemyInitiative': enemyInitiative.toJson(),
+      'focusRecoveredAtInitiative': focus.recovered};
     if (enemyInitiative.total > heroInitiative.total) {
       final turn = _enemyTurn(next, advanceRound: false);
       next = turn.campaign;
@@ -660,6 +667,14 @@ class GameEngine {
       );
     }
     final words = text.toLowerCase();
+    // A new class action or save request must never be mistaken for the
+    // natural die value of an already pending attack/check.
+    if (campaign.pendingRoll != null && RegExp(
+        r'^(?:rettungswurf|handauflegen)\s*[: ]').hasMatch(words)) {
+      return _commit(campaign, campaign,
+        'Zuerst den bereits offenen Würfelwurf abschließen.',
+        type: 'rules.blocked');
+    }
     final spokenRoll = _spokenNumber(words);
     if (campaign.pendingRoll != null && spokenRoll != null) {
       return resolveRoll(
@@ -722,6 +737,140 @@ class GameEngine {
         current,
         'Eine Probe wartet noch auf dich. Würfle automatisch oder gib den natürlichen W20 ein; ein Gesamtergebnis musst du ausdrücklich als Gesamt kennzeichnen.',
       );
+    }
+    // Manual saving throws with explicitly declared DC. This is deliberately
+    // NOT a spell save inferred from AI narration: the player supplies the DC.
+    const saveNames = <String, String>{
+      'stärke': 'strength', 'staerke': 'strength',
+      'geschicklichkeit': 'dexterity', 'konstitution': 'constitution',
+      'intelligenz': 'intelligence', 'weisheit': 'wisdom',
+      'charisma': 'charisma',
+    };
+    final requestedSave = RegExp(
+      r'^rettungswurf\s*:\s*(stärke|staerke|geschicklichkeit|konstitution|intelligenz|weisheit|charisma)\s+sg\s+(\d{1,2})\s*[.!?]?$',
+    ).firstMatch(words);
+    if (requestedSave != null) {
+      final ability = saveNames[requestedSave.group(1)!]!;
+      final dc = int.parse(requestedSave.group(2)!);
+      if (dc < 1 || dc > 30 || current.hero.isDead) {
+        return _commit(campaign, current,
+          'Der manuelle Rettungswurf benötigt SG 1 bis 30 und einen lebenden Charakter.',
+          type: 'rules.blocked');
+      }
+      try {
+        final rule = CharacterRuleEngine.savingThrow(current.hero, ability);
+        final rolled = dice.check(modifier: rule.modifier,
+          advantage: rule.advantage, disadvantage: rule.disadvantage);
+        final passed = rolled.total >= dc;
+        final options = <String>[
+          if (!passed && SavingThrowClassActions.available(current.hero,
+              SavingThrowRerollFeature.disciplinedSurvivor)) 'Fokus',
+          if (!passed && SavingThrowClassActions.available(current.hero,
+              SavingThrowRerollFeature.indomitable)) 'Unbeugsam',
+        ];
+        final suggestions = options.isEmpty ? '' :
+          'Du kannst sofort wiederholen mit: '
+          '${options.map((option) => 'Rettungswurf wiederholen: $option').join(' oder ')}. ';
+        return _commit(campaign, current,
+          'Manueller Rettungswurf (${requestedSave.group(1)}, SG $dc): '
+          '${rolled.total} – ${passed ? 'gelungen' : 'misslungen'}. '
+          '$suggestions'
+          'Das Ergebnis wird dokumentiert; Wirkungen fremder Zauber werden nicht automatisch angenommen.',
+          type: 'saving.roll',
+          payload: {'ability': ability, 'difficulty': dc,
+            'total': rolled.total, 'failed': !passed,
+            'roll': rolled.toJson(), 'manualDifficulty': true});
+      } on StateError catch (e) {
+        return _commit(campaign, current, e.message.toString(),
+          type: 'rules.blocked');
+      }
+    }
+    final retrySave = RegExp(
+      r'^rettungswurf wiederholen\s*:\s*(fokus|unbeugsam)\s*[.!?]?$',
+    ).firstMatch(words);
+    if (retrySave != null) {
+      final previous = campaign.events.isNotEmpty ? campaign.events.last : null;
+      final payload = previous?.payload ?? const <String, dynamic>{};
+      if (previous?.type != 'saving.roll' ||
+          payload['failed'] != true ||
+          payload['ability'] is! String ||
+          payload['difficulty'] is! int || payload['total'] is! int) {
+        return _commit(campaign, current,
+          'Es liegt kein unmittelbar vorheriger fehlgeschlagener Rettungswurf vor.',
+          type: 'rules.blocked');
+      }
+      final feature = retrySave.group(1) == 'fokus'
+          ? SavingThrowRerollFeature.disciplinedSurvivor
+          : SavingThrowRerollFeature.indomitable;
+      try {
+        final rerolled = SavingThrowClassActions.rerollFailed(
+          hero: current.hero, dice: dice,
+          ability: payload['ability'] as String,
+          difficulty: payload['difficulty'] as int,
+          originalTotal: payload['total'] as int,
+          feature: feature);
+        return _commit(campaign, current.copyWith(hero: rerolled.hero),
+          'Wiederholter Rettungswurf: ${rerolled.roll.total} – '
+          '${rerolled.passed ? 'gelungen' : 'misslungen'}. '
+          'Das neue Ergebnis gilt auch dann, wenn es schlechter ist.',
+          type: 'saving.rerolled',
+          payload: {'ability': payload['ability'],
+            'difficulty': payload['difficulty'],
+            'previousTotal': payload['total'],
+            'roll': rerolled.roll.toJson(), 'passed': rerolled.passed,
+            'resource': rerolled.resource,
+            'fighterLevelBonus': rerolled.fighterLevelBonus});
+      } on StateError catch (e) {
+        return _commit(campaign, current, e.message.toString(),
+          type: 'rules.blocked');
+      } on FormatException catch (e) {
+        return _commit(campaign, current, e.message,
+          type: 'rules.blocked');
+      }
+    }
+    // An explicit Lay on Hands command is the only authority to spend the
+    // paladin's shared healing pool. Natural-language story text cannot do so.
+    final handsCommand = RegExp(r'^handauflegen\s*:\s*(\d{1,3}|vergiftung)(?:\s*[.!?])?$')
+        .firstMatch(words);
+    if (handsCommand != null) {
+      final encounter = current.encounter;
+      if (encounter != null && !encounter.isFinished &&
+          (encounter.bonusActionUsed || encounter.activeParticipant != 'hero')) {
+        return _commit(campaign, current,
+          'Handauflegen benötigt deine freie Bonusaktion im eigenen Zug.',
+          type: 'rules.blocked');
+      }
+      try {
+        final choice = handsCommand.group(1)!;
+        final use = PaladinLayOnHands.useOnSelf(current.hero,
+          healing: int.tryParse(choice) ?? 0,
+          removePoisoned: choice == 'vergiftung');
+        final nextEncounter = encounter != null && !encounter.isFinished
+            ? encounter.copyWith(bonusActionUsed: true) : encounter;
+        final remaining = PaladinLayOnHands.remaining(use.hero);
+        return _commit(campaign, current.copyWith(hero: use.hero,
+            encounter: nextEncounter),
+          use.poisonedRemoved
+              ? 'Handauflegen: Vergiftet entfernt, 5 Heilpunkte verbraucht. '
+                '$remaining Punkte verbleiben.'
+              : 'Handauflegen: ${use.hitPointsRestored} Trefferpunkte '
+                'wiederhergestellt; ${use.pointsSpent} Heilpunkte verbraucht. '
+                '$remaining Punkte verbleiben.',
+          type: 'class.layOnHands',
+          payload: {'pointsSpent': use.pointsSpent,
+            'hitPointsRestored': use.hitPointsRestored,
+            'poisonedRemoved': use.poisonedRemoved,
+            'remaining': remaining});
+      } on StateError catch (e) {
+        return _commit(campaign, current, e.message.toString(),
+            type: 'rules.blocked');
+      } on FormatException catch (e) {
+        return _commit(campaign, current, e.message,
+            type: 'rules.blocked');
+      } on RangeError catch (e) {
+        return _commit(campaign, current, 'Ungültige Heilpunktzahl: $e',
+            type: 'rules.blocked');
+      }
     }
     if (RegExp(r'second wind|zweite luft').hasMatch(words)) {
       final encounter = current.encounter;
@@ -1057,7 +1206,9 @@ class GameEngine {
         disadvantage: initiative.disadvantage,
       );
       final foeInit = dice.check(modifier: 0);
+      final focus = MonkPerfectFocus.onInitiative(current.hero);
       var next = current.copyWith(
+        hero: focus.hero,
         scene: 'Am alten Waldschrein erhebt sich ein Dornenwächter.',
         facts: {...current.facts, 'location': 'Waldschrein'},
         places: current.places.any((e) => e.id == 'shrine')
@@ -1086,6 +1237,7 @@ class GameEngine {
       final details = <String, dynamic>{
         'heroInitiative': heroInit.toJson(),
         'enemyInitiative': foeInit.toJson(),
+        'focusRecoveredAtInitiative': focus.recovered,
       };
       if (foeInit.total > heroInit.total) {
         final turn = _enemyTurn(next, advanceRound: false);
@@ -1266,6 +1418,28 @@ class GameEngine {
         type: 'rules.blocked');
     }
     final encounter = current.encounter!;
+    if (words.startsWith('selbstwiederherstellung')) {
+      final match = RegExp(r'^selbstwiederherstellung\s*:\s*(bezaubert|verängstigt|vergiftet)\s*[.!?]?$')
+          .firstMatch(words);
+      if (match == null) {
+        return _commit(before, current,
+          'Bitte wähle genau einen Zustand: Bezaubert, Verängstigt oder Vergiftet.',
+          type: 'rules.blocked');
+      }
+      final choice = match.group(1)!;
+      try {
+        MonkSelfRestoration.validateChoice(current.hero, choice);
+        return _commit(before, current.copyWith(encounter:
+            encounter.copyWith(selfRestorationChoice: choice)),
+          'Selbstwiederherstellung vorbereitet: $choice. Der Zustand endet '
+          'am Ende deines Zugs, nicht sofort.',
+          type: 'class.selfRestorationSelected',
+          payload: {'condition': choice});
+      } on StateError catch (error) {
+        return _commit(before, current, error.message.toString(),
+          type: 'rules.blocked');
+      }
+    }
     if (RegExp(r'kampfrausch.*verlänger|kampfrausch.*verlaenger')
         .hasMatch(words)) {
       if (!CombatClassActions.rageActive(encounter) ||
@@ -1874,22 +2048,39 @@ class GameEngine {
     bool advanceRound = true,
   }) {
     final foe = campaign.encounter!;
+    var hero = campaign.hero;
+    var restored = '';
+    var restorationChoiceRequired = false;
+    if (advanceRound) {
+      final resolution = MonkSelfRestoration.atEndOfTurn(hero,
+          choice: foe.selfRestorationChoice);
+      hero = resolution.hero;
+      restored = resolution.removed;
+      restorationChoiceRequired = resolution.choiceRequired;
+    }
     final result = dice.check(
       modifier: foe.enemyAttackBonus,
-      advantage: ConditionRules.hasUnconditionalAttackerAdvantage(campaign.hero),
+      advantage: ConditionRules.hasUnconditionalAttackerAdvantage(hero),
       disadvantage: disadvantage || foe.dodgeActive,
     );
     final outcome = RulesEngine.attack(
       roll: result,
-      armorClass: campaign.hero.armorClass!,
+      armorClass: hero.armorClass!,
     );
-    var hero = campaign.hero;
     var narration =
         'Der ${foe.enemyName} greift an: ${result.total} gegen deine Rüstungsklasse ${hero.armorClass}. ';
     final details = <String, dynamic>{
       'attackRoll': result.toJson(),
       'hit': outcome.hit,
     };
+    if (restored.isNotEmpty) {
+      details['selfRestorationRemoved'] = restored;
+      narration = 'Selbstwiederherstellung beendet $restored. $narration';
+    } else if (restorationChoiceRequired) {
+      details['selfRestorationChoiceRequired'] = true;
+      narration = 'Selbstwiederherstellung wurde nicht eingesetzt: '
+          'Mehrere Zustände waren vorhanden, aber keiner ausgewählt. $narration';
+    }
     if (outcome.hit) {
       final damageRoll = dice.roll(foe.enemyDamage);
       final extra = outcome.critical ? dice.roll(foe.enemyDamage) : null;
@@ -1956,6 +2147,7 @@ class GameEngine {
           surgeReserved: false,
           surgeUsedThisTurn: false,
           sneakAttackUsedThisTurn: false,
+          selfRestorationChoice: '',
         ),
       ),
       narration,

@@ -724,6 +724,14 @@ class _DefensesSection extends StatelessWidget {
           _DetailRow(icon: Icons.favorite_border, label: 'Maximale Trefferpunkte', value: hero.maxHitPoints?.toString() ?? 'Nicht erfasst'),
           _DetailRow(icon: Icons.shield_outlined, label: 'Temporäre Trefferpunkte', value: hero.temporaryHitPoints.toString()),
           _DetailRow(icon: Icons.casino_outlined, label: 'Verfügbare Trefferwürfel', value: diceText),
+          if (ClassResourceRules.level(hero, 'Paladin') >= 1)
+            _DetailRow(icon: Icons.healing_outlined,
+              label: 'Handauflegen (Heilpunktevorrat)',
+              value: '${ClassResourceRules.remaining(hero, 'layOnHands')} / ${ClassResourceRules.maximum(hero, 'layOnHands')}'),
+          if (ClassResourceRules.level(hero, 'Kämpfer') >= 9)
+            _DetailRow(icon: Icons.autorenew_outlined,
+              label: 'Unbeugsam (Rettungswürfe)',
+              value: '${ClassResourceRules.remaining(hero, 'indomitable')} / ${ClassResourceRules.maximum(hero, 'indomitable')}'),
           _DetailRow(icon: Icons.directions_run, label: 'Bewegung (effektiv)', value:
             CharacterRuleEngine.speedMeters(hero) == null ? 'Nicht erfasst'
             : '${_meters(CharacterRuleEngine.speedMeters(hero))} (Basis ${hero.speed} m)'),

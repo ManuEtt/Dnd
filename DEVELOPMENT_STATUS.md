@@ -1,3 +1,20 @@
+## 0.7.4+44 — Tatsächliche Implementierung (16.10.2026)
+
+- **BASIS:** vollständiges Quellprojekt 0.7.3+43; GitHub `main` wurde bei der Entwicklung als 0.7.2+42 (`91ffddd`) gelesen.
+- **NEU:** Paladin-Handauflegen (Bonusaktions-/Ressourcenlogik und Entgiftung), Mönch-15-Perfect-Focus in der Initiative, explizite W20-Rettungswürfe mit Mönch-14- und Kämpfer-9-Wiederholungswurf, Speicherung/Ereignisse/UI.
+- **GEPRÜFT:** 38 Python-Projekttests, Projektdateistruktur, Patch-/ZIP-Integrität nach Verpackung.
+- **OFFEN:** Flutter analyze, Dart-Test-Suite, Android-Build, echte Gruppenmitglieder, automatisch ausgelöste Rettungswürfe aus allen Quellen, verbleibende SRD-Regelengine. Die 1.247 Anforderungen sind keinesfalls vollständig umgesetzt.
+- **DETAILS:** `docs/CLASS_ACTIONS_AND_SAVES_0_7_4.md`.
+
+## 0.7.3+43 – Mönch-Selbstwiederherstellung und alle Rettungswurfübungen (16.10.2026)
+
+- **BASIS:** GitHub `ManuEtt/Dnd` main `91ffddd246a3aa07780bf1bbafa9ce2c17726e21` / 0.7.2+42.
+- **IMPLEMENTIERT:** Stufe-10-Selbstwiederherstellung am Ende eines bestätigten eigenen Kampfzugs, eindeutige Zustandsauswahl bei mehreren, optional gespeicherte Auswahl und Ereignisnachweis; Stufe-14-Rettungswurfübung (alle sechs, ohne doppelte Berechnung); CI-Fix `monk_flurry_rules.dart` für `int?`.
+- **GETESTET:** Projektstruktur, 38 Python-Projekttests, ZIP-/Patchintegrität (siehe Übergabebericht).
+- **NICHT GETESTET:** Neue Dart-Domain-/Widgettests, `flutter analyze`, vollständige Flutter-Test-Suite, Android APK und Gerät. Kein Flutter SDK vorhanden.
+- **OFFEN:** Disziplinierter-Überlebender-Wiederholungswurf nach fehlgeschlagener Rettung, Hunger-/Durst-Erschöpfungslogik, weitere Klasse- und Ziel-Effekte, voller Android-Build.
+- **QUELLE:** SRD 5.2.1, CC BY 4.0. Siehe `docs/MONK_SELF_RESTORATION_0_7_3.md`.
+
 ## 0.7.2+42 – Temporäre Trefferpunkte, Monk Heightened Focus (16.10.2026)
 
 - Basis: GitHub `ManuEtt/Dnd`, Commit `73c5bfe5f39b5f3189eec5dc5aeeebe5fc083fa2` (0.7.1+41).

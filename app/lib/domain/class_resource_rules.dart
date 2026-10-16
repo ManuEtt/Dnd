@@ -11,7 +11,7 @@ class ClassResourceRules {
 
   static const supported = <String>{
     'rage', 'bardicInspiration', 'channelDivinityCleric',
-    'wildShape', 'focusPoints', 'layOnHands',
+    'wildShape', 'focusPoints', 'layOnHands', 'indomitable',
     'channelDivinityPaladin', 'favoredEnemy', 'sorceryPoints',
   };
 
@@ -47,6 +47,8 @@ class ClassResourceRules {
         return l < 2 ? 0 : l;
       case 'layOnHands':
         return 5 * level(hero, 'Paladin');
+      case 'indomitable':
+        return fighterIndomitableMaximum(level(hero, 'Kämpfer'));
       case 'channelDivinityPaladin':
         final l = level(hero, 'Paladin');
         return l < 3 ? 0 : l >= 11 ? 3 : 2;

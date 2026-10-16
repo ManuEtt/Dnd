@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../domain/models.dart';
 import '../domain/class_resource_rules.dart';
 import '../domain/monk_flurry_rules.dart';
+import '../domain/monk_self_restoration.dart';
 import '../services/backup_files.dart';
 import '../services/game_controller.dart';
 import '../services/voice_controller.dart';
@@ -1298,6 +1299,14 @@ class _CombatView extends StatelessWidget {
           'auf; Mönche können zuvor noch ihre freie Bonusaktion nutzen.',
         ),
         const SizedBox(height: 16),
+        if (ClassResourceRules.level(hero, 'Kämpfer') >= 9 ||
+            ClassResourceRules.level(hero, 'Mönch') >= 14)
+          const Padding(
+            padding: EdgeInsets.only(bottom: 12),
+            child: Text('Manueller Rettungswurf: z. B. „Rettungswurf: Weisheit SG 15“. '
+                'Nach einem Fehlschlag kann „Rettungswurf wiederholen: '
+                'Unbeugsam“ oder „Rettungswurf wiederholen: Fokus“ gewählt werden.'),
+          ),
         Wrap(
           spacing: 10,
           runSpacing: 10,
@@ -1357,6 +1366,46 @@ class _CombatView extends StatelessWidget {
                   child: const Text('Sprinten + Rückzug · 1 Fokus'),
                 ),
               ],
+            ],
+            if (MonkSelfRestoration.choices(hero).isNotEmpty) ...[
+              for (final condition in MonkSelfRestoration.choices(hero))
+                OutlinedButton(
+                  key: ValueKey('monk-self-restoration-$condition'),
+                  onPressed: busy || encounter.activeParticipant != 'hero'
+                      ? null
+                      : () => onAction('Selbstwiederherstellung: $condition'),
+                  child: Text(encounter.selfRestorationChoice == condition
+                      ? 'Ausgewählt für Zugende: $condition'
+                      : 'Am Zugende beenden: $condition'),
+                ),
+            ],
+            if (ClassResourceRules.level(hero, 'Paladin') >= 1) ...[
+              OutlinedButton.icon(
+                key: const ValueKey('paladin-lay-on-hands-heal'),
+                onPressed: busy || encounter.bonusActionUsed ||
+                    encounter.activeParticipant != 'hero' ||
+                    (hero.hitPoints ?? 0) <= 0 ||
+                    hero.hitPoints == hero.maxHitPoints ||
+                    ClassResourceRules.remaining(hero, 'layOnHands') <= 0
+                  ? null : () {
+                    final missing = hero.maxHitPoints! - hero.hitPoints!;
+                    final pool = ClassResourceRules.remaining(hero, 'layOnHands');
+                    final amount = missing < pool ? missing : pool;
+                    onAction('Handauflegen: $amount');
+                  },
+                icon: const Icon(Icons.healing_outlined),
+                label: Text('Handauflegen · '
+                    '${ClassResourceRules.remaining(hero, 'layOnHands')} TP-Vorrat'),
+              ),
+              if (hero.conditions.contains('vergiftet'))
+                OutlinedButton(
+                  key: const ValueKey('paladin-lay-on-hands-poison'),
+                  onPressed: busy || encounter.bonusActionUsed ||
+                      encounter.activeParticipant != 'hero' ||
+                      ClassResourceRules.remaining(hero, 'layOnHands') < 5
+                    ? null : () => onAction('Handauflegen: Vergiftung'),
+                  child: const Text('Vergiftung entfernen · 5 Punkte'),
+                ),
             ],
             if (ClassResourceRules.level(hero, 'Schurke') >= 2)
               OutlinedButton(
