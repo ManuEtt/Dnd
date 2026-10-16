@@ -114,6 +114,7 @@ class HeroCharacter {
     Map<String, int?>? abilities,
     this.hitPoints,
     this.maxHitPoints,
+    this.temporaryHitPoints = 0,
     this.armorClass,
     this.speed,
     List<String> skills = const [],
@@ -167,6 +168,8 @@ class HeroCharacter {
   final int? gold, experience;
   final Map<String, int?> abilities;
   final int? hitPoints, maxHitPoints, armorClass, speed;
+  /// SRD temporary HP: separate from normal/max HP, not additive.
+  final int temporaryHitPoints;
   final List<String> skills,
       savingThrowProficiencies,
       features,
@@ -216,6 +219,7 @@ class HeroCharacter {
     Map<String, int?>? abilities,
     Object? hitPoints = _unchanged,
     Object? maxHitPoints = _unchanged,
+    int? temporaryHitPoints,
     Object? armorClass = _unchanged,
     Object? speed = _unchanged,
     List<String>? skills,
@@ -263,6 +267,7 @@ class HeroCharacter {
     maxHitPoints: identical(maxHitPoints, _unchanged)
         ? this.maxHitPoints
         : maxHitPoints as int?,
+    temporaryHitPoints: temporaryHitPoints ?? this.temporaryHitPoints,
     armorClass: identical(armorClass, _unchanged)
         ? this.armorClass
         : armorClass as int?,
@@ -313,6 +318,7 @@ class HeroCharacter {
     'abilities': abilities,
     'hitPoints': hitPoints,
     'maxHitPoints': maxHitPoints,
+    if (temporaryHitPoints > 0) 'temporaryHitPoints': temporaryHitPoints,
     'armorClass': armorClass,
     'speed': speed,
     'skills': skills,
@@ -498,6 +504,8 @@ class HeroCharacter {
       },
       hitPoints: hp,
       maxHitPoints: maxHp,
+      temporaryHitPoints: _int(j['temporaryHitPoints'],
+          'Temporäre Trefferpunkte', fallback: 0, max: 100000),
       armorClass: _nullableInt(
         j['armorClass'],
         'Rüstungsklasse',

@@ -98,6 +98,7 @@ class RestRules {
         SpellcastingRules.afterLongRest(
           ExhaustionRules.afterLongRest(hero).copyWith(
             hitPoints: hero.maxHitPoints,
+            temporaryHitPoints: 0,
             spentHitDice: const {},
           ),
         ),

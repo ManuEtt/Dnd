@@ -184,6 +184,12 @@ class _CharacterHeader extends StatelessWidget {
                         ),
                       ),
                     ),
+                    if (hero.temporaryHitPoints > 0) ...[
+                      const SizedBox(height: 4),
+                      Text('+${hero.temporaryHitPoints} temporäre TP',
+                        key: const ValueKey('sheet-temporary-hit-points'),
+                        style: const TextStyle(color: _gold, fontSize: 12)),
+                    ],
                     const SizedBox(height: 8),
                     if (ratio != null)
                       ClipRRect(
@@ -716,6 +722,7 @@ class _DefensesSection extends StatelessWidget {
           _DetailRow(icon: Icons.shield_outlined, label: 'Rüstungsklasse', value: hero.armorClass?.toString() ?? 'Nicht erfasst'),
           _DetailRow(icon: Icons.favorite_outline, label: 'Aktuelle Trefferpunkte', value: hero.hitPoints?.toString() ?? 'Nicht erfasst'),
           _DetailRow(icon: Icons.favorite_border, label: 'Maximale Trefferpunkte', value: hero.maxHitPoints?.toString() ?? 'Nicht erfasst'),
+          _DetailRow(icon: Icons.shield_outlined, label: 'Temporäre Trefferpunkte', value: hero.temporaryHitPoints.toString()),
           _DetailRow(icon: Icons.casino_outlined, label: 'Verfügbare Trefferwürfel', value: diceText),
           _DetailRow(icon: Icons.directions_run, label: 'Bewegung (effektiv)', value:
             CharacterRuleEngine.speedMeters(hero) == null ? 'Nicht erfasst'

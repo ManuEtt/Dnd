@@ -1251,7 +1251,7 @@ class _CombatView extends StatelessWidget {
             title: Text(hero.name),
             subtitle: Text(
               'Initiative ${encounter.heroInitiative} · '
-              'TP ${hero.hitPoints ?? '?'}/${hero.maxHitPoints ?? '?'} · RK ${hero.armorClass ?? '?'}',
+              'TP ${hero.hitPoints ?? '?'}/${hero.maxHitPoints ?? '?'} · Temporär ${hero.temporaryHitPoints} · RK ${hero.armorClass ?? '?'}',
             ),
           ),
         ),
@@ -1346,7 +1346,9 @@ class _CombatView extends StatelessWidget {
                   key: const ValueKey('monk-patient-defense-focus'),
                   onPressed: busy || encounter.bonusActionUsed ? null
                       : () => onAction('Geduldige Verteidigung mit Fokuspunkt'),
-                  child: const Text('Rückzug + Ausweichen · 1 Fokus'),
+                  child: Text(ClassResourceRules.level(hero, 'Mönch') >= 10
+                      ? 'Rückzug + Ausweichen + temporäre TP · 1 Fokus'
+                      : 'Rückzug + Ausweichen · 1 Fokus'),
                 ),
                 OutlinedButton(
                   key: const ValueKey('monk-step-wind-focus'),

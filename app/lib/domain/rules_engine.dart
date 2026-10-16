@@ -81,6 +81,22 @@ class RulesEngine {
     return AttackOutcome(hit: roll.total >= armorClass, critical: false);
   }
 
+  /// Grant temporary hit points; they never add together. A player may elect
+  /// to replace a larger pool with a smaller new pool via [replaceExisting].
+  static HeroCharacter grantTemporaryHitPoints(
+    HeroCharacter hero, int amount, {bool replaceExisting = false}
+  ) {
+    _validateAmount(amount);
+    if (hero.temporaryHitPoints < 0 || hero.temporaryHitPoints > 100000) {
+      throw StateError('Ungültige temporäre Trefferpunkte.');
+    }
+    if (hero.isDead) {
+      throw StateError('Tote Charaktere erhalten keine temporären Trefferpunkte.');
+    }
+    if (!replaceExisting && amount <= hero.temporaryHitPoints) return hero;
+    return hero.copyWith(temporaryHitPoints: amount);
+  }
+
   static HeroCharacter damage(
     HeroCharacter hero,
     int amount, {
@@ -89,15 +105,28 @@ class RulesEngine {
     _validateHitPoints(hero);
     _validateAmount(amount);
     if (amount == 0 || hero.isDead) return hero;
+    if (hero.temporaryHitPoints < 0 || hero.temporaryHitPoints > 100000) {
+      throw StateError('Ungültige temporäre Trefferpunkte.');
+    }
+    // Temporary HP absorbs damage before actual HP. Only the remainder can
+    // cause unconsciousness, death saves or massive-damage death.
+    final absorbed = amount < hero.temporaryHitPoints
+        ? amount : hero.temporaryHitPoints;
+    final remaining = amount - absorbed;
+    final temporaryLeft = hero.temporaryHitPoints - absorbed;
+    if (remaining == 0) {
+      return hero.copyWith(temporaryHitPoints: temporaryLeft);
+    }
     final hp = hero.hitPoints!;
     final maxHp = hero.maxHitPoints!;
     final conditions = [...hero.conditions]..remove(stable);
-    final remainingDamage = amount - hp;
+    final remainingDamage = remaining - hp;
     if (remainingDamage >= maxHp) {
       _addCondition(conditions, unconscious);
       _addCondition(conditions, dead);
       return hero.copyWith(
         hitPoints: 0,
+        temporaryHitPoints: temporaryLeft,
         conditions: conditions,
         concentratingOn: '',
         deathSuccesses: 0,
@@ -109,23 +138,26 @@ class RulesEngine {
       _addCondition(conditions, unconscious);
       if (failures >= 3) _addCondition(conditions, dead);
       return hero.copyWith(
+        temporaryHitPoints: temporaryLeft,
         conditions: conditions,
         concentratingOn: '',
         deathFailures: failures > 3 ? 3 : failures,
       );
     }
-    final nextHp = hp - amount;
+    final nextHp = hp - remaining;
     if (nextHp <= 0) {
       _addCondition(conditions, unconscious);
       return hero.copyWith(
         hitPoints: 0,
+        temporaryHitPoints: temporaryLeft,
         conditions: conditions,
         concentratingOn: '',
         deathSuccesses: 0,
         deathFailures: 0,
       );
     }
-    return hero.copyWith(hitPoints: nextHp, conditions: conditions);
+    return hero.copyWith(hitPoints: nextHp,
+        temporaryHitPoints: temporaryLeft, conditions: conditions);
   }
 
   /// Resolve explicitly typed damage against explicitly known defenses before

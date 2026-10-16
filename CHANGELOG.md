@@ -1,3 +1,10 @@
+## 0.7.2+42 – Temporäre TP und Mönch: erhöhter Fokus (16.10.2026)
+
+- Verstärkte Geduldige Verteidigung ab Mönchsstufe 10: zwei Kampfkunstwürfel temporäre TP für einen Fokuspunkt; Kampfrunden- und Ereignisintegration.
+- Eigenes rückwärtskompatibles Speicherfeld für temporäre Trefferpunkte, Schadenspuffer vor echten TP, Heil- und Rastregeln sowie Anzeige in der UI.
+- CI-Lint für `monk_flurry_rules.dart` korrigiert. Neue Dart-Domain- und Widget-Regressionsprüfungen hinzugefügt.
+- Siehe `docs/TEMP_HP_MONK_HEIGHTENED_FOCUS_0_7_2.md`; Flutter-/APK-Prüfung noch offen.
+
 ## 0.7.1+41 – Mönch: Schlaghagel und letzte CI-Regressionen (16.10.2026)
 
 - Ausführbarer Schlaghagel für Mönchsstufe 2+ (2 Unarmed Strikes) und 10+ (3 Unarmed Strikes), Fokusverbrauch und Aktionsturn-Reihenfolge; Treffer/Krits und Schadenswürfe einzeln protokolliert.

@@ -1354,7 +1354,7 @@ class GameEngine {
         final used = MonkFocusActions.use(current.hero, encounter,
           action: patient ? MonkBonusAction.patientDefense
               : MonkBonusAction.stepOfTheWind,
-          enhanced: enhanced);
+          enhanced: enhanced, dice: dice);
         final remaining = ClassResourceRules.remaining(used.hero, 'focusPoints');
         return _commit(before, current.copyWith(
           hero: used.hero, encounter: used.encounter),
@@ -1362,6 +1362,7 @@ class GameEngine {
             ? (enhanced
                 ? 'Geduldige Verteidigung: Rückzug und Ausweichen als Bonusaktion. '
                   'Der nächste Gegnerangriff in diesem Kampfzug hat Nachteil, sofern kein Vorteil entgegenwirkt.'
+                  '${used.temporaryHitPointsRolled > 0 ? ' Du erhältst ${used.temporaryHitPointsRolled} gewürfelte temporäre Trefferpunkte (aktuell ${used.hero.temporaryHitPoints}).' : ''}'
                 : 'Geduldige Verteidigung: Rückzug als Bonusaktion (ohne Fokuskosten).')
             : (enhanced
                 ? 'Schritt des Windes: Sprinten und Rückzug; deine Sprungweite ist '
@@ -1371,6 +1372,8 @@ class GameEngine {
           payload: {'focusSpent': used.focusSpent,
             'remainingFocus': remaining,
             'addedMovement': used.movementAdded,
+            'temporaryHitPointsRolled': used.temporaryHitPointsRolled,
+            'temporaryHitPoints': used.hero.temporaryHitPoints,
             'dodgeActive': used.encounter.dodgeActive,
             'disengagedThisTurn': used.encounter.disengagedThisTurn,
             'jumpDoubledThisTurn': used.encounter.jumpDoubledThisTurn});
@@ -1898,7 +1901,13 @@ class GameEngine {
         details['rawDamage'] = rawDamage;
         details['rageResistanceReduction'] = rawDamage - damage;
       }
+      final tempBefore = hero.temporaryHitPoints;
+      final hitPointsBefore = hero.hitPoints!;
       hero = RulesEngine.damage(hero, damage, critical: outcome.critical);
+      details['temporaryHitPointsAbsorbed'] =
+          tempBefore - hero.temporaryHitPoints;
+      details['hitPointDamage'] = hitPointsBefore - hero.hitPoints!;
+      details['remainingTemporaryHitPoints'] = hero.temporaryHitPoints;
       if (campaign.hero.concentratingOn.isNotEmpty && damage > 0) {
         if (hero.concentratingOn.isEmpty) {
           details['concentrationLost'] = true;
@@ -1922,7 +1931,8 @@ class GameEngine {
       details['criticalExtra'] = extra?.toJson();
       details['damage'] = damage;
       narration +=
-          'Du erleidest $damage Schaden und hast noch ${hero.hitPoints} Trefferpunkte.';
+          'Du erleidest $damage Schaden und hast noch ${hero.hitPoints} Trefferpunkte'
+          '${hero.temporaryHitPoints > 0 ? ' und ${hero.temporaryHitPoints} temporäre Trefferpunkte' : ''}.';
     } else {
       narration += 'Der Angriff verfehlt dich.';
     }

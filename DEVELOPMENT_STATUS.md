@@ -1,3 +1,11 @@
+## 0.7.2+42 – Temporäre Trefferpunkte, Monk Heightened Focus (16.10.2026)
+
+- Basis: GitHub `ManuEtt/Dnd`, Commit `73c5bfe5f39b5f3189eec5dc5aeeebe5fc083fa2` (0.7.1+41).
+- Implementiert: temporäre TP als getrennte, persistierte Ressource; Schaden absorbieren, HP-Überhang korrekt berechnen, Verlust nach Langrast, Anzeige und Ereignisnachweise.
+- Geduldige Verteidigung auf Mönchsstufe 10+: 2 Kampfkunstwürfel für einen Fokuspunkt, Schutz gegen Stapelung.
+- CI-Hinweis `unnecessary_non_null_assertion` aus GitHub-Actions-Lauf 38866660863 korrigiert.
+- Neue Dart-Domain-/Widgettests enthalten; Flutter-/APK-Tests erst nach CI als bestanden melden.
+
 ## 0.7.1+41 – Schlaghagel als ausführbare Bonusaktion (16.10.2026)
 
 - **BASIS:** GitHub `main` `47b549125d95973b2d9e066e9a2401488ef322d2` (0.7.0+40).

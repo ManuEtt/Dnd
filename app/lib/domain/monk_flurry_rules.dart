@@ -88,7 +88,7 @@ class MonkFlurryRules {
     // confirmed modifier for this automatic roll, never a missing score.
     final useStrength = strength != null &&
         (dexterity == null || strength >= dexterity);
-    final score = useStrength ? strength! : dexterity!;
+    final score = useStrength ? strength! : dexterity;
     final modifier = RulesEngine.abilityModifier(score);
     final attackBonus = modifier + RulesEngine.proficiencyBonus(hero.level) +
         ExhaustionRules.d20Modifier(hero);
