@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dice_engine.dart';
 import 'condition_rules.dart';
 import 'character_rule_engine.dart';
+import 'class_progression_rules.dart';
 import 'ai_story.dart';
 import 'adventure_catalog.dart';
 import 'models.dart';
@@ -1176,9 +1177,22 @@ class GameEngine {
         type: 'rules.blocked');
     }
     final encounter = current.encounter!;
+    if (encounter.actionUsed && encounter.attacksRemaining > 0 &&
+        RegExp(r'ausweich|verteidig|flieh|flucht|wegrenn|heiltrank|trank.*trink|trink.*trank')
+            .hasMatch(words)) {
+      return _commit(before, current,
+          'Deine Angriffsaktion läuft bereits. Du kannst weitere Angriffe '
+          'ausführen, dich bewegen oder deinen Zug beenden; keine zweite '
+          'volle Aktion beginnen.', type: 'rules.blocked');
+    }
     if (RegExp(
       r'angreif|attackier|greif\w*.*\ban(?:[.!?]|$)|schieß|schies|schlag|hieb|bogen|schwert',
     ).hasMatch(words)) {
+      if (encounter.actionUsed && encounter.attacksRemaining == 0) {
+        return _commit(before, current,
+            'Deine Angriffsaktion ist bereits verbraucht.',
+            type: 'rules.blocked');
+      }
       final attack = CharacterRuleEngine.attack(current.hero);
       final bonus = attack.modifier;
       return _commit(
@@ -1219,7 +1233,7 @@ class GameEngine {
     if (RegExp(r'heiltrank|trank.*trink|trink.*trank').hasMatch(words)) {
       return _drinkPotion(before, current);
     }
-    if (RegExp(r'ausweich|verteidig|warten|zug beenden').hasMatch(words)) {
+    if (RegExp(r'ausweich|verteidig|warten|zug beenden|beende(?:\s+\w+){0,2}\s+zug').hasMatch(words)) {
       final dodge = RegExp(r'ausweich|verteidig').hasMatch(words);
       final turn = _enemyTurn(current, disadvantage: dodge);
       return _commit(
@@ -1330,6 +1344,16 @@ class GameEngine {
         roll: result,
         armorClass: foe.enemyArmorClass,
       );
+      // A regular Attack action may contain multiple separate attack rolls.
+      // Resolve each roll/damage independently and give the enemy exactly one
+      // turn when the sequence finishes (or the player ends their turn).
+      final attacksRemaining = foe.actionUsed
+          ? foe.attacksRemaining - 1
+          : ClassProgressionRules.attacksPerAttackAction(next.hero) - 1;
+      if (attacksRemaining < 0) {
+        throw StateError('Die Angriffsaktion ist bereits abgeschlossen.');
+      }
+      payload['attacksRemaining'] = attacksRemaining;
       if (outcome.hit) {
         final base = dice.roll(next.hero.weaponDamage);
         final extra = outcome.critical
@@ -1348,14 +1372,16 @@ class GameEngine {
         payload['criticalExtra'] = extra?.toJson();
         payload['damage'] = damage;
         next = next.copyWith(
-          encounter: foe.copyWith(enemyHitPoints: hp, actionUsed: true),
+          encounter: foe.copyWith(enemyHitPoints: hp, actionUsed: true,
+              attacksRemaining: attacksRemaining),
           facts: next.storyBible['mode'] == 'ai'
               ? next.facts : {...next.facts, 'guardianHitPoints': '$hp'},
         );
         narration +=
             '${outcome.critical ? 'Ein kritischer Treffer! ' : ''}Du verursachst $damage Schaden; der ${foe.enemyName} hat noch $hp Trefferpunkte. ';
       } else {
-        next = next.copyWith(encounter: foe.copyWith(actionUsed: true));
+        next = next.copyWith(encounter: foe.copyWith(
+            actionUsed: true, attacksRemaining: attacksRemaining));
         narration += 'Dein Angriff verfehlt den ${foe.enemyName}. ';
       }
       if (next.encounter!.isFinished) {
@@ -1401,6 +1427,11 @@ class GameEngine {
           narration += 'Der Dornenwächter zerfällt in Blätter. '
               'Der Weg zum Schrein ist frei. Was möchtest du tun?';
         }
+      } else if (next.encounter!.attacksRemaining > 0) {
+        narration += 'Du kannst in derselben Angriffsaktion noch '
+        '${next.encounter!.attacksRemaining} '
+        '${next.encounter!.attacksRemaining == 1 ? 'Angriff' : 'Angriffe'} '
+        'ausführen oder deinen Zug beenden.';
       } else {
         final turn = _enemyTurn(next);
         next = turn.campaign;
@@ -1605,6 +1636,7 @@ class GameEngine {
           activeParticipant: 'hero',
           movementRemaining: CharacterRuleEngine.movementWholeMeters(hero)!,
           actionUsed: false,
+          attacksRemaining: 0,
           bonusActionUsed: false,
           reactionUsed: false,
         ),

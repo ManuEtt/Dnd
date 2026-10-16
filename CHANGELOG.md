@@ -1,3 +1,11 @@
+## 0.6.6+36 – Klassenmeilensteine & Mehrfachangriffe (16.10.2026)
+
+- SRD-5.2.1-Klassenstufen: Vorschau der Unterklassen-, Talent- und Kämpfer-Meilensteine; keine automatischen freien Klassenmerkmale behauptet.
+- Mehrfachangriffe je Angriffsaktion: fünf Grundklassen ab Klassenstufe 5, Kämpfer ab 11 drei, ab 20 vier; Mehrklassen-Merkmale nicht kumulativ.
+- Demo- und KI-Kampfsystem: einzelne Attacken nacheinander mit eigenem W20, kritischem Treffer und Schaden; Gegnerzug erst nach Abschluss oder freiwilligem Zugende.
+- Laufende Angriffsaktion rückwärtskompatibel speichern; Anzahl möglicher Angriffe und nächste Meilensteine im Charakterbogen anzeigen.
+- Tests ergänzt, Flutter-CI/APK nicht vor Ort ausgeführt. Details: `docs/CLASS_PROGRESSION_0_6_6.md`.
+
 ## 0.6.5+35 – Regelengine: Schadensarten + bekannte CI-Blockade (16.10.2026)
 
 - Bewegungsanzeige im Charakterbogen korrekt formatiert, einschließlich halber Meter; Regressionstests ergänzt.

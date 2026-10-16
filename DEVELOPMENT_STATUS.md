@@ -1,3 +1,12 @@
+## 0.6.6+36 – SRD-Klassenfortschritt und Extra Attack (16.10.2026)
+
+- Basis: Repo `ManuEtt/Dnd` Commit `26d1d8b` (enthält 0.6.5+35).
+- Klassenstufen-spezifische reguläre Extra-Attack-Mechanik integriert, einschließlich Fighter 11/20 und Mehrklassenregel ohne Stacken.
+- Zusätzliche Attacken innerhalb einer Angriffsaktion werden einzeln im Kampfsystem abgewickelt. Verbleibende Angriffe in `Encounter` persistiert; altes Schema 1 weiterhin lesbar.
+- Charakterbogen um bestätigte Angriffe pro Angriffsaktion und **nur vorausschauende** Meilensteine ergänzt.
+- Testerweiterungen: `class_progression_rules_test.dart`, `class_progression_combat_test.dart`.
+- Nicht behauptet: vollständiges Level-up, Unterklassen-/Talentwirkungen, vollständiges Aktionssystem, Flutter-Test, Android-Build oder GitHub-Push.
+
 ## 0.6.5+35 – SRD-Schadensauflösung und CI-Korrektur (16.10.2026)
 
 - **BASIS:** GitHub `main` `49c8c39af045c6d0e3a78eba23e95383c3c31a84`, identische ursprüngliche Datei-Blob-SHAs aus Actions-Quell-Checkpoint.

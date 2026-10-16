@@ -876,6 +876,7 @@ class Encounter {
     this.enemyInitiative = 0,
     this.movementRemaining = 9,
     this.actionUsed = false,
+    this.attacksRemaining = 0,
     this.bonusActionUsed = false,
     this.reactionUsed = false,
   });
@@ -889,6 +890,9 @@ class Encounter {
       enemyInitiative,
       movementRemaining;
   final bool actionUsed, bonusActionUsed, reactionUsed;
+  /// Remaining attacks after the first attack of a single Attack action.
+  /// Old campaign saves omit the field and resume with zero.
+  final int attacksRemaining;
   bool get isFinished => enemyHitPoints == 0;
   Encounter copyWith({
     int? enemyHitPoints,
@@ -898,6 +902,7 @@ class Encounter {
     int? enemyInitiative,
     int? movementRemaining,
     bool? actionUsed,
+    int? attacksRemaining,
     bool? bonusActionUsed,
     bool? reactionUsed,
   }) => Encounter(
@@ -914,6 +919,7 @@ class Encounter {
     enemyInitiative: enemyInitiative ?? this.enemyInitiative,
     movementRemaining: movementRemaining ?? this.movementRemaining,
     actionUsed: actionUsed ?? this.actionUsed,
+    attacksRemaining: attacksRemaining ?? this.attacksRemaining,
     bonusActionUsed: bonusActionUsed ?? this.bonusActionUsed,
     reactionUsed: reactionUsed ?? this.reactionUsed,
   );
@@ -931,6 +937,7 @@ class Encounter {
     'enemyInitiative': enemyInitiative,
     'movementRemaining': movementRemaining,
     'actionUsed': actionUsed,
+    if (attacksRemaining > 0) 'attacksRemaining': attacksRemaining,
     'bonusActionUsed': bonusActionUsed,
     'reactionUsed': reactionUsed,
   };
@@ -987,6 +994,8 @@ class Encounter {
       ),
       movementRemaining: _int(j['movementRemaining'], 'Bewegung', fallback: 9),
       actionUsed: _bool(j['actionUsed'], 'Aktion'),
+      attacksRemaining: _int(j['attacksRemaining'],
+          'Verbleibende Angriffe', fallback: 0, min: 0, max: 3),
       bonusActionUsed: _bool(j['bonusActionUsed'], 'Bonusaktion'),
       reactionUsed: _bool(j['reactionUsed'], 'Reaktion'),
     );

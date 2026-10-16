@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../domain/character_rule_engine.dart';
+import '../domain/class_progression_rules.dart';
 import '../domain/condition_rules.dart';
 import '../domain/models.dart';
 import '../domain/multiclass_rules.dart';
@@ -648,10 +649,22 @@ class _DefensesSection extends StatelessWidget {
           _DetailRow(icon: Icons.directions_run, label: 'Bewegung (effektiv)', value:
             CharacterRuleEngine.speedMeters(hero) == null ? 'Nicht erfasst'
             : '${_meters(CharacterRuleEngine.speedMeters(hero))} (Basis ${hero.speed} m)'),
+          _DetailRow(icon: Icons.gps_fixed, label: 'Angriffe pro Angriffsaktion',
+            value: '${ClassProgressionRules.attacksPerAttackAction(hero)}'),
           _DetailRow(icon: Icons.check_circle_outline, label: 'Erfolgreiche Todesrettungswürfe', value: '${hero.deathSuccesses} / 3'),
           _DetailRow(icon: Icons.cancel_outlined, label: 'Fehlgeschlagene Todesrettungswürfe', value: '${hero.deathFailures} / 3'),
           const SizedBox(height: 20),
           const _EmptyDetails('Resistenzen und Immunitäten sind im aktuellen Charaktermodell nicht gesondert erfasst.'),
+          const SizedBox(height: 20),
+          const _OrnateHeading('Klassenmeilensteine', icon: Icons.timeline),
+          const SizedBox(height: 10),
+          for (final milestone in ClassProgressionRules.nextMilestones(hero))
+            _FantasyFrame(child: Text(
+              '${milestone.className} ${milestone.classLevel}: ${milestone.label}',
+              style: const TextStyle(color: _ivory),
+            )),
+          const SizedBox(height: 8),
+          const _EmptyDetails('Vorschau, keine automatische Freischaltung von Talenten oder Unterklassen.'),
         ],
       );
   }
