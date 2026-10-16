@@ -138,6 +138,11 @@ void main() {
       expect(SpellcastingRules.concentrationDc(21), 10);
       expect(SpellcastingRules.concentrationDc(22), 11);
       expect(SpellcastingRules.concentrationDc(38), 19);
+      expect(SpellcastingRules.concentrationDc(0), 10);
+      expect(SpellcastingRules.concentrationDc(59), 29);
+      expect(SpellcastingRules.concentrationDc(60), 30);
+      expect(SpellcastingRules.concentrationDc(500), 30);
+      expect(() => SpellcastingRules.concentrationDc(-1), throwsRangeError);
       final held = SpellcastingRules.saveAfterDamage(hero, damage: 21, d20: 8);
       expect(held.total, 10);
       expect(held.maintained, isTrue);

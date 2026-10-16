@@ -132,6 +132,20 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Erschöpfung zeigt halbe Meter und Basisrate ohne .0',
+      (tester) async {
+    final hero = HeroCharacter(
+      id: 'fractional-speed', name: 'Waldläufer', level: 2,
+      speed: 9, exhaustionLevel: 1,
+    );
+    await tester.pumpWidget(MaterialApp(
+      home: CharacterSheetPage(hero: hero),
+    ));
+    await tester.pumpAndSettle();
+    expect(find.text('7.5 m'), findsOneWidget);
+    expect(find.text('9.0 m'), findsNothing);
+  });
+
   testWidgets('Unbestätigte Angaben bleiben unbekannt und Bereiche sind erreichbar',
       (tester) async {
     tester.view.physicalSize = const Size(320, 720);

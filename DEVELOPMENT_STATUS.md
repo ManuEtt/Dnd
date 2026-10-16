@@ -1,3 +1,12 @@
+## 0.6.5+35 – SRD-Schadensauflösung und CI-Korrektur (16.10.2026)
+
+- **BASIS:** GitHub `main` `49c8c39af045c6d0e3a78eba23e95383c3c31a84`, identische ursprüngliche Datei-Blob-SHAs aus Actions-Quell-Checkpoint.
+- **CI-BLOCKER-KORREKTUR:** Bewegungsformatierung im Charakterbogen liefert bei ganzzahliger Geschwindigkeit `9 m` statt `9.0 m`; halbe Meter bleiben erhalten. Widget-Regression ergänzt. Basis-CI: 413 Tests bestanden, 1 fehlgeschlagen (Charakterbogen).
+- **REGELKORREKTUR:** Konzentrations-SG hat gemäß SRD 5.2.1 eine maximale Schwierigkeit von 30; Grenztests ergänzt.
+- **NEUE REGELKOMPONENTE:** `DamageRules` für 13 Schadensarten, Resistenz, Anfälligkeit, Immunität, Nicht-Stapelung, Reihenfolge und Mehrfachkomponenten; bewusste `RulesEngine.damageWithDefenses`-Integration. Keine Spezies-/Monsterresistenz aus Freitext erraten.
+- **NACHWEIS:** Projektstruktur und 38 Python-Tests lokal erfolgreich. Neu angelegte Flutter-/Dart-Tests, Analyzer und APK-Build **noch nicht ausgeführt**, weil kein Flutter SDK verfügbar ist.
+- **OFFEN:** Automatische Anbindung an Monster/Zauber/Charakter-Defensivdaten; vollständige Klassen- und Zauberengine; GitHub-Push (Schreibrechte verweigert, 403). Kein installierbares APK behauptet. Siehe `docs/SRD_DAMAGE_RULES.md`.
+
 ## 0.6.4+34 – Zauberressourcen in der gemeinsamen Regelengine (15.10.2026)
 
 - **BASIS:** vollständiges 0.6.3+33-Quell-ZIP; Entwicklung unabhängig von Codex.

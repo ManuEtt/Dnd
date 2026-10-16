@@ -1,3 +1,4 @@
+import 'damage_rules.dart';
 import 'dice_engine.dart';
 import 'models.dart';
 import 'condition_rules.dart';
@@ -121,6 +122,21 @@ class RulesEngine {
       );
     }
     return hero.copyWith(hitPoints: nextHp, conditions: conditions);
+  }
+
+  /// Resolve explicitly typed damage against explicitly known defenses before
+  /// applying existing HP, death-save and concentration bookkeeping.
+  /// Unknown defense profiles are not silently guessed from character names.
+  /// Existing untyped encounters continue using [damage] until their source
+  /// provides a verified damage type and a defense profile.
+  static HeroCharacter damageWithDefenses(
+    HeroCharacter hero, {
+    required Iterable<DamageComponent> components,
+    required DamageDefenses defenses,
+    bool critical = false,
+  }) {
+    final result = DamageRules.resolve(components, defenses: defenses);
+    return damage(hero, result.total, critical: critical);
   }
 
   static HeroCharacter heal(HeroCharacter hero, int amount) {

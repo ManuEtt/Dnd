@@ -231,8 +231,8 @@ class _SummaryGrid extends StatelessWidget {
     final dex = _modifier(hero.abilities['dexterity']);
     final values = <({String label, String value, IconData icon})>[
       (label: 'ÜBUNGSBONUS', value: proficiency == null ? '–' : _signed(proficiency), icon: Icons.stars_outlined),
-      (label: 'BEWEGUNG', value: CharacterRuleEngine.speedMeters(hero) == null
-          ? '–' : '${CharacterRuleEngine.speedMeters(hero)} m', icon: Icons.directions_run_outlined),
+      (label: 'BEWEGUNG', value: _meters(CharacterRuleEngine.speedMeters(hero)),
+          icon: Icons.directions_run_outlined),
       (label: 'INITIATIVE', value: dex == null ? '–' :
           _signed(RulesEngine.initiativeBonus(hero)), icon: Icons.casino_outlined),
       (label: 'RÜSTUNGSKLASSE', value: hero.armorClass?.toString() ?? '–', icon: Icons.shield_outlined),
@@ -347,6 +347,16 @@ const _abilities = <({String id, String label, IconData icon, Color color})>[
 
 int? _modifier(int? score) => score == null ? null : ((score - 10) / 2).floor();
 String _signed(int value) => value >= 0 ? '+$value' : '$value';
+
+/// Format effective SRD movement without a misleading '.0' suffix.
+/// Exhaustion can produce half-metre steps that must be preserved.
+String _meters(double? speed, {String unknown = '–'}) {
+  if (speed == null) return unknown;
+  final value = speed == speed.truncateToDouble()
+      ? speed.toInt().toString()
+      : speed.toString();
+  return '$value m';
+}
 
 class _AbilitiesSection extends StatelessWidget {
   const _AbilitiesSection({required this.hero});
@@ -579,7 +589,7 @@ class _ConditionsSection extends StatelessWidget {
             _FantasyFrame(child: Text(
               'Erschöpfung ${hero.exhaustionLevel}/6 · W20-Tests '
               '−${hero.exhaustionLevel * 2} · Bewegung '
-              '${CharacterRuleEngine.speedMeters(hero) ?? 'nicht bestätigt'} m',
+              '${_meters(CharacterRuleEngine.speedMeters(hero), unknown: 'nicht bestätigt')}',
               key: const ValueKey('sheet-exhaustion-effects'))),
 
           if (hero.conditions.isEmpty)
@@ -637,7 +647,7 @@ class _DefensesSection extends StatelessWidget {
           _DetailRow(icon: Icons.casino_outlined, label: 'Verfügbare Trefferwürfel', value: diceText),
           _DetailRow(icon: Icons.directions_run, label: 'Bewegung (effektiv)', value:
             CharacterRuleEngine.speedMeters(hero) == null ? 'Nicht erfasst'
-            : '${CharacterRuleEngine.speedMeters(hero)} m (Basis ${hero.speed} m)'),
+            : '${_meters(CharacterRuleEngine.speedMeters(hero))} (Basis ${hero.speed} m)'),
           _DetailRow(icon: Icons.check_circle_outline, label: 'Erfolgreiche Todesrettungswürfe', value: '${hero.deathSuccesses} / 3'),
           _DetailRow(icon: Icons.cancel_outlined, label: 'Fehlgeschlagene Todesrettungswürfe', value: '${hero.deathFailures} / 3'),
           const SizedBox(height: 20),

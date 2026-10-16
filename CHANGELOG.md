@@ -1,3 +1,10 @@
+## 0.6.5+35 – Regelengine: Schadensarten + bekannte CI-Blockade (16.10.2026)
+
+- Bewegungsanzeige im Charakterbogen korrekt formatiert, einschließlich halber Meter; Regressionstests ergänzt.
+- Konzentrations-SG auf SRD-Maximum 30 begrenzt; zusätzliche Grenzwerttests.
+- Neues Modul für typisierten Schaden, Resistenz/Anfälligkeit/Immunität und mehrere Schadenskomponenten; eigene Domänentests, bewusster Einstieg in die zentrale TP-Regelengine.
+- **Nicht als fertig freigegeben:** automatische Integration in alle Kämpfe, Charakter-/Monsterdefensiven, Dart-Tests und APK-Build ausstehend. GitHub-`main` unverändert; Import separat erforderlich.
+
 ## 0.6.4+34 – Zauberplätze, Paktmagie und Konzentration (15.10.2026)
 
 - Persistente und stufenvalidierte Zauberplatzverbräuche, separate Hexenmeister-Paktmagie und aktiver Konzentrationszauber im weiterhin kompatiblen Schema 1.

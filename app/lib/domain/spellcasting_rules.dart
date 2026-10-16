@@ -124,7 +124,8 @@ class SpellcastingRules {
   /// DC is at least 10 or half the damage, rounded down.
   static int concentrationDc(int damage) {
     if (damage < 0) throw RangeError.value(damage, 'damage');
-    return damage ~/ 2 > 10 ? damage ~/ 2 : 10;
+    // SRD 5.2.1: minimum 10, maximum 30 (round down).
+    return (damage ~/ 2).clamp(10, 30).toInt();
   }
 
   static ConcentrationResult saveAfterDamage(HeroCharacter hero, {
