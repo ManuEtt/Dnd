@@ -4,6 +4,9 @@ import 'dice_engine.dart';
 import 'condition_rules.dart';
 import 'character_rule_engine.dart';
 import 'class_progression_rules.dart';
+import 'class_feature_resources.dart';
+import 'class_resource_rules.dart';
+import 'class_combat_features.dart';
 import 'ai_story.dart';
 import 'adventure_catalog.dart';
 import 'models.dart';
@@ -717,6 +720,43 @@ class GameEngine {
         'Eine Probe wartet noch auf dich. Würfle automatisch oder gib den natürlichen W20 ein; ein Gesamtergebnis musst du ausdrücklich als Gesamt kennzeichnen.',
       );
     }
+    if (RegExp(r'second wind|zweite luft').hasMatch(words)) {
+      final encounter = current.encounter;
+      if (encounter != null && !encounter.isFinished &&
+          encounter.bonusActionUsed) {
+        return _commit(campaign, current,
+          'Die Bonusaktion dieses Zugs ist bereits verbraucht.',
+          type: 'rules.blocked');
+      }
+      if (encounter != null && !encounter.isFinished &&
+          !ConditionRules.canTakeActions(current.hero)) {
+        return _commit(campaign, current,
+          'Dein Zustand verhindert diese Bonusaktion.',
+          type: 'rules.blocked');
+      }
+      try {
+        final used = ClassFeatureResources.useSecondWind(current.hero, dice);
+        final updatedEncounter = encounter != null && !encounter.isFinished
+            ? encounter.copyWith(bonusActionUsed: true) : encounter;
+        return _commit(campaign, current.copyWith(hero: used.hero,
+          encounter: updatedEncounter),
+          'Second Wind: ${used.roll.rolls.single} + '
+          '${ClassFeatureResources.fighterLevel(current.hero)} = '
+          '${used.totalHealing} Heilung (tatsächlich '
+          '${used.hitPointsRestored} TP). Verbleibende Nutzungen: '
+          '${ClassFeatureResources.remainingSecondWind(used.hero)}.',
+          type: 'class.secondWind',
+          payload: {'roll': used.roll.toJson(),
+            'restoredHitPoints': used.hitPointsRestored,
+            'spentSecondWind': used.hero.spentSecondWind});
+      } on StateError catch (error) {
+        return _commit(campaign, current, error.message.toString(),
+          type: 'rules.blocked');
+      } on FormatException catch (error) {
+        return _commit(campaign, current, error.message,
+          type: 'rules.blocked');
+      }
+    }
     if (RegExp(
           r'angreif|attackier|greif\w*.*\ban(?:[.!?]|$)|schieß|schies|kämpf|kaempf|würfel|wuerfel|probe|heile|heiltrank|rast|ruhe',
         ).hasMatch(words) &&
@@ -786,11 +826,16 @@ class GameEngine {
           final count = requested == null ? 1 : int.parse(requested.group(1)!);
           final sides = requested == null ? null : int.parse(requested.group(2)!);
           if (current.hero.hitPoints == current.hero.maxHitPoints) {
-            if (current.hero.spentPactSlots > 0 && requested == null) {
-              final refreshed = SpellcastingRules.afterShortRest(current.hero);
+            if (requested == null && (current.hero.spentPactSlots > 0 ||
+                current.hero.spentSecondWind > 0 ||
+                current.hero.spentActionSurge > 0 ||
+                current.hero.spentClassResources.values.any((n) => n > 0))) {
+              final refreshed = ClassResourceRules.afterShortRest(
+                ClassFeatureResources.afterShortRest(
+                  SpellcastingRules.afterShortRest(current.hero)));
               return _commit(campaign, current.copyWith(hero: refreshed),
-                'Nach der kurzen Rast sind deine Paktmagieplätze wiederhergestellt. '
-                'Es wurden keine Trefferwürfel verbraucht.',
+                'Nach der kurzen Rast wurden deine verfügbaren Klassen- und '
+                'Paktressourcen regeneriert. Es wurden keine Trefferwürfel verbraucht.',
                 type: 'character.shortRest',
                 payload: {'hitDice': null, 'count': 0, 'rolls': <dynamic>[],
                   'pactSlotsRecovered': current.hero.spentPactSlots});
@@ -800,11 +845,16 @@ class GameEngine {
               'Es werden keine Trefferwürfel automatisch verbraucht.',
               type: 'rules.blocked');
           }
-          if (requested == null && current.hero.spentPactSlots > 0 &&
+          if (requested == null && (current.hero.spentPactSlots > 0 ||
+              current.hero.spentSecondWind > 0 ||
+              current.hero.spentActionSurge > 0 ||
+              current.hero.spentClassResources.values.any((n) => n > 0)) &&
               !RestRules.availableHitDice(current.hero).values.any((n) => n > 0)) {
-            final refreshed = SpellcastingRules.afterShortRest(current.hero);
+            final refreshed = ClassResourceRules.afterShortRest(
+                ClassFeatureResources.afterShortRest(
+                  SpellcastingRules.afterShortRest(current.hero)));
             return _commit(campaign, current.copyWith(hero: refreshed),
-              'Nach der kurzen Rast sind deine Paktmagieplätze wiederhergestellt. '
+              'Nach der kurzen Rast wurden Klassen- und Paktressourcen regeneriert. '
               'Die Trefferwürfel sind bereits verbraucht.',
               type: 'character.shortRest',
               payload: {'hitDice': null, 'count': 0, 'rolls': <dynamic>[],
@@ -830,7 +880,7 @@ class GameEngine {
           'Nach einer langen Rast (mindestens 8 Stunden) sind deine '
           'Trefferpunkte und verbrauchten Trefferwürfel wiederhergestellt. '
           'Erschöpfung: ${current.hero.exhaustionLevel} → ${hero.exhaustionLevel}. '
-          'Klassenspezifische Fähigkeiten werden separat geführt.',
+          'Klassenressourcen wurden ebenfalls wiederhergestellt.',
           type: 'character.longRest',
           payload: {'hitPoints': hero.hitPoints, 'spentHitDice': hero.spentHitDice,
               'spellSlotsRestored': current.hero.spentSpellSlots,
@@ -1177,6 +1227,31 @@ class GameEngine {
         type: 'rules.blocked');
     }
     final encounter = current.encounter!;
+    if (RegExp(r'action surge|aktionsschub').hasMatch(words)) {
+      if (encounter.surgeUsedThisTurn) {
+        return _commit(before, current,
+          'Action Surge ist pro Zug nur einmal möglich.',
+          type: 'rules.blocked');
+      }
+      try {
+        final hero = ClassFeatureResources.spendActionSurge(current.hero);
+        return _commit(before, current.copyWith(
+          hero: hero,
+          encounter: encounter.copyWith(
+            surgeReserved: true, surgeUsedThisTurn: true)),
+          'Action Surge aktiviert: In diesem Zug kannst du nach deiner '
+          'regulären Angriffsaktion noch eine weitere Angriffsaktion ausführen. '
+          'Eine Magieaktion ist hier ausgeschlossen.',
+          type: 'class.actionSurge',
+          payload: {'spentActionSurge': hero.spentActionSurge});
+      } on StateError catch (error) {
+        return _commit(before, current, error.message.toString(),
+            type: 'rules.blocked');
+      } on FormatException catch (error) {
+        return _commit(before, current, error.message,
+            type: 'rules.blocked');
+      }
+    }
     if (encounter.actionUsed && encounter.attacksRemaining > 0 &&
         RegExp(r'ausweich|verteidig|flieh|flucht|wegrenn|heiltrank|trank.*trink|trink.*trank')
             .hasMatch(words)) {
@@ -1343,6 +1418,7 @@ class GameEngine {
       final outcome = RulesEngine.attack(
         roll: result,
         armorClass: foe.enemyArmorClass,
+        criticalThreshold: ClassCombatFeatures.weaponCriticalThreshold(next.hero),
       );
       // A regular Attack action may contain multiple separate attack rolls.
       // Resolve each roll/damage independently and give the enemy exactly one
@@ -1427,6 +1503,12 @@ class GameEngine {
           narration += 'Der Dornenwächter zerfällt in Blätter. '
               'Der Weg zum Schrein ist frei. Was möchtest du tun?';
         }
+      } else if (next.encounter!.attacksRemaining == 0 &&
+          next.encounter!.surgeReserved) {
+        next = next.copyWith(encounter: next.encounter!.copyWith(
+          actionUsed: false, surgeReserved: false));
+        narration += 'Action Surge: Du kannst noch eine zusätzliche '
+          'Angriffsaktion beginnen oder deinen Zug beenden. ';
       } else if (next.encounter!.attacksRemaining > 0) {
         narration += 'Du kannst in derselben Angriffsaktion noch '
         '${next.encounter!.attacksRemaining} '
@@ -1639,6 +1721,8 @@ class GameEngine {
           attacksRemaining: 0,
           bonusActionUsed: false,
           reactionUsed: false,
+          surgeReserved: false,
+          surgeUsedThisTurn: false,
         ),
       ),
       narration,

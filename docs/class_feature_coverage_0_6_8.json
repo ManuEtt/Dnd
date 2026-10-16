@@ -1,0 +1,2828 @@
+{
+  "version": "0.6.8+38",
+  "srd": "5.2.1",
+  "scope": "12 SRD base classes and their 12 included subclasses",
+  "warning": "Catalog and level unlocks; not all effects are simulated",
+  "entries": [
+    {
+      "id": "barbar_1_base_rage_0",
+      "class_name": "Barbar",
+      "level": 1,
+      "feature": "Rage",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_1_base_unarmored-defense_1",
+      "class_name": "Barbar",
+      "level": 1,
+      "feature": "Unarmored Defense",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_1_base_weapon-mastery_2",
+      "class_name": "Barbar",
+      "level": 1,
+      "feature": "Weapon Mastery",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_2_base_danger-sense_0",
+      "class_name": "Barbar",
+      "level": 2,
+      "feature": "Danger Sense",
+      "subclass": "",
+      "execution": "automatic",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_2_base_reckless-attack_1",
+      "class_name": "Barbar",
+      "level": 2,
+      "feature": "Reckless Attack",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_3_base_barbarian-subclass_0",
+      "class_name": "Barbar",
+      "level": 3,
+      "feature": "Barbarian Subclass",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_3_base_primal-knowledge_1",
+      "class_name": "Barbar",
+      "level": 3,
+      "feature": "Primal Knowledge",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_4_base_ability-score-improvement_0",
+      "class_name": "Barbar",
+      "level": 4,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_5_base_extra-attack_0",
+      "class_name": "Barbar",
+      "level": 5,
+      "feature": "Extra Attack",
+      "subclass": "",
+      "execution": "automatic",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_5_base_fast-movement_1",
+      "class_name": "Barbar",
+      "level": 5,
+      "feature": "Fast Movement",
+      "subclass": "",
+      "execution": "automatic",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_7_base_feral-instinct_0",
+      "class_name": "Barbar",
+      "level": 7,
+      "feature": "Feral Instinct",
+      "subclass": "",
+      "execution": "automatic",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_7_base_instinctive-pounce_1",
+      "class_name": "Barbar",
+      "level": 7,
+      "feature": "Instinctive Pounce",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_8_base_ability-score-improvement_0",
+      "class_name": "Barbar",
+      "level": 8,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_9_base_brutal-strike_0",
+      "class_name": "Barbar",
+      "level": 9,
+      "feature": "Brutal Strike",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_11_base_relentless-rage_0",
+      "class_name": "Barbar",
+      "level": 11,
+      "feature": "Relentless Rage",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_12_base_ability-score-improvement_0",
+      "class_name": "Barbar",
+      "level": 12,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_13_base_improved-brutal-strike_0",
+      "class_name": "Barbar",
+      "level": 13,
+      "feature": "Improved Brutal Strike",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_15_base_persistent-rage_0",
+      "class_name": "Barbar",
+      "level": 15,
+      "feature": "Persistent Rage",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_16_base_ability-score-improvement_0",
+      "class_name": "Barbar",
+      "level": 16,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_17_base_improved-brutal-strike_0",
+      "class_name": "Barbar",
+      "level": 17,
+      "feature": "Improved Brutal Strike",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_18_base_indomitable-might_0",
+      "class_name": "Barbar",
+      "level": 18,
+      "feature": "Indomitable Might",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_19_base_epic-boon_0",
+      "class_name": "Barbar",
+      "level": 19,
+      "feature": "Epic Boon",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_20_base_primal-champion_0",
+      "class_name": "Barbar",
+      "level": 20,
+      "feature": "Primal Champion",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_3_subclass_frenzy_0",
+      "class_name": "Barbar",
+      "level": 3,
+      "feature": "Frenzy",
+      "subclass": "Berserker",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_6_subclass_mindless-rage_0",
+      "class_name": "Barbar",
+      "level": 6,
+      "feature": "Mindless Rage",
+      "subclass": "Berserker",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_10_subclass_retaliation_0",
+      "class_name": "Barbar",
+      "level": 10,
+      "feature": "Retaliation",
+      "subclass": "Berserker",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barbar_14_subclass_intimidating-presence_0",
+      "class_name": "Barbar",
+      "level": 14,
+      "feature": "Intimidating Presence",
+      "subclass": "Berserker",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barde_1_base_bardic-inspiration_0",
+      "class_name": "Barde",
+      "level": 1,
+      "feature": "Bardic Inspiration",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barde_1_base_spellcasting_1",
+      "class_name": "Barde",
+      "level": 1,
+      "feature": "Spellcasting",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barde_2_base_expertise_0",
+      "class_name": "Barde",
+      "level": 2,
+      "feature": "Expertise",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barde_2_base_jack-of-all-trades_1",
+      "class_name": "Barde",
+      "level": 2,
+      "feature": "Jack of All Trades",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barde_3_base_bard-subclass_0",
+      "class_name": "Barde",
+      "level": 3,
+      "feature": "Bard Subclass",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barde_4_base_ability-score-improvement_0",
+      "class_name": "Barde",
+      "level": 4,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barde_5_base_font-of-inspiration_0",
+      "class_name": "Barde",
+      "level": 5,
+      "feature": "Font of Inspiration",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barde_7_base_countercharm_0",
+      "class_name": "Barde",
+      "level": 7,
+      "feature": "Countercharm",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barde_8_base_ability-score-improvement_0",
+      "class_name": "Barde",
+      "level": 8,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barde_9_base_expertise_0",
+      "class_name": "Barde",
+      "level": 9,
+      "feature": "Expertise",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barde_10_base_magical-secrets_0",
+      "class_name": "Barde",
+      "level": 10,
+      "feature": "Magical Secrets",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barde_12_base_ability-score-improvement_0",
+      "class_name": "Barde",
+      "level": 12,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barde_16_base_ability-score-improvement_0",
+      "class_name": "Barde",
+      "level": 16,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barde_18_base_superior-inspiration_0",
+      "class_name": "Barde",
+      "level": 18,
+      "feature": "Superior Inspiration",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barde_19_base_epic-boon_0",
+      "class_name": "Barde",
+      "level": 19,
+      "feature": "Epic Boon",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barde_20_base_words-of-creation_0",
+      "class_name": "Barde",
+      "level": 20,
+      "feature": "Words of Creation",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barde_3_subclass_bonus-proficiencies_0",
+      "class_name": "Barde",
+      "level": 3,
+      "feature": "Bonus Proficiencies",
+      "subclass": "College of Lore",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barde_3_subclass_cutting-words_1",
+      "class_name": "Barde",
+      "level": 3,
+      "feature": "Cutting Words",
+      "subclass": "College of Lore",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barde_6_subclass_magical-discoveries_0",
+      "class_name": "Barde",
+      "level": 6,
+      "feature": "Magical Discoveries",
+      "subclass": "College of Lore",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "barde_14_subclass_peerless-skill_0",
+      "class_name": "Barde",
+      "level": 14,
+      "feature": "Peerless Skill",
+      "subclass": "College of Lore",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "kleriker_1_base_spellcasting_0",
+      "class_name": "Kleriker",
+      "level": 1,
+      "feature": "Spellcasting",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "kleriker_1_base_divine-order_1",
+      "class_name": "Kleriker",
+      "level": 1,
+      "feature": "Divine Order",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "kleriker_2_base_channel-divinity_0",
+      "class_name": "Kleriker",
+      "level": 2,
+      "feature": "Channel Divinity",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "kleriker_3_base_cleric-subclass_0",
+      "class_name": "Kleriker",
+      "level": 3,
+      "feature": "Cleric Subclass",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "kleriker_4_base_ability-score-improvement_0",
+      "class_name": "Kleriker",
+      "level": 4,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "kleriker_5_base_sear-undead_0",
+      "class_name": "Kleriker",
+      "level": 5,
+      "feature": "Sear Undead",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "kleriker_7_base_blessed-strikes_0",
+      "class_name": "Kleriker",
+      "level": 7,
+      "feature": "Blessed Strikes",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "kleriker_8_base_ability-score-improvement_0",
+      "class_name": "Kleriker",
+      "level": 8,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "kleriker_10_base_divine-intervention_0",
+      "class_name": "Kleriker",
+      "level": 10,
+      "feature": "Divine Intervention",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "kleriker_12_base_ability-score-improvement_0",
+      "class_name": "Kleriker",
+      "level": 12,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "kleriker_14_base_improved-blessed-strikes_0",
+      "class_name": "Kleriker",
+      "level": 14,
+      "feature": "Improved Blessed Strikes",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "kleriker_16_base_ability-score-improvement_0",
+      "class_name": "Kleriker",
+      "level": 16,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "kleriker_19_base_epic-boon_0",
+      "class_name": "Kleriker",
+      "level": 19,
+      "feature": "Epic Boon",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "kleriker_20_base_greater-divine-intervention_0",
+      "class_name": "Kleriker",
+      "level": 20,
+      "feature": "Greater Divine Intervention",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "kleriker_3_subclass_disciple-of-life_0",
+      "class_name": "Kleriker",
+      "level": 3,
+      "feature": "Disciple of Life",
+      "subclass": "Life Domain",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "kleriker_3_subclass_preserve-life_1",
+      "class_name": "Kleriker",
+      "level": 3,
+      "feature": "Preserve Life",
+      "subclass": "Life Domain",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "kleriker_3_subclass_life-domain-spells_2",
+      "class_name": "Kleriker",
+      "level": 3,
+      "feature": "Life Domain Spells",
+      "subclass": "Life Domain",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "kleriker_6_subclass_blessed-healer_0",
+      "class_name": "Kleriker",
+      "level": 6,
+      "feature": "Blessed Healer",
+      "subclass": "Life Domain",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "kleriker_17_subclass_supreme-healing_0",
+      "class_name": "Kleriker",
+      "level": 17,
+      "feature": "Supreme Healing",
+      "subclass": "Life Domain",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "druide_1_base_spellcasting_0",
+      "class_name": "Druide",
+      "level": 1,
+      "feature": "Spellcasting",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "druide_1_base_druidic_1",
+      "class_name": "Druide",
+      "level": 1,
+      "feature": "Druidic",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "druide_1_base_primal-order_2",
+      "class_name": "Druide",
+      "level": 1,
+      "feature": "Primal Order",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "druide_2_base_wild-shape_0",
+      "class_name": "Druide",
+      "level": 2,
+      "feature": "Wild Shape",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "druide_2_base_wild-companion_1",
+      "class_name": "Druide",
+      "level": 2,
+      "feature": "Wild Companion",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "druide_3_base_druid-subclass_0",
+      "class_name": "Druide",
+      "level": 3,
+      "feature": "Druid Subclass",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "druide_4_base_ability-score-improvement_0",
+      "class_name": "Druide",
+      "level": 4,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "druide_5_base_wild-resurgence_0",
+      "class_name": "Druide",
+      "level": 5,
+      "feature": "Wild Resurgence",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "druide_7_base_elemental-fury_0",
+      "class_name": "Druide",
+      "level": 7,
+      "feature": "Elemental Fury",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "druide_8_base_ability-score-improvement_0",
+      "class_name": "Druide",
+      "level": 8,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "druide_12_base_ability-score-improvement_0",
+      "class_name": "Druide",
+      "level": 12,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "druide_15_base_improved-elemental-fury_0",
+      "class_name": "Druide",
+      "level": 15,
+      "feature": "Improved Elemental Fury",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "druide_16_base_ability-score-improvement_0",
+      "class_name": "Druide",
+      "level": 16,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "druide_18_base_beast-spells_0",
+      "class_name": "Druide",
+      "level": 18,
+      "feature": "Beast Spells",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "druide_19_base_epic-boon_0",
+      "class_name": "Druide",
+      "level": 19,
+      "feature": "Epic Boon",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "druide_20_base_archdruid_0",
+      "class_name": "Druide",
+      "level": 20,
+      "feature": "Archdruid",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "druide_3_subclass_circle-of-the-land-spells_0",
+      "class_name": "Druide",
+      "level": 3,
+      "feature": "Circle of the Land Spells",
+      "subclass": "Circle of the Land",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "druide_3_subclass_land-s-aid_1",
+      "class_name": "Druide",
+      "level": 3,
+      "feature": "Land’s Aid",
+      "subclass": "Circle of the Land",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "druide_6_subclass_natural-recovery_0",
+      "class_name": "Druide",
+      "level": 6,
+      "feature": "Natural Recovery",
+      "subclass": "Circle of the Land",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "druide_10_subclass_nature-s-ward_0",
+      "class_name": "Druide",
+      "level": 10,
+      "feature": "Nature’s Ward",
+      "subclass": "Circle of the Land",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "druide_14_subclass_nature-s-sanctuary_0",
+      "class_name": "Druide",
+      "level": 14,
+      "feature": "Nature’s Sanctuary",
+      "subclass": "Circle of the Land",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_1_base_fighting-style_0",
+      "class_name": "Kämpfer",
+      "level": 1,
+      "feature": "Fighting Style",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_1_base_second-wind_1",
+      "class_name": "Kämpfer",
+      "level": 1,
+      "feature": "Second Wind",
+      "subclass": "",
+      "execution": "automatic",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_1_base_weapon-mastery_2",
+      "class_name": "Kämpfer",
+      "level": 1,
+      "feature": "Weapon Mastery",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_2_base_action-surge_0",
+      "class_name": "Kämpfer",
+      "level": 2,
+      "feature": "Action Surge",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_2_base_tactical-mind_1",
+      "class_name": "Kämpfer",
+      "level": 2,
+      "feature": "Tactical Mind",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_3_base_fighter-subclass_0",
+      "class_name": "Kämpfer",
+      "level": 3,
+      "feature": "Fighter Subclass",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_4_base_ability-score-improvement_0",
+      "class_name": "Kämpfer",
+      "level": 4,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_5_base_extra-attack_0",
+      "class_name": "Kämpfer",
+      "level": 5,
+      "feature": "Extra Attack",
+      "subclass": "",
+      "execution": "automatic",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_5_base_tactical-shift_1",
+      "class_name": "Kämpfer",
+      "level": 5,
+      "feature": "Tactical Shift",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_6_base_ability-score-improvement_0",
+      "class_name": "Kämpfer",
+      "level": 6,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_8_base_ability-score-improvement_0",
+      "class_name": "Kämpfer",
+      "level": 8,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_9_base_indomitable_0",
+      "class_name": "Kämpfer",
+      "level": 9,
+      "feature": "Indomitable",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_9_base_tactical-master_1",
+      "class_name": "Kämpfer",
+      "level": 9,
+      "feature": "Tactical Master",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_11_base_two-extra-attacks_0",
+      "class_name": "Kämpfer",
+      "level": 11,
+      "feature": "Two Extra Attacks",
+      "subclass": "",
+      "execution": "automatic",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_12_base_ability-score-improvement_0",
+      "class_name": "Kämpfer",
+      "level": 12,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_13_base_indomitable_0",
+      "class_name": "Kämpfer",
+      "level": 13,
+      "feature": "Indomitable",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_13_base_studied-attacks_1",
+      "class_name": "Kämpfer",
+      "level": 13,
+      "feature": "Studied Attacks",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_14_base_ability-score-improvement_0",
+      "class_name": "Kämpfer",
+      "level": 14,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_16_base_ability-score-improvement_0",
+      "class_name": "Kämpfer",
+      "level": 16,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_17_base_action-surge_0",
+      "class_name": "Kämpfer",
+      "level": 17,
+      "feature": "Action Surge",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_17_base_indomitable_1",
+      "class_name": "Kämpfer",
+      "level": 17,
+      "feature": "Indomitable",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_19_base_epic-boon_0",
+      "class_name": "Kämpfer",
+      "level": 19,
+      "feature": "Epic Boon",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_20_base_three-extra-attacks_0",
+      "class_name": "Kämpfer",
+      "level": 20,
+      "feature": "Three Extra Attacks",
+      "subclass": "",
+      "execution": "automatic",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_3_subclass_improved-critical_0",
+      "class_name": "Kämpfer",
+      "level": 3,
+      "feature": "Improved Critical",
+      "subclass": "Champion",
+      "execution": "automatic",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_3_subclass_remarkable-athlete_1",
+      "class_name": "Kämpfer",
+      "level": 3,
+      "feature": "Remarkable Athlete",
+      "subclass": "Champion",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_7_subclass_additional-fighting-style_0",
+      "class_name": "Kämpfer",
+      "level": 7,
+      "feature": "Additional Fighting Style",
+      "subclass": "Champion",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_10_subclass_heroic-warrior_0",
+      "class_name": "Kämpfer",
+      "level": 10,
+      "feature": "Heroic Warrior",
+      "subclass": "Champion",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_15_subclass_superior-critical_0",
+      "class_name": "Kämpfer",
+      "level": 15,
+      "feature": "Superior Critical",
+      "subclass": "Champion",
+      "execution": "automatic",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "k-mpfer_18_subclass_survivor_0",
+      "class_name": "Kämpfer",
+      "level": 18,
+      "feature": "Survivor",
+      "subclass": "Champion",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_1_base_martial-arts_0",
+      "class_name": "Mönch",
+      "level": 1,
+      "feature": "Martial Arts",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_1_base_unarmored-defense_1",
+      "class_name": "Mönch",
+      "level": 1,
+      "feature": "Unarmored Defense",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_2_base_monk-s-focus_0",
+      "class_name": "Mönch",
+      "level": 2,
+      "feature": "Monk's Focus",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_2_base_unarmored-movement_1",
+      "class_name": "Mönch",
+      "level": 2,
+      "feature": "Unarmored Movement",
+      "subclass": "",
+      "execution": "automatic",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_2_base_uncanny-metabolism_2",
+      "class_name": "Mönch",
+      "level": 2,
+      "feature": "Uncanny Metabolism",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_3_base_deflect-attacks_0",
+      "class_name": "Mönch",
+      "level": 3,
+      "feature": "Deflect Attacks",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_3_base_monk-subclass_1",
+      "class_name": "Mönch",
+      "level": 3,
+      "feature": "Monk Subclass",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_4_base_ability-score-improvement_0",
+      "class_name": "Mönch",
+      "level": 4,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_4_base_slow-fall_1",
+      "class_name": "Mönch",
+      "level": 4,
+      "feature": "Slow Fall",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_5_base_extra-attack_0",
+      "class_name": "Mönch",
+      "level": 5,
+      "feature": "Extra Attack",
+      "subclass": "",
+      "execution": "automatic",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_5_base_stunning-strike_1",
+      "class_name": "Mönch",
+      "level": 5,
+      "feature": "Stunning Strike",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_6_base_empowered-strikes_0",
+      "class_name": "Mönch",
+      "level": 6,
+      "feature": "Empowered Strikes",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_7_base_evasion_0",
+      "class_name": "Mönch",
+      "level": 7,
+      "feature": "Evasion",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_8_base_ability-score-improvement_0",
+      "class_name": "Mönch",
+      "level": 8,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_9_base_acrobatic-movement_0",
+      "class_name": "Mönch",
+      "level": 9,
+      "feature": "Acrobatic Movement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_10_base_heightened-focus_0",
+      "class_name": "Mönch",
+      "level": 10,
+      "feature": "Heightened Focus",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_10_base_self-restoration_1",
+      "class_name": "Mönch",
+      "level": 10,
+      "feature": "Self-Restoration",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_12_base_ability-score-improvement_0",
+      "class_name": "Mönch",
+      "level": 12,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_13_base_deflect-energy_0",
+      "class_name": "Mönch",
+      "level": 13,
+      "feature": "Deflect Energy",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_14_base_disciplined-survivor_0",
+      "class_name": "Mönch",
+      "level": 14,
+      "feature": "Disciplined Survivor",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_15_base_perfect-focus_0",
+      "class_name": "Mönch",
+      "level": 15,
+      "feature": "Perfect Focus",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_16_base_ability-score-improvement_0",
+      "class_name": "Mönch",
+      "level": 16,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_18_base_superior-defense_0",
+      "class_name": "Mönch",
+      "level": 18,
+      "feature": "Superior Defense",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_19_base_epic-boon_0",
+      "class_name": "Mönch",
+      "level": 19,
+      "feature": "Epic Boon",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_20_base_body-and-mind_0",
+      "class_name": "Mönch",
+      "level": 20,
+      "feature": "Body and Mind",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_3_subclass_open-hand-technique_0",
+      "class_name": "Mönch",
+      "level": 3,
+      "feature": "Open Hand Technique",
+      "subclass": "Warrior of the Open Hand",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_6_subclass_wholeness-of-body_0",
+      "class_name": "Mönch",
+      "level": 6,
+      "feature": "Wholeness of Body",
+      "subclass": "Warrior of the Open Hand",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_11_subclass_fleet-step_0",
+      "class_name": "Mönch",
+      "level": 11,
+      "feature": "Fleet Step",
+      "subclass": "Warrior of the Open Hand",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "m-nch_17_subclass_quivering-palm_0",
+      "class_name": "Mönch",
+      "level": 17,
+      "feature": "Quivering Palm",
+      "subclass": "Warrior of the Open Hand",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_1_base_lay-on-hands_0",
+      "class_name": "Paladin",
+      "level": 1,
+      "feature": "Lay On Hands",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_1_base_spellcasting_1",
+      "class_name": "Paladin",
+      "level": 1,
+      "feature": "Spellcasting",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_1_base_weapon-mastery_2",
+      "class_name": "Paladin",
+      "level": 1,
+      "feature": "Weapon Mastery",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_2_base_fighting-style_0",
+      "class_name": "Paladin",
+      "level": 2,
+      "feature": "Fighting Style",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_2_base_paladin-s-smite_1",
+      "class_name": "Paladin",
+      "level": 2,
+      "feature": "Paladin's Smite",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_3_base_channel-divinity_0",
+      "class_name": "Paladin",
+      "level": 3,
+      "feature": "Channel Divinity",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_3_base_paladin-subclass_1",
+      "class_name": "Paladin",
+      "level": 3,
+      "feature": "Paladin Subclass",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_4_base_ability-score-improvement_0",
+      "class_name": "Paladin",
+      "level": 4,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_5_base_extra-attack_0",
+      "class_name": "Paladin",
+      "level": 5,
+      "feature": "Extra Attack",
+      "subclass": "",
+      "execution": "automatic",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_5_base_faithful-steed_1",
+      "class_name": "Paladin",
+      "level": 5,
+      "feature": "Faithful Steed",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_6_base_aura-of-protection_0",
+      "class_name": "Paladin",
+      "level": 6,
+      "feature": "Aura of Protection",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_8_base_ability-score-improvement_0",
+      "class_name": "Paladin",
+      "level": 8,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_9_base_abjure-foes_0",
+      "class_name": "Paladin",
+      "level": 9,
+      "feature": "Abjure Foes",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_10_base_aura-of-courage_0",
+      "class_name": "Paladin",
+      "level": 10,
+      "feature": "Aura of Courage",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_11_base_radiant-strikes_0",
+      "class_name": "Paladin",
+      "level": 11,
+      "feature": "Radiant Strikes",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_12_base_ability-score-improvement_0",
+      "class_name": "Paladin",
+      "level": 12,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_14_base_restoring-touch_0",
+      "class_name": "Paladin",
+      "level": 14,
+      "feature": "Restoring Touch",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_16_base_ability-score-improvement_0",
+      "class_name": "Paladin",
+      "level": 16,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_18_base_aura-expansion_0",
+      "class_name": "Paladin",
+      "level": 18,
+      "feature": "Aura Expansion",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_19_base_epic-boon_0",
+      "class_name": "Paladin",
+      "level": 19,
+      "feature": "Epic Boon",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_3_subclass_oath-of-devotion-spells_0",
+      "class_name": "Paladin",
+      "level": 3,
+      "feature": "Oath of Devotion Spells",
+      "subclass": "Oath of Devotion",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_3_subclass_sacred-weapon_1",
+      "class_name": "Paladin",
+      "level": 3,
+      "feature": "Sacred Weapon",
+      "subclass": "Oath of Devotion",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_7_subclass_aura-of-devotion_0",
+      "class_name": "Paladin",
+      "level": 7,
+      "feature": "Aura of Devotion",
+      "subclass": "Oath of Devotion",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_15_subclass_smite-of-protection_0",
+      "class_name": "Paladin",
+      "level": 15,
+      "feature": "Smite of Protection",
+      "subclass": "Oath of Devotion",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "paladin_20_subclass_holy-nimbus_0",
+      "class_name": "Paladin",
+      "level": 20,
+      "feature": "Holy Nimbus",
+      "subclass": "Oath of Devotion",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_1_base_spellcasting_0",
+      "class_name": "Waldläufer",
+      "level": 1,
+      "feature": "Spellcasting",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_1_base_favored-enemy_1",
+      "class_name": "Waldläufer",
+      "level": 1,
+      "feature": "Favored Enemy",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_1_base_weapon-mastery_2",
+      "class_name": "Waldläufer",
+      "level": 1,
+      "feature": "Weapon Mastery",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_2_base_deft-explorer_0",
+      "class_name": "Waldläufer",
+      "level": 2,
+      "feature": "Deft Explorer",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_2_base_fighting-style_1",
+      "class_name": "Waldläufer",
+      "level": 2,
+      "feature": "Fighting Style",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_3_base_ranger-subclass_0",
+      "class_name": "Waldläufer",
+      "level": 3,
+      "feature": "Ranger Subclass",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_4_base_ability-score-improvement_0",
+      "class_name": "Waldläufer",
+      "level": 4,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_5_base_extra-attack_0",
+      "class_name": "Waldläufer",
+      "level": 5,
+      "feature": "Extra Attack",
+      "subclass": "",
+      "execution": "automatic",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_6_base_roving_0",
+      "class_name": "Waldläufer",
+      "level": 6,
+      "feature": "Roving",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_8_base_ability-score-improvement_0",
+      "class_name": "Waldläufer",
+      "level": 8,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_9_base_expertise_0",
+      "class_name": "Waldläufer",
+      "level": 9,
+      "feature": "Expertise",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_10_base_tireless_0",
+      "class_name": "Waldläufer",
+      "level": 10,
+      "feature": "Tireless",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_12_base_ability-score-improvement_0",
+      "class_name": "Waldläufer",
+      "level": 12,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_13_base_relentless-hunter_0",
+      "class_name": "Waldläufer",
+      "level": 13,
+      "feature": "Relentless Hunter",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_14_base_nature-s-veil_0",
+      "class_name": "Waldläufer",
+      "level": 14,
+      "feature": "Nature's Veil",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_16_base_ability-score-improvement_0",
+      "class_name": "Waldläufer",
+      "level": 16,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_17_base_precise-hunter_0",
+      "class_name": "Waldläufer",
+      "level": 17,
+      "feature": "Precise Hunter",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_18_base_feral-senses_0",
+      "class_name": "Waldläufer",
+      "level": 18,
+      "feature": "Feral Senses",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_19_base_epic-boon_0",
+      "class_name": "Waldläufer",
+      "level": 19,
+      "feature": "Epic Boon",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_20_base_foe-slayer_0",
+      "class_name": "Waldläufer",
+      "level": 20,
+      "feature": "Foe Slayer",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_3_subclass_hunter-s-prey_0",
+      "class_name": "Waldläufer",
+      "level": 3,
+      "feature": "Hunter’s Prey",
+      "subclass": "Hunter",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_3_subclass_hunter-s-lore_1",
+      "class_name": "Waldläufer",
+      "level": 3,
+      "feature": "Hunter’s Lore",
+      "subclass": "Hunter",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_7_subclass_defensive-tactics_0",
+      "class_name": "Waldläufer",
+      "level": 7,
+      "feature": "Defensive Tactics",
+      "subclass": "Hunter",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_11_subclass_superior-hunter-s-prey_0",
+      "class_name": "Waldläufer",
+      "level": 11,
+      "feature": "Superior Hunter’s Prey",
+      "subclass": "Hunter",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "waldl-ufer_15_subclass_superior-hunter-s-defense_0",
+      "class_name": "Waldläufer",
+      "level": 15,
+      "feature": "Superior Hunter’s Defense",
+      "subclass": "Hunter",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_1_base_expertise_0",
+      "class_name": "Schurke",
+      "level": 1,
+      "feature": "Expertise",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_1_base_sneak-attack_1",
+      "class_name": "Schurke",
+      "level": 1,
+      "feature": "Sneak Attack",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_1_base_thieves--cant_2",
+      "class_name": "Schurke",
+      "level": 1,
+      "feature": "Thieves' Cant",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_1_base_weapon-mastery_3",
+      "class_name": "Schurke",
+      "level": 1,
+      "feature": "Weapon Mastery",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_2_base_cunning-action_0",
+      "class_name": "Schurke",
+      "level": 2,
+      "feature": "Cunning Action",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_3_base_rogue-subclass_0",
+      "class_name": "Schurke",
+      "level": 3,
+      "feature": "Rogue Subclass",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_3_base_steady-aim_1",
+      "class_name": "Schurke",
+      "level": 3,
+      "feature": "Steady Aim",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_4_base_ability-score-improvement_0",
+      "class_name": "Schurke",
+      "level": 4,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_5_base_cunning-strike_0",
+      "class_name": "Schurke",
+      "level": 5,
+      "feature": "Cunning Strike",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_5_base_uncanny-dodge_1",
+      "class_name": "Schurke",
+      "level": 5,
+      "feature": "Uncanny Dodge",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_6_base_expertise_0",
+      "class_name": "Schurke",
+      "level": 6,
+      "feature": "Expertise",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_7_base_evasion_0",
+      "class_name": "Schurke",
+      "level": 7,
+      "feature": "Evasion",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_7_base_reliable-talent_1",
+      "class_name": "Schurke",
+      "level": 7,
+      "feature": "Reliable Talent",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_8_base_ability-score-improvement_0",
+      "class_name": "Schurke",
+      "level": 8,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_10_base_ability-score-improvement_0",
+      "class_name": "Schurke",
+      "level": 10,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_11_base_improved-cunning-strike_0",
+      "class_name": "Schurke",
+      "level": 11,
+      "feature": "Improved Cunning Strike",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_12_base_ability-score-improvement_0",
+      "class_name": "Schurke",
+      "level": 12,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_14_base_devious-strikes_0",
+      "class_name": "Schurke",
+      "level": 14,
+      "feature": "Devious Strikes",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_15_base_slippery-mind_0",
+      "class_name": "Schurke",
+      "level": 15,
+      "feature": "Slippery Mind",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_16_base_ability-score-improvement_0",
+      "class_name": "Schurke",
+      "level": 16,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_18_base_elusive_0",
+      "class_name": "Schurke",
+      "level": 18,
+      "feature": "Elusive",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_19_base_epic-boon_0",
+      "class_name": "Schurke",
+      "level": 19,
+      "feature": "Epic Boon",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_20_base_stroke-of-luck_0",
+      "class_name": "Schurke",
+      "level": 20,
+      "feature": "Stroke of Luck",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_3_subclass_fast-hands_0",
+      "class_name": "Schurke",
+      "level": 3,
+      "feature": "Fast Hands",
+      "subclass": "Thief",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_3_subclass_second-story-work_1",
+      "class_name": "Schurke",
+      "level": 3,
+      "feature": "Second-Story Work",
+      "subclass": "Thief",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_9_subclass_supreme-sneak_0",
+      "class_name": "Schurke",
+      "level": 9,
+      "feature": "Supreme Sneak",
+      "subclass": "Thief",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_13_subclass_use-magic-device_0",
+      "class_name": "Schurke",
+      "level": 13,
+      "feature": "Use Magic Device",
+      "subclass": "Thief",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "schurke_17_subclass_thief-s-reflexes_0",
+      "class_name": "Schurke",
+      "level": 17,
+      "feature": "Thief’s Reflexes",
+      "subclass": "Thief",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "zauberer_1_base_spellcasting_0",
+      "class_name": "Zauberer",
+      "level": 1,
+      "feature": "Spellcasting",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "zauberer_1_base_innate-sorcery_1",
+      "class_name": "Zauberer",
+      "level": 1,
+      "feature": "Innate Sorcery",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "zauberer_2_base_font-of-magic_0",
+      "class_name": "Zauberer",
+      "level": 2,
+      "feature": "Font of Magic",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "zauberer_2_base_metamagic_1",
+      "class_name": "Zauberer",
+      "level": 2,
+      "feature": "Metamagic",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "zauberer_3_base_sorcerer-subclass_0",
+      "class_name": "Zauberer",
+      "level": 3,
+      "feature": "Sorcerer Subclass",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "zauberer_4_base_ability-score-improvement_0",
+      "class_name": "Zauberer",
+      "level": 4,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "zauberer_5_base_sorcerous-restoration_0",
+      "class_name": "Zauberer",
+      "level": 5,
+      "feature": "Sorcerous Restoration",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "zauberer_7_base_sorcery-incarnate_0",
+      "class_name": "Zauberer",
+      "level": 7,
+      "feature": "Sorcery Incarnate",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "zauberer_8_base_ability-score-improvement_0",
+      "class_name": "Zauberer",
+      "level": 8,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "zauberer_10_base_metamagic_0",
+      "class_name": "Zauberer",
+      "level": 10,
+      "feature": "Metamagic",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "zauberer_12_base_ability-score-improvement_0",
+      "class_name": "Zauberer",
+      "level": 12,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "zauberer_16_base_ability-score-improvement_0",
+      "class_name": "Zauberer",
+      "level": 16,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "zauberer_17_base_metamagic_0",
+      "class_name": "Zauberer",
+      "level": 17,
+      "feature": "Metamagic",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "zauberer_19_base_epic-boon_0",
+      "class_name": "Zauberer",
+      "level": 19,
+      "feature": "Epic Boon",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "zauberer_20_base_arcane-apotheosis_0",
+      "class_name": "Zauberer",
+      "level": 20,
+      "feature": "Arcane Apotheosis",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "zauberer_3_subclass_draconic-resilience_0",
+      "class_name": "Zauberer",
+      "level": 3,
+      "feature": "Draconic Resilience",
+      "subclass": "Draconic Sorcery",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "zauberer_3_subclass_draconic-spells_1",
+      "class_name": "Zauberer",
+      "level": 3,
+      "feature": "Draconic Spells",
+      "subclass": "Draconic Sorcery",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "zauberer_3_subclass_dragon-speech_2",
+      "class_name": "Zauberer",
+      "level": 3,
+      "feature": "Dragon Speech",
+      "subclass": "Draconic Sorcery",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "zauberer_6_subclass_elemental-affinity_0",
+      "class_name": "Zauberer",
+      "level": 6,
+      "feature": "Elemental Affinity",
+      "subclass": "Draconic Sorcery",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "zauberer_14_subclass_dragon-wings_0",
+      "class_name": "Zauberer",
+      "level": 14,
+      "feature": "Dragon Wings",
+      "subclass": "Draconic Sorcery",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "zauberer_18_subclass_dragon-companion_0",
+      "class_name": "Zauberer",
+      "level": 18,
+      "feature": "Dragon Companion",
+      "subclass": "Draconic Sorcery",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "hexenmeister_1_base_eldritch-invocations_0",
+      "class_name": "Hexenmeister",
+      "level": 1,
+      "feature": "Eldritch Invocations",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "hexenmeister_1_base_pact-magic_1",
+      "class_name": "Hexenmeister",
+      "level": 1,
+      "feature": "Pact Magic",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "hexenmeister_2_base_magical-cunning_0",
+      "class_name": "Hexenmeister",
+      "level": 2,
+      "feature": "Magical Cunning",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "hexenmeister_3_base_warlock-subclass_0",
+      "class_name": "Hexenmeister",
+      "level": 3,
+      "feature": "Warlock Subclass",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "hexenmeister_4_base_ability-score-improvement_0",
+      "class_name": "Hexenmeister",
+      "level": 4,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "hexenmeister_8_base_ability-score-improvement_0",
+      "class_name": "Hexenmeister",
+      "level": 8,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "hexenmeister_9_base_contact-patron_0",
+      "class_name": "Hexenmeister",
+      "level": 9,
+      "feature": "Contact Patron",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "hexenmeister_11_base_mystic-arcanum--6th-_0",
+      "class_name": "Hexenmeister",
+      "level": 11,
+      "feature": "Mystic Arcanum (6th)",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "hexenmeister_12_base_ability-score-improvement_0",
+      "class_name": "Hexenmeister",
+      "level": 12,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "hexenmeister_13_base_mystic-arcanum--7th-_0",
+      "class_name": "Hexenmeister",
+      "level": 13,
+      "feature": "Mystic Arcanum (7th)",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "hexenmeister_15_base_mystic-arcanum--8th-_0",
+      "class_name": "Hexenmeister",
+      "level": 15,
+      "feature": "Mystic Arcanum (8th)",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "hexenmeister_16_base_ability-score-improvement_0",
+      "class_name": "Hexenmeister",
+      "level": 16,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "hexenmeister_17_base_mystic-arcanum--9th-_0",
+      "class_name": "Hexenmeister",
+      "level": 17,
+      "feature": "Mystic Arcanum (9th)",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "hexenmeister_19_base_epic-boon_0",
+      "class_name": "Hexenmeister",
+      "level": 19,
+      "feature": "Epic Boon",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "hexenmeister_20_base_eldritch-master_0",
+      "class_name": "Hexenmeister",
+      "level": 20,
+      "feature": "Eldritch Master",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "hexenmeister_3_subclass_dark-one-s-blessing_0",
+      "class_name": "Hexenmeister",
+      "level": 3,
+      "feature": "Dark One’s Blessing",
+      "subclass": "Fiend Patron",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "hexenmeister_3_subclass_fiend-spells_1",
+      "class_name": "Hexenmeister",
+      "level": 3,
+      "feature": "Fiend Spells",
+      "subclass": "Fiend Patron",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "hexenmeister_6_subclass_dark-one-s-own-luck_0",
+      "class_name": "Hexenmeister",
+      "level": 6,
+      "feature": "Dark One’s Own Luck",
+      "subclass": "Fiend Patron",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "hexenmeister_10_subclass_fiendish-resilience_0",
+      "class_name": "Hexenmeister",
+      "level": 10,
+      "feature": "Fiendish Resilience",
+      "subclass": "Fiend Patron",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "hexenmeister_14_subclass_hurl-through-hell_0",
+      "class_name": "Hexenmeister",
+      "level": 14,
+      "feature": "Hurl Through Hell",
+      "subclass": "Fiend Patron",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "magier_1_base_spellcasting_0",
+      "class_name": "Magier",
+      "level": 1,
+      "feature": "Spellcasting",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "magier_1_base_ritual-adept_1",
+      "class_name": "Magier",
+      "level": 1,
+      "feature": "Ritual Adept",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "magier_1_base_arcane-recovery_2",
+      "class_name": "Magier",
+      "level": 1,
+      "feature": "Arcane Recovery",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "magier_2_base_scholar_0",
+      "class_name": "Magier",
+      "level": 2,
+      "feature": "Scholar",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "magier_3_base_wizard-subclass_0",
+      "class_name": "Magier",
+      "level": 3,
+      "feature": "Wizard Subclass",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "magier_4_base_ability-score-improvement_0",
+      "class_name": "Magier",
+      "level": 4,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "magier_5_base_memorize-spell_0",
+      "class_name": "Magier",
+      "level": 5,
+      "feature": "Memorize Spell",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "magier_8_base_ability-score-improvement_0",
+      "class_name": "Magier",
+      "level": 8,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "magier_12_base_ability-score-improvement_0",
+      "class_name": "Magier",
+      "level": 12,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "magier_16_base_ability-score-improvement_0",
+      "class_name": "Magier",
+      "level": 16,
+      "feature": "Ability Score Improvement",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "magier_18_base_spell-mastery_0",
+      "class_name": "Magier",
+      "level": 18,
+      "feature": "Spell Mastery",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "magier_19_base_epic-boon_0",
+      "class_name": "Magier",
+      "level": 19,
+      "feature": "Epic Boon",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "magier_20_base_signature-spells_0",
+      "class_name": "Magier",
+      "level": 20,
+      "feature": "Signature Spells",
+      "subclass": "",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "magier_3_subclass_evocation-savant_0",
+      "class_name": "Magier",
+      "level": 3,
+      "feature": "Evocation Savant",
+      "subclass": "Evoker",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "magier_3_subclass_potent-cantrip_1",
+      "class_name": "Magier",
+      "level": 3,
+      "feature": "Potent Cantrip",
+      "subclass": "Evoker",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "magier_6_subclass_sculpt-spells_0",
+      "class_name": "Magier",
+      "level": 6,
+      "feature": "Sculpt Spells",
+      "subclass": "Evoker",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "magier_10_subclass_empowered-evocation_0",
+      "class_name": "Magier",
+      "level": 10,
+      "feature": "Empowered Evocation",
+      "subclass": "Evoker",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    },
+    {
+      "id": "magier_14_subclass_overchannel_0",
+      "class_name": "Magier",
+      "level": 14,
+      "feature": "Overchannel",
+      "subclass": "Evoker",
+      "execution": "requires_rule_check",
+      "source": "SRD 5.2.1",
+      "license": "CC BY 4.0"
+    }
+  ]
+}

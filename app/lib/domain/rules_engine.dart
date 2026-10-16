@@ -64,14 +64,18 @@ class RulesEngine {
   static AttackOutcome attack({
     required DiceResult roll,
     required int armorClass,
+    int criticalThreshold = 20,
   }) {
+    if (criticalThreshold < 18 || criticalThreshold > 20) {
+      throw RangeError.range(criticalThreshold, 18, 20);
+    }
     if (armorClass < 1 || armorClass > 100) {
       throw RangeError.range(armorClass, 1, 100, 'armorClass');
     }
     if (roll.natural == 1) {
       return const AttackOutcome(hit: false, critical: false);
     }
-    if (roll.natural == 20) {
+    if (roll.natural != null && roll.natural! >= criticalThreshold) {
       return const AttackOutcome(hit: true, critical: true);
     }
     return AttackOutcome(hit: roll.total >= armorClass, critical: false);

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../domain/character_rule_engine.dart';
 import '../domain/class_progression_rules.dart';
+import '../domain/class_feature_resources.dart';
+import '../domain/class_resource_rules.dart';
+import '../domain/srd_class_feature_catalog.dart';
 import '../domain/condition_rules.dart';
 import '../domain/models.dart';
 import '../domain/multiclass_rules.dart';
@@ -376,6 +379,74 @@ class _AbilitiesSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        if (SrdClassFeatureCatalog.unlocked(hero).isNotEmpty) ...[
+          const _OrnateHeading('Klassenmerkmale (SRD 5.2.1)',
+            icon: Icons.auto_stories_outlined),
+          const SizedBox(height: 8),
+          _FantasyFrame(child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (final feature in SrdClassFeatureCatalog.unlocked(hero))
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Text(
+                    '${feature.className} ${feature.classLevel} · '
+                    '${feature.name}${feature.isSubclass ? ' (Unterklasse)' : ''} '
+                    '· ${feature.automation == FeatureAutomation.automatic ? 'Berechnet' : 'Regelprüfung erforderlich'}',
+                    style: TextStyle(color:
+                      feature.automation == FeatureAutomation.automatic
+                        ? _ivory : _muted, fontSize: 12),
+                  ),
+                ),
+              const SizedBox(height: 6),
+              const Text('Die Auflistung ist kein Nachweis, dass sämtliche '
+                'Merkmalswirkungen automatisch simuliert werden.',
+                style: TextStyle(color: _muted, fontSize: 11)),
+            ],
+          )),
+          const SizedBox(height: 18),
+        ],
+        if (ClassResourceRules.supported.any((id) =>
+            ClassResourceRules.maximum(hero, id) > 0)) ...[
+          const _OrnateHeading('Klassenressourcen', icon: Icons.bolt_outlined),
+          const SizedBox(height: 8),
+          _FantasyFrame(child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (final id in ClassResourceRules.supported)
+                if (ClassResourceRules.maximum(hero, id) > 0)
+                  Text('$id: ${ClassResourceRules.remaining(hero, id)}/'
+                    '${ClassResourceRules.maximum(hero, id)}',
+                    style: const TextStyle(color: _ivory)),
+              const Text('Verbrauch wird nur über bestätigte Regelaktionen '
+                'gespeichert; besondere Effekte brauchen eine eigene Prüfung.',
+                style: TextStyle(color: _muted, fontSize: 11)),
+            ],
+          )),
+          const SizedBox(height: 18),
+        ],
+        if (ClassFeatureResources.fighterLevel(hero) > 0) ...[
+          const _OrnateHeading('Kämpferressourcen', icon: Icons.bolt_outlined),
+          const SizedBox(height: 8),
+          _FantasyFrame(child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Second Wind: '
+                '${ClassFeatureResources.remainingSecondWind(hero)}/'
+                '${ClassFeatureResources.secondWindMaximum(hero)}',
+                style: const TextStyle(color: _ivory)),
+              if (ClassFeatureResources.actionSurgeMaximum(hero) > 0)
+                Text('Action Surge: '
+                  '${ClassFeatureResources.remainingActionSurge(hero)}/'
+                  '${ClassFeatureResources.actionSurgeMaximum(hero)}',
+                  style: const TextStyle(color: _ivory)),
+              const Text('Second Wind benötigt eine Bonusaktion. '
+                'Action Surge gewährt im vereinfachten Kampf eine weitere '
+                'Angriffsaktion.', style: TextStyle(color: _muted, fontSize: 11)),
+            ],
+          )),
+          const SizedBox(height: 22),
+        ],
         if (remainingSlots.isNotEmpty || pactMax > 0 || hero.concentratingOn.isNotEmpty) ...[
           const _OrnateHeading('Zauberei', icon: Icons.auto_awesome_outlined),
           const SizedBox(height: 8),

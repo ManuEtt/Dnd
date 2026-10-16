@@ -1,5 +1,7 @@
 import 'srd_equipment_catalog.dart';
 import 'spellcasting_rules.dart';
+import 'class_feature_resources.dart';
+import 'class_resource_rules.dart';
 
 /// Versioned, provider-independent game data. Unknown historical values stay null.
 const abilityNames = <String>[
@@ -126,6 +128,9 @@ class HeroCharacter {
     Map<String, int> spentHitDice = const {},
     Map<String, int> spentSpellSlots = const {},
     this.spentPactSlots = 0,
+    this.spentSecondWind = 0,
+    this.spentActionSurge = 0,
+    Map<String, int> spentClassResources = const {},
     this.concentratingOn = '',
     this.weaponDamage = '',
     this.weaponAbility = 'strength',
@@ -149,6 +154,7 @@ class HeroCharacter {
        conditions = List.unmodifiable(conditions),
        spentHitDice = Map.unmodifiable(spentHitDice),
        spentSpellSlots = Map.unmodifiable(spentSpellSlots),
+       spentClassResources = Map.unmodifiable(spentClassResources),
        unverifiedNotes = List.unmodifiable(unverifiedNotes);
   final String id, name, species, className, secondaryClassName, subclass, background, backstory;
   final int secondaryClassLevel;
@@ -174,6 +180,9 @@ class HeroCharacter {
   /// Spent Spellcasting slots per spell level; Pact Magic is separate.
   final Map<String, int> spentSpellSlots;
   final int spentPactSlots;
+  final int spentSecondWind, spentActionSurge;
+  /// Optional cross-class SRD resource counters, keyed by source class.
+  final Map<String, int> spentClassResources;
   /// Explicitly declared current concentration, not a claimed spell effect.
   final String concentratingOn;
   final String weaponDamage, weaponAbility;
@@ -221,6 +230,9 @@ class HeroCharacter {
     Map<String, int>? spentHitDice,
     Map<String, int>? spentSpellSlots,
     int? spentPactSlots,
+    int? spentSecondWind,
+    int? spentActionSurge,
+    Map<String, int>? spentClassResources,
     String? concentratingOn,
     String? weaponDamage,
     String? weaponAbility,
@@ -270,6 +282,9 @@ class HeroCharacter {
     spentHitDice: spentHitDice ?? this.spentHitDice,
     spentSpellSlots: spentSpellSlots ?? this.spentSpellSlots,
     spentPactSlots: spentPactSlots ?? this.spentPactSlots,
+    spentSecondWind: spentSecondWind ?? this.spentSecondWind,
+    spentActionSurge: spentActionSurge ?? this.spentActionSurge,
+    spentClassResources: spentClassResources ?? this.spentClassResources,
     concentratingOn: concentratingOn ?? this.concentratingOn,
     weaponDamage: weaponDamage ?? this.weaponDamage,
     weaponAbility: weaponAbility ?? this.weaponAbility,
@@ -312,6 +327,11 @@ class HeroCharacter {
     if (spentHitDice.isNotEmpty) 'spentHitDice': spentHitDice,
     if (spentSpellSlots.isNotEmpty) 'spentSpellSlots': spentSpellSlots,
     if (spentPactSlots > 0) 'spentPactSlots': spentPactSlots,
+    if (spentSecondWind > 0) 'spentSecondWind': spentSecondWind,
+    if (spentActionSurge > 0) 'spentActionSurge': spentActionSurge,
+    if (spentClassResources.values.any((spent) => spent > 0))
+      'spentClassResources': {for (final e in spentClassResources.entries)
+          if (e.value > 0) e.key: e.value},
     if (concentratingOn.isNotEmpty) 'concentratingOn': concentratingOn,
     'weaponDamage': weaponDamage,
     'weaponAbility': weaponAbility,
@@ -396,6 +416,20 @@ class HeroCharacter {
           throw const FormatException('Ungültiger verbrauchter Zauberplatz.');
         }
         if (entry.value > 0) spentSlots[entry.key] = entry.value as int;
+      }
+    }
+    final classResourceRaw = j['spentClassResources'];
+    if (classResourceRaw != null && classResourceRaw is! Map<String, dynamic>) {
+      throw const FormatException('Klassenressourcen sind ungültig.');
+    }
+    final spentClassResources = <String, int>{};
+    if (classResourceRaw != null) {
+      for (final e in classResourceRaw.entries) {
+        if (!ClassResourceRules.supported.contains(e.key) ||
+            e.value is! int || e.value < 0 || e.value > 100) {
+          throw const FormatException('Ungültige Klassenressource.');
+        }
+        if (e.value > 0) spentClassResources[e.key] = e.value as int;
       }
     }
     final spentPact = _int(j['spentPactSlots'], 'Verbrauchte Paktplätze',
@@ -487,6 +521,11 @@ class HeroCharacter {
       spentHitDice: spent,
       spentSpellSlots: spentSlots,
       spentPactSlots: spentPact,
+      spentSecondWind: _int(j['spentSecondWind'], 'Second Wind',
+          fallback: 0, min: 0, max: 4),
+      spentActionSurge: _int(j['spentActionSurge'], 'Action Surge',
+          fallback: 0, min: 0, max: 2),
+      spentClassResources: spentClassResources,
       concentratingOn: concentration,
       weaponDamage: weaponDamage,
       weaponAbility: weaponAbility,
@@ -514,6 +553,8 @@ class HeroCharacter {
     // partial campaign state. Existing saves without these fields stay valid.
     SpellcastingRules.availableSlots(parsed);
     SpellcastingRules.availablePactSlots(parsed);
+    ClassFeatureResources.validate(parsed);
+    ClassResourceRules.validate(parsed);
     if (parsed.concentratingOn.isNotEmpty &&
         (parsed.isDead || parsed.hitPoints == 0)) {
       throw const FormatException('Bewusstlose oder tote Helden können nicht konzentrieren.');
@@ -879,6 +920,8 @@ class Encounter {
     this.attacksRemaining = 0,
     this.bonusActionUsed = false,
     this.reactionUsed = false,
+    this.surgeReserved = false,
+    this.surgeUsedThisTurn = false,
   });
   final String id, enemyName, enemyDamage, activeParticipant;
   final int enemyHitPoints,
@@ -890,6 +933,8 @@ class Encounter {
       enemyInitiative,
       movementRemaining;
   final bool actionUsed, bonusActionUsed, reactionUsed;
+  /// One reserved extra Attack action; a second Action Surge is not allowed.
+  final bool surgeReserved, surgeUsedThisTurn;
   /// Remaining attacks after the first attack of a single Attack action.
   /// Old campaign saves omit the field and resume with zero.
   final int attacksRemaining;
@@ -905,6 +950,8 @@ class Encounter {
     int? attacksRemaining,
     bool? bonusActionUsed,
     bool? reactionUsed,
+    bool? surgeReserved,
+    bool? surgeUsedThisTurn,
   }) => Encounter(
     id: id,
     enemyName: enemyName,
@@ -922,6 +969,8 @@ class Encounter {
     attacksRemaining: attacksRemaining ?? this.attacksRemaining,
     bonusActionUsed: bonusActionUsed ?? this.bonusActionUsed,
     reactionUsed: reactionUsed ?? this.reactionUsed,
+    surgeReserved: surgeReserved ?? this.surgeReserved,
+    surgeUsedThisTurn: surgeUsedThisTurn ?? this.surgeUsedThisTurn,
   );
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -940,6 +989,8 @@ class Encounter {
     if (attacksRemaining > 0) 'attacksRemaining': attacksRemaining,
     'bonusActionUsed': bonusActionUsed,
     'reactionUsed': reactionUsed,
+    if (surgeReserved) 'surgeReserved': true,
+    if (surgeUsedThisTurn) 'surgeUsedThisTurn': true,
   };
   factory Encounter.fromJson(Map<String, dynamic> j) {
     final maxHp = _int(j['enemyMaxHitPoints'], 'Gegnermaximum', min: 1);
@@ -957,6 +1008,10 @@ class Encounter {
     );
     if (!['hero', 'enemy'].contains(active)) {
       throw const FormatException('Unbekannter aktiver Teilnehmer.');
+    }
+    if (_bool(j['surgeReserved'], 'Action Surge reserviert') &&
+        !_bool(j['surgeUsedThisTurn'], 'Action Surge bereits genutzt')) {
+      throw const FormatException('Reservierte Zusatzaktion ohne Action Surge.');
     }
     return Encounter(
       id: _string(j['id'], 'Begegnung-ID'),
@@ -998,6 +1053,8 @@ class Encounter {
           'Verbleibende Angriffe', fallback: 0, min: 0, max: 3),
       bonusActionUsed: _bool(j['bonusActionUsed'], 'Bonusaktion'),
       reactionUsed: _bool(j['reactionUsed'], 'Reaktion'),
+      surgeReserved: _bool(j['surgeReserved'], 'Action Surge reserviert'),
+      surgeUsedThisTurn: _bool(j['surgeUsedThisTurn'], 'Action Surge bereits genutzt'),
     );
   }
 }

@@ -1,3 +1,11 @@
+## 0.6.7+37 – Fighter resource engine (16.10.2026)
+
+- Second Wind: resource pool by Fighter class level; 1d10 + class level as Bonus Action, rest recovery, save-state validation.
+- Action Surge: resource pool, once-per-turn reservation of an additional Attack action in the simplified combat system; restored on Short/Long Rest.
+- Character sheet now shows remaining Fighter resources. Old schema 1 saves remain readable.
+- Flutter analyze CI fix for `damage_rules.dart` dangling library doc comment.
+- Added Dart regression tests; **Flutter/Android execution pending**. See `docs/CLASS_RESOURCES_0_6_7.md`.
+
 ## 0.6.6+36 – Klassenmeilensteine & Mehrfachangriffe (16.10.2026)
 
 - SRD-5.2.1-Klassenstufen: Vorschau der Unterklassen-, Talent- und Kämpfer-Meilensteine; keine automatischen freien Klassenmerkmale behauptet.
@@ -352,3 +360,10 @@ Eigenständiger Alpha-Projektstand zur ZIP-Übergabe für `ManuEtt/Dnd`. Ein Ver
 Erfolgreich geprüft: Flutter-Analyse ohne Befunde, 74 Flutter-Tests, 17 Backend-Tests und ein Android-Debug-APK-Build. Eine Prüfung auf einem echten Android-Gerät steht noch aus.
 
 Überprüfte Ergebnisse stehen in `DEVELOPMENT_STATUS.md`. Vollständige SRD-Charakterbaulogik, öffentlicher Mehrspielerbetrieb, mobiler Realtime-WebRTC-Pfad, vollständige Erinnerungsverdichtung und weitere Plattformabnahmen bleiben offen.
+
+## 0.6.8+38 – SRD-Klassenmerkmalregister und Klassenressourcen (16.10.2026)
+
+- Alle zwölf SRD-Grundklassen und die zwölf SRD-Unterklassen als stufenbezogener Merkmalkatalog, einschließlich Automatisierungskennzeichen und Mehrklassen-Stufenabgleich.
+- Mehrere Klassenressourcen separat persistiert und hinsichtlich Kurz-/Langrastregeneration verarbeitet; Altspeicher kompatibel.
+- Regelbasierte Berechnungen für Schurken-Schadenswürfel, Kampfrauschwerte, Mönchskampfkunst und bardische Inspirationswürfel; Champion-Krit-Bereich in Angriffsauflösung; passive Bewegung/Initiative ergänzt.
+- Neue Dart-Domain-Tests; kein Anspruch auf vollständige Ausführung aller Merkmalswirkungen oder validierten Flutter-/APK-Build.

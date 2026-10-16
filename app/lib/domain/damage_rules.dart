@@ -1,8 +1,8 @@
-/// Deterministic, typed SRD 5.2.1 damage resolution.
-/// Source: https://www.dndbeyond.com/sources/dnd/br-2024/playing-the-game
-/// Damage adjustments from spells, saves, features and other multipliers must
-/// be applied before calling this resolver. This module does not infer them.
-/// Damage immunity is checked first, then Resistance, then Vulnerability.
+// Deterministic, typed SRD 5.2.1 damage resolution.
+// Source: https://www.dndbeyond.com/sources/dnd/br-2024/playing-the-game
+// Damage adjustments from spells, saves, features and other multipliers must
+// be applied before calling this resolver. This module does not infer them.
+// Damage immunity is checked first, then Resistance, then Vulnerability.
 
 enum DamageType {
   acid,

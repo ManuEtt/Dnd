@@ -1,3 +1,12 @@
+## 0.6.7+37 – Fighter-Ressourcen (16.10.2026)
+
+- Basis: GitHub `main` (`de88027f842a9dca80dd58ffccedb5a961551338`).
+- Implementiert: Second-Wind-Ressourcen und Heilung als Bonusaktion; Action-Surge-Ressourcen und reservierte zweite Angriffsaktion im vereinfachten Kampf, Einzel-Zuglimit, Kurz-/Langrast-Regeneration und Speicherkompatibilität.
+- Behoben: Flutter-Analyzer meldete `dangling_library_doc_comments` in `damage_rules.dart`; freistehenden Kommentar korrigiert.
+- Tests: Neue Unit- und Kampfintegrationstests enthalten; Python-Projekttests lokal bestanden. Flutter analyze/test, Backend-Abnahme und Android-APK **nicht lokal ausgeführt**.
+- Grenzen: Action Surge im Demo-Kampf nur zusätzliche Angriffsaktion; Tactical Mind, Tactical Shift, Rage und andere Klassenmerkmale noch offen.
+- Importhinweise: `docs/CLASS_RESOURCES_0_6_7.md`.
+
 ## 0.6.6+36 – SRD-Klassenfortschritt und Extra Attack (16.10.2026)
 
 - Basis: Repo `ManuEtt/Dnd` Commit `26d1d8b` (enthält 0.6.5+35).
@@ -414,3 +423,12 @@ Anfangs fehlten ein vollständiger Java-Compiler, die Sprachplugin-SDKs und CMak
 - Nächster konkreter Schritt: 0.3.1 auf dem Samsung getrennt für Erkennung und Vorlesen prüfen und ZIP mit CI-Korrektur übernehmen; neuen GitHub-Lauf/Artefakte abnehmen. Ohne Geräte-/Schreibzugriff anschließend Stufe-1-Trefferpunkte aus ausdrücklich gewählter Klasse und bestätigtem Konstitutionsmodifikator vorschlagen: vorher offizielle SRD-Quellen lesen, historische Werte erhalten, Vorschlag/Bestätigung/Persistenz testen.
 - Übergabepakete: Dnd-Projekt-0.3.1.zip mit Dateien direkt in der Wurzel sowie Der-lebendige-Spielleiter-0.3.1-arm64.apk/arm32.apk. Externer Dnd-0.3.1-status.json erfasst abschließenden Git-HEAD, SHA-256 und bestätigte private Drive-Links. Alte Übergabepakete bleiben erhalten.
 - Der tatsächliche Git-HEAD wird vor jeder Fortsetzung mit `git log -1 --oneline` geprüft. Keine zusätzlichen Credits oder Limit-Zurücksetzungen wurden ausgelöst. Ein erkennbares Kontingentlimit wird nicht aus nicht vorhandenen Messwerten abgeleitet.
+
+## 0.6.8+38 – SRD-Klassenmerkmalregister (16.10.2026)
+
+- **BASIS:** unveränderte Vollversion 0.6.7+37.
+- **NEU:** `SrdClassFeatureCatalog` für zwölf Grund- und SRD-Unterklassen, `ClassResourceRules` für Ressourcenstände und Rastregeneration, `ClassCombatFeatures` für Champion-Krit und Schurken-Voraussetzungen.
+- **INTEGRATION:** Charakterbogen, Speichermodell, Rast und bestätigte Kampfangriffe; passive Klassenmerkmale bei Bewegung und Initiative.
+- **TESTS:** Vorhandene Python-Projekttests ausgeführt; neue Dart-Tests hinzugefügt, aber ohne Flutter-SDK hier nicht ausführbar.
+- **OFFEN:** Vollständige automatische Implementierung sämtlicher Klasse-/Unterklassenwirkungen, komplexer Zauber und Entscheidungen – siehe `docs/CLASS_FEATURES_0_6_8.md`.
+- **GITHUB:** Kein Push; GitHub-App hat bislang Schreiben mit HTTP 403 abgewiesen.

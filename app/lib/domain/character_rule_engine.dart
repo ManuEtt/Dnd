@@ -1,5 +1,7 @@
 import 'condition_rules.dart';
 import 'models.dart';
+import 'class_resource_rules.dart';
+import 'srd_class_feature_catalog.dart';
 import 'rules_engine.dart';
 import 'srd_equipment_catalog.dart';
 
@@ -38,6 +40,8 @@ class CharacterRuleEngine {
     if (bonus == null) throw StateError('Das Attribut $ability ist nicht bestätigt.');
     final untrainedArmor = _untrainedArmor(hero);
     return D20Rule(bonus,
+      advantage: (ability == 'dexterity' && ClassResourceRules.level(hero, 'Barbar') >= 2 &&
+          ConditionRules.canTakeActions(hero)),
       disadvantage: (untrainedArmor && (ability == 'strength' || ability == 'dexterity')) ||
           (ability == 'dexterity' && ConditionRules.has(hero, 'festgesetzt')));
   }
@@ -61,7 +65,10 @@ class CharacterRuleEngine {
       throw StateError('Ein bewusstloser oder toter Held würfelt keine Initiative.');
     }
     return D20Rule(RulesEngine.initiativeBonus(hero),
-      advantage: ConditionRules.has(hero, 'unsichtbar'),
+      advantage: ConditionRules.has(hero, 'unsichtbar') ||
+          ClassResourceRules.level(hero, 'Barbar') >= 7 ||
+          SrdClassFeatureCatalog.unlocked(hero).any((f) =>
+              f.name == 'Remarkable Athlete'),
       disadvantage: !ConditionRules.canTakeActions(hero) ||
           ConditionRules.has(hero, 'vergiftet') || _untrainedArmor(hero));
   }
@@ -105,7 +112,23 @@ class CharacterRuleEngine {
         }
       }
     }
-    return (base - penaltyMeters).clamp(0, 1000).toDouble();
+    // Both are passive features. They depend on the respective *class* level.
+    // A heavy armor classification comes only from an equipped SRD item.
+    final armorMatch = hero.inventory.where((i) =>
+        i.id == hero.equippedArmorId && hero.equippedArmorId.isNotEmpty);
+    final equipped = armorMatch.length == 1
+        ? SrdEquipmentCatalog.byId(armorMatch.single.catalogId) : null;
+    final heavy = equipped?.category == EquipmentCategory.heavyArmor;
+    var bonusMeters = 0.0;
+    if (ClassResourceRules.level(hero, 'Barbar') >= 5 && !heavy) {
+      bonusMeters += 3; // Fast Movement, 10 feet.
+    }
+    final monk = ClassResourceRules.level(hero, 'Mönch');
+    if (monk >= 2 && hero.equippedArmorId.isEmpty &&
+        hero.equippedShieldId.isEmpty) {
+      bonusMeters += ClassResourceRules.monkMovementBonusFeet(monk) * .3;
+    }
+    return (base - penaltyMeters + bonusMeters).clamp(0, 1000).toDouble();
   }
 
   static int? movementWholeMeters(HeroCharacter hero) =>
