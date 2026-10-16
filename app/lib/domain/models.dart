@@ -911,6 +911,7 @@ class Encounter {
     this.enemyArmorClass = 12,
     this.enemyAttackBonus = 2,
     this.enemyDamage = '1d4',
+    this.enemyDamageType = '',
     this.round = 1,
     this.activeParticipant = 'hero',
     this.heroInitiative = 0,
@@ -922,8 +923,11 @@ class Encounter {
     this.reactionUsed = false,
     this.surgeReserved = false,
     this.surgeUsedThisTurn = false,
+    this.sneakAttackUsedThisTurn = false,
+    this.rageUntilRound = 0,
+    this.rageStartedRound = 0,
   });
-  final String id, enemyName, enemyDamage, activeParticipant;
+  final String id, enemyName, enemyDamage, enemyDamageType, activeParticipant;
   final int enemyHitPoints,
       enemyMaxHitPoints,
       enemyArmorClass,
@@ -935,6 +939,11 @@ class Encounter {
   final bool actionUsed, bonusActionUsed, reactionUsed;
   /// One reserved extra Attack action; a second Action Surge is not allowed.
   final bool surgeReserved, surgeUsedThisTurn;
+  /// A Sneak Attack may be used once per turn, including extra Attack actions.
+  final bool sneakAttackUsedThisTurn;
+  /// Rage ends at the end of this hero turn unless extended by a qualifying act.
+  /// Zero means no active Rage. The start round imposes the 100-round limit.
+  final int rageUntilRound, rageStartedRound;
   /// Remaining attacks after the first attack of a single Attack action.
   /// Old campaign saves omit the field and resume with zero.
   final int attacksRemaining;
@@ -952,6 +961,9 @@ class Encounter {
     bool? reactionUsed,
     bool? surgeReserved,
     bool? surgeUsedThisTurn,
+    bool? sneakAttackUsedThisTurn,
+    int? rageUntilRound,
+    int? rageStartedRound,
   }) => Encounter(
     id: id,
     enemyName: enemyName,
@@ -960,6 +972,7 @@ class Encounter {
     enemyArmorClass: enemyArmorClass,
     enemyAttackBonus: enemyAttackBonus,
     enemyDamage: enemyDamage,
+    enemyDamageType: enemyDamageType,
     round: round ?? this.round,
     activeParticipant: activeParticipant ?? this.activeParticipant,
     heroInitiative: heroInitiative ?? this.heroInitiative,
@@ -971,6 +984,9 @@ class Encounter {
     reactionUsed: reactionUsed ?? this.reactionUsed,
     surgeReserved: surgeReserved ?? this.surgeReserved,
     surgeUsedThisTurn: surgeUsedThisTurn ?? this.surgeUsedThisTurn,
+    sneakAttackUsedThisTurn: sneakAttackUsedThisTurn ?? this.sneakAttackUsedThisTurn,
+    rageUntilRound: rageUntilRound ?? this.rageUntilRound,
+    rageStartedRound: rageStartedRound ?? this.rageStartedRound,
   );
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -980,6 +996,7 @@ class Encounter {
     'enemyArmorClass': enemyArmorClass,
     'enemyAttackBonus': enemyAttackBonus,
     'enemyDamage': enemyDamage,
+    if (enemyDamageType.isNotEmpty) 'enemyDamageType': enemyDamageType,
     'round': round,
     'activeParticipant': activeParticipant,
     'heroInitiative': heroInitiative,
@@ -991,6 +1008,9 @@ class Encounter {
     'reactionUsed': reactionUsed,
     if (surgeReserved) 'surgeReserved': true,
     if (surgeUsedThisTurn) 'surgeUsedThisTurn': true,
+    if (sneakAttackUsedThisTurn) 'sneakAttackUsedThisTurn': true,
+    if (rageUntilRound > 0) 'rageUntilRound': rageUntilRound,
+    if (rageStartedRound > 0) 'rageStartedRound': rageStartedRound,
   };
   factory Encounter.fromJson(Map<String, dynamic> j) {
     final maxHp = _int(j['enemyMaxHitPoints'], 'Gegnermaximum', min: 1);
@@ -1000,6 +1020,14 @@ class Encounter {
       r'^([1-9][0-9]?)[dDwW](4|6|8|10|12|20|100)(\s*[+-]\s*[0-9]{1,3})?$',
     ).hasMatch(damage)) {
       throw const FormatException('Ungültiger Gegnerschaden.');
+    }
+    final damageType = _string(j['enemyDamageType'], 'Gegnerschadensart', fallback: '');
+    const supportedDamageTypes = {
+      'acid', 'bludgeoning', 'cold', 'fire', 'force', 'lightning',
+      'necrotic', 'piercing', 'poison', 'psychic', 'radiant', 'slashing', 'thunder',
+    };
+    if (damageType.isNotEmpty && !supportedDamageTypes.contains(damageType)) {
+      throw const FormatException('Unbekannte Gegnerschadensart.');
     }
     final active = _string(
       j['activeParticipant'],
@@ -1012,6 +1040,17 @@ class Encounter {
     if (_bool(j['surgeReserved'], 'Action Surge reserviert') &&
         !_bool(j['surgeUsedThisTurn'], 'Action Surge bereits genutzt')) {
       throw const FormatException('Reservierte Zusatzaktion ohne Action Surge.');
+    }
+    final rageStart = _int(j['rageStartedRound'], 'Rage-Beginn',
+        fallback: 0, min: 0, max: 1000000);
+    final rageEnd = _int(j['rageUntilRound'], 'Rage-Ende',
+        fallback: 0, min: 0, max: 1000000);
+    final currentRound = _int(j['round'], 'Runde', fallback: 1, min: 1);
+    if ((rageStart == 0) != (rageEnd == 0) ||
+        (rageEnd > 0 && (rageStart > currentRound ||
+         rageEnd < currentRound || rageEnd < rageStart ||
+         rageEnd > rageStart + 99))) {
+      throw const FormatException('Ungültige Kampfrausch-Dauer.');
     }
     return Encounter(
       id: _string(j['id'], 'Begegnung-ID'),
@@ -1033,6 +1072,7 @@ class Encounter {
         max: 30,
       ),
       enemyDamage: damage,
+      enemyDamageType: damageType,
       round: _int(j['round'], 'Runde', fallback: 1, min: 1),
       activeParticipant: active,
       heroInitiative: _int(
@@ -1055,6 +1095,10 @@ class Encounter {
       reactionUsed: _bool(j['reactionUsed'], 'Reaktion'),
       surgeReserved: _bool(j['surgeReserved'], 'Action Surge reserviert'),
       surgeUsedThisTurn: _bool(j['surgeUsedThisTurn'], 'Action Surge bereits genutzt'),
+      sneakAttackUsedThisTurn: _bool(j['sneakAttackUsedThisTurn'],
+          'Hinterhältiger Angriff bereits genutzt'),
+      rageUntilRound: rageEnd,
+      rageStartedRound: rageStart,
     );
   }
 }

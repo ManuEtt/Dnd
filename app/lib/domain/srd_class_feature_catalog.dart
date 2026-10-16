@@ -296,9 +296,12 @@ class SrdClassFeatureCatalog {
                   name == 'Elemental Fury'
                     ? FeatureAutomation.choiceRequired
                     : FeatureAutomation.manual;
-        final id = '${className.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '-')}_$level' +
-            (subclass.isEmpty ? '_base_' : '_subclass_') +
-            '${name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '-')}_${index}';
+        final classSlug = className.toLowerCase()
+            .replaceAll(RegExp(r'[^a-z0-9]'), '-');
+        final featureSlug = name.toLowerCase()
+            .replaceAll(RegExp(r'[^a-z0-9]'), '-');
+        final source = subclass.isEmpty ? 'base' : 'subclass';
+        final id = '${classSlug}_${level}_${source}_${featureSlug}_$index';
         result.add(SrdClassFeature(id: id, className: className,
             classLevel: level, name: name, subclass: subclass,
             automation: status));
@@ -353,9 +356,11 @@ class SrdClassFeatureCatalog {
     final primary = findSrdClass(hero.className)?.name;
     final secondary = findSrdClass(hero.secondaryClassName)?.name;
     final result = <SrdClassFeature>[];
-    if (primary != null) result.addAll(_catalog[primary]!.where((x) =>
-      x.classLevel <= hero.primaryClassLevel &&
-      (x.subclass.isEmpty || _matchesSubclass(primary, hero.subclass))));
+    if (primary != null) {
+      result.addAll(_catalog[primary]!.where((x) =>
+        x.classLevel <= hero.primaryClassLevel &&
+        (x.subclass.isEmpty || _matchesSubclass(primary, hero.subclass))));
+    }
     if (secondary != null && hero.hasSecondClass) {
       // The existing model stores only one subclass string, so a second
       // subclass is NOT inferred or granted before schema support exists.

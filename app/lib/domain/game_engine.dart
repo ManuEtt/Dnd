@@ -7,6 +7,7 @@ import 'class_progression_rules.dart';
 import 'class_feature_resources.dart';
 import 'class_resource_rules.dart';
 import 'class_combat_features.dart';
+import 'combat_class_actions.dart';
 import 'ai_story.dart';
 import 'adventure_catalog.dart';
 import 'models.dart';
@@ -1227,6 +1228,65 @@ class GameEngine {
         type: 'rules.blocked');
     }
     final encounter = current.encounter!;
+    if (RegExp(r'kampfrausch.*verlänger|kampfrausch.*verlaenger')
+        .hasMatch(words)) {
+      if (!CombatClassActions.rageActive(encounter) ||
+          encounter.bonusActionUsed) {
+        return _commit(before, current,
+          'Kampfrausch verlängern erfordert aktiven Kampfrausch und eine freie Bonusaktion.',
+          type: 'rules.blocked');
+      }
+      final until = encounter.round + 1;
+      final hardEnd = encounter.rageStartedRound + 99;
+      final nextUntil = until < hardEnd ? until : hardEnd;
+      return _commit(before, current.copyWith(encounter: encounter.copyWith(
+          bonusActionUsed: true, rageUntilRound: nextUntil)),
+          'Du verlängerst deinen Kampfrausch bis zum Ende des nächsten Zugs.',
+          type: 'class.rageExtended',
+          payload: {'rageUntilRound': nextUntil});
+    }
+    if (RegExp(r'kampfrausch|\brage\b').hasMatch(words)) {
+      if (encounter.bonusActionUsed ||
+          CombatClassActions.rageActive(encounter)) {
+        return _commit(before, current, 'Bonusaktion bereits verbraucht oder Kampfrausch aktiv.',
+            type: 'rules.blocked');
+      }
+      try {
+        if (CombatClassActions.hasHeavyArmor(current.hero)) {
+          throw StateError('Mit schwerer Rüstung ist Kampfrausch nicht möglich.');
+        }
+        final hero = ClassResourceRules.spend(current.hero, 'rage')
+            .copyWith(concentratingOn: '');
+        return _commit(before, current.copyWith(hero: hero,
+          encounter: encounter.copyWith(bonusActionUsed: true,
+            rageStartedRound: encounter.round,
+            rageUntilRound: encounter.round + 1)),
+          'Kampfrausch aktiviert. Ein Angriff verlängert ihn bis zum Ende '
+          'deines nächsten Zugs; deine Konzentration endet.',
+          type: 'class.rage', payload: {
+            'spentRage': hero.spentClassResources['rage'],
+            'rageUntilRound': encounter.round + 1,
+          });
+      } on StateError catch (e) {
+        return _commit(before, current, e.message.toString(), type: 'rules.blocked');
+      }
+    }
+    if (RegExp(r'flinke aktion.*(?:sprint|dash)|(?:sprint|dash).*flinke aktion')
+        .hasMatch(words)) {
+      if (ClassResourceRules.level(current.hero, 'Schurke') < 2 ||
+          encounter.bonusActionUsed || !ConditionRules.canMove(current.hero)) {
+        return _commit(before, current,
+            'Flinke Aktion: Sprinten erfordert Schurkenstufe 2 und eine freie Bonusaktion.',
+            type: 'rules.blocked');
+      }
+      final additional = CharacterRuleEngine.movementWholeMeters(current.hero) ?? 0;
+      final remaining = encounter.movementRemaining + additional;
+      return _commit(before, current.copyWith(encounter: encounter.copyWith(
+          movementRemaining: remaining, bonusActionUsed: true)),
+          'Flinke Aktion: Du sprintest als Bonusaktion. '
+          'Dir stehen in diesem Zug insgesamt noch $remaining Meter zur Verfügung.',
+          type: 'class.cunningDash', payload: {'addedMovement': additional});
+    }
     if (RegExp(r'action surge|aktionsschub').hasMatch(words)) {
       if (encounter.surgeUsedThisTurn) {
         return _commit(before, current,
@@ -1430,16 +1490,35 @@ class GameEngine {
         throw StateError('Die Angriffsaktion ist bereits abgeschlossen.');
       }
       payload['attacksRemaining'] = attacksRemaining;
+      final rolledFight = CombatClassActions.onAttackRoll(foe);
+      if (rolledFight.rageUntilRound != foe.rageUntilRound) {
+        payload['rageExtendedUntilRound'] = rolledFight.rageUntilRound;
+      }
       if (outcome.hit) {
         final base = dice.roll(next.hero.weaponDamage);
         final extra = outcome.critical
             ? dice.roll(next.hero.weaponDamage)
             : null;
-        final damage = RulesEngine.weaponDamage(
+        final weaponDamage = RulesEngine.weaponDamage(
           next.hero,
           baseRoll: base,
           criticalExtra: extra,
         );
+        final rageBonus = CombatClassActions.rageDamageBonus(
+            next.hero, rolledFight);
+        final sneakDice = ClassCombatFeatures.eligibleSneakAttackDice(
+          next.hero,
+          hasAdvantage: pending.advantage,
+          hasDisadvantage: pending.disadvantage,
+          adjacentConsciousAlly: false, // No confirmed ally positioning yet.
+          alreadyUsedThisTurn: foe.sneakAttackUsedThisTurn,
+        );
+        final sneakRoll = sneakDice > 0
+            ? ClassCombatFeatures.rollSneakAttack(dice, sneakDice,
+                critical: outcome.critical) : null;
+        final damage = weaponDamage + rageBonus + (sneakRoll?.total ?? 0);
+        if (rageBonus > 0) payload['rageDamageBonus'] = rageBonus;
+        if (sneakRoll != null) payload['sneakAttackRoll'] = sneakRoll.toJson();
         final hp = RulesEngine.remainingHitPoints(
           hitPoints: foe.enemyHitPoints,
           damage: damage,
@@ -1448,7 +1527,8 @@ class GameEngine {
         payload['criticalExtra'] = extra?.toJson();
         payload['damage'] = damage;
         next = next.copyWith(
-          encounter: foe.copyWith(enemyHitPoints: hp, actionUsed: true,
+          encounter: rolledFight.copyWith(enemyHitPoints: hp, actionUsed: true,
+              sneakAttackUsedThisTurn: foe.sneakAttackUsedThisTurn || sneakRoll != null,
               attacksRemaining: attacksRemaining),
           facts: next.storyBible['mode'] == 'ai'
               ? next.facts : {...next.facts, 'guardianHitPoints': '$hp'},
@@ -1456,7 +1536,7 @@ class GameEngine {
         narration +=
             '${outcome.critical ? 'Ein kritischer Treffer! ' : ''}Du verursachst $damage Schaden; der ${foe.enemyName} hat noch $hp Trefferpunkte. ';
       } else {
-        next = next.copyWith(encounter: foe.copyWith(
+        next = next.copyWith(encounter: rolledFight.copyWith(
             actionUsed: true, attacksRemaining: attacksRemaining));
         narration += 'Dein Angriff verfehlt den ${foe.enemyName}. ';
       }
@@ -1680,8 +1760,14 @@ class GameEngine {
     if (outcome.hit) {
       final damageRoll = dice.roll(foe.enemyDamage);
       final extra = outcome.critical ? dice.roll(foe.enemyDamage) : null;
-      final damage =
+      final rawDamage =
           damageRoll.total + (extra == null ? 0 : extra.total - extra.modifier);
+      final damage = CombatClassActions.effectiveIncomingDamage(
+          foe, hero, rawDamage);
+      if (damage != rawDamage) {
+        details['rawDamage'] = rawDamage;
+        details['rageResistanceReduction'] = rawDamage - damage;
+      }
       hero = RulesEngine.damage(hero, damage, critical: outcome.critical);
       if (campaign.hero.concentratingOn.isNotEmpty && damage > 0) {
         if (hero.concentratingOn.isEmpty) {
@@ -1710,10 +1796,13 @@ class GameEngine {
     } else {
       narration += 'Der Angriff verfehlt dich.';
     }
+    final afterTurn = advanceRound
+        ? CombatClassActions.afterHeroTurn(foe)
+        : foe;
     return _EnemyTurn(
       campaign.copyWith(
         hero: hero,
-        encounter: foe.copyWith(
+        encounter: afterTurn.copyWith(
           round: foe.round + (advanceRound ? 1 : 0),
           activeParticipant: 'hero',
           movementRemaining: CharacterRuleEngine.movementWholeMeters(hero)!,
@@ -1723,6 +1812,7 @@ class GameEngine {
           reactionUsed: false,
           surgeReserved: false,
           surgeUsedThisTurn: false,
+          sneakAttackUsedThisTurn: false,
         ),
       ),
       narration,

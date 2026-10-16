@@ -1,3 +1,7 @@
+## 0.6.9+39 — Ausführbare Kampf-Klassenaktionen (2026-10-16)
+
+Kampfrausch-Runden und gesonderter Ressourcenverbrauch, bestätigter Stärke-Nahkampfbonus, optional bestätigte körperliche Schadensresistenz, Flinke Aktion: Sprinten und Hinterhältiger Angriff auf Treffern mit bestätigtem Vorteil. Neue Regressionstests, Speicherkompatibilität und Dokumentation. Flutter/Android nicht lokal getestet.
+
 ## 0.6.7+37 – Fighter resource engine (16.10.2026)
 
 - Second Wind: resource pool by Fighter class level; 1d10 + class level as Bonus Action, rest recovery, save-state validation.

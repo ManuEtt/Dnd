@@ -38,8 +38,10 @@ class ClassCombatFeatures {
         weapon.category == EquipmentCategory.simpleRanged ||
         weapon.category == EquipmentCategory.martialRanged;
     if (!qualifies) return 0;
+    // Equal sources cancel: when both exist, the final roll has neither.
+    final effectiveDisadvantage = hasDisadvantage && !hasAdvantage;
     final advantage = hasAdvantage && !hasDisadvantage;
-    final ally = adjacentConsciousAlly && !hasDisadvantage;
+    final ally = adjacentConsciousAlly && !effectiveDisadvantage;
     return (advantage || ally) ? ClassResourceRules.sneakAttackDice(level) : 0;
   }
 

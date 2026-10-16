@@ -40,6 +40,7 @@ void main() {
     expect(dice(ally:true),3);
     expect(dice(a:true,d:true),0);
     expect(dice(ally:true,d:true),0);
+    expect(dice(a:true,d:true,ally:true),3);
     expect(dice(a:true,used:true),0);
     final roll=ClassCombatFeatures.rollSneakAttack(
        DiceEngine(random:OneRandom()),3,critical:true);

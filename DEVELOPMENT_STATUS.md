@@ -1,3 +1,10 @@
+## 0.6.9+39 — Kampf-Klassenaktionen (2026-10-16)
+
+- **IMPLEMENTIERT:** Barbaren-Kampfrausch (Bonusaktion, Ressource, Rundenablauf, Nahkampfbonus, explizit typisierte Resistenz), Flinke Aktion: Sprinten und bestätigter Hinterhältiger Angriff.
+- **GETESTET:** Projektstruktur und 38 Python-Tests; ergänzte Flutter-/Dart-Tests noch nicht ausgeführt.
+- **OFFEN:** Vollständiges Rage-/Zauber-/Positions-/Reaktionssystem; siehe `docs/CLASS_ACTIONS_0_6_9.md`.
+- **GITHUB:** Projektpaket und Patch vorbereitet; kein Commit oder APK-Build behauptet.
+
 ## 0.6.7+37 – Fighter-Ressourcen (16.10.2026)
 
 - Basis: GitHub `main` (`de88027f842a9dca80dd58ffccedb5a961551338`).
