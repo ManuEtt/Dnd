@@ -20,7 +20,7 @@ void main() {
     );
     await tester.pumpWidget(MaterialApp(home: CharacterSheetPage(hero: hero)));
     await tester.pumpAndSettle();
-    expect(find.text('6.0 m'), findsOneWidget);
+    expect(find.text('6 m'), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('sheet-tab-1')));
     await tester.pumpAndSettle();
     final fatigue = find.byKey(const ValueKey('sheet-exhaustion-effects'));

@@ -1,7 +1,7 @@
 name: lebendiger_spielleiter
 description: "Würfelraunen: deutschsprachiger Fantasy-Spielleiter mit lokalem Kampagnengedächtnis."
 publish_to: none
-version: 0.7.0+40
+version: 0.7.1+41
 environment:
   sdk: '>=3.9.0 <4.0.0'
 dependencies:

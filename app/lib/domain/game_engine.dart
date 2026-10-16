@@ -9,6 +9,7 @@ import 'class_resource_rules.dart';
 import 'class_combat_features.dart';
 import 'combat_class_actions.dart';
 import 'monk_focus_actions.dart';
+import 'monk_flurry_rules.dart';
 import 'ai_story.dart';
 import 'adventure_catalog.dart';
 import 'models.dart';
@@ -1221,6 +1222,42 @@ class GameEngine {
     );
   }
 
+  /// The bonus-action feature can defeat an enemy before or after the Attack
+  /// action. Complete only confirmed AI quests; never fabricate rewards.
+  Campaign _afterFlurryVictory(Campaign current, Map<String, dynamic> payload) {
+    if (current.storyBible['mode'] != 'ai') {
+      return current.copyWith(facts: {
+        ...current.facts,
+        'guardianDefeated': 'true',
+        'dornenwächter': 'Der Dornenwächter wurde im bestätigten Kampf überwunden.',
+      });
+    }
+    final questId = current.facts['aiEncounterQuestId'];
+    final offerId = current.facts['aiEncounterOfferId'];
+    final lootName = current.facts['aiEncounterLoot'];
+    final valid = questId != null && offerId != null && lootName != null &&
+        current.quests.any((q) => q.id == questId && q.status == 'active');
+    if (!valid) {
+      return current.copyWith(encounter: null);
+    }
+    final lootId = 'loot-$offerId';
+    final inventory = current.hero.inventory.any((e) => e.id == lootId)
+        ? current.hero.inventory
+        : [...current.hero.inventory, InventoryItem(id: lootId,
+            name: lootName, description: 'Beute der bestätigten Begegnung.')];
+    payload['completedQuestId'] = questId;
+    payload['rewardItemId'] = lootId;
+    return current.copyWith(
+      hero: current.hero.copyWith(inventory: inventory),
+      quests: [for (final q in current.quests)
+        q.id == questId ? q.copyWith(status: 'completed') : q],
+      encounter: null,
+      facts: {...current.facts,
+        'aiEncounterQuestId': '', 'aiEncounterOfferId': '',
+        'aiEncounterLoot': '', 'aiQuestCompleted:$questId': 'true'},
+    );
+  }
+
   GameUpdate _combatAction(Campaign before, Campaign current, String words) {
     if (!ConditionRules.canTakeActions(current.hero) &&
         !RegExp(r'beweg|lauf|geh').hasMatch(words)) {
@@ -1270,6 +1307,43 @@ class GameEngine {
           });
       } on StateError catch (e) {
         return _commit(before, current, e.message.toString(), type: 'rules.blocked');
+      }
+    }
+    if (RegExp(r'schlaghagel|flurry of blows').hasMatch(words)) {
+      try {
+        final flurry = MonkFlurryRules.use(current.hero, encounter, dice);
+        var next = current.copyWith(hero: flurry.hero,
+            encounter: flurry.encounter);
+        final payload = <String, dynamic>{
+          'focusSpent': 1,
+          'remainingFocus': ClassResourceRules.remaining(flurry.hero, 'focusPoints'),
+          'strikes': [for (final strike in flurry.strikes) strike.toJson()],
+          'damage': flurry.damageTotal,
+        };
+        var narration = 'Schlaghagel: ${flurry.strikes.length} '
+            'unbewaffnete Angriffe, ${flurry.damageTotal} Schaden. ';
+        if (flurry.encounter.isFinished) {
+          next = _afterFlurryVictory(next, payload);
+          narration += 'Der ${encounter.enemyName} ist besiegt. ';
+        } else if (flurry.encounter.actionUsed &&
+            flurry.encounter.attacksRemaining == 0 &&
+            !flurry.encounter.surgeReserved) {
+          final turn = _enemyTurn(next);
+          next = turn.campaign;
+          payload['enemyTurn'] = turn.details;
+          narration += '${turn.narration} ${_nextInstruction(next)}';
+        } else {
+          narration += 'Du kannst deine regulären Angriffe fortsetzen '
+              'oder deinen Zug beenden.';
+        }
+        return _commit(before, next, narration,
+            type: 'class.flurryOfBlows', payload: payload);
+      } on StateError catch (error) {
+        return _commit(before, current, error.message.toString(),
+            type: 'rules.blocked');
+      } on FormatException catch (error) {
+        return _commit(before, current, error.message,
+            type: 'rules.blocked');
       }
     }
     // Free / empowered Monk Focus actions. Enhanced choices cost one point.
@@ -1362,13 +1436,14 @@ class GameEngine {
             type: 'rules.blocked');
       }
     }
-    if (encounter.actionUsed && encounter.attacksRemaining > 0 &&
-        RegExp(r'ausweich|verteidig|flieh|flucht|wegrenn|heiltrank|trank.*trink|trink.*trank')
+    if (encounter.actionUsed &&
+        RegExp(r'ausweich|weich\w*\s+aus|verteidig|flieh|flucht|wegrenn|heiltrank|trank.*trink|trink.*trank')
             .hasMatch(words)) {
       return _commit(before, current,
-          'Deine Angriffsaktion läuft bereits. Du kannst weitere Angriffe '
-          'ausführen, dich bewegen oder deinen Zug beenden; keine zweite '
-          'volle Aktion beginnen.', type: 'rules.blocked');
+          'Deine Angriffsaktion wurde bereits begonnen. Du kannst weitere '
+          'Angriffe ausführen, eine freie Bonusaktion wählen, dich bewegen '
+          'oder den Zug beenden; keine zweite volle Aktion beginnen.',
+          type: 'rules.blocked');
     }
     if (RegExp(
       r'angreif|attackier|greif\w*.*\ban(?:[.!?]|$)|schieß|schies|schlag|hieb|bogen|schwert',
@@ -1418,8 +1493,8 @@ class GameEngine {
     if (RegExp(r'heiltrank|trank.*trink|trink.*trank').hasMatch(words)) {
       return _drinkPotion(before, current);
     }
-    if (RegExp(r'ausweich|verteidig|warten|zug beenden|beende(?:\s+\w+){0,2}\s+zug').hasMatch(words)) {
-      final dodge = RegExp(r'ausweich|verteidig').hasMatch(words);
+    if (RegExp(r'ausweich|weich\w*\s+aus|verteidig|warten|zug beenden|beende(?:\s+\w+){0,2}\s+zug').hasMatch(words)) {
+      final dodge = RegExp(r'ausweich|weich\w*\s+aus|verteidig').hasMatch(words);
       final turn = _enemyTurn(current, disadvantage: dodge);
       return _commit(
         before,
@@ -1639,6 +1714,11 @@ class GameEngine {
           actionUsed: false, surgeReserved: false));
         narration += 'Action Surge: Du kannst noch eine zusätzliche '
           'Angriffsaktion beginnen oder deinen Zug beenden. ';
+      } else if (next.encounter!.attacksRemaining == 0 &&
+          MonkFlurryRules.canUse(next.hero, next.encounter!) &&
+          !next.encounter!.surgeReserved) {
+        narration += 'Du kannst jetzt Schlaghagel als Bonusaktion einsetzen '
+            'oder deinen Zug beenden.';
       } else if (next.encounter!.attacksRemaining > 0) {
         narration += 'Du kannst in derselben Angriffsaktion noch '
         '${next.encounter!.attacksRemaining} '

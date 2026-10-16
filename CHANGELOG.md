@@ -1,3 +1,10 @@
+## 0.7.1+41 – Mönch: Schlaghagel und letzte CI-Regressionen (16.10.2026)
+
+- Ausführbarer Schlaghagel für Mönchsstufe 2+ (2 Unarmed Strikes) und 10+ (3 Unarmed Strikes), Fokusverbrauch und Aktionsturn-Reihenfolge; Treffer/Krits und Schadenswürfe einzeln protokolliert.
+- Bonusaktion vor oder nach der normalen Attack action; Quest-/Kampfsieg auch über Schlaghagel, Mehrklassen-Klassenstufe und Persistenz unverändert im Schema 1.
+- Behebung der in GitHub Actions `38857593290` bestätigten Regressionen: Widget-Test `6.0 m` versus `6 m`, blockierte Zweitaktion bei Eingabe „Ich weiche aus.“.
+- Neue Dart-Tests und Dokumentation. Python-Strukturprüfungen separat. Keine ungeprüfte Behauptung eines erfolgreichen Flutter-/APK-Builds. Details: `docs/MONK_FLURRY_0_7_1.md`.
+
 ## 0.7.0+40 – Mönchsfokus: defensive Bonusaktionen (2026-10-16)
 
 Geduldige Verteidigung und Schritt des Windes mit kostenlosen und fokussierten Varianten. Persistente, am Zugende automatisch zurückgesetzte Dodge-/Disengage-/Sprungstatus; Rogue Cunning Action Disengage. Separate Domain- und Kampf-Regressionstests. Kein Gelegenheitsangriffs-/Sprunggeometriesystem; keine Flurry-Ausführung. Flutter-/Android-Build noch nicht ausgeführt. Siehe docs/MONK_FOCUS_0_7_0.md.

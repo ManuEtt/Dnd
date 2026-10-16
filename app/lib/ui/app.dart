@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../domain/models.dart';
 import '../domain/class_resource_rules.dart';
+import '../domain/monk_flurry_rules.dart';
 import '../services/backup_files.dart';
 import '../services/game_controller.dart';
 import '../services/voice_controller.dart';
@@ -1293,7 +1294,8 @@ class _CombatView extends StatelessWidget {
         const Text(
           'Beschreibe deinen Angriff oder deine Entscheidung. Trefferpunkte '
           'ändern sich erst nach einer bestätigten Probe durch die Regelengine. '
-          'Der Solo-Kampf löst den Gegnerzug automatisch nach deiner Aktion auf.',
+          'Der Solo-Kampf löst den Gegnerzug nach abgeschlossenen Aktionen '
+          'auf; Mönche können zuvor noch ihre freie Bonusaktion nutzen.',
         ),
         const SizedBox(height: 16),
         Wrap(
@@ -1333,6 +1335,13 @@ class _CombatView extends StatelessWidget {
                 child: const Text('Mönch: Sprinten'),
               ),
               if (ClassResourceRules.remaining(hero, 'focusPoints') > 0) ...[
+                OutlinedButton.icon(
+                  key: const ValueKey('monk-flurry-of-blows'),
+                  onPressed: busy || !MonkFlurryRules.canUse(hero, encounter)
+                      ? null : () => onAction('Schlaghagel'),
+                  icon: const Icon(Icons.sports_martial_arts),
+                  label: Text('Schlaghagel · ${ClassResourceRules.level(hero, 'Mönch') >= 10 ? 3 : 2} Angriffe · 1 Fokus'),
+                ),
                 OutlinedButton(
                   key: const ValueKey('monk-patient-defense-focus'),
                   onPressed: busy || encounter.bonusActionUsed ? null

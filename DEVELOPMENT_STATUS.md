@@ -1,3 +1,11 @@
+## 0.7.1+41 – Schlaghagel als ausführbare Bonusaktion (16.10.2026)
+
+- **BASIS:** GitHub `main` `47b549125d95973b2d9e066e9a2401488ef322d2` (0.7.0+40).
+- **NEU:** zwei beziehungsweise drei unabhängige Mönchs-Unarmed-Strikes nach SRD 5.2.1; Fokuspunktverbrauch, Bonusaktionslimit, eigener Treffer-/Krit-/Schadenswurf, Mehrklassen-Skalierung, Siegauflösung, UI-Schaltfläche und JSON-Persistenz ohne Schemaänderung.
+- **CI-FIX:** Fehler aus Run `38857593290` (473 Tests erfolgreich, 2 fehlgeschlagen) gezielt adressiert: `6 m`-Widget-Erwartung und Eingabe „Ich weiche aus“ in laufender Angriffsaktion.
+- **TESTS:** neue Dart-Domain- und Integrationsregressionen vorhanden, Flutter/Android in dieser Umgebung nicht ausgeführt. Weitere Grenzen `docs/MONK_FLURRY_0_7_1.md`.
+- **GITHUB:** Repository nicht geschrieben; vollständiges ZIP und Patch separat zur Übergabe. Keine APK behauptet.
+
 ## 0.7.0+40 – Mönchsfokus & Rückzug (16.10.2026)
 
 - **Neu**: Patient Defense (0/1 Fokus), Step of the Wind (0/1 Fokus), Flinke Aktion: Rückzug; gemeinsamer Bonusaktionsverbrauch, Speichern/Laden der temporären Kampfzustände, Ausweichnachteil beim Gegnerangriff.
