@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../domain/models.dart';
+import '../domain/class_resource_rules.dart';
 import '../services/backup_files.dart';
 import '../services/game_controller.dart';
 import '../services/voice_controller.dart';
@@ -1318,6 +1319,41 @@ class _CombatView extends StatelessWidget {
                   : () => onAction('Ich untersuche meinen Gegner.'),
               child: const Text('Gegner untersuchen'),
             ),
+            if (ClassResourceRules.level(hero, 'Mönch') >= 2) ...[
+              OutlinedButton(
+                key: const ValueKey('monk-patient-defense'),
+                onPressed: busy || encounter.bonusActionUsed ? null
+                    : () => onAction('Geduldige Verteidigung'),
+                child: const Text('Mönch: Rückzug'),
+              ),
+              OutlinedButton(
+                key: const ValueKey('monk-step-wind'),
+                onPressed: busy || encounter.bonusActionUsed ? null
+                    : () => onAction('Schritt des Windes'),
+                child: const Text('Mönch: Sprinten'),
+              ),
+              if (ClassResourceRules.remaining(hero, 'focusPoints') > 0) ...[
+                OutlinedButton(
+                  key: const ValueKey('monk-patient-defense-focus'),
+                  onPressed: busy || encounter.bonusActionUsed ? null
+                      : () => onAction('Geduldige Verteidigung mit Fokuspunkt'),
+                  child: const Text('Rückzug + Ausweichen · 1 Fokus'),
+                ),
+                OutlinedButton(
+                  key: const ValueKey('monk-step-wind-focus'),
+                  onPressed: busy || encounter.bonusActionUsed ? null
+                      : () => onAction('Schritt des Windes verstärkt'),
+                  child: const Text('Sprinten + Rückzug · 1 Fokus'),
+                ),
+              ],
+            ],
+            if (ClassResourceRules.level(hero, 'Schurke') >= 2)
+              OutlinedButton(
+                key: const ValueKey('rogue-cunning-disengage'),
+                onPressed: busy || encounter.bonusActionUsed ? null
+                    : () => onAction('Flinke Aktion: Rückzug'),
+                child: const Text('Schurke: Rückzug'),
+              ),
           ],
         ),
       ],

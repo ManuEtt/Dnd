@@ -1,3 +1,10 @@
+## 0.7.0+40 – Mönchsfokus & Rückzug (16.10.2026)
+
+- **Neu**: Patient Defense (0/1 Fokus), Step of the Wind (0/1 Fokus), Flinke Aktion: Rückzug; gemeinsamer Bonusaktionsverbrauch, Speichern/Laden der temporären Kampfzustände, Ausweichnachteil beim Gegnerangriff.
+- **Tests**: `app/test/monk_focus_actions_test.dart` ergänzt. Python/Flutter/Android-Ergebnisse gesondert dokumentieren; keine nicht ausgeführten Tests als bestanden ausweisen.
+- **Grenzen**: Noch keine Flurry of Blows, Level-10-Temp-TP, Gelegenheitsangriffe oder Sprunggeometrie. Die neuen Flags sind keine Belege für deren vollständige Automatisierung.
+- **Ausgangsbasis**: GitHub main 7cd36e9bcb7a4533d34bcc95a77ba83d86c2fc4e / 0.6.9+39.
+
 ## 0.6.9+39 — Kampf-Klassenaktionen (2026-10-16)
 
 - **IMPLEMENTIERT:** Barbaren-Kampfrausch (Bonusaktion, Ressource, Rundenablauf, Nahkampfbonus, explizit typisierte Resistenz), Flinke Aktion: Sprinten und bestätigter Hinterhältiger Angriff.

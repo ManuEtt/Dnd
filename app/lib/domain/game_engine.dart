@@ -8,6 +8,7 @@ import 'class_feature_resources.dart';
 import 'class_resource_rules.dart';
 import 'class_combat_features.dart';
 import 'combat_class_actions.dart';
+import 'monk_focus_actions.dart';
 import 'ai_story.dart';
 import 'adventure_catalog.dart';
 import 'models.dart';
@@ -1271,6 +1272,55 @@ class GameEngine {
         return _commit(before, current, e.message.toString(), type: 'rules.blocked');
       }
     }
+    // Free / empowered Monk Focus actions. Enhanced choices cost one point.
+    if (RegExp(r'geduldige verteidigung|schritt des windes').hasMatch(words)) {
+      final patient = words.contains('geduldige verteidigung');
+      final enhanced = RegExp(r'verstärkt|verstaerkt|mit fokus|fokuspunkt').hasMatch(words);
+      try {
+        final used = MonkFocusActions.use(current.hero, encounter,
+          action: patient ? MonkBonusAction.patientDefense
+              : MonkBonusAction.stepOfTheWind,
+          enhanced: enhanced);
+        final remaining = ClassResourceRules.remaining(used.hero, 'focusPoints');
+        return _commit(before, current.copyWith(
+          hero: used.hero, encounter: used.encounter),
+          patient
+            ? (enhanced
+                ? 'Geduldige Verteidigung: Rückzug und Ausweichen als Bonusaktion. '
+                  'Der nächste Gegnerangriff in diesem Kampfzug hat Nachteil, sofern kein Vorteil entgegenwirkt.'
+                : 'Geduldige Verteidigung: Rückzug als Bonusaktion (ohne Fokuskosten).')
+            : (enhanced
+                ? 'Schritt des Windes: Sprinten und Rückzug; deine Sprungweite ist '
+                  'in diesem Zug verdoppelt.'
+                : 'Schritt des Windes: Sprinten als Bonusaktion (ohne Fokuskosten).'),
+          type: patient ? 'class.patientDefense' : 'class.stepOfTheWind',
+          payload: {'focusSpent': used.focusSpent,
+            'remainingFocus': remaining,
+            'addedMovement': used.movementAdded,
+            'dodgeActive': used.encounter.dodgeActive,
+            'disengagedThisTurn': used.encounter.disengagedThisTurn,
+            'jumpDoubledThisTurn': used.encounter.jumpDoubledThisTurn});
+      } on StateError catch (e) {
+        return _commit(before, current, e.message.toString(), type: 'rules.blocked');
+      } on FormatException catch (e) {
+        return _commit(before, current, e.message, type: 'rules.blocked');
+      }
+    }
+    if (RegExp(r'flinke aktion.*(?:rückzug|rueckzug|disengage)|'
+        r'(?:rückzug|rueckzug|disengage).*flinke aktion').hasMatch(words)) {
+      if (ClassResourceRules.level(current.hero, 'Schurke') < 2 ||
+          encounter.bonusActionUsed) {
+        return _commit(before, current,
+          'Flinke Aktion: Rückzug erfordert Schurkenstufe 2 und eine freie Bonusaktion.',
+          type: 'rules.blocked');
+      }
+      return _commit(before, current.copyWith(encounter: encounter.copyWith(
+        bonusActionUsed: true, disengagedThisTurn: true)),
+        'Flinke Aktion: Du ziehst dich als Bonusaktion zurück. '
+        'Gelegenheitsangriffe werden in diesem vereinfachten Kampf noch nicht berechnet.',
+        type: 'class.cunningDisengage',
+        payload: {'disengagedThisTurn': true});
+    }
     if (RegExp(r'flinke aktion.*(?:sprint|dash)|(?:sprint|dash).*flinke aktion')
         .hasMatch(words)) {
       if (ClassResourceRules.level(current.hero, 'Schurke') < 2 ||
@@ -1744,7 +1794,7 @@ class GameEngine {
     final result = dice.check(
       modifier: foe.enemyAttackBonus,
       advantage: ConditionRules.hasUnconditionalAttackerAdvantage(campaign.hero),
-      disadvantage: disadvantage,
+      disadvantage: disadvantage || foe.dodgeActive,
     );
     final outcome = RulesEngine.attack(
       roll: result,
@@ -1809,6 +1859,9 @@ class GameEngine {
           actionUsed: false,
           attacksRemaining: 0,
           bonusActionUsed: false,
+          dodgeActive: false,
+          disengagedThisTurn: false,
+          jumpDoubledThisTurn: false,
           reactionUsed: false,
           surgeReserved: false,
           surgeUsedThisTurn: false,

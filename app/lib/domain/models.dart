@@ -920,6 +920,9 @@ class Encounter {
     this.actionUsed = false,
     this.attacksRemaining = 0,
     this.bonusActionUsed = false,
+    this.dodgeActive = false,
+    this.disengagedThisTurn = false,
+    this.jumpDoubledThisTurn = false,
     this.reactionUsed = false,
     this.surgeReserved = false,
     this.surgeUsedThisTurn = false,
@@ -937,6 +940,8 @@ class Encounter {
       enemyInitiative,
       movementRemaining;
   final bool actionUsed, bonusActionUsed, reactionUsed;
+  /// Bonus-Action defensive effects persist until the enemy turn concludes.
+  final bool dodgeActive, disengagedThisTurn, jumpDoubledThisTurn;
   /// One reserved extra Attack action; a second Action Surge is not allowed.
   final bool surgeReserved, surgeUsedThisTurn;
   /// A Sneak Attack may be used once per turn, including extra Attack actions.
@@ -958,6 +963,9 @@ class Encounter {
     bool? actionUsed,
     int? attacksRemaining,
     bool? bonusActionUsed,
+    bool? dodgeActive,
+    bool? disengagedThisTurn,
+    bool? jumpDoubledThisTurn,
     bool? reactionUsed,
     bool? surgeReserved,
     bool? surgeUsedThisTurn,
@@ -981,6 +989,9 @@ class Encounter {
     actionUsed: actionUsed ?? this.actionUsed,
     attacksRemaining: attacksRemaining ?? this.attacksRemaining,
     bonusActionUsed: bonusActionUsed ?? this.bonusActionUsed,
+    dodgeActive: dodgeActive ?? this.dodgeActive,
+    disengagedThisTurn: disengagedThisTurn ?? this.disengagedThisTurn,
+    jumpDoubledThisTurn: jumpDoubledThisTurn ?? this.jumpDoubledThisTurn,
     reactionUsed: reactionUsed ?? this.reactionUsed,
     surgeReserved: surgeReserved ?? this.surgeReserved,
     surgeUsedThisTurn: surgeUsedThisTurn ?? this.surgeUsedThisTurn,
@@ -1005,6 +1016,9 @@ class Encounter {
     'actionUsed': actionUsed,
     if (attacksRemaining > 0) 'attacksRemaining': attacksRemaining,
     'bonusActionUsed': bonusActionUsed,
+    if (dodgeActive) 'dodgeActive': true,
+    if (disengagedThisTurn) 'disengagedThisTurn': true,
+    if (jumpDoubledThisTurn) 'jumpDoubledThisTurn': true,
     'reactionUsed': reactionUsed,
     if (surgeReserved) 'surgeReserved': true,
     if (surgeUsedThisTurn) 'surgeUsedThisTurn': true,
@@ -1092,6 +1106,9 @@ class Encounter {
       attacksRemaining: _int(j['attacksRemaining'],
           'Verbleibende Angriffe', fallback: 0, min: 0, max: 3),
       bonusActionUsed: _bool(j['bonusActionUsed'], 'Bonusaktion'),
+      dodgeActive: _bool(j['dodgeActive'], 'Ausweichen aktiv'),
+      disengagedThisTurn: _bool(j['disengagedThisTurn'], 'Rückzug aktiv'),
+      jumpDoubledThisTurn: _bool(j['jumpDoubledThisTurn'], 'Sprungbonus aktiv'),
       reactionUsed: _bool(j['reactionUsed'], 'Reaktion'),
       surgeReserved: _bool(j['surgeReserved'], 'Action Surge reserviert'),
       surgeUsedThisTurn: _bool(j['surgeUsedThisTurn'], 'Action Surge bereits genutzt'),

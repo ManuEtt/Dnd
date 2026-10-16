@@ -1,3 +1,7 @@
+## 0.7.0+40 – Mönchsfokus: defensive Bonusaktionen (2026-10-16)
+
+Geduldige Verteidigung und Schritt des Windes mit kostenlosen und fokussierten Varianten. Persistente, am Zugende automatisch zurückgesetzte Dodge-/Disengage-/Sprungstatus; Rogue Cunning Action Disengage. Separate Domain- und Kampf-Regressionstests. Kein Gelegenheitsangriffs-/Sprunggeometriesystem; keine Flurry-Ausführung. Flutter-/Android-Build noch nicht ausgeführt. Siehe docs/MONK_FOCUS_0_7_0.md.
+
 ## 0.6.9+39 — Ausführbare Kampf-Klassenaktionen (2026-10-16)
 
 Kampfrausch-Runden und gesonderter Ressourcenverbrauch, bestätigter Stärke-Nahkampfbonus, optional bestätigte körperliche Schadensresistenz, Flinke Aktion: Sprinten und Hinterhältiger Angriff auf Treffern mit bestätigtem Vorteil. Neue Regressionstests, Speicherkompatibilität und Dokumentation. Flutter/Android nicht lokal getestet.
