@@ -1,4 +1,5 @@
 import 'srd_equipment_catalog.dart';
+import 'condition_rules.dart';
 import 'spellcasting_rules.dart';
 import 'class_feature_resources.dart';
 import 'class_resource_rules.dart';
@@ -79,6 +80,7 @@ class InventoryItem {
     this.description = '',
     this.catalogId = '',
   });
+
   /// Optional catalog reference; legacy and user-defined items leave it empty.
   final String catalogId;
   final String id, name, description;
@@ -157,7 +159,14 @@ class HeroCharacter {
        spentSpellSlots = Map.unmodifiable(spentSpellSlots),
        spentClassResources = Map.unmodifiable(spentClassResources),
        unverifiedNotes = List.unmodifiable(unverifiedNotes);
-  final String id, name, species, className, secondaryClassName, subclass, background, backstory;
+  final String id,
+      name,
+      species,
+      className,
+      secondaryClassName,
+      subclass,
+      background,
+      backstory;
   final int secondaryClassLevel;
   int get primaryClassLevel => level - secondaryClassLevel;
   bool get hasSecondClass => secondaryClassName.isNotEmpty;
@@ -168,6 +177,7 @@ class HeroCharacter {
   final int? gold, experience;
   final Map<String, int?> abilities;
   final int? hitPoints, maxHitPoints, armorClass, speed;
+
   /// SRD temporary HP: separate from normal/max HP, not additive.
   final int temporaryHitPoints;
   final List<String> skills,
@@ -177,21 +187,27 @@ class HeroCharacter {
       conditions,
       unverifiedNotes;
   final List<InventoryItem> inventory;
+
   /// Already spent class Hit Dice, keyed by die type (d6/d8/d10/d12).
   /// Optional in schemaVersion 1 for backwards-compatible older saves.
   final Map<String, int> spentHitDice;
+
   /// Spent Spellcasting slots per spell level; Pact Magic is separate.
   final Map<String, int> spentSpellSlots;
   final int spentPactSlots;
   final int spentSecondWind, spentActionSurge;
+
   /// Optional cross-class SRD resource counters, keyed by source class.
   final Map<String, int> spentClassResources;
+
   /// Explicitly declared current concentration, not a claimed spell effect.
   final String concentratingOn;
   final String weaponDamage, weaponAbility;
   final bool weaponProficient;
+
   /// Optional inventory-instance references. Old saves default to no equipment.
   final String equippedArmorId, equippedShieldId, equippedWeaponId;
+
   /// Explicitly confirmed training for the currently equipped armor and shield.
   final bool equippedArmorTrained, equippedShieldTrained;
   List<String> get incompleteFields => [
@@ -336,8 +352,10 @@ class HeroCharacter {
     if (spentSecondWind > 0) 'spentSecondWind': spentSecondWind,
     if (spentActionSurge > 0) 'spentActionSurge': spentActionSurge,
     if (spentClassResources.values.any((spent) => spent > 0))
-      'spentClassResources': {for (final e in spentClassResources.entries)
-          if (e.value > 0) e.key: e.value},
+      'spentClassResources': {
+        for (final e in spentClassResources.entries)
+          if (e.value > 0) e.key: e.value,
+      },
     if (concentratingOn.isNotEmpty) 'concentratingOn': concentratingOn,
     'weaponDamage': weaponDamage,
     'weaponAbility': weaponAbility,
@@ -385,9 +403,18 @@ class HeroCharacter {
         ).hasMatch(weaponDamage)) {
       throw const FormatException('Ungültiger Waffenschaden.');
     }
-    final secondary = _string(j['secondaryClassName'], 'Zweitklasse', fallback: '');
-    final secondaryLevel = _int(j['secondaryClassLevel'], 'Zweitklassenstufe',
-        fallback: 0, min: 0, max: 19);
+    final secondary = _string(
+      j['secondaryClassName'],
+      'Zweitklasse',
+      fallback: '',
+    );
+    final secondaryLevel = _int(
+      j['secondaryClassLevel'],
+      'Zweitklassenstufe',
+      fallback: 0,
+      min: 0,
+      max: 19,
+    );
     final totalLevel = _int(j['level'], 'Stufe', min: 1, max: 20);
     final diceRecord = j['spentHitDice'];
     if (diceRecord != null && diceRecord is! Map<String, dynamic>) {
@@ -397,13 +424,17 @@ class HeroCharacter {
     if (diceRecord != null) {
       for (final entry in diceRecord.entries) {
         if (!const ['d6', 'd8', 'd10', 'd12'].contains(entry.key) ||
-            entry.value is! int || entry.value < 0 || entry.value > totalLevel) {
+            entry.value is! int ||
+            entry.value < 0 ||
+            entry.value > totalLevel) {
           throw const FormatException('Ungültiger Trefferwürfelbestand.');
         }
         if (entry.value > 0) spent[entry.key] = entry.value as int;
       }
       if (spent.values.fold<int>(0, (sum, count) => sum + count) > totalLevel) {
-        throw const FormatException('Mehr Trefferwürfel verbraucht als Stufen vorhanden.');
+        throw const FormatException(
+          'Mehr Trefferwürfel verbraucht als Stufen vorhanden.',
+        );
       }
     }
 
@@ -416,9 +447,13 @@ class HeroCharacter {
     if (spellsRecord != null) {
       for (final entry in spellsRecord.entries) {
         final slot = int.tryParse(entry.key);
-        if (slot == null || slot < 1 || slot > 9 ||
-            entry.key != '$slot' || entry.value is! int ||
-            entry.value < 0 || entry.value > maxima[slot - 1]) {
+        if (slot == null ||
+            slot < 1 ||
+            slot > 9 ||
+            entry.key != '$slot' ||
+            entry.value is! int ||
+            entry.value < 0 ||
+            entry.value > maxima[slot - 1]) {
           throw const FormatException('Ungültiger verbrauchter Zauberplatz.');
         }
         if (entry.value > 0) spentSlots[entry.key] = entry.value as int;
@@ -432,40 +467,77 @@ class HeroCharacter {
     if (classResourceRaw != null) {
       for (final e in classResourceRaw.entries) {
         if (!ClassResourceRules.supported.contains(e.key) ||
-            e.value is! int || e.value < 0 || e.value > 100) {
+            e.value is! int ||
+            e.value < 0 ||
+            e.value > 100) {
           throw const FormatException('Ungültige Klassenressource.');
         }
         if (e.value > 0) spentClassResources[e.key] = e.value as int;
       }
     }
-    final spentPact = _int(j['spentPactSlots'], 'Verbrauchte Paktplätze',
-        fallback: 0, min: 0, max: 4);
-    final concentration = _string(j['concentratingOn'], 'Konzentrationszauber',
-        fallback: '');
+    final spentPact = _int(
+      j['spentPactSlots'],
+      'Verbrauchte Paktplätze',
+      fallback: 0,
+      min: 0,
+      max: 4,
+    );
+    final concentration = _string(
+      j['concentratingOn'],
+      'Konzentrationszauber',
+      fallback: '',
+    );
     if (concentration.length > 200 || concentration != concentration.trim()) {
       throw const FormatException('Ungültiger Konzentrationszauber.');
     }
 
     if ((secondary.isEmpty && secondaryLevel != 0) ||
-        (secondary.isNotEmpty && (secondaryLevel < 1 || secondaryLevel >= totalLevel)) ||
-        (secondary.isNotEmpty && secondary.toLowerCase() ==
-            _string(j['className'], 'Klasse').toLowerCase())) {
-      throw const FormatException('Ungültige Zweitklassenstufe oder Klassenkombination.');
+        (secondary.isNotEmpty &&
+            (secondaryLevel < 1 || secondaryLevel >= totalLevel)) ||
+        (secondary.isNotEmpty &&
+            secondary.toLowerCase() ==
+                _string(j['className'], 'Klasse').toLowerCase())) {
+      throw const FormatException(
+        'Ungültige Zweitklassenstufe oder Klassenkombination.',
+      );
     }
-    final items = _list(j['inventory'], 'Inventar')
-        .map((item) => InventoryItem.fromJson(_map(item, 'Gegenstand')))
-        .toList();
-    final armorId = _string(j['equippedArmorId'], 'Rüstungs-Referenz', fallback: '');
-    final shieldId = _string(j['equippedShieldId'], 'Schild-Referenz', fallback: '');
-    final weaponId = _string(j['equippedWeaponId'], 'Waffen-Referenz', fallback: '');
+    final items = _list(
+      j['inventory'],
+      'Inventar',
+    ).map((item) => InventoryItem.fromJson(_map(item, 'Gegenstand'))).toList();
+    final armorId = _string(
+      j['equippedArmorId'],
+      'Rüstungs-Referenz',
+      fallback: '',
+    );
+    final shieldId = _string(
+      j['equippedShieldId'],
+      'Schild-Referenz',
+      fallback: '',
+    );
+    final weaponId = _string(
+      j['equippedWeaponId'],
+      'Waffen-Referenz',
+      fallback: '',
+    );
     final equipped = [armorId, shieldId, weaponId].where((id) => id.isNotEmpty);
     if (equipped.length != equipped.toSet().length ||
-        equipped.any((id) => items.where((item) => item.id == id &&
-            item.catalogId.isNotEmpty).length != 1)) {
-      throw const FormatException('Ausrüstung verweist auf fehlende oder doppelte Inventareinträge.');
+        equipped.any(
+          (id) =>
+              items
+                  .where((item) => item.id == id && item.catalogId.isNotEmpty)
+                  .length !=
+              1,
+        )) {
+      throw const FormatException(
+        'Ausrüstung verweist auf fehlende oder doppelte Inventareinträge.',
+      );
     }
-    for (final (id, type) in [(armorId, 'armor'),
-      (shieldId, 'shield'), (weaponId, 'weapon')]) {
+    for (final (id, type) in [
+      (armorId, 'armor'),
+      (shieldId, 'shield'),
+      (weaponId, 'weapon'),
+    ]) {
       if (id.isEmpty) continue;
       final match = items.singleWhere((item) => item.id == id);
       final entry = SrdEquipmentCatalog.byId(match.catalogId);
@@ -473,19 +545,28 @@ class HeroCharacter {
           (type == 'armor' && !entry.isArmor) ||
           (type == 'shield' && !entry.isShield) ||
           (type == 'weapon' && !entry.isWeapon)) {
-        throw const FormatException('Nicht unterstützter ausgerüsteter Gegenstand.');
+        throw const FormatException(
+          'Nicht unterstützter ausgerüsteter Gegenstand.',
+        );
       }
     }
     if (shieldId.isNotEmpty && weaponId.isNotEmpty) {
       final weapon = SrdEquipmentCatalog.byId(
-        items.singleWhere((item) => item.id == weaponId).catalogId);
+        items.singleWhere((item) => item.id == weaponId).catalogId,
+      );
       if (weapon!.hasProperty('two-handed')) {
-        throw const FormatException('Schild und Zweihandwaffe dürfen nicht gleichzeitig ausgerüstet sein.');
+        throw const FormatException(
+          'Schild und Zweihandwaffe dürfen nicht gleichzeitig ausgerüstet sein.',
+        );
       }
     }
-    if ((armorId.isEmpty && _bool(j['equippedArmorTrained'], 'Rüstungsübung')) ||
-        (shieldId.isEmpty && _bool(j['equippedShieldTrained'], 'Schildübung'))) {
-      throw const FormatException('Ausrüstungsübung ohne angelegten Gegenstand.');
+    if ((armorId.isEmpty &&
+            _bool(j['equippedArmorTrained'], 'Rüstungsübung')) ||
+        (shieldId.isEmpty &&
+            _bool(j['equippedShieldTrained'], 'Schildübung'))) {
+      throw const FormatException(
+        'Ausrüstungsübung ohne angelegten Gegenstand.',
+      );
     }
     final parsed = HeroCharacter(
       id: _string(j['id'], 'Charakter-ID'),
@@ -504,8 +585,12 @@ class HeroCharacter {
       },
       hitPoints: hp,
       maxHitPoints: maxHp,
-      temporaryHitPoints: _int(j['temporaryHitPoints'],
-          'Temporäre Trefferpunkte', fallback: 0, max: 100000),
+      temporaryHitPoints: _int(
+        j['temporaryHitPoints'],
+        'Temporäre Trefferpunkte',
+        fallback: 0,
+        max: 100000,
+      ),
       armorClass: _nullableInt(
         j['armorClass'],
         'Rüstungsklasse',
@@ -524,15 +609,30 @@ class HeroCharacter {
       gold: _nullableInt(j['gold'], 'Gold'),
       experience: _nullableInt(j['experience'], 'Erfahrung'),
       conditions: _strings(j['conditions'], 'Zustände'),
-      exhaustionLevel: _int(j['exhaustionLevel'], 'Erschöpfung',
-          fallback: 0, min: 0, max: 6),
+      exhaustionLevel: _int(
+        j['exhaustionLevel'],
+        'Erschöpfung',
+        fallback: 0,
+        min: 0,
+        max: 6,
+      ),
       spentHitDice: spent,
       spentSpellSlots: spentSlots,
       spentPactSlots: spentPact,
-      spentSecondWind: _int(j['spentSecondWind'], 'Second Wind',
-          fallback: 0, min: 0, max: 4),
-      spentActionSurge: _int(j['spentActionSurge'], 'Action Surge',
-          fallback: 0, min: 0, max: 2),
+      spentSecondWind: _int(
+        j['spentSecondWind'],
+        'Second Wind',
+        fallback: 0,
+        min: 0,
+        max: 4,
+      ),
+      spentActionSurge: _int(
+        j['spentActionSurge'],
+        'Action Surge',
+        fallback: 0,
+        min: 0,
+        max: 2,
+      ),
       spentClassResources: spentClassResources,
       concentratingOn: concentration,
       weaponDamage: weaponDamage,
@@ -565,7 +665,9 @@ class HeroCharacter {
     ClassResourceRules.validate(parsed);
     if (parsed.concentratingOn.isNotEmpty &&
         (parsed.isDead || parsed.hitPoints == 0)) {
-      throw const FormatException('Bewusstlose oder tote Helden können nicht konzentrieren.');
+      throw const FormatException(
+        'Bewusstlose oder tote Helden können nicht konzentrieren.',
+      );
     }
     return parsed;
   }
@@ -637,13 +739,21 @@ class Quest {
 /// AI proposal, never an active encounter, reward or completed quest.
 /// Its enemy archetype is resolved exclusively against the local catalogue.
 class AdventureOffer {
-  const AdventureOffer({required this.id, required this.title,
-    required this.description, required this.archetype,
-    required this.questTitle, required this.questDescription});
+  const AdventureOffer({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.archetype,
+    required this.questTitle,
+    required this.questDescription,
+  });
   final String id, title, description, archetype, questTitle, questDescription;
   Map<String, dynamic> toJson() => {
-    'id': id, 'title': title, 'description': description,
-    'archetype': archetype, 'questTitle': questTitle,
+    'id': id,
+    'title': title,
+    'description': description,
+    'archetype': archetype,
+    'questTitle': questTitle,
     'questDescription': questDescription,
   };
   factory AdventureOffer.fromJson(Map<String, dynamic> j) {
@@ -654,19 +764,30 @@ class AdventureOffer {
       }
       return value;
     }
+
     final id = bounded('id', 64);
     if (!RegExp(r'^[a-z][a-z0-9_-]{0,63}$').hasMatch(id)) {
       throw const FormatException('Ungültige Begegnungs-ID.');
     }
     final archetype = bounded('archetype', 32);
-    if (!const ['bandit', 'wolf', 'skeleton', 'goblin', 'orc', 'investigation']
-        .contains(archetype)) {
+    if (!const [
+      'bandit',
+      'wolf',
+      'skeleton',
+      'goblin',
+      'orc',
+      'investigation',
+    ].contains(archetype)) {
       throw const FormatException('Unbekanntes Gegnerprofil.');
     }
-    return AdventureOffer(id: id, title: bounded('title', 120),
-      description: bounded('description', 500), archetype: archetype,
+    return AdventureOffer(
+      id: id,
+      title: bounded('title', 120),
+      description: bounded('description', 500),
+      archetype: archetype,
       questTitle: bounded('questTitle', 120),
-      questDescription: bounded('questDescription', 500));
+      questDescription: bounded('questDescription', 500),
+    );
   }
 }
 
@@ -723,8 +844,10 @@ class SessionRecap {
   factory SessionRecap.fromJson(Map<String, dynamic> j) {
     final title = _string(j['title'], 'Rückblickstitel');
     final summary = _string(j['summary'], 'Sitzungsrückblick');
-    if (title.trim().isEmpty || title.length > 100 ||
-        summary.trim().isEmpty || summary.length > 2400) {
+    if (title.trim().isEmpty ||
+        title.length > 100 ||
+        summary.trim().isEmpty ||
+        summary.length > 2400) {
       throw const FormatException('Ungültiger Sitzungsrückblick.');
     }
     return SessionRecap(
@@ -761,10 +884,13 @@ class StoryThread {
   factory StoryThread.fromJson(Map<String, dynamic> j) {
     final title = _string(j['title'], 'Handlungsstrang');
     final description = _string(
-      j['description'], 'Handlungsnotiz', fallback: '',
+      j['description'],
+      'Handlungsnotiz',
+      fallback: '',
     );
     final status = _string(j['status'], 'Handlungsstatus', fallback: 'open');
-    if (title.trim().isEmpty || title.length > 120 ||
+    if (title.trim().isEmpty ||
+        title.length > 120 ||
         description.length > 1000 ||
         !const ['open', 'resolved', 'abandoned'].contains(status)) {
       throw const FormatException('Ungültiger Handlungsstrang.');
@@ -799,8 +925,10 @@ class NpcRelationshipNote {
   factory NpcRelationshipNote.fromJson(Map<String, dynamic> j) {
     final relationship = _string(j['relationship'], 'NPC-Beziehung');
     final note = _string(j['note'], 'Beziehungsnotiz');
-    if (relationship.trim().isEmpty || relationship.length > 80 ||
-        note.trim().isEmpty || note.length > 500) {
+    if (relationship.trim().isEmpty ||
+        relationship.length > 80 ||
+        note.trim().isEmpty ||
+        note.length > 500) {
       throw const FormatException('Ungültige Beziehungsnotiz.');
     }
     return NpcRelationshipNote(
@@ -928,6 +1056,7 @@ class Encounter {
     this.actionUsed = false,
     this.attacksRemaining = 0,
     this.bonusActionUsed = false,
+    this.spellSlotExpendedThisTurn = false,
     this.dodgeActive = false,
     this.disengagedThisTurn = false,
     this.jumpDoubledThisTurn = false,
@@ -940,6 +1069,7 @@ class Encounter {
     this.selfRestorationChoice = '',
   });
   final String id, enemyName, enemyDamage, enemyDamageType, activeParticipant;
+
   /// Pending player choice for the Monk's end-of-turn Self-Restoration.
   final String selfRestorationChoice;
   final int enemyHitPoints,
@@ -951,15 +1081,24 @@ class Encounter {
       enemyInitiative,
       movementRemaining;
   final bool actionUsed, bonusActionUsed, reactionUsed;
+
+  /// SRD 2024: expend a spell slot to cast a spell only once on a turn.
+  /// Absent in older schema-1 saves; defaults to false.
+  final bool spellSlotExpendedThisTurn;
+
   /// Bonus-Action defensive effects persist until the enemy turn concludes.
   final bool dodgeActive, disengagedThisTurn, jumpDoubledThisTurn;
+
   /// One reserved extra Attack action; a second Action Surge is not allowed.
   final bool surgeReserved, surgeUsedThisTurn;
+
   /// A Sneak Attack may be used once per turn, including extra Attack actions.
   final bool sneakAttackUsedThisTurn;
+
   /// Rage ends at the end of this hero turn unless extended by a qualifying act.
   /// Zero means no active Rage. The start round imposes the 100-round limit.
   final int rageUntilRound, rageStartedRound;
+
   /// Remaining attacks after the first attack of a single Attack action.
   /// Old campaign saves omit the field and resume with zero.
   final int attacksRemaining;
@@ -974,6 +1113,7 @@ class Encounter {
     bool? actionUsed,
     int? attacksRemaining,
     bool? bonusActionUsed,
+    bool? spellSlotExpendedThisTurn,
     bool? dodgeActive,
     bool? disengagedThisTurn,
     bool? jumpDoubledThisTurn,
@@ -1001,13 +1141,16 @@ class Encounter {
     actionUsed: actionUsed ?? this.actionUsed,
     attacksRemaining: attacksRemaining ?? this.attacksRemaining,
     bonusActionUsed: bonusActionUsed ?? this.bonusActionUsed,
+    spellSlotExpendedThisTurn:
+        spellSlotExpendedThisTurn ?? this.spellSlotExpendedThisTurn,
     dodgeActive: dodgeActive ?? this.dodgeActive,
     disengagedThisTurn: disengagedThisTurn ?? this.disengagedThisTurn,
     jumpDoubledThisTurn: jumpDoubledThisTurn ?? this.jumpDoubledThisTurn,
     reactionUsed: reactionUsed ?? this.reactionUsed,
     surgeReserved: surgeReserved ?? this.surgeReserved,
     surgeUsedThisTurn: surgeUsedThisTurn ?? this.surgeUsedThisTurn,
-    sneakAttackUsedThisTurn: sneakAttackUsedThisTurn ?? this.sneakAttackUsedThisTurn,
+    sneakAttackUsedThisTurn:
+        sneakAttackUsedThisTurn ?? this.sneakAttackUsedThisTurn,
     rageUntilRound: rageUntilRound ?? this.rageUntilRound,
     rageStartedRound: rageStartedRound ?? this.rageStartedRound,
     selfRestorationChoice: selfRestorationChoice ?? this.selfRestorationChoice,
@@ -1029,6 +1172,7 @@ class Encounter {
     'actionUsed': actionUsed,
     if (attacksRemaining > 0) 'attacksRemaining': attacksRemaining,
     'bonusActionUsed': bonusActionUsed,
+    if (spellSlotExpendedThisTurn) 'spellSlotExpendedThisTurn': true,
     if (dodgeActive) 'dodgeActive': true,
     if (disengagedThisTurn) 'disengagedThisTurn': true,
     if (jumpDoubledThisTurn) 'jumpDoubledThisTurn': true,
@@ -1050,10 +1194,25 @@ class Encounter {
     ).hasMatch(damage)) {
       throw const FormatException('Ungültiger Gegnerschaden.');
     }
-    final damageType = _string(j['enemyDamageType'], 'Gegnerschadensart', fallback: '');
+    final damageType = _string(
+      j['enemyDamageType'],
+      'Gegnerschadensart',
+      fallback: '',
+    );
     const supportedDamageTypes = {
-      'acid', 'bludgeoning', 'cold', 'fire', 'force', 'lightning',
-      'necrotic', 'piercing', 'poison', 'psychic', 'radiant', 'slashing', 'thunder',
+      'acid',
+      'bludgeoning',
+      'cold',
+      'fire',
+      'force',
+      'lightning',
+      'necrotic',
+      'piercing',
+      'poison',
+      'psychic',
+      'radiant',
+      'slashing',
+      'thunder',
     };
     if (damageType.isNotEmpty && !supportedDamageTypes.contains(damageType)) {
       throw const FormatException('Unbekannte Gegnerschadensart.');
@@ -1068,24 +1227,47 @@ class Encounter {
     }
     if (_bool(j['surgeReserved'], 'Action Surge reserviert') &&
         !_bool(j['surgeUsedThisTurn'], 'Action Surge bereits genutzt')) {
-      throw const FormatException('Reservierte Zusatzaktion ohne Action Surge.');
+      throw const FormatException(
+        'Reservierte Zusatzaktion ohne Action Surge.',
+      );
     }
-    final rageStart = _int(j['rageStartedRound'], 'Rage-Beginn',
-        fallback: 0, min: 0, max: 1000000);
-    final rageEnd = _int(j['rageUntilRound'], 'Rage-Ende',
-        fallback: 0, min: 0, max: 1000000);
+    final rageStart = _int(
+      j['rageStartedRound'],
+      'Rage-Beginn',
+      fallback: 0,
+      min: 0,
+      max: 1000000,
+    );
+    final rageEnd = _int(
+      j['rageUntilRound'],
+      'Rage-Ende',
+      fallback: 0,
+      min: 0,
+      max: 1000000,
+    );
     final currentRound = _int(j['round'], 'Runde', fallback: 1, min: 1);
     if ((rageStart == 0) != (rageEnd == 0) ||
-        (rageEnd > 0 && (rageStart > currentRound ||
-         rageEnd < currentRound || rageEnd < rageStart ||
-         rageEnd > rageStart + 99))) {
+        (rageEnd > 0 &&
+            (rageStart > currentRound ||
+                rageEnd < currentRound ||
+                rageEnd < rageStart ||
+                rageEnd > rageStart + 99))) {
       throw const FormatException('Ungültige Kampfrausch-Dauer.');
     }
-    final restoration = _string(j['selfRestorationChoice'],
-        'Selbstwiederherstellung', fallback: '');
-    if (restoration.isNotEmpty && !const {
-        'bezaubert', 'verängstigt', 'vergiftet'}.contains(restoration)) {
-      throw const FormatException('Ungültige Selbstwiederherstellungs-Auswahl.');
+    final restoration = _string(
+      j['selfRestorationChoice'],
+      'Selbstwiederherstellung',
+      fallback: '',
+    );
+    if (restoration.isNotEmpty &&
+        !const {
+          'bezaubert',
+          'verängstigt',
+          'vergiftet',
+        }.contains(restoration)) {
+      throw const FormatException(
+        'Ungültige Selbstwiederherstellungs-Auswahl.',
+      );
     }
     return Encounter(
       id: _string(j['id'], 'Begegnung-ID'),
@@ -1124,17 +1306,31 @@ class Encounter {
       ),
       movementRemaining: _int(j['movementRemaining'], 'Bewegung', fallback: 9),
       actionUsed: _bool(j['actionUsed'], 'Aktion'),
-      attacksRemaining: _int(j['attacksRemaining'],
-          'Verbleibende Angriffe', fallback: 0, min: 0, max: 3),
+      attacksRemaining: _int(
+        j['attacksRemaining'],
+        'Verbleibende Angriffe',
+        fallback: 0,
+        min: 0,
+        max: 3,
+      ),
       bonusActionUsed: _bool(j['bonusActionUsed'], 'Bonusaktion'),
+      spellSlotExpendedThisTurn: _bool(
+        j['spellSlotExpendedThisTurn'],
+        'Zauberplatz in diesem Zug',
+      ),
       dodgeActive: _bool(j['dodgeActive'], 'Ausweichen aktiv'),
       disengagedThisTurn: _bool(j['disengagedThisTurn'], 'Rückzug aktiv'),
       jumpDoubledThisTurn: _bool(j['jumpDoubledThisTurn'], 'Sprungbonus aktiv'),
       reactionUsed: _bool(j['reactionUsed'], 'Reaktion'),
       surgeReserved: _bool(j['surgeReserved'], 'Action Surge reserviert'),
-      surgeUsedThisTurn: _bool(j['surgeUsedThisTurn'], 'Action Surge bereits genutzt'),
-      sneakAttackUsedThisTurn: _bool(j['sneakAttackUsedThisTurn'],
-          'Hinterhältiger Angriff bereits genutzt'),
+      surgeUsedThisTurn: _bool(
+        j['surgeUsedThisTurn'],
+        'Action Surge bereits genutzt',
+      ),
+      sneakAttackUsedThisTurn: _bool(
+        j['sneakAttackUsedThisTurn'],
+        'Hinterhältiger Angriff bereits genutzt',
+      ),
       rageUntilRound: rageEnd,
       rageStartedRound: rageStart,
       selfRestorationChoice: restoration,
@@ -1250,8 +1446,9 @@ class Campaign {
     'sessionRecaps': sessionRecaps.map((e) => e.toJson()).toList(),
     'storyThreads': storyThreads.map((e) => e.toJson()).toList(),
     'storyBible': storyBible,
-    'npcRelationshipNotes':
-        npcRelationshipNotes.map((e) => e.toJson()).toList(),
+    'npcRelationshipNotes': npcRelationshipNotes
+        .map((e) => e.toJson())
+        .toList(),
     'npcs': npcs.map((e) => e.toJson()).toList(),
     'places': places.map((e) => e.toJson()).toList(),
     'events': events.map((e) => e.toJson()).toList(),
@@ -1282,33 +1479,44 @@ class Campaign {
         : Encounter.fromJson(_map(j['encounter'], 'Kampf'));
     final adventureOffer = j['adventureOffer'] == null
         ? null
-        : AdventureOffer.fromJson(_map(j['adventureOffer'], 'Begegnungsvorschlag'));
+        : AdventureOffer.fromJson(
+            _map(j['adventureOffer'], 'Begegnungsvorschlag'),
+          );
     // Existing 0.3.5 saves omit these optional collections; no migration.
-    final recaps = _list(j['sessionRecaps'], 'Sitzungsrückblicke')
-        .map((e) => SessionRecap.fromJson(_map(e, 'Sitzungsrückblick')))
-        .toList();
-    final threads = _list(j['storyThreads'], 'Handlungsstränge')
-        .map((e) => StoryThread.fromJson(_map(e, 'Handlungsstrang')))
-        .toList();
-    final rawBible = j['storyBible'] == null ? <String, dynamic>{} : _map(j['storyBible'], 'KI-Geschichtenbuch');
-    if (rawBible.length > 12 || rawBible.keys.any((key) => key.length > 60) ||
-        rawBible.values.any((value) => value is! String || value.length > 1500)) {
+    final recaps = _list(
+      j['sessionRecaps'],
+      'Sitzungsrückblicke',
+    ).map((e) => SessionRecap.fromJson(_map(e, 'Sitzungsrückblick'))).toList();
+    final threads = _list(
+      j['storyThreads'],
+      'Handlungsstränge',
+    ).map((e) => StoryThread.fromJson(_map(e, 'Handlungsstrang'))).toList();
+    final rawBible = j['storyBible'] == null
+        ? <String, dynamic>{}
+        : _map(j['storyBible'], 'KI-Geschichtenbuch');
+    if (rawBible.length > 12 ||
+        rawBible.keys.any((key) => key.length > 60) ||
+        rawBible.values.any(
+          (value) => value is! String || value.length > 1500,
+        )) {
       throw const FormatException('Ungültiges KI-Geschichtenbuch.');
     }
-    final relationshipNotes = _list(j['npcRelationshipNotes'], 'NPC-Notizen')
-        .map((e) => NpcRelationshipNote.fromJson(_map(e, 'NPC-Notiz')))
-        .toList();
-    final npcs = _list(j['npcs'], 'NPCs')
-        .map((e) => WorldNpc.fromJson(_map(e, 'NPC')))
-        .toList();
-    if (recaps.length > 60 || threads.length > 100 ||
+    final relationshipNotes = _list(
+      j['npcRelationshipNotes'],
+      'NPC-Notizen',
+    ).map((e) => NpcRelationshipNote.fromJson(_map(e, 'NPC-Notiz'))).toList();
+    final npcs = _list(
+      j['npcs'],
+      'NPCs',
+    ).map((e) => WorldNpc.fromJson(_map(e, 'NPC'))).toList();
+    if (recaps.length > 60 ||
+        threads.length > 100 ||
         relationshipNotes.length > 300 ||
         recaps.map((e) => e.id).toSet().length != recaps.length ||
         threads.map((e) => e.id).toSet().length != threads.length ||
         relationshipNotes.map((e) => e.id).toSet().length !=
             relationshipNotes.length ||
-        relationshipNotes.any((e) =>
-            !npcs.any((npc) => npc.id == e.npcId))) {
+        relationshipNotes.any((e) => !npcs.any((npc) => npc.id == e.npcId))) {
       throw const FormatException('Ungültiges Kampagnengedächtnis.');
     }
     if (pending != null) {
@@ -1319,12 +1527,20 @@ class Campaign {
       }
       final prof = 2 + (hero.level - 1) ~/ 4;
       int modifier(String key) => ((hero.abilities[key]! - 10) / 2).floor();
+      // A saved request must match the same confirmed Exhaustion penalty that
+      // the shared character rules applied when creating it. Death saves keep
+      // their natural die unmodified here; RulesEngine resolves that penalty.
+      final exhaustion = ExhaustionRules.d20Modifier(hero);
       final expected = switch (pending.type) {
         'attack' =>
-          modifier(hero.weaponAbility) + (hero.weaponProficient ? prof : 0),
+          modifier(hero.weaponAbility) +
+              (hero.weaponProficient ? prof : 0) +
+              exhaustion,
         'perception' =>
-          modifier('wisdom') + (hero.skills.contains('Wahrnehmung') ? prof : 0),
-        'escape' => modifier('dexterity'),
+          modifier('wisdom') +
+              (hero.skills.contains('Wahrnehmung') ? prof : 0) +
+              exhaustion,
+        'escape' => modifier('dexterity') + exhaustion,
         _ => 0,
       };
       if (pending.modifier != expected) {
@@ -1374,7 +1590,9 @@ class Campaign {
       ).map((e) => Quest.fromJson(_map(e, 'Quest'))).toList(),
       sessionRecaps: recaps,
       storyThreads: threads,
-      storyBible: {for (final entry in rawBible.entries) entry.key: entry.value as String},
+      storyBible: {
+        for (final entry in rawBible.entries) entry.key: entry.value as String,
+      },
       npcRelationshipNotes: relationshipNotes,
       npcs: npcs,
       places: _list(

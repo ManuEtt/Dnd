@@ -64,7 +64,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
       'exhaustionLevel',
     ]) {
       _fields[key] = TextEditingController(
-        text: _original[key]?.toString() ?? (key == 'exhaustionLevel' ? '0' : ''),
+        text:
+            _original[key]?.toString() ?? (key == 'exhaustionLevel' ? '0' : ''),
       );
     }
     for (final key in [
@@ -144,8 +145,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
           decoration: InputDecoration(
             labelText: label,
             suffixText: suffix,
-            helperText: modifierPreview ??
-                (required ? null : 'Leer = nicht bestätigt'),
+            helperText:
+                modifierPreview ?? (required ? null : 'Leer = nicht bestätigt'),
           ),
           onChanged: isAbilityScore || key == 'exhaustionLevel'
               ? (_) => setState(() => _error = null)
@@ -207,12 +208,19 @@ class _CharacterEditorState extends State<CharacterEditor> {
       // Level-1 SRD generation and freehand entries must not be conflated.
       // Historical/imported characters intentionally remain editable.
       if (widget.hero == null) {
-        final nonempty = _scores.values.any((value) => value.text.trim().isNotEmpty);
-        final matchesConfirmedGeneration = _generatedStartingAbilities != null &&
-            _scores.entries.every((entry) =>
-                int.tryParse(entry.value.text.trim()) ==
-                _generatedStartingAbilities![entry.key]);
-        if (nonempty && !matchesConfirmedGeneration && !_manualAbilityException) {
+        final nonempty = _scores.values.any(
+          (value) => value.text.trim().isNotEmpty,
+        );
+        final matchesConfirmedGeneration =
+            _generatedStartingAbilities != null &&
+            _scores.entries.every(
+              (entry) =>
+                  int.tryParse(entry.value.text.trim()) ==
+                  _generatedStartingAbilities![entry.key],
+            );
+        if (nonempty &&
+            !matchesConfirmedGeneration &&
+            !_manualAbilityException) {
           throw const FormatException(
             'Für einen neuen Charakter Attribute regelkonform über '
             '„Attribute ermitteln“ verteilen oder die manuelle '
@@ -256,12 +264,21 @@ class _CharacterEditorState extends State<CharacterEditor> {
           inventory.add(result.toJson());
         } else {
           if (item!.catalogId != result.catalogId) {
-            for (final slot in ['equippedArmorId', 'equippedShieldId', 'equippedWeaponId']) {
+            for (final slot in [
+              'equippedArmorId',
+              'equippedShieldId',
+              'equippedWeaponId',
+            ]) {
               if (_original[slot] == item.id) {
                 _original[slot] = '';
-                if (slot == 'equippedArmorId') _original['equippedArmorTrained'] = false;
-                if (slot == 'equippedShieldId') _original['equippedShieldTrained'] = false;
-                _error = 'Bearbeiteter Gegenstand ist nicht mehr kataloggebunden. '
+                if (slot == 'equippedArmorId') {
+                  _original['equippedArmorTrained'] = false;
+                }
+                if (slot == 'equippedShieldId') {
+                  _original['equippedShieldTrained'] = false;
+                }
+                _error =
+                    'Bearbeiteter Gegenstand ist nicht mehr kataloggebunden. '
                     'Ausrüstungswerte erneut prüfen.';
               }
             }
@@ -279,13 +296,15 @@ class _CharacterEditorState extends State<CharacterEditor> {
     );
     if (!mounted || selected == null) return;
     setState(() {
-      (_original['inventory'] as List).add(InventoryItem(
-        id: const Uuid().v4(),
-        name: selected.name,
-        quantity: 1,
-        description: selected.detail,
-        catalogId: selected.id,
-      ).toJson());
+      (_original['inventory'] as List).add(
+        InventoryItem(
+          id: const Uuid().v4(),
+          name: selected.name,
+          quantity: 1,
+          description: selected.detail,
+          catalogId: selected.id,
+        ).toJson(),
+      );
     });
   }
 
@@ -336,7 +355,9 @@ class _CharacterEditorState extends State<CharacterEditor> {
         _error = null;
       });
     } catch (error) {
-      setState(() => _error = 'Ausrüstung konnte nicht angewendet werden: $error');
+      setState(
+        () => _error = 'Ausrüstung konnte nicht angewendet werden: $error',
+      );
     }
   }
 
@@ -349,12 +370,19 @@ class _CharacterEditorState extends State<CharacterEditor> {
     json['level'] = int.tryParse(_fields['level']!.text.trim());
     json['hitPoints'] = int.tryParse(_fields['hitPoints']!.text.trim());
     json['maxHitPoints'] = int.tryParse(_fields['maxHitPoints']!.text.trim());
-    json['spells'] = _fields['spells']!.text.split('\n')
-        .map((x) => x.trim()).where((x) => x.isNotEmpty).toList();
-    json['conditions'] = _fields['conditions']!.text.split('\n')
-        .map((x) => x.trim()).where((x) => x.isNotEmpty).toList();
-    json['exhaustionLevel'] =
-        int.tryParse(_fields['exhaustionLevel']!.text.trim());
+    json['spells'] = _fields['spells']!.text
+        .split('\n')
+        .map((x) => x.trim())
+        .where((x) => x.isNotEmpty)
+        .toList();
+    json['conditions'] = _fields['conditions']!.text
+        .split('\n')
+        .map((x) => x.trim())
+        .where((x) => x.isNotEmpty)
+        .toList();
+    json['exhaustionLevel'] = int.tryParse(
+      _fields['exhaustionLevel']!.text.trim(),
+    );
     json['abilities'] = {
       for (final entry in _scores.entries)
         entry.key: int.tryParse(entry.value.text.trim()),
@@ -372,41 +400,63 @@ class _CharacterEditorState extends State<CharacterEditor> {
       setState(() => _error = 'Zauberressourcen: $error');
       return;
     }
-    final choice = await showDialog<SpellcastingChoice>(context: context,
-        builder: (_) => SpellcastingDialog(hero: draft));
+    final choice = await showDialog<SpellcastingChoice>(
+      context: context,
+      builder: (_) => SpellcastingDialog(hero: draft),
+    );
     if (!mounted || choice == null) return;
     try {
       final current = _draftForSpellcasting();
       final hero = choice.level == -1
           ? SpellcastingRules.endConcentration(current)
-          : SpellcastingRules.cast(current, spellName: choice.name,
-              spellLevel: choice.level, pactMagic: choice.pact,
-              concentration: choice.concentration).hero;
+          : SpellcastingRules.cast(
+              current,
+              spellName: choice.name,
+              spellLevel: choice.level,
+              pactMagic: choice.pact,
+              concentration: choice.concentration,
+            ).hero;
       setState(() {
-        _original['spentSpellSlots'] = Map<String, int>.from(hero.spentSpellSlots);
+        _original['spentSpellSlots'] = Map<String, int>.from(
+          hero.spentSpellSlots,
+        );
         _original['spentPactSlots'] = hero.spentPactSlots;
         _original['concentratingOn'] = hero.concentratingOn;
         _error = null;
       });
     } catch (error) {
-      setState(() => _error = 'Zauberressourcen konnten nicht bestätigt werden: $error');
+      setState(
+        () =>
+            _error = 'Zauberressourcen konnten nicht bestätigt werden: $error',
+      );
     }
   }
 
-  bool _isEquippedItem(dynamic id) =>
-      ['equippedArmorId', 'equippedShieldId', 'equippedWeaponId']
-          .any((slot) => _original[slot] == id);
+  bool _isEquippedItem(dynamic id) => [
+    'equippedArmorId',
+    'equippedShieldId',
+    'equippedWeaponId',
+  ].any((slot) => _original[slot] == id);
 
   void _removeInventoryItem(int index) {
     final inventory = _original['inventory'] as List;
     final id = (inventory[index] as Map)['id'];
     setState(() {
-      for (final slot in ['equippedArmorId', 'equippedShieldId', 'equippedWeaponId']) {
+      for (final slot in [
+        'equippedArmorId',
+        'equippedShieldId',
+        'equippedWeaponId',
+      ]) {
         if (_original[slot] == id) {
           _original[slot] = '';
-          if (slot == 'equippedArmorId') _original['equippedArmorTrained'] = false;
-          if (slot == 'equippedShieldId') _original['equippedShieldTrained'] = false;
-          _error = 'Ausrüstung wurde abgelegt. Manuell bestätigte RK- und '
+          if (slot == 'equippedArmorId') {
+            _original['equippedArmorTrained'] = false;
+          }
+          if (slot == 'equippedShieldId') {
+            _original['equippedShieldTrained'] = false;
+          }
+          _error =
+              'Ausrüstung wurde abgelegt. Manuell bestätigte RK- und '
               'Waffenwerte bitte erneut prüfen.';
         }
       }
@@ -444,7 +494,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
           '$sign${proposal.constitutionModifier} Konstitution = '
           '${proposal.maximum} TP.\n\n'
           '${overwrites ? 'Achtung: Die bisher eingetragenen Trefferpunkte '
-              'werden nur bei Bestätigung ersetzt. ' : ''}'
+                    'werden nur bei Bestätigung ersetzt. ' : ''}'
           'Für andere Stufen und bestehende Verletzungen darf dieser '
           'Startwert nicht automatisch verwendet werden.',
         ),
@@ -471,8 +521,11 @@ class _CharacterEditorState extends State<CharacterEditor> {
   Future<void> _configureSecondClass() async {
     // New characters first finish their initial level-1 character creation.
     if (widget.hero == null) {
-      setState(() => _error = 'Erstelle und speichere zuerst deinen '
-          'Startcharakter. Die zweite Klasse kommt bei einem Stufenaufstieg hinzu.');
+      setState(
+        () => _error =
+            'Erstelle und speichere zuerst deinen '
+            'Startcharakter. Die zweite Klasse kommt bei einem Stufenaufstieg hinzu.',
+      );
       return;
     }
     try {
@@ -480,8 +533,10 @@ class _CharacterEditorState extends State<CharacterEditor> {
       final current = widget.hero!.copyWith(
         className: _fields['className']!.text.trim(),
         level: int.tryParse(_fields['level']!.text.trim()),
-        abilities: {for (final entry in _scores.entries)
-          entry.key: int.tryParse(entry.value.text.trim())},
+        abilities: {
+          for (final entry in _scores.entries)
+            entry.key: int.tryParse(entry.value.text.trim()),
+        },
         skills: _listFieldValues('skills'),
         hitPoints: int.tryParse(_fields['hitPoints']!.text.trim()),
         maxHitPoints: int.tryParse(_fields['maxHitPoints']!.text.trim()),
@@ -505,17 +560,22 @@ class _CharacterEditorState extends State<CharacterEditor> {
       });
     } catch (error) {
       if (mounted) {
-        setState(() => _error = 'Zweitklasse konnte nicht hinzugefügt '
-            'werden: $error');
+        setState(
+          () => _error =
+              'Zweitklasse konnte nicht hinzugefügt '
+              'werden: $error',
+        );
       }
     }
   }
 
   Future<void> _configureSrdClass() async {
     if (int.tryParse(_fields['level']!.text.trim()) != 1) {
-      setState(() => _error =
-          'Der SRD-Klassenassistent gilt für Charaktere auf Stufe 1. '
-          'Bestehende höhere Stufen bleiben manuell editierbar.');
+      setState(
+        () => _error =
+            'Der SRD-Klassenassistent gilt für Charaktere auf Stufe 1. '
+            'Bestehende höhere Stufen bleiben manuell editierbar.',
+      );
       return;
     }
     final selected = await showDialog<SrdClassSetupResult>(
@@ -526,9 +586,11 @@ class _CharacterEditorState extends State<CharacterEditor> {
         existingSavingThrows: _listFieldValues('savingThrowProficiencies'),
         characterLevel: int.tryParse(_fields['level']!.text.trim()),
         constitutionScore: int.tryParse(_scores['constitution']!.text.trim()),
-        hasExistingHitPoints: _fields['hitPoints']!.text.trim().isNotEmpty ||
+        hasExistingHitPoints:
+            _fields['hitPoints']!.text.trim().isNotEmpty ||
             _fields['maxHitPoints']!.text.trim().isNotEmpty,
-        allowEquipment: widget.hero == null &&
+        allowEquipment:
+            widget.hero == null &&
             (_original['inventory'] as List).isEmpty &&
             _fields['gold']!.text.trim().isEmpty,
       ),
@@ -542,8 +604,10 @@ class _CharacterEditorState extends State<CharacterEditor> {
         : {..._listFieldValues('skills'), ...choice.skills}.toList();
     final saves = selected.replaceExistingProficiencies
         ? choice.characterClass.savingThrows
-        : {..._listFieldValues('savingThrowProficiencies'),
-            ...choice.characterClass.savingThrows}.toList();
+        : {
+            ..._listFieldValues('savingThrowProficiencies'),
+            ...choice.characterClass.savingThrows,
+          }.toList();
     StartingHitPoints? hp;
     if (selected.useSuggestedHitPoints) {
       hp = StartingHitPoints.propose(
@@ -565,9 +629,13 @@ class _CharacterEditorState extends State<CharacterEditor> {
         _fields['gold']!.text = kit.gold.toString();
         final inventory = _original['inventory'] as List;
         for (final item in kit.items) {
-          inventory.add(InventoryItem(
-            id: const Uuid().v4(), name: item.name, quantity: item.quantity,
-          ).toJson());
+          inventory.add(
+            InventoryItem(
+              id: const Uuid().v4(),
+              name: item.name,
+              quantity: item.quantity,
+            ).toJson(),
+          );
         }
       }
       _error = null;
@@ -612,283 +680,340 @@ class _CharacterEditorState extends State<CharacterEditor> {
       ),
       body: FantasyBackdrop(
         child: Align(
-        alignment: Alignment.topCenter,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 800),
-          child: Form(
-            key: _form,
-            child: ListView(
-              padding: const EdgeInsets.all(20),
-              children: [
-                const FantasySectionTitle(title: 'Dein Held',
-                  icon: Icons.person_outline),
-                const SizedBox(height: 8),
-                const Text(
-                  'Unbekannte Werte dürfen leer bleiben. Für regelgebundene '
-                  'Proben müssen Attribute, Trefferpunkte, Rüstung und Bewegung bestätigt sein.',
-                ),
-                const SizedBox(height: 20),
-                _text('name', 'Charaktername', required: true),
-                _text('species', 'Spezies', required: true),
-                _text('className', 'Klasse', required: true),
-                OutlinedButton.icon(
-                  key: const ValueKey('open-srd-class-selection'),
-                  onPressed: _configureSrdClass,
-                  icon: const Icon(Icons.shield_outlined),
-                  label: const Text('D&D-Klasse und Fertigkeiten wählen'),
-                ),
-                if ((_original['secondaryClassName'] as String? ?? '').isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Text('Mehrklassenheld: ${_fields['className']!.text} '
-                        'Stufe ${((int.tryParse(_fields['level']!.text) ?? 1) -
-                          ((_original['secondaryClassLevel'] as int?) ?? 0))} '
-                        '/ ${_original['secondaryClassName']} '
-                        'Stufe ${_original['secondaryClassLevel']}'),
+          alignment: Alignment.topCenter,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: Form(
+              key: _form,
+              child: ListView(
+                padding: const EdgeInsets.all(20),
+                children: [
+                  const FantasySectionTitle(
+                    title: 'Dein Held',
+                    icon: Icons.person_outline,
                   ),
-                OutlinedButton.icon(
-                  key: const ValueKey('open-multiclass-selection'),
-                  onPressed: _configureSecondClass,
-                  icon: const Icon(Icons.auto_awesome_outlined),
-                  label: const Text('Zweitklasse automatisch hinzufügen / steigern'),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 5, bottom: 12),
-                  child: Text('Mehrklassen nach D&D SRD 5.2.1: Voraussetzungen '
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Unbekannte Werte dürfen leer bleiben. Für regelgebundene '
+                    'Proben müssen Attribute, Trefferpunkte, Rüstung und Bewegung bestätigt sein.',
+                  ),
+                  const SizedBox(height: 20),
+                  _text('name', 'Charaktername', required: true),
+                  _text('species', 'Spezies', required: true),
+                  _text('className', 'Klasse', required: true),
+                  OutlinedButton.icon(
+                    key: const ValueKey('open-srd-class-selection'),
+                    onPressed: _configureSrdClass,
+                    icon: const Icon(Icons.shield_outlined),
+                    label: const Text('D&D-Klasse und Fertigkeiten wählen'),
+                  ),
+                  if ((_original['secondaryClassName'] as String? ?? '')
+                      .isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Text(
+                        'Mehrklassenheld: ${_fields['className']!.text} '
+                        'Stufe ${((int.tryParse(_fields['level']!.text) ?? 1) - ((_original['secondaryClassLevel'] as int?) ?? 0))} '
+                        '/ ${_original['secondaryClassName']} '
+                        'Stufe ${_original['secondaryClassLevel']}',
+                      ),
+                    ),
+                  OutlinedButton.icon(
+                    key: const ValueKey('open-multiclass-selection'),
+                    onPressed: _configureSecondClass,
+                    icon: const Icon(Icons.auto_awesome_outlined),
+                    label: const Text(
+                      'Zweitklasse automatisch hinzufügen / steigern',
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 5, bottom: 12),
+                    child: Text(
+                      'Mehrklassen nach D&D SRD 5.2.1: Voraussetzungen '
                       'prüfen, zusätzliche Fertigkeit wählen und TP-Zuwachs '
                       'erst nach Bestätigung übernehmen. Stufe 20 ist das Maximum.',
-                      style: TextStyle(fontSize: 12)),
-                ),
-                _text('subclass', 'Unterklasse'),
-                _text('background', 'Hintergrund'),
-                _text('backstory', 'Charaktergeschichte', lines: 3),
-                Wrap(
-                  spacing: 14,
-                  children: [
-                    _number('level', 'Stufe', min: 1, max: 20, required: true),
-                    _number('experience', 'Erfahrungspunkte'),
-                    _number('gold', 'Gold'),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                const FantasySectionTitle(title: 'Attribute',
-                  icon: Icons.auto_awesome_outlined),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  child: Text(
-                    'Startwerte für Stufe 1 mit Standardverteilung oder '
-                    'Punkte-Kauf bestimmen. Unbekannte Werte können auch '
-                    'weiterhin einzeln bestätigt werden.',
+                      style: TextStyle(fontSize: 12),
+                    ),
                   ),
-                ),
-                OutlinedButton.icon(
-                  key: const ValueKey('open-ability-assignment'),
-                  onPressed: _assignAbilities,
-                  icon: const Icon(Icons.auto_fix_high_outlined),
-                  label: const Text('Attribute ermitteln'),
-                ),
-                const SizedBox(height: 14),
-                Wrap(
-                  spacing: 14,
-                  children: [
-                    for (final ability in abilityLabels.entries)
-                      _number(ability.key, ability.value, min: 1, max: 30),
-                  ],
-                ),
-                if (widget.hero == null)
-                  CheckboxListTile(
-                    key: const ValueKey('allow-manual-abilities'),
-                    contentPadding: EdgeInsets.zero,
-                    value: _manualAbilityException,
-                    onChanged: (value) => setState(() =>
-                        _manualAbilityException = value ?? false),
-                    title: const Text('Manuelle Attribute als Hausregel zulassen'),
-                    subtitle: const Text('Nur für bewusst freie Werte oder '
-                        'Änderungen nach der SRD-Verteilung. Das kann vom '
-                        '27-Punkte-System abweichen.'),
-                  ),
-                const SizedBox(height: 16),
-                const FantasySectionTitle(title: 'Kampfwerte',
-                  icon: Icons.shield_outlined),
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 14,
-                  children: [
-                    _number('hitPoints', 'Aktuelle TP'),
-                    _number('maxHitPoints', 'Maximale TP', min: 1),
-                    _number('armorClass', 'Rüstungsklasse', min: 1, max: 40),
-                    _number('speed', 'Bewegung', min: 1, max: 200, suffix: 'm'),
-                  ],
-                ),
-                OutlinedButton.icon(
-                  key: const ValueKey('suggest-level1-hit-points'),
-                  onPressed: _suggestStartingHitPoints,
-                  icon: const Icon(Icons.favorite_outline),
-                  label: const Text('Start-TP nach D&D vorschlagen'),
-                ),
-                const SizedBox(height: 12),
-                _text('weaponDamage', 'Waffenschaden (z. B. 1d8)'),
-                DropdownButtonFormField<String>(
-                  key: ValueKey('weapon-ability-${_original['weaponAbility']}'),
-                  initialValue: _original['weaponAbility'] as String,
-                  decoration: const InputDecoration(
-                    labelText: 'Attribut der verwendeten Waffe',
-                  ),
-                  items: [
-                    for (final ability in abilityLabels.entries)
-                      DropdownMenuItem(
-                        value: ability.key,
-                        child: Text(ability.value),
+                  _text('subclass', 'Unterklasse'),
+                  _text('background', 'Hintergrund'),
+                  _text('backstory', 'Charaktergeschichte', lines: 3),
+                  Wrap(
+                    spacing: 14,
+                    children: [
+                      _number(
+                        'level',
+                        'Stufe',
+                        min: 1,
+                        max: 20,
+                        required: true,
                       ),
-                  ],
-                  onChanged: (value) => _original['weaponAbility'] = value,
-                ),
-                SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('Mit dieser Waffe geübt'),
-                  subtitle: const Text(
-                    'Übungsbonus bei Angriffen einmal berücksichtigen.',
+                      _number('experience', 'Erfahrungspunkte'),
+                      _number('gold', 'Gold'),
+                    ],
                   ),
-                  value: _original['weaponProficient'] == true,
-                  onChanged: (value) =>
-                      setState(() => _original['weaponProficient'] = value),
-                ),
-                const SizedBox(height: 20),
-                ExpansionTile(
-                  title: const Text('Fertigkeiten, Fähigkeiten & Zauber'),
-                  subtitle: const Text(
-                    'Ein Eintrag pro Zeile. Gespeicherte Werte bleiben erhalten.',
+                  const SizedBox(height: 16),
+                  const FantasySectionTitle(
+                    title: 'Attribute',
+                    icon: Icons.auto_awesome_outlined,
                   ),
-                  children: [
-                    _text('skills', 'Geübte Fertigkeiten', lines: 3),
-                    _text(
-                      'savingThrowProficiencies',
-                      'Geübte Rettungswürfe',
-                      lines: 2,
-                    ),
-                    _text('features', 'Klassenfähigkeiten', lines: 3),
-                    _text('spells', 'Bekannte Zauber', lines: 3),
-                    OutlinedButton.icon(
-                      key: const ValueKey('open-spellcasting-resources'),
-                      onPressed: _manageSpellcasting,
-                      icon: const Icon(Icons.auto_awesome_outlined),
-                      label: const Text('Zauberplätze und Konzentration verwalten'),
-                    ),
-                    if ((_original['concentratingOn'] as String? ?? '').isNotEmpty)
-                      Text('Aktive Konzentration: ${_original['concentratingOn']}'),
-                    _text('conditions', 'Aktuelle Zustände', lines: 2),
-                    _number('exhaustionLevel', 'Erschöpfung (0–6)',
-                      min: 0, max: 6, required: true),
-                    Builder(builder: (context) {
-                      final level = int.tryParse(
-                          _fields['exhaustionLevel']!.text.trim());
-                      if (level == null || level < 0 || level > 6) {
-                        return const SizedBox.shrink();
-                      }
-                      final speed = int.tryParse(_fields['speed']!.text.trim());
-                      final remaining = speed == null ? null :
-                          (speed - level * 1.5).clamp(0, 1000);
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: Text('SRD 5.2.1: W20-Tests ${level == 0 ? 'ohne Abzug' : '−${level * 2}'}'
-                          ' · Bewegung ${remaining == null ? 'nicht bestätigt' : '$remaining m'}'
-                          '${level == 6 ? ' · Stufe 6: Tod' : ''}.'),
-                      );
-                    }),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                const FantasySectionTitle(title: 'Inventar & Ausrüstung',
-                  icon: Icons.backpack_outlined),
-                for (
-                  var index = 0;
-                  index < (_original['inventory'] as List).length;
-                  index++
-                )
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(
-                      (_original['inventory'] as List)[index]['name'] as String,
-                    ),
-                    subtitle: Text(
-                      'Anzahl: ${(_original['inventory'] as List)[index]['quantity']}'
-                      '${_isEquippedItem((_original['inventory'] as List)[index]['id']) ? ' · angelegt' : ''}',
-                    ),
-                    onTap: () => _editInventory(index: index),
-                    trailing: IconButton(
-                      tooltip: 'Gegenstand entfernen',
-                      icon: const Icon(Icons.delete_outline),
-                      onPressed: () => _removeInventoryItem(index),
-                    ),
-                  ),
-                OutlinedButton.icon(
-                  key: const ValueKey('character-loadout-open'),
-                  onPressed: _equipFromInventory,
-                  icon: const Icon(Icons.shield_outlined),
-                  label: const Text('Waffen und Rüstung anlegen / RK berechnen'),
-                ),
-                const SizedBox(height: 8),
-                TextButton.icon(
-                  key: const ValueKey('character-loadout-clear'),
-                  onPressed: () => setState(() {
-                    _original['equippedArmorId'] = '';
-                    _original['equippedShieldId'] = '';
-                    _original['equippedWeaponId'] = '';
-                    _original['equippedArmorTrained'] = false;
-                    _original['equippedShieldTrained'] = false;
-                    _error = 'Ausrüstung abgelegt. Bisher manuell bestätigte '
-                        'Rüstungs- und Waffenwerte bitte prüfen.';
-                  }),
-                  icon: const Icon(Icons.remove_circle_outline),
-                  label: const Text('Ausrüstung ablegen (Werte manuell prüfen)'),
-                ),
-                const SizedBox(height: 8),
-                OutlinedButton.icon(
-                  key: const ValueKey('character-catalog-open'),
-                  onPressed: _addFromCatalog,
-                  icon: const Icon(Icons.menu_book_outlined),
-                  label: const Text('Aus SRD-Ausrüstungskatalog wählen'),
-                ),
-                const SizedBox(height: 8),
-                OutlinedButton.icon(
-                  key: const ValueKey('character-inventory-add'),
-                  onPressed: () => _editInventory(),
-                  icon: const Icon(Icons.add),
-                  label: const Text('Gegenstand hinzufügen'),
-                ),
-                if ((_original['unverifiedNotes'] as List).isNotEmpty) ...[
-                  const SizedBox(height: 20),
-                  Text(
-                    'Historische, ungeprüfte Angaben',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  for (final note in _original['unverifiedNotes'] as List)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Text(note as String),
-                    ),
-                ],
-                if (_error != null)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10),
                     child: Text(
-                      _error!,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
+                      'Startwerte für Stufe 1 mit Standardverteilung oder '
+                      'Punkte-Kauf bestimmen. Unbekannte Werte können auch '
+                      'weiterhin einzeln bestätigt werden.',
                     ),
                   ),
-                const SizedBox(height: 20),
-                FilledButton.icon(
-                  onPressed: _save,
-                  icon: const Icon(Icons.save_outlined),
-                  label: const Text('Charakter speichern'),
-                ),
-                const SizedBox(height: 20),
-              ],
+                  OutlinedButton.icon(
+                    key: const ValueKey('open-ability-assignment'),
+                    onPressed: _assignAbilities,
+                    icon: const Icon(Icons.auto_fix_high_outlined),
+                    label: const Text('Attribute ermitteln'),
+                  ),
+                  const SizedBox(height: 14),
+                  Wrap(
+                    spacing: 14,
+                    children: [
+                      for (final ability in abilityLabels.entries)
+                        _number(ability.key, ability.value, min: 1, max: 30),
+                    ],
+                  ),
+                  if (widget.hero == null)
+                    CheckboxListTile(
+                      key: const ValueKey('allow-manual-abilities'),
+                      contentPadding: EdgeInsets.zero,
+                      value: _manualAbilityException,
+                      onChanged: (value) => setState(
+                        () => _manualAbilityException = value ?? false,
+                      ),
+                      title: const Text(
+                        'Manuelle Attribute als Hausregel zulassen',
+                      ),
+                      subtitle: const Text(
+                        'Nur für bewusst freie Werte oder '
+                        'Änderungen nach der SRD-Verteilung. Das kann vom '
+                        '27-Punkte-System abweichen.',
+                      ),
+                    ),
+                  const SizedBox(height: 16),
+                  const FantasySectionTitle(
+                    title: 'Kampfwerte',
+                    icon: Icons.shield_outlined,
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 14,
+                    children: [
+                      _number('hitPoints', 'Aktuelle TP'),
+                      _number('maxHitPoints', 'Maximale TP', min: 1),
+                      _number('armorClass', 'Rüstungsklasse', min: 1, max: 40),
+                      _number(
+                        'speed',
+                        'Bewegung',
+                        min: 1,
+                        max: 200,
+                        suffix: 'm',
+                      ),
+                    ],
+                  ),
+                  OutlinedButton.icon(
+                    key: const ValueKey('suggest-level1-hit-points'),
+                    onPressed: _suggestStartingHitPoints,
+                    icon: const Icon(Icons.favorite_outline),
+                    label: const Text('Start-TP nach D&D vorschlagen'),
+                  ),
+                  const SizedBox(height: 12),
+                  _text('weaponDamage', 'Waffenschaden (z. B. 1d8)'),
+                  DropdownButtonFormField<String>(
+                    key: ValueKey(
+                      'weapon-ability-${_original['weaponAbility']}',
+                    ),
+                    initialValue: _original['weaponAbility'] as String,
+                    decoration: const InputDecoration(
+                      labelText: 'Attribut der verwendeten Waffe',
+                    ),
+                    items: [
+                      for (final ability in abilityLabels.entries)
+                        DropdownMenuItem(
+                          value: ability.key,
+                          child: Text(ability.value),
+                        ),
+                    ],
+                    onChanged: (value) => _original['weaponAbility'] = value,
+                  ),
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('Mit dieser Waffe geübt'),
+                    subtitle: const Text(
+                      'Übungsbonus bei Angriffen einmal berücksichtigen.',
+                    ),
+                    value: _original['weaponProficient'] == true,
+                    onChanged: (value) =>
+                        setState(() => _original['weaponProficient'] = value),
+                  ),
+                  const SizedBox(height: 20),
+                  ExpansionTile(
+                    title: const Text('Fertigkeiten, Fähigkeiten & Zauber'),
+                    subtitle: const Text(
+                      'Ein Eintrag pro Zeile. Gespeicherte Werte bleiben erhalten.',
+                    ),
+                    children: [
+                      _text('skills', 'Geübte Fertigkeiten', lines: 3),
+                      _text(
+                        'savingThrowProficiencies',
+                        'Geübte Rettungswürfe',
+                        lines: 2,
+                      ),
+                      _text('features', 'Klassenfähigkeiten', lines: 3),
+                      _text('spells', 'Bekannte Zauber', lines: 3),
+                      OutlinedButton.icon(
+                        key: const ValueKey('open-spellcasting-resources'),
+                        onPressed: _manageSpellcasting,
+                        icon: const Icon(Icons.auto_awesome_outlined),
+                        label: const Text(
+                          'Zauberplätze und Konzentration verwalten',
+                        ),
+                      ),
+                      if ((_original['concentratingOn'] as String? ?? '')
+                          .isNotEmpty)
+                        Text(
+                          'Aktive Konzentration: ${_original['concentratingOn']}',
+                        ),
+                      _text('conditions', 'Aktuelle Zustände', lines: 2),
+                      _number(
+                        'exhaustionLevel',
+                        'Erschöpfung (0–6)',
+                        min: 0,
+                        max: 6,
+                        required: true,
+                      ),
+                      Builder(
+                        builder: (context) {
+                          final level = int.tryParse(
+                            _fields['exhaustionLevel']!.text.trim(),
+                          );
+                          if (level == null || level < 0 || level > 6) {
+                            return const SizedBox.shrink();
+                          }
+                          final speed = int.tryParse(
+                            _fields['speed']!.text.trim(),
+                          );
+                          final remaining = speed == null
+                              ? null
+                              : (speed - level * 1.5).clamp(0, 1000);
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: Text(
+                              'SRD 5.2.1: W20-Tests ${level == 0 ? 'ohne Abzug' : '−${level * 2}'}'
+                              ' · Bewegung ${remaining == null ? 'nicht bestätigt' : '$remaining m'}'
+                              '${level == 6 ? ' · Stufe 6: Tod' : ''}.',
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  const FantasySectionTitle(
+                    title: 'Inventar & Ausrüstung',
+                    icon: Icons.backpack_outlined,
+                  ),
+                  for (
+                    var index = 0;
+                    index < (_original['inventory'] as List).length;
+                    index++
+                  )
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(
+                        (_original['inventory'] as List)[index]['name']
+                            as String,
+                      ),
+                      subtitle: Text(
+                        'Anzahl: ${(_original['inventory'] as List)[index]['quantity']}'
+                        '${_isEquippedItem((_original['inventory'] as List)[index]['id']) ? ' · angelegt' : ''}',
+                      ),
+                      onTap: () => _editInventory(index: index),
+                      trailing: IconButton(
+                        tooltip: 'Gegenstand entfernen',
+                        icon: const Icon(Icons.delete_outline),
+                        onPressed: () => _removeInventoryItem(index),
+                      ),
+                    ),
+                  OutlinedButton.icon(
+                    key: const ValueKey('character-loadout-open'),
+                    onPressed: _equipFromInventory,
+                    icon: const Icon(Icons.shield_outlined),
+                    label: const Text(
+                      'Waffen und Rüstung anlegen / RK berechnen',
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  TextButton.icon(
+                    key: const ValueKey('character-loadout-clear'),
+                    onPressed: () => setState(() {
+                      _original['equippedArmorId'] = '';
+                      _original['equippedShieldId'] = '';
+                      _original['equippedWeaponId'] = '';
+                      _original['equippedArmorTrained'] = false;
+                      _original['equippedShieldTrained'] = false;
+                      _error =
+                          'Ausrüstung abgelegt. Bisher manuell bestätigte '
+                          'Rüstungs- und Waffenwerte bitte prüfen.';
+                    }),
+                    icon: const Icon(Icons.remove_circle_outline),
+                    label: const Text(
+                      'Ausrüstung ablegen (Werte manuell prüfen)',
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  OutlinedButton.icon(
+                    key: const ValueKey('character-catalog-open'),
+                    onPressed: _addFromCatalog,
+                    icon: const Icon(Icons.menu_book_outlined),
+                    label: const Text('Aus SRD-Ausrüstungskatalog wählen'),
+                  ),
+                  const SizedBox(height: 8),
+                  OutlinedButton.icon(
+                    key: const ValueKey('character-inventory-add'),
+                    onPressed: () => _editInventory(),
+                    icon: const Icon(Icons.add),
+                    label: const Text('Gegenstand hinzufügen'),
+                  ),
+                  if ((_original['unverifiedNotes'] as List).isNotEmpty) ...[
+                    const SizedBox(height: 20),
+                    Text(
+                      'Historische, ungeprüfte Angaben',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    for (final note in _original['unverifiedNotes'] as List)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(note as String),
+                      ),
+                  ],
+                  if (_error != null)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      child: Text(
+                        _error!,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 20),
+                  FilledButton.icon(
+                    onPressed: _save,
+                    icon: const Icon(Icons.save_outlined),
+                    label: const Text('Charakter speichern'),
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
-        ),
         ),
       ),
     );
@@ -978,7 +1103,8 @@ class _InventoryItemDialogState extends State<_InventoryItemDialog> {
               quantity: int.parse(_quantity.text),
               description: _description.text.trim(),
               catalogId: _name.text.trim() == widget.item?.name
-                  ? (widget.item?.catalogId ?? '') : '',
+                  ? (widget.item?.catalogId ?? '')
+                  : '',
             ),
           );
         },

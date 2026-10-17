@@ -18,9 +18,11 @@ class CampaignMemoryPanel extends StatelessWidget {
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: Text(existing == null
-              ? 'Handlungsstrang anlegen'
-              : 'Handlungsstrang bearbeiten'),
+          title: Text(
+            existing == null
+                ? 'Handlungsstrang anlegen'
+                : 'Handlungsstrang bearbeiten',
+          ),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -52,7 +54,8 @@ class CampaignMemoryPanel extends StatelessWidget {
                     DropdownMenuItem(value: 'open', child: Text('Offen')),
                     DropdownMenuItem(value: 'resolved', child: Text('Gelöst')),
                     DropdownMenuItem(
-                      value: 'abandoned', child: Text('Aufgegeben'),
+                      value: 'abandoned',
+                      child: Text('Aufgegeben'),
                     ),
                   ],
                   onChanged: (value) {
@@ -170,8 +173,12 @@ class CampaignMemoryPanel extends StatelessWidget {
     );
   }
 
-  Widget _section(BuildContext context, String title, IconData icon,
-      List<Widget> children) => Padding(
+  Widget _section(
+    BuildContext context,
+    String title,
+    IconData icon,
+    List<Widget> children,
+  ) => Padding(
     padding: const EdgeInsets.only(bottom: 12),
     child: FantasyPanel(
       title: title,
@@ -195,16 +202,22 @@ class CampaignMemoryPanel extends StatelessWidget {
             const SizedBox(height: 8),
             Text('Übergeordnetes Ziel: ${campaign.storyBible['goal'] ?? ''}'),
             const SizedBox(height: 8),
-            Text('Fortgeschriebene Entscheidungen: '
-              '${campaign.storyBible['turnCount'] ?? '0'}'),
+            Text(
+              'Fortgeschriebene Entscheidungen: '
+              '${campaign.storyBible['turnCount'] ?? '0'}',
+            ),
             const SizedBox(height: 8),
-            const Text('Die KI berücksichtigt frühere Spielerentscheidungen, '
+            const Text(
+              'Die KI berücksichtigt frühere Spielerentscheidungen, '
               'NPC-Beziehungen und Handlungsstränge. Sie trainiert dabei kein '
-              'eigenes Modell. Das geheime Story-Ziel bleibt vorerst verborgen.'),
+              'eigenes Modell. Das geheime Story-Ziel bleibt vorerst verborgen.',
+            ),
           ]),
         _section(context, 'Sitzungsrückblicke', Icons.auto_stories_outlined, [
-          const Text('Aus bestätigten Fakten, Quest- und NPC-Status; '
-              'keine KI-Erfindungen oder unverifizierten Dialoge.'),
+          const Text(
+            'Aus bestätigten Fakten, Quest- und NPC-Status; '
+            'keine KI-Erfindungen oder unverifizierten Dialoge.',
+          ),
           const SizedBox(height: 8),
           OutlinedButton.icon(
             key: const ValueKey('create-session-recap'),
@@ -229,28 +242,33 @@ class CampaignMemoryPanel extends StatelessWidget {
           ),
           if (campaign.storyThreads.isEmpty)
             const Text('Noch keine selbst verwalteten Handlungsstränge.'),
-          for (final thread in campaign.storyThreads) ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(thread.title),
-            subtitle: Text('${switch (thread.status) {
-              'open' => 'Offen',
-              'resolved' => 'Gelöst',
-              _ => 'Aufgegeben',
-            }} · ${thread.description}'),
-            trailing: IconButton(
-              key: ValueKey('edit-story-thread-${thread.id}'),
-              tooltip: 'Handlungsstrang bearbeiten',
-              onPressed: controller.busy
-                  ? null : () => _newThread(context, existing: thread),
-              icon: const Icon(Icons.edit_outlined),
+          for (final thread in campaign.storyThreads)
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(thread.title),
+              subtitle: Text(
+                '${switch (thread.status) {
+                  'open' => 'Offen',
+                  'resolved' => 'Gelöst',
+                  _ => 'Aufgegeben',
+                }} · ${thread.description}',
+              ),
+              trailing: IconButton(
+                key: ValueKey('edit-story-thread-${thread.id}'),
+                tooltip: 'Handlungsstrang bearbeiten',
+                onPressed: controller.busy
+                    ? null
+                    : () => _newThread(context, existing: thread),
+                icon: const Icon(Icons.edit_outlined),
+              ),
             ),
-          ),
         ]),
         _section(context, 'NPC-Beziehungen', Icons.people_outline, [
           OutlinedButton.icon(
             key: const ValueKey('edit-npc-relationship'),
             onPressed: controller.busy || campaign.npcs.isEmpty
-                ? null : () => _recordNpc(context, campaign),
+                ? null
+                : () => _recordNpc(context, campaign),
             icon: const Icon(Icons.edit_note_outlined),
             label: const Text('Beziehung und Begründung festhalten'),
           ),
@@ -259,9 +277,10 @@ class CampaignMemoryPanel extends StatelessWidget {
           for (final note in campaign.npcRelationshipNotes.reversed.take(12))
             Padding(
               padding: const EdgeInsets.only(top: 8),
-              child: Text('${campaign.npcs.firstWhere(
-                (npc) => npc.id == note.npcId).name}: '
-                '${note.relationship} – ${note.note}'),
+              child: Text(
+                '${campaign.npcs.firstWhere((npc) => npc.id == note.npcId).name}: '
+                '${note.relationship} – ${note.note}',
+              ),
             ),
         ]),
       ],

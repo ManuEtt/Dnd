@@ -38,7 +38,9 @@ class ExhaustionRules {
       throw RangeError.range(levels, 1, 6, 'levels');
     }
     if (hero.isDead) {
-      throw StateError('Tote Charaktere können keine weitere Erschöpfung erhalten.');
+      throw StateError(
+        'Tote Charaktere können keine weitere Erschöpfung erhalten.',
+      );
     }
     final next = (_validate(hero.exhaustionLevel) + levels).clamp(0, 6).toInt();
     return hero.copyWith(
@@ -68,19 +70,27 @@ class ConditionRules {
   const ConditionRules._();
 
   static const Map<String, String> descriptions = {
-    'blind': 'Kann nicht sehen; Angriffe haben Nachteil, Angriffe gegen dich Vorteil.',
-    'bezaubert': 'Kann dem Verursacher nicht schaden; dieser hat Vorteile beim sozialen Umgang.',
+    'blind':
+        'Kann nicht sehen; Angriffe haben Nachteil, Angriffe gegen dich Vorteil.',
+    'bezaubert':
+        'Kann dem Verursacher nicht schaden; dieser hat Vorteile beim sozialen Umgang.',
     'taub': 'Kann nicht hören; Hörwahrnehmung ist nicht möglich.',
-    'verängstigt': 'Quellenabhängiger Nachteil auf Angriffe und Proben; nicht näherkommen.',
+    'verängstigt':
+        'Quellenabhängiger Nachteil auf Angriffe und Proben; nicht näherkommen.',
     'gepackt': 'Bewegungsrate 0; Ende unter anderem bei Befreiung.',
     'handlungsunfähig': 'Keine Aktion, Bonusaktion oder Reaktion.',
-    'unsichtbar': 'Ohne besondere Sinne nicht sichtbar; Angriffsfolgen sind situationsabhängig.',
-    'gelähmt': 'Handlungsunfähig und bewegungsunfähig; bestimmte Rettungswürfe misslingen.',
-    'versteinert': 'Verwandelt und handlungsunfähig; zusätzliche Resistenz-/Immunitätsregeln.',
+    'unsichtbar':
+        'Ohne besondere Sinne nicht sichtbar; Angriffsfolgen sind situationsabhängig.',
+    'gelähmt':
+        'Handlungsunfähig und bewegungsunfähig; bestimmte Rettungswürfe misslingen.',
+    'versteinert':
+        'Verwandelt und handlungsunfähig; zusätzliche Resistenz-/Immunitätsregeln.',
     'vergiftet': 'Nachteil auf Angriffswürfe und Attributsproben.',
-    'liegend': 'Angriffe mit Nachteil; Nah-/Fernangriffe gegen dich situationsabhängig.',
+    'liegend':
+        'Angriffe mit Nachteil; Nah-/Fernangriffe gegen dich situationsabhängig.',
     'festgesetzt': 'Bewegungsrate 0; eigene Angriffe mit Nachteil.',
-    'betäubt': 'Handlungsunfähig; keine Bewegung; Angriffe gegen dich haben Vorteil.',
+    'betäubt':
+        'Handlungsunfähig; Stärke-/Geschicklichkeitsrettung misslingt; Angriffe gegen dich haben Vorteil.',
     'bewusstlos': 'Handlungsunfähig; kann nicht wahrnehmen oder handeln.',
   };
 
@@ -89,22 +99,55 @@ class ConditionRules {
 
   static bool canTakeActions(HeroCharacter hero) =>
       !hero.isDead &&
-      !const {'bewusstlos', 'handlungsunfähig', 'gelähmt',
-        'versteinert', 'betäubt'}.any(hero.conditions.contains);
+      !const {
+        'bewusstlos',
+        'handlungsunfähig',
+        'gelähmt',
+        'versteinert',
+        'betäubt',
+      }.any(hero.conditions.contains);
 
   static bool canMove(HeroCharacter hero) =>
       !hero.isDead &&
-      !const {'bewusstlos', 'gelähmt', 'versteinert', 'betäubt',
-        'gepackt', 'festgesetzt'}.any(hero.conditions.contains) &&
+      !const {
+        'bewusstlos',
+        'gelähmt',
+        'versteinert',
+        'gepackt',
+        'festgesetzt',
+      }.any(hero.conditions.contains) &&
       (ExhaustionRules.effectiveSpeedMeters(hero) ?? 0) > 0;
+
+  /// SRD 5.2.1, Rules Glossary: Paralyzed/Petrified (p. 186),
+  /// Stunned (p. 188), Unconscious (p. 190). These conditions only
+  /// automatically fail Strength/Dexterity saves, not all D20 Tests.
+  /// Stunned alone does not set Speed to 0 in the 2024 rules.
+  static bool hasAutomaticSavingThrowFailure(
+    HeroCharacter hero,
+    String ability,
+  ) =>
+      (ability == 'strength' || ability == 'dexterity') &&
+      const {
+        'gelähmt',
+        'versteinert',
+        'betäubt',
+        'bewusstlos',
+      }.any(hero.conditions.contains);
 
   /// Only unconditional sources are summarized here. Do NOT infer line of
   /// sight, concealment, attacker distance, or a particular charmer.
-  static bool hasUnconditionalAttackDisadvantage(HeroCharacter hero) =>
-      const {'blind', 'vergiftet', 'liegend', 'festgesetzt'}
-          .any(hero.conditions.contains);
+  static bool hasUnconditionalAttackDisadvantage(HeroCharacter hero) => const {
+    'blind',
+    'vergiftet',
+    'liegend',
+    'festgesetzt',
+  }.any(hero.conditions.contains);
 
-  static bool hasUnconditionalAttackerAdvantage(HeroCharacter hero) =>
-      const {'blind', 'festgesetzt', 'betäubt', 'gelähmt', 'bewusstlos'}
-          .any(hero.conditions.contains);
+  static bool hasUnconditionalAttackerAdvantage(HeroCharacter hero) => const {
+    'blind',
+    'festgesetzt',
+    'betäubt',
+    'gelähmt',
+    'bewusstlos',
+  }.any(hero.conditions.contains);
 }

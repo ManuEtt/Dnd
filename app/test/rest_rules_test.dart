@@ -40,58 +40,95 @@ HeroCharacter wounded({int hp = 3, int maxHp = 15, int constitution = 14}) =>
 
 void main() {
   group('SRD 5.2.1 Trefferwürfel und Rast', () {
-    test('alte Spielstände erhalten einen unverbrauchten Trefferwürfelpool', () {
-      final hero = wounded();
-      expect(hero.spentHitDice, isEmpty);
-      expect(RestRules.availableHitDice(hero), {'d10': 2});
-      final restored = HeroCharacter.fromJson(hero.toJson());
-      expect(restored.spentHitDice, isEmpty);
-      expect(restored.level, 2);
-    });
+    test(
+      'alte Spielstände erhalten einen unverbrauchten Trefferwürfelpool',
+      () {
+        final hero = wounded();
+        expect(hero.spentHitDice, isEmpty);
+        expect(RestRules.availableHitDice(hero), {'d10': 2});
+        final restored = HeroCharacter.fromJson(hero.toJson());
+        expect(restored.spentHitDice, isEmpty);
+        expect(restored.level, 2);
+      },
+    );
 
-    test('kurze Rast verbraucht echte Würfel und addiert Konstitution einmal', () {
-      final hero = wounded();
-      final result = RestRules.shortRest(hero,
-          dice: DiceEngine(random: MinimumRandom()), count: 2);
-      expect(result.dieType, 'd10');
-      expect(result.dice.map((r) => r.rolls.single), [1, 1]);
-      expect(result.constitutionBonus, 2);
-      expect(result.recovered, 6);
-      expect(result.hero.hitPoints, 9);
-      expect(result.hero.spentHitDice, {'d10': 2});
-      expect(hero.spentHitDice, isEmpty); // never mutate old snapshot
-      expect(HeroCharacter.fromJson(result.hero.toJson()).spentHitDice,
-          {'d10': 2});
-      expect(() => RestRules.shortRest(result.hero,
-          dice: DiceEngine(random: MinimumRandom())), throwsStateError);
-    });
+    test(
+      'kurze Rast verbraucht echte Würfel und addiert Konstitution einmal',
+      () {
+        final hero = wounded();
+        final result = RestRules.shortRest(
+          hero,
+          dice: DiceEngine(random: MinimumRandom()),
+          count: 2,
+        );
+        expect(result.dieType, 'd10');
+        expect(result.dice.map((r) => r.rolls.single), [1, 1]);
+        expect(result.constitutionBonus, 2);
+        expect(result.recovered, 6);
+        expect(result.hero.hitPoints, 9);
+        expect(result.hero.spentHitDice, {'d10': 2});
+        expect(hero.spentHitDice, isEmpty); // never mutate old snapshot
+        expect(HeroCharacter.fromJson(result.hero.toJson()).spentHitDice, {
+          'd10': 2,
+        });
+        expect(
+          () => RestRules.shortRest(
+            result.hero,
+            dice: DiceEngine(random: MinimumRandom()),
+          ),
+          throwsStateError,
+        );
+      },
+    );
 
     test('Heilung hat Mindestwert 1 pro Trefferwürfel und HP-Grenze', () {
       final lowCon = wounded(hp: 14, maxHp: 15, constitution: 3);
-      final result = RestRules.shortRest(lowCon,
-          dice: DiceEngine(random: MinimumRandom()));
+      final result = RestRules.shortRest(
+        lowCon,
+        dice: DiceEngine(random: MinimumRandom()),
+      );
       expect(result.hero.hitPoints, 15);
       expect(result.recovered, 1);
       expect(result.hero.spentHitDice, {'d10': 1});
-      final full = RestRules.shortRest(result.hero,
-          dice: DiceEngine(random: MinimumRandom()));
+      final full = RestRules.shortRest(
+        result.hero,
+        dice: DiceEngine(random: MinimumRandom()),
+      );
       expect(full.recovered, 0);
       expect(full.hero.spentHitDice, {'d10': 2});
     });
 
     test('Mehrklassen führen getrennte Trefferwürfel nach Typ', () {
       final hero = wounded().copyWith(
-          level: 3, secondaryClassName: 'Magier', secondaryClassLevel: 1);
+        level: 3,
+        secondaryClassName: 'Magier',
+        secondaryClassLevel: 1,
+      );
       expect(RestRules.availableHitDice(hero), {'d10': 2, 'd6': 1});
-      final result = RestRules.shortRest(hero,
-          dieSides: 6, dice: DiceEngine(random: MinimumRandom()));
+      final result = RestRules.shortRest(
+        hero,
+        dieSides: 6,
+        dice: DiceEngine(random: MinimumRandom()),
+      );
       expect(result.dieType, 'd6');
       expect(result.hero.spentHitDice, {'d6': 1});
       expect(RestRules.availableHitDice(result.hero), {'d10': 2, 'd6': 0});
-      expect(() => RestRules.shortRest(result.hero, dieSides: 6,
-          dice: DiceEngine(random: MinimumRandom())), throwsStateError);
-      expect(() => RestRules.shortRest(result.hero, dieSides: 12,
-          dice: DiceEngine(random: MinimumRandom())), throwsStateError);
+      expect(
+        () => RestRules.shortRest(
+          result.hero,
+          dieSides: 6,
+          dice: DiceEngine(random: MinimumRandom()),
+        ),
+        throwsStateError,
+      );
+      expect(
+        () => RestRules.shortRest(
+          result.hero,
+          dieSides: 12,
+          dice: DiceEngine(random: MinimumRandom()),
+        ),
+        throwsStateError,
+      );
     });
 
     test('lange Rast stellt HP und verbrauchte Würfel wieder her', () {
@@ -107,8 +144,13 @@ void main() {
     test('bewusstlos und tot dürfen keine Rast ausführen', () {
       final zero = wounded(hp: 0);
       expect(() => RestRules.longRest(zero), throwsStateError);
-      expect(() => RestRules.shortRest(zero,
-          dice: DiceEngine(random: MinimumRandom())), throwsStateError);
+      expect(
+        () => RestRules.shortRest(
+          zero,
+          dice: DiceEngine(random: MinimumRandom()),
+        ),
+        throwsStateError,
+      );
       final dead = wounded().copyWith(conditions: ['tot']);
       expect(() => RestRules.longRest(dead), throwsStateError);
     });
@@ -122,41 +164,56 @@ void main() {
         {'w100': 1},
         {'d10': '2'},
       ]) {
-        expect(() => HeroCharacter.fromJson({...json,
-          'spentHitDice': invalid}), throwsFormatException);
+        expect(
+          () => HeroCharacter.fromJson({...json, 'spentHitDice': invalid}),
+          throwsFormatException,
+        );
       }
       final excessive = wounded().copyWith(spentHitDice: {'d6': 1});
-      expect(() => RestRules.availableHitDice(excessive), throwsFormatException);
+      expect(
+        () => RestRules.availableHitDice(excessive),
+        throwsFormatException,
+      );
     });
 
-    test('Spielhandlungen speichern die kurze Rast und das Würfelprotokoll', () {
-      final engine = GameEngine(
+    test(
+      'Spielhandlungen speichern die kurze Rast und das Würfelprotokoll',
+      () {
+        final engine = GameEngine(
           dice: DiceEngine(random: MinimumRandom()),
-          clock: () => DateTime.utc(2026, 10, 15));
-      var campaign = engine.createDemo();
-      campaign = campaign.copyWith(hero: campaign.hero.copyWith(
-          level: 2, hitPoints: 3, maxHitPoints: 15));
-      final short = engine.act(campaign, 'Ich mache eine kurze Rast 2W10.');
-      expect(short.events.single.type, 'character.shortRest');
-      expect(short.campaign.hero.hitPoints, 9);
-      expect(short.campaign.hero.spentHitDice, {'d10': 2});
-      expect(short.events.single.payload['count'], 2);
-      expect(short.events.single.payload['rolls'], hasLength(2));
-      final reloaded = Campaign.fromJson(short.campaign.toJson());
-      expect(reloaded.hero.spentHitDice, {'d10': 2});
-      final blocked = engine.act(reloaded, 'Ich mache eine kurze Rast.');
-      expect(blocked.events.single.type, 'rules.blocked');
-      expect(blocked.campaign.hero.spentHitDice, {'d10': 2});
-      final long = engine.act(reloaded, 'Ich mache eine lange Rast.');
-      expect(long.events.single.type, 'character.longRest');
-      expect(long.campaign.hero.hitPoints, 15);
-      expect(long.campaign.hero.spentHitDice, isEmpty);
-    });
+          clock: () => DateTime.utc(2026, 10, 15),
+        );
+        var campaign = engine.createDemo();
+        campaign = campaign.copyWith(
+          hero: campaign.hero.copyWith(
+            level: 2,
+            hitPoints: 3,
+            maxHitPoints: 15,
+          ),
+        );
+        final short = engine.act(campaign, 'Ich mache eine kurze Rast 2W10.');
+        expect(short.events.single.type, 'character.shortRest');
+        expect(short.campaign.hero.hitPoints, 9);
+        expect(short.campaign.hero.spentHitDice, {'d10': 2});
+        expect(short.events.single.payload['count'], 2);
+        expect(short.events.single.payload['rolls'], hasLength(2));
+        final reloaded = Campaign.fromJson(short.campaign.toJson());
+        expect(reloaded.hero.spentHitDice, {'d10': 2});
+        final blocked = engine.act(reloaded, 'Ich mache eine kurze Rast.');
+        expect(blocked.events.single.type, 'rules.blocked');
+        expect(blocked.campaign.hero.spentHitDice, {'d10': 2});
+        final long = engine.act(reloaded, 'Ich mache eine lange Rast.');
+        expect(long.events.single.type, 'character.longRest');
+        expect(long.campaign.hero.hitPoints, 15);
+        expect(long.campaign.hero.spentHitDice, isEmpty);
+      },
+    );
 
     test('Rast im Kampf und unklare Rast ändern keine Trefferpunkte', () {
       final engine = GameEngine(
-          dice: DiceEngine(random: MinimumRandom()),
-          clock: () => DateTime.utc(2026, 10, 15));
+        dice: DiceEngine(random: MinimumRandom()),
+        clock: () => DateTime.utc(2026, 10, 15),
+      );
       var game = engine.createDemo();
       game = game.copyWith(hero: game.hero.copyWith(hitPoints: 5));
       final ambiguous = engine.act(game, 'Ich raste.');

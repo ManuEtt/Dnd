@@ -14,19 +14,29 @@ class _MemoryRepository implements CampaignRepository {
 }
 
 void main() {
-  testWidgets('campaign memory controls show all three editable areas',
-      (tester) async {
+  testWidgets('campaign memory controls show all three editable areas', (
+    tester,
+  ) async {
     final repository = _MemoryRepository();
     final controller = GameController(repository: repository);
     controller.currentCampaign = Campaign(
-      id: 'campaign', name: 'Test', world: 'Aetheria',
-      sessionId: 'session', hero: HeroCharacter(id: 'hero', name: 'Held'),
+      id: 'campaign',
+      name: 'Test',
+      world: 'Aetheria',
+      sessionId: 'session',
+      hero: HeroCharacter(id: 'hero', name: 'Held'),
       scene: 'Waldschrein',
       npcs: const [WorldNpc(id: 'mira', name: 'Mira')],
     );
-    await tester.pumpWidget(MaterialApp(home: Scaffold(
-      body: SingleChildScrollView(child: CampaignMemoryPanel(controller: controller)),
-    )));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: CampaignMemoryPanel(controller: controller),
+          ),
+        ),
+      ),
+    );
     expect(find.text('Sitzungsrückblicke'), findsOneWidget);
     expect(find.text('Offene Handlungsstränge'), findsOneWidget);
     expect(find.text('NPC-Beziehungen'), findsOneWidget);

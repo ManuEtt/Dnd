@@ -11,6 +11,7 @@ npm test
 npm run build
 cd "$PROJECT_ROOT/app"
 flutter pub get
+dart format --output=none --set-exit-if-changed lib test
 flutter analyze
 RUN_BACKEND_SMOKE=1 flutter test
 # APK building is separate so tests also run without a local Android SDK:

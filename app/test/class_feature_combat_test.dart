@@ -6,18 +6,29 @@ import 'package:lebendiger_spielleiter/domain/game_engine.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 
 class LowRandom implements Random {
-  @override int nextInt(int max) => 0;
-  @override bool nextBool() => false;
-  @override double nextDouble() => 0;
+  @override
+  int nextInt(int max) => 0;
+  @override
+  bool nextBool() => false;
+  @override
+  double nextDouble() => 0;
 }
 
-GameEngine gm() => GameEngine(dice: DiceEngine(random: LowRandom()),
-    clock: () => DateTime.utc(2026, 10, 16));
+GameEngine gm() => GameEngine(
+  dice: DiceEngine(random: LowRandom()),
+  clock: () => DateTime.utc(2026, 10, 16),
+);
 
 Campaign encounter(GameEngine engine, int level) {
   var c = engine.createDemo();
-  c = c.copyWith(hero: c.hero.copyWith(className: 'Kämpfer', level: level,
-      hitPoints: 10, maxHitPoints: 22));
+  c = c.copyWith(
+    hero: c.hero.copyWith(
+      className: 'Kämpfer',
+      level: level,
+      hitPoints: 10,
+      maxHitPoints: 22,
+    ),
+  );
   return engine.act(c, 'Ich gehe zum Waldschrein.').campaign;
 }
 
@@ -94,9 +105,15 @@ void main() {
     final engine = gm();
     var c = engine.createDemo();
     final hp = c.hero.maxHitPoints!;
-    c = c.copyWith(hero: c.hero.copyWith(
-      className: 'Kämpfer', level: 5, hitPoints: hp,
-      spentSecondWind: 2, spentActionSurge: 1));
+    c = c.copyWith(
+      hero: c.hero.copyWith(
+        className: 'Kämpfer',
+        level: 5,
+        hitPoints: hp,
+        spentSecondWind: 2,
+        spentActionSurge: 1,
+      ),
+    );
     final rest = engine.act(c, 'Ich mache eine kurze Rast.');
     expect(rest.events.single.type, 'character.shortRest');
     expect(rest.campaign.hero.spentSecondWind, 1);

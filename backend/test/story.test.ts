@@ -128,3 +128,28 @@ test('mock narrator proposes a playable encounter and a skill challenge determin
   const neutral = mockStoryTurn({...action, action:'Ich spreche mit Tela.'});
   assert.equal(neutral.adventure, null);
 });
+
+test('mock story continuation accepts journal threads without a description', async (t) => {
+  const sparse = { ...action, threads: [{ ...action.threads[0]!, description: '' }] };
+  const turn = mockStoryTurn(sparse);
+  assert.ok(turn.narration.includes('Eila'));
+  assert.deepEqual(turn.threadUpdates, []);
+  assert.equal(sparse.threads[0]!.description, '');
+
+  const withDescribedThread = mockStoryTurn({ ...action,
+    threads: [sparse.threads[0]!, action.threads[1]!] });
+  assert.deepEqual(withDescribedThread.threadUpdates, [
+    { id: 'bund', status: 'open', description: 'Offen' },
+  ]);
+  assert.deepEqual(mockStoryTurn({ ...sparse,
+    threads: [{ ...sparse.threads[0]!, description: '   ' }] }).threadUpdates, []);
+
+  const app = buildApp(config); t.after(() => app.close());
+  const issued = await app.inject({ method: 'POST', url: '/v1/session',
+    headers: { authorization: `Bearer ${token}` }, payload: {} });
+  const continued = await app.inject({ method: 'POST', url: '/v1/story/advance',
+    headers: { authorization: `Bearer ${issued.json().token}` }, payload: sparse });
+  assert.equal(continued.statusCode, 200);
+  assert.deepEqual(continued.json().turn.threadUpdates, []);
+  assert.deepEqual(continued.json().stateChanges, []);
+});

@@ -14,10 +14,9 @@ void main() {
         resistances: [DamageType.fire, DamageType.fire],
         resistAll: true,
       );
-      final result = DamageRules.resolve(
-        const [DamageComponent(DamageType.fire, 23)],
-        defenses: defenses,
-      );
+      final result = DamageRules.resolve(const [
+        DamageComponent(DamageType.fire, 23),
+      ], defenses: defenses);
       expect(result.total, 11);
       expect(result.parts.single.incoming, 23);
       expect(result.parts.single.resistant, isTrue);
@@ -66,20 +65,28 @@ void main() {
 
     test('invalid inputs are rejected before HP is changed', () {
       final defenses = DamageDefenses();
-      expect(() => DamageRules.resolve([], defenses: defenses),
-          throwsArgumentError);
-      expect(() => DamageRules.resolve(
-        const [DamageComponent(DamageType.fire, -1)],
-        defenses: defenses,
-      ), throwsRangeError);
+      expect(
+        () => DamageRules.resolve([], defenses: defenses),
+        throwsArgumentError,
+      );
+      expect(
+        () => DamageRules.resolve(const [
+          DamageComponent(DamageType.fire, -1),
+        ], defenses: defenses),
+        throwsRangeError,
+      );
     });
 
     test('typed damage enters the existing HP and death rules', () {
       final hero = HeroCharacter(
-        id: 'typed-damage', name: 'Eira', hitPoints: 24,
-        maxHitPoints: 24, concentratingOn: 'Segen',
+        id: 'typed-damage',
+        name: 'Eira',
+        hitPoints: 24,
+        maxHitPoints: 24,
+        concentratingOn: 'Segen',
       );
-      final after = RulesEngine.damageWithDefenses(hero,
+      final after = RulesEngine.damageWithDefenses(
+        hero,
         components: const [DamageComponent(DamageType.fire, 9)],
         defenses: DamageDefenses(resistances: [DamageType.fire]),
       );
@@ -90,10 +97,14 @@ void main() {
 
     test('immunity leaves zero-HP saving throws unchanged', () {
       final downed = HeroCharacter(
-        id: 'down', name: 'Eira', hitPoints: 0,
-        maxHitPoints: 20, deathFailures: 1,
+        id: 'down',
+        name: 'Eira',
+        hitPoints: 0,
+        maxHitPoints: 20,
+        deathFailures: 1,
       );
-      final after = RulesEngine.damageWithDefenses(downed,
+      final after = RulesEngine.damageWithDefenses(
+        downed,
         components: const [DamageComponent(DamageType.poison, 20)],
         defenses: DamageDefenses(immunities: [DamageType.poison]),
       );

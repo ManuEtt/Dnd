@@ -94,31 +94,33 @@ class _BootstrapAppState extends State<BootstrapApp>
       debugShowCheckedModeBanner: false,
       theme: buildFantasyTheme(),
       home: Scaffold(
-        body: FantasyBackdrop(child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: _failure == null
-                ? const Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CircularProgressIndicator(),
-                      SizedBox(height: 24),
-                      Text('Das Abenteuer erwacht …'),
-                    ],
-                  )
-                : Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(_failure!, textAlign: TextAlign.center),
-                      const SizedBox(height: 24),
-                      FilledButton(
-                        onPressed: _start,
-                        child: const Text('Erneut versuchen'),
-                      ),
-                    ],
-                  ),
+        body: FantasyBackdrop(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: _failure == null
+                  ? const Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircularProgressIndicator(),
+                        SizedBox(height: 24),
+                        Text('Das Abenteuer erwacht …'),
+                      ],
+                    )
+                  : Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(_failure!, textAlign: TextAlign.center),
+                        const SizedBox(height: 24),
+                        FilledButton(
+                          onPressed: _start,
+                          child: const Text('Erneut versuchen'),
+                        ),
+                      ],
+                    ),
+            ),
           ),
-        )),
+        ),
       ),
     );
   }

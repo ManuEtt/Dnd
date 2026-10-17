@@ -27,9 +27,11 @@ class _EquipmentCatalogDialogState extends State<EquipmentCatalogDialog> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text('Auswahl zum Inventar hinzufügen. '
-                'Weder Gold noch Kampfwerte werden automatisch verändert.',
-              style: TextStyle(fontSize: 12)),
+            const Text(
+              'Auswahl zum Inventar hinzufügen. '
+              'Weder Gold noch Kampfwerte werden automatisch verändert.',
+              style: TextStyle(fontSize: 12),
+            ),
             const SizedBox(height: 10),
             TextField(
               key: const ValueKey('equipment-catalog-search'),
@@ -47,15 +49,21 @@ class _EquipmentCatalogDialogState extends State<EquipmentCatalogDialog> {
               isExpanded: true,
               items: [
                 const DropdownMenuItem<EquipmentCategory?>(
-                  value: null, child: Text('Alle Kategorien')),
+                  value: null,
+                  child: Text('Alle Kategorien'),
+                ),
                 for (final category in EquipmentCategory.values)
                   DropdownMenuItem<EquipmentCategory?>(
-                    value: category, child: Text(category.label)),
+                    value: category,
+                    child: Text(category.label),
+                  ),
               ],
               onChanged: (selected) => setState(() => _category = selected),
             ),
-            Text('${items.length} Treffer',
-                style: Theme.of(context).textTheme.bodySmall),
+            Text(
+              '${items.length} Treffer',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
             const SizedBox(height: 4),
             Expanded(
               child: items.isEmpty
@@ -69,8 +77,11 @@ class _EquipmentCatalogDialogState extends State<EquipmentCatalogDialog> {
                           key: ValueKey('equipment-catalog-item-${entry.id}'),
                           dense: true,
                           title: Text(entry.name),
-                          subtitle: Text(entry.detail,
-                            maxLines: 2, overflow: TextOverflow.ellipsis),
+                          subtitle: Text(
+                            entry.detail,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                           trailing: IconButton(
                             tooltip: '${entry.name} hinzufügen',
                             icon: const Icon(Icons.add_circle_outline),
@@ -85,8 +96,10 @@ class _EquipmentCatalogDialogState extends State<EquipmentCatalogDialog> {
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context),
-          child: const Text('Abbrechen')),
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Abbrechen'),
+        ),
       ],
     );
   }

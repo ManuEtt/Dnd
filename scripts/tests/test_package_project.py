@@ -77,6 +77,30 @@ class ProjectArchiveTests(unittest.TestCase):
             packaging.create_archive(self.root, output)
         self.assertFalse(output.exists())
 
+    def test_local_sdks_and_virtual_environments_are_skipped_without_losing_source_assets(self):
+        for name in ['personal-python/pyvenv.cfg', 'personal-python/lib/large.bin',
+                     'local-flutter/bin/internal/engine.version',
+                     'local-flutter/packages/flutter/pubspec.yaml',
+                     'local-flutter/bin/cache/large.bin', 'backup.ZIP',
+                     'signing.pem', 'signing.key', 'certificates/client.p12']:
+            path = self.root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text('local fixture')
+        source_asset = self.root / 'app/assets/needed.bin'
+        source_asset.write_bytes(b'\x00legitimate asset')
+        output = self.base / 'safe.zip'
+        packaging.create_archive(self.root, output, layout='root')
+        with zipfile.ZipFile(output) as archive:
+            self.assertEqual(set(archive.namelist()),
+                             packaging.REQUIRED_FILES | {'app/assets/needed.bin'})
+
+    def test_directory_symlink_is_rejected_even_when_empty(self):
+        external = self.base / 'external'
+        external.mkdir()
+        (self.root / 'linked').symlink_to(external, target_is_directory=True)
+        with self.assertRaisesRegex(ValueError, 'symlinked directories'):
+            packaging.create_archive(self.root, self.base / 'bad.zip')
+
     def test_invalid_layout_cannot_create_an_ambiguous_archive(self):
         with self.assertRaisesRegex(ValueError, 'layout'):
             packaging.create_archive(self.root, self.base / 'bad.zip', layout='nested')

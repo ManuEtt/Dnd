@@ -1,3 +1,26 @@
+## 0.7.7+47 – Ausführbare Heilzauber im Spiel (17.10.2026)
+
+- Wunden heilen und Heilendes Wort wirken auf den eigenen Charakter: 2024-Würfel (2W8/2W4 pro tatsächlichem Platzgrad), eigenes Klassenattribut, Hochstufung, normale/Pakt-Plätze und Lebensdomänenboni (Kleriker 3/17).
+- Deutsche Auswahl mit Klassen-/Platz-/Komponentenbestätigung direkt im Abenteuer/Kampf. Ereignis, TP, Platz und Aktion werden atomar bestätigt; keine automatischen Regeln aus Erzähltext.
+- Persistenter Zugschutz: nur ein Platzverbrauch für Zauberwirken je Zug, gemeinsam für normale und Paktplätze; reset erst beim nächsten eigenen Zug. Alte Begegnungen bleiben lesbar. Action Surge erlaubt keine zusätzliche Magieaktion.
+- 26 Domain-, 13 Dialog- und 9 Integrationsfälle geprüft. Vollständige Formatbereinigung und verpflichtende Formatprüfung im normalen Test-/Buildworkflow, keine autonome Codex-Action.
+- Abschluss: 635 Flutter-, 31 Backend-, 56 Python- und 12 native Androidtests bestanden; saubere Analyse/Formatierung und Debug-APK aus dem Quell-ZIP gebaut und geprüft. Umfang/Grenzen: docs/CHARACTER_EFFECTS_AND_HEALING.md.
+
+## 0.7.6+46 – Ausführbare Charaktereffekte (17.10.2026)
+
+- Gemeinsamer Schaden-/Konzentrationsablauf für bestätigte externe Quellen und Gegnerangriffe: Abwehr vor temporären/echten TP; auch absorbierter Schaden löst Konzentration aus.
+- Deutsche Oberfläche für Schaden, Heilung und temporäre TP mit Quelle und bestätigten Abwehrregeln. Atomare Speicherung und Revisionsschutz für offene Dialoge.
+- Versteinert-Schadensresistenz und automatische Stärke-/Geschicklichkeitsfehlschläge bei gelähmt/versteinert/betäubt/bewusstlos; betäubt sperrt Bewegung nach 2024 nicht generell.
+- 50 gezielte Domain-/Kampfregressionen, 6 Dialogtests und 7 echte UI-/SQLite-Tests erfolgreich; Flutter-Analyse ohne Befunde. Details im Checkpoint.
+
+## 0.7.5+45 – Prüfbare Speicher- und Backendkorrekturen (17.10.2026)
+
+- Erschöpfte Angriffs-, Wahrnehmungs- und Fluchtproben bleiben beim JSON-/SQLite-Neustart gültig; manipulierte Boni werden weiterhin abgewiesen.
+- Schaden bei 0 TP beendet Stabilität und verursacht Todesrettungsfehlschläge auch bei vollständiger Absorption durch temporäre TP; kritische Treffer und sofortiger Tod werden getrennt geprüft.
+- Gültige leere Tagebuchbeschreibungen verursachen im Backend-Mock keinen HTTP 502 mehr. OpenAI-POSTs weisen Redirects ab.
+- Reproduzierbares Checkpointwerkzeug mit vollständigem ZIP, Binärpatch, Dateimanifest, Prüfsummen und tatsächlicher Wiederherstellungsprüfung; lokale Regelabdeckungsmatrix ergänzt.
+- Gezielte Flutter-Regressionsprüfung: 30 bestanden; vollständiger lokaler Lauf: 544 bestanden, 1 optionaler Protokolltest übersprungen. Backend mit Node 22.14.0: 31 bestanden. Details im Checkpoint.
+
 ## 0.7.4+44 – Klassenaktionen, Rettungswürfe und Ressourcen (16.10.2026)
 
 - Paladin-Handauflegen als ausführbare Heil-/Entgiftungs-Bonusaktion, eigener Heilpunktevorrat, UI-Schaltflächen, Rastregeneration und Ereignisjournal.

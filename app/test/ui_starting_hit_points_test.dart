@@ -15,9 +15,13 @@ Future<void> _open(
         builder: (context) => Scaffold(
           body: FilledButton(
             onPressed: () async {
-              onSaved(await Navigator.of(context).push<HeroCharacter>(
-                MaterialPageRoute(builder: (_) => CharacterEditor(hero: hero)),
-              ));
+              onSaved(
+                await Navigator.of(context).push<HeroCharacter>(
+                  MaterialPageRoute(
+                    builder: (_) => CharacterEditor(hero: hero),
+                  ),
+                ),
+              );
             },
             child: const Text('Bearbeiten'),
           ),
@@ -42,16 +46,23 @@ Future<void> _findAndTap(WidgetTester tester, Finder finder) async {
 }
 
 void main() {
-  testWidgets('TP-Vorschlag überschreibt bestätigte TP erst nach Zustimmung',
-      (tester) async {
+  testWidgets('TP-Vorschlag überschreibt bestätigte TP erst nach Zustimmung', (
+    tester,
+  ) async {
     HeroCharacter? saved;
     final existing = HeroCharacter(
       id: 'player-1',
       name: 'Liora',
       className: 'Kämpfer',
       level: 1,
-      abilities: const {'strength': 15, 'dexterity': 12,
-        'constitution': 14, 'intelligence': 10, 'wisdom': 13, 'charisma': 8},
+      abilities: const {
+        'strength': 15,
+        'dexterity': 12,
+        'constitution': 14,
+        'intelligence': 10,
+        'wisdom': 13,
+        'charisma': 8,
+      },
       hitPoints: 7,
       maxHitPoints: 9,
     );

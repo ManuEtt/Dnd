@@ -15,7 +15,8 @@ class SrdEquipmentSourceTests(unittest.TestCase):
         cls.source = CATALOG.read_text(encoding='utf-8')
 
     def test_all_weapons_and_armor_present_once(self):
-        ids = re.findall(r'EquipmentEntry\(id: "([\w-]+)"', self.source)
+        # dart format may put the constructor and id on separate lines.
+        ids = re.findall(r'''EquipmentEntry\(\s*id:\s*["']([\w-]+)["']''', self.source)
         self.assertEqual(len(ids), len(set(ids)))
         self.assertEqual(sum(i.startswith('weapon-') for i in ids), 38)
         self.assertEqual(sum(i.startswith('armor-') for i in ids), 13)

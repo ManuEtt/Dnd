@@ -6,9 +6,14 @@ import 'srd_character_classes.dart';
 /// Subclass entries are scoped to their SRD subclass only; unknown subclasses
 /// never receive features from a different subclass.
 class SrdClassFeature {
-  const SrdClassFeature({required this.id, required this.className,
-    required this.classLevel, required this.name, this.subclass = '',
-    required this.automation});
+  const SrdClassFeature({
+    required this.id,
+    required this.className,
+    required this.classLevel,
+    required this.name,
+    this.subclass = '',
+    required this.automation,
+  });
 
   final String id, className, name, subclass;
   final int classLevel;
@@ -236,43 +241,80 @@ class SrdClassFeatureCatalog {
   };
 
   static const Map<String, String> _subclassFeatures = {
-    'Barbar': '3|Frenzy\n6|Mindless Rage\n10|Retaliation\n14|Intimidating Presence',
-    'Barde': '3|Bonus Proficiencies; Cutting Words\n6|Magical Discoveries\n14|Peerless Skill',
-    'Kleriker': '3|Disciple of Life; Preserve Life; Life Domain Spells\n6|Blessed Healer\n17|Supreme Healing',
-    'Druide': '3|Circle of the Land Spells; Land’s Aid\n6|Natural Recovery\n10|Nature’s Ward\n14|Nature’s Sanctuary',
-    'Kämpfer': '3|Improved Critical; Remarkable Athlete\n7|Additional Fighting Style\n10|Heroic Warrior\n15|Superior Critical\n18|Survivor',
-    'Mönch': '3|Open Hand Technique\n6|Wholeness of Body\n11|Fleet Step\n17|Quivering Palm',
-    'Paladin': '3|Oath of Devotion Spells; Sacred Weapon\n7|Aura of Devotion\n15|Smite of Protection\n20|Holy Nimbus',
-    'Waldläufer': '3|Hunter’s Prey; Hunter’s Lore\n7|Defensive Tactics\n11|Superior Hunter’s Prey\n15|Superior Hunter’s Defense',
-    'Schurke': '3|Fast Hands; Second-Story Work\n9|Supreme Sneak\n13|Use Magic Device\n17|Thief’s Reflexes',
-    'Zauberer': '3|Draconic Resilience; Draconic Spells; Dragon Speech\n6|Elemental Affinity\n14|Dragon Wings\n18|Dragon Companion',
-    'Hexenmeister': '3|Dark One’s Blessing; Fiend Spells\n6|Dark One’s Own Luck\n10|Fiendish Resilience\n14|Hurl Through Hell',
-    'Magier': '3|Evocation Savant; Potent Cantrip\n6|Sculpt Spells\n10|Empowered Evocation\n14|Overchannel',
+    'Barbar':
+        '3|Frenzy\n6|Mindless Rage\n10|Retaliation\n14|Intimidating Presence',
+    'Barde':
+        '3|Bonus Proficiencies; Cutting Words\n6|Magical Discoveries\n14|Peerless Skill',
+    'Kleriker':
+        '3|Disciple of Life; Preserve Life; Life Domain Spells\n6|Blessed Healer\n17|Supreme Healing',
+    'Druide':
+        '3|Circle of the Land Spells; Land’s Aid\n6|Natural Recovery\n10|Nature’s Ward\n14|Nature’s Sanctuary',
+    'Kämpfer':
+        '3|Improved Critical; Remarkable Athlete\n7|Additional Fighting Style\n10|Heroic Warrior\n15|Superior Critical\n18|Survivor',
+    'Mönch':
+        '3|Open Hand Technique\n6|Wholeness of Body\n11|Fleet Step\n17|Quivering Palm',
+    'Paladin':
+        '3|Oath of Devotion Spells; Sacred Weapon\n7|Aura of Devotion\n15|Smite of Protection\n20|Holy Nimbus',
+    'Waldläufer':
+        '3|Hunter’s Prey; Hunter’s Lore\n7|Defensive Tactics\n11|Superior Hunter’s Prey\n15|Superior Hunter’s Defense',
+    'Schurke':
+        '3|Fast Hands; Second-Story Work\n9|Supreme Sneak\n13|Use Magic Device\n17|Thief’s Reflexes',
+    'Zauberer':
+        '3|Draconic Resilience; Draconic Spells; Dragon Speech\n6|Elemental Affinity\n14|Dragon Wings\n18|Dragon Companion',
+    'Hexenmeister':
+        '3|Dark One’s Blessing; Fiend Spells\n6|Dark One’s Own Luck\n10|Fiendish Resilience\n14|Hurl Through Hell',
+    'Magier':
+        '3|Evocation Savant; Potent Cantrip\n6|Sculpt Spells\n10|Empowered Evocation\n14|Overchannel',
   };
 
   static const Set<String> _automaticNames = {
-    'Extra Attack', 'Two Extra Attacks', 'Three Extra Attacks',
-    'Second Wind', 'Unarmored Movement', 'Fast Movement',
-    'Feral Instinct', 'Danger Sense', 'Improved Critical', 'Superior Critical',
+    'Extra Attack',
+    'Two Extra Attacks',
+    'Three Extra Attacks',
+    'Second Wind',
+    'Unarmored Movement',
+    'Fast Movement',
+    'Feral Instinct',
+    'Danger Sense',
+    'Improved Critical',
+    'Superior Critical',
   };
   static const Set<String> _partialNames = {
-    'Spellcasting', 'Pact Magic', 'Channel Divinity', 'Rage', 'Action Surge',
-    "Monk's Focus", 'Bardic Inspiration', 'Lay On Hands',
-    'Font of Magic', 'Wild Shape', 'Favored Enemy', 'Weapon Mastery',
-    'Sneak Attack', 'Martial Arts', 'Unarmored Defense',
+    'Spellcasting',
+    'Pact Magic',
+    'Channel Divinity',
+    'Rage',
+    'Action Surge',
+    "Monk's Focus",
+    'Bardic Inspiration',
+    'Lay On Hands',
+    'Font of Magic',
+    'Wild Shape',
+    'Favored Enemy',
+    'Weapon Mastery',
+    'Sneak Attack',
+    'Martial Arts',
+    'Unarmored Defense',
     'Remarkable Athlete',
   };
 
   static final Map<String, List<SrdClassFeature>> _catalog = {
-    for (final key in _base.keys) key: List.unmodifiable([
-      ..._parse(key, _base[key]!),
-      ..._parse(key, _subclassFeatures[key]!,
-          subclass: defaultSubclass[key]!),
-    ]),
+    for (final key in _base.keys)
+      key: List.unmodifiable([
+        ..._parse(key, _base[key]!),
+        ..._parse(
+          key,
+          _subclassFeatures[key]!,
+          subclass: defaultSubclass[key]!,
+        ),
+      ]),
   };
 
-  static List<SrdClassFeature> _parse(String className, String data,
-      {String subclass = ''}) {
+  static List<SrdClassFeature> _parse(
+    String className,
+    String data, {
+    String subclass = '',
+  }) {
     final result = <SrdClassFeature>[];
     for (final line in data.trim().split('\n')) {
       if (line.trim().isEmpty) continue;
@@ -283,28 +325,45 @@ class SrdClassFeatureCatalog {
       final entries = line.substring(index + 1).split(';');
       for (var index = 0; index < entries.length; index++) {
         final name = entries[index].trim();
-        if (name.isEmpty) throw FormatException('Leeres Merkmal bei $className');
+        if (name.isEmpty) {
+          throw FormatException('Leeres Merkmal bei $className');
+        }
         final status = _automaticNames.contains(name)
             ? FeatureAutomation.automatic
             : _partialNames.contains(name)
-                ? FeatureAutomation.partial
-                : name.contains('Subclass') || name == 'Epic Boon' ||
+            ? FeatureAutomation.partial
+            : name.contains('Subclass') ||
+                  name == 'Epic Boon' ||
                   name == 'Ability Score Improvement' ||
-                  name == 'Fighting Style' || name == 'Metamagic' ||
-                  name == 'Eldritch Invocations' || name == 'Divine Order' ||
-                  name == 'Primal Order' || name == 'Blessed Strikes' ||
+                  name == 'Fighting Style' ||
+                  name == 'Metamagic' ||
+                  name == 'Eldritch Invocations' ||
+                  name == 'Divine Order' ||
+                  name == 'Primal Order' ||
+                  name == 'Blessed Strikes' ||
                   name == 'Elemental Fury'
-                    ? FeatureAutomation.choiceRequired
-                    : FeatureAutomation.manual;
-        final classSlug = className.toLowerCase()
-            .replaceAll(RegExp(r'[^a-z0-9]'), '-');
-        final featureSlug = name.toLowerCase()
-            .replaceAll(RegExp(r'[^a-z0-9]'), '-');
+            ? FeatureAutomation.choiceRequired
+            : FeatureAutomation.manual;
+        final classSlug = className.toLowerCase().replaceAll(
+          RegExp(r'[^a-z0-9]'),
+          '-',
+        );
+        final featureSlug = name.toLowerCase().replaceAll(
+          RegExp(r'[^a-z0-9]'),
+          '-',
+        );
         final source = subclass.isEmpty ? 'base' : 'subclass';
         final id = '${classSlug}_${level}_${source}_${featureSlug}_$index';
-        result.add(SrdClassFeature(id: id, className: className,
-            classLevel: level, name: name, subclass: subclass,
-            automation: status));
+        result.add(
+          SrdClassFeature(
+            id: id,
+            className: className,
+            classLevel: level,
+            name: name,
+            subclass: subclass,
+            automation: status,
+          ),
+        );
       }
     }
     return result;
@@ -315,21 +374,34 @@ class SrdClassFeatureCatalog {
     return key == null ? const [] : _catalog[key]!;
   }
 
-  static List<SrdClassFeature> atClassLevel(String name, int classLevel,
-      {String subclass = ''}) {
+  static List<SrdClassFeature> atClassLevel(
+    String name,
+    int classLevel, {
+    String subclass = '',
+  }) {
     if (classLevel < 1 || classLevel > 20) return const [];
     final key = findSrdClass(name)?.name;
     if (key == null) return const [];
-    return List.unmodifiable(_catalog[key]!.where((feature) =>
-        feature.classLevel == classLevel &&
-        (feature.subclass.isEmpty || _matchesSubclass(key, subclass))));
+    return List.unmodifiable(
+      _catalog[key]!.where(
+        (feature) =>
+            feature.classLevel == classLevel &&
+            (feature.subclass.isEmpty || _matchesSubclass(key, subclass)),
+      ),
+    );
   }
 
   static bool _matchesSubclass(String className, String entered) {
     final expected = defaultSubclass[className];
     if (expected == null || entered.trim().isEmpty) return false;
-    final normalized = entered.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
-    final canonical = expected.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
+    final normalized = entered.toLowerCase().replaceAll(
+      RegExp(r'[^a-z0-9]'),
+      '',
+    );
+    final canonical = expected.toLowerCase().replaceAll(
+      RegExp(r'[^a-z0-9]'),
+      '',
+    );
     if (normalized == canonical) return true;
     const localized = {
       'Barbar': ['Berserker', 'Pfad des Berserkers'],
@@ -345,8 +417,9 @@ class SrdClassFeatureCatalog {
       'Hexenmeister': ['Unhold', 'Unhold-Schutzherr'],
       'Magier': ['Hervorrufer'],
     };
-    return (localized[className] ?? const <String>[]).any((v) =>
-      v.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '') == normalized);
+    return (localized[className] ?? const <String>[]).any(
+      (v) => v.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '') == normalized,
+    );
   }
 
   /// Handles character *class levels*, never total levels of multiclass heroes.
@@ -357,17 +430,24 @@ class SrdClassFeatureCatalog {
     final secondary = findSrdClass(hero.secondaryClassName)?.name;
     final result = <SrdClassFeature>[];
     if (primary != null) {
-      result.addAll(_catalog[primary]!.where((x) =>
-        x.classLevel <= hero.primaryClassLevel &&
-        (x.subclass.isEmpty || _matchesSubclass(primary, hero.subclass))));
+      result.addAll(
+        _catalog[primary]!.where(
+          (x) =>
+              x.classLevel <= hero.primaryClassLevel &&
+              (x.subclass.isEmpty || _matchesSubclass(primary, hero.subclass)),
+        ),
+      );
     }
     if (secondary != null && hero.hasSecondClass) {
       // The existing model stores only one subclass string, so a second
       // subclass is NOT inferred or granted before schema support exists.
-      result.addAll(_catalog[secondary]!.where((x) =>
-        x.classLevel <= hero.secondaryClassLevel && x.subclass.isEmpty));
+      result.addAll(
+        _catalog[secondary]!.where(
+          (x) => x.classLevel <= hero.secondaryClassLevel && x.subclass.isEmpty,
+        ),
+      );
     }
-    result.sort((a,b) => a.classLevel.compareTo(b.classLevel));
+    result.sort((a, b) => a.classLevel.compareTo(b.classLevel));
     return List.unmodifiable(result);
   }
 

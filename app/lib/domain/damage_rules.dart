@@ -69,8 +69,8 @@ class DamagePartResult {
 /// A packet can contain different damage types; each is resolved on its own.
 class DamageResolution {
   DamageResolution._(List<DamagePartResult> resolved)
-      : parts = List<DamagePartResult>.unmodifiable(resolved),
-        total = resolved.fold<int>(0, (sum, part) => sum + part.applied);
+    : parts = List<DamagePartResult>.unmodifiable(resolved),
+      total = resolved.fold<int>(0, (sum, part) => sum + part.applied);
 
   final List<DamagePartResult> parts;
   final int total;
@@ -95,11 +95,12 @@ class DamageRules {
       if (entry.amount < 0 || entry.amount > 100000) {
         throw RangeError.range(entry.amount, 0, 100000, 'damage');
       }
-      final immune = defenses.immuneToAll ||
-          defenses.immunities.contains(entry.type);
-      final resistant = defenses.resistAll ||
-          defenses.resistances.contains(entry.type);
-      final vulnerable = defenses.vulnerableToAll ||
+      final immune =
+          defenses.immuneToAll || defenses.immunities.contains(entry.type);
+      final resistant =
+          defenses.resistAll || defenses.resistances.contains(entry.type);
+      final vulnerable =
+          defenses.vulnerableToAll ||
           defenses.vulnerabilities.contains(entry.type);
 
       // 2024 SRD order is consequential for odd numbers: 23 / 2 * 2 = 22.
@@ -108,14 +109,16 @@ class DamageRules {
       var applied = immune ? 0 : entry.amount;
       if (!immune && resistant) applied ~/= 2;
       if (!immune && vulnerable) applied *= 2;
-      results.add(DamagePartResult(
-        type: entry.type,
-        incoming: entry.amount,
-        applied: applied,
-        immune: immune,
-        resistant: resistant,
-        vulnerable: vulnerable,
-      ));
+      results.add(
+        DamagePartResult(
+          type: entry.type,
+          incoming: entry.amount,
+          applied: applied,
+          immune: immune,
+          resistant: resistant,
+          vulnerable: vulnerable,
+        ),
+      );
     }
     return DamageResolution._(results);
   }

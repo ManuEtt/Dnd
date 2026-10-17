@@ -21,7 +21,8 @@ class ClassCombatFeatures {
   /// SRD 2024 Sneak Attack: finesse or ranged weapon, once per turn,
   /// advantage OR active ally within 5 feet, and no disadvantage when relying
   /// on that ally. Not triggered from an unverified attack or narration.
-  static int eligibleSneakAttackDice(HeroCharacter hero, {
+  static int eligibleSneakAttackDice(
+    HeroCharacter hero, {
     required bool hasAdvantage,
     required bool hasDisadvantage,
     required bool adjacentConsciousAlly,
@@ -29,12 +30,14 @@ class ClassCombatFeatures {
   }) {
     final level = ClassResourceRules.level(hero, 'Schurke');
     if (level == 0 || alreadyUsedThisTurn) return 0;
-    final items = hero.inventory.where((i) =>
-        i.id == hero.equippedWeaponId && hero.equippedWeaponId.isNotEmpty);
+    final items = hero.inventory.where(
+      (i) => i.id == hero.equippedWeaponId && hero.equippedWeaponId.isNotEmpty,
+    );
     if (items.length != 1) return 0;
     final weapon = SrdEquipmentCatalog.byId(items.single.catalogId);
     if (weapon == null) return 0;
-    final qualifies = weapon.hasProperty('finesse') ||
+    final qualifies =
+        weapon.hasProperty('finesse') ||
         weapon.category == EquipmentCategory.simpleRanged ||
         weapon.category == EquipmentCategory.martialRanged;
     if (!qualifies) return 0;
@@ -47,8 +50,11 @@ class ClassCombatFeatures {
 
   /// Use after verifying the target, hit, once-per-turn state, and eligibility.
   /// Critical hits double the number of rolled damage dice.
-  static DiceResult rollSneakAttack(DiceEngine dice, int diceCount,
-      {bool critical = false}) {
+  static DiceResult rollSneakAttack(
+    DiceEngine dice,
+    int diceCount, {
+    bool critical = false,
+  }) {
     if (diceCount < 1 || diceCount > 10) {
       throw RangeError.range(diceCount, 1, 10, 'sneakAttackDice');
     }

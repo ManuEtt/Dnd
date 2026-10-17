@@ -21,9 +21,9 @@ GameEngine gameMaster() => GameEngine(
 
 Campaign beginFight(GameEngine gm, int level, {String className = 'Kämpfer'}) {
   var game = gm.createDemo();
-  game = game.copyWith(hero: game.hero.copyWith(
-    className: className, level: level,
-  ));
+  game = game.copyWith(
+    hero: game.hero.copyWith(className: className, level: level),
+  );
   return gm.act(game, 'Ich gehe zum Waldschrein.').campaign;
 }
 
@@ -66,22 +66,28 @@ void main() {
     expect(game.encounter!.round, round + 1);
   });
 
-  test('Bei laufender Angriffsaktion ist keine zweite volle Aktion möglich', () {
-    final gm = gameMaster();
-    var game = beginFight(gm, 5);
-    game = miss(gm, game);
-    final round = game.encounter!.round;
-    for (final input in ['Ich weiche aus.', 'Ich fliehe.',
-        'Ich trinke einen Heiltrank.']) {
-      final attempt = gm.act(game, input);
-      expect(attempt.events.single.type, 'rules.blocked');
-      expect(attempt.campaign.encounter!.round, round);
-      expect(attempt.campaign.encounter!.attacksRemaining, 1);
-      game = attempt.campaign;
-    }
-    game = miss(gm, game);
-    expect(game.encounter!.round, round + 1);
-  });
+  test(
+    'Bei laufender Angriffsaktion ist keine zweite volle Aktion möglich',
+    () {
+      final gm = gameMaster();
+      var game = beginFight(gm, 5);
+      game = miss(gm, game);
+      final round = game.encounter!.round;
+      for (final input in [
+        'Ich weiche aus.',
+        'Ich fliehe.',
+        'Ich trinke einen Heiltrank.',
+      ]) {
+        final attempt = gm.act(game, input);
+        expect(attempt.events.single.type, 'rules.blocked');
+        expect(attempt.campaign.encounter!.round, round);
+        expect(attempt.campaign.encounter!.attacksRemaining, 1);
+        game = attempt.campaign;
+      }
+      game = miss(gm, game);
+      expect(game.encounter!.round, round + 1);
+    },
+  );
 
   test('Restliche Angriffe freiwillig aufgeben beendet den Zug', () {
     final gm = gameMaster();

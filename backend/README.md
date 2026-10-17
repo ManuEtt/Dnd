@@ -89,7 +89,7 @@ OPENAI_API_KEY=<nur auf dem Server setzen>
 OPENAI_MODEL=<im eigenen Konto verfügbares Responses-Textmodell auswählen>
 ```
 
-Der Provider verwendet `POST https://api.openai.com/v1/responses`, `instructions`, Textinput und `store=false` (klassische Erzählung maximal 600 Tokens; strukturierter Story-Vorschlag maximal 2400 Tokens). Keine Tools, keine Zustandsänderungen, 20 Sekunden Timeout. `store=false` deaktiviert die Speicherung einer abrufbaren Responses-Antwort; es ersetzt keine Prüfung der Datenschutz- und Aufbewahrungsbedingungen des API-Anbieters. Nutzereingaben werden bei diesem Provider an OpenAI übertragen. Die Modellantwort ist Erzähltext; die lokale Regelengine bleibt allein für Zustandsänderungen zuständig.
+Der Provider verwendet `POST https://api.openai.com/v1/responses`, `instructions`, Textinput und `store=false` (klassische Erzählung maximal 600 Tokens; strukturierter Story-Vorschlag maximal 2400 Tokens). Keine Tools, keine Zustandsänderungen, 20 Sekunden Timeout. HTTP-Weiterleitungen werden abgewiesen, bevor Zugangsdaten oder POST-Anfragen erneut gesendet werden. `store=false` deaktiviert die Speicherung einer abrufbaren Responses-Antwort; es ersetzt keine Prüfung der Datenschutz- und Aufbewahrungsbedingungen des API-Anbieters. Nutzereingaben werden bei diesem Provider an OpenAI übertragen. Die Modellantwort ist Erzähltext; die lokale Regelengine bleibt allein für Zustandsänderungen zuständig.
 
 Die offiziellen [Text-Dokumentation](https://developers.openai.com/api/docs/guides/text), [OpenAPI-Spezifikation](https://github.com/openai/openai-openapi/blob/master/openapi.yaml) und [Realtime-WebRTC-Dokumentation](https://developers.openai.com/api/docs/guides/realtime-webrtc) wurden am 13.10.2026 gelesen. Der dokumentierte Realtime-Endpunkt für ephemere Credentials lautet `/v1/realtime/client_secrets`; WebRTC und dessen Tokenausstellung sind hier **noch nicht implementiert**.
 
@@ -117,3 +117,5 @@ npm audit
 **0.2.0:** Typecheck, Build und 22 Tests erfolgreich unter Node.js 22.14.0 und 24.19.0. Ein zusätzlicher echter Node-/Dart-Protokolltest prüft die Server-CLI, Sitzung, Erzählung und den lokalen Fallback. Keine bezahlten API-Aufrufe.
 
 **0.3.0:** Zwei strukturierte Story-Endpunkte neu. Isolierte Validatoren und Mock-Laufzeitprüfung sind lokal bestanden; vollständige Fastify-/TypeScript-Tests erst nach `npm ci` und CI, echte OpenAI-Responses nicht abgenommen.
+
+**GETESTET am 16.10.2026:** `npm ci`, Typecheck, Produktionsbuild und alle 31 Backendtests erfolgreich mit Node.js 22.14.0 (CI-Version). Ergänzte Regressionen prüfen Journal-Handlungsstränge ohne Beschreibung und einen echten lokalen HTTP-307-Redirect: Erzählung und Story-Anfrage brechen ab, ohne die Anfrage am Umleitungsziel zu wiederholen. Der Mock setzt bei leeren Handlungsnotizen keine erfundene Ersatzbeschreibung ein. Keine bezahlten API-Aufrufe; keine echte OpenAI-/HTTPS-Geräteabnahme.

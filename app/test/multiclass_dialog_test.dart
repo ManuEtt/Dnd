@@ -5,21 +5,46 @@ import 'package:lebendiger_spielleiter/domain/multiclass_rules.dart';
 import 'package:lebendiger_spielleiter/ui/multiclass_selection_dialog.dart';
 
 void main() {
-  testWidgets('multiclass assistant explains required skills and confirms', (tester) async {
+  testWidgets('multiclass assistant explains required skills and confirms', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(360, 800);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     MulticlassProposal? result;
-    await tester.pumpWidget(MaterialApp(home: Scaffold(body: Builder(builder: (context) =>
-      FilledButton(onPressed: () async {
-        result = await showDialog<MulticlassProposal>(context: context,
-          builder: (_) => MulticlassSelectionDialog(hero: HeroCharacter(
-            id: 'id', name: 'Tira', className: 'Kämpfer', level: 3,
-            abilities: const {'strength': 14, 'dexterity': 14,
-              'constitution': 14,'intelligence': 14,'wisdom': 14,'charisma': 14},
-          )));
-      }, child: const Text('Öffnen'))))));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => FilledButton(
+              onPressed: () async {
+                result = await showDialog<MulticlassProposal>(
+                  context: context,
+                  builder: (_) => MulticlassSelectionDialog(
+                    hero: HeroCharacter(
+                      id: 'id',
+                      name: 'Tira',
+                      className: 'Kämpfer',
+                      level: 3,
+                      abilities: const {
+                        'strength': 14,
+                        'dexterity': 14,
+                        'constitution': 14,
+                        'intelligence': 14,
+                        'wisdom': 14,
+                        'charisma': 14,
+                      },
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Öffnen'),
+            ),
+          ),
+        ),
+      ),
+    );
     await tester.tap(find.text('Öffnen'));
     await tester.pumpAndSettle();
     expect(find.text('Zweitklasse nach D&D'), findsOneWidget);

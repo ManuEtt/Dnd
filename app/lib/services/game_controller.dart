@@ -6,6 +6,7 @@ import '../data/campaign_repository.dart';
 import '../domain/game_engine.dart';
 import '../domain/ai_story.dart';
 import '../domain/models.dart';
+import '../domain/damage_rules.dart';
 import 'backend_narrator.dart';
 
 /// UI state changes only after an atomic repository commit succeeds.
@@ -48,6 +49,7 @@ class GameController extends ChangeNotifier {
         FormatException() => failure.message,
         CampaignConflictException() => failure.message,
         InvalidSaveException() => failure.message,
+        StateError() => failure.message.toString(),
         _ =>
           'Die Änderung konnte nicht bestätigt werden. '
               'Dein letzter gespeicherter Spielstand bleibt erhalten.',
@@ -100,38 +102,53 @@ class GameController extends ChangeNotifier {
 
   /// Opt-in generative campaign creation. No story is saved on network,
   /// validation or provider failure; the hero sheet is kept unchanged.
-  Future<void> newAiCampaign(HeroCharacter hero, {required String theme}) =>
-      _run(() async {
+  Future<void> newAiCampaign(
+    HeroCharacter hero, {
+    required String theme,
+  }) => _run(() async {
     if (!narrator.enabled) {
       throw const FormatException(
-        'Verbinde unter Optionen einen KI-Spielleiter-Server.');
+        'Verbinde unter Optionen einen KI-Spielleiter-Server.',
+      );
     }
     if (theme.trim().isEmpty || theme.length > 300) {
-      throw const FormatException('Das Thema muss 1 bis 300 Zeichen enthalten.');
+      throw const FormatException(
+        'Das Thema muss 1 bis 300 Zeichen enthalten.',
+      );
     }
     final valid = HeroCharacter.fromJson(hero.toJson());
     final response = await narrator.planStory(
-      heroName: valid.name, heroClass: valid.classSummary, theme: theme,
+      heroName: valid.name,
+      heroClass: valid.classSummary,
+      theme: theme,
     );
     if (response == null) {
       throw const FormatException(
-        'Die Geschichte konnte nicht erzeugt werden. Es wurde keine Kampagne gespeichert.');
+        'Die Geschichte konnte nicht erzeugt werden. Es wurde keine Kampagne gespeichert.',
+      );
     }
     final plan = AiStoryPlan.fromJson(response);
-    final campaign = engine.createAiCampaign(valid, plan,
-      provider: narrator.provider ?? 'mock');
+    final campaign = engine.createAiCampaign(
+      valid,
+      plan,
+      provider: narrator.provider ?? 'mock',
+    );
     await _create(campaign);
   });
 
   Future<void> acceptAdventure() => _run(() async {
     final current = currentCampaign;
-    if (current == null) throw const FormatException('Keine Kampagne geöffnet.');
+    if (current == null) {
+      throw const FormatException('Keine Kampagne geöffnet.');
+    }
     await _commit(engine.acceptAdventure(current));
   });
 
   Future<void> rejectAdventure() => _run(() async {
     final current = currentCampaign;
-    if (current == null) throw const FormatException('Keine Kampagne geöffnet.');
+    if (current == null) {
+      throw const FormatException('Keine Kampagne geöffnet.');
+    }
     await _commit(engine.rejectAdventure(current));
   });
 
@@ -188,25 +205,54 @@ class GameController extends ChangeNotifier {
             .where((value) => value.trim().isNotEmpty)
             .toList();
         final response = await narrator.advanceStory(
-          campaignId: campaign.id, heroName: campaign.hero.name,
+          campaignId: campaign.id,
+          heroName: campaign.hero.name,
           action: action.length > 2000 ? action.substring(0, 2000) : action,
-          scene: campaign.scene, premise: context['premise'] ?? '',
-          goal: context['goal'] ?? '', secret: context['secret'] ?? '',
-          threads: [for (final t in campaign.storyThreads)
-            {'id': t.id, 'title': t.title, 'description': t.description,
-              'status': t.status}],
-          npcs: [for (final npc in campaign.npcs)
-            {'id': npc.id, 'name': npc.name, 'relationship': npc.relationship}],
-          memories: memories.take(12).map((value) =>
-              value.length > 400 ? value.substring(0, 400) : value).toList(),
-          recentActions: recent.reversed.take(6).toList().reversed
-              .map((value) => value.length > 2000
-                  ? value.substring(0, 2000) : value).toList(),
+          scene: campaign.scene,
+          premise: context['premise'] ?? '',
+          goal: context['goal'] ?? '',
+          secret: context['secret'] ?? '',
+          threads: [
+            for (final t in campaign.storyThreads)
+              {
+                'id': t.id,
+                'title': t.title,
+                'description': t.description,
+                'status': t.status,
+              },
+          ],
+          npcs: [
+            for (final npc in campaign.npcs)
+              {
+                'id': npc.id,
+                'name': npc.name,
+                'relationship': npc.relationship,
+              },
+          ],
+          memories: memories
+              .take(12)
+              .map(
+                (value) => value.length > 400 ? value.substring(0, 400) : value,
+              )
+              .toList(),
+          recentActions: recent.reversed
+              .take(6)
+              .toList()
+              .reversed
+              .map(
+                (value) =>
+                    value.length > 2000 ? value.substring(0, 2000) : value,
+              )
+              .toList(),
         );
         if (response == null) return update;
         final step = AiStoryStep.fromJson(response, campaign);
-        return engine.applyAiStoryStep(update, step,
-          provider: narrator.provider ?? 'mock', decision: action);
+        return engine.applyAiStoryStep(
+          update,
+          step,
+          provider: narrator.provider ?? 'mock',
+          decision: action,
+        );
       } catch (_) {
         narrator.statusMessage =
             'Der KI-Fortschritt wurde nicht übernommen. Der bestätigte lokale Spielzug bleibt erhalten.';
@@ -271,6 +317,90 @@ class GameController extends ChangeNotifier {
     await _commit(engine.resolveRoll(campaign, natural: natural, total: total));
   });
 
+  Campaign _effectCampaign(String campaignId, int expectedRevision) {
+    final current = currentCampaign;
+    if (current == null ||
+        current.id != campaignId ||
+        current.revision != expectedRevision) {
+      throw const FormatException(
+        'Der Spielstand hat sich geändert. Bitte den Effekt erneut öffnen.',
+      );
+    }
+    return current;
+  }
+
+  Future<void> applyDamage({
+    required String campaignId,
+    required int expectedRevision,
+    required String source,
+    required List<DamageComponent> components,
+    required DamageDefenses defenses,
+    bool critical = false,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.applyDamage(
+        current,
+        source: source,
+        components: components,
+        defenses: defenses,
+        critical: critical,
+      ),
+    );
+  });
+
+  Future<void> applyHealing({
+    required String campaignId,
+    required int expectedRevision,
+    required String source,
+    required int amount,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(engine.applyHealing(current, source: source, amount: amount));
+  });
+
+  Future<void> grantTemporaryHitPoints({
+    required String campaignId,
+    required int expectedRevision,
+    required String source,
+    required int amount,
+    bool replaceExisting = false,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.grantTemporaryHitPoints(
+        current,
+        source: source,
+        amount: amount,
+        replaceExisting: replaceExisting,
+      ),
+    );
+  });
+
+  Future<void> castHealingSpell({
+    required String campaignId,
+    required int expectedRevision,
+    required String spellName,
+    required String castingClass,
+    int? slotLevel,
+    bool pactMagic = false,
+    required bool verbalComponentConfirmed,
+    bool somaticComponentConfirmed = false,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.castHealingSpell(
+        current,
+        spellName: spellName,
+        castingClass: castingClass,
+        slotLevel: slotLevel,
+        pactMagic: pactMagic,
+        verbalComponentConfirmed: verbalComponentConfirmed,
+        somaticComponentConfirmed: somaticComponentConfirmed,
+      ),
+    );
+  });
+
   Future<void> saveSessionRecap() => _run(() async {
     final campaign = currentCampaign;
     if (campaign == null) throw const FormatException('Keine aktive Kampagne.');
@@ -284,9 +414,14 @@ class GameController extends ChangeNotifier {
   }) => _run(() async {
     final campaign = currentCampaign;
     if (campaign == null) throw const FormatException('Keine aktive Kampagne.');
-    await _commit(engine.recordNpcRelationship(
-      campaign, npcId: npcId, relationship: relationship, note: note,
-    ));
+    await _commit(
+      engine.recordNpcRelationship(
+        campaign,
+        npcId: npcId,
+        relationship: relationship,
+        note: note,
+      ),
+    );
   });
 
   Future<void> saveStoryThread({
@@ -297,10 +432,15 @@ class GameController extends ChangeNotifier {
   }) => _run(() async {
     final campaign = currentCampaign;
     if (campaign == null) throw const FormatException('Keine aktive Kampagne.');
-    await _commit(engine.saveStoryThread(
-      campaign, threadId: threadId, title: title,
-      description: description, status: status,
-    ));
+    await _commit(
+      engine.saveStoryThread(
+        campaign,
+        threadId: threadId,
+        title: title,
+        description: description,
+        status: status,
+      ),
+    );
   });
 
   Future<void> rollDice(String expression) => _run(() async {

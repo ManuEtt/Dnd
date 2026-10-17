@@ -139,7 +139,9 @@ export function mockStoryPlan(input: StoryStartInput): StoryPlan {
   });
 }
 export function mockStoryTurn(input: StoryTurnInput): StoryTurn {
-  const first = input.threads.find(x => x.status === 'open');
+  // Journal threads may have no description. Do not turn that valid local
+  // state into an invalid provider update or invent a replacement note.
+  const first = input.threads.find(x => x.status === 'open' && x.description.trim());
   return parseStoryTurn({
     narration: `${input.heroName}, deine Entscheidung „${input.action.slice(0, 110)}“ bleibt nicht unbemerkt. In ${input.scene.slice(0, 140)} zeichnet sich eine neue Spur ab. Was möchtest du als Nächstes tun?`,
     threadUpdates: first ? [{ id: first.id, status: 'open', description: first.description }] : [],

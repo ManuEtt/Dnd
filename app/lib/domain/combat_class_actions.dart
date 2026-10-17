@@ -26,39 +26,50 @@ class CombatClassActions {
 
   /// No Rage bonus on ranged or Dexterity attacks, and no invented weapons.
   static int rageDamageBonus(HeroCharacter hero, Encounter fight) {
-    if (!rageActive(fight) || hero.weaponAbility != 'strength' ||
+    if (!rageActive(fight) ||
+        hero.weaponAbility != 'strength' ||
         hasHeavyArmor(hero)) {
       return 0;
     }
-    final items = hero.inventory.where((i) =>
-        i.id == hero.equippedWeaponId && hero.equippedWeaponId.isNotEmpty);
+    final items = hero.inventory.where(
+      (i) => i.id == hero.equippedWeaponId && hero.equippedWeaponId.isNotEmpty,
+    );
     if (items.length != 1) {
       return 0;
     }
     final weapon = SrdEquipmentCatalog.byId(items.single.catalogId);
-    if (weapon == null || !(weapon.category == EquipmentCategory.simpleMelee ||
-        weapon.category == EquipmentCategory.martialMelee)) {
+    if (weapon == null ||
+        !(weapon.category == EquipmentCategory.simpleMelee ||
+            weapon.category == EquipmentCategory.martialMelee)) {
       return 0;
     }
     return ClassResourceRules.rageDamageBonus(
-        ClassResourceRules.level(hero, 'Barbar'));
+      ClassResourceRules.level(hero, 'Barbar'),
+    );
   }
 
   /// Only known typed damage can be halved. Never invent enemy damage types.
-  static int effectiveIncomingDamage(Encounter fight, HeroCharacter hero,
-      int amount) {
+  static int effectiveIncomingDamage(
+    Encounter fight,
+    HeroCharacter hero,
+    int amount,
+  ) {
     if (amount < 0) {
       throw RangeError.value(amount, 'damage');
     }
-    if (!rageActive(fight) || fight.enemyDamageType.isEmpty ||
+    if (!rageActive(fight) ||
+        fight.enemyDamageType.isEmpty ||
         hasHeavyArmor(hero)) {
       return amount;
     }
     final kind = DamageType.values.byName(fight.enemyDamageType);
-    final physical = kind == DamageType.bludgeoning ||
-        kind == DamageType.piercing || kind == DamageType.slashing;
-    return DamageRules.resolve([DamageComponent(kind, amount)],
-      defenses: DamageDefenses(resistances: physical ? [kind] : [])).total;
+    final physical =
+        kind == DamageType.bludgeoning ||
+        kind == DamageType.piercing ||
+        kind == DamageType.slashing;
+    return DamageRules.resolve([
+      DamageComponent(kind, amount),
+    ], defenses: DamageDefenses(resistances: physical ? [kind] : [])).total;
   }
 
   /// Attack rolls extend Rage through the end of the following turn.

@@ -61,13 +61,16 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
   @override
   void initState() {
     super.initState();
-    _selectedClass = findSrdClass(widget.currentClass) ?? srdCharacterClasses.first;
+    _selectedClass =
+        findSrdClass(widget.currentClass) ?? srdCharacterClasses.first;
     _skills = widget.existingSkills
         .where((value) => _selectedClass.skillChoices.contains(value))
         .take(_selectedClass.skillCount)
         .toSet();
-    _useHp = !widget.hasExistingHitPoints &&
-        widget.characterLevel == 1 && widget.constitutionScore != null;
+    _useHp =
+        !widget.hasExistingHitPoints &&
+        widget.characterLevel == 1 &&
+        widget.constitutionScore != null;
   }
 
   StartingHitPoints? get _startingHitPoints {
@@ -92,11 +95,13 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
         skills: _skills,
         kitIndex: _kitIndex == -1 ? null : _kitIndex,
       );
-      Navigator.of(context).pop(SrdClassSetupResult(
-        selection: selection,
-        replaceExistingProficiencies: _replace,
-        useSuggestedHitPoints: _useHp && _startingHitPoints != null,
-      ));
+      Navigator.of(context).pop(
+        SrdClassSetupResult(
+          selection: selection,
+          replaceExistingProficiencies: _replace,
+          useSuggestedHitPoints: _useHp && _startingHitPoints != null,
+        ),
+      );
     } on FormatException catch (error) {
       setState(() => _error = error.message);
     }
@@ -105,7 +110,8 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
   @override
   Widget build(BuildContext context) {
     final hp = _startingHitPoints;
-    final hasProficiencies = widget.existingSkills.isNotEmpty ||
+    final hasProficiencies =
+        widget.existingSkills.isNotEmpty ||
         widget.existingSavingThrows.isNotEmpty;
     return AlertDialog(
       key: const ValueKey('srd-class-dialog'),
@@ -166,10 +172,13 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
                     key: ValueKey('srd-skill-$skill'),
                     label: Text(skill),
                     selected: _skills.contains(skill),
-                    onSelected: _skills.contains(skill) ||
+                    onSelected:
+                        _skills.contains(skill) ||
                             _skills.length < _selectedClass.skillCount
                         ? (selected) => setState(() {
-                            selected ? _skills.add(skill) : _skills.remove(skill);
+                            selected
+                                ? _skills.add(skill)
+                                : _skills.remove(skill);
                             _error = null;
                           })
                         : null,
@@ -200,17 +209,21 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
                 value: _useHp,
                 onChanged: (value) => setState(() => _useHp = value ?? false),
                 title: Text('Start-TP vorschlagen: ${hp.maximum} TP'),
-                subtitle: Text(widget.hasExistingHitPoints
-                    ? 'Achtung: Dies ersetzt nur nach deiner Bestätigung '
-                      'bisherige aktuelle und maximale TP.'
-                    : 'W${hp.hitDie} plus Konstitutionsmodifikator. '
-                      'Übernahme erst mit der Bestätigung.'),
+                subtitle: Text(
+                  widget.hasExistingHitPoints
+                      ? 'Achtung: Dies ersetzt nur nach deiner Bestätigung '
+                            'bisherige aktuelle und maximale TP.'
+                      : 'W${hp.hitDie} plus Konstitutionsmodifikator. '
+                            'Übernahme erst mit der Bestätigung.',
+                ),
               ),
             ] else
               const Padding(
                 padding: EdgeInsets.only(top: 12),
-                child: Text('Start-TP erst auf Stufe 1 und mit bestätigtem '
-                    'Konstitutionswert berechenbar.'),
+                child: Text(
+                  'Start-TP erst auf Stufe 1 und mit bestätigtem '
+                  'Konstitutionswert berechenbar.',
+                ),
               ),
             if (widget.allowEquipment) ...[
               const SizedBox(height: 12),
@@ -239,19 +252,24 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
                 Text('Startgold: ${_selectedClass.kits[_kitIndex].gold} GM'),
                 for (final item in _selectedClass.kits[_kitIndex].items)
                   Text('• ${item.quantity} × ${item.name}'),
-                const Text('Noch keine automatische Ausrüstung oder RK-Berechnung.'),
+                const Text(
+                  'Noch keine automatische Ausrüstung oder RK-Berechnung.',
+                ),
               ],
             ] else
               const Padding(
                 padding: EdgeInsets.only(top: 12),
-                child: Text('Bestehendes Inventar und Gold bleiben unverändert. '
-                    'Neue Ausrüstung kann im Inventar manuell ergänzt werden.'),
+                child: Text(
+                  'Bestehendes Inventar und Gold bleiben unverändert. '
+                  'Neue Ausrüstung kann im Inventar manuell ergänzt werden.',
+                ),
               ),
             if (_error != null) ...[
               const SizedBox(height: 12),
-              Text(_error!, style: TextStyle(
-                color: Theme.of(context).colorScheme.error,
-              )),
+              Text(
+                _error!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
             ],
           ],
         ),
@@ -263,7 +281,9 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
         ),
         FilledButton(
           key: const ValueKey('srd-confirm-class'),
-          onPressed: _skills.length == _selectedClass.skillCount ? _accept : null,
+          onPressed: _skills.length == _selectedClass.skillCount
+              ? _accept
+              : null,
           child: const Text('Klasse und Fertigkeiten übernehmen'),
         ),
       ],

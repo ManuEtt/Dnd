@@ -134,8 +134,9 @@ void main() {
         HeroCharacter(id: 'hero', name: 'Elowen'),
         (hero) => result = hero,
       );
-      final addItemButton =
-          find.byKey(const ValueKey('character-inventory-add'));
+      final addItemButton = find.byKey(
+        const ValueKey('character-inventory-add'),
+      );
       final editorList = find.byType(ListView).first;
       // Inventory is near the end of a lazily built ListView. Large
       // scrollUntilVisible steps can move past the short button before it is
@@ -159,32 +160,39 @@ void main() {
     },
   );
 
-  testWidgets('SRD catalog item is stored with an immutable catalog reference',
-      (tester) async {
-    HeroCharacter? result;
-    await openEditor(tester,
-      HeroCharacter(id: 'hero', name: 'Elowen'), (hero) => result = hero);
-    final open = find.byKey(const ValueKey('character-catalog-open'));
-    final list = find.byType(ListView).first;
-    for (var step = 0; step < 60; step++) {
-      if (open.hitTestable().evaluate().isNotEmpty) break;
-      await tester.drag(list, const Offset(0, -160));
+  testWidgets(
+    'SRD catalog item is stored with an immutable catalog reference',
+    (tester) async {
+      HeroCharacter? result;
+      await openEditor(
+        tester,
+        HeroCharacter(id: 'hero', name: 'Elowen'),
+        (hero) => result = hero,
+      );
+      final open = find.byKey(const ValueKey('character-catalog-open'));
+      final list = find.byType(ListView).first;
+      for (var step = 0; step < 60; step++) {
+        if (open.hitTestable().evaluate().isNotEmpty) break;
+        await tester.drag(list, const Offset(0, -160));
+        await tester.pumpAndSettle();
+      }
+      expect(open.hitTestable(), findsOneWidget);
+      await tester.tap(open);
       await tester.pumpAndSettle();
-    }
-    expect(open.hitTestable(), findsOneWidget);
-    await tester.tap(open);
-    await tester.pumpAndSettle();
-    await tester.enterText(
-      find.byKey(const ValueKey('equipment-catalog-search')), 'Longsword');
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(
-      const ValueKey('equipment-catalog-item-weapon-longsword')));
-    await tester.pumpAndSettle();
-    await save(tester);
-    expect(result, isNotNull);
-    expect(result!.inventory, hasLength(1));
-    expect(result!.inventory.single.name, 'Langschwert');
-    expect(result!.inventory.single.catalogId, 'weapon-longsword');
-  });
-
+      await tester.enterText(
+        find.byKey(const ValueKey('equipment-catalog-search')),
+        'Longsword',
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey('equipment-catalog-item-weapon-longsword')),
+      );
+      await tester.pumpAndSettle();
+      await save(tester);
+      expect(result, isNotNull);
+      expect(result!.inventory, hasLength(1));
+      expect(result!.inventory.single.name, 'Langschwert');
+      expect(result!.inventory.single.catalogId, 'weapon-longsword');
+    },
+  );
 }

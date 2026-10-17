@@ -9,11 +9,11 @@ import 'models.dart';
 class MonkPerfectFocus {
   const MonkPerfectFocus._();
 
-  static PerfectFocusResult onInitiative(HeroCharacter hero, {
+  static PerfectFocusResult onInitiative(
+    HeroCharacter hero, {
     bool uncannyMetabolismUsed = false,
   }) {
-    if (ClassResourceRules.level(hero, 'Mönch') < 15 ||
-        uncannyMetabolismUsed) {
+    if (ClassResourceRules.level(hero, 'Mönch') < 15 || uncannyMetabolismUsed) {
       return PerfectFocusResult(hero: hero, recovered: 0);
     }
     final maximum = ClassResourceRules.maximum(hero, 'focusPoints');

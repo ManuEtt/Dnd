@@ -13,34 +13,45 @@ class MonkSelfRestoration {
   static bool unlocked(HeroCharacter hero) =>
       ClassResourceRules.level(hero, 'Mönch') >= 10;
 
-  static List<String> choices(HeroCharacter hero) =>
-      !unlocked(hero) ? const [] : List.unmodifiable(
-        hero.conditions.where(curable.contains).toSet(),
-      );
+  static List<String> choices(HeroCharacter hero) => !unlocked(hero)
+      ? const []
+      : List.unmodifiable(hero.conditions.where(curable.contains).toSet());
 
   static void validateChoice(HeroCharacter hero, String choice) {
     if (!choices(hero).contains(choice)) {
-      throw StateError('Selbstwiederherstellung kann diesen Zustand nicht beenden.');
+      throw StateError(
+        'Selbstwiederherstellung kann diesen Zustand nicht beenden.',
+      );
     }
   }
 
-  static SelfRestorationResult atEndOfTurn(HeroCharacter hero,
-      {String choice = ''}) {
+  static SelfRestorationResult atEndOfTurn(
+    HeroCharacter hero, {
+    String choice = '',
+  }) {
     final eligible = choices(hero);
     // A condition may have been removed by a separately confirmed effect
     // after the player made the choice. Do not crash the turn on stale data.
     final validChoice = choice.isNotEmpty && eligible.contains(choice);
-    final selected = validChoice ? choice :
-        eligible.length == 1 ? eligible.single : '';
+    final selected = validChoice
+        ? choice
+        : eligible.length == 1
+        ? eligible.single
+        : '';
     if (selected.isEmpty) {
-      return SelfRestorationResult(hero: hero, removed: '',
-          choiceRequired: eligible.length > 1);
+      return SelfRestorationResult(
+        hero: hero,
+        removed: '',
+        choiceRequired: eligible.length > 1,
+      );
     }
     return SelfRestorationResult(
-      hero: hero.copyWith(conditions: [
-        for (final condition in hero.conditions)
-          if (condition != selected) condition,
-      ]),
+      hero: hero.copyWith(
+        conditions: [
+          for (final condition in hero.conditions)
+            if (condition != selected) condition,
+        ],
+      ),
       removed: selected,
       choiceRequired: false,
     );
@@ -48,8 +59,11 @@ class MonkSelfRestoration {
 }
 
 class SelfRestorationResult {
-  const SelfRestorationResult({required this.hero, required this.removed,
-    required this.choiceRequired});
+  const SelfRestorationResult({
+    required this.hero,
+    required this.removed,
+    required this.choiceRequired,
+  });
   final HeroCharacter hero;
   final String removed;
   final bool choiceRequired;

@@ -42,37 +42,65 @@ void main() {
     expect(bow.hasProperty('heavy'), isTrue);
     expect(bow.rangeLong, 600);
     expect(bow.ammunitionType, 'arrows');
-    expect(SrdEquipmentCatalog.byId('weapon-glaive')!.hasProperty('reach'), isTrue);
+    expect(
+      SrdEquipmentCatalog.byId('weapon-glaive')!.hasProperty('reach'),
+      isTrue,
+    );
   });
 
   test('Armor AC rules cap positive DEX, preserve negative DEX', () {
-    expect(SrdEquipmentCatalog.byId('armor-leather-armor')!
-      .armorClassWithDex(4), 15);
-    expect(SrdEquipmentCatalog.byId('armor-leather-armor')!
-      .armorClassWithDex(null), isNull);
-    expect(SrdEquipmentCatalog.byId('armor-scale-mail')!
-      .armorClassWithDex(5), 16);
-    expect(SrdEquipmentCatalog.byId('armor-scale-mail')!
-      .armorClassWithDex(-1), 13);
-    expect(SrdEquipmentCatalog.byId('armor-chain-mail')!
-      .armorClassWithDex(null), 16);
+    expect(
+      SrdEquipmentCatalog.byId('armor-leather-armor')!.armorClassWithDex(4),
+      15,
+    );
+    expect(
+      SrdEquipmentCatalog.byId('armor-leather-armor')!.armorClassWithDex(null),
+      isNull,
+    );
+    expect(
+      SrdEquipmentCatalog.byId('armor-scale-mail')!.armorClassWithDex(5),
+      16,
+    );
+    expect(
+      SrdEquipmentCatalog.byId('armor-scale-mail')!.armorClassWithDex(-1),
+      13,
+    );
+    expect(
+      SrdEquipmentCatalog.byId('armor-chain-mail')!.armorClassWithDex(null),
+      16,
+    );
     expect(SrdEquipmentCatalog.byId('armor-chain-mail')!.strengthMin, 13);
     expect(SrdEquipmentCatalog.byId('armor-shield')!.isShield, isTrue);
-    expect(SrdEquipmentCatalog.byId('armor-shield')!
-      .armorClassWithDex(4), isNull); // shield adds +2 only with training
+    expect(
+      SrdEquipmentCatalog.byId('armor-shield')!.armorClassWithDex(4),
+      isNull,
+    ); // shield adds +2 only with training
   });
 
   test('German/English item search and category filters', () {
-    expect(SrdEquipmentCatalog.search('Langschwert').single.id,
-      'weapon-longsword');
-    expect(SrdEquipmentCatalog.search('Longsword').single.id,
-      'weapon-longsword');
-    expect(SrdEquipmentCatalog.search('  LANGSCHWERT ').single.id,
-      'weapon-longsword');
-    expect(SrdEquipmentCatalog.search('',
-      category: EquipmentCategory.shield).single.id, 'armor-shield');
-    expect(SrdEquipmentCatalog.search('Longsword',
-      category: EquipmentCategory.gear), isEmpty);
+    expect(
+      SrdEquipmentCatalog.search('Langschwert').single.id,
+      'weapon-longsword',
+    );
+    expect(
+      SrdEquipmentCatalog.search('Longsword').single.id,
+      'weapon-longsword',
+    );
+    expect(
+      SrdEquipmentCatalog.search('  LANGSCHWERT ').single.id,
+      'weapon-longsword',
+    );
+    expect(
+      SrdEquipmentCatalog.search(
+        '',
+        category: EquipmentCategory.shield,
+      ).single.id,
+      'armor-shield',
+    );
+    expect(
+      SrdEquipmentCatalog.search('Longsword', category: EquipmentCategory.gear),
+      isEmpty,
+    );
     expect(SrdEquipmentCatalog.byId('missing'), isNull);
   });
 
@@ -86,13 +114,16 @@ void main() {
 
   test('Inventory catalog ID persists while legacy records are unmodified', () {
     final legacy = InventoryItem.fromJson({
-      'id': 'old', 'name': 'Magischer Schlüssel', 'quantity': 2,
+      'id': 'old',
+      'name': 'Magischer Schlüssel',
+      'quantity': 2,
       'description': 'Historische Notiz',
     });
     expect(legacy.catalogId, '');
     expect(legacy.toJson().containsKey('catalogId'), isFalse);
     final selected = InventoryItem(
-      id: 'new', name: 'Langschwert',
+      id: 'new',
+      name: 'Langschwert',
       description: SrdEquipmentCatalog.byId('weapon-longsword')!.detail,
       catalogId: 'weapon-longsword',
     );

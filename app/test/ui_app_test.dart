@@ -126,7 +126,9 @@ void main() {
       // Disabling hit-test warnings would hide a genuine navigation failure.
       final demoStart = find.text('Kostenlose Demo starten');
       await tester.scrollUntilVisible(
-        demoStart, 180, scrollable: find.byType(Scrollable).first,
+        demoStart,
+        180,
+        scrollable: find.byType(Scrollable).first,
       );
       await tester.ensureVisible(demoStart);
       await tester.pumpAndSettle();
@@ -149,7 +151,8 @@ void main() {
       await tester.tap(find.text('Tagebuch'));
       await tester.pumpAndSettle();
       await tester.scrollUntilVisible(
-        find.text('Dauerhafte Erinnerungen'), 280,
+        find.text('Dauerhafte Erinnerungen'),
+        280,
         scrollable: find.byType(Scrollable).first,
       );
       expect(find.text('Dauerhafte Erinnerungen'), findsOneWidget);
@@ -181,19 +184,31 @@ void main() {
       final controller = GameController(repository: repository);
       final voice = _SilentVoice();
       await tester.runAsync(controller.createDemo);
-      await tester.pumpWidget(LivingGameApp(controller: controller, voice: voice));
+      await tester.pumpWidget(
+        LivingGameApp(controller: controller, voice: voice),
+      );
       await tester.tap(find.text('Abenteuer'));
       await tester.pumpAndSettle();
 
       final shortcuts = find.byKey(const ValueKey('adventure-fixed-shortcuts'));
       expect(shortcuts, findsOneWidget);
       // The dock must be a real, non-scrolling Scaffold.bottomNavigationBar.
-      final dockScaffolds = tester.widgetList<Scaffold>(find.byType(Scaffold))
-          .where((scaffold) => scaffold.bottomNavigationBar is FantasyPinnedActionBar);
+      final dockScaffolds = tester
+          .widgetList<Scaffold>(find.byType(Scaffold))
+          .where(
+            (scaffold) =>
+                scaffold.bottomNavigationBar is FantasyPinnedActionBar,
+          );
       expect(dockScaffolds, hasLength(1));
       // Only the dock offers microphone and the generic W20 shortcut.
-      expect(find.byKey(const ValueKey('adventure-shortcut-speech')), findsOneWidget);
-      expect(find.byKey(const ValueKey('adventure-shortcut-roll')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('adventure-shortcut-speech')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('adventure-shortcut-roll')),
+        findsOneWidget,
+      );
       expect(find.text('Sprechen'), findsNothing);
       final before = tester.getTopLeft(shortcuts);
       final navigationTop = tester.getTopLeft(find.byType(NavigationBar)).dy;
@@ -201,13 +216,20 @@ void main() {
       await tester.drag(find.byType(ListView).first, const Offset(0, -360));
       await tester.pumpAndSettle();
       expect(tester.getTopLeft(shortcuts).dy, closeTo(before.dy, 1));
-      expect(find.byKey(const ValueKey('adventure-shortcut-inspect')).hitTestable(),
-        findsOneWidget);
-      await tester.tap(find.byKey(const ValueKey('adventure-shortcut-inspect')));
+      expect(
+        find.byKey(const ValueKey('adventure-shortcut-inspect')).hitTestable(),
+        findsOneWidget,
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('adventure-shortcut-inspect')),
+      );
       await waitForController(tester, controller);
       await tester.pumpAndSettle();
       expect(controller.currentCampaign!.messages.last.text, isNotEmpty);
-      expect(find.byKey(const ValueKey('adventure-fixed-shortcuts')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('adventure-fixed-shortcuts')),
+        findsOneWidget,
+      );
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
       controller.dispose();
@@ -243,10 +265,15 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('adventure-memory-recap')));
       await waitForController(tester, controller);
       await tester.pumpAndSettle();
-      expect(find.text('Ich möchte später den Brunnen erkunden.'), findsOneWidget);
+      expect(
+        find.text('Ich möchte später den Brunnen erkunden.'),
+        findsOneWidget,
+      );
       expect(controller.currentCampaign!.events.last.type, 'memory.recalled');
-      expect(controller.currentCampaign!.messages.last.text,
-          contains('Waldlicht'));
+      expect(
+        controller.currentCampaign!.messages.last.text,
+        contains('Waldlicht'),
+      );
       expect(jsonEncode(controller.currentCampaign!.hero.toJson()), heroBefore);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
@@ -553,7 +580,9 @@ void main() {
     );
     await tester.tap(find.text('Abenteuer'));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('adventure-open-character-sheet')));
+    await tester.tap(
+      find.byKey(const ValueKey('adventure-open-character-sheet')),
+    );
     await tester.pumpAndSettle();
     expect(find.text('Charakterbogen'), findsOneWidget);
     expect(find.text('RÜSTUNGSKLASSE'), findsOneWidget);

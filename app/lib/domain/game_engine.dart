@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'dice_engine.dart';
 import 'condition_rules.dart';
 import 'character_rule_engine.dart';
+import 'character_effect_rules.dart';
+import 'healing_spell_rules.dart';
+import 'damage_rules.dart';
 import 'class_progression_rules.dart';
 import 'class_feature_resources.dart';
 import 'class_resource_rules.dart';
@@ -117,7 +120,9 @@ class GameEngine {
 
   /// Creates a new independent campaign from a validated generative story plan.
   /// Nothing about the hero's rules or inventory comes from the provider.
-  Campaign createAiCampaign(HeroCharacter hero, AiStoryPlan plan, {
+  Campaign createAiCampaign(
+    HeroCharacter hero,
+    AiStoryPlan plan, {
     required String provider,
   }) {
     if (!const ['mock', 'openai'].contains(provider)) {
@@ -125,14 +130,30 @@ class GameEngine {
     }
     final validatedHero = HeroCharacter.fromJson(hero.toJson());
     final campaign = Campaign(
-      id: _id('story'), name: plan.title, world: plan.world,
-      sessionId: _id('session'), hero: validatedHero, scene: plan.opening,
-      messages: [NarrativeMessage(id: _id('message'), role: 'gm',
-        text: plan.opening, timestamp: _clock())],
-      storyThreads: plan.threads, npcs: plan.npcs, places: plan.places,
+      id: _id('story'),
+      name: plan.title,
+      world: plan.world,
+      sessionId: _id('session'),
+      hero: validatedHero,
+      scene: plan.opening,
+      messages: [
+        NarrativeMessage(
+          id: _id('message'),
+          role: 'gm',
+          text: plan.opening,
+          timestamp: _clock(),
+        ),
+      ],
+      storyThreads: plan.threads,
+      npcs: plan.npcs,
+      places: plan.places,
       storyBible: {
-        'mode': 'ai', 'provider': provider, 'premise': plan.premise,
-        'secret': plan.secret, 'goal': plan.goal, 'turnCount': '0',
+        'mode': 'ai',
+        'provider': provider,
+        'premise': plan.premise,
+        'secret': plan.secret,
+        'goal': plan.goal,
+        'turnCount': '0',
       },
       facts: const {'storySource': 'generated'},
     );
@@ -155,17 +176,24 @@ class GameEngine {
         !const ['mock', 'openai'].contains(provider) ||
         update.events.length != 1 ||
         update.events.single.type != 'narrative.turn' ||
-        current.messages.isEmpty || current.messages.last.role != 'gm') {
-      throw const FormatException('Dieser Spielzug ist nicht KI-fortschreibbar.');
+        current.messages.isEmpty ||
+        current.messages.last.role != 'gm') {
+      throw const FormatException(
+        'Dieser Spielzug ist nicht KI-fortschreibbar.',
+      );
     }
     // Do not trust callers to have parsed and bounded external response fields.
     final replay = AiStoryStep.fromJson({
       'narration': step.narration,
-      'threadUpdates': [for (final t in step.threadUpdates)
-        {'id': t.id, 'status': t.status, 'description': t.description}],
+      'threadUpdates': [
+        for (final t in step.threadUpdates)
+          {'id': t.id, 'status': t.status, 'description': t.description},
+      ],
       'newThreads': [for (final t in step.newThreads) t.toJson()],
-      'npcUpdates': [for (final n in step.npcUpdates)
-        {'id': n.id, 'relationship': n.relationship, 'note': n.note}],
+      'npcUpdates': [
+        for (final n in step.npcUpdates)
+          {'id': n.id, 'relationship': n.relationship, 'note': n.note},
+      ],
       'adventure': step.adventure?.toJson(),
     }, current);
     final now = _clock();
@@ -175,48 +203,72 @@ class GameEngine {
     final pastTurns = int.tryParse(current.storyBible['turnCount'] ?? '0') ?? 0;
     final next = current.copyWith(
       scene: replay.narration,
-      messages: [...current.messages.take(current.messages.length - 1),
-        NarrativeMessage(id: oldLast.id, role: 'gm',
-          text: replay.narration, timestamp: oldLast.timestamp)],
-      storyThreads: [for (final t in current.storyThreads)
-        if (changes.containsKey(t.id))
-          t.copyWith(status: changes[t.id]!.status,
-            description: changes[t.id]!.description)
-        else t,
-        ...replay.newThreads],
-      npcs: [for (final n in current.npcs)
-        relationships.containsKey(n.id)
-          ? n.copyWith(relationship: relationships[n.id]!.relationship)
-          : n],
+      messages: [
+        ...current.messages.take(current.messages.length - 1),
+        NarrativeMessage(
+          id: oldLast.id,
+          role: 'gm',
+          text: replay.narration,
+          timestamp: oldLast.timestamp,
+        ),
+      ],
+      storyThreads: [
+        for (final t in current.storyThreads)
+          if (changes.containsKey(t.id))
+            t.copyWith(
+              status: changes[t.id]!.status,
+              description: changes[t.id]!.description,
+            )
+          else
+            t,
+        ...replay.newThreads,
+      ],
+      npcs: [
+        for (final n in current.npcs)
+          relationships.containsKey(n.id)
+              ? n.copyWith(relationship: relationships[n.id]!.relationship)
+              : n,
+      ],
       npcRelationshipNotes: [
         ...current.npcRelationshipNotes,
         for (final n in replay.npcUpdates)
-          NpcRelationshipNote(id: _id('npc-note'), npcId: n.id,
-            relationship: n.relationship, note: n.note, recordedAt: now),
+          NpcRelationshipNote(
+            id: _id('npc-note'),
+            npcId: n.id,
+            relationship: n.relationship,
+            note: n.note,
+            recordedAt: now,
+          ),
       ],
-      storyBible: {...current.storyBible,
-        'turnCount': '${pastTurns + 1}'},
+      storyBible: {...current.storyBible, 'turnCount': '${pastTurns + 1}'},
       adventureOffer: replay.adventure ?? current.adventureOffer,
     );
     final oldEvent = update.events.single;
-    final payload = jsonDecode(jsonEncode(oldEvent.payload))
-        as Map<String, dynamic>;
+    final payload =
+        jsonDecode(jsonEncode(oldEvent.payload)) as Map<String, dynamic>;
     payload['storyProvider'] = provider;
     payload['playerDecision'] = decision.length > 2000
-        ? decision.substring(0, 2000) : decision;
+        ? decision.substring(0, 2000)
+        : decision;
     payload['threadUpdates'] = [for (final e in replay.threadUpdates) e.id];
     payload['newThreads'] = [for (final e in replay.newThreads) e.id];
     payload['npcUpdates'] = [for (final e in replay.npcUpdates) e.id];
     payload['adventureOffer'] = replay.adventure?.id;
-    payload['stateAfter'] = jsonDecode(jsonEncode(
-      next.copyWith(events: const []).toJson()));
-    final event = GameEvent(
-      id: oldEvent.id, campaignId: oldEvent.campaignId,
-      sessionId: oldEvent.sessionId, timestamp: oldEvent.timestamp,
-      type: oldEvent.type, entities: oldEvent.entities, payload: payload,
+    payload['stateAfter'] = jsonDecode(
+      jsonEncode(next.copyWith(events: const []).toJson()),
     );
-    final result = next.copyWith(events: [
-      ...current.events.take(current.events.length - 1), event]);
+    final event = GameEvent(
+      id: oldEvent.id,
+      campaignId: oldEvent.campaignId,
+      sessionId: oldEvent.sessionId,
+      timestamp: oldEvent.timestamp,
+      type: oldEvent.type,
+      entities: oldEvent.entities,
+      payload: payload,
+    );
+    final result = next.copyWith(
+      events: [...current.events.take(current.events.length - 1), event],
+    );
     Campaign.fromJson(result.toJson());
     return GameUpdate(campaign: result, events: [event]);
   }
@@ -225,75 +277,123 @@ class GameEngine {
   /// quest + one vetted enemy encounter. Initiatives are rolled locally.
   GameUpdate acceptAdventure(Campaign campaign) {
     final offer = campaign.adventureOffer;
-    if (offer == null || campaign.storyBible['mode'] != 'ai' ||
+    if (offer == null ||
+        campaign.storyBible['mode'] != 'ai' ||
         campaign.pendingRoll != null ||
         (campaign.encounter != null && !campaign.encounter!.isFinished)) {
       throw const FormatException('Keine annehmbare Begegnung vorhanden.');
     }
-    if (!campaign.hero.isComplete || campaign.hero.isDead ||
+    if (!campaign.hero.isComplete ||
+        campaign.hero.isDead ||
         campaign.hero.hitPoints == 0) {
-      throw const FormatException('Vor der Begegnung muss der Held kampffähig und sein Charakterbogen vollständig sein.');
+      throw const FormatException(
+        'Vor der Begegnung muss der Held kampffähig und sein Charakterbogen vollständig sein.',
+      );
     }
     final valid = AdventureOffer.fromJson(offer.toJson());
     final questId = 'ai-${valid.id}';
     if (campaign.quests.length >= 100 ||
         campaign.quests.any((q) => q.id == questId) ||
         campaign.hero.inventory.any((item) => item.id == 'loot-${valid.id}')) {
-      throw const FormatException('Diese Begegnung wurde bereits gespielt oder das Questlimit ist erreicht.');
+      throw const FormatException(
+        'Diese Begegnung wurde bereits gespielt oder das Questlimit ist erreicht.',
+      );
     }
     if (valid.archetype == 'investigation') {
       final perception = CharacterRuleEngine.perception(campaign.hero);
       final bonus = perception.modifier;
       final next = campaign.copyWith(
-        adventureOffer: null, scene: valid.description,
-        quests: [...campaign.quests, Quest(id: questId, title: valid.questTitle,
-          description: valid.questDescription)],
-        pendingRoll: PendingRoll(id: _id('roll'), type: 'perception',
-          modifier: bonus, difficulty: 10,
+        adventureOffer: null,
+        scene: valid.description,
+        quests: [
+          ...campaign.quests,
+          Quest(
+            id: questId,
+            title: valid.questTitle,
+            description: valid.questDescription,
+          ),
+        ],
+        pendingRoll: PendingRoll(
+          id: _id('roll'),
+          type: 'perception',
+          modifier: bonus,
+          difficulty: 10,
           advantage: perception.advantage,
-          disadvantage: perception.disadvantage),
-        facts: {...campaign.facts, 'aiEncounterQuestId': questId,
-          'aiEncounterOfferId': valid.id, 'aiEncounterLoot': 'Spurenkarte'},
+          disadvantage: perception.disadvantage,
+        ),
+        facts: {
+          ...campaign.facts,
+          'aiEncounterQuestId': questId,
+          'aiEncounterOfferId': valid.id,
+          'aiEncounterLoot': 'Spurenkarte',
+        },
       );
-      return _commit(campaign, next,
+      return _commit(
+        campaign,
+        next,
         '${valid.title}: ${valid.description} Würfle einen W20 für Wahrnehmung '
         'mit ${_signed(bonus)}; die Schwierigkeit beträgt 10.',
-        type: 'adventure.investigationStarted', payload: {
-          'questId': questId, 'template': 'investigation', 'difficulty': 10,
-        });
+        type: 'adventure.investigationStarted',
+        payload: {
+          'questId': questId,
+          'template': 'investigation',
+          'difficulty': 10,
+        },
+      );
     }
     final foe = AdventureCatalog.forHero(valid.archetype, campaign.hero);
     final initiative = CharacterRuleEngine.initiative(campaign.hero);
-    final heroInitiative = dice.check(modifier: initiative.modifier,
-        advantage: initiative.advantage,
-        disadvantage: initiative.disadvantage);
+    final heroInitiative = dice.check(
+      modifier: initiative.modifier,
+      advantage: initiative.advantage,
+      disadvantage: initiative.disadvantage,
+    );
     final enemyInitiative = dice.check(modifier: 0);
     final focus = MonkPerfectFocus.onInitiative(campaign.hero);
     var next = campaign.copyWith(
       hero: focus.hero,
       adventureOffer: null,
-      quests: [...campaign.quests, Quest(id: questId, title: valid.questTitle,
-        description: valid.questDescription)],
-      encounter: Encounter(id: _id('encounter'), enemyName: foe.name,
-        enemyHitPoints: foe.hitPoints, enemyMaxHitPoints: foe.hitPoints,
-        enemyArmorClass: foe.armorClass, enemyAttackBonus: foe.attackBonus,
-        enemyDamage: foe.damage, heroInitiative: heroInitiative.total,
+      quests: [
+        ...campaign.quests,
+        Quest(
+          id: questId,
+          title: valid.questTitle,
+          description: valid.questDescription,
+        ),
+      ],
+      encounter: Encounter(
+        id: _id('encounter'),
+        enemyName: foe.name,
+        enemyHitPoints: foe.hitPoints,
+        enemyMaxHitPoints: foe.hitPoints,
+        enemyArmorClass: foe.armorClass,
+        enemyAttackBonus: foe.attackBonus,
+        enemyDamage: foe.damage,
+        heroInitiative: heroInitiative.total,
         enemyInitiative: enemyInitiative.total,
-        movementRemaining: CharacterRuleEngine.movementWholeMeters(campaign.hero)!),
+        movementRemaining: CharacterRuleEngine.movementWholeMeters(
+          campaign.hero,
+        )!,
+      ),
       scene: valid.description,
-      facts: {...campaign.facts,
+      facts: {
+        ...campaign.facts,
         'aiEncounterQuestId': questId,
         'aiEncounterOfferId': valid.id,
         'aiEncounterLoot': foe.loot,
       },
     );
-    var narration = '${valid.title}: ${valid.description} '
-      'Die Initiative beträgt ${heroInitiative.total} für ${campaign.hero.name} '
-      'und ${enemyInitiative.total} für ${foe.name}. ';
-    final details = <String, dynamic>{'questId': questId,
-      'template': valid.archetype, 'heroInitiative': heroInitiative.toJson(),
+    var narration =
+        '${valid.title}: ${valid.description} '
+        'Die Initiative beträgt ${heroInitiative.total} für ${campaign.hero.name} '
+        'und ${enemyInitiative.total} für ${foe.name}. ';
+    final details = <String, dynamic>{
+      'questId': questId,
+      'template': valid.archetype,
+      'heroInitiative': heroInitiative.toJson(),
       'enemyInitiative': enemyInitiative.toJson(),
-      'focusRecoveredAtInitiative': focus.recovered};
+      'focusRecoveredAtInitiative': focus.recovered,
+    };
     if (enemyInitiative.total > heroInitiative.total) {
       final turn = _enemyTurn(next, advanceRound: false);
       next = turn.campaign;
@@ -301,8 +401,13 @@ class GameEngine {
       details['enemyTurn'] = turn.details;
     }
     narration += 'Angreifen, ausweichen oder fliehen?';
-    return _commit(campaign, next, narration,
-      type: 'adventure.accepted', payload: details);
+    return _commit(
+      campaign,
+      next,
+      narration,
+      type: 'adventure.accepted',
+      payload: details,
+    );
   }
 
   /// A rejected offer has no mechanical side effects.
@@ -311,9 +416,13 @@ class GameEngine {
     if (offer == null) {
       throw const FormatException('Es gibt keinen offenen Vorschlag.');
     }
-    return _commit(campaign, campaign.copyWith(adventureOffer: null),
+    return _commit(
+      campaign,
+      campaign.copyWith(adventureOffer: null),
       'Du entscheidest dich gegen ${offer.title}. Die Welt bleibt offen für andere Wege.',
-      type: 'adventure.rejected', payload: {'offerId': offer.id});
+      type: 'adventure.rejected',
+      payload: {'offerId': offer.id},
+    );
   }
 
   /// Saves a bounded summary of structured, already confirmed world state.
@@ -351,8 +460,10 @@ class GameEngine {
     }
     final normalized = relationship.trim();
     final description = note.trim();
-    if (normalized.isEmpty || normalized.length > 80 ||
-        description.isEmpty || description.length > 500) {
+    if (normalized.isEmpty ||
+        normalized.length > 80 ||
+        description.isEmpty ||
+        description.length > 500) {
       throw const FormatException(
         'Beziehung (1–80 Zeichen) und Notiz (1–500 Zeichen) angeben.',
       );
@@ -394,16 +505,20 @@ class GameEngine {
   }) {
     final cleanTitle = title.trim();
     final cleanDescription = description.trim();
-    if (cleanTitle.isEmpty || cleanTitle.length > 120 ||
+    if (cleanTitle.isEmpty ||
+        cleanTitle.length > 120 ||
         cleanDescription.length > 1000 ||
         !const ['open', 'resolved', 'abandoned'].contains(status)) {
-      throw const FormatException('Titel, Notiz oder Handlungsstatus ungültig.');
+      throw const FormatException(
+        'Titel, Notiz oder Handlungsstatus ungültig.',
+      );
     }
     if (threadId == null && campaign.storyThreads.length >= 100) {
       throw const FormatException('Maximal 100 Handlungsstränge möglich.');
     }
     if (threadId != null &&
-        campaign.storyThreads.where((thread) => thread.id == threadId).length != 1) {
+        campaign.storyThreads.where((thread) => thread.id == threadId).length !=
+            1) {
       throw const FormatException('Handlungsstrang nicht gefunden.');
     }
     final thread = StoryThread(
@@ -659,6 +774,221 @@ class GameEngine {
     );
   }
 
+  void _requireExternalEffect(Campaign campaign, String source) {
+    if (source.trim().isEmpty || source.trim().length > 200) {
+      throw const FormatException(
+        'Eine Effektquelle mit 1 bis 200 Zeichen angeben.',
+      );
+    }
+    if (campaign.pendingRoll != null) {
+      throw const FormatException(
+        'Zuerst den bereits offenen Würfelwurf abschließen.',
+      );
+    }
+    if (campaign.hero.hitPoints == null || campaign.hero.maxHitPoints == null) {
+      throw const FormatException(
+        'Zuerst die Trefferpunkte im Charakterbogen bestätigen.',
+      );
+    }
+    if (campaign.hero.isDead) {
+      throw const FormatException(
+        'Diese Effekte können einen toten Charakter nicht verändern.',
+      );
+    }
+  }
+
+  /// An explicit user-confirmed external source, never parsed out of prose.
+  GameUpdate applyDamage(
+    Campaign campaign, {
+    required String source,
+    required List<DamageComponent> components,
+    required DamageDefenses defenses,
+    bool critical = false,
+  }) {
+    _requireExternalEffect(campaign, source);
+    final effect = CharacterEffectRules.damage(
+      campaign.hero,
+      components: components,
+      defenses: CharacterEffectRules.defensesFor(
+        campaign.hero,
+        encounter: campaign.encounter,
+        declared: defenses,
+      ),
+      dice: dice,
+      critical: critical,
+    );
+    final concentration = effect.concentrationSave;
+    final concentrationText = concentration != null
+        ? ' Konzentrationsrettungswurf ${concentration.total} gegen SG '
+              '${effect.concentrationDc}: ${effect.concentrationLost ? 'misslungen' : 'gelungen'}.'
+        : effect.concentrationLost
+        ? ' Deine Konzentration endet.'
+        : '';
+    return _commit(
+      campaign,
+      campaign.copyWith(hero: effect.hero),
+      '${source.trim()}: ${effect.damage} Schaden bestätigt. '
+      '${effect.temporaryHitPointsAbsorbed} temporäre TP absorbiert; '
+      'TP ${effect.hero.hitPoints}/${effect.hero.maxHitPoints}.'
+      '$concentrationText',
+      type: 'effect.damage',
+      payload: {
+        'source': source.trim(),
+        'targetId': campaign.hero.id,
+        'critical': critical,
+        ...effect.toJson(),
+      },
+    );
+  }
+
+  GameUpdate applyHealing(
+    Campaign campaign, {
+    required String source,
+    required int amount,
+  }) {
+    _requireExternalEffect(campaign, source);
+    final hero = RulesEngine.heal(campaign.hero, amount);
+    final restored = hero.hitPoints! - campaign.hero.hitPoints!;
+    return _commit(
+      campaign,
+      campaign.copyWith(hero: hero),
+      '${source.trim()}: $restored Trefferpunkte wiederhergestellt. '
+      'TP ${hero.hitPoints}/${hero.maxHitPoints}.',
+      type: 'effect.healing',
+      payload: {
+        'source': source.trim(),
+        'targetId': hero.id,
+        'amount': amount,
+        'hitPointsRestored': restored,
+      },
+    );
+  }
+
+  GameUpdate grantTemporaryHitPoints(
+    Campaign campaign, {
+    required String source,
+    required int amount,
+    bool replaceExisting = false,
+  }) {
+    _requireExternalEffect(campaign, source);
+    final hero = RulesEngine.grantTemporaryHitPoints(
+      campaign.hero,
+      amount,
+      replaceExisting: replaceExisting,
+    );
+    return _commit(
+      campaign,
+      campaign.copyWith(hero: hero),
+      '${source.trim()}: ${hero.temporaryHitPoints} temporäre Trefferpunkte. '
+      'Temporäre TP werden nicht addiert und stellen keine echten TP wieder her.',
+      type: 'effect.temporaryHitPoints',
+      payload: {
+        'source': source.trim(),
+        'targetId': hero.id,
+        'amount': amount,
+        'replaceExisting': replaceExisting,
+        'previousTemporaryHitPoints': campaign.hero.temporaryHitPoints,
+        'temporaryHitPoints': hero.temporaryHitPoints,
+      },
+    );
+  }
+
+  GameUpdate castHealingSpell(
+    Campaign campaign, {
+    required String spellName,
+    required String castingClass,
+    int? slotLevel,
+    bool pactMagic = false,
+    required bool verbalComponentConfirmed,
+    bool somaticComponentConfirmed = false,
+  }) {
+    _requireExternalEffect(campaign, spellName);
+    final definition = HealingSpellRules.find(spellName);
+    if (definition == null) {
+      throw const FormatException(
+        'Dieser Zauber besitzt keine bestätigte Heilwirkung.',
+      );
+    }
+    final fight = campaign.encounter;
+    final inCombat = fight != null && !fight.isFinished;
+    final bonusAction = definition.actionType == 'bonusAction';
+    if (inCombat) {
+      if (!campaign.hero.isComplete || fight.activeParticipant != 'hero') {
+        throw const FormatException(
+          'Zauberwirken benötigt deinen eigenen Zug und bestätigte Kampfwerte.',
+        );
+      }
+      if (CombatClassActions.rageActive(fight)) {
+        throw const FormatException(
+          'Während des Kampfrauschs kannst du keine Zauber wirken.',
+        );
+      }
+      if (fight.spellSlotExpendedThisTurn) {
+        throw const FormatException(
+          'Du hast in diesem Zug bereits einen Zauberplatz zum Zauberwirken verbraucht.',
+        );
+      }
+      if (bonusAction ? fight.bonusActionUsed : fight.actionUsed) {
+        throw FormatException(
+          bonusAction
+              ? 'Deine Bonusaktion ist bereits verbraucht.'
+              : 'Deine Aktion ist bereits verbraucht.',
+        );
+      }
+      // The existing Action Surge implementation reserves an Attack action.
+      // It may never authorize the Magic action in the 2024 rules.
+      if (!bonusAction && (fight.surgeReserved || fight.surgeUsedThisTurn)) {
+        throw const FormatException(
+          'Die zusätzliche Action-Surge-Aktion erlaubt keine Magieaktion.',
+        );
+      }
+    }
+    final cast = HealingSpellRules.castSelf(
+      campaign.hero,
+      dice: dice,
+      spellName: spellName,
+      castingClass: castingClass,
+      slotLevel: slotLevel,
+      pactMagic: pactMagic,
+      verbalComponentConfirmed: verbalComponentConfirmed,
+      somaticComponentConfirmed: somaticComponentConfirmed,
+    );
+    final nextFight = inCombat
+        ? fight.copyWith(
+            actionUsed: bonusAction ? fight.actionUsed : true,
+            bonusActionUsed: bonusAction ? true : fight.bonusActionUsed,
+            spellSlotExpendedThisTurn: true,
+          )
+        : fight;
+    return _commit(
+      campaign,
+      campaign.copyWith(hero: cast.hero, encounter: nextFight),
+      '${cast.spellName}: ${cast.roll.expression} ergibt ${cast.roll.total}; '
+      '${cast.recovered} TP wiederhergestellt '
+      '(${cast.hero.hitPoints}/${cast.hero.maxHitPoints}). '
+      '${cast.pactMagic ? 'Paktplatz' : 'Zauberplatz'} Grad ${cast.slotLevel} verbraucht.'
+      '${inCombat ? ' ${bonusAction ? 'Bonusaktion' : 'Magieaktion'} verbraucht. Du kannst deinen Zug ausdrücklich beenden.' : ''}',
+      type: 'spell.healing',
+      payload: {
+        'spellName': cast.spellName,
+        'castingClass': cast.castingClass,
+        'spellcastingAbility': cast.spellcastingAbility,
+        'spellLevel': definition.level,
+        'slotLevel': cast.slotLevel,
+        'pactMagic': cast.pactMagic,
+        'targetId': cast.hero.id,
+        'actionType': cast.actionType,
+        'inCombat': inCombat,
+        'verbalComponentConfirmed': verbalComponentConfirmed,
+        'somaticComponentConfirmed': somaticComponentConfirmed,
+        'healingRoll': cast.roll.toJson(),
+        'hitPointsRestored': cast.recovered,
+        'discipleOfLifeBonus': cast.discipleOfLifeBonus,
+        'maximizedHealing': cast.maximizedHealing,
+      },
+    );
+  }
+
   GameUpdate act(Campaign campaign, String input) {
     final text = input.trim();
     if (text.isEmpty || text.length > 4000) {
@@ -669,11 +999,14 @@ class GameEngine {
     final words = text.toLowerCase();
     // A new class action or save request must never be mistaken for the
     // natural die value of an already pending attack/check.
-    if (campaign.pendingRoll != null && RegExp(
-        r'^(?:rettungswurf|handauflegen)\s*[: ]').hasMatch(words)) {
-      return _commit(campaign, campaign,
+    if (campaign.pendingRoll != null &&
+        RegExp(r'^(?:rettungswurf|handauflegen)\s*[: ]').hasMatch(words)) {
+      return _commit(
+        campaign,
+        campaign,
         'Zuerst den bereits offenen Würfelwurf abschließen.',
-        type: 'rules.blocked');
+        type: 'rules.blocked',
+      );
     }
     final spokenRoll = _spokenNumber(words);
     if (campaign.pendingRoll != null && spokenRoll != null) {
@@ -707,17 +1040,12 @@ class GameEngine {
       );
       final narration = memories.isEmpty
           ? '${current.hero.name}, dazu finde ich in deinem bestätigten '
-              'Abenteuer noch keine passende Erinnerung. '
-              'Was möchtest du genauer untersuchen?'
+                'Abenteuer noch keine passende Erinnerung. '
+                'Was möchtest du genauer untersuchen?'
           : '${current.hero.name}, das ist aus deinem Abenteuer bestätigt:\n'
-              '${memories.map((entry) => '• $entry').join('\n')}\n'
-              'Woran möchtest du anknüpfen?';
-      return _commit(
-        campaign,
-        current,
-        narration,
-        type: 'memory.recalled',
-      );
+                '${memories.map((entry) => '• $entry').join('\n')}\n'
+                'Woran möchtest du anknüpfen?';
+      return _commit(campaign, current, narration, type: 'memory.recalled');
     }
     if (RegExp(r'inventar|ausrüstung|besitze').hasMatch(words)) {
       final items = current.hero.inventory
@@ -741,9 +1069,12 @@ class GameEngine {
     // Manual saving throws with explicitly declared DC. This is deliberately
     // NOT a spell save inferred from AI narration: the player supplies the DC.
     const saveNames = <String, String>{
-      'stärke': 'strength', 'staerke': 'strength',
-      'geschicklichkeit': 'dexterity', 'konstitution': 'constitution',
-      'intelligenz': 'intelligence', 'weisheit': 'wisdom',
+      'stärke': 'strength',
+      'staerke': 'strength',
+      'geschicklichkeit': 'dexterity',
+      'konstitution': 'constitution',
+      'intelligenz': 'intelligence',
+      'weisheit': 'wisdom',
       'charisma': 'charisma',
     };
     final requestedSave = RegExp(
@@ -753,36 +1084,80 @@ class GameEngine {
       final ability = saveNames[requestedSave.group(1)!]!;
       final dc = int.parse(requestedSave.group(2)!);
       if (dc < 1 || dc > 30 || current.hero.isDead) {
-        return _commit(campaign, current,
+        return _commit(
+          campaign,
+          current,
           'Der manuelle Rettungswurf benötigt SG 1 bis 30 und einen lebenden Charakter.',
-          type: 'rules.blocked');
+          type: 'rules.blocked',
+        );
       }
       try {
         final rule = CharacterRuleEngine.savingThrow(current.hero, ability);
-        final rolled = dice.check(modifier: rule.modifier,
-          advantage: rule.advantage, disadvantage: rule.disadvantage);
+        if (rule.automaticallyFails) {
+          return _commit(
+            campaign,
+            current,
+            'Der Rettungswurf (${requestedSave.group(1)}, SG $dc) '
+            'misslingt durch deinen Zustand automatisch. '
+            'Es wird kein W20 gewürfelt und kein Wiederholungsmerkmal verbraucht.',
+            type: 'saving.automaticFailure',
+            payload: {
+              'ability': ability,
+              'difficulty': dc,
+              'failed': true,
+              'automaticFailure': true,
+              'manualDifficulty': true,
+            },
+          );
+        }
+        final rolled = dice.check(
+          modifier: rule.modifier,
+          advantage: rule.advantage,
+          disadvantage: rule.disadvantage,
+        );
         final passed = rolled.total >= dc;
         final options = <String>[
-          if (!passed && SavingThrowClassActions.available(current.hero,
-              SavingThrowRerollFeature.disciplinedSurvivor)) 'Fokus',
-          if (!passed && SavingThrowClassActions.available(current.hero,
-              SavingThrowRerollFeature.indomitable)) 'Unbeugsam',
+          if (!passed &&
+              SavingThrowClassActions.available(
+                current.hero,
+                SavingThrowRerollFeature.disciplinedSurvivor,
+              ))
+            'Fokus',
+          if (!passed &&
+              SavingThrowClassActions.available(
+                current.hero,
+                SavingThrowRerollFeature.indomitable,
+              ))
+            'Unbeugsam',
         ];
-        final suggestions = options.isEmpty ? '' :
-          'Du kannst sofort wiederholen mit: '
-          '${options.map((option) => 'Rettungswurf wiederholen: $option').join(' oder ')}. ';
-        return _commit(campaign, current,
+        final suggestions = options.isEmpty
+            ? ''
+            : 'Du kannst sofort wiederholen mit: '
+                  '${options.map((option) => 'Rettungswurf wiederholen: $option').join(' oder ')}. ';
+        return _commit(
+          campaign,
+          current,
           'Manueller Rettungswurf (${requestedSave.group(1)}, SG $dc): '
           '${rolled.total} – ${passed ? 'gelungen' : 'misslungen'}. '
           '$suggestions'
           'Das Ergebnis wird dokumentiert; Wirkungen fremder Zauber werden nicht automatisch angenommen.',
           type: 'saving.roll',
-          payload: {'ability': ability, 'difficulty': dc,
-            'total': rolled.total, 'failed': !passed,
-            'roll': rolled.toJson(), 'manualDifficulty': true});
+          payload: {
+            'ability': ability,
+            'difficulty': dc,
+            'total': rolled.total,
+            'failed': !passed,
+            'roll': rolled.toJson(),
+            'manualDifficulty': true,
+          },
+        );
       } on StateError catch (e) {
-        return _commit(campaign, current, e.message.toString(),
-          type: 'rules.blocked');
+        return _commit(
+          campaign,
+          current,
+          e.message.toString(),
+          type: 'rules.blocked',
+        );
       }
     }
     final retrySave = RegExp(
@@ -794,119 +1169,170 @@ class GameEngine {
       if (previous?.type != 'saving.roll' ||
           payload['failed'] != true ||
           payload['ability'] is! String ||
-          payload['difficulty'] is! int || payload['total'] is! int) {
-        return _commit(campaign, current,
+          payload['difficulty'] is! int ||
+          payload['total'] is! int) {
+        return _commit(
+          campaign,
+          current,
           'Es liegt kein unmittelbar vorheriger fehlgeschlagener Rettungswurf vor.',
-          type: 'rules.blocked');
+          type: 'rules.blocked',
+        );
       }
       final feature = retrySave.group(1) == 'fokus'
           ? SavingThrowRerollFeature.disciplinedSurvivor
           : SavingThrowRerollFeature.indomitable;
       try {
         final rerolled = SavingThrowClassActions.rerollFailed(
-          hero: current.hero, dice: dice,
+          hero: current.hero,
+          dice: dice,
           ability: payload['ability'] as String,
           difficulty: payload['difficulty'] as int,
           originalTotal: payload['total'] as int,
-          feature: feature);
-        return _commit(campaign, current.copyWith(hero: rerolled.hero),
+          feature: feature,
+        );
+        return _commit(
+          campaign,
+          current.copyWith(hero: rerolled.hero),
           'Wiederholter Rettungswurf: ${rerolled.roll.total} – '
           '${rerolled.passed ? 'gelungen' : 'misslungen'}. '
           'Das neue Ergebnis gilt auch dann, wenn es schlechter ist.',
           type: 'saving.rerolled',
-          payload: {'ability': payload['ability'],
+          payload: {
+            'ability': payload['ability'],
             'difficulty': payload['difficulty'],
             'previousTotal': payload['total'],
-            'roll': rerolled.roll.toJson(), 'passed': rerolled.passed,
+            'roll': rerolled.roll.toJson(),
+            'passed': rerolled.passed,
             'resource': rerolled.resource,
-            'fighterLevelBonus': rerolled.fighterLevelBonus});
+            'fighterLevelBonus': rerolled.fighterLevelBonus,
+          },
+        );
       } on StateError catch (e) {
-        return _commit(campaign, current, e.message.toString(),
-          type: 'rules.blocked');
+        return _commit(
+          campaign,
+          current,
+          e.message.toString(),
+          type: 'rules.blocked',
+        );
       } on FormatException catch (e) {
-        return _commit(campaign, current, e.message,
-          type: 'rules.blocked');
+        return _commit(campaign, current, e.message, type: 'rules.blocked');
       }
     }
     // An explicit Lay on Hands command is the only authority to spend the
     // paladin's shared healing pool. Natural-language story text cannot do so.
-    final handsCommand = RegExp(r'^handauflegen\s*:\s*(\d{1,3}|vergiftung)(?:\s*[.!?])?$')
-        .firstMatch(words);
+    final handsCommand = RegExp(
+      r'^handauflegen\s*:\s*(\d{1,3}|vergiftung)(?:\s*[.!?])?$',
+    ).firstMatch(words);
     if (handsCommand != null) {
       final encounter = current.encounter;
-      if (encounter != null && !encounter.isFinished &&
-          (encounter.bonusActionUsed || encounter.activeParticipant != 'hero')) {
-        return _commit(campaign, current,
+      if (encounter != null &&
+          !encounter.isFinished &&
+          (encounter.bonusActionUsed ||
+              encounter.activeParticipant != 'hero')) {
+        return _commit(
+          campaign,
+          current,
           'Handauflegen benötigt deine freie Bonusaktion im eigenen Zug.',
-          type: 'rules.blocked');
+          type: 'rules.blocked',
+        );
       }
       try {
         final choice = handsCommand.group(1)!;
-        final use = PaladinLayOnHands.useOnSelf(current.hero,
+        final use = PaladinLayOnHands.useOnSelf(
+          current.hero,
           healing: int.tryParse(choice) ?? 0,
-          removePoisoned: choice == 'vergiftung');
+          removePoisoned: choice == 'vergiftung',
+        );
         final nextEncounter = encounter != null && !encounter.isFinished
-            ? encounter.copyWith(bonusActionUsed: true) : encounter;
+            ? encounter.copyWith(bonusActionUsed: true)
+            : encounter;
         final remaining = PaladinLayOnHands.remaining(use.hero);
-        return _commit(campaign, current.copyWith(hero: use.hero,
-            encounter: nextEncounter),
+        return _commit(
+          campaign,
+          current.copyWith(hero: use.hero, encounter: nextEncounter),
           use.poisonedRemoved
               ? 'Handauflegen: Vergiftet entfernt, 5 Heilpunkte verbraucht. '
-                '$remaining Punkte verbleiben.'
+                    '$remaining Punkte verbleiben.'
               : 'Handauflegen: ${use.hitPointsRestored} Trefferpunkte '
-                'wiederhergestellt; ${use.pointsSpent} Heilpunkte verbraucht. '
-                '$remaining Punkte verbleiben.',
+                    'wiederhergestellt; ${use.pointsSpent} Heilpunkte verbraucht. '
+                    '$remaining Punkte verbleiben.',
           type: 'class.layOnHands',
-          payload: {'pointsSpent': use.pointsSpent,
+          payload: {
+            'pointsSpent': use.pointsSpent,
             'hitPointsRestored': use.hitPointsRestored,
             'poisonedRemoved': use.poisonedRemoved,
-            'remaining': remaining});
+            'remaining': remaining,
+          },
+        );
       } on StateError catch (e) {
-        return _commit(campaign, current, e.message.toString(),
-            type: 'rules.blocked');
+        return _commit(
+          campaign,
+          current,
+          e.message.toString(),
+          type: 'rules.blocked',
+        );
       } on FormatException catch (e) {
-        return _commit(campaign, current, e.message,
-            type: 'rules.blocked');
+        return _commit(campaign, current, e.message, type: 'rules.blocked');
       } on RangeError catch (e) {
-        return _commit(campaign, current, 'Ungültige Heilpunktzahl: $e',
-            type: 'rules.blocked');
+        return _commit(
+          campaign,
+          current,
+          'Ungültige Heilpunktzahl: $e',
+          type: 'rules.blocked',
+        );
       }
     }
     if (RegExp(r'second wind|zweite luft').hasMatch(words)) {
       final encounter = current.encounter;
-      if (encounter != null && !encounter.isFinished &&
+      if (encounter != null &&
+          !encounter.isFinished &&
           encounter.bonusActionUsed) {
-        return _commit(campaign, current,
+        return _commit(
+          campaign,
+          current,
           'Die Bonusaktion dieses Zugs ist bereits verbraucht.',
-          type: 'rules.blocked');
+          type: 'rules.blocked',
+        );
       }
-      if (encounter != null && !encounter.isFinished &&
+      if (encounter != null &&
+          !encounter.isFinished &&
           !ConditionRules.canTakeActions(current.hero)) {
-        return _commit(campaign, current,
+        return _commit(
+          campaign,
+          current,
           'Dein Zustand verhindert diese Bonusaktion.',
-          type: 'rules.blocked');
+          type: 'rules.blocked',
+        );
       }
       try {
         final used = ClassFeatureResources.useSecondWind(current.hero, dice);
         final updatedEncounter = encounter != null && !encounter.isFinished
-            ? encounter.copyWith(bonusActionUsed: true) : encounter;
-        return _commit(campaign, current.copyWith(hero: used.hero,
-          encounter: updatedEncounter),
+            ? encounter.copyWith(bonusActionUsed: true)
+            : encounter;
+        return _commit(
+          campaign,
+          current.copyWith(hero: used.hero, encounter: updatedEncounter),
           'Second Wind: ${used.roll.rolls.single} + '
           '${ClassFeatureResources.fighterLevel(current.hero)} = '
           '${used.totalHealing} Heilung (tatsächlich '
           '${used.hitPointsRestored} TP). Verbleibende Nutzungen: '
           '${ClassFeatureResources.remainingSecondWind(used.hero)}.',
           type: 'class.secondWind',
-          payload: {'roll': used.roll.toJson(),
+          payload: {
+            'roll': used.roll.toJson(),
             'restoredHitPoints': used.hitPointsRestored,
-            'spentSecondWind': used.hero.spentSecondWind});
+            'spentSecondWind': used.hero.spentSecondWind,
+          },
+        );
       } on StateError catch (error) {
-        return _commit(campaign, current, error.message.toString(),
-          type: 'rules.blocked');
+        return _commit(
+          campaign,
+          current,
+          error.message.toString(),
+          type: 'rules.blocked',
+        );
       } on FormatException catch (error) {
-        return _commit(campaign, current, error.message,
-          type: 'rules.blocked');
+        return _commit(campaign, current, error.message, type: 'rules.blocked');
       }
     }
     if (RegExp(
@@ -955,99 +1381,161 @@ class GameEngine {
     // No external storyteller can restore Hit Dice or Hit Points directly.
     if (RegExp(r'rast|ausruh|\bruhe\b').hasMatch(words)) {
       if (!current.hero.isComplete) {
-        return _commit(campaign, current,
+        return _commit(
+          campaign,
+          current,
           'Eine Rast benötigt einen vollständigen Charakterbogen.',
-          type: 'rules.blocked');
+          type: 'rules.blocked',
+        );
       }
       if (current.encounter != null && !current.encounter!.isFinished) {
-        return _commit(campaign, current,
+        return _commit(
+          campaign,
+          current,
           'Während eines laufenden Kampfes ist keine Rast möglich.',
-          type: 'rules.blocked');
+          type: 'rules.blocked',
+        );
       }
       final short = RegExp(r'kurz\w*\s+rast').hasMatch(words);
       final long = RegExp(r'lang\w*\s+rast').hasMatch(words);
       if (!short && !long) {
-        return _commit(campaign, current,
+        return _commit(
+          campaign,
+          current,
           'Bitte bestätige ausdrücklich „kurze Rast“ (mindestens 1 Stunde) '
           'oder „lange Rast“ (mindestens 8 Stunden).',
-          type: 'rules.blocked');
+          type: 'rules.blocked',
+        );
       }
       try {
         if (short) {
-          final requested = RegExp(r'(\d{1,2})\s*[wd](6|8|10|12)').firstMatch(words);
+          final requested = RegExp(
+            r'(\d{1,2})\s*[wd](6|8|10|12)',
+          ).firstMatch(words);
           final count = requested == null ? 1 : int.parse(requested.group(1)!);
-          final sides = requested == null ? null : int.parse(requested.group(2)!);
+          final sides = requested == null
+              ? null
+              : int.parse(requested.group(2)!);
           if (current.hero.hitPoints == current.hero.maxHitPoints) {
-            if (requested == null && (current.hero.spentPactSlots > 0 ||
-                current.hero.spentSecondWind > 0 ||
-                current.hero.spentActionSurge > 0 ||
-                current.hero.spentClassResources.values.any((n) => n > 0))) {
+            if (requested == null &&
+                (current.hero.spentPactSlots > 0 ||
+                    current.hero.spentSecondWind > 0 ||
+                    current.hero.spentActionSurge > 0 ||
+                    current.hero.spentClassResources.values.any(
+                      (n) => n > 0,
+                    ))) {
               final refreshed = ClassResourceRules.afterShortRest(
                 ClassFeatureResources.afterShortRest(
-                  SpellcastingRules.afterShortRest(current.hero)));
-              return _commit(campaign, current.copyWith(hero: refreshed),
+                  SpellcastingRules.afterShortRest(current.hero),
+                ),
+              );
+              return _commit(
+                campaign,
+                current.copyWith(hero: refreshed),
                 'Nach der kurzen Rast wurden deine verfügbaren Klassen- und '
                 'Paktressourcen regeneriert. Es wurden keine Trefferwürfel verbraucht.',
                 type: 'character.shortRest',
-                payload: {'hitDice': null, 'count': 0, 'rolls': <dynamic>[],
-                  'pactSlotsRecovered': current.hero.spentPactSlots});
+                payload: {
+                  'hitDice': null,
+                  'count': 0,
+                  'rolls': <dynamic>[],
+                  'pactSlotsRecovered': current.hero.spentPactSlots,
+                },
+              );
             }
-            return _commit(campaign, current,
+            return _commit(
+              campaign,
+              current,
               'Deine Trefferpunkte sind bereits vollständig. '
               'Es werden keine Trefferwürfel automatisch verbraucht.',
-              type: 'rules.blocked');
+              type: 'rules.blocked',
+            );
           }
-          if (requested == null && (current.hero.spentPactSlots > 0 ||
-              current.hero.spentSecondWind > 0 ||
-              current.hero.spentActionSurge > 0 ||
-              current.hero.spentClassResources.values.any((n) => n > 0)) &&
-              !RestRules.availableHitDice(current.hero).values.any((n) => n > 0)) {
+          if (requested == null &&
+              (current.hero.spentPactSlots > 0 ||
+                  current.hero.spentSecondWind > 0 ||
+                  current.hero.spentActionSurge > 0 ||
+                  current.hero.spentClassResources.values.any((n) => n > 0)) &&
+              !RestRules.availableHitDice(
+                current.hero,
+              ).values.any((n) => n > 0)) {
             final refreshed = ClassResourceRules.afterShortRest(
-                ClassFeatureResources.afterShortRest(
-                  SpellcastingRules.afterShortRest(current.hero)));
-            return _commit(campaign, current.copyWith(hero: refreshed),
+              ClassFeatureResources.afterShortRest(
+                SpellcastingRules.afterShortRest(current.hero),
+              ),
+            );
+            return _commit(
+              campaign,
+              current.copyWith(hero: refreshed),
               'Nach der kurzen Rast wurden Klassen- und Paktressourcen regeneriert. '
               'Die Trefferwürfel sind bereits verbraucht.',
               type: 'character.shortRest',
-              payload: {'hitDice': null, 'count': 0, 'rolls': <dynamic>[],
-                'pactSlotsRecovered': current.hero.spentPactSlots});
+              payload: {
+                'hitDice': null,
+                'count': 0,
+                'rolls': <dynamic>[],
+                'pactSlotsRecovered': current.hero.spentPactSlots,
+              },
+            );
           }
-          final rest = RestRules.shortRest(current.hero, dice: dice,
-            dieSides: sides, count: count);
-          return _commit(campaign,
+          final rest = RestRules.shortRest(
+            current.hero,
+            dice: dice,
+            dieSides: sides,
+            count: count,
+          );
+          return _commit(
+            campaign,
             current.copyWith(hero: rest.hero),
             'Nach einer kurzen Rast (mindestens 1 Stunde) verbrauchst du '
             '$count Trefferwürfel ${rest.dieType.toUpperCase()}. '
             'Du erhältst ${rest.recovered} Trefferpunkte zurück '
             '(jetzt ${rest.hero.hitPoints}/${rest.hero.maxHitPoints}).',
             type: 'character.shortRest',
-            payload: {'hitDice': rest.dieType, 'count': count,
+            payload: {
+              'hitDice': rest.dieType,
+              'count': count,
               'rolls': [for (final roll in rest.dice) roll.toJson()],
               'constitutionBonus': rest.constitutionBonus,
               'healed': rest.recovered,
-              'pactSlotsRecovered': current.hero.spentPactSlots});
+              'pactSlotsRecovered': current.hero.spentPactSlots,
+            },
+          );
         }
         final hero = RestRules.longRest(current.hero);
-        return _commit(campaign, current.copyWith(hero: hero),
+        return _commit(
+          campaign,
+          current.copyWith(hero: hero),
           'Nach einer langen Rast (mindestens 8 Stunden) sind deine '
           'Trefferpunkte und verbrauchten Trefferwürfel wiederhergestellt. '
           'Erschöpfung: ${current.hero.exhaustionLevel} → ${hero.exhaustionLevel}. '
           'Klassenressourcen wurden ebenfalls wiederhergestellt.',
           type: 'character.longRest',
-          payload: {'hitPoints': hero.hitPoints, 'spentHitDice': hero.spentHitDice,
-              'spellSlotsRestored': current.hero.spentSpellSlots,
-              'pactSlotsRestored': current.hero.spentPactSlots,
-              'exhaustionBefore': current.hero.exhaustionLevel,
-              'exhaustionAfter': hero.exhaustionLevel});
+          payload: {
+            'hitPoints': hero.hitPoints,
+            'spentHitDice': hero.spentHitDice,
+            'spellSlotsRestored': current.hero.spentSpellSlots,
+            'pactSlotsRestored': current.hero.spentPactSlots,
+            'exhaustionBefore': current.hero.exhaustionLevel,
+            'exhaustionAfter': hero.exhaustionLevel,
+          },
+        );
       } on StateError catch (error) {
-        return _commit(campaign, current, error.message.toString(),
-          type: 'rules.blocked');
+        return _commit(
+          campaign,
+          current,
+          error.message.toString(),
+          type: 'rules.blocked',
+        );
       } on FormatException catch (error) {
-        return _commit(campaign, current, error.message,
-          type: 'rules.blocked');
+        return _commit(campaign, current, error.message, type: 'rules.blocked');
       } on RangeError {
-        return _commit(campaign, current, 'Ungültige Anzahl Trefferwürfel.',
-          type: 'rules.blocked');
+        return _commit(
+          campaign,
+          current,
+          'Ungültige Anzahl Trefferwürfel.',
+          type: 'rules.blocked',
+        );
       }
     }
     if (current.facts['origin'] == 'arescan') {
@@ -1063,14 +1551,22 @@ class GameEngine {
       if (RegExp(r'heiltrank|trank.*trink|trink.*trank').hasMatch(words)) {
         return _drinkPotion(campaign, current);
       }
-      if (RegExp(r'angreif|attackier|schieß|schies|kämpf|kaempf').hasMatch(words)) {
-        return _commit(campaign, current,
+      if (RegExp(
+        r'angreif|attackier|schieß|schies|kämpf|kaempf',
+      ).hasMatch(words)) {
+        return _commit(
+          campaign,
+          current,
           'Ein Angriff benötigt zuerst einen bestätigten Gegner mit regelkonformen Werten. '
           'Die KI darf Trefferwürfe oder Schaden nicht selbst bestimmen.',
-          type: 'rules.blocked');
+          type: 'rules.blocked',
+        );
       }
-      return _commit(campaign, current,
-        'Deine Entscheidung wurde im Tagebuch festgehalten. Was möchtest du als Nächstes tun?');
+      return _commit(
+        campaign,
+        current,
+        'Deine Entscheidung wurde im Tagebuch festgehalten. Was möchtest du als Nächstes tun?',
+      );
     }
     if (current.encounter != null && !current.encounter!.isFinished) {
       return _combatAction(campaign, current, words);
@@ -1122,22 +1618,20 @@ class GameEngine {
       // must not reset progress or send the hero after consumed items.
       final answer = current.facts['questCompleted'] == 'true'
           ? 'Mira dankt dir für das erneuerte Waldlicht. Der Schrein ist '
-              'bereits geöffnet, und du hast ihren Auftrag erfüllt. '
-              'Was möchtest du als Nächstes unternehmen?'
+                'bereits geöffnet, und du hast ihren Auftrag erfüllt. '
+                'Was möchtest du als Nächstes unternehmen?'
           : current.facts['guardianDefeated'] == 'true'
           ? 'Mira weiß, dass der Dornenwächter besiegt ist. '
-              '${current.facts['keyFound'] == 'true'
-                  ? 'Mit dem gefundenen Messingschlüssel kannst du den Schrein öffnen.'
-                  : 'Der Messingschlüssel am Dorfbrunnen fehlt dir noch.'} '
-              'Wie möchtest du fortfahren?'
+                '${current.facts['keyFound'] == 'true' ? 'Mit dem gefundenen Messingschlüssel kannst du den Schrein öffnen.' : 'Der Messingschlüssel am Dorfbrunnen fehlt dir noch.'} '
+                'Wie möchtest du fortfahren?'
           : current.facts['keyFound'] == 'true'
           ? 'Mira erkennt den Messingschlüssel, den du bereits gefunden hast. '
-              'Jetzt erwartet dich der Dornenwächter am Waldschrein. '
-              'Wie möchtest du vorgehen?'
+                'Jetzt erwartet dich der Dornenwächter am Waldschrein. '
+                'Wie möchtest du vorgehen?'
           : 'Mira lächelt dir zu. Der Schrein liegt jenseits des Waldpfades; '
-              'ein Dornenwächter versperrt den Zugang. Suche den '
-              'Messingschlüssel am Brunnen und bringe das Licht zurück. '
-              'Was möchtest du tun?';
+                'ein Dornenwächter versperrt den Zugang. Suche den '
+                'Messingschlüssel am Brunnen und bringe das Licht zurück. '
+                'Was möchtest du tun?';
       return _commit(campaign, current, answer);
     }
     if (RegExp(
@@ -1229,7 +1723,9 @@ class GameEngine {
           enemyMaxHitPoints: 10,
           heroInitiative: heroInit.total,
           enemyInitiative: foeInit.total,
-          movementRemaining: CharacterRuleEngine.movementWholeMeters(current.hero)!,
+          movementRemaining: CharacterRuleEngine.movementWholeMeters(
+            current.hero,
+          )!,
         ),
       );
       var narration =
@@ -1378,16 +1874,22 @@ class GameEngine {
   /// action. Complete only confirmed AI quests; never fabricate rewards.
   Campaign _afterFlurryVictory(Campaign current, Map<String, dynamic> payload) {
     if (current.storyBible['mode'] != 'ai') {
-      return current.copyWith(facts: {
-        ...current.facts,
-        'guardianDefeated': 'true',
-        'dornenwächter': 'Der Dornenwächter wurde im bestätigten Kampf überwunden.',
-      });
+      return current.copyWith(
+        facts: {
+          ...current.facts,
+          'guardianDefeated': 'true',
+          'dornenwächter':
+              'Der Dornenwächter wurde im bestätigten Kampf überwunden.',
+        },
+      );
     }
     final questId = current.facts['aiEncounterQuestId'];
     final offerId = current.facts['aiEncounterOfferId'];
     final lootName = current.facts['aiEncounterLoot'];
-    final valid = questId != null && offerId != null && lootName != null &&
+    final valid =
+        questId != null &&
+        offerId != null &&
+        lootName != null &&
         current.quests.any((q) => q.id == questId && q.status == 'active');
     if (!valid) {
       return current.copyWith(encounter: null);
@@ -1395,106 +1897,171 @@ class GameEngine {
     final lootId = 'loot-$offerId';
     final inventory = current.hero.inventory.any((e) => e.id == lootId)
         ? current.hero.inventory
-        : [...current.hero.inventory, InventoryItem(id: lootId,
-            name: lootName, description: 'Beute der bestätigten Begegnung.')];
+        : [
+            ...current.hero.inventory,
+            InventoryItem(
+              id: lootId,
+              name: lootName,
+              description: 'Beute der bestätigten Begegnung.',
+            ),
+          ];
     payload['completedQuestId'] = questId;
     payload['rewardItemId'] = lootId;
     return current.copyWith(
       hero: current.hero.copyWith(inventory: inventory),
-      quests: [for (final q in current.quests)
-        q.id == questId ? q.copyWith(status: 'completed') : q],
+      quests: [
+        for (final q in current.quests)
+          q.id == questId ? q.copyWith(status: 'completed') : q,
+      ],
       encounter: null,
-      facts: {...current.facts,
-        'aiEncounterQuestId': '', 'aiEncounterOfferId': '',
-        'aiEncounterLoot': '', 'aiQuestCompleted:$questId': 'true'},
+      facts: {
+        ...current.facts,
+        'aiEncounterQuestId': '',
+        'aiEncounterOfferId': '',
+        'aiEncounterLoot': '',
+        'aiQuestCompleted:$questId': 'true',
+      },
     );
   }
 
   GameUpdate _combatAction(Campaign before, Campaign current, String words) {
     if (!ConditionRules.canTakeActions(current.hero) &&
         !RegExp(r'beweg|lauf|geh').hasMatch(words)) {
-      return _commit(before, current,
+      return _commit(
+        before,
+        current,
         'Dein aktueller Zustand verhindert diese Kampfhandlung.',
-        type: 'rules.blocked');
+        type: 'rules.blocked',
+      );
     }
     final encounter = current.encounter!;
     if (words.startsWith('selbstwiederherstellung')) {
-      final match = RegExp(r'^selbstwiederherstellung\s*:\s*(bezaubert|verängstigt|vergiftet)\s*[.!?]?$')
-          .firstMatch(words);
+      final match = RegExp(
+        r'^selbstwiederherstellung\s*:\s*(bezaubert|verängstigt|vergiftet)\s*[.!?]?$',
+      ).firstMatch(words);
       if (match == null) {
-        return _commit(before, current,
+        return _commit(
+          before,
+          current,
           'Bitte wähle genau einen Zustand: Bezaubert, Verängstigt oder Vergiftet.',
-          type: 'rules.blocked');
+          type: 'rules.blocked',
+        );
       }
       final choice = match.group(1)!;
       try {
         MonkSelfRestoration.validateChoice(current.hero, choice);
-        return _commit(before, current.copyWith(encounter:
-            encounter.copyWith(selfRestorationChoice: choice)),
+        return _commit(
+          before,
+          current.copyWith(
+            encounter: encounter.copyWith(selfRestorationChoice: choice),
+          ),
           'Selbstwiederherstellung vorbereitet: $choice. Der Zustand endet '
           'am Ende deines Zugs, nicht sofort.',
           type: 'class.selfRestorationSelected',
-          payload: {'condition': choice});
+          payload: {'condition': choice},
+        );
       } on StateError catch (error) {
-        return _commit(before, current, error.message.toString(),
-          type: 'rules.blocked');
+        return _commit(
+          before,
+          current,
+          error.message.toString(),
+          type: 'rules.blocked',
+        );
       }
     }
-    if (RegExp(r'kampfrausch.*verlänger|kampfrausch.*verlaenger')
-        .hasMatch(words)) {
+    if (RegExp(
+      r'kampfrausch.*verlänger|kampfrausch.*verlaenger',
+    ).hasMatch(words)) {
       if (!CombatClassActions.rageActive(encounter) ||
           encounter.bonusActionUsed) {
-        return _commit(before, current,
+        return _commit(
+          before,
+          current,
           'Kampfrausch verlängern erfordert aktiven Kampfrausch und eine freie Bonusaktion.',
-          type: 'rules.blocked');
+          type: 'rules.blocked',
+        );
       }
       final until = encounter.round + 1;
       final hardEnd = encounter.rageStartedRound + 99;
       final nextUntil = until < hardEnd ? until : hardEnd;
-      return _commit(before, current.copyWith(encounter: encounter.copyWith(
-          bonusActionUsed: true, rageUntilRound: nextUntil)),
-          'Du verlängerst deinen Kampfrausch bis zum Ende des nächsten Zugs.',
-          type: 'class.rageExtended',
-          payload: {'rageUntilRound': nextUntil});
+      return _commit(
+        before,
+        current.copyWith(
+          encounter: encounter.copyWith(
+            bonusActionUsed: true,
+            rageUntilRound: nextUntil,
+          ),
+        ),
+        'Du verlängerst deinen Kampfrausch bis zum Ende des nächsten Zugs.',
+        type: 'class.rageExtended',
+        payload: {'rageUntilRound': nextUntil},
+      );
     }
     if (RegExp(r'kampfrausch|\brage\b').hasMatch(words)) {
       if (encounter.bonusActionUsed ||
           CombatClassActions.rageActive(encounter)) {
-        return _commit(before, current, 'Bonusaktion bereits verbraucht oder Kampfrausch aktiv.',
-            type: 'rules.blocked');
+        return _commit(
+          before,
+          current,
+          'Bonusaktion bereits verbraucht oder Kampfrausch aktiv.',
+          type: 'rules.blocked',
+        );
       }
       try {
         if (CombatClassActions.hasHeavyArmor(current.hero)) {
-          throw StateError('Mit schwerer Rüstung ist Kampfrausch nicht möglich.');
+          throw StateError(
+            'Mit schwerer Rüstung ist Kampfrausch nicht möglich.',
+          );
         }
-        final hero = ClassResourceRules.spend(current.hero, 'rage')
-            .copyWith(concentratingOn: '');
-        return _commit(before, current.copyWith(hero: hero,
-          encounter: encounter.copyWith(bonusActionUsed: true,
-            rageStartedRound: encounter.round,
-            rageUntilRound: encounter.round + 1)),
+        final hero = ClassResourceRules.spend(
+          current.hero,
+          'rage',
+        ).copyWith(concentratingOn: '');
+        return _commit(
+          before,
+          current.copyWith(
+            hero: hero,
+            encounter: encounter.copyWith(
+              bonusActionUsed: true,
+              rageStartedRound: encounter.round,
+              rageUntilRound: encounter.round + 1,
+            ),
+          ),
           'Kampfrausch aktiviert. Ein Angriff verlängert ihn bis zum Ende '
           'deines nächsten Zugs; deine Konzentration endet.',
-          type: 'class.rage', payload: {
+          type: 'class.rage',
+          payload: {
             'spentRage': hero.spentClassResources['rage'],
             'rageUntilRound': encounter.round + 1,
-          });
+          },
+        );
       } on StateError catch (e) {
-        return _commit(before, current, e.message.toString(), type: 'rules.blocked');
+        return _commit(
+          before,
+          current,
+          e.message.toString(),
+          type: 'rules.blocked',
+        );
       }
     }
     if (RegExp(r'schlaghagel|flurry of blows').hasMatch(words)) {
       try {
         final flurry = MonkFlurryRules.use(current.hero, encounter, dice);
-        var next = current.copyWith(hero: flurry.hero,
-            encounter: flurry.encounter);
+        var next = current.copyWith(
+          hero: flurry.hero,
+          encounter: flurry.encounter,
+        );
         final payload = <String, dynamic>{
           'focusSpent': 1,
-          'remainingFocus': ClassResourceRules.remaining(flurry.hero, 'focusPoints'),
+          'remainingFocus': ClassResourceRules.remaining(
+            flurry.hero,
+            'focusPoints',
+          ),
           'strikes': [for (final strike in flurry.strikes) strike.toJson()],
           'damage': flurry.damageTotal,
         };
-        var narration = 'Schlaghagel: ${flurry.strikes.length} '
+        var narration =
+            'Schlaghagel: ${flurry.strikes.length} '
             'unbewaffnete Angriffe, ${flurry.damageTotal} Schaden. ';
         if (flurry.encounter.isFinished) {
           next = _afterFlurryVictory(next, payload);
@@ -1507,128 +2074,201 @@ class GameEngine {
           payload['enemyTurn'] = turn.details;
           narration += '${turn.narration} ${_nextInstruction(next)}';
         } else {
-          narration += 'Du kannst deine regulären Angriffe fortsetzen '
+          narration +=
+              'Du kannst deine regulären Angriffe fortsetzen '
               'oder deinen Zug beenden.';
         }
-        return _commit(before, next, narration,
-            type: 'class.flurryOfBlows', payload: payload);
+        return _commit(
+          before,
+          next,
+          narration,
+          type: 'class.flurryOfBlows',
+          payload: payload,
+        );
       } on StateError catch (error) {
-        return _commit(before, current, error.message.toString(),
-            type: 'rules.blocked');
+        return _commit(
+          before,
+          current,
+          error.message.toString(),
+          type: 'rules.blocked',
+        );
       } on FormatException catch (error) {
-        return _commit(before, current, error.message,
-            type: 'rules.blocked');
+        return _commit(before, current, error.message, type: 'rules.blocked');
       }
     }
     // Free / empowered Monk Focus actions. Enhanced choices cost one point.
     if (RegExp(r'geduldige verteidigung|schritt des windes').hasMatch(words)) {
       final patient = words.contains('geduldige verteidigung');
-      final enhanced = RegExp(r'verstärkt|verstaerkt|mit fokus|fokuspunkt').hasMatch(words);
+      final enhanced = RegExp(
+        r'verstärkt|verstaerkt|mit fokus|fokuspunkt',
+      ).hasMatch(words);
       try {
-        final used = MonkFocusActions.use(current.hero, encounter,
-          action: patient ? MonkBonusAction.patientDefense
+        final used = MonkFocusActions.use(
+          current.hero,
+          encounter,
+          action: patient
+              ? MonkBonusAction.patientDefense
               : MonkBonusAction.stepOfTheWind,
-          enhanced: enhanced, dice: dice);
-        final remaining = ClassResourceRules.remaining(used.hero, 'focusPoints');
-        return _commit(before, current.copyWith(
-          hero: used.hero, encounter: used.encounter),
+          enhanced: enhanced,
+          dice: dice,
+        );
+        final remaining = ClassResourceRules.remaining(
+          used.hero,
+          'focusPoints',
+        );
+        return _commit(
+          before,
+          current.copyWith(hero: used.hero, encounter: used.encounter),
           patient
-            ? (enhanced
-                ? 'Geduldige Verteidigung: Rückzug und Ausweichen als Bonusaktion. '
-                  'Der nächste Gegnerangriff in diesem Kampfzug hat Nachteil, sofern kein Vorteil entgegenwirkt.'
-                  '${used.temporaryHitPointsRolled > 0 ? ' Du erhältst ${used.temporaryHitPointsRolled} gewürfelte temporäre Trefferpunkte (aktuell ${used.hero.temporaryHitPoints}).' : ''}'
-                : 'Geduldige Verteidigung: Rückzug als Bonusaktion (ohne Fokuskosten).')
-            : (enhanced
-                ? 'Schritt des Windes: Sprinten und Rückzug; deine Sprungweite ist '
-                  'in diesem Zug verdoppelt.'
-                : 'Schritt des Windes: Sprinten als Bonusaktion (ohne Fokuskosten).'),
+              ? (enhanced
+                    ? 'Geduldige Verteidigung: Rückzug und Ausweichen als Bonusaktion. '
+                          'Der nächste Gegnerangriff in diesem Kampfzug hat Nachteil, sofern kein Vorteil entgegenwirkt.'
+                          '${used.temporaryHitPointsRolled > 0 ? ' Du erhältst ${used.temporaryHitPointsRolled} gewürfelte temporäre Trefferpunkte (aktuell ${used.hero.temporaryHitPoints}).' : ''}'
+                    : 'Geduldige Verteidigung: Rückzug als Bonusaktion (ohne Fokuskosten).')
+              : (enhanced
+                    ? 'Schritt des Windes: Sprinten und Rückzug; deine Sprungweite ist '
+                          'in diesem Zug verdoppelt.'
+                    : 'Schritt des Windes: Sprinten als Bonusaktion (ohne Fokuskosten).'),
           type: patient ? 'class.patientDefense' : 'class.stepOfTheWind',
-          payload: {'focusSpent': used.focusSpent,
+          payload: {
+            'focusSpent': used.focusSpent,
             'remainingFocus': remaining,
             'addedMovement': used.movementAdded,
             'temporaryHitPointsRolled': used.temporaryHitPointsRolled,
             'temporaryHitPoints': used.hero.temporaryHitPoints,
             'dodgeActive': used.encounter.dodgeActive,
             'disengagedThisTurn': used.encounter.disengagedThisTurn,
-            'jumpDoubledThisTurn': used.encounter.jumpDoubledThisTurn});
+            'jumpDoubledThisTurn': used.encounter.jumpDoubledThisTurn,
+          },
+        );
       } on StateError catch (e) {
-        return _commit(before, current, e.message.toString(), type: 'rules.blocked');
+        return _commit(
+          before,
+          current,
+          e.message.toString(),
+          type: 'rules.blocked',
+        );
       } on FormatException catch (e) {
         return _commit(before, current, e.message, type: 'rules.blocked');
       }
     }
-    if (RegExp(r'flinke aktion.*(?:rückzug|rueckzug|disengage)|'
-        r'(?:rückzug|rueckzug|disengage).*flinke aktion').hasMatch(words)) {
+    if (RegExp(
+      r'flinke aktion.*(?:rückzug|rueckzug|disengage)|'
+      r'(?:rückzug|rueckzug|disengage).*flinke aktion',
+    ).hasMatch(words)) {
       if (ClassResourceRules.level(current.hero, 'Schurke') < 2 ||
           encounter.bonusActionUsed) {
-        return _commit(before, current,
+        return _commit(
+          before,
+          current,
           'Flinke Aktion: Rückzug erfordert Schurkenstufe 2 und eine freie Bonusaktion.',
-          type: 'rules.blocked');
+          type: 'rules.blocked',
+        );
       }
-      return _commit(before, current.copyWith(encounter: encounter.copyWith(
-        bonusActionUsed: true, disengagedThisTurn: true)),
+      return _commit(
+        before,
+        current.copyWith(
+          encounter: encounter.copyWith(
+            bonusActionUsed: true,
+            disengagedThisTurn: true,
+          ),
+        ),
         'Flinke Aktion: Du ziehst dich als Bonusaktion zurück. '
         'Gelegenheitsangriffe werden in diesem vereinfachten Kampf noch nicht berechnet.',
         type: 'class.cunningDisengage',
-        payload: {'disengagedThisTurn': true});
+        payload: {'disengagedThisTurn': true},
+      );
     }
-    if (RegExp(r'flinke aktion.*(?:sprint|dash)|(?:sprint|dash).*flinke aktion')
-        .hasMatch(words)) {
+    if (RegExp(
+      r'flinke aktion.*(?:sprint|dash)|(?:sprint|dash).*flinke aktion',
+    ).hasMatch(words)) {
       if (ClassResourceRules.level(current.hero, 'Schurke') < 2 ||
-          encounter.bonusActionUsed || !ConditionRules.canMove(current.hero)) {
-        return _commit(before, current,
-            'Flinke Aktion: Sprinten erfordert Schurkenstufe 2 und eine freie Bonusaktion.',
-            type: 'rules.blocked');
+          encounter.bonusActionUsed ||
+          !ConditionRules.canMove(current.hero)) {
+        return _commit(
+          before,
+          current,
+          'Flinke Aktion: Sprinten erfordert Schurkenstufe 2 und eine freie Bonusaktion.',
+          type: 'rules.blocked',
+        );
       }
-      final additional = CharacterRuleEngine.movementWholeMeters(current.hero) ?? 0;
+      final additional =
+          CharacterRuleEngine.movementWholeMeters(current.hero) ?? 0;
       final remaining = encounter.movementRemaining + additional;
-      return _commit(before, current.copyWith(encounter: encounter.copyWith(
-          movementRemaining: remaining, bonusActionUsed: true)),
-          'Flinke Aktion: Du sprintest als Bonusaktion. '
-          'Dir stehen in diesem Zug insgesamt noch $remaining Meter zur Verfügung.',
-          type: 'class.cunningDash', payload: {'addedMovement': additional});
+      return _commit(
+        before,
+        current.copyWith(
+          encounter: encounter.copyWith(
+            movementRemaining: remaining,
+            bonusActionUsed: true,
+          ),
+        ),
+        'Flinke Aktion: Du sprintest als Bonusaktion. '
+        'Dir stehen in diesem Zug insgesamt noch $remaining Meter zur Verfügung.',
+        type: 'class.cunningDash',
+        payload: {'addedMovement': additional},
+      );
     }
     if (RegExp(r'action surge|aktionsschub').hasMatch(words)) {
       if (encounter.surgeUsedThisTurn) {
-        return _commit(before, current,
+        return _commit(
+          before,
+          current,
           'Action Surge ist pro Zug nur einmal möglich.',
-          type: 'rules.blocked');
+          type: 'rules.blocked',
+        );
       }
       try {
         final hero = ClassFeatureResources.spendActionSurge(current.hero);
-        return _commit(before, current.copyWith(
-          hero: hero,
-          encounter: encounter.copyWith(
-            surgeReserved: true, surgeUsedThisTurn: true)),
+        return _commit(
+          before,
+          current.copyWith(
+            hero: hero,
+            encounter: encounter.copyWith(
+              surgeReserved: true,
+              surgeUsedThisTurn: true,
+            ),
+          ),
           'Action Surge aktiviert: In diesem Zug kannst du nach deiner '
           'regulären Angriffsaktion noch eine weitere Angriffsaktion ausführen. '
           'Eine Magieaktion ist hier ausgeschlossen.',
           type: 'class.actionSurge',
-          payload: {'spentActionSurge': hero.spentActionSurge});
+          payload: {'spentActionSurge': hero.spentActionSurge},
+        );
       } on StateError catch (error) {
-        return _commit(before, current, error.message.toString(),
-            type: 'rules.blocked');
+        return _commit(
+          before,
+          current,
+          error.message.toString(),
+          type: 'rules.blocked',
+        );
       } on FormatException catch (error) {
-        return _commit(before, current, error.message,
-            type: 'rules.blocked');
+        return _commit(before, current, error.message, type: 'rules.blocked');
       }
     }
     if (encounter.actionUsed &&
-        RegExp(r'ausweich|weich\w*\s+aus|verteidig|flieh|flucht|wegrenn|heiltrank|trank.*trink|trink.*trank')
-            .hasMatch(words)) {
-      return _commit(before, current,
-          'Deine Angriffsaktion wurde bereits begonnen. Du kannst weitere '
-          'Angriffe ausführen, eine freie Bonusaktion wählen, dich bewegen '
-          'oder den Zug beenden; keine zweite volle Aktion beginnen.',
-          type: 'rules.blocked');
+        RegExp(
+          r'ausweich|weich\w*\s+aus|verteidig|flieh|flucht|wegrenn|heiltrank|trank.*trink|trink.*trank',
+        ).hasMatch(words)) {
+      return _commit(
+        before,
+        current,
+        'Deine Angriffsaktion wurde bereits begonnen. Du kannst weitere '
+        'Angriffe ausführen, eine freie Bonusaktion wählen, dich bewegen '
+        'oder den Zug beenden; keine zweite volle Aktion beginnen.',
+        type: 'rules.blocked',
+      );
     }
     if (RegExp(
       r'angreif|attackier|greif\w*.*\ban(?:[.!?]|$)|schieß|schies|schlag|hieb|bogen|schwert',
     ).hasMatch(words)) {
       if (encounter.actionUsed && encounter.attacksRemaining == 0) {
-        return _commit(before, current,
-            'Deine Angriffsaktion ist bereits verbraucht.',
-            type: 'rules.blocked');
+        return _commit(
+          before,
+          current,
+          'Deine Angriffsaktion ist bereits verbraucht.',
+          type: 'rules.blocked',
+        );
       }
       final attack = CharacterRuleEngine.attack(current.hero);
       final bonus = attack.modifier;
@@ -1651,7 +2291,10 @@ class GameEngine {
       );
     }
     if (RegExp(r'flieh|flucht|wegrenn').hasMatch(words)) {
-      final escape = CharacterRuleEngine.abilityCheck(current.hero, 'dexterity');
+      final escape = CharacterRuleEngine.abilityCheck(
+        current.hero,
+        'dexterity',
+      );
       return _commit(
         before,
         current.copyWith(
@@ -1670,8 +2313,12 @@ class GameEngine {
     if (RegExp(r'heiltrank|trank.*trink|trink.*trank').hasMatch(words)) {
       return _drinkPotion(before, current);
     }
-    if (RegExp(r'ausweich|weich\w*\s+aus|verteidig|warten|zug beenden|beende(?:\s+\w+){0,2}\s+zug').hasMatch(words)) {
-      final dodge = RegExp(r'ausweich|weich\w*\s+aus|verteidig').hasMatch(words);
+    if (RegExp(
+      r'ausweich|weich\w*\s+aus|verteidig|warten|zug beenden|beende(?:\s+\w+){0,2}\s+zug',
+    ).hasMatch(words)) {
+      final dodge = RegExp(
+        r'ausweich|weich\w*\s+aus|verteidig',
+      ).hasMatch(words);
       final turn = _enemyTurn(current, disadvantage: dodge);
       return _commit(
         before,
@@ -1683,9 +2330,12 @@ class GameEngine {
     }
     if (RegExp(r'beweg|lauf|geh').hasMatch(words)) {
       if ((CharacterRuleEngine.movementWholeMeters(current.hero) ?? 0) <= 0) {
-        return _commit(before, current,
+        return _commit(
+          before,
+          current,
           'Dein Zustand oder deine Bewegungsrate erlaubt keine Bewegung.',
-          type: 'rules.blocked');
+          type: 'rules.blocked',
+        );
       }
       final amount =
           int.tryParse(
@@ -1780,7 +2430,9 @@ class GameEngine {
       final outcome = RulesEngine.attack(
         roll: result,
         armorClass: foe.enemyArmorClass,
-        criticalThreshold: ClassCombatFeatures.weaponCriticalThreshold(next.hero),
+        criticalThreshold: ClassCombatFeatures.weaponCriticalThreshold(
+          next.hero,
+        ),
       );
       // A regular Attack action may contain multiple separate attack rolls.
       // Resolve each roll/damage independently and give the enemy exactly one
@@ -1807,7 +2459,9 @@ class GameEngine {
           criticalExtra: extra,
         );
         final rageBonus = CombatClassActions.rageDamageBonus(
-            next.hero, rolledFight);
+          next.hero,
+          rolledFight,
+        );
         final sneakDice = ClassCombatFeatures.eligibleSneakAttackDice(
           next.hero,
           hasAdvantage: pending.advantage,
@@ -1816,8 +2470,12 @@ class GameEngine {
           alreadyUsedThisTurn: foe.sneakAttackUsedThisTurn,
         );
         final sneakRoll = sneakDice > 0
-            ? ClassCombatFeatures.rollSneakAttack(dice, sneakDice,
-                critical: outcome.critical) : null;
+            ? ClassCombatFeatures.rollSneakAttack(
+                dice,
+                sneakDice,
+                critical: outcome.critical,
+              )
+            : null;
         final damage = weaponDamage + rageBonus + (sneakRoll?.total ?? 0);
         if (rageBonus > 0) payload['rageDamageBonus'] = rageBonus;
         if (sneakRoll != null) payload['sneakAttackRoll'] = sneakRoll.toJson();
@@ -1829,17 +2487,26 @@ class GameEngine {
         payload['criticalExtra'] = extra?.toJson();
         payload['damage'] = damage;
         next = next.copyWith(
-          encounter: rolledFight.copyWith(enemyHitPoints: hp, actionUsed: true,
-              sneakAttackUsedThisTurn: foe.sneakAttackUsedThisTurn || sneakRoll != null,
-              attacksRemaining: attacksRemaining),
+          encounter: rolledFight.copyWith(
+            enemyHitPoints: hp,
+            actionUsed: true,
+            sneakAttackUsedThisTurn:
+                foe.sneakAttackUsedThisTurn || sneakRoll != null,
+            attacksRemaining: attacksRemaining,
+          ),
           facts: next.storyBible['mode'] == 'ai'
-              ? next.facts : {...next.facts, 'guardianHitPoints': '$hp'},
+              ? next.facts
+              : {...next.facts, 'guardianHitPoints': '$hp'},
         );
         narration +=
             '${outcome.critical ? 'Ein kritischer Treffer! ' : ''}Du verursachst $damage Schaden; der ${foe.enemyName} hat noch $hp Trefferpunkte. ';
       } else {
-        next = next.copyWith(encounter: rolledFight.copyWith(
-            actionUsed: true, attacksRemaining: attacksRemaining));
+        next = next.copyWith(
+          encounter: rolledFight.copyWith(
+            actionUsed: true,
+            attacksRemaining: attacksRemaining,
+          ),
+        );
         narration += 'Dein Angriff verfehlt den ${foe.enemyName}. ';
       }
       if (next.encounter!.isFinished) {
@@ -1847,28 +2514,43 @@ class GameEngine {
           final questId = next.facts['aiEncounterQuestId'];
           final offerId = next.facts['aiEncounterOfferId'];
           final lootName = next.facts['aiEncounterLoot'];
-          final valid = questId != null && offerId != null &&
-              lootName != null && next.quests.any((q) =>
-                  q.id == questId && q.status == 'active');
+          final valid =
+              questId != null &&
+              offerId != null &&
+              lootName != null &&
+              next.quests.any((q) => q.id == questId && q.status == 'active');
           if (valid) {
             final lootId = 'loot-$offerId';
             final inventory = next.hero.inventory.any((e) => e.id == lootId)
                 ? next.hero.inventory
-                : [...next.hero.inventory, InventoryItem(id: lootId,
-                    name: lootName, description: 'Beute der bestätigten Begegnung.')];
+                : [
+                    ...next.hero.inventory,
+                    InventoryItem(
+                      id: lootId,
+                      name: lootName,
+                      description: 'Beute der bestätigten Begegnung.',
+                    ),
+                  ];
             next = next.copyWith(
               hero: next.hero.copyWith(inventory: inventory),
-              quests: [for (final q in next.quests)
-                q.id == questId ? q.copyWith(status: 'completed') : q],
+              quests: [
+                for (final q in next.quests)
+                  q.id == questId ? q.copyWith(status: 'completed') : q,
+              ],
               encounter: null,
-              facts: {...next.facts,
-                'aiEncounterQuestId': '', 'aiEncounterOfferId': '',
-                'aiEncounterLoot': '', 'aiQuestCompleted:$questId': 'true'},
+              facts: {
+                ...next.facts,
+                'aiEncounterQuestId': '',
+                'aiEncounterOfferId': '',
+                'aiEncounterLoot': '',
+                'aiQuestCompleted:$questId': 'true',
+              },
             );
             payload['completedQuestId'] = questId;
             payload['rewardItemId'] = lootId;
-            narration += 'Die Begegnung ist gewonnen. Dein Auftrag ist '
-              'abgeschlossen; als bestätigte Beute erhältst du $lootName. ';
+            narration +=
+                'Die Begegnung ist gewonnen. Dein Auftrag ist '
+                'abgeschlossen; als bestätigte Beute erhältst du $lootName. ';
           } else {
             next = next.copyWith(encounter: null);
             narration += 'Du hast den Gegner überwunden. ';
@@ -1882,25 +2564,33 @@ class GameEngine {
                   'Der Dornenwächter wurde im bestätigten Kampf überwunden.',
             },
           );
-          narration += 'Der Dornenwächter zerfällt in Blätter. '
+          narration +=
+              'Der Dornenwächter zerfällt in Blätter. '
               'Der Weg zum Schrein ist frei. Was möchtest du tun?';
         }
       } else if (next.encounter!.attacksRemaining == 0 &&
           next.encounter!.surgeReserved) {
-        next = next.copyWith(encounter: next.encounter!.copyWith(
-          actionUsed: false, surgeReserved: false));
-        narration += 'Action Surge: Du kannst noch eine zusätzliche '
-          'Angriffsaktion beginnen oder deinen Zug beenden. ';
+        next = next.copyWith(
+          encounter: next.encounter!.copyWith(
+            actionUsed: false,
+            surgeReserved: false,
+          ),
+        );
+        narration +=
+            'Action Surge: Du kannst noch eine zusätzliche '
+            'Angriffsaktion beginnen oder deinen Zug beenden. ';
       } else if (next.encounter!.attacksRemaining == 0 &&
           MonkFlurryRules.canUse(next.hero, next.encounter!) &&
           !next.encounter!.surgeReserved) {
-        narration += 'Du kannst jetzt Schlaghagel als Bonusaktion einsetzen '
+        narration +=
+            'Du kannst jetzt Schlaghagel als Bonusaktion einsetzen '
             'oder deinen Zug beenden.';
       } else if (next.encounter!.attacksRemaining > 0) {
-        narration += 'Du kannst in derselben Angriffsaktion noch '
-        '${next.encounter!.attacksRemaining} '
-        '${next.encounter!.attacksRemaining == 1 ? 'Angriff' : 'Angriffe'} '
-        'ausführen oder deinen Zug beenden.';
+        narration +=
+            'Du kannst in derselben Angriffsaktion noch '
+            '${next.encounter!.attacksRemaining} '
+            '${next.encounter!.attacksRemaining == 1 ? 'Angriff' : 'Angriffe'} '
+            'ausführen oder deinen Zug beenden.';
       } else {
         final turn = _enemyTurn(next);
         next = turn.campaign;
@@ -1911,21 +2601,31 @@ class GameEngine {
       if (result.total >= pending.difficulty) {
         if (next.storyBible['mode'] == 'ai') {
           final questId = next.facts['aiEncounterQuestId'];
-          next = next.copyWith(encounter: null,
-            quests: [for (final q in next.quests)
-              q.id == questId ? q.copyWith(status: 'failed') : q],
-            facts: {...next.facts, 'aiEncounterQuestId': '',
-              'aiEncounterOfferId': '', 'aiEncounterLoot': ''});
-          narration += 'Du entkommst dem Kampf. Der Auftrag gilt als gescheitert; '
-            'du erhältst keine Kampfbelohnung. Was möchtest du tun?';
+          next = next.copyWith(
+            encounter: null,
+            quests: [
+              for (final q in next.quests)
+                q.id == questId ? q.copyWith(status: 'failed') : q,
+            ],
+            facts: {
+              ...next.facts,
+              'aiEncounterQuestId': '',
+              'aiEncounterOfferId': '',
+              'aiEncounterLoot': '',
+            },
+          );
+          narration +=
+              'Du entkommst dem Kampf. Der Auftrag gilt als gescheitert; '
+              'du erhältst keine Kampfbelohnung. Was möchtest du tun?';
         } else {
           next = next.copyWith(
             encounter: null,
             scene: 'Du bist zum sicheren Dorf Mooswacht zurückgekehrt.',
             facts: {...next.facts, 'location': 'Mooswacht'},
           );
-          narration += 'Du entkommst den Dornen und erreichst das Dorf. '
-            'Der Wächter bewacht weiterhin den Schrein. Was möchtest du tun?';
+          narration +=
+              'Du entkommst den Dornen und erreichst das Dorf. '
+              'Der Wächter bewacht weiterhin den Schrein. Was möchtest du tun?';
         }
       } else {
         final turn = _enemyTurn(next);
@@ -1943,23 +2643,38 @@ class GameEngine {
         final success = result.total >= pending.difficulty;
         final lootId = 'loot-$offerId';
         next = next.copyWith(
-          quests: [for (final q in next.quests) q.id == questId
-            ? q.copyWith(status: success ? 'completed' : 'failed') : q],
+          quests: [
+            for (final q in next.quests)
+              q.id == questId
+                  ? q.copyWith(status: success ? 'completed' : 'failed')
+                  : q,
+          ],
           hero: success && !next.hero.inventory.any((item) => item.id == lootId)
-            ? next.hero.copyWith(inventory: [...next.hero.inventory,
-                InventoryItem(id: lootId, name: 'Spurenkarte',
-                  description: 'Fund einer bestätigten Wahrnehmungsprobe.')])
-            : next.hero,
-          facts: {...next.facts, 'aiEncounterQuestId': '',
-            'aiEncounterOfferId': '', 'aiEncounterLoot': '',
-            if (success) 'aiQuestCompleted:$questId': 'true'},
+              ? next.hero.copyWith(
+                  inventory: [
+                    ...next.hero.inventory,
+                    InventoryItem(
+                      id: lootId,
+                      name: 'Spurenkarte',
+                      description: 'Fund einer bestätigten Wahrnehmungsprobe.',
+                    ),
+                  ],
+                )
+              : next.hero,
+          facts: {
+            ...next.facts,
+            'aiEncounterQuestId': '',
+            'aiEncounterOfferId': '',
+            'aiEncounterLoot': '',
+            if (success) 'aiQuestCompleted:$questId': 'true',
+          },
         );
         payload['completedQuestId'] = success ? questId : null;
         narration += success
-          ? 'Du findest die entscheidende Spur! Der Auftrag ist abgeschlossen. '
-            'Du erhältst eine Spurenkarte als erzählerische Belohnung.'
-          : 'Die Spur bleibt verborgen. Der Auftrag ist gescheitert; '
-            'es gibt keine Belohnung. Du kannst einen anderen Weg wählen.';
+            ? 'Du findest die entscheidende Spur! Der Auftrag ist abgeschlossen. '
+                  'Du erhältst eine Spurenkarte als erzählerische Belohnung.'
+            : 'Die Spur bleibt verborgen. Der Auftrag ist gescheitert; '
+                  'es gibt keine Belohnung. Du kannst einen anderen Weg wählen.';
       } else if (result.total >= pending.difficulty) {
         next = next.copyWith(
           facts: {
@@ -2052,8 +2767,10 @@ class GameEngine {
     var restored = '';
     var restorationChoiceRequired = false;
     if (advanceRound) {
-      final resolution = MonkSelfRestoration.atEndOfTurn(hero,
-          choice: foe.selfRestorationChoice);
+      final resolution = MonkSelfRestoration.atEndOfTurn(
+        hero,
+        choice: foe.selfRestorationChoice,
+      );
       hero = resolution.hero;
       restored = resolution.removed;
       restorationChoiceRequired = resolution.choiceRequired;
@@ -2078,7 +2795,8 @@ class GameEngine {
       narration = 'Selbstwiederherstellung beendet $restored. $narration';
     } else if (restorationChoiceRequired) {
       details['selfRestorationChoiceRequired'] = true;
-      narration = 'Selbstwiederherstellung wurde nicht eingesetzt: '
+      narration =
+          'Selbstwiederherstellung wurde nicht eingesetzt: '
           'Mehrere Zustände waren vorhanden, aber keiner ausgewählt. $narration';
     }
     if (outcome.hit) {
@@ -2086,37 +2804,41 @@ class GameEngine {
       final extra = outcome.critical ? dice.roll(foe.enemyDamage) : null;
       final rawDamage =
           damageRoll.total + (extra == null ? 0 : extra.total - extra.modifier);
-      final damage = CombatClassActions.effectiveIncomingDamage(
-          foe, hero, rawDamage);
+      final effect = foe.enemyDamageType.isEmpty
+          ? CharacterEffectRules.untypedDamage(
+              hero,
+              amount: rawDamage,
+              dice: dice,
+              critical: outcome.critical,
+            )
+          : CharacterEffectRules.damage(
+              hero,
+              components: [
+                DamageComponent(
+                  DamageType.values.byName(foe.enemyDamageType),
+                  rawDamage,
+                ),
+              ],
+              defenses: CharacterEffectRules.defensesFor(hero, encounter: foe),
+              dice: dice,
+              critical: outcome.critical,
+            );
+      final damage = effect.damage;
       if (damage != rawDamage) {
         details['rawDamage'] = rawDamage;
-        details['rageResistanceReduction'] = rawDamage - damage;
-      }
-      final tempBefore = hero.temporaryHitPoints;
-      final hitPointsBefore = hero.hitPoints!;
-      hero = RulesEngine.damage(hero, damage, critical: outcome.critical);
-      details['temporaryHitPointsAbsorbed'] =
-          tempBefore - hero.temporaryHitPoints;
-      details['hitPointDamage'] = hitPointsBefore - hero.hitPoints!;
-      details['remainingTemporaryHitPoints'] = hero.temporaryHitPoints;
-      if (campaign.hero.concentratingOn.isNotEmpty && damage > 0) {
-        if (hero.concentratingOn.isEmpty) {
-          details['concentrationLost'] = true;
-          narration += ' Deine Konzentration endet.';
-        } else {
-          final rule = CharacterRuleEngine.savingThrow(hero, 'constitution');
-          final save = dice.check(modifier: rule.modifier,
-            advantage: rule.advantage, disadvantage: rule.disadvantage);
-          final concentration = SpellcastingRules.saveAfterDamage(hero,
-              damage: damage, d20: save.natural!);
-          hero = concentration.hero;
-          details['concentrationSave'] = save.toJson();
-          details['concentrationDc'] = concentration.dc;
-          details['concentrationMaintained'] = concentration.maintained;
-          narration += concentration.maintained
-              ? ' Konzentrationsrettungswurf geschafft (${concentration.total} gegen SG ${concentration.dc}).'
-              : ' Konzentration verloren (${concentration.total} gegen SG ${concentration.dc}).';
+        details['damageDefenseReduction'] = rawDamage - damage;
+        if (CombatClassActions.rageActive(foe)) {
+          details['rageResistanceReduction'] = rawDamage - damage;
         }
+      }
+      hero = effect.hero;
+      details.addAll(effect.toJson());
+      if (effect.concentrationSave != null) {
+        narration += effect.concentrationLost
+            ? ' Konzentration verloren (${effect.concentrationSave!.total} gegen SG ${effect.concentrationDc}).'
+            : ' Konzentrationsrettungswurf geschafft (${effect.concentrationSave!.total} gegen SG ${effect.concentrationDc}).';
+      } else if (effect.concentrationLost) {
+        narration += ' Deine Konzentration endet.';
       }
       details['damageRoll'] = damageRoll.toJson();
       details['criticalExtra'] = extra?.toJson();
@@ -2140,6 +2862,7 @@ class GameEngine {
           actionUsed: false,
           attacksRemaining: 0,
           bonusActionUsed: false,
+          spellSlotExpendedThisTurn: false,
           dodgeActive: false,
           disengagedThisTurn: false,
           jumpDoubledThisTurn: false,
@@ -2249,14 +2972,16 @@ class MemoryEngine {
   static bool isRecallRequest(String text) {
     final normalized = _memoryNormalize(text);
     return RegExp(
-      r'\b(?:erinner\w*|bisher\w*|tagebuch|'
-      r'zusammenfass\w*|rueckblick)\b',
-    ).hasMatch(normalized) ||
-        RegExp(r'\b(?:meine|unsere|bisherige)\s+geschichte\b')
-            .hasMatch(normalized) ||
+          r'\b(?:erinner\w*|bisher\w*|tagebuch|'
+          r'zusammenfass\w*|rueckblick)\b',
+        ).hasMatch(normalized) ||
+        RegExp(
+          r'\b(?:meine|unsere|bisherige)\s+geschichte\b',
+        ).hasMatch(normalized) ||
         RegExp(r'\bwas\s+weisst\s+du\b').hasMatch(normalized) ||
-        RegExp(r'\berzaehl\w*\s+(?:mir\s+)?(?:etwas\s+)?(?:ueber|von)\b')
-            .hasMatch(normalized);
+        RegExp(
+          r'\berzaehl\w*\s+(?:mir\s+)?(?:etwas\s+)?(?:ueber|von)\b',
+        ).hasMatch(normalized);
   }
 
   /// Selects confirmed memories by lexical relevance without model inference.
@@ -2347,14 +3072,20 @@ class MemoryEngine {
         'abandoned' => 'aufgegeben',
         _ => thread.status,
       };
-      add('Handlungsstrang $status: ${thread.title}',
-          thread.description, priority: thread.status == 'open' ? 210 : 70);
+      add(
+        'Handlungsstrang $status: ${thread.title}',
+        thread.description,
+        priority: thread.status == 'open' ? 210 : 70,
+      );
     }
     for (final note in campaign.npcRelationshipNotes.reversed) {
       final npc = campaign.npcs.where((entry) => entry.id == note.npcId);
       if (npc.isEmpty) continue;
-      add('Beziehung zu ${npc.first.name}: ${note.relationship}',
-          note.note, priority: 220);
+      add(
+        'Beziehung zu ${npc.first.name}: ${note.relationship}',
+        note.note,
+        priority: 220,
+      );
     }
     for (final item in campaign.hero.inventory) {
       add(
@@ -2421,17 +3152,13 @@ class MemoryEngine {
       'Kampagne: ${campaign.name}.',
       'Held: ${campaign.hero.name}.',
       if (campaign.quests.isNotEmpty)
-        'Quests: ${campaign.quests.map((q) =>
-            '${q.title} (${questStatus(q.status)})').join('; ')}.',
+        'Quests: ${campaign.quests.map((q) => '${q.title} (${questStatus(q.status)})').join('; ')}.',
       if (campaign.npcs.isNotEmpty)
-        'Bekannte NPCs: ${campaign.npcs.map((n) =>
-            '${n.name} (${n.alive ? 'lebendig' : 'tot'}, ${n.relationship})').join('; ')}.',
+        'Bekannte NPCs: ${campaign.npcs.map((n) => '${n.name} (${n.alive ? 'lebendig' : 'tot'}, ${n.relationship})').join('; ')}.',
       if (campaign.storyThreads.isNotEmpty)
-        'Handlungsstränge: ${campaign.storyThreads.map((t) =>
-            '${t.title} (${threadStatus(t.status)})').join('; ')}.',
+        'Handlungsstränge: ${campaign.storyThreads.map((t) => '${t.title} (${threadStatus(t.status)})').join('; ')}.',
       if (campaign.facts.isNotEmpty)
-        'Bestätigte Fakten: ${campaign.facts.entries.map((f) =>
-            '${f.key}: ${f.value}').join('; ')}.',
+        'Bestätigte Fakten: ${campaign.facts.entries.map((f) => '${f.key}: ${f.value}').join('; ')}.',
     ];
     final whole = lines.join('\n');
     // Both import validation and JSON limits use UTF-16 code units. Avoid
@@ -2465,8 +3192,9 @@ class MemoryEngine {
       'quests': campaign.quests.map((e) => e.toJson()).toList(),
       'sessionRecaps': campaign.sessionRecaps.map((e) => e.toJson()).toList(),
       'storyThreads': campaign.storyThreads.map((e) => e.toJson()).toList(),
-      'npcRelationshipNotes':
-          campaign.npcRelationshipNotes.map((e) => e.toJson()).toList(),
+      'npcRelationshipNotes': campaign.npcRelationshipNotes
+          .map((e) => e.toJson())
+          .toList(),
       'npcs': campaign.npcs.map((e) => e.toJson()).toList(),
       'inventory': campaign.hero.inventory.map((e) => e.toJson()).toList(),
     },

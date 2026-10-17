@@ -39,8 +39,10 @@ class ClassFeatureResources {
   static void validate(HeroCharacter hero) {
     final wind = secondWindMaximum(hero);
     final surge = actionSurgeMaximum(hero);
-    if (hero.spentSecondWind < 0 || hero.spentSecondWind > wind ||
-        hero.spentActionSurge < 0 || hero.spentActionSurge > surge) {
+    if (hero.spentSecondWind < 0 ||
+        hero.spentSecondWind > wind ||
+        hero.spentActionSurge < 0 ||
+        hero.spentActionSurge > surge) {
       throw const FormatException('Ungültiger Klassenressourcenverbrauch.');
     }
   }
@@ -62,7 +64,8 @@ class ClassFeatureResources {
       throw StateError('Second Wind erfordert mindestens eine Kämpferstufe.');
     }
     if (!ConditionRules.canTakeActions(hero) ||
-        hero.hitPoints == null || hero.hitPoints! < 1 ||
+        hero.hitPoints == null ||
+        hero.hitPoints! < 1 ||
         hero.maxHitPoints == null) {
       throw StateError('Second Wind benötigt einen handlungsfähigen Helden.');
     }
@@ -71,11 +74,16 @@ class ClassFeatureResources {
     }
     final roll = dice.roll('1d10');
     final total = roll.total + fighterLevel(hero);
-    final next = RulesEngine.heal(hero, total).copyWith(
-      spentSecondWind: hero.spentSecondWind + 1,
+    final next = RulesEngine.heal(
+      hero,
+      total,
+    ).copyWith(spentSecondWind: hero.spentSecondWind + 1);
+    return SecondWindResult(
+      next,
+      roll,
+      total,
+      next.hitPoints! - hero.hitPoints!,
     );
-    return SecondWindResult(next, roll, total,
-        next.hitPoints! - hero.hitPoints!);
   }
 
   /// Reserve one extra non-Magic action in a turn. The actual action is
@@ -85,7 +93,9 @@ class ClassFeatureResources {
       throw StateError('Action Surge erfordert Kämpferstufe 2.');
     }
     if (!ConditionRules.canTakeActions(hero) || hero.hitPoints == 0) {
-      throw StateError('Ein kampfunfähiger Held kann Action Surge nicht nutzen.');
+      throw StateError(
+        'Ein kampfunfähiger Held kann Action Surge nicht nutzen.',
+      );
     }
     if (remainingActionSurge(hero) == 0) {
       throw StateError('Action Surge hat keine Nutzung mehr.');
@@ -97,8 +107,7 @@ class ClassFeatureResources {
   static HeroCharacter afterShortRest(HeroCharacter hero) {
     validate(hero);
     return hero.copyWith(
-      spentSecondWind: hero.spentSecondWind > 0
-          ? hero.spentSecondWind - 1 : 0,
+      spentSecondWind: hero.spentSecondWind > 0 ? hero.spentSecondWind - 1 : 0,
       spentActionSurge: 0,
     );
   }
@@ -110,8 +119,12 @@ class ClassFeatureResources {
 }
 
 class SecondWindResult {
-  const SecondWindResult(this.hero, this.roll, this.totalHealing,
-      this.hitPointsRestored);
+  const SecondWindResult(
+    this.hero,
+    this.roll,
+    this.totalHealing,
+    this.hitPointsRestored,
+  );
   final HeroCharacter hero;
   final DiceResult roll;
   final int totalHealing;

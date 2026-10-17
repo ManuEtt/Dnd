@@ -1,3 +1,30 @@
+## Abschlussprüfung 0.7.7+47 (17.10.2026)
+
+**635 Flutter-, 31 Backend-, 56 Python- und 12 native Androidtests erfolgreich**, keine Skips/Fehler; Analyse und Formatierung sauber. Debug-APK tatsächlich aus entpacktem Quell-ZIP gebaut, Integrität/Metadaten/Signatur geprüft. Gerät/Emulator/Updatesignatur nicht abgenommen. GitHub-Write HTTP403; main unverändert. Finale ZIP-/Patch-/Hash-Artefakte und exakte Fortsetzung in CHECKPOINT.md; ausführlicher Prüfbericht docs/VALIDATION_2026_10_17.md. Umfang bleibt eine Teilmenge des SRD5.2.1.
+
+## 0.7.7+47 – Ausführbare Heilzauber im Spiel (17.10.2026)
+
+- Wunden heilen und Heilendes Wort wirken auf den eigenen Charakter: 2024-Würfel (2W8/2W4 pro tatsächlichem Platzgrad), eigenes Klassenattribut, Hochstufung, normale/Pakt-Plätze und Lebensdomänenboni (Kleriker 3/17).
+- Deutsche Auswahl mit Klassen-/Platz-/Komponentenbestätigung direkt im Abenteuer/Kampf. Ereignis, TP, Platz und Aktion werden atomar bestätigt; keine automatischen Regeln aus Erzähltext.
+- Persistenter Zugschutz: nur ein Platzverbrauch für Zauberwirken je Zug, gemeinsam für normale und Paktplätze; reset erst beim nächsten eigenen Zug. Alte Begegnungen bleiben lesbar. Action Surge erlaubt keine zusätzliche Magieaktion.
+- 26 Domain-, 13 Dialog- und 9 Integrationsfälle geprüft. Vollständige Formatbereinigung und verpflichtende Formatprüfung im normalen Test-/Buildworkflow, keine autonome Codex-Action.
+- Vollständige Suite und Android-Prüfung werden im aktuellen CHECKPOINT.md getrennt nachgewiesen. Umfang/Grenzen: docs/CHARACTER_EFFECTS_AND_HEALING.md.
+
+## 0.7.6+46 – Ausführbare Charaktereffekte (17.10.2026)
+
+- Gemeinsamer Schaden-/Konzentrationsablauf für bestätigte externe Quellen und Gegnerangriffe: Abwehr vor temporären/echten TP; auch absorbierter Schaden löst Konzentration aus.
+- Deutsche Oberfläche für Schaden, Heilung und temporäre TP mit Quelle und bestätigten Abwehrregeln. Atomare Speicherung und Revisionsschutz für offene Dialoge.
+- Versteinert-Schadensresistenz und automatische Stärke-/Geschicklichkeitsfehlschläge bei gelähmt/versteinert/betäubt/bewusstlos; betäubt sperrt Bewegung nach 2024 nicht generell.
+- 50 gezielte Domain-/Kampfregressionen, 6 Dialogtests und 7 echte UI-/SQLite-Tests erfolgreich; Flutter-Analyse ohne Befunde. Details im Checkpoint.
+
+## 0.7.5+45 – Verifizierte Korrekturen (17.10.2026)
+
+- Basis `b66354f3112165d76aa340a2f2ab5705f8019e1a`, eigener Branch `feature/autonomous-srd-engine-20261016`; keine Änderung von main.
+- Erschöpfte offene Proben überleben Speicherung/Neustart. Schaden bei 0 TP mit temporären TP korrigiert. Zwei Backendfehler korrigiert (leere Handlungsstränge, Redirects).
+- Flutter 3.35.7/Dart 3.9.2 lokal installiert: Analyse ohne Befunde; Suite 544 erfolgreich, 1 optionaler Backend-Protokolltest übersprungen. 30 gezielte Flutter-Regressionsfälle erfolgreich. Backend unter CI-Node 22.14.0: Typecheck, Build und 31 Tests erfolgreich.
+- Ursprüngliche Formatprüfung meldete 84 unformatierte Dateien; Formatbereinigung folgt isoliert nach Integration. Android-Build/Gerät weiterhin gesondert nachzuweisen.
+- `docs/RULE_COVERAGE.md` und `CHECKPOINT.md` sind die aktuelle Fortsetzungsbasis. Allgemeine Effekte/Heilzauber folgen als getrennte Inkremente.
+
 ## 0.7.4+44 — Tatsächliche Implementierung (16.10.2026)
 
 - **BASIS:** vollständiges Quellprojekt 0.7.3+43; GitHub `main` wurde bei der Entwicklung als 0.7.2+42 (`91ffddd`) gelesen.

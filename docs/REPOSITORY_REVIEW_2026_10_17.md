@@ -1,0 +1,22 @@
+# Repositoryprüfung vom 17.10.2026
+
+Ausgangspunkt: GitHub main `b66354f3112165d76aa340a2f2ab5705f8019e1a`, App 0.7.4+44. Kein zusätzlicher Projekt-ZIP im Workspace. Master-Prompt unter tatsächlichem Namen mit Leerzeichen gefunden und zusammen mit AGENTS.md, Architektur, Roadmap, Testing und fachlicher Dokumentation verwendet. Zielstand dieser Sitzung: 0.7.7+47. Der Architekturreview umfasst Flutter-Domäne, Modelle/JSON, SQLite, Controller, UI/Sprach-/Backupdienste, Backend, natives Android-Dateisystem und CI-/Paketskripte. Regelabdeckung und konkrete Testdateien stehen in RULE_COVERAGE.md; Prüfergebnisse in VALIDATION_2026_10_17.md.
+
+| Bereich | Befund und Konsequenz |
+| --- | --- |
+| Architektur | Lokale Regelautorität, UI, SQLite und schreibgeschützter Backend-Erzähler sind getrennt. GameEngine ist groß und enthält viele Solo-/Demo-Sonderpfade; keine riskante Großumstrukturierung vorgenommen. Neue Effekte in eigenes reines Domänenmodul ausgelagert. |
+| Speicherung | Snapshot und Ereignis in gemeinsamer SQLite-Transaktion, Revisionen/idempotente Ereignisse, Importvalidierung bereits vorhanden. Fehler im handgeschriebenen PendingRoll-Bonusvergleich bei Erschöpfung korrigiert und mit echten Neustarts für alle drei betroffenen Probentypen geprüft. |
+| Schadens-/Effektregeln | Getrennte DamageRules und temporäre TP bereits vorhanden, allgemeine Integration fehlte. Gemeinsamen Charaktereffektablauf für Gegner und explizite externe Quellen angeschlossen. 0-TP-Schadensfehler bei temporären TP korrigiert. Keine unbekannten Schadensarten aus Namen geraten. |
+| Zustände | Mehrere Grundfolgen bereits vorhanden; 2024-Betäubt-Bewegung und automatische STR-/DEX-Rettungsfehlschläge korrigiert. Quellgebundene Dauer, sämtliche bedingten Angriffsfolgen und besondere Sinne bleiben offen. |
+| Klassen | Zwölf Klassen, Mehrklassen und zahlreiche Ressourcen/passive Merkmale vorhanden. Katalogeinträge sind keine ausführbaren Regeln. Vorhandene Mönch-/Kämpfer-/Paladinaktionen erhalten; Lebensdomänen-Heilboni für neue reale Selbstheilzauber angeschlossen. |
+| Zauber | Vorher überwiegend Ressourcenverwaltung im Charaktereditor. Zwei konkret geprüfte SRD-Zauber jetzt mit echten TP-Effekten, Klasse/Attribut, Platz, Aktion/Bonusaktion, Komponenten, Journal und Speicherung. Keine allgemeine Vorbereitung/Zauberengine behauptet. |
+| Ausrüstung/Monster | Umfangreicher Waffen-/Rüstungskatalog und begrenztes Anlegen vorhanden; Magieeffekte weitgehend katalogisiert. Monster im spielbaren Abenteuer überwiegend lokale Demoprofile; keine erfundenen Werte als offizielle SRD-Statblocks ausgegeben. |
+| UI/UX | Vorhandene dunkle Fantasy-Gestaltung und unten erreichbare Schnellaktionen erhalten. Neue Dialoge scrollbar, 320 dp und vergrößerte Schrift geprüft. UI→Controller→SQLite-Tests enthalten auch veraltete Dialoge und späte Schreibfehler. |
+| Sprache/Backups | Austauschbare Sprach-/Dateidienste und vorhandene Schutz-/Timeout-/UTF-8-Tests erhalten. Keine echte Mikrofon-/SAF-/Offline-/Geräteabnahme aus Mocktests abgeleitet. |
+| Backend | Fastify/TypeScript mit Autorisierung/Validierung und im Speicher begrenzten Quoten. Gültige leere Journalbeschreibung löste Mock-502 aus: korrigiert. OpenAI-POSTs konnten Redirects folgen: jetzt Abbruch ohne Token-/POST-Wiederholung, echter lokaler Redirecttest. Keine externen bezahlten Modellaufrufe. |
+| CI/Werkzeuge | Aktuelle Basis-CI 38933445408 grün. Flutter/Node/JDK/Android-SDK lokal eingerichtet, alle relevanten Prüfungen tatsächlich ausgeführt. Formatierungsrückstand in eigenem Commit bereinigt, normalen Formatcheck ergänzt. Keine autonome Codex-Action. |
+| Übergabe | Vollständige wiederherstellbare ZIP-/Binärpatch-Checkpoints mit Hashmanifest; echte Patchprüfung auf sauberer Basis. GitHub-Write sowohl über Git als auch Connector HTTP403, daher eigener lokaler Branch und Importartefakte, main unverändert. |
+
+## Weiterarbeit
+
+Priorität haben quittierbare Zustandsquellen/-dauern, optionale Konzentrationsrettungs-Wiederholungen sowie Mönch-Todesrettungsboni/-wiederholung. Danach Fremdziele und weitere ausgewählte verifizierte Zauber/Monsterfähigkeiten mit demselben Gateway. Spezies/Hintergrund/Talente, vollständige Klassenstufenmerkmale, Reaktionen, Spielzeit und Magiegegenstände benötigen weitere ausführbare Inkremente. Der Bericht ersetzt keine vollständige externe Anforderungsmatrix; lokale IDs sind ausdrücklich begrenzt und transparent.

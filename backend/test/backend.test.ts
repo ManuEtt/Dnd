@@ -1,11 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { createServer } from 'node:http';
 import type { FastifyInstance } from 'fastify';
 import { buildApp } from '../src/app.js';
 import { readConfig, type Config } from '../src/config.js';
 import { issueSession, verifySession } from '../src/auth.js';
 import { extractOutputText, OpenAiNarrator } from '../src/providers.js';
 import { WindowLimiter } from '../src/limits.js';
+import { mockStoryPlan } from '../src/story.js';
 
 const accessToken = 'local-test-access-token-0123456789abcdef';
 const signingSecret = 'local-test-signing-secret-0123456789abcdef';
@@ -269,6 +271,44 @@ test('OpenAI request uses Responses, fixed HTTPS endpoint, server key and store=
   assert.equal(requests, 1);
   assert.equal(response.provider, 'openai');
   assert.deepEqual(response.stateChanges, []);
+});
+
+test('OpenAI redirects never resend authorization or paid POST requests', async (t) => {
+  let initialRequests = 0;
+  let redirectedRequests = 0;
+  let output: unknown = 'Die Küste ist still. Was tust du?';
+  const server = createServer((request, response) => {
+    if (request.url === '/responses') {
+      initialRequests += 1;
+      response.writeHead(307, { Location: '/redirected' });
+      response.end();
+      return;
+    }
+    redirectedRequests += 1;
+    response.writeHead(200, { 'Content-Type': 'application/json' });
+    response.end(JSON.stringify({ output: [{ type: 'message', content: [
+      { type: 'output_text', text: typeof output === 'string' ? output : JSON.stringify(output) },
+    ] }] }));
+  });
+  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => new Promise<void>((resolve, reject) => {
+    server.closeAllConnections();
+    server.close((error) => error ? reject(error) : resolve());
+  }));
+  const address = server.address();
+  assert.ok(address && typeof address === 'object');
+  const localFetch: typeof fetch = async (url, options) => {
+    assert.equal(url, 'https://api.openai.com/v1/responses');
+    return fetch(`http://127.0.0.1:${address.port}/responses`, options);
+  };
+  const provider = new OpenAiNarrator('synthetic-test-key', 'test-model', localFetch);
+  await assert.rejects(() => provider.narrate(input));
+  output = mockStoryPlan({ heroName: 'Eila', heroClass: 'Kämpfer', theme: 'Küste' });
+  await assert.rejects(() => provider.startStory({
+    heroName: 'Eila', heroClass: 'Kämpfer', theme: 'Küste',
+  }));
+  assert.equal(initialRequests, 2);
+  assert.equal(redirectedRequests, 0);
 });
 
 test('OpenAI malformed, missing text and HTTP error responses fail safely', async () => {

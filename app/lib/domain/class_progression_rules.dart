@@ -28,7 +28,11 @@ class ClassProgressionRules {
   const ClassProgressionRules._();
 
   static const _extraAttackClasses = <String>{
-    'Barbar', 'Kämpfer', 'Mönch', 'Paladin', 'Waldläufer',
+    'Barbar',
+    'Kämpfer',
+    'Mönch',
+    'Paladin',
+    'Waldläufer',
   };
 
   static int _validatedLevel(int level) {
@@ -52,7 +56,8 @@ class ClassProgressionRules {
   static int _attacksForClass(String raw, int classLevel) {
     _validatedLevel(classLevel);
     final className = findSrdClass(raw)?.name;
-    if (className == null || classLevel < 5 ||
+    if (className == null ||
+        classLevel < 5 ||
         !_extraAttackClasses.contains(className)) {
       return 1;
     }
@@ -68,36 +73,88 @@ class ClassProgressionRules {
     final className = findSrdClass(raw)?.name;
     if (className == null) return const [];
     final result = <ClassMilestone>[
-      ClassMilestone(className, 3, ClassMilestoneType.subclassChoice,
-          'Unterklasse wählen'),
+      ClassMilestone(
+        className,
+        3,
+        ClassMilestoneType.subclassChoice,
+        'Unterklasse wählen',
+      ),
       for (final level in const [4, 8, 12, 16])
-        ClassMilestone(className, level, ClassMilestoneType.featChoice,
-            'Talent oder Attributsverbesserung wählen'),
-      ClassMilestone(className, 19, ClassMilestoneType.epicBoon,
-          'Epische Gabe oder zulässiges Talent wählen'),
+        ClassMilestone(
+          className,
+          level,
+          ClassMilestoneType.featChoice,
+          'Talent oder Attributsverbesserung wählen',
+        ),
+      ClassMilestone(
+        className,
+        19,
+        ClassMilestoneType.epicBoon,
+        'Epische Gabe oder zulässiges Talent wählen',
+      ),
     ];
     if (className == 'Kämpfer') {
       for (final level in const [6, 14]) {
-        result.add(ClassMilestone(className, level, ClassMilestoneType.featChoice,
-            'Zusätzliche Kämpfer-Talentauswahl'));
+        result.add(
+          ClassMilestone(
+            className,
+            level,
+            ClassMilestoneType.featChoice,
+            'Zusätzliche Kämpfer-Talentauswahl',
+          ),
+        );
       }
-      for (final entry in const [(2, 'Action Surge'), (9, 'Indomitable'),
-          (13, 'Studied Attacks'), (17, 'Action Surge (zweite Nutzung)')]) {
-        result.add(ClassMilestone(className, entry.$1,
-            ClassMilestoneType.fighterFeature, entry.$2));
+      for (final entry in const [
+        (2, 'Action Surge'),
+        (9, 'Indomitable'),
+        (13, 'Studied Attacks'),
+        (17, 'Action Surge (zweite Nutzung)'),
+      ]) {
+        result.add(
+          ClassMilestone(
+            className,
+            entry.$1,
+            ClassMilestoneType.fighterFeature,
+            entry.$2,
+          ),
+        );
       }
-      result.add(ClassMilestone(className, 11,
-          ClassMilestoneType.extraAttack, 'Drei Angriffe pro Angriffsaktion'));
-      result.add(ClassMilestone(className, 20,
-          ClassMilestoneType.extraAttack, 'Vier Angriffe pro Angriffsaktion'));
+      result.add(
+        ClassMilestone(
+          className,
+          11,
+          ClassMilestoneType.extraAttack,
+          'Drei Angriffe pro Angriffsaktion',
+        ),
+      );
+      result.add(
+        ClassMilestone(
+          className,
+          20,
+          ClassMilestoneType.extraAttack,
+          'Vier Angriffe pro Angriffsaktion',
+        ),
+      );
     }
     if (className == 'Schurke') {
-      result.add(ClassMilestone(className, 10, ClassMilestoneType.featChoice,
-          'Zusätzliche Schurken-Talentauswahl'));
+      result.add(
+        ClassMilestone(
+          className,
+          10,
+          ClassMilestoneType.featChoice,
+          'Zusätzliche Schurken-Talentauswahl',
+        ),
+      );
     }
     if (_extraAttackClasses.contains(className)) {
-      result.add(ClassMilestone(className, 5,
-          ClassMilestoneType.extraAttack, 'Zwei Angriffe pro Angriffsaktion'));
+      result.add(
+        ClassMilestone(
+          className,
+          5,
+          ClassMilestoneType.extraAttack,
+          'Zwei Angriffe pro Angriffsaktion',
+        ),
+      );
     }
     result.sort((a, b) => a.classLevel.compareTo(b.classLevel));
     return List.unmodifiable(result);
@@ -105,31 +162,38 @@ class ClassProgressionRules {
 
   /// Future milestones for the existing class(es), without inventing a
   /// future multiclass distribution or automatically granting feats.
-  static List<ClassMilestone> nextMilestones(HeroCharacter hero,
-      {int limit = 4}) {
+  static List<ClassMilestone> nextMilestones(
+    HeroCharacter hero, {
+    int limit = 4,
+  }) {
     if (limit < 1 || limit > 40) {
       throw RangeError.range(limit, 1, 40, 'limit');
     }
     if (hero.level >= 20) return const [];
     final options = <ClassMilestone>[
       ...milestonesForClass(hero.className).where(
-        (m) => m.classLevel > hero.primaryClassLevel &&
-               hero.level + m.classLevel - hero.primaryClassLevel <= 20,
+        (m) =>
+            m.classLevel > hero.primaryClassLevel &&
+            hero.level + m.classLevel - hero.primaryClassLevel <= 20,
       ),
       if (hero.hasSecondClass)
         ...milestonesForClass(hero.secondaryClassName).where(
-          (m) => m.classLevel > hero.secondaryClassLevel &&
-                 hero.level + m.classLevel - hero.secondaryClassLevel <= 20,
+          (m) =>
+              m.classLevel > hero.secondaryClassLevel &&
+              hero.level + m.classLevel - hero.secondaryClassLevel <= 20,
         ),
     ];
     // Stable order: upcoming total levels first, then class name and type.
     options.sort((a, b) {
       final aCurrent = a.className == findSrdClass(hero.className)?.name
-          ? hero.primaryClassLevel : hero.secondaryClassLevel;
+          ? hero.primaryClassLevel
+          : hero.secondaryClassLevel;
       final bCurrent = b.className == findSrdClass(hero.className)?.name
-          ? hero.primaryClassLevel : hero.secondaryClassLevel;
-      final byDistance = (a.classLevel - aCurrent)
-          .compareTo(b.classLevel - bCurrent);
+          ? hero.primaryClassLevel
+          : hero.secondaryClassLevel;
+      final byDistance = (a.classLevel - aCurrent).compareTo(
+        b.classLevel - bCurrent,
+      );
       if (byDistance != 0) return byDistance;
       final byClass = a.className.compareTo(b.className);
       return byClass != 0 ? byClass : a.type.index.compareTo(b.type.index);

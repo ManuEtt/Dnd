@@ -34,8 +34,13 @@ class _EquipmentLoadoutDialogState extends State<EquipmentLoadoutDialog> {
     }).toList();
   }
 
-  Widget _chooser(String label, String key, String selected,
-      List<InventoryItem> options, ValueChanged<String> update) {
+  Widget _chooser(
+    String label,
+    String key,
+    String selected,
+    List<InventoryItem> options,
+    ValueChanged<String> update,
+  ) {
     return DropdownButtonFormField<String>(
       key: ValueKey(key),
       initialValue: options.any((item) => item.id == selected) ? selected : '',
@@ -44,8 +49,14 @@ class _EquipmentLoadoutDialogState extends State<EquipmentLoadoutDialog> {
       items: [
         const DropdownMenuItem(value: '', child: Text('Nicht auswählen')),
         for (final item in options)
-          DropdownMenuItem(value: item.id, child: Text(item.name,
-              maxLines: 1, overflow: TextOverflow.ellipsis)),
+          DropdownMenuItem(
+            value: item.id,
+            child: Text(
+              item.name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
       ],
       onChanged: (next) => setState(() => update(next ?? '')),
     );
@@ -56,10 +67,17 @@ class _EquipmentLoadoutDialogState extends State<EquipmentLoadoutDialog> {
     final armors = _items((e) => e.isArmor);
     final shields = _items((e) => e.isShield);
     final weapons = _items((e) => e.isWeapon);
-    final selection = EquipmentSelection(armorId: _armor, shieldId: _shield,
-      weaponId: _weapon, armorTrained: _armorTrained,
-      shieldTrained: _shieldTrained, weaponProficient: _weaponTrained,
-      preferDexterity: _dexFinesse, twoHands: _twoHands, thrown: _thrown);
+    final selection = EquipmentSelection(
+      armorId: _armor,
+      shieldId: _shield,
+      weaponId: _weapon,
+      armorTrained: _armorTrained,
+      shieldTrained: _shieldTrained,
+      weaponProficient: _weaponTrained,
+      preferDexterity: _dexFinesse,
+      twoHands: _twoHands,
+      thrown: _thrown,
+    );
     EquipmentRulePreview? preview;
     String? validation;
     try {
@@ -72,91 +90,136 @@ class _EquipmentLoadoutDialogState extends State<EquipmentLoadoutDialog> {
       content: SizedBox(
         width: 560,
         child: SingleChildScrollView(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min, children: [
-              const Text('Nur bereits im Inventar vorhandene SRD-Gegenstände. '
-                  'Rüstung, Schild und Waffe werden erst nach Bestätigung wirksam.'),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Nur bereits im Inventar vorhandene SRD-Gegenstände. '
+                'Rüstung, Schild und Waffe werden erst nach Bestätigung wirksam.',
+              ),
               const SizedBox(height: 12),
-              _chooser('Rüstung', 'loadout-armor', _armor, armors,
-                  (id) { _armor = id; if (id.isEmpty) _armorTrained = false; }),
+              _chooser('Rüstung', 'loadout-armor', _armor, armors, (id) {
+                _armor = id;
+                if (id.isEmpty) _armorTrained = false;
+              }),
               if (_armor.isNotEmpty)
                 CheckboxListTile(
                   key: const ValueKey('loadout-armor-trained'),
                   value: _armorTrained,
                   title: const Text('Übung mit dieser Rüstungsart bestätigt'),
-                  onChanged: (value) => setState(() => _armorTrained = value ?? false)),
-              _chooser('Schild', 'loadout-shield', _shield, shields,
-                  (id) { _shield = id; if (id.isEmpty) _shieldTrained = false; }),
+                  onChanged: (value) =>
+                      setState(() => _armorTrained = value ?? false),
+                ),
+              _chooser('Schild', 'loadout-shield', _shield, shields, (id) {
+                _shield = id;
+                if (id.isEmpty) _shieldTrained = false;
+              }),
               if (_shield.isNotEmpty)
                 CheckboxListTile(
                   key: const ValueKey('loadout-shield-trained'),
                   value: _shieldTrained,
                   title: const Text('Schildübung bestätigt (+2 RK)'),
-                  onChanged: (value) => setState(() => _shieldTrained = value ?? false)),
-              _chooser('Waffe', 'loadout-weapon', _weapon, weapons,
-                  (id) { _weapon = id; _twoHands = false; _dexFinesse = false; _thrown = false; }),
+                  onChanged: (value) =>
+                      setState(() => _shieldTrained = value ?? false),
+                ),
+              _chooser('Waffe', 'loadout-weapon', _weapon, weapons, (id) {
+                _weapon = id;
+                _twoHands = false;
+                _dexFinesse = false;
+                _thrown = false;
+              }),
               if (_weapon.isNotEmpty) ...[
                 CheckboxListTile(
                   key: const ValueKey('loadout-weapon-trained'),
                   value: _weaponTrained,
                   title: const Text('Waffenübung bestätigt'),
-                  onChanged: (value) => setState(() => _weaponTrained = value ?? false)),
+                  onChanged: (value) =>
+                      setState(() => _weaponTrained = value ?? false),
+                ),
                 CheckboxListTile(
                   key: const ValueKey('loadout-finesse'),
                   value: _dexFinesse,
                   title: const Text('Finesse: Geschicklichkeit wählen'),
-                  onChanged: (value) => setState(() => _dexFinesse = value ?? false)),
+                  onChanged: (value) =>
+                      setState(() => _dexFinesse = value ?? false),
+                ),
                 CheckboxListTile(
                   key: const ValueKey('loadout-two-hands'),
                   value: _twoHands,
                   title: const Text('Zweihändig führen'),
-                  onChanged: (value) => setState(() => _twoHands = value ?? false)),
+                  onChanged: (value) =>
+                      setState(() => _twoHands = value ?? false),
+                ),
                 CheckboxListTile(
                   key: const ValueKey('loadout-thrown'),
                   value: _thrown,
                   title: const Text('Waffe werfen'),
-                  onChanged: (value) => setState(() => _thrown = value ?? false)),
+                  onChanged: (value) =>
+                      setState(() => _thrown = value ?? false),
+                ),
               ],
               const SizedBox(height: 10),
               if (preview != null) ...[
-                Text('Vorschau (noch nicht gespeichert)',
-                  style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  'Vorschau (noch nicht gespeichert)',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 if (preview.armorClass != null)
                   Text('Rüstungsklasse: ${preview.armorClass}'),
                 if (preview.weaponDamage != null)
-                  Text('Waffenschaden: ${preview.weaponDamage}; '
+                  Text(
+                    'Waffenschaden: ${preview.weaponDamage}; '
                     'Angriff (Grundwert): ${preview.attackBonus! >= 0 ? '+' : ''}${preview.attackBonus} '
-                    '(${preview.weaponAbility == 'dexterity' ? 'GE' : 'ST'})'),
-                if (preview.weaponDamage != null && widget.hero.exhaustionLevel > 0)
-                  Text('Im Spiel mit Erschöpfung: Angriff '
+                    '(${preview.weaponAbility == 'dexterity' ? 'GE' : 'ST'})',
+                  ),
+                if (preview.weaponDamage != null &&
+                    widget.hero.exhaustionLevel > 0)
+                  Text(
+                    'Im Spiel mit Erschöpfung: Angriff '
                     '${preview.attackBonus! - widget.hero.exhaustionLevel * 2} '
-                    '(−${widget.hero.exhaustionLevel * 2} auf W20-Tests).'),
+                    '(−${widget.hero.exhaustionLevel * 2} auf W20-Tests).',
+                  ),
                 if (preview.speedPenaltyFeet != 0)
                   Text('Bewegungsabzug: ${preview.speedPenaltyFeet} Fuß'),
                 if (preview.weaponDamage != null &&
-                    ConditionRules.hasUnconditionalAttackDisadvantage(widget.hero))
+                    ConditionRules.hasUnconditionalAttackDisadvantage(
+                      widget.hero,
+                    ))
                   const Text('Aktueller Zustand: Waffenangriff mit Nachteil.'),
                 for (final note in preview.warnings)
-                  Padding(padding: const EdgeInsets.only(top: 4),
-                    child: Text('• $note')),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text('• $note'),
+                  ),
                 const SizedBox(height: 6),
-                const Text('Keine automatische Abbuchung von Gold oder Munition; '
-                    'magische Effekte und alternative RK-Formeln sind ausgenommen.',
-                    style: TextStyle(fontSize: 12)),
+                const Text(
+                  'Keine automatische Abbuchung von Gold oder Munition; '
+                  'magische Effekte und alternative RK-Formeln sind ausgenommen.',
+                  style: TextStyle(fontSize: 12),
+                ),
               ] else
-                Text(validation ?? 'Ausrüstung unvollständig',
+                Text(
+                  validation ?? 'Ausrüstung unvollständig',
                   key: const ValueKey('loadout-validation'),
-                  style: TextStyle(color: Theme.of(context).colorScheme.error)),
-            ]),
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+            ],
+          ),
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context),
-          child: const Text('Abbrechen')),
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Abbrechen'),
+        ),
         FilledButton(
           key: const ValueKey('loadout-confirm'),
-          onPressed: preview == null ? null : () => Navigator.pop(context, preview),
-          child: const Text('Werte übernehmen')),
+          onPressed: preview == null
+              ? null
+              : () => Navigator.pop(context, preview),
+          child: const Text('Werte übernehmen'),
+        ),
       ],
     );
   }

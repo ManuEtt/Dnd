@@ -12,8 +12,7 @@ enum SavingThrowRerollFeature { disciplinedSurvivor, indomitable }
 class SavingThrowClassActions {
   const SavingThrowClassActions._();
 
-  static bool available(HeroCharacter hero,
-      SavingThrowRerollFeature feature) {
+  static bool available(HeroCharacter hero, SavingThrowRerollFeature feature) {
     final currentHp = hero.hitPoints;
     if (hero.isDead || currentHp == null || currentHp <= 0) {
       return false;
@@ -21,10 +20,10 @@ class SavingThrowClassActions {
     return switch (feature) {
       SavingThrowRerollFeature.disciplinedSurvivor =>
         ClassResourceRules.level(hero, 'Mönch') >= 14 &&
-          ClassResourceRules.remaining(hero, 'focusPoints') >= 1,
+            ClassResourceRules.remaining(hero, 'focusPoints') >= 1,
       SavingThrowRerollFeature.indomitable =>
         ClassResourceRules.level(hero, 'Kämpfer') >= 9 &&
-          ClassResourceRules.remaining(hero, 'indomitable') >= 1,
+            ClassResourceRules.remaining(hero, 'indomitable') >= 1,
     };
   }
 
@@ -40,20 +39,37 @@ class SavingThrowClassActions {
       throw RangeError.range(difficulty, 1, 30, 'difficulty');
     }
     if (originalTotal >= difficulty) {
-      throw StateError('Ein erfolgreicher Rettungswurf kann nicht wiederholt werden.');
+      throw StateError(
+        'Ein erfolgreicher Rettungswurf kann nicht wiederholt werden.',
+      );
     }
-    if (!const {'strength', 'dexterity', 'constitution',
-        'intelligence', 'wisdom', 'charisma'}.contains(ability)) {
+    if (!const {
+      'strength',
+      'dexterity',
+      'constitution',
+      'intelligence',
+      'wisdom',
+      'charisma',
+    }.contains(ability)) {
       throw ArgumentError.value(ability, 'ability', 'Unbekanntes Attribut');
     }
     if (!available(hero, feature)) {
-      throw StateError('Klassenmerkmal oder Nutzung für diesen Wiederholungswurf fehlt.');
+      throw StateError(
+        'Klassenmerkmal oder Nutzung für diesen Wiederholungswurf fehlt.',
+      );
     }
     final savedRule = CharacterRuleEngine.savingThrow(hero, ability);
+    if (savedRule.automaticallyFails) {
+      throw StateError(
+        'Dieser Rettungswurf misslingt durch den Zustand automatisch und kann nicht wiederholt werden.',
+      );
+    }
     final fighterBonus = feature == SavingThrowRerollFeature.indomitable
-        ? ClassResourceRules.level(hero, 'Kämpfer') : 0;
+        ? ClassResourceRules.level(hero, 'Kämpfer')
+        : 0;
     final resource = feature == SavingThrowRerollFeature.indomitable
-        ? 'indomitable' : 'focusPoints';
+        ? 'indomitable'
+        : 'focusPoints';
     final spentHero = ClassResourceRules.spend(hero, resource);
     final newRoll = dice.check(
       modifier: savedRule.modifier + fighterBonus,
@@ -71,9 +87,13 @@ class SavingThrowClassActions {
 }
 
 class SavingThrowRerollResult {
-  const SavingThrowRerollResult({required this.hero, required this.roll,
-      required this.passed, required this.fighterLevelBonus,
-      required this.resource});
+  const SavingThrowRerollResult({
+    required this.hero,
+    required this.roll,
+    required this.passed,
+    required this.fighterLevelBonus,
+    required this.resource,
+  });
   final HeroCharacter hero;
   final DiceResult roll;
   final bool passed;

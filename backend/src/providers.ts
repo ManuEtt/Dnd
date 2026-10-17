@@ -113,6 +113,7 @@ export class OpenAiNarrator implements Narrator {
     name: string, schema: Record<string, unknown>): Promise<unknown> {
     const response = await this.request('https://api.openai.com/v1/responses', {
       method: 'POST',
+      redirect: 'error',
       headers: { Authorization: `Bearer ${this.key}`, 'Content-Type': 'application/json' },
       signal: AbortSignal.timeout(20000),
       body: JSON.stringify({ model: this.model, instructions,
@@ -166,6 +167,7 @@ export class OpenAiNarrator implements Narrator {
   async narrate(input: NarrationInput): Promise<Narration> {
     const response = await this.request('https://api.openai.com/v1/responses', {
       method: 'POST',
+      redirect: 'error',
       headers: { Authorization: `Bearer ${this.key}`, 'Content-Type': 'application/json' },
       signal: AbortSignal.timeout(20000),
       body: JSON.stringify({

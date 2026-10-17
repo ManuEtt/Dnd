@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../domain/models.dart';
+import '../domain/damage_rules.dart';
+import '../domain/healing_spell_rules.dart';
 import '../domain/class_resource_rules.dart';
 import '../domain/monk_flurry_rules.dart';
 import '../domain/monk_self_restoration.dart';
@@ -12,6 +14,8 @@ import '../services/voice_controller.dart';
 import 'backend_settings_panel.dart';
 import 'backup_dialogs.dart';
 import 'character_editor.dart';
+import 'character_effect_dialog.dart';
+import 'healing_spell_dialog.dart';
 import 'fantasy_character_sheet.dart';
 import 'fantasy_ui.dart';
 import 'fantasy_art.dart';
@@ -102,23 +106,30 @@ class _LivingGameAppState extends State<LivingGameApp> {
           ];
           return Scaffold(
             appBar: AppBar(
-              title: Row(children: [
-                const Icon(Icons.explore_outlined,
-                  color: FantasyPalette.gold, size: 26),
-                const SizedBox(width: 9),
-                Expanded(child: Text(
-                  const [
-                    'WÜRFELRAUNEN',
-                    'Abenteuer',
-                    'Deine Helden',
-                    'Kampagnen-Tagebuch',
-                    'Einstellungen',
-                  ][_page],
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: FantasyPalette.gold),
-                )),
-              ]),
+              title: Row(
+                children: [
+                  const Icon(
+                    Icons.explore_outlined,
+                    color: FantasyPalette.gold,
+                    size: 26,
+                  ),
+                  const SizedBox(width: 9),
+                  Expanded(
+                    child: Text(
+                      const [
+                        'WÜRFELRAUNEN',
+                        'Abenteuer',
+                        'Deine Helden',
+                        'Kampagnen-Tagebuch',
+                        'Einstellungen',
+                      ][_page],
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: FantasyPalette.gold),
+                    ),
+                  ),
+                ],
+              ),
               actions: [
                 if (controller.busy)
                   const Padding(
@@ -141,48 +152,70 @@ class _LivingGameAppState extends State<LivingGameApp> {
                 if (MediaQuery.sizeOf(context).width >= 920)
                   NavigationRail(
                     selectedIndex: _page,
-                    onDestinationSelected: (value) => setState(() => _page = value),
+                    onDestinationSelected: (value) =>
+                        setState(() => _page = value),
                     labelType: NavigationRailLabelType.all,
                     leading: const Padding(
                       padding: EdgeInsets.symmetric(vertical: 20),
-                      child: Icon(Icons.auto_awesome, color: FantasyPalette.gold, size: 34),
+                      child: Icon(
+                        Icons.auto_awesome,
+                        color: FantasyPalette.gold,
+                        size: 34,
+                      ),
                     ),
                     destinations: const [
-                      NavigationRailDestination(icon: Icon(Icons.home_outlined), label: Text('Start')),
-                      NavigationRailDestination(icon: Icon(Icons.auto_stories_outlined), label: Text('Abenteuer')),
-                      NavigationRailDestination(icon: Icon(Icons.person_outline), label: Text('Helden')),
-                      NavigationRailDestination(icon: Icon(Icons.menu_book_outlined), label: Text('Tagebuch')),
-                      NavigationRailDestination(icon: Icon(Icons.tune), label: Text('Optionen')),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.home_outlined),
+                        label: Text('Start'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.auto_stories_outlined),
+                        label: Text('Abenteuer'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.person_outline),
+                        label: Text('Helden'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.menu_book_outlined),
+                        label: Text('Tagebuch'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.tune),
+                        label: Text('Optionen'),
+                      ),
                     ],
                   ),
                 Expanded(
                   child: FantasyBackdrop(
                     child: SafeArea(
                       child: Column(
-                children: [
-                  if (controller.error != null)
-                    MaterialBanner(
-                      content: Text(controller.error!),
-                      leading: const Icon(Icons.error_outline),
-                      actions: [
-                        TextButton(
-                          onPressed: controller.clearError,
-                          child: const Text('Schließen'),
-                        ),
-                      ],
-                    ),
-                  Expanded(
-                    child: Center(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 1100),
-                        child: pages[_page],
+                        children: [
+                          if (controller.error != null)
+                            MaterialBanner(
+                              content: Text(controller.error!),
+                              leading: const Icon(Icons.error_outline),
+                              actions: [
+                                TextButton(
+                                  onPressed: controller.clearError,
+                                  child: const Text('Schließen'),
+                                ),
+                              ],
+                            ),
+                          Expanded(
+                            child: Center(
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  maxWidth: 1100,
+                                ),
+                                child: pages[_page],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                      ],
-                    ),
-                  ),
-                ),
                 ),
               ],
             ),
@@ -193,31 +226,32 @@ class _LivingGameAppState extends State<LivingGameApp> {
                       border: Border(top: BorderSide(color: Color(0x55ddb96c))),
                     ),
                     child: NavigationBar(
-              selectedIndex: _page,
-              onDestinationSelected: (value) => setState(() => _page = value),
-              destinations: const [
-                NavigationDestination(
-                  icon: Icon(Icons.home_outlined),
-                  selectedIcon: Icon(Icons.home),
-                  label: 'Start',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.auto_stories_outlined),
-                  label: 'Abenteuer',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.person_outline),
-                  label: 'Helden',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.menu_book_outlined),
-                  label: 'Tagebuch',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.tune),
-                  label: 'Optionen',
-                ),
-              ],
+                      selectedIndex: _page,
+                      onDestinationSelected: (value) =>
+                          setState(() => _page = value),
+                      destinations: const [
+                        NavigationDestination(
+                          icon: Icon(Icons.home_outlined),
+                          selectedIcon: Icon(Icons.home),
+                          label: 'Start',
+                        ),
+                        NavigationDestination(
+                          icon: Icon(Icons.auto_stories_outlined),
+                          label: 'Abenteuer',
+                        ),
+                        NavigationDestination(
+                          icon: Icon(Icons.person_outline),
+                          label: 'Helden',
+                        ),
+                        NavigationDestination(
+                          icon: Icon(Icons.menu_book_outlined),
+                          label: 'Tagebuch',
+                        ),
+                        NavigationDestination(
+                          icon: Icon(Icons.tune),
+                          label: 'Optionen',
+                        ),
+                      ],
                     ),
                   ),
           );
@@ -285,31 +319,42 @@ class _HomePage extends StatelessWidget {
       onPlay(() => controller.newCampaign(hero));
       return;
     }
-    var prompt = 'Epische Fantasy mit Geheimnissen, lebendigen NPCs und moralischen Entscheidungen';
+    var prompt =
+        'Epische Fantasy mit Geheimnissen, lebendigen NPCs und moralischen Entscheidungen';
     final theme = await showDialog<String>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Eigene KI-Geschichte'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('Der verbundene Erzähldienst entwickelt eine neue Geschichte. '
-                'Jeder weitere KI-Zug zählt zum vereinbarten Anfragelimit. '
-                'Die Geschichte bleibt lokal gespeichert.'),
-              const SizedBox(height: 14),
-              TextFormField(initialValue: prompt, maxLength: 300, maxLines: 3,
-                onChanged: (value) => prompt = value,
-                decoration: const InputDecoration(labelText: 'Wunschthema')),
-            ],
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context),
-              child: const Text('Abbrechen')),
-            FilledButton(onPressed: () => Navigator.pop(context, prompt),
-              child: const Text('Geschichte erstellen')),
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Eigene KI-Geschichte'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Der verbundene Erzähldienst entwickelt eine neue Geschichte. '
+              'Jeder weitere KI-Zug zählt zum vereinbarten Anfragelimit. '
+              'Die Geschichte bleibt lokal gespeichert.',
+            ),
+            const SizedBox(height: 14),
+            TextFormField(
+              initialValue: prompt,
+              maxLength: 300,
+              maxLines: 3,
+              onChanged: (value) => prompt = value,
+              decoration: const InputDecoration(labelText: 'Wunschthema'),
+            ),
           ],
         ),
-      );
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Abbrechen'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, prompt),
+            child: const Text('Geschichte erstellen'),
+          ),
+        ],
+      ),
+    );
     if (theme != null && theme.trim().isNotEmpty) {
       onPlay(() => controller.newAiCampaign(hero, theme: theme.trim()));
     }
@@ -317,7 +362,8 @@ class _HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final current = controller.currentCampaign ??
+    final current =
+        controller.currentCampaign ??
         (controller.campaigns.isEmpty ? null : controller.campaigns.first);
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -325,15 +371,19 @@ class _HomePage extends StatelessWidget {
         FantasyIllustratedBanner(
           key: const ValueKey('home-illustrated-banner'),
           image: FantasyArtwork.ruins,
-          eyebrow: current == null ? 'Würfelraunen · Deine Reise beginnt' : 'Kampagne fortsetzen',
+          eyebrow: current == null
+              ? 'Würfelraunen · Deine Reise beginnt'
+              : 'Kampagne fortsetzen',
           title: current?.name ?? 'Deine Geschichte wartet.',
           description: current == null
               ? 'Erkunde geheimnisvolle Welten und entscheide selbst, wohin dein Abenteuer führt.'
               : current.scene,
           actionLabel: current == null ? 'Demo entdecken' : 'Fortsetzen',
-          onPressed: controller.busy ? null : () => current == null
-              ? onPlay(controller.createDemo)
-              : onPlay(() => controller.openCampaign(current.id)),
+          onPressed: controller.busy
+              ? null
+              : () => current == null
+                    ? onPlay(controller.createDemo)
+                    : onPlay(() => controller.openCampaign(current.id)),
         ),
         const SizedBox(height: 18),
         FantasyPanel(
@@ -373,10 +423,14 @@ class _HomePage extends StatelessWidget {
                   ),
                   OutlinedButton.icon(
                     onPressed: controller.busy || !controller.narrator.enabled
-                        ? null : () => _newCampaign(context, ai: true),
+                        ? null
+                        : () => _newCampaign(context, ai: true),
                     icon: const Icon(Icons.auto_awesome),
-                    label: Text(controller.narrator.provider == 'mock'
-                        ? 'Testgeschichte starten' : 'KI-Kampagne erstellen'),
+                    label: Text(
+                      controller.narrator.provider == 'mock'
+                          ? 'Testgeschichte starten'
+                          : 'KI-Kampagne erstellen',
+                    ),
                   ),
                   TextButton.icon(
                     onPressed: onCharacters,
@@ -389,35 +443,61 @@ class _HomePage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 18),
-        const FantasySectionTitle(title: 'Schnellzugriff', icon: Icons.explore_outlined),
+        const FantasySectionTitle(
+          title: 'Schnellzugriff',
+          icon: Icons.explore_outlined,
+        ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          child: Row(children: [
-            FantasyShortcutTile(label: 'Neues Abenteuer', icon: Icons.sports_martial_arts,
-              color: FantasyPalette.danger, onTap: controller.busy ? null : () => _newCampaign(context)),
-            const SizedBox(width: 9),
-            FantasyShortcutTile(label: 'Helden', icon: Icons.groups_outlined,
-              color: FantasyPalette.gold, onTap: onCharacters),
-            const SizedBox(width: 9),
-            FantasyShortcutTile(label: 'Chronik', icon: Icons.menu_book_outlined,
-              color: FantasyPalette.blue, onTap: onJournal),
-            const SizedBox(width: 9),
-            FantasyShortcutTile(label: 'Weiterspielen', icon: Icons.auto_stories_outlined,
-              color: const Color(0xffbc8dde),
-              onTap: current == null ? null : onAdventure),
-          ]),
+          child: Row(
+            children: [
+              FantasyShortcutTile(
+                label: 'Neues Abenteuer',
+                icon: Icons.sports_martial_arts,
+                color: FantasyPalette.danger,
+                onTap: controller.busy ? null : () => _newCampaign(context),
+              ),
+              const SizedBox(width: 9),
+              FantasyShortcutTile(
+                label: 'Helden',
+                icon: Icons.groups_outlined,
+                color: FantasyPalette.gold,
+                onTap: onCharacters,
+              ),
+              const SizedBox(width: 9),
+              FantasyShortcutTile(
+                label: 'Chronik',
+                icon: Icons.menu_book_outlined,
+                color: FantasyPalette.blue,
+                onTap: onJournal,
+              ),
+              const SizedBox(width: 9),
+              FantasyShortcutTile(
+                label: 'Weiterspielen',
+                icon: Icons.auto_stories_outlined,
+                color: const Color(0xffbc8dde),
+                onTap: current == null ? null : onAdventure,
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: 20),
-        if (!controller.narrator.enabled) const _Notice(
-          icon: Icons.auto_awesome_outlined,
-          text: 'Für eine frei entwickelte KI-Kampagne zuerst unter „Optionen“ '
-            'einen Spielleiter-Server verbinden und bei Bedarf ausdrücklich '
-            'den kostenpflichtigen KI-Anbieter freigeben. Ohne Server bleibt die Demo verfügbar.',
-        ),
-        if (controller.narrator.enabled && controller.narrator.provider == 'mock')
-          const _Notice(icon: Icons.science_outlined,
-            text: 'Der verbundene Mock-Dienst erzeugt nur eine regelbasierte Testgeschichte. '
-              'Für eine wirklich generierte Geschichte ist der OpenAI-Anbieter erforderlich.'),
+        if (!controller.narrator.enabled)
+          const _Notice(
+            icon: Icons.auto_awesome_outlined,
+            text:
+                'Für eine frei entwickelte KI-Kampagne zuerst unter „Optionen“ '
+                'einen Spielleiter-Server verbinden und bei Bedarf ausdrücklich '
+                'den kostenpflichtigen KI-Anbieter freigeben. Ohne Server bleibt die Demo verfügbar.',
+          ),
+        if (controller.narrator.enabled &&
+            controller.narrator.provider == 'mock')
+          const _Notice(
+            icon: Icons.science_outlined,
+            text:
+                'Der verbundene Mock-Dienst erzeugt nur eine regelbasierte Testgeschichte. '
+                'Für eine wirklich generierte Geschichte ist der OpenAI-Anbieter erforderlich.',
+          ),
         const _Notice(
           icon: Icons.offline_bolt_outlined,
           text:
@@ -426,7 +506,10 @@ class _HomePage extends StatelessWidget {
               'Spracherkennung kann je nach Android-Dienst eine Internetverbindung benötigen.',
         ),
         const SizedBox(height: 16),
-        const FantasySectionTitle(title: 'Deine Kampagnen', icon: Icons.auto_stories_outlined),
+        const FantasySectionTitle(
+          title: 'Deine Kampagnen',
+          icon: Icons.auto_stories_outlined,
+        ),
         const SizedBox(height: 12),
         if (controller.campaigns.isEmpty)
           const Card(
@@ -438,27 +521,41 @@ class _HomePage extends StatelessWidget {
             ),
           ),
         for (var index = 0; index < controller.campaigns.length; index++)
-          Builder(builder: (context) {
-            final campaign = controller.campaigns[index];
-            return FantasyCampaignCard(
-              key: ValueKey('illustrated-campaign-${campaign.id}'),
-              name: campaign.name,
-              detail: '${campaign.world} · ${campaign.hero.name}\n${campaign.scene}',
-              image: FantasyArtwork.campaign(index),
-              accent: index % 3 == 1 ? FantasyPalette.danger
-                  : index % 3 == 2 ? FantasyPalette.success : FantasyPalette.gold,
-              onTap: controller.busy ? null : () => onPlay(() => controller.openCampaign(campaign.id)),
-              onDelete: controller.busy ? null : () async {
-                if (await _confirmDelete(context,
-                    '„${campaign.name}“ unwiderruflich löschen?') == true) {
-                  await controller.deleteCampaign(campaign.id);
-                }
-              },
-            );
-          }),
+          Builder(
+            builder: (context) {
+              final campaign = controller.campaigns[index];
+              return FantasyCampaignCard(
+                key: ValueKey('illustrated-campaign-${campaign.id}'),
+                name: campaign.name,
+                detail:
+                    '${campaign.world} · ${campaign.hero.name}\n${campaign.scene}',
+                image: FantasyArtwork.campaign(index),
+                accent: index % 3 == 1
+                    ? FantasyPalette.danger
+                    : index % 3 == 2
+                    ? FantasyPalette.success
+                    : FantasyPalette.gold,
+                onTap: controller.busy
+                    ? null
+                    : () => onPlay(() => controller.openCampaign(campaign.id)),
+                onDelete: controller.busy
+                    ? null
+                    : () async {
+                        if (await _confirmDelete(
+                              context,
+                              '„${campaign.name}“ unwiderruflich löschen?',
+                            ) ==
+                            true) {
+                          await controller.deleteCampaign(campaign.id);
+                        }
+                      },
+              );
+            },
+          ),
         const SizedBox(height: 20),
         const FantasySectionTitle(
-          title: 'Das Herz der Ewigkeit', icon: Icons.history_edu_outlined,
+          title: 'Das Herz der Ewigkeit',
+          icon: Icons.history_edu_outlined,
         ),
         const SizedBox(height: 8),
         const Text(
@@ -513,10 +610,12 @@ class _CharactersPage extends StatelessWidget {
       MaterialPageRoute(
         builder: (sheetContext) => CharacterSheetPage(
           hero: hero,
-          onEdit: controller.busy ? null : () async {
-            Navigator.of(sheetContext).pop();
-            if (context.mounted) await _edit(context, hero);
-          },
+          onEdit: controller.busy
+              ? null
+              : () async {
+                  Navigator.of(sheetContext).pop();
+                  if (context.mounted) await _edit(context, hero);
+                },
         ),
       ),
     );
@@ -529,13 +628,17 @@ class _CharactersPage extends StatelessWidget {
       children: [
         const FantasyIllustratedBanner(
           image: FantasyArtwork.castle,
-          eyebrow: 'Heldenchronik', title: 'Deine Helden',
-          description: 'Bewahre die Geschichten deiner Charaktere und führe ihre Abenteuer fort.',
-          icon: Icons.shield_outlined, height: 145,
+          eyebrow: 'Heldenchronik',
+          title: 'Deine Helden',
+          description:
+              'Bewahre die Geschichten deiner Charaktere und führe ihre Abenteuer fort.',
+          icon: Icons.shield_outlined,
+          height: 145,
         ),
         const SizedBox(height: 17),
         const FantasySectionTitle(
-          title: 'Heldenarchiv', icon: Icons.shield_outlined,
+          title: 'Heldenarchiv',
+          icon: Icons.shield_outlined,
           subtitle: 'Charaktere ansehen, bearbeiten und sicher verwalten.',
         ),
         Wrap(
@@ -580,16 +683,26 @@ class _CharactersPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(children: [
-                    FantasyHeroMedallion(name: hero.name),
-                    const SizedBox(width: 14),
-                    Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(hero.name, style: Theme.of(context).textTheme.titleLarge),
-                        Text('${hero.species} · ${hero.classSummary} · Stufe ${hero.level}'),
-                      ],
-                    )),
-                  ]),
+                  Row(
+                    children: [
+                      FantasyHeroMedallion(name: hero.name),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              hero.name,
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                            Text(
+                              '${hero.species} · ${hero.classSummary} · Stufe ${hero.level}',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 12),
                   _HeroStats(hero: hero),
                   if (!hero.isComplete)
@@ -785,6 +898,72 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previousMessageId);
   }
 
+  Future<void> _confirmCharacterEffect() async {
+    final campaign = widget.controller.currentCampaign;
+    if (campaign == null || widget.controller.busy) return;
+    final choice = await showDialog<CharacterEffectChoice>(
+      context: context,
+      builder: (_) => CharacterEffectDialog(hero: campaign.hero),
+    );
+    if (choice == null || !mounted) return;
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    switch (choice.kind) {
+      case CharacterEffectKind.damage:
+        await widget.controller.applyDamage(
+          campaignId: campaign.id,
+          expectedRevision: campaign.revision,
+          source: choice.source,
+          components: [DamageComponent(choice.damageType, choice.amount)],
+          defenses: DamageDefenses(
+            resistances: choice.resistant ? [choice.damageType] : [],
+            vulnerabilities: choice.vulnerable ? [choice.damageType] : [],
+            immunities: choice.immune ? [choice.damageType] : [],
+          ),
+          critical: choice.critical,
+        );
+      case CharacterEffectKind.healing:
+        await widget.controller.applyHealing(
+          campaignId: campaign.id,
+          expectedRevision: campaign.revision,
+          source: choice.source,
+          amount: choice.amount,
+        );
+      case CharacterEffectKind.temporaryHitPoints:
+        await widget.controller.grantTemporaryHitPoints(
+          campaignId: campaign.id,
+          expectedRevision: campaign.revision,
+          source: choice.source,
+          amount: choice.amount,
+          replaceExisting: choice.replaceTemporary,
+        );
+    }
+    if (mounted) await _afterTurn(previous);
+  }
+
+  Future<void> _castHealingSpell() async {
+    final campaign = widget.controller.currentCampaign;
+    if (campaign == null || widget.controller.busy) return;
+    final choice = await showDialog<HealingSpellChoice>(
+      context: context,
+      builder: (_) => HealingSpellDialog(hero: campaign.hero),
+    );
+    if (choice == null || !mounted) return;
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    await widget.controller.castHealingSpell(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      spellName: choice.spellName,
+      castingClass: choice.castingClass,
+      slotLevel: choice.slotLevel,
+      pactMagic: choice.pactMagic,
+      verbalComponentConfirmed: choice.verbalComponentConfirmed,
+      somaticComponentConfirmed: choice.somaticComponentConfirmed,
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
   Future<void> _editHero() async {
     final hero = widget.controller.currentCampaign?.hero;
     if (hero == null) return;
@@ -801,10 +980,12 @@ class _AdventurePageState extends State<_AdventurePage> {
       MaterialPageRoute(
         builder: (sheetContext) => CharacterSheetPage(
           hero: hero,
-          onEdit: widget.controller.busy ? null : () {
-            Navigator.of(sheetContext).pop();
-            if (mounted) _editHero();
-          },
+          onEdit: widget.controller.busy
+              ? null
+              : () {
+                  Navigator.of(sheetContext).pop();
+                  if (mounted) _editHero();
+                },
         ),
       ),
     );
@@ -834,84 +1015,119 @@ class _AdventurePageState extends State<_AdventurePage> {
       padding: const EdgeInsets.only(bottom: 12),
       child: FantasyPanel(
         child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      campaign.name,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    Text(
-                      '${campaign.hero.name} · TP ${campaign.hero.hitPoints ?? '?'}/${campaign.hero.maxHitPoints ?? '?'} '
-                      '· RK ${campaign.hero.armorClass ?? '?'}',
-                    ),
-                    TextButton.icon(
-                      key: const ValueKey('adventure-open-character-sheet'),
-                      onPressed: _showHeroSheet,
-                      icon: const Icon(Icons.auto_stories_outlined, size: 17),
-                      label: const Text('Charakterbogen ansehen'),
-                    ),
-                  ],
-                ),
-              ),
-              IconButton(
-                onPressed: _editHero,
-                tooltip: 'Charakterbogen bearbeiten',
-                icon: const Icon(Icons.person_outline),
-              ),
-              IconButton(
-                onPressed: () => _showInventory(context, campaign.hero),
-                tooltip: 'Inventar öffnen',
-                icon: const Icon(Icons.backpack_outlined),
-              ),
-              IconButton(
-                onPressed: () => _showExport(
-                  context,
-                  'Spielstand exportieren',
-                  widget.controller.exportCampaign(),
-                  widget.backupFiles,
-                  backupFileName(campaign.name),
-                ),
-                tooltip: 'Spielstand exportieren',
-                icon: const Icon(Icons.file_download_outlined),
-              ),
-            ],
-          ),
-          BackendAdventureStatus(controller: widget.controller),
-          if (!campaign.hero.isComplete)
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: _Notice(
-                icon: Icons.warning_amber,
-                text:
-                    'Charakterbogen unvollständig. Erzählung und historische Ereignisse sind verfügbar. '
-                    'Bestätige die fehlenden Werte im Charakterbogen für regelgebundene Proben.',
-                action: TextButton(
-                  onPressed: _editHero,
-                  child: const Text('Vervollständigen'),
-                ),
-              ),
-            ),
-          if (encounter.isNotEmpty)
+          children: [
             Row(
               children: [
-                const Icon(Icons.shield_outlined, color: _gold),
                 Expanded(
-                  child: Text(
-                    _combat ? 'Kampfübersicht' : 'Eine Begegnung ist aktiv.',
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        campaign.name,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      Text(
+                        '${campaign.hero.name} · TP ${campaign.hero.hitPoints ?? '?'}/${campaign.hero.maxHitPoints ?? '?'} '
+                        '· RK ${campaign.hero.armorClass ?? '?'}',
+                      ),
+                      TextButton.icon(
+                        key: const ValueKey('adventure-open-character-sheet'),
+                        onPressed: _showHeroSheet,
+                        icon: const Icon(Icons.auto_stories_outlined, size: 17),
+                        label: const Text('Charakterbogen ansehen'),
+                      ),
+                      TextButton.icon(
+                        key: const ValueKey(
+                          'adventure-confirm-character-effect',
+                        ),
+                        onPressed:
+                            widget.controller.busy ||
+                                campaign.pendingRoll != null ||
+                                campaign.hero.hitPoints == null ||
+                                campaign.hero.isDead
+                            ? null
+                            : _confirmCharacterEffect,
+                        icon: const Icon(
+                          Icons.health_and_safety_outlined,
+                          size: 17,
+                        ),
+                        label: const Text('Effekt bestätigen'),
+                      ),
+                      if (campaign.hero.spells.any(
+                        (name) => HealingSpellRules.find(name) != null,
+                      ))
+                        TextButton.icon(
+                          key: const ValueKey('adventure-cast-healing-spell'),
+                          onPressed:
+                              widget.controller.busy ||
+                                  campaign.pendingRoll != null ||
+                                  campaign.hero.isDead ||
+                                  campaign.hero.hitPoints == 0
+                              ? null
+                              : _castHealingSpell,
+                          icon: const Icon(
+                            Icons.auto_fix_high_outlined,
+                            size: 17,
+                          ),
+                          label: const Text('Heilzauber wirken'),
+                        ),
+                    ],
                   ),
                 ),
-                TextButton(
-                  onPressed: () => setState(() => _combat = !_combat),
-                  child: Text(_combat ? 'Zur Erzählung' : 'Kampf ansehen'),
+                IconButton(
+                  onPressed: _editHero,
+                  tooltip: 'Charakterbogen bearbeiten',
+                  icon: const Icon(Icons.person_outline),
+                ),
+                IconButton(
+                  onPressed: () => _showInventory(context, campaign.hero),
+                  tooltip: 'Inventar öffnen',
+                  icon: const Icon(Icons.backpack_outlined),
+                ),
+                IconButton(
+                  onPressed: () => _showExport(
+                    context,
+                    'Spielstand exportieren',
+                    widget.controller.exportCampaign(),
+                    widget.backupFiles,
+                    backupFileName(campaign.name),
+                  ),
+                  tooltip: 'Spielstand exportieren',
+                  icon: const Icon(Icons.file_download_outlined),
                 ),
               ],
             ),
-        ],
+            BackendAdventureStatus(controller: widget.controller),
+            if (!campaign.hero.isComplete)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: _Notice(
+                  icon: Icons.warning_amber,
+                  text:
+                      'Charakterbogen unvollständig. Erzählung und historische Ereignisse sind verfügbar. '
+                      'Bestätige die fehlenden Werte im Charakterbogen für regelgebundene Proben.',
+                  action: TextButton(
+                    onPressed: _editHero,
+                    child: const Text('Vervollständigen'),
+                  ),
+                ),
+              ),
+            if (encounter.isNotEmpty)
+              Row(
+                children: [
+                  const Icon(Icons.shield_outlined, color: _gold),
+                  Expanded(
+                    child: Text(
+                      _combat ? 'Kampfübersicht' : 'Eine Begegnung ist aktiv.',
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => setState(() => _combat = !_combat),
+                    child: Text(_combat ? 'Zur Erzählung' : 'Kampf ansehen'),
+                  ),
+                ],
+              ),
+          ],
         ),
       ),
     );
@@ -922,196 +1138,217 @@ class _AdventurePageState extends State<_AdventurePage> {
       // The surrounding app Scaffold already adjusts for Android's keyboard.
       resizeToAvoidBottomInset: false,
       body: Column(
-      children: [
-        Expanded(
-          child: _combat && encounter.isNotEmpty
-              ? _CombatView(
-                  encounter: campaign.encounter!,
-                  hero: campaign.hero,
-                  onAction: (text) {
-                    _input.text = text;
-                    _send();
-                  },
-                  busy: widget.controller.busy,
-                  header: header,
-                )
-              : ListView(
-                  controller: _scroll,
-                  padding: const EdgeInsets.all(16),
-                  children: [
-                    header,
-                    FantasyScenePanel(
-                      key: const ValueKey('adventure-illustrated-scene'),
-                      scene: campaign.scene,
-                      image: FantasyArtwork.ruins,
-                    ),
-                    const SizedBox(height: 14),
-                    if (campaign.adventureOffer != null)
-                      FantasyPanel(
-                        key: const ValueKey('adventure-offer-card'),
-                        accent: FantasyPalette.blue,
-                        child: Padding(
-                          padding: EdgeInsets.zero,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const FantasySectionTitle(
-                                title: 'Neue spielbare Begegnung',
-                                icon: Icons.sports_martial_arts,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(campaign.adventureOffer!.title,
-                                style: Theme.of(context).textTheme.titleSmall),
-                              Text(campaign.adventureOffer!.description),
-                              const SizedBox(height: 6),
-                              Text('Auftrag: ${campaign.adventureOffer!.questTitle}'),
-                              Text('Gegnerprofil: ${campaign.adventureOffer!.archetype}. '
-                                'Werte und Beute kommen nur aus der lokalen Regelengine.'),
-                              const SizedBox(height: 10),
-                              Wrap(spacing: 8, children: [
-                                FilledButton(
-                                  key: const ValueKey('adventure-accept'),
-                                  onPressed: widget.controller.busy ? null : () async {
-                                    final prior = _lastMessageId;
-                                    await widget.controller.acceptAdventure();
-                                    if (mounted) await _afterTurn(prior);
-                                  },
-                                  child: const Text('Begegnung annehmen'),
+        children: [
+          Expanded(
+            child: _combat && encounter.isNotEmpty
+                ? _CombatView(
+                    encounter: campaign.encounter!,
+                    hero: campaign.hero,
+                    onAction: (text) {
+                      _input.text = text;
+                      _send();
+                    },
+                    busy: widget.controller.busy,
+                    header: header,
+                  )
+                : ListView(
+                    controller: _scroll,
+                    padding: const EdgeInsets.all(16),
+                    children: [
+                      header,
+                      FantasyScenePanel(
+                        key: const ValueKey('adventure-illustrated-scene'),
+                        scene: campaign.scene,
+                        image: FantasyArtwork.ruins,
+                      ),
+                      const SizedBox(height: 14),
+                      if (campaign.adventureOffer != null)
+                        FantasyPanel(
+                          key: const ValueKey('adventure-offer-card'),
+                          accent: FantasyPalette.blue,
+                          child: Padding(
+                            padding: EdgeInsets.zero,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const FantasySectionTitle(
+                                  title: 'Neue spielbare Begegnung',
+                                  icon: Icons.sports_martial_arts,
                                 ),
-                                OutlinedButton(
-                                  key: const ValueKey('adventure-reject'),
-                                  onPressed: widget.controller.busy ? null : () async {
-                                    final prior = _lastMessageId;
-                                    await widget.controller.rejectAdventure();
-                                    if (mounted) await _afterTurn(prior);
-                                  },
-                                  child: const Text('Anderen Weg wählen'),
+                                const SizedBox(height: 8),
+                                Text(
+                                  campaign.adventureOffer!.title,
+                                  style: Theme.of(context).textTheme.titleSmall,
                                 ),
-                              ]),
-                            ],
+                                Text(campaign.adventureOffer!.description),
+                                const SizedBox(height: 6),
+                                Text(
+                                  'Auftrag: ${campaign.adventureOffer!.questTitle}',
+                                ),
+                                Text(
+                                  'Gegnerprofil: ${campaign.adventureOffer!.archetype}. '
+                                  'Werte und Beute kommen nur aus der lokalen Regelengine.',
+                                ),
+                                const SizedBox(height: 10),
+                                Wrap(
+                                  spacing: 8,
+                                  children: [
+                                    FilledButton(
+                                      key: const ValueKey('adventure-accept'),
+                                      onPressed: widget.controller.busy
+                                          ? null
+                                          : () async {
+                                              final prior = _lastMessageId;
+                                              await widget.controller
+                                                  .acceptAdventure();
+                                              if (mounted) {
+                                                await _afterTurn(prior);
+                                              }
+                                            },
+                                      child: const Text('Begegnung annehmen'),
+                                    ),
+                                    OutlinedButton(
+                                      key: const ValueKey('adventure-reject'),
+                                      onPressed: widget.controller.busy
+                                          ? null
+                                          : () async {
+                                              final prior = _lastMessageId;
+                                              await widget.controller
+                                                  .rejectAdventure();
+                                              if (mounted) {
+                                                await _afterTurn(prior);
+                                              }
+                                            },
+                                      child: const Text('Anderen Weg wählen'),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    for (final item in messages)
-                      _MessageBubble(
-                        message: _map(item),
-                        onSpeak: (text) => widget.voice.speak(text),
-                      ),
-                    if (pending.isNotEmpty)
-                      FantasyPanel(
-                        accent: FantasyPalette.gold,
-                        child: Padding(
-                          padding: EdgeInsets.zero,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Würfelprobe ausstehend',
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                '${pending['label'] ?? pending['type'] ?? 'Probe'} · '
-                                'Modifikator ${_signed(pending['modifier'] ?? pending['bonus'] ?? 0)}',
-                              ),
-                              const SizedBox(height: 12),
-                              FilledButton.icon(
-                                onPressed: widget.controller.busy
-                                    ? null
-                                    : _roll,
-                                icon: const Icon(Icons.casino_outlined),
-                                label: const Text('Wurf durchführen'),
-                              ),
-                            ],
+                      for (final item in messages)
+                        _MessageBubble(
+                          message: _map(item),
+                          onSpeak: (text) => widget.voice.speak(text),
+                        ),
+                      if (pending.isNotEmpty)
+                        FantasyPanel(
+                          accent: FantasyPalette.gold,
+                          child: Padding(
+                            padding: EdgeInsets.zero,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Würfelprobe ausstehend',
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  '${pending['label'] ?? pending['type'] ?? 'Probe'} · '
+                                  'Modifikator ${_signed(pending['modifier'] ?? pending['bonus'] ?? 0)}',
+                                ),
+                                const SizedBox(height: 12),
+                                FilledButton.icon(
+                                  onPressed: widget.controller.busy
+                                      ? null
+                                      : _roll,
+                                  icon: const Icon(Icons.casino_outlined),
+                                  label: const Text('Wurf durchführen'),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                  ],
-                ),
-        ),
-        if (widget.voice.error != null)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              widget.voice.error!,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+                    ],
+                  ),
+          ),
+          if (widget.voice.error != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                widget.voice.error!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
             ),
-          ),
-        if (widget.voice.speaking)
-          TextButton.icon(
-            onPressed: widget.voice.stopSpeaking,
-            icon: const Icon(Icons.stop_circle_outlined),
-            label: const Text('Vorlesen unterbrechen'),
-          ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
-          child: FantasyPanel(
-            padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
-            accent: FantasyPalette.blue,
-            child: Column(
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
+          if (widget.voice.speaking)
+            TextButton.icon(
+              onPressed: widget.voice.stopSpeaking,
+              icon: const Icon(Icons.stop_circle_outlined),
+              label: const Text('Vorlesen unterbrechen'),
+            ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
+            child: FantasyPanel(
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
+              accent: FantasyPalette.blue,
+              child: Column(
                 children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _input,
-                      minLines: 1,
-                      maxLines: 4,
-                      textInputAction: TextInputAction.send,
-                      onSubmitted: (_) => _send(),
-                      decoration: InputDecoration(
-                        labelText: widget.voice.listening
-                            ? 'Ich höre zu …'
-                            : 'Was möchtest du tun?',
-                        helperText:
-                            'Erkannten Text vor dem Senden prüfen und korrigieren.',
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _input,
+                          minLines: 1,
+                          maxLines: 4,
+                          textInputAction: TextInputAction.send,
+                          onSubmitted: (_) => _send(),
+                          decoration: InputDecoration(
+                            labelText: widget.voice.listening
+                                ? 'Ich höre zu …'
+                                : 'Was möchtest du tun?',
+                            helperText:
+                                'Erkannten Text vor dem Senden prüfen und korrigieren.',
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      IconButton.filled(
+                        onPressed: widget.controller.busy ? null : _send,
+                        tooltip: 'Handlung senden',
+                        icon: const Icon(Icons.send),
+                      ),
+                    ],
+                  ),
+                  // Secondary action stays by the text composer. Speech and
+                  // dice are available exactly once in the fixed bottom dock.
+                  if (MediaQuery.viewInsetsOf(context).bottom == 0) ...[
+                    const SizedBox(height: 8),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: OutlinedButton.icon(
+                        key: const ValueKey('adventure-memory-recap'),
+                        onPressed: widget.controller.busy ? null : _recap,
+                        icon: const Icon(Icons.history),
+                        label: const Text('Rückblick'),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  IconButton.filled(
-                    onPressed: widget.controller.busy ? null : _send,
-                    tooltip: 'Handlung senden',
-                    icon: const Icon(Icons.send),
-                  ),
+                  ],
                 ],
               ),
-              // Secondary action stays by the text composer. Speech and
-              // dice are available exactly once in the fixed bottom dock.
-              if (MediaQuery.viewInsetsOf(context).bottom == 0) ...[
-                const SizedBox(height: 8),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: OutlinedButton.icon(
-                    key: const ValueKey('adventure-memory-recap'),
-                    onPressed: widget.controller.busy ? null : _recap,
-                    icon: const Icon(Icons.history),
-                    label: const Text('Rückblick'),
-                  ),
-                ),
-              ],
-            ],
             ),
           ),
-        ),
-      ],
+        ],
       ),
       // Permanently docked below the composer and above main navigation.
       bottomNavigationBar: FantasyPinnedActionBar(
-          busy: widget.controller.busy,
-          listening: widget.voice.listening,
-          onSpeech: _toggleMic,
-          onInspect: () {
-            _input.text = 'Ich untersuche die Umgebung.';
-            _send();
-          },
-          onAttack: () {
-            _input.text = 'Ich greife an.';
-            _send();
-          },
-          onRoll: _roll,
-        ),
+        busy: widget.controller.busy,
+        listening: widget.voice.listening,
+        onSpeech: _toggleMic,
+        onInspect: () {
+          _input.text = 'Ich untersuche die Umgebung.';
+          _send();
+        },
+        onAttack: () {
+          _input.text = 'Ich greife an.';
+          _send();
+        },
+        onRoll: _roll,
+      ),
     );
   }
 }
@@ -1208,9 +1445,11 @@ class _HeroStats extends StatelessWidget {
         runSpacing: 7,
         children: [
           for (final entry in hero.abilities.entries)
-            Chip(label: Text(
-              '${const {'strength': 'STÄ', 'dexterity': 'GES', 'constitution': 'KON', 'intelligence': 'INT', 'wisdom': 'WEI', 'charisma': 'CHA'}[entry.key] ?? entry.key} ${entry.value ?? '?'}',
-            )),
+            Chip(
+              label: Text(
+                '${const {'strength': 'STÄ', 'dexterity': 'GES', 'constitution': 'KON', 'intelligence': 'INT', 'wisdom': 'WEI', 'charisma': 'CHA'}[entry.key] ?? entry.key} ${entry.value ?? '?'}',
+              ),
+            ),
         ],
       ),
     ],
@@ -1287,10 +1526,15 @@ class _CombatView extends StatelessWidget {
               ),
             ),
             Chip(label: Text('Bewegung: ${encounter.movementRemaining} m')),
+            if (encounter.spellSlotExpendedThisTurn)
+              const Chip(label: Text('Zauberplatz in diesem Zug verbraucht')),
           ],
         ),
         const SizedBox(height: 20),
-        const FantasySectionTitle(title: 'Deine Handlung', icon: Icons.sports_martial_arts),
+        const FantasySectionTitle(
+          title: 'Deine Handlung',
+          icon: Icons.sports_martial_arts,
+        ),
         const SizedBox(height: 10),
         const Text(
           'Beschreibe deinen Angriff oder deine Entscheidung. Trefferpunkte '
@@ -1303,9 +1547,11 @@ class _CombatView extends StatelessWidget {
             ClassResourceRules.level(hero, 'Mönch') >= 14)
           const Padding(
             padding: EdgeInsets.only(bottom: 12),
-            child: Text('Manueller Rettungswurf: z. B. „Rettungswurf: Weisheit SG 15“. '
-                'Nach einem Fehlschlag kann „Rettungswurf wiederholen: '
-                'Unbeugsam“ oder „Rettungswurf wiederholen: Fokus“ gewählt werden.'),
+            child: Text(
+              'Manueller Rettungswurf: z. B. „Rettungswurf: Weisheit SG 15“. '
+              'Nach einem Fehlschlag kann „Rettungswurf wiederholen: '
+              'Unbeugsam“ oder „Rettungswurf wiederholen: Fokus“ gewählt werden.',
+            ),
           ),
         Wrap(
           spacing: 10,
@@ -1333,13 +1579,15 @@ class _CombatView extends StatelessWidget {
             if (ClassResourceRules.level(hero, 'Mönch') >= 2) ...[
               OutlinedButton(
                 key: const ValueKey('monk-patient-defense'),
-                onPressed: busy || encounter.bonusActionUsed ? null
+                onPressed: busy || encounter.bonusActionUsed
+                    ? null
                     : () => onAction('Geduldige Verteidigung'),
                 child: const Text('Mönch: Rückzug'),
               ),
               OutlinedButton(
                 key: const ValueKey('monk-step-wind'),
-                onPressed: busy || encounter.bonusActionUsed ? null
+                onPressed: busy || encounter.bonusActionUsed
+                    ? null
                     : () => onAction('Schritt des Windes'),
                 child: const Text('Mönch: Sprinten'),
               ),
@@ -1347,21 +1595,28 @@ class _CombatView extends StatelessWidget {
                 OutlinedButton.icon(
                   key: const ValueKey('monk-flurry-of-blows'),
                   onPressed: busy || !MonkFlurryRules.canUse(hero, encounter)
-                      ? null : () => onAction('Schlaghagel'),
+                      ? null
+                      : () => onAction('Schlaghagel'),
                   icon: const Icon(Icons.sports_martial_arts),
-                  label: Text('Schlaghagel · ${ClassResourceRules.level(hero, 'Mönch') >= 10 ? 3 : 2} Angriffe · 1 Fokus'),
+                  label: Text(
+                    'Schlaghagel · ${ClassResourceRules.level(hero, 'Mönch') >= 10 ? 3 : 2} Angriffe · 1 Fokus',
+                  ),
                 ),
                 OutlinedButton(
                   key: const ValueKey('monk-patient-defense-focus'),
-                  onPressed: busy || encounter.bonusActionUsed ? null
+                  onPressed: busy || encounter.bonusActionUsed
+                      ? null
                       : () => onAction('Geduldige Verteidigung mit Fokuspunkt'),
-                  child: Text(ClassResourceRules.level(hero, 'Mönch') >= 10
-                      ? 'Rückzug + Ausweichen + temporäre TP · 1 Fokus'
-                      : 'Rückzug + Ausweichen · 1 Fokus'),
+                  child: Text(
+                    ClassResourceRules.level(hero, 'Mönch') >= 10
+                        ? 'Rückzug + Ausweichen + temporäre TP · 1 Fokus'
+                        : 'Rückzug + Ausweichen · 1 Fokus',
+                  ),
                 ),
                 OutlinedButton(
                   key: const ValueKey('monk-step-wind-focus'),
-                  onPressed: busy || encounter.bonusActionUsed ? null
+                  onPressed: busy || encounter.bonusActionUsed
+                      ? null
                       : () => onAction('Schritt des Windes verstärkt'),
                   child: const Text('Sprinten + Rückzug · 1 Fokus'),
                 ),
@@ -1374,43 +1629,57 @@ class _CombatView extends StatelessWidget {
                   onPressed: busy || encounter.activeParticipant != 'hero'
                       ? null
                       : () => onAction('Selbstwiederherstellung: $condition'),
-                  child: Text(encounter.selfRestorationChoice == condition
-                      ? 'Ausgewählt für Zugende: $condition'
-                      : 'Am Zugende beenden: $condition'),
+                  child: Text(
+                    encounter.selfRestorationChoice == condition
+                        ? 'Ausgewählt für Zugende: $condition'
+                        : 'Am Zugende beenden: $condition',
+                  ),
                 ),
             ],
             if (ClassResourceRules.level(hero, 'Paladin') >= 1) ...[
               OutlinedButton.icon(
                 key: const ValueKey('paladin-lay-on-hands-heal'),
-                onPressed: busy || encounter.bonusActionUsed ||
-                    encounter.activeParticipant != 'hero' ||
-                    (hero.hitPoints ?? 0) <= 0 ||
-                    hero.hitPoints == hero.maxHitPoints ||
-                    ClassResourceRules.remaining(hero, 'layOnHands') <= 0
-                  ? null : () {
-                    final missing = hero.maxHitPoints! - hero.hitPoints!;
-                    final pool = ClassResourceRules.remaining(hero, 'layOnHands');
-                    final amount = missing < pool ? missing : pool;
-                    onAction('Handauflegen: $amount');
-                  },
+                onPressed:
+                    busy ||
+                        encounter.bonusActionUsed ||
+                        encounter.activeParticipant != 'hero' ||
+                        (hero.hitPoints ?? 0) <= 0 ||
+                        hero.hitPoints == hero.maxHitPoints ||
+                        ClassResourceRules.remaining(hero, 'layOnHands') <= 0
+                    ? null
+                    : () {
+                        final missing = hero.maxHitPoints! - hero.hitPoints!;
+                        final pool = ClassResourceRules.remaining(
+                          hero,
+                          'layOnHands',
+                        );
+                        final amount = missing < pool ? missing : pool;
+                        onAction('Handauflegen: $amount');
+                      },
                 icon: const Icon(Icons.healing_outlined),
-                label: Text('Handauflegen · '
-                    '${ClassResourceRules.remaining(hero, 'layOnHands')} TP-Vorrat'),
+                label: Text(
+                  'Handauflegen · '
+                  '${ClassResourceRules.remaining(hero, 'layOnHands')} TP-Vorrat',
+                ),
               ),
               if (hero.conditions.contains('vergiftet'))
                 OutlinedButton(
                   key: const ValueKey('paladin-lay-on-hands-poison'),
-                  onPressed: busy || encounter.bonusActionUsed ||
-                      encounter.activeParticipant != 'hero' ||
-                      ClassResourceRules.remaining(hero, 'layOnHands') < 5
-                    ? null : () => onAction('Handauflegen: Vergiftung'),
+                  onPressed:
+                      busy ||
+                          encounter.bonusActionUsed ||
+                          encounter.activeParticipant != 'hero' ||
+                          ClassResourceRules.remaining(hero, 'layOnHands') < 5
+                      ? null
+                      : () => onAction('Handauflegen: Vergiftung'),
                   child: const Text('Vergiftung entfernen · 5 Punkte'),
                 ),
             ],
             if (ClassResourceRules.level(hero, 'Schurke') >= 2)
               OutlinedButton(
                 key: const ValueKey('rogue-cunning-disengage'),
-                onPressed: busy || encounter.bonusActionUsed ? null
+                onPressed: busy || encounter.bonusActionUsed
+                    ? null
                     : () => onAction('Flinke Aktion: Rückzug'),
                 child: const Text('Schurke: Rückzug'),
               ),
@@ -1443,9 +1712,12 @@ class _JournalPage extends StatelessWidget {
       children: [
         FantasyIllustratedBanner(
           image: FantasyArtwork.forgottenWoods,
-          eyebrow: 'Deine Chronik', title: campaign.name,
-          description: 'Alle bestätigten Erlebnisse und Erinnerungen deiner Reise.',
-          icon: Icons.auto_stories_outlined, height: 138,
+          eyebrow: 'Deine Chronik',
+          title: campaign.name,
+          description:
+              'Alle bestätigten Erlebnisse und Erinnerungen deiner Reise.',
+          icon: Icons.auto_stories_outlined,
+          height: 138,
         ),
         const SizedBox(height: 16),
         FantasySectionTitle(
@@ -1527,7 +1799,6 @@ class _JournalSection extends StatelessWidget {
       ),
     ),
   );
-
 }
 
 class _SettingsPage extends StatelessWidget {
@@ -1552,7 +1823,10 @@ class _SettingsPage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        const FantasySectionTitle(title: 'Sprache & Audio', icon: Icons.record_voice_over_outlined),
+        const FantasySectionTitle(
+          title: 'Sprache & Audio',
+          icon: Icons.record_voice_over_outlined,
+        ),
         const SizedBox(height: 12),
         Text(
           voice.refreshingVoices
@@ -1683,15 +1957,20 @@ class _SettingsPage extends StatelessWidget {
               'Textspiel, Würfel und Speicherung sind im Demo-Modus offline verfügbar.',
         ),
         const SizedBox(height: 24),
-        const FantasySectionTitle(title: 'KI & Kosten', icon: Icons.auto_awesome_outlined),
+        const FantasySectionTitle(
+          title: 'KI & Kosten',
+          icon: Icons.auto_awesome_outlined,
+        ),
         const SizedBox(height: 12),
         FantasyPanel(
           accent: FantasyPalette.blue,
           child: BackendSettingsPanel(controller: controller),
         ),
         const SizedBox(height: 24),
-        const FantasySectionTitle(title: 'Datenschutz & Spielstände',
-            icon: Icons.shield_outlined),
+        const FantasySectionTitle(
+          title: 'Datenschutz & Spielstände',
+          icon: Icons.shield_outlined,
+        ),
         const SizedBox(height: 12),
         const Text(
           'Charaktere und Kampagnen bleiben lokal in der App. Du kannst sie einzeln '
@@ -1734,7 +2013,10 @@ class _SettingsPage extends StatelessWidget {
           label: const Text('Alle lokalen Spieldaten löschen'),
         ),
         const SizedBox(height: 24),
-        const FantasySectionTitle(title: 'Lizenz & Inhalte', icon: Icons.menu_book_outlined),
+        const FantasySectionTitle(
+          title: 'Lizenz & Inhalte',
+          icon: Icons.menu_book_outlined,
+        ),
         const SizedBox(height: 10),
         const Text(
           'Eigenständiges Fantasy-Rollenspiel mit einem ausgewählten Regelkern des '
@@ -2144,50 +2426,70 @@ Future<void> _showInventory(BuildContext context, HeroCharacter hero) {
     showDragHandle: true,
     builder: (context) => FantasyBackdrop(
       child: SizedBox(
-      height: MediaQuery.sizeOf(context).height * .75,
-      child: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          FantasySectionTitle(
-            title: 'Inventar · ${hero.name}',
-            icon: Icons.backpack_outlined,
-          ),
-          FantasyPanel(
-            child: Wrap(spacing: 10, runSpacing: 10, children: [
-              FantasyStatTile(icon: Icons.monetization_on_outlined,
-                title: 'Gold', value: '${data['gold'] ?? '–'}'),
-              FantasyStatTile(icon: Icons.sports_martial_arts,
-                title: 'Waffenschaden',
-                value: hero.weaponDamage.isEmpty ? '–' : hero.weaponDamage,
-                color: FantasyPalette.blue),
-              FantasyStatTile(icon: Icons.verified_outlined,
-                title: 'Waffenübung',
-                value: hero.weaponProficient ? 'Ja' : 'Nein',
-                color: FantasyPalette.success),
-            ]),
-          ),
-          const SizedBox(height: 20),
-          const FantasySectionTitle(title: 'Gegenstände & Ausrüstung',
-            icon: Icons.inventory_2_outlined),
-          FantasyPanel(child: FantasyInventoryCards(items: hero.inventory)),
-          const SizedBox(height: 20),
-          for (final entry in const <String, String>{
-            'spells': 'Zauber',
-            'features': 'Klassenfähigkeiten',
-            'conditions': 'Zustände',
-          }.entries) ...[
-            FantasySectionTitle(title: entry.value,
-                icon: entry.key == 'inventory' ? Icons.inventory_2_outlined
-                  : entry.key == 'spells' ? Icons.auto_awesome_outlined
-                  : entry.key == 'conditions' ? Icons.healing_outlined
-                  : Icons.military_tech_outlined),
-            FantasyPanel(child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: _journalItems(data[entry.key]),
-            )),
+        height: MediaQuery.sizeOf(context).height * .75,
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            FantasySectionTitle(
+              title: 'Inventar · ${hero.name}',
+              icon: Icons.backpack_outlined,
+            ),
+            FantasyPanel(
+              child: Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: [
+                  FantasyStatTile(
+                    icon: Icons.monetization_on_outlined,
+                    title: 'Gold',
+                    value: '${data['gold'] ?? '–'}',
+                  ),
+                  FantasyStatTile(
+                    icon: Icons.sports_martial_arts,
+                    title: 'Waffenschaden',
+                    value: hero.weaponDamage.isEmpty ? '–' : hero.weaponDamage,
+                    color: FantasyPalette.blue,
+                  ),
+                  FantasyStatTile(
+                    icon: Icons.verified_outlined,
+                    title: 'Waffenübung',
+                    value: hero.weaponProficient ? 'Ja' : 'Nein',
+                    color: FantasyPalette.success,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            const FantasySectionTitle(
+              title: 'Gegenstände & Ausrüstung',
+              icon: Icons.inventory_2_outlined,
+            ),
+            FantasyPanel(child: FantasyInventoryCards(items: hero.inventory)),
+            const SizedBox(height: 20),
+            for (final entry in const <String, String>{
+              'spells': 'Zauber',
+              'features': 'Klassenfähigkeiten',
+              'conditions': 'Zustände',
+            }.entries) ...[
+              FantasySectionTitle(
+                title: entry.value,
+                icon: entry.key == 'inventory'
+                    ? Icons.inventory_2_outlined
+                    : entry.key == 'spells'
+                    ? Icons.auto_awesome_outlined
+                    : entry.key == 'conditions'
+                    ? Icons.healing_outlined
+                    : Icons.military_tech_outlined,
+              ),
+              FantasyPanel(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: _journalItems(data[entry.key]),
+                ),
+              ),
+            ],
           ],
-        ],
-      ),
+        ),
       ),
     ),
   );

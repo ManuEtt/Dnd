@@ -5,14 +5,25 @@ import 'package:lebendiger_spielleiter/domain/rest_rules.dart';
 import 'package:lebendiger_spielleiter/domain/rules_engine.dart';
 
 HeroCharacter hero({int level = 0, int hp = 8}) => HeroCharacter(
-  id: 'exhausted-hero', name: 'Liora', species: 'Mensch',
-  className: 'Kämpfer', level: 2,
+  id: 'exhausted-hero',
+  name: 'Liora',
+  species: 'Mensch',
+  className: 'Kämpfer',
+  level: 2,
   abilities: const {
-    'strength': 16, 'dexterity': 14, 'constitution': 12,
-    'intelligence': 10, 'wisdom': 10, 'charisma': 10,
+    'strength': 16,
+    'dexterity': 14,
+    'constitution': 12,
+    'intelligence': 10,
+    'wisdom': 10,
+    'charisma': 10,
   },
-  hitPoints: hp, maxHitPoints: 15, armorClass: 16, speed: 9,
-  weaponDamage: '1d8', weaponProficient: true,
+  hitPoints: hp,
+  maxHitPoints: 15,
+  armorClass: 16,
+  speed: 9,
+  weaponDamage: '1d8',
+  weaponProficient: true,
   exhaustionLevel: level,
 );
 
@@ -27,8 +38,10 @@ void main() {
       expect(HeroCharacter.fromJson(exhausted.toJson()).exhaustionLevel, 3);
       expect(restored.exhaustionLevel, 0);
       for (final invalid in [-1, 7, '3', 2.5, true]) {
-        expect(() => HeroCharacter.fromJson({...old,
-          'exhaustionLevel': invalid}), throwsFormatException);
+        expect(
+          () => HeroCharacter.fromJson({...old, 'exhaustionLevel': invalid}),
+          throwsFormatException,
+        );
       }
     });
 
@@ -41,16 +54,24 @@ void main() {
       expect(ExhaustionRules.effectiveSpeedMeters(hero(level: 0)), 9);
       expect(ExhaustionRules.effectiveSpeedMeters(hero(level: 5)), 1.5);
       expect(ExhaustionRules.effectiveSpeedMeters(hero(level: 6)), 0);
-      expect(ExhaustionRules.effectiveSpeedMeters(
-        hero().copyWith(speed: null)), null);
+      expect(
+        ExhaustionRules.effectiveSpeedMeters(hero().copyWith(speed: null)),
+        null,
+      );
     });
 
     test('Angriff/Initiative werden einmal reduziert, nicht Waffenschaden', () {
       final normal = hero();
       final exhausted = hero(level: 2);
-      expect(RulesEngine.attackBonus(normal) - RulesEngine.attackBonus(exhausted), 4);
-      expect(RulesEngine.initiativeBonus(normal) -
-          RulesEngine.initiativeBonus(exhausted), 4);
+      expect(
+        RulesEngine.attackBonus(normal) - RulesEngine.attackBonus(exhausted),
+        4,
+      );
+      expect(
+        RulesEngine.initiativeBonus(normal) -
+            RulesEngine.initiativeBonus(exhausted),
+        4,
+      );
     });
 
     test('Stufe 6 bedeutet Tod, Sättigung und Heilung bleibt blockiert', () {
@@ -94,22 +115,44 @@ void main() {
     });
     test('Handlungs- und Bewegungsverbote werden konservativ geprüft', () {
       expect(ConditionRules.canTakeActions(hero()), true);
-      expect(ConditionRules.canTakeActions(
-        hero().copyWith(conditions: ['gelähmt'])), false);
-      expect(ConditionRules.canMove(
-        hero().copyWith(conditions: ['gepackt'])), false);
-      expect(ConditionRules.canTakeActions(
-        hero().copyWith(conditions: ['gepackt'])), true);
+      expect(
+        ConditionRules.canTakeActions(hero().copyWith(conditions: ['gelähmt'])),
+        false,
+      );
+      expect(
+        ConditionRules.canMove(hero().copyWith(conditions: ['gepackt'])),
+        false,
+      );
+      expect(
+        ConditionRules.canTakeActions(hero().copyWith(conditions: ['gepackt'])),
+        true,
+      );
       // Incapacitated prohibits actions, not movement on its own.
-      expect(ConditionRules.canTakeActions(
-        hero().copyWith(conditions: ['handlungsunfähig'])), false);
-      expect(ConditionRules.canMove(
-        hero().copyWith(conditions: ['handlungsunfähig'])), true);
+      expect(
+        ConditionRules.canTakeActions(
+          hero().copyWith(conditions: ['handlungsunfähig']),
+        ),
+        false,
+      );
+      expect(
+        ConditionRules.canMove(
+          hero().copyWith(conditions: ['handlungsunfähig']),
+        ),
+        true,
+      );
       expect(ConditionRules.canTakeActions(hero(level: 6)), false);
-      expect(ConditionRules.hasUnconditionalAttackDisadvantage(
-        hero().copyWith(conditions: ['vergiftet'])), true);
-      expect(ConditionRules.hasUnconditionalAttackDisadvantage(
-        hero().copyWith(conditions: ['verängstigt'])), false);
+      expect(
+        ConditionRules.hasUnconditionalAttackDisadvantage(
+          hero().copyWith(conditions: ['vergiftet']),
+        ),
+        true,
+      );
+      expect(
+        ConditionRules.hasUnconditionalAttackDisadvantage(
+          hero().copyWith(conditions: ['verängstigt']),
+        ),
+        false,
+      );
     });
   });
 }

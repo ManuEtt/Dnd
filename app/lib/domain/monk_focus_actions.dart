@@ -10,9 +10,13 @@ import 'models.dart';
 enum MonkBonusAction { patientDefense, stepOfTheWind }
 
 class MonkBonusResult {
-  const MonkBonusResult({required this.hero, required this.encounter,
-    required this.focusSpent, required this.movementAdded,
-    required this.temporaryHitPointsRolled});
+  const MonkBonusResult({
+    required this.hero,
+    required this.encounter,
+    required this.focusSpent,
+    required this.movementAdded,
+    required this.temporaryHitPointsRolled,
+  });
   final HeroCharacter hero;
   final Encounter encounter;
   final int focusSpent, movementAdded, temporaryHitPointsRolled;
@@ -21,7 +25,9 @@ class MonkBonusResult {
 class MonkFocusActions {
   const MonkFocusActions._();
 
-  static MonkBonusResult use(HeroCharacter hero, Encounter encounter, {
+  static MonkBonusResult use(
+    HeroCharacter hero,
+    Encounter encounter, {
     required MonkBonusAction action,
     bool enhanced = false,
     DiceEngine? dice,
@@ -29,12 +35,15 @@ class MonkFocusActions {
     if (ClassResourceRules.level(hero, 'Mönch') < 2) {
       throw StateError('Mönchsfokus erfordert mindestens Mönchsstufe 2.');
     }
-    if (encounter.isFinished || encounter.activeParticipant != 'hero' ||
+    if (encounter.isFinished ||
+        encounter.activeParticipant != 'hero' ||
         !ConditionRules.canTakeActions(hero)) {
       throw StateError('Der Charakter kann diese Bonusaktion nicht ausführen.');
     }
     if (encounter.bonusActionUsed) {
-      throw StateError('Die Bonusaktion wurde in diesem Zug bereits verbraucht.');
+      throw StateError(
+        'Die Bonusaktion wurde in diesem Zug bereits verbraucht.',
+      );
     }
     var movementAdded = 0;
     if (action == MonkBonusAction.stepOfTheWind) {
@@ -51,22 +60,29 @@ class MonkFocusActions {
     // Heightened Focus, Monk level 10: roll exactly two Martial Arts dice.
     // This feature requires an explicit dice engine, rather than inferring HP
     // from a narrative. Validate before deducting a Focus Point.
-    final heightenedDefense = enhanced &&
+    final heightenedDefense =
+        enhanced &&
         action == MonkBonusAction.patientDefense &&
         ClassResourceRules.level(hero, 'Mönch') >= 10;
     if (heightenedDefense && dice == null) {
-      throw StateError('Für die temporären Trefferpunkte fehlt der Würfeldienst.');
+      throw StateError(
+        'Für die temporären Trefferpunkte fehlt der Würfeldienst.',
+      );
     }
     var updatedHero = enhanced
-        ? ClassResourceRules.spend(hero, 'focusPoints') : hero;
+        ? ClassResourceRules.spend(hero, 'focusPoints')
+        : hero;
     var temporaryRolled = 0;
     if (heightenedDefense) {
       final sides = ClassResourceRules.martialArtsDie(
-          ClassResourceRules.level(hero, 'Mönch'));
+        ClassResourceRules.level(hero, 'Mönch'),
+      );
       temporaryRolled = dice!.roll('2d$sides').total;
       // Keep the larger pool by default; temp HP do not stack.
       updatedHero = RulesEngine.grantTemporaryHitPoints(
-          updatedHero, temporaryRolled);
+        updatedHero,
+        temporaryRolled,
+      );
     }
     return MonkBonusResult(
       hero: updatedHero,
@@ -76,11 +92,15 @@ class MonkFocusActions {
       encounter: encounter.copyWith(
         bonusActionUsed: true,
         movementRemaining: encounter.movementRemaining + movementAdded,
-        disengagedThisTurn: encounter.disengagedThisTurn ||
-            action == MonkBonusAction.patientDefense || enhanced,
-        dodgeActive: encounter.dodgeActive ||
+        disengagedThisTurn:
+            encounter.disengagedThisTurn ||
+            action == MonkBonusAction.patientDefense ||
+            enhanced,
+        dodgeActive:
+            encounter.dodgeActive ||
             (action == MonkBonusAction.patientDefense && enhanced),
-        jumpDoubledThisTurn: encounter.jumpDoubledThisTurn ||
+        jumpDoubledThisTurn:
+            encounter.jumpDoubledThisTurn ||
             (action == MonkBonusAction.stepOfTheWind && enhanced),
       ),
     );

@@ -54,15 +54,40 @@ class StartingHitPoints {
     final name = source.trim().toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
     return switch (name) {
       'barbar' || 'barbarin' || 'barbarian' => 12,
-      'kämpfer' || 'kämpferin' || 'kaempfer' || 'fighter' ||
-      'paladin' || 'waldläufer' || 'waldläuferin' || 'waldlaeufer' ||
+      'kämpfer' ||
+      'kämpferin' ||
+      'kaempfer' ||
+      'fighter' ||
+      'paladin' ||
+      'waldläufer' ||
+      'waldläuferin' ||
+      'waldlaeufer' ||
       'ranger' => 10,
-      'barde' || 'bardin' || 'bard' || 'kleriker' || 'klerikerin' ||
-      'cleric' || 'druide' || 'druidin' || 'druid' || 'mönch' ||
-      'mönchin' || 'moench' || 'monk' || 'schurke' || 'schurkin' ||
-      'rogue' || 'hexenmeister' || 'hexenmeisterin' || 'warlock' => 8,
-      'zauberer' || 'zauberin' || 'sorcerer' || 'magier' ||
-      'magierin' || 'wizard' => 6,
+      'barde' ||
+      'bardin' ||
+      'bard' ||
+      'kleriker' ||
+      'klerikerin' ||
+      'cleric' ||
+      'druide' ||
+      'druidin' ||
+      'druid' ||
+      'mönch' ||
+      'mönchin' ||
+      'moench' ||
+      'monk' ||
+      'schurke' ||
+      'schurkin' ||
+      'rogue' ||
+      'hexenmeister' ||
+      'hexenmeisterin' ||
+      'warlock' => 8,
+      'zauberer' ||
+      'zauberin' ||
+      'sorcerer' ||
+      'magier' ||
+      'magierin' ||
+      'wizard' => 6,
       _ => null,
     };
   }
