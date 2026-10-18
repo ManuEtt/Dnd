@@ -81,8 +81,7 @@ class _ConditionEffectDialogState extends State<ConditionEffectDialog> {
       );
       return;
     }
-    if (_duration != ConditionEffectDuration.untilRemoved &&
-        !_activeOwnTurn) {
+    if (_duration != ConditionEffectDuration.untilRemoved && !_activeOwnTurn) {
       setState(
         () => _validationError = 'Ein Zugendpunkt benötigt deinen Kampfzug.',
       );

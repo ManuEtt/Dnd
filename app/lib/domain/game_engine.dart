@@ -761,8 +761,7 @@ class GameEngine {
     }
     final nextFight = _encounterAfterHeroChange(campaign, hero);
     final rageEnded =
-        (fight?.rageUntilRound ?? 0) > 0 &&
-        nextFight?.rageUntilRound == 0;
+        (fight?.rageUntilRound ?? 0) > 0 && nextFight?.rageUntilRound == 0;
     return _commit(
       campaign,
       campaign.copyWith(hero: hero, encounter: nextFight),

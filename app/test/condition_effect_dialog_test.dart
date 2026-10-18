@@ -48,7 +48,10 @@ void main() {
     await open(tester);
     await tester.tap(find.byKey(const ValueKey('condition-effect-confirm')));
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('condition-effect-error')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('condition-effect-error')),
+      findsOneWidget,
+    );
     expect(find.byType(ConditionEffectDialog), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('condition-effect-cancel')));
     await tester.pumpAndSettle();

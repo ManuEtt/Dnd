@@ -1084,7 +1084,9 @@ class _AdventurePageState extends State<_AdventurePage> {
                         label: const Text('Effekt bestätigen'),
                       ),
                       TextButton.icon(
-                        key: const ValueKey('adventure-manage-condition-effects'),
+                        key: const ValueKey(
+                          'adventure-manage-condition-effects',
+                        ),
                         onPressed:
                             widget.controller.busy ||
                                 campaign.pendingRoll != null ||
