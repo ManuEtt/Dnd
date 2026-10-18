@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
+import 'package:lebendiger_spielleiter/domain/condition_effects.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_character_sheet.dart';
 
 void main() {
@@ -277,4 +278,43 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets('Zustände zeigen unabhängige Quellen und Ablauf', (tester) async {
+    final hero = HeroCharacter(
+      id: 'sourced',
+      name: 'Liora',
+      conditions: const ['vergiftet'],
+      conditionEffects: [
+        ConditionEffect(
+          id: 'trap',
+          condition: 'vergiftet',
+          source: 'Rauchfalle',
+          expiresInEncounterId: 'fight-1',
+          expiresAtOwnTurnEndRound: 2,
+        ),
+        ConditionEffect(
+          id: 'poison',
+          condition: 'vergiftet',
+          source: 'Giftpfeil',
+        ),
+      ],
+    );
+    await tester.pumpWidget(MaterialApp(home: CharacterSheetPage(hero: hero)));
+    await tester.pumpAndSettle();
+    final tab = find.byKey(const ValueKey('sheet-tab-1'));
+    await tester.scrollUntilVisible(
+      tab,
+      180,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.ensureVisible(tab);
+    await tester.tap(tab);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('source-effect-trap')), findsOneWidget);
+    expect(find.byKey(const ValueKey('source-effect-poison')), findsOneWidget);
+    expect(find.text('Manuell / historisch'), findsOneWidget);
+    expect(find.textContaining('Runde 2 (fight-1)'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
 }
