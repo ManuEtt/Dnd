@@ -1,3 +1,15 @@
+# GitHub-Zwischencheckpoint – Quellgebundene Zustände, PR #7 (18.10.2026)
+
+Branch: `feature/condition-source-ledger-20261018`; Basis `main` bei `2b2618a45158d068a8cf37ab3d133a9b11ca10fb`; Pull Request: https://github.com/ManuEtt/Dnd/pull/7. Vor Merge oder weiterer Arbeit **tatsächlichen Branch-HEAD, Checks und PR-Status neu prüfen**. Keine Änderung direkt auf `main`.
+
+Implementiert auf dem Branch: getrennte manuelle und quellgebundene Zustände, strenge JSON-Validierung, deduplizierte Lesesicht, reine Quell-/Ablaufmutationen, Zugendrand der aktuellen Begegnung, Klassenzustandsheilung, Charakterbogenquellen und Domain-/Widgettests. Regel-ID `EFFECT-SOURCE-DURATION` bleibt **TEILWEISE**; Matrix in `docs/SRD_5_2_1_REQUIREMENTS_MATRIX.md`.
+
+CI: Dieser Eintrag ist **kein grüner Prüfbeleg**; endgültige GitHub Actions des PR #7 müssen noch ausgewertet werden. Flutter/Dart-SDK ist in der hier genutzten lokalen Umgebung nicht vorhanden; keine lokalen Testläufe behaupten. Quellcode liegt im GitHub-Featurebranch; ein vollständig geprüftes neues APK-/ZIP-Artefakt erst nach erfolgreichem Workflow nennen.
+
+Nächster Schritt: Format, Analyse, Tests und APK vollständig grün bekommen; anschließend autorisierte UI-/Controller-Änderungen für Quellen hinzufügen/entfernen, sofortige Konzentrations-/Kampfrauschfolgen und SQLite-/Rollback-/Gerätetests. Keine allgemeinen Echtzeit-/fremden-Zug-Dauern erfinden.
+
+---
+
 # Neuer Entwicklungsstand: 0.8.1+51 – Arescan entkoppelt (18.10.2026)
 
 **Basis:** lokales vollständiges Projekt-ZIP 0.7.9+49 plus erste Etappe der UI-/Itemwert-Darstellung.
