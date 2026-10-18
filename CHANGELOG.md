@@ -462,3 +462,10 @@ Erfolgreich geprüft: Flutter-Analyse ohne Befunde, 74 Flutter-Tests, 17 Backend
 - Validierung verhindert negative Preise/Gewichte, unmögliche Ladungen und unzulässige Reichweiten; unbekannte Angaben bleiben unbestimmt.
 - Neue Tests für JSON, SQLite, Katalogübernahme und UI ergänzt; **Flutter-Tests und Android-Build für diesen Stand noch nicht ausgeführt**.
 - Individuelle Werte dienen vorerst der Verwaltung; für Kampfmechaniken gilt weiterhin der geprüfte SRD-Katalog. Kein automatisches Ausführen von Freitext-Effekten.
+
+## In Vorbereitung – neue Charaktere: Erfahrungspunkte und Kämpfer-Stufe 1 (18.10.2026)
+
+- EP-Vorgaben aus den D&D-SRD-5.2.1-Stufengrenzen, inklusive manueller Werteprüfung bei der Neuerstellung.
+- Kämpfer Stufe 1: Pflichtwahl von Kampfstil und drei unterschiedlichen Waffenmeisterschaften, Startausrüstung und Vorschlag für W10 + KO-Start-TP.
+- Zweite Luft wird als dokumentiertes Merkmal mit zwei Anwendungen sichtbar; bestehende Spiele und importierte Charakterbögen bleiben unverändert.
+- Neue Domain- und UI-Tests für die Charaktererstellung. CI- und Android-Ergebnisse sind erst nach einem Branch-Build bestätigt.

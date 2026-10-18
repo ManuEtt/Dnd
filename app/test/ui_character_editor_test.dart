@@ -98,8 +98,30 @@ void main() {
     expect(HeroCharacter.fromJson(result!.toJson()).id, result!.id);
     expect(result!.abilities['dexterity'], isNull);
     expect(result!.gold, isNull);
-    expect(result!.experience, isNull);
+    expect(result!.experience, 0);
   });
+
+  testWidgets(
+    'new character starts at 0 EP and advances to the SRD threshold',
+    (tester) async {
+      HeroCharacter? result;
+      await openEditor(tester, null, (hero) => result = hero);
+      await tester.enterText(field('Charaktername'), 'Talyn');
+      final level = field('Stufe');
+      await tester.scrollUntilVisible(
+        level,
+        350,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.enterText(level, '3');
+      await tester.pumpAndSettle();
+      final xp = tester.widget<TextFormField>(field('Erfahrungspunkte'));
+      expect(xp.controller!.text, '900');
+      await save(tester);
+      expect(result?.level, 3);
+      expect(result?.experience, 900);
+    },
+  );
 
   testWidgets('HP above maximum is rejected instead of silently clamped', (
     tester,

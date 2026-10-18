@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 import '../domain/models.dart';
+import '../domain/character_creation_progression.dart';
+import '../domain/srd_character_classes.dart';
 import '../domain/srd_equipment_catalog.dart';
 import '../domain/equipment_rules.dart';
 import '../domain/multiclass_rules.dart';
@@ -34,6 +36,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
   String? _error;
   Map<String, int>? _generatedStartingAbilities;
   bool _manualAbilityException = false;
+  bool _experienceManuallyEdited = false;
+  bool _fighterSetupConfirmed = false;
 
   @override
   void initState() {
@@ -45,6 +49,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
           name: '',
           species: 'Mensch',
           className: 'Waldläufer',
+          experience: 0,
         ).toJson();
     for (final key in <String>[
       'name',
@@ -148,9 +153,24 @@ class _CharacterEditorState extends State<CharacterEditor> {
             helperText:
                 modifierPreview ?? (required ? null : 'Leer = nicht bestätigt'),
           ),
-          onChanged: isAbilityScore || key == 'exhaustionLevel'
-              ? (_) => setState(() => _error = null)
-              : null,
+          onChanged: (value) {
+            if (isAbilityScore || key == 'exhaustionLevel') {
+              setState(() => _error = null);
+            } else if (widget.hero == null && key == 'level') {
+              final level = int.tryParse(value.trim());
+              if (level != null &&
+                  level >= 1 &&
+                  level <= 20 &&
+                  !_experienceManuallyEdited) {
+                _fields['experience']!.text =
+                    CharacterCreationProgression.startingExperience(
+                      level,
+                    ).toString();
+              }
+            } else if (widget.hero == null && key == 'experience') {
+              _experienceManuallyEdited = true;
+            }
+          },
           validator: (value) {
             if (value == null || value.trim().isEmpty) {
               return required ? 'Bitte einen Wert eintragen.' : null;
@@ -205,6 +225,15 @@ class _CharacterEditorState extends State<CharacterEditor> {
             .where((e) => e.isNotEmpty)
             .toList();
       }
+      if (widget.hero == null &&
+          findSrdClass(json['className'] as String)?.name == 'Kämpfer' &&
+          !_fighterSetupConfirmed) {
+        throw const FormatException(
+          'Für einen neuen Kämpfer die D&D-Klassenwahl vollständig '
+          'bestätigen (Attribute, Kampfstil, drei Waffenmeisterschaften, '
+          'Fertigkeiten und Startausrüstung).',
+        );
+      }
       // Level-1 SRD generation and freehand entries must not be conflated.
       // Historical/imported characters intentionally remain editable.
       if (widget.hero == null) {
@@ -226,6 +255,27 @@ class _CharacterEditorState extends State<CharacterEditor> {
             '„Attribute ermitteln“ verteilen oder die manuelle '
             'Hausregel-Ausnahme ausdrücklich bestätigen.',
           );
+        }
+      }
+      if (widget.hero == null) {
+        final level = json['level'] as int?;
+        if (level != null) {
+          final minimum = CharacterCreationProgression.startingExperience(
+            level,
+          );
+          // A new character always has a known starting XP total.
+          final experience = (json['experience'] as int?) ?? minimum;
+          final nextThreshold = level < 20
+              ? CharacterCreationProgression.startingExperience(level + 1)
+              : null;
+          if (experience < minimum ||
+              (nextThreshold != null && experience >= nextThreshold)) {
+            throw const FormatException(
+              'Die Erfahrungspunkte passen nicht zur gewählten '
+              'Charakterstufe nach D&D SRD 5.2.1.',
+            );
+          }
+          json['experience'] = experience;
         }
       }
       json['abilities'] = {
@@ -598,6 +648,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
       context: context,
       builder: (_) => SrdClassSelectionDialog(
         currentClass: _fields['className']!.text,
+        isNewCharacter: widget.hero == null,
         existingSkills: _listFieldValues('skills'),
         existingSavingThrows: _listFieldValues('savingThrowProficiencies'),
         characterLevel: int.tryParse(_fields['level']!.text.trim()),
@@ -633,7 +684,31 @@ class _CharacterEditorState extends State<CharacterEditor> {
       );
     }
     final kit = choice.startingKit;
+    final fighterChoices = selected.fighterChoices;
+    final selectedFeatures = _listFieldValues('features')
+        .where(
+          (name) =>
+              !name.startsWith('Kampfstil: ') &&
+              !name.startsWith('Zweite Luft (') &&
+              !name.startsWith('Waffenmeisterschaft: '),
+        )
+        .toList();
+    if (fighterChoices != null) {
+      selectedFeatures.addAll(fighterChoices.featureLabels);
+    }
     setState(() {
+      if (widget.hero == null) {
+        _fighterSetupConfirmed = fighterChoices != null;
+        _fields['features']!.text = selectedFeatures.join('\n');
+      } else if (fighterChoices != null) {
+        _fields['features']!.text = [
+          ..._listFieldValues('features'),
+          ...fighterChoices.featureLabels.where(
+            (f) => !_listFieldValues('features').contains(f),
+          ),
+        ].join('\n');
+      }
+
       _fields['className']!.text = choice.characterClass.name;
       _fields['skills']!.text = skills.join('\n');
       _fields['savingThrowProficiencies']!.text = saves.join('\n');
@@ -768,6 +843,16 @@ class _CharacterEditorState extends State<CharacterEditor> {
                       _number('gold', 'Gold'),
                     ],
                   ),
+                  if (widget.hero == null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Text(
+                        'D&D SRD: EP ab Stufe '
+                        '${_fields['level']!.text.trim()} werden automatisch '
+                        'vorbelegt. Der Übungsbonus ergibt sich aus der Stufe.',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ),
                   const SizedBox(height: 16),
                   const FantasySectionTitle(
                     title: 'Attribute',
