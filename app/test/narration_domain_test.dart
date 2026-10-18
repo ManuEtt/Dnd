@@ -406,7 +406,6 @@ void main() {
   test(
     'replay still rejects changed values, list order and numeric JSON types',
     () {
-      final gm = engine();
       final seed = legacyArescanCampaign();
       final history = seed.events.single;
       for (final payload in [
