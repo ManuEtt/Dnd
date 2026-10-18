@@ -3,7 +3,6 @@ import 'package:uuid/uuid.dart';
 
 import '../domain/models.dart';
 import '../domain/character_creation_progression.dart';
-import '../domain/fighter_creation_rules.dart';
 import '../domain/srd_character_classes.dart';
 import '../domain/srd_equipment_catalog.dart';
 import '../domain/equipment_rules.dart';
