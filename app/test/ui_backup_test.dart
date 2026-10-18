@@ -201,9 +201,7 @@ void main() {
     final files = _FakeFiles();
     final fixture = await _start(tester, files);
     final previous = fixture.controller.currentCampaign!.toJson();
-    final source = jsonEncode(
-      legacyArescanCampaign().toJson(),
-    );
+    final source = jsonEncode(legacyArescanCampaign().toJson());
     files.open = () async => source;
     await _import(tester);
     await tester.tap(find.text('Datei wählen'));

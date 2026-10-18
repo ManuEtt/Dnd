@@ -17,32 +17,43 @@ void main() {
     expect(map.containsKey('note'), false);
   });
 
-  testWidgets('Katalog zeigt Einzelwerte und öffnet das Detailblatt',
-      (tester) async {
+  testWidgets('Katalog zeigt Einzelwerte und öffnet das Detailblatt', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(400, 850);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    await tester.pumpWidget(MaterialApp(home: Scaffold(body: Builder(
-      builder: (context) => TextButton(
-        onPressed: () => showDialog<EquipmentEntry>(
-          context: context,
-          builder: (_) => const EquipmentCatalogDialog(),
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => TextButton(
+              onPressed: () => showDialog<EquipmentEntry>(
+                context: context,
+                builder: (_) => const EquipmentCatalogDialog(),
+              ),
+              child: const Text('Katalog'),
+            ),
+          ),
         ),
-        child: const Text('Katalog'),
       ),
-    ))));
+    );
     await tester.tap(find.text('Katalog'));
     await tester.pumpAndSettle();
     await tester.enterText(
-        find.byKey(const ValueKey('equipment-catalog-search')), 'Langschwert');
+      find.byKey(const ValueKey('equipment-catalog-search')),
+      'Langschwert',
+    );
     await tester.pumpAndSettle();
     expect(find.text(sword.detail), findsNothing);
     await tester.tap(find.byTooltip('Werte für Langschwert anzeigen'));
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('equipment-value-weapon-longsword-damage')),
-        findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('equipment-value-weapon-longsword-damage')),
+      findsOneWidget,
+    );
     expect(find.text('Schadensart'), findsOneWidget);
     expect(find.text('Waffeneigenschaften'), findsOneWidget);
     expect(find.text('Gewicht'), findsOneWidget);

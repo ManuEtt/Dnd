@@ -267,6 +267,61 @@ void main() {
     },
   );
 
+  testWidgets('Schnellaktionen nur in der Abenteueransicht', (tester) async {
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final repository = (await tester.runAsync(
+      () => SqliteCampaignRepository.open(
+        factory: databaseFactoryFfi,
+        path: inMemoryDatabasePath,
+      ),
+    ))!;
+    final controller = GameController(repository: repository);
+    final voice = _SilentVoice();
+    await tester.runAsync(controller.createDemo);
+    await tester.pumpWidget(
+      LivingGameApp(controller: controller, voice: voice),
+    );
+    expect(
+      find.byKey(const ValueKey('adventure-fixed-shortcuts')),
+      findsNothing,
+    );
+    await tester.tap(find.text('Abenteuer'));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('adventure-fixed-shortcuts')),
+      findsOneWidget,
+    );
+    for (final page in ['Start', 'Helden', 'Tagebuch', 'Optionen']) {
+      await tester.tap(find.text(page).last);
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('adventure-fixed-shortcuts')),
+        findsNothing,
+        reason: 'Die Schnellaktionen sind in $page unzulässig.',
+      );
+      expect(
+        tester.widgetList<Scaffold>(find.byType(Scaffold)).where(
+          (scaffold) =>
+              scaffold.bottomNavigationBar is FantasyPinnedActionBar,
+        ),
+        isEmpty,
+      );
+    }
+    await tester.tap(find.text('Abenteuer'));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('adventure-fixed-shortcuts')),
+      findsOneWidget,
+    );
+    await tester.pumpWidget(const SizedBox.shrink());
+    controller.dispose();
+    voice.dispose();
+    await tester.runAsync(repository.close);
+  });
+
   testWidgets(
     'adventure recap preserves an unfinished action and confirmed state',
     (tester) async {

@@ -44,8 +44,10 @@ class EquipmentFields extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Hinweis',
-                        style: TextStyle(color: FantasyPalette.gold)),
+                    const Text(
+                      'Hinweis',
+                      style: TextStyle(color: FantasyPalette.gold),
+                    ),
                     Text(entry.note!),
                   ],
                 ),
@@ -53,8 +55,10 @@ class EquipmentFields extends StatelessWidget {
             if (!compact && entry.category == EquipmentCategory.magic)
               const Padding(
                 padding: EdgeInsets.only(top: 10),
-                child: Text('Magische Regelwirkungen werden nur angezeigt, '
-                    'soweit sie durch bestätigte Katalogwerte belegt sind.'),
+                child: Text(
+                  'Magische Regelwirkungen werden nur angezeigt, '
+                  'soweit sie durch bestätigte Katalogwerte belegt sind.',
+                ),
               ),
           ],
         );
@@ -71,48 +75,68 @@ class EquipmentFields extends StatelessWidget {
       if (entry.damageType != null)
         EquipmentAttribute('damageType', 'Schadensart', entry.damageType!),
       if (entry.twoHandDamage != null)
-        EquipmentAttribute('twoHand', 'Vielseitiger Schaden',
-            entry.twoHandDamage!),
+        EquipmentAttribute(
+          'twoHand',
+          'Vielseitiger Schaden',
+          entry.twoHandDamage!,
+        ),
       if (entry.properties.isNotEmpty)
-        EquipmentAttribute('properties', 'Waffeneigenschaften',
-            entry.properties.join(', ')),
+        EquipmentAttribute(
+          'properties',
+          'Waffeneigenschaften',
+          entry.properties.join(', '),
+        ),
       if (entry.mastery != null)
         EquipmentAttribute('mastery', 'Waffenmeisterschaft', entry.mastery!),
       if (entry.rangeNormal != null)
-        EquipmentAttribute('rangeNormal', 'Normale Reichweite',
-            '${entry.rangeNormal} ft'),
+        EquipmentAttribute(
+          'rangeNormal',
+          'Normale Reichweite',
+          '${entry.rangeNormal} ft',
+        ),
       if (entry.rangeLong != null)
-        EquipmentAttribute('rangeLong', 'Maximale Reichweite',
-            '${entry.rangeLong} ft'),
+        EquipmentAttribute(
+          'rangeLong',
+          'Maximale Reichweite',
+          '${entry.rangeLong} ft',
+        ),
       if (entry.ammunitionType != null)
-        EquipmentAttribute('ammunitionType', 'Munition',
-            entry.ammunitionType!),
+        EquipmentAttribute('ammunitionType', 'Munition', entry.ammunitionType!),
       if (entry.armorBaseAc != null)
-        EquipmentAttribute('armorBaseAc',
-            entry.isShield ? 'RK-Bonus' : 'Basis-Rüstungsklasse',
-            '${entry.armorBaseAc}'),
+        EquipmentAttribute(
+          'armorBaseAc',
+          entry.isShield ? 'RK-Bonus' : 'Basis-Rüstungsklasse',
+          '${entry.armorBaseAc}',
+        ),
       if (entry.dexCap != null)
-        EquipmentAttribute('dexCap', 'Maximaler GE-Bonus',
-            '${entry.dexCap}'),
+        EquipmentAttribute('dexCap', 'Maximaler GE-Bonus', '${entry.dexCap}'),
       if (entry.strengthMin != null)
-        EquipmentAttribute('strengthMin', 'Stärkeanforderung',
-            '${entry.strengthMin}'),
+        EquipmentAttribute(
+          'strengthMin',
+          'Stärkeanforderung',
+          '${entry.strengthMin}',
+        ),
       if (entry.isArmor)
-        EquipmentAttribute('stealthDisadvantage', 'Heimlichkeitsnachteil',
-            entry.stealthDisadvantage ? 'Ja' : 'Nein'),
+        EquipmentAttribute(
+          'stealthDisadvantage',
+          'Heimlichkeitsnachteil',
+          entry.stealthDisadvantage ? 'Ja' : 'Nein',
+        ),
       if (entry.weightLb != null)
-        EquipmentAttribute('weight', 'Gewicht',
-            '${_number(entry.weightLb!)} lb'),
+        EquipmentAttribute(
+          'weight',
+          'Gewicht',
+          '${_number(entry.weightLb!)} lb',
+        ),
       if (entry.priceCp != null)
         EquipmentAttribute('price', 'Preis', entry.priceLabel),
     ];
     return values;
   }
 
-  static String _number(double value) =>
-      value == value.truncateToDouble()
-          ? value.toInt().toString()
-          : value.toString();
+  static String _number(double value) => value == value.truncateToDouble()
+      ? value.toInt().toString()
+      : value.toString();
 }
 
 class EquipmentAttribute {
@@ -141,12 +165,19 @@ class _AttributeCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(field.label,
-            style: const TextStyle(fontSize: 11, color: FantasyPalette.muted)),
-        Text(field.value,
-            softWrap: true,
-            style: TextStyle(fontSize: compact ? 12 : 15,
-                fontWeight: FontWeight.w600, color: FantasyPalette.ivory)),
+        Text(
+          field.label,
+          style: const TextStyle(fontSize: 11, color: FantasyPalette.muted),
+        ),
+        Text(
+          field.value,
+          softWrap: true,
+          style: TextStyle(
+            fontSize: compact ? 12 : 15,
+            fontWeight: FontWeight.w600,
+            color: FantasyPalette.ivory,
+          ),
+        ),
       ],
     ),
   );

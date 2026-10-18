@@ -78,8 +78,11 @@ class _EquipmentCatalogDialogState extends State<EquipmentCatalogDialog> {
                           key: ValueKey('equipment-catalog-item-${entry.id}'),
                           dense: true,
                           title: Text(entry.name),
-                          subtitle: Text(entry.category.label, maxLines: 1,
-                              overflow: TextOverflow.ellipsis),
+                          subtitle: Text(
+                            entry.category.label,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -95,17 +98,24 @@ class _EquipmentCatalogDialogState extends State<EquipmentCatalogDialog> {
                                       child: SingleChildScrollView(
                                         padding: const EdgeInsets.all(20),
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.stretch,
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Text(entry.name,
-                                                style: Theme.of(context).textTheme.headlineSmall),
+                                            Text(
+                                              entry.name,
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.headlineSmall,
+                                            ),
                                             const SizedBox(height: 12),
                                             EquipmentFields(entry: entry),
                                             const SizedBox(height: 16),
                                             FilledButton.icon(
                                               icon: const Icon(Icons.add),
-                                              label: const Text('Zum Inventar hinzufügen'),
+                                              label: const Text(
+                                                'Zum Inventar hinzufügen',
+                                              ),
                                               onPressed: () {
                                                 Navigator.pop(sheetContext);
                                                 Navigator.pop(context, entry);

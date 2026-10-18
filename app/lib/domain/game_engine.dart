@@ -2819,12 +2819,7 @@ class GameEngine {
               ? [e]
               : e.quantity > 1
               ? [
-                  InventoryItem(
-                    id: e.id,
-                    name: e.name,
-                    quantity: e.quantity - 1,
-                    description: e.description,
-                  ),
+                  e.copyWith(quantity: e.quantity - 1),
                 ]
               : [],
         )

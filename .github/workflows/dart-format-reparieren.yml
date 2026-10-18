@@ -1,6 +1,6 @@
 name: Dart-Formatierung reparieren
 
-# Einmaliger, manuell ausgeloester Fix. Keine Codex-Automatisierung.
+# Einmaliger, manuell ausgeloester Formatierungs-Fix ohne Entwicklungsagenten.
 on:
   workflow_dispatch:
 

@@ -114,34 +114,28 @@ void main() {
     },
   );
 
-  test(
-    'imported historical campaign does not manufacture scripted items',
-    () {
-      final gm = engine();
-      var game = legacyArescanCampaign();
-      final original = game.hero.inventory;
-      game = gm.act(game, 'Ich nehme das Amulett.').campaign;
-      expect(game.hero.inventory, original);
-      expect(game.events.last.type, 'narrative.turn');
-      expect(game.facts['amuletTaken'], isNull);
-      expect(game.hero.name, 'Arescan');
-      expect(game.facts['origin'], 'arescan');
-    },
-  );
+  test('imported historical campaign does not manufacture scripted items', () {
+    final gm = engine();
+    var game = legacyArescanCampaign();
+    final original = game.hero.inventory;
+    game = gm.act(game, 'Ich nehme das Amulett.').campaign;
+    expect(game.hero.inventory, original);
+    expect(game.events.last.type, 'narrative.turn');
+    expect(game.facts['amuletTaken'], isNull);
+    expect(game.hero.name, 'Arescan');
+    expect(game.facts['origin'], 'arescan');
+  });
 
-  test(
-    'imported campaign never executes demo quest or gives demo items',
-    () {
-      final gm = engine();
-      var game = legacyArescanCampaign();
-      final beforeFacts = Map<String, String>.from(game.facts);
-      game = gm.act(game, 'Ich untersuche den Brunnen.').campaign;
-      expect(game.hero.inventory, isEmpty);
-      expect(game.facts, beforeFacts);
-      expect(game.quests.single.id, 'heart');
-      expect(game.events.last.type, 'narrative.turn');
-    },
-  );
+  test('imported campaign never executes demo quest or gives demo items', () {
+    final gm = engine();
+    var game = legacyArescanCampaign();
+    final beforeFacts = Map<String, String>.from(game.facts);
+    game = gm.act(game, 'Ich untersuche den Brunnen.').campaign;
+    expect(game.hero.inventory, isEmpty);
+    expect(game.facts, beforeFacts);
+    expect(game.quests.single.id, 'heart');
+    expect(game.events.last.type, 'narrative.turn');
+  });
 
   test(
     'Manual total never gains a second attack bonus or fabricated critical',
@@ -215,6 +209,42 @@ void main() {
     expect(game.hero.hitPoints, 6);
     game = gm.act(game, 'Ich mache eine lange Rast.').campaign;
     expect(game.hero.hitPoints, 12);
+  });
+
+  test('Potion consumption preserves the inventory catalog reference', () {
+    final gm = engine();
+    final initial = gm.createDemo();
+    final inventory = [
+      for (final item in initial.hero.inventory)
+        if (item.id == 'potion')
+          const InventoryItem(
+            id: 'potion',
+            name: 'Heiltrank',
+            quantity: 2,
+            description: 'Grüne Glasflasche.',
+            catalogId: 'magic-potion-of-healing',
+          )
+        else
+          item,
+    ];
+    var game = initial.copyWith(
+      hero: initial.hero.copyWith(hitPoints: 2, inventory: inventory),
+    );
+    game = gm.act(game, 'Ich trinke einen Heiltrank.').campaign;
+    final remaining = game.hero.inventory.singleWhere(
+      (item) => item.id == 'potion',
+    );
+    expect(remaining.quantity, 1);
+    expect(remaining.catalogId, 'magic-potion-of-healing');
+    expect(remaining.name, 'Heiltrank');
+    expect(remaining.description, 'Grüne Glasflasche.');
+    final restored = Campaign.fromJson(game.toJson());
+    final saved = restored.hero.inventory.singleWhere(
+      (item) => item.id == 'potion',
+    );
+    expect(saved.catalogId, remaining.catalogId);
+    expect(saved.quantity, remaining.quantity);
+    expect(saved.description, remaining.description);
   });
 
   test('Death saves require natural result and can restore one HP', () {
@@ -319,21 +349,18 @@ void main() {
     },
   );
 
-  test(
-    'Demo is packaged and historical fixture remains import-compatible',
-    () {
-      final demo = Campaign.fromJson(
-        jsonDecode(File('assets/demo.json').readAsStringSync())
-            as Map<String, dynamic>,
-      );
-      final arescan = Campaign.fromJson(
-        jsonDecode(File('test/fixtures/arescan_legacy.json').readAsStringSync())
-            as Map<String, dynamic>,
-      );
-      expect(demo.hero.isComplete, isTrue);
-      expect(arescan.hero.name, 'Arescan');
-      expect(arescan.hero.isComplete, isFalse);
-      expect(arescan.events.single.payload['attackTotal'], 19);
-    },
-  );
+  test('Demo is packaged and historical fixture remains import-compatible', () {
+    final demo = Campaign.fromJson(
+      jsonDecode(File('assets/demo.json').readAsStringSync())
+          as Map<String, dynamic>,
+    );
+    final arescan = Campaign.fromJson(
+      jsonDecode(File('test/fixtures/arescan_legacy.json').readAsStringSync())
+          as Map<String, dynamic>,
+    );
+    expect(demo.hero.isComplete, isTrue);
+    expect(arescan.hero.name, 'Arescan');
+    expect(arescan.hero.isComplete, isFalse);
+    expect(arescan.events.single.payload['attackTotal'], 19);
+  });
 }

@@ -87,6 +87,21 @@ class InventoryItem {
   final String catalogId;
   final String id, name, description;
   final int quantity;
+
+  /// Preserve the catalog reference when updating an inventory stack.
+  InventoryItem copyWith({
+    String? name,
+    int? quantity,
+    String? description,
+    String? catalogId,
+  }) => InventoryItem(
+    id: id,
+    name: name ?? this.name,
+    quantity: quantity ?? this.quantity,
+    description: description ?? this.description,
+    catalogId: catalogId ?? this.catalogId,
+  );
+
   Map<String, dynamic> toJson() => {
     'id': id,
     'name': name,
