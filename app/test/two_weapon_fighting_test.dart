@@ -50,11 +50,7 @@ HeroCharacter fighter({bool style = true, bool shield = false}) =>
           name: 'Kurzschwert',
           catalogId: 'weapon-shortsword',
         ),
-        InventoryItem(
-          id: 'offhand',
-          name: 'Dolch',
-          catalogId: 'weapon-dagger',
-        ),
+        InventoryItem(id: 'offhand', name: 'Dolch', catalogId: 'weapon-dagger'),
         InventoryItem(id: 'shield', name: 'Schild', catalogId: 'armor-shield'),
       ],
     );
@@ -73,8 +69,14 @@ Campaign missPrimary(GameEngine engine, Campaign game) {
 void main() {
   test('Two different confirmed Light weapons are required', () {
     expect(TwoWeaponFightingRules.offhandChoices(fighter()), hasLength(1));
-    expect(TwoWeaponFightingRules.offhandChoices(fighter(style: false)), isEmpty);
-    expect(TwoWeaponFightingRules.offhandChoices(fighter(shield: true)), isEmpty);
+    expect(
+      TwoWeaponFightingRules.offhandChoices(fighter(style: false)),
+      isEmpty,
+    );
+    expect(
+      TwoWeaponFightingRules.offhandChoices(fighter(shield: true)),
+      isEmpty,
+    );
   });
 
   test('Miss opens extra Bonus Action; pending roll survives persistence', () {
@@ -124,18 +126,23 @@ void main() {
     expect(done.encounter!.lightAttackAvailable, isFalse);
   });
 
-  test('Manipulated offhand attack modifiers and inventory references fail', () {
-    final engine = gm();
-    final before = battle(engine, fighter());
-    final after = missPrimary(engine, before);
-    final requested = engine.act(after, 'Nebenhandangriff mit Dolch').campaign;
-    final data = requested.toJson();
-    final pending = Map<String, dynamic>.from(data['pendingRoll'] as Map);
-    pending['modifier'] = 17;
-    data['pendingRoll'] = pending;
-    expect(() => Campaign.fromJson(data), throwsFormatException);
-    pending['modifier'] = 5;
-    pending['weaponId'] = 'shield';
-    expect(() => Campaign.fromJson(data), throwsFormatException);
-  });
+  test(
+    'Manipulated offhand attack modifiers and inventory references fail',
+    () {
+      final engine = gm();
+      final before = battle(engine, fighter());
+      final after = missPrimary(engine, before);
+      final requested = engine
+          .act(after, 'Nebenhandangriff mit Dolch')
+          .campaign;
+      final data = requested.toJson();
+      final pending = Map<String, dynamic>.from(data['pendingRoll'] as Map);
+      pending['modifier'] = 17;
+      data['pendingRoll'] = pending;
+      expect(() => Campaign.fromJson(data), throwsFormatException);
+      pending['modifier'] = 5;
+      pending['weaponId'] = 'shield';
+      expect(() => Campaign.fromJson(data), throwsFormatException);
+    },
+  );
 }

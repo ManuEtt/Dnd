@@ -2352,9 +2352,11 @@ class GameEngine {
       final selected = (offhandCommand.group(1) ?? offhandCommand.group(2)!)
           .trim();
       final choices = TwoWeaponFightingRules.offhandChoices(current.hero)
-          .where((item) =>
-              item.id.toLowerCase() == selected ||
-              item.name.toLowerCase() == selected)
+          .where(
+            (item) =>
+                item.id.toLowerCase() == selected ||
+                item.name.toLowerCase() == selected,
+          )
           .toList();
       if (choices.length != 1) {
         return _commit(
@@ -2588,12 +2590,10 @@ class GameEngine {
         );
       }
       return _completeDeathSave(campaign, next, resolved, payload: payload);
-    } else if (pending.type == 'attack' ||
-        pending.type == 'offhandAttack') {
+    } else if (pending.type == 'attack' || pending.type == 'offhandAttack') {
       final isOffhand = pending.type == 'offhandAttack';
       final offhand = isOffhand
-          ? TwoWeaponFightingRules.confirmedOffhand(
-              next.hero, pending.weaponId)
+          ? TwoWeaponFightingRules.confirmedOffhand(next.hero, pending.weaponId)
           : null;
       if (isOffhand && offhand == null) {
         throw StateError('Nebenhandwaffe nicht mehr bestätigt.');
@@ -2630,7 +2630,9 @@ class GameEngine {
         payload['rageExtendedUntilRound'] = rolledFight.rageUntilRound;
       }
       if (outcome.hit) {
-        final expression = isOffhand ? offhand!.damage! : next.hero.weaponDamage;
+        final expression = isOffhand
+            ? offhand!.damage!
+            : next.hero.weaponDamage;
         final base = dice.roll(expression);
         final extra = outcome.critical ? dice.roll(expression) : null;
         final weaponDamage = isOffhand
@@ -2680,7 +2682,9 @@ class GameEngine {
             lightAttackAvailable: isOffhand
                 ? false
                 : (foe.lightAttackAvailable ||
-                    TwoWeaponFightingRules.offhandChoices(next.hero).isNotEmpty),
+                      TwoWeaponFightingRules.offhandChoices(
+                        next.hero,
+                      ).isNotEmpty),
             sneakAttackUsedThisTurn:
                 foe.sneakAttackUsedThisTurn || sneakRoll != null,
             attacksRemaining: attacksRemaining,
@@ -2699,7 +2703,9 @@ class GameEngine {
             lightAttackAvailable: isOffhand
                 ? false
                 : (foe.lightAttackAvailable ||
-                    TwoWeaponFightingRules.offhandChoices(next.hero).isNotEmpty),
+                      TwoWeaponFightingRules.offhandChoices(
+                        next.hero,
+                      ).isNotEmpty),
             attacksRemaining: attacksRemaining,
           ),
         );
@@ -2779,7 +2785,8 @@ class GameEngine {
           next.encounter!.lightAttackAvailable &&
           !next.encounter!.bonusActionUsed &&
           !next.encounter!.surgeReserved) {
-        narration += 'Du kannst jetzt einen Nebenhandangriff als Bonusaktion '
+        narration +=
+            'Du kannst jetzt einen Nebenhandangriff als Bonusaktion '
             'ausführen (Nebenhandangriff mit Waffenname) oder deinen Zug beenden.';
       } else if (next.encounter!.attacksRemaining == 0 &&
           MonkFlurryRules.canUse(next.hero, next.encounter!) &&

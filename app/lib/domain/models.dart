@@ -1055,7 +1055,13 @@ class PendingRoll {
   factory PendingRoll.fromJson(Map<String, dynamic> j) {
     final type = _string(j['type'], 'Probeart');
     final expression = _string(j['expression'], 'Würfel', fallback: '1d20');
-    if (!['attack', 'offhandAttack', 'death', 'escape', 'perception'].contains(type) ||
+    if (![
+          'attack',
+          'offhandAttack',
+          'death',
+          'escape',
+          'perception',
+        ].contains(type) ||
         expression != '1d20') {
       throw const FormatException('Unbekannte Probe oder Würfelanweisung.');
     }
@@ -1682,10 +1688,12 @@ class Campaign {
               !weapon.hasProperty('light') ||
               (weapon.category != EquipmentCategory.simpleMelee &&
                   weapon.category != EquipmentCategory.martialMelee)) {
-            throw const FormatException('Keine bestätigte leichte Nebenhandwaffe.');
+            throw const FormatException(
+              'Keine bestätigte leichte Nebenhandwaffe.',
+            );
           }
-          final ability = weapon.hasProperty('finesse') &&
-                  hero.weaponAbility == 'dexterity'
+          final ability =
+              weapon.hasProperty('finesse') && hero.weaponAbility == 'dexterity'
               ? 'dexterity'
               : 'strength';
           return modifier(ability) + prof + exhaustion;
@@ -1723,10 +1731,13 @@ class Campaign {
                 !mainWeapon.hasProperty('light') ||
                 (mainWeapon.category != EquipmentCategory.simpleMelee &&
                     mainWeapon.category != EquipmentCategory.martialMelee)) ||
-            encounter == null || encounter.isFinished ||
+            encounter == null ||
+            encounter.isFinished ||
             encounter.activeParticipant != 'hero' ||
-            !encounter.actionUsed || encounter.attacksRemaining != 0 ||
-            !encounter.bonusActionUsed || !encounter.lightAttackAvailable) {
+            !encounter.actionUsed ||
+            encounter.attacksRemaining != 0 ||
+            !encounter.bonusActionUsed ||
+            !encounter.lightAttackAvailable) {
           throw const FormatException('Unzulässiger offener Nebenhandangriff.');
         }
       }
@@ -1752,7 +1763,8 @@ class Campaign {
                       encounter.deathSaveResolvedThisTurn)))) {
         throw const FormatException('Ungültiger Todesrettungswurf.');
       }
-      if (pending.type != 'attack' && pending.type != 'offhandAttack' &&
+      if (pending.type != 'attack' &&
+          pending.type != 'offhandAttack' &&
           pending.difficulty != 10) {
         throw const FormatException('Ungültige Schwierigkeit.');
       }

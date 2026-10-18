@@ -37,12 +37,18 @@ class TwoWeaponFightingRules {
 
   static List<InventoryItem> offhandChoices(HeroCharacter hero) {
     if (!eligiblePrimary(hero)) return const [];
-    final candidates = hero.inventory.where(
-      (item) => item.id != hero.equippedWeaponId && _lightWeapon(item) != null,
-    ).toList();
-    return candidates.where(
-      (item) => candidates.where((other) => other.id == item.id).length == 1,
-    ).toList();
+    final candidates = hero.inventory
+        .where(
+          (item) =>
+              item.id != hero.equippedWeaponId && _lightWeapon(item) != null,
+        )
+        .toList();
+    return candidates
+        .where(
+          (item) =>
+              candidates.where((other) => other.id == item.id).length == 1,
+        )
+        .toList();
   }
 
   static EquipmentEntry? confirmedOffhand(HeroCharacter hero, String itemId) {
@@ -52,8 +58,8 @@ class TwoWeaponFightingRules {
 
   static String ability(HeroCharacter hero, EquipmentEntry weapon) =>
       weapon.hasProperty('finesse') && hero.weaponAbility == 'dexterity'
-          ? 'dexterity'
-          : 'strength';
+      ? 'dexterity'
+      : 'strength';
 
   static int abilityModifier(HeroCharacter hero, EquipmentEntry weapon) {
     final score = hero.abilities[ability(hero, weapon)];
