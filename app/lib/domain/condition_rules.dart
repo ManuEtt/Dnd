@@ -47,8 +47,8 @@ class ExhaustionRules {
       exhaustionLevel: next,
       concentratingOn: next == 6 ? '' : hero.concentratingOn,
       conditions: next == 6 && !hero.conditions.contains('tot')
-          ? [...hero.conditions, 'tot']
-          : hero.conditions,
+          ? [...hero.manualConditions, 'tot']
+          : hero.manualConditions,
     );
   }
 
