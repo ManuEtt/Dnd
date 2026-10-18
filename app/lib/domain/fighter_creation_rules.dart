@@ -14,9 +14,9 @@ class FighterCreationRules {
     'two-weapon-fighting': 'Kampf mit zwei Waffen',
   };
 
-  static List<EquipmentEntry> get masteryWeapons =>
-      SrdEquipmentCatalog.all.where((item) => item.isWeapon &&
-          item.mastery != null).toList(growable: false);
+  static List<EquipmentEntry> get masteryWeapons => SrdEquipmentCatalog.all
+      .where((item) => item.isWeapon && item.mastery != null)
+      .toList(growable: false);
 
   static int get secondWindUses => 2;
   static int get hitDie => 10;
@@ -33,9 +33,11 @@ class FighterStartingChoices {
       throw const FormatException('Wähle einen SRD-Kampfstil für den Kämpfer.');
     }
     final available = FighterCreationRules.masteryWeapons
-        .map((item) => item.id).toSet();
+        .map((item) => item.id)
+        .toSet();
     if (this.masteryWeaponIds.length != FighterCreationRules.masteryCount ||
-        this.masteryWeaponIds.toSet().length != FighterCreationRules.masteryCount ||
+        this.masteryWeaponIds.toSet().length !=
+            FighterCreationRules.masteryCount ||
         this.masteryWeaponIds.any((id) => !available.contains(id))) {
       throw const FormatException(
         'Wähle genau drei unterschiedliche SRD-Waffenmeisterschaften.',

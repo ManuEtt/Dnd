@@ -104,8 +104,7 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
           styleId: _fighterStyle ?? '',
           masteryWeaponIds: _fighterMasteries,
         );
-        if (widget.isNewCharacter && widget.allowEquipment &&
-            _kitIndex < 0) {
+        if (widget.isNewCharacter && widget.allowEquipment && _kitIndex < 0) {
           throw const FormatException(
             'Wähle eines der drei SRD-Startpakete für deinen Kämpfer.',
           );
@@ -126,8 +125,8 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
         SrdClassSetupResult(
           selection: selection,
           replaceExistingProficiencies: _replace,
-          useSuggestedHitPoints: _selectedClass.name == 'Kämpfer' &&
-                  widget.isNewCharacter
+          useSuggestedHitPoints:
+              _selectedClass.name == 'Kämpfer' && widget.isNewCharacter
               ? _startingHitPoints != null
               : _useHp && _startingHitPoints != null,
           fighterChoices: fighterChoices,
@@ -185,28 +184,40 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
             const SizedBox(height: 12),
             Text('Trefferwürfel: W${_selectedClass.hitDie}'),
             if (widget.characterLevel == 1)
-              Text('Start-EP: ${CharacterCreationProgression.startingExperience(1)} · '
-                  'Übungsbonus: +${CharacterCreationProgression.proficiencyBonus(1)}'),
+              Text(
+                'Start-EP: ${CharacterCreationProgression.startingExperience(1)} · '
+                'Übungsbonus: +${CharacterCreationProgression.proficiencyBonus(1)}',
+              ),
             if (_selectedClass.name == 'Kämpfer') ...[
               const SizedBox(height: 8),
-              const Text('Kämpfer Stufe 1: W10 Trefferwürfel, Stärke- und '
-                  'Konstitutionsrettungen, alle Rüstungen und Schilde, '
-                  'einfache und Kriegswaffen, Zweite Luft (2 Anwendungen).'),
+              const Text(
+                'Kämpfer Stufe 1: W10 Trefferwürfel, Stärke- und '
+                'Konstitutionsrettungen, alle Rüstungen und Schilde, '
+                'einfache und Kriegswaffen, Zweite Luft (2 Anwendungen).',
+              ),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
                 key: const ValueKey('fighter-fighting-style'),
                 initialValue: _fighterStyle,
-                decoration: const InputDecoration(labelText: 'Kampfstil wählen'),
+                decoration: const InputDecoration(
+                  labelText: 'Kampfstil wählen',
+                ),
                 items: [
-                  for (final entry in FighterCreationRules.fightingStyles.entries)
-                    DropdownMenuItem(value: entry.key, child: Text(entry.value)),
+                  for (final entry
+                      in FighterCreationRules.fightingStyles.entries)
+                    DropdownMenuItem(
+                      value: entry.key,
+                      child: Text(entry.value),
+                    ),
                 ],
                 onChanged: (value) => setState(() => _fighterStyle = value),
               ),
               const SizedBox(height: 8),
               Text('Waffenmeisterschaften: ${_fighterMasteries.length} / 3'),
-              const Text('Wähle drei unterschiedliche Waffenarten. '
-                  'Die Auswahl wird auf dem Bogen dokumentiert.'),
+              const Text(
+                'Wähle drei unterschiedliche Waffenarten. '
+                'Die Auswahl wird auf dem Bogen dokumentiert.',
+              ),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 6,
@@ -217,7 +228,8 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
                       key: ValueKey('fighter-mastery-${weapon.id}'),
                       label: Text(weapon.name),
                       selected: _fighterMasteries.contains(weapon.id),
-                      onSelected: _fighterMasteries.contains(weapon.id) ||
+                      onSelected:
+                          _fighterMasteries.contains(weapon.id) ||
                               _fighterMasteries.length < 3
                           ? (selected) => setState(() {
                               selected
@@ -285,7 +297,8 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
                 key: const ValueKey('srd-confirm-start-hp'),
                 contentPadding: EdgeInsets.zero,
                 value: _useHp,
-                onChanged: widget.isNewCharacter && _selectedClass.name == 'Kämpfer'
+                onChanged:
+                    widget.isNewCharacter && _selectedClass.name == 'Kämpfer'
                     ? null
                     : (value) => setState(() => _useHp = value ?? false),
                 title: Text('Start-TP vorschlagen: ${hp.maximum} TP'),
@@ -312,7 +325,8 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
                 initialValue: _kitIndex,
                 isExpanded: true,
                 decoration: InputDecoration(
-                  labelText: widget.isNewCharacter && _selectedClass.name == 'Kämpfer'
+                  labelText:
+                      widget.isNewCharacter && _selectedClass.name == 'Kämpfer'
                       ? 'Kämpfer-Startausrüstung wählen'
                       : 'Optionale Startausrüstung',
                 ),
@@ -363,12 +377,14 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
         ),
         FilledButton(
           key: const ValueKey('srd-confirm-class'),
-          onPressed: _skills.length == _selectedClass.skillCount &&
+          onPressed:
+              _skills.length == _selectedClass.skillCount &&
                   (_selectedClass.name != 'Kämpfer' ||
-                      (_fighterStyle != null && _fighterMasteries.length == 3 &&
+                      (_fighterStyle != null &&
+                          _fighterMasteries.length == 3 &&
                           (!widget.isNewCharacter ||
                               (_startingHitPoints != null &&
-                               (!widget.allowEquipment || _kitIndex >= 0)))))
+                                  (!widget.allowEquipment || _kitIndex >= 0)))))
               ? _accept
               : null,
           child: const Text('Klasse und Fertigkeiten übernehmen'),

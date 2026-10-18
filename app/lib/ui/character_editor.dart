@@ -159,11 +159,14 @@ class _CharacterEditorState extends State<CharacterEditor> {
               setState(() => _error = null);
             } else if (widget.hero == null && key == 'level') {
               final level = int.tryParse(value.trim());
-              if (level != null && level >= 1 && level <= 20 &&
+              if (level != null &&
+                  level >= 1 &&
+                  level <= 20 &&
                   !_experienceManuallyEdited) {
                 _fields['experience']!.text =
-                    CharacterCreationProgression.startingExperience(level)
-                        .toString();
+                    CharacterCreationProgression.startingExperience(
+                      level,
+                    ).toString();
               }
             } else if (widget.hero == null && key == 'experience') {
               _experienceManuallyEdited = true;
@@ -258,7 +261,9 @@ class _CharacterEditorState extends State<CharacterEditor> {
       if (widget.hero == null) {
         final level = json['level'] as int?;
         if (level != null) {
-          final minimum = CharacterCreationProgression.startingExperience(level);
+          final minimum = CharacterCreationProgression.startingExperience(
+            level,
+          );
           // A new character always has a known starting XP total.
           final experience = (json['experience'] as int?) ?? minimum;
           final nextThreshold = level < 20
@@ -681,10 +686,14 @@ class _CharacterEditorState extends State<CharacterEditor> {
     }
     final kit = choice.startingKit;
     final fighterChoices = selected.fighterChoices;
-    final selectedFeatures = _listFieldValues('features').where((name) =>
-        !name.startsWith('Kampfstil: ') &&
-        !name.startsWith('Zweite Luft (') &&
-        !name.startsWith('Waffenmeisterschaft: ')).toList();
+    final selectedFeatures = _listFieldValues('features')
+        .where(
+          (name) =>
+              !name.startsWith('Kampfstil: ') &&
+              !name.startsWith('Zweite Luft (') &&
+              !name.startsWith('Waffenmeisterschaft: '),
+        )
+        .toList();
     if (fighterChoices != null) {
       selectedFeatures.addAll(fighterChoices.featureLabels);
     }
@@ -695,8 +704,9 @@ class _CharacterEditorState extends State<CharacterEditor> {
       } else if (fighterChoices != null) {
         _fields['features']!.text = [
           ..._listFieldValues('features'),
-          ...fighterChoices.featureLabels.where((f) =>
-              !_listFieldValues('features').contains(f)),
+          ...fighterChoices.featureLabels.where(
+            (f) => !_listFieldValues('features').contains(f),
+          ),
         ].join('\n');
       }
 
