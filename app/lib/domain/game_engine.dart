@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dice_engine.dart';
 import 'death_saving_throw_rules.dart';
 import 'condition_rules.dart';
+import 'condition_effects.dart';
 import 'character_rule_engine.dart';
 import 'character_effect_rules.dart';
 import 'healing_spell_rules.dart';
@@ -2969,6 +2970,13 @@ class GameEngine {
         ? CombatClassActions.afterHeroTurn(originalFight)
         : originalFight;
     var hero = campaign.hero;
+    if (advanceRound) {
+      hero = ConditionEffectRules.expireAtOwnTurnEnd(
+        hero,
+        encounterId: originalFight.id,
+        round: originalFight.round,
+      );
+    }
     final rageExpired =
         originalFight.rageUntilRound > 0 && foe.rageUntilRound == 0;
     final incapacitated =
