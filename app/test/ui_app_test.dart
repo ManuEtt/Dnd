@@ -303,10 +303,12 @@ void main() {
         reason: 'Die Schnellaktionen sind in $page unzulässig.',
       );
       expect(
-        tester.widgetList<Scaffold>(find.byType(Scaffold)).where(
-          (scaffold) =>
-              scaffold.bottomNavigationBar is FantasyPinnedActionBar,
-        ),
+        tester
+            .widgetList<Scaffold>(find.byType(Scaffold))
+            .where(
+              (scaffold) =>
+                  scaffold.bottomNavigationBar is FantasyPinnedActionBar,
+            ),
         isEmpty,
       );
     }

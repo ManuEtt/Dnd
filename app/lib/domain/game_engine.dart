@@ -2818,9 +2818,7 @@ class GameEngine {
           (e) => e.id != 'potion'
               ? [e]
               : e.quantity > 1
-              ? [
-                  e.copyWith(quantity: e.quantity - 1),
-                ]
+              ? [e.copyWith(quantity: e.quantity - 1)]
               : [],
         )
         .toList();
