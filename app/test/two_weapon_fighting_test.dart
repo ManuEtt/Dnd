@@ -145,4 +145,14 @@ void main() {
       expect(() => Campaign.fromJson(data), throwsFormatException);
     },
   );
+  test('Old encounters default to no optional light attack', () {
+    final engine = gm();
+    final original = battle(engine, fighter());
+    final data = original.toJson();
+    final fight = Map<String, dynamic>.from(data['encounter'] as Map);
+    fight.remove('lightAttackAvailable');
+    data['encounter'] = fight;
+    final restored = Campaign.fromJson(data);
+    expect(restored.encounter!.lightAttackAvailable, isFalse);
+  });
 }
