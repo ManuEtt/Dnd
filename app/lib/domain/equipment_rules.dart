@@ -1,6 +1,7 @@
 import 'models.dart';
 import 'rules_engine.dart';
 import 'srd_equipment_catalog.dart';
+import 'fighter_style_combat_rules.dart';
 
 /// One explicitly selected, catalog-backed loadout. All ids refer to inventory
 /// *instances*, not catalog definitions, so duplicate items remain distinct.
@@ -148,6 +149,7 @@ class EquipmentRules {
       final dexBonus = dex == null ? null : RulesEngine.abilityModifier(dex);
       ac = armor == null ? 10 + dexBonus! : armor.armorClassWithDex(dexBonus);
       if (shield != null && s.shieldTrained) ac = ac! + shield.armorBaseAc!;
+      ac = ac! + FighterStyleCombatRules.defenseBonus(hero, armor);
       if (armor != null && armor.strengthMin != null) {
         final str = hero.abilities['strength'];
         if (str == null) {
@@ -195,7 +197,8 @@ class EquipmentRules {
       damageMod = RulesEngine.abilityModifier(score);
       atk =
           damageMod +
-          (s.weaponProficient ? RulesEngine.proficiencyBonus(hero.level) : 0);
+          (s.weaponProficient ? RulesEngine.proficiencyBonus(hero.level) : 0) +
+          FighterStyleCombatRules.archeryBonus(hero, weapon);
       damage = s.twoHands && weapon.twoHandDamage != null
           ? weapon.twoHandDamage
           : weapon.damage;

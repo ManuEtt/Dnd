@@ -3,6 +3,7 @@ import 'dice_engine.dart';
 import 'models.dart';
 import 'condition_rules.dart';
 import 'death_saving_throw_rules.dart';
+import 'fighter_style_combat_rules.dart';
 
 class AttackOutcome {
   const AttackOutcome({required this.hit, required this.critical});
@@ -33,6 +34,10 @@ class RulesEngine {
   static int attackBonus(HeroCharacter hero) =>
       _ability(hero, hero.weaponAbility) +
       (hero.weaponProficient ? proficiencyBonus(hero.level) : 0) +
+      FighterStyleCombatRules.archeryBonus(
+        hero,
+        FighterStyleCombatRules.equippedWeapon(hero),
+      ) +
       ExhaustionRules.d20Modifier(hero);
 
   static int initiativeBonus(HeroCharacter hero) =>
