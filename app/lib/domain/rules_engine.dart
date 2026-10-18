@@ -135,7 +135,7 @@ class RulesEngine {
     final temporaryLeft = hero.temporaryHitPoints - absorbed;
     final hp = hero.hitPoints!;
     final maxHp = hero.maxHitPoints!;
-    final conditions = [...hero.conditions]..remove(stable);
+    final conditions = [...hero.manualConditions]..remove(stable);
     if (hp == 0) {
       final instantDeath = amount >= maxHp;
       final failures = instantDeath
@@ -211,7 +211,7 @@ class RulesEngine {
     final nextHp = hero.hitPoints! + amount;
     return hero.copyWith(
       hitPoints: nextHp > hero.maxHitPoints! ? hero.maxHitPoints! : nextHp,
-      conditions: [...hero.conditions]
+      conditions: [...hero.manualConditions]
         ..remove(unconscious)
         ..remove(stable),
       deathSuccesses: 0,
