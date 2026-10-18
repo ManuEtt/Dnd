@@ -57,7 +57,14 @@ class RulesEngine {
         (criticalExtra == null
             ? 0
             : criticalExtra.total - criticalExtra.modifier) +
-        _ability(hero, hero.weaponAbility);
+        _ability(hero, hero.weaponAbility) +
+        FighterStyleCombatRules.greatWeaponDamageBonus(hero, baseRoll) +
+        (criticalExtra == null
+            ? 0
+            : FighterStyleCombatRules.greatWeaponDamageBonus(
+                hero,
+                criticalExtra,
+              ));
     return result < 0 ? 0 : result;
   }
 

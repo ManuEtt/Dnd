@@ -1,10 +1,12 @@
 import 'class_resource_rules.dart';
+import 'dice_engine.dart';
 import 'models.dart';
 import 'srd_equipment_catalog.dart';
 
-/// Two deterministic SRD 5.2.1 Fighting Style effects used by the live combat
+/// Deterministic SRD 5.2.1 Fighting Style effects used by the live combat
 /// rules. The choice must be explicitly saved on a Fighter's character sheet.
-/// Other styles remain selectable but are not silently treated as implemented.
+/// Two-Weapon Fighting remains selectable but its extra attack is not yet
+/// executed by the combat engine.
 class FighterStyleCombatRules {
   const FighterStyleCombatRules._();
 
@@ -28,6 +30,41 @@ class FighterStyleCombatRules {
     if (!_hasStyle(hero, 'Verteidigung') || armor == null) return 0;
     return armor.isArmor ? 1 : 0;
   }
+
+  /// SRD 5.2.1: each 1 or 2 on a two-handed melee weapon's damage dice
+  /// counts as 3. Critical weapon damage dice receive the same treatment.
+  /// Additional damage sources such as Sneak Attack are never modified.
+  static int greatWeaponDamageBonus(HeroCharacter hero, DiceResult damageRoll) {
+    if (!_hasStyle(hero, 'Kampf mit großen Waffen') ||
+        hero.equippedShieldId.isNotEmpty) {
+      return 0;
+    }
+    final weapon = equippedWeapon(hero);
+    if (weapon == null ||
+        (weapon.category != EquipmentCategory.simpleMelee &&
+            weapon.category != EquipmentCategory.martialMelee) ||
+        weapon.hasProperty('thrown')) {
+      return 0;
+    }
+    String? expected;
+    if (weapon.hasProperty('two-handed')) {
+      expected = weapon.damage;
+    } else if (weapon.hasProperty('versatile')) {
+      expected = weapon.twoHandDamage;
+    }
+    if (expected == null ||
+        _dice(hero.weaponDamage) != _dice(expected) ||
+        _dice(damageRoll.expression) != _dice(expected)) {
+      return 0;
+    }
+    return damageRoll.rolls.fold<int>(
+      0,
+      (bonus, die) => bonus + (die < 3 ? 3 - die : 0),
+    );
+  }
+
+  static String _dice(String value) =>
+      value.toLowerCase().replaceAll('w', 'd').replaceAll(' ', '');
 
   /// Resolve only one *unique* equipped inventory instance, with a confirmed
   /// catalog reference. Names and free-text fields never grant bonuses.
