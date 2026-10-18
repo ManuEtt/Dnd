@@ -61,6 +61,44 @@ void main() {
     await directory.delete(recursive: true);
   });
 
+  test('Getrennte Inventarwerte überleben SQLite und JSON-Export', () async {
+    final base = fixture();
+    final character = base.hero.copyWith(
+      inventory: const [
+        InventoryItem(
+          id: 'spear-custom',
+          name: 'Eigener Speer',
+          quantity: 2,
+          description: 'Von einer Meisterschmiedin gefertigt.',
+          stats: InventoryItemStats(
+            kind: InventoryItemKind.weapon,
+            damage: '1d6',
+            damageType: 'Stich',
+            weightLb: 3.0,
+            priceCp: 120,
+            rangeNormalFt: 20,
+            rangeLongFt: 60,
+          ),
+        ),
+      ],
+    );
+    final campaign = base.copyWith(hero: character);
+    await repository.saveCampaign(campaign);
+    final restored = (await repository.getCampaign(campaign.id))!;
+    final item = restored.hero.inventory.single;
+    expect(item.stats!.damage, '1d6');
+    expect(item.stats!.weightLb, 3.0);
+    expect(item.stats!.rangeLongFt, 60);
+    expect(item.description, 'Von einer Meisterschmiedin gefertigt.');
+    final encoded = await repository.exportCampaign(campaign.id);
+    final envelope = jsonDecode(encoded) as Map<String, dynamic>;
+    final decoded = Campaign.fromJson(
+      Map<String, dynamic>.from(envelope['campaign'] as Map),
+    );
+    expect(decoded.hero.inventory.single.stats!.priceCp, 120);
+    expect(decoded.hero.inventory.single.stats!.damageType, 'Stich');
+  });
+
   test(
     'confirmed scene, character, facts, settings and journal survive reopen',
     () async {

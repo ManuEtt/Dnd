@@ -454,3 +454,11 @@ Erfolgreich geprüft: Flutter-Analyse ohne Befunde, 74 Flutter-Tests, 17 Backend
 - Mehrere Klassenressourcen separat persistiert und hinsichtlich Kurz-/Langrastregeneration verarbeitet; Altspeicher kompatibel.
 - Regelbasierte Berechnungen für Schurken-Schadenswürfel, Kampfrauschwerte, Mönchskampfkunst und bardische Inspirationswürfel; Champion-Krit-Bereich in Angriffsauflösung; passive Bewegung/Initiative ergänzt.
 - Neue Dart-Domain-Tests; kein Anspruch auf vollständige Ausführung aller Merkmalswirkungen oder validierten Flutter-/APK-Build.
+
+## In Vorbereitung – strukturierte Inventarwerte (18.10.2026)
+
+- Individuelle, typisierte Werte für Waffen, Rüstungen, Schilde, Verbrauchs- und magische Gegenstände gespeichert (`InventoryItem.stats`). Bestehende Spielstände ohne diese optionalen Werte bleiben lesbar.
+- Eigene Eingabefelder im Charaktereditor, Katalogwerte als getrennte Datensätze übernommen, kompakte Werte-Vorschau im Inventar.
+- Validierung verhindert negative Preise/Gewichte, unmögliche Ladungen und unzulässige Reichweiten; unbekannte Angaben bleiben unbestimmt.
+- Neue Tests für JSON, SQLite, Katalogübernahme und UI ergänzt; **Flutter-Tests und Android-Build für diesen Stand noch nicht ausgeführt**.
+- Individuelle Werte dienen vorerst der Verwaltung; für Kampfmechaniken gilt weiterhin der geprüfte SRD-Katalog. Kein automatisches Ausführen von Freitext-Effekten.
