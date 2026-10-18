@@ -12,6 +12,7 @@ import 'class_feature_resources.dart';
 import 'class_resource_rules.dart';
 import 'class_combat_features.dart';
 import 'combat_class_actions.dart';
+import 'two_weapon_fighting_rules.dart';
 import 'monk_focus_actions.dart';
 import 'monk_flurry_rules.dart';
 import 'monk_self_restoration.dart';
@@ -2329,6 +2330,72 @@ class GameEngine {
         return _commit(before, current, error.message, type: 'rules.blocked');
       }
     }
+    final offhandCommand = RegExp(
+      r'^nebenhandangriff(?:\s+mit\s+(.+?)|\s*:\s*(.+?))\s*[.!?]?$',
+    ).firstMatch(words);
+    if (words.startsWith('nebenhandangriff')) {
+      if (offhandCommand == null ||
+          !encounter.actionUsed ||
+          encounter.attacksRemaining != 0 ||
+          encounter.bonusActionUsed ||
+          !encounter.lightAttackAvailable ||
+          encounter.surgeReserved) {
+        return _commit(
+          before,
+          current,
+          'Nebenhandangriff benötigt eine vorherige Angriffsaktion mit einer '
+          'leichten Waffe, eine freie Bonusaktion und eine bestätigte Zweitwaffe. '
+          'Nutze: Nebenhandangriff mit Dolch.',
+          type: 'rules.blocked',
+        );
+      }
+      final selected = (offhandCommand.group(1) ?? offhandCommand.group(2)!)
+          .trim();
+      final choices = TwoWeaponFightingRules.offhandChoices(current.hero)
+          .where(
+            (item) =>
+                item.id.toLowerCase() == selected ||
+                item.name.toLowerCase() == selected,
+          )
+          .toList();
+      if (choices.length != 1) {
+        return _commit(
+          before,
+          current,
+          'Nebenhandwaffe nicht eindeutig bestätigt. '
+          'Nutze den eindeutigen Inventar-Namen oder die Gegenstand-ID.',
+          type: 'rules.blocked',
+        );
+      }
+      final offhand = TwoWeaponFightingRules.confirmedOffhand(
+        current.hero,
+        choices.single.id,
+      )!;
+      final attackRule = CharacterRuleEngine.attack(current.hero);
+      final bonus = TwoWeaponFightingRules.attackBonus(current.hero, offhand);
+      return _commit(
+        before,
+        current.copyWith(
+          encounter: encounter.copyWith(bonusActionUsed: true),
+          pendingRoll: PendingRoll(
+            id: _id('roll'),
+            type: 'offhandAttack',
+            modifier: bonus,
+            advantage: attackRule.advantage,
+            disadvantage: attackRule.disadvantage,
+            difficulty: encounter.enemyArmorClass,
+            targetId: encounter.id,
+            targetName: encounter.enemyName,
+            weaponId: choices.single.id,
+          ),
+        ),
+        'Nebenhandangriff mit ${choices.single.name}: Würfle W20 '
+        '${_signed(bonus)} gegen RK ${encounter.enemyArmorClass}. '
+        'Die Bonusaktion ist reserviert.',
+        type: 'roll.requested',
+        payload: {'offhandWeaponId': choices.single.id},
+      );
+    }
     if (encounter.actionUsed &&
         RegExp(
           r'ausweich|weich\w*\s+aus|verteidig|flieh|flucht|wegrenn|heiltrank|trank.*trink|trink.*trank',
@@ -2523,7 +2590,14 @@ class GameEngine {
         );
       }
       return _completeDeathSave(campaign, next, resolved, payload: payload);
-    } else if (pending.type == 'attack') {
+    } else if (pending.type == 'attack' || pending.type == 'offhandAttack') {
+      final isOffhand = pending.type == 'offhandAttack';
+      final offhand = isOffhand
+          ? TwoWeaponFightingRules.confirmedOffhand(next.hero, pending.weaponId)
+          : null;
+      if (isOffhand && offhand == null) {
+        throw StateError('Nebenhandwaffe nicht mehr bestätigt.');
+      }
       final foe = next.encounter;
       if (foe == null || foe.id != pending.targetId || foe.isFinished) {
         throw StateError('Das Angriffsziel ist nicht mehr gültig.');
@@ -2538,27 +2612,40 @@ class GameEngine {
       // A regular Attack action may contain multiple separate attack rolls.
       // Resolve each roll/damage independently and give the enemy exactly one
       // turn when the sequence finishes (or the player ends their turn).
-      final attacksRemaining = foe.actionUsed
+      final attacksRemaining = isOffhand
+          ? foe.attacksRemaining
+          : foe.actionUsed
           ? foe.attacksRemaining - 1
           : ClassProgressionRules.attacksPerAttackAction(next.hero) - 1;
       if (attacksRemaining < 0) {
         throw StateError('Die Angriffsaktion ist bereits abgeschlossen.');
       }
       payload['attacksRemaining'] = attacksRemaining;
+      if (isOffhand) {
+        payload['offhandWeaponId'] = pending.weaponId;
+        payload['bonusActionUsed'] = true;
+      }
       final rolledFight = CombatClassActions.onAttackRoll(foe);
       if (rolledFight.rageUntilRound != foe.rageUntilRound) {
         payload['rageExtendedUntilRound'] = rolledFight.rageUntilRound;
       }
       if (outcome.hit) {
-        final base = dice.roll(next.hero.weaponDamage);
-        final extra = outcome.critical
-            ? dice.roll(next.hero.weaponDamage)
-            : null;
-        final weaponDamage = RulesEngine.weaponDamage(
-          next.hero,
-          baseRoll: base,
-          criticalExtra: extra,
-        );
+        final expression = isOffhand
+            ? offhand!.damage!
+            : next.hero.weaponDamage;
+        final base = dice.roll(expression);
+        final extra = outcome.critical ? dice.roll(expression) : null;
+        final weaponDamage = isOffhand
+            ? TwoWeaponFightingRules.damage(
+                next.hero,
+                offhand!,
+                base.total + (extra?.total ?? 0),
+              )
+            : RulesEngine.weaponDamage(
+                next.hero,
+                baseRoll: base,
+                criticalExtra: extra,
+              );
         final rageBonus = CombatClassActions.rageDamageBonus(
           next.hero,
           rolledFight,
@@ -2591,6 +2678,13 @@ class GameEngine {
           encounter: rolledFight.copyWith(
             enemyHitPoints: hp,
             actionUsed: true,
+            bonusActionUsed: isOffhand ? true : foe.bonusActionUsed,
+            lightAttackAvailable: isOffhand
+                ? false
+                : (foe.lightAttackAvailable ||
+                      TwoWeaponFightingRules.offhandChoices(
+                        next.hero,
+                      ).isNotEmpty),
             sneakAttackUsedThisTurn:
                 foe.sneakAttackUsedThisTurn || sneakRoll != null,
             attacksRemaining: attacksRemaining,
@@ -2605,6 +2699,13 @@ class GameEngine {
         next = next.copyWith(
           encounter: rolledFight.copyWith(
             actionUsed: true,
+            bonusActionUsed: isOffhand ? true : foe.bonusActionUsed,
+            lightAttackAvailable: isOffhand
+                ? false
+                : (foe.lightAttackAvailable ||
+                      TwoWeaponFightingRules.offhandChoices(
+                        next.hero,
+                      ).isNotEmpty),
             attacksRemaining: attacksRemaining,
           ),
         );
@@ -2680,6 +2781,13 @@ class GameEngine {
         narration +=
             'Action Surge: Du kannst noch eine zusätzliche '
             'Angriffsaktion beginnen oder deinen Zug beenden. ';
+      } else if (next.encounter!.attacksRemaining == 0 &&
+          next.encounter!.lightAttackAvailable &&
+          !next.encounter!.bonusActionUsed &&
+          !next.encounter!.surgeReserved) {
+        narration +=
+            'Du kannst jetzt einen Nebenhandangriff als Bonusaktion '
+            'ausführen (Nebenhandangriff mit Waffenname) oder deinen Zug beenden.';
       } else if (next.encounter!.attacksRemaining == 0 &&
           MonkFlurryRules.canUse(next.hero, next.encounter!) &&
           !next.encounter!.surgeReserved) {
@@ -2979,6 +3087,7 @@ class GameEngine {
           actionUsed: false,
           attacksRemaining: 0,
           bonusActionUsed: false,
+          lightAttackAvailable: false,
           spellSlotExpendedThisTurn: false,
           deathSaveResolvedThisTurn: false,
           dodgeActive: false,

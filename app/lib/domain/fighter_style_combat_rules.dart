@@ -5,8 +5,7 @@ import 'srd_equipment_catalog.dart';
 
 /// Deterministic SRD 5.2.1 Fighting Style effects used by the live combat
 /// rules. The choice must be explicitly saved on a Fighter's character sheet.
-/// Two-Weapon Fighting remains selectable but its extra attack is not yet
-/// executed by the combat engine.
+/// The confirmed two-weapon extra attack is implemented separately.
 class FighterStyleCombatRules {
   const FighterStyleCombatRules._();
 
