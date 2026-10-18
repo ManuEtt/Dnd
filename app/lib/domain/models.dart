@@ -1028,12 +1028,13 @@ class PendingRoll {
     required this.difficulty,
     this.targetId = '',
     this.targetName = '',
+    this.weaponId = '',
     this.expression = '1d20',
     this.deathSaveRulesVersion = 0,
     this.advantage = false,
     this.disadvantage = false,
   });
-  final String id, type, targetId, targetName, expression;
+  final String id, type, targetId, targetName, weaponId, expression;
   final int modifier, difficulty;
   final int deathSaveRulesVersion;
   final bool advantage, disadvantage;
@@ -1044,6 +1045,7 @@ class PendingRoll {
     'difficulty': difficulty,
     'targetId': targetId,
     'targetName': targetName,
+    if (weaponId.isNotEmpty) 'weaponId': weaponId,
     'expression': expression,
     if (deathSaveRulesVersion > 0)
       'deathSaveRulesVersion': deathSaveRulesVersion,
@@ -1053,9 +1055,13 @@ class PendingRoll {
   factory PendingRoll.fromJson(Map<String, dynamic> j) {
     final type = _string(j['type'], 'Probeart');
     final expression = _string(j['expression'], 'Würfel', fallback: '1d20');
-    if (!['attack', 'death', 'escape', 'perception'].contains(type) ||
+    if (!['attack', 'offhandAttack', 'death', 'escape', 'perception'].contains(type) ||
         expression != '1d20') {
       throw const FormatException('Unbekannte Probe oder Würfelanweisung.');
+    }
+    final weaponId = _string(j['weaponId'], 'Nebenhandwaffe', fallback: '');
+    if ((type == 'offhandAttack') != weaponId.isNotEmpty) {
+      throw const FormatException('Ungültige Nebenhand-Angriffsanweisung.');
     }
     final deathVersion = _int(
       j['deathSaveRulesVersion'],
@@ -1077,6 +1083,7 @@ class PendingRoll {
       difficulty: _int(j['difficulty'], 'Schwierigkeit', min: 1, max: 100),
       targetId: _string(j['targetId'], 'Ziel-ID', fallback: ''),
       targetName: _string(j['targetName'], 'Ziel', fallback: ''),
+      weaponId: weaponId,
       expression: expression,
       advantage: _bool(j['advantage'], 'Vorteil'),
       disadvantage: _bool(j['disadvantage'], 'Nachteil'),
@@ -1126,6 +1133,7 @@ class Encounter {
     this.actionUsed = false,
     this.attacksRemaining = 0,
     this.bonusActionUsed = false,
+    this.lightAttackAvailable = false,
     this.spellSlotExpendedThisTurn = false,
     this.deathSaveResolvedThisTurn = false,
     this.dodgeActive = false,
@@ -1151,7 +1159,7 @@ class Encounter {
       heroInitiative,
       enemyInitiative,
       movementRemaining;
-  final bool actionUsed, bonusActionUsed, reactionUsed;
+  final bool actionUsed, bonusActionUsed, reactionUsed, lightAttackAvailable;
 
   /// SRD 2024: expend a spell slot to cast a spell only once on a turn.
   /// Absent in older schema-1 saves; defaults to false.
@@ -1185,6 +1193,7 @@ class Encounter {
     bool? actionUsed,
     int? attacksRemaining,
     bool? bonusActionUsed,
+    bool? lightAttackAvailable,
     bool? spellSlotExpendedThisTurn,
     bool? deathSaveResolvedThisTurn,
     bool? dodgeActive,
@@ -1214,6 +1223,7 @@ class Encounter {
     actionUsed: actionUsed ?? this.actionUsed,
     attacksRemaining: attacksRemaining ?? this.attacksRemaining,
     bonusActionUsed: bonusActionUsed ?? this.bonusActionUsed,
+    lightAttackAvailable: lightAttackAvailable ?? this.lightAttackAvailable,
     spellSlotExpendedThisTurn:
         spellSlotExpendedThisTurn ?? this.spellSlotExpendedThisTurn,
     deathSaveResolvedThisTurn:
@@ -1247,6 +1257,7 @@ class Encounter {
     'actionUsed': actionUsed,
     if (attacksRemaining > 0) 'attacksRemaining': attacksRemaining,
     'bonusActionUsed': bonusActionUsed,
+    if (lightAttackAvailable) 'lightAttackAvailable': true,
     if (spellSlotExpendedThisTurn) 'spellSlotExpendedThisTurn': true,
     if (deathSaveResolvedThisTurn) 'deathSaveResolvedThisTurn': true,
     if (dodgeActive) 'dodgeActive': true,
@@ -1390,6 +1401,10 @@ class Encounter {
         max: 3,
       ),
       bonusActionUsed: _bool(j['bonusActionUsed'], 'Bonusaktion'),
+      lightAttackAvailable: _bool(
+        j['lightAttackAvailable'],
+        'Leichter Zusatzangriff',
+      ),
       deathSaveResolvedThisTurn: _bool(
         j['deathSaveResolvedThisTurn'],
         'Todesrettung in diesem Zug',
@@ -1655,6 +1670,26 @@ class Campaign {
       // The final death result always recomputes it from the confirmed hero.
       final exhaustion = ExhaustionRules.d20Modifier(hero);
       final expected = switch (pending.type) {
+        'offhandAttack' => () {
+          final candidates = hero.inventory.where(
+            (item) => item.id == pending.weaponId && item.quantity > 0,
+          );
+          if (candidates.length != 1) {
+            throw const FormatException('Nebenhandwaffe nicht eindeutig.');
+          }
+          final weapon = SrdEquipmentCatalog.byId(candidates.single.catalogId);
+          if (weapon == null ||
+              !weapon.hasProperty('light') ||
+              (weapon.category != EquipmentCategory.simpleMelee &&
+                  weapon.category != EquipmentCategory.martialMelee)) {
+            throw const FormatException('Keine bestätigte leichte Nebenhandwaffe.');
+          }
+          final ability = weapon.hasProperty('finesse') &&
+                  hero.weaponAbility == 'dexterity'
+              ? 'dexterity'
+              : 'strength';
+          return modifier(ability) + prof + exhaustion;
+        }(),
         'attack' =>
           modifier(hero.weaponAbility) +
               (hero.weaponProficient ? prof : 0) +
@@ -1673,7 +1708,29 @@ class Campaign {
           'Die gespeicherte Probe enthält einen falschen Bonus.',
         );
       }
-      if (pending.type == 'attack' &&
+      if (pending.type == 'offhandAttack') {
+        final primary = hero.inventory.where(
+          (item) => item.id == hero.equippedWeaponId && item.quantity > 0,
+        );
+        final mainWeapon = primary.length == 1
+            ? SrdEquipmentCatalog.byId(primary.single.catalogId)
+            : null;
+        if (!hero.features.contains('Kampfstil: Kampf mit zwei Waffen') ||
+            ClassResourceRules.level(hero, 'Kämpfer') < 1 ||
+            hero.equippedShieldId.isNotEmpty ||
+            pending.weaponId == hero.equippedWeaponId ||
+            (mainWeapon == null ||
+                !mainWeapon.hasProperty('light') ||
+                (mainWeapon.category != EquipmentCategory.simpleMelee &&
+                    mainWeapon.category != EquipmentCategory.martialMelee)) ||
+            encounter == null || encounter.isFinished ||
+            encounter.activeParticipant != 'hero' ||
+            !encounter.actionUsed || encounter.attacksRemaining != 0 ||
+            !encounter.bonusActionUsed || !encounter.lightAttackAvailable) {
+          throw const FormatException('Unzulässiger offener Nebenhandangriff.');
+        }
+      }
+      if ((pending.type == 'attack' || pending.type == 'offhandAttack') &&
           (encounter == null ||
               encounter.isFinished ||
               encounter.id != pending.targetId ||
@@ -1695,7 +1752,8 @@ class Campaign {
                       encounter.deathSaveResolvedThisTurn)))) {
         throw const FormatException('Ungültiger Todesrettungswurf.');
       }
-      if (pending.type != 'attack' && pending.difficulty != 10) {
+      if (pending.type != 'attack' && pending.type != 'offhandAttack' &&
+          pending.difficulty != 10) {
         throw const FormatException('Ungültige Schwierigkeit.');
       }
     }
