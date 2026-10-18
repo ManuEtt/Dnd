@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../domain/srd_equipment_catalog.dart';
+import 'equipment_fields.dart';
 
 /// Searchable, opt-in SRD equipment chooser. Selection never spends gold or
 /// modifies AC, combat damage, attunement, or other confirmed character rules.
@@ -77,15 +78,52 @@ class _EquipmentCatalogDialogState extends State<EquipmentCatalogDialog> {
                           key: ValueKey('equipment-catalog-item-${entry.id}'),
                           dense: true,
                           title: Text(entry.name),
-                          subtitle: Text(
-                            entry.detail,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          trailing: IconButton(
-                            tooltip: '${entry.name} hinzufügen',
-                            icon: const Icon(Icons.add_circle_outline),
-                            onPressed: () => Navigator.pop(context, entry),
+                          subtitle: Text(entry.category.label, maxLines: 1,
+                              overflow: TextOverflow.ellipsis),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                tooltip: 'Werte für ${entry.name} anzeigen',
+                                icon: const Icon(Icons.info_outline),
+                                onPressed: () => showModalBottomSheet<void>(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  builder: (sheetContext) => SafeArea(
+                                    child: FractionallySizedBox(
+                                      heightFactor: .8,
+                                      child: SingleChildScrollView(
+                                        padding: const EdgeInsets.all(20),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(entry.name,
+                                                style: Theme.of(context).textTheme.headlineSmall),
+                                            const SizedBox(height: 12),
+                                            EquipmentFields(entry: entry),
+                                            const SizedBox(height: 16),
+                                            FilledButton.icon(
+                                              icon: const Icon(Icons.add),
+                                              label: const Text('Zum Inventar hinzufügen'),
+                                              onPressed: () {
+                                                Navigator.pop(sheetContext);
+                                                Navigator.pop(context, entry);
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                tooltip: '${entry.name} hinzufügen',
+                                icon: const Icon(Icons.add_circle_outline),
+                                onPressed: () => Navigator.pop(context, entry),
+                              ),
+                            ],
                           ),
                           onTap: () => Navigator.pop(context, entry),
                         );

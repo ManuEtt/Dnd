@@ -301,7 +301,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
           id: const Uuid().v4(),
           name: selected.name,
           quantity: 1,
-          description: selected.detail,
+          description: '', // Values resolve through catalogId.
           catalogId: selected.id,
         ).toJson(),
       );
