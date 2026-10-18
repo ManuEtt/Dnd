@@ -1,4 +1,6 @@
 import 'srd_equipment_catalog.dart';
+import 'inventory_item_stats.dart';
+export 'inventory_item_stats.dart';
 import 'condition_rules.dart';
 import 'death_saving_throw_rules.dart';
 import 'saving_throw_class_actions.dart';
@@ -81,10 +83,14 @@ class InventoryItem {
     this.quantity = 1,
     this.description = '',
     this.catalogId = '',
+    this.stats,
   });
 
   /// Optional catalog reference; legacy and user-defined items leave it empty.
   final String catalogId;
+
+  /// Eigene Werte werden separat gespeichert und nie aus Beschreibungstext gelesen.
+  final InventoryItemStats? stats;
   final String id, name, description;
   final int quantity;
 
@@ -94,12 +100,14 @@ class InventoryItem {
     int? quantity,
     String? description,
     String? catalogId,
+    InventoryItemStats? stats,
   }) => InventoryItem(
     id: id,
     name: name ?? this.name,
     quantity: quantity ?? this.quantity,
     description: description ?? this.description,
     catalogId: catalogId ?? this.catalogId,
+    stats: stats ?? this.stats,
   );
 
   Map<String, dynamic> toJson() => {
@@ -108,6 +116,7 @@ class InventoryItem {
     'quantity': quantity,
     'description': description,
     if (catalogId.isNotEmpty) 'catalogId': catalogId,
+    if (stats != null) 'stats': stats!.toJson(),
   };
   factory InventoryItem.fromJson(Map<String, dynamic> j) => InventoryItem(
     id: _string(j['id'], 'Gegenstand-ID'),
@@ -115,6 +124,9 @@ class InventoryItem {
     quantity: _int(j['quantity'], 'Anzahl', fallback: 1, min: 1),
     description: _string(j['description'], 'Beschreibung', fallback: ''),
     catalogId: _string(j['catalogId'], 'Katalog-ID', fallback: ''),
+    stats: j['stats'] == null
+        ? null
+        : InventoryItemStats.fromJson(_map(j['stats'], 'Gegenstandswerte')),
   );
 }
 

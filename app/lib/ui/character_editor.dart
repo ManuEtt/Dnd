@@ -303,6 +303,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
           quantity: 1,
           description: '', // Values resolve through catalogId.
           catalogId: selected.id,
+          stats: InventoryItemStats.fromCatalog(selected),
         ).toJson(),
       );
     });
@@ -437,6 +438,21 @@ class _CharacterEditorState extends State<CharacterEditor> {
     'equippedShieldId',
     'equippedWeaponId',
   ].any((slot) => _original[slot] == id);
+
+  String _inventoryStatSummary(dynamic raw) {
+    if (raw is! Map) return '';
+    final stats = InventoryItemStats.fromJson(Map<String, dynamic>.from(raw));
+    final parts = <String>[
+      stats.kind.label,
+      if (stats.damage != null) 'Schaden ${stats.damage}',
+      if (stats.armorBaseAc != null)
+        '${stats.kind == InventoryItemKind.shield ? 'RK-Bonus' : 'RK'} ${stats.armorBaseAc}',
+      if (stats.weightLb != null) 'Gewicht ${stats.weightLb} lb',
+      if (stats.priceCp != null) 'Wert ${stats.priceCp} KM',
+      if (stats.charges != null) 'Ladungen ${stats.charges}',
+    ];
+    return parts.join(' · ');
+  }
 
   void _removeInventoryItem(int index) {
     final inventory = _original['inventory'] as List;
@@ -932,7 +948,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
                       ),
                       subtitle: Text(
                         'Anzahl: ${(_original['inventory'] as List)[index]['quantity']}'
-                        '${_isEquippedItem((_original['inventory'] as List)[index]['id']) ? ' · angelegt' : ''}',
+                        '${_isEquippedItem((_original['inventory'] as List)[index]['id']) ? ' · angelegt' : ''}'
+                        '${_inventoryStatSummary((_original['inventory'] as List)[index]['stats']).isEmpty ? '' : '\n${_inventoryStatSummary((_original['inventory'] as List)[index]['stats'])}'}',
                       ),
                       onTap: () => _editInventory(index: index),
                       trailing: IconButton(
@@ -1038,12 +1055,172 @@ class _InventoryItemDialogState extends State<_InventoryItemDialog> {
     text: widget.item?.description ?? '',
   );
 
+  InventoryItemStats _catalogDefaults() {
+    final catalog = SrdEquipmentCatalog.byId(widget.item?.catalogId ?? '');
+    return catalog == null
+        ? const InventoryItemStats()
+        : InventoryItemStats.fromCatalog(catalog);
+  }
+
+  late final InventoryItemStats _initial =
+      widget.item?.stats ?? _catalogDefaults();
+  late InventoryItemKind _kind = _initial.kind;
+  late bool? _stealthDisadvantage = _initial.stealthDisadvantage;
+  late bool? _attunement = _initial.requiresAttunement;
+  late final Map<String, TextEditingController> _values = {
+    'priceCp': TextEditingController(text: _initial.priceCp?.toString() ?? ''),
+    'weightLb': TextEditingController(
+      text: _initial.weightLb?.toString() ?? '',
+    ),
+    'damage': TextEditingController(text: _initial.damage ?? ''),
+    'damageType': TextEditingController(text: _initial.damageType ?? ''),
+    'versatileDamage': TextEditingController(
+      text: _initial.versatileDamage ?? '',
+    ),
+    'weaponProperties': TextEditingController(
+      text: _initial.weaponProperties.join(', '),
+    ),
+    'mastery': TextEditingController(text: _initial.mastery ?? ''),
+    'rangeNormalFt': TextEditingController(
+      text: _initial.rangeNormalFt?.toString() ?? '',
+    ),
+    'rangeLongFt': TextEditingController(
+      text: _initial.rangeLongFt?.toString() ?? '',
+    ),
+    'ammunitionType': TextEditingController(
+      text: _initial.ammunitionType ?? '',
+    ),
+    'armorBaseAc': TextEditingController(
+      text: _initial.armorBaseAc?.toString() ?? '',
+    ),
+    'dexCap': TextEditingController(text: _initial.dexCap?.toString() ?? ''),
+    'strengthMin': TextEditingController(
+      text: _initial.strengthMin?.toString() ?? '',
+    ),
+    'rarity': TextEditingController(text: _initial.rarity ?? ''),
+    'charges': TextEditingController(text: _initial.charges?.toString() ?? ''),
+    'maxCharges': TextEditingController(
+      text: _initial.maxCharges?.toString() ?? '',
+    ),
+    'effect': TextEditingController(text: _initial.effect ?? ''),
+  };
+
   @override
   void dispose() {
     _name.dispose();
     _quantity.dispose();
     _description.dispose();
+    for (final controller in _values.values) {
+      controller.dispose();
+    }
     super.dispose();
+  }
+
+  String? _textValue(String key) {
+    final value = _values[key]!.text.trim();
+    return value.isEmpty ? null : value;
+  }
+
+  int? _intValue(String key) {
+    final value = _textValue(key);
+    return value == null ? null : int.parse(value);
+  }
+
+  double? _doubleValue(String key) {
+    final value = _textValue(key);
+    return value == null ? null : double.parse(value.replaceAll(',', '.'));
+  }
+
+  Widget _itemText(String key, String label, {int lines = 1}) => Padding(
+    padding: const EdgeInsets.only(top: 10),
+    child: TextFormField(
+      key: ValueKey('item-stat-$key'),
+      controller: _values[key],
+      maxLines: lines,
+      decoration: InputDecoration(labelText: label),
+      validator: (value) =>
+          (value?.length ?? 0) > 2000 ? 'Maximal 2000 Zeichen.' : null,
+    ),
+  );
+
+  Widget _itemNumber(
+    String key,
+    String label, {
+    bool decimal = false,
+    int max = 1000000,
+  }) => Padding(
+    padding: const EdgeInsets.only(top: 10),
+    child: TextFormField(
+      key: ValueKey('item-stat-$key'),
+      controller: _values[key],
+      keyboardType: TextInputType.numberWithOptions(decimal: decimal),
+      decoration: InputDecoration(labelText: label),
+      validator: (raw) {
+        final value = raw?.trim() ?? '';
+        if (value.isEmpty) return null;
+        final parsed = decimal
+            ? double.tryParse(value.replaceAll(',', '.'))
+            : int.tryParse(value)?.toDouble();
+        if (parsed == null || !parsed.isFinite || parsed < 0 || parsed > max) {
+          return 'Ungültiger nicht-negativer Wert.';
+        }
+        return null;
+      },
+    ),
+  );
+
+  Widget _optionalFlag(
+    String label,
+    bool? value,
+    void Function(bool?) onChanged,
+  ) => DropdownButtonFormField<bool?>(
+    initialValue: value,
+    decoration: InputDecoration(labelText: label),
+    items: const [
+      DropdownMenuItem<bool?>(value: null, child: Text('Unbekannt')),
+      DropdownMenuItem<bool?>(value: true, child: Text('Ja')),
+      DropdownMenuItem<bool?>(value: false, child: Text('Nein')),
+    ],
+    onChanged: (next) => setState(() => onChanged(next)),
+  );
+
+  InventoryItemStats _buildStats() {
+    return InventoryItemStats.fromJson({
+      'kind': _kind.name,
+      if (_intValue('priceCp') != null) 'priceCp': _intValue('priceCp'),
+      if (_doubleValue('weightLb') != null)
+        'weightLb': _doubleValue('weightLb'),
+      if (_textValue('damage') != null) 'damage': _textValue('damage'),
+      if (_textValue('damageType') != null)
+        'damageType': _textValue('damageType'),
+      if (_textValue('versatileDamage') != null)
+        'versatileDamage': _textValue('versatileDamage'),
+      'weaponProperties': _values['weaponProperties']!.text
+          .split(',')
+          .map((part) => part.trim())
+          .where((part) => part.isNotEmpty)
+          .toList(),
+      if (_textValue('mastery') != null) 'mastery': _textValue('mastery'),
+      if (_intValue('rangeNormalFt') != null)
+        'rangeNormalFt': _intValue('rangeNormalFt'),
+      if (_intValue('rangeLongFt') != null)
+        'rangeLongFt': _intValue('rangeLongFt'),
+      if (_textValue('ammunitionType') != null)
+        'ammunitionType': _textValue('ammunitionType'),
+      if (_intValue('armorBaseAc') != null)
+        'armorBaseAc': _intValue('armorBaseAc'),
+      if (_intValue('dexCap') != null) 'dexCap': _intValue('dexCap'),
+      if (_intValue('strengthMin') != null)
+        'strengthMin': _intValue('strengthMin'),
+      if (_stealthDisadvantage != null)
+        'stealthDisadvantage': _stealthDisadvantage,
+      if (_textValue('rarity') != null) 'rarity': _textValue('rarity'),
+      if (_attunement != null) 'requiresAttunement': _attunement,
+      if (_intValue('charges') != null) 'charges': _intValue('charges'),
+      if (_intValue('maxCharges') != null)
+        'maxCharges': _intValue('maxCharges'),
+      if (_textValue('effect') != null) 'effect': _textValue('effect'),
+    });
   }
 
   @override
@@ -1052,12 +1229,13 @@ class _InventoryItemDialogState extends State<_InventoryItemDialog> {
       widget.item == null ? 'Gegenstand hinzufügen' : 'Gegenstand bearbeiten',
     ),
     content: SizedBox(
-      width: 500,
+      width: 530,
       child: SingleChildScrollView(
         child: Form(
           key: _form,
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TextFormField(
                 controller: _name,
@@ -1071,16 +1249,87 @@ class _InventoryItemDialogState extends State<_InventoryItemDialog> {
                 controller: _quantity,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(labelText: 'Anzahl'),
-                validator: (value) => (int.tryParse(value ?? '') ?? 0) < 1
-                    ? 'Mindestens 1.'
-                    : null,
+                validator: (value) {
+                  final count = int.tryParse(value ?? '');
+                  return count == null || count < 1 || count > 1000000
+                      ? 'Anzahl zwischen 1 und 1000000.'
+                      : null;
+                },
               ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<InventoryItemKind>(
+                key: const ValueKey('item-stat-kind'),
+                initialValue: _kind,
+                isExpanded: true,
+                decoration: const InputDecoration(labelText: 'Gegenstandsart'),
+                items: [
+                  for (final kind in InventoryItemKind.values)
+                    DropdownMenuItem(value: kind, child: Text(kind.label)),
+                ],
+                onChanged: (next) => setState(() {
+                  if (next != null) _kind = next;
+                }),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Individuelle Werte werden einzeln gespeichert. Änderungen '
+                'ersetzen noch keine SRD-Kampfberechnung.',
+                style: TextStyle(fontSize: 12),
+              ),
+              _itemNumber('priceCp', 'Preis (Kupfermünzen)'),
+              _itemNumber('weightLb', 'Gewicht (Pfund)', decimal: true),
+              if (_kind == InventoryItemKind.weapon ||
+                  _kind == InventoryItemKind.ammunition) ...[
+                _itemText('damage', 'Schadenswürfel (z. B. 1d8)'),
+                _itemText('damageType', 'Schadensart'),
+                _itemText('versatileDamage', 'Vielseitiger Schaden'),
+                _itemText('weaponProperties', 'Waffeneigenschaften (Kommas)'),
+                _itemText('mastery', 'Waffenmeisterschaft'),
+                _itemNumber('rangeNormalFt', 'Normale Reichweite (Fuß)'),
+                _itemNumber('rangeLongFt', 'Maximale Reichweite (Fuß)'),
+                _itemText('ammunitionType', 'Munitionstyp'),
+              ],
+              if (_kind == InventoryItemKind.armor ||
+                  _kind == InventoryItemKind.shield) ...[
+                _itemNumber(
+                  'armorBaseAc',
+                  _kind == InventoryItemKind.shield
+                      ? 'Rüstungsklassen-Bonus'
+                      : 'Basis-Rüstungsklasse',
+                  max: 50,
+                ),
+                _itemNumber(
+                  'dexCap',
+                  'Maximaler Geschicklichkeitsbonus',
+                  max: 50,
+                ),
+                _itemNumber('strengthMin', 'Stärkemindestwert', max: 30),
+                _optionalFlag(
+                  'Nachteil auf Heimlichkeit',
+                  _stealthDisadvantage,
+                  (next) => _stealthDisadvantage = next,
+                ),
+              ],
+              if (_kind == InventoryItemKind.magic ||
+                  _kind == InventoryItemKind.consumable) ...[
+                _itemText('rarity', 'Seltenheit'),
+                _optionalFlag(
+                  'Einstimmung notwendig',
+                  _attunement,
+                  (next) => _attunement = next,
+                ),
+                _itemNumber('charges', 'Verbleibende Ladungen'),
+                _itemNumber('maxCharges', 'Maximale Ladungen'),
+              ],
+              _itemText('effect', 'Eigene Wirkung / Wirkungshinweis', lines: 2),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _description,
                 minLines: 2,
                 maxLines: 5,
-                decoration: const InputDecoration(labelText: 'Beschreibung'),
+                decoration: const InputDecoration(
+                  labelText: 'Beschreibung (nur Freitext)',
+                ),
               ),
             ],
           ),
@@ -1095,18 +1344,26 @@ class _InventoryItemDialogState extends State<_InventoryItemDialog> {
       FilledButton(
         onPressed: () {
           if (!_form.currentState!.validate()) return;
-          Navigator.pop(
-            context,
-            InventoryItem(
-              id: widget.item?.id ?? const Uuid().v4(),
-              name: _name.text.trim(),
-              quantity: int.parse(_quantity.text),
-              description: _description.text.trim(),
-              catalogId: _name.text.trim() == widget.item?.name
-                  ? (widget.item?.catalogId ?? '')
-                  : '',
-            ),
-          );
+          try {
+            final stats = _buildStats();
+            Navigator.pop(
+              context,
+              InventoryItem(
+                id: widget.item?.id ?? const Uuid().v4(),
+                name: _name.text.trim(),
+                quantity: int.parse(_quantity.text),
+                description: _description.text.trim(),
+                catalogId: _name.text.trim() == widget.item?.name
+                    ? (widget.item?.catalogId ?? '')
+                    : '',
+                stats: stats,
+              ),
+            );
+          } on FormatException catch (error) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(error.message)));
+          }
         },
         child: const Text('Speichern'),
       ),
