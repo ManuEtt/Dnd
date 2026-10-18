@@ -316,5 +316,4 @@ void main() {
     expect(find.textContaining('Runde 2 (fight-1)'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
-
 }

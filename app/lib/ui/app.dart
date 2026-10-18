@@ -2505,7 +2505,9 @@ Future<void> _showInventory(BuildContext context, HeroCharacter hero) {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: _journalItems(
-                    entry.key == 'conditions' ? hero.conditions : data[entry.key],
+                    entry.key == 'conditions'
+                        ? hero.conditions
+                        : data[entry.key],
                   ),
                 ),
               ),
