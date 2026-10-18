@@ -1,3 +1,10 @@
+## Unveröffentlicht – PR #7: Ursachengetrennte Zustände (18.10.2026)
+
+- Optionales Zustandseffekt-Register mit eindeutigen IDs, Quellen und eigenen Zugendpunkten; manuelle/Legacy-Zustände bleiben getrennt. Effektiver Regelzustand dedupliziert die Ursachen ohne sie zu verlieren.
+- Quellenpersistenz, Validierung, Schaden/Heilung, Todesrettung und Erschöpfung auf Eigentümertrennung angepasst; Paladin/Mönch beenden nach bestätigter Regel sämtliche Ursachen eines ausgewählten Zustands.
+- Zugendgültige Effekte nur in der jeweiligen Begegnung ablaufen lassen; Anzeige der Quellen im Charakterbogen und effektiver Zustände im Abenteuerbereich.
+- Domänen- und Widgettests ergänzt. Status: **nicht freigegeben, CI-/APK-Abnahme ausstehend**. Hinzufügen per Controller/UI und Konzentrations-/Ragefolgen stehen aus.
+
 ## 0.8.1+51 – Kein fest eingebauter Arescan-Spielstand (18.10.2026)
 
 - Festen Startknopf und Startgeschichte von Arescan entfernt; keine automatische
