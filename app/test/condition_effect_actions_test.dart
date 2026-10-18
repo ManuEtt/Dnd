@@ -148,6 +148,7 @@ void main() {
           enemyName: 'Wächter',
           enemyHitPoints: 10,
           enemyMaxHitPoints: 10,
+          rageStartedRound: 1,
           rageUntilRound: 5,
           dodgeActive: true,
         ),
