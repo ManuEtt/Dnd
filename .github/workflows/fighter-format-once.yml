@@ -1,0 +1,47 @@
+name: Einmalige Dart-Formatierung der Kaempfer-Erstellung
+on:
+  push:
+    branches:
+      - feature/fighter-start-xp-20261018
+    paths:
+      - .github/workflows/fighter-format-once.yml
+permissions:
+  contents: write
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Entwicklungsbranch auschecken
+        uses: actions/checkout@v4
+        with:
+          ref: feature/fighter-start-xp-20261018
+          persist-credentials: true
+      - name: Flutter installieren
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Dart-Quelldateien formatieren
+        working-directory: app
+        run: |
+          set -euo pipefail
+          flutter pub get
+          dart format lib test
+          dart format --output=none --set-exit-if-changed lib test
+      - name: Nur Formatierung committen und einmaligen Workflow entfernen
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          if git diff --name-only | grep -vE '^app/(lib|test)/.*\\.dart$'; then
+            echo "Nicht erlaubte Aenderungen" >&2
+            exit 1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- app/lib app/test
+          git rm -- .github/workflows/fighter-format-once.yml
+          git commit -m "style: offizielle Dart-Formatierung der neuen Kaempfer-Erstellung"
+          git push origin HEAD:feature/fighter-start-xp-20261018
