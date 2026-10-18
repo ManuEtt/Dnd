@@ -6,7 +6,7 @@ Implementiert auf dem Branch: getrennte manuelle und quellgebundene Zustände, s
 
 CI: Dieser Eintrag ist **kein grüner Prüfbeleg**; endgültige GitHub Actions des PR #7 müssen noch ausgewertet werden. Flutter/Dart-SDK ist in der hier genutzten lokalen Umgebung nicht vorhanden; keine lokalen Testläufe behaupten. Quellcode liegt im GitHub-Featurebranch; ein vollständig geprüftes neues APK-/ZIP-Artefakt erst nach erfolgreichem Workflow nennen.
 
-Nächster Schritt: Format, Analyse, Tests und APK vollständig grün bekommen; anschließend autorisierte UI-/Controller-Änderungen für Quellen hinzufügen/entfernen, sofortige Konzentrations-/Kampfrauschfolgen und SQLite-/Rollback-/Gerätetests. Keine allgemeinen Echtzeit-/fremden-Zug-Dauern erfinden.
+Nächster Schritt: Format, Analyse, Tests und APK vollständig grün bekommen; anschließend neue Domain-/UI-/SQLite-Tests vollständig grün abnehmen, Gerät testen sowie allgemeine Zeit-/SRD-Effektquellen weiter ausbauen. Keine allgemeinen Echtzeit-/fremden-Zug-Dauern erfinden.
 
 ---
 
