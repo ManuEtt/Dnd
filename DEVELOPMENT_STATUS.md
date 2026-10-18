@@ -527,3 +527,16 @@ Anfangs fehlten ein vollständiger Java-Compiler, die Sprachplugin-SDKs und CMak
 - **TESTS:** Vorhandene Python-Projekttests ausgeführt; neue Dart-Tests hinzugefügt, aber ohne Flutter-SDK hier nicht ausführbar.
 - **OFFEN:** Vollständige automatische Implementierung sämtlicher Klasse-/Unterklassenwirkungen, komplexer Zauber und Entscheidungen – siehe `docs/CLASS_FEATURES_0_6_8.md`.
 - **GITHUB:** Kein Push; GitHub-App hat bislang Schreiben mit HTTP 403 abgewiesen.
+
+## Neues Inkrement: Kämpfer-Erstellung und EP (18.10.2026)
+
+Implementiert im separaten Arbeitsstand: SRD-5.2.1-Erfahrungstabelle für
+Gesamtstufen 1–20, Übungsbonus-Vorschau und Stufe-1-Kämpferauswahl mit
+explizitem Kampfstil, drei Waffenmeisterschaften und Startpaket. Keine
+rückwirkende Neuberechnung bestehender Spielstände. Für Kampfstil/Meisterschaft
+wird ausschließlich die Wahl dokumentiert; vollständige Kampfeffekte werden
+nicht durch die Wahl eines Merkmaltexts aktiviert.
+
+Lokale Python-Projekttests ausgeführt; Flutter-Test, Flutter-Analyse und
+Android-Build noch auf GitHub mit Flutter-SDK ausführen. Neues Inkrement
+nicht als abgenommene Android-Version bezeichnen.
