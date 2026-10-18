@@ -84,6 +84,10 @@ class ConditionEffect {
   }
 }
 
+/// How long an explicitly confirmed external condition remains active.
+/// No wall clock or generic spell duration is inferred from these choices.
+enum ConditionEffectDuration { untilRemoved, currentTurnEnd, nextTurnEnd }
+
 /// Pure operations. The game controller must still authorize and atomically
 /// checkpoint any externally requested change before it is committed.
 class ConditionEffectRules {
