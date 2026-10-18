@@ -2,6 +2,7 @@ import 'damage_rules.dart';
 import 'dice_engine.dart';
 import 'models.dart';
 import 'condition_rules.dart';
+import 'death_saving_throw_rules.dart';
 
 class AttackOutcome {
   const AttackOutcome({required this.hit, required this.critical});
@@ -207,38 +208,7 @@ class RulesEngine {
   }
 
   static HeroCharacter deathSave(HeroCharacter hero, int natural) {
-    _validateHitPoints(hero);
-    if (natural < 1 || natural > 20) {
-      throw RangeError.range(natural, 1, 20, 'natural');
-    }
-    if (hero.hitPoints != 0 ||
-        hero.isDead ||
-        hero.conditions.contains(stable)) {
-      throw StateError('Dieser Charakter benötigt keinen Todesrettungswurf.');
-    }
-    if (natural == 20) return heal(hero, 1);
-    final conditions = [...hero.conditions];
-    _addCondition(conditions, unconscious);
-    var successes = hero.deathSuccesses;
-    var failures = hero.deathFailures;
-    if (natural + ExhaustionRules.d20Modifier(hero) >= 10) {
-      successes++;
-    } else {
-      failures += natural == 1 ? 2 : 1;
-    }
-    if (failures >= 3) {
-      _addCondition(conditions, dead);
-      failures = 3;
-    } else if (successes >= 3) {
-      _addCondition(conditions, stable);
-      successes = 0;
-      failures = 0;
-    }
-    return hero.copyWith(
-      conditions: conditions,
-      deathSuccesses: successes,
-      deathFailures: failures,
-    );
+    return DeathSavingThrowRules.resolve(hero: hero, natural: natural).hero;
   }
 
   static int _ability(HeroCharacter hero, String key) {

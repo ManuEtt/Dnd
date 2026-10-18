@@ -1,3 +1,24 @@
+## Abschlussprüfung 0.7.9+49 (18.10.2026)
+
+**692 Flutter-, 31 Backend-, 56 Python- und 12 native Androidtests bestanden, 0 Fehler/Skips.** Analyse/Format sauber, korrigierte Debug-APK aus entpacktem geprüftem ZIP gebaut; Integrität, Metadaten, Signatur und 203 Quell-/Test-/Builddateien verglichen. Geprüfter Codecommit `99b8a7bbed9c07132bf49e5eb78be9cfeb391d71`; finale Dokumentation folgt separat. GitHub-Push erneut HTTP403, main unverändert; ZIP/Patch/Importanleitung vorhanden. Exakte Fortsetzung: CHECKPOINT.md, Prüfbericht docs/VALIDATION_0_7_9.md.
+
+Nächster zusammenhängender Schritt: quellgebundene Zustände/Dauern gemäß docs/CONDITION_EFFECT_DESIGN.md implementieren, mit Trennung manueller/abgeleiteter Zustände und echten UI-/Speichertests. Danach Konzentrationswiederholungen/Reaktionen sowie weitere echte Ziele/Zauber-/Monsterwirkungen. Keine vollständige SRD- oder Geräteabnahme behauptet. Vor neuer großer Arbeit einen vollständigen Ausgangscheckpoint sichern; beobachtete frühere Teilagenten-Limitwarnungen nicht durch Credits/Resets umgehen.
+
+## 0.7.9+49 – Todesrettungen mit Klassenentscheidung (18.10.2026)
+
+- Todesrettungen verwenden jetzt Mönch-14-Rettungswurfübung und den Erschöpfungsmalus genau einmal. Natürliche 1/20 behalten ihre Sonderfolgen; Kämpfer-9-Unbeugsam addiert beim Ersatzwurf die tatsächliche Kämpferstufe.
+- Ein fehlgeschlagener Wurf mit verfügbarer Wiederholung bleibt vorläufig: deutsche Auswahl zum Annehmen oder Wiederholen, mit Neustart erhaltener Entscheidung. Auch ein drohender dritter Fehlschlag lässt sich ersetzen. Verbrauch und Folgen werden erst gemeinsam bestätigt.
+- Im aktiven Solokampf nur eine Todesrettung pro eigenem Zug; anschließend bewusstlos den Zug beenden oder nach natürlicher 20 normal fortsetzen. Gegnerzug, offene Entscheidung, veraltete Oberfläche und manipulierte Importe sind gesperrt.
+- Kampfrausch und Ausweichen enden auch bei extern bestätigtem KO und beim Bestätigen handlungsunfähiger Charakterzustände sofort; spätere Heilung reaktiviert keinen alten Kampfrausch.
+- 57 neue gezielte Fälle sowie 10 bestehende Erschöpfungsregressionen erfolgreich: 19 Todesrettungs-Domänenfälle, 18 Ablauf-/UI-/SQLite-Fälle und 20 Zuggrenzenfälle. Gesamtprüfung und Android-Build werden separat in CHECKPOINT.md nachgewiesen. Quelle und genaue Grenzen: docs/DEATH_SAVES_0_7_9.md.
+
+## 0.7.8+48 – Korrekte eigene Zuggrenzen (17.10.2026)
+
+- Reines Zugende trotz Handlungsunfähigkeit, auch für stabile bewusstlose Figuren; eigener UI-Button und atomare SQLite-Speicherung. Keine Ausweichaktion durch Textbeimischung.
+- Kampfrausch endet vor dem folgenden Gegnerangriff, wenn sein Endzeitpunkt erreicht ist, sowie endgültig bei Handlungsunfähigkeit. Ausweichen verliert Wirkung bei Handlungsunfähigkeit, Sichtverlust oder Bewegungsrate0; positive halbe Meter bleiben positiv.
+- Mönchs-Selbstwiederherstellung kann ohne Aktion vor dem eigenen Zugende ausgewählt werden. Feindlicher Initiative-Erstzug löst kein eigenes Zugende aus.
+- 17 neue Grenz-/UI-Tests erfolgreich; aktuelle Analyse ohne Befunde. Generische Zustandsdauer bleibt ausdrücklich Entwurf, siehe docs/CONDITION_EFFECT_DESIGN.md.
+
 ## Abschlussprüfung 0.7.7+47 (17.10.2026)
 
 **635 Flutter-, 31 Backend-, 56 Python- und 12 native Androidtests erfolgreich**, keine Skips/Fehler; Analyse und Formatierung sauber. Debug-APK tatsächlich aus entpacktem Quell-ZIP gebaut, Integrität/Metadaten/Signatur geprüft. Gerät/Emulator/Updatesignatur nicht abgenommen. GitHub-Write HTTP403; main unverändert. Finale ZIP-/Patch-/Hash-Artefakte und exakte Fortsetzung in CHECKPOINT.md; ausführlicher Prüfbericht docs/VALIDATION_2026_10_17.md. Umfang bleibt eine Teilmenge des SRD5.2.1.

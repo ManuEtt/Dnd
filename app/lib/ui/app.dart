@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../domain/models.dart';
 import '../domain/damage_rules.dart';
 import '../domain/healing_spell_rules.dart';
+import '../domain/saving_throw_class_actions.dart';
 import '../domain/class_resource_rules.dart';
 import '../domain/monk_flurry_rules.dart';
 import '../domain/monk_self_restoration.dart';
@@ -16,6 +17,7 @@ import 'backup_dialogs.dart';
 import 'character_editor.dart';
 import 'character_effect_dialog.dart';
 import 'healing_spell_dialog.dart';
+import 'death_save_decision_panel.dart';
 import 'fantasy_character_sheet.dart';
 import 'fantasy_ui.dart';
 import 'fantasy_art.dart';
@@ -941,6 +943,20 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previous);
   }
 
+  Future<void> _decideDeathSave(
+    Campaign campaign, {
+    SavingThrowRerollFeature? feature,
+  }) async {
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    await widget.controller.resolveDeathSaveDecision(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      feature: feature,
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
   Future<void> _castHealingSpell() async {
     final campaign = widget.controller.currentCampaign;
     if (campaign == null || widget.controller.busy) return;
@@ -1043,6 +1059,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                         onPressed:
                             widget.controller.busy ||
                                 campaign.pendingRoll != null ||
+                                campaign.pendingDeathSave != null ||
                                 campaign.hero.hitPoints == null ||
                                 campaign.hero.isDead
                             ? null
@@ -1061,6 +1078,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                           onPressed:
                               widget.controller.busy ||
                                   campaign.pendingRoll != null ||
+                                  campaign.pendingDeathSave != null ||
                                   campaign.hero.isDead ||
                                   campaign.hero.hitPoints == 0
                               ? null
@@ -1097,6 +1115,15 @@ class _AdventurePageState extends State<_AdventurePage> {
                 ),
               ],
             ),
+            if (campaign.pendingDeathSave != null)
+              DeathSaveDecisionPanel(
+                hero: campaign.hero,
+                pending: campaign.pendingDeathSave!,
+                busy: widget.controller.busy,
+                onAccept: () => _decideDeathSave(campaign),
+                onReroll: (feature) =>
+                    _decideDeathSave(campaign, feature: feature),
+              ),
             BackendAdventureStatus(controller: widget.controller),
             if (!campaign.hero.isComplete)
               Padding(
@@ -1563,6 +1590,18 @@ class _CombatView extends StatelessWidget {
                   : () => onAction('Ich greife an.'),
               icon: const Icon(Icons.sports_martial_arts),
               label: const Text('Angreifen'),
+            ),
+            OutlinedButton.icon(
+              key: const ValueKey('combat-end-hero-turn'),
+              onPressed:
+                  busy ||
+                      encounter.isFinished ||
+                      encounter.activeParticipant != 'hero' ||
+                      hero.isDead
+                  ? null
+                  : () => onAction('Zug beenden'),
+              icon: const Icon(Icons.skip_next_outlined),
+              label: const Text('Zug beenden'),
             ),
             OutlinedButton(
               onPressed: busy

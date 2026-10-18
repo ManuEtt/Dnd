@@ -1,4 +1,6 @@
-Aktueller Entwicklungsstand: **Würfelraunen 0.7.7+47**. Gemeinsame Charaktereffekte und zwei ausführbare SRD-Heilzauber sind in Spielablauf, deutsche Oberfläche und Speicherung integriert. Prüfstatus/Artefakte: [CHECKPOINT.md](CHECKPOINT.md); Umfang: [Regelabdeckung](docs/RULE_COVERAGE.md). Dies bleibt eine teilweise SRD-5.2.1-Implementation.
+Aktueller Entwicklungsstand: **Würfelraunen 0.7.9+49**. Todesrettungen mit Mönch-/Kämpfer-Wiederholungen, gespeicherter deutscher Entscheidung und einmaliger Rettung je eigenem Kampfzug; korrigiertes Zugende und dauerhaftes Kampfrauschende bei Handlungsunfähigkeit. Charaktereffekte und zwei ausführbare SRD-Heilzauber bleiben integriert. Prüfstatus/Artefakte: [CHECKPOINT.md](CHECKPOINT.md); [GitHub-Import](IMPORT_0_7_9_49.md); [Regelabdeckung](docs/RULE_COVERAGE.md). Das SRD 5.2.1 ist teilweise umgesetzt.
+
+Ältere Versionshinweise und ausstehende Prüfungen weiter unten beschreiben den damaligen Stand. Maßgeblich für die aktuelle Abnahme ist CHECKPOINT.md.
 
 **Neue Regelengine 0.6.4+34:** Zauberplätze und Hexenmeister-Paktmagie werden jetzt getrennt verbraucht und gespeichert, Konzentration wird verfolgt, Rasten stellen Ressourcen wieder her. Im Charaktereditor unter „Fertigkeiten, Fähigkeiten & Zauber“ den Ressourcen-Dialog öffnen. Das sind bewusst noch **keine automatischen Zauberwirkungen**; siehe [docs/SPELLCASTING_RESOURCES.md](docs/SPELLCASTING_RESOURCES.md).
 

@@ -1,5 +1,7 @@
 import 'srd_equipment_catalog.dart';
 import 'condition_rules.dart';
+import 'death_saving_throw_rules.dart';
+import 'saving_throw_class_actions.dart';
 import 'spellcasting_rules.dart';
 import 'class_feature_resources.dart';
 import 'class_resource_rules.dart';
@@ -1000,11 +1002,13 @@ class PendingRoll {
     this.targetId = '',
     this.targetName = '',
     this.expression = '1d20',
+    this.deathSaveRulesVersion = 0,
     this.advantage = false,
     this.disadvantage = false,
   });
   final String id, type, targetId, targetName, expression;
   final int modifier, difficulty;
+  final int deathSaveRulesVersion;
   final bool advantage, disadvantage;
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -1014,6 +1018,8 @@ class PendingRoll {
     'targetId': targetId,
     'targetName': targetName,
     'expression': expression,
+    if (deathSaveRulesVersion > 0)
+      'deathSaveRulesVersion': deathSaveRulesVersion,
     if (advantage) 'advantage': true,
     if (disadvantage) 'disadvantage': true,
   };
@@ -1024,7 +1030,20 @@ class PendingRoll {
         expression != '1d20') {
       throw const FormatException('Unbekannte Probe oder Würfelanweisung.');
     }
+    final deathVersion = _int(
+      j['deathSaveRulesVersion'],
+      'Todesrettungsregelversion',
+      fallback: 0,
+      max: 1,
+    );
+    if ((type != 'death' && deathVersion != 0) ||
+        (type == 'death' &&
+            (_bool(j['advantage'], 'Vorteil') ||
+                _bool(j['disadvantage'], 'Nachteil')))) {
+      throw const FormatException('Unzulässige Todesrettungsanweisung.');
+    }
     return PendingRoll(
+      deathSaveRulesVersion: deathVersion,
       id: _string(j['id'], 'Probe-ID'),
       type: type,
       modifier: _int(j['modifier'], 'Modifikator', min: -20, max: 30),
@@ -1036,6 +1055,30 @@ class PendingRoll {
       disadvantage: _bool(j['disadvantage'], 'Nachteil'),
     );
   }
+}
+
+/// A failed, not-yet-applied roll awaiting an explicit class-feature choice.
+/// The campaign hero is still the state BEFORE this roll. No arbitrary saved
+/// character snapshot or provider-supplied result may replace it.
+class PendingDeathSave {
+  const PendingDeathSave({
+    required this.originalNatural,
+    required this.modifier,
+  });
+  final int originalNatural, modifier;
+  Map<String, dynamic> toJson() => {
+    'originalNatural': originalNatural,
+    'modifier': modifier,
+  };
+  factory PendingDeathSave.fromJson(Map<String, dynamic> j) => PendingDeathSave(
+    originalNatural: _int(
+      j['originalNatural'],
+      'Vorläufiger Todesrettungswurf',
+      min: 1,
+      max: 19,
+    ),
+    modifier: _int(j['modifier'], 'Todesrettungsbonus', min: -20, max: 30),
+  );
 }
 
 class Encounter {
@@ -1057,6 +1100,7 @@ class Encounter {
     this.attacksRemaining = 0,
     this.bonusActionUsed = false,
     this.spellSlotExpendedThisTurn = false,
+    this.deathSaveResolvedThisTurn = false,
     this.dodgeActive = false,
     this.disengagedThisTurn = false,
     this.jumpDoubledThisTurn = false,
@@ -1085,6 +1129,7 @@ class Encounter {
   /// SRD 2024: expend a spell slot to cast a spell only once on a turn.
   /// Absent in older schema-1 saves; defaults to false.
   final bool spellSlotExpendedThisTurn;
+  final bool deathSaveResolvedThisTurn;
 
   /// Bonus-Action defensive effects persist until the enemy turn concludes.
   final bool dodgeActive, disengagedThisTurn, jumpDoubledThisTurn;
@@ -1114,6 +1159,7 @@ class Encounter {
     int? attacksRemaining,
     bool? bonusActionUsed,
     bool? spellSlotExpendedThisTurn,
+    bool? deathSaveResolvedThisTurn,
     bool? dodgeActive,
     bool? disengagedThisTurn,
     bool? jumpDoubledThisTurn,
@@ -1143,6 +1189,8 @@ class Encounter {
     bonusActionUsed: bonusActionUsed ?? this.bonusActionUsed,
     spellSlotExpendedThisTurn:
         spellSlotExpendedThisTurn ?? this.spellSlotExpendedThisTurn,
+    deathSaveResolvedThisTurn:
+        deathSaveResolvedThisTurn ?? this.deathSaveResolvedThisTurn,
     dodgeActive: dodgeActive ?? this.dodgeActive,
     disengagedThisTurn: disengagedThisTurn ?? this.disengagedThisTurn,
     jumpDoubledThisTurn: jumpDoubledThisTurn ?? this.jumpDoubledThisTurn,
@@ -1173,6 +1221,7 @@ class Encounter {
     if (attacksRemaining > 0) 'attacksRemaining': attacksRemaining,
     'bonusActionUsed': bonusActionUsed,
     if (spellSlotExpendedThisTurn) 'spellSlotExpendedThisTurn': true,
+    if (deathSaveResolvedThisTurn) 'deathSaveResolvedThisTurn': true,
     if (dodgeActive) 'dodgeActive': true,
     if (disengagedThisTurn) 'disengagedThisTurn': true,
     if (jumpDoubledThisTurn) 'jumpDoubledThisTurn': true,
@@ -1314,6 +1363,10 @@ class Encounter {
         max: 3,
       ),
       bonusActionUsed: _bool(j['bonusActionUsed'], 'Bonusaktion'),
+      deathSaveResolvedThisTurn: _bool(
+        j['deathSaveResolvedThisTurn'],
+        'Todesrettung in diesem Zug',
+      ),
       spellSlotExpendedThisTurn: _bool(
         j['spellSlotExpendedThisTurn'],
         'Zauberplatz in diesem Zug',
@@ -1357,6 +1410,7 @@ class Campaign {
     List<Place> places = const [],
     List<GameEvent> events = const [],
     this.pendingRoll,
+    this.pendingDeathSave,
     this.encounter,
     this.adventureOffer,
     this.revision = 0,
@@ -1383,6 +1437,7 @@ class Campaign {
   final List<Place> places;
   final List<GameEvent> events;
   final PendingRoll? pendingRoll;
+  final PendingDeathSave? pendingDeathSave;
   final Encounter? encounter;
   final AdventureOffer? adventureOffer;
   final int revision;
@@ -1401,6 +1456,7 @@ class Campaign {
     List<Place>? places,
     List<GameEvent>? events,
     Object? pendingRoll = _unchanged,
+    Object? pendingDeathSave = _unchanged,
     Object? encounter = _unchanged,
     Object? adventureOffer = _unchanged,
     int? revision,
@@ -1424,6 +1480,9 @@ class Campaign {
     pendingRoll: identical(pendingRoll, _unchanged)
         ? this.pendingRoll
         : pendingRoll as PendingRoll?,
+    pendingDeathSave: identical(pendingDeathSave, _unchanged)
+        ? this.pendingDeathSave
+        : pendingDeathSave as PendingDeathSave?,
     encounter: identical(encounter, _unchanged)
         ? this.encounter
         : encounter as Encounter?,
@@ -1453,6 +1512,8 @@ class Campaign {
     'places': places.map((e) => e.toJson()).toList(),
     'events': events.map((e) => e.toJson()).toList(),
     'pendingRoll': pendingRoll?.toJson(),
+    if (pendingDeathSave != null)
+      'pendingDeathSave': pendingDeathSave!.toJson(),
     'encounter': encounter?.toJson(),
     'adventureOffer': adventureOffer?.toJson(),
     'revision': revision,
@@ -1474,6 +1535,11 @@ class Campaign {
     final pending = j['pendingRoll'] == null
         ? null
         : PendingRoll.fromJson(_map(j['pendingRoll'], 'Probe'));
+    final deathChoice = j['pendingDeathSave'] == null
+        ? null
+        : PendingDeathSave.fromJson(
+            _map(j['pendingDeathSave'], 'Todesrettungsentscheidung'),
+          );
     final encounter = j['encounter'] == null
         ? null
         : Encounter.fromJson(_map(j['encounter'], 'Kampf'));
@@ -1519,6 +1585,35 @@ class Campaign {
         relationshipNotes.any((e) => !npcs.any((npc) => npc.id == e.npcId))) {
       throw const FormatException('Ungültiges Kampagnengedächtnis.');
     }
+    if (deathChoice != null) {
+      if (pending != null ||
+          !hero.isComplete ||
+          (encounter != null &&
+              !encounter.isFinished &&
+              (encounter.activeParticipant != 'hero' ||
+                  encounter.deathSaveResolvedThisTurn))) {
+        throw const FormatException(
+          'Ungültige offene Todesrettungsentscheidung.',
+        );
+      }
+      try {
+        final original = DeathSavingThrowRules.resolve(
+          hero: hero,
+          natural: deathChoice.originalNatural,
+        );
+        if (deathChoice.modifier != original.roll.modifier ||
+            original.passed ||
+            !SavingThrowRerollFeature.values.any(
+              (f) => DeathSavingThrowRules.canReroll(original, f),
+            )) {
+          throw const FormatException(
+            'Vorläufiger Todesrettungswurf passt nicht zum Charakter.',
+          );
+        }
+      } on StateError {
+        throw const FormatException('Unzulässige Todesrettungsentscheidung.');
+      }
+    }
     if (pending != null) {
       if (!hero.isComplete) {
         throw const FormatException(
@@ -1528,8 +1623,9 @@ class Campaign {
       final prof = 2 + (hero.level - 1) ~/ 4;
       int modifier(String key) => ((hero.abilities[key]! - 10) / 2).floor();
       // A saved request must match the same confirmed Exhaustion penalty that
-      // the shared character rules applied when creating it. Death saves keep
-      // their natural die unmodified here; RulesEngine resolves that penalty.
+      // the shared character rules applied when creating it. Legacy death-save
+      // requests use modifier0; version1 includes the authoritative bonus.
+      // The final death result always recomputes it from the confirmed hero.
       final exhaustion = ExhaustionRules.d20Modifier(hero);
       final expected = switch (pending.type) {
         'attack' =>
@@ -1541,6 +1637,8 @@ class Campaign {
               (hero.skills.contains('Wahrnehmung') ? prof : 0) +
               exhaustion,
         'escape' => modifier('dexterity') + exhaustion,
+        'death' when pending.deathSaveRulesVersion == 1 =>
+          DeathSavingThrowRules.modifier(hero),
         _ => 0,
       };
       if (pending.modifier != expected) {
@@ -1563,7 +1661,11 @@ class Campaign {
       if (pending.type == 'death' &&
           (hero.hitPoints != 0 ||
               hero.isDead ||
-              hero.conditions.contains('stabil'))) {
+              hero.conditions.contains('stabil') ||
+              (encounter != null &&
+                  !encounter.isFinished &&
+                  (encounter.activeParticipant != 'hero' ||
+                      encounter.deathSaveResolvedThisTurn)))) {
         throw const FormatException('Ungültiger Todesrettungswurf.');
       }
       if (pending.type != 'attack' && pending.difficulty != 10) {
@@ -1601,6 +1703,7 @@ class Campaign {
       ).map((e) => Place.fromJson(_map(e, 'Ort'))).toList(),
       events: events,
       pendingRoll: pending,
+      pendingDeathSave: deathChoice,
       encounter: encounter,
       adventureOffer: adventureOffer,
       revision: _int(j['revision'], 'Revision', fallback: 0),

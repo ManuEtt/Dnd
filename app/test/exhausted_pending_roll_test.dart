@@ -95,7 +95,8 @@ void main() {
       );
       final requested = engine.act(fallen, 'Todesrettung').campaign;
       final restored = Campaign.fromJson(requested.toJson());
-      expect(restored.pendingRoll?.modifier, 0);
+      expect(restored.pendingRoll?.modifier, -4);
+      expect(restored.pendingRoll?.deathSaveRulesVersion, 1);
       expect(
         engine.resolveRoll(restored, natural: 13).campaign.hero.deathFailures,
         1,

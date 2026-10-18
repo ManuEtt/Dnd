@@ -7,6 +7,7 @@ import '../domain/game_engine.dart';
 import '../domain/ai_story.dart';
 import '../domain/models.dart';
 import '../domain/damage_rules.dart';
+import '../domain/saving_throw_class_actions.dart';
 import 'backend_narrator.dart';
 
 /// UI state changes only after an atomic repository commit succeeds.
@@ -315,6 +316,15 @@ class GameController extends ChangeNotifier {
     final campaign = currentCampaign;
     if (campaign == null) throw const FormatException('Keine aktive Kampagne.');
     await _commit(engine.resolveRoll(campaign, natural: natural, total: total));
+  });
+
+  Future<void> resolveDeathSaveDecision({
+    required String campaignId,
+    required int expectedRevision,
+    SavingThrowRerollFeature? feature,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(engine.resolveDeathSaveDecision(current, feature: feature));
   });
 
   Campaign _effectCampaign(String campaignId, int expectedRevision) {

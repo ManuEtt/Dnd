@@ -1,46 +1,58 @@
-# Würfelraunen – geprüfter Checkpoint 0.7.7+47
+# Würfelraunen – geprüfter Checkpoint 0.7.9+49
 
-- Zeitpunkt: 2026-10-17 UTC; drei fachliche Entwicklungsphasen abgeschlossen.
-- Git-Basis: `b66354f3112165d76aa340a2f2ab5705f8019e1a` (GitHub-main beim Start).
-- Lokaler Branch: `feature/autonomous-srd-engine-20261016`; Implementierungscode `718d30fe1ca53ca01002fc03e9057229345e63be`. Exakten finalen HEAD aus Dateimanifest bzw. git log lesen (abschließend reine Dokumentation).
-- GitHub-Push und verbundene Branch-Erstellung beide HTTP403. Kein Remote-Branch/PR behauptet, main unverändert. Basis-CI38933445408 erfolgreich; neuer Stand lokal vollständig geprüft.
-- Primärquelle Repository, kein zusätzliches Projekt-ZIP vorhanden. Master-Prompt hat tatsächlich ein Leerzeichen: `docs/prompts/Wuerfelraunen_Codex_Masterprompt _Autonome_Entwicklung.md`.
+Stand: 18.10.2026, 06:28 UTC. Entwicklungsbranch: `feature/autonomous-srd-engine-20261016`. Letzter vollständig geprüfter Codecommit: `99b8a7bbed9c07132bf49e5eb78be9cfeb391d71`; danach nur Abschlussdokumentation. Der exakte finale HEAD steht im Dateimanifest und in `git log`.
 
-## Implementiert und angeschlossen
+## Basis und GitHub
 
-1. Erschöpfte Angriffs-/Wahrnehmungs-/Fluchtproben über JSON/SQLite/Neustart repariert; 0-TP-Schadensfolgen trotz temporärer TP korrigiert. Backend-Mock mit leerer Journalbeschreibung und OpenAI-Redirectschutz repariert.
-2. Gemeinsamer Schaden-/Abwehr-/TP-/Konzentrationsablauf für Gegnerangriffe und bestätigte externe Quellen. Deutsche Effektoberfläche für Schaden/Heilung/tempTP; Quelle, Ziel und Folgen atomar journalisiert. Echte Revisions-/Abbruch-/Neustarttests. Automatische STR/DEX-Fehlschläge, 2024-Betäubt-Bewegung und Versteinert-Schadensresistenz.
-3. Wunden heilen und Heilendes Wort als tatsächliche Selbstheilzauber im Abenteuer/Kampf: eigene Klasse/Attribut, 2024-Würfel, höhere/Paktplätze, Komponenten, Lebensdomänenboni; echte TP-/Platz-/Aktionsänderung. Persistenter Platzverbrauch-je-Zug-Schutz für beide Pools, Reset zum nächsten eigenen Zug, kompatible alte Encounter-JSON-Daten. Deutsche Dialoge und UI-/SQLite-Test.
-4. Dart-Formatierungsrückstand in eigenem Commit42a7e6c bereinigt; normalen Formatcheck in CI/scripts/check.sh ergänzt. Keine autonome Codex-Action. Android-Wrapper ausführbar.
+Patchbasis dieser Fortsetzung: **c889ab6619fe88bd48a420bc45f12d2751af94f7** (GitHub-main, enthält bereits den bisherigen 0.7.7-Code). Konfliktfrei in den eigenen Branch übernommen; main nicht verändert. Der GitHub-main-Build [39055088686](https://github.com/ManuEtt/Dnd/actions/runs/39055088686) ist erfolgreich. Das ist keine Remote-CI-Abnahme des neuen Codes.
 
-Fachlicher Umfang/Quellen: docs/CHARACTER_EFFECTS_AND_HEALING.md, docs/RULE_COVERAGE.md, THIRD_PARTY_NOTICES.md. Vollständiges SRD bleibt ausdrücklich offen; Katalogeinträge sind keine Mechaniken.
+Der erneute Push am 18.10.2026 scheiterte mit HTTP403: `Permission to ManuEtt/Dnd.git denied to ManuEtt.` Kein erfolgreicher Remote-Branch/PR behauptet. Lokal sind geprüfte Commits und vollständige ZIPs/Patches vorhanden. Kein Force-Push, keine automatische Codex-Action, keine Credits/Limit-Zurücksetzung.
+
+## Implementiert und angebunden
+
+1. **0.7.8+48, Commit a2dd0da:** explizites eigenes Zugende ohne Aktion auch bei Handlungsunfähigkeit/stabilen 0 TP; echter UI-Button, SQLite/Ereignis. Kampfrauschablauf vor Gegnerangriff, Ausweichen verliert Wirkung bei Handlungsunfähigkeit/Sichtverlust/Bewegungsrate 0, positive 0,5 m bleiben positiv. Mönch-Selbstwiederherstellung ohne Aktionsbedarf; Gegnererstzug löst keinen eigenen Endrand aus.
+2. **0.7.9+49, Commit b0fad28:** Todesrettungen mit Mönch-14-Übungsbonus, Erschöpfung genau einmal und Fokus-/Kämpfer-9-Unbeugsam-Wiederholung. Tatsächliche Klassenstufen, verbindlicher Ersatzwurf, natürliche 1/20 und Ressourcen bei 0 TP. Vorläufigen Fehlschlag erst nach Annehmen/Wiederholen bestätigen, einschließlich drohendem drittem Fehlschlag. Deutsche Auswahl, Neustart, atomare Speicherung und Revisionsschutz integriert. Eine Todesrettung pro eigenem Kampfzug; danach Zugende oder nach natürlicher 20 weiterspielen.
+3. **Korrektur 99b8a7b:** extern bestätigter KO und bestätigte handlungsunfähige Charakterzustände beenden Kampfrausch/Ausweichen sofort und dauerhaft. Spätere Heilung reaktiviert keinen alten Kampfrausch. Bestehenden Erschöpfungstest an die jetzt angezeigte Version-1-Anfrage angepasst; alte gespeicherte Modifikator-0-Anfragen bleiben lesbar.
+
+Regelquellen, Code und Grenzen: `docs/DEATH_SAVES_0_7_9.md`, `docs/RULE_COVERAGE.md`, `THIRD_PARTY_NOTICES.md`. Schema 1 bleibt kompatibel: zusätzliche Felder sind optional, ungültige Entscheidungen werden vollständig abgelehnt. Katalogeinträge sind keine umgesetzten Mechaniken; das vollständige SRD ist offen.
 
 ## Letzte verifizierte Prüfungen
 
-**635 Fluttertests, 31 Backendtests, 56 Pythontests und 12 native Androidtests bestanden; 0 Fehler/Skips.** Flutteranalyse ohne Befunde; Formatcheck127Dateien/0Änderungen. Echter Backendprotokolltest eingeschlossen. Debug-APK aus entpacktem überprüftem Vollprojekt-ZIP erfolgreich gebaut; APK-CRC, aapt-Metadaten und Signatur geprüft. Version0.7.7+47, minAPI24/target36, ARM64/ARMv7/x86_64. Ausführliche Befehle/Belege: docs/VALIDATION_2026_10_17.md.
+**692 Flutter-, 31 Backend-, 56 Python- und 12 native Android-/JVM-Tests bestanden; 0 Fehler/Skips.** Flutter einschließlich echtem Node-/Dart-Protokolltest ohne kostenpflichtigen KI-Anbieter. Formatprüfung: 132 Dateien, 0 Änderungen. Analyse ohne Befunde. Backend-Typecheck/Build erfolgreich. Insgesamt 57 neue Fälle seit der übernommenen 0.7.7-Basis; gezielter Korrekturlauf 67/67 einschließlich zehn bestehender Erschöpfungsfälle.
 
-Keine bekannten Test-/Analyse-/Buildfehler. Offen: reales Gerät, Emulator, Sprache/SAF/Onlinepfade und Kompatibilität zu bestehenden APK-Installationen. Keine reale OpenAI- oder Geräteabnahme behauptet. APK lokal mit Debug-Testschlüssel signiert; keine Store-Freigabe.
+Der erste Gesamtlauf hatte 688 Erfolge und eine veraltete Erwartung für den angezeigten Todesrettungsmodifikator. Korrigiert; erneuter vollständiger Lauf mit 692 Erfolgen. Keine offenen Test-/Analyse-/Buildfehler. Belege und Befehle: `docs/VALIDATION_0_7_9.md`, Logs in `/workspace/validation/0.7.9-*-final.log` bzw. `0.7.9-check-final.log`.
 
-## Artefakte und Wiederherstellung
+Debug-APK tatsächlich aus dem entpackten, verifizierten Korrektur-ZIP gebaut. 203 Quell-/Test-/Builddateien bytegleich mit aktuellem Code geprüft; danach nur Dokumentation. APK-CRC, aapt-Metadaten und apksigner erfolgreich: **0.7.9+49**, minAPI24/target36, ARM64/ARMv7/x86_64, 142493733 Bytes. APK-SHA256: `0b38dab8d03e001b46a2e925359d729842100b6b6e8053ab862de06a78f34c7b`. Lokale Debug-Testsignatur; keine Store-Freigabe.
 
-Alle realen Artefakte außerhalb Repository: **/workspace/artifacts**. Vollständige Basis0.7.4+44, Reparatur0.7.5+45 (876f55f) und Effekt0.7.6+46 (76e1ee2) unverändert erhalten. Zusätzlich vorsorgliche Zwischenstände vor einer tatsächlichen Teilagenten-Kontingentwarnung; keine Credits/Limitrücksetzung gekauft. Der letzte geprüfte Effektstand bestand isoliert587 Fluttertests, der jetzige635.
+**Nicht getestet:** Emulator/reales Gerät, tatsächliche Sprache-/SAF-Interaktion, Updateinstallation auf bestehende APKs, produktiver KI-Anbieter, neue Release-APKs je ABI. Der alte vor der letzten Korrektur gebaute APK-Kandidat bleibt mit `vor-korrektur` im Namen erhalten; final ist `Wuerfelraunen_0.7.9+49_Debug.apk`.
 
-Finales ZIP: `Wuerfelraunen_0.7.7+47_<UTC>_heilzauber_Vollprojekt.zip`; stabiler Alias `Wuerfelraunen_LATEST_Vollprojekt.zip`. Passender vollständiger `_Aenderungen.patch` gegen b66354f, `_Dateimanifest.json` und `_SHA256SUMS.txt`; globales `SHA256SUMS.txt`. Die tatsächlich vergebenen Dateinamen stehen in /workspace/artifacts/ARTEFAKTE.md. ZIP/Manifest/Patch werden byteweise mit dem vollständigen gefilterten Projekt verglichen; Patch wird auf sauberer Basis tatsächlich angewendet. Keine SDKs, Geheimnisse, Buildcaches oder APKs im Quell-ZIP.
+## Reale Artefakte und Import
 
-Separate APK: `/workspace/artifacts/Wuerfelraunen_0.7.7+47_Debug.apk` (142474157Bytes), .apk.sha256 und APK_Pruefung.json. APK-SHA256: bdf389221c6228be9c1a6d87ab106ca3ee9fa748295a791d3e5059bd95f003b1. Quellenhashes des gebauten ZIPs mit aktuellem Code verglichen; danach nur Dokumentation verändert.
+Ablage außerhalb Repository: **/workspace/artifacts**. Finale Namen: `Wuerfelraunen_0.7.9+49_<UTC>_todesrettung_Vollprojekt.zip`, dazu `_Aenderungen.patch`, `_Dateimanifest.json` und `_SHA256SUMS.txt`. Stabiler ZIP-Alias: `Wuerfelraunen_LATEST_Vollprojekt.zip`. Separate finale APK, APK-Prüfbericht und globale/versionierte Prüfsummen. Exakte reale Dateinamen und finaler HEAD: `/workspace/artifacts/ARTEFAKTE.md`.
 
-GitHub-Import: IMPORT_0_7_7_47.md. ZIP lokal entpacken und Inhalte einschließlich .github/ in einen Klon auf eigenem Branch übernehmen; GitHub entpackt eine hochgeladene ZIP-Datei nicht automatisch. Alternativ neuen sauberen Branch auf b66354f anlegen, `git apply --check <patch>` und `git apply <patch>`, prüfen/committen/pushen. Neuere eigene Dateien nicht blind ersetzen, kein Force-Push. `sha256sum --ignore-missing -c SHA256SUMS.txt` prüft heruntergeladene Dateien.
+ZIP, Manifest und gefiltertes vollständiges Projekt werden byte-/modusgenau verglichen; Binärpatch wird tatsächlich auf sauberer c889ab6-Basis angewendet und gegen alle Quelldateien geprüft. Kein Git-Verzeichnis, SDK, Cache, Geheimnis oder APK im Quell-ZIP. Frühere vollständige 0.7.7-/0.7.8- und vorsorgliche Zwischenstände bleiben erhalten. Workspacepfade sind keine behaupteten externen Uploads.
 
-## Nächste drei Aufgaben
+Importanleitung: **IMPORT_0_7_9_49.md**. ZIP entpacken und Inhalte einschließlich `.github/` in einen neuen Klon auf eigenem Branch übernehmen; ZIP-Upload in GitHub entpackt nichts. Alternativ auf sauberer c889ab6-Basis `git apply --check <patch>` / `git apply <patch>`, prüfen, committen, pushen und PR erstellen. Neuere eigene Änderungen erhalten. Alte Patches dieser Sitzung haben teils die frühere Basis b66354f; nicht verwechseln. Prüfsummen: `sha256sum --ignore-missing -c Wuerfelraunen_0.7.9+49_SHA256SUMS.txt`.
 
-1. Quellgebundene Zustände und Dauern als validierte Effekte samt Ende-/Entfernungsregeln implementieren; optionales Klassen-Wiederholen von Konzentrationsrettungen sauber in denselben Ablauf integrieren.
-2. Mönch-Todesrettungsübung/-wiederholung, Reaktionen und weitere ausgewählte Klassenmerkmale mit tatsächlichen Zug-/Ressourcenwirkungen fortsetzen. Handlungsunfähige Figuren benötigen auch einen sauberen reinen Zug-beenden-Pfad.
-3. Echte Fremdziele/Gruppenmitglieder, weitere verifizierte SRD-Zauber und Monsterfähigkeiten integrieren. Allgemeine Vorbereitung/Talente/Spezies/Hintergründe, volle Klassenstufen, Items, Spielzeit und Gerätetest bleiben offen. Action-Surge-/ursprüngliche-Magieaktions-Reihenfolge ist derzeit konservativ eingeschränkt.
+## Offener Umfang und nächste drei Schritte
+
+1. **Quellgebundene Zustände/Dauern implementieren.** `docs/CONDITION_EFFECT_DESIGN.md` ist ausschließlich Entwurf. Zuerst manuelle Zustände von abgeleiteten Quellen trennen, bestehende Mutatoren prüfen und kompatible JSON-Felder/Entfernen/Zugenden samt echten Speicher-/UI-Tests integrieren. Keine pauschalen Zeitgeber ohne bestätigte Weltzeit.
+2. Optionale Klassenwiederholung von Konzentrationsrettungen und weitere Reaktionen an denselben bestätigten Entscheidungs-/Ressourcenablauf anschließen. Allgemeine Positions-/Sicht-/Reichweiten-/Gelegenheitsangriffsregeln bleiben teilweise offen.
+3. Echte Fremdziele/Gruppenmitglieder, weitere verifizierte SRD-Zauber-, Gegenstands- und Monsterwirkungen ergänzen; volle Klassenstufen/Talente/Spezies/Hintergründe und Geräteabnahme fortsetzen. Keine bloßen Katalogergänzungen als Regelerfolg zählen.
 
 ## Exakte Wiederaufnahme
 
-AGENTS.md, Master-Prompt am tatsächlichen Pfad, CHECKPOINT, RULE_COVERAGE und VALIDATION lesen. Tatsächlichen git status/HEAD gegen neuestes Dateimanifest prüfen. Ältere ZIPs nie über neuere Arbeitsstände kopieren. Erst letzte geprüfte Sicherung/Commit laden und Tests prüfen; nicht allein einer Zusammenfassung vertrauen.
+AGENTS.md, `docs/prompts/Wuerfelraunen_Codex_Masterprompt _Autonome_Entwicklung.md` (tatsächlich mit Leerzeichen), CHECKPOINT, DEVELOPMENT_STATUS, RULE_COVERAGE und VALIDATION_0_7_9 lesen. Tatsächlichen `git status`, Branch, HEAD und Remote gegen letztes Manifest prüfen. Neuere Dateien nicht mit älterem ZIP überschreiben. Ausgangscheckpoint vor größeren Änderungen erzeugen.
 
-Werkzeuge hier außerhalb Repository: /workspace/toolchains/flutter/bin (3.35.7/Dart3.9.2), /workspace/toolchains/node-v22.14.0-linux-x64/bin, /workspace/toolchains/jdk17, /workspace/toolchains/android-sdk. SQLite-Tests: LD_LIBRARY_PATH=/workspace/toolchains/sqlite/lib. Frische Umgebung benötigt libsqlite3-dev. Komplette Prüfung: PATH korrekt setzen und `bash scripts/check.sh`; APK gesondert `cd app && flutter build apk --debug`, native Tests app/android/: `./gradlew :app:testDebugUnitTest --no-daemon`. Lokale Proxy-/CA-Befehle: /workspace/validation/TOOLCHAIN.md, nicht Geheimnisse ausgeben.
+Werkzeuge hier außerhalb Repository: Flutter 3.35.7/Dart3.9.2 unter `/workspace/toolchains/flutter/bin`, Node22.14.0 unter `/workspace/toolchains/node-v22.14.0-linux-x64/bin`, Java17 unter `/workspace/toolchains/jdk17`, SDK `/workspace/toolchains/android-sdk`, Gradle-Cache `/workspace/toolchains/gradle-cache`. Linux-SQLite: `LD_LIBRARY_PATH=/workspace/toolchains/sqlite/lib`; frische Umgebungen brauchen libsqlite3-dev.
 
-Neue Sicherung: `python3 scripts/create_checkpoint.py --output-dir /workspace/artifacts --base b66354f3112165d76aa340a2f2ab5705f8019e1a --label <name>`. Vor neuen großen Änderungen und regelmäßig checkpointieren; mindestens zwei vollständige geprüfte Stände erhalten.
+```bash
+PATH=/workspace/toolchains/node-v22.14.0-linux-x64/bin:/workspace/toolchains/flutter/bin:$PATH LD_LIBRARY_PATH=/workspace/toolchains/sqlite/lib bash scripts/check.sh
+# Android mit JAVA_HOME/SDK/Proxy-CA wie docs/VALIDATION_0_7_9.md und /workspace/validation/TOOLCHAIN.md:
+cd app
+flutter build apk --debug
+cd android
+./gradlew :app:testDebugUnitTest --no-daemon
+```
+
+Neue Sicherung aus Repositorywurzel: `python3 scripts/create_checkpoint.py --output-dir /workspace/artifacts --base c889ab6619fe88bd48a420bc45f12d2751af94f7 --label <name>`. Vor langen/riskanten Schritten CHECKPOINT aktualisieren und sichern. Bei tatsächlicher Limitwarnung laufenden Schritt konsolidieren statt neue große Arbeit zu starten; automatische Sitzungswiederaufnahme nicht voraussetzen.

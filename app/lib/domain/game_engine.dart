@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'dice_engine.dart';
+import 'death_saving_throw_rules.dart';
 import 'condition_rules.dart';
 import 'character_rule_engine.dart';
 import 'character_effect_rules.dart';
@@ -755,6 +756,22 @@ class GameEngine {
     );
   }
 
+  /// Incapacitation ends these effects immediately, including when a confirmed
+  /// external source or character correction occurs between combat turns.
+  /// Healing or removing the condition later cannot revive the old Rage.
+  Encounter? _encounterAfterHeroChange(Campaign campaign, HeroCharacter hero) {
+    final fight = campaign.encounter;
+    if (fight == null ||
+        (hero.hitPoints != 0 && ConditionRules.canTakeActions(hero))) {
+      return fight;
+    }
+    return fight.copyWith(
+      rageStartedRound: 0,
+      rageUntilRound: 0,
+      dodgeActive: false,
+    );
+  }
+
   GameUpdate updateHero(Campaign campaign, HeroCharacter hero) {
     // Round-trip validation also checks imported edits made outside the engine.
     final validated = HeroCharacter.fromJson(hero.toJson());
@@ -763,14 +780,25 @@ class GameEngine {
         'Ein anderer Charakter kann nicht stillschweigend übernommen werden.',
       );
     }
+    final fight = _encounterAfterHeroChange(campaign, validated);
     return _commit(
       campaign,
-      campaign.copyWith(hero: validated, pendingRoll: null),
+      campaign.copyWith(
+        hero: validated,
+        encounter: fight,
+        pendingRoll: null,
+        pendingDeathSave: null,
+      ),
       validated.isComplete
           ? '${hero.name}, dein Charakterbogen ist bestätigt. Deine historischen Erlebnisse bleiben erhalten.'
           : 'Der Charakterbogen wurde gespeichert. Noch offen: ${validated.incompleteFields.join(', ')}.',
       type: 'character.updated',
-      payload: {'characterId': hero.id},
+      payload: {
+        'characterId': hero.id,
+        if ((campaign.encounter?.rageUntilRound ?? 0) > 0 &&
+            fight?.rageUntilRound == 0)
+          'rageEndedByIncapacitation': true,
+      },
     );
   }
 
@@ -780,7 +808,7 @@ class GameEngine {
         'Eine Effektquelle mit 1 bis 200 Zeichen angeben.',
       );
     }
-    if (campaign.pendingRoll != null) {
+    if (campaign.pendingRoll != null || campaign.pendingDeathSave != null) {
       throw const FormatException(
         'Zuerst den bereits offenen Würfelwurf abschließen.',
       );
@@ -818,6 +846,10 @@ class GameEngine {
       critical: critical,
     );
     final concentration = effect.concentrationSave;
+    final fight = _encounterAfterHeroChange(campaign, effect.hero);
+    final rageEnded =
+        (campaign.encounter?.rageUntilRound ?? 0) > 0 &&
+        fight?.rageUntilRound == 0;
     final concentrationText = concentration != null
         ? ' Konzentrationsrettungswurf ${concentration.total} gegen SG '
               '${effect.concentrationDc}: ${effect.concentrationLost ? 'misslungen' : 'gelungen'}.'
@@ -826,16 +858,17 @@ class GameEngine {
         : '';
     return _commit(
       campaign,
-      campaign.copyWith(hero: effect.hero),
+      campaign.copyWith(hero: effect.hero, encounter: fight),
       '${source.trim()}: ${effect.damage} Schaden bestätigt. '
       '${effect.temporaryHitPointsAbsorbed} temporäre TP absorbiert; '
       'TP ${effect.hero.hitPoints}/${effect.hero.maxHitPoints}.'
-      '$concentrationText',
+      '$concentrationText${rageEnded ? ' Dein Kampfrausch endet wegen Handlungsunfähigkeit.' : ''}',
       type: 'effect.damage',
       payload: {
         'source': source.trim(),
         'targetId': campaign.hero.id,
         'critical': critical,
+        if (rageEnded) 'rageEndedByIncapacitation': true,
         ...effect.toJson(),
       },
     );
@@ -989,6 +1022,133 @@ class GameEngine {
     );
   }
 
+  static bool _isEndTurn(String words) => RegExp(
+    r'^(?:zug beenden|(?:ich )?beende (?:meinen|den) zug)[.!?]?$',
+  ).hasMatch(words.trim());
+
+  /// Ending a turn is not an action. Incapacitation cannot prevent it.
+  GameUpdate endHeroTurn(Campaign campaign) {
+    final fight = campaign.encounter;
+    if (fight == null ||
+        fight.isFinished ||
+        fight.activeParticipant != 'hero' ||
+        campaign.pendingRoll != null ||
+        campaign.pendingDeathSave != null ||
+        campaign.hero.isDead ||
+        !campaign.hero.isComplete) {
+      throw const FormatException(
+        'Der eigene Kampfzug kann jetzt nicht beendet werden.',
+      );
+    }
+    if (campaign.hero.hitPoints == 0 &&
+        !campaign.hero.conditions.contains(RulesEngine.stable) &&
+        !fight.deathSaveResolvedThisTurn) {
+      throw const FormatException(
+        'Zuerst den Todesrettungswurf für diesen Zug abschließen.',
+      );
+    }
+    final turn = _enemyTurn(campaign);
+    return _commit(
+      campaign,
+      turn.campaign,
+      'Du beendest deinen Zug. ${turn.narration} ${_nextInstruction(turn.campaign)}',
+      type: 'combat.turnCompleted',
+      payload: turn.details,
+    );
+  }
+
+  GameUpdate _completeDeathSave(
+    Campaign before,
+    Campaign next,
+    DeathSavingThrowResult result, {
+    Map<String, dynamic> payload = const {},
+    String type = 'roll.resolved',
+  }) {
+    final fight = next.encounter;
+    next = next.copyWith(
+      hero: result.hero,
+      pendingRoll: null,
+      pendingDeathSave: null,
+      encounter: fight != null && !fight.isFinished
+          ? fight.copyWith(deathSaveResolvedThisTurn: true)
+          : fight,
+    );
+    final outcome = result.hero.isDead
+        ? 'Dein Held stirbt; das Ereignis bleibt im Tagebuch.'
+        : result.hero.hitPoints! > 0
+        ? 'Du kommst mit einem Trefferpunkt wieder zu Bewusstsein und kannst deinen Zug fortsetzen.'
+        : result.hero.conditions.contains(RulesEngine.stable)
+        ? 'Du bist stabilisiert und bleibst bewusstlos.'
+        : 'Todesrettung: ${result.hero.deathSuccesses} Erfolge, ${result.hero.deathFailures} Fehlschläge.';
+    return _commit(
+      before,
+      next,
+      'Todesrettungswurf: Naturwurf ${result.roll.natural} ${_signed(result.roll.modifier)} = ${result.roll.total}. '
+      '$outcome${fight != null && !fight.isFinished && !result.hero.isDead && result.hero.hitPoints == 0 ? ' Beende jetzt deinen Zug; erst im nächsten eigenen Zug ist wieder eine Todesrettung fällig.' : ''}',
+      type: type,
+      payload: {
+        ...payload,
+        'roll': result.roll.toJson(),
+        'deathSave': true,
+        'passed': result.passed,
+        'rerolled': result.rerolled,
+        if (result.rerolled) ...{
+          'originalRoll': result.originalRoll.toJson(),
+          'resource': result.resource,
+          'fighterLevelBonus': result.fighterLevelBonus,
+        },
+      },
+    );
+  }
+
+  GameUpdate resolveDeathSaveDecision(
+    Campaign campaign, {
+    SavingThrowRerollFeature? feature,
+  }) {
+    final choice = campaign.pendingDeathSave;
+    if (choice == null) {
+      throw const FormatException('Keine offene Todesrettungsentscheidung.');
+    }
+    Campaign.fromJson(campaign.toJson());
+    final original = DeathSavingThrowRules.resolve(
+      hero: campaign.hero,
+      natural: choice.originalNatural,
+    );
+    if (feature == null) {
+      return _completeDeathSave(
+        campaign,
+        campaign,
+        original,
+        type: 'deathSave.resolved',
+        payload: {'decision': 'accepted'},
+      );
+    }
+    if (!DeathSavingThrowRules.canReroll(original, feature)) {
+      throw const FormatException(
+        'Diese Todesrettungswiederholung ist nicht verfügbar.',
+      );
+    }
+    final rolled = dice.check(
+      modifier:
+          DeathSavingThrowRules.modifier(campaign.hero) +
+          (feature == SavingThrowRerollFeature.indomitable
+              ? ClassResourceRules.level(campaign.hero, 'Kämpfer')
+              : 0),
+    );
+    final result = DeathSavingThrowRules.rerollFailed(
+      original: original,
+      natural: rolled.natural!,
+      feature: feature,
+    );
+    return _completeDeathSave(
+      campaign,
+      campaign,
+      result,
+      type: 'deathSave.resolved',
+      payload: {'decision': feature.name},
+    );
+  }
+
   GameUpdate act(Campaign campaign, String input) {
     final text = input.trim();
     if (text.isEmpty || text.length > 4000) {
@@ -997,6 +1157,41 @@ class GameEngine {
       );
     }
     final words = text.toLowerCase();
+    final deathCommand = RegExp(
+      r'^todesrettung (annehmen|wiederholen\s*:\s*(fokus|unbeugsam))[.!?]?$',
+    ).firstMatch(words);
+    if (campaign.pendingDeathSave != null || deathCommand != null) {
+      try {
+        if (deathCommand == null) {
+          throw const FormatException(
+            'Zuerst die offene Todesrettung annehmen oder wiederholen.',
+          );
+        }
+        return resolveDeathSaveDecision(
+          campaign,
+          feature: deathCommand.group(2) == null
+              ? null
+              : deathCommand.group(2) == 'fokus'
+              ? SavingThrowRerollFeature.disciplinedSurvivor
+              : SavingThrowRerollFeature.indomitable,
+        );
+      } on FormatException catch (error) {
+        return _commit(
+          campaign,
+          campaign,
+          error.message,
+          type: 'rules.blocked',
+        );
+      } on StateError catch (error) {
+        return _commit(
+          campaign,
+          campaign,
+          error.message.toString(),
+          type: 'rules.blocked',
+        );
+      }
+    }
+
     // A new class action or save request must never be mistaken for the
     // natural die value of an already pending attack/check.
     if (campaign.pendingRoll != null &&
@@ -1354,7 +1549,41 @@ class GameEngine {
         type: 'rules.blocked',
       );
     }
+    if (_isEndTurn(words)) {
+      try {
+        return endHeroTurn(current);
+      } on FormatException catch (error) {
+        return _commit(campaign, current, error.message, type: 'rules.blocked');
+      }
+    }
+    if (words.startsWith('selbstwiederherstellung') &&
+        current.encounter != null &&
+        !current.encounter!.isFinished) {
+      return _combatAction(campaign, current, words);
+    }
     if (current.hero.hitPoints == 0 && current.hero.isComplete) {
+      final fight = current.encounter;
+      if (fight != null &&
+          !fight.isFinished &&
+          fight.activeParticipant != 'hero') {
+        return _commit(
+          campaign,
+          current,
+          'Die Todesrettung ist erst zu Beginn deines eigenen Zugs fällig.',
+          type: 'rules.blocked',
+        );
+      }
+      if (fight != null &&
+          !fight.isFinished &&
+          fight.deathSaveResolvedThisTurn) {
+        return _commit(
+          campaign,
+          current,
+          'Die Todesrettung dieses Zugs ist abgeschlossen. Beende deinen Zug.',
+          type: 'rules.blocked',
+        );
+      }
+
       if (current.hero.conditions.contains(RulesEngine.stable)) {
         return _commit(
           campaign,
@@ -1369,7 +1598,8 @@ class GameEngine {
           pendingRoll: PendingRoll(
             id: _id('roll'),
             type: 'death',
-            modifier: 0,
+            modifier: DeathSavingThrowRules.modifier(current.hero),
+            deathSaveRulesVersion: 1,
             difficulty: 10,
           ),
         ),
@@ -1925,17 +2155,16 @@ class GameEngine {
   }
 
   GameUpdate _combatAction(Campaign before, Campaign current, String words) {
-    if (!ConditionRules.canTakeActions(current.hero) &&
-        !RegExp(r'beweg|lauf|geh').hasMatch(words)) {
-      return _commit(
-        before,
-        current,
-        'Dein aktueller Zustand verhindert diese Kampfhandlung.',
-        type: 'rules.blocked',
-      );
-    }
     final encounter = current.encounter!;
     if (words.startsWith('selbstwiederherstellung')) {
+      if (encounter.activeParticipant != 'hero') {
+        return _commit(
+          before,
+          current,
+          'Die Auswahl für Selbstwiederherstellung benötigt deinen eigenen Zug.',
+          type: 'rules.blocked',
+        );
+      }
       final match = RegExp(
         r'^selbstwiederherstellung\s*:\s*(bezaubert|verängstigt|vergiftet)\s*[.!?]?$',
       ).firstMatch(words);
@@ -1968,6 +2197,15 @@ class GameEngine {
           type: 'rules.blocked',
         );
       }
+    }
+    if (!ConditionRules.canTakeActions(current.hero) &&
+        !RegExp(r'beweg|lauf|geh').hasMatch(words)) {
+      return _commit(
+        before,
+        current,
+        'Dein aktueller Zustand verhindert diese Kampfhandlung.',
+        type: 'rules.blocked',
+      );
     }
     if (RegExp(
       r'kampfrausch.*verlänger|kampfrausch.*verlaenger',
@@ -2377,6 +2615,7 @@ class GameEngine {
   }) {
     final pending = campaign.pendingRoll;
     if (pending == null) throw StateError('Es ist keine Probe offen.');
+    if (pending.type == 'death') Campaign.fromJson(campaign.toJson());
     final result = dice.check(
       modifier: pending.modifier,
       natural: natural,
@@ -2412,16 +2651,33 @@ class GameEngine {
           'Todesrettung benötigt den natürlichen W20, kein Gesamtergebnis.',
         );
       }
-      next = next.copyWith(
-        hero: RulesEngine.deathSave(next.hero, result.natural!),
+      final resolved = DeathSavingThrowRules.resolve(
+        hero: next.hero,
+        natural: result.natural!,
       );
-      narration += next.hero.isDead
-          ? 'Dein Held stirbt; das Ereignis bleibt im Tagebuch.'
-          : next.hero.hitPoints! > 0
-          ? 'Du kommst mit einem Trefferpunkt wieder zu Bewusstsein. Was tust du?'
-          : next.hero.conditions.contains(RulesEngine.stable)
-          ? 'Du bist stabilisiert und bleibst bewusstlos. Du benötigst Hilfe.'
-          : 'Todesrettung: ${next.hero.deathSuccesses} Erfolge, ${next.hero.deathFailures} Fehlschläge. Fordere deinen nächsten Rettungswurf an.';
+      if (!resolved.passed &&
+          SavingThrowRerollFeature.values.any(
+            (feature) => DeathSavingThrowRules.canReroll(resolved, feature),
+          )) {
+        return _commit(
+          campaign,
+          next.copyWith(
+            pendingDeathSave: PendingDeathSave(
+              originalNatural: result.natural!,
+              modifier: resolved.roll.modifier,
+            ),
+          ),
+          'Vorläufiger Todesrettungswurf: ${resolved.roll.total} – misslungen. '
+          'Die Folgen sind noch nicht gebucht. Nimm den Wurf an oder wähle eine verfügbare Klassenwiederholung.',
+          type: 'deathSave.choicePending',
+          payload: {
+            ...payload,
+            'roll': resolved.roll.toJson(),
+            'provisional': true,
+          },
+        );
+      }
+      return _completeDeathSave(campaign, next, resolved, payload: payload);
     } else if (pending.type == 'attack') {
       final foe = next.encounter;
       if (foe == null || foe.id != pending.targetId || foe.isFinished) {
@@ -2762,8 +3018,24 @@ class GameEngine {
     bool disadvantage = false,
     bool advanceRound = true,
   }) {
-    final foe = campaign.encounter!;
+    final originalFight = campaign.encounter!;
+    var foe = advanceRound
+        ? CombatClassActions.afterHeroTurn(originalFight)
+        : originalFight;
     var hero = campaign.hero;
+    final rageExpired =
+        originalFight.rageUntilRound > 0 && foe.rageUntilRound == 0;
+    final incapacitated =
+        !ConditionRules.canTakeActions(hero) || hero.hitPoints == 0;
+    final rageEndedByIncapacitation = incapacitated && foe.rageUntilRound > 0;
+    if (incapacitated) {
+      hero = SpellcastingRules.endConcentration(hero);
+      foe = foe.copyWith(
+        rageStartedRound: 0,
+        rageUntilRound: 0,
+        dodgeActive: false,
+      );
+    }
     var restored = '';
     var restorationChoiceRequired = false;
     if (advanceRound) {
@@ -2778,7 +3050,11 @@ class GameEngine {
     final result = dice.check(
       modifier: foe.enemyAttackBonus,
       advantage: ConditionRules.hasUnconditionalAttackerAdvantage(hero),
-      disadvantage: disadvantage || foe.dodgeActive,
+      disadvantage:
+          (disadvantage || foe.dodgeActive) &&
+          ConditionRules.canTakeActions(hero) &&
+          (CharacterRuleEngine.speedMeters(hero) ?? 0) > 0 &&
+          !ConditionRules.has(hero, 'blind'),
     );
     final outcome = RulesEngine.attack(
       roll: result,
@@ -2789,6 +3065,8 @@ class GameEngine {
     final details = <String, dynamic>{
       'attackRoll': result.toJson(),
       'hit': outcome.hit,
+      if (rageExpired) 'rageExpiredAtTurnEnd': true,
+      if (rageEndedByIncapacitation) 'rageEndedByIncapacitation': true,
     };
     if (restored.isNotEmpty) {
       details['selfRestorationRemoved'] = restored;
@@ -2849,8 +3127,9 @@ class GameEngine {
     } else {
       narration += 'Der Angriff verfehlt dich.';
     }
-    final afterTurn = advanceRound
-        ? CombatClassActions.afterHeroTurn(foe)
+    final afterTurn =
+        !ConditionRules.canTakeActions(hero) || hero.hitPoints == 0
+        ? foe.copyWith(rageStartedRound: 0, rageUntilRound: 0)
         : foe;
     return _EnemyTurn(
       campaign.copyWith(
@@ -2863,6 +3142,7 @@ class GameEngine {
           attacksRemaining: 0,
           bonusActionUsed: false,
           spellSlotExpendedThisTurn: false,
+          deathSaveResolvedThisTurn: false,
           dodgeActive: false,
           disengagedThisTurn: false,
           jumpDoubledThisTurn: false,
@@ -2880,6 +3160,9 @@ class GameEngine {
 
   String _nextInstruction(Campaign campaign) => campaign.hero.isDead
       ? 'Dein Held ist gestorben.'
+      : campaign.hero.hitPoints == 0 &&
+            campaign.encounter?.deathSaveResolvedThisTurn == true
+      ? 'Die Todesrettung dieses Zugs ist abgeschlossen. Beende deinen Zug.'
       : campaign.hero.hitPoints == 0
       ? 'Du bist bewusstlos. Fordere einen Todesrettungswurf an.'
       : 'Dein nächster Zug beginnt. Was möchtest du tun?';
