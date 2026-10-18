@@ -45,13 +45,3 @@ jobs:
           git rm -- .github/workflows/fighter-format-once.yml
           git commit -m "style: offizielle Dart-Formatierung der neuen Kaempfer-Erstellung"
           git push origin HEAD:feature/fighter-start-xp-20261018
-; then
-            echo "Nicht erlaubte Aenderungen" >&2
-            exit 1
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- app/lib app/test
-          git rm -- .github/workflows/fighter-format-once.yml
-          git commit -m "style: offizielle Dart-Formatierung der neuen Kaempfer-Erstellung"
-          git push origin HEAD:feature/fighter-start-xp-20261018
