@@ -78,7 +78,10 @@ void main() {
       {'kind': 'magic', 'requiresAttunement': 'yes'},
       {'kind': 'magic', 'charges': 10, 'maxCharges': 4},
       {'kind': 'weapon', 'rangeNormalFt': 90, 'rangeLongFt': 20},
-      {'kind': 'weapon', 'weaponProperties': [11]},
+      {
+        'kind': 'weapon',
+        'weaponProperties': [11],
+      },
     ];
     for (final json in bad) {
       expect(

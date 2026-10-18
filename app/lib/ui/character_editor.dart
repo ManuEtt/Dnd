@@ -1062,17 +1062,21 @@ class _InventoryItemDialogState extends State<_InventoryItemDialog> {
         : InventoryItemStats.fromCatalog(catalog);
   }
 
-  late final InventoryItemStats _initial = widget.item?.stats ??
-      _catalogDefaults();
+  late final InventoryItemStats _initial =
+      widget.item?.stats ?? _catalogDefaults();
   late InventoryItemKind _kind = _initial.kind;
   late bool? _stealthDisadvantage = _initial.stealthDisadvantage;
   late bool? _attunement = _initial.requiresAttunement;
   late final Map<String, TextEditingController> _values = {
     'priceCp': TextEditingController(text: _initial.priceCp?.toString() ?? ''),
-    'weightLb': TextEditingController(text: _initial.weightLb?.toString() ?? ''),
+    'weightLb': TextEditingController(
+      text: _initial.weightLb?.toString() ?? '',
+    ),
     'damage': TextEditingController(text: _initial.damage ?? ''),
     'damageType': TextEditingController(text: _initial.damageType ?? ''),
-    'versatileDamage': TextEditingController(text: _initial.versatileDamage ?? ''),
+    'versatileDamage': TextEditingController(
+      text: _initial.versatileDamage ?? '',
+    ),
     'weaponProperties': TextEditingController(
       text: _initial.weaponProperties.join(', '),
     ),
@@ -1083,7 +1087,9 @@ class _InventoryItemDialogState extends State<_InventoryItemDialog> {
     'rangeLongFt': TextEditingController(
       text: _initial.rangeLongFt?.toString() ?? '',
     ),
-    'ammunitionType': TextEditingController(text: _initial.ammunitionType ?? ''),
+    'ammunitionType': TextEditingController(
+      text: _initial.ammunitionType ?? '',
+    ),
     'armorBaseAc': TextEditingController(
       text: _initial.armorBaseAc?.toString() ?? '',
     ),
@@ -1132,9 +1138,8 @@ class _InventoryItemDialogState extends State<_InventoryItemDialog> {
       controller: _values[key],
       maxLines: lines,
       decoration: InputDecoration(labelText: label),
-      validator: (value) => (value?.length ?? 0) > 2000
-          ? 'Maximal 2000 Zeichen.'
-          : null,
+      validator: (value) =>
+          (value?.length ?? 0) > 2000 ? 'Maximal 2000 Zeichen.' : null,
     ),
   );
 
@@ -1293,7 +1298,11 @@ class _InventoryItemDialogState extends State<_InventoryItemDialog> {
                       : 'Basis-Rüstungsklasse',
                   max: 50,
                 ),
-                _itemNumber('dexCap', 'Maximaler Geschicklichkeitsbonus', max: 50),
+                _itemNumber(
+                  'dexCap',
+                  'Maximaler Geschicklichkeitsbonus',
+                  max: 50,
+                ),
                 _itemNumber('strengthMin', 'Stärkemindestwert', max: 30),
                 _optionalFlag(
                   'Nachteil auf Heimlichkeit',
@@ -1351,9 +1360,9 @@ class _InventoryItemDialogState extends State<_InventoryItemDialog> {
               ),
             );
           } on FormatException catch (error) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(error.message)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(error.message)));
           }
         },
         child: const Text('Speichern'),

@@ -160,48 +160,46 @@ void main() {
     },
   );
 
-  testWidgets('Eigene Waffenwerte stehen in getrennten Inventarfeldern',
-    (tester) async {
-      HeroCharacter? result;
-      await openEditor(
-        tester,
-        HeroCharacter(id: 'custom-hero', name: 'Elowen'),
-        (hero) => result = hero,
-      );
-      final addItemButton = find.byKey(
-        const ValueKey('character-inventory-add'),
-      );
-      final list = find.byType(ListView).first;
-      for (var step = 0; step < 60; step++) {
-        if (addItemButton.hitTestable().evaluate().isNotEmpty) break;
-        await tester.drag(list, const Offset(0, -160));
-        await tester.pumpAndSettle();
-      }
-      await tester.tap(addItemButton);
+  testWidgets('Eigene Waffenwerte stehen in getrennten Inventarfeldern', (
+    tester,
+  ) async {
+    HeroCharacter? result;
+    await openEditor(
+      tester,
+      HeroCharacter(id: 'custom-hero', name: 'Elowen'),
+      (hero) => result = hero,
+    );
+    final addItemButton = find.byKey(const ValueKey('character-inventory-add'));
+    final list = find.byType(ListView).first;
+    for (var step = 0; step < 60; step++) {
+      if (addItemButton.hitTestable().evaluate().isNotEmpty) break;
+      await tester.drag(list, const Offset(0, -160));
       await tester.pumpAndSettle();
-      await tester.enterText(field('Name'), 'Eigener Säbel');
-      await tester.tap(find.byKey(const ValueKey('item-stat-kind')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Waffe').last);
-      await tester.pumpAndSettle();
-      final damage = find.byKey(const ValueKey('item-stat-damage'));
-      await tester.ensureVisible(damage);
-      await tester.enterText(damage, '1d6');
-      final damageType = find.byKey(const ValueKey('item-stat-damageType'));
-      await tester.ensureVisible(damageType);
-      await tester.enterText(damageType, 'Hieb');
-      await tester.tap(find.widgetWithText(FilledButton, 'Speichern'));
-      await tester.pumpAndSettle();
-      await save(tester);
-      expect(result, isNotNull);
-      final item = result!.inventory.single;
-      expect(item.stats!.kind, InventoryItemKind.weapon);
-      expect(item.stats!.damage, '1d6');
-      expect(item.stats!.damageType, 'Hieb');
-      expect(item.catalogId, isEmpty);
-      expect(item.description, isEmpty);
-    },
-  );
+    }
+    await tester.tap(addItemButton);
+    await tester.pumpAndSettle();
+    await tester.enterText(field('Name'), 'Eigener Säbel');
+    await tester.tap(find.byKey(const ValueKey('item-stat-kind')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Waffe').last);
+    await tester.pumpAndSettle();
+    final damage = find.byKey(const ValueKey('item-stat-damage'));
+    await tester.ensureVisible(damage);
+    await tester.enterText(damage, '1d6');
+    final damageType = find.byKey(const ValueKey('item-stat-damageType'));
+    await tester.ensureVisible(damageType);
+    await tester.enterText(damageType, 'Hieb');
+    await tester.tap(find.widgetWithText(FilledButton, 'Speichern'));
+    await tester.pumpAndSettle();
+    await save(tester);
+    expect(result, isNotNull);
+    final item = result!.inventory.single;
+    expect(item.stats!.kind, InventoryItemKind.weapon);
+    expect(item.stats!.damage, '1d6');
+    expect(item.stats!.damageType, 'Hieb');
+    expect(item.catalogId, isEmpty);
+    expect(item.description, isEmpty);
+  });
 
   testWidgets(
     'SRD catalog item is stored with an immutable catalog reference',

@@ -88,6 +88,7 @@ class InventoryItem {
 
   /// Optional catalog reference; legacy and user-defined items leave it empty.
   final String catalogId;
+
   /// Eigene Werte werden separat gespeichert und nie aus Beschreibungstext gelesen.
   final InventoryItemStats? stats;
   final String id, name, description;

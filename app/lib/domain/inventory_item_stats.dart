@@ -59,6 +59,7 @@ class InventoryItemStats {
   final String? damage, damageType, versatileDamage, mastery, ammunitionType;
   final List<String> weaponProperties;
   final int? rangeNormalFt, rangeLongFt;
+
   /// Basis-RK bei Rüstungen; RK-Bonus bei Schilden.
   final int? armorBaseAc, dexCap, strengthMin;
   final bool? stealthDisadvantage;
@@ -99,9 +100,7 @@ class InventoryItemStats {
       armorBaseAc: entry.armorBaseAc,
       dexCap: entry.dexCap,
       strengthMin: entry.strengthMin,
-      stealthDisadvantage: entry.isArmor
-          ? entry.stealthDisadvantage
-          : null,
+      stealthDisadvantage: entry.isArmor ? entry.stealthDisadvantage : null,
     );
   }
 
@@ -120,17 +119,20 @@ class InventoryItemStats {
     if (armorBaseAc != null) 'armorBaseAc': armorBaseAc,
     if (dexCap != null) 'dexCap': dexCap,
     if (strengthMin != null) 'strengthMin': strengthMin,
-    if (stealthDisadvantage != null)
-      'stealthDisadvantage': stealthDisadvantage,
+    if (stealthDisadvantage != null) 'stealthDisadvantage': stealthDisadvantage,
     if (rarity != null) 'rarity': rarity,
-    if (requiresAttunement != null)
-      'requiresAttunement': requiresAttunement,
+    if (requiresAttunement != null) 'requiresAttunement': requiresAttunement,
     if (charges != null) 'charges': charges,
     if (maxCharges != null) 'maxCharges': maxCharges,
     if (effect != null) 'effect': effect,
   };
 
-  static int? _integer(dynamic value, String name, {int min = 0, int max = 1000000}) {
+  static int? _integer(
+    dynamic value,
+    String name, {
+    int min = 0,
+    int max = 1000000,
+  }) {
     if (value == null) return null;
     if (value is! int || value < min || value > max) {
       throw FormatException('$name ist ungültig.');
@@ -181,12 +183,16 @@ class InventoryItemStats {
     final charges = _integer(data['charges'], 'Aktuelle Ladungen');
     final maxCharges = _integer(data['maxCharges'], 'Maximale Ladungen');
     if (charges != null && maxCharges != null && charges > maxCharges) {
-      throw const FormatException('Aktuelle Ladungen überschreiten das Maximum.');
+      throw const FormatException(
+        'Aktuelle Ladungen überschreiten das Maximum.',
+      );
     }
     final normal = _integer(data['rangeNormalFt'], 'Normale Reichweite');
     final long = _integer(data['rangeLongFt'], 'Maximale Reichweite');
     if (normal != null && long != null && normal > long) {
-      throw const FormatException('Normale Reichweite überschreitet maximale Reichweite.');
+      throw const FormatException(
+        'Normale Reichweite überschreitet maximale Reichweite.',
+      );
     }
     return InventoryItemStats(
       kind: kind,
@@ -205,7 +211,10 @@ class InventoryItemStats {
       armorBaseAc: _integer(data['armorBaseAc'], 'Rüstungsklasse', max: 50),
       dexCap: _integer(data['dexCap'], 'Geschicklichkeitsgrenze', max: 50),
       strengthMin: _integer(data['strengthMin'], 'Stärkeanforderung', max: 30),
-      stealthDisadvantage: _flag(data['stealthDisadvantage'], 'Heimlichkeitsnachteil'),
+      stealthDisadvantage: _flag(
+        data['stealthDisadvantage'],
+        'Heimlichkeitsnachteil',
+      ),
       rarity: _text(data['rarity'], 'Seltenheit'),
       requiresAttunement: _flag(data['requiresAttunement'], 'Einstimmung'),
       charges: charges,
