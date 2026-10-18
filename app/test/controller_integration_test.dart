@@ -42,16 +42,29 @@ class ControlledRepository implements CampaignRepository {
   @override
   Future<Campaign?> getCampaign(String id) => delegate.getCampaign(id);
   @override
+  Future<void> deleteCampaign(String id) => delegate.deleteCampaign(id);
+  @override
   Future<List<HeroCharacter>> loadCharacters() => delegate.loadCharacters();
+  @override
+  Future<void> saveCharacter(HeroCharacter character) =>
+      delegate.saveCharacter(character);
+  @override
+  Future<void> deleteCharacter(String id) => delegate.deleteCharacter(id);
   @override
   Future<Map<String, dynamic>> loadSettings() => delegate.loadSettings();
   @override
   Future<void> saveSettings(Map<String, dynamic> settings) =>
       delegate.saveSettings(settings);
   @override
-  Future<void> close() => delegate.close();
+  Future<String> exportCampaign(String id) => delegate.exportCampaign(id);
   @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+  Future<Campaign> importCampaign(String source) =>
+      delegate.importCampaign(source);
+  @override
+  Future<Campaign?> reconstructCampaign(String id, {int? revision}) =>
+      delegate.reconstructCampaign(id, revision: revision);
+  @override
+  Future<void> close() => delegate.close();
 }
 
 void main() {
@@ -167,6 +180,7 @@ void main() {
     'historical Arescan loads with unknown stats and blocks combat',
     () async {
       await importLegacyArescan(controller);
+      expect(controller.error, isNull);
       final history = controller.currentCampaign!;
       expect(
         history.hero.abilities.values.every((value) => value == null),
