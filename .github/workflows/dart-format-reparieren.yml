@@ -1,0 +1,101 @@
+name: Dart-Formatierung reparieren
+
+# Einmaliger, manuell ausgeloester Fix. Keine Codex-Automatisierung.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  repair:
+    name: Dateien formatieren und Pull Request vorbereiten
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Aktuellen Hauptbranch auschecken
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - name: Offiziellen Flutter- und Dart-Formatter bereitstellen
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Dart-Dateien automatisch und vollstaendig formatieren
+        working-directory: app
+        run: |
+          set -euo pipefail
+          dart --version
+          dart format lib test
+          dart format --output=none --set-exit-if-changed lib test
+      - name: Reparatur auf gueltige und begrenzte Aenderungen pruefen
+        id: check
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          git diff --name-only
+          if git diff --quiet; then
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+            echo 'Die Dart-Quelldateien sind bereits korrekt formatiert.'
+          else
+            echo 'changed=true' >> "$GITHUB_OUTPUT"
+            if git diff --name-only | grep -vE '^app/(lib|test)/.*\.dart$'; then
+              echo 'Unerwartete Dateiaenderungen. Abbruch.' >&2
+              exit 1
+            fi
+          fi
+      - name: Anwendbaren Patch und alle formatierten Dateien sichern
+        if: steps.check.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/formatreparatur"
+          mkdir -p "$OUT/files"
+          git diff --binary -- app/lib app/test > "$OUT/dart_format_reparatur.patch"
+          git diff --name-only -- app/lib app/test > "$OUT/GEAENDERTE_DATEIEN.txt"
+          while IFS= read -r path; do
+            mkdir -p "$OUT/files/$(dirname "$path")"
+            cp -- "$path" "$OUT/files/$path"
+          done < "$OUT/GEAENDERTE_DATEIEN.txt"
+          {
+            echo 'Dart-format-Korrektur fuer den unten angegebenen Stand.'
+            echo "Ausgangscommit: $(git rev-parse HEAD)"
+            echo 'Diese Dateien wurden mit dem offiziellen Dart-SDK formatiert.'
+            echo 'Den Patch nur auf denselben Commit anwenden oder Dateien gezielt uebernehmen.'
+          } > "$OUT/HINWEISE.txt"
+          (cd "$OUT" && sha256sum dart_format_reparatur.patch > SHA256SUMS.txt)
+      - name: Formatierten Quellcode auch ohne Schreibrechte herunterladen koennen
+        if: steps.check.outputs.changed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: wuerfelraunen-dart-format-reparatur-${{ github.run_id }}
+          path: ${{ runner.temp }}/formatreparatur/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Eigenen Reparaturbranch und Pull Request erstellen (nur bei Berechtigung)
+        if: steps.check.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          branch="fix/dart-format-${GITHUB_RUN_ID}"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git checkout -b "$branch"
+          git add -- app/lib app/test
+          git commit -m 'style: Dart-Formatierung fuer Flutter-CI reparieren'
+          if git push origin "$branch"; then
+            if ! gh pr create --base main --head "$branch" \
+              --title 'fix: Dart-Formatierung der Flutter-Dateien' \
+              --body 'Reine Dart-Formatierung per offizieller SDK-Version 3.35.7; keine bewusst geaenderte Spiellogik. Bitte Android-CI im PR pruefen und danach mergen.'; then
+              echo '::warning::Branch gepusht, Pull Request bitte im GitHub-Webinterface oeffnen.'
+            fi
+          else
+            echo '::warning::GitHub-Schreibzugriff fehlt. Das Artefakt enthaelt bereits die formatierten Dateien und einen Patch.'
+          fi
