@@ -2630,7 +2630,7 @@ class GameEngine {
         payload['rageExtendedUntilRound'] = rolledFight.rageUntilRound;
       }
       if (outcome.hit) {
-        final expression = isOffhand ? offhand!.damage : next.hero.weaponDamage;
+        final expression = isOffhand ? offhand!.damage! : next.hero.weaponDamage;
         final base = dice.roll(expression);
         final extra = outcome.critical ? dice.roll(expression) : null;
         final weaponDamage = isOffhand
