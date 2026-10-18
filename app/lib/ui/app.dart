@@ -2504,7 +2504,9 @@ Future<void> _showInventory(BuildContext context, HeroCharacter hero) {
               FantasyPanel(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: _journalItems(data[entry.key]),
+                  children: _journalItems(
+                    entry.key == 'conditions' ? hero.conditions : data[entry.key],
+                  ),
                 ),
               ),
             ],
