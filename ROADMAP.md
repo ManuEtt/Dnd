@@ -1,8 +1,8 @@
 ## Nächstes Inkrement nach PR #7 – quellgebundene Zustände (18.10.2026)
 
 1. PR #7 erst nach vollständig grünen Flutter-/Dart-/Backend-/Android-Checks abnehmen; notwendige Fehlerursachen tatsächlich beheben.
-2. Bestätigte `conditionEffect`-Aktionen durch GameEngine → GameController → SQLite-Checkpoint und deutsche Dialoge autorisiert anbinden; Quelle/Zustand/Endpunkt pro Aktion validieren und eine einzelne Effekt-ID gezielt beenden.
-3. Sofortige Folgen von Handlungsunfähigkeit für Konzentration, Kampfrausch und Ausweichen sowie unbewusste Lagefolgen, Monster-/Zauberquellen und ausstehende Wiederholungsentscheidungen korrekt abgrenzen; Rollback, Import/Export und Widgettests durchführen.
+2. Bestätigte `conditionEffect`-Aktionen durch GameEngine → GameController → SQLite-Checkpoint und deutsche Dialoge sind im PR #7 umgesetzt; Tests/Build und Gerät noch abzunehmen. Quelle/Zustand/Endpunkt sowie Einzelentfernung werden bestätigt.
+3. Sofortiges Ende von Konzentration/Kampfrausch/Ausweichen wurde angebunden; nach CI noch importierte Fälle und zeitliche Kanten prüfen. Unbewusste Lagefolgen, Monster-/Zauberquellen und ausstehende Wiederholungsentscheidungen weiter abgrenzen; zusätzliche Import-/Export-/Gerätetests durchführen.
 4. SRD-Matrix schrittweise für weitere Klassen, Zauber und Gegenstände erweitern; keinesfalls als vollständige Regelabdeckung ausgeben.
 
 ## Ab 0.7.3+43 – Klassenfähigkeiten, Stabilität und nächster Build
