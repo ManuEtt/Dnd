@@ -22,8 +22,7 @@ class ConditionEffect {
     if (this.source.isEmpty || this.source.length > 200) {
       throw const FormatException('Ungültige Zustandsquelle.');
     }
-    if ((expiresInEncounterId == null) !=
-        (expiresAtOwnTurnEndRound == null)) {
+    if ((expiresInEncounterId == null) != (expiresAtOwnTurnEndRound == null)) {
       throw const FormatException('Unvollständiger Zugendpunkt.');
     }
     if (expiresInEncounterId != null &&

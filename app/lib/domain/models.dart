@@ -654,9 +654,10 @@ class HeroCharacter {
       gold: _nullableInt(j['gold'], 'Gold'),
       experience: _nullableInt(j['experience'], 'Erfahrung'),
       conditions: _strings(j['conditions'], 'Zustände'),
-      conditionEffects: _list(j['conditionEffects'], 'Zustandseffekte')
-          .map(ConditionEffect.fromJson)
-          .toList(),
+      conditionEffects: _list(
+        j['conditionEffects'],
+        'Zustandseffekte',
+      ).map(ConditionEffect.fromJson).toList(),
       exhaustionLevel: _int(
         j['exhaustionLevel'],
         'Erschöpfung',

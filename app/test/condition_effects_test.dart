@@ -62,29 +62,35 @@ void main() {
     expect(afterA.conditions, ['vergiftet']);
     expect(afterA.conditionEffects.map((e) => e.id), ['b']);
     expect(ConditionEffectRules.removeById(afterA, 'b').conditions, isEmpty);
-    expect(() => ConditionEffectRules.removeById(afterA, 'missing'), throwsStateError);
+    expect(
+      () => ConditionEffectRules.removeById(afterA, 'missing'),
+      throwsStateError,
+    );
     expect(() => ConditionEffectRules.add(afterA, b), throwsStateError);
   });
 
-  test('manuelle Einträge und Quellen bleiben in beide Richtungen getrennt', () {
-    final stored = hero(
-      conditions: ['vergiftet', 'liegend'],
-      effects: [effect('source')],
-    );
-    expect(stored.conditions, ['vergiftet', 'liegend']);
-    final sourceGone = ConditionEffectRules.removeById(stored, 'source');
-    expect(sourceGone.conditions, ['vergiftet', 'liegend']);
-    final manualGone = stored.copyWith(conditions: ['liegend']);
-    expect(manualGone.conditions, ['liegend', 'vergiftet']);
-    expect(manualGone.conditionEffects, hasLength(1));
-    expect(
-      ConditionEffectRules.endCondition(stored, 'vergiftet').conditions,
-      ['liegend'],
-    );
-    expect(stored.manualConditions, ['vergiftet', 'liegend']);
-    expect(() => stored.conditions.add('betäubt'), throwsUnsupportedError);
-    expect(() => stored.conditionEffects.clear(), throwsUnsupportedError);
-  });
+  test(
+    'manuelle Einträge und Quellen bleiben in beide Richtungen getrennt',
+    () {
+      final stored = hero(
+        conditions: ['vergiftet', 'liegend'],
+        effects: [effect('source')],
+      );
+      expect(stored.conditions, ['vergiftet', 'liegend']);
+      final sourceGone = ConditionEffectRules.removeById(stored, 'source');
+      expect(sourceGone.conditions, ['vergiftet', 'liegend']);
+      final manualGone = stored.copyWith(conditions: ['liegend']);
+      expect(manualGone.conditions, ['liegend', 'vergiftet']);
+      expect(manualGone.conditionEffects, hasLength(1));
+      expect(
+        ConditionEffectRules.endCondition(stored, 'vergiftet').conditions,
+        ['liegend'],
+      );
+      expect(stored.manualConditions, ['vergiftet', 'liegend']);
+      expect(() => stored.conditions.add('betäubt'), throwsUnsupportedError);
+      expect(() => stored.conditionEffects.clear(), throwsUnsupportedError);
+    },
+  );
 
   test('Schema 1 JSON, Kopieren, Schaden und Heilung bewahren Quellbesitz', () {
     final original = hero(
@@ -168,32 +174,34 @@ void main() {
       () => ConditionEffect(id: 'x', condition: 'blind', source: '  '),
       throwsFormatException,
     );
+    expect(() => effect('x', encounter: 'fight'), throwsFormatException);
+    expect(() => effect('x', round: 2), throwsFormatException);
     expect(
-      () => effect('x', encounter: 'fight'),
+      () => effect('x', encounter: 'fight', round: 0),
       throwsFormatException,
     );
-    expect(
-      () => effect('x', round: 2),
-      throwsFormatException,
-    );
-    expect(() => effect('x', encounter: 'fight', round: 0), throwsFormatException);
     final duplicate = effect('dup');
-    expect(
-      () => hero(effects: [duplicate, duplicate]),
-      throwsFormatException,
-    );
+    expect(() => hero(effects: [duplicate, duplicate]), throwsFormatException);
     final json = hero().toJson();
     expect(
       () => HeroCharacter.fromJson({
         ...json,
         'conditionEffects': [
-          {'id': 'x', 'condition': 'blind', 'source': 'Trap', 'expiresAtOwnTurnEndRound': '2'},
+          {
+            'id': 'x',
+            'condition': 'blind',
+            'source': 'Trap',
+            'expiresAtOwnTurnEndRound': '2',
+          },
         ],
       }),
       throwsFormatException,
     );
     expect(
-      () => HeroCharacter.fromJson({...json, 'conditionEffects': [true]}),
+      () => HeroCharacter.fromJson({
+        ...json,
+        'conditionEffects': [true],
+      }),
       throwsFormatException,
     );
   });
@@ -217,10 +225,7 @@ void main() {
       level: 5,
       effects: [effect('a'), effect('b')],
     );
-    final result = PaladinLayOnHands.useOnSelf(
-      paladin,
-      removePoisoned: true,
-    );
+    final result = PaladinLayOnHands.useOnSelf(paladin, removePoisoned: true);
     expect(result.poisonedRemoved, isTrue);
     expect(result.hero.conditions, isEmpty);
     expect(result.hero.conditionEffects, isEmpty);
