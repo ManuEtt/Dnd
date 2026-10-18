@@ -981,7 +981,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
                         Text(
                           'Aktive Konzentration: ${_original['concentratingOn']}',
                         ),
-                      _text('conditions', 'Aktuelle Zustände', lines: 2),
+                      _text('conditions', 'Manuelle Zustände', lines: 2),
                       _number(
                         'exhaustionLevel',
                         'Erschöpfung (0–6)',
