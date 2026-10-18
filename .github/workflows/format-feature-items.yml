@@ -1,0 +1,36 @@
+name: Einmalige Dart-Formatierung des Item-Branches
+on:
+  push:
+    branches:
+      - feature/structured-inventory-20261018
+    paths:
+      - .github/workflows/format-feature-items.yml
+permissions:
+  contents: write
+jobs:
+  formatter:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/structured-inventory-20261018
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Formatierung durch offizielles Dart-SDK
+        run: |
+          cd app
+          flutter pub get
+          dart format lib test
+          dart format --output=none --set-exit-if-changed lib test
+      - name: Formatierte Dateien im Feature-Branch speichern
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/lib app/test
+          if ! git diff --cached --quiet; then
+            git commit -m "style: Flutter-Dartdateien mit 3.35.7 formatieren"
+            git push origin HEAD:feature/structured-inventory-20261018
+          fi
