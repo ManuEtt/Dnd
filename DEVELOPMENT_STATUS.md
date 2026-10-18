@@ -3,7 +3,8 @@
 - PR [#7](https://github.com/ManuEtt/Dnd/pull/7) gegen `main`; kein Merge und keine Veränderung von `main`.
 - Quellenabhängige 2024-SRD-Zustände als eigene validierte `ConditionEffect`-Einträge, optionales JSON-Feld, deduplizierte effektive Zustände. Reine Domänenaktionen für Einzelentfernung, Gesamtentfernung und eigenen Zugendpunkt; vorhandene Regelmutatoren bewahren die Trennung.
 - Regelanzeige/Quellenanzeige im Charakterbogen; manuelle Einträge bleiben separat editierbar. Neue Domain-/Widgettests wurden eingereicht; Ergebnis des endgültigen PR-CI ist vor Freigabe zu prüfen.
-- **Noch offen:** neue autorisierte Controller-/UI-Erstell- und Löschaktionen, sofortige Konzentrations-/Ragefolgen bei neuer Handlungsunfähigkeit, vollständige SQLite-/Rollback-/Revisions- und Geräteabnahme. Keine vollständige SRD-Abdeckung behaupten.
+- **Ergänzt im gleichen PR:** bestätigte UI-/Controller-Aktionen für Quellen und Einzelentfernung; neue Handlungsunfähigkeit beendet Konzentration/Rage/Dodge sofort. Domänen-, Dialog- und SQLite-Konflikt-/Rollbacktests ergänzt. README aktualisiert.
+- **Noch offen:** erfolgreiche endgültige CI-/APK-Abnahme aller Änderungen, Geräteabnahme, allgemeine Weltzeit und breitere SRD-Effektmechaniken. Keine vollständige SRD-Abdeckung behaupten.
 - Checkpoint: PR #7 und dieser Branch. Ein neuer Lauf muss HEAD/PR-Checks erneut abfragen und erst bei grünem Status weiter integrieren. Kein automatischer Codex-Workflow.
 
 ## Abschlussprüfung 0.7.9+49 (18.10.2026)
