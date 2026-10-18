@@ -49,7 +49,7 @@ Die Alpha bewahrt Verlauf und strukturierte Weltinformationen lokal. `MemoryEngi
 
 Eine ausgewählte Importdatei füllt zunächst den bearbeitbaren JSON-Dialog. Erst die ausdrückliche Importbestätigung ruft die bestehende versionierte und transaktionale Repositoryvalidierung auf. Export schreibt einen bestätigten Snapshot; er ändert keine Kampagnenrevision. Die Dateiauswahl bleibt austauschbar und wird in Tests simuliert. Ohne native Unterstützung bleiben JSON-Text und Zwischenablage nutzbar. Sicherungen sind nicht verschlüsselt, und ein gewählter Cloud-Dokumentanbieter ist kein garantierter Offline-Speicher.
 
-## Arescan als historischer Import
+## Optionale Altdaten über JSON-Import (keine feste Arescan-Kampagne)
 
 Der Testspielstand hält die bekannte Erzählung und markiert fehlende Charakterwerte. Der historische Gesamtangriff 19 und der erzählte Schaden 14 werden nicht nachträglich als beweiskräftige Würfelergebnisse einer vollständigen Charakterberechnung umgedeutet. Der alte, ungeprüfte Modifikator +7 darf keine Grundlage neuer Würfe sein. Die Charaktervervollständigung ist eine ausdrückliche Benutzereingabe; neue Werte verändern die vorhandene Geschichte nicht rückwirkend.
 

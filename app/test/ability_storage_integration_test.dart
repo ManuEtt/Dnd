@@ -9,6 +9,7 @@ import 'package:lebendiger_spielleiter/domain/ability_generation.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/domain/rules_engine.dart';
 import 'package:lebendiger_spielleiter/services/game_controller.dart';
+import 'support/legacy_campaign_fixture.dart';
 
 AbilityGenerationResult standardSoldier() =>
     AbilityAllocation(
@@ -252,7 +253,7 @@ void main() {
   test(
     'Arescan completion retains unverified history and still blocks new attacks',
     () async {
-      await controller.createArescan();
+      await importLegacyArescan(controller);
       final initial = controller.currentCampaign!;
       final history = initial.events.single.toJson();
       final generated = pointBuyCriminal();

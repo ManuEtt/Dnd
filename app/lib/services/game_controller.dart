@@ -95,7 +95,6 @@ class GameController extends ChangeNotifier {
   }
 
   Future<void> createDemo() => _run(() => _create(engine.createDemo()));
-  Future<void> createArescan() => _run(() => _create(engine.createArescan()));
   Future<void> newCampaign(HeroCharacter hero) => _run(() async {
     final valid = HeroCharacter.fromJson(hero.toJson());
     await _create(engine.createDemo(hero: valid));

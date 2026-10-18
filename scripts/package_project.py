@@ -66,7 +66,7 @@ def source_paths(root: Path) -> list[Path]:
 
 REQUIRED_FILES = {
     'app/lib/main.dart', 'app/pubspec.lock', 'backend/package-lock.json',
-    '.github/workflows/android-build.yml', 'app/assets/arescan.json', 'README.md',
+    '.github/workflows/android-build.yml', 'app/assets/demo.json', 'README.md',
 }
 
 def create_archive(root: Path, output: Path, *, layout: str = 'folder') -> tuple[int, str]:

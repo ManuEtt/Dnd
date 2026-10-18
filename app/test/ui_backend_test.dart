@@ -9,6 +9,7 @@ import 'package:lebendiger_spielleiter/services/backend_narrator.dart';
 import 'package:lebendiger_spielleiter/services/game_controller.dart';
 import 'package:lebendiger_spielleiter/services/voice_controller.dart';
 import 'package:lebendiger_spielleiter/ui/app.dart';
+import 'support/legacy_campaign_fixture.dart';
 
 class _SilentVoice extends VoiceController {
   @override
@@ -348,7 +349,7 @@ void main() {
         narrator: narrator,
       );
       final voice = _SilentVoice();
-      await tester.runAsync(controller.createArescan);
+      await tester.runAsync(() => importLegacyArescan(controller));
       await narrator.connect(
         url: 'https://spielleiter.example.org',
         sessionToken: 'short_session.signature',

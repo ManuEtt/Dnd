@@ -11,6 +11,7 @@ import 'package:lebendiger_spielleiter/services/backup_files.dart';
 import 'package:lebendiger_spielleiter/services/game_controller.dart';
 import 'package:lebendiger_spielleiter/services/voice_controller.dart';
 import 'package:lebendiger_spielleiter/ui/app.dart';
+import 'support/legacy_campaign_fixture.dart';
 
 class _SilentVoice extends VoiceController {
   @override
@@ -201,7 +202,7 @@ void main() {
     final fixture = await _start(tester, files);
     final previous = fixture.controller.currentCampaign!.toJson();
     final source = jsonEncode(
-      fixture.controller.engine.createArescan().toJson(),
+      legacyArescanCampaign().toJson(),
     );
     files.open = () async => source;
     await _import(tester);

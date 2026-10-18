@@ -39,6 +39,16 @@ class ProjectArchiveTests(unittest.TestCase):
             self.assertEqual(output.with_suffix('.zip.sha256').read_text(),
                              f'{digest}  {output.name}\n')
 
+    def test_arescan_is_only_a_compatibility_test_fixture(self):
+        root = Path(__file__).resolve().parents[2]
+        self.assertFalse((root / 'app/assets/arescan.json').exists())
+        self.assertTrue((root / 'app/test/fixtures/arescan_legacy.json').is_file())
+        runtime_ui = (root / 'app/lib/ui/app.dart').read_text(encoding='utf-8')
+        engine = (root / 'app/lib/domain/game_engine.dart').read_text(encoding='utf-8')
+        self.assertNotIn('Arescan-Spielstand laden', runtime_ui)
+        self.assertNotIn('createArescan(', engine)
+        self.assertNotIn('_arescan(', engine)
+
     def test_secrets_personal_saves_and_build_outputs_never_enter_archive(self):
         for name in ['.env', 'backend/.env.production', 'save.db', 'save.db-wal',
                      'signing.keystore', 'app/build/app-debug.apk',

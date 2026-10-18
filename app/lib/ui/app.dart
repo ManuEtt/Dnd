@@ -555,25 +555,6 @@ class _HomePage extends StatelessWidget {
             },
           ),
         const SizedBox(height: 20),
-        const FantasySectionTitle(
-          title: 'Das Herz der Ewigkeit',
-          icon: Icons.history_edu_outlined,
-        ),
-        const SizedBox(height: 8),
-        const Text(
-          'Arescan steht in Silberhain neben der Elfenmagierin und einem verletzten '
-          'Schattenritter. Sein rotes Amulett leuchtet. Der historische Angriff von 19 und '
-          'der erzählte Schaden von 14 werden bewahrt; fehlende Charakterwerte bleiben unbestätigt.',
-        ),
-        const SizedBox(height: 12),
-        OutlinedButton.icon(
-          onPressed: controller.busy
-              ? null
-              : () => onPlay(controller.createArescan),
-          icon: const Icon(Icons.history_edu),
-          label: const Text('Arescan-Spielstand laden'),
-        ),
-        const SizedBox(height: 20),
         OutlinedButton.icon(
           onPressed: controller.busy
               ? null

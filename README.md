@@ -213,19 +213,31 @@ benötigen eine zusätzliche Bestätigung zum Ersetzen; Abbrechen erhält sie.
 
 Die Hilfe vergibt Attribute und die gewählte Hintergrundbezeichnung.
 Fertigkeiten, Talente, Ausrüstung, Trefferpunkte und Klassenfortschritt brauchen
-weiter eigene bestätigte Angaben. Historische Arescan-Werte werden nicht
+weiter eigene bestätigte Angaben. Werte aus importierten, unvollständigen Alt-Spielständen werden nicht
 abgeleitet oder automatisch ergänzt. Regeln und Quellen:
 [docs/ABILITY_RULES.md](docs/ABILITY_RULES.md).
 
-## Die beiden Ausgangskampagnen
+## Kampagnen und persönliche Spielstände
 
-**Das Herz der Ewigkeit** übernimmt die vorgegebene Geschichte in Aetheria mit Arescan in Silberhain. Der Angriffsgesamtwert 19 und der erzählte Schaden 14 bleiben historische Angaben. Fehlende Attribute, Trefferpunkte, Gold, Erfahrungspunkte, Ausrüstung und der ungeprüfte frühere Geschicklichkeitsmodifikator +7 werden nicht als bestätigte Regelwerte übernommen. Die Geschichte bleibt lesbar; vor neuen regelabhängigen Aktionen muss der Charakter vervollständigt werden. Auch die Kampfwerte des Schattenritters sind unbekannt: Der historische Kampf kann noch nicht regelkonform fortgesetzt werden, solange diese nicht ausdrücklich bestätigt werden.
+Bei einer neuen App-Installation wird **kein Arescan-Spielstand** angelegt oder
+angeboten. Die einzige ausdrücklich auswählbare Beispielkampagne ist die
+optionale Demo **Das Licht von Mooswacht** mit Liora. Eigene Charaktere und
+Kampagnen können über die Benutzeroberfläche erstellt und gespeichert werden.
+
+Ältere Arescan-Spielstände werden **nicht automatisch gelöscht**: Sie bleiben
+bei einem App-Update in der lokalen Datenbank, und persönliche JSON-Backups
+können wie andere Kampagnen importiert werden. Arescan besitzt keine
+hartkodierte Sonderhandlung mehr. Ohne bestätigte regelrelevante Daten
+blockiert die generische Importkampagnenlogik unzulässige Kampfaktionen;
+historische Ereignisse und Texte bleiben erhalten. Eine historische
+Arescan-Testdatei liegt ausschließlich unter `app/test/fixtures/` und wird
+nicht als App-Asset ausgeliefert.
 
 Seit App **0.2.2** lassen sich Charaktere und Kampagnen über **Als Datei speichern** direkt als JSON sichern. Android fragt nach dem Zielordner; die App benötigt dafür keine allgemeine Speicherberechtigung. Beim Import öffnet **Datei wählen** die Android-Dateiauswahl. Der geladene Text wird erst mit **Importieren** bestätigt und gespeichert. Abbrechen und fehlerhafte Dateien verändern den vorhandenen Spielstand nicht. JSON-Anzeige, manuelle Texteingabe und Zwischenablage bleiben verfügbar. Details und Dateigrenzen stehen in [docs/SAVE_BACKUPS.md](docs/SAVE_BACKUPS.md).
 
 Sicherungsdateien und die lokale Datenbank sind nicht zusätzlich verschlüsselt. Wähle einen geeigneten Speicherort; ein Cloud-Dateianbieter kann Daten zu seinem Dienst übertragen. Android-App-Backups sind deaktiviert; vor einer Deinstallation wichtige Spielstände exportieren.
 
-Die separate Demo-Kampagne **Das Licht von Mooswacht** beginnt in der Welt Lunaris mit **Liora**, einer menschlichen Kämpferin der Stufe 1. Sie enthält ausdrücklich festgelegte Demo-Werte und führt über einen Brunnen, einen Schlüssel und einen Waldschrein zu einer einfachen Begegnung. Sie dient zum Prüfen des Ablaufs ohne externe KI-Dienste. Importierbare Ausgangsspielstände liegen unter `app/assets/arescan.json` und `app/assets/demo.json`.
+Die separate Demo-Kampagne **Das Licht von Mooswacht** beginnt in der Welt Lunaris mit **Liora**, einer menschlichen Kämpferin der Stufe 1. Sie enthält ausdrücklich festgelegte Demo-Werte und führt über einen Brunnen, einen Schlüssel und einen Waldschrein zu einer einfachen Begegnung. Sie dient zum Prüfen des Ablaufs ohne externe KI-Dienste. Die Demo-Testdaten liegen unter `app/assets/demo.json`.
 
 ## Projektstruktur
 

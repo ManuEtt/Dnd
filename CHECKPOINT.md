@@ -1,3 +1,15 @@
+# Neuer Entwicklungsstand: 0.8.1+51 – Arescan entkoppelt (18.10.2026)
+
+**Basis:** lokales vollständiges Projekt-ZIP 0.7.9+49 plus erste Etappe der UI-/Itemwert-Darstellung.
+
+Umgesetzt: kein Arescan-Startspielstand/-Button, keine Arescan-Sonderhandlung im Produktivcode, keine Arescan-Datei im `app/assets`-Paket. Bestehende lokale und importierte Spielstände bleiben erhalten. Ältere Arescan-Daten werden ausschließlich in Kompatibilitätstests geladen. Für importierte Nicht-Demo-Kampagnen wurde die Rückfallbehandlung von Mooswacht-Skriptmechaniken abgekoppelt. Neues Versionskennzeichen 0.8.1+51.
+
+**Prüfungen:** Python-Kompatibilitäts-/Paket-Tests und Strukturprüfung lokal; Flutter-/Android-Build noch nachzuholen (SDK hier nicht vorhanden). Alle tatsächlichen Prüfungen im Begleitbericht des Pakets dokumentiert.
+
+**Als Nächstes:** `dart format`, `flutter analyze`, `flutter test` und Android-Build; die von bestehenden Widgettests ausgeführten JSON-Importpfade überprüfen, anschließend weitere UI-/Itemdatenmodell-Arbeiten.
+
+---
+
 # Würfelraunen – geprüfter Checkpoint 0.7.9+49
 
 Stand: 18.10.2026, 06:28 UTC. Entwicklungsbranch: `feature/autonomous-srd-engine-20261016`. Letzter vollständig geprüfter Codecommit: `99b8a7bbed9c07132bf49e5eb78be9cfeb391d71`; danach nur Abschlussdokumentation. Der exakte finale HEAD steht im Dateimanifest und in `git log`.

@@ -648,114 +648,6 @@ class GameEngine {
     return campaign;
   }
 
-  Campaign createArescan() {
-    final hero = HeroCharacter(
-      id: _id('arescan'),
-      name: 'Arescan',
-      species: 'Mensch',
-      className: 'Waldläufer',
-      unverifiedNotes: const [
-        'Attribute, Trefferpunkte, Rüstungsklasse, Bewegung, Ausrüstung und Waffenwerte sind nicht bestätigt.',
-        'Gold und Erfahrungspunkte sind unbekannt. Leere Listen für Fertigkeiten, Zauber und Ausrüstung bedeuten nicht, dass Arescan diese nachweislich nicht besitzt.',
-        'Historischer Angriff: Gesamtergebnis 19; erzählter Schaden 14. Kein natürlicher W20 bekannt.',
-        'Der früher verwendete Geschicklichkeitsmodifikator +7 ist ungeprüft und wird NICHT angewendet.',
-      ],
-    );
-    const scene =
-        'Arescan steht auf dem Marktplatz von Silberhain neben der Elfenmagierin. '
-        'Der verletzte Schattenritter liegt nach dem Sturz vom Dach auf dem Marktplatz. '
-        'An seiner Brust leuchtet ein rotes Amulett: das Zeichen des Schattenkönigs. '
-        'Du kannst ihn untersuchen, verhören oder die Elfin befragen. Regelaktionen benötigen zuerst einen bestätigten Charakterbogen.';
-    final id = _id('aetheria');
-    final sessionId = _id('session');
-    final history = GameEvent(
-      id: _id('history'),
-      campaignId: id,
-      sessionId: sessionId,
-      timestamp: _clock(),
-      type: 'history.imported',
-      entities: [hero.id, 'shadow-knight'],
-      payload: const {
-        'attackTotal': 19,
-        'narratedDamage': 14,
-        'naturalRoll': null,
-        'unverifiedDexterityModifier': 7,
-        'mechanicallyVerified': false,
-        'history': [
-          'Der Sternentempel erwacht nach tausend Jahren.',
-          'Ein goldener Drache verkündet, dass das Herz der Ewigkeit gestohlen wurde.',
-          'In Silberhain erscheint ein Portal. Eine Elfenmagierin warnt vor Schattenrittern.',
-          'Ein vermummter Bogenschütze greift vom Dach an. Arescan warnt die Elfin und zieht sie hinter einen Brunnen.',
-          'Arescan greift mit seinem Bogen an: historisches Gesamtergebnis 19 und erzählter Schaden 14.',
-          'Der Schattenritter stürzt vom Dach. Sein rotes Amulett zeigt das Zeichen des Schattenkönigs.',
-        ],
-      },
-    );
-    return Campaign(
-      id: id,
-      name: 'Das Herz der Ewigkeit',
-      world: 'Aetheria',
-      sessionId: sessionId,
-      hero: hero,
-      scene: scene,
-      messages: [
-        NarrativeMessage(
-          id: _id('message'),
-          role: 'gm',
-          text: scene,
-          timestamp: _clock(),
-        ),
-      ],
-      facts: const {
-        'origin': 'arescan',
-        'location': 'Silberhain',
-        'sternentempel': 'Der Sternentempel ist nach tausend Jahren erwacht.',
-        'herz':
-            'Das Herz der Ewigkeit wurde gestohlen; ein goldener Drache verkündete es.',
-        'portal':
-            'In Silberhain erschien ein Portal. Eine Elfenmagierin warnte vor Schattenrittern.',
-        'rettung':
-            'Arescan warnte die Elfin und zog sie hinter den Brunnen in Deckung.',
-        'angriff':
-            'Historischer Angriff Gesamt 19, erzählter Schaden 14; Regelwerte ungeprüft.',
-        'amulett':
-            'Das rote Amulett am verletzten Schattenritter ist das Zeichen des Schattenkönigs.',
-        'schattenritter':
-            'Verletzt nach dem Sturz vom Dach; genaue Trefferpunkte und Kampfwerte unbekannt.',
-      },
-      quests: const [
-        Quest(
-          id: 'heart',
-          title: 'Das Herz der Ewigkeit',
-          description:
-              'Finde das gestohlene Herz und erforsche das Zeichen des Schattenkönigs.',
-        ),
-      ],
-      npcs: const [
-        WorldNpc(
-          id: 'elf',
-          name: 'Elfenmagierin',
-          description:
-              'Von Arescan gerettet; kennt das Zeichen des Schattenkönigs.',
-          relationship: 'dankbar',
-        ),
-        WorldNpc(
-          id: 'shadow-knight',
-          name: 'Verletzter Schattenritter',
-          description: 'Vom Dach gestürzt. Kampfwerte unbestätigt.',
-        ),
-      ],
-      places: const [
-        Place(
-          id: 'silberhain',
-          name: 'Silberhain',
-          description: 'Marktplatz mit Brunnen und magischem Portal.',
-        ),
-      ],
-      events: [history],
-    );
-  }
-
   /// Incapacitation ends these effects immediately, including when a confirmed
   /// external source or character correction occurs between combat turns.
   /// Healing or removing the condition later cannot revive the old Rage.
@@ -1768,9 +1660,6 @@ class GameEngine {
         );
       }
     }
-    if (current.facts['origin'] == 'arescan') {
-      return _arescan(campaign, current, words);
-    }
     // AI campaigns must NEVER fall through into the fixed Mooswacht demo.
     // The external narrator handles free world actions; mechanical outcomes
     // remain local and require an explicitly confirmed encounter/rule source.
@@ -1796,6 +1685,33 @@ class GameEngine {
         campaign,
         current,
         'Deine Entscheidung wurde im Tagebuch festgehalten. Was möchtest du als Nächstes tun?',
+      );
+    }
+    // Imported campaigns (including older user-created saves) are not a
+    // hardcoded demo. Preserve their story and data; avoid accidentally
+    // awarding Mooswacht items or applying its scripted quest mechanics.
+    if (current.facts['origin'] != 'demo') {
+      if (current.encounter != null && !current.encounter!.isFinished) {
+        return _combatAction(campaign, current, words);
+      }
+      if (RegExp(
+        r'angreif|attackier|schieß|schies|kämpf|kaempf|töte|heiltrank|trank.*trink|trink.*trank',
+      ).hasMatch(words)) {
+        return _commit(
+          campaign,
+          current,
+          'Für diese Regelaktion fehlen bestätigte Gegner- oder Gegenstandswerte. '
+          'Die importierte Geschichte bleibt unverändert; du kannst deine '
+          'Charakter- und Kampfdaten ergänzen.',
+          type: 'rules.blocked',
+        );
+      }
+      return _commit(
+        campaign,
+        current,
+        '${current.hero.name}, deine Entscheidung wurde im Tagebuch '
+        'festgehalten. Die importierte Geschichte und ihre vorhandenen '
+        'Erinnerungen bleiben erhalten. Was möchtest du als Nächstes tun?',
       );
     }
     if (current.encounter != null && !current.encounter!.isFinished) {
@@ -2024,85 +1940,14 @@ class GameEngine {
     );
   }
 
-  GameUpdate _arescan(Campaign before, Campaign current, String words) {
-    if (RegExp(
-      r'angreif|attackier|greif\w*.*\ban(?:[.!?]|$)|schieß|schies|kämpf|töte|heile',
-    ).hasMatch(words)) {
-      return _commit(
-        before,
-        current,
-        'Die bisherigen Treffer und der Sturz bleiben historische Erzähldaten. Die Gegnerwerte des Schattenritters sind noch nicht bestätigt. Eine neue Regelaktion benötigt zusätzlich einen geprüften Gegnerbogen; du kannst ihn untersuchen oder befragen.',
-        type: 'rules.blocked',
-      );
-    }
-    if (words.contains('amulett') &&
-        RegExp(r'nimm|nehme|abnehm|einsteck').hasMatch(words)) {
-      if (current.facts['amuletTaken'] == 'true') {
-        return _commit(
-          before,
-          current,
-          'Das rote Amulett befindet sich bereits in deinem Inventar. Sein Leuchten pulsiert im Takt eines fernen Herzschlags. Was möchtest du tun?',
-        );
-      }
-      return _commit(
-        before,
-        current.copyWith(
-          hero: current.hero.copyWith(
-            inventory: [
-              ...current.hero.inventory,
-              const InventoryItem(
-                id: 'red-amulet',
-                name: 'Rotes Amulett',
-                description: 'Zeichen des Schattenkönigs; Wirkung unbekannt.',
-              ),
-            ],
-          ),
-          scene:
-              'Arescan steht mit der geretteten Elfenmagierin beim Brunnen von Silberhain. Der verletzte Schattenritter liegt vor ihnen; Arescan trägt das rote Amulett.',
-          facts: {
-            ...current.facts,
-            'amuletTaken': 'true',
-            'amulett':
-                'Arescan nahm das rote Amulett an sich. Seine Wirkung ist unbekannt.',
-          },
-        ),
-        'Arescan, du nimmst das rote Amulett vorsichtig an dich. Die Elfin warnt dich vor seiner unbekannten Magie. Es ist jetzt in deinem Inventar; was möchtest du tun?',
-        type: 'inventory.itemAdded',
-        payload: {'itemId': 'red-amulet'},
-      );
-    }
-    if (RegExp(r'elf|magierin|befrag').hasMatch(words)) {
-      return _commit(
-        before,
-        current.copyWith(
-          facts: {
-            ...current.facts,
-            'elfenwarnung':
-                'Die Elfenmagierin warnt davor, das unbekannte rote Amulett zu aktivieren.',
-          },
-        ),
-        'Arescan, die Elfenmagierin zeigt auf das rote Zeichen. Der Schattenkönig verbirgt seine Boten hinter solchen Amuletten, sagt sie. Sie bittet dich, es vorerst nicht zu aktivieren. Was möchtest du tun?',
-      );
-    }
-    if (RegExp(
-      r'verhör|verhoer|frage|schattenritter|untersuch',
-    ).hasMatch(words)) {
-      return _commit(
-        before,
-        current,
-        'Arescan, der verletzte Schattenritter liegt weiterhin vor dir. ${current.facts['amuletTaken'] == 'true' ? 'Das rote Amulett leuchtet in deiner Tasche.' : 'Das rote Amulett überstrahlt seine Brust.'} Seine genauen Lebenspunkte sind unbekannt; die Elfin hält vorsichtig Abstand. Was möchtest du fragen oder untersuchen?',
-      );
-    }
-    return _commit(
-      before,
-      current,
-      'Arescan, das Portal schimmert über dem Marktplatz von Silberhain. Die gerettete Elfenmagierin bleibt bei dir, und der verletzte Schattenritter liegt beim Brunnen. Deine Entscheidung ist vermerkt. Was möchtest du tun?',
-    );
-  }
-
   /// The bonus-action feature can defeat an enemy before or after the Attack
   /// action. Complete only confirmed AI quests; never fabricate rewards.
   Campaign _afterFlurryVictory(Campaign current, Map<String, dynamic> payload) {
+    // Demo-only quest logic never applies to a manually imported campaign.
+    if (current.storyBible['mode'] != 'ai' &&
+        current.facts['origin'] != 'demo') {
+      return current.copyWith(encounter: null);
+    }
     if (current.storyBible['mode'] != 'ai') {
       return current.copyWith(
         facts: {

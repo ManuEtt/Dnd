@@ -1,3 +1,15 @@
+## 0.8.1+51 – Kein fest eingebauter Arescan-Spielstand (18.10.2026)
+
+- Festen Startknopf und Startgeschichte von Arescan entfernt; keine automatische
+  Generierung oder eingebettete JSON-Datei mehr im Android-App-Asset-Paket.
+- Testdaten nur noch in `app/test/fixtures/arescan_legacy.json`. Tests importieren
+  sie manuell, statt einen Produktionscodepfad zu verwenden.
+- Historische Nutzerspielstände bleiben über SQLite / JSON-Import erhalten,
+  werden aber nicht automatisch gelöscht oder wiederhergestellt.
+- Für andere importierte Kampagnen keine festen Mooswacht-Demo-Ereignisse mehr;
+  regelunklare Kämpfe blockieren ohne erfundene Werte.
+- Regressionstests für Startbildschirm und importierte Alt-Daten ergänzt.
+
 ## 0.7.9+49 – Todesrettungen mit Klassenentscheidung (18.10.2026)
 
 - Todesrettungen verwenden jetzt Mönch-14-Rettungswurfübung und den Erschöpfungsmalus genau einmal. Natürliche 1/20 behalten ihre Sonderfolgen; Kämpfer-9-Unbeugsam addiert beim Ersatzwurf die tatsächliche Kämpferstufe.

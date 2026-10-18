@@ -7,6 +7,7 @@ import 'package:lebendiger_spielleiter/domain/game_engine.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:path/path.dart' as paths;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'support/legacy_campaign_fixture.dart';
 
 GameEngine engine() => GameEngine(clock: () => DateTime.utc(2026, 10, 13));
 
@@ -103,9 +104,10 @@ void main() {
     'historical Arescan values stay unknown and new facts stay confirmed',
     () {
       final gm = engine();
-      final seed = gm.createArescan();
+      final seed = legacyArescanCampaign();
       final original = gm.act(seed, 'Ich befrage die Elfenmagierin.');
-      expect(original.campaign.facts['elfenwarnung'], isNotNull);
+      expect(original.events.single.type, 'narrative.turn');
+      expect(original.campaign.facts['elfenwarnung'], isNull);
       final updated = gm.replaceNarration(
         original,
         text: 'Arescan, die Elfin warnt dich vor dem Amulett. Was fragst du?',
@@ -159,13 +161,12 @@ void main() {
     final combat = gm.act(demo, 'Ich gehe zum Schrein.').campaign;
     final roll = gm.act(combat, 'Ich greife mit dem Schwert an.');
     final updates = [
-      gm.act(gm.createArescan(), 'Ich greife an.'),
+      gm.act(legacyArescanCampaign(), 'Ich greife an.'),
       gm.rollDice(demo, '1d20'),
       gm.act(demo, 'Ich gehe zum Schrein.'),
       roll,
       gm.resolveRoll(roll.campaign, natural: 16),
       gm.act(demo, 'Ich untersuche den Brunnen.'),
-      gm.act(gm.createArescan(), 'Ich nehme das Amulett.'),
     ];
     for (final update in updates) {
       expect(update.events.single.type, isNot('narrative.turn'));
@@ -380,7 +381,7 @@ void main() {
     'replay deduplicates equal JSON objects regardless of nested key order',
     () {
       final gm = engine();
-      final seed = gm.createArescan();
+      final seed = legacyArescanCampaign();
       final original = gm.act(seed, 'Ich befrage die Elfenmagierin.');
       final reordered = Campaign.fromJson(
         reverseObjectKeys(original.campaign.toJson()) as Map<String, dynamic>,
@@ -406,7 +407,7 @@ void main() {
     'replay still rejects changed values, list order and numeric JSON types',
     () {
       final gm = engine();
-      final seed = gm.createArescan();
+      final seed = legacyArescanCampaign();
       final history = seed.events.single;
       for (final payload in [
         {...history.payload, 'narratedDamage': 15},
@@ -439,7 +440,7 @@ void main() {
       );
       try {
         final gm = engine();
-        final seed = gm.createArescan();
+        final seed = legacyArescanCampaign();
         final original = gm.act(seed, 'Ich befrage die Elfenmagierin.');
         final updated = gm.replaceNarration(
           original,

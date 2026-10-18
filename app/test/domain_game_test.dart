@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/dice_engine.dart';
 import 'package:lebendiger_spielleiter/domain/game_engine.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
+import 'support/legacy_campaign_fixture.dart';
 
 class MinimumRandom implements Random {
   @override
@@ -47,7 +48,6 @@ void main() {
       expect(first.id, isNot(second.id));
       expect(second.name, 'Meine Reise');
       expect(second.scene, contains('Elya'));
-      expect(gm.createArescan().id, isNot(gm.createArescan().id));
     },
   );
 
@@ -91,7 +91,7 @@ void main() {
     'Arescan import preserves historical numbers without inventing abilities',
     () {
       final gm = engine();
-      var game = Campaign.fromJson(gm.createArescan().toJson());
+      var game = Campaign.fromJson(legacyArescanCampaign().toJson());
       expect(game.hero.abilities.values.every((e) => e == null), isTrue);
       expect(game.hero.hitPoints, isNull);
       expect(game.hero.armorClass, isNull);
@@ -109,27 +109,37 @@ void main() {
       expect(game.pendingRoll, isNull);
       expect(game.hero.hitPoints, isNull);
       game = gm.act(game, 'Ich befrage die Elfenmagierin.').campaign;
-      expect(game.messages.last.text, contains('Elfenmagierin'));
+      expect(game.messages.last.text, contains('Arescan'));
       expect(game.hero.isComplete, isFalse);
     },
   );
 
   test(
-    'Taking Arescan amulet is idempotent and the narration remembers its location',
+    'imported historical campaign does not manufacture scripted items',
     () {
       final gm = engine();
-      var game = gm.createArescan();
+      var game = legacyArescanCampaign();
+      final original = game.hero.inventory;
       game = gm.act(game, 'Ich nehme das Amulett.').campaign;
-      expect(game.hero.inventory.single.id, 'red-amulet');
-      expect(game.scene, contains('Arescan trägt das rote Amulett'));
-      game = gm.act(game, 'Ich nehme das Amulett erneut.').campaign;
-      expect(game.hero.inventory.length, 1);
-      game = gm.act(game, 'Ich untersuche den Schattenritter.').campaign;
-      expect(game.messages.last.text, contains('deiner Tasche'));
-      expect(
-        game.messages.last.text,
-        isNot(contains('überstrahlt seine Brust')),
-      );
+      expect(game.hero.inventory, original);
+      expect(game.events.last.type, 'narrative.turn');
+      expect(game.facts['amuletTaken'], isNull);
+      expect(game.hero.name, 'Arescan');
+      expect(game.facts['origin'], 'arescan');
+    },
+  );
+
+  test(
+    'imported campaign never executes demo quest or gives demo items',
+    () {
+      final gm = engine();
+      var game = legacyArescanCampaign();
+      final beforeFacts = Map<String, String>.from(game.facts);
+      game = gm.act(game, 'Ich untersuche den Brunnen.').campaign;
+      expect(game.hero.inventory, isEmpty);
+      expect(game.facts, beforeFacts);
+      expect(game.quests.single.id, 'heart');
+      expect(game.events.last.type, 'narrative.turn');
     },
   );
 
@@ -258,7 +268,7 @@ void main() {
     'All supported free dice are journaled without changing mechanical values',
     () {
       final gm = engine();
-      var game = gm.createArescan();
+      var game = legacyArescanCampaign();
       final original = game.hero.toJson();
       for (final die in DiceEngine.supportedSides) {
         game = gm.rollDice(game, '1d$die').campaign;
@@ -310,14 +320,14 @@ void main() {
   );
 
   test(
-    'Both packaged saves import and preserve historical and demo identity',
+    'Demo is packaged and historical fixture remains import-compatible',
     () {
       final demo = Campaign.fromJson(
         jsonDecode(File('assets/demo.json').readAsStringSync())
             as Map<String, dynamic>,
       );
       final arescan = Campaign.fromJson(
-        jsonDecode(File('assets/arescan.json').readAsStringSync())
+        jsonDecode(File('test/fixtures/arescan_legacy.json').readAsStringSync())
             as Map<String, dynamic>,
       );
       expect(demo.hero.isComplete, isTrue);

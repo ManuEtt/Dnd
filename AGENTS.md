@@ -16,9 +16,9 @@ Das vorgesehene Hauptrepository ist `ManuEtt/Dnd`, SSH `git@github.com:ManuEtt/D
 - Der Spielleiter liefert Erzählung und validierte Vorschläge. Zustandsänderungen erfolgen ausschließlich durch die autorisierte Geschäfts- beziehungsweise Regelengine.
 - Natürliche Würfelergebnisse getrennt von Gesamtwerten halten; Boni niemals zweimal anwenden.
 - Kontrollierbare Zufallsquellen für Regeln verwenden. Tests benötigen keine kostenpflichtige KI.
-- Historische Arescan-Werte 19 und 14 erhalten, aber nicht als neue bestätigte Regelberechnungen behandeln. Keine fehlenden Attribute erfinden; insbesondere den alten ungeprüften Modifikator +7 nicht übernehmen.
+- Ältere persönliche Spielstände einschließlich ehemaliger Testkampagnen nur durch expliziten JSON-Import unterstützen; keine speziellen Startknöpfe, fest eingebauten Charaktere oder Namen aus alten Spielständen als Standarddaten vorgeben. Unbestätigte historische Kampfwerte nicht als neue Regelwerte übernehmen.
 - Nur rechtmäßig verwendbare SRD-5.2.1-Inhalte und eigene Texte einsetzen. Neue Regelumsetzungen mit Quelle und Test versehen. `THIRD_PARTY_NOTICES.md` erhalten.
-- Als Demo ausgewiesene Werte sind ausdrücklich festgelegte Demo-Daten; sie dürfen nicht stillschweigend den historischen Arescan-Bogen ersetzen.
+- Als Demo ausgewiesene Werte sind ausdrücklich festgelegte Demo-Daten; sie dürfen niemals importierte Nutzer-Charakterwerte ersetzen.
 
 ## Speicher- und Sicherheitsvorgaben
 

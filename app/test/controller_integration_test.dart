@@ -9,6 +9,7 @@ import 'package:lebendiger_spielleiter/data/campaign_repository.dart';
 import 'package:lebendiger_spielleiter/data/sqlite_campaign_repository.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/services/game_controller.dart';
+import 'support/legacy_campaign_fixture.dart';
 
 /// Injects a real storage failure at the persistence boundary, while reads still
 /// use SQLite. This tests UI state against confirmed data, not a mirrored mock.
@@ -165,7 +166,7 @@ void main() {
   test(
     'historical Arescan loads with unknown stats and blocks combat',
     () async {
-      await controller.createArescan();
+      await importLegacyArescan(controller);
       final history = controller.currentCampaign!;
       expect(
         history.hero.abilities.values.every((value) => value == null),

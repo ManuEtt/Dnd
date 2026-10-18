@@ -9,6 +9,7 @@ import 'package:lebendiger_spielleiter/services/game_controller.dart';
 import 'package:lebendiger_spielleiter/services/voice_controller.dart';
 import 'package:lebendiger_spielleiter/ui/app.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_art.dart';
+import 'support/legacy_campaign_fixture.dart';
 
 class _SilentVoice extends VoiceController {
   final spoken = <String>[];
@@ -100,6 +101,34 @@ void main() {
   setUpAll(sqfliteFfiInit);
   setUp(() => WidgetController.hitTestWarningShouldBeFatal = true);
   tearDown(() => WidgetController.hitTestWarningShouldBeFatal = false);
+
+  testWidgets('home does not ship a fixed Arescan campaign', (tester) async {
+    final repository = (await tester.runAsync(
+      () => SqliteCampaignRepository.open(
+        factory: databaseFactoryFfi,
+        path: inMemoryDatabasePath,
+      ),
+    ))!;
+    final controller = GameController(repository: repository);
+    final voice = _SilentVoice();
+    await tester.runAsync(controller.initialize);
+    await tester.pumpWidget(
+      LivingGameApp(controller: controller, voice: voice),
+    );
+    expect(controller.campaigns, isEmpty);
+    expect(find.text('Arescan-Spielstand laden'), findsNothing);
+    expect(find.text('Das Herz der Ewigkeit'), findsNothing);
+    await tester.scrollUntilVisible(
+      find.text('Kampagne aus JSON importieren'),
+      240,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('Kampagne aus JSON importieren'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox.shrink());
+    controller.dispose();
+    voice.dispose();
+    await tester.runAsync(repository.close);
+  });
 
   testWidgets(
     '360 px Android navigation opens demo, correctable voice text and journal',
@@ -298,7 +327,7 @@ void main() {
       ))!;
       final controller = GameController(repository: repository);
       final voice = _SilentVoice();
-      await tester.runAsync(controller.createArescan);
+      await tester.runAsync(() => importLegacyArescan(controller));
       await tester.pumpWidget(
         LivingGameApp(controller: controller, voice: voice),
       );
@@ -348,7 +377,7 @@ void main() {
       ))!;
       final controller = GameController(repository: repository);
       final voice = _SilentVoice();
-      await tester.runAsync(controller.createArescan);
+      await tester.runAsync(() => importLegacyArescan(controller));
       await tester.pumpWidget(
         LivingGameApp(controller: controller, voice: voice),
       );

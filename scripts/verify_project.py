@@ -14,7 +14,7 @@ REQUIRED_FILES = (
     '.github/workflows/android-build.yml',
     'app/pubspec.yaml', 'app/pubspec.lock', 'app/lib/main.dart',
     'app/lib/domain/ability_generation.dart', 'app/lib/ui/ability_assignment_dialog.dart',
-    'app/assets/arescan.json', 'app/assets/demo.json',
+    'app/assets/demo.json',
     'app/android/settings.gradle.kts', 'app/android/app/build.gradle.kts',
     'app/android/app/src/main/AndroidManifest.xml',
     'app/android/gradlew', 'app/android/gradlew.bat',
