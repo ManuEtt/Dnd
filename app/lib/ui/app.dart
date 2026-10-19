@@ -1098,16 +1098,21 @@ class _AdventurePageState extends State<_AdventurePage> {
                       if (campaign.hero.conditions.contains('liegend'))
                         TextButton.icon(
                           key: const ValueKey('adventure-stand-up'),
-                          onPressed: widget.controller.busy ||
+                          onPressed:
+                              widget.controller.busy ||
                                   campaign.pendingRoll != null ||
                                   campaign.pendingDeathSave != null ||
                                   campaign.hero.isDead ||
                                   (campaign.encounter != null &&
                                       !campaign.encounter!.isFinished &&
-                                      campaign.encounter!.activeParticipant != 'hero')
+                                      campaign.encounter!.activeParticipant !=
+                                          'hero')
                               ? null
                               : _standUp,
-                          icon: const Icon(Icons.accessibility_new_outlined, size: 17),
+                          icon: const Icon(
+                            Icons.accessibility_new_outlined,
+                            size: 17,
+                          ),
                           label: const Text('Aufstehen'),
                         ),
                       TextButton.icon(

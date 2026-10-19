@@ -750,7 +750,8 @@ class GameEngine {
         'Beende zuerst diese Quelle.',
       );
     }
-    if (campaign.pendingRoll != null || campaign.pendingDeathSave != null ||
+    if (campaign.pendingRoll != null ||
+        campaign.pendingDeathSave != null ||
         hero.isDead) {
       throw const FormatException(
         'Zuerst den offenen Wurf abschließen oder den Tod beachten.',
@@ -778,14 +779,15 @@ class GameEngine {
       campaign.copyWith(hero: after, encounter: updatedFight),
       active
           ? 'Du stehst auf und verbrauchst ${ProneMovementRules.formatDecimeters(cost)} '
-            'Bewegung. Übrig: ${updatedFight!.movementRemainingLabel}.'
+                'Bewegung. Übrig: ${updatedFight!.movementRemainingLabel}.'
           : 'Du stehst auf. Außerhalb des Kampfes wird kein Zugbudget verbraucht.',
       type: 'combat.stoodUp',
       payload: {
         'targetId': hero.id,
         'movementSpentDecimeters': active ? cost : 0,
-        if (active) 'movementRemainingDecimeters':
-            updatedFight!.remainingMovementDecimeters,
+        if (active)
+          'movementRemainingDecimeters':
+              updatedFight!.remainingMovementDecimeters,
       },
     );
   }

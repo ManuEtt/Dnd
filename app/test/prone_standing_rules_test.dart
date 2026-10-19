@@ -4,7 +4,8 @@ import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/domain/prone_movement_rules.dart';
 import 'package:lebendiger_spielleiter/domain/condition_effects.dart';
 
-Campaign _combat(GameEngine engine, {
+Campaign _combat(
+  GameEngine engine, {
   int meters = 9,
   int remainder = 0,
   int exhaustion = 0,
@@ -53,12 +54,7 @@ void main() {
 
   test('7,5 m Tempo: 25 ft halbiert und abgerundet = 12 ft = 3,6 m', () {
     final engine = GameEngine();
-    final current = _combat(
-      engine,
-      meters: 7,
-      remainder: 5,
-      exhaustion: 1,
-    );
+    final current = _combat(engine, meters: 7, remainder: 5, exhaustion: 1);
     expect(ProneMovementRules.standingCostDecimeters(current.hero), 36);
     final updated = engine.standUp(current).campaign;
     expect(updated.encounter!.movementRemaining, 3);
@@ -67,17 +63,20 @@ void main() {
     expect(updated.hero.conditions, isNot(contains('liegend')));
   });
 
-  test('Bewegungskosten bleiben nach JSON-Neustart und Meterbewegung erhalten', () {
-    final engine = GameEngine();
-    final standing = engine.standUp(_combat(engine)).campaign;
-    final loaded = Campaign.fromJson(standing.toJson());
-    expect(loaded.encounter!.movementRemainderDecimeters, 5);
-    expect(loaded.toJson(), standing.toJson());
-    final moved = engine.act(loaded, 'Ich gehe 3 Meter.').campaign;
-    expect(moved.encounter!.movementRemaining, 1);
-    expect(moved.encounter!.movementRemainderDecimeters, 5);
-    expect(moved.encounter!.movementRemainingLabel, '1.5 m');
-  });
+  test(
+    'Bewegungskosten bleiben nach JSON-Neustart und Meterbewegung erhalten',
+    () {
+      final engine = GameEngine();
+      final standing = engine.standUp(_combat(engine)).campaign;
+      final loaded = Campaign.fromJson(standing.toJson());
+      expect(loaded.encounter!.movementRemainderDecimeters, 5);
+      expect(loaded.toJson(), standing.toJson());
+      final moved = engine.act(loaded, 'Ich gehe 3 Meter.').campaign;
+      expect(moved.encounter!.movementRemaining, 1);
+      expect(moved.encounter!.movementRemainderDecimeters, 5);
+      expect(moved.encounter!.movementRemainingLabel, '1.5 m');
+    },
+  );
 
   test('altes Schema 1 ohne Nachkommafeld bleibt unverändert lesbar', () {
     final engine = GameEngine();
@@ -116,34 +115,35 @@ void main() {
     );
   });
 
-  test('Bewusstlosigkeit und Quellzustand verhindern vorzeitiges Aufstehen', () {
-    final engine = GameEngine();
-    final before = _combat(engine);
-    final unconscious = before.copyWith(
-      hero: before.hero.copyWith(conditions: ['liegend', 'bewusstlos']),
-    );
-    expect(() => engine.standUp(unconscious), throwsFormatException);
+  test(
+    'Bewusstlosigkeit und Quellzustand verhindern vorzeitiges Aufstehen',
+    () {
+      final engine = GameEngine();
+      final before = _combat(engine);
+      final unconscious = before.copyWith(
+        hero: before.hero.copyWith(conditions: ['liegend', 'bewusstlos']),
+      );
+      expect(() => engine.standUp(unconscious), throwsFormatException);
 
-    final effect = ConditionEffect(
-      id: 'source-prone',
-      condition: 'liegend',
-      source: 'Bestätigte Falle',
-    );
-    final sourced = before.copyWith(
-      hero: before.hero.copyWith(conditionEffects: [effect]),
-    );
-    expect(() => engine.standUp(sourced), throwsFormatException);
-    expect(sourced.hero.conditionEffects.single.id, 'source-prone');
-  });
+      final effect = ConditionEffect(
+        id: 'source-prone',
+        condition: 'liegend',
+        source: 'Bestätigte Falle',
+      );
+      final sourced = before.copyWith(
+        hero: before.hero.copyWith(conditionEffects: [effect]),
+      );
+      expect(() => engine.standUp(sourced), throwsFormatException);
+      expect(sourced.hero.conditionEffects.single.id, 'source-prone');
+    },
+  );
 
   test('Editor kann im aktiven Kampf Aufstehen nicht kostenlos erzwingen', () {
     final engine = GameEngine();
     final combat = _combat(engine);
     expect(
-      () => engine.updateHero(
-        combat,
-        combat.hero.copyWith(conditions: const []),
-      ),
+      () =>
+          engine.updateHero(combat, combat.hero.copyWith(conditions: const [])),
       throwsFormatException,
     );
     // A completed encounter has no active combat movement restrictions.
@@ -151,8 +151,11 @@ void main() {
       encounter: combat.encounter!.copyWith(enemyHitPoints: 0),
     );
     expect(
-      engine.updateHero(finished, finished.hero.copyWith(conditions: [])).campaign
-          .hero.conditions,
+      engine
+          .updateHero(finished, finished.hero.copyWith(conditions: []))
+          .campaign
+          .hero
+          .conditions,
       isNot(contains('liegend')),
     );
   });
