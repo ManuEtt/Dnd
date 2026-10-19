@@ -168,23 +168,38 @@ class _LivingGameAppState extends State<LivingGameApp> {
                     ),
                     destinations: const [
                       NavigationRailDestination(
-                        icon: Icon(Icons.home_outlined),
+                        icon: FantasyRuneEmblem(
+                          rune: FantasyRune.compass,
+                          size: 28,
+                        ),
                         label: Text('Start'),
                       ),
                       NavigationRailDestination(
-                        icon: Icon(Icons.auto_stories_outlined),
+                        icon: FantasyRuneEmblem(
+                          rune: FantasyRune.dice,
+                          size: 28,
+                        ),
                         label: Text('Abenteuer'),
                       ),
                       NavigationRailDestination(
-                        icon: Icon(Icons.person_outline),
+                        icon: FantasyRuneEmblem(
+                          rune: FantasyRune.hero,
+                          size: 28,
+                        ),
                         label: Text('Helden'),
                       ),
                       NavigationRailDestination(
-                        icon: Icon(Icons.menu_book_outlined),
+                        icon: FantasyRuneEmblem(
+                          rune: FantasyRune.tome,
+                          size: 28,
+                        ),
                         label: Text('Tagebuch'),
                       ),
                       NavigationRailDestination(
-                        icon: Icon(Icons.tune),
+                        icon: FantasyRuneEmblem(
+                          rune: FantasyRune.moon,
+                          size: 28,
+                        ),
                         label: Text('Optionen'),
                       ),
                     ],
@@ -234,24 +249,38 @@ class _LivingGameAppState extends State<LivingGameApp> {
                           setState(() => _page = value),
                       destinations: const [
                         NavigationDestination(
-                          icon: Icon(Icons.home_outlined),
-                          selectedIcon: Icon(Icons.home),
+                          icon: FantasyRuneEmblem(
+                            rune: FantasyRune.compass,
+                            size: 26,
+                          ),
                           label: 'Start',
                         ),
                         NavigationDestination(
-                          icon: Icon(Icons.auto_stories_outlined),
+                          icon: FantasyRuneEmblem(
+                            rune: FantasyRune.dice,
+                            size: 26,
+                          ),
                           label: 'Abenteuer',
                         ),
                         NavigationDestination(
-                          icon: Icon(Icons.person_outline),
+                          icon: FantasyRuneEmblem(
+                            rune: FantasyRune.hero,
+                            size: 26,
+                          ),
                           label: 'Helden',
                         ),
                         NavigationDestination(
-                          icon: Icon(Icons.menu_book_outlined),
+                          icon: FantasyRuneEmblem(
+                            rune: FantasyRune.tome,
+                            size: 26,
+                          ),
                           label: 'Tagebuch',
                         ),
                         NavigationDestination(
-                          icon: Icon(Icons.tune),
+                          icon: FantasyRuneEmblem(
+                            rune: FantasyRune.moon,
+                            size: 26,
+                          ),
                           label: 'Optionen',
                         ),
                       ],
