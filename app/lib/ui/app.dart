@@ -249,7 +249,6 @@ class _LivingGameAppState extends State<LivingGameApp> {
                         NavigationDestination(
                           icon: Icon(Icons.person_outline),
                           label: 'Helden',
-                          approvedIconIndex: 0,
                         ),
                         NavigationDestination(
                           icon: Icon(Icons.menu_book_outlined),
@@ -485,6 +484,7 @@ class _HomePage extends StatelessWidget {
               const SizedBox(width: 9),
               FantasyShortcutTile(
                 label: 'Helden',
+                approvedIconIndex: 0,
                 icon: Icons.groups_outlined,
                 color: FantasyPalette.gold,
                 onTap: onCharacters,
