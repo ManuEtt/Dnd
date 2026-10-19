@@ -119,6 +119,11 @@ class InventoryItem {
     if (catalogId.isNotEmpty) 'catalogId': catalogId,
     if (stats != null) 'stats': stats!.toJson(),
   };
+  static InventoryItemStats? _catalogStats(String id) {
+    final entry = SrdEquipmentCatalog.byId(id);
+    return entry == null ? null : InventoryItemStats.fromCatalog(entry);
+  }
+
   factory InventoryItem.fromJson(Map<String, dynamic> j) => InventoryItem(
     id: _string(j['id'], 'Gegenstand-ID'),
     name: _string(j['name'], 'Gegenstand'),
@@ -129,11 +134,9 @@ class InventoryItem {
     // attributes in older imports. Never infer a catalog ID from a free name,
     // and never overwrite user-confirmed custom stats.
     stats: j['stats'] == null
-        ? (SrdEquipmentCatalog.byId(
-              _string(j['catalogId'], 'Katalog-ID', fallback: ''),
-            ) case final entry?)
-            ? InventoryItemStats.fromCatalog(entry)
-            : null
+        ? _catalogStats(
+            _string(j['catalogId'], 'Katalog-ID', fallback: ''),
+          )
         : InventoryItemStats.fromJson(_map(j['stats'], 'Gegenstandswerte')),
   );
 }
