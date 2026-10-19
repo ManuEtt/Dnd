@@ -391,7 +391,9 @@ class _HomePage extends StatelessWidget {
           description: current == null
               ? 'Erkunde geheimnisvolle Welten und entscheide selbst, wohin dein Abenteuer führt.'
               : current.scene,
-          actionLabel: current == null ? 'Demo entdecken' : 'Fortsetzen',
+          actionLabel: current == null
+              ? 'Kostenlose Demo starten'
+              : 'Fortsetzen',
           onPressed: controller.busy
               ? null
               : () => current == null
@@ -487,7 +489,7 @@ class _HomePage extends StatelessWidget {
                         ? null
                         : () => onPlay(controller.createDemo),
                     icon: const Icon(Icons.play_arrow),
-                    label: const Text('Kostenlose Demo starten'),
+                    label: const Text('Demo erneut starten'),
                   ),
                   FilledButton.icon(
                     key: const ValueKey('start-rabenwacht-campaign'),
@@ -1152,6 +1154,7 @@ class _AdventurePageState extends State<_AdventurePage> {
         child: Column(
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const FantasyRuneEmblem(rune: FantasyRune.compass, size: 38),
                 const SizedBox(width: 12),
