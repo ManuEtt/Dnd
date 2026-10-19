@@ -259,6 +259,7 @@ void main() {
     final result = PrimaryClassLevelUp.propose(
       hero: before,
       milestoneAdvancement: false,
+      abilityIncreases: {'strength': 2},
     ).applyTo(before);
     expect(result.primaryClassLevel, 4);
     expect(result.secondaryClassLevel, 1);
