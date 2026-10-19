@@ -1,3 +1,11 @@
+## Unveröffentlicht – Prone: regelkonformes Aufstehen (19.10.2026)
+
+- Explizite Aufstehen-Aktion mit Bewegungskosten in Fuß: Hälfte der bestätigten aktuellen Bewegungsrate, abgerundet, keine Aktion/Bonusaktion. 
+- Dezimetergenaues Bewegungsrestfeld im bestehenden Begegnungs-JSON (Schema 1, optional; alte Spielstände bleiben lesbar). 30 Fuß: 4,5 m; 25 Fuß: 3,6 m.
+- Deutsche Schaltfläche im Abenteuer, revisionsgeschützte Controller-Aktion, atomarer SQLite-Ereignischeckpoint.
+- Kein Aufstehen bei fehlendem Budget, Bewegungsrate 0, Bewusstlosigkeit, fremdem Zug oder aktiver verbleibender Zustandsquelle; Editor kann aktive Kampfbewegung nicht umgehen. Normales Laufen im Zustand `liegend` wird geblockt, Kriechen ist noch offen.
+- Neue Domain- und SQLite-/Revisions-/Rollbacktests in `prone_standing_rules_test.dart` und `prone_standing_storage_test.dart`. **Vollständige CI-/APK-Abnahme ausstehend**; keine Gerätefreigabe.
+
 ## Unveröffentlicht – SRD 5.2.1: Bewusstlos hinterlässt Liegend (19.10.2026)
 
 - Bestätigtes Bewusstloswerden setzt `liegend` als unabhängige, persistierte Folge; bei Erwachen durch Heilung/natürliche Todesrettungs-20 oder Ende einer separaten Quelle bleibt der Zustand erhalten.
