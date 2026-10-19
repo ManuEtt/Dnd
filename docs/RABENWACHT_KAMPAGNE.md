@@ -1,0 +1,58 @@
+# Das Flüstern der vergessenen Glocke — vorgefertigtes Solo-Abenteuer
+
+**Sprache:** Deutsch · **Regelgrundlage:** bestehende lokale D&D-5e/SRD-5.2.1-Regelengine · **Charakter:** eigener Held, empfohlen Stufe 3 · **Zielumfang:** 2–3 Stunden bei ruhigem Rollenspiel, Erkundung und optionalen Gesprächen.
+
+## Kampagnenidee (Spielleiterwissen – Spoiler)
+
+Im Grenzdorf Rabenwacht läutet ein vor 41 Jahren zerstörter Glockenturm. Drei Menschen sind verschwunden. Vor der dreizehnten Tür liegt ein Erinnerungsritual: Die gebundene Seren hält die Vermissten in einem schützenden Kreis, während die vierzehnte Glocke ihre Erinnerungen aussaugt. Der silberne Schlüssel bietet mehrere Lösungen. Entscheidend ist, ob der Held dem Geist vertraut, das Siegel erneuert oder es zerschlägt.
+
+Alle Schauplätze, NPCs, Handlungsschritte und Ergebnisse sind lokal in `app/lib/domain/rabenwacht_campaign.dart` definiert. Die Engine verwaltet bestätigte W20-Würfe, lokale Kampfwerte und den Spielstand. Externe KI ist zum Starten und Durchspielen **nicht erforderlich**.
+
+## Dramaturgie / Pacing
+
+| Akt | Schauplätze | Ungefähres Zeitbudget | Inhalt |
+| --- | --- | ---: | --- |
+| I. Der Fremde im Nebel | Handelsstraße, Dorfplatz, Gasthaus | 20–30 Min. | Erste Begegnung, schwarzer Handabdruck, Hinweis auf Vermisste, Gespräche |
+| II. Die Spuren der Verschwundenen | Mühle, Kapelle | 20–30 Min. | Spuren und Gebetbuch, Oswins Erinnerung, Familie von Fina |
+| III. Die Brandnacht | Chronistenhaus, Friedhof | 20–25 Min. | Schriftliche Beweise, Serens Motiv, Weg zur Ruine |
+| IV. Unter dem Turm | Rabenschlucht, Ruine, Kryptatreppe, Wächterhalle | 30–45 Min. | Heimlichkeit, Runen, Athletik, Kampf/Umgehen des Wächters |
+| V. Die dreizehnte Tür | Galerie, Siegelkammer | 20–35 Min. | Tür- und Ritualrätsel, Verhandlung, drei Enden |
+
+Die Zeiten sind **Erzählziele, keine technische Mindestspieldauer**. Schnelle Textantworten und wenige Nebengespräche können die Kampagne deutlich verkürzen. Die tatsächliche Länge muss beim Testspielen geprüft werden.
+
+## NPCs (eigene Inhalte)
+
+Elda Weißdorn (Hebamme und Zeugin), Tarek Dorn (Wirt), Mara Voss (Vorsteherin), Bruder Oswin (Zeitzeuge), Fina Kessel (vermisste Tochter), Joren Kessel (Müller), Bram Eisfeld (vermisster Wächter), Alrik Nebel (Chronist), Seren (gebundener Geist). NPC-Dialoge und Hinweise sollen nur offengelegt werden, wenn sie im aktuellen Akt zugänglich sind.
+
+## Vorgesehene Fertigkeitsproben
+
+Wahrnehmung SG 12 (Schritte), Nachforschungen SG 13 (Mühle), Nachforschungen SG 12 (Archiv), Heimlichkeit SG 12 (Wald), Arkane Kunde SG 13 (Ruine), Athletik SG 12 (Treppe), Heimlichkeit SG 13 (Wächter), Arkane Kunde SG 14 (Tür), Überreden SG 14 (Seren). Die Charakterboni und etwaiger Fertigkeitsbonus kommen aus `CharacterRuleEngine`, Ergebnisse aus `DiceEngine`; natürliche Würfelzahlen werden nicht doppelt bonifiziert. Die Story bleibt auch nach einem Misserfolg prinzipiell lösbar.
+
+Der Skelettwächter verwendet den bereits im `AdventureCatalog` definierten Gegnerdatensatz; die Kämpfe werden durch die vorhandene lokale Engine abgewickelt. Begegnungen für **einen** Stufe-3-Helden müssen vor Veröffentlichung geprüft werden.
+
+## Enden
+
+* **Das erneuerte Siegel:** Erinnerungen zurück, Vermisste frei, Gefahr gebannt.
+* **Das zerbrochene Siegel:** Vermisste frei, aber ein uraltes Wesen kann erwachen.
+* **Serens Erlösung:** Überreden oder bewusstes Vertrauen führt zur Auflösung des alten Opfers, ohne die Menschen erneut zu binden.
+
+## Integration und Start
+
+1. In der Android-App unter **Helden** einen eigenen Charakter anlegen.
+2. Im Startbildschirm **Rabenwacht (Solo, 2–3 Std.)** wählen.
+3. Den Helden aus der vorhandenen Auswahl auswählen.
+4. Direkt die Eingangsszene spielen und in der Abenteueransicht freie Handlungen eintippen oder vorlesen.
+5. Bei einer offenen Probe den W20 nach Aufforderung werfen. Spielstand und Entscheidungen werden im vorhandenen SQLite-Repository abgelegt.
+
+Technischer Einstieg: `GameController.newRabenwachtCampaign` → `GameEngine.createRabenwacht` → `RabenwachtCampaign.create`.
+
+## Grenzen der ersten Integration
+
+* Die erste Fassung verwendet handgeschriebene Schlüsselwort- und Szenenpfade; sie ist **kein** vollständig improvisierender KI-Dungeon-Master.
+* Einzelne in-world Handlungen sind erzählerisch aufgelöst. Nicht alle Sonderfälle (z. B. alle Werkzeuge, Zauber für Rätsel oder komplexe NPC-Reaktionen) haben regeltechnisch eigene Pfade.
+* Bis eine vollständige Flutter-CI inklusive Analyse, Tests und APK erfolgreich war, ist die Umsetzung als **implementiert, noch nicht als getestet oder installierbar bestätigt** zu behandeln.
+* Diese Fassung garantiert noch nicht zwei Stunden Spielzeit; der Zielumfang hängt von der individuellen Spieldauer ab. Mehr optionales Rollenspiel und weitere Mechanik können später ausgebaut werden.
+
+## Tests
+
+`app/test/rabenwacht_campaign_test.dart` prüft Kampagnenstart, eigener Held, erfolgreiche und erfolglose Würfe, Manipulationsschutz offener Würfe, Skelettbegegnung und verschiedene Enden. Zusätzlich müssen `dart format`, `flutter analyze`, `flutter test` und `flutter build apk --debug` erfolgreich sein, bevor eine APK bereitgestellt wird.
