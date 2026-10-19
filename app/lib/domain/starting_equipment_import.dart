@@ -31,6 +31,88 @@ class StartingEquipmentImport {
     return matches.length == 1 ? matches.single : null;
   }
 
+  /// The three known class starter labels with an unresolved player choice.
+  /// Only SRD catalog entries from the matching mundane item categories
+  /// can be chosen. A holy symbol has no matching catalog entries yet;
+  /// it stays explicitly unresolved rather than creating invented stats.
+  static List<EquipmentEntry> optionsFor(SrdStartingItem item) {
+    final categories = switch (item.name) {
+      'Musikinstrument (nach Wahl)' => const {EquipmentCategory.instrument},
+      'Handwerkszeug oder Musikinstrument (nach Wahl)' => const {
+        EquipmentCategory.tool,
+        EquipmentCategory.instrument,
+      },
+      _ => const <EquipmentCategory>{},
+    };
+    if (categories.isEmpty) return const [];
+    return SrdEquipmentCatalog.all
+        .where((entry) => categories.contains(entry.category))
+        .toList(growable: false);
+  }
+
+  /// Validates the complete explicit kit choice before any character is
+  /// mutated. Unknown IDs and a selection for another kit fail closed.
+  static void validateKitChoices(
+    SrdStartingKit kit,
+    Map<String, String> selected,
+  ) {
+    final expected = <String, List<EquipmentEntry>>{
+      for (final item in kit.items)
+        if (optionsFor(item).isNotEmpty) item.name: optionsFor(item),
+    };
+    for (final entry in selected.entries) {
+      final options = expected[entry.key];
+      if (options == null ||
+          !options.any((item) => item.id == entry.value)) {
+        throw const FormatException(
+          'Ungültige Startausrüstungswahl im SRD-Katalog.',
+        );
+      }
+    }
+    for (final name in expected.keys) {
+      if (!selected.containsKey(name)) {
+        throw FormatException(
+          'Bitte für „$name“ einen konkreten SRD-Gegenstand wählen.',
+        );
+      }
+    }
+  }
+
+  /// Resolve player-selected starter gear to the chosen *typed* catalog item.
+  /// Never grant a category's first default instrument or tool automatically.
+  static InventoryItem fromSelectedStartingItem(
+    SrdStartingItem item,
+    String id, {
+    String? selectedCatalogId,
+  }) {
+    final options = optionsFor(item);
+    if (options.isEmpty) {
+      if (selectedCatalogId != null) {
+        throw const FormatException(
+          'Für diesen Gegenstand gibt es keine freie Startausrüstungswahl.',
+        );
+      }
+      return fromStartingItem(item, id);
+    }
+    if (selectedCatalogId == null) {
+      throw FormatException(
+        'Für „${item.name}“ ist eine Auswahl erforderlich.',
+      );
+    }
+    for (final entry in options) {
+      if (entry.id != selectedCatalogId) continue;
+      return InventoryItem(
+        id: id,
+        name: entry.name,
+        quantity: item.quantity,
+        description: entry.note ?? '',
+        catalogId: entry.id,
+        stats: InventoryItemStats.fromCatalog(entry),
+      );
+    }
+    throw const FormatException('Ungültiger SRD-Startgegenstand.');
+  }
+
   /// All data fields originate from an exact SRD entry, never from prose.
   /// A 20-arrow starting stack is one catalog bundle of 20 arrows, NOT
   /// twenty separate bundles containing 400 arrows.
