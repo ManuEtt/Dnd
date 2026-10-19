@@ -12,6 +12,7 @@ import '../domain/rest_rules.dart';
 import '../domain/spellcasting_rules.dart';
 import '../domain/rules_engine.dart';
 import 'fantasy_art.dart';
+import 'character_portrait_picker.dart';
 
 // A read-only presentation of the actual, confirmed character data. No state,
 // rule changes, generated portrait, or assumed missing character values.
@@ -146,6 +147,16 @@ class _CharacterHeader extends StatelessWidget {
           const SizedBox(height: 18),
           Row(
             children: [
+              if (hero.portraitPreset >= 0 ||
+                  hero.portraitPhotoBase64.isNotEmpty)
+                FantasyCharacterPortrait(
+                  key: const ValueKey('sheet-hero-portrait'),
+                  preset: hero.portraitPreset,
+                  photoBase64: hero.portraitPhotoBase64,
+                  name: hero.name,
+                  size: 88,
+                )
+              else
               Container(
                 key: const ValueKey('sheet-avatar-placeholder'),
                 width: 88,
