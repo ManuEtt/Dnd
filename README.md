@@ -1,3 +1,15 @@
+## Aktuelle Versionsanzeige und GitHub-Bereinigung (19.10.2026)
+
+**App-Version laut Flutter-Paket:** `0.8.5+55`. Unter **Optionen → App-Version** zeigt Würfelraunen jetzt automatisch **Version 0.8.5 (Build 55)** an. Die Anzeige liest die mit der APK gebündelte `pubspec.yaml`, sodass später aktualisierte Versionsnummern ohne eine zusätzliche manuelle UI-Konstante erscheinen.
+
+**CI-Reparatur:** Die drei versehentlich als `const` deklarierten `HeroCharacter`-Fixtures der Porträt-Tests wurden korrigiert. PR [#14](https://github.com/ManuEtt/Dnd/pull/14) mit den freigegebenen Fantasy-Grafiken wurde bereits in `main` übernommen, sein erster Main-Build war wegen dieser Fixtures rot. Dieser Fix wird separat im Branch `fix/app-version-and-portrait-ci-20261019` getestet und nach erfolgreicher Prüfung integriert.
+
+**Repository aufgeräumt:** Über den einmaligen erfolgreichen GitHub-Workflow [39215530323](https://github.com/ManuEtt/Dnd/actions/runs/39215530323) wurden **zehn** mit exakt geprüftem PR-Merge-Nachweis erledigte Branches gelöscht. `main`, laufende Versions-/UI-Entwicklung und nicht eindeutig integrierte Zweige blieben bestehen. Der einmalige Bereinigungsworkflow wurde danach wieder entfernt. Keine Spielstände oder Android-Artefakte gelöscht.
+
+**Abnahme:** Flutter-Formatierung, statische Analyse, Flutter-/Backendtests, Android-APK und Geräteprüfstatus für den finalen Fix-HEAD verifizieren. Ein realer Gerätetest der Galerie/Bildauswahl ist weiterhin erforderlich.
+
+---
+
 # Würfelraunen – Fantasy-Grafiken und Charakterporträts (19.10.2026)
 
 **Entwicklung:** [Branch `feature/fantasy-portraits-and-ui-20261019`](https://github.com/ManuEtt/Dnd/tree/feature/fantasy-portraits-and-ui-20261019), basierend auf dem aktuellen stabilen `main` `2f392e1`. Die Änderungen sind vorerst **nicht** in `main` freigegeben; die abschließende Android-CI und Geräteabnahme müssen verifiziert werden.
