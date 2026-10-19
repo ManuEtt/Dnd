@@ -12,6 +12,7 @@ import 'damage_rules.dart';
 import 'class_progression_rules.dart';
 import 'class_feature_resources.dart';
 import 'class_resource_rules.dart';
+import 'skill_check_passives.dart';
 import 'class_combat_features.dart';
 import 'combat_class_actions.dart';
 import 'two_weapon_fighting_rules.dart';
@@ -322,6 +323,7 @@ class GameEngine {
           id: _id('roll'),
           type: 'perception',
           modifier: bonus,
+          minimumNatural: perception.minimumNatural,
           difficulty: 10,
           advantage: perception.advantage,
           disadvantage: perception.disadvantage,
@@ -2178,6 +2180,7 @@ class GameEngine {
             id: _id('roll'),
             type: 'perception',
             modifier: bonus,
+            minimumNatural: perception.minimumNatural,
             difficulty: 10,
             advantage: perception.advantage,
             disadvantage: perception.disadvantage,
@@ -2826,16 +2829,30 @@ class GameEngine {
         ],
       );
     }
+    // Preserve the natural die in the event history; only the adjudicated
+    // result may be raised by a confirmed class-based minimum.
+    final effectiveTotal = SkillCheckPassives.effectiveTotal(
+      total: result.total,
+      natural: result.natural,
+      minimumNatural: pending.minimumNatural,
+    );
+    final reliableTalentApplied =
+        result.natural != null &&
+        pending.minimumNatural == 10 &&
+        result.natural! < 10;
     final payload = <String, dynamic>{
       'request': pending.toJson(),
       'roll': result.toJson(),
+      if (reliableTalentApplied) 'skillFeature': 'reliableTalent',
+      if (reliableTalentApplied) 'effectiveTotal': effectiveTotal,
     };
     final label = result.natural == null
         ? 'Gesamtergebnis ${result.total} (Bonus bereits enthalten)'
-        : 'Naturwurf ${result.natural} ${_signed(result.modifier)} = ${result.total}';
+        : 'Naturwurf ${result.natural} ${_signed(result.modifier)} = ${result.total}'
+          '${reliableTalentApplied ? '; Verlässliches Talent: Würfelwert 10, Ergebnis $effectiveTotal' : ''}';
     var narration = '$label. ';
     if (pending.type == 'preparedCheck') {
-      final passed = result.total >= pending.difficulty;
+      final passed = effectiveTotal >= pending.difficulty;
       final story = RabenwachtCampaign.resolveCheck(next, pending, passed);
       payload['difficulty'] = pending.difficulty;
       payload['passed'] = passed;
@@ -3163,7 +3180,7 @@ class GameEngine {
           next.encounter == null) {
         final questId = next.facts['aiEncounterQuestId']!;
         final offerId = next.facts['aiEncounterOfferId']!;
-        final success = result.total >= pending.difficulty;
+        final success = effectiveTotal >= pending.difficulty;
         final lootId = 'loot-$offerId';
         next = next.copyWith(
           quests: [
@@ -3198,7 +3215,7 @@ class GameEngine {
                   'Du erhältst eine Spurenkarte als erzählerische Belohnung.'
             : 'Die Spur bleibt verborgen. Der Auftrag ist gescheitert; '
                   'es gibt keine Belohnung. Du kannst einen anderen Weg wählen.';
-      } else if (result.total >= pending.difficulty) {
+      } else if (effectiveTotal >= pending.difficulty) {
         next = next.copyWith(
           facts: {
             ...next.facts,
