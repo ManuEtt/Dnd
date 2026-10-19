@@ -1156,6 +1156,7 @@ class Encounter {
     this.heroInitiative = 0,
     this.enemyInitiative = 0,
     this.movementRemaining = 9,
+    this.movementRemainderDecimeters = 0,
     this.actionUsed = false,
     this.attacksRemaining = 0,
     this.bonusActionUsed = false,
@@ -1184,7 +1185,18 @@ class Encounter {
       round,
       heroInitiative,
       enemyInitiative,
-      movementRemaining;
+      movementRemaining,
+      movementRemainderDecimeters;
+
+  /// Precise fraction of remaining movement in tenths of a meter (0..9).
+  /// Older schema-1 campaigns omit it, retaining their full-meter balance.
+  int get remainingMovementDecimeters =>
+      movementRemaining * 10 + movementRemainderDecimeters;
+
+  String get movementRemainingLabel => movementRemainderDecimeters == 0
+      ? '$movementRemaining m'
+      : '$movementRemaining.$movementRemainderDecimeters m';
+
   final bool actionUsed, bonusActionUsed, reactionUsed, lightAttackAvailable;
 
   /// SRD 2024: expend a spell slot to cast a spell only once on a turn.
@@ -1216,6 +1228,7 @@ class Encounter {
     int? heroInitiative,
     int? enemyInitiative,
     int? movementRemaining,
+    int? movementRemainderDecimeters,
     bool? actionUsed,
     int? attacksRemaining,
     bool? bonusActionUsed,
@@ -1246,6 +1259,8 @@ class Encounter {
     heroInitiative: heroInitiative ?? this.heroInitiative,
     enemyInitiative: enemyInitiative ?? this.enemyInitiative,
     movementRemaining: movementRemaining ?? this.movementRemaining,
+    movementRemainderDecimeters:
+        movementRemainderDecimeters ?? this.movementRemainderDecimeters,
     actionUsed: actionUsed ?? this.actionUsed,
     attacksRemaining: attacksRemaining ?? this.attacksRemaining,
     bonusActionUsed: bonusActionUsed ?? this.bonusActionUsed,
@@ -1280,6 +1295,8 @@ class Encounter {
     'heroInitiative': heroInitiative,
     'enemyInitiative': enemyInitiative,
     'movementRemaining': movementRemaining,
+    if (movementRemainderDecimeters > 0)
+      'movementRemainderDecimeters': movementRemainderDecimeters,
     'actionUsed': actionUsed,
     if (attacksRemaining > 0) 'attacksRemaining': attacksRemaining,
     'bonusActionUsed': bonusActionUsed,
@@ -1418,6 +1435,13 @@ class Encounter {
         min: -20,
       ),
       movementRemaining: _int(j['movementRemaining'], 'Bewegung', fallback: 9),
+      movementRemainderDecimeters: _int(
+        j['movementRemainderDecimeters'],
+        'Bewegungsrest in Dezimetern',
+        fallback: 0,
+        min: 0,
+        max: 9,
+      ),
       actionUsed: _bool(j['actionUsed'], 'Aktion'),
       attacksRemaining: _int(
         j['attacksRemaining'],
