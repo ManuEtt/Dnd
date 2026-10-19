@@ -22,6 +22,7 @@ import 'death_save_decision_panel.dart';
 import 'fantasy_character_sheet.dart';
 import 'fantasy_ui.dart';
 import 'fantasy_art.dart';
+import 'character_portrait_picker.dart';
 import 'campaign_memory_panel.dart';
 
 const _gold = Color(0xffddb96c);
@@ -669,7 +670,17 @@ class _CharactersPage extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      FantasyHeroMedallion(name: hero.name),
+                      if (hero.portraitPreset >= 0 ||
+                          hero.portraitPhotoBase64.isNotEmpty)
+                        FantasyCharacterPortrait(
+                          key: ValueKey('list-hero-portrait-${hero.id}'),
+                          preset: hero.portraitPreset,
+                          photoBase64: hero.portraitPhotoBase64,
+                          name: hero.name,
+                          size: 70,
+                        )
+                      else
+                        FantasyHeroMedallion(name: hero.name),
                       const SizedBox(width: 14),
                       Expanded(
                         child: Column(

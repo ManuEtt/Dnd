@@ -1,3 +1,24 @@
+# Würfelraunen – Fantasy-Grafiken und Charakterporträts (19.10.2026)
+
+**Entwicklung:** [Branch `feature/fantasy-portraits-and-ui-20261019`](https://github.com/ManuEtt/Dnd/tree/feature/fantasy-portraits-and-ui-20261019), basierend auf dem aktuellen stabilen `main` `2f392e1`. Die Änderungen sind vorerst **nicht** in `main` freigegeben; die abschließende Android-CI und Geräteabnahme müssen verifiziert werden.
+
+## Freigegebenes Fantasy-Design umgesetzt
+
+- Die neun vom Nutzer freigegebenen Fantasy-Porträts werden in einem lokalen, komprimierten **3×3-Atlas** (`app/assets/fantasy/portrait_atlas.webp.b64`) gespeichert. Die Porträtwahl zeigt alle neun Originalmotive, eine Vorschau, eigene Bildauswahl, Entfernen sowie „Übernehmen/Abbrechen“. Die komprimierten Kacheln sind für mobile Übersicht und Offline-Nutzung gedacht.
+- Die ebenfalls freigegebene **nächtliche Burggrafik** (`night_sky.webp.b64`) erscheint auf dem Charaktereditor, der Bildauswahl und dem Charakterbogen. Die goldenen UI-Symbole (`ui_icon_atlas.webp.b64`) werden als Bilder statt System-Icons bei zentralen Bereichstiteln verwendet. Skalierbare goldene Eckornamente für weitere bestehende `FantasyPanel`-Komponenten ergänzen die Optik.
+- Charaktere enthalten optional **`portraitPreset`** (0–8) oder ein eigenes **`portraitPhotoBase64`**, nie beides. Angezeigte Porträts finden sich im Editor, in der Charakterliste und im Charakterbogen. Das JSON-Backup enthält die gewählte Bildquelle, benötigt keinen lokalen Android-Cachepfad und lässt ältere Charakterdateien unverändert.
+- Für ein **eigenes Android-Bild** wird der Android-System-Bildwähler (`image_picker`) genutzt. Bilder werden auf maximal 256×256 Pixel/ca. 45 KB begrenzt; zu große/fehlerhafte Dateien werden mit einer deutschen Meldung zurückgewiesen. Es gibt keinen Upload zu einem Server.
+- Beim Charaktereditor sind **Speichern/Abbrechen fixiert** am unteren Rand. Die bisherige SRD-Regelengine und bestehende Save-Validierung bleiben unverändert.
+- Die Porträt-Daten gelten ausschließlich der Darstellung und gewähren keine Spielboni. Regel- und SQLite-Regression müssen bei jedem Build grün bleiben.
+
+**Neue Tests:** `app/test/character_portrait_test.dart` (Vorlagenauswahl, JSON-Rundlauf, Backward-Kompatibilität, manipulierter Import). Der Image-Picker muss zusätzlich auf einem echten Android-Gerät mit der Systemgalerie geprüft werden.
+
+**Prüfstatus:** Nur als fertig angeben, was ein vollständiger aktueller GitHub-Actions-Lauf für den endgültigen HEAD bestätigt. Bis dahin Entwurfs-PR, kein erzwungener Merge.
+
+---
+
+## Vorherige Entwicklung
+
 # Entwicklungszusammenführung – Würfelraunen (19.10.2026)
 
 **Integration:** `integration/character-creation-20261019` kombiniert die bereits nach `main` übernommenen Änderungen aus PR #11 (SRD-Klassenaufstieg und Charaktererstellungsprüfung) mit dem in PR #9 getesteten Startausrüstungs-, Rüstungsklassen- und Bewegungsfix. Basis: `main` `b3e1de65`. Diese Kombination **bedarf eines eigenen kompletten CI-/APK-Tests**; die früheren grünen Einzel-PR-Builds beweisen die Integration nicht. Der fachlich überlappende PR #10 wurde auf zusätzliche Funktionen geprüft: die darin enthaltene validierte Attributsverbesserung (+2 oder +1/+1, 20er-Obergrenze, rückwirkende Konstitutions-TP) wurde **in den vorhandenen PR-#11-Aufstiegsassistenten übernommen**, ohne einen zweiten konkurrierenden Dialog einzubauen. Der übrige doppelte Code aus PR #10 wird nicht erneut integriert. Die gesamte Kombination muss gemeinsam per CI getestet werden.

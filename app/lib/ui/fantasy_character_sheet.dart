@@ -12,6 +12,7 @@ import '../domain/rest_rules.dart';
 import '../domain/spellcasting_rules.dart';
 import '../domain/rules_engine.dart';
 import 'fantasy_art.dart';
+import 'character_portrait_picker.dart';
 
 // A read-only presentation of the actual, confirmed character data. No state,
 // rule changes, generated portrait, or assumed missing character values.
@@ -111,16 +112,7 @@ class _CharacterHeader extends StatelessWidget {
     return _FantasyFrame(
       child: Column(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(9),
-            child: Image.asset(
-              FantasyArtwork.castle,
-              height: 80,
-              width: double.infinity,
-              fit: BoxFit.cover,
-              semanticLabel: 'Illustration einer Fantasy-Burg',
-            ),
-          ),
+          const FantasyMoonlitBanner(height: 80),
           const SizedBox(height: 12),
           Text(
             hero.name.isEmpty ? 'Unbenannter Held' : hero.name,
@@ -146,33 +138,43 @@ class _CharacterHeader extends StatelessWidget {
           const SizedBox(height: 18),
           Row(
             children: [
-              Container(
-                key: const ValueKey('sheet-avatar-placeholder'),
-                width: 88,
-                height: 100,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(22),
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xff39546c), Color(0xff0c1929)],
+              if (hero.portraitPreset >= 0 ||
+                  hero.portraitPhotoBase64.isNotEmpty)
+                FantasyCharacterPortrait(
+                  key: const ValueKey('sheet-hero-portrait'),
+                  preset: hero.portraitPreset,
+                  photoBase64: hero.portraitPhotoBase64,
+                  name: hero.name,
+                  size: 88,
+                )
+              else
+                Container(
+                  key: const ValueKey('sheet-avatar-placeholder'),
+                  width: 88,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(22),
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Color(0xff39546c), Color(0xff0c1929)],
+                    ),
+                    border: Border.all(color: _gold, width: 1.5),
                   ),
-                  border: Border.all(color: _gold, width: 1.5),
-                ),
-                alignment: Alignment.center,
-                child: Semantics(
-                  label: 'Platzhalter für das Charakterporträt',
-                  child: Text(
-                    initials,
-                    style: const TextStyle(
-                      fontFamily: 'serif',
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: _gold,
+                  alignment: Alignment.center,
+                  child: Semantics(
+                    label: 'Platzhalter für das Charakterporträt',
+                    child: Text(
+                      initials,
+                      style: const TextStyle(
+                        fontFamily: 'serif',
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: _gold,
+                      ),
                     ),
                   ),
                 ),
-              ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(

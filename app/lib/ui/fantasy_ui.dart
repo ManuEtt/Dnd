@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'fantasy_approved_icons.dart';
 
 /// Gemeinsames Oberflaechensystem. Keine Regeln oder gespeicherten Werte.
 abstract final class FantasyPalette {
@@ -240,6 +241,46 @@ class FantasyBackdrop extends StatelessWidget {
   );
 }
 
+/// Reusable corner ornaments inspired by the approved moonlit fantasy UI
+/// artwork. Painted vectors remain crisp at every Android density.
+class FantasyGoldFiligree extends CustomPainter {
+  const FantasyGoldFiligree();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = FantasyPalette.gold.withValues(alpha: .77)
+      ..strokeWidth = 1.1
+      ..style = PaintingStyle.stroke;
+    const edge = 19.0;
+    void corner(double x, double y, double dx, double dy) {
+      final p = Path()
+        ..moveTo(x + dx * edge, y)
+        ..lineTo(x + dx * 5, y)
+        ..quadraticBezierTo(x, y, x, y + dy * 5)
+        ..lineTo(x, y + dy * edge);
+      canvas.drawPath(p, paint);
+      canvas.drawLine(
+        Offset(x + dx * 7, y + dy * 7),
+        Offset(x + dx * 13, y + dy * 13),
+        paint,
+      );
+      final cx = x + dx * 22;
+      final cy = y + dy * 22;
+      canvas.drawLine(Offset(cx - 3, cy), Offset(cx + 3, cy), paint);
+      canvas.drawLine(Offset(cx, cy - 3), Offset(cx, cy + 3), paint);
+    }
+
+    corner(2, 2, 1, 1);
+    corner(size.width - 2, 2, -1, 1);
+    corner(2, size.height - 2, 1, -1);
+    corner(size.width - 2, size.height - 2, -1, -1);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
 /// Wiederverwendeter gerahmter Bereich mit dezenten goldenen Verzierungen.
 class FantasyPanel extends StatelessWidget {
   const FantasyPanel({
@@ -257,47 +298,50 @@ class FantasyPanel extends StatelessWidget {
   final EdgeInsetsGeometry padding;
 
   @override
-  Widget build(BuildContext context) => Container(
-    padding: padding,
-    decoration: BoxDecoration(
-      gradient: const LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [Color(0xff1a3045), Color(0xff0e1b29)],
-      ),
-      borderRadius: BorderRadius.circular(15),
-      border: Border.all(color: accent.withValues(alpha: .5)),
-      boxShadow: const [
-        BoxShadow(
-          color: Color(0x2e000000),
-          blurRadius: 10,
-          offset: Offset(0, 4),
+  Widget build(BuildContext context) => CustomPaint(
+    foregroundPainter: const FantasyGoldFiligree(),
+    child: Container(
+      padding: padding,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xff1a3045), Color(0xff0e1b29)],
         ),
-      ],
-    ),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (title != null) ...[
-          Row(
-            children: [
-              if (icon != null) ...[
-                Icon(icon, color: accent, size: 22),
-                const SizedBox(width: 10),
-              ],
-              Expanded(
-                child: Text(
-                  title!,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ),
-            ],
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: accent.withValues(alpha: .5)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x2e000000),
+            blurRadius: 10,
+            offset: Offset(0, 4),
           ),
-          Divider(color: accent.withValues(alpha: .3), height: 24),
         ],
-        child,
-      ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (title != null) ...[
+            Row(
+              children: [
+                if (icon != null) ...[
+                  Icon(icon, color: accent, size: 22),
+                  const SizedBox(width: 10),
+                ],
+                Expanded(
+                  child: Text(
+                    title!,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+              ],
+            ),
+            Divider(color: accent.withValues(alpha: .3), height: 24),
+          ],
+          child,
+        ],
+      ),
     ),
   );
 }
@@ -307,10 +351,12 @@ class FantasySectionTitle extends StatelessWidget {
     super.key,
     required this.title,
     this.icon,
+    this.approvedIconIndex,
     this.subtitle,
   });
   final String title;
   final IconData? icon;
+  final int? approvedIconIndex;
   final String? subtitle;
 
   @override
@@ -321,7 +367,10 @@ class FantasySectionTitle extends StatelessWidget {
       children: [
         Row(
           children: [
-            if (icon != null) ...[
+            if (approvedIconIndex != null) ...[
+              FantasyApprovedIcon(index: approvedIconIndex!, size: 34),
+              const SizedBox(width: 8),
+            ] else if (icon != null) ...[
               Icon(icon, color: FantasyPalette.gold, size: 25),
               const SizedBox(width: 10),
             ],
