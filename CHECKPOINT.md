@@ -1,6 +1,6 @@
 # Integrations-Checkpoint 19.10.2026
 
-Branch `integration/character-creation-20261019` von `main` `b3e1de65`: PR #11 bereits enthalten; Code aus PR #9 konfliktfrei dreifach abgeglichen (vorheriges gemeinsames Git-Base `82f2786b`), ohne neue PR #11-Merkmale zu entfernen. PR #10 überschneidet sich noch, wird nicht blind integriert. **Aktuelle gemeinsame CI und Android-Artefakte offen**; weder fertig noch installiert behaupten.
+Branch `integration/character-creation-20261019` von `main` `b3e1de65`: PR #11 bereits enthalten; Code aus PR #9 konfliktfrei dreifach abgeglichen (vorheriges gemeinsames Git-Base `82f2786b`), ohne neue PR #11-Merkmale zu entfernen. PR #10 wurde fachlich mit PR #11 verglichen: seine einzigartige ASI-Auswahl (+2 oder +1/+1, bestätigte Attribute ≤20, rückwirkende KO-TP) ist in den bestehenden PR-#11-Regel- und UI-Weg integriert, mit `integrated_character_level_up_test.dart` getestet werden. Der konkurrierende zweite Dialog wird nicht übernommen. **Aktuelle gemeinsame CI und Android-Artefakte offen**; weder fertig noch installiert behaupten.
 
 # CI-Verifizierung – RK und Bewegung, 19.10.2026
 
