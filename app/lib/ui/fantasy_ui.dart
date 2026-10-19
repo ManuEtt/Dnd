@@ -666,16 +666,8 @@ class _FantasyStarlightPainter extends CustomPainter {
       final center = Offset(x, y);
       final arm = (i % 5 == 0) ? 3.3 : 1.2;
       final pen = i.isEven ? ink : flare;
-      canvas.drawLine(
-        center.translate(-arm, 0),
-        center.translate(arm, 0),
-        pen,
-      );
-      canvas.drawLine(
-        center.translate(0, -arm),
-        center.translate(0, arm),
-        pen,
-      );
+      canvas.drawLine(center.translate(-arm, 0), center.translate(arm, 0), pen);
+      canvas.drawLine(center.translate(0, -arm), center.translate(0, arm), pen);
     }
     final orbitPaint = Paint()
       ..color = FantasyPalette.gold.withValues(alpha: .055)

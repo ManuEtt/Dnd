@@ -52,7 +52,9 @@ void main() {
     });
   }
 
-  testWidgets('Alle sechs neuen Vektor-Grafiken sind zeichnbar', (tester) async {
+  testWidgets('Alle sechs neuen Vektor-Grafiken sind zeichnbar', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(

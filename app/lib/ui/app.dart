@@ -116,10 +116,7 @@ class _LivingGameAppState extends State<LivingGameApp> {
             appBar: AppBar(
               title: Row(
                 children: [
-                  const FantasyRuneEmblem(
-                    rune: FantasyRune.dice,
-                    size: 30,
-                  ),
+                  const FantasyRuneEmblem(rune: FantasyRune.dice, size: 30),
                   const SizedBox(width: 9),
                   Expanded(
                     child: Text(
@@ -469,10 +466,7 @@ class _HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const FantasyRuneEmblem(
-                rune: FantasyRune.dice,
-                size: 46,
-              ),
+              const FantasyRuneEmblem(rune: FantasyRune.dice, size: 46),
               const SizedBox(height: 12),
               Text(
                 'Dein Spieltisch',
@@ -1159,10 +1153,7 @@ class _AdventurePageState extends State<_AdventurePage> {
           children: [
             Row(
               children: [
-                const FantasyRuneEmblem(
-                  rune: FantasyRune.compass,
-                  size: 38,
-                ),
+                const FantasyRuneEmblem(rune: FantasyRune.compass, size: 38),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(

@@ -190,10 +190,7 @@ class FantasyIllustratedBanner extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const FantasyRuneEmblem(
-                    rune: FantasyRune.moon,
-                    size: 42,
-                  ),
+                  const FantasyRuneEmblem(rune: FantasyRune.moon, size: 42),
                   const SizedBox(width: 9),
                   Icon(icon, color: FantasyPalette.gold, size: 17),
                   const SizedBox(width: 7),
@@ -280,10 +277,7 @@ class FantasyScenePanel extends StatelessWidget {
                 children: [
                   const Row(
                     children: [
-                      FantasyRuneEmblem(
-                        rune: FantasyRune.quill,
-                        size: 30,
-                      ),
+                      FantasyRuneEmblem(rune: FantasyRune.quill, size: 30),
                       SizedBox(width: 10),
                       Text(
                         'AKTUELLE SZENE',

@@ -208,9 +208,7 @@ class FantasyBrandPlaque extends StatelessWidget {
     child: DecoratedBox(
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(
-            color: FantasyPalette.gold.withValues(alpha: .32),
-          ),
+          bottom: BorderSide(color: FantasyPalette.gold.withValues(alpha: .32)),
         ),
         gradient: const LinearGradient(
           colors: [Color(0xee101d29), Color(0xa8122637), Color(0xee101d29)],
@@ -224,10 +222,7 @@ class FantasyBrandPlaque extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            FantasyRuneEmblem(
-              rune: FantasyRune.dice,
-              size: compact ? 32 : 62,
-            ),
+            FantasyRuneEmblem(rune: FantasyRune.dice, size: compact ? 32 : 62),
             SizedBox(width: compact ? 8 : 13),
             Flexible(
               child: Column(
@@ -379,10 +374,7 @@ class FantasyChapterHeading extends StatelessWidget {
             FantasyRuneEmblem(rune: rune, size: 36),
             const SizedBox(width: 11),
             Expanded(
-              child: Text(
-                label,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
+              child: Text(label, style: Theme.of(context).textTheme.titleLarge),
             ),
             const Icon(
               Icons.auto_awesome,
