@@ -1,3 +1,10 @@
+## Unveröffentlicht – Start-RK und Spezies-Bewegung (19.10.2026)
+
+- Vorher fehlende `Rüstungsklasse` und `Bewegung` bei der Erstellung werden nach tatsächlich bestätigten Klassen-, Spezies- und Attributwerten vorgeschlagen (10 + GE; bei ungerüstetem Barbar KON und ungerüstetem Mönch WEI).
+- SRD-2024-Spezies: 9 m / 30 Fuß üblich, 10,5 m / 35 Fuß für Goliath/Waldelf; optionales Feld `speedRemainderDecimeters` für exakte halbe Meter und alte Spielstände unverändert.
+- Automatische Berechnung beim Neuanlegen bzw. Bestätigen der Attribute; ältere Figuren erhalten einen expliziten Button für fehlende Werte. Manuelle Werte und ungeklärte Spezies werden nicht überschrieben/erraten.
+- Angelegte Rüstung/Schilde weiterhin nur nach separater ausdrücklicher Bestätigung wirksam. Domain-/Widgettests ergänzt, Android- und CI-Prüfung für diese neue Änderung ausstehend.
+
 ## Unveröffentlicht – Ausrüstung im Klassenassistenten/Import (19.10.2026)
 
 - Fehlerursache: SRD-Startsets wurden bisher nur als Name/Menge, ohne `catalogId` und `InventoryItemStats`, übernommen.
