@@ -1,3 +1,11 @@
+## Weiterentwicklung 19.10.2026 – Bewusstlos bewirkt bleibendes Liegend
+
+Der geprüfte Featurebranch `feature/condition-source-ledger-20261018` (PR #7, letzte grüne Basis `c000e78b` / Actions 39165288268) wird um die SRD-5.2.1-Folge `bewusstlos` → `liegend` erweitert: neue Bewusstlosigkeit aus Schaden, Todesrettungen, Quellzuständen und bestätigten Charakteränderungen setzt `liegend` getrennt. Die Folge überlebt das Aufwachen, Quellenende und JSON-/SQLite-Bestätigung; Legacy-Daten werden beim Lesen nicht automatisch migriert. Handlungsunfähigkeit durch bestätigte Charakterbogenänderung beendet Konzentration. Acht neue Testfälle sind unter `unconscious_prone_test.dart` eingereicht.
+
+**Prüfstatus dieses Inkrements: NICHT ABGENOMMEN.** Neue GitHub-Checks, APKs und Gerätetests erst nach verifiziertem Erfolg eintragen. Nächster Schritt: offizielle Dart-Formatierung, kompletter CI-Lauf, eventuelle Testkorrekturen, danach reale Android-Abnahme. Weitere SRD-Folgen (Fallenlassen gehaltener Gegenstände, Aufstehen/Kriechen und Positionsregeln) noch offen.
+
+---
+
 ## Laufender GitHub-Entwicklungsbranch – quellgebundene Zustände (18.10.2026)
 
 - PR [#7](https://github.com/ManuEtt/Dnd/pull/7) gegen `main`; kein Merge und keine Veränderung von `main`.
