@@ -1,3 +1,15 @@
+# Integrationscheckpoint – 19.10.2026
+
+**Abgeschlossen auf `main`:** PR #11 (SRD-Klassenentwicklung), PR #12 (3-Wege-Zusammenführung der SRD-Ausrüstungs-/RK-/Spezieswerte aus PR #9 und Ergänzung der einzigartigen Attributsverbesserung aus PR #10), PR #13 (einmaligen Formatter entfernen). Der integrierte App-Code verfügt über **einen** Level-up-Dialog. Alle Änderungen sind unter den PRs nachzuvollziehen; ursprüngliche Featurebranches wurden nicht gelöscht oder zwangsverschoben. Die alten PRs #9 und #10 wurden als integriert/ersetzt geschlossen, **nicht direkt gemergt**.
+
+**Fachlich abgedeckt:** Import von Kataloggegenständen mit `catalogId`/`InventoryItemStats`, Goliath-/Waldelf-Geschwindigkeit 10,5 m mit altem JSON kompatibel, Basis-RK-Vorschläge, Klassenstufen + TP + EP/Meilenstein und validierte ASI (+2, +1/+1 bis 20) mit Rückwirkung bei KO. Klassenmerkmale ohne voll implementierte Regellogik werden weiterhin nur als offen angezeigt.
+
+**Prüfstatus:** Kombination der Codes in `main` nach PR #12; vollständige Flutter-/Backend-Suite und statische Analyse erfolgreich im [Actions-Lauf 39206965724](https://github.com/ManuEtt/Dnd/actions/runs/39206965724); zu Ende laufende APK-/Android-Prüfung sowie echter Gerätetest separat bewerten. PR #13 entfernte lediglich den nur einmal genutzten Workflow.
+
+**Nächste Arbeit:** Die noch unvollständige SRD-5.2.1-Anforderungsmatrix weiter bearbeiten, alte Skript-/Testbranches nicht ohne funktionellen Mehrwert zurückmergen und veraltete Entwicklungsnotizen nicht als Release-Status lesen.
+
+---
+
 # Integrations-Checkpoint 19.10.2026
 
 Branch `integration/character-creation-20261019` von `main` `b3e1de65`: PR #11 bereits enthalten; Code aus PR #9 konfliktfrei dreifach abgeglichen (vorheriges gemeinsames Git-Base `82f2786b`), ohne neue PR #11-Merkmale zu entfernen. PR #10 wurde fachlich mit PR #11 verglichen: seine einzigartige ASI-Auswahl (+2 oder +1/+1, bestätigte Attribute ≤20, rückwirkende KO-TP) ist in den bestehenden PR-#11-Regel- und UI-Weg integriert, mit `integrated_character_level_up_test.dart` getestet werden. Der konkurrierende zweite Dialog wird nicht übernommen. **Aktuelle gemeinsame CI und Android-Artefakte offen**; weder fertig noch installiert behaupten.
