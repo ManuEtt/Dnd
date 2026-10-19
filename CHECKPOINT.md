@@ -1,3 +1,11 @@
+# Checkpoint 19.10.2026 – Primäre Klassenentwicklung
+
+Basis `main` `cadaf7369f8899f29370fb28dfdc2a92c0ba98aa`; Branch `feature/primary-class-level-up-20261019`. Geändert/neu: `app/lib/domain/primary_class_level_up.dart`, `app/lib/ui/primary_class_level_up_dialog.dart`, `app/lib/ui/character_editor.dart`, `app/test/primary_class_level_up_test.dart`, `app/test/ui_primary_class_level_up_test.dart`. Alle 12 Klassen: +1 Hauptklassenstufe, feste TP, EP-Meilenstein-Wahl, Unterklasse 3, ASI und offene Featureentscheidungen. Enthält Revisionsschutz des Vorschlags sowie sichere Ausgabewerte; zweiter Klassenstand bleibt intakt.
+
+**Stand:** Code und Tests eingereicht; vollständige CI/Android-Abnahme noch nicht verifiziert. Nächster Schritt: Dart format, Analyze, vollständige Flutter-/Backend-/Android-Suite grün, eventuelle Tests reparieren; danach weitere vertikale Wizard-Schritte für Spezies, Hintergründe, alle Merkmals-/Zauberwahlen, Zweitklassen-Unterklasse und ausstehende Feat-Resolution. **Keine vollständig umgesetzte SRD-5.2.1-Charaktererstellung/20-Level-Klassenautomatik behaupten**.
+
+---
+
 # Entwicklungscheckpoint 19.10.2026 – Aufstehen / Bewegungsbudget
 
 Branch `feature/prone-stand-movement-20261019`, basiert auf GitHub-`main` `82f2786b17d626dbecbe31e788b2a2201a05e275`; PR #7 ist inzwischen in `main` übernommen. Neue Änderungen bleiben bis zur vollen CI-Abnahme separat.
