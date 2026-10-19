@@ -1,3 +1,11 @@
+# Entwicklungscheckpoint vom 19.10.2026 – Bewusstlos / Liegend
+
+Branch `feature/condition-source-ledger-20261018`, PR [#7](https://github.com/ManuEtt/Dnd/pull/7) gegen `main`. Der letzte bereits erfolgreich durchlaufene vollständige GitHub-Workflow war [39165288268](https://github.com/ManuEtt/Dnd/actions/runs/39165288268) für `c000e78b`. Die **neuen** Änderungen zu Bewusstlos/Liegend müssen separat durch CI und Android-Build abgenommen werden.
+
+Neue Engine-Logik: bestätigte Bewusstlosigkeit hinterlässt Liegend als unabhängige manuelle Folge, selbst bei Heilung, natürlicher Todesrettungs-20 und Entfernung/Ablauf quellgebundener Effekte. Alte JSON-Spielstände verändern sich nicht beim bloßen Einlesen. Eine bestätigte handlungsunfähige Charakterbogenänderung beendet Konzentration. Neue Tests: `app/test/unconscious_prone_test.dart`. Regelmatrix, CHANGELOG und README aktualisiert. Offen: Format, statische Analyse, Flutter-/Backend-Suite, Android-Pakete und reales Gerät; Aufstehen, abgelegte Gegenstände und Fremdzielpositionsregeln weiterhin nicht implementiert.
+
+---
+
 # GitHub-Zwischencheckpoint – Quellgebundene Zustände, PR #7 (18.10.2026)
 
 Branch: `feature/condition-source-ledger-20261018`; Basis `main` bei `2b2618a45158d068a8cf37ab3d133a9b11ca10fb`; Pull Request: https://github.com/ManuEtt/Dnd/pull/7. Vor Merge oder weiterer Arbeit **tatsächlichen Branch-HEAD, Checks und PR-Status neu prüfen**. Keine Änderung direkt auf `main`.
