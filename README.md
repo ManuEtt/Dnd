@@ -1,3 +1,19 @@
+# Würfelraunen – bereinigter GitHub-Hauptstand (19.10.2026)
+
+**Branch `main`:** Zusammenführung abgeschlossen. [PR #11](https://github.com/ManuEtt/Dnd/pull/11) hat die SRD-Klassenentwicklung und Erstellungsprüfung übernommen; [PR #12](https://github.com/ManuEtt/Dnd/pull/12) hat den getypten Ausrüstungsimport, die Berechnung der Start-RK/Bewegung und die Attributsverbesserung aus den zuvor konkurrierenden Zweigen integriert; [PR #13](https://github.com/ManuEtt/Dnd/pull/13) hat den einmalig benötigten Formatierworkflow gelöscht. PRs [#9](https://github.com/ManuEtt/Dnd/pull/9) und [#10](https://github.com/ManuEtt/Dnd/pull/10) sind **als inhaltlich integriert/ersetzt geschlossen** (nicht noch einmal gemergt). Ihre ursprünglichen Branches bleiben für den Verlauf erhalten.
+
+**Aktueller Quellcode:** ein einziger Klassenaufstiegsdialog mit regelgeprüften Gesamt-/Klassenstufen, EP bzw. ausdrücklichem Meilenstein, klassenspezifischen Trefferpunkten, Attributsverbesserung (+2 oder +1/+1) und rückwirkenden KO-Trefferpunkten. Startausrüstung und Katalogimporte besitzen bei eindeutiger Zuordnung strukturierte Waffen-/Rüstungs-/Gegenstandswerte; RK und Speziesbewegung werden nach bestätigten Eingaben vorgeschlagen. Alte Spielstände und manuelle Werte bleiben geschützt. Die neuen Funktionen und Regressionstests liegen gemeinsam auf `main`.
+
+**Integrationsprüfung:** [GitHub-Actions-Lauf auf PR-#12-Mergecommit `8f8db0e2`](https://github.com/ManuEtt/Dnd/actions/runs/39206965724) – Dart-/Backend-/Flutterprüfungen erfolgreich; finale Android-Artefakte zum Zeitpunkt dieser Dokumentationsänderung noch prüfen. PR #13 änderte danach **nur** den temporären Workflow, nicht den App-Quellcode. Ein Test auf einem echten Android-Gerät steht weiterhin aus.
+
+**Regelumsetzung:** Das vollständige D&D-SRD-5.2.1-Regelwerk ist weiterhin **nicht** zu 100 % implementiert. Herkunftstalente, alle Unterklassen-/Zauberwirkungen sowie weitere Entscheidungen müssen schrittweise, überprüfbar und lizenzkonform ergänzt werden. Für Details siehe [SRD-Regelmatrix](docs/SRD_5_2_1_REQUIREMENTS_MATRIX.md), [CHECKPOINT](CHECKPOINT.md) und [Changelog](CHANGELOG.md).
+
+---
+
+## Historische Entwicklungsnotizen
+
+Nachfolgende frühere Branch- und CI-Statusangaben sind historische Einträge. Maßgeblich ist **der aktuelle Status oben**.
+
 # Entwicklungszusammenführung – Würfelraunen (19.10.2026)
 
 **Integration:** `integration/character-creation-20261019` kombiniert die bereits nach `main` übernommenen Änderungen aus PR #11 (SRD-Klassenaufstieg und Charaktererstellungsprüfung) mit dem in PR #9 getesteten Startausrüstungs-, Rüstungsklassen- und Bewegungsfix. Basis: `main` `b3e1de65`. Diese Kombination **bedarf eines eigenen kompletten CI-/APK-Tests**; die früheren grünen Einzel-PR-Builds beweisen die Integration nicht. Der fachlich überlappende PR #10 wurde auf zusätzliche Funktionen geprüft: die darin enthaltene validierte Attributsverbesserung (+2 oder +1/+1, 20er-Obergrenze, rückwirkende Konstitutions-TP) wurde **in den vorhandenen PR-#11-Aufstiegsassistenten übernommen**, ohne einen zweiten konkurrierenden Dialog einzubauen. Der übrige doppelte Code aus PR #10 wird nicht erneut integriert. Die gesamte Kombination muss gemeinsam per CI getestet werden.
