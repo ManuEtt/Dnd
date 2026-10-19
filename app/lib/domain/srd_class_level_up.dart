@@ -67,7 +67,12 @@ class SrdClassLevelUpProposal {
       secondaryClassLevel: isSecondary
           ? hero.secondaryClassLevel + 1
           : hero.secondaryClassLevel,
-      subclass: chosenSubclass.isNotEmpty ? chosenSubclass : hero.subclass,
+      subclass: !isSecondary && chosenSubclass.isNotEmpty
+          ? chosenSubclass
+          : hero.subclass,
+      secondarySubclass: isSecondary && chosenSubclass.isNotEmpty
+          ? chosenSubclass
+          : hero.secondarySubclass,
       abilities: {
         ...hero.abilities,
         for (final change in abilityIncreases.entries)
@@ -141,20 +146,24 @@ class SrdClassLevelUpRules {
         (isSecondary ? hero.secondaryClassLevel : hero.primaryClassLevel) + 1;
     final supportedSubclass =
         SrdClassFeatureCatalog.defaultSubclass[selected.name] ?? '';
+    final existingSubclass = isSecondary
+        ? hero.secondarySubclass
+        : hero.subclass;
     if (chosenSubclass.isNotEmpty &&
-        (isSecondary ||
-            classLevel != 3 ||
-            hero.subclass.isNotEmpty ||
+        (classLevel != 3 ||
+            existingSubclass.isNotEmpty ||
             chosenSubclass != supportedSubclass)) {
       throw const FormatException(
-        'Nur die ausdrücklich gewählte lizenzierte SRD-Unterklasse '
-        'der Hauptklasse auf Klassenstufe 3 ist hier zulässig.',
+        'Eine SRD-Unterklasse darf nur für die gewählte Klasse '
+        'auf Klassenstufe 3 ausdrücklich bestätigt werden.',
       );
     }
     final classFeatures = SrdClassFeatureCatalog.atClassLevel(
       selected.name,
       classLevel,
-      subclass: chosenSubclass.isNotEmpty ? chosenSubclass : hero.subclass,
+      subclass: chosenSubclass.isNotEmpty
+          ? chosenSubclass
+          : existingSubclass,
     );
     final milestones = ClassProgressionRules.milestonesForClass(selected.name)
         .where(
