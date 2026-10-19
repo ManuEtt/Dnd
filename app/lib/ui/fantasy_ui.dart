@@ -228,16 +228,49 @@ class FantasyBackdrop extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => DecoratedBox(
-    decoration: const BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [Color(0xff142a40), FantasyPalette.night, Color(0xff0b1726)],
-        stops: [0, .46, 1],
+  Widget build(BuildContext context) => Stack(
+    fit: StackFit.expand,
+    children: [
+      const DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xff142a40),
+              FantasyPalette.night,
+              Color(0xff0b1726),
+            ],
+            stops: [0, .46, 1],
+          ),
+        ),
       ),
-    ),
-    child: child,
+      Positioned(
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 205,
+        child: IgnorePointer(
+          child: ShaderMask(
+            shaderCallback: (bounds) => const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Colors.white, Colors.transparent],
+            ).createShader(bounds),
+            blendMode: BlendMode.dstIn,
+            child: Opacity(
+              opacity: 0.38,
+              child: Image.asset(
+                'assets/fantasy/night_sky.webp',
+                fit: BoxFit.cover,
+                errorBuilder: (_, error, stack) => const SizedBox.shrink(),
+              ),
+            ),
+          ),
+        ),
+      ),
+      child,
+    ],
   );
 }
 

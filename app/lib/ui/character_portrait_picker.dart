@@ -9,20 +9,22 @@ import 'package:image_picker/image_picker.dart';
 import 'fantasy_art.dart';
 import 'fantasy_ui.dart';
 
-// The user-approved portraits and scenery are embedded as portable Base64
-// text assets, avoiding binary-upload limitations while still bundling the
-// original approved artwork offline in the Android app.
+// The approved portraits and scenery are native WebP Flutter assets.
+// Portrait selection is independent of network access.
 abstract final class FantasyApprovedAssets {
   static final Future<ui.Image> portraitAtlas = _loadAtlas();
   static final Future<Uint8List> moonlitSky = rootBundle
-      .loadString('assets/fantasy/night_sky.webp.b64')
-      .then((value) => base64Decode(value.trim()));
+      .load('assets/fantasy/night_sky.webp')
+      .then(
+        (value) =>
+            value.buffer.asUint8List(value.offsetInBytes, value.lengthInBytes),
+      );
 
   static Future<ui.Image> _loadAtlas() async {
-    final text = await rootBundle.loadString(
-      'assets/fantasy/portrait_atlas.webp.b64',
+    final bytes = await rootBundle.load('assets/fantasy/portrait_atlas.webp');
+    final codec = await ui.instantiateImageCodec(
+      bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes),
     );
-    final codec = await ui.instantiateImageCodec(base64Decode(text.trim()));
     try {
       return (await codec.getNextFrame()).image;
     } finally {
