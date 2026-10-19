@@ -53,7 +53,7 @@ class CoverRules {
         'Ein Ziel hinter vollständiger Deckung kann nicht direkt angegriffen werden.',
       );
     }
-    return (baseArmorClass + getBonus(grade)).clamp(1, 100);
+    return (baseArmorClass + getBonus(grade)).clamp(1, 100).toInt();
   }
 
   /// Only a confirmed Dexterity save against a confirmed effect originating
