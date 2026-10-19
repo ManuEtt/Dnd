@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../domain/models.dart';
 import 'fantasy_ui.dart';
+import 'fantasy_approved_icons.dart';
 
 /// Artwork cropped from the project's original Aetheria visual concepts.
 /// These images are decorative; displayed story and character data is real.
@@ -394,12 +395,16 @@ class FantasyShortcutTile extends StatelessWidget {
     required this.onTap,
     this.width = 112,
     this.compact = false,
+    this.approvedIconIndex,
   });
   final String label;
   final IconData icon;
   final Color color;
   final VoidCallback? onTap;
   final double width;
+  /// Index of the actual approved illustrated fantasy icon (0-7).
+  /// Null retains the Material symbol for actions without a matching icon.
+  final int? approvedIconIndex;
 
   /// Short, consistently sized tile for a persistent mobile action bar.
   final bool compact;
@@ -434,11 +439,17 @@ class FantasyShortcutTile extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircleAvatar(
-                  radius: compact ? 17 : 24,
-                  backgroundColor: color.withValues(alpha: .14),
-                  child: Icon(icon, color: color, size: compact ? 21 : 29),
-                ),
+                if (approvedIconIndex != null)
+                  FantasyApprovedIcon(
+                    index: approvedIconIndex!,
+                    size: compact ? 38 : 52,
+                  )
+                else
+                  CircleAvatar(
+                    radius: compact ? 17 : 24,
+                    backgroundColor: color.withValues(alpha: .14),
+                    child: Icon(icon, color: color, size: compact ? 21 : 29),
+                  ),
                 SizedBox(height: compact ? 4 : 9),
                 Text(
                   label,
@@ -550,6 +561,7 @@ class FantasyPinnedActionBar extends StatelessWidget {
                   child: FantasyShortcutTile(
                     key: const ValueKey('adventure-shortcut-inspect'),
                     label: 'Untersuchen',
+                    approvedIconIndex: 3,
                     icon: Icons.search,
                     color: FantasyPalette.blue,
                     width: double.infinity,
@@ -562,6 +574,7 @@ class FantasyPinnedActionBar extends StatelessWidget {
                   child: FantasyShortcutTile(
                     key: const ValueKey('adventure-shortcut-attack'),
                     label: 'Angriff',
+                    approvedIconIndex: 1,
                     icon: Icons.sports_martial_arts,
                     color: FantasyPalette.danger,
                     width: double.infinity,
@@ -574,6 +587,7 @@ class FantasyPinnedActionBar extends StatelessWidget {
                   child: FantasyShortcutTile(
                     key: const ValueKey('adventure-shortcut-roll'),
                     label: 'W20',
+                    approvedIconIndex: 7,
                     icon: Icons.casino_outlined,
                     color: Color(0xffae90d8),
                     width: double.infinity,
