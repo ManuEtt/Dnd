@@ -135,6 +135,20 @@ class _CharacterHeader extends StatelessWidget {
               letterSpacing: .75,
             ),
           ),
+          if (hero.subclass.isNotEmpty || hero.secondarySubclass.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                [
+                  if (hero.subclass.isNotEmpty)
+                    '${hero.className}: ${hero.subclass}',
+                  if (hero.hasSecondClass && hero.secondarySubclass.isNotEmpty)
+                    '${hero.secondaryClassName}: ${hero.secondarySubclass}',
+                ].join(' · '),
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: _muted, fontSize: 11),
+              ),
+            ),
           const SizedBox(height: 18),
           Row(
             children: [
