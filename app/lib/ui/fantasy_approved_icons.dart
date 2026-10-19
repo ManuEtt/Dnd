@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -15,10 +14,10 @@ class FantasyApprovedIcon extends StatelessWidget {
   static final Future<ui.Image> _atlas = _load();
 
   static Future<ui.Image> _load() async {
-    final source = await rootBundle.loadString(
-      'assets/fantasy/ui_icon_atlas.webp.b64',
+    final bytes = await rootBundle.load('assets/fantasy/ui_icon_atlas.webp');
+    final codec = await ui.instantiateImageCodec(
+      bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes),
     );
-    final codec = await ui.instantiateImageCodec(base64Decode(source.trim()));
     try {
       return (await codec.getNextFrame()).image;
     } finally {
