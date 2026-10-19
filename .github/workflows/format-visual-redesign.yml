@@ -1,0 +1,47 @@
+name: Format visual redesign
+
+on:
+  push:
+    branches:
+      - feature/visual-redesign-v2-20261019
+    paths:
+      - '.github/workflows/format-visual-redesign.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  dart-format:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/visual-redesign-v2-20261019
+          persist-credentials: true
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Format all altered Flutter sources
+        run: |
+          dart format \
+            app/lib/ui/fantasy_experience.dart \
+            app/lib/ui/fantasy_art.dart \
+            app/lib/ui/fantasy_ui.dart \
+            app/lib/ui/app.dart \
+            app/lib/ui/fantasy_character_sheet.dart \
+            app/lib/ui/character_editor.dart \
+            app/test/visual_redesign_test.dart
+      - name: Commit format-only changes
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- app/lib/ui/ app/test/visual_redesign_test.dart; then
+            echo 'All sources already formatted.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- app/lib/ui/ app/test/visual_redesign_test.dart
+          git commit -m 'style(ui): dart format complete fantasy redesign'
+          git push origin HEAD:feature/visual-redesign-v2-20261019
