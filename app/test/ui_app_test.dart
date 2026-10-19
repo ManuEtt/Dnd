@@ -9,6 +9,7 @@ import 'package:lebendiger_spielleiter/services/game_controller.dart';
 import 'package:lebendiger_spielleiter/services/voice_controller.dart';
 import 'package:lebendiger_spielleiter/ui/app.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_art.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_experience.dart';
 import 'support/legacy_campaign_fixture.dart';
 
 class _SilentVoice extends VoiceController {
@@ -150,6 +151,13 @@ void main() {
         LivingGameApp(controller: controller, voice: voice),
       );
       expect(tester.takeException(), isNull);
+      expect(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.byType(FantasyRuneEmblem),
+        ),
+        findsNWidgets(5),
+      );
       // The illustrated home header increases the content height on 360 dp.
       // Scroll the *visible* home list to the real demo action before tapping.
       // Disabling hit-test warnings would hide a genuine navigation failure.
