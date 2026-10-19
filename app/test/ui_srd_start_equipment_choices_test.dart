@@ -28,8 +28,9 @@ void main() {
                   builder: (_) => SrdClassSelectionDialog(
                     currentClass: klass.name,
                     isNewCharacter: true,
-                    existingSkills:
-                        klass.skillChoices.take(klass.skillCount).toList(),
+                    existingSkills: klass.skillChoices
+                        .take(klass.skillCount)
+                        .toList(),
                     existingSavingThrows: const [],
                     characterLevel: 1,
                     constitutionScore: 14,
@@ -46,10 +47,7 @@ void main() {
     );
     await tester.tap(find.text('Assistent öffnen'));
     await tester.pumpAndSettle();
-    await tapVisible(
-      tester,
-      find.byKey(const ValueKey('srd-equipment--1')),
-    );
+    await tapVisible(tester, find.byKey(const ValueKey('srd-equipment--1')));
     await tapVisible(tester, find.text('A – Ausrüstung').last);
     await tapVisible(
       tester,
@@ -61,15 +59,9 @@ void main() {
       const SrdStartingItem('Musikinstrument (nach Wahl)'),
     ).singleWhere((item) => item.name == 'Laute');
     await tapVisible(tester, find.text(lute.name).last);
-    await tapVisible(
-      tester,
-      find.byKey(const ValueKey('srd-confirm-class')),
-    );
+    await tapVisible(tester, find.byKey(const ValueKey('srd-confirm-class')));
     expect(result?.selection.characterClass.name, 'Barde');
-    expect(
-      result?.equipmentChoices['Musikinstrument (nach Wahl)'],
-      lute.id,
-    );
+    expect(result?.equipmentChoices['Musikinstrument (nach Wahl)'], lute.id);
     expect(tester.takeException(), isNull);
   });
 }

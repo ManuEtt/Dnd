@@ -29,6 +29,7 @@ class SrdClassSetupResult {
   final bool replaceExistingProficiencies;
   final bool useSuggestedHitPoints;
   final FighterStartingChoices? fighterChoices;
+
   /// Player-confirmed SRD starter catalog IDs keyed by the kit's choice label.
   final Map<String, String> equipmentChoices;
 }

@@ -62,8 +62,7 @@ class StartingEquipmentImport {
     };
     for (final entry in selected.entries) {
       final options = expected[entry.key];
-      if (options == null ||
-          !options.any((item) => item.id == entry.value)) {
+      if (options == null || !options.any((item) => item.id == entry.value)) {
         throw const FormatException(
           'Ungültige Startausrüstungswahl im SRD-Katalog.',
         );
