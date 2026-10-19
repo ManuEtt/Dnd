@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import '../domain/models.dart';
 import '../domain/character_creation_progression.dart';
 import '../domain/srd_class_level_up.dart';
+import '../domain/srd_character_creation_audit.dart';
 import '../domain/srd_character_classes.dart';
 import '../domain/srd_equipment_catalog.dart';
 import '../domain/equipment_rules.dart';
@@ -586,6 +587,79 @@ class _CharacterEditorState extends State<CharacterEditor> {
     });
   }
 
+  Future<void> _inspectSrdCreation() async {
+    try {
+      final json = Map<String, dynamic>.from(_original);
+      for (final field in [
+        'name', 'species', 'className', 'background',
+      ]) {
+        json[field] = _fields[field]!.text.trim();
+      }
+      for (final field in [
+        'level', 'hitPoints', 'maxHitPoints', 'armorClass', 'speed', 'gold',
+      ]) {
+        json[field] = int.tryParse(_fields[field]!.text.trim());
+      }
+      for (final field in ['skills', 'savingThrowProficiencies']) {
+        json[field] = _listFieldValues(field);
+      }
+      json['abilities'] = {
+        for (final entry in _scores.entries)
+          entry.key: int.tryParse(entry.value.text.trim()),
+      };
+      final draft = HeroCharacter.fromJson(json);
+      final steps = SrdCharacterCreationAudit.inspect(draft);
+      if (!mounted) return;
+      await showDialog<void>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('SRD-Charaktererstellung prüfen'),
+          content: SizedBox(
+            width: 430,
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                const Text(
+                  'Die Übersicht unterscheidet bestätigte Daten, '
+                  'fehlende Angaben und noch nicht automatisierte Regeln. '
+                  'Sie bescheinigt noch keine vollständige SRD-Regeltreue.',
+                ),
+                for (final step in steps)
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: Icon(
+                      step.status == CreationStepStatus.confirmed
+                          ? Icons.check_circle_outline
+                          : step.status == CreationStepStatus.missing
+                          ? Icons.error_outline
+                          : Icons.info_outline,
+                    ),
+                    title: Text(step.title),
+                    subtitle: Text(step.detail),
+                    trailing: Text(
+                      step.status == CreationStepStatus.confirmed
+                          ? 'Erfasst'
+                          : step.status == CreationStepStatus.missing
+                          ? 'Fehlt'
+                          : 'Offen',
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Schließen'),
+            ),
+          ],
+        ),
+      );
+    } catch (error) {
+      if (mounted) setState(() => _error = 'SRD-Prüfung: $error');
+    }
+  }
+
   HeroCharacter _draftForLevelUp() {
     final json = Map<String, dynamic>.from(_original);
     json['name'] = _fields['name']!.text.trim();
@@ -936,6 +1010,12 @@ class _CharacterEditorState extends State<CharacterEditor> {
                       'Punkte-Kauf bestimmen. Unbekannte Werte können auch '
                       'weiterhin einzeln bestätigt werden.',
                     ),
+                  ),
+                  OutlinedButton.icon(
+                    key: const ValueKey('open-srd-creation-audit'),
+                    onPressed: _inspectSrdCreation,
+                    icon: const Icon(Icons.fact_check_outlined),
+                    label: const Text('Charaktererstellung auf fehlende SRD-Schritte prüfen'),
                   ),
                   OutlinedButton.icon(
                     key: const ValueKey('open-ability-assignment'),
