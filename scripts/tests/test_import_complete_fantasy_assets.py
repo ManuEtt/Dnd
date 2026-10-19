@@ -21,7 +21,7 @@ class FantasyImportTests(unittest.TestCase):
         self.archive = self.root / "approved.zip"
 
     def _make_archive(self, corrupt=None):
-        payload = b"RIFF" + b"\\x04\\x00\\x00\\x00" + b"WEBP"
+        payload = b"RIFF" + bytes([4, 0, 0, 0]) + b"WEBP"
         manifest = {}
         with zipfile.ZipFile(self.archive, "w") as z:
             for name in MODULE.ASSETS:
