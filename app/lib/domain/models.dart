@@ -1155,6 +1155,7 @@ class PendingRoll {
           'death',
           'escape',
           'perception',
+          'preparedCheck',
         ].contains(type) ||
         expression != '1d20') {
       throw const FormatException('Unbekannte Probe oder Würfelanweisung.');
@@ -1824,6 +1825,26 @@ class Campaign {
           modifier('wisdom') +
               (hero.skills.contains('Wahrnehmung') ? prof : 0) +
               exhaustion,
+        'preparedCheck' => () {
+          const skills = <String, String>{
+            'Wahrnehmung': 'wisdom',
+            'Nachforschungen': 'intelligence',
+            'Arkane Kunde': 'intelligence',
+            'Athletik': 'strength',
+            'Heimlichkeit': 'dexterity',
+            'Überreden': 'charisma',
+          };
+          final values = pending.targetName.split('|');
+          if (rawBible['mode'] != 'rabenwacht-v1' ||
+              !pending.targetId.startsWith('rabenwacht:') ||
+              values.length != 2 ||
+              skills[values[1]] != values[0]) {
+            throw const FormatException('Ungültige Kampagnenprobe.');
+          }
+          return modifier(values[0]) +
+              (hero.skills.contains(values[1]) ? prof : 0) +
+              exhaustion;
+        }(),
         'escape' => modifier('dexterity') + exhaustion,
         'death' when pending.deathSaveRulesVersion == 1 =>
           DeathSavingThrowRules.modifier(hero),
