@@ -1218,13 +1218,20 @@ class _AdventurePageState extends State<_AdventurePage> {
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       Text(
-                        '${campaign.hero.name} · Stufe ${campaign.hero.level}',
+                        '${campaign.hero.name} · TP ${campaign.hero.hitPoints ?? '?'}/${campaign.hero.maxHitPoints ?? '?'} '
+                        '· RK ${campaign.hero.armorClass ?? '?'} · Stufe ${campaign.hero.level}',
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
                   ),
+                ),
+                IconButton(
+                  key: const ValueKey('adventure-open-character-sheet'),
+                  tooltip: 'Charakterbogen ansehen',
+                  onPressed: _showHeroSheet,
+                  icon: const Icon(Icons.auto_stories_outlined),
                 ),
                 IconButton(
                   onPressed: () => _showExport(
@@ -1240,6 +1247,20 @@ class _AdventurePageState extends State<_AdventurePage> {
               ],
             ),
             const SizedBox(height: 11),
+            if (!campaign.hero.isComplete)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: _Notice(
+                  icon: Icons.warning_amber,
+                  text:
+                      'Charakterbogen unvollständig. Erzählung und historische Ereignisse sind verfügbar. '
+                      'Bestätige die fehlenden Werte im Charakterbogen für regelgebundene Proben.',
+                  action: TextButton(
+                    onPressed: _editHero,
+                    child: const Text('Vervollständigen'),
+                  ),
+                ),
+              ),
             FantasyAdventureStatusHud(hero: campaign.hero),
             const SizedBox(height: 8),
             Wrap(
@@ -1248,7 +1269,6 @@ class _AdventurePageState extends State<_AdventurePage> {
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 TextButton.icon(
-                  key: const ValueKey('adventure-open-character-sheet'),
                   onPressed: _showHeroSheet,
                   icon: const Icon(Icons.auto_stories_outlined, size: 17),
                   label: const Text('Charakterbogen ansehen'),
@@ -1336,20 +1356,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                     _decideDeathSave(campaign, feature: feature),
               ),
             BackendAdventureStatus(controller: widget.controller),
-            if (!campaign.hero.isComplete)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: _Notice(
-                  icon: Icons.warning_amber,
-                  text:
-                      'Charakterbogen unvollständig. Erzählung und historische Ereignisse sind verfügbar. '
-                      'Bestätige die fehlenden Werte im Charakterbogen für regelgebundene Proben.',
-                  action: TextButton(
-                    onPressed: _editHero,
-                    child: const Text('Vervollständigen'),
-                  ),
-                ),
-              ),
+
             if (encounter.isNotEmpty)
               Row(
                 children: [
