@@ -79,14 +79,14 @@ void main() {
 
     await tester.pumpWidget(
       const MaterialApp(
-        home: CharacterPortraitPicker(
-          initialPreset: 0,
-          initialPhotoBase64: '',
-        ),
+        home: CharacterPortraitPicker(initialPreset: 0, initialPhotoBase64: ''),
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('portrait-current-preview')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('portrait-current-preview')),
+      findsOneWidget,
+    );
     expect(find.byKey(const ValueKey('portrait-own-image')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });

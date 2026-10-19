@@ -146,31 +146,31 @@ class FantasyCharacterPortrait extends StatelessWidget {
         cornerSize: (size * .31).clamp(20.0, 40.0).toDouble(),
         opacity: .94,
         child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: FantasyPalette.ink,
-          borderRadius: BorderRadius.circular(9),
-          border: Border.all(color: FantasyPalette.gold, width: 2),
-          boxShadow: [
-            BoxShadow(
-              color: FantasyPalette.gold.withValues(alpha: .22),
-              blurRadius: 9,
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(3),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(5),
-            child: FittedBox(
-              fit: BoxFit.cover,
-              child: SizedBox(
-                width: size - 10,
-                height: size - 10,
-                child: picture,
+          decoration: BoxDecoration(
+            color: FantasyPalette.ink,
+            borderRadius: BorderRadius.circular(9),
+            border: Border.all(color: FantasyPalette.gold, width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: FantasyPalette.gold.withValues(alpha: .22),
+                blurRadius: 9,
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(3),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(5),
+              child: FittedBox(
+                fit: BoxFit.cover,
+                child: SizedBox(
+                  width: size - 10,
+                  height: size - 10,
+                  child: picture,
+                ),
               ),
             ),
           ),
-        ),
         ),
       ),
     );
@@ -381,10 +381,7 @@ class _CharacterPortraitPickerState extends State<CharacterPortraitPicker> {
                       ),
                     ),
                     if (_preset == i)
-                      const Icon(
-                        Icons.check_circle,
-                        color: FantasyPalette.gold,
-                      )
+                      const Icon(Icons.check_circle, color: FantasyPalette.gold)
                     else
                       const SizedBox(height: 24),
                   ],

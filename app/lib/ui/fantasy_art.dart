@@ -424,53 +424,53 @@ class FantasyShortcutTile extends StatelessWidget {
       cornerSize: compact ? 22 : 27,
       opacity: .90,
       child: Material(
-      color: FantasyPalette.ink,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: color.withValues(alpha: .75)),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: CustomPaint(
-          foregroundPainter: FantasyOrnamentPainter(color: color),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: compact ? 4 : 8,
-              vertical: compact ? 8 : 13,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (approvedIconIndex != null)
-                  FantasyApprovedIcon(
-                    index: approvedIconIndex!,
-                    size: compact ? 38 : 52,
-                  )
-                else
-                  CircleAvatar(
-                    radius: compact ? 17 : 24,
-                    backgroundColor: color.withValues(alpha: .14),
-                    child: Icon(icon, color: color, size: compact ? 21 : 29),
+        color: FantasyPalette.ink,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: color.withValues(alpha: .75)),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: CustomPaint(
+            foregroundPainter: FantasyOrnamentPainter(color: color),
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: compact ? 4 : 8,
+                vertical: compact ? 8 : 13,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (approvedIconIndex != null)
+                    FantasyApprovedIcon(
+                      index: approvedIconIndex!,
+                      size: compact ? 38 : 52,
+                    )
+                  else
+                    CircleAvatar(
+                      radius: compact ? 17 : 24,
+                      backgroundColor: color.withValues(alpha: .14),
+                      child: Icon(icon, color: color, size: compact ? 21 : 29),
+                    ),
+                  SizedBox(height: compact ? 4 : 9),
+                  Text(
+                    label,
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: FantasyPalette.ivory,
+                      fontSize: compact ? 11 : 13,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                SizedBox(height: compact ? 4 : 9),
-                Text(
-                  label,
-                  maxLines: 2,
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: FantasyPalette.ivory,
-                    fontSize: compact ? 11 : 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
-      ),
       ),
     ),
   );

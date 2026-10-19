@@ -314,7 +314,6 @@ class FantasyGoldFiligree extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-
 const _approvedGoldCorner = 'assets/fantasy/ornate_gold_corner.webp';
 
 /// Uses the gold filigree from the approved image package, not an emoji or
@@ -355,8 +354,7 @@ class FantasyApprovedCornerFrame extends StatelessWidget {
                     width: cornerSize,
                     height: cornerSize,
                     filterQuality: FilterQuality.medium,
-                    errorBuilder: (_, error, stack) =>
-                        const SizedBox.shrink(),
+                    errorBuilder: (_, error, stack) => const SizedBox.shrink(),
                   ),
                 ),
               ),
