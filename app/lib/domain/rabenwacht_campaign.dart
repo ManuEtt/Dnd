@@ -209,6 +209,55 @@ class RabenwachtCampaign {
     return Campaign.fromJson(result.toJson());
   }
 
+  /// Show only information the hero has actually discovered. No secret,
+  /// future scene or hidden NPC motivation is exposed by the journal.
+  static String discoveredClues(Campaign campaign) {
+    final known = <String>[
+      'Seit sieben Nächten läutet der vor 41 Jahren zerstörte Glockenturm.',
+      if (campaign.facts['blackHandClue'] == 'true')
+        'Die unsichtbaren Schritte endeten an einem schwarzen Handabdruck.',
+      if (campaign.facts['wellClue'] == 'true')
+        'Im Dorfbrunnen spiegelt sich eine vierzehnte Tür, die oberirdisch fehlt.',
+      if (campaign.facts['maraMet'] == 'true')
+        'Mara Voss bestätigte: Drei Dorfbewohner verschwanden am schwarzen Bach.',
+      if (campaign.facts['tarekTrust'] == 'true')
+        'Tarek markierte Mühle, Kapelle und Chronistenhaus auf einer Karte.',
+      if (campaign.facts['finaNote'] == 'true')
+        'Finas Nachricht am Mühlrad verweist auf das Gebetbuch der Kapelle.',
+      if (campaign.facts['jorenMet'] == 'true')
+        'Joren sucht seine Tochter Fina; sie notierte Namen in einem Gebetbuch.',
+      if (campaign.facts['prayerFound'] == 'true')
+        'Das Gebetbuch verbindet dreizehn Türen mit der vierzehnten Glocke.',
+      if (campaign.facts['oswinTruth'] == 'true')
+        'Bruder Oswin sagt: Der Glockenturm wurde absichtlich zerstört.',
+      if (campaign.facts['serenMotive'] == 'true')
+        'Die Archivakten deuten darauf hin, dass Seren Menschen beschützen wollte.',
+      if (campaign.facts['graveClue'] == 'true')
+        'Am Friedhof steht: Der Schlüssel trennt ein Versprechen.',
+      if (campaign.facts['runeClue'] == 'true')
+        'Die Turmrunen binden das Ritual an den Willen und an Erinnerungen.',
+      if (campaign.facts['silverKeyFound'] == 'true')
+        'Der silberne Schlüssel liegt bei dir; er gehört zur dreizehnten Tür.',
+      if (campaign.facts['finaHeard'] == 'true')
+        'Fina sagte, dass Seren die Gefangenen vor der Glocke schützt.',
+      if (campaign.facts['ritualSolution'] == 'true')
+        'Die Runen zeigen einen Weg, das Siegel ohne neue Opfer zu erneuern.',
+      if (campaign.facts['ritualKnown'] == 'true')
+        'Die Gefangenen werden unfreiwillig vom Erinnerungsritual aufgezehrt.',
+      if (campaign.facts['allMissingFound'] == 'true')
+        'Alle drei vermissten Menschen wurden befreit.',
+    ];
+    final objectives = campaign.quests
+        .where((quest) => quest.status == 'active')
+        .map((quest) => '• ${quest.title}')
+        .join('\n');
+    return '${campaign.hero.name}, dies hast du bisher selbst herausgefunden:\n'
+        '${known.map((clue) => '• $clue').join('\n')}\n\n'
+        'Offene Aufträge:\n'
+        '${objectives.isEmpty ? 'Keine – die Geschichte ist abgeschlossen.' : objectives}\n'
+        'Dein aktueller Ort: ${campaign.facts['location'] ?? 'unbekannt'}.';
+  }
+
   static bool _has(String input, String words) {
     final text = input.toLowerCase();
     return words.split('|').any((part) => text.contains(part));
@@ -222,15 +271,61 @@ class RabenwachtCampaign {
     bool battle = false,
   }) {
     final narration = '${c.hero.name}, $scene';
-    return RabenwachtTurn(
-      c.copyWith(
-        scene: narration,
-        storyBible: {...c.storyBible, 'stage': stage},
-        facts: {...c.facts, ...clues},
-      ),
-      narration,
-      battle: battle,
+    final facts = {...c.facts, ...clues};
+    final located = stage == 'chamber' ||
+        stage == 'choice' ||
+        stage.startsWith('end-') ||
+        facts['missingLocated'] == 'true';
+    final keyUsed = located && facts['silverKeyFound'] == 'true';
+    final rescued = facts['allMissingFound'] == 'true';
+    final next = c.copyWith(
+      scene: narration,
+      storyBible: {...c.storyBible, 'stage': stage},
+      facts: {
+        ...facts,
+        if (located) 'missingLocated': 'true',
+      },
+      quests: [
+        for (final quest in c.quests)
+          if (quest.id == 'rabenwacht-missing' && located)
+            quest.copyWith(status: 'completed')
+          else if (quest.id == 'rabenwacht-key' && keyUsed)
+            quest.copyWith(status: 'completed')
+          else if (quest.id == 'rabenwacht-well' &&
+              facts['wellVisited'] == 'true' &&
+              stage == 'square')
+            quest.copyWith(status: 'completed')
+          else
+            quest,
+      ],
+      storyThreads: [
+        for (final thread in c.storyThreads)
+          if (thread.id == 'missing' && rescued)
+            thread.copyWith(status: 'resolved')
+          else if (thread.id == 'stranger' && keyUsed)
+            thread.copyWith(status: 'resolved')
+          else if (thread.id == 'bells' && stage.startsWith('end-'))
+            thread.copyWith(status: 'resolved')
+          else
+            thread,
+      ],
+      npcs: [
+        for (final npc in c.npcs)
+          if (npc.id == 'elda' && facts['eldaHelped'] == 'true')
+            npc.copyWith(relationship: 'freundlich')
+          else if (npc.id == 'tarek' && facts['tarekTrust'] == 'true')
+            npc.copyWith(relationship: 'freundlich')
+          else if (npc.id == 'joren' && facts['jorenMet'] == 'true')
+            npc.copyWith(relationship: 'dankbar')
+          else if (npc.id == 'oswin' && facts['oswinTruth'] == 'true')
+            npc.copyWith(relationship: 'vertrauensvoll')
+          else if ((npc.id == 'fina' || npc.id == 'bram') && rescued)
+            npc.copyWith(relationship: 'gerettet')
+          else
+            npc,
+      ],
     );
+    return RabenwachtTurn(next, narration, battle: battle);
   }
 
   static RabenwachtTurn _ask(
@@ -288,6 +383,9 @@ class RabenwachtCampaign {
         'bleibt gespeichert. Für ein anderes Ende starte eine neue Kampagne.',
       );
     }
+    if (_has(input, 'hinweise|hinweisprotokoll|ermittlungsstand|spurenliste')) {
+      return RabenwachtTurn(c, discoveredClues(c));
+    }
     switch (stage) {
       case 'road':
         if (_has(input, 'schritt|nebel|spur|wahrnehm|untersuch|lauschen')) {
@@ -331,6 +429,34 @@ class RabenwachtCampaign {
           'zum Dorfplatz gehen. Was tust du?',
         );
       case 'square':
+        if (_has(input, 'brunnen|feder|wasser|schacht')) {
+          final visit = _move(
+            c,
+            'well',
+            'Das schwarze Wasser im Dorfbrunnen zittert im Takt eines '
+                'Glockenschlags. Zwischen den Fugen scheint eine weitere '
+                'Tür gespiegelt, doch die Wasseroberfläche ist unruhig. '
+                'Untersuchst du das Spiegelbild genauer oder kehrst du '
+                'zum Dorfplatz zurück?',
+            clues: {'location': 'Dorfbrunnen'},
+          );
+          return RabenwachtTurn(
+            visit.campaign.copyWith(
+              quests: [
+                ...visit.campaign.quests,
+                if (!visit.campaign.quests.any(
+                  (quest) => quest.id == 'rabenwacht-well',
+                ))
+                  const Quest(
+                    id: 'rabenwacht-well',
+                    title: 'Das Spiegelbild im Brunnen',
+                    description: 'Untersuche die rätselhafte Spiegelung.',
+                  ),
+              ],
+            ),
+            visit.narration,
+          );
+        }
         if (_has(input, 'tarek|wirt|schank|taverne|gasthaus|licht')) {
           return _move(
             c,
@@ -360,6 +486,34 @@ class RabenwachtCampaign {
           'Zwischen Ratsstube und Schankstube '
           'liegt die Entscheidung bei dir. Sprich mit Mara Voss oder '
           'besuche Tarek im Letzten Licht.',
+        );
+      case 'well':
+        if (_has(input, 'untersuch|spiegel|blick|schau|prüf|suche|feder')) {
+          return _ask(
+            c,
+            input,
+            'well',
+            'wisdom',
+            'Wahrnehmung',
+            12,
+            'Du versuchst das unmögliche Spiegelbild zu erkennen.',
+            rollId,
+          );
+        }
+        if (_has(input, 'platz|zurück|verlass|weiter')) {
+          return _move(
+            c,
+            'square',
+            'Du verlässt den Brunnen und kehrst zwischen die Häuser '
+                'zurück. Die Dorfvorsteherin erwartet dich in der '
+                'Ratsstube, während im Gasthaus Licht brennt.',
+            clues: {'wellVisited': 'true', 'location': 'Dorfplatz'},
+          );
+        }
+        return RabenwachtTurn(
+          c,
+          'Das Wasser bleibt schwarz. Du kannst sein Spiegelbild '
+          'untersuchen oder zum Dorfplatz zurückgehen.',
         );
       case 'inn':
         if (_has(input, 'tarek|sprech|frag|karte|unterhalt|wirt')) {
@@ -806,6 +960,25 @@ class RabenwachtCampaign {
                     'zum Dorfplatz. „Im Letzten Licht wissen sie mehr“, '
                     'flüstert sie.',
           clues: {if (passed) 'blackHandClue': 'true', 'location': 'Dorfplatz'},
+        );
+      case 'well':
+        return _move(
+          c,
+          'square',
+          passed
+              ? 'Du erkennst im Wasser das Spiegelbild einer '
+                    'vierzehnten Tür ohne sichtbares Gegenstück. '
+                    'Ein einzelnes Wort steht auf dem Rahmen: '
+                    '„Erinnerung“. Mit dieser Entdeckung kehrst du '
+                    'auf den Dorfplatz zurück.'
+              : 'Für einen Moment siehst du einen Schatten zwischen '
+                    'den Spiegelungen, doch der Regen zerstreut ihn. '
+                    'Du kehrst zum Dorfplatz zurück.',
+          clues: {
+            'wellVisited': 'true',
+            if (passed) 'wellClue': 'true',
+            'location': 'Dorfplatz',
+          },
         );
       case 'mill':
         return _move(
