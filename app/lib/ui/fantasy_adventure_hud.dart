@@ -116,7 +116,8 @@ class FantasyAdventureStatusHud extends StatelessWidget {
           if (hpRatio != null) ...[
             const SizedBox(height: 9),
             Semantics(
-              label: 'Trefferpunkte: ${hero.hitPoints} von ${hero.maxHitPoints}',
+              label:
+                  'Trefferpunkte: ${hero.hitPoints} von ${hero.maxHitPoints}',
               child: _MeterTrack(
                 value: hpRatio,
                 height: 6,
