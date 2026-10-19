@@ -30,7 +30,7 @@ class CampaignExperience {
     final next = nextThreshold(hero);
     final experience = hero.experience;
     if (next == null || experience == null) return null;
-    return (next - experience).clamp(0, next);
+    return (next - experience).clamp(0, next).toInt();
   }
 
   static bool canLevelUp(HeroCharacter hero) {
@@ -44,7 +44,7 @@ class CampaignExperience {
     final next = nextThreshold(hero);
     if (next == null) return 1;
     final base = CharacterCreationProgression.startingExperience(hero.level);
-    return ((experience - base) / (next - base)).clamp(0.0, 1.0);
+    return ((experience - base) / (next - base)).clamp(0.0, 1.0).toDouble();
   }
 
   /// A single, validated story milestone is awarded at most once per
