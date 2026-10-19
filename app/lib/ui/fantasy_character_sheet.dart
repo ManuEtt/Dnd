@@ -12,6 +12,7 @@ import '../domain/rest_rules.dart';
 import '../domain/spellcasting_rules.dart';
 import '../domain/rules_engine.dart';
 import 'fantasy_art.dart';
+import 'fantasy_experience.dart';
 import 'character_portrait_picker.dart';
 
 // A read-only presentation of the actual, confirmed character data. No state,
