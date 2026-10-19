@@ -391,7 +391,9 @@ class _HomePage extends StatelessWidget {
           description: current == null
               ? 'Erkunde geheimnisvolle Welten und entscheide selbst, wohin dein Abenteuer führt.'
               : current.scene,
-          actionLabel: current == null ? 'Demo entdecken' : 'Fortsetzen',
+          actionLabel: current == null
+              ? 'Kostenlose Demo starten'
+              : 'Fortsetzen',
           onPressed: controller.busy
               ? null
               : () => current == null
