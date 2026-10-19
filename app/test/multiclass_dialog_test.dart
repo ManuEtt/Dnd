@@ -27,6 +27,9 @@ void main() {
                       name: 'Tira',
                       className: 'Kämpfer',
                       level: 3,
+                      experience: 2700,
+                      hitPoints: 20,
+                      maxHitPoints: 25,
                       abilities: const {
                         'strength': 14,
                         'dexterity': 14,
