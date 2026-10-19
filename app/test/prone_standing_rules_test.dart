@@ -146,8 +146,7 @@ void main() {
       ),
       throwsFormatException,
     );
-    final outside = combat.copyWith(encounter: null);
-    // Campaign.copyWith retains nullable encounters; use a completed fight.
+    // A completed encounter has no active combat movement restrictions.
     final finished = combat.copyWith(
       encounter: combat.encounter!.copyWith(enemyHitPoints: 0),
     );
