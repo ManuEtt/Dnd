@@ -1,3 +1,11 @@
+# Checkpoint: Ausrüstungsattribute beim Import, 19.10.2026
+
+Branch `fix/equipment-import-attributes-20261019` von `main` `82f2786b`. Parallel existiert PR #8 für die Aufstehen-Regel, hier bewusst nicht vermischt. Diese Änderungen: `app/lib/domain/starting_equipment_import.dart`, `app/lib/domain/models.dart`, `app/lib/ui/character_editor.dart`, `app/test/starting_equipment_import_test.dart`, `app/test/ui_starting_equipment_import_test.dart`. Alte Klassenstartsets bekamen bisher nur Namen und Mengen; nun werden eindeutige Katalog-IDs samt strukturierten Daten geschrieben. Validierte Katalog-ID ohne Stats wird beim Import wiederhergestellt, vorhandene individuelle Daten werden nicht überschrieben. Altgegenstände ohne ID werden erst nach expliziter UI-Vorschau und Bestätigung angereichert. 20 Pfeile werden korrekt als eine 20er-Packung behandelt.
+
+Noch erforderlich: neueste GitHub Actions (Format, Analyze, Flutter-/Backendtests, APK, native Tests) vollständig grün, echter Android-Gerätetest, Merge/Statusdokumentation. Unbekannte Auswahlgegenstände bleiben bewusst offen. Für den Nutzerwunsch „komplettes D&D-Regelwerk“: nur lizenzierte SRD-5.2.1-Regeln und nachweislich getestete Regel-IDs implementieren, alle sonstigen als TEILWEISE/FEHLT führen; Details in README/Regelmatrix. **Dieser Checkpoint ist keine Freigabe.**
+
+---
+
 # Entwicklungscheckpoint vom 19.10.2026 – Bewusstlos / Liegend
 
 Branch `feature/condition-source-ledger-20261018`, PR [#7](https://github.com/ManuEtt/Dnd/pull/7) gegen `main`. Der letzte bereits erfolgreich durchlaufene vollständige GitHub-Workflow war [39165288268](https://github.com/ManuEtt/Dnd/actions/runs/39165288268) für `c000e78b`. Die **neuen** Änderungen zu Bewusstlos/Liegend müssen separat durch CI und Android-Build abgenommen werden.
