@@ -1,3 +1,11 @@
+## 19.10.2026 – Fehlerbehebung Klassen-Startausrüstung
+
+Root Cause bestätigt in `CharacterEditor._configureSrdClass`: Einträge aus dem SRD-Klassenset wurden bisher ohne `catalogId` und `stats` erstellt, obwohl der SRD-Katalog diese Attribute besitzt. Neuer validierter Resolver `StartingEquipmentImport`: exakte Namen, selektiv geprüfte Aliasnamen, richtige Packgröße für 20 Pfeile, unbekannte Auswahlen ohne erfundene Werte. Der bestehende Katalogimport übernimmt jetzt verfügbare Kataloghinweise. Eingehende Gegenstände mit expliziter `catalogId` und fehlenden Stats werden vervollständigt; Benutzerwerte bleiben immer erhalten. Eigener Bestätigungsdialog für ältere Klasseninventare im Charaktereditor. Domain-/Widgettests ergänzt.
+
+Entwicklungsbranch: `fix/equipment-import-attributes-20261019` ab `82f2786b`, PR #8 bleibt separater ungemergter Entwicklungszweig. Gesamtregelwerk ist nicht vollständig; SRD-5.2.1-Anforderungsmatrix und künftige vertikale Klassen-/Zauber-/Kampf-/Erkundungstests sind nötig. Build-/APK-Abnahme für diesen neuen Fix noch ausstehend.
+
+---
+
 ## Weiterentwicklung 19.10.2026 – Bewusstlos bewirkt bleibendes Liegend
 
 Der geprüfte Featurebranch `feature/condition-source-ledger-20261018` (PR #7, letzte grüne Basis `c000e78b` / Actions 39165288268) wird um die SRD-5.2.1-Folge `bewusstlos` → `liegend` erweitert: neue Bewusstlosigkeit aus Schaden, Todesrettungen, Quellzuständen und bestätigten Charakteränderungen setzt `liegend` getrennt. Die Folge überlebt das Aufwachen, Quellenende und JSON-/SQLite-Bestätigung; Legacy-Daten werden beim Lesen nicht automatisch migriert. Handlungsunfähigkeit durch bestätigte Charakterbogenänderung beendet Konzentration. Acht neue Testfälle sind unter `unconscious_prone_test.dart` eingereicht.
