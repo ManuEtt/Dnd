@@ -1381,11 +1381,27 @@ class GameEngine {
       'charisma': 'charisma',
     };
     final requestedSave = RegExp(
-      r'^rettungswurf\s*:\s*(stärke|staerke|geschicklichkeit|konstitution|intelligenz|weisheit|charisma)\s+sg\s+(\d{1,2})\s*[.!?]?$',
+      r'^rettungswurf\s*:\s*(stärke|staerke|geschicklichkeit|konstitution|intelligenz|weisheit|charisma)\s+sg\s+(\d{1,2})(\s+vom\s+gegner)?\s*[.!?]?$',
     ).firstMatch(words);
     if (requestedSave != null) {
       final ability = saveNames[requestedSave.group(1)!]!;
       final dc = int.parse(requestedSave.group(2)!);
+      final fromEnemy = requestedSave.group(3) != null;
+      if (fromEnemy && (current.encounter == null || current.encounter!.isFinished)) {
+        return _commit(
+          campaign,
+          current,
+          'Der Deckungsbonus gegen den Gegner braucht einen bestätigten aktiven Kampf.',
+          type: 'rules.blocked',
+        );
+      }
+      final coverBonus = fromEnemy
+          ? CoverRules.savingThrowBonus(
+              current.encounter!.heroCover,
+              ability: ability,
+              sourceOppositeCover: true,
+            )
+          : 0;
       if (dc < 1 || dc > 30 || current.hero.isDead) {
         return _commit(
           campaign,
@@ -1414,7 +1430,7 @@ class GameEngine {
           );
         }
         final rolled = dice.check(
-          modifier: rule.modifier,
+          modifier: rule.modifier + coverBonus,
           advantage: rule.advantage,
           disadvantage: rule.disadvantage,
         );
@@ -1442,6 +1458,7 @@ class GameEngine {
           current,
           'Manueller Rettungswurf (${requestedSave.group(1)}, SG $dc): '
           '${rolled.total} – ${passed ? 'gelungen' : 'misslungen'}. '
+          '${fromEnemy ? 'Bestätigte Deckung gegen den Gegner: +$coverBonus. ' : ''}'
           '$suggestions'
           'Das Ergebnis wird dokumentiert; Wirkungen fremder Zauber werden nicht automatisch angenommen.',
           type: 'saving.roll',
@@ -1452,6 +1469,8 @@ class GameEngine {
             'failed': !passed,
             'roll': rolled.toJson(),
             'manualDifficulty': true,
+            if (fromEnemy) 'fromEnemyCover': true,
+            if (fromEnemy) 'coverBonus': coverBonus,
           },
         );
       } on StateError catch (e) {
@@ -1481,6 +1500,25 @@ class GameEngine {
           type: 'rules.blocked',
         );
       }
+      final fromEnemy = payload['fromEnemyCover'] == true;
+      final expectedCoverBonus = fromEnemy && current.encounter != null
+          ? CoverRules.savingThrowBonus(
+              current.encounter!.heroCover,
+              ability: payload['ability'] as String,
+              sourceOppositeCover: true,
+            )
+          : 0;
+      if (fromEnemy &&
+          (current.encounter == null ||
+           current.encounter!.isFinished ||
+           payload['coverBonus'] != expectedCoverBonus)) {
+        return _commit(
+          campaign,
+          current,
+          'Die bestätigte Deckung für diesen Rettungswurf hat sich verändert.',
+          type: 'rules.blocked',
+        );
+      }
       final feature = retrySave.group(1) == 'fokus'
           ? SavingThrowRerollFeature.disciplinedSurvivor
           : SavingThrowRerollFeature.indomitable;
@@ -1492,6 +1530,7 @@ class GameEngine {
           difficulty: payload['difficulty'] as int,
           originalTotal: payload['total'] as int,
           feature: feature,
+          extraModifier: expectedCoverBonus,
         );
         return _commit(
           campaign,
@@ -1508,6 +1547,7 @@ class GameEngine {
             'passed': rerolled.passed,
             'resource': rerolled.resource,
             'fighterLevelBonus': rerolled.fighterLevelBonus,
+            if (fromEnemy) 'coverBonus': expectedCoverBonus,
           },
         );
       } on StateError catch (e) {
