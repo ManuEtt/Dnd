@@ -925,6 +925,18 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previous);
   }
 
+  Future<void> _standUp() async {
+    final campaign = widget.controller.currentCampaign;
+    if (campaign == null || widget.controller.busy) return;
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    await widget.controller.standUp(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
   Future<void> _manageConditionEffects() async {
     final campaign = widget.controller.currentCampaign;
     if (campaign == null || widget.controller.busy) return;
@@ -1083,6 +1095,21 @@ class _AdventurePageState extends State<_AdventurePage> {
                         ),
                         label: const Text('Effekt bestätigen'),
                       ),
+                      if (campaign.hero.conditions.contains('liegend'))
+                        TextButton.icon(
+                          key: const ValueKey('adventure-stand-up'),
+                          onPressed: widget.controller.busy ||
+                                  campaign.pendingRoll != null ||
+                                  campaign.pendingDeathSave != null ||
+                                  campaign.hero.isDead ||
+                                  (campaign.encounter != null &&
+                                      !campaign.encounter!.isFinished &&
+                                      campaign.encounter!.activeParticipant != 'hero')
+                              ? null
+                              : _standUp,
+                          icon: const Icon(Icons.accessibility_new_outlined, size: 17),
+                          label: const Text('Aufstehen'),
+                        ),
                       TextButton.icon(
                         key: const ValueKey(
                           'adventure-manage-condition-effects',
@@ -1580,7 +1607,7 @@ class _CombatView extends StatelessWidget {
                 'Reaktion: ${encounter.reactionUsed ? 'verbraucht' : 'verfügbar'}',
               ),
             ),
-            Chip(label: Text('Bewegung: ${encounter.movementRemaining} m')),
+            Chip(label: Text('Bewegung: ${encounter.movementRemainingLabel}')),
             if (encounter.spellSlotExpendedThisTurn)
               const Chip(label: Text('Zauberplatz in diesem Zug verbraucht')),
           ],
