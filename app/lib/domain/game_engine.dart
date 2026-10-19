@@ -653,14 +653,13 @@ class GameEngine {
   }
 
   /// Starts a prewritten, offline solo story using the selected character.
-  Campaign createRabenwacht(HeroCharacter hero) =>
-      RabenwachtCampaign.create(
-        hero: hero,
-        campaignId: _id('rabenwacht'),
-        sessionId: _id('session'),
-        messageId: _id('message'),
-        now: _clock(),
-      );
+  Campaign createRabenwacht(HeroCharacter hero) => RabenwachtCampaign.create(
+    hero: hero,
+    campaignId: _id('rabenwacht'),
+    sessionId: _id('session'),
+    messageId: _id('message'),
+    now: _clock(),
+  );
 
   /// Incapacitation ends these effects immediately, including when a confirmed
   /// external source or character correction occurs between combat turns.
@@ -1893,18 +1892,21 @@ class GameEngine {
           enemyDamage: enemy.damage,
           heroInitiative: heroRoll.total,
           enemyInitiative: foeRoll.total,
-          movementRemaining:
-              CharacterRuleEngine.movementWholeMeters(current.hero)!,
+          movementRemaining: CharacterRuleEngine.movementWholeMeters(
+            current.hero,
+          )!,
         ),
       );
-      var description = '${scripted.narration} Deine Initiative: '
+      var description =
+          '${scripted.narration} Deine Initiative: '
           '${heroRoll.total}, Gegnerinitiative: ${foeRoll.total}. ';
       if (foeRoll.total > heroRoll.total) {
         final first = _enemyTurn(started, advanceRound: false);
         started = first.campaign;
         description += '${first.narration} ';
       }
-      description += 'Du kannst angreifen, ausweichen, '
+      description +=
+          'Du kannst angreifen, ausweichen, '
           'fliehen oder eine Klassenfähigkeit einsetzen.';
       return _commit(
         campaign,
@@ -3006,9 +3008,11 @@ class GameEngine {
             encounter: null,
             storyBible: {...next.storyBible, 'stage': 'seal'},
             facts: {...next.facts, 'sentryDefeated': 'true'},
-            scene: 'Der Skelettwächter ist gefallen. Die Galerie liegt vor dir.',
+            scene:
+                'Der Skelettwächter ist gefallen. Die Galerie liegt vor dir.',
           );
-          narration += 'Der Wächter sinkt in sich zusammen. '
+          narration +=
+              'Der Wächter sinkt in sich zusammen. '
               'Zwischen den Knochen liegt ein silberner Schlüssel. '
               'Die Galerie der dreizehn Türen ist nun erreichbar. '
               'Was möchtest du tun?';
@@ -3114,7 +3118,8 @@ class GameEngine {
             storyBible: {...next.storyBible, 'stage': 'bonehall'},
             scene: 'Du weichst in die Halle der Wächter zurück.',
           );
-          narration += 'Du entkommst dem Skelettwächter. '
+          narration +=
+              'Du entkommst dem Skelettwächter. '
               'Der Schlüssel bleibt in der Halle. '
               'Du kannst erneut angreifen oder dich vorbeischleichen.';
         } else if (next.storyBible['mode'] == 'ai') {

@@ -284,7 +284,11 @@ class _HomePage extends StatelessWidget {
   final VoidCallback onAdventure;
   final VoidCallback onJournal;
 
-  Future<void> _newCampaign(BuildContext context, {bool ai = false, bool prepared = false}) async {
+  Future<void> _newCampaign(
+    BuildContext context, {
+    bool ai = false,
+    bool prepared = false,
+  }) async {
     final hero = await showDialog<HeroCharacter>(
       context: context,
       builder: (context) => SimpleDialog(

@@ -23,7 +23,9 @@ void main() {
   test('Probe hat bestätigten Bonus und führt nach Erfolg weiter', () {
     final engine = GameEngine();
     var campaign = engine.createRabenwacht(engine.createDemo().hero);
-    campaign = engine.act(campaign, 'Ich untersuche die Schritte im Nebel.').campaign;
+    campaign = engine
+        .act(campaign, 'Ich untersuche die Schritte im Nebel.')
+        .campaign;
     final pending = campaign.pendingRoll;
     expect(pending, isNotNull);
     expect(pending!.type, 'preparedCheck');
@@ -62,10 +64,9 @@ void main() {
   test('Skelettwächter entsteht nur bei gewähltem Kampf', () {
     final engine = GameEngine();
     var campaign = engine.createRabenwacht(engine.createDemo().hero);
-    campaign = campaign.copyWith(storyBible: {
-      ...campaign.storyBible,
-      'stage': 'bonehall',
-    });
+    campaign = campaign.copyWith(
+      storyBible: {...campaign.storyBible, 'stage': 'bonehall'},
+    );
     final examined = engine.act(campaign, 'Ich beobachte die Statue.').campaign;
     expect(examined.encounter, isNull);
     final started = engine.act(examined, 'Ich greife den Wächter an.').campaign;
@@ -78,12 +79,15 @@ void main() {
 
   test('Drei unterschiedliche Abschlüsse bleiben persistent', () {
     final engine = GameEngine();
-    for (final choice in ['erneuere das Siegel', 'zerstöre das Siegel', 'erlöse Seren']) {
+    for (final choice in [
+      'erneuere das Siegel',
+      'zerstöre das Siegel',
+      'erlöse Seren',
+    ]) {
       final start = engine.createRabenwacht(engine.createDemo().hero);
-      final before = start.copyWith(storyBible: {
-        ...start.storyBible,
-        'stage': 'choice',
-      });
+      final before = start.copyWith(
+        storyBible: {...start.storyBible, 'stage': 'choice'},
+      );
       final update = engine.act(before, choice);
       final c = Campaign.fromJson(update.campaign.toJson());
       expect(c.storyBible['stage'], startsWith('end-'));
