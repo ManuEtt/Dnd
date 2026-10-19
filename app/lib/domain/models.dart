@@ -459,6 +459,12 @@ class HeroCharacter {
     if (hp != null && maxHp != null && hp > maxHp) {
       throw const FormatException('Trefferpunkte über Maximum.');
     }
+    if (_readSpeedRemainder(j['speedRemainderDecimeters']) != 0 &&
+        _nullableInt(j['speed'], 'Bewegung', max: 1000) == null) {
+      throw const FormatException(
+        'Ein halber Meter Rest setzt einen bestätigten Bewegungswert voraus.',
+      );
+    }
     final weaponAbility = _string(
       j['weaponAbility'],
       'Waffenattribut',
