@@ -72,8 +72,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
       'weaponDamage',
       'exhaustionLevel',
     ]) {
-      final initial = _original[key]?.toString() ??
-          (key == 'exhaustionLevel' ? '0' : '');
+      final initial =
+          _original[key]?.toString() ?? (key == 'exhaustionLevel' ? '0' : '');
       _fields[key] = TextEditingController(
         text: key == 'speed' && _original['speed'] != null
             ? SrdStartingCombatValues.formatSpeedDecimeters(
@@ -151,7 +151,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
       _fields['species']!.text,
     );
     final speedField = _fields['speed']!;
-    final canUpdateSpeed = speedField.text.trim().isEmpty ||
+    final canUpdateSpeed =
+        speedField.text.trim().isEmpty ||
         (widget.hero == null && speedField.text == _autoSpeed);
     if (canUpdateSpeed) {
       final suggested = speciesDm == null
@@ -162,7 +163,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
     }
 
     final acField = _fields['armorClass']!;
-    final canUpdateAc = acField.text.trim().isEmpty ||
+    final canUpdateAc =
+        acField.text.trim().isEmpty ||
         (widget.hero == null && acField.text == _autoArmorClass);
     if (canUpdateAc) {
       final ac = _suggestedArmorClass();
@@ -1108,11 +1110,12 @@ class _CharacterEditorState extends State<CharacterEditor> {
                     key: const ValueKey('character-recalculate-combat-values'),
                     onPressed: () => setState(() {
                       _autofillCombatValues(explicit: true);
-                      _error = _fields['armorClass']!.text.isEmpty ||
+                      _error =
+                          _fields['armorClass']!.text.isEmpty ||
                               _fields['speed']!.text.isEmpty
                           ? 'Für die automatische Berechnung bitte eine bekannte '
-                            'SRD-Spezies und den Geschicklichkeitswert '
-                            '(beim Mönch/Barbaren auch den zweiten Wert) bestätigen.'
+                                'SRD-Spezies und den Geschicklichkeitswert '
+                                '(beim Mönch/Barbaren auch den zweiten Wert) bestätigen.'
                           : null;
                     }),
                     icon: const Icon(Icons.calculate_outlined),

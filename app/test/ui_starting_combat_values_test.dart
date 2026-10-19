@@ -26,12 +26,14 @@ Future<void> _startEditor(
         builder: (context) => Scaffold(
           body: FilledButton(
             onPressed: () async {
-              saved(await Navigator.push<HeroCharacter>(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => CharacterEditor(hero: hero),
+              saved(
+                await Navigator.push<HeroCharacter>(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => CharacterEditor(hero: hero),
+                  ),
                 ),
-              ));
+              );
             },
             child: const Text('Editor öffnen'),
           ),
@@ -44,102 +46,111 @@ Future<void> _startEditor(
 }
 
 void main() {
-  testWidgets('Bestehender Charakter: fehlende RK und Bewegung werden berechnet', (
-    tester,
-  ) async {
-    HeroCharacter? result;
-    final original = HeroCharacter(
-      id: 'without-ac',
-      name: 'Liora',
-      species: 'Mensch',
-      className: 'Waldläufer',
-      abilities: const {'dexterity': 16},
-    );
-    await _startEditor(tester, original, (value) => result = value);
-    await _tapVisible(
-      tester,
-      find.byKey(const ValueKey('character-recalculate-combat-values')),
-    );
-    expect(
-      tester.widget<TextFormField>(
-        find.byKey(const ValueKey('character-speed-meters')),
-      ).controller!.text,
-      '9',
-    );
-    await _tapVisible(tester, find.text('Charakter speichern'));
-    expect(result, isNotNull);
-    expect(result!.armorClass, 13);
-    expect(result!.speed, 9);
-    expect(result!.speedRemainderDecimeters, 0);
-  });
+  testWidgets(
+    'Bestehender Charakter: fehlende RK und Bewegung werden berechnet',
+    (tester) async {
+      HeroCharacter? result;
+      final original = HeroCharacter(
+        id: 'without-ac',
+        name: 'Liora',
+        species: 'Mensch',
+        className: 'Waldläufer',
+        abilities: const {'dexterity': 16},
+      );
+      await _startEditor(tester, original, (value) => result = value);
+      await _tapVisible(
+        tester,
+        find.byKey(const ValueKey('character-recalculate-combat-values')),
+      );
+      expect(
+        tester
+            .widget<TextFormField>(
+              find.byKey(const ValueKey('character-speed-meters')),
+            )
+            .controller!
+            .text,
+        '9',
+      );
+      await _tapVisible(tester, find.text('Charakter speichern'));
+      expect(result, isNotNull);
+      expect(result!.armorClass, 13);
+      expect(result!.speed, 9);
+      expect(result!.speedRemainderDecimeters, 0);
+    },
+  );
 
-  testWidgets('Neue menschliche Figur: Bewegung sofort und RK nach GE-Eingabe', (
-    tester,
-  ) async {
-    HeroCharacter? result;
-    await _startEditor(tester, null, (value) => result = value);
-    final speed = find.byKey(const ValueKey('character-speed-meters'));
-    await tester.scrollUntilVisible(
-      speed,
-      250,
-      scrollable: find.byType(Scrollable).first,
-    );
-    expect(tester.widget<TextFormField>(speed).controller!.text, '9');
+  testWidgets(
+    'Neue menschliche Figur: Bewegung sofort und RK nach GE-Eingabe',
+    (tester) async {
+      HeroCharacter? result;
+      await _startEditor(tester, null, (value) => result = value);
+      final speed = find.byKey(const ValueKey('character-speed-meters'));
+      await tester.scrollUntilVisible(
+        speed,
+        250,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(tester.widget<TextFormField>(speed).controller!.text, '9');
 
-    final dexterity = find.widgetWithText(TextFormField, 'Geschicklichkeit');
-    await tester.scrollUntilVisible(
-      dexterity,
-      -250,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.enterText(dexterity, '16');
-    await tester.pumpAndSettle();
-    final armorField = find.widgetWithText(TextFormField, 'Rüstungsklasse');
-    await tester.scrollUntilVisible(
-      armorField,
-      250,
-      scrollable: find.byType(Scrollable).first,
-    );
-    expect(tester.widget<TextFormField>(armorField).controller!.text, '13');
+      final dexterity = find.widgetWithText(TextFormField, 'Geschicklichkeit');
+      await tester.scrollUntilVisible(
+        dexterity,
+        -250,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.enterText(dexterity, '16');
+      await tester.pumpAndSettle();
+      final armorField = find.widgetWithText(TextFormField, 'Rüstungsklasse');
+      await tester.scrollUntilVisible(
+        armorField,
+        250,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(tester.widget<TextFormField>(armorField).controller!.text, '13');
 
-    // Manual ability values need the existing explicit rules exception.
-    await _tapVisible(tester, find.byKey(const ValueKey('allow-manual-abilities')));
-    final name = find.widgetWithText(TextFormField, 'Charaktername');
-    await tester.scrollUntilVisible(
-      name,
-      -250,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.enterText(name, 'Aelia');
-    await tester.pumpAndSettle();
-    await _tapVisible(tester, find.text('Charakter speichern'));
-    expect(result, isNotNull);
-    expect(result!.armorClass, 13);
-    expect(result!.speed, 9);
-  });
+      // Manual ability values need the existing explicit rules exception.
+      await _tapVisible(
+        tester,
+        find.byKey(const ValueKey('allow-manual-abilities')),
+      );
+      final name = find.widgetWithText(TextFormField, 'Charaktername');
+      await tester.scrollUntilVisible(
+        name,
+        -250,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.enterText(name, 'Aelia');
+      await tester.pumpAndSettle();
+      await _tapVisible(tester, find.text('Charakter speichern'));
+      expect(result, isNotNull);
+      expect(result!.armorClass, 13);
+      expect(result!.speed, 9);
+    },
+  );
 
-  testWidgets('Vorhandene manuelle RK und Bewegung werden nicht überschrieben', (
-    tester,
-  ) async {
-    HeroCharacter? result;
-    final original = HeroCharacter(
-      id: 'manual-values',
-      name: 'Skara',
-      species: 'Mensch',
-      className: 'Waldläufer',
-      abilities: const {'dexterity': 16},
-      armorClass: 18,
-      speed: 12,
-    );
-    await _startEditor(tester, original, (value) => result = value);
-    await _tapVisible(
-      tester,
-      find.byKey(const ValueKey('character-recalculate-combat-values')),
-    );
-    await _tapVisible(tester, find.text('Charakter speichern'));
-    expect(result!.armorClass, 18);
-    expect(result!.speed, 12);
-  });
+  testWidgets(
+    'Vorhandene manuelle RK und Bewegung werden nicht überschrieben',
+    (tester) async {
+      HeroCharacter? result;
+      final original = HeroCharacter(
+        id: 'manual-values',
+        name: 'Skara',
+        species: 'Mensch',
+        className: 'Waldläufer',
+        abilities: const {'dexterity': 16},
+        armorClass: 18,
+        speed: 12,
+      );
+      await _startEditor(tester, original, (value) => result = value);
+      await _tapVisible(
+        tester,
+        find.byKey(const ValueKey('character-recalculate-combat-values')),
+      );
+      await _tapVisible(tester, find.text('Charakter speichern'));
+      expect(result!.armorClass, 18);
+      expect(result!.speed, 12);
+    },
+  );
 
   testWidgets('Goliath-Spezies wird mit 10,5 Metern vorgeschlagen', (
     tester,

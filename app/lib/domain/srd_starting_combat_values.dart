@@ -31,12 +31,7 @@ class SrdStartingCombatValues {
       'tiefling',
     };
     if (thirtyFoot.contains(name)) return 90;
-    if (const {
-      'goliath',
-      'waldelf',
-      'waldelfe',
-      'wood elf',
-    }.contains(name)) {
+    if (const {'goliath', 'waldelf', 'waldelfe', 'wood elf'}.contains(name)) {
       return 105;
     }
     return null; // Unspecified/custom species: do not invent its Speed.

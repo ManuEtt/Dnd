@@ -220,13 +220,7 @@ class HeroCharacter {
   final int? hitPoints, maxHitPoints, armorClass, speed;
 
   static int _readSpeedRemainder(dynamic raw) {
-    final remainder = _int(
-      raw,
-      'Bewegungsrest',
-      fallback: 0,
-      min: 0,
-      max: 5,
-    );
+    final remainder = _int(raw, 'Bewegungsrest', fallback: 0, min: 0, max: 5);
     if (remainder != 0 && remainder != 5) {
       throw const FormatException(
         'Bewegungsrest darf nur 0 oder 5 Dezimeter betragen.',
@@ -238,9 +232,8 @@ class HeroCharacter {
   /// Optional fractional base speed (0 or 5 decimeters) for SRD 35-ft species.
   /// Absent in old saves; do not confuse with an exhaustion penalty.
   final int speedRemainderDecimeters;
-  double? get baseSpeedMeters => speed == null
-      ? null
-      : speed! + speedRemainderDecimeters / 10.0;
+  double? get baseSpeedMeters =>
+      speed == null ? null : speed! + speedRemainderDecimeters / 10.0;
 
   /// SRD temporary HP: separate from normal/max HP, not additive.
   final int temporaryHitPoints;

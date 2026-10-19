@@ -6,15 +6,24 @@ import 'package:lebendiger_spielleiter/domain/srd_starting_combat_values.dart';
 void main() {
   test('Acht bekannte SRD-Spezies mit 30 Fuß erhalten 9 Meter', () {
     for (final name in [
-      'Mensch', 'Zwerg', 'Elf', 'Gnom', 'Halbling', 'Drachenblütiger',
-      'Orc', 'Tiefling',
+      'Mensch',
+      'Zwerg',
+      'Elf',
+      'Gnom',
+      'Halbling',
+      'Drachenblütiger',
+      'Orc',
+      'Tiefling',
     ]) {
       expect(SrdStartingCombatValues.speedDecimeters(name), 90, reason: name);
     }
     expect(SrdStartingCombatValues.speedDecimeters('Goliath'), 105);
     expect(SrdStartingCombatValues.speedDecimeters('Waldelf'), 105);
     expect(SrdStartingCombatValues.speedDecimeters('Wood Elf'), 105);
-    expect(SrdStartingCombatValues.speedDecimeters('frei erfundene Spezies'), isNull);
+    expect(
+      SrdStartingCombatValues.speedDecimeters('frei erfundene Spezies'),
+      isNull,
+    );
   });
 
   test('Start-RK folgt bestätigten Attributen und Klassenmerkmalen', () {
@@ -80,18 +89,21 @@ void main() {
     expect(HeroCharacter.fromJson(json).toJson(), json);
   });
 
-  test('Alt-Spielstand ohne Bruchteil bleibt unverändert und unbekannt bleibt null', () {
-    final old = HeroCharacter(
-      id: 'legacy',
-      name: 'Altfigur',
-      speed: 9,
-    ).toJson();
-    expect(old.containsKey('speedRemainderDecimeters'), isFalse);
-    expect(HeroCharacter.fromJson(old).toJson(), old);
-    final unknown = HeroCharacter(id: 'unknown', name: 'Unbekannt');
-    expect(unknown.baseSpeedMeters, isNull);
-    expect(HeroCharacter.fromJson(unknown.toJson()).baseSpeedMeters, isNull);
-  });
+  test(
+    'Alt-Spielstand ohne Bruchteil bleibt unverändert und unbekannt bleibt null',
+    () {
+      final old = HeroCharacter(
+        id: 'legacy',
+        name: 'Altfigur',
+        speed: 9,
+      ).toJson();
+      expect(old.containsKey('speedRemainderDecimeters'), isFalse);
+      expect(HeroCharacter.fromJson(old).toJson(), old);
+      final unknown = HeroCharacter(id: 'unknown', name: 'Unbekannt');
+      expect(unknown.baseSpeedMeters, isNull);
+      expect(HeroCharacter.fromJson(unknown.toJson()).baseSpeedMeters, isNull);
+    },
+  );
 
   test('Manipulierte Werte werden zurückgewiesen', () {
     for (final raw in ['10.25', '0', '201', 'zehn']) {
