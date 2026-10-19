@@ -1,3 +1,33 @@
+## 19.10.2026 – Integration statt konkurrierender Entwicklungszweige
+
+Neuer Branch `integration/character-creation-20261019`: PR #11 in `main`, getypte Ausrüstung und Startkampfwerte aus PR #9 ergänzt (drei konfliktfreie Code-Diff3-Dateien plus neue Module und Tests). PR #10 auf doppelte Aufstiegsmechanik und einzigartige ASI-Funktionen prüfen. Gemeinsame Tests/CI/Android-Build noch ausstehend; keine hundertprozentige SRD-Abdeckung behaupten.
+
+## 19.10.2026 – RK/Bewegung grün im CI
+
+Für PR #9: Verifizierter GitHub-Lauf [39201449428](https://github.com/ManuEtt/Dnd/actions/runs/39201449428), Code-HEAD `2f7ecb15`: Backend-, Dart-Format-/Analyse-, alle Flutter-/Widgettests, Debug-APK, native Android-Tests und kompakte Alpha-APKs erfolgreich. Die vorherige Teststörung (Lazy-ListView Finder bei nicht sichtbarem Bewegungsfeld) wurde korrigiert. Der Sourcecode-Fix inklusive exakter 10,5-m-Spezieswerte ist erfolgreich getestet; Android-Gerätetest und Integration in `main` noch offen.
+
+---
+
+## 19.10.2026 – Fehlerbild Rüstungsklasse und Bewegung ohne Startwerte
+
+Bei der Charaktererstellung wurden `armorClass` und `speed` bisher nicht aus der gewählten SRD-Spezies und den bestätigten Attributen vorbelegt. Der Fix setzt Grund-RK 10 + GE bzw. die relevanten ungerüsteten Klassenmerkmale (Mönch WEI, Barbar KON). Bewegung wird über explizite Speziesnamen gesetzt (meist 9 m, Goliath/Waldelf 10,5 m), mit rückwärtskompatiblem optionalem halben Meter im Hero-JSON. Beim Import alter/anderer Figuren werden keine Werte erraten oder überschrieben; die UI bietet einen gesonderten Button „Fehlende RK und Bewegung berechnen“. Ausrüstung wird weiterhin gesondert angelegt und mit dem bestehenden SRD-EquipmentRules-Dialog berechnet.
+
+Neue Domain-/Widgettests vorhanden, **diese Änderung muss noch durch die neueste CI verifiziert werden**. PR #9 bleibt vorläufig Entwurf, PR #8 ist davon getrennt. Das Gesamt-SRD ist weiterhin nicht vollständig implementiert.
+
+---
+
+## 19.10.2026 – Fehlerbehebung Klassen-Startausrüstung
+
+Root Cause bestätigt in `CharacterEditor._configureSrdClass`: Einträge aus dem SRD-Klassenset wurden bisher ohne `catalogId` und `stats` erstellt, obwohl der SRD-Katalog diese Attribute besitzt. Neuer validierter Resolver `StartingEquipmentImport`: exakte Namen, selektiv geprüfte Aliasnamen, richtige Packgröße für 20 Pfeile, unbekannte Auswahlen ohne erfundene Werte. Der bestehende Katalogimport übernimmt jetzt verfügbare Kataloghinweise. Eingehende Gegenstände mit expliziter `catalogId` und fehlenden Stats werden vervollständigt; Benutzerwerte bleiben immer erhalten. Eigener Bestätigungsdialog für ältere Klasseninventare im Charaktereditor. Domain-/Widgettests ergänzt.
+
+Entwicklungsbranch: `fix/equipment-import-attributes-20261019` ab `82f2786b`, PR #8 bleibt separater ungemergter Entwicklungszweig. Gesamtregelwerk ist nicht vollständig; SRD-5.2.1-Anforderungsmatrix und künftige vertikale Klassen-/Zauber-/Kampf-/Erkundungstests sind nötig. Build-/APK-Abnahme für diesen neuen Fix noch ausstehend.
+
+---
+
+
+
+---
+
 ## 19.10.2026 – Klassenaufstieg und Erstellungsprüfung (laufender PR)
 
 Branch `feature/srd-character-level-up-20261019`: neue regelgeprüfte Stufe +1 für alle 12 vorhandenen Klassen, inkl. bereits gewählter Zweitklasse, bestätigter fester Trefferpunkte, gültiger XP-Schwelle oder ausdrücklichem Meilenstein, Klassentabellen-Vorschau und Persistenz offener Entscheidungen als Notiz. Neue SRD-Erstellungsprüfung für Stufe-1-Daten mit klaren Hinweisen auf noch nicht implementierte Herkunfts- und Klassenentscheidungen. Tests für Domäne und UI angelegt.
