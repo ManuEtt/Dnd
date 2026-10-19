@@ -1,3 +1,9 @@
+## 19.10.2026 – RK/Bewegung grün im CI
+
+Für PR #9: Verifizierter GitHub-Lauf [39201449428](https://github.com/ManuEtt/Dnd/actions/runs/39201449428), Code-HEAD `2f7ecb15`: Backend-, Dart-Format-/Analyse-, alle Flutter-/Widgettests, Debug-APK, native Android-Tests und kompakte Alpha-APKs erfolgreich. Die vorherige Teststörung (Lazy-ListView Finder bei nicht sichtbarem Bewegungsfeld) wurde korrigiert. Der Sourcecode-Fix inklusive exakter 10,5-m-Spezieswerte ist erfolgreich getestet; Android-Gerätetest und Integration in `main` noch offen.
+
+---
+
 ## 19.10.2026 – Fehlerbild Rüstungsklasse und Bewegung ohne Startwerte
 
 Bei der Charaktererstellung wurden `armorClass` und `speed` bisher nicht aus der gewählten SRD-Spezies und den bestätigten Attributen vorbelegt. Der Fix setzt Grund-RK 10 + GE bzw. die relevanten ungerüsteten Klassenmerkmale (Mönch WEI, Barbar KON). Bewegung wird über explizite Speziesnamen gesetzt (meist 9 m, Goliath/Waldelf 10,5 m), mit rückwärtskompatiblem optionalem halben Meter im Hero-JSON. Beim Import alter/anderer Figuren werden keine Werte erraten oder überschrieben; die UI bietet einen gesonderten Button „Fehlende RK und Bewegung berechnen“. Ausrüstung wird weiterhin gesondert angelegt und mit dem bestehenden SRD-EquipmentRules-Dialog berechnet.
