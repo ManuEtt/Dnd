@@ -124,14 +124,20 @@ void main() {
     });
 
     test('Niemals einen unbestätigten Wahrnehmungswert erfinden', () {
-      expect(CharacterRuleEngine.passivePerception(character(wisdom: null)), isNull);
+      expect(
+        CharacterRuleEngine.passivePerception(character(wisdom: null)),
+        isNull,
+      );
       expect(
         CharacterRuleEngine.passivePerception(
           character(conditions: const ['bewusstlos']),
         ),
         isNull,
       );
-      expect(CharacterRuleEngine.passivePerception(character(hitPoints: 0)), isNull);
+      expect(
+        CharacterRuleEngine.passivePerception(character(hitPoints: 0)),
+        isNull,
+      );
       expect(
         CharacterRuleEngine.passivePerception(
           character(conditions: const ['tot']),
@@ -142,38 +148,46 @@ void main() {
   });
 
   group('Offline-Spielleitung meldet nur bestätigte Werte', () {
-    test('Passive Wahrnehmung würfelt nicht und enthüllt keine Storygeheimnisse', () {
-      final gameMaster = GameEngine();
-      final initial = gameMaster.createRabenwacht(
-        gameMaster.createDemo().hero,
-      );
-      final beforeStage = initial.storyBible['stage'];
-      final update = gameMaster.act(
-        initial,
-        'Wie hoch ist meine passive Wahrnehmung?',
-      );
-      final result = update.campaign;
-      expect(result.pendingRoll, isNull);
-      expect(result.storyBible['stage'], beforeStage);
-      expect(result.facts, initial.facts);
-      expect(update.events.single.type, 'rules.passivePerception');
-      expect(update.events.single.payload['value'], 13);
-      expect(update.events.single.payload['withoutDice'], true);
-      expect(update.events.single.payload['grantsDiscovery'], false);
-      expect(result.messages.last.text, contains('keine geheimen Hinweise'));
-      expect(Campaign.fromJson(result.toJson()).toJson(), result.toJson());
-    });
+    test(
+      'Passive Wahrnehmung würfelt nicht und enthüllt keine Storygeheimnisse',
+      () {
+        final gameMaster = GameEngine();
+        final initial = gameMaster.createRabenwacht(
+          gameMaster.createDemo().hero,
+        );
+        final beforeStage = initial.storyBible['stage'];
+        final update = gameMaster.act(
+          initial,
+          'Wie hoch ist meine passive Wahrnehmung?',
+        );
+        final result = update.campaign;
+        expect(result.pendingRoll, isNull);
+        expect(result.storyBible['stage'], beforeStage);
+        expect(result.facts, initial.facts);
+        expect(update.events.single.type, 'rules.passivePerception');
+        expect(update.events.single.payload['value'], 13);
+        expect(update.events.single.payload['withoutDice'], true);
+        expect(update.events.single.payload['grantsDiscovery'], false);
+        expect(result.messages.last.text, contains('keine geheimen Hinweise'));
+        expect(Campaign.fromJson(result.toJson()).toJson(), result.toJson());
+      },
+    );
 
-    test('Offene Würfelproben können nicht durch passiven Wert ersetzt werden', () {
-      final engine = GameEngine();
-      final initial = engine.createRabenwacht(engine.createDemo().hero);
-      final opened = engine.act(initial, 'Ich untersuche die Schritte.').campaign;
-      expect(opened.pendingRoll?.type, 'preparedCheck');
-      final update = engine.act(opened, 'passive Wahrnehmung');
-      expect(update.campaign.pendingRoll?.id, opened.pendingRoll?.id);
-      expect(update.events.single.type, isNot('rules.passivePerception'));
-      expect(update.campaign.storyBible['stage'], 'road');
-    });
+    test(
+      'Offene Würfelproben können nicht durch passiven Wert ersetzt werden',
+      () {
+        final engine = GameEngine();
+        final initial = engine.createRabenwacht(engine.createDemo().hero);
+        final opened = engine
+            .act(initial, 'Ich untersuche die Schritte.')
+            .campaign;
+        expect(opened.pendingRoll?.type, 'preparedCheck');
+        final update = engine.act(opened, 'passive Wahrnehmung');
+        expect(update.campaign.pendingRoll?.id, opened.pendingRoll?.id);
+        expect(update.events.single.type, isNot('rules.passivePerception'));
+        expect(update.campaign.storyBible['stage'], 'road');
+      },
+    );
 
     test('Unbekannte Weisheit wird nicht durch erfundene Zahlen ersetzt', () {
       final engine = GameEngine();
@@ -198,9 +212,7 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
       await tester.pumpWidget(
-        MaterialApp(
-          home: CharacterSheetPage(hero: character()),
-        ),
+        MaterialApp(home: CharacterSheetPage(hero: character())),
       );
       await tester.pumpAndSettle();
       final strip = find.byKey(const ValueKey('sheet-passive-perception'));
