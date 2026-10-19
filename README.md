@@ -1,3 +1,15 @@
+# Entwicklungsstand – konkrete SRD-Startausrüstung (19.10.2026)
+
+**Neue Version im Entwicklungsbranch:** `0.8.6+56` (Version **0.8.6**, Build **56**). Die in der App vorhandene Anzeige **Optionen → App-Version** übernimmt diesen Wert direkt aus der gebündelten `pubspec.yaml`. `main` und ältere installierte APKs bleiben bis zum geprüften Merge bei ihrem jeweils tatsächlichen Buildstand.
+
+**Implementiert:** Bei der Charaktererstellung von Barden und Mönchen können bisher ungeklärte Startausrüstungswahlen nun konkret getroffen werden: **Musikinstrument (nach Wahl)** und **Handwerkszeug oder Musikinstrument (nach Wahl)**. Nur lizenzierte, tatsächlich vorhandene SRD-5.2.1-Katalogeinträge aus den Kategorien Instrument/Werkzeug sind zulässig. Der Klassenassistent übergibt die ausdrückliche Auswahl als validierte Katalog-ID; das Inventar bekommt Name, Anzahl, Gewicht, Preis und weitere vorhandene katalogisierte Attribute. Es werden weder freie Wunschobjekte eingeschmuggelt noch ein zufälliges Standardinstrument gewählt. Wechsel der Klasse oder des Startsets verwirft alte Auswahlen.
+
+**Bewusst weiterhin offen:** Allgemeine „Heilige Symbole“ und andere im Projekt bislang nicht eindeutig katalogisierte Fokus-/Herkunftsobjekte behalten ihren erkennbaren Namen ohne erfundene Werte. Ihre vollständige SRD-Auswahl, Klassenmerkmale und Herkunftstalente benötigen weitere Regelmodule. Angelegte Rüstung/Schilde bleiben eine separate bestätigte Handlung; die Inventarauswahl allein verändert keine RK.
+
+**Abnahme:** Domain-Test `app/test/starting_equipment_choices_test.dart` prüft echte und manipulierte IDs, beide Klassen und alle 12 Startsets; Widgettest `app/test/ui_srd_start_equipment_choices_test.dart` prüft die Auswahl in der Klassenmaske. Formatierung, Flutter-Analyse, sämtliche Backend-/Fluttertests, Android-/APK-Build und echte Geräterealität sind für diesen neuen Code jeweils gesondert zu verifizieren. Noch keine vollständige SRD-5.2.1-Charaktererstellung behaupten.
+
+---
+
 ## Aktuelle Versionsanzeige und GitHub-Bereinigung (19.10.2026)
 
 **App-Version laut Flutter-Paket:** `0.8.5+55`. Unter **Optionen → App-Version** zeigt Würfelraunen jetzt automatisch **Version 0.8.5 (Build 55)** an. Die Anzeige liest die mit der APK gebündelte `pubspec.yaml`, sodass später aktualisierte Versionsnummern ohne eine zusätzliche manuelle UI-Konstante erscheinen.
