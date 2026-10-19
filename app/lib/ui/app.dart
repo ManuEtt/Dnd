@@ -12,6 +12,7 @@ import '../domain/monk_self_restoration.dart';
 import '../services/backup_files.dart';
 import '../services/game_controller.dart';
 import '../services/voice_controller.dart';
+import 'app_build_info.dart';
 import 'backend_settings_panel.dart';
 import 'backup_dialogs.dart';
 import 'character_editor.dart';
@@ -2121,6 +2122,32 @@ class _SettingsPage extends StatelessWidget {
                 },
           icon: const Icon(Icons.delete_forever_outlined),
           label: const Text('Alle lokalen Spieldaten löschen'),
+        ),
+        const SizedBox(height: 24),
+        const FantasySectionTitle(
+          title: 'App-Version',
+          icon: Icons.info_outline,
+        ),
+        const SizedBox(height: 10),
+        FutureBuilder<AppBuildInfo>(
+          future: AppBuildInfo.current,
+          builder: (context, snapshot) {
+            final label = snapshot.hasData
+                ? snapshot.data!.display
+                : snapshot.hasError
+                ? 'Version konnte nicht ermittelt werden'
+                : 'Version wird geladen …';
+            return FantasyPanel(
+              child: Semantics(
+                label: label,
+                child: SelectableText(
+                  label,
+                  key: const ValueKey('settings-app-version'),
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
+            );
+          },
         ),
         const SizedBox(height: 24),
         const FantasySectionTitle(
