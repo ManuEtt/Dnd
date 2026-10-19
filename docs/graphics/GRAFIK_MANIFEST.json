@@ -1,0 +1,82 @@
+{
+  "app/assets/fantasy/portrait_1.webp": {
+    "sha256": "eb02a7dc30c7f9192377d7bb18a3086ee984c7e462b0462f94a9833a66033d08",
+    "bytes": 13320
+  },
+  "app/assets/fantasy/portrait_2.webp": {
+    "sha256": "40415734aa6ea6ca9e199fa4d3ef834d7b5945dcf6b16d8fcee19d348e395973",
+    "bytes": 12430
+  },
+  "app/assets/fantasy/portrait_3.webp": {
+    "sha256": "3b65558c1f4c2a18f8d017b3720ebfd4d76cb926a9a82018c28776d1c30f04ac",
+    "bytes": 9940
+  },
+  "app/assets/fantasy/portrait_4.webp": {
+    "sha256": "7d5eb0831d4c548ad51048a41f8ecbb9450f7f19cc6648ab544bcb1810b7066f",
+    "bytes": 14060
+  },
+  "app/assets/fantasy/portrait_5.webp": {
+    "sha256": "ca07b40403d1c1a2c4c1ed49c31f2459551527027a0519fa93446295dfb9821b",
+    "bytes": 15616
+  },
+  "app/assets/fantasy/portrait_6.webp": {
+    "sha256": "00ba03edc5f7f40ee57c443d3fb8ce6e724ac4f24daef5a300693aacfa5ec9a5",
+    "bytes": 9454
+  },
+  "app/assets/fantasy/portrait_7.webp": {
+    "sha256": "a4155197f58c4c3b9e6204a530ea5e5343e24bd602bc8b69de2938f30fceb867",
+    "bytes": 11718
+  },
+  "app/assets/fantasy/portrait_8.webp": {
+    "sha256": "21a564fc6db86265cb676829f820a48bf0174177fcd35c789c3821fc53c6a29b",
+    "bytes": 9420
+  },
+  "app/assets/fantasy/portrait_9.webp": {
+    "sha256": "bc51ea3f9a478fe24e64820b9df6405ef284590e96c091d33251f4fb545bf69e",
+    "bytes": 13606
+  },
+  "docs/graphics/original/frames_concept.png": {
+    "sha256": "5c0613cf1748ddcd3f1433634208d39733244a33638ce91d96a28620ec0598dd",
+    "bytes": 1478266
+  },
+  "docs/graphics/original/buttons_icons_concept.png": {
+    "sha256": "772c243a32afd75f3c5f7c8b8b9f64b2d8a5095cf3823ef32fa7b20d93ef69a8",
+    "bytes": 1948895
+  },
+  "docs/graphics/original/portrait_atlas.webp.b64": {
+    "sha256": "38adaf111432920fed3c4e2fede302266422e2835c941a6c0d67bb7217786351",
+    "bytes": 12152
+  },
+  "app/assets/fantasy/portrait_atlas.webp": {
+    "sha256": "6d14b54444e81faad52d810563e36b48b1ac9c13ba620bf85ddb24bb2b669b4c",
+    "bytes": 9114
+  },
+  "docs/graphics/original/night_sky.webp.b64": {
+    "sha256": "57a1fbe7f0103e1cc7d525900bdd6c29034d3d99fb6f35db87e4ea79e953151f",
+    "bytes": 5892
+  },
+  "app/assets/fantasy/night_sky.webp": {
+    "sha256": "71e91eb30b80f71f3a8fe8670f5626860d7a6d94df6eb6c9eb15b02c8ad4ccd3",
+    "bytes": 4418
+  },
+  "app/assets/fantasy/ornate_panel_background.webp": {
+    "sha256": "fac92c5791a476aafc2ab1b583fc0277ec7d3a273779ade8885bb41825e5b93a",
+    "bytes": 3998
+  },
+  "app/assets/fantasy/ornate_button_background.webp": {
+    "sha256": "a7e4a99260f9d6e3e309ab3de20cf47d71d57660470881631282c60a669b7d6b",
+    "bytes": 4468
+  },
+  "app/assets/fantasy/ornate_card_background.webp": {
+    "sha256": "57728a3920f72f7beff87735209f93f7d39bca8fa5cfd9ac3a86d72666d39a54",
+    "bytes": 10540
+  },
+  "app/assets/fantasy/ornate_portrait_border.webp": {
+    "sha256": "1e7469e34055ebece1125d289e536c09aa1e7a9c322d0f56e63299d758fd1cc1",
+    "bytes": 7200
+  },
+  "README_GRAFIK_KORREKTUR.md": {
+    "sha256": "8c2ae6e4e7b430b457083764e9d480afb1177d7a1fcb3911ecf690d06e85b9cd",
+    "bytes": 1437
+  }
+}
