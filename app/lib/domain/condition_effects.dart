@@ -110,19 +110,25 @@ class ConditionEffectRules {
     if (hero.conditionEffects.any((entry) => entry.id == effect.id)) {
       throw StateError('Zustandseffekt-ID bereits vergeben.');
     }
-    return hero.copyWith(conditionEffects: [...hero.conditionEffects, effect]);
+    final updated = hero.copyWith(
+      conditionEffects: [...hero.conditionEffects, effect],
+    );
+    return effect.condition == 'bewusstlos'
+        ? ConditionRules.retainProneFromUnconscious(hero, updated)
+        : updated;
   }
 
   static HeroCharacter removeById(HeroCharacter hero, String id) {
     if (!hero.conditionEffects.any((effect) => effect.id == id)) {
       throw StateError('Zustandseffekt-ID nicht vorhanden.');
     }
-    return hero.copyWith(
+    final updated = hero.copyWith(
       conditionEffects: [
         for (final effect in hero.conditionEffects)
           if (effect.id != id) effect,
       ],
     );
+    return ConditionRules.retainProneFromUnconscious(hero, updated);
   }
 
   /// A rule that explicitly ends this condition removes every cause AND its
@@ -131,7 +137,7 @@ class ConditionEffectRules {
     if (!ConditionRules.descriptions.containsKey(condition)) {
       throw const FormatException('Unbekannter quellgebundener Zustand.');
     }
-    return hero.copyWith(
+    final updated = hero.copyWith(
       conditions: [
         for (final entry in hero.manualConditions)
           if (entry != condition) entry,
@@ -141,6 +147,9 @@ class ConditionEffectRules {
           if (effect.condition != condition) effect,
       ],
     );
+    return condition == 'bewusstlos'
+        ? ConditionRules.retainProneFromUnconscious(hero, updated)
+        : updated;
   }
 
   /// Only the owning encounter's confirmed hero-turn boundary may expire this
@@ -161,6 +170,9 @@ class ConditionEffectRules {
           effect,
     ];
     if (remaining.length == hero.conditionEffects.length) return hero;
-    return hero.copyWith(conditionEffects: remaining);
+    return ConditionRules.retainProneFromUnconscious(
+      hero,
+      hero.copyWith(conditionEffects: remaining),
+    );
   }
 }
