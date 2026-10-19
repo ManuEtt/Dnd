@@ -1,3 +1,37 @@
+# Würfelraunen – aktueller Entwicklungsstand (19.10.2026)
+
+**Schwerpunkt:** Fehlerbehebung für fehlende Attribute beim Ausrüstungsimport und Ausbau der D&D-5E-Regeln nach **SRD 5.2.1**.
+
+**Entwicklungsbranch:** `fix/equipment-import-attributes-20261019` (Abzweigung von `main` `82f2786b`). **App-Version laut Quellcode:** `0.8.5+55`; kein Release für diesen Fix zugesagt, bis alle CI-/Android-Prüfungen erfolgreich sind. Der separate [Aufstehen-PR #8](https://github.com/ManuEtt/Dnd/pull/8) ist parallel offen und **nicht** Bestandteil dieses Fehlerfixes.
+
+## Fehler behoben: Startausrüstung ohne SRD-Attribute
+
+**Ursache:** Der Klassenassistent übernahm die ausgewählte Startausrüstung bisher nur als `name` und `quantity`, nicht als `catalogId` plus `stats`. Deshalb fehlten Eigenschaften bei Waffen, Rüstungen und weiteren Gegenständen, obwohl der SRD-Katalog bereits strukturierte Felder enthielt.
+
+**Neuer Ablauf:**
+- Alle 12 SRD-Klassen erhalten bei der bestätigten Startausrüstung eindeutige Katalog-IDs, soweit ein Artikel eindeutig dem enthaltenen SRD-Katalog zugeordnet ist. Automatisch vorhandene strukturierte Werte: Gegenstandsart, Preis, Gewicht, Schaden/Schadensart, Vielseitigkeit, Waffeneigenschaften/-meisterschaften, Reichweiten/Munition, RK-/Stärke-/Geschicklichkeitswerte und Heimlichkeitsnachteil, je nach Artikel.
+- Die Bezeichnungen `Zweihänder`, `Arkaner Fokus (Kristall/Kugel/Kampfstab)`, `Kräuterkunde-Ausrüstung` etc. werden nur über **geprüfte eindeutige Aliasse** zugeordnet; freie Gegenstandsnamen oder Auswahlmöglichkeiten wie `Musikinstrument (nach Wahl)` / `Heiliges Symbol` werden **nicht** geraten.
+- Besonders wichtig: `20 Pfeile` sind **ein** Katalogpaket mit 20 Pfeilen, nicht 20 Pakete mit 400 Pfeilen.
+- Bei Charakter-JSON-Importen mit einer schon vorhandenen validen `catalogId`, aber fehlenden `stats`, werden die veröffentlichten Katalogattribute rekonstruiert. Eigens gespeicherte/überschriebene Stats bleiben unverändert; reine freie Namen bleiben unverändert.
+- **Altcharaktere ohne Katalog-ID:** Im Charaktereditor **„Fehlende SRD-Gegenstandswerte ergänzen“** auswählen. Die App zeigt die eindeutigen Zuordnungen und ändert das Inventar **erst nach ausdrücklicher Zustimmung**. Unbekannte und mehrdeutige Einträge bleiben bestehen.
+- Die Wahl eines Gegenstands im SRD-Katalog übernimmt zusätzlich dessen vorhandenen Informationstext; dies löst noch **keine magische Wirkung oder automatische Ausrüstung** aus. Rüstung, Schild und Waffe müssen wie bisher gesondert bestätigt/angelegt werden.
+
+**Tests hinzugefügt:** `app/test/starting_equipment_import_test.dart` (alle 12 Klassensets, Waffen-/Rüstungsdaten, Pfeile, Aliasse, Import-/Legacy-/Eigene-Werte-Schutz) und `app/test/ui_starting_equipment_import_test.dart` (vorgeschaltete Bestätigung, Reparatur vorhandener Inventareinträge). Gesamte Test-/Build-Abnahme für dieses Inkrement ist separat über GitHub Actions zu bestätigen.
+
+## Vollständiges D&D-Regelwerk – realistischer Umfang
+
+**Nicht fertig:** Die App deckt das vollständige D&D-Regelwerk weder jetzt noch nach diesem Inventarfix ab. Lizenz- und Regelgrundlage ist das [deutsche SRD 5.2.1](https://www.dndbeyond.com/srd) unter CC BY 4.0. Nicht im SRD enthaltene, geschützte Zusatzbücher, Monster, Kampagnen und Markeninhalte dürfen nicht als frei lizenzierbar vorausgesetzt werden.
+
+Die Umsetzung erfolgt als überprüfbare Regelinkremente: (1) vollständige SRD-5.2.1-Anforderungsmatrix, (2) 12 Klassen und alle lizenzierten Herkünfte mit automatischer Charaktererstellung/-entwicklung, (3) Kampf-/Bewegungssystem und Zustände, (4) Zauber inklusive Ressourcen/Konzentration/Wirkungen, (5) Gegenstände/Ausrüstung/Schätze, (6) lizenzierte Monster/NPCs, Begegnungen und Exploration, (7) persistente KI-Spielleitung nur als Erzähler, (8) Migrationen, Import/Export und Android-/End-to-End-Abnahme. `docs/SRD_5_2_1_REQUIREMENTS_MATRIX.md` hält jede überprüfbare Regel mit Status und Tests fest. Keine pauschale 100-%-Behauptung.
+
+**Nächste Abnahme:** Featurebranch-HEAD und PR-Checks vergleichen, mit Flutter 3.35.7 / Dart 3.9.2 formatieren, Analyse/Tests/Backend/APK vollständig prüfen. Erst danach in `main` integrieren, danach PR #8 rebasen bzw. erneut vergleichen. Eingangsstand bleibt erhalten; kein unkontrollierter GitHub-Actions-Codex-Workflow.
+
+---
+
+## Ältere Projektchronik
+
+Die folgenden Einträge enthalten historische Statusangaben (u. a. der inzwischen geschlossene PR #7); der jeweils aktuelle Entwicklungs- und Prüfstand steht **oben**.
+
 # Würfelraunen – Entwicklungsstand und Fortsetzung
 
 **Stand:** 18.10.2026 · **App-Version im Quellcode:** `0.8.5+55` (`app/pubspec.yaml`) · **Entwicklung:** [Pull Request #7](https://github.com/ManuEtt/Dnd/pull/7) auf `feature/condition-source-ledger-20261018`, noch nicht in `main`.
