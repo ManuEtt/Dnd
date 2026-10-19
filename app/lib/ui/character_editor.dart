@@ -352,7 +352,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
           id: const Uuid().v4(),
           name: selected.name,
           quantity: 1,
-          description: '', // Values resolve through catalogId.
+          description: selected.note ?? '', // Reference-only note; mechanics in stats.
           catalogId: selected.id,
           stats: InventoryItemStats.fromCatalog(selected),
         ).toJson(),
