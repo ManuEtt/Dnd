@@ -38,12 +38,9 @@ class _MoonlitSceneryPainter extends CustomPainter {
     canvas.scale(size.width / 1000, size.height / 350);
 
     final glow = Paint()
-      ..shader =
-          const RadialGradient(
-            colors: [Color(0x77bcd8e8), Color(0x2283a6ce), Color(0x00223856)],
-          ).createShader(
-            const Rect.fromLTWH(615, -69, 310, 310),
-          );
+      ..shader = const RadialGradient(
+        colors: [Color(0x77bcd8e8), Color(0x2283a6ce), Color(0x00223856)],
+      ).createShader(const Rect.fromLTWH(615, -69, 310, 310));
     canvas.drawCircle(const Offset(770, 86), 155, glow);
     canvas.drawCircle(
       const Offset(770, 86),
