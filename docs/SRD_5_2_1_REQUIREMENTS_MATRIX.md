@@ -1,5 +1,33 @@
 # SRD 5.2.1 – Regelanforderungsmatrix (laufender Aufbau)
 
+## Integrationsstatus (19.10.2026)
+
+PR #11 ist auf `main` enthalten. Die PR-#9-Regeln für Startausrüstung/RK/Bewegung sind in `integration/character-creation-20261019` zusammengeführt. Die gemeinsame CI ist noch zu bestätigen. PR #10 enthält überschneidende Klassenaufstiegsregeln und muss getrennt auf zusätzliche Fähigkeiten geprüft werden. `GETESTET` in älteren Zeilen bezieht sich auf die jeweils verlinkte Einzelbranch-CI, **nicht** die Integration.
+
+
+## Startkampfwerte aus bestätigten Eingaben (19.10.2026)
+
+**CI-Nachweis:** [39201449428](https://github.com/ManuEtt/Dnd/actions/runs/39201449428), Code-Commit `2f7ecb15`, grün. Gerätetest offen.
+
+| ID | Referenz | Anforderung | Umsetzung | Tests | Status |
+| --- | --- | --- | --- | --- | --- |
+| CHAR-SPEED-SRD | Character Creation / Character Origins: Species | 30 Fuß bei 8 SRD-Spezies, 35 Fuß bei Goliath/Waldelf; unbekannte Spezies nicht raten | `srd_starting_combat_values.dart`, `models.dart`, `condition_rules.dart`, `character_editor.dart` | `srd_starting_combat_values_test.dart`, `ui_starting_combat_values_test.dart` | GETESTET (CI grün, Gerätetest offen) |
+| CHAR-AC-BASE | Playing the Game: Armor Class; Classes: Unarmored Defense | Grund-RK 10 + GE, bei ungerüstetem Barbar/Mönch zusätzlich KON/WEI, nur bei bestätigten Werten | `srd_starting_combat_values.dart`, `character_editor.dart` | `srd_starting_combat_values_test.dart`, `ui_starting_combat_values_test.dart` | GETESTET (CI grün, Gerätetest offen) |
+| CHAR-AC-EQUIPPED | Equipment: Armor | Rüstung und Schild nur nach aktiver Bestätigung anrechnen | `equipment_rules.dart`, `character_editor.dart` | bisherige Equipment- und neue Kampfwerttests | TEILWEISE; vollständige Sonderfälle/Regressionen offen |
+
+
+
+## Inventar-/Charaktererstellung: neues Inkrement (19.10.2026)
+
+| ID | SRD-Abschnitt | Anforderung | Code / UI | Persistenz / Tests | Status |
+| --- | --- | --- | --- | --- | --- |
+| EQUIP-START-TYPED | Classes: Starting Equipment; Equipment Tables | Alle eindeutigen Klassenstartgegenstände erhalten korrekte Katalog-ID/Preis/Gewicht/Kampf-/RK-Attribute und passende Menge | `starting_equipment_import.dart`, `character_editor.dart` | `InventoryItem.stats`, `starting_equipment_import_test.dart` | IMPLEMENTIERT_UNGETESTET (neue CI ausstehend) |
+| EQUIP-IMPORT-BACKFILL | Equipment Tables | Bestätigte Katalog-ID ohne Stats sicher aus Katalog rekonstruieren; individuelle Werte wahren | `models.dart` | Import/Export/JSON-Rundlauf-Tests in `starting_equipment_import_test.dart` | IMPLEMENTIERT_UNGETESTET |
+| EQUIP-LEGACY-CONFIRM | Equipment Tables | Bei historischen frei benannten Altgegenständen nur eindeutige Zuordnungen nach Bestätigung ergänzen | `character_editor.dart`, `starting_equipment_import.dart` | `ui_starting_equipment_import_test.dart` | IMPLEMENTIERT_UNGETESTET |
+| EQUIP-CHOICES | Classes: Starting Equipment | Nicht eindeutige Gegenstände (Instrument, heiliges Symbol etc.) aktiv wählen lassen | Klassenassistent noch ohne spezifische Gegenstandswahl | E2E-Tests fehlen | FEHLT |
+| SRD-COVERAGE-ALL | gesamtes SRD 5.2.1 | Vollständiger lizenzierter Regelkatalog mit Engine, UI, SQLite, Tests und Android-Abnahme | Noch nicht inventarisiert und implementiert | Matrix für alle SRD-Regeln erst zu erstellen | TEILWEISE; kein Vollständigkeitsanspruch |
+
+
 ## Stufenaufstieg und Erstellungsprüfung (19.10.2026, neue CI offen)
 
 | ID | SRD 5.2.1 | Umsetzung | Tests | Status |
