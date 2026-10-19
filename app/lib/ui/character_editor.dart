@@ -1142,6 +1142,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
               child: ListView(
                 padding: const EdgeInsets.all(20),
                 children: [
+                  const FantasyMoonlitBanner(height: 110),
+                  const SizedBox(height: 15),
                   const FantasySectionTitle(
                     title: 'Dein Held',
                     icon: Icons.person_outline,
