@@ -1,3 +1,9 @@
+## 19.10.2026 – Branches in `main` zusammengeführt
+
+Zusammenführungsreihenfolge: PR #11 → PR #12 → PR #13 (alle gemergt); offene ältere PRs #9 und #10 wurden mit Begründung geschlossen, da ihre benötigten Inhalte selektiv in PR #12 aufgegangen sind. Keine Force-Pushes oder Löschung historischer Branches. Hauptstand umfasst Katalog-Attributimporte, RK/Speziesbewegung, Klassenaufstieg und den integrierten ASI-Dialog samt Tests. Aktionen [39206965724](https://github.com/ManuEtt/Dnd/actions/runs/39206965724) für den gemeinsamen App-Code prüfen; physischer Android-Test noch ausstehend. Vollständiges SRD 5.2.1 nicht behaupten.
+
+---
+
 ## 19.10.2026 – Integration statt konkurrierender Entwicklungszweige
 
 Neuer Branch `integration/character-creation-20261019`: PR #11 in `main`, getypte Ausrüstung und Startkampfwerte aus PR #9 ergänzt (drei konfliktfreie Code-Diff3-Dateien plus neue Module und Tests). PR #10 und #11 hatten konkurrierende Aufstiegsassistenten. Einziger verbleibender Dialog ist `SrdClassLevelUpDialog`; die einzigartige ASI-Validierung und rückwirkenden Konstitutions-TP aus PR #10 wurden dort und im Regelmodul eingearbeitet. Die Integrationsregressionen sind neu zu prüfen. Gemeinsame Tests/CI/Android-Build noch ausstehend; keine hundertprozentige SRD-Abdeckung behaupten.
