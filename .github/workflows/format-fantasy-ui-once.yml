@@ -1,4 +1,4 @@
-name: Einmalige Fantasy-UI-Formatierung
+name: Einmalige Fantasy-UI-Formatierung (korrigiert)
 on:
   push:
     branches:
