@@ -89,6 +89,8 @@ void main() {
         find.byKey(const ValueKey('adventure-xp-progress')),
         findsOneWidget,
       );
+      // The decorated HUD bars must not masquerade as a pending file export.
+      expect(find.byType(LinearProgressIndicator), findsNothing);
       expect(
         find.textContaining('Die vergessene Glocke finden'),
         findsOneWidget,
