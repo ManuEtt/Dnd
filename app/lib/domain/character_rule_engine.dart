@@ -1,6 +1,7 @@
 import 'condition_rules.dart';
 import 'models.dart';
 import 'class_resource_rules.dart';
+import 'skill_check_passives.dart';
 import 'srd_class_feature_catalog.dart';
 import 'rules_engine.dart';
 import 'srd_equipment_catalog.dart';
@@ -14,8 +15,11 @@ class D20Rule {
     this.advantage = false,
     this.disadvantage = false,
     this.automaticallyFails = false,
+    this.minimumNatural = 0,
   });
   final int modifier;
+  /// Only for confirmed skill-based ability checks such as Rogue Reliable Talent.
+  final int minimumNatural;
   final bool advantage;
   final bool disadvantage;
 
@@ -47,7 +51,9 @@ class CharacterRuleEngine {
     // This is a computed proficiency, not a mutation of the saved list.
     final proficient =
         hero.savingThrowProficiencies.contains(ability) ||
-        ClassResourceRules.level(hero, 'Mönch') >= 14;
+        ClassResourceRules.level(hero, 'Mönch') >= 14 ||
+        (ClassResourceRules.level(hero, 'Schurke') >= 15 &&
+            (ability == 'wisdom' || ability == 'charisma'));
     return mod +
         (proficient ? RulesEngine.proficiencyBonus(hero.level) : 0) +
         ExhaustionRules.d20Modifier(hero);
@@ -81,15 +87,32 @@ class CharacterRuleEngine {
     String ability, {
     bool proficient = false,
     bool stealth = false,
+    String? skill,
   }) {
     final mod = attributeModifier(hero, ability);
     if (mod == null) {
       throw StateError('Das Attribut $ability ist nicht bestätigt.');
     }
+    final usesSkill = skill != null && skill.isNotEmpty;
+    final confirmedProficiency = usesSkill && hero.skills.contains(skill);
+    final prof = RulesEngine.proficiencyBonus(hero.level);
+    final jack = SkillCheckPassives.jackOfAllTrades(
+      bardClassLevel: ClassResourceRules.level(hero, 'Barde'),
+      proficiencyBonus: prof,
+      usesSkill: usesSkill,
+      proficient: proficient || confirmedProficiency,
+    );
+    final minimumNatural = SkillCheckPassives.minimumNatural(
+      rogueClassLevel: ClassResourceRules.level(hero, 'Schurke'),
+      usesSkill: usesSkill,
+      proficient: proficient && confirmedProficiency,
+    );
     return D20Rule(
       mod +
-          (proficient ? RulesEngine.proficiencyBonus(hero.level) : 0) +
+          (proficient ? prof : 0) +
+          jack +
           ExhaustionRules.d20Modifier(hero),
+      minimumNatural: minimumNatural,
       disadvantage:
           ConditionRules.has(hero, 'vergiftet') ||
           (_untrainedArmor(hero) &&
@@ -102,6 +125,7 @@ class CharacterRuleEngine {
     hero,
     'wisdom',
     proficient: hero.skills.contains('Wahrnehmung'),
+    skill: 'Wahrnehmung',
   );
 
   static D20Rule initiative(HeroCharacter hero) {
