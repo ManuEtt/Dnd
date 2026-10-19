@@ -64,6 +64,9 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
     // The preview errors may depend on the selected XP/milestone mode.
     final proposal = _proposal();
     final message = proposal == null ? _error : null;
+    final thresholdLabel = widget.hero.level >= 20
+        ? 'Höchststufe 20'
+        : '${CharacterCreationProgression.startingExperience(widget.hero.level + 1)}';
     return AlertDialog(
       title: const Text('Klasse um eine Stufe steigern'),
       content: SizedBox(
@@ -116,7 +119,7 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
               const SizedBox(height: 10),
               Text(
                 'EP vorhanden: ${widget.hero.experience?.toString() ?? 'nicht bestätigt'}'
-                ' · Schwelle: ${widget.hero.level >= 20 ? 'Höchststufe 20' : CharacterCreationProgression.startingExperience(widget.hero.level + 1)}',
+                ' · Schwelle: $thresholdLabel',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               if (canChooseSubclass)
