@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/ui/app_build_info.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   test('Version und Buildnummer stammen aus dem Paketmanifest', () {
     const pubspec = '''
 name: lebendiger_spielleiter
