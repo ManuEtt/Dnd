@@ -125,8 +125,15 @@ class InventoryItem {
     quantity: _int(j['quantity'], 'Anzahl', fallback: 1, min: 1),
     description: _string(j['description'], 'Beschreibung', fallback: ''),
     catalogId: _string(j['catalogId'], 'Katalog-ID', fallback: ''),
+    // Explicit SRD catalog IDs are sufficient to restore missing typed
+    // attributes in older imports. Never infer a catalog ID from a free name,
+    // and never overwrite user-confirmed custom stats.
     stats: j['stats'] == null
-        ? null
+        ? (SrdEquipmentCatalog.byId(
+              _string(j['catalogId'], 'Katalog-ID', fallback: ''),
+            ) case final entry?)
+            ? InventoryItemStats.fromCatalog(entry)
+            : null
         : InventoryItemStats.fromJson(_map(j['stats'], 'Gegenstandswerte')),
   );
 }
