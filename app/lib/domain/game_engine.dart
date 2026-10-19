@@ -668,7 +668,11 @@ class GameEngine {
 
   GameUpdate updateHero(Campaign campaign, HeroCharacter hero) {
     // Round-trip validation also checks imported edits made outside the engine.
-    final validated = HeroCharacter.fromJson(hero.toJson());
+    final parsed = HeroCharacter.fromJson(hero.toJson());
+    final validated = ConditionRules.retainProneFromUnconscious(
+      campaign.hero,
+      parsed,
+    );
     if (validated.id != campaign.hero.id) {
       throw ArgumentError(
         'Ein anderer Charakter kann nicht stillschweigend übernommen werden.',
