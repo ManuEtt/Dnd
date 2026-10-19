@@ -2728,6 +2728,14 @@ class GameEngine {
         current.hero,
         choices.single.id,
       )!;
+      if (!CoverRules.canTargetDirectly(encounter.enemyCover)) {
+        return _commit(
+          before,
+          current,
+          'Vollständige Deckung: Der Gegner kann nicht direkt anvisiert werden.',
+          type: 'rules.blocked',
+        );
+      }
       final attackRule = CharacterRuleEngine.attack(current.hero);
       final bonus = TwoWeaponFightingRules.attackBonus(current.hero, offhand);
       return _commit(
@@ -2740,14 +2748,19 @@ class GameEngine {
             modifier: bonus,
             advantage: attackRule.advantage,
             disadvantage: attackRule.disadvantage,
-            difficulty: encounter.enemyArmorClass,
+            difficulty: CoverRules.armorClass(
+              encounter.enemyArmorClass,
+              encounter.enemyCover,
+            ),
             targetId: encounter.id,
             targetName: encounter.enemyName,
             weaponId: choices.single.id,
           ),
         ),
         'Nebenhandangriff mit ${choices.single.name}: Würfle W20 '
-        '${_signed(bonus)} gegen RK ${encounter.enemyArmorClass}. '
+        '${_signed(bonus)} gegen RK '
+        '${CoverRules.armorClass(encounter.enemyArmorClass, encounter.enemyCover)} '
+        '(inklusive Deckung). '
         'Die Bonusaktion ist reserviert.',
         type: 'roll.requested',
         payload: {'offhandWeaponId': choices.single.id},
@@ -2777,6 +2790,14 @@ class GameEngine {
           type: 'rules.blocked',
         );
       }
+      if (!CoverRules.canTargetDirectly(encounter.enemyCover)) {
+        return _commit(
+          before,
+          current,
+          'Vollständige Deckung: Der Gegner kann nicht direkt angegriffen werden.',
+          type: 'rules.blocked',
+        );
+      }
       final attack = CharacterRuleEngine.attack(current.hero);
       final bonus = attack.modifier;
       return _commit(
@@ -2788,12 +2809,15 @@ class GameEngine {
             modifier: bonus,
             advantage: attack.advantage,
             disadvantage: attack.disadvantage,
-            difficulty: encounter.enemyArmorClass,
+            difficulty: CoverRules.armorClass(
+              encounter.enemyArmorClass,
+              encounter.enemyCover,
+            ),
             targetId: encounter.id,
             targetName: encounter.enemyName,
           ),
         ),
-        '${current.hero.name}, würfle einen W20 für deinen Angriff auf den ${encounter.enemyName}. Dein Angriffsbonus ist ${_signed(bonus)} (${attack.rollHint}); seine Rüstungsklasse beträgt ${encounter.enemyArmorClass}.',
+        '${current.hero.name}, würfle einen W20 für deinen Angriff auf den ${encounter.enemyName}. Dein Angriffsbonus ist ${_signed(bonus)} (${attack.rollHint}); seine effektive Rüstungsklasse beträgt ${CoverRules.armorClass(encounter.enemyArmorClass, encounter.enemyCover)} (${CoverRules.label(encounter.enemyCover)}).',
         type: 'roll.requested',
       );
     }
@@ -2872,9 +2896,10 @@ class GameEngine {
         current.copyWith(
           encounter: encounter.copyWith(
             movementRemaining: encounter.movementRemaining - amount,
+            heroCover: CoverLevel.none,
           ),
         ),
-        'Du bewegst dich $amount Meter. In diesem Zug bleiben ${encounter.copyWith(movementRemaining: encounter.movementRemaining - amount).movementRemainingLabel}; deine Aktion ist verfügbar.',
+        'Du bewegst dich $amount Meter. In diesem Zug bleiben ${encounter.copyWith(movementRemaining: encounter.movementRemaining - amount).movementRemainingLabel}; deine Aktion ist verfügbar. Eine frühere Deckungsposition ist danach nicht mehr bestätigt.',
         type: 'combat.moved',
         payload: {'meters': amount},
       );
@@ -2999,7 +3024,7 @@ class GameEngine {
       }
       final outcome = RulesEngine.attack(
         roll: result,
-        armorClass: foe.enemyArmorClass,
+        armorClass: pending.difficulty,
         criticalThreshold: ClassCombatFeatures.weaponCriticalThreshold(
           next.hero,
         ),
@@ -3016,6 +3041,8 @@ class GameEngine {
         throw StateError('Die Angriffsaktion ist bereits abgeschlossen.');
       }
       payload['attacksRemaining'] = attacksRemaining;
+      payload['targetCover'] = foe.enemyCover.name;
+      payload['effectiveTargetArmorClass'] = pending.difficulty;
       if (isOffhand) {
         payload['offhandWeaponId'] = pending.weaponId;
         payload['bonusActionUsed'] = true;
