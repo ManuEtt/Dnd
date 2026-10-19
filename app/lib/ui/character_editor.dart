@@ -5,6 +5,7 @@ import '../domain/models.dart';
 import '../domain/character_creation_progression.dart';
 import '../domain/srd_character_classes.dart';
 import '../domain/srd_equipment_catalog.dart';
+import '../domain/starting_equipment_import.dart';
 import '../domain/equipment_rules.dart';
 import '../domain/multiclass_rules.dart';
 import '../domain/rules_engine.dart';
@@ -356,6 +357,63 @@ class _CharacterEditorState extends State<CharacterEditor> {
           stats: InventoryItemStats.fromCatalog(selected),
         ).toJson(),
       );
+    });
+  }
+
+  /// Older starting kits stored only a name and quantity. Require an
+  /// explicit preview/confirmation before adding reviewed SRD metadata.
+  Future<void> _enrichInventoryFromCatalog() async {
+    final entries = (_original['inventory'] as List).map(
+      (value) => InventoryItem.fromJson(Map<String, dynamic>.from(value as Map)),
+    ).toList();
+    final updated = entries.map(StartingEquipmentImport.enrichLegacyItem).toList();
+    final changed = <int>[
+      for (var i = 0; i < entries.length; i++)
+        if (entries[i].catalogId != updated[i].catalogId) i,
+    ];
+    if (changed.isEmpty) {
+      setState(() => _error =
+          'Keine eindeutig passenden Gegenstände ohne Katalogwerte gefunden. '
+          'Offene Ausrüstungswahlen bitte im SRD-Katalog auswählen.');
+      return;
+    }
+    final approved = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('SRD-Gegenstandswerte nachtragen'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Nur eindeutig zugeordnete Gegenstände erhalten '
+                  'ihre veröffentlichten Katalogattribute. '
+                  'Eigene Gegenstandswerte und nicht eindeutige '
+                  'Auswahlmöglichkeiten bleiben unverändert.'),
+              const SizedBox(height: 12),
+              for (final i in changed)
+                Text('${entries[i].name} → ${updated[i].name} '
+                     '(Anzahl ${updated[i].quantity})'),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Abbrechen'),
+          ),
+          FilledButton(
+            key: const ValueKey('character-enrich-confirm'),
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Attribute übernehmen'),
+          ),
+        ],
+      ),
+    );
+    if (approved != true || !mounted) return;
+    setState(() {
+      _original['inventory'] = updated.map((item) => item.toJson()).toList();
+      _error = null;
     });
   }
 
@@ -721,10 +779,9 @@ class _CharacterEditorState extends State<CharacterEditor> {
         final inventory = _original['inventory'] as List;
         for (final item in kit.items) {
           inventory.add(
-            InventoryItem(
-              id: const Uuid().v4(),
-              name: item.name,
-              quantity: item.quantity,
+            StartingEquipmentImport.fromStartingItem(
+              item,
+              const Uuid().v4(),
             ).toJson(),
           );
         }
@@ -1068,6 +1125,13 @@ class _CharacterEditorState extends State<CharacterEditor> {
                     label: const Text(
                       'Ausrüstung ablegen (Werte manuell prüfen)',
                     ),
+                  ),
+                  const SizedBox(height: 8),
+                  OutlinedButton.icon(
+                    key: const ValueKey('character-enrich-equipment'),
+                    onPressed: _enrichInventoryFromCatalog,
+                    icon: const Icon(Icons.auto_fix_high_outlined),
+                    label: const Text('Fehlende SRD-Gegenstandswerte ergänzen'),
                   ),
                   const SizedBox(height: 8),
                   OutlinedButton.icon(
