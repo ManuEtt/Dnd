@@ -9,6 +9,7 @@ import 'spellcasting_rules.dart';
 import 'class_feature_resources.dart';
 import 'class_resource_rules.dart';
 import 'skill_check_passives.dart';
+import 'cover_rules.dart';
 
 /// Versioned, provider-independent game data. Unknown historical values stay null.
 const abilityNames = <String>[
@@ -1261,6 +1262,8 @@ class Encounter {
     required this.enemyHitPoints,
     required this.enemyMaxHitPoints,
     this.enemyArmorClass = 12,
+    this.heroCover = CoverLevel.none,
+    this.enemyCover = CoverLevel.none,
     this.enemyAttackBonus = 2,
     this.enemyDamage = '1d4',
     this.enemyDamageType = '',
@@ -1288,6 +1291,9 @@ class Encounter {
     this.selfRestorationChoice = '',
   });
   final String id, enemyName, enemyDamage, enemyDamageType, activeParticipant;
+  /// Explicitly confirmed from the CURRENT opponent's attack direction.
+  /// Older campaigns default to no cover, not an inferred obstacle.
+  final CoverLevel heroCover, enemyCover;
 
   /// Pending player choice for the Monk's end-of-turn Self-Restoration.
   final String selfRestorationChoice;
@@ -1336,6 +1342,8 @@ class Encounter {
   bool get isFinished => enemyHitPoints == 0;
   Encounter copyWith({
     int? enemyHitPoints,
+    CoverLevel? heroCover,
+    CoverLevel? enemyCover,
     int? round,
     String? activeParticipant,
     int? heroInitiative,
@@ -1364,6 +1372,8 @@ class Encounter {
     enemyHitPoints: enemyHitPoints ?? this.enemyHitPoints,
     enemyMaxHitPoints: enemyMaxHitPoints,
     enemyArmorClass: enemyArmorClass,
+    heroCover: heroCover ?? this.heroCover,
+    enemyCover: enemyCover ?? this.enemyCover,
     enemyAttackBonus: enemyAttackBonus,
     enemyDamage: enemyDamage,
     enemyDamageType: enemyDamageType,
@@ -1400,6 +1410,8 @@ class Encounter {
     'enemyHitPoints': enemyHitPoints,
     'enemyMaxHitPoints': enemyMaxHitPoints,
     'enemyArmorClass': enemyArmorClass,
+    if (heroCover != CoverLevel.none) 'heroCover': heroCover.name,
+    if (enemyCover != CoverLevel.none) 'enemyCover': enemyCover.name,
     'enemyAttackBonus': enemyAttackBonus,
     'enemyDamage': enemyDamage,
     if (enemyDamageType.isNotEmpty) 'enemyDamageType': enemyDamageType,
@@ -1524,6 +1536,8 @@ class Encounter {
         min: 1,
         max: 100,
       ),
+      heroCover: CoverRules.fromStorage(_string(j['heroCover'], 'Deckung des Helden', fallback: 'none')),
+      enemyCover: CoverRules.fromStorage(_string(j['enemyCover'], 'Deckung des Gegners', fallback: 'none')),
       enemyAttackBonus: _int(
         j['enemyAttackBonus'],
         'Gegnerbonus',
@@ -1962,7 +1976,11 @@ class Campaign {
           (encounter == null ||
               encounter.isFinished ||
               encounter.id != pending.targetId ||
-              encounter.enemyArmorClass != pending.difficulty)) {
+              encounter.enemyCover == CoverLevel.total ||
+              CoverRules.armorClass(
+                    encounter.enemyArmorClass,
+                    encounter.enemyCover,
+                  ) != pending.difficulty)) {
         throw const FormatException(
           'Das Angriffsziel stimmt nicht mit der Probe überein.',
         );
