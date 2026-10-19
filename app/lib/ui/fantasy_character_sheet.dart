@@ -43,11 +43,16 @@ class _CharacterSheetPageState extends State<CharacterSheetPage> {
       backgroundColor: _night,
       appBar: AppBar(
         title: const Row(
-          mainAxisSize: MainAxisSize.min,
           children: [
-            FantasyRuneEmblem(rune: FantasyRune.hero, size: 30),
-            SizedBox(width: 9),
-            Text('Charakterbogen'),
+            FantasyRuneEmblem(rune: FantasyRune.hero, size: 26),
+            SizedBox(width: 7),
+            Expanded(
+              child: Text(
+                'Charakterbogen',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
         centerTitle: true,
