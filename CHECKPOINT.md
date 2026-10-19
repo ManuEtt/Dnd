@@ -1,3 +1,11 @@
+# Checkpoint 19.10.2026 – Nutzerfreigabe Fantasy-Grafiken
+
+Branch `feature/fantasy-portraits-and-ui-20261019` von `main` `2f392e1`. Genehmigte Assets liegen nun in `app/assets/fantasy/` als offline ladbare Base64-WebP-Dateien: `portrait_atlas.webp.b64`, `night_sky.webp.b64`, `ui_icon_atlas.webp.b64`; Flutter-Assetdeklaration ergänzt. Neue `character_portrait_picker.dart`, `fantasy_approved_icons.dart`; bestehende Flutter-Fantasy-Oberflächen mit filigranen Goldverzierungen, Mondkulisse, fester Speicherleiste und Porträtanzeige erweitert. `HeroCharacter` trägt optionale Bildauswahl bzw. klein eingebettete eigene Bilddaten zur Sicherung/JSON-Migration. image_picker 1.1.x ist per Lockfile geprüft.
+
+**Abnahme offen:** aktuelle vollständige Flutter-Tests, statische Analyse, Debug-/Release-APKs, native Android-Tests sowie echte Gerätegalerie. Kein Merge nach `main` ohne Grünstatus. Bestehende D&D-Regeln dürfen nicht beschädigt werden; Bilder haben keinen Regelaffekt. Noch nicht benötigte Branches nicht ohne bestätigte Merge-/Backupsituation löschen.
+
+---
+
 # Integrations-Checkpoint 19.10.2026
 
 Branch `integration/character-creation-20261019` von `main` `b3e1de65`: PR #11 bereits enthalten; Code aus PR #9 konfliktfrei dreifach abgeglichen (vorheriges gemeinsames Git-Base `82f2786b`), ohne neue PR #11-Merkmale zu entfernen. PR #10 wurde fachlich mit PR #11 verglichen: seine einzigartige ASI-Auswahl (+2 oder +1/+1, bestätigte Attribute ≤20, rückwirkende KO-TP) ist in den bestehenden PR-#11-Regel- und UI-Weg integriert, mit `integrated_character_level_up_test.dart` getestet werden. Der konkurrierende zweite Dialog wird nicht übernommen. **Aktuelle gemeinsame CI und Android-Artefakte offen**; weder fertig noch installiert behaupten.
