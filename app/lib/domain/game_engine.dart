@@ -1336,6 +1336,38 @@ class GameEngine {
         'Eine Probe wartet noch auf dich. Würfle automatisch oder gib den natürlichen W20 ein; ein Gesamtergebnis musst du ausdrücklich als Gesamt kennzeichnen.',
       );
     }
+    // A player may ask for the confirmed passive value. This is a
+    // rules lookup, NOT a narrated discovery, automatic success or hidden
+    // enemy detection; only the GM/scene can establish target and DC.
+    if (RegExp(
+      r'\bpassiv(?:e|er|en)?\s+wahrnehmung\b|\bwahrnehmung\s+passiv\b',
+    ).hasMatch(words)) {
+      final score = CharacterRuleEngine.passivePerception(current.hero);
+      if (score == null) {
+        return _commit(
+          campaign,
+          current,
+          'Passive Wahrnehmung ist derzeit nicht verfügbar. '
+          'Prüfe deinen bestätigten Weisheitswert und deinen Zustand.',
+          type: 'rules.blocked',
+        );
+      }
+      return _commit(
+        campaign,
+        current,
+        'Deine passive Wahrnehmung beträgt $score (ohne W20). '
+        'Sie berücksichtigt bestätigte Charakterwerte und Zustände. '
+        'Ohne eine konkrete bestätigte Szene und Schwierigkeit werden '
+        'dadurch keine geheimen Hinweise oder Gegner aufgedeckt.',
+        type: 'rules.passivePerception',
+        payload: {
+          'value': score,
+          'withoutDice': true,
+          'grantsDiscovery': false,
+        },
+      );
+    }
+
     // Manual saving throws with explicitly declared DC. This is deliberately
     // NOT a spell save inferred from AI narration: the player supplies the DC.
     const saveNames = <String, String>{

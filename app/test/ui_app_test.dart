@@ -672,6 +672,14 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Charakterbogen'), findsOneWidget);
     expect(find.text('RÜSTUNGSKLASSE'), findsOneWidget);
+    // The passive-Perception row can move the tab bar just below a small
+    // screen's initial viewport. Prove it is reachable by actual scrolling.
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('sheet-tab-0')),
+      160,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
     expect(find.text('Attribute'), findsOneWidget);
     expect(tester.takeException(), isNull);
     await tester.pageBack();

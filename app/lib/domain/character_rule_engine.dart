@@ -126,6 +126,43 @@ class CharacterRuleEngine {
     skill: 'Wahrnehmung',
   );
 
+  /// A passive Wisdom (Perception) check needs no d20. The character's
+  /// *confirmed* current skill rule supplies ability, proficiency, Bard
+  /// Jack of All Trades and exhaustion; a situational advantage or
+  /// disadvantage adjusts the result by 5, never 5 per source.
+  ///
+  /// The caller must still confirm the sense, target, lighting, obstacles
+  /// and difficulty: a passive total alone never invents a hidden clue.
+  /// Unconfirmed Wisdom and unconscious/dead characters cannot perceive.
+  ///
+  /// The uploaded German starter-set book covers the passive-check arithmetic
+  /// in chapter 1, "Verstecken und Sehen" (p. 6). Edition-specific 2014
+  /// surprise/exhaustion rules are NOT imported into the SRD 5.2.1 engine.
+  static int? passivePerception(
+    HeroCharacter hero, {
+    bool situationalAdvantage = false,
+    bool situationalDisadvantage = false,
+  }) {
+    if (hero.abilities['wisdom'] == null ||
+        hero.isDead ||
+        hero.hitPoints == 0 ||
+        ConditionRules.has(hero, 'bewusstlos')) {
+      return null;
+    }
+    final rule = perception(hero);
+    if (rule.automaticallyFails) return null;
+    // Multiple advantages/disadvantages never stack, and opposing sources
+    // cancel even when one originates in a condition such as Poisoned.
+    final advantage = rule.advantage || situationalAdvantage;
+    final disadvantage = rule.disadvantage || situationalDisadvantage;
+    final situationalBonus = advantage == disadvantage
+        ? 0
+        : advantage
+        ? 5
+        : -5;
+    return 10 + rule.modifier + situationalBonus;
+  }
+
   static D20Rule initiative(HeroCharacter hero) {
     if (hero.isDead || hero.hitPoints == 0) {
       throw StateError(

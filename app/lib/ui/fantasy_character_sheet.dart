@@ -72,6 +72,8 @@ class _CharacterSheetPageState extends State<CharacterSheetPage> {
                 _CharacterHeader(hero: hero),
                 const SizedBox(height: 14),
                 _SummaryGrid(hero: hero),
+                const SizedBox(height: 12),
+                _PassivePerceptionStrip(hero: hero),
                 const SizedBox(height: 20),
                 _SectionNavigation(
                   selected: _section,
@@ -370,6 +372,58 @@ class _SummaryGrid extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+class _PassivePerceptionStrip extends StatelessWidget {
+  const _PassivePerceptionStrip({required this.hero});
+  final HeroCharacter hero;
+
+  @override
+  Widget build(BuildContext context) {
+    final score = CharacterRuleEngine.passivePerception(hero);
+    return _FantasyFrame(
+      child: Row(
+        key: const ValueKey('sheet-passive-perception'),
+        children: [
+          const Icon(Icons.visibility_outlined, color: _gold, size: 26),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'PASSIVE WAHRNEHMUNG',
+                  style: TextStyle(
+                    color: _ivory,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: .8,
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  score == null
+                      ? 'Nicht verfügbar oder Weisheit unbestätigt'
+                      : 'Ohne Würfeln · situationsabhängig',
+                  style: const TextStyle(color: _muted, fontSize: 11),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            score?.toString() ?? '–',
+            key: const ValueKey('sheet-passive-perception-score'),
+            style: const TextStyle(
+              color: _gold,
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
