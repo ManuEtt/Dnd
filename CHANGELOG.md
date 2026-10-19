@@ -1,3 +1,11 @@
+## Unveröffentlicht – Fantasy-UI und Charakterporträt (19.10.2026)
+
+- Neun bestätigte Fantasy-Charakterporträts als offline eingebetteter WebP-Atlas, Galerie mit Vorschau, Übernehmen/Abbrechen, Auswählen/Entfernen und eigener Bildwahl via Android-System-Bildwähler.
+- Selbsterstellte Bilder werden klein in den Character-JSON-Daten statt in temporären Cachepfaden gespeichert; sichere ID-/Größenprüfung, ältere Savegames unverändert.
+- Nächtliche Burgkulisse und echte goldene Icons aus den freigegebenen UI-Grafiken; wiederverwendbare Ornamentrahmen für FantasyPanel.
+- Charaktereditor: stets sichtbare Schaltflächen Speichern/Abbrechen; Porträt auf Charakterliste und Charakterbogen.
+- Neue Domain- und Widgettests; CI-/Geräteabnahme für diesen Entwicklungszweig noch offen.
+
 ## Integration 19.10.2026 – PR #11 und PR #9
 
 - SRD-Klassenaufstieg und Erstellungsprüfung aus PR #11 mit der Startausrüstung/RK/Bewegungs-Korrektur aus PR #9 auf separatem Integrationsbranch zusammengeführt. Integrationstest und Merge nach `main` stehen aus. Die gegenüber PR #11 neue Funktion aus PR #10 – validierte ASI (+2/+1+1) mit rückwirkender KO-TP-Berechnung – wurde in den vorhandenen Klassenaufstiegsdialog übernommen. Der alternative doppelte Dialog wird nicht eingebaut.
