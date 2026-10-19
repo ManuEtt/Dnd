@@ -1,3 +1,9 @@
+# CI-Verifizierung – RK und Bewegung, 19.10.2026
+
+[Android-Alpha-Workflow 39201449428](https://github.com/ManuEtt/Dnd/actions/runs/39201449428): **SUCCESS** für Code-Commit `2f7ecb1589723075a09197d2f2f70efcae18477b` im Branch `fix/equipment-import-attributes-20261019` (PR #9). Der anfängliche Widgettest-Fehler beruhte darauf, dass ein Eingabefeld nach dem Scrollen nicht mehr im lazily gerenderten ListView montiert war; der Test wurde korrigiert und der **gesamte** Workflow erneut erfolgreich durchlaufen. Backend-, Flutter-, Android-Debug-/Native- und kompakte Alpha-APK-Schritte sind erfolgreich. Gerätetest und Review/Merge in `main` fehlen weiterhin. Keine vollständig implementierte SRD-Gesamtabdeckung behaupten.
+
+---
+
 # Zwischenstand 19.10.2026 – Fehlende RK/Bewegung korrigieren
 
 PR #9, Branch `fix/equipment-import-attributes-20261019` ergänzt jetzt zusätzlich zum bereits CI-geprüften Ausrüstungsimport die Berechnung fehlender Kampfwerte: SRD-Speziesgeschwindigkeit, ungerüstete Grund-RK inkl. Mönch/Barbar, automatisch nach bestätigten Feldern im neuen Charaktereditor und explizit bei alten Figuren. `speedRemainderDecimeters` als optionales Legacy-sicheres JSON-Feld (Goliath/Waldelf 10,5 m) und angepasste Erschöpfungsbewegung; vorhandene manuelle Werte bleiben erhalten.
