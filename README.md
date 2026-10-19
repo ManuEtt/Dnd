@@ -1,3 +1,31 @@
+# Würfelraunen – Entwicklung: Hauptklassen-Stufenaufstieg (19.10.2026)
+
+**Arbeitsbranch:** `feature/primary-class-level-up-20261019` · **Basis-`main`:** `cadaf7369f8899f29370fb28dfdc2a92c0ba98aa` · **Lizenzierte Regelquelle:** [SRD 5.2.1](https://www.dndbeyond.com/srd).
+
+## Aktuelles Inkrement: Charakter- und Klassenentwicklung
+
+Der bereits vorhandene SRD-Klassenkatalog enthält alle **zwölf Basis-Klassen**, ihre offiziellen Trefferwürfel, Merkmale pro Klassenstufe, eine jeweilige SRD-Unterklasse und Tabellen mit Stufen-/Erfahrungspunkten. Der bisher fehlende sichere **Stufenaufstieg der Hauptklasse** wird jetzt durch `PrimaryClassLevelUp` plus `PrimaryClassLevelUpDialog` ergänzt.
+
+- Ein **bestehender** Charakter kann im Charaktereditor über **„Hauptklasse nach D&D um eine Stufe steigern“** genau eine neue Hauptklassenstufe vorbereiten, unabhängig davon, ob bereits eine zweite Klasse existiert. Die Zweitklassenstufe wird nicht verändert.
+- Validiert den EP-Grenzwert der **neuen Gesamtstufe**. Alternativ ist ein Meilenstein möglich, aber **nur nach ausdrücklicher Auswahl**; die vorhandenen EP werden nicht erfunden.
+- Berechnet den festen Trefferpunktzuwachs aus dem Trefferwürfel der **gewählten Hauptklasse** und dem bestehenden KON-Modifikator (mindestens 1 TP). Bestätigte KON-Verbesserungen durch ein ASI wirken rückwirkend auf alle erreichten Charakterstufen.
+- Auf **Klassenstufe 3** muss die SRD-Unterklasse ausdrücklich bestätigt werden; aktuell ist pro Basis-Klasse nur die **eine frei lizenzierte SRD-Unterklasse** erfasst. Es werden keine fremden Subklassen erfunden.
+- Bei fälligen Attributsverbesserungen (**auch Kämpfer 6/14, Schurke 10**) ist +2 auf ein Attribut oder +1/+1 auf zwei Attribute bis höchstens 20 möglich; andere Talente bleiben ausdrücklich **offen** und werden nicht als aktiv gebucht.
+- Die neuen Klassenmerkmale werden aus dem bereits bestehenden Featurekatalog anhand der tatsächlichen **Klassenstufe** erschlossen. Ungeklärte Wahlmerkmale werden im Charakter als offene Entscheidungen vermerkt. Weder Zauber- noch Ressourcenlisten noch Ausrüstung werden dadurch unberechtigt automatisch verändert.
+- Der Assistent verändert den Speicherstand **erst nach Dialogbestätigung und abschließendem Speichern des Charakterbogens**; die Vorschau wird bei zwischenzeitlich verändertem Ausgangszustand abgelehnt.
+
+**Tests:** `app/test/primary_class_level_up_test.dart` (12 Klassen, EP/Meilenstein, Unterklasse, ASI, KON/TP, Multiclass-Stufentrennung, Doppelanwendung und Import) und `app/test/ui_primary_class_level_up_test.dart` (bestätigte Eingaben). **Die endgültige GitHub-Actions-/Android-Abnahme für dieses neue Inkrement ist noch offen.**
+
+**Nicht vollständig:** Das gesamte SRD-5.2.1-Regelwerk und eine lückenlose automatische Charaktererstellung **sind noch nicht fertig**. Insbesondere fehlen durchgängige Auswahlassistenten für alle Speziesmerkmale, Hintergrund-Talente, alle Klassenmerkmale auf Stufe 1, Zauber-/Invokations-/Metamagie-Entscheidungen, weitere Talente/epische Gaben und eine persistierte getrennte Unterklasse der Zweitklasse. Diese Entscheidungen werden bewusst nicht gefälscht. Die vollständige SRD-Anforderungsmatrix muss weiterhin Bereich für Bereich vervollständigt werden.
+
+**Wiederaufnahme:** GitHub-HEAD/PR/CI prüfen; erst bei grünem Flutter-/Backend-/Android-Gesamtbuild freigeben. Offene Entscheidungen in `unverifiedNotes` bleiben sichtbar und dürfen nicht als bereits wirksame Fähigkeiten angesehen werden. Entwicklungsdokumentation: [SRD-Matrix](docs/SRD_5_2_1_REQUIREMENTS_MATRIX.md), [Checkpoint](CHECKPOINT.md), [Entwicklungsstatus](DEVELOPMENT_STATUS.md), [Master-Prompt](docs/CODEX_MASTER_PROMPT.md).
+
+---
+
+## Frühere Projektinformationen
+
+Die nachfolgenden Versions- und Prüfaussagen sind historische Zwischenstände. Maßgeblich für diesen Branch ist die Zusammenfassung oben.
+
 # Würfelraunen – aktueller Entwicklungsstand (19.10.2026)
 
 **Version im Quellcode:** `0.8.5+55` (noch nicht für dieses Inkrement erhöht). **Aktueller Arbeitsbranch:** `feature/prone-stand-movement-20261019`, Basis `main` bei `82f2786b`. Die abgeschlossene Zustandsentwicklung aus [PR #7](https://github.com/ManuEtt/Dnd/pull/7) wurde bereits in `main` übernommen. Dieses neue Regelpaket wird getrennt geprüft und nicht ungeprüft nach `main` geschrieben.
