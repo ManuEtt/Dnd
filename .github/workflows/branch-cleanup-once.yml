@@ -1,0 +1,56 @@
+name: Einmalige Branch-Bereinigung
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/branch-cleanup-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  remove-confirmed-obsolete-branches:
+    if: github.event.head_commit.message == 'chore: run audited one-time branch cleanup'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Confirm exact refs and remove only known obsolete branches
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [ "$GITHUB_REPOSITORY" = "ManuEtt/Dnd" ] || exit 1
+          open_prs="$(gh api "repos/$GITHUB_REPOSITORY/pulls?state=open&per_page=100")"
+          deleted=0
+          skipped=0
+          while IFS='|' read -r branch expected; do
+            [ -n "$branch" ] || continue
+            if [ "$branch" = main ]; then
+              echo "::error::Refusing to delete main"
+              exit 1
+            fi
+            # Ref-name and exact SHA are deliberately hard-coded after
+            # interactive inspection of branches, PRs, and compare results.
+            if jq -e --arg b "$branch" 'any(.[]; .head.ref == $b)' <<< "$open_prs" >/dev/null; then
+              echo "::warning::KEEP (open PR): $branch"
+              skipped=$((skipped + 1))
+              continue
+            fi
+            current="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/$branch" --jq '.object.sha')"
+            if [ "$current" != "$expected" ]; then
+              echo "::warning::KEEP (new changes): $branch"
+              skipped=$((skipped + 1))
+              continue
+            fi
+            gh api -X DELETE "repos/$GITHUB_REPOSITORY/git/refs/heads/$branch" >/dev/null
+            echo "REMOVED: $branch @ $current"
+            deleted=$((deleted + 1))
+          done <<'BRANCHES'
+          chatgpt-write-access-test-2026-10-18|a579de5940e7d636c7634ef5da250326acefb3f3
+          fix/app-version-and-portrait-ci-20261019|e66debc2ca2644002fff1579e48f65e22e8f9461
+          fix/dart-format-39133071528|db75559f4707bca0cbf837e68c5a9103d915b0fb
+          fix/dart-format-39135407226|fd76d9a18ee8d90b38085fcf76bfeb76f5e8148a
+          fix/dart-format-39227738318|8d0c2b055eb25fa4ee4f2bedf201dccc573d126e
+          BRANCHES
+          echo "Deleted branches: $deleted; skipped: $skipped"
