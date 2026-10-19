@@ -2832,6 +2832,20 @@ class GameEngine {
         ? 'Gesamtergebnis ${result.total} (Bonus bereits enthalten)'
         : 'Naturwurf ${result.natural} ${_signed(result.modifier)} = ${result.total}';
     var narration = '$label. ';
+    if (pending.type == 'preparedCheck') {
+      final passed = result.total >= pending.difficulty;
+      final story = RabenwachtCampaign.resolveCheck(next, pending, passed);
+      payload['difficulty'] = pending.difficulty;
+      payload['passed'] = passed;
+      return _commit(
+        campaign,
+        story.campaign,
+        '$label. ${passed ? 'Die Probe gelingt.' : 'Die Probe misslingt.'} '
+        '${story.narration}',
+        type: 'roll.resolved',
+        payload: payload,
+      );
+    }
     if (pending.type == 'death') {
       if (result.natural == null) {
         throw ArgumentError(
@@ -2987,7 +3001,18 @@ class GameEngine {
         narration += 'Dein Angriff verfehlt den ${foe.enemyName}. ';
       }
       if (next.encounter!.isFinished) {
-        if (next.storyBible['mode'] == 'ai') {
+        if (next.storyBible['mode'] == RabenwachtCampaign.mode) {
+          next = next.copyWith(
+            encounter: null,
+            storyBible: {...next.storyBible, 'stage': 'seal'},
+            facts: {...next.facts, 'sentryDefeated': 'true'},
+            scene: 'Der Skelettwächter ist gefallen. Die Galerie liegt vor dir.',
+          );
+          narration += 'Der Wächter sinkt in sich zusammen. '
+              'Zwischen den Knochen liegt ein silberner Schlüssel. '
+              'Die Galerie der dreizehn Türen ist nun erreichbar. '
+              'Was möchtest du tun?';
+        } else if (next.storyBible['mode'] == 'ai') {
           final questId = next.facts['aiEncounterQuestId'];
           final offerId = next.facts['aiEncounterOfferId'];
           final lootName = next.facts['aiEncounterLoot'];
@@ -3083,7 +3108,16 @@ class GameEngine {
       }
     } else if (pending.type == 'escape') {
       if (result.total >= pending.difficulty) {
-        if (next.storyBible['mode'] == 'ai') {
+        if (next.storyBible['mode'] == RabenwachtCampaign.mode) {
+          next = next.copyWith(
+            encounter: null,
+            storyBible: {...next.storyBible, 'stage': 'bonehall'},
+            scene: 'Du weichst in die Halle der Wächter zurück.',
+          );
+          narration += 'Du entkommst dem Skelettwächter. '
+              'Der Schlüssel bleibt in der Halle. '
+              'Du kannst erneut angreifen oder dich vorbeischleichen.';
+        } else if (next.storyBible['mode'] == 'ai') {
           final questId = next.facts['aiEncounterQuestId'];
           next = next.copyWith(
             encounter: null,
