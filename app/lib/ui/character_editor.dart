@@ -9,11 +9,13 @@ import '../domain/equipment_rules.dart';
 import '../domain/multiclass_rules.dart';
 import '../domain/rules_engine.dart';
 import '../domain/starting_hit_points.dart';
+import '../domain/primary_class_level_up.dart';
 import '../domain/spellcasting_rules.dart';
 import 'ability_assignment_dialog.dart';
 import 'srd_class_selection_dialog.dart';
 import 'fantasy_ui.dart';
 import 'multiclass_selection_dialog.dart';
+import 'primary_class_level_up_dialog.dart';
 import 'equipment_catalog_dialog.dart';
 import 'equipment_loadout_dialog.dart';
 import 'spellcasting_dialog.dart';
@@ -584,6 +586,57 @@ class _CharacterEditorState extends State<CharacterEditor> {
     });
   }
 
+  /// Only committed after the explicit SRD preview and final editor save.
+  /// Unlike editing the level text directly, this increments exactly one
+  /// primary class level with fixed HP, XP gate and due-choice bookkeeping.
+  Future<void> _advancePrimaryClass() async {
+    if (widget.hero == null) {
+      setState(() => _error =
+          'Bitte zuerst den Charakter der Stufe 1 speichern.');
+      return;
+    }
+    try {
+      final json = Map<String, dynamic>.from(_original);
+      json['name'] = _fields['name']!.text.trim();
+      json['className'] = _fields['className']!.text.trim();
+      json['subclass'] = _fields['subclass']!.text.trim();
+      json['level'] = int.tryParse(_fields['level']!.text.trim());
+      json['experience'] = int.tryParse(_fields['experience']!.text.trim());
+      json['hitPoints'] = int.tryParse(_fields['hitPoints']!.text.trim());
+      json['maxHitPoints'] = int.tryParse(_fields['maxHitPoints']!.text.trim());
+      json['abilities'] = {
+        for (final entry in _scores.entries)
+          entry.key: int.tryParse(entry.value.text.trim()),
+      };
+      final current = HeroCharacter.fromJson(json);
+      final proposal = await showDialog<SrdPrimaryLevelUpProposal>(
+        context: context,
+        builder: (_) => PrimaryClassLevelUpDialog(hero: current),
+      );
+      if (proposal == null || !mounted) return;
+      final next = proposal.applyTo(current);
+      setState(() {
+        _fields['level']!.text = next.level.toString();
+        _fields['hitPoints']!.text = next.hitPoints?.toString() ?? '';
+        _fields['maxHitPoints']!.text = next.maxHitPoints?.toString() ?? '';
+        _fields['subclass']!.text = next.subclass;
+        for (final entry in next.abilities.entries) {
+          _scores[entry.key]!.text = entry.value?.toString() ?? '';
+        }
+        _original['unverifiedNotes'] = next.unverifiedNotes;
+        _error = proposal.pendingSelections.isEmpty
+            ? null
+            : 'Aufstieg vorbereitet; noch offene Regelwahlen: '
+              '${proposal.pendingSelections.join('; ')}. '
+              'Der Aufstieg wird erst beim Speichern übernommen.';
+      });
+    } catch (error) {
+      if (mounted) {
+        setState(() => _error = 'Stufenaufstieg nicht möglich: $error');
+      }
+    }
+  }
+
   Future<void> _configureSecondClass() async {
     // New characters first finish their initial level-1 character creation.
     if (widget.hero == null) {
@@ -807,6 +860,15 @@ class _CharacterEditorState extends State<CharacterEditor> {
                         'Stufe ${((int.tryParse(_fields['level']!.text) ?? 1) - ((_original['secondaryClassLevel'] as int?) ?? 0))} '
                         '/ ${_original['secondaryClassName']} '
                         'Stufe ${_original['secondaryClassLevel']}',
+                      ),
+                    ),
+                  if (widget.hero != null)
+                    OutlinedButton.icon(
+                      key: const ValueKey('open-primary-class-level-up'),
+                      onPressed: _advancePrimaryClass,
+                      icon: const Icon(Icons.trending_up_outlined),
+                      label: const Text(
+                        'Hauptklasse nach D&D um eine Stufe steigern',
                       ),
                     ),
                   OutlinedButton.icon(
