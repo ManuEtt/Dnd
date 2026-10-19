@@ -142,7 +142,10 @@ class FantasyCharacterPortrait extends StatelessWidget {
     return SizedBox(
       height: size,
       width: size,
-      child: DecoratedBox(
+      child: FantasyApprovedCornerFrame(
+        cornerSize: (size * .31).clamp(20.0, 40.0),
+        opacity: .94,
+        child: DecoratedBox(
         decoration: BoxDecoration(
           color: FantasyPalette.ink,
           borderRadius: BorderRadius.circular(9),
@@ -167,6 +170,7 @@ class FantasyCharacterPortrait extends StatelessWidget {
               ),
             ),
           ),
+        ),
         ),
       ),
     );
@@ -314,28 +318,56 @@ class _CharacterPortraitPickerState extends State<CharacterPortraitPicker> {
               childAspectRatio: 0.87,
             ),
             itemCount: 9,
-            itemBuilder: (context, i) => InkWell(
-              key: ValueKey('portrait-option-$i'),
-              onTap: () => setState(() {
-                _preset = i;
-                _photo = '';
-                _message = null;
-              }),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: LayoutBuilder(
-                      builder: (context, constraints) =>
-                          FantasyCharacterPortrait(
-                            preset: i,
-                            photoBase64: '',
-                            size: constraints.maxWidth,
-                          ),
+            itemBuilder: (context, i) => Semantics(
+              label: 'Fantasy-Porträt ${i + 1}',
+              button: true,
+              selected: _preset == i,
+              child: InkWell(
+                key: ValueKey('portrait-option-$i'),
+                borderRadius: BorderRadius.circular(12),
+                onTap: () => setState(() {
+                  _preset = i;
+                  _photo = '';
+                  _message = null;
+                }),
+                onLongPress: () => showDialog<void>(
+                  context: context,
+                  builder: (dialogContext) => AlertDialog(
+                    title: Text('Fantasy-Porträt ${i + 1}'),
+                    content: FantasyCharacterPortrait(
+                      preset: i,
+                      photoBase64: '',
+                      size: 220,
                     ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(),
+                        child: const Text('Schließen'),
+                      ),
+                    ],
                   ),
-                  if (_preset == i)
-                    const Icon(Icons.check_circle, color: FantasyPalette.gold),
-                ],
+                ),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: LayoutBuilder(
+                        builder: (context, constraints) =>
+                            FantasyCharacterPortrait(
+                              preset: i,
+                              photoBase64: '',
+                              size: constraints.maxWidth,
+                            ),
+                      ),
+                    ),
+                    if (_preset == i)
+                      const Icon(
+                        Icons.check_circle,
+                        color: FantasyPalette.gold,
+                      )
+                    else
+                      const SizedBox(height: 24),
+                  ],
+                ),
               ),
             ),
           ),
