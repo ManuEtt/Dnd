@@ -36,12 +36,11 @@ class _PrimaryClassLevelUpDialogState extends State<PrimaryClassLevelUpDialog> {
 
   Map<String, int> get _boost => switch (_featMode) {
     'two' when _firstAbility != null => {_firstAbility!: 2},
-    'split' when _firstAbility != null &&
-        _secondAbility != null &&
-        _firstAbility != _secondAbility => {
-      _firstAbility!: 1,
-      _secondAbility!: 1,
-    },
+    'split'
+        when _firstAbility != null &&
+            _secondAbility != null &&
+            _firstAbility != _secondAbility =>
+      {_firstAbility!: 1, _secondAbility!: 1},
     _ => const {},
   };
 
@@ -97,17 +96,20 @@ class _PrimaryClassLevelUpDialogState extends State<PrimaryClassLevelUpDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('$className: Klassenstufe ${hero.primaryClassLevel} → $classLevel'),
+            Text(
+              '$className: Klassenstufe ${hero.primaryClassLevel} → $classLevel',
+            ),
             Text('Gesamtstufe ${hero.level} → $nextLevel'),
             const SizedBox(height: 8),
-            Text('Erforderlich: $threshold EP · vorhanden: '
-                '${hero.experience?.toString() ?? 'nicht bestätigt'}'),
+            Text(
+              'Erforderlich: $threshold EP · vorhanden: '
+              '${hero.experience?.toString() ?? 'nicht bestätigt'}',
+            ),
             CheckboxListTile(
               key: const ValueKey('primary-level-milestone'),
               contentPadding: EdgeInsets.zero,
               value: _milestone,
-              onChanged: (value) =>
-                  setState(() => _milestone = value ?? false),
+              onChanged: (value) => setState(() => _milestone = value ?? false),
               title: const Text('Meilenstein statt Erfahrungspunkte'),
               subtitle: const Text(
                 'Nur bei ausdrücklicher Bestätigung durch die Spielleitung. '
@@ -166,7 +168,9 @@ class _PrimaryClassLevelUpDialogState extends State<PrimaryClassLevelUpDialog> {
                   key: const ValueKey('primary-level-first-ability'),
                   isExpanded: true,
                   initialValue: _firstAbility,
-                  decoration: const InputDecoration(labelText: 'Erstes Attribut'),
+                  decoration: const InputDecoration(
+                    labelText: 'Erstes Attribut',
+                  ),
                   items: [
                     for (final ability in abilityLabels.entries)
                       DropdownMenuItem(
@@ -176,15 +180,16 @@ class _PrimaryClassLevelUpDialogState extends State<PrimaryClassLevelUpDialog> {
                         ),
                       ),
                   ],
-                  onChanged: (value) =>
-                      setState(() => _firstAbility = value),
+                  onChanged: (value) => setState(() => _firstAbility = value),
                 ),
               if (_featMode == 'split')
                 DropdownButtonFormField<String>(
                   key: const ValueKey('primary-level-second-ability'),
                   isExpanded: true,
                   initialValue: _secondAbility,
-                  decoration: const InputDecoration(labelText: 'Zweites Attribut'),
+                  decoration: const InputDecoration(
+                    labelText: 'Zweites Attribut',
+                  ),
                   items: [
                     for (final ability in abilityLabels.entries)
                       if (ability.key != _firstAbility)
@@ -195,20 +200,25 @@ class _PrimaryClassLevelUpDialogState extends State<PrimaryClassLevelUpDialog> {
                           ),
                         ),
                   ],
-                  onChanged: (value) =>
-                      setState(() => _secondAbility = value),
+                  onChanged: (value) => setState(() => _secondAbility = value),
                 ),
             ],
             const Divider(),
-            const Text('Neue Klassenmerkmale:', style: TextStyle(fontWeight: FontWeight.bold)),
-            if (due.isEmpty) const Text('Keine neuen Merkmale in der SRD-Tabelle'),
+            const Text(
+              'Neue Klassenmerkmale:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            if (due.isEmpty)
+              const Text('Keine neuen Merkmale in der SRD-Tabelle'),
             for (final feature in due)
-              Text('• ${feature.name} '
-                  '(${feature.automation == FeatureAutomation.automatic
+              Text(
+                '• ${feature.name} '
+                '(${feature.automation == FeatureAutomation.automatic
                     ? 'Regel automatisch verfügbar'
                     : feature.automation == FeatureAutomation.choiceRequired
                     ? 'Spielerwahl nötig'
-                    : 'Wirkung separat prüfen'})'),
+                    : 'Wirkung separat prüfen'})',
+              ),
             const SizedBox(height: 10),
             const Text(
               'TP-Wachstum: fester Klassen-Trefferwürfelwert + '

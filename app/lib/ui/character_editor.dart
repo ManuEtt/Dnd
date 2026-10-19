@@ -591,8 +591,9 @@ class _CharacterEditorState extends State<CharacterEditor> {
   /// primary class level with fixed HP, XP gate and due-choice bookkeeping.
   Future<void> _advancePrimaryClass() async {
     if (widget.hero == null) {
-      setState(() => _error =
-          'Bitte zuerst den Charakter der Stufe 1 speichern.');
+      setState(
+        () => _error = 'Bitte zuerst den Charakter der Stufe 1 speichern.',
+      );
       return;
     }
     try {
@@ -627,8 +628,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
         _error = proposal.pendingSelections.isEmpty
             ? null
             : 'Aufstieg vorbereitet; noch offene Regelwahlen: '
-              '${proposal.pendingSelections.join('; ')}. '
-              'Der Aufstieg wird erst beim Speichern übernommen.';
+                  '${proposal.pendingSelections.join('; ')}. '
+                  'Der Aufstieg wird erst beim Speichern übernommen.';
       });
     } catch (error) {
       if (mounted) {

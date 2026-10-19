@@ -35,8 +35,10 @@ class PrimaryClassLevelUp {
         'Für die Ausgangsklasse liegen keine geprüften SRD-Regeln vor.',
       );
     }
-    if (hero.level < 1 || hero.level >= 20 ||
-        hero.primaryClassLevel < 1 || hero.primaryClassLevel >= 20) {
+    if (hero.level < 1 ||
+        hero.level >= 20 ||
+        hero.primaryClassLevel < 1 ||
+        hero.primaryClassLevel >= 20) {
       throw const FormatException('Die zulässige Gesamtstufe ist 1 bis 20.');
     }
     if (hero.maxHitPoints == null || hero.hitPoints == null) {
@@ -52,7 +54,9 @@ class PrimaryClassLevelUp {
     }
     final nextLevel = hero.level + 1;
     final nextClassLevel = hero.primaryClassLevel + 1;
-    final threshold = CharacterCreationProgression.startingExperience(nextLevel);
+    final threshold = CharacterCreationProgression.startingExperience(
+      nextLevel,
+    );
     if (!milestoneAdvancement &&
         (hero.experience == null || hero.experience! < threshold)) {
       throw FormatException(
@@ -61,7 +65,9 @@ class PrimaryClassLevelUp {
       );
     }
     if (chosenSubclass != null && nextClassLevel != 3) {
-      throw const FormatException('Unterklassenwahl ist hier nicht vorgesehen.');
+      throw const FormatException(
+        'Unterklassenwahl ist hier nicht vorgesehen.',
+      );
     }
     final allowedSubclass = SrdClassFeatureCatalog.defaultSubclass[cls.name]!;
     final originalSubclass = hero.subclass.trim();
@@ -94,7 +100,8 @@ class PrimaryClassLevelUp {
     }
     if (featDue && !deferFeat) {
       final increases = abilityIncreases.values.toList();
-      final validShape = increases.length == 1 && increases.single == 2 ||
+      final validShape =
+          increases.length == 1 && increases.single == 2 ||
           increases.length == 2 && increases.every((v) => v == 1);
       if (!validShape) {
         throw const FormatException(
@@ -105,7 +112,8 @@ class PrimaryClassLevelUp {
     }
     final nextScores = <String, int?>{...hero.abilities};
     for (final e in abilityIncreases.entries) {
-      if (!nextScores.containsKey(e.key) || nextScores[e.key] == null ||
+      if (!nextScores.containsKey(e.key) ||
+          nextScores[e.key] == null ||
           nextScores[e.key]! + e.value > 20) {
         throw const FormatException(
           'Für die Attributsverbesserung sind bestätigte Werte bis 20 erforderlich.',

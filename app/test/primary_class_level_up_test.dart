@@ -36,39 +36,42 @@ HeroCharacter _hero(
 );
 
 void main() {
-  test('Alle zwölf SRD-Klassen steigen von 1 auf 2 mit ihrem Trefferwürfel', () {
-    expect(srdCharacterClasses, hasLength(12));
-    for (final cls in srdCharacterClasses) {
-      final original = _hero(cls.name, experience: 300);
-      final proposal = PrimaryClassLevelUp.propose(
-        hero: original,
-        milestoneAdvancement: false,
-      );
-      final expectedGain = cls.hitDie ~/ 2 + 1 + 2;
-      expect(proposal.hitPointGain, expectedGain, reason: cls.name);
-      expect(proposal.newClassLevel, 2, reason: cls.name);
-      final advanced = proposal.applyTo(original);
-      expect(advanced.level, 2, reason: cls.name);
-      expect(advanced.hitPoints, original.hitPoints! + expectedGain);
-      expect(advanced.maxHitPoints, original.maxHitPoints! + expectedGain);
-      expect(advanced.experience, original.experience);
-      expect(advanced.secondaryClassLevel, 0);
-      expect(advanced.features, original.features);
-      expect(advanced.inventory, original.inventory);
-      expect(
-        HeroCharacter.fromJson(advanced.toJson()).toJson(),
-        advanced.toJson(),
-      );
-      // No feature list is fabricated. Features are derived by class level.
-      expect(
-        SrdClassFeatureCatalog.unlocked(advanced).where(
-          (f) => f.classLevel == 2 && f.className == cls.name,
-        ),
-        isNotEmpty,
-        reason: cls.name,
-      );
-    }
-  });
+  test(
+    'Alle zwölf SRD-Klassen steigen von 1 auf 2 mit ihrem Trefferwürfel',
+    () {
+      expect(srdCharacterClasses, hasLength(12));
+      for (final cls in srdCharacterClasses) {
+        final original = _hero(cls.name, experience: 300);
+        final proposal = PrimaryClassLevelUp.propose(
+          hero: original,
+          milestoneAdvancement: false,
+        );
+        final expectedGain = cls.hitDie ~/ 2 + 1 + 2;
+        expect(proposal.hitPointGain, expectedGain, reason: cls.name);
+        expect(proposal.newClassLevel, 2, reason: cls.name);
+        final advanced = proposal.applyTo(original);
+        expect(advanced.level, 2, reason: cls.name);
+        expect(advanced.hitPoints, original.hitPoints! + expectedGain);
+        expect(advanced.maxHitPoints, original.maxHitPoints! + expectedGain);
+        expect(advanced.experience, original.experience);
+        expect(advanced.secondaryClassLevel, 0);
+        expect(advanced.features, original.features);
+        expect(advanced.inventory, original.inventory);
+        expect(
+          HeroCharacter.fromJson(advanced.toJson()).toJson(),
+          advanced.toJson(),
+        );
+        // No feature list is fabricated. Features are derived by class level.
+        expect(
+          SrdClassFeatureCatalog.unlocked(
+            advanced,
+          ).where((f) => f.classLevel == 2 && f.className == cls.name),
+          isNotEmpty,
+          reason: cls.name,
+        );
+      }
+    },
+  );
 
   test('Ohne nötige EP wird ausdrücklich gewählter Meilenstein verlangt', () {
     final original = _hero('Barde', experience: 0);
@@ -88,42 +91,44 @@ void main() {
     expect(CharacterCreationProgression.startingExperience(2), 300);
   });
 
-  test('Klassenstufe 3 erfordert explizit die im SRD zugelassene Unterklasse', () {
-    for (final cls in srdCharacterClasses) {
-      final before = _hero(cls.name, level: 2);
-      expect(
-        () => PrimaryClassLevelUp.propose(
+  test(
+    'Klassenstufe 3 erfordert explizit die im SRD zugelassene Unterklasse',
+    () {
+      for (final cls in srdCharacterClasses) {
+        final before = _hero(cls.name, level: 2);
+        expect(
+          () => PrimaryClassLevelUp.propose(
+            hero: before,
+            milestoneAdvancement: false,
+          ),
+          throwsFormatException,
+          reason: cls.name,
+        );
+        final subclass = SrdClassFeatureCatalog.defaultSubclass[cls.name]!;
+        final approved = PrimaryClassLevelUp.propose(
           hero: before,
           milestoneAdvancement: false,
-        ),
-        throwsFormatException,
-        reason: cls.name,
-      );
-      final subclass = SrdClassFeatureCatalog.defaultSubclass[cls.name]!;
-      final approved = PrimaryClassLevelUp.propose(
-        hero: before,
-        milestoneAdvancement: false,
-        chosenSubclass: subclass,
-      );
-      final after = approved.applyTo(before);
-      expect(after.subclass, subclass, reason: cls.name);
-      expect(after.level, 3);
-      expect(
-        SrdClassFeatureCatalog.unlocked(after)
-            .where((feature) => feature.subclass == subclass),
-        isNotEmpty,
-        reason: cls.name,
-      );
-    }
-  });
+          chosenSubclass: subclass,
+        );
+        final after = approved.applyTo(before);
+        expect(after.subclass, subclass, reason: cls.name);
+        expect(after.level, 3);
+        expect(
+          SrdClassFeatureCatalog.unlocked(
+            after,
+          ).where((feature) => feature.subclass == subclass),
+          isNotEmpty,
+          reason: cls.name,
+        );
+      }
+    },
+  );
 
   test('Stufe 4 verlangt ASI-Auswahl; +2 und +1/+1 sind erlaubt', () {
     final start = _hero('Magier', level: 3, subclass: 'Evoker');
     expect(
-      () => PrimaryClassLevelUp.propose(
-        hero: start,
-        milestoneAdvancement: false,
-      ),
+      () =>
+          PrimaryClassLevelUp.propose(hero: start, milestoneAdvancement: false),
       throwsFormatException,
     );
     final asis = PrimaryClassLevelUp.propose(
@@ -151,24 +156,31 @@ void main() {
     expect(deferred.applyTo(start).unverifiedNotes, isNotEmpty);
   });
 
-  test('Konstitutionsbonus bei ASI wirkt rückwirkend auf alle neuen Stufen', () {
-    final original = _hero(
-      'Kämpfer', level: 3, hp: 25, maxHp: 30, constitution: 13,
-      subclass: 'Champion',
-    );
-    final proposal = PrimaryClassLevelUp.propose(
-      hero: original,
-      milestoneAdvancement: false,
-      abilityIncreases: {'constitution': 2},
-    );
-    // Fixed 6 + old CON(1), plus four levels * CON-modifier delta(1).
-    expect(proposal.fixedHitPointGain, 7);
-    expect(proposal.hitPointGain, 11);
-    final advanced = proposal.applyTo(original);
-    expect(advanced.maxHitPoints, 41);
-    expect(advanced.hitPoints, 36);
-    expect(advanced.abilities['constitution'], 15);
-  });
+  test(
+    'Konstitutionsbonus bei ASI wirkt rückwirkend auf alle neuen Stufen',
+    () {
+      final original = _hero(
+        'Kämpfer',
+        level: 3,
+        hp: 25,
+        maxHp: 30,
+        constitution: 13,
+        subclass: 'Champion',
+      );
+      final proposal = PrimaryClassLevelUp.propose(
+        hero: original,
+        milestoneAdvancement: false,
+        abilityIncreases: {'constitution': 2},
+      );
+      // Fixed 6 + old CON(1), plus four levels * CON-modifier delta(1).
+      expect(proposal.fixedHitPointGain, 7);
+      expect(proposal.hitPointGain, 11);
+      final advanced = proposal.applyTo(original);
+      expect(advanced.maxHitPoints, 41);
+      expect(advanced.hitPoints, 36);
+      expect(advanced.abilities['constitution'], 15);
+    },
+  );
 
   test('Fighter 6 and Rogue 10 also require a feat decision', () {
     expect(PrimaryClassLevelUp.needsAbilityFeat('Kämpfer', 6), isTrue);
@@ -188,7 +200,8 @@ void main() {
     ]) {
       expect(
         () => PrimaryClassLevelUp.propose(
-          hero: start, milestoneAdvancement: false,
+          hero: start,
+          milestoneAdvancement: false,
           abilityIncreases: boosts,
         ),
         throwsFormatException,
@@ -237,8 +250,12 @@ void main() {
       ),
       throwsFormatException,
     );
-    final before = _hero('Kämpfer', level: 4, secondClassLevel: 1,
-        subclass: 'Champion');
+    final before = _hero(
+      'Kämpfer',
+      level: 4,
+      secondClassLevel: 1,
+      subclass: 'Champion',
+    );
     final result = PrimaryClassLevelUp.propose(
       hero: before,
       milestoneAdvancement: false,
