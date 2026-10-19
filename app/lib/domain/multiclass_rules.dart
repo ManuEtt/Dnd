@@ -135,7 +135,8 @@ class MulticlassRules {
         );
       }
     }
-    if (hero.hitPoints == null || hero.maxHitPoints == null ||
+    if (hero.hitPoints == null ||
+        hero.maxHitPoints == null ||
         hero.hitPoints! > hero.maxHitPoints!) {
       throw const FormatException(
         'Aktuelle und maximale Trefferpunkte müssen für den Aufstieg '

@@ -161,9 +161,7 @@ class SrdClassLevelUpRules {
     final classFeatures = SrdClassFeatureCatalog.atClassLevel(
       selected.name,
       classLevel,
-      subclass: chosenSubclass.isNotEmpty
-          ? chosenSubclass
-          : existingSubclass,
+      subclass: chosenSubclass.isNotEmpty ? chosenSubclass : existingSubclass,
     );
     final milestones = ClassProgressionRules.milestonesForClass(selected.name)
         .where(

@@ -25,8 +25,7 @@ HeroCharacter character({
   subclass: subclass,
   secondarySubclass: secondarySubclass,
   experience:
-      experience ??
-      CharacterCreationProgression.startingExperience(level + 1),
+      experience ?? CharacterCreationProgression.startingExperience(level + 1),
   maxHitPoints: 20 + level * 6,
   hitPoints: 16 + level * 6,
   armorClass: 15,
@@ -69,8 +68,10 @@ void main() {
           HeroCharacter.fromJson(upgraded.toJson()).toJson(),
           upgraded.toJson(),
         );
-        expect(ClassProgressionRules.attacksPerAttackAction(upgraded),
-            greaterThanOrEqualTo(1));
+        expect(
+          ClassProgressionRules.attacksPerAttackAction(upgraded),
+          greaterThanOrEqualTo(1),
+        );
       }
     }
   });
@@ -99,13 +100,21 @@ void main() {
     expect(upgraded.secondarySubclass, 'Evoker');
     final unlocked = SrdClassFeatureCatalog.unlocked(upgraded);
     expect(
-      unlocked.where((f) => f.className == 'Magier' &&
-          f.isSubclass && f.name == 'Evocation Savant'),
+      unlocked.where(
+        (f) =>
+            f.className == 'Magier' &&
+            f.isSubclass &&
+            f.name == 'Evocation Savant',
+      ),
       isNotEmpty,
     );
     expect(
-      unlocked.where((f) => f.className == 'Kämpfer' &&
-          f.isSubclass && f.name == 'Improved Critical'),
+      unlocked.where(
+        (f) =>
+            f.className == 'Kämpfer' &&
+            f.isSubclass &&
+            f.name == 'Improved Critical',
+      ),
       isNotEmpty,
     );
     expect(
@@ -149,13 +158,14 @@ void main() {
       method: LevelUpMethod.experience,
     ).applyTo(hero);
     expect(upgraded.secondarySubclass, isEmpty);
-    expect(upgraded.unverifiedNotes, contains(
-      'OFFENE SRD-STUFENWAHL: Magier 3 – Unterklasse wählen',
-    ));
     expect(
-      SrdClassFeatureCatalog.unlocked(upgraded).where(
-        (feature) => feature.className == 'Magier' && feature.isSubclass,
-      ),
+      upgraded.unverifiedNotes,
+      contains('OFFENE SRD-STUFENWAHL: Magier 3 – Unterklasse wählen'),
+    );
+    expect(
+      SrdClassFeatureCatalog.unlocked(
+        upgraded,
+      ).where((feature) => feature.className == 'Magier' && feature.isSubclass),
       isEmpty,
     );
   });
@@ -191,22 +201,25 @@ void main() {
     );
   });
 
-  test('Multiclass-Vorschlag ist für tote Helden und unbekannte TP gesperrt', () {
-    for (final invalid in [
-      character().copyWith(conditions: ['tot']),
-      character().copyWith(hitPoints: null),
-      character().copyWith(maxHitPoints: null),
-    ]) {
-      expect(
-        () => MulticlassRules.propose(
-          hero: invalid,
-          newClass: 'Magier',
-          method: LevelUpMethod.milestone,
-        ),
-        throwsFormatException,
-      );
-    }
-  });
+  test(
+    'Multiclass-Vorschlag ist für tote Helden und unbekannte TP gesperrt',
+    () {
+      for (final invalid in [
+        character().copyWith(conditions: ['tot']),
+        character().copyWith(hitPoints: null),
+        character().copyWith(maxHitPoints: null),
+      ]) {
+        expect(
+          () => MulticlassRules.propose(
+            hero: invalid,
+            newClass: 'Magier',
+            method: LevelUpMethod.milestone,
+          ),
+          throwsFormatException,
+        );
+      }
+    },
+  );
 
   test('Alte Speicherstände ohne Zweitunterklasse bleiben lesbar', () {
     final original = character(
