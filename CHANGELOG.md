@@ -1,6 +1,6 @@
 ## Integration 19.10.2026 – PR #11 und PR #9
 
-- SRD-Klassenaufstieg und Erstellungsprüfung aus PR #11 mit der Startausrüstung/RK/Bewegungs-Korrektur aus PR #9 auf separatem Integrationsbranch zusammengeführt. Integrationstest und Merge nach `main` stehen aus. PR #10 enthält überlappende Klassenaufstiegslogik, wird gesondert geprüft.
+- SRD-Klassenaufstieg und Erstellungsprüfung aus PR #11 mit der Startausrüstung/RK/Bewegungs-Korrektur aus PR #9 auf separatem Integrationsbranch zusammengeführt. Integrationstest und Merge nach `main` stehen aus. Die gegenüber PR #11 neue Funktion aus PR #10 – validierte ASI (+2/+1+1) mit rückwirkender KO-TP-Berechnung – wurde in den vorhandenen Klassenaufstiegsdialog übernommen. Der alternative doppelte Dialog wird nicht eingebaut.
 
 **Prüfnachweis (19.10.2026):** RK-/Bewegungs-Fix im vollständigen GitHub-Lauf [39201449428](https://github.com/ManuEtt/Dnd/actions/runs/39201449428) auf `2f7ecb15` erfolgreich; echte Android-Geräteabnahme und Merge noch offen.
 
