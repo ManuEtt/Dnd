@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'fantasy_approved_icons.dart';
 
 /// Gemeinsames Oberflaechensystem. Keine Regeln oder gespeicherten Werte.
@@ -227,17 +231,61 @@ class FantasyBackdrop extends StatelessWidget {
   const FantasyBackdrop({super.key, required this.child});
   final Widget child;
 
+  // Keep the approved illustration in the APK and decode it once. Main pages
+  // previously used only a gradient, hiding the artwork on most screens.
+  static final Future<Uint8List> _approvedNightSky = rootBundle
+      .loadString('assets/fantasy/night_sky.webp.b64')
+      .then((asset) => base64Decode(asset.trim()));
+
   @override
-  Widget build(BuildContext context) => DecoratedBox(
-    decoration: const BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [Color(0xff142a40), FantasyPalette.night, Color(0xff0b1726)],
-        stops: [0, .46, 1],
+  Widget build(BuildContext context) => Stack(
+    fit: StackFit.expand,
+    children: [
+      const DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xff142a40), FantasyPalette.night, Color(0xff0b1726)],
+            stops: [0, .46, 1],
+          ),
+        ),
       ),
-    ),
-    child: child,
+      Positioned(
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 205,
+        child: IgnorePointer(
+          child: FutureBuilder<Uint8List>(
+            future: _approvedNightSky,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const SizedBox.shrink();
+              }
+              return ShaderMask(
+                shaderCallback: (bounds) => const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.white, Colors.transparent],
+                ).createShader(bounds),
+                blendMode: BlendMode.dstIn,
+                child: Opacity(
+                  opacity: 0.38,
+                  child: Image.memory(
+                    snapshot.data!,
+                    fit: BoxFit.cover,
+                    gaplessPlayback: true,
+                    errorBuilder: (_, error, stack) => const SizedBox.shrink(),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+      child,
+    ],
   );
 }
 
