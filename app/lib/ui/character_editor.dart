@@ -1262,6 +1262,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
                   const FantasySectionTitle(
                     title: 'Attribute',
                     icon: Icons.auto_awesome_outlined,
+                    approvedIconIndex: 3,
                   ),
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 10),
@@ -1314,6 +1315,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
                   const FantasySectionTitle(
                     title: 'Kampfwerte',
                     icon: Icons.shield_outlined,
+                    approvedIconIndex: 0,
                   ),
                   const SizedBox(height: 12),
                   Wrap(
