@@ -429,7 +429,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
       MaterialPageRoute(
         builder: (_) => CharacterPortraitPicker(
           initialPreset: (_original['portraitPreset'] as int?) ?? -1,
-          initialPhotoBase64: (_original['portraitPhotoBase64'] as String?) ?? '',
+          initialPhotoBase64:
+              (_original['portraitPhotoBase64'] as String?) ?? '',
         ),
       ),
     );
@@ -1154,7 +1155,9 @@ class _CharacterEditorState extends State<CharacterEditor> {
                         FantasyCharacterPortrait(
                           key: const ValueKey('editor-current-portrait'),
                           preset: (_original['portraitPreset'] as int?) ?? -1,
-                          photoBase64: (_original['portraitPhotoBase64'] as String?) ?? '',
+                          photoBase64:
+                              (_original['portraitPhotoBase64'] as String?) ??
+                              '',
                           name: _fields['name']!.text,
                           size: 116,
                         ),
@@ -1163,15 +1166,21 @@ class _CharacterEditorState extends State<CharacterEditor> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Charakterbild',
-                                  style: Theme.of(context).textTheme.titleMedium),
+                              Text(
+                                'Charakterbild',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
                               const SizedBox(height: 6),
-                              const Text('Eigenes Bild oder Fantasy-Vorlage wählen'),
+                              const Text(
+                                'Eigenes Bild oder Fantasy-Vorlage wählen',
+                              ),
                               const SizedBox(height: 8),
                               OutlinedButton.icon(
                                 key: const ValueKey('editor-choose-portrait'),
                                 onPressed: _choosePortrait,
-                                icon: const Icon(Icons.add_photo_alternate_outlined),
+                                icon: const Icon(
+                                  Icons.add_photo_alternate_outlined,
+                                ),
                                 label: const Text('Bild wählen'),
                               ),
                             ],
@@ -1550,22 +1559,30 @@ class _CharacterEditorState extends State<CharacterEditor> {
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
           decoration: BoxDecoration(
             color: FantasyPalette.ink,
-            border: Border(top: BorderSide(color: FantasyPalette.gold.withValues(alpha: .55))),
+            border: Border(
+              top: BorderSide(
+                color: FantasyPalette.gold.withValues(alpha: .55),
+              ),
+            ),
           ),
           child: Row(
             children: [
-              Expanded(child: OutlinedButton.icon(
-                onPressed: () => Navigator.of(context).pop(),
-                icon: const Icon(Icons.close),
-                label: const Text('Abbrechen'),
-              )),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close),
+                  label: const Text('Abbrechen'),
+                ),
+              ),
               const SizedBox(width: 12),
-              Expanded(child: FilledButton.icon(
-                key: const ValueKey('editor-save-fixed'),
-                onPressed: _save,
-                icon: const Icon(Icons.save_outlined),
-                label: const Text('Charakter speichern'),
-              )),
+              Expanded(
+                child: FilledButton.icon(
+                  key: const ValueKey('editor-save-fixed'),
+                  onPressed: _save,
+                  icon: const Icon(Icons.save_outlined),
+                  label: const Text('Charakter speichern'),
+                ),
+              ),
             ],
           ),
         ),

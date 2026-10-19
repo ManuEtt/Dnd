@@ -7,11 +7,7 @@ import 'package:flutter/services.dart' show rootBundle;
 /// Approved gold-on-navy icons, extracted from the user's accepted design.
 /// The grid is an offline 4 x 2 WebP atlas embedded as an ASCII Flutter asset.
 class FantasyApprovedIcon extends StatelessWidget {
-  const FantasyApprovedIcon({
-    super.key,
-    required this.index,
-    this.size = 30,
-  });
+  const FantasyApprovedIcon({super.key, required this.index, this.size = 30});
 
   final int index;
   final double size;

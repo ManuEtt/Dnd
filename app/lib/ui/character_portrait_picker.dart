@@ -156,9 +156,14 @@ class FantasyCharacterPortrait extends StatelessWidget {
           padding: const EdgeInsets.all(3),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(5),
-            child: FittedBox(fit: BoxFit.cover, child: SizedBox(
-              width: size - 10, height: size - 10, child: picture,
-            )),
+            child: FittedBox(
+              fit: BoxFit.cover,
+              child: SizedBox(
+                width: size - 10,
+                height: size - 10,
+                child: picture,
+              ),
+            ),
           ),
         ),
       ),
@@ -176,7 +181,8 @@ class CharacterPortraitPicker extends StatefulWidget {
   final String initialPhotoBase64;
 
   @override
-  State<CharacterPortraitPicker> createState() => _CharacterPortraitPickerState();
+  State<CharacterPortraitPicker> createState() =>
+      _CharacterPortraitPickerState();
 }
 
 class _CharacterPortraitPickerState extends State<CharacterPortraitPicker> {
@@ -196,8 +202,10 @@ class _CharacterPortraitPickerState extends State<CharacterPortraitPicker> {
       if (file == null || !mounted) return;
       final bytes = await file.readAsBytes();
       if (bytes.length > 45000 || bytes.isEmpty) {
-        setState(() => _message =
-            'Bild ist zu groß. Bitte eine kleinere JPG-Datei wählen (maximal 45 KB nach Verkleinerung).');
+        setState(
+          () => _message =
+              'Bild ist zu groß. Bitte eine kleinere JPG-Datei wählen (maximal 45 KB nach Verkleinerung).',
+        );
         return;
       }
       // Validate that the supplied data is an actual decodable image, not
@@ -244,49 +252,63 @@ class _CharacterPortraitPickerState extends State<CharacterPortraitPicker> {
                   size: 124,
                 ),
                 const SizedBox(width: 14),
-                Expanded(child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Aktuelles Charakterbild',
-                        style: Theme.of(context).textTheme.titleMedium),
-                    const SizedBox(height: 8),
-                    const Text('Dieses Bild erscheint auf deinem Charakterbogen.'),
-                    const SizedBox(height: 10),
-                    OutlinedButton.icon(
-                      key: const ValueKey('portrait-own-image'),
-                      onPressed: _pickOwnPicture,
-                      icon: const Icon(Icons.add_photo_alternate_outlined),
-                      label: const Text('Eigenes Bild wählen'),
-                    ),
-                    TextButton.icon(
-                      key: const ValueKey('portrait-remove'),
-                      onPressed: () => setState(() {
-                        _preset = -1;
-                        _photo = '';
-                        _message = null;
-                      }),
-                      icon: const Icon(Icons.delete_outline),
-                      label: const Text('Entfernen'),
-                    ),
-                  ],
-                )),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Aktuelles Charakterbild',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Dieses Bild erscheint auf deinem Charakterbogen.',
+                      ),
+                      const SizedBox(height: 10),
+                      OutlinedButton.icon(
+                        key: const ValueKey('portrait-own-image'),
+                        onPressed: _pickOwnPicture,
+                        icon: const Icon(Icons.add_photo_alternate_outlined),
+                        label: const Text('Eigenes Bild wählen'),
+                      ),
+                      TextButton.icon(
+                        key: const ValueKey('portrait-remove'),
+                        onPressed: () => setState(() {
+                          _preset = -1;
+                          _photo = '';
+                          _message = null;
+                        }),
+                        icon: const Icon(Icons.delete_outline),
+                        label: const Text('Entfernen'),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
           if (_message != null)
-            Padding(padding: const EdgeInsets.all(8),
-              child: Text(_message!, style: const TextStyle(color: FantasyPalette.danger))),
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Text(
+                _message!,
+                style: const TextStyle(color: FantasyPalette.danger),
+              ),
+            ),
           const SizedBox(height: 18),
           const FantasySectionTitle(
             title: 'Vorschläge',
             icon: Icons.auto_awesome_outlined,
-            subtitle: 'Wähle eines der neun Fantasy-Porträts oder ein eigenes Bild.',
+            subtitle:
+                'Wähle eines der neun Fantasy-Porträts oder ein eigenes Bild.',
           ),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3, crossAxisSpacing: 10, mainAxisSpacing: 12,
+              crossAxisCount: 3,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 12,
               childAspectRatio: 0.87,
             ),
             itemCount: 9,
@@ -297,14 +319,22 @@ class _CharacterPortraitPickerState extends State<CharacterPortraitPicker> {
                 _photo = '';
                 _message = null;
               }),
-              child: Column(children: [
-                Expanded(child: LayoutBuilder(builder: (context, constraints) =>
-                  FantasyCharacterPortrait(
-                    preset: i, photoBase64: '', size: constraints.maxWidth,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: LayoutBuilder(
+                      builder: (context, constraints) =>
+                          FantasyCharacterPortrait(
+                            preset: i,
+                            photoBase64: '',
+                            size: constraints.maxWidth,
+                          ),
+                    ),
                   ),
-                )),
-                if (_preset == i) const Icon(Icons.check_circle, color: FantasyPalette.gold),
-              ]),
+                  if (_preset == i)
+                    const Icon(Icons.check_circle, color: FantasyPalette.gold),
+                ],
+              ),
             ),
           ),
         ],
@@ -313,21 +343,27 @@ class _CharacterPortraitPickerState extends State<CharacterPortraitPicker> {
     bottomNavigationBar: SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
-        child: Row(children: [
-          Expanded(child: OutlinedButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Abbrechen'),
-          )),
-          const SizedBox(width: 12),
-          Expanded(child: FilledButton.icon(
-            key: const ValueKey('portrait-apply'),
-            onPressed: () => Navigator.of(context).pop(
-              CharacterPortraitChoice(_preset, _photo),
+        child: Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Abbrechen'),
+              ),
             ),
-            icon: const Icon(Icons.save_outlined),
-            label: const Text('Übernehmen'),
-          )),
-        ]),
+            const SizedBox(width: 12),
+            Expanded(
+              child: FilledButton.icon(
+                key: const ValueKey('portrait-apply'),
+                onPressed: () => Navigator.of(
+                  context,
+                ).pop(CharacterPortraitChoice(_preset, _photo)),
+                icon: const Icon(Icons.save_outlined),
+                label: const Text('Übernehmen'),
+              ),
+            ),
+          ],
+        ),
       ),
     ),
   );

@@ -148,33 +148,33 @@ class _CharacterHeader extends StatelessWidget {
                   size: 88,
                 )
               else
-              Container(
-                key: const ValueKey('sheet-avatar-placeholder'),
-                width: 88,
-                height: 100,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(22),
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xff39546c), Color(0xff0c1929)],
+                Container(
+                  key: const ValueKey('sheet-avatar-placeholder'),
+                  width: 88,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(22),
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Color(0xff39546c), Color(0xff0c1929)],
+                    ),
+                    border: Border.all(color: _gold, width: 1.5),
                   ),
-                  border: Border.all(color: _gold, width: 1.5),
-                ),
-                alignment: Alignment.center,
-                child: Semantics(
-                  label: 'Platzhalter für das Charakterporträt',
-                  child: Text(
-                    initials,
-                    style: const TextStyle(
-                      fontFamily: 'serif',
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: _gold,
+                  alignment: Alignment.center,
+                  child: Semantics(
+                    label: 'Platzhalter für das Charakterporträt',
+                    child: Text(
+                      initials,
+                      style: const TextStyle(
+                        fontFamily: 'serif',
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: _gold,
+                      ),
                     ),
                   ),
                 ),
-              ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(

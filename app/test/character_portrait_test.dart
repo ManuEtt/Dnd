@@ -13,7 +13,8 @@ void main() {
   });
 
   test('Eigene Bilddaten werden im Charakter gespeichert, ohne lokale Pfade', () {
-    const image = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/PTcAAAAASUVORK5CYII=';
+    const image =
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/PTcAAAAASUVORK5CYII=';
     const hero = HeroCharacter(
       id: 'hero',
       name: 'Tira',
@@ -37,13 +38,19 @@ void main() {
     const hero = HeroCharacter(id: 'old', name: 'Alt');
     for (final invalid in [-2, 9, '3']) {
       expect(
-        () => HeroCharacter.fromJson({...hero.toJson(), 'portraitPreset': invalid}),
+        () => HeroCharacter.fromJson({
+          ...hero.toJson(),
+          'portraitPreset': invalid,
+        }),
         throwsFormatException,
       );
     }
     for (final invalid in ['not base64!', List.filled(64004, 'x').join()]) {
       expect(
-        () => HeroCharacter.fromJson({...hero.toJson(), 'portraitPhotoBase64': invalid}),
+        () => HeroCharacter.fromJson({
+          ...hero.toJson(),
+          'portraitPhotoBase64': invalid,
+        }),
         throwsFormatException,
       );
     }
@@ -57,34 +64,42 @@ void main() {
     );
   });
 
-  testWidgets('Galerie lässt eine Vorlage wählen und kann sie wieder entfernen',
-      (tester) async {
-    CharacterPortraitChoice? chosen;
-    await tester.pumpWidget(MaterialApp(
-      home: Builder(builder: (context) => Scaffold(
-        body: TextButton(
-          onPressed: () async {
-            chosen = await Navigator.of(context).push<CharacterPortraitChoice>(
-              MaterialPageRoute(builder: (_) =>
-                const CharacterPortraitPicker(
-                  initialPreset: -1,
-                  initialPhotoBase64: '',
-                )),
-            );
-          },
-          child: const Text('Wählen'),
+  testWidgets(
+    'Galerie lässt eine Vorlage wählen und kann sie wieder entfernen',
+    (tester) async {
+      CharacterPortraitChoice? chosen;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: TextButton(
+                onPressed: () async {
+                  chosen = await Navigator.of(context)
+                      .push<CharacterPortraitChoice>(
+                        MaterialPageRoute(
+                          builder: (_) => const CharacterPortraitPicker(
+                            initialPreset: -1,
+                            initialPhotoBase64: '',
+                          ),
+                        ),
+                      );
+                },
+                child: const Text('Wählen'),
+              ),
+            ),
+          ),
         ),
-      )),
-    ));
-    await tester.tap(find.text('Wählen'));
-    await tester.pumpAndSettle();
-    final fourth = find.byKey(const ValueKey('portrait-option-3'));
-    await tester.ensureVisible(fourth);
-    await tester.tap(fourth);
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('portrait-apply')));
-    await tester.pumpAndSettle();
-    expect(chosen?.preset, 3);
-    expect(chosen?.photoBase64, isEmpty);
-  });
+      );
+      await tester.tap(find.text('Wählen'));
+      await tester.pumpAndSettle();
+      final fourth = find.byKey(const ValueKey('portrait-option-3'));
+      await tester.ensureVisible(fourth);
+      await tester.tap(fourth);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('portrait-apply')));
+      await tester.pumpAndSettle();
+      expect(chosen?.preset, 3);
+      expect(chosen?.photoBase64, isEmpty);
+    },
+  );
 }

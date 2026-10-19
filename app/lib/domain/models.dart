@@ -211,6 +211,7 @@ class HeroCharacter {
       background,
       backstory,
       portraitPhotoBase64;
+
   /// -1 = no preset, 0..8 = approved portrait grid.
   final int portraitPreset;
   final int secondaryClassLevel;
@@ -412,7 +413,8 @@ class HeroCharacter {
     'background': background,
     'backstory': backstory,
     if (portraitPreset >= 0) 'portraitPreset': portraitPreset,
-    if (portraitPhotoBase64.isNotEmpty) 'portraitPhotoBase64': portraitPhotoBase64,
+    if (portraitPhotoBase64.isNotEmpty)
+      'portraitPhotoBase64': portraitPhotoBase64,
     'abilities': abilities,
     'hitPoints': hitPoints,
     'maxHitPoints': maxHitPoints,
@@ -594,15 +596,21 @@ class HeroCharacter {
       );
     }
     final portraitPreset = _int(
-      j['portraitPreset'], 'Porträtvorlage',
-      fallback: -1, min: -1, max: 8,
+      j['portraitPreset'],
+      'Porträtvorlage',
+      fallback: -1,
+      min: -1,
+      max: 8,
     );
     final photo = j['portraitPhotoBase64'] ?? '';
-    if (photo is! String || photo.length > 64000 ||
+    if (photo is! String ||
+        photo.length > 64000 ||
         (photo.isNotEmpty &&
-         (photo.length % 4 != 0 ||
-          !RegExp(r'^[A-Za-z0-9+/]+={0,2}$').hasMatch(photo)))) {
-      throw const FormatException('Ungültige oder zu große Charakterbilddaten.');
+            (photo.length % 4 != 0 ||
+                !RegExp(r'^[A-Za-z0-9+/]+={0,2}$').hasMatch(photo)))) {
+      throw const FormatException(
+        'Ungültige oder zu große Charakterbilddaten.',
+      );
     }
     if (portraitPreset >= 0 && photo.isNotEmpty) {
       throw const FormatException('Nur eine Charakterbildquelle ist zulässig.');

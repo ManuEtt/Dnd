@@ -270,6 +270,7 @@ class FantasyGoldFiligree extends CustomPainter {
       canvas.drawLine(Offset(cx - 3, cy), Offset(cx + 3, cy), paint);
       canvas.drawLine(Offset(cx, cy - 3), Offset(cx, cy + 3), paint);
     }
+
     corner(2, 2, 1, 1);
     corner(size.width - 2, 2, -1, 1);
     corner(2, size.height - 2, 1, -1);
@@ -300,48 +301,48 @@ class FantasyPanel extends StatelessWidget {
   Widget build(BuildContext context) => CustomPaint(
     foregroundPainter: const FantasyGoldFiligree(),
     child: Container(
-    padding: padding,
-    decoration: BoxDecoration(
-      gradient: const LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [Color(0xff1a3045), Color(0xff0e1b29)],
-      ),
-      borderRadius: BorderRadius.circular(15),
-      border: Border.all(color: accent.withValues(alpha: .5)),
-      boxShadow: const [
-        BoxShadow(
-          color: Color(0x2e000000),
-          blurRadius: 10,
-          offset: Offset(0, 4),
+      padding: padding,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xff1a3045), Color(0xff0e1b29)],
         ),
-      ],
-    ),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (title != null) ...[
-          Row(
-            children: [
-              if (icon != null) ...[
-                Icon(icon, color: accent, size: 22),
-                const SizedBox(width: 10),
-              ],
-              Expanded(
-                child: Text(
-                  title!,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ),
-            ],
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: accent.withValues(alpha: .5)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x2e000000),
+            blurRadius: 10,
+            offset: Offset(0, 4),
           ),
-          Divider(color: accent.withValues(alpha: .3), height: 24),
         ],
-        child,
-      ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (title != null) ...[
+            Row(
+              children: [
+                if (icon != null) ...[
+                  Icon(icon, color: accent, size: 22),
+                  const SizedBox(width: 10),
+                ],
+                Expanded(
+                  child: Text(
+                    title!,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+              ],
+            ),
+            Divider(color: accent.withValues(alpha: .3), height: 24),
+          ],
+          child,
+        ],
+      ),
     ),
-  ),
   );
 }
 
