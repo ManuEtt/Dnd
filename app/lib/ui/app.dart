@@ -284,7 +284,7 @@ class _HomePage extends StatelessWidget {
   final VoidCallback onAdventure;
   final VoidCallback onJournal;
 
-  Future<void> _newCampaign(BuildContext context, {bool ai = false}) async {
+  Future<void> _newCampaign(BuildContext context, {bool ai = false, bool prepared = false}) async {
     final hero = await showDialog<HeroCharacter>(
       context: context,
       builder: (context) => SimpleDialog(
@@ -320,6 +320,10 @@ class _HomePage extends StatelessWidget {
       ),
     );
     if (hero == null || !context.mounted) return;
+    if (prepared) {
+      onPlay(() => controller.newRabenwachtCampaign(hero));
+      return;
+    }
     if (!ai) {
       onPlay(() => controller.newCampaign(hero));
       return;
@@ -418,6 +422,14 @@ class _HomePage extends StatelessWidget {
                         : () => onPlay(controller.createDemo),
                     icon: const Icon(Icons.play_arrow),
                     label: const Text('Kostenlose Demo starten'),
+                  ),
+                  FilledButton.icon(
+                    key: const ValueKey('start-rabenwacht-campaign'),
+                    onPressed: controller.busy
+                        ? null
+                        : () => _newCampaign(context, prepared: true),
+                    icon: const Icon(Icons.menu_book_outlined),
+                    label: const Text('Rabenwacht (Solo, 2–3 Std.)'),
                   ),
                   OutlinedButton.icon(
                     onPressed: controller.busy
