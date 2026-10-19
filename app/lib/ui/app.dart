@@ -27,6 +27,7 @@ import 'fantasy_character_sheet.dart';
 import 'fantasy_ui.dart';
 import 'fantasy_art.dart';
 import 'fantasy_experience.dart';
+import 'fantasy_campaign_dashboard.dart';
 import 'character_portrait_picker.dart';
 import 'campaign_memory_panel.dart';
 
@@ -430,6 +431,21 @@ class _HomePage extends StatelessWidget {
                     ? onPlay(controller.createDemo)
                     : onPlay(() => controller.openCampaign(current.id)),
         ),
+        if (current != null) ...[
+          const FantasyChapterHeading(
+            label: 'Dein Held am Spieltisch',
+            rune: FantasyRune.hero,
+          ),
+          FantasyActiveHeroCard(
+            hero: current.hero,
+            campaignName: current.name,
+            onContinue: controller.busy
+                ? null
+                : () => onPlay(() => controller.openCampaign(current.id)),
+            onHeroes: onCharacters,
+          ),
+          const SizedBox(height: 14),
+        ],
         const FantasyChapterHeading(
           label: 'Wähle deinen Weg',
           rune: FantasyRune.compass,
