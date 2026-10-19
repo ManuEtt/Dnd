@@ -23,6 +23,7 @@ import 'paladin_lay_on_hands.dart';
 import 'saving_throw_class_actions.dart';
 import 'ai_story.dart';
 import 'adventure_catalog.dart';
+import 'rabenwacht_campaign.dart';
 import 'models.dart';
 import 'rules_engine.dart';
 import 'rest_rules.dart';
@@ -650,6 +651,16 @@ class GameEngine {
     );
     return campaign;
   }
+
+  /// Starts a prewritten, offline solo story using the selected character.
+  Campaign createRabenwacht(HeroCharacter hero) =>
+      RabenwachtCampaign.create(
+        hero: hero,
+        campaignId: _id('rabenwacht'),
+        sessionId: _id('session'),
+        messageId: _id('message'),
+        now: _clock(),
+      );
 
   /// Incapacitation ends these effects immediately, including when a confirmed
   /// external source or character correction occurs between combat turns.
@@ -1831,6 +1842,82 @@ class GameEngine {
         );
       }
     }
+    if (current.storyBible['mode'] == RabenwachtCampaign.mode) {
+      if (current.encounter != null && !current.encounter!.isFinished) {
+        return _combatAction(campaign, current, words);
+      }
+      if (RegExp(r'heiltrank|trank.*trink|trink.*trank').hasMatch(words)) {
+        return _drinkPotion(campaign, current);
+      }
+      final scripted = RabenwachtCampaign.advance(
+        current,
+        text,
+        rollId: _id('roll'),
+      );
+      if (!scripted.battle) {
+        return _commit(
+          campaign,
+          scripted.campaign,
+          scripted.narration,
+          type: scripted.campaign.pendingRoll != null
+              ? 'roll.requested'
+              : 'narrative.turn',
+        );
+      }
+      if (!current.hero.isComplete) {
+        return _commit(
+          campaign,
+          current,
+          'Für diesen Kampf benötigt dein Held einen vollständigen Charakterbogen.',
+          type: 'rules.blocked',
+        );
+      }
+      final enemy = AdventureCatalog.forHero('skeleton', current.hero);
+      final initiative = CharacterRuleEngine.initiative(current.hero);
+      final heroRoll = dice.check(
+        modifier: initiative.modifier,
+        advantage: initiative.advantage,
+        disadvantage: initiative.disadvantage,
+      );
+      final foeRoll = dice.check(modifier: 2);
+      final focus = MonkPerfectFocus.onInitiative(current.hero);
+      var started = scripted.campaign.copyWith(
+        hero: focus.hero,
+        encounter: Encounter(
+          id: _id('encounter'),
+          enemyName: enemy.name,
+          enemyHitPoints: enemy.hitPoints,
+          enemyMaxHitPoints: enemy.hitPoints,
+          enemyArmorClass: enemy.armorClass,
+          enemyAttackBonus: enemy.attackBonus,
+          enemyDamage: enemy.damage,
+          heroInitiative: heroRoll.total,
+          enemyInitiative: foeRoll.total,
+          movementRemaining:
+              CharacterRuleEngine.movementWholeMeters(current.hero)!,
+        ),
+      );
+      var description = '${scripted.narration} Deine Initiative: '
+          '${heroRoll.total}, Gegnerinitiative: ${foeRoll.total}. ';
+      if (foeRoll.total > heroRoll.total) {
+        final first = _enemyTurn(started, advanceRound: false);
+        started = first.campaign;
+        description += '${first.narration} ';
+      }
+      description += 'Du kannst angreifen, ausweichen, '
+          'fliehen oder eine Klassenfähigkeit einsetzen.';
+      return _commit(
+        campaign,
+        started,
+        description,
+        type: 'combat.started',
+        payload: {
+          'heroInitiative': heroRoll.toJson(),
+          'enemyInitiative': foeRoll.toJson(),
+          'adventure': 'rabenwacht',
+        },
+      );
+    }
     // AI campaigns must NEVER fall through into the fixed Mooswacht demo.
     // The external narrator handles free world actions; mechanical outcomes
     // remain local and require an explicitly confirmed encounter/rule source.
@@ -2115,6 +2202,14 @@ class GameEngine {
   /// action. Complete only confirmed AI quests; never fabricate rewards.
   Campaign _afterFlurryVictory(Campaign current, Map<String, dynamic> payload) {
     // Demo-only quest logic never applies to a manually imported campaign.
+    if (current.storyBible['mode'] == RabenwachtCampaign.mode) {
+      return current.copyWith(
+        encounter: null,
+        scene: 'Der Skelettwächter ist überwunden. Die Galerie liegt vor dir.',
+        storyBible: {...current.storyBible, 'stage': 'seal'},
+        facts: {...current.facts, 'sentryDefeated': 'true'},
+      );
+    }
     if (current.storyBible['mode'] != 'ai' &&
         current.facts['origin'] != 'demo') {
       return current.copyWith(encounter: null);
