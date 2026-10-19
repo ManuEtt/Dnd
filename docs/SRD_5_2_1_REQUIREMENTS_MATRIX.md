@@ -1,5 +1,19 @@
 # SRD 5.2.1 – Regelanforderungsmatrix (laufender Aufbau)
 
+## Stufenaufstieg und Erstellungsprüfung (19.10.2026, neue CI offen)
+
+| ID | SRD 5.2.1 | Umsetzung | Tests | Status |
+| --- | --- | --- | --- | --- |
+| CHAR-START-AUDIT | Character Creation / Classes / Origins | Explizite Prüfliste für alle 12 Klassen, fehlende Werte und unautomatisierte Herkunfts-/Klassenwahlen | `srd_character_creation_audit_test.dart` | IMPLEMENTIERT_UNGETESTET |
+| LEVEL-SAME-CLASS | Character Advancement / Class Features | Bestehende Klasse +1, bis Gesamtstufe 20; Zweitklasse im bestehenden Modell | `srd_class_level_up_test.dart`, `ui_srd_class_level_up_test.dart` | IMPLEMENTIERT_UNGETESTET |
+| LEVEL-HP-FIXED | Gaining Levels / Hit Points | Fester Trefferwürfelgewinn plus KO, Minimum 1, Verletzung beibehalten | `srd_class_level_up_test.dart` | IMPLEMENTIERT_UNGETESTET |
+| LEVEL-XP-MILESTONE | XP Thresholds / Milestones | Bestätigte XP-Schwelle oder explizit gewählter Meilenstein, keine erfundenen XP | `srd_class_level_up_test.dart` | IMPLEMENTIERT_UNGETESTET |
+| LEVEL-CHOICES-PENDING | Features / Feats / Subclasses | Tabellenmerkmale und offene Entscheidungen verfolgen, ohne ungeprüfte Wirkung; lizenzierte Haupt-Unterklasse auf Klassenstufe 3 explizit anwählbar | `srd_class_level_up_test.dart`, `ui_srd_class_level_up_test.dart` | TEILWEISE |
+| LEVEL-CHOICES-EXECUTE | Ability Score Improvements / Feats / Spells / Class Features | Alle wählbaren Talente/ASI/Zauber/Klassenmerkmale validieren und regelkonform ausführen | Noch nicht | FEHLT |
+| ORIGINS-COMPLETE | Species / Backgrounds / Origin Feats | Alle SRD-Ursprünge, Talente und Sonderregeln inkl. UI und Persistenz | Vier Hintergründe mit Attributsverbesserungen existieren; umfassende Features fehlen | TEILWEISE |
+
+
+
 ## Neue Anforderung (19.10.2026)
 
 | ID | SRD-Abschnitt | Regel | Engine / UI | Persistenz / Tests | Status |
