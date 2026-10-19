@@ -1,3 +1,10 @@
+## 0.8.13+63 – Illustrierte Heldenübersicht (19.10.2026)
+
+- Neuer Fantasy-Dashboard-Bereich auf der Startseite bei vorhandenen Kampagnen: gespeichertes Charakterporträt, Name, Klasse, Stufe und Kampagnentitel.
+- Trefferpunkte mit tatsächlichem Maximum und visualisiertem Zustand, Rüstungsklasse, bestätigte Bewegung einschließlich 0,5 m, EP-Fortschritt und regelgebundener Aufstiegshinweis. Historisch unbekannte Werte bleiben sichtbar unbekannt.
+- Direktaktionen „Abenteuer fortsetzen“ und „Helden verwalten“ nutzen die vorhandenen Controller- und Navigationswege ohne zusätzliches Datenbankschema.
+- Neue Widgettests mit 320/360/960 dp, echten/fehlenden Werten, Touch-Aktionen und Stufenaufstieg. Android-CI und Geräteprüfung sind getrennt nachzuweisen; der erste erfolgreiche CI-Lauf auf dem finalen Commit entscheidet über die technische Freigabe.
+
 ## Unveröffentlicht – Version 0.8.6+56 / ausdrückliche SRD-Startpaketwahl (19.10.2026)
 
 - Barden: konkrete Auswahl eines SRD-Musikinstruments; Mönche: konkrete Auswahl eines SRD-Handwerkszeugs oder -Musikinstruments statt eines untypisierten Platzhalters.
