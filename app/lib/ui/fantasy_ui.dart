@@ -389,37 +389,40 @@ class FantasyOptionalArtBackground extends StatelessWidget {
     required this.child,
     required this.centerSlice,
     this.opacity = 1,
+    this.foreground = false,
   });
 
   final String asset;
   final Rect centerSlice;
   final Widget child;
   final double opacity;
+  final bool foreground;
 
   @override
   Widget build(BuildContext context) => FutureBuilder<Set<String>>(
     future: FantasyGraphicAssets.available,
     builder: (context, snapshot) {
       if (snapshot.data?.contains(asset) != true) return child;
+      final illustration = Positioned.fill(
+        child: IgnorePointer(
+          child: ExcludeSemantics(
+            child: Image.asset(
+              asset,
+              fit: BoxFit.fill,
+              centerSlice: centerSlice,
+              filterQuality: FilterQuality.medium,
+              opacity: AlwaysStoppedAnimation<double>(opacity),
+              errorBuilder: (_, error, stack) => const SizedBox.shrink(),
+            ),
+          ),
+        ),
+      );
       return Stack(
         fit: StackFit.passthrough,
         children: [
-          Positioned.fill(
-            child: IgnorePointer(
-              child: ExcludeSemantics(
-                child: Image.asset(
-                  asset,
-                  fit: BoxFit.fill,
-                  centerSlice: centerSlice,
-                  filterQuality: FilterQuality.medium,
-                  opacity: AlwaysStoppedAnimation<double>(opacity),
-                  errorBuilder: (_, error, stack) =>
-                      const SizedBox.shrink(),
-                ),
-              ),
-            ),
-          ),
+          if (!foreground) illustration,
           child,
+          if (foreground) illustration,
         ],
       );
     },
