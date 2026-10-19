@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dice_engine.dart';
 import 'death_saving_throw_rules.dart';
 import 'condition_rules.dart';
+import 'cover_rules.dart';
 import 'condition_effects.dart';
 import 'prone_movement_rules.dart';
 import 'character_rule_engine.dart';
@@ -1380,11 +1381,28 @@ class GameEngine {
       'charisma': 'charisma',
     };
     final requestedSave = RegExp(
-      r'^rettungswurf\s*:\s*(stärke|staerke|geschicklichkeit|konstitution|intelligenz|weisheit|charisma)\s+sg\s+(\d{1,2})\s*[.!?]?$',
+      r'^rettungswurf\s*:\s*(stärke|staerke|geschicklichkeit|konstitution|intelligenz|weisheit|charisma)\s+sg\s+(\d{1,2})(\s+vom\s+gegner)?\s*[.!?]?$',
     ).firstMatch(words);
     if (requestedSave != null) {
       final ability = saveNames[requestedSave.group(1)!]!;
       final dc = int.parse(requestedSave.group(2)!);
+      final fromEnemy = requestedSave.group(3) != null;
+      if (fromEnemy &&
+          (current.encounter == null || current.encounter!.isFinished)) {
+        return _commit(
+          campaign,
+          current,
+          'Der Deckungsbonus gegen den Gegner braucht einen bestätigten aktiven Kampf.',
+          type: 'rules.blocked',
+        );
+      }
+      final coverBonus = fromEnemy
+          ? CoverRules.savingThrowBonus(
+              current.encounter!.heroCover,
+              ability: ability,
+              sourceOppositeCover: true,
+            )
+          : 0;
       if (dc < 1 || dc > 30 || current.hero.isDead) {
         return _commit(
           campaign,
@@ -1413,7 +1431,7 @@ class GameEngine {
           );
         }
         final rolled = dice.check(
-          modifier: rule.modifier,
+          modifier: rule.modifier + coverBonus,
           advantage: rule.advantage,
           disadvantage: rule.disadvantage,
         );
@@ -1441,6 +1459,7 @@ class GameEngine {
           current,
           'Manueller Rettungswurf (${requestedSave.group(1)}, SG $dc): '
           '${rolled.total} – ${passed ? 'gelungen' : 'misslungen'}. '
+          '${fromEnemy ? 'Bestätigte Deckung gegen den Gegner: +$coverBonus. ' : ''}'
           '$suggestions'
           'Das Ergebnis wird dokumentiert; Wirkungen fremder Zauber werden nicht automatisch angenommen.',
           type: 'saving.roll',
@@ -1451,6 +1470,8 @@ class GameEngine {
             'failed': !passed,
             'roll': rolled.toJson(),
             'manualDifficulty': true,
+            if (fromEnemy) 'fromEnemyCover': true,
+            if (fromEnemy) 'coverBonus': coverBonus,
           },
         );
       } on StateError catch (e) {
@@ -1480,6 +1501,25 @@ class GameEngine {
           type: 'rules.blocked',
         );
       }
+      final fromEnemy = payload['fromEnemyCover'] == true;
+      final expectedCoverBonus = fromEnemy && current.encounter != null
+          ? CoverRules.savingThrowBonus(
+              current.encounter!.heroCover,
+              ability: payload['ability'] as String,
+              sourceOppositeCover: true,
+            )
+          : 0;
+      if (fromEnemy &&
+          (current.encounter == null ||
+              current.encounter!.isFinished ||
+              payload['coverBonus'] != expectedCoverBonus)) {
+        return _commit(
+          campaign,
+          current,
+          'Die bestätigte Deckung für diesen Rettungswurf hat sich verändert.',
+          type: 'rules.blocked',
+        );
+      }
       final feature = retrySave.group(1) == 'fokus'
           ? SavingThrowRerollFeature.disciplinedSurvivor
           : SavingThrowRerollFeature.indomitable;
@@ -1491,6 +1531,7 @@ class GameEngine {
           difficulty: payload['difficulty'] as int,
           originalTotal: payload['total'] as int,
           feature: feature,
+          extraModifier: expectedCoverBonus,
         );
         return _commit(
           campaign,
@@ -1507,6 +1548,7 @@ class GameEngine {
             'passed': rerolled.passed,
             'resource': rerolled.resource,
             'fighterLevelBonus': rerolled.fighterLevelBonus,
+            if (fromEnemy) 'coverBonus': expectedCoverBonus,
           },
         );
       } on StateError catch (e) {
@@ -2304,6 +2346,60 @@ class GameEngine {
 
   GameUpdate _combatAction(Campaign before, Campaign current, String words) {
     final encounter = current.encounter!;
+    // The GM explicitly confirms the obstacle relative to this opponent.
+    if (words == 'deckungsstatus' || words == 'deckung?') {
+      return _commit(
+        before,
+        current,
+        'Deckung gegen diesen Gegner: Held – '
+        '${CoverRules.label(encounter.heroCover)}; Gegner – '
+        '${CoverRules.label(encounter.enemyCover)}.',
+        type: 'combat.coverStatus',
+        payload: {
+          'heroCover': encounter.heroCover.name,
+          'enemyCover': encounter.enemyCover.name,
+        },
+      );
+    }
+    if (words.startsWith('deckung:')) {
+      final match = RegExp(
+        r'^deckung:\s*(held|gegner)\s+(keine|halb|dreiviertel|voll)\s*[.!?]?$',
+      ).firstMatch(words);
+      if (match == null) {
+        return _commit(
+          before,
+          current,
+          'Bestätige z. B. „Deckung: Held halb“, '
+          '„Deckung: Gegner dreiviertel“, „Deckung: Held keine“.',
+          type: 'rules.blocked',
+        );
+      }
+      final grade = switch (match.group(2)!) {
+        'keine' => CoverLevel.none,
+        'halb' => CoverLevel.half,
+        'dreiviertel' => CoverLevel.threeQuarters,
+        'voll' => CoverLevel.total,
+        _ => throw const FormatException('Unbekannter Deckungsgrad.'),
+      };
+      final target = match.group(1)!;
+      final updated = target == 'held'
+          ? encounter.copyWith(heroCover: grade)
+          : encounter.copyWith(enemyCover: grade);
+      return _commit(
+        before,
+        current.copyWith(encounter: updated),
+        'Bestätigt: ${target == 'held' ? 'Dein Held' : 'Der Gegner'} '
+        'hat nun ${CoverRules.label(grade)} gegenüber dem Gegner. '
+        'Die Situationsbestätigung verbraucht keine Kampfaktion.',
+        type: 'combat.coverConfirmed',
+        payload: {
+          'target': target,
+          'grade': grade.name,
+          'armorBonus': CoverRules.getBonus(grade),
+          'directAttackBlocked': !CoverRules.canTargetDirectly(grade),
+        },
+      );
+    }
     if (words.startsWith('selbstwiederherstellung')) {
       if (encounter.activeParticipant != 'hero') {
         return _commit(
@@ -2673,6 +2769,14 @@ class GameEngine {
         current.hero,
         choices.single.id,
       )!;
+      if (!CoverRules.canTargetDirectly(encounter.enemyCover)) {
+        return _commit(
+          before,
+          current,
+          'Vollständige Deckung: Der Gegner kann nicht direkt anvisiert werden.',
+          type: 'rules.blocked',
+        );
+      }
       final attackRule = CharacterRuleEngine.attack(current.hero);
       final bonus = TwoWeaponFightingRules.attackBonus(current.hero, offhand);
       return _commit(
@@ -2685,14 +2789,19 @@ class GameEngine {
             modifier: bonus,
             advantage: attackRule.advantage,
             disadvantage: attackRule.disadvantage,
-            difficulty: encounter.enemyArmorClass,
+            difficulty: CoverRules.armorClass(
+              encounter.enemyArmorClass,
+              encounter.enemyCover,
+            ),
             targetId: encounter.id,
             targetName: encounter.enemyName,
             weaponId: choices.single.id,
           ),
         ),
         'Nebenhandangriff mit ${choices.single.name}: Würfle W20 '
-        '${_signed(bonus)} gegen RK ${encounter.enemyArmorClass}. '
+        '${_signed(bonus)} gegen RK '
+        '${CoverRules.armorClass(encounter.enemyArmorClass, encounter.enemyCover)} '
+        '(inklusive Deckung). '
         'Die Bonusaktion ist reserviert.',
         type: 'roll.requested',
         payload: {'offhandWeaponId': choices.single.id},
@@ -2722,6 +2831,14 @@ class GameEngine {
           type: 'rules.blocked',
         );
       }
+      if (!CoverRules.canTargetDirectly(encounter.enemyCover)) {
+        return _commit(
+          before,
+          current,
+          'Vollständige Deckung: Der Gegner kann nicht direkt angegriffen werden.',
+          type: 'rules.blocked',
+        );
+      }
       final attack = CharacterRuleEngine.attack(current.hero);
       final bonus = attack.modifier;
       return _commit(
@@ -2733,12 +2850,15 @@ class GameEngine {
             modifier: bonus,
             advantage: attack.advantage,
             disadvantage: attack.disadvantage,
-            difficulty: encounter.enemyArmorClass,
+            difficulty: CoverRules.armorClass(
+              encounter.enemyArmorClass,
+              encounter.enemyCover,
+            ),
             targetId: encounter.id,
             targetName: encounter.enemyName,
           ),
         ),
-        '${current.hero.name}, würfle einen W20 für deinen Angriff auf den ${encounter.enemyName}. Dein Angriffsbonus ist ${_signed(bonus)} (${attack.rollHint}); seine Rüstungsklasse beträgt ${encounter.enemyArmorClass}.',
+        '${current.hero.name}, würfle einen W20 für deinen Angriff auf den ${encounter.enemyName}. Dein Angriffsbonus ist ${_signed(bonus)} (${attack.rollHint}); seine effektive Rüstungsklasse beträgt ${CoverRules.armorClass(encounter.enemyArmorClass, encounter.enemyCover)} (${CoverRules.label(encounter.enemyCover)}).',
         type: 'roll.requested',
       );
     }
@@ -2817,9 +2937,10 @@ class GameEngine {
         current.copyWith(
           encounter: encounter.copyWith(
             movementRemaining: encounter.movementRemaining - amount,
+            heroCover: CoverLevel.none,
           ),
         ),
-        'Du bewegst dich $amount Meter. In diesem Zug bleiben ${encounter.copyWith(movementRemaining: encounter.movementRemaining - amount).movementRemainingLabel}; deine Aktion ist verfügbar.',
+        'Du bewegst dich $amount Meter. In diesem Zug bleiben ${encounter.copyWith(movementRemaining: encounter.movementRemaining - amount).movementRemainingLabel}; deine Aktion ist verfügbar. Eine frühere Deckungsposition ist danach nicht mehr bestätigt.',
         type: 'combat.moved',
         payload: {'meters': amount},
       );
@@ -2944,7 +3065,7 @@ class GameEngine {
       }
       final outcome = RulesEngine.attack(
         roll: result,
-        armorClass: foe.enemyArmorClass,
+        armorClass: pending.difficulty,
         criticalThreshold: ClassCombatFeatures.weaponCriticalThreshold(
           next.hero,
         ),
@@ -2961,6 +3082,8 @@ class GameEngine {
         throw StateError('Die Angriffsaktion ist bereits abgeschlossen.');
       }
       payload['attacksRemaining'] = attacksRemaining;
+      payload['targetCover'] = foe.enemyCover.name;
+      payload['effectiveTargetArmorClass'] = pending.difficulty;
       if (isOffhand) {
         payload['offhandWeaponId'] = pending.weaponId;
         payload['bonusActionUsed'] = true;
@@ -3363,6 +3486,46 @@ class GameEngine {
       restored = resolution.removed;
       restorationChoiceRequired = resolution.choiceRequired;
     }
+    // Total cover prevents *direct targeting*, including a natural 20.
+    // The enemy still completes its turn, and duration/round bookkeeping
+    // continues normally. Area spells remain separate confirmed effects.
+    if (!CoverRules.canTargetDirectly(foe.heroCover)) {
+      final nextFight = foe.copyWith(
+        round: foe.round + (advanceRound ? 1 : 0),
+        activeParticipant: 'hero',
+        movementRemaining: CharacterRuleEngine.movementWholeMeters(hero)!,
+        movementRemainderDecimeters: 0,
+        actionUsed: false,
+        attacksRemaining: 0,
+        bonusActionUsed: false,
+        lightAttackAvailable: false,
+        spellSlotExpendedThisTurn: false,
+        deathSaveResolvedThisTurn: false,
+        dodgeActive: false,
+        disengagedThisTurn: false,
+        jumpDoubledThisTurn: false,
+        reactionUsed: false,
+        surgeReserved: false,
+        surgeUsedThisTurn: false,
+        sneakAttackUsedThisTurn: false,
+        selfRestorationChoice: '',
+      );
+      return _EnemyTurn(
+        campaign.copyWith(hero: hero, encounter: nextFight),
+        'Der ${foe.enemyName} kann dich hinter vollständiger '
+        'Deckung nicht direkt angreifen.'
+        '${restored.isNotEmpty ? ' Selbstwiederherstellung: $restored.' : ''}',
+        {
+          'blockedByTotalCover': true,
+          'heroCover': foe.heroCover.name,
+          'hit': false,
+          if (rageExpired) 'rageExpiredAtTurnEnd': true,
+          if (rageEndedByIncapacitation) 'rageEndedByIncapacitation': true,
+          if (restorationChoiceRequired) 'selfRestorationChoiceRequired': true,
+          if (restored.isNotEmpty) 'selfRestorationRemoved': restored,
+        },
+      );
+    }
     final result = dice.check(
       modifier: foe.enemyAttackBonus,
       advantage: ConditionRules.hasUnconditionalAttackerAdvantage(hero),
@@ -3374,13 +3537,21 @@ class GameEngine {
     );
     final outcome = RulesEngine.attack(
       roll: result,
-      armorClass: hero.armorClass!,
+      armorClass: CoverRules.armorClass(hero.armorClass!, foe.heroCover),
+    );
+    final effectiveArmorClass = CoverRules.armorClass(
+      hero.armorClass!,
+      foe.heroCover,
     );
     var narration =
-        'Der ${foe.enemyName} greift an: ${result.total} gegen deine Rüstungsklasse ${hero.armorClass}. ';
+        'Der ${foe.enemyName} greift an: ${result.total} gegen deine effektive '
+        'Rüstungsklasse $effectiveArmorClass '
+        '(${CoverRules.label(foe.heroCover)}). ';
     final details = <String, dynamic>{
       'attackRoll': result.toJson(),
       'hit': outcome.hit,
+      'heroCover': foe.heroCover.name,
+      'effectiveHeroArmorClass': effectiveArmorClass,
       if (rageExpired) 'rageExpiredAtTurnEnd': true,
       if (rageEndedByIncapacitation) 'rageEndedByIncapacitation': true,
     };

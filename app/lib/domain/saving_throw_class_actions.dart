@@ -34,7 +34,11 @@ class SavingThrowClassActions {
     required int difficulty,
     required int originalTotal,
     required SavingThrowRerollFeature feature,
+    int extraModifier = 0,
   }) {
+    if (!const {0, 2, 5}.contains(extraModifier)) {
+      throw const FormatException('Unzulässiger situativer Rettungswurfbonus.');
+    }
     if (difficulty < 1 || difficulty > 30) {
       throw RangeError.range(difficulty, 1, 30, 'difficulty');
     }
@@ -72,7 +76,7 @@ class SavingThrowClassActions {
         : 'focusPoints';
     final spentHero = ClassResourceRules.spend(hero, resource);
     final newRoll = dice.check(
-      modifier: savedRule.modifier + fighterBonus,
+      modifier: savedRule.modifier + fighterBonus + extraModifier,
       advantage: savedRule.advantage,
       disadvantage: savedRule.disadvantage,
     );

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../domain/models.dart';
+import '../domain/cover_rules.dart';
 import '../domain/campaign_experience.dart';
 import '../domain/rabenwacht_campaign.dart';
 import '../domain/damage_rules.dart';
@@ -1789,6 +1790,64 @@ class _CombatView extends StatelessWidget {
             subtitle: Text(
               'Initiative ${encounter.enemyInitiative} · '
               'TP ${encounter.enemyHitPoints}/${encounter.enemyMaxHitPoints} · RK ${encounter.enemyArmorClass}',
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Deckung gegen diesen Gegner',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 5),
+                const Text(
+                  'Nur ausdrücklich bestätigte Hindernisse gelten. '
+                  'Höchste Deckung zählt; eine Bewegung beendet die '
+                  'bisher bestätigte Deckungsposition des Helden.',
+                  style: TextStyle(fontSize: 12),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final target in const ['Held', 'Gegner'])
+                      PopupMenuButton<CoverLevel>(
+                        key: ValueKey(
+                          target == 'Held'
+                              ? 'combat-hero-cover'
+                              : 'combat-enemy-cover',
+                        ),
+                        tooltip: 'Deckung für $target ändern',
+                        enabled:
+                            !busy &&
+                            !encounter.isFinished &&
+                            encounter.activeParticipant == 'hero',
+                        onSelected: (grade) => onAction(
+                          'Deckung: $target ${CoverRules.commandValue(grade)}',
+                        ),
+                        itemBuilder: (_) => [
+                          for (final grade in CoverLevel.values)
+                            PopupMenuItem<CoverLevel>(
+                              value: grade,
+                              child: Text(CoverRules.label(grade)),
+                            ),
+                        ],
+                        child: Chip(
+                          avatar: const Icon(Icons.shield_outlined, size: 16),
+                          label: Text(
+                            '$target: ${CoverRules.label(target == 'Held' ? encounter.heroCover : encounter.enemyCover)}',
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
