@@ -1,6 +1,6 @@
 ## 19.10.2026 – Integration statt konkurrierender Entwicklungszweige
 
-Neuer Branch `integration/character-creation-20261019`: PR #11 in `main`, getypte Ausrüstung und Startkampfwerte aus PR #9 ergänzt (drei konfliktfreie Code-Diff3-Dateien plus neue Module und Tests). PR #10 auf doppelte Aufstiegsmechanik und einzigartige ASI-Funktionen prüfen. Gemeinsame Tests/CI/Android-Build noch ausstehend; keine hundertprozentige SRD-Abdeckung behaupten.
+Neuer Branch `integration/character-creation-20261019`: PR #11 in `main`, getypte Ausrüstung und Startkampfwerte aus PR #9 ergänzt (drei konfliktfreie Code-Diff3-Dateien plus neue Module und Tests). PR #10 und #11 hatten konkurrierende Aufstiegsassistenten. Einziger verbleibender Dialog ist `SrdClassLevelUpDialog`; die einzigartige ASI-Validierung und rückwirkenden Konstitutions-TP aus PR #10 wurden dort und im Regelmodul eingearbeitet. Die Integrationsregressionen sind neu zu prüfen. Gemeinsame Tests/CI/Android-Build noch ausstehend; keine hundertprozentige SRD-Abdeckung behaupten.
 
 ## 19.10.2026 – RK/Bewegung grün im CI
 
