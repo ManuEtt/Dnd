@@ -42,7 +42,14 @@ class _CharacterSheetPageState extends State<CharacterSheetPage> {
     return Scaffold(
       backgroundColor: _night,
       appBar: AppBar(
-        title: const Text('Charakterbogen'),
+        title: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FantasyRuneEmblem(rune: FantasyRune.hero, size: 30),
+            SizedBox(width: 9),
+            Text('Charakterbogen'),
+          ],
+        ),
         centerTitle: true,
         backgroundColor: _night,
         actions: [
