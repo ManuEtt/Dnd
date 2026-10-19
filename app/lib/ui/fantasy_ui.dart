@@ -283,10 +283,7 @@ class FantasyBackdrop extends StatelessWidget {
         left: 0,
         right: 0,
         height: 224,
-        child: Opacity(
-          opacity: .62,
-          child: FantasyMoonlitScenery(height: 224),
-        ),
+        child: Opacity(opacity: .62, child: FantasyMoonlitScenery(height: 224)),
       ),
       child,
     ],

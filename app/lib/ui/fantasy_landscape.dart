@@ -38,13 +38,12 @@ class _MoonlitSceneryPainter extends CustomPainter {
     canvas.scale(size.width / 1000, size.height / 350);
 
     final glow = Paint()
-      ..shader = const RadialGradient(
-        colors: [
-          Color(0x77bcd8e8),
-          Color(0x2283a6ce),
-          Color(0x00223856),
-        ],
-      ).createShader(const Rect.fromCircle(center: Offset(770, 86), radius: 155));
+      ..shader =
+          const RadialGradient(
+            colors: [Color(0x77bcd8e8), Color(0x2283a6ce), Color(0x00223856)],
+          ).createShader(
+            const Rect.fromCircle(center: Offset(770, 86), radius: 155),
+          );
     canvas.drawCircle(const Offset(770, 86), 155, glow);
     canvas.drawCircle(
       const Offset(770, 86),
@@ -73,51 +72,39 @@ class _MoonlitSceneryPainter extends CustomPainter {
       canvas.drawCircle(Offset(x, y), radius, star);
     }
 
-    _mountains(
-      canvas,
-      _horizon,
-      const [
-        Offset(-50, 245),
-        Offset(66, 153),
-        Offset(166, 222),
-        Offset(312, 125),
-        Offset(442, 231),
-        Offset(554, 147),
-        Offset(644, 206),
-        Offset(830, 134),
-        Offset(1050, 246),
-      ],
-    );
-    _mountains(
-      canvas,
-      _mountain,
-      const [
-        Offset(-50, 294),
-        Offset(97, 209),
-        Offset(188, 253),
-        Offset(349, 173),
-        Offset(488, 278),
-        Offset(601, 213),
-        Offset(734, 253),
-        Offset(855, 207),
-        Offset(1050, 290),
-      ],
-    );
-    _mountains(
-      canvas,
-      _ridge,
-      const [
-        Offset(-50, 327),
-        Offset(112, 271),
-        Offset(240, 308),
-        Offset(393, 246),
-        Offset(528, 297),
-        Offset(674, 240),
-        Offset(792, 300),
-        Offset(975, 254),
-        Offset(1050, 296),
-      ],
-    );
+    _mountains(canvas, _horizon, const [
+      Offset(-50, 245),
+      Offset(66, 153),
+      Offset(166, 222),
+      Offset(312, 125),
+      Offset(442, 231),
+      Offset(554, 147),
+      Offset(644, 206),
+      Offset(830, 134),
+      Offset(1050, 246),
+    ]);
+    _mountains(canvas, _mountain, const [
+      Offset(-50, 294),
+      Offset(97, 209),
+      Offset(188, 253),
+      Offset(349, 173),
+      Offset(488, 278),
+      Offset(601, 213),
+      Offset(734, 253),
+      Offset(855, 207),
+      Offset(1050, 290),
+    ]);
+    _mountains(canvas, _ridge, const [
+      Offset(-50, 327),
+      Offset(112, 271),
+      Offset(240, 308),
+      Offset(393, 246),
+      Offset(528, 297),
+      Offset(674, 240),
+      Offset(792, 300),
+      Offset(975, 254),
+      Offset(1050, 296),
+    ]);
 
     // A fictional silhouette, not a claim about a game location.
     final silhouette = Paint()..color = _castle;
@@ -132,12 +119,8 @@ class _MoonlitSceneryPainter extends CustomPainter {
     _tower(canvas, 498, 216, 30, 70, silhouette);
     _tower(canvas, 575, 213, 31, 79, silhouette);
     _tower(canvas, 530, 166, 32, 122, silhouette);
-    canvas.drawRect(
-      const Rect.fromLTWH(492, 277, 116, 24),
-      silhouette,
-    );
-    final windowPaint = Paint()
-      ..color = _lantern.withValues(alpha: .83);
+    canvas.drawRect(const Rect.fromLTWH(492, 277, 116, 24), silhouette);
+    final windowPaint = Paint()..color = _lantern.withValues(alpha: .83);
     for (final window in [
       const Rect.fromLTWH(513, 246, 4, 9),
       const Rect.fromLTWH(541, 230, 4, 13),
