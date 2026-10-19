@@ -64,18 +64,27 @@ void main() {
     expect(legacy.conditions, ['bewusstlos']);
   });
 
-  test('tödlicher Angriff fügt Liegend nur einmal als getrennte Folge hinzu', () {
-    final dead = RulesEngine.damage(hero(hitPoints: 12), 24);
-    expect(dead.isDead, isTrue);
-    expect(dead.manualConditions.where((c) => c == 'liegend'), hasLength(1));
+  test(
+    'tödlicher Angriff fügt Liegend nur einmal als getrennte Folge hinzu',
+    () {
+      final dead = RulesEngine.damage(hero(hitPoints: 12), 24);
+      expect(dead.isDead, isTrue);
+      expect(dead.manualConditions.where((c) => c == 'liegend'), hasLength(1));
 
-    final fallen = RulesEngine.damage(
-      hero(hitPoints: 0, conditions: ['bewusstlos']),
-      1,
-    );
-    expect(fallen.manualConditions.where((c) => c == 'liegend'), hasLength(1));
-    expect(RulesEngine.damage(fallen, 1).manualConditions, contains('liegend'));
-  });
+      final fallen = RulesEngine.damage(
+        hero(hitPoints: 0, conditions: ['bewusstlos']),
+        1,
+      );
+      expect(
+        fallen.manualConditions.where((c) => c == 'liegend'),
+        hasLength(1),
+      );
+      expect(
+        RulesEngine.damage(fallen, 1).manualConditions,
+        contains('liegend'),
+      );
+    },
+  );
 
   test('mehrere Bewusstlos-Quellen verlieren nie Liegend', () {
     var current = hero();
@@ -121,57 +130,66 @@ void main() {
     expect(cleared.conditions, ['liegend']);
   });
 
-  test('Legacy-JSON bleibt beim reinen Lesen unverändert; Erholung korrigiert', () {
-    final old = hero(hitPoints: 0, conditions: ['bewusstlos']).toJson();
-    expect(old['conditions'], ['bewusstlos']);
-    final loaded = HeroCharacter.fromJson(old);
-    expect(loaded.toJson()['conditions'], ['bewusstlos']);
-    expect(RulesEngine.heal(loaded, 1).manualConditions, ['liegend']);
-  });
+  test(
+    'Legacy-JSON bleibt beim reinen Lesen unverändert; Erholung korrigiert',
+    () {
+      final old = hero(hitPoints: 0, conditions: ['bewusstlos']).toJson();
+      expect(old['conditions'], ['bewusstlos']);
+      final loaded = HeroCharacter.fromJson(old);
+      expect(loaded.toJson()['conditions'], ['bewusstlos']);
+      expect(RulesEngine.heal(loaded, 1).manualConditions, ['liegend']);
+    },
+  );
 
-  test('Bestätigte manuelle Bewusstlosigkeit erzeugt Liegend und beendet Fokus', () {
-    final engine = GameEngine();
-    final before = engine.createDemo();
-    final changed = before.hero.copyWith(
-      conditions: ['bewusstlos'],
-      concentratingOn: 'Segen',
-    );
-    final updated = engine.updateHero(before, changed);
-    expect(
-      updated.campaign.hero.conditions,
-      containsAll(['bewusstlos', 'liegend']),
-    );
-    expect(updated.campaign.hero.concentratingOn, isEmpty);
-    expect(updated.campaign.hero.manualConditions, ['bewusstlos', 'liegend']);
+  test(
+    'Bestätigte manuelle Bewusstlosigkeit erzeugt Liegend und beendet Fokus',
+    () {
+      final engine = GameEngine();
+      final before = engine.createDemo();
+      final changed = before.hero.copyWith(
+        conditions: ['bewusstlos'],
+        concentratingOn: 'Segen',
+      );
+      final updated = engine.updateHero(before, changed);
+      expect(
+        updated.campaign.hero.conditions,
+        containsAll(['bewusstlos', 'liegend']),
+      );
+      expect(updated.campaign.hero.concentratingOn, isEmpty);
+      expect(updated.campaign.hero.manualConditions, ['bewusstlos', 'liegend']);
 
-    final awake = engine.updateHero(
-      updated.campaign,
-      updated.campaign.hero.copyWith(conditions: ['liegend']),
-    );
-    expect(awake.campaign.hero.conditions, ['liegend']);
-    expect(awake.campaign.hero.concentratingOn, isEmpty);
-  });
+      final awake = engine.updateHero(
+        updated.campaign,
+        updated.campaign.hero.copyWith(conditions: ['liegend']),
+      );
+      expect(awake.campaign.hero.conditions, ['liegend']);
+      expect(awake.campaign.hero.concentratingOn, isEmpty);
+    },
+  );
 
-  test('Quellen-Bewusstlosigkeit beendet Konzentration ohne Quellenverlust', () {
-    final engine = GameEngine();
-    final before = engine.createDemo();
-    final concentrating = before.copyWith(
-      hero: before.hero.copyWith(concentratingOn: 'Segen'),
-    );
-    final applied = engine.applyConditionEffect(
-      concentrating,
-      source: 'Magischer Schlaf',
-      condition: 'bewusstlos',
-      duration: ConditionEffectDuration.untilRemoved,
-    );
-    expect(applied.campaign.hero.concentratingOn, isEmpty);
-    expect(applied.campaign.hero.manualConditions, ['liegend']);
-    expect(applied.campaign.hero.conditionEffects, hasLength(1));
-    final awake = engine.removeConditionEffect(
-      applied.campaign,
-      effectId: applied.campaign.hero.conditionEffects.single.id,
-    );
-    expect(awake.campaign.hero.conditions, ['liegend']);
-    expect(awake.campaign.hero.concentratingOn, isEmpty);
-  });
+  test(
+    'Quellen-Bewusstlosigkeit beendet Konzentration ohne Quellenverlust',
+    () {
+      final engine = GameEngine();
+      final before = engine.createDemo();
+      final concentrating = before.copyWith(
+        hero: before.hero.copyWith(concentratingOn: 'Segen'),
+      );
+      final applied = engine.applyConditionEffect(
+        concentrating,
+        source: 'Magischer Schlaf',
+        condition: 'bewusstlos',
+        duration: ConditionEffectDuration.untilRemoved,
+      );
+      expect(applied.campaign.hero.concentratingOn, isEmpty);
+      expect(applied.campaign.hero.manualConditions, ['liegend']);
+      expect(applied.campaign.hero.conditionEffects, hasLength(1));
+      final awake = engine.removeConditionEffect(
+        applied.campaign,
+        effectId: applied.campaign.hero.conditionEffects.single.id,
+      );
+      expect(awake.campaign.hero.conditions, ['liegend']);
+      expect(awake.campaign.hero.concentratingOn, isEmpty);
+    },
+  );
 }

@@ -148,8 +148,8 @@ class RulesEngine {
         hero.copyWith(
           temporaryHitPoints: temporaryLeft,
           conditions: conditions,
-        concentratingOn: '',
-        deathSuccesses: instantDeath ? 0 : hero.deathSuccesses,
+          concentratingOn: '',
+          deathSuccesses: instantDeath ? 0 : hero.deathSuccesses,
           deathFailures: failures > 3 ? 3 : failures,
         ),
       );

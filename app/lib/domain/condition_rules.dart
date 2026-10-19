@@ -86,9 +86,7 @@ class ConditionRules {
         after.manualConditions.contains('liegend')) {
       return after;
     }
-    return after.copyWith(
-      conditions: [...after.manualConditions, 'liegend'],
-    );
+    return after.copyWith(conditions: [...after.manualConditions, 'liegend']);
   }
 
   static const Map<String, String> descriptions = {
