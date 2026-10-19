@@ -240,6 +240,45 @@ class FantasyBackdrop extends StatelessWidget {
   );
 }
 
+/// Reusable corner ornaments inspired by the approved moonlit fantasy UI
+/// artwork. Painted vectors remain crisp at every Android density.
+class FantasyGoldFiligree extends CustomPainter {
+  const FantasyGoldFiligree();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = FantasyPalette.gold.withValues(alpha: .77)
+      ..strokeWidth = 1.1
+      ..style = PaintingStyle.stroke;
+    const edge = 19.0;
+    void corner(double x, double y, double dx, double dy) {
+      final p = Path()
+        ..moveTo(x + dx * edge, y)
+        ..lineTo(x + dx * 5, y)
+        ..quadraticBezierTo(x, y, x, y + dy * 5)
+        ..lineTo(x, y + dy * edge);
+      canvas.drawPath(p, paint);
+      canvas.drawLine(
+        Offset(x + dx * 7, y + dy * 7),
+        Offset(x + dx * 13, y + dy * 13),
+        paint,
+      );
+      final cx = x + dx * 22;
+      final cy = y + dy * 22;
+      canvas.drawLine(Offset(cx - 3, cy), Offset(cx + 3, cy), paint);
+      canvas.drawLine(Offset(cx, cy - 3), Offset(cx, cy + 3), paint);
+    }
+    corner(2, 2, 1, 1);
+    corner(size.width - 2, 2, -1, 1);
+    corner(2, size.height - 2, 1, -1);
+    corner(size.width - 2, size.height - 2, -1, -1);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
 /// Wiederverwendeter gerahmter Bereich mit dezenten goldenen Verzierungen.
 class FantasyPanel extends StatelessWidget {
   const FantasyPanel({
@@ -257,7 +296,9 @@ class FantasyPanel extends StatelessWidget {
   final EdgeInsetsGeometry padding;
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) => CustomPaint(
+    foregroundPainter: const FantasyGoldFiligree(),
+    child: Container(
     padding: padding,
     decoration: BoxDecoration(
       gradient: const LinearGradient(
@@ -299,6 +340,7 @@ class FantasyPanel extends StatelessWidget {
         child,
       ],
     ),
+  ),
   );
 }
 
