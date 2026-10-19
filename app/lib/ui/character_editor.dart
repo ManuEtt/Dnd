@@ -1084,9 +1084,10 @@ class _CharacterEditorState extends State<CharacterEditor> {
         final inventory = _original['inventory'] as List;
         for (final item in kit.items) {
           inventory.add(
-            StartingEquipmentImport.fromStartingItem(
+            StartingEquipmentImport.fromSelectedStartingItem(
               item,
               const Uuid().v4(),
+              selectedCatalogId: selected.equipmentChoices[item.name],
             ).toJson(),
           );
         }

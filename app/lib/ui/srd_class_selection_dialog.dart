@@ -4,6 +4,7 @@ import '../domain/srd_character_classes.dart';
 import '../domain/starting_hit_points.dart';
 import '../domain/fighter_creation_rules.dart';
 import '../domain/character_creation_progression.dart';
+import '../domain/starting_equipment_import.dart';
 
 const _savingThrowLabels = <String, String>{
   'strength': 'Stärke',
@@ -21,12 +22,16 @@ class SrdClassSetupResult {
     required this.replaceExistingProficiencies,
     required this.useSuggestedHitPoints,
     this.fighterChoices,
+    this.equipmentChoices = const {},
   });
 
   final SrdClassSelection selection;
   final bool replaceExistingProficiencies;
   final bool useSuggestedHitPoints;
   final FighterStartingChoices? fighterChoices;
+
+  /// Player-confirmed SRD starter catalog IDs keyed by the kit's choice label.
+  final Map<String, String> equipmentChoices;
 }
 
 class SrdClassSelectionDialog extends StatefulWidget {
@@ -62,6 +67,7 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
   bool _replace = false;
   bool _useHp = false;
   int _kitIndex = -1;
+  final Map<String, String> _equipmentChoices = {};
   String? _error;
   String? _fighterStyle;
   final Set<String> _fighterMasteries = {};
@@ -116,6 +122,12 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
           );
         }
       }
+      if (widget.allowEquipment && _kitIndex >= 0) {
+        StartingEquipmentImport.validateKitChoices(
+          _selectedClass.kits[_kitIndex],
+          _equipmentChoices,
+        );
+      }
       final selection = SrdClassSelection(
         characterClass: _selectedClass,
         skills: _skills,
@@ -130,6 +142,7 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
               ? _startingHitPoints != null
               : _useHp && _startingHitPoints != null,
           fighterChoices: fighterChoices,
+          equipmentChoices: Map.unmodifiable(_equipmentChoices),
         ),
       );
     } on FormatException catch (error) {
@@ -175,6 +188,7 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
                   _selectedClass = value;
                   _skills.clear();
                   _kitIndex = -1;
+                  _equipmentChoices.clear();
                   _fighterStyle = null;
                   _fighterMasteries.clear();
                   _error = null;
@@ -341,13 +355,46 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
                       child: Text(_selectedClass.kits[i].label),
                     ),
                 ],
-                onChanged: (value) => setState(() => _kitIndex = value ?? -1),
+                onChanged: (value) => setState(() {
+                  _kitIndex = value ?? -1;
+                  _equipmentChoices.clear();
+                  _error = null;
+                }),
               ),
               if (_kitIndex >= 0) ...[
                 const SizedBox(height: 8),
                 Text('Startgold: ${_selectedClass.kits[_kitIndex].gold} GM'),
-                for (final item in _selectedClass.kits[_kitIndex].items)
+                for (final item in _selectedClass.kits[_kitIndex].items) ...[
                   Text('• ${item.quantity} × ${item.name}'),
+                  if (StartingEquipmentImport.optionsFor(item).isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8, bottom: 8),
+                      child: DropdownButtonFormField<String>(
+                        key: ValueKey('srd-starter-choice-${item.name}'),
+                        initialValue: _equipmentChoices[item.name],
+                        isExpanded: true,
+                        decoration: InputDecoration(
+                          labelText: '${item.name} konkret auswählen',
+                          helperText: 'Nur Gegenstände aus dem SRD-Katalog',
+                        ),
+                        items: [
+                          for (final entry
+                              in StartingEquipmentImport.optionsFor(item))
+                            DropdownMenuItem(
+                              value: entry.id,
+                              child: Text(entry.name),
+                            ),
+                        ],
+                        onChanged: (id) => setState(() {
+                          if (id == null) {
+                            _equipmentChoices.remove(item.name);
+                          } else {
+                            _equipmentChoices[item.name] = id;
+                          }
+                        }),
+                      ),
+                    ),
+                ],
                 const Text(
                   'Noch keine automatische Ausrüstung oder RK-Berechnung.',
                 ),

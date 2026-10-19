@@ -1,3 +1,11 @@
+# Checkpoint 19.10.2026 – individuelle SRD-Startgegenstände (0.8.6+56)
+
+Branch `feature/srd-start-equipment-choices-20261019` ab `main` `8d717230` (PR #15 mit in-App-Version, Porträt-Tests und Fantasy-UI bereits enthalten). Code: `starting_equipment_import.dart` mit expliziter validierter Kategorieauswahl und Fail-Closed bei manipulierten Optionen; `srd_class_selection_dialog.dart` mit Instrument-/Werkzeugauswahl; `character_editor.dart` schreibt bestätigte getypte Gegenstände. Tests: `starting_equipment_choices_test.dart`, `ui_srd_start_equipment_choices_test.dart`. `pubspec.yaml` auf 0.8.6+56.
+
+Nächste Schritte: Vollständigen Dart-Format-/Analyse-/Flutter-/Backend-/APK-Workflow am letzten HEAD verifizieren, Testfehler beheben, dann PR-Review. Kein direktes Löschen alter Spielstände oder Doppel-Auswahl unter falscher Klasse. Weiterhin offen: SRD-Holy-Symbol-/Fokus-Unterkategorien, weitere lizenzierten Ursprungsobjekte, Herkunftstalente, Klassenregeln, echter Android-Test. Kein autonomer Hintergrundlauf behauptet.
+
+---
+
 # Checkpoint 19.10.2026 – Nutzerfreigabe Fantasy-Grafiken
 
 Branch `feature/fantasy-portraits-and-ui-20261019` von `main` `2f392e1`. Genehmigte Assets liegen nun in `app/assets/fantasy/` als offline ladbare Base64-WebP-Dateien: `portrait_atlas.webp.b64`, `night_sky.webp.b64`, `ui_icon_atlas.webp.b64`; Flutter-Assetdeklaration ergänzt. Neue `character_portrait_picker.dart`, `fantasy_approved_icons.dart`; bestehende Flutter-Fantasy-Oberflächen mit filigranen Goldverzierungen, Mondkulisse, fester Speicherleiste und Porträtanzeige erweitert. `HeroCharacter` trägt optionale Bildauswahl bzw. klein eingebettete eigene Bilddaten zur Sicherung/JSON-Migration. image_picker 1.1.x ist per Lockfile geprüft.

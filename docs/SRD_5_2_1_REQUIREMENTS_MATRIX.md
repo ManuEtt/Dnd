@@ -1,5 +1,15 @@
 # SRD 5.2.1 – Regelanforderungsmatrix (laufender Aufbau)
 
+## Verifizierte konkrete Klassen-Startausrüstungswahl (Version 0.8.6+56; CI offen)
+
+| Regel-ID | SRD-Abschnitt | Umsetzung | Tests | Status |
+| --- | --- | --- | --- | --- |
+| EQUIP-CHOICES-INSTRUMENT | Classes / Equipment | Barde wählt konkretes SRD-Instrument mit validiertem Katalogeintrag statt unbestätigter Sammelbezeichnung | `starting_equipment_choices_test.dart`, `ui_srd_start_equipment_choices_test.dart` | IMPLEMENTIERT_UNGETESTET (CI ausstehend) |
+| EQUIP-CHOICES-TOOL | Classes / Equipment | Mönch wählt SRD-Handwerkszeug oder Instrument, nur erlaubte Kategorien; korrekte Typ-/Preis-/Gewichtsfelder | `starting_equipment_choices_test.dart` | IMPLEMENTIERT_UNGETESTET |
+| EQUIP-CHOICES-OTHER | Classes / Equipment | Heiliges Symbol, Druidenfokus und weitere unaufgelöste Startgegenstände aus dem vollen SRD präzise wählbar machen | Vorhandene SRD-Katalogeinträge reichen noch nicht aus | TEILWEISE; keine erfundenen Eigenschaften |
+
+
+
 ## Integrationsstatus (19.10.2026)
 
 PR #11 ist auf `main` enthalten. Die PR-#9-Regeln für Startausrüstung/RK/Bewegung sind in `integration/character-creation-20261019` zusammengeführt. Die gemeinsame CI ist noch zu bestätigen. PR #10 enthält überschneidende Klassenaufstiegsregeln und muss getrennt auf zusätzliche Fähigkeiten geprüft werden. `GETESTET` in älteren Zeilen bezieht sich auf die jeweils verlinkte Einzelbranch-CI, **nicht** die Integration.
