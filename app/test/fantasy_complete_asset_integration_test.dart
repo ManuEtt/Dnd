@@ -110,4 +110,39 @@ void main() {
     expect(find.text('Weiterhin spielbar'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('Kompakte Originalrahmen zeichnen ohne Ausnahme', (tester) async {
+    for (final asset in [
+      FantasyOptionalArt.panel,
+      FantasyOptionalArt.button,
+      FantasyOptionalArt.card,
+      FantasyOptionalArt.portrait,
+    ]) {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: 96,
+                height: 80,
+                child: FantasyOptionalImageFrame(
+                  image: asset,
+                  foreground: true,
+                  centerSlice: const Rect.fromLTWH(20, 20, 50, 30),
+                  child: const Text('W20'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('W20'), findsOneWidget);
+      expect(
+        tester.takeException(),
+        isNull,
+        reason: 'Originalgrafik darf beim Zeichnen nicht abstuerzen: $asset',
+      );
+    }
+  });
 }
