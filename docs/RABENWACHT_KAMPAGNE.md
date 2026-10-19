@@ -29,6 +29,31 @@ Die Zeiten sind **Erzählziele, keine technische Mindestspieldauer**. Schnelle T
 * **Speicherung:** Der neue Ort, die Zusatzquest, Hinweise und NPC-Beziehungen werden über das vorhandene Kampagnenformat gespeichert. Bestehende Spielstände benötigen keine Migration.
 * **Tests:** `app/test/rabenwacht_progress_test.dart` prüft die Spoilerbegrenzung, einen erfolgreichen Brunnenwurf, einen übersprungenen Umweg, die Gesprächsbeziehungen sowie Questfortschritt und Persistenz.
 
+## Erfahrungspunkte und Stufenaufstieg (0.8.8+58)
+
+**Regelgrundlage:** Die offiziellen SRD-5.2.1-Schwellen beziehen sich auf die Gesamtstufe eines Charakters und nicht auf eine einzelne Klasse. Ein Held steigt nach Überschreiten der Schwelle **nicht automatisch** auf. Er kann den bestehenden regelgebundenen Aufstiegsdialog öffnen und selbst wählen, welche bereits bekannte Klasse er steigert. Trefferpunkte und bestätigte Klassenfähigkeiten werden dabei durch den bestehenden Klassenassistenten behandelt. Für neue Zweitklassen bleibt der Mehrklassen-Assistent maßgeblich.
+
+**Szenenbelohnungen (Spielleiterfestlegung, keine offiziellen SRD-Gegner-EP):**
+
+| Ziel | EP |
+| --- | ---: |
+| Brunnengeheimnis erfolgreich untersuchen (optional) | 100 |
+| Alte Mühle erreichen | 200 |
+| Kapelle erreichen | 220 |
+| Chronistenhaus erreichen | 260 |
+| Friedhof erreichen | 240 |
+| Turmruine erreichen | 260 |
+| Die dreizehnte Tür öffnen und Gefangene finden | 340 |
+| Die Kampagne zu einem Ende führen | 900 |
+
+Die Hauptziele vergeben insgesamt **2.420 EP**, mit freiwilliger Nebenquest **2.520 EP**. Ein Stufe-3-Charakter, der mit regulären 900 EP startet, erreicht bis zum Finale mindestens 3.320 EP und damit die offizielle Schwelle für Stufe 4 (2.700 EP). Höherstufige Figuren können abhängig von ihren EP eine längere Kampagne für den nächsten Aufstieg benötigen.
+
+* Jede Belohnung wird **nur einmal pro Kampagne** mit einem persistenten `xpReward:`-Marker gutgeschrieben. Wiederholtes Betreten eines Ortes, das Laden alter Gesprächsstellen oder dieselbe Auflösung vergeben keine weiteren EP.
+* Schleichen am Knochenwächter und dessen Besiegen führen zur selben Etappe; das Kampagnenziel und nicht die Zahl getöteter Gegner ist entscheidend.
+* Ein unbekannter historischer EP-Stand wird **nicht erfunden**. Die App verlangt in diesem Fall, die bisherigen EP zuerst im Charakterbogen zu bestätigen.
+* Der Abenteuerbildschirm zeigt EP-Stand und Fortschrittsbalken. Beim Erreichen der nächsten Schwelle erscheint **„Stufenaufstieg verfügbar“** als Einstieg in den Charaktereditor, in dem der vorhandene SRD-Aufstiegsassistent genutzt wird.
+* `app/lib/domain/campaign_experience.dart` implementiert die Belohnungs- und Fortschrittslogik, `app/test/campaign_experience_test.dart` kontrolliert Schwellenwerte, einmalige Vergabe, Persistenz, unbekannte EP und einen tatsächlichen Klassenaufstieg.
+
 ## NPCs (eigene Inhalte)
 
 Elda Weißdorn (Hebamme und Zeugin), Tarek Dorn (Wirt), Mara Voss (Vorsteherin), Bruder Oswin (Zeitzeuge), Fina Kessel (vermisste Tochter), Joren Kessel (Müller), Bram Eisfeld (vermisster Wächter), Alrik Nebel (Chronist), Seren (gebundener Geist). NPC-Dialoge und Hinweise sollen nur offengelegt werden, wenn sie im aktuellen Akt zugänglich sind.
