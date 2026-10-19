@@ -1837,6 +1837,7 @@ class Campaign {
           final values = pending.targetName.split('|');
           const difficultyByStage = <String, int>{
             'road': 12,
+            'well': 12,
             'mill': 13,
             'archive': 12,
             'forest': 12,

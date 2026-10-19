@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../domain/models.dart';
+import '../domain/campaign_experience.dart';
+import '../domain/rabenwacht_campaign.dart';
 import '../domain/damage_rules.dart';
 import '../domain/healing_spell_rules.dart';
 import '../domain/saving_throw_class_actions.dart';
@@ -1271,6 +1273,78 @@ class _AdventurePageState extends State<_AdventurePage> {
                     padding: const EdgeInsets.all(16),
                     children: [
                       header,
+                      if (campaign.storyBible['mode'] ==
+                          RabenwachtCampaign.mode)
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextButton.icon(
+                            key: const ValueKey('rabenwacht-discovered-clues'),
+                            onPressed: () => showDialog<void>(
+                              context: context,
+                              builder: (dialogContext) => AlertDialog(
+                                title: const Text('Ermittlungsstand'),
+                                content: SingleChildScrollView(
+                                  child: SelectableText(
+                                    RabenwachtCampaign.discoveredClues(
+                                      campaign,
+                                    ),
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(dialogContext),
+                                    child: const Text('Schließen'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            icon: const Icon(
+                              Icons.fact_check_outlined,
+                              size: 17,
+                            ),
+                            label: const Text('Hinweise und Aufträge'),
+                          ),
+                        ),
+                      const SizedBox(height: 8),
+                      FantasyPanel(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Erfahrungsfortschritt: ${campaign.hero.experience?.toString() ?? 'nicht bestätigt'} EP'
+                              '${CampaignExperience.nextThreshold(campaign.hero) == null ? ' · Höchststufe' : ' / ${CampaignExperience.nextThreshold(campaign.hero)} EP'}',
+                              key: const ValueKey('adventure-xp-details'),
+                            ),
+                            const SizedBox(height: 6),
+                            if (CampaignExperience.levelProgress(
+                                  campaign.hero,
+                                ) !=
+                                null)
+                              LinearProgressIndicator(
+                                key: const ValueKey('adventure-xp-progress'),
+                                value: CampaignExperience.levelProgress(
+                                  campaign.hero,
+                                ),
+                                minHeight: 5,
+                              ),
+                            if (CampaignExperience.canLevelUp(campaign.hero))
+                              TextButton.icon(
+                                key: const ValueKey('adventure-levelup-ready'),
+                                onPressed:
+                                    widget.controller.busy ||
+                                        campaign.pendingRoll != null ||
+                                        campaign.encounter != null ||
+                                        campaign.pendingDeathSave != null
+                                    ? null
+                                    : _editHero,
+                                icon: const Icon(Icons.trending_up_outlined),
+                                label: const Text('Stufenaufstieg verfügbar'),
+                              ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
                       FantasyScenePanel(
                         key: const ValueKey('adventure-illustrated-scene'),
                         scene: campaign.scene,
