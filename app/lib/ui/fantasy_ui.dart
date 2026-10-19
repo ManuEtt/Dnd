@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show AssetManifest, rootBundle;
 import 'fantasy_approved_icons.dart';
 
 /// Gemeinsames Oberflaechensystem. Keine Regeln oder gespeicherten Werte.
@@ -365,6 +366,66 @@ class FantasyApprovedCornerFrame extends StatelessWidget {
   );
 }
 
+/// Offline image manifest; optional art never triggers a missing-asset
+/// exception and never depends on a network connection.
+abstract final class FantasyGraphicAssets {
+  static const panel = 'assets/fantasy/ornate_panel_background.webp';
+  static const card = 'assets/fantasy/ornate_card_background.webp';
+  static const button = 'assets/fantasy/ornate_button_background.webp';
+  static const portraitBorder = 'assets/fantasy/ornate_portrait_border.webp';
+
+  static final Future<Set<String>> available = AssetManifest
+      .loadFromAssetBundle(rootBundle)
+      .then((manifest) => manifest.listAssets().toSet());
+}
+
+/// Displays an optional full-size nine-patch image behind the actual
+/// Flutter content. The transparent margins and corner details retain their
+/// proportions even when the panel is taller than the source artwork.
+class FantasyOptionalArtBackground extends StatelessWidget {
+  const FantasyOptionalArtBackground({
+    super.key,
+    required this.asset,
+    required this.child,
+    required this.centerSlice,
+    this.opacity = 1,
+  });
+
+  final String asset;
+  final Rect centerSlice;
+  final Widget child;
+  final double opacity;
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder<Set<String>>(
+    future: FantasyGraphicAssets.available,
+    builder: (context, snapshot) {
+      if (snapshot.data?.contains(asset) != true) return child;
+      return Stack(
+        fit: StackFit.passthrough,
+        children: [
+          Positioned.fill(
+            child: IgnorePointer(
+              child: ExcludeSemantics(
+                child: Image.asset(
+                  asset,
+                  fit: BoxFit.fill,
+                  centerSlice: centerSlice,
+                  filterQuality: FilterQuality.medium,
+                  opacity: AlwaysStoppedAnimation<double>(opacity),
+                  errorBuilder: (_, error, stack) =>
+                      const SizedBox.shrink(),
+                ),
+              ),
+            ),
+          ),
+          child,
+        ],
+      );
+    },
+  );
+}
+
 /// Wiederverwendeter gerahmter Bereich mit dezenten goldenen Verzierungen.
 class FantasyPanel extends StatelessWidget {
   const FantasyPanel({
@@ -383,24 +444,27 @@ class FantasyPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => FantasyApprovedCornerFrame(
-    child: Container(
-      padding: padding,
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xff1a3045), Color(0xff0e1b29)],
-        ),
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: accent.withValues(alpha: .5)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x2e000000),
-            blurRadius: 10,
-            offset: Offset(0, 4),
+    child: FantasyOptionalArtBackground(
+      asset: FantasyGraphicAssets.panel,
+      centerSlice: const Rect.fromLTWH(30, 28, 300, 66),
+      child: Container(
+        padding: padding,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xcc1a3045), Color(0xd90e1b29)],
           ),
-        ],
-      ),
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: accent.withValues(alpha: .5)),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x2e000000),
+              blurRadius: 10,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -424,6 +488,7 @@ class FantasyPanel extends StatelessWidget {
           ],
           child,
         ],
+      ),
       ),
     ),
   );
