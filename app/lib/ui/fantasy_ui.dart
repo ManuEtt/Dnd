@@ -314,6 +314,59 @@ class FantasyGoldFiligree extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
+
+const _approvedGoldCorner = 'assets/fantasy/ornate_gold_corner.webp';
+
+/// Uses the gold filigree from the approved image package, not an emoji or
+/// improvised placeholder. Mirrors one cropped corner to avoid stretching it.
+class FantasyApprovedCornerFrame extends StatelessWidget {
+  const FantasyApprovedCornerFrame({
+    super.key,
+    required this.child,
+    this.cornerSize = 34,
+    this.opacity = .80,
+  });
+
+  final Widget child;
+  final double cornerSize;
+  final double opacity;
+
+  @override
+  Widget build(BuildContext context) => Stack(
+    fit: StackFit.passthrough,
+    children: [
+      child,
+      for (final corner in [0, 1, 2, 3])
+        Positioned(
+          top: corner < 2 ? 0 : null,
+          bottom: corner >= 2 ? 0 : null,
+          left: corner.isEven ? 0 : null,
+          right: corner.isOdd ? 0 : null,
+          child: IgnorePointer(
+            child: ExcludeSemantics(
+              child: Opacity(
+                opacity: opacity,
+                child: Transform.flip(
+                  flipX: corner.isOdd,
+                  flipY: corner >= 2,
+                  child: Image.asset(
+                    _approvedGoldCorner,
+                    key: ValueKey('approved-corner-$corner'),
+                    width: cornerSize,
+                    height: cornerSize,
+                    filterQuality: FilterQuality.medium,
+                    errorBuilder: (_, error, stack) =>
+                        const SizedBox.shrink(),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+    ],
+  );
+}
+
 /// Wiederverwendeter gerahmter Bereich mit dezenten goldenen Verzierungen.
 class FantasyPanel extends StatelessWidget {
   const FantasyPanel({
@@ -331,8 +384,7 @@ class FantasyPanel extends StatelessWidget {
   final EdgeInsetsGeometry padding;
 
   @override
-  Widget build(BuildContext context) => CustomPaint(
-    foregroundPainter: const FantasyGoldFiligree(),
+  Widget build(BuildContext context) => FantasyApprovedCornerFrame(
     child: Container(
       padding: padding,
       decoration: BoxDecoration(
