@@ -53,6 +53,11 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
   }
 
   void _confirm() {
+    if (_abilityChoice != 'pending' && _chosenAbilityBoost.isEmpty) {
+      setState(() => _error = 'Bitte die Attributswerte für '
+          'die gewählte Verbesserung vollständig auswählen.');
+      return;
+    }
     final proposal = _proposal();
     if (proposal == null) {
       setState(() {});
