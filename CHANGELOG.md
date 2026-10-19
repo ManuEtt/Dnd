@@ -1,3 +1,10 @@
+## Zusammengeführter GitHub-Hauptstand – 19.10.2026
+
+- PR #11, #12 und #13 sind gemergt; PR #9 und #10 als funktional integriert/ersetzt geschlossen.
+- Nur ein Klassenaufstiegsdialog nach SRD 5.2.1; einzigartige validierte Attributsverbesserung aus PR #10 in die regelgeprüfte Klassenentwicklung aus PR #11 eingebaut.
+- Ausrüstungskatalog-Attribute, Start-RK und Speziesbewegung aus PR #9 per 3-Wege-Abgleich und zugehörigen Tests in `main` übernommen; halbmetergenaue Speicherung und Altspielstandschutz bleiben erhalten.
+- Temporären Formatierworkflow entfernt, historische Branches unverändert gelassen. Vollständige Android-/Gerätefreigabe separat prüfen; SRD-Regelwerk weiterhin teilweise implementiert.
+
 ## Integration 19.10.2026 – PR #11 und PR #9
 
 - SRD-Klassenaufstieg und Erstellungsprüfung aus PR #11 mit der Startausrüstung/RK/Bewegungs-Korrektur aus PR #9 auf separatem Integrationsbranch zusammengeführt. Integrationstest und Merge nach `main` stehen aus. Die gegenüber PR #11 neue Funktion aus PR #10 – validierte ASI (+2/+1+1) mit rückwirkender KO-TP-Berechnung – wurde in den vorhandenen Klassenaufstiegsdialog übernommen. Der alternative doppelte Dialog wird nicht eingebaut.
