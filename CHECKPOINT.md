@@ -1,3 +1,11 @@
+# Zwischenstand 19.10.2026 – Fehlende RK/Bewegung korrigieren
+
+PR #9, Branch `fix/equipment-import-attributes-20261019` ergänzt jetzt zusätzlich zum bereits CI-geprüften Ausrüstungsimport die Berechnung fehlender Kampfwerte: SRD-Speziesgeschwindigkeit, ungerüstete Grund-RK inkl. Mönch/Barbar, automatisch nach bestätigten Feldern im neuen Charaktereditor und explizit bei alten Figuren. `speedRemainderDecimeters` als optionales Legacy-sicheres JSON-Feld (Goliath/Waldelf 10,5 m) und angepasste Erschöpfungsbewegung; vorhandene manuelle Werte bleiben erhalten.
+
+Neu: `app/lib/domain/srd_starting_combat_values.dart`, `app/test/srd_starting_combat_values_test.dart`, `app/test/ui_starting_combat_values_test.dart`; Änderungen an `models.dart`, `condition_rules.dart`, `character_editor.dart`. **CI-Durchlauf für dieses Inkrement ausstehend**, bisheriger grüner Stand `39199122240` gilt nur für den vorangegangenen Import-Fix. Keine Freigabe oder Merge ohne vollständige Analyse, Tests, APK und reale Geräteabnahme. SRD 5.2.1 bleibt insgesamt unvollständig.
+
+---
+
 # Checkpoint: Ausrüstungsattribute beim Import, 19.10.2026
 
 Branch `fix/equipment-import-attributes-20261019` von `main` `82f2786b`. Parallel existiert PR #8 für die Aufstehen-Regel, hier bewusst nicht vermischt. Diese Änderungen: `app/lib/domain/starting_equipment_import.dart`, `app/lib/domain/models.dart`, `app/lib/ui/character_editor.dart`, `app/test/starting_equipment_import_test.dart`, `app/test/ui_starting_equipment_import_test.dart`. Alte Klassenstartsets bekamen bisher nur Namen und Mengen; nun werden eindeutige Katalog-IDs samt strukturierten Daten geschrieben. Validierte Katalog-ID ohne Stats wird beim Import wiederhergestellt, vorhandene individuelle Daten werden nicht überschrieben. Altgegenstände ohne ID werden erst nach expliziter UI-Vorschau und Bestätigung angereichert. 20 Pfeile werden korrekt als eine 20er-Packung behandelt.
