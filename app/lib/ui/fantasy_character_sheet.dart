@@ -47,7 +47,13 @@ class _CharacterSheetPageState extends State<CharacterSheetPage> {
           children: [
             FantasyRuneEmblem(rune: FantasyRune.hero, size: 30),
             SizedBox(width: 9),
-            Text('Charakterbogen'),
+            Flexible(
+              child: Text(
+                'Charakterbogen',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
         centerTitle: true,
