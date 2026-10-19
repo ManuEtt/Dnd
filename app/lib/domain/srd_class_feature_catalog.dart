@@ -439,11 +439,14 @@ class SrdClassFeatureCatalog {
       );
     }
     if (secondary != null && hero.hasSecondClass) {
-      // The existing model stores only one subclass string, so a second
-      // subclass is NOT inferred or granted before schema support exists.
+      // A second class has its own independently confirmed subclass.
+      // Its special features remain class-level gated, never total-level gated.
       result.addAll(
         _catalog[secondary]!.where(
-          (x) => x.classLevel <= hero.secondaryClassLevel && x.subclass.isEmpty,
+          (x) =>
+              x.classLevel <= hero.secondaryClassLevel &&
+              (x.subclass.isEmpty ||
+                  _matchesSubclass(secondary, hero.secondarySubclass)),
         ),
       );
     }
