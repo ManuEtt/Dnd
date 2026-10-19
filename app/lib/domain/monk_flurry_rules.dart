@@ -2,6 +2,7 @@ import 'class_combat_features.dart';
 import 'class_resource_rules.dart';
 import 'combat_class_actions.dart';
 import 'condition_rules.dart';
+import 'cover_rules.dart';
 import 'dice_engine.dart';
 import 'models.dart';
 import 'rules_engine.dart';
@@ -66,6 +67,7 @@ class MonkFlurryRules {
       !hero.isDead &&
       ConditionRules.canTakeActions(hero) &&
       !encounter.isFinished &&
+      CoverRules.canTargetDirectly(encounter.enemyCover) &&
       encounter.activeParticipant == 'hero' &&
       !encounter.bonusActionUsed &&
       ClassResourceRules.remaining(hero, 'focusPoints') >= 1 &&
@@ -84,6 +86,11 @@ class MonkFlurryRules {
   ) {
     if (strikeCount(hero) == 0) {
       throw StateError('Schlaghagel ist erst ab Mönchsstufe 2 möglich.');
+    }
+    if (!CoverRules.canTargetDirectly(encounter.enemyCover)) {
+      throw StateError(
+        'Vollständige Deckung verhindert einen direkten Schlaghagel.',
+      );
     }
     if (encounter.isFinished ||
         encounter.activeParticipant != 'hero' ||
@@ -133,7 +140,10 @@ class MonkFlurryRules {
       );
       final outcome = RulesEngine.attack(
         roll: roll,
-        armorClass: updatedEncounter.enemyArmorClass,
+        armorClass: CoverRules.armorClass(
+          updatedEncounter.enemyArmorClass,
+          updatedEncounter.enemyCover,
+        ),
         criticalThreshold: ClassCombatFeatures.weaponCriticalThreshold(hero),
       );
       var damage = 0;
