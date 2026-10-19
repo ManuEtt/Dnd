@@ -1,3 +1,28 @@
+## Integration 19.10.2026 – PR #11 und PR #9
+
+- SRD-Klassenaufstieg und Erstellungsprüfung aus PR #11 mit der Startausrüstung/RK/Bewegungs-Korrektur aus PR #9 auf separatem Integrationsbranch zusammengeführt. Integrationstest und Merge nach `main` stehen aus. Die gegenüber PR #11 neue Funktion aus PR #10 – validierte ASI (+2/+1+1) mit rückwirkender KO-TP-Berechnung – wurde in den vorhandenen Klassenaufstiegsdialog übernommen. Der alternative doppelte Dialog wird nicht eingebaut.
+
+**Prüfnachweis (19.10.2026):** RK-/Bewegungs-Fix im vollständigen GitHub-Lauf [39201449428](https://github.com/ManuEtt/Dnd/actions/runs/39201449428) auf `2f7ecb15` erfolgreich; echte Android-Geräteabnahme und Merge noch offen.
+
+## Unveröffentlicht – Start-RK und Spezies-Bewegung (19.10.2026)
+
+- Vorher fehlende `Rüstungsklasse` und `Bewegung` bei der Erstellung werden nach tatsächlich bestätigten Klassen-, Spezies- und Attributwerten vorgeschlagen (10 + GE; bei ungerüstetem Barbar KON und ungerüstetem Mönch WEI).
+- SRD-2024-Spezies: 9 m / 30 Fuß üblich, 10,5 m / 35 Fuß für Goliath/Waldelf; optionales Feld `speedRemainderDecimeters` für exakte halbe Meter und alte Spielstände unverändert.
+- Automatische Berechnung beim Neuanlegen bzw. Bestätigen der Attribute; ältere Figuren erhalten einen expliziten Button für fehlende Werte. Manuelle Werte und ungeklärte Spezies werden nicht überschrieben/erraten.
+- Angelegte Rüstung/Schilde weiterhin nur nach separater ausdrücklicher Bestätigung wirksam. Domain-/Widgettests ergänzt, Android- und CI-Prüfung für diese neue Änderung ausstehend.
+
+## Unveröffentlicht – Ausrüstung im Klassenassistenten/Import (19.10.2026)
+
+- Fehlerursache: SRD-Startsets wurden bisher nur als Name/Menge, ohne `catalogId` und `InventoryItemStats`, übernommen.
+- Neue `StartingEquipmentImport`-Zuordnung für eindeutige SRD-Katalogeinträge in allen zwölf Startklassen. Ungeklärte Optionen bleiben ohne erfundene Werte; 20 Pfeile werden als genau eine 20er-Packung gespeichert.
+- Vorhandene `catalogId`-Importe ohne `stats` werden rekonstruiert, **eigene Stats werden nie überschrieben**. Bereits gespeicherte freie Altgegenstände können nach explizitem Preview und Bestätigung im Charaktereditor sicher ergänzt werden.
+- SRD-Katalogtexte werden, falls vorhanden, als Beschreibung übernommen. Ausrüstung und magische Wirkung werden nicht stillschweigend aktiviert.
+- Regressionstests für alle Klassensets, Inventar/Altimport und Editor nachgerüstet. **CI-/APK-Abnahme für diesen Fix ausstehend.** Komplettimplementierung des SRD nicht behauptet.
+
+
+
+---
+
 ## Unveröffentlicht – Klassenentwicklung und SRD-Erstellungsprüfung (19.10.2026)
 
 - `SrdClassLevelUpRules`: fixer klassenspezifischer TP-Zuwachs, 1-stufiger Aufstieg in eine der vorhandenen Klassen, EP-Schwellenprüfung oder expliziter Meilenstein, Schnappschuss-/Stale-Prüfung und Level-20-Grenze.

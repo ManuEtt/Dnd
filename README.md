@@ -1,3 +1,65 @@
+# Entwicklungszusammenführung – Würfelraunen (19.10.2026)
+
+**Integration:** `integration/character-creation-20261019` kombiniert die bereits nach `main` übernommenen Änderungen aus PR #11 (SRD-Klassenaufstieg und Charaktererstellungsprüfung) mit dem in PR #9 getesteten Startausrüstungs-, Rüstungsklassen- und Bewegungsfix. Basis: `main` `b3e1de65`. Diese Kombination **bedarf eines eigenen kompletten CI-/APK-Tests**; die früheren grünen Einzel-PR-Builds beweisen die Integration nicht. Der fachlich überlappende PR #10 wurde auf zusätzliche Funktionen geprüft: die darin enthaltene validierte Attributsverbesserung (+2 oder +1/+1, 20er-Obergrenze, rückwirkende Konstitutions-TP) wurde **in den vorhandenen PR-#11-Aufstiegsassistenten übernommen**, ohne einen zweiten konkurrierenden Dialog einzubauen. Der übrige doppelte Code aus PR #10 wird nicht erneut integriert. Die gesamte Kombination muss gemeinsam per CI getestet werden.
+
+**Funktionen des gemeinsamen Stands:** Bei der Charaktererstellung werden eindeutige SRD-Gegenstände mit Katalog-ID und getypten Waffen-/Rüstungswerten importiert. Bekannte Spezies erhalten ihre bestätigte Grundbewegung (9 bzw. 10,5 m); die ungerüstete RK nutzt GE und gegebenenfalls KON/WEI, ausgerüstete Waffen/Rüstungen werden nur nach ausdrücklicher Bestätigung angewendet. Bestehende Figuren haben sichere Reparaturoptionen. Der von PR #11 integrierte Klassenaufstieg um eine Stufe prüft EP/Meilenstein, TP und offene Entscheidungen, unterstützt die bereits gewählte Zweitklasse. Die Attributsverbesserung aus PR #10 ist in denselben regelgeprüften Dialog aufgenommen; Konstitutions-Änderungen berechnen die rückwirkenden TP für alle Gesamtstufen. Noch nicht vollständige SRD-5.2.1-Regeln und echte Android-Geräteprüfung bleiben offen.
+
+**Quellen:** [PR #9](https://github.com/ManuEtt/Dnd/pull/9), [PR #10](https://github.com/ManuEtt/Dnd/pull/10), [PR #11](https://github.com/ManuEtt/Dnd/pull/11); [SRD-Regelmatrix](docs/SRD_5_2_1_REQUIREMENTS_MATRIX.md).
+
+---
+
+**Verifiziert am 19.10.2026:** Der vollständige GitHub-Actions-Lauf [39201449428](https://github.com/ManuEtt/Dnd/actions/runs/39201449428) für den RK-/Bewegungs-Fix auf Code-Commit `2f7ecb15` ist **erfolgreich** (Backend, Dart-Formatierung, Flutter-Analyse und -Tests, Android-Debug-APK, native Tests, Alpha-APK-Artefakte). **Ein echter Android-Gerätetest und die Integration in `main` stehen noch aus.** Ältere Zwischenstatusangaben weiter unten beziehen sich auf vorangegangene Commits.
+
+## Korrektur: Rüstungsklasse und Bewegung in der Charaktererstellung (19.10.2026)
+
+**Root Cause:** Die Charaktermaske ließ `armorClass` und `speed` bisher unverändert leer, auch wenn Spezies und Geschicklichkeit bereits bekannt waren. Die Startausrüstung kann nach dem Import zwar strukturierte Rüstungsdaten enthalten, wird jedoch erst nach ausdrücklichem Anlegen regelwirksam.
+
+**Neuer Ablauf:** Ein neuer Charakter erhält für die neun SRD-5.2.1-Spezies einen Bewegungsvorschlag (normalerweise **30 Fuß = 9 m**; Goliath und ausdrücklich als Waldelf gewählte Charaktere **35 Fuß = 10,5 m**). Die Grund-RK wird nach bestätigtem Geschicklichkeitswert gesetzt: **10 + GE-Modifikator**; beim ungerüsteten Barbar zusätzlich KON und beim ungerüsteten Mönch WEI. `speedRemainderDecimeters` speichert einen optionalen 0,5-m-Anteil, damit die 35-Fuß-Regel nicht auf 10 oder 11 m verfälscht wird. Das alte JSON-Schema bleibt lesbar, und Erschöpfung berechnet Bewegung auf Basis des vollständigen Grundwerts.
+
+**Manuelle und bestehende Charaktere:** Automatisch vorgeschlagene Werte werden bei später bestätigten Eingaben aktualisiert, aber **manuell eingegebene Werte nicht überschrieben**. Für ältere Charaktere gibt es im Charaktereditor den Button **„Fehlende RK und Bewegung berechnen“**. Unbekannte Spezies und ungeklärte Attribute bleiben explizit offen. **Importierte, aber nicht angelegte Rüstungen und Schilde werden nicht heimlich angewendet**; dafür weiterhin die bestätigte Funktion „Waffen und Rüstung anlegen / RK berechnen“ nutzen.
+
+**Tests:** `app/test/srd_starting_combat_values_test.dart` und `app/test/ui_starting_combat_values_test.dart` für Klassen-Grund-RK, SRD-Spezies, 10,5-m-Speicherung, Rückwärtskompatibilität und Schutz individueller Werte. **Neue CI-/Android-Abnahme muss für diese Änderung separat bestätigt werden**; der ältere erfolgreiche Workflow `39199122240` belegt ausschließlich den vorherigen Inventarimport-Fix.
+
+---
+
+# Würfelraunen – aktueller Entwicklungsstand (19.10.2026)
+
+**Schwerpunkt:** Fehlerbehebung für fehlende Attribute beim Ausrüstungsimport und Ausbau der D&D-5E-Regeln nach **SRD 5.2.1**.
+
+**Entwicklungsbranch:** `fix/equipment-import-attributes-20261019` (Abzweigung von `main` `82f2786b`). **App-Version laut Quellcode:** `0.8.5+55`; kein Release für diesen Fix zugesagt, bis alle CI-/Android-Prüfungen erfolgreich sind. Der separate [Aufstehen-PR #8](https://github.com/ManuEtt/Dnd/pull/8) ist parallel offen und **nicht** Bestandteil dieses Fehlerfixes.
+
+## Fehler behoben: Startausrüstung ohne SRD-Attribute
+
+**Ursache:** Der Klassenassistent übernahm die ausgewählte Startausrüstung bisher nur als `name` und `quantity`, nicht als `catalogId` plus `stats`. Deshalb fehlten Eigenschaften bei Waffen, Rüstungen und weiteren Gegenständen, obwohl der SRD-Katalog bereits strukturierte Felder enthielt.
+
+**Neuer Ablauf:**
+- Alle 12 SRD-Klassen erhalten bei der bestätigten Startausrüstung eindeutige Katalog-IDs, soweit ein Artikel eindeutig dem enthaltenen SRD-Katalog zugeordnet ist. Automatisch vorhandene strukturierte Werte: Gegenstandsart, Preis, Gewicht, Schaden/Schadensart, Vielseitigkeit, Waffeneigenschaften/-meisterschaften, Reichweiten/Munition, RK-/Stärke-/Geschicklichkeitswerte und Heimlichkeitsnachteil, je nach Artikel.
+- Die Bezeichnungen `Zweihänder`, `Arkaner Fokus (Kristall/Kugel/Kampfstab)`, `Kräuterkunde-Ausrüstung` etc. werden nur über **geprüfte eindeutige Aliasse** zugeordnet; freie Gegenstandsnamen oder Auswahlmöglichkeiten wie `Musikinstrument (nach Wahl)` / `Heiliges Symbol` werden **nicht** geraten.
+- Besonders wichtig: `20 Pfeile` sind **ein** Katalogpaket mit 20 Pfeilen, nicht 20 Pakete mit 400 Pfeilen.
+- Bei Charakter-JSON-Importen mit einer schon vorhandenen validen `catalogId`, aber fehlenden `stats`, werden die veröffentlichten Katalogattribute rekonstruiert. Eigens gespeicherte/überschriebene Stats bleiben unverändert; reine freie Namen bleiben unverändert.
+- **Altcharaktere ohne Katalog-ID:** Im Charaktereditor **„Fehlende SRD-Gegenstandswerte ergänzen“** auswählen. Die App zeigt die eindeutigen Zuordnungen und ändert das Inventar **erst nach ausdrücklicher Zustimmung**. Unbekannte und mehrdeutige Einträge bleiben bestehen.
+- Die Wahl eines Gegenstands im SRD-Katalog übernimmt zusätzlich dessen vorhandenen Informationstext; dies löst noch **keine magische Wirkung oder automatische Ausrüstung** aus. Rüstung, Schild und Waffe müssen wie bisher gesondert bestätigt/angelegt werden.
+
+**Tests und Builds:** `app/test/starting_equipment_import_test.dart` (alle zwölf Klassensets, Waffen-/Rüstungsdaten, Pfeile, Aliasse, Import-/Legacy-/Eigenwerte-Schutz) und `app/test/ui_starting_equipment_import_test.dart` (Bestätigung und Altinventar-Reparatur) wurden ergänzt. Der vollständige GitHub-Actions-Lauf [39199122240](https://github.com/ManuEtt/Dnd/actions/runs/39199122240) auf Commit `a8f2f090` ist **erfolgreich abgeschlossen** (Formatter, Flutter-Analyse, Flutter-/Backendtests, Android-Debug-APK, native Tests und APK-Artefakte). Ein Test auf einem echten Android-Gerät steht noch aus.
+
+## Vollständiges D&D-Regelwerk – realistischer Umfang
+
+**Nicht fertig:** Die App deckt das vollständige D&D-Regelwerk weder jetzt noch nach diesem Inventarfix ab. Lizenz- und Regelgrundlage ist das [deutsche SRD 5.2.1](https://www.dndbeyond.com/srd) unter CC BY 4.0. Nicht im SRD enthaltene, geschützte Zusatzbücher, Monster, Kampagnen und Markeninhalte dürfen nicht als frei lizenzierbar vorausgesetzt werden.
+
+Die Umsetzung erfolgt als überprüfbare Regelinkremente: (1) vollständige SRD-5.2.1-Anforderungsmatrix, (2) 12 Klassen und alle lizenzierten Herkünfte mit automatischer Charaktererstellung/-entwicklung, (3) Kampf-/Bewegungssystem und Zustände, (4) Zauber inklusive Ressourcen/Konzentration/Wirkungen, (5) Gegenstände/Ausrüstung/Schätze, (6) lizenzierte Monster/NPCs, Begegnungen und Exploration, (7) persistente KI-Spielleitung nur als Erzähler, (8) Migrationen, Import/Export und Android-/End-to-End-Abnahme. `docs/SRD_5_2_1_REQUIREMENTS_MATRIX.md` hält jede überprüfbare Regel mit Status und Tests fest. Keine pauschale 100-%-Behauptung.
+
+**Nächste Abnahme:** Featurebranch-HEAD und PR-Checks vergleichen, mit Flutter 3.35.7 / Dart 3.9.2 formatieren, Analyse/Tests/Backend/APK vollständig prüfen. Erst danach in `main` integrieren, danach PR #8 rebasen bzw. erneut vergleichen. Eingangsstand bleibt erhalten; kein unkontrollierter GitHub-Actions-Codex-Workflow.
+
+---
+
+## Ältere Projektchronik
+
+Die folgenden Einträge enthalten historische Statusangaben (u. a. der inzwischen geschlossene PR #7); der jeweils aktuelle Entwicklungs- und Prüfstand steht **oben**.
+
+
+
+---
+
 # Würfelraunen – Charaktererstellung und Klassenentwicklung (19.10.2026)
 
 **Aktueller Entwicklungsbranch:** `feature/srd-character-level-up-20261019` ab `main` `cadaf7369f8899f29370fb28dfdc2a92c0ba98aa`. **Stand:** Neuer Klassenaufstiegsassistent und SRD-Charaktererstellungsprüfung sind eingecheckt; **vollständige CI-/Android-Abnahme dieses Inkrements noch nicht bestätigt**. Die separate Ausrüstungs-/RK-/Bewegungskorrektur liegt in [PR #9](https://github.com/ManuEtt/Dnd/pull/9) und wurde nicht ungeprüft in dieses Inkrement kopiert.

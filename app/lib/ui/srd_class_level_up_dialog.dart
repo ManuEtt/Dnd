@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../domain/character_creation_progression.dart';
+import '../domain/class_progression_rules.dart';
 import '../domain/models.dart';
 import '../domain/srd_class_feature_catalog.dart';
 import '../domain/srd_class_level_up.dart';
+import 'ability_assignment_dialog.dart';
 
 /// A preview only; no campaign data changes until the editor is saved.
 class SrdClassLevelUpDialog extends StatefulWidget {
@@ -18,9 +20,22 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
   late String _target = widget.hero.className;
   LevelUpMethod _method = LevelUpMethod.experience;
   bool _chooseSubclass = false;
+  String _abilityChoice = 'pending';
+  String? _firstAbility;
+  String? _secondAbility;
   String? _error;
 
   String get _subclass => SrdClassFeatureCatalog.defaultSubclass[_target] ?? '';
+
+  Map<String, int> get _chosenAbilityBoost => switch (_abilityChoice) {
+    'two' when _firstAbility != null => {_firstAbility!: 2},
+    'split'
+        when _firstAbility != null &&
+            _secondAbility != null &&
+            _firstAbility != _secondAbility =>
+      {_firstAbility!: 1, _secondAbility!: 1},
+    _ => const {},
+  };
 
   SrdClassLevelUpProposal? _proposal() {
     try {
@@ -29,6 +44,7 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
         className: _target,
         method: _method,
         chosenSubclass: _chooseSubclass ? _subclass : '',
+        abilityIncreases: _chosenAbilityBoost,
       );
     } on FormatException catch (exception) {
       _error = exception.message;
@@ -37,6 +53,14 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
   }
 
   void _confirm() {
+    if (_abilityChoice != 'pending' && _chosenAbilityBoost.isEmpty) {
+      setState(
+        () => _error =
+            'Bitte die Attributswerte für '
+            'die gewählte Verbesserung vollständig auswählen.',
+      );
+      return;
+    }
     final proposal = _proposal();
     if (proposal == null) {
       setState(() {});
@@ -61,6 +85,11 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
         chosenLevel == 3 &&
         widget.hero.subclass.trim().isEmpty &&
         _subclass.isNotEmpty;
+    final featDue = ClassProgressionRules.milestonesForClass(_target).any(
+      (milestone) =>
+          milestone.classLevel == chosenLevel &&
+          milestone.type == ClassMilestoneType.featChoice,
+    );
     // The preview errors may depend on the selected XP/milestone mode.
     final proposal = _proposal();
     final message = proposal == null ? _error : null;
@@ -93,6 +122,9 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
                     setState(() {
                       _target = value;
                       _chooseSubclass = false;
+                      _abilityChoice = 'pending';
+                      _firstAbility = null;
+                      _secondAbility = null;
                       _error = null;
                     });
                   }
@@ -138,6 +170,76 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
                   onChanged: (value) =>
                       setState(() => _chooseSubclass = value ?? false),
                 ),
+              if (featDue) ...[
+                const SizedBox(height: 10),
+                const Text('Talentauswahl dieser Klassenstufe:'),
+                DropdownButtonFormField<String>(
+                  key: const ValueKey('levelup-asi-choice'),
+                  initialValue: _abilityChoice,
+                  isExpanded: true,
+                  items: const [
+                    DropdownMenuItem(
+                      value: 'pending',
+                      child: Text('Talent/ASI noch offen lassen'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'two',
+                      child: Text('Attributsverbesserung +2'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'split',
+                      child: Text('Attributsverbesserung +1 / +1'),
+                    ),
+                  ],
+                  onChanged: (value) => setState(() {
+                    _abilityChoice = value ?? 'pending';
+                    _firstAbility = null;
+                    _secondAbility = null;
+                  }),
+                ),
+                if (_abilityChoice == 'two' || _abilityChoice == 'split')
+                  DropdownButtonFormField<String>(
+                    key: const ValueKey('levelup-asi-first'),
+                    initialValue: _firstAbility,
+                    isExpanded: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Erstes Attribut',
+                    ),
+                    items: [
+                      for (final ability in abilityLabels.entries)
+                        DropdownMenuItem(
+                          value: ability.key,
+                          child: Text(
+                            '${ability.value} (${widget.hero.abilities[ability.key] ?? '–'})',
+                          ),
+                        ),
+                    ],
+                    onChanged: (value) => setState(() => _firstAbility = value),
+                  ),
+                if (_abilityChoice == 'split')
+                  DropdownButtonFormField<String>(
+                    key: const ValueKey('levelup-asi-second'),
+                    initialValue: _secondAbility,
+                    isExpanded: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Zweites Attribut',
+                    ),
+                    items: [
+                      for (final ability in abilityLabels.entries)
+                        if (ability.key != _firstAbility)
+                          DropdownMenuItem(
+                            value: ability.key,
+                            child: Text(
+                              '${ability.value} (${widget.hero.abilities[ability.key] ?? '–'})',
+                            ),
+                          ),
+                    ],
+                    onChanged: (value) =>
+                        setState(() => _secondAbility = value),
+                  ),
+                if (_abilityChoice != 'pending' && _chosenAbilityBoost.isEmpty)
+                  const Text('Bitte die passenden Attribute auswählen.'),
+              ],
               if (proposal != null) ...[
                 const SizedBox(height: 10),
                 Text(
@@ -150,6 +252,10 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
                   for (final feature in proposal.features)
                     Text('• ${feature.name} – ${feature.automation.name}'),
                 ],
+                if (proposal.abilityIncreases.isNotEmpty)
+                  Text(
+                    'Attributsverbesserung: ${proposal.abilityIncreases.entries.map((e) => '${abilityLabels[e.key]} +${e.value}').join(', ')}',
+                  ),
                 if (proposal.requiredChoices.isNotEmpty) ...[
                   const SizedBox(height: 10),
                   const Text(
@@ -170,10 +276,11 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
               ],
               const SizedBox(height: 10),
               const Text(
-                'Nach Bestätigung werden ausschließlich Klassenstufe und '
-                'feste Trefferpunkte angepasst. Talente, Zauber, '
-                'Ressourcen und Unterklassenwirkungen müssen nach ihren '
-                'jeweiligen SRD-Regeln separat bestätigt werden.',
+                'Nach Bestätigung werden Klassenstufe, feste Trefferpunkte '
+                'und nur ausdrücklich gewählte Attributsverbesserungen '
+                '(einschließlich rückwirkender TP durch KO) übernommen. '
+                'Andere Talente, Zauber und Unterklassenwirkungen '
+                'müssen separat bestätigt werden.',
                 style: TextStyle(fontSize: 12),
               ),
             ],

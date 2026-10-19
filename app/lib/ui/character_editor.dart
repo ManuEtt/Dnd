@@ -7,6 +7,8 @@ import '../domain/srd_class_level_up.dart';
 import '../domain/srd_character_creation_audit.dart';
 import '../domain/srd_character_classes.dart';
 import '../domain/srd_equipment_catalog.dart';
+import '../domain/starting_equipment_import.dart';
+import '../domain/srd_starting_combat_values.dart';
 import '../domain/equipment_rules.dart';
 import '../domain/multiclass_rules.dart';
 import '../domain/rules_engine.dart';
@@ -41,6 +43,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
   bool _manualAbilityException = false;
   bool _experienceManuallyEdited = false;
   bool _fighterSetupConfirmed = false;
+  String? _autoArmorClass;
+  String? _autoSpeed;
 
   @override
   void initState() {
@@ -71,9 +75,15 @@ class _CharacterEditorState extends State<CharacterEditor> {
       'weaponDamage',
       'exhaustionLevel',
     ]) {
+      final initial =
+          _original[key]?.toString() ?? (key == 'exhaustionLevel' ? '0' : '');
       _fields[key] = TextEditingController(
-        text:
-            _original[key]?.toString() ?? (key == 'exhaustionLevel' ? '0' : ''),
+        text: key == 'speed' && _original['speed'] != null
+            ? SrdStartingCombatValues.formatSpeedDecimeters(
+                (_original['speed'] as int) * 10 +
+                    ((_original['speedRemainderDecimeters'] as int?) ?? 0),
+              )
+            : initial,
       );
     }
     for (final key in [
@@ -91,6 +101,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
     for (final key in abilityLabels.keys) {
       _scores[key] = TextEditingController(text: scores[key]?.toString() ?? '');
     }
+    if (widget.hero == null) _autofillCombatValues();
   }
 
   @override
@@ -100,6 +111,97 @@ class _CharacterEditorState extends State<CharacterEditor> {
     }
     super.dispose();
   }
+
+  int? _confirmedAbility(String ability) {
+    final score = int.tryParse(_scores[ability]!.text.trim());
+    return score != null && score >= 1 && score <= 30 ? score : null;
+  }
+
+  int? _suggestedArmorClass() {
+    // A worn armor or shield requires the selected SRD item's rule formula.
+    // Never use merely imported but not equipped starter armor.
+    final armorId = _original['equippedArmorId'] as String? ?? '';
+    final shieldId = _original['equippedShieldId'] as String? ?? '';
+    if (armorId.isNotEmpty || shieldId.isNotEmpty) {
+      try {
+        final hero = _draftForEquipment();
+        return EquipmentRules.preview(
+          hero,
+          EquipmentSelection(
+            armorId: armorId,
+            shieldId: shieldId,
+            armorTrained: _original['equippedArmorTrained'] == true,
+            shieldTrained: _original['equippedShieldTrained'] == true,
+          ),
+        ).armorClass;
+      } catch (_) {
+        return null; // Keep unknown equipment outcomes explicit.
+      }
+    }
+    return SrdStartingCombatValues.unarmoredArmorClass(
+      className: _fields['className']!.text,
+      dexterity: _confirmedAbility('dexterity'),
+      constitution: _confirmedAbility('constitution'),
+      wisdom: _confirmedAbility('wisdom'),
+    );
+  }
+
+  /// Never overwrite a manually edited value. Existing characters only
+  /// opt in through the explicit button; new heroes get known SRD proposals.
+  void _autofillCombatValues({bool explicit = false}) {
+    if (widget.hero != null && !explicit) return;
+    final speciesDm = SrdStartingCombatValues.speedDecimeters(
+      _fields['species']!.text,
+    );
+    final speedField = _fields['speed']!;
+    final canUpdateSpeed =
+        speedField.text.trim().isEmpty ||
+        (widget.hero == null && speedField.text == _autoSpeed);
+    if (canUpdateSpeed) {
+      final suggested = speciesDm == null
+          ? ''
+          : SrdStartingCombatValues.formatSpeedDecimeters(speciesDm);
+      speedField.text = suggested;
+      _autoSpeed = suggested;
+    }
+
+    final acField = _fields['armorClass']!;
+    final canUpdateAc =
+        acField.text.trim().isEmpty ||
+        (widget.hero == null && acField.text == _autoArmorClass);
+    if (canUpdateAc) {
+      final ac = _suggestedArmorClass();
+      final suggested = ac?.toString() ?? '';
+      acField.text = suggested;
+      _autoArmorClass = suggested;
+    }
+  }
+
+  Widget _speedField() => SizedBox(
+    width: 195,
+    child: Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: TextFormField(
+        key: const ValueKey('character-speed-meters'),
+        controller: _fields['speed'],
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        decoration: const InputDecoration(
+          labelText: 'Bewegung',
+          suffixText: 'm',
+          helperText: 'Spezies-Basiswert; z. B. 9 oder 10,5',
+        ),
+        validator: (value) {
+          if (value == null || value.trim().isEmpty) return null;
+          try {
+            SrdStartingCombatValues.parseSpeedDecimeters(value);
+            return null;
+          } on FormatException catch (error) {
+            return error.message;
+          }
+        },
+      ),
+    ),
+  );
 
   Widget _text(
     String key,
@@ -114,6 +216,11 @@ class _CharacterEditorState extends State<CharacterEditor> {
         decoration: InputDecoration(labelText: label),
         minLines: lines,
         maxLines: lines == 1 ? 1 : 6,
+        onChanged: (value) {
+          if (widget.hero == null && (key == 'species' || key == 'className')) {
+            setState(() => _autofillCombatValues());
+          }
+        },
         validator: required
             ? (value) => value == null || value.trim().isEmpty
                   ? 'Bitte $label eintragen.'
@@ -158,7 +265,10 @@ class _CharacterEditorState extends State<CharacterEditor> {
           ),
           onChanged: (value) {
             if (isAbilityScore || key == 'exhaustionLevel') {
-              setState(() => _error = null);
+              setState(() {
+                _error = null;
+                if (isAbilityScore) _autofillCombatValues();
+              });
             } else if (widget.hero == null && key == 'level') {
               final level = int.tryParse(value.trim());
               if (level != null &&
@@ -189,6 +299,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
   }
 
   void _save() {
+    if (widget.hero == null) _autofillCombatValues();
     if (!_form.currentState!.validate()) return;
     try {
       final json = Map<String, dynamic>.from(_original);
@@ -208,12 +319,24 @@ class _CharacterEditorState extends State<CharacterEditor> {
         'hitPoints',
         'maxHitPoints',
         'armorClass',
-        'speed',
         'experience',
         'gold',
         'exhaustionLevel',
       ]) {
         json[key] = int.tryParse(_fields[key]!.text.trim());
+      }
+      final speedText = _fields['speed']!.text.trim();
+      if (speedText.isEmpty) {
+        json['speed'] = null;
+        json.remove('speedRemainderDecimeters');
+      } else {
+        final dm = SrdStartingCombatValues.parseSpeedDecimeters(speedText);
+        json['speed'] = dm ~/ 10;
+        if (dm % 10 == 0) {
+          json.remove('speedRemainderDecimeters');
+        } else {
+          json['speedRemainderDecimeters'] = dm % 10;
+        }
       }
       for (final key in [
         'skills',
@@ -354,11 +477,80 @@ class _CharacterEditorState extends State<CharacterEditor> {
           id: const Uuid().v4(),
           name: selected.name,
           quantity: 1,
-          description: '', // Values resolve through catalogId.
+          description:
+              selected.note ?? '', // Reference-only note; mechanics in stats.
           catalogId: selected.id,
           stats: InventoryItemStats.fromCatalog(selected),
         ).toJson(),
       );
+    });
+  }
+
+  /// Older starting kits stored only a name and quantity. Require an
+  /// explicit preview/confirmation before adding reviewed SRD metadata.
+  Future<void> _enrichInventoryFromCatalog() async {
+    final entries = (_original['inventory'] as List)
+        .map(
+          (value) =>
+              InventoryItem.fromJson(Map<String, dynamic>.from(value as Map)),
+        )
+        .toList();
+    final updated = entries
+        .map(StartingEquipmentImport.enrichLegacyItem)
+        .toList();
+    final changed = <int>[
+      for (var i = 0; i < entries.length; i++)
+        if (entries[i].catalogId != updated[i].catalogId) i,
+    ];
+    if (changed.isEmpty) {
+      setState(
+        () => _error =
+            'Keine eindeutig passenden Gegenstände ohne Katalogwerte gefunden. '
+            'Offene Ausrüstungswahlen bitte im SRD-Katalog auswählen.',
+      );
+      return;
+    }
+    final approved = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('SRD-Gegenstandswerte nachtragen'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Nur eindeutig zugeordnete Gegenstände erhalten '
+                'ihre veröffentlichten Katalogattribute. '
+                'Eigene Gegenstandswerte und nicht eindeutige '
+                'Auswahlmöglichkeiten bleiben unverändert.',
+              ),
+              const SizedBox(height: 12),
+              for (final i in changed)
+                Text(
+                  '${entries[i].name} → ${updated[i].name} '
+                  '(Anzahl ${updated[i].quantity})',
+                ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Abbrechen'),
+          ),
+          FilledButton(
+            key: const ValueKey('character-enrich-confirm'),
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Attribute übernehmen'),
+          ),
+        ],
+      ),
+    );
+    if (approved != true || !mounted) return;
+    setState(() {
+      _original['inventory'] = updated.map((item) => item.toJson()).toList();
+      _error = null;
     });
   }
 
@@ -402,6 +594,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
         _original['weaponProficient'] = confirmed.weaponProficient;
         if (proposal.armorClass != null) {
           _fields['armorClass']!.text = '${confirmed.armorClass}';
+          _autoArmorClass = null; // Equipment was explicitly confirmed.
         }
         if (proposal.weaponDamage != null) {
           _fields['weaponDamage']!.text = confirmed.weaponDamage;
@@ -714,6 +907,9 @@ class _CharacterEditorState extends State<CharacterEditor> {
         _fields['hitPoints']!.text = result.hitPoints!.toString();
         _fields['maxHitPoints']!.text = result.maxHitPoints!.toString();
         _fields['subclass']!.text = result.subclass;
+        for (final entry in result.abilities.entries) {
+          _scores[entry.key]!.text = entry.value?.toString() ?? '';
+        }
         _original['secondaryClassLevel'] = result.secondaryClassLevel;
         _original['unverifiedNotes'] = [...result.unverifiedNotes];
         _error = null;
@@ -862,14 +1058,14 @@ class _CharacterEditorState extends State<CharacterEditor> {
         final inventory = _original['inventory'] as List;
         for (final item in kit.items) {
           inventory.add(
-            InventoryItem(
-              id: const Uuid().v4(),
-              name: item.name,
-              quantity: item.quantity,
+            StartingEquipmentImport.fromStartingItem(
+              item,
+              const Uuid().v4(),
             ).toJson(),
           );
         }
       }
+      _autofillCombatValues();
       _error = null;
     });
   }
@@ -897,6 +1093,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
       }
       _fields['background']!.text = result.background;
       _generatedStartingAbilities = result.scores;
+      _autofillCombatValues();
     });
   }
 
@@ -1065,14 +1262,23 @@ class _CharacterEditorState extends State<CharacterEditor> {
                       _number('hitPoints', 'Aktuelle TP'),
                       _number('maxHitPoints', 'Maximale TP', min: 1),
                       _number('armorClass', 'Rüstungsklasse', min: 1, max: 40),
-                      _number(
-                        'speed',
-                        'Bewegung',
-                        min: 1,
-                        max: 200,
-                        suffix: 'm',
-                      ),
+                      _speedField(),
                     ],
+                  ),
+                  OutlinedButton.icon(
+                    key: const ValueKey('character-recalculate-combat-values'),
+                    onPressed: () => setState(() {
+                      _autofillCombatValues(explicit: true);
+                      _error =
+                          _fields['armorClass']!.text.isEmpty ||
+                              _fields['speed']!.text.isEmpty
+                          ? 'Für die automatische Berechnung bitte eine bekannte '
+                                'SRD-Spezies und den Geschicklichkeitswert '
+                                '(beim Mönch/Barbaren auch den zweiten Wert) bestätigen.'
+                          : null;
+                    }),
+                    icon: const Icon(Icons.calculate_outlined),
+                    label: const Text('Fehlende RK und Bewegung berechnen'),
                   ),
                   OutlinedButton.icon(
                     key: const ValueKey('suggest-level1-hit-points'),
@@ -1224,6 +1430,13 @@ class _CharacterEditorState extends State<CharacterEditor> {
                     label: const Text(
                       'Ausrüstung ablegen (Werte manuell prüfen)',
                     ),
+                  ),
+                  const SizedBox(height: 8),
+                  OutlinedButton.icon(
+                    key: const ValueKey('character-enrich-equipment'),
+                    onPressed: _enrichInventoryFromCatalog,
+                    icon: const Icon(Icons.auto_fix_high_outlined),
+                    label: const Text('Fehlende SRD-Gegenstandswerte ergänzen'),
                   ),
                   const SizedBox(height: 8),
                   OutlinedButton.icon(

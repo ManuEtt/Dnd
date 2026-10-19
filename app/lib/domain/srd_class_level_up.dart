@@ -27,6 +27,7 @@ class SrdClassLevelUpProposal {
     required this.requiredChoices,
     required this.chosenSubclass,
     required this.isSecondary,
+    required this.abilityIncreases,
   });
 
   final String sourceSnapshot;
@@ -37,6 +38,7 @@ class SrdClassLevelUpProposal {
   final List<String> requiredChoices;
   final String chosenSubclass;
   final bool isSecondary;
+  final Map<String, int> abilityIncreases;
 
   HeroCharacter applyTo(HeroCharacter hero) {
     if (jsonEncode(hero.toJson()) != sourceSnapshot) {
@@ -46,7 +48,14 @@ class SrdClassLevelUpProposal {
     }
     final unresolved = requiredChoices.where(
       (choice) =>
-          !choice.startsWith('Unterklasse wählen') || chosenSubclass.isEmpty,
+          (!choice.startsWith('Unterklasse wählen') ||
+              chosenSubclass.isEmpty) &&
+          (!choice.startsWith('Talent oder Attributsverbesserung wählen') ||
+              abilityIncreases.isEmpty) &&
+          (!choice.startsWith('Zusätzliche Kämpfer-Talentauswahl') ||
+              abilityIncreases.isEmpty) &&
+          (!choice.startsWith('Zusätzliche Schurken-Talentauswahl') ||
+              abilityIncreases.isEmpty),
     );
     final notes = <String>[
       ...hero.unverifiedNotes,
@@ -59,6 +68,11 @@ class SrdClassLevelUpProposal {
           ? hero.secondaryClassLevel + 1
           : hero.secondaryClassLevel,
       subclass: chosenSubclass.isNotEmpty ? chosenSubclass : hero.subclass,
+      abilities: {
+        ...hero.abilities,
+        for (final change in abilityIncreases.entries)
+          change.key: hero.abilities[change.key]! + change.value,
+      },
       maxHitPoints: hero.maxHitPoints! + hpGain,
       hitPoints: hero.hitPoints! + hpGain,
       unverifiedNotes: notes,
@@ -77,6 +91,7 @@ class SrdClassLevelUpRules {
     required String className,
     required LevelUpMethod method,
     String chosenSubclass = '',
+    Map<String, int> abilityIncreases = const {},
   }) {
     final first = findSrdClass(hero.className);
     final other = hero.hasSecondClass
@@ -150,6 +165,35 @@ class SrdClassLevelUpRules {
                   m.type == ClassMilestoneType.epicBoon),
         )
         .map((m) => m.label);
+    final featDue = ClassProgressionRules.milestonesForClass(selected.name).any(
+      (m) =>
+          m.classLevel == classLevel && m.type == ClassMilestoneType.featChoice,
+    );
+    if (!featDue && abilityIncreases.isNotEmpty) {
+      throw const FormatException(
+        'Auf dieser Klassenstufe ist keine Attributsverbesserung vorgesehen.',
+      );
+    }
+    if (abilityIncreases.isNotEmpty) {
+      final values = abilityIncreases.values.toList();
+      final validShape =
+          (values.length == 1 && values.single == 2) ||
+          (values.length == 2 && values.every((v) => v == 1));
+      if (!validShape) {
+        throw const FormatException(
+          'Attributsverbesserung muss +2 oder +1/+1 betragen.',
+        );
+      }
+      for (final entry in abilityIncreases.entries) {
+        if (!abilityNames.contains(entry.key) ||
+            hero.abilities[entry.key] == null ||
+            hero.abilities[entry.key]! + entry.value > 20) {
+          throw const FormatException(
+            'Die gewählten bestätigten Attribute dürfen 20 nicht überschreiten.',
+          );
+        }
+      }
+    }
     final choices = <String>{
       ...milestones,
       for (final feature in classFeatures)
@@ -159,10 +203,18 @@ class SrdClassLevelUpRules {
             feature.name != 'Epic Boon')
           'Klassenwahl: ${feature.name}',
     };
-    final hpGain = math.max(
-      1,
-      selected.hitDie ~/ 2 + 1 + RulesEngine.abilityModifier(con),
+    final oldConModifier = RulesEngine.abilityModifier(con);
+    final newConModifier = RulesEngine.abilityModifier(
+      con + (abilityIncreases['constitution'] ?? 0),
     );
+    final fixedHpGain = math.max(1, selected.hitDie ~/ 2 + 1 + oldConModifier);
+    // A Constitution modifier change affects HP for every total level,
+    // including the newly gained one (SRD 5.2.1 Ability Scores).
+    final hpGain =
+        fixedHpGain + (newConModifier - oldConModifier) * (hero.level + 1);
+    if (hero.maxHitPoints! + hpGain < 1) {
+      throw const FormatException('Ungültige neue maximale Trefferpunkte.');
+    }
     return SrdClassLevelUpProposal(
       sourceSnapshot: jsonEncode(hero.toJson()),
       className: selected.name,
@@ -175,6 +227,7 @@ class SrdClassLevelUpRules {
       requiredChoices: List.unmodifiable(choices),
       chosenSubclass: chosenSubclass,
       isSecondary: isSecondary,
+      abilityIncreases: Map.unmodifiable(abilityIncreases),
     );
   }
 }

@@ -20,7 +20,7 @@ class ExhaustionRules {
   /// The app's existing speed field is in meters. Five feet = 1.5 m.
   /// Keep base speed unchanged; movement is calculated for this turn only.
   static double? effectiveSpeedMeters(HeroCharacter hero) {
-    final speed = hero.speed;
+    final speed = hero.baseSpeedMeters;
     if (speed == null) return null;
     final reduced = speed - 1.5 * _validate(hero.exhaustionLevel);
     return reduced < 0 ? 0 : reduced;

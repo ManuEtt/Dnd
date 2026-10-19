@@ -1,3 +1,33 @@
+# Integrations-Checkpoint 19.10.2026
+
+Branch `integration/character-creation-20261019` von `main` `b3e1de65`: PR #11 bereits enthalten; Code aus PR #9 konfliktfrei dreifach abgeglichen (vorheriges gemeinsames Git-Base `82f2786b`), ohne neue PR #11-Merkmale zu entfernen. PR #10 wurde fachlich mit PR #11 verglichen: seine einzigartige ASI-Auswahl (+2 oder +1/+1, bestätigte Attribute ≤20, rückwirkende KO-TP) ist in den bestehenden PR-#11-Regel- und UI-Weg integriert, mit `integrated_character_level_up_test.dart` getestet werden. Der konkurrierende zweite Dialog wird nicht übernommen. **Aktuelle gemeinsame CI und Android-Artefakte offen**; weder fertig noch installiert behaupten.
+
+# CI-Verifizierung – RK und Bewegung, 19.10.2026
+
+[Android-Alpha-Workflow 39201449428](https://github.com/ManuEtt/Dnd/actions/runs/39201449428): **SUCCESS** für Code-Commit `2f7ecb1589723075a09197d2f2f70efcae18477b` im Branch `fix/equipment-import-attributes-20261019` (PR #9). Der anfängliche Widgettest-Fehler beruhte darauf, dass ein Eingabefeld nach dem Scrollen nicht mehr im lazily gerenderten ListView montiert war; der Test wurde korrigiert und der **gesamte** Workflow erneut erfolgreich durchlaufen. Backend-, Flutter-, Android-Debug-/Native- und kompakte Alpha-APK-Schritte sind erfolgreich. Gerätetest und Review/Merge in `main` fehlen weiterhin. Keine vollständig implementierte SRD-Gesamtabdeckung behaupten.
+
+---
+
+# Zwischenstand 19.10.2026 – Fehlende RK/Bewegung korrigieren
+
+PR #9, Branch `fix/equipment-import-attributes-20261019` ergänzt jetzt zusätzlich zum bereits CI-geprüften Ausrüstungsimport die Berechnung fehlender Kampfwerte: SRD-Speziesgeschwindigkeit, ungerüstete Grund-RK inkl. Mönch/Barbar, automatisch nach bestätigten Feldern im neuen Charaktereditor und explizit bei alten Figuren. `speedRemainderDecimeters` als optionales Legacy-sicheres JSON-Feld (Goliath/Waldelf 10,5 m) und angepasste Erschöpfungsbewegung; vorhandene manuelle Werte bleiben erhalten.
+
+Neu: `app/lib/domain/srd_starting_combat_values.dart`, `app/test/srd_starting_combat_values_test.dart`, `app/test/ui_starting_combat_values_test.dart`; Änderungen an `models.dart`, `condition_rules.dart`, `character_editor.dart`. **CI-Durchlauf für dieses Inkrement ausstehend**, bisheriger grüner Stand `39199122240` gilt nur für den vorangegangenen Import-Fix. Keine Freigabe oder Merge ohne vollständige Analyse, Tests, APK und reale Geräteabnahme. SRD 5.2.1 bleibt insgesamt unvollständig.
+
+---
+
+# Checkpoint: Ausrüstungsattribute beim Import, 19.10.2026
+
+Branch `fix/equipment-import-attributes-20261019` von `main` `82f2786b`. Parallel existiert PR #8 für die Aufstehen-Regel, hier bewusst nicht vermischt. Diese Änderungen: `app/lib/domain/starting_equipment_import.dart`, `app/lib/domain/models.dart`, `app/lib/ui/character_editor.dart`, `app/test/starting_equipment_import_test.dart`, `app/test/ui_starting_equipment_import_test.dart`. Alte Klassenstartsets bekamen bisher nur Namen und Mengen; nun werden eindeutige Katalog-IDs samt strukturierten Daten geschrieben. Validierte Katalog-ID ohne Stats wird beim Import wiederhergestellt, vorhandene individuelle Daten werden nicht überschrieben. Altgegenstände ohne ID werden erst nach expliziter UI-Vorschau und Bestätigung angereichert. 20 Pfeile werden korrekt als eine 20er-Packung behandelt.
+
+Verifizierte CI: kompletter GitHub-Actions-Lauf [39199122240](https://github.com/ManuEtt/Dnd/actions/runs/39199122240) auf `a8f2f090` erfolgreich (Format, Analyze, Flutter-/Backendtests, Android-Debug-APK, native Tests, APK-Artefakte). Noch erforderlich: Test auf echtem Android-Gerät, Review, Merge/Statusabgleich und weitere SRD-Inkremente. Unbekannte Auswahlgegenstände bleiben bewusst offen. Für den Nutzerwunsch „komplettes D&D-Regelwerk“: nur lizenzierte SRD-5.2.1-Regeln und nachweislich getestete Regel-IDs implementieren, alle sonstigen als TEILWEISE/FEHLT führen; Details in README/Regelmatrix. **Dieser Checkpoint ist keine Freigabe.**
+
+---
+
+
+
+---
+
 # Checkpoint 19.10.2026 – Charaktererstellung und Klassenaufstieg
 
 Branch `feature/srd-character-level-up-20261019` ab `main` `cadaf7369f8899f29370fb28dfdc2a92c0ba98aa`. Die zwei offenen SRD-Charakter-/Ausrüstungsstränge aus anderen PRs nicht einfach überschreiben: vor Integration HEAD/PRs und eventuelle Konflikte prüfen.
