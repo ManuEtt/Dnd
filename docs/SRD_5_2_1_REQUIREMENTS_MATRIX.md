@@ -1,5 +1,8 @@
 # SRD 5.2.1 – Regelanforderungsmatrix (laufender Aufbau)
 
+**Stand 19.10.2026:** PR #11, #12 und #13 sind in `main` übernommen. Die früher separat entwickelten Inventar-/RK-/Spezies- und ASI-Erweiterungen aus PR #9/#10 wurden nach konfliktbereinigter Integration in PR #12 eingebaut; alte PRs #9/#10 sind als ersetzt geschlossen. Ältere Statuszeilen `IMPLEMENTIERT_UNGETESTET` oder `CI offen` in der nachfolgenden Chronik beziehen sich auf den damaligen Zeitpunkt. Der kombinierte Flutter-/Backend-Test und Analyse sind im [CI-Lauf 39206965724](https://github.com/ManuEtt/Dnd/actions/runs/39206965724) erfolgreich; Android-/APK-Abschluss und echter Gerätetest getrennt nachweisen. Nicht alle SRD-Inhalte sind implementiert.
+
+
 ## Integrationsstatus (19.10.2026)
 
 PR #11 ist auf `main` enthalten. Die PR-#9-Regeln für Startausrüstung/RK/Bewegung sind in `integration/character-creation-20261019` zusammengeführt. Die gemeinsame CI ist noch zu bestätigen. PR #10 enthält überschneidende Klassenaufstiegsregeln und muss getrennt auf zusätzliche Fähigkeiten geprüft werden. `GETESTET` in älteren Zeilen bezieht sich auf die jeweils verlinkte Einzelbranch-CI, **nicht** die Integration.
