@@ -21,10 +21,9 @@ class CampaignExperience {
     'resolve-rabenwacht': 900,
   };
 
-  static int? nextThreshold(HeroCharacter hero) =>
-      hero.level >= 20
-          ? null
-          : CharacterCreationProgression.startingExperience(hero.level + 1);
+  static int? nextThreshold(HeroCharacter hero) => hero.level >= 20
+      ? null
+      : CharacterCreationProgression.startingExperience(hero.level + 1);
 
   static int? pointsUntilLevel(HeroCharacter hero) {
     final next = nextThreshold(hero);
@@ -85,7 +84,7 @@ class CampaignExperience {
       '+$amount EP für deinen Fortschritt. '
       'Du hast jetzt ${updated.hero.experience} EP.'
       '${leveled ? ' Eine neue Charakterstufe ist erreichbar! '
-          'Öffne deinen Charakterbogen und nutze den Klassenaufstieg.' : ''}',
+                'Öffne deinen Charakterbogen und nutze den Klassenaufstieg.' : ''}',
     );
   }
 }

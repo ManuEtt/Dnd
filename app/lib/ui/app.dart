@@ -1105,21 +1105,23 @@ class _AdventurePageState extends State<_AdventurePage> {
                       Text(
                         'Stufe ${campaign.hero.level} · '
                         '${campaign.hero.experience?.toString() ?? 'EP unbekannt'} EP'
-                        '${CampaignExperience.nextThreshold(campaign.hero) == null
-                            ? ' · Höchststufe'
-                            : ' / ${CampaignExperience.nextThreshold(campaign.hero)} EP zur nächsten Stufe'}',
+                        '${CampaignExperience.nextThreshold(campaign.hero) == null ? ' · Höchststufe' : ' / ${CampaignExperience.nextThreshold(campaign.hero)} EP zur nächsten Stufe'}',
                         key: const ValueKey('adventure-xp-status'),
                       ),
-                      if (CampaignExperience.levelProgress(campaign.hero) != null)
+                      if (CampaignExperience.levelProgress(campaign.hero) !=
+                          null)
                         LinearProgressIndicator(
                           key: const ValueKey('adventure-xp-progress'),
-                          value: CampaignExperience.levelProgress(campaign.hero),
+                          value: CampaignExperience.levelProgress(
+                            campaign.hero,
+                          ),
                           minHeight: 5,
                         ),
                       if (CampaignExperience.canLevelUp(campaign.hero))
                         TextButton.icon(
                           key: const ValueKey('adventure-levelup-ready'),
-                          onPressed: widget.controller.busy ||
+                          onPressed:
+                              widget.controller.busy ||
                                   campaign.pendingRoll != null ||
                                   campaign.encounter != null ||
                                   campaign.pendingDeathSave != null
