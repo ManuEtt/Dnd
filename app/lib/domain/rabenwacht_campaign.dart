@@ -507,7 +507,7 @@ class RabenwachtCampaign {
             'Du verlässt den Brunnen und kehrst zwischen die Häuser '
                 'zurück. Die Dorfvorsteherin erwartet dich in der '
                 'Ratsstube, während im Gasthaus Licht brennt.',
-            clues: {'wellVisited': 'true', 'location': 'Dorfplatz'},
+            clues: {'location': 'Dorfplatz'},
           );
         }
         return RabenwachtTurn(
