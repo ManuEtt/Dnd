@@ -1,3 +1,11 @@
+## 0.8.14+64 – Abenteuer-Status und Auftragsübersicht (19.10.2026)
+
+- Neuer Fantasy-HUD im Abenteuerbildschirm mit 2- bis 4-spaltigem, responsivem Raster für tatsächlich bestätigte Trefferpunkte, Rüstungsklasse, Bewegungsrate und Erfahrungspunkte. Trefferpunkte- und EP-Fortschritt erscheinen nur bei bestätigten Werten.
+- Temporäre TP, dokumentierte Zustände, Konzentration und regelgeprüfter Stufenaufstieg werden angezeigt, ohne Spielwerte oder Zustände zu verändern.
+- Neue aufklappbare Auftragsübersicht liest ausschließlich die bestätigten `Campaign.quests`, unterscheidet aktiv/abgeschlossen/gescheitert und bietet einen direkten Tagebuchaufruf.
+- Der Abenteuerkopf führt Aktionen auf schmalen Displays in einer separaten, umbrechenden Leiste; Import/Export, Charakterbogen, Ausrüstung, Zustände und Heilung bleiben auf ihren bisherigen Controller-Aktionen.
+- Tests für kleine und breite Displays, große Schrift, unbekannte Werte, Queststatus und Tagebuchnavigation. Vollständige GitHub-CI-/APK-Abnahme für den finalen Commit gesondert prüfen; ein echter Android-Gerätetest steht noch aus.
+
 ## 0.8.13+63 – Illustrierte Heldenübersicht (19.10.2026)
 
 - Neuer Fantasy-Dashboard-Bereich auf der Startseite bei vorhandenen Kampagnen: gespeichertes Charakterporträt, Name, Klasse, Stufe und Kampagnentitel.
