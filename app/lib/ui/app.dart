@@ -1101,34 +1101,14 @@ class _AdventurePageState extends State<_AdventurePage> {
                         '${campaign.hero.name} · TP ${campaign.hero.hitPoints ?? '?'}/${campaign.hero.maxHitPoints ?? '?'} '
                         '· RK ${campaign.hero.armorClass ?? '?'}',
                       ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'Stufe ${campaign.hero.level} · '
-                        '${campaign.hero.experience?.toString() ?? 'EP unbekannt'} EP'
-                        '${CampaignExperience.nextThreshold(campaign.hero) == null ? ' · Höchststufe' : ' / ${CampaignExperience.nextThreshold(campaign.hero)} EP zur nächsten Stufe'}',
-                        key: const ValueKey('adventure-xp-status'),
-                      ),
-                      if (CampaignExperience.levelProgress(campaign.hero) !=
-                          null)
-                        LinearProgressIndicator(
-                          key: const ValueKey('adventure-xp-progress'),
-                          value: CampaignExperience.levelProgress(
-                            campaign.hero,
+                      if (campaign.hero.experience != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Text(
+                            'Stufe ${campaign.hero.level} · ${campaign.hero.experience} EP',
+                            key: const ValueKey('adventure-xp-status'),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
-                          minHeight: 5,
-                        ),
-                      if (CampaignExperience.canLevelUp(campaign.hero))
-                        TextButton.icon(
-                          key: const ValueKey('adventure-levelup-ready'),
-                          onPressed:
-                              widget.controller.busy ||
-                                  campaign.pendingRoll != null ||
-                                  campaign.encounter != null ||
-                                  campaign.pendingDeathSave != null
-                              ? null
-                              : _editHero,
-                          icon: const Icon(Icons.trending_up_outlined),
-                          label: const Text('Stufenaufstieg verfügbar'),
                         ),
                       TextButton.icon(
                         key: const ValueKey('adventure-open-character-sheet'),
@@ -1326,6 +1306,39 @@ class _AdventurePageState extends State<_AdventurePage> {
                     padding: const EdgeInsets.all(16),
                     children: [
                       header,
+                      const SizedBox(height: 8),
+                      FantasyPanel(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Erfahrungsfortschritt: ${campaign.hero.experience?.toString() ?? 'nicht bestätigt'} EP'
+                              '${CampaignExperience.nextThreshold(campaign.hero) == null ? ' · Höchststufe' : ' / ${CampaignExperience.nextThreshold(campaign.hero)} EP'}',
+                              key: const ValueKey('adventure-xp-details'),
+                            ),
+                            const SizedBox(height: 6),
+                            if (CampaignExperience.levelProgress(campaign.hero) != null)
+                              LinearProgressIndicator(
+                                key: const ValueKey('adventure-xp-progress'),
+                                value: CampaignExperience.levelProgress(campaign.hero),
+                                minHeight: 5,
+                              ),
+                            if (CampaignExperience.canLevelUp(campaign.hero))
+                              TextButton.icon(
+                                key: const ValueKey('adventure-levelup-ready'),
+                                onPressed: widget.controller.busy ||
+                                        campaign.pendingRoll != null ||
+                                        campaign.encounter != null ||
+                                        campaign.pendingDeathSave != null
+                                    ? null
+                                    : _editHero,
+                                icon: const Icon(Icons.trending_up_outlined),
+                                label: const Text('Stufenaufstieg verfügbar'),
+                              ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
                       FantasyScenePanel(
                         key: const ValueKey('adventure-illustrated-scene'),
                         scene: campaign.scene,
