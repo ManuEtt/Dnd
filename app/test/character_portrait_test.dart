@@ -93,7 +93,13 @@ void main() {
       await tester.tap(find.text('Wählen'));
       await tester.pumpAndSettle();
       final fourth = find.byKey(const ValueKey('portrait-option-3'));
+      await tester.scrollUntilVisible(
+        fourth,
+        220,
+        scrollable: find.byType(Scrollable).first,
+      );
       await tester.ensureVisible(fourth);
+      await tester.pumpAndSettle();
       await tester.tap(fourth);
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('portrait-apply')));
