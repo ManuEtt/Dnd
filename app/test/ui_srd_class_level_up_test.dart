@@ -136,5 +136,4 @@ void main() {
     expect(find.byKey(const ValueKey('levelup-error')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
-
 }
