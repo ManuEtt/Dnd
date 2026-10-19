@@ -1,3 +1,14 @@
+## Stufenaufstieg Hauptklasse (19.10.2026)
+
+| ID | Quelle | Regel | Engine/UI | Tests und Nachweis | Status |
+| --- | --- | --- | --- | --- | --- |
+| CLASS-LEVEL-UP-12 | SRD 5.2.1: Class Advancement | Aufstieg aller 12 Basisklassen um genau eine Hauptklassenstufe bis max. 20 | `primary_class_level_up.dart`, `primary_class_level_up_dialog.dart`, `character_editor.dart` | `primary_class_level_up_test.dart`, `ui_primary_class_level_up_test.dart` | IMPLEMENTIERT_UNGETESTET; CI ausstehend |
+| CLASS-XP-MILESTONE | Character Advancement | EP-Schwelle oder explizit bestätigter Meilenstein, keine erfundenen EP | `primary_class_level_up.dart` | Domain/UI-Tests | IMPLEMENTIERT_UNGETESTET |
+| CLASS-HP-PROGRESSION | Gaining Levels | Durchschnittlicher Trefferwürfel + KON min. 1; KON-Änderung retroaktiv auf Gesamtstufe | `primary_class_level_up.dart` | Domain-Tests | IMPLEMENTIERT_UNGETESTET |
+| CLASS-SUBCLASS-CHOICE | Level 3 | Exklusive SRD-Unterklasse bewusst wählen, nicht erfinden | `primary_class_level_up_dialog.dart` | Domain/UI-Tests | TEILWEISE: pro Klasse eine lizenzierte Unterklasse, Zweitklassen-Unterklasse noch offen |
+| CLASS-FEAT-ASI | Class Advancement | +2 auf ein oder +1 auf zwei Attribute (Cap 20), Klassen-Meilensteine berücksichtigen | `primary_class_level_up.dart` | Domain-Tests | TEILWEISE: alternative Feats/Epic Boons aufgeschoben |
+| CLASS-FEATURE-CHOICES | SRD 5.2.1 Klassenstufentabellen | Spell/Invocation/Metamagic/sonstige Merkmalsentscheidungen vollständig sicher auflösen | Featurekatalog vorhanden; offene Wahlen werden nur protokolliert | weiter erforderliche E2E-Tests | TEILWEISE |
+
 # SRD 5.2.1 – Regelanforderungsmatrix (laufender Aufbau)
 
 ## Neue Anforderung (19.10.2026)
