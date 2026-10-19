@@ -13,6 +13,7 @@ import '../domain/spellcasting_rules.dart';
 import '../domain/rules_engine.dart';
 import 'fantasy_art.dart';
 import 'fantasy_experience.dart';
+import 'fantasy_ui.dart';
 import 'character_portrait_picker.dart';
 
 // A read-only presentation of the actual, confirmed character data. No state,
@@ -67,15 +68,7 @@ class _CharacterSheetPageState extends State<CharacterSheetPage> {
             ),
         ],
       ),
-      body: DecoratedBox(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xff142c42), _night, Color(0xff0b1725)],
-            stops: [0, .42, 1],
-          ),
-        ),
+      body: FantasyBackdrop(
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 860),
