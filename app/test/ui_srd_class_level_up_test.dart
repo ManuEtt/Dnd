@@ -125,4 +125,16 @@ void main() {
     expect(result?.maxHitPoints, 14);
     expect(result?.hitPoints, 8);
   });
+  testWidgets('Höchststufe 20 verursacht keinen UI-Fehler', (tester) async {
+    await openEditor(
+      tester,
+      current().copyWith(level: 20, experience: 355000),
+      (_) {},
+    );
+    await tapVisible(tester, find.byKey(const ValueKey('open-class-level-up')));
+    expect(find.textContaining('Höchststufe 20'), findsWidgets);
+    expect(find.byKey(const ValueKey('levelup-error')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
 }
