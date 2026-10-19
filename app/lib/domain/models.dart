@@ -1151,6 +1151,7 @@ class PendingRoll {
   final String id, type, targetId, targetName, weaponId, expression;
   final int modifier, difficulty;
   final int deathSaveRulesVersion;
+
   /// The verified skill check's lower natural d20 limit, 0 or 10.
   final int minimumNatural;
   final bool advantage, disadvantage;
@@ -1837,6 +1838,7 @@ class Campaign {
                 proficient: false,
               );
       }
+
       // A saved request must match the same confirmed Exhaustion penalty that
       // the shared character rules applied when creating it. Legacy death-save
       // requests use modifier0; version1 includes the authoritative bonus.
@@ -1870,9 +1872,7 @@ class Campaign {
               (hero.weaponProficient ? prof : 0) +
               exhaustion,
         'perception' =>
-          modifier('wisdom') +
-              skillBonus('Wahrnehmung') +
-              exhaustion,
+          modifier('wisdom') + skillBonus('Wahrnehmung') + exhaustion,
         'preparedCheck' => () {
           const skills = <String, String>{
             'Wahrnehmung': 'wisdom',
@@ -1904,9 +1904,7 @@ class Campaign {
               skills[values[1]] != values[0]) {
             throw const FormatException('Ungültige Kampagnenprobe.');
           }
-          return modifier(values[0]) +
-              skillBonus(values[1]) +
-              exhaustion;
+          return modifier(values[0]) + skillBonus(values[1]) + exhaustion;
         }(),
         'escape' => modifier('dexterity') + exhaustion,
         'death' when pending.deathSaveRulesVersion == 1 =>

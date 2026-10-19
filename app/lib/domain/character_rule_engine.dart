@@ -18,6 +18,7 @@ class D20Rule {
     this.minimumNatural = 0,
   });
   final int modifier;
+
   /// Only for confirmed skill-based ability checks such as Rogue Reliable Talent.
   final int minimumNatural;
   final bool advantage;
@@ -108,10 +109,7 @@ class CharacterRuleEngine {
       proficient: proficient && confirmedProficiency,
     );
     return D20Rule(
-      mod +
-          (proficient ? prof : 0) +
-          jack +
-          ExhaustionRules.d20Modifier(hero),
+      mod + (proficient ? prof : 0) + jack + ExhaustionRules.d20Modifier(hero),
       minimumNatural: minimumNatural,
       disadvantage:
           ConditionRules.has(hero, 'vergiftet') ||

@@ -43,40 +43,37 @@ HeroCharacter hero({
 
 void main() {
   group('Alleskönner: Barde ab Klassenstufe 2', () {
-    test('Nur untrainierte benannte Fertigkeitsproben erhalten halbe Übung', () {
-      final before = hero(level: 1);
-      final bard = hero();
-      expect(
-        CharacterRuleEngine.abilityCheck(
-          before,
-          'wisdom',
-          skill: 'Wahrnehmung',
-        ).modifier,
-        1,
-      );
-      expect(
-        CharacterRuleEngine.abilityCheck(
-          bard,
-          'wisdom',
-          skill: 'Wahrnehmung',
-        ).modifier,
-        2,
-      );
-      final trained = bard.copyWith(skills: ['Wahrnehmung']);
-      expect(
-        CharacterRuleEngine.perception(trained).modifier,
-        3,
-      );
-      expect(CharacterRuleEngine.perception(trained).minimumNatural, 0);
-      // In SRD 5.2.1 initiative without a skill does not qualify.
-      expect(CharacterRuleEngine.initiative(bard).modifier, 1);
-      expect(
-        CharacterRuleEngine.abilityCheck(bard, 'wisdom').modifier,
-        1,
-      );
-      expect(CharacterRuleEngine.savingThrowBonus(bard, 'wisdom'), 1);
-      expect(CharacterRuleEngine.attack(bard).modifier, 4);
-    });
+    test(
+      'Nur untrainierte benannte Fertigkeitsproben erhalten halbe Übung',
+      () {
+        final before = hero(level: 1);
+        final bard = hero();
+        expect(
+          CharacterRuleEngine.abilityCheck(
+            before,
+            'wisdom',
+            skill: 'Wahrnehmung',
+          ).modifier,
+          1,
+        );
+        expect(
+          CharacterRuleEngine.abilityCheck(
+            bard,
+            'wisdom',
+            skill: 'Wahrnehmung',
+          ).modifier,
+          2,
+        );
+        final trained = bard.copyWith(skills: ['Wahrnehmung']);
+        expect(CharacterRuleEngine.perception(trained).modifier, 3);
+        expect(CharacterRuleEngine.perception(trained).minimumNatural, 0);
+        // In SRD 5.2.1 initiative without a skill does not qualify.
+        expect(CharacterRuleEngine.initiative(bard).modifier, 1);
+        expect(CharacterRuleEngine.abilityCheck(bard, 'wisdom').modifier, 1);
+        expect(CharacterRuleEngine.savingThrowBonus(bard, 'wisdom'), 1);
+        expect(CharacterRuleEngine.attack(bard).modifier, 4);
+      },
+    );
 
     test('Gesamt-Übungsbonus gilt auch bei Barde 2 / Kämpfer 7', () {
       final mixed = hero(
@@ -95,10 +92,7 @@ void main() {
         ).modifier,
         1,
       );
-      expect(
-        CharacterRuleEngine.perception(mixed).modifier,
-        1,
-      );
+      expect(CharacterRuleEngine.perception(mixed).modifier, 1);
       expect(
         CharacterRuleEngine.abilityCheck(
           mixed.copyWith(skills: ['Wahrnehmung']),
@@ -113,11 +107,7 @@ void main() {
 
   group('Verlässliches Talent: Schurke ab Klassenstufe 7', () {
     test('Nur trainierte Skillchecks erhalten natürlichen Mindestwurf 10', () {
-      final rogue = hero(
-        klass: 'Schurke',
-        level: 7,
-        skills: ['Wahrnehmung'],
-      );
+      final rogue = hero(klass: 'Schurke', level: 7, skills: ['Wahrnehmung']);
       expect(CharacterRuleEngine.perception(rogue).minimumNatural, 10);
       expect(
         CharacterRuleEngine.abilityCheck(
@@ -134,9 +124,7 @@ void main() {
       expect(CharacterRuleEngine.initiative(rogue).minimumNatural, 0);
       expect(CharacterRuleEngine.attack(rogue).minimumNatural, 0);
       expect(
-        CharacterRuleEngine.perception(
-          rogue.copyWith(level: 6),
-        ).minimumNatural,
+        CharacterRuleEngine.perception(rogue.copyWith(level: 6)).minimumNatural,
         0,
       );
       expect(
@@ -174,29 +162,39 @@ void main() {
       );
     });
 
-    test('Eine vorbereitete Rabenwacht-Probe wird regelkonform aufgewertet', () {
-      final engine = GameEngine();
-      final source = engine.createDemo().hero.copyWith(
-        className: 'Schurke',
-        level: 7,
-      );
-      var campaign = engine.createRabenwacht(source);
-      campaign = engine.act(campaign, 'Ich untersuche die Schritte.').campaign;
-      expect(campaign.pendingRoll?.type, 'preparedCheck');
-      expect(campaign.pendingRoll?.minimumNatural, 10);
-      expect(campaign.pendingRoll?.modifier, 4);
-      campaign = Campaign.fromJson(campaign.toJson());
-      final success = engine.resolveRoll(campaign, natural: 1);
-      expect(success.campaign.storyBible['stage'], 'square');
-      expect(success.campaign.facts['blackHandClue'], 'true');
-      expect(success.events.single.payload['roll']['natural'], 1);
-      expect(success.events.single.payload['roll']['total'], 5);
-      expect(success.events.single.payload['effectiveTotal'], 14);
-      expect(success.events.single.payload['skillFeature'], 'reliableTalent');
-      expect(success.campaign.messages.last.text, contains('Verlässliches Talent'));
-      expect(Campaign.fromJson(success.campaign.toJson()).toJson(),
-          success.campaign.toJson());
-    });
+    test(
+      'Eine vorbereitete Rabenwacht-Probe wird regelkonform aufgewertet',
+      () {
+        final engine = GameEngine();
+        final source = engine.createDemo().hero.copyWith(
+          className: 'Schurke',
+          level: 7,
+        );
+        var campaign = engine.createRabenwacht(source);
+        campaign = engine
+            .act(campaign, 'Ich untersuche die Schritte.')
+            .campaign;
+        expect(campaign.pendingRoll?.type, 'preparedCheck');
+        expect(campaign.pendingRoll?.minimumNatural, 10);
+        expect(campaign.pendingRoll?.modifier, 4);
+        campaign = Campaign.fromJson(campaign.toJson());
+        final success = engine.resolveRoll(campaign, natural: 1);
+        expect(success.campaign.storyBible['stage'], 'square');
+        expect(success.campaign.facts['blackHandClue'], 'true');
+        expect(success.events.single.payload['roll']['natural'], 1);
+        expect(success.events.single.payload['roll']['total'], 5);
+        expect(success.events.single.payload['effectiveTotal'], 14);
+        expect(success.events.single.payload['skillFeature'], 'reliableTalent');
+        expect(
+          success.campaign.messages.last.text,
+          contains('Verlässliches Talent'),
+        );
+        expect(
+          Campaign.fromJson(success.campaign.toJson()).toJson(),
+          success.campaign.toJson(),
+        );
+      },
+    );
 
     test('Ein explizites Gesamtergebnis bekommt keinen heimlichen Bonus', () {
       final engine = GameEngine();
@@ -208,7 +206,10 @@ void main() {
       campaign = engine.act(campaign, 'Ich untersuche die Schritte.').campaign;
       final result = engine.resolveRoll(campaign, total: 5);
       expect(result.campaign.facts['blackHandClue'], isNull);
-      expect(result.events.single.payload.containsKey('effectiveTotal'), isFalse);
+      expect(
+        result.events.single.payload.containsKey('effectiveTotal'),
+        isFalse,
+      );
       expect(result.campaign.storyBible['stage'], 'square');
     });
 
@@ -216,7 +217,9 @@ void main() {
       final engine = GameEngine();
       final source = engine.createDemo().hero;
       final campaign = engine.createRabenwacht(source);
-      final prepared = engine.act(campaign, 'Ich untersuche die Schritte.').campaign;
+      final prepared = engine
+          .act(campaign, 'Ich untersuche die Schritte.')
+          .campaign;
       final json = prepared.toJson();
       final pending = Map<String, dynamic>.from(json['pendingRoll'] as Map);
       pending['minimumNatural'] = 10;
@@ -261,11 +264,9 @@ void main() {
       expect(CharacterRuleEngine.savingThrowBonus(later, 'strength'), 7);
       expect(
         CharacterRuleEngine.savingThrowBonus(
-          later.copyWith(savingThrowProficiencies: [
-            'strength',
-            'wisdom',
-            'charisma',
-          ]),
+          later.copyWith(
+            savingThrowProficiencies: ['strength', 'wisdom', 'charisma'],
+          ),
           'wisdom',
         ),
         6,

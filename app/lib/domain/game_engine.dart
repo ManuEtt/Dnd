@@ -2849,7 +2849,7 @@ class GameEngine {
     final label = result.natural == null
         ? 'Gesamtergebnis ${result.total} (Bonus bereits enthalten)'
         : 'Naturwurf ${result.natural} ${_signed(result.modifier)} = ${result.total}'
-          '${reliableTalentApplied ? '; Verlässliches Talent: Würfelwert 10, Ergebnis $effectiveTotal' : ''}';
+              '${reliableTalentApplied ? '; Verlässliches Talent: Würfelwert 10, Ergebnis $effectiveTotal' : ''}';
     var narration = '$label. ';
     if (pending.type == 'preparedCheck') {
       final passed = effectiveTotal >= pending.difficulty;
