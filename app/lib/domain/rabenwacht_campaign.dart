@@ -1,4 +1,5 @@
 import 'character_rule_engine.dart';
+import 'campaign_experience.dart';
 import 'models.dart';
 
 /// Handgeschriebene Offline-Solo-Kampagne. Keine KI-Entscheidung, kein
@@ -290,7 +291,7 @@ class RabenwachtCampaign {
           else if (quest.id == 'rabenwacht-key' && keyUsed)
             quest.copyWith(status: 'completed')
           else if (quest.id == 'rabenwacht-well' &&
-              facts['wellVisited'] == 'true' &&
+              facts['wellClue'] == 'true' &&
               stage == 'square')
             quest.copyWith(status: 'completed')
           else
@@ -323,7 +324,26 @@ class RabenwachtCampaign {
             npc,
       ],
     );
-    return RabenwachtTurn(next, narration, battle: battle);
+    // Etappen werden nur beim ersten Erreichen belohnt. Die Höhe ist
+    // Spielleiter-Design; der erforderliche EP-Stand für Stufen ist SRD 5.2.1.
+    final milestone = switch (stage) {
+      'square' when facts['wellClue'] == 'true' => 'well-discovery',
+      'mill' => 'reach-mill',
+      'chapel' => 'reach-chapel',
+      'archive' => 'reach-archive',
+      'graveyard' => 'reach-graveyard',
+      'ruins' => 'reach-ruins',
+      'chamber' => 'reach-chamber',
+      'end-seal' || 'end-break' || 'end-mercy' => 'resolve-rabenwacht',
+      _ => null,
+    };
+    final reward = milestone == null
+        ? ExperienceAward(next, 0, '')
+        : CampaignExperience.awardOnce(next, milestone);
+    final description = reward.narration.isEmpty
+        ? narration
+        : '$narration\n\n${reward.narration}';
+    return RabenwachtTurn(reward.campaign, description, battle: battle);
   }
 
   static RabenwachtTurn _ask(
