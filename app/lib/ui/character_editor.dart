@@ -18,6 +18,7 @@ import 'ability_assignment_dialog.dart';
 import 'srd_class_selection_dialog.dart';
 import 'srd_class_level_up_dialog.dart';
 import 'fantasy_ui.dart';
+import 'character_portrait_picker.dart';
 import 'multiclass_selection_dialog.dart';
 import 'equipment_catalog_dialog.dart';
 import 'equipment_loadout_dialog.dart';
@@ -421,6 +422,30 @@ class _CharacterEditorState extends State<CharacterEditor> {
         () => _error = 'Charakter konnte nicht gespeichert werden: $error',
       );
     }
+  }
+
+  Future<void> _choosePortrait() async {
+    final choice = await Navigator.of(context).push<CharacterPortraitChoice>(
+      MaterialPageRoute(
+        builder: (_) => CharacterPortraitPicker(
+          initialPreset: (_original['portraitPreset'] as int?) ?? -1,
+          initialPhotoBase64: (_original['portraitPhotoBase64'] as String?) ?? '',
+        ),
+      ),
+    );
+    if (!mounted || choice == null) return;
+    setState(() {
+      if (choice.preset < 0) {
+        _original.remove('portraitPreset');
+      } else {
+        _original['portraitPreset'] = choice.preset;
+      }
+      if (choice.photoBase64.isEmpty) {
+        _original.remove('portraitPhotoBase64');
+      } else {
+        _original['portraitPhotoBase64'] = choice.photoBase64;
+      }
+    });
   }
 
   Future<void> _editInventory({int? index}) async {
@@ -1121,6 +1146,39 @@ class _CharacterEditorState extends State<CharacterEditor> {
                     title: 'Dein Held',
                     icon: Icons.person_outline,
                   ),
+                  FantasyPanel(
+                    child: Row(
+                      children: [
+                        FantasyCharacterPortrait(
+                          key: const ValueKey('editor-current-portrait'),
+                          preset: (_original['portraitPreset'] as int?) ?? -1,
+                          photoBase64: (_original['portraitPhotoBase64'] as String?) ?? '',
+                          name: _fields['name']!.text,
+                          size: 116,
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Charakterbild',
+                                  style: Theme.of(context).textTheme.titleMedium),
+                              const SizedBox(height: 6),
+                              const Text('Eigenes Bild oder Fantasy-Vorlage wählen'),
+                              const SizedBox(height: 8),
+                              OutlinedButton.icon(
+                                key: const ValueKey('editor-choose-portrait'),
+                                onPressed: _choosePortrait,
+                                icon: const Icon(Icons.add_photo_alternate_outlined),
+                                label: const Text('Bild wählen'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 14),
                   const SizedBox(height: 8),
                   const Text(
                     'Unbekannte Werte dürfen leer bleiben. Für regelgebundene '
@@ -1475,15 +1533,36 @@ class _CharacterEditorState extends State<CharacterEditor> {
                       ),
                     ),
                   const SizedBox(height: 20),
-                  FilledButton.icon(
-                    onPressed: _save,
-                    icon: const Icon(Icons.save_outlined),
-                    label: const Text('Charakter speichern'),
-                  ),
+                  // Permanently visible primary action in the footer below.
                   const SizedBox(height: 20),
                 ],
               ),
             ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
+          decoration: BoxDecoration(
+            color: FantasyPalette.ink,
+            border: Border(top: BorderSide(color: FantasyPalette.gold.withValues(alpha: .55))),
+          ),
+          child: Row(
+            children: [
+              Expanded(child: OutlinedButton.icon(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: const Icon(Icons.close),
+                label: const Text('Abbrechen'),
+              )),
+              const SizedBox(width: 12),
+              Expanded(child: FilledButton.icon(
+                key: const ValueKey('editor-save-fixed'),
+                onPressed: _save,
+                icon: const Icon(Icons.save_outlined),
+                label: const Text('Charakter speichern'),
+              )),
+            ],
           ),
         ),
       ),
