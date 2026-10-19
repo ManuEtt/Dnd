@@ -38,8 +38,7 @@ class FantasyActiveHeroCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final maxHp = hero.maxHitPoints;
-    final hitPointsRatio =
-        hero.hitPoints != null && maxHp != null && maxHp > 0
+    final hitPointsRatio = hero.hitPoints != null && maxHp != null && maxHp > 0
         ? (hero.hitPoints! / maxHp).clamp(0.0, 1.0).toDouble()
         : null;
     final nextExperience = CampaignExperience.nextThreshold(hero);
@@ -50,9 +49,7 @@ class FantasyActiveHeroCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: FantasyPalette.ink,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: FantasyPalette.gold.withValues(alpha: .65),
-        ),
+        border: Border.all(color: FantasyPalette.gold.withValues(alpha: .65)),
         boxShadow: const [
           BoxShadow(
             color: Color(0x66000000),
@@ -142,9 +139,7 @@ class FantasyActiveHeroCard extends StatelessWidget {
                             '${hero.species} · ${hero.classSummary} · Stufe ${hero.level}',
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: FantasyPalette.ivory,
-                            ),
+                            style: const TextStyle(color: FantasyPalette.ivory),
                           ),
                           const SizedBox(height: 5),
                           Text(
@@ -196,10 +191,7 @@ class FantasyActiveHeroCard extends StatelessWidget {
                   const SizedBox(height: 9),
                   const Text(
                     'Trefferpunkte noch nicht bestätigt',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: FantasyPalette.muted,
-                    ),
+                    style: TextStyle(fontSize: 12, color: FantasyPalette.muted),
                   ),
                 ] else ...[
                   const SizedBox(height: 10),
@@ -226,10 +218,7 @@ class FantasyActiveHeroCard extends StatelessWidget {
                 if (hero.experience == null)
                   const Text(
                     'Erfahrungspunkte: nicht bestätigt',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: FantasyPalette.muted,
-                    ),
+                    style: TextStyle(fontSize: 12, color: FantasyPalette.muted),
                   )
                 else ...[
                   Text(
@@ -361,10 +350,7 @@ class _HeroMetric extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: FantasyPalette.muted,
-              fontSize: 10,
-            ),
+            style: const TextStyle(color: FantasyPalette.muted, fontSize: 10),
           ),
         ],
       ),
