@@ -1,5 +1,16 @@
 # SRD 5.2.1 – Regelanforderungsmatrix (laufender Aufbau)
 
+## Inventar-/Charaktererstellung: neues Inkrement (19.10.2026)
+
+| ID | SRD-Abschnitt | Anforderung | Code / UI | Persistenz / Tests | Status |
+| --- | --- | --- | --- | --- | --- |
+| EQUIP-START-TYPED | Classes: Starting Equipment; Equipment Tables | Alle eindeutigen Klassenstartgegenstände erhalten korrekte Katalog-ID/Preis/Gewicht/Kampf-/RK-Attribute und passende Menge | `starting_equipment_import.dart`, `character_editor.dart` | `InventoryItem.stats`, `starting_equipment_import_test.dart` | IMPLEMENTIERT_UNGETESTET (neue CI ausstehend) |
+| EQUIP-IMPORT-BACKFILL | Equipment Tables | Bestätigte Katalog-ID ohne Stats sicher aus Katalog rekonstruieren; individuelle Werte wahren | `models.dart` | Import/Export/JSON-Rundlauf-Tests in `starting_equipment_import_test.dart` | IMPLEMENTIERT_UNGETESTET |
+| EQUIP-LEGACY-CONFIRM | Equipment Tables | Bei historischen frei benannten Altgegenständen nur eindeutige Zuordnungen nach Bestätigung ergänzen | `character_editor.dart`, `starting_equipment_import.dart` | `ui_starting_equipment_import_test.dart` | IMPLEMENTIERT_UNGETESTET |
+| EQUIP-CHOICES | Classes: Starting Equipment | Nicht eindeutige Gegenstände (Instrument, heiliges Symbol etc.) aktiv wählen lassen | Klassenassistent noch ohne spezifische Gegenstandswahl | E2E-Tests fehlen | FEHLT |
+| SRD-COVERAGE-ALL | gesamtes SRD 5.2.1 | Vollständiger lizenzierter Regelkatalog mit Engine, UI, SQLite, Tests und Android-Abnahme | Noch nicht inventarisiert und implementiert | Matrix für alle SRD-Regeln erst zu erstellen | TEILWEISE; kein Vollständigkeitsanspruch |
+
+
 Stand 18.10.2026, Entwicklungsbranch `feature/condition-source-ledger-20261018`, PR #7.
 Dies ist ein **explizit unvollständiger Ausgangsauszug**, keine behauptete Gesamtinventur des SRD. Die übrigen Regelbereiche in [RULE_COVERAGE.md](RULE_COVERAGE.md) sind noch systematisch in Einzelanforderungen mit Quelle und Tests zu zerlegen. Verbindliche Norm: [SRD 5.2.1](https://www.dndbeyond.com/srd), CC BY 4.0.
 
