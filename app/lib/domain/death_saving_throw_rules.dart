@@ -165,10 +165,13 @@ class DeathSavingThrowRules {
         successes = 0;
         failures = 0;
       }
-      next = hero.copyWith(
-        conditions: conditions,
-        deathSuccesses: successes,
-        deathFailures: failures,
+      next = ConditionRules.retainProneFromUnconscious(
+        hero,
+        hero.copyWith(
+          conditions: conditions,
+          deathSuccesses: successes,
+          deathFailures: failures,
+        ),
       );
     }
     return DeathSavingThrowResult._(
