@@ -1101,15 +1101,6 @@ class _AdventurePageState extends State<_AdventurePage> {
                         '${campaign.hero.name} · TP ${campaign.hero.hitPoints ?? '?'}/${campaign.hero.maxHitPoints ?? '?'} '
                         '· RK ${campaign.hero.armorClass ?? '?'}',
                       ),
-                      if (campaign.hero.experience != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Text(
-                            'Stufe ${campaign.hero.level} · ${campaign.hero.experience} EP',
-                            key: const ValueKey('adventure-xp-status'),
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ),
                       TextButton.icon(
                         key: const ValueKey('adventure-open-character-sheet'),
                         onPressed: _showHeroSheet,
