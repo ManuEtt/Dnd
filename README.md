@@ -1,3 +1,15 @@
+## Korrektur: Rüstungsklasse und Bewegung in der Charaktererstellung (19.10.2026)
+
+**Root Cause:** Die Charaktermaske ließ `armorClass` und `speed` bisher unverändert leer, auch wenn Spezies und Geschicklichkeit bereits bekannt waren. Die Startausrüstung kann nach dem Import zwar strukturierte Rüstungsdaten enthalten, wird jedoch erst nach ausdrücklichem Anlegen regelwirksam.
+
+**Neuer Ablauf:** Ein neuer Charakter erhält für die neun SRD-5.2.1-Spezies einen Bewegungsvorschlag (normalerweise **30 Fuß = 9 m**; Goliath und ausdrücklich als Waldelf gewählte Charaktere **35 Fuß = 10,5 m**). Die Grund-RK wird nach bestätigtem Geschicklichkeitswert gesetzt: **10 + GE-Modifikator**; beim ungerüsteten Barbar zusätzlich KON und beim ungerüsteten Mönch WEI. `speedRemainderDecimeters` speichert einen optionalen 0,5-m-Anteil, damit die 35-Fuß-Regel nicht auf 10 oder 11 m verfälscht wird. Das alte JSON-Schema bleibt lesbar, und Erschöpfung berechnet Bewegung auf Basis des vollständigen Grundwerts.
+
+**Manuelle und bestehende Charaktere:** Automatisch vorgeschlagene Werte werden bei später bestätigten Eingaben aktualisiert, aber **manuell eingegebene Werte nicht überschrieben**. Für ältere Charaktere gibt es im Charaktereditor den Button **„Fehlende RK und Bewegung berechnen“**. Unbekannte Spezies und ungeklärte Attribute bleiben explizit offen. **Importierte, aber nicht angelegte Rüstungen und Schilde werden nicht heimlich angewendet**; dafür weiterhin die bestätigte Funktion „Waffen und Rüstung anlegen / RK berechnen“ nutzen.
+
+**Tests:** `app/test/srd_starting_combat_values_test.dart` und `app/test/ui_starting_combat_values_test.dart` für Klassen-Grund-RK, SRD-Spezies, 10,5-m-Speicherung, Rückwärtskompatibilität und Schutz individueller Werte. **Neue CI-/Android-Abnahme muss für diese Änderung separat bestätigt werden**; der ältere erfolgreiche Workflow `39199122240` belegt ausschließlich den vorherigen Inventarimport-Fix.
+
+---
+
 # Würfelraunen – aktueller Entwicklungsstand (19.10.2026)
 
 **Schwerpunkt:** Fehlerbehebung für fehlende Attribute beim Ausrüstungsimport und Ausbau der D&D-5E-Regeln nach **SRD 5.2.1**.
