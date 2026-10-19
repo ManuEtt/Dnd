@@ -1,5 +1,15 @@
 # SRD 5.2.1 – Regelanforderungsmatrix (laufender Aufbau)
 
+## Startkampfwerte aus bestätigten Eingaben (19.10.2026)
+
+| ID | Referenz | Anforderung | Umsetzung | Tests | Status |
+| --- | --- | --- | --- | --- | --- |
+| CHAR-SPEED-SRD | Character Creation / Character Origins: Species | 30 Fuß bei 8 SRD-Spezies, 35 Fuß bei Goliath/Waldelf; unbekannte Spezies nicht raten | `srd_starting_combat_values.dart`, `models.dart`, `condition_rules.dart`, `character_editor.dart` | `srd_starting_combat_values_test.dart`, `ui_starting_combat_values_test.dart` | IMPLEMENTIERT_UNGETESTET (neue CI offen) |
+| CHAR-AC-BASE | Playing the Game: Armor Class; Classes: Unarmored Defense | Grund-RK 10 + GE, bei ungerüstetem Barbar/Mönch zusätzlich KON/WEI, nur bei bestätigten Werten | `srd_starting_combat_values.dart`, `character_editor.dart` | `srd_starting_combat_values_test.dart`, `ui_starting_combat_values_test.dart` | IMPLEMENTIERT_UNGETESTET |
+| CHAR-AC-EQUIPPED | Equipment: Armor | Rüstung und Schild nur nach aktiver Bestätigung anrechnen | `equipment_rules.dart`, `character_editor.dart` | bisherige Equipment- und neue Kampfwerttests | TEILWEISE; vollständige Sonderfälle/Regressionen offen |
+
+
+
 ## Inventar-/Charaktererstellung: neues Inkrement (19.10.2026)
 
 | ID | SRD-Abschnitt | Anforderung | Code / UI | Persistenz / Tests | Status |
