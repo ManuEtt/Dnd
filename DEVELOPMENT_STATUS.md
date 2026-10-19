@@ -1,3 +1,9 @@
+## Hauptklassen-Aufstieg – CI erfolgreich (19.10.2026)
+
+PR #10: Vollständiger GitHub-Actions-Lauf [39203732788](https://github.com/ManuEtt/Dnd/actions/runs/39203732788) für `acaaa23d` erfolgreich (alle automatisierten Prüfungen und Alpha-APK). Der Stufenaufstiegsassistent für die 12 SRD-Basisklassen, sichere TP/EP-/ASI-/Unterklassenwahl und Mehrklassen-Levelschutz sind technisch getestet. Ungeklärte Regelentscheidungen sind weiterhin ausdrücklich offen. Echte Geräteabnahme, SRD-Vollständigkeit und Review/Merge ausstehend.
+
+---
+
 ## 19.10.2026 – SRD 5.2.1, geprüfter Hauptklassen-Stufenaufstieg
 
 Neuer Featurebranch `feature/primary-class-level-up-20261019` von `cadaf736`. Hauptklassen-Wizard ergänzt: 12 SRD-Basis-Klassen, XP/Meilenstein, HP und retroaktiver KON-Effekt, explizite Auswahl der SRD-Unterklasse auf Klassenstufe 3, zulässige Attributsverbesserung oder offen gelassene andere Talentwahl, Auswertung des bereits vorhandenen Merkmalskatalogs. Zusätzliche Domain- und Widgettests. Gegenüber bestehenden Charakteren bleiben Ausrüstung, verbrauchte Ressourcen, Nebenklasse und bereits bestätigte Features unverändert.
