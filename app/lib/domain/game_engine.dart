@@ -759,14 +759,14 @@ class GameEngine {
     }
     final fight = campaign.encounter;
     final active = fight != null && !fight.isFinished;
-    if (active && fight!.activeParticipant != 'hero') {
+    if (active && fight.activeParticipant != 'hero') {
       throw const FormatException('Aufstehen ist nur im eigenen Zug erlaubt.');
     }
     // Also validates positive Speed and movement-blocking conditions outside
     // combat, without inventing a turn/movement pool there.
     final cost = ProneMovementRules.standingCostDecimeters(hero);
     final updatedFight = active
-        ? ProneMovementRules.spendStandingMovement(fight!, hero)
+        ? ProneMovementRules.spendStandingMovement(fight, hero)
         : fight;
     final after = hero.copyWith(
       conditions: [
