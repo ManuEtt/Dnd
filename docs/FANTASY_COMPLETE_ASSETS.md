@@ -39,6 +39,21 @@ nur die 13 bisher fehlenden Dateien, nicht die großen Konzeptbilder. Alternativ
 kann man `app/assets/fantasy/` aus dem ZIP in den Repository-Ordner kopieren;
 dabei Dateien keinesfalls blind überschreiben.
 
+## Bequemer Import per GitHub (auch vom Android-Smartphone)
+
+Der vorbereitete Upload-Ordner `incoming/` und die GitHub-Action
+`Original-Grafiken aus ZIP übernehmen` ermöglichen die Übertragung mit
+nur einem ZIP-Upload. Lade die bestehende
+`Wuerfelraunen_Grafikpaket_Korrektur_2026-10-19.zip` unverändert über
+GitHub → `incoming/` → **Add file** → **Upload files** nach `main`.
+Die Aktion prüft die 13 Originaldateien, überträgt sie nach
+`app/assets/fantasy/`, löscht das hochgeladene ZIP aus der aktuellen
+Repository-Version und fordert einen Android-Neubuild an.
+
+Die Importaktion läuft **erst nach diesem Upload**. Wenn die GitHub-Action
+nicht erfolgreich ist, sind die Grafiken nicht vollständig integriert.
+Alternativ funktioniert der manuelle Import wie unten beschrieben.
+
 ## Prüfungen und Abnahme
 
 ```bash
