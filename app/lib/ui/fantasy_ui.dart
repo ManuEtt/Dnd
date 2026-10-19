@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'fantasy_approved_icons.dart';
 
 /// Gemeinsames Oberflaechensystem. Keine Regeln oder gespeicherten Werte.
 abstract final class FantasyPalette {
@@ -349,10 +350,12 @@ class FantasySectionTitle extends StatelessWidget {
     super.key,
     required this.title,
     this.icon,
+    this.approvedIconIndex,
     this.subtitle,
   });
   final String title;
   final IconData? icon;
+  final int? approvedIconIndex;
   final String? subtitle;
 
   @override
@@ -363,7 +366,10 @@ class FantasySectionTitle extends StatelessWidget {
       children: [
         Row(
           children: [
-            if (icon != null) ...[
+            if (approvedIconIndex != null) ...[
+              FantasyApprovedIcon(index: approvedIconIndex!, size: 34),
+              const SizedBox(width: 8),
+            ] else if (icon != null) ...[
               Icon(icon, color: FantasyPalette.gold, size: 25),
               const SizedBox(width: 10),
             ],
