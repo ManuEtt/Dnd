@@ -42,7 +42,7 @@ class _MoonlitSceneryPainter extends CustomPainter {
           const RadialGradient(
             colors: [Color(0x77bcd8e8), Color(0x2283a6ce), Color(0x00223856)],
           ).createShader(
-            const Rect.fromCircle(center: Offset(770, 86), radius: 155),
+            const Rect.fromLTWH(615, -69, 310, 310),
           );
     canvas.drawCircle(const Offset(770, 86), 155, glow);
     canvas.drawCircle(
