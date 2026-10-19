@@ -53,6 +53,7 @@ class StartingEquipmentImport {
       id: id,
       name: arrowBundle ? entry.name : item.name,
       quantity: arrowBundle ? item.quantity ~/ 20 : item.quantity,
+      description: entry.note ?? '',
       catalogId: entry.id,
       stats: InventoryItemStats.fromCatalog(entry),
     );
