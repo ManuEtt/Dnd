@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show AssetManifest, rootBundle;
 import 'fantasy_approved_icons.dart';
+import 'fantasy_landscape.dart';
 
 /// Gemeinsames Oberflaechensystem. Keine Regeln oder gespeicherten Werte.
 abstract final class FantasyPalette {
@@ -275,6 +276,16 @@ class FantasyBackdrop extends StatelessWidget {
               ),
             ),
           ),
+        ),
+      ),
+      const Positioned(
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 224,
+        child: Opacity(
+          opacity: .62,
+          child: FantasyMoonlitScenery(height: 224),
         ),
       ),
       child,
