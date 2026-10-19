@@ -1,3 +1,11 @@
+## 19.10.2026 – Fehlerbild Rüstungsklasse und Bewegung ohne Startwerte
+
+Bei der Charaktererstellung wurden `armorClass` und `speed` bisher nicht aus der gewählten SRD-Spezies und den bestätigten Attributen vorbelegt. Der Fix setzt Grund-RK 10 + GE bzw. die relevanten ungerüsteten Klassenmerkmale (Mönch WEI, Barbar KON). Bewegung wird über explizite Speziesnamen gesetzt (meist 9 m, Goliath/Waldelf 10,5 m), mit rückwärtskompatiblem optionalem halben Meter im Hero-JSON. Beim Import alter/anderer Figuren werden keine Werte erraten oder überschrieben; die UI bietet einen gesonderten Button „Fehlende RK und Bewegung berechnen“. Ausrüstung wird weiterhin gesondert angelegt und mit dem bestehenden SRD-EquipmentRules-Dialog berechnet.
+
+Neue Domain-/Widgettests vorhanden, **diese Änderung muss noch durch die neueste CI verifiziert werden**. PR #9 bleibt vorläufig Entwurf, PR #8 ist davon getrennt. Das Gesamt-SRD ist weiterhin nicht vollständig implementiert.
+
+---
+
 ## 19.10.2026 – Fehlerbehebung Klassen-Startausrüstung
 
 Root Cause bestätigt in `CharacterEditor._configureSrdClass`: Einträge aus dem SRD-Klassenset wurden bisher ohne `catalogId` und `stats` erstellt, obwohl der SRD-Katalog diese Attribute besitzt. Neuer validierter Resolver `StartingEquipmentImport`: exakte Namen, selektiv geprüfte Aliasnamen, richtige Packgröße für 20 Pfeile, unbekannte Auswahlen ohne erfundene Werte. Der bestehende Katalogimport übernimmt jetzt verfügbare Kataloghinweise. Eingehende Gegenstände mit expliziter `catalogId` und fehlenden Stats werden vervollständigt; Benutzerwerte bleiben immer erhalten. Eigener Bestätigungsdialog für ältere Klasseninventare im Charaktereditor. Domain-/Widgettests ergänzt.
