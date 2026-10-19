@@ -1835,8 +1835,22 @@ class Campaign {
             'Überreden': 'charisma',
           };
           final values = pending.targetName.split('|');
+          const difficultyByStage = <String, int>{
+            'road': 12,
+            'mill': 13,
+            'archive': 12,
+            'forest': 12,
+            'ruins': 13,
+            'stairs': 12,
+            'bonehall': 13,
+            'door13': 14,
+            'chamber': 14,
+          };
+          final stage = pending.targetId.replaceFirst('rabenwacht:', '');
           if (rawBible['mode'] != 'rabenwacht-v1' ||
               !pending.targetId.startsWith('rabenwacht:') ||
+              rawBible['stage'] != stage ||
+              pending.difficulty != difficultyByStage[stage] ||
               values.length != 2 ||
               skills[values[1]] != values[0]) {
             throw const FormatException('Ungültige Kampagnenprobe.');
@@ -1904,6 +1918,7 @@ class Campaign {
       }
       if (pending.type != 'attack' &&
           pending.type != 'offhandAttack' &&
+          pending.type != 'preparedCheck' &&
           pending.difficulty != 10) {
         throw const FormatException('Ungültige Schwierigkeit.');
       }
