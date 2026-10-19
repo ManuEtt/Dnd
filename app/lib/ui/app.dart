@@ -489,7 +489,7 @@ class _HomePage extends StatelessWidget {
                         ? null
                         : () => onPlay(controller.createDemo),
                     icon: const Icon(Icons.play_arrow),
-                    label: const Text('Kostenlose Demo starten'),
+                    label: const Text('Demo spielen'),
                   ),
                   FilledButton.icon(
                     key: const ValueKey('start-rabenwacht-campaign'),
