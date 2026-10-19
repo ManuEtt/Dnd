@@ -101,6 +101,12 @@ class GameController extends ChangeNotifier {
     await _create(engine.createDemo(hero: valid));
   });
 
+  /// Starts the fully prewritten German solo adventure without a provider.
+  Future<void> newRabenwachtCampaign(HeroCharacter hero) => _run(() async {
+    final valid = HeroCharacter.fromJson(hero.toJson());
+    await _create(engine.createRabenwacht(valid));
+  });
+
   /// Opt-in generative campaign creation. No story is saved on network,
   /// validation or provider failure; the hero sheet is kept unchanged.
   Future<void> newAiCampaign(
