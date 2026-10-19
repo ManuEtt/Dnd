@@ -907,6 +907,9 @@ class _CharacterEditorState extends State<CharacterEditor> {
         _fields['hitPoints']!.text = result.hitPoints!.toString();
         _fields['maxHitPoints']!.text = result.maxHitPoints!.toString();
         _fields['subclass']!.text = result.subclass;
+        for (final entry in result.abilities.entries) {
+          _scores[entry.key]!.text = entry.value?.toString() ?? '';
+        }
         _original['secondaryClassLevel'] = result.secondaryClassLevel;
         _original['unverifiedNotes'] = [...result.unverifiedNotes];
         _error = null;
