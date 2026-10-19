@@ -272,7 +272,8 @@ class RabenwachtCampaign {
   }) {
     final narration = '${c.hero.name}, $scene';
     final facts = {...c.facts, ...clues};
-    final located = stage == 'chamber' ||
+    final located =
+        stage == 'chamber' ||
         stage == 'choice' ||
         stage.startsWith('end-') ||
         facts['missingLocated'] == 'true';
@@ -281,10 +282,7 @@ class RabenwachtCampaign {
     final next = c.copyWith(
       scene: narration,
       storyBible: {...c.storyBible, 'stage': stage},
-      facts: {
-        ...facts,
-        if (located) 'missingLocated': 'true',
-      },
+      facts: {...facts, if (located) 'missingLocated': 'true'},
       quests: [
         for (final quest in c.quests)
           if (quest.id == 'rabenwacht-missing' && located)

@@ -1106,7 +1106,8 @@ class _AdventurePageState extends State<_AdventurePage> {
                         icon: const Icon(Icons.auto_stories_outlined, size: 17),
                         label: const Text('Charakterbogen ansehen'),
                       ),
-                      if (campaign.storyBible['mode'] == RabenwachtCampaign.mode)
+                      if (campaign.storyBible['mode'] ==
+                          RabenwachtCampaign.mode)
                         TextButton.icon(
                           key: const ValueKey('rabenwacht-discovered-clues'),
                           onPressed: () => showDialog<void>(

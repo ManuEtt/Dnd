@@ -40,9 +40,12 @@ void main() {
     campaign = engine.resolveRoll(campaign, natural: 20).campaign;
     expect(campaign.storyBible['stage'], 'square');
     expect(campaign.facts['wellClue'], 'true');
-    expect(campaign.quests.singleWhere(
-      (quest) => quest.id == 'rabenwacht-well',
-    ).status, 'completed');
+    expect(
+      campaign.quests
+          .singleWhere((quest) => quest.id == 'rabenwacht-well')
+          .status,
+      'completed',
+    );
     expect(
       RabenwachtCampaign.discoveredClues(campaign),
       contains('vierzehnte Tür'),
@@ -58,9 +61,12 @@ void main() {
     campaign = engine.act(campaign, 'Ich gehe zurück zum Platz.').campaign;
     expect(campaign.storyBible['stage'], 'square');
     expect(campaign.facts['wellClue'], isNull);
-    expect(campaign.quests.singleWhere(
-      (quest) => quest.id == 'rabenwacht-well',
-    ).status, 'active');
+    expect(
+      campaign.quests
+          .singleWhere((quest) => quest.id == 'rabenwacht-well')
+          .status,
+      'active',
+    );
   });
 
   test('Beziehungen reagieren auf tatsächliche Gespräche', () {
@@ -86,34 +92,50 @@ void main() {
     campaign = campaign.copyWith(
       storyBible: {...campaign.storyBible, 'stage': 'seal'},
     );
-    campaign = engine.act(campaign, 'Ich nehme den Schlüssel und gehe zur Tür.').campaign;
+    campaign = engine
+        .act(campaign, 'Ich nehme den Schlüssel und gehe zur Tür.')
+        .campaign;
     expect(campaign.storyBible['stage'], 'door13');
-    expect(campaign.quests.singleWhere(
-      (quest) => quest.id == 'rabenwacht-key',
-    ).status, 'active');
+    expect(
+      campaign.quests
+          .singleWhere((quest) => quest.id == 'rabenwacht-key')
+          .status,
+      'active',
+    );
 
     campaign = engine.act(campaign, 'Ich öffne die Tür.').campaign;
     expect(campaign.storyBible['stage'], 'chamber');
-    expect(campaign.quests.singleWhere(
-      (quest) => quest.id == 'rabenwacht-missing',
-    ).status, 'completed');
-    expect(campaign.quests.singleWhere(
-      (quest) => quest.id == 'rabenwacht-key',
-    ).status, 'completed');
-    expect(campaign.storyThreads.singleWhere(
-      (thread) => thread.id == 'stranger',
-    ).status, 'resolved');
+    expect(
+      campaign.quests
+          .singleWhere((quest) => quest.id == 'rabenwacht-missing')
+          .status,
+      'completed',
+    );
+    expect(
+      campaign.quests
+          .singleWhere((quest) => quest.id == 'rabenwacht-key')
+          .status,
+      'completed',
+    );
+    expect(
+      campaign.storyThreads
+          .singleWhere((thread) => thread.id == 'stranger')
+          .status,
+      'resolved',
+    );
     expect(campaign.facts['allMissingFound'], isNull);
 
     campaign = engine.act(campaign, 'Ich zerstöre das Siegel.').campaign;
     expect(campaign.storyBible['stage'], 'end-break');
     expect(campaign.facts['allMissingFound'], 'true');
-    expect(campaign.storyThreads.every(
-      (thread) => thread.status == 'resolved',
-    ), isTrue);
-    expect(campaign.npcs.singleWhere(
-      (npc) => npc.id == 'fina',
-    ).relationship, 'gerettet');
+    expect(
+      campaign.storyThreads.every((thread) => thread.status == 'resolved'),
+      isTrue,
+    );
+    expect(
+      campaign.npcs.singleWhere((npc) => npc.id == 'fina').relationship,
+      'gerettet',
+    );
     expect(Campaign.fromJson(campaign.toJson()).toJson(), campaign.toJson());
   });
 }
