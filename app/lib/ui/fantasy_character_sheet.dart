@@ -112,16 +112,7 @@ class _CharacterHeader extends StatelessWidget {
     return _FantasyFrame(
       child: Column(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(9),
-            child: Image.asset(
-              FantasyArtwork.castle,
-              height: 80,
-              width: double.infinity,
-              fit: BoxFit.cover,
-              semanticLabel: 'Illustration einer Fantasy-Burg',
-            ),
-          ),
+          const FantasyMoonlitBanner(height: 80),
           const SizedBox(height: 12),
           Text(
             hero.name.isEmpty ? 'Unbenannter Held' : hero.name,
