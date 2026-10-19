@@ -40,7 +40,7 @@ dependencies:
 
   test('Die aktuell gebündelte pubspec.yaml zeigt die Paketversion', () async {
     final info = await AppBuildInfo.current;
-    expect(info.version, matches(RegExp(r'^\\d+\\.\\d+\\.\\d+')));
+    expect(info.version, matches(RegExp(r'^\d+\.\d+\.\d+')));
     expect(int.parse(info.buildNumber), greaterThanOrEqualTo(0));
   });
 }
