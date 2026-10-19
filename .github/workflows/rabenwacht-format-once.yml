@@ -1,0 +1,46 @@
+name: Rabenwacht-Dateien einmalig formatieren
+on:
+  push:
+    branches:
+      - feature/rabenwacht-quest-journal-20261019
+    paths:
+      - '.github/workflows/rabenwacht-format-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  dart-format:
+    if: "github.event.head_commit.message == 'chore: format Rabenwacht story changes'"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Aktuellen Branch auschecken
+        uses: actions/checkout@v4
+        with:
+          ref: feature/rabenwacht-quest-journal-20261019
+          persist-credentials: true
+      - name: Offizielles Dart SDK bereitstellen
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Änderungen formatieren
+        working-directory: app
+        run: |
+          dart format lib/domain/rabenwacht_campaign.dart lib/ui/app.dart test/rabenwacht_progress_test.dart
+          dart format --output=none --set-exit-if-changed lib test
+      - name: Formatierten Code übernehmen
+        run: |
+          set -euo pipefail
+          git diff --check
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/lib/domain/rabenwacht_campaign.dart app/lib/ui/app.dart app/test/rabenwacht_progress_test.dart
+          if git diff --cached --quiet; then
+            echo "Bereits korrekt formatiert"
+          else
+            git commit -m "style(rabenwacht): apply official Dart formatter"
+            git push origin HEAD:feature/rabenwacht-quest-journal-20261019
+          fi
