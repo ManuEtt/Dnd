@@ -80,10 +80,12 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
             ? widget.hero.primaryClassLevel
             : widget.hero.secondaryClassLevel) +
         1;
+    final existingSubclass = _target == widget.hero.className
+        ? widget.hero.subclass
+        : widget.hero.secondarySubclass;
     final canChooseSubclass =
-        _target == widget.hero.className &&
         chosenLevel == 3 &&
-        widget.hero.subclass.trim().isEmpty &&
+        existingSubclass.trim().isEmpty &&
         _subclass.isNotEmpty;
     final featDue = ClassProgressionRules.milestonesForClass(_target).any(
       (milestone) =>

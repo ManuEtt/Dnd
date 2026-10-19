@@ -937,6 +937,9 @@ class _CharacterEditorState extends State<CharacterEditor> {
           _scores[entry.key]!.text = entry.value?.toString() ?? '';
         }
         _original['secondaryClassLevel'] = result.secondaryClassLevel;
+        if (result.secondarySubclass.isNotEmpty) {
+          _original['secondarySubclass'] = result.secondarySubclass;
+        }
         _original['unverifiedNotes'] = [...result.unverifiedNotes];
         _error = null;
       });
@@ -948,6 +951,12 @@ class _CharacterEditorState extends State<CharacterEditor> {
   }
 
   Future<void> _configureSecondClass() async {
+    // Existing second-class levels use the full SRD level-up wizard, including
+    // subclass selection, class-level features and ability-score increases.
+    if (widget.hero?.hasSecondClass == true) {
+      await _advanceExistingClass();
+      return;
+    }
     // New characters first finish their initial level-1 character creation.
     if (widget.hero == null) {
       setState(
@@ -1228,8 +1237,10 @@ class _CharacterEditorState extends State<CharacterEditor> {
                     key: const ValueKey('open-multiclass-selection'),
                     onPressed: _configureSecondClass,
                     icon: const Icon(Icons.auto_awesome_outlined),
-                    label: const Text(
-                      'Zweitklasse automatisch hinzufügen / steigern',
+                    label: Text(
+                      widget.hero?.hasSecondClass == true
+                          ? 'Zweitklasse im Aufstiegsassistenten steigern'
+                          : 'Zweitklasse nach SRD hinzufügen',
                     ),
                   ),
                   const Padding(

@@ -147,6 +147,7 @@ class HeroCharacter {
     this.className = 'Kämpfer',
     this.secondaryClassName = '',
     this.secondaryClassLevel = 0,
+    this.secondarySubclass = '',
     this.level = 1,
     this.subclass = '',
     this.background = '',
@@ -208,6 +209,7 @@ class HeroCharacter {
       className,
       secondaryClassName,
       subclass,
+      secondarySubclass,
       background,
       backstory,
       portraitPhotoBase64;
@@ -300,6 +302,7 @@ class HeroCharacter {
     String? className,
     String? secondaryClassName,
     int? secondaryClassLevel,
+    String? secondarySubclass,
     int? level,
     String? subclass,
     String? background,
@@ -348,6 +351,7 @@ class HeroCharacter {
     className: className ?? this.className,
     secondaryClassName: secondaryClassName ?? this.secondaryClassName,
     secondaryClassLevel: secondaryClassLevel ?? this.secondaryClassLevel,
+    secondarySubclass: secondarySubclass ?? this.secondarySubclass,
     level: level ?? this.level,
     subclass: subclass ?? this.subclass,
     background: background ?? this.background,
@@ -408,6 +412,7 @@ class HeroCharacter {
     'className': className,
     if (secondaryClassName.isNotEmpty) 'secondaryClassName': secondaryClassName,
     if (secondaryClassLevel > 0) 'secondaryClassLevel': secondaryClassLevel,
+    if (secondarySubclass.isNotEmpty) 'secondarySubclass': secondarySubclass,
     'level': level,
     'subclass': subclass,
     'background': background,
@@ -595,6 +600,18 @@ class HeroCharacter {
         'Ungültige Zweitklassenstufe oder Klassenkombination.',
       );
     }
+    final secondarySubclass = _string(
+      j['secondarySubclass'],
+      'Unterklasse der Zweitklasse',
+      fallback: '',
+    );
+    if (secondarySubclass.length > 120 ||
+        (secondarySubclass.isNotEmpty &&
+            (secondary.isEmpty || secondaryLevel < 3))) {
+      throw const FormatException(
+        'Die zweite Unterklasse setzt drei Stufen in der Zweitklasse voraus.',
+      );
+    }
     final portraitPreset = _int(
       j['portraitPreset'],
       'Porträtvorlage',
@@ -689,6 +706,7 @@ class HeroCharacter {
       className: _string(j['className'], 'Klasse'),
       secondaryClassName: secondary,
       secondaryClassLevel: secondaryLevel,
+      secondarySubclass: secondarySubclass,
       level: totalLevel,
       subclass: _string(j['subclass'], 'Unterklasse', fallback: ''),
       background: _string(j['background'], 'Hintergrund', fallback: ''),

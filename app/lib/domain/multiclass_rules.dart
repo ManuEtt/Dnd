@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 
 import 'models.dart';
+import 'character_creation_progression.dart';
+import 'srd_class_level_up.dart';
 import 'rules_engine.dart';
 import 'srd_character_classes.dart';
 
@@ -91,7 +93,11 @@ class MulticlassRules {
     required HeroCharacter hero,
     required String newClass,
     String? selectedSkill,
+    LevelUpMethod method = LevelUpMethod.milestone,
   }) {
+    if (hero.isDead) {
+      throw const FormatException('Tote Charaktere können nicht aufsteigen.');
+    }
     if (hero.level >= 20) {
       throw const FormatException('Die maximale Gesamtstufe beträgt 20.');
     }
@@ -116,6 +122,25 @@ class MulticlassRules {
     if (hero.hasSecondClass && hero.secondaryClassName != next.name) {
       throw const FormatException(
         'Der Assistent unterstützt derzeit genau zwei Klassen.',
+      );
+    }
+    if (method == LevelUpMethod.experience) {
+      final needed = CharacterCreationProgression.startingExperience(
+        hero.level + 1,
+      );
+      if (hero.experience == null || hero.experience! < needed) {
+        throw FormatException(
+          'Für Stufe ${hero.level + 1} sind mindestens $needed EP erforderlich. '
+          'Alternativ kann ein bestätigter Meilenstein gewählt werden.',
+        );
+      }
+    }
+    if (hero.hitPoints == null ||
+        hero.maxHitPoints == null ||
+        hero.hitPoints! > hero.maxHitPoints!) {
+      throw const FormatException(
+        'Aktuelle und maximale Trefferpunkte müssen für den Aufstieg '
+        'zuerst bestätigt werden.',
       );
     }
     final error = prerequisiteError(hero, next.name);
@@ -155,6 +180,7 @@ class MulticlassRules {
       hpGain: hpGain,
       gainedSkill: selectedSkill,
       sourceHeroId: hero.id,
+      sourceExperience: hero.experience,
       sourceAbilities: Map<String, int?>.unmodifiable(hero.abilities),
       sourceSkills: List<String>.unmodifiable(hero.skills),
       sourceMaxHitPoints: hero.maxHitPoints,
@@ -223,6 +249,7 @@ class MulticlassProposal {
     required this.hpGain,
     this.gainedSkill,
     required this.sourceHeroId,
+    required this.sourceExperience,
     required this.sourceAbilities,
     required this.sourceSkills,
     required this.sourceMaxHitPoints,
@@ -234,6 +261,7 @@ class MulticlassProposal {
   // HP damage taken meanwhile is permitted, but maximum HP, attributes and
   // existing trained skills must still match the values used for the proposal.
   final String sourceHeroId;
+  final int? sourceExperience;
   final Map<String, int?> sourceAbilities;
   final List<String> sourceSkills;
   final int? sourceMaxHitPoints;
@@ -248,6 +276,8 @@ class MulticlassProposal {
 
   HeroCharacter applyTo(HeroCharacter hero) {
     if (hero.id != sourceHeroId ||
+        hero.experience != sourceExperience ||
+        hero.isDead ||
         hero.maxHitPoints != sourceMaxHitPoints ||
         hero.abilities.length != sourceAbilities.length ||
         sourceAbilities.entries.any(

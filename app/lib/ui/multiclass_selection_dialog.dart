@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../domain/models.dart';
 import '../domain/multiclass_rules.dart';
+import '../domain/character_creation_progression.dart';
+import '../domain/srd_class_level_up.dart';
 import '../domain/srd_character_classes.dart';
 
 /// An explicitly confirmed SRD 5.2.1 second-class level-up.
@@ -19,6 +21,7 @@ class MulticlassSelectionDialog extends StatefulWidget {
 class _MulticlassSelectionDialogState extends State<MulticlassSelectionDialog> {
   late String _className;
   String? _skill;
+  LevelUpMethod _method = LevelUpMethod.experience;
   String? _error;
 
   @override
@@ -54,6 +57,7 @@ class _MulticlassSelectionDialogState extends State<MulticlassSelectionDialog> {
         hero: hero,
         newClass: _className,
         selectedSkill: chooseSkill ? _skill : null,
+        method: _method,
       );
     } on FormatException catch (error) {
       problem = error.message;
@@ -71,6 +75,31 @@ class _MulticlassSelectionDialogState extends State<MulticlassSelectionDialog> {
                 'Ausgangsklasse: ${hero.className} (Stufe ${hero.primaryClassLevel})',
               ),
               Text('Aktuelle Gesamtstufe: ${hero.level}'),
+              const SizedBox(height: 12),
+              SegmentedButton<LevelUpMethod>(
+                segments: const [
+                  ButtonSegment(
+                    value: LevelUpMethod.experience,
+                    label: Text('Erfahrung'),
+                  ),
+                  ButtonSegment(
+                    value: LevelUpMethod.milestone,
+                    label: Text('Meilenstein'),
+                  ),
+                ],
+                selected: {_method},
+                onSelectionChanged: (selection) => setState(() {
+                  _method = selection.single;
+                  _error = null;
+                }),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'EP: ${hero.experience?.toString() ?? 'unbestätigt'} · '
+                'Stufe ${hero.level + 1}: '
+                '${hero.level < 20 ? CharacterCreationProgression.startingExperience(hero.level + 1).toString() : 'Höchststufe'} EP',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 key: const ValueKey('multiclass-class'),
