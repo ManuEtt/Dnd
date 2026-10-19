@@ -373,9 +373,10 @@ abstract final class FantasyOptionalArt {
   static const card = 'assets/fantasy/ornate_card_background.webp';
   static const portrait = 'assets/fantasy/ornate_portrait_border.webp';
 
-  static final Future<Set<String>> available = AssetManifest
-      .loadFromAssetBundle(rootBundle)
-      .then((manifest) => manifest.listAssets().toSet());
+  static final Future<Set<String>> available =
+      AssetManifest.loadFromAssetBundle(
+        rootBundle,
+      ).then((manifest) => manifest.listAssets().toSet());
 }
 
 /// Paints an optional original fantasy asset without intercepting touches.
@@ -474,25 +475,25 @@ class FantasyPanel extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-          if (title != null) ...[
-            Row(
-              children: [
-                if (icon != null) ...[
-                  Icon(icon, color: accent, size: 22),
-                  const SizedBox(width: 10),
-                ],
-                Expanded(
-                  child: Text(
-                    title!,
-                    style: Theme.of(context).textTheme.titleMedium,
+            if (title != null) ...[
+              Row(
+                children: [
+                  if (icon != null) ...[
+                    Icon(icon, color: accent, size: 22),
+                    const SizedBox(width: 10),
+                  ],
+                  Expanded(
+                    child: Text(
+                      title!,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            Divider(color: accent.withValues(alpha: .3), height: 24),
+                ],
+              ),
+              Divider(color: accent.withValues(alpha: .3), height: 24),
+            ],
+            child,
           ],
-          child,
-        ],
         ),
       ),
     ),

@@ -339,50 +339,50 @@ class FantasyCampaignCard extends StatelessWidget {
           centerSlice: const Rect.fromLTWH(43, 43, 464, 100),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Stack(
-              children: [
-                Image.asset(
-                  image,
-                  height: 106,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  semanticLabel: 'Fantasy-Kampagnenillustration',
-                ),
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: IconButton.filledTonal(
-                    tooltip: 'Kampagne löschen',
-                    onPressed: onDelete,
-                    icon: const Icon(Icons.delete_outline, size: 19),
+            children: [
+              Stack(
+                children: [
+                  Image.asset(
+                    image,
+                    height: 106,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    semanticLabel: 'Fantasy-Kampagnenillustration',
                   ),
+                  Positioned(
+                    right: 8,
+                    top: 8,
+                    child: IconButton.filledTonal(
+                      tooltip: 'Kampagne löschen',
+                      onPressed: onDelete,
+                      icon: const Icon(Icons.delete_outline, size: 19),
+                    ),
+                  ),
+                ],
+              ),
+              ListTile(
+                onTap: onTap,
+                leading: const Icon(
+                  Icons.explore_outlined,
+                  color: FantasyPalette.gold,
                 ),
-              ],
-            ),
-            ListTile(
-              onTap: onTap,
-              leading: const Icon(
-                Icons.explore_outlined,
-                color: FantasyPalette.gold,
+                title: Text(
+                  name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                subtitle: Text(
+                  detail,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                trailing: const Icon(
+                  Icons.chevron_right,
+                  color: FantasyPalette.gold,
+                ),
               ),
-              title: Text(
-                name,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              subtitle: Text(
-                detail,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-              ),
-              trailing: const Icon(
-                Icons.chevron_right,
-                color: FantasyPalette.gold,
-              ),
-            ),
-          ],
+            ],
           ),
         ),
       ),
@@ -438,45 +438,49 @@ class FantasyShortcutTile extends StatelessWidget {
           image: FantasyOptionalArt.button,
           centerSlice: const Rect.fromLTWH(26, 20, 248, 35),
           child: InkWell(
-          onTap: onTap,
-          child: CustomPaint(
-            foregroundPainter: FantasyOrnamentPainter(color: color),
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: compact ? 4 : 8,
-                vertical: compact ? 8 : 13,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (approvedIconIndex != null)
-                    FantasyApprovedIcon(
-                      index: approvedIconIndex!,
-                      size: compact ? 38 : 52,
-                    )
-                  else
-                    CircleAvatar(
-                      radius: compact ? 17 : 24,
-                      backgroundColor: color.withValues(alpha: .14),
-                      child: Icon(icon, color: color, size: compact ? 21 : 29),
+            onTap: onTap,
+            child: CustomPaint(
+              foregroundPainter: FantasyOrnamentPainter(color: color),
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: compact ? 4 : 8,
+                  vertical: compact ? 8 : 13,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (approvedIconIndex != null)
+                      FantasyApprovedIcon(
+                        index: approvedIconIndex!,
+                        size: compact ? 38 : 52,
+                      )
+                    else
+                      CircleAvatar(
+                        radius: compact ? 17 : 24,
+                        backgroundColor: color.withValues(alpha: .14),
+                        child: Icon(
+                          icon,
+                          color: color,
+                          size: compact ? 21 : 29,
+                        ),
+                      ),
+                    SizedBox(height: compact ? 4 : 9),
+                    Text(
+                      label,
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: FantasyPalette.ivory,
+                        fontSize: compact ? 11 : 13,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  SizedBox(height: compact ? 4 : 9),
-                  Text(
-                    label,
-                    maxLines: 2,
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: FantasyPalette.ivory,
-                      fontSize: compact ? 11 : 13,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
           ),
         ),
       ),

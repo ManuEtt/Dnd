@@ -7,9 +7,15 @@ import 'package:lebendiger_spielleiter/ui/fantasy_ui.dart';
 void main() {
   test('Vollstaendiges Grafikpaket hat vier eindeutige Rahmentypen', () {
     expect(FantasyOptionalArt.panel, contains('ornate_panel_background.webp'));
-    expect(FantasyOptionalArt.button, contains('ornate_button_background.webp'));
+    expect(
+      FantasyOptionalArt.button,
+      contains('ornate_button_background.webp'),
+    );
     expect(FantasyOptionalArt.card, contains('ornate_card_background.webp'));
-    expect(FantasyOptionalArt.portrait, contains('ornate_portrait_border.webp'));
+    expect(
+      FantasyOptionalArt.portrait,
+      contains('ornate_portrait_border.webp'),
+    );
   });
 
   testWidgets('Auch ohne optionale Grafik bleibt ein Panel bedienbar', (
