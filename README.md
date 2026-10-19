@@ -1,3 +1,28 @@
+# Würfelraunen – Charaktererstellung und Klassenentwicklung (19.10.2026)
+
+**Aktueller Entwicklungsbranch:** `feature/srd-character-level-up-20261019` ab `main` `cadaf7369f8899f29370fb28dfdc2a92c0ba98aa`. **Stand:** Neuer Klassenaufstiegsassistent und SRD-Charaktererstellungsprüfung sind eingecheckt; **vollständige CI-/Android-Abnahme dieses Inkrements noch nicht bestätigt**. Die separate Ausrüstungs-/RK-/Bewegungskorrektur liegt in [PR #9](https://github.com/ManuEtt/Dnd/pull/9) und wurde nicht ungeprüft in dieses Inkrement kopiert.
+
+## Neue Funktionen
+
+- **Aufstieg der bestehenden Klasse:** Beim Bearbeiten eines gespeicherten Helden über „Bestehende Klasse nach SRD steigern“ einen Stufenaufstieg **genau um eine Stufe** bestätigen. Unterstützt alle zwölf SRD-5.2.1-Basisklassen und die bereits ausgewählte Zweitklasse, soweit sie im Charaktermodell hinterlegt ist. Höchste Gesamtstufe 20.
+- **Erfahrung oder Meilenstein:** Die EP-Variante erfordert die Schwelle der nächsten Gesamtstufe. Ein Meilenstein muss ausdrücklich ausgewählt werden; Erfahrungspunkte werden nicht erfunden oder verändert.
+- **TP und Klassenstufe:** Fester TP-Zuwachs gemäß Klassen-Trefferwürfel (halber Würfel + 1 + KO-Modifikator, mindestens 1), aktuelle und maximale Trefferpunkte steigen im selben Verhältnis. Weder neue Anfangsausrüstung noch doppelte Rettungswurf-Übungen werden verliehen. Kampf-/Zauberressourcen bleiben bei bestehender Limitierung erhalten.
+- **Merkmale und offene Entscheidungen:** Die SRD-Klassentabelle wird für die neue Klassenstufe angezeigt. Unterklassenwahl auf Klassenstufe 3 kann für die erste Klasse ausdrücklich aus der im SRD-Katalog enthaltenen Unterklasse übernommen werden. Noch nicht regelkonform auflösbare Talent-, Herkunfts-, Zauber- und Klassenentscheidungen werden ausdrücklich als `OFFENE SRD-STUFENWAHL` in den Notizen gespeichert, **ohne erfundene Fähigkeiten oder Boni**. Der gesamte Vorschlag wird vor der endgültigen Charakterbogen-Speicherung gegen inzwischen geänderte Daten geprüft.
+- **Charaktererstellung prüfen:** In der Charaktermaske gibt es eine SRD-Prüfliste für die zwölf Klassen. Sie meldet fehlende Spezies, Hintergründe, Attribute, Klassenfertigkeiten, Rettungswurf-Übungen, Start-TP, RK/Bewegung und Ausrüstung getrennt von noch nicht automatisierten Herkunftstalenten/Klassenwahlen. Bestehende Charaktere und historische Daten werden nicht allein durch die Prüfung verändert.
+- **Tests:** `app/test/srd_class_level_up_test.dart`, `app/test/ui_srd_class_level_up_test.dart`, `app/test/srd_character_creation_audit_test.dart`; dazu bestehende Klassen-/Mehrklassen-/SQLite-/Charaktereditor-Regression.
+
+## Noch nicht vollständig
+
+**Die komplette SRD-5.2.1-Charaktererstellung und Klassenentwicklung ist noch nicht fertig.** Offen sind vor allem alle Klassenmerkmals-Effekte, Herkunftstalente/Hintergrundausrüstung und Fertigkeitsübungen, Unterklassenwahl/Unterklasseneffekte für mehrere Klassen, sämtliche Talent- und Attributssteigerungsentscheidungen samt Grenzen, Zauberwahl/-wechsel, Sonderressourcen und alle Sonderfälle der Klassenprogression. Diese Lücken werden in der [SRD-Regelmatrix](docs/SRD_5_2_1_REQUIREMENTS_MATRIX.md) geführt. Keine pauschale 100-%-Behauptung. Maßgeblich ist das unter CC BY 4.0 veröffentlichte [SRD 5.2.1](https://www.dndbeyond.com/srd), nicht nichtlizenzierte Zusatzbücher.
+
+**Weiterarbeit und Freigabe:** Aktuellen HEAD, CI (Dart-Format, Analyze, Flutter-/Backendtests, Android/APK), offene PRs und Regressionen zuerst prüfen. Nur grüne kleine Regelinkremente nach Review übernehmen; bisherige Spielstände erhalten, keine automatische Hintergrundarbeit behaupten. Detailcheckpoint in [CHECKPOINT.md](CHECKPOINT.md).
+
+---
+
+## Frühere Entwicklungsnotizen
+
+Die nachfolgenden Texte sind historische Einträge aus vorigen Versionen und PRs. Die jeweils neueste Zusammenfassung oben ist maßgeblich.
+
 # Würfelraunen – aktueller Entwicklungsstand (19.10.2026)
 
 **Version im Quellcode:** `0.8.5+55` (noch nicht für dieses Inkrement erhöht). **Aktueller Arbeitsbranch:** `feature/prone-stand-movement-20261019`, Basis `main` bei `82f2786b`. Die abgeschlossene Zustandsentwicklung aus [PR #7](https://github.com/ManuEtt/Dnd/pull/7) wurde bereits in `main` übernommen. Dieses neue Regelpaket wird getrennt geprüft und nicht ungeprüft nach `main` geschrieben.
