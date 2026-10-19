@@ -1,3 +1,5 @@
+**Abnahmenachweis:** `acaaa23d` · GitHub Actions [39203732788](https://github.com/ManuEtt/Dnd/actions/runs/39203732788) erfolgreich einschließlich Flutter-/Backendtests, Debug- und Alpha-APK. Gerätetest offen.
+
 ## Unveröffentlicht – SRD-5.2.1-Stufenaufstieg der Hauptklasse (19.10.2026)
 
 - Sicherer, ausdrücklich bestätigter Aufstieg der vorhandenen Hauptklasse für alle 12 SRD-Basisklassen, maximal Gesamtstufe 20, eigene Zweitklassenstufe bleibt unverändert.
