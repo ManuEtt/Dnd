@@ -1,3 +1,33 @@
+# Würfelraunen – Entwicklungsstand und Fortsetzung
+
+**Stand:** 18.10.2026 · **App-Version im Quellcode:** `0.8.5+55` (`app/pubspec.yaml`) · **Entwicklung:** [Pull Request #7](https://github.com/ManuEtt/Dnd/pull/7) auf `feature/condition-source-ledger-20261018`, noch nicht in `main`.
+
+**Produkt:** Deutschsprachiger D&D-5E-Solo-Spielleiter für Android mit Flutter/Dart, optionalem Fastify-/TypeScript-Erzähler und lokalem SQLite-Kampagnenspeicher. Normative Regelquelle ist das lizenzierte [SRD 5.2.1](https://www.dndbeyond.com/srd); die App setzt davon bisher **nur einen Teil** um. Die KI darf keine bestätigten Regelwerte ändern. Kein fest eingebauter Arescan-Startspielstand.
+
+## Neue SRD-Regel: Bewusstlos → Liegend (19.10.2026)
+
+**In Entwicklung auf PR #7:** Die Regelengine verknüpft jetzt bestätigte Bewusstlosigkeit mit dem eigenständigen Zustand `liegend`. Dies gilt bei einem Treffer auf 0 TP, beim Tod durch Schaden, bei bestätigten externen Zustandsquellen und bei neu bestätigten Charakterbogenänderungen. Nach TP-Heilung, einer natürlichen 20 bei der Todesrettung oder dem Ende der letzten Bewusstlos-Quelle bleibt `liegend` erhalten, bis der Spieler es regelkonform separat beendet. Mehrere Bewusstlos-Quellen werden weiterhin getrennt verwaltet. Ältere JSON-Spielstände werden beim bloßen Laden **nicht** umgeschrieben; die Folge wird erst bei einer bestätigten Zustandsänderung gespeichert.
+
+**Zusätzliche Sicherheit:** Eine bestätigte Bearbeitung des Charakterbogens beendet bestehende Konzentration, sobald der Charakter dadurch handlungsunfähig wird. Tests für Schaden, Heilung, Todesrettungen, Quelldauer, JSON-Rundlauf und Charakterbogenbestätigung stehen unter `app/test/unconscious_prone_test.dart`. Die **CI-/APK-Abnahme dieser neuen Änderung** ist noch zu bestätigen; die zuletzt belegte erfolgreiche Gesamtprüfung gehört zum vorherigen Codecommit `c000e78b` (GitHub Actions [39165288268](https://github.com/ManuEtt/Dnd/actions/runs/39165288268)). Reale Android-Gerätetests bleiben offen. Der neue Code ist noch kein vollständiger Positions-/Bewegungs- oder Inventar-Ablege-Mechanismus.
+
+## Aktuell in Entwicklung – quellgebundene Zustände
+
+Im offenen PR #7 wurden die Ursachen einzelner Zustände als `ConditionEffect` mit eigener ID, Quelle und optionalem Ende des aktuellen bzw. nächsten eigenen Kampfzugs ergänzt. Manuelle historische Zustände bleiben getrennt; mehrere Ursachen wirken regeltechnisch nicht mehrfach und können getrennt entfernt werden. Zustandsursachen und Laufzeiten erscheinen im Charakterbogen, der Abenteuerbereich zeigt die wirksamen Zustände.
+
+**Neue Bedienung im PR:** In der Abenteueransicht `Zustände verwalten` öffnen, einen der 14 unterstützten SRD-Zustände sowie eine bestätigte Quelle auswählen und die Änderung ausdrücklich bestätigen. Während des eigenen laufenden Kampfzugs kann ein Ende am aktuellen/nächsten eigenen Zug gewählt werden; außerhalb des Kampfes nur die ausdrücklich zu entfernende Variante. Über denselben Dialog lässt sich eine ausgewählte **einzelne Quelle** beenden, ohne weitere Ursachen oder manuelle Zustände zu löschen. Ein bestätigter handlungsunfähiger Zustand beendet Konzentration, Kampfrausch und Ausweichen; Entfernen startet diese nicht neu. Aktionen durchlaufen `GameEngine`, `GameController` und die transaktionale SQLite-Speicherung einschließlich erwarteter Spielstandsrevision. Freie Erzählungen vergeben keine Zustände.
+
+**Tests/Qualität:** Domänen-, Dialog- und SQLite-Regressionsfälle für Quellenbesitz, Ablauf, Neustart, veraltete Dialoge und Rollback sind im PR eingereicht. Die abschließende CI- und APK-Abnahme für **diese** Erweiterung ist noch offen; kein neues installierbares Release oder erfolgreicher Gerätetest wird behauptet. Der letzte erfolgreiche `main`-Android-Lauf vor diesem PR war [39161290442](https://github.com/ManuEtt/Dnd/actions/runs/39161290442), Codecommit `50fd700e`. [Aktuelle PR-Prüfungen](https://github.com/ManuEtt/Dnd/pull/7/checks) zeigen, ob die Erweiterung inzwischen grün ist. Ein Draft-PR ist keine Freigabe.
+
+**Offen:** vollständige SRD-Regelabdeckung, nicht kampfgebundene Zeit-/Konzentrationsdauern, Positions-/Fremdzielregeln, Vollständigkeit der Klassen-/Zauber-/Monsterwirkungen, weitere SQLite-/Widget-Grenzfälle und Abnahme auf echtem Android-Gerät. Keine kostenpflichtigen KI-Aufrufe oder unbeaufsichtigten Codex-Actions-Workflows.
+
+**Wiederaufnahme:** Zuerst tatsächlichen GitHub-HEAD, PR #7, laufende Checks und eventuelle neue Commits vergleichen. Fehlgeschlagene Tests reparieren, App und Backend sowie Android-APK prüfen, anschließend nur nach grüner Abnahme freigeben. Detaillierte Dateien: [SRD-Regelmatrix](docs/SRD_5_2_1_REQUIREMENTS_MATRIX.md), [Regelabdeckung](docs/RULE_COVERAGE.md), [CHECKPOINT](CHECKPOINT.md), [Entwicklungsstatus](DEVELOPMENT_STATUS.md), [Änderungsprotokoll](CHANGELOG.md) und [Codex-Master-Prompt](docs/CODEX_MASTER_PROMPT.md).
+
+---
+
+## Historische Entwicklungsnotizen (ältere Versionsstände)
+
+Die nachfolgenden Abschnitte dokumentieren frühere Entwicklungsstände. Ihre damaligen CI-Aussagen und Versionsnummern sind **keine aktuelle Freigabeinformation**; maßgeblich ist die Zusammenfassung oben und die PR-/GitHub-Actions-Abnahme.
+
 Aktueller Entwicklungsstand: **Würfelraunen 0.7.9+49**. Todesrettungen mit Mönch-/Kämpfer-Wiederholungen, gespeicherter deutscher Entscheidung und einmaliger Rettung je eigenem Kampfzug; korrigiertes Zugende und dauerhaftes Kampfrauschende bei Handlungsunfähigkeit. Charaktereffekte und zwei ausführbare SRD-Heilzauber bleiben integriert. Prüfstatus/Artefakte: [CHECKPOINT.md](CHECKPOINT.md); [GitHub-Import](IMPORT_0_7_9_49.md); [Regelabdeckung](docs/RULE_COVERAGE.md). Das SRD 5.2.1 ist teilweise umgesetzt.
 
 Ältere Versionshinweise und ausstehende Prüfungen weiter unten beschreiben den damaligen Stand. Maßgeblich für die aktuelle Abnahme ist CHECKPOINT.md.

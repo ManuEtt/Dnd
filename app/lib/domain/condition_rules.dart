@@ -47,8 +47,8 @@ class ExhaustionRules {
       exhaustionLevel: next,
       concentratingOn: next == 6 ? '' : hero.concentratingOn,
       conditions: next == 6 && !hero.conditions.contains('tot')
-          ? [...hero.conditions, 'tot']
-          : hero.conditions,
+          ? [...hero.manualConditions, 'tot']
+          : hero.manualConditions,
     );
   }
 
@@ -68,6 +68,26 @@ class ExhaustionRules {
 /// Synonyms from older free-form character sheets remain untouched.
 class ConditionRules {
   const ConditionRules._();
+
+  /// SRD 5.2.1, Unconscious (Rules Glossary, p. 191): becoming unconscious
+  /// also makes the creature Prone; after Unconscious ends it remains Prone.
+  /// This persistent consequence is a separate manual condition, NOT a
+  /// synthetic entry in the independent source-effect ledger.
+  ///
+  /// Apply only in confirmed rule transitions. Merely reading a legacy save
+  /// must not silently rewrite its history; a later confirmed recovery can
+  /// establish the required Prone consequence without losing effect metadata.
+  static HeroCharacter retainProneFromUnconscious(
+    HeroCharacter before,
+    HeroCharacter after,
+  ) {
+    if ((!before.conditions.contains('bewusstlos') &&
+            !after.conditions.contains('bewusstlos')) ||
+        after.manualConditions.contains('liegend')) {
+      return after;
+    }
+    return after.copyWith(conditions: [...after.manualConditions, 'liegend']);
+  }
 
   static const Map<String, String> descriptions = {
     'blind':

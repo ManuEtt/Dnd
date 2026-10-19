@@ -1,4 +1,5 @@
 import 'class_resource_rules.dart';
+import 'condition_effects.dart';
 import 'models.dart';
 
 /// SRD 5.2.1, Monk 10: Self-Restoration.
@@ -46,12 +47,7 @@ class MonkSelfRestoration {
       );
     }
     return SelfRestorationResult(
-      hero: hero.copyWith(
-        conditions: [
-          for (final condition in hero.conditions)
-            if (condition != selected) condition,
-        ],
-      ),
+      hero: ConditionEffectRules.endCondition(hero, selected),
       removed: selected,
       choiceRequired: false,
     );

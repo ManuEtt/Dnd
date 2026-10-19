@@ -7,6 +7,7 @@ import '../domain/game_engine.dart';
 import '../domain/ai_story.dart';
 import '../domain/models.dart';
 import '../domain/damage_rules.dart';
+import '../domain/condition_effects.dart';
 import '../domain/saving_throw_class_actions.dart';
 import 'backend_narrator.dart';
 
@@ -337,6 +338,33 @@ class GameController extends ChangeNotifier {
     }
     return current;
   }
+
+  Future<void> applyConditionEffect({
+    required String campaignId,
+    required int expectedRevision,
+    required String source,
+    required String condition,
+    required ConditionEffectDuration duration,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.applyConditionEffect(
+        current,
+        source: source,
+        condition: condition,
+        duration: duration,
+      ),
+    );
+  });
+
+  Future<void> removeConditionEffect({
+    required String campaignId,
+    required int expectedRevision,
+    required String effectId,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(engine.removeConditionEffect(current, effectId: effectId));
+  });
 
   Future<void> applyDamage({
     required String campaignId,

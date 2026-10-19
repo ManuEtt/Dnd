@@ -1,3 +1,18 @@
+## Unveröffentlicht – SRD 5.2.1: Bewusstlos hinterlässt Liegend (19.10.2026)
+
+- Bestätigtes Bewusstloswerden setzt `liegend` als unabhängige, persistierte Folge; bei Erwachen durch Heilung/natürliche Todesrettungs-20 oder Ende einer separaten Quelle bleibt der Zustand erhalten.
+- Altdaten werden beim Lesen nicht verändert; neue bestätigte Regelaktionen ergänzen die Folge. Bewusstlos-Quellen behalten weiterhin eigene IDs und Ablaufgrenzen.
+- Manuell bestätigte Handlungsunfähigkeit beendet nun auch bei Änderungen im Charakterbogen die Konzentration.
+- Neue Regressionstests in `app/test/unconscious_prone_test.dart`. Der Gesamtworkflow für dieses neue Inkrement ist **noch nicht als erfolgreich dokumentiert**; letzte grüne Vorversion: `c000e78b` / Actions `39165288268`.
+
+## Unveröffentlicht – PR #7: Ursachengetrennte Zustände (18.10.2026)
+
+- Optionales Zustandseffekt-Register mit eindeutigen IDs, Quellen und eigenen Zugendpunkten; manuelle/Legacy-Zustände bleiben getrennt. Effektiver Regelzustand dedupliziert die Ursachen ohne sie zu verlieren.
+- Quellenpersistenz, Validierung, Schaden/Heilung, Todesrettung und Erschöpfung auf Eigentümertrennung angepasst; Paladin/Mönch beenden nach bestätigter Regel sämtliche Ursachen eines ausgewählten Zustands.
+- Zugendgültige Effekte nur in der jeweiligen Begegnung ablaufen lassen; Anzeige der Quellen im Charakterbogen und effektiver Zustände im Abenteuerbereich.
+- Neue bestätigte Bedienoberfläche und revisionsgesicherte GameEngine-/GameController-Aktionen zum Anlegen und gezielten Entfernen einzelner Quellen. Neue handlungsunfähige Zustände beenden Konzentration und Kampfrausch/Ausweichen sofort.
+- Domänen-, Widget- und echte SQLite-Neustart-/Rollback-/Konflikttests ergänzt. Status: **nicht freigegeben, CI-/APK-Abnahme ausstehend**; allgemeine Weltzeit und Geräteszenarien bleiben offen.
+
 ## 0.8.1+51 – Kein fest eingebauter Arescan-Spielstand (18.10.2026)
 
 - Festen Startknopf und Startgeschichte von Arescan entfernt; keine automatische

@@ -143,7 +143,7 @@ class DeathSavingThrowRules {
     if (natural == 20) {
       next = RulesEngine.heal(hero, 1);
     } else {
-      final conditions = [...hero.conditions];
+      final conditions = [...hero.manualConditions];
       if (!conditions.contains(RulesEngine.unconscious)) {
         conditions.add(RulesEngine.unconscious);
       }
@@ -165,10 +165,13 @@ class DeathSavingThrowRules {
         successes = 0;
         failures = 0;
       }
-      next = hero.copyWith(
-        conditions: conditions,
-        deathSuccesses: successes,
-        deathFailures: failures,
+      next = ConditionRules.retainProneFromUnconscious(
+        hero,
+        hero.copyWith(
+          conditions: conditions,
+          deathSuccesses: successes,
+          deathFailures: failures,
+        ),
       );
     }
     return DeathSavingThrowResult._(

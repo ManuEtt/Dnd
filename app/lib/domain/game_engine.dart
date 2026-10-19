@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dice_engine.dart';
 import 'death_saving_throw_rules.dart';
 import 'condition_rules.dart';
+import 'condition_effects.dart';
 import 'character_rule_engine.dart';
 import 'character_effect_rules.dart';
 import 'healing_spell_rules.dart';
@@ -667,11 +668,18 @@ class GameEngine {
 
   GameUpdate updateHero(Campaign campaign, HeroCharacter hero) {
     // Round-trip validation also checks imported edits made outside the engine.
-    final validated = HeroCharacter.fromJson(hero.toJson());
+    final parsed = HeroCharacter.fromJson(hero.toJson());
+    var validated = ConditionRules.retainProneFromUnconscious(
+      campaign.hero,
+      parsed,
+    );
     if (validated.id != campaign.hero.id) {
       throw ArgumentError(
         'Ein anderer Charakter kann nicht stillschweigend übernommen werden.',
       );
+    }
+    if (!ConditionRules.canTakeActions(validated)) {
+      validated = SpellcastingRules.endConcentration(validated);
     }
     final fight = _encounterAfterHeroChange(campaign, validated);
     return _commit(
@@ -716,6 +724,102 @@ class GameEngine {
         'Diese Effekte können einen toten Charakter nicht verändern.',
       );
     }
+  }
+
+  /// Apply one confirmed external condition, never inferred from narration.
+  /// A timed effect is tied to the currently active encounter and its own
+  /// hero-turn boundary. Other durations require a future world-time model.
+  GameUpdate applyConditionEffect(
+    Campaign campaign, {
+    required String source,
+    required String condition,
+    required ConditionEffectDuration duration,
+  }) {
+    _requireExternalEffect(campaign, source);
+    final fight = campaign.encounter;
+    final int? endRound;
+    final String? encounterId;
+    if (duration == ConditionEffectDuration.untilRemoved) {
+      endRound = null;
+      encounterId = null;
+    } else {
+      if (fight == null ||
+          fight.isFinished ||
+          fight.activeParticipant != 'hero') {
+        throw const FormatException(
+          'Ein Zugendpunkt erfordert einen aktiven eigenen Kampfzug.',
+        );
+      }
+      encounterId = fight.id;
+      endRound =
+          fight.round +
+          (duration == ConditionEffectDuration.nextTurnEnd ? 1 : 0);
+    }
+    final effect = ConditionEffect(
+      id: _id('condition'),
+      condition: condition,
+      source: source,
+      expiresInEncounterId: encounterId,
+      expiresAtOwnTurnEndRound: endRound,
+    );
+    var hero = ConditionEffectRules.add(campaign.hero, effect);
+    if (!ConditionRules.canTakeActions(hero)) {
+      hero = SpellcastingRules.endConcentration(hero);
+    }
+    final nextFight = _encounterAfterHeroChange(campaign, hero);
+    final rageEnded =
+        (fight?.rageUntilRound ?? 0) > 0 && nextFight?.rageUntilRound == 0;
+    return _commit(
+      campaign,
+      campaign.copyWith(hero: hero, encounter: nextFight),
+      'Bestätigter Zustand: $condition durch ${effect.source}.'
+      '${endRound == null ? ' Bis zur ausdrücklichen Entfernung.' : ' Bis zu deinem Zugende in Runde $endRound.'}'
+      '${rageEnded ? ' Dein Kampfrausch endet.' : ''}',
+      type: 'condition.effect.added',
+      payload: {
+        'effect': effect.toJson(),
+        'targetId': hero.id,
+        if (rageEnded) 'rageEndedByIncapacitation': true,
+        if (campaign.hero.concentratingOn.isNotEmpty &&
+            hero.concentratingOn.isEmpty)
+          'concentrationEnded': true,
+      },
+    );
+  }
+
+  /// End exactly one validated cause; overlapping sources and manual entries
+  /// remain in place. Never restart a lost concentration or Rage.
+  GameUpdate removeConditionEffect(
+    Campaign campaign, {
+    required String effectId,
+  }) {
+    if (campaign.pendingRoll != null || campaign.pendingDeathSave != null) {
+      throw const FormatException(
+        'Zuerst den bereits offenen Würfelwurf abschließen.',
+      );
+    }
+    final matches = campaign.hero.conditionEffects.where(
+      (entry) => entry.id == effectId,
+    );
+    if (matches.length != 1) {
+      throw const FormatException(
+        'Diese Zustandsquelle ist nicht mehr vorhanden.',
+      );
+    }
+    final effect = matches.single;
+    final hero = ConditionEffectRules.removeById(campaign.hero, effectId);
+    return _commit(
+      campaign,
+      campaign.copyWith(hero: hero),
+      'Zustandsquelle ${effect.source} für ${effect.condition} beendet.',
+      type: 'condition.effect.removed',
+      payload: {
+        'effectId': effect.id,
+        'condition': effect.condition,
+        'source': effect.source,
+        'targetId': hero.id,
+      },
+    );
   }
 
   /// An explicit user-confirmed external source, never parsed out of prose.
@@ -2969,6 +3073,13 @@ class GameEngine {
         ? CombatClassActions.afterHeroTurn(originalFight)
         : originalFight;
     var hero = campaign.hero;
+    if (advanceRound) {
+      hero = ConditionEffectRules.expireAtOwnTurnEnd(
+        hero,
+        encounterId: originalFight.id,
+        round: originalFight.round,
+      );
+    }
     final rageExpired =
         originalFight.rageUntilRound > 0 && foe.rageUntilRound == 0;
     final incapacitated =

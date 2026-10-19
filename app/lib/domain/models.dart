@@ -2,6 +2,7 @@ import 'srd_equipment_catalog.dart';
 import 'inventory_item_stats.dart';
 export 'inventory_item_stats.dart';
 import 'condition_rules.dart';
+import 'condition_effects.dart';
 import 'death_saving_throw_rules.dart';
 import 'saving_throw_class_actions.dart';
 import 'spellcasting_rules.dart';
@@ -156,6 +157,7 @@ class HeroCharacter {
     this.gold,
     this.experience,
     List<String> conditions = const [],
+    List<ConditionEffect> conditionEffects = const [],
     this.exhaustionLevel = 0,
     Map<String, int> spentHitDice = const {},
     Map<String, int> spentSpellSlots = const {},
@@ -183,7 +185,8 @@ class HeroCharacter {
        features = List.unmodifiable(features),
        spells = List.unmodifiable(spells),
        inventory = List.unmodifiable(inventory),
-       conditions = List.unmodifiable(conditions),
+       manualConditions = List.unmodifiable(conditions),
+       conditionEffects = ConditionEffectRules.validated(conditionEffects),
        spentHitDice = Map.unmodifiable(spentHitDice),
        spentSpellSlots = Map.unmodifiable(spentSpellSlots),
        spentClassResources = Map.unmodifiable(spentClassResources),
@@ -213,8 +216,17 @@ class HeroCharacter {
       savingThrowProficiencies,
       features,
       spells,
-      conditions,
       unverifiedNotes;
+
+  /// Explicit legacy/manual entries, never synthesized from a source effect.
+  final List<String> manualConditions;
+  final List<ConditionEffect> conditionEffects;
+
+  /// Read-only effective condition view: distinct names, multiple causes.
+  List<String> get conditions => List.unmodifiable({
+    ...manualConditions,
+    for (final effect in conditionEffects) effect.condition,
+  });
   final List<InventoryItem> inventory;
 
   /// Already spent class Hit Dice, keyed by die type (d6/d8/d10/d12).
@@ -275,6 +287,7 @@ class HeroCharacter {
     Object? gold = _unchanged,
     Object? experience = _unchanged,
     List<String>? conditions,
+    List<ConditionEffect>? conditionEffects,
     int? exhaustionLevel,
     Map<String, int>? spentHitDice,
     Map<String, int>? spentSpellSlots,
@@ -327,7 +340,8 @@ class HeroCharacter {
     experience: identical(experience, _unchanged)
         ? this.experience
         : experience as int?,
-    conditions: conditions ?? this.conditions,
+    conditions: conditions ?? manualConditions,
+    conditionEffects: conditionEffects ?? this.conditionEffects,
     exhaustionLevel: exhaustionLevel ?? this.exhaustionLevel,
     spentHitDice: spentHitDice ?? this.spentHitDice,
     spentSpellSlots: spentSpellSlots ?? this.spentSpellSlots,
@@ -373,7 +387,9 @@ class HeroCharacter {
     'inventory': inventory.map((e) => e.toJson()).toList(),
     'gold': gold,
     'experience': experience,
-    'conditions': conditions,
+    'conditions': manualConditions,
+    if (conditionEffects.isNotEmpty)
+      'conditionEffects': conditionEffects.map((e) => e.toJson()).toList(),
     if (exhaustionLevel > 0) 'exhaustionLevel': exhaustionLevel,
     if (spentHitDice.isNotEmpty) 'spentHitDice': spentHitDice,
     if (spentSpellSlots.isNotEmpty) 'spentSpellSlots': spentSpellSlots,
@@ -638,6 +654,10 @@ class HeroCharacter {
       gold: _nullableInt(j['gold'], 'Gold'),
       experience: _nullableInt(j['experience'], 'Erfahrung'),
       conditions: _strings(j['conditions'], 'Zustände'),
+      conditionEffects: _list(
+        j['conditionEffects'],
+        'Zustandseffekte',
+      ).map(ConditionEffect.fromJson).toList(),
       exhaustionLevel: _int(
         j['exhaustionLevel'],
         'Erschöpfung',

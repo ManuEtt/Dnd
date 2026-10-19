@@ -891,6 +891,20 @@ class _ConditionsSection extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(condition),
+                      if (hero.manualConditions.contains(condition))
+                        const Text(
+                          'Manuell / historisch',
+                          style: TextStyle(color: _muted, fontSize: 12),
+                        ),
+                      for (final effect in hero.conditionEffects.where(
+                        (entry) => entry.condition == condition,
+                      ))
+                        Text(
+                          'Quelle: ${effect.source}'
+                          '${effect.expiresAtOwnTurnEndRound == null ? ' · Bis zur ausdrücklichen Entfernung' : ' · Ende deines Zugs: Runde ${effect.expiresAtOwnTurnEndRound} (${effect.expiresInEncounterId})'}',
+                          key: ValueKey('source-effect-${effect.id}'),
+                          style: const TextStyle(color: _muted, fontSize: 12),
+                        ),
                       if (ConditionRules.descriptions.containsKey(condition))
                         Text(
                           ConditionRules.descriptions[condition]!,

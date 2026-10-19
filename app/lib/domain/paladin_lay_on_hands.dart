@@ -1,5 +1,6 @@
 import 'class_resource_rules.dart';
 import 'condition_rules.dart';
+import 'condition_effects.dart';
 import 'models.dart';
 import 'rules_engine.dart';
 
@@ -48,12 +49,7 @@ class PaladinLayOnHands {
     final spent = ClassResourceRules.spend(hero, 'layOnHands', amount: cost);
     final healed = healing == 0 ? spent : RulesEngine.heal(spent, healing);
     final finalHero = removePoisoned
-        ? healed.copyWith(
-            conditions: [
-              for (final condition in healed.conditions)
-                if (condition != 'vergiftet') condition,
-            ],
-          )
+        ? ConditionEffectRules.endCondition(healed, 'vergiftet')
         : healed;
     return LayOnHandsResult(
       hero: finalHero,

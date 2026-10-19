@@ -16,6 +16,7 @@ import 'backend_settings_panel.dart';
 import 'backup_dialogs.dart';
 import 'character_editor.dart';
 import 'character_effect_dialog.dart';
+import 'condition_effect_dialog.dart';
 import 'healing_spell_dialog.dart';
 import 'death_save_decision_panel.dart';
 import 'fantasy_character_sheet.dart';
@@ -924,6 +925,37 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previous);
   }
 
+  Future<void> _manageConditionEffects() async {
+    final campaign = widget.controller.currentCampaign;
+    if (campaign == null || widget.controller.busy) return;
+    final choice = await showDialog<ConditionEffectChoice>(
+      context: context,
+      builder: (_) => ConditionEffectDialog(
+        hero: campaign.hero,
+        encounter: campaign.encounter,
+      ),
+    );
+    if (choice == null || !mounted) return;
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    if (choice.isRemoval) {
+      await widget.controller.removeConditionEffect(
+        campaignId: campaign.id,
+        expectedRevision: campaign.revision,
+        effectId: choice.effectId,
+      );
+    } else {
+      await widget.controller.applyConditionEffect(
+        campaignId: campaign.id,
+        expectedRevision: campaign.revision,
+        source: choice.source,
+        condition: choice.condition,
+        duration: choice.duration,
+      );
+    }
+    if (mounted) await _afterTurn(previous);
+  }
+
   Future<void> _decideDeathSave(
     Campaign campaign, {
     SavingThrowRerollFeature? feature,
@@ -1050,6 +1082,21 @@ class _AdventurePageState extends State<_AdventurePage> {
                           size: 17,
                         ),
                         label: const Text('Effekt bestätigen'),
+                      ),
+                      TextButton.icon(
+                        key: const ValueKey(
+                          'adventure-manage-condition-effects',
+                        ),
+                        onPressed:
+                            widget.controller.busy ||
+                                campaign.pendingRoll != null ||
+                                campaign.pendingDeathSave != null ||
+                                campaign.hero.hitPoints == null ||
+                                campaign.hero.isDead
+                            ? null
+                            : _manageConditionEffects,
+                        icon: const Icon(Icons.shield_moon_outlined, size: 17),
+                        label: const Text('Zustände verwalten'),
                       ),
                       if (campaign.hero.spells.any(
                         (name) => HealingSpellRules.find(name) != null,
@@ -2504,7 +2551,11 @@ Future<void> _showInventory(BuildContext context, HeroCharacter hero) {
               FantasyPanel(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: _journalItems(data[entry.key]),
+                  children: _journalItems(
+                    entry.key == 'conditions'
+                        ? hero.conditions
+                        : data[entry.key],
+                  ),
                 ),
               ),
             ],

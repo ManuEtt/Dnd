@@ -1,3 +1,20 @@
+## Weiterentwicklung 19.10.2026 – Bewusstlos bewirkt bleibendes Liegend
+
+Der geprüfte Featurebranch `feature/condition-source-ledger-20261018` (PR #7, letzte grüne Basis `c000e78b` / Actions 39165288268) wird um die SRD-5.2.1-Folge `bewusstlos` → `liegend` erweitert: neue Bewusstlosigkeit aus Schaden, Todesrettungen, Quellzuständen und bestätigten Charakteränderungen setzt `liegend` getrennt. Die Folge überlebt das Aufwachen, Quellenende und JSON-/SQLite-Bestätigung; Legacy-Daten werden beim Lesen nicht automatisch migriert. Handlungsunfähigkeit durch bestätigte Charakterbogenänderung beendet Konzentration. Acht neue Testfälle sind unter `unconscious_prone_test.dart` eingereicht.
+
+**Prüfstatus dieses Inkrements: NICHT ABGENOMMEN.** Neue GitHub-Checks, APKs und Gerätetests erst nach verifiziertem Erfolg eintragen. Nächster Schritt: offizielle Dart-Formatierung, kompletter CI-Lauf, eventuelle Testkorrekturen, danach reale Android-Abnahme. Weitere SRD-Folgen (Fallenlassen gehaltener Gegenstände, Aufstehen/Kriechen und Positionsregeln) noch offen.
+
+---
+
+## Laufender GitHub-Entwicklungsbranch – quellgebundene Zustände (18.10.2026)
+
+- PR [#7](https://github.com/ManuEtt/Dnd/pull/7) gegen `main`; kein Merge und keine Veränderung von `main`.
+- Quellenabhängige 2024-SRD-Zustände als eigene validierte `ConditionEffect`-Einträge, optionales JSON-Feld, deduplizierte effektive Zustände. Reine Domänenaktionen für Einzelentfernung, Gesamtentfernung und eigenen Zugendpunkt; vorhandene Regelmutatoren bewahren die Trennung.
+- Regelanzeige/Quellenanzeige im Charakterbogen; manuelle Einträge bleiben separat editierbar. Neue Domain-/Widgettests wurden eingereicht; Ergebnis des endgültigen PR-CI ist vor Freigabe zu prüfen.
+- **Ergänzt im gleichen PR:** bestätigte UI-/Controller-Aktionen für Quellen und Einzelentfernung; neue Handlungsunfähigkeit beendet Konzentration/Rage/Dodge sofort. Domänen-, Dialog- und SQLite-Konflikt-/Rollbacktests ergänzt. README aktualisiert.
+- **Noch offen:** erfolgreiche endgültige CI-/APK-Abnahme aller Änderungen, Geräteabnahme, allgemeine Weltzeit und breitere SRD-Effektmechaniken. Keine vollständige SRD-Abdeckung behaupten.
+- Checkpoint: PR #7 und dieser Branch. Ein neuer Lauf muss HEAD/PR-Checks erneut abfragen und erst bei grünem Status weiter integrieren. Kein automatischer Codex-Workflow.
+
 ## Abschlussprüfung 0.7.9+49 (18.10.2026)
 
 **692 Flutter-, 31 Backend-, 56 Python- und 12 native Androidtests bestanden, 0 Fehler/Skips.** Analyse/Format sauber, korrigierte Debug-APK aus entpacktem geprüftem ZIP gebaut; Integrität, Metadaten, Signatur und 203 Quell-/Test-/Builddateien verglichen. Geprüfter Codecommit `99b8a7bbed9c07132bf49e5eb78be9cfeb391d71`; finale Dokumentation folgt separat. GitHub-Push erneut HTTP403, main unverändert; ZIP/Patch/Importanleitung vorhanden. Exakte Fortsetzung: CHECKPOINT.md, Prüfbericht docs/VALIDATION_0_7_9.md.

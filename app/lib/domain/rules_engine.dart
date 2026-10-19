@@ -135,7 +135,7 @@ class RulesEngine {
     final temporaryLeft = hero.temporaryHitPoints - absorbed;
     final hp = hero.hitPoints!;
     final maxHp = hero.maxHitPoints!;
-    final conditions = [...hero.conditions]..remove(stable);
+    final conditions = [...hero.manualConditions]..remove(stable);
     if (hp == 0) {
       final instantDeath = amount >= maxHp;
       final failures = instantDeath
@@ -143,12 +143,15 @@ class RulesEngine {
           : hero.deathFailures + (critical ? 2 : 1);
       _addCondition(conditions, unconscious);
       if (failures >= 3) _addCondition(conditions, dead);
-      return hero.copyWith(
-        temporaryHitPoints: temporaryLeft,
-        conditions: conditions,
-        concentratingOn: '',
-        deathSuccesses: instantDeath ? 0 : hero.deathSuccesses,
-        deathFailures: failures > 3 ? 3 : failures,
+      return ConditionRules.retainProneFromUnconscious(
+        hero,
+        hero.copyWith(
+          temporaryHitPoints: temporaryLeft,
+          conditions: conditions,
+          concentratingOn: '',
+          deathSuccesses: instantDeath ? 0 : hero.deathSuccesses,
+          deathFailures: failures > 3 ? 3 : failures,
+        ),
       );
     }
     if (remaining == 0) {
@@ -158,25 +161,31 @@ class RulesEngine {
     if (remainingDamage >= maxHp) {
       _addCondition(conditions, unconscious);
       _addCondition(conditions, dead);
-      return hero.copyWith(
-        hitPoints: 0,
-        temporaryHitPoints: temporaryLeft,
-        conditions: conditions,
-        concentratingOn: '',
-        deathSuccesses: 0,
-        deathFailures: 3,
+      return ConditionRules.retainProneFromUnconscious(
+        hero,
+        hero.copyWith(
+          hitPoints: 0,
+          temporaryHitPoints: temporaryLeft,
+          conditions: conditions,
+          concentratingOn: '',
+          deathSuccesses: 0,
+          deathFailures: 3,
+        ),
       );
     }
     final nextHp = hp - remaining;
     if (nextHp <= 0) {
       _addCondition(conditions, unconscious);
-      return hero.copyWith(
-        hitPoints: 0,
-        temporaryHitPoints: temporaryLeft,
-        conditions: conditions,
-        concentratingOn: '',
-        deathSuccesses: 0,
-        deathFailures: 0,
+      return ConditionRules.retainProneFromUnconscious(
+        hero,
+        hero.copyWith(
+          hitPoints: 0,
+          temporaryHitPoints: temporaryLeft,
+          conditions: conditions,
+          concentratingOn: '',
+          deathSuccesses: 0,
+          deathFailures: 0,
+        ),
       );
     }
     return hero.copyWith(
@@ -209,13 +218,16 @@ class RulesEngine {
     }
     if (amount == 0) return hero;
     final nextHp = hero.hitPoints! + amount;
-    return hero.copyWith(
-      hitPoints: nextHp > hero.maxHitPoints! ? hero.maxHitPoints! : nextHp,
-      conditions: [...hero.conditions]
-        ..remove(unconscious)
-        ..remove(stable),
-      deathSuccesses: 0,
-      deathFailures: 0,
+    return ConditionRules.retainProneFromUnconscious(
+      hero,
+      hero.copyWith(
+        hitPoints: nextHp > hero.maxHitPoints! ? hero.maxHitPoints! : nextHp,
+        conditions: [...hero.manualConditions]
+          ..remove(unconscious)
+          ..remove(stable),
+        deathSuccesses: 0,
+        deathFailures: 0,
+      ),
     );
   }
 
