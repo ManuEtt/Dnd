@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -18,6 +19,11 @@ void main() {
     ]) {
       final text = await rootBundle.loadString('assets/fantasy/$file');
       final bytes = base64Decode(text.trim());
+      final native = await rootBundle.load(
+        'assets/fantasy/${file.substring(0, file.length - 4)}',
+      );
+      final binary = Uint8List.sublistView(native);
+      expect(binary, bytes, reason: 'Native WebP und Textatlas unterscheiden sich: $file');
       expect(bytes, isNotEmpty, reason: file);
       // The approved artwork is stored as base64-encoded WebP (RIFF).
       expect(ascii.decode(bytes.sublist(0, 4)), 'RIFF', reason: file);
@@ -58,6 +64,6 @@ void main() {
       ),
     );
     expect(find.text('Inhalt bleibt sichtbar'), findsOneWidget);
-    expect(find.byType(FutureBuilder), findsWidgets);
+    expect(find.byType(Image), findsOneWidget);
   });
 }
