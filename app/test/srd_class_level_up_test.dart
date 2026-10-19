@@ -226,8 +226,24 @@ void main() {
       throwsFormatException,
     );
     for (final invalid in [
-      hero().copyWith(maxHitPoints: null),
-      hero().copyWith(hitPoints: null),
+      HeroCharacter(
+        id: 'missing-hp',
+        name: 'Unvollständig',
+        className: 'Kämpfer',
+        level: 1,
+        hitPoints: 8,
+        experience: 300,
+        abilities: const {'constitution': 14},
+      ),
+      HeroCharacter(
+        id: 'missing-current-hp',
+        name: 'Unvollständig',
+        className: 'Kämpfer',
+        level: 1,
+        maxHitPoints: 14,
+        experience: 300,
+        abilities: const {'constitution': 14},
+      ),
       hero().copyWith(
         abilities: {...hero().abilities, 'constitution': null},
       ),
