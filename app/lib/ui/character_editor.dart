@@ -18,6 +18,7 @@ import 'ability_assignment_dialog.dart';
 import 'srd_class_selection_dialog.dart';
 import 'srd_class_level_up_dialog.dart';
 import 'fantasy_ui.dart';
+import 'fantasy_experience.dart';
 import 'character_portrait_picker.dart';
 import 'multiclass_selection_dialog.dart';
 import 'equipment_catalog_dialog.dart';
@@ -1137,10 +1138,18 @@ class _CharacterEditorState extends State<CharacterEditor> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.hero == null
-              ? 'Neuen Helden erschaffen'
-              : 'Charakter bearbeiten',
+        title: Row(
+          children: [
+            const FantasyRuneEmblem(rune: FantasyRune.hero, size: 30),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                widget.hero == null
+                    ? 'Neuen Helden erschaffen'
+                    : 'Charakter bearbeiten',
+              ),
+            ),
+          ],
         ),
       ),
       body: FantasyBackdrop(
