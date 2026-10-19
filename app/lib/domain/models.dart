@@ -219,6 +219,22 @@ class HeroCharacter {
   final Map<String, int?> abilities;
   final int? hitPoints, maxHitPoints, armorClass, speed;
 
+  static int _readSpeedRemainder(dynamic raw) {
+    final remainder = _int(
+      raw,
+      'Bewegungsrest',
+      fallback: 0,
+      min: 0,
+      max: 5,
+    );
+    if (remainder != 0 && remainder != 5) {
+      throw const FormatException(
+        'Bewegungsrest darf nur 0 oder 5 Dezimeter betragen.',
+      );
+    }
+    return remainder;
+  }
+
   /// Optional fractional base speed (0 or 5 decimeters) for SRD 35-ft species.
   /// Absent in old saves; do not confuse with an exhaustion penalty.
   final int speedRemainderDecimeters;
@@ -664,12 +680,8 @@ class HeroCharacter {
         max: 100,
       ),
       speed: _nullableInt(j['speed'], 'Bewegung', max: 1000),
-      speedRemainderDecimeters: _int(
+      speedRemainderDecimeters: _readSpeedRemainder(
         j['speedRemainderDecimeters'],
-        'Bewegungsrest',
-        fallback: 0,
-        min: 0,
-        max: 5,
       ),
       skills: _strings(j['skills'], 'Fertigkeiten'),
       savingThrowProficiencies: _strings(
