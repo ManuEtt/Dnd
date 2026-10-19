@@ -387,7 +387,7 @@ void main() {
     await showEditor(tester, original, (value) => saved = value);
     await openAssistantFromEditor(tester);
     await chooseSoldierAllThree(tester);
-    await tester.tap(find.text('Abbrechen'));
+    await tester.tap(find.text('Abbrechen').last);
     await tester.pumpAndSettle();
     await saveEditor(tester);
     expect(saved!.toJson(), original.toJson());
@@ -419,7 +419,7 @@ void main() {
     await openAssistantFromEditor(tester, scrollStep: -400);
     await chooseSoldierAllThree(tester);
     expect(applyButton(tester).onPressed, isNull);
-    await tester.tap(find.text('Abbrechen'));
+    await tester.tap(find.text('Abbrechen').last);
     await tester.pumpAndSettle();
     await saveEditor(tester);
     expect(saved!.background, 'Reisende');
