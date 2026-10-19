@@ -590,13 +590,16 @@ class _CharacterEditorState extends State<CharacterEditor> {
   Future<void> _inspectSrdCreation() async {
     try {
       final json = Map<String, dynamic>.from(_original);
-      for (final field in [
-        'name', 'species', 'className', 'background',
-      ]) {
+      for (final field in ['name', 'species', 'className', 'background']) {
         json[field] = _fields[field]!.text.trim();
       }
       for (final field in [
-        'level', 'hitPoints', 'maxHitPoints', 'armorClass', 'speed', 'gold',
+        'level',
+        'hitPoints',
+        'maxHitPoints',
+        'armorClass',
+        'speed',
+        'gold',
       ]) {
         json[field] = int.tryParse(_fields[field]!.text.trim());
       }
@@ -1015,7 +1018,9 @@ class _CharacterEditorState extends State<CharacterEditor> {
                     key: const ValueKey('open-srd-creation-audit'),
                     onPressed: _inspectSrdCreation,
                     icon: const Icon(Icons.fact_check_outlined),
-                    label: const Text('Charaktererstellung auf fehlende SRD-Schritte prüfen'),
+                    label: const Text(
+                      'Charaktererstellung auf fehlende SRD-Schritte prüfen',
+                    ),
                   ),
                   OutlinedButton.icon(
                     key: const ValueKey('open-ability-assignment'),

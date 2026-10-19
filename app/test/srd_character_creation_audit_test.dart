@@ -23,30 +23,34 @@ HeroCharacter hero(String name) => HeroCharacter(
   armorClass: 12,
   experience: 0,
   gold: 0,
-  skills: findSrdClass(name)!.skillChoices.take(
-    findSrdClass(name)!.skillCount,
-  ).toList(),
+  skills: findSrdClass(
+    name,
+  )!.skillChoices.take(findSrdClass(name)!.skillCount).toList(),
   savingThrowProficiencies: findSrdClass(name)!.savingThrows,
 );
 
 void main() {
-  test('Kern-Checkliste für alle zwölf SRD-Klassen und offen gebliebene Merkmale', () {
-    for (final klass in srdCharacterClasses) {
-      final steps = SrdCharacterCreationAudit.inspect(hero(klass.name));
-      expect(steps.length, 11);
-      expect(
-        steps.where((s) => s.status == CreationStepStatus.missing),
-        isEmpty,
-        reason: klass.name,
-      );
-      expect(
-        steps.where((s) => s.status == CreationStepStatus.notAutomated)
-            .map((s) => s.id),
-        containsAll(['origin.feat', 'class.choices']),
-        reason: klass.name,
-      );
-    }
-  });
+  test(
+    'Kern-Checkliste für alle zwölf SRD-Klassen und offen gebliebene Merkmale',
+    () {
+      for (final klass in srdCharacterClasses) {
+        final steps = SrdCharacterCreationAudit.inspect(hero(klass.name));
+        expect(steps.length, 11);
+        expect(
+          steps.where((s) => s.status == CreationStepStatus.missing),
+          isEmpty,
+          reason: klass.name,
+        );
+        expect(
+          steps
+              .where((s) => s.status == CreationStepStatus.notAutomated)
+              .map((s) => s.id),
+          containsAll(['origin.feat', 'class.choices']),
+          reason: klass.name,
+        );
+      }
+    },
+  );
 
   test('Fehlende Attribute, Übungen, TP und Ausrüstung werden angezeigt', () {
     final missing = HeroCharacter(
@@ -59,7 +63,8 @@ void main() {
     );
     final incomplete = SrdCharacterCreationAudit.inspect(missing);
     expect(
-      incomplete.where((s) => s.status == CreationStepStatus.missing)
+      incomplete
+          .where((s) => s.status == CreationStepStatus.missing)
           .map((s) => s.id),
       containsAll([
         'origin.species',

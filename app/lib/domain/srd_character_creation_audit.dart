@@ -20,15 +20,16 @@ class SrdCharacterCreationAudit {
     final knownBackground = SrdBackground.values.any(
       (entry) => entry.label == hero.background,
     );
-    final skillsValid = definition != null &&
+    final skillsValid =
+        definition != null &&
         hero.skills
-            .where((skill) => definition.skillChoices.contains(skill))
-            .toSet()
-            .length >= definition.skillCount;
-    final savesValid = definition != null &&
-        definition.savingThrows.every(
-          hero.savingThrowProficiencies.contains,
-        );
+                .where((skill) => definition.skillChoices.contains(skill))
+                .toSet()
+                .length >=
+            definition.skillCount;
+    final savesValid =
+        definition != null &&
+        definition.savingThrows.every(hero.savingThrowProficiencies.contains);
     final knownAbilityScores = abilityNames.every(
       (ability) => hero.abilities[ability] != null,
     );
@@ -47,13 +48,13 @@ class SrdCharacterCreationAudit {
         hero.background.trim().isEmpty
             ? CreationStepStatus.missing
             : knownBackground
-                ? CreationStepStatus.confirmed
-                : CreationStepStatus.notAutomated,
+            ? CreationStepStatus.confirmed
+            : CreationStepStatus.notAutomated,
         knownBackground
             ? 'SRD-Hintergrund notiert; vollständige weitere Herkunftsmerkmale '
-                'müssen getrennt bestätigt werden.'
+                  'müssen getrennt bestätigt werden.'
             : 'Der Assistent kennt aktuell vier SRD-Hintergründe mit '
-                'Attributserhöhungen; freie Hintergründe bleiben ungeprüft.',
+                  'Attributserhöhungen; freie Hintergründe bleiben ungeprüft.',
       ),
       CreationStep(
         'abilities.scores',
@@ -74,17 +75,13 @@ class SrdCharacterCreationAudit {
       CreationStep(
         'class.skills',
         'Klassenfertigkeiten',
-        skillsValid
-            ? CreationStepStatus.confirmed
-            : CreationStepStatus.missing,
+        skillsValid ? CreationStepStatus.confirmed : CreationStepStatus.missing,
         'Benötigt die bestätigte Anzahl unterschiedlicher Klassenfertigkeiten.',
       ),
       CreationStep(
         'class.saving-throws',
         'Klassenrettungswürfe',
-        savesValid
-            ? CreationStepStatus.confirmed
-            : CreationStepStatus.missing,
+        savesValid ? CreationStepStatus.confirmed : CreationStepStatus.missing,
         'Erste Klassenstufe gewährt nur die zugehörigen Rettungswurf-Übungen.',
       ),
       CreationStep(
