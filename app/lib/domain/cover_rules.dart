@@ -38,6 +38,13 @@ class CoverRules {
     CoverLevel.total => 'vollständige Deckung',
   };
 
+  static String commandValue(CoverLevel grade) => switch (grade) {
+    CoverLevel.none => 'keine',
+    CoverLevel.half => 'halb',
+    CoverLevel.threeQuarters => 'dreiviertel',
+    CoverLevel.total => 'voll',
+  };
+
   static bool canTargetDirectly(CoverLevel grade) =>
       grade != CoverLevel.total;
 
