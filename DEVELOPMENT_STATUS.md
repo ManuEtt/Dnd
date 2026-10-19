@@ -1,3 +1,11 @@
+## 19.10.2026 – Klassenaufstieg und Erstellungsprüfung (laufender PR)
+
+Branch `feature/srd-character-level-up-20261019`: neue regelgeprüfte Stufe +1 für alle 12 vorhandenen Klassen, inkl. bereits gewählter Zweitklasse, bestätigter fester Trefferpunkte, gültiger XP-Schwelle oder ausdrücklichem Meilenstein, Klassentabellen-Vorschau und Persistenz offener Entscheidungen als Notiz. Neue SRD-Erstellungsprüfung für Stufe-1-Daten mit klaren Hinweisen auf noch nicht implementierte Herkunfts- und Klassenentscheidungen. Tests für Domäne und UI angelegt.
+
+**Stand vor endgültiger CI: NICHT ABGENOMMEN.** Weder alle Klassenmechaniken noch das vollständige SRD 5.2.1 sind implementiert. Offene Regel-ID-Matrix und nächste Arbeiten siehe `docs/SRD_5_2_1_REQUIREMENTS_MATRIX.md`.
+
+---
+
 ## 19.10.2026 – SRD 5.2.1 Aufstehen aus „liegend“
 
 Nach der Übernahme von PR #7 in `main` wurde der neue Branch `feature/prone-stand-movement-20261019` von `82f2786b` abgezweigt. Implementiert sind ein ausdrückliches Aufstehen mit bestätigter Bewegungsrate, genauem Fuß-Rundungsmodell im vorhandenen Meter-System (Dezimeterrest), Abzug des verbleibenden Budgets, Schutz bei Bewegungsrate 0/Handlungsunfähigkeit/noch aktiver Quelle und ein deutscher Abenteuer-Button. `GameController` prüft die erwartete Revision und persistiert Ereignis + Bewegungsstand gemeinsam in SQLite. Ein Editor kann den Zustand während des Kampfes nicht ohne Bewegungskosten löschen; normales Gehen im Liegen wird nicht als kostenloser Lauf gewertet.

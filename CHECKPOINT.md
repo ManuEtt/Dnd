@@ -1,3 +1,15 @@
+# Checkpoint 19.10.2026 – Charaktererstellung und Klassenaufstieg
+
+Branch `feature/srd-character-level-up-20261019` ab `main` `cadaf7369f8899f29370fb28dfdc2a92c0ba98aa`. Die zwei offenen SRD-Charakter-/Ausrüstungsstränge aus anderen PRs nicht einfach überschreiben: vor Integration HEAD/PRs und eventuelle Konflikte prüfen.
+
+**Neue Dateien:** `app/lib/domain/srd_class_level_up.dart`, `app/lib/ui/srd_class_level_up_dialog.dart`, `app/lib/domain/srd_character_creation_audit.dart`, `app/test/srd_class_level_up_test.dart`, `app/test/ui_srd_class_level_up_test.dart`, `app/test/srd_character_creation_audit_test.dart`. Geändert: `app/lib/ui/character_editor.dart` sowie README, CHECKPOINT, CHANGELOG, DEVELOPMENT_STATUS, SRD-Matrix.
+
+**Funktion:** Klassenaufstieg der bisherigen 1. und bereits existierenden 2. Klasse (kein automatisches freies Drittklassenmodell) inkl. fixer TP, EP-Prüfung oder ausdrücklich bestätigtem Meilenstein, exakten Zustandsvergleichs vor Übernahme, begrenzter SRD-Unterklassenwahl, tabellarischer Merkmalsvorschau und offen notierter nicht automatisierter Wahl. SRD-Erstellungsprüfung zeigt gefüllte/fehlende/nicht implementierte Felder, ohne Spielstände zu ändern. **Keine pauschale vollständige Klassenregellogik**, insbesondere nicht Feat-/Herkunftstalent-/Zauber-/Unterklassen-Mechaniken.
+
+**Abnahme offen:** Aktueller Branch-HEAD und GitHub Actions auf Format/Analyse/Fluttertest/Backend/APK prüfen, Fehler beheben, auf Android-Gerät testen, erst danach PR-Freigabe. Bei Auftragsfortsetzung wieder hier und in der Regelmatrix beginnen.
+
+---
+
 # Entwicklungscheckpoint 19.10.2026 – Aufstehen / Bewegungsbudget
 
 Branch `feature/prone-stand-movement-20261019`, basiert auf GitHub-`main` `82f2786b17d626dbecbe31e788b2a2201a05e275`; PR #7 ist inzwischen in `main` übernommen. Neue Änderungen bleiben bis zur vollen CI-Abnahme separat.

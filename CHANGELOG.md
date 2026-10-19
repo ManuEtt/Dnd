@@ -1,3 +1,11 @@
+## Unveröffentlicht – Klassenentwicklung und SRD-Erstellungsprüfung (19.10.2026)
+
+- `SrdClassLevelUpRules`: fixer klassenspezifischer TP-Zuwachs, 1-stufiger Aufstieg in eine der vorhandenen Klassen, EP-Schwellenprüfung oder expliziter Meilenstein, Schnappschuss-/Stale-Prüfung und Level-20-Grenze.
+- SRD-Klassenmerkmale des nächsten Levels werden nur als Vorschau gezeigt. Nicht automatisierbare Talente/Unterklassen/-fähigkeiten bleiben als offene Wahl notiert statt ungeprüft gewährt; explizite Hauptklassen-Unterklasse auf Stufe 3 aus lizenzierter Auswahl.
+- Neuer deutscher Dialog im Charaktereditor, finaler Spielstandswechsel erst nach Charakterbogen-Speichern.
+- SRD-Erstellungsprüfung mit fehlenden und technisch noch nicht automatisierten Schritten für alle zwölf Basisklassen.
+- Tests der gesamten 12-Klassen-Festwertprogression, Meilensteine, Talente, Zweitklassenaufstieg, Datenänderungen, Grenzen und UI. **CI-/APK-Abnahme ausstehend; vollständige 5.2.1-Abdeckung weiterhin offen.**
+
 ## Unveröffentlicht – Prone: regelkonformes Aufstehen (19.10.2026)
 
 - Explizite Aufstehen-Aktion mit Bewegungskosten in Fuß: Hälfte der bestätigten aktuellen Bewegungsrate, abgerundet, keine Aktion/Bonusaktion. 
