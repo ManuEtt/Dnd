@@ -1,3 +1,5 @@
+**Prüfnachweis (19.10.2026):** RK-/Bewegungs-Fix im vollständigen GitHub-Lauf [39201449428](https://github.com/ManuEtt/Dnd/actions/runs/39201449428) auf `2f7ecb15` erfolgreich; echte Android-Geräteabnahme und Merge noch offen.
+
 ## Unveröffentlicht – Start-RK und Spezies-Bewegung (19.10.2026)
 
 - Vorher fehlende `Rüstungsklasse` und `Bewegung` bei der Erstellung werden nach tatsächlich bestätigten Klassen-, Spezies- und Attributwerten vorgeschlagen (10 + GE; bei ungerüstetem Barbar KON und ungerüstetem Mönch WEI).
