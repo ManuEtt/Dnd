@@ -1,3 +1,11 @@
+## 19.10.2026 – SRD 5.2.1, geprüfter Hauptklassen-Stufenaufstieg
+
+Neuer Featurebranch `feature/primary-class-level-up-20261019` von `cadaf736`. Hauptklassen-Wizard ergänzt: 12 SRD-Basis-Klassen, XP/Meilenstein, HP und retroaktiver KON-Effekt, explizite Auswahl der SRD-Unterklasse auf Klassenstufe 3, zulässige Attributsverbesserung oder offen gelassene andere Talentwahl, Auswertung des bereits vorhandenen Merkmalskatalogs. Zusätzliche Domain- und Widgettests. Gegenüber bestehenden Charakteren bleiben Ausrüstung, verbrauchte Ressourcen, Nebenklasse und bereits bestätigte Features unverändert.
+
+**Ungeprüft:** die neuen CI/Android-Builds. **Fehlend:** vollständige origin/species/background choices, Zauber und alle Klassenentscheidungen, Subclass der Zweitklasse, zusätzliche SRD-Feat-Engine, Geräteabnahme. Keine vollständige Umsetzung behaupten.
+
+---
+
 ## 19.10.2026 – SRD 5.2.1 Aufstehen aus „liegend“
 
 Nach der Übernahme von PR #7 in `main` wurde der neue Branch `feature/prone-stand-movement-20261019` von `82f2786b` abgezweigt. Implementiert sind ein ausdrückliches Aufstehen mit bestätigter Bewegungsrate, genauem Fuß-Rundungsmodell im vorhandenen Meter-System (Dezimeterrest), Abzug des verbleibenden Budgets, Schutz bei Bewegungsrate 0/Handlungsunfähigkeit/noch aktiver Quelle und ein deutscher Abenteuer-Button. `GameController` prüft die erwartete Revision und persistiert Ereignis + Bewegungsstand gemeinsam in SQLite. Ein Editor kann den Zustand während des Kampfes nicht ohne Bewegungskosten löschen; normales Gehen im Liegen wird nicht als kostenloser Lauf gewertet.
