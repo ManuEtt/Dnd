@@ -142,28 +142,32 @@ class FantasyCharacterPortrait extends StatelessWidget {
     return SizedBox(
       height: size,
       width: size,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: FantasyPalette.ink,
-          borderRadius: BorderRadius.circular(9),
-          border: Border.all(color: FantasyPalette.gold, width: 2),
-          boxShadow: [
-            BoxShadow(
-              color: FantasyPalette.gold.withValues(alpha: .22),
-              blurRadius: 9,
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(3),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(5),
-            child: FittedBox(
-              fit: BoxFit.cover,
-              child: SizedBox(
-                width: size - 10,
-                height: size - 10,
-                child: picture,
+      child: FantasyApprovedCornerFrame(
+        cornerSize: (size * .31).clamp(20.0, 40.0).toDouble(),
+        opacity: .94,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: FantasyPalette.ink,
+            borderRadius: BorderRadius.circular(9),
+            border: Border.all(color: FantasyPalette.gold, width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: FantasyPalette.gold.withValues(alpha: .22),
+                blurRadius: 9,
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(3),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(5),
+              child: FittedBox(
+                fit: BoxFit.cover,
+                child: SizedBox(
+                  width: size - 10,
+                  height: size - 10,
+                  child: picture,
+                ),
               ),
             ),
           ),
@@ -245,48 +249,69 @@ class _CharacterPortraitPickerState extends State<CharacterPortraitPicker> {
           const FantasyMoonlitBanner(height: 98),
           const SizedBox(height: 12),
           FantasyPanel(
-            child: Row(
-              children: [
-                FantasyCharacterPortrait(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final portrait = FantasyCharacterPortrait(
                   key: const ValueKey('portrait-current-preview'),
                   preset: _preset,
                   photoBase64: _photo,
                   size: 124,
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                );
+                final options = Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Aktuelles Charakterbild',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Dieses Bild erscheint auf deinem Charakterbogen.',
+                    ),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      children: [
+                        OutlinedButton.icon(
+                          key: const ValueKey('portrait-own-image'),
+                          onPressed: _pickOwnPicture,
+                          icon: const Icon(Icons.add_photo_alternate_outlined),
+                          label: const Text('Eigenes Bild wählen'),
+                        ),
+                        TextButton.icon(
+                          key: const ValueKey('portrait-remove'),
+                          onPressed: () => setState(() {
+                            _preset = -1;
+                            _photo = '';
+                            _message = null;
+                          }),
+                          icon: const Icon(Icons.delete_outline),
+                          label: const Text('Entfernen'),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+                if (constraints.maxWidth < 410) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Text(
-                        'Aktuelles Charakterbild',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Dieses Bild erscheint auf deinem Charakterbogen.',
-                      ),
-                      const SizedBox(height: 10),
-                      OutlinedButton.icon(
-                        key: const ValueKey('portrait-own-image'),
-                        onPressed: _pickOwnPicture,
-                        icon: const Icon(Icons.add_photo_alternate_outlined),
-                        label: const Text('Eigenes Bild wählen'),
-                      ),
-                      TextButton.icon(
-                        key: const ValueKey('portrait-remove'),
-                        onPressed: () => setState(() {
-                          _preset = -1;
-                          _photo = '';
-                          _message = null;
-                        }),
-                        icon: const Icon(Icons.delete_outline),
-                        label: const Text('Entfernen'),
-                      ),
+                      Center(child: portrait),
+                      const SizedBox(height: 12),
+                      options,
                     ],
-                  ),
-                ),
-              ],
+                  );
+                }
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    portrait,
+                    const SizedBox(width: 14),
+                    Expanded(child: options),
+                  ],
+                );
+              },
             ),
           ),
           if (_message != null)
@@ -314,28 +339,53 @@ class _CharacterPortraitPickerState extends State<CharacterPortraitPicker> {
               childAspectRatio: 0.87,
             ),
             itemCount: 9,
-            itemBuilder: (context, i) => InkWell(
-              key: ValueKey('portrait-option-$i'),
-              onTap: () => setState(() {
-                _preset = i;
-                _photo = '';
-                _message = null;
-              }),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: LayoutBuilder(
-                      builder: (context, constraints) =>
-                          FantasyCharacterPortrait(
-                            preset: i,
-                            photoBase64: '',
-                            size: constraints.maxWidth,
-                          ),
+            itemBuilder: (context, i) => Semantics(
+              label: 'Fantasy-Porträt ${i + 1}',
+              button: true,
+              selected: _preset == i,
+              child: InkWell(
+                key: ValueKey('portrait-option-$i'),
+                borderRadius: BorderRadius.circular(12),
+                onTap: () => setState(() {
+                  _preset = i;
+                  _photo = '';
+                  _message = null;
+                }),
+                onLongPress: () => showDialog<void>(
+                  context: context,
+                  builder: (dialogContext) => AlertDialog(
+                    title: Text('Fantasy-Porträt ${i + 1}'),
+                    content: FantasyCharacterPortrait(
+                      preset: i,
+                      photoBase64: '',
+                      size: 220,
                     ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(),
+                        child: const Text('Schließen'),
+                      ),
+                    ],
                   ),
-                  if (_preset == i)
-                    const Icon(Icons.check_circle, color: FantasyPalette.gold),
-                ],
+                ),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: LayoutBuilder(
+                        builder: (context, constraints) =>
+                            FantasyCharacterPortrait(
+                              preset: i,
+                              photoBase64: '',
+                              size: constraints.biggest.shortestSide,
+                            ),
+                      ),
+                    ),
+                    if (_preset == i)
+                      const Icon(Icons.check_circle, color: FantasyPalette.gold)
+                    else
+                      const SizedBox(height: 24),
+                  ],
+                ),
               ),
             ),
           ),
