@@ -1340,7 +1340,7 @@ class GameEngine {
     // rules lookup, NOT a narrated discovery, automatic success or hidden
     // enemy detection; only the GM/scene can establish target and DC.
     if (RegExp(
-      r'\\bpassiv(?:e|er|en)?\\s+wahrnehmung\\b|\\bwahrnehmung\\s+passiv\\b',
+      r'\bpassiv(?:e|er|en)?\s+wahrnehmung\b|\bwahrnehmung\s+passiv\b',
     ).hasMatch(words)) {
       final score = CharacterRuleEngine.passivePerception(current.hero);
       if (score == null) {
