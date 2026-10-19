@@ -758,14 +758,14 @@ class GameEngine {
     }
     final fight = campaign.encounter;
     final active = fight != null && !fight.isFinished;
-    if (active && fight.activeParticipant != 'hero') {
+    if (active && fight!.activeParticipant != 'hero') {
       throw const FormatException('Aufstehen ist nur im eigenen Zug erlaubt.');
     }
     // Also validates positive Speed and movement-blocking conditions outside
     // combat, without inventing a turn/movement pool there.
     final cost = ProneMovementRules.standingCostDecimeters(hero);
     final updatedFight = active
-        ? ProneMovementRules.spendStandingMovement(fight, hero)
+        ? ProneMovementRules.spendStandingMovement(fight!, hero)
         : fight;
     final after = hero.copyWith(
       conditions: [
@@ -2647,6 +2647,16 @@ class GameEngine {
       );
     }
     if (RegExp(r'beweg|lauf|geh').hasMatch(words)) {
+      if (current.hero.conditions.contains('liegend')) {
+        return _commit(
+          before,
+          current,
+          'Du liegst am Boden und kannst nicht normal laufen. '
+          'Stehe zuerst regelkonform auf. Kriechen wird noch nicht '
+          'automatisch berechnet.',
+          type: 'rules.blocked',
+        );
+      }
       if ((CharacterRuleEngine.movementWholeMeters(current.hero) ?? 0) <= 0) {
         return _commit(
           before,
@@ -2664,7 +2674,7 @@ class GameEngine {
         return _commit(
           before,
           current,
-          'Für diese Bewegung reichen die verbleibenden ${encounter.movementRemaining} Meter nicht aus. Deine Aktion ist weiterhin verfügbar.',
+          'Für diese Bewegung reichen die verbleibenden ${encounter.movementRemainingLabel} nicht aus. Deine Aktion ist weiterhin verfügbar.',
           type: 'rules.blocked',
         );
       }
@@ -2675,7 +2685,7 @@ class GameEngine {
             movementRemaining: encounter.movementRemaining - amount,
           ),
         ),
-        'Du bewegst dich $amount Meter. In diesem Zug bleiben ${encounter.movementRemaining - amount} Meter; deine Aktion ist verfügbar.',
+        'Du bewegst dich $amount Meter. In diesem Zug bleiben ${encounter.copyWith(movementRemaining: encounter.movementRemaining - amount).movementRemainingLabel}; deine Aktion ist verfügbar.',
         type: 'combat.moved',
         payload: {'meters': amount},
       );
