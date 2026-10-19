@@ -1,3 +1,24 @@
+# Würfelraunen – aktueller Entwicklungsstand (19.10.2026)
+
+**Version im Quellcode:** `0.8.5+55` (noch nicht für dieses Inkrement erhöht). **Aktueller Arbeitsbranch:** `feature/prone-stand-movement-20261019`, Basis `main` bei `82f2786b`. Die abgeschlossene Zustandsentwicklung aus [PR #7](https://github.com/ManuEtt/Dnd/pull/7) wurde bereits in `main` übernommen. Dieses neue Regelpaket wird getrennt geprüft und nicht ungeprüft nach `main` geschrieben.
+
+## Neu: Aufstehen aus „liegend“ – SRD 5.2.1
+
+- Im Abenteuer erscheint bei liegendem Helden die Schaltfläche **Aufstehen**. Im aktiven Kampf ist das nur im eigenen Zug möglich; der Charakter muss sich bewegen dürfen, eine positive Bewegungsrate und genügend verbleibende Bewegung haben. Aufstehen kostet **die Hälfte der Bewegungsrate, in Fuß abgerundet**, jedoch keine Aktion oder Bonusaktion.
+- Das Kampfsystem speichert zusätzlich zum ganzen Meter einen **Dezimeter-Rest**. Beispiele: Bei 9 m Bewegungsrate kostet das Aufstehen 4,5 m und lässt 4,5 m übrig; bei 7,5 m (25 Fuß) kostet es 3,6 m (12 Fuß). Bereits vorhandene JSON-/SQLite-Spielstände ohne Restfeld werden unverändert eingelesen. Bewegung und Sprinten bewahren verbleibende Bruchteile; zu Beginn des folgenden Kampfrunds wird der Rest neu gesetzt.
+- Bewusstlosigkeit, Bewegungsrate 0, zu wenig verbliebene Bewegung, ein fremder Zug oder eine weiterhin aktive `liegend`-Quelle blockieren die Aktion. Der Charaktereditor darf die `liegend`-Folge während eines laufenden Kampfes nicht kostenlos entfernen. Normales Laufen während `liegend` wird vorsichtig abgewiesen, bis **Kriechen** ausdrücklich implementiert ist.
+- Die Bestätigung durchläuft die Regelengine, eine Spielstands-Revisionsprüfung und die atomare SQLite-Speicherung mit Ereignisjournal (`combat.stoodUp`). Die Aktion wird beim Neustart rekonstruiert. Neue Domänentests: `app/test/prone_standing_rules_test.dart`; SQLite-/Rollbacktests: `app/test/prone_standing_storage_test.dart`.
+
+**Prüfstatus:** Neue Änderungen **noch nicht vollständig durch GitHub Actions abgenommen**; ein erfolgreiches vorheriges Android-Build ist kein Beleg für dieses Inkrement. Kein Gerätetest durchgeführt. Aufstehen/Bewegung ist im vorhandenen Solo-Kampfsystem umgesetzt; Kriechen, Position/Entfernung, Gelände und allgemeine Sonderbewegung bleiben offen.
+
+**Wiederaufnahme:** [Aktuelle Branch-Prüfungen](https://github.com/ManuEtt/Dnd/actions) und den neuen Pull Request prüfen; Format, Flutter-Analyse/-Tests, Backend, Android-APK und SQLite-Journal müssen grün sein, bevor der Branch in `main` übernommen wird. Fachliche Übersicht: [Regelmatrix](docs/SRD_5_2_1_REQUIREMENTS_MATRIX.md), [Entwicklungsstatus](DEVELOPMENT_STATUS.md), [Checkpoint](CHECKPOINT.md), [Changelog](CHANGELOG.md), [Master-Prompt](docs/CODEX_MASTER_PROMPT.md).
+
+---
+
+## Historische Entwicklungsdokumentation (ältere Stände)
+
+Die folgenden Abschnitte enthalten frühere Angaben, einschließlich des damals noch offenen PR #7. **Dieser PR wurde inzwischen in `main` übernommen.** Für den aktuellen Stand sind die Informationen oben maßgeblich.
+
 # Würfelraunen – Entwicklungsstand und Fortsetzung
 
 **Stand:** 18.10.2026 · **App-Version im Quellcode:** `0.8.5+55` (`app/pubspec.yaml`) · **Entwicklung:** [Pull Request #7](https://github.com/ManuEtt/Dnd/pull/7) auf `feature/condition-source-ledger-20261018`, noch nicht in `main`.
