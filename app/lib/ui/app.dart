@@ -1154,6 +1154,7 @@ class _AdventurePageState extends State<_AdventurePage> {
         child: Column(
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const FantasyRuneEmblem(rune: FantasyRune.compass, size: 38),
                 const SizedBox(width: 12),
