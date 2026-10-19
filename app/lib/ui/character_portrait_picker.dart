@@ -20,8 +20,9 @@ abstract final class FantasyApprovedAssets {
       'assets/fantasy/portrait_${preset + 1}.webp';
 
   static final Future<Set<String>> availableAssetPaths =
-      AssetManifest.loadFromAssetBundle(rootBundle)
-          .then((manifest) => manifest.listAssets().toSet());
+      AssetManifest.loadFromAssetBundle(
+        rootBundle,
+      ).then((manifest) => manifest.listAssets().toSet());
   static final Future<Uint8List> moonlitSky = rootBundle
       .load('assets/fantasy/night_sky.webp')
       .then(
@@ -149,7 +150,9 @@ class FantasyCharacterPortrait extends StatelessWidget {
       picture = FutureBuilder<Set<String>>(
         future: FantasyApprovedAssets.availableAssetPaths,
         builder: (context, snapshot) {
-          final asset = FantasyApprovedAssets.highResolutionPortraitPath(preset);
+          final asset = FantasyApprovedAssets.highResolutionPortraitPath(
+            preset,
+          );
           if (!(snapshot.data?.contains(asset) ?? false)) {
             return atlasFallback;
           }
