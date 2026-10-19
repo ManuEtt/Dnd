@@ -17,19 +17,27 @@ dependencies:
     expect(info.display, 'Version 0.8.5 (Build 55)');
   });
 
-  test('Vorabversionen bleiben sichtbar und ein fehlender Build wird erkannt', () {
-    expect(
-      AppBuildInfo.fromPubspec('version: 1.2.3-beta.1+41').display,
-      'Version 1.2.3-beta.1 (Build 41)',
-    );
-    expect(
-      AppBuildInfo.fromPubspec('version: 2.0.0').display,
-      'Version 2.0.0 (Build 0)',
-    );
-  });
+  test(
+    'Vorabversionen bleiben sichtbar und ein fehlender Build wird erkannt',
+    () {
+      expect(
+        AppBuildInfo.fromPubspec('version: 1.2.3-beta.1+41').display,
+        'Version 1.2.3-beta.1 (Build 41)',
+      );
+      expect(
+        AppBuildInfo.fromPubspec('version: 2.0.0').display,
+        'Version 2.0.0 (Build 0)',
+      );
+    },
+  );
 
   test('Unbekannte und manipulierte Versionsangaben werden nicht geraten', () {
-    for (final invalid in ['', 'name: test', 'version: unknown', 'version: 1.0']) {
+    for (final invalid in [
+      '',
+      'name: test',
+      'version: unknown',
+      'version: 1.0',
+    ]) {
       expect(
         () => AppBuildInfo.fromPubspec(invalid),
         throwsFormatException,
