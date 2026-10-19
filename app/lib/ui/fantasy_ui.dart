@@ -414,8 +414,12 @@ class FantasyOptionalImageFrame extends StatelessWidget {
                 child: Image.asset(
                   image,
                   key: ValueKey('fantasy-art-$image'),
+                  // These source WebPs are design crops, not nine-patch images.
+                  // centerSlice causes a Flutter paint assertion for small
+                  // cards, buttons, and portrait tiles. Stretch the optional
+                  // decorative layer safely; the interactive content remains
+                  // independent and the gold corner overlay stays intact.
                   fit: BoxFit.fill,
-                  centerSlice: centerSlice,
                   filterQuality: FilterQuality.medium,
                   errorBuilder: (_, error, stack) => const SizedBox.shrink(),
                 ),
