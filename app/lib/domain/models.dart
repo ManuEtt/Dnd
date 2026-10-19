@@ -157,6 +157,7 @@ class HeroCharacter {
     this.temporaryHitPoints = 0,
     this.armorClass,
     this.speed,
+    this.speedRemainderDecimeters = 0,
     List<String> skills = const [],
     List<String> savingThrowProficiencies = const [],
     List<String> features = const [],
@@ -217,6 +218,13 @@ class HeroCharacter {
   final int? gold, experience;
   final Map<String, int?> abilities;
   final int? hitPoints, maxHitPoints, armorClass, speed;
+
+  /// Optional fractional base speed (0 or 5 decimeters) for SRD 35-ft species.
+  /// Absent in old saves; do not confuse with an exhaustion penalty.
+  final int speedRemainderDecimeters;
+  double? get baseSpeedMeters => speed == null
+      ? null
+      : speed! + speedRemainderDecimeters / 10.0;
 
   /// SRD temporary HP: separate from normal/max HP, not additive.
   final int temporaryHitPoints;
@@ -287,6 +295,7 @@ class HeroCharacter {
     int? temporaryHitPoints,
     Object? armorClass = _unchanged,
     Object? speed = _unchanged,
+    int? speedRemainderDecimeters,
     List<String>? skills,
     List<String>? savingThrowProficiencies,
     List<String>? features,
@@ -338,6 +347,8 @@ class HeroCharacter {
         ? this.armorClass
         : armorClass as int?,
     speed: identical(speed, _unchanged) ? this.speed : speed as int?,
+    speedRemainderDecimeters:
+        speedRemainderDecimeters ?? this.speedRemainderDecimeters,
     skills: skills ?? this.skills,
     savingThrowProficiencies:
         savingThrowProficiencies ?? this.savingThrowProficiencies,
@@ -388,6 +399,8 @@ class HeroCharacter {
     if (temporaryHitPoints > 0) 'temporaryHitPoints': temporaryHitPoints,
     'armorClass': armorClass,
     'speed': speed,
+    if (speedRemainderDecimeters != 0)
+      'speedRemainderDecimeters': speedRemainderDecimeters,
     'skills': skills,
     'savingThrowProficiencies': savingThrowProficiencies,
     'features': features,
@@ -651,6 +664,13 @@ class HeroCharacter {
         max: 100,
       ),
       speed: _nullableInt(j['speed'], 'Bewegung', max: 1000),
+      speedRemainderDecimeters: _int(
+        j['speedRemainderDecimeters'],
+        'Bewegungsrest',
+        fallback: 0,
+        min: 0,
+        max: 5,
+      ),
       skills: _strings(j['skills'], 'Fertigkeiten'),
       savingThrowProficiencies: _strings(
         j['savingThrowProficiencies'],
