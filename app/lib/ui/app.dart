@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../domain/models.dart';
+import '../domain/rabenwacht_campaign.dart';
 import '../domain/damage_rules.dart';
 import '../domain/healing_spell_rules.dart';
 import '../domain/saving_throw_class_actions.dart';
@@ -1105,6 +1106,29 @@ class _AdventurePageState extends State<_AdventurePage> {
                         icon: const Icon(Icons.auto_stories_outlined, size: 17),
                         label: const Text('Charakterbogen ansehen'),
                       ),
+                      if (campaign.storyBible['mode'] == RabenwachtCampaign.mode)
+                        TextButton.icon(
+                          key: const ValueKey('rabenwacht-discovered-clues'),
+                          onPressed: () => showDialog<void>(
+                            context: context,
+                            builder: (dialogContext) => AlertDialog(
+                              title: const Text('Ermittlungsstand'),
+                              content: SingleChildScrollView(
+                                child: SelectableText(
+                                  RabenwachtCampaign.discoveredClues(campaign),
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(dialogContext),
+                                  child: const Text('Schließen'),
+                                ),
+                              ],
+                            ),
+                          ),
+                          icon: const Icon(Icons.fact_check_outlined, size: 17),
+                          label: const Text('Hinweise und Aufträge'),
+                        ),
                       TextButton.icon(
                         key: const ValueKey(
                           'adventure-confirm-character-effect',
