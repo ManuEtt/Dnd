@@ -1,3 +1,5 @@
+**Verifiziert am 19.10.2026:** Der vollständige GitHub-Actions-Lauf [39201449428](https://github.com/ManuEtt/Dnd/actions/runs/39201449428) für den RK-/Bewegungs-Fix auf Code-Commit `2f7ecb15` ist **erfolgreich** (Backend, Dart-Formatierung, Flutter-Analyse und -Tests, Android-Debug-APK, native Tests, Alpha-APK-Artefakte). **Ein echter Android-Gerätetest und die Integration in `main` stehen noch aus.** Ältere Zwischenstatusangaben weiter unten beziehen sich auf vorangegangene Commits.
+
 ## Korrektur: Rüstungsklasse und Bewegung in der Charaktererstellung (19.10.2026)
 
 **Root Cause:** Die Charaktermaske ließ `armorClass` und `speed` bisher unverändert leer, auch wenn Spezies und Geschicklichkeit bereits bekannt waren. Die Startausrüstung kann nach dem Import zwar strukturierte Rüstungsdaten enthalten, wird jedoch erst nach ausdrücklichem Anlegen regelwirksam.
