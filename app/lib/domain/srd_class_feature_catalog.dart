@@ -278,6 +278,9 @@ class SrdClassFeatureCatalog {
     'Danger Sense',
     'Improved Critical',
     'Superior Critical',
+    'Jack of All Trades',
+    'Reliable Talent',
+    'Slippery Mind',
   };
   static const Set<String> _partialNames = {
     'Spellcasting',

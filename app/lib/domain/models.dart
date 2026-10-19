@@ -8,6 +8,7 @@ import 'saving_throw_class_actions.dart';
 import 'spellcasting_rules.dart';
 import 'class_feature_resources.dart';
 import 'class_resource_rules.dart';
+import 'skill_check_passives.dart';
 
 /// Versioned, provider-independent game data. Unknown historical values stay null.
 const abilityNames = <String>[
@@ -1143,12 +1144,16 @@ class PendingRoll {
     this.weaponId = '',
     this.expression = '1d20',
     this.deathSaveRulesVersion = 0,
+    this.minimumNatural = 0,
     this.advantage = false,
     this.disadvantage = false,
   });
   final String id, type, targetId, targetName, weaponId, expression;
   final int modifier, difficulty;
   final int deathSaveRulesVersion;
+
+  /// The verified skill check's lower natural d20 limit, 0 or 10.
+  final int minimumNatural;
   final bool advantage, disadvantage;
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -1161,6 +1166,7 @@ class PendingRoll {
     'expression': expression,
     if (deathSaveRulesVersion > 0)
       'deathSaveRulesVersion': deathSaveRulesVersion,
+    if (minimumNatural > 0) 'minimumNatural': minimumNatural,
     if (advantage) 'advantage': true,
     if (disadvantage) 'disadvantage': true,
   };
@@ -1177,6 +1183,19 @@ class PendingRoll {
         ].contains(type) ||
         expression != '1d20') {
       throw const FormatException('Unbekannte Probe oder Würfelanweisung.');
+    }
+    final minimumNatural = _int(
+      j['minimumNatural'],
+      'Fertigkeits-Mindestwurf',
+      fallback: 0,
+      min: 0,
+      max: 10,
+    );
+    if ((minimumNatural != 0 && minimumNatural != 10) ||
+        (minimumNatural > 0 &&
+            type != 'preparedCheck' &&
+            type != 'perception')) {
+      throw const FormatException('Unzulässiger natürlicher Mindestwurf.');
     }
     final weaponId = _string(j['weaponId'], 'Nebenhandwaffe', fallback: '');
     if ((type == 'offhandAttack') != weaponId.isNotEmpty) {
@@ -1196,6 +1215,7 @@ class PendingRoll {
     }
     return PendingRoll(
       deathSaveRulesVersion: deathVersion,
+      minimumNatural: minimumNatural,
       id: _string(j['id'], 'Probe-ID'),
       type: type,
       modifier: _int(j['modifier'], 'Modifikator', min: -20, max: 30),
@@ -1807,6 +1827,18 @@ class Campaign {
       }
       final prof = 2 + (hero.level - 1) ~/ 4;
       int modifier(String key) => ((hero.abilities[key]! - 10) / 2).floor();
+      int skillBonus(String skill) {
+        final proficient = hero.skills.contains(skill);
+        return proficient
+            ? prof
+            : SkillCheckPassives.jackOfAllTrades(
+                bardClassLevel: ClassResourceRules.level(hero, 'Barde'),
+                proficiencyBonus: prof,
+                usesSkill: true,
+                proficient: false,
+              );
+      }
+
       // A saved request must match the same confirmed Exhaustion penalty that
       // the shared character rules applied when creating it. Legacy death-save
       // requests use modifier0; version1 includes the authoritative bonus.
@@ -1840,9 +1872,7 @@ class Campaign {
               (hero.weaponProficient ? prof : 0) +
               exhaustion,
         'perception' =>
-          modifier('wisdom') +
-              (hero.skills.contains('Wahrnehmung') ? prof : 0) +
-              exhaustion,
+          modifier('wisdom') + skillBonus('Wahrnehmung') + exhaustion,
         'preparedCheck' => () {
           const skills = <String, String>{
             'Wahrnehmung': 'wisdom',
@@ -1874,15 +1904,30 @@ class Campaign {
               skills[values[1]] != values[0]) {
             throw const FormatException('Ungültige Kampagnenprobe.');
           }
-          return modifier(values[0]) +
-              (hero.skills.contains(values[1]) ? prof : 0) +
-              exhaustion;
+          return modifier(values[0]) + skillBonus(values[1]) + exhaustion;
         }(),
         'escape' => modifier('dexterity') + exhaustion,
         'death' when pending.deathSaveRulesVersion == 1 =>
           DeathSavingThrowRules.modifier(hero),
         _ => 0,
       };
+      if (pending.minimumNatural > 0) {
+        final skill = pending.type == 'perception'
+            ? 'Wahrnehmung'
+            : pending.type == 'preparedCheck'
+            ? pending.targetName.split('|').last
+            : '';
+        final expectedMinimum = SkillCheckPassives.minimumNatural(
+          rogueClassLevel: ClassResourceRules.level(hero, 'Schurke'),
+          usesSkill: skill.isNotEmpty,
+          proficient: hero.skills.contains(skill),
+        );
+        if (pending.minimumNatural != expectedMinimum) {
+          throw const FormatException(
+            'Dieser Charakter besitzt keinen gültigen Fertigkeits-Mindestwurf.',
+          );
+        }
+      }
       if (pending.modifier != expected) {
         throw const FormatException(
           'Die gespeicherte Probe enthält einen falschen Bonus.',
