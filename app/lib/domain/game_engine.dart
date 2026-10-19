@@ -669,7 +669,7 @@ class GameEngine {
   GameUpdate updateHero(Campaign campaign, HeroCharacter hero) {
     // Round-trip validation also checks imported edits made outside the engine.
     final parsed = HeroCharacter.fromJson(hero.toJson());
-    final validated = ConditionRules.retainProneFromUnconscious(
+    var validated = ConditionRules.retainProneFromUnconscious(
       campaign.hero,
       parsed,
     );
@@ -677,6 +677,9 @@ class GameEngine {
       throw ArgumentError(
         'Ein anderer Charakter kann nicht stillschweigend übernommen werden.',
       );
+    }
+    if (!ConditionRules.canTakeActions(validated)) {
+      validated = SpellcastingRules.endConcentration(validated);
     }
     final fight = _encounterAfterHeroChange(campaign, validated);
     return _commit(
