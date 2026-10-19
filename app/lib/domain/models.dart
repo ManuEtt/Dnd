@@ -134,9 +134,7 @@ class InventoryItem {
     // attributes in older imports. Never infer a catalog ID from a free name,
     // and never overwrite user-confirmed custom stats.
     stats: j['stats'] == null
-        ? _catalogStats(
-            _string(j['catalogId'], 'Katalog-ID', fallback: ''),
-          )
+        ? _catalogStats(_string(j['catalogId'], 'Katalog-ID', fallback: ''))
         : InventoryItemStats.fromJson(_map(j['stats'], 'Gegenstandswerte')),
   );
 }

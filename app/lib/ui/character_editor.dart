@@ -352,7 +352,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
           id: const Uuid().v4(),
           name: selected.name,
           quantity: 1,
-          description: selected.note ?? '', // Reference-only note; mechanics in stats.
+          description:
+              selected.note ?? '', // Reference-only note; mechanics in stats.
           catalogId: selected.id,
           stats: InventoryItemStats.fromCatalog(selected),
         ).toJson(),
@@ -363,18 +364,25 @@ class _CharacterEditorState extends State<CharacterEditor> {
   /// Older starting kits stored only a name and quantity. Require an
   /// explicit preview/confirmation before adding reviewed SRD metadata.
   Future<void> _enrichInventoryFromCatalog() async {
-    final entries = (_original['inventory'] as List).map(
-      (value) => InventoryItem.fromJson(Map<String, dynamic>.from(value as Map)),
-    ).toList();
-    final updated = entries.map(StartingEquipmentImport.enrichLegacyItem).toList();
+    final entries = (_original['inventory'] as List)
+        .map(
+          (value) =>
+              InventoryItem.fromJson(Map<String, dynamic>.from(value as Map)),
+        )
+        .toList();
+    final updated = entries
+        .map(StartingEquipmentImport.enrichLegacyItem)
+        .toList();
     final changed = <int>[
       for (var i = 0; i < entries.length; i++)
         if (entries[i].catalogId != updated[i].catalogId) i,
     ];
     if (changed.isEmpty) {
-      setState(() => _error =
-          'Keine eindeutig passenden Gegenstände ohne Katalogwerte gefunden. '
-          'Offene Ausrüstungswahlen bitte im SRD-Katalog auswählen.');
+      setState(
+        () => _error =
+            'Keine eindeutig passenden Gegenstände ohne Katalogwerte gefunden. '
+            'Offene Ausrüstungswahlen bitte im SRD-Katalog auswählen.',
+      );
       return;
     }
     final approved = await showDialog<bool>(
@@ -386,14 +394,18 @@ class _CharacterEditorState extends State<CharacterEditor> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Nur eindeutig zugeordnete Gegenstände erhalten '
-                  'ihre veröffentlichten Katalogattribute. '
-                  'Eigene Gegenstandswerte und nicht eindeutige '
-                  'Auswahlmöglichkeiten bleiben unverändert.'),
+              const Text(
+                'Nur eindeutig zugeordnete Gegenstände erhalten '
+                'ihre veröffentlichten Katalogattribute. '
+                'Eigene Gegenstandswerte und nicht eindeutige '
+                'Auswahlmöglichkeiten bleiben unverändert.',
+              ),
               const SizedBox(height: 12),
               for (final i in changed)
-                Text('${entries[i].name} → ${updated[i].name} '
-                     '(Anzahl ${updated[i].quantity})'),
+                Text(
+                  '${entries[i].name} → ${updated[i].name} '
+                  '(Anzahl ${updated[i].quantity})',
+                ),
             ],
           ),
         ),

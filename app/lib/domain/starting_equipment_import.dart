@@ -37,11 +37,7 @@ class StartingEquipmentImport {
   static InventoryItem fromStartingItem(SrdStartingItem item, String id) {
     final entry = catalogEntry(item.name);
     if (entry == null) {
-      return InventoryItem(
-        id: id,
-        name: item.name,
-        quantity: item.quantity,
-      );
+      return InventoryItem(id: id, name: item.name, quantity: item.quantity);
     }
     final arrowBundle = entry.id == 'item-arrows-20';
     if (arrowBundle && item.quantity % 20 != 0) {
