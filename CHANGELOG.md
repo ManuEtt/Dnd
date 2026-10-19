@@ -1,3 +1,10 @@
+## Unveröffentlicht – Versionsanzeige, Porträt-CI und Repositorypflege (19.10.2026)
+
+- **Optionen → App-Version:** Paketversion und Android-Buildnummer aus der gebündelten `app/pubspec.yaml`; kein hartcodierter zweiter Versionsstand. Unit- und Bundle-Test hinzugefügt.
+- Porträt-Regressionstests wieder kompilierbar: `HeroCharacter` ist keine const-Klasse; fehlerhafte const-Fixtures korrigiert.
+- Nach belegtem Merge-Nachweis und exaktem Branch-HEAD zehn erledigte GitHub-Feature-/Integrationsbranches gelöscht. Main und nicht zusammengeführte Arbeitszweige bleiben.
+- Integration in `main` erst nach grüner vollständiger CI dieses separaten Fixes.
+
 ## Unveröffentlicht – Fantasy-UI und Charakterporträt (19.10.2026)
 
 - Neun bestätigte Fantasy-Charakterporträts als offline eingebetteter WebP-Atlas, Galerie mit Vorschau, Übernehmen/Abbrechen, Auswählen/Entfernen und eigener Bildwahl via Android-System-Bildwähler.

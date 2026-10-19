@@ -1535,16 +1535,6 @@ class _CharacterEditorState extends State<CharacterEditor> {
                         child: Text(note as String),
                       ),
                   ],
-                  if (_error != null)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      child: Text(
-                        _error!,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
-                        ),
-                      ),
-                    ),
                   const SizedBox(height: 20),
                   // Permanently visible primary action in the footer below.
                   const SizedBox(height: 20),
@@ -1565,23 +1555,44 @@ class _CharacterEditorState extends State<CharacterEditor> {
               ),
             ),
           ),
-          child: Row(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close),
-                  label: const Text('Abbrechen'),
+              if (_error != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 100),
+                    child: SingleChildScrollView(
+                      child: Text(
+                        _error!,
+                        key: const ValueKey('editor-validation-error'),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: FilledButton.icon(
-                  key: const ValueKey('editor-save-fixed'),
-                  onPressed: _save,
-                  icon: const Icon(Icons.save_outlined),
-                  label: const Text('Charakter speichern'),
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close),
+                      label: const Text('Abbrechen'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: FilledButton.icon(
+                      key: const ValueKey('editor-save-fixed'),
+                      onPressed: _save,
+                      icon: const Icon(Icons.save_outlined),
+                      label: const Text('Charakter speichern'),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

@@ -15,7 +15,7 @@ void main() {
   test('Eigene Bilddaten werden im Charakter gespeichert, ohne lokale Pfade', () {
     const image =
         'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/PTcAAAAASUVORK5CYII=';
-    const hero = HeroCharacter(
+    final hero = HeroCharacter(
       id: 'hero',
       name: 'Tira',
       portraitPhotoBase64: image,
@@ -27,7 +27,7 @@ void main() {
   });
 
   test('Alte Spielstände bleiben byteweise in ihrer Struktur unverändert', () {
-    const hero = HeroCharacter(id: 'old', name: 'Alt');
+    final hero = HeroCharacter(id: 'old', name: 'Alt');
     final json = hero.toJson();
     expect(json.containsKey('portraitPreset'), isFalse);
     expect(json.containsKey('portraitPhotoBase64'), isFalse);
@@ -35,7 +35,7 @@ void main() {
   });
 
   test('Manipulierte Vorlagen und große/ungültige Bilder werden abgelehnt', () {
-    const hero = HeroCharacter(id: 'old', name: 'Alt');
+    final hero = HeroCharacter(id: 'old', name: 'Alt');
     for (final invalid in [-2, 9, '3']) {
       expect(
         () => HeroCharacter.fromJson({
@@ -93,7 +93,13 @@ void main() {
       await tester.tap(find.text('Wählen'));
       await tester.pumpAndSettle();
       final fourth = find.byKey(const ValueKey('portrait-option-3'));
+      await tester.scrollUntilVisible(
+        fourth,
+        220,
+        scrollable: find.byType(Scrollable).first,
+      );
       await tester.ensureVisible(fourth);
+      await tester.pumpAndSettle();
       await tester.tap(fourth);
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('portrait-apply')));
