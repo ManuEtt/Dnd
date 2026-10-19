@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart' show AssetManifest, rootBundle;
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,6 +13,16 @@ import 'fantasy_ui.dart';
 // Portrait selection is independent of network access.
 abstract final class FantasyApprovedAssets {
   static final Future<ui.Image> portraitAtlas = _loadAtlas();
+
+  /// The original 256px portraits are bundled by the graphics package.
+  /// Existing saves retain their preset indices even without those files.
+  static String highResolutionPortraitPath(int preset) =>
+      'assets/fantasy/portrait_${preset + 1}.webp';
+
+  static final Future<Set<String>> availableAssetPaths =
+      AssetManifest.loadFromAssetBundle(
+        rootBundle,
+      ).then((manifest) => manifest.listAssets().toSet());
   static final Future<Uint8List> moonlitSky = rootBundle
       .load('assets/fantasy/night_sky.webp')
       .then(
@@ -121,7 +131,8 @@ class FantasyCharacterPortrait extends StatelessWidget {
         picture = const Icon(Icons.person_outline, color: FantasyPalette.gold);
       }
     } else if (preset >= 0 && preset < 9) {
-      picture = FutureBuilder<ui.Image>(
+      // Prefer original 256px portraits; preserve the shipped atlas fallback.
+      final atlasFallback = FutureBuilder<ui.Image>(
         future: FantasyApprovedAssets.portraitAtlas,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
@@ -133,6 +144,23 @@ class FantasyCharacterPortrait extends StatelessWidget {
           return Image.asset(
             FantasyArtwork.campaign(preset),
             fit: BoxFit.cover,
+          );
+        },
+      );
+      picture = FutureBuilder<Set<String>>(
+        future: FantasyApprovedAssets.availableAssetPaths,
+        builder: (context, snapshot) {
+          final asset = FantasyApprovedAssets.highResolutionPortraitPath(
+            preset,
+          );
+          if (!(snapshot.data?.contains(asset) ?? false)) {
+            return atlasFallback;
+          }
+          return Image.asset(
+            asset,
+            fit: BoxFit.cover,
+            gaplessPlayback: true,
+            errorBuilder: (_, error, stackTrace) => atlasFallback,
           );
         },
       );
