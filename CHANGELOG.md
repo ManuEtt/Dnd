@@ -1,3 +1,10 @@
+## Unveröffentlicht – SRD-5.2.1-Stufenaufstieg der Hauptklasse (19.10.2026)
+
+- Sicherer, ausdrücklich bestätigter Aufstieg der vorhandenen Hauptklasse für alle 12 SRD-Basisklassen, maximal Gesamtstufe 20, eigene Zweitklassenstufe bleibt unverändert.
+- EP-/Meilenstein-Prüfung, fester Trefferpunktzuwachs ab Stufe 2 mit KON, retroaktive HP-Korrektur beim KON-Anstieg; Spielstandsvorschau gegen nachträgliche Änderungen geschützt.
+- Auf Klassenstufe 3 explizite SRD-Unterklasse; bei Attributstalenten zulässige +2 oder +1/+1; nicht getroffene Klassen-/Talentauswahlen explizit offen statt automatisch erfunden.
+- Neue Domain- und UI-Tests. **Vollständige CI-/APK-/Geräteabnahme für dieses Inkrement ausstehend**. Keine vollständige SRD-Abdeckung behauptet.
+
 ## Unveröffentlicht – Prone: regelkonformes Aufstehen (19.10.2026)
 
 - Explizite Aufstehen-Aktion mit Bewegungskosten in Fuß: Hälfte der bestätigten aktuellen Bewegungsrate, abgerundet, keine Aktion/Bonusaktion. 
