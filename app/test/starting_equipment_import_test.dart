@@ -7,7 +7,7 @@ import 'package:lebendiger_spielleiter/domain/starting_equipment_import.dart';
 void main() {
   test('Alle 12 Klassen-Startsets behalten bekannte Waffen/Rüstungen vollständig', () {
     var imported = 0;
-    for (final cls in srdClasses) {
+    for (final cls in srdCharacterClasses) {
       for (final kit in cls.kits) {
         for (final starting in kit.items) {
           final result = StartingEquipmentImport.fromStartingItem(
@@ -64,7 +64,10 @@ void main() {
       expect(result.stats!.armorBaseAc, entry.armorBaseAc);
       expect(result.stats!.strengthMin, entry.strengthMin);
       expect(result.stats!.dexCap, entry.dexCap);
-      expect(result.stats!.stealthDisadvantage, entry.stealthDisadvantage);
+      expect(
+        result.stats!.stealthDisadvantage,
+        entry.isArmor ? entry.stealthDisadvantage : null,
+      );
     }
   });
 
