@@ -1,3 +1,11 @@
+## Unveröffentlicht – Version 0.8.6+56 / ausdrückliche SRD-Startpaketwahl (19.10.2026)
+
+- Barden: konkrete Auswahl eines SRD-Musikinstruments; Mönche: konkrete Auswahl eines SRD-Handwerkszeugs oder -Musikinstruments statt eines untypisierten Platzhalters.
+- Auswahl-ID wird gegen die jeweilige Klassenset-Kategorie geprüft und beim Übernehmen als strukturierter Kataloggegenstand mit Preis und Gewicht geschrieben; manipulierte/stale IDs werden abgewiesen, Wechsel der Klasse/Startausrüstung setzt Auswahl zurück.
+- Unbekannte, nicht im SRD-Katalog abgedeckte Gegenstände bleiben explizit ohne erfundene Eigenschaften; keine automatische Ausrüstung.
+- Regressionstests für alle zwölf Sets und echte Klassenassistenten-Auswahl. Version in `pubspec.yaml` erhöht; Anzeige im Einstellungsbildschirm folgt automatisch.
+- Neuer PR wird vor Android-Gerätetest, CI-Abnahme und Review nicht als fertig freigegeben.
+
 ## Unveröffentlicht – Versionsanzeige, Porträt-CI und Repositorypflege (19.10.2026)
 
 - **Optionen → App-Version:** Paketversion und Android-Buildnummer aus der gebündelten `app/pubspec.yaml`; kein hartcodierter zweiter Versionsstand. Unit- und Bundle-Test hinzugefügt.
