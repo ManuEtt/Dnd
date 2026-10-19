@@ -5,7 +5,7 @@ import 'package:lebendiger_spielleiter/ui/character_portrait_picker.dart';
 
 void main() {
   test('Die Bildvorlage überlebt JSON-Export und -Import unverändert', () {
-    const hero = HeroCharacter(id: 'hero', name: 'Liora', portraitPreset: 7);
+    final hero = HeroCharacter(id: 'hero', name: 'Liora', portraitPreset: 7);
     final restored = HeroCharacter.fromJson(hero.toJson());
     expect(restored.portraitPreset, 7);
     expect(restored.portraitPhotoBase64, isEmpty);
@@ -41,7 +41,7 @@ void main() {
         throwsFormatException,
       );
     }
-    for (final invalid in ['not base64!', 'x' * 64004]) {
+    for (final invalid in ['not base64!', List.filled(64004, 'x').join()]) {
       expect(
         () => HeroCharacter.fromJson({...hero.toJson(), 'portraitPhotoBase64': invalid}),
         throwsFormatException,
