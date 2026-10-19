@@ -49,7 +49,7 @@ void main() {
     c = engine.act(c, 'Ich befrage Joren.').campaign;
     expect(c.storyBible['stage'], 'chapel');
     expect(c.hero.experience, 420);
-    expect(c.messages.last.text, contains('Stufenaufstieg'));
+    expect(c.messages.last.text, contains('neue Charakterstufe'));
     expect(CampaignExperience.canLevelUp(c.hero), isTrue);
     final proposal = SrdClassLevelUpRules.propose(
       hero: c.hero,
