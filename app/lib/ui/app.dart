@@ -249,6 +249,7 @@ class _LivingGameAppState extends State<LivingGameApp> {
                         NavigationDestination(
                           icon: Icon(Icons.person_outline),
                           label: 'Helden',
+                approvedIconIndex: 0,
                         ),
                         NavigationDestination(
                           icon: Icon(Icons.menu_book_outlined),
@@ -476,6 +477,7 @@ class _HomePage extends StatelessWidget {
             children: [
               FantasyShortcutTile(
                 label: 'Neues Abenteuer',
+                approvedIconIndex: 1,
                 icon: Icons.sports_martial_arts,
                 color: FantasyPalette.danger,
                 onTap: controller.busy ? null : () => _newCampaign(context),
@@ -490,6 +492,7 @@ class _HomePage extends StatelessWidget {
               const SizedBox(width: 9),
               FantasyShortcutTile(
                 label: 'Chronik',
+                approvedIconIndex: 6,
                 icon: Icons.menu_book_outlined,
                 color: FantasyPalette.blue,
                 onTap: onJournal,
@@ -497,6 +500,7 @@ class _HomePage extends StatelessWidget {
               const SizedBox(width: 9),
               FantasyShortcutTile(
                 label: 'Weiterspielen',
+                approvedIconIndex: 3,
                 icon: Icons.auto_stories_outlined,
                 color: const Color(0xffbc8dde),
                 onTap: current == null ? null : onAdventure,
