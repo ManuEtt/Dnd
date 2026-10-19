@@ -604,8 +604,11 @@ class _CharacterEditorState extends State<CharacterEditor> {
 
   Future<void> _advanceExistingClass() async {
     if (widget.hero == null) {
-      setState(() => _error = 'Für den Stufenaufstieg zuerst den '
-          'Startcharakter speichern.');
+      setState(
+        () => _error =
+            'Für den Stufenaufstieg zuerst den '
+            'Startcharakter speichern.',
+      );
       return;
     }
     try {

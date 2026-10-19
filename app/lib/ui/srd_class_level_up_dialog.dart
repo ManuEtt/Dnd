@@ -11,8 +11,7 @@ class SrdClassLevelUpDialog extends StatefulWidget {
   final HeroCharacter hero;
 
   @override
-  State<SrdClassLevelUpDialog> createState() =>
-      _SrdClassLevelUpDialogState();
+  State<SrdClassLevelUpDialog> createState() => _SrdClassLevelUpDialogState();
 }
 
 class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
@@ -21,8 +20,7 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
   bool _chooseSubclass = false;
   String? _error;
 
-  String get _subclass =>
-      SrdClassFeatureCatalog.defaultSubclass[_target] ?? '';
+  String get _subclass => SrdClassFeatureCatalog.defaultSubclass[_target] ?? '';
 
   SrdClassLevelUpProposal? _proposal() {
     try {
@@ -53,11 +51,13 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
       widget.hero.className,
       if (widget.hero.hasSecondClass) widget.hero.secondaryClassName,
     ];
-    final chosenLevel = (_target == widget.hero.className
+    final chosenLevel =
+        (_target == widget.hero.className
             ? widget.hero.primaryClassLevel
             : widget.hero.secondaryClassLevel) +
         1;
-    final canChooseSubclass = _target == widget.hero.className &&
+    final canChooseSubclass =
+        _target == widget.hero.className &&
         chosenLevel == 3 &&
         widget.hero.subclass.trim().isEmpty &&
         _subclass.isNotEmpty;
@@ -73,7 +73,9 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('Gesamtstufe ${widget.hero.level} → ${widget.hero.level + 1}'),
+              Text(
+                'Gesamtstufe ${widget.hero.level} → ${widget.hero.level + 1}',
+              ),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 key: const ValueKey('levelup-class'),
@@ -81,10 +83,7 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
                 decoration: const InputDecoration(labelText: 'Klasse steigern'),
                 items: [
                   for (final className in classNames)
-                    DropdownMenuItem(
-                      value: className,
-                      child: Text(className),
-                    ),
+                    DropdownMenuItem(value: className, child: Text(className)),
                 ],
                 onChanged: (value) {
                   if (value != null) {
@@ -125,15 +124,16 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
                   key: const ValueKey('levelup-subclass'),
                   contentPadding: EdgeInsets.zero,
                   value: _chooseSubclass,
-                  title: Text('SRD-Unterklasse „$_subclass“ ausdrücklich wählen'),
+                  title: Text(
+                    'SRD-Unterklasse „$_subclass“ ausdrücklich wählen',
+                  ),
                   subtitle: const Text(
                     'Nur der SRD-Katalogeintrag wird notiert. '
                     'Nicht implementierte Unterklassenwirkungen '
                     'werden dadurch nicht erfunden.',
                   ),
-                  onChanged: (value) => setState(
-                    () => _chooseSubclass = value ?? false,
-                  ),
+                  onChanged: (value) =>
+                      setState(() => _chooseSubclass = value ?? false),
                 ),
               if (proposal != null) ...[
                 const SizedBox(height: 10),

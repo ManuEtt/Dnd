@@ -46,8 +46,7 @@ class SrdClassLevelUpProposal {
     }
     final unresolved = requiredChoices.where(
       (choice) =>
-          !choice.startsWith('Unterklasse wählen') ||
-          chosenSubclass.isEmpty,
+          !choice.startsWith('Unterklasse wählen') || chosenSubclass.isEmpty,
     );
     final notes = <String>[
       ...hero.unverifiedNotes,
@@ -56,8 +55,9 @@ class SrdClassLevelUpProposal {
     ];
     final resulting = hero.copyWith(
       level: totalLevel,
-      secondaryClassLevel:
-          isSecondary ? hero.secondaryClassLevel + 1 : hero.secondaryClassLevel,
+      secondaryClassLevel: isSecondary
+          ? hero.secondaryClassLevel + 1
+          : hero.secondaryClassLevel,
       subclass: chosenSubclass.isNotEmpty ? chosenSubclass : hero.subclass,
       maxHitPoints: hero.maxHitPoints! + hpGain,
       hitPoints: hero.hitPoints! + hpGain,
@@ -122,11 +122,10 @@ class SrdClassLevelUpRules {
         );
       }
     }
-    final classLevel = (isSecondary
-        ? hero.secondaryClassLevel
-        : hero.primaryClassLevel) + 1;
-    final supportedSubclass = SrdClassFeatureCatalog.defaultSubclass[
-        selected.name] ?? '';
+    final classLevel =
+        (isSecondary ? hero.secondaryClassLevel : hero.primaryClassLevel) + 1;
+    final supportedSubclass =
+        SrdClassFeatureCatalog.defaultSubclass[selected.name] ?? '';
     if (chosenSubclass.isNotEmpty &&
         (isSecondary ||
             classLevel != 3 ||
@@ -143,11 +142,13 @@ class SrdClassLevelUpRules {
       subclass: chosenSubclass.isNotEmpty ? chosenSubclass : hero.subclass,
     );
     final milestones = ClassProgressionRules.milestonesForClass(selected.name)
-        .where((m) =>
-            m.classLevel == classLevel &&
-            (m.type == ClassMilestoneType.subclassChoice ||
-                m.type == ClassMilestoneType.featChoice ||
-                m.type == ClassMilestoneType.epicBoon))
+        .where(
+          (m) =>
+              m.classLevel == classLevel &&
+              (m.type == ClassMilestoneType.subclassChoice ||
+                  m.type == ClassMilestoneType.featChoice ||
+                  m.type == ClassMilestoneType.epicBoon),
+        )
         .map((m) => m.label);
     final choices = <String>{
       ...milestones,

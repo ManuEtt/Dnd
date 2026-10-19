@@ -51,8 +51,11 @@ void main() {
         method: LevelUpMethod.experience,
       );
       expect(proposal.hitDie, klass.hitDie, reason: klass.name);
-      expect(proposal.hpGain, klass.hitDie ~/ 2 + 3,
-          reason: klass.name); // fixed midpoint+1 plus KON +2
+      expect(
+        proposal.hpGain,
+        klass.hitDie ~/ 2 + 3,
+        reason: klass.name,
+      ); // fixed midpoint+1 plus KON +2
       expect(proposal.classLevel, 2);
       final raised = proposal.applyTo(current);
       expect(raised.level, 2);
@@ -113,43 +116,46 @@ void main() {
     );
   });
 
-  test('Unterklassenwahl ist explizit, keine unbekannte Unterklasse zugeschrieben', () {
-    final current = hero(level: 2, xp: 900, className: 'Kämpfer');
-    final pending = SrdClassLevelUpRules.propose(
-      hero: current,
-      className: 'Kämpfer',
-      method: LevelUpMethod.experience,
-    );
-    expect(pending.requiredChoices, contains('Unterklasse wählen'));
-    final without = pending.applyTo(current);
-    expect(without.subclass, isEmpty);
-    expect(
-      without.unverifiedNotes,
-      contains('OFFENE SRD-STUFENWAHL: Kämpfer 3 – Unterklasse wählen'),
-    );
-    final chosen = SrdClassLevelUpRules.propose(
-      hero: current,
-      className: 'Kämpfer',
-      method: LevelUpMethod.experience,
-      chosenSubclass: SrdClassFeatureCatalog.defaultSubclass['Kämpfer']!,
-    );
-    final raised = chosen.applyTo(current);
-    expect(raised.subclass, 'Champion');
-    expect(
-      raised.unverifiedNotes.any((n) => n.contains('Unterklasse wählen')),
-      isFalse,
-    );
-    expect(raised.features, current.features);
-    expect(
-      () => SrdClassLevelUpRules.propose(
+  test(
+    'Unterklassenwahl ist explizit, keine unbekannte Unterklasse zugeschrieben',
+    () {
+      final current = hero(level: 2, xp: 900, className: 'Kämpfer');
+      final pending = SrdClassLevelUpRules.propose(
         hero: current,
         className: 'Kämpfer',
         method: LevelUpMethod.experience,
-        chosenSubclass: 'Nicht im SRD',
-      ),
-      throwsFormatException,
-    );
-  });
+      );
+      expect(pending.requiredChoices, contains('Unterklasse wählen'));
+      final without = pending.applyTo(current);
+      expect(without.subclass, isEmpty);
+      expect(
+        without.unverifiedNotes,
+        contains('OFFENE SRD-STUFENWAHL: Kämpfer 3 – Unterklasse wählen'),
+      );
+      final chosen = SrdClassLevelUpRules.propose(
+        hero: current,
+        className: 'Kämpfer',
+        method: LevelUpMethod.experience,
+        chosenSubclass: SrdClassFeatureCatalog.defaultSubclass['Kämpfer']!,
+      );
+      final raised = chosen.applyTo(current);
+      expect(raised.subclass, 'Champion');
+      expect(
+        raised.unverifiedNotes.any((n) => n.contains('Unterklasse wählen')),
+        isFalse,
+      );
+      expect(raised.features, current.features);
+      expect(
+        () => SrdClassLevelUpRules.propose(
+          hero: current,
+          className: 'Kämpfer',
+          method: LevelUpMethod.experience,
+          chosenSubclass: 'Nicht im SRD',
+        ),
+        throwsFormatException,
+      );
+    },
+  );
 
   test('Talente und epische Gabe bleiben offen statt automatisch erteilt', () {
     final fourth = hero(level: 3, xp: 2700, className: 'Schurke');
@@ -168,35 +174,42 @@ void main() {
         className: className,
         method: LevelUpMethod.experience,
       ).applyTo(at18);
-      expect(result.unverifiedNotes.any((n) => n.contains('Epische Gabe')),
-          isTrue);
+      expect(
+        result.unverifiedNotes.any((n) => n.contains('Epische Gabe')),
+        isTrue,
+      );
     }
   });
 
-  test('Bestehende Zweitklasse aufsteigen ohne neue Start-Übungen und Ausrüstung', () {
-    final current = hero(
-      className: 'Kämpfer',
-      secondary: 'Magier',
-      secondaryLevel: 2,
-      level: 5,
-      xp: 14000,
-    );
-    final proposal = SrdClassLevelUpRules.propose(
-      hero: current,
-      className: 'Magier',
-      method: LevelUpMethod.experience,
-    );
-    expect(proposal.isSecondary, isTrue);
-    expect(proposal.classLevel, 3);
-    final result = proposal.applyTo(current);
-    expect(result.level, 6);
-    expect(result.primaryClassLevel, 3);
-    expect(result.secondaryClassLevel, 3);
-    expect(result.inventory, current.inventory);
-    expect(result.savingThrowProficiencies, current.savingThrowProficiencies);
-    expect(result.unverifiedNotes.any((n) => n.contains('Unterklasse wählen')),
-        isTrue);
-  });
+  test(
+    'Bestehende Zweitklasse aufsteigen ohne neue Start-Übungen und Ausrüstung',
+    () {
+      final current = hero(
+        className: 'Kämpfer',
+        secondary: 'Magier',
+        secondaryLevel: 2,
+        level: 5,
+        xp: 14000,
+      );
+      final proposal = SrdClassLevelUpRules.propose(
+        hero: current,
+        className: 'Magier',
+        method: LevelUpMethod.experience,
+      );
+      expect(proposal.isSecondary, isTrue);
+      expect(proposal.classLevel, 3);
+      final result = proposal.applyTo(current);
+      expect(result.level, 6);
+      expect(result.primaryClassLevel, 3);
+      expect(result.secondaryClassLevel, 3);
+      expect(result.inventory, current.inventory);
+      expect(result.savingThrowProficiencies, current.savingThrowProficiencies);
+      expect(
+        result.unverifiedNotes.any((n) => n.contains('Unterklasse wählen')),
+        isTrue,
+      );
+    },
+  );
 
   test('Vorschlag ist bei veränderten TP, EP und Attributen ungültig', () {
     final current = hero();
@@ -215,58 +228,59 @@ void main() {
     }
   });
 
-  test('Level 20, unbekannte Klasse, fehlende TP/KO und Tod werden abgewiesen', () {
-    final atMax = hero(level: 20, xp: 355000);
-    expect(
-      () => SrdClassLevelUpRules.propose(
-        hero: atMax,
-        className: 'Kämpfer',
-        method: LevelUpMethod.milestone,
-      ),
-      throwsFormatException,
-    );
-    for (final invalid in [
-      HeroCharacter(
-        id: 'missing-hp',
-        name: 'Unvollständig',
-        className: 'Kämpfer',
-        level: 1,
-        hitPoints: 8,
-        experience: 300,
-        abilities: const {'constitution': 14},
-      ),
-      HeroCharacter(
-        id: 'missing-current-hp',
-        name: 'Unvollständig',
-        className: 'Kämpfer',
-        level: 1,
-        maxHitPoints: 14,
-        experience: 300,
-        abilities: const {'constitution': 14},
-      ),
-      hero().copyWith(
-        abilities: {...hero().abilities, 'constitution': null},
-      ),
-      hero().copyWith(conditions: ['tot']),
-    ]) {
+  test(
+    'Level 20, unbekannte Klasse, fehlende TP/KO und Tod werden abgewiesen',
+    () {
+      final atMax = hero(level: 20, xp: 355000);
       expect(
         () => SrdClassLevelUpRules.propose(
-          hero: invalid,
+          hero: atMax,
           className: 'Kämpfer',
           method: LevelUpMethod.milestone,
         ),
         throwsFormatException,
       );
-    }
-    expect(
-      () => SrdClassLevelUpRules.propose(
-        hero: hero(),
-        className: 'Unbekannt',
-        method: LevelUpMethod.milestone,
-      ),
-      throwsFormatException,
-    );
-  });
+      for (final invalid in [
+        HeroCharacter(
+          id: 'missing-hp',
+          name: 'Unvollständig',
+          className: 'Kämpfer',
+          level: 1,
+          hitPoints: 8,
+          experience: 300,
+          abilities: const {'constitution': 14},
+        ),
+        HeroCharacter(
+          id: 'missing-current-hp',
+          name: 'Unvollständig',
+          className: 'Kämpfer',
+          level: 1,
+          maxHitPoints: 14,
+          experience: 300,
+          abilities: const {'constitution': 14},
+        ),
+        hero().copyWith(abilities: {...hero().abilities, 'constitution': null}),
+        hero().copyWith(conditions: ['tot']),
+      ]) {
+        expect(
+          () => SrdClassLevelUpRules.propose(
+            hero: invalid,
+            className: 'Kämpfer',
+            method: LevelUpMethod.milestone,
+          ),
+          throwsFormatException,
+        );
+      }
+      expect(
+        () => SrdClassLevelUpRules.propose(
+          hero: hero(),
+          className: 'Unbekannt',
+          method: LevelUpMethod.milestone,
+        ),
+        throwsFormatException,
+      );
+    },
+  );
 
   test('Berechnete Angriffe folgen bestätigter Klassenstufe', () {
     final initial = hero(level: 4, xp: 6500);

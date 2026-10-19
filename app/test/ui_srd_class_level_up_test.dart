@@ -64,45 +64,53 @@ HeroCharacter current({int xp = 300}) => HeroCharacter(
 );
 
 void main() {
-  testWidgets('Bestehende Klasse wird erst nach Vorschau und Speicherung erhöht', (
-    tester,
-  ) async {
-    HeroCharacter? result;
-    await openEditor(tester, current(), (value) => result = value);
-    await tapVisible(tester, find.byKey(const ValueKey('open-class-level-up')));
-    expect(find.text('Klasse um eine Stufe steigern'), findsOneWidget);
-    expect(find.textContaining('Gesamtstufe 1 → 2'), findsOneWidget);
-    expect(find.textContaining('feste +8 TP'), findsOneWidget);
-    await tester.tap(find.byKey(const ValueKey('levelup-confirm')));
-    await tester.pumpAndSettle();
-    // No user save yet; the editor still owns the changes.
-    expect(result, isNull);
-    await tapVisible(tester, find.text('Charakter speichern'));
-    expect(result?.level, 2);
-    expect(result?.maxHitPoints, 22);
-    expect(result?.hitPoints, 16);
-    expect(result?.experience, 300);
-    expect(tester.takeException(), isNull);
-  });
+  testWidgets(
+    'Bestehende Klasse wird erst nach Vorschau und Speicherung erhöht',
+    (tester) async {
+      HeroCharacter? result;
+      await openEditor(tester, current(), (value) => result = value);
+      await tapVisible(
+        tester,
+        find.byKey(const ValueKey('open-class-level-up')),
+      );
+      expect(find.text('Klasse um eine Stufe steigern'), findsOneWidget);
+      expect(find.textContaining('Gesamtstufe 1 → 2'), findsOneWidget);
+      expect(find.textContaining('feste +8 TP'), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('levelup-confirm')));
+      await tester.pumpAndSettle();
+      // No user save yet; the editor still owns the changes.
+      expect(result, isNull);
+      await tapVisible(tester, find.text('Charakter speichern'));
+      expect(result?.level, 2);
+      expect(result?.maxHitPoints, 22);
+      expect(result?.hitPoints, 16);
+      expect(result?.experience, 300);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
-  testWidgets('Zu wenige Erfahrungspunkte erfordern ausdrücklichen Meilenstein', (
-    tester,
-  ) async {
-    HeroCharacter? result;
-    await openEditor(tester, current(xp: 0), (value) => result = value);
-    await tapVisible(tester, find.byKey(const ValueKey('open-class-level-up')));
-    expect(find.byKey(const ValueKey('levelup-error')), findsOneWidget);
-    await tester.tap(find.byKey(const ValueKey('levelup-confirm')));
-    await tester.pumpAndSettle();
-    expect(find.text('Klasse um eine Stufe steigern'), findsOneWidget);
-    await tester.tap(find.text('Meilenstein'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('levelup-confirm')));
-    await tester.pumpAndSettle();
-    await tapVisible(tester, find.text('Charakter speichern'));
-    expect(result?.level, 2);
-    expect(result?.experience, 0);
-  });
+  testWidgets(
+    'Zu wenige Erfahrungspunkte erfordern ausdrücklichen Meilenstein',
+    (tester) async {
+      HeroCharacter? result;
+      await openEditor(tester, current(xp: 0), (value) => result = value);
+      await tapVisible(
+        tester,
+        find.byKey(const ValueKey('open-class-level-up')),
+      );
+      expect(find.byKey(const ValueKey('levelup-error')), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('levelup-confirm')));
+      await tester.pumpAndSettle();
+      expect(find.text('Klasse um eine Stufe steigern'), findsOneWidget);
+      await tester.tap(find.text('Meilenstein'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('levelup-confirm')));
+      await tester.pumpAndSettle();
+      await tapVisible(tester, find.text('Charakter speichern'));
+      expect(result?.level, 2);
+      expect(result?.experience, 0);
+    },
+  );
 
   testWidgets('Abbrechen ändert keine bestätigten Trefferpunkte', (
     tester,
