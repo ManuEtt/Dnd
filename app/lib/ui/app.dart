@@ -1706,8 +1706,10 @@ class _CombatView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Deckung gegen diesen Gegner',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text(
+                  'Deckung gegen diesen Gegner',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 5),
                 const Text(
                   'Nur ausdrücklich bestätigte Hindernisse gelten. '
@@ -1728,7 +1730,8 @@ class _CombatView extends StatelessWidget {
                               : 'combat-enemy-cover',
                         ),
                         tooltip: 'Deckung für $target ändern',
-                        enabled: !busy &&
+                        enabled:
+                            !busy &&
                             !encounter.isFinished &&
                             encounter.activeParticipant == 'hero',
                         onSelected: (grade) => onAction(

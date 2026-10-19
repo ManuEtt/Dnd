@@ -64,10 +64,7 @@ void main() {
         ),
         2,
       );
-      expect(
-        CoverRules.armorClass(100, CoverLevel.threeQuarters),
-        100,
-      );
+      expect(CoverRules.armorClass(100, CoverLevel.threeQuarters), 100);
     });
 
     test('Vollständige Deckung verhindert das direkte Angreifen', () {
@@ -80,22 +77,47 @@ void main() {
     });
 
     test('Geschicklichkeitsrettung nur relativ zum bestätigten Angreifer', () {
-      expect(CoverRules.savingThrowBonus(
-        CoverLevel.half, ability: 'dexterity', sourceOppositeCover: true,
-      ), 2);
-      expect(CoverRules.savingThrowBonus(
-        CoverLevel.threeQuarters, ability: 'dexterity', sourceOppositeCover: true,
-      ), 5);
-      expect(CoverRules.savingThrowBonus(
-        CoverLevel.half, ability: 'wisdom', sourceOppositeCover: true,
-      ), 0);
-      expect(CoverRules.savingThrowBonus(
-        CoverLevel.half, ability: 'dexterity', sourceOppositeCover: false,
-      ), 0);
+      expect(
+        CoverRules.savingThrowBonus(
+          CoverLevel.half,
+          ability: 'dexterity',
+          sourceOppositeCover: true,
+        ),
+        2,
+      );
+      expect(
+        CoverRules.savingThrowBonus(
+          CoverLevel.threeQuarters,
+          ability: 'dexterity',
+          sourceOppositeCover: true,
+        ),
+        5,
+      );
+      expect(
+        CoverRules.savingThrowBonus(
+          CoverLevel.half,
+          ability: 'wisdom',
+          sourceOppositeCover: true,
+        ),
+        0,
+      );
+      expect(
+        CoverRules.savingThrowBonus(
+          CoverLevel.half,
+          ability: 'dexterity',
+          sourceOppositeCover: false,
+        ),
+        0,
+      );
       // An area effect can reach around total cover; never auto-succeed it.
-      expect(CoverRules.savingThrowBonus(
-        CoverLevel.total, ability: 'dexterity', sourceOppositeCover: true,
-      ), 0);
+      expect(
+        CoverRules.savingThrowBonus(
+          CoverLevel.total,
+          ability: 'dexterity',
+          sourceOppositeCover: true,
+        ),
+        0,
+      );
     });
 
     test('Alte Spielstände ohne Deckungsfeld und falsche Werte', () {
@@ -111,7 +133,10 @@ void main() {
         heroCover: CoverLevel.half,
         enemyCover: CoverLevel.threeQuarters,
       );
-      expect(Encounter.fromJson(protected.toJson()).toJson(), protected.toJson());
+      expect(
+        Encounter.fromJson(protected.toJson()).toJson(),
+        protected.toJson(),
+      );
       expect(
         () => Encounter.fromJson({...legacy, 'enemyCover': 'sevenEighths'}),
         throwsFormatException,
@@ -136,7 +161,10 @@ void main() {
       expect(campaign.encounter!.bonusActionUsed, isFalse);
       final status = gm.act(campaign, 'Deckungsstatus');
       expect(status.events.single.type, 'combat.coverStatus');
-      expect(status.campaign.messages.last.text, contains('Dreivierteldeckung'));
+      expect(
+        status.campaign.messages.last.text,
+        contains('Dreivierteldeckung'),
+      );
       expect(Campaign.fromJson(campaign.toJson()).toJson(), campaign.toJson());
     });
 
@@ -147,10 +175,7 @@ void main() {
       final action = gm.act(campaign, 'Ich greife an').campaign;
       expect(action.pendingRoll?.type, 'attack');
       expect(action.pendingRoll?.difficulty, 14);
-      expect(
-        Campaign.fromJson(action.toJson()).pendingRoll?.difficulty,
-        14,
-      );
+      expect(Campaign.fromJson(action.toJson()).pendingRoll?.difficulty, 14);
       final miss = gm.resolveRoll(action, total: 13);
       expect(miss.campaign.encounter?.enemyHitPoints, 90);
       expect(miss.events.single.payload['effectiveTargetArmorClass'], 14);
@@ -169,20 +194,25 @@ void main() {
       expect(() => Campaign.fromJson(original), throwsFormatException);
     });
 
-    test('Vollständige Deckung lässt Angriffe nicht starten oder W20 nutzen', () {
-      final gm = engine();
-      var campaign = withFight(gm);
-      campaign = gm.act(campaign, 'Deckung: Gegner voll').campaign;
-      final blocked = gm.act(campaign, 'Ich greife an');
-      expect(blocked.events.single.type, 'rules.blocked');
-      expect(blocked.campaign.pendingRoll, isNull);
-      expect(blocked.campaign.encounter!.actionUsed, isFalse);
-      expect(blocked.campaign.encounter!.enemyHitPoints, 90);
-      final reset = gm.act(campaign, 'Deckung: Gegner keine');
-      expect(reset.campaign.encounter!.enemyCover, CoverLevel.none);
-      expect(gm.act(reset.campaign, 'Ich greife an').campaign.pendingRoll?.type,
-          'attack');
-    });
+    test(
+      'Vollständige Deckung lässt Angriffe nicht starten oder W20 nutzen',
+      () {
+        final gm = engine();
+        var campaign = withFight(gm);
+        campaign = gm.act(campaign, 'Deckung: Gegner voll').campaign;
+        final blocked = gm.act(campaign, 'Ich greife an');
+        expect(blocked.events.single.type, 'rules.blocked');
+        expect(blocked.campaign.pendingRoll, isNull);
+        expect(blocked.campaign.encounter!.actionUsed, isFalse);
+        expect(blocked.campaign.encounter!.enemyHitPoints, 90);
+        final reset = gm.act(campaign, 'Deckung: Gegner keine');
+        expect(reset.campaign.encounter!.enemyCover, CoverLevel.none);
+        expect(
+          gm.act(reset.campaign, 'Ich greife an').campaign.pendingRoll?.type,
+          'attack',
+        );
+      },
+    );
 
     test('Gegner darf Held mit vollständiger Deckung nicht angreifen', () {
       final gm = engine(natural: 20);
@@ -228,31 +258,37 @@ void main() {
       expect(update.campaign.encounter!.enemyCover, CoverLevel.none);
     });
 
-    test('Rettungswürfe nur gegen konkret bestätigten Gegner verwenden Deckung', () {
-      final gm = engine(natural: 7);
-      var campaign = withFight(gm);
-      campaign = gm.act(campaign, 'Deckung: Held dreiviertel').campaign;
-      final covered = gm.act(
-        campaign,
-        'Rettungswurf: Geschicklichkeit SG 20 vom Gegner',
-      );
-      expect(covered.events.single.type, 'saving.roll');
-      expect(covered.events.single.payload['coverBonus'], 5);
-      expect(covered.events.single.payload['fromEnemyCover'], true);
-      expect(covered.events.single.payload['roll']['modifier'], 7);
-      final otherSource = gm.act(
-        campaign,
-        'Rettungswurf: Geschicklichkeit SG 20',
-      );
-      expect(otherSource.events.single.payload.containsKey('coverBonus'), isFalse);
-      expect(otherSource.events.single.payload['roll']['modifier'], 2);
-      final wisdom = gm.act(
-        campaign,
-        'Rettungswurf: Weisheit SG 20 vom Gegner',
-      );
-      expect(wisdom.events.single.payload['coverBonus'], 0);
-      expect(wisdom.events.single.payload['roll']['modifier'], 1);
-    });
+    test(
+      'Rettungswürfe nur gegen konkret bestätigten Gegner verwenden Deckung',
+      () {
+        final gm = engine(natural: 7);
+        var campaign = withFight(gm);
+        campaign = gm.act(campaign, 'Deckung: Held dreiviertel').campaign;
+        final covered = gm.act(
+          campaign,
+          'Rettungswurf: Geschicklichkeit SG 20 vom Gegner',
+        );
+        expect(covered.events.single.type, 'saving.roll');
+        expect(covered.events.single.payload['coverBonus'], 5);
+        expect(covered.events.single.payload['fromEnemyCover'], true);
+        expect(covered.events.single.payload['roll']['modifier'], 7);
+        final otherSource = gm.act(
+          campaign,
+          'Rettungswurf: Geschicklichkeit SG 20',
+        );
+        expect(
+          otherSource.events.single.payload.containsKey('coverBonus'),
+          isFalse,
+        );
+        expect(otherSource.events.single.payload['roll']['modifier'], 2);
+        final wisdom = gm.act(
+          campaign,
+          'Rettungswurf: Weisheit SG 20 vom Gegner',
+        );
+        expect(wisdom.events.single.payload['coverBonus'], 0);
+        expect(wisdom.events.single.payload['roll']['modifier'], 1);
+      },
+    );
 
     test('Klassen-Wiederholungswurf bewahrt den bestätigten Deckungsbonus', () {
       final gm = engine(natural: 1);
@@ -266,7 +302,10 @@ void main() {
       expect(save.events.single.type, 'saving.roll');
       expect(save.events.single.payload['failed'], isTrue);
       expect(save.events.single.payload['coverBonus'], 2);
-      final reroll = gm.act(save.campaign, 'Rettungswurf wiederholen: Unbeugsam');
+      final reroll = gm.act(
+        save.campaign,
+        'Rettungswurf wiederholen: Unbeugsam',
+      );
       expect(reroll.events.single.type, 'saving.rerolled');
       expect(reroll.events.single.payload['coverBonus'], 2);
       // DEX +2, cover +2, Fighter 9 (Indomitable) +9.
@@ -276,9 +315,15 @@ void main() {
 
   test('Schlaghagel berücksichtigt Deckung vor Ressourcenverbrauch', () {
     final monk = HeroCharacter(
-      id: 'monk', name: 'Liora', className: 'Mönch', level: 2,
+      id: 'monk',
+      name: 'Liora',
+      className: 'Mönch',
+      level: 2,
       abilities: const {'strength': 12, 'dexterity': 16, 'wisdom': 14},
-      hitPoints: 25, maxHitPoints: 25, armorClass: 15, speed: 9,
+      hitPoints: 25,
+      maxHitPoints: 25,
+      armorClass: 15,
+      speed: 9,
     );
     final dice = DiceEngine(random: _FixedRandom(9));
     final covered = encounter(enemyCover: CoverLevel.total);

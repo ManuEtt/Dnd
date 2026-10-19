@@ -1291,6 +1291,7 @@ class Encounter {
     this.selfRestorationChoice = '',
   });
   final String id, enemyName, enemyDamage, enemyDamageType, activeParticipant;
+
   /// Explicitly confirmed from the CURRENT opponent's attack direction.
   /// Older campaigns default to no cover, not an inferred obstacle.
   final CoverLevel heroCover, enemyCover;
@@ -1536,8 +1537,12 @@ class Encounter {
         min: 1,
         max: 100,
       ),
-      heroCover: CoverRules.fromStorage(_string(j['heroCover'], 'Deckung des Helden', fallback: 'none')),
-      enemyCover: CoverRules.fromStorage(_string(j['enemyCover'], 'Deckung des Gegners', fallback: 'none')),
+      heroCover: CoverRules.fromStorage(
+        _string(j['heroCover'], 'Deckung des Helden', fallback: 'none'),
+      ),
+      enemyCover: CoverRules.fromStorage(
+        _string(j['enemyCover'], 'Deckung des Gegners', fallback: 'none'),
+      ),
       enemyAttackBonus: _int(
         j['enemyAttackBonus'],
         'Gegnerbonus',
@@ -1980,7 +1985,8 @@ class Campaign {
               CoverRules.armorClass(
                     encounter.enemyArmorClass,
                     encounter.enemyCover,
-                  ) != pending.difficulty)) {
+                  ) !=
+                  pending.difficulty)) {
         throw const FormatException(
           'Das Angriffsziel stimmt nicht mit der Probe überein.',
         );

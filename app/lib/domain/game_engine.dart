@@ -1387,7 +1387,8 @@ class GameEngine {
       final ability = saveNames[requestedSave.group(1)!]!;
       final dc = int.parse(requestedSave.group(2)!);
       final fromEnemy = requestedSave.group(3) != null;
-      if (fromEnemy && (current.encounter == null || current.encounter!.isFinished)) {
+      if (fromEnemy &&
+          (current.encounter == null || current.encounter!.isFinished)) {
         return _commit(
           campaign,
           current,
@@ -1510,8 +1511,8 @@ class GameEngine {
           : 0;
       if (fromEnemy &&
           (current.encounter == null ||
-           current.encounter!.isFinished ||
-           payload['coverBonus'] != expectedCoverBonus)) {
+              current.encounter!.isFinished ||
+              payload['coverBonus'] != expectedCoverBonus)) {
         return _commit(
           campaign,
           current,
@@ -3519,10 +3520,8 @@ class GameEngine {
           'heroCover': foe.heroCover.name,
           'hit': false,
           if (rageExpired) 'rageExpiredAtTurnEnd': true,
-          if (rageEndedByIncapacitation)
-            'rageEndedByIncapacitation': true,
-          if (restorationChoiceRequired)
-            'selfRestorationChoiceRequired': true,
+          if (rageEndedByIncapacitation) 'rageEndedByIncapacitation': true,
+          if (restorationChoiceRequired) 'selfRestorationChoiceRequired': true,
           if (restored.isNotEmpty) 'selfRestorationRemoved': restored,
         },
       );
@@ -3538,10 +3537,7 @@ class GameEngine {
     );
     final outcome = RulesEngine.attack(
       roll: result,
-      armorClass: CoverRules.armorClass(
-        hero.armorClass!,
-        foe.heroCover,
-      ),
+      armorClass: CoverRules.armorClass(hero.armorClass!, foe.heroCover),
     );
     final effectiveArmorClass = CoverRules.armorClass(
       hero.armorClass!,

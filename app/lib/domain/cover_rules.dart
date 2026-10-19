@@ -45,8 +45,7 @@ class CoverRules {
     CoverLevel.total => 'voll',
   };
 
-  static bool canTargetDirectly(CoverLevel grade) =>
-      grade != CoverLevel.total;
+  static bool canTargetDirectly(CoverLevel grade) => grade != CoverLevel.total;
 
   /// Effective AC for a direct attack from the opposite side. Natural-20
   /// critical hits still follow the attack engine; full cover cannot be
