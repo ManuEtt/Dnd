@@ -1,3 +1,11 @@
+## Unveröffentlicht – Ausrüstung im Klassenassistenten/Import (19.10.2026)
+
+- Fehlerursache: SRD-Startsets wurden bisher nur als Name/Menge, ohne `catalogId` und `InventoryItemStats`, übernommen.
+- Neue `StartingEquipmentImport`-Zuordnung für eindeutige SRD-Katalogeinträge in allen zwölf Startklassen. Ungeklärte Optionen bleiben ohne erfundene Werte; 20 Pfeile werden als genau eine 20er-Packung gespeichert.
+- Vorhandene `catalogId`-Importe ohne `stats` werden rekonstruiert, **eigene Stats werden nie überschrieben**. Bereits gespeicherte freie Altgegenstände können nach explizitem Preview und Bestätigung im Charaktereditor sicher ergänzt werden.
+- SRD-Katalogtexte werden, falls vorhanden, als Beschreibung übernommen. Ausrüstung und magische Wirkung werden nicht stillschweigend aktiviert.
+- Regressionstests für alle Klassensets, Inventar/Altimport und Editor nachgerüstet. **CI-/APK-Abnahme für diesen Fix ausstehend.** Komplettimplementierung des SRD nicht behauptet.
+
 ## Unveröffentlicht – SRD 5.2.1: Bewusstlos hinterlässt Liegend (19.10.2026)
 
 - Bestätigtes Bewusstloswerden setzt `liegend` als unabhängige, persistierte Folge; bei Erwachen durch Heilung/natürliche Todesrettungs-20 oder Ende einer separaten Quelle bleibt der Zustand erhalten.
