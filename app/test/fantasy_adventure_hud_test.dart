@@ -101,9 +101,7 @@ void main() {
       expect(find.text('Den alten Brunnen erkunden'), findsOneWidget);
       expect(find.text('Das verlassene Tor schützen'), findsOneWidget);
 
-      final action = find.byKey(
-        const ValueKey('adventure-quest-open-journal'),
-      );
+      final action = find.byKey(const ValueKey('adventure-quest-open-journal'));
       await tester.ensureVisible(action);
       await tester.pumpAndSettle();
       await tester.tap(action);
@@ -112,97 +110,96 @@ void main() {
     });
   }
 
-  testWidgets('Nicht bestätigte Werte und fehlende Quests werden nicht erfunden', (
-    tester,
-  ) async {
-    final hero = HeroCharacter(
-      id: 'unknown-hero',
-      name: 'Unbekannter Held',
-      level: 1,
-    );
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: buildFantasyTheme(),
-        home: Scaffold(
-          body: ListView(
-            children: [
-              FantasyAdventureStatusHud(hero: hero),
-              FantasyAdventureQuestBoard(
-                campaign: _campaign(hero),
-                onOpenJournal: () {},
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(find.text('? / ?'), findsOneWidget);
-    expect(find.text('?'), findsNWidgets(3));
-    expect(
-      find.byKey(const ValueKey('adventure-xp-progress')),
-      findsNothing,
-    );
-    expect(find.text('Keine aktiven Aufträge bestätigt'), findsOneWidget);
-    expect(find.text('Die vergessene Glocke finden'), findsNothing);
-    await tester.tap(find.text('Auftragsübersicht'));
-    await tester.pumpAndSettle();
-    expect(
-      find.text('Noch keine Aufträge im Spielstand dokumentiert.'),
-      findsOneWidget,
-    );
-    expect(tester.takeException(), isNull);
-  });
-
-  testWidgets('Große Systemschrift verändert keine Quest- oder Trefferpunktwerte', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(320, 800);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    final hero = HeroCharacter(
-      id: 'big-text',
-      name: 'Held',
-      level: 3,
-      hitPoints: 12,
-      maxHitPoints: 24,
-      armorClass: 16,
-      speed: 9,
-    );
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: buildFantasyTheme(),
-        builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            textScaler: const TextScaler.linear(1.6),
-          ),
-          child: child!,
-        ),
-        home: Scaffold(
-          body: ListView(
-            children: [
-              FantasyAdventureStatusHud(hero: hero),
-              FantasyAdventureQuestBoard(
-                campaign: _campaign(
-                  hero,
-                  quests: const [
-                    Quest(
-                      id: 'large-font-quest',
-                      title: 'Eine Reise durch die Nebel der Nacht',
-                    ),
-                  ],
+  testWidgets(
+    'Nicht bestätigte Werte und fehlende Quests werden nicht erfunden',
+    (tester) async {
+      final hero = HeroCharacter(
+        id: 'unknown-hero',
+        name: 'Unbekannter Held',
+        level: 1,
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildFantasyTheme(),
+          home: Scaffold(
+            body: ListView(
+              children: [
+                FantasyAdventureStatusHud(hero: hero),
+                FantasyAdventureQuestBoard(
+                  campaign: _campaign(hero),
+                  onOpenJournal: () {},
                 ),
-                onOpenJournal: () {},
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(find.text('12 / 24'), findsOneWidget);
-    expect(find.textContaining('Eine Reise durch'), findsOneWidget);
-    expect(tester.takeException(), isNull);
-  });
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('? / ?'), findsOneWidget);
+      expect(find.text('?'), findsNWidgets(3));
+      expect(find.byKey(const ValueKey('adventure-xp-progress')), findsNothing);
+      expect(find.text('Keine aktiven Aufträge bestätigt'), findsOneWidget);
+      expect(find.text('Die vergessene Glocke finden'), findsNothing);
+      await tester.tap(find.text('Auftragsübersicht'));
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Noch keine Aufträge im Spielstand dokumentiert.'),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'Große Systemschrift verändert keine Quest- oder Trefferpunktwerte',
+    (tester) async {
+      tester.view.physicalSize = const Size(320, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final hero = HeroCharacter(
+        id: 'big-text',
+        name: 'Held',
+        level: 3,
+        hitPoints: 12,
+        maxHitPoints: 24,
+        armorClass: 16,
+        speed: 9,
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildFantasyTheme(),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: const TextScaler.linear(1.6)),
+            child: child!,
+          ),
+          home: Scaffold(
+            body: ListView(
+              children: [
+                FantasyAdventureStatusHud(hero: hero),
+                FantasyAdventureQuestBoard(
+                  campaign: _campaign(
+                    hero,
+                    quests: const [
+                      Quest(
+                        id: 'large-font-quest',
+                        title: 'Eine Reise durch die Nebel der Nacht',
+                      ),
+                    ],
+                  ),
+                  onOpenJournal: () {},
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('12 / 24'), findsOneWidget);
+      expect(find.textContaining('Eine Reise durch'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 }

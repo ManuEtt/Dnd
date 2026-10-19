@@ -35,9 +35,7 @@ class FantasyAdventureStatusHud extends StatelessWidget {
       key: const ValueKey('adventure-live-status'),
       padding: const EdgeInsets.all(11),
       decoration: BoxDecoration(
-        border: Border.all(
-          color: FantasyPalette.gold.withValues(alpha: .50),
-        ),
+        border: Border.all(color: FantasyPalette.gold.withValues(alpha: .50)),
         borderRadius: BorderRadius.circular(12),
         gradient: const LinearGradient(
           colors: [Color(0xf4122636), Color(0xf20c1726)],
@@ -118,7 +116,8 @@ class FantasyAdventureStatusHud extends StatelessWidget {
           if (hpRatio != null) ...[
             const SizedBox(height: 9),
             Semantics(
-              label: 'Trefferpunkte: ${hero.hitPoints} von ${hero.maxHitPoints}',
+              label:
+                  'Trefferpunkte: ${hero.hitPoints} von ${hero.maxHitPoints}',
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(6),
                 child: LinearProgressIndicator(
@@ -165,10 +164,7 @@ class FantasyAdventureStatusHud extends StatelessWidget {
               ].join(' · '),
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 12,
-                color: FantasyPalette.ivory,
-              ),
+              style: const TextStyle(fontSize: 12, color: FantasyPalette.ivory),
             ),
           ],
           if (CampaignExperience.canLevelUp(hero)) ...[
@@ -274,9 +270,7 @@ class FantasyAdventureQuestBoard extends StatelessWidget {
       decoration: BoxDecoration(
         color: FantasyPalette.ink,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: FantasyPalette.gold.withValues(alpha: .45),
-        ),
+        border: Border.all(color: FantasyPalette.gold.withValues(alpha: .45)),
       ),
       child: ExpansionTile(
         key: ValueKey('adventure-quest-tiles-${campaign.id}'),
@@ -337,11 +331,7 @@ class FantasyAdventureQuestBoard extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: Padding(
-              padding: const EdgeInsets.only(
-                left: 10,
-                right: 10,
-                bottom: 7,
-              ),
+              padding: const EdgeInsets.only(left: 10, right: 10, bottom: 7),
               child: TextButton.icon(
                 key: const ValueKey('adventure-quest-open-journal'),
                 onPressed: onOpenJournal,
@@ -395,10 +385,7 @@ class _QuestLine extends StatelessWidget {
               children: [
                 Text(quest.title, maxLines: 3, overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 2),
-                Text(
-                  status,
-                  style: TextStyle(color: color, fontSize: 11),
-                ),
+                Text(status, style: TextStyle(color: color, fontSize: 11)),
                 if (quest.description.trim().isNotEmpty)
                   Text(
                     quest.description,

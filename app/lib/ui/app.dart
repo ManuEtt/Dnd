@@ -1273,10 +1273,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                           campaign.hero.isDead
                       ? null
                       : _confirmCharacterEffect,
-                  icon: const Icon(
-                    Icons.health_and_safety_outlined,
-                    size: 17,
-                  ),
+                  icon: const Icon(Icons.health_and_safety_outlined, size: 17),
                   label: const Text('Effekt bestätigen'),
                 ),
                 if (campaign.hero.conditions.contains('liegend'))
