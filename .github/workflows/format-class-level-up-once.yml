@@ -1,4 +1,4 @@
-name: Einmalige Formatierung – Klassenaufstieg
+name: Einmalige Formatierung – Klassenaufstieg und Erstellungsprüfung
 on:
   push:
     branches:
