@@ -48,7 +48,8 @@ class SrdClassLevelUpProposal {
     }
     final unresolved = requiredChoices.where(
       (choice) =>
-          (!choice.startsWith('Unterklasse wählen') || chosenSubclass.isEmpty) &&
+          (!choice.startsWith('Unterklasse wählen') ||
+              chosenSubclass.isEmpty) &&
           (!choice.startsWith('Talent oder Attributsverbesserung wählen') ||
               abilityIncreases.isEmpty) &&
           (!choice.startsWith('Zusätzliche Kämpfer-Talentauswahl') ||
@@ -164,10 +165,10 @@ class SrdClassLevelUpRules {
                   m.type == ClassMilestoneType.epicBoon),
         )
         .map((m) => m.label);
-    final featDue = ClassProgressionRules.milestonesForClass(selected.name)
-        .any((m) =>
-            m.classLevel == classLevel &&
-            m.type == ClassMilestoneType.featChoice);
+    final featDue = ClassProgressionRules.milestonesForClass(selected.name).any(
+      (m) =>
+          m.classLevel == classLevel && m.type == ClassMilestoneType.featChoice,
+    );
     if (!featDue && abilityIncreases.isNotEmpty) {
       throw const FormatException(
         'Auf dieser Klassenstufe ist keine Attributsverbesserung vorgesehen.',
@@ -206,10 +207,7 @@ class SrdClassLevelUpRules {
     final newConModifier = RulesEngine.abilityModifier(
       con + (abilityIncreases['constitution'] ?? 0),
     );
-    final fixedHpGain = math.max(
-      1,
-      selected.hitDie ~/ 2 + 1 + oldConModifier,
-    );
+    final fixedHpGain = math.max(1, selected.hitDie ~/ 2 + 1 + oldConModifier);
     // A Constitution modifier change affects HP for every total level,
     // including the newly gained one (SRD 5.2.1 Ability Scores).
     final hpGain =

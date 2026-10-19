@@ -54,8 +54,11 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
 
   void _confirm() {
     if (_abilityChoice != 'pending' && _chosenAbilityBoost.isEmpty) {
-      setState(() => _error = 'Bitte die Attributswerte für '
-          'die gewählte Verbesserung vollständig auswählen.');
+      setState(
+        () => _error =
+            'Bitte die Attributswerte für '
+            'die gewählte Verbesserung vollständig auswählen.',
+      );
       return;
     }
     final proposal = _proposal();
@@ -82,10 +85,11 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
         chosenLevel == 3 &&
         widget.hero.subclass.trim().isEmpty &&
         _subclass.isNotEmpty;
-    final featDue = ClassProgressionRules.milestonesForClass(_target)
-        .any((milestone) =>
-            milestone.classLevel == chosenLevel &&
-            milestone.type == ClassMilestoneType.featChoice);
+    final featDue = ClassProgressionRules.milestonesForClass(_target).any(
+      (milestone) =>
+          milestone.classLevel == chosenLevel &&
+          milestone.type == ClassMilestoneType.featChoice,
+    );
     // The preview errors may depend on the selected XP/milestone mode.
     final proposal = _proposal();
     final message = proposal == null ? _error : null;
@@ -198,7 +202,9 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
                     key: const ValueKey('levelup-asi-first'),
                     initialValue: _firstAbility,
                     isExpanded: true,
-                    decoration: const InputDecoration(labelText: 'Erstes Attribut'),
+                    decoration: const InputDecoration(
+                      labelText: 'Erstes Attribut',
+                    ),
                     items: [
                       for (final ability in abilityLabels.entries)
                         DropdownMenuItem(
@@ -208,15 +214,16 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
                           ),
                         ),
                     ],
-                    onChanged: (value) =>
-                        setState(() => _firstAbility = value),
+                    onChanged: (value) => setState(() => _firstAbility = value),
                   ),
                 if (_abilityChoice == 'split')
                   DropdownButtonFormField<String>(
                     key: const ValueKey('levelup-asi-second'),
                     initialValue: _secondAbility,
                     isExpanded: true,
-                    decoration: const InputDecoration(labelText: 'Zweites Attribut'),
+                    decoration: const InputDecoration(
+                      labelText: 'Zweites Attribut',
+                    ),
                     items: [
                       for (final ability in abilityLabels.entries)
                         if (ability.key != _firstAbility)
@@ -246,7 +253,9 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
                     Text('• ${feature.name} – ${feature.automation.name}'),
                 ],
                 if (proposal.abilityIncreases.isNotEmpty)
-                  Text('Attributsverbesserung: ${proposal.abilityIncreases.entries.map((e) => '${abilityLabels[e.key]} +${e.value}').join(', ')}'),
+                  Text(
+                    'Attributsverbesserung: ${proposal.abilityIncreases.entries.map((e) => '${abilityLabels[e.key]} +${e.value}').join(', ')}',
+                  ),
                 if (proposal.requiredChoices.isNotEmpty) ...[
                   const SizedBox(height: 10),
                   const Text(
