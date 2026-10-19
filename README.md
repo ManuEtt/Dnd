@@ -4,6 +4,12 @@
 
 **Produkt:** Deutschsprachiger D&D-5E-Solo-Spielleiter für Android mit Flutter/Dart, optionalem Fastify-/TypeScript-Erzähler und lokalem SQLite-Kampagnenspeicher. Normative Regelquelle ist das lizenzierte [SRD 5.2.1](https://www.dndbeyond.com/srd); die App setzt davon bisher **nur einen Teil** um. Die KI darf keine bestätigten Regelwerte ändern. Kein fest eingebauter Arescan-Startspielstand.
 
+## Neue SRD-Regel: Bewusstlos → Liegend (19.10.2026)
+
+**In Entwicklung auf PR #7:** Die Regelengine verknüpft jetzt bestätigte Bewusstlosigkeit mit dem eigenständigen Zustand `liegend`. Dies gilt bei einem Treffer auf 0 TP, beim Tod durch Schaden, bei bestätigten externen Zustandsquellen und bei neu bestätigten Charakterbogenänderungen. Nach TP-Heilung, einer natürlichen 20 bei der Todesrettung oder dem Ende der letzten Bewusstlos-Quelle bleibt `liegend` erhalten, bis der Spieler es regelkonform separat beendet. Mehrere Bewusstlos-Quellen werden weiterhin getrennt verwaltet. Ältere JSON-Spielstände werden beim bloßen Laden **nicht** umgeschrieben; die Folge wird erst bei einer bestätigten Zustandsänderung gespeichert.
+
+**Zusätzliche Sicherheit:** Eine bestätigte Bearbeitung des Charakterbogens beendet bestehende Konzentration, sobald der Charakter dadurch handlungsunfähig wird. Tests für Schaden, Heilung, Todesrettungen, Quelldauer, JSON-Rundlauf und Charakterbogenbestätigung stehen unter `app/test/unconscious_prone_test.dart`. Die **CI-/APK-Abnahme dieser neuen Änderung** ist noch zu bestätigen; die zuletzt belegte erfolgreiche Gesamtprüfung gehört zum vorherigen Codecommit `c000e78b` (GitHub Actions [39165288268](https://github.com/ManuEtt/Dnd/actions/runs/39165288268)). Reale Android-Gerätetests bleiben offen. Der neue Code ist noch kein vollständiger Positions-/Bewegungs- oder Inventar-Ablege-Mechanismus.
+
 ## Aktuell in Entwicklung – quellgebundene Zustände
 
 Im offenen PR #7 wurden die Ursachen einzelner Zustände als `ConditionEffect` mit eigener ID, Quelle und optionalem Ende des aktuellen bzw. nächsten eigenen Kampfzugs ergänzt. Manuelle historische Zustände bleiben getrennt; mehrere Ursachen wirken regeltechnisch nicht mehrfach und können getrennt entfernt werden. Zustandsursachen und Laufzeiten erscheinen im Charakterbogen, der Abenteuerbereich zeigt die wirksamen Zustände.
