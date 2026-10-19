@@ -1273,7 +1273,8 @@ class _AdventurePageState extends State<_AdventurePage> {
                     padding: const EdgeInsets.all(16),
                     children: [
                       header,
-                      if (campaign.storyBible['mode'] == RabenwachtCampaign.mode)
+                      if (campaign.storyBible['mode'] ==
+                          RabenwachtCampaign.mode)
                         Align(
                           alignment: Alignment.centerLeft,
                           child: TextButton.icon(
@@ -1284,18 +1285,24 @@ class _AdventurePageState extends State<_AdventurePage> {
                                 title: const Text('Ermittlungsstand'),
                                 content: SingleChildScrollView(
                                   child: SelectableText(
-                                    RabenwachtCampaign.discoveredClues(campaign),
+                                    RabenwachtCampaign.discoveredClues(
+                                      campaign,
+                                    ),
                                   ),
                                 ),
                                 actions: [
                                   TextButton(
-                                    onPressed: () => Navigator.pop(dialogContext),
+                                    onPressed: () =>
+                                        Navigator.pop(dialogContext),
                                     child: const Text('Schließen'),
                                   ),
                                 ],
                               ),
                             ),
-                            icon: const Icon(Icons.fact_check_outlined, size: 17),
+                            icon: const Icon(
+                              Icons.fact_check_outlined,
+                              size: 17,
+                            ),
                             label: const Text('Hinweise und Aufträge'),
                           ),
                         ),
@@ -1310,16 +1317,22 @@ class _AdventurePageState extends State<_AdventurePage> {
                               key: const ValueKey('adventure-xp-details'),
                             ),
                             const SizedBox(height: 6),
-                            if (CampaignExperience.levelProgress(campaign.hero) != null)
+                            if (CampaignExperience.levelProgress(
+                                  campaign.hero,
+                                ) !=
+                                null)
                               LinearProgressIndicator(
                                 key: const ValueKey('adventure-xp-progress'),
-                                value: CampaignExperience.levelProgress(campaign.hero),
+                                value: CampaignExperience.levelProgress(
+                                  campaign.hero,
+                                ),
                                 minHeight: 5,
                               ),
                             if (CampaignExperience.canLevelUp(campaign.hero))
                               TextButton.icon(
                                 key: const ValueKey('adventure-levelup-ready'),
-                                onPressed: widget.controller.busy ||
+                                onPressed:
+                                    widget.controller.busy ||
                                         campaign.pendingRoll != null ||
                                         campaign.encounter != null ||
                                         campaign.pendingDeathSave != null
