@@ -62,15 +62,13 @@ void main() {
         tester,
         find.byKey(const ValueKey('character-recalculate-combat-values')),
       );
-      expect(
-        tester
-            .widget<TextFormField>(
-              find.byKey(const ValueKey('character-speed-meters')),
-            )
-            .controller!
-            .text,
-        '9',
+      final speedField = find.byKey(const ValueKey('character-speed-meters'));
+      await tester.scrollUntilVisible(
+        speedField,
+        -250,
+        scrollable: find.byType(Scrollable).first,
       );
+      expect(tester.widget<TextFormField>(speedField).controller!.text, '9');
       await _tapVisible(tester, find.text('Charakter speichern'));
       expect(result, isNotNull);
       expect(result!.armorClass, 13);
