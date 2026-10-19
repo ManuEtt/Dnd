@@ -1,3 +1,5 @@
+**Verifizierte Abnahme (19.10.2026):** Der vollständige GitHub-Actions-Lauf [39203732788](https://github.com/ManuEtt/Dnd/actions/runs/39203732788) ist für Commit `acaaa23d0fbb08dfb69ee1395d13122e04582f9a` **erfolgreich**: offizielles Dart-Format, Flutter-Analyse, alle Flutter-/Backendtests, Android-Debug-Build, native Android-Tests und Alpha-APKs. Nach einem zu streng angelegten Mehrklassen-Testfall wurden die erforderlichen Kämpfer-ASI-Regeln auch im Test ausdrücklich bestätigt; der korrigierte Komplettlauf ist grün. **Android-Gerätetest, fachliche Review und Merge nach `main` sind weiterhin offen.**
+
 # Würfelraunen – Entwicklung: Hauptklassen-Stufenaufstieg (19.10.2026)
 
 **Arbeitsbranch:** `feature/primary-class-level-up-20261019` · **Basis-`main`:** `cadaf7369f8899f29370fb28dfdc2a92c0ba98aa` · **Lizenzierte Regelquelle:** [SRD 5.2.1](https://www.dndbeyond.com/srd).
