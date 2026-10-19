@@ -4,6 +4,7 @@ import 'dice_engine.dart';
 import 'death_saving_throw_rules.dart';
 import 'condition_rules.dart';
 import 'condition_effects.dart';
+import 'prone_movement_rules.dart';
 import 'character_rule_engine.dart';
 import 'character_effect_rules.dart';
 import 'healing_spell_rules.dart';
@@ -678,6 +679,14 @@ class GameEngine {
         'Ein anderer Charakter kann nicht stillschweigend übernommen werden.',
       );
     }
+    if (campaign.encounter != null &&
+        !campaign.encounter!.isFinished &&
+        campaign.hero.manualConditions.contains('liegend') &&
+        !validated.manualConditions.contains('liegend')) {
+      throw const FormatException(
+        'Im laufenden Kampf bitte über Aufstehen mit Bewegungskosten aufstehen.',
+      );
+    }
     if (!ConditionRules.canTakeActions(validated)) {
       validated = SpellcastingRules.endConcentration(validated);
     }
@@ -724,6 +733,63 @@ class GameEngine {
         'Diese Effekte können einen toten Charakter nicht verändern.',
       );
     }
+  }
+
+  /// End the manually retained Prone condition by spending the proper
+  /// half-Speed movement on the active hero turn. A still-active sourced
+  /// Prone effect cannot be silently cancelled by standing up.
+  GameUpdate standUp(Campaign campaign) {
+    final hero = campaign.hero;
+    if (!hero.conditions.contains('liegend')) {
+      throw const FormatException('Dein Charakter liegt nicht am Boden.');
+    }
+    if (!hero.manualConditions.contains('liegend') ||
+        hero.conditionEffects.any((entry) => entry.condition == 'liegend')) {
+      throw const FormatException(
+        'Eine bestätigte Zustandsquelle hält dich noch liegend. '
+        'Beende zuerst diese Quelle.',
+      );
+    }
+    if (campaign.pendingRoll != null ||
+        campaign.pendingDeathSave != null ||
+        hero.isDead) {
+      throw const FormatException(
+        'Zuerst den offenen Wurf abschließen oder den Tod beachten.',
+      );
+    }
+    final fight = campaign.encounter;
+    final active = fight != null && !fight.isFinished;
+    if (active && fight.activeParticipant != 'hero') {
+      throw const FormatException('Aufstehen ist nur im eigenen Zug erlaubt.');
+    }
+    // Also validates positive Speed and movement-blocking conditions outside
+    // combat, without inventing a turn/movement pool there.
+    final cost = ProneMovementRules.standingCostDecimeters(hero);
+    final updatedFight = active
+        ? ProneMovementRules.spendStandingMovement(fight, hero)
+        : fight;
+    final after = hero.copyWith(
+      conditions: [
+        for (final condition in hero.manualConditions)
+          if (condition != 'liegend') condition,
+      ],
+    );
+    return _commit(
+      campaign,
+      campaign.copyWith(hero: after, encounter: updatedFight),
+      active
+          ? 'Du stehst auf und verbrauchst ${ProneMovementRules.formatDecimeters(cost)} '
+                'Bewegung. Übrig: ${updatedFight!.movementRemainingLabel}.'
+          : 'Du stehst auf. Außerhalb des Kampfes wird kein Zugbudget verbraucht.',
+      type: 'combat.stoodUp',
+      payload: {
+        'targetId': hero.id,
+        'movementSpentDecimeters': active ? cost : 0,
+        if (active)
+          'movementRemainingDecimeters':
+              updatedFight!.remainingMovementDecimeters,
+      },
+    );
   }
 
   /// Apply one confirmed external condition, never inferred from narration.
@@ -2583,6 +2649,16 @@ class GameEngine {
       );
     }
     if (RegExp(r'beweg|lauf|geh').hasMatch(words)) {
+      if (current.hero.conditions.contains('liegend')) {
+        return _commit(
+          before,
+          current,
+          'Du liegst am Boden und kannst nicht normal laufen. '
+          'Stehe zuerst regelkonform auf. Kriechen wird noch nicht '
+          'automatisch berechnet.',
+          type: 'rules.blocked',
+        );
+      }
       if ((CharacterRuleEngine.movementWholeMeters(current.hero) ?? 0) <= 0) {
         return _commit(
           before,
@@ -2600,7 +2676,7 @@ class GameEngine {
         return _commit(
           before,
           current,
-          'Für diese Bewegung reichen die verbleibenden ${encounter.movementRemaining} Meter nicht aus. Deine Aktion ist weiterhin verfügbar.',
+          'Für diese Bewegung reichen die verbleibenden ${encounter.movementRemainingLabel} nicht aus. Deine Aktion ist weiterhin verfügbar.',
           type: 'rules.blocked',
         );
       }
@@ -2611,7 +2687,7 @@ class GameEngine {
             movementRemaining: encounter.movementRemaining - amount,
           ),
         ),
-        'Du bewegst dich $amount Meter. In diesem Zug bleiben ${encounter.movementRemaining - amount} Meter; deine Aktion ist verfügbar.',
+        'Du bewegst dich $amount Meter. In diesem Zug bleiben ${encounter.copyWith(movementRemaining: encounter.movementRemaining - amount).movementRemainingLabel}; deine Aktion ist verfügbar.',
         type: 'combat.moved',
         payload: {'meters': amount},
       );
@@ -3195,6 +3271,7 @@ class GameEngine {
           round: foe.round + (advanceRound ? 1 : 0),
           activeParticipant: 'hero',
           movementRemaining: CharacterRuleEngine.movementWholeMeters(hero)!,
+          movementRemainderDecimeters: 0,
           actionUsed: false,
           attacksRemaining: 0,
           bonusActionUsed: false,

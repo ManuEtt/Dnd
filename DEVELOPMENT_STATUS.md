@@ -1,3 +1,11 @@
+## 19.10.2026 – SRD 5.2.1 Aufstehen aus „liegend“
+
+Nach der Übernahme von PR #7 in `main` wurde der neue Branch `feature/prone-stand-movement-20261019` von `82f2786b` abgezweigt. Implementiert sind ein ausdrückliches Aufstehen mit bestätigter Bewegungsrate, genauem Fuß-Rundungsmodell im vorhandenen Meter-System (Dezimeterrest), Abzug des verbleibenden Budgets, Schutz bei Bewegungsrate 0/Handlungsunfähigkeit/noch aktiver Quelle und ein deutscher Abenteuer-Button. `GameController` prüft die erwartete Revision und persistiert Ereignis + Bewegungsstand gemeinsam in SQLite. Ein Editor kann den Zustand während des Kampfes nicht ohne Bewegungskosten löschen; normales Gehen im Liegen wird nicht als kostenloser Lauf gewertet.
+
+Neue Regeln und Speicherregressionen: `prone_standing_rules_test.dart`, `prone_standing_storage_test.dart`. Schema-Version 1 bleibt erhalten; neue Bewegungsreste sind optional. **Abnahme und Android-Build noch zu überprüfen**, ebenso echte Geräteinteraktion, Kriechen, Fremdziele und Positionen. Dokumentation in README und CHECKPOINT nachführen, sobald der vollständige PR-Workflow erfolgreich ist.
+
+---
+
 ## Weiterentwicklung 19.10.2026 – Bewusstlos bewirkt bleibendes Liegend
 
 Der geprüfte Featurebranch `feature/condition-source-ledger-20261018` (PR #7, letzte grüne Basis `c000e78b` / Actions 39165288268) wird um die SRD-5.2.1-Folge `bewusstlos` → `liegend` erweitert: neue Bewusstlosigkeit aus Schaden, Todesrettungen, Quellzuständen und bestätigten Charakteränderungen setzt `liegend` getrennt. Die Folge überlebt das Aufwachen, Quellenende und JSON-/SQLite-Bestätigung; Legacy-Daten werden beim Lesen nicht automatisch migriert. Handlungsunfähigkeit durch bestätigte Charakterbogenänderung beendet Konzentration. Acht neue Testfälle sind unter `unconscious_prone_test.dart` eingereicht.

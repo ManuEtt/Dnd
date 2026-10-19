@@ -1,3 +1,13 @@
+# Entwicklungscheckpoint 19.10.2026 – Aufstehen / Bewegungsbudget
+
+Branch `feature/prone-stand-movement-20261019`, basiert auf GitHub-`main` `82f2786b17d626dbecbe31e788b2a2201a05e275`; PR #7 ist inzwischen in `main` übernommen. Neue Änderungen bleiben bis zur vollen CI-Abnahme separat.
+
+Implementiert: typisierte Standkosten und Restberechnung in `prone_movement_rules.dart`; `Encounter.movementRemainderDecimeters` als optionales Schema-1-Feld; `GameEngine.standUp`, `GameController.standUp`, deutsche Abenteueraktion und genaue Bewegungsanzeige; Sperre gegen kostenlose Charaktereditor-Korrektur im laufenden Kampf und gegen normales Gehen im Zustand `liegend`. 9 m -> 4,5 m Standkosten; 7,5 m -> 3,6 m nach SRD-Rundung in Fuß. Tests: `app/test/prone_standing_rules_test.dart` und `app/test/prone_standing_storage_test.dart`.
+
+**Nicht als abgeschlossen ausgeben:** neueste GitHub Actions, Android-APK und Gerätetest sowie Kriechen, Positionen, Terrain und Sonderbewegungen. Kein Code im `main` direkt geändert. Nach neuestem Branch-HEAD die CI/Logs prüfen, Fehler beheben und erst dann PR freigeben.
+
+---
+
 # Entwicklungscheckpoint vom 19.10.2026 – Bewusstlos / Liegend
 
 Branch `feature/condition-source-ledger-20261018`, PR [#7](https://github.com/ManuEtt/Dnd/pull/7) gegen `main`. Der letzte bereits erfolgreich durchlaufene vollständige GitHub-Workflow war [39165288268](https://github.com/ManuEtt/Dnd/actions/runs/39165288268) für `c000e78b`. Die **neuen** Änderungen zu Bewusstlos/Liegend müssen separat durch CI und Android-Build abgenommen werden.

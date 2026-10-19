@@ -339,6 +339,14 @@ class GameController extends ChangeNotifier {
     return current;
   }
 
+  Future<void> standUp({
+    required String campaignId,
+    required int expectedRevision,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(engine.standUp(current));
+  });
+
   Future<void> applyConditionEffect({
     required String campaignId,
     required int expectedRevision,

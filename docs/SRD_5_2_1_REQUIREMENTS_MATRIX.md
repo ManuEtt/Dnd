@@ -1,5 +1,14 @@
 # SRD 5.2.1 – Regelanforderungsmatrix (laufender Aufbau)
 
+## Neue Anforderung (19.10.2026)
+
+| ID | SRD-Abschnitt | Regel | Engine / UI | Persistenz / Tests | Status |
+| --- | --- | --- | --- | --- | --- |
+| COMBAT-PRONE-STAND | Rules Glossary: Prone | Aufstehen kostet Hälfte der aktuellen Bewegungsrate, in Fuß abrunden; nur wenn positive Bewegungsrate und genügend Bewegungsbudget; keine Aktion | `prone_movement_rules.dart`, `game_engine.dart`, `services/game_controller.dart`, `ui/app.dart` | `Encounter.movementRemainderDecimeters`, `prone_standing_rules_test.dart`, `prone_standing_storage_test.dart` | IMPLEMENTIERT_UNGETESTET, neue CI-/Geräteabnahme offen |
+| COMBAT-PRONE-CRAWL | Rules Glossary: Prone / Crawling | Kriechen mit zusätzlichen Bewegungskosten und Terrainanpassung | Noch kein allgemeines Bewegungs-/Positionstool | Tests fehlen | FEHLT |
+
+
+
 Stand 18.10.2026, Entwicklungsbranch `feature/condition-source-ledger-20261018`, PR #7.
 Dies ist ein **explizit unvollständiger Ausgangsauszug**, keine behauptete Gesamtinventur des SRD. Die übrigen Regelbereiche in [RULE_COVERAGE.md](RULE_COVERAGE.md) sind noch systematisch in Einzelanforderungen mit Quelle und Tests zu zerlegen. Verbindliche Norm: [SRD 5.2.1](https://www.dndbeyond.com/srd), CC BY 4.0.
 
