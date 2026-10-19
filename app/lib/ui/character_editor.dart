@@ -1237,7 +1237,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
                     key: const ValueKey('open-multiclass-selection'),
                     onPressed: _configureSecondClass,
                     icon: const Icon(Icons.auto_awesome_outlined),
-                    label: const Text(
+                    label: Text(
                       widget.hero?.hasSecondClass == true
                           ? 'Zweitklasse im Aufstiegsassistenten steigern'
                           : 'Zweitklasse nach SRD hinzufügen',
