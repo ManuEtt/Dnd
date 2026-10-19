@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show AssetManifest, rootBundle;
 import 'fantasy_approved_icons.dart';
@@ -244,6 +246,11 @@ class FantasyBackdrop extends StatelessWidget {
             ],
             stops: [0, .46, 1],
           ),
+        ),
+      ),
+      const Positioned.fill(
+        child: IgnorePointer(
+          child: CustomPaint(painter: _FantasyStarlightPainter()),
         ),
       ),
       Positioned(
@@ -637,4 +644,49 @@ class FantasyStatTile extends StatelessWidget {
       ],
     ),
   );
+}
+
+/// Quiet, deterministic golden star tracery; graphics remain offline and do
+/// not intercept any gestures or semantics.
+class _FantasyStarlightPainter extends CustomPainter {
+  const _FantasyStarlightPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (size.isEmpty) return;
+    final ink = Paint()
+      ..color = FantasyPalette.gold.withValues(alpha: .19)
+      ..strokeWidth = .8;
+    final flare = Paint()
+      ..color = FantasyPalette.blue.withValues(alpha: .14)
+      ..strokeWidth = .7;
+    for (var i = 0; i < 38; i++) {
+      final x = ((i * 97 + 13) % 101) / 101 * size.width;
+      final y = ((i * 47 + 21) % 97) / 97 * size.height;
+      final center = Offset(x, y);
+      final arm = (i % 5 == 0) ? 3.3 : 1.2;
+      final pen = i.isEven ? ink : flare;
+      canvas.drawLine(
+        center.translate(-arm, 0),
+        center.translate(arm, 0),
+        pen,
+      );
+      canvas.drawLine(
+        center.translate(0, -arm),
+        center.translate(0, arm),
+        pen,
+      );
+    }
+    final orbitPaint = Paint()
+      ..color = FantasyPalette.gold.withValues(alpha: .055)
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
+    final radius = math.min(size.width, size.height) * .27;
+    final center = Offset(size.width * .89, size.height * .11);
+    canvas.drawCircle(center, radius, orbitPaint);
+    canvas.drawCircle(center, radius * .8, orbitPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _FantasyStarlightPainter oldDelegate) => false;
 }
