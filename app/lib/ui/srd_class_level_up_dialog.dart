@@ -116,7 +116,7 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
               const SizedBox(height: 10),
               Text(
                 'EP vorhanden: ${widget.hero.experience?.toString() ?? 'nicht bestätigt'}'
-                ' · Schwelle: ${CharacterCreationProgression.startingExperience(widget.hero.level + 1)}',
+                ' · Schwelle: ${widget.hero.level >= 20 ? 'Höchststufe 20' : CharacterCreationProgression.startingExperience(widget.hero.level + 1)}',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               if (canChooseSubclass)
