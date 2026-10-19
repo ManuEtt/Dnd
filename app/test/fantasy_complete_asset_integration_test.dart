@@ -111,9 +111,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Originalrahmen laden auch bei kleinen Widgetgroessen ohne Paint-Fehler', (
-    tester,
-  ) async {
+  testWidgets('Kompakte Originalrahmen zeichnen ohne Ausnahme', (tester) async {
     for (final asset in [
       FantasyOptionalArt.panel,
       FantasyOptionalArt.button,
