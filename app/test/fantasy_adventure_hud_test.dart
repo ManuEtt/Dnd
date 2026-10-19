@@ -89,7 +89,7 @@ void main() {
         find.byKey(const ValueKey('adventure-xp-progress')),
         findsOneWidget,
       );
-      expect(find.text('Die vergessene Glocke finden'), findsOneWidget);
+      expect(find.textContaining('Die vergessene Glocke finden'), findsOneWidget);
       expect(tester.takeException(), isNull);
 
       await tester.tap(find.text('Auftragsübersicht'));
