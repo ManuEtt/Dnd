@@ -28,6 +28,7 @@ import 'fantasy_ui.dart';
 import 'fantasy_art.dart';
 import 'fantasy_experience.dart';
 import 'fantasy_campaign_dashboard.dart';
+import 'fantasy_adventure_hud.dart';
 import 'character_portrait_picker.dart';
 import 'campaign_memory_panel.dart';
 
@@ -105,6 +106,7 @@ class _LivingGameAppState extends State<LivingGameApp> {
               backupFiles: _backupFiles,
               voice: widget.voice,
               onHome: () => setState(() => _page = 0),
+              onJournal: () => setState(() => _page = 3),
             ),
             _CharactersPage(controller: controller, backupFiles: _backupFiles),
             _JournalPage(controller: controller),
@@ -899,12 +901,14 @@ class _AdventurePage extends StatefulWidget {
     required this.controller,
     required this.voice,
     required this.onHome,
+    required this.onJournal,
     required this.backupFiles,
   });
   final BackupFiles backupFiles;
   final GameController controller;
   final VoiceController voice;
   final VoidCallback onHome;
+  final VoidCallback onJournal;
 
   @override
   State<_AdventurePage> createState() => _AdventurePageState();
@@ -1200,112 +1204,27 @@ class _AdventurePageState extends State<_AdventurePage> {
         child: Column(
           children: [
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const FantasyRuneEmblem(rune: FantasyRune.compass, size: 38),
-                const SizedBox(width: 12),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         campaign.name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       Text(
-                        '${campaign.hero.name} · TP ${campaign.hero.hitPoints ?? '?'}/${campaign.hero.maxHitPoints ?? '?'} '
-                        '· RK ${campaign.hero.armorClass ?? '?'}',
+                        '${campaign.hero.name} · Stufe ${campaign.hero.level}',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
-                      TextButton.icon(
-                        key: const ValueKey('adventure-open-character-sheet'),
-                        onPressed: _showHeroSheet,
-                        icon: const Icon(Icons.auto_stories_outlined, size: 17),
-                        label: const Text('Charakterbogen ansehen'),
-                      ),
-                      TextButton.icon(
-                        key: const ValueKey(
-                          'adventure-confirm-character-effect',
-                        ),
-                        onPressed:
-                            widget.controller.busy ||
-                                campaign.pendingRoll != null ||
-                                campaign.pendingDeathSave != null ||
-                                campaign.hero.hitPoints == null ||
-                                campaign.hero.isDead
-                            ? null
-                            : _confirmCharacterEffect,
-                        icon: const Icon(
-                          Icons.health_and_safety_outlined,
-                          size: 17,
-                        ),
-                        label: const Text('Effekt bestätigen'),
-                      ),
-                      if (campaign.hero.conditions.contains('liegend'))
-                        TextButton.icon(
-                          key: const ValueKey('adventure-stand-up'),
-                          onPressed:
-                              widget.controller.busy ||
-                                  campaign.pendingRoll != null ||
-                                  campaign.pendingDeathSave != null ||
-                                  campaign.hero.isDead ||
-                                  (campaign.encounter != null &&
-                                      !campaign.encounter!.isFinished &&
-                                      campaign.encounter!.activeParticipant !=
-                                          'hero')
-                              ? null
-                              : _standUp,
-                          icon: const Icon(
-                            Icons.accessibility_new_outlined,
-                            size: 17,
-                          ),
-                          label: const Text('Aufstehen'),
-                        ),
-                      TextButton.icon(
-                        key: const ValueKey(
-                          'adventure-manage-condition-effects',
-                        ),
-                        onPressed:
-                            widget.controller.busy ||
-                                campaign.pendingRoll != null ||
-                                campaign.pendingDeathSave != null ||
-                                campaign.hero.hitPoints == null ||
-                                campaign.hero.isDead
-                            ? null
-                            : _manageConditionEffects,
-                        icon: const Icon(Icons.shield_moon_outlined, size: 17),
-                        label: const Text('Zustände verwalten'),
-                      ),
-                      if (campaign.hero.spells.any(
-                        (name) => HealingSpellRules.find(name) != null,
-                      ))
-                        TextButton.icon(
-                          key: const ValueKey('adventure-cast-healing-spell'),
-                          onPressed:
-                              widget.controller.busy ||
-                                  campaign.pendingRoll != null ||
-                                  campaign.pendingDeathSave != null ||
-                                  campaign.hero.isDead ||
-                                  campaign.hero.hitPoints == 0
-                              ? null
-                              : _castHealingSpell,
-                          icon: const Icon(
-                            Icons.auto_fix_high_outlined,
-                            size: 17,
-                          ),
-                          label: const Text('Heilzauber wirken'),
-                        ),
                     ],
                   ),
-                ),
-                IconButton(
-                  onPressed: _editHero,
-                  tooltip: 'Charakterbogen bearbeiten',
-                  icon: const Icon(Icons.person_outline),
-                ),
-                IconButton(
-                  onPressed: () => _showInventory(context, campaign.hero),
-                  tooltip: 'Inventar öffnen',
-                  icon: const Icon(Icons.backpack_outlined),
                 ),
                 IconButton(
                   onPressed: () => _showExport(
@@ -1318,6 +1237,96 @@ class _AdventurePageState extends State<_AdventurePage> {
                   tooltip: 'Spielstand exportieren',
                   icon: const Icon(Icons.file_download_outlined),
                 ),
+              ],
+            ),
+            const SizedBox(height: 11),
+            FantasyAdventureStatusHud(hero: campaign.hero),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 5,
+              runSpacing: 3,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                TextButton.icon(
+                  key: const ValueKey('adventure-open-character-sheet'),
+                  onPressed: _showHeroSheet,
+                  icon: const Icon(Icons.auto_stories_outlined, size: 17),
+                  label: const Text('Charakterbogen ansehen'),
+                ),
+                IconButton(
+                  onPressed: widget.controller.busy ? null : _editHero,
+                  tooltip: 'Charakterbogen bearbeiten',
+                  icon: const Icon(Icons.person_outline),
+                ),
+                IconButton(
+                  onPressed: () => _showInventory(context, campaign.hero),
+                  tooltip: 'Inventar öffnen',
+                  icon: const Icon(Icons.backpack_outlined),
+                ),
+                TextButton.icon(
+                  key: const ValueKey('adventure-confirm-character-effect'),
+                  onPressed:
+                      widget.controller.busy ||
+                          campaign.pendingRoll != null ||
+                          campaign.pendingDeathSave != null ||
+                          campaign.hero.hitPoints == null ||
+                          campaign.hero.isDead
+                      ? null
+                      : _confirmCharacterEffect,
+                  icon: const Icon(
+                    Icons.health_and_safety_outlined,
+                    size: 17,
+                  ),
+                  label: const Text('Effekt bestätigen'),
+                ),
+                if (campaign.hero.conditions.contains('liegend'))
+                  TextButton.icon(
+                    key: const ValueKey('adventure-stand-up'),
+                    onPressed:
+                        widget.controller.busy ||
+                            campaign.pendingRoll != null ||
+                            campaign.pendingDeathSave != null ||
+                            campaign.hero.isDead ||
+                            (campaign.encounter != null &&
+                                !campaign.encounter!.isFinished &&
+                                campaign.encounter!.activeParticipant != 'hero')
+                        ? null
+                        : _standUp,
+                    icon: const Icon(
+                      Icons.accessibility_new_outlined,
+                      size: 17,
+                    ),
+                    label: const Text('Aufstehen'),
+                  ),
+                TextButton.icon(
+                  key: const ValueKey('adventure-manage-condition-effects'),
+                  onPressed:
+                      widget.controller.busy ||
+                          campaign.pendingRoll != null ||
+                          campaign.pendingDeathSave != null ||
+                          campaign.hero.hitPoints == null ||
+                          campaign.hero.isDead
+                      ? null
+                      : _manageConditionEffects,
+                  icon: const Icon(Icons.shield_moon_outlined, size: 17),
+                  label: const Text('Zustände verwalten'),
+                ),
+                if (campaign.hero.spells.any(
+                  (name) => HealingSpellRules.find(name) != null,
+                ))
+                  TextButton.icon(
+                    key: const ValueKey('adventure-cast-healing-spell'),
+                    onPressed:
+                        widget.controller.busy ||
+                            campaign.pendingRoll != null ||
+                            campaign.pendingDeathSave != null ||
+                            campaign.hero.isDead ||
+                            campaign.hero.hitPoints == 0
+                        ? null
+                        : _castHealingSpell,
+                    icon: const Icon(Icons.auto_fix_high_outlined, size: 17),
+                    label: const Text('Heilzauber wirken'),
+                  ),
               ],
             ),
             if (campaign.pendingDeathSave != null)
@@ -1388,6 +1397,10 @@ class _AdventurePageState extends State<_AdventurePage> {
                     padding: const EdgeInsets.all(16),
                     children: [
                       header,
+                      FantasyAdventureQuestBoard(
+                        campaign: campaign,
+                        onOpenJournal: widget.onJournal,
+                      ),
                       if (campaign.storyBible['mode'] ==
                           RabenwachtCampaign.mode)
                         Align(
