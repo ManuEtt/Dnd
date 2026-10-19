@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show AssetManifest, rootBundle;
 import 'fantasy_approved_icons.dart';
 
 /// Gemeinsames Oberflaechensystem. Keine Regeln oder gespeicherten Werte.
@@ -365,6 +366,72 @@ class FantasyApprovedCornerFrame extends StatelessWidget {
   );
 }
 
+/// File names from the user's complete fantasy artwork ZIP.
+abstract final class FantasyOptionalArt {
+  static const panel = 'assets/fantasy/ornate_panel_background.webp';
+  static const button = 'assets/fantasy/ornate_button_background.webp';
+  static const card = 'assets/fantasy/ornate_card_background.webp';
+  static const portrait = 'assets/fantasy/ornate_portrait_border.webp';
+
+  static final Future<Set<String>> available =
+      AssetManifest.loadFromAssetBundle(
+        rootBundle,
+      ).then((manifest) => manifest.listAssets().toSet());
+}
+
+/// Paints an optional original fantasy asset without intercepting touches.
+/// Content remains genuine Flutter widgets. Missing graphics fall back to the
+/// normal fantasy color/filigree theme, including older installed APKs.
+class FantasyOptionalImageFrame extends StatelessWidget {
+  const FantasyOptionalImageFrame({
+    super.key,
+    required this.child,
+    required this.image,
+    this.foreground = false,
+    this.opacity = .95,
+    this.centerSlice,
+  });
+
+  final Widget child;
+  final String image;
+  final bool foreground;
+  final double opacity;
+  final Rect? centerSlice;
+
+  @override
+  Widget build(BuildContext context) {
+    final artwork = Positioned.fill(
+      child: IgnorePointer(
+        child: ExcludeSemantics(
+          child: FutureBuilder<Set<String>>(
+            future: FantasyOptionalArt.available,
+            builder: (context, snapshot) {
+              if (!(snapshot.data?.contains(image) ?? false)) {
+                return const SizedBox.shrink();
+              }
+              return Opacity(
+                opacity: opacity,
+                child: Image.asset(
+                  image,
+                  key: ValueKey('fantasy-art-$image'),
+                  fit: BoxFit.fill,
+                  centerSlice: centerSlice,
+                  filterQuality: FilterQuality.medium,
+                  errorBuilder: (_, error, stack) => const SizedBox.shrink(),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+    return Stack(
+      fit: StackFit.passthrough,
+      children: foreground ? [child, artwork] : [artwork, child],
+    );
+  }
+}
+
 /// Wiederverwendeter gerahmter Bereich mit dezenten goldenen Verzierungen.
 class FantasyPanel extends StatelessWidget {
   const FantasyPanel({
@@ -401,29 +468,33 @@ class FantasyPanel extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (title != null) ...[
-            Row(
-              children: [
-                if (icon != null) ...[
-                  Icon(icon, color: accent, size: 22),
-                  const SizedBox(width: 10),
-                ],
-                Expanded(
-                  child: Text(
-                    title!,
-                    style: Theme.of(context).textTheme.titleMedium,
+      child: FantasyOptionalImageFrame(
+        image: FantasyOptionalArt.panel,
+        centerSlice: const Rect.fromLTWH(34, 32, 292, 54),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (title != null) ...[
+              Row(
+                children: [
+                  if (icon != null) ...[
+                    Icon(icon, color: accent, size: 22),
+                    const SizedBox(width: 10),
+                  ],
+                  Expanded(
+                    child: Text(
+                      title!,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            Divider(color: accent.withValues(alpha: .3), height: 24),
+                ],
+              ),
+              Divider(color: accent.withValues(alpha: .3), height: 24),
+            ],
+            child,
           ],
-          child,
-        ],
+        ),
       ),
     ),
   );

@@ -1,0 +1,53 @@
+name: Original-Grafiken aus ZIP übernehmen
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'incoming/Wuerfelraunen_Grafikpaket_Korrektur_2026-10-19.zip'
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: wuerfelraunen-original-grafiken-import
+  cancel-in-progress: false
+
+jobs:
+  import-original-artwork:
+    name: Originale prüfen und in Flutter installieren
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - name: Archiv prüfen und Originale importieren
+        run: |
+          set -euo pipefail
+          zip='incoming/Wuerfelraunen_Grafikpaket_Korrektur_2026-10-19.zip'
+          test -f "$zip"
+          test "$(stat -c %s "$zip")" -lt 25000000
+          python3 scripts/import_complete_fantasy_assets.py "$zip"
+          for i in {1..9}; do
+            test -s "app/assets/fantasy/portrait_${i}.webp"
+          done
+          for name in ornate_panel_background ornate_button_background ornate_card_background ornate_portrait_border; do
+            test -s "app/assets/fantasy/${name}.webp"
+          done
+      - name: Grafiken übernehmen, einmalig archivierte ZIP entfernen
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- app/assets/fantasy/
+          git rm -- incoming/Wuerfelraunen_Grafikpaket_Korrektur_2026-10-19.zip
+          git commit -m 'assets(ui): install all 13 validated original fantasy images'
+          git push origin HEAD:main
+      - name: Neue Android-APKs für die vollständigen Bilder bauen
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run android-build.yml --ref main
