@@ -16,7 +16,7 @@
 - **Altcharaktere ohne Katalog-ID:** Im Charaktereditor **„Fehlende SRD-Gegenstandswerte ergänzen“** auswählen. Die App zeigt die eindeutigen Zuordnungen und ändert das Inventar **erst nach ausdrücklicher Zustimmung**. Unbekannte und mehrdeutige Einträge bleiben bestehen.
 - Die Wahl eines Gegenstands im SRD-Katalog übernimmt zusätzlich dessen vorhandenen Informationstext; dies löst noch **keine magische Wirkung oder automatische Ausrüstung** aus. Rüstung, Schild und Waffe müssen wie bisher gesondert bestätigt/angelegt werden.
 
-**Tests hinzugefügt:** `app/test/starting_equipment_import_test.dart` (alle 12 Klassensets, Waffen-/Rüstungsdaten, Pfeile, Aliasse, Import-/Legacy-/Eigene-Werte-Schutz) und `app/test/ui_starting_equipment_import_test.dart` (vorgeschaltete Bestätigung, Reparatur vorhandener Inventareinträge). Gesamte Test-/Build-Abnahme für dieses Inkrement ist separat über GitHub Actions zu bestätigen.
+**Tests und Builds:** `app/test/starting_equipment_import_test.dart` (alle zwölf Klassensets, Waffen-/Rüstungsdaten, Pfeile, Aliasse, Import-/Legacy-/Eigenwerte-Schutz) und `app/test/ui_starting_equipment_import_test.dart` (Bestätigung und Altinventar-Reparatur) wurden ergänzt. Der vollständige GitHub-Actions-Lauf [39199122240](https://github.com/ManuEtt/Dnd/actions/runs/39199122240) auf Commit `a8f2f090` ist **erfolgreich abgeschlossen** (Formatter, Flutter-Analyse, Flutter-/Backendtests, Android-Debug-APK, native Tests und APK-Artefakte). Ein Test auf einem echten Android-Gerät steht noch aus.
 
 ## Vollständiges D&D-Regelwerk – realistischer Umfang
 
