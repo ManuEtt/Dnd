@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../domain/models.dart';
 import 'fantasy_ui.dart';
+import 'fantasy_experience.dart';
 import 'fantasy_approved_icons.dart';
 
 /// Artwork cropped from the project's original Aetheria visual concepts.
@@ -189,8 +190,10 @@ class FantasyIllustratedBanner extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(icon, color: FantasyPalette.gold, size: 19),
+                  const FantasyRuneEmblem(rune: FantasyRune.moon, size: 42),
                   const SizedBox(width: 9),
+                  Icon(icon, color: FantasyPalette.gold, size: 17),
+                  const SizedBox(width: 7),
                   Flexible(
                     child: Text(
                       eyebrow.toUpperCase(),
@@ -263,7 +266,7 @@ class FantasyScenePanel extends StatelessWidget {
           children: [
             Image.asset(
               image,
-              height: 160,
+              height: 186,
               fit: BoxFit.cover,
               semanticLabel: 'Atmosphärische Fantasy-Landschaft',
             ),
@@ -274,10 +277,7 @@ class FantasyScenePanel extends StatelessWidget {
                 children: [
                   const Row(
                     children: [
-                      Icon(
-                        Icons.auto_stories_outlined,
-                        color: FantasyPalette.gold,
-                      ),
+                      FantasyRuneEmblem(rune: FantasyRune.quill, size: 30),
                       SizedBox(width: 10),
                       Text(
                         'AKTUELLE SZENE',
@@ -344,10 +344,18 @@ class FantasyCampaignCard extends StatelessWidget {
                 children: [
                   Image.asset(
                     image,
-                    height: 106,
+                    height: 142,
                     width: double.infinity,
                     fit: BoxFit.cover,
                     semanticLabel: 'Fantasy-Kampagnenillustration',
+                  ),
+                  const Positioned(
+                    left: 12,
+                    bottom: 8,
+                    child: FantasyRuneEmblem(
+                      rune: FantasyRune.compass,
+                      size: 40,
+                    ),
                   ),
                   Positioned(
                     right: 8,

@@ -25,6 +25,7 @@ import 'death_save_decision_panel.dart';
 import 'fantasy_character_sheet.dart';
 import 'fantasy_ui.dart';
 import 'fantasy_art.dart';
+import 'fantasy_experience.dart';
 import 'character_portrait_picker.dart';
 import 'campaign_memory_panel.dart';
 
@@ -115,11 +116,7 @@ class _LivingGameAppState extends State<LivingGameApp> {
             appBar: AppBar(
               title: Row(
                 children: [
-                  const Icon(
-                    Icons.explore_outlined,
-                    color: FantasyPalette.gold,
-                    size: 26,
-                  ),
+                  const FantasyRuneEmblem(rune: FantasyRune.dice, size: 30),
                   const SizedBox(width: 9),
                   Expanded(
                     child: Text(
@@ -164,10 +161,9 @@ class _LivingGameAppState extends State<LivingGameApp> {
                     labelType: NavigationRailLabelType.all,
                     leading: const Padding(
                       padding: EdgeInsets.symmetric(vertical: 20),
-                      child: Icon(
-                        Icons.auto_awesome,
-                        color: FantasyPalette.gold,
-                        size: 34,
+                      child: FantasyRuneEmblem(
+                        rune: FantasyRune.compass,
+                        size: 42,
                       ),
                     ),
                     destinations: const [
@@ -383,6 +379,8 @@ class _HomePage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+        const FantasyBrandPlaque(),
+        const SizedBox(height: 12),
         FantasyIllustratedBanner(
           key: const ValueKey('home-illustrated-banner'),
           image: FantasyArtwork.ruins,
@@ -400,16 +398,78 @@ class _HomePage extends StatelessWidget {
                     ? onPlay(controller.createDemo)
                     : onPlay(() => controller.openCampaign(current.id)),
         ),
+        const FantasyChapterHeading(
+          label: 'Wähle deinen Weg',
+          rune: FantasyRune.compass,
+          description: 'Vier Wege führen zurück an deinen Spieltisch.',
+        ),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final cardWidth = constraints.maxWidth >= 660
+                ? (constraints.maxWidth - 12) / 2
+                : constraints.maxWidth;
+            return Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: [
+                SizedBox(
+                  width: cardWidth,
+                  child: FantasyJourneyCard(
+                    title: 'Neues Abenteuer',
+                    description: 'Erschaffe eine eigene Geschichte.',
+                    image: FantasyArtwork.shadowForest,
+                    rune: FantasyRune.dice,
+                    onTap: controller.busy ? null : () => _newCampaign(context),
+                  ),
+                ),
+                SizedBox(
+                  width: cardWidth,
+                  child: FantasyJourneyCard(
+                    title: 'Rabenwacht',
+                    description: 'Das Soloabenteuer für 2–3 Stunden.',
+                    image: FantasyArtwork.ruins,
+                    rune: FantasyRune.compass,
+                    accent: FantasyPalette.blue,
+                    onTap: controller.busy
+                        ? null
+                        : () => _newCampaign(context, prepared: true),
+                  ),
+                ),
+                SizedBox(
+                  width: cardWidth,
+                  child: FantasyJourneyCard(
+                    title: 'Heldenarchiv',
+                    description: 'Charaktere und Porträts verwalten.',
+                    image: FantasyArtwork.castle,
+                    rune: FantasyRune.hero,
+                    onTap: onCharacters,
+                  ),
+                ),
+                SizedBox(
+                  width: cardWidth,
+                  child: FantasyJourneyCard(
+                    title: 'Abenteuerchronik',
+                    description: 'Erinnerungen, Aufträge und Ereignisse.',
+                    image: FantasyArtwork.forgottenWoods,
+                    rune: FantasyRune.tome,
+                    accent: FantasyPalette.success,
+                    onTap: onJournal,
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
         const SizedBox(height: 18),
         FantasyPanel(
           padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.auto_awesome, color: _gold, size: 40),
-              const SizedBox(height: 14),
+              const FantasyRuneEmblem(rune: FantasyRune.dice, size: 46),
+              const SizedBox(height: 12),
               Text(
-                'Deine Geschichte wartet.',
+                'Dein Spieltisch',
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
               const SizedBox(height: 10),
@@ -466,9 +526,9 @@ class _HomePage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 18),
-        const FantasySectionTitle(
-          title: 'Schnellzugriff',
-          icon: Icons.explore_outlined,
+        const FantasyChapterHeading(
+          label: 'Schnellzugriff',
+          rune: FantasyRune.dice,
         ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -533,9 +593,9 @@ class _HomePage extends StatelessWidget {
               'Spracherkennung kann je nach Android-Dienst eine Internetverbindung benötigen.',
         ),
         const SizedBox(height: 16),
-        const FantasySectionTitle(
-          title: 'Deine Kampagnen',
-          icon: Icons.auto_stories_outlined,
+        const FantasyChapterHeading(
+          label: 'Deine Kampagnen',
+          rune: FantasyRune.tome,
         ),
         const SizedBox(height: 12),
         if (controller.campaigns.isEmpty)
@@ -644,10 +704,10 @@ class _CharactersPage extends StatelessWidget {
           height: 145,
         ),
         const SizedBox(height: 17),
-        const FantasySectionTitle(
-          title: 'Heldenarchiv',
-          icon: Icons.shield_outlined,
-          subtitle: 'Charaktere ansehen, bearbeiten und sicher verwalten.',
+        const FantasyChapterHeading(
+          label: 'Heldenarchiv',
+          rune: FantasyRune.hero,
+          description: 'Charaktere ansehen, bearbeiten und sicher verwalten.',
         ),
         Wrap(
           spacing: 12,
@@ -1093,6 +1153,8 @@ class _AdventurePageState extends State<_AdventurePage> {
           children: [
             Row(
               children: [
+                const FantasyRuneEmblem(rune: FantasyRune.compass, size: 38),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1925,10 +1987,10 @@ class _JournalPage extends StatelessWidget {
           height: 138,
         ),
         const SizedBox(height: 16),
-        FantasySectionTitle(
-          title: campaign.name,
-          icon: Icons.auto_stories_outlined,
-          subtitle: 'Die Chronik deines Abenteuers',
+        FantasyChapterHeading(
+          label: campaign.name,
+          rune: FantasyRune.quill,
+          description: 'Die Chronik deines Abenteuers',
         ),
         const SizedBox(height: 8),
         Text(
@@ -2028,9 +2090,9 @@ class _SettingsPage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        const FantasySectionTitle(
-          title: 'Sprache & Audio',
-          icon: Icons.record_voice_over_outlined,
+        const FantasyChapterHeading(
+          label: 'Sprache & Audio',
+          rune: FantasyRune.moon,
         ),
         const SizedBox(height: 12),
         Text(
@@ -2162,9 +2224,9 @@ class _SettingsPage extends StatelessWidget {
               'Textspiel, Würfel und Speicherung sind im Demo-Modus offline verfügbar.',
         ),
         const SizedBox(height: 24),
-        const FantasySectionTitle(
-          title: 'KI & Kosten',
-          icon: Icons.auto_awesome_outlined,
+        const FantasyChapterHeading(
+          label: 'KI & Kosten',
+          rune: FantasyRune.dice,
         ),
         const SizedBox(height: 12),
         FantasyPanel(
@@ -2172,9 +2234,9 @@ class _SettingsPage extends StatelessWidget {
           child: BackendSettingsPanel(controller: controller),
         ),
         const SizedBox(height: 24),
-        const FantasySectionTitle(
-          title: 'Datenschutz & Spielstände',
-          icon: Icons.shield_outlined,
+        const FantasyChapterHeading(
+          label: 'Datenschutz & Spielstände',
+          rune: FantasyRune.hero,
         ),
         const SizedBox(height: 12),
         const Text(
@@ -2218,9 +2280,9 @@ class _SettingsPage extends StatelessWidget {
           label: const Text('Alle lokalen Spieldaten löschen'),
         ),
         const SizedBox(height: 24),
-        const FantasySectionTitle(
-          title: 'App-Version',
-          icon: Icons.info_outline,
+        const FantasyChapterHeading(
+          label: 'App-Version',
+          rune: FantasyRune.compass,
         ),
         const SizedBox(height: 10),
         FutureBuilder<AppBuildInfo>(
@@ -2244,9 +2306,9 @@ class _SettingsPage extends StatelessWidget {
           },
         ),
         const SizedBox(height: 24),
-        const FantasySectionTitle(
-          title: 'Lizenz & Inhalte',
-          icon: Icons.menu_book_outlined,
+        const FantasyChapterHeading(
+          label: 'Lizenz & Inhalte',
+          rune: FantasyRune.tome,
         ),
         const SizedBox(height: 10),
         const Text(

@@ -12,6 +12,7 @@ import '../domain/rest_rules.dart';
 import '../domain/spellcasting_rules.dart';
 import '../domain/rules_engine.dart';
 import 'fantasy_art.dart';
+import 'fantasy_experience.dart';
 import 'character_portrait_picker.dart';
 
 // A read-only presentation of the actual, confirmed character data. No state,
@@ -41,7 +42,14 @@ class _CharacterSheetPageState extends State<CharacterSheetPage> {
     return Scaffold(
       backgroundColor: _night,
       appBar: AppBar(
-        title: const Text('Charakterbogen'),
+        title: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FantasyRuneEmblem(rune: FantasyRune.hero, size: 30),
+            SizedBox(width: 9),
+            Text('Charakterbogen'),
+          ],
+        ),
         centerTitle: true,
         backgroundColor: _night,
         actions: [
