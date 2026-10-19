@@ -1,3 +1,9 @@
+# Vollständig verifizierter CI-Checkpoint (19.10.2026)
+
+Neuer Hauptklassen-Stufenaufstieg mit allen zwölf SRD-Basisklassen: Android-Alpha-Workflow [39203732788](https://github.com/ManuEtt/Dnd/actions/runs/39203732788) **SUCCESS** auf Code-Commit `acaaa23d0fbb08dfb69ee1395d13122e04582f9a`. Backend, Format, Analyse, 778 Fluttertests, Android-Debug-APK, native Tests und ARM64-APK-Build erfolgreich. Vorheriger Fehlfall testete Fighter-Klassenstufe 4 ohne erforderliche ASI-Wahl; Test korrigiert, Regeln unverändert. Kein echter Android-Gerätetest und kein Merge von PR #10 bestätigt. Wiederaufnahme: aktuellen HEAD/PR/CI neu prüfen und restliche Spezies-/Herkunfts-/Feat-/Zauber-/Zweitklassen-Unterklassen-Entscheidungen schrittweise ausbauen.
+
+---
+
 # Checkpoint 19.10.2026 – Primäre Klassenentwicklung
 
 Basis `main` `cadaf7369f8899f29370fb28dfdc2a92c0ba98aa`; Branch `feature/primary-class-level-up-20261019`. Geändert/neu: `app/lib/domain/primary_class_level_up.dart`, `app/lib/ui/primary_class_level_up_dialog.dart`, `app/lib/ui/character_editor.dart`, `app/test/primary_class_level_up_test.dart`, `app/test/ui_primary_class_level_up_test.dart`. Alle 12 Klassen: +1 Hauptklassenstufe, feste TP, EP-Meilenstein-Wahl, Unterklasse 3, ASI und offene Featureentscheidungen. Enthält Revisionsschutz des Vorschlags sowie sichere Ausgabewerte; zweiter Klassenstand bleibt intakt.
