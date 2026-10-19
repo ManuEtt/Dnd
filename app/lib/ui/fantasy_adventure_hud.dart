@@ -116,20 +116,15 @@ class FantasyAdventureStatusHud extends StatelessWidget {
           if (hpRatio != null) ...[
             const SizedBox(height: 9),
             Semantics(
-              label:
-                  'Trefferpunkte: ${hero.hitPoints} von ${hero.maxHitPoints}',
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(6),
-                child: LinearProgressIndicator(
-                  value: hpRatio,
-                  minHeight: 6,
-                  backgroundColor: FantasyPalette.night,
-                  color: hpRatio > .5
-                      ? FantasyPalette.success
-                      : hpRatio > .2
-                      ? FantasyPalette.gold
-                      : FantasyPalette.danger,
-                ),
+              label: 'Trefferpunkte: ${hero.hitPoints} von ${hero.maxHitPoints}',
+              child: _MeterTrack(
+                value: hpRatio,
+                height: 6,
+                color: hpRatio > .5
+                    ? FantasyPalette.success
+                    : hpRatio > .2
+                    ? FantasyPalette.gold
+                    : FantasyPalette.danger,
               ),
             ),
           ],
@@ -137,15 +132,11 @@ class FantasyAdventureStatusHud extends StatelessWidget {
             const SizedBox(height: 7),
             Semantics(
               label: 'Erfahrungsfortschritt',
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(6),
-                child: LinearProgressIndicator(
-                  key: const ValueKey('adventure-xp-progress'),
-                  value: experienceRatio,
-                  minHeight: 4,
-                  backgroundColor: FantasyPalette.night,
-                  color: FantasyPalette.blue,
-                ),
+              child: _MeterTrack(
+                key: const ValueKey('adventure-xp-progress'),
+                value: experienceRatio,
+                height: 4,
+                color: FantasyPalette.blue,
               ),
             ),
           ],
@@ -237,6 +228,41 @@ class _StatusTile extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    ),
+  );
+}
+
+/// The painted HUD meters must not look like an async loading indicator.
+/// A linear progress indicator elsewhere in the app means a pending action.
+class _MeterTrack extends StatelessWidget {
+  const _MeterTrack({
+    super.key,
+    required this.value,
+    required this.color,
+    required this.height,
+  });
+
+  final double value;
+  final double height;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => ClipRRect(
+    borderRadius: BorderRadius.circular(6),
+    child: ColoredBox(
+      color: FantasyPalette.night,
+      child: SizedBox(
+        width: double.infinity,
+        height: height,
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: FractionallySizedBox(
+            widthFactor: value,
+            heightFactor: 1,
+            child: ColoredBox(color: color),
+          ),
+        ),
       ),
     ),
   );
