@@ -20,6 +20,15 @@ Alle Schauplätze, NPCs, Handlungsschritte und Ergebnisse sind lokal in `app/lib
 
 Die Zeiten sind **Erzählziele, keine technische Mindestspieldauer**. Schnelle Textantworten und wenige Nebengespräche können die Kampagne deutlich verkürzen. Die tatsächliche Länge muss beim Testspielen geprüft werden.
 
+## Erweiterungen ab 0.8.7+57
+
+* **Spoilerfreier Ermittlungsstand:** Im laufenden Rabenwacht-Abenteuer auf „Hinweise und Aufträge“ tippen. Die Übersicht ist jederzeit auch während einer offenen Würfelprobe lesbar, verändert weder Würfel noch Spielstand und zeigt nur bereits bestätigte Hinweise.
+* **Freie Eingabe:** Außerhalb einer offenen Probe genügt auch das Kommando `Hinweise` oder `Ermittlungsstand` im Erzählfeld.
+* **Optionales Brunnengeheimnis:** Auf dem Dorfplatz den Brunnen oder die schwarze Feder untersuchen, dann das Spiegelbild prüfen (Wahrnehmung SG 12). Der Umweg lässt sich jederzeit verlassen; ohne tatsächlich abgelegte Probe bleibt sein Auftrag offen.
+* **Lebendige Fortschrittsanzeige:** Die Suche nach Vermissten wird bei ihrem Auffinden markiert, das Schlüsselrätsel nach dem Öffnen der dreizehnten Tür. Gespräche mit Elda, Tarek, Joren und Oswin verändern deren Beziehungen. Gerettete NPCs sowie gelöste Handlungsstränge werden am Ende erfasst.
+* **Speicherung:** Der neue Ort, die Zusatzquest, Hinweise und NPC-Beziehungen werden über das vorhandene Kampagnenformat gespeichert. Bestehende Spielstände benötigen keine Migration.
+* **Tests:** `app/test/rabenwacht_progress_test.dart` prüft die Spoilerbegrenzung, einen erfolgreichen Brunnenwurf, einen übersprungenen Umweg, die Gesprächsbeziehungen sowie Questfortschritt und Persistenz.
+
 ## NPCs (eigene Inhalte)
 
 Elda Weißdorn (Hebamme und Zeugin), Tarek Dorn (Wirt), Mara Voss (Vorsteherin), Bruder Oswin (Zeitzeuge), Fina Kessel (vermisste Tochter), Joren Kessel (Müller), Bram Eisfeld (vermisster Wächter), Alrik Nebel (Chronist), Seren (gebundener Geist). NPC-Dialoge und Hinweise sollen nur offengelegt werden, wenn sie im aktuellen Akt zugänglich sind.
