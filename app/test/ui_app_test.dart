@@ -151,12 +151,21 @@ void main() {
         LivingGameApp(controller: controller, voice: voice),
       );
       expect(tester.takeException(), isNull);
+      final mainDestinations = tester
+          .widgetList<NavigationDestination>(find.byType(NavigationDestination))
+          .toList();
+      expect(mainDestinations, hasLength(5));
       expect(
-        find.descendant(
-          of: find.byType(NavigationBar),
-          matching: find.byType(FantasyRuneEmblem),
+        mainDestinations.map(
+          (destination) => (destination.icon as FantasyRuneEmblem).rune,
         ),
-        findsNWidgets(5),
+        [
+          FantasyRune.compass,
+          FantasyRune.dice,
+          FantasyRune.hero,
+          FantasyRune.tome,
+          FantasyRune.moon,
+        ],
       );
       // The illustrated home header increases the content height on 360 dp.
       // Scroll the *visible* home list to the real demo action before tapping.
