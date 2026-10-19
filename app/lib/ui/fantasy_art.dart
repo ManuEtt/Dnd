@@ -420,7 +420,10 @@ class FantasyShortcutTile extends StatelessWidget {
               .clamp(110.0, 190.0)
               .toDouble()
         : null,
-    child: Material(
+    child: FantasyApprovedCornerFrame(
+      cornerSize: compact ? 22 : 27,
+      opacity: .90,
+      child: Material(
       color: FantasyPalette.ink,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -467,6 +470,7 @@ class FantasyShortcutTile extends StatelessWidget {
             ),
           ),
         ),
+      ),
       ),
     ),
   );
