@@ -155,6 +155,13 @@ void main() {
   ) async {
     await _startEditor(tester, null, (_) {});
     final species = find.widgetWithText(TextFormField, 'Spezies');
+    await tester.scrollUntilVisible(
+      species,
+      -250,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.ensureVisible(species);
+    await tester.pumpAndSettle();
     await tester.enterText(species, 'Goliath');
     await tester.pumpAndSettle();
     final speed = find.byKey(const ValueKey('character-speed-meters'));
