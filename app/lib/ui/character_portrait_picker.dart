@@ -173,7 +173,11 @@ class FantasyCharacterPortrait extends StatelessWidget {
       child: FantasyApprovedCornerFrame(
         cornerSize: (size * .31).clamp(20.0, 40.0).toDouble(),
         opacity: .94,
-        child: DecoratedBox(
+        child: FantasyOptionalArtBackground(
+          asset: FantasyGraphicAssets.portraitBorder,
+          centerSlice: const Rect.fromLTWH(29, 36, 94, 117),
+          foreground: true,
+          child: DecoratedBox(
           decoration: BoxDecoration(
             color: FantasyPalette.ink,
             borderRadius: BorderRadius.circular(9),
@@ -199,6 +203,7 @@ class FantasyCharacterPortrait extends StatelessWidget {
               ),
             ),
           ),
+        ),
         ),
       ),
     );
