@@ -3445,6 +3445,48 @@ class GameEngine {
       restored = resolution.removed;
       restorationChoiceRequired = resolution.choiceRequired;
     }
+    // Total cover prevents *direct targeting*, including a natural 20.
+    // The enemy still completes its turn, and duration/round bookkeeping
+    // continues normally. Area spells remain separate confirmed effects.
+    if (!CoverRules.canTargetDirectly(foe.heroCover)) {
+      final nextFight = foe.copyWith(
+        round: foe.round + (advanceRound ? 1 : 0),
+        activeParticipant: 'hero',
+        movementRemaining: CharacterRuleEngine.movementWholeMeters(hero)!,
+        movementRemainderDecimeters: 0,
+        actionUsed: false,
+        attacksRemaining: 0,
+        bonusActionUsed: false,
+        lightAttackAvailable: false,
+        spellSlotExpendedThisTurn: false,
+        deathSaveResolvedThisTurn: false,
+        dodgeActive: false,
+        disengagedThisTurn: false,
+        jumpDoubledThisTurn: false,
+        reactionUsed: false,
+        surgeReserved: false,
+        surgeUsedThisTurn: false,
+        sneakAttackUsedThisTurn: false,
+        selfRestorationChoice: '',
+      );
+      return _EnemyTurn(
+        campaign.copyWith(hero: hero, encounter: nextFight),
+        'Der ${foe.enemyName} kann dich hinter vollständiger '
+        'Deckung nicht direkt angreifen.'
+        '${restored.isNotEmpty ? ' Selbstwiederherstellung: $restored.' : ''}',
+        {
+          'blockedByTotalCover': true,
+          'heroCover': foe.heroCover.name,
+          'hit': false,
+          if (rageExpired) 'rageExpiredAtTurnEnd': true,
+          if (rageEndedByIncapacitation)
+            'rageEndedByIncapacitation': true,
+          if (restorationChoiceRequired)
+            'selfRestorationChoiceRequired': true,
+          if (restored.isNotEmpty) 'selfRestorationRemoved': restored,
+        },
+      );
+    }
     final result = dice.check(
       modifier: foe.enemyAttackBonus,
       advantage: ConditionRules.hasUnconditionalAttackerAdvantage(hero),
@@ -3456,13 +3498,24 @@ class GameEngine {
     );
     final outcome = RulesEngine.attack(
       roll: result,
-      armorClass: hero.armorClass!,
+      armorClass: CoverRules.armorClass(
+        hero.armorClass!,
+        foe.heroCover,
+      ),
+    );
+    final effectiveArmorClass = CoverRules.armorClass(
+      hero.armorClass!,
+      foe.heroCover,
     );
     var narration =
-        'Der ${foe.enemyName} greift an: ${result.total} gegen deine Rüstungsklasse ${hero.armorClass}. ';
+        'Der ${foe.enemyName} greift an: ${result.total} gegen deine effektive '
+        'Rüstungsklasse $effectiveArmorClass '
+        '(${CoverRules.label(foe.heroCover)}). ';
     final details = <String, dynamic>{
       'attackRoll': result.toJson(),
       'hit': outcome.hit,
+      'heroCover': foe.heroCover.name,
+      'effectiveHeroArmorClass': effectiveArmorClass,
       if (rageExpired) 'rageExpiredAtTurnEnd': true,
       if (rageEndedByIncapacitation) 'rageEndedByIncapacitation': true,
     };
