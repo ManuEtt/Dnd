@@ -15,7 +15,10 @@ abstract final class FantasyApprovedAssets {
   static final Future<ui.Image> portraitAtlas = _loadAtlas();
   static final Future<Uint8List> moonlitSky = rootBundle
       .load('assets/fantasy/night_sky.webp')
-      .then((value) => value.buffer.asUint8List(value.offsetInBytes, value.lengthInBytes));
+      .then(
+        (value) =>
+            value.buffer.asUint8List(value.offsetInBytes, value.lengthInBytes),
+      );
 
   static Future<ui.Image> _loadAtlas() async {
     final bytes = await rootBundle.load('assets/fantasy/portrait_atlas.webp');

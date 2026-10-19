@@ -23,7 +23,11 @@ void main() {
         'assets/fantasy/${file.substring(0, file.length - 4)}',
       );
       final binary = Uint8List.sublistView(native);
-      expect(binary, bytes, reason: 'Native WebP und Textatlas unterscheiden sich: $file');
+      expect(
+        binary,
+        bytes,
+        reason: 'Native WebP und Textatlas unterscheiden sich: $file',
+      );
       expect(bytes, isNotEmpty, reason: file);
       // The approved artwork is stored as base64-encoded WebP (RIFF).
       expect(ascii.decode(bytes.sublist(0, 4)), 'RIFF', reason: file);
@@ -31,7 +35,9 @@ void main() {
     }
   });
 
-  testWidgets('Schnellaktionen zeigen die echten Fantasy-Symbole', (tester) async {
+  testWidgets('Schnellaktionen zeigen die echten Fantasy-Symbole', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -47,10 +53,14 @@ void main() {
       ),
     );
     expect(find.byType(FantasyApprovedIcon), findsNWidgets(3));
-    expect(find.byKey(const ValueKey('adventure-shortcut-attack')),
-        findsOneWidget);
-    expect(find.byKey(const ValueKey('adventure-shortcut-roll')),
-        findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('adventure-shortcut-attack')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('adventure-shortcut-roll')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('Fantasy-Hintergrund erhält den Vordergrund', (tester) async {

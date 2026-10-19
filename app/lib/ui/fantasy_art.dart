@@ -402,6 +402,7 @@ class FantasyShortcutTile extends StatelessWidget {
   final Color color;
   final VoidCallback? onTap;
   final double width;
+
   /// Index of the actual approved illustrated fantasy icon (0-7).
   /// Null retains the Material symbol for actions without a matching icon.
   final int? approvedIconIndex;

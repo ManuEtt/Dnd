@@ -249,7 +249,7 @@ class _LivingGameAppState extends State<LivingGameApp> {
                         NavigationDestination(
                           icon: Icon(Icons.person_outline),
                           label: 'Helden',
-                approvedIconIndex: 0,
+                          approvedIconIndex: 0,
                         ),
                         NavigationDestination(
                           icon: Icon(Icons.menu_book_outlined),

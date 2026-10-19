@@ -236,7 +236,11 @@ class FantasyBackdrop extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xff142a40), FantasyPalette.night, Color(0xff0b1726)],
+            colors: [
+              Color(0xff142a40),
+              FantasyPalette.night,
+              Color(0xff0b1726),
+            ],
             stops: [0, .46, 1],
           ),
         ),
