@@ -1,12 +1,85 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'dart:ui' show instantiateImageCodec;
+import 'dart:ui' as ui;
+import 'package:flutter/services.dart' show rootBundle;
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'fantasy_art.dart';
 import 'fantasy_ui.dart';
+
+// The user-approved portraits and scenery are embedded as portable Base64
+// text assets, avoiding binary-upload limitations while still bundling the
+// original approved artwork offline in the Android app.
+abstract final class FantasyApprovedAssets {
+  static final Future<ui.Image> portraitAtlas = _loadAtlas();
+  static final Future<Uint8List> moonlitSky = rootBundle
+      .loadString('assets/fantasy/night_sky.webp.b64')
+      .then((value) => base64Decode(value.trim()));
+
+  static Future<ui.Image> _loadAtlas() async {
+    final text = await rootBundle.loadString(
+      'assets/fantasy/portrait_atlas.webp.b64',
+    );
+    final codec = await ui.instantiateImageCodec(base64Decode(text.trim()));
+    try {
+      return (await codec.getNextFrame()).image;
+    } finally {
+      codec.dispose();
+    }
+  }
+}
+
+class _PortraitAtlasPainter extends CustomPainter {
+  const _PortraitAtlasPainter(this.atlas, this.index);
+  final ui.Image atlas;
+  final int index;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final width = atlas.width / 3;
+    final height = atlas.height / 3;
+    canvas.drawImageRect(
+      atlas,
+      Rect.fromLTWH((index % 3) * width, (index ~/ 3) * height, width, height),
+      Offset.zero & size,
+      Paint()..filterQuality = FilterQuality.medium,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_PortraitAtlasPainter oldDelegate) =>
+      oldDelegate.index != index || oldDelegate.atlas != atlas;
+}
+
+class FantasyMoonlitBanner extends StatelessWidget {
+  const FantasyMoonlitBanner({super.key, this.height = 100});
+  final double height;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    height: height,
+    width: double.infinity,
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: FutureBuilder<Uint8List>(
+        future: FantasyApprovedAssets.moonlitSky,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const ColoredBox(color: FantasyPalette.ink);
+          }
+          return Image.memory(
+            snapshot.data!,
+            fit: BoxFit.cover,
+            gaplessPlayback: true,
+            semanticLabel: 'Mondnacht über dem Fantasy-Schloss',
+          );
+        },
+      ),
+    ),
+  );
+}
 
 class CharacterPortraitChoice {
   const CharacterPortraitChoice(this.preset, this.photoBase64);
@@ -46,16 +119,20 @@ class FantasyCharacterPortrait extends StatelessWidget {
         picture = const Icon(Icons.person_outline, color: FantasyPalette.gold);
       }
     } else if (preset >= 0 && preset < 9) {
-      // The exact approved portraits are delivered with the graphic pack.
-      // Existing artwork provides an offline fallback until each picture is
-      // installed in assets/fantasy/portraits/.
-      picture = Image.asset(
-        'assets/fantasy/portraits/portrait_${preset + 1}.webp',
-        fit: BoxFit.cover,
-        errorBuilder: (_, error, stackTrace) => Image.asset(
-          FantasyArtwork.campaign(preset),
-          fit: BoxFit.cover,
-        ),
+      picture = FutureBuilder<ui.Image>(
+        future: FantasyApprovedAssets.portraitAtlas,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return CustomPaint(
+              painter: _PortraitAtlasPainter(snapshot.data!, preset),
+              size: Size(size - 10, size - 10),
+            );
+          }
+          return Image.asset(
+            FantasyArtwork.campaign(preset),
+            fit: BoxFit.cover,
+          );
+        },
       );
     } else {
       picture = const Icon(Icons.person_outline, color: FantasyPalette.gold);
@@ -125,7 +202,7 @@ class _CharacterPortraitPickerState extends State<CharacterPortraitPicker> {
       }
       // Validate that the supplied data is an actual decodable image, not
       // an arbitrary file with a .jpg or .png extension.
-      final codec = await instantiateImageCodec(bytes);
+      final codec = await ui.instantiateImageCodec(bytes);
       final frame = await codec.getNextFrame();
       if (frame.image.width > 256 || frame.image.height > 256) {
         frame.image.dispose();
@@ -155,6 +232,8 @@ class _CharacterPortraitPickerState extends State<CharacterPortraitPicker> {
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          const FantasyMoonlitBanner(height: 98),
+          const SizedBox(height: 12),
           FantasyPanel(
             child: Row(
               children: [
