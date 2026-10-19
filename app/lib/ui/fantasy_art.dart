@@ -332,9 +332,13 @@ class FantasyCampaignCard extends StatelessWidget {
     ),
     child: ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: CustomPaint(
-        foregroundPainter: FantasyOrnamentPainter(color: accent),
-        child: Column(
+      child: FantasyOptionalArtBackground(
+        asset: FantasyGraphicAssets.card,
+        centerSlice: const Rect.fromLTWH(36, 32, 478, 124),
+        opacity: 0.90,
+        child: CustomPaint(
+          foregroundPainter: FantasyOrnamentPainter(color: accent),
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Stack(
@@ -380,6 +384,7 @@ class FantasyCampaignCard extends StatelessWidget {
               ),
             ),
           ],
+        ),
         ),
       ),
     ),
@@ -430,8 +435,11 @@ class FantasyShortcutTile extends StatelessWidget {
           side: BorderSide(color: color.withValues(alpha: .75)),
         ),
         clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
+        child: FantasyOptionalArtBackground(
+          asset: FantasyGraphicAssets.button,
+          centerSlice: const Rect.fromLTWH(26, 20, 248, 33),
+          child: InkWell(
+            onTap: onTap,
           child: CustomPaint(
             foregroundPainter: FantasyOrnamentPainter(color: color),
             child: Padding(
@@ -470,6 +478,7 @@ class FantasyShortcutTile extends StatelessWidget {
               ),
             ),
           ),
+        ),
         ),
       ),
     ),
