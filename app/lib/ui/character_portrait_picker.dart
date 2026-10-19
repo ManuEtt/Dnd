@@ -376,7 +376,7 @@ class _CharacterPortraitPickerState extends State<CharacterPortraitPicker> {
                             FantasyCharacterPortrait(
                               preset: i,
                               photoBase64: '',
-                              size: constraints.maxWidth,
+                              size: constraints.biggest.shortestSide,
                             ),
                       ),
                     ),
