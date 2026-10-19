@@ -368,6 +368,7 @@ class RabenwachtCampaign {
       ability,
       proficient: c.hero.skills.contains(skill),
       stealth: skill == 'Heimlichkeit',
+      skill: skill,
     );
     return RabenwachtTurn(
       c.copyWith(
@@ -378,13 +379,15 @@ class RabenwachtCampaign {
           targetName: '$ability|$skill',
           difficulty: difficulty,
           modifier: check.modifier,
+          minimumNatural: check.minimumNatural,
           advantage: check.advantage,
           disadvantage: check.disadvantage,
         ),
       ),
       '$description W20-Probe auf $skill (SG $difficulty, '
       'Bonus ${check.modifier >= 0 ? '+' : ''}${check.modifier}). '
-      'Würfle jetzt automatisch oder gib deinen natürlichen W20 ein.',
+      'Würfle jetzt automatisch oder gib deinen natürlichen W20 ein.'
+      '${check.minimumNatural == 10 ? ' Verlässliches Talent: Würfelwerte unter 10 gelten als 10.' : ''}',
     );
   }
 
