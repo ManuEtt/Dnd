@@ -273,9 +273,13 @@ void main() {
     );
     final game = engine.createDemo().copyWith(
       hero: _caster(),
-      encounter: _encounter.copyWith(
-        enemyShieldActive: true,
+      encounter: const Encounter(
+        id: 'fire-enemy',
+        enemyName: 'Wächter',
+        enemyHitPoints: 50,
+        enemyMaxHitPoints: 50,
         enemyArmorClass: 15,
+        enemyShieldActive: true,
       ),
     );
     final result = _engine(engine, game);
