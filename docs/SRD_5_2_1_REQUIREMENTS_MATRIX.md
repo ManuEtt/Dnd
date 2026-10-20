@@ -1,8 +1,10 @@
+**CI-Freigabe und Integration 20.10.2026:** [PR #44](https://github.com/ManuEtt/Dnd/pull/44) wurde nach erfolgreich abgeschlossener [GitHub Actions #39383477544](https://github.com/ManuEtt/Dnd/actions/runs/39383477544) (finaler geprüfter Head `8f703b0002ae6dcb5279893020bea63e14771184`) nach `main` gemergt; Merge-Commit [`fa2ee36caff2c210eabaa651321b9591de46737f`](https://github.com/ManuEtt/Dnd/commit/fa2ee36caff2c210eabaa651321b9591de46737f). Bestanden: Struktur-/Python-Tests, Backend Typecheck/Build/Tests, Dart format, Flutter analyze/test, Android-Debug-Build, native Android-Tests und Release-APK-Artefakte. **Weiter offen:** echter Android-Gerätetest, vollständige Shield-Reaktionsmechanik, allgemeine Monster-Abwehr und komplette SRD-Abdeckung.
+
 ## Erweiterung 0.8.17+67 – SPELL-MISSILE-DEFENSES (20.10.2026)
 
 | ID | Soll nach SRD 5.2.1 | Umsetzung / Tests | Stand |
 | --- | --- | --- | --- |
-| SPELL-MISSILE-FORCE | SRD Rules Glossary Damage Resistance/Immunity/Vulnerability; Magic Missile: Energieschaden mit einzelnen Schadensinstanzen | `enemy_force_defense.dart`, erweitertes `Encounter`-JSON, `GameEngine.castMagicMissile`, `MagicMissileDialog`; `enemy_force_defense_rules_test.dart`, `enemy_force_defense_storage_test.dart` | IMPLEMENTIERT, CI AUSSTEHEND |
+| SPELL-MISSILE-FORCE | SRD Rules Glossary Damage Resistance/Immunity/Vulnerability; Magic Missile: Energieschaden mit einzelnen Schadensinstanzen | `enemy_force_defense.dart`, erweitertes `Encounter`-JSON, `GameEngine.castMagicMissile`, `MagicMissileDialog`; `enemy_force_defense_rules_test.dart`, `enemy_force_defense_storage_test.dart` | GETESTET (CI 39383477544; Gerätetest offen) |
 | SPELL-MISSILE-SHIELD-REACTION | Shield-Zauber als bestätigte Reaktion, verbleibende Dauer und verbrauchte Ressourcen des Gegners | Weiterhin nur Bestätigung, dass Shield nicht wirksam ist; keine erfundene Reaktion | FEHLT |
 | ENEMY-DEFENSES-GENERAL | Schadens-Resistenzen/Immunitäten aus bestätigten Monsterstatblocks für sämtliche Schadensarten | `DamageRules` vorhanden, Gegnerpersistenz in diesem Inkrement nur Force | TEILWEISE |
 
