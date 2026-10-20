@@ -120,7 +120,7 @@ void main() {
   });
 
   test('Natural 20 always hits, doubles dice, never spends a slot', () {
-    final random = _SequenceRandom([19, 0]);
+    final random = _SequenceRandom([19, 0, 0, 0, 0]);
     final before = _caster(level: 5);
     final cast = _cast(before, random, targetArmorClass: 99);
     expect(cast.hit, isTrue);
@@ -145,7 +145,7 @@ void main() {
 
   test('Confirmed cover and active Shield change hit outcome', () {
     // Attack roll 12 + Int 3 + proficiency 3 = 18.
-    final random = _SequenceRandom([11, 4]);
+    final random = _SequenceRandom([11, 4, 4]);
     final hit = _cast(_caster(), random, targetArmorClass: 18);
     expect(hit.hit, isTrue);
     expect(hit.damage, 10);
@@ -234,7 +234,7 @@ void main() {
   });
 
   test('GameEngine stores attack and damage atomically without slot use', () {
-    final random = _SequenceRandom([11, 4]);
+    final random = _SequenceRandom([11, 4, 4]);
     final engine = GameEngine(
       dice: DiceEngine(random: random),
       clock: () => DateTime.utc(2026, 10, 20),
