@@ -466,6 +466,52 @@ class GameController extends ChangeNotifier {
     );
   });
 
+  Future<void> castAcidSplash({
+    required String campaignId,
+    required int expectedRevision,
+    required String castingClass,
+    required int confirmedTargetDexteritySaveModifier,
+    required bool originWithin60FeetConfirmed,
+    required bool currentEnemyIsOnlyCreatureInSphereConfirmed,
+    required bool verbalComponentConfirmed,
+    required bool somaticComponentConfirmed,
+    required bool noUnmodelledDcModifiersConfirmed,
+    required bool targetSaveCircumstancesConfirmed,
+    required bool targetCoverRelationshipConfirmed,
+    required bool effectPathConfirmed,
+    required bool noAcidDamageAdjustmentConfirmed,
+    bool targetSourceOppositeCover = false,
+    bool targetSaveAdvantage = false,
+    bool targetSaveDisadvantage = false,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.castAcidSplash(
+        current,
+        castingClass: castingClass,
+        confirmedTargetDexteritySaveModifier:
+            confirmedTargetDexteritySaveModifier,
+        originWithin60FeetConfirmed: originWithin60FeetConfirmed,
+        currentEnemyIsOnlyCreatureInSphereConfirmed:
+            currentEnemyIsOnlyCreatureInSphereConfirmed,
+        verbalComponentConfirmed: verbalComponentConfirmed,
+        somaticComponentConfirmed: somaticComponentConfirmed,
+        noUnmodelledDcModifiersConfirmed:
+            noUnmodelledDcModifiersConfirmed,
+        targetSaveCircumstancesConfirmed:
+            targetSaveCircumstancesConfirmed,
+        targetCoverRelationshipConfirmed:
+            targetCoverRelationshipConfirmed,
+        effectPathConfirmed: effectPathConfirmed,
+        noAcidDamageAdjustmentConfirmed:
+            noAcidDamageAdjustmentConfirmed,
+        targetSourceOppositeCover: targetSourceOppositeCover,
+        targetSaveAdvantage: targetSaveAdvantage,
+        targetSaveDisadvantage: targetSaveDisadvantage,
+      ),
+    );
+  });
+
   Future<void> castSacredFlame({
     required String campaignId,
     required int expectedRevision,
