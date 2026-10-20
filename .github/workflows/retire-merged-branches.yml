@@ -1,0 +1,28 @@
+name: One-time merged branch retirement
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/retire-merged-branches.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: retire-merged-branches-20261020
+  cancel-in-progress: false
+jobs:
+  retire:
+    name: Delete only already-merged verified branches
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    if: github.repository == 'ManuEtt/Dnd' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify offline cleanup safety
+        run: python3 -m unittest discover -s scripts/tests -p test_retire_merged_branches.py -v
+      - name: Recheck HEADs and delete only merged refs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 scripts/retire_merged_branches.py --execute
