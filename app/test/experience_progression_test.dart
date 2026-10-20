@@ -3,6 +3,7 @@ import 'package:lebendiger_spielleiter/domain/character_creation_progression.dar
 import 'package:lebendiger_spielleiter/domain/experience_progression.dart';
 import 'package:lebendiger_spielleiter/domain/game_engine.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
+import 'package:lebendiger_spielleiter/domain/srd_class_level_up.dart';
 
 void main() {
   test('XP-Schwellen und Übungsbonus stimmen mit der SRD-Tabelle überein', () {
@@ -70,6 +71,58 @@ void main() {
       throwsFormatException,
     );
     expect(unknown.facts.containsKey('xp.reward.kapitel-1'), isFalse);
+  });
+
+
+  test('EP erlauben mehrere getrennte, nicht automatische Aufstiege', () {
+    final initial = GameEngine().createDemo().hero.copyWith(experience: 6500);
+    expect(initial.level, 1);
+    expect(ExperienceProgression.reachableLevel(initial), 5);
+    expect(ExperienceProgression.pendingLevels(initial), 4);
+    expect(ExperienceProgression.pointsUntilNextLevel(initial), 0);
+    expect(ExperienceProgression.progressToNextLevel(initial), 1.0);
+
+    var hero = initial;
+    for (var target = 2; target <= 5; target++) {
+      final proposal = SrdClassLevelUpRules.propose(
+        hero: hero,
+        className: hero.className,
+        method: LevelUpMethod.experience,
+      );
+      hero = proposal.applyTo(hero);
+      hero = HeroCharacter.fromJson(hero.toJson());
+      expect(hero.level, target);
+      expect(hero.experience, 6500);
+      expect(ExperienceProgression.pendingLevels(hero), 5 - target);
+      expect(ExperienceProgression.reachableLevel(hero), 5);
+    }
+    expect(ExperienceProgression.pointsUntilNextLevel(hero), 7500);
+    expect(ExperienceProgression.progressToNextLevel(hero), 0.0);
+  });
+
+  test('Fortschrittsanzeige bleibt bei unbekannten EP unbestimmt', () {
+    final original = GameEngine().createDemo().hero;
+    final unknown = original.copyWith(experience: null);
+    expect(ExperienceProgression.pointsUntilNextLevel(unknown), isNull);
+    expect(ExperienceProgression.progressToNextLevel(unknown), isNull);
+    expect(ExperienceProgression.pendingLevels(unknown), 0);
+    expect(ExperienceProgression.reachableLevel(unknown), unknown.level);
+    expect(ExperienceProgression.pointsUntilNextLevel(original), 300);
+    expect(ExperienceProgression.progressToNextLevel(original), 0.0);
+    final halfway = original.copyWith(experience: 150);
+    expect(ExperienceProgression.progressToNextLevel(halfway), 0.5);
+    expect(ExperienceProgression.pointsUntilNextLevel(halfway), 150);
+  });
+
+  test('Höchststufe 20 erzeugt trotz XP keine weiteren Aufstiege', () {
+    final original = GameEngine().createDemo().hero.copyWith(
+      level: 20,
+      experience: 1000000,
+    );
+    expect(ExperienceProgression.reachableLevel(original), 20);
+    expect(ExperienceProgression.pendingLevels(original), 0);
+    expect(ExperienceProgression.pointsUntilNextLevel(original), 0);
+    expect(ExperienceProgression.progressToNextLevel(original), 1.0);
   });
 
   test('Ungültige Belohnungen und Maximalgrenzen werden abgewiesen', () {
