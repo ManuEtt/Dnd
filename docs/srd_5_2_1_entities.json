@@ -3949,10 +3949,20 @@
       "source_url": "https://www.dndbeyond.com/srd",
       "transcription_url": "https://github.com/azemoning/omni-5e/blob/main/data/raw/5.2.1/spells.md",
       "license": "CC-BY-4.0",
-      "rule_implemented": "unverified",
-      "code": [],
-      "tests": [],
-      "note": "Name und ggf. Kategorie aus öffentlicher SRD-Transkription. Gegen offizielles SRD 5.2.1 und konkrete Domain-Wirkung/Tests noch zu verifizieren."
+      "rule_implemented": "partial",
+      "code": [
+        "app/lib/domain/srd_spell_saving_throw_rules.dart",
+        "app/lib/domain/sacred_flame_rules.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/services/game_controller.dart",
+        "app/lib/ui/sacred_flame_dialog.dart",
+        "app/lib/ui/app.dart"
+      ],
+      "tests": [
+        "app/test/sacred_flame_rules_test.dart",
+        "app/test/sacred_flame_dialog_test.dart"
+      ],
+      "note": "SRD 5.2.1 Heilige Flamme: vorbereiteter Klerikerzaubertrick, bestätigter vollständiger GES-Monsterrettungswurfbonus, SG-Formel, W20/adv/disadv, 1-4W8 Strahlenschaden, keine halbe/3/4-Deckung beim Save, Aktions-/HP-/Journalpersistenz. Ungeprüft: automatische Monsterstats, magische Modifikatoren, besondere Rettungswurftraits, mehrere Ziele, echte Karten-/Sichtverifikation und Android-Gerätetest."
     },
     {
       "id": "SPELL-ENTRY-SANCTUARY",
