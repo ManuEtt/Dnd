@@ -68,10 +68,40 @@ class ExperienceProgression {
     );
   }
 
-  static int pendingLevels(HeroCharacter hero) {
+  /// Required EP for the next single confirmed character level.
+  /// Null means the historical EP value is unknown, not zero.
+  static int? pointsUntilNextLevel(HeroCharacter hero) {
+    final next = nextThreshold(hero.level);
     final xp = hero.experience;
-    if (xp == null) return 0;
-    final target = levelForXp(xp);
-    return target > hero.level ? target - hero.level : 0;
+    if (xp == null) return null;
+    if (next == null) return 0;
+    return (next - xp).clamp(0, next).toInt();
+  }
+
+  /// Progress within the *current* level, never across unconfirmed levels.
+  /// A hero ready for multiple levels stays at 100% until each is confirmed.
+  static double? progressToNextLevel(HeroCharacter hero) {
+    final next = nextThreshold(hero.level);
+    final xp = hero.experience;
+    if (xp == null) return null;
+    if (next == null) return 1.0;
+    final start = CharacterCreationProgression.startingExperience(hero.level);
+    return ((xp - start) / (next - start)).clamp(0.0, 1.0).toDouble();
+  }
+
+  /// XP can qualify for several levels, but does not apply any of them.
+  /// The player must confirm every intermediate class advancement.
+  static int reachableLevel(HeroCharacter hero) {
+    if (hero.level < 1 || hero.level > 20) {
+      throw RangeError.range(hero.level, 1, 20, 'level');
+    }
+    final xp = hero.experience;
+    if (xp == null) return hero.level;
+    final earned = levelForXp(xp);
+    return earned > hero.level ? earned : hero.level;
+  }
+
+  static int pendingLevels(HeroCharacter hero) {
+    return reachableLevel(hero) - hero.level;
   }
 }
