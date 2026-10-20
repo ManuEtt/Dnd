@@ -105,6 +105,10 @@ void main() {
     );
     expect(selected.value, false);
     expect(find.byKey(const ValueKey('acid-extra-save-extra-1')), findsNothing);
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('acid-extra-select-extra-1')),
+    );
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('acid-extra-select-extra-1')));
     await tester.pumpAndSettle();
     expect(
