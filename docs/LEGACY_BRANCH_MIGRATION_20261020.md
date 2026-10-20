@@ -44,3 +44,16 @@ Für die alten Tests oder Implementierungen kann alternativ jede oben notierte S
 Der Sammelmerge wurde über [PR #38](https://github.com/ManuEtt/Dnd/pull/38) in `main` aufgenommen (Merge-Commit `23c937af976c94b472585219bf73b386a813350a`). Die Bereinigung überprüft den aktuellen Stand nochmals vor dem Entfernen jeder alten Branch-Referenz. Die tatsächlich entfernten Referenzen und Backup-Tags sind separat anhand des GitHub-Workflows nachzuprüfen.
 
 **Sicherheitskorrektur:** Vor der Löschung wurde eine fehlerhafte SHA-Länge im Bereinigungsmanifest erkannt und korrigiert. Der erste Löschlauf hat sämtliche alten Branches unverändert gelassen. Der erneute Lauf verwendet ausschließlich die nachgeprüften aktuellen Commit-IDs.
+
+## Abschlussstatus – erfolgreich
+
+**Abgeschlossen am 20.10.2026.** Nach der historischen Integration über [PR #38](https://github.com/ManuEtt/Dnd/pull/38) wurden die ursprünglichen zehn Feature-/Fix-/Dokumentationsbranches sowie die zwei temporären Integrationsbranches erfolgreich gelöscht.
+
+- Erfolgreicher GitHub-Actions-Lauf: [39372908266](https://github.com/ManuEtt/Dnd/actions/runs/39372908266), Status **success**.
+- Es existiert danach ausschließlich der Arbeitsbranch `main`; dies wurde über die GitHub-Branchliste geprüft.
+- Für **alle zwölf** entfernten Branches existiert der gleichnamige unveränderliche Backup-Tag unter `archive/legacy-20261020/<alter-branchname>`. Jeder Tag wurde per GitHub-Commitvergleich erfolgreich verifiziert.
+- Alle zwölf alten HEAD-Commits sind Vorfahren von `main`; keiner der alten Entwicklungsstände geht dadurch verloren.
+- Der einmalige Bereinigungsworkflow wurde anschließend aus `main` entfernt, um zukünftige versehentliche Löschläufe auszuschließen.
+- Die Änderungen des Migrations-PRs betreffen nur Dokumentation und den inzwischen entfernten Workflow. Die laufende App wird nicht auf veraltete UI-/Regelfassungen zurückgesetzt.
+
+**Wichtig zur Terminologie:** Historie und Wiederherstellbarkeit sind vollständig integriert; diese historienbewahrende `ours`-Zusammenführung aktiviert absichtlich keine durch neuere Implementierungen ersetzten Altdateien. Ein erneuter Flutter-/Android-Build kann bei späteren funktionalen Änderungen weiterhin notwendig sein.
