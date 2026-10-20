@@ -16,6 +16,7 @@ import sys
 ROOT = Path(__file__).resolve().parent.parent
 MATRIX = ROOT / "docs" / "srd_5_2_1_requirements.json"
 CATALOGUE = ROOT / "docs" / "class_feature_coverage_0_6_8.json"
+ENTITIES = ROOT / "docs" / "srd_5_2_1_entities.json"
 STATUSES = {"tested", "partial", "missing", "unverified"}
 AREAS = {
     "class_features", "character_creation", "combat", "core_rules",
@@ -84,8 +85,51 @@ def validate_matrix(matrix: dict, catalogue: dict) -> list[str]:
     return errors
 
 
-def summary(matrix: dict) -> dict:
-    rows = matrix["requirements"]
+
+def validate_entities(entities: dict, matrix: dict) -> list[str]:
+    """Check unique, traceable named entries without treating transcription as verified rules."""
+    errors: list[str] = []
+    if entities.get("schema_version") != 1:
+        errors.append("Unbekanntes Entity-Inventarschema.")
+    rows = entities.get("entries")
+    if not isinstance(rows, list):
+        return errors + ["Entity-Inventar muss entries-Liste enthalten."]
+    ids = {r["id"] for r in matrix.get("requirements", [])}
+    names_by_kind: set[tuple[str, str]] = set()
+    kinds = {"spell_definition", "monster_statblock", "magic_item", "feat"}
+    for row in rows:
+        if not isinstance(row, dict):
+            errors.append("Entity-Eintrag muss ein JSON-Objekt sein.")
+            continue
+        rid = row.get("id")
+        if not isinstance(rid, str) or not rid:
+            errors.append("Unbenannter Entity-Eintrag ohne ID.")
+            continue
+        if rid in ids:
+            errors.append(f"Doppelte Entity-/Requirement-ID: {rid}")
+        ids.add(rid)
+        if row.get("kind") not in kinds or row.get("area") not in AREAS:
+            errors.append(f"{rid}: Kategorie oder Entitätstyp ungültig.")
+        name = row.get("name")
+        key = (row.get("kind"), name)
+        if not isinstance(name, str) or not name.strip() or key in names_by_kind:
+            errors.append(f"{rid}: Name fehlt oder Entity mehrfach vorhanden.")
+        names_by_kind.add(key)
+        if row.get("rule_implemented") not in STATUSES:
+            errors.append(f"{rid}: kein gültiger Implementierungsstatus.")
+        if not row.get("source_url") or not row.get("transcription_url"):
+            errors.append(f"{rid}: Quellen- oder Provenienzverweis fehlt.")
+        if row.get("rule_implemented") == "tested" and not row.get("tests"):
+            errors.append(f"{rid}: getestet ohne konkreten Testnachweis.")
+        if row.get("kind") == "spell_definition" and row.get("spell_level") not in range(10):
+            errors.append(f"{rid}: Zauberstufe 0 bis 9 erforderlich.")
+    if entities.get("verified_against_official_pdf") is True and matrix.get("inventory_gaps"):
+        errors.append("Entitätskatalog kann bei ungeprüften Quellenlücken nicht als offiziell verifiziert gelten.")
+    return errors
+
+
+def summary(matrix: dict, entities: dict | None = None) -> dict:
+    rows = matrix["requirements"] + (entities["entries"] if entities else [])
     return {
         "counted_requirements": len(rows),
         "by_area": dict(sorted(Counter(r["area"] for r in rows).items())),
@@ -101,24 +145,26 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--matrix", type=Path, default=MATRIX)
     parser.add_argument("--catalogue", type=Path, default=CATALOGUE)
+    parser.add_argument("--entities", type=Path, default=ENTITIES)
     parser.add_argument("--json", action="store_true", help="Zusammenfassung als JSON ausgeben")
     parser.add_argument("--require-complete-inventory", action="store_true")
     parser.add_argument("--require-fully-tested", action="store_true")
     args = parser.parse_args(argv)
     matrix = json.loads(args.matrix.read_text(encoding="utf-8"))
     catalogue = json.loads(args.catalogue.read_text(encoding="utf-8"))
-    errors = validate_matrix(matrix, catalogue)
+    entities = json.loads(args.entities.read_text(encoding="utf-8"))
+    errors = validate_matrix(matrix, catalogue) + validate_entities(entities, matrix)
     if args.require_complete_inventory and (not matrix.get("scope_complete") or matrix.get("inventory_gaps")):
         errors.append("SRD-Gesamtinventar ist noch nicht vollständig.")
     if args.require_fully_tested and (
         not matrix.get("scope_complete") or matrix.get("inventory_gaps") or
-        any(r["rule_implemented"] != "tested" for r in matrix.get("requirements", []))
+        any(r["rule_implemented"] != "tested" for r in matrix.get("requirements", []) + entities.get("entries", []))
     ):
         errors.append("Die vollständig getestete SRD-Engine ist noch nicht nachgewiesen.")
     if errors:
         print("\n".join("FEHLER: " + e for e in errors), file=sys.stderr)
         return 1
-    result = summary(matrix)
+    result = summary(matrix, entities)
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:
