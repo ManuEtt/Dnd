@@ -1,0 +1,41 @@
+name: Temporary Multi-Creature Initiative Dart Formatter
+
+on:
+  push:
+    branches:
+      - feature/srd-multi-initiative-roster-20261020
+    paths:
+      - .github/workflows/format-initiative-roster.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: github.repository == 'ManuEtt/Dnd'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/srd-multi-initiative-roster-20261020
+          persist-credentials: true
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Format initiative source and tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          dart format app/lib/domain/models.dart app/lib/domain/srd_initiative_roster_rules.dart app/lib/domain/game_engine.dart app/lib/services/game_controller.dart app/lib/ui/app.dart app/lib/ui/tracked_creature_initiative_dialog.dart app/test/srd_initiative_roster_test.dart app/test/tracked_creature_initiative_dialog_test.dart
+          dart format --output=none --set-exit-if-changed app/lib/domain/models.dart app/lib/domain/srd_initiative_roster_rules.dart app/lib/domain/game_engine.dart app/lib/services/game_controller.dart app/lib/ui/app.dart app/lib/ui/tracked_creature_initiative_dialog.dart app/test/srd_initiative_roster_test.dart app/test/tracked_creature_initiative_dialog_test.dart
+          git diff --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- app/lib/domain/models.dart app/lib/domain/srd_initiative_roster_rules.dart app/lib/domain/game_engine.dart app/lib/services/game_controller.dart app/lib/ui/app.dart app/lib/ui/tracked_creature_initiative_dialog.dart app/test/srd_initiative_roster_test.dart app/test/tracked_creature_initiative_dialog_test.dart
+          if ! git diff --cached --quiet; then
+            git commit -m 'style(combat): format multi-creature initiative with pinned Dart SDK'
+            git push origin HEAD:feature/srd-multi-initiative-roster-20261020
+          fi
