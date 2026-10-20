@@ -12,6 +12,7 @@ import 'character_effect_rules.dart';
 import 'magic_missile_rules.dart';
 import 'healing_spell_rules.dart';
 import 'damage_rules.dart';
+import 'enemy_force_defense.dart';
 import 'class_progression_rules.dart';
 import 'class_feature_resources.dart';
 import 'class_resource_rules.dart';
@@ -1063,6 +1064,7 @@ class GameEngine {
     required bool verbalComponentConfirmed,
     required bool somaticComponentConfirmed,
     required bool noProtectionConfirmed,
+    EnemyForceDefense? confirmedForceDefense,
   }) {
     _requireExternalEffect(campaign, 'Magisches Geschoss');
     final fight = campaign.encounter;
@@ -1090,6 +1092,23 @@ class GameEngine {
         'verhindern diesen Zauber.',
       );
     }
+    // Older callers can still explicitly confirm ordinary defenses via
+    // noProtectionConfirmed; historical encounters never infer a defense.
+    // New UI callers choose an explicit value. Shield must be separately
+    // excluded before dice or resources are touched.
+    if (!noProtectionConfirmed ||
+        confirmedForceDefense == EnemyForceDefense.unknown) {
+      throw const FormatException(
+        'Schildzauber und Gegner-Abwehr müssen bestätigt sein.',
+      );
+    }
+    final effectiveDefense = confirmedForceDefense ??
+        (fight.enemyForceDefense == EnemyForceDefense.unknown
+            ? EnemyForceDefense.normal
+            : fight.enemyForceDefense);
+    if (effectiveDefense == EnemyForceDefense.unknown) {
+      throw const FormatException('Unbestätigte Gegner-Abwehr.');
+    }
     final cast = MagicMissileRules.cast(
       campaign.hero,
       dice: dice,
@@ -1102,9 +1121,13 @@ class GameEngine {
       somaticComponentConfirmed: somaticComponentConfirmed,
       noProtectionConfirmed: noProtectionConfirmed,
     );
+    final reduced = EnemyForceDefenseRules.apply(
+      cast.rolls.map((roll) => roll.total),
+      defense: effectiveDefense,
+    );
     final remaining = RulesEngine.remainingHitPoints(
       hitPoints: fight.enemyHitPoints,
-      damage: cast.damage,
+      damage: reduced.appliedTotal,
     );
     final payload = <String, dynamic>{
       'spellName': 'Magisches Geschoss',
@@ -1112,7 +1135,10 @@ class GameEngine {
       'slotLevel': cast.slotLevel,
       'pactMagic': cast.pactMagic,
       'damageType': 'force',
-      'damage': cast.damage,
+      'rawDamage': reduced.rawTotal,
+      'damage': reduced.appliedTotal,
+      'appliedMissileDamage': reduced.appliedPerMissile,
+      'enemyForceDefense': effectiveDefense.name,
       'missileRolls': cast.rolls.map((roll) => roll.toJson()).toList(),
       'targetId': fight.id,
       'targetVisibleConfirmed': true,
@@ -1124,6 +1150,7 @@ class GameEngine {
       hero: cast.hero,
       encounter: fight.copyWith(
         enemyHitPoints: remaining,
+        enemyForceDefense: effectiveDefense,
         actionUsed: true,
         spellSlotExpendedThisTurn: true,
       ),
@@ -1135,7 +1162,9 @@ class GameEngine {
       campaign,
       next,
       'Magisches Geschoss: ${cast.rolls.length} Geschosse treffen '
-      'den ${fight.enemyName} für ${cast.damage} Energieschaden. '
+      'den ${fight.enemyName}. Die bestätigte Abwehr '
+      '(${EnemyForceDefenseRules.label(effectiveDefense)}) reduziert '
+      '${reduced.rawTotal} auf ${reduced.appliedTotal} Energieschaden. '
       'Verbleibende Gegner-TP: $remaining. '
       'Zauberplatz Grad ${cast.slotLevel} und Magieaktion verbraucht.'
       '${remaining == 0 ? ' Der Gegner ist besiegt.' : ''}',

@@ -7,6 +7,7 @@ import '../domain/game_engine.dart';
 import '../domain/ai_story.dart';
 import '../domain/models.dart';
 import '../domain/damage_rules.dart';
+import '../domain/enemy_force_defense.dart';
 import '../domain/condition_effects.dart';
 import '../domain/saving_throw_class_actions.dart';
 import 'backend_narrator.dart';
@@ -455,6 +456,7 @@ class GameController extends ChangeNotifier {
     required bool verbalComponentConfirmed,
     required bool somaticComponentConfirmed,
     required bool noProtectionConfirmed,
+    EnemyForceDefense? confirmedForceDefense,
   }) => _run(() async {
     final current = _effectCampaign(campaignId, expectedRevision);
     await _commit(
@@ -468,6 +470,7 @@ class GameController extends ChangeNotifier {
         verbalComponentConfirmed: verbalComponentConfirmed,
         somaticComponentConfirmed: somaticComponentConfirmed,
         noProtectionConfirmed: noProtectionConfirmed,
+        confirmedForceDefense: confirmedForceDefense,
       ),
     );
   });
