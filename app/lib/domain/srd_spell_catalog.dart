@@ -78,11 +78,12 @@ class SrdSpellDefinition {
         .replaceAll(' ', '')
         .split(',');
     for (final symbol in ['V', 'S', 'M']) {
-      if (symbols.contains(symbol) != switch (symbol) {
+      final expected = switch (symbol) {
         'V' => verbal,
         'S' => somatic,
         _ => material,
-      }) {
+      };
+      if (symbols.contains(symbol) != expected) {
         throw const FormatException('SRD-Zauberkomponenten widersprechen sich.');
       }
     }
