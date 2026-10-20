@@ -1792,8 +1792,10 @@ class TrackedAreaCreature {
 
   final String id, name;
   final int hitPoints, maxHitPoints;
+
   /// Null means initiative has NOT been confirmed; zero is a valid result.
   final int? initiativeTotal;
+
   /// Explicit SRD tie adjudicator: 'gm' for GM-managed creatures or
   /// 'player' for player-managed characters. Never inferred from a name.
   final String? initiativeController;
@@ -1808,8 +1810,7 @@ class TrackedAreaCreature {
     hitPoints: hitPoints ?? this.hitPoints,
     maxHitPoints: maxHitPoints,
     initiativeTotal: initiativeTotal ?? this.initiativeTotal,
-    initiativeController:
-        initiativeController ?? this.initiativeController,
+    initiativeController: initiativeController ?? this.initiativeController,
   );
 
   Map<String, dynamic> toJson() => {
@@ -1837,9 +1838,7 @@ class TrackedAreaCreature {
         ? null
         : _string(j['initiativeController'], 'Initiativkontrolle');
     if ((total == null) != (controller == null) ||
-        (controller != null &&
-            controller != 'gm' &&
-            controller != 'player')) {
+        (controller != null && controller != 'gm' && controller != 'player')) {
       throw const FormatException(
         'Initiative und bestätigte Spieler-/SL-Kontrolle gehören zusammen.',
       );

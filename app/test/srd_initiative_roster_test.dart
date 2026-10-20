@@ -33,12 +33,11 @@ const _encounter = Encounter(
   enemyInitiative: 12,
 );
 
-Campaign _game(GameEngine engine) => engine.createDemo().copyWith(
-  hero: _hero(),
-  encounter: _encounter,
-);
+Campaign _game(GameEngine engine) =>
+    engine.createDemo().copyWith(hero: _hero(), encounter: _encounter);
 
-TrackedAreaCreature _extra(String id, {
+TrackedAreaCreature _extra(
+  String id, {
   int? initiative,
   String? control,
   int hp = 20,
@@ -53,27 +52,28 @@ TrackedAreaCreature _extra(String id, {
 
 void main() {
   test('Old optional initiative fields are absent in legacy saves', () {
-    final game = _game(GameEngine()).copyWith(
-      trackedAreaCreatures: [_extra('skeleton')],
-    );
+    final game = _game(
+      GameEngine(),
+    ).copyWith(trackedAreaCreatures: [_extra('skeleton')]);
     final json = game.toJson();
     expect(
-      (json['trackedAreaCreatures'] as List).single
-          .containsKey('initiativeTotal'),
+      (json['trackedAreaCreatures'] as List).single.containsKey(
+        'initiativeTotal',
+      ),
       false,
     );
     expect(Campaign.fromJson(json).toJson(), json);
-    expect(Campaign.fromJson(json).trackedAreaCreatures.single.initiativeTotal,
-        isNull);
+    expect(
+      Campaign.fromJson(json).trackedAreaCreatures.single.initiativeTotal,
+      isNull,
+    );
   });
 
   test('Confirmed initiatives serialize with signed 0 and preserve HP', () {
-    final engine = GameEngine(
-      clock: () => DateTime.utc(2026, 10, 20),
-    );
-    final initial = _game(engine).copyWith(
-      trackedAreaCreatures: [_extra('goblin')],
-    );
+    final engine = GameEngine(clock: () => DateTime.utc(2026, 10, 20));
+    final initial = _game(
+      engine,
+    ).copyWith(trackedAreaCreatures: [_extra('goblin')]);
     final result = engine.confirmAreaCreatureInitiative(
       initial,
       creatureId: 'goblin',
@@ -135,10 +135,7 @@ void main() {
 
   test('Missing initiative and legacy base uncertainty block readiness', () {
     final game = _game(GameEngine()).copyWith(
-      trackedAreaCreatures: [
-        _extra('unknown'),
-        _extra('defeated', hp: 0),
-      ],
+      trackedAreaCreatures: [_extra('unknown'), _extra('defeated', hp: 0)],
     );
     final roster = SrdInitiativeRosterRules.preview(
       game,
@@ -157,14 +154,10 @@ void main() {
 
   test('Invalid initiative, actor ownership or contradictory file rejects', () {
     final engine = GameEngine();
-    final game = _game(engine).copyWith(
-      trackedAreaCreatures: [_extra('goblin')],
-    );
-    for (final combination in [
-      (-31, 'gm'),
-      (101, 'gm'),
-      (15, 'unowned'),
-    ]) {
+    final game = _game(
+      engine,
+    ).copyWith(trackedAreaCreatures: [_extra('goblin')]);
+    for (final combination in [(-31, 'gm'), (101, 'gm'), (15, 'unowned')]) {
       expect(
         () => engine.confirmAreaCreatureInitiative(
           game,

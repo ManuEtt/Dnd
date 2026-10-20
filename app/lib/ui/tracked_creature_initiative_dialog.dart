@@ -17,10 +17,7 @@ class ConfirmedInitiativeChoice {
 /// Initiative is a **preview** until all totals and tied-actor orders are
 /// confirmed. The existing Encounter only automates the primary opponent.
 class TrackedCreatureInitiativeDialog extends StatefulWidget {
-  const TrackedCreatureInitiativeDialog({
-    super.key,
-    required this.campaign,
-  });
+  const TrackedCreatureInitiativeDialog({super.key, required this.campaign});
 
   final Campaign campaign;
 
@@ -50,9 +47,11 @@ class _TrackedCreatureInitiativeDialogState
         total > 100 ||
         _controller == null ||
         !_confirmed) {
-      setState(() => _error =
-          'Kreatur, vollständiges Initiativeergebnis, '
-          'SL-/Spieler-Kontrolle und Bestätigung sind erforderlich.');
+      setState(
+        () => _error =
+            'Kreatur, vollständiges Initiativeergebnis, '
+            'SL-/Spieler-Kontrolle und Bestätigung sind erforderlich.',
+      );
       return;
     }
     Navigator.of(context).pop(
@@ -97,21 +96,22 @@ class _TrackedCreatureInitiativeDialogState
                   'Initiative des Helden und Hauptgegners '
                   'aus dem Kampfstart bestätigt.',
                 ),
-                onChanged: (v) => setState(() =>
-                    _baseConfirmed = v ?? false),
+                onChanged: (v) => setState(() => _baseConfirmed = v ?? false),
               ),
               for (final group in roster.groups) ...[
                 const Divider(),
-                Text('Initiative ${group.total}',
-                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  'Initiative ${group.total}',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
                 for (final entry in group.entries)
-                  Text('${entry.name} '
-                      '(${entry.controller == 'gm' ? 'SL' : 'Spieler'}, '
-                      '${entry.kind == 'additional' ? 'Zusatzkreatur' : 'Hauptakteur'})'),
-                if (group.hasUnresolvedTie)
-                  const Text(
-                    'Gleichstand – Reihenfolge ausdrücklich klären.',
+                  Text(
+                    '${entry.name} '
+                    '(${entry.controller == 'gm' ? 'SL' : 'Spieler'}, '
+                    '${entry.kind == 'additional' ? 'Zusatzkreatur' : 'Hauptakteur'})',
                   ),
+                if (group.hasUnresolvedTie)
+                  const Text('Gleichstand – Reihenfolge ausdrücklich klären.'),
               ],
               if (roster.missing.isNotEmpty)
                 Text(
@@ -140,14 +140,14 @@ class _TrackedCreatureInitiativeDialogState
                       child: Text(creature.name),
                     ),
                 ],
-                onChanged: (value) =>
-                    setState(() => _selectedId = value),
+                onChanged: (value) => setState(() => _selectedId = value),
               ),
               TextField(
                 key: const ValueKey('initiative-total'),
                 controller: _total,
-                keyboardType:
-                    const TextInputType.numberWithOptions(signed: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  signed: true,
+                ),
                 decoration: const InputDecoration(
                   labelText: 'Bestätigtes Initiative-Ergebnis',
                   hintText: 'z. B. 14, einschließlich aller Modifikatoren',
@@ -180,8 +180,7 @@ class _TrackedCreatureInitiativeDialogState
                   'Würfelergebnis und Kontrolle anhand des '
                   'Kampfes ausdrücklich bestätigt.',
                 ),
-                onChanged: (v) =>
-                    setState(() => _confirmed = v ?? false),
+                onChanged: (v) => setState(() => _confirmed = v ?? false),
               ),
               if (_error != null)
                 Text(_error!, style: const TextStyle(color: Colors.redAccent)),

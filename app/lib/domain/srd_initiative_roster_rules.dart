@@ -20,6 +20,7 @@ class InitiativeRosterGroup {
       entries = List.unmodifiable(entries);
 
   final int total;
+
   /// A group is unordered if its size is >1; the controlling players/GM
   /// must resolve SRD 5.2.1 ties, rather than using a hidden ID tiebreaker.
   final List<InitiativeRosterEntry> entries;
@@ -38,8 +39,7 @@ class InitiativeRoster {
   final List<TrackedAreaCreature> missing;
   final bool baseInitiativeConfirmed;
 
-  bool get hasUnresolvedTies =>
-      groups.any((group) => group.hasUnresolvedTie);
+  bool get hasUnresolvedTies => groups.any((group) => group.hasUnresolvedTie);
 
   /// Only a preview. Even a ready list never activates autonomous turns.
   bool get readyForManualAdjudication =>

@@ -1295,8 +1295,7 @@ class GameEngine {
         creatureId.isEmpty ||
         initiativeTotal < -30 ||
         initiativeTotal > 100 ||
-        (initiativeController != 'gm' &&
-            initiativeController != 'player')) {
+        (initiativeController != 'gm' && initiativeController != 'player')) {
       throw const FormatException(
         'Bestätige die vollständige Initiative (-30 bis 100) und '
         'den Spieler- oder SL-gesteuerten Kampfteilnehmer.',

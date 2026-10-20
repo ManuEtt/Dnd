@@ -46,11 +46,13 @@ void main() {
   testWidgets('Initiative preview shows missing values and unresolved ties', (
     tester,
   ) async {
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(
-        body: TrackedCreatureInitiativeDialog(campaign: _game()),
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: TrackedCreatureInitiativeDialog(campaign: _game()),
+        ),
       ),
-    ));
+    );
     await tester.pumpAndSettle();
     expect(find.text('Mehrgegner-Initiative'), findsOneWidget);
     expect(
@@ -59,9 +61,11 @@ void main() {
     );
     expect(find.textContaining('Ohne bestätigte Initiative:'), findsOneWidget);
     expect(
-      tester.widget<CheckboxListTile>(
-        find.byKey(const ValueKey('initiative-base-confirmed')),
-      ).value,
+      tester
+          .widget<CheckboxListTile>(
+            find.byKey(const ValueKey('initiative-base-confirmed')),
+          )
+          .value,
       false,
     );
   });
@@ -70,28 +74,32 @@ void main() {
     tester,
   ) async {
     ConfirmedInitiativeChoice? choice;
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(
-        body: Builder(
-          builder: (context) => TextButton(
-            onPressed: () async {
-              choice = await showDialog<ConfirmedInitiativeChoice>(
-                context: context,
-                builder: (_) =>
-                    TrackedCreatureInitiativeDialog(campaign: _game()),
-              );
-            },
-            child: const Text('Öffnen'),
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => TextButton(
+              onPressed: () async {
+                choice = await showDialog<ConfirmedInitiativeChoice>(
+                  context: context,
+                  builder: (_) =>
+                      TrackedCreatureInitiativeDialog(campaign: _game()),
+                );
+              },
+              child: const Text('Öffnen'),
+            ),
           ),
         ),
       ),
-    ));
+    );
     await tester.tap(find.text('Öffnen'));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('initiative-save')));
     await tester.pumpAndSettle();
     expect(choice, isNull);
-    expect(find.textContaining('Kreatur, vollständiges Initiativeergebnis'),
-        findsOneWidget);
+    expect(
+      find.textContaining('Kreatur, vollständiges Initiativeergebnis'),
+      findsOneWidget,
+    );
   });
 }

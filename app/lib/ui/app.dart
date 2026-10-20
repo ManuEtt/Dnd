@@ -1204,15 +1204,14 @@ class _AdventurePageState extends State<_AdventurePage> {
 
   Future<void> _confirmAreaCreatureInitiative() async {
     final campaign = widget.controller.currentCampaign;
-    if (campaign == null || campaign.encounter == null ||
+    if (campaign == null ||
+        campaign.encounter == null ||
         widget.controller.busy) {
       return;
     }
     final choice = await showDialog<ConfirmedInitiativeChoice>(
       context: context,
-      builder: (_) => TrackedCreatureInitiativeDialog(
-        campaign: campaign,
-      ),
+      builder: (_) => TrackedCreatureInitiativeDialog(campaign: campaign),
     );
     if (choice == null || !mounted) return;
     final previous = _lastMessageId;
@@ -1670,7 +1669,8 @@ class _AdventurePageState extends State<_AdventurePage> {
                     campaign.trackedAreaCreatures.isNotEmpty)
                   TextButton.icon(
                     key: const ValueKey('adventure-initiative-roster'),
-                    onPressed: widget.controller.busy ||
+                    onPressed:
+                        widget.controller.busy ||
                             campaign.pendingRoll != null ||
                             campaign.pendingDeathSave != null ||
                             campaign.pendingEnemyShieldHit != null
