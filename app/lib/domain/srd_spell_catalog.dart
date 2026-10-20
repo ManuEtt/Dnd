@@ -72,11 +72,7 @@ class SrdSpellDefinition {
     final verbal = requiredBool('verbal');
     final somatic = requiredBool('somatic');
     final material = requiredBool('material');
-    final symbols = components
-        .split('(')
-        .first
-        .replaceAll(' ', '')
-        .split(',');
+    final symbols = components.split('(').first.replaceAll(' ', '').split(',');
     for (final symbol in ['V', 'S', 'M']) {
       final expected = switch (symbol) {
         'V' => verbal,
@@ -84,14 +80,18 @@ class SrdSpellDefinition {
         _ => material,
       };
       if (symbols.contains(symbol) != expected) {
-        throw const FormatException('SRD-Zauberkomponenten widersprechen sich.');
+        throw const FormatException(
+          'SRD-Zauberkomponenten widersprechen sich.',
+        );
       }
     }
     final concentration = requiredBool('concentration');
     final ritual = requiredBool('ritual');
     if (concentration != duration.startsWith('Concentration') ||
         ritual != castingTime.contains('Ritual')) {
-      throw const FormatException('SRD-Zauberdauer oder Ritualangabe ungültig.');
+      throw const FormatException(
+        'SRD-Zauberdauer oder Ritualangabe ungültig.',
+      );
     }
     return SrdSpellDefinition(
       id: requiredText('id'),

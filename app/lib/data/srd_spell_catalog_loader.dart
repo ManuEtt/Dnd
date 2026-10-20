@@ -7,9 +7,7 @@ class SrdSpellCatalogLoader {
   const SrdSpellCatalogLoader._();
 
   static Future<SrdSpellCatalog> load() async {
-    final json = await rootBundle.loadString(
-      'assets/srd_5_2_1_spells.json',
-    );
+    final json = await rootBundle.loadString('assets/srd_5_2_1_spells.json');
     return SrdSpellCatalog.fromJsonString(json);
   }
 }

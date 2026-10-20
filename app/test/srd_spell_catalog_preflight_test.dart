@@ -89,9 +89,7 @@ void main() {
   });
 
   test('tampered or duplicate catalogue records are rejected', () async {
-    final source = await rootBundle.loadString(
-      'assets/srd_5_2_1_spells.json',
-    );
+    final source = await rootBundle.loadString('assets/srd_5_2_1_spells.json');
     final root = jsonDecode(source) as Map<String, dynamic>;
     final entries = root['spells'] as List<dynamic>;
     entries.add(Map<String, dynamic>.from(entries.first as Map));
@@ -114,62 +112,71 @@ void main() {
     );
   });
 
-  test('preflight is read-only and resource commit requires resolved effect', () {
-    final hero = prepared();
-    final spell = catalog.find('Magic Missile')!;
-    final approval = plan(hero, spell);
-    expect(approval.preparedName, 'Magisches Geschoss');
-    expect(approval.slotLevel, 1);
-    expect(hero.spentSpellSlots, isEmpty);
-    expect(
-      () => SrdSpellPreflightRules.recordConfirmedResourceUse(
+  test(
+    'preflight is read-only and resource commit requires resolved effect',
+    () {
+      final hero = prepared();
+      final spell = catalog.find('Magic Missile')!;
+      final approval = plan(hero, spell);
+      expect(approval.preparedName, 'Magisches Geschoss');
+      expect(approval.slotLevel, 1);
+      expect(hero.spentSpellSlots, isEmpty);
+      expect(
+        () => SrdSpellPreflightRules.recordConfirmedResourceUse(
+          hero,
+          approval,
+          effectResolvedSeparatelyConfirmed: false,
+        ),
+        throwsStateError,
+      );
+      final spent = SrdSpellPreflightRules.recordConfirmedResourceUse(
         hero,
         approval,
-        effectResolvedSeparatelyConfirmed: false,
-      ),
-      throwsStateError,
-    );
-    final spent = SrdSpellPreflightRules.recordConfirmedResourceUse(
-      hero,
-      approval,
-      effectResolvedSeparatelyConfirmed: true,
-    );
-    expect(spent.hero.spentSpellSlots, {'1': 1});
-    expect(hero.spentSpellSlots, isEmpty);
-    expect(
-      () => SrdSpellPreflightRules.recordConfirmedResourceUse(
-        spent.hero,
-        approval,
         effectResolvedSeparatelyConfirmed: true,
-      ),
-      throwsFormatException,
-    );
-  });
+      );
+      expect(spent.hero.spentSpellSlots, {'1': 1});
+      expect(hero.spentSpellSlots, isEmpty);
+      expect(
+        () => SrdSpellPreflightRules.recordConfirmedResourceUse(
+          spent.hero,
+          approval,
+          effectResolvedSeparatelyConfirmed: true,
+        ),
+        throwsFormatException,
+      );
+    },
+  );
 
-  test('cannot cast without prepared name, own class, or class spell level', () {
-    final spell = catalog.find('Magic Missile')!;
-    expect(
-      () => plan(prepared(spells: const ['Licht']), spell),
-      throwsFormatException,
-    );
-    expect(
-      () => plan(prepared(className: 'Kleriker'), spell, castingClass: 'Kleriker'),
-      throwsFormatException,
-    );
-    final multiclass = prepared(level: 6).copyWith(
-      secondaryClassName: 'Zauberer',
-      secondaryClassLevel: 5,
-    );
-    expect(
-      () => plan(
-        multiclass,
-        catalog.find('Fireball')!,
-        castingClass: 'Magier',
-        slotLevel: 3,
-      ),
-      throwsFormatException,
-    );
-  });
+  test(
+    'cannot cast without prepared name, own class, or class spell level',
+    () {
+      final spell = catalog.find('Magic Missile')!;
+      expect(
+        () => plan(prepared(spells: const ['Licht']), spell),
+        throwsFormatException,
+      );
+      expect(
+        () => plan(
+          prepared(className: 'Kleriker'),
+          spell,
+          castingClass: 'Kleriker',
+        ),
+        throwsFormatException,
+      );
+      final multiclass = prepared(
+        level: 6,
+      ).copyWith(secondaryClassName: 'Zauberer', secondaryClassLevel: 5);
+      expect(
+        () => plan(
+          multiclass,
+          catalog.find('Fireball')!,
+          castingClass: 'Magier',
+          slotLevel: 3,
+        ),
+        throwsFormatException,
+      );
+    },
+  );
 
   test('component and target confirmations cannot be bypassed', () {
     final hero = prepared();
@@ -226,10 +233,7 @@ void main() {
       throwsFormatException,
     );
 
-    final warlock = prepared(
-      className: 'Hexenmeister',
-      spells: const ['Hex'],
-    );
+    final warlock = prepared(className: 'Hexenmeister', spells: const ['Hex']);
     final hex = catalog.find('Hex')!;
     final pact = plan(
       warlock,
@@ -260,11 +264,8 @@ void main() {
       spells: const ['Divine Smite'],
     );
     expect(
-      () => plan(
-        paladin,
-        catalog.find('Divine Smite')!,
-        castingClass: 'Paladin',
-      ),
+      () =>
+          plan(paladin, catalog.find('Divine Smite')!, castingClass: 'Paladin'),
       throwsUnsupportedError,
     );
   });
@@ -272,13 +273,7 @@ void main() {
   test('insufficient resources or an impossible spell grade are rejected', () {
     final hero = prepared();
     final missile = catalog.find('Magic Missile')!;
-    expect(
-      () => plan(hero, missile, slotLevel: 9),
-      throwsStateError,
-    );
-    expect(
-      () => plan(hero, missile, slotLevel: 0),
-      throwsFormatException,
-    );
+    expect(() => plan(hero, missile, slotLevel: 9), throwsStateError);
+    expect(() => plan(hero, missile, slotLevel: 0), throwsFormatException);
   });
 }

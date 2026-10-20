@@ -34,10 +34,7 @@ class SrdSpellPreflightRules {
     'Unsichtbarkeit': 'Invisibility',
   };
 
-  static String? _preparedName(
-    HeroCharacter hero,
-    SrdSpellDefinition spell,
-  ) {
+  static String? _preparedName(HeroCharacter hero, SrdSpellDefinition spell) {
     for (final known in hero.spells) {
       if (known == spell.name || _knownAliases[known] == spell.name) {
         return known;
@@ -61,11 +58,14 @@ class SrdSpellPreflightRules {
   }) {
     final knownName = _preparedName(hero, spell);
     if (knownName == null) {
-      throw const FormatException('Zauber ist nicht als vorbereitet bestätigt.');
+      throw const FormatException(
+        'Zauber ist nicht als vorbereitet bestätigt.',
+      );
     }
     final chosenClass = findSrdClass(castingClass)?.name;
     final englishClass = _classes[chosenClass];
-    final hasClass = chosenClass != null &&
+    final hasClass =
+        chosenClass != null &&
         ((findSrdClass(hero.className)?.name == chosenClass &&
                 hero.primaryClassLevel > 0) ||
             (hero.hasSecondClass &&
@@ -112,7 +112,9 @@ class SrdSpellPreflightRules {
         );
       }
       if (slotLevel < spell.level || slotLevel > 9) {
-        throw const FormatException('Zauberplatzgrad ist zu niedrig oder ungültig.');
+        throw const FormatException(
+          'Zauberplatzgrad ist zu niedrig oder ungültig.',
+        );
       }
       if (pactMagic) {
         if (SpellcastingRules.availablePactSlots(hero) == 0 ||
