@@ -1,3 +1,5 @@
+**20.10.2026 / 0.8.20+70:** `SPELL-SHIELD-HERO-POST-HIT` mit echter Entscheidung nach gewürfeltem Gegnerhit, persistiertem W20, sicherem Fortsetzen, bestätigten Zauberkomponenten und Slotkosten umgesetzt. Domain-/SQLite-Tests ergänzt. **CI noch nicht bestätigt; Mehrfachangriffe fehlen.**
+
 **20.10.2026 / 0.8.19+69:** Bedingte Schild-Reaktion des Helden gegen den unmittelbar nach dem eigenen Zug automatisch ausgewürfelten Einzelangriff. Vorab bestätigt, Würfel-Trigger, +5 RK, korrekter Zauberplatzverbrauch, Controller/SQLite-Regressionstests. **CI #39394683773 grün; Gerätetest offen**, allgemeine Treffer-Unterbrechung fehlt.
 
 **20.10.2026 / 0.8.18+68:** `SPELL-SHIELD-ENEMY-REACTION` implementiert: Schild gegen Magisches Geschoss, Nullschaden, bestätigte gegnerische Reaktion/Zauberplätze, +5 RK bis nächster Gegnerzug, Alt-JSON- und SQLite-Regressionsfälle. **CI #39386823499 grün; Android-Gerätetest offen**; Spieler-Reaktion gegen Angriffe fehlt.

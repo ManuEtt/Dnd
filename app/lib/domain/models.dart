@@ -1256,6 +1256,61 @@ class PendingDeathSave {
   );
 }
 
+/// A rolled, genuinely hitting enemy attack awaiting the player's
+/// post-hit Shield reaction decision. No damage has been rolled or applied.
+class PendingEnemyShieldHit {
+  const PendingEnemyShieldHit({
+    required this.encounterId,
+    required this.natural,
+    required this.modifier,
+    required this.total,
+    required this.rolls,
+    required this.advanceRound,
+  });
+
+  final String encounterId;
+  final int natural, modifier, total;
+  final List<int> rolls;
+  final bool advanceRound;
+
+  Map<String, dynamic> toJson() => {
+    'encounterId': encounterId,
+    'natural': natural,
+    'modifier': modifier,
+    'total': total,
+    'rolls': rolls,
+    'advanceRound': advanceRound,
+  };
+
+  factory PendingEnemyShieldHit.fromJson(Map<String, dynamic> j) {
+    final natural = _int(j['natural'], 'Gegnernaturwurf', min: 1, max: 20);
+    final modifier = _int(
+      j['modifier'],
+      'Gegnerangriffsbonus',
+      min: -20,
+      max: 30,
+    );
+    final total = _int(j['total'], 'Gegnerangriffsergebnis', min: -20, max: 50);
+    final rolls = _list(j['rolls'], 'Gegnerangriffswürfel')
+        .map((v) => _int(v, 'Gegnerwürfel', min: 1, max: 20))
+        .toList(growable: false);
+    if (total != natural + modifier ||
+        rolls.isEmpty ||
+        rolls.length > 2 ||
+        !rolls.contains(natural)) {
+      throw const FormatException('Manipulierter Gegnerangriffswurf.');
+    }
+    return PendingEnemyShieldHit(
+      encounterId: _string(j['encounterId'], 'Angriffsziel-ID'),
+      natural: natural,
+      modifier: modifier,
+      total: total,
+      rolls: List.unmodifiable(rolls),
+      advanceRound: _bool(j['advanceRound'], 'Rundenfortschritt'),
+    );
+  }
+}
+
 class Encounter {
   const Encounter({
     required this.id,
@@ -1691,6 +1746,7 @@ class Campaign {
     List<GameEvent> events = const [],
     this.pendingRoll,
     this.pendingDeathSave,
+    this.pendingEnemyShieldHit,
     this.encounter,
     this.adventureOffer,
     this.revision = 0,
@@ -1718,6 +1774,7 @@ class Campaign {
   final List<GameEvent> events;
   final PendingRoll? pendingRoll;
   final PendingDeathSave? pendingDeathSave;
+  final PendingEnemyShieldHit? pendingEnemyShieldHit;
   final Encounter? encounter;
   final AdventureOffer? adventureOffer;
   final int revision;
@@ -1737,6 +1794,7 @@ class Campaign {
     List<GameEvent>? events,
     Object? pendingRoll = _unchanged,
     Object? pendingDeathSave = _unchanged,
+    Object? pendingEnemyShieldHit = _unchanged,
     Object? encounter = _unchanged,
     Object? adventureOffer = _unchanged,
     int? revision,
@@ -1763,6 +1821,9 @@ class Campaign {
     pendingDeathSave: identical(pendingDeathSave, _unchanged)
         ? this.pendingDeathSave
         : pendingDeathSave as PendingDeathSave?,
+    pendingEnemyShieldHit: identical(pendingEnemyShieldHit, _unchanged)
+        ? this.pendingEnemyShieldHit
+        : pendingEnemyShieldHit as PendingEnemyShieldHit?,
     encounter: identical(encounter, _unchanged)
         ? this.encounter
         : encounter as Encounter?,
@@ -1794,6 +1855,8 @@ class Campaign {
     'pendingRoll': pendingRoll?.toJson(),
     if (pendingDeathSave != null)
       'pendingDeathSave': pendingDeathSave!.toJson(),
+    if (pendingEnemyShieldHit != null)
+      'pendingEnemyShieldHit': pendingEnemyShieldHit!.toJson(),
     'encounter': encounter?.toJson(),
     'adventureOffer': adventureOffer?.toJson(),
     'revision': revision,
@@ -1823,6 +1886,30 @@ class Campaign {
     final encounter = j['encounter'] == null
         ? null
         : Encounter.fromJson(_map(j['encounter'], 'Kampf'));
+    final pendingEnemyShieldHit = j['pendingEnemyShieldHit'] == null
+        ? null
+        : PendingEnemyShieldHit.fromJson(
+            _map(j['pendingEnemyShieldHit'], 'Offene Schildreaktion'),
+          );
+    if (pendingEnemyShieldHit != null &&
+        (encounter == null ||
+            encounter.isFinished ||
+            encounter.id != pendingEnemyShieldHit.encounterId ||
+            encounter.activeParticipant != 'enemy' ||
+            pending != null ||
+            deathChoice != null ||
+            hero.isDead ||
+            hero.hitPoints == null ||
+            hero.hitPoints! <= 0 ||
+            hero.armorClass == null ||
+            (pendingEnemyShieldHit.natural != 20 &&
+                pendingEnemyShieldHit.total <
+                    CoverRules.armorClass(
+                      hero.armorClass!,
+                      encounter.heroCover,
+                    )))) {
+      throw const FormatException('Ungültiger offener Gegnerangriff.');
+    }
     final adventureOffer = j['adventureOffer'] == null
         ? null
         : AdventureOffer.fromJson(
@@ -2099,6 +2186,7 @@ class Campaign {
       events: events,
       pendingRoll: pending,
       pendingDeathSave: deathChoice,
+      pendingEnemyShieldHit: pendingEnemyShieldHit,
       encounter: encounter,
       adventureOffer: adventureOffer,
       revision: _int(j['revision'], 'Revision', fallback: 0),
