@@ -1,3 +1,7 @@
+**Aktueller zählbarer Arbeitsstand (20.10.2026):** Die [maschinenlesbare SRD-5.2.1-Inventur](SRD_5_2_1_COVERAGE_AUDIT.md) enthält **1.419 eindeutige Prüf-IDs** mit offenen Scope-Lücken und Herkunftsnachweisen; davon **282 Klassen-Freischaltungen**. Die vorliegende Markdown-Matrix ist ein **historisches Inkrement-Journal**, dessen frühere Statuszeilen durch spätere Implementierungen überholt sein können. **1.419 ist kein vollständiger SRD-Nenner und kein Fertigstellungsprozent.** CI dieser Dokumentationsänderung ist noch offen.
+
+---
+
 **CI- und Merge-Abnahme (20.10.2026):** SRD-Inkrement `0.8.21+71` über [PR #52](https://github.com/ManuEtt/Dnd/pull/52) erfolgreich nach `main` integriert. [GitHub-Actions-CI #39421141308](https://github.com/ManuEtt/Dnd/actions/runs/39421141308) auf finalem Code-HEAD `9156b972d240de4c5a588c09ebb5ac8adeca99ad`: **success**, inklusive Python-/Strukturtests, Backend-Typecheck/Build/Tests, Dart-Formatierung, Flutter-Analyse und Tests, Android-Debug-APK, native Android-Tests, Alpha-APK-Pakete und Checkpoint-Artefakt. Merge-Commit [`b87e53591df75bc40b9e9f534529666fb168c6f3`](https://github.com/ManuEtt/Dnd/commit/b87e53591df75bc40b9e9f534529666fb168c6f3). **Nicht getestet:** echte Android-Geräteinstallation; mehrere unabhängige Monster und unterschiedliche Attackenprofile; vollständige SRD-Abdeckung.
 
 ## SRD 5.2.1: COMBAT-ENEMY-MULTIATTACK / SPELL-SHIELD-ONGOING (0.8.21+71)

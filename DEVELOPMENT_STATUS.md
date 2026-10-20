@@ -1,3 +1,13 @@
+## 20.10.2026 – Maschinenlesbare SRD-5.2.1-Anforderungsmatrix (laufendes Review)
+
+- **Entwicklungsbranch:** `feature/srd-countable-requirements-20261020`, Ausgangspunkt `main` `b965efc3e9d337a4ce406b5e3380b79147918c66`; App-Quellversion bleibt `0.8.21+71`.
+- **Neu:** `docs/srd_5_2_1_requirements.json` (475 ältere/übergreifende Anforderungen inklusive 282 Klassen-Freischaltungen); `docs/srd_5_2_1_entities.json` (944 zusätzlich benannte Zauber, Monster, Tiere, Magiegegenstände, Talente) und `docs/SRD_5_2_1_COVERAGE_AUDIT.md`.
+- **Insgesamt:** 1.419 eindeutig gezählte, aber *nicht vollständig auf mechanische Einzelregeln zerlegte* Arbeitsprüfpunkte. 8 historisch getestet, 11 teilweise, 7 als fehlend dokumentiert, 1.393 unbestätigt. 9 offene Inventur-/Quellenabgleich-Lücken; **kein zulässiger globaler SRD-Prozentsatz**.
+- **Qualitätsschutz:** `scripts/srd_coverage.py`, `scripts/tests/test_srd_requirements_matrix.py` prüfen ID-Eindeutigkeit, SRD-Quellreferenzen, 282 Katalogeinträge, Entity-Zahl, keine unbelegten Fertigmeldungen und Abschluss-Gates. Integration über bestehende Python-CI-Tests, GitHub-Actions-Ergebnis für dieses Inkrement **noch ausstehend**.
+- **Nächste Schritte in Priorität:** 339 Zaubernamen mit amtlichem SRD abgleichen, jede Wirkung und Vorbereitung/Ziel/Slots/Komponenten einzeln umsetzen; danach 282 Klassen-Freischaltungen mit Effektnachweis, 330 Monster/Tier-Statblocks, restliche Kampf-/Erkundungs-/Magiegegenstandsregeln. **Kein Android-Gerätetest.**
+
+---
+
 ## Abnahme / Merge 20.10.2026 – Version 0.8.21+71
 
 **CI- und Merge-Abnahme (20.10.2026):** SRD-Inkrement `0.8.21+71` über [PR #52](https://github.com/ManuEtt/Dnd/pull/52) erfolgreich nach `main` integriert. [GitHub-Actions-CI #39421141308](https://github.com/ManuEtt/Dnd/actions/runs/39421141308) auf finalem Code-HEAD `9156b972d240de4c5a588c09ebb5ac8adeca99ad`: **success**, inklusive Python-/Strukturtests, Backend-Typecheck/Build/Tests, Dart-Formatierung, Flutter-Analyse und Tests, Android-Debug-APK, native Android-Tests, Alpha-APK-Pakete und Checkpoint-Artefakt. Merge-Commit [`b87e53591df75bc40b9e9f534529666fb168c6f3`](https://github.com/ManuEtt/Dnd/commit/b87e53591df75bc40b9e9f534529666fb168c6f3). **Nicht getestet:** echte Android-Geräteinstallation; mehrere unabhängige Monster und unterschiedliche Attackenprofile; vollständige SRD-Abdeckung.
