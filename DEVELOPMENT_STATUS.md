@@ -1,3 +1,14 @@
+## 20.10.2026 – Initiative zusätzlicher Kreaturen (0.8.27+77, CI offen)
+
+- Vorheriger verifizierter `main`: Version 0.8.26+76 (PR #58, Android-/Flutter- und ZIP-CI erfolgreich). Echtes Gerät bleibt offen.
+- `TrackedAreaCreature` kann nun ein optionales bestätigtes Initiative-Gesamtergebnis sowie dessen SL-/Spieler-Kontrolle speichern. Alte schema-1-Kampagnen ohne diese Felder bleiben unverändert lesbar, 0 ist von null unterscheidbar.
+- Eigenständige `SrdInitiativeRosterRules.preview`: absteigend sortierte Gruppen, Gleichstände als unentschiedene Gruppen, fehlende Zusatzergebnisse separat. Alte Null-Standardwerte der Hauptinitiative werden **nicht** stillschweigend als bestätigt betrachtet.
+- UI „Initiative der Kreaturen“, Engine/Controller `confirmAreaCreatureInitiative`, eigener Journaleintrag `combat.areaCreatureInitiativeConfirmed` und strikte Bestätigungs-/Revisionssperren.
+- SRD-Matrix `RULE-COMBAT-INITIATIVE` als `partial` mit Code-/Testnachweisen; Details `docs/SRD_MULTI_CREATURE_INITIATIVE.md`.
+- **Grenze:** Turn-Queue, tatsächliche Zusatzgegner-Aktionen, gemeinsame Monstergruppen-Initiative, Auflösung von Gleichständen und Kampfende erst in weiteren Inkrementen. CI und Gerätetest offen.
+
+---
+
 ## 20.10.2026 – Persistente Mehrziel-TP für Säurespritzer (0.8.26+76, CI offen)
 
 - Basis: 0.8.25+75 nach PR #57 in `main` integriert; Flutter-, Android- und Alpha-Builds erfolgreich.

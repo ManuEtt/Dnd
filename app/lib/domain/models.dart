@@ -1778,24 +1778,39 @@ class Encounter {
 
 /// Explicitly recorded additional creature HP for area effects.
 ///
-/// These are NOT fully simulated encounter actors: no initiative, attack,
-/// position, defenses, spell slots or action economy can be inferred.
+/// These are NOT fully simulated encounter actors: their initiative may be
+/// explicitly recorded but does not authorize attacks, turns or movement.
 class TrackedAreaCreature {
   const TrackedAreaCreature({
     required this.id,
     required this.name,
     required this.hitPoints,
     required this.maxHitPoints,
+    this.initiativeTotal,
+    this.initiativeController,
   });
 
   final String id, name;
   final int hitPoints, maxHitPoints;
 
-  TrackedAreaCreature copyWith({int? hitPoints}) => TrackedAreaCreature(
+  /// Null means initiative has NOT been confirmed; zero is a valid result.
+  final int? initiativeTotal;
+
+  /// Explicit SRD tie adjudicator: 'gm' for GM-managed creatures or
+  /// 'player' for player-managed characters. Never inferred from a name.
+  final String? initiativeController;
+
+  TrackedAreaCreature copyWith({
+    int? hitPoints,
+    int? initiativeTotal,
+    String? initiativeController,
+  }) => TrackedAreaCreature(
     id: id,
     name: name,
     hitPoints: hitPoints ?? this.hitPoints,
     maxHitPoints: maxHitPoints,
+    initiativeTotal: initiativeTotal ?? this.initiativeTotal,
+    initiativeController: initiativeController ?? this.initiativeController,
   );
 
   Map<String, dynamic> toJson() => {
@@ -1803,6 +1818,9 @@ class TrackedAreaCreature {
     'name': name,
     'hitPoints': hitPoints,
     'maxHitPoints': maxHitPoints,
+    if (initiativeTotal != null) 'initiativeTotal': initiativeTotal,
+    if (initiativeController != null)
+      'initiativeController': initiativeController,
   };
 
   factory TrackedAreaCreature.fromJson(Map<String, dynamic> j) {
@@ -1810,6 +1828,21 @@ class TrackedAreaCreature {
     final name = _string(j['name'], 'Zusätzliche Kreatur');
     final maxHp = _int(j['maxHitPoints'], 'Kreatur-Maximum', min: 1);
     final hp = _int(j['hitPoints'], 'Kreatur-TP', max: maxHp);
+    final total = _nullableInt(
+      j['initiativeTotal'],
+      'Initiative der Kreatur',
+      min: -30,
+      max: 100,
+    );
+    final controller = j['initiativeController'] == null
+        ? null
+        : _string(j['initiativeController'], 'Initiativkontrolle');
+    if ((total == null) != (controller == null) ||
+        (controller != null && controller != 'gm' && controller != 'player')) {
+      throw const FormatException(
+        'Initiative und bestätigte Spieler-/SL-Kontrolle gehören zusammen.',
+      );
+    }
     if (id.isEmpty ||
         id.length > 128 ||
         name.trim().isEmpty ||
@@ -1823,6 +1856,8 @@ class TrackedAreaCreature {
       name: name,
       hitPoints: hp,
       maxHitPoints: maxHp,
+      initiativeTotal: total,
+      initiativeController: controller,
     );
   }
 }

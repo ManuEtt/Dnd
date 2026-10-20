@@ -32,6 +32,7 @@ import 'fire_bolt_dialog.dart';
 import 'sacred_flame_dialog.dart';
 import 'acid_splash_dialog.dart';
 import 'area_creature_registration_dialog.dart';
+import 'tracked_creature_initiative_dialog.dart';
 import 'healing_spell_dialog.dart';
 import 'death_save_decision_panel.dart';
 import 'fantasy_character_sheet.dart';
@@ -1201,6 +1202,30 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previous);
   }
 
+  Future<void> _confirmAreaCreatureInitiative() async {
+    final campaign = widget.controller.currentCampaign;
+    if (campaign == null ||
+        campaign.encounter == null ||
+        widget.controller.busy) {
+      return;
+    }
+    final choice = await showDialog<ConfirmedInitiativeChoice>(
+      context: context,
+      builder: (_) => TrackedCreatureInitiativeDialog(campaign: campaign),
+    );
+    if (choice == null || !mounted) return;
+    final previous = _lastMessageId;
+    await widget.controller.confirmAreaCreatureInitiative(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      creatureId: choice.creatureId,
+      initiativeTotal: choice.total,
+      initiativeController: choice.controller,
+      initiativeConfirmed: true,
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
   Future<void> _trackAreaCreature() async {
     final campaign = widget.controller.currentCampaign;
     if (campaign == null ||
@@ -1638,6 +1663,21 @@ class _AdventurePageState extends State<_AdventurePage> {
                         : _trackAreaCreature,
                     icon: const Icon(Icons.group_add_outlined, size: 17),
                     label: const Text('Kreatur-TP erfassen'),
+                  ),
+                if (campaign.encounter != null &&
+                    !campaign.encounter!.isFinished &&
+                    campaign.trackedAreaCreatures.isNotEmpty)
+                  TextButton.icon(
+                    key: const ValueKey('adventure-initiative-roster'),
+                    onPressed:
+                        widget.controller.busy ||
+                            campaign.pendingRoll != null ||
+                            campaign.pendingDeathSave != null ||
+                            campaign.pendingEnemyShieldHit != null
+                        ? null
+                        : _confirmAreaCreatureInitiative,
+                    icon: const Icon(Icons.format_list_numbered, size: 17),
+                    label: const Text('Initiative der Kreaturen'),
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&
