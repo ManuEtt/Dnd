@@ -20,7 +20,7 @@
 
 ## Neues SRD-Regelpaket: bedingte Schildreaktion des Helden (20.10.2026)
 
-**Version `0.8.19+69`:** Der Spieler kann beim Beenden seines Kampfzugs ausdrücklich **Schild als bedingte Reaktion** gegen den unmittelbar folgenden Gegnerangriff freigeben. Nur wenn die Attacke trifft und der RK-Bonus von +5 sie abwehren würde, wird der bekannte Zauber mit validierten Komponenten und einem vorhandenen Zauberplatz gewirkt. Andernfalls bleiben sämtliche Ressourcen erhalten; bestehende Spielstände bleiben kompatibel. Neue Domain-/SQLite-Tests und Dialog sind vorhanden. **CI dieses Inkrements ausstehend.** Es handelt sich noch nicht um eine allgemeine, nach dem Treffer interaktiv bestätigte Reaktionsengine.
+**Version `0.8.19+69`:** Der Spieler kann beim Beenden seines Kampfzugs ausdrücklich **Schild als bedingte Reaktion** gegen den unmittelbar folgenden Gegnerangriff freigeben. Nur wenn die Attacke trifft und der RK-Bonus von +5 sie abwehren würde, wird der bekannte Zauber mit validierten Komponenten und einem vorhandenen Zauberplatz gewirkt. Andernfalls bleiben sämtliche Ressourcen erhalten; bestehende Spielstände bleiben kompatibel. Neue Domain-/SQLite-Tests und Dialog sind vorhanden. **Vollständige CI dieses Inkrements bestanden (Lauf #39394683773); Android-Gerätetest offen.** Es handelt sich noch nicht um eine allgemeine, nach dem Treffer interaktiv bestätigte Reaktionsengine.
 
 ## SRD-Inkrement: Shield als bestätigte Gegnerreaktion (20.10.2026)
 
@@ -137,6 +137,9 @@ python3 -m unittest discover -s scripts/tests -v
 Auf Linux benötigen die SQLite-Tests gegebenenfalls `libsqlite3-dev`. Weitere Details: [`TESTING.md`](TESTING.md) und [`AGENTS.md`](AGENTS.md).
 
 ## Build- und Teststand
+
+**Neuester vollständig grüner Workflow für 0.8.19+69:** [#39394683773](https://github.com/ManuEtt/Dnd/actions/runs/39394683773), finaler Code-HEAD `090adb4c5fe21ddfc83d0903d5ef39181c50dd9f`, [PR #49](https://github.com/ManuEtt/Dnd/pull/49) gemergt nach `main` (Merge `95792bb241c6123e34a1fae97c9fdef31d153ce2`). Alle Projekt-, Backend-, Flutter-, Android-JVM- und APK-Prüfungen grün; realer Android-Gerätetest noch offen.
+
 
 **Aktuellster vollständig erfolgreicher Code-CI-Lauf für 0.8.18+68:** [#39386823499](https://github.com/ManuEtt/Dnd/actions/runs/39386823499) auf finalem PR-HEAD `81635c8eccb0d06e5d1bf95d54f5884c62f4a215`, danach Merge nach `main` (`45160602b339c35e23e0d445f4e41e98b9b3dd5e`). Flutter, Backend, Python, native Android-Tests und APK-Builds bestanden. Keine reale Geräteabnahme; der spätere reine Markdown-Nachtrag ändert keinen ausführbaren Code.
 
