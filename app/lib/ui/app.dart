@@ -1562,7 +1562,8 @@ class _AdventurePageState extends State<_AdventurePage> {
                             key: const ValueKey('enemy-shield-decline'),
                             onPressed: widget.controller.busy
                                 ? null
-                                : () => _decideEnemyShieldHit(castShield: false),
+                                : () =>
+                                      _decideEnemyShieldHit(castShield: false),
                             child: const Text('Treffer hinnehmen'),
                           ),
                         ],

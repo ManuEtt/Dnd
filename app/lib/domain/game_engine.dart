@@ -1389,7 +1389,10 @@ class GameEngine {
       '${shieldPlan == null ? 'Du verzichtest auf Schild. ' : 'Deine Schildreaktion wird ausgewertet. '}'
       '${turn.narration} ${_nextInstruction(turn.campaign)}',
       type: 'combat.shieldHitResolved',
-      payload: {...turn.details, 'choice': shieldPlan == null ? 'decline' : 'cast'},
+      payload: {
+        ...turn.details,
+        'choice': shieldPlan == null ? 'decline' : 'cast',
+      },
     );
   }
 

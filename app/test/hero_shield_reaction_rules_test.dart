@@ -173,14 +173,17 @@ void main() {
     expect(HeroShieldReactionRules.slots(hero).first.level, 1);
   });
 
-  test('Ohne Vorabplan wird ein tatsächlicher Treffer erst zur Entscheidung angeboten', () {
-    final random = _FixedDie(13);
-    final engine = GameEngine(dice: DiceEngine(random: random));
-    final result = engine.endHeroTurn(_campaign(engine));
-    expect(result.campaign.pendingEnemyShieldHit, isNotNull);
-    expect(result.campaign.hero.spentSpellSlots, isEmpty);
-    expect(result.campaign.hero.hitPoints, 20);
-    expect(result.events.single.payload['pendingEnemyShieldHit'], isTrue);
-    expect(random.calls, 1); // Die Schadenswürfel folgen erst nach der Wahl.
-  });
+  test(
+    'Ohne Vorabplan wird ein tatsächlicher Treffer erst zur Entscheidung angeboten',
+    () {
+      final random = _FixedDie(13);
+      final engine = GameEngine(dice: DiceEngine(random: random));
+      final result = engine.endHeroTurn(_campaign(engine));
+      expect(result.campaign.pendingEnemyShieldHit, isNotNull);
+      expect(result.campaign.hero.spentSpellSlots, isEmpty);
+      expect(result.campaign.hero.hitPoints, 20);
+      expect(result.events.single.payload['pendingEnemyShieldHit'], isTrue);
+      expect(random.calls, 1); // Die Schadenswürfel folgen erst nach der Wahl.
+    },
+  );
 }

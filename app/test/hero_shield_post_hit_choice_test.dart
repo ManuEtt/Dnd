@@ -67,36 +67,45 @@ Campaign _campaign(GameEngine engine, {bool knowsShield = true}) {
 }
 
 void main() {
-  test('SRD Shield: nach gewürfeltem Treffer wählen und ohne Neuwurf parieren', () {
-    final rng = _FixedRoll(13);
-    final engine = GameEngine(dice: DiceEngine(random: rng));
-    final start = _campaign(engine);
-    final offer = engine.endHeroTurn(start).campaign;
-    expect(offer.pendingEnemyShieldHit!.natural, 13);
-    expect(offer.pendingEnemyShieldHit!.total, 15);
-    expect(offer.pendingEnemyShieldHit!.rolls, [13]);
-    expect(offer.encounter!.activeParticipant, 'enemy');
-    expect(offer.hero.hitPoints, 20);
-    expect(offer.hero.spentSpellSlots, isEmpty);
-    expect(rng.calls, 1);
-    expect(Campaign.fromJson(offer.toJson()).toJson(), offer.toJson());
+  test(
+    'SRD Shield: nach gewürfeltem Treffer wählen und ohne Neuwurf parieren',
+    () {
+      final rng = _FixedRoll(13);
+      final engine = GameEngine(dice: DiceEngine(random: rng));
+      final start = _campaign(engine);
+      final offer = engine.endHeroTurn(start).campaign;
+      expect(offer.pendingEnemyShieldHit!.natural, 13);
+      expect(offer.pendingEnemyShieldHit!.total, 15);
+      expect(offer.pendingEnemyShieldHit!.rolls, [13]);
+      expect(offer.encounter!.activeParticipant, 'enemy');
+      expect(offer.hero.hitPoints, 20);
+      expect(offer.hero.spentSpellSlots, isEmpty);
+      expect(rng.calls, 1);
+      expect(Campaign.fromJson(offer.toJson()).toJson(), offer.toJson());
 
-    final update = engine.resolvePendingEnemyShieldHit(offer, shieldPlan: _plan);
-    final done = update.campaign;
-    expect(rng.calls, 1);
-    expect(done.pendingEnemyShieldHit, isNull);
-    expect(done.encounter!.activeParticipant, 'hero');
-    expect(done.encounter!.round, 2);
-    expect(done.hero.hitPoints, 20);
-    expect(done.hero.spentSpellSlots, {'1': 1});
-    expect(update.events.single.type, 'combat.shieldHitResolved');
-    expect(update.events.single.payload['shieldReactionTriggered'], isTrue);
-    expect(update.events.single.payload['shieldBonusAc'], 5);
-    expect(update.events.single.payload['hit'], isFalse);
-    expect(update.events.single.payload['choice'], 'cast');
-    expect(Campaign.fromJson(done.toJson()).toJson(), done.toJson());
-    expect(() => engine.resolvePendingEnemyShieldHit(done), throwsFormatException);
-  });
+      final update = engine.resolvePendingEnemyShieldHit(
+        offer,
+        shieldPlan: _plan,
+      );
+      final done = update.campaign;
+      expect(rng.calls, 1);
+      expect(done.pendingEnemyShieldHit, isNull);
+      expect(done.encounter!.activeParticipant, 'hero');
+      expect(done.encounter!.round, 2);
+      expect(done.hero.hitPoints, 20);
+      expect(done.hero.spentSpellSlots, {'1': 1});
+      expect(update.events.single.type, 'combat.shieldHitResolved');
+      expect(update.events.single.payload['shieldReactionTriggered'], isTrue);
+      expect(update.events.single.payload['shieldBonusAc'], 5);
+      expect(update.events.single.payload['hit'], isFalse);
+      expect(update.events.single.payload['choice'], 'cast');
+      expect(Campaign.fromJson(done.toJson()).toJson(), done.toJson());
+      expect(
+        () => engine.resolvePendingEnemyShieldHit(done),
+        throwsFormatException,
+      );
+    },
+  );
 
   test('Treffer ablehnen würfelt erst danach Schaden, nie einen neuen W20', () {
     final rng = _FixedRoll(13);
@@ -116,7 +125,10 @@ void main() {
     final engine = GameEngine(dice: DiceEngine(random: rng));
     final offer = engine.endHeroTurn(_campaign(engine)).campaign;
     expect(offer.pendingEnemyShieldHit!.total, 21);
-    final result = engine.resolvePendingEnemyShieldHit(offer, shieldPlan: _plan);
+    final result = engine.resolvePendingEnemyShieldHit(
+      offer,
+      shieldPlan: _plan,
+    );
     expect(result.events.single.payload['shieldReactionTriggered'], isTrue);
     expect(result.events.single.payload['hit'], isTrue);
     expect(result.events.single.payload['effectiveHeroArmorClass'], 19);
@@ -125,27 +137,36 @@ void main() {
     expect(rng.calls, 2);
   });
 
-  test('Kritischer Treffer bleibt Treffer, Schild kostet dennoch einen Slot', () {
-    final rng = _FixedRoll(20);
-    final engine = GameEngine(dice: DiceEngine(random: rng));
-    final offer = engine.endHeroTurn(_campaign(engine)).campaign;
-    final update = engine.resolvePendingEnemyShieldHit(offer, shieldPlan: _plan);
-    expect(update.events.single.payload['shieldReactionTriggered'], isTrue);
-    expect(update.events.single.payload['hit'], isTrue);
-    expect(update.campaign.hero.spentSpellSlots, {'1': 1});
-    expect(update.campaign.hero.hitPoints, 18); // critical 2 dice of 1
-    expect(rng.calls, 3);
-  });
+  test(
+    'Kritischer Treffer bleibt Treffer, Schild kostet dennoch einen Slot',
+    () {
+      final rng = _FixedRoll(20);
+      final engine = GameEngine(dice: DiceEngine(random: rng));
+      final offer = engine.endHeroTurn(_campaign(engine)).campaign;
+      final update = engine.resolvePendingEnemyShieldHit(
+        offer,
+        shieldPlan: _plan,
+      );
+      expect(update.events.single.payload['shieldReactionTriggered'], isTrue);
+      expect(update.events.single.payload['hit'], isTrue);
+      expect(update.campaign.hero.spentSpellSlots, {'1': 1});
+      expect(update.campaign.hero.hitPoints, 18); // critical 2 dice of 1
+      expect(rng.calls, 3);
+    },
+  );
 
-  test('Bei Fehlschlag kein künstliches Reaktionsfenster, alter Zug funktioniert', () {
-    final rng = _FixedRoll(3);
-    final engine = GameEngine(dice: DiceEngine(random: rng));
-    final update = engine.endHeroTurn(_campaign(engine));
-    expect(update.campaign.pendingEnemyShieldHit, isNull);
-    expect(update.campaign.hero.spentSpellSlots, isEmpty);
-    expect(update.campaign.hero.hitPoints, 20);
-    expect(rng.calls, 1);
-  });
+  test(
+    'Bei Fehlschlag kein künstliches Reaktionsfenster, alter Zug funktioniert',
+    () {
+      final rng = _FixedRoll(3);
+      final engine = GameEngine(dice: DiceEngine(random: rng));
+      final update = engine.endHeroTurn(_campaign(engine));
+      expect(update.campaign.pendingEnemyShieldHit, isNull);
+      expect(update.campaign.hero.spentSpellSlots, isEmpty);
+      expect(update.campaign.hero.hitPoints, 20);
+      expect(rng.calls, 1);
+    },
+  );
 
   test('Keine ausgerüstete Zauberkenntnis: herkömmlicher Gegnerzug', () {
     final rng = _FixedRoll(13);
@@ -177,33 +198,38 @@ void main() {
     expect(paused.hero.spentSpellSlots, isEmpty);
   });
 
-  test('Alte Kampagnen gültig, manipulierte offene Treffer werden verworfen', () {
-    final rng = _FixedRoll(13);
-    final engine = GameEngine(dice: DiceEngine(random: rng));
-    final source = _campaign(engine);
-    final legacy = source.toJson();
-    expect(legacy.containsKey('pendingEnemyShieldHit'), isFalse);
-    expect(Campaign.fromJson(legacy).pendingEnemyShieldHit, isNull);
+  test(
+    'Alte Kampagnen gültig, manipulierte offene Treffer werden verworfen',
+    () {
+      final rng = _FixedRoll(13);
+      final engine = GameEngine(dice: DiceEngine(random: rng));
+      final source = _campaign(engine);
+      final legacy = source.toJson();
+      expect(legacy.containsKey('pendingEnemyShieldHit'), isFalse);
+      expect(Campaign.fromJson(legacy).pendingEnemyShieldHit, isNull);
 
-    final paused = engine.endHeroTurn(source).campaign.toJson();
-    final pending = Map<String, dynamic>.from(
-      paused['pendingEnemyShieldHit'] as Map<String, dynamic>,
-    );
-    for (final override in <Map<String, dynamic>>[
-      {'natural': 21},
-      {'total': 99},
-      {'rolls': [99]},
-      {'modifier': 30},
-      {'encounterId': 'wrong'},
-      {'rolls': []},
-    ]) {
-      expect(
-        () => Campaign.fromJson({
-          ...paused,
-          'pendingEnemyShieldHit': {...pending, ...override},
-        }),
-        throwsFormatException,
+      final paused = engine.endHeroTurn(source).campaign.toJson();
+      final pending = Map<String, dynamic>.from(
+        paused['pendingEnemyShieldHit'] as Map<String, dynamic>,
       );
-    }
-  });
+      for (final override in <Map<String, dynamic>>[
+        {'natural': 21},
+        {'total': 99},
+        {
+          'rolls': [99],
+        },
+        {'modifier': 30},
+        {'encounterId': 'wrong'},
+        {'rolls': []},
+      ]) {
+        expect(
+          () => Campaign.fromJson({
+            ...paused,
+            'pendingEnemyShieldHit': {...pending, ...override},
+          }),
+          throwsFormatException,
+        );
+      }
+    },
+  );
 }

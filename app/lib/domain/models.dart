@@ -1284,7 +1284,12 @@ class PendingEnemyShieldHit {
 
   factory PendingEnemyShieldHit.fromJson(Map<String, dynamic> j) {
     final natural = _int(j['natural'], 'Gegnernaturwurf', min: 1, max: 20);
-    final modifier = _int(j['modifier'], 'Gegnerangriffsbonus', min: -20, max: 30);
+    final modifier = _int(
+      j['modifier'],
+      'Gegnerangriffsbonus',
+      min: -20,
+      max: 30,
+    );
     final total = _int(j['total'], 'Gegnerangriffsergebnis', min: -20, max: 50);
     final rolls = _list(j['rolls'], 'Gegnerangriffswürfel')
         .map((v) => _int(v, 'Gegnerwürfel', min: 1, max: 20))
@@ -1899,7 +1904,10 @@ class Campaign {
             hero.armorClass == null ||
             (pendingEnemyShieldHit.natural != 20 &&
                 pendingEnemyShieldHit.total <
-                    CoverRules.armorClass(hero.armorClass!, encounter.heroCover)))) {
+                    CoverRules.armorClass(
+                      hero.armorClass!,
+                      encounter.heroCover,
+                    )))) {
       throw const FormatException('Ungültiger offener Gegnerangriff.');
     }
     final adventureOffer = j['adventureOffer'] == null

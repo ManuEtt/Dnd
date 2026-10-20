@@ -68,61 +68,65 @@ Future<Campaign> _seed(SqliteCampaignRepository repo) async {
 void main() {
   setUpAll(sqfliteFfiInit);
 
-  test('SQLite speichert offenen W20, Neustart und Revision ohne zweiten Angriffswurf', () async {
-    final dir = await Directory.systemTemp.createTemp('pending-hit-');
-    final path = p.join(dir.path, 'game.sqlite');
-    var repo = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: path,
-    );
-    var ctrl = GameController(
-      repository: repo,
-      engine: GameEngine(dice: DiceEngine(random: _FixedDie())),
-    );
-    try {
-      final first = await _seed(repo);
-      await ctrl.openCampaign(first.id);
-      // Calling the real game engine once, then writing its already-rolled
-      // pending attack to the same repository transaction.
-      final update = GameEngine(dice: DiceEngine(random: _FixedDie()))
-          .endHeroTurn(first);
-      await repo.saveCampaign(update.campaign, events: update.events);
-      await ctrl.openCampaign(first.id);
-      final waiting = ctrl.currentCampaign!;
-      expect(waiting.pendingEnemyShieldHit!.total, 15);
-
-      await ctrl.resolveEnemyShieldHit(
-        campaignId: waiting.id,
-        expectedRevision: waiting.revision,
-        plan: _plan,
-      );
-      expect(ctrl.error, isNull);
-      final after = ctrl.currentCampaign!;
-      expect(after.pendingEnemyShieldHit, isNull);
-      expect(after.hero.spentSpellSlots, {'1': 1});
-      expect(after.events.last.payload['choice'], 'cast');
-      expect(after.hero.hitPoints, 20);
-      await ctrl.resolveEnemyShieldHit(
-        campaignId: waiting.id,
-        expectedRevision: waiting.revision,
-      );
-      expect(ctrl.error, isNotNull);
-      expect(ctrl.currentCampaign!.toJson(), after.toJson());
-
-      ctrl.dispose();
-      await repo.close();
-      repo = await SqliteCampaignRepository.open(
+  test(
+    'SQLite speichert offenen W20, Neustart und Revision ohne zweiten Angriffswurf',
+    () async {
+      final dir = await Directory.systemTemp.createTemp('pending-hit-');
+      final path = p.join(dir.path, 'game.sqlite');
+      var repo = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: path,
       );
-      ctrl = GameController(repository: repo);
-      await ctrl.openCampaign(first.id);
-      expect(ctrl.error, isNull);
-      expect(ctrl.currentCampaign!.toJson(), after.toJson());
-    } finally {
-      ctrl.dispose();
-      await repo.close();
-      await dir.delete(recursive: true);
-    }
-  });
+      var ctrl = GameController(
+        repository: repo,
+        engine: GameEngine(dice: DiceEngine(random: _FixedDie())),
+      );
+      try {
+        final first = await _seed(repo);
+        await ctrl.openCampaign(first.id);
+        // Calling the real game engine once, then writing its already-rolled
+        // pending attack to the same repository transaction.
+        final update = GameEngine(
+          dice: DiceEngine(random: _FixedDie()),
+        ).endHeroTurn(first);
+        await repo.saveCampaign(update.campaign, events: update.events);
+        await ctrl.openCampaign(first.id);
+        final waiting = ctrl.currentCampaign!;
+        expect(waiting.pendingEnemyShieldHit!.total, 15);
+
+        await ctrl.resolveEnemyShieldHit(
+          campaignId: waiting.id,
+          expectedRevision: waiting.revision,
+          plan: _plan,
+        );
+        expect(ctrl.error, isNull);
+        final after = ctrl.currentCampaign!;
+        expect(after.pendingEnemyShieldHit, isNull);
+        expect(after.hero.spentSpellSlots, {'1': 1});
+        expect(after.events.last.payload['choice'], 'cast');
+        expect(after.hero.hitPoints, 20);
+        await ctrl.resolveEnemyShieldHit(
+          campaignId: waiting.id,
+          expectedRevision: waiting.revision,
+        );
+        expect(ctrl.error, isNotNull);
+        expect(ctrl.currentCampaign!.toJson(), after.toJson());
+
+        ctrl.dispose();
+        await repo.close();
+        repo = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: path,
+        );
+        ctrl = GameController(repository: repo);
+        await ctrl.openCampaign(first.id);
+        expect(ctrl.error, isNull);
+        expect(ctrl.currentCampaign!.toJson(), after.toJson());
+      } finally {
+        ctrl.dispose();
+        await repo.close();
+        await dir.delete(recursive: true);
+      }
+    },
+  );
 }
