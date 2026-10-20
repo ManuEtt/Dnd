@@ -466,6 +466,45 @@ class GameController extends ChangeNotifier {
     );
   });
 
+  Future<void> castFireBolt({
+    required String campaignId,
+    required int expectedRevision,
+    required String castingClass,
+    required bool targetVisibleConfirmed,
+    required bool targetWithinRangeConfirmed,
+    required bool verbalComponentConfirmed,
+    required bool somaticComponentConfirmed,
+    required bool noFireResistanceOrImmunityConfirmed,
+    required bool noUnresolvedShieldReactionConfirmed,
+    required bool situationalAttackConditionsConfirmed,
+    bool advantage = false,
+    bool disadvantage = false,
+    bool targetProne = false,
+    bool targetWithinFiveFeet = false,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.castFireBolt(
+        current,
+        castingClass: castingClass,
+        targetVisibleConfirmed: targetVisibleConfirmed,
+        targetWithinRangeConfirmed: targetWithinRangeConfirmed,
+        verbalComponentConfirmed: verbalComponentConfirmed,
+        somaticComponentConfirmed: somaticComponentConfirmed,
+        noFireResistanceOrImmunityConfirmed:
+            noFireResistanceOrImmunityConfirmed,
+        noUnresolvedShieldReactionConfirmed:
+            noUnresolvedShieldReactionConfirmed,
+        situationalAttackConditionsConfirmed:
+            situationalAttackConditionsConfirmed,
+        advantage: advantage,
+        disadvantage: disadvantage,
+        targetProne: targetProne,
+        targetWithinFiveFeet: targetWithinFiveFeet,
+      ),
+    );
+  });
+
   Future<void> castMagicMissile({
     required String campaignId,
     required int expectedRevision,
