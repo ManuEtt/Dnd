@@ -35,9 +35,7 @@ class EnemyForceDefenseRules {
     }
     final values = missileDamage.toList(growable: false);
     final result = DamageRules.resolve(
-      [
-        for (final amount in values) DamageComponent(DamageType.force, amount),
-      ],
+      [for (final amount in values) DamageComponent(DamageType.force, amount)],
       defenses: DamageDefenses(
         resistances: defense == EnemyForceDefense.resistant
             ? const [DamageType.force]

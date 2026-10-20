@@ -65,44 +65,50 @@ Future<void> _cast(GameController controller, Campaign campaign) =>
 void main() {
   setUpAll(sqfliteFfiInit);
 
-  test('Persistierte Resistenz, Schadenswerte und Revisionssperre nach Neustart', () async {
-    final folder = await Directory.systemTemp.createTemp('force-defense-');
-    final path = p.join(folder.path, 'test.sqlite');
-    var repo = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: path,
-    );
-    var ctrl = GameController(
-      repository: repo,
-      engine: GameEngine(dice: DiceEngine(random: _Die())),
-    );
-    try {
-      final original = await _seed(repo);
-      await ctrl.openCampaign(original.id);
-      await _cast(ctrl, original);
-      expect(ctrl.error, isNull);
-      final result = ctrl.currentCampaign!;
-      expect(result.encounter!.enemyForceDefense, EnemyForceDefense.resistant);
-      expect(result.encounter!.enemyHitPoints, 54);
-      expect(result.events.last.payload['appliedMissileDamage'], [2, 2, 2]);
-      await _cast(ctrl, original);
-      expect(ctrl.error, isNotNull);
-      expect(ctrl.currentCampaign!.toJson(), result.toJson());
-
-      ctrl.dispose();
-      await repo.close();
-      repo = await SqliteCampaignRepository.open(
+  test(
+    'Persistierte Resistenz, Schadenswerte und Revisionssperre nach Neustart',
+    () async {
+      final folder = await Directory.systemTemp.createTemp('force-defense-');
+      final path = p.join(folder.path, 'test.sqlite');
+      var repo = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: path,
       );
-      ctrl = GameController(repository: repo);
-      await ctrl.openCampaign(original.id);
-      expect(ctrl.error, isNull);
-      expect(ctrl.currentCampaign!.toJson(), result.toJson());
-    } finally {
-      ctrl.dispose();
-      await repo.close();
-      await folder.delete(recursive: true);
-    }
-  });
+      var ctrl = GameController(
+        repository: repo,
+        engine: GameEngine(dice: DiceEngine(random: _Die())),
+      );
+      try {
+        final original = await _seed(repo);
+        await ctrl.openCampaign(original.id);
+        await _cast(ctrl, original);
+        expect(ctrl.error, isNull);
+        final result = ctrl.currentCampaign!;
+        expect(
+          result.encounter!.enemyForceDefense,
+          EnemyForceDefense.resistant,
+        );
+        expect(result.encounter!.enemyHitPoints, 54);
+        expect(result.events.last.payload['appliedMissileDamage'], [2, 2, 2]);
+        await _cast(ctrl, original);
+        expect(ctrl.error, isNotNull);
+        expect(ctrl.currentCampaign!.toJson(), result.toJson());
+
+        ctrl.dispose();
+        await repo.close();
+        repo = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: path,
+        );
+        ctrl = GameController(repository: repo);
+        await ctrl.openCampaign(original.id);
+        expect(ctrl.error, isNull);
+        expect(ctrl.currentCampaign!.toJson(), result.toJson());
+      } finally {
+        ctrl.dispose();
+        await repo.close();
+        await folder.delete(recursive: true);
+      }
+    },
+  );
 }

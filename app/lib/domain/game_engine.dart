@@ -1102,7 +1102,8 @@ class GameEngine {
         'Schildzauber und Gegner-Abwehr müssen bestätigt sein.',
       );
     }
-    final effectiveDefense = confirmedForceDefense ??
+    final effectiveDefense =
+        confirmedForceDefense ??
         (fight.enemyForceDefense == EnemyForceDefense.unknown
             ? EnemyForceDefense.normal
             : fight.enemyForceDefense);

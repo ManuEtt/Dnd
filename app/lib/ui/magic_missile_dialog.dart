@@ -227,7 +227,8 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
                   initialValue: _forceDefense,
                   decoration: const InputDecoration(
                     labelText: 'Bestätigte Energieschaden-Abwehr',
-                    helperText: 'Aus dem Gegnerprofil oder einer bestätigten '
+                    helperText:
+                        'Aus dem Gegnerprofil oder einer bestätigten '
                         'Spielentscheidung; niemals erraten.',
                   ),
                   isExpanded: true,
