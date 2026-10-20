@@ -34,21 +34,23 @@ void main() {
     tester,
   ) async {
     TrackedAreaCreature? added;
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(
-        body: Builder(
-          builder: (context) => TextButton(
-            onPressed: () async {
-              added = await showDialog<TrackedAreaCreature>(
-                context: context,
-                builder: (_) => const AreaCreatureRegistrationDialog(),
-              );
-            },
-            child: const Text('Open'),
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => TextButton(
+              onPressed: () async {
+                added = await showDialog<TrackedAreaCreature>(
+                  context: context,
+                  builder: (_) => const AreaCreatureRegistrationDialog(),
+                );
+              },
+              child: const Text('Open'),
+            ),
           ),
         ),
       ),
-    ));
+    );
     await tester.tap(find.text('Open'));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('area-creature-register')));
@@ -56,16 +58,17 @@ void main() {
     expect(added, isNull);
     expect(find.textContaining('Bitte alle Werte'), findsOneWidget);
     await tester.enterText(
-      find.byKey(const ValueKey('area-creature-id')), 'goblin-2',
+      find.byKey(const ValueKey('area-creature-id')),
+      'goblin-2',
     );
     await tester.enterText(
-      find.byKey(const ValueKey('area-creature-name')), 'Goblin',
+      find.byKey(const ValueKey('area-creature-name')),
+      'Goblin',
     );
+    await tester.enterText(find.byKey(const ValueKey('area-creature-hp')), '7');
     await tester.enterText(
-      find.byKey(const ValueKey('area-creature-hp')), '7',
-    );
-    await tester.enterText(
-      find.byKey(const ValueKey('area-creature-maxhp')), '7',
+      find.byKey(const ValueKey('area-creature-maxhp')),
+      '7',
     );
     await tester.tap(find.byKey(const ValueKey('area-creature-confirmed')));
     await tester.pumpAndSettle();
@@ -78,31 +81,30 @@ void main() {
   testWidgets('Acid Splash additional targets start unchecked and unverified', (
     tester,
   ) async {
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(
-        body: AcidSplashDialog(
-          hero: _mage(),
-          encounter: _fight,
-          trackedAreaCreatures: const [
-            TrackedAreaCreature(
-              id: 'extra-1',
-              name: 'Goblin',
-              hitPoints: 7,
-              maxHitPoints: 7,
-            ),
-          ],
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: AcidSplashDialog(
+            hero: _mage(),
+            encounter: _fight,
+            trackedAreaCreatures: const [
+              TrackedAreaCreature(
+                id: 'extra-1',
+                name: 'Goblin',
+                hitPoints: 7,
+                maxHitPoints: 7,
+              ),
+            ],
+          ),
         ),
       ),
-    ));
+    );
     await tester.pumpAndSettle();
     final selected = tester.widget<CheckboxListTile>(
       find.byKey(const ValueKey('acid-extra-select-extra-1')),
     );
     expect(selected.value, false);
-    expect(
-      find.byKey(const ValueKey('acid-extra-save-extra-1')),
-      findsNothing,
-    );
+    expect(find.byKey(const ValueKey('acid-extra-save-extra-1')), findsNothing);
     await tester.tap(find.byKey(const ValueKey('acid-extra-select-extra-1')));
     await tester.pumpAndSettle();
     expect(
@@ -110,9 +112,11 @@ void main() {
       findsOneWidget,
     );
     expect(
-      tester.widget<CheckboxListTile>(
-        find.byKey(const ValueKey('acid-splash-all-included')),
-      ).value,
+      tester
+          .widget<CheckboxListTile>(
+            find.byKey(const ValueKey('acid-splash-all-included')),
+          )
+          .value,
       false,
     );
   });

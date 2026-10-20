@@ -53,10 +53,8 @@ const Encounter _fight = Encounter(
   enemyArmorClass: 12,
 );
 
-Campaign _campaign(GameEngine engine) => engine.createDemo().copyWith(
-  hero: _mage(),
-  encounter: _fight,
-);
+Campaign _campaign(GameEngine engine) =>
+    engine.createDemo().copyWith(hero: _mage(), encounter: _fight);
 
 GameUpdate _track(
   GameEngine engine,
@@ -129,9 +127,7 @@ void main() {
   });
 
   test('Can store additional HP with stable IDs and immutable lists', () {
-    final engine = GameEngine(
-      clock: () => DateTime.utc(2026, 10, 20),
-    );
+    final engine = GameEngine(clock: () => DateTime.utc(2026, 10, 20));
     final game = _campaign(engine);
     final first = _track(engine, game, 'goblin-2');
     expect(first.events.single.type, 'combat.areaCreatureTracked');
@@ -142,7 +138,10 @@ void main() {
     expect(
       () => second.campaign.trackedAreaCreatures.add(
         const TrackedAreaCreature(
-          id: 'injected', name: 'injected', hitPoints: 1, maxHitPoints: 1,
+          id: 'injected',
+          name: 'injected',
+          hitPoints: 1,
+          maxHitPoints: 1,
         ),
       ),
       throwsUnsupportedError,
@@ -166,10 +165,7 @@ void main() {
     final after = _cast(
       engine,
       game,
-      extras: [
-        _target(before[0]),
-        _target(before[1]),
-      ],
+      extras: [_target(before[0]), _target(before[1])],
     );
     expect(after.events.single.type, 'spell.acidSplash');
     expect(after.campaign.encounter!.enemyHitPoints, 16);
@@ -177,7 +173,11 @@ void main() {
     expect(after.campaign.trackedAreaCreatures[1].hitPoints, 12);
     expect(before[0].hitPoints, 12);
     expect(after.events.single.payload['targetResolutions'], hasLength(3));
-    expect(after.events.single.payload['targetIds'], ['foe', 'goblin', 'friend']);
+    expect(after.events.single.payload['targetIds'], [
+      'foe',
+      'goblin',
+      'friend',
+    ]);
     expect(after.events.single.payload['totalDamage'], 18);
     expect(after.events.single.payload['damageRoll']['expression'], '2d6');
     expect(after.campaign.encounter!.actionUsed, true);
@@ -193,9 +193,9 @@ void main() {
   test('Defeated main foe does not erase surviving tracked area creatures', () {
     final rng = _SequenceRandom([0, 19, 5, 5]);
     final engine = GameEngine(dice: DiceEngine(random: rng));
-    var game = _campaign(engine).copyWith(
-      encounter: _fight.copyWith(enemyHitPoints: 4),
-    );
+    var game = _campaign(
+      engine,
+    ).copyWith(encounter: _fight.copyWith(enemyHitPoints: 4));
     game = _track(engine, game, 'bystander').campaign;
     final cast = _cast(
       engine,
@@ -206,57 +206,71 @@ void main() {
     expect(cast.campaign.trackedAreaCreatures.single.id, 'bystander');
     // The demo encounter is allowed to finish; tracked HP survive.
     expect(
-      Campaign.fromJson(cast.campaign.toJson())
-          .trackedAreaCreatures.single.hitPoints,
+      Campaign.fromJson(
+        cast.campaign.toJson(),
+      ).trackedAreaCreatures.single.hitPoints,
       20,
     );
   });
 
-  test('Stale/unregistered, duplicate or inconsistent targets reject before RNG', () {
-    final rng = _SequenceRandom([0]);
-    final engine = GameEngine(dice: DiceEngine(random: rng));
-    var game = _track(engine, _campaign(engine), 'goblin').campaign;
-    final target = _target(game.trackedAreaCreatures.single);
-    expect(
-      () => _cast(engine, game, extras: [target], all: false),
-      throwsFormatException,
-    );
-    expect(
-      () => _cast(engine, game, extras: [target], only: true),
-      throwsFormatException,
-    );
-    expect(
-      () => _cast(engine, game, extras: [target, target]),
-      throwsFormatException,
-    );
-    final invalid = AcidSplashTarget(
-      id: 'goblin',
-      name: 'goblin',
-      hitPoints: 19, // stale; actual HP is 20
-      maxHitPoints: 20,
-      dexteritySaveModifier: 0,
-      cover: CoverLevel.none,
-      sourceOppositeCover: false,
-      coverRelationshipConfirmed: true,
-      inSphereConfirmed: true,
-      effectPathConfirmed: true,
-      noAcidDamageAdjustmentConfirmed: true,
-      saveCircumstancesConfirmed: true,
-    );
-    expect(
-      () => _cast(engine, game, extras: [invalid]),
-      throwsFormatException,
-    );
-    expect(
-      () => _cast(engine, game, extras: [_target(
-          const TrackedAreaCreature(
-              id: 'nonexistent', name: 'unknown', hitPoints: 20,
-              maxHitPoints: 20))]),
-      throwsFormatException,
-    );
-    expect(rng.calls, 0);
-    expect(game.trackedAreaCreatures.single.hitPoints, 20);
-  });
+  test(
+    'Stale/unregistered, duplicate or inconsistent targets reject before RNG',
+    () {
+      final rng = _SequenceRandom([0]);
+      final engine = GameEngine(dice: DiceEngine(random: rng));
+      var game = _track(engine, _campaign(engine), 'goblin').campaign;
+      final target = _target(game.trackedAreaCreatures.single);
+      expect(
+        () => _cast(engine, game, extras: [target], all: false),
+        throwsFormatException,
+      );
+      expect(
+        () => _cast(engine, game, extras: [target], only: true),
+        throwsFormatException,
+      );
+      expect(
+        () => _cast(engine, game, extras: [target, target]),
+        throwsFormatException,
+      );
+      final invalid = AcidSplashTarget(
+        id: 'goblin',
+        name: 'goblin',
+        hitPoints: 19, // stale; actual HP is 20
+        maxHitPoints: 20,
+        dexteritySaveModifier: 0,
+        cover: CoverLevel.none,
+        sourceOppositeCover: false,
+        coverRelationshipConfirmed: true,
+        inSphereConfirmed: true,
+        effectPathConfirmed: true,
+        noAcidDamageAdjustmentConfirmed: true,
+        saveCircumstancesConfirmed: true,
+      );
+      expect(
+        () => _cast(engine, game, extras: [invalid]),
+        throwsFormatException,
+      );
+      expect(
+        () => _cast(
+          engine,
+          game,
+          extras: [
+            _target(
+              const TrackedAreaCreature(
+                id: 'nonexistent',
+                name: 'unknown',
+                hitPoints: 20,
+                maxHitPoints: 20,
+              ),
+            ),
+          ],
+        ),
+        throwsFormatException,
+      );
+      expect(rng.calls, 0);
+      expect(game.trackedAreaCreatures.single.hitPoints, 20);
+    },
+  );
 
   test('Reject invalid creature ID, duplicate, HP and tampered save files', () {
     final engine = GameEngine();

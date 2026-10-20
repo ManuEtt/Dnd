@@ -1808,16 +1808,8 @@ class TrackedAreaCreature {
   factory TrackedAreaCreature.fromJson(Map<String, dynamic> j) {
     final id = _string(j['id'], 'Zusätzliche Kreatur-ID');
     final name = _string(j['name'], 'Zusätzliche Kreatur');
-    final maxHp = _int(
-      j['maxHitPoints'],
-      'Kreatur-Maximum',
-      min: 1,
-    );
-    final hp = _int(
-      j['hitPoints'],
-      'Kreatur-TP',
-      max: maxHp,
-    );
+    final maxHp = _int(j['maxHitPoints'], 'Kreatur-Maximum', min: 1);
+    final hp = _int(j['hitPoints'], 'Kreatur-TP', max: maxHp);
     if (id.isEmpty ||
         id.length > 128 ||
         name.trim().isEmpty ||
@@ -1883,6 +1875,7 @@ class Campaign {
   final List<WorldNpc> npcs;
   final List<Place> places;
   final List<GameEvent> events;
+
   /// HP-only additional creatures, persistent even if the main fight ends.
   final List<TrackedAreaCreature> trackedAreaCreatures;
   final PendingRoll? pendingRoll;
@@ -1968,7 +1961,9 @@ class Campaign {
     'places': places.map((e) => e.toJson()).toList(),
     'events': events.map((e) => e.toJson()).toList(),
     if (trackedAreaCreatures.isNotEmpty)
-      'trackedAreaCreatures': trackedAreaCreatures.map((e) => e.toJson()).toList(),
+      'trackedAreaCreatures': trackedAreaCreatures
+          .map((e) => e.toJson())
+          .toList(),
     'pendingRoll': pendingRoll?.toJson(),
     if (pendingDeathSave != null)
       'pendingDeathSave': pendingDeathSave!.toJson(),
@@ -2010,9 +2005,9 @@ class Campaign {
     if (trackedAreaCreatures.length > 19 ||
         trackedAreaCreatures.map((e) => e.id).toSet().length !=
             trackedAreaCreatures.length ||
-        trackedAreaCreatures.any((e) =>
-            e.id == hero.id ||
-            (encounter != null && e.id == encounter.id))) {
+        trackedAreaCreatures.any(
+          (e) => e.id == hero.id || (encounter != null && e.id == encounter.id),
+        )) {
       throw const FormatException(
         'Ungültige Anzahl oder doppelte IDs zusätzlicher Kreaturen.',
       );

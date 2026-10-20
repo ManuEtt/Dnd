@@ -1203,8 +1203,10 @@ class _AdventurePageState extends State<_AdventurePage> {
 
   Future<void> _trackAreaCreature() async {
     final campaign = widget.controller.currentCampaign;
-    if (campaign == null || campaign.encounter == null ||
-        widget.controller.busy) return;
+    if (campaign == null ||
+        campaign.encounter == null ||
+        widget.controller.busy)
+      return;
     final creature = await showDialog<TrackedAreaCreature>(
       context: context,
       builder: (_) => const AreaCreatureRegistrationDialog(),
@@ -1628,7 +1630,8 @@ class _AdventurePageState extends State<_AdventurePage> {
                     !campaign.encounter!.isFinished)
                   TextButton.icon(
                     key: const ValueKey('adventure-register-area-creature'),
-                    onPressed: widget.controller.busy ||
+                    onPressed:
+                        widget.controller.busy ||
                             campaign.trackedAreaCreatures.length >= 19
                         ? null
                         : _trackAreaCreature,

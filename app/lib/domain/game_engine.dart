@@ -1247,8 +1247,9 @@ class GameEngine {
         campaign.trackedAreaCreatures.length >= 19 ||
         creatureId == campaign.hero.id ||
         creatureId == campaign.encounter!.id ||
-        campaign.trackedAreaCreatures.any((creature) =>
-            creature.id == creatureId)) {
+        campaign.trackedAreaCreatures.any(
+          (creature) => creature.id == creatureId,
+        )) {
       throw const FormatException(
         'Eine lebende, eindeutig identifizierte Zusatzkreatur mit '
         'bestätigten Trefferpunkten ist erforderlich.',
@@ -1262,18 +1263,14 @@ class GameEngine {
     });
     return _commit(
       campaign,
-      campaign.copyWith(trackedAreaCreatures: [
-        ...campaign.trackedAreaCreatures,
-        creature,
-      ]),
+      campaign.copyWith(
+        trackedAreaCreatures: [...campaign.trackedAreaCreatures, creature],
+      ),
       '${creature.name} als zusätzliche Kreatur mit '
       '${creature.hitPoints}/${creature.maxHitPoints} TP erfasst. '
       'Noch keine eigenen Angriffe, Züge oder Positionen.',
       type: 'combat.areaCreatureTracked',
-      payload: {
-        'creature': creature.toJson(),
-        'hpOnly': true,
-      },
+      payload: {'creature': creature.toJson(), 'hpOnly': true},
     );
   }
 
@@ -1368,10 +1365,9 @@ class GameEngine {
         ...additionalTargets,
       ],
       sphereOriginWithinRangeConfirmed: originWithin60FeetConfirmed,
-      everyCreatureInSphereIncludedConfirmed:
-          additionalTargets.isEmpty
-              ? currentEnemyIsOnlyCreatureInSphereConfirmed
-              : allCreaturesInSphereAccountedForConfirmed,
+      everyCreatureInSphereIncludedConfirmed: additionalTargets.isEmpty
+          ? currentEnemyIsOnlyCreatureInSphereConfirmed
+          : allCreaturesInSphereAccountedForConfirmed,
       verbalComponentConfirmed: verbalComponentConfirmed,
       somaticComponentConfirmed: somaticComponentConfirmed,
       noUnmodelledDcModifiersConfirmed: noUnmodelledDcModifiersConfirmed,

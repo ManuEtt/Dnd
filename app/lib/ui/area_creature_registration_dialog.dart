@@ -34,8 +34,11 @@ class _AreaCreatureRegistrationDialogState
     final hp = int.tryParse(_hitPoints.text.trim());
     final max = int.tryParse(_maximum.text.trim());
     if (!_confirmed || hp == null || max == null) {
-      setState(() => _error = 'Bitte alle Werte anhand eines bekannten '
-          'Kreaturenprofils bestätigen.');
+      setState(
+        () => _error =
+            'Bitte alle Werte anhand eines bekannten '
+            'Kreaturenprofils bestätigen.',
+      );
       return;
     }
     try {
@@ -65,9 +68,11 @@ class _AreaCreatureRegistrationDialogState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Zusätzliche Kreaturen können bei Flächenzaubern '
-                'Schaden erhalten. Angriffe, Initiative, Ausrüstung und '
-                'Bewegung werden für sie noch nicht simuliert.'),
+            const Text(
+              'Zusätzliche Kreaturen können bei Flächenzaubern '
+              'Schaden erhalten. Angriffe, Initiative, Ausrüstung und '
+              'Bewegung werden für sie noch nicht simuliert.',
+            ),
             TextField(
               key: const ValueKey('area-creature-id'),
               controller: _id,
@@ -78,9 +83,7 @@ class _AreaCreatureRegistrationDialogState
             TextField(
               key: const ValueKey('area-creature-name'),
               controller: _name,
-              decoration: const InputDecoration(
-                labelText: 'Kreaturenname',
-              ),
+              decoration: const InputDecoration(labelText: 'Kreaturenname'),
             ),
             TextField(
               key: const ValueKey('area-creature-hp'),
@@ -102,8 +105,7 @@ class _AreaCreatureRegistrationDialogState
               key: const ValueKey('area-creature-confirmed'),
               contentPadding: EdgeInsets.zero,
               value: _confirmed,
-              onChanged: (value) =>
-                  setState(() => _confirmed = value ?? false),
+              onChanged: (value) => setState(() => _confirmed = value ?? false),
               title: const Text('Identität und Trefferpunkte geprüft.'),
             ),
             if (_error != null)

@@ -130,27 +130,31 @@ class _AcidSplashDialogState extends State<AcidSplashDialog> {
           cover == null ||
           cover == CoverLevel.total ||
           !_extraVerified.contains(creature.id)) {
-        setState(() => _error =
-            'Für jedes ausgewählte Zusatz-Ziel den GES-Bonus, '
-            'den Deckungsgrad und alle Defensivwerte bestätigen.');
+        setState(
+          () => _error =
+              'Für jedes ausgewählte Zusatz-Ziel den GES-Bonus, '
+              'den Deckungsgrad und alle Defensivwerte bestätigen.',
+        );
         return;
       }
-      additions.add(AcidSplashTarget(
-        id: creature.id,
-        name: creature.name,
-        hitPoints: creature.hitPoints,
-        maxHitPoints: creature.maxHitPoints,
-        dexteritySaveModifier: targetSave,
-        cover: cover,
-        sourceOppositeCover: _extraOpposite.contains(creature.id),
-        coverRelationshipConfirmed: true,
-        inSphereConfirmed: true,
-        effectPathConfirmed: true,
-        noAcidDamageAdjustmentConfirmed: true,
-        saveCircumstancesConfirmed: true,
-        saveAdvantage: _extraAdvantage.contains(creature.id),
-        saveDisadvantage: _extraDisadvantage.contains(creature.id),
-      ));
+      additions.add(
+        AcidSplashTarget(
+          id: creature.id,
+          name: creature.name,
+          hitPoints: creature.hitPoints,
+          maxHitPoints: creature.maxHitPoints,
+          dexteritySaveModifier: targetSave,
+          cover: cover,
+          sourceOppositeCover: _extraOpposite.contains(creature.id),
+          coverRelationshipConfirmed: true,
+          inSphereConfirmed: true,
+          effectPathConfirmed: true,
+          noAcidDamageAdjustmentConfirmed: true,
+          saveCircumstancesConfirmed: true,
+          saveAdvantage: _extraAdvantage.contains(creature.id),
+          saveDisadvantage: _extraDisadvantage.contains(creature.id),
+        ),
+      );
     }
     final isMulti = additions.isNotEmpty;
     if (modifier == null ||
@@ -324,14 +328,18 @@ class _AcidSplashDialogState extends State<AcidSplashDialog> {
             ),
             if (_extraModifiers.isNotEmpty) ...[
               const SizedBox(height: 12),
-              const Text('Weitere gespeicherte Kugelziele',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text(
+                'Weitere gespeicherte Kugelziele',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               for (final creature in widget.trackedAreaCreatures)
                 if (creature.hitPoints > 0) ...[
                   CheckboxListTile(
                     key: ValueKey('acid-extra-select-${creature.id}'),
-                    title: Text('${creature.name} '
-                        '(${creature.hitPoints}/${creature.maxHitPoints} TP)'),
+                    title: Text(
+                      '${creature.name} '
+                      '(${creature.hitPoints}/${creature.maxHitPoints} TP)',
+                    ),
                     value: _extraSelected.contains(creature.id),
                     onChanged: (v) => setState(() {
                       if (v ?? false) {
