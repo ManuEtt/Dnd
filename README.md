@@ -2,7 +2,7 @@
 
 **Deutschsprachige Android-Fantasy-Rollenspiel-App mit Soloabenteuern, Charakterverwaltung, D&D-Regelunterstützung und optionalem KI-Erzähler.**
 
-> **Projektstatus (20. Oktober 2026):** Aktive **Android-Alpha**, in Entwicklung. Im Flutter-Quellprojekt steht **Version `0.8.18+68`** (Version 0.8.18, Build 68); verbindlich ist immer [`app/pubspec.yaml`](app/pubspec.yaml). Diese Quellcode-Version bedeutet **nicht**, dass eine identisch geprüfte oder veröffentlichte APK bereits auf jedem Gerät installiert ist. Das vollständige D&D-Regelwerk ist **nicht** implementiert.
+> **Projektstatus (20. Oktober 2026):** Aktive **Android-Alpha**, in Entwicklung. Im Flutter-Quellprojekt steht **Version `0.8.19+69`** (Version 0.8.18, Build 68); verbindlich ist immer [`app/pubspec.yaml`](app/pubspec.yaml). Diese Quellcode-Version bedeutet **nicht**, dass eine identisch geprüfte oder veröffentlichte APK bereits auf jedem Gerät installiert ist. Das vollständige D&D-Regelwerk ist **nicht** implementiert.
 
 ## GitHub-Branch-Bereinigung (20.10.2026)
 
@@ -17,6 +17,10 @@
 - [Build- und Teststand](#build--und-teststand)
 - [Bekannte Grenzen und nächste Schritte](#bekannte-grenzen-und-nächste-schritte)
 - [Regelgrundlage, Dokumentation und Chronik](#regelgrundlage-dokumentation-und-chronik)
+
+## Neues SRD-Regelpaket: bedingte Schildreaktion des Helden (20.10.2026)
+
+**Version `0.8.19+69`:** Der Spieler kann beim Beenden seines Kampfzugs ausdrücklich **Schild als bedingte Reaktion** gegen den unmittelbar folgenden Gegnerangriff freigeben. Nur wenn die Attacke trifft und der RK-Bonus von +5 sie abwehren würde, wird der bekannte Zauber mit validierten Komponenten und einem vorhandenen Zauberplatz gewirkt. Andernfalls bleiben sämtliche Ressourcen erhalten; bestehende Spielstände bleiben kompatibel. Neue Domain-/SQLite-Tests und Dialog sind vorhanden. **CI dieses Inkrements ausstehend.** Es handelt sich noch nicht um eine allgemeine, nach dem Treffer interaktiv bestätigte Reaktionsengine.
 
 ## SRD-Inkrement: Shield als bestätigte Gegnerreaktion (20.10.2026)
 

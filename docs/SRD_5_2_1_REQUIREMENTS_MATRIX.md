@@ -1,3 +1,12 @@
+## Neu: SPELL-SHIELD-HERO-CONDITIONAL – 0.8.19+69
+
+| ID | SRD-5.2.1-Regel | Implementierter Umfang / Testnachweis | Status |
+| --- | --- | --- | --- |
+| SPELL-SHIELD-HERO-CONDITIONAL | Shield, 1. Grad, V/S, Reaction nach Treffer; +5 RK bis zum nächsten Zug | Explizite Vorabautorisierung für den sofortigen Gegner-Einzelangriff; Prüfung vor Wurf, tatsächliche Ausgabe erst wenn +5 RK den Treffer verhindert, keine Wirkung auf kritische Treffer. Klasse, Vorbereitung, Komponenten, Slot und Revisionsschutz. `hero_shield_reaction_rules.dart`, `game_engine.dart`, `hero_shield_reaction_dialog.dart`, Domain-/SQLite-Tests | TEILWEISE IMPLEMENTIERT, CI AUSSTEHEND |
+| SPELL-SHIELD-HERO-INTERRUPT | Reaction nach tatsächlich getroffenem Angriff, optionale Wahl auch wenn +5 RK den Treffer nicht verhindert | Noch kein echter Unterbrechungspunkt zur Entscheidung nach dem Angriffswurf, keine dauernde Schild-Wirkung über mehrere Monsterangriffe bis zum nächsten Heldzug | FEHLT |
+
+Keine Übernahme nichtlizenzierter D&D-Texte; Quelle: SRD 5.2.1 CC BY 4.0. Vorautorisierung nicht mit vollständiger Shield-Mechanik gleichsetzen.
+
 **CI und Merge bestätigt (20.10.2026):** [PR #46](https://github.com/ManuEtt/Dnd/pull/46) nach grünem [GitHub-Actions-Lauf #39386823499](https://github.com/ManuEtt/Dnd/actions/runs/39386823499), geprüfter Code-HEAD `81635c8eccb0d06e5d1bf95d54f5884c62f4a215`, erfolgreich in `main` integriert. Merge-Commit [`45160602b339c35e23e0d445f4e41e98b9b3dd5e`](https://github.com/ManuEtt/Dnd/commit/45160602b339c35e23e0d445f4e41e98b9b3dd5e). Erfolgreich: Struktur-/Python-Prüfung, Backend-Typecheck/Build/Tests, Dart-Formatierung, Flutter-Analyse und Tests, Android-Debug-APK, native Android-Unit-Tests, Alpha-APK-Artefakte und Quellcode-Checkpoint. **Noch offen:** echter Android-Gerätetest, vollständiges SRD, Held-Shield-Reaktion und verifizierte Gegner-Zauberlisten.
 
 ## SRD 5.2.1: SPELL-SHIELD-ENEMY-REACTION – 20.10.2026 (0.8.18+68)
