@@ -1,3 +1,11 @@
+## 20.10.2026 – SRD-5.2.1-Regelinventur (noch nicht merged)
+
+- 1.419 eindeutig identifizierte Arbeitsanforderungen in zwei maschinenlesbaren, quellenreferenzierten JSON-Registern; davon 282 bestehende Klassen-Freischaltungen. 339 Zaubertitel, 330 Monster-/Tier-Statblocks, 260 Magiegegenstandseinträge und 17 Talente als gezielte zusätzliche Inventare erfasst.
+- Python-CLI und Regressionstests für ID-Dubletten, SRD-Level und Inventur-Vollständigkeitsgates hinzugefügt. 9 explizite Prüflücken verhindern eine erfundene globale SRD-Fertigstellungsquote.
+- Keine Regelengine-Funktionen oder App-Version geändert. Verifizierung gegen amtliches Gesamt-SRD und GitHub-CI für den neuen Branch noch offen.
+
+---
+
 ## Abnahme / Merge 20.10.2026 – Version 0.8.21+71
 
 **CI- und Merge-Abnahme (20.10.2026):** SRD-Inkrement `0.8.21+71` über [PR #52](https://github.com/ManuEtt/Dnd/pull/52) erfolgreich nach `main` integriert. [GitHub-Actions-CI #39421141308](https://github.com/ManuEtt/Dnd/actions/runs/39421141308) auf finalem Code-HEAD `9156b972d240de4c5a588c09ebb5ac8adeca99ad`: **success**, inklusive Python-/Strukturtests, Backend-Typecheck/Build/Tests, Dart-Formatierung, Flutter-Analyse und Tests, Android-Debug-APK, native Android-Tests, Alpha-APK-Pakete und Checkpoint-Artefakt. Merge-Commit [`b87e53591df75bc40b9e9f534529666fb168c6f3`](https://github.com/ManuEtt/Dnd/commit/b87e53591df75bc40b9e9f534529666fb168c6f3). **Nicht getestet:** echte Android-Geräteinstallation; mehrere unabhängige Monster und unterschiedliche Attackenprofile; vollständige SRD-Abdeckung.
