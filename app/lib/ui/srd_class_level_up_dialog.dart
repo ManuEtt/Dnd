@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../domain/character_creation_progression.dart';
+import '../domain/experience_progression.dart';
 import '../domain/class_progression_rules.dart';
 import '../domain/models.dart';
 import '../domain/srd_class_feature_catalog.dart';
@@ -95,6 +96,15 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
     // The preview errors may depend on the selected XP/milestone mode.
     final proposal = _proposal();
     final message = proposal == null ? _error : null;
+    final availableAdvancements = ExperienceProgression.pendingLevels(
+      widget.hero,
+    );
+    final trainingBefore = CharacterCreationProgression.proficiencyBonus(
+      widget.hero.level,
+    );
+    final trainingAfter = widget.hero.level < 20
+        ? CharacterCreationProgression.proficiencyBonus(widget.hero.level + 1)
+        : trainingBefore;
     final thresholdLabel = widget.hero.level >= 20
         ? 'Höchststufe 20'
         : '${CharacterCreationProgression.startingExperience(widget.hero.level + 1)}';
@@ -156,6 +166,16 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
                 ' · Schwelle: $thresholdLabel',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
+              if (availableAdvancements > 0) ...[
+                const SizedBox(height: 6),
+                Text(
+                  availableAdvancements == 1
+                      ? 'Ein Aufstieg mit bestätigten EP verfügbar.'
+                      : '$availableAdvancements Aufstiege mit EP verfügbar. '
+                            'Jede Klassenstufe wird einzeln bestätigt.',
+                  key: const ValueKey('levelup-available-levels'),
+                ),
+              ],
               if (canChooseSubclass)
                 CheckboxListTile(
                   key: const ValueKey('levelup-subclass'),
@@ -247,6 +267,17 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
                 Text(
                   '${proposal.className}, Klassenstufe ${proposal.classLevel}'
                   ' · W${proposal.hitDie}: feste +${proposal.hpGain} TP',
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'TP-Vorschau: ${widget.hero.hitPoints} → '
+                  '${widget.hero.hitPoints! + proposal.hpGain} / '
+                  '${widget.hero.maxHitPoints! + proposal.hpGain}',
+                  key: const ValueKey('levelup-hp-preview'),
+                ),
+                Text(
+                  'Übungsbonus: +$trainingBefore → +$trainingAfter',
+                  key: const ValueKey('levelup-proficiency-preview'),
                 ),
                 if (proposal.features.isNotEmpty) ...[
                   const SizedBox(height: 10),

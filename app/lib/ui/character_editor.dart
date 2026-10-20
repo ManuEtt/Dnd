@@ -45,6 +45,10 @@ class _CharacterEditorState extends State<CharacterEditor> {
   bool _manualAbilityException = false;
   bool _experienceManuallyEdited = false;
   bool _fighterSetupConfirmed = false;
+  // Only wizard-confirmed intermediate levels may be advanced again before
+  // the editor is saved; manually edited level numbers are still rejected.
+  int? _lastWizardLevel;
+  int? _lastWizardSecondaryLevel;
   String? _autoArmorClass;
   String? _autoSpeed;
 
@@ -912,10 +916,14 @@ class _CharacterEditorState extends State<CharacterEditor> {
       final draft = _draftForLevelUp();
       // This wizard may advance only a confirmed current level, not an
       // independent manual editing change already entered in the level box.
-      if (draft.level != widget.hero!.level ||
-          draft.primaryClassLevel != widget.hero!.primaryClassLevel ||
-          draft.secondaryClassLevel != widget.hero!.secondaryClassLevel ||
-          draft.className != widget.hero!.className) {
+      final approvedLevel = _lastWizardLevel ?? widget.hero!.level;
+      final approvedSecondary =
+          _lastWizardSecondaryLevel ?? widget.hero!.secondaryClassLevel;
+      if (draft.level != approvedLevel ||
+          draft.primaryClassLevel != approvedLevel - approvedSecondary ||
+          draft.secondaryClassLevel != approvedSecondary ||
+          draft.className != widget.hero!.className ||
+          draft.secondaryClassName != widget.hero!.secondaryClassName) {
         throw const FormatException(
           'Bitte unbestätigte Klassen-/Stufenänderungen zuerst '
           'zurücknehmen oder den Charakter speichern.',
@@ -930,6 +938,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
       final current = _draftForLevelUp();
       final result = proposal.applyTo(current);
       setState(() {
+        _lastWizardLevel = result.level;
+        _lastWizardSecondaryLevel = result.secondaryClassLevel;
         _fields['level']!.text = result.level.toString();
         _fields['hitPoints']!.text = result.hitPoints!.toString();
         _fields['maxHitPoints']!.text = result.maxHitPoints!.toString();

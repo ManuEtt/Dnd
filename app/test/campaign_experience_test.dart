@@ -30,6 +30,20 @@ void main() {
     );
   });
 
+  test('Mehrere erreichte Stufen werden in der Erzählung gezählt', () {
+    final engine = GameEngine();
+    final hero = engine.createDemo().hero.copyWith(experience: 6400);
+    final campaign = engine.createRabenwacht(hero);
+    expect(CampaignExperience.pendingLevels(campaign.hero), 3);
+
+    final award = CampaignExperience.awardOnce(campaign, 'reach-mill');
+    expect(award.points, 200);
+    expect(award.campaign.hero.experience, 6600);
+    expect(CampaignExperience.pendingLevels(award.campaign.hero), 4);
+    expect(award.narration, contains('4 Stufenaufstiege'));
+    expect(award.campaign.hero.level, 1);
+  });
+
   test('EP werden genau einmal bei einer erreichten Szene gutgeschrieben', () {
     final engine = GameEngine();
     var c = engine.createRabenwacht(engine.createDemo().hero);

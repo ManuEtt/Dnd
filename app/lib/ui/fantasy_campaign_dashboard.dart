@@ -244,9 +244,13 @@ class FantasyActiveHeroCard extends StatelessWidget {
                   ],
                   if (CampaignExperience.canLevelUp(hero)) ...[
                     const SizedBox(height: 6),
-                    const Text(
-                      'Stufenaufstieg möglich',
-                      style: TextStyle(
+                    Text(
+                      CampaignExperience.pendingLevels(hero) == 1
+                          ? 'Stufenaufstieg möglich'
+                          : '${CampaignExperience.pendingLevels(hero)} '
+                                'Stufenaufstiege möglich – einzeln bestätigen',
+                      key: const ValueKey('hero-pending-level-ups'),
+                      style: const TextStyle(
                         color: FantasyPalette.gold,
                         fontWeight: FontWeight.w700,
                       ),

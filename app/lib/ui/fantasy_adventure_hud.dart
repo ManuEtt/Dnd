@@ -161,9 +161,13 @@ class FantasyAdventureStatusHud extends StatelessWidget {
           ],
           if (CampaignExperience.canLevelUp(hero)) ...[
             const SizedBox(height: 7),
-            const Text(
-              'Stufenaufstieg möglich – Charakterbogen öffnen',
-              style: TextStyle(color: FantasyPalette.gold, fontSize: 12),
+            Text(
+              CampaignExperience.pendingLevels(hero) == 1
+                  ? 'Stufenaufstieg möglich – Charakterbogen öffnen'
+                  : '${CampaignExperience.pendingLevels(hero)} '
+                        'Stufenaufstiege möglich – einzeln im Charakterbogen bestätigen',
+              key: const ValueKey('adventure-pending-level-ups'),
+              style: const TextStyle(color: FantasyPalette.gold, fontSize: 12),
             ),
           ],
         ],
