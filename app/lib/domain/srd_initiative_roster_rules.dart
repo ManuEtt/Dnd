@@ -15,9 +15,8 @@ class InitiativeRosterEntry {
 }
 
 class InitiativeRosterGroup {
-  InitiativeRosterGroup(int total, List<InitiativeRosterEntry> entries)
-    : total = total,
-      entries = List.unmodifiable(entries);
+  InitiativeRosterGroup(this.total, List<InitiativeRosterEntry> entries)
+    : entries = List.unmodifiable(entries);
 
   final int total;
 
