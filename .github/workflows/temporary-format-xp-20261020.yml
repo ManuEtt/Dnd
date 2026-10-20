@@ -31,7 +31,7 @@ jobs:
       - name: Dart Dateien formatieren und Änderungen einchecken
         run: |
           cd app
-          dart format lib/domain/experience_progression.dart test/experience_progression_test.dart
+          dart format lib test
           cd ..
           if ! git diff --quiet -- app/lib/domain/experience_progression.dart app/test/experience_progression_test.dart; then
             git config user.name "github-actions[bot]"
