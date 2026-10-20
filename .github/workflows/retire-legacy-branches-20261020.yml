@@ -84,3 +84,26 @@ jobs:
             echo "Entfernt: $branch"
           done <<< "$rows"
           echo "Alle 11 alten Branches sind im main-Verlauf und durch Tags gesichert."
+
+          echo "Phase 4: Temporären Integrationsbranch bei bestätigtem Main-Merge entfernen"
+          migration_branch="integration/merge-and-retire-legacy-20261020"
+          migration_sha=$(git ls-remote origin "refs/heads/$migration_branch" | awk '{print $1}')
+          if [[ -n "$migration_sha" ]]; then
+            if ! git merge-base --is-ancestor "$migration_sha" HEAD; then
+              echo "ABBRUCH: Integrationsbranch noch nicht in main" >&2
+              exit 1
+            fi
+            migration_tag="archive/legacy-20261020/$migration_branch"
+            existing=$(git ls-remote --tags origin "refs/tags/$migration_tag" | awk '{print $1}')
+            if [[ -n "$existing" && "$existing" != "$migration_sha" ]]; then
+              echo "ABBRUCH: Migrationsbackup stimmt nicht überein" >&2
+              exit 1
+            fi
+            if [[ -z "$existing" ]]; then
+              git tag "$migration_tag" "$migration_sha"
+              git push origin "refs/tags/$migration_tag"
+            fi
+            git push --force-with-lease="refs/heads/$migration_branch:$migration_sha" \
+              origin ":refs/heads/$migration_branch"
+            echo "Integrationsbranch archiviert und entfernt: $migration_branch"
+          fi
