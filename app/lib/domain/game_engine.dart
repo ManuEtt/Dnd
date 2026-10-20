@@ -1268,10 +1268,8 @@ class GameEngine {
       targetWithinRangeConfirmed: targetWithinRangeConfirmed,
       verbalComponentConfirmed: verbalComponentConfirmed,
       somaticComponentConfirmed: somaticComponentConfirmed,
-      noFireResistanceOrImmunityConfirmed:
-          noFireResistanceOrImmunityConfirmed,
-      noUnresolvedShieldReactionConfirmed:
-          noUnresolvedShieldReactionConfirmed,
+      noFireResistanceOrImmunityConfirmed: noFireResistanceOrImmunityConfirmed,
+      noUnresolvedShieldReactionConfirmed: noUnresolvedShieldReactionConfirmed,
       situationalAttackConditionsConfirmed:
           situationalAttackConditionsConfirmed,
       advantage: advantage,
@@ -1312,10 +1310,7 @@ class GameEngine {
     };
     var next = campaign.copyWith(
       hero: result.hero,
-      encounter: fight.copyWith(
-        enemyHitPoints: remaining,
-        actionUsed: true,
-      ),
+      encounter: fight.copyWith(enemyHitPoints: remaining, actionUsed: true),
     );
     if (remaining == 0) {
       next = _afterFlurryVictory(next, payload);

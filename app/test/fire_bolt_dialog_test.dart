@@ -56,9 +56,14 @@ void main() {
     await tester.tap(find.text('Öffnen'));
     await tester.pumpAndSettle();
     expect(find.text('Feuerpfeil wirken'), findsOneWidget);
-    expect(tester.widget<CheckboxListTile>(
-      find.byKey(const ValueKey('fire-bolt-visible')),
-    ).value, false);
+    expect(
+      tester
+          .widget<CheckboxListTile>(
+            find.byKey(const ValueKey('fire-bolt-visible')),
+          )
+          .value,
+      false,
+    );
     final cast = find.byKey(const ValueKey('fire-bolt-cast'));
     await tester.tap(cast);
     await tester.pumpAndSettle();
@@ -73,7 +78,10 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: FireBoltDialog(hero: _hero(spells: const []), encounter: _fight),
+          body: FireBoltDialog(
+            hero: _hero(spells: const []),
+            encounter: _fight,
+          ),
         ),
       ),
     );

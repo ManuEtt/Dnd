@@ -1542,7 +1542,10 @@ class _AdventurePageState extends State<_AdventurePage> {
                             campaign.encounter!.actionUsed
                         ? null
                         : _castFireBolt,
-                    icon: const Icon(Icons.local_fire_department_outlined, size: 17),
+                    icon: const Icon(
+                      Icons.local_fire_department_outlined,
+                      size: 17,
+                    ),
                     label: const Text('Feuerpfeil'),
                   ),
                 if (campaign.encounter != null &&

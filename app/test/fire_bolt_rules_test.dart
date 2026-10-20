@@ -158,11 +158,7 @@ void main() {
     expect(covered.hit, isFalse);
     expect(covered.effectiveArmorClass, 20);
     expect(
-      () => _cast(
-        _caster(),
-        _SequenceRandom([19]),
-        cover: CoverLevel.total,
-      ),
+      () => _cast(_caster(), _SequenceRandom([19]), cover: CoverLevel.total),
       throwsFormatException,
     );
   });
@@ -170,10 +166,7 @@ void main() {
   test('Unverified targets, components and defenses reject before random', () {
     final random = _SequenceRandom([19]);
     final hero = _caster();
-    expect(
-      () => _cast(hero, random, visible: false),
-      throwsFormatException,
-    );
+    expect(() => _cast(hero, random, visible: false), throwsFormatException);
     expect(() => _cast(hero, random, range: false), throwsFormatException);
     expect(() => _cast(hero, random, verbal: false), throwsFormatException);
     expect(() => _cast(hero, random, somatic: false), throwsFormatException);
@@ -213,12 +206,7 @@ void main() {
   test('Ranged attacks on a prone faraway target suffer disadvantage', () {
     // Attack 18 versus 2 due to prone farther than 5ft.
     final random = _SequenceRandom([17, 1]);
-    final roll = _cast(
-      _caster(),
-      random,
-      prone: true,
-      targetArmorClass: 14,
-    );
+    final roll = _cast(_caster(), random, prone: true, targetArmorClass: 14);
     expect(roll.attackRoll.rolls, [18, 2]);
     expect(roll.attackRoll.natural, 2);
     expect(roll.hit, isFalse);
@@ -255,10 +243,7 @@ void main() {
       Campaign.fromJson(result.campaign.toJson()).toJson(),
       result.campaign.toJson(),
     );
-    expect(
-      () => _engine(engine, result.campaign),
-      throwsFormatException,
-    );
+    expect(() => _engine(engine, result.campaign), throwsFormatException);
   });
 
   test('Combat validates turn and target before consuming RNG', () {

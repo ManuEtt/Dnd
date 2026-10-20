@@ -165,15 +165,20 @@ class _FireBoltDialogState extends State<FireBoltDialog> {
             _check('visible', 'Das Ziel ist sichtbar.', _visible, (v) {
               _visible = v;
             }),
-            _check('range', 'Das Ziel ist innerhalb von 120 Fuß.', _withinRange, (
-              v,
-            ) {
-              _withinRange = v;
-            }),
+            _check(
+              'range',
+              'Das Ziel ist innerhalb von 120 Fuß.',
+              _withinRange,
+              (v) {
+                _withinRange = v;
+              },
+            ),
             _check('verbal', 'Verbale Komponente ist möglich.', _verbal, (v) {
               _verbal = v;
             }),
-            _check('somatic', 'Gestische Komponente ist möglich.', _somatic, (v) {
+            _check('somatic', 'Gestische Komponente ist möglich.', _somatic, (
+              v,
+            ) {
               _somatic = v;
             }),
             _check(
@@ -223,7 +228,8 @@ class _FireBoltDialogState extends State<FireBoltDialog> {
       ),
       FilledButton(
         key: const ValueKey('fire-bolt-cast'),
-        onPressed: _castingClass == null ||
+        onPressed:
+            _castingClass == null ||
                 _setupError != null ||
                 FireBoltRules.preparedName(widget.hero) == null
             ? null
