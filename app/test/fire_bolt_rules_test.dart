@@ -280,6 +280,8 @@ void main() {
         enemyMaxHitPoints: 50,
         enemyArmorClass: 15,
         enemyShieldActive: true,
+        enemyShieldReactionUsed: true,
+        enemyShieldSlotsRemaining: 0,
       ),
     );
     final result = _engine(engine, game);
