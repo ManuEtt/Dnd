@@ -1,0 +1,41 @@
+name: Temporary Sacred Flame Dart Formatter
+
+on:
+  push:
+    branches:
+      - feature/srd-sacred-flame-save-20261020
+    paths:
+      - .github/workflows/format-sacred-flame.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: github.repository == 'ManuEtt/Dnd'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/srd-sacred-flame-save-20261020
+          persist-credentials: true
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Official Dart format for new saving throw files
+        shell: bash
+        run: |
+          set -euo pipefail
+          dart format app/lib/domain/srd_spell_saving_throw_rules.dart app/lib/domain/sacred_flame_rules.dart app/lib/domain/game_engine.dart app/lib/services/game_controller.dart app/lib/ui/sacred_flame_dialog.dart app/lib/ui/app.dart app/test/sacred_flame_rules_test.dart app/test/sacred_flame_dialog_test.dart
+          dart format --output=none --set-exit-if-changed app/lib/domain/srd_spell_saving_throw_rules.dart app/lib/domain/sacred_flame_rules.dart app/lib/domain/game_engine.dart app/lib/services/game_controller.dart app/lib/ui/sacred_flame_dialog.dart app/lib/ui/app.dart app/test/sacred_flame_rules_test.dart app/test/sacred_flame_dialog_test.dart
+          git diff --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- app/lib/domain/srd_spell_saving_throw_rules.dart app/lib/domain/sacred_flame_rules.dart app/lib/domain/game_engine.dart app/lib/services/game_controller.dart app/lib/ui/sacred_flame_dialog.dart app/lib/ui/app.dart app/test/sacred_flame_rules_test.dart app/test/sacred_flame_dialog_test.dart
+          if ! git diff --cached --quiet; then
+            git commit -m 'style(spells): format Sacred Flame saving throw code'
+            git push origin HEAD:feature/srd-sacred-flame-save-20261020
+          fi
