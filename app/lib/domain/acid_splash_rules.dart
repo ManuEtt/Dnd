@@ -162,6 +162,13 @@ class AcidSplashRules {
           target.hitPoints > target.maxHitPoints ||
           target.dexteritySaveModifier < -30 ||
           target.dexteritySaveModifier > 30 ||
+          target.dexteritySaveModifier +
+                  CoverRules.savingThrowBonus(
+                    target.cover,
+                    ability: 'dexterity',
+                    sourceOppositeCover: target.sourceOppositeCover,
+                  ) >
+              30 ||
           !target.coverRelationshipConfirmed ||
           !target.inSphereConfirmed ||
           !target.effectPathConfirmed ||
