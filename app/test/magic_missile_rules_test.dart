@@ -213,7 +213,7 @@ void main() {
         encounter: _fight.copyWith(enemyCover: CoverLevel.total),
       ),
       initial.copyWith(
-        pendingRoll: const PendingRoll(id: 'roll', type: 'attack', modifier: 0),
+        pendingRoll: const PendingRoll(id: 'roll', type: 'attack', modifier: 0, difficulty: 10),
       ),
     ];
     for (final game in invalid) {
