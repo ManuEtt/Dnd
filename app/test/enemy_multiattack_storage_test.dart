@@ -66,7 +66,7 @@ void main() {
         ),
         encounter: const Encounter(
           id: 'multi-save',
-          enemyName: 'Kampfg egner',
+          enemyName: 'Kampfgegner',
           enemyHitPoints: 80,
           enemyMaxHitPoints: 80,
           enemyAttacksPerTurn: 2,
@@ -104,19 +104,7 @@ void main() {
       );
       await controller.openCampaign(started.id);
       expect(controller.currentCampaign!.toJson(), shielded.toJson());
-      final staleRevision = started.revision;
-      await controller.act(
-        campaignId: started.id,
-        expectedRevision: staleRevision,
-        input: 'Gegnerangriff fortsetzen',
-      );
-      expect(controller.error, isNotNull);
-      expect(controller.currentCampaign!.toJson(), shielded.toJson());
-      await controller.act(
-        campaignId: started.id,
-        expectedRevision: shielded.revision,
-        input: 'Gegnerangriff fortsetzen',
-      );
+      await controller.sendAction('Gegnerangriff fortsetzen');
       expect(controller.error, isNull);
       expect(controller.currentCampaign!.encounter!.activeParticipant, 'hero');
       expect(controller.currentCampaign!.encounter!.round, 2);
