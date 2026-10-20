@@ -1,3 +1,11 @@
+## Abschluss – erfolgreich ausgeführt und erneut überprüft
+
+**Branch-Bereinigung verifiziert (20.10.2026):** Alle neun historischen Feature-/Dokumentationsbranches waren bereits in `main` enthalten (`ahead_by=0`) und wurden über den geprüften einmaligen [GitHub-Actions-Lauf #39392381240](https://github.com/ManuEtt/Dnd/actions/runs/39392381240) entfernt. Auch der kurzlebige Maintenance-Branch ist gelöscht. Die GitHub-Branchliste wurde danach erneut gelesen: **nur `main` vorhanden**. Implementierte Features, Merge-Commits und Pull Requests bleiben erhalten; nichts wurde neu gecherry-pickt. Der temporäre Löschworkflow wurde nach erfolgreicher Bereinigung aus dem Hauptbranch entfernt. Prüfdokument: [`docs/BRANCH_RETIREMENT_20261020.md`](docs/BRANCH_RETIREMENT_20261020.md).
+
+**Geprüfter Maintenance-PR:** [#48](https://github.com/ManuEtt/Dnd/pull/48); vollständige Projekt-CI [#39391315599](https://github.com/ManuEtt/Dnd/actions/runs/39391315599) erfolgreich; Merge-Commit `28621b516d2d8ce33c80ce4a796b1d8d860fd788`. Einziger verbleibender Branch nach Löschung: `main`. Dies ist der **tatsächlich bestätigte Endzustand**, nicht nur eine geplante Ausführung. Der privilegierte Einmal-Workflow wurde anschließend wieder aus dem Repository entfernt; Sicherheitsprüfskript und Offline-Tests bleiben als überprüfbare Historie bestehen.
+
+---
+
 # Branch-Konsolidierung – 20.10.2026
 
 **Unveränderter Hauptbranch vor Bereinigung:** `420fc1344a599a69ab17b71b46cf597793f8c48c` (`main`). Die GitHub-API lieferte genau zehn Branches (inkl. `main`), Seite 2 leer. Alle neun Nicht-main-Branches wurden über `compare/main...<branch>` geprüft: **ahead_by = 0**, status `behind` und jeweiliger HEAD-Commit bereits Vorfahr von `main`. GitHub-PR-Historie #39–#47 weist vollständige Merges aus. Dadurch gehen beim Entfernen der Zeiger **keine Commits verloren**. Es sind keine nachträglichen Cherry-Picks nötig.

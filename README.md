@@ -4,6 +4,10 @@
 
 > **Projektstatus (20. Oktober 2026):** Aktive **Android-Alpha**, in Entwicklung. Im Flutter-Quellprojekt steht **Version `0.8.18+68`** (Version 0.8.18, Build 68); verbindlich ist immer [`app/pubspec.yaml`](app/pubspec.yaml). Diese Quellcode-Version bedeutet **nicht**, dass eine identisch geprüfte oder veröffentlichte APK bereits auf jedem Gerät installiert ist. Das vollständige D&D-Regelwerk ist **nicht** implementiert.
 
+## GitHub-Branch-Bereinigung (20.10.2026)
+
+**Branch-Bereinigung verifiziert (20.10.2026):** Alle neun historischen Feature-/Dokumentationsbranches waren bereits in `main` enthalten (`ahead_by=0`) und wurden über den geprüften einmaligen [GitHub-Actions-Lauf #39392381240](https://github.com/ManuEtt/Dnd/actions/runs/39392381240) entfernt. Auch der kurzlebige Maintenance-Branch ist gelöscht. Die GitHub-Branchliste wurde danach erneut gelesen: **nur `main` vorhanden**. Implementierte Features, Merge-Commits und Pull Requests bleiben erhalten; nichts wurde neu gecherry-pickt. Der temporäre Löschworkflow wurde nach erfolgreicher Bereinigung aus dem Hauptbranch entfernt. Prüfdokument: [`docs/BRANCH_RETIREMENT_20261020.md`](docs/BRANCH_RETIREMENT_20261020.md).
+
 ## Inhaltsverzeichnis
 
 - [Funktionsstand](#funktionsstand)
