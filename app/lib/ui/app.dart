@@ -2169,6 +2169,36 @@ class _CombatView extends StatelessWidget {
               icon: const Icon(Icons.sports_martial_arts),
               label: const Text('Angreifen'),
             ),
+            PopupMenuButton<int>(
+              key: const ValueKey('enemy-multiattack-count'),
+              tooltip: 'Bestätigte Gegner-Angriffe',
+              enabled: !busy &&
+                  !encounter.isFinished &&
+                  encounter.activeParticipant == 'hero',
+              onSelected: (count) =>
+                  onAction('Gegner: $count Angriffe'),
+              itemBuilder: (_) => [
+                for (var count = 1; count <= 4; count++)
+                  PopupMenuItem<int>(
+                    value: count,
+                    child: Text('$count bestätigte Gegner-Angriffe'),
+                  ),
+              ],
+              child: Chip(
+                label: Text('Gegner-Angriffe: ${encounter.enemyAttacksPerTurn}'),
+              ),
+            ),
+            if (encounter.activeParticipant == 'enemy' &&
+                encounter.enemyAttacksRemaining > 0)
+              OutlinedButton.icon(
+                key: const ValueKey('enemy-attack-continue'),
+                onPressed: busy ? null : () => onAction('Gegnerangriff fortsetzen'),
+                icon: const Icon(Icons.arrow_forward),
+                label: Text(
+                  'Gegnerangriff fortsetzen '
+                  '(${encounter.enemyAttacksRemaining} übrig)',
+                ),
+              ),
             OutlinedButton.icon(
               key: const ValueKey('combat-end-hero-turn'),
               onPressed:
