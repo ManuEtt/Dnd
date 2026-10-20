@@ -71,7 +71,8 @@ class SrdSpellPreflightRules {
             (hero.hasSecondClass &&
                 findSrdClass(hero.secondaryClassName)?.name == chosenClass &&
                 hero.secondaryClassLevel > 0));
-    if (!hasClass ||
+    if (chosenClass == null ||
+        !hasClass ||
         englishClass == null ||
         !spell.classes.contains(englishClass) ||
         HealingSpellRules.maximumPreparedSpellLevel(hero, chosenClass) <
