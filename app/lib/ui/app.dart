@@ -31,6 +31,7 @@ import 'magic_missile_dialog.dart';
 import 'fire_bolt_dialog.dart';
 import 'sacred_flame_dialog.dart';
 import 'acid_splash_dialog.dart';
+import 'area_creature_registration_dialog.dart';
 import 'healing_spell_dialog.dart';
 import 'death_save_decision_panel.dart';
 import 'fantasy_character_sheet.dart';
@@ -1200,13 +1201,42 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previous);
   }
 
+  Future<void> _trackAreaCreature() async {
+    final campaign = widget.controller.currentCampaign;
+    if (campaign == null ||
+        campaign.encounter == null ||
+        widget.controller.busy) {
+      return;
+    }
+    final creature = await showDialog<TrackedAreaCreature>(
+      context: context,
+      builder: (_) => const AreaCreatureRegistrationDialog(),
+    );
+    if (creature == null || !mounted) return;
+    final previous = _lastMessageId;
+    await widget.controller.trackAreaCreature(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      creatureId: creature.id,
+      creatureName: creature.name,
+      hitPoints: creature.hitPoints,
+      maxHitPoints: creature.maxHitPoints,
+      valuesConfirmed: true,
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
   Future<void> _castAcidSplash() async {
     final campaign = widget.controller.currentCampaign;
     final fight = campaign?.encounter;
     if (campaign == null || fight == null || widget.controller.busy) return;
     final choice = await showDialog<AcidSplashChoice>(
       context: context,
-      builder: (_) => AcidSplashDialog(hero: campaign.hero, encounter: fight),
+      builder: (_) => AcidSplashDialog(
+        hero: campaign.hero,
+        encounter: fight,
+        trackedAreaCreatures: campaign.trackedAreaCreatures,
+      ),
     );
     if (choice == null || !mounted) return;
     final previous = _lastMessageId;
@@ -1229,6 +1259,9 @@ class _AdventurePageState extends State<_AdventurePage> {
       targetSourceOppositeCover: choice.sourceOppositeCover,
       targetSaveAdvantage: choice.saveAdvantage,
       targetSaveDisadvantage: choice.saveDisadvantage,
+      additionalTargets: choice.additionalTargets,
+      allCreaturesInSphereAccountedForConfirmed:
+          choice.everyCreatureInSphereIncludedConfirmed,
     );
     if (mounted) await _afterTurn(previous);
   }
@@ -1593,6 +1626,18 @@ class _AdventurePageState extends State<_AdventurePage> {
                         : _endTurnWithShield,
                     icon: const Icon(Icons.shield_outlined, size: 17),
                     label: const Text('Zug beenden: Schild ggf. wirken'),
+                  ),
+                if (campaign.encounter != null &&
+                    !campaign.encounter!.isFinished)
+                  TextButton.icon(
+                    key: const ValueKey('adventure-register-area-creature'),
+                    onPressed:
+                        widget.controller.busy ||
+                            campaign.trackedAreaCreatures.length >= 19
+                        ? null
+                        : _trackAreaCreature,
+                    icon: const Icon(Icons.group_add_outlined, size: 17),
+                    label: const Text('Kreatur-TP erfassen'),
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&

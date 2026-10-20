@@ -1227,6 +1227,53 @@ class GameEngine {
   /// Cantrip consumes a Magic action but NEVER a spell slot.
   /// SRD 5.2.1 Sacred Flame: a confirmed enemy Dexterity saving throw.
   /// Half and three-quarter cover NEVER grant a bonus for this spell.
+  /// Record an explicit creature's HP without fabricating an actor turn.
+  /// It remains in campaign memory when an encounter is completed.
+  GameUpdate trackAreaCreature(
+    Campaign campaign, {
+    required String creatureId,
+    required String creatureName,
+    required int hitPoints,
+    required int maxHitPoints,
+    required bool valuesConfirmed,
+  }) {
+    if (!valuesConfirmed ||
+        campaign.encounter == null ||
+        campaign.encounter!.isFinished ||
+        campaign.pendingRoll != null ||
+        campaign.pendingDeathSave != null ||
+        campaign.pendingEnemyShieldHit != null ||
+        campaign.hero.isDead ||
+        campaign.trackedAreaCreatures.length >= 19 ||
+        creatureId == campaign.hero.id ||
+        creatureId == campaign.encounter!.id ||
+        campaign.trackedAreaCreatures.any(
+          (creature) => creature.id == creatureId,
+        )) {
+      throw const FormatException(
+        'Eine lebende, eindeutig identifizierte Zusatzkreatur mit '
+        'bestätigten Trefferpunkten ist erforderlich.',
+      );
+    }
+    final creature = TrackedAreaCreature.fromJson({
+      'id': creatureId,
+      'name': creatureName,
+      'hitPoints': hitPoints,
+      'maxHitPoints': maxHitPoints,
+    });
+    return _commit(
+      campaign,
+      campaign.copyWith(
+        trackedAreaCreatures: [...campaign.trackedAreaCreatures, creature],
+      ),
+      '${creature.name} als zusätzliche Kreatur mit '
+      '${creature.hitPoints}/${creature.maxHitPoints} TP erfasst. '
+      'Noch keine eigenen Angriffe, Züge oder Positionen.',
+      type: 'combat.areaCreatureTracked',
+      payload: {'creature': creature.toJson(), 'hpOnly': true},
+    );
+  }
+
   /// SRD 5.2.1 Acid Splash. The domain resolver supports all confirmed
   /// creatures in a sphere. The current Encounter persists only ONE live foe,
   /// so this action is intentionally restricted to an expressly isolated foe.
@@ -1247,6 +1294,8 @@ class GameEngine {
     bool targetSourceOppositeCover = false,
     bool targetSaveAdvantage = false,
     bool targetSaveDisadvantage = false,
+    List<AcidSplashTarget> additionalTargets = const [],
+    bool allCreaturesInSphereAccountedForConfirmed = false,
   }) {
     _requireExternalEffect(campaign, 'Säurespritzer');
     final fight = campaign.encounter;
@@ -1264,13 +1313,33 @@ class GameEngine {
         'und eine verfügbare Magieaktion.',
       );
     }
-    // Do not allow a genuine multi-target effect to silently damage only
-    // the current enemy. The untracked creatures need persisted participants.
-    if (!currentEnemyIsOnlyCreatureInSphereConfirmed) {
-      throw const FormatException(
-        'Mehrere Kreaturen in der Kugel benötigen einen gespeicherten '
-        'Mehrgegnerkampf. Keine Teilauflösung ohne deren Trefferpunkte.',
-      );
+    // Preserve the existing one-foe contract. Every additional creature
+    // must be already saved and supplied with an exact current HP snapshot.
+    if (additionalTargets.isEmpty) {
+      if (!currentEnemyIsOnlyCreatureInSphereConfirmed) {
+        throw const FormatException(
+          'Weitere Kugelziele müssen mit bestätigten TP gespeichert sein.',
+        );
+      }
+    } else {
+      if (currentEnemyIsOnlyCreatureInSphereConfirmed ||
+          !allCreaturesInSphereAccountedForConfirmed ||
+          additionalTargets.length > 19 ||
+          additionalTargets.any((target) {
+            final matches = campaign.trackedAreaCreatures.where(
+              (creature) => creature.id == target.id,
+            );
+            return matches.length != 1 ||
+                matches.single.name != target.name ||
+                matches.single.hitPoints != target.hitPoints ||
+                matches.single.maxHitPoints != target.maxHitPoints ||
+                target.id == fight.id;
+          })) {
+        throw const FormatException(
+          'Mehrziel-Kugel: Alle Kreaturen und aktuellen Trefferpunkte '
+          'müssen im Kampagnenspeicher bestätigt sein.',
+        );
+      }
     }
     final result = AcidSplashRules.cast(
       campaign.hero,
@@ -1293,15 +1362,28 @@ class GameEngine {
           saveAdvantage: targetSaveAdvantage,
           saveDisadvantage: targetSaveDisadvantage,
         ),
+        ...additionalTargets,
       ],
       sphereOriginWithinRangeConfirmed: originWithin60FeetConfirmed,
-      everyCreatureInSphereIncludedConfirmed:
-          currentEnemyIsOnlyCreatureInSphereConfirmed,
+      everyCreatureInSphereIncludedConfirmed: additionalTargets.isEmpty
+          ? currentEnemyIsOnlyCreatureInSphereConfirmed
+          : allCreaturesInSphereAccountedForConfirmed,
       verbalComponentConfirmed: verbalComponentConfirmed,
       somaticComponentConfirmed: somaticComponentConfirmed,
       noUnmodelledDcModifiersConfirmed: noUnmodelledDcModifiersConfirmed,
     );
-    final impact = result.targets.single;
+    final impact = result.targets.first;
+    final extraImpacts = {
+      for (final target in result.targets.skip(1)) target.id: target,
+    };
+    final updatedCreatures = [
+      for (final creature in campaign.trackedAreaCreatures)
+        extraImpacts.containsKey(creature.id)
+            ? creature.copyWith(
+                hitPoints: extraImpacts[creature.id]!.hitPointsAfter,
+              )
+            : creature,
+    ];
     final payload = <String, dynamic>{
       'spellName': 'Säurespritzer',
       'spellLevel': 0,
@@ -1314,7 +1396,7 @@ class GameEngine {
       'rangeFeet': 60,
       'areaOriginWithinRangeConfirmed': true,
       'allCreaturesWithinSphereConfirmed': true,
-      'targetIds': [fight.id],
+      'targetIds': [for (final target in result.targets) target.id],
       'savingThrowAbility': 'dexterity',
       'savingThrowDc': result.dc,
       'targetResolutions': [
@@ -1322,18 +1404,24 @@ class GameEngine {
       ],
       'damageRoll': result.damageRoll?.toJson(),
       'damageType': 'acid',
-      'totalDamage': impact.damage,
+      'totalDamage': result.targets.fold<int>(
+        0,
+        (sum, target) => sum + target.damage,
+      ),
       'enemyHitPoints': impact.hitPointsAfter,
       'noSpellSlotSpent': true,
     };
     var next = campaign.copyWith(
       hero: result.hero,
+      trackedAreaCreatures: updatedCreatures,
       encounter: fight.copyWith(
         enemyHitPoints: impact.hitPointsAfter,
         actionUsed: true,
       ),
     );
     if (impact.hitPointsAfter == 0) {
+      // These other HP records are not enemy turns. Keep them in the
+      // campaign even when the primary encounter is won and removed.
       next = _afterFlurryVictory(next, payload);
     }
     return _commit(

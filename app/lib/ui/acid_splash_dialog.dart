@@ -4,9 +4,8 @@ import '../domain/acid_splash_rules.dart';
 import '../domain/cover_rules.dart';
 import '../domain/models.dart';
 
-/// Confirmation-only form. A stored Encounter currently has one active foe.
-/// The multi-target rule engine is ready, but this UI MUST NOT resolve a
-/// genuine multi-creature Sphere without HP storage for every creature.
+/// Manual HP-only targets can join the saved foe, with verified save/cover.
+/// The editor does not infer positions, monster traits or initiative.
 class AcidSplashChoice {
   const AcidSplashChoice({
     required this.castingClass,
@@ -23,6 +22,8 @@ class AcidSplashChoice {
     required this.sourceOppositeCover,
     required this.saveAdvantage,
     required this.saveDisadvantage,
+    required this.additionalTargets,
+    required this.everyCreatureInSphereIncludedConfirmed,
   });
 
   final String castingClass;
@@ -32,6 +33,8 @@ class AcidSplashChoice {
   final bool saveCircumstancesConfirmed, coverRelationshipConfirmed;
   final bool effectPathConfirmed, noAcidDamageAdjustmentConfirmed;
   final bool sourceOppositeCover, saveAdvantage, saveDisadvantage;
+  final List<AcidSplashTarget> additionalTargets;
+  final bool everyCreatureInSphereIncludedConfirmed;
 }
 
 class AcidSplashDialog extends StatefulWidget {
@@ -39,10 +42,12 @@ class AcidSplashDialog extends StatefulWidget {
     super.key,
     required this.hero,
     required this.encounter,
+    this.trackedAreaCreatures = const [],
   });
 
   final HeroCharacter hero;
   final Encounter encounter;
+  final List<TrackedAreaCreature> trackedAreaCreatures;
 
   @override
   State<AcidSplashDialog> createState() => _AcidSplashDialogState();
@@ -56,10 +61,23 @@ class _AcidSplashDialogState extends State<AcidSplashDialog> {
   bool _dc = false, _circumstances = false, _coverConfirmed = false;
   bool _effectPath = false, _acidDefense = false, _oppositeCover = false;
   bool _advantage = false, _disadvantage = false;
+  bool _allIncluded = false;
+  final _extraSelected = <String>{};
+  final _extraModifiers = <String, TextEditingController>{};
+  final _extraCovers = <String, CoverLevel?>{};
+  final _extraVerified = <String>{};
+  final _extraOpposite = <String>{};
+  final _extraAdvantage = <String>{};
+  final _extraDisadvantage = <String>{};
 
   @override
   void initState() {
     super.initState();
+    for (final creature in widget.trackedAreaCreatures) {
+      if (creature.hitPoints > 0) {
+        _extraModifiers[creature.id] = TextEditingController();
+      }
+    }
     try {
       _classes = AcidSplashRules.castingClasses(widget.hero);
       if (_classes.isNotEmpty) _selectedClass = _classes.first;
@@ -73,6 +91,9 @@ class _AcidSplashDialogState extends State<AcidSplashDialog> {
   @override
   void dispose() {
     _dexModifier.dispose();
+    for (final controller in _extraModifiers.values) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -96,13 +117,53 @@ class _AcidSplashDialogState extends State<AcidSplashDialog> {
 
   void _confirm() {
     final modifier = int.tryParse(_dexModifier.text.trim());
+    final additions = <AcidSplashTarget>[];
+    for (final creature in widget.trackedAreaCreatures) {
+      if (!_extraSelected.contains(creature.id)) continue;
+      final targetSave = int.tryParse(
+        _extraModifiers[creature.id]?.text.trim() ?? '',
+      );
+      final cover = _extraCovers[creature.id];
+      if (targetSave == null ||
+          targetSave < -30 ||
+          targetSave > 30 ||
+          cover == null ||
+          cover == CoverLevel.total ||
+          !_extraVerified.contains(creature.id)) {
+        setState(
+          () => _error =
+              'Für jedes ausgewählte Zusatz-Ziel den GES-Bonus, '
+              'den Deckungsgrad und alle Defensivwerte bestätigen.',
+        );
+        return;
+      }
+      additions.add(
+        AcidSplashTarget(
+          id: creature.id,
+          name: creature.name,
+          hitPoints: creature.hitPoints,
+          maxHitPoints: creature.maxHitPoints,
+          dexteritySaveModifier: targetSave,
+          cover: cover,
+          sourceOppositeCover: _extraOpposite.contains(creature.id),
+          coverRelationshipConfirmed: true,
+          inSphereConfirmed: true,
+          effectPathConfirmed: true,
+          noAcidDamageAdjustmentConfirmed: true,
+          saveCircumstancesConfirmed: true,
+          saveAdvantage: _extraAdvantage.contains(creature.id),
+          saveDisadvantage: _extraDisadvantage.contains(creature.id),
+        ),
+      );
+    }
+    final isMulti = additions.isNotEmpty;
     if (modifier == null ||
         modifier < -30 ||
         modifier > 30 ||
         _selectedClass == null ||
         _setupError != null ||
         !_origin ||
-        !_only ||
+        (isMulti ? !_allIncluded || _only : !_only) ||
         !_verbal ||
         !_somatic ||
         !_dc ||
@@ -115,8 +176,8 @@ class _AcidSplashDialogState extends State<AcidSplashDialog> {
         () => _error =
             'GES-Rettungswurfbonus (−30 bis +30) und alle '
             'tatsächlich zutreffenden Voraussetzungen bestätigen. '
-            'Bei mehreren Kreaturen in der Kugel ist dieser '
-            'Einzelgegner-Ablauf nicht zulässig.',
+            'Bei mehreren Kreaturen alle getroffenen Wesen '
+            'einschließlich Verbündeter vollständig erfassen.',
       );
       return;
     }
@@ -136,6 +197,8 @@ class _AcidSplashDialogState extends State<AcidSplashDialog> {
         sourceOppositeCover: _oppositeCover,
         saveAdvantage: _advantage,
         saveDisadvantage: _disadvantage,
+        additionalTargets: additions,
+        everyCreatureInSphereIncludedConfirmed: isMulti && _allIncluded,
       ),
     );
   }
@@ -154,9 +217,10 @@ class _AcidSplashDialogState extends State<AcidSplashDialog> {
               'SRD 2024: Kugel, Radius 5 Fuß (1,5 m), '
               'Ursprung bis 60 Fuß. Jede Kreatur würfelt einen GES-'
               'Rettungswurf. Alle fehlgeschlagenen Würfe erhalten '
-              'denselben W6-Schadenswurf. Aktuell kann nur '
-              'der gespeicherte Gegner als einziges Kugelziel '
-              'im Kampf verarbeitet werden: ${widget.encounter.enemyName}.',
+              'denselben W6-Schadenswurf. Gespeicherter Gegner: '
+              '${widget.encounter.enemyName}. Weitere manuell erfasste '
+              'Kreaturen können einbezogen werden. Keine automatische '
+              'Erkennung von Positionen oder Monsterfähigkeiten.',
             ),
             const SizedBox(height: 8),
             if (_setupError != null) Text(_setupError!),
@@ -194,8 +258,8 @@ class _AcidSplashDialogState extends State<AcidSplashDialog> {
             ),
             _check(
               'only',
-              'Der angezeigte Gegner ist die EINZIGE Kreatur in der '
-                  'gesamten Kugel, einschließlich Verbündeter.',
+              'Der Hauptgegner ist die EINZIGE Kreatur in der Kugel '
+                  '(nur bei keinem weiteren Ziel anhaken).',
               _only,
               (v) => _only = v,
             ),
@@ -262,6 +326,100 @@ class _AcidSplashDialogState extends State<AcidSplashDialog> {
               _disadvantage,
               (v) => _disadvantage = v,
             ),
+            if (_extraModifiers.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              const Text(
+                'Weitere gespeicherte Kugelziele',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              for (final creature in widget.trackedAreaCreatures)
+                if (creature.hitPoints > 0) ...[
+                  CheckboxListTile(
+                    key: ValueKey('acid-extra-select-${creature.id}'),
+                    title: Text(
+                      '${creature.name} '
+                      '(${creature.hitPoints}/${creature.maxHitPoints} TP)',
+                    ),
+                    value: _extraSelected.contains(creature.id),
+                    onChanged: (v) => setState(() {
+                      if (v ?? false) {
+                        _extraSelected.add(creature.id);
+                      } else {
+                        _extraSelected.remove(creature.id);
+                      }
+                      _error = null;
+                    }),
+                  ),
+                  if (_extraSelected.contains(creature.id)) ...[
+                    TextField(
+                      key: ValueKey('acid-extra-save-${creature.id}'),
+                      controller: _extraModifiers[creature.id],
+                      keyboardType: const TextInputType.numberWithOptions(
+                        signed: true,
+                      ),
+                      decoration: InputDecoration(
+                        labelText: 'GES-Rettungswurfbonus ${creature.name}',
+                      ),
+                    ),
+                    DropdownButtonFormField<CoverLevel>(
+                      key: ValueKey('acid-extra-cover-${creature.id}'),
+                      initialValue: _extraCovers[creature.id],
+                      decoration: const InputDecoration(
+                        labelText: 'Deckung vom Kugel-Ursprung',
+                      ),
+                      items: [
+                        for (final cover in CoverLevel.values)
+                          DropdownMenuItem(
+                            value: cover,
+                            child: Text(CoverRules.label(cover)),
+                          ),
+                      ],
+                      onChanged: (v) =>
+                          setState(() => _extraCovers[creature.id] = v),
+                    ),
+                    _check(
+                      'extra-opposite-${creature.id}',
+                      'Deckung liegt zwischen diesem Ziel und Ursprung.',
+                      _extraOpposite.contains(creature.id),
+                      (v) => v
+                          ? _extraOpposite.add(creature.id)
+                          : _extraOpposite.remove(creature.id),
+                    ),
+                    _check(
+                      'extra-adv-${creature.id}',
+                      'Bestätigter Rettungswurf-Vorteil.',
+                      _extraAdvantage.contains(creature.id),
+                      (v) => v
+                          ? _extraAdvantage.add(creature.id)
+                          : _extraAdvantage.remove(creature.id),
+                    ),
+                    _check(
+                      'extra-disadv-${creature.id}',
+                      'Bestätigter Rettungswurf-Nachteil.',
+                      _extraDisadvantage.contains(creature.id),
+                      (v) => v
+                          ? _extraDisadvantage.add(creature.id)
+                          : _extraDisadvantage.remove(creature.id),
+                    ),
+                    _check(
+                      'extra-confirm-${creature.id}',
+                      'Kugelzugehörigkeit, Wirkpfad, Deckung, Rettungs-'
+                          'umstände und Säureabwehr dieses Ziels geprüft.',
+                      _extraVerified.contains(creature.id),
+                      (v) => v
+                          ? _extraVerified.add(creature.id)
+                          : _extraVerified.remove(creature.id),
+                    ),
+                  ],
+                ],
+              _check(
+                'all-included',
+                'ALLE Kreaturen in der Kugel, auch Verbündete, sind '
+                    'als Haupt- oder Zusatz-Ziele erfasst.',
+                _allIncluded,
+                (v) => _allIncluded = v,
+              ),
+            ],
             if (_error != null)
               Text(_error!, style: const TextStyle(color: Colors.redAccent)),
           ],

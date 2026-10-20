@@ -1,3 +1,12 @@
+## 20.10.2026 – Version 0.8.26+76 (Zusätzliche Kreaturen für Flächenzauber – CI offen)
+
+- Separate bestätigte Kreaturen mit ID/Name/TP können im Kampagnen-Spielstand erfasst und von Säurespritzer gemeinsam mit dem Hauptgegner getroffen werden. Eindeutige IDs, unveränderliche Speicherlisten, alte schema-1-Speicherstände.
+- Individuelle GES-Rettungswürfe/Deckung, ein gemeinsamer Flächenschadenswurf, separate neue TP und gemeinsamer persistenter Kampfjournal-Eintrag.
+- Neue UI für HP-Erfassung, zusätzliche Zielauswahl und pro-Ziel-Prüfung; Tests für Duplikate, veraltete Werte, ältere Spielstände und gleichzeitige HP-Änderungen.
+- Kein bereits vollständiger Mehrgegnerkampf: zusätzliche Kreaturen bleiben HP-geführte Flächenziele ohne automatische Aktionen und Initiative. Android-Geräteabnahme noch offen.
+
+---
+
 ## 20.10.2026 – Version 0.8.25+75 (Säurespritzer / Mehrziel-Regelkern, CI ausstehend)
 
 - Neues reines Regelmodul `AcidSplashRules`: 2024er 5-Fuß-Radius-Kugel mit eigenen GES-Rettungswürfen pro bestätigter Kreatur, nur **einem** gemeinsam verwendeten 1–4W6-Säureschadenswurf pro gleichzeitiger Wirkung und individueller HP-Berechnung.

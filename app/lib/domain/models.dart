@@ -1776,6 +1776,57 @@ class Encounter {
   }
 }
 
+/// Explicitly recorded additional creature HP for area effects.
+///
+/// These are NOT fully simulated encounter actors: no initiative, attack,
+/// position, defenses, spell slots or action economy can be inferred.
+class TrackedAreaCreature {
+  const TrackedAreaCreature({
+    required this.id,
+    required this.name,
+    required this.hitPoints,
+    required this.maxHitPoints,
+  });
+
+  final String id, name;
+  final int hitPoints, maxHitPoints;
+
+  TrackedAreaCreature copyWith({int? hitPoints}) => TrackedAreaCreature(
+    id: id,
+    name: name,
+    hitPoints: hitPoints ?? this.hitPoints,
+    maxHitPoints: maxHitPoints,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'hitPoints': hitPoints,
+    'maxHitPoints': maxHitPoints,
+  };
+
+  factory TrackedAreaCreature.fromJson(Map<String, dynamic> j) {
+    final id = _string(j['id'], 'Zusätzliche Kreatur-ID');
+    final name = _string(j['name'], 'Zusätzliche Kreatur');
+    final maxHp = _int(j['maxHitPoints'], 'Kreatur-Maximum', min: 1);
+    final hp = _int(j['hitPoints'], 'Kreatur-TP', max: maxHp);
+    if (id.isEmpty ||
+        id.length > 128 ||
+        name.trim().isEmpty ||
+        name.length > 128) {
+      throw const FormatException(
+        'Zusätzliche Kreatur braucht eine eindeutige ID und einen Namen.',
+      );
+    }
+    return TrackedAreaCreature(
+      id: id,
+      name: name,
+      hitPoints: hp,
+      maxHitPoints: maxHp,
+    );
+  }
+}
+
 class Campaign {
   Campaign({
     required this.id,
@@ -1794,6 +1845,7 @@ class Campaign {
     List<WorldNpc> npcs = const [],
     List<Place> places = const [],
     List<GameEvent> events = const [],
+    List<TrackedAreaCreature> trackedAreaCreatures = const [],
     this.pendingRoll,
     this.pendingDeathSave,
     this.pendingEnemyShieldHit,
@@ -1809,7 +1861,8 @@ class Campaign {
        npcRelationshipNotes = List.unmodifiable(npcRelationshipNotes),
        npcs = List.unmodifiable(npcs),
        places = List.unmodifiable(places),
-       events = List.unmodifiable(events);
+       events = List.unmodifiable(events),
+       trackedAreaCreatures = List.unmodifiable(trackedAreaCreatures);
   final String id, name, world, sessionId, scene;
   final HeroCharacter hero;
   final List<NarrativeMessage> messages;
@@ -1822,6 +1875,9 @@ class Campaign {
   final List<WorldNpc> npcs;
   final List<Place> places;
   final List<GameEvent> events;
+
+  /// HP-only additional creatures, persistent even if the main fight ends.
+  final List<TrackedAreaCreature> trackedAreaCreatures;
   final PendingRoll? pendingRoll;
   final PendingDeathSave? pendingDeathSave;
   final PendingEnemyShieldHit? pendingEnemyShieldHit;
@@ -1842,6 +1898,7 @@ class Campaign {
     List<WorldNpc>? npcs,
     List<Place>? places,
     List<GameEvent>? events,
+    List<TrackedAreaCreature>? trackedAreaCreatures,
     Object? pendingRoll = _unchanged,
     Object? pendingDeathSave = _unchanged,
     Object? pendingEnemyShieldHit = _unchanged,
@@ -1865,6 +1922,7 @@ class Campaign {
     npcs: npcs ?? this.npcs,
     places: places ?? this.places,
     events: events ?? this.events,
+    trackedAreaCreatures: trackedAreaCreatures ?? this.trackedAreaCreatures,
     pendingRoll: identical(pendingRoll, _unchanged)
         ? this.pendingRoll
         : pendingRoll as PendingRoll?,
@@ -1902,6 +1960,10 @@ class Campaign {
     'npcs': npcs.map((e) => e.toJson()).toList(),
     'places': places.map((e) => e.toJson()).toList(),
     'events': events.map((e) => e.toJson()).toList(),
+    if (trackedAreaCreatures.isNotEmpty)
+      'trackedAreaCreatures': trackedAreaCreatures
+          .map((e) => e.toJson())
+          .toList(),
     'pendingRoll': pendingRoll?.toJson(),
     if (pendingDeathSave != null)
       'pendingDeathSave': pendingDeathSave!.toJson(),
@@ -1936,6 +1998,20 @@ class Campaign {
     final encounter = j['encounter'] == null
         ? null
         : Encounter.fromJson(_map(j['encounter'], 'Kampf'));
+    final trackedAreaCreatures = _list(
+      j['trackedAreaCreatures'],
+      'Zusätzliche Kreaturen',
+    ).map((e) => TrackedAreaCreature.fromJson(_map(e, 'Kreatur'))).toList();
+    if (trackedAreaCreatures.length > 19 ||
+        trackedAreaCreatures.map((e) => e.id).toSet().length !=
+            trackedAreaCreatures.length ||
+        trackedAreaCreatures.any(
+          (e) => e.id == hero.id || (encounter != null && e.id == encounter.id),
+        )) {
+      throw const FormatException(
+        'Ungültige Anzahl oder doppelte IDs zusätzlicher Kreaturen.',
+      );
+    }
     final pendingEnemyShieldHit = j['pendingEnemyShieldHit'] == null
         ? null
         : PendingEnemyShieldHit.fromJson(
@@ -2234,6 +2310,7 @@ class Campaign {
         'Orte',
       ).map((e) => Place.fromJson(_map(e, 'Ort'))).toList(),
       events: events,
+      trackedAreaCreatures: trackedAreaCreatures,
       pendingRoll: pending,
       pendingDeathSave: deathChoice,
       pendingEnemyShieldHit: pendingEnemyShieldHit,

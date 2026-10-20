@@ -6,6 +6,7 @@ import '../data/campaign_repository.dart';
 import '../domain/game_engine.dart';
 import '../domain/ai_story.dart';
 import '../domain/models.dart';
+import '../domain/acid_splash_rules.dart';
 import '../domain/hero_shield_reaction_rules.dart';
 import '../domain/damage_rules.dart';
 import '../domain/enemy_force_defense.dart';
@@ -466,6 +467,28 @@ class GameController extends ChangeNotifier {
     );
   });
 
+  Future<void> trackAreaCreature({
+    required String campaignId,
+    required int expectedRevision,
+    required String creatureId,
+    required String creatureName,
+    required int hitPoints,
+    required int maxHitPoints,
+    required bool valuesConfirmed,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.trackAreaCreature(
+        current,
+        creatureId: creatureId,
+        creatureName: creatureName,
+        hitPoints: hitPoints,
+        maxHitPoints: maxHitPoints,
+        valuesConfirmed: valuesConfirmed,
+      ),
+    );
+  });
+
   Future<void> castAcidSplash({
     required String campaignId,
     required int expectedRevision,
@@ -483,6 +506,8 @@ class GameController extends ChangeNotifier {
     bool targetSourceOppositeCover = false,
     bool targetSaveAdvantage = false,
     bool targetSaveDisadvantage = false,
+    List<AcidSplashTarget> additionalTargets = const [],
+    bool allCreaturesInSphereAccountedForConfirmed = false,
   }) => _run(() async {
     final current = _effectCampaign(campaignId, expectedRevision);
     await _commit(
@@ -504,6 +529,9 @@ class GameController extends ChangeNotifier {
         targetSourceOppositeCover: targetSourceOppositeCover,
         targetSaveAdvantage: targetSaveAdvantage,
         targetSaveDisadvantage: targetSaveDisadvantage,
+        additionalTargets: additionalTargets,
+        allCreaturesInSphereAccountedForConfirmed:
+            allCreaturesInSphereAccountedForConfirmed,
       ),
     );
   });
