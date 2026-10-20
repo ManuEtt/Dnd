@@ -1366,6 +1366,7 @@ class Encounter {
   /// Null means unknown; never invent monster spell slots.
   final int? enemyShieldSlotsRemaining;
   final bool enemyShieldReactionUsed, enemyShieldActive;
+
   /// Explicitly confirmed from a monster profile, not inferred from narration.
   final int enemyAttacksPerTurn, enemyAttacksRemaining;
   final bool enemyTurnAdvanceRound, heroShieldActive;

@@ -33,87 +33,97 @@ const _plan = HeroShieldReactionPlan(
 void main() {
   setUpAll(sqfliteFfiInit);
 
-  test('SQLite-Neustart mitten im Mehrfachzug erhält Schild und Ressourcen', () async {
-    final dir = await Directory.systemTemp.createTemp('multiattack-storage-');
-    final path = p.join(dir.path, 'game.db');
-    var db = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: path,
-    );
-    var controller = GameController(
-      repository: db,
-      engine: GameEngine(dice: DiceEngine(random: _Roll(13))),
-    );
-    try {
-      final demo = GameEngine().createDemo();
-      final started = demo.copyWith(
-        hero: demo.hero.copyWith(
-          className: 'Magier',
-          level: 5,
-          spells: ['Schild'],
-          abilities: const {
-            'strength': 10,
-            'dexterity': 12,
-            'constitution': 14,
-            'intelligence': 16,
-            'wisdom': 12,
-            'charisma': 14,
-          },
-          hitPoints: 20,
-          maxHitPoints: 20,
-          armorClass: 14,
-          speed: 9,
-        ),
-        encounter: const Encounter(
-          id: 'multi-save',
-          enemyName: 'Kampfgegner',
-          enemyHitPoints: 80,
-          enemyMaxHitPoints: 80,
-          enemyAttacksPerTurn: 2,
-          enemyDamage: '1d4',
-        ),
-      );
-      await db.saveCampaign(started, events: started.events);
-      await controller.openCampaign(started.id);
-      final offer = GameEngine(dice: DiceEngine(random: _Roll(13)))
-          .endHeroTurn(started);
-      await db.saveCampaign(offer.campaign, events: offer.events);
-      await controller.openCampaign(started.id);
-      final pending = controller.currentCampaign!;
-      expect(pending.pendingEnemyShieldHit, isNotNull);
-      await controller.resolveEnemyShieldHit(
-        campaignId: pending.id,
-        expectedRevision: pending.revision,
-        plan: _plan,
-      );
-      expect(controller.error, isNull);
-      final shielded = controller.currentCampaign!;
-      expect(shielded.encounter!.heroShieldActive, isTrue);
-      expect(shielded.encounter!.enemyAttacksRemaining, 1);
-      expect(shielded.hero.spentSpellSlots, {'1': 1});
-
-      controller.dispose();
-      await db.close();
-      db = await SqliteCampaignRepository.open(
+  test(
+    'SQLite-Neustart mitten im Mehrfachzug erhält Schild und Ressourcen',
+    () async {
+      final dir = await Directory.systemTemp.createTemp('multiattack-storage-');
+      final path = p.join(dir.path, 'game.db');
+      var db = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: path,
       );
-      controller = GameController(
+      var controller = GameController(
         repository: db,
-        engine: GameEngine(dice: DiceEngine(random: _Roll(16))),
+        engine: GameEngine(dice: DiceEngine(random: _Roll(13))),
       );
-      await controller.openCampaign(started.id);
-      expect(controller.currentCampaign!.toJson(), shielded.toJson());
-      await controller.sendAction('Gegnerangriff fortsetzen');
-      expect(controller.error, isNull);
-      expect(controller.currentCampaign!.encounter!.activeParticipant, 'hero');
-      expect(controller.currentCampaign!.encounter!.round, 2);
-      expect(controller.currentCampaign!.encounter!.heroShieldActive, isFalse);
-      expect(controller.currentCampaign!.hero.spentSpellSlots, {'1': 1});
-    } finally {
-      controller.dispose();
-      await db.close();
-      await dir.delete(recursive: true);
-    }
-  });
+      try {
+        final demo = GameEngine().createDemo();
+        final started = demo.copyWith(
+          hero: demo.hero.copyWith(
+            className: 'Magier',
+            level: 5,
+            spells: ['Schild'],
+            abilities: const {
+              'strength': 10,
+              'dexterity': 12,
+              'constitution': 14,
+              'intelligence': 16,
+              'wisdom': 12,
+              'charisma': 14,
+            },
+            hitPoints: 20,
+            maxHitPoints: 20,
+            armorClass: 14,
+            speed: 9,
+          ),
+          encounter: const Encounter(
+            id: 'multi-save',
+            enemyName: 'Kampfgegner',
+            enemyHitPoints: 80,
+            enemyMaxHitPoints: 80,
+            enemyAttacksPerTurn: 2,
+            enemyDamage: '1d4',
+          ),
+        );
+        await db.saveCampaign(started, events: started.events);
+        await controller.openCampaign(started.id);
+        final offer = GameEngine(
+          dice: DiceEngine(random: _Roll(13)),
+        ).endHeroTurn(started);
+        await db.saveCampaign(offer.campaign, events: offer.events);
+        await controller.openCampaign(started.id);
+        final pending = controller.currentCampaign!;
+        expect(pending.pendingEnemyShieldHit, isNotNull);
+        await controller.resolveEnemyShieldHit(
+          campaignId: pending.id,
+          expectedRevision: pending.revision,
+          plan: _plan,
+        );
+        expect(controller.error, isNull);
+        final shielded = controller.currentCampaign!;
+        expect(shielded.encounter!.heroShieldActive, isTrue);
+        expect(shielded.encounter!.enemyAttacksRemaining, 1);
+        expect(shielded.hero.spentSpellSlots, {'1': 1});
+
+        controller.dispose();
+        await db.close();
+        db = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: path,
+        );
+        controller = GameController(
+          repository: db,
+          engine: GameEngine(dice: DiceEngine(random: _Roll(16))),
+        );
+        await controller.openCampaign(started.id);
+        expect(controller.currentCampaign!.toJson(), shielded.toJson());
+        await controller.sendAction('Gegnerangriff fortsetzen');
+        expect(controller.error, isNull);
+        expect(
+          controller.currentCampaign!.encounter!.activeParticipant,
+          'hero',
+        );
+        expect(controller.currentCampaign!.encounter!.round, 2);
+        expect(
+          controller.currentCampaign!.encounter!.heroShieldActive,
+          isFalse,
+        );
+        expect(controller.currentCampaign!.hero.spentSpellSlots, {'1': 1});
+      } finally {
+        controller.dispose();
+        await db.close();
+        await dir.delete(recursive: true);
+      }
+    },
+  );
 }

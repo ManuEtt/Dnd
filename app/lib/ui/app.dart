@@ -2172,11 +2172,11 @@ class _CombatView extends StatelessWidget {
             PopupMenuButton<int>(
               key: const ValueKey('enemy-multiattack-count'),
               tooltip: 'Bestätigte Gegner-Angriffe',
-              enabled: !busy &&
+              enabled:
+                  !busy &&
                   !encounter.isFinished &&
                   encounter.activeParticipant == 'hero',
-              onSelected: (count) =>
-                  onAction('Gegner: $count Angriffe'),
+              onSelected: (count) => onAction('Gegner: $count Angriffe'),
               itemBuilder: (_) => [
                 for (var count = 1; count <= 4; count++)
                   PopupMenuItem<int>(
@@ -2185,14 +2185,18 @@ class _CombatView extends StatelessWidget {
                   ),
               ],
               child: Chip(
-                label: Text('Gegner-Angriffe: ${encounter.enemyAttacksPerTurn}'),
+                label: Text(
+                  'Gegner-Angriffe: ${encounter.enemyAttacksPerTurn}',
+                ),
               ),
             ),
             if (encounter.activeParticipant == 'enemy' &&
                 encounter.enemyAttacksRemaining > 0)
               OutlinedButton.icon(
                 key: const ValueKey('enemy-attack-continue'),
-                onPressed: busy ? null : () => onAction('Gegnerangriff fortsetzen'),
+                onPressed: busy
+                    ? null
+                    : () => onAction('Gegnerangriff fortsetzen'),
                 icon: const Icon(Icons.arrow_forward),
                 label: Text(
                   'Gegnerangriff fortsetzen '

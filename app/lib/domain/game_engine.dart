@@ -3832,8 +3832,8 @@ class GameEngine {
     // continues normally. Area spells remain separate confirmed effects.
     if (!CoverRules.canTargetDirectly(foe.heroCover)) {
       final nextFight = foe.copyWith(
-        round: foe.round +
-            ((advanceRound || foe.enemyTurnAdvanceRound) ? 1 : 0),
+        round:
+            foe.round + ((advanceRound || foe.enemyTurnAdvanceRound) ? 1 : 0),
         activeParticipant: 'hero',
         enemyAttacksRemaining: 0,
         enemyTurnAdvanceRound: false,
@@ -3918,8 +3918,7 @@ class GameEngine {
           hero: hero,
           encounter: foe.copyWith(
             activeParticipant: 'enemy',
-            enemyTurnAdvanceRound:
-                foe.enemyTurnAdvanceRound || advanceRound,
+            enemyTurnAdvanceRound: foe.enemyTurnAdvanceRound || advanceRound,
           ),
           pendingEnemyShieldHit: PendingEnemyShieldHit(
             encounterId: foe.id,
@@ -4057,7 +4056,8 @@ class GameEngine {
               ? foe.enemyAttacksRemaining - 1
               : foe.enemyAttacksPerTurn - 1)
         : foe.enemyAttacksPerTurn - 1;
-    final anotherAttack = remaining > 0 &&
+    final anotherAttack =
+        remaining > 0 &&
         !hero.isDead &&
         hero.hitPoints != null &&
         hero.hitPoints! > 0;
@@ -4068,9 +4068,9 @@ class GameEngine {
       campaign.copyWith(
         hero: hero,
         encounter: afterTurn.copyWith(
-          round: foe.round +
-              (!anotherAttack &&
-                      (advanceRound || foe.enemyTurnAdvanceRound)
+          round:
+              foe.round +
+              (!anotherAttack && (advanceRound || foe.enemyTurnAdvanceRound)
                   ? 1
                   : 0),
           activeParticipant: anotherAttack ? 'enemy' : 'hero',
@@ -4086,26 +4086,27 @@ class GameEngine {
           actionUsed: anotherAttack ? foe.actionUsed : false,
           attacksRemaining: anotherAttack ? foe.attacksRemaining : 0,
           bonusActionUsed: anotherAttack ? foe.bonusActionUsed : false,
-          lightAttackAvailable: anotherAttack ? foe.lightAttackAvailable : false,
-          spellSlotExpendedThisTurn:
-              anotherAttack ? foe.spellSlotExpendedThisTurn : false,
-          deathSaveResolvedThisTurn:
-              anotherAttack ? foe.deathSaveResolvedThisTurn : false,
+          lightAttackAvailable: anotherAttack
+              ? foe.lightAttackAvailable
+              : false,
+          spellSlotExpendedThisTurn: anotherAttack
+              ? foe.spellSlotExpendedThisTurn
+              : false,
+          deathSaveResolvedThisTurn: anotherAttack
+              ? foe.deathSaveResolvedThisTurn
+              : false,
           dodgeActive: anotherAttack ? foe.dodgeActive : false,
-          disengagedThisTurn:
-              anotherAttack ? foe.disengagedThisTurn : false,
-          jumpDoubledThisTurn:
-              anotherAttack ? foe.jumpDoubledThisTurn : false,
+          disengagedThisTurn: anotherAttack ? foe.disengagedThisTurn : false,
+          jumpDoubledThisTurn: anotherAttack ? foe.jumpDoubledThisTurn : false,
           reactionUsed: anotherAttack
               ? (foe.reactionUsed || shieldUsed)
               : false,
           surgeReserved: anotherAttack ? foe.surgeReserved : false,
           surgeUsedThisTurn: anotherAttack ? foe.surgeUsedThisTurn : false,
-          sneakAttackUsedThisTurn:
-              anotherAttack ? foe.sneakAttackUsedThisTurn : false,
-          selfRestorationChoice: anotherAttack
-              ? foe.selfRestorationChoice
-              : '',
+          sneakAttackUsedThisTurn: anotherAttack
+              ? foe.sneakAttackUsedThisTurn
+              : false,
+          selfRestorationChoice: anotherAttack ? foe.selfRestorationChoice : '',
         ),
         pendingEnemyShieldHit: null,
       ),

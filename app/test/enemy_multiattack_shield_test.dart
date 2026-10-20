@@ -83,10 +83,9 @@ void main() {
   test('Zwei bestätigte Angriffe: jeder eigene W20, Zug endet erst danach', () {
     final random = _SequenceRandom([3, 15]);
     final engine = GameEngine(dice: DiceEngine(random: random));
-    final before = engine.configureEnemyAttacks(
-      _combat(engine, knowsShield: false),
-      2,
-    ).campaign;
+    final before = engine
+        .configureEnemyAttacks(_combat(engine, knowsShield: false), 2)
+        .campaign;
     expect(before.encounter!.enemyAttacksPerTurn, 2);
     expect(before.events.last.type, 'combat.enemyAttackCountConfirmed');
     final first = engine.endHeroTurn(before).campaign;
@@ -104,7 +103,10 @@ void main() {
     expect(resumed.campaign.encounter!.enemyAttacksRemaining, 0);
     expect(resumed.campaign.hero.hitPoints, 19);
     expect(random.attacks, 2);
-    expect(() => engine.continueEnemyTurn(resumed.campaign), throwsFormatException);
+    expect(
+      () => engine.continueEnemyTurn(resumed.campaign),
+      throwsFormatException,
+    );
   });
 
   test('Post-Hit Shield bleibt für folgenden Gegnerangriff aktiv', () {
@@ -114,10 +116,9 @@ void main() {
     final offered = engine.endHeroTurn(before).campaign;
     expect(offered.pendingEnemyShieldHit, isNotNull);
     expect(random.attacks, 1);
-    final parried = engine.resolvePendingEnemyShieldHit(
-      offered,
-      shieldPlan: _shield,
-    ).campaign;
+    final parried = engine
+        .resolvePendingEnemyShieldHit(offered, shieldPlan: _shield)
+        .campaign;
     expect(parried.pendingEnemyShieldHit, isNull);
     expect(parried.encounter!.activeParticipant, 'enemy');
     expect(parried.encounter!.enemyAttacksRemaining, 1);
@@ -169,10 +170,7 @@ void main() {
         throwsFormatException,
       );
     }
-    expect(
-      () => engine.continueEnemyTurn(before),
-      throwsFormatException,
-    );
+    expect(() => engine.continueEnemyTurn(before), throwsFormatException);
     final blocked = before.copyWith(
       encounter: before.encounter!.copyWith(activeParticipant: 'enemy'),
     );
