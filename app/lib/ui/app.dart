@@ -10,6 +10,7 @@ import '../domain/damage_rules.dart';
 import '../domain/magic_missile_rules.dart';
 import '../domain/fire_bolt_rules.dart';
 import '../domain/sacred_flame_rules.dart';
+import '../domain/acid_splash_rules.dart';
 import '../domain/healing_spell_rules.dart';
 import '../domain/saving_throw_class_actions.dart';
 import '../domain/class_resource_rules.dart';
@@ -29,6 +30,7 @@ import '../domain/hero_shield_reaction_rules.dart';
 import 'magic_missile_dialog.dart';
 import 'fire_bolt_dialog.dart';
 import 'sacred_flame_dialog.dart';
+import 'acid_splash_dialog.dart';
 import 'healing_spell_dialog.dart';
 import 'death_save_decision_panel.dart';
 import 'fantasy_character_sheet.dart';
@@ -1198,6 +1200,39 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previous);
   }
 
+  Future<void> _castAcidSplash() async {
+    final campaign = widget.controller.currentCampaign;
+    final fight = campaign?.encounter;
+    if (campaign == null || fight == null || widget.controller.busy) return;
+    final choice = await showDialog<AcidSplashChoice>(
+      context: context,
+      builder: (_) => AcidSplashDialog(hero: campaign.hero, encounter: fight),
+    );
+    if (choice == null || !mounted) return;
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    await widget.controller.castAcidSplash(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      castingClass: choice.castingClass,
+      confirmedTargetDexteritySaveModifier: choice.targetDexteritySaveModifier,
+      originWithin60FeetConfirmed: choice.originWithin60FeetConfirmed,
+      currentEnemyIsOnlyCreatureInSphereConfirmed:
+          choice.onlyCreatureInSphereConfirmed,
+      verbalComponentConfirmed: choice.verbalConfirmed,
+      somaticComponentConfirmed: choice.somaticConfirmed,
+      noUnmodelledDcModifiersConfirmed: choice.noUnmodelledDcConfirmed,
+      targetSaveCircumstancesConfirmed: choice.saveCircumstancesConfirmed,
+      targetCoverRelationshipConfirmed: choice.coverRelationshipConfirmed,
+      effectPathConfirmed: choice.effectPathConfirmed,
+      noAcidDamageAdjustmentConfirmed: choice.noAcidDamageAdjustmentConfirmed,
+      targetSourceOppositeCover: choice.sourceOppositeCover,
+      targetSaveAdvantage: choice.saveAdvantage,
+      targetSaveDisadvantage: choice.saveDisadvantage,
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
   Future<void> _castSacredFlame() async {
     final campaign = widget.controller.currentCampaign;
     final fight = campaign?.encounter;
@@ -1558,6 +1593,25 @@ class _AdventurePageState extends State<_AdventurePage> {
                         : _endTurnWithShield,
                     icon: const Icon(Icons.shield_outlined, size: 17),
                     label: const Text('Zug beenden: Schild ggf. wirken'),
+                  ),
+                if (campaign.encounter != null &&
+                    !campaign.encounter!.isFinished &&
+                    AcidSplashRules.preparedName(campaign.hero) != null)
+                  TextButton.icon(
+                    key: const ValueKey('adventure-cast-acid-splash'),
+                    onPressed:
+                        widget.controller.busy ||
+                            campaign.pendingRoll != null ||
+                            campaign.pendingDeathSave != null ||
+                            campaign.pendingEnemyShieldHit != null ||
+                            campaign.hero.isDead ||
+                            campaign.hero.hitPoints == 0 ||
+                            campaign.encounter!.activeParticipant != 'hero' ||
+                            campaign.encounter!.actionUsed
+                        ? null
+                        : _castAcidSplash,
+                    icon: const Icon(Icons.bubble_chart_outlined, size: 17),
+                    label: const Text('Säurespritzer'),
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&

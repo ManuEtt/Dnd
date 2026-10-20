@@ -1,3 +1,14 @@
+## 20.10.2026 – Säurespritzer: 2024er Flächenzauber-Regelkern (0.8.25+75, CI offen)
+
+- Ausgangs-`main`: `0.8.24+74`, Heilige Flamme und Rettungswurf-Engine aus PR #56 erfolgreich mit Android-/Flutter-CI integriert.
+- `AcidSplashRules`: mehrere selbstständig bestätigte Kreaturen, GES-Saves pro Ziel, 5-Fuß-Radius, Deckungs-Save-Boni relativ zum Ursprung, **ein gemeinsamer** W6-Schadenswurf bei gleichzeitig betroffenen Kreaturen, individueller Schaden/TP und Null-Schaden bei Erfolg, Cantrip-Skalierung auf Stufe 5/11/17.
+- Eigenständige Kampfaktion, Dialog, Controller, `spell.acidSplash`-Journal, 0 Slotverbrauch; **im vorhandenen Encounter ist nur ein einzelner aktiver Gegner speicherbar, deshalb absichtlich auf eine einzelne wirklich allein betroffene Kreatur beschränkt**.
+- Tests für mehrfach betroffene Kreaturen im reinen Domänenkern, separate Saves, gemeinsame Würfel, Schutz vor unbestätigtem Flächeninhalt, widersprüchlichen Deckungen und Speicher-Regression.
+- SRD-Eintrag `SPELL-ENTRY-ACID-SPLASH` als `partial` statt als fertig gewertet. Vollständige Multi-Encounter-HP-/Turn-/Monster-Logik bleibt offen.
+- Details: `docs/SRD_ACID_SPLASH_AOE.md`. Versionsbuild muss CI bestehen; echter Android-Gerätetest weiterhin ausstehend.
+
+---
+
 ## 20.10.2026 – Heilige Flamme: Rettungswurf-Zauberengine (0.8.24+74, CI ausstehend)
 
 - **Basis:** 0.8.23+73 (PR #55) wurde nach vollständig erfolgreicher GitHub-CI nach `main` gemergt; Android-Gerätetest separat offen.
