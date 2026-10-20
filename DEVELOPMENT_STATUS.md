@@ -1,3 +1,15 @@
+## 20.10.2026 – Persistente Mehrziel-TP für Säurespritzer (0.8.26+76, CI offen)
+
+- Basis: 0.8.25+75 nach PR #57 in `main` integriert; Flutter-, Android- und Alpha-Builds erfolgreich.
+- `Campaign.trackedAreaCreatures`: HP- und Identitätsliste für maximal 19 **zusätzliche** separat verfolgte Kreaturen; optionale schemaVersion-1-JSON-Erweiterung, alte Spielstände kompatibel. IDs, TP-Grenzen, doppelte IDs und Namens-/Zustands-Snapshots werden validiert.
+- `GameEngine.trackAreaCreature` und Controller erlauben explizit bestätigte HP-Erfassung im laufenden Kampf. Zusätzliche Trefferpunkte bleiben auch nach dem Ende des Hauptkampfes persistent.
+- `castAcidSplash`: alle ausgewählten, gespeicherten Kreaturen werden vor Würfelwurf geprüft und bekommen eigene GES-Saves. Ein gemeinsamer Säureschadenswurf; persistiert alle HP, Hauptgegner und Journal in einem revisionsgeschützten Commit.
+- Neue manuelle Eingabedialoge für Zusatzkreaturen und per-Ziel-Rettungswurf/Deckung/Vorteil. Neue Regel-, Speicher- und Widgettests.
+- **Weiterhin keine vollständige Mehrgegner-Kampfsteuerung:** Zusatz-HP sind nur Flächenziele, nicht eigenständige KI-Akteure mit Turn-Slots/Initiative und Siegbedingungen. Keine Karten-/Monsterdefensivautomatik. Näheres: `docs/SRD_PERSISTENT_AREA_CREATURES.md`.
+- CI/APK-Abnahme und echter Android-Gerätetest bei Erstellung noch ausstehend.
+
+---
+
 ## 20.10.2026 – Säurespritzer: 2024er Flächenzauber-Regelkern (0.8.25+75, CI offen)
 
 - Ausgangs-`main`: `0.8.24+74`, Heilige Flamme und Rettungswurf-Engine aus PR #56 erfolgreich mit Android-/Flutter-CI integriert.
