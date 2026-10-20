@@ -1206,10 +1206,7 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (campaign == null || fight == null || widget.controller.busy) return;
     final choice = await showDialog<AcidSplashChoice>(
       context: context,
-      builder: (_) => AcidSplashDialog(
-        hero: campaign.hero,
-        encounter: fight,
-      ),
+      builder: (_) => AcidSplashDialog(hero: campaign.hero, encounter: fight),
     );
     if (choice == null || !mounted) return;
     final previous = _lastMessageId;
@@ -1218,23 +1215,17 @@ class _AdventurePageState extends State<_AdventurePage> {
       campaignId: campaign.id,
       expectedRevision: campaign.revision,
       castingClass: choice.castingClass,
-      confirmedTargetDexteritySaveModifier:
-          choice.targetDexteritySaveModifier,
-      originWithin60FeetConfirmed:
-          choice.originWithin60FeetConfirmed,
+      confirmedTargetDexteritySaveModifier: choice.targetDexteritySaveModifier,
+      originWithin60FeetConfirmed: choice.originWithin60FeetConfirmed,
       currentEnemyIsOnlyCreatureInSphereConfirmed:
           choice.onlyCreatureInSphereConfirmed,
       verbalComponentConfirmed: choice.verbalConfirmed,
       somaticComponentConfirmed: choice.somaticConfirmed,
-      noUnmodelledDcModifiersConfirmed:
-          choice.noUnmodelledDcConfirmed,
-      targetSaveCircumstancesConfirmed:
-          choice.saveCircumstancesConfirmed,
-      targetCoverRelationshipConfirmed:
-          choice.coverRelationshipConfirmed,
+      noUnmodelledDcModifiersConfirmed: choice.noUnmodelledDcConfirmed,
+      targetSaveCircumstancesConfirmed: choice.saveCircumstancesConfirmed,
+      targetCoverRelationshipConfirmed: choice.coverRelationshipConfirmed,
       effectPathConfirmed: choice.effectPathConfirmed,
-      noAcidDamageAdjustmentConfirmed:
-          choice.noAcidDamageAdjustmentConfirmed,
+      noAcidDamageAdjustmentConfirmed: choice.noAcidDamageAdjustmentConfirmed,
       targetSourceOppositeCover: choice.sourceOppositeCover,
       targetSaveAdvantage: choice.saveAdvantage,
       targetSaveDisadvantage: choice.saveDisadvantage,

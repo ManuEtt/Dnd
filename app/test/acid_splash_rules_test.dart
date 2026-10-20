@@ -179,11 +179,7 @@ void main() {
 
   test('All successful saves spend an action in caller but no damage dice', () {
     final rng = _FixedRandom([19, 19]);
-    final outcome = _cast(
-      _hero(),
-      rng,
-      targets: [_target('a'), _target('b')],
-    );
+    final outcome = _cast(_hero(), rng, targets: [_target('a'), _target('b')]);
     expect(outcome.damageRoll, isNull);
     expect(outcome.targets.map((e) => e.damage), [0, 0]);
     expect(rng.calls, 2);
@@ -204,20 +200,23 @@ void main() {
     expect(result.targets[1].save.roll.natural, 20);
   });
 
-  test('Saving throw half and three-quarter cover comes from sphere origin', () {
-    final result = _cast(
-      _hero(),
-      _FixedRandom([10, 10, 0, 0]),
-      targets: [
-        _target('cover', cover: CoverLevel.half, sourceOppositeCover: true),
-        _target('notOpposite', cover: CoverLevel.threeQuarters),
-      ],
-    );
-    expect(result.targets[0].coverBonus, 2);
-    expect(result.targets[0].save.roll.total, 13);
-    expect(result.targets[1].coverBonus, 0);
-    expect(result.targets[1].save.roll.total, 11);
-  });
+  test(
+    'Saving throw half and three-quarter cover comes from sphere origin',
+    () {
+      final result = _cast(
+        _hero(),
+        _FixedRandom([10, 10, 0, 0]),
+        targets: [
+          _target('cover', cover: CoverLevel.half, sourceOppositeCover: true),
+          _target('notOpposite', cover: CoverLevel.threeQuarters),
+        ],
+      );
+      expect(result.targets[0].coverBonus, 2);
+      expect(result.targets[0].save.roll.total, 13);
+      expect(result.targets[1].coverBonus, 0);
+      expect(result.targets[1].save.roll.total, 11);
+    },
+  );
 
   test('Preflight rejects incomplete area and duplicate target BEFORE RNG', () {
     final rng = _FixedRandom([19]);
@@ -236,15 +235,16 @@ void main() {
       throwsFormatException,
     );
     expect(
-      () => _cast(
-        h,
-        rng,
-        targets: [_target('covered', cover: CoverLevel.total)],
-      ),
+      () =>
+          _cast(h, rng, targets: [_target('covered', cover: CoverLevel.total)]),
       throwsFormatException,
     );
     expect(
-      () => _cast(h, rng, targets: [_target('tooHigh', dexteritySaveModifier: 31)]),
+      () => _cast(
+        h,
+        rng,
+        targets: [_target('tooHigh', dexteritySaveModifier: 31)],
+      ),
       throwsFormatException,
     );
     expect(
@@ -252,7 +252,8 @@ void main() {
         h,
         rng,
         targets: [
-          _target('tooHighWithCover',
+          _target(
+            'tooHighWithCover',
             dexteritySaveModifier: 29,
             cover: CoverLevel.threeQuarters,
             sourceOppositeCover: true,
@@ -277,7 +278,11 @@ void main() {
       spells: const ['Acid Splash'],
     );
     expect(
-      _cast(sorcerer, _FixedRandom([19]), castingClass: 'Zauberer').castingClass,
+      _cast(
+        sorcerer,
+        _FixedRandom([19]),
+        castingClass: 'Zauberer',
+      ).castingClass,
       'Zauberer',
     );
   });
@@ -317,10 +322,11 @@ void main() {
       hero: _hero(),
       encounter: _encounter,
     );
-    expect(() => _engine(engine, initial, isolated: false),
-        throwsFormatException);
-    expect(() => _engine(engine, initial, path: false),
-        throwsFormatException);
+    expect(
+      () => _engine(engine, initial, isolated: false),
+      throwsFormatException,
+    );
+    expect(() => _engine(engine, initial, path: false), throwsFormatException);
     for (final encounter in [
       _encounter.copyWith(activeParticipant: 'enemy'),
       _encounter.copyWith(actionUsed: true),

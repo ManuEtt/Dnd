@@ -111,11 +111,13 @@ class _AcidSplashDialogState extends State<AcidSplashDialog> {
         !_effectPath ||
         !_acidDefense ||
         widget.encounter.enemyCover == CoverLevel.total) {
-      setState(() => _error =
-          'GES-Rettungswurfbonus (−30 bis +30) und alle '
-          'tatsächlich zutreffenden Voraussetzungen bestätigen. '
-          'Bei mehreren Kreaturen in der Kugel ist dieser '
-          'Einzelgegner-Ablauf nicht zulässig.');
+      setState(
+        () => _error =
+            'GES-Rettungswurfbonus (−30 bis +30) und alle '
+            'tatsächlich zutreffenden Voraussetzungen bestätigen. '
+            'Bei mehreren Kreaturen in der Kugel ist dieser '
+            'Einzelgegner-Ablauf nicht zulässig.',
+      );
       return;
     }
     Navigator.of(context).pop(
@@ -171,16 +173,13 @@ class _AcidSplashDialogState extends State<AcidSplashDialog> {
                   for (final name in _classes)
                     DropdownMenuItem(value: name, child: Text(name)),
                 ],
-                onChanged: (value) =>
-                    setState(() => _selectedClass = value),
+                onChanged: (value) => setState(() => _selectedClass = value),
               ),
             const SizedBox(height: 8),
             TextField(
               key: const ValueKey('acid-splash-save-modifier'),
               controller: _dexModifier,
-              keyboardType: const TextInputType.numberWithOptions(
-                signed: true,
-              ),
+              keyboardType: const TextInputType.numberWithOptions(signed: true),
               decoration: const InputDecoration(
                 labelText: 'Vollständiger GES-Rettungswurfbonus des Gegners',
                 border: OutlineInputBorder(),
@@ -200,10 +199,18 @@ class _AcidSplashDialogState extends State<AcidSplashDialog> {
               _only,
               (v) => _only = v,
             ),
-            _check('verbal', 'Verbale Komponente möglich.', _verbal,
-                (v) => _verbal = v),
-            _check('somatic', 'Gestische Komponente möglich.', _somatic,
-                (v) => _somatic = v),
+            _check(
+              'verbal',
+              'Verbale Komponente möglich.',
+              _verbal,
+              (v) => _verbal = v,
+            ),
+            _check(
+              'somatic',
+              'Gestische Komponente möglich.',
+              _somatic,
+              (v) => _somatic = v,
+            ),
             _check(
               'dc',
               'Keine unmodellierten Zauber-SG-Boni vorhanden.',
@@ -268,7 +275,8 @@ class _AcidSplashDialogState extends State<AcidSplashDialog> {
       ),
       FilledButton(
         key: const ValueKey('acid-splash-cast'),
-        onPressed: _selectedClass == null ||
+        onPressed:
+            _selectedClass == null ||
                 AcidSplashRules.preparedName(widget.hero) == null ||
                 _setupError != null
             ? null

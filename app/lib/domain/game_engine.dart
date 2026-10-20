@@ -1288,8 +1288,7 @@ class GameEngine {
           coverRelationshipConfirmed: targetCoverRelationshipConfirmed,
           inSphereConfirmed: true,
           effectPathConfirmed: effectPathConfirmed,
-          noAcidDamageAdjustmentConfirmed:
-              noAcidDamageAdjustmentConfirmed,
+          noAcidDamageAdjustmentConfirmed: noAcidDamageAdjustmentConfirmed,
           saveCircumstancesConfirmed: targetSaveCircumstancesConfirmed,
           saveAdvantage: targetSaveAdvantage,
           saveDisadvantage: targetSaveDisadvantage,
@@ -1300,16 +1299,16 @@ class GameEngine {
           currentEnemyIsOnlyCreatureInSphereConfirmed,
       verbalComponentConfirmed: verbalComponentConfirmed,
       somaticComponentConfirmed: somaticComponentConfirmed,
-      noUnmodelledDcModifiersConfirmed:
-          noUnmodelledDcModifiersConfirmed,
+      noUnmodelledDcModifiersConfirmed: noUnmodelledDcModifiersConfirmed,
     );
     final impact = result.targets.single;
     final payload = <String, dynamic>{
       'spellName': 'Säurespritzer',
       'spellLevel': 0,
       'castingClass': result.castingClass,
-      'spellcastingAbility':
-          result.castingClass == 'Magier' ? 'intelligence' : 'charisma',
+      'spellcastingAbility': result.castingClass == 'Magier'
+          ? 'intelligence'
+          : 'charisma',
       'areaShape': 'sphere',
       'areaRadiusFeet': 5,
       'rangeFeet': 60,

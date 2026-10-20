@@ -89,7 +89,11 @@ class AcidSplashResult {
 class AcidSplashRules {
   const AcidSplashRules._();
 
-  static const spellNames = <String>['Säurespritzer', 'Saeurespritzer', 'Acid Splash'];
+  static const spellNames = <String>[
+    'Säurespritzer',
+    'Saeurespritzer',
+    'Acid Splash',
+  ];
 
   static String? preparedName(HeroCharacter hero) {
     for (final name in spellNames) {
@@ -211,8 +215,7 @@ class AcidSplashRules {
         SrdSpellSavingThrowRules.resolve(
           dice: dice,
           dc: dc,
-          confirmedTargetModifier:
-              target.dexteritySaveModifier + coverBonus,
+          confirmedTargetModifier: target.dexteritySaveModifier + coverBonus,
           saveCircumstancesConfirmed: target.saveCircumstancesConfirmed,
           advantage: target.saveAdvantage,
           disadvantage: target.saveDisadvantage,

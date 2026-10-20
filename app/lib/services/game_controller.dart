@@ -496,15 +496,11 @@ class GameController extends ChangeNotifier {
             currentEnemyIsOnlyCreatureInSphereConfirmed,
         verbalComponentConfirmed: verbalComponentConfirmed,
         somaticComponentConfirmed: somaticComponentConfirmed,
-        noUnmodelledDcModifiersConfirmed:
-            noUnmodelledDcModifiersConfirmed,
-        targetSaveCircumstancesConfirmed:
-            targetSaveCircumstancesConfirmed,
-        targetCoverRelationshipConfirmed:
-            targetCoverRelationshipConfirmed,
+        noUnmodelledDcModifiersConfirmed: noUnmodelledDcModifiersConfirmed,
+        targetSaveCircumstancesConfirmed: targetSaveCircumstancesConfirmed,
+        targetCoverRelationshipConfirmed: targetCoverRelationshipConfirmed,
         effectPathConfirmed: effectPathConfirmed,
-        noAcidDamageAdjustmentConfirmed:
-            noAcidDamageAdjustmentConfirmed,
+        noAcidDamageAdjustmentConfirmed: noAcidDamageAdjustmentConfirmed,
         targetSourceOppositeCover: targetSourceOppositeCover,
         targetSaveAdvantage: targetSaveAdvantage,
         targetSaveDisadvantage: targetSaveDisadvantage,
