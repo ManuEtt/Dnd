@@ -85,22 +85,15 @@ void main() {
       );
     }
     expect(
-      () => ExperienceProgression.grant(
-        original,
-        rewardId: ' ',
-        amount: 10,
-      ),
+      () => ExperienceProgression.grant(original, rewardId: ' ', amount: 10),
       throwsFormatException,
     );
     final capped = original.copyWith(
       hero: original.hero.copyWith(experience: 999999),
     );
     expect(
-      () => ExperienceProgression.grant(
-        capped,
-        rewardId: 'kapitel-2',
-        amount: 2,
-      ),
+      () =>
+          ExperienceProgression.grant(capped, rewardId: 'kapitel-2', amount: 2),
       throwsFormatException,
     );
   });

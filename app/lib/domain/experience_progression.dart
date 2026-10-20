@@ -63,8 +63,7 @@ class ExperienceProgression {
       facts: {
         ...campaign.facts,
         key: '$amount',
-        if (levelForXp(xp) > campaign.hero.level)
-          'xp.levelUpAvailable': 'true',
+        if (levelForXp(xp) > campaign.hero.level) 'xp.levelUpAvailable': 'true',
       },
     );
   }
