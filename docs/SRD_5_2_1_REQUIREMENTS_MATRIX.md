@@ -1,9 +1,11 @@
+**CI- und Merge-Abnahme (20.10.2026):** SRD-Inkrement `0.8.21+71` über [PR #52](https://github.com/ManuEtt/Dnd/pull/52) erfolgreich nach `main` integriert. [GitHub-Actions-CI #39421141308](https://github.com/ManuEtt/Dnd/actions/runs/39421141308) auf finalem Code-HEAD `9156b972d240de4c5a588c09ebb5ac8adeca99ad`: **success**, inklusive Python-/Strukturtests, Backend-Typecheck/Build/Tests, Dart-Formatierung, Flutter-Analyse und Tests, Android-Debug-APK, native Android-Tests, Alpha-APK-Pakete und Checkpoint-Artefakt. Merge-Commit [`b87e53591df75bc40b9e9f534529666fb168c6f3`](https://github.com/ManuEtt/Dnd/commit/b87e53591df75bc40b9e9f534529666fb168c6f3). **Nicht getestet:** echte Android-Geräteinstallation; mehrere unabhängige Monster und unterschiedliche Attackenprofile; vollständige SRD-Abdeckung.
+
 ## SRD 5.2.1: COMBAT-ENEMY-MULTIATTACK / SPELL-SHIELD-ONGOING (0.8.21+71)
 
 | ID | Anspruch | Implementierung / Prüfungen | Status |
 | --- | --- | --- | --- |
-| COMBAT-ENEMY-MULTIATTACK | Mehrere bestätigte Angriffe desselben Gegners; jeder Angriff einzeln, keine erfundenen Monsterstats | `Encounter.enemyAttacksPerTurn`, `enemyAttacksRemaining`; `GameEngine.configureEnemyAttacks`, `continueEnemyTurn`; UI-Auswahl 1–4; JSON- und SQLite-Regressionstests | IMPLEMENTIERT, CI AUSSTEHEND |
-| SPELL-SHIELD-ONGOING | Shield +5 RK bis zum Beginn des nächsten eigenen Zuges, auch gegen weitere Angriffe | `heroShieldActive`, Verbrauch nur bei wirksamem ersten Schild; zweiter Angriff nutzt +5 RK ohne weitere Reaktion; Regressionstests in `enemy_multiattack_shield_test.dart` | IMPLEMENTIERT, CI AUSSTEHEND |
+| COMBAT-ENEMY-MULTIATTACK | Mehrere bestätigte Angriffe desselben Gegners; jeder Angriff einzeln, keine erfundenen Monsterstats | `Encounter.enemyAttacksPerTurn`, `enemyAttacksRemaining`; `GameEngine.configureEnemyAttacks`, `continueEnemyTurn`; UI-Auswahl 1–4; JSON- und SQLite-Regressionstests | GETESTET (CI 39421141308; Gerätetest offen) |
+| SPELL-SHIELD-ONGOING | Shield +5 RK bis zum Beginn des nächsten eigenen Zuges, auch gegen weitere Angriffe | `heroShieldActive`, Verbrauch nur bei wirksamem ersten Schild; zweiter Angriff nutzt +5 RK ohne weitere Reaktion; Regressionstests in `enemy_multiattack_shield_test.dart` | GETESTET (CI 39421141308; Gerätetest offen) |
 | COMBAT-MONSTER-ADVANCED | Unterschiedliche Angriffe und mehrere Monster, automatische verifizierte Statblock-Multiattack | Gegenwärtig nicht unterstützt; Angriffsmuster bleiben explizite Eingabe | FEHLT |
 
 Quelle: D&D SRD 5.2.1, CC BY 4.0, https://www.dndbeyond.com/srd. Keine Vollständigkeitsbehauptung.

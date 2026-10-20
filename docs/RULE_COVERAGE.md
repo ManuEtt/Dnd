@@ -1,4 +1,4 @@
-**20.10.2026 / 0.8.21+71:** Gegner-Multiattack 1–4 ausdrücklich bestätigen, eigene W20 pro Angriff, Pause für Schildentscheidung, +5 RK für den Rest des Gegnerzuges und Ablauf beim nächsten Heldzug; JSON-/SQLite-/Kampf-Tests enthalten. **CI offen; Gerätetest offen**. Noch keine Multi-Gegner-/Mehrfachangriffstypen.
+**20.10.2026 / 0.8.21+71:** Gegner-Multiattack 1–4 ausdrücklich bestätigen, eigene W20 pro Angriff, Pause für Schildentscheidung, +5 RK für den Rest des Gegnerzuges und Ablauf beim nächsten Heldzug; JSON-/SQLite-/Kampf-Tests enthalten. **CI #39421141308 erfolgreich; Gerätetest offen**. Noch keine Multi-Gegner-/Mehrfachangriffstypen.
 
 **20.10.2026 / 0.8.20+70:** `SPELL-SHIELD-HERO-POST-HIT` mit echter Entscheidung nach gewürfeltem Gegnerhit, persistiertem W20, sicherem Fortsetzen, bestätigten Zauberkomponenten und Slotkosten umgesetzt. Domain-/SQLite-Tests ergänzt. **CI #39406260656 grün; Mehrfachangriffe und Android-Gerätetest offen.**
 

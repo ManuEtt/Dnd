@@ -1,3 +1,9 @@
+## Abnahme / Merge 20.10.2026 – Version 0.8.21+71
+
+**CI- und Merge-Abnahme (20.10.2026):** SRD-Inkrement `0.8.21+71` über [PR #52](https://github.com/ManuEtt/Dnd/pull/52) erfolgreich nach `main` integriert. [GitHub-Actions-CI #39421141308](https://github.com/ManuEtt/Dnd/actions/runs/39421141308) auf finalem Code-HEAD `9156b972d240de4c5a588c09ebb5ac8adeca99ad`: **success**, inklusive Python-/Strukturtests, Backend-Typecheck/Build/Tests, Dart-Formatierung, Flutter-Analyse und Tests, Android-Debug-APK, native Android-Tests, Alpha-APK-Pakete und Checkpoint-Artefakt. Merge-Commit [`b87e53591df75bc40b9e9f534529666fb168c6f3`](https://github.com/ManuEtt/Dnd/commit/b87e53591df75bc40b9e9f534529666fb168c6f3). **Nicht getestet:** echte Android-Geräteinstallation; mehrere unabhängige Monster und unterschiedliche Attackenprofile; vollständige SRD-Abdeckung.
+
+---
+
 ## 20.10.2026 – Bestätigte Gegner-Mehrfachangriffe und Schilddauer (0.8.21+71)
 
 **Basis:** `main` `ded30b8720140babca7b4841a88a167cd3241665`. **Status: Feature-Branch, CI-/APK-Abnahme noch offen.**
