@@ -47,6 +47,8 @@ class HeroShieldReactionRules {
         !plan.verbalConfirmed ||
         !plan.somaticConfirmed ||
         encounter.reactionUsed ||
+        (hero.equippedArmorId.isNotEmpty && !hero.equippedArmorTrained) ||
+        (hero.equippedShieldId.isNotEmpty && !hero.equippedShieldTrained) ||
         hero.isDead ||
         hero.hitPoints == null ||
         hero.hitPoints! <= 0 ||
