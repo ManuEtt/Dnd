@@ -66,14 +66,21 @@ class CampaignExperience {
       hero: campaign.hero.copyWith(experience: experience + amount),
       facts: {...campaign.facts, marker: 'true'},
     );
-    final leveled = canLevelUp(updated.hero) && !canLevelUp(campaign.hero);
+    final readyBefore = pendingLevels(campaign.hero);
+    final readyAfter = pendingLevels(updated.hero);
+    final newlyReady = readyAfter > readyBefore;
+    final readyMessage = !newlyReady
+        ? ''
+        : readyAfter == 1
+        ? ' Eine neue Charakterstufe ist erreichbar! '
+              'Öffne deinen Charakterbogen und nutze den Klassenaufstieg.'
+        : ' $readyAfter Stufenaufstiege sind erreichbar! '
+              'Bestätige sie einzeln in deinem Charakterbogen.';
     return ExperienceAward(
       updated,
       amount,
       '+$amount EP für deinen Fortschritt. '
-      'Du hast jetzt ${updated.hero.experience} EP.'
-      '${leveled ? ' Eine neue Charakterstufe ist erreichbar! '
-                'Öffne deinen Charakterbogen und nutze den Klassenaufstieg.' : ''}',
+      'Du hast jetzt ${updated.hero.experience} EP.$readyMessage',
     );
   }
 }
