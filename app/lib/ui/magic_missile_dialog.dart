@@ -276,7 +276,8 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
                       'sowie ein Zauberplatz tatsächlich verfügbar sind.',
                     ),
                     value: _shieldReaction,
-                    onChanged: widget.encounter.enemyShieldReactionUsed ||
+                    onChanged:
+                        widget.encounter.enemyShieldReactionUsed ||
                             widget.encounter.enemyShieldSlotsRemaining == 0
                         ? null
                         : (v) => setState(() {
@@ -296,7 +297,7 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
                     _check(
                       'shield-components',
                       'Gegner hat Schild vorbereitet, eine Reaktion frei '
-                      'und kann verbale sowie gestische Komponenten ausführen.',
+                          'und kann verbale sowie gestische Komponenten ausführen.',
                       _shieldComponents,
                       (v) => _shieldComponents = v,
                     ),
@@ -305,7 +306,8 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
                         key: const ValueKey('missile-shield-slots'),
                         initialValue: _shieldSlots,
                         decoration: const InputDecoration(
-                          labelText: 'Bestätigte verbleibende Gegner-Zauberplätze',
+                          labelText:
+                              'Bestätigte verbleibende Gegner-Zauberplätze',
                         ),
                         items: [
                           for (var count = 1; count <= 20; count++)

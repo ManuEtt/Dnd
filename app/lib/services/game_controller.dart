@@ -475,7 +475,8 @@ class GameController extends ChangeNotifier {
         noProtectionConfirmed: noProtectionConfirmed,
         confirmedForceDefense: confirmedForceDefense,
         shieldReactionConfirmed: shieldReactionConfirmed,
-        shieldPreparedAndComponentsConfirmed: shieldPreparedAndComponentsConfirmed,
+        shieldPreparedAndComponentsConfirmed:
+            shieldPreparedAndComponentsConfirmed,
         confirmedEnemyShieldSlots: confirmedEnemyShieldSlots,
       ),
     );

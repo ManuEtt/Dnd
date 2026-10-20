@@ -1303,10 +1303,12 @@ class Encounter {
 
   /// Validated from an explicit encounter confirmation, never from narration.
   final EnemyForceDefense enemyForceDefense;
+
   /// Null means unknown; never invent monster spell slots.
   final int? enemyShieldSlotsRemaining;
   final bool enemyShieldReactionUsed, enemyShieldActive;
-  int get effectiveEnemyArmorClass => enemyArmorClass + (enemyShieldActive ? 5 : 0);
+  int get effectiveEnemyArmorClass =>
+      enemyArmorClass + (enemyShieldActive ? 5 : 0);
 
   /// Pending player choice for the Monk's end-of-turn Self-Restoration.
   final String selfRestorationChoice;
@@ -1392,8 +1394,10 @@ class Encounter {
     heroCover: heroCover ?? this.heroCover,
     enemyCover: enemyCover ?? this.enemyCover,
     enemyForceDefense: enemyForceDefense ?? this.enemyForceDefense,
-    enemyShieldSlotsRemaining: enemyShieldSlotsRemaining ?? this.enemyShieldSlotsRemaining,
-    enemyShieldReactionUsed: enemyShieldReactionUsed ?? this.enemyShieldReactionUsed,
+    enemyShieldSlotsRemaining:
+        enemyShieldSlotsRemaining ?? this.enemyShieldSlotsRemaining,
+    enemyShieldReactionUsed:
+        enemyShieldReactionUsed ?? this.enemyShieldReactionUsed,
     enemyShieldActive: enemyShieldActive ?? this.enemyShieldActive,
     enemyAttackBonus: enemyAttackBonus,
     enemyDamage: enemyDamage,

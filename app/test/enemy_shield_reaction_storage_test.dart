@@ -68,46 +68,49 @@ Future<void> _cast(GameController ctrl, Campaign current) =>
 void main() {
   setUpAll(sqfliteFfiInit);
 
-  test('Bestätigte Gegnerreaktion überlebt SQLite-Neustart und Revisionskonflikt', () async {
-    final dir = await Directory.systemTemp.createTemp('enemy-shield-db-');
-    final path = p.join(dir.path, 'game.sqlite');
-    var db = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: path,
-    );
-    var ctrl = GameController(
-      repository: db,
-      engine: GameEngine(dice: DiceEngine(random: _FixedRandom())),
-    );
-    try {
-      final start = await _seed(db);
-      await ctrl.openCampaign(start.id);
-      await _cast(ctrl, start);
-      expect(ctrl.error, isNull);
-      final result = ctrl.currentCampaign!;
-      expect(result.encounter!.enemyShieldSlotsRemaining, 1);
-      expect(result.encounter!.enemyShieldActive, isTrue);
-      expect(result.encounter!.enemyShieldReactionUsed, isTrue);
-      expect(result.encounter!.enemyHitPoints, 80);
-      expect(result.hero.spentSpellSlots, {'1': 1});
-      expect(result.events.last.payload['shieldBlocked'], isTrue);
-      await _cast(ctrl, start);
-      expect(ctrl.error, isNotNull);
-      expect(ctrl.currentCampaign!.toJson(), result.toJson());
-      ctrl.dispose();
-      await db.close();
-      db = await SqliteCampaignRepository.open(
+  test(
+    'Bestätigte Gegnerreaktion überlebt SQLite-Neustart und Revisionskonflikt',
+    () async {
+      final dir = await Directory.systemTemp.createTemp('enemy-shield-db-');
+      final path = p.join(dir.path, 'game.sqlite');
+      var db = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: path,
       );
-      ctrl = GameController(repository: db);
-      await ctrl.openCampaign(start.id);
-      expect(ctrl.error, isNull);
-      expect(ctrl.currentCampaign!.toJson(), result.toJson());
-    } finally {
-      ctrl.dispose();
-      await db.close();
-      await dir.delete(recursive: true);
-    }
-  });
+      var ctrl = GameController(
+        repository: db,
+        engine: GameEngine(dice: DiceEngine(random: _FixedRandom())),
+      );
+      try {
+        final start = await _seed(db);
+        await ctrl.openCampaign(start.id);
+        await _cast(ctrl, start);
+        expect(ctrl.error, isNull);
+        final result = ctrl.currentCampaign!;
+        expect(result.encounter!.enemyShieldSlotsRemaining, 1);
+        expect(result.encounter!.enemyShieldActive, isTrue);
+        expect(result.encounter!.enemyShieldReactionUsed, isTrue);
+        expect(result.encounter!.enemyHitPoints, 80);
+        expect(result.hero.spentSpellSlots, {'1': 1});
+        expect(result.events.last.payload['shieldBlocked'], isTrue);
+        await _cast(ctrl, start);
+        expect(ctrl.error, isNotNull);
+        expect(ctrl.currentCampaign!.toJson(), result.toJson());
+        ctrl.dispose();
+        await db.close();
+        db = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: path,
+        );
+        ctrl = GameController(repository: db);
+        await ctrl.openCampaign(start.id);
+        expect(ctrl.error, isNull);
+        expect(ctrl.currentCampaign!.toJson(), result.toJson());
+      } finally {
+        ctrl.dispose();
+        await db.close();
+        await dir.delete(recursive: true);
+      }
+    },
+  );
 }

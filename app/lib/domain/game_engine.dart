@@ -1100,7 +1100,8 @@ class GameEngine {
     if (confirmedForceDefense == EnemyForceDefense.unknown) {
       throw const FormatException('Unbestätigte Gegner-Abwehr.');
     }
-    final effectiveDefense = confirmedForceDefense ??
+    final effectiveDefense =
+        confirmedForceDefense ??
         (fight.enemyForceDefense == EnemyForceDefense.unknown
             ? EnemyForceDefense.normal
             : fight.enemyForceDefense);
@@ -1114,16 +1115,23 @@ class GameEngine {
       if (fight.enemyShieldActive ||
           fight.enemyShieldReactionUsed ||
           !shieldPreparedAndComponentsConfirmed) {
-        throw const FormatException('Gegnerische Schildreaktion nicht verfügbar.');
+        throw const FormatException(
+          'Gegnerische Schildreaktion nicht verfügbar.',
+        );
       }
       if (fight.enemyShieldSlotsRemaining != null &&
           confirmedEnemyShieldSlots != null &&
           fight.enemyShieldSlotsRemaining != confirmedEnemyShieldSlots) {
-        throw const FormatException('Gegnerische Zauberplätze widersprechen dem Spielstand.');
+        throw const FormatException(
+          'Gegnerische Zauberplätze widersprechen dem Spielstand.',
+        );
       }
-      final count = fight.enemyShieldSlotsRemaining ?? confirmedEnemyShieldSlots;
+      final count =
+          fight.enemyShieldSlotsRemaining ?? confirmedEnemyShieldSlots;
       if (count == null || count < 1 || count > 99) {
-        throw const FormatException('Gegnerische Zauberplätze zuerst bestätigen.');
+        throw const FormatException(
+          'Gegnerische Zauberplätze zuerst bestätigen.',
+        );
       }
     } else if (!noProtectionConfirmed && !fight.enemyShieldActive) {
       throw const FormatException('Schildzauberstatus muss bestätigt sein.');
@@ -1150,8 +1158,8 @@ class GameEngine {
           );
     final appliedDamage = reduced?.appliedTotal ?? 0;
     final rawDamage = reduced?.rawTotal ?? 0;
-    final perMissile = reduced?.appliedPerMissile ??
-        List<int>.filled(2 + cast.slotLevel, 0);
+    final perMissile =
+        reduced?.appliedPerMissile ?? List<int>.filled(2 + cast.slotLevel, 0);
     final remaining = RulesEngine.remainingHitPoints(
       hitPoints: fight.enemyHitPoints,
       damage: appliedDamage,
@@ -1184,7 +1192,8 @@ class GameEngine {
         enemyHitPoints: remaining,
         enemyForceDefense: effectiveDefense,
         enemyShieldSlotsRemaining: shieldReactionConfirmed
-            ? (fight.enemyShieldSlotsRemaining ?? confirmedEnemyShieldSlots)! - 1
+            ? (fight.enemyShieldSlotsRemaining ?? confirmedEnemyShieldSlots)! -
+                  1
             : fight.enemyShieldSlotsRemaining,
         enemyShieldReactionUsed:
             fight.enemyShieldReactionUsed || shieldReactionConfirmed,

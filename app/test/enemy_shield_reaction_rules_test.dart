@@ -36,7 +36,8 @@ Campaign _campaign(GameEngine engine, {Encounter? encounter}) {
         'charisma': 14,
       },
     ),
-    encounter: encounter ??
+    encounter:
+        encounter ??
         const Encounter(
           id: 'enemy-shield',
           enemyName: 'Gegner',
@@ -104,114 +105,128 @@ void main() {
     expect(nextRound.encounter!.enemyShieldSlotsRemaining, 1);
   });
 
-  test('Schildbonus wird bei weiteren Angriffen im selben Zug berücksichtigt', () {
-    final engine = GameEngine(dice: DiceEngine(random: _FixedRandom()));
-    final confirmed = const Encounter(
-      id: 'e',
-      enemyName: 'Gegner',
-      enemyHitPoints: 80,
-      enemyMaxHitPoints: 80,
-      enemyArmorClass: 12,
-      enemyShieldActive: true,
-      enemyShieldReactionUsed: true,
-      enemyShieldSlotsRemaining: 0,
-    );
-    final withShield = _campaign(engine, encounter: confirmed);
-    final requested = engine.act(withShield, 'Ich greife an').campaign;
-    expect(requested.pendingRoll!.difficulty, 17);
-    expect(requested.encounter!.enemyShieldActive, isTrue);
-  });
-
-  test('Unbestätigte oder verbrauchte Reaktion verändert weder Würfel noch Zustand', () {
-    final random = _FixedRandom();
-    final engine = GameEngine(dice: DiceEngine(random: random));
-    final before = _campaign(engine);
-    for (final reject in [
-      () => _cast(engine, before, components: false),
-      () => _cast(engine, before, slots: null),
-      () => _cast(engine, before, slots: 0),
-      () => _cast(engine, before, noShield: true),
-      () => _cast(
-        engine,
-        before.copyWith(
-          encounter: before.encounter!.copyWith(enemyShieldReactionUsed: true),
-        ),
-      ),
-      () => _cast(
-        engine,
-        before.copyWith(
-          encounter: before.encounter!.copyWith(enemyShieldSlotsRemaining: 0),
-        ),
-      ),
-      () => _cast(
-        engine,
-        before.copyWith(
-          encounter: before.encounter!.copyWith(enemyShieldSlotsRemaining: 1),
-        ),
-        slots: 2,
-      ),
-    ]) {
-      expect(reject, throwsFormatException);
-    }
-    expect(before.hero.spentSpellSlots, isEmpty);
-    expect(before.encounter!.enemyHitPoints, 80);
-    expect(random.calls, 0);
-  });
-
-  test('Legacy ohne Schilddaten bleibt unbekannt; manipulierte Daten scheitern', () {
-    final old = const Encounter(
-      id: 'old',
-      enemyName: 'Alt',
-      enemyHitPoints: 10,
-      enemyMaxHitPoints: 10,
-    ).toJson();
-    expect(old.containsKey('enemyShieldSlotsRemaining'), isFalse);
-    final resumed = Encounter.fromJson(old);
-    expect(resumed.enemyShieldSlotsRemaining, isNull);
-    expect(resumed.enemyShieldActive, isFalse);
-    expect(resumed.enemyShieldReactionUsed, isFalse);
-    final valid = Encounter.fromJson({
-      ...old,
-      'enemyShieldSlotsRemaining': 0,
-      'enemyShieldReactionUsed': true,
-      'enemyShieldActive': true,
-    });
-    expect(valid.enemyShieldSlotsRemaining, 0);
-    expect(Encounter.fromJson(valid.toJson()).enemyShieldActive, isTrue);
-    for (final invalid in [
-      {'enemyShieldSlotsRemaining': -1},
-      {'enemyShieldSlotsRemaining': '5'},
-      {'enemyShieldSlotsRemaining': 100},
-      {'enemyShieldActive': true},
-      {'enemyShieldActive': true, 'enemyShieldReactionUsed': true},
-    ]) {
-      expect(
-        () => Encounter.fromJson({...old, ...invalid}),
-        throwsFormatException,
+  test(
+    'Schildbonus wird bei weiteren Angriffen im selben Zug berücksichtigt',
+    () {
+      final engine = GameEngine(dice: DiceEngine(random: _FixedRandom()));
+      final confirmed = const Encounter(
+        id: 'e',
+        enemyName: 'Gegner',
+        enemyHitPoints: 80,
+        enemyMaxHitPoints: 80,
+        enemyArmorClass: 12,
+        enemyShieldActive: true,
+        enemyShieldReactionUsed: true,
+        enemyShieldSlotsRemaining: 0,
       );
-    }
-  });
+      final withShield = _campaign(engine, encounter: confirmed);
+      final requested = engine.act(withShield, 'Ich greife an').campaign;
+      expect(requested.pendingRoll!.difficulty, 17);
+      expect(requested.encounter!.enemyShieldActive, isTrue);
+    },
+  );
 
-  test('Bereits aktives Schild verhindert späteren Schaden ohne zweite Reaktion', () {
-    final engine = GameEngine(dice: DiceEngine(random: _FixedRandom()));
-    final encounter = const Encounter(
-      id: 'active',
-      enemyName: 'Gegner',
-      enemyHitPoints: 80,
-      enemyMaxHitPoints: 80,
-      enemyShieldActive: true,
-      enemyShieldReactionUsed: true,
-      enemyShieldSlotsRemaining: 1,
-    );
-    final result = _cast(
-      engine,
-      _campaign(engine, encounter: encounter),
-      shield: false,
-      noShield: true,
-      slots: null,
-    );
-    expect(result.events.single.payload['damage'], 0);
-    expect(result.events.single.payload['shieldReactionTriggered'], isFalse);
-    expect(result.campaign.encounter!.enemyShieldSlotsRemaining, 1);
-  });
+  test(
+    'Unbestätigte oder verbrauchte Reaktion verändert weder Würfel noch Zustand',
+    () {
+      final random = _FixedRandom();
+      final engine = GameEngine(dice: DiceEngine(random: random));
+      final before = _campaign(engine);
+      for (final reject in [
+        () => _cast(engine, before, components: false),
+        () => _cast(engine, before, slots: null),
+        () => _cast(engine, before, slots: 0),
+        () => _cast(engine, before, noShield: true),
+        () => _cast(
+          engine,
+          before.copyWith(
+            encounter: before.encounter!.copyWith(
+              enemyShieldReactionUsed: true,
+            ),
+          ),
+        ),
+        () => _cast(
+          engine,
+          before.copyWith(
+            encounter: before.encounter!.copyWith(enemyShieldSlotsRemaining: 0),
+          ),
+        ),
+        () => _cast(
+          engine,
+          before.copyWith(
+            encounter: before.encounter!.copyWith(enemyShieldSlotsRemaining: 1),
+          ),
+          slots: 2,
+        ),
+      ]) {
+        expect(reject, throwsFormatException);
+      }
+      expect(before.hero.spentSpellSlots, isEmpty);
+      expect(before.encounter!.enemyHitPoints, 80);
+      expect(random.calls, 0);
+    },
+  );
+
+  test(
+    'Legacy ohne Schilddaten bleibt unbekannt; manipulierte Daten scheitern',
+    () {
+      final old = const Encounter(
+        id: 'old',
+        enemyName: 'Alt',
+        enemyHitPoints: 10,
+        enemyMaxHitPoints: 10,
+      ).toJson();
+      expect(old.containsKey('enemyShieldSlotsRemaining'), isFalse);
+      final resumed = Encounter.fromJson(old);
+      expect(resumed.enemyShieldSlotsRemaining, isNull);
+      expect(resumed.enemyShieldActive, isFalse);
+      expect(resumed.enemyShieldReactionUsed, isFalse);
+      final valid = Encounter.fromJson({
+        ...old,
+        'enemyShieldSlotsRemaining': 0,
+        'enemyShieldReactionUsed': true,
+        'enemyShieldActive': true,
+      });
+      expect(valid.enemyShieldSlotsRemaining, 0);
+      expect(Encounter.fromJson(valid.toJson()).enemyShieldActive, isTrue);
+      for (final invalid in [
+        {'enemyShieldSlotsRemaining': -1},
+        {'enemyShieldSlotsRemaining': '5'},
+        {'enemyShieldSlotsRemaining': 100},
+        {'enemyShieldActive': true},
+        {'enemyShieldActive': true, 'enemyShieldReactionUsed': true},
+      ]) {
+        expect(
+          () => Encounter.fromJson({...old, ...invalid}),
+          throwsFormatException,
+        );
+      }
+    },
+  );
+
+  test(
+    'Bereits aktives Schild verhindert späteren Schaden ohne zweite Reaktion',
+    () {
+      final engine = GameEngine(dice: DiceEngine(random: _FixedRandom()));
+      final encounter = const Encounter(
+        id: 'active',
+        enemyName: 'Gegner',
+        enemyHitPoints: 80,
+        enemyMaxHitPoints: 80,
+        enemyShieldActive: true,
+        enemyShieldReactionUsed: true,
+        enemyShieldSlotsRemaining: 1,
+      );
+      final result = _cast(
+        engine,
+        _campaign(engine, encounter: encounter),
+        shield: false,
+        noShield: true,
+        slots: null,
+      );
+      expect(result.events.single.payload['damage'], 0);
+      expect(result.events.single.payload['shieldReactionTriggered'], isFalse);
+      expect(result.campaign.encounter!.enemyShieldSlotsRemaining, 1);
+    },
+  );
 }
