@@ -38,3 +38,7 @@ git switch -c wiederhergestellt archive/legacy-20261020/feature/moonlit-scenery-
 ```
 
 Für die alten Tests oder Implementierungen kann alternativ jede oben notierte SHA explizit ausgecheckt oder über GitHub eingesehen werden. Der Quellbaum von `main` ist absichtlich nicht auf das ältere Niveau zurückgesetzt.
+
+## Technischer Main-Nachweis
+
+Der Sammelmerge wurde über [PR #38](https://github.com/ManuEtt/Dnd/pull/38) in `main` aufgenommen (Merge-Commit `23c937af976c94b472585219bf73b386a813350a`). Die Bereinigung überprüft den aktuellen Stand nochmals vor dem Entfernen jeder alten Branch-Referenz. Die tatsächlich entfernten Referenzen und Backup-Tags sind separat anhand des GitHub-Workflows nachzuprüfen.
