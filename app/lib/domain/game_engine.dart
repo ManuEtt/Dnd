@@ -1183,7 +1183,7 @@ class GameEngine {
       'targetId': fight.id,
       'targetVisibleConfirmed': true,
       'targetWithinRangeConfirmed': true,
-      'noProtectionConfirmed': true,
+      'noProtectionConfirmed': noProtectionConfirmed,
       'enemyHitPoints': remaining,
     };
     var next = campaign.copyWith(
@@ -3007,7 +3007,7 @@ class GameEngine {
             advantage: attackRule.advantage,
             disadvantage: attackRule.disadvantage,
             difficulty: CoverRules.armorClass(
-              encounter.enemyArmorClass,
+              encounter.effectiveEnemyArmorClass,
               encounter.enemyCover,
             ),
             targetId: encounter.id,
@@ -3068,7 +3068,7 @@ class GameEngine {
             advantage: attack.advantage,
             disadvantage: attack.disadvantage,
             difficulty: CoverRules.armorClass(
-              encounter.enemyArmorClass,
+              encounter.effectiveEnemyArmorClass,
               encounter.enemyCover,
             ),
             targetId: encounter.id,
