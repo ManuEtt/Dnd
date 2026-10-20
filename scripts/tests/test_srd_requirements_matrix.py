@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 import unittest
 
-from scripts.srd_coverage import MATRIX, CATALOGUE, summary, validate_matrix
+from scripts.srd_coverage import MATRIX, CATALOGUE, ENTITIES, summary, validate_matrix, validate_entities
 
 
 class SrdRequirementsMatrixTests(unittest.TestCase):
@@ -12,6 +12,7 @@ class SrdRequirementsMatrixTests(unittest.TestCase):
     def setUpClass(cls):
         cls.matrix = json.loads(MATRIX.read_text(encoding="utf-8"))
         cls.catalogue = json.loads(CATALOGUE.read_text(encoding="utf-8"))
+        cls.entities = json.loads(ENTITIES.read_text(encoding="utf-8"))
 
     def test_matrix_is_valid_and_ids_are_unique(self):
         self.assertEqual(validate_matrix(self.matrix, self.catalogue), [])
@@ -27,10 +28,27 @@ class SrdRequirementsMatrixTests(unittest.TestCase):
         self.assertTrue(all(r["rule_implemented"] != "tested" for r in features))
 
     def test_incomplete_inventory_does_not_claim_global_percent(self):
-        result = summary(self.matrix)
+        result = summary(self.matrix, self.entities)
+        self.assertEqual(result["counted_requirements"], 1419)
         self.assertFalse(result["scope_complete"])
         self.assertGreater(result["open_inventory_gaps"], 0)
         self.assertIsNone(result["global_srd_coverage_percent"])
+
+    def test_944_named_entities_and_srd_spell_levels(self):
+        self.assertEqual(validate_entities(self.entities, self.matrix), [])
+        self.assertEqual(len(self.entities["entries"]), 944)
+        rows = self.entities["entries"]
+        self.assertEqual(sum(r["kind"] == "spell_definition" for r in rows), 337)
+        self.assertEqual(sum(r["kind"] == "monster_statblock" for r in rows), 330)
+        self.assertEqual(sum(r["kind"] == "magic_item" for r in rows), 260)
+        self.assertEqual(sum(r["kind"] == "feat" for r in rows), 17)
+        self.assertFalse(self.entities["verified_against_official_pdf"])
+
+    def test_duplicates_across_both_inventories_rejected(self):
+        changed = copy.deepcopy(self.entities)
+        changed["entries"][0]["id"] = self.matrix["requirements"][0]["id"]
+        self.assertTrue(any("Doppelte Entity-/Requirement-ID" in e
+                            for e in validate_entities(changed, self.matrix)))
 
     def test_duplicate_id_is_rejected(self):
         changed = copy.deepcopy(self.matrix)
