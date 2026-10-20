@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
+import 'package:lebendiger_spielleiter/domain/enemy_force_defense.dart';
 import 'package:lebendiger_spielleiter/ui/magic_missile_dialog.dart';
 
 void main() {
@@ -60,6 +61,12 @@ void main() {
       await tester.tap(field);
       await tester.pumpAndSettle();
     }
+    final defense = find.byKey(const ValueKey('missile-force-defense'));
+    await tester.ensureVisible(defense);
+    await tester.tap(defense);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Resistenz gegen Energieschaden').last);
+    await tester.pumpAndSettle();
     await tester.ensureVisible(button);
     await tester.tap(button);
     await tester.pumpAndSettle();
@@ -68,5 +75,6 @@ void main() {
     expect(selected!.slotLevel, 1);
     expect(selected!.targetVisibleConfirmed, isTrue);
     expect(selected!.noProtectionConfirmed, isTrue);
+    expect(selected!.confirmedForceDefense, EnemyForceDefense.resistant);
   });
 }
