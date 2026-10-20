@@ -1322,7 +1322,7 @@ class GameEngine {
       'Angriff ${result.attackRoll.total} gegen RK '
       '${result.effectiveArmorClass}. '
       '${result.hit ? 'Treffer mit ${result.damage} Feuerschaden.' : 'Verfehlt.'} '
-      'Gegner-TP ${remaining}. Magieaktion verbraucht, kein Zauberplatz.',
+      'Gegner-TP $remaining. Magieaktion verbraucht, kein Zauberplatz.',
       type: 'spell.fireBolt',
       payload: payload,
     );
