@@ -1,0 +1,41 @@
+name: Temporary Persistent Area Creature Dart Formatter
+
+on:
+  push:
+    branches:
+      - feature/srd-persistent-area-creatures-20261020
+    paths:
+      - .github/workflows/format-area-creatures.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: github.repository == 'ManuEtt/Dnd'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/srd-persistent-area-creatures-20261020
+          persist-credentials: true
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Apply official Dart formatter
+        shell: bash
+        run: |
+          set -euo pipefail
+          dart format app/lib/domain/models.dart app/lib/domain/game_engine.dart app/lib/services/game_controller.dart app/lib/ui/app.dart app/lib/ui/acid_splash_dialog.dart app/lib/ui/area_creature_registration_dialog.dart app/test/area_creature_persistence_test.dart app/test/area_creature_dialog_test.dart
+          dart format --output=none --set-exit-if-changed app/lib/domain/models.dart app/lib/domain/game_engine.dart app/lib/services/game_controller.dart app/lib/ui/app.dart app/lib/ui/acid_splash_dialog.dart app/lib/ui/area_creature_registration_dialog.dart app/test/area_creature_persistence_test.dart app/test/area_creature_dialog_test.dart
+          git diff --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- app/lib/domain/models.dart app/lib/domain/game_engine.dart app/lib/services/game_controller.dart app/lib/ui/app.dart app/lib/ui/acid_splash_dialog.dart app/lib/ui/area_creature_registration_dialog.dart app/test/area_creature_persistence_test.dart app/test/area_creature_dialog_test.dart
+          if ! git diff --cached --quiet; then
+            git commit -m 'style(combat): format persistent area creature code'
+            git push origin HEAD:feature/srd-persistent-area-creatures-20261020
+          fi
