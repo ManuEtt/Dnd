@@ -112,6 +112,49 @@ void main() {
     },
   );
 
+
+  testWidgets('Mehrere EP-Aufstiege können vor dem Speichern bestätigt werden', (
+    tester,
+  ) async {
+    HeroCharacter? result;
+    await openEditor(tester, current(xp: 900), (value) => result = value);
+
+    await tapVisible(tester, find.byKey(const ValueKey('open-class-level-up')));
+    expect(find.textContaining('Gesamtstufe 1 → 2'), findsOneWidget);
+    expect(
+      find.textContaining('2 Aufstiege mit EP verfügbar'),
+      findsOneWidget,
+    );
+    expect(find.byKey(const ValueKey('levelup-hp-preview')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('levelup-proficiency-preview')),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const ValueKey('levelup-confirm')));
+    await tester.pumpAndSettle();
+
+    // The second step stays bound to the first wizard-confirmed draft.
+    await tapVisible(tester, find.byKey(const ValueKey('open-class-level-up')));
+    expect(find.textContaining('Gesamtstufe 2 → 3'), findsOneWidget);
+    expect(
+      find.textContaining('Ein Aufstieg mit bestätigten EP verfügbar'),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const ValueKey('levelup-confirm')));
+    await tester.pumpAndSettle();
+    expect(result, isNull);
+
+    await tapVisible(tester, find.text('Charakter speichern'));
+    expect(result?.level, 3);
+    expect(result?.primaryClassLevel, 3);
+    expect(result?.experience, 900);
+    expect(result?.hitPoints, 24);
+    expect(result?.maxHitPoints, 30);
+    expect(result?.unverifiedNotes.any((note) =>
+        note.contains('Unterklasse wählen')), isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Abbrechen ändert keine bestätigten Trefferpunkte', (
     tester,
   ) async {
