@@ -3900,8 +3900,8 @@ class GameEngine {
         '(${CoverRules.label(foe.heroCover)}). ';
     if (shieldUsed) {
       narration +=
-          'Dein ausdrücklich autorisierter Schildzauber '
-          'wehrt diesen Treffer mit +5 RK ab. ';
+          'Dein gewirkter Schildzauber (+5 RK) '
+          '${shieldBlocked ? 'wehrt diesen Treffer ab.' : 'verhindert diesen Treffer nicht.'} ';
     }
     final details = <String, dynamic>{
       'attackRoll': result.toJson(),
