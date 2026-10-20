@@ -1,3 +1,13 @@
+## 20.10.2026 – Version 0.8.25+75 (Säurespritzer / Mehrziel-Regelkern, CI ausstehend)
+
+- Neues reines Regelmodul `AcidSplashRules`: 2024er 5-Fuß-Radius-Kugel mit eigenen GES-Rettungswürfen pro bestätigter Kreatur, nur **einem** gemeinsam verwendeten 1–4W6-Säureschadenswurf pro gleichzeitiger Wirkung und individueller HP-Berechnung.
+- Deckungsboni relativ zum Flächenursprung; maximale 20 Prüfeinträge als technischer Schutz, nicht als SRD-Regel. Keine erratenen Positionen, Monsterfähigkeiten oder Abwehrwerte.
+- Kampflogik/Controller/UI/Journal implementiert, **vorerst nur wenn der eine aktive Gegner nachweislich die einzige Kreatur in der Kugel ist**. Weitere Ziele werden nicht stillschweigend ignoriert; echte Mehrgegner-Persistenz folgt separat.
+- Domain-/Engine-/Widgettests; Anforderungs-Mapping `SPELL-ENTRY-ACID-SPLASH` als `partial` und ausführliche Grenzen dokumentiert.
+- CI-/APK-Abnahme und Android-Gerätetest bei diesem Eintrag ausstehend.
+
+---
+
 ## 20.10.2026 – Version 0.8.24+74 (Heilige Flamme / Rettungswürfe, CI ausstehend)
 
 - Wiederverwendbare `SrdSpellSavingThrowRules` für Zauber-SG und bestätigte gegnerische Rettungswurfboni mit W20, Vorteil/Nachteil und 2024-Regeln für natürliche 1/20.
