@@ -9,6 +9,7 @@ import '../domain/rabenwacht_campaign.dart';
 import '../domain/damage_rules.dart';
 import '../domain/magic_missile_rules.dart';
 import '../domain/fire_bolt_rules.dart';
+import '../domain/sacred_flame_rules.dart';
 import '../domain/healing_spell_rules.dart';
 import '../domain/saving_throw_class_actions.dart';
 import '../domain/class_resource_rules.dart';
@@ -27,6 +28,7 @@ import 'hero_shield_reaction_dialog.dart';
 import '../domain/hero_shield_reaction_rules.dart';
 import 'magic_missile_dialog.dart';
 import 'fire_bolt_dialog.dart';
+import 'sacred_flame_dialog.dart';
 import 'healing_spell_dialog.dart';
 import 'death_save_decision_panel.dart';
 import 'fantasy_character_sheet.dart';
@@ -1196,6 +1198,40 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previous);
   }
 
+  Future<void> _castSacredFlame() async {
+    final campaign = widget.controller.currentCampaign;
+    final fight = campaign?.encounter;
+    if (campaign == null || fight == null || widget.controller.busy) return;
+    final choice = await showDialog<SacredFlameChoice>(
+      context: context,
+      builder: (_) => SacredFlameDialog(
+        hero: campaign.hero,
+        encounter: fight,
+      ),
+    );
+    if (choice == null || !mounted) return;
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    await widget.controller.castSacredFlame(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      confirmedTargetDexteritySaveModifier:
+          choice.confirmedTargetDexteritySaveModifier,
+      targetVisibleConfirmed: choice.targetVisibleConfirmed,
+      targetWithinRangeConfirmed: choice.targetWithinRangeConfirmed,
+      verbalComponentConfirmed: choice.verbalComponentConfirmed,
+      somaticComponentConfirmed: choice.somaticComponentConfirmed,
+      noRadiantDamageAdjustmentConfirmed:
+          choice.noRadiantDamageAdjustmentConfirmed,
+      noUnmodelledDcModifiersConfirmed:
+          choice.noUnmodelledDcModifiersConfirmed,
+      saveCircumstancesConfirmed: choice.saveCircumstancesConfirmed,
+      saveAdvantage: choice.saveAdvantage,
+      saveDisadvantage: choice.saveDisadvantage,
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
   Future<void> _castFireBolt() async {
     final campaign = widget.controller.currentCampaign;
     final fight = campaign?.encounter;
@@ -1526,6 +1562,26 @@ class _AdventurePageState extends State<_AdventurePage> {
                         : _endTurnWithShield,
                     icon: const Icon(Icons.shield_outlined, size: 17),
                     label: const Text('Zug beenden: Schild ggf. wirken'),
+                  ),
+                if (campaign.encounter != null &&
+                    !campaign.encounter!.isFinished &&
+                    SacredFlameRules.preparedName(campaign.hero) != null &&
+                    SacredFlameRules.isClericCaster(campaign.hero))
+                  TextButton.icon(
+                    key: const ValueKey('adventure-cast-sacred-flame'),
+                    onPressed:
+                        widget.controller.busy ||
+                            campaign.pendingRoll != null ||
+                            campaign.pendingDeathSave != null ||
+                            campaign.pendingEnemyShieldHit != null ||
+                            campaign.hero.isDead ||
+                            campaign.hero.hitPoints == 0 ||
+                            campaign.encounter!.activeParticipant != 'hero' ||
+                            campaign.encounter!.actionUsed
+                        ? null
+                        : _castSacredFlame,
+                    icon: const Icon(Icons.wb_sunny_outlined, size: 17),
+                    label: const Text('Heilige Flamme'),
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&
