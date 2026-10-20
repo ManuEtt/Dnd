@@ -1,3 +1,12 @@
+## SPELL-SHIELD-HERO-POST-HIT – 20.10.2026 (0.8.20+70)
+
+| SRD-Anforderung | Nachgewiesene Umsetzung | Code/Tests | Status |
+| --- | --- | --- | --- |
+| SPELL-SHIELD-HERO-POST-HIT | Nach wirklich treffendem Gegner-W20 entscheiden; +5 RK auch gegen auslösenden Angriff, Zauberplatz bei Entscheidung, kritische Treffer bleiben treffsicher, ursprünglicher W20 bleibt erhalten | `PendingEnemyShieldHit`, `GameEngine.resolvePendingEnemyShieldHit`, `GameController.resolveEnemyShieldHit`, neue UI-Entscheidung, Tests `hero_shield_post_hit_choice_test.dart`, `hero_shield_post_hit_storage_test.dart` | IMPLEMENTIERT, CI OFFEN |
+| SPELL-SHIELD-ONGOING/MULTIATTACK | Gültige Schilddauer über mehrere Gegnerangriffe bis zum Beginn des nächsten Heldzuges; zusätzliche Gegner-Zauberquellen | Nicht vollständig: ein Gegner und einzelne Angriffsabwicklung | OFFEN |
+
+Quelle: SRD 5.2.1 CC BY 4.0 – https://www.dndbeyond.com/srd. Alte Matrixzeile zur fehlenden Post-Hit-Reaktion ist historischer Zustand und durch diese Zeile aktualisiert, aber nicht gelöscht.
+
 **CI- und Merge-Abnahme 20.10.2026:** Das eingeschränkte Regelpaket `SPELL-SHIELD-HERO-CONDITIONAL` in Version `0.8.19+69` wurde über [PR #49](https://github.com/ManuEtt/Dnd/pull/49) auf `main` integriert (Merge [`95792bb241c6123e34a1fae97c9fdef31d153ce2`](https://github.com/ManuEtt/Dnd/commit/95792bb241c6123e34a1fae97c9fdef31d153ce2)). Vollständiger [GitHub-Actions-Lauf #39394683773](https://github.com/ManuEtt/Dnd/actions/runs/39394683773) auf dem finalen Code-HEAD `090adb4c5fe21ddfc83d0903d5ef39181c50dd9f` **success**: Struktur-/Python-Tests, Backend-Typecheck/Build/Tests, Dart-Formatierung, Flutter-Analyse und Tests, Android-Debug-APK, native Android-Tests und Alpha-APK-Artefakte. **Nicht geprüft:** Gerätetest; eine echte Reaktions-Unterbrechung *nach* dem gegnerischen Angriffswurf; mehrere Angriffe/Gegner und Shield gegen gegnerisches Magisches Geschoss. Diese Grenzen bleiben als offene SRD-Anforderungen bestehen.
 
 ## Neu: SPELL-SHIELD-HERO-CONDITIONAL – 0.8.19+69

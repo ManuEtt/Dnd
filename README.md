@@ -8,6 +8,10 @@
 
 **Branch-Bereinigung verifiziert (20.10.2026):** Alle neun historischen Feature-/Dokumentationsbranches waren bereits in `main` enthalten (`ahead_by=0`) und wurden über den geprüften einmaligen [GitHub-Actions-Lauf #39392381240](https://github.com/ManuEtt/Dnd/actions/runs/39392381240) entfernt. Auch der kurzlebige Maintenance-Branch ist gelöscht. Die GitHub-Branchliste wurde danach erneut gelesen: **nur `main` vorhanden**. Implementierte Features, Merge-Commits und Pull Requests bleiben erhalten; nichts wurde neu gecherry-pickt. Der temporäre Löschworkflow wurde nach erfolgreicher Bereinigung aus dem Hauptbranch entfernt. Prüfdokument: [`docs/BRANCH_RETIREMENT_20261020.md`](docs/BRANCH_RETIREMENT_20261020.md).
 
+## SRD 5.2.1: echte Schildwahl nach Angriffstreffer (20.10.2026)
+
+**Version 0.8.20+70:** Der Gegner würfelt zuerst. Bei einem tatsächlich treffenden Angriff wird der Zustand ohne Schadenswurf gespeichert und eine Entscheidung angezeigt: **Schild wirken oder Treffer hinnehmen**. Der Spieler sieht das Angriffsergebnis. Ein bestätigter Schildzauber verbraucht einen Zauberplatz, selbst wenn ein kritischer Treffer oder sehr hoher Wurf trotz +5 RK trifft. Das ursprüngliche W20-Ergebnis wird ohne erneutes Würfeln fortgesetzt. Die neue Auswahl unterstützt SQLite-Neustart und Revisionsschutz. **Build/CI dieses neuen Pakets und echter Gerätetest sind zum Implementierungszeitpunkt offen.** Mehrere Gegner/Angriffe bleiben noch offen.
+
 ## Inhaltsverzeichnis
 
 - [Funktionsstand](#funktionsstand)
