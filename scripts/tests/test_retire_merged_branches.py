@@ -9,7 +9,7 @@ from retire_merged_branches import BRANCH_SNAPSHOT, MAINTENANCE_BRANCH, eligible
 
 class BranchRetirementTests(unittest.TestCase):
     def test_snapshots_are_exact_and_never_main(self):
-        self.assertEqual(len(BRANCH_SNAPSHOT), 9)
+        self.assertEqual(len(BRANCH_SNAPSHOT), 12)
         self.assertNotIn("main", BRANCH_SNAPSHOT)
         self.assertTrue(all(len(commit) == 40 for commit in BRANCH_SNAPSHOT.values()))
 

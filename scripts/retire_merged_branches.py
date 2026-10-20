@@ -21,7 +21,10 @@ BRANCH_SNAPSHOT = {
     "feature/srd-crawling-20261020": "3462106592157953473c7d777b0d5b664872243a",
     "feature/srd-enemy-shield-reaction-20261020": "81635c8eccb0d06e5d1bf95d54f5884c62f4a215",
     "feature/srd-magic-missile-20261020": "78d89230281f8196edbff628ca243d591ef092b3",
-    "feature/srd-missile-force-defense-20261020": "8f703b0002ae6dcb5279893020bea63e14771184"
+    "feature/srd-missile-force-defense-20261020": "8f703b0002ae6dcb5279893020bea63e14771184",
+    "docs/srd-hero-shield-ci-20261020": "33ba2b4d2f6297fd5d43900fb1ea54a7060a9651",
+    "feature/srd-hero-shield-auto-reaction-20261020": "090adb4c5fe21ddfc83d0903d5ef39181c50dd9f",
+    "feature/srd-hero-shield-hit-choice-20261020": "011c53826956e609994930c65221bca9c33d9985"
 }
 MAINTENANCE_BRANCH = "maintenance/retire-merged-branches-20261020"
 
