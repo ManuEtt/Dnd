@@ -1,3 +1,13 @@
+## SRD 5.2.1: COMBAT-ENEMY-MULTIATTACK / SPELL-SHIELD-ONGOING (0.8.21+71)
+
+| ID | Anspruch | Implementierung / Prüfungen | Status |
+| --- | --- | --- | --- |
+| COMBAT-ENEMY-MULTIATTACK | Mehrere bestätigte Angriffe desselben Gegners; jeder Angriff einzeln, keine erfundenen Monsterstats | `Encounter.enemyAttacksPerTurn`, `enemyAttacksRemaining`; `GameEngine.configureEnemyAttacks`, `continueEnemyTurn`; UI-Auswahl 1–4; JSON- und SQLite-Regressionstests | IMPLEMENTIERT, CI AUSSTEHEND |
+| SPELL-SHIELD-ONGOING | Shield +5 RK bis zum Beginn des nächsten eigenen Zuges, auch gegen weitere Angriffe | `heroShieldActive`, Verbrauch nur bei wirksamem ersten Schild; zweiter Angriff nutzt +5 RK ohne weitere Reaktion; Regressionstests in `enemy_multiattack_shield_test.dart` | IMPLEMENTIERT, CI AUSSTEHEND |
+| COMBAT-MONSTER-ADVANCED | Unterschiedliche Angriffe und mehrere Monster, automatische verifizierte Statblock-Multiattack | Gegenwärtig nicht unterstützt; Angriffsmuster bleiben explizite Eingabe | FEHLT |
+
+Quelle: D&D SRD 5.2.1, CC BY 4.0, https://www.dndbeyond.com/srd. Keine Vollständigkeitsbehauptung.
+
 **CI bestätigt (20.10.2026):** [PR #51](https://github.com/ManuEtt/Dnd/pull/51) wurde nach vollständig erfolgreicher [GitHub-Actions-CI #39406260656](https://github.com/ManuEtt/Dnd/actions/runs/39406260656) mit Code-HEAD `011c53826956e609994930c65221bca9c33d9985` nach `main` integriert. Merge-Commit [`ff1b043652e46a99c4ac3038698d047fb0d3f380`](https://github.com/ManuEtt/Dnd/commit/ff1b043652e46a99c4ac3038698d047fb0d3f380). Erfolgreich: Python-Strukturtests, Backend-Typecheck/Build/Tests, Dart-Formatierung, Flutter-Analyse und Tests, Android-Debug-APK, native Android-Unit-Tests, Alpha-APK-Erstellung und Build-Artefakte. **Echter Android-Gerätetest, Mehrfachgegner/Mehrfachattacken und Shield gegen gegnerisches Magisches Geschoss bleiben offen.**
 
 ## SPELL-SHIELD-HERO-POST-HIT – 20.10.2026 (0.8.20+70)

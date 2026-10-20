@@ -1,3 +1,16 @@
+## 20.10.2026 – Bestätigte Gegner-Mehrfachangriffe und Schilddauer (0.8.21+71)
+
+**Basis:** `main` `ded30b8720140babca7b4841a88a167cd3241665`. **Status: Feature-Branch, CI-/APK-Abnahme noch offen.**
+
+- Einem Gegner dürfen ausdrücklich **1–4 Angriffe pro Zug** zugewiesen werden, etwa anhand eines verifizierten SRD-Statblocks oder einer tatsächlichen Spielentscheidung. Ohne Bestätigung bleibt das bisherige Verhalten **ein Angriff**. Kein KI-Text wird als bestätigte Monsterfähigkeit übernommen.
+- Pro Angriff erfolgt ein eigener Angriffswurf; ggf. bleibt der bereits vorhandene echte Post-Hit-Schildentscheid offen. Folgetreffer laufen erst über `Gegnerangriff fortsetzen` weiter, ohne einen vorherigen W20 zu wiederholen. Rundenfortschritt, Zähler und aktiver Gegnerzug bleiben in der Kampagne und dem Journal gespeichert, auch bei SQLite-Neustart.
+- Ein bereits gewirkter Helden-Schild bietet +5 RK **für die restlichen Angriffe dieses Gegnerzuges**, verhindert einen zweiten Reaktions-/Zauberplatzverbrauch und endet am Beginn des nächsten eigenen Zuges. Alte Kampagnen haben weder automatisch Mehrfachangriffe noch einen aktiven Shield.
+- Die Kampfoberfläche zeigt einen Bestätigungs-Popup zur Anzahl und einen Fortsetzen-Button bei noch offenen Gegnerangriffen; reguläre/ältere Einzelangriffe bleiben kompatibel.
+- Tests: `enemy_multiattack_shield_test.dart`, `enemy_multiattack_storage_test.dart` für Rundenzähler, Schild-Reaktionsdauer, zweiten Treffer, W20-Wiederholungsverhinderung, alten JSON-Spielstand, Manipulationsabwehr und SQLite-Fortsetzung. **Testdateien vorhanden ≠ bestanden; vollständiger GitHub-Actions-Nachweis ausstehend.**
+- **Grenzen:** Maximal vier gleichartige bestätigte Angriffe **eines** Gegners, keine unabhängigen Angriffsmuster/mehrere Gegner oder automatisch angenommene Monsterfähigkeiten; keine realen Android-Gerätetests.
+
+**Wiederaufnahme:** finalen PR-Code-HEAD in GitHub Actions auf erfolgreiche Projekt-, Backend-, Flutter-, Android- und APK-Tests prüfen, Fehler im Feature-Branch korrigieren, ausschließlich nach voll grünem CI-Run mergen. Danach Statusdateien mit dem echten Merge-Commit und Run aktualisieren und vollständig gemergten Branch sicher löschen.
+
 ## Zweite Branch-Bereinigung 20.10.2026
 
 **Nachtrag 20.10.2026:** Die nach Abschluss des vorherigen Zyklus verbliebenen Branches `docs/srd-hero-shield-ci-20261020`, `feature/srd-hero-shield-auto-reaction-20261020` und `feature/srd-hero-shield-hit-choice-20261020` waren ebenfalls vollständig in `main` enthalten (`ahead_by=0`, keine geschützten Branches, feste HEAD-Prüfung). Der [GitHub-Actions-Lauf #39408002022](https://github.com/ManuEtt/Dnd/actions/runs/39408002022) hat **alle drei** erfolgreich entfernt. Anschließend ergab `GET /branches`: ausschließlich `main`. Der einmalige privilegierte Löschworkflow wurde wieder entfernt. Der vollständige Code und alle PR-Merges bleiben erhalten.
