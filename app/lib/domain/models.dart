@@ -2039,7 +2039,7 @@ class Campaign {
               encounter.id != pending.targetId ||
               encounter.enemyCover == CoverLevel.total ||
               CoverRules.armorClass(
-                    encounter.enemyArmorClass,
+                    encounter.effectiveEnemyArmorClass,
                     encounter.enemyCover,
                   ) !=
                   pending.difficulty)) {
