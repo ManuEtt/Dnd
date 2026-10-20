@@ -1,0 +1,99 @@
+name: Historische Branches nach geprüfter Migration archivieren
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - docs/LEGACY_BRANCH_MIGRATION_20261020.md
+
+permissions:
+  contents: write
+
+concurrency:
+  group: migrate-and-retire-legacy-branches
+  cancel-in-progress: false
+
+jobs:
+  archive-and-retire:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git-Verlauf laden
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Sicherheitsprüfung, Backup-Tags und Branch-Referenzen entfernen
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$(git branch --show-current)" != "main" && "${GITHUB_REF}" != "refs/heads/main" ]]; then
+            echo "Aus Sicherheitsgründen nur auf main ausführbar" >&2
+            exit 1
+          fi
+          git fetch --tags origin '+refs/heads/*:refs/remotes/origin/*'
+          rows=$(cat <<'BRANCHES'
+docs/merged-character-branches-20261019 f7023926b122a0286b4f02c8829875b50b6ca527
+feat/complete-graphics-ui-20261019 a94a3a61749917f312044d9109df225aa79948cd
+feature/complete-fantasy-artwork-ui-20261019 7baea4f91c03d8fbaa1f08c87ae4c359fb1d77a8
+feature/fantasy-portraits-and-ui-20261019 3f4c45838c7460352ed57def9d89235de8c51aa8
+feature/fantasy-rune-main-navigation-20261019 a1aaf75818dffd09579dd648f4a3f1fba81714bb
+feature/moonlit-scenery-20261019 66d530a3c75564e6465973bdf65209f4afe364c2
+feature/primary-class-level-up-20261019 8ee18d04a5ba7ab820eaca72529295a8e81c6586
+feature/xp-level-progression-20261019 a4a4bec1a449259b1edc78536ca006ef3a6ec8dd
+fix/equipment-import-attributes-20261019 ff764e193c98c73547fe8ad5ce9fafe46772ac9b
+fix/fantasy-ui-responsive-20261019 22de1096d57ba9cb5f530b65209d783ae3b41bd4f6
+integration/legacy-branches-safe-20261020 d7fc2941c2da4f69eb86b9666917c5dab678a0e4
+BRANCHES
+          )
+          echo "Phase 1: Alle Heads und Git-Vorfahren prüfen"
+          while read -r branch expected; do
+            [[ -n "$branch" ]] || continue
+            actual=$(git ls-remote origin "refs/heads/$branch" | awk '{print $1}')
+            if [[ -z "$actual" ]]; then
+              echo "Branch bereits nicht vorhanden: $branch"
+            elif [[ "$actual" != "$expected" ]]; then
+              echo "ABBRUCH: $branch wurde seit der Überprüfung verändert ($actual)" >&2
+              exit 1
+            fi
+            if ! git merge-base --is-ancestor "$expected" HEAD; then
+              echo "ABBRUCH: Original-Commit nicht in main: $branch ($expected)" >&2
+              exit 1
+            fi
+          done <<< "$rows"
+
+          echo "Phase 2: Backup-Tags für ALLE alten Branches anlegen"
+          while read -r branch expected; do
+            [[ -n "$branch" ]] || continue
+            tag="archive/legacy-20261020/$branch"
+            remote=$(git ls-remote --tags origin "refs/tags/$tag" | awk '{print $1}')
+            if [[ -n "$remote" && "$remote" != "$expected" ]]; then
+              echo "ABBRUCH: vorhandener Backup-Tag zeigt auf anderen SHA: $tag" >&2
+              exit 1
+            fi
+            if [[ -z "$remote" ]]; then
+              git tag "$tag" "$expected"
+              git push origin "refs/tags/$tag"
+            fi
+            verified=$(git ls-remote --tags origin "refs/tags/$tag" | awk '{print $1}')
+            if [[ "$verified" != "$expected" ]]; then
+              echo "ABBRUCH: Tag nicht bestätigt: $tag" >&2
+              exit 1
+            fi
+            echo "Gesichert: $branch -> $tag"
+          done <<< "$rows"
+
+          echo "Phase 3: Exakt überprüfte Branches mit Lease löschen"
+          while read -r branch expected; do
+            [[ -n "$branch" ]] || continue
+            actual=$(git ls-remote origin "refs/heads/$branch" | awk '{print $1}')
+            if [[ -z "$actual" ]]; then
+              echo "Schon entfernt: $branch"
+              continue
+            fi
+            git push --force-with-lease="refs/heads/$branch:$expected" \
+              origin ":refs/heads/$branch"
+            echo "Entfernt: $branch"
+          done <<< "$rows"
+          echo "Alle 11 alten Branches sind im main-Verlauf und durch Tags gesichert."
