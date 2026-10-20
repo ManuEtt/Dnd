@@ -1,3 +1,14 @@
+## 20.10.2026 – SRD 5.2.1: Zauberindex/Vorprüfung (0.8.22+72, CI offen)
+
+- Basis: bereits integrierter PR #53 und `main`; neuer Branch `feature/srd-spell-catalog-preflight-20261020`.
+- 339 strukturierte Zaubereinträge aus SRD-Transkription in `app/assets/srd_5_2_1_spells.json`: Name, Grad, Schule, Klassen, Zeit, Reichweite, Komponenten und Dauer/Konzentration/Ritual.
+- Neue reine Domain-Vorprüfung `SrdSpellPreflightRules`: eigene Klasse und deren Aufstiegsstufe, bestätigte bekannte Zauber, normale/Paktplätze, separate Aktions-/Ziel-/Komponenten-/Ein-Zauberplatz-pro-Zug-Bestätigung sowie veraltete Charakter-Snapshot-Sperre.
+- Nur ausdrücklich bestätigtes **manuell aufgelöstes** Zauberereignis erlaubt Ressourcenbuchung; **keine** automatische allgemeine Zauberwirkung. Reaktionen, ausgelöste Bonusaktionen und mehrzügige Zauberzeiten weiterhin gesperrt.
+- Tests `srd_spell_catalog_preflight_test.dart`; Altspielstände und bestehende Spezialpfade unverändert. Amtlicher Metadatenabgleich, echte Ziel-/Area-/Kampf-Integration und Android-Geräteabnahme weiterhin offen.
+- CI/APK für dieses Inkrement **noch nicht freigegeben**. Details: `docs/SRD_SPELL_CATALOG_PREFLIGHT.md`.
+
+---
+
 ## 20.10.2026 – Maschinenlesbare SRD-5.2.1-Anforderungsmatrix (laufendes Review)
 
 - **Entwicklungsbranch:** `feature/srd-countable-requirements-20261020`, Ausgangspunkt `main` `b965efc3e9d337a4ce406b5e3380b79147918c66`; App-Quellversion bleibt `0.8.21+71`.
