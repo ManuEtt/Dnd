@@ -101,10 +101,7 @@ GameUpdate _engineCast(
 
 Campaign _campaign(GameEngine engine, {HeroCharacter? hero}) {
   final start = engine.createDemo();
-  return start.copyWith(
-    hero: hero ?? _hero(),
-    encounter: _fight,
-  );
+  return start.copyWith(hero: hero ?? _hero(), encounter: _fight);
 }
 
 void main() {
@@ -132,10 +129,7 @@ void main() {
 
   test('Ungültige Klassen/Zauber und Bestätigungen würfeln nicht', () {
     final random = _FixedRandom(false);
-    final invalid = [
-      _hero(spells: const []),
-      _hero(className: 'Kleriker'),
-    ];
+    final invalid = [_hero(spells: const []), _hero(className: 'Kleriker')];
     for (final hero in invalid) {
       expect(() => _cast(hero, random), throwsFormatException);
     }
@@ -175,24 +169,13 @@ void main() {
       className: 'Sorcerer',
       spells: const ['Magic Missile'],
     );
-    final cast = _cast(
-      sorcerer,
-      _FixedRandom(false),
-      castingClass: 'Zauberer',
-    );
+    final cast = _cast(sorcerer, _FixedRandom(false), castingClass: 'Zauberer');
     expect(cast.hero.className, 'Sorcerer');
     final multi = _hero(
       className: 'Magier',
       level: 4,
-    ).copyWith(
-      secondaryClassName: 'Hexenmeister',
-      secondaryClassLevel: 2,
-    );
-    final result = _cast(
-      multi,
-      _FixedRandom(false),
-      pactMagic: true,
-    );
+    ).copyWith(secondaryClassName: 'Hexenmeister', secondaryClassLevel: 2);
+    final result = _cast(multi, _FixedRandom(false), pactMagic: true);
     expect(result.hero.spentPactSlots, 1);
     expect(result.hero.spentSpellSlots, isEmpty);
     expect(result.pactMagic, isTrue);
@@ -226,19 +209,20 @@ void main() {
         encounter: _fight.copyWith(spellSlotExpendedThisTurn: true),
       ),
       initial.copyWith(encounter: _fight.copyWith(activeParticipant: 'enemy')),
-      initial.copyWith(encounter: _fight.copyWith(enemyCover: CoverLevel.total)),
       initial.copyWith(
-        pendingRoll: const PendingRoll(
-          id: 'roll',
-          type: 'attack',
-          modifier: 0,
-        ),
+        encounter: _fight.copyWith(enemyCover: CoverLevel.total),
+      ),
+      initial.copyWith(
+        pendingRoll: const PendingRoll(id: 'roll', type: 'attack', modifier: 0),
       ),
     ];
     for (final game in invalid) {
       expect(() => _engineCast(engine, game), throwsFormatException);
     }
-    expect(() => _engineCast(engine, initial, safe: false), throwsFormatException);
+    expect(
+      () => _engineCast(engine, initial, safe: false),
+      throwsFormatException,
+    );
     expect(random.calls, 0);
   });
 
@@ -253,9 +237,9 @@ void main() {
 
   test('Bei tödlichem Treffer greift vorhandener Abschluss der Begegnung', () {
     final engine = GameEngine(dice: DiceEngine(random: _FixedRandom(true)));
-    final current = _campaign(engine).copyWith(
-      encounter: _fight.copyWith(enemyHitPoints: 3),
-    );
+    final current = _campaign(
+      engine,
+    ).copyWith(encounter: _fight.copyWith(enemyHitPoints: 3));
     final update = _engineCast(engine, current);
     expect(update.events.single.payload['enemyHitPoints'], 0);
     expect(update.campaign.encounter?.isFinished ?? true, isTrue);

@@ -43,14 +43,12 @@ class MagicMissileRules {
     ];
   }
 
-  static HeroCharacter normalized(HeroCharacter hero) =>
-      hero.copyWith(
-        className: findSrdClass(hero.className)?.name ?? hero.className,
-        secondaryClassName: hero.hasSecondClass
-            ? findSrdClass(hero.secondaryClassName)?.name ??
-                  hero.secondaryClassName
-            : '',
-      );
+  static HeroCharacter normalized(HeroCharacter hero) => hero.copyWith(
+    className: findSrdClass(hero.className)?.name ?? hero.className,
+    secondaryClassName: hero.hasSecondClass
+        ? findSrdClass(hero.secondaryClassName)?.name ?? hero.secondaryClassName
+        : '',
+  );
 
   static List<MagicMissileSlot> slots(HeroCharacter hero) {
     final resource = normalized(hero);
@@ -123,9 +121,7 @@ class MagicMissileRules {
       pactMagic: pactMagic,
     );
     final count = 2 + spent.slotLevel;
-    final rolls = [
-      for (var i = 0; i < count; i++) dice.roll('1d4+1'),
-    ];
+    final rolls = [for (var i = 0; i < count; i++) dice.roll('1d4+1')];
     final damage = rolls.fold<int>(0, (sum, roll) => sum + roll.total);
     // Normalization is temporary: historic/localized class names are kept.
     return MagicMissileResult(

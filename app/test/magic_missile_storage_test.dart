@@ -106,23 +106,25 @@ void main() {
     }
   });
 
-  test('Fehler im Event-Insert rollt Gegner-TP und Zauberplatz zurück', () async {
-    final directory = await Directory.systemTemp.createTemp('missile-fail-');
-    final path = p.join(directory.path, 'game.sqlite');
-    final repo = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: path,
-    );
-    final controller = GameController(
-      repository: repo,
-      engine: GameEngine(dice: DiceEngine(random: _Random())),
-    );
-    try {
-      final before = await seed(repo);
-      await controller.openCampaign(before.id);
-      final database = await databaseFactoryFfi.openDatabase(path);
+  test(
+    'Fehler im Event-Insert rollt Gegner-TP und Zauberplatz zurück',
+    () async {
+      final directory = await Directory.systemTemp.createTemp('missile-fail-');
+      final path = p.join(directory.path, 'game.sqlite');
+      final repo = await SqliteCampaignRepository.open(
+        factory: databaseFactoryFfi,
+        path: path,
+      );
+      final controller = GameController(
+        repository: repo,
+        engine: GameEngine(dice: DiceEngine(random: _Random())),
+      );
       try {
-        await database.execute('''
+        final before = await seed(repo);
+        await controller.openCampaign(before.id);
+        final database = await databaseFactoryFfi.openDatabase(path);
+        try {
+          await database.execute('''
 CREATE TRIGGER reject_missile
 BEFORE INSERT ON game_events
 WHEN instr(NEW.event_json, '"spell.magicMissile"') > 0
@@ -130,20 +132,21 @@ BEGIN
   SELECT RAISE(ABORT, 'blocked missile journal');
 END
 ''');
-        await cast(controller, before);
-        expect(controller.error, isNotNull);
-        expect(controller.currentCampaign!.toJson(), before.toJson());
-        expect(
-          (await repo.getCampaign(before.id))!.toJson(),
-          before.toJson(),
-        );
+          await cast(controller, before);
+          expect(controller.error, isNotNull);
+          expect(controller.currentCampaign!.toJson(), before.toJson());
+          expect(
+            (await repo.getCampaign(before.id))!.toJson(),
+            before.toJson(),
+          );
+        } finally {
+          await database.close();
+        }
       } finally {
-        await database.close();
+        controller.dispose();
+        await repo.close();
+        await directory.delete(recursive: true);
       }
-    } finally {
-      controller.dispose();
-      await repo.close();
-      await directory.delete(recursive: true);
-    }
-  });
+    },
+  );
 }

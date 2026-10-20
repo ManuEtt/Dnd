@@ -1150,10 +1150,7 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (campaign == null || fight == null || widget.controller.busy) return;
     final choice = await showDialog<MagicMissileChoice>(
       context: context,
-      builder: (_) => MagicMissileDialog(
-        hero: campaign.hero,
-        encounter: fight,
-      ),
+      builder: (_) => MagicMissileDialog(hero: campaign.hero, encounter: fight),
     );
     if (choice == null || !mounted) return;
     final previous = _lastMessageId;

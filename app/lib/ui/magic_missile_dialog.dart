@@ -90,7 +90,8 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
     if (_className == null || slot == null || _setupError != null) return;
     if (!_visible || !_range || !_verbal || !_somatic || !_unprotected) {
       setState(
-        () => _error = 'Bitte alle tatsächlichen Ziel- und '
+        () => _error =
+            'Bitte alle tatsächlichen Ziel- und '
             'Komponentenvoraussetzungen bestätigen.',
       );
       return;
@@ -133,8 +134,10 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 12),
-              Text('Ziel: ${widget.encounter.enemyName}. '
-                  'Alle Geschosse treffen dieses eine Ziel gleichzeitig.'),
+              Text(
+                'Ziel: ${widget.encounter.enemyName}. '
+                'Alle Geschosse treffen dieses eine Ziel gleichzeitig.',
+              ),
               const SizedBox(height: 10),
               if (_setupError != null)
                 Text('Regelprüfung: $_setupError')
@@ -209,7 +212,7 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
                 _check(
                   'protection',
                   'Keine bekannte Schildzauber-Abwehr oder '
-                  'Energiestärke-Immunität/-Resistenz des Ziels.',
+                      'Energiestärke-Immunität/-Resistenz des Ziels.',
                   _unprotected,
                   (v) => _unprotected = v,
                 ),
@@ -222,9 +225,7 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
               if (_error != null)
                 Text(
                   _error!,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.error,
-                  ),
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
               const SizedBox(height: 16),
               FilledButton(
