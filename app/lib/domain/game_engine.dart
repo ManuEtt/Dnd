@@ -3771,13 +3771,14 @@ class GameEngine {
   }) {
     final originalFight = campaign.encounter!;
     final resuming = resumeShieldHit != null;
-    var foe = resuming
+    final continuing = !resuming && originalFight.enemyAttacksRemaining > 0;
+    var foe = resuming || continuing
         ? originalFight
         : advanceRound
         ? CombatClassActions.afterHeroTurn(originalFight)
         : originalFight;
     // Only the first stage of the enemy turn prepares/advances effects.
-    if (!resuming) {
+    if (!resuming && !continuing) {
       foe = foe.copyWith(
         enemyShieldActive: false,
         enemyShieldReactionUsed: false,
@@ -3823,8 +3824,12 @@ class GameEngine {
     // continues normally. Area spells remain separate confirmed effects.
     if (!CoverRules.canTargetDirectly(foe.heroCover)) {
       final nextFight = foe.copyWith(
-        round: foe.round + (advanceRound ? 1 : 0),
+        round: foe.round +
+            ((advanceRound || foe.enemyTurnAdvanceRound) ? 1 : 0),
         activeParticipant: 'hero',
+        enemyAttacksRemaining: 0,
+        enemyTurnAdvanceRound: false,
+        heroShieldActive: false,
         movementRemaining: CharacterRuleEngine.movementWholeMeters(hero)!,
         movementRemainderDecimeters: 0,
         actionUsed: false,
@@ -3877,10 +3882,13 @@ class GameEngine {
           );
     final outcome = RulesEngine.attack(
       roll: result,
-      armorClass: CoverRules.armorClass(hero.armorClass!, foe.heroCover),
+      armorClass: CoverRules.armorClass(
+        hero.armorClass! + (foe.heroShieldActive ? 5 : 0),
+        foe.heroCover,
+      ),
     );
     final baseArmorClass = CoverRules.armorClass(
-      hero.armorClass!,
+      hero.armorClass! + (foe.heroShieldActive ? 5 : 0),
       foe.heroCover,
     );
     // The decision is offered AFTER a genuine hit but BEFORE damage rolls.
@@ -3900,7 +3908,11 @@ class GameEngine {
       return _EnemyTurn(
         campaign.copyWith(
           hero: hero,
-          encounter: foe.copyWith(activeParticipant: 'enemy'),
+          encounter: foe.copyWith(
+            activeParticipant: 'enemy',
+            enemyTurnAdvanceRound:
+                foe.enemyTurnAdvanceRound || advanceRound,
+          ),
           pendingEnemyShieldHit: PendingEnemyShieldHit(
             encounterId: foe.id,
             natural: result.natural!,
@@ -3956,6 +3968,7 @@ class GameEngine {
       'attackRoll': result.toJson(),
       'hit': outcome.hit && !shieldBlocked,
       'shieldReactionTriggered': shieldUsed,
+      'shieldPreviouslyActive': foe.heroShieldActive,
       'shieldReactionAuthorized': shieldPlan != null,
       if (shieldUsed) ...{
         'shieldCastingClass': shieldPlan.castingClass,
@@ -4031,28 +4044,60 @@ class GameEngine {
         !ConditionRules.canTakeActions(hero) || hero.hitPoints == 0
         ? foe.copyWith(rageStartedRound: 0, rageUntilRound: 0)
         : foe;
+    final remaining = resuming || continuing
+        ? (foe.enemyAttacksRemaining > 0
+              ? foe.enemyAttacksRemaining - 1
+              : foe.enemyAttacksPerTurn - 1)
+        : foe.enemyAttacksPerTurn - 1;
+    final anotherAttack = remaining > 0 &&
+        !hero.isDead &&
+        hero.hitPoints != null &&
+        hero.hitPoints! > 0;
+    details['enemyAttacksRemaining'] = anotherAttack ? remaining : 0;
+    details['heroShieldActiveDuringEnemyTurn'] =
+        foe.heroShieldActive || shieldUsed;
     return _EnemyTurn(
       campaign.copyWith(
         hero: hero,
         encounter: afterTurn.copyWith(
-          round: foe.round + (advanceRound ? 1 : 0),
-          activeParticipant: 'hero',
+          round: foe.round +
+              (!anotherAttack &&
+                      (advanceRound || foe.enemyTurnAdvanceRound)
+                  ? 1
+                  : 0),
+          activeParticipant: anotherAttack ? 'enemy' : 'hero',
+          enemyAttacksRemaining: anotherAttack ? remaining : 0,
+          enemyTurnAdvanceRound: anotherAttack
+              ? (foe.enemyTurnAdvanceRound || advanceRound)
+              : false,
+          heroShieldActive: anotherAttack
+              ? (foe.heroShieldActive || shieldUsed)
+              : false,
           movementRemaining: CharacterRuleEngine.movementWholeMeters(hero)!,
           movementRemainderDecimeters: 0,
-          actionUsed: false,
-          attacksRemaining: 0,
-          bonusActionUsed: false,
-          lightAttackAvailable: false,
-          spellSlotExpendedThisTurn: false,
-          deathSaveResolvedThisTurn: false,
-          dodgeActive: false,
-          disengagedThisTurn: false,
-          jumpDoubledThisTurn: false,
-          reactionUsed: false,
-          surgeReserved: false,
-          surgeUsedThisTurn: false,
-          sneakAttackUsedThisTurn: false,
-          selfRestorationChoice: '',
+          actionUsed: anotherAttack ? foe.actionUsed : false,
+          attacksRemaining: anotherAttack ? foe.attacksRemaining : 0,
+          bonusActionUsed: anotherAttack ? foe.bonusActionUsed : false,
+          lightAttackAvailable: anotherAttack ? foe.lightAttackAvailable : false,
+          spellSlotExpendedThisTurn:
+              anotherAttack ? foe.spellSlotExpendedThisTurn : false,
+          deathSaveResolvedThisTurn:
+              anotherAttack ? foe.deathSaveResolvedThisTurn : false,
+          dodgeActive: anotherAttack ? foe.dodgeActive : false,
+          disengagedThisTurn:
+              anotherAttack ? foe.disengagedThisTurn : false,
+          jumpDoubledThisTurn:
+              anotherAttack ? foe.jumpDoubledThisTurn : false,
+          reactionUsed: anotherAttack
+              ? (foe.reactionUsed || shieldUsed)
+              : false,
+          surgeReserved: anotherAttack ? foe.surgeReserved : false,
+          surgeUsedThisTurn: anotherAttack ? foe.surgeUsedThisTurn : false,
+          sneakAttackUsedThisTurn:
+              anotherAttack ? foe.sneakAttackUsedThisTurn : false,
+          selfRestorationChoice: anotherAttack
+              ? foe.selfRestorationChoice
+              : '',
         ),
         pendingEnemyShieldHit: null,
       ),
