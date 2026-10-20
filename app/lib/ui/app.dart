@@ -1205,8 +1205,9 @@ class _AdventurePageState extends State<_AdventurePage> {
     final campaign = widget.controller.currentCampaign;
     if (campaign == null ||
         campaign.encounter == null ||
-        widget.controller.busy)
+        widget.controller.busy) {
       return;
+    }
     final creature = await showDialog<TrackedAreaCreature>(
       context: context,
       builder: (_) => const AreaCreatureRegistrationDialog(),
