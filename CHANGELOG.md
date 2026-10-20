@@ -1,3 +1,13 @@
+## 20.10.2026 – Version 0.8.27+77 (Mehrgegner-Initiativverwaltung, CI offen)
+
+- Weitere bestätigte Kreaturen speichern ein optionales Initiative-Gesamtergebnis sowie die zuständige SL-/Spieler-Kontrolle im abwärtskompatiblen schema-1-Kampagnenformat.
+- Neue SRD-5.2.1-Initiativvorschau: absteigende Gruppen; bei Gleichstand wird **keine** künstliche Reihenfolge erfunden. Fehlende und bisher nicht bestätigte Initiativewerte werden angezeigt.
+- Neue Kampf-Schnellaktion „Initiative der Kreaturen“ samt Eingabe, revisionsgeschütztem Controller-Commit und Ereignisjournal. Ausgeschiedene Kreaturen werden in der Runden-Vorschau ausgeblendet.
+- Regressionstests für alte Kampagnen, 0-Initiative, Ungültigkeitsprüfungen, Unentschieden, Roundtrip, UI und unveränderte Trefferpunkte.
+- **Noch kein vollständiger Mehrgegner-Zugscheduler:** Zusatzkreaturen besitzen weiterhin keine automatisch ausgelösten Angriffe oder Initiative-Zugrechte. Kein Gerätetest; CI zur Version ausstehend.
+
+---
+
 ## 20.10.2026 – Version 0.8.26+76 (Zusätzliche Kreaturen für Flächenzauber – CI offen)
 
 - Separate bestätigte Kreaturen mit ID/Name/TP können im Kampagnen-Spielstand erfasst und von Säurespritzer gemeinsam mit dem Hauptgegner getroffen werden. Eindeutige IDs, unveränderliche Speicherlisten, alte schema-1-Speicherstände.
