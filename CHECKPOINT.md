@@ -1,3 +1,16 @@
+## 20.10.2026 – Shield-Reaktion des Gegners (0.8.18+68)
+
+**Basis:** `main` `c48e1452a08057ecdc4f9f526b0b6b5d56903bcb`. Branch `feature/srd-enemy-shield-reaction-20261020`. **Status: Implementiert, CI noch nicht nachgewiesen.**
+
+- Neues `Encounter`-Reaktionsmodell: `enemyShieldSlotsRemaining` (**null** = unbekannt, nicht geraten), `enemyShieldReactionUsed`, `enemyShieldActive`. Historische Spielstände bleiben ohne Änderung gültig, gefälschte unplausible Kombinationen werden beim Import abgewiesen.
+- Ein Gegner darf Schild (`Shield`) nur als ausdrücklich bestätigte Reaktion auf `Magisches Geschoss` wirken, wenn vorbereiteter Zauber, verbal/gestische Komponenten, freie Reaktion und bestätigte verbliebene Zauberplätze vorliegen. Der gegnerische Zauberplatz wird genau einmal verbraucht, die Treffer verlieren alle Wirkung; der Held verbraucht trotzdem seine Aktion und den eigenen Zauberplatz. Keine Würfel werden für komplett blockierte Geschosse verbraucht.
+- `enemyShieldActive` führt +5 RK bis **zum Beginn des nächsten Gegnerzuges**, sperrt weitere Magische Geschosse und wird bei `_enemyTurn` zurückgesetzt; gegnerische Reaktion wird dann erneut verfügbar.
+- Der bestehende Magisches-Geschoss-Dialog bietet einen separaten bestätigten Shield-Reaktionszweig mit manueller initialer Gegnerzauberplatzanzahl. Der bisherige Weg ohne Schild bleibt erhalten, damit alte Controller- und Testaufrufe nicht unbemerkt andere Regeln ausführen.
+- Tests für Schaden 0, Würfelaufrufe 0, Zauberplatz- und Reaktionsverbrauch, Shield-RK, Dauer bis zum nächsten Zug, Legacy-JSON, ungültige Daten, SQLite-Neustart und Revisionsschutz in `enemy_shield_reaction_rules_test.dart` und `enemy_shield_reaction_storage_test.dart`. CI/Android-Build **noch offen**, nicht als bestanden ausgeben.
+- **Weiter offen:** `Shield` als Heldreaktion auf gegnerische Angriffe, Gegner-Zauberplätze aus verifiziertem Monsterstatblock, echte Monster-KI, tatsächliche Kartenpositionen, vollständig generische Reaktions-/Schadensregeln und Gerätetest.
+
+**Wiederaufnahme:** [PR prüfen](https://github.com/ManuEtt/Dnd/pulls), vollständige GitHub-Actions-Ausführung für den **finalen** PR-HEAD abwarten, gemeldete Flutter-/Dart-/Backend-/Android-Probleme im Feature-Branch korrigieren. Erst bei vollständig grünem CI-Lauf konfliktfrei in `main` mergen; dann README, CHANGELOG, CHECKPOINT, Entwicklungsstatus und Matrix mit dem nachgewiesenen Workflow und Merge-Commit aktualisieren.
+
 ## CI- und Merge-Abnahme 20.10.2026 – Version 0.8.17+67
 
 **CI-Freigabe und Integration 20.10.2026:** [PR #44](https://github.com/ManuEtt/Dnd/pull/44) wurde nach erfolgreich abgeschlossener [GitHub Actions #39383477544](https://github.com/ManuEtt/Dnd/actions/runs/39383477544) (finaler geprüfter Head `8f703b0002ae6dcb5279893020bea63e14771184`) nach `main` gemergt; Merge-Commit [`fa2ee36caff2c210eabaa651321b9591de46737f`](https://github.com/ManuEtt/Dnd/commit/fa2ee36caff2c210eabaa651321b9591de46737f). Bestanden: Struktur-/Python-Tests, Backend Typecheck/Build/Tests, Dart format, Flutter analyze/test, Android-Debug-Build, native Android-Tests und Release-APK-Artefakte. **Weiter offen:** echter Android-Gerätetest, vollständige Shield-Reaktionsmechanik, allgemeine Monster-Abwehr und komplette SRD-Abdeckung.
