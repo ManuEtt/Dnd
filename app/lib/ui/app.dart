@@ -1169,6 +1169,31 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(prior);
   }
 
+  Future<void> _decideEnemyShieldHit({required bool castShield}) async {
+    final current = widget.controller.currentCampaign;
+    if (current == null ||
+        current.pendingEnemyShieldHit == null ||
+        widget.controller.busy) {
+      return;
+    }
+    HeroShieldReactionPlan? plan;
+    if (castShield) {
+      plan = await showDialog<HeroShieldReactionPlan>(
+        context: context,
+        builder: (_) => HeroShieldReactionDialog(hero: current.hero),
+      );
+      if (plan == null || !mounted) return;
+    }
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    await widget.controller.resolveEnemyShieldHit(
+      campaignId: current.id,
+      expectedRevision: current.revision,
+      plan: plan,
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
   Future<void> _castMagicMissile() async {
     final campaign = widget.controller.currentCampaign;
     final fight = campaign?.encounter;
@@ -1504,6 +1529,48 @@ class _AdventurePageState extends State<_AdventurePage> {
                   ),
               ],
             ),
+            if (campaign.pendingEnemyShieldHit != null)
+              Card(
+                key: const ValueKey('pending-enemy-shield-hit'),
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Gegnerangriff trifft – Schildreaktion',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Gewürfelter Treffer: '
+                        '${campaign.pendingEnemyShieldHit!.total}. '
+                        'Der Schaden wurde noch nicht gewürfelt.',
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        children: [
+                          FilledButton.tonal(
+                            key: const ValueKey('enemy-shield-cast-now'),
+                            onPressed: widget.controller.busy
+                                ? null
+                                : () => _decideEnemyShieldHit(castShield: true),
+                            child: const Text('Jetzt Schild wirken'),
+                          ),
+                          TextButton(
+                            key: const ValueKey('enemy-shield-decline'),
+                            onPressed: widget.controller.busy
+                                ? null
+                                : () => _decideEnemyShieldHit(castShield: false),
+                            child: const Text('Treffer hinnehmen'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             if (campaign.pendingDeathSave != null)
               DeathSaveDecisionPanel(
                 hero: campaign.hero,

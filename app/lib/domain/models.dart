@@ -1897,7 +1897,9 @@ class Campaign {
             hero.hitPoints == null ||
             hero.hitPoints! <= 0 ||
             hero.armorClass == null ||
-            pendingEnemyShieldHit.total < hero.armorClass!)) {
+            (pendingEnemyShieldHit.natural != 20 &&
+                pendingEnemyShieldHit.total <
+                    CoverRules.armorClass(hero.armorClass!, encounter.heroCover)))) {
       throw const FormatException('Ungültiger offener Gegnerangriff.');
     }
     final adventureOffer = j['adventureOffer'] == null

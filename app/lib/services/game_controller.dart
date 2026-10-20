@@ -455,6 +455,17 @@ class GameController extends ChangeNotifier {
     await _commit(engine.endHeroTurn(current, shieldPlan: plan));
   });
 
+  Future<void> resolveEnemyShieldHit({
+    required String campaignId,
+    required int expectedRevision,
+    HeroShieldReactionPlan? plan,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.resolvePendingEnemyShieldHit(current, shieldPlan: plan),
+    );
+  });
+
   Future<void> castMagicMissile({
     required String campaignId,
     required int expectedRevision,
