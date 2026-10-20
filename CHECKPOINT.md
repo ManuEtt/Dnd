@@ -1,3 +1,9 @@
+## Abnahme und Merge: 0.8.19+69 (20.10.2026)
+
+**CI- und Merge-Abnahme 20.10.2026:** Das eingeschränkte Regelpaket `SPELL-SHIELD-HERO-CONDITIONAL` in Version `0.8.19+69` wurde über [PR #49](https://github.com/ManuEtt/Dnd/pull/49) auf `main` integriert (Merge [`95792bb241c6123e34a1fae97c9fdef31d153ce2`](https://github.com/ManuEtt/Dnd/commit/95792bb241c6123e34a1fae97c9fdef31d153ce2)). Vollständiger [GitHub-Actions-Lauf #39394683773](https://github.com/ManuEtt/Dnd/actions/runs/39394683773) auf dem finalen Code-HEAD `090adb4c5fe21ddfc83d0903d5ef39181c50dd9f` **success**: Struktur-/Python-Tests, Backend-Typecheck/Build/Tests, Dart-Formatierung, Flutter-Analyse und Tests, Android-Debug-APK, native Android-Tests und Alpha-APK-Artefakte. **Nicht geprüft:** Gerätetest; eine echte Reaktions-Unterbrechung *nach* dem gegnerischen Angriffswurf; mehrere Angriffe/Gegner und Shield gegen gegnerisches Magisches Geschoss. Diese Grenzen bleiben als offene SRD-Anforderungen bestehen.
+
+---
+
 ## 20.10.2026 – SRD Hero Shield (Version 0.8.19+69)
 
 **Basis:** `main` `12b2ddd8e524d674acbb909cc09025bc8ef2cfd9`. Featurebranch: `feature/srd-hero-shield-auto-reaction-20261020`. **Status beim Commit: implementiert, CI noch nicht bestätigt**.
