@@ -11,6 +11,7 @@ import 'character_rule_engine.dart';
 import 'character_effect_rules.dart';
 import 'magic_missile_rules.dart';
 import 'fire_bolt_rules.dart';
+import 'sacred_flame_rules.dart';
 import 'healing_spell_rules.dart';
 import 'hero_shield_reaction_rules.dart';
 import 'damage_rules.dart';
@@ -1223,6 +1224,108 @@ class GameEngine {
 
   /// Fire Bolt: confirmed single creature, local spell attack and fire damage.
   /// Cantrip consumes a Magic action but NEVER a spell slot.
+  /// SRD 5.2.1 Sacred Flame: a confirmed enemy Dexterity saving throw.
+  /// Half and three-quarter cover NEVER grant a bonus for this spell.
+  GameUpdate castSacredFlame(
+    Campaign campaign, {
+    required int confirmedTargetDexteritySaveModifier,
+    required bool targetVisibleConfirmed,
+    required bool targetWithinRangeConfirmed,
+    required bool verbalComponentConfirmed,
+    required bool somaticComponentConfirmed,
+    required bool noRadiantDamageAdjustmentConfirmed,
+    required bool noUnmodelledDcModifiersConfirmed,
+    required bool saveCircumstancesConfirmed,
+    bool saveAdvantage = false,
+    bool saveDisadvantage = false,
+  }) {
+    _requireExternalEffect(campaign, 'Heilige Flamme');
+    final fight = campaign.encounter;
+    if (fight == null ||
+        fight.isFinished ||
+        fight.activeParticipant != 'hero' ||
+        !campaign.hero.isComplete ||
+        fight.actionUsed ||
+        fight.surgeReserved ||
+        fight.surgeUsedThisTurn ||
+        CombatClassActions.rageActive(fight) ||
+        campaign.pendingEnemyShieldHit != null) {
+      throw const FormatException(
+        'Heilige Flamme benötigt einen freien eigenen Kampfzug, '
+        'bestätigte Werte und eine Magieaktion.',
+      );
+    }
+    final cast = SacredFlameRules.cast(
+      campaign.hero,
+      dice: dice,
+      confirmedTargetDexteritySaveModifier:
+          confirmedTargetDexteritySaveModifier,
+      targetCover: fight.enemyCover,
+      targetVisibleConfirmed: targetVisibleConfirmed,
+      targetWithinRangeConfirmed: targetWithinRangeConfirmed,
+      verbalComponentConfirmed: verbalComponentConfirmed,
+      somaticComponentConfirmed: somaticComponentConfirmed,
+      noRadiantDamageAdjustmentConfirmed:
+          noRadiantDamageAdjustmentConfirmed,
+      noUnmodelledDcModifiersConfirmed:
+          noUnmodelledDcModifiersConfirmed,
+      saveCircumstancesConfirmed: saveCircumstancesConfirmed,
+      saveAdvantage: saveAdvantage,
+      saveDisadvantage: saveDisadvantage,
+    );
+    final remaining = RulesEngine.remainingHitPoints(
+      hitPoints: fight.enemyHitPoints,
+      damage: cast.damage,
+    );
+    final payload = <String, dynamic>{
+      'spellName': 'Heilige Flamme',
+      'spellLevel': 0,
+      'castingClass': 'Kleriker',
+      'spellcastingAbility': 'wisdom',
+      'targetId': fight.id,
+      'targetName': fight.enemyName,
+      'savingThrowAbility': 'dexterity',
+      'savingThrowDc': cast.savingThrow.dc,
+      'savingThrowModifier': cast.savingThrow.modifier,
+      'savingThrowRoll': cast.savingThrow.roll.toJson(),
+      'savingThrowSucceeded': cast.savingThrow.succeeded,
+      'saveAdvantage': saveAdvantage,
+      'saveDisadvantage': saveDisadvantage,
+      'targetCover': fight.enemyCover.name,
+      'halfAndThreeQuarterCoverIgnored': true,
+      'damageRoll': cast.damageRoll?.toJson(),
+      'damageType': 'radiant',
+      'damage': cast.damage,
+      'enemyHitPoints': remaining,
+      'noSpellSlotSpent': true,
+      'targetVisibleConfirmed': true,
+      'targetWithinRangeConfirmed': true,
+      'saveCircumstancesConfirmed': true,
+      'noRadiantDamageAdjustmentConfirmed': true,
+      'noUnmodelledDcModifiersConfirmed': true,
+    };
+    var next = campaign.copyWith(
+      hero: cast.hero,
+      encounter: fight.copyWith(
+        enemyHitPoints: remaining,
+        actionUsed: true,
+      ),
+    );
+    if (remaining == 0) {
+      next = _afterFlurryVictory(next, payload);
+    }
+    return _commit(
+      campaign,
+      next,
+      'Heilige Flamme gegen ${fight.enemyName}: Geschicklichkeitsrettungswurf '
+      '${cast.savingThrow.roll.total} gegen SG ${cast.savingThrow.dc}. '
+      '${cast.savingThrow.succeeded ? 'Erfolgreich, kein Schaden.' : '${cast.damage} Strahlenschaden.'} '
+      'Gegner-TP $remaining. Magieaktion verbraucht, kein Zauberplatz.',
+      type: 'spell.sacredFlame',
+      payload: payload,
+    );
+  }
+
   GameUpdate castFireBolt(
     Campaign campaign, {
     required String castingClass,
