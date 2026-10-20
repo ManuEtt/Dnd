@@ -1,0 +1,85 @@
+name: Einmalige Bereinigung gemergter Entwicklungsbranches
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/cleanup-verified-merged-branches.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    name: PR-Merges und SHA prüfen, dann Branches entfernen
+    if: github.repository == 'ManuEtt/Dnd'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Nur 17 überprüfte Merge-Branches löschen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          candidates=(
+          "feature/adventure-status-quests-20261019|565351f632fbcbedd8bb8d422afe2d38df8b4980|34"
+          "feature/bard-rogue-skill-passives-20261019|ecf905d8e65daffea4b57754d3b29c5306a4c40c|21"
+          "feature/complete-character-level-up-20261019|2f6fcb294fba62c82ccef0691bdaf8106d60e833|19"
+          "feature/cover-combat-20261019|973895df7f61ab8bd4794ecb369d343cf6b23fe4|28"
+          "feature/fantasy-assets-2026-10-19|b1c2451c307adaa8958f5239c323b2a46080c446|20"
+          "feature/fantasy-rune-navigation-ready-20261019|8bb770d21e2a705c3330562ef931d1e9156bff13|31"
+          "feature/finish-fantasy-art-import-20261019|83a64f37b7cedae6d49098b55983c1d29a8a9e5c|25"
+          "feature/hero-campaign-dashboard-20261019|39889cb953eeca6e04f2aa527bda71073875b944|33"
+          "feature/moonlit-scenery-v2-20261019|4cda661bef1e39dcf231a1d95a6ef2cd7216bd83|32"
+          "feature/ornate-frame-portrait-ui-20261019|90917f901b6b021bb67e014ed425617c4600bc79|22"
+          "feature/passive-perception-rulebook-20261019|57869f5e141f33bbb231df973a70072717061b79|24"
+          "feature/rabenwacht-quest-journal-20261019|b042b8eababaff7bbfe470b82db842637faac00f|18"
+          "feature/srd-start-equipment-choices-20261019|8f1772933d84e34409a1a9fbf556d41b80bd3534|16"
+          "feature/visual-redesign-v2-20261019|1c049207a19ad3745ccc82b147505272c1b99ac1|27"
+          "fix/graphic-assets-fallback-20261019|239be718b867c721ae38215dca9fbce29e33bbe4|23"
+          "fix/original-graphics-centerslice-20261019|e76c21ed4746b2f20c7713c5359558a317ed82d6|26"
+          "fix/visual-redesign-mobile-accessibility-20261019|4f2f9ed3879ad80e06ceb5cced68b5d41178af15|29"
+          )
+          deleted=0
+          skipped=0
+          for row in "${candidates[@]}"; do
+            IFS='|' read -r branch expected_sha pr_number <<< "$row"
+            if [[ "$branch" == "main" || "$branch" == "master" ]]; then
+              echo "::error::Protected default branch was listed. Aborting."
+              exit 1
+            fi
+
+            # Verify the PR was actually merged into this repository's main.
+            pr_json=$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${pr_number}")
+            merged=$(jq -r '.merged' <<< "$pr_json")
+            pr_ref=$(jq -r '.head.ref' <<< "$pr_json")
+            pr_sha=$(jq -r '.head.sha' <<< "$pr_json")
+            pr_base=$(jq -r '.base.ref' <<< "$pr_json")
+            pr_repo=$(jq -r '.head.repo.full_name' <<< "$pr_json")
+            if [[ "$merged" != "true" || "$pr_ref" != "$branch" || "$pr_sha" != "$expected_sha" || "$pr_base" != "main" || "$pr_repo" != "$GITHUB_REPOSITORY" ]]; then
+              echo "::warning::Skipping ${branch}: merged PR #${pr_number} could not be verified."
+              skipped=$((skipped+1))
+              continue
+            fi
+
+            # A later update to the branch must never be discarded.
+            if ! current_sha=$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/${branch}" --jq '.object.sha' 2>/dev/null); then
+              echo "::notice::Branch ${branch} no longer exists."
+              skipped=$((skipped+1))
+              continue
+            fi
+            if [[ "$current_sha" != "$expected_sha" ]]; then
+              echo "::warning::Skipping ${branch}: changed after PR merge."
+              skipped=$((skipped+1))
+              continue
+            fi
+
+            echo "Delete ${branch} (merged PR #${pr_number}, ${expected_sha})"
+            gh api --method DELETE "repos/${GITHUB_REPOSITORY}/git/refs/heads/${branch}"
+            deleted=$((deleted+1))
+          done
+
+          echo "Bereinigung abgeschlossen: ${deleted} gelöscht, ${skipped} übersprungen."
+          echo "Ungeprüfte, ungemergte und nachträglich veränderte Branches wurden nicht angefasst."
