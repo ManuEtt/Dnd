@@ -1,3 +1,12 @@
+## 20.10.2026 – Version 0.8.23+73 (Feuerpfeil – CI ausstehend)
+
+- Erste neue vollständig durch Engine/Controller/UI integrierte Schadens-Zaubertrick-Aktion `spell.fireBolt` mit W20-Angriff, Deckung, Trefferlogik, kritischen Treffern und stufenabhängigen Feuer-Schadenswürfeln.
+- Prüft bestätigte Zauberklassen/Verfügbarkeit, Komponenten, Sicht, Reichweite, Angriffsumstände und bekannte gegnerische Feuer-/Schildabwehr. Keine erfundenen Monsterwerte.
+- Verbraucht Magieaktion, **keinen** Zauberplatz. Gegner-TP und Würfel werden atomar protokolliert. Neue Engine-/Domänen- und UI-Regressionstests.
+- Keine generische Zauberengine-Abnahme: Objektentzündung, automatische Feuerabwehr und komplexe Monsterreaktionen bleiben offen.
+
+---
+
 ## 20.10.2026 – Version 0.8.22+72 (SRD-Zauberindex und Vorprüfung, CI ausstehend)
 
 - Bundling und striktes Einlesen von 339 vorläufigen SRD-5.2.1-Zauberdefinitionen mit Metadaten zu Klasse, Zaubergrad, Zeit, Reichweite, Komponenten, Wirkungsdauer, Konzentration und Ritual.

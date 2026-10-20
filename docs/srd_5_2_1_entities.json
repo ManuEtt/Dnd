@@ -1870,10 +1870,19 @@
       "source_url": "https://www.dndbeyond.com/srd",
       "transcription_url": "https://github.com/azemoning/omni-5e/blob/main/data/raw/5.2.1/spells.md",
       "license": "CC-BY-4.0",
-      "rule_implemented": "unverified",
-      "code": [],
-      "tests": [],
-      "note": "Name und ggf. Kategorie aus öffentlicher SRD-Transkription. Gegen offizielles SRD 5.2.1 und konkrete Domain-Wirkung/Tests noch zu verifizieren."
+      "rule_implemented": "partial",
+      "code": [
+        "app/lib/domain/fire_bolt_rules.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/services/game_controller.dart",
+        "app/lib/ui/fire_bolt_dialog.dart",
+        "app/lib/ui/app.dart"
+      ],
+      "tests": [
+        "app/test/fire_bolt_rules_test.dart",
+        "app/test/fire_bolt_dialog_test.dart"
+      ],
+      "note": "Regelengine/Spielablauf für bestätigtes einzelnes Kreaturenziel: Zauberangriff, V/S, Sicht/Reichweite, Deckung, aktive Schild-RK, natürliche 1/20, Schadensskalierung und Würfel/Journaleintrag. Kein Objektentflammen, automatische Feuerabwehr, automatische Positionsprüfung oder beliebige Zielanzahl; Android-Gerätetest offen. CI zum neuen PR noch ausstehend."
     },
     {
       "id": "SPELL-ENTRY-FIRE-SHIELD",

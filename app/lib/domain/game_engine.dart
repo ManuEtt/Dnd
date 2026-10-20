@@ -10,6 +10,7 @@ import 'crawling_movement_rules.dart';
 import 'character_rule_engine.dart';
 import 'character_effect_rules.dart';
 import 'magic_missile_rules.dart';
+import 'fire_bolt_rules.dart';
 import 'healing_spell_rules.dart';
 import 'hero_shield_reaction_rules.dart';
 import 'damage_rules.dart';
@@ -1216,6 +1217,113 @@ class GameEngine {
       'Zauberplatz Grad ${cast.slotLevel} und Magieaktion verbraucht.'
       '${remaining == 0 ? ' Der Gegner ist besiegt.' : ''}',
       type: 'spell.magicMissile',
+      payload: payload,
+    );
+  }
+
+  /// Fire Bolt: confirmed single creature, local spell attack and fire damage.
+  /// Cantrip consumes a Magic action but NEVER a spell slot.
+  GameUpdate castFireBolt(
+    Campaign campaign, {
+    required String castingClass,
+    required bool targetVisibleConfirmed,
+    required bool targetWithinRangeConfirmed,
+    required bool verbalComponentConfirmed,
+    required bool somaticComponentConfirmed,
+    required bool noFireResistanceOrImmunityConfirmed,
+    required bool noUnresolvedShieldReactionConfirmed,
+    required bool situationalAttackConditionsConfirmed,
+    bool advantage = false,
+    bool disadvantage = false,
+    bool targetProne = false,
+    bool targetWithinFiveFeet = false,
+  }) {
+    _requireExternalEffect(campaign, 'Feuerpfeil');
+    final fight = campaign.encounter;
+    if (fight == null ||
+        fight.isFinished ||
+        fight.activeParticipant != 'hero' ||
+        !campaign.hero.isComplete ||
+        fight.actionUsed ||
+        fight.surgeReserved ||
+        fight.surgeUsedThisTurn ||
+        CombatClassActions.rageActive(fight)) {
+      throw const FormatException(
+        'Feuerpfeil benötigt einen freien eigenen Kampfzug, '
+        'eine Magieaktion und bestätigte Charakterwerte.',
+      );
+    }
+    if (fight.enemyCover == CoverLevel.total) {
+      throw const FormatException(
+        'Ein Ziel mit vollständiger Deckung ist nicht direkt anvisierbar.',
+      );
+    }
+    final result = FireBoltRules.cast(
+      campaign.hero,
+      dice: dice,
+      castingClass: castingClass,
+      targetArmorClass: fight.effectiveEnemyArmorClass,
+      targetCover: fight.enemyCover,
+      targetVisibleConfirmed: targetVisibleConfirmed,
+      targetWithinRangeConfirmed: targetWithinRangeConfirmed,
+      verbalComponentConfirmed: verbalComponentConfirmed,
+      somaticComponentConfirmed: somaticComponentConfirmed,
+      noFireResistanceOrImmunityConfirmed: noFireResistanceOrImmunityConfirmed,
+      noUnresolvedShieldReactionConfirmed: noUnresolvedShieldReactionConfirmed,
+      situationalAttackConditionsConfirmed:
+          situationalAttackConditionsConfirmed,
+      advantage: advantage,
+      disadvantage: disadvantage,
+      targetProne: targetProne,
+      targetWithinFiveFeet: targetWithinFiveFeet,
+    );
+    final remaining = RulesEngine.remainingHitPoints(
+      hitPoints: fight.enemyHitPoints,
+      damage: result.damage,
+    );
+    final payload = <String, dynamic>{
+      'spellName': 'Feuerpfeil',
+      'spellLevel': 0,
+      'castingClass': result.castingClass,
+      'spellcastingAbility': result.spellcastingAbility,
+      'targetId': fight.id,
+      'attackRoll': result.attackRoll.toJson(),
+      'attackBonus': result.attackBonus,
+      'effectiveArmorClass': result.effectiveArmorClass,
+      'hit': result.hit,
+      'critical': result.critical,
+      'damageRoll': result.damageRoll?.toJson(),
+      'damageType': 'fire',
+      'damage': result.damage,
+      'enemyHitPoints': remaining,
+      'targetVisibleConfirmed': true,
+      'targetWithinRangeConfirmed': true,
+      'noFireResistanceOrImmunityConfirmed': true,
+      'noUnresolvedShieldReactionConfirmed': true,
+      'situationalAttackConditionsConfirmed': true,
+      'advantage': advantage,
+      'disadvantage': disadvantage,
+      'targetProne': targetProne,
+      'targetWithinFiveFeet': targetWithinFiveFeet,
+      'cover': fight.enemyCover.name,
+      'noSpellSlotSpent': true,
+    };
+    var next = campaign.copyWith(
+      hero: result.hero,
+      encounter: fight.copyWith(enemyHitPoints: remaining, actionUsed: true),
+    );
+    if (remaining == 0) {
+      next = _afterFlurryVictory(next, payload);
+    }
+    return _commit(
+      campaign,
+      next,
+      'Feuerpfeil gegen ${fight.enemyName}: '
+      'Angriff ${result.attackRoll.total} gegen RK '
+      '${result.effectiveArmorClass}. '
+      '${result.hit ? 'Treffer mit ${result.damage} Feuerschaden.' : 'Verfehlt.'} '
+      'Gegner-TP $remaining. Magieaktion verbraucht, kein Zauberplatz.',
+      type: 'spell.fireBolt',
       payload: payload,
     );
   }
