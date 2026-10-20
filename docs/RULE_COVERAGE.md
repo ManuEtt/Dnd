@@ -1,3 +1,5 @@
+**20.10.2026 / 0.8.15+65:** `COMBAT-PRONE-CRAWL` implementiert: explizite Kriechbewegung 2:1 bzw. 3:1, UI, Controller und SQLite-/JSON-Tests, **CI noch offen**. Kartengeometrie und Gegnerbewegung fehlen weiterhin.
+
 # SRD-5.2.1-Regelabdeckung
 
 **Neue offene Abnahme (19.10.2026):** `COMBAT-PRONE-STAND`: ausdrückliches Aufstehen aus Liegend, in Fuß abgerundete halbe Bewegungsrate, Dezimeter-Restbudget, UI und SQLite-/Revisions-/Rollbacktests auf `feature/prone-stand-movement-20261019` implementiert. Letzte CI für dieses Paket **noch ausstehend**; Kriechen und Positionskampf weiterhin offen. Details in `SRD_5_2_1_REQUIREMENTS_MATRIX.md`.

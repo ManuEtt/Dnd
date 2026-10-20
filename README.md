@@ -2,7 +2,7 @@
 
 **Deutschsprachige Android-Fantasy-Rollenspiel-App mit Soloabenteuern, Charakterverwaltung, D&D-Regelunterstützung und optionalem KI-Erzähler.**
 
-> **Projektstatus (20. Oktober 2026):** Aktive **Android-Alpha**, in Entwicklung. Im Flutter-Quellprojekt steht **Version `0.8.14+64`** (Version 0.8.14, Build 64); verbindlich ist immer [`app/pubspec.yaml`](app/pubspec.yaml). Diese Quellcode-Version bedeutet **nicht**, dass eine identisch geprüfte oder veröffentlichte APK bereits auf jedem Gerät installiert ist. Das vollständige D&D-Regelwerk ist **nicht** implementiert.
+> **Projektstatus (20. Oktober 2026):** Aktive **Android-Alpha**, in Entwicklung. Im Flutter-Quellprojekt steht **Version `0.8.15+65`** (Version 0.8.14, Build 64); verbindlich ist immer [`app/pubspec.yaml`](app/pubspec.yaml). Diese Quellcode-Version bedeutet **nicht**, dass eine identisch geprüfte oder veröffentlichte APK bereits auf jedem Gerät installiert ist. Das vollständige D&D-Regelwerk ist **nicht** implementiert.
 
 ## Inhaltsverzeichnis
 
@@ -13,6 +13,12 @@
 - [Build- und Teststand](#build--und-teststand)
 - [Bekannte Grenzen und nächste Schritte](#bekannte-grenzen-und-nächste-schritte)
 - [Regelgrundlage, Dokumentation und Chronik](#regelgrundlage-dokumentation-und-chronik)
+
+## Erstes SRD-5.2.1-Inkrement: Kriechen (20.10.2026)
+
+**Version 0.8.15+65 – Entwicklungsbranch `feature/srd-crawling-20261020`**, Basis-`main` `f06fb2ffac476ceec0dee2a4c6979d972e0c1a72`, Code-Commit `72f51dd0b`, Test-Commit `4b0154dc8`. In der Abenteueransicht kann ein **liegender Held** im aktiven eigenen Kampfzug 1,5 oder 3 m kriechen und normales beziehungsweise schwieriges Gelände ausdrücklich bestätigen. Die Regelengine berechnet Bewegungskosten von **2 oder 3 Fuß pro Fuß**; unzureichende Bewegung, blockierende Zustände, fremde Züge und offene Proben werden abgewiesen. Bewegung und `combat.crawled`-Ereignis werden mit Revisionsschutz atomar gespeichert, ohne den Status „Liegend“ aufzuheben. Die bisherige Deckungsposition endet.
+
+**Nachweisstand:** Implementierung, Domain- und SQLite-Tests liegen im Entwicklungsbranch. GitHub-CI, Flutter-Analyse, Backend-/Android-Build und reale Geräteabnahme sind für **diesen neuen Commit noch nicht nachgewiesen**. Die weiter unten genannten grünen CI-Läufe beziehen sich auf ältere Commits und dürfen nicht als Prüfung dieser Version ausgegeben werden. Ein vollständiges SRD-5.2.1-Regelwerk ist weiterhin nicht implementiert. Siehe `docs/SRD_5_2_1_REQUIREMENTS_MATRIX.md`, `DEVELOPMENT_STATUS.md`, `CHANGELOG.md` und `CHECKPOINT.md`.
 
 ## Funktionsstand
 

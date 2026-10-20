@@ -353,6 +353,22 @@ class GameController extends ChangeNotifier {
     await _commit(engine.standUp(current));
   });
 
+  Future<void> crawl({
+    required String campaignId,
+    required int expectedRevision,
+    required int distanceFeet,
+    required bool difficultTerrain,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.crawl(
+        current,
+        distanceFeet: distanceFeet,
+        difficultTerrain: difficultTerrain,
+      ),
+    );
+  });
+
   Future<void> applyConditionEffect({
     required String campaignId,
     required int expectedRevision,
