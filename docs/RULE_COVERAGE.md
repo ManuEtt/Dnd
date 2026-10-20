@@ -1,8 +1,8 @@
-**20.10.2026 / 0.8.15+65:** `COMBAT-PRONE-CRAWL` implementiert: explizite Kriechbewegung 2:1 bzw. 3:1, UI, Controller und SQLite-/JSON-Tests, **CI noch offen**. Kartengeometrie und Gegnerbewegung fehlen weiterhin.
+**20.10.2026 / 0.8.15+65:** `COMBAT-PRONE-CRAWL` implementiert: explizite Kriechbewegung 2:1 bzw. 3:1, UI, Controller und SQLite-/JSON-Tests, **CI 39378443958 erfolgreich; Gerätetest offen**. Kartengeometrie und Gegnerbewegung fehlen weiterhin.
 
 # SRD-5.2.1-Regelabdeckung
 
-**Neue offene Abnahme (19.10.2026):** `COMBAT-PRONE-STAND`: ausdrückliches Aufstehen aus Liegend, in Fuß abgerundete halbe Bewegungsrate, Dezimeter-Restbudget, UI und SQLite-/Revisions-/Rollbacktests auf `feature/prone-stand-movement-20261019` implementiert. Letzte CI für dieses Paket **noch ausstehend**; Kriechen und Positionskampf weiterhin offen. Details in `SRD_5_2_1_REQUIREMENTS_MATRIX.md`.
+**Neue offene Abnahme (19.10.2026):** `COMBAT-PRONE-STAND`: ausdrückliches Aufstehen aus Liegend, in Fuß abgerundete halbe Bewegungsrate, Dezimeter-Restbudget, UI und SQLite-/Revisions-/Rollbacktests auf `feature/prone-stand-movement-20261019` implementiert. Letzte CI für dieses Paket **noch ausstehend**; Positionskampf weiterhin offen; Kriechen wurde nachträglich durch PR #40 implementiert. Details in `SRD_5_2_1_REQUIREMENTS_MATRIX.md`.
 
 
 Stand: 0.7.9+49, 18.10.2026. Quelle: offizielles [SRD 5.2.1](https://www.dndbeyond.com/srd), CC BY 4.0; Attribution in `THIRD_PARTY_NOTICES.md`. Keine externe vollständige Anforderungsmatrix wurde im Workspace gefunden. Die folgenden lokalen IDs bilden überprüfbare Arbeitsbereiche ab, keine Behauptung einer vollständigen Umsetzung der zuvor erwähnten 1.247 Anforderungen. Status beziehen sich auf den jeweils beschriebenen Umfang.
