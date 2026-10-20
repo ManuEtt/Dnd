@@ -1,3 +1,13 @@
+## Neue Anforderungszeilen (20.10.2026, Version 0.8.15+65)
+
+| ID | SRD-Abschnitt | Soll und Umsetzung | Tests | Status |
+| --- | --- | --- | --- | --- |
+| COMBAT-PRONE-CRAWL | Rules Glossary: Crawling / Difficult Terrain | Liegend und bewegungsfähig: Kriechen kostet 2 Fuß Bewegung je 1 Fuß Strecke; im bestätigten schwierigen Gelände 3 Fuß. Eigener Kampfzug, kein offener Wurf, keine Aktion; UI-Auswahl 5/10 Fuß, Ereignis und SQLite-Revisionsschutz. `crawling_movement_rules.dart` / `game_engine.dart` / `game_controller.dart` / `ui/app.dart` | `prone_crawling_rules_test.dart`, `prone_crawling_storage_test.dart` | IMPLEMENTIERT, CI/Android NOCH NICHT GETESTET |
+| COMBAT-TERRAIN-MAP | Playing the Game / Movement | Gelände und Position aus überprüften Kartendaten statt manueller Terrainbestätigung ableiten | Tests fehlen | FEHLT |
+| MONSTERS-MOVEMENT | Combat / Monsters | Gegnerbewegung, Kriechen und räumliche Abstände regelkonform umsetzen | Tests fehlen | FEHLT |
+
+**Quelle:** offizielles [SRD 5.2.1](https://www.dndbeyond.com/srd), CC BY 4.0. Diese fortgeschriebene Matrix ist ausdrücklich noch keine vollständige Inventur des SRD; historische Einträge können sich auf ältere, nicht gemeinsam verifizierte Branches beziehen.
+
 # SRD 5.2.1 – Regelanforderungsmatrix (laufender Aufbau)
 
 ## Verifizierte konkrete Klassen-Startausrüstungswahl (Version 0.8.6+56; CI offen)
