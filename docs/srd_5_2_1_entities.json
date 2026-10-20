@@ -40,10 +40,19 @@
       "source_url": "https://www.dndbeyond.com/srd",
       "transcription_url": "https://github.com/azemoning/omni-5e/blob/main/data/raw/5.2.1/spells.md",
       "license": "CC-BY-4.0",
-      "rule_implemented": "unverified",
-      "code": [],
-      "tests": [],
-      "note": "Name und ggf. Kategorie aus öffentlicher SRD-Transkription. Gegen offizielles SRD 5.2.1 und konkrete Domain-Wirkung/Tests noch zu verifizieren."
+      "rule_implemented": "partial",
+      "code": [
+        "app/lib/domain/acid_splash_rules.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/services/game_controller.dart",
+        "app/lib/ui/acid_splash_dialog.dart",
+        "app/lib/ui/app.dart"
+      ],
+      "tests": [
+        "app/test/acid_splash_rules_test.dart",
+        "app/test/acid_splash_dialog_test.dart"
+      ],
+      "note": "SRD 5.2.1: 60ft/5ft-Radius Sphere, unabhängige GES-Rettungswürfe, ein gemeinsamer W6-Schadenswurf für mehrere Fehlschläge, 1/2/3/4W6 Gesamtstufe, bestätigte Deckungs-Saves pro Ursprung. Im aktiven Kampf derzeit absichtlich ausschließlich bestätigter isolierter Hauptgegner; vollständiger persistenter Mehrgegner-Kampfzustand/UI noch FEHLT. Alle Ziele und deren TP werden im reinen Mehrziel-Regelresultat getrennt ausgewiesen; nur ein aktiver Gegner wird im Campaign-Encounter persistiert. Keine automatischen Kartenpositionen, Sicht, Monstertraits, Säureimmunitäten oder echte Gerätetests."
     },
     {
       "id": "SPELL-ENTRY-AID",
