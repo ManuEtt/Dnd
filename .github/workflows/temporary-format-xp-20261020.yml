@@ -26,6 +26,8 @@ jobs:
         with:
           channel: stable
           flutter-version: '3.35.7'
+      - name: Flutter-Abhängigkeiten laden
+        run: cd app && flutter pub get
       - name: Dart Dateien formatieren und Änderungen einchecken
         run: |
           cd app
