@@ -112,7 +112,7 @@ Auf Linux benötigen die SQLite-Tests gegebenenfalls `libsqlite3-dev`. Weitere D
 
 **Verifiziert für den integrierten XP-/Aufstiegs-Pull-Request #39:** Der GitHub-Actions-Lauf [39374739010](https://github.com/ManuEtt/Dnd/actions/runs/39374739010) ist mit **success** abgeschlossen. Bestanden wurden unter anderem Backend-Tests, Dart-Formatierung, Flutter-Codeanalyse, sämtliche Flutter-Tests, Android-Debug-APK-Build und die Bereitstellung der kleinen Alpha-APKs.
 
-**Zusätzlicher Build auf `main`:** [39375312975](https://github.com/ManuEtt/Dnd/actions/runs/39375312975), Commit `25dab9b`. Bei der README-Prüfung waren Backend-Tests, Formatierung, Analyse, Flutter-Tests und Debug-APK-Build erfolgreich; der **gesamte Lauf war noch nicht abgeschlossen**. Für die neueste Prüfung bitte den Live-Status direkt bei GitHub Actions lesen.
+**Erfolgreicher vollständiger Build auf `main`:** [39375312975](https://github.com/ManuEtt/Dnd/actions/runs/39375312975), Commit `25dab9b` – GitHub Actions meldet **completed / success**. Backend-Tests, Dart-Formatierung, Flutter-Codeanalyse, sämtliche Flutter-Tests und Android-Debug-APK-Build waren erfolgreich. Der erfolgreiche CI-Abschluss bestätigt den geprüften Quellstand, ersetzt aber keine Geräteabnahme.
 
 **Nicht als geprüft ausgeben:** Installation/Update auf einem echten Android-Gerät, TTS-/Spracherkennungsqualität, System-Bildwähler, Langzeit-Speicherstandmigration, produktiver kostenpflichtiger KI-Anbieter und langfristig konsistente Release-Signierung.
 
