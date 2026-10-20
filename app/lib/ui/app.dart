@@ -22,6 +22,8 @@ import 'backup_dialogs.dart';
 import 'character_editor.dart';
 import 'character_effect_dialog.dart';
 import 'condition_effect_dialog.dart';
+import 'hero_shield_reaction_dialog.dart';
+import '../domain/hero_shield_reaction_rules.dart';
 import 'magic_missile_dialog.dart';
 import 'healing_spell_dialog.dart';
 import 'death_save_decision_panel.dart';
@@ -1144,6 +1146,25 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previous);
   }
 
+  Future<void> _endTurnWithShield() async {
+    final current = widget.controller.currentCampaign;
+    if (current == null || current.encounter == null ||
+        widget.controller.busy || current.hero.isDead) return;
+    final plan = await showDialog<HeroShieldReactionPlan>(
+      context: context,
+      builder: (_) => HeroShieldReactionDialog(hero: current.hero),
+    );
+    if (plan == null || !mounted) return;
+    final prior = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    await widget.controller.endTurnWithShield(
+      campaignId: current.id,
+      expectedRevision: current.revision,
+      plan: plan,
+    );
+    if (mounted) await _afterTurn(prior);
+  }
+
   Future<void> _castMagicMissile() async {
     final campaign = widget.controller.currentCampaign;
     final fight = campaign?.encounter;
@@ -1424,6 +1445,23 @@ class _AdventurePageState extends State<_AdventurePage> {
                   icon: const Icon(Icons.shield_moon_outlined, size: 17),
                   label: const Text('Zustände verwalten'),
                 ),
+                if (campaign.encounter != null &&
+                    !campaign.encounter!.isFinished &&
+                    campaign.encounter!.activeParticipant == 'hero' &&
+                    HeroShieldReactionRules.preparedName(campaign.hero) != null)
+                  TextButton.icon(
+                    key: const ValueKey('adventure-end-turn-with-shield'),
+                    onPressed: widget.controller.busy ||
+                            campaign.pendingRoll != null ||
+                            campaign.pendingDeathSave != null ||
+                            campaign.hero.isDead ||
+                            campaign.hero.hitPoints == null ||
+                            campaign.hero.hitPoints! <= 0
+                        ? null
+                        : _endTurnWithShield,
+                    icon: const Icon(Icons.shield_outlined, size: 17),
+                    label: const Text('Zug beenden: Schild ggf. wirken'),
+                  ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&
                     MagicMissileRules.preparedName(campaign.hero) != null)
