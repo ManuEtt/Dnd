@@ -1166,6 +1166,7 @@ class _AdventurePageState extends State<_AdventurePage> {
       verbalComponentConfirmed: choice.verbalComponentConfirmed,
       somaticComponentConfirmed: choice.somaticComponentConfirmed,
       noProtectionConfirmed: choice.noProtectionConfirmed,
+      confirmedForceDefense: choice.confirmedForceDefense,
     );
     if (mounted) await _afterTurn(previous);
   }
