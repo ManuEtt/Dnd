@@ -82,6 +82,7 @@ class MagicMissileRules {
     required bool verbalComponentConfirmed,
     required bool somaticComponentConfirmed,
     required bool noProtectionConfirmed,
+    bool blockedByShield = false,
   }) {
     final knownName = preparedName(hero);
     if (knownName == null ||
@@ -95,7 +96,7 @@ class MagicMissileRules {
         !targetWithinRangeConfirmed ||
         !verbalComponentConfirmed ||
         !somaticComponentConfirmed ||
-        !noProtectionConfirmed) {
+        (!noProtectionConfirmed && !blockedByShield)) {
       throw const FormatException(
         'Sicht, Reichweite (120 Fuß), verbale und gestische Komponenten '
         'sowie fehlende bekannte Schutzwirkungen müssen bestätigt sein.',
@@ -121,7 +122,10 @@ class MagicMissileRules {
       pactMagic: pactMagic,
     );
     final count = 2 + spent.slotLevel;
-    final rolls = [for (var i = 0; i < count; i++) dice.roll('1d4+1')];
+    final rolls = [
+      if (!blockedByShield)
+        for (var i = 0; i < count; i++) dice.roll('1d4+1'),
+    ];
     final damage = rolls.fold<int>(0, (sum, roll) => sum + roll.total);
     // Normalization is temporary: historic/localized class names are kept.
     return MagicMissileResult(

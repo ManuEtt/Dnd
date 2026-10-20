@@ -1266,6 +1266,9 @@ class Encounter {
     this.heroCover = CoverLevel.none,
     this.enemyCover = CoverLevel.none,
     this.enemyForceDefense = EnemyForceDefense.unknown,
+    this.enemyShieldSlotsRemaining,
+    this.enemyShieldReactionUsed = false,
+    this.enemyShieldActive = false,
     this.enemyAttackBonus = 2,
     this.enemyDamage = '1d4',
     this.enemyDamageType = '',
@@ -1300,6 +1303,10 @@ class Encounter {
 
   /// Validated from an explicit encounter confirmation, never from narration.
   final EnemyForceDefense enemyForceDefense;
+  /// Null means unknown; never invent monster spell slots.
+  final int? enemyShieldSlotsRemaining;
+  final bool enemyShieldReactionUsed, enemyShieldActive;
+  int get effectiveEnemyArmorClass => enemyArmorClass + (enemyShieldActive ? 5 : 0);
 
   /// Pending player choice for the Monk's end-of-turn Self-Restoration.
   final String selfRestorationChoice;
@@ -1351,6 +1358,9 @@ class Encounter {
     CoverLevel? heroCover,
     CoverLevel? enemyCover,
     EnemyForceDefense? enemyForceDefense,
+    int? enemyShieldSlotsRemaining,
+    bool? enemyShieldReactionUsed,
+    bool? enemyShieldActive,
     int? round,
     String? activeParticipant,
     int? heroInitiative,
@@ -1382,6 +1392,9 @@ class Encounter {
     heroCover: heroCover ?? this.heroCover,
     enemyCover: enemyCover ?? this.enemyCover,
     enemyForceDefense: enemyForceDefense ?? this.enemyForceDefense,
+    enemyShieldSlotsRemaining: enemyShieldSlotsRemaining ?? this.enemyShieldSlotsRemaining,
+    enemyShieldReactionUsed: enemyShieldReactionUsed ?? this.enemyShieldReactionUsed,
+    enemyShieldActive: enemyShieldActive ?? this.enemyShieldActive,
     enemyAttackBonus: enemyAttackBonus,
     enemyDamage: enemyDamage,
     enemyDamageType: enemyDamageType,
@@ -1422,6 +1435,10 @@ class Encounter {
     if (enemyCover != CoverLevel.none) 'enemyCover': enemyCover.name,
     if (enemyForceDefense != EnemyForceDefense.unknown)
       'enemyForceDefense': enemyForceDefense.name,
+    if (enemyShieldSlotsRemaining != null)
+      'enemyShieldSlotsRemaining': enemyShieldSlotsRemaining,
+    if (enemyShieldReactionUsed) 'enemyShieldReactionUsed': true,
+    if (enemyShieldActive) 'enemyShieldActive': true,
     'enemyAttackBonus': enemyAttackBonus,
     'enemyDamage': enemyDamage,
     if (enemyDamageType.isNotEmpty) 'enemyDamageType': enemyDamageType,
@@ -1534,6 +1551,22 @@ class Encounter {
         'Ungültige Selbstwiederherstellungs-Auswahl.',
       );
     }
+    final shieldSlots = j['enemyShieldSlotsRemaining'] == null
+        ? null
+        : _int(
+            j['enemyShieldSlotsRemaining'],
+            'Gegner-Schildzauberplätze',
+            min: 0,
+            max: 99,
+          );
+    final shieldActive = _bool(j['enemyShieldActive'], 'Schild aktiv');
+    final shieldReactionUsed = _bool(
+      j['enemyShieldReactionUsed'],
+      'Gegnerreaktion verbraucht',
+    );
+    if (shieldActive && (!shieldReactionUsed || shieldSlots == null)) {
+      throw const FormatException('Ungültiger aktiver Schildzauber.');
+    }
     return Encounter(
       id: _string(j['id'], 'Begegnung-ID'),
       enemyName: _string(j['enemyName'], 'Gegner'),
@@ -1559,6 +1592,9 @@ class Encounter {
           fallback: 'unknown',
         ),
       ),
+      enemyShieldSlotsRemaining: shieldSlots,
+      enemyShieldReactionUsed: shieldReactionUsed,
+      enemyShieldActive: shieldActive,
       enemyAttackBonus: _int(
         j['enemyAttackBonus'],
         'Gegnerbonus',
