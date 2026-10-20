@@ -1274,6 +1274,68 @@ class GameEngine {
     );
   }
 
+  /// Confirm a stored creature's full initiative check total and whether
+  /// the controlling party is the GM or a player. This does NOT trigger a
+  /// turn, reroll a die or fabricate a monster initiative modifier.
+  GameUpdate confirmAreaCreatureInitiative(
+    Campaign campaign, {
+    required String creatureId,
+    required int initiativeTotal,
+    required String initiativeController,
+    required bool initiativeConfirmed,
+  }) {
+    final fight = campaign.encounter;
+    if (!initiativeConfirmed ||
+        fight == null ||
+        fight.isFinished ||
+        campaign.pendingRoll != null ||
+        campaign.pendingDeathSave != null ||
+        campaign.pendingEnemyShieldHit != null ||
+        campaign.hero.isDead ||
+        creatureId.isEmpty ||
+        initiativeTotal < -30 ||
+        initiativeTotal > 100 ||
+        (initiativeController != 'gm' &&
+            initiativeController != 'player')) {
+      throw const FormatException(
+        'Bestätige die vollständige Initiative (-30 bis 100) und '
+        'den Spieler- oder SL-gesteuerten Kampfteilnehmer.',
+      );
+    }
+    final matches = campaign.trackedAreaCreatures.where(
+      (creature) => creature.id == creatureId && creature.hitPoints > 0,
+    );
+    if (matches.length != 1) {
+      throw const FormatException(
+        'Der lebende Zusatz-Kampfteilnehmer existiert nicht.',
+      );
+    }
+    final updated = TrackedAreaCreature.fromJson({
+      ...matches.single.toJson(),
+      'initiativeTotal': initiativeTotal,
+      'initiativeController': initiativeController,
+    });
+    return _commit(
+      campaign,
+      campaign.copyWith(
+        trackedAreaCreatures: [
+          for (final creature in campaign.trackedAreaCreatures)
+            creature.id == creatureId ? updated : creature,
+        ],
+      ),
+      'Initiative für ${updated.name} auf $initiativeTotal bestätigt '
+      '(${initiativeController == 'gm' ? 'SL-gesteuert' : 'spieler-gesteuert'}). '
+      'Noch keine automatische Zugsteuerung.',
+      type: 'combat.areaCreatureInitiativeConfirmed',
+      payload: {
+        'creatureId': creatureId,
+        'initiativeTotal': initiativeTotal,
+        'initiativeController': initiativeController,
+        'turnOrderOnly': true,
+      },
+    );
+  }
+
   /// SRD 5.2.1 Acid Splash. The domain resolver supports all confirmed
   /// creatures in a sphere. The current Encounter persists only ONE live foe,
   /// so this action is intentionally restricted to an expressly isolated foe.
