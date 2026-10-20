@@ -1331,6 +1331,7 @@ class GameEngine {
         fight.activeParticipant != 'hero' ||
         campaign.pendingRoll != null ||
         campaign.pendingDeathSave != null ||
+        campaign.pendingEnemyShieldHit != null ||
         campaign.hero.isDead ||
         !campaign.hero.isComplete) {
       throw const FormatException(
@@ -1354,6 +1355,41 @@ class GameEngine {
       'Du beendest deinen Zug. ${turn.narration} ${_nextInstruction(turn.campaign)}',
       type: 'combat.turnCompleted',
       payload: turn.details,
+    );
+  }
+
+  /// Resolve the original attack die after the explicit Shield choice.
+  GameUpdate resolvePendingEnemyShieldHit(
+    Campaign campaign, {
+    HeroShieldReactionPlan? shieldPlan,
+  }) {
+    final pending = campaign.pendingEnemyShieldHit;
+    final fight = campaign.encounter;
+    if (pending == null ||
+        fight == null ||
+        fight.isFinished ||
+        fight.activeParticipant != 'enemy' ||
+        pending.encounterId != fight.id ||
+        campaign.pendingRoll != null ||
+        campaign.pendingDeathSave != null) {
+      throw const FormatException('Kein gültiger offener Gegnerangriff.');
+    }
+    if (shieldPlan != null) {
+      HeroShieldReactionRules.validate(campaign.hero, fight, shieldPlan);
+    }
+    final turn = _enemyTurn(
+      campaign,
+      resumeShieldHit: pending,
+      advanceRound: pending.advanceRound,
+      shieldPlan: shieldPlan,
+    );
+    return _commit(
+      campaign,
+      turn.campaign,
+      '${shieldPlan == null ? 'Du verzichtest auf Schild. ' : 'Deine Schildreaktion wird ausgewertet. '}'
+      '${turn.narration} ${_nextInstruction(turn.campaign)}',
+      type: 'combat.shieldHitResolved',
+      payload: {...turn.details, 'choice': shieldPlan == null ? 'decline' : 'cast'},
     );
   }
 
@@ -1454,6 +1490,11 @@ class GameEngine {
     if (text.isEmpty || text.length > 4000) {
       throw const FormatException(
         'Bitte eine Handlung mit 1 bis 4000 Zeichen eingeben.',
+      );
+    }
+    if (campaign.pendingEnemyShieldHit != null) {
+      throw const FormatException(
+        'Zuerst den offenen Gegnerangriff mit oder ohne Schild abschließen.',
       );
     }
     final words = text.toLowerCase();
@@ -3674,21 +3715,27 @@ class GameEngine {
     bool disadvantage = false,
     bool advanceRound = true,
     HeroShieldReactionPlan? shieldPlan,
+    PendingEnemyShieldHit? resumeShieldHit,
   }) {
     final originalFight = campaign.encounter!;
-    var foe = advanceRound
+    final resuming = resumeShieldHit != null;
+    var foe = resuming
+        ? originalFight
+        : advanceRound
         ? CombatClassActions.afterHeroTurn(originalFight)
         : originalFight;
-    // Shield expires at the START of the enemy's next turn, not earlier.
-    foe = foe.copyWith(
-      enemyShieldActive: false,
-      enemyShieldReactionUsed: false,
-    );
+    // Only the first stage of the enemy turn prepares/advances effects.
+    if (!resuming) {
+      foe = foe.copyWith(
+        enemyShieldActive: false,
+        enemyShieldReactionUsed: false,
+      );
+    }
     var hero = campaign.hero;
     if (shieldPlan != null) {
       HeroShieldReactionRules.validate(hero, originalFight, shieldPlan);
     }
-    if (advanceRound) {
+    if (advanceRound && !resuming) {
       hero = ConditionEffectRules.expireAtOwnTurnEnd(
         hero,
         encounterId: originalFight.id,
@@ -3710,7 +3757,7 @@ class GameEngine {
     }
     var restored = '';
     var restorationChoiceRequired = false;
-    if (advanceRound) {
+    if (advanceRound && !resuming) {
       final resolution = MonkSelfRestoration.atEndOfTurn(
         hero,
         choice: foe.selfRestorationChoice,
@@ -3759,15 +3806,23 @@ class GameEngine {
         },
       );
     }
-    final result = dice.check(
-      modifier: foe.enemyAttackBonus,
-      advantage: ConditionRules.hasUnconditionalAttackerAdvantage(hero),
-      disadvantage:
-          (disadvantage || foe.dodgeActive) &&
-          ConditionRules.canTakeActions(hero) &&
-          (CharacterRuleEngine.speedMeters(hero) ?? 0) > 0 &&
-          !ConditionRules.has(hero, 'blind'),
-    );
+    final result = resumeShieldHit == null
+        ? dice.check(
+            modifier: foe.enemyAttackBonus,
+            advantage: ConditionRules.hasUnconditionalAttackerAdvantage(hero),
+            disadvantage:
+                (disadvantage || foe.dodgeActive) &&
+                ConditionRules.canTakeActions(hero) &&
+                (CharacterRuleEngine.speedMeters(hero) ?? 0) > 0 &&
+                !ConditionRules.has(hero, 'blind'),
+          )
+        : DiceResult(
+            expression: '1d20',
+            rolls: resumeShieldHit.rolls,
+            modifier: resumeShieldHit.modifier,
+            total: resumeShieldHit.total,
+            natural: resumeShieldHit.natural,
+          );
     final outcome = RulesEngine.attack(
       roll: result,
       armorClass: CoverRules.armorClass(hero.armorClass!, foe.heroCover),
@@ -3776,33 +3831,81 @@ class GameEngine {
       hero.armorClass!,
       foe.heroCover,
     );
-    final shieldTriggered =
+    // The decision is offered AFTER a genuine hit but BEFORE damage rolls.
+    // Store the original die; replaying it here must never roll another W20.
+    if (!resuming &&
+        shieldPlan == null &&
+        outcome.hit &&
+        hero.hitPoints != null &&
+        hero.hitPoints! > 0 &&
+        !hero.isDead &&
+        hero.isComplete &&
+        ConditionRules.canTakeActions(hero) &&
+        !foe.reactionUsed &&
+        HeroShieldReactionRules.preparedName(hero) != null &&
+        HeroShieldReactionRules.castingClasses(hero).isNotEmpty &&
+        HeroShieldReactionRules.slots(hero).isNotEmpty) {
+      return _EnemyTurn(
+        campaign.copyWith(
+          hero: hero,
+          encounter: foe.copyWith(activeParticipant: 'enemy'),
+          pendingEnemyShieldHit: PendingEnemyShieldHit(
+            encounterId: foe.id,
+            natural: result.natural!,
+            modifier: result.modifier,
+            total: result.total,
+            rolls: List.unmodifiable(result.rolls),
+            advanceRound: advanceRound,
+          ),
+        ),
+        'Der ${foe.enemyName} trifft dich mit ${result.total} gegen '
+        'RK $baseArmorClass. Jetzt Schild wirken oder Treffer hinnehmen? '
+        'Der Schaden wurde noch nicht gewürfelt.',
+        {
+          'attackRoll': result.toJson(),
+          'pendingEnemyShieldHit': true,
+          'effectiveHeroArmorClass': baseArmorClass,
+        },
+      );
+    }
+    // Explicit post-hit casting is legal even if +5 AC cannot prevent
+    // the blow (including a natural 20). Only a deflection stops damage.
+    final shieldUsed =
         shieldPlan != null &&
+        (resuming && outcome.hit ||
+            HeroShieldReactionRules.preventsHit(
+              hit: outcome.hit,
+              critical: outcome.critical,
+              attackTotal: result.total,
+              effectiveArmorClass: baseArmorClass,
+            ));
+    final shieldBlocked =
+        shieldUsed &&
         HeroShieldReactionRules.preventsHit(
           hit: outcome.hit,
           critical: outcome.critical,
           attackTotal: result.total,
           effectiveArmorClass: baseArmorClass,
         );
-    if (shieldTriggered) {
+    if (shieldUsed) {
       hero = HeroShieldReactionRules.spend(hero, shieldPlan);
     }
-    final effectiveArmorClass = baseArmorClass + (shieldTriggered ? 5 : 0);
+    final effectiveArmorClass = baseArmorClass + (shieldUsed ? 5 : 0);
     var narration =
         'Der ${foe.enemyName} greift an: ${result.total} gegen deine effektive '
         'Rüstungsklasse $effectiveArmorClass '
         '(${CoverRules.label(foe.heroCover)}). ';
-    if (shieldTriggered) {
+    if (shieldUsed) {
       narration +=
           'Dein ausdrücklich autorisierter Schildzauber '
           'wehrt diesen Treffer mit +5 RK ab. ';
     }
     final details = <String, dynamic>{
       'attackRoll': result.toJson(),
-      'hit': outcome.hit && !shieldTriggered,
-      'shieldReactionTriggered': shieldTriggered,
+      'hit': outcome.hit && !shieldBlocked,
+      'shieldReactionTriggered': shieldUsed,
       'shieldReactionAuthorized': shieldPlan != null,
-      if (shieldTriggered) ...{
+      if (shieldUsed) ...{
         'shieldCastingClass': shieldPlan.castingClass,
         'shieldSlotLevel': shieldPlan.slotLevel,
         'shieldPactMagic': shieldPlan.pactMagic,
@@ -3822,7 +3925,7 @@ class GameEngine {
           'Selbstwiederherstellung wurde nicht eingesetzt: '
           'Mehrere Zustände waren vorhanden, aber keiner ausgewählt. $narration';
     }
-    if (outcome.hit && !shieldTriggered) {
+    if (outcome.hit && !shieldBlocked) {
       final damageRoll = dice.roll(foe.enemyDamage);
       final extra = outcome.critical ? dice.roll(foe.enemyDamage) : null;
       final rawDamage =
@@ -3869,7 +3972,7 @@ class GameEngine {
       narration +=
           'Du erleidest $damage Schaden und hast noch ${hero.hitPoints} Trefferpunkte'
           '${hero.temporaryHitPoints > 0 ? ' und ${hero.temporaryHitPoints} temporäre Trefferpunkte' : ''}.';
-    } else if (!shieldTriggered) {
+    } else if (!shieldBlocked) {
       narration += 'Der Angriff verfehlt dich.';
     }
     final afterTurn =
@@ -3899,13 +4002,17 @@ class GameEngine {
           sneakAttackUsedThisTurn: false,
           selfRestorationChoice: '',
         ),
+        pendingEnemyShieldHit: null,
       ),
       narration,
       details,
     );
   }
 
-  String _nextInstruction(Campaign campaign) => campaign.hero.isDead
+  String _nextInstruction(Campaign campaign) =>
+      campaign.pendingEnemyShieldHit != null
+      ? 'Entscheide jetzt über deine Schildreaktion.'
+      : campaign.hero.isDead
       ? 'Dein Held ist gestorben.'
       : campaign.hero.hitPoints == 0 &&
             campaign.encounter?.deathSaveResolvedThisTurn == true
