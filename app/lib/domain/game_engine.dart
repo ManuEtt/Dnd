@@ -11,6 +11,7 @@ import 'character_rule_engine.dart';
 import 'character_effect_rules.dart';
 import 'magic_missile_rules.dart';
 import 'healing_spell_rules.dart';
+import 'hero_shield_reaction_rules.dart';
 import 'damage_rules.dart';
 import 'enemy_force_defense.dart';
 import 'class_progression_rules.dart';
@@ -1320,7 +1321,10 @@ class GameEngine {
   ).hasMatch(words.trim());
 
   /// Ending a turn is not an action. Incapacitation cannot prevent it.
-  GameUpdate endHeroTurn(Campaign campaign) {
+  GameUpdate endHeroTurn(
+    Campaign campaign, {
+    HeroShieldReactionPlan? shieldPlan,
+  }) {
     final fight = campaign.encounter;
     if (fight == null ||
         fight.isFinished ||
@@ -1340,7 +1344,10 @@ class GameEngine {
         'Zuerst den Todesrettungswurf für diesen Zug abschließen.',
       );
     }
-    final turn = _enemyTurn(campaign);
+    if (shieldPlan != null) {
+      HeroShieldReactionRules.validate(campaign.hero, fight, shieldPlan);
+    }
+    final turn = _enemyTurn(campaign, shieldPlan: shieldPlan);
     return _commit(
       campaign,
       turn.campaign,
@@ -3666,6 +3673,7 @@ class GameEngine {
     Campaign campaign, {
     bool disadvantage = false,
     bool advanceRound = true,
+    HeroShieldReactionPlan? shieldPlan,
   }) {
     final originalFight = campaign.encounter!;
     var foe = advanceRound
@@ -3677,6 +3685,9 @@ class GameEngine {
       enemyShieldReactionUsed: false,
     );
     var hero = campaign.hero;
+    if (shieldPlan != null) {
+      HeroShieldReactionRules.validate(hero, originalFight, shieldPlan);
+    }
     if (advanceRound) {
       hero = ConditionEffectRules.expireAtOwnTurnEnd(
         hero,
@@ -3761,17 +3772,42 @@ class GameEngine {
       roll: result,
       armorClass: CoverRules.armorClass(hero.armorClass!, foe.heroCover),
     );
-    final effectiveArmorClass = CoverRules.armorClass(
+    final baseArmorClass = CoverRules.armorClass(
       hero.armorClass!,
       foe.heroCover,
     );
+    final shieldTriggered =
+        shieldPlan != null &&
+        HeroShieldReactionRules.preventsHit(
+          hit: outcome.hit,
+          critical: outcome.critical,
+          attackTotal: result.total,
+          effectiveArmorClass: baseArmorClass,
+        );
+    if (shieldTriggered) {
+      hero = HeroShieldReactionRules.spend(hero, shieldPlan);
+    }
+    final effectiveArmorClass = baseArmorClass + (shieldTriggered ? 5 : 0);
     var narration =
         'Der ${foe.enemyName} greift an: ${result.total} gegen deine effektive '
         'Rüstungsklasse $effectiveArmorClass '
         '(${CoverRules.label(foe.heroCover)}). ';
+    if (shieldTriggered) {
+      narration +=
+          'Dein ausdrücklich autorisierter Schildzauber '
+          'wehrt diesen Treffer mit +5 RK ab. ';
+    }
     final details = <String, dynamic>{
       'attackRoll': result.toJson(),
-      'hit': outcome.hit,
+      'hit': outcome.hit && !shieldTriggered,
+      'shieldReactionTriggered': shieldTriggered,
+      'shieldReactionAuthorized': shieldPlan != null,
+      if (shieldTriggered) ...{
+        'shieldCastingClass': shieldPlan.castingClass,
+        'shieldSlotLevel': shieldPlan.slotLevel,
+        'shieldPactMagic': shieldPlan.pactMagic,
+        'shieldBonusAc': 5,
+      },
       'heroCover': foe.heroCover.name,
       'effectiveHeroArmorClass': effectiveArmorClass,
       if (rageExpired) 'rageExpiredAtTurnEnd': true,
@@ -3786,7 +3822,7 @@ class GameEngine {
           'Selbstwiederherstellung wurde nicht eingesetzt: '
           'Mehrere Zustände waren vorhanden, aber keiner ausgewählt. $narration';
     }
-    if (outcome.hit) {
+    if (outcome.hit && !shieldTriggered) {
       final damageRoll = dice.roll(foe.enemyDamage);
       final extra = outcome.critical ? dice.roll(foe.enemyDamage) : null;
       final rawDamage =
@@ -3833,7 +3869,7 @@ class GameEngine {
       narration +=
           'Du erleidest $damage Schaden und hast noch ${hero.hitPoints} Trefferpunkte'
           '${hero.temporaryHitPoints > 0 ? ' und ${hero.temporaryHitPoints} temporäre Trefferpunkte' : ''}.';
-    } else {
+    } else if (!shieldTriggered) {
       narration += 'Der Angriff verfehlt dich.';
     }
     final afterTurn =
