@@ -1324,6 +1324,10 @@ class Encounter {
     this.enemyShieldSlotsRemaining,
     this.enemyShieldReactionUsed = false,
     this.enemyShieldActive = false,
+    this.enemyAttacksPerTurn = 1,
+    this.enemyAttacksRemaining = 0,
+    this.enemyTurnAdvanceRound = false,
+    this.heroShieldActive = false,
     this.enemyAttackBonus = 2,
     this.enemyDamage = '1d4',
     this.enemyDamageType = '',
@@ -1362,6 +1366,9 @@ class Encounter {
   /// Null means unknown; never invent monster spell slots.
   final int? enemyShieldSlotsRemaining;
   final bool enemyShieldReactionUsed, enemyShieldActive;
+  /// Explicitly confirmed from a monster profile, not inferred from narration.
+  final int enemyAttacksPerTurn, enemyAttacksRemaining;
+  final bool enemyTurnAdvanceRound, heroShieldActive;
   int get effectiveEnemyArmorClass =>
       enemyArmorClass + (enemyShieldActive ? 5 : 0);
 
@@ -1418,6 +1425,10 @@ class Encounter {
     int? enemyShieldSlotsRemaining,
     bool? enemyShieldReactionUsed,
     bool? enemyShieldActive,
+    int? enemyAttacksPerTurn,
+    int? enemyAttacksRemaining,
+    bool? enemyTurnAdvanceRound,
+    bool? heroShieldActive,
     int? round,
     String? activeParticipant,
     int? heroInitiative,
@@ -1454,6 +1465,10 @@ class Encounter {
     enemyShieldReactionUsed:
         enemyShieldReactionUsed ?? this.enemyShieldReactionUsed,
     enemyShieldActive: enemyShieldActive ?? this.enemyShieldActive,
+    enemyAttacksPerTurn: enemyAttacksPerTurn ?? this.enemyAttacksPerTurn,
+    enemyAttacksRemaining: enemyAttacksRemaining ?? this.enemyAttacksRemaining,
+    enemyTurnAdvanceRound: enemyTurnAdvanceRound ?? this.enemyTurnAdvanceRound,
+    heroShieldActive: heroShieldActive ?? this.heroShieldActive,
     enemyAttackBonus: enemyAttackBonus,
     enemyDamage: enemyDamage,
     enemyDamageType: enemyDamageType,
@@ -1498,6 +1513,11 @@ class Encounter {
       'enemyShieldSlotsRemaining': enemyShieldSlotsRemaining,
     if (enemyShieldReactionUsed) 'enemyShieldReactionUsed': true,
     if (enemyShieldActive) 'enemyShieldActive': true,
+    if (enemyAttacksPerTurn != 1) 'enemyAttacksPerTurn': enemyAttacksPerTurn,
+    if (enemyAttacksRemaining > 0)
+      'enemyAttacksRemaining': enemyAttacksRemaining,
+    if (enemyTurnAdvanceRound) 'enemyTurnAdvanceRound': true,
+    if (heroShieldActive) 'heroShieldActive': true,
     'enemyAttackBonus': enemyAttackBonus,
     'enemyDamage': enemyDamage,
     if (enemyDamageType.isNotEmpty) 'enemyDamageType': enemyDamageType,
@@ -1626,6 +1646,31 @@ class Encounter {
     if (shieldActive && (!shieldReactionUsed || shieldSlots == null)) {
       throw const FormatException('Ungültiger aktiver Schildzauber.');
     }
+    final enemyAttacks = _int(
+      j['enemyAttacksPerTurn'],
+      'Bestätigte gegnerische Angriffe',
+      fallback: 1,
+      min: 1,
+      max: 4,
+    );
+    final enemyRemaining = _int(
+      j['enemyAttacksRemaining'],
+      'Verbleibende gegnerische Angriffe',
+      fallback: 0,
+      min: 0,
+      max: 3,
+    );
+    final turnAdvance = _bool(
+      j['enemyTurnAdvanceRound'],
+      'Laufender Gegnerzug',
+    );
+    final heroShield = _bool(j['heroShieldActive'], 'Schild des Helden aktiv');
+    if (enemyRemaining >= enemyAttacks ||
+        (enemyRemaining > 0 && active != 'enemy') ||
+        (turnAdvance && active != 'enemy') ||
+        (heroShield && active != 'enemy')) {
+      throw const FormatException('Ungültiger laufender Gegnerzug.');
+    }
     return Encounter(
       id: _string(j['id'], 'Begegnung-ID'),
       enemyName: _string(j['enemyName'], 'Gegner'),
@@ -1654,6 +1699,10 @@ class Encounter {
       enemyShieldSlotsRemaining: shieldSlots,
       enemyShieldReactionUsed: shieldReactionUsed,
       enemyShieldActive: shieldActive,
+      enemyAttacksPerTurn: enemyAttacks,
+      enemyAttacksRemaining: enemyRemaining,
+      enemyTurnAdvanceRound: turnAdvance,
+      heroShieldActive: heroShield,
       enemyAttackBonus: _int(
         j['enemyAttackBonus'],
         'Gegnerbonus',
