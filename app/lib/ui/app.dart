@@ -8,6 +8,7 @@ import '../domain/campaign_experience.dart';
 import '../domain/rabenwacht_campaign.dart';
 import '../domain/damage_rules.dart';
 import '../domain/magic_missile_rules.dart';
+import '../domain/fire_bolt_rules.dart';
 import '../domain/healing_spell_rules.dart';
 import '../domain/saving_throw_class_actions.dart';
 import '../domain/class_resource_rules.dart';
@@ -25,6 +26,7 @@ import 'condition_effect_dialog.dart';
 import 'hero_shield_reaction_dialog.dart';
 import '../domain/hero_shield_reaction_rules.dart';
 import 'magic_missile_dialog.dart';
+import 'fire_bolt_dialog.dart';
 import 'healing_spell_dialog.dart';
 import 'death_save_decision_panel.dart';
 import 'fantasy_character_sheet.dart';
@@ -1194,6 +1196,39 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previous);
   }
 
+  Future<void> _castFireBolt() async {
+    final campaign = widget.controller.currentCampaign;
+    final fight = campaign?.encounter;
+    if (campaign == null || fight == null || widget.controller.busy) return;
+    final choice = await showDialog<FireBoltChoice>(
+      context: context,
+      builder: (_) => FireBoltDialog(hero: campaign.hero, encounter: fight),
+    );
+    if (choice == null || !mounted) return;
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    await widget.controller.castFireBolt(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      castingClass: choice.castingClass,
+      targetVisibleConfirmed: choice.targetVisibleConfirmed,
+      targetWithinRangeConfirmed: choice.targetWithinRangeConfirmed,
+      verbalComponentConfirmed: choice.verbalComponentConfirmed,
+      somaticComponentConfirmed: choice.somaticComponentConfirmed,
+      noFireResistanceOrImmunityConfirmed:
+          choice.noFireResistanceOrImmunityConfirmed,
+      noUnresolvedShieldReactionConfirmed:
+          choice.noUnresolvedShieldReactionConfirmed,
+      situationalAttackConditionsConfirmed:
+          choice.situationalAttackConditionsConfirmed,
+      advantage: choice.advantage,
+      disadvantage: choice.disadvantage,
+      targetProne: choice.targetProne,
+      targetWithinFiveFeet: choice.targetWithinFiveFeet,
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
   Future<void> _castMagicMissile() async {
     final campaign = widget.controller.currentCampaign;
     final fight = campaign?.encounter;
@@ -1491,6 +1526,24 @@ class _AdventurePageState extends State<_AdventurePage> {
                         : _endTurnWithShield,
                     icon: const Icon(Icons.shield_outlined, size: 17),
                     label: const Text('Zug beenden: Schild ggf. wirken'),
+                  ),
+                if (campaign.encounter != null &&
+                    !campaign.encounter!.isFinished &&
+                    FireBoltRules.preparedName(campaign.hero) != null)
+                  TextButton.icon(
+                    key: const ValueKey('adventure-cast-fire-bolt'),
+                    onPressed:
+                        widget.controller.busy ||
+                            campaign.pendingRoll != null ||
+                            campaign.pendingDeathSave != null ||
+                            campaign.hero.isDead ||
+                            campaign.hero.hitPoints == 0 ||
+                            campaign.encounter!.activeParticipant != 'hero' ||
+                            campaign.encounter!.actionUsed
+                        ? null
+                        : _castFireBolt,
+                    icon: const Icon(Icons.local_fire_department_outlined, size: 17),
+                    label: const Text('Feuerpfeil'),
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&
