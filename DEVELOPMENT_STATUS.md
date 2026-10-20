@@ -1,3 +1,15 @@
+## 20.10.2026 – Heilige Flamme: Rettungswurf-Zauberengine (0.8.24+74, CI ausstehend)
+
+- **Basis:** 0.8.23+73 (PR #55) wurde nach vollständig erfolgreicher GitHub-CI nach `main` gemergt; Android-Gerätetest separat offen.
+- **Neue wiederverwendbare Regel:** `SrdSpellSavingThrowRules` (SG = 8 + Proficiency + Zauberattribut, vollständiger bestätigter gegnerischer Saving-Throw-Bonus, Advantage/Disadvantage; natürliche W20 1/20 nicht automatisch Erfolg/Fehlschlag).
+- **Erster regelintegrierter Rettungswurf-Zauber:** `SacredFlameRules` (Heilige Flamme): bestätigter Kleriker-Zaubertrick, GES-Save, 1–4W8 Strahlenschaden nach Stufe, keine halb-/dreiviertel-Deckung beim Save, Magieaktion ohne Zauberplatz.
+- **End-to-End:** eigener bestätigungspflichtiger Dialog, revisionsgeschützter Controller, `spell.sacredFlame`-Checkpoint mit W20, SG, Schaden und Gegner-TP.
+- **Zählbare Anforderung:** `SPELL-ENTRY-SACRED-FLAME` auf `partial` mit Code-/Testnachweis; vollständige SRD-Inventur weiter unvollständig (keine globale Quote).
+- **Grenzen:** nur ein bestätigter Kreaturengegner, keine automatisch abgeleiteten Monsterboni, Schäden, Traits, geometrischen Ziele oder Sonder-SG. Weitere Zauber (AoE, Monster-Reaktionen) und Gerätetests offen. Siehe `docs/SRD_SACRED_FLAME_SAVING_THROW.md`.
+- **Gate:** Version 0.8.24+74 bleibt vor erfolgreicher vollständiger CI auf dem Featurebranch.
+
+---
+
 ## 20.10.2026 – SRD Feuerpfeil-Kampfaktion (0.8.23+73, CI noch offen)
 
 - Basis: SRD-Zauberindex und Vorprüfung 0.8.22+72 erfolgreich per PR #54 nach `main` gemergt (Android-/Flutter-CI bestanden).
