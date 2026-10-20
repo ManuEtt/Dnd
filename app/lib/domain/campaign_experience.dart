@@ -1,4 +1,4 @@
-import 'character_creation_progression.dart';
+import 'experience_progression.dart';
 import 'models.dart';
 
 /// Spielleiter-Belohnungen für erreichte Szenenziele.
@@ -21,30 +21,19 @@ class CampaignExperience {
     'resolve-rabenwacht': 900,
   };
 
-  static int? nextThreshold(HeroCharacter hero) => hero.level >= 20
-      ? null
-      : CharacterCreationProgression.startingExperience(hero.level + 1);
+  static int? nextThreshold(HeroCharacter hero) =>
+      ExperienceProgression.nextThreshold(hero.level);
 
-  static int? pointsUntilLevel(HeroCharacter hero) {
-    final next = nextThreshold(hero);
-    final experience = hero.experience;
-    if (next == null || experience == null) return null;
-    return (next - experience).clamp(0, next).toInt();
-  }
+  static int? pointsUntilLevel(HeroCharacter hero) =>
+      ExperienceProgression.pointsUntilNextLevel(hero);
 
-  static bool canLevelUp(HeroCharacter hero) {
-    final next = nextThreshold(hero);
-    return next != null && hero.experience != null && hero.experience! >= next;
-  }
+  static int pendingLevels(HeroCharacter hero) =>
+      ExperienceProgression.pendingLevels(hero);
 
-  static double? levelProgress(HeroCharacter hero) {
-    final experience = hero.experience;
-    if (experience == null) return null;
-    final next = nextThreshold(hero);
-    if (next == null) return 1;
-    final base = CharacterCreationProgression.startingExperience(hero.level);
-    return ((experience - base) / (next - base)).clamp(0.0, 1.0).toDouble();
-  }
+  static bool canLevelUp(HeroCharacter hero) => pendingLevels(hero) > 0;
+
+  static double? levelProgress(HeroCharacter hero) =>
+      ExperienceProgression.progressToNextLevel(hero);
 
   /// A single, validated story milestone is awarded at most once per
   /// campaign, with persistence through Campaign.facts. An unconfirmed
