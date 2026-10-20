@@ -7297,10 +7297,20 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Playing the Game / Combat",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_initiative_roster_test.dart",
+        "app/test/tracked_creature_initiative_dialog_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/models.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/domain/srd_initiative_roster_rules.dart",
+        "app/lib/services/game_controller.dart",
+        "app/lib/ui/tracked_creature_initiative_dialog.dart",
+        "app/lib/ui/app.dart"
+      ],
+      "note": "SRD 5.2.1: Hauptkampf enthält bereits Hero-/Gegnerinitiative. Erweiterung speichert bestätigte Initiativeergebnisse und GM-/Spieler-Kontrolle einzelner zusätzlicher HP-geführter Kreaturen (schema-1 optional). Sortierte absteigende Gruppen mit nicht stillschweigend aufgelösten Gleichständen, fehlende/alte Werte offengelegt; Dialog+Controller+Journalevent. Noch keine eigenständigen Zusatzgegner-Züge, aktive Turnqueue, Gruppeninitiative identischer Monster, Initiative-Surprise-Advantage/Disadvantage-Integration, automatische neue Siegbedingungen oder automatisches Tiebreaking. Daher partial."
     },
     {
       "id": "RULE-COMBAT-SURPRISE",
