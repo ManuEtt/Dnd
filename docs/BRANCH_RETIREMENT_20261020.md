@@ -1,3 +1,9 @@
+## Zusätzliche integrierte Schild-Branches bereinigt
+
+**Nachtrag 20.10.2026:** Die nach Abschluss des vorherigen Zyklus verbliebenen Branches `docs/srd-hero-shield-ci-20261020`, `feature/srd-hero-shield-auto-reaction-20261020` und `feature/srd-hero-shield-hit-choice-20261020` waren ebenfalls vollständig in `main` enthalten (`ahead_by=0`, keine geschützten Branches, feste HEAD-Prüfung). Der [GitHub-Actions-Lauf #39408002022](https://github.com/ManuEtt/Dnd/actions/runs/39408002022) hat **alle drei** erfolgreich entfernt. Anschließend ergab `GET /branches`: ausschließlich `main`. Der einmalige privilegierte Löschworkflow wurde wieder entfernt. Der vollständige Code und alle PR-Merges bleiben erhalten.
+
+---
+
 ## Abschluss – erfolgreich ausgeführt und erneut überprüft
 
 **Branch-Bereinigung verifiziert (20.10.2026):** Alle neun historischen Feature-/Dokumentationsbranches waren bereits in `main` enthalten (`ahead_by=0`) und wurden über den geprüften einmaligen [GitHub-Actions-Lauf #39392381240](https://github.com/ManuEtt/Dnd/actions/runs/39392381240) entfernt. Auch der kurzlebige Maintenance-Branch ist gelöscht. Die GitHub-Branchliste wurde danach erneut gelesen: **nur `main` vorhanden**. Implementierte Features, Merge-Commits und Pull Requests bleiben erhalten; nichts wurde neu gecherry-pickt. Der temporäre Löschworkflow wurde nach erfolgreicher Bereinigung aus dem Hauptbranch entfernt. Prüfdokument: [`docs/BRANCH_RETIREMENT_20261020.md`](docs/BRANCH_RETIREMENT_20261020.md).
