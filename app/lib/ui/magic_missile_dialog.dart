@@ -18,6 +18,9 @@ class MagicMissileChoice {
     required this.somaticComponentConfirmed,
     required this.noProtectionConfirmed,
     required this.confirmedForceDefense,
+    this.shieldReactionConfirmed = false,
+    this.shieldPreparedAndComponentsConfirmed = false,
+    this.confirmedEnemyShieldSlots,
   });
 
   final String castingClass;
@@ -27,6 +30,8 @@ class MagicMissileChoice {
   final bool verbalComponentConfirmed, somaticComponentConfirmed;
   final bool noProtectionConfirmed;
   final EnemyForceDefense confirmedForceDefense;
+  final bool shieldReactionConfirmed, shieldPreparedAndComponentsConfirmed;
+  final int? confirmedEnemyShieldSlots;
 }
 
 class MagicMissileDialog extends StatefulWidget {
@@ -49,10 +54,14 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
   EnemyForceDefense? _forceDefense;
   bool _visible = false, _range = false, _verbal = false;
   bool _somatic = false, _unprotected = false;
+  bool _shieldReaction = false, _shieldComponents = false;
+  int? _shieldSlots;
 
   @override
   void initState() {
     super.initState();
+    if (widget.encounter.enemyShieldActive) _unprotected = true;
+    _shieldSlots = widget.encounter.enemyShieldSlotsRemaining;
     if (widget.encounter.enemyForceDefense != EnemyForceDefense.unknown) {
       _forceDefense = widget.encounter.enemyForceDefense;
     }
@@ -99,8 +108,11 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
         !_range ||
         !_verbal ||
         !_somatic ||
-        !_unprotected ||
-        _forceDefense == null) {
+        (!_unprotected && !_shieldReaction) ||
+        _forceDefense == null ||
+        (_shieldReaction &&
+            (!_shieldComponents ||
+                (_shieldSlots == null || _shieldSlots! < 1)))) {
       setState(
         () => _error =
             'Bitte alle tatsächlichen Ziel- und '
@@ -124,6 +136,9 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
         somaticComponentConfirmed: _somatic,
         noProtectionConfirmed: _unprotected,
         confirmedForceDefense: _forceDefense!,
+        shieldReactionConfirmed: _shieldReaction,
+        shieldPreparedAndComponentsConfirmed: _shieldComponents,
+        confirmedEnemyShieldSlots: _shieldReaction ? _shieldSlots : null,
       ),
     );
   }
@@ -245,18 +260,77 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
                     _error = null;
                   }),
                 ),
-                _check(
-                  'protection',
-                  'Kein wirksamer Schildzauber (Shield) des Gegners',
-                  _unprotected,
-                  (v) => _unprotected = v,
-                ),
+                if (widget.encounter.enemyShieldActive)
+                  const Text(
+                    'Schildzauber ist bereits aktiv: alle Geschosse '
+                    'verursachen 0 Schaden bis zum nächsten Gegnerzug.',
+                    key: ValueKey('missile-shield-active'),
+                  )
+                else ...[
+                  SwitchListTile.adaptive(
+                    key: const ValueKey('missile-shield-reaction'),
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('Gegner wirkt Schild als Reaktion'),
+                    subtitle: const Text(
+                      'Nur wenn Schild vorbereitet und seine Reaktion '
+                      'sowie ein Zauberplatz tatsächlich verfügbar sind.',
+                    ),
+                    value: _shieldReaction,
+                    onChanged: widget.encounter.enemyShieldReactionUsed ||
+                            widget.encounter.enemyShieldSlotsRemaining == 0
+                        ? null
+                        : (v) => setState(() {
+                            _shieldReaction = v;
+                            _unprotected = false;
+                            _error = null;
+                          }),
+                  ),
+                  if (!_shieldReaction)
+                    _check(
+                      'protection',
+                      'Kein wirksamer Schildzauber (Shield) des Gegners',
+                      _unprotected,
+                      (v) => _unprotected = v,
+                    )
+                  else ...[
+                    _check(
+                      'shield-components',
+                      'Gegner hat Schild vorbereitet, eine Reaktion frei '
+                      'und kann verbale sowie gestische Komponenten ausführen.',
+                      _shieldComponents,
+                      (v) => _shieldComponents = v,
+                    ),
+                    if (widget.encounter.enemyShieldSlotsRemaining == null)
+                      DropdownButtonFormField<int>(
+                        key: const ValueKey('missile-shield-slots'),
+                        initialValue: _shieldSlots,
+                        decoration: const InputDecoration(
+                          labelText: 'Bestätigte verbleibende Gegner-Zauberplätze',
+                        ),
+                        items: [
+                          for (var count = 1; count <= 20; count++)
+                            DropdownMenuItem(
+                              value: count,
+                              child: Text('$count freie Plätze (Grad 1+)'),
+                            ),
+                        ],
+                        onChanged: (v) => setState(() {
+                          _shieldSlots = v;
+                          _error = null;
+                        }),
+                      )
+                    else
+                      Text(
+                        'Gegnerische Zauberplätze: '
+                        '${widget.encounter.enemyShieldSlotsRemaining} frei',
+                      ),
+                  ],
+                ],
                 const Text(
-                  'Energieschaden-Resistenz halbiert jedes Geschoss '
-                  'einzeln; Immunität verursacht 0 Schaden. '
-                  'Ein tatsächlich aktiver Schildzauber muss in einem '
-                  'späteren Regelpaket separat abgewickelt werden. '
-                  'Nichts aus der Erzählung als bestätigt übernehmen.',
+                  'Schild als bestätigte Reaktion verhindert jeden Schaden '
+                  'durch Magisches Geschoss; eine verfügbare Reaktion und '
+                  'ein bestätigter Zauberplatz werden dabei verbraucht. '
+                  'Die Wirkung endet zu Beginn des nächsten Gegnerzuges.',
                 ),
               ],
               if (_error != null)
