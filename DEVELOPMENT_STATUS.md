@@ -1,3 +1,9 @@
+## Erfolgreiche CI- und Merge-Abnahme – 20.10.2026 (0.8.20+70)
+
+**CI bestätigt (20.10.2026):** [PR #51](https://github.com/ManuEtt/Dnd/pull/51) wurde nach vollständig erfolgreicher [GitHub-Actions-CI #39406260656](https://github.com/ManuEtt/Dnd/actions/runs/39406260656) mit Code-HEAD `011c53826956e609994930c65221bca9c33d9985` nach `main` integriert. Merge-Commit [`ff1b043652e46a99c4ac3038698d047fb0d3f380`](https://github.com/ManuEtt/Dnd/commit/ff1b043652e46a99c4ac3038698d047fb0d3f380). Erfolgreich: Python-Strukturtests, Backend-Typecheck/Build/Tests, Dart-Formatierung, Flutter-Analyse und Tests, Android-Debug-APK, native Android-Unit-Tests, Alpha-APK-Erstellung und Build-Artefakte. **Echter Android-Gerätetest, Mehrfachgegner/Mehrfachattacken und Shield gegen gegnerisches Magisches Geschoss bleiben offen.**
+
+---
+
 ## 20.10.2026 – Schildreaktion nach tatsächlich getroffenem Gegnerwurf (0.8.20+70)
 
 **Entwicklungsbasis:** `main` `89bd998563c58ae9a8e44a7db6a4ec996219f85d`. **CI und Android-Gerätetest für diese Änderung stehen noch aus.**

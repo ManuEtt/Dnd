@@ -1,8 +1,10 @@
+**CI bestätigt (20.10.2026):** [PR #51](https://github.com/ManuEtt/Dnd/pull/51) wurde nach vollständig erfolgreicher [GitHub-Actions-CI #39406260656](https://github.com/ManuEtt/Dnd/actions/runs/39406260656) mit Code-HEAD `011c53826956e609994930c65221bca9c33d9985` nach `main` integriert. Merge-Commit [`ff1b043652e46a99c4ac3038698d047fb0d3f380`](https://github.com/ManuEtt/Dnd/commit/ff1b043652e46a99c4ac3038698d047fb0d3f380). Erfolgreich: Python-Strukturtests, Backend-Typecheck/Build/Tests, Dart-Formatierung, Flutter-Analyse und Tests, Android-Debug-APK, native Android-Unit-Tests, Alpha-APK-Erstellung und Build-Artefakte. **Echter Android-Gerätetest, Mehrfachgegner/Mehrfachattacken und Shield gegen gegnerisches Magisches Geschoss bleiben offen.**
+
 ## SPELL-SHIELD-HERO-POST-HIT – 20.10.2026 (0.8.20+70)
 
 | SRD-Anforderung | Nachgewiesene Umsetzung | Code/Tests | Status |
 | --- | --- | --- | --- |
-| SPELL-SHIELD-HERO-POST-HIT | Nach wirklich treffendem Gegner-W20 entscheiden; +5 RK auch gegen auslösenden Angriff, Zauberplatz bei Entscheidung, kritische Treffer bleiben treffsicher, ursprünglicher W20 bleibt erhalten | `PendingEnemyShieldHit`, `GameEngine.resolvePendingEnemyShieldHit`, `GameController.resolveEnemyShieldHit`, neue UI-Entscheidung, Tests `hero_shield_post_hit_choice_test.dart`, `hero_shield_post_hit_storage_test.dart` | IMPLEMENTIERT, CI OFFEN |
+| SPELL-SHIELD-HERO-POST-HIT | Nach wirklich treffendem Gegner-W20 entscheiden; +5 RK auch gegen auslösenden Angriff, Zauberplatz bei Entscheidung, kritische Treffer bleiben treffsicher, ursprünglicher W20 bleibt erhalten | `PendingEnemyShieldHit`, `GameEngine.resolvePendingEnemyShieldHit`, `GameController.resolveEnemyShieldHit`, neue UI-Entscheidung, Tests `hero_shield_post_hit_choice_test.dart`, `hero_shield_post_hit_storage_test.dart` | GETESTET (CI 39406260656 grün; Gerätetest offen) |
 | SPELL-SHIELD-ONGOING/MULTIATTACK | Gültige Schilddauer über mehrere Gegnerangriffe bis zum Beginn des nächsten Heldzuges; zusätzliche Gegner-Zauberquellen | Nicht vollständig: ein Gegner und einzelne Angriffsabwicklung | OFFEN |
 
 Quelle: SRD 5.2.1 CC BY 4.0 – https://www.dndbeyond.com/srd. Alte Matrixzeile zur fehlenden Post-Hit-Reaktion ist historischer Zustand und durch diese Zeile aktualisiert, aber nicht gelöscht.

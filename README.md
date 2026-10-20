@@ -10,7 +10,7 @@
 
 ## SRD 5.2.1: echte Schildwahl nach Angriffstreffer (20.10.2026)
 
-**Version 0.8.20+70:** Der Gegner würfelt zuerst. Bei einem tatsächlich treffenden Angriff wird der Zustand ohne Schadenswurf gespeichert und eine Entscheidung angezeigt: **Schild wirken oder Treffer hinnehmen**. Der Spieler sieht das Angriffsergebnis. Ein bestätigter Schildzauber verbraucht einen Zauberplatz, selbst wenn ein kritischer Treffer oder sehr hoher Wurf trotz +5 RK trifft. Das ursprüngliche W20-Ergebnis wird ohne erneutes Würfeln fortgesetzt. Die neue Auswahl unterstützt SQLite-Neustart und Revisionsschutz. **Build/CI dieses neuen Pakets und echter Gerätetest sind zum Implementierungszeitpunkt offen.** Mehrere Gegner/Angriffe bleiben noch offen.
+**Version 0.8.20+70:** Der Gegner würfelt zuerst. Bei einem tatsächlich treffenden Angriff wird der Zustand ohne Schadenswurf gespeichert und eine Entscheidung angezeigt: **Schild wirken oder Treffer hinnehmen**. Der Spieler sieht das Angriffsergebnis. Ein bestätigter Schildzauber verbraucht einen Zauberplatz, selbst wenn ein kritischer Treffer oder sehr hoher Wurf trotz +5 RK trifft. Das ursprüngliche W20-Ergebnis wird ohne erneutes Würfeln fortgesetzt. Die neue Auswahl unterstützt SQLite-Neustart und Revisionsschutz. **CI bestätigt (20.10.2026):** [PR #51](https://github.com/ManuEtt/Dnd/pull/51) wurde nach vollständig erfolgreicher [GitHub-Actions-CI #39406260656](https://github.com/ManuEtt/Dnd/actions/runs/39406260656) mit Code-HEAD `011c53826956e609994930c65221bca9c33d9985` nach `main` integriert. Merge-Commit [`ff1b043652e46a99c4ac3038698d047fb0d3f380`](https://github.com/ManuEtt/Dnd/commit/ff1b043652e46a99c4ac3038698d047fb0d3f380). Erfolgreich: Python-Strukturtests, Backend-Typecheck/Build/Tests, Dart-Formatierung, Flutter-Analyse und Tests, Android-Debug-APK, native Android-Unit-Tests, Alpha-APK-Erstellung und Build-Artefakte. **Echter Android-Gerätetest, Mehrfachgegner/Mehrfachattacken und Shield gegen gegnerisches Magisches Geschoss bleiben offen.** Mehrere Gegner/Angriffe bleiben noch offen.
 
 ## Inhaltsverzeichnis
 
@@ -141,6 +141,9 @@ python3 -m unittest discover -s scripts/tests -v
 Auf Linux benötigen die SQLite-Tests gegebenenfalls `libsqlite3-dev`. Weitere Details: [`TESTING.md`](TESTING.md) und [`AGENTS.md`](AGENTS.md).
 
 ## Build- und Teststand
+
+**Letzter erfolgreicher Code-CI-Lauf (0.8.20+70):** [#39406260656](https://github.com/ManuEtt/Dnd/actions/runs/39406260656) auf finalem PR-Head `011c53826956e609994930c65221bca9c33d9985` und Merge `ff1b043652e46a99c4ac3038698d047fb0d3f380`. Flutter, Backend, Python, Android-Debug, native Unit-Tests und Alpha-APKs bestanden. Gerätetest offen. Diese zusätzliche Statusaktualisierung enthält nur Markdown.
+
 
 **Neuester vollständig grüner Workflow für 0.8.19+69:** [#39394683773](https://github.com/ManuEtt/Dnd/actions/runs/39394683773), finaler Code-HEAD `090adb4c5fe21ddfc83d0903d5ef39181c50dd9f`, [PR #49](https://github.com/ManuEtt/Dnd/pull/49) gemergt nach `main` (Merge `95792bb241c6123e34a1fae97c9fdef31d153ce2`). Alle Projekt-, Backend-, Flutter-, Android-JVM- und APK-Prüfungen grün; realer Android-Gerätetest noch offen.
 

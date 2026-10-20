@@ -1,4 +1,4 @@
-**20.10.2026 / 0.8.20+70:** `SPELL-SHIELD-HERO-POST-HIT` mit echter Entscheidung nach gewürfeltem Gegnerhit, persistiertem W20, sicherem Fortsetzen, bestätigten Zauberkomponenten und Slotkosten umgesetzt. Domain-/SQLite-Tests ergänzt. **CI noch nicht bestätigt; Mehrfachangriffe fehlen.**
+**20.10.2026 / 0.8.20+70:** `SPELL-SHIELD-HERO-POST-HIT` mit echter Entscheidung nach gewürfeltem Gegnerhit, persistiertem W20, sicherem Fortsetzen, bestätigten Zauberkomponenten und Slotkosten umgesetzt. Domain-/SQLite-Tests ergänzt. **CI #39406260656 grün; Mehrfachangriffe und Android-Gerätetest offen.**
 
 **20.10.2026 / 0.8.19+69:** Bedingte Schild-Reaktion des Helden gegen den unmittelbar nach dem eigenen Zug automatisch ausgewürfelten Einzelangriff. Vorab bestätigt, Würfel-Trigger, +5 RK, korrekter Zauberplatzverbrauch, Controller/SQLite-Regressionstests. **CI #39394683773 grün; Gerätetest offen**, allgemeine Treffer-Unterbrechung fehlt.
 
