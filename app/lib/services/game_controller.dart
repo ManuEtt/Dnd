@@ -6,6 +6,7 @@ import '../data/campaign_repository.dart';
 import '../domain/game_engine.dart';
 import '../domain/ai_story.dart';
 import '../domain/models.dart';
+import '../domain/hero_shield_reaction_rules.dart';
 import '../domain/damage_rules.dart';
 import '../domain/enemy_force_defense.dart';
 import '../domain/condition_effects.dart';
@@ -443,6 +444,15 @@ class GameController extends ChangeNotifier {
         replaceExisting: replaceExisting,
       ),
     );
+  });
+
+  Future<void> endTurnWithShield({
+    required String campaignId,
+    required int expectedRevision,
+    required HeroShieldReactionPlan plan,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(engine.endHeroTurn(current, shieldPlan: plan));
   });
 
   Future<void> castMagicMissile({
