@@ -2,11 +2,15 @@
 
 **Deutschsprachige Android-Fantasy-Rollenspiel-App mit Soloabenteuern, Charakterverwaltung, D&D-Regelunterstützung und optionalem KI-Erzähler.**
 
-> **Projektstatus (20. Oktober 2026):** Aktive **Android-Alpha**, in Entwicklung. Im Flutter-Quellprojekt steht **Version `0.8.19+69`** (Version 0.8.18, Build 68); verbindlich ist immer [`app/pubspec.yaml`](app/pubspec.yaml). Diese Quellcode-Version bedeutet **nicht**, dass eine identisch geprüfte oder veröffentlichte APK bereits auf jedem Gerät installiert ist. Das vollständige D&D-Regelwerk ist **nicht** implementiert.
+> **Projektstatus (20. Oktober 2026):** Aktive **Android-Alpha**, in Entwicklung. Im Flutter-Quellprojekt steht **Version `0.8.21+71`** (Version 0.8.21, Build 71); verbindlich ist immer [`app/pubspec.yaml`](app/pubspec.yaml). Diese Quellcode-Version bedeutet **nicht**, dass eine identisch geprüfte oder veröffentlichte APK bereits auf jedem Gerät installiert ist. Das vollständige D&D-Regelwerk ist **nicht** implementiert.
 
 ## GitHub-Branch-Bereinigung (20.10.2026)
 
 **Branch-Bereinigung verifiziert (20.10.2026):** Alle neun historischen Feature-/Dokumentationsbranches waren bereits in `main` enthalten (`ahead_by=0`) und wurden über den geprüften einmaligen [GitHub-Actions-Lauf #39392381240](https://github.com/ManuEtt/Dnd/actions/runs/39392381240) entfernt. Auch der kurzlebige Maintenance-Branch ist gelöscht. Die GitHub-Branchliste wurde danach erneut gelesen: **nur `main` vorhanden**. Implementierte Features, Merge-Commits und Pull Requests bleiben erhalten; nichts wurde neu gecherry-pickt. Der temporäre Löschworkflow wurde nach erfolgreicher Bereinigung aus dem Hauptbranch entfernt. Prüfdokument: [`docs/BRANCH_RETIREMENT_20261020.md`](docs/BRANCH_RETIREMENT_20261020.md).
+
+## Neue SRD-Regeln 0.8.21+71: bestätigte Mehrfachangriffe
+
+Gegner können nach ausdrücklicher Auswahl im Kampfmenü **1 bis 4 Angriffe je Zug** durchführen. Jeder Angriff wird einzeln geprüft; ein Treffer kann weiterhin die echte Schild-Reaktionsentscheidung auslösen. Ein bereits gewirkter Schild schützt mit **+5 Rüstungsklasse** vor weiteren Angriffen dieses Gegnerzuges und kostet keinen zweiten Zauberplatz. Die Kampfoberfläche bietet „Gegnerangriff fortsetzen“, bis der Gegnerzug abgeschlossen ist. Fortschritt und Schilddauer werden gespeichert. **CI und Android-Gerätetest dieses neuen Inkrements stehen zunächst aus; die letzte bestätigte erfolgreiche CI betrifft Version 0.8.20+70.**
 
 ## SRD 5.2.1: echte Schildwahl nach Angriffstreffer (20.10.2026)
 
