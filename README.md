@@ -2,7 +2,7 @@
 
 **Deutschsprachige Android-Fantasy-Rollenspiel-App mit Soloabenteuern, Charakterverwaltung, D&D-Regelunterstützung und optionalem KI-Erzähler.**
 
-> **Projektstatus (20. Oktober 2026):** Aktive **Android-Alpha**, in Entwicklung. Im Flutter-Quellprojekt steht **Version `0.8.15+65`** (Version 0.8.14, Build 64); verbindlich ist immer [`app/pubspec.yaml`](app/pubspec.yaml). Diese Quellcode-Version bedeutet **nicht**, dass eine identisch geprüfte oder veröffentlichte APK bereits auf jedem Gerät installiert ist. Das vollständige D&D-Regelwerk ist **nicht** implementiert.
+> **Projektstatus (20. Oktober 2026):** Aktive **Android-Alpha**, in Entwicklung. Im Flutter-Quellprojekt steht **Version `0.8.15+65`** (Version 0.8.15, Build 65); verbindlich ist immer [`app/pubspec.yaml`](app/pubspec.yaml). Diese Quellcode-Version bedeutet **nicht**, dass eine identisch geprüfte oder veröffentlichte APK bereits auf jedem Gerät installiert ist. Das vollständige D&D-Regelwerk ist **nicht** implementiert.
 
 ## Inhaltsverzeichnis
 
@@ -18,7 +18,7 @@
 
 **Version 0.8.15+65 – Entwicklungsbranch `feature/srd-crawling-20261020`**, Basis-`main` `f06fb2ffac476ceec0dee2a4c6979d972e0c1a72`, Code-Commit `72f51dd0b`, Test-Commit `4b0154dc8`. In der Abenteueransicht kann ein **liegender Held** im aktiven eigenen Kampfzug 1,5 oder 3 m kriechen und normales beziehungsweise schwieriges Gelände ausdrücklich bestätigen. Die Regelengine berechnet Bewegungskosten von **2 oder 3 Fuß pro Fuß**; unzureichende Bewegung, blockierende Zustände, fremde Züge und offene Proben werden abgewiesen. Bewegung und `combat.crawled`-Ereignis werden mit Revisionsschutz atomar gespeichert, ohne den Status „Liegend“ aufzuheben. Die bisherige Deckungsposition endet.
 
-**Nachweisstand:** Implementierung, Domain- und SQLite-Tests liegen im Entwicklungsbranch. GitHub-CI, Flutter-Analyse, Backend-/Android-Build und reale Geräteabnahme sind für **diesen neuen Commit noch nicht nachgewiesen**. Die weiter unten genannten grünen CI-Läufe beziehen sich auf ältere Commits und dürfen nicht als Prüfung dieser Version ausgegeben werden. Ein vollständiges SRD-5.2.1-Regelwerk ist weiterhin nicht implementiert. Siehe `docs/SRD_5_2_1_REQUIREMENTS_MATRIX.md`, `DEVELOPMENT_STATUS.md`, `CHANGELOG.md` und `CHECKPOINT.md`.
+**Abnahme nach Merge:** [PR #40](https://github.com/ManuEtt/Dnd/pull/40) vollständig über [CI-Lauf 39378443958](https://github.com/ManuEtt/Dnd/actions/runs/39378443958) am Code-HEAD `3462106592157953473c7d777b0d5b664872243a` mit **success** geprüft: Projekt-/Python-Strukturtests, Backend-Typecheck/Build/Tests, Dart-Formatierung, Flutter-Analyse und Tests, Android-Debug-APK, native Android-Unit-Tests, drei Alpha-APK-Varianten und Artefakterstellung. Am 20.10.2026 konfliktfrei nach `main` gemergt: [`f7c6a68c09155880fd9a08b0c2f308d324b27b82`](https://github.com/ManuEtt/Dnd/commit/f7c6a68c09155880fd9a08b0c2f308d324b27b82). **Nicht geprüft:** echter Android-Gerätetest, Langzeitmigration auf Nutzergeräten, vollständiges SRD-Regelwerk. Ein vollständiges SRD-5.2.1-Regelwerk ist weiterhin nicht implementiert. Siehe `docs/SRD_5_2_1_REQUIREMENTS_MATRIX.md`, `DEVELOPMENT_STATUS.md`, `CHANGELOG.md` und `CHECKPOINT.md`.
 
 ## Funktionsstand
 
@@ -116,6 +116,8 @@ Auf Linux benötigen die SQLite-Tests gegebenenfalls `libsqlite3-dev`. Weitere D
 
 ## Build- und Teststand
 
+**Neuester nachgewiesener vollständiger CI-Lauf für 0.8.15+65:** [39378443958](https://github.com/ManuEtt/Dnd/actions/runs/39378443958), abgeschlossen mit **success**, vor Merge in [PR #40](https://github.com/ManuEtt/Dnd/pull/40), Code-HEAD `3462106592157953473c7d777b0d5b664872243a`. Backend, Dart, Flutter, native Android-Tests und APK-Builds grün. `main` wurde als Merge-Commit `f7c6a68c09155880fd9a08b0c2f308d324b27b82` aktualisiert; kein neuer separater Gerätefunktionstest durchgeführt.
+
 **Verifiziert für den integrierten XP-/Aufstiegs-Pull-Request #39:** Der GitHub-Actions-Lauf [39374739010](https://github.com/ManuEtt/Dnd/actions/runs/39374739010) ist mit **success** abgeschlossen. Bestanden wurden unter anderem Backend-Tests, Dart-Formatierung, Flutter-Codeanalyse, sämtliche Flutter-Tests, Android-Debug-APK-Build und die Bereitstellung der kleinen Alpha-APKs.
 
 **Erfolgreicher vollständiger Build auf `main`:** [39375312975](https://github.com/ManuEtt/Dnd/actions/runs/39375312975), Commit `25dab9b` – GitHub Actions meldet **completed / success**. Backend-Tests, Dart-Formatierung, Flutter-Codeanalyse, sämtliche Flutter-Tests und Android-Debug-APK-Build waren erfolgreich. Der erfolgreiche CI-Abschluss bestätigt den geprüften Quellstand, ersetzt aber keine Geräteabnahme.
@@ -148,4 +150,4 @@ Das Projekt verwendet ausgewählte Inhalte des **System Reference Document 5.2.1
 
 ---
 
-*Diese README beschreibt den nachweisbaren Stand des Hauptbranches am 20.10.2026; für Änderungen nach diesem Datum sind Quellcode, Tests und GitHub-Actions-Ergebnisse erneut zu prüfen.*
+*Diese README beschreibt den nachweisbaren Stand einschließlich PR #40 auf `main` am 20.10.2026. Die Ergebnisse beziehen sich auf den verifizierten Code-HEAD des PR; für weitere Änderungen sind GitHub Actions und Quellcode erneut zu prüfen.*
