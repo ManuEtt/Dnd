@@ -6,6 +6,7 @@ import 'condition_rules.dart';
 import 'cover_rules.dart';
 import 'condition_effects.dart';
 import 'prone_movement_rules.dart';
+import 'crawling_movement_rules.dart';
 import 'character_rule_engine.dart';
 import 'character_effect_rules.dart';
 import 'healing_spell_rules.dart';
@@ -801,6 +802,54 @@ class GameEngine {
         if (active)
           'movementRemainingDecimeters':
               updatedFight!.remainingMovementDecimeters,
+      },
+    );
+  }
+
+  /// Confirmed prone crawling. Terrain and distance are selected by the user.
+  GameUpdate crawl(
+    Campaign campaign, {
+    required int distanceFeet,
+    required bool difficultTerrain,
+  }) {
+    final fight = campaign.encounter;
+    if (fight == null || fight.isFinished) {
+      throw const FormatException('Kriechen ist nur im Kampf verfügbar.');
+    }
+    if (fight.activeParticipant != 'hero') {
+      throw const FormatException('Kriechen nur im eigenen Zug.');
+    }
+    if (campaign.pendingRoll != null ||
+        campaign.pendingDeathSave != null ||
+        campaign.hero.isDead) {
+      throw const FormatException('Zuerst den offenen Wurf abschließen.');
+    }
+    final updated = CrawlingMovementRules.spend(
+      fight,
+      campaign.hero,
+      distanceFeet: distanceFeet,
+      difficultTerrain: difficultTerrain,
+    ).copyWith(heroCover: CoverLevel.none);
+    final cost = CrawlingMovementRules.costDecimeters(
+      distanceFeet: distanceFeet,
+      difficultTerrain: difficultTerrain,
+    );
+    return _commit(
+      campaign,
+      campaign.copyWith(encounter: updated),
+      'Du kriechst ${ProneMovementRules.formatDecimeters(distanceFeet * 3)}'
+      '${difficultTerrain ? ' durch schwieriges Gelände' : ''}. '
+      'Bewegungskosten: ${ProneMovementRules.formatDecimeters(cost)}. '
+      'Verbleibend: ${updated.movementRemainingLabel}. '
+      'Deine vorherige Deckungsposition ist nicht mehr bestätigt.',
+      type: 'combat.crawled',
+      payload: {
+        'targetId': campaign.hero.id,
+        'distanceFeet': distanceFeet,
+        'difficultTerrain': difficultTerrain,
+        'movementSpentDecimeters': cost,
+        'movementRemainingDecimeters':
+            updated.remainingMovementDecimeters,
       },
     );
   }

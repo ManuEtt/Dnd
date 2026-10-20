@@ -1083,6 +1083,20 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previous);
   }
 
+  Future<void> _crawl(int distanceFeet, bool difficultTerrain) async {
+    final campaign = widget.controller.currentCampaign;
+    if (campaign == null || widget.controller.busy) return;
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    await widget.controller.crawl(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      distanceFeet: distanceFeet,
+      difficultTerrain: difficultTerrain,
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
   Future<void> _manageConditionEffects() async {
     final campaign = widget.controller.currentCampaign;
     if (campaign == null || widget.controller.busy) return;
@@ -1314,6 +1328,54 @@ class _AdventurePageState extends State<_AdventurePage> {
                       size: 17,
                     ),
                     label: const Text('Aufstehen'),
+                  ),
+                if (campaign.hero.conditions.contains('liegend') &&
+                    campaign.encounter != null &&
+                    !campaign.encounter!.isFinished)
+                  PopupMenuButton<int>(
+                    key: const ValueKey('adventure-crawl'),
+                    tooltip: 'Kriechstrecke und Gelände bestätigen',
+                    enabled: !widget.controller.busy &&
+                        campaign.pendingRoll == null &&
+                        campaign.pendingDeathSave == null &&
+                        !campaign.hero.isDead &&
+                        campaign.encounter!.activeParticipant == 'hero',
+                    onSelected: (value) => _crawl(
+                      value >= 100 ? value - 100 : value,
+                      value >= 100,
+                    ),
+                    itemBuilder: (_) => const [
+                      PopupMenuItem(
+                        value: 5,
+                        child: Text('1,5 m kriechen – kostet 3 m'),
+                      ),
+                      PopupMenuItem(
+                        value: 10,
+                        child: Text('3 m kriechen – kostet 6 m'),
+                      ),
+                      PopupMenuItem(
+                        value: 105,
+                        child: Text('1,5 m schwieriges Gelände – kostet 4,5 m'),
+                      ),
+                      PopupMenuItem(
+                        value: 110,
+                        child: Text('3 m schwieriges Gelände – kostet 9 m'),
+                      ),
+                    ],
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 8,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.accessibility_outlined, size: 17),
+                          SizedBox(width: 6),
+                          Text('Kriechen'),
+                        ],
+                      ),
+                    ),
                   ),
                 TextButton.icon(
                   key: const ValueKey('adventure-manage-condition-effects'),
