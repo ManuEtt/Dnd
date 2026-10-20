@@ -7,6 +7,7 @@ import '../domain/cover_rules.dart';
 import '../domain/campaign_experience.dart';
 import '../domain/rabenwacht_campaign.dart';
 import '../domain/damage_rules.dart';
+import '../domain/magic_missile_rules.dart';
 import '../domain/healing_spell_rules.dart';
 import '../domain/saving_throw_class_actions.dart';
 import '../domain/class_resource_rules.dart';
@@ -21,6 +22,7 @@ import 'backup_dialogs.dart';
 import 'character_editor.dart';
 import 'character_effect_dialog.dart';
 import 'condition_effect_dialog.dart';
+import 'magic_missile_dialog.dart';
 import 'healing_spell_dialog.dart';
 import 'death_save_decision_panel.dart';
 import 'fantasy_character_sheet.dart';
@@ -1142,6 +1144,35 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previous);
   }
 
+  Future<void> _castMagicMissile() async {
+    final campaign = widget.controller.currentCampaign;
+    final fight = campaign?.encounter;
+    if (campaign == null || fight == null || widget.controller.busy) return;
+    final choice = await showDialog<MagicMissileChoice>(
+      context: context,
+      builder: (_) => MagicMissileDialog(
+        hero: campaign.hero,
+        encounter: fight,
+      ),
+    );
+    if (choice == null || !mounted) return;
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    await widget.controller.castMagicMissile(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      castingClass: choice.castingClass,
+      slotLevel: choice.slotLevel,
+      pactMagic: choice.pactMagic,
+      targetVisibleConfirmed: choice.targetVisibleConfirmed,
+      targetWithinRangeConfirmed: choice.targetWithinRangeConfirmed,
+      verbalComponentConfirmed: choice.verbalComponentConfirmed,
+      somaticComponentConfirmed: choice.somaticComponentConfirmed,
+      noProtectionConfirmed: choice.noProtectionConfirmed,
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
   Future<void> _castHealingSpell() async {
     final campaign = widget.controller.currentCampaign;
     if (campaign == null || widget.controller.busy) return;
@@ -1391,6 +1422,25 @@ class _AdventurePageState extends State<_AdventurePage> {
                   icon: const Icon(Icons.shield_moon_outlined, size: 17),
                   label: const Text('Zustände verwalten'),
                 ),
+                if (campaign.encounter != null &&
+                    !campaign.encounter!.isFinished &&
+                    MagicMissileRules.preparedName(campaign.hero) != null)
+                  TextButton.icon(
+                    key: const ValueKey('adventure-cast-magic-missile'),
+                    onPressed:
+                        widget.controller.busy ||
+                            campaign.pendingRoll != null ||
+                            campaign.pendingDeathSave != null ||
+                            campaign.hero.isDead ||
+                            campaign.hero.hitPoints == 0 ||
+                            campaign.encounter!.activeParticipant != 'hero' ||
+                            campaign.encounter!.actionUsed ||
+                            campaign.encounter!.spellSlotExpendedThisTurn
+                        ? null
+                        : _castMagicMissile,
+                    icon: const Icon(Icons.auto_awesome_outlined, size: 17),
+                    label: const Text('Magisches Geschoss'),
+                  ),
                 if (campaign.hero.spells.any(
                   (name) => HealingSpellRules.find(name) != null,
                 ))
