@@ -23,14 +23,14 @@ class SacredFlameRules {
   }
 
   static bool isClericCaster(HeroCharacter hero) {
-    final primary = findSrdClass(hero.className)?.name == 'Kleriker' &&
+    final primary =
+        findSrdClass(hero.className)?.name == 'Kleriker' &&
         hero.primaryClassLevel >= 1;
-    final secondary = hero.hasSecondClass &&
+    final secondary =
+        hero.hasSecondClass &&
         findSrdClass(hero.secondaryClassName)?.name == 'Kleriker' &&
         hero.secondaryClassLevel >= 1;
-    return hero.level >= 1 &&
-        hero.level <= 20 &&
-        (primary || secondary);
+    return hero.level >= 1 && hero.level <= 20 && (primary || secondary);
   }
 
   static int diceCount(int totalCharacterLevel) {
@@ -85,8 +85,7 @@ class SacredFlameRules {
     final dc = SrdSpellSavingThrowRules.spellSaveDc(
       hero,
       spellcastingAbility: 'wisdom',
-      noUnmodelledDcModifiersConfirmed:
-          noUnmodelledDcModifiersConfirmed,
+      noUnmodelledDcModifiersConfirmed: noUnmodelledDcModifiersConfirmed,
     );
     if (!saveCircumstancesConfirmed ||
         confirmedTargetDexteritySaveModifier < -30 ||

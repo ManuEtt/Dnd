@@ -56,17 +56,16 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Heilige Flamme wirken'), findsOneWidget);
     expect(
-      tester.widget<CheckboxListTile>(
-        find.byKey(const ValueKey('sacred-flame-visible')),
-      ).value,
+      tester
+          .widget<CheckboxListTile>(
+            find.byKey(const ValueKey('sacred-flame-visible')),
+          )
+          .value,
       false,
     );
     await tester.tap(find.byKey(const ValueKey('sacred-flame-cast')));
     await tester.pumpAndSettle();
-    expect(
-      find.textContaining('Gegner-Rettungswurfbonus'),
-      findsOneWidget,
-    );
+    expect(find.textContaining('Gegner-Rettungswurfbonus'), findsOneWidget);
     expect(choice, isNull);
   });
 
@@ -89,9 +88,9 @@ void main() {
       findsOneWidget,
     );
     expect(
-      tester.widget<FilledButton>(
-        find.byKey(const ValueKey('sacred-flame-cast')),
-      ).onPressed,
+      tester
+          .widget<FilledButton>(find.byKey(const ValueKey('sacred-flame-cast')))
+          .onPressed,
       isNull,
     );
   });

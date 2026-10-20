@@ -94,9 +94,11 @@ class _SacredFlameDialogState extends State<SacredFlameDialog> {
         !_noExtraDc ||
         !_saveCircumstances ||
         widget.encounter.enemyCover == CoverLevel.total) {
-      setState(() => _error =
-          'Gegner-Rettungswurfbonus (−30 bis +30) und alle '
-          'tatsächlichen Voraussetzungen müssen bestätigt sein.');
+      setState(
+        () => _error =
+            'Gegner-Rettungswurfbonus (−30 bis +30) und alle '
+            'tatsächlichen Voraussetzungen müssen bestätigt sein.',
+      );
       return;
     }
     Navigator.of(context).pop(
@@ -155,7 +157,9 @@ class _SacredFlameDialogState extends State<SacredFlameDialog> {
             _check('verbal', 'Verbale Komponente ist möglich.', _verbal, (v) {
               _verbal = v;
             }),
-            _check('somatic', 'Gestische Komponente ist möglich.', _somatic, (v) {
+            _check('somatic', 'Gestische Komponente ist möglich.', _somatic, (
+              v,
+            ) {
               _somatic = v;
             }),
             _check(

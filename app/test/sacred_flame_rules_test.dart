@@ -89,19 +89,18 @@ SacredFlameResult _cast(
   saveDisadvantage: disadvantage,
 );
 
-GameUpdate _gameCast(GameEngine engine, Campaign campaign, {
-  int bonus = 0,
-}) => engine.castSacredFlame(
-  campaign,
-  confirmedTargetDexteritySaveModifier: bonus,
-  targetVisibleConfirmed: true,
-  targetWithinRangeConfirmed: true,
-  verbalComponentConfirmed: true,
-  somaticComponentConfirmed: true,
-  noRadiantDamageAdjustmentConfirmed: true,
-  noUnmodelledDcModifiersConfirmed: true,
-  saveCircumstancesConfirmed: true,
-);
+GameUpdate _gameCast(GameEngine engine, Campaign campaign, {int bonus = 0}) =>
+    engine.castSacredFlame(
+      campaign,
+      confirmedTargetDexteritySaveModifier: bonus,
+      targetVisibleConfirmed: true,
+      targetWithinRangeConfirmed: true,
+      verbalComponentConfirmed: true,
+      somaticComponentConfirmed: true,
+      noRadiantDamageAdjustmentConfirmed: true,
+      noUnmodelledDcModifiersConfirmed: true,
+      saveCircumstancesConfirmed: true,
+    );
 
 void main() {
   test('SRD cantrip scales 1/2/3/4d8 by total character level', () {
@@ -203,17 +202,16 @@ void main() {
 
   test('Invalid preparation, classes, confirmations never roll dice', () {
     final rng = _FixedRandom([19]);
-    expect(
-      () => _cast(_hero(spells: const []), rng),
-      throwsFormatException,
-    );
-    expect(
-      () => _cast(_hero(className: 'Magier'), rng),
-      throwsFormatException,
-    );
+    expect(() => _cast(_hero(spells: const []), rng), throwsFormatException);
+    expect(() => _cast(_hero(className: 'Magier'), rng), throwsFormatException);
     for (final flags in [
-      {'visible': false}, {'range': false}, {'verbal': false},
-      {'somatic': false}, {'radiant': false}, {'dc': false}, {'save': false},
+      {'visible': false},
+      {'range': false},
+      {'verbal': false},
+      {'somatic': false},
+      {'radiant': false},
+      {'dc': false},
+      {'save': false},
     ]) {
       expect(
         () => _cast(
@@ -235,10 +233,10 @@ void main() {
   });
 
   test('Multiclass Cleric can cast; save and slots stay independent', () {
-    final hero = _hero(level: 6, className: 'Magier').copyWith(
-      secondaryClassName: 'Kleriker',
-      secondaryClassLevel: 1,
-    );
+    final hero = _hero(
+      level: 6,
+      className: 'Magier',
+    ).copyWith(secondaryClassName: 'Kleriker', secondaryClassLevel: 1);
     final cast = _cast(hero, _FixedRandom([0, 2, 3]));
     expect(cast.damage, 7);
     expect(cast.hero.className, 'Magier');

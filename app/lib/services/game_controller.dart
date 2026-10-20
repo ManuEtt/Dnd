@@ -490,10 +490,8 @@ class GameController extends ChangeNotifier {
         targetWithinRangeConfirmed: targetWithinRangeConfirmed,
         verbalComponentConfirmed: verbalComponentConfirmed,
         somaticComponentConfirmed: somaticComponentConfirmed,
-        noRadiantDamageAdjustmentConfirmed:
-            noRadiantDamageAdjustmentConfirmed,
-        noUnmodelledDcModifiersConfirmed:
-            noUnmodelledDcModifiersConfirmed,
+        noRadiantDamageAdjustmentConfirmed: noRadiantDamageAdjustmentConfirmed,
+        noUnmodelledDcModifiersConfirmed: noUnmodelledDcModifiersConfirmed,
         saveCircumstancesConfirmed: saveCircumstancesConfirmed,
         saveAdvantage: saveAdvantage,
         saveDisadvantage: saveDisadvantage,

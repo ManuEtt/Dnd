@@ -1204,10 +1204,7 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (campaign == null || fight == null || widget.controller.busy) return;
     final choice = await showDialog<SacredFlameChoice>(
       context: context,
-      builder: (_) => SacredFlameDialog(
-        hero: campaign.hero,
-        encounter: fight,
-      ),
+      builder: (_) => SacredFlameDialog(hero: campaign.hero, encounter: fight),
     );
     if (choice == null || !mounted) return;
     final previous = _lastMessageId;
@@ -1223,8 +1220,7 @@ class _AdventurePageState extends State<_AdventurePage> {
       somaticComponentConfirmed: choice.somaticComponentConfirmed,
       noRadiantDamageAdjustmentConfirmed:
           choice.noRadiantDamageAdjustmentConfirmed,
-      noUnmodelledDcModifiersConfirmed:
-          choice.noUnmodelledDcModifiersConfirmed,
+      noUnmodelledDcModifiersConfirmed: choice.noUnmodelledDcModifiersConfirmed,
       saveCircumstancesConfirmed: choice.saveCircumstancesConfirmed,
       saveAdvantage: choice.saveAdvantage,
       saveDisadvantage: choice.saveDisadvantage,
