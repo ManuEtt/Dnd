@@ -1,3 +1,13 @@
+## Neu: SPELL-MAGIC-MISSILE (20.10.2026, 0.8.16+66)
+
+| ID | SRD 5.2.1 | Soll und tatsächliche Umsetzung | Code / Tests | Status |
+| --- | --- | --- | --- | --- |
+| SPELL-MISSILE-SINGLE | Spells: Magic Missile | Für einen sichtbaren bestätigten Einzelgegner innerhalb 120 Fuß, V/S, eigene Zauberklasse Magier oder Zauberer, Aktion und Platz; drei Geschosse +1 je höherem Grad; einzeln 1W4+1 Energieschaden; validierte Gegner-TP/Journaländerung | `magic_missile_rules.dart`, `game_engine.dart`, `game_controller.dart`, `magic_missile_dialog.dart`; Tests `magic_missile_rules_test.dart`, `magic_missile_storage_test.dart`, `magic_missile_dialog_test.dart` | IMPLEMENTIERT, CI AUSSTEHEND |
+| SPELL-MISSILE-DEFENSES | Damage Resistance / Immunity; Spells: Shield | Shield-Reaktion und tatsächlich vorhandene Resistenz-/Immunitätswerte Gegnerseite maschinenlesbar prüfen, keine unbestätigte Verneinung raten | Derzeit nur ausdrückliche Anwenderbestätigung „keine bekannte Schutzwirkung“; keine Gegnerdaten aus Erzählung | TEILWEISE |
+| SPELL-MISSILE-MULTITARGET | Magic Missile / Spell Targeting | Bestätigte mehrere Zielkreaturen, Positionsdaten, Reichweite, Deckung und Verteilung von Geschossen | Aktuell nur ein Gegner in `Encounter` | FEHLT |
+
+**Lizenz:** SRD 5.2.1, CC BY 4.0, https://www.dndbeyond.com/srd. Diese Matrix bleibt unvollständig. Ein erfolgreicher Workflow ist vor Freigabe separat nachzuweisen.
+
 **Abnahme 20.10.2026:** COMBAT-PRONE-CRAWL erfolgreich getestet mit [CI 39378443958](https://github.com/ManuEtt/Dnd/actions/runs/39378443958), integriert durch [PR #40](https://github.com/ManuEtt/Dnd/pull/40), Merge `f7c6a68`. Gerätetest offen. Diese Bestätigung bezieht sich ausschließlich auf das Kriech-Regelpaket.
 
 ## Neue Anforderungszeilen (20.10.2026, Version 0.8.15+65)

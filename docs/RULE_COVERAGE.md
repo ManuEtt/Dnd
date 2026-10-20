@@ -1,3 +1,5 @@
+**20.10.2026 / 0.8.16+66:** `SPELL-MISSILE-SINGLE` als ausführbare SRD-Zauberwirkung implementiert (W4-Geschosse, Plätze, UI, Controller, SQLite-Tests). **CI noch ausstehend**. Ziel-/Gegnerschutz muss ausdrücklich bestätigt werden; keine Multi-Ziel- oder Shield-Engine. Quelle: SRD 5.2.1 unter CC BY 4.0.
+
 **20.10.2026 / 0.8.15+65:** `COMBAT-PRONE-CRAWL` implementiert: explizite Kriechbewegung 2:1 bzw. 3:1, UI, Controller und SQLite-/JSON-Tests, **CI 39378443958 erfolgreich; Gerätetest offen**. Kartengeometrie und Gegnerbewegung fehlen weiterhin.
 
 # SRD-5.2.1-Regelabdeckung
