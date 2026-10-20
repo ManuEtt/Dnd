@@ -9,6 +9,7 @@ import 'prone_movement_rules.dart';
 import 'crawling_movement_rules.dart';
 import 'character_rule_engine.dart';
 import 'character_effect_rules.dart';
+import 'magic_missile_rules.dart';
 import 'healing_spell_rules.dart';
 import 'damage_rules.dart';
 import 'class_progression_rules.dart';
@@ -1047,6 +1048,99 @@ class GameEngine {
         'previousTemporaryHitPoints': campaign.hero.temporaryHitPoints,
         'temporaryHitPoints': hero.temporaryHitPoints,
       },
+    );
+  }
+
+  /// SRD 5.2.1: validated Magic Missile targeting the current sole enemy.
+  /// Unknown defenses and positional facts require explicit confirmation.
+  GameUpdate castMagicMissile(
+    Campaign campaign, {
+    required String castingClass,
+    required int slotLevel,
+    required bool pactMagic,
+    required bool targetVisibleConfirmed,
+    required bool targetWithinRangeConfirmed,
+    required bool verbalComponentConfirmed,
+    required bool somaticComponentConfirmed,
+    required bool noProtectionConfirmed,
+  }) {
+    _requireExternalEffect(campaign, 'Magisches Geschoss');
+    final fight = campaign.encounter;
+    if (fight == null ||
+        fight.isFinished ||
+        fight.activeParticipant != 'hero' ||
+        !campaign.hero.isComplete) {
+      throw const FormatException(
+        'Magisches Geschoss benötigt einen aktiven eigenen Kampfzug '
+        'mit bestätigten Charakterwerten.',
+      );
+    }
+    if (fight.enemyCover == CoverLevel.total) {
+      throw const FormatException(
+        'Vollständige Deckung verhindert das direkte Ziel.',
+      );
+    }
+    if (fight.actionUsed ||
+        fight.spellSlotExpendedThisTurn ||
+        fight.surgeReserved ||
+        fight.surgeUsedThisTurn ||
+        CombatClassActions.rageActive(fight)) {
+      throw const FormatException(
+        'Aktion, Zauberplatz pro Zug, Aktionsschub oder Kampfrausch '
+        'verhindern diesen Zauber.',
+      );
+    }
+    final cast = MagicMissileRules.cast(
+      campaign.hero,
+      dice: dice,
+      castingClass: castingClass,
+      slotLevel: slotLevel,
+      pactMagic: pactMagic,
+      targetVisibleConfirmed: targetVisibleConfirmed,
+      targetWithinRangeConfirmed: targetWithinRangeConfirmed,
+      verbalComponentConfirmed: verbalComponentConfirmed,
+      somaticComponentConfirmed: somaticComponentConfirmed,
+      noProtectionConfirmed: noProtectionConfirmed,
+    );
+    final remaining = RulesEngine.remainingHitPoints(
+      hitPoints: fight.enemyHitPoints,
+      damage: cast.damage,
+    );
+    final payload = <String, dynamic>{
+      'spellName': 'Magisches Geschoss',
+      'castingClass': cast.castingClass,
+      'slotLevel': cast.slotLevel,
+      'pactMagic': cast.pactMagic,
+      'damageType': 'force',
+      'damage': cast.damage,
+      'missileRolls': cast.rolls.map((roll) => roll.toJson()).toList(),
+      'targetId': fight.id,
+      'targetVisibleConfirmed': true,
+      'targetWithinRangeConfirmed': true,
+      'noProtectionConfirmed': true,
+      'enemyHitPoints': remaining,
+    };
+    var next = campaign.copyWith(
+      hero: cast.hero,
+      encounter: fight.copyWith(
+        enemyHitPoints: remaining,
+        actionUsed: true,
+        spellSlotExpendedThisTurn: true,
+      ),
+    );
+    if (remaining == 0) {
+      next = _afterFlurryVictory(next, payload);
+    }
+    return _commit(
+      campaign,
+      next,
+      'Magisches Geschoss: ${cast.rolls.length} Geschosse treffen '
+      'den ${fight.enemyName} für ${cast.damage} Energieschaden. '
+      'Verbleibende Gegner-TP: $remaining. '
+      'Zauberplatz Grad ${cast.slotLevel} und Magieaktion verbraucht.'
+      '${remaining == 0 ? ' Der Gegner ist besiegt.' : ''}',
+      type: 'spell.magicMissile',
+      payload: payload,
     );
   }
 

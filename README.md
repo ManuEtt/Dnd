@@ -2,7 +2,7 @@
 
 **Deutschsprachige Android-Fantasy-Rollenspiel-App mit Soloabenteuern, Charakterverwaltung, D&D-Regelunterstützung und optionalem KI-Erzähler.**
 
-> **Projektstatus (20. Oktober 2026):** Aktive **Android-Alpha**, in Entwicklung. Im Flutter-Quellprojekt steht **Version `0.8.15+65`** (Version 0.8.15, Build 65); verbindlich ist immer [`app/pubspec.yaml`](app/pubspec.yaml). Diese Quellcode-Version bedeutet **nicht**, dass eine identisch geprüfte oder veröffentlichte APK bereits auf jedem Gerät installiert ist. Das vollständige D&D-Regelwerk ist **nicht** implementiert.
+> **Projektstatus (20. Oktober 2026):** Aktive **Android-Alpha**, in Entwicklung. Im Flutter-Quellprojekt steht **Version `0.8.16+66`** (Version 0.8.16, Build 66); verbindlich ist immer [`app/pubspec.yaml`](app/pubspec.yaml). Diese Quellcode-Version bedeutet **nicht**, dass eine identisch geprüfte oder veröffentlichte APK bereits auf jedem Gerät installiert ist. Das vollständige D&D-Regelwerk ist **nicht** implementiert.
 
 ## Inhaltsverzeichnis
 
@@ -13,6 +13,12 @@
 - [Build- und Teststand](#build--und-teststand)
 - [Bekannte Grenzen und nächste Schritte](#bekannte-grenzen-und-nächste-schritte)
 - [Regelgrundlage, Dokumentation und Chronik](#regelgrundlage-dokumentation-und-chronik)
+
+## Neues SRD-5.2.1-Inkrement: Magisches Geschoss (20.10.2026)
+
+Die Flutter-Version ist `0.8.16+66`. Implementiert sind die **tatsächlichen Würfel- und Schadensregeln** für Magisches Geschoss (`Magic Missile`): bei einem Zauberplatz Grad 1 drei Geschosse, je höherem Platz ein weiteres, je Geschoss `1W4+1` Energieschaden. Die neue Kampfaktion validiert bekannte Zauber, Zauberklasse und Plätze, Magieaktion, Sicht und 120-Fuß-Reichweite, Komponenten, vollständige Deckung und ausdrücklich bestätigte fehlende Schutzwirkung des einzigen gegnerischen Ziels. Gegner-TP, Zauberplätze und Ereignisse werden zusammen mit Revisionsschutz gespeichert; unbestätigte KI-Angaben ändern keine Kampfwerte. UI, Domain-/Widget- und SQLite-Tests sind im Entwicklungsbranch enthalten.
+
+**Abnahmehinweis:** GitHub-CI/Flutter-/Backend-/Android-Builds und Android-Gerätetest sind für **dieses neue Inkrement noch offen**. Die nachstehend verlinkten erfolgreichen CI-Läufe betreffen bisher ausschließlich ältere Versionen. Vollständige Gegnerimmunitäten, Schildzauber, Entfernungen anhand einer Karte und Verteilung auf mehrere Ziele bleiben unimplementiert. [SRD-Matrix](docs/SRD_5_2_1_REQUIREMENTS_MATRIX.md) und [Entwicklungsstatus](DEVELOPMENT_STATUS.md) beschreiben die Grenzen.
 
 ## Erstes SRD-5.2.1-Inkrement: Kriechen (20.10.2026)
 
