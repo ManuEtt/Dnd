@@ -12,6 +12,7 @@ import 'character_effect_rules.dart';
 import 'magic_missile_rules.dart';
 import 'fire_bolt_rules.dart';
 import 'sacred_flame_rules.dart';
+import 'acid_splash_rules.dart';
 import 'healing_spell_rules.dart';
 import 'hero_shield_reaction_rules.dart';
 import 'damage_rules.dart';
@@ -1226,6 +1227,128 @@ class GameEngine {
   /// Cantrip consumes a Magic action but NEVER a spell slot.
   /// SRD 5.2.1 Sacred Flame: a confirmed enemy Dexterity saving throw.
   /// Half and three-quarter cover NEVER grant a bonus for this spell.
+  /// SRD 5.2.1 Acid Splash. The domain resolver supports all confirmed
+  /// creatures in a sphere. The current Encounter persists only ONE live foe,
+  /// so this action is intentionally restricted to an expressly isolated foe.
+  /// Never discard other target HP changes or invent positions.
+  GameUpdate castAcidSplash(
+    Campaign campaign, {
+    required String castingClass,
+    required int confirmedTargetDexteritySaveModifier,
+    required bool originWithin60FeetConfirmed,
+    required bool currentEnemyIsOnlyCreatureInSphereConfirmed,
+    required bool verbalComponentConfirmed,
+    required bool somaticComponentConfirmed,
+    required bool noUnmodelledDcModifiersConfirmed,
+    required bool targetSaveCircumstancesConfirmed,
+    required bool targetCoverRelationshipConfirmed,
+    required bool effectPathConfirmed,
+    required bool noAcidDamageAdjustmentConfirmed,
+    bool targetSourceOppositeCover = false,
+    bool targetSaveAdvantage = false,
+    bool targetSaveDisadvantage = false,
+  }) {
+    _requireExternalEffect(campaign, 'Säurespritzer');
+    final fight = campaign.encounter;
+    if (fight == null ||
+        fight.isFinished ||
+        fight.activeParticipant != 'hero' ||
+        !campaign.hero.isComplete ||
+        fight.actionUsed ||
+        fight.surgeReserved ||
+        fight.surgeUsedThisTurn ||
+        CombatClassActions.rageActive(fight) ||
+        campaign.pendingEnemyShieldHit != null) {
+      throw const FormatException(
+        'Säurespritzer erfordert einen freien eigenen Kampfzug '
+        'und eine verfügbare Magieaktion.',
+      );
+    }
+    // Do not allow a genuine multi-target effect to silently damage only
+    // the current enemy. The untracked creatures need persisted participants.
+    if (!currentEnemyIsOnlyCreatureInSphereConfirmed) {
+      throw const FormatException(
+        'Mehrere Kreaturen in der Kugel benötigen einen gespeicherten '
+        'Mehrgegnerkampf. Keine Teilauflösung ohne deren Trefferpunkte.',
+      );
+    }
+    final result = AcidSplashRules.cast(
+      campaign.hero,
+      dice: dice,
+      castingClass: castingClass,
+      targets: [
+        AcidSplashTarget(
+          id: fight.id,
+          name: fight.enemyName,
+          hitPoints: fight.enemyHitPoints,
+          maxHitPoints: fight.enemyMaxHitPoints,
+          dexteritySaveModifier: confirmedTargetDexteritySaveModifier,
+          cover: fight.enemyCover,
+          sourceOppositeCover: targetSourceOppositeCover,
+          coverRelationshipConfirmed: targetCoverRelationshipConfirmed,
+          inSphereConfirmed: true,
+          effectPathConfirmed: effectPathConfirmed,
+          noAcidDamageAdjustmentConfirmed:
+              noAcidDamageAdjustmentConfirmed,
+          saveCircumstancesConfirmed: targetSaveCircumstancesConfirmed,
+          saveAdvantage: targetSaveAdvantage,
+          saveDisadvantage: targetSaveDisadvantage,
+        ),
+      ],
+      sphereOriginWithinRangeConfirmed: originWithin60FeetConfirmed,
+      everyCreatureInSphereIncludedConfirmed:
+          currentEnemyIsOnlyCreatureInSphereConfirmed,
+      verbalComponentConfirmed: verbalComponentConfirmed,
+      somaticComponentConfirmed: somaticComponentConfirmed,
+      noUnmodelledDcModifiersConfirmed:
+          noUnmodelledDcModifiersConfirmed,
+    );
+    final impact = result.targets.single;
+    final payload = <String, dynamic>{
+      'spellName': 'Säurespritzer',
+      'spellLevel': 0,
+      'castingClass': result.castingClass,
+      'spellcastingAbility':
+          result.castingClass == 'Magier' ? 'intelligence' : 'charisma',
+      'areaShape': 'sphere',
+      'areaRadiusFeet': 5,
+      'rangeFeet': 60,
+      'areaOriginWithinRangeConfirmed': true,
+      'allCreaturesWithinSphereConfirmed': true,
+      'targetIds': [fight.id],
+      'savingThrowAbility': 'dexterity',
+      'savingThrowDc': result.dc,
+      'targetResolutions': [
+        for (final target in result.targets) target.toJson(),
+      ],
+      'damageRoll': result.damageRoll?.toJson(),
+      'damageType': 'acid',
+      'totalDamage': impact.damage,
+      'enemyHitPoints': impact.hitPointsAfter,
+      'noSpellSlotSpent': true,
+    };
+    var next = campaign.copyWith(
+      hero: result.hero,
+      encounter: fight.copyWith(
+        enemyHitPoints: impact.hitPointsAfter,
+        actionUsed: true,
+      ),
+    );
+    if (impact.hitPointsAfter == 0) {
+      next = _afterFlurryVictory(next, payload);
+    }
+    return _commit(
+      campaign,
+      next,
+      'Säurespritzer gegen ${fight.enemyName}: GES-Rettungswurf '
+      '${impact.save.roll.total} gegen SG ${result.dc}, '
+      '${impact.save.succeeded ? 'kein Schaden' : '${impact.damage} Säureschaden'}. '
+      'Gegner-TP ${impact.hitPointsAfter}. Magieaktion verbraucht, kein Zauberplatz.',
+      type: 'spell.acidSplash',
+      payload: payload,
+    );
+  }
+
   GameUpdate castSacredFlame(
     Campaign campaign, {
     required int confirmedTargetDexteritySaveModifier,
