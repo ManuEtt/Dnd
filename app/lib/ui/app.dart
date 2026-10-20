@@ -1167,6 +1167,10 @@ class _AdventurePageState extends State<_AdventurePage> {
       somaticComponentConfirmed: choice.somaticComponentConfirmed,
       noProtectionConfirmed: choice.noProtectionConfirmed,
       confirmedForceDefense: choice.confirmedForceDefense,
+      shieldReactionConfirmed: choice.shieldReactionConfirmed,
+      shieldPreparedAndComponentsConfirmed:
+          choice.shieldPreparedAndComponentsConfirmed,
+      confirmedEnemyShieldSlots: choice.confirmedEnemyShieldSlots,
     );
     if (mounted) await _afterTurn(previous);
   }
