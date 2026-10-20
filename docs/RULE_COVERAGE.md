@@ -1,3 +1,5 @@
+**20.10.2026 / 0.8.18+68:** `SPELL-SHIELD-ENEMY-REACTION` implementiert: Schild gegen Magisches Geschoss, Nullschaden, bestätigte gegnerische Reaktion/Zauberplätze, +5 RK bis nächster Gegnerzug, Alt-JSON- und SQLite-Regressionsfälle. **CI unbestätigt**; Spieler-Reaktion gegen Angriffe fehlt.
+
 **20.10.2026 / 0.8.17+67:** Neue getypte `EnemyForceDefense` bei aktivem Gegner: normal, Resistenz, Immunität, Verwundbarkeit gegen Energieschaden. Pro Geschoss `DamageRules`, UI-Bestätigung, JSON-/SQLite-Regression; **CI #39383477544 grün; Android-Gerätetest offen**. Vollständige Monster-Abwehr, Shield-Reaktion und Mehrzielverteilung fehlen.
 
 **20.10.2026 / 0.8.16+66:** `SPELL-MISSILE-SINGLE` als ausführbare SRD-Zauberwirkung implementiert (W4-Geschosse, Plätze, UI, Controller, SQLite-Tests). **CI #39381087593 erfolgreich; Gerätetest offen**. Ziel-/Gegnerschutz muss ausdrücklich bestätigt werden; keine Multi-Ziel- oder Shield-Engine. Quelle: SRD 5.2.1 unter CC BY 4.0.

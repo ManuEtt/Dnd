@@ -1065,6 +1065,9 @@ class GameEngine {
     required bool somaticComponentConfirmed,
     required bool noProtectionConfirmed,
     EnemyForceDefense? confirmedForceDefense,
+    bool shieldReactionConfirmed = false,
+    bool shieldPreparedAndComponentsConfirmed = false,
+    int? confirmedEnemyShieldSlots,
   }) {
     _requireExternalEffect(campaign, 'Magisches Geschoss');
     final fight = campaign.encounter;
@@ -1092,15 +1095,10 @@ class GameEngine {
         'verhindern diesen Zauber.',
       );
     }
-    // Older callers can still explicitly confirm ordinary defenses via
-    // noProtectionConfirmed; historical encounters never infer a defense.
-    // New UI callers choose an explicit value. Shield must be separately
-    // excluded before dice or resources are touched.
-    if (!noProtectionConfirmed ||
-        confirmedForceDefense == EnemyForceDefense.unknown) {
-      throw const FormatException(
-        'Schildzauber und Gegner-Abwehr müssen bestätigt sein.',
-      );
+    // No unknown creature resources are inferred. A fresh Shield reaction
+    // must be explicitly confirmed, including preparedness and components.
+    if (confirmedForceDefense == EnemyForceDefense.unknown) {
+      throw const FormatException('Unbestätigte Gegner-Abwehr.');
     }
     final effectiveDefense =
         confirmedForceDefense ??
@@ -1110,6 +1108,35 @@ class GameEngine {
     if (effectiveDefense == EnemyForceDefense.unknown) {
       throw const FormatException('Unbestätigte Gegner-Abwehr.');
     }
+    if (noProtectionConfirmed && shieldReactionConfirmed) {
+      throw const FormatException('Widersprüchliche Schildentscheidung.');
+    }
+    if (shieldReactionConfirmed) {
+      if (fight.enemyShieldActive ||
+          fight.enemyShieldReactionUsed ||
+          !shieldPreparedAndComponentsConfirmed) {
+        throw const FormatException(
+          'Gegnerische Schildreaktion nicht verfügbar.',
+        );
+      }
+      if (fight.enemyShieldSlotsRemaining != null &&
+          confirmedEnemyShieldSlots != null &&
+          fight.enemyShieldSlotsRemaining != confirmedEnemyShieldSlots) {
+        throw const FormatException(
+          'Gegnerische Zauberplätze widersprechen dem Spielstand.',
+        );
+      }
+      final count =
+          fight.enemyShieldSlotsRemaining ?? confirmedEnemyShieldSlots;
+      if (count == null || count < 1 || count > 99) {
+        throw const FormatException(
+          'Gegnerische Zauberplätze zuerst bestätigen.',
+        );
+      }
+    } else if (!noProtectionConfirmed && !fight.enemyShieldActive) {
+      throw const FormatException('Schildzauberstatus muss bestätigt sein.');
+    }
+    final shieldBlocks = shieldReactionConfirmed || fight.enemyShieldActive;
     final cast = MagicMissileRules.cast(
       campaign.hero,
       dice: dice,
@@ -1121,14 +1148,21 @@ class GameEngine {
       verbalComponentConfirmed: verbalComponentConfirmed,
       somaticComponentConfirmed: somaticComponentConfirmed,
       noProtectionConfirmed: noProtectionConfirmed,
+      blockedByShield: shieldBlocks,
     );
-    final reduced = EnemyForceDefenseRules.apply(
-      cast.rolls.map((roll) => roll.total),
-      defense: effectiveDefense,
-    );
+    final reduced = shieldBlocks
+        ? null
+        : EnemyForceDefenseRules.apply(
+            cast.rolls.map((roll) => roll.total),
+            defense: effectiveDefense,
+          );
+    final appliedDamage = reduced?.appliedTotal ?? 0;
+    final rawDamage = reduced?.rawTotal ?? 0;
+    final perMissile =
+        reduced?.appliedPerMissile ?? List<int>.filled(2 + cast.slotLevel, 0);
     final remaining = RulesEngine.remainingHitPoints(
       hitPoints: fight.enemyHitPoints,
-      damage: reduced.appliedTotal,
+      damage: appliedDamage,
     );
     final payload = <String, dynamic>{
       'spellName': 'Magisches Geschoss',
@@ -1136,15 +1170,20 @@ class GameEngine {
       'slotLevel': cast.slotLevel,
       'pactMagic': cast.pactMagic,
       'damageType': 'force',
-      'rawDamage': reduced.rawTotal,
-      'damage': reduced.appliedTotal,
-      'appliedMissileDamage': reduced.appliedPerMissile,
+      'rawDamage': rawDamage,
+      'damage': appliedDamage,
+      'appliedMissileDamage': perMissile,
+      'shieldReactionTriggered': shieldReactionConfirmed,
+      'shieldBlocked': shieldBlocks,
+      'enemyShieldSlotsRemaining': shieldReactionConfirmed
+          ? (fight.enemyShieldSlotsRemaining ?? confirmedEnemyShieldSlots)! - 1
+          : fight.enemyShieldSlotsRemaining,
       'enemyForceDefense': effectiveDefense.name,
       'missileRolls': cast.rolls.map((roll) => roll.toJson()).toList(),
       'targetId': fight.id,
       'targetVisibleConfirmed': true,
       'targetWithinRangeConfirmed': true,
-      'noProtectionConfirmed': true,
+      'noProtectionConfirmed': noProtectionConfirmed,
       'enemyHitPoints': remaining,
     };
     var next = campaign.copyWith(
@@ -1152,6 +1191,13 @@ class GameEngine {
       encounter: fight.copyWith(
         enemyHitPoints: remaining,
         enemyForceDefense: effectiveDefense,
+        enemyShieldSlotsRemaining: shieldReactionConfirmed
+            ? (fight.enemyShieldSlotsRemaining ?? confirmedEnemyShieldSlots)! -
+                  1
+            : fight.enemyShieldSlotsRemaining,
+        enemyShieldReactionUsed:
+            fight.enemyShieldReactionUsed || shieldReactionConfirmed,
+        enemyShieldActive: shieldBlocks,
         actionUsed: true,
         spellSlotExpendedThisTurn: true,
       ),
@@ -1162,10 +1208,9 @@ class GameEngine {
     return _commit(
       campaign,
       next,
-      'Magisches Geschoss: ${cast.rolls.length} Geschosse treffen '
-      'den ${fight.enemyName}. Die bestätigte Abwehr '
-      '(${EnemyForceDefenseRules.label(effectiveDefense)}) reduziert '
-      '${reduced.rawTotal} auf ${reduced.appliedTotal} Energieschaden. '
+      'Magisches Geschoss: ${2 + cast.slotLevel} Geschosse gegen '
+      'den ${fight.enemyName}. '
+      '${shieldBlocks ? 'Der bestätigte Schildzauber wehrt alle Geschosse ab. ' : 'Die bestätigte Abwehr (${EnemyForceDefenseRules.label(effectiveDefense)}) reduziert $rawDamage auf $appliedDamage Energieschaden. '}'
       'Verbleibende Gegner-TP: $remaining. '
       'Zauberplatz Grad ${cast.slotLevel} und Magieaktion verbraucht.'
       '${remaining == 0 ? ' Der Gegner ist besiegt.' : ''}',
@@ -2962,7 +3007,7 @@ class GameEngine {
             advantage: attackRule.advantage,
             disadvantage: attackRule.disadvantage,
             difficulty: CoverRules.armorClass(
-              encounter.enemyArmorClass,
+              encounter.effectiveEnemyArmorClass,
               encounter.enemyCover,
             ),
             targetId: encounter.id,
@@ -2972,7 +3017,7 @@ class GameEngine {
         ),
         'Nebenhandangriff mit ${choices.single.name}: Würfle W20 '
         '${_signed(bonus)} gegen RK '
-        '${CoverRules.armorClass(encounter.enemyArmorClass, encounter.enemyCover)} '
+        '${CoverRules.armorClass(encounter.effectiveEnemyArmorClass, encounter.enemyCover)} '
         '(inklusive Deckung). '
         'Die Bonusaktion ist reserviert.',
         type: 'roll.requested',
@@ -3023,14 +3068,14 @@ class GameEngine {
             advantage: attack.advantage,
             disadvantage: attack.disadvantage,
             difficulty: CoverRules.armorClass(
-              encounter.enemyArmorClass,
+              encounter.effectiveEnemyArmorClass,
               encounter.enemyCover,
             ),
             targetId: encounter.id,
             targetName: encounter.enemyName,
           ),
         ),
-        '${current.hero.name}, würfle einen W20 für deinen Angriff auf den ${encounter.enemyName}. Dein Angriffsbonus ist ${_signed(bonus)} (${attack.rollHint}); seine effektive Rüstungsklasse beträgt ${CoverRules.armorClass(encounter.enemyArmorClass, encounter.enemyCover)} (${CoverRules.label(encounter.enemyCover)}).',
+        '${current.hero.name}, würfle einen W20 für deinen Angriff auf den ${encounter.enemyName}. Dein Angriffsbonus ist ${_signed(bonus)} (${attack.rollHint}); seine effektive Rüstungsklasse beträgt ${CoverRules.armorClass(encounter.effectiveEnemyArmorClass, encounter.enemyCover)} (${CoverRules.label(encounter.enemyCover)}).',
         type: 'roll.requested',
       );
     }
@@ -3626,6 +3671,11 @@ class GameEngine {
     var foe = advanceRound
         ? CombatClassActions.afterHeroTurn(originalFight)
         : originalFight;
+    // Shield expires at the START of the enemy's next turn, not earlier.
+    foe = foe.copyWith(
+      enemyShieldActive: false,
+      enemyShieldReactionUsed: false,
+    );
     var hero = campaign.hero;
     if (advanceRound) {
       hero = ConditionEffectRules.expireAtOwnTurnEnd(

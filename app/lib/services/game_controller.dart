@@ -457,6 +457,9 @@ class GameController extends ChangeNotifier {
     required bool somaticComponentConfirmed,
     required bool noProtectionConfirmed,
     EnemyForceDefense? confirmedForceDefense,
+    bool shieldReactionConfirmed = false,
+    bool shieldPreparedAndComponentsConfirmed = false,
+    int? confirmedEnemyShieldSlots,
   }) => _run(() async {
     final current = _effectCampaign(campaignId, expectedRevision);
     await _commit(
@@ -471,6 +474,10 @@ class GameController extends ChangeNotifier {
         somaticComponentConfirmed: somaticComponentConfirmed,
         noProtectionConfirmed: noProtectionConfirmed,
         confirmedForceDefense: confirmedForceDefense,
+        shieldReactionConfirmed: shieldReactionConfirmed,
+        shieldPreparedAndComponentsConfirmed:
+            shieldPreparedAndComponentsConfirmed,
+        confirmedEnemyShieldSlots: confirmedEnemyShieldSlots,
       ),
     );
   });

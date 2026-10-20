@@ -1,3 +1,13 @@
+## SRD 5.2.1: SPELL-SHIELD-ENEMY-REACTION – 20.10.2026 (0.8.18+68)
+
+| ID | SRD-Abschnitt | Mechanik und prüfbare Quellen | Stand |
+| --- | --- | --- | --- |
+| SPELL-SHIELD-ENEMY-REACTION | Shield (Abjuration 1, Reaction V/S), Magic Missile | Bestätigte gegnerische Zauberplätze + Vorbereitung + Komponenten + freie Reaktion: Gegenzauber auf Magic Missile verhindert gesamten Schaden; eigener Zauberplatz und Aktion werden dennoch verbraucht; +5 RK bis zum Beginn des nächsten Gegnerzuges; Legacy-JSON bleibt kompatibel. `models.dart`, `game_engine.dart`, `magic_missile_dialog.dart`, `enemy_shield_reaction_rules_test.dart`, `enemy_shield_reaction_storage_test.dart` | IMPLEMENTIERT, CI AUSSTEHEND |
+| SPELL-SHIELD-HERO-REACTION | Shield als Heldreaktion gegen treffenden Gegnerangriff | Verzögerter Angriffswurf/Entscheidungsfenster und kompatibles Ereignisjournal fehlen | FEHLT |
+| SPELL-SHIELD-MONSTER-CATALOG | Monsters, Spellcasting | Verifizierter Gegnerstatblock und automatische Monster-Zauberplatzberechnung | FEHLT |
+
+**Regelquelle:** D&D SRD 5.2.1, CC BY 4.0 – https://www.dndbeyond.com/srd. Der Shield-Effekt erfordert einen echten Trigger, keine erfundenen Gegnerressourcen. Gesamte SRD-Matrix weiterhin unvollständig.
+
 **CI-Freigabe und Integration 20.10.2026:** [PR #44](https://github.com/ManuEtt/Dnd/pull/44) wurde nach erfolgreich abgeschlossener [GitHub Actions #39383477544](https://github.com/ManuEtt/Dnd/actions/runs/39383477544) (finaler geprüfter Head `8f703b0002ae6dcb5279893020bea63e14771184`) nach `main` gemergt; Merge-Commit [`fa2ee36caff2c210eabaa651321b9591de46737f`](https://github.com/ManuEtt/Dnd/commit/fa2ee36caff2c210eabaa651321b9591de46737f). Bestanden: Struktur-/Python-Tests, Backend Typecheck/Build/Tests, Dart format, Flutter analyze/test, Android-Debug-Build, native Android-Tests und Release-APK-Artefakte. **Weiter offen:** echter Android-Gerätetest, vollständige Shield-Reaktionsmechanik, allgemeine Monster-Abwehr und komplette SRD-Abdeckung.
 
 ## Erweiterung 0.8.17+67 – SPELL-MISSILE-DEFENSES (20.10.2026)

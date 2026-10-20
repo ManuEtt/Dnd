@@ -2,7 +2,7 @@
 
 **Deutschsprachige Android-Fantasy-Rollenspiel-App mit Soloabenteuern, Charakterverwaltung, D&D-Regelunterstützung und optionalem KI-Erzähler.**
 
-> **Projektstatus (20. Oktober 2026):** Aktive **Android-Alpha**, in Entwicklung. Im Flutter-Quellprojekt steht **Version `0.8.17+67`** (Version 0.8.17, Build 67); verbindlich ist immer [`app/pubspec.yaml`](app/pubspec.yaml). Diese Quellcode-Version bedeutet **nicht**, dass eine identisch geprüfte oder veröffentlichte APK bereits auf jedem Gerät installiert ist. Das vollständige D&D-Regelwerk ist **nicht** implementiert.
+> **Projektstatus (20. Oktober 2026):** Aktive **Android-Alpha**, in Entwicklung. Im Flutter-Quellprojekt steht **Version `0.8.18+68`** (Version 0.8.18, Build 68); verbindlich ist immer [`app/pubspec.yaml`](app/pubspec.yaml). Diese Quellcode-Version bedeutet **nicht**, dass eine identisch geprüfte oder veröffentlichte APK bereits auf jedem Gerät installiert ist. Das vollständige D&D-Regelwerk ist **nicht** implementiert.
 
 ## Inhaltsverzeichnis
 
@@ -13,6 +13,10 @@
 - [Build- und Teststand](#build--und-teststand)
 - [Bekannte Grenzen und nächste Schritte](#bekannte-grenzen-und-nächste-schritte)
 - [Regelgrundlage, Dokumentation und Chronik](#regelgrundlage-dokumentation-und-chronik)
+
+## SRD-Inkrement: Shield als bestätigte Gegnerreaktion (20.10.2026)
+
+**Version 0.8.18+68** führt gegnerische Schildzauber-Reaktionen auf Magisches Geschoss aus: Der Spielende muss Vorbereitung, Komponenten, freie Reaktion und den tatsächlich verfügbaren gegnerischen Zauberplatz bestätigen. Die Regelengine bucht gegnerischen und eigenen Platz, verhindert den Zauberschaden ohne Schadenswürfel und speichert den aktiven Schild (+5 RK) bis zum Beginn des nächsten Gegnerzuges. Alte Speicherstände ohne gegnerische Zauberplätze bleiben ausdrücklich unbekannt. Die neue UI und SQLite-/Domain-Tests sind im Feature-Branch enthalten. **Für dieses Inkrement wurde noch kein vollständiger erfolgreicher CI-/Android-Build bestätigt.**
 
 ## Nächstes SRD-Inkrement: Gegnerabwehr gegen Magisches Geschoss (20.10.2026)
 
