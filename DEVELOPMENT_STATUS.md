@@ -1,3 +1,15 @@
+## 20.10.2026 – SRD Feuerpfeil-Kampfaktion (0.8.23+73, CI noch offen)
+
+- Basis: SRD-Zauberindex und Vorprüfung 0.8.22+72 erfolgreich per PR #54 nach `main` gemergt (Android-/Flutter-CI bestanden).
+- Der Zaubertrick **Feuerpfeil / Fire Bolt** wird nun als eigene bestätigte `spell.fireBolt`-Kampfaktion mit gültiger Zauberklasse, Magieaktion, Sicht/Reichweite, V/S-Komponenten und expliziter Zielabwehrbestätigung ausgeführt.
+- Lokaler W20-Zauberangriff inklusive Proficiency/Zauberattribut/Erschöpfung, Deckung und aktiver Schild-RK; natürliche 1/20, Vorteils-/Nachteilsentscheidung, kritische Schadenswürfel, 1–4 W10 nach Gesamtstufe.
+- Gegner-TP, magische Aktionsökonomie, Ereignisjournal, Revisionsschutz und JSON/SQLite-Verarbeitung über vorhandene Engine/Controller-Struktur. Neuer Checkbox-Dialog und Schnellaktion.
+- Domänentests/Engine- und Widgettests ergänzt: `fire_bolt_rules_test.dart`, `fire_bolt_dialog_test.dart`. Vorprüfungen und Speicherschutz bleiben erhalten.
+- **Teilweise SRD-Abdeckung:** keine Objektentzündung, automatischer Feuerresistenz-Abgleich, Kartenpositionen, Mehrfachziele, komplette Monsterreaktionen; Gerätetest ausstehend. Siehe `docs/SRD_FIRE_BOLT_COMBAT.md`.
+- Für diese Version GitHub Actions CI vollständig prüfen; vor grünem Gesamtbuild nicht nach `main` mergen.
+
+---
+
 ## 20.10.2026 – SRD 5.2.1: Zauberindex/Vorprüfung (0.8.22+72, CI offen)
 
 - Basis: bereits integrierter PR #53 und `main`; neuer Branch `feature/srd-spell-catalog-preflight-20261020`.
