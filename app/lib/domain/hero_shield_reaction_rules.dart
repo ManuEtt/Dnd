@@ -62,7 +62,9 @@ class HeroShieldReactionRules {
           slot.pactMagic == plan.pactMagic &&
           slot.remaining > 0,
     )) {
-      throw const FormatException('Kein bestätigter freier Schild-Zauberplatz.');
+      throw const FormatException(
+        'Kein bestätigter freier Schild-Zauberplatz.',
+      );
     }
   }
 
@@ -72,8 +74,7 @@ class HeroShieldReactionRules {
     required bool critical,
     required int attackTotal,
     required int effectiveArmorClass,
-  }) =>
-      hit && !critical && attackTotal < effectiveArmorClass + 5;
+  }) => hit && !critical && attackTotal < effectiveArmorClass + 5;
 
   static HeroCharacter spend(HeroCharacter hero, HeroShieldReactionPlan plan) {
     final resource = MagicMissileRules.normalized(hero);

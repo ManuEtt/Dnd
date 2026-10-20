@@ -3776,7 +3776,8 @@ class GameEngine {
       hero.armorClass!,
       foe.heroCover,
     );
-    final shieldTriggered = shieldPlan != null &&
+    final shieldTriggered =
+        shieldPlan != null &&
         HeroShieldReactionRules.preventsHit(
           hit: outcome.hit,
           critical: outcome.critical,
@@ -3786,14 +3787,14 @@ class GameEngine {
     if (shieldTriggered) {
       hero = HeroShieldReactionRules.spend(hero, shieldPlan!);
     }
-    final effectiveArmorClass =
-        baseArmorClass + (shieldTriggered ? 5 : 0);
+    final effectiveArmorClass = baseArmorClass + (shieldTriggered ? 5 : 0);
     var narration =
         'Der ${foe.enemyName} greift an: ${result.total} gegen deine effektive '
         'Rüstungsklasse $effectiveArmorClass '
         '(${CoverRules.label(foe.heroCover)}). ';
     if (shieldTriggered) {
-      narration += 'Dein ausdrücklich autorisierter Schildzauber '
+      narration +=
+          'Dein ausdrücklich autorisierter Schildzauber '
           'wehrt diesen Treffer mit +5 RK ab. ';
     }
     final details = <String, dynamic>{

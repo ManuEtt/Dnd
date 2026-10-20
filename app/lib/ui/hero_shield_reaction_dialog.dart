@@ -11,7 +11,8 @@ class HeroShieldReactionDialog extends StatefulWidget {
   final HeroCharacter hero;
 
   @override
-  State<HeroShieldReactionDialog> createState() => _HeroShieldReactionDialogState();
+  State<HeroShieldReactionDialog> createState() =>
+      _HeroShieldReactionDialogState();
 }
 
 class _HeroShieldReactionDialogState extends State<HeroShieldReactionDialog> {
@@ -48,7 +49,9 @@ class _HeroShieldReactionDialogState extends State<HeroShieldReactionDialog> {
   void _confirm() {
     final slot = _selectedSlot;
     if (_castingClass == null || slot == null || !_verbal || !_somatic) {
-      setState(() => _error = 'Eigene Klasse, Platz und beide Komponenten bestätigen.');
+      setState(
+        () => _error = 'Eigene Klasse, Platz und beide Komponenten bestätigen.',
+      );
       return;
     }
     Navigator.of(context).pop(
@@ -77,7 +80,8 @@ class _HeroShieldReactionDialogState extends State<HeroShieldReactionDialog> {
             'Kritische Treffer können dadurch nicht abgewehrt werden. '
             'Andernfalls bleibt dein Zauberplatz erhalten.',
           ),
-          if (_error != null) Text(_error!, key: const ValueKey('hero-shield-error')),
+          if (_error != null)
+            Text(_error!, key: const ValueKey('hero-shield-error')),
           if (HeroShieldReactionRules.preparedName(widget.hero) == null)
             const Text('Der Zauber Schild ist nicht vorbereitet.'),
           DropdownButtonFormField<String>(
@@ -98,7 +102,9 @@ class _HeroShieldReactionDialogState extends State<HeroShieldReactionDialog> {
               for (final slot in _slots)
                 DropdownMenuItem(
                   value: slot.key,
-                  child: Text('${slot.pactMagic ? 'Pakt ' : ''}Grad ${slot.level} – ${slot.remaining} frei'),
+                  child: Text(
+                    '${slot.pactMagic ? 'Pakt ' : ''}Grad ${slot.level} – ${slot.remaining} frei',
+                  ),
                 ),
             ],
             onChanged: (value) => setState(() => _slotKey = value),
@@ -127,8 +133,10 @@ class _HeroShieldReactionDialogState extends State<HeroShieldReactionDialog> {
       ),
       FilledButton(
         key: const ValueKey('hero-shield-confirm'),
-        onPressed: HeroShieldReactionRules.preparedName(widget.hero) == null ||
-                _classes.isEmpty || _slots.isEmpty
+        onPressed:
+            HeroShieldReactionRules.preparedName(widget.hero) == null ||
+                _classes.isEmpty ||
+                _slots.isEmpty
             ? null
             : _confirm,
         child: const Text('Zug beenden und ggf. Schild wirken'),

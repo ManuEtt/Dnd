@@ -15,6 +15,7 @@ class _FixedDie implements Random {
     calls++;
     return max == 20 ? natural - 1 : 0;
   }
+
   @override
   bool nextBool() => false;
   @override
@@ -49,15 +50,16 @@ Campaign _campaign(GameEngine engine, {HeroCharacter? hero, Encounter? foe}) {
   final original = engine.createDemo();
   return original.copyWith(
     hero: hero ?? _wizard(),
-    encounter: foe ??
-      const Encounter(
-        id: 'shield-test',
-        enemyName: 'Gegner',
-        enemyHitPoints: 40,
-        enemyMaxHitPoints: 40,
-        enemyAttackBonus: 2,
-        enemyDamage: '1d4',
-      ),
+    encounter:
+        foe ??
+        const Encounter(
+          id: 'shield-test',
+          enemyName: 'Gegner',
+          enemyHitPoints: 40,
+          enemyMaxHitPoints: 40,
+          enemyAttackBonus: 2,
+          enemyDamage: '1d4',
+        ),
   );
 }
 
@@ -99,14 +101,17 @@ void main() {
     expect(random.calls, 1);
   });
 
-  test('Nicht abwendbarer Treffer löst keine automatische Schildreaktion aus', () {
-    final random = _FixedDie(19); // 21 ist größer als 19
-    final engine = GameEngine(dice: DiceEngine(random: random));
-    final result = engine.endHeroTurn(_campaign(engine), shieldPlan: plan);
-    expect(result.campaign.hero.spentSpellSlots, isEmpty);
-    expect(result.campaign.hero.hitPoints, lessThan(20));
-    expect(result.events.single.payload['shieldReactionTriggered'], isFalse);
-  });
+  test(
+    'Nicht abwendbarer Treffer löst keine automatische Schildreaktion aus',
+    () {
+      final random = _FixedDie(19); // 21 ist größer als 19
+      final engine = GameEngine(dice: DiceEngine(random: random));
+      final result = engine.endHeroTurn(_campaign(engine), shieldPlan: plan);
+      expect(result.campaign.hero.spentSpellSlots, isEmpty);
+      expect(result.campaign.hero.hitPoints, lessThan(20));
+      expect(result.events.single.payload['shieldReactionTriggered'], isFalse);
+    },
+  );
 
   test('Kritischer Treffer bleibt Treffer trotz des RK-Bonus', () {
     final random = _FixedDie(20);

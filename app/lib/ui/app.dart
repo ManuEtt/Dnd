@@ -1148,8 +1148,11 @@ class _AdventurePageState extends State<_AdventurePage> {
 
   Future<void> _endTurnWithShield() async {
     final current = widget.controller.currentCampaign;
-    if (current == null || current.encounter == null ||
-        widget.controller.busy || current.hero.isDead) return;
+    if (current == null ||
+        current.encounter == null ||
+        widget.controller.busy ||
+        current.hero.isDead)
+      return;
     final plan = await showDialog<HeroShieldReactionPlan>(
       context: context,
       builder: (_) => HeroShieldReactionDialog(hero: current.hero),
@@ -1451,7 +1454,8 @@ class _AdventurePageState extends State<_AdventurePage> {
                     HeroShieldReactionRules.preparedName(campaign.hero) != null)
                   TextButton.icon(
                     key: const ValueKey('adventure-end-turn-with-shield'),
-                    onPressed: widget.controller.busy ||
+                    onPressed:
+                        widget.controller.busy ||
                             campaign.pendingRoll != null ||
                             campaign.pendingDeathSave != null ||
                             campaign.hero.isDead ||
