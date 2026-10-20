@@ -3784,7 +3784,7 @@ class GameEngine {
           effectiveArmorClass: baseArmorClass,
         );
     if (shieldTriggered) {
-      hero = HeroShieldReactionRules.spend(hero, shieldPlan);
+      hero = HeroShieldReactionRules.spend(hero, shieldPlan!);
     }
     final effectiveArmorClass =
         baseArmorClass + (shieldTriggered ? 5 : 0);
@@ -3802,7 +3802,7 @@ class GameEngine {
       'shieldReactionTriggered': shieldTriggered,
       'shieldReactionAuthorized': shieldPlan != null,
       if (shieldTriggered) ...{
-        'shieldCastingClass': shieldPlan.castingClass,
+        'shieldCastingClass': shieldPlan!.castingClass,
         'shieldSlotLevel': shieldPlan.slotLevel,
         'shieldPactMagic': shieldPlan.pactMagic,
         'shieldBonusAc': 5,
