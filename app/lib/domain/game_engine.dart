@@ -848,8 +848,7 @@ class GameEngine {
         'distanceFeet': distanceFeet,
         'difficultTerrain': difficultTerrain,
         'movementSpentDecimeters': cost,
-        'movementRemainingDecimeters':
-            updated.remainingMovementDecimeters,
+        'movementRemainingDecimeters': updated.remainingMovementDecimeters,
       },
     );
   }

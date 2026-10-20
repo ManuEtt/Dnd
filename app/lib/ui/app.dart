@@ -1335,7 +1335,8 @@ class _AdventurePageState extends State<_AdventurePage> {
                   PopupMenuButton<int>(
                     key: const ValueKey('adventure-crawl'),
                     tooltip: 'Kriechstrecke und Gelände bestätigen',
-                    enabled: !widget.controller.busy &&
+                    enabled:
+                        !widget.controller.busy &&
                         campaign.pendingRoll == null &&
                         campaign.pendingDeathSave == null &&
                         !campaign.hero.isDead &&

@@ -65,11 +65,9 @@ void main() {
     final proneAgain = stood.copyWith(
       hero: stood.hero.copyWith(conditions: ['liegend']),
     );
-    final after = engine.crawl(
-      proneAgain,
-      distanceFeet: 5,
-      difficultTerrain: false,
-    ).campaign;
+    final after = engine
+        .crawl(proneAgain, distanceFeet: 5, difficultTerrain: false)
+        .campaign;
     expect(after.encounter!.movementRemainingLabel, '1.5 m');
     expect(Campaign.fromJson(after.toJson()).toJson(), after.toJson());
   });
@@ -83,11 +81,7 @@ void main() {
       combat(conditions: const ['liegend', 'bewusstlos']),
     ]) {
       expect(
-        () => engine.crawl(
-          invalid,
-          distanceFeet: 5,
-          difficultTerrain: false,
-        ),
+        () => engine.crawl(invalid, distanceFeet: 5, difficultTerrain: false),
         throwsFormatException,
       );
     }
