@@ -1,3 +1,13 @@
+## 20.10.2026 – Version 0.8.24+74 (Heilige Flamme / Rettungswürfe, CI ausstehend)
+
+- Wiederverwendbare `SrdSpellSavingThrowRules` für Zauber-SG und bestätigte gegnerische Rettungswurfboni mit W20, Vorteil/Nachteil und 2024-Regeln für natürliche 1/20.
+- Neue Kleriker-Kampfaktion `Heilige Flamme` mit V/S, Sicht/Reichweite, Geschicklichkeitsrettungswurf, deckungsunabhängigem Rettungswurfbonus (halbe/3⁄4 Deckung) und Strahlenschaden 1–4W8 nach Gesamtstufe; Erfolg 0 Schaden.
+- Bestätigungsdialog, Controller-Revisionsschutz, lokaler RNG, Gegner-Trefferpunkte, Magieaktion und persistiertes Ereignis `spell.sacredFlame`.
+- Kein Gegnerstatblock geraten, keine versteckten magischen SG- oder Schadensanpassungen. Nur Einzelziel und Teilabdeckung; neue Domänen-/Engine-/Dialogtests.
+- PR-/Android-CI und echter Gerätetest bei Anlage dieses Eintrags noch nicht freigegeben.
+
+---
+
 ## 20.10.2026 – Version 0.8.23+73 (Feuerpfeil – CI ausstehend)
 
 - Erste neue vollständig durch Engine/Controller/UI integrierte Schadens-Zaubertrick-Aktion `spell.fireBolt` mit W20-Angriff, Deckung, Trefferlogik, kritischen Treffern und stufenabhängigen Feuer-Schadenswürfeln.

@@ -466,6 +466,39 @@ class GameController extends ChangeNotifier {
     );
   });
 
+  Future<void> castSacredFlame({
+    required String campaignId,
+    required int expectedRevision,
+    required int confirmedTargetDexteritySaveModifier,
+    required bool targetVisibleConfirmed,
+    required bool targetWithinRangeConfirmed,
+    required bool verbalComponentConfirmed,
+    required bool somaticComponentConfirmed,
+    required bool noRadiantDamageAdjustmentConfirmed,
+    required bool noUnmodelledDcModifiersConfirmed,
+    required bool saveCircumstancesConfirmed,
+    bool saveAdvantage = false,
+    bool saveDisadvantage = false,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.castSacredFlame(
+        current,
+        confirmedTargetDexteritySaveModifier:
+            confirmedTargetDexteritySaveModifier,
+        targetVisibleConfirmed: targetVisibleConfirmed,
+        targetWithinRangeConfirmed: targetWithinRangeConfirmed,
+        verbalComponentConfirmed: verbalComponentConfirmed,
+        somaticComponentConfirmed: somaticComponentConfirmed,
+        noRadiantDamageAdjustmentConfirmed: noRadiantDamageAdjustmentConfirmed,
+        noUnmodelledDcModifiersConfirmed: noUnmodelledDcModifiersConfirmed,
+        saveCircumstancesConfirmed: saveCircumstancesConfirmed,
+        saveAdvantage: saveAdvantage,
+        saveDisadvantage: saveDisadvantage,
+      ),
+    );
+  });
+
   Future<void> castFireBolt({
     required String campaignId,
     required int expectedRevision,
