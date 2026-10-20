@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../domain/magic_missile_rules.dart';
 import '../domain/cover_rules.dart';
+import '../domain/enemy_force_defense.dart';
 import '../domain/models.dart';
 
 /// Only collects confirmations. Casting, rolling and persistence are delegated
@@ -16,6 +17,7 @@ class MagicMissileChoice {
     required this.verbalComponentConfirmed,
     required this.somaticComponentConfirmed,
     required this.noProtectionConfirmed,
+    required this.confirmedForceDefense,
   });
 
   final String castingClass;
@@ -24,6 +26,7 @@ class MagicMissileChoice {
   final bool targetVisibleConfirmed, targetWithinRangeConfirmed;
   final bool verbalComponentConfirmed, somaticComponentConfirmed;
   final bool noProtectionConfirmed;
+  final EnemyForceDefense confirmedForceDefense;
 }
 
 class MagicMissileDialog extends StatefulWidget {
@@ -43,12 +46,16 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
   List<String> _classes = const [];
   List<MagicMissileSlot> _slots = const [];
   String? _className, _slotKey, _setupError, _error;
+  EnemyForceDefense? _forceDefense;
   bool _visible = false, _range = false, _verbal = false;
   bool _somatic = false, _unprotected = false;
 
   @override
   void initState() {
     super.initState();
+    if (widget.encounter.enemyForceDefense != EnemyForceDefense.unknown) {
+      _forceDefense = widget.encounter.enemyForceDefense;
+    }
     try {
       _classes = MagicMissileRules.castingClasses(widget.hero);
       _slots = MagicMissileRules.slots(widget.hero);
@@ -88,7 +95,12 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
   void _confirm() {
     final slot = _slot;
     if (_className == null || slot == null || _setupError != null) return;
-    if (!_visible || !_range || !_verbal || !_somatic || !_unprotected) {
+    if (!_visible ||
+        !_range ||
+        !_verbal ||
+        !_somatic ||
+        !_unprotected ||
+        _forceDefense == null) {
       setState(
         () => _error =
             'Bitte alle tatsächlichen Ziel- und '
@@ -111,6 +123,7 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
         verbalComponentConfirmed: _verbal,
         somaticComponentConfirmed: _somatic,
         noProtectionConfirmed: _unprotected,
+        confirmedForceDefense: _forceDefense!,
       ),
     );
   }
@@ -209,17 +222,41 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
                   _somatic,
                   (v) => _somatic = v,
                 ),
+                DropdownButtonFormField<EnemyForceDefense>(
+                  key: const ValueKey('missile-force-defense'),
+                  initialValue: _forceDefense,
+                  decoration: const InputDecoration(
+                    labelText: 'Bestätigte Energieschaden-Abwehr',
+                    helperText:
+                        'Aus dem Gegnerprofil oder einer bestätigten '
+                        'Spielentscheidung; niemals erraten.',
+                  ),
+                  isExpanded: true,
+                  items: [
+                    for (final defense in EnemyForceDefense.values)
+                      if (defense != EnemyForceDefense.unknown)
+                        DropdownMenuItem(
+                          value: defense,
+                          child: Text(EnemyForceDefenseRules.label(defense)),
+                        ),
+                  ],
+                  onChanged: (value) => setState(() {
+                    _forceDefense = value;
+                    _error = null;
+                  }),
+                ),
                 _check(
                   'protection',
-                  'Keine bekannte Schildzauber-Abwehr oder '
-                      'Energiestärke-Immunität/-Resistenz des Ziels.',
+                  'Kein wirksamer Schildzauber (Shield) des Gegners',
                   _unprotected,
                   (v) => _unprotected = v,
                 ),
                 const Text(
-                  'Dieses Inkrement unterstützt nur einen Gegner ohne '
-                  'bestätigte Schutzwirkung. Bei unbekannten Schutzwerten '
-                  'nicht bestätigen; keine Positionsdaten werden erfunden.',
+                  'Energieschaden-Resistenz halbiert jedes Geschoss '
+                  'einzeln; Immunität verursacht 0 Schaden. '
+                  'Ein tatsächlich aktiver Schildzauber muss in einem '
+                  'späteren Regelpaket separat abgewickelt werden. '
+                  'Nichts aus der Erzählung als bestätigt übernehmen.',
                 ),
               ],
               if (_error != null)

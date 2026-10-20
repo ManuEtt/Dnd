@@ -10,6 +10,7 @@ import 'class_feature_resources.dart';
 import 'class_resource_rules.dart';
 import 'skill_check_passives.dart';
 import 'cover_rules.dart';
+import 'enemy_force_defense.dart';
 
 /// Versioned, provider-independent game data. Unknown historical values stay null.
 const abilityNames = <String>[
@@ -1264,6 +1265,7 @@ class Encounter {
     this.enemyArmorClass = 12,
     this.heroCover = CoverLevel.none,
     this.enemyCover = CoverLevel.none,
+    this.enemyForceDefense = EnemyForceDefense.unknown,
     this.enemyAttackBonus = 2,
     this.enemyDamage = '1d4',
     this.enemyDamageType = '',
@@ -1295,6 +1297,9 @@ class Encounter {
   /// Explicitly confirmed from the CURRENT opponent's attack direction.
   /// Older campaigns default to no cover, not an inferred obstacle.
   final CoverLevel heroCover, enemyCover;
+
+  /// Validated from an explicit encounter confirmation, never from narration.
+  final EnemyForceDefense enemyForceDefense;
 
   /// Pending player choice for the Monk's end-of-turn Self-Restoration.
   final String selfRestorationChoice;
@@ -1345,6 +1350,7 @@ class Encounter {
     int? enemyHitPoints,
     CoverLevel? heroCover,
     CoverLevel? enemyCover,
+    EnemyForceDefense? enemyForceDefense,
     int? round,
     String? activeParticipant,
     int? heroInitiative,
@@ -1375,6 +1381,7 @@ class Encounter {
     enemyArmorClass: enemyArmorClass,
     heroCover: heroCover ?? this.heroCover,
     enemyCover: enemyCover ?? this.enemyCover,
+    enemyForceDefense: enemyForceDefense ?? this.enemyForceDefense,
     enemyAttackBonus: enemyAttackBonus,
     enemyDamage: enemyDamage,
     enemyDamageType: enemyDamageType,
@@ -1413,6 +1420,8 @@ class Encounter {
     'enemyArmorClass': enemyArmorClass,
     if (heroCover != CoverLevel.none) 'heroCover': heroCover.name,
     if (enemyCover != CoverLevel.none) 'enemyCover': enemyCover.name,
+    if (enemyForceDefense != EnemyForceDefense.unknown)
+      'enemyForceDefense': enemyForceDefense.name,
     'enemyAttackBonus': enemyAttackBonus,
     'enemyDamage': enemyDamage,
     if (enemyDamageType.isNotEmpty) 'enemyDamageType': enemyDamageType,
@@ -1542,6 +1551,13 @@ class Encounter {
       ),
       enemyCover: CoverRules.fromStorage(
         _string(j['enemyCover'], 'Deckung des Gegners', fallback: 'none'),
+      ),
+      enemyForceDefense: EnemyForceDefenseRules.fromStorage(
+        _string(
+          j['enemyForceDefense'],
+          'Energieschaden-Abwehr des Gegners',
+          fallback: 'unknown',
+        ),
       ),
       enemyAttackBonus: _int(
         j['enemyAttackBonus'],
