@@ -444,6 +444,34 @@ class GameController extends ChangeNotifier {
     );
   });
 
+  Future<void> castMagicMissile({
+    required String campaignId,
+    required int expectedRevision,
+    required String castingClass,
+    required int slotLevel,
+    required bool pactMagic,
+    required bool targetVisibleConfirmed,
+    required bool targetWithinRangeConfirmed,
+    required bool verbalComponentConfirmed,
+    required bool somaticComponentConfirmed,
+    required bool noProtectionConfirmed,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.castMagicMissile(
+        current,
+        castingClass: castingClass,
+        slotLevel: slotLevel,
+        pactMagic: pactMagic,
+        targetVisibleConfirmed: targetVisibleConfirmed,
+        targetWithinRangeConfirmed: targetWithinRangeConfirmed,
+        verbalComponentConfirmed: verbalComponentConfirmed,
+        somaticComponentConfirmed: somaticComponentConfirmed,
+        noProtectionConfirmed: noProtectionConfirmed,
+      ),
+    );
+  });
+
   Future<void> castHealingSpell({
     required String campaignId,
     required int expectedRevision,
