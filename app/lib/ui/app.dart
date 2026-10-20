@@ -1151,8 +1151,9 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (current == null ||
         current.encounter == null ||
         widget.controller.busy ||
-        current.hero.isDead)
+        current.hero.isDead) {
       return;
+    }
     final plan = await showDialog<HeroShieldReactionPlan>(
       context: context,
       builder: (_) => HeroShieldReactionDialog(hero: current.hero),
