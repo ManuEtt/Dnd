@@ -96,10 +96,12 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
     // The preview errors may depend on the selected XP/milestone mode.
     final proposal = _proposal();
     final message = proposal == null ? _error : null;
-    final availableAdvancements =
-        ExperienceProgression.pendingLevels(widget.hero);
-    final trainingBefore =
-        CharacterCreationProgression.proficiencyBonus(widget.hero.level);
+    final availableAdvancements = ExperienceProgression.pendingLevels(
+      widget.hero,
+    );
+    final trainingBefore = CharacterCreationProgression.proficiencyBonus(
+      widget.hero.level,
+    );
     final trainingAfter = widget.hero.level < 20
         ? CharacterCreationProgression.proficiencyBonus(widget.hero.level + 1)
         : trainingBefore;

@@ -73,7 +73,6 @@ void main() {
     expect(unknown.facts.containsKey('xp.reward.kapitel-1'), isFalse);
   });
 
-
   test('EP erlauben mehrere getrennte, nicht automatische Aufstiege', () {
     final initial = GameEngine().createDemo().hero.copyWith(experience: 6500);
     expect(initial.level, 1);
