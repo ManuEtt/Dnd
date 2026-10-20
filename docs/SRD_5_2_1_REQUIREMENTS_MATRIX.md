@@ -1,8 +1,10 @@
+**CI und Merge bestätigt (20.10.2026):** [PR #46](https://github.com/ManuEtt/Dnd/pull/46) nach grünem [GitHub-Actions-Lauf #39386823499](https://github.com/ManuEtt/Dnd/actions/runs/39386823499), geprüfter Code-HEAD `81635c8eccb0d06e5d1bf95d54f5884c62f4a215`, erfolgreich in `main` integriert. Merge-Commit [`45160602b339c35e23e0d445f4e41e98b9b3dd5e`](https://github.com/ManuEtt/Dnd/commit/45160602b339c35e23e0d445f4e41e98b9b3dd5e). Erfolgreich: Struktur-/Python-Prüfung, Backend-Typecheck/Build/Tests, Dart-Formatierung, Flutter-Analyse und Tests, Android-Debug-APK, native Android-Unit-Tests, Alpha-APK-Artefakte und Quellcode-Checkpoint. **Noch offen:** echter Android-Gerätetest, vollständiges SRD, Held-Shield-Reaktion und verifizierte Gegner-Zauberlisten.
+
 ## SRD 5.2.1: SPELL-SHIELD-ENEMY-REACTION – 20.10.2026 (0.8.18+68)
 
 | ID | SRD-Abschnitt | Mechanik und prüfbare Quellen | Stand |
 | --- | --- | --- | --- |
-| SPELL-SHIELD-ENEMY-REACTION | Shield (Abjuration 1, Reaction V/S), Magic Missile | Bestätigte gegnerische Zauberplätze + Vorbereitung + Komponenten + freie Reaktion: Gegenzauber auf Magic Missile verhindert gesamten Schaden; eigener Zauberplatz und Aktion werden dennoch verbraucht; +5 RK bis zum Beginn des nächsten Gegnerzuges; Legacy-JSON bleibt kompatibel. `models.dart`, `game_engine.dart`, `magic_missile_dialog.dart`, `enemy_shield_reaction_rules_test.dart`, `enemy_shield_reaction_storage_test.dart` | IMPLEMENTIERT, CI AUSSTEHEND |
+| SPELL-SHIELD-ENEMY-REACTION | Shield (Abjuration 1, Reaction V/S), Magic Missile | Bestätigte gegnerische Zauberplätze + Vorbereitung + Komponenten + freie Reaktion: Gegenzauber auf Magic Missile verhindert gesamten Schaden; eigener Zauberplatz und Aktion werden dennoch verbraucht; +5 RK bis zum Beginn des nächsten Gegnerzuges; Legacy-JSON bleibt kompatibel. `models.dart`, `game_engine.dart`, `magic_missile_dialog.dart`, `enemy_shield_reaction_rules_test.dart`, `enemy_shield_reaction_storage_test.dart` | GETESTET (CI 39386823499 grün; Gerätetest offen) |
 | SPELL-SHIELD-HERO-REACTION | Shield als Heldreaktion gegen treffenden Gegnerangriff | Verzögerter Angriffswurf/Entscheidungsfenster und kompatibles Ereignisjournal fehlen | FEHLT |
 | SPELL-SHIELD-MONSTER-CATALOG | Monsters, Spellcasting | Verifizierter Gegnerstatblock und automatische Monster-Zauberplatzberechnung | FEHLT |
 

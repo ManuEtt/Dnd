@@ -1,4 +1,4 @@
-**20.10.2026 / 0.8.18+68:** `SPELL-SHIELD-ENEMY-REACTION` implementiert: Schild gegen Magisches Geschoss, Nullschaden, bestätigte gegnerische Reaktion/Zauberplätze, +5 RK bis nächster Gegnerzug, Alt-JSON- und SQLite-Regressionsfälle. **CI unbestätigt**; Spieler-Reaktion gegen Angriffe fehlt.
+**20.10.2026 / 0.8.18+68:** `SPELL-SHIELD-ENEMY-REACTION` implementiert: Schild gegen Magisches Geschoss, Nullschaden, bestätigte gegnerische Reaktion/Zauberplätze, +5 RK bis nächster Gegnerzug, Alt-JSON- und SQLite-Regressionsfälle. **CI #39386823499 grün; Android-Gerätetest offen**; Spieler-Reaktion gegen Angriffe fehlt.
 
 **20.10.2026 / 0.8.17+67:** Neue getypte `EnemyForceDefense` bei aktivem Gegner: normal, Resistenz, Immunität, Verwundbarkeit gegen Energieschaden. Pro Geschoss `DamageRules`, UI-Bestätigung, JSON-/SQLite-Regression; **CI #39383477544 grün; Android-Gerätetest offen**. Vollständige Monster-Abwehr, Shield-Reaktion und Mehrzielverteilung fehlen.
 

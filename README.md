@@ -16,7 +16,7 @@
 
 ## SRD-Inkrement: Shield als bestätigte Gegnerreaktion (20.10.2026)
 
-**Version 0.8.18+68** führt gegnerische Schildzauber-Reaktionen auf Magisches Geschoss aus: Der Spielende muss Vorbereitung, Komponenten, freie Reaktion und den tatsächlich verfügbaren gegnerischen Zauberplatz bestätigen. Die Regelengine bucht gegnerischen und eigenen Platz, verhindert den Zauberschaden ohne Schadenswürfel und speichert den aktiven Schild (+5 RK) bis zum Beginn des nächsten Gegnerzuges. Alte Speicherstände ohne gegnerische Zauberplätze bleiben ausdrücklich unbekannt. Die neue UI und SQLite-/Domain-Tests sind im Feature-Branch enthalten. **Für dieses Inkrement wurde noch kein vollständiger erfolgreicher CI-/Android-Build bestätigt.**
+**Version 0.8.18+68** führt gegnerische Schildzauber-Reaktionen auf Magisches Geschoss aus: Der Spielende muss Vorbereitung, Komponenten, freie Reaktion und den tatsächlich verfügbaren gegnerischen Zauberplatz bestätigen. Die Regelengine bucht gegnerischen und eigenen Platz, verhindert den Zauberschaden ohne Schadenswürfel und speichert den aktiven Schild (+5 RK) bis zum Beginn des nächsten Gegnerzuges. Alte Speicherstände ohne gegnerische Zauberplätze bleiben ausdrücklich unbekannt. Die neue UI und SQLite-/Domain-Tests sind im Feature-Branch enthalten. **CI und Merge bestätigt (20.10.2026):** [PR #46](https://github.com/ManuEtt/Dnd/pull/46) nach grünem [GitHub-Actions-Lauf #39386823499](https://github.com/ManuEtt/Dnd/actions/runs/39386823499), geprüfter Code-HEAD `81635c8eccb0d06e5d1bf95d54f5884c62f4a215`, erfolgreich in `main` integriert. Merge-Commit [`45160602b339c35e23e0d445f4e41e98b9b3dd5e`](https://github.com/ManuEtt/Dnd/commit/45160602b339c35e23e0d445f4e41e98b9b3dd5e). Erfolgreich: Struktur-/Python-Prüfung, Backend-Typecheck/Build/Tests, Dart-Formatierung, Flutter-Analyse und Tests, Android-Debug-APK, native Android-Unit-Tests, Alpha-APK-Artefakte und Quellcode-Checkpoint. **Noch offen:** echter Android-Gerätetest, vollständiges SRD, Held-Shield-Reaktion und verifizierte Gegner-Zauberlisten.
 
 ## Nächstes SRD-Inkrement: Gegnerabwehr gegen Magisches Geschoss (20.10.2026)
 
@@ -129,6 +129,9 @@ python3 -m unittest discover -s scripts/tests -v
 Auf Linux benötigen die SQLite-Tests gegebenenfalls `libsqlite3-dev`. Weitere Details: [`TESTING.md`](TESTING.md) und [`AGENTS.md`](AGENTS.md).
 
 ## Build- und Teststand
+
+**Aktuellster vollständig erfolgreicher Code-CI-Lauf für 0.8.18+68:** [#39386823499](https://github.com/ManuEtt/Dnd/actions/runs/39386823499) auf finalem PR-HEAD `81635c8eccb0d06e5d1bf95d54f5884c62f4a215`, danach Merge nach `main` (`45160602b339c35e23e0d445f4e41e98b9b3dd5e`). Flutter, Backend, Python, native Android-Tests und APK-Builds bestanden. Keine reale Geräteabnahme; der spätere reine Markdown-Nachtrag ändert keinen ausführbaren Code.
+
 
 **0.8.17+67 verifiziert:** [CI #39383477544](https://github.com/ManuEtt/Dnd/actions/runs/39383477544) (Code-HEAD `8f703b0002ae6dcb5279893020bea63e14771184`), PR #44, Merge `fa2ee36caff2c210eabaa651321b9591de46737f`. Python, Backend, Flutter, Android-JVM und Android-APKs grün. Reale Geräteabnahme steht aus.
 
