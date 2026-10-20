@@ -467,6 +467,26 @@ class GameController extends ChangeNotifier {
     );
   });
 
+  Future<void> confirmAreaCreatureInitiative({
+    required String campaignId,
+    required int expectedRevision,
+    required String creatureId,
+    required int initiativeTotal,
+    required String initiativeController,
+    required bool initiativeConfirmed,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.confirmAreaCreatureInitiative(
+        current,
+        creatureId: creatureId,
+        initiativeTotal: initiativeTotal,
+        initiativeController: initiativeController,
+        initiativeConfirmed: initiativeConfirmed,
+      ),
+    );
+  });
+
   Future<void> trackAreaCreature({
     required String campaignId,
     required int expectedRevision,
