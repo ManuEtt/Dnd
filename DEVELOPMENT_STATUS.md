@@ -1,3 +1,16 @@
+## Inkrement 0.8.17+67 – Gegnerische Energieschaden-Abwehr (20.10.2026)
+
+**Basis:** `main` `5c0882644283b63225774d4e88f7e7fdd493dafe`, Branch `feature/srd-missile-force-defense-20261020`. **Status beim Erstellen: implementiert, CI-/APK-/Gerätetests noch nicht bestätigt.**
+
+- `Encounter.enemyForceDefense` enthält nun `unknown`, `normal`, `resistant`, `immune` oder `vulnerable`. Historische Spielstände ohne Feld bleiben `unknown`, werden nicht rückwirkend umgedeutet. Falsche/unbekannte Importwerte werden zurückgewiesen. Keine SQLite-Tabellenmigration erforderlich (vorhandenes JSON-Ereignismodell).
+- `EnemyForceDefenseRules` integriert `DamageRules` und wendet Resistenz (abrunden), Immunität und Verwundbarkeit auf **jedes einzelne Geschoss** an, nicht auf die Gesamtsumme. Alle Werte werden im `spell.magicMissile`-Journal (roh und angewendet) protokolliert.
+- Neue Gegnerabwehr-Auswahl im bestehenden `MagicMissileDialog`: Ohne bestätigten Wert ist das Wirken gesperrt. Ein bereits gespeicherter bestätigter Wert kann beim nächsten Mal wieder verwendet werden; Änderungen müssen erneut bestätigt werden. Getrennte Pflichtbestätigung: Kein wirksamer Schildzauber (Shield). Kein unbestätigtes Gegnerprofil und keine KI-Erzählung erzeugen eine Abwehr.
+- Zauberplätze, Runde, HP, Abwehr und Journal werden erst nach der Regelprüfung und der Bestätigung in derselben Repository-Transaktion gespeichert. Altes `noProtectionConfirmed`-API bleibt für bisherige Aufrufer kompatibel, sofern der Nutzer ausdrücklich keine Schutzwirkung bestätigt.
+- Tests `enemy_force_defense_rules_test.dart`, `enemy_force_defense_storage_test.dart`, angepasster `magic_missile_dialog_test.dart`: Resistenz-Rundung je Geschoss, Immunität, Verwundbarkeit, unbekannter Altspielstand, manipulierte JSON-Werte, bestätigte UI-Auswahl, SQLite-Neustart, veraltete Revision. Bestehende Magic-Missile-Rollback-Tests bleiben erhalten.
+- **Noch offen:** tatsächlich ausgeführter Shield-Reaktionszauber mit Ressourcen und Dauer, generisches getyptes Monster-Immunitätsprofil über alle Schadensarten, vollständiger Mehrzielkampf, Gegnerinventar und Gerätetest.
+
+**Nächster Schritt/Wiederaufnahme:** vollständigen CI-Workflow auf dem finalen PR-HEAD verfolgen (Backend, Python, Dart format, Flutter analyze/test, Android-JVM und APK-Build). Fehler im selben Branch korrigieren; erst nach grünem Endergebnis mergen. Danach Merge-Commit und exakten GitHub-Actions-Lauf hier nachtragen.
+
 ## Abnahme- und Merge-Nachtrag 20.10.2026
 
 **CI und Integration bestätigt (20.10.2026):** [PR #42](https://github.com/ManuEtt/Dnd/pull/42) wurde nach vollständig erfolgreicher [GitHub Actions CI #39381087593](https://github.com/ManuEtt/Dnd/actions/runs/39381087593) (geprüfter Head `78d89230281f8196edbff628ca243d591ef092b3`) nach `main` integriert. Merge-Commit: [`259dcf69fa2471c5546e1ba1b1003cef148e1cb9`](https://github.com/ManuEtt/Dnd/commit/259dcf69fa2471c5546e1ba1b1003cef148e1cb9). Erfolgreich: Python-Projektprüfung, Backend-Typecheck/Build/Tests, Dart-Formatierung, Flutter-Analyse/Tests, Android-Debug-APK, native JVM-Tests, drei Alpha-APK-Varianten und Artefaktbereitstellung. **Ein realer Gerätefunktionstest und die vollständige SRD-5.2.1-Abdeckung bleiben offen.**

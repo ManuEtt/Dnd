@@ -1,3 +1,13 @@
+## Erweiterung 0.8.17+67 – SPELL-MISSILE-DEFENSES (20.10.2026)
+
+| ID | Soll nach SRD 5.2.1 | Umsetzung / Tests | Stand |
+| --- | --- | --- | --- |
+| SPELL-MISSILE-FORCE | SRD Rules Glossary Damage Resistance/Immunity/Vulnerability; Magic Missile: Energieschaden mit einzelnen Schadensinstanzen | `enemy_force_defense.dart`, erweitertes `Encounter`-JSON, `GameEngine.castMagicMissile`, `MagicMissileDialog`; `enemy_force_defense_rules_test.dart`, `enemy_force_defense_storage_test.dart` | IMPLEMENTIERT, CI AUSSTEHEND |
+| SPELL-MISSILE-SHIELD-REACTION | Shield-Zauber als bestätigte Reaktion, verbleibende Dauer und verbrauchte Ressourcen des Gegners | Weiterhin nur Bestätigung, dass Shield nicht wirksam ist; keine erfundene Reaktion | FEHLT |
+| ENEMY-DEFENSES-GENERAL | Schadens-Resistenzen/Immunitäten aus bestätigten Monsterstatblocks für sämtliche Schadensarten | `DamageRules` vorhanden, Gegnerpersistenz in diesem Inkrement nur Force | TEILWEISE |
+
+**Lizenz-/Statusgrenze:** nur CC-BY-4.0-lizenziertes SRD 5.2.1. Diese Matrix beschreibt noch keine vollständige SRD-Abdeckung. Eine bloße Dateiexistenz gilt nicht als bestandener CI-Test.
+
 **Nachtrag:** SPELL-MISSILE-SINGLE ist durch [GitHub Actions #39381087593](https://github.com/ManuEtt/Dnd/actions/runs/39381087593) technisch geprüft und über [PR #42](https://github.com/ManuEtt/Dnd/pull/42) in `main` enthalten. Keine vollständige Gegner-Schutzmechanik und keine Voll-SRD-Abnahme behauptet.
 
 ## Neu: SPELL-MAGIC-MISSILE (20.10.2026, 0.8.16+66)

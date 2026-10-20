@@ -2,7 +2,7 @@
 
 **Deutschsprachige Android-Fantasy-Rollenspiel-App mit Soloabenteuern, Charakterverwaltung, D&D-Regelunterstützung und optionalem KI-Erzähler.**
 
-> **Projektstatus (20. Oktober 2026):** Aktive **Android-Alpha**, in Entwicklung. Im Flutter-Quellprojekt steht **Version `0.8.16+66`** (Version 0.8.16, Build 66); verbindlich ist immer [`app/pubspec.yaml`](app/pubspec.yaml). Diese Quellcode-Version bedeutet **nicht**, dass eine identisch geprüfte oder veröffentlichte APK bereits auf jedem Gerät installiert ist. Das vollständige D&D-Regelwerk ist **nicht** implementiert.
+> **Projektstatus (20. Oktober 2026):** Aktive **Android-Alpha**, in Entwicklung. Im Flutter-Quellprojekt steht **Version `0.8.17+67`** (Version 0.8.17, Build 67); verbindlich ist immer [`app/pubspec.yaml`](app/pubspec.yaml). Diese Quellcode-Version bedeutet **nicht**, dass eine identisch geprüfte oder veröffentlichte APK bereits auf jedem Gerät installiert ist. Das vollständige D&D-Regelwerk ist **nicht** implementiert.
 
 ## Inhaltsverzeichnis
 
@@ -13,6 +13,10 @@
 - [Build- und Teststand](#build--und-teststand)
 - [Bekannte Grenzen und nächste Schritte](#bekannte-grenzen-und-nächste-schritte)
 - [Regelgrundlage, Dokumentation und Chronik](#regelgrundlage-dokumentation-und-chronik)
+
+## Nächstes SRD-Inkrement: Gegnerabwehr gegen Magisches Geschoss (20.10.2026)
+
+Die neue Version `0.8.17+67` speichert ausdrücklich bestätigte Gegner-Resistenzen, -Immunitäten und -Verwundbarkeiten gegen Energieschaden. Jeder Geschoss-Schadenswurf wird **separat** über die bestehende getypte Schadensregelengine berechnet; die Bestätigung kann im Zauberdialog gewählt und im Begegnungsspeicher wiederverwendet werden. Ein Altspielstand ohne Angaben bleibt ausdrücklich **unbekannt**. Die fehlende Shield-Reaktionslogik wird nicht erfunden: Der Spieler muss weiterhin das Fehlen eines wirksamen Schildzaubers bestätigen. Domain-, Widget- und SQLite-Regressionstests liegen im Branch vor. **CI und Android-Gerätetest für diesen neuen Commit sind noch offen**; grüne frühere Läufe betreffen nur 0.8.16+66.
 
 ## Neues SRD-5.2.1-Inkrement: Magisches Geschoss (20.10.2026)
 
