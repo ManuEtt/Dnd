@@ -18,7 +18,7 @@
 
 Die Flutter-Version ist `0.8.16+66`. Implementiert sind die **tatsächlichen Würfel- und Schadensregeln** für Magisches Geschoss (`Magic Missile`): bei einem Zauberplatz Grad 1 drei Geschosse, je höherem Platz ein weiteres, je Geschoss `1W4+1` Energieschaden. Die neue Kampfaktion validiert bekannte Zauber, Zauberklasse und Plätze, Magieaktion, Sicht und 120-Fuß-Reichweite, Komponenten, vollständige Deckung und ausdrücklich bestätigte fehlende Schutzwirkung des einzigen gegnerischen Ziels. Gegner-TP, Zauberplätze und Ereignisse werden zusammen mit Revisionsschutz gespeichert; unbestätigte KI-Angaben ändern keine Kampfwerte. UI, Domain-/Widget- und SQLite-Tests sind im Entwicklungsbranch enthalten.
 
-**Abnahmehinweis:** GitHub-CI/Flutter-/Backend-/Android-Builds und Android-Gerätetest sind für **dieses neue Inkrement noch offen**. Die nachstehend verlinkten erfolgreichen CI-Läufe betreffen bisher ausschließlich ältere Versionen. Vollständige Gegnerimmunitäten, Schildzauber, Entfernungen anhand einer Karte und Verteilung auf mehrere Ziele bleiben unimplementiert. [SRD-Matrix](docs/SRD_5_2_1_REQUIREMENTS_MATRIX.md) und [Entwicklungsstatus](DEVELOPMENT_STATUS.md) beschreiben die Grenzen.
+**CI und Integration bestätigt (20.10.2026):** [PR #42](https://github.com/ManuEtt/Dnd/pull/42) wurde nach vollständig erfolgreicher [GitHub Actions CI #39381087593](https://github.com/ManuEtt/Dnd/actions/runs/39381087593) (geprüfter Head `78d89230281f8196edbff628ca243d591ef092b3`) nach `main` integriert. Merge-Commit: [`259dcf69fa2471c5546e1ba1b1003cef148e1cb9`](https://github.com/ManuEtt/Dnd/commit/259dcf69fa2471c5546e1ba1b1003cef148e1cb9). Erfolgreich: Python-Projektprüfung, Backend-Typecheck/Build/Tests, Dart-Formatierung, Flutter-Analyse/Tests, Android-Debug-APK, native JVM-Tests, drei Alpha-APK-Varianten und Artefaktbereitstellung. **Ein realer Gerätefunktionstest und die vollständige SRD-5.2.1-Abdeckung bleiben offen.** Vollständige Gegnerimmunitäten, Schildzauber, Entfernungen anhand einer Karte und Verteilung auf mehrere Ziele bleiben unimplementiert. [SRD-Matrix](docs/SRD_5_2_1_REQUIREMENTS_MATRIX.md) und [Entwicklungsstatus](DEVELOPMENT_STATUS.md) beschreiben die Grenzen.
 
 ## Erstes SRD-5.2.1-Inkrement: Kriechen (20.10.2026)
 
@@ -121,6 +121,9 @@ python3 -m unittest discover -s scripts/tests -v
 Auf Linux benötigen die SQLite-Tests gegebenenfalls `libsqlite3-dev`. Weitere Details: [`TESTING.md`](TESTING.md) und [`AGENTS.md`](AGENTS.md).
 
 ## Build- und Teststand
+
+**Neuester geprüfter Workflow für 0.8.16+66:** [39381087593](https://github.com/ManuEtt/Dnd/actions/runs/39381087593) ist auf dem finalen Code-HEAD von PR #42 vollständig grün (Flutter, Backend, Android-Debug, native Android-Tests und Alpha-APKs). Integration: `259dcf69fa2471c5546e1ba1b1003cef148e1cb9`. Kein realer Gerätetest. Der Dokumentationsnachtrag selbst enthält ausschließlich Markdown und verändert keine Builds.
+
 
 **Neuester nachgewiesener vollständiger CI-Lauf für 0.8.15+65:** [39378443958](https://github.com/ManuEtt/Dnd/actions/runs/39378443958), abgeschlossen mit **success**, vor Merge in [PR #40](https://github.com/ManuEtt/Dnd/pull/40), Code-HEAD `3462106592157953473c7d777b0d5b664872243a`. Backend, Dart, Flutter, native Android-Tests und APK-Builds grün. `main` wurde als Merge-Commit `f7c6a68c09155880fd9a08b0c2f308d324b27b82` aktualisiert; kein neuer separater Gerätefunktionstest durchgeführt.
 

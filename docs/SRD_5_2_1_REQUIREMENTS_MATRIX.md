@@ -1,8 +1,10 @@
+**Nachtrag:** SPELL-MISSILE-SINGLE ist durch [GitHub Actions #39381087593](https://github.com/ManuEtt/Dnd/actions/runs/39381087593) technisch geprüft und über [PR #42](https://github.com/ManuEtt/Dnd/pull/42) in `main` enthalten. Keine vollständige Gegner-Schutzmechanik und keine Voll-SRD-Abnahme behauptet.
+
 ## Neu: SPELL-MAGIC-MISSILE (20.10.2026, 0.8.16+66)
 
 | ID | SRD 5.2.1 | Soll und tatsächliche Umsetzung | Code / Tests | Status |
 | --- | --- | --- | --- | --- |
-| SPELL-MISSILE-SINGLE | Spells: Magic Missile | Für einen sichtbaren bestätigten Einzelgegner innerhalb 120 Fuß, V/S, eigene Zauberklasse Magier oder Zauberer, Aktion und Platz; drei Geschosse +1 je höherem Grad; einzeln 1W4+1 Energieschaden; validierte Gegner-TP/Journaländerung | `magic_missile_rules.dart`, `game_engine.dart`, `game_controller.dart`, `magic_missile_dialog.dart`; Tests `magic_missile_rules_test.dart`, `magic_missile_storage_test.dart`, `magic_missile_dialog_test.dart` | IMPLEMENTIERT, CI AUSSTEHEND |
+| SPELL-MISSILE-SINGLE | Spells: Magic Missile | Für einen sichtbaren bestätigten Einzelgegner innerhalb 120 Fuß, V/S, eigene Zauberklasse Magier oder Zauberer, Aktion und Platz; drei Geschosse +1 je höherem Grad; einzeln 1W4+1 Energieschaden; validierte Gegner-TP/Journaländerung | `magic_missile_rules.dart`, `game_engine.dart`, `game_controller.dart`, `magic_missile_dialog.dart`; Tests `magic_missile_rules_test.dart`, `magic_missile_storage_test.dart`, `magic_missile_dialog_test.dart` | GETESTET (CI 39381087593 grün; Android-Gerätetest offen) |
 | SPELL-MISSILE-DEFENSES | Damage Resistance / Immunity; Spells: Shield | Shield-Reaktion und tatsächlich vorhandene Resistenz-/Immunitätswerte Gegnerseite maschinenlesbar prüfen, keine unbestätigte Verneinung raten | Derzeit nur ausdrückliche Anwenderbestätigung „keine bekannte Schutzwirkung“; keine Gegnerdaten aus Erzählung | TEILWEISE |
 | SPELL-MISSILE-MULTITARGET | Magic Missile / Spell Targeting | Bestätigte mehrere Zielkreaturen, Positionsdaten, Reichweite, Deckung und Verteilung von Geschossen | Aktuell nur ein Gegner in `Encounter` | FEHLT |
 
