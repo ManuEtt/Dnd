@@ -1,3 +1,12 @@
+## 20.10.2026 – Version 0.8.22+72 (SRD-Zauberindex und Vorprüfung, CI ausstehend)
+
+- Bundling und striktes Einlesen von 339 vorläufigen SRD-5.2.1-Zauberdefinitionen mit Metadaten zu Klasse, Zaubergrad, Zeit, Reichweite, Komponenten, Wirkungsdauer, Konzentration und Ritual.
+- Neue bestätigungspflichtige, unverändernde Zaubervorprüfung mit Klassenstufe, normalen/Paktplätzen, Komponenten, Zielbedingungen, Ein-Platz-pro-Zug-Bestätigung und Schutz gegen veraltete Pläne.
+- Das Buchen einer bestätigten Wirkung ändert lediglich Ressourcen und Konzentrationszustand; keine Behauptung einer generischen automatischen Zauberauflösung. Komplexe Reaktionen, ausgelöste Bonusaktionen und länger dauernde Zauber werden explizit abgewiesen.
+- Neue Tests und Dokumentation, Flutter-/Android-CI dieses Branches ausstehend.
+
+---
+
 ## 20.10.2026 – SRD-5.2.1-Regelinventur (noch nicht merged)
 
 - 1.419 eindeutig identifizierte Arbeitsanforderungen in zwei maschinenlesbaren, quellenreferenzierten JSON-Registern; davon 282 bestehende Klassen-Freischaltungen. 339 Zaubertitel, 330 Monster-/Tier-Statblocks, 260 Magiegegenstandseinträge und 17 Talente als gezielte zusätzliche Inventare erfasst.
