@@ -16,7 +16,7 @@
 
 ## Nächstes SRD-Inkrement: Gegnerabwehr gegen Magisches Geschoss (20.10.2026)
 
-Die neue Version `0.8.17+67` speichert ausdrücklich bestätigte Gegner-Resistenzen, -Immunitäten und -Verwundbarkeiten gegen Energieschaden. Jeder Geschoss-Schadenswurf wird **separat** über die bestehende getypte Schadensregelengine berechnet; die Bestätigung kann im Zauberdialog gewählt und im Begegnungsspeicher wiederverwendet werden. Ein Altspielstand ohne Angaben bleibt ausdrücklich **unbekannt**. Die fehlende Shield-Reaktionslogik wird nicht erfunden: Der Spieler muss weiterhin das Fehlen eines wirksamen Schildzaubers bestätigen. Domain-, Widget- und SQLite-Regressionstests liegen im Branch vor. **CI und Android-Gerätetest für diesen neuen Commit sind noch offen**; grüne frühere Läufe betreffen nur 0.8.16+66.
+Die neue Version `0.8.17+67` speichert ausdrücklich bestätigte Gegner-Resistenzen, -Immunitäten und -Verwundbarkeiten gegen Energieschaden. Jeder Geschoss-Schadenswurf wird **separat** über die bestehende getypte Schadensregelengine berechnet; die Bestätigung kann im Zauberdialog gewählt und im Begegnungsspeicher wiederverwendet werden. Ein Altspielstand ohne Angaben bleibt ausdrücklich **unbekannt**. Die fehlende Shield-Reaktionslogik wird nicht erfunden: Der Spieler muss weiterhin das Fehlen eines wirksamen Schildzaubers bestätigen. Domain-, Widget- und SQLite-Regressionstests liegen im Branch vor. **GitHub-CI für diesen Commit bestanden; echter Android-Gerätetest weiterhin offen**; grüne frühere Läufe betreffen nur 0.8.16+66.
 
 ## Neues SRD-5.2.1-Inkrement: Magisches Geschoss (20.10.2026)
 
@@ -125,6 +125,9 @@ python3 -m unittest discover -s scripts/tests -v
 Auf Linux benötigen die SQLite-Tests gegebenenfalls `libsqlite3-dev`. Weitere Details: [`TESTING.md`](TESTING.md) und [`AGENTS.md`](AGENTS.md).
 
 ## Build- und Teststand
+
+**0.8.17+67 verifiziert:** [CI #39383477544](https://github.com/ManuEtt/Dnd/actions/runs/39383477544) (Code-HEAD `8f703b0002ae6dcb5279893020bea63e14771184`), PR #44, Merge `fa2ee36caff2c210eabaa651321b9591de46737f`. Python, Backend, Flutter, Android-JVM und Android-APKs grün. Reale Geräteabnahme steht aus.
+
 
 **Neuester geprüfter Workflow für 0.8.16+66:** [39381087593](https://github.com/ManuEtt/Dnd/actions/runs/39381087593) ist auf dem finalen Code-HEAD von PR #42 vollständig grün (Flutter, Backend, Android-Debug, native Android-Tests und Alpha-APKs). Integration: `259dcf69fa2471c5546e1ba1b1003cef148e1cb9`. Kein realer Gerätetest. Der Dokumentationsnachtrag selbst enthält ausschließlich Markdown und verändert keine Builds.
 

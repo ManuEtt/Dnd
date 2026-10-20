@@ -1,3 +1,9 @@
+## CI- und Merge-Abnahme 20.10.2026 – Version 0.8.17+67
+
+**CI-Freigabe und Integration 20.10.2026:** [PR #44](https://github.com/ManuEtt/Dnd/pull/44) wurde nach erfolgreich abgeschlossener [GitHub Actions #39383477544](https://github.com/ManuEtt/Dnd/actions/runs/39383477544) (finaler geprüfter Head `8f703b0002ae6dcb5279893020bea63e14771184`) nach `main` gemergt; Merge-Commit [`fa2ee36caff2c210eabaa651321b9591de46737f`](https://github.com/ManuEtt/Dnd/commit/fa2ee36caff2c210eabaa651321b9591de46737f). Bestanden: Struktur-/Python-Tests, Backend Typecheck/Build/Tests, Dart format, Flutter analyze/test, Android-Debug-Build, native Android-Tests und Release-APK-Artefakte. **Weiter offen:** echter Android-Gerätetest, vollständige Shield-Reaktionsmechanik, allgemeine Monster-Abwehr und komplette SRD-Abdeckung.
+
+---
+
 ## Inkrement 0.8.17+67 – Gegnerische Energieschaden-Abwehr (20.10.2026)
 
 **Basis:** `main` `5c0882644283b63225774d4e88f7e7fdd493dafe`, Branch `feature/srd-missile-force-defense-20261020`. **Status beim Erstellen: implementiert, CI-/APK-/Gerätetests noch nicht bestätigt.**
