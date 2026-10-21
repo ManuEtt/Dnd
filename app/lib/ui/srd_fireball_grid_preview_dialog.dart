@@ -70,6 +70,16 @@ class _SrdFireballGridPreviewDialogState
     });
   }
 
+  void _resetMap() {
+    setState(() {
+      _walls.clear();
+      _caster = const SrdGridCell(2, 5);
+      _origin = const SrdGridCell(6, 5);
+      _tool = _PreviewTool.origin;
+      _invalidate();
+    });
+  }
+
   void _calculate() {
     try {
       if (widget.fireball.name != 'Fireball' ||
@@ -309,6 +319,11 @@ class _SrdFireballGridPreviewDialogState
         ),
       ),
       actions: [
+        TextButton(
+          key: const ValueKey('fireball-preview-reset'),
+          onPressed: _resetMap,
+          child: const Text('Karte zurücksetzen'),
+        ),
         TextButton(
           key: const ValueKey('fireball-preview-close'),
           onPressed: () => Navigator.of(context).pop(),
