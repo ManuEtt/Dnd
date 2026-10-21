@@ -307,7 +307,7 @@ class FourteenthVoiceEpilogue {
               'erzählt. Der Dorfplatz erwartet keinen '
               'weiteren erzwungenen Eid. Du kannst '
               'ein Gedenkbuch anlegen, Zeugnisse veröffentlichen '
-              'oder ein Erinnerungsfest veranstalten. '
+              'oder ein Dorffest veranstalten. '
               'Du darfst auch erst weitere Menschen besuchen.',
         );
       }
@@ -378,7 +378,7 @@ class FourteenthVoiceEpilogue {
               'wird dadurch nicht wiederhergestellt.',
         );
       }
-      if (_said(text, 'erinnerungsfest veranstalten')) {
+      if (_said(text, 'dorffest veranstalten|fest veranstalten')) {
         return _finish(
           c,
           'festival',
@@ -392,7 +392,7 @@ class FourteenthVoiceEpilogue {
         c,
         'Wähle bewusst: Gedenkbuch anlegen, '
         'Zeugnisse veröffentlichen oder '
-        'Erinnerungsfest veranstalten.',
+        'Dorffest veranstalten.',
       );
     }
 
