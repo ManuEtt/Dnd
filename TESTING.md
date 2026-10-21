@@ -1,3 +1,10 @@
+## Rabenwacht – Akt VIII / Der Eid der Raben (21.10.2026, CI offen)
+
+- Neue Flutter-Regression `app/test/rabenwacht_fourteenth_voice_act8_test.dart`: echter Fortsetzungspfad bis zum Zeugenrat, bestätigte Originalspuren, alternative öffentliche Aussage, Abbruch/Negation, Rückkehr zur dritten Spur, vier historische Enden, drei neue Enden, Liora, Preis-Schuld, Questschutz und JSON-Roundtrip.
+- Weiterhin unveränderte `schemaVersion=1`-Persistenz und unveränderte Heldenressourcen. Keine automatisierte regelmechanische Wirkung des Chronisten behaupten.
+- **NOCH AUSZUFÜHREN:** Format-/Importprüfungen, `flutter analyze`, `flutter test`, Android-Debug-Build, native Checks und reales Gerät.
+- Nachweise und fachliche Bedingungen: `docs/RABENWACHT_AKT_VIII_IMPLEMENTIERUNG.md`.
+
 ## Rabenwacht – Akt VII / Das Haus ohne Türen (21.10.2026, Tests geschrieben – nicht ausgeführt)
 
 - `app/test/rabenwacht_fourteenth_voice_act7_test.dart`: Eintritt über die echte Akt-VI-Bibliothek, Porträtvergleich, Spoilergrenze, Ablehnung/Verhandlung/Täuschung, exakte Preisbestätigung, negierte Zustimmung, Rückzug, Eidblattbeweis, unterschiedliche Verwahrung, Speicher-Roundtrip und Nicht-Abschluss der Hauptquest.
