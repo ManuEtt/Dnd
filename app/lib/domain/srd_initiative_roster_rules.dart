@@ -212,7 +212,11 @@ class SrdInitiativeRosterRules {
         if (nextRound > 1000000) {
           throw const FormatException('Maximale manuelle Rundenzahl erreicht.');
         }
-        return queue.copyWith(activeIndex: candidate, round: nextRound);
+        return queue.copyWith(
+          activeIndex: candidate,
+          round: nextRound,
+          actionUsed: false,
+        );
       }
     }
     throw const FormatException('Keine lebenden Akteure in der Zugfolge.');
