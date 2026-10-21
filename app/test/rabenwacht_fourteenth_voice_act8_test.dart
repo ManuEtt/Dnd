@@ -55,19 +55,20 @@ void main() {
       c = engine.act(c, 'Ich täusche Zustimmung vor.').campaign;
     } else if (choice == 'accepted') {
       c = engine.act(c, 'Ich frage nach dem Preis.').campaign;
-      c = engine.act(
-        c,
-        'Ich bestätige den Preis: Eine andere Person wird vergessen.',
-      ).campaign;
+      c = engine
+          .act(c, 'Ich bestätige den Preis: Eine andere Person wird vergessen.')
+          .campaign;
     }
     c = engine.act(c, 'Ich suche das vierzehnte Blatt.').campaign;
     c = engine.act(c, 'Ich untersuche das Blatt.').campaign;
-    c = engine.act(
-      c,
-      liora
-          ? 'Ich vertraue Liora den Namen an.'
-          : 'Ich will den Namen selbst bewahren.',
-    ).campaign;
+    c = engine
+        .act(
+          c,
+          liora
+              ? 'Ich vertraue Liora den Namen an.'
+              : 'Ich will den Namen selbst bewahren.',
+        )
+        .campaign;
     expect(c.storyBible['stage'], 'voice-threshold');
     c = engine.act(c, 'Ich berufe den Rat der Zeugen ein.').campaign;
     expect(c.storyBible['stage'], 'voice-council');
@@ -83,10 +84,7 @@ void main() {
   Campaign testimony(Campaign c) {
     c = engine.act(c, 'Ich biete eine öffentliche Aussage an.').campaign;
     expect(c.storyBible['stage'], 'voice-testimony');
-    c = engine.act(
-      c,
-      'Ich bezeuge öffentlich die Lücke im Eid.',
-    ).campaign;
+    c = engine.act(c, 'Ich bezeuge öffentlich die Lücke im Eid.').campaign;
     expect(c.storyBible['stage'], 'voice-council');
     expect(c.facts['voice:publicTestimony'], 'true');
     return c;
@@ -96,8 +94,7 @@ void main() {
     final c = council();
     expect(c.facts['voice:visited:council'], 'true');
     expect(c.facts['voice:witnessChain'], isNull);
-    expect(c.quests.singleWhere((q) => q.id == 'voice-main').status,
-        'active');
+    expect(c.quests.singleWhere((q) => q.id == 'voice-main').status, 'active');
     expect(c.facts['voice:originEnding'], 'end-seal');
     expect(Campaign.fromJson(c.toJson()).toJson(), c.toJson());
     final attempt = engine.act(c, 'Ich will die Beweise verbinden.').campaign;
@@ -109,16 +106,14 @@ void main() {
   test('Zwei Belege plus öffentliches Zeugnis öffnen den Ritualweg', () {
     var c = council();
     c = engine.act(c, 'Ich biete eine öffentliche Aussage an.').campaign;
-    final warning = engine.act(
-      c,
-      'Ich bezeuge die Lücke im Eid nicht.',
-    ).campaign;
+    final warning = engine
+        .act(c, 'Ich bezeuge die Lücke im Eid nicht.')
+        .campaign;
     expect(warning.storyBible['stage'], 'voice-testimony');
     expect(warning.facts['voice:publicTestimony'], isNull);
-    c = engine.act(
-      warning,
-      'Ich bezeuge öffentlich die Lücke im Eid.',
-    ).campaign;
+    c = engine
+        .act(warning, 'Ich bezeuge öffentlich die Lücke im Eid.')
+        .campaign;
     expect(c.facts['voice:testimonyRisk'], 'true');
     c = ritual(c);
     expect(c.facts['voice:witnessChain'], 'true');
@@ -176,14 +171,12 @@ void main() {
       'Ich will das Archiv zerstören.': 'end-archive',
       'Ich will einen neuen Eid verhandeln.': 'end-accord',
     }.entries) {
-      final before = ritual(council(
-        clues: const ['elda', 'grave', 'tarek'],
-        liora: false,
-      ));
-      final denial = engine.act(
-        before,
-        'Ich will den Eid nicht erneuern.',
-      ).campaign;
+      final before = ritual(
+        council(clues: const ['elda', 'grave', 'tarek'], liora: false),
+      );
+      final denial = engine
+          .act(before, 'Ich will den Eid nicht erneuern.')
+          .campaign;
       expect(denial.storyBible['stage'], 'voice-ritual');
       expect(denial.facts['voice:ending'], isNull);
 
@@ -191,8 +184,10 @@ void main() {
       expect(c.storyBible['stage'], 'voice-${entry.value}');
       expect(c.facts['voice:ending'], entry.value);
       expect(c.hero.toJson(), before.hero.toJson());
-      expect(c.quests.singleWhere((q) => q.id == 'voice-main').status,
-          'completed');
+      expect(
+        c.quests.singleWhere((q) => q.id == 'voice-main').status,
+        'completed',
+      );
       expect(Campaign.fromJson(c.toJson()).toJson(), c.toJson());
       final again = engine.act(c, entry.key).campaign;
       expect(again.facts['voice:ending'], entry.value);
@@ -201,12 +196,7 @@ void main() {
   });
 
   test('Alle vier alten Enden erhalten ihre eigene Ratskonsequenz', () {
-    for (final ending in [
-      'end-seal',
-      'end-break',
-      'end-mercy',
-      'end-chorus',
-    ]) {
+    for (final ending in ['end-seal', 'end-break', 'end-mercy', 'end-chorus']) {
       final c = council(ending: ending);
       expect(c.facts['voice:originEnding'], ending);
       final text = c.messages.last.text;
@@ -236,10 +226,7 @@ void main() {
   });
 
   test('Täuschung und Lioras Verwahrung werden im Finale erinnert', () {
-    var c = council(
-      clues: const ['grave', 'tarek', 'elda'],
-      choice: 'feigned',
-    );
+    var c = council(clues: const ['grave', 'tarek', 'elda'], choice: 'feigned');
     c = ritual(c);
     c = engine.act(c, 'Ich will einen neuen Eid verhandeln.').campaign;
     expect(c.facts['voice:chronistSuspicious'], 'true');
@@ -262,10 +249,14 @@ void main() {
       ],
     );
     c = engine.act(c, 'Ich will den Eid erneuern.').campaign;
-    expect(c.quests.singleWhere((q) => q.id == 'voice-optional').status,
-        'active');
-    expect(c.quests.singleWhere((q) => q.id == 'rabenwacht-historical').status,
-        'failed');
+    expect(
+      c.quests.singleWhere((q) => q.id == 'voice-optional').status,
+      'active',
+    );
+    expect(
+      c.quests.singleWhere((q) => q.id == 'rabenwacht-historical').status,
+      'failed',
+    );
     final journal = engine.act(c, 'Hinweise').campaign.messages.last.text;
     expect(journal, contains('erneuert'));
   });
