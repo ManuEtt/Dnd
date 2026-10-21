@@ -51,7 +51,7 @@ frühere Spuren werden nicht als offengelegte Wahrheiten behandelt.
 2. **Zeugnisse veröffentlichen** (`voice:legacy=testimonies`):
    Unterschiedliche Berichte bleiben einzeln zugeordnet. Der zuvor
    zerstörte Chronistenort wird nicht wiederhergestellt.
-3. **Erinnerungsfest veranstalten** (`voice:legacy=festival`):
+3. **Dorffest veranstalten** (`voice:legacy=festival`):
    Die Einwohner feiern Gemeinschaft ohne erzwungene einheitliche
    Vergangenheit.
 
