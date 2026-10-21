@@ -1,3 +1,12 @@
+## 21.10.2026 – Rabenwacht: Der Brief von Morgen (Folgebranch, CI offen)
+
+- **IMPLEMENTIERT:** Freiwillige Nachgeschichte nach einem real abgeschlossenen Epilog. Widersprüchlicher Brief mit eigenem Ermittlungsbaum bei Elda, Tarek und am Brunnen; mindestens zwei tatsächlich untersuchte unabhängige Spuren für den Zeugenrat.
+- **IMPLEMENTIERT:** Drei unterschiedliche Enden – versiegelt verwahren, mit Herkunftsangaben veröffentlichen, oder Liora frei mitentscheiden lassen. Alte vier Ausgänge und neues Dorfvermächtnis bleiben erhalten, keine EP-/SRD- oder NPC-Schreibzugriffe.
+- **REGRESSIONEN ERSTELLT, CI OFFEN:** `app/test/rabenwacht_fourteenth_voice_morrow_test.dart`; echte Kapitelpfade, Spoiler, Negation, Beweisschwelle, Save-Roundtrip und Abschluss-Idempotenz.
+- **Abhängigkeit:** gestapelter Story-Branch auf PR #86 (wiederum PR #84). Details: `docs/RABENWACHT_BRIEF_VON_MORGEN.md`.
+
+---
+
 ## 21.10.2026 – Rabenwacht Epilog (Folgebranch zu offenem PR #84; CI offen)
 
 - **IMPLEMENTIERT:** Nach tatsächlich beendeter „vierzehnter Stimme“ freiwilliger Epilog, sieben Tage später, mit eigenständigen Szenen für Elda, Tarek und Liora. Mindestens zwei verschiedene Gesprächspartner schalten eine ausdrückliche Wahl der Dorfzukunft frei.
