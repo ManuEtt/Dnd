@@ -330,11 +330,11 @@ class RabenwachtCampaign {
         }
       }
     }
-    if (target == null ||
-        target == stage ||
-        c.facts['visited:$target'] != 'true') {
-      return null;
-    }
+    if (target == null || target == stage) return null;
+    final alreadyKnown = c.facts['visited:$target'] == 'true';
+    final maraRoute = c.facts['maraLetter'] == 'true' &&
+        (target == 'mill' || target == 'chapel');
+    if (!alreadyKnown && !maraRoute) return null;
     final label = locations[target]!;
     return _move(
       c,
@@ -1268,12 +1268,27 @@ class RabenwachtCampaign {
   }
 
   static RabenwachtTurn _ending(Campaign c, String stage, String prose) {
+    final aftermath = <String>[
+      if (c.facts['maraTrust'] == 'true')
+        'Mara Voss hält ihr Versprechen und unterstützt dich '
+            'als Verbündete beim Wiederaufbau des Dorfes.',
+      if (c.facts['maraDefied'] == 'true')
+        'Mara Voss dankt dir für die Rettung, doch euer Streit '
+            'über das Schweigen des Rates bleibt ungelöst.',
+      if (c.facts['crowsAlerted'] == 'true')
+        'Die aufgescheuchten Krähen haben die Wachen alarmiert; '
+            'die Dorfbewohner erwarten deine Rückkehr mit Sorge.',
+      if (c.facts['serenTrust'] == 'true')
+        'Serens Vertrauen verändert, wie das Dorf '
+            'über den gebundenen Geist spricht.',
+    ].join(' ');
     final next = c.copyWith(
       quests: [
         for (final quest in c.quests) quest.copyWith(status: 'completed'),
       ],
       facts: {...c.facts, 'allMissingFound': 'true', 'ending': stage},
     );
-    return _move(next, stage, prose);
+
+    return _move(next, stage, '$prose${aftermath.isEmpty ? '' : ' $aftermath'}');
   }
 }
