@@ -1,3 +1,14 @@
+## 21.10.2026 – Rabenwacht: Handlungsentwicklung (Entwicklungsbranch)
+
+- Branch `feature/rabenwacht-namenchor-main-20261021`, Basis `main` nach abgeschlossenem PR #66.
+- Neue optionale Kapellenszene `hymn` („Die stumme Strophe“) mit eigenen Dialogen, Belegen, Spielerentscheidung und Quest `rabenwacht-hymn`.
+- Geheimes viertes Ende `end-chorus` benötigt `hymnChoice=kept`, `graveOath=remembered`, `alrikConfession=true` und `serenTrust=true`. Keiner dieser Fakten wird nur durch Erzählwunsch erzeugt.
+- Oswins Beziehung, Hinweise und Epilog unterscheiden Erhalten/Vernichten; optionaler Auftrag kann ungelöst bleiben; Meilenstein-EP weiterhin nur einmal.
+- Story-Bibel: `docs/RABENWACHT_DIE_STUMME_STROPHE.md`. Tests: `app/test/rabenwacht_hymn_story_test.dart`.
+- CI, reale Geräteprüfung und spielerische Balance-Abnahme stehen aus. Keine neue SRD-Zaubermechanik.
+
+---
+
 ## 21.10.2026 – Rabenwacht: alternative Fertigkeitsproben (Entwicklungsbranch)
 
 - Vorheriger bestätigter Stand: PR #65 erfolgreich in `main` integriert; Änderungen auf `feature/rabenwacht-alternative-checks-20261021`.
