@@ -80,6 +80,9 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
+      - name: Dart-Formatvorschau (temporär, nur Featurebranch)
+        working-directory: app
+        run: dart format --output=show lib/domain/srd_spell_component_rules.dart test/srd_spell_material_components_test.dart
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
