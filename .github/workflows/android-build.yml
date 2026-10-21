@@ -80,12 +80,6 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
-      - name: Temporärer Formatter-Abgleich Brief von Morgen
-        working-directory: app
-        run: |
-          dart format lib/story/fourteenth_voice_morrow.dart test/rabenwacht_fourteenth_voice_morrow_test.dart
-          git diff -- lib/story/fourteenth_voice_morrow.dart test/rabenwacht_fourteenth_voice_morrow_test.dart
-          exit 1
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
