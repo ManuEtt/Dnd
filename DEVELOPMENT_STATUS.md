@@ -1,3 +1,12 @@
+## 21.10.2026 – Rabenwacht: Akt VIII, Epilog und Brief von Morgen (konsolidierter Integrationsbranch)
+
+- **Implementiert:** Rat der Zeugen mit Belegschwelle und drei Enden; optionaler Epilog mit Elda, Tarek und Liora sowie drei Dorfvermächtnissen; anschließende optionale Nachgeschichte „Der Brief von Morgen“ mit drei unabhängigen Ermittlungsorten und drei Schlusswegen.
+- **Einbindung:** `rabenwacht-voice-v1`, identische Campaign-Persistenz, keine SRD- oder Backend-Modifikation und kein unberechtigter EP-/TP-/Ausrüstungs-Effekt. Bestehende Main-Änderungen am D&D-Regelwerk bleiben erhalten.
+- **Tests:** `app/test/rabenwacht_fourteenth_voice_act8_test.dart`, `app/test/rabenwacht_fourteenth_voice_epilogue_test.dart`, `app/test/rabenwacht_fourteenth_voice_morrow_test.dart`; alle drei Entwicklungsstufen und die konsolidierte Android-CI müssen vor Merge grün sein. Echter Geräte-/Balance-Test weiterhin offen.
+- **Fachdokumentation:** `docs/RABENWACHT_AKT_VIII_IMPLEMENTIERUNG.md`, `docs/RABENWACHT_EPILOG_IMPLEMENTIERUNG.md`, `docs/RABENWACHT_BRIEF_VON_MORGEN.md`. Die historischen Zwischenstände auf den Featurebranches bleiben nachvollziehbar.
+
+---
+
 ## 21.10.2026 – SRD 5.2.1: konservative Kugel-Flächenvorschau (CI offen)
 
 - **IMPLEMENTIERT:** `SrdSphereAreaRules.preview` erzeugt unveränderliche, mögliche 2D-5-Fuß-Kandidatenfelder einer separat bestätigten SRD-Kugel. Mittelpunktsabstand, mögliche Randüberlappung und offene Deckungsfragen bleiben ausdrücklich unterschiedliche Informationen. Eingaben aus unvollständigen Karten, ungültigen Radien und blockierten Ursprüngen werden gesperrt.
