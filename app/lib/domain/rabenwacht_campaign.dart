@@ -256,6 +256,14 @@ class RabenwachtCampaign {
         'Du hast die Namen am Gedenkstein bewusst verschwiegen.',
       if (campaign.facts['runeClue'] == 'true')
         'Die Turmrunen binden das Ritual an den Willen und an Erinnerungen.',
+      if (campaign.facts['towerSabotage'] == 'true')
+        'An der Turmruine hast du Spuren der absichtlichen Sprengung gefunden.',
+      if (campaign.facts['stairSafePassage'] == 'true')
+        'Du hast einen sicheren Weg über die eingestürzte Kryptatreppe ermittelt.',
+      if (campaign.facts['stairLooseStone'] == 'true')
+        'Beim Abstieg hat sich ein Stein gelöst und Lärm verursacht.',
+      if (campaign.facts['ritualSolutionFromRecords'] == 'true')
+        'Mit den gesammelten Aufzeichnungen hast du die Lösung der Tür erkannt.',
       if (campaign.facts['silverKeyFound'] == 'true')
         'Der silberne Schlüssel liegt bei dir; er gehört zur dreizehnten Tür.',
       if (campaign.facts['finaHeard'] == 'true')
@@ -1101,6 +1109,23 @@ class RabenwachtCampaign {
           'an. Schleiche zum Turm oder gehe offen über den Pfad.',
         );
       case 'ruins':
+        if (_has(
+          input,
+          'mauerwerk|fundament|baufuge|steinfuge|brandspur|'
+          'meißelspur|meisselspur|bauspuren',
+        )) {
+          return _ask(
+            c,
+            input,
+            'ruins',
+            'intelligence',
+            'Nachforschungen',
+            13,
+            'Du untersuchst das Mauerwerk auf Spuren der Brandnacht '
+                'und suchst nach einem verborgenen Abstieg.',
+            rollId,
+          );
+        }
         if (_has(input, 'inschrift|zeichen|rune|untersuch|les|magie')) {
           return _ask(
             c,
@@ -1130,6 +1155,23 @@ class RabenwachtCampaign {
           'Untersuche die Inschrift oder steige hinab.',
         );
       case 'stairs':
+        if (_has(
+          input,
+          'strebe|tragwerk|balken|abstütz|abstuetz|'
+          'träger|traeger|stufen prüfen|stufen untersuchen',
+        )) {
+          return _ask(
+            c,
+            input,
+            'stairs',
+            'intelligence',
+            'Nachforschungen',
+            12,
+            'Du prüfst die Träger und die losen Stufen, '
+                'um einen sicheren Weg über den Abgrund zu finden.',
+            rollId,
+          );
+        }
         if (_has(input, 'kletter|spring|überwind|stärk|athlet')) {
           return _ask(
             c,
@@ -1218,6 +1260,34 @@ class RabenwachtCampaign {
           'Schlüssel liegt vor dir. Nimm ihn und geh zur Galerie.',
         );
       case 'door13':
+        if (_has(
+          input,
+          'gebetbuch|chronik|glockeneid|aufzeichnungen|'
+          'belege|notizen|brandbericht',
+        )) {
+          if (c.facts['prayerFound'] != 'true' &&
+              c.facts['maraLetter'] != 'true' &&
+              c.facts['serenMotive'] != 'true') {
+            return RabenwachtTurn(
+              c,
+              'Du möchtest die Tür mit historischen Belegen lösen. '
+              'Dafür brauchst du zuerst das Gebetbuch, '
+              'Maras Glockeneid oder eine verifizierte Chronik. '
+              'Du kannst stattdessen ihre Runen untersuchen.',
+            );
+          }
+          return _ask(
+            c,
+            input,
+            'door13',
+            'intelligence',
+            'Nachforschungen',
+            14,
+            'Du vergleichst die gesicherten Aufzeichnungen '
+                'mit den dreizehn Türen und dem silbernen Schlüssel.',
+            rollId,
+          );
+        }
         if (_has(input, 'rune|siegel|untersuch|magie|zeichen|inschrift')) {
           return _ask(
             c,
@@ -1437,32 +1507,64 @@ class RabenwachtCampaign {
           clues: {if (!passed) 'crowsAlerted': 'true', 'location': 'Turmruine'},
         );
       case 'ruins':
+        final masonry = pending.targetName == 'intelligence|Nachforschungen';
         return _move(
           c,
           'stairs',
-          passed
-              ? 'Du entzifferst: „Das Opfer ist ein Wille, kein '
-                    'Körper.“ Dir wird klar, dass der Kreis unter dem '
-                    'Turm an Erinnerungen gebunden ist. Du steigst '
-                    'über die verborgene Treppe hinab.'
-              : 'Die Zeichen sind zu verwittert, um sie vollständig '
-                    'zu lesen. Die Treppe führt dennoch nach unten.',
-          clues: {if (passed) 'runeClue': 'true', 'location': 'Kryptatreppe'},
+          masonry
+              ? (passed
+                    ? 'An den Steinlagen erkennst du absichtlich '
+                          'geschwächte Fugen und Spuren einer alten '
+                          'Sprengung. Die Täter verbargen den '
+                          'Kryptazugang hinter eingestürzten Balken. '
+                          'Du findest den Abstieg.'
+                    : 'Die Brandspuren lassen ihren Ursprung nicht '
+                          'mehr erkennen. Ein Riss führt dich '
+                          'dennoch zu den Kryptastufen.')
+              : (passed
+                    ? 'Du entzifferst: „Das Opfer ist ein Wille, kein '
+                          'Körper.“ Dir wird klar, dass der Kreis unter '
+                          'dem Turm an Erinnerungen gebunden ist. '
+                          'Du steigst über die verborgene Treppe hinab.'
+                    : 'Die Zeichen sind zu verwittert, um sie '
+                          'vollständig zu lesen. Die Treppe führt '
+                          'dennoch nach unten.'),
+          clues: {
+            if (passed && masonry) 'towerSabotage': 'true',
+            if (passed && !masonry) 'runeClue': 'true',
+            'location': 'Kryptatreppe',
+          },
         );
       case 'stairs':
+        final searchedBeams =
+            pending.targetName == 'intelligence|Nachforschungen';
         return _move(
           c,
           'bonehall',
-          passed
-              ? 'Du ziehst dich mit beiden Händen über den '
-                    'Abgrund. Dahinter erstreckt sich eine Halle '
-                    'voller Statuen; ein Skelettwächter regt sich '
-                    'neben dem silbernen Schlüssel.'
-              : 'Ein Stein löst sich unter deinem Fuß. Du '
-                    'klammerst dich an den Rand, findest aber '
-                    'eine sichere Kante und erreichst die Halle. '
-                    'Dort wartet ein Skelettwächter am Schlüssel.',
-          clues: {'location': 'Halle der Wächter'},
+          searchedBeams
+              ? (passed
+                    ? 'Du erkennst einen tragfähigen Querbalken '
+                          'und überquerst die Lücke auf einem '
+                          'sicheren Umweg. Hinter dem Abgrund '
+                          'erwartet dich die Halle der Wächter.'
+                    : 'Die morschen Träger geben nach; '
+                          'ein Stein poltert in die Tiefe. '
+                          'Du erreichst die Wächterhalle '
+                          'über eine schmale Seitenkante.')
+              : (passed
+                    ? 'Du ziehst dich mit beiden Händen über den '
+                          'Abgrund. Dahinter erstreckt sich eine '
+                          'Halle voller Statuen; ein Skelettwächter '
+                          'regt sich neben dem silbernen Schlüssel.'
+                    : 'Ein Stein löst sich unter deinem Fuß. Du '
+                          'klammerst dich an den Rand, findest aber '
+                          'eine sichere Kante und erreichst die Halle. '
+                          'Dort wartet ein Skelettwächter am Schlüssel.'),
+          clues: {
+            if (searchedBeams && passed) 'stairSafePassage': 'true',
+            if (searchedBeams && !passed) 'stairLooseStone': 'true',
+            'location': 'Halle der Wächter',
+          },
         );
       case 'bonehall':
         return _move(
@@ -1480,21 +1582,36 @@ class RabenwachtCampaign {
           clues: {'silverKeyFound': 'true'},
         );
       case 'door13':
+        final usedRecords =
+            pending.targetName == 'intelligence|Nachforschungen';
         return _move(
           c,
           'chamber',
           passed
-              ? 'Du erkennst, dass der Schlüssel das Siegel '
-                    'erneuern kann, ohne ein Leben zu fordern. '
-                    'Du öffnest die dreizehnte Tür. Fina, Bram '
-                    'und der Holzfäller liegen in einem leuchtenden '
-                    'Kreis; der Geist Seren bewacht sie.'
-              : 'Die Runen bleiben rätselhaft. Mit dem '
-                    'silbernen Schlüssel öffnest du die dreizehnte '
-                    'Tür. Drei Gefangene ruhen in einem Lichtkreis, '
-                    'über dem Seren schwebt.',
+              ? (usedRecords
+                    ? 'Du ordnest die dreizehn Türen den '
+                          'überlieferten Namen aus der Chronik zu. '
+                          'Der Glockeneid verrät dir, wie sich '
+                          'das Siegel ohne weiteres Opfer erneuern '
+                          'lässt. Du öffnest die Tür. Seren '
+                          'bewacht die drei schlafenden Gefangenen.'
+                    : 'Du erkennst, dass der Schlüssel das Siegel '
+                          'erneuern kann, ohne ein Leben zu fordern. '
+                          'Du öffnest die dreizehnte Tür. Fina, Bram '
+                          'und der Holzfäller liegen in einem '
+                          'leuchtenden Kreis; Seren bewacht sie.')
+              : (usedRecords
+                    ? 'Die alten Berichte widersprechen sich. '
+                          'Du erkennst die sichere Lösung noch '
+                          'nicht, aber der Schlüssel öffnet '
+                          'die dreizehnte Tür. Seren wartet im Kreis.'
+                    : 'Die Runen bleiben rätselhaft. Mit dem '
+                          'silbernen Schlüssel öffnest du die '
+                          'dreizehnte Tür. Drei Gefangene ruhen '
+                          'in einem Lichtkreis, über dem Seren schwebt.'),
           clues: {
             if (passed) 'ritualSolution': 'true',
+            if (passed && usedRecords) 'ritualSolutionFromRecords': 'true',
             'location': 'Siegelkammer',
           },
         );
