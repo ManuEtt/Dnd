@@ -116,6 +116,31 @@ void main() {
     );
   });
 
+  testWidgets('reset clears walls, result and previous map confirmation', (
+    tester,
+  ) async {
+    await _open(tester, catalog.find('Fireball')!);
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await _tap(tester, 'fireball-tool-wall');
+    await _tap(tester, 'fireball-cell-4-5');
+    await _tap(tester, 'fireball-map-surveyed');
+    await _tap(tester, 'fireball-preview-calculate');
+    expect(find.byKey(const ValueKey('fireball-preview-error')), findsOneWidget);
+
+    await _tap(tester, 'fireball-preview-reset');
+    expect(find.byKey(const ValueKey('fireball-preview-error')), findsNothing);
+    expect(find.byKey(const ValueKey('fireball-preview-summary')), findsNothing);
+    final confirmation = tester.widget<CheckboxListTile>(
+      find.byKey(const ValueKey('fireball-map-surveyed')),
+    );
+    expect(confirmation.value, isFalse);
+    await _tap(tester, 'fireball-preview-calculate');
+    expect(find.byKey(const ValueKey('fireball-preview-error')), findsOneWidget);
+    await _tap(tester, 'fireball-map-surveyed');
+    await _tap(tester, 'fireball-preview-calculate');
+    expect(find.byKey(const ValueKey('fireball-preview-summary')), findsOneWidget);
+  });
+
   testWidgets('other spells cannot borrow Fireball dimensions', (tester) async {
     await _open(tester, catalog.find('Magic Missile')!);
     addTearDown(() => tester.binding.setSurfaceSize(null));
