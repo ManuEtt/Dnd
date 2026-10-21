@@ -117,11 +117,11 @@ class FourteenthVoiceAct7 {
           campaign,
           'voice-gallery',
           'In den dreizehn Rahmen altern die Eidträger, '
-          'aber niemals gleichzeitig. Eldas Zeichnung, Tareks Brief '
-          'und das namenlose Grab ergeben je eine andere Zeitfolge. '
-          'Das vierzehnte Bild zeigt nur eine mögliche Zukunft, '
-          'keinen feststehenden Tod. Hinter einem Rahmen '
-          'hörst du das Umblättern eines Buches.',
+              'aber niemals gleichzeitig. Eldas Zeichnung, Tareks Brief '
+              'und das namenlose Grab ergeben je eine andere Zeitfolge. '
+              'Das vierzehnte Bild zeigt nur eine mögliche Zukunft, '
+              'keinen feststehenden Tod. Hinter einem Rahmen '
+              'hörst du das Umblättern eines Buches.',
           gained: {'voice:portraitCompared': 'true'},
         );
       }
@@ -131,13 +131,13 @@ class FourteenthVoiceAct7 {
           campaign,
           'voice-library',
           'Du trittst in die Bibliothek der ungelebten Tage. '
-          'Ein Mann ohne Schatten stellt sich als Chronist vor. '
-          '„Ich kann einen Verlust aus deiner Erinnerung nehmen“, '
-          'sagt er. „Dafür muss eine andere Person aus den '
-          'gemeinsamen Erinnerungen verschwinden.“ '
-          'Du kannst ablehnen, Bedingungen verhandeln, '
-          'Zustimmung vortäuschen oder ausdrücklich nach dem Preis fragen. '
-          'Das vierzehnte Blatt liegt hinter ihm.',
+              'Ein Mann ohne Schatten stellt sich als Chronist vor. '
+              '„Ich kann einen Verlust aus deiner Erinnerung nehmen“, '
+              'sagt er. „Dafür muss eine andere Person aus den '
+              'gemeinsamen Erinnerungen verschwinden.“ '
+              'Du kannst ablehnen, Bedingungen verhandeln, '
+              'Zustimmung vortäuschen oder ausdrücklich nach dem Preis fragen. '
+              'Das vierzehnte Blatt liegt hinter ihm.',
           gained: {'voice:chronistMet': 'true'},
         );
       }
@@ -146,7 +146,7 @@ class FourteenthVoiceAct7 {
           campaign,
           'voice-house',
           'Du verlässt die Galerie und stehst wieder '
-          'im Eingang des Hauses ohne Türen.',
+              'im Eingang des Hauses ohne Türen.',
         );
       }
       return RabenwachtTurn(
@@ -164,10 +164,10 @@ class FourteenthVoiceAct7 {
           campaign,
           'voice-ledger',
           'Du folgst einer Spur loser Seiten in den '
-          'Lesesaal. Auf einem Pult liegt ein Buch '
-          'mit herausgetrennter vierzehnter Seite. '
-          'Untersuche das Blatt, bevor du jemandem '
-          'einen Namen anvertraust.',
+              'Lesesaal. Auf einem Pult liegt ein Buch '
+              'mit herausgetrennter vierzehnter Seite. '
+              'Untersuche das Blatt, bevor du jemandem '
+              'einen Namen anvertraust.',
         );
       }
       if (_has(
@@ -186,20 +186,20 @@ class FourteenthVoiceAct7 {
           campaign,
           'voice-price',
           'Der Chronist zeigt zwei leere Seiten. '
-          'Er würde deinen Verlust aus den Erinnerungen streichen. '
-          'Im Gegenzug soll ein anderer Mensch von allen '
-          'vergessen werden. Du kennst weder eine sichere '
-          'Person noch eine folgenlose Rücknahme. '
-          'Der Handel wird noch nicht ausgeführt. '
-          'Um das Risiko bewusst anzunehmen, bestätige exakt: '
-          '„Ich bestätige den Preis: Eine andere Person wird vergessen.“ '
-          'Oder lehne den Handel ab.',
+              'Er würde deinen Verlust aus den Erinnerungen streichen. '
+              'Im Gegenzug soll ein anderer Mensch von allen '
+              'vergessen werden. Du kennst weder eine sichere '
+              'Person noch eine folgenlose Rücknahme. '
+              'Der Handel wird noch nicht ausgeführt. '
+              'Um das Risiko bewusst anzunehmen, bestätige exakt: '
+              '„Ich bestätige den Preis: Eine andere Person wird vergessen.“ '
+              'Oder lehne den Handel ab.',
           gained: {'voice:priceExplained': 'true'},
         );
       }
       if (_has(
             text,
-            'verhandel|fordere beweise|bedingungen prüfen|bedingungen pruefen',
+            'verhandl|verhandel|fordere beweise|bedingungen prüfen|bedingungen pruefen',
           ) &&
           !_negated(text)) {
         return _move(
@@ -214,15 +214,15 @@ class FourteenthVoiceAct7 {
           gained: {'voice:termsQuestioned': 'true'},
         );
       }
-      if (_has(text, 'ablehn|verweig|kein angebot') && !_negated(text)) {
+      if (_has(text, 'lehn|ablehn|verweig|kein angebot') && !_negated(text)) {
         return _decision(
           campaign,
           'refused',
           'Du schlägst den Handel aus. '
-          'Liora atmet hörbar aus. Der Chronist legt '
-          'eine leere Seite zwischen euch, doch er '
-          'kann deine Weigerung nicht zurücknehmen. '
-          'Das vierzehnte Blatt wartet im Lesesaal.',
+              'Liora atmet hörbar aus. Der Chronist legt '
+              'eine leere Seite zwischen euch, doch er '
+              'kann deine Weigerung nicht zurücknehmen. '
+              'Das vierzehnte Blatt wartet im Lesesaal.',
         );
       }
       if (_has(text, 'täusch|taeusch|spiele zustimmung|zum schein annehm') &&
@@ -231,10 +231,10 @@ class FourteenthVoiceAct7 {
           campaign,
           'feigned',
           'Du spielst Einverständnis. Der Chronist '
-          'lächelt, doch sein Federkiel stockt. '
-          'Er glaubt dir nicht vollständig. '
-          'Dieser Verdacht könnte später Folgen haben. '
-          'Du kannst nun das vierzehnte Blatt suchen.',
+              'lächelt, doch sein Federkiel stockt. '
+              'Er glaubt dir nicht vollständig. '
+              'Dieser Verdacht könnte später Folgen haben. '
+              'Du kannst nun das vierzehnte Blatt suchen.',
           gained: {'voice:chronistSuspicious': 'true'},
         );
       }
@@ -256,12 +256,12 @@ class FourteenthVoiceAct7 {
           campaign,
           'accepted',
           'Du bestätigst den gefährlichen Preis. '
-          'Der Chronist vermerkt deine Zustimmung, '
-          'doch noch ist kein Mensch aus der Welt '
-          'oder aus einem Spielstand gelöscht. '
-          'Die Folgen dieses Versprechens stehen '
-          'im Rat der Zeugen noch aus. '
-          'Suche nun das vierzehnte Blatt.',
+              'Der Chronist vermerkt deine Zustimmung, '
+              'doch noch ist kein Mensch aus der Welt '
+              'oder aus einem Spielstand gelöscht. '
+              'Die Folgen dieses Versprechens stehen '
+              'im Rat der Zeugen noch aus. '
+              'Suche nun das vierzehnte Blatt.',
           gained: {'voice:chronistDebt': 'pending'},
         );
       }
@@ -271,8 +271,8 @@ class FourteenthVoiceAct7 {
           campaign,
           'voice-library',
           'Du ziehst deine unbestätigte Zustimmung '
-          'zurück. Niemand wurde geopfert. '
-          'Der Chronist wartet schweigend.',
+              'zurück. Niemand wurde geopfert. '
+              'Der Chronist wartet schweigend.',
         );
       }
       return RabenwachtTurn(
@@ -348,9 +348,9 @@ class FourteenthVoiceAct7 {
           campaign,
           'voice-threshold',
           'Du verwahrst die beschädigte Abschrift '
-          'selbst und versprichst, sie vor dem Rat '
-          'der Zeugen offen zu prüfen. '
-          'Der Weg zu Akt VIII ist vorbereitet.',
+              'selbst und versprichst, sie vor dem Rat '
+              'der Zeugen offen zu prüfen. '
+              'Der Weg zu Akt VIII ist vorbereitet.',
           gained: {'voice:nameCustody': 'hero', 'voice:act7Reached': 'true'},
         );
       }
@@ -359,7 +359,7 @@ class FourteenthVoiceAct7 {
           campaign,
           'voice-library',
           'Du kehrst mit deinem gesicherten Wissen '
-          'zum Chronisten zurück.',
+              'zum Chronisten zurück.',
         );
       }
       return RabenwachtTurn(
