@@ -265,6 +265,16 @@ class FourteenthVoiceAct8 {
     }
 
     if (stage == 'voice-ritual') {
+      if (_said(text, 'zurück zum rat|weitere belege sammeln') &&
+          !_negated(text)) {
+        return _move(
+          c,
+          'voice-council',
+          'Du unterbrichst die Schlussentscheidung. '
+              'Der Rat bewahrt seine bisherigen Aussagen. '
+              'Weitere Spuren können weiterhin gesucht werden.',
+        );
+      }
       if (c.facts['voice:witnessChain'] != 'true') {
         return RabenwachtTurn(c, 'Die Beweiskette fehlt.');
       }
