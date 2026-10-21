@@ -1,3 +1,15 @@
+## 21.10.2026 – Zusätzlicher Monsterangriff auf gespeichertes Flächenziel (0.8.29+79, CI offen)
+
+- Vorheriger `main`: 0.8.28+78, PR #60 gemergt und alle CI-Gates einschließlich Android-Alpha erfolgreich.
+- Neue `SrdExtraCreatureAttackRules.resolve`: bestätigter einfacher Waffeneinzelangriff mit W20, natürlichen 1/20, Deckung, Vorteil/Nachteil, kritischen zusätzlichen Schadenswürfeln, geprüfter Schadensart und getrennten Ziel-TP.
+- Nur lebende SL-gesteuerte Zusatzkreaturen mit aktuellem manuellen Zug und freier Aktion können eine **andere** gespeicherte lebende Zusatzkreatur treffen. Held/Hauptgegner bleiben wegen fehlender vollständiger Reaktions-/Todesrettungsintegration ausdrücklich ausgesperrt.
+- `ManualCombatTurnQueue.actionUsed` im abwärtskompatiblen schema-1-JSON (ältere Spielstände ohne Feld implizieren `false`). Revisionsgeschützter Controller, `combat.manualExtraCreatureAttack`-Journal und Schnellaktion/Dialog „Zusatzkreatur-Angriff“.
+- Regressionstests für Critical ohne doppelten Flat-Bonus, Decken-RK, einmaligen Angriff/Zug, HP-Journal-Roundtrip, nicht autorisierte Ziele, abgelehnte unbekannte Monsterdaten und UI-Schutz.
+- SRD-Anforderungen `RULE-COMBAT-MULTIPLE-OPPONENTS` und `RULE-COMBAT-TURN-STRUCTURE` als `partial` mit Code-/Test-Links; Details `docs/SRD_MANUAL_EXTRA_CREATURE_ATTACK.md`.
+- **Offen:** Held-/Hauptgegner-Schaden und Reaktionen, Multiattack, echte gemeinsame Turnqueue, Monsterprofile, Kampfende, Android-Gerätetest. Vollständige CI-Abnahme noch ausstehend.
+
+---
+
 ## 21.10.2026 – Manuelle Mehrgegner-Zugfolge (0.8.28+78, CI offen)
 
 - Verifizierte Basis: `main` Version 0.8.27+77 (PR #59, Flutter und Android/Alpha-CI erfolgreich).
