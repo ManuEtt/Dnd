@@ -1,3 +1,14 @@
+## 21.10.2026 – Rabenwacht: alternative Fertigkeitsproben (Entwicklungsbranch)
+
+- Vorheriger bestätigter Stand: PR #65 erfolgreich in `main` integriert; Änderungen auf `feature/rabenwacht-alternative-checks-20261021`.
+- Implementiert: Untersuchung von Bauspuren in der Turmruine (Nachforschungen SG13), Statik der Kryptatreppe (Nachforschungen SG12), historisches Lösungsrätsel an der dreizehnten Tür (Nachforschungen SG14 nur bei belegten Archivrecherchen); bestehende Lösungswege bleiben bestehen.
+- Keine eigens erfundenen SRD-Boni. Bestehende `preparedCheck`-Sicherheitsprüfung validiert Fertigkeit, Attribut, SG, Stage und Heldenboni. Ergebnisse bleiben in normalen `Campaign.facts` gespeichert; Fehlschläge respektieren das Fail-forward-Prinzip ohne geheime Erfolgsfakten.
+- Schutz vor frei behauptetem Wirken von Zaubern (kein impliziter Zauberplatzverbrauch und keine Pseudowirkung).
+- Neue Datei `app/test/rabenwacht_alternative_checks_test.dart`; vollständige Flutter-CI, Debug-APK und Gerätetest sind **noch offen**.
+- Nächster Schritt: echte Weltzauber-/Klassenaktions-Unterstützung über bestätigte, ressourcenwirksame Regelaktionen statt textbasiertem Simulieren.
+
+---
+
 ## 21.10.2026 – Rabenwacht NPC-Gedächtnis und alternative Route (Entwicklungsbranch)
 
 - Branch: `feature/rabenwacht-npc-memory-20261021` auf Basis von PR #64. Der Hauptbranch wird erst nach CI-Abnahme geändert.
