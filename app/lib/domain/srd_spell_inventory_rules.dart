@@ -5,7 +5,10 @@ import 'srd_spell_preflight_rules.dart';
 /// A specific, manually verified inventory stack that a spell consumes.
 /// IDs identify inventory instances, never names or free-text descriptions.
 class SrdConsumedMaterial {
-  const SrdConsumedMaterial({required this.inventoryId, required this.quantity});
+  const SrdConsumedMaterial({
+    required this.inventoryId,
+    required this.quantity,
+  });
 
   final String inventoryId;
   final int quantity;
@@ -70,7 +73,9 @@ class SrdSpellInventoryRules {
       if (item.id == hero.equippedWeaponId ||
           item.id == hero.equippedArmorId ||
           item.id == hero.equippedShieldId) {
-        throw StateError('Ausgerüstete Gegenstände können nicht verbraucht werden.');
+        throw StateError(
+          'Ausgerüstete Gegenstände können nicht verbraucht werden.',
+        );
       }
       if (item.quantity < 1 || amount > item.quantity) {
         throw StateError('Nicht genügend bestätigtes Material im Inventar.');
