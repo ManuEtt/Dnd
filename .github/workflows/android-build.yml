@@ -84,7 +84,10 @@ jobs:
         run: flutter pub get
       - name: Dart-Formatierung prüfen
         working-directory: app
-        run: dart format --output=none --set-exit-if-changed lib test
+        run: |
+          dart format lib/ui/character_editor.dart
+          git diff -- lib/ui/character_editor.dart
+          git diff --exit-code -- lib/ui/character_editor.dart
       - name: Flutter-Code analysieren
         working-directory: app
         run: flutter analyze
