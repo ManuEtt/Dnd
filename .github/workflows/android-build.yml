@@ -32,6 +32,8 @@ jobs:
     steps:
       - name: Repository auschecken
         uses: actions/checkout@v4
+      - name: Fantasy-Buttons ohne externe Abhängigkeiten generieren
+        run: python3 scripts/generate_fantasy_buttons.py
       - name: Upload-Struktur und Projektdateien prüfen
         run: |
           if [ -f scripts/verify_project.py ]; then
