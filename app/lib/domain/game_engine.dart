@@ -57,6 +57,7 @@ class GameEngine {
   late final StoryCampaignEngine _story = StoryCampaignEngine(
     nextId: _id,
     clock: _clock,
+    commit: _commit,
   );
 
   GameUpdate replaceNarration(
@@ -221,137 +222,37 @@ class GameEngine {
     );
   }
 
-  /// A rejected offer has no mechanical side effects.
-  GameUpdate rejectAdventure(Campaign campaign) {
-    final offer = campaign.adventureOffer;
-    if (offer == null) {
-      throw const FormatException('Es gibt keinen offenen Vorschlag.');
-    }
-    return _commit(
-      campaign,
-      campaign.copyWith(adventureOffer: null),
-      'Du entscheidest dich gegen ${offer.title}. Die Welt bleibt offen für andere Wege.',
-      type: 'adventure.rejected',
-      payload: {'offerId': offer.id},
-    );
-  }
+  GameUpdate rejectAdventure(Campaign campaign) =>
+      _story.rejectAdventure(campaign);
 
-  /// Saves a bounded summary of structured, already confirmed world state.
-  /// Free player speech and generated prose are intentionally not sources.
-  GameUpdate saveSessionRecap(Campaign campaign) {
-    if (campaign.sessionRecaps.length >= 60) {
-      throw const FormatException('Maximal 60 Sitzungsrückblicke möglich.');
-    }
-    final summary = MemoryEngine.buildSessionSummary(campaign);
-    final recap = SessionRecap(
-      id: _id('recap'),
-      title: 'Rückblick ${campaign.sessionRecaps.length + 1}',
-      summary: summary,
-      createdAt: _clock(),
-    );
-    return _commit(
-      campaign,
-      campaign.copyWith(sessionRecaps: [...campaign.sessionRecaps, recap]),
-      'Ein neuer Sitzungsrückblick wurde im Tagebuch bestätigt und gespeichert.',
-      type: 'memory.sessionRecapSaved',
-      payload: {'recapId': recap.id},
-    );
-  }
+  GameUpdate saveSessionRecap(Campaign campaign) =>
+      _story.saveSessionRecap(campaign);
 
-  /// Relationship changes are explicit editorial choices, never AI actions.
   GameUpdate recordNpcRelationship(
     Campaign campaign, {
     required String npcId,
     required String relationship,
     required String note,
-  }) {
-    final npc = campaign.npcs.where((entry) => entry.id == npcId).toList();
-    if (npc.length != 1) {
-      throw const FormatException('Der ausgewählte NPC existiert nicht.');
-    }
-    final normalized = relationship.trim();
-    final description = note.trim();
-    if (normalized.isEmpty ||
-        normalized.length > 80 ||
-        description.isEmpty ||
-        description.length > 500) {
-      throw const FormatException(
-        'Beziehung (1–80 Zeichen) und Notiz (1–500 Zeichen) angeben.',
-      );
-    }
-    if (campaign.npcRelationshipNotes.length >= 300) {
-      throw const FormatException('Maximal 300 NPC-Notizen möglich.');
-    }
-    final entry = NpcRelationshipNote(
-      id: _id('npc-note'),
-      npcId: npcId,
-      relationship: normalized,
-      note: description,
-      recordedAt: _clock(),
-    );
-    return _commit(
-      campaign,
-      campaign.copyWith(
-        npcs: [
-          for (final current in campaign.npcs)
-            current.id == npcId
-                ? current.copyWith(relationship: normalized)
-                : current,
-        ],
-        npcRelationshipNotes: [...campaign.npcRelationshipNotes, entry],
-      ),
-      'Deine bestätigte Beziehungsnotiz zu ${npc.single.name} wurde gespeichert.',
-      type: 'memory.npcRelationshipRecorded',
-      payload: {'npcId': npcId, 'noteId': entry.id},
-    );
-  }
+  }) => _story.recordNpcRelationship(
+    campaign,
+    npcId: npcId,
+    relationship: relationship,
+    note: note,
+  );
 
-  /// Story threads are leads, not mechanically rewarded quests.
   GameUpdate saveStoryThread(
     Campaign campaign, {
     String? threadId,
     required String title,
     required String description,
     required String status,
-  }) {
-    final cleanTitle = title.trim();
-    final cleanDescription = description.trim();
-    if (cleanTitle.isEmpty ||
-        cleanTitle.length > 120 ||
-        cleanDescription.length > 1000 ||
-        !const ['open', 'resolved', 'abandoned'].contains(status)) {
-      throw const FormatException(
-        'Titel, Notiz oder Handlungsstatus ungültig.',
-      );
-    }
-    if (threadId == null && campaign.storyThreads.length >= 100) {
-      throw const FormatException('Maximal 100 Handlungsstränge möglich.');
-    }
-    if (threadId != null &&
-        campaign.storyThreads.where((thread) => thread.id == threadId).length !=
-            1) {
-      throw const FormatException('Handlungsstrang nicht gefunden.');
-    }
-    final thread = StoryThread(
-      id: threadId ?? _id('thread'),
-      title: cleanTitle,
-      description: cleanDescription,
-      status: status,
-    );
-    final threads = threadId == null
-        ? [...campaign.storyThreads, thread]
-        : [
-            for (final old in campaign.storyThreads)
-              old.id == threadId ? thread : old,
-          ];
-    return _commit(
-      campaign,
-      campaign.copyWith(storyThreads: threads),
-      'Der Handlungsstrang „${thread.title}“ wurde im Tagebuch gespeichert.',
-      type: 'memory.storyThreadSaved',
-      payload: {'threadId': thread.id, 'status': status},
-    );
-  }
+  }) => _story.saveStoryThread(
+    campaign,
+    threadId: threadId,
+    title: title,
+    description: description,
+    status: status,
+  );
 
   GameUpdate rollDice(Campaign campaign, String expression) {
     final result = dice.roll(expression);
