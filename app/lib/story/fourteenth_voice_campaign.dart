@@ -166,15 +166,15 @@ class FourteenthVoiceStoryModule {
       if (campaign.facts['voice:chronistMet'] == 'true')
         'Der Chronist behauptet, Erinnerungen verändern zu können.',
       if (campaign.facts['voice:termsQuestioned'] == 'true')
-        'Der Chronist kann Erinnerungen verändern, nicht Vergangenes ungeschehen machen.',
+        'Der Chronist verändert Erinnerungen, nicht die Vergangenheit.',
       if (campaign.facts['voice:chronistChoice'] == 'refused')
         'Du hast das Angebot des Chronisten abgelehnt.',
       if (campaign.facts['voice:chronistChoice'] == 'feigned')
         'Du hast dem Chronisten nur scheinbar zugestimmt.',
       if (campaign.facts['voice:chronistChoice'] == 'accepted')
-        'Du hast einen gefährlichen Preis zugesagt; die Folgen sind noch offen.',
+        'Du hast einen gefährlichen Preis zugesagt; seine Folgen sind offen.',
       if (campaign.facts['voice:oathPageFound'] == 'true')
-        'Das vierzehnte Eidblatt zeigt eine unterbrochene Kette gegenseitiger Zeugen.',
+        'Das vierzehnte Eidblatt zeigt eine beschädigte Zeugenfolge.',
       if (campaign.facts['voice:nameCustody'] == 'liora')
         'Liora verwahrt die Abschrift für den Rat der Zeugen.',
       if (campaign.facts['voice:nameCustody'] == 'hero')
