@@ -1,9 +1,7 @@
-/// Public story-only entrypoint. Worldbuilding implementations and AI
-/// validations live behind CampaignStoryEngine, not inside the rule kernel.
+/// Public story-only entrypoint for independently developed campaigns.
 ///
-/// Existing Rabenwacht files remain at their legacy path until the separate
-/// narrative branch merges; campaign writers can use this stable facade.
+/// Narrative state transitions are owned by StoryCampaignEngine; D&D rules
+/// are not exported. RabenwachtCampaign stays at its legacy domain path until
+/// the validated story boundary can fully absorb that implementation.
 export 'story_campaign_engine.dart';
 export '../domain/ai_story.dart' show AiStoryPlan, AiStoryStep;
-// RabenwachtCampaign remains at its legacy path until the campaign
-// module is moved behind the validated story boundary.
