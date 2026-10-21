@@ -152,33 +152,23 @@ class _SrdFireballGridPreviewDialogState
                 : candidate.centerWithinRadius
                 ? scheme.secondaryContainer
                 : scheme.tertiaryContainer;
+            final description = caster
+                ? 'Figur'
+                : origin
+                ? 'Feuerball-Ursprung'
+                : wall
+                ? 'Vollhindernis'
+                : candidate == null
+                ? 'Außerhalb der Vorschau'
+                : uncertain
+                ? 'Deckung ungeklärt'
+                : candidate.centerWithinRadius
+                ? 'Mittelpunkt im 2D-Radius'
+                : 'Mögliches Randfeld';
             return Tooltip(
-              message:
-                  (caster
-                      ? 'Figur'
-                      : origin
-                      ? 'Feuerball-Ursprung'
-                      : wall
-                      ? 'Vollhindernis'
-                      : candidate == null
-                      ? 'Außerhalb der Vorschau'
-                      : uncertain
-                      ? 'Deckung ungeklärt'
-                      : candidate.centerWithinRadius
-                      ? 'Mittelpunkt im 2D-Radius'
-                      : 'Mögliches Randfeld') +
-                  ' (' +
-                  cell.column.toString() +
-                  ', ' +
-                  cell.row.toString() +
-                  ')',
+              message: '$description (${cell.column}, ${cell.row})',
               child: InkWell(
-                key: ValueKey(
-                  'fireball-cell-' +
-                      cell.column.toString() +
-                      '-' +
-                      cell.row.toString(),
-                ),
+                key: ValueKey('fireball-cell-${cell.column}-${cell.row}'),
                 onTap: () => _edit(cell),
                 child: Container(
                   margin: const EdgeInsets.all(1),
@@ -264,7 +254,7 @@ class _SrdFireballGridPreviewDialogState
                 children: [
                   for (final tool in _PreviewTool.values)
                     ChoiceChip(
-                      key: ValueKey('fireball-tool-' + tool.name),
+                      key: ValueKey('fireball-tool-${tool.name}'),
                       selected: _tool == tool,
                       label: Text(switch (tool) {
                         _PreviewTool.caster => 'S: Figur',
@@ -299,10 +289,8 @@ class _SrdFireballGridPreviewDialogState
               ),
               if (_result != null) ...[
                 Text(
-                  count.toString() +
-                      ' mögliche 2D-Bodenfelder, ' +
-                      uncertain.toString() +
-                      ' mit ungeklärtem Mittelpunktstrahl.',
+                  '$count mögliche 2D-Bodenfelder, '
+                  '$uncertain mit ungeklärtem Mittelpunktstrahl.',
                   key: const ValueKey('fireball-preview-summary'),
                 ),
                 const Text(
