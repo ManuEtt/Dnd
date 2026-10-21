@@ -18,7 +18,8 @@ void main() {
 
   test('Mauerwerk erlaubt Nachforschungen statt Arkane Kunde', () {
     var campaign = scene('ruins');
-    campaign = engine.act(campaign, 'Ich untersuche die Steinfügen im Mauerwerk.')
+    campaign = engine
+        .act(campaign, 'Ich untersuche die Steinfügen im Mauerwerk.')
         .campaign;
     expect(campaign.pendingRoll?.targetId, 'rabenwacht:ruins');
     expect(campaign.pendingRoll?.targetName, 'intelligence|Nachforschungen');
@@ -120,10 +121,9 @@ void main() {
   test('Gesprochene Zauberwirkung verändert weder Helden noch Geschichte', () {
     final campaign = scene('ruins');
     final before = campaign.toJson();
-    final result = engine.act(
-      campaign,
-      'Ich wirke Magie entdecken auf die Runen.',
-    ).campaign;
+    final result = engine
+        .act(campaign, 'Ich wirke Magie entdecken auf die Runen.')
+        .campaign;
     expect(result.storyBible['stage'], 'ruins');
     expect(result.pendingRoll, isNull);
     expect(result.hero.toJson(), campaign.hero.toJson());
