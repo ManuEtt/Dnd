@@ -80,6 +80,12 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
+      - name: Temporärer Dart-Formatabgleich Epilog
+        working-directory: app
+        run: |
+          dart format lib/story/fourteenth_voice_epilogue.dart test/rabenwacht_fourteenth_voice_epilogue_test.dart
+          git diff -- lib/story/fourteenth_voice_epilogue.dart test/rabenwacht_fourteenth_voice_epilogue_test.dart
+          exit 1
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
