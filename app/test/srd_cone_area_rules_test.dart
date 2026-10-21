@@ -101,10 +101,7 @@ void main() {
       lengthFeet: 15,
       direction: SrdConeDirection.northEast,
     );
-    expect(
-      northEast.at(const SrdGridCell(17, 13))!.centerWithinCone,
-      isTrue,
-    );
+    expect(northEast.at(const SrdGridCell(17, 13))!.centerWithinCone, isTrue);
     expect(northEast.at(const SrdGridCell(13, 17)), isNull);
     expect(northEast.at(const SrdGridCell(18, 13)), isNotNull);
   });
@@ -128,19 +125,10 @@ void main() {
   });
 
   test('unconfirmed map, blocking origin and invalid length fail closed', () {
-    expect(
-      () => _east(_map(confirmed: false)),
-      throwsFormatException,
-    );
-    expect(
-      () => _east(_map(blockers: const [_origin])),
-      throwsFormatException,
-    );
+    expect(() => _east(_map(confirmed: false)), throwsFormatException);
+    expect(() => _east(_map(blockers: const [_origin])), throwsFormatException);
     for (final length in [-5, 0, 4, 6, 125]) {
-      expect(
-        () => _east(_map(), length: length),
-        throwsFormatException,
-      );
+      expect(() => _east(_map(), length: length), throwsFormatException);
     }
     expect(
       () => SrdConeAreaRules.preview(
@@ -163,15 +151,15 @@ void main() {
     expect(cone.candidates, isNotEmpty);
     expect(
       cone.candidates.every(
-        (c) => c.cell.column >= 0 && c.cell.row >= 0 &&
-            c.cell.column < 3 && c.cell.row < 3,
+        (c) =>
+            c.cell.column >= 0 &&
+            c.cell.row >= 0 &&
+            c.cell.column < 3 &&
+            c.cell.row < 3,
       ),
       isTrue,
     );
-    expect(
-      () => cone.candidates.clear(),
-      throwsUnsupportedError,
-    );
+    expect(() => cone.candidates.clear(), throwsUnsupportedError);
     expect(cone.at(const SrdGridCell(-1, -1)), isNull);
   });
 
@@ -235,22 +223,25 @@ void main() {
     );
   });
 
-  test('spell without independently verified cone metadata cannot infer one', () {
-    final fireball = catalog.find('Fireball')!;
-    final request = SrdSpellGridTargetRequest(
-      map: _map(),
-      caster: const SrdGridCell(0, 0),
-      origin: const SrdGridCell(15, 15),
-    );
-    expect(
-      () => SrdConeAreaRules.previewConfirmedSpell(
-        spell: fireball,
-        gridTarget: request,
-        coneShapeVerifiedFromEffect: false,
-        verifiedEffectLengthFeet: 15,
-        direction: SrdConeDirection.east,
-      ),
-      throwsFormatException,
-    );
-  });
+  test(
+    'spell without independently verified cone metadata cannot infer one',
+    () {
+      final fireball = catalog.find('Fireball')!;
+      final request = SrdSpellGridTargetRequest(
+        map: _map(),
+        caster: const SrdGridCell(0, 0),
+        origin: const SrdGridCell(15, 15),
+      );
+      expect(
+        () => SrdConeAreaRules.previewConfirmedSpell(
+          spell: fireball,
+          gridTarget: request,
+          coneShapeVerifiedFromEffect: false,
+          verifiedEffectLengthFeet: 15,
+          direction: SrdConeDirection.east,
+        ),
+        throwsFormatException,
+      );
+    },
+  );
 }
