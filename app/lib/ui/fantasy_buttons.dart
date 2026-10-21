@@ -188,6 +188,7 @@ class _FantasyButtonState extends State<FantasyButton> {
 /// The background is decorative; callers must supply their own InkWell.
 class FantasyButtonSurface extends StatelessWidget {
   const FantasyButtonSurface({
+    super.key,
     required this.style,
     required this.state,
     required this.square,
