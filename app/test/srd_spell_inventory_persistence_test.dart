@@ -98,66 +98,65 @@ void main() {
     await directory.delete(recursive: true);
   });
 
-  test('single controller commit persists slot, material, journal and replay',
-      () async {
-    final initial = _campaign();
-    await repository.saveCampaign(initial);
-    final controller = GameController(repository: repository);
-    try {
-      await controller.openCampaign(initial.id);
-      final approved = _plan(controller.currentCampaign!.hero, spell);
-      await controller.commitConfirmedSpellMaterialCast(
-        campaignId: initial.id,
-        expectedRevision: 0,
-        plan: approved,
-        effectResolvedSeparatelyConfirmed: true,
-        materialIdentityAndQuantityConfirmed: true,
-        consumedMaterials: _materials,
-      );
-      expect(controller.error, isNull);
-      final changed = controller.currentCampaign!;
-      expect(changed.revision, 1);
-      expect(changed.hero.spentSpellSlots, {'1': 1});
-      expect(changed.hero.inventory.first.quantity, 1);
-      expect(changed.hero.inventory.last.id, 'travel-rope');
-      expect(changed.hero.concentratingOn, spell.name);
-      expect(changed.events, hasLength(1));
-      expect(changed.events.single.type, 'spell.materialsCommitted');
-      expect(changed.events.single.payload['spell'], spell.name);
-      expect(changed.events.single.payload['slotLevel'], 1);
-      expect(
-        changed.events.single.payload['consumedMaterials'],
-        [
+  test(
+    'single controller commit persists slot, material, journal and replay',
+    () async {
+      final initial = _campaign();
+      await repository.saveCampaign(initial);
+      final controller = GameController(repository: repository);
+      try {
+        await controller.openCampaign(initial.id);
+        final approved = _plan(controller.currentCampaign!.hero, spell);
+        await controller.commitConfirmedSpellMaterialCast(
+          campaignId: initial.id,
+          expectedRevision: 0,
+          plan: approved,
+          effectResolvedSeparatelyConfirmed: true,
+          materialIdentityAndQuantityConfirmed: true,
+          consumedMaterials: _materials,
+        );
+        expect(controller.error, isNull);
+        final changed = controller.currentCampaign!;
+        expect(changed.revision, 1);
+        expect(changed.hero.spentSpellSlots, {'1': 1});
+        expect(changed.hero.inventory.first.quantity, 1);
+        expect(changed.hero.inventory.last.id, 'travel-rope');
+        expect(changed.hero.concentratingOn, spell.name);
+        expect(changed.events, hasLength(1));
+        expect(changed.events.single.type, 'spell.materialsCommitted');
+        expect(changed.events.single.payload['spell'], spell.name);
+        expect(changed.events.single.payload['slotLevel'], 1);
+        expect(changed.events.single.payload['consumedMaterials'], [
           {'inventoryId': 'water-confirmed', 'quantity': 1},
-        ],
-      );
+        ]);
 
-      final durable = (await repository.getCampaign(initial.id))!;
-      expect(durable.toJson(), changed.toJson());
-      final replayed = await repository.reconstructCampaign(
-        initial.id,
-        revision: 1,
-      );
-      expect(replayed!.toJson(), changed.toJson());
+        final durable = (await repository.getCampaign(initial.id))!;
+        expect(durable.toJson(), changed.toJson());
+        final replayed = await repository.reconstructCampaign(
+          initial.id,
+          revision: 1,
+        );
+        expect(replayed!.toJson(), changed.toJson());
 
-      await controller.commitConfirmedSpellMaterialCast(
-        campaignId: initial.id,
-        expectedRevision: 0,
-        plan: approved,
-        effectResolvedSeparatelyConfirmed: true,
-        materialIdentityAndQuantityConfirmed: true,
-        consumedMaterials: _materials,
-      );
-      expect(controller.error, isNotNull);
-      expect(controller.currentCampaign!.toJson(), changed.toJson());
-      expect(
-        (await repository.getCampaign(initial.id))!.toJson(),
-        changed.toJson(),
-      );
-    } finally {
-      controller.dispose();
-    }
-  });
+        await controller.commitConfirmedSpellMaterialCast(
+          campaignId: initial.id,
+          expectedRevision: 0,
+          plan: approved,
+          effectResolvedSeparatelyConfirmed: true,
+          materialIdentityAndQuantityConfirmed: true,
+          consumedMaterials: _materials,
+        );
+        expect(controller.error, isNotNull);
+        expect(controller.currentCampaign!.toJson(), changed.toJson());
+        expect(
+          (await repository.getCampaign(initial.id))!.toJson(),
+          changed.toJson(),
+        );
+      } finally {
+        controller.dispose();
+      }
+    },
+  );
 
   test('state and journal survive SQLite close and reopen', () async {
     final initial = _campaign();
@@ -186,76 +185,83 @@ void main() {
     expect(loaded.events, hasLength(1));
   });
 
-  test('missing resources or unverified effect never commit a partial event',
-      () async {
-    final initial = _campaign();
-    await repository.saveCampaign(initial);
-    final controller = GameController(repository: repository);
-    try {
-      await controller.openCampaign(initial.id);
-      final approved = _plan(initial.hero, spell);
-      await controller.commitConfirmedSpellMaterialCast(
-        campaignId: initial.id,
-        expectedRevision: 0,
-        plan: approved,
-        effectResolvedSeparatelyConfirmed: false,
-        materialIdentityAndQuantityConfirmed: true,
-        consumedMaterials: _materials,
-      );
-      expect(controller.error, isNotNull);
-      await controller.commitConfirmedSpellMaterialCast(
-        campaignId: initial.id,
-        expectedRevision: 0,
-        plan: approved,
-        effectResolvedSeparatelyConfirmed: true,
-        materialIdentityAndQuantityConfirmed: true,
-        consumedMaterials: const [
-          SrdConsumedMaterial(inventoryId: 'water-confirmed', quantity: 3),
-        ],
-      );
-      expect(controller.error, isNotNull);
-      expect(controller.currentCampaign!.toJson(), initial.toJson());
-      expect((await repository.getCampaign(initial.id))!.toJson(), initial.toJson());
-      expect(
-        await repository.reconstructCampaign(initial.id, revision: 1),
-        isNull,
-      );
-    } finally {
-      controller.dispose();
-    }
-  });
+  test(
+    'missing resources or unverified effect never commit a partial event',
+    () async {
+      final initial = _campaign();
+      await repository.saveCampaign(initial);
+      final controller = GameController(repository: repository);
+      try {
+        await controller.openCampaign(initial.id);
+        final approved = _plan(initial.hero, spell);
+        await controller.commitConfirmedSpellMaterialCast(
+          campaignId: initial.id,
+          expectedRevision: 0,
+          plan: approved,
+          effectResolvedSeparatelyConfirmed: false,
+          materialIdentityAndQuantityConfirmed: true,
+          consumedMaterials: _materials,
+        );
+        expect(controller.error, isNotNull);
+        await controller.commitConfirmedSpellMaterialCast(
+          campaignId: initial.id,
+          expectedRevision: 0,
+          plan: approved,
+          effectResolvedSeparatelyConfirmed: true,
+          materialIdentityAndQuantityConfirmed: true,
+          consumedMaterials: const [
+            SrdConsumedMaterial(inventoryId: 'water-confirmed', quantity: 3),
+          ],
+        );
+        expect(controller.error, isNotNull);
+        expect(controller.currentCampaign!.toJson(), initial.toJson());
+        expect(
+          (await repository.getCampaign(initial.id))!.toJson(),
+          initial.toJson(),
+        );
+        expect(
+          await repository.reconstructCampaign(initial.id, revision: 1),
+          isNull,
+        );
+      } finally {
+        controller.dispose();
+      }
+    },
+  );
 
-  test('concurrent stale SQLite writer cannot overwrite latest revision',
-      () async {
-    final initial = _campaign();
-    await repository.saveCampaign(initial);
-    final controller = GameController(repository: repository);
-    try {
-      await controller.openCampaign(initial.id);
-      final approved = _plan(initial.hero, spell);
-      await repository.saveCampaign(
-        initial.copyWith(revision: 1, scene: 'Anderer bestätigter Zug.'),
-      );
-      await controller.commitConfirmedSpellMaterialCast(
-        campaignId: initial.id,
-        expectedRevision: 0,
-        plan: approved,
-        effectResolvedSeparatelyConfirmed: true,
-        materialIdentityAndQuantityConfirmed: true,
-        consumedMaterials: _materials,
-      );
-      expect(controller.error, isNotNull);
-      expect(controller.currentCampaign!.revision, 0);
-      final durable = (await repository.getCampaign(initial.id))!;
-      expect(durable.revision, 1);
-      expect(durable.scene, 'Anderer bestätigter Zug.');
-      expect(durable.hero.spentSpellSlots, isEmpty);
-      expect(durable.hero.inventory.first.quantity, 2);
-      expect(durable.events, isEmpty);
-    } finally {
-      controller.dispose();
-    }
-  });
+  test(
+    'concurrent stale SQLite writer cannot overwrite latest revision',
+    () async {
+      final initial = _campaign();
+      await repository.saveCampaign(initial);
+      final controller = GameController(repository: repository);
+      try {
+        await controller.openCampaign(initial.id);
+        final approved = _plan(initial.hero, spell);
+        await repository.saveCampaign(
+          initial.copyWith(revision: 1, scene: 'Anderer bestätigter Zug.'),
+        );
+        await controller.commitConfirmedSpellMaterialCast(
+          campaignId: initial.id,
+          expectedRevision: 0,
+          plan: approved,
+          effectResolvedSeparatelyConfirmed: true,
+          materialIdentityAndQuantityConfirmed: true,
+          consumedMaterials: _materials,
+        );
+        expect(controller.error, isNotNull);
+        expect(controller.currentCampaign!.revision, 0);
+        final durable = (await repository.getCampaign(initial.id))!;
+        expect(durable.revision, 1);
+        expect(durable.scene, 'Anderer bestätigter Zug.');
+        expect(durable.hero.spentSpellSlots, isEmpty);
+        expect(durable.hero.inventory.first.quantity, 2);
+        expect(durable.events, isEmpty);
+      } finally {
+        controller.dispose();
+      }
+    },
+  );
 
   test('open dice and combat state reject generic material booking', () {
     final engine = GameEngine();
