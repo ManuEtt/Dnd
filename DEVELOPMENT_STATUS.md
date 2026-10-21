@@ -1,3 +1,13 @@
+## 21.10.2026 – Rabenwacht: Akt VIII, Rat der Zeugen und drei Finalwege (CI offen)
+
+- **IMPLEMENTIERT (Featurebranch):** Eigenes Storymodul `app/lib/story/fourteenth_voice_act8.dart`. Spielbarer Übergang aus dem belegten Akt-VII-Blatt zum Rat; Prüfung dreier unabhängiger Akt-VI-Ermittlungsbelege oder bewusste, riskante öffentliche Ersatzzeugenaussage bei genau zwei echten Belegen; freier Rückweg zur dritten Spur.
+- **IMPLEMENTIERT:** Alternativen `voice-end-oath`, `voice-end-archive` (nur drei gesicherte Belege) und `voice-end-accord`. Vier ursprüngliche Enden, Lioras Verwahrung und Chronistenentscheidung verändern Szenentexte. Unbestätigte Opferbuchung findet nicht statt; einmaliger Abschluss ohne neue XP, Zauber- oder Kampfregeln.
+- **TESTS ERSTELLT, CI NOCH OFFEN:** `app/test/rabenwacht_fourteenth_voice_act8_test.dart`; Grenzen, Spoiler, alternative Wege, Save-Roundtrip und unveränderte Heldenwerte. Keine Behauptung grüner Flutter-/Android-CI vor deren tatsächlichem Lauf.
+- **NICHT GETESTET:** Android-Gerät und tatsächliche Spieldauer. **NICHT IMPLEMENTIERT:** regelkonformer Chronist-Statblock oder obligatorischer Kampf. Keine Schemaänderung.
+- Story-/Technikbeleg: `docs/RABENWACHT_AKT_VIII_IMPLEMENTIERUNG.md`.
+
+---
+
 ## 21.10.2026 – SRD-5.2.1-Ziele: geprüftes 5-Fuß-Raster und Mittelpunktstrahl (CI offen)
 
 - Ausgangslage: `main` SHA `0f0a82c`, gesamter Build `39572178736` **grün**, offener Story-PR nicht angerührt.
