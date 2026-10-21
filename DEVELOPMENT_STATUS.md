@@ -1,3 +1,13 @@
+## 21.10.2026 – SRD-Feuerball: interaktives Kartenoverlay (CI offen)
+
+- **IMPLEMENTIERT:** In der Abenteueransicht kann ein getrenntes, read-only `SrdFireballGridPreviewDialog` geöffnet werden. Figuren-/Ursprungsfeld und bestätigte Vollhindernisse sind interaktiv auf 12×12, 20×20 oder 32×32 Feldern markierbar. Jede Terrainänderung widerruft die Kartenfreigabe und verwirft veraltete Vorschauen.
+- **IMPLEMENTIERT:** Es werden der SRD-Feuerball mit 150 Fuß Reichweite zum Ursprung und eine 20-Fuß-Kugelvorschau kombiniert; mögliche Randfelder und offene Deckungsfragen bleiben ausdrücklich unbestätigte Effekte. Der Dialog verändert keinen Kampf-/Charakter-/SQLite-Zustand.
+- **TESTS ERSTELLT, CI NOCH OFFEN:** `app/test/srd_fireball_grid_preview_dialog_test.dart` für unbestätigte Karte, Bearbeitung/Invalidierung, Hindernis zwischen Zauberndem und Ursprung, fremden Zauber und Schließen. Keine echte Android-Geräteabnahme.
+- **NOCH NICHT IMPLEMENTIERT:** Echtzeitkarten/Positionierung, tatsächliche 3D-Deckungs-/Sichtregeln, automatische Zielwirkung, Feuerball-Schadenswurf, Dex-Saves und Ressourcenbuchung über diesen Planungsdialog. `RULE-SPELLS-SPELL-AREAS-OF-EFFECT` bleibt `partial`.
+- Quelle: `docs/SRD_FIREBALL_PREVIEW_UI.md`.
+
+---
+
 ## 21.10.2026 – SRD 5.2.1: konservative Kugel-Flächenvorschau (CI offen)
 
 - **IMPLEMENTIERT:** `SrdSphereAreaRules.preview` erzeugt unveränderliche, mögliche 2D-5-Fuß-Kandidatenfelder einer separat bestätigten SRD-Kugel. Mittelpunktsabstand, mögliche Randüberlappung und offene Deckungsfragen bleiben ausdrücklich unterschiedliche Informationen. Eingaben aus unvollständigen Karten, ungültigen Radien und blockierten Ursprüngen werden gesperrt.
