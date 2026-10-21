@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/ui/character_editor.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 
 Finder field(String label) => find.widgetWithText(TextFormField, label);
 
@@ -174,7 +175,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.enterText(field('Name'), 'Seil');
       await tester.enterText(field('Anzahl'), '2');
-      await tester.tap(find.widgetWithText(FilledButton, 'Speichern'));
+      await tester.tap(find.widgetWithText(FantasyTextButton, 'Speichern'));
       await tester.pumpAndSettle();
       await save(tester);
       expect(result!.inventory.single.name, 'Seil');
@@ -211,7 +212,7 @@ void main() {
     final damageType = find.byKey(const ValueKey('item-stat-damageType'));
     await tester.ensureVisible(damageType);
     await tester.enterText(damageType, 'Hieb');
-    await tester.tap(find.widgetWithText(FilledButton, 'Speichern'));
+    await tester.tap(find.widgetWithText(FantasyTextButton, 'Speichern'));
     await tester.pumpAndSettle();
     await save(tester);
     expect(result, isNotNull);
