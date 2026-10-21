@@ -3,6 +3,7 @@ import 'package:lebendiger_spielleiter/data/srd_spell_catalog_loader.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_grid_target_rules.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_preflight_rules.dart';
+import 'package:lebendiger_spielleiter/domain/srd_spell_catalog.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_target_rules.dart';
 
 const _caster = SrdGridCell(0, 0);
@@ -32,7 +33,7 @@ SrdSpellGridTargetRequest _request(
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  late dynamic catalog;
+  late SrdSpellCatalog catalog;
 
   setUpAll(() async {
     catalog = await SrdSpellCatalogLoader.load();
