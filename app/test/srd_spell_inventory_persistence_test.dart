@@ -11,7 +11,6 @@ import 'package:lebendiger_spielleiter/domain/srd_spell_catalog.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_inventory_rules.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_preflight_rules.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_grid_target_rules.dart';
-import 'package:lebendiger_spielleiter/domain/srd_spell_target_rules.dart';
 import 'package:lebendiger_spielleiter/data/srd_spell_catalog_loader.dart';
 import 'package:lebendiger_spielleiter/services/game_controller.dart';
 
