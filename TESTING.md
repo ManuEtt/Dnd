@@ -1,3 +1,9 @@
+## Rabenwacht: konsolidierter Integrationsstand (21.10.2026, CI offen)
+
+- Drei Story-Regressionen: `rabenwacht_fourteenth_voice_act8_test.dart`, `rabenwacht_fourteenth_voice_epilogue_test.dart`, `rabenwacht_fourteenth_voice_morrow_test.dart` im `app/test`-Ordner. Sie prüfen die echte Fortsetzung aus der alten Kampagne, Entscheidungen, Begleiter, Untersuchungsbelege, unzulässige Abkürzungen, drei Enden pro Abschnitt, Speicher-Roundtrip und Helden-/Quest-Kontinuität.
+- Die neue Story nutzt keine ungesicherten Würfel-, Zauber-, XP- oder Monsteraktionen. Aktuelle Main-Codebasis einschließlich jüngster SRD-Ergänzungen wurde beibehalten.
+- **Freigabe:** Normaler GitHub-Workflow muss Format, Analyse, Flutter-Tests, Android-Debug- und Alpha-APKs sowie native Prüfungen auf der konsolidierten Branchbasis bestehen. Realgerät separat offen.
+
 ## Rabenwacht – Akt VII / Das Haus ohne Türen (21.10.2026, Tests geschrieben – nicht ausgeführt)
 
 - `app/test/rabenwacht_fourteenth_voice_act7_test.dart`: Eintritt über die echte Akt-VI-Bibliothek, Porträtvergleich, Spoilergrenze, Ablehnung/Verhandlung/Täuschung, exakte Preisbestätigung, negierte Zustimmung, Rückzug, Eidblattbeweis, unterschiedliche Verwahrung, Speicher-Roundtrip und Nicht-Abschluss der Hauptquest.
