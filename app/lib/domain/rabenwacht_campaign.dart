@@ -1015,7 +1015,10 @@ class RabenwachtCampaign {
                 'ohne Blut.“ Oswin vertraut dir die Melodie '
                 'an und bittet dich, die Wahrheit zu '
                 'den Menschen von Rabenwacht zurückzutragen. '
-                'Der Weg zum Chronistenhaus bleibt offen.',
+                '„Wenn die Schuldigen sprechen und Seren '
+                'uns vertraut, kann daraus ein Namenchor '
+                'werden“, sagt er. Der Weg zum '
+                'Chronistenhaus bleibt offen.',
             clues: {'location': 'Kapelle'},
           );
         }
@@ -1654,9 +1657,15 @@ class RabenwachtCampaign {
         }
         return RabenwachtTurn(
           c,
-          'Es gibt drei ernsthafte Möglichkeiten: '
-          'das Siegel erneuern, es zerstören oder Seren erlösen. '
-          'Du darfst frei entscheiden und weitere Fragen stellen.',
+          c.facts['hymnChoice'] == 'kept'
+              ? 'Die vierzehnte Glocke ruft nach einer Entscheidung. '
+                    'Du kannst das Siegel erneuern, zerstören, '
+                    'Seren erlösen oder versuchen, Oswins '
+                    'Namenchor mit den gesammelten Zeugnissen '
+                    'anzustimmen. Deine Entscheidung bleibt frei.'
+              : 'Es gibt drei ernsthafte Möglichkeiten: '
+                    'das Siegel erneuern, es zerstören oder Seren erlösen. '
+                    'Du darfst frei entscheiden und weitere Fragen stellen.',
         );
       default:
         return RabenwachtTurn(
