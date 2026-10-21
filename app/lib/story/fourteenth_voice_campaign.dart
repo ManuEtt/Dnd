@@ -2,6 +2,7 @@ import '../domain/models.dart';
 import 'fourteenth_voice_act7.dart';
 import 'fourteenth_voice_act8.dart';
 import 'fourteenth_voice_epilogue.dart';
+import 'fourteenth_voice_morrow.dart';
 import 'rabenwacht_campaign.dart' show RabenwachtTurn;
 import 'story_rule_port.dart';
 
@@ -207,6 +208,22 @@ class FourteenthVoiceStoryModule {
         'Der Dorfentscheid veröffentlicht getrennte Zeugnisse.',
       if (campaign.facts['voice:legacy'] == 'festival')
         'Der Dorfentscheid feiert ein gemeinsames Erinnerungsfest.',
+      if (campaign.facts['voice:morrow:started'] == 'true')
+        'Nach dem Epilog ist ein rätselhafter Brief erschienen.',
+      if (campaign.facts['voice:morrow:letterRead'] == 'true')
+        'Zwei widersprüchliche Fassungen beschreiben denselben Morgen.',
+      if (campaign.facts['voice:morrow:elda'] == 'true')
+        'Eldas Register nennt den Brief eine heutige Abschrift.',
+      if (campaign.facts['voice:morrow:tarek'] == 'true')
+        'Tarek bestätigt zwei Handschriften auf Papier aus einem Stapel.',
+      if (campaign.facts['voice:morrow:well'] == 'true')
+        'Am Brunnen sind Wachsreste am Umschlag dokumentiert.',
+      if (campaign.facts['voice:morrow:outcome'] == 'sealed')
+        'Der Brief liegt mit dokumentierter Unsicherheit versiegelt beim Rat.',
+      if (campaign.facts['voice:morrow:outcome'] == 'published')
+        'Der Brief wurde mit getrennten Quellen und Widersprüchen veröffentlicht.',
+      if (campaign.facts['voice:morrow:outcome'] == 'liora')
+        'Liora entscheidet frei, wie mit dem Brief weiter verfahren wird.',
     ];
     final remaining = campaign.quests
         .where((q) => q.id.startsWith('voice-') && q.status == 'active')
@@ -330,6 +347,9 @@ class FourteenthVoiceStoryModule {
         campaign,
         'Zuerst den offenen Würfelwurf abschließen.',
       );
+    }
+    if (FourteenthVoiceMorrow.handles(stage)) {
+      return FourteenthVoiceMorrow.advance(campaign, input);
     }
     if (FourteenthVoiceEpilogue.handles(stage)) {
       return FourteenthVoiceEpilogue.advance(campaign, input);
