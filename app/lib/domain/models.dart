@@ -2022,6 +2022,7 @@ class Campaign {
     manualTurnQueue: identical(manualTurnQueue, _unchanged)
         ? (identical(encounter, _unchanged) ||
                   (encounter is Encounter &&
+                      !encounter.isFinished &&
                       encounter.id == this.manualTurnQueue?.encounterId)
               ? this.manualTurnQueue
               : null)
