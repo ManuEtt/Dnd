@@ -1,3 +1,11 @@
+## 21.10.2026 – SRD 5.2.1 Kegelfläche auf 5-Fuß-Raster (CI offen)
+
+- **IMPLEMENTIERT:** `SrdConeAreaRules` als deterministische, read-only 2D-Kandidatenauswahl für Kegel in acht ausdrücklich ausgewählten Richtungen; je Feld geometrische Mittelpunktprüfung, mögliche Randüberlappung und Deckungsprüfbedarf. Exakte Reichweite des Zauberursprungs und separat bestätigte Kegellänge werden auseinandergehalten.
+- **TESTS ERSTELLT, CI NOCH OFFEN:** `app/test/srd_cone_area_rules_test.dart` mit Grenzen, Richtungen, Blockern, ungültigen/unklaren Daten und katalogisiertem `Burning Hands`. Vollständiger Flutter-/Android-Build muss vor einem Merge grün sein.
+- **NOCH NICHT IMPLEMENTIERT:** frei drehbarer oder 3D-Kegel, tatsächliche Ziel-/Deckungsentscheidung, Kartenerfassung, Rettungswürfe und automatischer Schaden. SRD-Flächen/Ziele/Deckung bleiben `partial`; Dokumentation `docs/SRD_CONE_AOE_PREVIEW.md`.
+
+---
+
 ## 21.10.2026 – Rabenwacht: Akt VIII, Epilog und Brief von Morgen (konsolidierter Integrationsbranch)
 
 - **Implementiert:** Rat der Zeugen mit Belegschwelle und drei Enden; optionaler Epilog mit Elda, Tarek und Liora sowie drei Dorfvermächtnissen; anschließende optionale Nachgeschichte „Der Brief von Morgen“ mit drei unabhängigen Ermittlungsorten und drei Schlusswegen.
