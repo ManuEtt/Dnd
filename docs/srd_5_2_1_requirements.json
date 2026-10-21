@@ -7075,10 +7075,17 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Spells",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_spell_target_rules_test.dart",
+        "app/test/srd_spell_inventory_persistence_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/srd_spell_target_rules.dart",
+        "app/lib/domain/srd_spell_preflight_rules.dart",
+        "app/lib/domain/game_engine.dart"
+      ],
+      "note": "Teilprüfung der bestätigten Zauberursprungsentfernung: Self, Touch, feste Fuß- und Meilenwerte; unbekannte/Sonderreichweiten werden abgelehnt. Automatische Positions-, Hindernis- und Spezialreichweitenregeln noch offen."
     },
     {
       "id": "RULE-SPELLS-SPELL-TARGETS",
@@ -7090,10 +7097,17 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Spells",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_spell_target_rules_test.dart",
+        "app/test/srd_spell_inventory_persistence_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/srd_spell_target_rules.dart",
+        "app/lib/domain/srd_spell_preflight_rules.dart",
+        "app/lib/domain/game_engine.dart"
+      ],
+      "note": "Teilprüfung von manuell bestätigtem freien Weg und der Berührungsreichweite; nur boolesche Zielangaben reichen für persistierten generischen Zauberressourcen-Commit nicht mehr. Konkrete Kreaturen-/Objektziele, Wirkungsbereiche, Sicht- und Deckungsgeometrie sowie Zielgültigkeit noch offen."
     },
     {
       "id": "RULE-SPELLS-SPELL-AREAS-OF-EFFECT",

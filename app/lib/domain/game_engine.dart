@@ -453,6 +453,14 @@ class GameEngine {
         'Offene Würfe und laufende Kämpfe benötigen eine eigene Zauberaktion.',
       );
     }
+    // A persistent generic spell resource event must carry reviewed spatial
+    // evidence, not only the legacy targetRulesConfirmed boolean.
+    final target = plan.targetAssessment;
+    if (target == null) {
+      throw const FormatException(
+        'Für die Materialbuchung fehlt die SRD-Reichweitenprüfung.',
+      );
+    }
     final result = SrdSpellInventoryRules.commitConfirmedCast(
       campaign.hero,
       plan,
@@ -470,6 +478,12 @@ class GameEngine {
       type: 'spell.materialsCommitted',
       payload: {
         'spell': result.spellName,
+        'targetOriginMode': target.mode.name,
+        'targetRange': target.range,
+        if (target.originDistanceFeet != null)
+          'targetOriginFeet': target.originDistanceFeet,
+        if (target.maxOriginDistanceFeet != null)
+          'targetMaxRangeFeet': target.maxOriginDistanceFeet,
         'castingClass': plan.castingClass,
         'slotLevel': result.slotLevel,
         'pactMagic': result.pactMagic,

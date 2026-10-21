@@ -1,3 +1,13 @@
+## 21.10.2026 – SRD 5.2.1 Zauberreichweite und Zielursprung (PR, CI offen)
+
+- Basis: letzter `main`-Workflow 39568413044 vollständig **grün** nach Material-/SQLite-Integration (PR #78).
+- **IMPLEMENTIERT:** `SrdSpellTargetRules.validateOrigin` trennt Selbstursprung, bestätigte Berührung und feste Reichweiten in Fuß/Meilen, erfordert explizit freien Pfad und weist unbestätigte oder besondere Reichweiten zurück. `SrdSpellPreflightRules` nimmt strukturierte Zielfakten optional auf. Generischer persistierter Material-/Slotcommit verlangt diese Prüfung und protokolliert Ursprung/Abstand im Journal.
+- **TESTS ERGÄNZT, CI OFFEN:** `srd_spell_target_rules_test.dart` plus erweiterte SQLite-Persistenztests. Kein behaupteter Geräte- oder vollständiger Effektabgleich.
+- **OFFEN:** automatisches Weltkoordinaten-/Sichtlinienmodell, Mehrfachziele, flächenförmige Ursprungsverschiebung, Spezialreichweiten und regelgeprüfte Einzelzauberwirkungen; keine Voll-SRD-Abdeckung. `RULE-SPELLS-SPELL-RANGE` und `RULE-SPELLS-SPELL-TARGETS` als `partial` ausgewiesen.
+- Details: `docs/SRD_SPELL_TARGET_RANGE.md`.
+
+---
+
 ## 21.10.2026 – SRD-Zaubermaterialien: Revisions-/SQLite-Integration (CI offen)
 
 - Grundlage: Materialpreflight-PR #74 und unveränderlicher Inventar-/Zauberplatz-Commit aus PR #76 sind nach vollständigem grünen GitHub-Workflow in `main` gemergt.

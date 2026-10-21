@@ -1,3 +1,11 @@
+## 21.10.2026 – Strukturierte SRD-Zauberreichweite (Entwicklungs-PR; CI offen)
+
+- Neue konservative Prüfung von Ursprung, Reichweite, Touch/Self und direktem Zielweg; Sonderreichweiten bleiben gesperrt.
+- Vor dauerhaftem Material-/Slotverbrauch ist nun ein überprüfter räumlicher Ursprung erforderlich; das SQLite-Ereignis speichert die Bestätigung. Die bestehenden dedizierten Zaubereffekte bleiben separat.
+- Neue Regressionstests mit Grenzwerten und unzulässigen Konstellationen; keine automatische Karten-/Sichtliniengeometrie behauptet.
+
+---
+
 ## 21.10.2026 – SRD-Zaubermaterialien in Kampagnenrevisionen (Integrations-PR, CI offen)
 
 - Verbinde bestätigte Material-/Slot-Regeländerung mit `GameEngine`-Audit-Ereignis `spell.materialsCommitted` und bestehendem `GameController`-SQLite-Revisions-Commit.

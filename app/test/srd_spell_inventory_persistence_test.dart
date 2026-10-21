@@ -10,6 +10,7 @@ import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_catalog.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_inventory_rules.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_preflight_rules.dart';
+import 'package:lebendiger_spielleiter/domain/srd_spell_target_rules.dart';
 import 'package:lebendiger_spielleiter/data/srd_spell_catalog_loader.dart';
 import 'package:lebendiger_spielleiter/services/game_controller.dart';
 
@@ -63,6 +64,11 @@ SrdSpellCastPlan _plan(HeroCharacter hero, SrdSpellDefinition spell) =>
       slotLevel: 1,
       actionAvailableConfirmed: true,
       targetRulesConfirmed: true,
+      targetFacts: const SrdSpellTargetFacts(
+        mode: SrdSpellOriginMode.touched,
+        withinTouchReachConfirmed: true,
+        clearPathConfirmed: true,
+      ),
       verbalComponentConfirmed: true,
       somaticComponentConfirmed: true,
       materialComponentConfirmed: true,
@@ -126,6 +132,8 @@ void main() {
         expect(changed.events.single.type, 'spell.materialsCommitted');
         expect(changed.events.single.payload['spell'], spell.name);
         expect(changed.events.single.payload['slotLevel'], 1);
+        expect(changed.events.single.payload['targetRange'], 'Touch');
+        expect(changed.events.single.payload['targetOriginMode'], 'touched');
         expect(changed.events.single.payload['consumedMaterials'], [
           {'inventoryId': 'water-confirmed', 'quantity': 1},
         ]);
@@ -262,6 +270,40 @@ void main() {
       }
     },
   );
+
+  test('boolean-only target confirmation cannot persist spell resources', () {
+    final engine = GameEngine();
+    final base = _campaign();
+    final legacyPlan = SrdSpellPreflightRules.preflight(
+      base.hero,
+      spell: spell,
+      castingClass: 'Kleriker',
+      slotLevel: 1,
+      actionAvailableConfirmed: true,
+      targetRulesConfirmed: true,
+      verbalComponentConfirmed: true,
+      somaticComponentConfirmed: true,
+      materialComponentConfirmed: true,
+      costlyComponentAvailableConfirmed: true,
+      consumedComponentReservedConfirmed: true,
+      slotTurnLimitConfirmed: true,
+    );
+    expect(legacyPlan.targetAssessment, isNull);
+    expect(
+      () => engine.commitConfirmedSpellMaterialCast(
+        base,
+        plan: legacyPlan,
+        effectResolvedSeparatelyConfirmed: true,
+        materialIdentityAndQuantityConfirmed: true,
+        consumedMaterials: _materials,
+      ),
+      throwsFormatException,
+    );
+    expect(base.hero.spentSpellSlots, isEmpty);
+    expect(base.hero.inventory.first.quantity, 2);
+    expect(base.revision, 0);
+    expect(base.events, isEmpty);
+  });
 
   test('open dice and combat state reject generic material booking', () {
     final engine = GameEngine();
