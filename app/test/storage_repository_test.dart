@@ -307,8 +307,8 @@ void main() {
   );
 
   test(
-      'Kampagnenfortschritt und Heldenarchiv sind atomar gespeichert',
-      () async {
+    'Kampagnenfortschritt und Heldenarchiv sind atomar gespeichert',
+    () async {
       final initial = fixture().copyWith(
         hero: fixture().hero.copyWith(experience: 0),
       );
@@ -339,11 +339,12 @@ void main() {
         path: databasePath,
       );
       expect((await repository.loadCharacters()).single.experience, 300);
-  });
+    },
+  );
 
   test(
-      'Altes getrenntes Heldenarchiv übernimmt neueren Kampagnenstand',
-      () async {
+    'Altes getrenntes Heldenarchiv übernimmt neueren Kampagnenstand',
+    () async {
       final campaign = fixture().copyWith(
         hero: fixture().hero.copyWith(experience: 650),
       );
@@ -374,7 +375,8 @@ void main() {
         path: databasePath,
       );
       expect((await repository.loadCharacters()).single.experience, 650);
-  });
+    },
+  );
 
   test('Ältere Kampagnen dürfen verdiente EP nicht zurücksetzen', () async {
     final hero = fixture().hero.copyWith(experience: 700);
