@@ -80,6 +80,11 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
+      - name: Temporärer Formatter-Abgleich für Akt VIII
+        working-directory: app
+        run: |
+          dart format lib/story/fourteenth_voice_act8.dart test/rabenwacht_fourteenth_voice_act8_test.dart
+          git diff -- lib/story/fourteenth_voice_act8.dart test/rabenwacht_fourteenth_voice_act8_test.dart
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
