@@ -143,7 +143,8 @@ class _FantasyButtonState extends State<FantasyButton> {
                     child: _FantasyButtonBackground(
                       style: widget.style,
                       state: state,
-                      square: iconOnly ||
+                      square:
+                          iconOnly ||
                           widget.style == FantasyButtonStyle.dice ||
                           widget.style == FantasyButtonStyle.iconGold,
                     ),
@@ -225,7 +226,8 @@ class _FantasyButtonFallback extends StatelessWidget {
   Widget build(BuildContext context) {
     final disabled = state == FantasyButtonState.disabled;
     final active =
-        state == FantasyButtonState.active || state == FantasyButtonState.pressed;
+        state == FantasyButtonState.active ||
+        state == FantasyButtonState.pressed;
     final arcane =
         style == FantasyButtonStyle.arcane || style == FantasyButtonStyle.dice;
     final wax = style == FantasyButtonStyle.wax;
