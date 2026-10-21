@@ -7078,14 +7078,16 @@
       "rule_implemented": "partial",
       "tests": [
         "app/test/srd_spell_target_rules_test.dart",
-        "app/test/srd_spell_inventory_persistence_test.dart"
+        "app/test/srd_spell_inventory_persistence_test.dart",
+        "app/test/srd_spell_grid_target_rules_test.dart"
       ],
       "code": [
         "app/lib/domain/srd_spell_target_rules.dart",
         "app/lib/domain/srd_spell_preflight_rules.dart",
-        "app/lib/domain/game_engine.dart"
+        "app/lib/domain/game_engine.dart",
+        "app/lib/domain/srd_spell_grid_target_rules.dart"
       ],
-      "note": "Teilprüfung der bestätigten Zauberursprungsentfernung: Self, Touch, feste Fuß- und Meilenwerte; unbekannte/Sonderreichweiten werden abgelehnt. Automatische Positions-, Hindernis- und Spezialreichweitenregeln noch offen."
+      "note": "Teilabdeckung: bestätigtes 5-Fuß-Kartenraster berechnet selbst diagonal-korrekte SRD-Ursprungsabstände und validiert feste Zauberreichweiten, Self und Touch. 3D, Mehrfeldziele, Spezialreichweiten und automatische Zielwirkung fehlen."
     },
     {
       "id": "RULE-SPELLS-SPELL-TARGETS",
@@ -7100,14 +7102,16 @@
       "rule_implemented": "partial",
       "tests": [
         "app/test/srd_spell_target_rules_test.dart",
-        "app/test/srd_spell_inventory_persistence_test.dart"
+        "app/test/srd_spell_inventory_persistence_test.dart",
+        "app/test/srd_spell_grid_target_rules_test.dart"
       ],
       "code": [
         "app/lib/domain/srd_spell_target_rules.dart",
         "app/lib/domain/srd_spell_preflight_rules.dart",
-        "app/lib/domain/game_engine.dart"
+        "app/lib/domain/game_engine.dart",
+        "app/lib/domain/srd_spell_grid_target_rules.dart"
       ],
-      "note": "Teilprüfung von manuell bestätigtem freien Weg und der Berührungsreichweite; nur boolesche Zielangaben reichen für persistierten generischen Zauberressourcen-Commit nicht mehr. Konkrete Kreaturen-/Objektziele, Wirkungsbereiche, Sicht- und Deckungsgeometrie sowie Zielgültigkeit noch offen."
+      "note": "Teilabdeckung: validiertes kartiertes Raster mit unveränderlichen Vollhindernissen, konservativer Mittelpunktstrahl und Vorrang vor bloßer Zielbehauptung im SRD-Preflight. Karte muss vollständig bestätigt sein. Keine Sicht-/3D-/AoE- oder vollständige Deckungsberechnung."
     },
     {
       "id": "RULE-SPELLS-SPELL-AREAS-OF-EFFECT",
@@ -7299,10 +7303,16 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Spells",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/cover_combat_rules_test.dart",
+        "app/test/srd_spell_grid_target_rules_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/cover_rules.dart",
+        "app/lib/domain/srd_spell_grid_target_rules.dart"
+      ],
+      "note": "Teilabdeckung: vorhandene CoverRules für bestätigte Deckungsgrade + 2D-Mittelpunktstrahl gegen ausdrücklich erhobene blockierende Vollhindernisse. Kein vollständiger geometrischer Deckungsgrad, keine Sicht-/3D-Berechnung und keine allgemeine automatische Zauberzielauswahl."
     },
     {
       "id": "RULE-SPELLS-COUNTERSPELL-REACTIONS",
