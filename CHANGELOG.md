@@ -1,3 +1,12 @@
+## 21.10.2026 – Rabenwacht: alternative Fertigkeitswege (CI offen)
+
+- Turmruine, Kryptatreppe und dreizehnte Tür bieten jeweils einen neuen Rechercheweg über Nachforschungen, ohne die bisherigen Arkane-Kunde-/Athletik-Proben zu ersetzen.
+- Belegprüfung vor dem historischen Lösungsweg; Ergebnisfakten unterscheiden den eingeschlagenen Weg, und Fehlschläge verraten keine Geheimnisse.
+- Ausgesprochene Zauberwünsche verändern keine Ressourcen oder Ergebnisse ohne bestätigte Zauberaktion.
+- Zehn neue Flutter-Regressionsfälle; CI/Android-Abnahme und Gerätetest stehen noch aus.
+
+---
+
 ## 21.10.2026 – Rabenwacht: NPC-Erinnerungen und alternativer Waldpfad (Entwicklungsbranch)
 
 - Tarek gibt seinen geheimen Kundschafterpfad nur nach ausdrücklicher Bitte preis; der Weg lässt sich bei der Rabenschlucht tatsächlich benutzen und respektiert frühere Krähenalarme.
