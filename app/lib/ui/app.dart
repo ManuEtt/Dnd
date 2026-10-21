@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../domain/models.dart';
+import '../data/srd_spell_catalog_loader.dart';
 import '../domain/cover_rules.dart';
 import '../domain/campaign_experience.dart';
 import '../domain/rabenwacht_campaign.dart';
@@ -32,6 +33,7 @@ import 'fire_bolt_dialog.dart';
 import 'sacred_flame_dialog.dart';
 import 'acid_splash_dialog.dart';
 import 'area_creature_registration_dialog.dart';
+import 'srd_fireball_grid_preview_dialog.dart';
 import 'tracked_creature_initiative_dialog.dart';
 import 'manual_turn_queue_dialog.dart';
 import 'manual_extra_creature_attack_dialog.dart';
@@ -1285,6 +1287,23 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previous);
   }
 
+  Future<void> _showFireballGridPreview() async {
+    // A planning-only tool: its result never writes campaign or character.
+    final catalog = await SrdSpellCatalogLoader.load();
+    if (!mounted) return;
+    final fireball = catalog.find('Fireball');
+    if (fireball == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('SRD-Feuerball nicht verfügbar.')),
+      );
+      return;
+    }
+    await showDialog<void>(
+      context: context,
+      builder: (_) => SrdFireballGridPreviewDialog(fireball: fireball),
+    );
+  }
+
   Future<void> _trackAreaCreature() async {
     final campaign = widget.controller.currentCampaign;
     if (campaign == null ||
@@ -1864,6 +1883,14 @@ class _AdventurePageState extends State<_AdventurePage> {
                     icon: const Icon(Icons.auto_awesome_outlined, size: 17),
                     label: const Text('Magisches Geschoss'),
                   ),
+                TextButton.icon(
+                  key: const ValueKey('adventure-fireball-area-preview'),
+                  onPressed: widget.controller.busy
+                      ? null
+                      : _showFireballGridPreview,
+                  icon: const Icon(Icons.grid_on_outlined, size: 17),
+                  label: const Text('Feuerball-Kartenvorschau'),
+                ),
                 if (campaign.hero.spells.any(
                   (name) => HealingSpellRules.find(name) != null,
                 ))

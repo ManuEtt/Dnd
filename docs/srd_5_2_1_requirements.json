@@ -7127,13 +7127,16 @@
       "unlocks_catalogued": false,
       "rule_implemented": "partial",
       "tests": [
-        "app/test/srd_sphere_area_rules_test.dart"
+        "app/test/srd_sphere_area_rules_test.dart",
+        "app/test/srd_fireball_grid_preview_dialog_test.dart"
       ],
       "code": [
         "app/lib/domain/srd_sphere_area_rules.dart",
-        "app/lib/domain/srd_spell_grid_target_rules.dart"
+        "app/lib/domain/srd_spell_grid_target_rules.dart",
+        "app/lib/ui/srd_fireball_grid_preview_dialog.dart",
+        "app/lib/ui/app.dart"
       ],
-      "note": "Teilabdeckung: 2D-Vorschau möglicher Rasterfelder einer durch den einzelnen SRD-Effekt separat bestätigten Kugelform mit Radius 5–120 Fuß; Mittelpunkt-im-Kreis, Rand-/Eckkandidaten und Deckungsprüfbedarf werden getrennt. Kein Treffer-, Rettungswurf-, 3D-, Flächen- oder Wirkungsnachweis."
+      "note": "Teilabdeckung: zusätzlich zur konservativen 2D-Kugel-Kandidatenregel steht ein read-only SRD-Feuerball-Planungsdialog mit editierbaren bestätigten Vollhindernissen und widerrufbarer Kartenbestätigung in der Abenteueransicht bereit. Keine automatische Kreaturen-/3D-Wirkung, Schaden oder Speicherung; weiterhin partial."
     },
     {
       "id": "RULE-SPELLS-SPELL-DURATION",

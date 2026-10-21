@@ -1,3 +1,11 @@
+## 21.10.2026 – Read-only Feuerball-Kartenvorschau im Abenteuer (CI offen)
+
+- Interaktive 5-Fuß-Rasterplanung mit veränderbaren Figuren-/Ursprungspositionen und Vollhindernissen, bestätigter Kartenvollständigkeit und automatisch verworfenen alten Ergebnissen.
+- Anzeigen von möglichen Kugel-Randfeldern, freien Mittelpunktsstrahlen und unklarer Deckung ohne falsche automatische Treffer- oder Schadensannahmen.
+- Neue Widgettests, SRD-Audit- und Architekturhinweise; keine Änderungen an persistiertem Kampf-, Material- oder Zauberzustand.
+
+---
+
 ## 21.10.2026 – Konservative Vorschau kugelförmiger SRD-Zaubereffekte (CI offen)
 
 - 2D-Rasterkandidaten für separat bestätigte Kugelradien inklusive überlappender Randfelder; geprüfter Ursprung und Zauberreichweite.
