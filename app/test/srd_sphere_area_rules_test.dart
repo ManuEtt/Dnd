@@ -67,6 +67,9 @@ void main() {
       radiusFeet: 15,
     );
     expect(result.at(const SrdGridCell(11, 10)), isNull);
+    expect(result.coverReviewCount, greaterThan(0));
+    expect(result.clearCenterCells, isNot(contains(const SrdGridCell(12, 10))));
+    expect(result.clearCenterCells, contains(const SrdGridCell(10, 12)));
     expect(
       result.at(const SrdGridCell(12, 10))!.centerRay,
       SrdSphereCenterRay.requiresCoverReview,
