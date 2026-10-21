@@ -1,3 +1,11 @@
+## 21.10.2026 – Kartengestützte SRD-Zauberursprünge (Integrations-PR, CI offen)
+
+- 5-Fuß-Raster mit konservativer Eckensperre und bestätigten Blockern berechnet Entfernungen und freie geradlinige Mittelpunktverbindungen deterministisch.
+- Preflight unterstützt kartengestützte statt nur manuell angegebene Distanzen; Touch-Integration samt SQLite-Ereignis-Replay über Regressionen abgesichert.
+- Noch keine vollständige Sicht-/Deckungs-/3D- und Zielwirkungsberechnung; unbekannte Felder bleiben unzulässig.
+
+---
+
 ## 21.10.2026 – Strukturierte SRD-Zauberreichweite (Entwicklungs-PR; CI offen)
 
 - Neue konservative Prüfung von Ursprung, Reichweite, Touch/Self und direktem Zielweg; Sonderreichweiten bleiben gesperrt.
