@@ -1,3 +1,8 @@
+## Rabenwacht – verzweigte Ermittlungen (21.10.2026, CI offen)
+
+- `app/test/rabenwacht_branching_story_test.dart`: Maras drei Entscheidungswege, NPC-Vertrauen und -Konflikt, nachholbare bekannte Orte, Schutz vor EP-Doppelbuchung, keine Kämpfe durch negierte Angriffe, bewusster Abschluss nach Seren-Überreden, warnende Krähen und persistente Epilog-Fakten.
+- Vor PR-Merge in `app/`: `dart format --output=none --set-exit-if-changed lib test`, `flutter analyze`, `flutter test`, `flutter build apk --debug`. Neu implementiert, aber noch nicht durch Flutter-CI geprüft.
+
 ## Zaubersystem 0.6.4+34
 
 - `app/test/spellcasting_rules_test.dart`: vollständige Zauberklassen-/Pakt-Pools, Verbrauch und alte Speicherdaten, Zaubertrick, bestätigte Konzentration, lange/kurze Rast, Konzentration nach Schaden, manipulierte Speicherstände.
