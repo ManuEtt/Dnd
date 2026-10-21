@@ -273,8 +273,8 @@ class RabenwachtCampaign {
   static bool _wantsFight(String input) {
     final text = input.toLowerCase();
     final verbs = RegExp(
-      r'angreif\w*|attackier\w*|greif\w*|kämpf\w*|kaempf\w*|'
-      r'schlag\w*|töt\w*|schieß\w*|schiess\w*',
+      r'\b(?:angreif\w*|attackier\w*|greif\w*|kämpf\w*|kaempf\w*|'
+      r'schlag\w*|töt\w*|schieß\w*|schiess\w*)',
     );
     for (final match in verbs.allMatches(text)) {
       final before = text.substring(0, match.start);
@@ -776,14 +776,24 @@ class RabenwachtCampaign {
             'intelligence',
             'Nachforschungen',
             12,
-            'Du vergleichst die Brandberichte mit der Chronik des Glockenordens.',
+            c.facts['maraLetter'] == 'true'
+                ? 'Alrik bricht Maras Siegel und legt die geheimen '
+                      'Brandberichte des Glockenordens offen. '
+                      'Du vergleichst den Eid mit der Chronik.'
+                : 'Du vergleichst die Brandberichte '
+                      'mit der Chronik des Glockenordens.',
             rollId,
           );
         }
         return RabenwachtTurn(
           c,
-          'Alrik lässt dich allein mit der Chronik. '
-          'Untersuche die alten Aufzeichnungen, bevor du weiterziehst.',
+          c.facts['maraDefied'] == 'true'
+              ? 'Alrik kennt deinen Streit mit Mara und bleibt '
+                    'auf Distanz. Du kannst die vorhandenen '
+                    'Aufzeichnungen trotzdem untersuchen.'
+              : 'Alrik lässt dich allein mit der Chronik. '
+                    'Untersuche die alten Aufzeichnungen, '
+                    'bevor du weiterziehst.',
         );
       case 'graveyard':
         if (_has(input, 'grab|stein|zeichen|namen|untersuch|les')) {
