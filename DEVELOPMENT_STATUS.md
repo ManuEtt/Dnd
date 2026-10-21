@@ -1,3 +1,15 @@
+## 21.10.2026 – Manuelle Mehrgegner-Zugfolge (0.8.28+78, CI offen)
+
+- Verifizierte Basis: `main` Version 0.8.27+77 (PR #59, Flutter und Android/Alpha-CI erfolgreich).
+- `ManualCombatTurnQueue` als optionale immutable Kampf-ID/Akteur-Reihenfolge/Position/Rundenzahl im schema-1-Campaign-JSON mit Importvalidierung und Schutz vor verwaisten Encounter-IDs.
+- `SrdInitiativeRosterRules.createManualQueue` bestätigt **alle** lebenden Teilnehmer einmalig, sortiert absteigend und verlangt bewusste Entscheidungen für Gleichstände. Die manuelle Fortsetzung überspringt ausgeschiedene Zusatzkreaturen und erhöht die Rundenzahl beim Umlauf.
+- Getrenntes UI für Reihenfolge, Tiebreaker, fortlaufenden Marker; Controller-Revision und eigene Journalereignisse `combat.manualTurnQueueEstablished`/`combat.manualTurnQueueAdvanced`.
+- Automatische Invalidierung nach Änderungen an Kreaturen-/Initiativdaten oder Kampfende; Legacy-Kämpfe bleiben unverändert. Regressionstests für Codec, alte Saves, Idempotenz, Tie-Handling und falsche Akteur-IDs.
+- **Bewusst noch nur taktischer Marker:** nicht mit `Encounter.activeParticipant` oder Hauptgegner-Angriffen synchronisiert, keine autonomen Aktionen oder Siege für Zusatzgegner. `RULE-COMBAT-INITIATIVE` bleibt `partial`. Siehe `docs/SRD_MANUAL_MULTI_TURN_QUEUE.md`.
+- CI/Android-Gerätetest ausstehend.
+
+---
+
 ## 20.10.2026 – Initiative zusätzlicher Kreaturen (0.8.27+77, CI offen)
 
 - Vorheriger verifizierter `main`: Version 0.8.26+76 (PR #58, Android-/Flutter- und ZIP-CI erfolgreich). Echtes Gerät bleibt offen.
