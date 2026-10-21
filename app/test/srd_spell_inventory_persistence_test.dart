@@ -271,6 +271,40 @@ void main() {
     },
   );
 
+  test('boolean-only target confirmation cannot persist spell resources', () {
+    final engine = GameEngine();
+    final base = _campaign();
+    final legacyPlan = SrdSpellPreflightRules.preflight(
+      base.hero,
+      spell: spell,
+      castingClass: 'Kleriker',
+      slotLevel: 1,
+      actionAvailableConfirmed: true,
+      targetRulesConfirmed: true,
+      verbalComponentConfirmed: true,
+      somaticComponentConfirmed: true,
+      materialComponentConfirmed: true,
+      costlyComponentAvailableConfirmed: true,
+      consumedComponentReservedConfirmed: true,
+      slotTurnLimitConfirmed: true,
+    );
+    expect(legacyPlan.targetAssessment, isNull);
+    expect(
+      () => engine.commitConfirmedSpellMaterialCast(
+        base,
+        plan: legacyPlan,
+        effectResolvedSeparatelyConfirmed: true,
+        materialIdentityAndQuantityConfirmed: true,
+        consumedMaterials: _materials,
+      ),
+      throwsFormatException,
+    );
+    expect(base.hero.spentSpellSlots, isEmpty);
+    expect(base.hero.inventory.first.quantity, 2);
+    expect(base.revision, 0);
+    expect(base.events, isEmpty);
+  });
+
   test('open dice and combat state reject generic material booking', () {
     final engine = GameEngine();
     final base = _campaign();
