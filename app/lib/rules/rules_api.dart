@@ -1,7 +1,7 @@
-/// Public rule-only entrypoint for parallel SRD 5.2.1 development.
-///
-/// No story generation, campaign scripts or backend requests are exported.
-/// Legacy implementations stay in domain/ while the existing app migrates.
+// Public rule-only entrypoint for parallel SRD 5.2.1 development.
+//
+// No story generation, campaign scripts or backend requests are exported.
+// Legacy implementations stay in domain/ while the existing app migrates.
 export '../domain/dice_engine.dart';
 export '../domain/rules_engine.dart';
 export '../domain/damage_rules.dart';
