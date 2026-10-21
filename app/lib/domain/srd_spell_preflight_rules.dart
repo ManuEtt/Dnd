@@ -6,6 +6,7 @@ import 'srd_spell_component_rules.dart';
 import 'spellcasting_rules.dart';
 import 'srd_character_classes.dart';
 import 'srd_spell_catalog.dart';
+import 'srd_spell_grid_target_rules.dart';
 import 'srd_spell_target_rules.dart';
 
 /// Conservative validation before explicitly confirmed resource-only casting.
@@ -54,6 +55,7 @@ class SrdSpellPreflightRules {
     bool actionAvailableConfirmed = false,
     bool targetRulesConfirmed = false,
     SrdSpellTargetFacts? targetFacts,
+    SrdSpellGridTargetRequest? gridTarget,
     bool verbalComponentConfirmed = false,
     bool somaticComponentConfirmed = false,
     bool materialComponentConfirmed = false,
@@ -100,9 +102,17 @@ class SrdSpellPreflightRules {
         'Aktion/Bonusaktion und Zielbedingungen müssen bestätigt sein.',
       );
     }
-    final targetAssessment = targetFacts == null
+    if (targetFacts != null && gridTarget != null) {
+      throw const FormatException(
+        'Zielbestätigung darf nur eine räumliche Quelle verwenden.',
+      );
+    }
+    final resolvedTargetFacts = gridTarget == null
+        ? targetFacts
+        : SrdSpellGridTargetRules.factsFor(spell, gridTarget);
+    final targetAssessment = resolvedTargetFacts == null
         ? null
-        : SrdSpellTargetRules.validateOrigin(spell, targetFacts);
+        : SrdSpellTargetRules.validateOrigin(spell, resolvedTargetFacts);
     if ((spell.verbal && !verbalComponentConfirmed) ||
         (spell.somatic && !somaticComponentConfirmed)) {
       throw const FormatException(
