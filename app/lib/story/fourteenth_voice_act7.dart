@@ -172,7 +172,7 @@ class FourteenthVoiceAct7 {
       }
       if (_has(
             text,
-            'preis|kosten|opfer|handel annehmen|angebot annehmen',
+            'preis|kost|opfer|handel annehmen|angebot annehmen',
           ) &&
           !_negated(text)) {
         if (campaign.facts['voice:chronistChoice'] != null) {
@@ -265,7 +265,7 @@ class FourteenthVoiceAct7 {
           gained: {'voice:chronistDebt': 'pending'},
         );
       }
-      if (_has(text, 'ablehn|abbruch|abbrechen|zurück|zurueck|verzichte') &&
+      if (_has(text, 'lehn|ablehn|abbruch|abbrechen|zurück|zurueck|verzichte') &&
           !_negated(text)) {
         return _move(
           campaign,
