@@ -111,7 +111,7 @@ def main() -> None:
         for state in STATES:
             out = ROOT / f"btn_{style}_{state}.png"
             out.write_bytes(draw(style, state))
-            print(out.relative_to(ROOT.parents[3]))
+            print(out.name)
     print(f"Generated {len(STYLES) * len(STATES)} transparent images.")
 
 
