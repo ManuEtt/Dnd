@@ -1,4 +1,5 @@
 import '../domain/models.dart';
+import 'fourteenth_voice_act7.dart';
 import 'rabenwacht_campaign.dart' show RabenwachtTurn;
 import 'story_rule_port.dart';
 
@@ -160,6 +161,24 @@ class FourteenthVoiceStoryModule {
         'Das Haus ohne Türen ist jenseits des Friedhofs erschienen.',
       if (campaign.facts['voice:portraitSeen'] == 'true')
         'Ein vierzehntes Porträt zeigt eine mögliche Zukunft deines Helden.',
+      if (campaign.facts['voice:portraitCompared'] == 'true')
+        'Die Porträts widersprechen der gemeinsamen Erinnerung an die Zeit.',
+      if (campaign.facts['voice:chronistMet'] == 'true')
+        'Der Chronist behauptet, Erinnerungen verändern zu können.',
+      if (campaign.facts['voice:termsQuestioned'] == 'true')
+        'Der Chronist kann Erinnerungen verändern, nicht Vergangenes ungeschehen machen.',
+      if (campaign.facts['voice:chronistChoice'] == 'refused')
+        'Du hast das Angebot des Chronisten abgelehnt.',
+      if (campaign.facts['voice:chronistChoice'] == 'feigned')
+        'Du hast dem Chronisten nur scheinbar zugestimmt.',
+      if (campaign.facts['voice:chronistChoice'] == 'accepted')
+        'Du hast einen gefährlichen Preis zugesagt; die Folgen sind noch offen.',
+      if (campaign.facts['voice:oathPageFound'] == 'true')
+        'Das vierzehnte Eidblatt zeigt eine unterbrochene Kette gegenseitiger Zeugen.',
+      if (campaign.facts['voice:nameCustody'] == 'liora')
+        'Liora verwahrt die Abschrift für den Rat der Zeugen.',
+      if (campaign.facts['voice:nameCustody'] == 'hero')
+        'Du bewahrst die Abschrift für den Rat der Zeugen.',
     ];
     final remaining = campaign.quests
         .where((q) => q.id.startsWith('voice-') && q.status == 'active')
@@ -284,14 +303,8 @@ class FourteenthVoiceStoryModule {
         'Zuerst den offenen Würfelwurf abschließen.',
       );
     }
-    if (stage == 'voice-gallery') {
-      return RabenwachtTurn(
-        campaign,
-        'Vor dir hängen dreizehn Porträts. Ein vierzehntes '
-        'zeigt eine mögliche Zukunft. Das Geheimnis des '
-        'Chronisten beginnt hier; die Galerie wird in '
-        'einem weiteren Kapitel ausgebaut.',
-      );
+    if (FourteenthVoiceAct7.handles(stage)) {
+      return FourteenthVoiceAct7.advance(campaign, input);
     }
     if (stage == 'voice-house') {
       if (_has(spoken, 'porträt|portrait|bilder|galerie|betret|untersuch')) {
