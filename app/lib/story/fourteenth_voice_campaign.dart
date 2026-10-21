@@ -1,5 +1,6 @@
 import '../domain/models.dart';
 import 'fourteenth_voice_act7.dart';
+import 'fourteenth_voice_act8.dart';
 import 'rabenwacht_campaign.dart' show RabenwachtTurn;
 import 'story_rule_port.dart';
 
@@ -179,6 +180,18 @@ class FourteenthVoiceStoryModule {
         'Liora verwahrt die Abschrift für den Rat der Zeugen.',
       if (campaign.facts['voice:nameCustody'] == 'hero')
         'Du bewahrst die Abschrift für den Rat der Zeugen.',
+      if (campaign.facts['voice:visited:council'] == 'true')
+        'Der Rat der Zeugen wurde einberufen.',
+      if (campaign.facts['voice:publicTestimony'] == 'true')
+        'Du hast eine öffentliche Ersatzzeugenaussage abgelegt.',
+      if (campaign.facts['voice:witnessChain'] == 'true')
+        'Der Rat hat die zerbrochene Beweiskette rekonstruiert.',
+      if (campaign.facts['voice:ending'] == 'end-oath')
+        'Du hast den Eid der Zeugen erneuert.',
+      if (campaign.facts['voice:ending'] == 'end-archive')
+        'Das Archiv wurde nach Sicherung der Belege aufgelöst.',
+      if (campaign.facts['voice:ending'] == 'end-accord')
+        'Die Bewohner haben einen gemeinsamen neuen Eid ausgehandelt.',
     ];
     final remaining = campaign.quests
         .where((q) => q.id.startsWith('voice-') && q.status == 'active')
@@ -302,6 +315,9 @@ class FourteenthVoiceStoryModule {
         campaign,
         'Zuerst den offenen Würfelwurf abschließen.',
       );
+    }
+    if (FourteenthVoiceAct8.handles(stage)) {
+      return FourteenthVoiceAct8.advance(campaign, input);
     }
     if (FourteenthVoiceAct7.handles(stage)) {
       return FourteenthVoiceAct7.advance(campaign, input);
