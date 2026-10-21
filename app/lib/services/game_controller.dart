@@ -821,8 +821,17 @@ class GameController extends ChangeNotifier {
   });
 
   Future<void> saveStandaloneHero(HeroCharacter hero) => _run(() async {
-    await repository.saveCharacter(HeroCharacter.fromJson(hero.toJson()));
-    await _reload();
+    final valid = HeroCharacter.fromJson(hero.toJson());
+    final campaign = currentCampaign;
+    if (campaign != null && campaign.hero.id == valid.id) {
+      // The hero archive and the active campaign share one character identity.
+      // Commit through the rule engine so pending rolls and game-state
+      // constraints stay valid; SQLite updates both snapshots atomically.
+      await _commit(engine.updateHero(campaign, valid));
+    } else {
+      await repository.saveCharacter(valid);
+      await _reload();
+    }
   });
 
   Future<void> deleteCampaign(String id) => _run(() async {
