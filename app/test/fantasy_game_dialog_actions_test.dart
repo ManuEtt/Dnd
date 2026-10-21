@@ -10,24 +10,21 @@ import 'package:lebendiger_spielleiter/ui/multiclass_selection_dialog.dart';
 import 'package:lebendiger_spielleiter/ui/spellcasting_dialog.dart';
 
 void main() {
-  Future<void> show(
-    WidgetTester tester,
-    Widget dialog,
-  ) async {
+  Future<void> show(WidgetTester tester, Widget dialog) async {
     tester.view.physicalSize = const Size(480, 1000);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     await tester.pumpWidget(
-      MaterialApp(home: Scaffold(body: Center(child: dialog))),
+      MaterialApp(
+        home: Scaffold(body: Center(child: dialog)),
+      ),
     );
     await tester.pumpAndSettle();
   }
 
   FantasyTextButton action(WidgetTester tester, String name) {
-    return tester.widget<FantasyTextButton>(
-      find.byKey(ValueKey(name)),
-    );
+    return tester.widget<FantasyTextButton>(find.byKey(ValueKey(name)));
   }
 
   testWidgets('Zauberaktion ist magisch, aber ohne Zauber nicht verfügbar', (
@@ -130,8 +127,7 @@ void main() {
     await show(tester, const EquipmentCatalogDialog());
     final cancel = tester.widget<FantasyTextButton>(
       find.byWidgetPredicate(
-        (widget) =>
-            widget is FantasyTextButton && widget.label == 'Abbrechen',
+        (widget) => widget is FantasyTextButton && widget.label == 'Abbrechen',
       ),
     );
     expect(cancel.style, FantasyButtonStyle.iron);
