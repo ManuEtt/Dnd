@@ -10,6 +10,175 @@
 
 Das vorgesehene Hauptrepository ist `ManuEtt/Dnd`, SSH `git@github.com:ManuEtt/Dnd.git`. Kein alternatives Hauptrepository anlegen. Kein Force-Push und keine fremden Dateien ohne Prüfung überschreiben. Geheimnisse niemals anfordern oder im Chat, in Logs, Quellcode oder Commits ausgeben.
 
+## Arbeitsprioritäten und Modulverträge (Stand 21.10.2026)
+
+Diese Regeln ergänzen die weiter unten stehenden Sicherheits-, Build- und
+Kompatibilitätsvorgaben. Vor jeder Arbeit **tatsächlichen HEAD, offene Branches/PRs,
+CI-Läufe und den aktuellen Quellcode** prüfen. Versions- und Statusangaben in
+`README.md`, `ROADMAP.md`, `CHANGELOG.md` und älteren Abschnitten von
+`DEVELOPMENT_STATUS.md` können historische Momentaufnahmen sein. Bei Widersprüchen
+gelten beobachtbarer Code/Tests/CI und die neueste geprüfte Architekturentscheidung,
+nicht die optimistischste Statusmeldung.
+
+### Produktstand und verbindliche Quellen
+
+- Produktname: **Würfelraunen – Der lebendige Spielleiter** (früher Aetheria);
+  Flutter/Dart-Android-App in `app/`, Fastify-/TypeScript-Erzähler in
+  `backend/`, SQLite/JSON-Spielstände, deutscher Solo-Spielleiter mit
+  optionalem externem Erzähler. Weitere Plattformen, Online-Multiplayer und
+  vollständige SRD-Automatik nicht als fertig ausgeben.
+- Vor einer Regeländerung `docs/SRD_5_2_1_COVERAGE_AUDIT.md`,
+  `docs/srd_5_2_1_requirements.json`, `docs/srd_5_2_1_entities.json`,
+  `docs/UNIFIED_RULE_ENGINE.md` und die relevanten Fachtests lesen.
+  `docs/SRD_5_2_1_REQUIREMENTS_MATRIX.md` ist ein **historisches
+  Änderungsjournal**, keine aktuelle, vollständige Abdeckungsquote.
+- Vor einer Architektur-/Storyänderung
+  `docs/ARCHITEKTUR_REGELENGINE_STORY_TRENNUNG.md`,
+  `app/test/rules_story_separation_test.dart` und
+  `scripts/check_domain_boundaries.py` lesen.
+- Der Stand vom 20.10.2026 erfasst 1.419 *Prüfaufträge* und 282
+  Klassen-Freischaltungen, aber keine vollständig inventarisierte SRD und
+  keinen zulässigen globalen Fertigstellungsprozentsatz. Zähler bei jedem
+  Inkrement mit `python3 scripts/srd_coverage.py --json` neu ermitteln;
+  **Katalogeintrag, Level-Unlock oder vorhandener Testdateiname sind kein
+  Nachweis einer getesteten Regelwirkung**.
+
+### Drei unabhängig entwickelbare Tracks
+
+**A – Regelengine:** `app/lib/rules/rules_api.dart` ist die öffentliche
+Regel-Fassade; bestehende Implementierungen liegen überwiegend in
+`app/lib/domain/*rules.dart`, `dice_engine.dart`,
+`rules_engine.dart`, `character_rule_engine.dart` und SRD-Katalogen.
+Würfel, Ressourcen, TP/RK, XP, Zustände, Zauber, Klassen, Gegenstände und
+Monstermechanik müssen deterministisch und ohne Story-, UI- oder
+KI-Provider-Abhängigkeit testbar sein. Die Regelmodule importieren keine
+`app/lib/story/`-Dateien. Regeln dürfen niemals aus freier Erzählung,
+unbestätigten Monsterwerten oder einer generativen Antwort abgeleitet werden.
+
+**B – Story/Kampagne:** `app/lib/story/story_api.dart` mit
+`story_campaign_engine.dart`, `story_memory_engine.dart` und
+`story_rule_boundary.dart` ist die neue Story-Fassade.
+`app/lib/domain/rabenwacht_campaign.dart` und `domain/ai_story.dart`
+sind **noch Legacy-Pfade**, keine Freigabe für beliebige Cross-Imports.
+Neue `story/`-Module nutzen nur die vom Importprüfer zugelassenen
+Dart-/Story- und Domänenmodell-/AI-Verträge: keine Flutter-UI, keine
+Backend-Provider, keine direkten Würfel-/Kampf-/Regelimporte.
+`StoryRuleBoundary.ensureRuleStateUnchanged` sperrt alle Felder außerhalb
+seiner expliziten Story-Whitelist (Fail-Closed bei unbekannten neuen Feldern).
+Insbesondere sind `hero`, `encounter`, `facts`, `quests`, Ressourcen und
+Inventar **nicht** durch diese Story-Schnittstelle frei veränderbar.
+Mechanisch relevante Quest-/EP-/Kampagnenaktionen des bestehenden
+Rabenwacht-Legacy-Pfads sind erst nach expliziter Validierung durch die
+Integrations-/Regelschicht zulässig. Narrative Behauptungen allein lösen
+keinen Zauber, Kampf, EP-Gewinn, Gegenstands- oder Questabschluss aus.
+Rabenwacht-Entscheidungen, Spoilerschutz, Rückkehrwege, NPC-Gedächtnis,
+Negationen und einmalige Belohnungen gezielt gegen Regression testen.
+
+**C – Integration/Persistenz:** `app/lib/domain/models.dart`,
+`app/lib/domain/game_engine.dart`, `app/lib/services/game_controller.dart`
+und `app/lib/data/` sind derzeit die gemeinsam genutzten
+Kompositions-/Speichergrenzen. **Sie sind noch nicht vollständig
+entkoppelt.** Rule- und Story-PRs sollen diese Dateien nicht unabhängig
+voneinander parallel verändern. Notwendige Änderungen an gemeinsamen
+Modellen, Befehls-/Ergebnis-DTOs, Controller, SQLite-Schema und Eventformat
+über einen kleinen koordinierten Integrations-PR führen. Bestehende
+`GameEngine`-Aufrufe, IDs, Zeitstempel, Events und `schemaVersion=1`
+bleiben bis zu einer ausdrücklich getesteten Migration kompatibel.
+
+Zielarchitektur: versionierte `RuleCommand`/`RuleResult`-Verträge und getrennte
+`RuleSnapshot`/`StorySnapshot`-Adapter; Regelentscheidung **vor** Erzählung,
+atomare Bestätigung **durch** Controller/Repository. Die erste Entkopplung ist
+bereits vorhanden, der mehrtausendzeilige Legacy-`game_engine.dart` sowie
+die kombinierten Modelle sind **keine vollständig migrierte Architektur**.
+Alte öffentliche API nicht ohne Migration und Vergleichstests entfernen.
+
+### Konkrete fachliche Reihenfolge
+
+1. **Zauberengine:** offiziellen Zauberkatalog quellgenau inventarisieren,
+   anschließend Klassenlisten, Vorbereitung, Komponenten, Reichweite/Ziele,
+   Aktionen/Reaktionen, Slot-/Paktressourcen, Konzentration, Dauer,
+   Hochstufen, Würfe, Effekte und Ereignisse pro Mechanismus implementieren.
+2. **Klassen Stufe 1–20:** die katalogisierten Features *einzeln* auf
+   tatsächliche Trigger, Entscheidungen, Ressourcen, Unterklassen,
+   Multiclassing, Wirkung, Persistenz und Ende-zu-Ende-Tests prüfen.
+3. **SRD-Monster:** nur amtlich verifizierte Statblocks, Traits,
+   Mehrfachangriffe, Reaktionen, Zielauswahl, Initiative und Ressourcen
+   integrieren; unbekannte Werte bleiben unbekannt.
+4. **Kampf, Erkundung und Magiegegenstände:** Aktionsökonomie,
+   Bewegungs-/Reise-/Sicht-/Deckungsregeln, Ladungen, Einstimmung und
+   dauerhafte Effekte abschließen.
+
+Vor neuen Features haben **reproduzierbare Buildfehler und bestehende
+fehlschlagende Tests** Vorrang. Insbesondere unabhängige Regel-/Story-Branches
+erst nach erfolgreich geprüfter Importgrenze integrieren. Das Scheitern
+eines frühen Python-Schritts bedeutet, dass spätere Flutter-/APK-Schritte
+**nicht geprüft** sind, nicht dass sie bestanden hätten.
+
+### Belegpflicht je Inkrement
+
+- Eine stabile Anforderungs-ID mit offizieller SRD-5.2.1-Stelle,
+  Lizenz/Provenienz, Code-Pfad und konkretem Test führen. Status in den
+  maschinenlesbaren Registern nur als `tested`, `partial`, `missing`
+  oder `unverified` setzen; `tested` verlangt tatsächlich bestandene
+  zutreffende Tests. Offene Inventurlücken nicht stillschweigend schließen.
+- Happy Path **und** Gegenbeispiele: unbekannte Werte, Manipulation,
+  fehlende Ressourcen, abgelehnte Aktion, doppelte IDs, Wiederholung,
+  Race/Stale Revision, Neustart/SQLite, alte JSONs, Regel-/Story-Grenze.
+  Automatische Test-Zufallsquellen und Mocks statt kostenpflichtiger KI.
+- Für Rabenwacht neue Handlung getrennt von SRD-Geltung dokumentieren;
+  alternative Wege/Entscheidungen nicht als zusätzliche Regelimplementierung
+  zählen. KI generiert Erzählung und Vorschläge, aber keine bestätigten
+  D20-Würfe, Monsterstatistiken, XP oder regelmechanischen Weltzustände.
+- Für jede Änderung **IMPLEMENTIERT**, **GETESTET**, **NICHT GETESTET**,
+  **BLOCKIERT** und **NOCH NICHT IMPLEMENTIERT** anhand belegter Ergebnisse
+  unterscheiden. Dokumentation, Build, CI-APK und echte Geräteabnahme
+  sind verschiedene Nachweise.
+
+### Prüf- und Git-Workflow
+
+In der Repositorywurzel (wenn lokal verfügbar):
+
+```bash
+python3 scripts/verify_project.py
+python3 scripts/check_domain_boundaries.py
+python3 scripts/srd_coverage.py
+python3 -m unittest discover -s scripts/tests -v
+```
+
+Danach die weiter unten dokumentierten Backend-/Flutter-Prüfungen oder
+`bash scripts/check.sh`, sofern die SDKs/Abhängigkeiten installiert sind;
+zusätzlich für Android den Debug-Build und native Gradle-Tests gemäß
+`.github/workflows/android-build.yml`. Keine Erfolgsmeldung ohne
+konkreten Lauf/Commit; fehlendes SDK als **nicht ausgeführt** ausweisen.
+Das strengere `srd_coverage.py --require-complete-inventory` darf bei
+offenen Inventurlücken **absichtlich fehlschlagen**.
+
+**Wichtig für Dokumentations-PRs:** `android-build.yml` nutzt
+Pfadfilter nur für `app/**`, `backend/**`, `scripts/**` und den Workflow
+selbst. Eine Änderung ausschließlich an `AGENTS.md` oder `docs/**`
+startet daher **nicht automatisch** die normale Android-CI.
+Erforderliche vollständige Abnahmen explizit per `workflow_dispatch`
+auf geeignetem Stand anstoßen und deren Ergebnis abwarten; fehlende
+Checks nicht als grünen Build interpretieren.
+
+Pro Arbeitspaket einen kleinen Entwicklungsbranch von aktuellem `main`
+anlegen, Änderungen inklusive Regressionstests dokumentieren und per PR
+prüfen. Parallele Regel- und Story-PRs anhand gemeinsamer Dateien,
+Merge-Basis, finalem HEAD und aktuellen CI-Läufen integrieren; nicht blind
+veraltete Branch-Versionen über `main` kopieren. Bereits historisch
+zusammengeführte Branches nur nach ancestry-/SHA-/Backup-Tag-Prüfung
+bereinigen; niemals Force-Push oder ungeprüftes Branch-Löschen. Nicht für
+reine Dokumentationskorrekturen die App-Version hochzählen. Ältere
+`docs/AUTONOMOUS_DEVELOPMENT_STATE.md`-Angaben sind historische
+Übergaben, keine verlässliche heutige Branch-/CI-Aussage.
+
+Autonome Codex-Ausführung bedeutet **ein begrenztes, überprüfbares
+Arbeitspaket pro Sitzung** gemäß `docs/CODEX_AUTONOMOUS_CYCLE.md`,
+keine unbeaufsichtigte Endlosschleife, keine GitHub-Actions-Codex-Jobs,
+kein kostenpflichtiger Anbieteraufruf ohne Freigabe und keine Zusage einer
+automatischen Wiederaufnahme. Vor Limit/Abbruch verifizierten Stand,
+konkrete Fehler, Commit/PR und nächsten Schritt dokumentieren.
+
 ## Architektur und Regeln
 
 - Flutter in `app/`, Fastify/TypeScript in `backend/`; UI, Domänenregeln und Datenzugriff getrennt halten.
