@@ -1,3 +1,13 @@
+## 21.10.2026 – Rabenwacht: verzweigte Ermittlungen (unversionierter Entwicklungsbranch, CI offen)
+
+- Mara Voss erhält eine eigene Ratsstuben-Szene: Verschwiegenheit und Brief an Alrik, Konfrontation und Vertrauensverlust oder der direkte Ermittlungsweg über Fina.
+- Bereits entdeckte Orte können ohne doppelte EP erneut aufgesucht werden; Besuche und neue Entscheidungen bleiben in bestehenden Kampagnenfakten gespeichert.
+- Bewusste Kampfentscheidung beim Skelettwächter: verneinte Angriffe und bloße Schlüsselinteressen starten keinen Kampf.
+- Erfolgreiches Überreden von Seren führt zur **Wahl** statt zum sofortigen Ende. Maras Beziehung und der Krähenalarm verändern den Epilog.
+- Neue Tests in `app/test/rabenwacht_branching_story_test.dart`. **Flutter-Tests und Android-Build vor CI nicht bestätigt**; keine Versionsnummer erhöht.
+
+---
+
 ## 21.10.2026 – Version 0.8.28+78 (manuelle Mehrgegner-Zugfolge; CI offen)
 
 - Optionale, gespeicherte manuelle Zugfolge mit Kampf-ID, eindeutigen Akteur-IDs, Position und eigener Rundenzählung. Alte Kampagnen ohne Feld bleiben unverändert gültig.
