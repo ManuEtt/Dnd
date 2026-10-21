@@ -1,3 +1,13 @@
+## 21.10.2026 – SRD-5.2.1-Ziele: geprüftes 5-Fuß-Raster und Mittelpunktstrahl (CI offen)
+
+- Ausgangslage: `main` SHA `0f0a82c`, gesamter Build `39572178736` **grün**, offener Story-PR nicht angerührt.
+- **IMPLEMENTIERT:** Neuer deterministischer `SrdSpellGridTargetRules` ermittelt Rasterabstände einschließlich Diagonalen und prüft Mitte-zu-Mitte-Verbindungen gegen bestätigte volle Blockerfelder; fehlende Kartenfreigabe, Ecken-Kollisionen und unbekannte Felder werden konservativ abgewehrt. `SrdSpellPreflightRules.preflight(gridTarget: ...)` leitet geprüfte SRD-Reichweitenfakten daraus ab; Kombination mit widersprechender manueller Geometrie verboten.
+- **TESTS ANGELEGT, CI OFFEN:** `srd_spell_grid_target_rules_test.dart` deckt Raster, 3D-Grenze, Blockaden, Eckenkontakt, Manipulationsschutz, ungültige Felder und Preflight ab. Der SQLite-Material-Commit-Test verwendet einen geometrisch berechneten Touch-Ursprung.
+- **NICHT IMPLEMENTIERT:** reale Kartenaufnahme, vollständige Sichtlinie oder 3D-Höhe, dynamische Hindernisse, genaue Voll-/Teil-Deckung, AoE-Raster, Mehrfeldwesen und Zauberwirkung. SRD-Auditpunkte `RULE-SPELLS-SPELL-RANGE`, `RULE-SPELLS-SPELL-TARGETS`, `RULE-SPELLS-SPELL-ATTACK-COVER` weiterhin ausdrücklich `partial`.
+- Details: `docs/SRD_SPELL_GRID_TARGETING.md`.
+
+---
+
 ## 21.10.2026 – SRD 5.2.1 Zauberreichweite und Zielursprung (PR, CI offen)
 
 - Basis: letzter `main`-Workflow 39568413044 vollständig **grün** nach Material-/SQLite-Integration (PR #78).
