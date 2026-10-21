@@ -82,6 +82,11 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
+      - name: Formatierungspatch einmalig fuer Review ausgeben
+        working-directory: app
+        run: |
+          dart format lib/ui/fantasy_buttons.dart test/fantasy_buttons_test.dart
+          git diff --unified=3 -- lib/ui/fantasy_buttons.dart test/fantasy_buttons_test.dart
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
