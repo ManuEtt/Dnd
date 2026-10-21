@@ -127,6 +127,7 @@ void main() {
 
   test('Eine Preisfrage kann ohne Konsequenzen abgebrochen werden', () {
     var campaign = engine.act(library(), 'Was kostet der Handel?').campaign;
+    expect(campaign.storyBible['stage'], 'voice-price');
     campaign = engine.act(campaign, 'Ich lehne ab.').campaign;
     expect(campaign.storyBible['stage'], 'voice-library');
     expect(campaign.facts['voice:chronistChoice'], isNull);
