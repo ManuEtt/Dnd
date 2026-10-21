@@ -6,4 +6,5 @@
 export 'story_campaign_engine.dart';
 export 'ai_story.dart' show AiStoryPlan, AiStoryStep;
 export 'rabenwacht_campaign.dart' show RabenwachtStoryModule, RabenwachtTurn;
-export 'story_rule_port.dart' show StoryRulePort, StoryAbilityCheck, StoryMilestoneAward;
+export 'story_rule_port.dart'
+    show StoryRulePort, StoryAbilityCheck, StoryMilestoneAward;

@@ -532,11 +532,7 @@ class RabenwachtStoryModule {
     );
   }
 
-  RabenwachtTurn advance(
-    Campaign c,
-    String input, {
-    required String rollId,
-  }) {
+  RabenwachtTurn advance(Campaign c, String input, {required String rollId}) {
     final stage = c.storyBible['stage'] ?? 'road';
     if (stage.startsWith('end-')) {
       return RabenwachtTurn(
@@ -1685,11 +1681,7 @@ class RabenwachtStoryModule {
     }
   }
 
-  RabenwachtTurn resolveCheck(
-    Campaign c,
-    PendingRoll pending,
-    bool passed,
-  ) {
+  RabenwachtTurn resolveCheck(Campaign c, PendingRoll pending, bool passed) {
     final step = pending.targetId.replaceFirst('rabenwacht:', '');
     switch (step) {
       case 'road':

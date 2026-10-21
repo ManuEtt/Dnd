@@ -78,10 +78,6 @@ class _RabenwachtRulesAdapter implements StoryRulePort {
   @override
   StoryMilestoneAward awardMilestone(Campaign campaign, String milestone) {
     final award = CampaignExperience.awardOnce(campaign, milestone);
-    return StoryMilestoneAward(
-      award.campaign,
-      award.points,
-      award.narration,
-    );
+    return StoryMilestoneAward(award.campaign, award.points, award.narration);
   }
 }

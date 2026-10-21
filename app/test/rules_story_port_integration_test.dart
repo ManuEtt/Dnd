@@ -38,27 +38,30 @@ class _SpyRules implements StoryRulePort {
 }
 
 void main() {
-  test('Authored Rabenwacht can request checks without importing rule code', () {
-    final rules = _SpyRules();
-    final module = RabenwachtStoryModule(rules);
-    final hero = GameEngine().createDemo().hero;
-    final created = module.create(
-      hero: hero,
-      campaignId: 'test-rabenwacht',
-      sessionId: 'test-session',
-      messageId: 'test-message',
-      now: DateTime.utc(2026, 10, 21),
-    );
-    final step = module.advance(
-      created,
-      'Ich untersuche die Schritte im Nebel.',
-      rollId: 'rabenwacht-check',
-    );
-    expect(rules.checks, 1);
-    expect(step.campaign.pendingRoll?.modifier, 7);
-    expect(step.campaign.hero.toJson(), created.hero.toJson());
-    expect(step.campaign.storyBible['mode'], RabenwachtStoryModule.mode);
-  });
+  test(
+    'Authored Rabenwacht can request checks without importing rule code',
+    () {
+      final rules = _SpyRules();
+      final module = RabenwachtStoryModule(rules);
+      final hero = GameEngine().createDemo().hero;
+      final created = module.create(
+        hero: hero,
+        campaignId: 'test-rabenwacht',
+        sessionId: 'test-session',
+        messageId: 'test-message',
+        now: DateTime.utc(2026, 10, 21),
+      );
+      final step = module.advance(
+        created,
+        'Ich untersuche die Schritte im Nebel.',
+        rollId: 'rabenwacht-check',
+      );
+      expect(rules.checks, 1);
+      expect(step.campaign.pendingRoll?.modifier, 7);
+      expect(step.campaign.hero.toJson(), created.hero.toJson());
+      expect(step.campaign.storyBible['mode'], RabenwachtStoryModule.mode);
+    },
+  );
 
   test('Story module delegates milestone rewards through interface', () {
     final rules = _SpyRules();
@@ -70,8 +73,11 @@ void main() {
       messageId: 'message',
       now: DateTime.utc(2026, 10, 21),
     );
-    final reached = module.advance(initial, 'Ich gehe zum Dorfplatz.',
-        rollId: 'check-2');
+    final reached = module.advance(
+      initial,
+      'Ich gehe zum Dorfplatz.',
+      rollId: 'check-2',
+    );
     expect(reached.campaign.storyBible['stage'], 'square');
     expect(reached.campaign.hero.toJson(), initial.hero.toJson());
     // A story route must never award experience by manipulating Hero directly.
@@ -79,9 +85,7 @@ void main() {
   });
 
   test('Legacy static facade preserves exact saves and content', () {
-    final engine = GameEngine(
-      clock: () => DateTime.utc(2026, 10, 21),
-    );
+    final engine = GameEngine(clock: () => DateTime.utc(2026, 10, 21));
     final hero = engine.createDemo().hero;
     final game = legacy.RabenwachtCampaign.create(
       hero: hero,
