@@ -201,7 +201,7 @@ void main() {
     var c = begin(before);
     c = engine.act(c, 'Ich besuche Liora.').campaign;
     expect(c.messages.last.text, contains('Anschuldigung'));
-    expect(c.messages.last.text, contains('freien Person'));
+    expect(c.messages.last.text, contains('freie Person'));
     expect(c.facts['voice:epilogue:liora'], 'true');
     expect(c.facts['voice:chronistDebt'], 'contested');
     expect(c.npcs.map((n) => n.toJson()).toList(),
