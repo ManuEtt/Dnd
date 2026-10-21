@@ -188,7 +188,9 @@ void main() {
     campaign = engine.act(campaign, 'Ich betrete die Bibliothek.').campaign;
     campaign = engine.act(campaign, 'Ich suche das vierzehnte Blatt.').campaign;
     campaign = engine.act(campaign, 'Ich untersuche das Blatt.').campaign;
-    campaign = engine.act(campaign, 'Ich will den Namen selbst bewahren.').campaign;
+    campaign = engine
+        .act(campaign, 'Ich will den Namen selbst bewahren.')
+        .campaign;
     expect(campaign.storyBible['stage'], 'voice-threshold');
     expect(campaign.facts['voice:nameCustody'], 'hero');
     expect(campaign.facts['voice:chronistChoice'], isNull);
