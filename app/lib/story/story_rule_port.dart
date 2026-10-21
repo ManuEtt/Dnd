@@ -11,7 +11,7 @@ class StoryAbilityCheck {
   });
 
   final int modifier;
-  final int? minimumNatural;
+  final int minimumNatural;
   final bool advantage, disadvantage;
 }
 
