@@ -34,6 +34,20 @@ class SrdSphereAreaPreview {
   final int radiusFeet;
   final List<SrdSphereCellCandidate> candidates;
 
+  /// Candidate cells that need a separate obstacle/cover ruling.
+  int get coverReviewCount => candidates
+      .where((candidate) =>
+          candidate.centerRay == SrdSphereCenterRay.requiresCoverReview)
+      .length;
+
+  /// Only geometrically centered cells with an unobstructed center ray.
+  /// These are still not confirmed spell targets or damage recipients.
+  Iterable<SrdGridCell> get clearCenterCells => candidates
+      .where((candidate) =>
+          candidate.centerWithinRadius &&
+          candidate.centerRay == SrdSphereCenterRay.clear)
+      .map((candidate) => candidate.cell);
+
   SrdSphereCellCandidate? at(SrdGridCell position) {
     for (final entry in candidates) {
       if (entry.cell == position) return entry;
