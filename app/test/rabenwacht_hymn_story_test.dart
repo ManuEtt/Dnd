@@ -167,6 +167,7 @@ void main() {
   test('Vernichtetes Glockenlied sperrt den Namenchor dauerhaft', () {
     var c = explore(chapter(facts: {'prayerFound': 'true'}));
     c = engine.act(c, 'Ich vernichte die Strophe.').campaign;
+    expect(c.facts['hymnChoice'], 'burned');
     c = c.copyWith(
       storyBible: {...c.storyBible, 'stage': 'choice'},
       facts: {
