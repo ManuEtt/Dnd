@@ -1368,10 +1368,7 @@ class GameEngine {
       'für Runde 1 bestätigt. Noch keine automatischen '
       'Zusatzgegner-Angriffe oder Aktionsrechte.',
       type: 'combat.manualTurnQueueEstablished',
-      payload: {
-        ...queue.toJson(),
-        'advisoryOnly': true,
-      },
+      payload: {...queue.toJson(), 'advisoryOnly': true},
     );
   }
 

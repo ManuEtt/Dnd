@@ -83,17 +83,17 @@ void main() {
   ) async {
     final engine = GameEngine();
     final campaign = _game();
-    final after = engine.establishManualTurnQueue(
-      campaign,
-      orderedActorIds: const ['hero', 'foe', 'goblin'],
-      baseInitiativeConfirmed: true,
-      tiedOrderConfirmed: true,
-    ).campaign;
+    final after = engine
+        .establishManualTurnQueue(
+          campaign,
+          orderedActorIds: const ['hero', 'foe', 'goblin'],
+          baseInitiativeConfirmed: true,
+          tiedOrderConfirmed: true,
+        )
+        .campaign;
     await tester.pumpWidget(
       MaterialApp(
-        home: Scaffold(
-          body: ManualTurnQueueDialog(campaign: after),
-        ),
+        home: Scaffold(body: ManualTurnQueueDialog(campaign: after)),
       ),
     );
     await tester.pumpAndSettle();

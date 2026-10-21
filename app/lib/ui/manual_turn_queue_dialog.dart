@@ -4,7 +4,8 @@ import '../domain/models.dart';
 import '../domain/srd_initiative_roster_rules.dart';
 
 class ManualTurnQueueChoice {
-  const ManualTurnQueueChoice.create(this.actorIds, {
+  const ManualTurnQueueChoice.create(
+    this.actorIds, {
     required this.baseConfirmed,
     required this.tieConfirmed,
   }) : advance = false;
@@ -26,8 +27,7 @@ class ManualTurnQueueDialog extends StatefulWidget {
   final Campaign campaign;
 
   @override
-  State<ManualTurnQueueDialog> createState() =>
-      _ManualTurnQueueDialogState();
+  State<ManualTurnQueueDialog> createState() => _ManualTurnQueueDialogState();
 }
 
 class _ManualTurnQueueDialogState extends State<ManualTurnQueueDialog> {
@@ -44,9 +44,7 @@ class _ManualTurnQueueDialogState extends State<ManualTurnQueueDialog> {
       widget.campaign,
       baseInitiativeConfirmed: false,
     );
-    _actors = [
-      for (final group in _roster.groups) ...group.entries,
-    ];
+    _actors = [for (final group in _roster.groups) ...group.entries];
   }
 
   void _move(int index, int offset) {
@@ -88,7 +86,8 @@ class _ManualTurnQueueDialogState extends State<ManualTurnQueueDialog> {
   @override
   Widget build(BuildContext context) {
     final queue = widget.campaign.manualTurnQueue;
-    final queueCurrent = queue != null &&
+    final queueCurrent =
+        queue != null &&
         SrdInitiativeRosterRules.isCurrent(widget.campaign, queue);
     return AlertDialog(
       title: const Text('Manuelle Kampf-Zugfolge'),
@@ -137,7 +136,8 @@ class _ManualTurnQueueDialogState extends State<ManualTurnQueueDialog> {
                     IconButton(
                       key: ValueKey('queue-up-${_actors[index].id}'),
                       tooltip: 'Bei Gleichstand nach oben',
-                      onPressed: index > 0 &&
+                      onPressed:
+                          index > 0 &&
                               _actors[index - 1].total == _actors[index].total
                           ? () => _move(index, -1)
                           : null,
@@ -146,7 +146,8 @@ class _ManualTurnQueueDialogState extends State<ManualTurnQueueDialog> {
                     IconButton(
                       key: ValueKey('queue-down-${_actors[index].id}'),
                       tooltip: 'Bei Gleichstand nach unten',
-                      onPressed: index + 1 < _actors.length &&
+                      onPressed:
+                          index + 1 < _actors.length &&
                               _actors[index + 1].total == _actors[index].total
                           ? () => _move(index, 1)
                           : null,
@@ -194,8 +195,9 @@ class _ManualTurnQueueDialogState extends State<ManualTurnQueueDialog> {
         if (queueCurrent)
           TextButton(
             key: const ValueKey('queue-advance'),
-            onPressed: () =>
-                Navigator.of(context).pop(const ManualTurnQueueChoice.advance()),
+            onPressed: () => Navigator.of(
+              context,
+            ).pop(const ManualTurnQueueChoice.advance()),
             child: const Text('Manuellen Marker weiter'),
           ),
         FilledButton(

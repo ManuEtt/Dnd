@@ -1907,9 +1907,10 @@ class ManualCombatTurnQueue {
   };
 
   factory ManualCombatTurnQueue.fromJson(Map<String, dynamic> j) {
-    final ids = _list(j['actorIds'], 'Zugfolge-Akteure')
-        .map((value) => _string(value, 'Zugfolge-Akteur'))
-        .toList();
+    final ids = _list(
+      j['actorIds'],
+      'Zugfolge-Akteure',
+    ).map((value) => _string(value, 'Zugfolge-Akteur')).toList();
     return ManualCombatTurnQueue(
       encounterId: _string(j['encounterId'], 'Zugfolge-Kampf'),
       actorIds: ids,
@@ -1971,6 +1972,7 @@ class Campaign {
 
   /// HP-only additional creatures, persistent even if the main fight ends.
   final List<TrackedAreaCreature> trackedAreaCreatures;
+
   /// Optional advisory turn cursor; never authorizes real combat actions.
   final ManualCombatTurnQueue? manualTurnQueue;
   final PendingRoll? pendingRoll;
@@ -2129,7 +2131,8 @@ class Campaign {
             !manualQueue.actorIds.contains(hero.id) ||
             !manualQueue.actorIds.contains(encounter.id) ||
             manualQueue.actorIds.any(
-              (id) => id != hero.id &&
+              (id) =>
+                  id != hero.id &&
                   id != encounter.id &&
                   !trackedAreaCreatures.any((creature) => creature.id == id),
             ))) {

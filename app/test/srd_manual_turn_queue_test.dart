@@ -33,18 +33,15 @@ const _foe = Encounter(
   enemyInitiative: 12,
 );
 
-TrackedAreaCreature _creature(
-  String id,
-  int initiative, {
-  int hp = 10,
-}) => TrackedAreaCreature(
-  id: id,
-  name: id,
-  hitPoints: hp,
-  maxHitPoints: 10,
-  initiativeTotal: initiative,
-  initiativeController: 'gm',
-);
+TrackedAreaCreature _creature(String id, int initiative, {int hp = 10}) =>
+    TrackedAreaCreature(
+      id: id,
+      name: id,
+      hitPoints: hp,
+      maxHitPoints: 10,
+      initiativeTotal: initiative,
+      initiativeController: 'gm',
+    );
 
 Campaign _game(GameEngine engine) => engine.createDemo().copyWith(
   hero: _hero(),
@@ -114,9 +111,7 @@ void main() {
   });
 
   test('Manual cursor persists and wraps round without performing attacks', () {
-    final engine = GameEngine(
-      clock: () => DateTime.utc(2026, 10, 21),
-    );
+    final engine = GameEngine(clock: () => DateTime.utc(2026, 10, 21));
     final game = _game(engine);
     final start = engine.establishManualTurnQueue(
       game,
@@ -149,12 +144,14 @@ void main() {
   test('Downed HP-only creatures are skipped; cursors remain explicit', () {
     final engine = GameEngine();
     var game = _game(engine);
-    game = engine.establishManualTurnQueue(
-      game,
-      orderedActorIds: ['orc', 'goblin', 'hero', 'foe', 'wolf'],
-      baseInitiativeConfirmed: true,
-      tiedOrderConfirmed: true,
-    ).campaign;
+    game = engine
+        .establishManualTurnQueue(
+          game,
+          orderedActorIds: ['orc', 'goblin', 'hero', 'foe', 'wolf'],
+          baseInitiativeConfirmed: true,
+          tiedOrderConfirmed: true,
+        )
+        .campaign;
     game = game.copyWith(
       trackedAreaCreatures: [
         _creature('orc', 17, hp: 0),
@@ -167,103 +164,119 @@ void main() {
     expect(next.campaign.manualTurnQueue!.round, 1);
   });
 
-  test('Open decisions, missing init, added creatures and stale queue block', () {
-    final engine = GameEngine();
-    final game = _game(engine);
-    expect(
-      () => engine.establishManualTurnQueue(
-        game,
-        orderedActorIds: ['orc', 'goblin', 'hero', 'foe', 'wolf'],
-        baseInitiativeConfirmed: false,
-        tiedOrderConfirmed: true,
-      ),
-      throwsFormatException,
-    );
-    expect(
-      () => engine.establishManualTurnQueue(
-        game.copyWith(
-          trackedAreaCreatures: [
-            _creature('orc', 17),
-            _creature('goblin', 15),
-            const TrackedAreaCreature(
-              id: 'wolf',
-              name: 'wolf',
-              hitPoints: 10,
-              maxHitPoints: 10,
-            ),
-          ],
+  test(
+    'Open decisions, missing init, added creatures and stale queue block',
+    () {
+      final engine = GameEngine();
+      final game = _game(engine);
+      expect(
+        () => engine.establishManualTurnQueue(
+          game,
+          orderedActorIds: ['orc', 'goblin', 'hero', 'foe', 'wolf'],
+          baseInitiativeConfirmed: false,
+          tiedOrderConfirmed: true,
         ),
-        orderedActorIds: ['orc', 'goblin', 'hero', 'foe'],
-        baseInitiativeConfirmed: true,
-        tiedOrderConfirmed: true,
-      ),
-      throwsFormatException,
-    );
-    final queued = engine.establishManualTurnQueue(
-      game,
-      orderedActorIds: ['orc', 'goblin', 'hero', 'foe', 'wolf'],
-      baseInitiativeConfirmed: true,
-      tiedOrderConfirmed: true,
-    ).campaign;
-    final changed = queued.copyWith(trackedAreaCreatures: [
-      _creature('orc', 17),
-      _creature('goblin', 15),
-      _creature('wolf', 19),
-    ]);
-    expect(
-      () => engine.advanceManualTurnQueue(changed),
-      throwsFormatException,
-    );
-  });
+        throwsFormatException,
+      );
+      expect(
+        () => engine.establishManualTurnQueue(
+          game.copyWith(
+            trackedAreaCreatures: [
+              _creature('orc', 17),
+              _creature('goblin', 15),
+              const TrackedAreaCreature(
+                id: 'wolf',
+                name: 'wolf',
+                hitPoints: 10,
+                maxHitPoints: 10,
+              ),
+            ],
+          ),
+          orderedActorIds: ['orc', 'goblin', 'hero', 'foe'],
+          baseInitiativeConfirmed: true,
+          tiedOrderConfirmed: true,
+        ),
+        throwsFormatException,
+      );
+      final queued = engine
+          .establishManualTurnQueue(
+            game,
+            orderedActorIds: ['orc', 'goblin', 'hero', 'foe', 'wolf'],
+            baseInitiativeConfirmed: true,
+            tiedOrderConfirmed: true,
+          )
+          .campaign;
+      final changed = queued.copyWith(
+        trackedAreaCreatures: [
+          _creature('orc', 17),
+          _creature('goblin', 15),
+          _creature('wolf', 19),
+        ],
+      );
+      expect(
+        () => engine.advanceManualTurnQueue(changed),
+        throwsFormatException,
+      );
+    },
+  );
 
-  test('Initiative changes and registrations invalidate active manual queue', () {
-    final engine = GameEngine();
-    final game = _game(engine);
-    final queued = engine.establishManualTurnQueue(
-      game,
-      orderedActorIds: ['orc', 'goblin', 'hero', 'foe', 'wolf'],
-      baseInitiativeConfirmed: true,
-      tiedOrderConfirmed: true,
-    ).campaign;
-    final changed = engine.confirmAreaCreatureInitiative(
-      queued,
-      creatureId: 'wolf',
-      initiativeTotal: 11,
-      initiativeController: 'gm',
-      initiativeConfirmed: true,
-    );
-    expect(changed.campaign.manualTurnQueue, isNull);
-    expect(changed.campaign.trackedAreaCreatures.last.initiativeTotal, 11);
-    final added = engine.trackAreaCreature(
-      queued,
-      creatureId: 'new',
-      creatureName: 'New',
-      hitPoints: 5,
-      maxHitPoints: 5,
-      valuesConfirmed: true,
-    );
-    expect(added.campaign.manualTurnQueue, isNull);
-  });
+  test(
+    'Initiative changes and registrations invalidate active manual queue',
+    () {
+      final engine = GameEngine();
+      final game = _game(engine);
+      final queued = engine
+          .establishManualTurnQueue(
+            game,
+            orderedActorIds: ['orc', 'goblin', 'hero', 'foe', 'wolf'],
+            baseInitiativeConfirmed: true,
+            tiedOrderConfirmed: true,
+          )
+          .campaign;
+      final changed = engine.confirmAreaCreatureInitiative(
+        queued,
+        creatureId: 'wolf',
+        initiativeTotal: 11,
+        initiativeController: 'gm',
+        initiativeConfirmed: true,
+      );
+      expect(changed.campaign.manualTurnQueue, isNull);
+      expect(changed.campaign.trackedAreaCreatures.last.initiativeTotal, 11);
+      final added = engine.trackAreaCreature(
+        queued,
+        creatureId: 'new',
+        creatureName: 'New',
+        hitPoints: 5,
+        maxHitPoints: 5,
+        valuesConfirmed: true,
+      );
+      expect(added.campaign.manualTurnQueue, isNull);
+    },
+  );
 
   test('Victory or new encounter clears optional queue automatically', () {
     final engine = GameEngine();
     final game = _game(engine);
-    final queued = engine.establishManualTurnQueue(
-      game,
-      orderedActorIds: ['orc', 'goblin', 'hero', 'foe', 'wolf'],
-      baseInitiativeConfirmed: true,
-      tiedOrderConfirmed: true,
-    ).campaign;
+    final queued = engine
+        .establishManualTurnQueue(
+          game,
+          orderedActorIds: ['orc', 'goblin', 'hero', 'foe', 'wolf'],
+          baseInitiativeConfirmed: true,
+          tiedOrderConfirmed: true,
+        )
+        .campaign;
     expect(queued.copyWith(encounter: null).manualTurnQueue, isNull);
     expect(
-      queued.copyWith(
-        encounter: const Encounter(
-          id: 'other',
-          enemyName: 'New foe',
-          enemyHitPoints: 10,
-          enemyMaxHitPoints: 10,
-        ),
-      ).manualTurnQueue,
+      queued
+          .copyWith(
+            encounter: const Encounter(
+              id: 'other',
+              enemyName: 'New foe',
+              enemyHitPoints: 10,
+              enemyMaxHitPoints: 10,
+            ),
+          )
+          .manualTurnQueue,
       isNull,
     );
     expect(queued.copyWith(scene: 'new').manualTurnQueue, isNotNull);
@@ -272,12 +285,14 @@ void main() {
   test('Tampered manual queue files are rejected and list is immutable', () {
     final engine = GameEngine();
     final game = _game(engine);
-    final queued = engine.establishManualTurnQueue(
-      game,
-      orderedActorIds: ['orc', 'goblin', 'hero', 'foe', 'wolf'],
-      baseInitiativeConfirmed: true,
-      tiedOrderConfirmed: true,
-    ).campaign;
+    final queued = engine
+        .establishManualTurnQueue(
+          game,
+          orderedActorIds: ['orc', 'goblin', 'hero', 'foe', 'wolf'],
+          baseInitiativeConfirmed: true,
+          tiedOrderConfirmed: true,
+        )
+        .campaign;
     expect(
       () => queued.manualTurnQueue!.actorIds.add('malicious'),
       throwsUnsupportedError,

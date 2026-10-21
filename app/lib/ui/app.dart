@@ -1205,7 +1205,8 @@ class _AdventurePageState extends State<_AdventurePage> {
 
   Future<void> _editManualTurnQueue() async {
     final campaign = widget.controller.currentCampaign;
-    if (campaign == null || campaign.encounter == null ||
+    if (campaign == null ||
+        campaign.encounter == null ||
         widget.controller.busy) {
       return;
     }
@@ -1714,7 +1715,8 @@ class _AdventurePageState extends State<_AdventurePage> {
                     campaign.trackedAreaCreatures.isNotEmpty)
                   TextButton.icon(
                     key: const ValueKey('adventure-manual-turn-queue'),
-                    onPressed: widget.controller.busy ||
+                    onPressed:
+                        widget.controller.busy ||
                             campaign.pendingRoll != null ||
                             campaign.pendingDeathSave != null ||
                             campaign.pendingEnemyShieldHit != null

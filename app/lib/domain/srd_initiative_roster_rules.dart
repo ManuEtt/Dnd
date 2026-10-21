@@ -149,8 +149,7 @@ class SrdInitiativeRosterRules {
         for (final actor in group.entries) actor.id: actor.total,
     };
     for (var i = 1; i < orderedActorIds.length; i++) {
-      if (totals[orderedActorIds[i - 1]]! <
-          totals[orderedActorIds[i]]!) {
+      if (totals[orderedActorIds[i - 1]]! < totals[orderedActorIds[i]]!) {
         throw const FormatException(
           'Initiativen müssen absteigend sortiert sein; '
           'nur Gleichstände dürfen vertauscht werden.',
@@ -165,14 +164,9 @@ class SrdInitiativeRosterRules {
     );
   }
 
-  static bool isCurrent(
-    Campaign campaign,
-    ManualCombatTurnQueue queue,
-  ) {
+  static bool isCurrent(Campaign campaign, ManualCombatTurnQueue queue) {
     final fight = campaign.encounter;
-    if (fight == null ||
-        fight.isFinished ||
-        fight.id != queue.encounterId) {
+    if (fight == null || fight.isFinished || fight.id != queue.encounterId) {
       return false;
     }
     final roster = preview(campaign, baseInitiativeConfirmed: true);
