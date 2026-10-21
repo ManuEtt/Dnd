@@ -1,3 +1,11 @@
+## 21.10.2026 – Konservative Vorschau kugelförmiger SRD-Zaubereffekte (CI offen)
+
+- 2D-Rasterkandidaten für separat bestätigte Kugelradien inklusive überlappender Randfelder; geprüfter Ursprung und Zauberreichweite.
+- Explizite Unterscheidung zwischen freien Mittelpunktstrahlen und ungeklärtem Cover; keine unbestätigten Treffer/Zauberschäden.
+- Neue Regressionstests, öffentliche Regel-API und Audit-Nachweise; keine Speicherformatmigration.
+
+---
+
 ## 21.10.2026 – Kartengestützte SRD-Zauberursprünge (Integrations-PR, CI offen)
 
 - 5-Fuß-Raster mit konservativer Eckensperre und bestätigten Blockern berechnet Entfernungen und freie geradlinige Mittelpunktverbindungen deterministisch.
