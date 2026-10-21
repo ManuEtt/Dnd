@@ -1,3 +1,11 @@
+## 21.10.2026 – SRD-Zaubermaterialien in Kampagnenrevisionen (Integrations-PR, CI offen)
+
+- Verbinde bestätigte Material-/Slot-Regeländerung mit `GameEngine`-Audit-Ereignis `spell.materialsCommitted` und bestehendem `GameController`-SQLite-Revisions-Commit.
+- Regressionen für Neustart, Revisionen, doppelte Anfragen, fehlende Materialien, konkurrierende Schreibzugriffe und Blockierung im laufenden Kampf ergänzt.
+- Keine automatische Zauberwirkung oder freie Materialnamen-/Preisinterpretation; kein neues Speicherformat.
+
+---
+
 ## 21.10.2026 – SRD Materialinventar atomar (eigener Entwicklungsbranch, CI offen)
 
 - Nach PR #74 neuer reiner Domain-Baustein für gemeinsam geprüften Zauberplatz- und verbrauchbaren Materialabzug aus einer bestätigten Inventarinstanz.
