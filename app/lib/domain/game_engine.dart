@@ -34,6 +34,7 @@ import 'ai_story.dart';
 import 'adventure_catalog.dart';
 import 'rabenwacht_campaign.dart';
 import 'models.dart';
+import 'srd_initiative_roster_rules.dart';
 import 'rules_engine.dart';
 import 'rest_rules.dart';
 import 'spellcasting_rules.dart';
@@ -1265,6 +1266,7 @@ class GameEngine {
       campaign,
       campaign.copyWith(
         trackedAreaCreatures: [...campaign.trackedAreaCreatures, creature],
+        manualTurnQueue: null,
       ),
       '${creature.name} als zusätzliche Kreatur mit '
       '${creature.hitPoints}/${creature.maxHitPoints} TP erfasst. '
@@ -1321,6 +1323,7 @@ class GameEngine {
           for (final creature in campaign.trackedAreaCreatures)
             creature.id == creatureId ? updated : creature,
         ],
+        manualTurnQueue: null,
       ),
       'Initiative für ${updated.name} auf $initiativeTotal bestätigt '
       '(${initiativeController == 'gm' ? 'SL-gesteuert' : 'spieler-gesteuert'}). '
@@ -1331,6 +1334,68 @@ class GameEngine {
         'initiativeTotal': initiativeTotal,
         'initiativeController': initiativeController,
         'turnOrderOnly': true,
+      },
+    );
+  }
+
+  /// Stores a validated advisory turn sequence; the original Encounter
+  /// remains the sole authority for hero and main-foe combat actions.
+  GameUpdate establishManualTurnQueue(
+    Campaign campaign, {
+    required List<String> orderedActorIds,
+    required bool baseInitiativeConfirmed,
+    required bool tiedOrderConfirmed,
+  }) {
+    if (campaign.pendingRoll != null ||
+        campaign.pendingDeathSave != null ||
+        campaign.pendingEnemyShieldHit != null ||
+        campaign.hero.isDead) {
+      throw const FormatException(
+        'Die manuelle Zugfolge kann bei offenen Kampfentscheidungen '
+        'nicht eingerichtet werden.',
+      );
+    }
+    final queue = SrdInitiativeRosterRules.createManualQueue(
+      campaign,
+      orderedActorIds: orderedActorIds,
+      baseInitiativeConfirmed: baseInitiativeConfirmed,
+      tiedOrderConfirmed: tiedOrderConfirmed,
+    );
+    return _commit(
+      campaign,
+      campaign.copyWith(manualTurnQueue: queue),
+      'Manuelle Zugfolge mit ${queue.actorIds.length} Akteuren '
+      'für Runde 1 bestätigt. Noch keine automatischen '
+      'Zusatzgegner-Angriffe oder Aktionsrechte.',
+      type: 'combat.manualTurnQueueEstablished',
+      payload: {...queue.toJson(), 'advisoryOnly': true},
+    );
+  }
+
+  /// Advances a journaled, manual initiative marker without granting actions.
+  GameUpdate advanceManualTurnQueue(Campaign campaign) {
+    final queue = campaign.manualTurnQueue;
+    if (queue == null ||
+        campaign.pendingRoll != null ||
+        campaign.pendingDeathSave != null ||
+        campaign.pendingEnemyShieldHit != null ||
+        campaign.hero.isDead) {
+      throw const FormatException(
+        'Keine freie, bestätigte manuelle Kampf-Zugfolge.',
+      );
+    }
+    final next = SrdInitiativeRosterRules.nextManualActor(campaign, queue);
+    return _commit(
+      campaign,
+      campaign.copyWith(manualTurnQueue: next),
+      'Manuelle Zugfolge: Runde ${next.round}, '
+      'Akteur ${next.activeActorId}. '
+      'Dies löst keinen Angriff und keine Kampfaktion aus.',
+      type: 'combat.manualTurnQueueAdvanced',
+      payload: {
+        ...next.toJson(),
+        'previousActorId': queue.activeActorId,
+        'advisoryOnly': true,
       },
     );
   }

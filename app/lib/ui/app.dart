@@ -33,6 +33,7 @@ import 'sacred_flame_dialog.dart';
 import 'acid_splash_dialog.dart';
 import 'area_creature_registration_dialog.dart';
 import 'tracked_creature_initiative_dialog.dart';
+import 'manual_turn_queue_dialog.dart';
 import 'healing_spell_dialog.dart';
 import 'death_save_decision_panel.dart';
 import 'fantasy_character_sheet.dart';
@@ -1202,6 +1203,36 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previous);
   }
 
+  Future<void> _editManualTurnQueue() async {
+    final campaign = widget.controller.currentCampaign;
+    if (campaign == null ||
+        campaign.encounter == null ||
+        widget.controller.busy) {
+      return;
+    }
+    final choice = await showDialog<ManualTurnQueueChoice>(
+      context: context,
+      builder: (_) => ManualTurnQueueDialog(campaign: campaign),
+    );
+    if (choice == null || !mounted) return;
+    final previous = _lastMessageId;
+    if (choice.advance) {
+      await widget.controller.advanceManualTurnQueue(
+        campaignId: campaign.id,
+        expectedRevision: campaign.revision,
+      );
+    } else {
+      await widget.controller.establishManualTurnQueue(
+        campaignId: campaign.id,
+        expectedRevision: campaign.revision,
+        orderedActorIds: choice.actorIds,
+        baseInitiativeConfirmed: choice.baseConfirmed,
+        tiedOrderConfirmed: choice.tieConfirmed,
+      );
+    }
+    if (mounted) await _afterTurn(previous);
+  }
+
   Future<void> _confirmAreaCreatureInitiative() async {
     final campaign = widget.controller.currentCampaign;
     if (campaign == null ||
@@ -1678,6 +1709,21 @@ class _AdventurePageState extends State<_AdventurePage> {
                         : _confirmAreaCreatureInitiative,
                     icon: const Icon(Icons.format_list_numbered, size: 17),
                     label: const Text('Initiative der Kreaturen'),
+                  ),
+                if (campaign.encounter != null &&
+                    !campaign.encounter!.isFinished &&
+                    campaign.trackedAreaCreatures.isNotEmpty)
+                  TextButton.icon(
+                    key: const ValueKey('adventure-manual-turn-queue'),
+                    onPressed:
+                        widget.controller.busy ||
+                            campaign.pendingRoll != null ||
+                            campaign.pendingDeathSave != null ||
+                            campaign.pendingEnemyShieldHit != null
+                        ? null
+                        : _editManualTurnQueue,
+                    icon: const Icon(Icons.format_list_bulleted, size: 17),
+                    label: const Text('Manuelle Zugfolge'),
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&

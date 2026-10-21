@@ -7300,7 +7300,9 @@
       "rule_implemented": "partial",
       "tests": [
         "app/test/srd_initiative_roster_test.dart",
-        "app/test/tracked_creature_initiative_dialog_test.dart"
+        "app/test/tracked_creature_initiative_dialog_test.dart",
+        "app/test/srd_manual_turn_queue_test.dart",
+        "app/test/manual_turn_queue_dialog_test.dart"
       ],
       "code": [
         "app/lib/domain/models.dart",
@@ -7308,9 +7310,10 @@
         "app/lib/domain/srd_initiative_roster_rules.dart",
         "app/lib/services/game_controller.dart",
         "app/lib/ui/tracked_creature_initiative_dialog.dart",
-        "app/lib/ui/app.dart"
+        "app/lib/ui/app.dart",
+        "app/lib/ui/manual_turn_queue_dialog.dart"
       ],
-      "note": "SRD 5.2.1: Hauptkampf enthält bereits Hero-/Gegnerinitiative. Erweiterung speichert bestätigte Initiativeergebnisse und GM-/Spieler-Kontrolle einzelner zusätzlicher HP-geführter Kreaturen (schema-1 optional). Sortierte absteigende Gruppen mit nicht stillschweigend aufgelösten Gleichständen, fehlende/alte Werte offengelegt; Dialog+Controller+Journalevent. Noch keine eigenständigen Zusatzgegner-Züge, aktive Turnqueue, Gruppeninitiative identischer Monster, Initiative-Surprise-Advantage/Disadvantage-Integration, automatische neue Siegbedingungen oder automatisches Tiebreaking. Daher partial."
+      "note": "SRD 5.2.1: für Hero/Hauptgegner und bestätigte HP-geführte Zusatzkreaturen jetzt eine persistente, separat MANUELL fortschaltbare Initiativ-Zugfolge mit vollständiger Akteurliste, absteigender Sortierung und ausdrücklich bestätigter Gleichstandsreihenfolge (einschließlich UI, Codec, Revisionsschutz, Guard bei Kampfende/Akteuränderung). Der Marker erlaubt KEINE Kampfaktion und ist nicht an die bisherigen automatischen Hero-/Hauptgegner-Züge gekoppelt. Monsterangriffe, Mehrgegner-Aktionen/Reaktionen, tatsächlicher Turn-Scheduler, Monstergruppen, Geometrie, sämtliche Zugende-Effekte und korrekte Encounter-Siegbedingungen weiterhin offen. Partielle Implementierung."
     },
     {
       "id": "RULE-COMBAT-SURPRISE",

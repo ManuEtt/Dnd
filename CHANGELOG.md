@@ -1,3 +1,14 @@
+## 21.10.2026 – Version 0.8.28+78 (manuelle Mehrgegner-Zugfolge; CI offen)
+
+- Optionale, gespeicherte manuelle Zugfolge mit Kampf-ID, eindeutigen Akteur-IDs, Position und eigener Rundenzählung. Alte Kampagnen ohne Feld bleiben unverändert gültig.
+- Vollständige bestätigte Initiativen aller lebenden Beteiligten und ausdrücklich entschiedene Gleichstände erforderlich. Nur gleich hohe Initiative darf umsortiert werden.
+- Neue Schnellaktion „Manuelle Zugfolge“ mit visueller Tiebreaker-Auswahl und manueller Marker-Fortsetzung. Besiegte Zusatzkreaturen werden übersprungen; eine neue Runde wird erkannt.
+- Revisionsgeschützte Engine-/Controller-Aktionen, überprüfbares Kampfjournal, Invalidierung nach Initiativ-/Akteuränderung oder Kampfende sowie Regressionstests.
+- **Keine vorgetäuschte neue automatische Mehrgegner-Kampfengine:** Der Marker verleiht weder Aktionen noch erzeugt er Gegnerangriffe und beeinflusst die bestehende `Encounter`-Reihenfolge nicht.
+- PR/CI- und echter Android-Gerätetest noch ausstehend.
+
+---
+
 ## 20.10.2026 – Version 0.8.27+77 (Mehrgegner-Initiativverwaltung, CI offen)
 
 - Weitere bestätigte Kreaturen speichern ein optionales Initiative-Gesamtergebnis sowie die zuständige SL-/Spieler-Kontrolle im abwärtskompatiblen schema-1-Kampagnenformat.
