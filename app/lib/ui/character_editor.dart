@@ -27,9 +27,17 @@ import 'spellcasting_dialog.dart';
 
 /// Edits nullable values explicitly: an imported unknown score stays unknown.
 class CharacterEditor extends StatefulWidget {
-  const CharacterEditor({super.key, this.hero});
+  const CharacterEditor({
+    super.key,
+    this.hero,
+    this.autoFillExistingCombatValues = false,
+  });
 
   final HeroCharacter? hero;
+
+  /// Opt-in for the live archive/campaign views. Generic editors preserve
+  /// historical unknown values until the player explicitly confirms them.
+  final bool autoFillExistingCombatValues;
 
   @override
   State<CharacterEditor> createState() => _CharacterEditorState();
@@ -107,7 +115,9 @@ class _CharacterEditorState extends State<CharacterEditor> {
     for (final key in abilityLabels.keys) {
       _scores[key] = TextEditingController(text: scores[key]?.toString() ?? '');
     }
-    if (widget.hero == null) _autofillCombatValues();
+    // The live hero screens opt in; legacy/manual editor flows retain their
+    // original null values when an unrelated dialog is cancelled or saved.
+    _autofillCombatValues();
   }
 
   @override
@@ -152,17 +162,22 @@ class _CharacterEditorState extends State<CharacterEditor> {
     );
   }
 
-  /// Never overwrite a manually edited value. Existing characters only
-  /// opt in through the explicit button; new heroes get known SRD proposals.
+  /// Fill only unknown values or previously auto-proposed values. Existing
+  /// confirmed values and manual overrides always remain authoritative.
+  /// Unrelated editing actions must not silently confirm legacy unknowns.
   void _autofillCombatValues({bool explicit = false}) {
-    if (widget.hero != null && !explicit) return;
+    if (widget.hero != null &&
+        !widget.autoFillExistingCombatValues &&
+        !explicit) {
+      return;
+    }
     final speciesDm = SrdStartingCombatValues.speedDecimeters(
       _fields['species']!.text,
     );
     final speedField = _fields['speed']!;
     final canUpdateSpeed =
         speedField.text.trim().isEmpty ||
-        (widget.hero == null && speedField.text == _autoSpeed);
+        (_autoSpeed != null && speedField.text == _autoSpeed);
     if (canUpdateSpeed) {
       final suggested = speciesDm == null
           ? ''
@@ -174,7 +189,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
     final acField = _fields['armorClass']!;
     final canUpdateAc =
         acField.text.trim().isEmpty ||
-        (widget.hero == null && acField.text == _autoArmorClass);
+        (_autoArmorClass != null && acField.text == _autoArmorClass);
     if (canUpdateAc) {
       final ac = _suggestedArmorClass();
       final suggested = ac?.toString() ?? '';
@@ -223,7 +238,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
         minLines: lines,
         maxLines: lines == 1 ? 1 : 6,
         onChanged: (value) {
-          if (widget.hero == null && (key == 'species' || key == 'className')) {
+          if (key == 'species' || key == 'className') {
             setState(() => _autofillCombatValues());
           }
         },
@@ -305,7 +320,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
   }
 
   void _save() {
-    if (widget.hero == null) _autofillCombatValues();
+    _autofillCombatValues();
     if (!_form.currentState!.validate()) return;
     try {
       final json = Map<String, dynamic>.from(_original);

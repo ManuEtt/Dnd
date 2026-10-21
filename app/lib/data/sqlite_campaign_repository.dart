@@ -241,6 +241,36 @@ CREATE TABLE settings (
         }
         ordinal++;
       }
+
+      // The campaign and hero archive represent the same hero ID. Persist
+      // progression/loot/XP in the *same* transaction as events and revision.
+      // Imported campaigns may add an absent hero, but never replace a hero
+      // already in the archive just because an older backup was imported.
+      final hero = HeroCharacter.fromJson(
+        Map<String, dynamic>.from(campaignData['hero'] as Map),
+      );
+      final archived = await transaction.query(
+        'characters',
+        columns: ['snapshot'],
+        where: 'id = ?',
+        whereArgs: [hero.id],
+        limit: 1,
+      );
+      final previous = archived.isEmpty
+          ? null
+          : HeroCharacter.fromJson(
+              Map<String, dynamic>.from(
+                jsonDecode(archived.single['snapshot'] as String) as Map,
+              ),
+            );
+      if ((previous == null || !imported) &&
+          (previous == null || !_losesEarnedExperience(previous, hero))) {
+        await transaction.insert('characters', {
+          'id': hero.id,
+          'snapshot': _canonical(hero.toJson()),
+          'updated_at': confirmedAt,
+        }, conflictAlgorithm: ConflictAlgorithm.replace);
+      }
     });
   }
 
@@ -249,8 +279,52 @@ CREATE TABLE settings (
     await _database.delete('campaigns', where: 'id = ?', whereArgs: [id]);
   }
 
+  /// Repairs archives created before campaign progress was synchronized.
+  /// Only a newer campaign for the same stable hero ID may take precedence;
+  /// a later manual hero edit or higher known XP is never rolled back.
+  Future<void> _reconcileArchivedCharacters() async {
+    await _database.transaction((transaction) async {
+      final archived = await transaction.query('characters');
+      if (archived.isEmpty) return;
+      final archivedById = {
+        for (final row in archived) row['id'] as String: row,
+      };
+      final campaigns = await transaction.query(
+        'campaigns',
+        columns: ['snapshot', 'updated_at'],
+        orderBy: 'updated_at DESC',
+      );
+      final checked = <String>{};
+      for (final row in campaigns) {
+        final data = Map<String, dynamic>.from(
+          jsonDecode(row['snapshot'] as String) as Map,
+        );
+        final heroData = Map<String, dynamic>.from(data['hero'] as Map);
+        final id = heroData['id'] as String;
+        final oldRow = archivedById[id];
+        if (oldRow == null || !checked.add(id)) continue;
+        final savedAt = row['updated_at'] as String;
+        if (savedAt.compareTo(oldRow['updated_at'] as String) <= 0) continue;
+        final next = HeroCharacter.fromJson(heroData);
+        final previous = HeroCharacter.fromJson(
+          Map<String, dynamic>.from(
+            jsonDecode(oldRow['snapshot'] as String) as Map,
+          ),
+        );
+        if (_losesEarnedExperience(previous, next)) continue;
+        await transaction.update(
+          'characters',
+          {'snapshot': _canonical(next.toJson()), 'updated_at': savedAt},
+          where: 'id = ?',
+          whereArgs: [id],
+        );
+      }
+    });
+  }
+
   @override
   Future<List<HeroCharacter>> loadCharacters() async {
+    await _reconcileArchivedCharacters();
     final rows = await _database.query(
       'characters',
       orderBy: 'updated_at DESC',
@@ -364,6 +438,13 @@ CREATE TABLE settings (
 
   @override
   Future<void> close() => _database.close();
+}
+
+/// An older campaign must not erase confirmed XP from a newer hero record.
+bool _losesEarnedExperience(HeroCharacter previous, HeroCharacter next) {
+  final earned = previous.experience;
+  return earned != null &&
+      (next.experience == null || next.experience! < earned);
 }
 
 Campaign _decodeCampaign(String snapshot) =>

@@ -18,8 +18,9 @@ Future<void> _tapVisible(WidgetTester tester, Finder finder) async {
 Future<void> _startEditor(
   WidgetTester tester,
   HeroCharacter? hero,
-  void Function(HeroCharacter?) saved,
-) async {
+  void Function(HeroCharacter?) saved, {
+  bool autoFillExistingCombatValues = false,
+}) async {
   await tester.pumpWidget(
     MaterialApp(
       home: Builder(
@@ -30,7 +31,11 @@ Future<void> _startEditor(
                 await Navigator.push<HeroCharacter>(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => CharacterEditor(hero: hero),
+                    builder: (_) => CharacterEditor(
+                      hero: hero,
+                      autoFillExistingCombatValues:
+                          autoFillExistingCombatValues,
+                    ),
                   ),
                 ),
               );
@@ -171,5 +176,76 @@ void main() {
       scrollable: find.byType(Scrollable).first,
     );
     expect(tester.widget<TextFormField>(speed).controller!.text, '10,5');
+  });
+
+  testWidgets(
+    'Bestehender Held: bekannte Kampfwerte ohne Knopfdruck ergänzen',
+    (tester) async {
+      HeroCharacter? result;
+      final hero = HeroCharacter(
+        id: 'old-hero-missing-values',
+        name: 'Borin',
+        species: 'Goliath',
+        className: 'Kämpfer',
+        abilities: const {'dexterity': 14},
+      );
+      await _startEditor(
+        tester,
+        hero,
+        (value) => result = value,
+        autoFillExistingCombatValues: true,
+      );
+      final speed = find.byKey(const ValueKey('character-speed-meters'));
+      await tester.scrollUntilVisible(
+        speed,
+        250,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(tester.widget<TextFormField>(speed).controller!.text, '10,5');
+      final armor = find.widgetWithText(TextFormField, 'Rüstungsklasse');
+      await tester.scrollUntilVisible(
+        armor,
+        250,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(tester.widget<TextFormField>(armor).controller!.text, '12');
+      await _tapVisible(tester, find.text('Charakter speichern'));
+      expect(result!.armorClass, 12);
+      expect(result!.speed, 10);
+      expect(result!.speedRemainderDecimeters, 5);
+    },
+  );
+
+  testWidgets('Unbekannte SRD-Werte bleiben auch beim Bearbeiten unbestätigt', (
+    tester,
+  ) async {
+    HeroCharacter? result;
+    await _startEditor(
+      tester,
+      HeroCharacter(
+        id: 'unknown-stats',
+        name: 'Kera',
+        species: 'Eigene Spezies',
+        className: 'Kämpfer',
+      ),
+      (value) => result = value,
+    );
+    final speed = find.byKey(const ValueKey('character-speed-meters'));
+    await tester.scrollUntilVisible(
+      speed,
+      250,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(tester.widget<TextFormField>(speed).controller!.text, '');
+    final armor = find.widgetWithText(TextFormField, 'Rüstungsklasse');
+    await tester.scrollUntilVisible(
+      armor,
+      250,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(tester.widget<TextFormField>(armor).controller!.text, '');
+    await _tapVisible(tester, find.text('Charakter speichern'));
+    expect(result!.armorClass, isNull);
+    expect(result!.speed, isNull);
   });
 }
