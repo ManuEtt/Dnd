@@ -9,10 +9,7 @@ enum _PreviewTool { caster, origin, wall }
 /// Only a local planning aid. It never casts a spell, mutates a campaign,
 /// charges a spell slot, changes HP or persists an inferred target.
 class SrdFireballGridPreviewDialog extends StatefulWidget {
-  const SrdFireballGridPreviewDialog({
-    super.key,
-    required this.fireball,
-  });
+  const SrdFireballGridPreviewDialog({super.key, required this.fireball});
 
   final SrdSpellDefinition fireball;
 
@@ -140,40 +137,46 @@ class _SrdFireballGridPreviewDialogState
             final origin = cell == _origin;
             final wall = _walls.contains(cell);
             final candidate = candidates[cell];
-            final uncertain = candidate?.centerRay ==
-                SrdSphereCenterRay.requiresCoverReview;
+            final uncertain =
+                candidate?.centerRay == SrdSphereCenterRay.requiresCoverReview;
             final color = caster
                 ? scheme.primary
                 : origin
-                    ? scheme.tertiary
-                    : wall
-                        ? scheme.onSurface
-                        : candidate == null
-                            ? scheme.surfaceContainerHighest
-                            : uncertain
-                                ? scheme.errorContainer
-                                : candidate.centerWithinRadius
-                                    ? scheme.secondaryContainer
-                                    : scheme.tertiaryContainer;
+                ? scheme.tertiary
+                : wall
+                ? scheme.onSurface
+                : candidate == null
+                ? scheme.surfaceContainerHighest
+                : uncertain
+                ? scheme.errorContainer
+                : candidate.centerWithinRadius
+                ? scheme.secondaryContainer
+                : scheme.tertiaryContainer;
             return Tooltip(
-              message: (caster
+              message:
+                  (caster
                       ? 'Figur'
                       : origin
-                          ? 'Feuerball-Ursprung'
-                          : wall
-                              ? 'Vollhindernis'
-                              : candidate == null
-                                  ? 'Außerhalb der Vorschau'
-                                  : uncertain
-                                      ? 'Deckung ungeklärt'
-                                      : candidate.centerWithinRadius
-                                          ? 'Mittelpunkt im 2D-Radius'
-                                          : 'Mögliches Randfeld') +
-                  ' (' + cell.column.toString() + ', ' +
-                  cell.row.toString() + ')',
+                      ? 'Feuerball-Ursprung'
+                      : wall
+                      ? 'Vollhindernis'
+                      : candidate == null
+                      ? 'Außerhalb der Vorschau'
+                      : uncertain
+                      ? 'Deckung ungeklärt'
+                      : candidate.centerWithinRadius
+                      ? 'Mittelpunkt im 2D-Radius'
+                      : 'Mögliches Randfeld') +
+                  ' (' +
+                  cell.column.toString() +
+                  ', ' +
+                  cell.row.toString() +
+                  ')',
               child: InkWell(
                 key: ValueKey(
-                  'fireball-cell-' + cell.column.toString() + '-' +
+                  'fireball-cell-' +
+                      cell.column.toString() +
+                      '-' +
                       cell.row.toString(),
                 ),
                 onTap: () => _edit(cell),
@@ -188,16 +191,16 @@ class _SrdFireballGridPreviewDialogState
                     caster
                         ? 'S'
                         : origin
-                            ? 'Z'
-                            : wall
-                                ? 'X'
-                                : candidate == null
-                                    ? ''
-                                    : uncertain
-                                        ? '?'
-                                        : candidate.centerWithinRadius
-                                            ? '●'
-                                            : '·',
+                        ? 'Z'
+                        : wall
+                        ? 'X'
+                        : candidate == null
+                        ? ''
+                        : uncertain
+                        ? '?'
+                        : candidate.centerWithinRadius
+                        ? '●'
+                        : '·',
                     style: TextStyle(
                       color: caster || wall
                           ? scheme.onPrimary
@@ -217,7 +220,8 @@ class _SrdFireballGridPreviewDialogState
   @override
   Widget build(BuildContext context) {
     final count = _result?.candidates.length ?? 0;
-    final uncertain = _result?.candidates
+    final uncertain =
+        _result?.candidates
             .where(
               (entry) =>
                   entry.centerRay == SrdSphereCenterRay.requiresCoverReview,
@@ -262,13 +266,11 @@ class _SrdFireballGridPreviewDialogState
                     ChoiceChip(
                       key: ValueKey('fireball-tool-' + tool.name),
                       selected: _tool == tool,
-                      label: Text(
-                        switch (tool) {
-                          _PreviewTool.caster => 'S: Figur',
-                          _PreviewTool.origin => 'Z: Ursprung',
-                          _PreviewTool.wall => 'X: Vollhindernis',
-                        },
-                      ),
+                      label: Text(switch (tool) {
+                        _PreviewTool.caster => 'S: Figur',
+                        _PreviewTool.origin => 'Z: Ursprung',
+                        _PreviewTool.wall => 'X: Vollhindernis',
+                      }),
                       onSelected: (_) => setState(() => _tool = tool),
                     ),
                 ],
@@ -297,7 +299,8 @@ class _SrdFireballGridPreviewDialogState
               ),
               if (_result != null) ...[
                 Text(
-                  count.toString() + ' mögliche 2D-Bodenfelder, ' +
+                  count.toString() +
+                      ' mögliche 2D-Bodenfelder, ' +
                       uncertain.toString() +
                       ' mit ungeklärtem Mittelpunktstrahl.',
                   key: const ValueKey('fireball-preview-summary'),
@@ -311,9 +314,7 @@ class _SrdFireballGridPreviewDialogState
                 Text(
                   _error!,
                   key: const ValueKey('fireball-preview-error'),
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.error,
-                  ),
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
             ],
           ),
