@@ -24,7 +24,7 @@ class _SpyRules implements StoryRulePort {
     expect(skill, 'Wahrnehmung');
     return const StoryAbilityCheck(
       modifier: 7,
-      minimumNatural: null,
+      minimumNatural: 0,
       advantage: false,
       disadvantage: false,
     );
