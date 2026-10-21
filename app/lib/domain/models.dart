@@ -1870,6 +1870,7 @@ class ManualCombatTurnQueue {
     required List<String> actorIds,
     required this.activeIndex,
     required this.round,
+    this.actionUsed = false,
   }) : actorIds = List.unmodifiable(actorIds) {
     if (encounterId.isEmpty ||
         encounterId.length > 128 ||
@@ -1889,21 +1890,29 @@ class ManualCombatTurnQueue {
   final List<String> actorIds;
   final int activeIndex, round;
 
+  /// One confirmed basic attack per manual extra actor turn, if supported.
+  final bool actionUsed;
+
   String get activeActorId => actorIds[activeIndex];
 
-  ManualCombatTurnQueue copyWith({int? activeIndex, int? round}) =>
-      ManualCombatTurnQueue(
-        encounterId: encounterId,
-        actorIds: actorIds,
-        activeIndex: activeIndex ?? this.activeIndex,
-        round: round ?? this.round,
-      );
+  ManualCombatTurnQueue copyWith({
+    int? activeIndex,
+    int? round,
+    bool? actionUsed,
+  }) => ManualCombatTurnQueue(
+    encounterId: encounterId,
+    actorIds: actorIds,
+    activeIndex: activeIndex ?? this.activeIndex,
+    round: round ?? this.round,
+    actionUsed: actionUsed ?? this.actionUsed,
+  );
 
   Map<String, dynamic> toJson() => {
     'encounterId': encounterId,
     'actorIds': actorIds.toList(),
     'activeIndex': activeIndex,
     'round': round,
+    if (actionUsed) 'actionUsed': true,
   };
 
   factory ManualCombatTurnQueue.fromJson(Map<String, dynamic> j) {
@@ -1916,6 +1925,7 @@ class ManualCombatTurnQueue {
       actorIds: ids,
       activeIndex: _int(j['activeIndex'], 'Aktive Zugfolge-Position'),
       round: _int(j['round'], 'Zugfolge-Runde', min: 1),
+      actionUsed: _bool(j['actionUsed'], 'Zugfolge-Aktion verbraucht'),
     );
   }
 }
