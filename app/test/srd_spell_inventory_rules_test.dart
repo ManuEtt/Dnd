@@ -143,7 +143,7 @@ void main() {
           materialIdentityAndQuantityConfirmed: true,
           consumedMaterials: used,
         ),
-        throwsA(isA<Exception>()),
+        throwsA(anyOf(isA<FormatException>(), isA<StateError>())),
         reason: '$used',
       );
       expect(before.inventory.first.quantity, 2);
