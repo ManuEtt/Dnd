@@ -106,3 +106,15 @@ Technischer Einstieg: `GameController.newRabenwachtCampaign` → `GameEngine.cre
 **Spielerentscheidung im Finale:** Eine erfolgreiche Überreden-Probe bei Seren erzeugt jetzt zunächst `serenTrust` und führt zum finalen Entscheidungspunkt. Die App trifft das Erlösungsende nicht mehr ohne ausdrückliche Spielerhandlung. Auch die anderen beiden Enden bleiben wählbar.
 
 **Tests und Grenzen:** Der Regressionstest `app/test/rabenwacht_branching_story_test.dart` überprüft Mara-Routen, Beziehungen, Rückreisen, EP-Schutz, unbeabsichtigte Kämpfe, bewusste Finalwahl und Alarm-Folgen. Dieser Branch muss mit `dart format`, `flutter analyze`, `flutter test` und einem Android-Build geprüft werden. Ohne durchgeführten CI-Lauf sind diese Prüfungen **nicht bestätigt**. Komplexe Zauberlösungen, wirklich frei improvisierte NPC-Dialoge, Nebenquests und dynamische Kampfpläne bleiben zukünftige Entwicklungsschritte.
+
+## Erweiterung: Die ausgelöschten Namen (optionale Friedhofsquest)
+
+Am Friedhof kann der Held den **Gedenkstein der Namenlosen** untersuchen. Unter dem Stein flüstern Stimmen, deren Namen der Glockenorden aus der Chronik getilgt hat. Das neue optionale Ziel `rabenwacht-memorial` und `memorialSeen` werden erst durch tatsächliches Entdecken angelegt. Die Hinweiseübersicht verrät vorher nichts davon.
+
+Nach der Entdeckung kann der Held die Namen **bewahren** (nur mit einem belegten Hinweis aus Gebetbuch, Oswins Geständnis, Maras Brief oder den Chronistenakten), die Namen **verschweigen**, erst weitere Spuren suchen oder weiterreisen. Fehlende Beweise lösen keinen künstlichen Würfelwurf und kein automatisches Scheitern aus. Uneindeutige oder ausdrücklich verneinte Eingaben werden nicht als irreversible Entscheidungen übernommen.
+
+Die Ausgänge sind eindeutig speicherbar: `graveOath=remembered` (Nebenquest abgeschlossen) oder `graveOath=hidden` (Nebenquest gescheitert). Die Wahl bestimmt einen zusätzlichen Abschnitt im Epilog aller drei vorhandenen Enden. Offen gebliebene freiwillige Aufträge blockieren die Haupthandlung nicht und werden beim Kampagnenende als gescheitert markiert. Das erneute Betrachten des Steins erzeugt keine doppelten Quests oder zusätzlichen Erfahrungspunkte.
+
+**Tests:** `app/test/rabenwacht_memorial_test.dart`: spoilerfreie Entdeckung, Queststatus, Beweiserfordernis, Rückreise, Idempotenz, beide Ausgänge, Speicher-Roundtrip, Epilog über drei Enden, offener Auftrag und verneinte Eingaben.
+
+**Grenzen:** Dieser zusätzliche Handlungszweig ist handgeschrieben und deterministisch. Er stellt noch keinen generativen Dialog, keine neuen Kampfregeln und keine SRD-Zauberinteraktion dar. Build/CI/Android-Gerätetest sind getrennt nachzuweisen.
