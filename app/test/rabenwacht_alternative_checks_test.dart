@@ -117,6 +117,21 @@ void main() {
     expect(campaign.facts['ritualSolution'], isNull);
   });
 
+  test('Gesprochene Zauberwirkung verändert weder Helden noch Geschichte', () {
+    final campaign = scene('ruins');
+    final before = campaign.toJson();
+    final result = engine.act(
+      campaign,
+      'Ich wirke Magie entdecken auf die Runen.',
+    ).campaign;
+    expect(result.storyBible['stage'], 'ruins');
+    expect(result.pendingRoll, isNull);
+    expect(result.hero.toJson(), campaign.hero.toJson());
+    expect(result.facts, campaign.facts);
+    expect(result.messages.last.text, contains('keinen Zauber'));
+    expect(before['hero'], result.toJson()['hero']);
+  });
+
   test('Die ursprüngliche arkane Türprobe bleibt verfügbar', () {
     var campaign = scene('door13');
     campaign = engine.act(campaign, 'Ich untersuche die Runen.').campaign;
