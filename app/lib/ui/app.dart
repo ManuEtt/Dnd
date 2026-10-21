@@ -34,6 +34,7 @@ import 'acid_splash_dialog.dart';
 import 'area_creature_registration_dialog.dart';
 import 'tracked_creature_initiative_dialog.dart';
 import 'manual_turn_queue_dialog.dart';
+import 'manual_extra_creature_attack_dialog.dart';
 import 'healing_spell_dialog.dart';
 import 'death_save_decision_panel.dart';
 import 'fantasy_character_sheet.dart';
@@ -1203,6 +1204,27 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previous);
   }
 
+  Future<void> _manualExtraCreatureAttack() async {
+    final campaign = widget.controller.currentCampaign;
+    if (campaign == null || campaign.encounter == null ||
+        widget.controller.busy) return;
+    final choice = await showDialog<ManualAttackChoice>(
+      context: context,
+      builder: (_) => ManualExtraCreatureAttackDialog(campaign: campaign),
+    );
+    if (choice == null || !mounted) return;
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    await widget.controller.manualExtraCreatureAttack(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      attackerId: choice.attackerId,
+      targetId: choice.targetId,
+      attack: choice.attack,
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
   Future<void> _editManualTurnQueue() async {
     final campaign = widget.controller.currentCampaign;
     if (campaign == null ||
@@ -1724,6 +1746,32 @@ class _AdventurePageState extends State<_AdventurePage> {
                         : _editManualTurnQueue,
                     icon: const Icon(Icons.format_list_bulleted, size: 17),
                     label: const Text('Manuelle Zugfolge'),
+                  ),
+                if (campaign.encounter != null &&
+                    !campaign.encounter!.isFinished &&
+                    campaign.manualTurnQueue != null &&
+                    !campaign.manualTurnQueue!.actionUsed &&
+                    campaign.trackedAreaCreatures.any(
+                      (creature) =>
+                          creature.id == campaign.manualTurnQueue!.activeActorId &&
+                          creature.hitPoints > 0 &&
+                          creature.initiativeController == 'gm',
+                    ) &&
+                    campaign.trackedAreaCreatures.any(
+                      (creature) =>
+                          creature.id != campaign.manualTurnQueue!.activeActorId &&
+                          creature.hitPoints > 0,
+                    ))
+                  TextButton.icon(
+                    key: const ValueKey('adventure-manual-extra-attack'),
+                    onPressed: widget.controller.busy ||
+                            campaign.pendingRoll != null ||
+                            campaign.pendingDeathSave != null ||
+                            campaign.pendingEnemyShieldHit != null
+                        ? null
+                        : _manualExtraCreatureAttack,
+                    icon: const Icon(Icons.gavel, size: 17),
+                    label: const Text('Zusatzkreatur-Angriff'),
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&
