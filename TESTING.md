@@ -1,3 +1,8 @@
+## Rabenwacht – Gedenkstein-Friedhofsquest (21.10.2026)
+
+- `app/test/rabenwacht_memorial_test.dart`: Hinweisfreigabe erst nach Entdeckung, Nachweis zum Bewahren, Nichtblockieren des Hauptpfads, Rückreisen, einmalige Quest, Speicherrundlauf, explizites Verschweigen, drei Epiloge und negierte Aussagen.
+- CI-Abnahme: `dart format --output=none --set-exit-if-changed lib test`, `flutter analyze`, `flutter test`, Android-APK; realer Android-Test separat. **Noch nicht erfolgreich bestätigt.**
+
 ## Rabenwacht – verzweigte Ermittlungen (21.10.2026, CI offen)
 
 - `app/test/rabenwacht_branching_story_test.dart`: Maras drei Entscheidungswege, NPC-Vertrauen und -Konflikt, nachholbare bekannte Orte, Schutz vor EP-Doppelbuchung, keine Kämpfe durch negierte Angriffe, bewusster Abschluss nach Seren-Überreden, warnende Krähen und persistente Epilog-Fakten.

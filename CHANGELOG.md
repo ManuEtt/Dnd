@@ -1,3 +1,12 @@
+## 21.10.2026 – Rabenwacht: Die ausgelöschten Namen (Entwicklungsbranch auf main)
+
+- Optionaler Gedenkstein am Friedhof mit neuer Quest, Erinnerungsentscheidung und spoilerfreien Fakten.
+- Zur Bewahrung der Namen sind tatsächlich gefundene Belege notwendig. Verschweigen, Rückkehr und ungelöste Nebenquest bleiben möglich.
+- Beide Entscheidungen beeinflussen gespeicherten Queststatus und drei Epiloge; keine zusätzlichen SRD-Regelwerte oder doppelte EP.
+- Neue Flutter-Domaintests `rabenwacht_memorial_test.dart`; CI-/APK-Ergebnis bis zum Prüflauf offen.
+
+---
+
 ## 21.10.2026 – Rabenwacht: verzweigte Ermittlungen (unversionierter Entwicklungsbranch, CI offen)
 
 - Mara Voss erhält eine eigene Ratsstuben-Szene: Verschwiegenheit und Brief an Alrik, Konfrontation und Vertrauensverlust oder der direkte Ermittlungsweg über Fina.
