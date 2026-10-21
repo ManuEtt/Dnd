@@ -80,12 +80,6 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
-      - name: Temporärer Dart-Formatabgleich
-        working-directory: app
-        run: |
-          dart format lib/story/fourteenth_voice_act7.dart
-          git diff -- lib/story/fourteenth_voice_act7.dart
-          exit 1
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
