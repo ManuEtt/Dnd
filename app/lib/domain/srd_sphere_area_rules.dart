@@ -101,12 +101,16 @@ class SrdSphereAreaRules {
     final maxRow = origin.row + radiusCells + 1;
     final minColumn = origin.column - radiusCells - 1;
     final maxColumn = origin.column + radiusCells + 1;
-    for (var row = minRow < 0 ? 0 : minRow;
-        row <= maxRow && row < map.height;
-        row++) {
-      for (var col = minColumn < 0 ? 0 : minColumn;
-          col <= maxColumn && col < map.width;
-          col++) {
+    for (
+      var row = minRow < 0 ? 0 : minRow;
+      row <= maxRow && row < map.height;
+      row++
+    ) {
+      for (
+        var col = minColumn < 0 ? 0 : minColumn;
+        col <= maxColumn && col < map.width;
+        col++
+      ) {
         final cell = SrdGridCell(col, row);
         if (map.fullBlockers.contains(cell)) {
           // Opaque wall squares are not free ground squares to preview.
@@ -125,13 +129,15 @@ class SrdSphereAreaRules {
             diameterInCells * diameterInCells) {
           continue;
         }
-        final rayClear =
-            SrdSpellGridTargetRules.hasClearCenterRay(map, origin, cell);
+        final rayClear = SrdSpellGridTargetRules.hasClearCenterRay(
+          map,
+          origin,
+          cell,
+        );
         result.add(
           SrdSphereCellCandidate(
             cell: cell,
-            centerWithinRadius:
-                dx * dx + dy * dy <= radiusCells * radiusCells,
+            centerWithinRadius: dx * dx + dy * dy <= radiusCells * radiusCells,
             centerRay: rayClear
                 ? SrdSphereCenterRay.clear
                 : SrdSphereCenterRay.requiresCoverReview,
