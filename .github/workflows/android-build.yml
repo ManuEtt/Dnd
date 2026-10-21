@@ -82,11 +82,6 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
-      - name: Formatter-Diff fuer den neuen UI-Branch anzeigen
-        working-directory: app
-        run: |
-          dart format lib/ui/fantasy_art.dart lib/ui/fantasy_buttons.dart lib/ui/app.dart test/fantasy_action_controls_test.dart
-          git diff --unified=3 -- lib/ui/fantasy_art.dart lib/ui/fantasy_buttons.dart lib/ui/app.dart test/fantasy_action_controls_test.dart
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
