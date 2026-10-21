@@ -47,16 +47,11 @@ void main() {
     c = engine.act(c, 'Ich will den Namen selbst bewahren.').campaign;
     c = engine.act(c, 'Ich berufe den Rat der Zeugen ein.').campaign;
     c = engine.act(c, 'Ich will die Beweise verbinden.').campaign;
-    c = engine
-        .act(
-          c,
-          switch (finale) {
-            'archive' => 'Ich will das Archiv zerstören.',
-            'accord' => 'Ich will einen neuen Eid verhandeln.',
-            _ => 'Ich will den Eid erneuern.',
-          },
-        )
-        .campaign;
+    c = engine.act(c, switch (finale) {
+      'archive' => 'Ich will das Archiv zerstören.',
+      'accord' => 'Ich will einen neuen Eid verhandeln.',
+      _ => 'Ich will den Eid erneuern.',
+    }).campaign;
     expect(c.storyBible['stage'], 'voice-end-$finale');
     c = engine.act(c, 'Epilog beginnen.').campaign;
     c = engine.act(c, 'Ich besuche Elda.').campaign;
@@ -64,16 +59,11 @@ void main() {
     c = engine.act(c, 'Ich besuche Tarek.').campaign;
     c = engine.act(c, 'Zurück zum Dorfplatz.').campaign;
     c = engine.act(c, 'Dorfzukunft entscheiden.').campaign;
-    c = engine
-        .act(
-          c,
-          switch (legacy) {
-            'testimonies' => 'Zeugnisse veröffentlichen.',
-            'festival' => 'Dorffest veranstalten.',
-            _ => 'Gedenkbuch anlegen.',
-          },
-        )
-        .campaign;
+    c = engine.act(c, switch (legacy) {
+      'testimonies' => 'Zeugnisse veröffentlichen.',
+      'festival' => 'Dorffest veranstalten.',
+      _ => 'Gedenkbuch anlegen.',
+    }).campaign;
     expect(c.storyBible['stage'], 'voice-epilogue-complete');
     expect(c.facts['voice:legacy'], legacy);
     return c;
@@ -100,9 +90,15 @@ void main() {
       _ => 'Ich will die Spuren prüfen.',
     };
     c = engine.act(c, travel).campaign;
-    expect(c.storyBible['stage'], 'voice-morrow-${person == 'brunnen' ? 'well' : person}');
+    expect(
+      c.storyBible['stage'],
+      'voice-morrow-${person == 'brunnen' ? 'well' : person}',
+    );
     c = engine.act(c, inspect).campaign;
-    expect(c.facts['voice:morrow:${person == 'brunnen' ? 'well' : person}'], 'true');
+    expect(
+      c.facts['voice:morrow:${person == 'brunnen' ? 'well' : person}'],
+      'true',
+    );
     c = engine.act(c, 'Zurück zum Dorfplatz.').campaign;
     expect(c.storyBible['stage'], 'voice-morrow-square');
     return c;
@@ -190,7 +186,9 @@ void main() {
       expect(c.facts['voice:legacy'], original.facts['voice:legacy']);
       expect(c.hero.toJson(), original.hero.toJson());
       expect(Campaign.fromJson(c.toJson()).toJson(), c.toJson());
-      final another = engine.act(c, 'Brief mit Quellen veröffentlichen.').campaign;
+      final another = engine
+          .act(c, 'Brief mit Quellen veröffentlichen.')
+          .campaign;
       expect(another.facts['voice:morrow:outcome'], entry.value);
       expect(another.hero.experience, original.hero.experience);
       expect(another.quests.where((q) => q.id == 'voice-morrow').length, 1);
@@ -212,8 +210,10 @@ void main() {
     expect(c.facts['voice:morrow:tarek'], 'true');
     expect(c.facts['voice:morrow:well'], 'true');
     expect(c.hero.toJson(), original.hero.toJson());
-    expect(c.quests.singleWhere((q) => q.id == 'voice-main').status,
-        'completed');
+    expect(
+      c.quests.singleWhere((q) => q.id == 'voice-main').status,
+      'completed',
+    );
   });
 
   test('Jedes finale Dorfvermächtnis lässt eine Nachgeschichte zu', () {
@@ -236,7 +236,9 @@ void main() {
     expect(after, contains('zwei Handschriften'));
     expect(c.facts['ending'], 'end-mercy');
     expect(c.hero.toJson(), original.hero.toJson());
-    expect(c.quests.singleWhere((q) => q.id == 'voice-main').status,
-        'completed');
+    expect(
+      c.quests.singleWhere((q) => q.id == 'voice-main').status,
+      'completed',
+    );
   });
 }
