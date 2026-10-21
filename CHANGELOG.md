@@ -1,3 +1,13 @@
+## 21.10.2026 – Rabenwacht: Die stumme Strophe und vierter Ausgang (Story-Branch)
+
+- Spielbarer neuer Kapellenstrang mit Bruder Oswin, verlorener Liedstrophe, moralischer Bewahren-/Vernichten-Entscheidung und nachholbaren Belegen.
+- Neues geheimes Finale `end-chorus` bei vier tatsächlich erreichten Story-Voraussetzungen. Bestehende drei Enden bleiben verfügbar.
+- Sofortige NPC-Reaktionen, Journal, offener/abgeschlossener/gescheiterter Nebenauftrag und einmalige Abschluss-EP.
+- Zehn neue Regressionstests für Spoilerschutz, Zweigentscheidungen, Speicherstände, viertes Ende und klassische Enden.
+- Technische CI- und Android-Freigabe noch offen.
+
+---
+
 ## 21.10.2026 – Rabenwacht: alternative Fertigkeitswege (CI offen)
 
 - Turmruine, Kryptatreppe und dreizehnte Tür bieten jeweils einen neuen Rechercheweg über Nachforschungen, ohne die bisherigen Arkane-Kunde-/Athletik-Proben zu ersetzen.
