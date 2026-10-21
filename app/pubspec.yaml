@@ -25,4 +25,5 @@ flutter:
     - assets/
     - assets/art/
     - assets/fantasy/
+    - assets/fantasy/buttons/
     - pubspec.yaml
