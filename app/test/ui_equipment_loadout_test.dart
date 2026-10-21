@@ -49,7 +49,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       tester
-          .widget<FantasyTextButton>(find.byKey(const ValueKey('loadout-confirm')))
+          .widget<FantasyTextButton>(
+            find.byKey(const ValueKey('loadout-confirm')),
+          )
           .onPressed,
       isNull,
     );
