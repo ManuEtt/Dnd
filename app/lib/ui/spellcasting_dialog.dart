@@ -157,7 +157,7 @@ class _SpellcastingDialogState extends State<SpellcastingDialog> {
           width: (MediaQuery.sizeOf(context).width - 144)
               .clamp(180.0, 460.0)
               .toDouble(),
-          Wrap(
+          child: Wrap(
             alignment: WrapAlignment.end,
             spacing: 8,
             runSpacing: 8,
