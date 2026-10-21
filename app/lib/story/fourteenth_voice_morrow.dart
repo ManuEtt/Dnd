@@ -29,13 +29,13 @@ class FourteenthVoiceMorrow {
 
   static bool _mayStart(Campaign c) =>
       c.facts['voice:ending'] != null &&
-      const {'memorial', 'testimonies', 'festival'}.contains(
-        c.facts['voice:legacy'],
-      ) &&
+      const {
+        'memorial',
+        'testimonies',
+        'festival',
+      }.contains(c.facts['voice:legacy']) &&
       c.facts['voice:witnessChain'] == 'true' &&
-      c.quests.any(
-        (q) => q.id == 'voice-epilogue' && q.status == 'completed',
-      );
+      c.quests.any((q) => q.id == 'voice-epilogue' && q.status == 'completed');
 
   static int clueCount(Campaign c) => const [
     'voice:morrow:elda',
@@ -43,9 +43,7 @@ class FourteenthVoiceMorrow {
     'voice:morrow:well',
   ].where((key) => c.facts[key] == 'true').length;
 
-  static String _legacyContext(Campaign c) => switch (
-    c.facts['voice:legacy']
-  ) {
+  static String _legacyContext(Campaign c) => switch (c.facts['voice:legacy']) {
     'memorial' =>
       'Das freiwillige Gedenkbuch enthält absichtlich '
           'auch weiße Seiten für offene Fragen.',
@@ -116,11 +114,7 @@ class FourteenthVoiceMorrow {
     return RabenwachtTurn(next, next.scene);
   }
 
-  static RabenwachtTurn _ending(
-    Campaign c,
-    String stage,
-    String response,
-  ) {
+  static RabenwachtTurn _ending(Campaign c, String stage, String response) {
     if (c.facts['voice:morrow:outcome'] != null ||
         clueCount(c) < 2 ||
         c.facts['voice:morrow:letterRead'] != 'true') {
@@ -154,8 +148,7 @@ class FourteenthVoiceMorrow {
 
   static RabenwachtTurn advance(Campaign c, String input) {
     final stage = c.storyBible['stage'] ?? '';
-    if (c.storyBible['mode'] != 'rabenwacht-voice-v1' ||
-        !handles(stage)) {
+    if (c.storyBible['mode'] != 'rabenwacht-voice-v1' || !handles(stage)) {
       throw const FormatException('Ungültige Nachgeschichtenszene.');
     }
     final text = input.trim().toLowerCase();
@@ -197,8 +190,7 @@ class FourteenthVoiceMorrow {
       );
     }
 
-    if (c.facts['voice:morrow:started'] != 'true' ||
-        !_mayStart(c)) {
+    if (c.facts['voice:morrow:started'] != 'true' || !_mayStart(c)) {
       return RabenwachtTurn(
         c,
         'Diese Nachgeschichte muss aus dem '
@@ -208,10 +200,7 @@ class FourteenthVoiceMorrow {
 
     if (stage == 'voice-morrow-square') {
       if (_negated(text)) {
-        return RabenwachtTurn(
-          c,
-          'Du führst die verneinte Handlung nicht aus.',
-        );
+        return RabenwachtTurn(c, 'Du führst die verneinte Handlung nicht aus.');
       }
       if (_said(text, 'brief öffnen|brief oeffnen|brief lesen')) {
         if (c.facts['voice:morrow:letterRead'] == 'true') {
@@ -226,13 +215,13 @@ class FourteenthVoiceMorrow {
           c,
           stage,
           'Du öffnest den Umschlag. Zwei Seiten '
-              'beschreiben denselben Morgen: '
-              'eine nennt den Brunnen leer, die andere '
-              'berichtet von drei Zeugen dort. '
-              'Beide nennen sich „die einzige Wahrheit“. '
-              'Ein Datum allein ist keine Prophezeiung. '
-              'Elda, Tarek und der Brunnen können '
-              'unabhängige Spuren liefern.',
+          'beschreiben denselben Morgen: '
+          'eine nennt den Brunnen leer, die andere '
+          'berichtet von drei Zeugen dort. '
+          'Beide nennen sich „die einzige Wahrheit“. '
+          'Ein Datum allein ist keine Prophezeiung. '
+          'Elda, Tarek und der Brunnen können '
+          'unabhängige Spuren liefern.',
           gained: {'voice:morrow:letterRead': 'true'},
         );
       }
@@ -315,10 +304,7 @@ class FourteenthVoiceMorrow {
         );
       }
       if (_negated(text)) {
-        return RabenwachtTurn(
-          c,
-          'Die Untersuchung wird nicht durchgeführt.',
-        );
+        return RabenwachtTurn(c, 'Die Untersuchung wird nicht durchgeführt.');
       }
       if (stage == 'voice-morrow-elda' &&
           _said(text, 'register untersuchen|register prüfen|buch prüfen')) {
@@ -333,10 +319,10 @@ class FourteenthVoiceMorrow {
           c,
           stage,
           'Eldas Register führt den Brief als '
-              'heute eingegangene Abschrift, '
-              'nicht als altes Original. '
-              'Sie will die Unsicherheit sichtbar halten. '
-              'Du kannst zurück zum Platz gehen.',
+          'heute eingegangene Abschrift, '
+          'nicht als altes Original. '
+          'Sie will die Unsicherheit sichtbar halten. '
+          'Du kannst zurück zum Platz gehen.',
           gained: {'voice:morrow:elda': 'true'},
         );
       }
@@ -353,10 +339,10 @@ class FourteenthVoiceMorrow {
           c,
           stage,
           'Tarek findet zwei Handschriften auf '
-              'Papier aus demselben Stapel. '
-              'Es belegt einen gemeinsamen Ursprung '
-              'des Materials, aber keinen Autor. '
-              'Du kannst zurück zum Platz gehen.',
+          'Papier aus demselben Stapel. '
+          'Es belegt einen gemeinsamen Ursprung '
+          'des Materials, aber keinen Autor. '
+          'Du kannst zurück zum Platz gehen.',
           gained: {'voice:morrow:tarek': 'true'},
         );
       }
@@ -373,11 +359,11 @@ class FourteenthVoiceMorrow {
           c,
           stage,
           'Am Brunnen siehst du trockene '
-              'Wachsflecken am Rand des Umschlags. '
-              'Mehrere Menschen könnten ihn '
-              'dort abgelegt oder berührt haben. '
-              'Niemand wird allein deshalb beschuldigt. '
-              'Du kannst zurück zum Platz gehen.',
+          'Wachsflecken am Rand des Umschlags. '
+          'Mehrere Menschen könnten ihn '
+          'dort abgelegt oder berührt haben. '
+          'Niemand wird allein deshalb beschuldigt. '
+          'Du kannst zurück zum Platz gehen.',
           gained: {'voice:morrow:well': 'true'},
         );
       }
@@ -397,8 +383,7 @@ class FourteenthVoiceMorrow {
               'Die gesicherten Spuren bleiben erhalten.',
         );
       }
-      if (clueCount(c) < 2 ||
-          c.facts['voice:morrow:letterRead'] != 'true') {
+      if (clueCount(c) < 2 || c.facts['voice:morrow:letterRead'] != 'true') {
         return RabenwachtTurn(
           c,
           'Die gesicherte Beweiskette ist unvollständig.',
@@ -420,7 +405,10 @@ class FourteenthVoiceMorrow {
               'seine Behauptungen gelten nicht als bewiesen.',
         );
       }
-      if (_said(text, 'brief mit quellen veröffentlichen|brief mit quellen veroeffentlichen')) {
+      if (_said(
+        text,
+        'brief mit quellen veröffentlichen|brief mit quellen veroeffentlichen',
+      )) {
         return _ending(
           c,
           'voice-morrow-end-published',
