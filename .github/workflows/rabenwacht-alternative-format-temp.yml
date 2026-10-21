@@ -1,0 +1,39 @@
+name: Rabenwacht Alternativproben – Dart-Formatierung (temporär)
+
+on:
+  push:
+    branches:
+      - feature/rabenwacht-alternative-checks-20261021
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Zwei neue Dart-Dateien mit offizieller Version formatieren
+        run: |
+          set -euo pipefail
+          cd app
+          dart format lib/domain/rabenwacht_campaign.dart test/rabenwacht_alternative_checks_test.dart
+          dart format --output=none --set-exit-if-changed lib/domain/rabenwacht_campaign.dart test/rabenwacht_alternative_checks_test.dart
+          cd ..
+          git diff --check
+      - name: Formatierung in den Feature-Branch übernehmen
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- app/lib/domain/rabenwacht_campaign.dart app/test/rabenwacht_alternative_checks_test.dart
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'style(rabenwacht): official Dart format for alternative checks'
+          git push origin HEAD:feature/rabenwacht-alternative-checks-20261021
