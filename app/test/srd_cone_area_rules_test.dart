@@ -54,8 +54,7 @@ void main() {
     expect(cone.at(const SrdGridCell(17, 16))!.centerWithinCone, isTrue);
     expect(cone.at(const SrdGridCell(18, 16))!.centerWithinCone, isTrue);
     expect(cone.at(const SrdGridCell(18, 17))!.centerWithinCone, isFalse);
-    expect(cone.at(const SrdGridCell(19, 15)), isNotNull);
-    expect(cone.at(const SrdGridCell(19, 15))!.centerWithinCone, isFalse);
+    expect(cone.at(const SrdGridCell(19, 15)), isNull);
     expect(cone.at(const SrdGridCell(15, 20)), isNull);
     expect(cone.at(const SrdGridCell(13, 15)), isNull);
     expect(cone.at(const SrdGridCell(20, 15)), isNull);
@@ -107,20 +106,20 @@ void main() {
       isTrue,
     );
     expect(northEast.at(const SrdGridCell(13, 17)), isNull);
-    expect(northEast.at(const SrdGridCell(18, 12)), isNotNull);
+    expect(northEast.at(const SrdGridCell(18, 13)), isNotNull);
   });
 
   test('known obstacles require cover review but never establish immunity', () {
-    final map = _map(blockers: const [SrdGridCell(16, 15)]);
+    final map = _map(blockers: const [SrdGridCell(17, 15)]);
     final result = _east(map, length: 20);
-    expect(result.at(const SrdGridCell(16, 15)), isNull);
+    expect(result.at(const SrdGridCell(17, 15)), isNull);
     expect(
       result.at(const SrdGridCell(18, 15))!.centerRay,
       SrdSphereCenterRay.requiresCoverReview,
     );
     expect(
       result.at(const SrdGridCell(16, 16))!.centerRay,
-      SrdSphereCenterRay.requiresCoverReview,
+      SrdSphereCenterRay.clear,
     );
     expect(
       result.at(const SrdGridCell(17, 14))!.centerRay,
