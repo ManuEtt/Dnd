@@ -1,3 +1,11 @@
+## Unveröffentlicht – Rabenwacht: Akt VIII (21.10.2026, Entwicklungsbranch)
+
+- „Der Eid der Raben“ erweitert die Story um den Rat der Zeugen, einen belegabhängigen Auflösungspfad, eine ausdrücklich bestätigte alternative Ersatzzeugenaussage und drei eigenständige Schlussentscheidungen.
+- Originalende, Liora, früherer Chronistenhandel, Quests und Spielstände werden berücksichtigt; keine erfundenen SRD-Kampfwerte, freien Zaubereffekte oder EP. CI-/Geräteabnahme noch offen.
+- Details: `docs/RABENWACHT_AKT_VIII_IMPLEMENTIERUNG.md`.
+
+---
+
 ## 21.10.2026 – Kartengestützte SRD-Zauberursprünge (Integrations-PR, CI offen)
 
 - 5-Fuß-Raster mit konservativer Eckensperre und bestätigten Blockern berechnet Entfernungen und freie geradlinige Mittelpunktverbindungen deterministisch.
