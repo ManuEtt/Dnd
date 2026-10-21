@@ -1,3 +1,11 @@
+## 21.10.2026 – SRD-Kegelflächen (Entwicklungs-PR, CI offen)
+
+- 5-Fuß-Raster erhält konservative Kegel-Kandidatenvorschau in acht Himmelsrichtungen. Geometrische Rand-/Mittelpunktüberlappung, Startpunktentscheidung und fehlende Cover-Auflösung werden separat ausgegeben.
+- Bestätigter SRD-Zauberursprung und bestätigte Kegellänge werden getrennt validiert; weder Treffer noch automatische Zauberwirkung.
+- Neue Regeltests und `rules_api.dart`-Export; vollständige SRD- und Android-Geräteprüfung bleiben offen.
+
+---
+
 ## Unveröffentlicht – Rabenwacht, drei neue spielbare Kapitel (21.10.2026)
 
 - Akt VIII führt den Rat der Zeugen sowie drei Beweis- und Entscheidungswege zu einem nichtlinearen Finale.
