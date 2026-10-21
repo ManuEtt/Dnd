@@ -9,7 +9,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 LIB = ROOT / "app" / "lib"
-IMPORT = re.compile(r"^\\s*(?:import|export)\\s+['\\\"]([^'\\\"]+)['\\\"]", re.M)
+IMPORT = re.compile(r'''^\s*(?:import|export)\s+["']([^"']+)["']''', re.M)
 
 def sources(folder: str):
     return sorted((LIB / folder).rglob("*.dart"))
