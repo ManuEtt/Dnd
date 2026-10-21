@@ -128,3 +128,19 @@ Die Ausgänge sind eindeutig speicherbar: `graveOath=remembered` (Nebenquest abg
 **Mara kann ihre Position überdenken:** Erst nach Alriks Geständnis kann Mara in der Ratsstube mit seiner Aussage konfrontiert werden. Dann öffnet sie das alte Ratsbuch, verspricht eine öffentliche Berichtigung und der Spielstand erhält `maraReconciled`. Ihre Beziehung wechselt zu `versöhnt`, auch wenn zuvor ein Streit stattgefunden hat. Der Epilog ersetzt bei einer Versöhnung den offenen Konflikt durch eine glaubwürdige Folgehandlung.
 
 Alle Fakten und NPC-Beziehungen nutzen das bestehende Campaign-JSON. Es gibt keine neuen Würfel-Proben, keine neuen SRD-Mechaniken, keine stillen Rücknahmen bestätigter früherer Ereignisse und keine externe KI-Abhängigkeit. Die Erweiterung ist deterministisch, nicht sprachlich universell; sie reagiert auf konkrete erkennbare Eingabeabsichten. Das Regressionstestpaket liegt unter `app/test/rabenwacht_npc_memory_test.dart`; Flutter-CI und APK sind für diesen Entwicklungszweig gesondert zu bestätigen.
+
+## Erweiterung: alternative Erkundungs- und Rätselproben (21.10.2026)
+
+Die drei Engstellen der Turmruine können jetzt auch mit **Nachforschungen (Intelligenz)** und nicht nur mit der ursprünglichen Fertigkeit bewältigt werden. Der Spieler muss den Ansatz ausdrücklich beschreiben.
+
+| Schauplatz | Ursprünglicher Weg | Neuer alternativer Weg | SG |
+| --- | --- | --- | --- |
+| Turmruine | Arkane Kunde (Intelligenz): Runen entschlüsseln | Nachforschungen (Intelligenz): Mauerwerk, alte Brandspuren und Fugen untersuchen | 13 |
+| Kryptatreppe | Athletik (Stärke): Abgrund überklettern | Nachforschungen (Intelligenz): tragfähige Balken und sicheren Umweg finden | 12 |
+| Dreizehnte Tür | Arkane Kunde (Intelligenz): magisches Siegel analysieren | Nachforschungen (Intelligenz): gesicherte Aufzeichnungen mit Türen vergleichen | 14 |
+
+Der Aktenweg zur dreizehnten Tür steht nur offen, wenn das Gebetbuch (`prayerFound`), Maras Glockeneid (`maraLetter`) oder Serens Motiv aus den geprüften Chronistenakten (`serenMotive`) **bereits** bekannt ist. Ohne Belege wird keine Probe und kein Hinweis erfunden. Die vorhandene SRD-Würfelengine berechnet Werte, Übung und Fertigkeitsboni. Erfolgreiche Alternativen schreiben **unterschiedliche Fakten** (`towerSabotage`, `stairSafePassage`, `ritualSolutionFromRecords`); ein Fehlschlag erfindet keine gewonnenen Geheimnisse. Die Hauptgeschichte kann auch nach einem Fehlschlag weitergehen. Orts-/Meilenstein-EP werden weiterhin nur einmal vergeben.
+
+Eine freie Texteingabe „Ich wirke …“, „Ich zaubere …“ oder „Ich caste …“ ist **kein gültig bestätigter Zauber**. Die Kampagnenengine erzeugt dadurch keine erfundene Zauberwirkung und verbraucht keine Zauberressourcen. Eine richtige spätere Zauberintegration muss die geprüfte Zauberengine, bestätigte Reichweite, Komponenten, Vorbereitung und verfügbare Ressourcen verwenden, nicht bloße Schlüsselwörter. In diesem Entwicklungsschritt wurden bewusst **keine neuen Zaubereffekte oder Klassenfähigkeiten** eingeführt.
+
+Neue Regressionstests: `app/test/rabenwacht_alternative_checks_test.dart` prüft zugelassene/gesperrte Proben, Fertigkeitswahl, SG, Erfolg, Misserfolg, Speicher-Roundtrip, ursprüngliche Wege und den Schutz gegen unbestätigte Zauber.
