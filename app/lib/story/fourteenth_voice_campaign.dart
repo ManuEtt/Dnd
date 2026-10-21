@@ -1,5 +1,8 @@
 import '../domain/models.dart';
 import 'fourteenth_voice_act7.dart';
+import 'fourteenth_voice_act8.dart';
+import 'fourteenth_voice_epilogue.dart';
+import 'fourteenth_voice_morrow.dart';
 import 'rabenwacht_campaign.dart' show RabenwachtTurn;
 import 'story_rule_port.dart';
 
@@ -179,6 +182,48 @@ class FourteenthVoiceStoryModule {
         'Liora verwahrt die Abschrift für den Rat der Zeugen.',
       if (campaign.facts['voice:nameCustody'] == 'hero')
         'Du bewahrst die Abschrift für den Rat der Zeugen.',
+      if (campaign.facts['voice:visited:council'] == 'true')
+        'Der Rat der Zeugen wurde einberufen.',
+      if (campaign.facts['voice:publicTestimony'] == 'true')
+        'Du hast eine öffentliche Ersatzzeugenaussage abgelegt.',
+      if (campaign.facts['voice:witnessChain'] == 'true')
+        'Der Rat hat die zerbrochene Beweiskette rekonstruiert.',
+      if (campaign.facts['voice:ending'] == 'end-oath')
+        'Du hast den Eid der Zeugen erneuert.',
+      if (campaign.facts['voice:ending'] == 'end-archive')
+        'Das Archiv wurde nach Sicherung der Belege aufgelöst.',
+      if (campaign.facts['voice:ending'] == 'end-accord')
+        'Die Bewohner haben einen gemeinsamen neuen Eid ausgehandelt.',
+      if (campaign.facts['voice:epilogueStarted'] == 'true')
+        'Sieben Tage später hat Rabenwacht die Folgen erlebt.',
+      if (campaign.facts['voice:epilogue:elda'] == 'true')
+        'Du hast Elda nach dem Finale besucht.',
+      if (campaign.facts['voice:epilogue:tarek'] == 'true')
+        'Du hast Tarek nach dem Finale besucht.',
+      if (campaign.facts['voice:epilogue:liora'] == 'true')
+        'Du hast mit Liora über ihre Zukunft gesprochen.',
+      if (campaign.facts['voice:legacy'] == 'memorial')
+        'Der Dorfentscheid bewahrt ein freiwilliges Gedenkbuch.',
+      if (campaign.facts['voice:legacy'] == 'testimonies')
+        'Der Dorfentscheid veröffentlicht getrennte Zeugnisse.',
+      if (campaign.facts['voice:legacy'] == 'festival')
+        'Der Dorfentscheid feiert ein gemeinsames Erinnerungsfest.',
+      if (campaign.facts['voice:morrow:started'] == 'true')
+        'Nach dem Epilog ist ein rätselhafter Brief erschienen.',
+      if (campaign.facts['voice:morrow:letterRead'] == 'true')
+        'Zwei widersprüchliche Fassungen beschreiben denselben Morgen.',
+      if (campaign.facts['voice:morrow:elda'] == 'true')
+        'Eldas Register nennt den Brief eine heutige Abschrift.',
+      if (campaign.facts['voice:morrow:tarek'] == 'true')
+        'Tarek bestätigt zwei Handschriften auf Papier aus einem Stapel.',
+      if (campaign.facts['voice:morrow:well'] == 'true')
+        'Am Brunnen sind Wachsreste am Umschlag dokumentiert.',
+      if (campaign.facts['voice:morrow:outcome'] == 'sealed')
+        'Der Brief liegt mit dokumentierter Unsicherheit versiegelt beim Rat.',
+      if (campaign.facts['voice:morrow:outcome'] == 'published')
+        'Der Brief wurde mit getrennten Quellen und Widersprüchen veröffentlicht.',
+      if (campaign.facts['voice:morrow:outcome'] == 'liora')
+        'Liora entscheidet frei, wie mit dem Brief weiter verfahren wird.',
     ];
     final remaining = campaign.quests
         .where((q) => q.id.startsWith('voice-') && q.status == 'active')
@@ -302,6 +347,15 @@ class FourteenthVoiceStoryModule {
         campaign,
         'Zuerst den offenen Würfelwurf abschließen.',
       );
+    }
+    if (FourteenthVoiceMorrow.handles(stage)) {
+      return FourteenthVoiceMorrow.advance(campaign, input);
+    }
+    if (FourteenthVoiceEpilogue.handles(stage)) {
+      return FourteenthVoiceEpilogue.advance(campaign, input);
+    }
+    if (FourteenthVoiceAct8.handles(stage)) {
+      return FourteenthVoiceAct8.advance(campaign, input);
     }
     if (FourteenthVoiceAct7.handles(stage)) {
       return FourteenthVoiceAct7.advance(campaign, input);
