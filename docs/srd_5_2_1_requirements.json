@@ -7103,15 +7103,17 @@
       "tests": [
         "app/test/srd_spell_target_rules_test.dart",
         "app/test/srd_spell_inventory_persistence_test.dart",
-        "app/test/srd_spell_grid_target_rules_test.dart"
+        "app/test/srd_spell_grid_target_rules_test.dart",
+        "app/test/srd_sphere_area_rules_test.dart"
       ],
       "code": [
         "app/lib/domain/srd_spell_target_rules.dart",
         "app/lib/domain/srd_spell_preflight_rules.dart",
         "app/lib/domain/game_engine.dart",
-        "app/lib/domain/srd_spell_grid_target_rules.dart"
+        "app/lib/domain/srd_spell_grid_target_rules.dart",
+        "app/lib/domain/srd_sphere_area_rules.dart"
       ],
-      "note": "Teilabdeckung: validiertes kartiertes Raster mit unveränderlichen Vollhindernissen, konservativer Mittelpunktstrahl und Vorrang vor bloßer Zielbehauptung im SRD-Preflight. Karte muss vollständig bestätigt sein. Keine Sicht-/3D-/AoE- oder vollständige Deckungsberechnung."
+      "note": "Teilabdeckung: bestätigter Zauberursprung und Distanz plus konservative Vorschau für 2D-Kugel-Rasterkandidaten. Randkandidaten und Deckung bleiben ungeklärt; konkrete Kreaturen-/Objektziele, 3D, andere Flächenformen, SRD-Einzelzauber und tatsächliche Wirkungen fehlen."
     },
     {
       "id": "RULE-SPELLS-SPELL-AREAS-OF-EFFECT",
@@ -7123,10 +7125,15 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Spells",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_sphere_area_rules_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/srd_sphere_area_rules.dart",
+        "app/lib/domain/srd_spell_grid_target_rules.dart"
+      ],
+      "note": "Teilabdeckung: 2D-Vorschau möglicher Rasterfelder einer durch den einzelnen SRD-Effekt separat bestätigten Kugelform mit Radius 5–120 Fuß; Mittelpunkt-im-Kreis, Rand-/Eckkandidaten und Deckungsprüfbedarf werden getrennt. Kein Treffer-, Rettungswurf-, 3D-, Flächen- oder Wirkungsnachweis."
     },
     {
       "id": "RULE-SPELLS-SPELL-DURATION",
@@ -7306,13 +7313,15 @@
       "rule_implemented": "partial",
       "tests": [
         "app/test/cover_combat_rules_test.dart",
-        "app/test/srd_spell_grid_target_rules_test.dart"
+        "app/test/srd_spell_grid_target_rules_test.dart",
+        "app/test/srd_sphere_area_rules_test.dart"
       ],
       "code": [
         "app/lib/domain/cover_rules.dart",
-        "app/lib/domain/srd_spell_grid_target_rules.dart"
+        "app/lib/domain/srd_spell_grid_target_rules.dart",
+        "app/lib/domain/srd_sphere_area_rules.dart"
       ],
-      "note": "Teilabdeckung: vorhandene CoverRules für bestätigte Deckungsgrade + 2D-Mittelpunktstrahl gegen ausdrücklich erhobene blockierende Vollhindernisse. Kein vollständiger geometrischer Deckungsgrad, keine Sicht-/3D-Berechnung und keine allgemeine automatische Zauberzielauswahl."
+      "note": "Teilabdeckung: bestätigt bekannte 2D-Vollblocker und gesperrte Mittelpunktstrahlen, markiert diese ausschließlich als Cover-Prüfbedarf statt sichere Unverwundbarkeit. Keine vollständige Cover-Geometrie, Sichtberechnung oder automatische Wirkungsfreigabe."
     },
     {
       "id": "RULE-SPELLS-COUNTERSPELL-REACTIONS",
