@@ -279,12 +279,18 @@ class RabenwachtCampaign {
     for (final match in verbs.allMatches(text)) {
       final before = text.substring(0, match.start);
       final after = text.substring(match.end);
+      // "greifen nach" is grasping, not an attack. Only "greifen ... an"
+      // counts here; explicit "angreifen" remains independently supported.
+      if (match.group(0)!.startsWith('greif') &&
+          !RegExp(r'^\s+(?:\S+\s+){0,5}an\b').hasMatch(after)) {
+        continue;
+      }
       final refusalBefore = RegExp(
         r'\b(?:nicht|kein|keine|keinen|ohne|niemals)\b'
-        r'(?:\s+\w+){0,4}\s*$',
+        r'(?:\s+\S+){0,4}\s*$',
       ).hasMatch(before);
       final refusalAfter = RegExp(
-        r'^\s+(?:\w+\s+){0,4}nicht\b',
+        r'^\s+(?:\S+\s+){0,4}nicht\b',
       ).hasMatch(after);
       if (!refusalBefore && !refusalAfter) return true;
     }
