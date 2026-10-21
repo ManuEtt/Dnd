@@ -11,7 +11,6 @@ class FourteenthVoiceAct7 {
     'voice-library',
     'voice-price',
     'voice-ledger',
-    'voice-threshold',
   }.contains(stage);
 
   static bool _has(String text, String alternatives) =>
