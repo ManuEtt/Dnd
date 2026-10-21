@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'healing_spell_rules.dart';
 import 'models.dart';
+import 'srd_spell_component_rules.dart';
 import 'spellcasting_rules.dart';
 import 'srd_character_classes.dart';
 import 'srd_spell_catalog.dart';
@@ -54,6 +55,11 @@ class SrdSpellPreflightRules {
     bool verbalComponentConfirmed = false,
     bool somaticComponentConfirmed = false,
     bool materialComponentConfirmed = false,
+    SrdSpellMaterialSource materialSource =
+        SrdSpellMaterialSource.specificComponents,
+    bool focusUseAuthorizedConfirmed = false,
+    bool costlyComponentAvailableConfirmed = false,
+    bool consumedComponentReservedConfirmed = false,
     bool slotTurnLimitConfirmed = false,
   }) {
     final knownName = _preparedName(hero, spell);
@@ -93,12 +99,19 @@ class SrdSpellPreflightRules {
       );
     }
     if ((spell.verbal && !verbalComponentConfirmed) ||
-        (spell.somatic && !somaticComponentConfirmed) ||
-        (spell.material && !materialComponentConfirmed)) {
+        (spell.somatic && !somaticComponentConfirmed)) {
       throw const FormatException(
         'Alle erforderlichen Zauberkomponenten sind zu bestätigen.',
       );
     }
+    final materials = SrdSpellComponentRules.validateMaterial(
+      spell,
+      materialComponentConfirmed: materialComponentConfirmed,
+      source: materialSource,
+      focusUseAuthorizedConfirmed: focusUseAuthorizedConfirmed,
+      costlyComponentAvailableConfirmed: costlyComponentAvailableConfirmed,
+      consumedComponentReservedConfirmed: consumedComponentReservedConfirmed,
+    );
     if (spell.level == 0) {
       if (slotLevel != 0 || pactMagic) {
         throw const FormatException(
@@ -132,6 +145,7 @@ class SrdSpellPreflightRules {
       castingClass: chosenClass,
       slotLevel: slotLevel,
       pactMagic: pactMagic,
+      hasConsumedMaterial: materials.isConsumed,
     );
   }
 
@@ -141,6 +155,7 @@ class SrdSpellPreflightRules {
     HeroCharacter hero,
     SrdSpellCastPlan plan, {
     required bool effectResolvedSeparatelyConfirmed,
+    bool materialConsumptionResolvedSeparatelyConfirmed = false,
   }) {
     if (jsonEncode(hero.toJson()) != plan.sourceSnapshot) {
       throw const FormatException(
@@ -150,6 +165,12 @@ class SrdSpellPreflightRules {
     if (!effectResolvedSeparatelyConfirmed) {
       throw StateError(
         'Die eigentliche Zauberwirkung ist noch nicht regelgeprüft.',
+      );
+    }
+    if (plan.hasConsumedMaterial &&
+        !materialConsumptionResolvedSeparatelyConfirmed) {
+      throw StateError(
+        'Der Verbrauch der Materialkomponenten ist nicht bestätigt.',
       );
     }
     return SpellcastingRules.cast(
@@ -173,6 +194,7 @@ class SrdSpellCastPlan {
     required this.castingClass,
     required this.slotLevel,
     required this.pactMagic,
+    required this.hasConsumedMaterial,
   });
 
   final String sourceSnapshot;
@@ -181,4 +203,5 @@ class SrdSpellCastPlan {
   final String castingClass;
   final int slotLevel;
   final bool pactMagic;
+  final bool hasConsumedMaterial;
 }
