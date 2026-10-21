@@ -21,10 +21,12 @@ HeroCharacter _cleric({List<InventoryItem>? inventory}) => HeroCharacter(
   },
   maxHitPoints: 32,
   hitPoints: 32,
-  inventory: inventory ?? const [
-    InventoryItem(id: 'diamond', name: 'Bestätigter Diamant', quantity: 2),
-    InventoryItem(id: 'rope', name: 'Seil', quantity: 1),
-  ],
+  inventory:
+      inventory ??
+      const [
+        InventoryItem(id: 'diamond', name: 'Bestätigter Diamant', quantity: 2),
+        InventoryItem(id: 'rope', name: 'Seil', quantity: 1),
+      ],
 );
 
 SrdSpellCastPlan _plan(
@@ -56,49 +58,51 @@ void main() {
     catalog = await SrdSpellCatalogLoader.load();
   });
 
-  test('confirmed spell consumes inventory and slot in one immutable result', () {
-    final before = _cleric();
-    final approved = _plan(before, catalog.find('Revivify')!);
-    final result = SrdSpellInventoryRules.commitConfirmedCast(
-      before,
-      approved,
-      spellEffectResolvedConfirmed: true,
-      materialIdentityAndQuantityConfirmed: true,
-      consumedMaterials: const [
-        SrdConsumedMaterial(inventoryId: 'diamond', quantity: 1),
-      ],
-    );
-
-    expect(result.hero.spentSpellSlots, {'3': 1});
-    expect(result.hero.inventory.map((item) => item.id).toList(), [
-      'diamond',
-      'rope',
-    ]);
-    expect(result.hero.inventory.first.quantity, 1);
-    expect(result.hero.inventory.last.quantity, 1);
-    expect(before.inventory.first.quantity, 2);
-    expect(before.spentSpellSlots, isEmpty);
-    expect(
-      HeroCharacter.fromJson(result.hero.toJson()).inventory.first.quantity,
-      1,
-    );
-    expect(
-      HeroCharacter.fromJson(result.hero.toJson()).spentSpellSlots,
-      {'3': 1},
-    );
-    expect(
-      () => SrdSpellInventoryRules.commitConfirmedCast(
-        result.hero,
+  test(
+    'confirmed spell consumes inventory and slot in one immutable result',
+    () {
+      final before = _cleric();
+      final approved = _plan(before, catalog.find('Revivify')!);
+      final result = SrdSpellInventoryRules.commitConfirmedCast(
+        before,
         approved,
         spellEffectResolvedConfirmed: true,
         materialIdentityAndQuantityConfirmed: true,
         consumedMaterials: const [
           SrdConsumedMaterial(inventoryId: 'diamond', quantity: 1),
         ],
-      ),
-      throwsFormatException,
-    );
-  });
+      );
+
+      expect(result.hero.spentSpellSlots, {'3': 1});
+      expect(result.hero.inventory.map((item) => item.id).toList(), [
+        'diamond',
+        'rope',
+      ]);
+      expect(result.hero.inventory.first.quantity, 1);
+      expect(result.hero.inventory.last.quantity, 1);
+      expect(before.inventory.first.quantity, 2);
+      expect(before.spentSpellSlots, isEmpty);
+      expect(
+        HeroCharacter.fromJson(result.hero.toJson()).inventory.first.quantity,
+        1,
+      );
+      expect(HeroCharacter.fromJson(result.hero.toJson()).spentSpellSlots, {
+        '3': 1,
+      });
+      expect(
+        () => SrdSpellInventoryRules.commitConfirmedCast(
+          result.hero,
+          approved,
+          spellEffectResolvedConfirmed: true,
+          materialIdentityAndQuantityConfirmed: true,
+          consumedMaterials: const [
+            SrdConsumedMaterial(inventoryId: 'diamond', quantity: 1),
+          ],
+        ),
+        throwsFormatException,
+      );
+    },
+  );
 
   test('entire confirmed stack is removed without touching other items', () {
     final before = _cleric(
@@ -215,10 +219,12 @@ void main() {
     final before = _cleric();
     final approved = _plan(before, catalog.find('Revivify')!);
     for (final changed in [
-      before.copyWith(inventory: [
-        before.inventory.first.copyWith(quantity: 1),
-        before.inventory.last,
-      ]),
+      before.copyWith(
+        inventory: [
+          before.inventory.first.copyWith(quantity: 1),
+          before.inventory.last,
+        ],
+      ),
       before.copyWith(spentSpellSlots: {'3': 1}),
       before.copyWith(className: 'Magier'),
     ]) {
