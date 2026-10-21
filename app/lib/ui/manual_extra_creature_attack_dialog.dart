@@ -32,7 +32,7 @@ class _ManualExtraCreatureAttackDialogState
   final _damage = TextEditingController();
   final _ac = TextEditingController();
   String? _targetId, _error;
-  DamageType _damageType = DamageType.slashing;
+  DamageType? _damageType;
   CoverLevel? _cover;
   bool _opposite = false;
   bool _reach = false, _actorCanAct = false, _targetAvailable = false;
@@ -80,6 +80,7 @@ class _ManualExtraCreatureAttackDialogState
         ac < 1 ||
         ac > 95 ||
         _cover == null ||
+        _damageType == null ||
         !_reach ||
         !_actorCanAct ||
         !_targetAvailable ||
@@ -97,7 +98,7 @@ class _ManualExtraCreatureAttackDialogState
     final attack = ConfirmedExtraCreatureAttack(
       attackBonus: bonus,
       weaponDamage: damage,
-      damageType: _damageType,
+      damageType: _damageType!,
       targetArmorClass: ac,
       targetCover: _cover!,
       coverOppositeAttacker: _opposite,
