@@ -17,10 +17,7 @@ class ManualAttackChoice {
 
 /// Conservative one-attack form: no monster traits are derived from names.
 class ManualExtraCreatureAttackDialog extends StatefulWidget {
-  const ManualExtraCreatureAttackDialog({
-    super.key,
-    required this.campaign,
-  });
+  const ManualExtraCreatureAttackDialog({super.key, required this.campaign});
 
   final Campaign campaign;
 
@@ -90,8 +87,11 @@ class _ManualExtraCreatureAttackDialogState
         !_defenses ||
         !_reactions ||
         !_noEffects) {
-      setState(() => _error = 'Bestätigte Angriffs- und Zielwerte '
-          'sowie alle geltenden Voraussetzungen sind erforderlich.');
+      setState(
+        () => _error =
+            'Bestätigte Angriffs- und Zielwerte '
+            'sowie alle geltenden Voraussetzungen sind erforderlich.',
+      );
       return;
     }
     final attack = ConfirmedExtraCreatureAttack(
@@ -114,11 +114,13 @@ class _ManualExtraCreatureAttackDialogState
     // The domain resolver validates the dice expression before rolling.
     // The UI performs an equivalent lightweight check to avoid closing.
     if (!RegExp(
-      r'^([1-9][0-9]?)[dDwW](4|6|8|10|12)([+-][0-9]{1,2})?$',
-    ).hasMatch(damage) ||
+          r'^([1-9][0-9]?)[dDwW](4|6|8|10|12)([+-][0-9]{1,2})?$',
+        ).hasMatch(damage) ||
         int.parse(RegExp(r'^[0-9]+').firstMatch(damage)!.group(0)!) > 10) {
-      setState(() => _error =
-          'Waffenschaden als bestätigter Würfelausdruck (z. B. 1d6+2).');
+      setState(
+        () => _error =
+            'Waffenschaden als bestätigter Würfelausdruck (z. B. 1d6+2).',
+      );
       return;
     }
     Navigator.of(context).pop(
@@ -133,14 +135,17 @@ class _ManualExtraCreatureAttackDialogState
   @override
   Widget build(BuildContext context) {
     final queue = widget.campaign.manualTurnQueue;
-    final attacker = widget.campaign.trackedAreaCreatures.where(
-      (creature) => creature.id == queue?.activeActorId,
-    ).toList();
-    final eligible = widget.campaign.trackedAreaCreatures.where(
-      (creature) => creature.id != queue?.activeActorId &&
-          creature.hitPoints > 0,
-    ).toList();
-    final available = queue != null &&
+    final attacker = widget.campaign.trackedAreaCreatures
+        .where((creature) => creature.id == queue?.activeActorId)
+        .toList();
+    final eligible = widget.campaign.trackedAreaCreatures
+        .where(
+          (creature) =>
+              creature.id != queue?.activeActorId && creature.hitPoints > 0,
+        )
+        .toList();
+    final available =
+        queue != null &&
         !queue.actionUsed &&
         attacker.length == 1 &&
         attacker.single.hitPoints > 0 &&
@@ -155,15 +160,19 @@ class _ManualExtraCreatureAttackDialogState
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text('Eine bestätigte einfache Waffen-Aktion der '
-                  'aktuellen Zusatzkreatur gegen eine ANDERE erfasste '
-                  'Zusatzkreatur. Held und Hauptgegner bleiben im '
-                  'bisherigen Kampfsystem. Keine automatischen '
-                  'Monsterwerte, Reaktionen oder Sonderfähigkeiten.'),
+              const Text(
+                'Eine bestätigte einfache Waffen-Aktion der '
+                'aktuellen Zusatzkreatur gegen eine ANDERE erfasste '
+                'Zusatzkreatur. Held und Hauptgegner bleiben im '
+                'bisherigen Kampfsystem. Keine automatischen '
+                'Monsterwerte, Reaktionen oder Sonderfähigkeiten.',
+              ),
               if (queue != null)
-                Text('Angreifer-ID: ${queue.activeActorId}, '
-                    'manuelle Runde ${queue.round}, '
-                    'Aktion ${queue.actionUsed ? 'verbraucht' : 'frei'}.'),
+                Text(
+                  'Angreifer-ID: ${queue.activeActorId}, '
+                  'manuelle Runde ${queue.round}, '
+                  'Aktion ${queue.actionUsed ? 'verbraucht' : 'frei'}.',
+                ),
               DropdownButtonFormField<String>(
                 key: const ValueKey('manual-attack-target'),
                 initialValue: _targetId,
@@ -174,8 +183,10 @@ class _ManualExtraCreatureAttackDialogState
                   for (final creature in eligible)
                     DropdownMenuItem(
                       value: creature.id,
-                      child: Text('${creature.name} '
-                          '(${creature.hitPoints} TP)'),
+                      child: Text(
+                        '${creature.name} '
+                        '(${creature.hitPoints} TP)',
+                      ),
                     ),
                 ],
                 onChanged: (v) => setState(() => _targetId = v),
@@ -183,8 +194,9 @@ class _ManualExtraCreatureAttackDialogState
               TextField(
                 key: const ValueKey('manual-attack-bonus'),
                 controller: _bonus,
-                keyboardType:
-                    const TextInputType.numberWithOptions(signed: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  signed: true,
+                ),
                 decoration: const InputDecoration(
                   labelText: 'Vollständiger Angriffsbonus, z. B. +4',
                 ),
@@ -233,32 +245,73 @@ class _ManualExtraCreatureAttackDialogState
                 ],
                 onChanged: (v) => setState(() => _cover = v),
               ),
-              _check('opposite', 'Deckung ist zwischen Angreifer und Ziel.',
-                  _opposite, (v) => _opposite = v),
-              _check('reach', 'Ziel ist innerhalb bestätigter Waffenreichweite.',
-                  _reach, (v) => _reach = v),
-              _check('actor', 'Angreifer ist handlungsfähig; '
-                  'keine unbekannten Bewegungs-/Zustandseffekte.',
-                  _actorCanAct, (v) => _actorCanAct = v),
-              _check('target-valid', 'Dieses Ziel darf aktuell '
-                  'angegriffen werden.', _targetAvailable,
-                  (v) => _targetAvailable = v),
-              _check('modifiers', 'Alle Angriffs-Modifikatoren einschließlich '
-                  'Sonderfähigkeiten geprüft.', _modifiers,
-                  (v) => _modifiers = v),
-              _check('defenses', 'Keine ungeklärte Schadensabwehr, '
-                  'Immunität, Anfälligkeit, Zustands- oder andere '
-                  'Schadensmodifikation.', _defenses, (v) => _defenses = v),
-              _check('reactions', 'Keine anstehende Ziel-Reaktion '
-                  'wie Schild oder Abwehr.', _reactions,
-                  (v) => _reactions = v),
-              _check('no-effects', 'Kein zusätzliches Angriffs-'
-                  'oder kritisches Treffereffekt-Merkmal.', _noEffects,
-                  (v) => _noEffects = v),
-              _check('advantage', 'Bestätigter Vorteil auf Angriff.',
-                  _advantage, (v) => _advantage = v),
-              _check('disadvantage', 'Bestätigter Nachteil auf Angriff.',
-                  _disadvantage, (v) => _disadvantage = v),
+              _check(
+                'opposite',
+                'Deckung ist zwischen Angreifer und Ziel.',
+                _opposite,
+                (v) => _opposite = v,
+              ),
+              _check(
+                'reach',
+                'Ziel ist innerhalb bestätigter Waffenreichweite.',
+                _reach,
+                (v) => _reach = v,
+              ),
+              _check(
+                'actor',
+                'Angreifer ist handlungsfähig; '
+                    'keine unbekannten Bewegungs-/Zustandseffekte.',
+                _actorCanAct,
+                (v) => _actorCanAct = v,
+              ),
+              _check(
+                'target-valid',
+                'Dieses Ziel darf aktuell '
+                    'angegriffen werden.',
+                _targetAvailable,
+                (v) => _targetAvailable = v,
+              ),
+              _check(
+                'modifiers',
+                'Alle Angriffs-Modifikatoren einschließlich '
+                    'Sonderfähigkeiten geprüft.',
+                _modifiers,
+                (v) => _modifiers = v,
+              ),
+              _check(
+                'defenses',
+                'Keine ungeklärte Schadensabwehr, '
+                    'Immunität, Anfälligkeit, Zustands- oder andere '
+                    'Schadensmodifikation.',
+                _defenses,
+                (v) => _defenses = v,
+              ),
+              _check(
+                'reactions',
+                'Keine anstehende Ziel-Reaktion '
+                    'wie Schild oder Abwehr.',
+                _reactions,
+                (v) => _reactions = v,
+              ),
+              _check(
+                'no-effects',
+                'Kein zusätzliches Angriffs-'
+                    'oder kritisches Treffereffekt-Merkmal.',
+                _noEffects,
+                (v) => _noEffects = v,
+              ),
+              _check(
+                'advantage',
+                'Bestätigter Vorteil auf Angriff.',
+                _advantage,
+                (v) => _advantage = v,
+              ),
+              _check(
+                'disadvantage',
+                'Bestätigter Nachteil auf Angriff.',
+                _disadvantage,
+                (v) => _disadvantage = v,
+              ),
               if (_error != null)
                 Text(_error!, style: const TextStyle(color: Colors.redAccent)),
             ],

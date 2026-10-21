@@ -1206,8 +1206,10 @@ class _AdventurePageState extends State<_AdventurePage> {
 
   Future<void> _manualExtraCreatureAttack() async {
     final campaign = widget.controller.currentCampaign;
-    if (campaign == null || campaign.encounter == null ||
-        widget.controller.busy) return;
+    if (campaign == null ||
+        campaign.encounter == null ||
+        widget.controller.busy)
+      return;
     final choice = await showDialog<ManualAttackChoice>(
       context: context,
       builder: (_) => ManualExtraCreatureAttackDialog(campaign: campaign),
@@ -1753,18 +1755,21 @@ class _AdventurePageState extends State<_AdventurePage> {
                     !campaign.manualTurnQueue!.actionUsed &&
                     campaign.trackedAreaCreatures.any(
                       (creature) =>
-                          creature.id == campaign.manualTurnQueue!.activeActorId &&
+                          creature.id ==
+                              campaign.manualTurnQueue!.activeActorId &&
                           creature.hitPoints > 0 &&
                           creature.initiativeController == 'gm',
                     ) &&
                     campaign.trackedAreaCreatures.any(
                       (creature) =>
-                          creature.id != campaign.manualTurnQueue!.activeActorId &&
+                          creature.id !=
+                              campaign.manualTurnQueue!.activeActorId &&
                           creature.hitPoints > 0,
                     ))
                   TextButton.icon(
                     key: const ValueKey('adventure-manual-extra-attack'),
-                    onPressed: widget.controller.busy ||
+                    onPressed:
+                        widget.controller.busy ||
                             campaign.pendingRoll != null ||
                             campaign.pendingDeathSave != null ||
                             campaign.pendingEnemyShieldHit != null

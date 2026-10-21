@@ -76,12 +76,14 @@ Campaign _game(GameEngine engine) => engine.createDemo().copyWith(
   ],
 );
 
-Campaign _queue(GameEngine engine) => engine.establishManualTurnQueue(
-  _game(engine),
-  orderedActorIds: const ['orc', 'hero', 'foe', 'goblin'],
-  baseInitiativeConfirmed: true,
-  tiedOrderConfirmed: false,
-).campaign;
+Campaign _queue(GameEngine engine) => engine
+    .establishManualTurnQueue(
+      _game(engine),
+      orderedActorIds: const ['orc', 'hero', 'foe', 'goblin'],
+      baseInitiativeConfirmed: true,
+      tiedOrderConfirmed: false,
+    )
+    .campaign;
 
 ConfirmedExtraCreatureAttack _input({
   int bonus = 4,
@@ -121,50 +123,53 @@ void main() {
     expect(restored.manualTurnQueue!.actionUsed, false);
   });
 
-  test('Successful basic attack spends one separate action and persists HP', () {
-    final rng = _RandomRolls([14, 2]);
-    final engine = GameEngine(
-      dice: DiceEngine(random: rng),
-      clock: () => DateTime.utc(2026, 10, 21),
-    );
-    final before = _queue(engine);
-    final result = engine.manualExtraCreatureAttack(
-      before,
-      attackerId: 'orc',
-      targetId: 'goblin',
-      attack: _input(),
-    );
-    expect(result.events.single.type, 'combat.manualExtraCreatureAttack');
-    expect(result.events.single.payload['attackRoll']['natural'], 15);
-    expect(result.events.single.payload['damage'], 5);
-    expect(result.events.single.payload['critical'], false);
-    expect(result.campaign.trackedAreaCreatures[1].hitPoints, 7);
-    expect(result.campaign.trackedAreaCreatures[0].hitPoints, 10);
-    expect(result.campaign.manualTurnQueue!.actionUsed, true);
-    expect(result.campaign.encounter!.enemyHitPoints, 30);
-    expect(result.campaign.encounter!.activeParticipant, 'hero');
-    expect(result.campaign.hero.hitPoints, 20);
-    expect(rng.calls, 2);
-    expect(result.campaign.revision, before.revision + 1);
-    expect(
-      Campaign.fromJson(result.campaign.toJson()).toJson(),
-      result.campaign.toJson(),
-    );
-    expect(
-      () => engine.manualExtraCreatureAttack(
-        result.campaign,
+  test(
+    'Successful basic attack spends one separate action and persists HP',
+    () {
+      final rng = _RandomRolls([14, 2]);
+      final engine = GameEngine(
+        dice: DiceEngine(random: rng),
+        clock: () => DateTime.utc(2026, 10, 21),
+      );
+      final before = _queue(engine);
+      final result = engine.manualExtraCreatureAttack(
+        before,
         attackerId: 'orc',
         targetId: 'goblin',
         attack: _input(),
-      ),
-      throwsFormatException,
-    );
-    expect(rng.calls, 2);
-    final next = engine.advanceManualTurnQueue(result.campaign);
-    expect(next.campaign.manualTurnQueue!.activeActorId, 'hero');
-    expect(next.campaign.manualTurnQueue!.actionUsed, false);
-    expect(next.campaign.trackedAreaCreatures[1].hitPoints, 7);
-  });
+      );
+      expect(result.events.single.type, 'combat.manualExtraCreatureAttack');
+      expect(result.events.single.payload['attackRoll']['natural'], 15);
+      expect(result.events.single.payload['damage'], 5);
+      expect(result.events.single.payload['critical'], false);
+      expect(result.campaign.trackedAreaCreatures[1].hitPoints, 7);
+      expect(result.campaign.trackedAreaCreatures[0].hitPoints, 10);
+      expect(result.campaign.manualTurnQueue!.actionUsed, true);
+      expect(result.campaign.encounter!.enemyHitPoints, 30);
+      expect(result.campaign.encounter!.activeParticipant, 'hero');
+      expect(result.campaign.hero.hitPoints, 20);
+      expect(rng.calls, 2);
+      expect(result.campaign.revision, before.revision + 1);
+      expect(
+        Campaign.fromJson(result.campaign.toJson()).toJson(),
+        result.campaign.toJson(),
+      );
+      expect(
+        () => engine.manualExtraCreatureAttack(
+          result.campaign,
+          attackerId: 'orc',
+          targetId: 'goblin',
+          attack: _input(),
+        ),
+        throwsFormatException,
+      );
+      expect(rng.calls, 2);
+      final next = engine.advanceManualTurnQueue(result.campaign);
+      expect(next.campaign.manualTurnQueue!.activeActorId, 'hero');
+      expect(next.campaign.manualTurnQueue!.actionUsed, false);
+      expect(next.campaign.trackedAreaCreatures[1].hitPoints, 7);
+    },
+  );
 
   test('Natural one always misses and never consumes damage dice', () {
     final rng = _RandomRolls([0]);
@@ -199,24 +204,14 @@ void main() {
   test('Half cover adds AC only when opposite from attacker', () {
     final guarded = SrdExtraCreatureAttackRules.resolve(
       DiceEngine(random: _RandomRolls([9])),
-      _input(
-        bonus: 2,
-        ac: 12,
-        cover: CoverLevel.half,
-        opposite: true,
-      ),
+      _input(bonus: 2, ac: 12, cover: CoverLevel.half, opposite: true),
     );
     expect(guarded.effectiveArmorClass, 14);
     expect(guarded.attackRoll.total, 12);
     expect(guarded.hit, false);
     final uncovered = SrdExtraCreatureAttackRules.resolve(
       DiceEngine(random: _RandomRolls([9, 0])),
-      _input(
-        bonus: 2,
-        ac: 12,
-        cover: CoverLevel.half,
-        opposite: false,
-      ),
+      _input(bonus: 2, ac: 12, cover: CoverLevel.half, opposite: false),
     );
     expect(uncovered.effectiveArmorClass, 12);
     expect(uncovered.hit, true);
@@ -245,52 +240,52 @@ void main() {
       _input(ac: 95, cover: CoverLevel.threeQuarters, opposite: true),
     ]) {
       expect(
-        () => SrdExtraCreatureAttackRules.resolve(
-          DiceEngine(random: rng),
-          bad,
-        ),
+        () => SrdExtraCreatureAttackRules.resolve(DiceEngine(random: rng), bad),
         throwsFormatException,
       );
     }
     expect(rng.calls, 0);
   });
 
-  test('Manual marker refuses hero, main foe or stale attacker before dice', () {
-    final rng = _RandomRolls([19]);
-    final engine = GameEngine(dice: DiceEngine(random: rng));
-    final game = _queue(engine);
-    for (final target in ['hero', 'foe', 'orc', 'ghost']) {
+  test(
+    'Manual marker refuses hero, main foe or stale attacker before dice',
+    () {
+      final rng = _RandomRolls([19]);
+      final engine = GameEngine(dice: DiceEngine(random: rng));
+      final game = _queue(engine);
+      for (final target in ['hero', 'foe', 'orc', 'ghost']) {
+        expect(
+          () => engine.manualExtraCreatureAttack(
+            game,
+            attackerId: 'orc',
+            targetId: target,
+            attack: _input(),
+          ),
+          throwsFormatException,
+        );
+      }
       expect(
         () => engine.manualExtraCreatureAttack(
           game,
-          attackerId: 'orc',
-          targetId: target,
+          attackerId: 'goblin',
+          targetId: 'orc',
           attack: _input(),
         ),
         throwsFormatException,
       );
-    }
-    expect(
-      () => engine.manualExtraCreatureAttack(
-        game,
-        attackerId: 'goblin',
-        targetId: 'orc',
-        attack: _input(),
-      ),
-      throwsFormatException,
-    );
-    final moved = engine.advanceManualTurnQueue(game);
-    expect(
-      () => engine.manualExtraCreatureAttack(
-        moved.campaign,
-        attackerId: 'orc',
-        targetId: 'goblin',
-        attack: _input(),
-      ),
-      throwsFormatException,
-    );
-    expect(rng.calls, 0);
-  });
+      final moved = engine.advanceManualTurnQueue(game);
+      expect(
+        () => engine.manualExtraCreatureAttack(
+          moved.campaign,
+          attackerId: 'orc',
+          targetId: 'goblin',
+          attack: _input(),
+        ),
+        throwsFormatException,
+      );
+      expect(rng.calls, 0);
+    },
+  );
 
   test('Counterfeit actionUsed storage value is rejected', () {
     final campaign = _queue(GameEngine());

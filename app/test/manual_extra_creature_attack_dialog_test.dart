@@ -55,17 +55,17 @@ Campaign _game({bool used = false}) {
       ),
     ],
   );
-  final queued = engine.establishManualTurnQueue(
-    game,
-    orderedActorIds: const ['orc', 'hero', 'foe', 'goblin'],
-    baseInitiativeConfirmed: true,
-    tiedOrderConfirmed: false,
-  ).campaign;
+  final queued = engine
+      .establishManualTurnQueue(
+        game,
+        orderedActorIds: const ['orc', 'hero', 'foe', 'goblin'],
+        baseInitiativeConfirmed: true,
+        tiedOrderConfirmed: false,
+      )
+      .campaign;
   return used
       ? queued.copyWith(
-          manualTurnQueue: queued.manualTurnQueue!.copyWith(
-            actionUsed: true,
-          ),
+          manualTurnQueue: queued.manualTurnQueue!.copyWith(actionUsed: true),
         )
       : queued;
 }
@@ -75,22 +75,24 @@ void main() {
     tester,
   ) async {
     ManualAttackChoice? choice;
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(
-        body: Builder(
-          builder: (context) => TextButton(
-            child: const Text('Open'),
-            onPressed: () async {
-              choice = await showDialog<ManualAttackChoice>(
-                context: context,
-                builder: (_) =>
-                    ManualExtraCreatureAttackDialog(campaign: _game()),
-              );
-            },
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => TextButton(
+              child: const Text('Open'),
+              onPressed: () async {
+                choice = await showDialog<ManualAttackChoice>(
+                  context: context,
+                  builder: (_) =>
+                      ManualExtraCreatureAttackDialog(campaign: _game()),
+                );
+              },
+            ),
           ),
         ),
       ),
-    ));
+    );
     await tester.tap(find.text('Open'));
     await tester.pumpAndSettle();
     expect(find.text('Zusätzlicher Kreaturenangriff'), findsOneWidget);
@@ -100,23 +102,29 @@ void main() {
     await tester.tap(submit);
     await tester.pumpAndSettle();
     expect(choice, isNull);
-    expect(find.textContaining('Bestätigte Angriffs- und Zielwerte'),
-        findsOneWidget);
+    expect(
+      find.textContaining('Bestätigte Angriffs- und Zielwerte'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('One used action disables additional attack confirmation', (
     tester,
   ) async {
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(
-        body: ManualExtraCreatureAttackDialog(campaign: _game(used: true)),
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ManualExtraCreatureAttackDialog(campaign: _game(used: true)),
+        ),
       ),
-    ));
+    );
     await tester.pumpAndSettle();
     expect(
-      tester.widget<FilledButton>(
-        find.byKey(const ValueKey('manual-attack-confirm')),
-      ).onPressed,
+      tester
+          .widget<FilledButton>(
+            find.byKey(const ValueKey('manual-attack-confirm')),
+          )
+          .onPressed,
       isNull,
     );
   });

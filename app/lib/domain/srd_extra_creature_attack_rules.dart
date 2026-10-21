@@ -119,10 +119,9 @@ class SrdExtraCreatureAttackRules {
         ? dice.roll('${match.group(1)}d${match.group(2)}')
         : null;
     final raw = base.total + (extra?.total ?? 0);
-    final damage = DamageRules.resolve(
-      [DamageComponent(input.damageType, raw < 0 ? 0 : raw)],
-      defenses: DamageDefenses(),
-    ).total;
+    final damage = DamageRules.resolve([
+      DamageComponent(input.damageType, raw < 0 ? 0 : raw),
+    ], defenses: DamageDefenses()).total;
     return ExtraCreatureAttackResult(
       attackRoll: attack,
       hit: true,

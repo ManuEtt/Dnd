@@ -1429,7 +1429,9 @@ class GameEngine {
       );
     }
     final attackers = campaign.trackedAreaCreatures.where(
-      (creature) => creature.id == attackerId && creature.hitPoints > 0 &&
+      (creature) =>
+          creature.id == attackerId &&
+          creature.hitPoints > 0 &&
           creature.initiativeController == 'gm',
     );
     final targets = campaign.trackedAreaCreatures.where(

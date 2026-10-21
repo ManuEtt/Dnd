@@ -1889,6 +1889,7 @@ class ManualCombatTurnQueue {
   final String encounterId;
   final List<String> actorIds;
   final int activeIndex, round;
+
   /// One confirmed basic attack per manual extra actor turn, if supported.
   final bool actionUsed;
 
@@ -1898,14 +1899,13 @@ class ManualCombatTurnQueue {
     int? activeIndex,
     int? round,
     bool? actionUsed,
-  }) =>
-      ManualCombatTurnQueue(
-        encounterId: encounterId,
-        actorIds: actorIds,
-        activeIndex: activeIndex ?? this.activeIndex,
-        round: round ?? this.round,
-        actionUsed: actionUsed ?? this.actionUsed,
-      );
+  }) => ManualCombatTurnQueue(
+    encounterId: encounterId,
+    actorIds: actorIds,
+    activeIndex: activeIndex ?? this.activeIndex,
+    round: round ?? this.round,
+    actionUsed: actionUsed ?? this.actionUsed,
+  );
 
   Map<String, dynamic> toJson() => {
     'encounterId': encounterId,
