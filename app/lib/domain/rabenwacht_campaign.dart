@@ -2,6 +2,7 @@ import 'campaign_experience.dart';
 import 'character_rule_engine.dart';
 import 'models.dart';
 import '../story/rabenwacht_campaign.dart';
+import '../story/fourteenth_voice_campaign.dart';
 import '../story/story_rule_port.dart';
 
 export '../story/rabenwacht_campaign.dart' show RabenwachtTurn;
@@ -14,6 +15,30 @@ class RabenwachtCampaign {
 
   static const title = RabenwachtStoryModule.title;
   static const mode = RabenwachtStoryModule.mode;
+  static const sequelMode = FourteenthVoiceStoryModule.mode;
+
+  static const _sequel = FourteenthVoiceStoryModule(_RabenwachtRulesAdapter());
+
+  static bool canStartSequel(Campaign campaign) =>
+      FourteenthVoiceStoryModule.canStart(campaign);
+
+  static RabenwachtTurn startSequel(Campaign campaign) =>
+      _sequel.start(campaign);
+
+  static RabenwachtTurn advanceSequel(
+    Campaign campaign,
+    String input, {
+    required String rollId,
+  }) => _sequel.advance(campaign, input, rollId: rollId);
+
+  static RabenwachtTurn resolveSequelCheck(
+    Campaign campaign,
+    PendingRoll pending,
+    bool passed,
+  ) => _sequel.resolveCheck(campaign, pending, passed);
+
+  static String sequelClues(Campaign campaign) =>
+      _sequel.discoveredClues(campaign);
 
   static const _story = RabenwachtStoryModule(_RabenwachtRulesAdapter());
 
