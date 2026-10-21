@@ -467,6 +467,32 @@ class GameController extends ChangeNotifier {
     );
   });
 
+  Future<void> establishManualTurnQueue({
+    required String campaignId,
+    required int expectedRevision,
+    required List<String> orderedActorIds,
+    required bool baseInitiativeConfirmed,
+    required bool tiedOrderConfirmed,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.establishManualTurnQueue(
+        current,
+        orderedActorIds: orderedActorIds,
+        baseInitiativeConfirmed: baseInitiativeConfirmed,
+        tiedOrderConfirmed: tiedOrderConfirmed,
+      ),
+    );
+  });
+
+  Future<void> advanceManualTurnQueue({
+    required String campaignId,
+    required int expectedRevision,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(engine.advanceManualTurnQueue(current));
+  });
+
   Future<void> confirmAreaCreatureInitiative({
     required String campaignId,
     required int expectedRevision,
