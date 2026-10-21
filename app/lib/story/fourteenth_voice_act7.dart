@@ -170,10 +170,7 @@ class FourteenthVoiceAct7 {
               'einen Namen anvertraust.',
         );
       }
-      if (_has(
-            text,
-            'preis|kost|opfer|handel annehmen|angebot annehmen',
-          ) &&
+      if (_has(text, 'preis|kost|opfer|handel annehmen|angebot annehmen') &&
           !_negated(text)) {
         if (campaign.facts['voice:chronistChoice'] != null) {
           return RabenwachtTurn(
@@ -197,10 +194,7 @@ class FourteenthVoiceAct7 {
           gained: {'voice:priceExplained': 'true'},
         );
       }
-      if (_has(
-            text,
-            'verhandl|verhandel|bedingungen prüf|bedingungen pruef',
-          ) &&
+      if (_has(text, 'verhandl|verhandel|bedingungen prüf|bedingungen pruef') &&
           !_negated(text)) {
         return _move(
           campaign,
