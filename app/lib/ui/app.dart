@@ -41,6 +41,7 @@ import 'healing_spell_dialog.dart';
 import 'death_save_decision_panel.dart';
 import 'fantasy_character_sheet.dart';
 import 'fantasy_ui.dart';
+import 'fantasy_buttons.dart';
 import 'fantasy_art.dart';
 import 'fantasy_experience.dart';
 import 'fantasy_campaign_dashboard.dart';
@@ -164,10 +165,10 @@ class _LivingGameAppState extends State<LivingGameApp> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     ),
                   ),
-                IconButton(
+                FantasyIconButton(
                   tooltip: 'Einstellungen',
                   onPressed: () => setState(() => _page = 4),
-                  icon: const Icon(Icons.settings_outlined),
+                  icon: Icons.settings_outlined,
                 ),
               ],
             ),
@@ -563,12 +564,12 @@ class _HomePage extends StatelessWidget {
                     icon: const Icon(Icons.menu_book_outlined),
                     label: const Text('Rabenwacht (Solo, 2–3 Std.)'),
                   ),
-                  OutlinedButton.icon(
+                  FantasyTextButton(
+                    label: 'Neue Kampagne',
+                    icon: Icons.add,
                     onPressed: controller.busy
                         ? null
                         : () => _newCampaign(context),
-                    icon: const Icon(Icons.add),
-                    label: const Text('Neue Kampagne'),
                   ),
                   OutlinedButton.icon(
                     onPressed: controller.busy || !controller.narrator.enabled
@@ -581,10 +582,11 @@ class _HomePage extends StatelessWidget {
                           : 'KI-Kampagne erstellen',
                     ),
                   ),
-                  TextButton.icon(
+                  FantasyTextButton(
+                    label: 'Helden verwalten',
+                    icon: Icons.person_add_alt,
+                    style: FantasyButtonStyle.iron,
                     onPressed: onCharacters,
-                    icon: const Icon(Icons.person_add_alt),
-                    label: const Text('Helden verwalten'),
                   ),
                 ],
               ),
