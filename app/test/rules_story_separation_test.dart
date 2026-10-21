@@ -1,10 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lebendiger_spielleiter/domain/game_engine.dart'
-    as legacy;
+import 'package:lebendiger_spielleiter/domain/game_engine.dart' as legacy;
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/story/story_campaign_engine.dart';
-import 'package:lebendiger_spielleiter/story/story_memory_engine.dart'
-    as story;
+import 'package:lebendiger_spielleiter/story/story_memory_engine.dart' as story;
 import 'package:lebendiger_spielleiter/story/story_rule_boundary.dart';
 
 Campaign _campaign() => Campaign(
@@ -66,19 +64,20 @@ void main() {
     final component = StoryCampaignEngine(
       nextId: (prefix) => '$prefix-${++sequence}',
       clock: () => DateTime.utc(2026, 10, 21),
-      commit: (
-        before,
-        next,
-        narration, {
-        required String type,
-        required Map<String, dynamic> payload,
-      }) {
-        expect(type, 'memory.sessionRecapSaved');
-        return GameUpdate(
-          campaign: next.copyWith(revision: before.revision + 1),
-          events: const [],
-        );
-      },
+      commit:
+          (
+            before,
+            next,
+            narration, {
+            required String type,
+            required Map<String, dynamic> payload,
+          }) {
+            expect(type, 'memory.sessionRecapSaved');
+            return GameUpdate(
+              campaign: next.copyWith(revision: before.revision + 1),
+              events: const [],
+            );
+          },
     );
     final initial = _campaign();
     final result = component.saveSessionRecap(initial);
@@ -92,16 +91,17 @@ void main() {
     final malicious = StoryCampaignEngine(
       nextId: (prefix) => '$prefix-1',
       clock: () => DateTime.utc(2026, 10, 21),
-      commit: (
-        before,
-        next,
-        narration, {
-        required String type,
-        required Map<String, dynamic> payload,
-      }) => GameUpdate(
-        campaign: next.copyWith(hero: next.hero.copyWith(hitPoints: 1)),
-        events: const [],
-      ),
+      commit:
+          (
+            before,
+            next,
+            narration, {
+            required String type,
+            required Map<String, dynamic> payload,
+          }) => GameUpdate(
+            campaign: next.copyWith(hero: next.hero.copyWith(hitPoints: 1)),
+            events: const [],
+          ),
     );
     expect(
       () => malicious.saveSessionRecap(_campaign()),
@@ -109,17 +109,20 @@ void main() {
     );
   });
 
-  test('MemoryEngine remains backward compatible through GameEngine export', () {
-    final campaign = _campaign();
-    expect(
-      legacy.MemoryEngine.buildSessionSummary(campaign),
-      story.MemoryEngine.buildSessionSummary(campaign),
-    );
-    expect(
-      story.MemoryEngine.isRecallRequest('Erinnere dich an Rabenwacht'),
-      isTrue,
-    );
-    final old = campaign.toJson();
-    expect(Campaign.fromJson(old).toJson(), old);
-  });
+  test(
+    'MemoryEngine remains backward compatible through GameEngine export',
+    () {
+      final campaign = _campaign();
+      expect(
+        legacy.MemoryEngine.buildSessionSummary(campaign),
+        story.MemoryEngine.buildSessionSummary(campaign),
+      );
+      expect(
+        story.MemoryEngine.isRecallRequest('Erinnere dich an Rabenwacht'),
+        isTrue,
+      );
+      final old = campaign.toJson();
+      expect(Campaign.fromJson(old).toJson(), old);
+    },
+  );
 }

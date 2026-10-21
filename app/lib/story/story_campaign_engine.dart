@@ -5,13 +5,14 @@ import '../domain/models.dart';
 import 'story_memory_engine.dart';
 import 'story_rule_boundary.dart';
 
-typedef StoryCommit = GameUpdate Function(
-  Campaign before,
-  Campaign next,
-  String narration, {
-  required String type,
-  required Map<String, dynamic> payload,
-});
+typedef StoryCommit =
+    GameUpdate Function(
+      Campaign before,
+      Campaign next,
+      String narration, {
+      required String type,
+      required Map<String, dynamic> payload,
+    });
 
 /// Isolated narrative-state mutations. No random dice and no combat rules.
 /// All changed checkpoints are validated against the shared campaign schema.
@@ -20,7 +21,9 @@ class StoryCampaignEngine {
     required String Function(String) nextId,
     required DateTime Function() clock,
     required StoryCommit commit,
-  }) : _id = nextId, _clock = clock, _commit = commit;
+  }) : _id = nextId,
+       _clock = clock,
+       _commit = commit;
 
   final String Function(String) _id;
   final DateTime Function() _clock;
@@ -414,8 +417,6 @@ class StoryCampaignEngine {
       payload: {'threadId': thread.id, 'status': status},
     );
   }
-
-
 }
 
 /// Object key order can change in storage; list order and number types cannot.
@@ -431,4 +432,3 @@ String _canonicalJson(Object? value) {
 
   return jsonEncode(ordered(value));
 }
-

@@ -4448,4 +4448,3 @@ class _EnemyTurn {
   final String narration;
   final Map<String, dynamic> details;
 }
-
