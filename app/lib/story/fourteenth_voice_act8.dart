@@ -34,23 +34,22 @@ class FourteenthVoiceAct8 {
       c.facts['voice:oathPageFound'] == 'true' &&
       const ['hero', 'liora'].contains(c.facts['voice:nameCustody']);
 
-  static String _oldEnding(Campaign c) => switch (
-    c.facts['voice:originEnding']
-  ) {
-    'end-seal' =>
-      'Die erneuerte Siegelgrenze lässt nur Worte durch; '
-          'Seren kann nicht persönlich an der Versammlung teilnehmen.',
-    'end-break' =>
-      'Seit dem Bruch des Siegels erreicht der Chronist '
-          'den Platz ohne Schutz. Die Bewohner halten zusammen.',
-    'end-mercy' =>
-      'Seren wurde erlöst und ist keine gefangene Zeugin. '
-          'Ihr früherer Mut lebt in den Aussagen der Familien.',
-    'end-chorus' =>
-      'Der Namenchor hat Serens Zeugnis bewahrt. '
-          'Seren darf sich frei entscheiden, ob sie antwortet.',
-    _ => 'Der Rat erinnert sich an die Glockennacht.',
-  };
+  static String _oldEnding(Campaign c) =>
+      switch (c.facts['voice:originEnding']) {
+        'end-seal' =>
+          'Die erneuerte Siegelgrenze lässt nur Worte durch; '
+              'Seren kann nicht persönlich an der Versammlung teilnehmen.',
+        'end-break' =>
+          'Seit dem Bruch des Siegels erreicht der Chronist '
+              'den Platz ohne Schutz. Die Bewohner halten zusammen.',
+        'end-mercy' =>
+          'Seren wurde erlöst und ist keine gefangene Zeugin. '
+              'Ihr früherer Mut lebt in den Aussagen der Familien.',
+        'end-chorus' =>
+          'Der Namenchor hat Serens Zeugnis bewahrt. '
+              'Seren darf sich frei entscheiden, ob sie antwortet.',
+        _ => 'Der Rat erinnert sich an die Glockennacht.',
+      };
 
   static RabenwachtTurn _move(
     Campaign c,
@@ -89,11 +88,7 @@ class FourteenthVoiceAct8 {
     return RabenwachtTurn(next, next.scene);
   }
 
-  static RabenwachtTurn _finish(
-    Campaign c,
-    String stage,
-    String prose,
-  ) {
+  static RabenwachtTurn _finish(Campaign c, String stage, String prose) {
     final chronist = switch (c.facts['voice:chronistChoice']) {
       'refused' => 'Du hast dem Chronisten nie dein Einverständnis gegeben. ',
       'feigned' =>
@@ -123,8 +118,7 @@ class FourteenthVoiceAct8 {
 
   static RabenwachtTurn advance(Campaign c, String input) {
     final stage = c.storyBible['stage'] ?? '';
-    if (c.storyBible['mode'] != 'rabenwacht-voice-v1' ||
-        !handles(stage)) {
+    if (c.storyBible['mode'] != 'rabenwacht-voice-v1' || !handles(stage)) {
       throw const FormatException('Ungültiger Handlungsstand in Akt VIII.');
     }
     final text = input.trim().toLowerCase();
@@ -248,8 +242,7 @@ class FourteenthVoiceAct8 {
           },
         );
       }
-      if (_said(text, 'zurück|abbruch|verzicht|lehn') &&
-          !_negated(text)) {
+      if (_said(text, 'zurück|abbruch|verzicht|lehn') && !_negated(text)) {
         return _move(
           c,
           'voice-council',
