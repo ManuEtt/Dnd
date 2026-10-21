@@ -136,10 +136,7 @@ void main() {
                     tooltip: 'Optionen',
                     onPressed: () => count++,
                   ),
-                  FantasyDiceButton(
-                    sides: 20,
-                    onPressed: () => count++,
-                  ),
+                  FantasyDiceButton(sides: 20, onPressed: () => count++),
                 ],
               ),
             ),
