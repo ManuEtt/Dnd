@@ -12,7 +12,7 @@ Sechs Bildtypen (`wood_gold`, `rune_arcane`, `iron`, `wax`, `dice`,
 
 Breite Buttons: **192 × 64 px**, mit geschützten 24 px Rändern links/rechts
 sowie 20 px oben/unten (`centerSlice: Rect.fromLTWH(24,20,144,24)`).
-Icon/Würfel: **64 × 64 px**, ohne `centerSlice`.
+Icon-Buttons: **64 × 64 px**, ohne `centerSlice`. Der beschriftete **Würfelbutton** verwendet ebenfalls **192 × 64 px** und 9-Slice, damit sein Würfelsymbol und seine Ränder nicht verzerrt werden.
 
 Bezeichnungen, Symbole, Fokus, Drücken und Zustandswechsel liegen als echte
 Flutter-Widgets darüber; die Bitmaps fangen keine Eingaben ab. Das System ist
