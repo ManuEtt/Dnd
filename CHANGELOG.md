@@ -1,3 +1,12 @@
+## 21.10.2026 – SRD 5.2.1 Materialkomponenten (Teilregel, CI offen)
+
+- Neue reine Regelprüfung für konkrete, kostspielige und verbrauchte Zaubermaterialien; teure oder konsumierte Komponenten dürfen nicht durch Komponentenbeutel oder Fokus ersetzt werden.
+- Vorprüfung verlangt bei Bedarf bestätigte teure Materialien, Reservierung und separaten Verbrauch, bevor der Zauberplatz verbucht wird. Das Inventar wird noch nicht automatisiert verändert.
+- Neue Domain-Regressionsfälle, öffentliche Regel-Fassade und aktualisierte SRD-Anforderungsmatrix; Spielstände, Story und bestehende Spezialzauber bleiben unverändert.
+- **Offen:** Formatierung/CI-Gesamtabnahme, effektiver Materialabzug, vollständiger offizieller SRD-Abgleich und Android-Gerätetest.
+
+---
+
 ## 21.10.2026 – Version 0.8.30+80 (Regelengine/Story-Modultrennung, CI offen)
 
 - Rabenwacht-Kampagnencode vollständig unter `app/lib/story/rabenwacht_campaign.dart` verschoben. Bestehende statische Domain-API als kurze Kompatibilitätsfassade mit identischen Rückgabetypen/Speicherformaten erhalten.

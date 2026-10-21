@@ -1,3 +1,15 @@
+## 21.10.2026 – SRD-Zaubermaterialien als eigenständiger Regelbaustein (CI offen)
+
+- Branch: `feature/srd-spell-material-components-20261021`, basierend auf `main` (`abf30627570095f6b41d34b26d84bda0184bc4f4`).
+- **IMPLEMENTIERT:** Metadatenprüfung für ausdrücklich angegebene Kosten und Verbrauch, selektiver Einsatz von Komponentenbeutel/Zauberfokus, Verbot des Ersatzes teurer und verbrauchter Materialien sowie explizite Preflight-/Commit-Bestätigungen ohne Story-Kopplung. `app/lib/domain/srd_spell_component_rules.dart` und `app/test/srd_spell_material_components_test.dart`.
+- **GETESTET (bisher):** Projektstruktur-/Python- und Backend-Schritte im CI-Vorlauf bis zur Dart-Formatprüfung bestanden; die neuen Flutter-Tests selbst **noch nicht ausgeführt**.
+- **BLOCKIERT:** Ein erster CI-Lauf scheiterte an der Formatierung zweier neuer Dart-Dateien; Korrektur und erneute Prüfung stehen aus.
+- **NICHT GETESTET:** Flutter-Analyse, sämtliche Flutter-Tests, Android-Debug-/Release-Build und Gerätetest.
+- **NOCH NICHT IMPLEMENTIERT:** automatischer Verbrauch der Inventarobjekte, transaktionale Materialreservierung, komponentenabhängige Hand-/Fokusberechtigung aus konkreter Ausrüstung, allgemeine Zaubereffekte und vollständiger offizieller SRD-Abgleich. SRD-Matrix führt die beiden Komponentenanforderungen weiterhin nur als `partial`.
+- Details: `docs/SRD_SPELL_MATERIAL_COMPONENTS.md`.
+
+---
+
 ## 21.10.2026 – Regelengine und Story technisch getrennt (0.8.30+80, CI offen)
 
 - Ausgangspunkt `main`: Version 0.8.29+79; die SRD-Regel- und Story-Module existieren bislang nur teilweise als separate APIs.

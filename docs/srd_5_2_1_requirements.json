@@ -7027,10 +7027,16 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Spells",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_spell_material_components_test.dart",
+        "app/test/srd_spell_catalog_preflight_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/srd_spell_component_rules.dart",
+        "app/lib/domain/srd_spell_preflight_rules.dart"
+      ],
+      "note": "Teillogik für Materialquellen, Kosten und Verbrauchsbestätigungen mit Regressionstests ergänzt; Inventartransaktion, Handprüfung, Effektausführung, offizieller Quellen-Vollabgleich und CI-/Geräte-Abnahme offen."
     },
     {
       "id": "RULE-SPELLS-MATERIAL-COMPONENTS",
@@ -7042,10 +7048,16 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Spells",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_spell_material_components_test.dart",
+        "app/test/srd_spell_catalog_preflight_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/srd_spell_component_rules.dart",
+        "app/lib/domain/srd_spell_preflight_rules.dart"
+      ],
+      "note": "Teillogik für Materialquellen, Kosten und Verbrauchsbestätigungen mit Regressionstests ergänzt; Inventartransaktion, Handprüfung, Effektausführung, offizieller Quellen-Vollabgleich und CI-/Geräte-Abnahme offen."
     },
     {
       "id": "RULE-SPELLS-SPELL-RANGE",
