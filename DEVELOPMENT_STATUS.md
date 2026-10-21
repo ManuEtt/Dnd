@@ -1,3 +1,13 @@
+## 21.10.2026 – SRD-Zaubermaterialien: Revisions-/SQLite-Integration (CI offen)
+
+- Grundlage: Materialpreflight-PR #74 und unveränderlicher Inventar-/Zauberplatz-Commit aus PR #76 sind nach vollständigem grünen GitHub-Workflow in `main` gemergt.
+- **IMPLEMENTIERT:** `GameEngine.commitConfirmedSpellMaterialCast` führt extern bestätigten Zaubereffekt und Materialverbrauch im eigenen Revisions-/`spell.materialsCommitted`-Ereignisjournal zusammen. `GameController.commitConfirmedSpellMaterialCast` prüft Kampagnen-ID und Revision, nutzt das vorhandene transaktionale SQLite-Speichern samt Revisionsjournal. Keine reine KI-Erzählung löst diese Aktion aus; generischer Kampfzug wird abgewiesen.
+- **TESTS ERSTELLT, CI NOCH OFFEN:** `app/test/srd_spell_inventory_persistence_test.dart` prüft Slot-/Inventarzustand, Journal, Neustart, Wiederherstellung, Wiederholungen, Konflikt und invaliden Materialverbrauch.
+- **NICHT IMPLEMENTIERT:** amtlich bestätigte Inventar-/Komponentenidentität, automatische Preise und Materialrezepte, eigenständige überprüfbare Zaubereffekte, Ziel-/Kampfsteuerung und UI. Gerätetest offen.
+- Quelle: `docs/SRD_SPELL_INVENTORY_PERSISTENCE.md`; Anforderungsstatus bleibt `partial`.
+
+---
+
 ## 21.10.2026 – SRD-Zaubermaterialien/Inventar atomar im Domain-Zustand (CI offen)
 
 - Ausgangspunkt: gemergter PR #74, der die SRD-Materialkomponenten und sichere Vorprüfung ergänzt (GitHub-CI auf seinem HEAD vollständig grün).

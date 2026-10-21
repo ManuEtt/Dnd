@@ -8,6 +8,8 @@ import '../domain/ai_story.dart';
 import '../domain/models.dart';
 import '../domain/acid_splash_rules.dart';
 import '../domain/srd_extra_creature_attack_rules.dart';
+import '../domain/srd_spell_preflight_rules.dart';
+import '../domain/srd_spell_inventory_rules.dart';
 import '../domain/hero_shield_reaction_rules.dart';
 import '../domain/damage_rules.dart';
 import '../domain/enemy_force_defense.dart';
@@ -348,6 +350,30 @@ class GameController extends ChangeNotifier {
     }
     return current;
   }
+
+  /// The caller must supply a plan from verified SRD preflight.
+  /// This action only books previously resolved effects and material costs;
+  /// no free-text story or generic combat spell effect may use this endpoint.
+  Future<void> commitConfirmedSpellMaterialCast({
+    required String campaignId,
+    required int expectedRevision,
+    required SrdSpellCastPlan plan,
+    required bool effectResolvedSeparatelyConfirmed,
+    required bool materialIdentityAndQuantityConfirmed,
+    List<SrdConsumedMaterial> consumedMaterials = const [],
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.commitConfirmedSpellMaterialCast(
+        current,
+        plan: plan,
+        effectResolvedSeparatelyConfirmed: effectResolvedSeparatelyConfirmed,
+        materialIdentityAndQuantityConfirmed:
+            materialIdentityAndQuantityConfirmed,
+        consumedMaterials: consumedMaterials,
+      ),
+    );
+  });
 
   Future<void> standUp({
     required String campaignId,

@@ -7052,14 +7052,18 @@
       "tests": [
         "app/test/srd_spell_material_components_test.dart",
         "app/test/srd_spell_inventory_rules_test.dart",
+        "app/test/srd_spell_inventory_persistence_test.dart",
         "app/test/srd_spell_catalog_preflight_test.dart"
       ],
       "code": [
         "app/lib/domain/srd_spell_component_rules.dart",
         "app/lib/domain/srd_spell_inventory_rules.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/services/game_controller.dart",
+        "app/lib/data/sqlite_campaign_repository.dart",
         "app/lib/domain/srd_spell_preflight_rules.dart"
       ],
-      "note": "Atomarer, bestätigter Material-/Slotabzug auf einem immutable HeroCharacter ergänzt; Inventaridentität/-preis bleibt extern zu validieren, persistierter Controller-Commit und vollständige Zauberengine fehlen. Teillogik für Materialquellen, Kosten und Verbrauchsbestätigungen mit Regressionstests ergänzt; Inventartransaktion, Handprüfung, Effektausführung, offizieller Quellen-Vollabgleich und CI-/Geräte-Abnahme offen."
+      "note": "Atomarer bestätigter Material-/Slotabzug ist an Kampagnenrevision, Controller, SQLite-Ereignisjournal und Replay angebunden; automatische Materialrezept-/Preisprüfung und vollständige Zaubereffekte fehlen. Teillogik für Materialquellen, Kosten und Verbrauchsbestätigungen mit Regressionstests ergänzt; Inventartransaktion, Handprüfung, Effektausführung, offizieller Quellen-Vollabgleich und CI-/Geräte-Abnahme offen."
     },
     {
       "id": "RULE-SPELLS-SPELL-RANGE",
