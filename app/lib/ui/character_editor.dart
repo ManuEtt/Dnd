@@ -27,9 +27,17 @@ import 'spellcasting_dialog.dart';
 
 /// Edits nullable values explicitly: an imported unknown score stays unknown.
 class CharacterEditor extends StatefulWidget {
-  const CharacterEditor({super.key, this.hero});
+  const CharacterEditor({
+    super.key,
+    this.hero,
+    this.autoFillExistingCombatValues = false,
+  });
 
   final HeroCharacter? hero;
+
+  /// Opt-in for the live archive/campaign views. Generic editors preserve
+  /// historical unknown values until the player explicitly confirms them.
+  final bool autoFillExistingCombatValues;
 
   @override
   State<CharacterEditor> createState() => _CharacterEditorState();
@@ -107,8 +115,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
     for (final key in abilityLabels.keys) {
       _scores[key] = TextEditingController(text: scores[key]?.toString() ?? '');
     }
-    // Missing values on archived heroes are just as actionable as on new ones.
-    // This never replaces confirmed or manually entered numbers.
+    // The live hero screens opt in; legacy/manual editor flows retain their
+    // original null values when an unrelated dialog is cancelled or saved.
     _autofillCombatValues();
   }
 
@@ -156,7 +164,13 @@ class _CharacterEditorState extends State<CharacterEditor> {
 
   /// Fill only unknown values or previously auto-proposed values. Existing
   /// confirmed values and manual overrides always remain authoritative.
-  void _autofillCombatValues() {
+  /// Unrelated editing actions must not silently confirm legacy unknowns.
+  void _autofillCombatValues({bool explicit = false}) {
+    if (widget.hero != null &&
+        !widget.autoFillExistingCombatValues &&
+        !explicit) {
+      return;
+    }
     final speciesDm = SrdStartingCombatValues.speedDecimeters(
       _fields['species']!.text,
     );
@@ -1371,7 +1385,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
                   OutlinedButton.icon(
                     key: const ValueKey('character-recalculate-combat-values'),
                     onPressed: () => setState(() {
-                      _autofillCombatValues();
+                      _autofillCombatValues(explicit: true);
                       _error =
                           _fields['armorClass']!.text.isEmpty ||
                               _fields['speed']!.text.isEmpty
