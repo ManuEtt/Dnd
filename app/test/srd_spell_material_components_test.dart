@@ -77,20 +77,23 @@ void main() {
     expect(free.hasSpecifiedCost, isFalse);
     expect(free.isConsumed, isFalse);
 
-    final priced =
-        SrdSpellComponentRules.requirements(catalog.find('Identify')!);
+    final priced = SrdSpellComponentRules.requirements(
+      catalog.find('Identify')!,
+    );
     expect(priced.hasSpecifiedCost, isTrue);
     expect(priced.isConsumed, isFalse);
     expect(priced.maySubstitute, isFalse);
 
-    final consumed =
-        SrdSpellComponentRules.requirements(catalog.find('Revivify')!);
+    final consumed = SrdSpellComponentRules.requirements(
+      catalog.find('Revivify')!,
+    );
     expect(consumed.hasSpecifiedCost, isTrue);
     expect(consumed.isConsumed, isTrue);
     expect(consumed.maySubstitute, isFalse);
 
-    final noMaterial =
-        SrdSpellComponentRules.requirements(catalog.find('Magic Missile')!);
+    final noMaterial = SrdSpellComponentRules.requirements(
+      catalog.find('Magic Missile')!,
+    );
     expect(noMaterial.hasMaterial, isFalse);
   });
 
@@ -118,97 +121,95 @@ void main() {
     expect(hero.spentSpellSlots, isEmpty);
   });
 
-  test('focus must be specifically authorized; component pouch can substitute', () {
-    final hero = _caster(spellName: 'Fireball');
-    final fireball = catalog.find('Fireball')!;
-    expect(
-      () => _preflight(
-        hero,
-        fireball,
-        slotLevel: 3,
-        source: SrdSpellMaterialSource.spellcastingFocus,
-      ),
-      throwsFormatException,
-    );
-    expect(
-      () => _preflight(
-        hero,
-        fireball,
-        slotLevel: 3,
-        source: SrdSpellMaterialSource.spellcastingFocus,
-        focusAuthorized: true,
-        materialConfirmed: false,
-      ),
-      throwsFormatException,
-    );
-    expect(
-      _preflight(
-        hero,
-        fireball,
-        slotLevel: 3,
-        source: SrdSpellMaterialSource.spellcastingFocus,
-        focusAuthorized: true,
-      ).hasConsumedMaterial,
-      isFalse,
-    );
-    expect(
-      _preflight(
-        hero,
-        fireball,
-        slotLevel: 3,
-        source: SrdSpellMaterialSource.componentPouch,
-      ).hasConsumedMaterial,
-      isFalse,
-    );
-  });
+  test(
+    'focus must be specifically authorized; component pouch can substitute',
+    () {
+      final hero = _caster(spellName: 'Fireball');
+      final fireball = catalog.find('Fireball')!;
+      expect(
+        () => _preflight(
+          hero,
+          fireball,
+          slotLevel: 3,
+          source: SrdSpellMaterialSource.spellcastingFocus,
+        ),
+        throwsFormatException,
+      );
+      expect(
+        () => _preflight(
+          hero,
+          fireball,
+          slotLevel: 3,
+          source: SrdSpellMaterialSource.spellcastingFocus,
+          focusAuthorized: true,
+          materialConfirmed: false,
+        ),
+        throwsFormatException,
+      );
+      expect(
+        _preflight(
+          hero,
+          fireball,
+          slotLevel: 3,
+          source: SrdSpellMaterialSource.spellcastingFocus,
+          focusAuthorized: true,
+        ).hasConsumedMaterial,
+        isFalse,
+      );
+      expect(
+        _preflight(
+          hero,
+          fireball,
+          slotLevel: 3,
+          source: SrdSpellMaterialSource.componentPouch,
+        ).hasConsumedMaterial,
+        isFalse,
+      );
+    },
+  );
 
-  test('consumed material requires reservation and separate consumption at commit', () {
-    final hero = _caster(
-      characterClass: 'Kleriker',
-      spellName: 'Revivify',
-    );
-    final spell = catalog.find('Revivify')!;
-    expect(
-      () => _preflight(
+  test(
+    'consumed material requires reservation and separate consumption at commit',
+    () {
+      final hero = _caster(characterClass: 'Kleriker', spellName: 'Revivify');
+      final spell = catalog.find('Revivify')!;
+      expect(
+        () => _preflight(hero, spell, slotLevel: 3, costlyConfirmed: true),
+        throwsFormatException,
+      );
+      final approved = _preflight(
         hero,
         spell,
         slotLevel: 3,
         costlyConfirmed: true,
-      ),
-      throwsFormatException,
-    );
-    final approved = _preflight(
-      hero,
-      spell,
-      slotLevel: 3,
-      costlyConfirmed: true,
-      reservedConfirmed: true,
-    );
-    expect(approved.hasConsumedMaterial, isTrue);
-    expect(
-      () => SrdSpellPreflightRules.recordConfirmedResourceUse(
+        reservedConfirmed: true,
+      );
+      expect(approved.hasConsumedMaterial, isTrue);
+      expect(
+        () => SrdSpellPreflightRules.recordConfirmedResourceUse(
+          hero,
+          approved,
+          effectResolvedSeparatelyConfirmed: true,
+        ),
+        throwsStateError,
+      );
+      expect(hero.spentSpellSlots, isEmpty);
+      final recorded = SrdSpellPreflightRules.recordConfirmedResourceUse(
         hero,
         approved,
         effectResolvedSeparatelyConfirmed: true,
-      ),
-      throwsStateError,
-    );
-    expect(hero.spentSpellSlots, isEmpty);
-    final recorded = SrdSpellPreflightRules.recordConfirmedResourceUse(
-      hero,
-      approved,
-      effectResolvedSeparatelyConfirmed: true,
-      materialConsumptionResolvedSeparatelyConfirmed: true,
-    );
-    expect(recorded.hero.spentSpellSlots, {'3': 1});
-    expect(
-      () => SrdSpellPreflightRules.recordConfirmedResourceUse(
-        recorded.hero,
-        approved,
-        effectResolvedSeparatelyConfirmed: true,
         materialConsumptionResolvedSeparatelyConfirmed: true,
-      ),
-      throwsFormatException,
-    );
-  });
+      );
+      expect(recorded.hero.spentSpellSlots, {'3': 1});
+      expect(
+        () => SrdSpellPreflightRules.recordConfirmedResourceUse(
+          recorded.hero,
+          approved,
+          effectResolvedSeparatelyConfirmed: true,
+          materialConsumptionResolvedSeparatelyConfirmed: true,
+        ),
+        throwsFormatException,
+      );
+    },
+  );
 }
