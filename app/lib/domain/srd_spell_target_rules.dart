@@ -54,7 +54,8 @@ class SrdSpellTargetRules {
     ).firstMatch(range.trim());
     if (match == null) return null;
     final value = int.parse(match.group(1)!);
-    return value * (match.group(2)!.toLowerCase().startsWith('mile') ? 5280 : 1);
+    return value *
+        (match.group(2)!.toLowerCase().startsWith('mile') ? 5280 : 1);
   }
 
   static SrdSpellTargetAssessment validateOrigin(
@@ -64,7 +65,9 @@ class SrdSpellTargetRules {
     final range = spell.range.trim();
     final distance = facts.originDistanceFeet;
     if (distance != null && distance < 0) {
-      throw const FormatException('Der Ursprungabstand darf nicht negativ sein.');
+      throw const FormatException(
+        'Der Ursprungabstand darf nicht negativ sein.',
+      );
     }
 
     if (range == 'Self') {
