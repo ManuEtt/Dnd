@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/ui/character_editor.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 
 Finder field(String label) => find.widgetWithText(TextFormField, label);
 
@@ -174,13 +175,47 @@ void main() {
       await tester.pumpAndSettle();
       await tester.enterText(field('Name'), 'Seil');
       await tester.enterText(field('Anzahl'), '2');
-      await tester.tap(find.widgetWithText(FilledButton, 'Speichern'));
+      await tester.tap(find.widgetWithText(FantasyTextButton, 'Speichern'));
       await tester.pumpAndSettle();
       await save(tester);
       expect(result!.inventory.single.name, 'Seil');
       expect(result!.inventory.single.quantity, 2);
     },
   );
+
+  testWidgets('Abbrechen bei eigener Ausrüstung übernimmt keinen Gegenstand', (
+    tester,
+  ) async {
+    HeroCharacter? result;
+    await openEditor(
+      tester,
+      HeroCharacter(id: 'cancel-hero', name: 'Elowen'),
+      (hero) => result = hero,
+    );
+    final addItemButton = find.byKey(const ValueKey('character-inventory-add'));
+    final editorList = find.byType(ListView).first;
+    for (var step = 0; step < 60; step++) {
+      if (addItemButton.hitTestable().evaluate().isNotEmpty) break;
+      await tester.drag(editorList, const Offset(0, -160));
+      await tester.pumpAndSettle();
+    }
+    expect(addItemButton.hitTestable(), findsOneWidget);
+    await tester.tap(addItemButton);
+    await tester.pumpAndSettle();
+    await tester.enterText(field('Name'), 'Nicht übernommenes Seil');
+    final cancel = find.widgetWithText(FantasyTextButton, 'Abbrechen');
+    expect(cancel, findsOneWidget);
+    expect(
+      tester.widget<FantasyTextButton>(cancel).style,
+      FantasyButtonStyle.iron,
+    );
+    await tester.tap(cancel);
+    await tester.pumpAndSettle();
+    await save(tester);
+    expect(result, isNotNull);
+    expect(result!.inventory, isEmpty);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('Eigene Waffenwerte stehen in getrennten Inventarfeldern', (
     tester,
@@ -211,7 +246,7 @@ void main() {
     final damageType = find.byKey(const ValueKey('item-stat-damageType'));
     await tester.ensureVisible(damageType);
     await tester.enterText(damageType, 'Hieb');
-    await tester.tap(find.widgetWithText(FilledButton, 'Speichern'));
+    await tester.tap(find.widgetWithText(FantasyTextButton, 'Speichern'));
     await tester.pumpAndSettle();
     await save(tester);
     expect(result, isNotNull);

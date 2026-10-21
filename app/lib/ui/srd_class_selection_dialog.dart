@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'fantasy_buttons.dart';
+
 import '../domain/srd_character_classes.dart';
 import '../domain/starting_hit_points.dart';
 import '../domain/fighter_creation_rules.dart';
@@ -418,12 +420,14 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
         ),
       ),
       actions: [
-        TextButton(
+        FantasyTextButton(
+          label: 'Abbrechen',
+          style: FantasyButtonStyle.iron,
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Abbrechen'),
         ),
-        FilledButton(
+        FantasyButton(
           key: const ValueKey('srd-confirm-class'),
+          label: 'Klasse und Fertigkeiten übernehmen',
           onPressed:
               _skills.length == _selectedClass.skillCount &&
                   (_selectedClass.name != 'Kämpfer' ||
@@ -434,7 +438,6 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
                                   (!widget.allowEquipment || _kitIndex >= 0)))))
               ? _accept
               : null,
-          child: const Text('Klasse und Fertigkeiten übernehmen'),
         ),
       ],
     );

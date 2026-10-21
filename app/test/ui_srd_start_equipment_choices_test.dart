@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/srd_character_classes.dart';
 import 'package:lebendiger_spielleiter/domain/starting_equipment_import.dart';
 import 'package:lebendiger_spielleiter/ui/srd_class_selection_dialog.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 
 Future<void> tapVisible(WidgetTester tester, Finder finder) async {
   await tester.ensureVisible(finder);
@@ -12,6 +13,57 @@ Future<void> tapVisible(WidgetTester tester, Finder finder) async {
 }
 
 void main() {
+  testWidgets('Klassenbestätigung bleibt ohne Fertigkeiten deaktiviert', (
+    tester,
+  ) async {
+    SrdClassSetupResult? result;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: TextButton(
+              onPressed: () async {
+                result = await showDialog<SrdClassSetupResult>(
+                  context: context,
+                  builder: (_) => const SrdClassSelectionDialog(
+                    currentClass: 'Barde',
+                    existingSkills: [],
+                    existingSavingThrows: [],
+                    characterLevel: 1,
+                    constitutionScore: 14,
+                    hasExistingHitPoints: false,
+                    allowEquipment: false,
+                  ),
+                );
+              },
+              child: const Text('Assistent öffnen'),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('Assistent öffnen'));
+    await tester.pumpAndSettle();
+    final confirm = find.byKey(const ValueKey('srd-confirm-class'));
+    expect(tester.widget<FantasyButton>(confirm).onPressed, isNull);
+    expect(
+      tester
+          .widget<FantasyButtonSurface>(
+            find.descendant(
+              of: confirm,
+              matching: find.byType(FantasyButtonSurface),
+            ),
+          )
+          .state,
+      FantasyButtonState.disabled,
+    );
+    await tester.tap(find.widgetWithText(FantasyTextButton, 'Abbrechen'));
+    await tester.pumpAndSettle();
+    expect(result, isNull);
+    expect(find.byKey(const ValueKey('srd-class-dialog')), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Barde: konkrete Laute wird vor bestätigtem Startset verlangt', (
     tester,
   ) async {
@@ -59,7 +111,9 @@ void main() {
       const SrdStartingItem('Musikinstrument (nach Wahl)'),
     ).singleWhere((item) => item.name == 'Laute');
     await tapVisible(tester, find.text(lute.name).last);
-    await tapVisible(tester, find.byKey(const ValueKey('srd-confirm-class')));
+    final confirm = find.byKey(const ValueKey('srd-confirm-class'));
+    expect(tester.widget<FantasyButton>(confirm).onPressed, isNotNull);
+    await tapVisible(tester, confirm);
     expect(result?.selection.characterClass.name, 'Barde');
     expect(result?.equipmentChoices['Musikinstrument (nach Wahl)'], lute.id);
     expect(tester.takeException(), isNull);

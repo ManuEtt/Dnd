@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/fighter_creation_rules.dart';
 import 'package:lebendiger_spielleiter/ui/srd_class_selection_dialog.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 
 void main() {
   testWidgets(
@@ -39,7 +40,7 @@ void main() {
       expect(find.text('Start-EP: 0 · Übungsbonus: +2'), findsOneWidget);
       expect(
         tester
-            .widget<FilledButton>(
+            .widget<FantasyButton>(
               find.byKey(const ValueKey('srd-confirm-class')),
             )
             .onPressed,

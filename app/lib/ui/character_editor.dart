@@ -1981,7 +1981,6 @@ class _InventoryItemDialogState extends State<_InventoryItemDialog> {
             ).showSnackBar(SnackBar(content: Text(error.message)));
           }
         },
-
       ),
     ],
   );
