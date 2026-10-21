@@ -172,7 +172,7 @@ class FourteenthVoiceAct7 {
       }
       if (_has(
             text,
-            'preis|kosten|opfer|bedingung|handel annehmen|angebot annehmen',
+            'preis|kosten|opfer|handel annehmen|angebot annehmen',
           ) &&
           !_negated(text)) {
         if (campaign.facts['voice:chronistChoice'] != null) {
