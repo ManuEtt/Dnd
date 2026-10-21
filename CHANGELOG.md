@@ -1,3 +1,11 @@
+## Unveröffentlicht – Rabenwacht, freiwilliger Epilog (21.10.2026)
+
+- „Sieben Tage nach der vierzehnten Stimme“: Nach den drei Enden von Akt VIII sind Elda, Tarek und Liora in einem nichtlinearen Epilog ansprechbar. Zwei unabhängige Gespräche erlauben die nachhaltige Dorfentscheidung (Gedenkbuch, öffentliche Zeugnisse oder Erinnerungsfest).
+- Ursprüngliche vier Enden, Lioras Behandlung, die umstrittene Ersatzzeugenaussage und die Entscheidung über den Chronisten bleiben sichtbar. Die Storybuchhaltung ist idempotent; keine neuen Werte oder SRD-Effekte.
+- Tests geschrieben, CI und echte Geräteprüfung offen. Technische Details: `docs/RABENWACHT_EPILOG_IMPLEMENTIERUNG.md`.
+
+---
+
 ## Unveröffentlicht – Rabenwacht: Akt VIII (21.10.2026, Entwicklungsbranch)
 
 - „Der Eid der Raben“ erweitert die Story um den Rat der Zeugen, einen belegabhängigen Auflösungspfad, eine ausdrücklich bestätigte alternative Ersatzzeugenaussage und drei eigenständige Schlussentscheidungen.
