@@ -183,6 +183,42 @@ void main() {
     },
   );
 
+  testWidgets('Abbrechen bei eigener Ausrüstung übernimmt keinen Gegenstand', (
+    tester,
+  ) async {
+    HeroCharacter? result;
+    await openEditor(
+      tester,
+      HeroCharacter(id: 'cancel-hero', name: 'Elowen'),
+      (hero) => result = hero,
+    );
+    final addItemButton = find.byKey(
+      const ValueKey('character-inventory-add'),
+    );
+    final editorList = find.byType(ListView).first;
+    for (var step = 0; step < 60; step++) {
+      if (addItemButton.hitTestable().evaluate().isNotEmpty) break;
+      await tester.drag(editorList, const Offset(0, -160));
+      await tester.pumpAndSettle();
+    }
+    expect(addItemButton.hitTestable(), findsOneWidget);
+    await tester.tap(addItemButton);
+    await tester.pumpAndSettle();
+    await tester.enterText(field('Name'), 'Nicht übernommenes Seil');
+    final cancel = find.widgetWithText(FantasyTextButton, 'Abbrechen');
+    expect(cancel, findsOneWidget);
+    expect(
+      tester.widget<FantasyTextButton>(cancel).style,
+      FantasyButtonStyle.iron,
+    );
+    await tester.tap(cancel);
+    await tester.pumpAndSettle();
+    await save(tester);
+    expect(result, isNotNull);
+    expect(result!.inventory, isEmpty);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Eigene Waffenwerte stehen in getrennten Inventarfeldern', (
     tester,
   ) async {
