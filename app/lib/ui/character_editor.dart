@@ -107,7 +107,9 @@ class _CharacterEditorState extends State<CharacterEditor> {
     for (final key in abilityLabels.keys) {
       _scores[key] = TextEditingController(text: scores[key]?.toString() ?? '');
     }
-    if (widget.hero == null) _autofillCombatValues();
+    // Missing values on archived heroes are just as actionable as on new ones.
+    // This never replaces confirmed or manually entered numbers.
+    _autofillCombatValues();
   }
 
   @override
@@ -152,17 +154,16 @@ class _CharacterEditorState extends State<CharacterEditor> {
     );
   }
 
-  /// Never overwrite a manually edited value. Existing characters only
-  /// opt in through the explicit button; new heroes get known SRD proposals.
-  void _autofillCombatValues({bool explicit = false}) {
-    if (widget.hero != null && !explicit) return;
+  /// Fill only unknown values or previously auto-proposed values. Existing
+  /// confirmed values and manual overrides always remain authoritative.
+  void _autofillCombatValues() {
     final speciesDm = SrdStartingCombatValues.speedDecimeters(
       _fields['species']!.text,
     );
     final speedField = _fields['speed']!;
     final canUpdateSpeed =
         speedField.text.trim().isEmpty ||
-        (widget.hero == null && speedField.text == _autoSpeed);
+        (_autoSpeed != null && speedField.text == _autoSpeed);
     if (canUpdateSpeed) {
       final suggested = speciesDm == null
           ? ''
@@ -174,7 +175,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
     final acField = _fields['armorClass']!;
     final canUpdateAc =
         acField.text.trim().isEmpty ||
-        (widget.hero == null && acField.text == _autoArmorClass);
+        (_autoArmorClass != null && acField.text == _autoArmorClass);
     if (canUpdateAc) {
       final ac = _suggestedArmorClass();
       final suggested = ac?.toString() ?? '';
@@ -223,7 +224,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
         minLines: lines,
         maxLines: lines == 1 ? 1 : 6,
         onChanged: (value) {
-          if (widget.hero == null && (key == 'species' || key == 'className')) {
+          if (key == 'species' || key == 'className') {
             setState(() => _autofillCombatValues());
           }
         },
@@ -305,7 +306,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
   }
 
   void _save() {
-    if (widget.hero == null) _autofillCombatValues();
+    _autofillCombatValues();
     if (!_form.currentState!.validate()) return;
     try {
       final json = Map<String, dynamic>.from(_original);
@@ -1370,7 +1371,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
                   OutlinedButton.icon(
                     key: const ValueKey('character-recalculate-combat-values'),
                     onPressed: () => setState(() {
-                      _autofillCombatValues(explicit: true);
+                      _autofillCombatValues();
                       _error =
                           _fields['armorClass']!.text.isEmpty ||
                               _fields['speed']!.text.isEmpty
