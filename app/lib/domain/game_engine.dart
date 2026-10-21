@@ -1193,7 +1193,6 @@ class GameEngine {
     );
   }
 
-
   /// SRD 5.2.1 Acid Splash. The domain resolver supports all confirmed
   /// creatures in a sphere. The current Encounter persists only ONE live foe,
   /// so this action is intentionally restricted to an expressly isolated foe.
