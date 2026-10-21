@@ -1,3 +1,8 @@
+## Rabenwacht – Der Brief von Morgen (21.10.2026, CI offen)
+
+- `app/test/rabenwacht_fourteenth_voice_morrow_test.dart`: echter Durchlauf aus ursprünglicher Kampagne über Finale und Epilog; Brief ausdrücklich öffnen, drei frei kombinierbare Ortsbelege, unabhängige Mindestschwelle, negierte Eingaben, drei unterschiedliche Enden, Save-Roundtrip, Spoiler- und Questschutz.
+- **Noch zu bestätigen:** Dart-Format und Flutter-Testlauf, Android- und native CI, realer Gerätetest. Keine Heldendaten oder SRD-Effekte automatisch verändern.
+
 ## Rabenwacht – Epilog / Sieben Tage später (21.10.2026, CI offen)
 
 - Neue Regression `app/test/rabenwacht_fourteenth_voice_epilogue_test.dart`: Eintritt nur nach abgeschlossenem Akt VIII, Epilog ausdrücklich beginnen, drei Personen in beliebiger Reihenfolge, mindestens zwei unterschiedliche Stimmen, Lioras freie Entscheidung, drei vermächtnisgebundene Abschlusswege, alle früheren Finale, negierte Eingaben, Questisolierung und Save-Roundtrips.
