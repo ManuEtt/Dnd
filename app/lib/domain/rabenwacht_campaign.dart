@@ -244,6 +244,14 @@ class RabenwachtCampaign {
         'Das Gebetbuch verbindet dreizehn Türen mit der vierzehnten Glocke.',
       if (campaign.facts['oswinTruth'] == 'true')
         'Bruder Oswin sagt: Der Glockenturm wurde absichtlich zerstört.',
+      if (campaign.facts['hymnSeen'] == 'true')
+        'In der Kapelle wurde die letzte Strophe des Glockenlieds ausgelöscht.',
+      if (campaign.facts['hymnChoice'] == 'kept')
+        'Du hast Oswins stumme Strophe bewahrt.',
+      if (campaign.facts['hymnChoice'] == 'burned')
+        'Du hast den letzten Vers des Glockenlieds vernichtet.',
+      if (campaign.facts['ending'] == 'end-chorus')
+        'Der Namenchor befreite Rabenwacht vom uralten Schweigen.',
       if (campaign.facts['serenMotive'] == 'true')
         'Die Archivakten deuten darauf hin, dass Seren Menschen beschützen wollte.',
       if (campaign.facts['graveClue'] == 'true')
@@ -285,6 +293,12 @@ class RabenwachtCampaign {
         '${objectives.isEmpty ? 'Keine – die Geschichte ist abgeschlossen.' : objectives}\n'
         'Dein aktueller Ort: ${campaign.facts['location'] ?? 'unbekannt'}.';
   }
+
+  /// Exact negation words only: "vernichte" must not count as "nicht".
+  static bool _hasNegation(String input) => RegExp(
+    r'\b(?:nicht|niemals|ohne|kein(?:e|en|em|er|es)?)\b',
+    caseSensitive: false,
+  ).hasMatch(input);
 
   static bool _has(String input, String words) {
     final text = input.toLowerCase();
@@ -435,6 +449,10 @@ class RabenwachtCampaign {
             npc.copyWith(relationship: 'reumütig')
           else if (npc.id == 'joren' && facts['jorenMet'] == 'true')
             npc.copyWith(relationship: 'dankbar')
+          else if (npc.id == 'oswin' && facts['hymnChoice'] == 'kept')
+            npc.copyWith(relationship: 'verbündet')
+          else if (npc.id == 'oswin' && facts['hymnChoice'] == 'burned')
+            npc.copyWith(relationship: 'abweisend')
           else if (npc.id == 'oswin' && facts['oswinTruth'] == 'true')
             npc.copyWith(relationship: 'vertrauensvoll')
           else if ((npc.id == 'fina' || npc.id == 'bram') && rescued)
@@ -453,7 +471,10 @@ class RabenwachtCampaign {
       'graveyard' => 'reach-graveyard',
       'ruins' => 'reach-ruins',
       'chamber' => 'reach-chamber',
-      'end-seal' || 'end-break' || 'end-mercy' => 'resolve-rabenwacht',
+      'end-seal' ||
+      'end-break' ||
+      'end-mercy' ||
+      'end-chorus' => 'resolve-rabenwacht',
       _ => null,
     };
     final reward = milestone == null
@@ -841,6 +862,57 @@ class RabenwachtCampaign {
           'Du kannst Joren Kessel befragen oder die Spuren am Bach untersuchen.',
         );
       case 'chapel':
+        if (_has(input, 'glockenlied|strophe|gesang|melodie|hymne|lied')) {
+          if (c.facts['hymnChoice'] == 'kept') {
+            return RabenwachtTurn(
+              c,
+              'Bruder Oswin summt die wiedergefundene Strophe. '
+              'Er erinnert sich an dein Versprechen, sie '
+              'für die Familien zu bewahren. '
+              'Das Lied muss nicht noch einmal geborgen werden.',
+            );
+          }
+          if (c.facts['hymnChoice'] == 'burned') {
+            return RabenwachtTurn(
+              c,
+              'Wo das Lied lag, ist nur Asche. '
+              'Oswin schaut auf seine Hände und schweigt.',
+            );
+          }
+          final entered = _move(
+            c,
+            'hymn',
+            'Hinter einem losen Stein der Kapelle entdeckst du '
+                'eine Notenzeile ohne letzte Strophe. '
+                'Oswin wird blass. „Der Orden ließ uns diesen Vers '
+                'aus den Gebeten schneiden“, sagt er. '
+                '„Der vierzehnte Schlag ruft nicht nur einen '
+                'Wächter. Er ruft die Namen zurück.“ '
+                'Eine verbrannte Hälfte liegt neben dem Ofen. '
+                'Du kannst Oswin um den vollständigen Vers bitten, '
+                'ihn bewahren, das Fragment verbrennen '
+                'oder ohne Entscheidung zur Kapelle zurückkehren.',
+            clues: {'hymnSeen': 'true', 'location': 'Kapelle'},
+          );
+          return RabenwachtTurn(
+            entered.campaign.copyWith(
+              quests: [
+                ...entered.campaign.quests,
+                if (!entered.campaign.quests.any(
+                  (quest) => quest.id == 'rabenwacht-hymn',
+                ))
+                  const Quest(
+                    id: 'rabenwacht-hymn',
+                    title: 'Die stumme Strophe',
+                    description:
+                        'Erfahre, warum der Glockenorden '
+                        'den letzten Vers des Lieds verbot.',
+                  ),
+              ],
+            ),
+            entered.narration,
+          );
+        }
         if (_has(input, 'altar|nische|buch|untersuch|gebet|such')) {
           return _move(
             c,
@@ -869,6 +941,112 @@ class RabenwachtCampaign {
           c,
           'Ein einsamer Lichtstrahl fällt auf den '
           'Altar. Untersuche die Nische oder sprich mit Bruder Oswin.',
+        );
+      case 'hymn':
+        final burn = _has(
+          input,
+          'verbrenn|zerreiß|zerreiss|vernicht|zerstör|zerstoer|ins feuer',
+        );
+        final keep = _has(
+          input,
+          'bewahr|lern|lerne|singe|sing|abschreib|schreib|notier|rette',
+        );
+        final denial = _hasNegation(input);
+        if ((burn || keep) && (denial || burn == keep)) {
+          return RabenwachtTurn(
+            c,
+            'Oswin wartet. Möchtest du die stumme Strophe '
+            'bewahren oder ausdrücklich vernichten? '
+            'Seine Erinnerung lässt sich nicht zurückholen, '
+            'wenn du das Papier verbrennst.',
+          );
+        }
+        if (burn && !keep) {
+          final decided = c.copyWith(
+            facts: {...c.facts, 'hymnChoice': 'burned'},
+            quests: [
+              for (final quest in c.quests)
+                if (quest.id == 'rabenwacht-hymn')
+                  quest.copyWith(status: 'failed')
+                else
+                  quest,
+            ],
+          );
+          return _move(
+            decided,
+            'chapel',
+            'Du hältst das Notenblatt in die Ofenglut. '
+                'Oswin streckt eine Hand danach aus, '
+                'zieht sie aber wieder zurück. '
+                '„Vielleicht soll ein solches Lied vergessen '
+                'bleiben“, sagt er. Seine Stimme ist jetzt '
+                'so kalt wie die Steine der Kapelle. '
+                'Der Weg zum Chronistenhaus bleibt offen.',
+            clues: {'location': 'Kapelle'},
+          );
+        }
+        if (keep && !burn) {
+          final hasContext =
+              c.facts['prayerFound'] == 'true' ||
+              c.facts['oswinTruth'] == 'true' ||
+              c.facts['maraLetter'] == 'true';
+          if (!hasContext) {
+            return RabenwachtTurn(
+              c,
+              'Die letzte Zeile ist verbrannt. '
+              'Oswin fordert einen Beleg, bevor er '
+              'sein Gelübde bricht: das Gebetbuch, '
+              'seine Aussage über die Brandnacht '
+              'oder Maras Abschrift des Glockeneids. '
+              'Du kannst zurückkehren, um weitere '
+              'Spuren zu sichern.',
+            );
+          }
+          final decided = c.copyWith(
+            facts: {...c.facts, 'hymnChoice': 'kept'},
+            quests: [
+              for (final quest in c.quests)
+                if (quest.id == 'rabenwacht-hymn')
+                  quest.copyWith(status: 'completed')
+                else
+                  quest,
+            ],
+          );
+          return _move(
+            decided,
+            'chapel',
+            'Du legst Oswin die Beweise der Brandnacht vor. '
+                'Mit zitternder Stimme ergänzt er den '
+                'verbrannten Vers: „Vierzehn Schläge, '
+                'dreizehn Türen; kein Herz soll sich '
+                'allein verlieren. Sprecht die Namen, '
+                'tragt die Schuld, dann schweigt die Glocke '
+                'ohne Blut.“ Oswin vertraut dir die Melodie '
+                'an und bittet dich, die Wahrheit zu '
+                'den Menschen von Rabenwacht zurückzutragen. '
+                '„Wenn die Schuldigen sprechen und Seren '
+                'uns vertraut, kann daraus ein Namenchor '
+                'werden“, sagt er. Der Weg zum '
+                'Chronistenhaus bleibt offen.',
+            clues: {'location': 'Kapelle'},
+          );
+        }
+        if (_has(input, 'zurück|zurueck|kapelle|später|spaeter|verlass')) {
+          return _move(
+            c,
+            'chapel',
+            'Du lässt den unvollständigen Notenbogen '
+                'im Versteck und kehrst in die Kapelle zurück. '
+                'Du kannst später zu dem Lied zurückkommen '
+                'oder die alten Aufzeichnungen suchen.',
+            clues: {'location': 'Kapelle'},
+          );
+        }
+        return RabenwachtTurn(
+          c,
+          'Vor dir liegt das unvollständige Glockenlied. '
+          'Du kannst es mit Oswins Hilfe bewahren, '
+          'es vernichten oder zur Kapelle zurückkehren.',
         );
       case 'archive':
         if (_has(input, 'konfrontier|gesteh|geständnis|gelöschten namen')) {
@@ -989,7 +1167,7 @@ class RabenwachtCampaign {
             'bewahr|gedenk|ich nenne|ich ehre|schwör|schwoer|erinner',
           );
           // Ambiguous/negated utterances are never silently resolved.
-          final negated = _has(input, 'nicht|kein|niemals|ohne');
+          final negated = _hasNegation(input);
           if ((hide || remember) && (negated || hide == remember)) {
             return RabenwachtTurn(
               c,
@@ -1359,7 +1537,11 @@ class RabenwachtCampaign {
             'charisma',
             'Überreden',
             14,
-            'Du versuchst Seren davon zu überzeugen, die Gefangenen freizugeben.',
+            c.facts['hymnChoice'] == 'kept'
+                ? 'Du erinnerst Seren an Oswins wiedergefundene Strophe '
+                      'und bittest sie, den Gefangenen zu vertrauen.'
+                : 'Du versuchst Seren davon zu überzeugen, '
+                      'die Gefangenen freizugeben.',
             rollId,
           );
         }
@@ -1395,6 +1577,59 @@ class RabenwachtCampaign {
           'oder das Siegel brechen.',
         );
       case 'choice':
+        if (_has(
+          input,
+          'namenchor|namen chor|vierter weg|vierter pfad|'
+          'gemeinsam singen|stummen vers|stumme strophe',
+        )) {
+          if (c.facts['hymnSeen'] != 'true') {
+            return RabenwachtTurn(
+              c,
+              'Einen solchen Ritus kennst du bislang nicht. '
+              'Du kannst das Siegel erneuern, brechen '
+              'oder Seren um ihren Übergang bitten.',
+            );
+          }
+          final missing = <String>[
+            if (c.facts['hymnChoice'] != 'kept')
+              'die wiedergewonnene Strophe aus der Kapelle',
+            if (c.facts['graveOath'] != 'remembered')
+              'die bewahrten Namen der Opfer',
+            if (c.facts['alrikConfession'] != 'true')
+              'Alriks belegbares Geständnis',
+            if (c.facts['serenTrust'] != 'true') 'Serens Vertrauen',
+          ];
+          if (missing.isNotEmpty) {
+            return RabenwachtTurn(
+              c,
+              'Du versuchst, den Namenchor anzustimmen. '
+              'Doch dafür fehlen noch: ${missing.join(', ')}. '
+              'Das Schicksal des Siegels steht dir '
+              'weiterhin auf den drei bekannten Wegen offen.',
+            );
+          }
+          return _ending(
+            c,
+            'end-chorus',
+            'Du beginnst Oswins wiedergefundene Strophe. '
+                'Zuerst antwortet Seren, dann klingen die '
+                'Stimmen der Namenlosen aus dem Stein. '
+                'Alriks Geständnis und die bewahrten Namen '
+                'geben dem Lied die Wahrheit zurück. '
+                'Die vierzehnte Glocke schlägt, doch sie '
+                'fordert kein Opfer: Jeder im Dorf erinnert '
+                'sich an seinen Teil der Brandnacht. '
+                'Fina, Bram und der Holzfäller erwachen. '
+                'Der Runenkreis schließt sich ohne neue '
+                'Gefangene. Seren entscheidet sich, '
+                'als Hüterin der Erinnerungen im '
+                'Morgenlicht zu verbleiben. '
+                'Die Familien geben den Opfern ihre '
+                'Namen zurück. Rabenwacht ist nicht '
+                'mehr frei von Schuld, aber endlich '
+                'frei von Schweigen.',
+          );
+        }
         if (_has(input, 'erneuer|reparier|versiegel|schlüssel|schluessel')) {
           return _ending(
             c,
@@ -1430,9 +1665,15 @@ class RabenwachtCampaign {
         }
         return RabenwachtTurn(
           c,
-          'Es gibt drei ernsthafte Möglichkeiten: '
-          'das Siegel erneuern, es zerstören oder Seren erlösen. '
-          'Du darfst frei entscheiden und weitere Fragen stellen.',
+          c.facts['hymnChoice'] == 'kept'
+              ? 'Die vierzehnte Glocke ruft nach einer Entscheidung. '
+                    'Du kannst das Siegel erneuern, zerstören, '
+                    'Seren erlösen oder versuchen, Oswins '
+                    'Namenchor mit den gesammelten Zeugnissen '
+                    'anzustimmen. Deine Entscheidung bleibt frei.'
+              : 'Es gibt drei ernsthafte Möglichkeiten: '
+                    'das Siegel erneuern, es zerstören oder Seren erlösen. '
+                    'Du darfst frei entscheiden und weitere Fragen stellen.',
         );
       default:
         return RabenwachtTurn(
@@ -1679,6 +1920,12 @@ class RabenwachtCampaign {
       if (c.facts['serenTrust'] == 'true')
         'Serens Vertrauen verändert, wie das Dorf '
             'über den gebundenen Geist spricht.',
+      if (c.facts['hymnChoice'] == 'kept')
+        'Bruder Oswin gibt die stumme Strophe '
+            'wieder an die Menschen weiter.',
+      if (c.facts['hymnChoice'] == 'burned')
+        'Von Oswins verbotenem Lied blieb nur Asche; '
+            'das Dorf wird seine letzte Strophe nie hören.',
       if (c.facts['graveOath'] == 'remembered')
         'Vor dem Dorf liest du die bewahrten Namen vor. '
             'Die Familien wissen endlich, was damals geschah.',
@@ -1689,7 +1936,9 @@ class RabenwachtCampaign {
     final next = c.copyWith(
       quests: [
         for (final quest in c.quests)
-          if (quest.id == 'rabenwacht-memorial' && quest.status == 'active')
+          if ((quest.id == 'rabenwacht-memorial' ||
+                  quest.id == 'rabenwacht-hymn') &&
+              quest.status == 'active')
             quest.copyWith(status: 'failed')
           else if (quest.status == 'active')
             quest.copyWith(status: 'completed')
