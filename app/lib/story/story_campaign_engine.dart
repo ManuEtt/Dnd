@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import '../domain/ai_story.dart';
+import 'ai_story.dart';
 import '../domain/models.dart';
 import 'story_memory_engine.dart';
 import 'story_rule_boundary.dart';

@@ -1,3 +1,14 @@
+## 21.10.2026 – Version 0.8.30+80 (Regelengine/Story-Modultrennung, CI offen)
+
+- Rabenwacht-Kampagnencode vollständig unter `app/lib/story/rabenwacht_campaign.dart` verschoben. Bestehende statische Domain-API als kurze Kompatibilitätsfassade mit identischen Rückgabetypen/Speicherformaten erhalten.
+- Direkte Rabenwacht-Klassenproben- und XP-Aufrufe durch neuen `StoryRulePort` ersetzt. Die Regelimplementierung und bestätigten XP-Schwellen verbleiben im Domain-Regeladapter.
+- KI-Storyparser `AiStoryPlan`/`AiStoryStep` nach `story/ai_story.dart` verlagert, bisheriger Domain-Import exportiert die kanonische Implementierung.
+- Klare öffentliche `story_api.dart`-/`rules_api.dart`-Grenzen, Architekturregression in `scripts/tests/test_module_dependencies.py`, separate Testdouble-/Kompatibilitätstests.
+- Zwei unabhängige Entwicklungsstränge mit kleinen Integrations-PRs in `docs/ARCHITECTURE_RULES_STORY.md` beschrieben, einschließlich realistischem Restaufwand.
+- Noch nicht vollständig entkoppelt: historische `GameEngine` vereint weiterhin Story-/Regelkoordination; vollständige Flutter-/Android-CI und Gerätetest stehen aus.
+
+---
+
 ## 21.10.2026 – Version 0.8.29+79 (zusätzliche Kreaturenangriffe, CI offen)
 
 - Erster **tatsächlicher** Waffenangriff einer lebenden SL-gesteuerten Zusatzkreatur während ihres manuell aktiven Zuges, vorerst gegen eine andere gespeicherte Zusatzkreatur.

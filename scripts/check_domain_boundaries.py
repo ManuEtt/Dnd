@@ -16,8 +16,18 @@ STORY_ALLOWED = {
     "../domain/models.dart",
     "../domain/ai_story.dart",
 }
+# The facade composes both modules. The two legacy shims must expose
+# precisely these canonically owned story implementations and nothing else.
 DOMAIN_STORY_IMPORT_ALLOWED = {
-    "app/lib/domain/game_engine.dart",
+    "app/lib/domain/game_engine.dart": {
+        "../story/story_campaign_engine.dart",
+        "../story/story_memory_engine.dart",
+    },
+    "app/lib/domain/rabenwacht_campaign.dart": {
+        "../story/rabenwacht_campaign.dart",
+        "../story/story_rule_port.dart",
+    },
+    "app/lib/domain/ai_story.dart": {"../story/ai_story.dart"},
 }
 
 
@@ -35,10 +45,12 @@ def check_imports(relative_path: str, content: str) -> list[str]:
             elif "/" in uri and not uri.startswith("../"):
                 violations.append(f"{relative_path}: unexpected cross-module import {uri}")
     elif relative_path.startswith("app/lib/domain/"):
-        if relative_path not in DOMAIN_STORY_IMPORT_ALLOWED:
-            for uri in sources:
-                if uri.startswith("../story/"):
-                    violations.append(f"{relative_path}: rule module imports story {uri}")
+        allowed = DOMAIN_STORY_IMPORT_ALLOWED.get(relative_path, set())
+        for uri in sources:
+            if uri.startswith("../story/") and uri not in allowed:
+                violations.append(
+                    f"{relative_path}: rule module imports story {uri}"
+                )
     return violations
 
 

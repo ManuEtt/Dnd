@@ -1,3 +1,15 @@
+## 21.10.2026 – Regelengine und Story technisch getrennt (0.8.30+80, CI offen)
+
+- Ausgangspunkt `main`: Version 0.8.29+79; die SRD-Regel- und Story-Module existieren bislang nur teilweise als separate APIs.
+- Kanonische Rabenwacht-Erzählung und das komplette handgeschriebene Kampagnenskript liegen jetzt in `story/rabenwacht_campaign.dart` statt `domain/rabenwacht_campaign.dart`. Die frühere statische API bleibt durch eine kleine Domain-Fassade unverändert benutzbar.
+- Expliziter `StoryRulePort` erlaubt der Handlung Proben und Kampagnen-Meilensteinbelohnungen anzufordern, ohne Klassen-/XP-Regelcode zu importieren. Domain-Adapter behält bestehende SRD-Berechnungen.
+- Generative KI-Storytypen aus `domain/ai_story.dart` in kanonische `story/ai_story.dart` verschoben; Legacy-Import bleibt als Export erhalten.
+- Versionsübergreifende Speicherformate unverändert. CI-Architekturtests verhindern neue direkte Story-Regel-Importe; Rabenwacht-Port-Tests und bestehende Kampagnen-/Rules-Trenn-Regressionen hinzugefügt.
+- Parallel-Branches `feature/rules-*` und `feature/story-*` sowie Port-Integrationspolitik und Aufwand in `docs/ARCHITECTURE_RULES_STORY.md` dokumentiert.
+- Weiter offen: weitere 4.500+ Zeilen GameEngine-Orchestrierung aufteilen, Ports für Kampfende/Story-Quest-Übergänge, vollständige getrennte Packages und Android-Gerätetest; Build/CI muss erfolgreich sein.
+
+---
+
 ## 21.10.2026 – Zusätzlicher Monsterangriff auf gespeichertes Flächenziel (0.8.29+79, CI offen)
 
 - Vorheriger `main`: 0.8.28+78, PR #60 gemergt und alle CI-Gates einschließlich Android-Alpha erfolgreich.
