@@ -1,0 +1,47 @@
+name: Temporärer Rabenwacht-Dart-Formatter
+
+on:
+  push:
+    branches:
+      - feature/rabenwacht-branching-story-20261021
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Zwei Rabenwacht-Dateien automatisch formatieren
+        run: |
+          set -euo pipefail
+          cd app
+          dart format lib/domain/rabenwacht_campaign.dart test/rabenwacht_branching_story_test.dart
+          dart format --output=none --set-exit-if-changed lib/domain/rabenwacht_campaign.dart test/rabenwacht_branching_story_test.dart
+          cd ..
+          git diff --check
+          echo '--- FORMATIERTE DATEI 1 (BASE64) ---'
+          base64 -w0 app/lib/domain/rabenwacht_campaign.dart
+          echo
+          echo '--- ENDE DATEI 1 ---'
+          echo '--- FORMATIERTE DATEI 2 (BASE64) ---'
+          base64 -w0 app/test/rabenwacht_branching_story_test.dart
+          echo
+          echo '--- ENDE DATEI 2 ---'
+      - name: Formatierten Code zum Feature-Branch committen
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- app/lib/domain/rabenwacht_campaign.dart app/test/rabenwacht_branching_story_test.dart
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'style(rabenwacht): apply official Dart 3.9 formatter'
+          git push origin HEAD:feature/rabenwacht-branching-story-20261021
