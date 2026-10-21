@@ -1,3 +1,12 @@
+## 21.10.2026 – Rabenwacht: Akt VIII, Epilog und Brief von Morgen (konsolidierter Integrationsbranch)
+
+- **Implementiert:** Rat der Zeugen mit Belegschwelle und drei Enden; optionaler Epilog mit Elda, Tarek und Liora sowie drei Dorfvermächtnissen; anschließende optionale Nachgeschichte „Der Brief von Morgen“ mit drei unabhängigen Ermittlungsorten und drei Schlusswegen.
+- **Einbindung:** `rabenwacht-voice-v1`, identische Campaign-Persistenz, keine SRD- oder Backend-Modifikation und kein unberechtigter EP-/TP-/Ausrüstungs-Effekt. Bestehende Main-Änderungen am D&D-Regelwerk bleiben erhalten.
+- **Tests:** `app/test/rabenwacht_fourteenth_voice_act8_test.dart`, `app/test/rabenwacht_fourteenth_voice_epilogue_test.dart`, `app/test/rabenwacht_fourteenth_voice_morrow_test.dart`; alle drei Entwicklungsstufen und die konsolidierte Android-CI müssen vor Merge grün sein. Echter Geräte-/Balance-Test weiterhin offen.
+- **Fachdokumentation:** `docs/RABENWACHT_AKT_VIII_IMPLEMENTIERUNG.md`, `docs/RABENWACHT_EPILOG_IMPLEMENTIERUNG.md`, `docs/RABENWACHT_BRIEF_VON_MORGEN.md`. Die historischen Zwischenstände auf den Featurebranches bleiben nachvollziehbar.
+
+---
+
 ## 21.10.2026 – SRD-Feuerball: interaktives Kartenoverlay (CI offen)
 
 - **IMPLEMENTIERT:** In der Abenteueransicht kann ein getrenntes, read-only `SrdFireballGridPreviewDialog` geöffnet werden. Figuren-/Ursprungsfeld und bestätigte Vollhindernisse sind interaktiv auf 12×12, 20×20 oder 32×32 Feldern markierbar. Jede Terrainänderung widerruft die Kartenfreigabe und verwirft veraltete Vorschauen.
