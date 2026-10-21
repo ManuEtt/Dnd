@@ -170,7 +170,10 @@ class FourteenthVoiceAct7 {
           'einen Namen anvertraust.',
         );
       }
-      if (_has(text, 'preis|kosten|opfer|bedingung|handel annehmen|angebot annehmen') &&
+      if (_has(
+            text,
+            'preis|kosten|opfer|bedingung|handel annehmen|angebot annehmen',
+          ) &&
           !_negated(text)) {
         if (campaign.facts['voice:chronistChoice'] != null) {
           return RabenwachtTurn(
@@ -194,7 +197,10 @@ class FourteenthVoiceAct7 {
           gained: {'voice:priceExplained': 'true'},
         );
       }
-      if (_has(text, 'verhandel|fordere beweise|bedingungen prüfen|bedingungen pruefen') &&
+      if (_has(
+            text,
+            'verhandel|fordere beweise|bedingungen prüfen|bedingungen pruefen',
+          ) &&
           !_negated(text)) {
         return _move(
           campaign,
@@ -242,8 +248,10 @@ class FourteenthVoiceAct7 {
     }
 
     if (stage == 'voice-price') {
-      if (text == 'ich bestätige den preis: eine andere person wird vergessen.' ||
-          text == 'ich bestätige den preis: eine andere person wird vergessen') {
+      if (text ==
+              'ich bestätige den preis: eine andere person wird vergessen.' ||
+          text ==
+              'ich bestätige den preis: eine andere person wird vergessen') {
         return _decision(
           campaign,
           'accepted',
