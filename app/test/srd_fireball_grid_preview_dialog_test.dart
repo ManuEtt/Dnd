@@ -43,10 +43,6 @@ void main() {
     catalog = await SrdSpellCatalogLoader.load();
   });
 
-  tearDown(() async {
-    // The next test gets its own viewport, not a persistent emulated device.
-  });
-
   testWidgets('unconfirmed map cannot create a spell or preview', (tester) async {
     await _open(tester, catalog.find('Fireball')!);
     addTearDown(() => tester.binding.setSurfaceSize(null));
