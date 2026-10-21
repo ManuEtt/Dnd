@@ -1,3 +1,9 @@
+## Rabenwacht – Epilog / Sieben Tage später (21.10.2026, CI offen)
+
+- Neue Regression `app/test/rabenwacht_fourteenth_voice_epilogue_test.dart`: Eintritt nur nach abgeschlossenem Akt VIII, Epilog ausdrücklich beginnen, drei Personen in beliebiger Reihenfolge, mindestens zwei unterschiedliche Stimmen, Lioras freie Entscheidung, drei vermächtnisgebundene Abschlusswege, alle früheren Finale, negierte Eingaben, Questisolierung und Save-Roundtrips.
+- **Noch ausstehend:** offizieller Dart-Formatter, Flutter-Analyse und Tests, Android-CI/Debug-APK und Geräteabnahme. Keine automatische Veränderung von TP, EP, Zauberressourcen, Inventar oder bestehenden NPC-Daten.
+- Fachliches und technische Prüfpunkte: `docs/RABENWACHT_EPILOG_IMPLEMENTIERUNG.md`.
+
 ## Rabenwacht – Akt VIII / Der Eid der Raben (21.10.2026, CI offen)
 
 - Neue Flutter-Regression `app/test/rabenwacht_fourteenth_voice_act8_test.dart`: echter Fortsetzungspfad bis zum Zeugenrat, bestätigte Originalspuren, alternative öffentliche Aussage, Abbruch/Negation, Rückkehr zur dritten Spur, vier historische Enden, drei neue Enden, Liora, Preis-Schuld, Questschutz und JSON-Roundtrip.
