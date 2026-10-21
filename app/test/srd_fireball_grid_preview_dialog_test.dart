@@ -116,6 +116,7 @@ void main() {
     );
   });
 
+  // A reset also invalidates confirmation from the previous map.
   testWidgets('reset clears walls, result and previous map confirmation', (
     tester,
   ) async {
