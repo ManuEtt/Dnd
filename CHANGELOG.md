@@ -1,4 +1,4 @@
-## 21.10.2026 – Rabenwacht: Die ausgelöschten Namen (gestapelter Entwicklungsbranch)
+## 21.10.2026 – Rabenwacht: Die ausgelöschten Namen (Entwicklungsbranch auf main)
 
 - Optionaler Gedenkstein am Friedhof mit neuer Quest, Erinnerungsentscheidung und spoilerfreien Fakten.
 - Zur Bewahrung der Namen sind tatsächlich gefundene Belege notwendig. Verschweigen, Rückkehr und ungelöste Nebenquest bleiben möglich.
