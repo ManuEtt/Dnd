@@ -1,3 +1,8 @@
+## Rabenwacht – alternative Fertigkeitswege (21.10.2026, CI offen)
+
+- `app/test/rabenwacht_alternative_checks_test.dart`: ursprüngliche und neue Wege bei Turmruine/Treppe/Tür, Schwierigkeitsgrade 12–14, echte Heldenproben, Belegfreischaltung, unbestätigte Hinweise, Erfolgs-/Misserfolgszweige, JSON-Roundtrip und frei behauptete Zauberwirkung.
+- Vor Merge: `dart format --output=none --set-exit-if-changed lib test`, `flutter analyze`, `flutter test`, `flutter build apk --debug` und separater Test auf einem Android-Gerät.
+
 ## Rabenwacht – NPC-Gedächtnis und Geheimweg (21.10.2026)
 
 - `app/test/rabenwacht_npc_memory_test.dart` enthält sieben Testfälle: Geheimweg nur nach gezieltem Tarek-Gespräch, nicht freigeschalteter Geheimweg, Geheimweg mit einmaliger EP-Vergabe und gespeicherten Ortsbesuchen, unveränderter Krähenalarm, Alriks Belegprüfung und Geständnis, Maras Versöhnung und ein zusammenhängender Weg über Tarek → Friedhof → Alrik → Mara.
