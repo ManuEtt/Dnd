@@ -876,6 +876,14 @@ class RabenwachtCampaign {
           );
           // Ambiguous/negated utterances are never silently resolved.
           final negated = _has(input, 'nicht|kein|niemals|ohne');
+          if ((hide || remember) && (negated || hide == remember)) {
+            return RabenwachtTurn(
+              c,
+              'Du bist noch unentschlossen. Soll ich die Namen bewahren '
+              'oder das alte Schweigen fortsetzen? '
+              'Formuliere deine Entscheidung ausdrücklich.',
+            );
+          }
           if (!negated && hide != remember) {
             final evidence = c.facts['prayerFound'] == 'true' ||
                 c.facts['oswinTruth'] == 'true' ||
