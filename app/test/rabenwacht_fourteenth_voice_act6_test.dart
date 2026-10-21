@@ -262,8 +262,10 @@ void main() {
     campaign = engine.act(campaign, 'Ich besuche Elda.').campaign;
     campaign = engine.act(campaign, 'Ich untersuche die Zeichnungen.').campaign;
     final valid = campaign.pendingRoll!;
-    expect(Campaign.fromJson(campaign.toJson()).pendingRoll!.targetId,
-        'voice:elda');
+    expect(
+      Campaign.fromJson(campaign.toJson()).pendingRoll!.targetId,
+      'voice:elda',
+    );
 
     PendingRoll fake({
       required String targetId,
@@ -304,12 +306,10 @@ void main() {
       ),
     ]) {
       expect(
-        () => Campaign.fromJson(
-          campaign.copyWith(pendingRoll: request).toJson(),
-        ),
+        () =>
+            Campaign.fromJson(campaign.copyWith(pendingRoll: request).toJson()),
         throwsFormatException,
       );
     }
   });
-
 }

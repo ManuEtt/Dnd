@@ -2337,20 +2337,25 @@ class Campaign {
               rawBible['stage'] ==
                   pending.targetId.replaceFirst('rabenwacht:', '') &&
               pending.difficulty ==
-                  difficultyByStage[pending.targetId.replaceFirst('rabenwacht:', '')];
+                  difficultyByStage[pending.targetId.replaceFirst(
+                    'rabenwacht:',
+                    '',
+                  )];
           final voice =
               rawBible['mode'] == 'rabenwacht-voice-v1' &&
               pending.targetId.startsWith('voice:') &&
               rawBible['stage'] ==
                   'voice-${pending.targetId.replaceFirst('voice:', '')}' &&
               pending.difficulty ==
-                  difficultyByVoiceStage[
-                    pending.targetId.replaceFirst('voice:', '')
-                  ] &&
+                  difficultyByVoiceStage[pending.targetId.replaceFirst(
+                    'voice:',
+                    '',
+                  )] &&
               pending.targetName ==
-                  skillsByVoiceStage[
-                    pending.targetId.replaceFirst('voice:', '')
-                  ];
+                  skillsByVoiceStage[pending.targetId.replaceFirst(
+                    'voice:',
+                    '',
+                  )];
           if (!(rabenwacht || voice) ||
               values.length != 2 ||
               skills[values[1]] != values[0]) {
