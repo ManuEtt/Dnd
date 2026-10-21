@@ -7340,10 +7340,21 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Playing the Game / Combat",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_extra_creature_attack_test.dart",
+        "app/test/manual_extra_creature_attack_dialog_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/srd_extra_creature_attack_rules.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/domain/models.dart",
+        "app/lib/domain/srd_initiative_roster_rules.dart",
+        "app/lib/services/game_controller.dart",
+        "app/lib/ui/manual_extra_creature_attack_dialog.dart",
+        "app/lib/ui/app.dart"
+      ],
+      "note": "Inkrement 0.8.29+79: erste durch Nutzer bestätigte einfache Waffen-Angriffsaktion einer lebenden GM-gesteuerten Zusatzkreatur gegen eine ANDERE HP-geführte Zusatzkreatur im aktiven manuellen Zug. Lokaler W20 mit Vor-/Nachteil, natürliche 1/20, kritischer zusätzlicher Würfelsatz ohne doppelte flache Boni, bestätigte Deckung/Ziel-RK/Schaden, ein Angriff je manuellem Zug, persistierte TP+Aktionsverbrauch+Journal. KEIN Held-/Hauptgegnerziel, keine Monsterstatblock-Automatik, Multiattack, Reaktionen/Resistenzen, Position, Konzentration, vollständiger kanonischer Mehrgegner-Turnscheduler oder Siegbedingung. Daher partial."
     },
     {
       "id": "RULE-COMBAT-MOVE",
@@ -7625,10 +7636,21 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Playing the Game / Combat",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_extra_creature_attack_test.dart",
+        "app/test/manual_extra_creature_attack_dialog_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/srd_extra_creature_attack_rules.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/domain/models.dart",
+        "app/lib/domain/srd_initiative_roster_rules.dart",
+        "app/lib/services/game_controller.dart",
+        "app/lib/ui/manual_extra_creature_attack_dialog.dart",
+        "app/lib/ui/app.dart"
+      ],
+      "note": "Inkrement 0.8.29+79: erste durch Nutzer bestätigte einfache Waffen-Angriffsaktion einer lebenden GM-gesteuerten Zusatzkreatur gegen eine ANDERE HP-geführte Zusatzkreatur im aktiven manuellen Zug. Lokaler W20 mit Vor-/Nachteil, natürliche 1/20, kritischer zusätzlicher Würfelsatz ohne doppelte flache Boni, bestätigte Deckung/Ziel-RK/Schaden, ein Angriff je manuellem Zug, persistierte TP+Aktionsverbrauch+Journal. KEIN Held-/Hauptgegnerziel, keine Monsterstatblock-Automatik, Multiattack, Reaktionen/Resistenzen, Position, Konzentration, vollständiger kanonischer Mehrgegner-Turnscheduler oder Siegbedingung. Daher partial."
     },
     {
       "id": "RULE-COMBAT-CONCENTRATION-ON-DAMAGE",
