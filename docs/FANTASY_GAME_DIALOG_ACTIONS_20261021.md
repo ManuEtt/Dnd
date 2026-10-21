@@ -22,7 +22,7 @@ Spieloberflächen:
 - `AbilityAssignmentDialog`: Attribute ausdrücklich übernehmen
   (Holz/Gold), Abbrechen (Eisen)
 
-Insgesamt 16 bislang bestehende Aktionswidgets werden neu gestaltet,
+Insgesamt 15 bislang bestehende Aktionswidgets werden neu gestaltet,
 einschließlich des Aktionsbuttons im Ausrüstungs-Detailblatt. Bestehende
 `ValueKey`-Kennungen und Controller-Callbacks bleiben erhalten.
 Nicht verfügbare Regelaktionen haben weiter `onPressed: null` und
