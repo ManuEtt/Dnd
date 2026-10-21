@@ -18,6 +18,7 @@ import 'ability_assignment_dialog.dart';
 import 'srd_class_selection_dialog.dart';
 import 'srd_class_level_up_dialog.dart';
 import 'fantasy_ui.dart';
+import 'fantasy_buttons.dart';
 import 'fantasy_experience.dart';
 import 'character_portrait_picker.dart';
 import 'multiclass_selection_dialog.dart';
@@ -581,14 +582,15 @@ class _CharacterEditorState extends State<CharacterEditor> {
           ),
         ),
         actions: [
-          TextButton(
+          FantasyTextButton(
+            label: 'Abbrechen',
+            style: FantasyButtonStyle.iron,
             onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('Abbrechen'),
           ),
-          FilledButton(
+          FantasyButton(
             key: const ValueKey('character-enrich-confirm'),
+            label: 'Attribute übernehmen',
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('Attribute übernehmen'),
           ),
         ],
       ),
@@ -807,13 +809,14 @@ class _CharacterEditorState extends State<CharacterEditor> {
           'Startwert nicht automatisch verwendet werden.',
         ),
         actions: [
-          TextButton(
+          FantasyTextButton(
+            label: 'Abbrechen',
+            style: FantasyButtonStyle.iron,
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Abbrechen'),
           ),
-          FilledButton(
+          FantasyTextButton(
+            label: 'Trefferpunkte übernehmen',
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Trefferpunkte übernehmen'),
           ),
         ],
       ),
@@ -1948,11 +1951,13 @@ class _InventoryItemDialogState extends State<_InventoryItemDialog> {
       ),
     ),
     actions: [
-      TextButton(
+      FantasyTextButton(
+        label: 'Abbrechen',
+        style: FantasyButtonStyle.iron,
         onPressed: () => Navigator.pop(context),
-        child: const Text('Abbrechen'),
       ),
-      FilledButton(
+      FantasyTextButton(
+        label: 'Speichern',
         onPressed: () {
           if (!_form.currentState!.validate()) return;
           try {
@@ -1976,7 +1981,7 @@ class _InventoryItemDialogState extends State<_InventoryItemDialog> {
             ).showSnackBar(SnackBar(content: Text(error.message)));
           }
         },
-        child: const Text('Speichern'),
+
       ),
     ],
   );
