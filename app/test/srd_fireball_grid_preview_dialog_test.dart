@@ -14,8 +14,7 @@ Future<void> _open(WidgetTester tester, SrdSpellDefinition spell) async {
             child: ElevatedButton(
               onPressed: () => showDialog<void>(
                 context: context,
-                builder: (_) =>
-                    SrdFireballGridPreviewDialog(fireball: spell),
+                builder: (_) => SrdFireballGridPreviewDialog(fireball: spell),
               ),
               child: const Text('Öffnen'),
             ),
@@ -43,17 +42,28 @@ void main() {
     catalog = await SrdSpellCatalogLoader.load();
   });
 
-  testWidgets('unconfirmed map cannot create a spell or preview', (tester) async {
+  testWidgets('unconfirmed map cannot create a spell or preview', (
+    tester,
+  ) async {
     await _open(tester, catalog.find('Fireball')!);
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
     await _tap(tester, 'fireball-preview-calculate');
-    expect(find.byKey(const ValueKey('fireball-preview-summary')), findsNothing);
-    expect(find.byKey(const ValueKey('fireball-preview-error')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('fireball-preview-summary')),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const ValueKey('fireball-preview-error')),
+      findsOneWidget,
+    );
 
     await _tap(tester, 'fireball-map-surveyed');
     await _tap(tester, 'fireball-preview-calculate');
-    expect(find.byKey(const ValueKey('fireball-preview-summary')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('fireball-preview-summary')),
+      findsOneWidget,
+    );
     expect(find.textContaining('mögliche 2D-Bodenfelder'), findsOneWidget);
     expect(find.byKey(const ValueKey('fireball-preview-error')), findsNothing);
 
@@ -62,28 +72,48 @@ void main() {
     expect(find.text('Feuerball: Flächenvorschau'), findsNothing);
   });
 
-  testWidgets('editing wall invalidates review and blocks origin ray', (tester) async {
+  testWidgets('editing wall invalidates review and blocks origin ray', (
+    tester,
+  ) async {
     await _open(tester, catalog.find('Fireball')!);
     addTearDown(() => tester.binding.setSurfaceSize(null));
     await _tap(tester, 'fireball-map-surveyed');
     await _tap(tester, 'fireball-preview-calculate');
-    expect(find.byKey(const ValueKey('fireball-preview-summary')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('fireball-preview-summary')),
+      findsOneWidget,
+    );
 
     await _tap(tester, 'fireball-tool-wall');
     await _tap(tester, 'fireball-cell-4-5');
-    expect(find.byKey(const ValueKey('fireball-preview-summary')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('fireball-preview-summary')),
+      findsNothing,
+    );
 
     await _tap(tester, 'fireball-preview-calculate');
-    expect(find.byKey(const ValueKey('fireball-preview-error')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('fireball-preview-error')),
+      findsOneWidget,
+    );
     await _tap(tester, 'fireball-map-surveyed');
     await _tap(tester, 'fireball-preview-calculate');
-    expect(find.byKey(const ValueKey('fireball-preview-error')), findsOneWidget);
-    expect(find.byKey(const ValueKey('fireball-preview-summary')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('fireball-preview-error')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('fireball-preview-summary')),
+      findsNothing,
+    );
 
     await _tap(tester, 'fireball-cell-4-5');
     await _tap(tester, 'fireball-map-surveyed');
     await _tap(tester, 'fireball-preview-calculate');
-    expect(find.byKey(const ValueKey('fireball-preview-summary')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('fireball-preview-summary')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('other spells cannot borrow Fireball dimensions', (tester) async {
@@ -91,7 +121,13 @@ void main() {
     addTearDown(() => tester.binding.setSurfaceSize(null));
     await _tap(tester, 'fireball-map-surveyed');
     await _tap(tester, 'fireball-preview-calculate');
-    expect(find.byKey(const ValueKey('fireball-preview-error')), findsOneWidget);
-    expect(find.byKey(const ValueKey('fireball-preview-summary')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('fireball-preview-error')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('fireball-preview-summary')),
+      findsNothing,
+    );
   });
 }
