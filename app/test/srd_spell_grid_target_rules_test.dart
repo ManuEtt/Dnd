@@ -42,24 +42,15 @@ void main() {
   test('Chebyshev 5-foot grid distance handles diagonals and boundaries', () {
     expect(SrdSpellGridTargetRules.distanceFeet(_caster, _caster), 0);
     expect(
-      SrdSpellGridTargetRules.distanceFeet(
-        _caster,
-        const SrdGridCell(4, 0),
-      ),
+      SrdSpellGridTargetRules.distanceFeet(_caster, const SrdGridCell(4, 0)),
       20,
     );
     expect(
-      SrdSpellGridTargetRules.distanceFeet(
-        _caster,
-        const SrdGridCell(4, 4),
-      ),
+      SrdSpellGridTargetRules.distanceFeet(_caster, const SrdGridCell(4, 4)),
       20,
     );
     expect(
-      SrdSpellGridTargetRules.distanceFeet(
-        _caster,
-        const SrdGridCell(4, 2),
-      ),
+      SrdSpellGridTargetRules.distanceFeet(_caster, const SrdGridCell(4, 2)),
       20,
     );
     expect(
@@ -89,9 +80,7 @@ void main() {
 
   test('full blocker on the ray rejects spell despite valid distance', () {
     final spell = catalog.find('Magic Missile')!;
-    final blocked = _map(
-      blockers: const [SrdGridCell(2, 0)],
-    );
+    final blocked = _map(blockers: const [SrdGridCell(2, 0)]);
     expect(
       () => SrdSpellGridTargetRules.validateOrigin(
         spell,
@@ -99,9 +88,7 @@ void main() {
       ),
       throwsFormatException,
     );
-    final clear = _map(
-      blockers: const [SrdGridCell(2, 1)],
-    );
+    final clear = _map(blockers: const [SrdGridCell(2, 1)]);
     expect(
       SrdSpellGridTargetRules.validateOrigin(
         spell,
@@ -113,9 +100,7 @@ void main() {
 
   test('an exact corner graze is conservatively considered blocked', () {
     final spell = catalog.find('Magic Missile')!;
-    final map = _map(
-      blockers: const [SrdGridCell(1, 0)],
-    );
+    final map = _map(blockers: const [SrdGridCell(1, 0)]);
     expect(
       () => SrdSpellGridTargetRules.validateOrigin(
         spell,
@@ -190,50 +175,53 @@ void main() {
     );
   });
 
-  test('Self and Touch preserve origin semantics and real reach confirmation', () {
-    final self = catalog.find('Burning Hands')!;
-    final touch = catalog.find('Cure Wounds')!;
-    expect(
-      SrdSpellGridTargetRules.validateOrigin(
-        self,
-        _request(_map(), _caster),
-      ).mode,
-      SrdSpellOriginMode.caster,
-    );
-    expect(
-      () => SrdSpellGridTargetRules.validateOrigin(
-        self,
-        _request(_map(), const SrdGridCell(0, 1)),
-      ),
-      throwsFormatException,
-    );
-
-    expect(
-      SrdSpellGridTargetRules.validateOrigin(
-        touch,
-        _request(_map(), const SrdGridCell(0, 1), touch: true),
-      ).mode,
-      SrdSpellOriginMode.touched,
-    );
-    expect(
-      () => SrdSpellGridTargetRules.validateOrigin(
-        touch,
-        _request(_map(), const SrdGridCell(0, 1)),
-      ),
-      throwsFormatException,
-    );
-    expect(
-      () => SrdSpellGridTargetRules.validateOrigin(
-        touch,
-        _request(
-          _map(blockers: const [SrdGridCell(0, 1)]),
-          const SrdGridCell(0, 1),
-          touch: true,
+  test(
+    'Self and Touch preserve origin semantics and real reach confirmation',
+    () {
+      final self = catalog.find('Burning Hands')!;
+      final touch = catalog.find('Cure Wounds')!;
+      expect(
+        SrdSpellGridTargetRules.validateOrigin(
+          self,
+          _request(_map(), _caster),
+        ).mode,
+        SrdSpellOriginMode.caster,
+      );
+      expect(
+        () => SrdSpellGridTargetRules.validateOrigin(
+          self,
+          _request(_map(), const SrdGridCell(0, 1)),
         ),
-      ),
-      throwsFormatException,
-    );
-  });
+        throwsFormatException,
+      );
+
+      expect(
+        SrdSpellGridTargetRules.validateOrigin(
+          touch,
+          _request(_map(), const SrdGridCell(0, 1), touch: true),
+        ).mode,
+        SrdSpellOriginMode.touched,
+      );
+      expect(
+        () => SrdSpellGridTargetRules.validateOrigin(
+          touch,
+          _request(_map(), const SrdGridCell(0, 1)),
+        ),
+        throwsFormatException,
+      );
+      expect(
+        () => SrdSpellGridTargetRules.validateOrigin(
+          touch,
+          _request(
+            _map(blockers: const [SrdGridCell(0, 1)]),
+            const SrdGridCell(0, 1),
+            touch: true,
+          ),
+        ),
+        throwsFormatException,
+      );
+    },
+  );
 
   test('unsupported special range stays unsupported with a surveyed map', () {
     final spell = catalog.spells.firstWhere((entry) => entry.range == 'Sight');
@@ -284,9 +272,7 @@ void main() {
     );
 
     final map = _map();
-    final checked = plan(
-      request: _request(map, const SrdGridCell(3, 4)),
-    );
+    final checked = plan(request: _request(map, const SrdGridCell(3, 4)));
     expect(checked.targetAssessment!.originDistanceFeet, 20);
     expect(checked.targetAssessment!.maxOriginDistanceFeet, 120);
     expect(hero.spentSpellSlots, isEmpty);
