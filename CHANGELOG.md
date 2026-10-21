@@ -1,3 +1,14 @@
+## 21.10.2026 – Rabenwacht: Die vierzehnte Stimme, spielbarer Akt VI (Entwicklungsbranch)
+
+- Expliziter Start der Fortsetzung über „Fortsetzung beginnen“ nach einem abgeschlossenen Original-Finale, mit Erhalt von Held, Erinnerungen, NPCs und altem Queststatus.
+- Eigenständiges Story-Modul `app/lib/story/fourteenth_voice_campaign.dart` samt eigenem Modus `rabenwacht-voice-v1` (Trennung Story/Regeln).
+- Drei frei kombinierbare Ermittlungsstränge bei Elda, Tarek und dem namenlosen Grab, gespeichert mit echten SRD-Fertigkeitsproben; zwei unabhängige Belege öffnen das Haus ohne Türen.
+- Lioras Vertrauen wird anhand einer echten Entscheidung persistiert. Spoilerfreies Journal, neue Quests, optionaler Einstieg in die Porträtgalerie, JSON-Speicherrundlauf.
+- Kein automatisch gewährter Zauber, keine improvisierten Gegnerwerte oder zusätzlichen Erfahrungspunkte. Spätere Akte VII–VIII noch nicht implementiert.
+- Tests in `app/test/rabenwacht_fourteenth_voice_act6_test.dart`; vollständige CI/Android-Build stehen aus.
+
+---
+
 ## 21.10.2026 – Version 0.8.30+80 (Regelengine/Story-Modultrennung, CI offen)
 
 - Rabenwacht-Kampagnencode vollständig unter `app/lib/story/rabenwacht_campaign.dart` verschoben. Bestehende statische Domain-API als kurze Kompatibilitätsfassade mit identischen Rückgabetypen/Speicherformaten erhalten.
