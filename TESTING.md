@@ -1,3 +1,15 @@
+## Rabenwacht – Akt VII / Das Haus ohne Türen (21.10.2026, Tests geschrieben – nicht ausgeführt)
+
+- `app/test/rabenwacht_fourteenth_voice_act7_test.dart`: Eintritt über die echte Akt-VI-Bibliothek, Porträtvergleich, Spoilergrenze, Ablehnung/Verhandlung/Täuschung, exakte Preisbestätigung, negierte Zustimmung, Rückzug, Eidblattbeweis, unterschiedliche Verwahrung, Speicher-Roundtrip und Nicht-Abschluss der Hauptquest.
+- `app/lib/story/fourteenth_voice_act7.dart` importiert ausschließlich gemeinsames Modell und Story-Typ; keine direkte Würfel-/Zauberlogik.
+- **OFFEN:** Dart-Formatprüfung, Flutter-Analyse, Flutter-Tests, Android-APK und Gerätetest; fehlender lokaler Flutter-/Dart-SDK-Zugriff ist kein Testerfolg. Abhängigkeit von offenem PR #77 beachten.
+- Details: `docs/RABENWACHT_AKT_VII_IMPLEMENTIERUNG.md`.
+
+## Rabenwacht: Die vierzehnte Stimme / Akt VI (21.10.2026)
+
+- `app/test/rabenwacht_fourteenth_voice_act6_test.dart`: bestätigt freiwilligen Kapitelwechsel, Erhalt alter Abschlüsse und Charakterdaten, vier originale Enden, nicht wiederholbaren Questbeginn, Liora-Reaktion, spoilerfreie Hinweise, Nachforschungs-/Wahrnehmungsproben bei drei Zeugen, negative Würfe, alle Zweierkombinationen, Galerieszene, Speicher-Roundtrip und unveränderte alte Nebenquests.
+- Regression: `flutter analyze`, `flutter test`, `flutter build apk --debug`; CI-Status vor Merge ablesen. Kein Android-Gerätetest behauptet. Die Fortsetzung verwendet exakt die vorhandene `StoryRulePort`-Schnittstelle und vergibt keinen nicht implementierten Zauber oder automatische Meilenstein-EP.
+
 ## Rabenwacht – Die stumme Strophe (21.10.2026)
 
 - `app/test/rabenwacht_hymn_story_test.dart` prüft: keine Spuren vor der Entdeckung, Questvergabe erst in der Kapelle, fehlende Beweise, Rückreise und Idempotenz, Oswins Erinnerung und Relationship-State, dauerhafte Verbrennung, negative/ambivalente Kommandos, 4-fach gesperrten Namenchor, viertes Finale mit einmaliger EP-Vergabe, klassische Enden und ungelöste Nebenquest.
