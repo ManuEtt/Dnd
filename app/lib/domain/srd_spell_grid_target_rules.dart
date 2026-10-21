@@ -13,9 +13,7 @@ class SrdGridCell {
 
   @override
   bool operator ==(Object other) =>
-      other is SrdGridCell &&
-      column == other.column &&
-      row == other.row;
+      other is SrdGridCell && column == other.column && row == other.row;
 
   @override
   int get hashCode => Object.hash(column, row);
@@ -86,11 +84,7 @@ class SrdSpellGridTargetRules {
   const SrdSpellGridTargetRules._();
 
   static int distanceFeet(SrdGridCell a, SrdGridCell b) =>
-      5 *
-      math.max(
-        (b.column - a.column).abs(),
-        (b.row - a.row).abs(),
-      );
+      5 * math.max((b.column - a.column).abs(), (b.row - a.row).abs());
 
   static SrdSpellTargetFacts factsFor(
     SrdSpellDefinition spell,
