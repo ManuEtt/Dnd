@@ -11,6 +11,7 @@ export '../domain/spellcasting_rules.dart';
 export '../domain/srd_spell_component_rules.dart';
 export '../domain/srd_spell_catalog.dart';
 export '../domain/srd_spell_preflight_rules.dart';
+export '../domain/srd_spell_inventory_rules.dart';
 export '../domain/srd_spell_saving_throw_rules.dart';
 export '../domain/srd_initiative_roster_rules.dart';
 export '../domain/srd_extra_creature_attack_rules.dart';

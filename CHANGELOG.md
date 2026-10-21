@@ -1,3 +1,11 @@
+## 21.10.2026 – SRD Materialinventar atomar (eigener Entwicklungsbranch, CI offen)
+
+- Nach PR #74 neuer reiner Domain-Baustein für gemeinsam geprüften Zauberplatz- und verbrauchbaren Materialabzug aus einer bestätigten Inventarinstanz.
+- Sicherheitsprüfungen für doppelte IDs, fehlende oder ungenügende Mengen, ausgerüstete Gegenstände, alte Zauberfreigaben und doppelte Verbuchung. Keine Änderungen am ursprünglichen Charakter bei Fehlern.
+- Neue Dart-Regressionstests und SRD-Matrix-Belege; kontrollierte Übergabe an Controller offen. Keine fertige automatische Materialrezept- oder Persistenz-Integration behauptet.
+
+---
+
 ## 21.10.2026 – SRD 5.2.1 Materialkomponenten (Teilregel, CI offen)
 
 - Neue reine Regelprüfung für konkrete, kostspielige und verbrauchte Zaubermaterialien; teure oder konsumierte Komponenten dürfen nicht durch Komponentenbeutel oder Fokus ersetzt werden.
