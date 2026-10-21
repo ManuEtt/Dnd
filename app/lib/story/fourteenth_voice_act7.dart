@@ -199,7 +199,7 @@ class FourteenthVoiceAct7 {
       }
       if (_has(
             text,
-            'verhandl|verhandel|fordere beweise|bedingungen prüfen|bedingungen pruefen',
+            'verhandl|verhandel|fordere beweise|bedingungen prüf|bedingungen pruef',
           ) &&
           !_negated(text)) {
         return _move(
