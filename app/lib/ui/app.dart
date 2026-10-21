@@ -3233,10 +3233,11 @@ class _RollDialogState extends State<_RollDialog> {
               'Bestätigter Modifikator: ${_signed(widget.pending['modifier'] ?? widget.pending['bonus'] ?? 0)}',
             ),
             const SizedBox(height: 14),
-            FilledButton.icon(
+            FantasyTextButton(
+              label: 'Automatisch würfeln',
+              icon: Icons.casino,
+              style: FantasyButtonStyle.arcane,
               onPressed: () => Navigator.of(context).pop(const _ManualRoll()),
-              icon: const Icon(Icons.casino),
-              label: const Text('Automatisch würfeln'),
             ),
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 16),
@@ -3270,13 +3271,14 @@ class _RollDialogState extends State<_RollDialog> {
       ),
     ),
     actions: [
-      TextButton(
+      FantasyTextButton(
+        label: 'Abbrechen',
+        style: FantasyButtonStyle.iron,
         onPressed: () => Navigator.pop(context),
-        child: const Text('Abbrechen'),
       ),
-      FilledButton(
+      FantasyTextButton(
+        label: 'Manuellen Wurf bestätigen',
         onPressed: _confirm,
-        child: const Text('Manuellen Wurf bestätigen'),
       ),
     ],
   );
@@ -3364,11 +3366,15 @@ class _FreeDiceDialogState extends State<_FreeDiceDialog> {
       ),
     ),
     actions: [
-      TextButton(
+      FantasyTextButton(
+        label: 'Abbrechen',
+        style: FantasyButtonStyle.iron,
         onPressed: () => Navigator.pop(context),
-        child: const Text('Abbrechen'),
       ),
-      FilledButton.icon(
+      FantasyTextButton(
+        label: 'Würfeln',
+        icon: Icons.casino,
+        style: FantasyButtonStyle.arcane,
         onPressed: () {
           if (!_form.currentState!.validate()) return;
           final modifier = int.parse(_modifier.text);
@@ -3377,8 +3383,6 @@ class _FreeDiceDialogState extends State<_FreeDiceDialog> {
             '${int.parse(_count.text)}d$_sides${modifier == 0 ? '' : _signed(modifier)}',
           );
         },
-        icon: const Icon(Icons.casino),
-        label: const Text('Würfeln'),
       ),
     ],
   );
@@ -3445,13 +3449,15 @@ Future<bool?> _confirmDelete(BuildContext context, String message) =>
         title: const Text('Löschen bestätigen'),
         content: Text(message),
         actions: [
-          TextButton(
+          FantasyTextButton(
+            label: 'Abbrechen',
+            style: FantasyButtonStyle.iron,
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Abbrechen'),
           ),
-          FilledButton(
+          FantasyTextButton(
+            label: 'Endgültig löschen',
+            style: FantasyButtonStyle.wax,
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Endgültig löschen'),
           ),
         ],
       ),
