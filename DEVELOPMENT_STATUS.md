@@ -1,3 +1,13 @@
+## 21.10.2026 – Rabenwacht NPC-Gedächtnis und alternative Route (Entwicklungsbranch)
+
+- Branch: `feature/rabenwacht-npc-memory-20261021` auf Basis von PR #64. Der Hauptbranch wird erst nach CI-Abnahme geändert.
+- Implementiert: optionale Kundschafterroute von Tarek mit `tarekSafeRoute` und `crowsBypassed`; vorhandener Krähenalarm bleibt erhalten. Alriks Reue nach belegter Gedenkstein-Entscheidung (`alrikConfession`), danach Maras Versöhnung (`maraReconciled`).
+- Rückwärtskompatible Fakten/NPC-Beziehungen statt neuer Schemas; Belohnungen bleiben einmalig. Hinweise sind entdeckungsabhängig, das Finale reagiert auf gesicherte Fakten.
+- Testdatei `app/test/rabenwacht_npc_memory_test.dart`: sieben neue Testfälle für Dialogsperren, Persistenz, EP, Konsequenzen und zusammenhängenden Kampagnenpfad.
+- Noch ausstehend: CI/Flutter/Android-Geräteprüfung dieses Branches, tieferes Dialogverständnis, echte Klassen- und Zauberlösungen.
+
+---
+
 ## 21.10.2026 – Rabenwacht: zusätzliche Gedenkstein-Quest (gestapelter PR)
 
 - Basis: `main` nach erfolgreichem Merge von PR #61. Der neue Gedenkstein-Handlungsstrang liegt isoliert auf `feature/rabenwacht-gedenkstein-main-20261021`; `main` bleibt bis zur Abnahme dieses Inkrements unverändert.

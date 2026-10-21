@@ -118,3 +118,13 @@ Die Ausgänge sind eindeutig speicherbar: `graveOath=remembered` (Nebenquest abg
 **Tests:** `app/test/rabenwacht_memorial_test.dart`: spoilerfreie Entdeckung, Queststatus, Beweiserfordernis, Rückreise, Idempotenz, beide Ausgänge, Speicher-Roundtrip, Epilog über drei Enden, offener Auftrag und verneinte Eingaben.
 
 **Grenzen:** Dieser zusätzliche Handlungszweig ist handgeschrieben und deterministisch. Er stellt noch keinen generativen Dialog, keine neuen Kampfregeln und keine SRD-Zauberinteraktion dar. Build/CI/Android-Gerätetest sind getrennt nachzuweisen.
+
+## Erweiterung: Erinnernde NPCs und Tareks Geheimweg (Entwicklungszweig, Oktober 2026)
+
+**Alternative Waldrouten:** Im Gasthaus kann der Held Tarek ausdrücklich um einen „Geheimweg“ oder „Schleichweg“ bitten. Erst dann wird `tarekSafeRoute` gespeichert; Tarek erklärt die markierten Kerben im Wald. In der Rabenschlucht kann der Held **bewusst Tareks Wegzeichen folgen**. Die Route führt ohne Würfelprobe zur Turmruine. Der normale Heimlichkeitsweg und das offene Voranschreiten bestehen unverändert fort. Die EP für die Turmruine gibt es pro Kampagne weiterhin nur einmal. Ein **bereits** ausgelöster Krähenalarm wird nicht gelöscht. `crowsBypassed` wird gespeichert und in Hinweisen sowie Epilog berücksichtigt.
+
+**Alrik reagiert auf echte Beweise:** Erst wenn die Namen am Gedenkstein nachweislich bewahrt wurden (`graveOath=remembered`), kann der Held Alrik im Chronistenhaus mit den gelöschten Namen konfrontieren. Alrik gesteht die Fälschung der Abschrift und `alrikConfession` wird gespeichert. Vorher weigert er sich, ohne dass der Spieler das Geständnis vorweggenommen bekommt. Alriks Beziehung verändert sich zu `reumütig`.
+
+**Mara kann ihre Position überdenken:** Erst nach Alriks Geständnis kann Mara in der Ratsstube mit seiner Aussage konfrontiert werden. Dann öffnet sie das alte Ratsbuch, verspricht eine öffentliche Berichtigung und der Spielstand erhält `maraReconciled`. Ihre Beziehung wechselt zu `versöhnt`, auch wenn zuvor ein Streit stattgefunden hat. Der Epilog ersetzt bei einer Versöhnung den offenen Konflikt durch eine glaubwürdige Folgehandlung.
+
+Alle Fakten und NPC-Beziehungen nutzen das bestehende Campaign-JSON. Es gibt keine neuen Würfel-Proben, keine neuen SRD-Mechaniken, keine stillen Rücknahmen bestätigter früherer Ereignisse und keine externe KI-Abhängigkeit. Die Erweiterung ist deterministisch, nicht sprachlich universell; sie reagiert auf konkrete erkennbare Eingabeabsichten. Das Regressionstestpaket liegt unter `app/test/rabenwacht_npc_memory_test.dart`; Flutter-CI und APK sind für diesen Entwicklungszweig gesondert zu bestätigen.

@@ -228,6 +228,14 @@ class RabenwachtCampaign {
         'Nach eurem Streit hält Mara die Ratsakten zurück.',
       if (campaign.facts['tarekTrust'] == 'true')
         'Tarek markierte Mühle, Kapelle und Chronistenhaus auf einer Karte.',
+      if (campaign.facts['tarekSafeRoute'] == 'true')
+        'Tarek zeigte dir geheime Wegzeichen am Waldrand; sie führen an den Krähen vorbei.',
+      if (campaign.facts['crowsBypassed'] == 'true')
+        'Du bist über Tareks markierten Seitenpfad zur Turmruine gelangt.',
+      if (campaign.facts['alrikConfession'] == 'true')
+        'Alrik gestand, dass der Glockenorden die Namen aus dem Archiv löschte.',
+      if (campaign.facts['maraReconciled'] == 'true')
+        'Mara hat nach Alriks Geständnis ihr Schweigen überdacht.',
       if (campaign.facts['finaNote'] == 'true')
         'Finas Nachricht am Mühlrad verweist auf das Gebetbuch der Kapelle.',
       if (campaign.facts['jorenMet'] == 'true')
@@ -407,12 +415,16 @@ class RabenwachtCampaign {
         for (final npc in c.npcs)
           if (npc.id == 'elda' && facts['eldaHelped'] == 'true')
             npc.copyWith(relationship: 'freundlich')
+          else if (npc.id == 'mara' && facts['maraReconciled'] == 'true')
+            npc.copyWith(relationship: 'versöhnt')
           else if (npc.id == 'mara' && facts['maraTrust'] == 'true')
             npc.copyWith(relationship: 'verbündet')
           else if (npc.id == 'mara' && facts['maraDefied'] == 'true')
             npc.copyWith(relationship: 'feindselig')
           else if (npc.id == 'tarek' && facts['tarekTrust'] == 'true')
             npc.copyWith(relationship: 'freundlich')
+          else if (npc.id == 'alrik' && facts['alrikConfession'] == 'true')
+            npc.copyWith(relationship: 'reumütig')
           else if (npc.id == 'joren' && facts['jorenMet'] == 'true')
             npc.copyWith(relationship: 'dankbar')
           else if (npc.id == 'oswin' && facts['oswinTruth'] == 'true')
@@ -612,6 +624,31 @@ class RabenwachtCampaign {
           'besuche Tarek im Letzten Licht.',
         );
       case 'watchhouse':
+        if (_has(
+          input,
+          'geständnis|alriks beweise|alriks aussage|alrik konfront',
+        )) {
+          if (c.facts['alrikConfession'] != 'true') {
+            return RabenwachtTurn(
+              c,
+              'Mara verlangt eine überprüfbare Aussage. '
+              'Das bloße Versprechen eines Zeugen '
+              'reicht ihr nicht.',
+            );
+          }
+          return _move(
+            c,
+            'watchhouse',
+            'Du liest Mara Alriks Geständnis vor. '
+                'Sie legt den Handschuh ab und öffnet '
+                'erstmals das alte Ratsbuch. '
+                '„Das Schweigen hat uns nicht geschützt“, '
+                'sagt sie. „Ich werde die Namen öffentlich '
+                'berichtigen.“ Sie entschuldigt sich '
+                'für ihren Umgang mit dir.',
+            clues: {'maraReconciled': 'true', 'location': 'Ratsstube'},
+          );
+        }
         if (_has(input, 'versprech|schweig|diskret|geheim|vertrau')) {
           return _move(
             c,
@@ -691,6 +728,35 @@ class RabenwachtCampaign {
           'untersuchen oder zum Dorfplatz zurückgehen.',
         );
       case 'inn':
+        if (_has(
+          input,
+          'geheimweg|schleichweg|sicherer weg|versteckter pfad|geheime route',
+        )) {
+          // Optional NPC memory: a deliberate request, not a free reward
+          // automatically granted by the normal conversation.
+          final route = _move(
+            c,
+            'inn',
+            c.facts['maraDefied'] == 'true'
+                ? 'Tarek hat von deinem Streit mit Mara gehört. '
+                      '„Du brauchst einen Weg, auf dem dich keiner '
+                      'beobachtet“, sagt er. Er zeichnet zwei '
+                      'kleine Kerben auf eine Karte: Ab dem Waldpfad '
+                      'führen sie an den Krähenwächtern vorbei. '
+                      'Er bittet dich, den Pfad nicht preiszugeben.'
+                : 'Tarek zeigt dir seinen alten Kundschafterpfad. '
+                      '„Am Waldpfad folgst du zwei eingeschnittenen '
+                      'Kerben im Holz. So erreichst du den Turm '
+                      'abseits der Krähenwächter.“ '
+                      'Er bittet dich, den Pfad nicht preiszugeben.',
+            clues: {
+              'tarekSafeRoute': 'true',
+              'tarekTrust': 'true',
+              'location': 'Gasthaus',
+            },
+          );
+          return RabenwachtTurn(route.campaign, route.narration);
+        }
         if (_has(input, 'tarek|sprech|frag|karte|unterhalt|wirt')) {
           return _move(
             c,
@@ -781,6 +847,30 @@ class RabenwachtCampaign {
           'Altar. Untersuche die Nische oder sprich mit Bruder Oswin.',
         );
       case 'archive':
+        if (_has(input, 'konfrontier|gesteh|geständnis|gelöschten namen')) {
+          if (c.facts['graveOath'] != 'remembered') {
+            return RabenwachtTurn(
+              c,
+              'Alrik weicht aus. Um ihn mit den Namen zu '
+              'konfrontieren, brauchst du gesicherte '
+              'Zeugnisse vom Gedenkstein des Friedhofs.',
+            );
+          }
+          return _move(
+            c,
+            'archive',
+            'Du zeigst Alrik die bewahrten Namen. '
+                'Er lässt den Blick sinken: '
+                '„Ich habe damals die Abschrift gefälscht. '
+                'Die Familien sollten nie erfahren, '
+                'wen der Glockenorden opferte.“ '
+                'Er bestätigt die gelöschten Einträge '
+                'und erlaubt, sein Geständnis Mara vorzulegen. '
+                'Die Chronik bleibt hier, doch du kennst '
+                'jetzt den Weg zu den Verantwortlichen.',
+            clues: {'alrikConfession': 'true', 'location': 'Chronistenhaus'},
+          );
+        }
         if (_has(
           input,
           'archiv|buch|bericht|alrik|schrift|untersuch|frag|sprech',
@@ -957,6 +1047,30 @@ class RabenwachtCampaign {
           'Eiben. Untersuche die Grabsteine oder betrete den Waldpfad.',
         );
       case 'forest':
+        if (_has(input, 'geheimweg|schleichweg|tareks pfad|wegzeichen')) {
+          if (c.facts['tarekSafeRoute'] != 'true') {
+            return RabenwachtTurn(
+              c,
+              'Du entdeckst keinen verlässlichen Seitenpfad. '
+              'Erkunde den Wald oder versuche, an den Krähen '
+              'vorbeizuschleichen.',
+            );
+          }
+          return _move(
+            c,
+            'ruins',
+            c.facts['crowsAlerted'] == 'true'
+                ? 'Du folgst Tareks Wegzeichen und erreichst '
+                      'die Turmruine auf einem Seitenpfad. '
+                      'Die Krähen waren bereits alarmiert; '
+                      'deine frühere Entscheidung bleibt spürbar.'
+                : 'Du folgst den Kerben aus Tareks Karte. '
+                      'Ein verborgener Seitenpfad führt unter '
+                      'Wurzeln hindurch direkt zur Ruine. '
+                      'Die Krähen bemerken deinen Aufstieg nicht.',
+            clues: {'crowsBypassed': 'true', 'location': 'Turmruine'},
+          );
+        }
         if (_has(input, 'schleich|leise|vorsichtig|heimlich')) {
           return _ask(
             c,
@@ -1416,9 +1530,16 @@ class RabenwachtCampaign {
       if (c.facts['maraTrust'] == 'true')
         'Mara Voss hält ihr Versprechen und unterstützt dich '
             'als Verbündete beim Wiederaufbau des Dorfes.',
-      if (c.facts['maraDefied'] == 'true')
+      if (c.facts['maraDefied'] == 'true' &&
+          c.facts['maraReconciled'] != 'true')
         'Mara Voss dankt dir für die Rettung, doch euer Streit '
             'über das Schweigen des Rates bleibt ungelöst.',
+      if (c.facts['maraReconciled'] == 'true')
+        'Mara veröffentlicht nach Alriks Geständnis '
+            'das Ratsbuch und bittet die Familien um Vergebung.',
+      if (c.facts['crowsBypassed'] == 'true')
+        'Tareks geheimer Seitenpfad ermöglichte den '
+            'Aufstieg zur Turmruine.',
       if (c.facts['crowsAlerted'] == 'true')
         'Die aufgescheuchten Krähen haben die Wachen alarmiert; '
             'die Dorfbewohner erwarten deine Rückkehr mit Sorge.',

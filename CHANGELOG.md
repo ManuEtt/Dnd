@@ -1,3 +1,12 @@
+## 21.10.2026 – Rabenwacht: NPC-Erinnerungen und alternativer Waldpfad (Entwicklungsbranch)
+
+- Tarek gibt seinen geheimen Kundschafterpfad nur nach ausdrücklicher Bitte preis; der Weg lässt sich bei der Rabenschlucht tatsächlich benutzen und respektiert frühere Krähenalarme.
+- Alrik gesteht nach der bewiesenen Gedenkstein-Quest seine Vertuschung; Mara überdenkt daraufhin ihr Schweigen und ihr Verhältnis zum Helden.
+- Hinweise, gespeicherte Beziehungen, reaktive Dialoge und Epilog erweitern sich um bestätigte Ereignisse ohne neue SRD-Werte oder wiederholbare Meilenstein-EP.
+- Sieben weitere Regressionstests für Geheimweg, Sperren, Reise, EP, Geständnis, Versöhnung und kompletten Charakterpfad; Flutter-/Android-CI offen.
+
+---
+
 ## 21.10.2026 – Rabenwacht: Die ausgelöschten Namen (Entwicklungsbranch auf main)
 
 - Optionaler Gedenkstein am Friedhof mit neuer Quest, Erinnerungsentscheidung und spoilerfreien Fakten.

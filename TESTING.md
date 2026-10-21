@@ -1,3 +1,8 @@
+## Rabenwacht – NPC-Gedächtnis und Geheimweg (21.10.2026)
+
+- `app/test/rabenwacht_npc_memory_test.dart` enthält sieben Testfälle: Geheimweg nur nach gezieltem Tarek-Gespräch, nicht freigeschalteter Geheimweg, Geheimweg mit einmaliger EP-Vergabe und gespeicherten Ortsbesuchen, unveränderter Krähenalarm, Alriks Belegprüfung und Geständnis, Maras Versöhnung und ein zusammenhängender Weg über Tarek → Friedhof → Alrik → Mara.
+- Vor Merge erneut `dart format --output=none --set-exit-if-changed lib test`, `flutter analyze`, `flutter test`, `flutter build apk --debug`; reale Geräteprüfung separat. Noch keine erfolgreiche CI-Abnahme für diesen Branch behaupten.
+
 ## Rabenwacht – Gedenkstein-Friedhofsquest (21.10.2026)
 
 - `app/test/rabenwacht_memorial_test.dart`: Hinweisfreigabe erst nach Entdeckung, Nachweis zum Bewahren, Nichtblockieren des Hauptpfads, Rückreisen, einmalige Quest, Speicherrundlauf, explizites Verschweigen, drei Epiloge und negierte Aussagen.
