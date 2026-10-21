@@ -2326,6 +2326,11 @@ class Campaign {
             'tarek': 13,
             'grave': 12,
           };
+          const skillsByVoiceStage = <String, String>{
+            'elda': 'wisdom|Wahrnehmung',
+            'tarek': 'intelligence|Nachforschungen',
+            'grave': 'wisdom|Wahrnehmung',
+          };
           final rabenwacht =
               rawBible['mode'] == 'rabenwacht-v1' &&
               pending.targetId.startsWith('rabenwacht:') &&
@@ -2340,6 +2345,10 @@ class Campaign {
                   'voice-${pending.targetId.replaceFirst('voice:', '')}' &&
               pending.difficulty ==
                   difficultyByVoiceStage[
+                    pending.targetId.replaceFirst('voice:', '')
+                  ] &&
+              pending.targetName ==
+                  skillsByVoiceStage[
                     pending.targetId.replaceFirst('voice:', '')
                   ];
           if (!(rabenwacht || voice) ||
