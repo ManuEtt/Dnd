@@ -733,10 +733,8 @@ class _CharactersPage extends StatelessWidget {
   Future<void> _edit(BuildContext context, HeroCharacter? hero) async {
     final result = await Navigator.of(context).push<HeroCharacter>(
       MaterialPageRoute(
-        builder: (context) => CharacterEditor(
-          hero: hero,
-          autoFillExistingCombatValues: true,
-        ),
+        builder: (context) =>
+            CharacterEditor(hero: hero, autoFillExistingCombatValues: true),
       ),
     );
     if (result != null) await controller.saveStandaloneHero(result);
@@ -1474,10 +1472,8 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (hero == null) return;
     final result = await Navigator.of(context).push<HeroCharacter>(
       MaterialPageRoute(
-        builder: (context) => CharacterEditor(
-          hero: hero,
-          autoFillExistingCombatValues: true,
-        ),
+        builder: (context) =>
+            CharacterEditor(hero: hero, autoFillExistingCombatValues: true),
       ),
     );
     if (result != null) await widget.controller.saveHero(result);

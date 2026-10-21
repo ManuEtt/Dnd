@@ -33,7 +33,8 @@ Future<void> _startEditor(
                   MaterialPageRoute(
                     builder: (_) => CharacterEditor(
                       hero: hero,
-                      autoFillExistingCombatValues: autoFillExistingCombatValues,
+                      autoFillExistingCombatValues:
+                          autoFillExistingCombatValues,
                     ),
                   ),
                 ),
