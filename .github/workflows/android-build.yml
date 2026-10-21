@@ -82,12 +82,6 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
-      - name: Temporärer Formatter-Diff für Fantasy-Dialoge
-        working-directory: app
-        run: |
-          dart format lib/ui/spellcasting_dialog.dart lib/ui/equipment_catalog_dialog.dart lib/ui/equipment_loadout_dialog.dart lib/ui/character_effect_dialog.dart lib/ui/multiclass_selection_dialog.dart lib/ui/condition_effect_dialog.dart lib/ui/ability_assignment_dialog.dart test/ui_equipment_loadout_test.dart test/fantasy_game_dialog_actions_test.dart
-          git diff --unified=3 -- lib/ui/spellcasting_dialog.dart lib/ui/equipment_catalog_dialog.dart lib/ui/equipment_loadout_dialog.dart lib/ui/character_effect_dialog.dart lib/ui/multiclass_selection_dialog.dart lib/ui/condition_effect_dialog.dart lib/ui/ability_assignment_dialog.dart test/ui_equipment_loadout_test.dart test/fantasy_game_dialog_actions_test.dart
-          exit 1 # Diagnose beenden, damit der Formatierungsdiff zeitnah auslesbar ist
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
