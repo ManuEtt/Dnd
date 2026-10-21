@@ -25,8 +25,7 @@ class SrdSpellMaterialRequirements {
   final bool hasSpecifiedCost;
   final bool isConsumed;
 
-  bool get maySubstitute =>
-      hasMaterial && !hasSpecifiedCost && !isConsumed;
+  bool get maySubstitute => hasMaterial && !hasSpecifiedCost && !isConsumed;
 }
 
 /// SRD 5.2.1, Spells / Casting Spells / Components: a component pouch or an
