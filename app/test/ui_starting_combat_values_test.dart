@@ -18,8 +18,9 @@ Future<void> _tapVisible(WidgetTester tester, Finder finder) async {
 Future<void> _startEditor(
   WidgetTester tester,
   HeroCharacter? hero,
-  void Function(HeroCharacter?) saved,
-) async {
+  void Function(HeroCharacter?) saved, {
+  bool autoFillExistingCombatValues = false,
+}) async {
   await tester.pumpWidget(
     MaterialApp(
       home: Builder(
@@ -30,7 +31,10 @@ Future<void> _startEditor(
                 await Navigator.push<HeroCharacter>(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => CharacterEditor(hero: hero),
+                    builder: (_) => CharacterEditor(
+                      hero: hero,
+                      autoFillExistingCombatValues: autoFillExistingCombatValues,
+                    ),
                   ),
                 ),
               );
@@ -184,7 +188,12 @@ void main() {
         className: 'Kämpfer',
         abilities: const {'dexterity': 14},
       );
-      await _startEditor(tester, hero, (value) => result = value);
+      await _startEditor(
+        tester,
+        hero,
+        (value) => result = value,
+        autoFillExistingCombatValues: true,
+      );
       final speed = find.byKey(const ValueKey('character-speed-meters'));
       await tester.scrollUntilVisible(
         speed,
