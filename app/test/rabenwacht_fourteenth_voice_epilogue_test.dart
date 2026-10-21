@@ -62,26 +62,24 @@ void main() {
       c = engine.act(c, 'Ich täusche Zustimmung vor.').campaign;
     } else if (chronistChoice == 'accepted') {
       c = engine.act(c, 'Ich frage nach dem Preis.').campaign;
-      c = engine.act(
-        c,
-        'Ich bestätige den Preis: Eine andere Person wird vergessen.',
-      ).campaign;
+      c = engine
+          .act(c, 'Ich bestätige den Preis: Eine andere Person wird vergessen.')
+          .campaign;
     }
     c = engine.act(c, 'Ich suche das vierzehnte Blatt.').campaign;
     c = engine.act(c, 'Ich untersuche das Blatt.').campaign;
-    c = engine.act(
-      c,
-      lioraCustody
-          ? 'Ich vertraue Liora den Namen an.'
-          : 'Ich will den Namen selbst bewahren.',
-    ).campaign;
+    c = engine
+        .act(
+          c,
+          lioraCustody
+              ? 'Ich vertraue Liora den Namen an.'
+              : 'Ich will den Namen selbst bewahren.',
+        )
+        .campaign;
     c = engine.act(c, 'Ich berufe den Rat der Zeugen ein.').campaign;
     if (clues.length == 2) {
       c = engine.act(c, 'Ich biete eine öffentliche Aussage an.').campaign;
-      c = engine.act(
-        c,
-        'Ich bezeuge öffentlich die Lücke im Eid.',
-      ).campaign;
+      c = engine.act(c, 'Ich bezeuge öffentlich die Lücke im Eid.').campaign;
     }
     c = engine.act(c, 'Ich will die Beweise verbinden.').campaign;
     expect(c.storyBible['stage'], 'voice-ritual');
@@ -204,8 +202,10 @@ void main() {
     expect(c.messages.last.text, contains('freie Person'));
     expect(c.facts['voice:epilogue:liora'], 'true');
     expect(c.facts['voice:chronistDebt'], 'contested');
-    expect(c.npcs.map((n) => n.toJson()).toList(),
-        before.npcs.map((n) => n.toJson()).toList());
+    expect(
+      c.npcs.map((n) => n.toJson()).toList(),
+      before.npcs.map((n) => n.toJson()).toList(),
+    );
     expect(
       c.storyThreads.singleWhere((t) => t.id == 'voice-liora-origin').status,
       'resolved',
@@ -249,9 +249,7 @@ void main() {
   });
 
   test('Umstrittenes öffentliches Zeugnis bleibt umstritten', () {
-    var c = begin(
-      finale(ending: 'oath', clues: const ['elda', 'grave']),
-    );
+    var c = begin(finale(ending: 'oath', clues: const ['elda', 'grave']));
     c = speak(c, 'Elda');
     c = speak(c, 'Tarek');
     c = engine.act(c, 'Dorfzukunft entscheiden.').campaign;
@@ -279,10 +277,7 @@ void main() {
     c = speak(c, 'Tarek');
     c = engine.act(c, 'Dorfzukunft entscheiden.').campaign;
     c = engine.act(c, 'Gedenkbuch anlegen.').campaign;
-    expect(
-      c.quests.singleWhere((q) => q.id == 'voice-side').status,
-      'active',
-    );
+    expect(c.quests.singleWhere((q) => q.id == 'voice-side').status, 'active');
     expect(
       c.quests.singleWhere((q) => q.id == 'rabenwacht-old-failure').status,
       'failed',
