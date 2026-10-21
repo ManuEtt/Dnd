@@ -117,6 +117,12 @@ class FourteenthVoiceEpilogue {
       ...c.facts,
       ...gained,
       'voice:visited:${stage.replaceFirst('voice-', '')}': 'true',
+      'location': switch (stage) {
+        'voice-epilogue-elda' => 'Eldas Haus',
+        'voice-epilogue-tarek' => 'Gasthaus Zum Letzten Licht',
+        'voice-epilogue-liora' => 'Brunnen von Rabenwacht',
+        _ => 'Dorfplatz von Rabenwacht',
+      },
     };
     final next = c.copyWith(
       scene: '${c.hero.name}, $prose',
