@@ -549,20 +549,22 @@ class _HomePage extends StatelessWidget {
                 spacing: 12,
                 runSpacing: 12,
                 children: [
-                  FilledButton.icon(
+                  FantasyTextButton(
+                    label: 'Demo erneut starten',
+                    icon: Icons.play_arrow,
+                    style: FantasyButtonStyle.woodGold,
                     onPressed: controller.busy
                         ? null
                         : () => onPlay(controller.createDemo),
-                    icon: const Icon(Icons.play_arrow),
-                    label: const Text('Demo erneut starten'),
                   ),
-                  FilledButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('start-rabenwacht-campaign'),
+                    label: 'Rabenwacht (Solo, 2–3 Std.)',
+                    icon: Icons.menu_book_outlined,
+                    style: FantasyButtonStyle.woodGold,
                     onPressed: controller.busy
                         ? null
                         : () => _newCampaign(context, prepared: true),
-                    icon: const Icon(Icons.menu_book_outlined),
-                    label: const Text('Rabenwacht (Solo, 2–3 Std.)'),
                   ),
                   FantasyTextButton(
                     label: 'Neue Kampagne',
@@ -571,16 +573,15 @@ class _HomePage extends StatelessWidget {
                         ? null
                         : () => _newCampaign(context),
                   ),
-                  OutlinedButton.icon(
+                  FantasyTextButton(
+                    label: controller.narrator.provider == 'mock'
+                        ? 'Testgeschichte starten'
+                        : 'KI-Kampagne erstellen',
+                    icon: Icons.auto_awesome,
+                    style: FantasyButtonStyle.arcane,
                     onPressed: controller.busy || !controller.narrator.enabled
                         ? null
                         : () => _newCampaign(context, ai: true),
-                    icon: const Icon(Icons.auto_awesome),
-                    label: Text(
-                      controller.narrator.provider == 'mock'
-                          ? 'Testgeschichte starten'
-                          : 'KI-Kampagne erstellen',
-                    ),
                   ),
                   FantasyTextButton(
                     label: 'Helden verwalten',
@@ -708,7 +709,10 @@ class _HomePage extends StatelessWidget {
             },
           ),
         const SizedBox(height: 20),
-        OutlinedButton.icon(
+        FantasyTextButton(
+          label: 'Kampagne aus JSON importieren',
+          style: FantasyButtonStyle.iron,
+          icon: Icons.file_upload_outlined,
           onPressed: controller.busy
               ? null
               : () async {
@@ -721,8 +725,6 @@ class _HomePage extends StatelessWidget {
                     onPlay(() => controller.importCampaign(json));
                   }
                 },
-          icon: const Icon(Icons.file_upload_outlined),
-          label: const Text('Kampagne aus JSON importieren'),
         ),
       ],
     );
