@@ -1,6 +1,6 @@
 ## 21.10.2026 – Rabenwacht: zusätzliche Gedenkstein-Quest (gestapelter PR)
 
-- Basis: `feature/rabenwacht-branching-story-20261021` (PR #61); weitere Änderungen liegen separat auf `feature/rabenwacht-gedenkstein-20261021`. Der Hauptbranch bleibt unverändert.
+- Basis: `main` nach erfolgreichem Merge von PR #61. Der neue Gedenkstein-Handlungsstrang liegt isoliert auf `feature/rabenwacht-gedenkstein-main-20261021`; `main` bleibt bis zur Abnahme dieses Inkrements unverändert.
 - Implementiert: optionaler Friedhofshandlungsstrang `rabenwacht-memorial`, nachgewiesene Erinnerung versus Verschweigen, irreversible Wahl nur bei eindeutiger Eingabe, sicherer Nachholweg, spoilergeschützte Fakten und unterschiedliche Epiloge.
 - Neue `app/test/rabenwacht_memorial_test.dart` prüft Folgen, Persistenz, Hauptpfad und Spielerverneinung.
 - **Noch nicht abgenommen:** volle Flutter-Tests und Android-APK der neuen Änderung; Geräteabnahme offen. Keine neue Versionsnummer. Nächste Stufe: dialogfähige NPCs, alternative Fertigkeits-/Zauberlösungen und mechanische Komplikationen.
