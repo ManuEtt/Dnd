@@ -26,19 +26,25 @@ void main() {
       case 'elda':
         campaign = engine.act(campaign, 'Ich besuche Elda.').campaign;
         expect(campaign.storyBible['stage'], 'voice-elda');
-        campaign = engine.act(campaign, 'Ich untersuche die Zeichnungen.').campaign;
+        campaign = engine
+            .act(campaign, 'Ich untersuche die Zeichnungen.')
+            .campaign;
         expect(campaign.pendingRoll?.targetId, 'voice:elda');
         expect(campaign.pendingRoll?.difficulty, 12);
         break;
       case 'tarek':
         campaign = engine.act(campaign, 'Ich suche Tarek.').campaign;
         expect(campaign.storyBible['stage'], 'voice-tarek');
-        campaign = engine.act(campaign, 'Ich untersuche die Tinte im Brief.').campaign;
+        campaign = engine
+            .act(campaign, 'Ich untersuche die Tinte im Brief.')
+            .campaign;
         expect(campaign.pendingRoll?.targetId, 'voice:tarek');
         expect(campaign.pendingRoll?.difficulty, 13);
         break;
       case 'grave':
-        campaign = engine.act(campaign, 'Ich folge Liora zum Friedhof.').campaign;
+        campaign = engine
+            .act(campaign, 'Ich folge Liora zum Friedhof.')
+            .campaign;
         expect(campaign.storyBible['stage'], 'voice-grave');
         campaign = engine.act(campaign, 'Ich untersuche das Grab.').campaign;
         expect(campaign.pendingRoll?.targetId, 'voice:grave');
@@ -63,24 +69,32 @@ void main() {
     expect(RabenwachtCampaign.canStartSequel(first), false);
   });
 
-  test('Akt VI beginnt nur auf ausdrücklichen Wunsch, ohne alte Fakten zu löschen', () {
-    for (final ending in ['end-seal', 'end-break', 'end-mercy', 'end-chorus']) {
-      final before = completed(ending: ending);
-      final after = engine.act(before, 'Fortsetzung beginnen').campaign;
-      expect(after.storyBible['mode'], 'rabenwacht-voice-v1');
-      expect(after.storyBible['stage'], 'voice-square');
-      expect(after.storyBible['voicePreviousEnding'], ending);
-      expect(after.facts['voice:originEnding'], ending);
-      expect(after.facts['ending'], ending);
-      expect(after.hero.toJson(), before.hero.toJson());
-      expect(after.messages.length, greaterThan(before.messages.length));
-      expect(after.quests.where((q) => q.id == 'voice-main').length, 1);
-      expect(after.quests.where((q) => q.id == 'voice-witnesses').length, 1);
-      expect(after.npcs.where((npc) => npc.id == 'liora').length, 1);
-      expect(after.encounter, isNull);
-      expect(Campaign.fromJson(after.toJson()).toJson(), after.toJson());
-    }
-  });
+  test(
+    'Akt VI beginnt nur auf ausdrücklichen Wunsch, ohne alte Fakten zu löschen',
+    () {
+      for (final ending in [
+        'end-seal',
+        'end-break',
+        'end-mercy',
+        'end-chorus',
+      ]) {
+        final before = completed(ending: ending);
+        final after = engine.act(before, 'Fortsetzung beginnen').campaign;
+        expect(after.storyBible['mode'], 'rabenwacht-voice-v1');
+        expect(after.storyBible['stage'], 'voice-square');
+        expect(after.storyBible['voicePreviousEnding'], ending);
+        expect(after.facts['voice:originEnding'], ending);
+        expect(after.facts['ending'], ending);
+        expect(after.hero.toJson(), before.hero.toJson());
+        expect(after.messages.length, greaterThan(before.messages.length));
+        expect(after.quests.where((q) => q.id == 'voice-main').length, 1);
+        expect(after.quests.where((q) => q.id == 'voice-witnesses').length, 1);
+        expect(after.npcs.where((npc) => npc.id == 'liora').length, 1);
+        expect(after.encounter, isNull);
+        expect(Campaign.fromJson(after.toJson()).toJson(), after.toJson());
+      }
+    },
+  );
 
   test('Der Fortsetzungsstart ist nicht wiederholbar', () {
     var campaign = continued();
@@ -90,38 +104,47 @@ void main() {
     expect(campaign.facts['voice:started'], 'true');
   });
 
-  test('Liora kann geschützt, beschuldigt oder vorläufig offen beurteilt werden', () {
-    const choices = <String, String>{
-      'Ich schütze Liora.': 'protect',
-      'Ich beschuldige Liora.': 'accuse',
-      'Ich will erst Belege suchen.': 'evidence',
-    };
-    for (final entry in choices.entries) {
-      final campaign = engine.act(continued(), entry.key).campaign;
-      expect(campaign.facts['voice:lioraChoice'], entry.value);
-      expect(
-        campaign.quests.singleWhere((q) => q.id == 'voice-liora').status,
-        'completed',
-      );
-      if (entry.value == 'protect') {
+  test(
+    'Liora kann geschützt, beschuldigt oder vorläufig offen beurteilt werden',
+    () {
+      const choices = <String, String>{
+        'Ich schütze Liora.': 'protect',
+        'Ich beschuldige Liora.': 'accuse',
+        'Ich will erst Belege suchen.': 'evidence',
+      };
+      for (final entry in choices.entries) {
+        final campaign = engine.act(continued(), entry.key).campaign;
+        expect(campaign.facts['voice:lioraChoice'], entry.value);
         expect(
-          campaign.npcs.singleWhere((npc) => npc.id == 'liora').relationship,
-          'vertrauensvoll',
+          campaign.quests.singleWhere((q) => q.id == 'voice-liora').status,
+          'completed',
         );
-      } else if (entry.value == 'accuse') {
+        if (entry.value == 'protect') {
+          expect(
+            campaign.npcs.singleWhere((npc) => npc.id == 'liora').relationship,
+            'vertrauensvoll',
+          );
+        } else if (entry.value == 'accuse') {
+          expect(
+            campaign.npcs.singleWhere((npc) => npc.id == 'liora').relationship,
+            'misstrauisch',
+          );
+        }
         expect(
-          campaign.npcs.singleWhere((npc) => npc.id == 'liora').relationship,
-          'misstrauisch',
+          Campaign.fromJson(campaign.toJson()).toJson(),
+          campaign.toJson(),
         );
       }
-      expect(Campaign.fromJson(campaign.toJson()).toJson(), campaign.toJson());
-    }
-  });
+    },
+  );
 
   test('Hinweise erscheinen nicht vor ihrer tatsächlichen Entdeckung', () {
     var campaign = continued();
     campaign = engine.act(campaign, 'Zeige Hinweise.').campaign;
-    expect(campaign.messages.last.text, isNot(contains('ausradiertes Gesicht')));
+    expect(
+      campaign.messages.last.text,
+      isNot(contains('ausradiertes Gesicht')),
+    );
     expect(campaign.messages.last.text, isNot(contains('Tintenschichten')));
     campaign = collect(campaign, 'elda');
     campaign = engine.act(campaign, 'Ermittlungsstand').campaign;
@@ -152,8 +175,10 @@ void main() {
     expect(campaign.storyBible['stage'], 'voice-square');
     expect(campaign.facts['voice:memorySketch'], isNull);
     expect(campaign.facts['voice:houseFound'], isNull);
-    expect(campaign.quests.singleWhere((q) => q.id == 'voice-witnesses').status,
-        'active');
+    expect(
+      campaign.quests.singleWhere((q) => q.id == 'voice-witnesses').status,
+      'active',
+    );
   });
 
   test('Ein Hinweis reicht nicht, zwei beliebige Spuren öffnen das Haus', () {
@@ -199,10 +224,9 @@ void main() {
 
   test('Gesprochener Zauberwunsch ändert weder Helden noch Hinweise', () {
     final campaign = continued();
-    final after = engine.act(
-      campaign,
-      'Ich wirke Magie entdecken auf den Brief.',
-    ).campaign;
+    final after = engine
+        .act(campaign, 'Ich wirke Magie entdecken auf den Brief.')
+        .campaign;
     expect(after.storyBible['stage'], 'voice-square');
     expect(after.pendingRoll, isNull);
     expect(after.hero.toJson(), campaign.hero.toJson());
@@ -210,22 +234,27 @@ void main() {
     expect(after.messages.last.text, contains('keine Zauberwirkungen'));
   });
 
-  test('Kapitelwechsel verändert nicht die Questabschlüsse der ersten Kampagne', () {
-    final old = completed().copyWith(
-      quests: [
-        for (final q in completed().quests)
-          if (q.id == 'rabenwacht-well') q.copyWith(status: 'failed') else q,
-      ],
-    );
-    var campaign = engine.act(old, 'Fortsetzung beginnen').campaign;
-    campaign = collect(campaign, 'grave');
-    campaign = collect(campaign, 'tarek');
-    campaign = engine.act(campaign, 'Ich gehe zum Haus ohne Türen.').campaign;
-    expect(
-      campaign.quests.singleWhere((q) => q.id == 'rabenwacht-well').status,
-      'failed',
-    );
-    expect(campaign.quests.singleWhere((q) => q.id == 'voice-main').status,
-        'active');
-  });
+  test(
+    'Kapitelwechsel verändert nicht die Questabschlüsse der ersten Kampagne',
+    () {
+      final old = completed().copyWith(
+        quests: [
+          for (final q in completed().quests)
+            if (q.id == 'rabenwacht-well') q.copyWith(status: 'failed') else q,
+        ],
+      );
+      var campaign = engine.act(old, 'Fortsetzung beginnen').campaign;
+      campaign = collect(campaign, 'grave');
+      campaign = collect(campaign, 'tarek');
+      campaign = engine.act(campaign, 'Ich gehe zum Haus ohne Türen.').campaign;
+      expect(
+        campaign.quests.singleWhere((q) => q.id == 'rabenwacht-well').status,
+        'failed',
+      );
+      expect(
+        campaign.quests.singleWhere((q) => q.id == 'voice-main').status,
+        'active',
+      );
+    },
+  );
 }

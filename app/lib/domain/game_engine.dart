@@ -3699,8 +3699,7 @@ class GameEngine {
     var narration = '$label. ';
     if (pending.type == 'preparedCheck') {
       final passed = effectiveTotal >= pending.difficulty;
-      final story =
-          next.storyBible['mode'] == RabenwachtCampaign.sequelMode
+      final story = next.storyBible['mode'] == RabenwachtCampaign.sequelMode
           ? RabenwachtCampaign.resolveSequelCheck(next, pending, passed)
           : RabenwachtCampaign.resolveCheck(next, pending, passed);
       payload['difficulty'] = pending.difficulty;

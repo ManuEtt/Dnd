@@ -31,17 +31,22 @@ class FourteenthVoiceStoryModule {
     }
     final oldEnding = previous.facts['ending']!;
     final endingContext = switch (oldEnding) {
-      'end-seal' => 'Du hast das Siegel erneuert. '
-          'Seine Risse beginnen nun die Stimmen durchzulassen.',
-      'end-break' => 'Du hast das Siegel gebrochen. '
-          'Etwas Fremdes gelangt jetzt leichter nach Rabenwacht.',
-      'end-mercy' => 'Du hast Seren erlöst. '
-          'Die Erinnerung an ihre letzten Worte ist noch lebendig.',
-      'end-chorus' => 'Du hast den Glockenchor bewahrt. '
-          'Seine Stimmen klingen zwischen neuen Erinnerungen nach.',
+      'end-seal' =>
+        'Du hast das Siegel erneuert. '
+            'Seine Risse beginnen nun die Stimmen durchzulassen.',
+      'end-break' =>
+        'Du hast das Siegel gebrochen. '
+            'Etwas Fremdes gelangt jetzt leichter nach Rabenwacht.',
+      'end-mercy' =>
+        'Du hast Seren erlöst. '
+            'Die Erinnerung an ihre letzten Worte ist noch lebendig.',
+      'end-chorus' =>
+        'Du hast den Glockenchor bewahrt. '
+            'Seine Stimmen klingen zwischen neuen Erinnerungen nach.',
       _ => 'Die Glocke ist verstummt, doch das Dorf findet keine Ruhe.',
     };
-    final opening = '${previous.hero.name}, am Morgen nach der '
+    final opening =
+        '${previous.hero.name}, am Morgen nach der '
         'Glockennacht trägt Elda vier Teller an einen Tisch für drei. '
         'Eine junge Frau im grauen Mantel steht in der Tür. '
         '„Du hast mich gestern gerettet“, behauptet sie. '
@@ -72,13 +77,15 @@ class FourteenthVoiceStoryModule {
         const Quest(
           id: 'voice-main',
           title: 'Die vierzehnte Stimme',
-          description: 'Finde heraus, weshalb Rabenwacht '
+          description:
+              'Finde heraus, weshalb Rabenwacht '
               'sich an Menschen erinnert, die es nie gab.',
         ),
         const Quest(
           id: 'voice-witnesses',
           title: 'Widersprüchliche Zeugnisse',
-          description: 'Sichere mindestens zwei voneinander '
+          description:
+              'Sichere mindestens zwei voneinander '
               'unabhängige Hinweise auf die verlorenen Namen.',
         ),
         const Quest(
@@ -328,9 +335,9 @@ class FourteenthVoiceStoryModule {
           campaign,
           stage,
           'Du trittst vor Liora. Die Menge weicht zurück, '
-              'aber Tarek bleibt misstrauisch. Liora flüstert: '
-              '„Danke. Ich zeige dir das namenlose Grab.“ '
-              'Du kannst nun den Friedhof aufsuchen.',
+          'aber Tarek bleibt misstrauisch. Liora flüstert: '
+          '„Danke. Ich zeige dir das namenlose Grab.“ '
+          'Du kannst nun den Friedhof aufsuchen.',
           gained: {'voice:lioraChoice': 'protect'},
         );
       }
@@ -340,9 +347,9 @@ class FourteenthVoiceStoryModule {
           campaign,
           stage,
           'Du forderst Liora öffentlich zur Wahrheit auf. '
-              'Sie schaut verletzt zu Boden. Einige '
-              'Dorfbewohner nicken dir zu. '
-              'Die Spuren stehen dir trotzdem offen.',
+          'Sie schaut verletzt zu Boden. Einige '
+          'Dorfbewohner nicken dir zu. '
+          'Die Spuren stehen dir trotzdem offen.',
           gained: {'voice:lioraChoice': 'accuse'},
         );
       }
@@ -351,12 +358,15 @@ class FourteenthVoiceStoryModule {
           campaign,
           stage,
           'Du versprichst, niemanden ohne Beweise zu verurteilen. '
-              'Elda bittet dich in ihr Haus; Tarek zeigt '
-              'auf einen seltsamen Brief.',
+          'Elda bittet dich in ihr Haus; Tarek zeigt '
+          'auf einen seltsamen Brief.',
           gained: {'voice:lioraChoice': 'evidence'},
         );
       }
-      if (_has(spoken, 'haus ohne türen|haus ohne tueren|zum haus|geheimhaus')) {
+      if (_has(
+        spoken,
+        'haus ohne türen|haus ohne tueren|zum haus|geheimhaus',
+      )) {
         if (evidenceCount(campaign) < 2) {
           return RabenwachtTurn(
             campaign,
@@ -373,10 +383,7 @@ class FourteenthVoiceStoryModule {
               'steht ein Haus, das gestern noch nicht da war. '
               'Kein Türgriff, keine Fuge. Als du näherkommst, '
               'steht der Eingang plötzlich offen.',
-          gained: {
-            'voice:houseFound': 'true',
-            'location': 'Haus ohne Türen',
-          },
+          gained: {'voice:houseFound': 'true', 'location': 'Haus ohne Türen'},
         );
       }
       if (_has(spoken, 'elda|teller|zeichnung|kindheit')) {
