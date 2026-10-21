@@ -31,8 +31,11 @@ class FourteenthVoiceEpilogue {
   ).hasMatch(text);
 
   static bool _hasRealEnding(Campaign c) =>
-      const {'end-oath', 'end-archive', 'end-accord'}
-          .contains(c.facts['voice:ending']) &&
+      const {
+        'end-oath',
+        'end-archive',
+        'end-accord',
+      }.contains(c.facts['voice:ending']) &&
       c.facts['voice:witnessChain'] == 'true' &&
       c.quests.any((q) => q.id == 'voice-main' && q.status == 'completed');
 
@@ -166,8 +169,7 @@ class FourteenthVoiceEpilogue {
 
   static RabenwachtTurn advance(Campaign c, String input) {
     final stage = c.storyBible['stage'] ?? '';
-    if (c.storyBible['mode'] != 'rabenwacht-voice-v1' ||
-        !handles(stage)) {
+    if (c.storyBible['mode'] != 'rabenwacht-voice-v1' || !handles(stage)) {
       throw const FormatException('Unbekannte Epilogszene.');
     }
     if (!_hasRealEnding(c)) {
@@ -180,8 +182,8 @@ class FourteenthVoiceEpilogue {
 
     final text = input.trim().toLowerCase();
     if (_endStages.contains(stage)) {
-      final correctEnd = c.facts['voice:ending'] ==
-          stage.replaceFirst('voice-', '');
+      final correctEnd =
+          c.facts['voice:ending'] == stage.replaceFirst('voice-', '');
       if (!correctEnd) {
         return RabenwachtTurn(
           c,
@@ -287,7 +289,10 @@ class FourteenthVoiceEpilogue {
           gained: {'voice:epilogue:liora': 'true'},
         );
       }
-      if (_said(text, 'dorfversammlung|dorfzukunft|zukunft entscheiden|epilog abschließen|epilog abschliessen')) {
+      if (_said(
+        text,
+        'dorfversammlung|dorfzukunft|zukunft entscheiden|epilog abschließen|epilog abschliessen',
+      )) {
         if (witnessCount(c) < 2) {
           return RabenwachtTurn(
             c,
@@ -320,8 +325,7 @@ class FourteenthVoiceEpilogue {
       'voice-epilogue-tarek',
       'voice-epilogue-liora',
     }.contains(stage)) {
-      if (_said(text, 'zurück|zurueck|dorfplatz|platz') &&
-          !_negated(text)) {
+      if (_said(text, 'zurück|zurueck|dorfplatz|platz') && !_negated(text)) {
         return _move(
           c,
           'voice-epilogue-square',
@@ -395,11 +399,7 @@ class FourteenthVoiceEpilogue {
     throw const FormatException('Ungültige Epilogszene.');
   }
 
-  static RabenwachtTurn _finish(
-    Campaign c,
-    String legacy,
-    String description,
-  ) {
+  static RabenwachtTurn _finish(Campaign c, String legacy, String description) {
     if (witnessCount(c) < 2 || c.facts['voice:legacy'] != null) {
       return RabenwachtTurn(c, 'Die Epilogentscheidung ist nicht verfügbar.');
     }
@@ -411,9 +411,9 @@ class FourteenthVoiceEpilogue {
       c,
       'voice-epilogue-complete',
       '$description $risk${_debtConsequence(c)} '
-      '${_endingConsequence(c)} '
-      'Rabenwacht bewahrt diese Wahl, ohne '
-      'vergangene Entscheidungen umzuschreiben.',
+          '${_endingConsequence(c)} '
+          'Rabenwacht bewahrt diese Wahl, ohne '
+          'vergangene Entscheidungen umzuschreiben.',
       gained: {'voice:legacy': legacy},
     );
   }
