@@ -1,3 +1,10 @@
+## Unveröffentlicht – Rabenwacht: Der Brief von Morgen (21.10.2026, CI offen)
+
+- Neues optionales Nachabenteuer nach dem Epilog: widersprüchlicher Brief, freie Nachforschungen bei drei Quellen, zwei unabhängige Belege für den Rat und drei dauerhaft gespeicherte Lösungswege.
+- Frühere Heldendaten, vier Ausgangsenden, Ratsentscheid und Dorfvermächtnis bleiben unverändert; keine zusätzlichen SRD-Kampf- oder Zauberwirkungen. Details: `docs/RABENWACHT_BRIEF_VON_MORGEN.md`.
+
+---
+
 ## Unveröffentlicht – Rabenwacht, freiwilliger Epilog (21.10.2026)
 
 - „Sieben Tage nach der vierzehnten Stimme“: Nach den drei Enden von Akt VIII sind Elda, Tarek und Liora in einem nichtlinearen Epilog ansprechbar. Zwei unabhängige Gespräche erlauben die nachhaltige Dorfentscheidung (Gedenkbuch, öffentliche Zeugnisse oder Erinnerungsfest).
