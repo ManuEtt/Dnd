@@ -332,7 +332,8 @@ class RabenwachtCampaign {
     }
     if (target == null || target == stage) return null;
     final alreadyKnown = c.facts['visited:$target'] == 'true';
-    final maraRoute = c.facts['maraLetter'] == 'true' &&
+    final maraRoute =
+        c.facts['maraLetter'] == 'true' &&
         (target == 'mill' || target == 'chapel');
     if (!alreadyKnown && !maraRoute) return null;
     final label = locations[target]!;
@@ -629,7 +630,10 @@ class RabenwachtCampaign {
             clues: {'maraDefied': 'true', 'location': 'Gasthaus'},
           );
         }
-        if (_has(input, 'fina|müller|muehle|mühl|tochter|hinweis|frag|beweis')) {
+        if (_has(
+          input,
+          'fina|müller|muehle|mühl|tochter|hinweis|frag|beweis',
+        )) {
           return _move(
             c,
             'mill',
@@ -1299,6 +1303,10 @@ class RabenwachtCampaign {
       facts: {...c.facts, 'allMissingFound': 'true', 'ending': stage},
     );
 
-    return _move(next, stage, '$prose${aftermath.isEmpty ? '' : ' $aftermath'}');
+    return _move(
+      next,
+      stage,
+      '$prose${aftermath.isEmpty ? '' : ' $aftermath'}',
+    );
   }
 }

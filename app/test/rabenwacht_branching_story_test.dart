@@ -18,49 +18,68 @@ void main() {
     campaign = engine.act(campaign, 'Ich spreche mit Mara Voss.').campaign;
     expect(campaign.storyBible['stage'], 'watchhouse');
     expect(campaign.facts['visited:watchhouse'], 'true');
-    expect(campaign.npcs.singleWhere((npc) => npc.id == 'mara').relationship,
-        'misstrauisch');
+    expect(
+      campaign.npcs.singleWhere((npc) => npc.id == 'mara').relationship,
+      'misstrauisch',
+    );
 
-    campaign = engine.act(campaign, 'Ich verspreche Verschwiegenheit.').campaign;
+    campaign = engine
+        .act(campaign, 'Ich verspreche Verschwiegenheit.')
+        .campaign;
     expect(campaign.storyBible['stage'], 'archive');
     expect(campaign.facts['maraTrust'], 'true');
     expect(campaign.facts['visited:archive'], 'true');
-    expect(campaign.npcs.singleWhere((npc) => npc.id == 'mara').relationship,
-        'verbündet');
-    expect(RabenwachtCampaign.discoveredClues(campaign), contains('Glockeneid'));
-    expect(Campaign.fromJson(campaign.toJson()).toJson(), campaign.toJson());
-  });
-
-  test('Mara kann widersprochen werden: Vertrauen und Ausgang unterscheiden sich', () {
-    var campaign = atVillage();
-    campaign = engine.act(campaign, 'Ich befrage die Vorsteherin.').campaign;
-    campaign = engine.act(campaign, 'Ich fordere die Wahrheit.').campaign;
-    expect(campaign.storyBible['stage'], 'inn');
-    expect(campaign.facts['maraDefied'], 'true');
-    expect(campaign.npcs.singleWhere((npc) => npc.id == 'mara').relationship,
-        'feindselig');
-
-    campaign = campaign.copyWith(
-      storyBible: {...campaign.storyBible, 'stage': 'choice'},
+    expect(
+      campaign.npcs.singleWhere((npc) => npc.id == 'mara').relationship,
+      'verbündet',
     );
-    campaign = engine.act(campaign, 'Ich erneuere das Siegel.').campaign;
-    expect(campaign.storyBible['stage'], 'end-seal');
-    expect(campaign.scene, contains('Streit'));
-    expect(campaign.facts['ending'], 'end-seal');
-  });
-
-  test('Erkundete Orte sind erneut erreichbar, nicht erkundete bleiben gesperrt', () {
-    var campaign = atVillage();
-    campaign = engine.act(campaign, 'Ich gehe zur Turmruine.').campaign;
-    expect(campaign.storyBible['stage'], 'square');
-    campaign = engine.act(campaign, 'Ich gehe zum Gasthaus.').campaign;
-    expect(campaign.storyBible['stage'], 'inn');
-    campaign = engine.act(campaign, 'Ich gehe zurück zum Dorfplatz.').campaign;
-    expect(campaign.storyBible['stage'], 'square');
-    campaign = engine.act(campaign, 'Ich gehe zum Gasthaus.').campaign;
-    expect(campaign.storyBible['stage'], 'inn');
+    expect(
+      RabenwachtCampaign.discoveredClues(campaign),
+      contains('Glockeneid'),
+    );
     expect(Campaign.fromJson(campaign.toJson()).toJson(), campaign.toJson());
   });
+
+  test(
+    'Mara kann widersprochen werden: Vertrauen und Ausgang unterscheiden sich',
+    () {
+      var campaign = atVillage();
+      campaign = engine.act(campaign, 'Ich befrage die Vorsteherin.').campaign;
+      campaign = engine.act(campaign, 'Ich fordere die Wahrheit.').campaign;
+      expect(campaign.storyBible['stage'], 'inn');
+      expect(campaign.facts['maraDefied'], 'true');
+      expect(
+        campaign.npcs.singleWhere((npc) => npc.id == 'mara').relationship,
+        'feindselig',
+      );
+
+      campaign = campaign.copyWith(
+        storyBible: {...campaign.storyBible, 'stage': 'choice'},
+      );
+      campaign = engine.act(campaign, 'Ich erneuere das Siegel.').campaign;
+      expect(campaign.storyBible['stage'], 'end-seal');
+      expect(campaign.scene, contains('Streit'));
+      expect(campaign.facts['ending'], 'end-seal');
+    },
+  );
+
+  test(
+    'Erkundete Orte sind erneut erreichbar, nicht erkundete bleiben gesperrt',
+    () {
+      var campaign = atVillage();
+      campaign = engine.act(campaign, 'Ich gehe zur Turmruine.').campaign;
+      expect(campaign.storyBible['stage'], 'square');
+      campaign = engine.act(campaign, 'Ich gehe zum Gasthaus.').campaign;
+      expect(campaign.storyBible['stage'], 'inn');
+      campaign = engine
+          .act(campaign, 'Ich gehe zurück zum Dorfplatz.')
+          .campaign;
+      expect(campaign.storyBible['stage'], 'square');
+      campaign = engine.act(campaign, 'Ich gehe zum Gasthaus.').campaign;
+      expect(campaign.storyBible['stage'], 'inn');
+      expect(Campaign.fromJson(campaign.toJson()).toJson(), campaign.toJson());
+    },
+  );
 
   test('Maras Brief öffnet auch nach dem Archiv den Weg zur Mühle', () {
     var campaign = atVillage();
@@ -70,7 +89,9 @@ void main() {
     campaign = engine.act(campaign, 'Ich gehe zur Mühle.').campaign;
     expect(campaign.storyBible['stage'], 'mill');
     final xp = campaign.hero.experience;
-    campaign = engine.act(campaign, 'Ich gehe zurück ins Chronistenhaus.').campaign;
+    campaign = engine
+        .act(campaign, 'Ich gehe zurück ins Chronistenhaus.')
+        .campaign;
     expect(campaign.storyBible['stage'], 'archive');
     campaign = engine.act(campaign, 'Ich gehe zur Mühle.').campaign;
     expect(campaign.hero.experience, xp);
@@ -98,22 +119,25 @@ void main() {
     expect(attacking.storyBible['stage'], 'sentryFight');
   });
 
-  test('Erfolgreiches Überreden eröffnet die finale Wahl statt sie zu treffen', () {
-    var campaign = engine.createRabenwacht(engine.createDemo().hero);
-    campaign = campaign.copyWith(
-      storyBible: {...campaign.storyBible, 'stage': 'chamber'},
-    );
-    campaign = engine.act(campaign, 'Ich spreche mit Seren.').campaign;
-    expect(campaign.pendingRoll?.difficulty, 14);
-    campaign = engine.resolveRoll(campaign, natural: 20).campaign;
-    expect(campaign.storyBible['stage'], 'choice');
-    expect(campaign.facts['serenTrust'], 'true');
-    expect(campaign.facts['ending'], isNull);
-    expect(Campaign.fromJson(campaign.toJson()).toJson(), campaign.toJson());
-    campaign = engine.act(campaign, 'Ich erlöse Seren.').campaign;
-    expect(campaign.storyBible['stage'], 'end-mercy');
-    expect(campaign.scene, contains('Vertrauen'));
-  });
+  test(
+    'Erfolgreiches Überreden eröffnet die finale Wahl statt sie zu treffen',
+    () {
+      var campaign = engine.createRabenwacht(engine.createDemo().hero);
+      campaign = campaign.copyWith(
+        storyBible: {...campaign.storyBible, 'stage': 'chamber'},
+      );
+      campaign = engine.act(campaign, 'Ich spreche mit Seren.').campaign;
+      expect(campaign.pendingRoll?.difficulty, 14);
+      campaign = engine.resolveRoll(campaign, natural: 20).campaign;
+      expect(campaign.storyBible['stage'], 'choice');
+      expect(campaign.facts['serenTrust'], 'true');
+      expect(campaign.facts['ending'], isNull);
+      expect(Campaign.fromJson(campaign.toJson()).toJson(), campaign.toJson());
+      campaign = engine.act(campaign, 'Ich erlöse Seren.').campaign;
+      expect(campaign.storyBible['stage'], 'end-mercy');
+      expect(campaign.scene, contains('Vertrauen'));
+    },
+  );
 
   test('Misslungene Heimlichkeit warnt die Wachen und prägt das Ende', () {
     var campaign = engine.createRabenwacht(engine.createDemo().hero);
