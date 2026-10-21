@@ -239,6 +239,7 @@ void main() {
       expect(stored.facts['keyFound'], 'true');
     },
   );
+
   test('Kampagnen-EP und Heldenarchiv benutzen dieselbe Charakter-ID', () async {
     final hero = HeroCharacter(
       id: 'shared-hero',
@@ -259,9 +260,7 @@ void main() {
     final first = controller.currentCampaign!;
     expect(first.hero.id, hero.id);
 
-    await controller.saveHero(
-      first.hero.copyWith(experience: 350, gold: 22),
-    );
+    await controller.saveHero(first.hero.copyWith(experience: 350, gold: 22));
     expect(controller.error, isNull);
     expect(controller.currentCampaign!.hero.experience, 350);
     expect(controller.characters, hasLength(1));
@@ -285,5 +284,4 @@ void main() {
     expect(controller.currentCampaign!.hero.experience, 350);
     expect((await sqlite.loadCharacters()).single.experience, 350);
   });
-
 }
