@@ -140,7 +140,7 @@ class _FantasyButtonState extends State<FantasyButton> {
                 alignment: Alignment.center,
                 children: [
                   Positioned.fill(
-                    child: _FantasyButtonBackground(
+                    child: FantasyButtonSurface(
                       style: widget.style,
                       state: state,
                       square:
@@ -184,8 +184,11 @@ class _FantasyButtonState extends State<FantasyButton> {
   }
 }
 
-class _FantasyButtonBackground extends StatelessWidget {
-  const _FantasyButtonBackground({
+/// Asset-backed artwork shared by text buttons and illustrated shortcuts.
+/// The background is decorative; callers must supply their own InkWell.
+class FantasyButtonSurface extends StatelessWidget {
+  const FantasyButtonSurface({
+    super.key,
     required this.style,
     required this.state,
     required this.square,

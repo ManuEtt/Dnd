@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../domain/models.dart';
 import 'fantasy_ui.dart';
+import 'fantasy_buttons.dart';
 import 'fantasy_experience.dart';
 import 'fantasy_approved_icons.dart';
 
@@ -398,7 +399,7 @@ class FantasyCampaignCard extends StatelessWidget {
   );
 }
 
-class FantasyShortcutTile extends StatelessWidget {
+class FantasyShortcutTile extends StatefulWidget {
   const FantasyShortcutTile({
     super.key,
     required this.label,
@@ -408,92 +409,151 @@ class FantasyShortcutTile extends StatelessWidget {
     this.width = 112,
     this.compact = false,
     this.approvedIconIndex,
+    this.style = FantasyButtonStyle.woodGold,
+    this.selected = false,
   });
+
   final String label;
   final IconData icon;
   final Color color;
   final VoidCallback? onTap;
   final double width;
-
-  /// Index of the actual approved illustrated fantasy icon (0-7).
-  /// Null retains the Material symbol for actions without a matching icon.
   final int? approvedIconIndex;
-
-  /// Short, consistently sized tile for a persistent mobile action bar.
   final bool compact;
 
+  /// The plate material; only decorative art changes, not action behavior.
+  final FantasyButtonStyle style;
+
+  /// For persistent states such as the actively listening microphone.
+  final bool selected;
+
   @override
-  Widget build(BuildContext context) => SizedBox(
-    width: width,
-    // Two-line labels must remain readable at enlarged Android text scales.
-    // The old 92dp minimum could be shorter than icon + scaled labels.
-    height: compact
-        ? (74 + MediaQuery.textScalerOf(context).scale(11) * 3.2)
-              .clamp(110.0, 190.0)
-              .toDouble()
-        : null,
-    child: FantasyApprovedCornerFrame(
-      cornerSize: compact ? 22 : 27,
-      opacity: .90,
-      child: Material(
-        color: FantasyPalette.ink,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: color.withValues(alpha: .75)),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: FantasyOptionalImageFrame(
-          image: FantasyOptionalArt.button,
-          centerSlice: const Rect.fromLTWH(26, 20, 248, 35),
-          child: InkWell(
-            onTap: onTap,
-            child: CustomPaint(
-              foregroundPainter: FantasyOrnamentPainter(color: color),
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: compact ? 4 : 8,
-                  vertical: compact ? 8 : 13,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (approvedIconIndex != null)
-                      FantasyApprovedIcon(
-                        index: approvedIconIndex!,
-                        size: compact ? 38 : 52,
-                      )
-                    else
-                      CircleAvatar(
-                        radius: compact ? 17 : 24,
-                        backgroundColor: color.withValues(alpha: .14),
-                        child: Icon(
-                          icon,
-                          color: color,
-                          size: compact ? 21 : 29,
-                        ),
-                      ),
-                    SizedBox(height: compact ? 4 : 9),
-                    Text(
-                      label,
-                      maxLines: 2,
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: FantasyPalette.ivory,
-                        fontSize: compact ? 11 : 13,
-                        fontWeight: FontWeight.w600,
+  State<FantasyShortcutTile> createState() => _FantasyShortcutTileState();
+}
+
+class _FantasyShortcutTileState extends State<FantasyShortcutTile> {
+  bool _hovered = false;
+  bool _focused = false;
+  bool _pressed = false;
+
+  FantasyButtonState get _visualState {
+    if (widget.onTap == null) return FantasyButtonState.disabled;
+    if (_pressed) return FantasyButtonState.pressed;
+    if (widget.selected) return FantasyButtonState.active;
+    if (_hovered || _focused) return FantasyButtonState.hover;
+    return FantasyButtonState.normal;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final enabled = widget.onTap != null;
+    final accent = enabled ? widget.color : FantasyPalette.muted;
+    return SizedBox(
+      width: widget.width,
+      // Keep the existing large-text and keyboard-safe dimensions.
+      height: widget.compact
+          ? (74 + MediaQuery.textScalerOf(context).scale(11) * 3.2)
+                .clamp(110.0, 190.0)
+                .toDouble()
+          : null,
+      child: Semantics(
+        button: true,
+        enabled: enabled,
+        selected: widget.selected,
+        label: widget.label,
+        child: AnimatedScale(
+          scale: enabled && _pressed ? .965 : 1,
+          duration: const Duration(milliseconds: 105),
+          curve: Curves.easeOut,
+          child: FantasyApprovedCornerFrame(
+            cornerSize: widget.compact ? 22 : 27,
+            opacity: enabled ? .90 : .40,
+            child: Material(
+              color: FantasyPalette.ink,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(color: accent.withValues(alpha: .75)),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Stack(
+                fit: StackFit.passthrough,
+                children: [
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: FantasyButtonSurface(
+                        style: widget.style,
+                        state: _visualState,
+                        square: false,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  InkWell(
+                    onTap: widget.onTap,
+                    onHover: (value) {
+                      if (mounted) setState(() => _hovered = value);
+                    },
+                    onFocusChange: (value) {
+                      if (mounted) setState(() => _focused = value);
+                    },
+                    onHighlightChanged: (value) {
+                      if (mounted) setState(() => _pressed = value);
+                    },
+                    child: CustomPaint(
+                      foregroundPainter: FantasyOrnamentPainter(color: accent),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: widget.compact ? 4 : 8,
+                          vertical: widget.compact ? 8 : 13,
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (widget.approvedIconIndex != null)
+                              Opacity(
+                                opacity: enabled ? 1 : .45,
+                                child: FantasyApprovedIcon(
+                                  index: widget.approvedIconIndex!,
+                                  size: widget.compact ? 38 : 52,
+                                ),
+                              )
+                            else
+                              CircleAvatar(
+                                radius: widget.compact ? 17 : 24,
+                                backgroundColor: accent.withValues(alpha: .14),
+                                child: Icon(
+                                  widget.icon,
+                                  color: accent,
+                                  size: widget.compact ? 21 : 29,
+                                ),
+                              ),
+                            SizedBox(height: widget.compact ? 4 : 9),
+                            Text(
+                              widget.label,
+                              maxLines: 2,
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: enabled
+                                    ? FantasyPalette.ivory
+                                    : FantasyPalette.muted,
+                                fontSize: widget.compact ? 11 : 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 /// Always-present quick actions along the bottom of an active adventure.
@@ -572,6 +632,8 @@ class FantasyPinnedActionBar extends StatelessWidget {
                   child: FantasyShortcutTile(
                     key: const ValueKey('adventure-shortcut-speech'),
                     label: listening ? 'Stopp' : 'Sprache',
+                    selected: listening,
+                    style: FantasyButtonStyle.woodGold,
                     icon: listening
                         ? Icons.mic_off_outlined
                         : Icons.chat_bubble_outline,
@@ -586,6 +648,7 @@ class FantasyPinnedActionBar extends StatelessWidget {
                   child: FantasyShortcutTile(
                     key: const ValueKey('adventure-shortcut-inspect'),
                     label: 'Untersuchen',
+                    style: FantasyButtonStyle.arcane,
                     approvedIconIndex: 3,
                     icon: Icons.search,
                     color: FantasyPalette.blue,
@@ -599,6 +662,7 @@ class FantasyPinnedActionBar extends StatelessWidget {
                   child: FantasyShortcutTile(
                     key: const ValueKey('adventure-shortcut-attack'),
                     label: 'Angriff',
+                    style: FantasyButtonStyle.wax,
                     approvedIconIndex: 1,
                     icon: Icons.sports_martial_arts,
                     color: FantasyPalette.danger,
@@ -612,6 +676,7 @@ class FantasyPinnedActionBar extends StatelessWidget {
                   child: FantasyShortcutTile(
                     key: const ValueKey('adventure-shortcut-roll'),
                     label: 'W20',
+                    style: FantasyButtonStyle.arcane,
                     approvedIconIndex: 7,
                     icon: Icons.casino_outlined,
                     color: Color(0xffae90d8),

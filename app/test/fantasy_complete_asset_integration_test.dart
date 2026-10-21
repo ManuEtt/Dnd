@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/ui/character_portrait_picker.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_art.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_ui.dart';
 
 void main() {
@@ -44,7 +45,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Original-Buttonrahmen blockiert keine Schnellaktion', (
+  testWidgets('Zustands-Buttonrahmen blockiert keine Schnellaktion', (
     tester,
   ) async {
     var clicks = 0;
@@ -64,7 +65,12 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.byType(FantasyOptionalImageFrame), findsOneWidget);
+    expect(find.byType(FantasyButtonSurface), findsOneWidget);
+    final surface = tester.widget<FantasyButtonSurface>(
+      find.byType(FantasyButtonSurface),
+    );
+    expect(surface.style, FantasyButtonStyle.woodGold);
+    expect(surface.state, FantasyButtonState.normal);
     await tester.tap(find.text('W20'));
     expect(clicks, 1);
     expect(tester.takeException(), isNull);
