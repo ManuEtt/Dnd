@@ -2020,7 +2020,11 @@ class Campaign {
     events: events ?? this.events,
     trackedAreaCreatures: trackedAreaCreatures ?? this.trackedAreaCreatures,
     manualTurnQueue: identical(manualTurnQueue, _unchanged)
-        ? this.manualTurnQueue
+        ? (identical(encounter, _unchanged) ||
+                  (encounter is Encounter &&
+                      encounter.id == this.manualTurnQueue?.encounterId)
+              ? this.manualTurnQueue
+              : null)
         : manualTurnQueue as ManualCombatTurnQueue?,
     pendingRoll: identical(pendingRoll, _unchanged)
         ? this.pendingRoll
