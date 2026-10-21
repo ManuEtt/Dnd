@@ -526,6 +526,20 @@ class RabenwachtCampaign {
     if (_has(input, 'hinweise|hinweisprotokoll|ermittlungsstand|spurenliste')) {
       return RabenwachtTurn(c, discoveredClues(c));
     }
+    // A free-text wish to cast a spell is not a confirmed SRD spell action.
+    // It must never silently turn into an Arcana check or a free spell effect.
+    if (RegExp(r'\b(?:wirke|zaubere|caste)\b', caseSensitive: false)
+        .hasMatch(input)) {
+      return RabenwachtTurn(
+        c,
+        'Ein Zauber benötigt eine bestätigte Regelaktion mit '
+            'bekanntem Zauber, Komponenten und gegebenenfalls '
+            'verfügbaren Zauberplätzen. Eine freie Texteingabe '
+            'wirkt hier keinen Zauber und verändert keine Ressourcen. '
+            'Wähle stattdessen eine verfügbare geprüfte Zauberaktion '
+            'oder untersuche die Umgebung mit einer Fertigkeitsprobe.',
+      );
+    }
     final revisit = _revisit(c, input, stage);
     if (revisit != null) return revisit;
     switch (stage) {
