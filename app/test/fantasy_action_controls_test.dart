@@ -68,11 +68,7 @@ void main() {
     tester,
   ) async {
     var count = 0;
-    await mountActions(
-      tester,
-      listening: true,
-      speech: () => count++,
-    );
+    await mountActions(tester, listening: true, speech: () => count++);
     expect(find.text('Stopp'), findsOneWidget);
     expect(stateOf(tester, 'speech'), FantasyButtonState.active);
     await tester.tap(find.byKey(const ValueKey('adventure-shortcut-speech')));
@@ -126,9 +122,7 @@ void main() {
     );
     for (final action in ['speech', 'inspect', 'attack', 'roll']) {
       expect(stateOf(tester, action), FantasyButtonState.disabled);
-      await tester.tap(
-        find.byKey(ValueKey('adventure-shortcut-$action')),
-      );
+      await tester.tap(find.byKey(ValueKey('adventure-shortcut-$action')));
     }
     await tester.pumpAndSettle();
     expect(count, 0);
