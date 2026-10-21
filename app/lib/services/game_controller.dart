@@ -7,6 +7,7 @@ import '../domain/game_engine.dart';
 import '../domain/ai_story.dart';
 import '../domain/models.dart';
 import '../domain/acid_splash_rules.dart';
+import '../domain/srd_extra_creature_attack_rules.dart';
 import '../domain/hero_shield_reaction_rules.dart';
 import '../domain/damage_rules.dart';
 import '../domain/enemy_force_defense.dart';
@@ -481,6 +482,24 @@ class GameController extends ChangeNotifier {
         orderedActorIds: orderedActorIds,
         baseInitiativeConfirmed: baseInitiativeConfirmed,
         tiedOrderConfirmed: tiedOrderConfirmed,
+      ),
+    );
+  });
+
+  Future<void> manualExtraCreatureAttack({
+    required String campaignId,
+    required int expectedRevision,
+    required String attackerId,
+    required String targetId,
+    required ConfirmedExtraCreatureAttack attack,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.manualExtraCreatureAttack(
+        current,
+        attackerId: attackerId,
+        targetId: targetId,
+        attack: attack,
       ),
     );
   });

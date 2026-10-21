@@ -1,3 +1,14 @@
+## 21.10.2026 – Version 0.8.29+79 (zusätzliche Kreaturenangriffe, CI offen)
+
+- Erster **tatsächlicher** Waffenangriff einer lebenden SL-gesteuerten Zusatzkreatur während ihres manuell aktiven Zuges, vorerst gegen eine andere gespeicherte Zusatzkreatur.
+- Getrennt bestätigte Angriff-/Schadenswerte und Schadensart, Reichweite, Deckung/RK, Vor-/Nachteil, Reaktionen und fehlende Sonderfähigkeiten. D20-Naturwurf 1/20, kritische zusätzliche Schadenswürfel ohne doppelte statische Boni.
+- Ein Angriff pro manuellem Zug mit persistentem `manualTurnQueue.actionUsed`, Zurücksetzen bei Zugwechsel. Ein gemeinsamer revisionsgeschützter Commit für Ziel-TP, Aktionsverbrauch und `combat.manualExtraCreatureAttack`-Ereignis.
+- Neue Dialog-/Schnellaktion und Tests für Legacy-Speicherung, Treffer/Fehlschlag/Krit, Deckung, mehrfachen Aktionseinsatz, ungültige Ziele und unbestätigte Werte.
+- **Weiterhin partial:** Keine Attacken auf Held/Hauptgegner oder vollständige zusätzliche Monsterzüge, keine automatische Verifikation von Statblocks oder Resistenzfähigkeiten. Android-Geräteprüfung ausstehend.
+
+
+---
+
 ## 21.10.2026 – Rabenwacht: Die stumme Strophe und vierter Ausgang (Story-Branch)
 
 - Spielbarer neuer Kapellenstrang mit Bruder Oswin, verlorener Liedstrophe, moralischer Bewahren-/Vernichten-Entscheidung und nachholbaren Belegen.
