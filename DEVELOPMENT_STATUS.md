@@ -1,5 +1,15 @@
 ## 21.10.2026 – Spielbarer Kampagnen-Einstieg „Die vierzehnte Stimme“ (Akt VI)
 
+## 21.10.2026 – Rabenwacht Akt VII: Der Chronist (Featurebranch, CI offen)
+
+- **IMPLEMENTIERT:** Akt-VI-Fortsetzung aus PR #77 um Akt VII erweitert: Porträtvergleich, Bibliothek und direkter Chronistenkontakt, freiwillige Verhandlung, endgültige Ablehnung, verdächtige Scheinzusage, gesonderte bewusste Preisbestätigung, vierzehntes Eidblatt und Wahl der Verwahrung; spoilerfreie Hinweisergänzungen.
+- **CODE & TESTS ERSTELLT:** `app/lib/story/fourteenth_voice_act7.dart`, Integration in `fourteenth_voice_campaign.dart` und `app/test/rabenwacht_fourteenth_voice_act7_test.dart`; kein Modell-/SQL-Schemawechsel, keine erfundenen SRD-Regeln, EP oder Ressourcenbuchungen.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse, Flutter-Tests, APK und Android-Geräteprüfung sind in dieser Umgebung nicht ausführbar und brauchen einen vollständigen CI-Lauf. Bestehender Akt-VI-PR #77 bleibt Integrationsvoraussetzung.
+- **NOCH NICHT IMPLEMENTIERT:** Akt VIII, Rat der Zeugen, Eidentscheidungen, mögliche Gegnermechanik und finales Balancing. `voice:chronistDebt=pending` ist eine nicht vollstreckte Story-Schuld, keine automatische Löschung einer Spielfigur.
+- Technische Übersicht: `docs/RABENWACHT_AKT_VII_IMPLEMENTIERUNG.md`.
+
+---
+
 - Entwicklung: `feature/rabenwacht-voice-act6-20261021`. Neue Datei `app/lib/story/fourteenth_voice_campaign.dart` hinter der bestehenden StoryRulePort-Schnittstelle, die regeltechnischen Modifikatoren kommen aus dem unveränderten Charakter-Regeladapter.
 - Sichere Kapiteltransition nur nach bestätigtem `end-*`-Abschluss und mit ausdrücklicher Texteingabe „Fortsetzung beginnen“. Die Story beginnt im neuen Modus `rabenwacht-voice-v1`, ohne alte Fakten oder Quests zu löschen.
 - Spielbar: Eröffnung mit Liora, Wahl zwischen Schutz, Beschuldigung oder Belegsuche, drei unabhängige Hinweise mit Regelchecks, gesperrter Hauszugang bei weniger als zwei Belegen, Haus und Porträtgalerie. Enden des Originalspiels beeinflussen Eröffnungstexte; vorhandenes Tarek-Vertrauen beeinflusst sein Auftreten.
