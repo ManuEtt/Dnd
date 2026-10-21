@@ -40,6 +40,8 @@ import 'srd_extra_creature_attack_rules.dart';
 import 'rules_engine.dart';
 import 'rest_rules.dart';
 import 'spellcasting_rules.dart';
+import 'srd_spell_preflight_rules.dart';
+import 'srd_spell_inventory_rules.dart';
 
 /// A free-text, deterministic narrator. It cannot execute SQL or provider tools.
 /// Every accepted turn produces a validated state checkpoint and an audit event.
@@ -426,6 +428,61 @@ class GameEngine {
         if ((campaign.encounter?.rageUntilRound ?? 0) > 0 &&
             fight?.rageUntilRound == 0)
           'rageEndedByIncapacitation': true,
+      },
+    );
+  }
+
+  /// Persists ONLY resource and inventory bookkeeping for a spell whose
+  /// actual effect was already resolved by a separate, verified rule path.
+  /// Never treats an AI narration or spell name as proof of an effect.
+  ///
+  /// No generic combat casting: action economy, reactions and target rules
+  /// require specific mechanics before this endpoint may be used in a fight.
+  GameUpdate commitConfirmedSpellMaterialCast(
+    Campaign campaign, {
+    required SrdSpellCastPlan plan,
+    required bool effectResolvedSeparatelyConfirmed,
+    required bool materialIdentityAndQuantityConfirmed,
+    List<SrdConsumedMaterial> consumedMaterials = const [],
+  }) {
+    if (campaign.pendingRoll != null ||
+        campaign.pendingDeathSave != null ||
+        campaign.pendingEnemyShieldHit != null ||
+        (campaign.encounter != null && !campaign.encounter!.isFinished)) {
+      throw const FormatException(
+        'Offene Würfe und laufende Kämpfe benötigen eine eigene Zauberaktion.',
+      );
+    }
+    final result = SrdSpellInventoryRules.commitConfirmedCast(
+      campaign.hero,
+      plan,
+      spellEffectResolvedConfirmed: effectResolvedSeparatelyConfirmed,
+      materialIdentityAndQuantityConfirmed:
+          materialIdentityAndQuantityConfirmed,
+      consumedMaterials: consumedMaterials,
+    );
+    return _commit(
+      campaign,
+      campaign.copyWith(hero: result.hero),
+      'Der separat regelgeprüfte Zauber ${result.spellName} ist mit '
+      'Zauberplatz und bestätigten Materialien verbucht. '
+      'Die Zauberwirkung wurde durch diese Aktion nicht berechnet.',
+      type: 'spell.materialsCommitted',
+      payload: {
+        'spell': result.spellName,
+        'castingClass': plan.castingClass,
+        'slotLevel': result.slotLevel,
+        'pactMagic': result.pactMagic,
+        'effectResolvedSeparatelyConfirmed': true,
+        'materialIdentityAndQuantityConfirmed':
+            materialIdentityAndQuantityConfirmed,
+        'consumedMaterials': [
+          for (final material in consumedMaterials)
+            {
+              'inventoryId': material.inventoryId,
+              'quantity': material.quantity,
+            },
+        ],
       },
     );
   }
