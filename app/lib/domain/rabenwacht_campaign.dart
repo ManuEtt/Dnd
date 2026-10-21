@@ -251,7 +251,7 @@ class RabenwachtCampaign {
       if (campaign.facts['hymnChoice'] == 'burned')
         'Du hast den letzten Vers des Glockenlieds vernichtet.',
       if (campaign.facts['ending'] == 'end-chorus')
-        'Der Namenchor befreite Rabenwacht vom uralten Schweigen.'
+        'Der Namenchor befreite Rabenwacht vom uralten Schweigen.',
       if (campaign.facts['serenMotive'] == 'true')
         'Die Archivakten deuten darauf hin, dass Seren Menschen beschützen wollte.',
       if (campaign.facts['graveClue'] == 'true')
