@@ -2321,11 +2321,28 @@ class Campaign {
             'door13': 14,
             'chamber': 14,
           };
-          final stage = pending.targetId.replaceFirst('rabenwacht:', '');
-          if (rawBible['mode'] != 'rabenwacht-v1' ||
-              !pending.targetId.startsWith('rabenwacht:') ||
-              rawBible['stage'] != stage ||
-              pending.difficulty != difficultyByStage[stage] ||
+          const difficultyByVoiceStage = <String, int>{
+            'elda': 12,
+            'tarek': 13,
+            'grave': 12,
+          };
+          final rabenwacht =
+              rawBible['mode'] == 'rabenwacht-v1' &&
+              pending.targetId.startsWith('rabenwacht:') &&
+              rawBible['stage'] ==
+                  pending.targetId.replaceFirst('rabenwacht:', '') &&
+              pending.difficulty ==
+                  difficultyByStage[pending.targetId.replaceFirst('rabenwacht:', '')];
+          final voice =
+              rawBible['mode'] == 'rabenwacht-voice-v1' &&
+              pending.targetId.startsWith('voice:') &&
+              rawBible['stage'] ==
+                  'voice-${pending.targetId.replaceFirst('voice:', '')}' &&
+              pending.difficulty ==
+                  difficultyByVoiceStage[
+                    pending.targetId.replaceFirst('voice:', '')
+                  ];
+          if (!(rabenwacht || voice) ||
               values.length != 2 ||
               skills[values[1]] != values[0]) {
             throw const FormatException('Ungültige Kampagnenprobe.');
