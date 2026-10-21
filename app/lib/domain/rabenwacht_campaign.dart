@@ -578,7 +578,7 @@ class RabenwachtCampaign {
             clues: {'location': 'Gasthaus'},
           );
         }
-        if (_has(input, 'voss|vorsteher|wache|rat|befrag')) {
+        if (_has(input, 'mara|voss|vorsteher|wache|rat|befrag')) {
           return _move(
             c,
             'watchhouse',
@@ -911,14 +911,14 @@ class RabenwachtCampaign {
             'dexterity',
             'Heimlichkeit',
             13,
-            'Du versuchst den Knochenwächter lautlos zu umgehen.',
+            c.facts['crowsAlerted'] == 'true'
+                ? 'Die Krähen haben den Wächter bereits gewarnt. '
+                      'Du suchst trotzdem lautlos einen Weg vorbei.'
+                : 'Du versuchst den Knochenwächter lautlos zu umgehen.',
             rollId,
           );
         }
-        if (_has(
-          input,
-          'kampf|angreif|waffe|kämpf|stell|wächter|schlüssel|näher',
-        )) {
+        if (_wantsFight(input)) {
           return RabenwachtTurn(
             c.copyWith(storyBible: {...c.storyBible, 'stage': 'sentryFight'}),
             'Die Knochen der alten Rüstung klappern. Ein Skelettwächter '
@@ -1242,15 +1242,16 @@ class RabenwachtCampaign {
         );
       case 'chamber':
         if (passed) {
-          return _ending(
+          return _move(
             c,
-            'end-mercy',
-            'Du sprichst Seren von Fina, Bram und den anderen '
-                'Menschen vor dem Turm. Der Geist lässt den '
-                'schwarzen Glockenschlag verklingen und nimmt '
-                'deine angebotene Gnade an. Sein Opfer befreit '
-                'die Menschen und schließt das Siegel ohne '
-                'weitere Opfer. Rabenwacht erlebt einen neuen Morgen.',
+            'choice',
+            'Deine Worte erreichen Seren. Der Geist vertraut dir '
+                'genug, die Wahrheit über das Opfer zu offenbaren. '
+                'Seren ist bereit, sich erlösen zu lassen. '
+                'Du entscheidest jetzt selbst, ob du ihr diesen '
+                'Frieden anbietest, das Siegel erneuerst '
+                'oder den Runenkreis zerstörst.',
+            clues: {'serenTrust': 'true'},
           );
         }
         return _move(
