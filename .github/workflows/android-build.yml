@@ -80,6 +80,11 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
+      - name: Temporäre Formatdiagnose für Akt VII
+        working-directory: app
+        run: |
+          dart format lib/story/fourteenth_voice_act7.dart test/rabenwacht_fourteenth_voice_act7_test.dart
+          git diff -- lib/story/fourteenth_voice_act7.dart test/rabenwacht_fourteenth_voice_act7_test.dart
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
