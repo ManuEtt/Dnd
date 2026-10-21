@@ -17,16 +17,20 @@ void main() {
   }
 
   Campaign collect(Campaign campaign, String witness) {
-    campaign = engine.act(
-      campaign,
-      witness == 'elda' ? 'Ich besuche Elda.' : 'Ich suche Tarek.',
-    ).campaign;
-    campaign = engine.act(
-      campaign,
-      witness == 'elda'
-          ? 'Ich untersuche die Zeichnungen.'
-          : 'Ich untersuche die Tinte im Brief.',
-    ).campaign;
+    campaign = engine
+        .act(
+          campaign,
+          witness == 'elda' ? 'Ich besuche Elda.' : 'Ich suche Tarek.',
+        )
+        .campaign;
+    campaign = engine
+        .act(
+          campaign,
+          witness == 'elda'
+              ? 'Ich untersuche die Zeichnungen.'
+              : 'Ich untersuche die Tinte im Brief.',
+        )
+        .campaign;
     expect(campaign.pendingRoll, isNotNull);
     return engine.resolveRoll(campaign, natural: 20).campaign;
   }
@@ -52,22 +56,13 @@ void main() {
   test('Akt VII wird in Akt VI an der Galerie angeschlossen', () {
     final before = gallery();
     expect(before.facts['voice:chronistMet'], isNull);
-    expect(
-      before.quests.where((q) => q.id == 'voice-chronist'),
-      isEmpty,
-    );
-    var campaign = engine.act(
-      before,
-      'Ich vergleiche die Porträts.',
-    ).campaign;
+    expect(before.quests.where((q) => q.id == 'voice-chronist'), isEmpty);
+    var campaign = engine.act(before, 'Ich vergleiche die Porträts.').campaign;
     expect(campaign.facts['voice:portraitCompared'], 'true');
     expect(campaign.hero.toJson(), before.hero.toJson());
     campaign = engine.act(campaign, 'Ich betrete die Bibliothek.').campaign;
     expect(campaign.facts['voice:chronistMet'], 'true');
-    expect(
-      campaign.quests.where((q) => q.id == 'voice-chronist').length,
-      1,
-    );
+    expect(campaign.quests.where((q) => q.id == 'voice-chronist').length, 1);
     expect(campaign.storyBible['stage'], 'voice-library');
     expect(Campaign.fromJson(campaign.toJson()).toJson(), campaign.toJson());
   });
@@ -83,20 +78,14 @@ void main() {
 
   test('Ablehnung bleibt endgültig, ohne Charakter- oder EP-Änderung', () {
     final before = library();
-    var campaign = engine.act(
-      before,
-      'Ich lehne das Angebot ab.',
-    ).campaign;
+    var campaign = engine.act(before, 'Ich lehne das Angebot ab.').campaign;
     expect(campaign.facts['voice:chronistChoice'], 'refused');
     expect(campaign.hero.toJson(), before.hero.toJson());
     expect(
       campaign.quests.singleWhere((q) => q.id == 'voice-chronist').status,
       'completed',
     );
-    campaign = engine.act(
-      campaign,
-      'Ich täusche Zustimmung vor.',
-    ).campaign;
+    campaign = engine.act(campaign, 'Ich täusche Zustimmung vor.').campaign;
     expect(campaign.facts['voice:chronistChoice'], 'refused');
     expect(campaign.facts['voice:chronistSuspicious'], isNull);
   });
@@ -114,35 +103,30 @@ void main() {
 
   test('Preis erfordert exakte bewusste Zustimmung', () {
     final before = library();
-    var campaign = engine.act(
-      before,
-      'Ich frage nach dem Preis.',
-    ).campaign;
+    var campaign = engine.act(before, 'Ich frage nach dem Preis.').campaign;
     expect(campaign.storyBible['stage'], 'voice-price');
-    campaign = engine.act(
-      campaign,
-      'Ich bestätige den Preis nicht.',
-    ).campaign;
+    campaign = engine.act(campaign, 'Ich bestätige den Preis nicht.').campaign;
     expect(campaign.storyBible['stage'], 'voice-price');
     expect(campaign.facts['voice:chronistChoice'], isNull);
-    campaign = engine.act(
-      campaign,
-      'Ich bestätige den Preis: Eine andere Person wird vergessen.',
-    ).campaign;
+    campaign = engine
+        .act(
+          campaign,
+          'Ich bestätige den Preis: Eine andere Person wird vergessen.',
+        )
+        .campaign;
     expect(campaign.storyBible['stage'], 'voice-library');
     expect(campaign.facts['voice:chronistChoice'], 'accepted');
     expect(campaign.facts['voice:chronistDebt'], 'pending');
     expect(campaign.hero.toJson(), before.hero.toJson());
-    expect(campaign.npcs.map((n) => n.id).toList(),
-        before.npcs.map((n) => n.id).toList());
+    expect(
+      campaign.npcs.map((n) => n.id).toList(),
+      before.npcs.map((n) => n.id).toList(),
+    );
     expect(Campaign.fromJson(campaign.toJson()).toJson(), campaign.toJson());
   });
 
   test('Eine Preisfrage kann ohne Konsequenzen abgebrochen werden', () {
-    var campaign = engine.act(
-      library(),
-      'Was kostet der Handel?',
-    ).campaign;
+    var campaign = engine.act(library(), 'Was kostet der Handel?').campaign;
     campaign = engine.act(campaign, 'Ich lehne ab.').campaign;
     expect(campaign.storyBible['stage'], 'voice-library');
     expect(campaign.facts['voice:chronistChoice'], isNull);
@@ -150,30 +134,26 @@ void main() {
   });
 
   test('Blattbelege müssen vor Übergabe tatsächlich entdeckt werden', () {
-    var campaign = engine.act(
-      library(),
-      'Ich suche das vierzehnte Blatt.',
-    ).campaign;
+    var campaign = engine
+        .act(library(), 'Ich suche das vierzehnte Blatt.')
+        .campaign;
     expect(campaign.storyBible['stage'], 'voice-ledger');
-    campaign = engine.act(
-      campaign,
-      'Ich vertraue Liora den Namen an.',
-    ).campaign;
+    campaign = engine
+        .act(campaign, 'Ich vertraue Liora den Namen an.')
+        .campaign;
     expect(campaign.storyBible['stage'], 'voice-ledger');
     expect(campaign.facts['voice:nameCustody'], isNull);
-    campaign = engine.act(
-      campaign,
-      'Ich untersuche das Blatt.',
-    ).campaign;
+    campaign = engine.act(campaign, 'Ich untersuche das Blatt.').campaign;
     expect(campaign.facts['voice:oathPageFound'], 'true');
-    campaign = engine.act(
-      campaign,
-      'Ich vertraue Liora den Namen an.',
-    ).campaign;
+    campaign = engine
+        .act(campaign, 'Ich vertraue Liora den Namen an.')
+        .campaign;
     expect(campaign.storyBible['stage'], 'voice-threshold');
     expect(campaign.facts['voice:nameCustody'], 'liora');
-    expect(campaign.quests.singleWhere((q) => q.id == 'voice-main').status,
-        'active');
+    expect(
+      campaign.quests.singleWhere((q) => q.id == 'voice-main').status,
+      'active',
+    );
     expect(Campaign.fromJson(campaign.toJson()).toJson(), campaign.toJson());
     final paused = engine.act(campaign, 'Ich besiege den Chronisten.').campaign;
     expect(paused.storyBible['stage'], 'voice-threshold');
