@@ -259,7 +259,10 @@ class FourteenthVoiceAct7 {
           gained: {'voice:chronistDebt': 'pending'},
         );
       }
-      if (_has(text, 'lehn|ablehn|abbruch|abbrechen|zurück|zurueck|verzichte') &&
+      if (_has(
+            text,
+            'lehn|ablehn|abbruch|abbrechen|zurück|zurueck|verzichte',
+          ) &&
           !_negated(text)) {
         return _move(
           campaign,
