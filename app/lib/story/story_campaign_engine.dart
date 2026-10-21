@@ -3,13 +3,14 @@ import 'dart:convert';
 import '../domain/ai_story.dart';
 import '../domain/models.dart';
 import 'story_memory_engine.dart';
+import 'story_rule_boundary.dart';
 
 typedef StoryCommit = GameUpdate Function(
   Campaign before,
   Campaign next,
   String narration, {
-  String type,
-  Map<String, dynamic> payload,
+  required String type,
+  required Map<String, dynamic> payload,
 });
 
 /// Isolated narrative-state mutations. No random dice and no combat rules.
@@ -24,6 +25,24 @@ class StoryCampaignEngine {
   final String Function(String) _id;
   final DateTime Function() _clock;
   final StoryCommit _commit;
+
+  GameUpdate _commitStory(
+    Campaign before,
+    Campaign next,
+    String narration, {
+    required String type,
+    required Map<String, dynamic> payload,
+  }) {
+    final update = _commit(
+      before,
+      next,
+      narration,
+      type: type,
+      payload: payload,
+    );
+    StoryRuleBoundary.ensureRuleStateUnchanged(before, update.campaign);
+    return update;
+  }
 
   /// Replaces the narration of the latest unconfirmed free turn, never rules.
   /// Its existing checkpoint is rewritten with the same confirmed game state.
@@ -104,6 +123,7 @@ class StoryCampaignEngine {
       events: [...campaign.events.take(campaign.events.length - 1), event],
     );
     Campaign.fromJson(result.toJson());
+    StoryRuleBoundary.ensureRuleStateUnchanged(campaign, result);
     return GameUpdate(campaign: result, events: [event]);
   }
 
@@ -259,6 +279,7 @@ class StoryCampaignEngine {
       events: [...current.events.take(current.events.length - 1), event],
     );
     Campaign.fromJson(result.toJson());
+    StoryRuleBoundary.ensureRuleStateUnchanged(current, result);
     return GameUpdate(campaign: result, events: [event]);
   }
 
@@ -268,7 +289,7 @@ class StoryCampaignEngine {
     if (offer == null) {
       throw const FormatException('Es gibt keinen offenen Vorschlag.');
     }
-    return _commit(
+    return _commitStory(
       campaign,
       campaign.copyWith(adventureOffer: null),
       'Du entscheidest dich gegen ${offer.title}. Die Welt bleibt offen für andere Wege.',
@@ -290,7 +311,7 @@ class StoryCampaignEngine {
       summary: summary,
       createdAt: _clock(),
     );
-    return _commit(
+    return _commitStory(
       campaign,
       campaign.copyWith(sessionRecaps: [...campaign.sessionRecaps, recap]),
       'Ein neuer Sitzungsrückblick wurde im Tagebuch bestätigt und gespeichert.',
@@ -330,7 +351,7 @@ class StoryCampaignEngine {
       note: description,
       recordedAt: _clock(),
     );
-    return _commit(
+    return _commitStory(
       campaign,
       campaign.copyWith(
         npcs: [
@@ -385,7 +406,7 @@ class StoryCampaignEngine {
             for (final old in campaign.storyThreads)
               old.id == threadId ? thread : old,
           ];
-    return _commit(
+    return _commitStory(
       campaign,
       campaign.copyWith(storyThreads: threads),
       'Der Handlungsstrang „${thread.title}“ wurde im Tagebuch gespeichert.',
