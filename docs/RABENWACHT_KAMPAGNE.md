@@ -144,3 +144,11 @@ Der Aktenweg zur dreizehnten Tür steht nur offen, wenn das Gebetbuch (`prayerFo
 Eine freie Texteingabe „Ich wirke …“, „Ich zaubere …“ oder „Ich caste …“ ist **kein gültig bestätigter Zauber**. Die Kampagnenengine erzeugt dadurch keine erfundene Zauberwirkung und verbraucht keine Zauberressourcen. Eine richtige spätere Zauberintegration muss die geprüfte Zauberengine, bestätigte Reichweite, Komponenten, Vorbereitung und verfügbare Ressourcen verwenden, nicht bloße Schlüsselwörter. In diesem Entwicklungsschritt wurden bewusst **keine neuen Zaubereffekte oder Klassenfähigkeiten** eingeführt.
 
 Neue Regressionstests: `app/test/rabenwacht_alternative_checks_test.dart` prüft zugelassene/gesperrte Proben, Fertigkeitswahl, SG, Erfolg, Misserfolg, Speicher-Roundtrip, ursprüngliche Wege und den Schutz gegen unbestätigte Zauber.
+
+## Die stumme Strophe und das vierte Finale (Handlungs-Erweiterung)
+
+Im Bereich Kapelle können Spieler nun die **stumme Strophe des Glockenlieds** entdecken. Bruder Oswin hält sein Geständnis erst für glaubwürdig, wenn der Held das Gebetbuch, Oswins vorhandenes Brandnachtzeugnis oder Maras Glockeneid kennt. Der Spieler kann das Lied **bewahren**, bewusst **vernichten** oder den Auftrag offen lassen und später zurückkehren. Neue Quest: `rabenwacht-hymn`; Ereignisfakten: `hymnSeen` und `hymnChoice`; Oswin-Beziehung reagiert unmittelbar.
+
+Wer darüber hinaus die Namen am Gedenkstein bewahrt, Alriks Vertuschung aufdeckt und Serens Vertrauen gewinnt, kann am Entscheidungspunkt **freiwillig** den **Namenchor** anstimmen. Das vierte Ende `end-chorus` ist ein anderer erzählerischer Ausgang als die bisherigen drei Abschlüsse und erhält deren einmalige Meilenstein-EP. Ohne die Voraussetzungen verrät das Spiel keine vorweggenommene Lösung. Alte Haupt- und Nebenwege bleiben spielbar.
+
+Siehe die vollständige (spoilerhaltige) Dramaturgie in [RABENWACHT_DIE_STUMME_STROPHE.md](RABENWACHT_DIE_STUMME_STROPHE.md). Neue Testdatei: `app/test/rabenwacht_hymn_story_test.dart`. CI/Android-Build und reale Gerätetests müssen für diese Erweiterung gesondert bestätigt werden.
