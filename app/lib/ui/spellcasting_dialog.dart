@@ -153,52 +153,59 @@ class _SpellcastingDialogState extends State<SpellcastingDialog> {
         ),
       ),
       actions: [
-        if (hero.concentratingOn.isNotEmpty)
-          FantasyTextButton(
-            key: const ValueKey('spell-dialog-end-concentration'),
-            label: 'Konzentration beenden',
-            style: FantasyButtonStyle.iron,
-            onPressed: () => Navigator.pop(
-              context,
-              const SpellcastingChoice(
-                name: '',
-                level: -1,
-                pact: false,
-                concentration: false,
+        Wrap(
+          alignment: WrapAlignment.end,
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            if (hero.concentratingOn.isNotEmpty)
+              FantasyTextButton(
+                key: const ValueKey('spell-dialog-end-concentration'),
+                label: 'Konzentration beenden',
+                style: FantasyButtonStyle.iron,
+                onPressed: () => Navigator.pop(
+                  context,
+                  const SpellcastingChoice(
+                    name: '',
+                    level: -1,
+                    pact: false,
+                    concentration: false,
+                  ),
+                ),
               ),
+            FantasyTextButton(
+              label: 'Abbrechen',
+              style: FantasyButtonStyle.iron,
+              onPressed: () => Navigator.pop(context),
             ),
-          ),
-        FantasyTextButton(
-          label: 'Abbrechen',
-          style: FantasyButtonStyle.iron,
-          onPressed: () => Navigator.pop(context),
-        ),
-        FantasyTextButton(
-          key: const ValueKey('spell-dialog-cast'),
-          label: 'Verbrauch bestätigen',
-          style: FantasyButtonStyle.arcane,
-          onPressed: hero.spells.isEmpty
-              ? null
-              : () {
-                  try {
-                    final choice = SpellcastingChoice(
-                      name: _spell!,
-                      level: _level,
-                      pact: _pact,
-                      concentration: _concentration,
-                    );
-                    SpellcastingRules.cast(
-                      hero,
-                      spellName: choice.name,
-                      spellLevel: choice.level,
-                      pactMagic: choice.pact,
-                      concentration: choice.concentration,
-                    );
-                    Navigator.pop(context, choice);
-                  } catch (e) {
-                    setState(() => _error = '$e');
-                  }
-                },
+            FantasyTextButton(
+              key: const ValueKey('spell-dialog-cast'),
+              label: 'Verbrauch bestätigen',
+              style: FantasyButtonStyle.arcane,
+              onPressed: hero.spells.isEmpty
+                  ? null
+                  : () {
+                      try {
+                        final choice = SpellcastingChoice(
+                          name: _spell!,
+                          level: _level,
+                          pact: _pact,
+                          concentration: _concentration,
+                        );
+                        SpellcastingRules.cast(
+                          hero,
+                          spellName: choice.name,
+                          spellLevel: choice.level,
+                          pactMagic: choice.pact,
+                          concentration: choice.concentration,
+                        );
+                        Navigator.pop(context, choice);
+                      } catch (e) {
+                        setState(() => _error = '$e');
+                      }
+                    },
+            ),
+          ],
         ),
       ],
     );
