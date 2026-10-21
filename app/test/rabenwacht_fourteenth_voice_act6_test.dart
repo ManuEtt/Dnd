@@ -240,7 +240,7 @@ void main() {
       final old = completed().copyWith(
         quests: [
           for (final q in completed().quests)
-            if (q.id == 'rabenwacht-well') q.copyWith(status: 'failed') else q,
+            if (q.id == 'rabenwacht-key') q.copyWith(status: 'failed') else q,
         ],
       );
       var campaign = engine.act(old, 'Fortsetzung beginnen').campaign;
@@ -248,7 +248,7 @@ void main() {
       campaign = collect(campaign, 'tarek');
       campaign = engine.act(campaign, 'Ich gehe zum Haus ohne Türen.').campaign;
       expect(
-        campaign.quests.singleWhere((q) => q.id == 'rabenwacht-well').status,
+        campaign.quests.singleWhere((q) => q.id == 'rabenwacht-key').status,
         'failed',
       );
       expect(
