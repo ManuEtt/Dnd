@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/srd_character_classes.dart';
 import 'package:lebendiger_spielleiter/domain/starting_equipment_import.dart';
 import 'package:lebendiger_spielleiter/ui/srd_class_selection_dialog.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 
 Future<void> tapVisible(WidgetTester tester, Finder finder) async {
   await tester.ensureVisible(finder);
@@ -59,7 +60,9 @@ void main() {
       const SrdStartingItem('Musikinstrument (nach Wahl)'),
     ).singleWhere((item) => item.name == 'Laute');
     await tapVisible(tester, find.text(lute.name).last);
-    await tapVisible(tester, find.byKey(const ValueKey('srd-confirm-class')));
+    final confirm = find.byKey(const ValueKey('srd-confirm-class'));
+    expect(tester.widget<FantasyButton>(confirm).onPressed, isNotNull);
+    await tapVisible(tester, confirm);
     expect(result?.selection.characterClass.name, 'Barde');
     expect(result?.equipmentChoices['Musikinstrument (nach Wahl)'], lute.id);
     expect(tester.takeException(), isNull);
