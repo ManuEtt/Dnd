@@ -192,9 +192,7 @@ void main() {
       HeroCharacter(id: 'cancel-hero', name: 'Elowen'),
       (hero) => result = hero,
     );
-    final addItemButton = find.byKey(
-      const ValueKey('character-inventory-add'),
-    );
+    final addItemButton = find.byKey(const ValueKey('character-inventory-add'));
     final editorList = find.byType(ListView).first;
     for (var step = 0; step < 60; step++) {
       if (addItemButton.hitTestable().evaluate().isNotEmpty) break;
