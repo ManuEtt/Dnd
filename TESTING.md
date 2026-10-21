@@ -1,3 +1,8 @@
+## Rabenwacht – Die stumme Strophe (21.10.2026)
+
+- `app/test/rabenwacht_hymn_story_test.dart` prüft: keine Spuren vor der Entdeckung, Questvergabe erst in der Kapelle, fehlende Beweise, Rückreise und Idempotenz, Oswins Erinnerung und Relationship-State, dauerhafte Verbrennung, negative/ambivalente Kommandos, 4-fach gesperrten Namenchor, viertes Finale mit einmaliger EP-Vergabe, klassische Enden und ungelöste Nebenquest.
+- Weiterhin `dart format --output=none --set-exit-if-changed lib test`, `flutter analyze`, `flutter test`, `flutter build apk --debug` und praktischer Android-Spieltest erforderlich.
+
 ## Rabenwacht – alternative Fertigkeitswege (21.10.2026, CI offen)
 
 - `app/test/rabenwacht_alternative_checks_test.dart`: ursprüngliche und neue Wege bei Turmruine/Treppe/Tür, Schwierigkeitsgrade 12–14, echte Heldenproben, Belegfreischaltung, unbestätigte Hinweise, Erfolgs-/Misserfolgszweige, JSON-Roundtrip und frei behauptete Zauberwirkung.
