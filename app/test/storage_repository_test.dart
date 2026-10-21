@@ -305,4 +305,81 @@ void main() {
       );
     },
   );
+  test('Kampagnenfortschritt und Heldenarchiv sind atomar gespeichert', () async {
+    final initial = fixture().copyWith(
+      hero: fixture().hero.copyWith(experience: 0),
+    );
+    await repository.saveCampaign(initial);
+    expect((await repository.loadCharacters()).single.experience, 0);
+    final updated = initial.copyWith(
+      revision: 1,
+      hero: initial.hero.copyWith(experience: 300, gold: 37),
+    );
+    await repository.saveCampaign(updated, expectedRevision: 0);
+    expect((await repository.loadCharacters()).single.experience, 300);
+    expect((await repository.loadCharacters()).single.gold, 37);
+
+    final stale = initial.copyWith(
+      revision: 1,
+      hero: initial.hero.copyWith(experience: 100),
+    );
+    await expectLater(
+      repository.saveCampaign(stale, expectedRevision: 0),
+      throwsA(isA<CampaignConflictException>()),
+    );
+    expect((await repository.loadCharacters()).single.experience, 300);
+    expect((await repository.getCampaign(initial.id))!.hero.experience, 300);
+
+    await repository.close();
+    repository = await SqliteCampaignRepository.open(
+      factory: databaseFactoryFfi,
+      path: databasePath,
+    );
+    expect((await repository.loadCharacters()).single.experience, 300);
+  });
+
+  test('Altes getrenntes Heldenarchiv übernimmt neueren Kampagnenstand', () async {
+    final campaign = fixture().copyWith(
+      hero: fixture().hero.copyWith(experience: 650),
+    );
+    await repository.saveCampaign(campaign);
+    // Simulate a pre-fix archive entry with old XP and an older update time.
+    await repository.saveCharacter(campaign.hero.copyWith(experience: 0));
+    await repository.close();
+    final database = await databaseFactoryFfi.openDatabase(databasePath);
+    await database.update(
+      'characters',
+      {'updated_at': '2020-01-01T00:00:00.000Z'},
+      where: 'id = ?',
+      whereArgs: [campaign.hero.id],
+    );
+    await database.close();
+    repository = await SqliteCampaignRepository.open(
+      factory: databaseFactoryFfi,
+      path: databasePath,
+    );
+    final merged = (await repository.loadCharacters()).single;
+    expect(merged.id, campaign.hero.id);
+    expect(merged.experience, 650);
+
+    // Repair is durable, not just a one-time in-memory projection.
+    await repository.close();
+    repository = await SqliteCampaignRepository.open(
+      factory: databaseFactoryFfi,
+      path: databasePath,
+    );
+    expect((await repository.loadCharacters()).single.experience, 650);
+  });
+
+  test('Ältere Kampagnen dürfen verdiente EP nicht zurücksetzen', () async {
+    final hero = fixture().hero.copyWith(experience: 700);
+    await repository.saveCharacter(hero);
+    final oldCampaign = fixture(id: 'old-adventure').copyWith(
+      hero: hero.copyWith(experience: 0),
+    );
+    await repository.saveCampaign(oldCampaign);
+    expect((await repository.loadCharacters()).single.experience, 700);
+    expect((await repository.getCampaign(oldCampaign.id))!.hero.experience, 0);
+  });
+
 }
