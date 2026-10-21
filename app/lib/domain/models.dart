@@ -1862,6 +1862,63 @@ class TrackedAreaCreature {
   }
 }
 
+/// Separate, manually advanced initiative marker. This is NOT an automatic
+/// actor scheduler: the legacy Encounter alone owns attack/action economy.
+class ManualCombatTurnQueue {
+  ManualCombatTurnQueue({
+    required this.encounterId,
+    required List<String> actorIds,
+    required this.activeIndex,
+    required this.round,
+  }) : actorIds = List.unmodifiable(actorIds) {
+    if (encounterId.isEmpty ||
+        encounterId.length > 128 ||
+        actorIds.length < 2 ||
+        actorIds.length > 21 ||
+        actorIds.any((id) => id.isEmpty || id.length > 128) ||
+        actorIds.toSet().length != actorIds.length ||
+        activeIndex < 0 ||
+        activeIndex >= actorIds.length ||
+        round < 1 ||
+        round > 1000000) {
+      throw const FormatException('Ungültige manuelle Kampf-Zugfolge.');
+    }
+  }
+
+  final String encounterId;
+  final List<String> actorIds;
+  final int activeIndex, round;
+
+  String get activeActorId => actorIds[activeIndex];
+
+  ManualCombatTurnQueue copyWith({int? activeIndex, int? round}) =>
+      ManualCombatTurnQueue(
+        encounterId: encounterId,
+        actorIds: actorIds,
+        activeIndex: activeIndex ?? this.activeIndex,
+        round: round ?? this.round,
+      );
+
+  Map<String, dynamic> toJson() => {
+    'encounterId': encounterId,
+    'actorIds': actorIds.toList(),
+    'activeIndex': activeIndex,
+    'round': round,
+  };
+
+  factory ManualCombatTurnQueue.fromJson(Map<String, dynamic> j) {
+    final ids = _list(j['actorIds'], 'Zugfolge-Akteure')
+        .map((value) => _string(value, 'Zugfolge-Akteur'))
+        .toList();
+    return ManualCombatTurnQueue(
+      encounterId: _string(j['encounterId'], 'Zugfolge-Kampf'),
+      actorIds: ids,
+      activeIndex: _int(j['activeIndex'], 'Aktive Zugfolge-Position'),
+      round: _int(j['round'], 'Zugfolge-Runde', min: 1),
+    );
+  }
+}
+
 class Campaign {
   Campaign({
     required this.id,
@@ -1881,6 +1938,7 @@ class Campaign {
     List<Place> places = const [],
     List<GameEvent> events = const [],
     List<TrackedAreaCreature> trackedAreaCreatures = const [],
+    this.manualTurnQueue,
     this.pendingRoll,
     this.pendingDeathSave,
     this.pendingEnemyShieldHit,
@@ -1913,6 +1971,8 @@ class Campaign {
 
   /// HP-only additional creatures, persistent even if the main fight ends.
   final List<TrackedAreaCreature> trackedAreaCreatures;
+  /// Optional advisory turn cursor; never authorizes real combat actions.
+  final ManualCombatTurnQueue? manualTurnQueue;
   final PendingRoll? pendingRoll;
   final PendingDeathSave? pendingDeathSave;
   final PendingEnemyShieldHit? pendingEnemyShieldHit;
@@ -1934,6 +1994,7 @@ class Campaign {
     List<Place>? places,
     List<GameEvent>? events,
     List<TrackedAreaCreature>? trackedAreaCreatures,
+    Object? manualTurnQueue = _unchanged,
     Object? pendingRoll = _unchanged,
     Object? pendingDeathSave = _unchanged,
     Object? pendingEnemyShieldHit = _unchanged,
@@ -1958,6 +2019,9 @@ class Campaign {
     places: places ?? this.places,
     events: events ?? this.events,
     trackedAreaCreatures: trackedAreaCreatures ?? this.trackedAreaCreatures,
+    manualTurnQueue: identical(manualTurnQueue, _unchanged)
+        ? this.manualTurnQueue
+        : manualTurnQueue as ManualCombatTurnQueue?,
     pendingRoll: identical(pendingRoll, _unchanged)
         ? this.pendingRoll
         : pendingRoll as PendingRoll?,
@@ -1999,6 +2063,7 @@ class Campaign {
       'trackedAreaCreatures': trackedAreaCreatures
           .map((e) => e.toJson())
           .toList(),
+    if (manualTurnQueue != null) 'manualTurnQueue': manualTurnQueue!.toJson(),
     'pendingRoll': pendingRoll?.toJson(),
     if (pendingDeathSave != null)
       'pendingDeathSave': pendingDeathSave!.toJson(),
@@ -2045,6 +2110,26 @@ class Campaign {
         )) {
       throw const FormatException(
         'Ungültige Anzahl oder doppelte IDs zusätzlicher Kreaturen.',
+      );
+    }
+    final manualQueue = j['manualTurnQueue'] == null
+        ? null
+        : ManualCombatTurnQueue.fromJson(
+            _map(j['manualTurnQueue'], 'Manuelle Zugfolge'),
+          );
+    if (manualQueue != null &&
+        (encounter == null ||
+            encounter.isFinished ||
+            manualQueue.encounterId != encounter.id ||
+            !manualQueue.actorIds.contains(hero.id) ||
+            !manualQueue.actorIds.contains(encounter.id) ||
+            manualQueue.actorIds.any(
+              (id) => id != hero.id &&
+                  id != encounter.id &&
+                  !trackedAreaCreatures.any((creature) => creature.id == id),
+            ))) {
+      throw const FormatException(
+        'Manuelle Zugfolge gehört nicht zum aktuellen Kampf.',
       );
     }
     final pendingEnemyShieldHit = j['pendingEnemyShieldHit'] == null
@@ -2346,6 +2431,7 @@ class Campaign {
       ).map((e) => Place.fromJson(_map(e, 'Ort'))).toList(),
       events: events,
       trackedAreaCreatures: trackedAreaCreatures,
+      manualTurnQueue: manualQueue,
       pendingRoll: pending,
       pendingDeathSave: deathChoice,
       pendingEnemyShieldHit: pendingEnemyShieldHit,
