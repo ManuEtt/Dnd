@@ -7104,16 +7104,18 @@
         "app/test/srd_spell_target_rules_test.dart",
         "app/test/srd_spell_inventory_persistence_test.dart",
         "app/test/srd_spell_grid_target_rules_test.dart",
-        "app/test/srd_sphere_area_rules_test.dart"
+        "app/test/srd_sphere_area_rules_test.dart",
+        "app/test/srd_cone_area_rules_test.dart"
       ],
       "code": [
         "app/lib/domain/srd_spell_target_rules.dart",
         "app/lib/domain/srd_spell_preflight_rules.dart",
         "app/lib/domain/game_engine.dart",
         "app/lib/domain/srd_spell_grid_target_rules.dart",
-        "app/lib/domain/srd_sphere_area_rules.dart"
+        "app/lib/domain/srd_sphere_area_rules.dart",
+        "app/lib/domain/srd_cone_area_rules.dart"
       ],
-      "note": "Teilabdeckung: bestätigter Zauberursprung und Distanz plus konservative Vorschau für 2D-Kugel-Rasterkandidaten. Randkandidaten und Deckung bleiben ungeklärt; konkrete Kreaturen-/Objektziele, 3D, andere Flächenformen, SRD-Einzelzauber und tatsächliche Wirkungen fehlen."
+      "note": "Teilabdeckung: bestätigte Ursprung-/Reichweitenprüfung und read-only Kandidaten für Kugel und Kegel. Keine endgültige Auswahl betroffener Ziele, 3D-Geometrie, Größen oder Wirkungsfreigabe."
     },
     {
       "id": "RULE-SPELLS-SPELL-AREAS-OF-EFFECT",
@@ -7128,15 +7130,17 @@
       "rule_implemented": "partial",
       "tests": [
         "app/test/srd_sphere_area_rules_test.dart",
-        "app/test/srd_fireball_grid_preview_dialog_test.dart"
+        "app/test/srd_fireball_grid_preview_dialog_test.dart",
+        "app/test/srd_cone_area_rules_test.dart"
       ],
       "code": [
         "app/lib/domain/srd_sphere_area_rules.dart",
         "app/lib/domain/srd_spell_grid_target_rules.dart",
         "app/lib/ui/srd_fireball_grid_preview_dialog.dart",
-        "app/lib/ui/app.dart"
+        "app/lib/ui/app.dart",
+        "app/lib/domain/srd_cone_area_rules.dart"
       ],
-      "note": "Teilabdeckung: zusätzlich zur konservativen 2D-Kugel-Kandidatenregel steht ein read-only SRD-Feuerball-Planungsdialog mit editierbaren bestätigten Vollhindernissen und widerrufbarer Kartenbestätigung in der Abenteueransicht bereit. Keine automatische Kreaturen-/3D-Wirkung, Schaden oder Speicherung; weiterhin partial."
+      "note": "Teilabdeckung: vorhandene Kugelvorschau und neue Konus-/Kegelvorschau mit 8 bestätigten Richtungen auf 5-Fuß-Raster, möglicher Zellüberdeckung, Ursprungspunktwahl und Deckungsprüfbedarf. Tatsächliche 3D-Wirkung, Treffer, Sichtlinie und übrige Formen bleiben offen."
     },
     {
       "id": "RULE-SPELLS-SPELL-DURATION",
@@ -7317,14 +7321,16 @@
       "tests": [
         "app/test/cover_combat_rules_test.dart",
         "app/test/srd_spell_grid_target_rules_test.dart",
-        "app/test/srd_sphere_area_rules_test.dart"
+        "app/test/srd_sphere_area_rules_test.dart",
+        "app/test/srd_cone_area_rules_test.dart"
       ],
       "code": [
         "app/lib/domain/cover_rules.dart",
         "app/lib/domain/srd_spell_grid_target_rules.dart",
-        "app/lib/domain/srd_sphere_area_rules.dart"
+        "app/lib/domain/srd_sphere_area_rules.dart",
+        "app/lib/domain/srd_cone_area_rules.dart"
       ],
-      "note": "Teilabdeckung: bestätigt bekannte 2D-Vollblocker und gesperrte Mittelpunktstrahlen, markiert diese ausschließlich als Cover-Prüfbedarf statt sichere Unverwundbarkeit. Keine vollständige Cover-Geometrie, Sichtberechnung oder automatische Wirkungsfreigabe."
+      "note": "Teilabdeckung: bestätigte Vollhindernisse und center-to-center Strahlzeugen; bei blockierten Strahlen lediglich Prüfbedarf, keine automatisch behauptete vollständige Deckung oder Schadensimmunität."
     },
     {
       "id": "RULE-SPELLS-COUNTERSPELL-REACTIONS",
