@@ -1,3 +1,13 @@
+## 21.10.2026 – Spielbarer Kampagnen-Einstieg „Die vierzehnte Stimme“ (Akt VI)
+
+- Entwicklung: `feature/rabenwacht-voice-act6-20261021`. Neue Datei `app/lib/story/fourteenth_voice_campaign.dart` hinter der bestehenden StoryRulePort-Schnittstelle, die regeltechnischen Modifikatoren kommen aus dem unveränderten Charakter-Regeladapter.
+- Sichere Kapiteltransition nur nach bestätigtem `end-*`-Abschluss und mit ausdrücklicher Texteingabe „Fortsetzung beginnen“. Die Story beginnt im neuen Modus `rabenwacht-voice-v1`, ohne alte Fakten oder Quests zu löschen.
+- Spielbar: Eröffnung mit Liora, Wahl zwischen Schutz, Beschuldigung oder Belegsuche, drei unabhängige Hinweise mit Regelchecks, gesperrter Hauszugang bei weniger als zwei Belegen, Haus und Porträtgalerie. Enden des Originalspiels beeinflussen Eröffnungstexte; vorhandenes Tarek-Vertrauen beeinflusst sein Auftreten.
+- Tests: Start-/Speichersicherheit, vier mögliche Ausgangsenden, Gegner-/Zauberressourcen unverändert, Dialogkonsequenzen, alle drei Wurfpfade, Scheitern, drei Hinweiskombinationen, spoilerfreie Hinweise, originale Quests unverändert.
+- **Noch nicht fertig:** Akte VII–VIII und ihre Enden, UI-Kachel für Kapitelwechsel, vollständige Android-/Flutter-CI und Gerätetest.
+
+---
+
 ## 21.10.2026 – SRD-Zaubermaterialien als eigenständiger Regelbaustein (CI offen)
 
 - Branch: `feature/srd-spell-material-components-20261021`, basierend auf `main` (`abf30627570095f6b41d34b26d84bda0184bc4f4`).
