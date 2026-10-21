@@ -239,4 +239,51 @@ void main() {
       expect(stored.facts['keyFound'], 'true');
     },
   );
+  test('Kampagnen-EP und Heldenarchiv benutzen dieselbe Charakter-ID', () async {
+    final hero = HeroCharacter(
+      id: 'shared-hero',
+      name: 'Runa',
+      species: 'Mensch',
+      className: 'Waldläufer',
+      experience: 0,
+      abilities: {for (final ability in abilityNames) ability: 12},
+      hitPoints: 12,
+      maxHitPoints: 12,
+      armorClass: 11,
+      speed: 9,
+      weaponDamage: '1d6',
+    );
+    await controller.saveStandaloneHero(hero);
+    await controller.newRabenwachtCampaign(hero);
+    expect(controller.error, isNull);
+    final first = controller.currentCampaign!;
+    expect(first.hero.id, hero.id);
+
+    await controller.saveHero(
+      first.hero.copyWith(experience: 350, gold: 22),
+    );
+    expect(controller.error, isNull);
+    expect(controller.currentCampaign!.hero.experience, 350);
+    expect(controller.characters, hasLength(1));
+    expect(controller.characters.single.id, hero.id);
+    expect(controller.characters.single.experience, 350);
+    expect(controller.characters.single.gold, 22);
+
+    // An edit from the hero screen also updates the active campaign.
+    final oldRevision = controller.currentCampaign!.revision;
+    await controller.saveStandaloneHero(
+      controller.characters.single.copyWith(name: 'Runa die Mutige'),
+    );
+    expect(controller.error, isNull);
+    expect(controller.currentCampaign!.revision, oldRevision + 1);
+    expect(controller.currentCampaign!.hero.name, 'Runa die Mutige');
+
+    // Starting another campaign reuses the earned XP and the same ID.
+    await controller.newRabenwachtCampaign(controller.characters.single);
+    expect(controller.error, isNull);
+    expect(controller.currentCampaign!.hero.id, hero.id);
+    expect(controller.currentCampaign!.hero.experience, 350);
+    expect((await sqlite.loadCharacters()).single.experience, 350);
+  });
+
 }
