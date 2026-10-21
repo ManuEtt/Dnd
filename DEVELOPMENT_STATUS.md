@@ -1,3 +1,13 @@
+## 21.10.2026 – Rabenwacht Epilog (Folgebranch zu offenem PR #84; CI offen)
+
+- **IMPLEMENTIERT:** Nach tatsächlich beendeter „vierzehnter Stimme“ freiwilliger Epilog, sieben Tage später, mit eigenständigen Szenen für Elda, Tarek und Liora. Mindestens zwei verschiedene Gesprächspartner schalten eine ausdrückliche Wahl der Dorfzukunft frei.
+- **DREI LEGACY-AUSGÄNGE:** freiwilliges Gedenkbuch, Veröffentlichung getrennt gekennzeichneter Zeugnisse oder Erinnerungsfest. Finale, vier alte Ursprungsenden, Liora-Beziehung, bestrittene Chronistenschuld und öffentliche Ersatzzeugenaussage bleiben sachgerecht erhalten.
+- **TESTS ERSTELLT – CI OFFEN:** `app/test/rabenwacht_fourteenth_voice_epilogue_test.dart` deckt echten Einstieg, nicht bestätigte und negierte Eingaben, Zeugenbesuche, alte und neue Enden, Save-/Quest-Schutz und wiederholbaren Abschluss ab. Keine EP-, SRD-, Helden- oder Ausrüstungsbuchung.
+- **ABHÄNGIGKEIT:** offener Akt-VIII-PR #84; Folge-PR muss danach auf aktuellen `main` umgestellt werden. Vollständige GitHub-CI und Android-Geräteabnahme separat erforderlich.
+- Einzelheiten: `docs/RABENWACHT_EPILOG_IMPLEMENTIERUNG.md`.
+
+---
+
 ## 21.10.2026 – Rabenwacht: Akt VIII, Rat der Zeugen und drei Finalwege (CI offen)
 
 - **IMPLEMENTIERT (Featurebranch):** Eigenes Storymodul `app/lib/story/fourteenth_voice_act8.dart`. Spielbarer Übergang aus dem belegten Akt-VII-Blatt zum Rat; Prüfung dreier unabhängiger Akt-VI-Ermittlungsbelege oder bewusste, riskante öffentliche Ersatzzeugenaussage bei genau zwei echten Belegen; freier Rückweg zur dritten Spur.
