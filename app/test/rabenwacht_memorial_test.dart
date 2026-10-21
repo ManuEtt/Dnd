@@ -46,7 +46,8 @@ void main() {
     final withoutEvidence = engine.act(campaign, 'Ich bewahre die Namen.').campaign;
     expect(withoutEvidence.facts['graveOath'], isNull);
     expect(withoutEvidence.storyBible['stage'], 'graveyard');
-    expect(withoutEvidence.scene, contains('Gebetbuch'));
+    expect(withoutEvidence.messages.last.text, contains('Gebetbuch'));
+    expect(withoutEvidence.facts['graveOath'], isNull);
 
     campaign = withoutEvidence.copyWith(
       facts: {...withoutEvidence.facts, 'oswinTruth': 'true'},
@@ -128,6 +129,7 @@ void main() {
     campaign = engine.act(campaign, 'Ich lese den Gedenkstein.').campaign;
     campaign = engine.act(campaign, 'Ich will die Namen nicht vergessen.').campaign;
     expect(campaign.facts['graveOath'], isNull);
+    expect(campaign.storyBible['stage'], 'graveyard');
     campaign = engine.act(campaign, 'Ich bin noch unsicher.').campaign;
     expect(campaign.facts['graveOath'], isNull);
   });
