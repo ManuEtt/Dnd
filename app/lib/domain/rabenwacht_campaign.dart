@@ -294,6 +294,12 @@ class RabenwachtCampaign {
         'Dein aktueller Ort: ${campaign.facts['location'] ?? 'unbekannt'}.';
   }
 
+  /// Exact negation words only: "vernichte" must not count as "nicht".
+  static bool _hasNegation(String input) => RegExp(
+    r'\b(?:nicht|niemals|ohne|kein(?:e|en|em|er|es)?)\b',
+    caseSensitive: false,
+  ).hasMatch(input);
+
   static bool _has(String input, String words) {
     final text = input.toLowerCase();
     return words.split('|').any((part) => text.contains(part));
@@ -945,7 +951,7 @@ class RabenwachtCampaign {
           input,
           'bewahr|lern|lerne|singe|sing|abschreib|schreib|notier|rette',
         );
-        final denial = _has(input, 'nicht|niemals|kein|ohne');
+        final denial = _hasNegation(input);
         if ((burn || keep) && (denial || burn == keep)) {
           return RabenwachtTurn(
             c,
@@ -1161,7 +1167,7 @@ class RabenwachtCampaign {
             'bewahr|gedenk|ich nenne|ich ehre|schwör|schwoer|erinner',
           );
           // Ambiguous/negated utterances are never silently resolved.
-          final negated = _has(input, 'nicht|kein|niemals|ohne');
+          final negated = _hasNegation(input);
           if ((hide || remember) && (negated || hide == remember)) {
             return RabenwachtTurn(
               c,
