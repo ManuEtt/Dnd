@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'fantasy_buttons.dart';
+
 import '../domain/models.dart';
 import '../domain/multiclass_rules.dart';
 import '../domain/character_creation_progression.dart';
@@ -191,16 +193,18 @@ class _MulticlassSelectionDialogState extends State<MulticlassSelectionDialog> {
         ),
       ),
       actions: [
-        TextButton(
+        FantasyTextButton(
+          label: 'Abbrechen',
+          style: FantasyButtonStyle.iron,
           onPressed: () => Navigator.pop(context),
-          child: const Text('Abbrechen'),
         ),
-        FilledButton(
+        FantasyTextButton(
           key: const ValueKey('multiclass-accept'),
+          label: 'Stufenaufstieg übernehmen',
+          style: FantasyButtonStyle.arcane,
           onPressed: proposal == null
               ? null
               : () => Navigator.pop(context, proposal),
-          child: const Text('Stufenaufstieg übernehmen'),
         ),
       ],
     );
