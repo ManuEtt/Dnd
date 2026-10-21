@@ -30,12 +30,6 @@ void main() {
   testWidgets('Zauberaktion ist magisch, aber ohne Zauber nicht verfügbar', (
     tester,
   ) async {
-    final previousErrorHandler = FlutterError.onError;
-    FlutterError.onError = (details) {
-      debugPrint('SPELL_DIALOG_OVERFLOW_DETAILS: ${details.toString()}');
-      previousErrorHandler?.call(details);
-    };
-    addTearDown(() => FlutterError.onError = previousErrorHandler);
     await show(
       tester,
       SpellcastingDialog(
