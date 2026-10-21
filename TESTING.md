@@ -1,3 +1,8 @@
+## Rabenwacht: Die vierzehnte Stimme / Akt VI (21.10.2026)
+
+- `app/test/rabenwacht_fourteenth_voice_act6_test.dart`: bestätigt freiwilligen Kapitelwechsel, Erhalt alter Abschlüsse und Charakterdaten, vier originale Enden, nicht wiederholbaren Questbeginn, Liora-Reaktion, spoilerfreie Hinweise, Nachforschungs-/Wahrnehmungsproben bei drei Zeugen, negative Würfe, alle Zweierkombinationen, Galerieszene, Speicher-Roundtrip und unveränderte alte Nebenquests.
+- Regression: `flutter analyze`, `flutter test`, `flutter build apk --debug`; CI-Status vor Merge ablesen. Kein Android-Gerätetest behauptet. Die Fortsetzung verwendet exakt die vorhandene `StoryRulePort`-Schnittstelle und vergibt keinen nicht implementierten Zauber oder automatische Meilenstein-EP.
+
 ## Rabenwacht – Die stumme Strophe (21.10.2026)
 
 - `app/test/rabenwacht_hymn_story_test.dart` prüft: keine Spuren vor der Entdeckung, Questvergabe erst in der Kapelle, fehlende Beweise, Rückreise und Idempotenz, Oswins Erinnerung und Relationship-State, dauerhafte Verbrennung, negative/ambivalente Kommandos, 4-fach gesperrten Namenchor, viertes Finale mit einmaliger EP-Vergabe, klassische Enden und ungelöste Nebenquest.
