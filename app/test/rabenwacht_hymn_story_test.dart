@@ -46,19 +46,24 @@ void main() {
     expect(c.storyBible['stage'], 'hymn');
     expect(c.facts['hymnChoice'], isNull);
     expect(c.messages.last.text, contains('Gebetbuch'));
-    expect(c.npcs.singleWhere((npc) => npc.id == 'oswin').relationship,
-        'neutral');
+    expect(
+      c.npcs.singleWhere((npc) => npc.id == 'oswin').relationship,
+      'neutral',
+    );
   });
 
-  test('Das Lied kann unterbrochen und ohne doppelte Quest erneut entdeckt werden', () {
-    var c = explore(chapter());
-    c = engine.act(c, 'Ich kehre zur Kapelle zurück.').campaign;
-    expect(c.storyBible['stage'], 'chapel');
-    c = explore(c);
-    expect(c.storyBible['stage'], 'hymn');
-    expect(c.quests.where((q) => q.id == 'rabenwacht-hymn').length, 1);
-    expect(c.facts['hymnChoice'], isNull);
-  });
+  test(
+    'Das Lied kann unterbrochen und ohne doppelte Quest erneut entdeckt werden',
+    () {
+      var c = explore(chapter());
+      c = engine.act(c, 'Ich kehre zur Kapelle zurück.').campaign;
+      expect(c.storyBible['stage'], 'chapel');
+      c = explore(c);
+      expect(c.storyBible['stage'], 'hymn');
+      expect(c.quests.where((q) => q.id == 'rabenwacht-hymn').length, 1);
+      expect(c.facts['hymnChoice'], isNull);
+    },
+  );
 
   test('Oswin vervollständigt das Lied mit bestätigten Aufzeichnungen', () {
     var c = explore(chapter(facts: {'prayerFound': 'true'}));
@@ -69,8 +74,10 @@ void main() {
       c.quests.singleWhere((q) => q.id == 'rabenwacht-hymn').status,
       'completed',
     );
-    expect(c.npcs.singleWhere((npc) => npc.id == 'oswin').relationship,
-        'verbündet');
+    expect(
+      c.npcs.singleWhere((npc) => npc.id == 'oswin').relationship,
+      'verbündet',
+    );
     expect(c.scene, contains('Vierzehn Schläge'));
     expect(Campaign.fromJson(c.toJson()).toJson(), c.toJson());
     final experience = c.hero.experience;
@@ -89,23 +96,28 @@ void main() {
       c.quests.singleWhere((q) => q.id == 'rabenwacht-hymn').status,
       'failed',
     );
-    expect(c.npcs.singleWhere((npc) => npc.id == 'oswin').relationship,
-        'abweisend');
+    expect(
+      c.npcs.singleWhere((npc) => npc.id == 'oswin').relationship,
+      'abweisend',
+    );
     c = explore(c);
     expect(c.facts['hymnChoice'], 'burned');
     expect(c.quests.where((q) => q.id == 'rabenwacht-hymn').length, 1);
     expect(Campaign.fromJson(c.toJson()).toJson(), c.toJson());
   });
 
-  test('Negierte oder widersprüchliche Handlungen entscheiden nicht automatisch', () {
-    var c = explore(chapter(facts: {'oswinTruth': 'true'}));
-    c = engine.act(c, 'Ich will das Lied nicht verbrennen.').campaign;
-    expect(c.facts['hymnChoice'], isNull);
-    expect(c.storyBible['stage'], 'hymn');
-    c = engine.act(c, 'Ich bewahre das Lied und verbrenne es.').campaign;
-    expect(c.facts['hymnChoice'], isNull);
-    expect(c.storyBible['stage'], 'hymn');
-  });
+  test(
+    'Negierte oder widersprüchliche Handlungen entscheiden nicht automatisch',
+    () {
+      var c = explore(chapter(facts: {'oswinTruth': 'true'}));
+      c = engine.act(c, 'Ich will das Lied nicht verbrennen.').campaign;
+      expect(c.facts['hymnChoice'], isNull);
+      expect(c.storyBible['stage'], 'hymn');
+      c = engine.act(c, 'Ich bewahre das Lied und verbrenne es.').campaign;
+      expect(c.facts['hymnChoice'], isNull);
+      expect(c.storyBible['stage'], 'hymn');
+    },
+  );
 
   test('Der verborgene Namenchor bleibt ohne Beweise gesperrt', () {
     var c = chapter();
@@ -118,36 +130,39 @@ void main() {
     expect(c.storyBible['stage'], 'end-seal');
   });
 
-  test('Der Namenchor wird nur durch vier bestätigte Voraussetzungen möglich', () {
-    var c = explore(chapter(facts: {'oswinTruth': 'true'}));
-    c = engine.act(c, 'Ich bewahre das Lied.').campaign;
-    c = c.copyWith(
-      storyBible: {...c.storyBible, 'stage': 'choice'},
-      facts: {
-        ...c.facts,
-        'graveOath': 'remembered',
-        'alrikConfession': 'true',
-      },
-    );
-    c = engine.act(c, 'Ich singe den Namenchor.').campaign;
-    expect(c.storyBible['stage'], 'choice');
-    expect(c.facts['ending'], isNull);
-    expect(c.messages.last.text, contains('Serens Vertrauen'));
-    c = c.copyWith(facts: {...c.facts, 'serenTrust': 'true'});
-    c = engine.act(c, 'Ich singe den Namenchor.').campaign;
-    expect(c.storyBible['stage'], 'end-chorus');
-    expect(c.facts['ending'], 'end-chorus');
-    expect(c.facts['allMissingFound'], 'true');
-    expect(c.scene, contains('Hüterin der Erinnerungen'));
-    expect(
-      c.quests.singleWhere((q) => q.id == 'rabenwacht-hymn').status,
-      'completed',
-    );
-    expect(Campaign.fromJson(c.toJson()).toJson(), c.toJson());
-    final experience = c.hero.experience;
-    c = engine.act(c, 'Ich singe erneut.').campaign;
-    expect(c.hero.experience, experience);
-  });
+  test(
+    'Der Namenchor wird nur durch vier bestätigte Voraussetzungen möglich',
+    () {
+      var c = explore(chapter(facts: {'oswinTruth': 'true'}));
+      c = engine.act(c, 'Ich bewahre das Lied.').campaign;
+      c = c.copyWith(
+        storyBible: {...c.storyBible, 'stage': 'choice'},
+        facts: {
+          ...c.facts,
+          'graveOath': 'remembered',
+          'alrikConfession': 'true',
+        },
+      );
+      c = engine.act(c, 'Ich singe den Namenchor.').campaign;
+      expect(c.storyBible['stage'], 'choice');
+      expect(c.facts['ending'], isNull);
+      expect(c.messages.last.text, contains('Serens Vertrauen'));
+      c = c.copyWith(facts: {...c.facts, 'serenTrust': 'true'});
+      c = engine.act(c, 'Ich singe den Namenchor.').campaign;
+      expect(c.storyBible['stage'], 'end-chorus');
+      expect(c.facts['ending'], 'end-chorus');
+      expect(c.facts['allMissingFound'], 'true');
+      expect(c.scene, contains('Hüterin der Erinnerungen'));
+      expect(
+        c.quests.singleWhere((q) => q.id == 'rabenwacht-hymn').status,
+        'completed',
+      );
+      expect(Campaign.fromJson(c.toJson()).toJson(), c.toJson());
+      final experience = c.hero.experience;
+      c = engine.act(c, 'Ich singe erneut.').campaign;
+      expect(c.hero.experience, experience);
+    },
+  );
 
   test('Vernichtetes Glockenlied sperrt den Namenchor dauerhaft', () {
     var c = explore(chapter(facts: {'prayerFound': 'true'}));

@@ -465,8 +465,10 @@ class RabenwachtCampaign {
       'graveyard' => 'reach-graveyard',
       'ruins' => 'reach-ruins',
       'chamber' => 'reach-chamber',
-      'end-seal' || 'end-break' || 'end-mercy' || 'end-chorus' =>
-        'resolve-rabenwacht',
+      'end-seal' ||
+      'end-break' ||
+      'end-mercy' ||
+      'end-chorus' => 'resolve-rabenwacht',
       _ => null,
     };
     final reward = milestone == null
@@ -896,7 +898,8 @@ class RabenwachtCampaign {
                   const Quest(
                     id: 'rabenwacht-hymn',
                     title: 'Die stumme Strophe',
-                    description: 'Erfahre, warum der Glockenorden '
+                    description:
+                        'Erfahre, warum der Glockenorden '
                         'den letzten Vers des Lieds verbot.',
                   ),
               ],
@@ -1588,16 +1591,15 @@ class RabenwachtCampaign {
               'die bewahrten Namen der Opfer',
             if (c.facts['alrikConfession'] != 'true')
               'Alriks belegbares Geständnis',
-            if (c.facts['serenTrust'] != 'true')
-              'Serens Vertrauen',
+            if (c.facts['serenTrust'] != 'true') 'Serens Vertrauen',
           ];
           if (missing.isNotEmpty) {
             return RabenwachtTurn(
               c,
               'Du versuchst, den Namenchor anzustimmen. '
-                  'Doch dafür fehlen noch: ${missing.join(', ')}. '
-                  'Das Schicksal des Siegels steht dir '
-                  'weiterhin auf den drei bekannten Wegen offen.',
+              'Doch dafür fehlen noch: ${missing.join(', ')}. '
+              'Das Schicksal des Siegels steht dir '
+              'weiterhin auf den drei bekannten Wegen offen.',
             );
           }
           return _ending(
