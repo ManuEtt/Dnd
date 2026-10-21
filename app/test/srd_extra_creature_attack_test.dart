@@ -237,7 +237,7 @@ void main() {
       _input(damage: '11d6+2'),
       _input(damage: '2d20+1'),
       _input(cover: CoverLevel.total),
-      _input(ac: 95, cover: CoverLevel.threeQuarters, opposite: true),
+      _input(ac: 96, cover: CoverLevel.threeQuarters, opposite: true),
     ]) {
       expect(
         () => SrdExtraCreatureAttackRules.resolve(DiceEngine(random: rng), bad),
