@@ -381,9 +381,9 @@ void main() {
   test('Ältere Kampagnen dürfen verdiente EP nicht zurücksetzen', () async {
     final hero = fixture().hero.copyWith(experience: 700);
     await repository.saveCharacter(hero);
-    final oldCampaign = fixture(id: 'old-adventure').copyWith(
-      hero: hero.copyWith(experience: 0),
-    );
+    final oldCampaign = fixture(
+      id: 'old-adventure',
+    ).copyWith(hero: hero.copyWith(experience: 0));
     await repository.saveCampaign(oldCampaign);
     expect((await repository.loadCharacters()).single.experience, 700);
     expect((await repository.getCampaign(oldCampaign.id))!.hero.experience, 0);
