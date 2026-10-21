@@ -240,6 +240,12 @@ class RabenwachtCampaign {
         'Die Archivakten deuten darauf hin, dass Seren Menschen beschützen wollte.',
       if (campaign.facts['graveClue'] == 'true')
         'Am Friedhof steht: Der Schlüssel trennt ein Versprechen.',
+      if (campaign.facts['memorialSeen'] == 'true')
+        'Am Gedenkstein bitten Stimmen, die verschwiegenen Namen nicht zu vergessen.',
+      if (campaign.facts['graveOath'] == 'remembered')
+        'Du hast die Namen der Opfer am Gedenkstein bewahrt.',
+      if (campaign.facts['graveOath'] == 'hidden')
+        'Du hast die Namen am Gedenkstein bewusst verschwiegen.',
       if (campaign.facts['runeClue'] == 'true')
         'Die Turmrunen binden das Ritual an den Willen und an Erinnerungen.',
       if (campaign.facts['silverKeyFound'] == 'true')
@@ -806,6 +812,124 @@ class RabenwachtCampaign {
                     'bevor du weiterziehst.',
         );
       case 'graveyard':
+        // The optional memorial is a local story branch, not a mandatory
+        // gate. It does not use new rule modifiers or unconfirmed rewards.
+        if (_has(
+          input,
+          'gedenkstein|namenlosen|flüsterstein|fluesterstein|'
+          'geisterstimme|schwarzen stein',
+        )) {
+          if (c.facts['graveOath'] == 'remembered') {
+            return RabenwachtTurn(
+              c,
+              'Der Gedenkstein trägt nun die bewahrten Namen. '
+              'Die Stimmen schweigen dankbar. Du kannst zum '
+              'Waldpfad weitergehen.',
+            );
+          }
+          if (c.facts['graveOath'] == 'hidden') {
+            return RabenwachtTurn(
+              c,
+              'Die Namen bleiben unter dem Stein verborgen. '
+              'Der Wind klingt wie ein erstickter Glockenschlag. '
+              'Du kannst zum Waldpfad weitergehen.',
+            );
+          }
+          final visited = _move(
+            c,
+            'graveyard',
+            'Im Schatten einer abgestorbenen Eibe liegt ein Gedenkstein '
+                'mit drei ausgemeißelten Namen. Darunter hörst du '
+                'Stimmen: „Wer erinnert sich noch an uns?“ '
+                'Alte Zeichen erinnern an den Glockenorden. '
+                'Du kannst nach Hinweisen suchen, die Namen '
+                'bewahren, sie verbergen oder weiterziehen.',
+            clues: {'memorialSeen': 'true', 'location': 'Friedhof'},
+          );
+          return RabenwachtTurn(
+            visited.campaign.copyWith(
+              quests: [
+                ...visited.campaign.quests,
+                if (!visited.campaign.quests.any(
+                  (quest) => quest.id == 'rabenwacht-memorial',
+                ))
+                  const Quest(
+                    id: 'rabenwacht-memorial',
+                    title: 'Die ausgelöschten Namen',
+                    description:
+                        'Entscheide, ob die Namen der '
+                        'Opfer des Glockenordens bewahrt werden.',
+                  ),
+              ],
+            ),
+            visited.narration,
+          );
+        }
+        if (c.facts['memorialSeen'] == 'true' && c.facts['graveOath'] == null) {
+          final hide = _has(
+            input,
+            'verberg|verschweig|verbrenn|vergess|vernicht|zerstör|leugne',
+          );
+          final remember = _has(
+            input,
+            'bewahr|gedenk|ich nenne|ich ehre|schwör|schwoer|erinner',
+          );
+          // Ambiguous/negated utterances are never silently resolved.
+          final negated = _has(input, 'nicht|kein|niemals|ohne');
+          if ((hide || remember) && (negated || hide == remember)) {
+            return RabenwachtTurn(
+              c,
+              'Du bist noch unentschlossen. Soll ich die Namen bewahren '
+              'oder das alte Schweigen fortsetzen? '
+              'Formuliere deine Entscheidung ausdrücklich.',
+            );
+          }
+          if (!negated && hide != remember) {
+            final evidence =
+                c.facts['prayerFound'] == 'true' ||
+                c.facts['oswinTruth'] == 'true' ||
+                c.facts['maraLetter'] == 'true' ||
+                c.facts['serenMotive'] == 'true';
+            if (remember && !evidence) {
+              return RabenwachtTurn(
+                c,
+                'Du willst die Namen bewahren, doch die Inschrift '
+                'ist unleserlich. Das Gebetbuch, Oswins Zeugnis '
+                'oder die alten Aufzeichnungen könnten helfen. '
+                'Du kannst später zurückkehren oder jetzt '
+                'bewusst das Schweigen wählen.',
+              );
+            }
+            final updated = c.copyWith(
+              facts: {
+                ...c.facts,
+                'graveOath': remember ? 'remembered' : 'hidden',
+              },
+              quests: [
+                for (final quest in c.quests)
+                  if (quest.id == 'rabenwacht-memorial')
+                    quest.copyWith(status: remember ? 'completed' : 'failed')
+                  else
+                    quest,
+              ],
+            );
+            return _move(
+              updated,
+              'graveyard',
+              remember
+                  ? 'Du sprichst die Namen laut aus den geretteten '
+                        'Aufzeichnungen. Ein warmer Wind streicht '
+                        'über die Gräber. Die Stimmen bitten dich, '
+                        'die Wahrheit nach Rabenwacht zurückzutragen. '
+                        'Im Nebel führt ein Pfad in die Rabenschlucht.'
+                  : 'Du verdeckst die ausgelöschten Namen erneut. '
+                        'Die Stimmen verstummen, aber das Versprechen '
+                        'des Ordens bleibt ungebrochen. '
+                        'Du entdeckst den Pfad zur Rabenschlucht.',
+              clues: {'location': 'Friedhof'},
+            );
+          }
+        }
         if (_has(input, 'grab|stein|zeichen|namen|untersuch|les')) {
           return _move(
             c,
@@ -1301,10 +1425,22 @@ class RabenwachtCampaign {
       if (c.facts['serenTrust'] == 'true')
         'Serens Vertrauen verändert, wie das Dorf '
             'über den gebundenen Geist spricht.',
+      if (c.facts['graveOath'] == 'remembered')
+        'Vor dem Dorf liest du die bewahrten Namen vor. '
+            'Die Familien wissen endlich, was damals geschah.',
+      if (c.facts['graveOath'] == 'hidden')
+        'Die ausgelöschten Namen bleiben ein Geheimnis. '
+            'Einige Familien erfahren nie die ganze Wahrheit.',
     ].join(' ');
     final next = c.copyWith(
       quests: [
-        for (final quest in c.quests) quest.copyWith(status: 'completed'),
+        for (final quest in c.quests)
+          if (quest.id == 'rabenwacht-memorial' && quest.status == 'active')
+            quest.copyWith(status: 'failed')
+          else if (quest.status == 'active')
+            quest.copyWith(status: 'completed')
+          else
+            quest,
       ],
       facts: {...c.facts, 'allMissingFound': 'true', 'ending': stage},
     );
