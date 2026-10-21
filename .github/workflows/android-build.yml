@@ -80,9 +80,6 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
-      - name: Dart-UI-Formatdiagnose Feuerball (temporär)
-        working-directory: app
-        run: dart format --output=show lib/ui/srd_fireball_grid_preview_dialog.dart test/srd_fireball_grid_preview_dialog_test.dart
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
