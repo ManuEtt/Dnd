@@ -146,12 +146,16 @@ class SrdConeAreaRules {
     final upperY = triangle.map((p) => p.$2).reduce(math.max);
     final candidates = <SrdConeCellCandidate>[];
 
-    for (var row = math.max(0, lowerY.floor() - 1);
-        row < map.height && row <= upperY.ceil();
-        row++) {
-      for (var col = math.max(0, lowerX.floor() - 1);
-          col < map.width && col <= upperX.ceil();
-          col++) {
+    for (
+      var row = math.max(0, lowerY.floor() - 1);
+      row < map.height && row <= upperY.ceil();
+      row++
+    ) {
+      for (
+        var col = math.max(0, lowerX.floor() - 1);
+        col < map.width && col <= upperX.ceil();
+        col++
+      ) {
         final cell = SrdGridCell(col, row);
         if (map.fullBlockers.contains(cell) ||
             !_triangleTouchesSquare(triangle, col, row)) {
@@ -164,11 +168,12 @@ class SrdConeAreaRules {
         final forward = deltaX * ux + deltaY * uy;
         final sideways = deltaX * uy - deltaY * ux;
         final centered =
-            forward >= 0 &&
-            forward <= length &&
-            sideways.abs() <= forward / 2;
-        final clear =
-            SrdSpellGridTargetRules.hasClearCenterRay(map, origin, cell);
+            forward >= 0 && forward <= length && sideways.abs() <= forward / 2;
+        final clear = SrdSpellGridTargetRules.hasClearCenterRay(
+          map,
+          origin,
+          cell,
+        );
         candidates.add(
           SrdConeCellCandidate(
             cell: cell,
@@ -217,8 +222,7 @@ class SrdConeAreaRules {
       final triangleMax = triangleDots.reduce(math.max);
       final squareMin = squareDots.reduce(math.min);
       final squareMax = squareDots.reduce(math.max);
-      if (triangleMax < squareMin - 1e-9 ||
-          squareMax < triangleMin - 1e-9) {
+      if (triangleMax < squareMin - 1e-9 || squareMax < triangleMin - 1e-9) {
         return false;
       }
     }
