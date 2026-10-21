@@ -10,6 +10,7 @@ import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_catalog.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_inventory_rules.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_preflight_rules.dart';
+import 'package:lebendiger_spielleiter/domain/srd_spell_grid_target_rules.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_target_rules.dart';
 import 'package:lebendiger_spielleiter/data/srd_spell_catalog_loader.dart';
 import 'package:lebendiger_spielleiter/services/game_controller.dart';
@@ -64,10 +65,16 @@ SrdSpellCastPlan _plan(HeroCharacter hero, SrdSpellDefinition spell) =>
       slotLevel: 1,
       actionAvailableConfirmed: true,
       targetRulesConfirmed: true,
-      targetFacts: const SrdSpellTargetFacts(
-        mode: SrdSpellOriginMode.touched,
+      gridTarget: SrdSpellGridTargetRequest(
+        map: SrdSpellGridMap(
+          width: 4,
+          height: 4,
+          fullBlockers: const [],
+          fullBlockersSurveyedConfirmed: true,
+        ),
+        caster: const SrdGridCell(0, 0),
+        origin: const SrdGridCell(0, 1),
         withinTouchReachConfirmed: true,
-        clearPathConfirmed: true,
       ),
       verbalComponentConfirmed: true,
       somaticComponentConfirmed: true,
