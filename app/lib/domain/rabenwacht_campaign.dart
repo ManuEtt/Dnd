@@ -56,6 +56,7 @@ class RabenwachtCampaign {
       },
       facts: const {
         'origin': 'rabenwacht',
+        'visited:road': 'true',
         'location': 'Straße nach Rabenwacht',
         'bells': 'Seit sieben Nächten läutet der zerstörte Glockenturm.',
       },
@@ -221,6 +222,10 @@ class RabenwachtCampaign {
         'Im Dorfbrunnen spiegelt sich eine vierzehnte Tür, die oberirdisch fehlt.',
       if (campaign.facts['maraMet'] == 'true')
         'Mara Voss bestätigte: Drei Dorfbewohner verschwanden am schwarzen Bach.',
+      if (campaign.facts['maraTrust'] == 'true')
+        'Mara vertraute dir den Glockeneid und Alriks versiegelte Akten an.',
+      if (campaign.facts['maraDefied'] == 'true')
+        'Nach eurem Streit hält Mara die Ratsakten zurück.',
       if (campaign.facts['tarekTrust'] == 'true')
         'Tarek markierte Mühle, Kapelle und Chronistenhaus auf einer Karte.',
       if (campaign.facts['finaNote'] == 'true')
@@ -264,6 +269,90 @@ class RabenwachtCampaign {
     return words.split('|').any((part) => text.contains(part));
   }
 
+  /// Negated commands such as "nicht angreifen" must not start combat.
+  static bool _wantsFight(String input) {
+    final text = input.toLowerCase();
+    final verbs = RegExp(
+      r'\b(?:angreif\w*|attackier\w*|greif\w*|kämpf\w*|kaempf\w*|'
+      r'schlag\w*|töt\w*|schieß\w*|schiess\w*)',
+    );
+    for (final match in verbs.allMatches(text)) {
+      final before = text.substring(0, match.start);
+      final after = text.substring(match.end);
+      // "greifen nach" is grasping, not an attack. Only "greifen ... an"
+      // counts here; explicit "angreifen" remains independently supported.
+      if (match.group(0)!.startsWith('greif') &&
+          !RegExp(r'^\s+(?:\S+\s+){0,5}an\b').hasMatch(after)) {
+        continue;
+      }
+      final refusalBefore = RegExp(
+        r'\b(?:nicht|kein|keine|keinen|ohne|niemals)\b'
+        r'(?:\s+\S+){0,4}\s*$',
+      ).hasMatch(before);
+      final refusalAfter = RegExp(
+        r'^\s+(?:\S+\s+){0,4}nicht\b',
+      ).hasMatch(after);
+      if (!refusalBefore && !refusalAfter) return true;
+    }
+    return false;
+  }
+
+  /// Travel to discovered locations; visit markers survive saving/loading.
+  static RabenwachtTurn? _revisit(Campaign c, String input, String stage) {
+    if (!_has(input, 'geh|reise|kehr|zurück|zurueck|lauf|besuch')) {
+      return null;
+    }
+    const names = <String, String>{
+      'square': 'dorfplatz|platz',
+      'watchhouse': 'ratsstube|vorsteherin',
+      'inn': 'gasthaus|schankstube|taverne|wirtshaus',
+      'mill': 'mühle|muehle',
+      'chapel': 'kapelle',
+      'archive': 'chronistenhaus|archiv',
+      'graveyard': 'friedhof',
+      'forest': 'rabenschlucht|waldpfad',
+      'ruins': 'turmruine|turm',
+    };
+    const locations = <String, String>{
+      'square': 'Dorfplatz',
+      'watchhouse': 'Ratsstube',
+      'inn': 'Gasthaus',
+      'mill': 'Alte Mühle',
+      'chapel': 'Kapelle',
+      'archive': 'Chronistenhaus',
+      'graveyard': 'Friedhof',
+      'forest': 'Rabenschlucht',
+      'ruins': 'Turmruine',
+    };
+    final spoken = input.toLowerCase();
+    String? target;
+    var lastMention = -1;
+    for (final entry in names.entries) {
+      for (final word in entry.value.split('|')) {
+        final at = spoken.lastIndexOf(word);
+        if (at > lastMention) {
+          target = entry.key;
+          lastMention = at;
+        }
+      }
+    }
+    if (target == null || target == stage) return null;
+    final alreadyKnown = c.facts['visited:$target'] == 'true';
+    final maraRoute =
+        c.facts['maraLetter'] == 'true' &&
+        (target == 'mill' || target == 'chapel');
+    if (!alreadyKnown && !maraRoute) return null;
+    final label = locations[target]!;
+    return _move(
+      c,
+      target,
+      'Du kehrst an den bekannten Ort $label zurück. '
+      'Deine bisherigen Erkenntnisse bleiben erhalten. '
+      'Du kannst dort weiteren Spuren nachgehen.',
+      clues: {'location': label},
+    );
+  }
+
   static RabenwachtTurn _move(
     Campaign c,
     String stage,
@@ -272,7 +361,7 @@ class RabenwachtCampaign {
     bool battle = false,
   }) {
     final narration = '${c.hero.name}, $scene';
-    final facts = {...c.facts, ...clues};
+    final facts = {...c.facts, ...clues, 'visited:$stage': 'true'};
     final located =
         stage == 'chamber' ||
         stage == 'choice' ||
@@ -312,6 +401,10 @@ class RabenwachtCampaign {
         for (final npc in c.npcs)
           if (npc.id == 'elda' && facts['eldaHelped'] == 'true')
             npc.copyWith(relationship: 'freundlich')
+          else if (npc.id == 'mara' && facts['maraTrust'] == 'true')
+            npc.copyWith(relationship: 'verbündet')
+          else if (npc.id == 'mara' && facts['maraDefied'] == 'true')
+            npc.copyWith(relationship: 'feindselig')
           else if (npc.id == 'tarek' && facts['tarekTrust'] == 'true')
             npc.copyWith(relationship: 'freundlich')
           else if (npc.id == 'joren' && facts['jorenMet'] == 'true')
@@ -407,6 +500,8 @@ class RabenwachtCampaign {
     if (_has(input, 'hinweise|hinweisprotokoll|ermittlungsstand|spurenliste')) {
       return RabenwachtTurn(c, discoveredClues(c));
     }
+    final revisit = _revisit(c, input, stage);
+    if (revisit != null) return revisit;
     switch (stage) {
       case 'road':
         if (_has(input, 'schritt|nebel|spur|wahrnehm|untersuch|lauschen')) {
@@ -490,16 +585,18 @@ class RabenwachtCampaign {
             clues: {'location': 'Gasthaus'},
           );
         }
-        if (_has(input, 'voss|vorsteher|wache|rat|befrag')) {
+        if (_has(input, 'mara|voss|vorsteher|wache|rat|befrag')) {
           return _move(
             c,
-            'inn',
-            'Mara Voss erklärt, dass die drei Vermissten nacheinander '
-                'am schwarzen Bach gesehen wurden. „Wenn du helfen willst, '
-                'rede mit Tarek und prüfe die Mühle.“ '
-                'Ihre rechte Hand verbirgt sie unter einem Handschuh. '
-                'Vor dem Gasthaus erwartet dich jemand.',
-            clues: {'maraMet': 'true'},
+            'watchhouse',
+            'Mara Voss führt dich in die Ratsstube. Hinter verschlossenen '
+                'Fensterläden zeigt sie dir eine Liste der Vermissten. '
+                'Ihre behandschuhte Hand zittert. „Der Glockenorden nahm '
+                'uns damals ein Versprechen ab. Was ich dir erzähle, '
+                'darf nicht auf den Dorfplatz.“ '
+                'Versprichst du Verschwiegenheit, verlangst du die '
+                'Wahrheit oder fragst du nach Fina Kessel?',
+            clues: {'maraMet': 'true', 'location': 'Ratsstube'},
           );
         }
         return RabenwachtTurn(
@@ -507,6 +604,57 @@ class RabenwachtCampaign {
           'Zwischen Ratsstube und Schankstube '
           'liegt die Entscheidung bei dir. Sprich mit Mara Voss oder '
           'besuche Tarek im Letzten Licht.',
+        );
+      case 'watchhouse':
+        if (_has(input, 'versprech|schweig|diskret|geheim|vertrau')) {
+          return _move(
+            c,
+            'archive',
+            'Du sicherst Mara zu, die Namen nicht leichtfertig preiszugeben. '
+                'Sie übergibt dir einen versiegelten Brief an Alrik Nebel '
+                'und eine Abschrift des Glockeneids. '
+                'Diese Spur führt direkt ins Chronistenhaus. '
+                'Alrik erkennt das Siegel und öffnet die alten Akten. '
+                'Du kannst die Chronik untersuchen oder später '
+                'die Mühle und Kapelle aufsuchen.',
+            clues: {
+              'maraTrust': 'true',
+              'maraLetter': 'true',
+              'location': 'Chronistenhaus',
+            },
+          );
+        }
+        if (_has(input, 'forder|droh|enthüll|öffentlich|verrat|lüge|anklag')) {
+          return _move(
+            c,
+            'inn',
+            'Du weigerst dich, Maras Schweigen hinzunehmen. '
+                'Sie verwehrt dir den Zugang zu den Ratsakten. '
+                'Doch im Flur flüstert eine Wache: '
+                '„Tarek kennt den Weg am schwarzen Bach.“ '
+                'Du erreichst das Gasthaus und suchst andere Spuren.',
+            clues: {'maraDefied': 'true', 'location': 'Gasthaus'},
+          );
+        }
+        if (_has(
+          input,
+          'fina|müller|muehle|mühl|tochter|hinweis|frag|beweis',
+        )) {
+          return _move(
+            c,
+            'mill',
+            'Mara nennt dir Fina Kessels Vater Joren. '
+                'Du erreichst die Mühle am schwarzen Bach. '
+                'Das Mühlrad dreht sich trotz Windstille. '
+                'Untersuchst du die Spuren oder sprichst du mit Joren?',
+            clues: {'location': 'Alte Mühle'},
+          );
+        }
+        return RabenwachtTurn(
+          c,
+          'Mara wartet auf deine Antwort: Verschwiegenheit versprechen, '
+          'die Offenlegung fordern oder nach Fina fragen. '
+          'Du kannst auch zum Dorfplatz zurückkehren.',
         );
       case 'well':
         if (_has(input, 'untersuch|spiegel|blick|schau|prüf|suche|feder')) {
@@ -638,14 +786,24 @@ class RabenwachtCampaign {
             'intelligence',
             'Nachforschungen',
             12,
-            'Du vergleichst die Brandberichte mit der Chronik des Glockenordens.',
+            c.facts['maraLetter'] == 'true'
+                ? 'Alrik bricht Maras Siegel und legt die geheimen '
+                      'Brandberichte des Glockenordens offen. '
+                      'Du vergleichst den Eid mit der Chronik.'
+                : 'Du vergleichst die Brandberichte '
+                      'mit der Chronik des Glockenordens.',
             rollId,
           );
         }
         return RabenwachtTurn(
           c,
-          'Alrik lässt dich allein mit der Chronik. '
-          'Untersuche die alten Aufzeichnungen, bevor du weiterziehst.',
+          c.facts['maraDefied'] == 'true'
+              ? 'Alrik kennt deinen Streit mit Mara und bleibt '
+                    'auf Distanz. Du kannst die vorhandenen '
+                    'Aufzeichnungen trotzdem untersuchen.'
+              : 'Alrik lässt dich allein mit der Chronik. '
+                    'Untersuche die alten Aufzeichnungen, '
+                    'bevor du weiterziehst.',
         );
       case 'graveyard':
         if (_has(input, 'grab|stein|zeichen|namen|untersuch|les')) {
@@ -773,14 +931,14 @@ class RabenwachtCampaign {
             'dexterity',
             'Heimlichkeit',
             13,
-            'Du versuchst den Knochenwächter lautlos zu umgehen.',
+            c.facts['crowsAlerted'] == 'true'
+                ? 'Die Krähen haben den Wächter bereits gewarnt. '
+                      'Du suchst trotzdem lautlos einen Weg vorbei.'
+                : 'Du versuchst den Knochenwächter lautlos zu umgehen.',
             rollId,
           );
         }
-        if (_has(
-          input,
-          'kampf|angreif|waffe|kämpf|stell|wächter|schlüssel|näher',
-        )) {
+        if (_wantsFight(input)) {
           return RabenwachtTurn(
             c.copyWith(storyBible: {...c.storyBible, 'stage': 'sentryFight'}),
             'Die Knochen der alten Rüstung klappern. Ein Skelettwächter '
@@ -1104,15 +1262,16 @@ class RabenwachtCampaign {
         );
       case 'chamber':
         if (passed) {
-          return _ending(
+          return _move(
             c,
-            'end-mercy',
-            'Du sprichst Seren von Fina, Bram und den anderen '
-                'Menschen vor dem Turm. Der Geist lässt den '
-                'schwarzen Glockenschlag verklingen und nimmt '
-                'deine angebotene Gnade an. Sein Opfer befreit '
-                'die Menschen und schließt das Siegel ohne '
-                'weitere Opfer. Rabenwacht erlebt einen neuen Morgen.',
+            'choice',
+            'Deine Worte erreichen Seren. Der Geist vertraut dir '
+                'genug, die Wahrheit über das Opfer zu offenbaren. '
+                'Seren ist bereit, sich erlösen zu lassen. '
+                'Du entscheidest jetzt selbst, ob du ihr diesen '
+                'Frieden anbietest, das Siegel erneuerst '
+                'oder den Runenkreis zerstörst.',
+            clues: {'serenTrust': 'true'},
           );
         }
         return _move(
@@ -1129,12 +1288,31 @@ class RabenwachtCampaign {
   }
 
   static RabenwachtTurn _ending(Campaign c, String stage, String prose) {
+    final aftermath = <String>[
+      if (c.facts['maraTrust'] == 'true')
+        'Mara Voss hält ihr Versprechen und unterstützt dich '
+            'als Verbündete beim Wiederaufbau des Dorfes.',
+      if (c.facts['maraDefied'] == 'true')
+        'Mara Voss dankt dir für die Rettung, doch euer Streit '
+            'über das Schweigen des Rates bleibt ungelöst.',
+      if (c.facts['crowsAlerted'] == 'true')
+        'Die aufgescheuchten Krähen haben die Wachen alarmiert; '
+            'die Dorfbewohner erwarten deine Rückkehr mit Sorge.',
+      if (c.facts['serenTrust'] == 'true')
+        'Serens Vertrauen verändert, wie das Dorf '
+            'über den gebundenen Geist spricht.',
+    ].join(' ');
     final next = c.copyWith(
       quests: [
         for (final quest in c.quests) quest.copyWith(status: 'completed'),
       ],
       facts: {...c.facts, 'allMissingFound': 'true', 'ending': stage},
     );
-    return _move(next, stage, prose);
+
+    return _move(
+      next,
+      stage,
+      '$prose${aftermath.isEmpty ? '' : ' $aftermath'}',
+    );
   }
 }

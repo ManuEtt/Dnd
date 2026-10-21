@@ -90,3 +90,19 @@ Technischer Einstieg: `GameController.newRabenwachtCampaign` → `GameEngine.cre
 ## Tests
 
 `app/test/rabenwacht_campaign_test.dart` prüft Kampagnenstart, eigener Held, erfolgreiche und erfolglose Würfe, Manipulationsschutz offener Würfe, Skelettbegegnung und verschiedene Enden. Zusätzlich müssen `dart format`, `flutter analyze`, `flutter test` und `flutter build apk --debug` erfolgreich sein, bevor eine APK bereitgestellt wird.
+
+## Verzweigte Ermittlungen und reaktiver Epilog (Entwicklungsbranch, Oktober 2026)
+
+**Neue optionale Ermittlungsroute:** Wer am Dorfplatz Mara Voss anspricht, betritt die Ratsstube. Drei konkrete Entscheidungen beeinflussen den weiteren Verlauf:
+
+- **Verschwiegenheit versprechen:** Mara vertraut dem Helden einen versiegelten Brief und den Glockeneid an. Alrik öffnet das Chronistenhaus; Mühle und Kapelle bleiben als nachholbare Rechercheorte erreichbar. `maraTrust` und `maraLetter` werden gespeichert.
+- **Offenlegung der Wahrheit fordern:** Mara verweigert die Ratsakten; der Held wird stattdessen auf Tarek im Gasthaus verwiesen. `maraDefied` und eine feindselige Beziehung werden gespeichert.
+- **Gezielt nach Fina fragen:** Mara verrät den Weg zur Mühle; der ursprüngliche Ermittlungsweg bleibt erhalten.
+
+**Reisen und freie Eingaben:** Die Szenenwechsel setzen nun `visited:<stage>`-Marker. Bereits besuchte Hauptorte sind durch explizite Reisebefehle wieder erreichbar, ohne dieselben Meilenstein-EP erneut zu erhalten. Neue, noch nicht entdeckte Hauptorte sind nicht frei teleportierbar. Maras Brief schaltet ausdrücklich auch eine nachträgliche Reise zu Mühle/Kapelle frei. Die vorhandene Schlüsselworterkennung bleibt insgesamt deterministisch; sie ist **kein vollwertiges Sprachverständnis**. Für den Skelettwächter starten jedoch nur explizite Angriffsverben einen Kampf, negierte Angriffe und das bloße Erwähnen von Schlüssel oder Wächter nicht.
+
+**Persistente Konsequenzen:** Maras Vertrauen oder Konflikt beeinflusst ihre gespeicherte Beziehung und das Finale. Ein bei misslungener Heimlichkeit ausgelöster Krähenalarm wird beim Wächter erwähnt und erscheint im Epilog. Die Schwierigkeit der Würfelproben bleibt unverändert; die Komplikationen sind derzeit **erzählerisch**, kein neuer mechanischer Schaden oder SRD-Zustand.
+
+**Spielerentscheidung im Finale:** Eine erfolgreiche Überreden-Probe bei Seren erzeugt jetzt zunächst `serenTrust` und führt zum finalen Entscheidungspunkt. Die App trifft das Erlösungsende nicht mehr ohne ausdrückliche Spielerhandlung. Auch die anderen beiden Enden bleiben wählbar.
+
+**Tests und Grenzen:** Der Regressionstest `app/test/rabenwacht_branching_story_test.dart` überprüft Mara-Routen, Beziehungen, Rückreisen, EP-Schutz, unbeabsichtigte Kämpfe, bewusste Finalwahl und Alarm-Folgen. Dieser Branch muss mit `dart format`, `flutter analyze`, `flutter test` und einem Android-Build geprüft werden. Ohne durchgeführten CI-Lauf sind diese Prüfungen **nicht bestätigt**. Komplexe Zauberlösungen, wirklich frei improvisierte NPC-Dialoge, Nebenquests und dynamische Kampfpläne bleiben zukünftige Entwicklungsschritte.
