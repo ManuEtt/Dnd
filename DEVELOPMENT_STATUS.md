@@ -1,3 +1,14 @@
+## 21.10.2026 – Rabenwacht, verzweigter Story-Inkrement (Entwicklungsbranch)
+
+- Entwicklung auf `feature/rabenwacht-branching-story-20261021`; `main` bleibt unverändert.
+- Implementiert: eigener Mara-Ermittlungszweig, drei Entscheidungspfade, persistente Beziehungen und Hinweisfakten; besuchte Orte mit einmaliger EP-Vergabe und nachholbaren Wegen.
+- Implementiert: Kampf nur bei ausdrücklicher Aggression im Wächterraum (Negationen werden berücksichtigt); nach erfolgreichem Überreden Seren-Wahl statt erzwungenem Finale; Epilog-Varianten zu Mara, Seren und Krähenalarm.
+- Testdatei: `app/test/rabenwacht_branching_story_test.dart` (Entscheidungen, Persistenz, Reisen, EP-Idempotenz, Kampfverweigerung, finale Wahl, Konsequenzen).
+- **Nicht getestet:** kein Flutter-/Dart-SDK in der Ausführungsumgebung; `dart format`, `flutter analyze`, `flutter test`, APK-/Android-Gerätetest stehen aus. Siehe `docs/RABENWACHT_KAMPAGNE.md`.
+- **Offen:** vollständige Handlungs-/Dialog-NLU, KI-improvisierte Nebenpfade, dynamische Gegnerkonsequenzen, Zauber-/Werkzeuginteraktionen in allen Szenen, umfassende Balance- und Durchspieltests.
+
+---
+
 ## 21.10.2026 – Manuelle Mehrgegner-Zugfolge (0.8.28+78, CI offen)
 
 - Verifizierte Basis: `main` Version 0.8.27+77 (PR #59, Flutter und Android/Alpha-CI erfolgreich).
