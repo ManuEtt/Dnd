@@ -1208,8 +1208,9 @@ class _AdventurePageState extends State<_AdventurePage> {
     final campaign = widget.controller.currentCampaign;
     if (campaign == null ||
         campaign.encounter == null ||
-        widget.controller.busy)
+        widget.controller.busy) {
       return;
+    }
     final choice = await showDialog<ManualAttackChoice>(
       context: context,
       builder: (_) => ManualExtraCreatureAttackDialog(campaign: campaign),
