@@ -1,3 +1,12 @@
+## Unveröffentlicht – Rabenwacht, drei neue spielbare Kapitel (21.10.2026)
+
+- Akt VIII führt den Rat der Zeugen sowie drei Beweis- und Entscheidungswege zu einem nichtlinearen Finale.
+- Der optionale Epilog macht drei NPC-Gespräche und drei dauerhafte Dorfvermächtnisse spielbar.
+- „Der Brief von Morgen“ setzt freiwillig danach ein: drei unabhängige Spuren und drei alternative Ausgänge. Savegame, Held und altes Kampagnenende bleiben unverändert.
+- SRD-Regelengine und parallele Material-/Flächenzauberentwicklung bleiben unberührt; vollständige konsolidierte CI vor Merge offen.
+
+---
+
 ## 21.10.2026 – Konservative Vorschau kugelförmiger SRD-Zaubereffekte (CI offen)
 
 - 2D-Rasterkandidaten für separat bestätigte Kugelradien inklusive überlappender Randfelder; geprüfter Ursprung und Zauberreichweite.
