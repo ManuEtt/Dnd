@@ -65,10 +65,7 @@ void main() {
       findsOneWidget,
     );
     expect(find.textContaining('mögliche 2D-Bodenfelder'), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('fireball-preview-error')),
-      findsNothing,
-    );
+    expect(find.byKey(const ValueKey('fireball-preview-error')), findsNothing);
 
     await _tap(tester, 'fireball-preview-close');
     expect(find.text('Öffnen'), findsOneWidget);
@@ -134,10 +131,7 @@ void main() {
     );
 
     await _tap(tester, 'fireball-preview-reset');
-    expect(
-      find.byKey(const ValueKey('fireball-preview-error')),
-      findsNothing,
-    );
+    expect(find.byKey(const ValueKey('fireball-preview-error')), findsNothing);
     expect(
       find.byKey(const ValueKey('fireball-preview-summary')),
       findsNothing,
