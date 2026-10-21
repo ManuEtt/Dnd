@@ -1,6 +1,7 @@
 import '../domain/models.dart';
 import 'fourteenth_voice_act7.dart';
 import 'fourteenth_voice_act8.dart';
+import 'fourteenth_voice_epilogue.dart';
 import 'rabenwacht_campaign.dart' show RabenwachtTurn;
 import 'story_rule_port.dart';
 
@@ -192,6 +193,20 @@ class FourteenthVoiceStoryModule {
         'Das Archiv wurde nach Sicherung der Belege aufgelöst.',
       if (campaign.facts['voice:ending'] == 'end-accord')
         'Die Bewohner haben einen gemeinsamen neuen Eid ausgehandelt.',
+      if (campaign.facts['voice:epilogueStarted'] == 'true')
+        'Sieben Tage später hat Rabenwacht die Folgen erlebt.',
+      if (campaign.facts['voice:epilogue:elda'] == 'true')
+        'Du hast Elda nach dem Finale besucht.',
+      if (campaign.facts['voice:epilogue:tarek'] == 'true')
+        'Du hast Tarek nach dem Finale besucht.',
+      if (campaign.facts['voice:epilogue:liora'] == 'true')
+        'Du hast mit Liora über ihre Zukunft gesprochen.',
+      if (campaign.facts['voice:legacy'] == 'memorial')
+        'Der Dorfentscheid bewahrt ein freiwilliges Gedenkbuch.',
+      if (campaign.facts['voice:legacy'] == 'testimonies')
+        'Der Dorfentscheid veröffentlicht getrennte Zeugnisse.',
+      if (campaign.facts['voice:legacy'] == 'festival')
+        'Der Dorfentscheid feiert ein gemeinsames Erinnerungsfest.',
     ];
     final remaining = campaign.quests
         .where((q) => q.id.startsWith('voice-') && q.status == 'active')
@@ -315,6 +330,9 @@ class FourteenthVoiceStoryModule {
         campaign,
         'Zuerst den offenen Würfelwurf abschließen.',
       );
+    }
+    if (FourteenthVoiceEpilogue.handles(stage)) {
+      return FourteenthVoiceEpilogue.advance(campaign, input);
     }
     if (FourteenthVoiceAct8.handles(stage)) {
       return FourteenthVoiceAct8.advance(campaign, input);
