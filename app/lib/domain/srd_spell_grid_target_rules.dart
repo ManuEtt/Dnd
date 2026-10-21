@@ -139,6 +139,26 @@ class SrdSpellGridTargetRules {
     SrdSpellGridTargetRequest request,
   ) => SrdSpellTargetRules.validateOrigin(spell, factsFor(spell, request));
 
+  /// A conservative *witness*, not a verdict of Total Cover: a blocked
+  /// center-to-center ray may coexist with another unobstructed route.
+  /// Unknown terrain and coordinates fail closed.
+  static bool hasClearCenterRay(
+    SrdSpellGridMap map,
+    SrdGridCell start,
+    SrdGridCell end,
+  ) {
+    if (!map.fullBlockersSurveyedConfirmed ||
+        !map.contains(start) ||
+        !map.contains(end) ||
+        map.fullBlockers.contains(start) ||
+        map.fullBlockers.contains(end)) {
+      throw const FormatException(
+        'Mittelpunktstrahl benötigt bestätigte, freie Kartenfelder.',
+      );
+    }
+    return _centerRayIsClear(map, start, end);
+  }
+
   /// An inclusive segment-vs-closed-square intersection. Touching a corner
   /// or edge of an opaque square is deliberately NOT treated as a clear ray.
   static bool _centerRayIsClear(

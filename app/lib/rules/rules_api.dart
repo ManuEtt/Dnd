@@ -13,6 +13,7 @@ export '../domain/srd_spell_catalog.dart';
 export '../domain/srd_spell_preflight_rules.dart';
 export '../domain/srd_spell_target_rules.dart';
 export '../domain/srd_spell_grid_target_rules.dart';
+export '../domain/srd_sphere_area_rules.dart';
 export '../domain/srd_spell_inventory_rules.dart';
 export '../domain/srd_spell_saving_throw_rules.dart';
 export '../domain/srd_initiative_roster_rules.dart';

@@ -1,3 +1,13 @@
+## 21.10.2026 – SRD 5.2.1: konservative Kugel-Flächenvorschau (CI offen)
+
+- **IMPLEMENTIERT:** `SrdSphereAreaRules.preview` erzeugt unveränderliche, mögliche 2D-5-Fuß-Kandidatenfelder einer separat bestätigten SRD-Kugel. Mittelpunktsabstand, mögliche Randüberlappung und offene Deckungsfragen bleiben ausdrücklich unterschiedliche Informationen. Eingaben aus unvollständigen Karten, ungültigen Radien und blockierten Ursprüngen werden gesperrt.
+- **IMPLEMENTIERT:** `previewConfirmedSpell` validiert weiterhin die tatsächliche Katalog-Zauberreichweite bis zum bestätigten Ursprung und trennt sie vom separat bestätigten Kugel-Effektradius. `SrdSpellGridTargetRules.hasClearCenterRay` liefert einen konservativen Zeugen für Mitte-zu-Mitte-Weg, nicht den endgültigen Total-Cover-Status.
+- **TESTS ERSTELLT, CI OFFEN:** `app/test/srd_sphere_area_rules_test.dart` für Randfälle, Blocker, Unveränderlichkeit, Zauberursprung vs. Effektradius. Keine neue GUI und keine tatsächliche Zielschadensauflösung.
+- **NICHT IMPLEMENTIERT:** 3D-AoE, vollständiger SRD-Rasterflächenentscheid, Mehrfeldziele, Flächenverteilung um Ecken, Zauberspezialregel, Zieltypen/Zauberwirkung; Audit `RULE-SPELLS-SPELL-AREAS-OF-EFFECT` bleibt `partial`.
+- Siehe `docs/SRD_SPHERE_AOE_PREVIEW.md`.
+
+---
+
 ## 21.10.2026 – SRD-5.2.1-Ziele: geprüftes 5-Fuß-Raster und Mittelpunktstrahl (CI offen)
 
 - Ausgangslage: `main` SHA `0f0a82c`, gesamter Build `39572178736` **grün**, offener Story-PR nicht angerührt.
