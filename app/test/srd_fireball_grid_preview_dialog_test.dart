@@ -65,7 +65,10 @@ void main() {
       findsOneWidget,
     );
     expect(find.textContaining('mögliche 2D-Bodenfelder'), findsOneWidget);
-    expect(find.byKey(const ValueKey('fireball-preview-error')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('fireball-preview-error')),
+      findsNothing,
+    );
 
     await _tap(tester, 'fireball-preview-close');
     expect(find.text('Öffnen'), findsOneWidget);
@@ -125,20 +128,35 @@ void main() {
     await _tap(tester, 'fireball-cell-4-5');
     await _tap(tester, 'fireball-map-surveyed');
     await _tap(tester, 'fireball-preview-calculate');
-    expect(find.byKey(const ValueKey('fireball-preview-error')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('fireball-preview-error')),
+      findsOneWidget,
+    );
 
     await _tap(tester, 'fireball-preview-reset');
-    expect(find.byKey(const ValueKey('fireball-preview-error')), findsNothing);
-    expect(find.byKey(const ValueKey('fireball-preview-summary')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('fireball-preview-error')),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const ValueKey('fireball-preview-summary')),
+      findsNothing,
+    );
     final confirmation = tester.widget<CheckboxListTile>(
       find.byKey(const ValueKey('fireball-map-surveyed')),
     );
     expect(confirmation.value, isFalse);
     await _tap(tester, 'fireball-preview-calculate');
-    expect(find.byKey(const ValueKey('fireball-preview-error')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('fireball-preview-error')),
+      findsOneWidget,
+    );
     await _tap(tester, 'fireball-map-surveyed');
     await _tap(tester, 'fireball-preview-calculate');
-    expect(find.byKey(const ValueKey('fireball-preview-summary')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('fireball-preview-summary')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('other spells cannot borrow Fireball dimensions', (tester) async {
