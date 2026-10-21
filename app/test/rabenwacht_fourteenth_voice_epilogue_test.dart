@@ -216,7 +216,7 @@ void main() {
     for (final entry in {
       'Gedenkbuch anlegen.': 'memorial',
       'Zeugnisse veröffentlichen.': 'testimonies',
-      'Erinnerungsfest veranstalten.': 'festival',
+      'Dorffest veranstalten.': 'festival',
     }.entries) {
       final before = finale(
         ending: 'accord',
