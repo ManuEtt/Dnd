@@ -86,6 +86,7 @@ void main() {
       'Ich will den Wächter nicht angreifen.',
       'Ich greife den Wächter nicht an.',
       'Ich nehme den silbernen Schlüssel.',
+      'Ich begreife das Rätsel des Wächters.',
       'Ich möchte keinen Kampf.',
     ]) {
       final after = engine.act(hall, words).campaign;
