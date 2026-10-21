@@ -257,4 +257,59 @@ void main() {
       );
     },
   );
+  test('Manipulierte Fortsetzungsproben werden beim Laden abgewiesen', () {
+    var campaign = continued();
+    campaign = engine.act(campaign, 'Ich besuche Elda.').campaign;
+    campaign = engine.act(campaign, 'Ich untersuche die Zeichnungen.').campaign;
+    final valid = campaign.pendingRoll!;
+    expect(Campaign.fromJson(campaign.toJson()).pendingRoll!.targetId,
+        'voice:elda');
+
+    PendingRoll fake({
+      required String targetId,
+      required String targetName,
+      required int difficulty,
+    }) => PendingRoll(
+      id: valid.id,
+      type: 'preparedCheck',
+      targetId: targetId,
+      targetName: targetName,
+      modifier: valid.modifier,
+      difficulty: difficulty,
+      minimumNatural: valid.minimumNatural,
+      advantage: valid.advantage,
+      disadvantage: valid.disadvantage,
+    );
+
+    for (final request in [
+      fake(
+        targetId: 'voice:grave',
+        targetName: 'wisdom|Wahrnehmung',
+        difficulty: 12,
+      ),
+      fake(
+        targetId: 'voice:elda',
+        targetName: 'wisdom|Wahrnehmung',
+        difficulty: 1,
+      ),
+      fake(
+        targetId: 'voice:elda',
+        targetName: 'charisma|Überreden',
+        difficulty: 12,
+      ),
+      fake(
+        targetId: 'rabenwacht:road',
+        targetName: 'wisdom|Wahrnehmung',
+        difficulty: 12,
+      ),
+    ]) {
+      expect(
+        () => Campaign.fromJson(
+          campaign.copyWith(pendingRoll: request).toJson(),
+        ),
+        throwsFormatException,
+      );
+    }
+  });
+
 }
