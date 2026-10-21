@@ -82,6 +82,9 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
+      - name: Dart-Kegelformat (temporäre Diagnose)
+        working-directory: app
+        run: dart format --output=show lib/domain/srd_cone_area_rules.dart test/srd_cone_area_rules_test.dart
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
