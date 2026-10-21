@@ -174,8 +174,8 @@ void main() {
   });
 
   testWidgets(
-      'Bestehender Held: bekannte Kampfwerte ohne Knopfdruck ergänzen',
-      (tester) async {
+    'Bestehender Held: bekannte Kampfwerte ohne Knopfdruck ergänzen',
+    (tester) async {
       HeroCharacter? result;
       final hero = HeroCharacter(
         id: 'old-hero-missing-values',
@@ -207,8 +207,8 @@ void main() {
   );
 
   testWidgets(
-      'Unbekannte SRD-Werte bleiben auch beim Bearbeiten unbestätigt',
-      (tester) async {
+    'Unbekannte SRD-Werte bleiben auch beim Bearbeiten unbestätigt',
+    (tester) async {
       HeroCharacter? result;
       await _startEditor(
         tester,
@@ -237,5 +237,6 @@ void main() {
       await _tapVisible(tester, find.text('Charakter speichern'));
       expect(result!.armorClass, isNull);
       expect(result!.speed, isNull);
-  });
+    },
+  );
 }
