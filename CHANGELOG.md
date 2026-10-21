@@ -30,6 +30,22 @@
 
 ---
 
+## 21.10.2026 – Rabenwacht: Die vierzehnte Stimme, spielbarer Akt VI (Entwicklungsbranch)
+
+## Unveröffentlicht – Rabenwacht Akt VII (Entwicklungsbranch, 21.10.2026)
+
+- Optionale Fortsetzung „Die vierzehnte Stimme“ um die interaktive Chronistenbibliothek, Eidblatt-Ermittlungen und drei eindeutig gespeicherte Antworten auf das gefährliche Angebot erweitert; bewusster Preisdialog verlangt einen exakten Bestätigungssatz.
+- Spielerkontrolle, frühere Quests, EP, Inventar, Held und bestätigte Kampfregeln bleiben unverändert. Eigenständige Regressionstests geschrieben; vollständige CI und Geräteabnahme stehen aus. Baut auf dem noch offenen Akt-VI-PR #77 auf.
+
+- Expliziter Start der Fortsetzung über „Fortsetzung beginnen“ nach einem abgeschlossenen Original-Finale, mit Erhalt von Held, Erinnerungen, NPCs und altem Queststatus.
+- Eigenständiges Story-Modul `app/lib/story/fourteenth_voice_campaign.dart` samt eigenem Modus `rabenwacht-voice-v1` (Trennung Story/Regeln).
+- Drei frei kombinierbare Ermittlungsstränge bei Elda, Tarek und dem namenlosen Grab, gespeichert mit echten SRD-Fertigkeitsproben; zwei unabhängige Belege öffnen das Haus ohne Türen.
+- Lioras Vertrauen wird anhand einer echten Entscheidung persistiert. Spoilerfreies Journal, neue Quests, optionaler Einstieg in die Porträtgalerie, JSON-Speicherrundlauf.
+- Kein automatisch gewährter Zauber, keine improvisierten Gegnerwerte oder zusätzlichen Erfahrungspunkte. Spätere Akte VII–VIII noch nicht implementiert.
+- Tests in `app/test/rabenwacht_fourteenth_voice_act6_test.dart`; vollständige CI/Android-Build stehen aus.
+
+---
+
 ## 21.10.2026 – SRD 5.2.1 Materialkomponenten (Teilregel, CI offen)
 
 - Neue reine Regelprüfung für konkrete, kostspielige und verbrauchte Zaubermaterialien; teure oder konsumierte Komponenten dürfen nicht durch Komponentenbeutel oder Fokus ersetzt werden.

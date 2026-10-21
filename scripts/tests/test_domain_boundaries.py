@@ -32,6 +32,25 @@ class StoryRulesBoundaryTests(unittest.TestCase):
         )
         self.assertEqual(1, len(messages))
 
+    def test_followup_story_adapter_is_explicitly_allowed(self):
+        self.assertEqual(
+            [],
+            check_imports(
+                "app/lib/domain/rabenwacht_campaign.dart",
+                "import '../story/fourteenth_voice_campaign.dart';",
+            ),
+        )
+        self.assertEqual(
+            [
+                "app/lib/domain/character_rule_engine.dart: rule module imports story "
+                "../story/fourteenth_voice_campaign.dart"
+            ],
+            check_imports(
+                "app/lib/domain/character_rule_engine.dart",
+                "import '../story/fourteenth_voice_campaign.dart';",
+            ),
+        )
+
     def test_facade_and_shared_model_are_allowed(self):
         self.assertEqual(
             [],

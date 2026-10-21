@@ -1,9 +1,13 @@
+> **Entwicklungsnachtrag (21.10.2026):** Akt VII (Porträtgalerie, Bibliothek, Chronisten-Angebot, vierzehntes Eidblatt und bewusste Aufbewahrungsentscheidung) ist auf `feature/rabenwacht-voice-act7-20261021` als nächstes spielbares Teilkapitel umgesetzt. Grundlage ist der noch offene Akt-VI-PR #77; Akt VIII ist weiterhin Konzeption. Flutter-/Android-CI für dieses Folgeinkrement ist noch nicht bestätigt. Technische Details: [Akt-VII-Implementierung](RABENWACHT_AKT_VII_IMPLEMENTIERUNG.md).
+
+> **Implementierungsstand (21.10.2026):** Akt VI ist auf dem Entwicklungsbranch `feature/rabenwacht-voice-act6-20261021` als spielbarer, deterministischer Einstieg umgesetzt. Der Übergang aus einem abgeschlossenen Originalabenteuer erfolgt nur mit „Fortsetzung beginnen“. Die drei unabhängigen Ermittlungswege bei Elda, Tarek und dem namenlosen Grab nutzen echte `preparedCheck`-Proben; zwei nachgewiesene Spuren öffnen das Haus ohne Türen und eine erste Galerieszene. Die hier beschriebenen späteren Akte VII–VIII, der Chronist und die neuen Finalentscheidungen sind **noch Entwurf und nicht spielbar**. Android-Build und vollständige CI dieser Änderung stehen noch aus.
+
 # Rabenwacht – Die vierzehnte Stimme
 
 **Erweiterung der Handlung / Story-Bibel v0.1**  
 Anschlussabenteuer zu „Das Flüstern der vergessenen Glocke“, geplant für Charaktere ab Stufe 4. Die Spielzeit ist erst nach Spieltests bestimmbar.
 
-> **Status:** Erzählkonzept und Implementierungsvorlage, noch keine spielbare Integration in den Game-Engine-Zustandsautomaten. Die Handlung muss später mit vorhandenen Entscheidungen, Quests, NPC-Gedächtnis, SRD-Proben und Savegame-Migration verbunden werden.
+> **Status:** Die erste Spielstrecke des Akts VI ist als eigenes Story-Modul integriert; der Rest der Story-Bibel ist Implementierungsentwurf. Es erfolgt keine automatische Migration bestehender Spielstände.
 
 ## Kerngeheimnis
 

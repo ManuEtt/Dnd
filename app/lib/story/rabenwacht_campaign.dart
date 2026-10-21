@@ -538,7 +538,8 @@ class RabenwachtStoryModule {
       return RabenwachtTurn(
         c,
         'Die Chronik von Rabenwacht ist abgeschlossen. Dein gewähltes Ende '
-        'bleibt gespeichert. Für ein anderes Ende starte eine neue Kampagne.',
+        'bleibt gespeichert. Für ein anderes Ende starte eine neue Kampagne. '
+        'Für die neue Handlung schreibe „Fortsetzung beginnen“. ',
       );
     }
     if (_has(input, 'hinweise|hinweisprotokoll|ermittlungsstand|spurenliste')) {

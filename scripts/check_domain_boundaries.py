@@ -25,6 +25,7 @@ DOMAIN_STORY_IMPORT_ALLOWED = {
     },
     "app/lib/domain/rabenwacht_campaign.dart": {
         "../story/rabenwacht_campaign.dart",
+        "../story/fourteenth_voice_campaign.dart",
         "../story/story_rule_port.dart",
     },
     "app/lib/domain/ai_story.dart": {"../story/ai_story.dart"},

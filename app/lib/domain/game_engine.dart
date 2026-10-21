@@ -2648,6 +2648,39 @@ class GameEngine {
         );
       }
     }
+    if (current.storyBible['mode'] == RabenwachtCampaign.mode &&
+        RabenwachtCampaign.canStartSequel(current) &&
+        RegExp(
+          r'^\s*(fortsetzung beginnen|die vierzehnte stimme starten|'
+          r'neues kapitel starten)[.!]?\s*$',
+          caseSensitive: false,
+        ).hasMatch(text)) {
+      final continuation = RabenwachtCampaign.startSequel(current);
+      return _commit(
+        campaign,
+        continuation.campaign,
+        continuation.narration,
+        type: 'narrative.chapterStarted',
+      );
+    }
+    if (current.storyBible['mode'] == RabenwachtCampaign.sequelMode) {
+      if (current.encounter != null && !current.encounter!.isFinished) {
+        return _combatAction(campaign, current, words);
+      }
+      final continuation = RabenwachtCampaign.advanceSequel(
+        current,
+        text,
+        rollId: _id('roll'),
+      );
+      return _commit(
+        campaign,
+        continuation.campaign,
+        continuation.narration,
+        type: continuation.campaign.pendingRoll != null
+            ? 'roll.requested'
+            : 'narrative.turn',
+      );
+    }
     if (current.storyBible['mode'] == RabenwachtCampaign.mode) {
       if (current.encounter != null && !current.encounter!.isFinished) {
         return _combatAction(campaign, current, words);
@@ -3737,7 +3770,9 @@ class GameEngine {
     var narration = '$label. ';
     if (pending.type == 'preparedCheck') {
       final passed = effectiveTotal >= pending.difficulty;
-      final story = RabenwachtCampaign.resolveCheck(next, pending, passed);
+      final story = next.storyBible['mode'] == RabenwachtCampaign.sequelMode
+          ? RabenwachtCampaign.resolveSequelCheck(next, pending, passed)
+          : RabenwachtCampaign.resolveCheck(next, pending, passed);
       payload['difficulty'] = pending.difficulty;
       payload['passed'] = passed;
       return _commit(
