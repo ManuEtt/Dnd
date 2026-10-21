@@ -856,7 +856,8 @@ class RabenwachtCampaign {
                   const Quest(
                     id: 'rabenwacht-memorial',
                     title: 'Die ausgelöschten Namen',
-                    description: 'Entscheide, ob die Namen der '
+                    description:
+                        'Entscheide, ob die Namen der '
                         'Opfer des Glockenordens bewahrt werden.',
                   ),
               ],
@@ -864,8 +865,7 @@ class RabenwachtCampaign {
             visited.narration,
           );
         }
-        if (c.facts['memorialSeen'] == 'true' &&
-            c.facts['graveOath'] == null) {
+        if (c.facts['memorialSeen'] == 'true' && c.facts['graveOath'] == null) {
           final hide = _has(
             input,
             'verberg|verschweig|verbrenn|vergess|vernicht|zerstör|leugne',
@@ -885,7 +885,8 @@ class RabenwachtCampaign {
             );
           }
           if (!negated && hide != remember) {
-            final evidence = c.facts['prayerFound'] == 'true' ||
+            final evidence =
+                c.facts['prayerFound'] == 'true' ||
                 c.facts['oswinTruth'] == 'true' ||
                 c.facts['maraLetter'] == 'true' ||
                 c.facts['serenMotive'] == 'true';
@@ -907,9 +908,7 @@ class RabenwachtCampaign {
               quests: [
                 for (final quest in c.quests)
                   if (quest.id == 'rabenwacht-memorial')
-                    quest.copyWith(
-                      status: remember ? 'completed' : 'failed',
-                    )
+                    quest.copyWith(status: remember ? 'completed' : 'failed')
                   else
                     quest,
               ],
@@ -919,14 +918,14 @@ class RabenwachtCampaign {
               'graveyard',
               remember
                   ? 'Du sprichst die Namen laut aus den geretteten '
-                      'Aufzeichnungen. Ein warmer Wind streicht '
-                      'über die Gräber. Die Stimmen bitten dich, '
-                      'die Wahrheit nach Rabenwacht zurückzutragen. '
-                      'Im Nebel führt ein Pfad in die Rabenschlucht.'
+                        'Aufzeichnungen. Ein warmer Wind streicht '
+                        'über die Gräber. Die Stimmen bitten dich, '
+                        'die Wahrheit nach Rabenwacht zurückzutragen. '
+                        'Im Nebel führt ein Pfad in die Rabenschlucht.'
                   : 'Du verdeckst die ausgelöschten Namen erneut. '
-                      'Die Stimmen verstummen, aber das Versprechen '
-                      'des Ordens bleibt ungebrochen. '
-                      'Du entdeckst den Pfad zur Rabenschlucht.',
+                        'Die Stimmen verstummen, aber das Versprechen '
+                        'des Ordens bleibt ungebrochen. '
+                        'Du entdeckst den Pfad zur Rabenschlucht.',
               clues: {'location': 'Friedhof'},
             );
           }
@@ -1436,8 +1435,7 @@ class RabenwachtCampaign {
     final next = c.copyWith(
       quests: [
         for (final quest in c.quests)
-          if (quest.id == 'rabenwacht-memorial' &&
-              quest.status == 'active')
+          if (quest.id == 'rabenwacht-memorial' && quest.status == 'active')
             quest.copyWith(status: 'failed')
           else if (quest.status == 'active')
             quest.copyWith(status: 'completed')
