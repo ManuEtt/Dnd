@@ -35,6 +35,7 @@ import 'adventure_catalog.dart';
 import 'rabenwacht_campaign.dart';
 import 'models.dart';
 import 'srd_initiative_roster_rules.dart';
+import 'srd_extra_creature_attack_rules.dart';
 import 'rules_engine.dart';
 import 'rest_rules.dart';
 import 'spellcasting_rules.dart';
@@ -1396,6 +1397,100 @@ class GameEngine {
         ...next.toJson(),
         'previousActorId': queue.activeActorId,
         'advisoryOnly': true,
+      },
+    );
+  }
+
+  /// Resolve exactly one explicitly confirmed additional-creature attack.
+  /// A distinct HP-only creature is the target; never modify the legacy hero
+  /// or primary foe turn engine, whose reactions/defenses aren't modeled here.
+  GameUpdate manualExtraCreatureAttack(
+    Campaign campaign, {
+    required String attackerId,
+    required String targetId,
+    required ConfirmedExtraCreatureAttack attack,
+  }) {
+    final queue = campaign.manualTurnQueue;
+    final fight = campaign.encounter;
+    if (queue == null ||
+        fight == null ||
+        !SrdInitiativeRosterRules.isCurrent(campaign, queue) ||
+        queue.actionUsed ||
+        queue.activeActorId != attackerId ||
+        attackerId == targetId ||
+        campaign.pendingRoll != null ||
+        campaign.pendingDeathSave != null ||
+        campaign.pendingEnemyShieldHit != null ||
+        campaign.hero.isDead ||
+        campaign.hero.hitPoints == 0) {
+      throw const FormatException(
+        'Nur eine noch freie zusätzliche Kreatur im gültigen '
+        'manuellen Zug darf diesen bestätigten Angriff ausführen.',
+      );
+    }
+    final attackers = campaign.trackedAreaCreatures.where(
+      (creature) => creature.id == attackerId && creature.hitPoints > 0 &&
+          creature.initiativeController == 'gm',
+    );
+    final targets = campaign.trackedAreaCreatures.where(
+      (creature) => creature.id == targetId && creature.hitPoints > 0,
+    );
+    if (attackers.length != 1 || targets.length != 1) {
+      throw const FormatException(
+        'Angreifer und Ziel müssen verschiedene lebende, '
+        'gespeicherte Zusatzkreaturen sein. Held und '
+        'Hauptgegner sind in diesem Pfad ausgeschlossen.',
+      );
+    }
+    final result = SrdExtraCreatureAttackRules.resolve(dice, attack);
+    final target = targets.single;
+    final remaining = RulesEngine.remainingHitPoints(
+      hitPoints: target.hitPoints,
+      damage: result.damage,
+    );
+    final next = campaign.copyWith(
+      manualTurnQueue: queue.copyWith(actionUsed: true),
+      trackedAreaCreatures: [
+        for (final creature in campaign.trackedAreaCreatures)
+          creature.id == targetId
+              ? creature.copyWith(hitPoints: remaining)
+              : creature,
+      ],
+    );
+    return _commit(
+      campaign,
+      next,
+      '${attackers.single.name} greift ${target.name} an: '
+      'Angriff ${result.attackRoll.total} gegen RK '
+      '${result.effectiveArmorClass}, '
+      '${result.hit ? '${result.damage} Schaden' : 'verfehlt'}. '
+      '${target.name}: $remaining TP. '
+      'Manuelle Angriffsaktion verbraucht; kein '
+      'automatischer Zug des Hauptgegners.',
+      type: 'combat.manualExtraCreatureAttack',
+      payload: {
+        'attackerId': attackerId,
+        'targetId': targetId,
+        'manualRound': queue.round,
+        'attackBonus': attack.attackBonus,
+        'weaponDamage': attack.weaponDamage,
+        'damageType': attack.damageType.name,
+        'targetArmorClass': attack.targetArmorClass,
+        'cover': attack.targetCover.name,
+        'coverOppositeAttacker': attack.coverOppositeAttacker,
+        'effectiveArmorClass': result.effectiveArmorClass,
+        'advantage': attack.advantage,
+        'disadvantage': attack.disadvantage,
+        'attackRoll': result.attackRoll.toJson(),
+        'hit': result.hit,
+        'critical': result.critical,
+        'damageRoll': result.damageRoll?.toJson(),
+        'criticalExtraRoll': result.criticalExtraRoll?.toJson(),
+        'damage': result.damage,
+        'targetHitPointsBefore': target.hitPoints,
+        'targetHitPointsAfter': remaining,
+        'manualActionUsed': true,
+        'legacyEncounterUnchanged': true,
       },
     );
   }
