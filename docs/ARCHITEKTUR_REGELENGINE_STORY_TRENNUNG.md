@@ -48,3 +48,9 @@ flutter build apk --debug
 ```
 
 Nicht getestet: Installation auf einem echten Android-Gerät, gleichzeitige externe GitHub-PR-Merges vor Ende ihrer eigenen CI und vollständiger SRD-Konformitätsgrad (noch separat im Anforderungsinventar erfasst).
+
+## Öffentliche Fassaden für getrennte Entwicklung
+
+- `app/lib/rules/rules_api.dart` bündelt die reinen SRD-Regelmodule einschließlich bestätigter Zusatzkreatur-Angriffe. Hier werden keine Storymodule exportiert.
+- `app/lib/story/story_api.dart` stellt die kompatible `StoryCampaignEngine` sowie bestätigte KI-Erzählverträge bereit. Bis zur vollständigen Modellmigration bleibt `RabenwachtCampaign` unter dem bestehenden Legacy-Pfad; der Story-Fassadenexport darf die eingeschränkten Importgrenzen nicht umgehen.
+- Diese Fassaden übernehmen die nutzbaren API-Bausteine aus dem alternativen Branch `feature/separate-rules-and-story-20261021`. Dessen konkurrierender Story-Orchestrator/Committer ersetzt **nicht** die bereits getestete und gemergte Architektur aus PR #69.
