@@ -91,10 +91,7 @@ void main() {
     expect(result.candidates, hasLength(4));
     expect(result.at(const SrdGridCell(0, 0)), isNotNull);
     expect(result.at(const SrdGridCell(-1, 0)), isNull);
-    expect(
-      () => result.candidates.clear(),
-      throwsUnsupportedError,
-    );
+    expect(() => result.candidates.clear(), throwsUnsupportedError);
   });
 
   test('invalid radius, unknown map and obstructed origin fail closed', () {
