@@ -108,6 +108,7 @@ void main() {
       'Ich will den Wächter nicht angreifen.',
       'Ich greife den Wächter nicht an.',
       'Ich nehme den silbernen Schlüssel.',
+      'Ich greife nach dem silbernen Schlüssel.',
       'Ich begreife das Rätsel des Wächters.',
       'Ich möchte keinen Kampf.',
     ]) {
