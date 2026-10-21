@@ -105,8 +105,7 @@ jobs:
           packages: 'platform-tools'
           log-accepted-android-sdk-licenses: 'false'
       - name: Android-Plattformen und Buildwerkzeuge installieren
-        run: |
-          sdkmanager "platforms;android-34" "platforms;android-35" "platforms;android-36" "build-tools;35.0.0" "ndk;27.0.12077973" "cmake;3.22.1"
+        run: bash scripts/install_android_sdk_packages.sh
       - name: Android-Debug-APK bauen
         working-directory: app
         run: |
