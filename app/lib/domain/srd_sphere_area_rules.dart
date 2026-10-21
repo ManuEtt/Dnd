@@ -1,3 +1,4 @@
+import 'srd_spell_catalog.dart';
 import 'srd_spell_grid_target_rules.dart';
 
 /// Geometric approximation of one square on a 2D, 5-foot tactical map.
@@ -53,6 +54,28 @@ class SrdSphereAreaPreview {
 /// A 2D preview cannot conclude full 3D area-of-effect eligibility.
 class SrdSphereAreaRules {
   const SrdSphereAreaRules._();
+
+  /// Connects a separately verified sphere shape and its effect radius to
+  /// the already checked caster-to-origin spell range / clear path.
+  /// The SRD spell catalogue stores range, NOT an authoritative AoE radius.
+  static SrdSphereAreaPreview previewConfirmedSpell({
+    required SrdSpellDefinition spell,
+    required SrdSpellGridTargetRequest gridTarget,
+    required bool sphereShapeVerifiedFromEffect,
+    required int verifiedEffectRadiusFeet,
+  }) {
+    if (!sphereShapeVerifiedFromEffect) {
+      throw const FormatException(
+        'Die Kugelform muss separat aus dem SRD-Zaubereffekt bestätigt sein.',
+      );
+    }
+    SrdSpellGridTargetRules.validateOrigin(spell, gridTarget);
+    return preview(
+      map: gridTarget.map,
+      origin: gridTarget.origin,
+      radiusFeet: verifiedEffectRadiusFeet,
+    );
+  }
 
   static SrdSphereAreaPreview preview({
     required SrdSpellGridMap map,
