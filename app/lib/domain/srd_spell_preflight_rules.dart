@@ -6,6 +6,7 @@ import 'srd_spell_component_rules.dart';
 import 'spellcasting_rules.dart';
 import 'srd_character_classes.dart';
 import 'srd_spell_catalog.dart';
+import 'srd_spell_target_rules.dart';
 
 /// Conservative validation before explicitly confirmed resource-only casting.
 ///
@@ -52,6 +53,7 @@ class SrdSpellPreflightRules {
     bool pactMagic = false,
     bool actionAvailableConfirmed = false,
     bool targetRulesConfirmed = false,
+    SrdSpellTargetFacts? targetFacts,
     bool verbalComponentConfirmed = false,
     bool somaticComponentConfirmed = false,
     bool materialComponentConfirmed = false,
@@ -98,6 +100,9 @@ class SrdSpellPreflightRules {
         'Aktion/Bonusaktion und Zielbedingungen müssen bestätigt sein.',
       );
     }
+    final targetAssessment = targetFacts == null
+        ? null
+        : SrdSpellTargetRules.validateOrigin(spell, targetFacts);
     if ((spell.verbal && !verbalComponentConfirmed) ||
         (spell.somatic && !somaticComponentConfirmed)) {
       throw const FormatException(
@@ -146,6 +151,7 @@ class SrdSpellPreflightRules {
       slotLevel: slotLevel,
       pactMagic: pactMagic,
       hasConsumedMaterial: materials.isConsumed,
+      targetAssessment: targetAssessment,
     );
   }
 
@@ -195,6 +201,7 @@ class SrdSpellCastPlan {
     required this.slotLevel,
     required this.pactMagic,
     required this.hasConsumedMaterial,
+    required this.targetAssessment,
   });
 
   final String sourceSnapshot;
@@ -204,4 +211,8 @@ class SrdSpellCastPlan {
   final int slotLevel;
   final bool pactMagic;
   final bool hasConsumedMaterial;
+
+  /// Null for legacy callers relying solely on independent target confirmation.
+  /// The persistent generic resource-booking path requires this assessment.
+  final SrdSpellTargetAssessment? targetAssessment;
 }
