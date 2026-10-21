@@ -1,3 +1,14 @@
+## 21.10.2026 – SRD-Zaubermaterialien/Inventar atomar im Domain-Zustand (CI offen)
+
+- Ausgangspunkt: gemergter PR #74, der die SRD-Materialkomponenten und sichere Vorprüfung ergänzt (GitHub-CI auf seinem HEAD vollständig grün).
+- **IMPLEMENTIERT:** Neuer unabhängiger Regelbaustein `SrdSpellInventoryRules.commitConfirmedCast`: auf einen geprüften `SrdSpellCastPlan` folgend werden Materialmengen und Slots nur gemeinsam im zurückgegebenen unveränderlichen Charakter aktualisiert. Ganze Stapel entfernen; Teilstapel und übriges Inventar erhalten. Fehlende/doppelte IDs, negative oder übergroße Mengen, ausgerüstete Items, unbestätigte Wirkung und veraltete Preflight-Snapshots werden abgewiesen.
+- **NEUE TESTS (CI-Abnahme offen):** `app/test/srd_spell_inventory_rules_test.dart`, einschließlich JSON-Roundtrip, Doppelcommit-Verweigerung, Fehlerfälle und Schutz nicht konsumierender Zauber.
+- **NOCH NICHT IMPLEMENTIERT:** Verlässliche automatische Identitäts-/Preisprüfung der Materialrezepte, UI-Auswahl, gemeinsame persistierte Repositorytransaktion samt Event, konkrete Revivify-Effektausführung, Geräteabnahme und vollständiger SRD-Abgleich.
+- **Grenze:** Die Domänenfunktion gibt einen neuen `HeroCharacter` zurück; ein aufrufender Controller muss ihn und sein Ereignis atomar persistieren. Keine Behauptung einer fertigen Ende-zu-Ende-Integration.
+- Details: `docs/SRD_SPELL_INVENTORY_ATOMIC.md`.
+
+---
+
 ## 21.10.2026 – SRD-Zaubermaterialien als eigenständiger Regelbaustein (CI offen)
 
 - Branch: `feature/srd-spell-material-components-20261021`, basierend auf `main` (`abf30627570095f6b41d34b26d84bda0184bc4f4`).
