@@ -222,6 +222,10 @@ class RabenwachtCampaign {
         'Im Dorfbrunnen spiegelt sich eine vierzehnte Tür, die oberirdisch fehlt.',
       if (campaign.facts['maraMet'] == 'true')
         'Mara Voss bestätigte: Drei Dorfbewohner verschwanden am schwarzen Bach.',
+      if (campaign.facts['maraTrust'] == 'true')
+        'Mara vertraute dir den Glockeneid und Alriks versiegelte Akten an.',
+      if (campaign.facts['maraDefied'] == 'true')
+        'Nach eurem Streit hält Mara die Ratsakten zurück.',
       if (campaign.facts['tarekTrust'] == 'true')
         'Tarek markierte Mühle, Kapelle und Chronistenhaus auf einer Karte.',
       if (campaign.facts['finaNote'] == 'true')
@@ -390,6 +394,10 @@ class RabenwachtCampaign {
         for (final npc in c.npcs)
           if (npc.id == 'elda' && facts['eldaHelped'] == 'true')
             npc.copyWith(relationship: 'freundlich')
+          else if (npc.id == 'mara' && facts['maraTrust'] == 'true')
+            npc.copyWith(relationship: 'verbündet')
+          else if (npc.id == 'mara' && facts['maraDefied'] == 'true')
+            npc.copyWith(relationship: 'feindselig')
           else if (npc.id == 'tarek' && facts['tarekTrust'] == 'true')
             npc.copyWith(relationship: 'freundlich')
           else if (npc.id == 'joren' && facts['jorenMet'] == 'true')
@@ -573,13 +581,15 @@ class RabenwachtCampaign {
         if (_has(input, 'voss|vorsteher|wache|rat|befrag')) {
           return _move(
             c,
-            'inn',
-            'Mara Voss erklärt, dass die drei Vermissten nacheinander '
-                'am schwarzen Bach gesehen wurden. „Wenn du helfen willst, '
-                'rede mit Tarek und prüfe die Mühle.“ '
-                'Ihre rechte Hand verbirgt sie unter einem Handschuh. '
-                'Vor dem Gasthaus erwartet dich jemand.',
-            clues: {'maraMet': 'true'},
+            'watchhouse',
+            'Mara Voss führt dich in die Ratsstube. Hinter verschlossenen '
+                'Fensterläden zeigt sie dir eine Liste der Vermissten. '
+                'Ihre behandschuhte Hand zittert. „Der Glockenorden nahm '
+                'uns damals ein Versprechen ab. Was ich dir erzähle, '
+                'darf nicht auf den Dorfplatz.“ '
+                'Versprichst du Verschwiegenheit, verlangst du die '
+                'Wahrheit oder fragst du nach Fina Kessel?',
+            clues: {'maraMet': 'true', 'location': 'Ratsstube'},
           );
         }
         return RabenwachtTurn(
@@ -587,6 +597,54 @@ class RabenwachtCampaign {
           'Zwischen Ratsstube und Schankstube '
           'liegt die Entscheidung bei dir. Sprich mit Mara Voss oder '
           'besuche Tarek im Letzten Licht.',
+        );
+      case 'watchhouse':
+        if (_has(input, 'versprech|schweig|diskret|geheim|vertrau')) {
+          return _move(
+            c,
+            'archive',
+            'Du sicherst Mara zu, die Namen nicht leichtfertig preiszugeben. '
+                'Sie übergibt dir einen versiegelten Brief an Alrik Nebel '
+                'und eine Abschrift des Glockeneids. '
+                'Diese Spur führt direkt ins Chronistenhaus. '
+                'Alrik erkennt das Siegel und öffnet die alten Akten. '
+                'Du kannst die Chronik untersuchen oder später '
+                'die Mühle und Kapelle aufsuchen.',
+            clues: {
+              'maraTrust': 'true',
+              'maraLetter': 'true',
+              'location': 'Chronistenhaus',
+            },
+          );
+        }
+        if (_has(input, 'forder|droh|enthüll|öffentlich|verrat|lüge|anklag')) {
+          return _move(
+            c,
+            'inn',
+            'Du weigerst dich, Maras Schweigen hinzunehmen. '
+                'Sie verwehrt dir den Zugang zu den Ratsakten. '
+                'Doch im Flur flüstert eine Wache: '
+                '„Tarek kennt den Weg am schwarzen Bach.“ '
+                'Du erreichst das Gasthaus und suchst andere Spuren.',
+            clues: {'maraDefied': 'true', 'location': 'Gasthaus'},
+          );
+        }
+        if (_has(input, 'fina|müller|muehle|mühl|tochter|hinweis|frag|beweis')) {
+          return _move(
+            c,
+            'mill',
+            'Mara nennt dir Fina Kessels Vater Joren. '
+                'Du erreichst die Mühle am schwarzen Bach. '
+                'Das Mühlrad dreht sich trotz Windstille. '
+                'Untersuchst du die Spuren oder sprichst du mit Joren?',
+            clues: {'location': 'Alte Mühle'},
+          );
+        }
+        return RabenwachtTurn(
+          c,
+          'Mara wartet auf deine Antwort: Verschwiegenheit versprechen, '
+          'die Offenlegung fordern oder nach Fina fragen. '
+          'Du kannst auch zum Dorfplatz zurückkehren.',
         );
       case 'well':
         if (_has(input, 'untersuch|spiegel|blick|schau|prüf|suche|feder')) {
