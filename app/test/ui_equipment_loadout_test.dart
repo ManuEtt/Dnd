@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/equipment_rules.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/ui/equipment_loadout_dialog.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 
 void main() {
   testWidgets('Ausrüstung nur mit bestätigter Vorschau übernehmen', (
@@ -48,7 +49,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       tester
-          .widget<FilledButton>(find.byKey(const ValueKey('loadout-confirm')))
+          .widget<FantasyTextButton>(
+            find.byKey(const ValueKey('loadout-confirm')),
+          )
           .onPressed,
       isNull,
     );
@@ -57,10 +60,11 @@ void main() {
     await tester.tap(find.text('Lederrüstung').last);
     await tester.pumpAndSettle();
     expect(find.text('Rüstungsklasse: 13'), findsOneWidget);
-    final confirm = tester.widget<FilledButton>(
+    final confirm = tester.widget<FantasyTextButton>(
       find.byKey(const ValueKey('loadout-confirm')),
     );
     expect(confirm.onPressed, isNotNull);
+    expect(confirm.style, FantasyButtonStyle.woodGold);
     await tester.ensureVisible(find.byKey(const ValueKey('loadout-confirm')));
     await tester.tap(find.byKey(const ValueKey('loadout-confirm')));
     await tester.pumpAndSettle();

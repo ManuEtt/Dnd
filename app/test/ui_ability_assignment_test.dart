@@ -5,6 +5,7 @@ import 'package:lebendiger_spielleiter/domain/ability_generation.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/ui/ability_assignment_dialog.dart';
 import 'package:lebendiger_spielleiter/ui/character_editor.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 
 Finder keyed(String key) => find.byKey(ValueKey(key));
 Finder keyStarting(String prefix) => find.byWidgetPredicate((widget) {
@@ -60,8 +61,8 @@ Future<void> chooseSoldierAllThree(WidgetTester tester) async {
   await choose(tester, keyed('ability-bonus-pattern'), '+1 auf alle drei');
 }
 
-FilledButton applyButton(WidgetTester tester) =>
-    tester.widget<FilledButton>(keyed('apply-ability-assignment'));
+FantasyTextButton applyButton(WidgetTester tester) =>
+    tester.widget<FantasyTextButton>(keyed('apply-ability-assignment'));
 
 Future<void> showEditor(
   WidgetTester tester,

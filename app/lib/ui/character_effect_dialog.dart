@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'fantasy_buttons.dart';
+
 import '../domain/damage_rules.dart';
 import '../domain/models.dart';
 
@@ -302,19 +304,18 @@ class _CharacterEffectDialogState extends State<CharacterEffectDialog> {
                   'Diese müssen separat regelgerecht geklärt sein.',
                 ),
                 const SizedBox(height: 20),
-                FilledButton(
+                FantasyTextButton(
                   key: const ValueKey('character-effect-confirm'),
+                  label: 'Effekt bestätigen',
+                  style: FantasyButtonStyle.arcane,
                   onPressed: _confirm,
-                  child: const Text(
-                    'Effekt bestätigen',
-                    textAlign: TextAlign.center,
-                  ),
                 ),
                 const SizedBox(height: 8),
-                TextButton(
+                FantasyTextButton(
                   key: const ValueKey('character-effect-cancel'),
+                  label: 'Abbrechen',
+                  style: FantasyButtonStyle.iron,
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Abbrechen'),
                 ),
               ],
             ),

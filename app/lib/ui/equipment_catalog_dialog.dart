@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'fantasy_buttons.dart';
+
 import '../domain/srd_equipment_catalog.dart';
 import 'equipment_fields.dart';
 
@@ -111,11 +113,9 @@ class _EquipmentCatalogDialogState extends State<EquipmentCatalogDialog> {
                                             const SizedBox(height: 12),
                                             EquipmentFields(entry: entry),
                                             const SizedBox(height: 16),
-                                            FilledButton.icon(
-                                              icon: const Icon(Icons.add),
-                                              label: const Text(
-                                                'Zum Inventar hinzufügen',
-                                              ),
+                                            FantasyTextButton(
+                                              icon: Icons.add,
+                                              label: 'Zum Inventar hinzufügen',
                                               onPressed: () {
                                                 Navigator.pop(sheetContext);
                                                 Navigator.pop(context, entry);
@@ -144,9 +144,10 @@ class _EquipmentCatalogDialogState extends State<EquipmentCatalogDialog> {
         ),
       ),
       actions: [
-        TextButton(
+        FantasyTextButton(
+          label: 'Abbrechen',
+          style: FantasyButtonStyle.iron,
           onPressed: () => Navigator.pop(context),
-          child: const Text('Abbrechen'),
         ),
       ],
     );

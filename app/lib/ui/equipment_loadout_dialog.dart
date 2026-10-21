@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'fantasy_buttons.dart';
+
 import '../domain/equipment_rules.dart';
 import '../domain/condition_rules.dart';
 import '../domain/models.dart';
@@ -209,16 +211,18 @@ class _EquipmentLoadoutDialogState extends State<EquipmentLoadoutDialog> {
         ),
       ),
       actions: [
-        TextButton(
+        FantasyTextButton(
+          label: 'Abbrechen',
+          style: FantasyButtonStyle.iron,
           onPressed: () => Navigator.pop(context),
-          child: const Text('Abbrechen'),
         ),
-        FilledButton(
+        FantasyTextButton(
           key: const ValueKey('loadout-confirm'),
+          label: 'Werte übernehmen',
+          style: FantasyButtonStyle.woodGold,
           onPressed: preview == null
               ? null
               : () => Navigator.pop(context, preview),
-          child: const Text('Werte übernehmen'),
         ),
       ],
     );

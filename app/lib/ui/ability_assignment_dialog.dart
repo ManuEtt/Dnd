@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'fantasy_buttons.dart';
+
 import '../domain/ability_generation.dart';
 import '../domain/models.dart';
 import '../domain/rules_engine.dart';
@@ -354,12 +356,15 @@ class _AbilityAssignmentDialogState extends State<AbilityAssignmentDialog> {
         ),
       ),
       actions: [
-        TextButton(
+        FantasyTextButton(
+          label: 'Abbrechen',
+          style: FantasyButtonStyle.iron,
           onPressed: () => Navigator.pop(context),
-          child: const Text('Abbrechen'),
         ),
-        FilledButton(
+        FantasyTextButton(
           key: const ValueKey('apply-ability-assignment'),
+          label: 'Attribute übernehmen',
+          style: FantasyButtonStyle.woodGold,
           onPressed:
               result != null &&
                   (!_requiresConfirmation || _confirmedReplacement)
@@ -371,7 +376,6 @@ class _AbilityAssignmentDialogState extends State<AbilityAssignmentDialog> {
                   ),
                 )
               : null,
-          child: const Text('Attribute übernehmen'),
         ),
       ],
     );

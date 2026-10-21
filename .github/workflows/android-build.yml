@@ -88,6 +88,11 @@ jobs:
       - name: Flutter-Code analysieren
         working-directory: app
         run: flutter analyze
+      - name: Fantasy-Spiel-Dialoge gezielt testen
+        working-directory: app
+        run: |
+          flutter test test/fantasy_game_dialog_actions_test.dart test/ui_ability_assignment_test.dart test/ui_equipment_loadout_test.dart
+
       - name: Flutter-Tests ausführen
         working-directory: app
         env:

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'fantasy_buttons.dart';
+
 import '../domain/condition_effects.dart';
 import '../domain/condition_rules.dart';
 import '../domain/models.dart';
@@ -212,15 +214,17 @@ class _ConditionEffectDialogState extends State<ConditionEffectDialog> {
         ),
       ),
       actions: [
-        TextButton(
+        FantasyTextButton(
           key: const ValueKey('condition-effect-cancel'),
+          label: 'Abbrechen',
+          style: FantasyButtonStyle.iron,
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Abbrechen'),
         ),
-        FilledButton(
+        FantasyTextButton(
           key: const ValueKey('condition-effect-confirm'),
+          label: _remove ? 'Quelle beenden' : 'Zustand bestätigen',
+          style: _remove ? FantasyButtonStyle.iron : FantasyButtonStyle.arcane,
           onPressed: _confirm,
-          child: Text(_remove ? 'Quelle beenden' : 'Zustand bestätigen'),
         ),
       ],
     );

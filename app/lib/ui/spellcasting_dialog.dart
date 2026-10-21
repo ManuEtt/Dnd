@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'fantasy_buttons.dart';
+
 import '../domain/models.dart';
 import '../domain/spellcasting_rules.dart';
 
@@ -94,6 +96,7 @@ class _SpellcastingDialogState extends State<SpellcastingDialog> {
               const SizedBox(height: 12),
               DropdownButtonFormField<int>(
                 key: const ValueKey('spell-dialog-level'),
+                isExpanded: true,
                 initialValue: _level,
                 decoration: const InputDecoration(
                   labelText: 'Zaubergrad / verwendeter Platz',
@@ -104,6 +107,7 @@ class _SpellcastingDialogState extends State<SpellcastingDialog> {
                       value: i,
                       child: Text(
                         i == 0 ? 'Zaubertrick (kein Platz)' : 'Grad $i',
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                 ],
@@ -152,8 +156,10 @@ class _SpellcastingDialogState extends State<SpellcastingDialog> {
       ),
       actions: [
         if (hero.concentratingOn.isNotEmpty)
-          TextButton(
+          FantasyTextButton(
             key: const ValueKey('spell-dialog-end-concentration'),
+            label: 'Konzentration beenden',
+            style: FantasyButtonStyle.iron,
             onPressed: () => Navigator.pop(
               context,
               const SpellcastingChoice(
@@ -163,14 +169,16 @@ class _SpellcastingDialogState extends State<SpellcastingDialog> {
                 concentration: false,
               ),
             ),
-            child: const Text('Konzentration beenden'),
           ),
-        TextButton(
+        FantasyTextButton(
+          label: 'Abbrechen',
+          style: FantasyButtonStyle.iron,
           onPressed: () => Navigator.pop(context),
-          child: const Text('Abbrechen'),
         ),
-        FilledButton(
+        FantasyTextButton(
           key: const ValueKey('spell-dialog-cast'),
+          label: 'Verbrauch bestätigen',
+          style: FantasyButtonStyle.arcane,
           onPressed: hero.spells.isEmpty
               ? null
               : () {
@@ -193,7 +201,6 @@ class _SpellcastingDialogState extends State<SpellcastingDialog> {
                     setState(() => _error = '$e');
                   }
                 },
-          child: const Text('Verbrauch bestätigen'),
         ),
       ],
     );
