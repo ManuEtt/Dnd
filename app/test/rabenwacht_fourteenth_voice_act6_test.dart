@@ -29,18 +29,21 @@ void main() {
         campaign = engine.act(campaign, 'Ich untersuche die Zeichnungen.').campaign;
         expect(campaign.pendingRoll?.targetId, 'voice:elda');
         expect(campaign.pendingRoll?.difficulty, 12);
+        break;
       case 'tarek':
         campaign = engine.act(campaign, 'Ich suche Tarek.').campaign;
         expect(campaign.storyBible['stage'], 'voice-tarek');
         campaign = engine.act(campaign, 'Ich untersuche die Tinte im Brief.').campaign;
         expect(campaign.pendingRoll?.targetId, 'voice:tarek');
         expect(campaign.pendingRoll?.difficulty, 13);
+        break;
       case 'grave':
         campaign = engine.act(campaign, 'Ich folge Liora zum Friedhof.').campaign;
         expect(campaign.storyBible['stage'], 'voice-grave');
         campaign = engine.act(campaign, 'Ich untersuche das Grab.').campaign;
         expect(campaign.pendingRoll?.targetId, 'voice:grave');
         expect(campaign.pendingRoll?.difficulty, 12);
+        break;
       default:
         throw StateError('Unbekannter Zeuge: $witness');
     }
