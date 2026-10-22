@@ -793,12 +793,16 @@ class _CharactersPage extends StatelessWidget {
           spacing: 12,
           runSpacing: 10,
           children: [
-            FilledButton.icon(
+            FantasyTextButton(
+              label: 'Charakter erstellen',
+              icon: Icons.person_add_alt_1,
+              style: FantasyButtonStyle.woodGold,
               onPressed: controller.busy ? null : () => _edit(context, null),
-              icon: const Icon(Icons.person_add_alt_1),
-              label: const Text('Charakter erstellen'),
             ),
-            OutlinedButton.icon(
+            FantasyTextButton(
+              label: 'Importieren',
+              icon: Icons.file_upload_outlined,
+              style: FantasyButtonStyle.iron,
               onPressed: controller.busy
                   ? null
                   : () async {
@@ -811,8 +815,6 @@ class _CharactersPage extends StatelessWidget {
                         await controller.importHero(json);
                       }
                     },
-              icon: const Icon(Icons.file_upload_outlined),
-              label: const Text('Importieren'),
             ),
           ],
         ),
@@ -875,20 +877,25 @@ class _CharactersPage extends StatelessWidget {
                   Wrap(
                     spacing: 10,
                     children: [
-                      OutlinedButton.icon(
+                      FantasyTextButton(
                         key: ValueKey('open-character-sheet-${hero.id}'),
+                        label: 'Bogen ansehen',
+                        icon: Icons.auto_stories_outlined,
+                        style: FantasyButtonStyle.woodGold,
                         onPressed: () => _showSheet(context, hero),
-                        icon: const Icon(Icons.auto_stories_outlined),
-                        label: const Text('Bogen ansehen'),
                       ),
-                      TextButton.icon(
+                      FantasyTextButton(
+                        label: 'Bearbeiten',
+                        icon: Icons.edit_outlined,
+                        style: FantasyButtonStyle.iron,
                         onPressed: controller.busy
                             ? null
                             : () => _edit(context, hero),
-                        icon: const Icon(Icons.edit_outlined),
-                        label: const Text('Bearbeiten'),
                       ),
-                      TextButton.icon(
+                      FantasyTextButton(
+                        label: 'Exportieren',
+                        icon: Icons.file_download_outlined,
+                        style: FantasyButtonStyle.iron,
                         onPressed: () => _showExport(
                           context,
                           '${hero.name} exportieren',
@@ -896,10 +903,11 @@ class _CharactersPage extends StatelessWidget {
                           backupFiles,
                           backupFileName(hero.name, kind: 'charakter'),
                         ),
-                        icon: const Icon(Icons.file_download_outlined),
-                        label: const Text('Exportieren'),
                       ),
-                      TextButton.icon(
+                      FantasyTextButton(
+                        label: 'Löschen',
+                        icon: Icons.delete_outline,
+                        style: FantasyButtonStyle.wax,
                         onPressed: controller.busy
                             ? null
                             : () async {
@@ -912,8 +920,6 @@ class _CharactersPage extends StatelessWidget {
                                   await controller.deleteCharacter(hero.id);
                                 }
                               },
-                        icon: const Icon(Icons.delete_outline),
-                        label: const Text('Löschen'),
                       ),
                     ],
                   ),
