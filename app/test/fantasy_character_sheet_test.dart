@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/domain/condition_effects.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_character_sheet.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 
 void main() {
   for (final width in [320.0, 360.0, 400.0]) {
@@ -239,7 +240,10 @@ void main() {
         ),
       ),
     );
-    await tester.tap(find.byTooltip('Charakter bearbeiten'));
+    final edit = find.byTooltip('Charakter bearbeiten');
+    expect(find.ancestor(of: edit, matching: find.byType(FantasyIconButton)),
+        findsOneWidget);
+    await tester.tap(edit);
     expect(edits, 1);
     expect(tester.takeException(), isNull);
   });
