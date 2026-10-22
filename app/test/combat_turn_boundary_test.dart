@@ -487,12 +487,24 @@ void main() {
   );
 
   for (final caseData in [
-    (name: 'Mönch', level: 2, key: 'monk-patient-defense',
-     style: FantasyButtonStyle.iron),
-    (name: 'Paladin', level: 1, key: 'paladin-lay-on-hands-heal',
-     style: FantasyButtonStyle.woodGold),
-    (name: 'Schurke', level: 2, key: 'rogue-cunning-disengage',
-     style: FantasyButtonStyle.iron),
+    (
+      name: 'Mönch',
+      level: 2,
+      key: 'monk-patient-defense',
+      style: FantasyButtonStyle.iron,
+    ),
+    (
+      name: 'Paladin',
+      level: 1,
+      key: 'paladin-lay-on-hands-heal',
+      style: FantasyButtonStyle.woodGold,
+    ),
+    (
+      name: 'Schurke',
+      level: 2,
+      key: 'rogue-cunning-disengage',
+      style: FantasyButtonStyle.iron,
+    ),
   ]) {
     testWidgets(
       '${caseData.name}: Bonusaktionsbutton zeigt Material und Busy-Sperre',
