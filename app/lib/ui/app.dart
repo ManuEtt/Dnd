@@ -1639,7 +1639,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                   tooltip: 'Inventar öffnen',
                   icon: const Icon(Icons.backpack_outlined),
                 ),
-                TextButton.icon(
+                FantasyTextButton(
                   key: const ValueKey('adventure-confirm-character-effect'),
                   onPressed:
                       widget.controller.busy ||
@@ -1649,11 +1649,12 @@ class _AdventurePageState extends State<_AdventurePage> {
                           campaign.hero.isDead
                       ? null
                       : _confirmCharacterEffect,
-                  icon: const Icon(Icons.health_and_safety_outlined, size: 17),
-                  label: const Text('Effekt bestätigen'),
+                  icon: Icons.health_and_safety_outlined,
+                  style: FantasyButtonStyle.woodGold,
+                  label: 'Effekt bestätigen',
                 ),
                 if (campaign.hero.conditions.contains('liegend'))
-                  TextButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('adventure-stand-up'),
                     onPressed:
                         widget.controller.busy ||
@@ -1665,11 +1666,9 @@ class _AdventurePageState extends State<_AdventurePage> {
                                 campaign.encounter!.activeParticipant != 'hero')
                         ? null
                         : _standUp,
-                    icon: const Icon(
-                      Icons.accessibility_new_outlined,
-                      size: 17,
-                    ),
-                    label: const Text('Aufstehen'),
+                    icon: Icons.accessibility_new_outlined,
+                    style: FantasyButtonStyle.iron,
+                    label: 'Aufstehen',
                   ),
                 if (campaign.hero.conditions.contains('liegend') &&
                     campaign.encounter != null &&
@@ -1720,7 +1719,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                       ),
                     ),
                   ),
-                TextButton.icon(
+                FantasyTextButton(
                   key: const ValueKey('adventure-manage-condition-effects'),
                   onPressed:
                       widget.controller.busy ||
@@ -1730,14 +1729,15 @@ class _AdventurePageState extends State<_AdventurePage> {
                           campaign.hero.isDead
                       ? null
                       : _manageConditionEffects,
-                  icon: const Icon(Icons.shield_moon_outlined, size: 17),
-                  label: const Text('Zustände verwalten'),
+                  icon: Icons.shield_moon_outlined,
+                  style: FantasyButtonStyle.iron,
+                  label: 'Zustände verwalten',
                 ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&
                     campaign.encounter!.activeParticipant == 'hero' &&
                     HeroShieldReactionRules.preparedName(campaign.hero) != null)
-                  TextButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('adventure-end-turn-with-shield'),
                     onPressed:
                         widget.controller.busy ||
@@ -1748,25 +1748,27 @@ class _AdventurePageState extends State<_AdventurePage> {
                             campaign.hero.hitPoints! <= 0
                         ? null
                         : _endTurnWithShield,
-                    icon: const Icon(Icons.shield_outlined, size: 17),
-                    label: const Text('Zug beenden: Schild ggf. wirken'),
+                    icon: Icons.shield_outlined,
+                    style: FantasyButtonStyle.arcane,
+                    label: 'Zug beenden: Schild ggf. wirken',
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished)
-                  TextButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('adventure-register-area-creature'),
                     onPressed:
                         widget.controller.busy ||
                             campaign.trackedAreaCreatures.length >= 19
                         ? null
                         : _trackAreaCreature,
-                    icon: const Icon(Icons.group_add_outlined, size: 17),
-                    label: const Text('Kreatur-TP erfassen'),
+                    icon: Icons.group_add_outlined,
+                    style: FantasyButtonStyle.woodGold,
+                    label: 'Kreatur-TP erfassen',
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&
                     campaign.trackedAreaCreatures.isNotEmpty)
-                  TextButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('adventure-initiative-roster'),
                     onPressed:
                         widget.controller.busy ||
@@ -1775,13 +1777,14 @@ class _AdventurePageState extends State<_AdventurePage> {
                             campaign.pendingEnemyShieldHit != null
                         ? null
                         : _confirmAreaCreatureInitiative,
-                    icon: const Icon(Icons.format_list_numbered, size: 17),
-                    label: const Text('Initiative der Kreaturen'),
+                    icon: Icons.format_list_numbered,
+                    style: FantasyButtonStyle.iron,
+                    label: 'Initiative der Kreaturen',
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&
                     campaign.trackedAreaCreatures.isNotEmpty)
-                  TextButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('adventure-manual-turn-queue'),
                     onPressed:
                         widget.controller.busy ||
@@ -1790,8 +1793,9 @@ class _AdventurePageState extends State<_AdventurePage> {
                             campaign.pendingEnemyShieldHit != null
                         ? null
                         : _editManualTurnQueue,
-                    icon: const Icon(Icons.format_list_bulleted, size: 17),
-                    label: const Text('Manuelle Zugfolge'),
+                    icon: Icons.format_list_bulleted,
+                    style: FantasyButtonStyle.iron,
+                    label: 'Manuelle Zugfolge',
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&
@@ -1810,7 +1814,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                               campaign.manualTurnQueue!.activeActorId &&
                           creature.hitPoints > 0,
                     ))
-                  TextButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('adventure-manual-extra-attack'),
                     onPressed:
                         widget.controller.busy ||
@@ -1819,13 +1823,14 @@ class _AdventurePageState extends State<_AdventurePage> {
                             campaign.pendingEnemyShieldHit != null
                         ? null
                         : _manualExtraCreatureAttack,
-                    icon: const Icon(Icons.gavel, size: 17),
-                    label: const Text('Zusatzkreatur-Angriff'),
+                    icon: Icons.gavel,
+                    style: FantasyButtonStyle.wax,
+                    label: 'Zusatzkreatur-Angriff',
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&
                     AcidSplashRules.preparedName(campaign.hero) != null)
-                  TextButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('adventure-cast-acid-splash'),
                     onPressed:
                         widget.controller.busy ||
@@ -1838,14 +1843,15 @@ class _AdventurePageState extends State<_AdventurePage> {
                             campaign.encounter!.actionUsed
                         ? null
                         : _castAcidSplash,
-                    icon: const Icon(Icons.bubble_chart_outlined, size: 17),
-                    label: const Text('Säurespritzer'),
+                    icon: Icons.bubble_chart_outlined,
+                    style: FantasyButtonStyle.arcane,
+                    label: 'Säurespritzer',
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&
                     SacredFlameRules.preparedName(campaign.hero) != null &&
                     SacredFlameRules.isClericCaster(campaign.hero))
-                  TextButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('adventure-cast-sacred-flame'),
                     onPressed:
                         widget.controller.busy ||
@@ -1858,13 +1864,14 @@ class _AdventurePageState extends State<_AdventurePage> {
                             campaign.encounter!.actionUsed
                         ? null
                         : _castSacredFlame,
-                    icon: const Icon(Icons.wb_sunny_outlined, size: 17),
-                    label: const Text('Heilige Flamme'),
+                    icon: Icons.wb_sunny_outlined,
+                    style: FantasyButtonStyle.arcane,
+                    label: 'Heilige Flamme',
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&
                     FireBoltRules.preparedName(campaign.hero) != null)
-                  TextButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('adventure-cast-fire-bolt'),
                     onPressed:
                         widget.controller.busy ||
@@ -1876,16 +1883,14 @@ class _AdventurePageState extends State<_AdventurePage> {
                             campaign.encounter!.actionUsed
                         ? null
                         : _castFireBolt,
-                    icon: const Icon(
-                      Icons.local_fire_department_outlined,
-                      size: 17,
-                    ),
-                    label: const Text('Feuerpfeil'),
+                    icon: Icons.local_fire_department_outlined,
+                    style: FantasyButtonStyle.arcane,
+                    label: 'Feuerpfeil',
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&
                     MagicMissileRules.preparedName(campaign.hero) != null)
-                  TextButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('adventure-cast-magic-missile'),
                     onPressed:
                         widget.controller.busy ||
@@ -1898,21 +1903,23 @@ class _AdventurePageState extends State<_AdventurePage> {
                             campaign.encounter!.spellSlotExpendedThisTurn
                         ? null
                         : _castMagicMissile,
-                    icon: const Icon(Icons.auto_awesome_outlined, size: 17),
-                    label: const Text('Magisches Geschoss'),
+                    icon: Icons.auto_awesome_outlined,
+                    style: FantasyButtonStyle.arcane,
+                    label: 'Magisches Geschoss',
                   ),
-                TextButton.icon(
+                FantasyTextButton(
                   key: const ValueKey('adventure-fireball-area-preview'),
                   onPressed: widget.controller.busy
                       ? null
                       : _showFireballGridPreview,
-                  icon: const Icon(Icons.grid_on_outlined, size: 17),
-                  label: const Text('Feuerball-Kartenvorschau'),
+                  icon: Icons.grid_on_outlined,
+                  style: FantasyButtonStyle.arcane,
+                  label: 'Feuerball-Kartenvorschau',
                 ),
                 if (campaign.hero.spells.any(
                   (name) => HealingSpellRules.find(name) != null,
                 ))
-                  TextButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('adventure-cast-healing-spell'),
                     onPressed:
                         widget.controller.busy ||
@@ -1922,8 +1929,9 @@ class _AdventurePageState extends State<_AdventurePage> {
                             campaign.hero.hitPoints == 0
                         ? null
                         : _castHealingSpell,
-                    icon: const Icon(Icons.auto_fix_high_outlined, size: 17),
-                    label: const Text('Heilzauber wirken'),
+                    icon: Icons.auto_fix_high_outlined,
+                    style: FantasyButtonStyle.woodGold,
+                    label: 'Heilzauber wirken',
                   ),
               ],
             ),
