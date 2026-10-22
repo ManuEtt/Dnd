@@ -64,9 +64,13 @@ class FantasyEffectWard extends StatelessWidget {
             expanded: expandDetailsInitially,
             details: [
               Text(
-                'W20-Tests: −' +
+                'Erschöpfung ' +
+                    hero.exhaustionLevel.toString() +
+                    '/6 · W20-Tests −' +
                     (hero.exhaustionLevel * 2).toString() +
-                    ' durch Erschöpfung.',
+                    ' · Bewegung ' +
+                    _speedLabel(hero),
+                key: const ValueKey('sheet-exhaustion-effects'),
               ),
               Text('Bewegungsrate: ' + _speedLabel(hero)),
               const Text(
