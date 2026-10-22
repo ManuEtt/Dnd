@@ -15,6 +15,7 @@ import 'fantasy_experience.dart';
 import 'fantasy_ui.dart';
 import 'fantasy_effect_ward.dart';
 import 'fantasy_buttons.dart';
+import 'fantasy_character_overview.dart';
 import 'character_portrait_picker.dart';
 
 // A read-only presentation of the actual, confirmed character data. No state,
@@ -26,10 +27,11 @@ const _ivory = Color(0xfff4ead6);
 const _muted = Color(0xffadc0cf);
 
 class CharacterSheetPage extends StatefulWidget {
-  const CharacterSheetPage({super.key, required this.hero, this.onEdit});
+  const CharacterSheetPage({super.key, required this.hero, this.onEdit, this.onRoll});
 
   final HeroCharacter hero;
   final VoidCallback? onEdit;
+  final VoidCallback? onRoll;
 
   @override
   State<CharacterSheetPage> createState() => _CharacterSheetPageState();
@@ -37,6 +39,109 @@ class CharacterSheetPage extends StatefulWidget {
 
 class _CharacterSheetPageState extends State<CharacterSheetPage> {
   int _section = 0;
+  final ScrollController _sheetScroll = ScrollController();
+
+  @override
+  void dispose() {
+    _sheetScroll.dispose();
+    super.dispose();
+  }
+
+  void _showCollection(String title, List<String> values) {
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      backgroundColor: _night,
+      isScrollControlled: true,
+      builder: (context) => SafeArea(
+        top: false,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * .7,
+          ),
+          child: ListView(
+            shrinkWrap: true,
+            padding: const EdgeInsets.fromLTRB(18, 6, 18, 22),
+            children: [
+              Text(title, style: const TextStyle(
+                color: _gold, fontFamily: 'serif', fontSize: 24,
+              )),
+              const Divider(color: _gold),
+              if (values.isEmpty)
+                const Text('Keine bestätigten Einträge.',
+                    style: TextStyle(color: _muted)),
+              for (final value in values)
+                ListTile(
+                  dense: true,
+                  leading: const Icon(Icons.auto_awesome, color: _gold, size: 19),
+                  title: Text(value, style: const TextStyle(color: _ivory)),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _rollFromSheet() {
+    if (widget.onRoll != null) {
+      widget.onRoll!();
+      return;
+    }
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Würfeln'),
+        content: const Text(
+          'Würfelwürfe werden im aktiven Abenteuer über den '
+          'bestätigten Würfeldialog ausgeführt.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Verstanden'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _moreDetails() {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: _night,
+      builder: (context) => SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final entry in [
+              (0, 'Attribute und Rettungswürfe'),
+              (1, 'Zustände und Merkmale'),
+              (2, 'Verteidigung und Trefferwürfel'),
+            ])
+              ListTile(
+                leading: const Icon(Icons.auto_awesome, color: _gold),
+                title: Text(entry.$2, style: const TextStyle(color: _ivory)),
+                onTap: () {
+                  Navigator.pop(context);
+                  setState(() => _section = entry.$1);
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted && _sheetScroll.hasClients) {
+                      _sheetScroll.animateTo(
+                        _sheetScroll.position.maxScrollExtent,
+                        duration: const Duration(milliseconds: 260),
+                        curve: Curves.easeOut,
+                      );
+                    }
+                  });
+                },
+              ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,13 +181,16 @@ class _CharacterSheetPageState extends State<CharacterSheetPage> {
             constraints: const BoxConstraints(maxWidth: 860),
             child: ListView(
               key: const ValueKey('fantasy-character-sheet-scroll'),
-              padding: const EdgeInsets.fromLTRB(14, 16, 14, 36),
+              controller: _sheetScroll,
+              padding: const EdgeInsets.fromLTRB(12, 13, 12, 30),
               children: [
                 _CharacterHeader(hero: hero),
                 const SizedBox(height: 14),
                 _SummaryGrid(hero: hero),
                 const SizedBox(height: 12),
                 _PassivePerceptionStrip(hero: hero),
+                const SizedBox(height: 16),
+                FantasyCharacterOverview(hero: hero),
                 const SizedBox(height: 20),
                 _SectionNavigation(
                   selected: _section,
@@ -97,6 +205,34 @@ class _CharacterSheetPageState extends State<CharacterSheetPage> {
           ),
         ),
       ),
+      bottomNavigationBar: FantasyCharacterQuickNavigation(
+        onCharacter: () {
+          if (_sheetScroll.hasClients) {
+            _sheetScroll.animateTo(
+              0,
+              duration: const Duration(milliseconds: 260),
+              curve: Curves.easeOut,
+            );
+          }
+        },
+        onInventory: () => _showCollection(
+          'Ausrüstung und Inventar',
+          [
+            for (final item in widget.hero.inventory)
+              '${item.name}${item.quantity > 1 ? ' ×${item.quantity}' : ''}',
+          ],
+        ),
+        onRoll: _rollFromSheet,
+        onSpells: () => _showCollection(
+          'Bekannte Zauber',
+          [
+            ...widget.hero.spells,
+            if (widget.hero.concentratingOn.isNotEmpty)
+              'Konzentration: ${widget.hero.concentratingOn}',
+          ],
+        ),
+        onMore: _moreDetails,
+      ),
     );
   }
 }
@@ -107,172 +243,147 @@ class _CharacterHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final current = hero.hitPoints;
-    final maximum = hero.maxHitPoints;
-    final ratio = current != null && maximum != null && maximum > 0
-        ? (current / maximum).clamp(0.0, 1.0).toDouble()
-        : null;
     final initials = hero.name.trim().isEmpty
         ? '?'
-        : hero.name
-              .trim()
-              .split(RegExp(r'\s+'))
-              .take(2)
-              .map((p) => p[0].toUpperCase())
-              .join();
-    return _FantasyFrame(
-      child: Column(
-        children: [
-          const FantasyMoonlitBanner(height: 80),
-          const SizedBox(height: 12),
-          Text(
-            hero.name.isEmpty ? 'Unbenannter Held' : hero.name,
-            key: const ValueKey('sheet-hero-name'),
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: _ivory,
-              fontFamily: 'serif',
-              fontSize: 29,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            '${hero.species}  •  ${hero.classSummary}  •  Stufe ${hero.level}',
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: _muted,
-              fontSize: 12,
-              letterSpacing: .75,
-            ),
-          ),
-          if (hero.subclass.isNotEmpty || hero.secondarySubclass.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: Text(
-                [
-                  if (hero.subclass.isNotEmpty)
-                    '${hero.className}: ${hero.subclass}',
-                  if (hero.hasSecondClass && hero.secondarySubclass.isNotEmpty)
-                    '${hero.secondaryClassName}: ${hero.secondarySubclass}',
-                ].join(' · '),
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: _muted, fontSize: 11),
-              ),
-            ),
-          const SizedBox(height: 18),
-          Row(
-            children: [
-              if (hero.portraitPreset >= 0 ||
-                  hero.portraitPhotoBase64.isNotEmpty)
-                FantasyCharacterPortrait(
-                  key: const ValueKey('sheet-hero-portrait'),
-                  preset: hero.portraitPreset,
-                  photoBase64: hero.portraitPhotoBase64,
-                  name: hero.name,
-                  size: 88,
-                )
-              else
-                Container(
-                  key: const ValueKey('sheet-avatar-placeholder'),
-                  width: 88,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(22),
-                    gradient: const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Color(0xff39546c), Color(0xff0c1929)],
-                    ),
-                    border: Border.all(color: _gold, width: 1.5),
-                  ),
-                  alignment: Alignment.center,
-                  child: Semantics(
-                    label: 'Platzhalter für das Charakterporträt',
-                    child: Text(
-                      initials,
-                      style: const TextStyle(
-                        fontFamily: 'serif',
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: _gold,
-                      ),
-                    ),
+        : hero.name.trim().split(RegExp(r'\\s+'))
+            .take(2).map((part) => part[0].toUpperCase()).join();
+    return FantasyApprovedCornerFrame(
+      cornerSize: 30,
+      child: Container(
+        key: const ValueKey('sheet-reference-header'),
+        constraints: const BoxConstraints(minHeight: 154),
+        decoration: BoxDecoration(
+          border: Border.all(color: _gold.withValues(alpha: .72)),
+          borderRadius: BorderRadius.circular(14),
+          color: _night,
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: ExcludeSemantics(
+                child: ShaderMask(
+                  blendMode: BlendMode.dstIn,
+                  shaderCallback: (bounds) => const LinearGradient(
+                    colors: [Color(0x99ffffff), Color(0x33ffffff)],
+                  ).createShader(bounds),
+                  child: Image.asset(
+                    FantasyArtwork.castle,
+                    fit: BoxFit.cover,
+                    alignment: Alignment.centerRight,
                   ),
                 ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'TREFFERPUNKTE',
-                      style: TextStyle(
-                        color: _muted,
-                        fontSize: 11,
-                        letterSpacing: 1.6,
-                      ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+              child: Row(
+                children: [
+                  Container(
+                    width: 112,
+                    height: 112,
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: _gold, width: 2),
+                      color: _night,
+                      boxShadow: const [
+                        BoxShadow(color: Color(0x7794772a), blurRadius: 13),
+                      ],
                     ),
-                    const SizedBox(height: 4),
-                    FittedBox(
-                      alignment: Alignment.centerLeft,
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        '${current ?? '–'} / ${maximum ?? '–'}',
-                        key: const ValueKey('sheet-hit-points'),
-                        style: const TextStyle(
+                    child: ClipOval(
+                      child: hero.portraitPreset >= 0 ||
+                          hero.portraitPhotoBase64.isNotEmpty
+                          ? FantasyCharacterPortrait(
+                              key: const ValueKey('sheet-hero-portrait'),
+                              preset: hero.portraitPreset,
+                              photoBase64: hero.portraitPhotoBase64,
+                              name: hero.name,
+                              size: 105,
+                            )
+                          : Container(
+                              key: const ValueKey('sheet-avatar-placeholder'),
+                              color: const Color(0xff243749),
+                              alignment: Alignment.center,
+                              child: Text(
+                                initials,
+                                style: const TextStyle(
+                                  fontFamily: 'serif',
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.bold,
+                                  color: _gold,
+                                ),
+                              ),
+                            ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('WÜRFELRAUNEN', style: TextStyle(
                           fontFamily: 'serif',
+                          fontSize: 12,
+                          letterSpacing: 1.2,
                           fontWeight: FontWeight.bold,
-                          fontSize: 31,
-                          color: _ivory,
-                        ),
-                      ),
-                    ),
-                    if (hero.temporaryHitPoints > 0) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        '+${hero.temporaryHitPoints} temporäre TP',
-                        key: const ValueKey('sheet-temporary-hit-points'),
-                        style: const TextStyle(color: _gold, fontSize: 12),
-                      ),
-                    ],
-                    const SizedBox(height: 8),
-                    if (ratio != null)
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: LinearProgressIndicator(
-                          value: ratio,
-                          minHeight: 9,
-                          backgroundColor: const Color(0xff273746),
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            ratio > .5
-                                ? const Color(0xff3fc38b)
-                                : ratio > .2
-                                ? const Color(0xffe2af5d)
-                                : const Color(0xffd65f65),
+                          color: _gold,
+                        )),
+                        const SizedBox(height: 6),
+                        Text(
+                          hero.name.isEmpty ? 'Unbenannter Held' : hero.name,
+                          key: const ValueKey('sheet-hero-name'),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontFamily: 'serif',
+                            fontSize: 24,
+                            color: _ivory,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      )
-                    else
-                      const Text(
-                        'Noch nicht erfasst',
-                        style: TextStyle(color: _muted, fontSize: 12),
-                      ),
-                    const SizedBox(height: 9),
-                    Text(
-                      hero.background.isEmpty
-                          ? 'Ein Abenteuer wartet auf dich'
-                          : hero.background,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: _gold, fontSize: 12),
+                        const SizedBox(height: 5),
+                        Text(
+                          '${hero.species}  •  ${hero.classSummary}  •  Stufe ${hero.level}',
+                          style: const TextStyle(color: _ivory, fontSize: 11),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        if (hero.subclass.isNotEmpty ||
+                            hero.secondarySubclass.isNotEmpty) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            [
+                              if (hero.subclass.isNotEmpty) hero.subclass,
+                              if (hero.secondarySubclass.isNotEmpty)
+                                hero.secondarySubclass,
+                            ].join(' · '),
+                            maxLines: 2,
+                            style: const TextStyle(color: _gold, fontSize: 11),
+                          ),
+                        ],
+                        const SizedBox(height: 7),
+                        Text(
+                          hero.background.isEmpty
+                              ? 'Dein Weg durch die Chroniken'
+                              : hero.background,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: _muted,
+                            fontSize: 11,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -284,98 +395,122 @@ class _SummaryGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final level = hero.level;
-    final proficiency = level >= 1 && level <= 20
-        ? RulesEngine.proficiencyBonus(level)
-        : null;
     final dex = _modifier(hero.abilities['dexterity']);
-    final values = <({String label, String value, IconData icon})>[
+    final initiative = dex == null ? '–' : _signed(RulesEngine.initiativeBonus(hero));
+    final maximum = hero.maxHitPoints;
+    final current = hero.hitPoints;
+    final hpFraction = current != null && maximum != null && maximum > 0
+        ? (current / maximum).clamp(0.0, 1.0).toDouble()
+        : null;
+    final values = <({String label, String value, IconData icon, Color accent})>[
       (
-        label: 'ÜBUNGSBONUS',
-        value: proficiency == null ? '–' : _signed(proficiency),
-        icon: Icons.stars_outlined,
-      ),
-      (
-        label: 'BEWEGUNG',
-        value: _meters(CharacterRuleEngine.speedMeters(hero)),
-        icon: Icons.directions_run_outlined,
-      ),
-      (
-        label: 'INITIATIVE',
-        value: dex == null ? '–' : _signed(RulesEngine.initiativeBonus(hero)),
-        icon: Icons.casino_outlined,
+        label: 'TREFFERPUNKTE',
+        value: '${current ?? '–'} / ${maximum ?? '–'}',
+        icon: Icons.favorite,
+        accent: const Color(0xffdb7064),
       ),
       (
         label: 'RÜSTUNGSKLASSE',
         value: hero.armorClass?.toString() ?? '–',
         icon: Icons.shield_outlined,
+        accent: const Color(0xffa7c8dc),
+      ),
+      (
+        label: 'INITIATIVE',
+        value: initiative,
+        icon: Icons.sports_martial_arts,
+        accent: _gold,
+      ),
+      (
+        label: 'BEWEGUNG',
+        value: _meters(CharacterRuleEngine.speedMeters(hero)),
+        icon: Icons.directions_run_outlined,
+        accent: _gold,
       ),
     ];
     return LayoutBuilder(
       builder: (context, constraints) {
         final columns = constraints.maxWidth < 580 ? 2 : 4;
-        // A width-derived aspect ratio makes these tiles too short on phones:
-        // the icon, score and label overflow by a few pixels at 320/360 dp.
-        // Reserve two label lines and scale the row height with system text size
-        // instead of clipping text or ignoring Flutter's overflow reports.
         final scaler = MediaQuery.textScalerOf(context);
-        final tileHeight =
-            (20 +
-                    22 +
-                    5 +
-                    scaler.scale(23) * 1.35 +
-                    2 +
-                    scaler.scale(10) * 1.45 * 2 +
-                    12)
-                .clamp(124.0, 320.0)
-                .toDouble();
-        // GridView.count has no mainAxisExtent parameter. An explicit
-        // SliverGridDelegateWithFixedCrossAxisCount supports fixed row heights
-        // and prevents narrow-screen RenderFlex overflow without clipping text.
+        final tileHeight = (76 + scaler.scale(50)).clamp(124.0, 230.0).toDouble();
         return GridView(
           key: const ValueKey('sheet-summary-grid'),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: columns,
             mainAxisExtent: tileHeight,
-            mainAxisSpacing: 9,
-            crossAxisSpacing: 9,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
           ),
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           children: [
-            for (final item in values)
-              _FantasyFrame(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(item.icon, size: 22, color: _gold),
-                    const SizedBox(height: 5),
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        item.value,
+            for (var i = 0; i < values.length; i++)
+              FantasyApprovedCornerFrame(
+                cornerSize: 20,
+                child: Container(
+                  key: ValueKey('sheet-summary-${i == 0 ? 'hp' : i == 1 ? 'ac' : i == 2 ? 'initiative' : 'speed'}'),
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: i == 0 ? const Color(0xff351c25) : _panel,
+                    border: Border.all(color: _gold.withValues(alpha: .55)),
+                    borderRadius: BorderRadius.circular(11),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(values[i].icon, size: 23, color: values[i].accent),
+                      const SizedBox(height: 3),
+                      Text(
+                        values[i].label,
                         maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           color: _ivory,
-                          fontSize: 23,
+                          fontSize: 10,
+                          fontFamily: 'serif',
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      item.label,
-                      maxLines: 2,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: _muted,
-                        fontSize: 10,
-                        letterSpacing: .6,
+                      const SizedBox(height: 4),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          values[i].value,
+                          key: i == 0 ? const ValueKey('sheet-hit-points') : null,
+                          style: const TextStyle(
+                            fontSize: 23, fontWeight: FontWeight.bold, color: _ivory,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                      if (i == 0 && hpFraction != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(5),
+                            child: LinearProgressIndicator(
+                              value: hpFraction,
+                              minHeight: 6,
+                              backgroundColor: const Color(0xff1c1015),
+                              valueColor: const AlwaysStoppedAnimation<Color>(
+                                Color(0xffde5a59),
+                              ),
+                            ),
+                          ),
+                        ),
+                      if (i == 0 && hpFraction == null)
+                        const Text('Noch nicht erfasst',
+                          style: TextStyle(color: _muted, fontSize: 10)),
+                      if (i == 0 && hero.temporaryHitPoints > 0)
+                        Text(
+                          '+${hero.temporaryHitPoints} temporäre TP',
+                          key: const ValueKey('sheet-temporary-hit-points'),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(color: _gold, fontSize: 10),
+                        ),
+                    ],
+                  ),
                 ),
               ),
           ],
@@ -420,6 +555,20 @@ class _PassivePerceptionStrip extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+          const SizedBox(width: 8),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('ÜBUNGSBONUS', style: TextStyle(
+                color: _muted, fontSize: 9, letterSpacing: .4,
+              )),
+              Text(
+                _signed(RulesEngine.proficiencyBonus(hero.level)),
+                style: const TextStyle(color: _gold, fontSize: 17),
+              ),
+            ],
           ),
           const SizedBox(width: 8),
           Text(
