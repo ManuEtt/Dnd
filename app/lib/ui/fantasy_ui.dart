@@ -600,6 +600,9 @@ class FantasyOptionalImageFrame extends StatelessWidget {
 }
 
 /// Wiederverwendeter gerahmter Bereich mit dezenten goldenen Verzierungen.
+/// Surface materials share the same responsive frame and readable text.
+enum FantasyPanelMaterial { midnight, parchment, leather, iron }
+
 class FantasyPanel extends StatelessWidget {
   const FantasyPanel({
     super.key,
@@ -608,22 +611,44 @@ class FantasyPanel extends StatelessWidget {
     this.icon,
     this.accent = FantasyPalette.gold,
     this.padding = const EdgeInsets.all(16),
+    this.material = FantasyPanelMaterial.midnight,
   });
+
   final Widget child;
   final String? title;
   final IconData? icon;
   final Color accent;
   final EdgeInsetsGeometry padding;
+  final FantasyPanelMaterial material;
+
+  List<Color> get _materialGradient => switch (material) {
+    FantasyPanelMaterial.midnight => const [
+      Color(0xff1a3045),
+      Color(0xff0e1b29),
+    ],
+    FantasyPanelMaterial.parchment => const [
+      Color(0xff443a2b),
+      Color(0xff251f1c),
+    ],
+    FantasyPanelMaterial.leather => const [
+      Color(0xff35271f),
+      Color(0xff151b23),
+    ],
+    FantasyPanelMaterial.iron => const [
+      Color(0xff29343c),
+      Color(0xff141c25),
+    ],
+  };
 
   @override
   Widget build(BuildContext context) => FantasyApprovedCornerFrame(
     child: Container(
       padding: padding,
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xff1a3045), Color(0xff0e1b29)],
+          colors: _materialGradient,
         ),
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: accent.withValues(alpha: .5)),
@@ -636,8 +661,11 @@ class FantasyPanel extends StatelessWidget {
         ],
       ),
       child: FantasyOptionalImageFrame(
-        image: FantasyOptionalArt.panel,
+        image: material == FantasyPanelMaterial.parchment
+            ? FantasyOptionalArt.card
+            : FantasyOptionalArt.panel,
         centerSlice: const Rect.fromLTWH(34, 32, 292, 54),
+        opacity: material == FantasyPanelMaterial.parchment ? .32 : .95,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
