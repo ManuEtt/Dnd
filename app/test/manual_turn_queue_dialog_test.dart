@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/game_engine.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/ui/manual_turn_queue_dialog.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 
 HeroCharacter _hero() => HeroCharacter(
   id: 'hero',
@@ -71,6 +72,9 @@ void main() {
     expect(find.text('Manuelle Kampf-Zugfolge'), findsOneWidget);
     expect(find.textContaining('keine automatische'), findsWidgets);
     final save = find.byKey(const ValueKey('queue-establish'));
+    final fantasyAction = tester.widget<FantasyTextButton>(save);
+    expect(fantasyAction.style, FantasyButtonStyle.woodGold);
+    expect(fantasyAction.onPressed, isNotNull);
     await tester.ensureVisible(save);
     await tester.tap(save);
     await tester.pumpAndSettle();
