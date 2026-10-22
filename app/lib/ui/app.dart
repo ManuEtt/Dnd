@@ -2635,68 +2635,78 @@ class _CombatView extends StatelessWidget {
                   : () => onAction('Ich untersuche meinen Gegner.'),
             ),
             if (ClassResourceRules.level(hero, 'Mönch') >= 2) ...[
-              OutlinedButton(
+              FantasyTextButton(
                 key: const ValueKey('monk-patient-defense'),
+                label: 'Mönch: Rückzug',
+                icon: Icons.shield_outlined,
+                style: FantasyButtonStyle.iron,
                 onPressed: busy || encounter.bonusActionUsed
                     ? null
                     : () => onAction('Geduldige Verteidigung'),
-                child: const Text('Mönch: Rückzug'),
               ),
-              OutlinedButton(
+              FantasyTextButton(
                 key: const ValueKey('monk-step-wind'),
+                label: 'Mönch: Sprinten',
+                icon: Icons.air,
+                style: FantasyButtonStyle.arcane,
                 onPressed: busy || encounter.bonusActionUsed
                     ? null
                     : () => onAction('Schritt des Windes'),
-                child: const Text('Mönch: Sprinten'),
               ),
               if (ClassResourceRules.remaining(hero, 'focusPoints') > 0) ...[
-                OutlinedButton.icon(
+                FantasyTextButton(
                   key: const ValueKey('monk-flurry-of-blows'),
+                  label:
+                      'Schlaghagel · ${ClassResourceRules.level(hero, 'Mönch') >= 10 ? 3 : 2} Angriffe · 1 Fokus',
+                  icon: Icons.sports_martial_arts,
+                  style: FantasyButtonStyle.wax,
                   onPressed: busy || !MonkFlurryRules.canUse(hero, encounter)
                       ? null
                       : () => onAction('Schlaghagel'),
-                  icon: const Icon(Icons.sports_martial_arts),
-                  label: Text(
-                    'Schlaghagel · ${ClassResourceRules.level(hero, 'Mönch') >= 10 ? 3 : 2} Angriffe · 1 Fokus',
-                  ),
                 ),
-                OutlinedButton(
+                FantasyTextButton(
                   key: const ValueKey('monk-patient-defense-focus'),
+                  label: ClassResourceRules.level(hero, 'Mönch') >= 10
+                      ? 'Rückzug + Ausweichen + temporäre TP · 1 Fokus'
+                      : 'Rückzug + Ausweichen · 1 Fokus',
+                  icon: Icons.shield_outlined,
+                  style: FantasyButtonStyle.arcane,
                   onPressed: busy || encounter.bonusActionUsed
                       ? null
                       : () => onAction('Geduldige Verteidigung mit Fokuspunkt'),
-                  child: Text(
-                    ClassResourceRules.level(hero, 'Mönch') >= 10
-                        ? 'Rückzug + Ausweichen + temporäre TP · 1 Fokus'
-                        : 'Rückzug + Ausweichen · 1 Fokus',
-                  ),
                 ),
-                OutlinedButton(
+                FantasyTextButton(
                   key: const ValueKey('monk-step-wind-focus'),
+                  label: 'Sprinten + Rückzug · 1 Fokus',
+                  icon: Icons.air,
+                  style: FantasyButtonStyle.arcane,
                   onPressed: busy || encounter.bonusActionUsed
                       ? null
                       : () => onAction('Schritt des Windes verstärkt'),
-                  child: const Text('Sprinten + Rückzug · 1 Fokus'),
                 ),
               ],
             ],
             if (MonkSelfRestoration.choices(hero).isNotEmpty) ...[
               for (final condition in MonkSelfRestoration.choices(hero))
-                OutlinedButton(
+                FantasyToggleButton(
                   key: ValueKey('monk-self-restoration-$condition'),
+                  label: encounter.selfRestorationChoice == condition
+                      ? 'Ausgewählt für Zugende: $condition'
+                      : 'Am Zugende beenden: $condition',
+                  icon: Icons.auto_fix_high_outlined,
+                  selected: encounter.selfRestorationChoice == condition,
                   onPressed: busy || encounter.activeParticipant != 'hero'
                       ? null
                       : () => onAction('Selbstwiederherstellung: $condition'),
-                  child: Text(
-                    encounter.selfRestorationChoice == condition
-                        ? 'Ausgewählt für Zugende: $condition'
-                        : 'Am Zugende beenden: $condition',
-                  ),
                 ),
             ],
             if (ClassResourceRules.level(hero, 'Paladin') >= 1) ...[
-              OutlinedButton.icon(
+              FantasyTextButton(
                 key: const ValueKey('paladin-lay-on-hands-heal'),
+                label: 'Handauflegen · '
+                    '${ClassResourceRules.remaining(hero, 'layOnHands')} TP-Vorrat',
+                icon: Icons.healing_outlined,
+                style: FantasyButtonStyle.woodGold,
                 onPressed:
                     busy ||
                         encounter.bonusActionUsed ||
@@ -2714,15 +2724,13 @@ class _CombatView extends StatelessWidget {
                         final amount = missing < pool ? missing : pool;
                         onAction('Handauflegen: $amount');
                       },
-                icon: const Icon(Icons.healing_outlined),
-                label: Text(
-                  'Handauflegen · '
-                  '${ClassResourceRules.remaining(hero, 'layOnHands')} TP-Vorrat',
-                ),
               ),
               if (hero.conditions.contains('vergiftet'))
-                OutlinedButton(
+                FantasyTextButton(
                   key: const ValueKey('paladin-lay-on-hands-poison'),
+                  label: 'Vergiftung entfernen · 5 Punkte',
+                  icon: Icons.healing_outlined,
+                  style: FantasyButtonStyle.woodGold,
                   onPressed:
                       busy ||
                           encounter.bonusActionUsed ||
@@ -2730,16 +2738,17 @@ class _CombatView extends StatelessWidget {
                           ClassResourceRules.remaining(hero, 'layOnHands') < 5
                       ? null
                       : () => onAction('Handauflegen: Vergiftung'),
-                  child: const Text('Vergiftung entfernen · 5 Punkte'),
                 ),
             ],
             if (ClassResourceRules.level(hero, 'Schurke') >= 2)
-              OutlinedButton(
+              FantasyTextButton(
                 key: const ValueKey('rogue-cunning-disengage'),
+                label: 'Schurke: Rückzug',
+                icon: Icons.directions_run_outlined,
+                style: FantasyButtonStyle.iron,
                 onPressed: busy || encounter.bonusActionUsed
                     ? null
                     : () => onAction('Flinke Aktion: Rückzug'),
-                child: const Text('Schurke: Rückzug'),
               ),
           ],
         ),
