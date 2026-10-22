@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../domain/models.dart';
 import 'fantasy_ui.dart';
+import 'fantasy_dice_breakdown.dart';
 
 /// A read-only view over persisted game events. Never renders the raw event
 /// payload: it contains stateAfter checkpoints, which include private save data.
@@ -82,6 +83,7 @@ class _ChronicleEntry extends StatelessWidget {
   Widget build(BuildContext context) {
     final label = _EventSummary.title(event.type);
     final details = _EventSummary.details(event);
+    final diceDetails = FantasyDiceBreakdown.describe(event);
     final date = event.timestamp.toLocal();
     final when =
         '${_two(date.day)}.${_two(date.month)}.${date.year} '
@@ -93,7 +95,7 @@ class _ChronicleEntry extends StatelessWidget {
     final accent = attack ? FantasyPalette.danger : FantasyPalette.gold;
 
     return Semantics(
-      label: '$label, $when${details.isEmpty ? '' : ', ${details.join(', ')}'}',
+      label: '$label, $when${details.isEmpty ? '' : ', ${details.join(', ')}'}${diceDetails.isEmpty ? '' : ', ${diceDetails.join(', ')}'}',
       child: ExcludeSemantics(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
@@ -132,6 +134,10 @@ class _ChronicleEntry extends StatelessWidget {
                     if (details.isNotEmpty) ...[
                       const SizedBox(height: 4),
                       Text(details.join(' · '), softWrap: true),
+                    ],
+                    if (diceDetails.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      FantasyDiceBreakdown(event: event),
                     ],
                   ],
                 ),
