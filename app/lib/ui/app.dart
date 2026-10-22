@@ -227,6 +227,13 @@ class _LivingGameAppState extends State<LivingGameApp> {
                   ),
                 Expanded(
                   child: FantasyBackdrop(
+                    scene: switch (_page) {
+                      0 => FantasyBackdropScene.home,
+                      1 => FantasyBackdropScene.adventure,
+                      2 => FantasyBackdropScene.heroes,
+                      3 => FantasyBackdropScene.journal,
+                      _ => FantasyBackdropScene.settings,
+                    },
                     child: SafeArea(
                       child: Column(
                         children: [
@@ -1996,15 +2003,18 @@ class _AdventurePageState extends State<_AdventurePage> {
         children: [
           Expanded(
             child: _combat && encounter.isNotEmpty
-                ? _CombatView(
-                    encounter: campaign.encounter!,
-                    hero: campaign.hero,
-                    onAction: (text) {
-                      _input.text = text;
-                      _send();
-                    },
-                    busy: widget.controller.busy,
-                    header: header,
+                ? FantasyBackdrop(
+                    scene: FantasyBackdropScene.combat,
+                    child: _CombatView(
+                      encounter: campaign.encounter!,
+                      hero: campaign.hero,
+                      onAction: (text) {
+                        _input.text = text;
+                        _send();
+                      },
+                      busy: widget.controller.busy,
+                      header: header,
+                    ),
                   )
                 : ListView(
                     controller: _scroll,
@@ -2183,12 +2193,13 @@ class _AdventurePageState extends State<_AdventurePage> {
                                   'Modifikator ${_signed(pending['modifier'] ?? pending['bonus'] ?? 0)}',
                                 ),
                                 const SizedBox(height: 12),
-                                FilledButton.icon(
+                                FantasyTextButton(
+                                  label: 'Wurf durchführen',
+                                  icon: Icons.casino_outlined,
+                                  style: FantasyButtonStyle.dice,
                                   onPressed: widget.controller.busy
                                       ? null
                                       : _roll,
-                                  icon: const Icon(Icons.casino_outlined),
-                                  label: const Text('Wurf durchführen'),
                                 ),
                               ],
                             ),
@@ -2238,10 +2249,10 @@ class _AdventurePageState extends State<_AdventurePage> {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      IconButton.filled(
+                      FantasyIconButton(
                         onPressed: widget.controller.busy ? null : _send,
                         tooltip: 'Handlung senden',
-                        icon: const Icon(Icons.send),
+                        icon: Icons.send,
                       ),
                     ],
                   ),
@@ -2251,11 +2262,12 @@ class _AdventurePageState extends State<_AdventurePage> {
                     const SizedBox(height: 8),
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: OutlinedButton.icon(
+                      child: FantasyTextButton(
                         key: const ValueKey('adventure-memory-recap'),
+                        label: 'Rückblick',
+                        icon: Icons.history,
+                        style: FantasyButtonStyle.iron,
                         onPressed: widget.controller.busy ? null : _recap,
-                        icon: const Icon(Icons.history),
-                        label: const Text('Rückblick'),
                       ),
                     ),
                   ],
