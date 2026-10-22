@@ -5,7 +5,6 @@ import '../domain/class_progression_rules.dart';
 import '../domain/class_feature_resources.dart';
 import '../domain/class_resource_rules.dart';
 import '../domain/srd_class_feature_catalog.dart';
-import '../domain/condition_rules.dart';
 import '../domain/models.dart';
 import '../domain/multiclass_rules.dart';
 import '../domain/rest_rules.dart';
@@ -14,6 +13,7 @@ import '../domain/rules_engine.dart';
 import 'fantasy_art.dart';
 import 'fantasy_experience.dart';
 import 'fantasy_ui.dart';
+import 'fantasy_effect_ward.dart';
 import 'fantasy_buttons.dart';
 import 'character_portrait_picker.dart';
 
@@ -926,55 +926,7 @@ class _ConditionsSection extends StatelessWidget {
     children: [
       const _OrnateHeading('Zustände', icon: Icons.healing_outlined),
       const SizedBox(height: 12),
-      if (hero.exhaustionLevel > 0)
-        _FantasyFrame(
-          child: Text(
-            'Erschöpfung ${hero.exhaustionLevel}/6 · W20-Tests '
-            '−${hero.exhaustionLevel * 2} · Bewegung '
-            '${_meters(CharacterRuleEngine.speedMeters(hero), unknown: 'nicht bestätigt')}',
-            key: const ValueKey('sheet-exhaustion-effects'),
-          ),
-        ),
-
-      if (hero.conditions.isEmpty)
-        const _EmptyDetails('Keine Zustände eingetragen.')
-      else
-        for (final condition in hero.conditions)
-          _FantasyFrame(
-            child: Row(
-              children: [
-                const Icon(Icons.warning_amber_outlined, color: _gold),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(condition),
-                      if (hero.manualConditions.contains(condition))
-                        const Text(
-                          'Manuell / historisch',
-                          style: TextStyle(color: _muted, fontSize: 12),
-                        ),
-                      for (final effect in hero.conditionEffects.where(
-                        (entry) => entry.condition == condition,
-                      ))
-                        Text(
-                          'Quelle: ${effect.source}'
-                          '${effect.expiresAtOwnTurnEndRound == null ? ' · Bis zur ausdrücklichen Entfernung' : ' · Ende deines Zugs: Runde ${effect.expiresAtOwnTurnEndRound} (${effect.expiresInEncounterId})'}',
-                          key: ValueKey('source-effect-${effect.id}'),
-                          style: const TextStyle(color: _muted, fontSize: 12),
-                        ),
-                      if (ConditionRules.descriptions.containsKey(condition))
-                        Text(
-                          ConditionRules.descriptions[condition]!,
-                          style: const TextStyle(color: _muted, fontSize: 12),
-                        ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+      FantasyEffectWard(hero: hero, expandDetailsInitially: true),
       const SizedBox(height: 20),
       const _OrnateHeading(
         'Charaktermerkmale',
