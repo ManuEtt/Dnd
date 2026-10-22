@@ -825,6 +825,17 @@ class HeroCharacter {
         'Bewusstlose oder tote Helden können nicht konzentrieren.',
       );
     }
+    if (parsed.confirmedSpellEffects.any(
+      (effect) =>
+          !parsed.spells.contains(effect.spellName) ||
+          (effect.concentrationBound &&
+              effect.spellName != parsed.concentratingOn),
+    )) {
+      throw const FormatException(
+        'Bestätigte Zauberwirkung widerspricht bekannten Zaubern '
+        'oder aktueller Konzentration.',
+      );
+    }
     return parsed;
   }
 }
