@@ -137,7 +137,17 @@ class _LivingGameAppState extends State<LivingGameApp> {
             appBar: AppBar(
               title: Row(
                 children: [
-                  const FantasyRuneEmblem(rune: FantasyRune.dice, size: 30),
+                  FantasySelectedNavigationRune(
+                    key: const ValueKey('fantasy-appbar-rune'),
+                    rune: switch (_page) {
+                      0 => FantasyRune.compass,
+                      1 => FantasyRune.dice,
+                      2 => FantasyRune.hero,
+                      3 => FantasyRune.tome,
+                      _ => FantasyRune.moon,
+                    },
+                    size: 30,
+                  ),
                   const SizedBox(width: 9),
                   Expanded(
                     child: Text(
@@ -193,12 +203,20 @@ class _LivingGameAppState extends State<LivingGameApp> {
                           rune: FantasyRune.compass,
                           size: 28,
                         ),
+                        selectedIcon: FantasySelectedNavigationRune(
+                          rune: FantasyRune.compass,
+                          size: 32,
+                        ),
                         label: Text('Start'),
                       ),
                       NavigationRailDestination(
                         icon: FantasyRuneEmblem(
                           rune: FantasyRune.dice,
                           size: 28,
+                        ),
+                        selectedIcon: FantasySelectedNavigationRune(
+                          rune: FantasyRune.dice,
+                          size: 32,
                         ),
                         label: Text('Abenteuer'),
                       ),
@@ -207,6 +225,10 @@ class _LivingGameAppState extends State<LivingGameApp> {
                           rune: FantasyRune.hero,
                           size: 28,
                         ),
+                        selectedIcon: FantasySelectedNavigationRune(
+                          rune: FantasyRune.hero,
+                          size: 32,
+                        ),
                         label: Text('Helden'),
                       ),
                       NavigationRailDestination(
@@ -214,12 +236,20 @@ class _LivingGameAppState extends State<LivingGameApp> {
                           rune: FantasyRune.tome,
                           size: 28,
                         ),
+                        selectedIcon: FantasySelectedNavigationRune(
+                          rune: FantasyRune.tome,
+                          size: 32,
+                        ),
                         label: Text('Tagebuch'),
                       ),
                       NavigationRailDestination(
                         icon: FantasyRuneEmblem(
                           rune: FantasyRune.moon,
                           size: 28,
+                        ),
+                        selectedIcon: FantasySelectedNavigationRune(
+                          rune: FantasyRune.moon,
+                          size: 32,
                         ),
                         label: Text('Optionen'),
                       ),
@@ -281,12 +311,20 @@ class _LivingGameAppState extends State<LivingGameApp> {
                             rune: FantasyRune.compass,
                             size: 26,
                           ),
+                          selectedIcon: FantasySelectedNavigationRune(
+                            rune: FantasyRune.compass,
+                            size: 32,
+                          ),
                           label: 'Start',
                         ),
                         NavigationDestination(
                           icon: FantasyRuneEmblem(
                             rune: FantasyRune.dice,
                             size: 26,
+                          ),
+                          selectedIcon: FantasySelectedNavigationRune(
+                            rune: FantasyRune.dice,
+                            size: 32,
                           ),
                           label: 'Abenteuer',
                         ),
@@ -295,6 +333,10 @@ class _LivingGameAppState extends State<LivingGameApp> {
                             rune: FantasyRune.hero,
                             size: 26,
                           ),
+                          selectedIcon: FantasySelectedNavigationRune(
+                            rune: FantasyRune.hero,
+                            size: 32,
+                          ),
                           label: 'Helden',
                         ),
                         NavigationDestination(
@@ -302,12 +344,20 @@ class _LivingGameAppState extends State<LivingGameApp> {
                             rune: FantasyRune.tome,
                             size: 26,
                           ),
+                          selectedIcon: FantasySelectedNavigationRune(
+                            rune: FantasyRune.tome,
+                            size: 32,
+                          ),
                           label: 'Tagebuch',
                         ),
                         NavigationDestination(
                           icon: FantasyRuneEmblem(
                             rune: FantasyRune.moon,
                             size: 26,
+                          ),
+                          selectedIcon: FantasySelectedNavigationRune(
+                            rune: FantasyRune.moon,
+                            size: 32,
                           ),
                           label: 'Optionen',
                         ),
