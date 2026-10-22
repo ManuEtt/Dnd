@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../domain/condition_effects.dart';
+import '../domain/confirmed_spell_effects.dart';
 import '../domain/condition_rules.dart';
 import '../domain/models.dart';
 import 'fantasy_ui.dart';
@@ -13,12 +14,14 @@ class FantasyEffectWard extends StatelessWidget {
     required this.hero,
     this.encounter,
     this.onManage,
+    this.onManageSpells,
     this.expandDetailsInitially = false,
   });
 
   final HeroCharacter hero;
   final Encounter? encounter;
   final VoidCallback? onManage;
+  final VoidCallback? onManageSpells;
   final bool expandDetailsInitially;
 
   @override
@@ -44,7 +47,9 @@ class FantasyEffectWard extends StatelessWidget {
               Text('Bestätigter Zauber: ${hero.concentratingOn}'),
             const Text(
               'Die Wirkungsdauer ist nicht bestätigt. Aus dem '
-              'Zaubernamen wird keine Restzeit abgeleitet.',
+              'Zaubernamen wird keine Restzeit abgeleitet. '
+              'Nur separate, ausdrücklich bestätigte Zaubereinträge '
+              'haben einen eigenen Ablaufzähler.',
             ),
             const Text(
               'Konzentration endet bei einem neuen Konzentrationseffekt, '
@@ -53,6 +58,29 @@ class FantasyEffectWard extends StatelessWidget {
             ),
           ],
         ),
+        for (final effect in hero.confirmedSpellEffects) ...[
+          const SizedBox(height: 9),
+          _WardCard(
+            key: ValueKey('ward-spell-effect-${effect.id}'),
+            icon: Icons.hourglass_top,
+            color: FantasyPalette.gold,
+            title: effect.spellName,
+            summary: _spellDuration(effect),
+            expanded: expandDetailsInitially,
+            details: [
+              Text(
+                'Bestätigte Quelle: ${effect.source}',
+                key: ValueKey('spell-effect-source-${effect.id}'),
+              ),
+              if (effect.concentrationBound)
+                const Text('Endet auch bei Konzentrationsverlust.'),
+              const Text(
+                'Nur Verlaufsnachweis: keine automatisch berechnete '
+                'Wirkung auf Ziele oder Trefferpunkte.',
+              ),
+            ],
+          ),
+        ],
         if (hero.exhaustionLevel > 0) ...[
           const SizedBox(height: 9),
           _WardCard(
@@ -123,6 +151,16 @@ class FantasyEffectWard extends StatelessWidget {
               ),
             ),
           ),
+        if (onManageSpells != null)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              key: const ValueKey('ward-manage-spell-effects'),
+              onPressed: onManageSpells,
+              icon: const Icon(Icons.auto_fix_high, size: 18),
+              label: const Text('Zauberwirkungen verwalten'),
+            ),
+          ),
         if (onManage != null)
           Align(
             alignment: Alignment.centerLeft,
@@ -136,6 +174,21 @@ class FantasyEffectWard extends StatelessWidget {
       ],
     ),
   );
+
+  String _spellDuration(ConfirmedSpellEffect effect) {
+    final round = effect.expiresAtOwnTurnEndRound;
+    if (round == null) return 'Bis zur bestätigten Beendigung';
+    final rest = ConfirmedSpellEffectRules.remainingOwnTurnEnds(
+      effect,
+      encounter,
+    );
+    final foreign = encounter != null &&
+        encounter!.id != effect.expiresInEncounterId;
+    return 'Ende des eigenen Zugs: Runde $round '
+        '(${effect.expiresInEncounterId})'
+        '${foreign ? ' · andere Begegnung' : ''}'
+        '${rest == null ? '' : ' · noch $rest eigene Zugenden'}';
+  }
 
   String _summary(String condition) {
     final count = hero.conditionEffects
