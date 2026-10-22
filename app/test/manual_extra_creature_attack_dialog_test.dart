@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/game_engine.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
@@ -121,7 +122,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       tester
-          .widget<FilledButton>(
+          .widget<FantasyTextButton>(
             find.byKey(const ValueKey('manual-attack-confirm')),
           )
           .onPressed,
