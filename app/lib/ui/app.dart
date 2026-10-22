@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 import '../domain/models.dart';
 import '../data/srd_spell_catalog_loader.dart';
-import '../domain/cover_rules.dart';
 import '../domain/campaign_experience.dart';
 import '../domain/rabenwacht_campaign.dart';
 import '../domain/damage_rules.dart';
