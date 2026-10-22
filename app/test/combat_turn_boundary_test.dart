@@ -594,8 +594,20 @@ void main() {
       await tester.ensureVisible(combatToggle);
       await tester.pumpAndSettle();
       expect(combatToggle.hitTestable(), findsOneWidget);
+      expect(
+        tester.widget<FantasyToggleButton>(
+          find.byKey(const ValueKey('adventure-combat-mode-toggle')),
+        ).selected,
+        isFalse,
+      );
       await tester.tap(combatToggle);
       await tester.pumpAndSettle();
+      expect(
+        tester.widget<FantasyToggleButton>(
+          find.byKey(const ValueKey('adventure-combat-mode-toggle')),
+        ).selected,
+        isTrue,
+      );
       final button = find.byKey(const ValueKey('combat-end-hero-turn'));
       await tester.scrollUntilVisible(
         button,
