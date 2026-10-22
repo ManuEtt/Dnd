@@ -32,6 +32,88 @@ class FantasyRuneEmblem extends StatelessWidget {
   );
 }
 
+/// Selected navigation art, rendered as native vectors and scaled to the
+/// available slot. The containing NavigationBar/Rail still handles semantics,
+/// keyboard focus, touch navigation, and the selected destination.
+class FantasySelectedNavigationRune extends StatelessWidget {
+  const FantasySelectedNavigationRune({
+    super.key,
+    required this.rune,
+    this.size = 32,
+  });
+
+  final FantasyRune rune;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) => ExcludeSemantics(
+    child: SizedBox(
+      width: size,
+      height: size,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: const RadialGradient(
+            colors: [Color(0xff5d4329), Color(0xff1a3146)],
+          ),
+          border: Border.all(color: FantasyPalette.gold, width: 1.3),
+          boxShadow: [
+            BoxShadow(
+              color: FantasyPalette.gold.withValues(alpha: .33),
+              blurRadius: 8,
+              spreadRadius: 1,
+            ),
+          ],
+        ),
+        child: CustomPaint(
+          foregroundPainter: const _NavigationEmblemPainter(),
+          child: Center(
+            child: FantasyRuneEmblem(
+              rune: rune,
+              size: size * .72,
+              color: FantasyPalette.ivory,
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+class _NavigationEmblemPainter extends CustomPainter {
+  const _NavigationEmblemPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (size.width < 16 || size.height < 16) return;
+    final paint = Paint()
+      ..color = FantasyPalette.gold.withValues(alpha: .82)
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
+    final c = Offset(size.width / 2, size.height / 2);
+    final radius = math.min(size.width, size.height) / 2 - 3;
+    canvas.drawCircle(c, radius, paint);
+    for (final direction in const [
+      Offset(0, -1),
+      Offset(1, 0),
+      Offset(0, 1),
+      Offset(-1, 0),
+    ]) {
+      final center = c + direction * (radius - 1);
+      final glyph = Path()
+        ..moveTo(center.dx, center.dy - 2)
+        ..lineTo(center.dx + 2, center.dy)
+        ..lineTo(center.dx, center.dy + 2)
+        ..lineTo(center.dx - 2, center.dy)
+        ..close();
+      canvas.drawPath(glyph, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _NavigationEmblemPainter oldDelegate) => false;
+}
+
 class _FantasyRunePainter extends CustomPainter {
   const _FantasyRunePainter({required this.rune, required this.color});
 
