@@ -102,7 +102,7 @@ void main() {
       find.text('Schildentscheidung offen – Schaden nicht gewürfelt'),
       findsOneWidget,
     );
-    expect(find.text('1 weitere Gegnerangriffe'), findsOneWidget);
+    expect(find.text('1 weiterer Gegnerangriff'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -131,7 +131,7 @@ void main() {
     expect(find.text('2 weitere Gegnerangriffe'), findsOneWidget);
     await tester.pumpWidget(screen(remaining: 1, heroShield: true));
     await tester.pumpAndSettle();
-    expect(find.text('1 weitere Gegnerangriffe'), findsOneWidget);
+    expect(find.text('1 weiterer Gegnerangriff'), findsOneWidget);
     expect(find.text('2 weitere Gegnerangriffe'), findsNothing);
     expect(find.text('Schild des Helden aktiv'), findsOneWidget);
     expect(tester.takeException(), isNull);
