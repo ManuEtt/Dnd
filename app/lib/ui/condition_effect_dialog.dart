@@ -188,6 +188,18 @@ class _ConditionEffectDialogState extends State<ConditionEffectDialog> {
                         value: ConditionEffectDuration.nextTurnEnd,
                         child: Text('Ende des nächsten eigenen Zugs'),
                       ),
+                      DropdownMenuItem(
+                        value: ConditionEffectDuration.threeOwnTurnEnds,
+                        child: Text('Nach 3 eigenen Zugenden'),
+                      ),
+                      DropdownMenuItem(
+                        value: ConditionEffectDuration.fiveOwnTurnEnds,
+                        child: Text('Nach 5 eigenen Zugenden'),
+                      ),
+                      DropdownMenuItem(
+                        value: ConditionEffectDuration.tenOwnTurnEnds,
+                        child: Text('Nach 10 eigenen Zugenden'),
+                      ),
                     ],
                   ],
                   onChanged: (value) {
@@ -196,8 +208,9 @@ class _ConditionEffectDialogState extends State<ConditionEffectDialog> {
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  'Nur bestätigte Ursachen. Erzählungen lösen keine '
-                  'Regeländerung aus. Allgemeine Zauberzeiten sind noch offen.',
+                  'Nur nach ausdrücklich bestätigter Regelquelle festlegen. '
+                  'Ein Zugende zählt erst bei bestätigtem eigenen Zug. '
+                  'Keine automatische Ableitung aus Zaubernamen.',
                   style: TextStyle(fontSize: 12),
                 ),
               ],
