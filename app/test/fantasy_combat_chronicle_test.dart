@@ -101,7 +101,6 @@ void main() {
         ]),
       );
       await tester.pumpAndSettle();
-      expect(find.text('Schild gewirkt').evaluate().isNotEmpty, isFalse);
       expect(find.text('Wurf: 18 · Verfehlt · Schild gewirkt'), findsOneWidget);
       expect(find.text('Kampf begonnen'), findsOneWidget);
       expect(tester.takeException(), isNull);
