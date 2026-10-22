@@ -3,6 +3,7 @@ import 'inventory_item_stats.dart';
 export 'inventory_item_stats.dart';
 import 'condition_rules.dart';
 import 'condition_effects.dart';
+import 'confirmed_spell_effects.dart';
 import 'death_saving_throw_rules.dart';
 import 'saving_throw_class_actions.dart';
 import 'spellcasting_rules.dart';
@@ -173,6 +174,7 @@ class HeroCharacter {
     this.experience,
     List<String> conditions = const [],
     List<ConditionEffect> conditionEffects = const [],
+    List<ConfirmedSpellEffect> confirmedSpellEffects = const [],
     this.exhaustionLevel = 0,
     Map<String, int> spentHitDice = const {},
     Map<String, int> spentSpellSlots = const {},
@@ -202,6 +204,7 @@ class HeroCharacter {
        inventory = List.unmodifiable(inventory),
        manualConditions = List.unmodifiable(conditions),
        conditionEffects = ConditionEffectRules.validated(conditionEffects),
+       confirmedSpellEffects = ConfirmedSpellEffectRules.validated(confirmedSpellEffects),
        spentHitDice = Map.unmodifiable(spentHitDice),
        spentSpellSlots = Map.unmodifiable(spentSpellSlots),
        spentClassResources = Map.unmodifiable(spentClassResources),
@@ -257,6 +260,7 @@ class HeroCharacter {
   /// Explicit legacy/manual entries, never synthesized from a source effect.
   final List<String> manualConditions;
   final List<ConditionEffect> conditionEffects;
+  final List<ConfirmedSpellEffect> confirmedSpellEffects;
 
   /// Read-only effective condition view: distinct names, multiple causes.
   List<String> get conditions => List.unmodifiable({
@@ -328,6 +332,7 @@ class HeroCharacter {
     Object? experience = _unchanged,
     List<String>? conditions,
     List<ConditionEffect>? conditionEffects,
+    List<ConfirmedSpellEffect>? confirmedSpellEffects,
     int? exhaustionLevel,
     Map<String, int>? spentHitDice,
     Map<String, int>? spentSpellSlots,
@@ -387,6 +392,7 @@ class HeroCharacter {
         : experience as int?,
     conditions: conditions ?? manualConditions,
     conditionEffects: conditionEffects ?? this.conditionEffects,
+    confirmedSpellEffects: confirmedSpellEffects ?? this.confirmedSpellEffects,
     exhaustionLevel: exhaustionLevel ?? this.exhaustionLevel,
     spentHitDice: spentHitDice ?? this.spentHitDice,
     spentSpellSlots: spentSpellSlots ?? this.spentSpellSlots,
@@ -441,6 +447,8 @@ class HeroCharacter {
     'conditions': manualConditions,
     if (conditionEffects.isNotEmpty)
       'conditionEffects': conditionEffects.map((e) => e.toJson()).toList(),
+    if (confirmedSpellEffects.isNotEmpty)
+      'confirmedSpellEffects': confirmedSpellEffects.map((e) => e.toJson()).toList(),
     if (exhaustionLevel > 0) 'exhaustionLevel': exhaustionLevel,
     if (spentHitDice.isNotEmpty) 'spentHitDice': spentHitDice,
     if (spentSpellSlots.isNotEmpty) 'spentSpellSlots': spentSpellSlots,
@@ -753,6 +761,10 @@ class HeroCharacter {
         j['conditionEffects'],
         'Zustandseffekte',
       ).map(ConditionEffect.fromJson).toList(),
+      confirmedSpellEffects: _list(
+        j['confirmedSpellEffects'],
+        'Bestätigte Zauberwirkungen',
+      ).map(ConfirmedSpellEffect.fromJson).toList(),
       exhaustionLevel: _int(
         j['exhaustionLevel'],
         'Erschöpfung',
@@ -811,6 +823,17 @@ class HeroCharacter {
         (parsed.isDead || parsed.hitPoints == 0)) {
       throw const FormatException(
         'Bewusstlose oder tote Helden können nicht konzentrieren.',
+      );
+    }
+    if (parsed.confirmedSpellEffects.any(
+      (effect) =>
+          !parsed.spells.contains(effect.spellName) ||
+          (effect.concentrationBound &&
+              effect.spellName != parsed.concentratingOn),
+    )) {
+      throw const FormatException(
+        'Bestätigte Zauberwirkung widerspricht bekannten Zaubern '
+        'oder aktueller Konzentration.',
       );
     }
     return parsed;
