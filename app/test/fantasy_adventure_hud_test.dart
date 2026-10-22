@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_adventure_hud.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_ui.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 
 Campaign _campaign(HeroCharacter hero, {List<Quest> quests = const []}) =>
     Campaign(
@@ -107,6 +108,10 @@ void main() {
       expect(find.text('Das verlassene Tor schützen'), findsOneWidget);
 
       final action = find.byKey(const ValueKey('adventure-quest-open-journal'));
+      expect(
+        tester.widget<FantasyTextButton>(action).style,
+        FantasyButtonStyle.iron,
+      );
       await tester.ensureVisible(action);
       await tester.pumpAndSettle();
       await tester.tap(action);
