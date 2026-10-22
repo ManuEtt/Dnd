@@ -272,22 +272,35 @@ class _ParchmentAbilities extends StatelessWidget {
         ),
         child: Column(
           children: [
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.auto_awesome, size: 17, color: FantasyCharacterOverview.ink),
-                SizedBox(width: 9),
-                Text(
-                  'Attribute',
-                  style: TextStyle(
-                    fontFamily: 'serif',
-                    fontSize: 23,
-                    fontWeight: FontWeight.bold,
-                    color: FantasyCharacterOverview.ink,
+                const Icon(
+                  Icons.auto_awesome,
+                  size: 17,
+                  color: FantasyCharacterOverview.ink,
+                ),
+                const SizedBox(width: 9),
+                const Expanded(
+                  child: Text(
+                    'Attribute',
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: 'serif',
+                      fontSize: 23,
+                      fontWeight: FontWeight.bold,
+                      color: FantasyCharacterOverview.ink,
+                    ),
                   ),
                 ),
-                SizedBox(width: 9),
-                Icon(Icons.auto_awesome, size: 17, color: FantasyCharacterOverview.ink),
+                const SizedBox(width: 9),
+                const Icon(
+                  Icons.auto_awesome,
+                  size: 17,
+                  color: FantasyCharacterOverview.ink,
+                ),
               ],
             ),
             const Divider(color: Color(0x994a351d), height: 13),
