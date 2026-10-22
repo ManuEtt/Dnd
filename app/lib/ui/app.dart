@@ -1550,6 +1550,7 @@ class _AdventurePageState extends State<_AdventurePage> {
     final header = Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: FantasyPanel(
+        material: FantasyPanelMaterial.leather,
         child: Column(
           children: [
             Row(
@@ -2838,6 +2839,7 @@ class _JournalSection extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(bottom: 12),
     child: FantasyPanel(
+      material: FantasyPanelMaterial.parchment,
       title: title,
       icon: icon,
       child: Column(
