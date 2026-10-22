@@ -1618,6 +1618,12 @@ class _AdventurePageState extends State<_AdventurePage> {
                 ),
               ),
             FantasyAdventureStatusHud(hero: campaign.hero),
+            const SizedBox(height: 12),
+            const FantasyChapterHeading(
+              label: 'Held & Kampf',
+              rune: FantasyRune.hero,
+              description: 'Charakterbogen, Zustände und Begegnungen',
+            ),
             const SizedBox(height: 8),
             Wrap(
               spacing: 5,
@@ -1827,6 +1833,20 @@ class _AdventurePageState extends State<_AdventurePage> {
                     style: FantasyButtonStyle.wax,
                     label: 'Zusatzkreatur-Angriff',
                   ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            const FantasyChapterHeading(
+              label: 'Zauber & Rituale',
+              rune: FantasyRune.tome,
+              description: 'Vorbereitete Magie und Heilung',
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 5,
+              runSpacing: 3,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&
                     AcidSplashRules.preparedName(campaign.hero) != null)
@@ -1957,20 +1977,24 @@ class _AdventurePageState extends State<_AdventurePage> {
                       Wrap(
                         spacing: 8,
                         children: [
-                          FilledButton.tonal(
+                          FantasyTextButton(
                             key: const ValueKey('enemy-shield-cast-now'),
+                            label: 'Jetzt Schild wirken',
+                            icon: Icons.shield_outlined,
+                            style: FantasyButtonStyle.arcane,
                             onPressed: widget.controller.busy
                                 ? null
                                 : () => _decideEnemyShieldHit(castShield: true),
-                            child: const Text('Jetzt Schild wirken'),
                           ),
-                          TextButton(
+                          FantasyTextButton(
                             key: const ValueKey('enemy-shield-decline'),
+                            label: 'Treffer hinnehmen',
+                            icon: Icons.shield_moon_outlined,
+                            style: FantasyButtonStyle.iron,
                             onPressed: widget.controller.busy
                                 ? null
                                 : () =>
                                       _decideEnemyShieldHit(castShield: false),
-                            child: const Text('Treffer hinnehmen'),
                           ),
                         ],
                       ),
@@ -1998,9 +2022,14 @@ class _AdventurePageState extends State<_AdventurePage> {
                       _combat ? 'Kampfübersicht' : 'Eine Begegnung ist aktiv.',
                     ),
                   ),
-                  TextButton(
+                  FantasyToggleButton(
+                    key: const ValueKey('adventure-combat-mode-toggle'),
+                    label: _combat ? 'Zur Erzählung' : 'Kampf ansehen',
+                    icon: _combat
+                        ? Icons.auto_stories_outlined
+                        : Icons.shield_outlined,
+                    selected: _combat,
                     onPressed: () => setState(() => _combat = !_combat),
-                    child: Text(_combat ? 'Zur Erzählung' : 'Kampf ansehen'),
                   ),
                 ],
               ),
