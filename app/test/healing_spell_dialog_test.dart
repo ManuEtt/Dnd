@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_ui.dart';
@@ -273,7 +274,7 @@ void main() {
         );
         expect(control('name'), findsNothing);
         expect(
-          tester.widget<FilledButton>(control('confirm')).onPressed,
+          tester.widget<FantasyTextButton>(control('confirm')).onPressed,
           isNull,
         );
         await tap(tester, 'cancel');
@@ -291,7 +292,7 @@ void main() {
         find.textContaining('Kein ausreichender freier Zauberplatz'),
         findsOneWidget,
       );
-      expect(tester.widget<FilledButton>(control('confirm')).onPressed, isNull);
+      expect(tester.widget<FantasyTextButton>(control('confirm')).onPressed, isNull);
       expect(hero.spentSpellSlots, {'1': 2});
     },
   );

@@ -18,6 +18,32 @@ void main() {
     expect(FantasyButtonAssets.wideCenterSlice.width, 144);
   });
 
+  testWidgets('Beschrifteter Würfelbutton skaliert via 9-Slice', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildFantasyTheme(),
+        home: Scaffold(
+          body: Center(
+            child: SizedBox(
+              width: 250,
+              child: FantasyDiceButton(sides: 20, onPressed: () {}),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final surface = tester.widget<FantasyButtonSurface>(
+      find.byType(FantasyButtonSurface),
+    );
+    expect(surface.style, FantasyButtonStyle.dice);
+    expect(surface.square, isFalse);
+    expect(find.text('W20 würfeln'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Primärbutton ruft Aktion und optionales Klicksignal auf', (
     tester,
   ) async {

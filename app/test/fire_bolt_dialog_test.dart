@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/ui/fire_bolt_dialog.dart';
@@ -87,7 +88,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('Kein bestätigter Feuerpfeil verfügbar.'), findsOneWidget);
-    final confirm = tester.widget<FilledButton>(
+    final confirm = tester.widget<FantasyTextButton>(
       find.byKey(const ValueKey('fire-bolt-cast')),
     );
     expect(confirm.onPressed, isNull);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'fantasy_buttons.dart';
 
 import '../domain/condition_rules.dart';
 import '../domain/healing_spell_rules.dart';
@@ -379,22 +380,21 @@ class _HealingSpellDialogState extends State<HealingSpellDialog> {
                   child: Text(_error!, style: TextStyle(color: errorColor)),
                 ),
               const SizedBox(height: 20),
-              FilledButton(
+              FantasyTextButton(
                 key: const ValueKey('healing-spell-confirm'),
+                label: 'Wirken bestätigen',
+                style: FantasyButtonStyle.arcane,
                 onPressed:
                     _setupError != null || _spell == null || _slot == null
                     ? null
                     : _confirm,
-                child: const Text(
-                  'Wirken bestätigen',
-                  textAlign: TextAlign.center,
-                ),
               ),
               const SizedBox(height: 8),
-              TextButton(
+              FantasyTextButton(
                 key: const ValueKey('healing-spell-cancel'),
+                label: 'Abbrechen',
+                style: FantasyButtonStyle.iron,
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Abbrechen'),
               ),
             ],
           ),

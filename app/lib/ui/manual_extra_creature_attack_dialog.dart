@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'fantasy_buttons.dart';
 
 import '../domain/cover_rules.dart';
 import '../domain/damage_rules.dart';
@@ -320,14 +321,16 @@ class _ManualExtraCreatureAttackDialogState
         ),
       ),
       actions: [
-        TextButton(
+        FantasyTextButton(
+          label: 'Abbrechen',
+          style: FantasyButtonStyle.iron,
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Abbrechen'),
         ),
-        FilledButton(
+        FantasyTextButton(
           key: const ValueKey('manual-attack-confirm'),
+          label: 'Angriff würfeln',
+          style: FantasyButtonStyle.wax,
           onPressed: available ? _confirm : null,
-          child: const Text('Angriff würfeln'),
         ),
       ],
     );

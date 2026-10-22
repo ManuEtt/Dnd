@@ -9,7 +9,7 @@ enum FantasyButtonStyle { woodGold, arcane, iron, wax, dice, iconGold }
 
 /// The PNGs are optional: a vector/gradient fallback makes offline installs
 /// and partial asset packs safe. Wide source frames are 192x64 with an
-/// unchanging 24px edge; icon and dice frames are 64x64.
+/// unchanging 24px edge; icon-only frames are 64x64.
 abstract final class FantasyButtonAssets {
   static const root = 'assets/fantasy/buttons/';
 
@@ -145,7 +145,6 @@ class _FantasyButtonState extends State<FantasyButton> {
                       state: state,
                       square:
                           iconOnly ||
-                          widget.style == FantasyButtonStyle.dice ||
                           widget.style == FantasyButtonStyle.iconGold,
                     ),
                   ),

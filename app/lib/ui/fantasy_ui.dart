@@ -226,68 +226,216 @@ ThemeData buildFantasyTheme() {
   );
 }
 
-/// Unaufdringlicher Fantasy-Verlauf fuer alle Hauptseiten.
+/// Decorative environments per app level. These variants never own UI input.
+enum FantasyBackdropScene { home, adventure, combat, heroes, journal, settings }
+
+/// Original illustrations already bundled with the app. No new dependency or
+/// external image provider is required; existing installed APKs keep working.
+abstract final class FantasyBackdropArtwork {
+  static String? imageFor(FantasyBackdropScene scene) => switch (scene) {
+    FantasyBackdropScene.home => null,
+    FantasyBackdropScene.adventure => 'assets/art/shadow_forest.webp',
+    FantasyBackdropScene.combat => 'assets/art/blood_mountains.webp',
+    FantasyBackdropScene.heroes => 'assets/art/castle.webp',
+    FantasyBackdropScene.journal => 'assets/art/forgotten_woods.webp',
+    FantasyBackdropScene.settings => 'assets/fantasy/night_sky.webp',
+  };
+}
+
+/// Illustrated, pointer-transparent background behind genuine Flutter controls.
+/// Existing callers default to the approved moonlit home treatment.
 class FantasyBackdrop extends StatelessWidget {
-  const FantasyBackdrop({super.key, required this.child});
+  const FantasyBackdrop({
+    super.key,
+    required this.child,
+    this.scene = FantasyBackdropScene.home,
+  });
+
   final Widget child;
+  final FantasyBackdropScene scene;
+
+  List<Color> get _gradient => switch (scene) {
+    FantasyBackdropScene.home => const [
+      Color(0xff142a40),
+      FantasyPalette.night,
+      Color(0xff0b1726),
+    ],
+    FantasyBackdropScene.adventure => const [
+      Color(0xff172d30),
+      Color(0xff0c1d24),
+      FantasyPalette.night,
+    ],
+    FantasyBackdropScene.combat => const [
+      Color(0xff342725),
+      Color(0xff161e27),
+      FantasyPalette.night,
+    ],
+    FantasyBackdropScene.heroes => const [
+      Color(0xff322920),
+      Color(0xff161e29),
+      FantasyPalette.night,
+    ],
+    FantasyBackdropScene.journal => const [
+      Color(0xff332c24),
+      Color(0xff1d2226),
+      FantasyPalette.night,
+    ],
+    FantasyBackdropScene.settings => const [
+      Color(0xff29252a),
+      Color(0xff141f2b),
+      FantasyPalette.night,
+    ],
+  };
 
   @override
-  Widget build(BuildContext context) => Stack(
-    fit: StackFit.expand,
-    children: [
-      const DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xff142a40),
-              FantasyPalette.night,
-              Color(0xff0b1726),
-            ],
-            stops: [0, .46, 1],
-          ),
-        ),
-      ),
-      const Positioned.fill(
-        child: IgnorePointer(
-          child: CustomPaint(painter: _FantasyStarlightPainter()),
-        ),
-      ),
-      Positioned(
-        top: 0,
-        left: 0,
-        right: 0,
-        height: 205,
-        child: IgnorePointer(
-          child: ShaderMask(
-            shaderCallback: (bounds) => const LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Colors.white, Colors.transparent],
-            ).createShader(bounds),
-            blendMode: BlendMode.dstIn,
-            child: Opacity(
-              opacity: 0.38,
-              child: Image.asset(
-                'assets/fantasy/night_sky.webp',
-                fit: BoxFit.cover,
-                errorBuilder: (_, error, stack) => const SizedBox.shrink(),
-              ),
+  Widget build(BuildContext context) {
+    final sceneArt = FantasyBackdropArtwork.imageFor(scene);
+    final isHome = scene == FantasyBackdropScene.home;
+    return Stack(
+      key: ValueKey('fantasy-backdrop-${scene.name}'),
+      fit: StackFit.expand,
+      children: [
+        DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: _gradient,
+              stops: const [0, .46, 1],
             ),
           ),
         ),
+        if (sceneArt != null)
+          Positioned.fill(
+            child: IgnorePointer(
+              child: ExcludeSemantics(
+                child: ShaderMask(
+                  shaderCallback: (bounds) => const LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.white,
+                      Color(0x88ffffff),
+                      Colors.transparent,
+                    ],
+                    stops: [0, .38, .85],
+                  ).createShader(bounds),
+                  blendMode: BlendMode.dstIn,
+                  child: Opacity(
+                    opacity: .28,
+                    child: Image.asset(
+                      sceneArt,
+                      key: ValueKey('fantasy-backdrop-art-${scene.name}'),
+                      fit: BoxFit.cover,
+                      alignment: Alignment.topCenter,
+                      errorBuilder: (_, error, stack) =>
+                          const SizedBox.shrink(),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        if (isHome) ...[
+          const Positioned.fill(
+            child: IgnorePointer(
+              child: CustomPaint(painter: _FantasyStarlightPainter()),
+            ),
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 205,
+            child: IgnorePointer(
+              child: ShaderMask(
+                shaderCallback: (bounds) => const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.white, Colors.transparent],
+                ).createShader(bounds),
+                blendMode: BlendMode.dstIn,
+                child: Opacity(
+                  opacity: 0.38,
+                  child: Image.asset(
+                    'assets/fantasy/night_sky.webp',
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, error, stack) =>
+                        const SizedBox.shrink(),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 224,
+            child: Opacity(
+              opacity: .62,
+              child: FantasyMoonlitScenery(height: 224),
+            ),
+          ),
+        ] else
+          Positioned.fill(
+            child: IgnorePointer(
+              child: CustomPaint(
+                painter: _FantasyBackdropFramePainter(
+                  warm: scene == FantasyBackdropScene.journal ||
+                      scene == FantasyBackdropScene.heroes ||
+                      scene == FantasyBackdropScene.combat,
+                ),
+              ),
+            ),
+          ),
+        child,
+      ],
+    );
+  }
+}
+
+/// Engraved chapter border is vector art, so it scales without bitmap seams.
+class _FantasyBackdropFramePainter extends CustomPainter {
+  const _FantasyBackdropFramePainter({required this.warm});
+
+  final bool warm;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (size.width < 80 || size.height < 80) return;
+    final accent = warm ? FantasyPalette.gold : FantasyPalette.blue;
+    final border = Paint()
+      ..color = accent.withValues(alpha: .16)
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(8, 8, size.width - 16, size.height - 16),
+        const Radius.circular(14),
       ),
-      const Positioned(
-        top: 0,
-        left: 0,
-        right: 0,
-        height: 224,
-        child: Opacity(opacity: .62, child: FantasyMoonlitScenery(height: 224)),
-      ),
-      child,
-    ],
-  );
+      border,
+    );
+    for (final right in [false, true]) {
+      for (final bottom in [false, true]) {
+        final x = right ? size.width - 18 : 18.0;
+        final y = bottom ? size.height - 18 : 18.0;
+        final dx = right ? -1.0 : 1.0;
+        final dy = bottom ? -1.0 : 1.0;
+        final path = Path()
+          ..moveTo(x + dx * 35, y)
+          ..lineTo(x + dx * 9, y)
+          ..quadraticBezierTo(x, y, x, y + dy * 9)
+          ..lineTo(x, y + dy * 35);
+        canvas.drawPath(path, border);
+        canvas.drawCircle(Offset(x + dx * 9, y + dy * 9), 2.6, border);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _FantasyBackdropFramePainter old) =>
+      old.warm != warm;
 }
 
 /// Reusable corner ornaments inspired by the approved moonlit fantasy UI
@@ -452,6 +600,9 @@ class FantasyOptionalImageFrame extends StatelessWidget {
 }
 
 /// Wiederverwendeter gerahmter Bereich mit dezenten goldenen Verzierungen.
+/// Surface materials share the same responsive frame and readable text.
+enum FantasyPanelMaterial { midnight, parchment, leather, iron }
+
 class FantasyPanel extends StatelessWidget {
   const FantasyPanel({
     super.key,
@@ -460,22 +611,44 @@ class FantasyPanel extends StatelessWidget {
     this.icon,
     this.accent = FantasyPalette.gold,
     this.padding = const EdgeInsets.all(16),
+    this.material = FantasyPanelMaterial.midnight,
   });
+
   final Widget child;
   final String? title;
   final IconData? icon;
   final Color accent;
   final EdgeInsetsGeometry padding;
+  final FantasyPanelMaterial material;
+
+  List<Color> get _materialGradient => switch (material) {
+    FantasyPanelMaterial.midnight => const [
+      Color(0xff1a3045),
+      Color(0xff0e1b29),
+    ],
+    FantasyPanelMaterial.parchment => const [
+      Color(0xff443a2b),
+      Color(0xff251f1c),
+    ],
+    FantasyPanelMaterial.leather => const [
+      Color(0xff35271f),
+      Color(0xff151b23),
+    ],
+    FantasyPanelMaterial.iron => const [
+      Color(0xff29343c),
+      Color(0xff141c25),
+    ],
+  };
 
   @override
   Widget build(BuildContext context) => FantasyApprovedCornerFrame(
     child: Container(
       padding: padding,
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xff1a3045), Color(0xff0e1b29)],
+          colors: _materialGradient,
         ),
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: accent.withValues(alpha: .5)),
@@ -488,8 +661,11 @@ class FantasyPanel extends StatelessWidget {
         ],
       ),
       child: FantasyOptionalImageFrame(
-        image: FantasyOptionalArt.panel,
+        image: material == FantasyPanelMaterial.parchment
+            ? FantasyOptionalArt.card
+            : FantasyOptionalArt.panel,
         centerSlice: const Rect.fromLTWH(34, 32, 292, 54),
+        opacity: material == FantasyPanelMaterial.parchment ? .32 : .95,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'fantasy_buttons.dart';
 
 import '../domain/cover_rules.dart';
 import '../domain/fire_bolt_rules.dart';
@@ -222,19 +223,21 @@ class _FireBoltDialogState extends State<FireBoltDialog> {
       ),
     ),
     actions: [
-      TextButton(
+      FantasyTextButton(
+        label: 'Abbrechen',
+        style: FantasyButtonStyle.iron,
         onPressed: () => Navigator.pop(context),
-        child: const Text('Abbrechen'),
       ),
-      FilledButton(
+      FantasyTextButton(
         key: const ValueKey('fire-bolt-cast'),
+        label: 'W20 und Schaden würfeln',
+        style: FantasyButtonStyle.dice,
         onPressed:
             _castingClass == null ||
                 _setupError != null ||
                 FireBoltRules.preparedName(widget.hero) == null
             ? null
             : _confirm,
-        child: const Text('W20 und Schaden würfeln'),
       ),
     ],
   );

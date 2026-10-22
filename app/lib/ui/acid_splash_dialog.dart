@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'fantasy_buttons.dart';
 
 import '../domain/acid_splash_rules.dart';
 import '../domain/cover_rules.dart';
@@ -427,19 +428,21 @@ class _AcidSplashDialogState extends State<AcidSplashDialog> {
       ),
     ),
     actions: [
-      TextButton(
+      FantasyTextButton(
+        label: 'Abbrechen',
+        style: FantasyButtonStyle.iron,
         onPressed: () => Navigator.of(context).pop(),
-        child: const Text('Abbrechen'),
       ),
-      FilledButton(
+      FantasyTextButton(
         key: const ValueKey('acid-splash-cast'),
+        label: 'Rettungswurf würfeln',
+        style: FantasyButtonStyle.arcane,
         onPressed:
             _selectedClass == null ||
                 AcidSplashRules.preparedName(widget.hero) == null ||
                 _setupError != null
             ? null
             : _confirm,
-        child: const Text('Rettungswurf würfeln'),
       ),
     ],
   );

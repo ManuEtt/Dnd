@@ -50,7 +50,8 @@ def _png(width: int, height: int, data: bytes) -> bytes:
 
 
 def draw(style: str, state: str) -> bytes:
-    square = style in ("dice", "icon_gold")
+    # Dice buttons have a label and therefore need wide, 9-slice-safe frames.
+    square = style == "icon_gold"
     width, height = (64, 64) if square else (192, 64)
     base, metal = STYLES[style]
     if state == "disabled":

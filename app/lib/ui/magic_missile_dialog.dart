@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'fantasy_buttons.dart';
 
 import '../domain/magic_missile_rules.dart';
 import '../domain/cover_rules.dart';
@@ -341,8 +342,10 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
                   style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
               const SizedBox(height: 16),
-              FilledButton(
+              FantasyTextButton(
                 key: const ValueKey('missile-confirm'),
+                label: 'Wirken bestätigen',
+                style: FantasyButtonStyle.arcane,
                 onPressed:
                     _setupError != null ||
                         MagicMissileRules.preparedName(widget.hero) == null ||
@@ -350,12 +353,12 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
                         slot == null
                     ? null
                     : _confirm,
-                child: const Text('Wirken bestätigen'),
               ),
-              TextButton(
+              FantasyTextButton(
                 key: const ValueKey('missile-cancel'),
+                label: 'Abbrechen',
+                style: FantasyButtonStyle.iron,
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Abbrechen'),
               ),
             ],
           ),

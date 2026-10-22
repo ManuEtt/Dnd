@@ -227,6 +227,13 @@ class _LivingGameAppState extends State<LivingGameApp> {
                   ),
                 Expanded(
                   child: FantasyBackdrop(
+                    scene: switch (_page) {
+                      0 => FantasyBackdropScene.home,
+                      1 => FantasyBackdropScene.adventure,
+                      2 => FantasyBackdropScene.heroes,
+                      3 => FantasyBackdropScene.journal,
+                      _ => FantasyBackdropScene.settings,
+                    },
                     child: SafeArea(
                       child: Column(
                         children: [
@@ -549,20 +556,22 @@ class _HomePage extends StatelessWidget {
                 spacing: 12,
                 runSpacing: 12,
                 children: [
-                  FilledButton.icon(
+                  FantasyTextButton(
+                    label: 'Demo erneut starten',
+                    icon: Icons.play_arrow,
+                    style: FantasyButtonStyle.woodGold,
                     onPressed: controller.busy
                         ? null
                         : () => onPlay(controller.createDemo),
-                    icon: const Icon(Icons.play_arrow),
-                    label: const Text('Demo erneut starten'),
                   ),
-                  FilledButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('start-rabenwacht-campaign'),
+                    label: 'Rabenwacht (Solo, 2–3 Std.)',
+                    icon: Icons.menu_book_outlined,
+                    style: FantasyButtonStyle.woodGold,
                     onPressed: controller.busy
                         ? null
                         : () => _newCampaign(context, prepared: true),
-                    icon: const Icon(Icons.menu_book_outlined),
-                    label: const Text('Rabenwacht (Solo, 2–3 Std.)'),
                   ),
                   FantasyTextButton(
                     label: 'Neue Kampagne',
@@ -571,16 +580,15 @@ class _HomePage extends StatelessWidget {
                         ? null
                         : () => _newCampaign(context),
                   ),
-                  OutlinedButton.icon(
+                  FantasyTextButton(
+                    label: controller.narrator.provider == 'mock'
+                        ? 'Testgeschichte starten'
+                        : 'KI-Kampagne erstellen',
+                    icon: Icons.auto_awesome,
+                    style: FantasyButtonStyle.arcane,
                     onPressed: controller.busy || !controller.narrator.enabled
                         ? null
                         : () => _newCampaign(context, ai: true),
-                    icon: const Icon(Icons.auto_awesome),
-                    label: Text(
-                      controller.narrator.provider == 'mock'
-                          ? 'Testgeschichte starten'
-                          : 'KI-Kampagne erstellen',
-                    ),
                   ),
                   FantasyTextButton(
                     label: 'Helden verwalten',
@@ -708,7 +716,10 @@ class _HomePage extends StatelessWidget {
             },
           ),
         const SizedBox(height: 20),
-        OutlinedButton.icon(
+        FantasyTextButton(
+          label: 'Kampagne aus JSON importieren',
+          style: FantasyButtonStyle.iron,
+          icon: Icons.file_upload_outlined,
           onPressed: controller.busy
               ? null
               : () async {
@@ -721,8 +732,6 @@ class _HomePage extends StatelessWidget {
                     onPlay(() => controller.importCampaign(json));
                   }
                 },
-          icon: const Icon(Icons.file_upload_outlined),
-          label: const Text('Kampagne aus JSON importieren'),
         ),
       ],
     );
@@ -1541,6 +1550,7 @@ class _AdventurePageState extends State<_AdventurePage> {
     final header = Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: FantasyPanel(
+        material: FantasyPanelMaterial.leather,
         child: Column(
           children: [
             Row(
@@ -1994,15 +2004,18 @@ class _AdventurePageState extends State<_AdventurePage> {
         children: [
           Expanded(
             child: _combat && encounter.isNotEmpty
-                ? _CombatView(
-                    encounter: campaign.encounter!,
-                    hero: campaign.hero,
-                    onAction: (text) {
-                      _input.text = text;
-                      _send();
-                    },
-                    busy: widget.controller.busy,
-                    header: header,
+                ? FantasyBackdrop(
+                    scene: FantasyBackdropScene.combat,
+                    child: _CombatView(
+                      encounter: campaign.encounter!,
+                      hero: campaign.hero,
+                      onAction: (text) {
+                        _input.text = text;
+                        _send();
+                      },
+                      busy: widget.controller.busy,
+                      header: header,
+                    ),
                   )
                 : ListView(
                     controller: _scroll,
@@ -2181,12 +2194,13 @@ class _AdventurePageState extends State<_AdventurePage> {
                                   'Modifikator ${_signed(pending['modifier'] ?? pending['bonus'] ?? 0)}',
                                 ),
                                 const SizedBox(height: 12),
-                                FilledButton.icon(
+                                FantasyTextButton(
+                                  label: 'Wurf durchführen',
+                                  icon: Icons.casino_outlined,
+                                  style: FantasyButtonStyle.dice,
                                   onPressed: widget.controller.busy
                                       ? null
                                       : _roll,
-                                  icon: const Icon(Icons.casino_outlined),
-                                  label: const Text('Wurf durchführen'),
                                 ),
                               ],
                             ),
@@ -2236,10 +2250,10 @@ class _AdventurePageState extends State<_AdventurePage> {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      IconButton.filled(
+                      FantasyIconButton(
                         onPressed: widget.controller.busy ? null : _send,
                         tooltip: 'Handlung senden',
-                        icon: const Icon(Icons.send),
+                        icon: Icons.send,
                       ),
                     ],
                   ),
@@ -2249,11 +2263,12 @@ class _AdventurePageState extends State<_AdventurePage> {
                     const SizedBox(height: 8),
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: OutlinedButton.icon(
+                      child: FantasyTextButton(
                         key: const ValueKey('adventure-memory-recap'),
+                        label: 'Rückblick',
+                        icon: Icons.history,
+                        style: FantasyButtonStyle.iron,
                         onPressed: widget.controller.busy ? null : _recap,
-                        icon: const Icon(Icons.history),
-                        label: const Text('Rückblick'),
                       ),
                     ),
                   ],
@@ -2824,6 +2839,7 @@ class _JournalSection extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(bottom: 12),
     child: FantasyPanel(
+      material: FantasyPanelMaterial.parchment,
       title: title,
       icon: icon,
       child: Column(
