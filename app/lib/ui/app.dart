@@ -2559,12 +2559,13 @@ class _CombatView extends StatelessWidget {
           spacing: 10,
           runSpacing: 10,
           children: [
-            FilledButton.icon(
+            FantasyTextButton(
+              label: 'Angreifen',
+              icon: Icons.sports_martial_arts,
+              style: FantasyButtonStyle.wax,
               onPressed: busy || encounter.isFinished
                   ? null
                   : () => onAction('Ich greife an.'),
-              icon: const Icon(Icons.sports_martial_arts),
-              label: const Text('Angreifen'),
             ),
             PopupMenuButton<int>(
               key: const ValueKey('enemy-multiattack-count'),
@@ -2600,8 +2601,11 @@ class _CombatView extends StatelessWidget {
                   '(${encounter.enemyAttacksRemaining} übrig)',
                 ),
               ),
-            OutlinedButton.icon(
+            FantasyTextButton(
               key: const ValueKey('combat-end-hero-turn'),
+              label: 'Zug beenden',
+              icon: Icons.skip_next_outlined,
+              style: FantasyButtonStyle.iron,
               onPressed:
                   busy ||
                       encounter.isFinished ||
@@ -2609,20 +2613,22 @@ class _CombatView extends StatelessWidget {
                       hero.isDead
                   ? null
                   : () => onAction('Zug beenden'),
-              icon: const Icon(Icons.skip_next_outlined),
-              label: const Text('Zug beenden'),
             ),
-            OutlinedButton(
+            FantasyTextButton(
+              label: 'Fliehen',
+              icon: Icons.directions_run_outlined,
+              style: FantasyButtonStyle.iron,
               onPressed: busy
                   ? null
                   : () => onAction('Ich versuche zu fliehen.'),
-              child: const Text('Fliehen'),
             ),
-            OutlinedButton(
+            FantasyTextButton(
+              label: 'Gegner untersuchen',
+              icon: Icons.search_outlined,
+              style: FantasyButtonStyle.arcane,
               onPressed: busy
                   ? null
                   : () => onAction('Ich untersuche meinen Gegner.'),
-              child: const Text('Gegner untersuchen'),
             ),
             if (ClassResourceRules.level(hero, 'Mönch') >= 2) ...[
               OutlinedButton(
