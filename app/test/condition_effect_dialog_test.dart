@@ -74,7 +74,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Ende des nächsten eigenen Zugs'), findsWidgets);
     expect(find.text('Ende des aktuellen eigenen Zugs'), findsWidgets);
-    await tester.tap(find.text('Ende des nächsten eigenen Zugs').last);
+    expect(find.text('Nach 3 eigenen Zugenden'), findsWidgets);
+    expect(find.text('Nach 5 eigenen Zugenden'), findsWidgets);
+    expect(find.text('Nach 10 eigenen Zugenden'), findsWidgets);
+    await tester.tap(find.text('Nach 10 eigenen Zugenden').last);
     await tester.pumpAndSettle();
     await tester.enterText(
       find.byKey(const ValueKey('condition-effect-source')),
@@ -115,4 +118,17 @@ void main() {
     expect(find.byType(ConditionEffectDialog), findsNothing);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('Mehrzügige Zeitoptionen fehlen außerhalb eigener Kampfzüge', (
+    tester,
+  ) async {
+    await open(tester);
+    await tester.tap(find.byKey(const ValueKey('condition-effect-duration')));
+    await tester.pumpAndSettle();
+    expect(find.text('Nach 10 eigenen Zugenden'), findsNothing);
+    expect(find.text('Nach 5 eigenen Zugenden'), findsNothing);
+    expect(find.text('Nach 3 eigenen Zugenden'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
 }
