@@ -47,6 +47,7 @@ import 'fantasy_campaign_dashboard.dart';
 import 'fantasy_adventure_hud.dart';
 import 'fantasy_combatant_card.dart';
 import 'fantasy_combat_status.dart';
+import 'fantasy_combat_turn_tracker.dart';
 import 'character_portrait_picker.dart';
 import 'campaign_memory_panel.dart';
 
@@ -2526,13 +2527,14 @@ class _CombatView extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       children: [
         header,
-        FantasySectionTitle(
-          title: 'Kampfrunde ${encounter.round}',
-          icon: Icons.shield_outlined,
-        ),
-        const SizedBox(height: 10),
-        Text(
-          'Aktiver Zug: ${encounter.activeParticipant == 'hero' ? hero.name : encounter.enemyName}',
+        FantasyCombatTurnTracker(
+          round: encounter.round,
+          heroName: hero.name,
+          enemyName: encounter.enemyName,
+          heroInitiative: encounter.heroInitiative,
+          enemyInitiative: encounter.enemyInitiative,
+          activeParticipant: encounter.activeParticipant,
+          isFinished: encounter.isFinished,
         ),
         const SizedBox(height: 16),
         FantasyCombatantCard(
