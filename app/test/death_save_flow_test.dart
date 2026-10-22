@@ -12,6 +12,7 @@ import 'package:lebendiger_spielleiter/services/game_controller.dart';
 import 'package:lebendiger_spielleiter/services/voice_controller.dart';
 import 'package:lebendiger_spielleiter/ui/app.dart';
 import 'package:lebendiger_spielleiter/ui/death_save_decision_panel.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 
 class _Random implements Random {
   int calls = 0;
@@ -514,6 +515,12 @@ void main() {
     expect(
       find.byKey(const ValueKey('death-save-reroll-focus')),
       findsOneWidget,
+    );
+    expect(
+      tester.widget<FantasyTextButton>(
+        find.byKey(const ValueKey('death-save-reroll-focus')),
+      ).style,
+      FantasyButtonStyle.arcane,
     );
     expect(
       find.byKey(const ValueKey('death-save-reroll-indomitable')),
