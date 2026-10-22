@@ -49,6 +49,12 @@ void main() {
       expect(find.byKey(const ValueKey('sheet-summary-ac')), findsOneWidget);
       expect(find.text('38 / 38'), findsOneWidget);
       expect(find.text('RÜSTUNGSKLASSE'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('sheet-parchment-abilities')),
+        170,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('sheet-parchment-abilities')), findsOneWidget);
       final grid = tester.widget<GridView>(
         find.byKey(const ValueKey('sheet-preview-attributes-grid')),
@@ -84,13 +90,13 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Ausrüstung und Inventar'), findsOneWidget);
     expect(find.textContaining('Heiltrank'), findsWidgets);
-    await tester.pageBack();
+    await tester.tapAt(const Offset(5, 90));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('sheet-quick-zauber')));
     await tester.pumpAndSettle();
     expect(find.text('Bekannte Zauber'), findsOneWidget);
     expect(find.text('Segen'), findsWidgets);
-    await tester.pageBack();
+    await tester.tapAt(const Offset(5, 90));
     await tester.pumpAndSettle();
     expect(hero.toJson(), before);
     expect(tester.takeException(), isNull);
@@ -143,6 +149,12 @@ void main() {
       ),
       home: CharacterSheetPage(hero: _sample()),
     ));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('sheet-parchment-abilities')),
+      170,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('sheet-parchment-abilities')), findsOneWidget);
     expect(tester.takeException(), isNull);
