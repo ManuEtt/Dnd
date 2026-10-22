@@ -12,6 +12,7 @@ import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/services/game_controller.dart';
 import 'package:lebendiger_spielleiter/services/voice_controller.dart';
 import 'package:lebendiger_spielleiter/ui/app.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 
 class _Random implements Random {
   _Random([this.faces = const []]);
@@ -521,6 +522,10 @@ void main() {
       await tester.tap(combatToggle);
       await tester.pumpAndSettle();
       final button = find.byKey(const ValueKey('combat-end-hero-turn'));
+      expect(
+        tester.widget<FantasyTextButton>(button).style,
+        FantasyButtonStyle.iron,
+      );
       await tester.scrollUntilVisible(
         button,
         250,
