@@ -86,12 +86,51 @@ class ConditionEffect {
 
 /// How long an explicitly confirmed external condition remains active.
 /// No wall clock or generic spell duration is inferred from these choices.
-enum ConditionEffectDuration { untilRemoved, currentTurnEnd, nextTurnEnd }
+enum ConditionEffectDuration {
+  untilRemoved,
+  currentTurnEnd,
+  nextTurnEnd,
+  threeOwnTurnEnds,
+  fiveOwnTurnEnds,
+  tenOwnTurnEnds;
+
+  /// Number of confirmed OWN turn boundaries, including the current one.
+  /// This is a manually selected expiry, NOT a spell duration inferred from
+  /// an unverified spell name or elapsed wall-clock time.
+  int? get ownTurnEnds => switch (this) {
+    ConditionEffectDuration.untilRemoved => null,
+    ConditionEffectDuration.currentTurnEnd => 1,
+    ConditionEffectDuration.nextTurnEnd => 2,
+    ConditionEffectDuration.threeOwnTurnEnds => 3,
+    ConditionEffectDuration.fiveOwnTurnEnds => 5,
+    ConditionEffectDuration.tenOwnTurnEnds => 10,
+  };
+}
 
 /// Pure operations. The game controller must still authorize and atomically
 /// checkpoint any externally requested change before it is committed.
 class ConditionEffectRules {
   const ConditionEffectRules._();
+
+  /// Read-only remaining confirmed own-turn boundaries. When the encounter
+  /// is absent, stale, finished or in another actor's turn the absolute
+  /// expiry still exists but no live countdown can safely be asserted.
+  static int? remainingOwnTurnEnds(
+    ConditionEffect effect,
+    Encounter? encounter,
+  ) {
+    final expires = effect.expiresAtOwnTurnEndRound;
+    if (expires == null ||
+        encounter == null ||
+        encounter.isFinished ||
+        encounter.activeParticipant != 'hero' ||
+        encounter.id != effect.expiresInEncounterId ||
+        encounter.round < 1 ||
+        encounter.round > expires) {
+      return null;
+    }
+    return expires - encounter.round + 1;
+  }
 
   static List<ConditionEffect> validated(List<ConditionEffect> effects) {
     if (effects.length > 100) {

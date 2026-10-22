@@ -156,8 +156,17 @@ class FantasyEffectWard extends StatelessWidget {
       return 'Bis zur ausdrücklichen Entfernung';
     }
     final other = encounter != null && encounter!.id != id;
+    final remaining = ConditionEffectRules.remainingOwnTurnEnds(
+      effect,
+      encounter,
+    );
+    final countdown = remaining == null
+        ? ''
+        : remaining == 1
+        ? ' · noch 1 eigenes Zugende'
+        : ' · noch $remaining eigene Zugenden';
     return 'Ende deines Zugs: Runde $round ($id)'
-        '${other ? ' · andere Begegnung' : ''}';
+        '${other ? ' · andere Begegnung' : ''}$countdown';
   }
 
   static String _speedLabel(HeroCharacter hero) {
