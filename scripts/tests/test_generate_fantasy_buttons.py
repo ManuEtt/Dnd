@@ -26,10 +26,13 @@ class FantasyButtonArtTests(unittest.TestCase):
                     data = image.read_bytes()
                     self.assertTrue(data.startswith(b"\x89PNG\r\n\x1a\n"))
                     width, height = struct.unpack("!2I", data[16:24])
-                    expected = (64, 64) if any(
-                        image.name.startswith(f"btn_{prefix}_")
-                        for prefix in ("dice", "icon_gold")
-                    ) else (192, 64)
+                    # Only icon-only art is square. Labeled W4-W100 buttons
+                    # need wide 9-slice-safe textures for readable text.
+                    expected = (
+                        (64, 64)
+                        if image.name.startswith("btn_icon_gold_")
+                        else (192, 64)
+                    )
                     self.assertEqual((width, height), expected)
                     self.assertGreater(len(data), 300)
                 first = (Path(temp) / "btn_wood_gold_pressed.png").read_bytes()
