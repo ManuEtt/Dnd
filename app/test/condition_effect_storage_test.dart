@@ -5,6 +5,9 @@ import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:lebendiger_spielleiter/data/sqlite_campaign_repository.dart';
 import 'package:lebendiger_spielleiter/domain/condition_effects.dart';
+import 'package:lebendiger_spielleiter/domain/cover_rules.dart';
+import 'package:lebendiger_spielleiter/domain/game_engine.dart';
+import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/services/game_controller.dart';
 
 void main() {
@@ -147,4 +150,76 @@ END
       }
     },
   );
+
+  test(
+    'bestätigte Drei-Zug-Dauer bleibt über SQLite-Neustart erhalten und endet genau einmal',
+    () async {
+      final directory = await Directory.systemTemp.createTemp(
+        'condition-multiturn-',
+      );
+      final path = p.join(directory.path, 'save.sqlite');
+      var repository = await SqliteCampaignRepository.open(
+        factory: databaseFactoryFfi,
+        path: path,
+      );
+      final engine = GameEngine();
+      try {
+        final initial = engine.createDemo().copyWith(
+          encounter: const Encounter(
+            id: 'dauer-kampf',
+            enemyName: 'Wächter',
+            enemyHitPoints: 20,
+            enemyMaxHitPoints: 20,
+            heroCover: CoverLevel.total,
+            round: 2,
+          ),
+        );
+        await repository.saveCampaign(initial);
+        final confirmed = engine.applyConditionEffect(
+          initial,
+          source: 'Bestätigte Zauberquelle',
+          condition: 'vergiftet',
+          duration: ConditionEffectDuration.threeOwnTurnEnds,
+        );
+        await repository.saveCampaign(
+          confirmed.campaign,
+          events: confirmed.events,
+          expectedRevision: initial.revision,
+        );
+        final withEffect = (await repository.getCampaign(initial.id))!;
+        expect(withEffect.hero.conditionEffects.single.expiresAtOwnTurnEndRound, 4);
+        final firstTurn = engine.endHeroTurn(withEffect);
+        await repository.saveCampaign(
+          firstTurn.campaign,
+          events: firstTurn.events,
+          expectedRevision: withEffect.revision,
+        );
+        await repository.close();
+        repository = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: path,
+        );
+        var restored = (await repository.getCampaign(initial.id))!;
+        expect(restored.encounter!.round, 3);
+        expect(restored.hero.conditionEffects.single.expiresAtOwnTurnEndRound, 4);
+        for (var i = 0; i < 2; i++) {
+          final next = engine.endHeroTurn(restored);
+          await repository.saveCampaign(
+            next.campaign,
+            events: next.events,
+            expectedRevision: restored.revision,
+          );
+          restored = (await repository.getCampaign(initial.id))!;
+        }
+        expect(restored.hero.conditionEffects, isEmpty);
+        expect(restored.hero.conditions, isNot(contains('vergiftet')));
+        expect(restored.encounter!.round, 5);
+        expect((await repository.getCampaign(initial.id))!.toJson(), restored.toJson());
+      } finally {
+        await repository.close();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
+
 }
