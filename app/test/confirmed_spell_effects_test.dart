@@ -122,7 +122,13 @@ void main() {
     expect(
       ConfirmedSpellEffectRules.remainingOwnTurnEnds(
         effect,
-        own.copyWith(id: 'another'),
+        const Encounter(
+          id: 'another',
+          enemyName: 'Wächter',
+          enemyHitPoints: 60,
+          enemyMaxHitPoints: 60,
+          round: 5,
+        ),
       ),
       isNull,
     );
