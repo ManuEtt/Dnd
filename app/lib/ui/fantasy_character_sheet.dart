@@ -527,61 +527,83 @@ class _PassivePerceptionStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final score = CharacterRuleEngine.passivePerception(hero);
+    final proficiency = _signed(RulesEngine.proficiencyBonus(hero.level));
+    final largeText = MediaQuery.textScalerOf(context).scale(1) > 1.15;
+    final description = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text(
+          'PASSIVE WAHRNEHMUNG',
+          style: TextStyle(
+            color: _ivory,
+            fontWeight: FontWeight.w700,
+            letterSpacing: .5,
+            fontSize: 11,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          score == null
+              ? 'Nicht verfügbar oder Weisheit unbestätigt'
+              : 'Ohne Würfeln · situationsabhängig',
+          style: const TextStyle(color: _muted, fontSize: 10),
+        ),
+      ],
+    );
+    final numbers = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('ÜBUNGSBONUS', style: TextStyle(
+              color: _muted, fontSize: 9, letterSpacing: .25,
+            )),
+            Text(
+              proficiency,
+              style: const TextStyle(color: _gold, fontSize: 17),
+            ),
+          ],
+        ),
+        const SizedBox(width: 10),
+        Text(
+          score?.toString() ?? '–',
+          key: const ValueKey('sheet-passive-perception-score'),
+          style: const TextStyle(
+            color: _gold, fontSize: 25, fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
     return _FantasyFrame(
-      child: Row(
-        key: const ValueKey('sheet-passive-perception'),
-        children: [
-          const Icon(Icons.visibility_outlined, color: _gold, size: 26),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: largeText
+          ? Column(
+              key: const ValueKey('sheet-passive-perception'),
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text(
-                  'PASSIVE WAHRNEHMUNG',
-                  style: TextStyle(
-                    color: _ivory,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: .8,
-                    fontSize: 12,
-                  ),
+                Row(
+                  children: [
+                    const Icon(Icons.visibility_outlined, color: _gold, size: 24),
+                    const SizedBox(width: 9),
+                    Expanded(child: description),
+                  ],
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  score == null
-                      ? 'Nicht verfügbar oder Weisheit unbestätigt'
-                      : 'Ohne Würfeln · situationsabhängig',
-                  style: const TextStyle(color: _muted, fontSize: 11),
-                ),
+                const SizedBox(height: 8),
+                Align(alignment: Alignment.centerRight, child: numbers),
+              ],
+            )
+          : Row(
+              key: const ValueKey('sheet-passive-perception'),
+              children: [
+                const Icon(Icons.visibility_outlined, color: _gold, size: 24),
+                const SizedBox(width: 9),
+                Expanded(child: description),
+                const SizedBox(width: 7),
+                numbers,
               ],
             ),
-          ),
-          const SizedBox(width: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('ÜBUNGSBONUS', style: TextStyle(
-                color: _muted, fontSize: 9, letterSpacing: .4,
-              )),
-              Text(
-                _signed(RulesEngine.proficiencyBonus(hero.level)),
-                style: const TextStyle(color: _gold, fontSize: 17),
-              ),
-            ],
-          ),
-          const SizedBox(width: 8),
-          Text(
-            score?.toString() ?? '–',
-            key: const ValueKey('sheet-passive-perception-score'),
-            style: const TextStyle(
-              color: _gold,
-              fontSize: 25,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
