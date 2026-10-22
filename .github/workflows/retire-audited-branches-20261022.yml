@@ -1,0 +1,115 @@
+name: Einmalige geprüfte Branch-Bereinigung (2026-10-22)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/retire-audited-branches-20261022.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  retire-audited-branches:
+    if: github.repository == 'ManuEtt/Dnd' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Audit and retire only pinned, merged branches
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const repo = {owner:'ManuEtt',repo:'Dnd'};
+            const targets = [{"name":"feat/fantasy-ui-interactions-20261022","sha":"d1873540834ec77d25487fa148774519edf605f1","pr":103},{"name":"feat/fantasy-navigation-emblems-20261022","sha":"3d9128a37322960a021226ebb6dd22c989af4d11","pr":104},{"name":"feat/fantasy-combat-cards-main-20261022","sha":"81468d81c1b4fa9a2de0b07e7b841a481e186237","pr":105},{"name":"feat/fantasy-combat-status-20261022","sha":"91587a7b230fc708f6e51f4761af648e1675d0db","pr":106},{"name":"feat/fantasy-combat-turn-tracker-20261022","sha":"4f802107fb6fb5311e72617351dac6a6416cdda1","pr":107},{"name":"feat/fantasy-combat-threat-status-20261022","sha":"928980a41b7965bdd8b6ad5d3308c858ea7b782d","pr":108},{"name":"feat/fantasy-combat-chronicle-20261022","sha":"3e937cd0bd56c65348b1766d07b37d362cc71661","pr":109},{"name":"feat/fantasy-dice-details-20261022","sha":"65e067be171395e0dd56e10d9a3c3897ccd0e39a","pr":110},{"name":"feat/fantasy-effect-ward-20261022","sha":"c211528ce53f0bde5e2b95c8c13e500469fcb880","pr":111},{"name":"feat/confirmed-spell-effect-tracker-20261022","sha":"da08c14da837317f4e3a51858f8975c5602b3976","pr":113},{"name":"feat/character-sheet-reference-layout-20261022","sha":"d19d607fbb0cf939cb179e6605352ce6eed34788","pr":116},{"name":"fix/character-sheet-responsive-grid-20261022","sha":"82838e455496276fe618749fed5589813995c0fb","pr":117}];
+            const historical = {name:'feat/fantasy-combat-cards-20261022',sha:'3ce2348880dbab02adc4c2f1570b473af1394410'};
+            const cleanupName = 'maintenance/audited-branch-retirement-20261022';
+            if (context.repo.owner !== repo.owner || context.repo.repo !== repo.repo || context.ref !== 'refs/heads/main') {
+              throw new Error('Cleanup darf ausschließlich auf ManuEtt/Dnd:main laufen.');
+            }
+            const getBranch = async name => {
+              try {return (await github.rest.repos.getBranch({...repo,branch:name})).data;}
+              catch(e){if(e.status===404)return null;throw e;}
+            };
+            const mainNow = async () => (await getBranch('main')).commit.sha;
+            const isDescendant = async (ancestor,descendant) => {
+              const c=(await github.rest.repos.compareCommits({...repo,base:ancestor,head:descendant})).data;
+              return c.behind_by===0 && (c.status==='identical'||c.status==='ahead');
+            };
+            const assertMain = async () => {
+              if (!(await isDescendant(context.sha,await mainNow()))) throw new Error('main ist kein Nachfolger des Cleanup-Commits.');
+            };
+            const assertMerged = async (name,head,number,mainSha) => {
+              const pr=(await github.rest.pulls.get({...repo,pull_number:number})).data;
+              if (!pr.merged || !pr.merged_at || pr.base.ref!=='main' || pr.head.repo?.full_name!=='ManuEtt/Dnd' || pr.head.ref!==name || pr.head.sha!==head || !pr.merge_commit_sha) {
+                throw new Error('PR nicht als vollständig integriert bestätigt: #'+number+' '+name);
+              }
+              if (!(await isDescendant(pr.merge_commit_sha,mainSha))) throw new Error('Merge-Commit nicht in main: #'+number);
+            };
+            const branchData = async (name,expected) => {
+              const b=await getBranch(name);
+              if (!b || b.protected || b.commit.sha!==expected) throw new Error('Branch fehlt, ist geschützt oder wurde geändert: '+name);
+              return b;
+            };
+            const mainSha=await mainNow();
+            await assertMain();
+            const approved=[];
+            for (const item of targets) {
+              await branchData(item.name,item.sha);
+              await assertMerged(item.name,item.sha,item.pr,mainSha);
+              approved.push(item);
+            }
+            // A previously unmerged worktree contains exactly six reviewed changes.
+            // Five source/test blobs are byte-identical with main. The previous app.dart
+            // combat UI has been superseded by the merged #105-#109 components.
+            await branchData(historical.name,historical.sha);
+            const checkedNames=[
+             'app/lib/ui/app.dart',
+             'app/lib/ui/fantasy_combatant_card.dart',
+             'app/lib/ui/fantasy_experience.dart',
+             'app/test/fantasy_combatant_card_test.dart',
+             'app/test/fantasy_navigation_emblem_test.dart',
+             'app/test/ui_app_test.dart'
+            ];
+            const compareOld=(await github.rest.repos.compareCommits({...repo,base:'main',head:historical.name})).data;
+            const modified=(compareOld.files||[]).map(f=>f.filename).sort();
+            if (JSON.stringify(modified)!==JSON.stringify([...checkedNames].sort())) throw new Error('Historischer Kampf-Branch enthält neue/ungeprüfte Pfade.');
+            const tree = async sha => {
+              const t=(await github.rest.git.getTree({...repo,tree_sha:sha,recursive:'1'})).data;
+              if(t.truncated)throw new Error('Git tree unvollständig.');
+              return new Map(t.tree.filter(x=>x.type==='blob').map(x=>[x.path,x.sha]));
+            };
+            const oldTree=await tree(historical.sha), newTree=await tree(mainSha);
+            for(const p of checkedNames.filter(p=>p!=='app/lib/ui/app.dart')){
+             if(!oldTree.has(p)||newTree.get(p)!==oldTree.get(p))throw new Error('Kampf-Änderung nicht vollständig enthalten: '+p);
+            }
+            for(const p of ['app/lib/ui/fantasy_combat_status.dart','app/lib/ui/fantasy_combat_turn_tracker.dart','app/lib/ui/fantasy_combat_threat_status.dart','app/lib/ui/fantasy_combat_chronicle.dart']){
+             if(!newTree.has(p))throw new Error('Neuere Kampfkomponente fehlt: '+p);
+            }
+            approved.push(historical);
+            // Safely also retire the maintenance branch itself, but only once its PR
+            // really has been merged and exactly matches its unchanged branch head.
+            const prs=await github.paginate(github.rest.pulls.list,{...repo,state:'closed',per_page:100});
+            const our=prs.find(p=>p.head.ref===cleanupName && p.merged_at && p.base.ref==='main');
+            const self=await getBranch(cleanupName);
+            if(!our || !self || self.protected || our.head.sha!==self.commit.sha || !await isDescendant(our.merge_commit_sha,mainSha)){
+             throw new Error('Cleanup-PR selbst nicht vollständig gemergt; keine Branches löschen.');
+            }
+            approved.push({name:cleanupName,sha:self.commit.sha});
+            // Preflight is finished: all targets, SHA equality, merged PRs and content
+            // equivalence have passed. Create immutable recovery refs before deletion.
+            for(const {name,sha} of approved){
+             const ref='tags/archive/branch-retirement-20261022/'+name.replaceAll('/','--');
+             let saved;
+             try{saved=(await github.rest.git.getRef({...repo,ref})).data.object.sha;}
+             catch(e){if(e.status!==404)throw e;}
+             if(saved && saved!==sha)throw new Error('Archiv-Tag existiert mit anderem SHA: '+ref);
+             if(!saved)await github.rest.git.createRef({...repo,ref:'refs/'+ref,sha});
+             const verify=(await github.rest.git.getRef({...repo,ref})).data.object.sha;
+             if(verify!==sha)throw new Error('Archivierung fehlgeschlagen: '+name);
+            }
+            for(const {name,sha} of approved){
+             await assertMain();
+             await branchData(name,sha);
+             await github.rest.git.deleteRef({...repo,ref:'heads/'+name});
+             if(await getBranch(name))throw new Error('Branch weiterhin vorhanden: '+name);
+             core.info('Gelöscht und mit Tag archiviert: '+name);
+            }
+            core.info('Bereinigung abgeschlossen: '+approved.length+' Branches.');
