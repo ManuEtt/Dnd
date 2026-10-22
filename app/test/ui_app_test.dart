@@ -8,6 +8,7 @@ import 'package:lebendiger_spielleiter/data/sqlite_campaign_repository.dart';
 import 'package:lebendiger_spielleiter/services/game_controller.dart';
 import 'package:lebendiger_spielleiter/services/voice_controller.dart';
 import 'package:lebendiger_spielleiter/ui/app.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_art.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_experience.dart';
 import 'support/legacy_campaign_fixture.dart';
@@ -92,7 +93,7 @@ Future<void> importCampaignText(WidgetTester tester, String source) async {
     find.widgetWithText(TextField, 'JSON-Spielstand'),
     source,
   );
-  await tester.tap(find.widgetWithText(FilledButton, 'Importieren'));
+  await tester.tap(find.widgetWithText(FantasyTextButton, 'Importieren'));
   // The real SQLite import needs real async time before a busy indicator can
   // settle; callers wait for the controller before settling the route.
   await tester.pump();
