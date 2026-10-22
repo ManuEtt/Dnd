@@ -135,7 +135,7 @@ void main() {
     );
     expect(find.text('Keine aktive Konzentration'), findsOneWidget);
     expect(
-      find.text('Keine bestätigten Zustände oder Erschöpfungsstufen.'),
+      find.text('Keine Zustände eingetragen.'),
       findsOneWidget,
     );
     expect(find.byKey(const ValueKey('ward-exhaustion')), findsNothing);
