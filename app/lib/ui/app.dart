@@ -49,6 +49,7 @@ import 'fantasy_combatant_card.dart';
 import 'fantasy_combat_status.dart';
 import 'fantasy_combat_turn_tracker.dart';
 import 'fantasy_combat_threat_status.dart';
+import 'fantasy_combat_chronicle.dart';
 import 'character_portrait_picker.dart';
 import 'campaign_memory_panel.dart';
 
@@ -2113,6 +2114,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                     child: _CombatView(
                       encounter: campaign.encounter!,
                       hero: campaign.hero,
+                      events: campaign.events,
                       pendingShieldDecision:
                           campaign.pendingEnemyShieldHit != null,
                       onAction: (text) {
@@ -2514,6 +2516,7 @@ class _CombatView extends StatelessWidget {
   const _CombatView({
     required this.encounter,
     required this.hero,
+    required this.events,
     required this.pendingShieldDecision,
     required this.onAction,
     required this.busy,
@@ -2521,6 +2524,7 @@ class _CombatView extends StatelessWidget {
   });
   final Encounter encounter;
   final HeroCharacter hero;
+  final List<GameEvent> events;
   final bool pendingShieldDecision;
   final void Function(String) onAction;
   final bool busy;
@@ -2808,6 +2812,8 @@ class _CombatView extends StatelessWidget {
               ),
           ],
         ),
+        const SizedBox(height: 16),
+        FantasyCombatChronicle(events: events),
       ],
     );
   }
@@ -2884,11 +2890,7 @@ class _JournalPage extends StatelessWidget {
                 : Icons.explore_outlined,
             children: _journalItems(data[section.key]),
           ),
-        _JournalSection(
-          title: 'Ereignisprotokoll',
-          icon: Icons.history,
-          children: _journalItems(data['events']),
-        ),
+        FantasyCombatChronicle(events: campaign.events, maxEntries: 20),
         const _Notice(
           icon: Icons.save_outlined,
           text:
