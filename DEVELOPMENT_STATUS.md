@@ -1,3 +1,12 @@
+## 22.10.2026 – SRD 5.2.1: Linien-AoE-Rastervorschau (PR/CI offen)
+
+- **IMPLEMENTIERT:** Regelreine `SrdLineAreaRules` für acht Himmelsrichtungen auf bestätigter 5-Fuß-Karte mit getrennten, vom konkreten Zaubereffekt bestätigten Linienlängen/-breiten, inklusiver Rechteck/Zell-Schnittprüfung, getrenntem Mittelpunkt-/Randmerkmal und expliziter Ursprungsfeldprüfung.
+- **IMPLEMENTIERT:** `previewConfirmedSpell` prüft die Zauberreichweite zum Ursprung unabhängig von den bestätigten Maßen der Linienwirkung. Ein gesperrter Zentrumstrahl erfordert Cover-Nachprüfung, ist keine endgültige Immunität.
+- **TESTS ANGELEGT, CI OFFEN:** `app/test/srd_line_area_rules_test.dart` prüft Randfälle, acht-Richtungsmodell anhand mehrerer Richtungen, Grenzen, unbekannte Karte, Vollhindernisse und Lightning-Bolt-Ursprung.
+- **NOCH OFFEN:** 3D/weitere Winkel, tatsächliche Raster- und Kreaturenwirkungen, Deckungsgrade, Rettungswürfe, Schaden und UI. Keine Zustand-/SQLite-Migration. Audit weiter `partial`; siehe `docs/SRD_LINE_AOE_PREVIEW.md`.
+
+---
+
 ## 21.10.2026 – SRD 5.2.1 Kegelfläche auf 5-Fuß-Raster (CI offen)
 
 - **IMPLEMENTIERT:** `SrdConeAreaRules` als deterministische, read-only 2D-Kandidatenauswahl für Kegel in acht ausdrücklich ausgewählten Richtungen; je Feld geometrische Mittelpunktprüfung, mögliche Randüberlappung und Deckungsprüfbedarf. Exakte Reichweite des Zauberursprungs und separat bestätigte Kegellänge werden auseinandergehalten.
