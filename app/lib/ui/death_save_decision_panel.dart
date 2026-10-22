@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'fantasy_buttons.dart';
 
 import '../domain/death_saving_throw_rules.dart';
 import '../domain/models.dart';
@@ -46,34 +47,37 @@ class DeathSaveDecisionPanel extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              FilledButton(
+              FantasyTextButton(
                 key: const ValueKey('death-save-accept'),
+                label: 'Wurf annehmen',
+                style: FantasyButtonStyle.woodGold,
                 onPressed: busy ? null : onAccept,
-                child: const Text('Wurf annehmen'),
               ),
               if (DeathSavingThrowRules.available(
                 hero,
                 SavingThrowRerollFeature.disciplinedSurvivor,
               ))
-                OutlinedButton(
+                FantasyTextButton(
                   key: const ValueKey('death-save-reroll-focus'),
+                  label: 'Wiederholen · 1 Fokus',
+                  style: FantasyButtonStyle.arcane,
                   onPressed: busy
                       ? null
                       : () => onReroll(
                           SavingThrowRerollFeature.disciplinedSurvivor,
                         ),
-                  child: const Text('Wiederholen · 1 Fokus'),
                 ),
               if (DeathSavingThrowRules.available(
                 hero,
                 SavingThrowRerollFeature.indomitable,
               ))
-                OutlinedButton(
+                FantasyTextButton(
                   key: const ValueKey('death-save-reroll-indomitable'),
+                  label: 'Wiederholen · Unbeugsam',
+                  style: FantasyButtonStyle.arcane,
                   onPressed: busy
                       ? null
                       : () => onReroll(SavingThrowRerollFeature.indomitable),
-                  child: const Text('Wiederholen · Unbeugsam'),
                 ),
             ],
           ),
