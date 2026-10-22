@@ -1274,8 +1274,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
                   FantasyTextButton(
                     key: const ValueKey('open-multiclass-selection'),
                     label: widget.hero?.hasSecondClass == true
-              ? 'Zweitklasse im Aufstiegsassistenten steigern'
-              : 'Zweitklasse nach SRD hinzufügen',
+                        ? 'Zweitklasse im Aufstiegsassistenten steigern'
+                        : 'Zweitklasse nach SRD hinzufügen',
                     icon: Icons.auto_awesome_outlined,
                     style: FantasyButtonStyle.arcane,
                     onPressed: _configureSecondClass,
@@ -1332,7 +1332,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
                   ),
                   FantasyTextButton(
                     key: const ValueKey('open-srd-creation-audit'),
-                    label: 'Charaktererstellung auf fehlende SRD-Schritte prüfen',
+                    label:
+                        'Charaktererstellung auf fehlende SRD-Schritte prüfen',
                     icon: Icons.fact_check_outlined,
                     style: FantasyButtonStyle.iron,
                     onPressed: _inspectSrdCreation,
