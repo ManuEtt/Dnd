@@ -71,7 +71,7 @@ jobs:
              'app/test/fantasy_navigation_emblem_test.dart',
              'app/test/ui_app_test.dart'
             ];
-            const compareOld=(await github.rest.repos.compareCommits({...repo,base:'main',head:historical.name})).data;
+            const compareOld=(await github.rest.repos.compareCommits({...repo,base:'main',head:historical.sha})).data;
             const modified=(compareOld.files||[]).map(f=>f.filename).sort();
             if (JSON.stringify(modified)!==JSON.stringify([...checkedNames].sort())) throw new Error('Historischer Kampf-Branch enthält neue/ungeprüfte Pfade.');
             const tree = async sha => {
