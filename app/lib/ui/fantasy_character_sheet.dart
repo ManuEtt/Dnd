@@ -1269,15 +1269,11 @@ class _OrnateHeading extends StatelessWidget {
 }
 
 class _FantasyFrame extends StatelessWidget {
-  const _FantasyFrame({
-    required this.child,
-    this.padding = const EdgeInsets.all(15),
-  });
+  const _FantasyFrame({required this.child});
   final Widget child;
-  final EdgeInsetsGeometry padding;
   @override
   Widget build(BuildContext context) => Container(
-    padding: padding,
+    padding: const EdgeInsets.all(15),
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(14),
       color: _panel.withValues(alpha: .9),
