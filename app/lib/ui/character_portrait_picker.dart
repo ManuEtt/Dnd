@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 
 import 'fantasy_art.dart';
 import 'fantasy_ui.dart';
+import 'fantasy_buttons.dart';
 
 // The approved portraits and scenery are native WebP Flutter assets.
 // Portrait selection is independent of network access.
@@ -306,21 +307,23 @@ class _CharacterPortraitPickerState extends State<CharacterPortraitPicker> {
                       spacing: 8,
                       runSpacing: 4,
                       children: [
-                        OutlinedButton.icon(
+                        FantasyTextButton(
                           key: const ValueKey('portrait-own-image'),
+                          label: 'Eigenes Bild wählen',
+                          icon: Icons.add_photo_alternate_outlined,
+                          style: FantasyButtonStyle.iron,
                           onPressed: _pickOwnPicture,
-                          icon: const Icon(Icons.add_photo_alternate_outlined),
-                          label: const Text('Eigenes Bild wählen'),
                         ),
-                        TextButton.icon(
+                        FantasyTextButton(
                           key: const ValueKey('portrait-remove'),
+                          label: 'Entfernen',
+                          icon: Icons.delete_outline,
+                          style: FantasyButtonStyle.wax,
                           onPressed: () => setState(() {
                             _preset = -1;
                             _photo = '';
                             _message = null;
                           }),
-                          icon: const Icon(Icons.delete_outline),
-                          label: const Text('Entfernen'),
                         ),
                       ],
                     ),
@@ -394,9 +397,10 @@ class _CharacterPortraitPickerState extends State<CharacterPortraitPicker> {
                       size: 220,
                     ),
                     actions: [
-                      TextButton(
+                      FantasyTextButton(
+                        label: 'Schließen',
+                        style: FantasyButtonStyle.iron,
                         onPressed: () => Navigator.of(dialogContext).pop(),
-                        child: const Text('Schließen'),
                       ),
                     ],
                   ),
@@ -431,20 +435,22 @@ class _CharacterPortraitPickerState extends State<CharacterPortraitPicker> {
         child: Row(
           children: [
             Expanded(
-              child: OutlinedButton(
+              child: FantasyTextButton(
+                label: 'Abbrechen',
+                style: FantasyButtonStyle.iron,
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Abbrechen'),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: FilledButton.icon(
+              child: FantasyTextButton(
                 key: const ValueKey('portrait-apply'),
+                label: 'Übernehmen',
+                icon: Icons.save_outlined,
+                style: FantasyButtonStyle.woodGold,
                 onPressed: () => Navigator.of(
                   context,
                 ).pop(CharacterPortraitChoice(_preset, _photo)),
-                icon: const Icon(Icons.save_outlined),
-                label: const Text('Übernehmen'),
               ),
             ),
           ],
