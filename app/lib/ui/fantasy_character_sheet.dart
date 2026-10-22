@@ -190,7 +190,11 @@ class _CharacterSheetPageState extends State<CharacterSheetPage> {
                 const SizedBox(height: 12),
                 _PassivePerceptionStrip(hero: hero),
                 const SizedBox(height: 16),
-                FantasyCharacterOverview(hero: hero),
+                _ReferenceCharacterDashboard(
+                  hero: hero,
+                  onOpen: _showCollection,
+                  onConditions: () => setState(() => _section = 1),
+                ),
                 const SizedBox(height: 20),
                 _SectionNavigation(
                   selected: _section,
