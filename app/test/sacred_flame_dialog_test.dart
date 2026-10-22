@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/ui/sacred_flame_dialog.dart';
@@ -89,7 +90,7 @@ void main() {
     );
     expect(
       tester
-          .widget<FilledButton>(find.byKey(const ValueKey('sacred-flame-cast')))
+          .widget<FantasyTextButton>(find.byKey(const ValueKey('sacred-flame-cast')))
           .onPressed,
       isNull,
     );
