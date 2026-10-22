@@ -42,6 +42,7 @@ class FantasyButton extends StatefulWidget {
     this.tooltip,
     this.onSound,
     this.minWidth,
+    this.compact = false,
   });
 
   final String label;
@@ -53,6 +54,8 @@ class FantasyButton extends StatefulWidget {
   final String? tooltip;
   final VoidCallback? onSound;
   final double? minWidth;
+  /// Narrow vertically stacked icon/label layout for three-column tab bars.
+  final bool compact;
 
   @override
   State<FantasyButton> createState() => _FantasyButtonState();
@@ -79,6 +82,25 @@ class _FantasyButtonState extends State<FantasyButton> {
     final size = iconOnly ? 48.0 : 52.0;
     final content = iconOnly
         ? Icon(widget.icon ?? Icons.auto_awesome, size: 23)
+        : widget.compact
+        ? Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (widget.icon != null) Icon(widget.icon, size: 18),
+              if (widget.icon != null) const SizedBox(height: 2),
+              Text(
+                widget.label,
+                maxLines: 1,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontFamily: 'serif',
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          )
         : Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -133,7 +155,8 @@ class _FantasyButtonState extends State<FantasyButton> {
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 minHeight: size,
-                minWidth: widget.minWidth ?? (iconOnly ? size : 108),
+                minWidth:
+                    widget.minWidth ?? (widget.compact ? 0 : (iconOnly ? size : 108)),
               ),
               child: Stack(
                 fit: StackFit.passthrough,
@@ -150,8 +173,8 @@ class _FantasyButtonState extends State<FantasyButton> {
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(
-                      horizontal: iconOnly ? 11 : 20,
-                      vertical: iconOnly ? 11 : 14,
+                      horizontal: widget.compact ? 5 : (iconOnly ? 11 : 20),
+                      vertical: widget.compact ? 8 : (iconOnly ? 11 : 14),
                     ),
                     child: DefaultTextStyle(
                       style: TextStyle(
@@ -396,17 +419,20 @@ class FantasyToggleButton extends StatelessWidget {
     required this.selected,
     required this.onPressed,
     this.icon,
+    this.compact = false,
   });
 
   final String label;
   final bool selected;
   final VoidCallback? onPressed;
   final IconData? icon;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) => FantasyButton(
     label: label,
     icon: icon,
+    compact: compact,
     selected: selected,
     style: FantasyButtonStyle.arcane,
     onPressed: onPressed,
