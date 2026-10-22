@@ -9,6 +9,7 @@ import 'package:lebendiger_spielleiter/services/backend_narrator.dart';
 import 'package:lebendiger_spielleiter/services/game_controller.dart';
 import 'package:lebendiger_spielleiter/services/voice_controller.dart';
 import 'package:lebendiger_spielleiter/ui/app.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 import 'support/legacy_campaign_fixture.dart';
 
 class _SilentVoice extends VoiceController {
@@ -456,9 +457,9 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
     final disconnectButton = find.ancestor(
       of: disconnect,
-      matching: find.byWidgetPredicate((widget) => widget is TextButton),
+      matching: find.byWidgetPredicate((widget) => widget is FantasyTextButton),
     );
-    expect(tester.widget<TextButton>(disconnectButton).onPressed, isNotNull);
+    expect(tester.widget<FantasyTextButton>(disconnectButton).onPressed, isNotNull);
     await tester.tap(disconnect);
     await tester.pump();
     expect(controller.narrator.enabled, isFalse);
