@@ -138,13 +138,13 @@ class _AbilityAssignmentDialogState extends State<AbilityAssignmentDialog> {
           Row(
             children: [
               Expanded(child: Text(abilityLabels[key]!)),
-              IconButton(
+              FantasyIconButton(
                 key: ValueKey('decrease-$key'),
                 tooltip: '${abilityLabels[key]} verringern',
+                icon: Icons.remove_circle_outline,
                 onPressed: _pointBuy[key]! > 8
                     ? () => setState(() => _pointBuy[key] = _pointBuy[key]! - 1)
                     : null,
-                icon: const Icon(Icons.remove_circle_outline),
               ),
               SizedBox(
                 width: 30,
@@ -154,13 +154,13 @@ class _AbilityAssignmentDialogState extends State<AbilityAssignmentDialog> {
                   textAlign: TextAlign.center,
                 ),
               ),
-              IconButton(
+              FantasyIconButton(
                 key: ValueKey('increase-$key'),
                 tooltip: '${abilityLabels[key]} erhöhen',
+                icon: Icons.add_circle_outline,
                 onPressed: _canIncrease(key)
                     ? () => setState(() => _pointBuy[key] = _pointBuy[key]! + 1)
                     : null,
-                icon: const Icon(Icons.add_circle_outline),
               ),
             ],
           ),
