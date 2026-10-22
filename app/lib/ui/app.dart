@@ -2082,8 +2082,11 @@ class _AdventurePageState extends State<_AdventurePage> {
                                 minHeight: 5,
                               ),
                             if (CampaignExperience.canLevelUp(campaign.hero))
-                              TextButton.icon(
+                              FantasyTextButton(
                                 key: const ValueKey('adventure-levelup-ready'),
+                                label: 'Stufenaufstieg verfügbar',
+                                icon: Icons.trending_up_outlined,
+                                style: FantasyButtonStyle.woodGold,
                                 onPressed:
                                     widget.controller.busy ||
                                         campaign.pendingRoll != null ||
@@ -2091,8 +2094,6 @@ class _AdventurePageState extends State<_AdventurePage> {
                                         campaign.pendingDeathSave != null
                                     ? null
                                     : _editHero,
-                                icon: const Icon(Icons.trending_up_outlined),
-                                label: const Text('Stufenaufstieg verfügbar'),
                               ),
                           ],
                         ),
@@ -2135,8 +2136,11 @@ class _AdventurePageState extends State<_AdventurePage> {
                                 Wrap(
                                   spacing: 8,
                                   children: [
-                                    FilledButton(
+                                    FantasyTextButton(
                                       key: const ValueKey('adventure-accept'),
+                                      label: 'Begegnung annehmen',
+                                      icon: Icons.check_circle_outline,
+                                      style: FantasyButtonStyle.woodGold,
                                       onPressed: widget.controller.busy
                                           ? null
                                           : () async {
@@ -2147,10 +2151,12 @@ class _AdventurePageState extends State<_AdventurePage> {
                                                 await _afterTurn(prior);
                                               }
                                             },
-                                      child: const Text('Begegnung annehmen'),
                                     ),
-                                    OutlinedButton(
+                                    FantasyTextButton(
                                       key: const ValueKey('adventure-reject'),
+                                      label: 'Anderen Weg wählen',
+                                      icon: Icons.alt_route_outlined,
+                                      style: FantasyButtonStyle.iron,
                                       onPressed: widget.controller.busy
                                           ? null
                                           : () async {
@@ -2161,7 +2167,6 @@ class _AdventurePageState extends State<_AdventurePage> {
                                                 await _afterTurn(prior);
                                               }
                                             },
-                                      child: const Text('Anderen Weg wählen'),
                                     ),
                                   ],
                                 ),
@@ -2590,16 +2595,15 @@ class _CombatView extends StatelessWidget {
             ),
             if (encounter.activeParticipant == 'enemy' &&
                 encounter.enemyAttacksRemaining > 0)
-              OutlinedButton.icon(
+              FantasyTextButton(
                 key: const ValueKey('enemy-attack-continue'),
+                label: 'Gegnerangriff fortsetzen '
+                    '(${encounter.enemyAttacksRemaining} übrig)',
+                icon: Icons.arrow_forward,
+                style: FantasyButtonStyle.wax,
                 onPressed: busy
                     ? null
                     : () => onAction('Gegnerangriff fortsetzen'),
-                icon: const Icon(Icons.arrow_forward),
-                label: Text(
-                  'Gegnerangriff fortsetzen '
-                  '(${encounter.enemyAttacksRemaining} übrig)',
-                ),
               ),
             FantasyTextButton(
               key: const ValueKey('combat-end-hero-turn'),
