@@ -2903,17 +2903,14 @@ class _SettingsPage extends StatelessWidget {
               : 'Eingabe-Sprache: ${voice.recognitionLocale}',
         ),
         const SizedBox(height: 12),
-        OutlinedButton.icon(
+        FantasyTextButton(
           key: const ValueKey('refresh-voices'),
+          label: voice.refreshingVoices
+              ? 'Stimmen werden geprüft …'
+              : 'Stimmen neu prüfen',
+          icon: voice.refreshingVoices ? Icons.hourglass_top : Icons.refresh,
+          style: FantasyButtonStyle.iron,
           onPressed: voice.refreshingVoices ? null : voice.refreshVoices,
-          icon: Icon(
-            voice.refreshingVoices ? Icons.hourglass_top : Icons.refresh,
-          ),
-          label: Text(
-            voice.refreshingVoices
-                ? 'Stimmen werden geprüft …'
-                : 'Stimmen neu prüfen',
-          ),
         ),
         const SizedBox(height: 8),
         const Text(
@@ -2979,20 +2976,23 @@ class _SettingsPage extends StatelessWidget {
         Wrap(
           spacing: 12,
           children: [
-            OutlinedButton.icon(
+            FantasyTextButton(
               key: const ValueKey('test-voice'),
+              label: 'Stimme testen',
+              icon: Icons.volume_up_outlined,
+              style: FantasyButtonStyle.arcane,
               onPressed: canChooseVoice
                   ? () => voice.speak(
                       'Willkommen bei Würfelraunen. Deine Geschichte wartet auf dich.',
                     )
                   : null,
-              icon: const Icon(Icons.volume_up_outlined),
-              label: const Text('Stimme testen'),
             ),
-            TextButton(
+            FantasyTextButton(
               key: const ValueKey('stop-voice'),
+              label: 'Wiedergabe stoppen',
+              icon: Icons.stop_circle_outlined,
+              style: FantasyButtonStyle.iron,
               onPressed: voice.stopSpeaking,
-              child: const Text('Wiedergabe stoppen'),
             ),
           ],
         ),
@@ -3038,7 +3038,10 @@ class _SettingsPage extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         if (controller.currentCampaign != null)
-          OutlinedButton.icon(
+          FantasyTextButton(
+            label: 'Aktuelle Kampagne exportieren',
+            icon: Icons.file_download_outlined,
+            style: FantasyButtonStyle.woodGold,
             onPressed: () => _showExport(
               context,
               'Spielstand sichern',
@@ -3046,11 +3049,12 @@ class _SettingsPage extends StatelessWidget {
               backupFiles,
               backupFileName(controller.currentCampaign!.name),
             ),
-            icon: const Icon(Icons.file_download_outlined),
-            label: const Text('Aktuelle Kampagne exportieren'),
           ),
         const SizedBox(height: 12),
-        OutlinedButton.icon(
+        FantasyTextButton(
+          label: 'Alle lokalen Spieldaten löschen',
+          icon: Icons.delete_forever_outlined,
+          style: FantasyButtonStyle.wax,
           onPressed: controller.busy
               ? null
               : () async {
@@ -3068,8 +3072,6 @@ class _SettingsPage extends StatelessWidget {
                   await controller.deleteAllData();
                   if (controller.error == null) voice.configure({});
                 },
-          icon: const Icon(Icons.delete_forever_outlined),
-          label: const Text('Alle lokalen Spieldaten löschen'),
         ),
         const SizedBox(height: 24),
         const FantasyChapterHeading(
