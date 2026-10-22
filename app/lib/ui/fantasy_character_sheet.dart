@@ -69,6 +69,7 @@ class _CharacterSheetPageState extends State<CharacterSheetPage> {
         ],
       ),
       body: FantasyBackdrop(
+        scene: FantasyBackdropScene.heroes,
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 860),
