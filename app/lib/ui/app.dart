@@ -1956,8 +1956,12 @@ class _AdventurePageState extends State<_AdventurePage> {
               ],
             ),
             if (campaign.pendingEnemyShieldHit != null)
-              Card(
+              FantasyPanel(
                 key: const ValueKey('pending-enemy-shield-hit'),
+                title: 'Schildreaktion',
+                icon: Icons.shield_outlined,
+                accent: FantasyPalette.blue,
+                material: FantasyPanelMaterial.iron,
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Column(
@@ -2073,8 +2077,11 @@ class _AdventurePageState extends State<_AdventurePage> {
                           RabenwachtCampaign.mode)
                         Align(
                           alignment: Alignment.centerLeft,
-                          child: TextButton.icon(
+                          child: FantasyTextButton(
                             key: const ValueKey('rabenwacht-discovered-clues'),
+                            label: 'Hinweise und Aufträge',
+                            icon: Icons.fact_check_outlined,
+                            style: FantasyButtonStyle.iron,
                             onPressed: () => showDialog<void>(
                               context: context,
                               builder: (dialogContext) => AlertDialog(
@@ -2087,19 +2094,15 @@ class _AdventurePageState extends State<_AdventurePage> {
                                   ),
                                 ),
                                 actions: [
-                                  TextButton(
+                                  FantasyTextButton(
+                                    label: 'Schließen',
+                                    style: FantasyButtonStyle.iron,
                                     onPressed: () =>
                                         Navigator.pop(dialogContext),
-                                    child: const Text('Schließen'),
                                   ),
                                 ],
                               ),
                             ),
-                            icon: const Icon(
-                              Icons.fact_check_outlined,
-                              size: 17,
-                            ),
-                            label: const Text('Hinweise und Aufträge'),
                           ),
                         ),
                       const SizedBox(height: 8),
@@ -2266,10 +2269,11 @@ class _AdventurePageState extends State<_AdventurePage> {
               ),
             ),
           if (widget.voice.speaking)
-            TextButton.icon(
+            FantasyTextButton(
+              label: 'Vorlesen unterbrechen',
+              icon: Icons.stop_circle_outlined,
+              style: FantasyButtonStyle.iron,
               onPressed: widget.voice.stopSpeaking,
-              icon: const Icon(Icons.stop_circle_outlined),
-              label: const Text('Vorlesen unterbrechen'),
             ),
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
@@ -2383,11 +2387,10 @@ class _MessageBubble extends StatelessWidget {
                   ),
                 ),
                 if (!player)
-                  IconButton(
+                  FantasyIconButton(
                     onPressed: () => onSpeak(text),
                     tooltip: 'Diese Antwort vorlesen',
-                    icon: const Icon(Icons.volume_up_outlined),
-                    iconSize: 20,
+                    icon: Icons.volume_up_outlined,
                   ),
               ],
             ),
