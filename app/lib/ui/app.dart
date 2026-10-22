@@ -47,6 +47,7 @@ import 'fantasy_experience.dart';
 import 'fantasy_campaign_dashboard.dart';
 import 'fantasy_adventure_hud.dart';
 import 'fantasy_combatant_card.dart';
+import 'fantasy_combat_status.dart';
 import 'character_portrait_picker.dart';
 import 'campaign_memory_panel.dart';
 
@@ -2558,87 +2559,22 @@ class _CombatView extends StatelessWidget {
           armorClass: encounter.enemyArmorClass,
         ),
         const SizedBox(height: 12),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Deckung gegen diesen Gegner',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 5),
-                const Text(
-                  'Nur ausdrücklich bestätigte Hindernisse gelten. '
-                  'Höchste Deckung zählt; eine Bewegung beendet die '
-                  'bisher bestätigte Deckungsposition des Helden.',
-                  style: TextStyle(fontSize: 12),
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    for (final target in const ['Held', 'Gegner'])
-                      PopupMenuButton<CoverLevel>(
-                        key: ValueKey(
-                          target == 'Held'
-                              ? 'combat-hero-cover'
-                              : 'combat-enemy-cover',
-                        ),
-                        tooltip: 'Deckung für $target ändern',
-                        enabled:
-                            !busy &&
-                            !encounter.isFinished &&
-                            encounter.activeParticipant == 'hero',
-                        onSelected: (grade) => onAction(
-                          'Deckung: $target ${CoverRules.commandValue(grade)}',
-                        ),
-                        itemBuilder: (_) => [
-                          for (final grade in CoverLevel.values)
-                            PopupMenuItem<CoverLevel>(
-                              value: grade,
-                              child: Text(CoverRules.label(grade)),
-                            ),
-                        ],
-                        child: Chip(
-                          avatar: const Icon(Icons.shield_outlined, size: 16),
-                          label: Text(
-                            '$target: ${CoverRules.label(target == 'Held' ? encounter.heroCover : encounter.enemyCover)}',
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+        FantasyCombatCoverPanel(
+          heroCover: encounter.heroCover,
+          enemyCover: encounter.enemyCover,
+          canChange:
+              !busy &&
+              !encounter.isFinished &&
+              encounter.activeParticipant == 'hero',
+          onAction: onAction,
         ),
         const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            Chip(
-              label: Text(
-                'Aktion: ${encounter.actionUsed ? 'verbraucht' : 'verfügbar'}',
-              ),
-            ),
-            Chip(
-              label: Text(
-                'Bonusaktion: ${encounter.bonusActionUsed ? 'verbraucht' : 'verfügbar'}',
-              ),
-            ),
-            Chip(
-              label: Text(
-                'Reaktion: ${encounter.reactionUsed ? 'verbraucht' : 'verfügbar'}',
-              ),
-            ),
-            Chip(label: Text('Bewegung: ${encounter.movementRemainingLabel}')),
-            if (encounter.spellSlotExpendedThisTurn)
-              const Chip(label: Text('Zauberplatz in diesem Zug verbraucht')),
-          ],
+        FantasyCombatActionEconomy(
+          actionUsed: encounter.actionUsed,
+          bonusActionUsed: encounter.bonusActionUsed,
+          reactionUsed: encounter.reactionUsed,
+          movementRemainingLabel: encounter.movementRemainingLabel,
+          spellSlotExpendedThisTurn: encounter.spellSlotExpendedThisTurn,
         ),
         const SizedBox(height: 20),
         const FantasySectionTitle(
