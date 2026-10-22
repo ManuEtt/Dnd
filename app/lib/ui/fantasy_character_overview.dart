@@ -272,16 +272,16 @@ class _ParchmentAbilities extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                Icon(
                   Icons.auto_awesome,
                   size: 17,
                   color: FantasyCharacterOverview.ink,
                 ),
-                const SizedBox(width: 9),
-                const Expanded(
+                SizedBox(width: 9),
+                Expanded(
                   child: Text(
                     'Attribute',
                     textAlign: TextAlign.center,
@@ -295,8 +295,8 @@ class _ParchmentAbilities extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 9),
-                const Icon(
+                SizedBox(width: 9),
+                Icon(
                   Icons.auto_awesome,
                   size: 17,
                   color: FantasyCharacterOverview.ink,
