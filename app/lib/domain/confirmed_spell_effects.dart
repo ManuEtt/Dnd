@@ -112,7 +112,8 @@ class ConfirmedSpellEffectRules {
     if (effect.concentrationBound &&
         (hero.concentratingOn != effect.spellName ||
             hero.isDead ||
-            hero.hitPoints == 0)) {
+            hero.hitPoints == 0 ||
+            hero.confirmedSpellEffects.any((e) => e.concentrationBound))) {
       throw const FormatException(
         'Konzentrationsgebundener Eintrag benötigt aktive Konzentration.',
       );
@@ -127,16 +128,11 @@ class ConfirmedSpellEffectRules {
     if (found.length != 1) {
       throw const FormatException('Zauberwirkung ist nicht mehr vorhanden.');
     }
-    final effect = found.single;
     return hero.copyWith(
       confirmedSpellEffects: [
         for (final current in hero.confirmedSpellEffects)
           if (current.id != effectId) current,
       ],
-      concentratingOn: effect.concentrationBound &&
-              hero.concentratingOn == effect.spellName
-          ? ''
-          : hero.concentratingOn,
     );
   }
 
