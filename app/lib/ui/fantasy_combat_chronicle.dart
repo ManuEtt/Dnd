@@ -100,11 +100,9 @@ class _ChronicleEntry extends StatelessWidget {
           decoration: BoxDecoration(
             color: FantasyPalette.night.withValues(alpha: .64),
             borderRadius: BorderRadius.circular(9),
-            border: Border(
-              left: BorderSide(color: accent, width: 3),
-              top: BorderSide(color: accent.withValues(alpha: .23)),
-              right: BorderSide(color: accent.withValues(alpha: .23)),
-              bottom: BorderSide(color: accent.withValues(alpha: .23)),
+            border: Border.all(
+              color: accent.withValues(alpha: .5),
+              width: 1.3,
             ),
           ),
           child: Row(
