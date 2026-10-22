@@ -1222,13 +1222,12 @@ class _CharacterEditorState extends State<CharacterEditor> {
                                 'Eigenes Bild oder Fantasy-Vorlage wählen',
                               ),
                               const SizedBox(height: 8),
-                              OutlinedButton.icon(
+                              FantasyTextButton(
                                 key: const ValueKey('editor-choose-portrait'),
+                                label: 'Bild wählen',
+                                icon: Icons.add_photo_alternate_outlined,
+                                style: FantasyButtonStyle.iron,
                                 onPressed: _choosePortrait,
-                                icon: const Icon(
-                                  Icons.add_photo_alternate_outlined,
-                                ),
-                                label: const Text('Bild wählen'),
                               ),
                             ],
                           ),
@@ -1246,11 +1245,12 @@ class _CharacterEditorState extends State<CharacterEditor> {
                   _text('name', 'Charaktername', required: true),
                   _text('species', 'Spezies', required: true),
                   _text('className', 'Klasse', required: true),
-                  OutlinedButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('open-srd-class-selection'),
+                    label: 'D&D-Klasse und Fertigkeiten wählen',
+                    icon: Icons.shield_outlined,
+                    style: FantasyButtonStyle.woodGold,
                     onPressed: _configureSrdClass,
-                    icon: const Icon(Icons.shield_outlined),
-                    label: const Text('D&D-Klasse und Fertigkeiten wählen'),
                   ),
                   if ((_original['secondaryClassName'] as String? ?? '')
                       .isNotEmpty)
@@ -1264,21 +1264,21 @@ class _CharacterEditorState extends State<CharacterEditor> {
                       ),
                     ),
                   if (widget.hero != null)
-                    OutlinedButton.icon(
+                    FantasyTextButton(
                       key: const ValueKey('open-class-level-up'),
+                      label: 'Bestehende Klasse nach SRD steigern',
+                      icon: Icons.trending_up_outlined,
+                      style: FantasyButtonStyle.woodGold,
                       onPressed: _advanceExistingClass,
-                      icon: const Icon(Icons.trending_up_outlined),
-                      label: const Text('Bestehende Klasse nach SRD steigern'),
                     ),
-                  OutlinedButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('open-multiclass-selection'),
+                    label: widget.hero?.hasSecondClass == true
+              ? 'Zweitklasse im Aufstiegsassistenten steigern'
+              : 'Zweitklasse nach SRD hinzufügen',
+                    icon: Icons.auto_awesome_outlined,
+                    style: FantasyButtonStyle.arcane,
                     onPressed: _configureSecondClass,
-                    icon: const Icon(Icons.auto_awesome_outlined),
-                    label: Text(
-                      widget.hero?.hasSecondClass == true
-                          ? 'Zweitklasse im Aufstiegsassistenten steigern'
-                          : 'Zweitklasse nach SRD hinzufügen',
-                    ),
                   ),
                   const Padding(
                     padding: EdgeInsets.only(top: 5, bottom: 12),
@@ -1330,19 +1330,19 @@ class _CharacterEditorState extends State<CharacterEditor> {
                       'weiterhin einzeln bestätigt werden.',
                     ),
                   ),
-                  OutlinedButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('open-srd-creation-audit'),
+                    label: 'Charaktererstellung auf fehlende SRD-Schritte prüfen',
+                    icon: Icons.fact_check_outlined,
+                    style: FantasyButtonStyle.iron,
                     onPressed: _inspectSrdCreation,
-                    icon: const Icon(Icons.fact_check_outlined),
-                    label: const Text(
-                      'Charaktererstellung auf fehlende SRD-Schritte prüfen',
-                    ),
                   ),
-                  OutlinedButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('open-ability-assignment'),
+                    label: 'Attribute ermitteln',
+                    icon: Icons.auto_fix_high_outlined,
+                    style: FantasyButtonStyle.arcane,
                     onPressed: _assignAbilities,
-                    icon: const Icon(Icons.auto_fix_high_outlined),
-                    label: const Text('Attribute ermitteln'),
                   ),
                   const SizedBox(height: 14),
                   Wrap(
@@ -1385,8 +1385,11 @@ class _CharacterEditorState extends State<CharacterEditor> {
                       _speedField(),
                     ],
                   ),
-                  OutlinedButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('character-recalculate-combat-values'),
+                    label: 'Fehlende RK und Bewegung berechnen',
+                    icon: Icons.calculate_outlined,
+                    style: FantasyButtonStyle.iron,
                     onPressed: () => setState(() {
                       _autofillCombatValues(explicit: true);
                       _error =
@@ -1397,14 +1400,13 @@ class _CharacterEditorState extends State<CharacterEditor> {
                                 '(beim Mönch/Barbaren auch den zweiten Wert) bestätigen.'
                           : null;
                     }),
-                    icon: const Icon(Icons.calculate_outlined),
-                    label: const Text('Fehlende RK und Bewegung berechnen'),
                   ),
-                  OutlinedButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('suggest-level1-hit-points'),
+                    label: 'Start-TP nach D&D vorschlagen',
+                    icon: Icons.favorite_outline,
+                    style: FantasyButtonStyle.woodGold,
                     onPressed: _suggestStartingHitPoints,
-                    icon: const Icon(Icons.favorite_outline),
-                    label: const Text('Start-TP nach D&D vorschlagen'),
                   ),
                   const SizedBox(height: 12),
                   _text('weaponDamage', 'Waffenschaden (z. B. 1d8)'),
@@ -1450,13 +1452,12 @@ class _CharacterEditorState extends State<CharacterEditor> {
                       ),
                       _text('features', 'Klassenfähigkeiten', lines: 3),
                       _text('spells', 'Bekannte Zauber', lines: 3),
-                      OutlinedButton.icon(
+                      FantasyTextButton(
                         key: const ValueKey('open-spellcasting-resources'),
+                        label: 'Zauberplätze und Konzentration verwalten',
+                        icon: Icons.auto_awesome_outlined,
+                        style: FantasyButtonStyle.arcane,
                         onPressed: _manageSpellcasting,
-                        icon: const Icon(Icons.auto_awesome_outlined),
-                        label: const Text(
-                          'Zauberplätze und Konzentration verwalten',
-                        ),
                       ),
                       if ((_original['concentratingOn'] as String? ?? '')
                           .isNotEmpty)
@@ -1525,17 +1526,19 @@ class _CharacterEditorState extends State<CharacterEditor> {
                         onPressed: () => _removeInventoryItem(index),
                       ),
                     ),
-                  OutlinedButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('character-loadout-open'),
+                    label: 'Waffen und Rüstung anlegen / RK berechnen',
+                    icon: Icons.shield_outlined,
+                    style: FantasyButtonStyle.woodGold,
                     onPressed: _equipFromInventory,
-                    icon: const Icon(Icons.shield_outlined),
-                    label: const Text(
-                      'Waffen und Rüstung anlegen / RK berechnen',
-                    ),
                   ),
                   const SizedBox(height: 8),
-                  TextButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('character-loadout-clear'),
+                    label: 'Ausrüstung ablegen (Werte manuell prüfen)',
+                    icon: Icons.remove_circle_outline,
+                    style: FantasyButtonStyle.iron,
                     onPressed: () => setState(() {
                       _original['equippedArmorId'] = '';
                       _original['equippedShieldId'] = '';
@@ -1546,31 +1549,30 @@ class _CharacterEditorState extends State<CharacterEditor> {
                           'Ausrüstung abgelegt. Bisher manuell bestätigte '
                           'Rüstungs- und Waffenwerte bitte prüfen.';
                     }),
-                    icon: const Icon(Icons.remove_circle_outline),
-                    label: const Text(
-                      'Ausrüstung ablegen (Werte manuell prüfen)',
-                    ),
                   ),
                   const SizedBox(height: 8),
-                  OutlinedButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('character-enrich-equipment'),
+                    label: 'Fehlende SRD-Gegenstandswerte ergänzen',
+                    icon: Icons.auto_fix_high_outlined,
+                    style: FantasyButtonStyle.iron,
                     onPressed: _enrichInventoryFromCatalog,
-                    icon: const Icon(Icons.auto_fix_high_outlined),
-                    label: const Text('Fehlende SRD-Gegenstandswerte ergänzen'),
                   ),
                   const SizedBox(height: 8),
-                  OutlinedButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('character-catalog-open'),
+                    label: 'Aus SRD-Ausrüstungskatalog wählen',
+                    icon: Icons.menu_book_outlined,
+                    style: FantasyButtonStyle.woodGold,
                     onPressed: _addFromCatalog,
-                    icon: const Icon(Icons.menu_book_outlined),
-                    label: const Text('Aus SRD-Ausrüstungskatalog wählen'),
                   ),
                   const SizedBox(height: 8),
-                  OutlinedButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('character-inventory-add'),
+                    label: 'Gegenstand hinzufügen',
+                    icon: Icons.add,
+                    style: FantasyButtonStyle.woodGold,
                     onPressed: () => _editInventory(),
-                    icon: const Icon(Icons.add),
-                    label: const Text('Gegenstand hinzufügen'),
                   ),
                   if ((_original['unverifiedNotes'] as List).isNotEmpty) ...[
                     const SizedBox(height: 20),
