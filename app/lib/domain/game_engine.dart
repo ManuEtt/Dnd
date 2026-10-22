@@ -3,6 +3,7 @@ import 'death_saving_throw_rules.dart';
 import 'condition_rules.dart';
 import 'cover_rules.dart';
 import 'condition_effects.dart';
+import 'confirmed_spell_effects.dart';
 import 'prone_movement_rules.dart';
 import 'crawling_movement_rules.dart';
 import 'character_rule_engine.dart';
@@ -726,6 +727,93 @@ class GameEngine {
         'condition': effect.condition,
         'source': effect.source,
         'targetId': hero.id,
+      },
+    );
+  }
+
+  /// Register a spell effect already resolved by an independent approved path.
+  /// No spell is cast here; no slots, targets, conditions or damage are inferred.
+  GameUpdate registerConfirmedSpellEffect(
+    Campaign campaign, {
+    required String spellName,
+    required String source,
+    required bool concentrationBound,
+    required int? ownTurnEnds,
+  }) {
+    _requireExternalEffect(campaign, source);
+    if (campaign.pendingEnemyShieldHit != null) {
+      throw const FormatException('Zuerst die offene Schildreaktion abschließen.');
+    }
+    final name = spellName.trim();
+    if (name.isEmpty || name.length > 200 || name != spellName) {
+      throw const FormatException('Zaubername muss bestätigt sein.');
+    }
+    final fight = campaign.encounter;
+    final String? encounterId;
+    final int? endRound;
+    if (ownTurnEnds == null) {
+      encounterId = null;
+      endRound = null;
+    } else {
+      if (ownTurnEnds < 1 || ownTurnEnds > 100 ||
+          fight == null || fight.isFinished ||
+          fight.activeParticipant != 'hero' ||
+          fight.round < 1 ||
+          fight.round > 1000000 - (ownTurnEnds - 1)) {
+        throw const FormatException(
+          'Bestätigte Zauberdauer benötigt eigenen gültigen Kampfzug.',
+        );
+      }
+      encounterId = fight.id;
+      endRound = fight.round + ownTurnEnds - 1;
+    }
+    final effect = ConfirmedSpellEffect(
+      id: _id('spell-effect'),
+      spellName: name,
+      source: source,
+      concentrationBound: concentrationBound,
+      expiresInEncounterId: encounterId,
+      expiresAtOwnTurnEndRound: endRound,
+    );
+    final updated = ConfirmedSpellEffectRules.add(campaign.hero, effect);
+    return _commit(
+      campaign,
+      campaign.copyWith(hero: updated),
+      'Bestätigte, separat geprüfte Zauberwirkung: $name durch ${effect.source}. '
+      '${endRound == null ? 'Ohne automatische Zugfrist.' : 'Ende am eigenen Zugende von Runde $endRound.'} '
+      'Die Zauberwirkung selbst wurde nicht berechnet.',
+      type: 'spell.effect.confirmed',
+      payload: {
+        'effect': effect.toJson(),
+        'targetId': campaign.hero.id,
+        'effectsNotResolvedByTracker': true,
+      },
+    );
+  }
+
+  /// End only this tracked record; does not infer a spell dispel,
+  /// free a slot or undo an independently applied mechanical effect.
+  GameUpdate removeConfirmedSpellEffect(
+    Campaign campaign, {
+    required String effectId,
+  }) {
+    if (campaign.pendingRoll != null ||
+        campaign.pendingDeathSave != null ||
+        campaign.pendingEnemyShieldHit != null) {
+      throw const FormatException('Zuerst einen offenen Wurf abschließen.');
+    }
+    final updated = ConfirmedSpellEffectRules.remove(
+      campaign.hero,
+      effectId,
+    );
+    return _commit(
+      campaign,
+      campaign.copyWith(hero: updated),
+      'Bestätigter Zauberwirkungseintrag beendet.',
+      type: 'spell.effect.recordRemoved',
+      payload: {
+        'effectId': effectId,
+        'targetId': campaign.hero.id,
       },
     );
   }
@@ -4249,6 +4337,11 @@ class GameEngine {
         encounterId: originalFight.id,
         round: originalFight.round,
       );
+      hero = ConfirmedSpellEffectRules.expireAtOwnTurnEnd(
+        hero,
+        encounterId: originalFight.id,
+        round: originalFight.round,
+      );
     }
     final rageExpired =
         originalFight.rageUntilRound > 0 && foe.rageUntilRound == 0;
@@ -4618,7 +4711,12 @@ class GameEngine {
     String type = 'narrative.turn',
     Map<String, dynamic> payload = const {},
   }) {
-    final confirmed = next.copyWith(
+    // A separately tracked concentration effect must never outlive
+    // independently confirmed concentration loss or replacement.
+    final reconciled = next.copyWith(
+      hero: ConfirmedSpellEffectRules.discardBrokenConcentration(next.hero),
+    );
+    final confirmed = reconciled.copyWith(
       revision: before.revision + 1,
       messages: [
         ...next.messages,
