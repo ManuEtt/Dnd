@@ -1626,19 +1626,21 @@ class _CharacterEditorState extends State<CharacterEditor> {
               Row(
                 children: [
                   Expanded(
-                    child: OutlinedButton.icon(
+                    child: FantasyTextButton(
+                      label: 'Abbrechen',
+                      icon: Icons.close,
+                      style: FantasyButtonStyle.iron,
                       onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.close),
-                      label: const Text('Abbrechen'),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: FilledButton.icon(
+                    child: FantasyTextButton(
                       key: const ValueKey('editor-save-fixed'),
+                      label: 'Charakter speichern',
+                      icon: Icons.save_outlined,
+                      style: FantasyButtonStyle.woodGold,
                       onPressed: _save,
-                      icon: const Icon(Icons.save_outlined),
-                      label: const Text('Charakter speichern'),
                     ),
                   ),
                 ],
