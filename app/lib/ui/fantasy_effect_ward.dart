@@ -41,7 +41,7 @@ class FantasyEffectWard extends StatelessWidget {
           expanded: expandDetailsInitially,
           details: [
             if (hero.concentratingOn.isNotEmpty)
-              Text('Bestätigter Zauber: ' + hero.concentratingOn),
+              Text('Bestätigter Zauber: ${hero.concentratingOn}'),
             const Text(
               'Die Wirkungsdauer ist nicht bestätigt. Aus dem '
               'Zaubernamen wird keine Restzeit abgeleitet.',
@@ -60,19 +60,15 @@ class FantasyEffectWard extends StatelessWidget {
             icon: Icons.hourglass_bottom,
             color: FantasyPalette.danger,
             title: 'Erschöpfung',
-            summary: 'Stufe ' + hero.exhaustionLevel.toString() + '/6',
+            summary: 'Stufe ${hero.exhaustionLevel}/6',
             expanded: expandDetailsInitially,
             details: [
               Text(
-                'Erschöpfung ' +
-                    hero.exhaustionLevel.toString() +
-                    '/6 · W20-Tests −' +
-                    (hero.exhaustionLevel * 2).toString() +
-                    ' · Bewegung ' +
-                    _speedLabel(hero),
+                'Erschöpfung ${hero.exhaustionLevel}/6 · W20-Tests '
+                '−${hero.exhaustionLevel * 2} · Bewegung ${_speedLabel(hero)}',
                 key: const ValueKey('sheet-exhaustion-effects'),
               ),
-              Text('Bewegungsrate: ' + _speedLabel(hero)),
+              Text('Bewegungsrate: ${_speedLabel(hero)}'),
               const Text(
                 'Die gespeicherte Grundbewegung bleibt unverändert. '
                 'Lange Rast und Stufenänderungen benötigen bestätigte Regeln.',
@@ -83,7 +79,7 @@ class FantasyEffectWard extends StatelessWidget {
         for (final condition in hero.conditions) ...[
           const SizedBox(height: 9),
           _WardCard(
-            key: ValueKey('ward-condition-' + condition),
+            key: ValueKey('ward-condition-$condition'),
             icon: _conditionIcon(condition),
             color: _conditionColor(condition),
             title: _title(condition),
@@ -100,8 +96,8 @@ class FantasyEffectWard extends StatelessWidget {
                 (item) => item.condition == condition,
               ))
                 Text(
-                  'Quelle: ' + effect.source + ' · ' + _duration(effect),
-                  key: ValueKey('source-effect-' + effect.id),
+                  'Quelle: ${effect.source} · ${_duration(effect)}',
+                  key: ValueKey('source-effect-${effect.id}'),
                 ),
             ],
           ),
@@ -118,9 +114,9 @@ class FantasyEffectWard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Text(
-              'Bestätigte Kampfrunde: ' + encounter!.round.toString() +
-                  '. Ein Effekt endet ausschließlich am bestätigten '
-                      'eigenen Zugende seiner Begegnung.',
+              'Bestätigte Kampfrunde: ${encounter!.round}. '
+              'Ein Effekt endet ausschließlich am bestätigten '
+              'eigenen Zugende seiner Begegnung.',
               style: const TextStyle(
                 color: FantasyPalette.muted,
                 fontSize: 12,
@@ -149,7 +145,7 @@ class FantasyEffectWard extends StatelessWidget {
     final sourceLabel =
         count == 1 ? '1 bestätigte Quelle' : '$count bestätigte Quellen';
     return hero.manualConditions.contains(condition)
-        ? sourceLabel + ' · auch manuell'
+        ? '$sourceLabel · auch manuell'
         : sourceLabel;
   }
 
@@ -160,21 +156,21 @@ class FantasyEffectWard extends StatelessWidget {
       return 'Bis zur ausdrücklichen Entfernung';
     }
     final other = encounter != null && encounter!.id != id;
-    return 'Ende deines Zugs: Runde $round ($id)' +
-        (other ? ' · andere Begegnung' : '');
+    return 'Ende deines Zugs: Runde $round ($id)'
+        '${other ? ' · andere Begegnung' : ''}';
   }
 
   static String _speedLabel(HeroCharacter hero) {
     final speed = ExhaustionRules.effectiveSpeedMeters(hero);
     if (speed == null) return 'nicht bestätigt';
     return speed == speed.roundToDouble()
-        ? speed.toInt().toString() + ' m'
-        : speed.toString() + ' m';
+        ? '${speed.toInt()} m'
+        : '$speed m';
   }
 
   static String _title(String condition) => condition.isEmpty
       ? 'Unbekannt'
-      : condition[0].toUpperCase() + condition.substring(1);
+      : '${condition[0].toUpperCase()}${condition.substring(1)}';
 
   static Color _conditionColor(String value) => switch (value) {
     'vergiftet' => FantasyPalette.success,
