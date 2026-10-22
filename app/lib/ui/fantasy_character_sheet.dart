@@ -455,33 +455,13 @@ class _SectionNavigation extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 2),
-              child: OutlinedButton(
+              child: FantasyToggleButton(
                 key: ValueKey('sheet-tab-$i'),
+                label: labels[i],
+                icon: icons[i],
+                compact: true,
+                selected: selected == i,
                 onPressed: () => onSelected(i),
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(0, 52),
-                  padding: const EdgeInsets.symmetric(horizontal: 3),
-                  foregroundColor: selected == i ? _gold : _muted,
-                  backgroundColor: selected == i ? _panel : _night,
-                  side: BorderSide(
-                    color: selected == i ? _gold : const Color(0xff334658),
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(icons[i], size: 18),
-                    const SizedBox(height: 3),
-                    Text(
-                      labels[i],
-                      maxLines: 1,
-                      style: const TextStyle(fontSize: 11),
-                    ),
-                  ],
-                ),
               ),
             ),
           ),
