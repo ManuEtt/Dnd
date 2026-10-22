@@ -28,9 +28,9 @@ class FantasyDiceBreakdown extends StatelessWidget {
         return;
       }
       final faces = values.cast<int>();
-      var text = '$label: ' + faces.take(8).join(', ');
+      var text = '$label: ${faces.take(8).join(', ')}';
       if (faces.length > 8) {
-        text += ' (+' + (faces.length - 8).toString() + ' weitere)';
+        text += ' (+${faces.length - 8} weitere)';
       }
       final natural = source['natural'];
       if (faces.length > 1 &&
@@ -46,7 +46,7 @@ class FantasyDiceBreakdown extends StatelessWidget {
           bonus != 0 &&
           bonus >= -1000 &&
           bonus <= 1000) {
-        text += ' · Bonus: ' + (bonus > 0 ? '+' : '') + bonus.toString();
+        text += ' · Bonus: ${bonus > 0 ? '+' : ''}$bonus';
       }
       lines.add(text);
     }
@@ -81,7 +81,7 @@ class FantasyDiceBreakdown extends StatelessWidget {
     final entries = describe(event);
     if (entries.isEmpty) return const SizedBox.shrink();
     return Column(
-      key: ValueKey('chronicle-dice-' + event.id),
+      key: ValueKey('chronicle-dice-${event.id}'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         for (final entry in entries)
