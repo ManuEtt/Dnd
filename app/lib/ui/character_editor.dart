@@ -1954,11 +1954,13 @@ class _InventoryItemDialogState extends State<_InventoryItemDialog> {
     ),
     actions: [
       FantasyTextButton(
+        key: const ValueKey('inventory-item-cancel'),
         label: 'Abbrechen',
         style: FantasyButtonStyle.iron,
         onPressed: () => Navigator.pop(context),
       ),
       FantasyTextButton(
+        key: const ValueKey('inventory-item-save'),
         label: 'Speichern',
         onPressed: () {
           if (!_form.currentState!.validate()) return;
