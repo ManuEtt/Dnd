@@ -1614,6 +1614,10 @@ class _AdventurePageState extends State<_AdventurePage> {
       MaterialPageRoute(
         builder: (sheetContext) => CharacterSheetPage(
           hero: hero,
+          onRoll: () {
+            Navigator.of(sheetContext).pop();
+            if (mounted) _roll();
+          },
           onEdit: widget.controller.busy
               ? null
               : () {

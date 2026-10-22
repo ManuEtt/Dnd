@@ -36,6 +36,12 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.text('6 m'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('sheet-tab-1')),
+        190,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('sheet-tab-1')));
       await tester.pumpAndSettle();
       final fatigue = find.byKey(const ValueKey('sheet-exhaustion-effects'));
