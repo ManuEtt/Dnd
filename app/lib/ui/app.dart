@@ -371,9 +371,10 @@ class _HomePage extends StatelessWidget {
                 'Erstelle zuerst einen Charakter unter „Helden“ oder starte die fertige Demo.',
               ),
             ),
-          TextButton(
+          FantasyTextButton(
+            label: 'Schließen',
+            style: FantasyButtonStyle.iron,
             onPressed: () => Navigator.pop(context),
-            child: const Text('Schließen'),
           ),
         ],
       ),
@@ -412,13 +413,16 @@ class _HomePage extends StatelessWidget {
           ],
         ),
         actions: [
-          TextButton(
+          FantasyTextButton(
+            label: 'Abbrechen',
+            style: FantasyButtonStyle.iron,
             onPressed: () => Navigator.pop(context),
-            child: const Text('Abbrechen'),
           ),
-          FilledButton(
+          FantasyTextButton(
+            label: 'Geschichte erstellen',
+            icon: Icons.auto_awesome_outlined,
+            style: FantasyButtonStyle.arcane,
             onPressed: () => Navigator.pop(context, prompt),
-            child: const Text('Geschichte erstellen'),
           ),
         ],
       ),
@@ -1583,13 +1587,13 @@ class _AdventurePageState extends State<_AdventurePage> {
                     ],
                   ),
                 ),
-                IconButton(
+                FantasyIconButton(
                   key: const ValueKey('adventure-open-character-sheet'),
                   tooltip: 'Charakterbogen ansehen',
                   onPressed: _showHeroSheet,
-                  icon: const Icon(Icons.auto_stories_outlined),
+                  icon: Icons.auto_stories_outlined,
                 ),
-                IconButton(
+                FantasyIconButton(
                   onPressed: () => _showExport(
                     context,
                     'Spielstand exportieren',
@@ -1598,7 +1602,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                     backupFileName(campaign.name),
                   ),
                   tooltip: 'Spielstand exportieren',
-                  icon: const Icon(Icons.file_download_outlined),
+                  icon: Icons.file_download_outlined,
                 ),
               ],
             ),
@@ -3168,13 +3172,14 @@ class _SettingsPage extends StatelessWidget {
         const SizedBox(height: 12),
         const SelectableText(_srdAttribution),
         const SizedBox(height: 12),
-        OutlinedButton.icon(
+        FantasyTextButton(
+          label: 'Softwarelizenzen anzeigen',
+          icon: Icons.description_outlined,
+          style: FantasyButtonStyle.iron,
           onPressed: () => showLicensePage(
             context: context,
             applicationName: 'Würfelraunen',
           ),
-          icon: const Icon(Icons.description_outlined),
-          label: const Text('Softwarelizenzen anzeigen'),
         ),
         const SizedBox(height: 30),
       ],
