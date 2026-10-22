@@ -1,3 +1,11 @@
+## 22.10.2026 – SRD-5.2.1-Linienvorschau (CI offen)
+
+- Neue read-only-2D-Vorschau für Linienflächen mit bestätigter Länge, Breite, Richtung und geprüftem Zauberursprung.
+- Separate Randkandidaten, Ursprungspunktregel, Blocker-Review; keine automatisch behaupteten Treffer/Schäden.
+- Domain-Regressionstests, SRD-Abdeckungsmatrix und Regel-API ergänzt.
+
+---
+
 ## 21.10.2026 – SRD-Kegelflächen (Entwicklungs-PR, CI offen)
 
 - 5-Fuß-Raster erhält konservative Kegel-Kandidatenvorschau in acht Himmelsrichtungen. Geometrische Rand-/Mittelpunktüberlappung, Startpunktentscheidung und fehlende Cover-Auflösung werden separat ausgegeben.

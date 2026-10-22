@@ -7105,7 +7105,8 @@
         "app/test/srd_spell_inventory_persistence_test.dart",
         "app/test/srd_spell_grid_target_rules_test.dart",
         "app/test/srd_sphere_area_rules_test.dart",
-        "app/test/srd_cone_area_rules_test.dart"
+        "app/test/srd_cone_area_rules_test.dart",
+        "app/test/srd_line_area_rules_test.dart"
       ],
       "code": [
         "app/lib/domain/srd_spell_target_rules.dart",
@@ -7113,9 +7114,10 @@
         "app/lib/domain/game_engine.dart",
         "app/lib/domain/srd_spell_grid_target_rules.dart",
         "app/lib/domain/srd_sphere_area_rules.dart",
-        "app/lib/domain/srd_cone_area_rules.dart"
+        "app/lib/domain/srd_cone_area_rules.dart",
+        "app/lib/domain/srd_line_area_rules.dart"
       ],
-      "note": "Teilabdeckung: bestätigte Ursprung-/Reichweitenprüfung und read-only Kandidaten für Kugel und Kegel. Keine endgültige Auswahl betroffener Ziele, 3D-Geometrie, Größen oder Wirkungsfreigabe."
+      "note": "Teilabdeckung: bestätigte Ursprung-/Reichweitenprüfung und read-only Kandidaten für Kugel und Kegel. Keine endgültige Auswahl betroffener Ziele, 3D-Geometrie, Größen oder Wirkungsfreigabe. Ergänzung: Linien-Flächenvorschau mit bestätigter Länge/Breite, acht Richtungen, getrennter Zellenmittelpunkt-/Rand-Kandidatur und Cover-Review (keine tatsächliche 3D-Wirkungs-/Trefferfreigabe)."
     },
     {
       "id": "RULE-SPELLS-SPELL-AREAS-OF-EFFECT",
@@ -7131,16 +7133,18 @@
       "tests": [
         "app/test/srd_sphere_area_rules_test.dart",
         "app/test/srd_fireball_grid_preview_dialog_test.dart",
-        "app/test/srd_cone_area_rules_test.dart"
+        "app/test/srd_cone_area_rules_test.dart",
+        "app/test/srd_line_area_rules_test.dart"
       ],
       "code": [
         "app/lib/domain/srd_sphere_area_rules.dart",
         "app/lib/domain/srd_spell_grid_target_rules.dart",
         "app/lib/ui/srd_fireball_grid_preview_dialog.dart",
         "app/lib/ui/app.dart",
-        "app/lib/domain/srd_cone_area_rules.dart"
+        "app/lib/domain/srd_cone_area_rules.dart",
+        "app/lib/domain/srd_line_area_rules.dart"
       ],
-      "note": "Teilabdeckung: vorhandene Kugelvorschau und neue Konus-/Kegelvorschau mit 8 bestätigten Richtungen auf 5-Fuß-Raster, möglicher Zellüberdeckung, Ursprungspunktwahl und Deckungsprüfbedarf. Tatsächliche 3D-Wirkung, Treffer, Sichtlinie und übrige Formen bleiben offen."
+      "note": "Teilabdeckung: vorhandene Kugelvorschau und neue Konus-/Kegelvorschau mit 8 bestätigten Richtungen auf 5-Fuß-Raster, möglicher Zellüberdeckung, Ursprungspunktwahl und Deckungsprüfbedarf. Tatsächliche 3D-Wirkung, Treffer, Sichtlinie und übrige Formen bleiben offen. Ergänzung: Linien-Flächenvorschau mit bestätigter Länge/Breite, acht Richtungen, getrennter Zellenmittelpunkt-/Rand-Kandidatur und Cover-Review (keine tatsächliche 3D-Wirkungs-/Trefferfreigabe)."
     },
     {
       "id": "RULE-SPELLS-SPELL-DURATION",
@@ -7322,15 +7326,17 @@
         "app/test/cover_combat_rules_test.dart",
         "app/test/srd_spell_grid_target_rules_test.dart",
         "app/test/srd_sphere_area_rules_test.dart",
-        "app/test/srd_cone_area_rules_test.dart"
+        "app/test/srd_cone_area_rules_test.dart",
+        "app/test/srd_line_area_rules_test.dart"
       ],
       "code": [
         "app/lib/domain/cover_rules.dart",
         "app/lib/domain/srd_spell_grid_target_rules.dart",
         "app/lib/domain/srd_sphere_area_rules.dart",
-        "app/lib/domain/srd_cone_area_rules.dart"
+        "app/lib/domain/srd_cone_area_rules.dart",
+        "app/lib/domain/srd_line_area_rules.dart"
       ],
-      "note": "Teilabdeckung: bestätigte Vollhindernisse und center-to-center Strahlzeugen; bei blockierten Strahlen lediglich Prüfbedarf, keine automatisch behauptete vollständige Deckung oder Schadensimmunität."
+      "note": "Teilabdeckung: bestätigte Vollhindernisse und center-to-center Strahlzeugen; bei blockierten Strahlen lediglich Prüfbedarf, keine automatisch behauptete vollständige Deckung oder Schadensimmunität. Ergänzung: Linien-Flächenvorschau mit bestätigter Länge/Breite, acht Richtungen, getrennter Zellenmittelpunkt-/Rand-Kandidatur und Cover-Review (keine tatsächliche 3D-Wirkungs-/Trefferfreigabe)."
     },
     {
       "id": "RULE-SPELLS-COUNTERSPELL-REACTIONS",
