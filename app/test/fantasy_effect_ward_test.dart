@@ -80,6 +80,7 @@ void main() {
       expect(find.byKey(const ValueKey('source-effect-trap')), findsOneWidget);
       expect(find.byKey(const ValueKey('source-effect-curse')), findsOneWidget);
       expect(find.textContaining('Runde 4 (battle)'), findsOneWidget);
+      expect(find.textContaining('noch 2 eigene Zugenden'), findsOneWidget);
       expect(find.textContaining('Wirkungsdauer ist nicht bestätigt'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
@@ -124,6 +125,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.textContaining('andere Begegnung'), findsOneWidget);
+    expect(find.textContaining('noch 2 eigene Zugenden'), findsNothing);
     expect(find.textContaining('Bestätigte Kampfrunde: 3'), findsOneWidget);
   });
 
@@ -142,4 +144,16 @@ void main() {
     expect(find.byKey(const ValueKey('ward-manage-effects')), findsNothing);
     expect(tester.takeException(), isNull);
   });
+  testWidgets('Nach einem bestätigten Rundenwechsel sinkt Restzeit', (
+    tester,
+  ) async {
+    final hero = _hero();
+    await tester.pumpWidget(
+      _page(hero, encounter: _encounter().copyWith(round: 4), expanded: true),
+    );
+    await tester.pumpAndSettle();
+    expect(find.textContaining('noch 1 eigenes Zugende'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
 }
