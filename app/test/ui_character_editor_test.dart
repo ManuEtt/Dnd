@@ -204,6 +204,10 @@ void main() {
       await tester.pumpAndSettle();
     }
     expect(addItemButton.hitTestable(), findsOneWidget);
+    expect(
+      tester.widget<FantasyTextButton>(addItemButton).style,
+      FantasyButtonStyle.woodGold,
+    );
     await tester.tap(addItemButton);
     await tester.pumpAndSettle();
     await tester.enterText(field('Name'), 'Nicht übernommenes Seil');
@@ -281,6 +285,10 @@ void main() {
         await tester.pumpAndSettle();
       }
       expect(open.hitTestable(), findsOneWidget);
+      expect(
+        tester.widget<FantasyTextButton>(open).style,
+        FantasyButtonStyle.woodGold,
+      );
       await tester.tap(open);
       await tester.pumpAndSettle();
       await tester.enterText(
