@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/ui/acid_splash_dialog.dart';
@@ -86,7 +87,7 @@ void main() {
     expect(find.text('Säurespritzer ist nicht vorbereitet.'), findsOneWidget);
     expect(
       tester
-          .widget<FilledButton>(find.byKey(const ValueKey('acid-splash-cast')))
+          .widget<FantasyTextButton>(find.byKey(const ValueKey('acid-splash-cast')))
           .onPressed,
       isNull,
     );
