@@ -541,6 +541,8 @@ class _ReferenceEmpty extends StatelessWidget {
 
 /// Permanently pinned action navigation, backed by real actions. Adventure
 /// dice rolls remain owned by its controller, never rolled by this widget.
+/// Fixed bottom navigation for the character sheet. Buttons only invoke
+/// supplied callbacks; they never create game actions or dice results.
 class FantasyCharacterQuickNavigation extends StatelessWidget {
   const FantasyCharacterQuickNavigation({
     super.key,
@@ -561,49 +563,102 @@ class FantasyCharacterQuickNavigation extends StatelessWidget {
   Widget build(BuildContext context) => SafeArea(
     top: false,
     child: DecoratedBox(
-      decoration: const BoxDecoration(
-        color: Color(0xff081421),
-        border: Border(top: BorderSide(color: FantasyCharacterOverview.gold)),
+      key: const ValueKey('sheet-fixed-quick-navigation'),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xff172a3a), Color(0xff081421)],
+        ),
+        border: const Border(
+          top: BorderSide(color: FantasyCharacterOverview.gold, width: 1.5),
+        ),
+        boxShadow: const [
+          BoxShadow(color: Color(0xaa000000), blurRadius: 12),
+        ],
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(5, 7, 5, 5),
+        padding: const EdgeInsets.fromLTRB(5, 6, 5, 6),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _action('Charakter', Icons.person_outline, onCharacter, selected: true),
             _action('Inventar', Icons.backpack_outlined, onInventory),
             Expanded(
               flex: 2,
-              child: InkWell(
-                key: const ValueKey('sheet-quick-roll'),
-                onTap: onRoll,
-                borderRadius: BorderRadius.circular(36),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 54,
-                      height: 54,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: const RadialGradient(colors: [
-                          Color(0xff2a8fd0), Color(0xff102f62), Color(0xff071a34),
-                        ]),
-                        border: Border.all(color: FantasyCharacterOverview.gold, width: 2),
-                        boxShadow: const [
-                          BoxShadow(color: Color(0xaa237fc5), blurRadius: 10),
+              child: Semantics(
+                label: 'W20 würfeln',
+                button: true,
+                child: Tooltip(
+                  message: 'Würfeln',
+                  child: InkWell(
+                    key: const ValueKey('sheet-quick-roll'),
+                    onTap: onRoll,
+                    borderRadius: BorderRadius.circular(38),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(minHeight: 72),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            key: const ValueKey('sheet-d20-medallion'),
+                            width: 58,
+                            height: 58,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: const RadialGradient(colors: [
+                                Color(0xff329ad8),
+                                Color(0xff164580),
+                                Color(0xff081a32),
+                              ]),
+                              border: Border.all(
+                                color: FantasyCharacterOverview.gold,
+                                width: 2,
+                              ),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0xaa237fc5),
+                                  blurRadius: 10,
+                                ),
+                              ],
+                            ),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                const CustomPaint(
+                                  size: Size(40, 40),
+                                  painter: _ReferenceD20Painter(),
+                                ),
+                                Text(
+                                  '20',
+                                  style: const TextStyle(
+                                    fontFamily: 'serif',
+                                    fontWeight: FontWeight.bold,
+                                    color: FantasyCharacterOverview.ivory,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          const FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              'Würfeln',
+                              maxLines: 1,
+                              style: TextStyle(
+                                color: FantasyCharacterOverview.ivory,
+                                fontSize: 11,
+                                fontFamily: 'serif',
+                              ),
+                            ),
+                          ),
                         ],
                       ),
-                      child: const Icon(
-                        Icons.casino_outlined,
-                        color: FantasyCharacterOverview.ivory,
-                        size: 32,
-                      ),
                     ),
-                    const Text('Würfeln', maxLines: 1, style: TextStyle(
-                      color: FantasyCharacterOverview.ivory, fontSize: 11,
-                      fontFamily: 'serif')),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -615,33 +670,105 @@ class FantasyCharacterQuickNavigation extends StatelessWidget {
     ),
   );
 
-  Widget _action(String label, IconData icon, VoidCallback tap, {bool selected = false}) =>
-      Expanded(
+  Widget _action(
+    String label,
+    IconData icon,
+    VoidCallback tap, {
+    bool selected = false,
+  }) => Expanded(
+    child: Semantics(
+      label: label,
+      button: true,
+      selected: selected,
+      child: Tooltip(
+        message: label,
         child: InkWell(
           key: ValueKey('sheet-quick-${label.toLowerCase()}'),
           onTap: tap,
-          borderRadius: BorderRadius.circular(9),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 1),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(icon, size: 23,
-                  color: selected ? FantasyCharacterOverview.gold : FantasyCharacterOverview.dim),
-                const SizedBox(height: 5),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(label,
-                    maxLines: 1,
-                    style: TextStyle(
-                      color: selected ? FantasyCharacterOverview.ivory : FantasyCharacterOverview.dim,
-                      fontFamily: 'serif',
-                      fontSize: 11,
-                    )),
+          borderRadius: BorderRadius.circular(10),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 66),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 1),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: selected ? const Color(0x333fa8dd) : Colors.transparent,
+                  border: selected
+                      ? Border.all(color: const Color(0x99ddb96c))
+                      : null,
+                  borderRadius: BorderRadius.circular(9),
                 ),
-              ],
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      icon,
+                      size: 23,
+                      color: selected
+                          ? FantasyCharacterOverview.gold
+                          : FantasyCharacterOverview.dim,
+                    ),
+                    const SizedBox(height: 4),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        label,
+                        maxLines: 1,
+                        style: TextStyle(
+                          color: selected
+                              ? FantasyCharacterOverview.ivory
+                              : FantasyCharacterOverview.dim,
+                          fontFamily: 'serif',
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
-      );
+      ),
+    ),
+  );
+}
+
+/// Vector-only twenty-sided die outline: no opaque screenshot or baked
+/// placeholder values enter the actual saved character sheet.
+class _ReferenceD20Painter extends CustomPainter {
+  const _ReferenceD20Painter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final line = Paint()
+      ..color = const Color(0xffb5e8ff)
+      ..strokeWidth = 1.45
+      ..style = PaintingStyle.stroke
+      ..strokeJoin = StrokeJoin.round;
+    final contour = Path()
+      ..moveTo(w * .5, h * .06)
+      ..lineTo(w * .91, h * .32)
+      ..lineTo(w * .78, h * .85)
+      ..lineTo(w * .22, h * .85)
+      ..lineTo(w * .09, h * .32)
+      ..close();
+    canvas.drawPath(contour, line);
+    final facets = Path()
+      ..moveTo(w * .09, h * .32)
+      ..lineTo(w * .5, h * .41)
+      ..lineTo(w * .91, h * .32)
+      ..moveTo(w * .5, h * .06)
+      ..lineTo(w * .5, h * .41)
+      ..moveTo(w * .22, h * .85)
+      ..lineTo(w * .5, h * .41)
+      ..lineTo(w * .78, h * .85);
+    canvas.drawPath(facets, line);
+  }
+
+  @override
+  bool shouldRepaint(covariant _ReferenceD20Painter oldDelegate) => false;
 }
