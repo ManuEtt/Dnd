@@ -213,3 +213,17 @@ software text, transparent background, strict front view, no text --ar 3:1
 **Stand dieses PRs (22.10.2026):** dokumentierte IST-Analyse, Asset-/Prompt-Matrix, 9-Slice-Korrektur für beschriftete Würfelaktionen, Umstellung der ersten vier Startaktionen und **neun zusätzlicher Kampf-/Zauberdialoge** auf die existierenden zustandsabhängigen Fantasy-Texturen (Feuerpfeil, Heilige Flamme, Säurespritzer, Heilzauber, Magisches Geschoss, Schildreaktion, zusätzlicher Kreaturenangriff, Kreaturregistrierung und Initiative). Abbrechen/Schließen nutzt dabei Eisen, Magie arkanes Blau, Angriff Wachsrot, Registrierung Holz/Messing und Feuerpfeil die breite Würfelplatte. Bestehende Handler und ValueKeys bleiben erhalten; alte Widget-Typ-Assertions wurden migriert. Der alte Python-Test für Würfelgrafiken wurde an das neue 192×64-Format angepasst.
 
 **Noch nicht enthalten:** vollständige neue Screen-Hintergründe, Austausch **aller** Dialogbuttons, fertig erzeugte KI-Produktionsgrafiken, vollständige manuelle Android-Geräteabnahme. **Kein Merge in `main` vor erfolgreicher CI.**
+
+## 7. Phase 2 – bildgestützte Screens und Material-Panels (22.10.2026)
+
+**Implementiert im Branch:**
+- Neues `FantasyBackdropScene` mit `home`, `adventure`, `combat`, `heroes`, `journal` und `settings`. Die Zuordnung verwendet bereits lizenzierte/eingecheckte Artworks, keine erfundenen Asset-Pfade und keine externen Anfragen: Schattenwald für Abenteuer, Blutberge für Kampf, Burg für Helden, Vergessene Wälder für Tagebuch sowie Nachthimmel für Einstellungen. Die Startseite behält den vorhandenen mondbeschienenen Look.
+- Je Szene unterschiedliche Farbverläufe; bestehende Bilder werden gedämpft und nach unten ausgeblendet, sodass Text und echte Widgets weiterhin lesbar bleiben. Ein eigener Vektor-Painter zeichnet dezente, skalierbare Messing-/Arkan-Rahmen. Alle Ebenen sind `IgnorePointer`, die verwendeten Bilder `ExcludeSemantics`.
+- Die Hauptnavigation in `app/lib/ui/app.dart` wählt das Szenenbild anhand des tatsächlichen Tabs. Die Kampfübersicht bekommt einen eigenen Kampfhintergrund; der eigenständige Charakterbogen nutzt das Heldenmotiv.
+- `FantasyPanelMaterial` ergänzt `midnight`, `parchment`, `leather` und `iron`, ohne bestehende `FantasyPanel`-Aufrufer zu brechen. Der Abenteuerkopf verwendet Leder, die Tagebuchabschnitte gedämpftes Pergament mit vorhandener Ornamentkarte. Text bleibt weiterhin echtes Flutter-Textwidget, nie in Bitmap gerendert.
+- Abenteuerinteraktionen `Handlung senden`, `Rückblick` und `Wurf durchführen` verwenden die vorhandene zustandsbasierte Fantasy-Button-Familie. Alle Callback- und Busy-Gates bleiben identisch.
+- `app/test/fantasy_backdrop_scenes_test.dart` überprüft die Szene-Asset-Zuordnung, die Funktion von Aktionen auf allen sechs Hintergründen und die Bedienbarkeit aller vier Materialvarianten.
+
+**Abgrenzung:** Die neuen Kompositionen **verwenden bereits eingecheckte Bilddaten**; maßgeschneiderte neue KI-generierte Illustrationen pro Screen werden in einem gesonderten, bildorientierten Schritt eingebunden. Diese Phase liefert integrierte Level-Stile und grafische Vektorrahmen, aber keine neuen extern generierten Binärdateien. `pubspec.yaml` braucht deshalb keine zusätzliche Asset-Registrierung.
+
+**Build-Nachweise:** Das unmittelbar vorherige Inkrement war im GitHub-Actions-Lauf `39710113996` erfolgreich, einschließlich `flutter analyze`, `flutter test`, Android-Debug-APK, nativen Tests und Alpha-Artefakten. Für die **neuen Szenenänderungen** ist ein neuer CI-Lauf nötig und getrennt zu prüfen.
