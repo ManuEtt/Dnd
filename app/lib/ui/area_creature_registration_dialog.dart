@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'fantasy_buttons.dart';
 
 import '../domain/models.dart';
 
@@ -115,14 +116,16 @@ class _AreaCreatureRegistrationDialogState
       ),
     ),
     actions: [
-      TextButton(
+      FantasyTextButton(
+        label: 'Abbrechen',
+        style: FantasyButtonStyle.iron,
         onPressed: () => Navigator.of(context).pop(),
-        child: const Text('Abbrechen'),
       ),
-      FilledButton(
+      FantasyTextButton(
         key: const ValueKey('area-creature-register'),
+        label: 'Kreatur speichern',
+        style: FantasyButtonStyle.woodGold,
         onPressed: _submit,
-        child: const Text('Kreatur speichern'),
       ),
     ],
   );
