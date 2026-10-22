@@ -65,12 +65,6 @@ void main() {
   testWidgets('Statistikkacheln respektieren größere Systemschrift', (
     tester,
   ) async {
-    final previousErrorHandler = FlutterError.onError;
-    FlutterError.onError = (details) {
-      FlutterError.dumpErrorToConsole(details, forceReport: true);
-      previousErrorHandler?.call(details);
-    };
-    addTearDown(() => FlutterError.onError = previousErrorHandler);
     tester.view.physicalSize = const Size(360, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
