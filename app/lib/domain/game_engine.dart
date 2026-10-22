@@ -641,7 +641,8 @@ class GameEngine {
     final fight = campaign.encounter;
     final int? endRound;
     final String? encounterId;
-    if (duration == ConditionEffectDuration.untilRemoved) {
+    final ownTurnEnds = duration.ownTurnEnds;
+    if (ownTurnEnds == null) {
       endRound = null;
       encounterId = null;
     } else {
@@ -652,10 +653,15 @@ class GameEngine {
           'Ein Zugendpunkt erfordert einen aktiven eigenen Kampfzug.',
         );
       }
+      // ConditionEffect's existing schema-1 round ceiling is one million.
+      // Reject the whole request before generating an effect ID or commit.
+      if (fight.round < 1 || fight.round > 1000000 - (ownTurnEnds - 1)) {
+        throw const FormatException(
+          'Die bestätigte Wirkungsdauer überschreitet die Rundenbegrenzung.',
+        );
+      }
       encounterId = fight.id;
-      endRound =
-          fight.round +
-          (duration == ConditionEffectDuration.nextTurnEnd ? 1 : 0);
+      endRound = fight.round + ownTurnEnds - 1;
     }
     final effect = ConditionEffect(
       id: _id('condition'),
