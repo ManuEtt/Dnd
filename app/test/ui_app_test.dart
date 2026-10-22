@@ -646,6 +646,12 @@ void main() {
     await tester.ensureVisible(button);
     await tester.pumpAndSettle();
     expect(
+      tester.widget<FantasyTextButton>(
+        find.widgetWithText(FantasyTextButton, 'Softwarelizenzen anzeigen'),
+      ).style,
+      FantasyButtonStyle.iron,
+    );
+    expect(
       find.textContaining(
         'This work includes material from the System Reference Document 5.2.1',
       ),
