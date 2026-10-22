@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'fantasy_buttons.dart';
 
 import '../domain/srd_spell_catalog.dart';
 import '../domain/srd_spell_grid_target_rules.dart';
@@ -319,20 +320,23 @@ class _SrdFireballGridPreviewDialogState
         ),
       ),
       actions: [
-        TextButton(
+        FantasyTextButton(
           key: const ValueKey('fireball-preview-reset'),
+          label: 'Karte zurücksetzen',
+          style: FantasyButtonStyle.iron,
           onPressed: _resetMap,
-          child: const Text('Karte zurücksetzen'),
         ),
-        TextButton(
+        FantasyTextButton(
           key: const ValueKey('fireball-preview-close'),
+          label: 'Schließen',
+          style: FantasyButtonStyle.iron,
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Schließen'),
         ),
-        FilledButton(
+        FantasyTextButton(
           key: const ValueKey('fireball-preview-calculate'),
+          label: 'Vorschau berechnen',
+          style: FantasyButtonStyle.arcane,
           onPressed: _calculate,
-          child: const Text('Vorschau berechnen'),
         ),
       ],
     );
