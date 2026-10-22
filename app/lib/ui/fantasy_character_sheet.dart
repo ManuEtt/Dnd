@@ -5,7 +5,6 @@ import '../domain/class_progression_rules.dart';
 import '../domain/class_feature_resources.dart';
 import '../domain/class_resource_rules.dart';
 import '../domain/srd_class_feature_catalog.dart';
-import '../domain/condition_rules.dart';
 import '../domain/models.dart';
 import '../domain/multiclass_rules.dart';
 import '../domain/rest_rules.dart';
