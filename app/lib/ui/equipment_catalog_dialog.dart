@@ -88,9 +88,9 @@ class _EquipmentCatalogDialogState extends State<EquipmentCatalogDialog> {
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              IconButton(
+                              FantasyIconButton(
                                 tooltip: 'Werte für ${entry.name} anzeigen',
-                                icon: const Icon(Icons.info_outline),
+                                icon: Icons.info_outline,
                                 onPressed: () => showModalBottomSheet<void>(
                                   context: context,
                                   isScrollControlled: true,
@@ -128,9 +128,9 @@ class _EquipmentCatalogDialogState extends State<EquipmentCatalogDialog> {
                                   ),
                                 ),
                               ),
-                              IconButton(
+                              FantasyIconButton(
                                 tooltip: '${entry.name} hinzufügen',
-                                icon: const Icon(Icons.add_circle_outline),
+                                icon: Icons.add_circle_outline,
                                 onPressed: () => Navigator.pop(context, entry),
                               ),
                             ],
