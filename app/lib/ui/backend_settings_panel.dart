@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'fantasy_buttons.dart';
 
 import '../services/game_controller.dart';
 
@@ -55,7 +56,10 @@ class BackendSettingsPanel extends StatelessWidget {
           spacing: 12,
           runSpacing: 8,
           children: [
-            OutlinedButton.icon(
+            FantasyTextButton(
+              label: narrator.enabled ? 'Neu verbinden' : 'Backend verbinden',
+              icon: Icons.link,
+              style: FantasyButtonStyle.arcane,
               onPressed: controller.busy || narrator.connecting
                   ? null
                   : () => showDialog<void>(
@@ -64,18 +68,15 @@ class BackendSettingsPanel extends StatelessWidget {
                       builder: (context) =>
                           _BackendConnectDialog(controller: controller),
                     ),
-              icon: const Icon(Icons.link),
-              label: Text(
-                narrator.enabled ? 'Neu verbinden' : 'Backend verbinden',
-              ),
             ),
             if (narrator.enabled)
-              TextButton.icon(
+              FantasyTextButton(
+                label: 'Lokale Demo verwenden',
+                icon: Icons.link_off,
+                style: FantasyButtonStyle.iron,
                 onPressed: narrator.connecting
                     ? null
                     : controller.disconnectNarrator,
-                icon: const Icon(Icons.link_off),
-                label: const Text('Lokale Demo verwenden'),
               ),
           ],
         ),
@@ -330,13 +331,15 @@ class _BackendConnectDialogState extends State<_BackendConnectDialog> {
         ),
       ),
       actions: [
-        TextButton(
+        FantasyTextButton(
+          label: 'Abbrechen',
+          style: FantasyButtonStyle.iron,
           onPressed: _submitting ? null : () => Navigator.of(context).pop(),
-          child: const Text('Abbrechen'),
         ),
-        FilledButton(
+        FantasyTextButton(
+          label: _submitting ? 'Prüfe Verbindung …' : 'Verbinden',
+          style: FantasyButtonStyle.arcane,
           onPressed: _submitting ? null : _connect,
-          child: Text(_submitting ? 'Prüfe Verbindung …' : 'Verbinden'),
         ),
       ],
     ),
