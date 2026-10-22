@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'fantasy_buttons.dart';
 
 import '../domain/hero_shield_reaction_rules.dart';
 import '../domain/magic_missile_rules.dart';
@@ -127,19 +128,21 @@ class _HeroShieldReactionDialogState extends State<HeroShieldReactionDialog> {
       ),
     ),
     actions: [
-      TextButton(
+      FantasyTextButton(
+        label: 'Abbrechen',
+        style: FantasyButtonStyle.iron,
         onPressed: () => Navigator.of(context).pop(),
-        child: const Text('Abbrechen'),
       ),
-      FilledButton(
+      FantasyTextButton(
         key: const ValueKey('hero-shield-confirm'),
+        label: 'Zug beenden und ggf. Schild wirken',
+        style: FantasyButtonStyle.arcane,
         onPressed:
             HeroShieldReactionRules.preparedName(widget.hero) == null ||
                 _classes.isEmpty ||
                 _slots.isEmpty
             ? null
             : _confirm,
-        child: const Text('Zug beenden und ggf. Schild wirken'),
       ),
     ],
   );
