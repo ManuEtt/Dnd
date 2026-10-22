@@ -99,6 +99,11 @@ class ConfirmedSpellEffectRules {
     if (effects.map((effect) => effect.id).toSet().length != effects.length) {
       throw const FormatException('Doppelte Zauberwirkungs-ID.');
     }
+    if (effects.where((effect) => effect.concentrationBound).length > 1) {
+      throw const FormatException(
+        'Nur eine bestätigte Konzentrationsquelle zulässig.',
+      );
+    }
     return List.unmodifiable(effects);
   }
 
