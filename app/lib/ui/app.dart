@@ -47,6 +47,7 @@ import 'fantasy_campaign_dashboard.dart';
 import 'fantasy_adventure_hud.dart';
 import 'fantasy_combatant_card.dart';
 import 'fantasy_combat_status.dart';
+import 'fantasy_effect_ward.dart';
 import 'fantasy_combat_turn_tracker.dart';
 import 'fantasy_combat_threat_status.dart';
 import 'fantasy_combat_chronicle.dart';
@@ -2122,6 +2123,14 @@ class _AdventurePageState extends State<_AdventurePage> {
                         _send();
                       },
                       busy: widget.controller.busy,
+                      onManageEffects:
+                          widget.controller.busy ||
+                              campaign.pendingRoll != null ||
+                              campaign.pendingDeathSave != null ||
+                              campaign.hero.hitPoints == null ||
+                              campaign.hero.isDead
+                          ? null
+                          : _manageConditionEffects,
                       header: header,
                     ),
                   )
@@ -2520,6 +2529,7 @@ class _CombatView extends StatelessWidget {
     required this.pendingShieldDecision,
     required this.onAction,
     required this.busy,
+    required this.onManageEffects,
     required this.header,
   });
   final Encounter encounter;
@@ -2528,6 +2538,7 @@ class _CombatView extends StatelessWidget {
   final bool pendingShieldDecision;
   final void Function(String) onAction;
   final bool busy;
+  final VoidCallback? onManageEffects;
   final Widget header;
 
   @override
@@ -2578,6 +2589,12 @@ class _CombatView extends StatelessWidget {
           hitPoints: encounter.enemyHitPoints,
           maxHitPoints: encounter.enemyMaxHitPoints,
           armorClass: encounter.enemyArmorClass,
+        ),
+        const SizedBox(height: 12),
+        FantasyEffectWard(
+          hero: hero,
+          encounter: encounter,
+          onManage: onManageEffects,
         ),
         const SizedBox(height: 12),
         FantasyCombatCoverPanel(
