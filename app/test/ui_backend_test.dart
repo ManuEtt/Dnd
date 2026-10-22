@@ -224,13 +224,13 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       expect(
-        find.widgetWithText(FilledButton, 'Verbinden').hitTestable(),
+        find.widgetWithText(FantasyTextButton, 'Verbinden').hitTestable(),
         findsOneWidget,
       );
       await _enterConnection(tester, limit: '7');
       tester.view.resetViewInsets();
       await tester.pumpAndSettle();
-      await tester.tap(find.widgetWithText(FilledButton, 'Verbinden'));
+      await tester.tap(find.widgetWithText(FantasyTextButton, 'Verbinden'));
       await _finishAction(tester, controller);
       expect(controller.narrator.enabled, isTrue);
       expect(controller.narrator.allowPaidProvider, isFalse);
@@ -265,7 +265,7 @@ void main() {
     await _settings(tester);
     await _dialog(tester);
     await _enterConnection(tester);
-    await tester.tap(find.widgetWithText(FilledButton, 'Verbinden'));
+    await tester.tap(find.widgetWithText(FantasyTextButton, 'Verbinden'));
     await _finishAction(tester, controller);
     expect(controller.narrator.enabled, isFalse);
     expect(find.byType(AlertDialog), findsOneWidget);
@@ -274,7 +274,7 @@ void main() {
     await tester.ensureVisible(paid);
     await tester.pumpAndSettle();
     await tester.tap(paid);
-    await tester.tap(find.widgetWithText(FilledButton, 'Verbinden'));
+    await tester.tap(find.widgetWithText(FantasyTextButton, 'Verbinden'));
     await _finishAction(tester, controller);
     expect(controller.narrator.enabled, isTrue);
     expect(controller.narrator.allowPaidProvider, isTrue);
@@ -319,7 +319,7 @@ void main() {
     );
     FocusManager.instance.primaryFocus?.unfocus();
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(FilledButton, 'Verbinden'));
+    await tester.tap(find.widgetWithText(FantasyTextButton, 'Verbinden'));
     await tester.pumpAndSettle();
     expect(
       find.text('HTTPS-Adresse ohne Zugangsdaten eingeben.'),
