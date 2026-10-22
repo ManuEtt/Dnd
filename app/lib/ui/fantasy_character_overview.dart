@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import '../domain/character_rule_engine.dart';
 import '../domain/models.dart';
 import '../domain/rules_engine.dart';
-import '../domain/spellcasting_rules.dart';
-import 'fantasy_art.dart';
 import 'fantasy_ui.dart';
 
 /// The reference-design's parchment attributes and four compact information
