@@ -399,6 +399,38 @@ class GameController extends ChangeNotifier {
     );
   });
 
+  Future<void> registerConfirmedSpellEffect({
+    required String campaignId,
+    required int expectedRevision,
+    required String spellName,
+    required String source,
+    required bool concentrationBound,
+    required int? ownTurnEnds,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.registerConfirmedSpellEffect(
+        current,
+        spellName: spellName,
+        source: source,
+        concentrationBound: concentrationBound,
+        ownTurnEnds: ownTurnEnds,
+      ),
+    );
+  });
+
+  Future<void> removeConfirmedSpellEffect({
+    required String campaignId,
+    required int expectedRevision,
+    required String effectId,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(engine.removeConfirmedSpellEffect(
+      current,
+      effectId: effectId,
+    ));
+  });
+
   Future<void> applyConditionEffect({
     required String campaignId,
     required int expectedRevision,
