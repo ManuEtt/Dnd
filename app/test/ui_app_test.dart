@@ -168,6 +168,25 @@ void main() {
           FantasyRune.moon,
         ],
       );
+      expect(
+        mainDestinations.map(
+          (destination) =>
+              (destination.selectedIcon! as FantasySelectedNavigationRune).rune,
+        ),
+        [
+          FantasyRune.compass,
+          FantasyRune.dice,
+          FantasyRune.hero,
+          FantasyRune.tome,
+          FantasyRune.moon,
+        ],
+      );
+      expect(
+        tester.widget<FantasySelectedNavigationRune>(
+          find.byKey(const ValueKey('fantasy-appbar-rune')),
+        ).rune,
+        FantasyRune.compass,
+      );
       // The illustrated home header increases the content height on 360 dp.
       // Scroll the *visible* home list to the real demo action before tapping.
       // Disabling hit-test warnings would hide a genuine navigation failure.
@@ -184,6 +203,12 @@ void main() {
       await waitForController(tester, controller);
       await tester.pumpAndSettle();
       expect(controller.currentCampaign, isNotNull);
+      expect(
+        tester.widget<FantasySelectedNavigationRune>(
+          find.byKey(const ValueKey('fantasy-appbar-rune')),
+        ).rune,
+        FantasyRune.dice,
+      );
       expect(find.text('Was möchtest du tun?'), findsOneWidget);
       expect(tester.takeException(), isNull);
       // The text command in the persistent composer is independent of the
@@ -197,6 +222,12 @@ void main() {
       expect(controller.currentCampaign!.messages.length, greaterThan(1));
       await tester.tap(find.text('Tagebuch'));
       await tester.pumpAndSettle();
+      expect(
+        tester.widget<FantasySelectedNavigationRune>(
+          find.byKey(const ValueKey('fantasy-appbar-rune')),
+        ).rune,
+        FantasyRune.tome,
+      );
       await tester.scrollUntilVisible(
         find.text('Dauerhafte Erinnerungen'),
         280,
