@@ -39,7 +39,7 @@ void main() {
     });
   }
 
-  testWidgets('Charakterbogen verwendet dieselbe Mondschein-Kulisse', (
+  testWidgets('Charakterbogen verwendet eigene Heldenkulisse', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(320, 760);
@@ -59,7 +59,15 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.byType(FantasyMoonlitScenery), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('fantasy-backdrop-heroes')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('fantasy-backdrop-art-heroes')),
+      findsOneWidget,
+    );
+    expect(find.byType(FantasyMoonlitScenery), findsNothing);
     expect(find.text('Testheld'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
