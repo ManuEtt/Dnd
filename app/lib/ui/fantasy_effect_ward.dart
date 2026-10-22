@@ -106,7 +106,7 @@ class FantasyEffectWard extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.only(top: 8),
             child: Text(
-              'Keine bestätigten Zustände oder Erschöpfungsstufen.',
+              'Keine Zustände eingetragen.',
               style: TextStyle(color: FantasyPalette.muted, fontSize: 12),
             ),
           ),
