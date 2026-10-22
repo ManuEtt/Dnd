@@ -206,7 +206,15 @@ void main() {
       expect(tester.takeException(), isNull);
       await tester.tap(find.text('Helden'));
       await tester.pumpAndSettle();
-      expect(find.text('Charakter erstellen'), findsOneWidget);
+      final createHero = find.widgetWithText(
+        FantasyTextButton,
+        'Charakter erstellen',
+      );
+      expect(createHero, findsOneWidget);
+      expect(
+        tester.widget<FantasyTextButton>(createHero).style,
+        FantasyButtonStyle.woodGold,
+      );
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
       controller.dispose();
