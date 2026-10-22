@@ -4,6 +4,7 @@ import '../domain/character_rule_engine.dart';
 import '../domain/models.dart';
 import '../domain/rules_engine.dart';
 import 'fantasy_ui.dart';
+import 'fantasy_character_ornaments.dart';
 
 /// The reference-design's parchment attributes and four compact information
 /// panels. All labels and values are derived from the CONFIRMED hero snapshot.
@@ -256,6 +257,8 @@ class _ParchmentAbilities extends StatelessWidget {
     final scaler = MediaQuery.textScalerOf(context);
     return FantasyApprovedCornerFrame(
       cornerSize: 31,
+      child: FantasyEngravedFrame(
+      parchment: true,
       child: Container(
         key: const ValueKey('sheet-parchment-abilities'),
         padding: const EdgeInsets.fromLTRB(9, 12, 9, 14),
@@ -336,6 +339,7 @@ class _ParchmentAbilities extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }
@@ -434,7 +438,8 @@ class _ReferencePanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => FantasyApprovedCornerFrame(
     cornerSize: 24,
-    child: Container(
+    child: FantasyEngravedFrame(
+      child: Container(
       key: ValueKey('sheet-preview-${title.toLowerCase()}'),
       decoration: BoxDecoration(
         gradient: const LinearGradient(colors: [Color(0xff172a38), Color(0xff0c1825)]),
@@ -475,6 +480,7 @@ class _ReferencePanel extends StatelessWidget {
           child,
         ],
       ),
+    ),
     ),
   );
 }
