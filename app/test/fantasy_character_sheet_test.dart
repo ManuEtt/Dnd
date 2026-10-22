@@ -203,8 +203,16 @@ void main() {
       await tester.ensureVisible(conditionsTab);
       await tester.pumpAndSettle();
       expect(conditionsTab.hitTestable(), findsOneWidget);
+      expect(
+        tester.widget<FantasyToggleButton>(conditionsTab).compact,
+        isTrue,
+      );
       await tester.tap(conditionsTab);
       await tester.pumpAndSettle();
+      expect(
+        tester.widget<FantasyToggleButton>(conditionsTab).selected,
+        isTrue,
+      );
       expect(find.text('Keine Zustände eingetragen.'), findsOneWidget);
       final defensesTab = find.byKey(const ValueKey('sheet-tab-2'));
       await tester.scrollUntilVisible(
@@ -217,6 +225,10 @@ void main() {
       expect(defensesTab.hitTestable(), findsOneWidget);
       await tester.tap(defensesTab);
       await tester.pumpAndSettle();
+      expect(
+        tester.widget<FantasyToggleButton>(defensesTab).selected,
+        isTrue,
+      );
       expect(
         find.text(
           'Resistenzen und Immunitäten sind im aktuellen Charaktermodell nicht gesondert erfasst.',
