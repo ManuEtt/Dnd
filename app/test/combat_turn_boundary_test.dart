@@ -486,6 +486,69 @@ void main() {
     },
   );
 
+  for (final caseData in [
+    (name: 'Mönch', level: 2, key: 'monk-patient-defense',
+     style: FantasyButtonStyle.iron),
+    (name: 'Paladin', level: 1, key: 'paladin-lay-on-hands-heal',
+     style: FantasyButtonStyle.woodGold),
+    (name: 'Schurke', level: 2, key: 'rogue-cunning-disengage',
+     style: FantasyButtonStyle.iron),
+  ]) {
+    testWidgets(
+      '${caseData.name}: Bonusaktionsbutton zeigt Material und Busy-Sperre',
+      (tester) async {
+        tester.view.physicalSize = const Size(400, 900);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        final repository = (await tester.runAsync(
+          () => SqliteCampaignRepository.open(
+            factory: databaseFactoryFfi,
+            path: inMemoryDatabasePath,
+          ),
+        ))!;
+        final controller = GameController(repository: repository, engine: engine);
+        final voice = _Voice();
+        addTearDown(() async {
+          await tester.pumpWidget(const SizedBox.shrink());
+          controller.dispose();
+          voice.dispose();
+          await tester.runAsync(repository.close);
+        });
+        final campaign = _campaign(
+          engine,
+          className: caseData.name,
+          level: caseData.level,
+          encounter: _fight.copyWith(bonusActionUsed: true),
+        );
+        await tester.runAsync(() => repository.saveCampaign(campaign));
+        await tester.runAsync(() => controller.openCampaign(campaign.id));
+        await tester.pumpWidget(
+          LivingGameApp(controller: controller, voice: voice),
+        );
+        await tester.tap(find.text('Abenteuer'));
+        await tester.pumpAndSettle();
+        final combatToggle = find.text('Kampf ansehen');
+        await tester.ensureVisible(combatToggle);
+        await tester.pumpAndSettle();
+        await tester.tap(combatToggle);
+        await tester.pumpAndSettle();
+        final action = find.byKey(ValueKey(caseData.key));
+        await tester.scrollUntilVisible(
+          action,
+          220,
+          scrollable: find.byType(Scrollable).first,
+        );
+        await tester.ensureVisible(action);
+        await tester.pumpAndSettle();
+        final button = tester.widget<FantasyTextButton>(action);
+        expect(button.style, caseData.style);
+        expect(button.onPressed, isNull);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
   testWidgets(
     'Echter Zugende-Button beendet handlungsunfähigen Zug und speichert SQLite',
     (tester) async {
