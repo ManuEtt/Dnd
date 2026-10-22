@@ -79,6 +79,8 @@ Future<_Fixture> _start(WidgetTester tester) async {
   await fixture.mount(tester);
   await tester.tap(find.text('Abenteuer'));
   await tester.pumpAndSettle();
+  expect(find.text('Held & Kampf'), findsOneWidget);
+  expect(find.text('Zauber & Rituale'), findsOneWidget);
   return fixture;
 }
 
