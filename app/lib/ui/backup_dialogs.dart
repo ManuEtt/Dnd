@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'fantasy_buttons.dart';
 import 'package:flutter/services.dart';
 
 import '../services/backup_files.dart';
@@ -112,10 +113,11 @@ class _ImportBackupDialogState extends State<_ImportBackupDialog> {
                 'Erst „Importieren“ übernimmt geprüfte Daten. Fehlerhafte Daten werden abgewiesen.',
               ),
               const SizedBox(height: 12),
-              OutlinedButton.icon(
+              FantasyTextButton(
+                label: 'Datei wählen',
+                icon: Icons.folder_open_outlined,
+                style: FantasyButtonStyle.iron,
                 onPressed: _busy ? null : _chooseFile,
-                icon: const Icon(Icons.folder_open_outlined),
-                label: const Text('Datei wählen'),
               ),
               const SizedBox(height: 12),
               TextField(
@@ -134,13 +136,16 @@ class _ImportBackupDialogState extends State<_ImportBackupDialog> {
         ),
       ),
       actions: [
-        TextButton(
+        FantasyTextButton(
+          label: 'Abbrechen',
+          style: FantasyButtonStyle.iron,
           onPressed: _busy ? null : () => Navigator.pop(context),
-          child: const Text('Abbrechen'),
         ),
-        FilledButton(
+        FantasyTextButton(
+          label: 'Importieren',
+          icon: Icons.file_download_outlined,
+          style: FantasyButtonStyle.woodGold,
           onPressed: _busy ? null : () => Navigator.pop(context, _text.text),
-          child: const Text('Importieren'),
         ),
       ],
     ),
@@ -230,10 +235,11 @@ class _ExportBackupDialogState extends State<_ExportBackupDialog> {
                 'Du kannst den Text auch kopieren.',
               ),
               const SizedBox(height: 12),
-              OutlinedButton.icon(
+              FantasyTextButton(
+                label: 'Als Datei speichern',
+                icon: Icons.save_outlined,
+                style: FantasyButtonStyle.iron,
                 onPressed: _busy ? null : _saveFile,
-                icon: const Icon(Icons.save_outlined),
-                label: const Text('Als Datei speichern'),
               ),
               _BackupStatus(busy: _busy, message: _message),
               const SizedBox(height: 12),
@@ -246,14 +252,16 @@ class _ExportBackupDialogState extends State<_ExportBackupDialog> {
         ),
       ),
       actions: [
-        TextButton(
+        FantasyTextButton(
+          label: 'Schließen',
+          style: FantasyButtonStyle.iron,
           onPressed: _busy ? null : () => Navigator.pop(context),
-          child: const Text('Schließen'),
         ),
-        FilledButton.icon(
+        FantasyTextButton(
+          label: 'Kopieren',
+          icon: Icons.copy,
+          style: FantasyButtonStyle.woodGold,
           onPressed: _busy ? null : _copy,
-          icon: const Icon(Icons.copy),
-          label: const Text('Kopieren'),
         ),
       ],
     ),
