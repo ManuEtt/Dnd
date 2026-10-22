@@ -100,13 +100,15 @@ class _ActionSeal extends StatelessWidget {
             borderRadius: BorderRadius.circular(9),
             border: Border.all(color: accent.withValues(alpha: .48)),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
+          child: Wrap(
+            spacing: 6,
+            runSpacing: 4,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Icon(icon, color: accent, size: 17),
-              const SizedBox(width: 6),
               Text(
                 '$label: $value',
+                softWrap: true,
                 style: const TextStyle(
                   fontSize: 12,
                   color: FantasyPalette.ivory,
