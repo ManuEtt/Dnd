@@ -522,10 +522,6 @@ void main() {
       await tester.tap(combatToggle);
       await tester.pumpAndSettle();
       final button = find.byKey(const ValueKey('combat-end-hero-turn'));
-      expect(
-        tester.widget<FantasyTextButton>(button).style,
-        FantasyButtonStyle.iron,
-      );
       await tester.scrollUntilVisible(
         button,
         250,
@@ -534,6 +530,10 @@ void main() {
       await tester.ensureVisible(button);
       await tester.pumpAndSettle();
       expect(button.hitTestable(), findsOneWidget);
+      expect(
+        tester.widget<FantasyTextButton>(button).style,
+        FantasyButtonStyle.iron,
+      );
       await tester.tap(button);
       await tester.pump();
       await tester.runAsync(() async {
