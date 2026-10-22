@@ -207,7 +207,9 @@ void main() {
     await tester.tap(addItemButton);
     await tester.pumpAndSettle();
     await tester.enterText(field('Name'), 'Nicht übernommenes Seil');
-    final cancel = find.widgetWithText(FantasyTextButton, 'Abbrechen');
+    // The editor footer has another Abbrechen action beneath the modal.
+    // Target the dialog's own action so closing the item never closes the hero.
+    final cancel = find.byKey(const ValueKey('inventory-item-cancel'));
     expect(cancel, findsOneWidget);
     expect(
       tester.widget<FantasyTextButton>(cancel).style,
