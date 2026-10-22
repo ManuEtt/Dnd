@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'fantasy_buttons.dart';
 
 import '../domain/models.dart';
 import '../domain/srd_initiative_roster_rules.dart';
@@ -189,14 +190,16 @@ class _TrackedCreatureInitiativeDialogState
         ),
       ),
       actions: [
-        TextButton(
+        FantasyTextButton(
+          label: 'Schließen',
+          style: FantasyButtonStyle.iron,
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Schließen'),
         ),
-        FilledButton(
+        FantasyTextButton(
           key: const ValueKey('initiative-save'),
+          label: 'Initiative speichern',
+          style: FantasyButtonStyle.woodGold,
           onPressed: living.isEmpty ? null : _save,
-          child: const Text('Initiative speichern'),
         ),
       ],
     );
