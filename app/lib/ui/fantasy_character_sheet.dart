@@ -16,6 +16,7 @@ import 'fantasy_ui.dart';
 import 'fantasy_effect_ward.dart';
 import 'fantasy_buttons.dart';
 import 'fantasy_character_overview.dart';
+import 'fantasy_character_ornaments.dart';
 import 'character_portrait_picker.dart';
 
 // A read-only presentation of the actual, confirmed character data. No state,
@@ -279,43 +280,31 @@ class _CharacterHeader extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
               child: Row(
                 children: [
-                  Container(
-                    width: 112,
-                    height: 112,
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: _gold, width: 2),
-                      color: _night,
-                      boxShadow: const [
-                        BoxShadow(color: Color(0x7794772a), blurRadius: 13),
-                      ],
-                    ),
-                    child: ClipOval(
-                      child: hero.portraitPreset >= 0 ||
-                          hero.portraitPhotoBase64.isNotEmpty
-                          ? FantasyCharacterPortrait(
-                              key: const ValueKey('sheet-hero-portrait'),
-                              preset: hero.portraitPreset,
-                              photoBase64: hero.portraitPhotoBase64,
-                              name: hero.name,
-                              size: 105,
-                            )
-                          : Container(
-                              key: const ValueKey('sheet-avatar-placeholder'),
-                              color: const Color(0xff243749),
-                              alignment: Alignment.center,
-                              child: Text(
-                                initials,
-                                style: const TextStyle(
-                                  fontFamily: 'serif',
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.bold,
-                                  color: _gold,
-                                ),
+                  FantasyPortraitMedallion(
+                    size: 112,
+                    child: hero.portraitPreset >= 0 ||
+                            hero.portraitPhotoBase64.isNotEmpty
+                        ? FantasyCharacterPortrait(
+                            key: const ValueKey('sheet-hero-portrait'),
+                            preset: hero.portraitPreset,
+                            photoBase64: hero.portraitPhotoBase64,
+                            name: hero.name,
+                            size: 105,
+                          )
+                        : Container(
+                            key: const ValueKey('sheet-avatar-placeholder'),
+                            color: const Color(0xff243749),
+                            alignment: Alignment.center,
+                            child: Text(
+                              initials,
+                              style: const TextStyle(
+                                fontFamily: 'serif',
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: _gold,
                               ),
                             ),
-                    ),
+                          ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
