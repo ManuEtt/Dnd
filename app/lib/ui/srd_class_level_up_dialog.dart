@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'fantasy_buttons.dart';
 
 import '../domain/character_creation_progression.dart';
 import '../domain/experience_progression.dart';
@@ -321,14 +322,16 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
         ),
       ),
       actions: [
-        TextButton(
+        FantasyTextButton(
+          label: 'Abbrechen',
+          style: FantasyButtonStyle.iron,
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Abbrechen'),
         ),
-        FilledButton(
+        FantasyTextButton(
           key: const ValueKey('levelup-confirm'),
+          label: 'Stufenaufstieg übernehmen',
+          style: FantasyButtonStyle.woodGold,
           onPressed: _confirm,
-          child: const Text('Stufenaufstieg übernehmen'),
         ),
       ],
     );

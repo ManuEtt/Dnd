@@ -10,6 +10,7 @@ import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/services/game_controller.dart';
 import 'package:lebendiger_spielleiter/services/voice_controller.dart';
 import 'package:lebendiger_spielleiter/ui/app.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 import 'package:lebendiger_spielleiter/ui/healing_spell_dialog.dart';
 
 class _Random implements Random {
@@ -312,6 +313,10 @@ void main() {
       await tester.ensureVisible(button);
       await tester.pumpAndSettle();
       expect(button.hitTestable(), findsOneWidget);
+      expect(
+        tester.widget<FantasyTextButton>(button).style,
+        FantasyButtonStyle.woodGold,
+      );
       await tester.tap(button);
       await tester.pumpAndSettle();
       expect(find.byType(HealingSpellDialog), findsOneWidget);

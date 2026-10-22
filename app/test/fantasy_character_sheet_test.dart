@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/domain/condition_effects.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_character_sheet.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 
 void main() {
   for (final width in [320.0, 360.0, 400.0]) {
@@ -202,8 +203,16 @@ void main() {
       await tester.ensureVisible(conditionsTab);
       await tester.pumpAndSettle();
       expect(conditionsTab.hitTestable(), findsOneWidget);
+      expect(
+        tester.widget<FantasyToggleButton>(conditionsTab).compact,
+        isTrue,
+      );
       await tester.tap(conditionsTab);
       await tester.pumpAndSettle();
+      expect(
+        tester.widget<FantasyToggleButton>(conditionsTab).selected,
+        isTrue,
+      );
       expect(find.text('Keine Zustände eingetragen.'), findsOneWidget);
       final defensesTab = find.byKey(const ValueKey('sheet-tab-2'));
       await tester.scrollUntilVisible(
@@ -216,6 +225,10 @@ void main() {
       expect(defensesTab.hitTestable(), findsOneWidget);
       await tester.tap(defensesTab);
       await tester.pumpAndSettle();
+      expect(
+        tester.widget<FantasyToggleButton>(defensesTab).selected,
+        isTrue,
+      );
       expect(
         find.text(
           'Resistenzen und Immunitäten sind im aktuellen Charaktermodell nicht gesondert erfasst.',
@@ -239,7 +252,10 @@ void main() {
         ),
       ),
     );
-    await tester.tap(find.byTooltip('Charakter bearbeiten'));
+    final edit = find.byTooltip('Charakter bearbeiten');
+    expect(find.ancestor(of: edit, matching: find.byType(FantasyIconButton)),
+        findsOneWidget);
+    await tester.tap(edit);
     expect(edits, 1);
     expect(tester.takeException(), isNull);
   });

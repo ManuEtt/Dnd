@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/ui/character_portrait_picker.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 
 void main() {
   test('Die Bildvorlage überlebt JSON-Export und -Import unverändert', () {
@@ -102,6 +103,10 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(fourth);
       await tester.pumpAndSettle();
+      final apply = tester.widget<FantasyTextButton>(
+        find.byKey(const ValueKey('portrait-apply')),
+      );
+      expect(apply.style, FantasyButtonStyle.woodGold);
       await tester.tap(find.byKey(const ValueKey('portrait-apply')));
       await tester.pumpAndSettle();
       expect(chosen?.preset, 3);

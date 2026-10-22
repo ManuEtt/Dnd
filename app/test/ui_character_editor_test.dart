@@ -50,6 +50,10 @@ Future<void> save(WidgetTester tester) async {
   await tester.ensureVisible(button);
   await tester.pumpAndSettle();
   expect(button.hitTestable(), findsOneWidget);
+  final saveControl = tester.widget<FantasyTextButton>(
+    find.byKey(const ValueKey('editor-save-fixed')),
+  );
+  expect(saveControl.style, FantasyButtonStyle.woodGold);
   await tester.tap(button);
   await tester.pumpAndSettle();
 }
@@ -200,10 +204,16 @@ void main() {
       await tester.pumpAndSettle();
     }
     expect(addItemButton.hitTestable(), findsOneWidget);
+    expect(
+      tester.widget<FantasyTextButton>(addItemButton).style,
+      FantasyButtonStyle.woodGold,
+    );
     await tester.tap(addItemButton);
     await tester.pumpAndSettle();
     await tester.enterText(field('Name'), 'Nicht übernommenes Seil');
-    final cancel = find.widgetWithText(FantasyTextButton, 'Abbrechen');
+    // The editor footer has another Abbrechen action beneath the modal.
+    // Target the dialog's own action so closing the item never closes the hero.
+    final cancel = find.byKey(const ValueKey('inventory-item-cancel'));
     expect(cancel, findsOneWidget);
     expect(
       tester.widget<FantasyTextButton>(cancel).style,
@@ -275,6 +285,10 @@ void main() {
         await tester.pumpAndSettle();
       }
       expect(open.hitTestable(), findsOneWidget);
+      expect(
+        tester.widget<FantasyTextButton>(open).style,
+        FantasyButtonStyle.woodGold,
+      );
       await tester.tap(open);
       await tester.pumpAndSettle();
       await tester.enterText(

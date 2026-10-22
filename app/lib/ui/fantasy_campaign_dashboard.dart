@@ -6,6 +6,7 @@ import 'character_portrait_picker.dart';
 import 'fantasy_art.dart';
 import 'fantasy_experience.dart';
 import 'fantasy_ui.dart';
+import 'fantasy_buttons.dart';
 
 /// Read-only overview of the saved hero. Values always come from the supplied
 /// campaign character, never from illustrations or invented defaults.
@@ -285,17 +286,19 @@ class FantasyActiveHeroCard extends StatelessWidget {
                   spacing: 8,
                   runSpacing: 8,
                   children: [
-                    FilledButton.icon(
+                    FantasyTextButton(
                       key: const ValueKey('fantasy-hero-continue'),
+                      label: 'Abenteuer fortsetzen',
+                      icon: Icons.play_arrow,
+                      style: FantasyButtonStyle.woodGold,
                       onPressed: onContinue,
-                      icon: const Icon(Icons.play_arrow),
-                      label: const Text('Abenteuer fortsetzen'),
                     ),
-                    OutlinedButton.icon(
+                    FantasyTextButton(
                       key: const ValueKey('fantasy-hero-archive'),
+                      label: 'Helden verwalten',
+                      icon: Icons.people_outline,
+                      style: FantasyButtonStyle.iron,
                       onPressed: onHeroes,
-                      icon: const Icon(Icons.people_outline),
-                      label: const Text('Helden verwalten'),
                     ),
                   ],
                 ),

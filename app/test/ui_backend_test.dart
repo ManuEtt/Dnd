@@ -9,6 +9,7 @@ import 'package:lebendiger_spielleiter/services/backend_narrator.dart';
 import 'package:lebendiger_spielleiter/services/game_controller.dart';
 import 'package:lebendiger_spielleiter/services/voice_controller.dart';
 import 'package:lebendiger_spielleiter/ui/app.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 import 'support/legacy_campaign_fixture.dart';
 
 class _SilentVoice extends VoiceController {
@@ -223,13 +224,13 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       expect(
-        find.widgetWithText(FilledButton, 'Verbinden').hitTestable(),
+        find.widgetWithText(FantasyTextButton, 'Verbinden').hitTestable(),
         findsOneWidget,
       );
       await _enterConnection(tester, limit: '7');
       tester.view.resetViewInsets();
       await tester.pumpAndSettle();
-      await tester.tap(find.widgetWithText(FilledButton, 'Verbinden'));
+      await tester.tap(find.widgetWithText(FantasyTextButton, 'Verbinden'));
       await _finishAction(tester, controller);
       expect(controller.narrator.enabled, isTrue);
       expect(controller.narrator.allowPaidProvider, isFalse);
@@ -264,7 +265,7 @@ void main() {
     await _settings(tester);
     await _dialog(tester);
     await _enterConnection(tester);
-    await tester.tap(find.widgetWithText(FilledButton, 'Verbinden'));
+    await tester.tap(find.widgetWithText(FantasyTextButton, 'Verbinden'));
     await _finishAction(tester, controller);
     expect(controller.narrator.enabled, isFalse);
     expect(find.byType(AlertDialog), findsOneWidget);
@@ -273,7 +274,7 @@ void main() {
     await tester.ensureVisible(paid);
     await tester.pumpAndSettle();
     await tester.tap(paid);
-    await tester.tap(find.widgetWithText(FilledButton, 'Verbinden'));
+    await tester.tap(find.widgetWithText(FantasyTextButton, 'Verbinden'));
     await _finishAction(tester, controller);
     expect(controller.narrator.enabled, isTrue);
     expect(controller.narrator.allowPaidProvider, isTrue);
@@ -318,7 +319,7 @@ void main() {
     );
     FocusManager.instance.primaryFocus?.unfocus();
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(FilledButton, 'Verbinden'));
+    await tester.tap(find.widgetWithText(FantasyTextButton, 'Verbinden'));
     await tester.pumpAndSettle();
     expect(
       find.text('HTTPS-Adresse ohne Zugangsdaten eingeben.'),
@@ -456,9 +457,9 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
     final disconnectButton = find.ancestor(
       of: disconnect,
-      matching: find.byWidgetPredicate((widget) => widget is TextButton),
+      matching: find.byWidgetPredicate((widget) => widget is FantasyTextButton),
     );
-    expect(tester.widget<TextButton>(disconnectButton).onPressed, isNotNull);
+    expect(tester.widget<FantasyTextButton>(disconnectButton).onPressed, isNotNull);
     await tester.tap(disconnect);
     await tester.pump();
     expect(controller.narrator.enabled, isFalse);

@@ -4,6 +4,7 @@ import '../domain/campaign_experience.dart';
 import '../domain/models.dart';
 import 'fantasy_experience.dart';
 import 'fantasy_ui.dart';
+import 'fantasy_buttons.dart';
 
 /// A read-only in-game HUD. Every stat is derived from confirmed campaign
 /// state. Missing values stay unknown; this widget never changes game rules.
@@ -363,11 +364,12 @@ class FantasyAdventureQuestBoard extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: Padding(
               padding: const EdgeInsets.only(left: 10, right: 10, bottom: 7),
-              child: TextButton.icon(
+              child: FantasyTextButton(
                 key: const ValueKey('adventure-quest-open-journal'),
+                label: 'Tagebuch öffnen',
+                icon: Icons.menu_book_outlined,
+                style: FantasyButtonStyle.iron,
                 onPressed: onOpenJournal,
-                icon: const Icon(Icons.menu_book_outlined),
-                label: const Text('Tagebuch öffnen'),
               ),
             ),
           ),

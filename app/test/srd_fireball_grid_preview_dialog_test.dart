@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/data/srd_spell_catalog_loader.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_catalog.dart';
 import 'package:lebendiger_spielleiter/ui/srd_fireball_grid_preview_dialog.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 
 Future<void> _open(WidgetTester tester, SrdSpellDefinition spell) async {
   await tester.binding.setSurfaceSize(const Size(1000, 1100));
@@ -47,6 +48,15 @@ void main() {
   ) async {
     await _open(tester, catalog.find('Fireball')!);
     addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    final calculate = tester.widget<FantasyTextButton>(
+      find.byKey(const ValueKey('fireball-preview-calculate')),
+    );
+    expect(calculate.style, FantasyButtonStyle.arcane);
+    final reset = tester.widget<FantasyTextButton>(
+      find.byKey(const ValueKey('fireball-preview-reset')),
+    );
+    expect(reset.style, FantasyButtonStyle.iron);
 
     await _tap(tester, 'fireball-preview-calculate');
     expect(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'fantasy_buttons.dart';
 
 import '../domain/models.dart';
 import '../domain/srd_initiative_roster_rules.dart';
@@ -188,22 +189,25 @@ class _ManualTurnQueueDialogState extends State<ManualTurnQueueDialog> {
         ),
       ),
       actions: [
-        TextButton(
+        FantasyTextButton(
+          label: 'Schließen',
+          style: FantasyButtonStyle.iron,
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Schließen'),
         ),
         if (queueCurrent)
-          TextButton(
+          FantasyTextButton(
             key: const ValueKey('queue-advance'),
+            label: 'Manuellen Marker weiter',
+            style: FantasyButtonStyle.arcane,
             onPressed: () => Navigator.of(
               context,
             ).pop(const ManualTurnQueueChoice.advance()),
-            child: const Text('Manuellen Marker weiter'),
           ),
-        FilledButton(
+        FantasyTextButton(
           key: const ValueKey('queue-establish'),
+          label: 'Zugfolge bestätigen',
+          style: FantasyButtonStyle.woodGold,
           onPressed: _roster.missing.isNotEmpty ? null : _establish,
-          child: const Text('Zugfolge bestätigen'),
         ),
       ],
     );

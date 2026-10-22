@@ -4,6 +4,7 @@ import 'package:lebendiger_spielleiter/data/campaign_repository.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/services/game_controller.dart';
 import 'package:lebendiger_spielleiter/ui/campaign_memory_panel.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 
 // Only tests visible controls and dialog behavior. Persistence is exercised
 // separately by repository tests and new domain round-trip coverage.
@@ -41,6 +42,8 @@ void main() {
     expect(find.text('Offene Handlungsstränge'), findsOneWidget);
     expect(find.text('NPC-Beziehungen'), findsOneWidget);
     final create = find.byKey(const ValueKey('create-story-thread'));
+    expect(tester.widget<FantasyTextButton>(create).style,
+        FantasyButtonStyle.woodGold);
     await tester.ensureVisible(create);
     await tester.tap(create);
     await tester.pumpAndSettle();

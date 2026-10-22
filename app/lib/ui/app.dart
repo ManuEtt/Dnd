@@ -371,9 +371,10 @@ class _HomePage extends StatelessWidget {
                 'Erstelle zuerst einen Charakter unter „Helden“ oder starte die fertige Demo.',
               ),
             ),
-          TextButton(
+          FantasyTextButton(
+            label: 'Schließen',
+            style: FantasyButtonStyle.iron,
             onPressed: () => Navigator.pop(context),
-            child: const Text('Schließen'),
           ),
         ],
       ),
@@ -412,13 +413,16 @@ class _HomePage extends StatelessWidget {
           ],
         ),
         actions: [
-          TextButton(
+          FantasyTextButton(
+            label: 'Abbrechen',
+            style: FantasyButtonStyle.iron,
             onPressed: () => Navigator.pop(context),
-            child: const Text('Abbrechen'),
           ),
-          FilledButton(
+          FantasyTextButton(
+            label: 'Geschichte erstellen',
+            icon: Icons.auto_awesome_outlined,
+            style: FantasyButtonStyle.arcane,
             onPressed: () => Navigator.pop(context, prompt),
-            child: const Text('Geschichte erstellen'),
           ),
         ],
       ),
@@ -793,12 +797,16 @@ class _CharactersPage extends StatelessWidget {
           spacing: 12,
           runSpacing: 10,
           children: [
-            FilledButton.icon(
+            FantasyTextButton(
+              label: 'Charakter erstellen',
+              icon: Icons.person_add_alt_1,
+              style: FantasyButtonStyle.woodGold,
               onPressed: controller.busy ? null : () => _edit(context, null),
-              icon: const Icon(Icons.person_add_alt_1),
-              label: const Text('Charakter erstellen'),
             ),
-            OutlinedButton.icon(
+            FantasyTextButton(
+              label: 'Importieren',
+              icon: Icons.file_upload_outlined,
+              style: FantasyButtonStyle.iron,
               onPressed: controller.busy
                   ? null
                   : () async {
@@ -811,8 +819,6 @@ class _CharactersPage extends StatelessWidget {
                         await controller.importHero(json);
                       }
                     },
-              icon: const Icon(Icons.file_upload_outlined),
-              label: const Text('Importieren'),
             ),
           ],
         ),
@@ -875,20 +881,25 @@ class _CharactersPage extends StatelessWidget {
                   Wrap(
                     spacing: 10,
                     children: [
-                      OutlinedButton.icon(
+                      FantasyTextButton(
                         key: ValueKey('open-character-sheet-${hero.id}'),
+                        label: 'Bogen ansehen',
+                        icon: Icons.auto_stories_outlined,
+                        style: FantasyButtonStyle.woodGold,
                         onPressed: () => _showSheet(context, hero),
-                        icon: const Icon(Icons.auto_stories_outlined),
-                        label: const Text('Bogen ansehen'),
                       ),
-                      TextButton.icon(
+                      FantasyTextButton(
+                        label: 'Bearbeiten',
+                        icon: Icons.edit_outlined,
+                        style: FantasyButtonStyle.iron,
                         onPressed: controller.busy
                             ? null
                             : () => _edit(context, hero),
-                        icon: const Icon(Icons.edit_outlined),
-                        label: const Text('Bearbeiten'),
                       ),
-                      TextButton.icon(
+                      FantasyTextButton(
+                        label: 'Exportieren',
+                        icon: Icons.file_download_outlined,
+                        style: FantasyButtonStyle.iron,
                         onPressed: () => _showExport(
                           context,
                           '${hero.name} exportieren',
@@ -896,10 +907,11 @@ class _CharactersPage extends StatelessWidget {
                           backupFiles,
                           backupFileName(hero.name, kind: 'charakter'),
                         ),
-                        icon: const Icon(Icons.file_download_outlined),
-                        label: const Text('Exportieren'),
                       ),
-                      TextButton.icon(
+                      FantasyTextButton(
+                        label: 'Löschen',
+                        icon: Icons.delete_outline,
+                        style: FantasyButtonStyle.wax,
                         onPressed: controller.busy
                             ? null
                             : () async {
@@ -912,8 +924,6 @@ class _CharactersPage extends StatelessWidget {
                                   await controller.deleteCharacter(hero.id);
                                 }
                               },
-                        icon: const Icon(Icons.delete_outline),
-                        label: const Text('Löschen'),
                       ),
                     ],
                   ),
@@ -1577,13 +1587,13 @@ class _AdventurePageState extends State<_AdventurePage> {
                     ],
                   ),
                 ),
-                IconButton(
+                FantasyIconButton(
                   key: const ValueKey('adventure-open-character-sheet'),
                   tooltip: 'Charakterbogen ansehen',
                   onPressed: _showHeroSheet,
-                  icon: const Icon(Icons.auto_stories_outlined),
+                  icon: Icons.auto_stories_outlined,
                 ),
-                IconButton(
+                FantasyIconButton(
                   onPressed: () => _showExport(
                     context,
                     'Spielstand exportieren',
@@ -1592,7 +1602,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                     backupFileName(campaign.name),
                   ),
                   tooltip: 'Spielstand exportieren',
-                  icon: const Icon(Icons.file_download_outlined),
+                  icon: Icons.file_download_outlined,
                 ),
               ],
             ),
@@ -1612,6 +1622,12 @@ class _AdventurePageState extends State<_AdventurePage> {
                 ),
               ),
             FantasyAdventureStatusHud(hero: campaign.hero),
+            const SizedBox(height: 12),
+            const FantasyChapterHeading(
+              label: 'Held & Kampf',
+              rune: FantasyRune.hero,
+              description: 'Charakterbogen, Zustände und Begegnungen',
+            ),
             const SizedBox(height: 8),
             Wrap(
               spacing: 5,
@@ -1633,7 +1649,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                   tooltip: 'Inventar öffnen',
                   icon: const Icon(Icons.backpack_outlined),
                 ),
-                TextButton.icon(
+                FantasyTextButton(
                   key: const ValueKey('adventure-confirm-character-effect'),
                   onPressed:
                       widget.controller.busy ||
@@ -1643,11 +1659,12 @@ class _AdventurePageState extends State<_AdventurePage> {
                           campaign.hero.isDead
                       ? null
                       : _confirmCharacterEffect,
-                  icon: const Icon(Icons.health_and_safety_outlined, size: 17),
-                  label: const Text('Effekt bestätigen'),
+                  icon: Icons.health_and_safety_outlined,
+                  style: FantasyButtonStyle.woodGold,
+                  label: 'Effekt bestätigen',
                 ),
                 if (campaign.hero.conditions.contains('liegend'))
-                  TextButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('adventure-stand-up'),
                     onPressed:
                         widget.controller.busy ||
@@ -1659,11 +1676,9 @@ class _AdventurePageState extends State<_AdventurePage> {
                                 campaign.encounter!.activeParticipant != 'hero')
                         ? null
                         : _standUp,
-                    icon: const Icon(
-                      Icons.accessibility_new_outlined,
-                      size: 17,
-                    ),
-                    label: const Text('Aufstehen'),
+                    icon: Icons.accessibility_new_outlined,
+                    style: FantasyButtonStyle.iron,
+                    label: 'Aufstehen',
                   ),
                 if (campaign.hero.conditions.contains('liegend') &&
                     campaign.encounter != null &&
@@ -1714,7 +1729,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                       ),
                     ),
                   ),
-                TextButton.icon(
+                FantasyTextButton(
                   key: const ValueKey('adventure-manage-condition-effects'),
                   onPressed:
                       widget.controller.busy ||
@@ -1724,14 +1739,15 @@ class _AdventurePageState extends State<_AdventurePage> {
                           campaign.hero.isDead
                       ? null
                       : _manageConditionEffects,
-                  icon: const Icon(Icons.shield_moon_outlined, size: 17),
-                  label: const Text('Zustände verwalten'),
+                  icon: Icons.shield_moon_outlined,
+                  style: FantasyButtonStyle.iron,
+                  label: 'Zustände verwalten',
                 ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&
                     campaign.encounter!.activeParticipant == 'hero' &&
                     HeroShieldReactionRules.preparedName(campaign.hero) != null)
-                  TextButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('adventure-end-turn-with-shield'),
                     onPressed:
                         widget.controller.busy ||
@@ -1742,25 +1758,27 @@ class _AdventurePageState extends State<_AdventurePage> {
                             campaign.hero.hitPoints! <= 0
                         ? null
                         : _endTurnWithShield,
-                    icon: const Icon(Icons.shield_outlined, size: 17),
-                    label: const Text('Zug beenden: Schild ggf. wirken'),
+                    icon: Icons.shield_outlined,
+                    style: FantasyButtonStyle.arcane,
+                    label: 'Zug beenden: Schild ggf. wirken',
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished)
-                  TextButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('adventure-register-area-creature'),
                     onPressed:
                         widget.controller.busy ||
                             campaign.trackedAreaCreatures.length >= 19
                         ? null
                         : _trackAreaCreature,
-                    icon: const Icon(Icons.group_add_outlined, size: 17),
-                    label: const Text('Kreatur-TP erfassen'),
+                    icon: Icons.group_add_outlined,
+                    style: FantasyButtonStyle.woodGold,
+                    label: 'Kreatur-TP erfassen',
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&
                     campaign.trackedAreaCreatures.isNotEmpty)
-                  TextButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('adventure-initiative-roster'),
                     onPressed:
                         widget.controller.busy ||
@@ -1769,13 +1787,14 @@ class _AdventurePageState extends State<_AdventurePage> {
                             campaign.pendingEnemyShieldHit != null
                         ? null
                         : _confirmAreaCreatureInitiative,
-                    icon: const Icon(Icons.format_list_numbered, size: 17),
-                    label: const Text('Initiative der Kreaturen'),
+                    icon: Icons.format_list_numbered,
+                    style: FantasyButtonStyle.iron,
+                    label: 'Initiative der Kreaturen',
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&
                     campaign.trackedAreaCreatures.isNotEmpty)
-                  TextButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('adventure-manual-turn-queue'),
                     onPressed:
                         widget.controller.busy ||
@@ -1784,8 +1803,9 @@ class _AdventurePageState extends State<_AdventurePage> {
                             campaign.pendingEnemyShieldHit != null
                         ? null
                         : _editManualTurnQueue,
-                    icon: const Icon(Icons.format_list_bulleted, size: 17),
-                    label: const Text('Manuelle Zugfolge'),
+                    icon: Icons.format_list_bulleted,
+                    style: FantasyButtonStyle.iron,
+                    label: 'Manuelle Zugfolge',
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&
@@ -1804,7 +1824,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                               campaign.manualTurnQueue!.activeActorId &&
                           creature.hitPoints > 0,
                     ))
-                  TextButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('adventure-manual-extra-attack'),
                     onPressed:
                         widget.controller.busy ||
@@ -1813,13 +1833,28 @@ class _AdventurePageState extends State<_AdventurePage> {
                             campaign.pendingEnemyShieldHit != null
                         ? null
                         : _manualExtraCreatureAttack,
-                    icon: const Icon(Icons.gavel, size: 17),
-                    label: const Text('Zusatzkreatur-Angriff'),
+                    icon: Icons.gavel,
+                    style: FantasyButtonStyle.wax,
+                    label: 'Zusatzkreatur-Angriff',
                   ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            const FantasyChapterHeading(
+              label: 'Zauber & Rituale',
+              rune: FantasyRune.tome,
+              description: 'Vorbereitete Magie und Heilung',
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 5,
+              runSpacing: 3,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&
                     AcidSplashRules.preparedName(campaign.hero) != null)
-                  TextButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('adventure-cast-acid-splash'),
                     onPressed:
                         widget.controller.busy ||
@@ -1832,14 +1867,15 @@ class _AdventurePageState extends State<_AdventurePage> {
                             campaign.encounter!.actionUsed
                         ? null
                         : _castAcidSplash,
-                    icon: const Icon(Icons.bubble_chart_outlined, size: 17),
-                    label: const Text('Säurespritzer'),
+                    icon: Icons.bubble_chart_outlined,
+                    style: FantasyButtonStyle.arcane,
+                    label: 'Säurespritzer',
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&
                     SacredFlameRules.preparedName(campaign.hero) != null &&
                     SacredFlameRules.isClericCaster(campaign.hero))
-                  TextButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('adventure-cast-sacred-flame'),
                     onPressed:
                         widget.controller.busy ||
@@ -1852,13 +1888,14 @@ class _AdventurePageState extends State<_AdventurePage> {
                             campaign.encounter!.actionUsed
                         ? null
                         : _castSacredFlame,
-                    icon: const Icon(Icons.wb_sunny_outlined, size: 17),
-                    label: const Text('Heilige Flamme'),
+                    icon: Icons.wb_sunny_outlined,
+                    style: FantasyButtonStyle.arcane,
+                    label: 'Heilige Flamme',
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&
                     FireBoltRules.preparedName(campaign.hero) != null)
-                  TextButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('adventure-cast-fire-bolt'),
                     onPressed:
                         widget.controller.busy ||
@@ -1870,16 +1907,14 @@ class _AdventurePageState extends State<_AdventurePage> {
                             campaign.encounter!.actionUsed
                         ? null
                         : _castFireBolt,
-                    icon: const Icon(
-                      Icons.local_fire_department_outlined,
-                      size: 17,
-                    ),
-                    label: const Text('Feuerpfeil'),
+                    icon: Icons.local_fire_department_outlined,
+                    style: FantasyButtonStyle.arcane,
+                    label: 'Feuerpfeil',
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished &&
                     MagicMissileRules.preparedName(campaign.hero) != null)
-                  TextButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('adventure-cast-magic-missile'),
                     onPressed:
                         widget.controller.busy ||
@@ -1892,21 +1927,23 @@ class _AdventurePageState extends State<_AdventurePage> {
                             campaign.encounter!.spellSlotExpendedThisTurn
                         ? null
                         : _castMagicMissile,
-                    icon: const Icon(Icons.auto_awesome_outlined, size: 17),
-                    label: const Text('Magisches Geschoss'),
+                    icon: Icons.auto_awesome_outlined,
+                    style: FantasyButtonStyle.arcane,
+                    label: 'Magisches Geschoss',
                   ),
-                TextButton.icon(
+                FantasyTextButton(
                   key: const ValueKey('adventure-fireball-area-preview'),
                   onPressed: widget.controller.busy
                       ? null
                       : _showFireballGridPreview,
-                  icon: const Icon(Icons.grid_on_outlined, size: 17),
-                  label: const Text('Feuerball-Kartenvorschau'),
+                  icon: Icons.grid_on_outlined,
+                  style: FantasyButtonStyle.arcane,
+                  label: 'Feuerball-Kartenvorschau',
                 ),
                 if (campaign.hero.spells.any(
                   (name) => HealingSpellRules.find(name) != null,
                 ))
-                  TextButton.icon(
+                  FantasyTextButton(
                     key: const ValueKey('adventure-cast-healing-spell'),
                     onPressed:
                         widget.controller.busy ||
@@ -1916,14 +1953,19 @@ class _AdventurePageState extends State<_AdventurePage> {
                             campaign.hero.hitPoints == 0
                         ? null
                         : _castHealingSpell,
-                    icon: const Icon(Icons.auto_fix_high_outlined, size: 17),
-                    label: const Text('Heilzauber wirken'),
+                    icon: Icons.auto_fix_high_outlined,
+                    style: FantasyButtonStyle.woodGold,
+                    label: 'Heilzauber wirken',
                   ),
               ],
             ),
             if (campaign.pendingEnemyShieldHit != null)
-              Card(
+              FantasyPanel(
                 key: const ValueKey('pending-enemy-shield-hit'),
+                title: 'Schildreaktion',
+                icon: Icons.shield_outlined,
+                accent: FantasyPalette.blue,
+                material: FantasyPanelMaterial.iron,
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Column(
@@ -1943,20 +1985,24 @@ class _AdventurePageState extends State<_AdventurePage> {
                       Wrap(
                         spacing: 8,
                         children: [
-                          FilledButton.tonal(
+                          FantasyTextButton(
                             key: const ValueKey('enemy-shield-cast-now'),
+                            label: 'Jetzt Schild wirken',
+                            icon: Icons.shield_outlined,
+                            style: FantasyButtonStyle.arcane,
                             onPressed: widget.controller.busy
                                 ? null
                                 : () => _decideEnemyShieldHit(castShield: true),
-                            child: const Text('Jetzt Schild wirken'),
                           ),
-                          TextButton(
+                          FantasyTextButton(
                             key: const ValueKey('enemy-shield-decline'),
+                            label: 'Treffer hinnehmen',
+                            icon: Icons.shield_moon_outlined,
+                            style: FantasyButtonStyle.iron,
                             onPressed: widget.controller.busy
                                 ? null
                                 : () =>
                                       _decideEnemyShieldHit(castShield: false),
-                            child: const Text('Treffer hinnehmen'),
                           ),
                         ],
                       ),
@@ -1984,9 +2030,14 @@ class _AdventurePageState extends State<_AdventurePage> {
                       _combat ? 'Kampfübersicht' : 'Eine Begegnung ist aktiv.',
                     ),
                   ),
-                  TextButton(
+                  FantasyToggleButton(
+                    key: const ValueKey('adventure-combat-mode-toggle'),
+                    label: _combat ? 'Zur Erzählung' : 'Kampf ansehen',
+                    icon: _combat
+                        ? Icons.auto_stories_outlined
+                        : Icons.shield_outlined,
+                    selected: _combat,
                     onPressed: () => setState(() => _combat = !_combat),
-                    child: Text(_combat ? 'Zur Erzählung' : 'Kampf ansehen'),
                   ),
                 ],
               ),
@@ -2030,8 +2081,11 @@ class _AdventurePageState extends State<_AdventurePage> {
                           RabenwachtCampaign.mode)
                         Align(
                           alignment: Alignment.centerLeft,
-                          child: TextButton.icon(
+                          child: FantasyTextButton(
                             key: const ValueKey('rabenwacht-discovered-clues'),
+                            label: 'Hinweise und Aufträge',
+                            icon: Icons.fact_check_outlined,
+                            style: FantasyButtonStyle.iron,
                             onPressed: () => showDialog<void>(
                               context: context,
                               builder: (dialogContext) => AlertDialog(
@@ -2044,19 +2098,15 @@ class _AdventurePageState extends State<_AdventurePage> {
                                   ),
                                 ),
                                 actions: [
-                                  TextButton(
+                                  FantasyTextButton(
+                                    label: 'Schließen',
+                                    style: FantasyButtonStyle.iron,
                                     onPressed: () =>
                                         Navigator.pop(dialogContext),
-                                    child: const Text('Schließen'),
                                   ),
                                 ],
                               ),
                             ),
-                            icon: const Icon(
-                              Icons.fact_check_outlined,
-                              size: 17,
-                            ),
-                            label: const Text('Hinweise und Aufträge'),
                           ),
                         ),
                       const SizedBox(height: 8),
@@ -2082,8 +2132,11 @@ class _AdventurePageState extends State<_AdventurePage> {
                                 minHeight: 5,
                               ),
                             if (CampaignExperience.canLevelUp(campaign.hero))
-                              TextButton.icon(
+                              FantasyTextButton(
                                 key: const ValueKey('adventure-levelup-ready'),
+                                label: 'Stufenaufstieg verfügbar',
+                                icon: Icons.trending_up_outlined,
+                                style: FantasyButtonStyle.woodGold,
                                 onPressed:
                                     widget.controller.busy ||
                                         campaign.pendingRoll != null ||
@@ -2091,8 +2144,6 @@ class _AdventurePageState extends State<_AdventurePage> {
                                         campaign.pendingDeathSave != null
                                     ? null
                                     : _editHero,
-                                icon: const Icon(Icons.trending_up_outlined),
-                                label: const Text('Stufenaufstieg verfügbar'),
                               ),
                           ],
                         ),
@@ -2135,8 +2186,11 @@ class _AdventurePageState extends State<_AdventurePage> {
                                 Wrap(
                                   spacing: 8,
                                   children: [
-                                    FilledButton(
+                                    FantasyTextButton(
                                       key: const ValueKey('adventure-accept'),
+                                      label: 'Begegnung annehmen',
+                                      icon: Icons.check_circle_outline,
+                                      style: FantasyButtonStyle.woodGold,
                                       onPressed: widget.controller.busy
                                           ? null
                                           : () async {
@@ -2147,10 +2201,12 @@ class _AdventurePageState extends State<_AdventurePage> {
                                                 await _afterTurn(prior);
                                               }
                                             },
-                                      child: const Text('Begegnung annehmen'),
                                     ),
-                                    OutlinedButton(
+                                    FantasyTextButton(
                                       key: const ValueKey('adventure-reject'),
+                                      label: 'Anderen Weg wählen',
+                                      icon: Icons.alt_route_outlined,
+                                      style: FantasyButtonStyle.iron,
                                       onPressed: widget.controller.busy
                                           ? null
                                           : () async {
@@ -2161,7 +2217,6 @@ class _AdventurePageState extends State<_AdventurePage> {
                                                 await _afterTurn(prior);
                                               }
                                             },
-                                      child: const Text('Anderen Weg wählen'),
                                     ),
                                   ],
                                 ),
@@ -2218,10 +2273,11 @@ class _AdventurePageState extends State<_AdventurePage> {
               ),
             ),
           if (widget.voice.speaking)
-            TextButton.icon(
+            FantasyTextButton(
+              label: 'Vorlesen unterbrechen',
+              icon: Icons.stop_circle_outlined,
+              style: FantasyButtonStyle.iron,
               onPressed: widget.voice.stopSpeaking,
-              icon: const Icon(Icons.stop_circle_outlined),
-              label: const Text('Vorlesen unterbrechen'),
             ),
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
@@ -2335,11 +2391,10 @@ class _MessageBubble extends StatelessWidget {
                   ),
                 ),
                 if (!player)
-                  IconButton(
+                  FantasyIconButton(
                     onPressed: () => onSpeak(text),
                     tooltip: 'Diese Antwort vorlesen',
-                    icon: const Icon(Icons.volume_up_outlined),
-                    iconSize: 20,
+                    icon: Icons.volume_up_outlined,
                   ),
               ],
             ),
@@ -2559,12 +2614,13 @@ class _CombatView extends StatelessWidget {
           spacing: 10,
           runSpacing: 10,
           children: [
-            FilledButton.icon(
+            FantasyTextButton(
+              label: 'Angreifen',
+              icon: Icons.sports_martial_arts,
+              style: FantasyButtonStyle.wax,
               onPressed: busy || encounter.isFinished
                   ? null
                   : () => onAction('Ich greife an.'),
-              icon: const Icon(Icons.sports_martial_arts),
-              label: const Text('Angreifen'),
             ),
             PopupMenuButton<int>(
               key: const ValueKey('enemy-multiattack-count'),
@@ -2589,19 +2645,21 @@ class _CombatView extends StatelessWidget {
             ),
             if (encounter.activeParticipant == 'enemy' &&
                 encounter.enemyAttacksRemaining > 0)
-              OutlinedButton.icon(
+              FantasyTextButton(
                 key: const ValueKey('enemy-attack-continue'),
+                label: 'Gegnerangriff fortsetzen '
+                    '(${encounter.enemyAttacksRemaining} übrig)',
+                icon: Icons.arrow_forward,
+                style: FantasyButtonStyle.wax,
                 onPressed: busy
                     ? null
                     : () => onAction('Gegnerangriff fortsetzen'),
-                icon: const Icon(Icons.arrow_forward),
-                label: Text(
-                  'Gegnerangriff fortsetzen '
-                  '(${encounter.enemyAttacksRemaining} übrig)',
-                ),
               ),
-            OutlinedButton.icon(
+            FantasyTextButton(
               key: const ValueKey('combat-end-hero-turn'),
+              label: 'Zug beenden',
+              icon: Icons.skip_next_outlined,
+              style: FantasyButtonStyle.iron,
               onPressed:
                   busy ||
                       encounter.isFinished ||
@@ -2609,84 +2667,96 @@ class _CombatView extends StatelessWidget {
                       hero.isDead
                   ? null
                   : () => onAction('Zug beenden'),
-              icon: const Icon(Icons.skip_next_outlined),
-              label: const Text('Zug beenden'),
             ),
-            OutlinedButton(
+            FantasyTextButton(
+              label: 'Fliehen',
+              icon: Icons.directions_run_outlined,
+              style: FantasyButtonStyle.iron,
               onPressed: busy
                   ? null
                   : () => onAction('Ich versuche zu fliehen.'),
-              child: const Text('Fliehen'),
             ),
-            OutlinedButton(
+            FantasyTextButton(
+              label: 'Gegner untersuchen',
+              icon: Icons.search_outlined,
+              style: FantasyButtonStyle.arcane,
               onPressed: busy
                   ? null
                   : () => onAction('Ich untersuche meinen Gegner.'),
-              child: const Text('Gegner untersuchen'),
             ),
             if (ClassResourceRules.level(hero, 'Mönch') >= 2) ...[
-              OutlinedButton(
+              FantasyTextButton(
                 key: const ValueKey('monk-patient-defense'),
+                label: 'Mönch: Rückzug',
+                icon: Icons.shield_outlined,
+                style: FantasyButtonStyle.iron,
                 onPressed: busy || encounter.bonusActionUsed
                     ? null
                     : () => onAction('Geduldige Verteidigung'),
-                child: const Text('Mönch: Rückzug'),
               ),
-              OutlinedButton(
+              FantasyTextButton(
                 key: const ValueKey('monk-step-wind'),
+                label: 'Mönch: Sprinten',
+                icon: Icons.air,
+                style: FantasyButtonStyle.arcane,
                 onPressed: busy || encounter.bonusActionUsed
                     ? null
                     : () => onAction('Schritt des Windes'),
-                child: const Text('Mönch: Sprinten'),
               ),
               if (ClassResourceRules.remaining(hero, 'focusPoints') > 0) ...[
-                OutlinedButton.icon(
+                FantasyTextButton(
                   key: const ValueKey('monk-flurry-of-blows'),
+                  label:
+                      'Schlaghagel · ${ClassResourceRules.level(hero, 'Mönch') >= 10 ? 3 : 2} Angriffe · 1 Fokus',
+                  icon: Icons.sports_martial_arts,
+                  style: FantasyButtonStyle.wax,
                   onPressed: busy || !MonkFlurryRules.canUse(hero, encounter)
                       ? null
                       : () => onAction('Schlaghagel'),
-                  icon: const Icon(Icons.sports_martial_arts),
-                  label: Text(
-                    'Schlaghagel · ${ClassResourceRules.level(hero, 'Mönch') >= 10 ? 3 : 2} Angriffe · 1 Fokus',
-                  ),
                 ),
-                OutlinedButton(
+                FantasyTextButton(
                   key: const ValueKey('monk-patient-defense-focus'),
+                  label: ClassResourceRules.level(hero, 'Mönch') >= 10
+                      ? 'Rückzug + Ausweichen + temporäre TP · 1 Fokus'
+                      : 'Rückzug + Ausweichen · 1 Fokus',
+                  icon: Icons.shield_outlined,
+                  style: FantasyButtonStyle.arcane,
                   onPressed: busy || encounter.bonusActionUsed
                       ? null
                       : () => onAction('Geduldige Verteidigung mit Fokuspunkt'),
-                  child: Text(
-                    ClassResourceRules.level(hero, 'Mönch') >= 10
-                        ? 'Rückzug + Ausweichen + temporäre TP · 1 Fokus'
-                        : 'Rückzug + Ausweichen · 1 Fokus',
-                  ),
                 ),
-                OutlinedButton(
+                FantasyTextButton(
                   key: const ValueKey('monk-step-wind-focus'),
+                  label: 'Sprinten + Rückzug · 1 Fokus',
+                  icon: Icons.air,
+                  style: FantasyButtonStyle.arcane,
                   onPressed: busy || encounter.bonusActionUsed
                       ? null
                       : () => onAction('Schritt des Windes verstärkt'),
-                  child: const Text('Sprinten + Rückzug · 1 Fokus'),
                 ),
               ],
             ],
             if (MonkSelfRestoration.choices(hero).isNotEmpty) ...[
               for (final condition in MonkSelfRestoration.choices(hero))
-                OutlinedButton(
+                FantasyToggleButton(
                   key: ValueKey('monk-self-restoration-$condition'),
+                  label: encounter.selfRestorationChoice == condition
+                      ? 'Ausgewählt für Zugende: $condition'
+                      : 'Am Zugende beenden: $condition',
+                  icon: Icons.auto_fix_high_outlined,
+                  selected: encounter.selfRestorationChoice == condition,
                   onPressed: busy || encounter.activeParticipant != 'hero'
                       ? null
                       : () => onAction('Selbstwiederherstellung: $condition'),
-                  child: Text(
-                    encounter.selfRestorationChoice == condition
-                        ? 'Ausgewählt für Zugende: $condition'
-                        : 'Am Zugende beenden: $condition',
-                  ),
                 ),
             ],
             if (ClassResourceRules.level(hero, 'Paladin') >= 1) ...[
-              OutlinedButton.icon(
+              FantasyTextButton(
                 key: const ValueKey('paladin-lay-on-hands-heal'),
+                label: 'Handauflegen · '
+                    '${ClassResourceRules.remaining(hero, 'layOnHands')} TP-Vorrat',
+                icon: Icons.healing_outlined,
+                style: FantasyButtonStyle.woodGold,
                 onPressed:
                     busy ||
                         encounter.bonusActionUsed ||
@@ -2704,15 +2774,13 @@ class _CombatView extends StatelessWidget {
                         final amount = missing < pool ? missing : pool;
                         onAction('Handauflegen: $amount');
                       },
-                icon: const Icon(Icons.healing_outlined),
-                label: Text(
-                  'Handauflegen · '
-                  '${ClassResourceRules.remaining(hero, 'layOnHands')} TP-Vorrat',
-                ),
               ),
               if (hero.conditions.contains('vergiftet'))
-                OutlinedButton(
+                FantasyTextButton(
                   key: const ValueKey('paladin-lay-on-hands-poison'),
+                  label: 'Vergiftung entfernen · 5 Punkte',
+                  icon: Icons.healing_outlined,
+                  style: FantasyButtonStyle.woodGold,
                   onPressed:
                       busy ||
                           encounter.bonusActionUsed ||
@@ -2720,16 +2788,17 @@ class _CombatView extends StatelessWidget {
                           ClassResourceRules.remaining(hero, 'layOnHands') < 5
                       ? null
                       : () => onAction('Handauflegen: Vergiftung'),
-                  child: const Text('Vergiftung entfernen · 5 Punkte'),
                 ),
             ],
             if (ClassResourceRules.level(hero, 'Schurke') >= 2)
-              OutlinedButton(
+              FantasyTextButton(
                 key: const ValueKey('rogue-cunning-disengage'),
+                label: 'Schurke: Rückzug',
+                icon: Icons.directions_run_outlined,
+                style: FantasyButtonStyle.iron,
                 onPressed: busy || encounter.bonusActionUsed
                     ? null
                     : () => onAction('Flinke Aktion: Rückzug'),
-                child: const Text('Schurke: Rückzug'),
               ),
           ],
         ),
@@ -2893,17 +2962,14 @@ class _SettingsPage extends StatelessWidget {
               : 'Eingabe-Sprache: ${voice.recognitionLocale}',
         ),
         const SizedBox(height: 12),
-        OutlinedButton.icon(
+        FantasyTextButton(
           key: const ValueKey('refresh-voices'),
+          label: voice.refreshingVoices
+              ? 'Stimmen werden geprüft …'
+              : 'Stimmen neu prüfen',
+          icon: voice.refreshingVoices ? Icons.hourglass_top : Icons.refresh,
+          style: FantasyButtonStyle.iron,
           onPressed: voice.refreshingVoices ? null : voice.refreshVoices,
-          icon: Icon(
-            voice.refreshingVoices ? Icons.hourglass_top : Icons.refresh,
-          ),
-          label: Text(
-            voice.refreshingVoices
-                ? 'Stimmen werden geprüft …'
-                : 'Stimmen neu prüfen',
-          ),
         ),
         const SizedBox(height: 8),
         const Text(
@@ -2969,20 +3035,23 @@ class _SettingsPage extends StatelessWidget {
         Wrap(
           spacing: 12,
           children: [
-            OutlinedButton.icon(
+            FantasyTextButton(
               key: const ValueKey('test-voice'),
+              label: 'Stimme testen',
+              icon: Icons.volume_up_outlined,
+              style: FantasyButtonStyle.arcane,
               onPressed: canChooseVoice
                   ? () => voice.speak(
                       'Willkommen bei Würfelraunen. Deine Geschichte wartet auf dich.',
                     )
                   : null,
-              icon: const Icon(Icons.volume_up_outlined),
-              label: const Text('Stimme testen'),
             ),
-            TextButton(
+            FantasyTextButton(
               key: const ValueKey('stop-voice'),
+              label: 'Wiedergabe stoppen',
+              icon: Icons.stop_circle_outlined,
+              style: FantasyButtonStyle.iron,
               onPressed: voice.stopSpeaking,
-              child: const Text('Wiedergabe stoppen'),
             ),
           ],
         ),
@@ -3028,7 +3097,10 @@ class _SettingsPage extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         if (controller.currentCampaign != null)
-          OutlinedButton.icon(
+          FantasyTextButton(
+            label: 'Aktuelle Kampagne exportieren',
+            icon: Icons.file_download_outlined,
+            style: FantasyButtonStyle.woodGold,
             onPressed: () => _showExport(
               context,
               'Spielstand sichern',
@@ -3036,11 +3108,12 @@ class _SettingsPage extends StatelessWidget {
               backupFiles,
               backupFileName(controller.currentCampaign!.name),
             ),
-            icon: const Icon(Icons.file_download_outlined),
-            label: const Text('Aktuelle Kampagne exportieren'),
           ),
         const SizedBox(height: 12),
-        OutlinedButton.icon(
+        FantasyTextButton(
+          label: 'Alle lokalen Spieldaten löschen',
+          icon: Icons.delete_forever_outlined,
+          style: FantasyButtonStyle.wax,
           onPressed: controller.busy
               ? null
               : () async {
@@ -3058,8 +3131,6 @@ class _SettingsPage extends StatelessWidget {
                   await controller.deleteAllData();
                   if (controller.error == null) voice.configure({});
                 },
-          icon: const Icon(Icons.delete_forever_outlined),
-          label: const Text('Alle lokalen Spieldaten löschen'),
         ),
         const SizedBox(height: 24),
         const FantasyChapterHeading(
@@ -3101,13 +3172,14 @@ class _SettingsPage extends StatelessWidget {
         const SizedBox(height: 12),
         const SelectableText(_srdAttribution),
         const SizedBox(height: 12),
-        OutlinedButton.icon(
+        FantasyTextButton(
+          label: 'Softwarelizenzen anzeigen',
+          icon: Icons.description_outlined,
+          style: FantasyButtonStyle.iron,
           onPressed: () => showLicensePage(
             context: context,
             applicationName: 'Würfelraunen',
           ),
-          icon: const Icon(Icons.description_outlined),
-          label: const Text('Softwarelizenzen anzeigen'),
         ),
         const SizedBox(height: 30),
       ],

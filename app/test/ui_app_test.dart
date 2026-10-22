@@ -8,6 +8,7 @@ import 'package:lebendiger_spielleiter/data/sqlite_campaign_repository.dart';
 import 'package:lebendiger_spielleiter/services/game_controller.dart';
 import 'package:lebendiger_spielleiter/services/voice_controller.dart';
 import 'package:lebendiger_spielleiter/ui/app.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_art.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_experience.dart';
 import 'support/legacy_campaign_fixture.dart';
@@ -92,7 +93,7 @@ Future<void> importCampaignText(WidgetTester tester, String source) async {
     find.widgetWithText(TextField, 'JSON-Spielstand'),
     source,
   );
-  await tester.tap(find.widgetWithText(FilledButton, 'Importieren'));
+  await tester.tap(find.widgetWithText(FantasyTextButton, 'Importieren'));
   // The real SQLite import needs real async time before a busy indicator can
   // settle; callers wait for the controller before settling the route.
   await tester.pump();
@@ -205,7 +206,15 @@ void main() {
       expect(tester.takeException(), isNull);
       await tester.tap(find.text('Helden'));
       await tester.pumpAndSettle();
-      expect(find.text('Charakter erstellen'), findsOneWidget);
+      final createHero = find.widgetWithText(
+        FantasyTextButton,
+        'Charakter erstellen',
+      );
+      expect(createHero, findsOneWidget);
+      expect(
+        tester.widget<FantasyTextButton>(createHero).style,
+        FantasyButtonStyle.woodGold,
+      );
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
       controller.dispose();
@@ -636,6 +645,12 @@ void main() {
     await tester.pumpAndSettle();
     await tester.ensureVisible(button);
     await tester.pumpAndSettle();
+    expect(
+      tester.widget<FantasyTextButton>(
+        find.widgetWithText(FantasyTextButton, 'Softwarelizenzen anzeigen'),
+      ).style,
+      FantasyButtonStyle.iron,
+    );
     expect(
       find.textContaining(
         'This work includes material from the System Reference Document 5.2.1',

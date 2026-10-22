@@ -11,6 +11,7 @@ import 'package:lebendiger_spielleiter/services/backup_files.dart';
 import 'package:lebendiger_spielleiter/services/game_controller.dart';
 import 'package:lebendiger_spielleiter/services/voice_controller.dart';
 import 'package:lebendiger_spielleiter/ui/app.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 import 'support/legacy_campaign_fixture.dart';
 
 class _SilentVoice extends VoiceController {
@@ -74,7 +75,7 @@ Future<_Fixture> _start(WidgetTester tester, _FakeFiles files) async {
   return _Fixture(repository, controller, voice, files);
 }
 
-Finder _button<T extends ButtonStyleButton>(String label) => find.ancestor(
+Finder _button<T extends Widget>(String label) => find.ancestor(
   of: find.text(label),
   matching: find.byWidgetPredicate((widget) => widget is T),
 );
@@ -186,7 +187,7 @@ void main() {
       );
       expect(
         tester
-            .widget<FilledButton>(_button<FilledButton>('Kopieren'))
+            .widget<FantasyTextButton>(_button<FantasyTextButton>('Kopieren'))
             .onPressed,
         isNotNull,
       );
@@ -212,7 +213,7 @@ void main() {
     await _unchanged(tester, fixture, previous);
     // File content is still an explicit, correctable proposal until confirmation.
     await tester.enterText(field, source);
-    await tester.tap(_button<FilledButton>('Importieren'));
+    await tester.tap(_button<FantasyTextButton>('Importieren'));
     await tester.pump();
     await _wait(tester, fixture.controller);
     expect(fixture.controller.error, isNull);
@@ -262,7 +263,7 @@ void main() {
     await _import(tester);
     await tester.tap(find.text('Datei wählen'));
     await tester.pumpAndSettle();
-    await tester.tap(_button<FilledButton>('Importieren'));
+    await tester.tap(_button<FantasyTextButton>('Importieren'));
     await tester.pump();
     await _wait(tester, fixture.controller);
     expect(fixture.controller.error, isNotNull);
@@ -312,18 +313,18 @@ void main() {
     expect(find.byType(LinearProgressIndicator), findsOneWidget);
     expect(
       tester
-          .widget<OutlinedButton>(
-            _button<OutlinedButton>('Als Datei speichern'),
+          .widget<FantasyTextButton>(
+            _button<FantasyTextButton>('Als Datei speichern'),
           )
           .onPressed,
       isNull,
     );
     expect(
-      tester.widget<FilledButton>(_button<FilledButton>('Kopieren')).onPressed,
+      tester.widget<FantasyTextButton>(_button<FantasyTextButton>('Kopieren')).onPressed,
       isNull,
     );
     expect(
-      tester.widget<TextButton>(_button<TextButton>('Schließen')).onPressed,
+      tester.widget<FantasyTextButton>(_button<FantasyTextButton>('Schließen')).onPressed,
       isNull,
     );
     await tester.binding.handlePopRoute();
@@ -360,18 +361,18 @@ void main() {
       );
       expect(
         tester
-            .widget<OutlinedButton>(_button<OutlinedButton>('Datei wählen'))
+            .widget<FantasyTextButton>(_button<FantasyTextButton>('Datei wählen'))
             .onPressed,
         isNull,
       );
       expect(
         tester
-            .widget<FilledButton>(_button<FilledButton>('Importieren'))
+            .widget<FantasyTextButton>(_button<FantasyTextButton>('Importieren'))
             .onPressed,
         isNull,
       );
       expect(
-        tester.widget<TextButton>(_button<TextButton>('Abbrechen')).onPressed,
+        tester.widget<FantasyTextButton>(_button<FantasyTextButton>('Abbrechen')).onPressed,
         isNull,
       );
       await tester.binding.handlePopRoute();

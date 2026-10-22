@@ -11,6 +11,7 @@ import 'package:lebendiger_spielleiter/services/game_controller.dart';
 import 'package:lebendiger_spielleiter/services/voice_controller.dart';
 import 'package:lebendiger_spielleiter/ui/app.dart';
 import 'package:lebendiger_spielleiter/ui/character_effect_dialog.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 
 class _SilentVoice extends VoiceController {
   @override
@@ -78,6 +79,8 @@ Future<_Fixture> _start(WidgetTester tester) async {
   await fixture.mount(tester);
   await tester.tap(find.text('Abenteuer'));
   await tester.pumpAndSettle();
+  expect(find.text('Held & Kampf'), findsOneWidget);
+  expect(find.text('Zauber & Rituale'), findsOneWidget);
   return fixture;
 }
 
@@ -92,10 +95,16 @@ Future<void> _tap(WidgetTester tester, Finder finder) async {
 }
 
 Future<void> _open(WidgetTester tester) async {
-  await _tap(
-    tester,
-    find.byKey(const ValueKey('adventure-confirm-character-effect')),
+  final action = find.byKey(
+    const ValueKey('adventure-confirm-character-effect'),
   );
+  await tester.ensureVisible(action);
+  await tester.pumpAndSettle();
+  expect(
+    tester.widget<FantasyTextButton>(action).style,
+    FantasyButtonStyle.woodGold,
+  );
+  await _tap(tester, action);
   expect(find.byType(CharacterEffectDialog), findsOneWidget);
 }
 

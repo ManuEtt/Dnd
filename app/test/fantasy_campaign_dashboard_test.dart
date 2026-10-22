@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_campaign_dashboard.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_ui.dart';
 
 void main() {
@@ -59,11 +60,19 @@ void main() {
       final resume = find.byKey(const ValueKey('fantasy-hero-continue'));
       await tester.ensureVisible(resume);
       await tester.pumpAndSettle();
+      expect(
+        tester.widget<FantasyTextButton>(resume).style,
+        FantasyButtonStyle.woodGold,
+      );
       await tester.tap(resume);
       expect(continuations, 1);
       final archive = find.byKey(const ValueKey('fantasy-hero-archive'));
       await tester.ensureVisible(archive);
       await tester.pumpAndSettle();
+      expect(
+        tester.widget<FantasyTextButton>(archive).style,
+        FantasyButtonStyle.iron,
+      );
       await tester.tap(archive);
       expect(heroOpens, 1);
       expect(tester.takeException(), isNull);
@@ -96,7 +105,7 @@ void main() {
     expect(find.text('Rüstungsklasse'), findsOneWidget);
     expect(find.text('Trefferpunkte noch nicht bestätigt'), findsOneWidget);
     expect(find.text('Erfahrungspunkte: nicht bestätigt'), findsOneWidget);
-    final continueButton = tester.widget<FilledButton>(
+    final continueButton = tester.widget<FantasyTextButton>(
       find.byKey(const ValueKey('fantasy-hero-continue')),
     );
     expect(continueButton.onPressed, isNull);

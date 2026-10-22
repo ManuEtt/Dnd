@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../domain/models.dart';
 import '../services/game_controller.dart';
 import 'fantasy_ui.dart';
+import 'fantasy_buttons.dart';
 
 /// Editable, confirmed campaign notes. Never calls a narrator or changes rules.
 class CampaignMemoryPanel extends StatelessWidget {
@@ -66,12 +67,15 @@ class CampaignMemoryPanel extends StatelessWidget {
             ),
           ),
           actions: [
-            TextButton(
+            FantasyTextButton(
+              label: 'Abbrechen',
+              style: FantasyButtonStyle.iron,
               onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Abbrechen'),
             ),
-            FilledButton(
+            FantasyTextButton(
               key: const ValueKey('save-story-thread'),
+              label: 'Speichern',
+              style: FantasyButtonStyle.woodGold,
               onPressed: () {
                 final heading = title.trim();
                 if (heading.isEmpty) return;
@@ -83,7 +87,6 @@ class CampaignMemoryPanel extends StatelessWidget {
                   status: status,
                 );
               },
-              child: const Text('Speichern'),
             ),
           ],
         ),
@@ -150,12 +153,15 @@ class CampaignMemoryPanel extends StatelessWidget {
             ),
           ),
           actions: [
-            TextButton(
+            FantasyTextButton(
+              label: 'Abbrechen',
+              style: FantasyButtonStyle.iron,
               onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Abbrechen'),
             ),
-            FilledButton(
+            FantasyTextButton(
               key: const ValueKey('save-npc-relationship'),
+              label: 'Bestätigen',
+              style: FantasyButtonStyle.woodGold,
               onPressed: () {
                 if (relationship.trim().isEmpty || note.trim().isEmpty) return;
                 Navigator.pop(dialogContext);
@@ -165,7 +171,6 @@ class CampaignMemoryPanel extends StatelessWidget {
                   note: note.trim(),
                 );
               },
-              child: const Text('Bestätigen'),
             ),
           ],
         ),
@@ -219,11 +224,12 @@ class CampaignMemoryPanel extends StatelessWidget {
             'keine KI-Erfindungen oder unverifizierten Dialoge.',
           ),
           const SizedBox(height: 8),
-          OutlinedButton.icon(
+          FantasyTextButton(
             key: const ValueKey('create-session-recap'),
+            label: 'Rückblick dauerhaft speichern',
+            icon: Icons.bookmark_add_outlined,
+            style: FantasyButtonStyle.woodGold,
             onPressed: controller.busy ? null : controller.saveSessionRecap,
-            icon: const Icon(Icons.bookmark_add_outlined),
-            label: const Text('Rückblick dauerhaft speichern'),
           ),
           if (campaign.sessionRecaps.isEmpty)
             const Text('Noch kein gespeicherter Rückblick.'),
@@ -234,11 +240,12 @@ class CampaignMemoryPanel extends StatelessWidget {
           ],
         ]),
         _section(context, 'Offene Handlungsstränge', Icons.route_outlined, [
-          OutlinedButton.icon(
+          FantasyTextButton(
             key: const ValueKey('create-story-thread'),
+            label: 'Handlungsstrang anlegen',
+            icon: Icons.add,
+            style: FantasyButtonStyle.woodGold,
             onPressed: controller.busy ? null : () => _newThread(context),
-            icon: const Icon(Icons.add),
-            label: const Text('Handlungsstrang anlegen'),
           ),
           if (campaign.storyThreads.isEmpty)
             const Text('Noch keine selbst verwalteten Handlungsstränge.'),
@@ -264,13 +271,14 @@ class CampaignMemoryPanel extends StatelessWidget {
             ),
         ]),
         _section(context, 'NPC-Beziehungen', Icons.people_outline, [
-          OutlinedButton.icon(
+          FantasyTextButton(
             key: const ValueKey('edit-npc-relationship'),
+            label: 'Beziehung und Begründung festhalten',
+            icon: Icons.edit_note_outlined,
+            style: FantasyButtonStyle.iron,
             onPressed: controller.busy || campaign.npcs.isEmpty
                 ? null
                 : () => _recordNpc(context, campaign),
-            icon: const Icon(Icons.edit_note_outlined),
-            label: const Text('Beziehung und Begründung festhalten'),
           ),
           for (final npc in campaign.npcs)
             Text('${npc.name}: ${npc.relationship}'),

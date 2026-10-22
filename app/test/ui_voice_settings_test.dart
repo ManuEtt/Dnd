@@ -7,6 +7,7 @@ import 'package:lebendiger_spielleiter/data/campaign_repository.dart';
 import 'package:lebendiger_spielleiter/services/game_controller.dart';
 import 'package:lebendiger_spielleiter/services/voice_controller.dart';
 import 'package:lebendiger_spielleiter/ui/app.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 
 // These settings never access campaign storage. Unexpected storage calls fail.
 class _UnusedRepository implements CampaignRepository {
@@ -226,7 +227,7 @@ void main() {
     expect(find.text('Sprachausgabe wird geprüft …'), findsOneWidget);
     expect(
       tester
-          .widget<OutlinedButton>(find.byKey(const ValueKey('refresh-voices')))
+          .widget<FantasyTextButton>(find.byKey(const ValueKey('refresh-voices')))
           .onPressed,
       isNull,
     );
@@ -238,7 +239,7 @@ void main() {
     await _show(tester, find.byKey(const ValueKey('test-voice')));
     expect(
       tester
-          .widget<OutlinedButton>(find.byKey(const ValueKey('test-voice')))
+          .widget<FantasyTextButton>(find.byKey(const ValueKey('test-voice')))
           .onPressed,
       isNull,
     );
@@ -272,14 +273,14 @@ void main() {
     await _show(tester, find.byKey(const ValueKey('test-voice')));
     expect(
       tester
-          .widget<OutlinedButton>(find.byKey(const ValueKey('test-voice')))
+          .widget<FantasyTextButton>(find.byKey(const ValueKey('test-voice')))
           .onPressed,
       isNull,
     );
     await _show(tester, find.byKey(const ValueKey('stop-voice')));
     expect(
       tester
-          .widget<TextButton>(find.byKey(const ValueKey('stop-voice')))
+          .widget<FantasyTextButton>(find.byKey(const ValueKey('stop-voice')))
           .onPressed,
       isNotNull,
     );
