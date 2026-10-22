@@ -241,6 +241,225 @@ class _CharacterSheetPageState extends State<CharacterSheetPage> {
   }
 }
 
+class _ReferenceCharacterDashboard extends StatelessWidget {
+  const _ReferenceCharacterDashboard({
+    required this.hero,
+    required this.onOpen,
+    required this.onConditions,
+  });
+
+  final HeroCharacter hero;
+  final void Function(String, List<String>) onOpen;
+  final VoidCallback onConditions;
+
+  @override
+  Widget build(BuildContext context) {
+    final inventory = [
+      for (final item in hero.inventory)
+        '${item.name}${item.quantity > 1 ? ' ×${item.quantity}' : ''}',
+    ];
+    final spells = hero.spells;
+    final conditions = hero.conditions.toList();
+    final width = MediaQuery.sizeOf(context).width;
+    final compact = width < 580;
+    final panels = <Widget>[
+      _ReferenceListPanel(
+        title: 'Fertigkeiten',
+        icon: Icons.auto_stories,
+        lines: [
+          for (final ability in _abilities)
+            '${ability.label}: ${hero.abilities[ability.id] ?? '–'}',
+        ],
+        onOpen: () => onOpen('Attribute und Fertigkeiten', [
+          for (final ability in _abilities)
+            '${ability.label}: ${hero.abilities[ability.id] ?? 'Nicht erfasst'}',
+        ]),
+      ),
+      _ReferenceListPanel(
+        title: 'Zauber',
+        icon: Icons.auto_awesome,
+        lines: spells,
+        onOpen: () => onOpen('Bekannte Zauber', spells),
+      ),
+      _ReferenceListPanel(
+        title: 'Zustände',
+        icon: Icons.favorite_border,
+        lines: conditions.isEmpty ? const ['Keine bestätigten Zustände'] : conditions,
+        onOpen: onConditions,
+      ),
+      _ReferenceListPanel(
+        title: 'Ausrüstung',
+        icon: Icons.backpack_outlined,
+        lines: inventory,
+        onOpen: () => onOpen('Ausrüstung und Inventar', inventory),
+      ),
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          key: const ValueKey('sheet-reference-attributes'),
+          padding: const EdgeInsets.fromLTRB(10, 14, 10, 12),
+          decoration: BoxDecoration(
+            color: const Color(0xffd6bf96),
+            border: Border.all(color: const Color(0xffa8874e), width: 2),
+            borderRadius: BorderRadius.circular(13),
+          ),
+          child: Column(
+            children: [
+              const Text('Attribute', style: TextStyle(
+                fontFamily: 'serif', fontSize: 23,
+                fontWeight: FontWeight.bold, color: Color(0xff241a15),
+              )),
+              const SizedBox(height: 10),
+              LayoutBuilder(builder: (context, bounds) {
+                final columns = bounds.maxWidth >= 680 ? 6 : 3;
+                final height = MediaQuery.textScalerOf(context).scale(94).clamp(100.0, 170.0);
+                return GridView.count(
+                  crossAxisCount: columns,
+                  mainAxisSpacing: 7,
+                  crossAxisSpacing: 7,
+                  childAspectRatio: (bounds.maxWidth / columns - 7) / height,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    for (final ability in _abilities)
+                      _ReferenceAbilityTile(
+                        label: ability.label,
+                        icon: ability.icon,
+                        accent: ability.color,
+                        score: hero.abilities[ability.id],
+                      ),
+                  ],
+                );
+              }),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        if (compact)
+          for (var i = 0; i < panels.length; i++) ...[
+            panels[i],
+            const SizedBox(height: 10),
+          ]
+        else
+          for (var i = 0; i < panels.length; i += 2) ...[
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: panels[i]),
+                const SizedBox(width: 10),
+                Expanded(child: panels[i + 1]),
+              ],
+            ),
+            const SizedBox(height: 10),
+          ],
+      ],
+    );
+  }
+}
+
+class _ReferenceAbilityTile extends StatelessWidget {
+  const _ReferenceAbilityTile({
+    required this.label, required this.icon, required this.accent,
+    required this.score,
+  });
+  final String label;
+  final IconData icon;
+  final Color accent;
+  final int? score;
+
+  @override
+  Widget build(BuildContext context) {
+    final modifier = score == null ? null : ((score! - 10) / 2).floor();
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 5),
+      decoration: BoxDecoration(
+        color: const Color(0xffebd9b8),
+        border: Border.all(color: const Color(0xffac8957)),
+        borderRadius: BorderRadius.circular(9),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          FittedBox(child: Text(label, style: const TextStyle(
+            fontFamily: 'serif', fontSize: 11, color: Color(0xff271c15),
+            fontWeight: FontWeight.bold,
+          ))),
+          CircleAvatar(
+            radius: 16, backgroundColor: accent.withValues(alpha: .25),
+            child: Icon(icon, color: const Color(0xff2b2221), size: 20),
+          ),
+          Text('${score ?? '–'}', style: const TextStyle(
+            fontFamily: 'serif', fontSize: 23, color: Color(0xff241a15),
+            fontWeight: FontWeight.bold,
+          )),
+          Text(
+            modifier == null ? '–' : modifier >= 0 ? '+$modifier' : '$modifier',
+            style: const TextStyle(color: Color(0xff493324), fontSize: 12),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ReferenceListPanel extends StatelessWidget {
+  const _ReferenceListPanel({
+    required this.title, required this.icon,
+    required this.lines, required this.onOpen,
+  });
+  final String title;
+  final IconData icon;
+  final List<String> lines;
+  final VoidCallback onOpen;
+
+  @override
+  Widget build(BuildContext context) => FantasyApprovedCornerFrame(
+    cornerSize: 19,
+    child: Container(
+      decoration: BoxDecoration(
+        color: const Color(0xff101d2b),
+        border: Border.all(color: _gold.withValues(alpha: .65)),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          TextButton.icon(
+            onPressed: onOpen,
+            icon: Icon(icon, color: _gold, size: 19),
+            label: Row(children: [
+              Expanded(child: Text(title, style: const TextStyle(
+                fontFamily: 'serif', color: _ivory, fontSize: 19,
+              ))),
+              const Text('Alle anzeigen', style: TextStyle(
+                color: _muted, fontSize: 11,
+              )),
+              const Icon(Icons.chevron_right, color: _gold),
+            ]),
+          ),
+          Divider(color: _gold.withValues(alpha: .35), height: 1),
+          if (lines.isEmpty)
+            const Padding(
+              padding: EdgeInsets.all(13),
+              child: Text('Keine bestätigten Einträge.',
+                  style: TextStyle(color: _muted)),
+            )
+          else
+            for (final line in lines.take(4))
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
+                child: Text(line, maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: _ivory, fontSize: 13)),
+              ),
+        ],
+      ),
+    ),
+  );
+}
+
 class _CharacterHeader extends StatelessWidget {
   const _CharacterHeader({required this.hero});
   final HeroCharacter hero;
