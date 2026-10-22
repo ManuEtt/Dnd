@@ -46,6 +46,7 @@ import 'fantasy_art.dart';
 import 'fantasy_experience.dart';
 import 'fantasy_campaign_dashboard.dart';
 import 'fantasy_adventure_hud.dart';
+import 'fantasy_combatant_card.dart';
 import 'character_portrait_picker.dart';
 import 'campaign_memory_panel.dart';
 
@@ -2534,25 +2535,27 @@ class _CombatView extends StatelessWidget {
           'Aktiver Zug: ${encounter.activeParticipant == 'hero' ? hero.name : encounter.enemyName}',
         ),
         const SizedBox(height: 16),
-        Card(
-          child: ListTile(
-            leading: const Icon(Icons.person_outline, color: _gold),
-            title: Text(hero.name),
-            subtitle: Text(
-              'Initiative ${encounter.heroInitiative} · '
-              'TP ${hero.hitPoints ?? '?'}/${hero.maxHitPoints ?? '?'} · Temporär ${hero.temporaryHitPoints} · RK ${hero.armorClass ?? '?'}',
-            ),
-          ),
+        FantasyCombatantCard(
+          key: const ValueKey('combat-hero-card'),
+          name: hero.name,
+          isHero: true,
+          isActive: encounter.activeParticipant == 'hero',
+          initiative: encounter.heroInitiative,
+          hitPoints: hero.hitPoints,
+          maxHitPoints: hero.maxHitPoints,
+          armorClass: hero.armorClass,
+          temporaryHitPoints: hero.temporaryHitPoints,
         ),
-        Card(
-          child: ListTile(
-            leading: const Icon(Icons.shield_outlined),
-            title: Text(encounter.enemyName),
-            subtitle: Text(
-              'Initiative ${encounter.enemyInitiative} · '
-              'TP ${encounter.enemyHitPoints}/${encounter.enemyMaxHitPoints} · RK ${encounter.enemyArmorClass}',
-            ),
-          ),
+        const SizedBox(height: 10),
+        FantasyCombatantCard(
+          key: const ValueKey('combat-enemy-card'),
+          name: encounter.enemyName,
+          isHero: false,
+          isActive: encounter.activeParticipant == 'enemy',
+          initiative: encounter.enemyInitiative,
+          hitPoints: encounter.enemyHitPoints,
+          maxHitPoints: encounter.enemyMaxHitPoints,
+          armorClass: encounter.enemyArmorClass,
         ),
         const SizedBox(height: 12),
         Card(
