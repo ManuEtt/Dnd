@@ -61,7 +61,9 @@ class FantasyCombatThreatStatus extends StatelessWidget {
                 _ThreatSeal(
                   key: const ValueKey('combat-remaining-attacks'),
                   icon: Icons.repeat_outlined,
-                  label: '$enemyAttacksRemaining weitere Gegnerangriffe',
+                  label: enemyAttacksRemaining == 1
+                      ? '1 weiterer Gegnerangriff'
+                      : '$enemyAttacksRemaining weitere Gegnerangriffe',
                   accent: FantasyPalette.danger,
                 ),
               if (pendingShieldDecision && !isFinished)
