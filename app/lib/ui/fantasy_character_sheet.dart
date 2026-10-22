@@ -14,6 +14,7 @@ import '../domain/rules_engine.dart';
 import 'fantasy_art.dart';
 import 'fantasy_experience.dart';
 import 'fantasy_ui.dart';
+import 'fantasy_buttons.dart';
 import 'character_portrait_picker.dart';
 
 // A read-only presentation of the actual, confirmed character data. No state,
@@ -61,9 +62,9 @@ class _CharacterSheetPageState extends State<CharacterSheetPage> {
         backgroundColor: _night,
         actions: [
           if (widget.onEdit != null)
-            IconButton(
+            FantasyIconButton(
               tooltip: 'Charakter bearbeiten',
-              icon: const Icon(Icons.edit_outlined),
+              icon: Icons.edit_outlined,
               onPressed: widget.onEdit,
             ),
         ],
