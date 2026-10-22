@@ -48,6 +48,7 @@ import 'fantasy_adventure_hud.dart';
 import 'fantasy_combatant_card.dart';
 import 'fantasy_combat_status.dart';
 import 'fantasy_combat_turn_tracker.dart';
+import 'fantasy_combat_threat_status.dart';
 import 'character_portrait_picker.dart';
 import 'campaign_memory_panel.dart';
 
@@ -2112,6 +2113,8 @@ class _AdventurePageState extends State<_AdventurePage> {
                     child: _CombatView(
                       encounter: campaign.encounter!,
                       hero: campaign.hero,
+                      pendingShieldDecision:
+                          campaign.pendingEnemyShieldHit != null,
                       onAction: (text) {
                         _input.text = text;
                         _send();
@@ -2511,12 +2514,14 @@ class _CombatView extends StatelessWidget {
   const _CombatView({
     required this.encounter,
     required this.hero,
+    required this.pendingShieldDecision,
     required this.onAction,
     required this.busy,
     required this.header,
   });
   final Encounter encounter;
   final HeroCharacter hero;
+  final bool pendingShieldDecision;
   final void Function(String) onAction;
   final bool busy;
   final Widget header;
@@ -2534,6 +2539,17 @@ class _CombatView extends StatelessWidget {
           heroInitiative: encounter.heroInitiative,
           enemyInitiative: encounter.enemyInitiative,
           activeParticipant: encounter.activeParticipant,
+          isFinished: encounter.isFinished,
+        ),
+        const SizedBox(height: 12),
+        FantasyCombatThreatStatus(
+          enemyAttacksPerTurn: encounter.enemyAttacksPerTurn,
+          enemyAttacksRemaining: encounter.enemyAttacksRemaining,
+          activeParticipant: encounter.activeParticipant,
+          pendingShieldDecision: pendingShieldDecision,
+          heroShieldActive: encounter.heroShieldActive,
+          enemyShieldActive: encounter.enemyShieldActive,
+          enemyShieldReactionUsed: encounter.enemyShieldReactionUsed,
           isFinished: encounter.isFinished,
         ),
         const SizedBox(height: 16),
