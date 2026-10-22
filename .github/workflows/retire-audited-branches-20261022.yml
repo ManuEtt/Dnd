@@ -45,7 +45,10 @@ jobs:
             };
             const branchData = async (name,expected) => {
               const b=await getBranch(name);
-              if (!b || b.protected || b.commit.sha!==expected) throw new Error('Branch fehlt, ist geschützt oder wurde geändert: '+name);
+              // A merged PR may already have auto-deleted its source branch.
+              // Missing is safe only because its exact PR head is checked below.
+              if (!b) return null;
+              if (b.protected || b.commit.sha!==expected) throw new Error('Branch geschützt oder wurde geändert: '+name);
               return b;
             };
             const mainSha=await mainNow();
@@ -89,10 +92,13 @@ jobs:
             const prs=await github.paginate(github.rest.pulls.list,{...repo,state:'closed',per_page:100});
             const our=prs.find(p=>p.head.ref===cleanupName && p.merged_at && p.base.ref==='main');
             const self=await getBranch(cleanupName);
-            if(!our || !self || self.protected || our.head.sha!==self.commit.sha || !await isDescendant(our.merge_commit_sha,mainSha)){
-             throw new Error('Cleanup-PR selbst nicht vollständig gemergt; keine Branches löschen.');
+            const expectedSelf='71ade33dc78ecb2f4d2e29f6b85498bab14a08ee';
+            if(!our || our.head.sha!==expectedSelf || !our.merge_commit_sha ||
+               (self && (self.protected || self.commit.sha!==expectedSelf)) ||
+               !await isDescendant(our.merge_commit_sha,mainSha)){
+             throw new Error('Cleanup-PR selbst nicht vollständig gemergt oder nachträglich geändert.');
             }
-            approved.push({name:cleanupName,sha:self.commit.sha});
+            approved.push({name:cleanupName,sha:expectedSelf});
             // Preflight is finished: all targets, SHA equality, merged PRs and content
             // equivalence have passed. Create immutable recovery refs before deletion.
             for(const {name,sha} of approved){
@@ -101,13 +107,21 @@ jobs:
              try{saved=(await github.rest.git.getRef({...repo,ref})).data.object.sha;}
              catch(e){if(e.status!==404)throw e;}
              if(saved && saved!==sha)throw new Error('Archiv-Tag existiert mit anderem SHA: '+ref);
-             if(!saved)await github.rest.git.createRef({...repo,ref:'refs/'+ref,sha});
+             if(!saved){
+               // Also archive auto-deleted branches from their exact verified PR head.
+               await github.rest.git.getCommit({...repo,commit_sha:sha});
+               await github.rest.git.createRef({...repo,ref:'refs/'+ref,sha});
+             }
              const verify=(await github.rest.git.getRef({...repo,ref})).data.object.sha;
              if(verify!==sha)throw new Error('Archivierung fehlgeschlagen: '+name);
             }
             for(const {name,sha} of approved){
              await assertMain();
-             await branchData(name,sha);
+             const current=await branchData(name,sha);
+             if(!current){
+               core.info('Bereits automatisch gelöscht, archiviert: '+name);
+               continue;
+             }
              await github.rest.git.deleteRef({...repo,ref:'heads/'+name});
              if(await getBranch(name))throw new Error('Branch weiterhin vorhanden: '+name);
              core.info('Gelöscht und mit Tag archiviert: '+name);
