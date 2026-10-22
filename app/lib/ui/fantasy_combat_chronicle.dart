@@ -82,6 +82,7 @@ class _ChronicleEntry extends StatelessWidget {
   Widget build(BuildContext context) {
     final label = _EventSummary.title(event.type);
     final details = _EventSummary.details(event);
+    final diceDetails = _EventSummary.diceDetails(event);
     final date = event.timestamp.toLocal();
     final when =
         '${_two(date.day)}.${_two(date.month)}.${date.year} '
@@ -93,7 +94,7 @@ class _ChronicleEntry extends StatelessWidget {
     final accent = attack ? FantasyPalette.danger : FantasyPalette.gold;
 
     return Semantics(
-      label: '$label, $when${details.isEmpty ? '' : ', ${details.join(', ')}'}',
+      label: '$label, $when${details.isEmpty ? '' : ', ${details.join(', ')}'}${diceDetails.isEmpty ? '' : ', ${diceDetails.join(', ')}'}',
       child: ExcludeSemantics(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
@@ -133,6 +134,17 @@ class _ChronicleEntry extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(details.join(' · '), softWrap: true),
                     ],
+                    if (diceDetails.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      for (final item in diceDetails)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 5),
+                          child: _DiceDetail(
+                            label: item,
+                            critical: item.startsWith('KRITISCH'),
+                          ),
+                        ),
+                    ],
                   ],
                 ),
               ),
@@ -144,6 +156,45 @@ class _ChronicleEntry extends StatelessWidget {
   }
 
   static String _two(int value) => value.toString().padLeft(2, '0');
+}
+
+/// Compact engraved row, rather than a new interactive roll: all values are
+/// copied verbatim from confirmed, pre-existing dice result objects.
+class _DiceDetail extends StatelessWidget {
+  const _DiceDetail({required this.label, required this.critical});
+
+  final String label;
+  final bool critical;
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = critical ? FantasyPalette.danger : FantasyPalette.gold;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      decoration: BoxDecoration(
+        color: FantasyPalette.night.withValues(alpha: .8),
+        borderRadius: BorderRadius.circular(7),
+        border: Border.all(color: accent.withValues(alpha: .55)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.casino_outlined, color: accent, size: 17),
+          const SizedBox(width: 7),
+          Expanded(
+            child: Text(
+              label,
+              softWrap: true,
+              style: TextStyle(
+                color: critical ? accent : FantasyPalette.ivory,
+                fontSize: 12,
+                fontWeight: critical ? FontWeight.w700 : FontWeight.normal,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 /// An explicit allowlist prevents stateAfter, internal identifiers or arbitrary
@@ -187,6 +238,135 @@ class _EventSummary {
     _ when type.startsWith('spell.') => 'Zauberwirkung bestätigt',
     _ => 'Kampfereignis bestätigt',
   };
+
+  /// Show real die faces separately from the already stored final result.
+  /// Never print arbitrary expressions, checkpoint data or custom payload text.
+  static List<String> diceDetails(GameEvent event) {
+    final p = event.payload;
+    final result = <String>[];
+    final attack = p['attackRoll'] is Map
+        ? p['attackRoll']
+        : event.type == 'attack' ||
+              event.type == 'offhandAttack' ||
+              event.type == 'roll.resolved'
+        ? p['roll']
+        : null;
+    final normal = attack ?? (event.type == 'dice.freeRoll' ? p['roll'] : null);
+    final attackLabel = event.type == 'dice.freeRoll' ? 'Freier Wurf' : 'Angriffswurf';
+    final roll = _diceLine(attackLabel, normal);
+    if (roll != null) result.add(roll);
+
+    if (p['critical'] == true && p['hit'] == true) {
+      result.add('KRITISCHER TREFFER bestätigt');
+    }
+    final damage = _diceLine('Schadenswürfel', p['damageRoll']);
+    if (damage != null) result.add(damage);
+    // On a critical hit, extra weapon dice do not add the ability modifier
+    // again. Present the raw faces only, not an invented damage sum.
+    final criticalDice = _diceLine(
+      'Kritische Zusatzwürfel',
+      p['criticalExtra'] ?? p['criticalExtraRoll'],
+      includeModifier: false,
+    );
+    if (criticalDice != null) result.add(criticalDice);
+    final sneak = _diceLine('Hinterhältige Angriffswürfel', p['sneakAttackRoll']);
+    if (sneak != null) result.add(sneak);
+    return result;
+  }
+
+  static String? _diceLine(
+    String label,
+    Object? dice, {
+    bool includeModifier = true,
+  }) {
+    if (dice is! Map) return null;
+    final raw = dice['rolls'];
+    if (raw is! List || raw.isEmpty || raw.length > 100) return null;
+    if (raw.any((die) => die is! int || die < 1 || die > 100)) return null;
+    final faces = raw.cast<int>();
+    final display = faces.take(8).join(', ');
+    final omitted = faces.length > 8 ? ' (+${faces.length - 8} weitere)' : '';
+    final expression = dice['expression'];
+    final match = expression is String
+        ? RegExp(r'^\\d{1,3}d(\\d{1,3})(?:[+-]\\d{1,4})?
+    final payload = event.payload;
+    final result = <String>[];
+    final roll = payload['attackRoll'] is Map
+        ? payload['attackRoll'] as Map
+        : payload['roll'] is Map
+        ? payload['roll'] as Map
+        : null;
+
+    if (roll != null && roll['total'] is num) {
+      result.add('Wurf: ${roll['total']}');
+    }
+    if (payload['pendingEnemyShieldHit'] == true) {
+      result.add('Schildentscheidung offen');
+    } else if (payload['hit'] is bool) {
+      result.add(payload['hit'] == true ? 'Treffer' : 'Verfehlt');
+    }
+    if (payload['damage'] is num) {
+      result.add('Schaden: ${payload['damage']}');
+    }
+    if (payload['hitPointsRestored'] is num) {
+      result.add('Geheilte TP: ${payload['hitPointsRestored']}');
+    }
+    if (payload['recovered'] is num) {
+      result.add('Geheilte TP: ${payload['recovered']}');
+    }
+    if (payload['meters'] is num) {
+      result.add('Bewegung: ${payload['meters']} m');
+    }
+    if (event.type == 'combat.enemyAttackCountConfirmed' &&
+        payload['count'] is int) {
+      result.add('Gegnerangriffe: ${payload['count']}');
+    }
+    if (payload['enemyAttacksRemaining'] is int &&
+        (payload['enemyAttacksRemaining'] as int) > 0) {
+      result.add('Weitere Gegnerangriffe: ${payload['enemyAttacksRemaining']}');
+    }
+    if (event.type == 'combat.shieldHitResolved') {
+      if (payload['choice'] == 'cast') {
+        result.add('Schild gewirkt');
+      } else if (payload['choice'] == 'decline') {
+        result.add('Auf Schild verzichtet');
+      }
+    }
+    if (event.type == 'combat.coverConfirmed') {
+      const levels = {
+        'none': 'keine',
+        'half': 'halbe',
+        'threeQuarters': 'Dreiviertel',
+        'total': 'vollständige',
+      };
+      final target = switch (payload['target']) {
+        'held' => 'Held',
+        'gegner' => 'Gegner',
+        _ => null,
+      };
+      final level = levels[payload['grade']];
+      if (target != null && level != null) {
+        result.add('$target: $level Deckung');
+      }
+    }
+    return result;
+  }
+}
+).firstMatch(expression)
+        : null;
+    final sides = match?.group(1);
+    final dieType = sides == null ? '' : ' W$sides';
+    var description = '$label$dieType: $display$omitted';
+    final natural = dice['natural'];
+    if (natural is int && natural >= 1 && natural <= 20 && faces.length > 1) {
+      description += ' · gewählt: $natural';
+    }
+    final bonus = dice['modifier'];
+    if (includeModifier && bonus is int && bonus != 0 && bonus.abs() <= 1000) {
+      description += ' · Bonus: ${bonus > 0 ? '+' : ''}$bonus';
+    }
+    return description;
+  }
 
   static List<String> details(GameEvent event) {
     final payload = event.payload;
