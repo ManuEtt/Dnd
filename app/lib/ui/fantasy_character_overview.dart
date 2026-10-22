@@ -295,7 +295,7 @@ class _ParchmentAbilities extends StatelessWidget {
               builder: (context, box) {
                 final columns = box.maxWidth >= 705
                     ? 6
-                    : box.maxWidth >= 320
+                    : box.maxWidth >= 270
                     ? 3
                     : 2;
                 final rowsHeight = 93 + scaler.scale(49);
