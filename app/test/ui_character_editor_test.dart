@@ -50,6 +50,10 @@ Future<void> save(WidgetTester tester) async {
   await tester.ensureVisible(button);
   await tester.pumpAndSettle();
   expect(button.hitTestable(), findsOneWidget);
+  final saveControl = tester.widget<FantasyTextButton>(
+    find.byKey(const ValueKey('editor-save-fixed')),
+  );
+  expect(saveControl.style, FantasyButtonStyle.woodGold);
   await tester.tap(button);
   await tester.pumpAndSettle();
 }
