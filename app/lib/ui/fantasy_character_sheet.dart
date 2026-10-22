@@ -264,6 +264,7 @@ class _ReferenceCharacterDashboard extends StatelessWidget {
     final compact = width < 580;
     final panels = <Widget>[
       _ReferenceListPanel(
+        key: const ValueKey('sheet-preview-fertigkeiten'),
         title: 'Fertigkeiten',
         icon: Icons.auto_stories,
         lines: [
@@ -298,7 +299,7 @@ class _ReferenceCharacterDashboard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Container(
-          key: const ValueKey('sheet-reference-attributes'),
+          key: const ValueKey('sheet-parchment-abilities'),
           padding: const EdgeInsets.fromLTRB(10, 14, 10, 12),
           decoration: BoxDecoration(
             color: const Color(0xffd6bf96),
@@ -314,23 +315,31 @@ class _ReferenceCharacterDashboard extends StatelessWidget {
               const SizedBox(height: 10),
               LayoutBuilder(builder: (context, bounds) {
                 final columns = bounds.maxWidth >= 680 ? 6 : 3;
-                final height = MediaQuery.textScalerOf(context).scale(94).clamp(100.0, 170.0);
-                return GridView.count(
-                  crossAxisCount: columns,
-                  mainAxisSpacing: 7,
-                  crossAxisSpacing: 7,
-                  childAspectRatio: (bounds.maxWidth / columns - 7) / height,
+                // A fixed row height prevents scaled fonts and rune icons
+                // from overflowing the narrow three-column layout.
+                final tileHeight = MediaQuery.textScalerOf(context)
+                    .scale(120)
+                    .clamp(136.0, 210.0);
+                return GridView.builder(
+                  key: const ValueKey('sheet-preview-attributes-grid'),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: columns,
+                    mainAxisSpacing: 7,
+                    crossAxisSpacing: 7,
+                    mainAxisExtent: tileHeight,
+                  ),
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    for (final ability in _abilities)
-                      _ReferenceAbilityTile(
-                        label: ability.label,
-                        icon: ability.icon,
-                        accent: ability.color,
-                        score: hero.abilities[ability.id],
-                      ),
-                  ],
+                  itemCount: _abilities.length,
+                  itemBuilder: (context, index) {
+                    final ability = _abilities[index];
+                    return _ReferenceAbilityTile(
+                      label: ability.label,
+                      icon: ability.icon,
+                      accent: ability.color,
+                      score: hero.abilities[ability.id],
+                    );
+                  },
                 );
               }),
             ],
@@ -406,6 +415,7 @@ class _ReferenceAbilityTile extends StatelessWidget {
 
 class _ReferenceListPanel extends StatelessWidget {
   const _ReferenceListPanel({
+    super.key,
     required this.title, required this.icon,
     required this.lines, required this.onOpen,
   });
