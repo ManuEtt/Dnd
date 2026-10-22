@@ -112,6 +112,26 @@ enum ConditionEffectDuration {
 class ConditionEffectRules {
   const ConditionEffectRules._();
 
+  /// Read-only remaining confirmed own-turn boundaries. When the encounter
+  /// is absent, stale, finished or in another actor's turn the absolute
+  /// expiry still exists but no live countdown can safely be asserted.
+  static int? remainingOwnTurnEnds(
+    ConditionEffect effect,
+    Encounter? encounter,
+  ) {
+    final expires = effect.expiresAtOwnTurnEndRound;
+    if (expires == null ||
+        encounter == null ||
+        encounter.isFinished ||
+        encounter.activeParticipant != 'hero' ||
+        encounter.id != effect.expiresInEncounterId ||
+        encounter.round < 1 ||
+        encounter.round > expires) {
+      return null;
+    }
+    return expires - encounter.round + 1;
+  }
+
   static List<ConditionEffect> validated(List<ConditionEffect> effects) {
     if (effects.length > 100) {
       throw const FormatException('Zu viele Zustandseffekte.');
