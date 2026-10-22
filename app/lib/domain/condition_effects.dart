@@ -110,8 +110,21 @@ class ConditionEffectRules {
     if (hero.conditionEffects.any((entry) => entry.id == effect.id)) {
       throw StateError('Zustandseffekt-ID bereits vergeben.');
     }
+    // SRD 5.2.1, Rules Glossary: Incapacitated breaks Concentration.
+    // Derived incapacitation (such as Paralyzed) has the same consequence.
+    // The effect and concentration change are one confirmed state transition.
+    const incapacitating = {
+      'handlungsunfähig',
+      'gelähmt',
+      'versteinert',
+      'betäubt',
+      'bewusstlos',
+    };
     final updated = hero.copyWith(
       conditionEffects: [...hero.conditionEffects, effect],
+      concentratingOn: incapacitating.contains(effect.condition)
+          ? ''
+          : hero.concentratingOn,
     );
     return effect.condition == 'bewusstlos'
         ? ConditionRules.retainProneFromUnconscious(hero, updated)
