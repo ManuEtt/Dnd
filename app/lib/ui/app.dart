@@ -25,6 +25,7 @@ import 'backup_dialogs.dart';
 import 'character_editor.dart';
 import 'character_effect_dialog.dart';
 import 'condition_effect_dialog.dart';
+import 'confirmed_spell_effect_dialog.dart';
 import 'hero_shield_reaction_dialog.dart';
 import '../domain/hero_shield_reaction_rules.dart';
 import 'magic_missile_dialog.dart';
@@ -1192,6 +1193,38 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previous);
   }
 
+  Future<void> _manageConfirmedSpellEffects() async {
+    final campaign = widget.controller.currentCampaign;
+    if (campaign == null || widget.controller.busy) return;
+    final choice = await showDialog<ConfirmedSpellEffectChoice>(
+      context: context,
+      builder: (_) => ConfirmedSpellEffectDialog(
+        hero: campaign.hero,
+        encounter: campaign.encounter,
+      ),
+    );
+    if (choice == null || !mounted) return;
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    if (choice.isRemoval) {
+      await widget.controller.removeConfirmedSpellEffect(
+        campaignId: campaign.id,
+        expectedRevision: campaign.revision,
+        effectId: choice.effectId,
+      );
+    } else {
+      await widget.controller.registerConfirmedSpellEffect(
+        campaignId: campaign.id,
+        expectedRevision: campaign.revision,
+        spellName: choice.spellName,
+        source: choice.source,
+        concentrationBound: choice.concentrationBound,
+        ownTurnEnds: choice.ownTurnEnds,
+      );
+    }
+    if (mounted) await _afterTurn(previous);
+  }
+
   Future<void> _manageConditionEffects() async {
     final campaign = widget.controller.currentCampaign;
     if (campaign == null || widget.controller.busy) return;
@@ -1785,6 +1818,19 @@ class _AdventurePageState extends State<_AdventurePage> {
                     ),
                   ),
                 FantasyTextButton(
+                  key: const ValueKey('adventure-manage-spell-effects'),
+                  onPressed: widget.controller.busy ||
+                          campaign.pendingRoll != null ||
+                          campaign.pendingDeathSave != null ||
+                          campaign.pendingEnemyShieldHit != null ||
+                          campaign.hero.isDead
+                      ? null
+                      : _manageConfirmedSpellEffects,
+                  icon: Icons.auto_fix_high,
+                  style: FantasyButtonStyle.iron,
+                  label: 'Zauberwirkungen verwalten',
+                ),
+                FantasyTextButton(
                   key: const ValueKey('adventure-manage-condition-effects'),
                   onPressed:
                       widget.controller.busy ||
@@ -2123,6 +2169,14 @@ class _AdventurePageState extends State<_AdventurePage> {
                         _send();
                       },
                       busy: widget.controller.busy,
+                      onManageSpells:
+                          widget.controller.busy ||
+                              campaign.pendingRoll != null ||
+                              campaign.pendingDeathSave != null ||
+                              campaign.pendingEnemyShieldHit != null ||
+                              campaign.hero.isDead
+                          ? null
+                          : _manageConfirmedSpellEffects,
                       onManageEffects:
                           widget.controller.busy ||
                               campaign.pendingRoll != null ||
@@ -2530,6 +2584,7 @@ class _CombatView extends StatelessWidget {
     required this.onAction,
     required this.busy,
     required this.onManageEffects,
+    required this.onManageSpells,
     required this.header,
   });
   final Encounter encounter;
@@ -2539,6 +2594,7 @@ class _CombatView extends StatelessWidget {
   final void Function(String) onAction;
   final bool busy;
   final VoidCallback? onManageEffects;
+  final VoidCallback? onManageSpells;
   final Widget header;
 
   @override
@@ -2595,6 +2651,7 @@ class _CombatView extends StatelessWidget {
           hero: hero,
           encounter: encounter,
           onManage: onManageEffects,
+          onManageSpells: onManageSpells,
         ),
         const SizedBox(height: 12),
         FantasyCombatCoverPanel(
