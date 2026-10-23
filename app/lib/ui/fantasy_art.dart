@@ -568,8 +568,12 @@ class FantasyPinnedActionBar extends StatelessWidget {
     required this.onInspect,
     required this.onAttack,
     required this.onRoll,
+    this.attackEnabled = true,
+    this.attackUnavailableReason,
   });
 
+  final bool attackEnabled;
+  final String? attackUnavailableReason;
   final bool busy;
   final bool listening;
   final VoidCallback onSpeech;
@@ -659,16 +663,24 @@ class FantasyPinnedActionBar extends StatelessWidget {
                 ),
                 const SizedBox(width: 7),
                 Expanded(
-                  child: FantasyShortcutTile(
-                    key: const ValueKey('adventure-shortcut-attack'),
-                    label: 'Angriff',
-                    style: FantasyButtonStyle.wax,
-                    approvedIconIndex: 1,
-                    icon: Icons.sports_martial_arts,
-                    color: FantasyPalette.danger,
-                    width: double.infinity,
-                    compact: true,
-                    onTap: busy ? null : onAttack,
+                  child: Tooltip(
+                    message: busy
+                        ? 'Eine Handlung wird bereits verarbeitet.'
+                        : attackEnabled
+                            ? 'Angriff im bestätigten Kampf ausführen'
+                            : attackUnavailableReason ??
+                                'Hier ist derzeit kein Angriff möglich.',
+                    child: FantasyShortcutTile(
+                      key: const ValueKey('adventure-shortcut-attack'),
+                      label: 'Angriff',
+                      style: FantasyButtonStyle.wax,
+                      approvedIconIndex: 1,
+                      icon: Icons.sports_martial_arts,
+                      color: FantasyPalette.danger,
+                      width: double.infinity,
+                      compact: true,
+                      onTap: busy || !attackEnabled ? null : onAttack,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 7),
