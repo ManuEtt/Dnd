@@ -1012,6 +1012,9 @@ class GameController extends ChangeNotifier {
     for (final hero in await repository.loadCharacters()) {
       await repository.deleteCharacter(hero.id);
     }
+    if (repository case PendingActionStore store) {
+      await store.clearAllPendingActions();
+    }
     await repository.saveSettings({});
     currentCampaign = null;
     await _reload();
