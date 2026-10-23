@@ -69,12 +69,16 @@ void main() {
       bool a = false,
       bool d = false,
       bool ally = false,
+      bool nearTarget = true,
+      bool allyCanAct = true,
       bool used = false,
     }) => ClassCombatFeatures.eligibleSneakAttackDice(
       rogue,
       hasAdvantage: a,
       hasDisadvantage: d,
       adjacentConsciousAlly: ally,
+      allyWithinFiveFeetOfTargetConfirmed: nearTarget,
+      allyNotIncapacitatedConfirmed: allyCanAct,
       alreadyUsedThisTurn: used,
     );
     expect(dice(a: true), 3);
@@ -83,6 +87,17 @@ void main() {
     expect(dice(ally: true, d: true), 0);
     expect(dice(a: true, d: true, ally: true), 3);
     expect(dice(a: true, used: true), 0);
+    // Being conscious does not prove the ally can act (e.g. Stunned).
+    expect(dice(ally: true, allyCanAct: false), 0);
+    // An ally adjacent to the rogue, but not the target, does not qualify.
+    expect(dice(ally: true, nearTarget: false), 0);
+    expect(dice(ally: true, nearTarget: false, allyCanAct: false), 0);
+    // An independently confirmed Advantage still permits Sneak Attack.
+    expect(dice(a: true, ally: true, nearTarget: false), 3);
+    expect(dice(a: true, ally: true, allyCanAct: false), 3);
+    // Canceled Advantage must not bypass unconfirmed ally criteria.
+    expect(dice(a: true, d: true, ally: true, nearTarget: false), 0);
+    expect(dice(a: true, d: true, ally: true, allyCanAct: false), 0);
     final roll = ClassCombatFeatures.rollSneakAttack(
       DiceEngine(random: OneRandom()),
       3,

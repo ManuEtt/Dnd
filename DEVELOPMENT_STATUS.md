@@ -1,3 +1,12 @@
+## 23.10.2026 – Schurken-Hinterhältiger-Angriff nach SRD 5.2.1 sichern (CI offen)
+
+- **IMPLEMENTIERT:** `ClassCombatFeatures.eligibleSneakAttackDice` verlangt bei Angriff ohne echten Vorteil zwei unabhängige Bestätigungen: ein Verbündeter befindet sich höchstens 5 Fuß vom ZIEL entfernt und er besitzt nicht `Incapacitated`. Kein stilles Auslösen aus bloßer Bewusstheit oder Nähe zur Spielfigur. Ergänzte Negativtests bei gestunnten/fehlpositionierten Verbündeten und beim Aufheben von Vorteil/Nachteil.
+- **QUELLE:** SRD 5.2.1, Rogue/Sneak Attack S. 62, CC BY 4.0. Requirement `CLASS-SCHURKE-1-BASE-SNEAK-ATTACK-1` ist nur `partial`, keine Vollständigkeitsbehauptung: `GameEngine` hat noch keine Positions- und Ally-Condition-Integration; automatisch nur bestätigte Angriffe mit Vorteil aus ihrem bisherigen Pfad.
+- **BASIS:** Main `f71c287e` nach PR #142. Neuer Branch `fix/srd-rogue-sneak-attack-ally-20261023`, Version `0.8.36+86`, CI noch ausstehend. Ohne DB-Migration oder neue Kampagnen-JSON-Version. Kein Geräte-, Altspielstand- und Release-Signaturtest.
+- **NÄCHSTER SCHRITT:** neuen CI-Lauf prüfen, Fehler beheben; dann in separatem Inkrement bestätigte Karte/Verbündetenstatus im Kampfdialog und im Journal verarbeiten.
+
+---
+
 ## 23.10.2026 – SRD Sight als ausdrücklich bestätigte Zauberreichweite (CI ausstehend)
 
 - **IMPLEMENTIERT:** Reine regeltechnische `Sight`-Vorprüfung für verifiziert sichtbaren Zauberursprung und getrennt bestätigten freien Weg; Kartenprüfer transportiert den vom Spieler/Spielleiter bestätigten Sichtfakt ohne Annahme aus Hindernissen. Keine neuen Zauberwirkungen, Automatikwürfe oder Ressourcenbuchungen. `Unlimited`/`Special` bleiben ausdrücklich nicht freigeschaltet.

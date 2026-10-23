@@ -6,6 +6,9 @@
 
 ## Aktueller Stand und autonome Fortsetzung (23.10.2026)
 
+> **Neues SRD-Regelpaket 23.10.2026 – `0.8.36+86`, Branch `fix/srd-rogue-sneak-attack-ally-20261023`:** Der reine Schurkenregel-Helper verlangt jetzt eine ausdrücklich bestätigte Position des Verbündeten innerhalb von 5 Fuß des **Ziels** sowie das bestätigte Fehlen von `Incapacitated`, bevor er Hinterhältigen Angriff ohne Vorteil zulässt. Bei fehlender Bestätigung wird nicht gewürfelt; echter Angriffsvorteil bleibt eigenständig. Unit-Regressionen ergänzen die Abdeckung. **Keine echte Verbündeten-/Kartenzuordnung in der aktiven GameEngine implementiert**, daher SRD-Matrixstatus nur `partial`. Eigene CI und Android-Geräteabnahme stehen noch aus; App-Version `0.8.36+86`, DB 2 und JSON-Format 1.
+
+
 > **Entwicklungszyklus 8 – SRD 5.2.1 / Reichweite Sicht (23.10.2026, Version `0.8.35+85`):** Die Zauber-Zielprüfung verarbeitet `Sight` jetzt nur bei ausdrücklich bestätigter Sicht **und** freiem Weg. Ein freier Kartenstrahl allein erteilt keine Sichtbestätigung; ein voller Blocker oder fehlende Kartenaufnahme verhindert die Prüfung. `Unlimited` und `Special` bleiben gesperrt, ebenso die tatsächliche 10-Minuten-Wirkung von `Mirage Arcane`. Regressionstests für alle 339 katalogisierten Reichweiten, unbestätigte Sicht, Hindernisse und Richtungsangaben ergänzt. **Die neue CI und eine echte Geräteabnahme stehen noch aus**; Quelle und Grenzen unter [SRD Sight Range Preflight](docs/SRD_SIGHT_RANGE_PREFLIGHT_20261023.md). `main` steht auf `2dac48e0` mit gemergten PRs #140/#141; die App-Version des Hauptbranches bleibt `0.8.34+84`.
 
 

@@ -1,3 +1,12 @@
+## 23.10.2026 – 0.8.36+86: Schurken-Hinterhältiger-Angriff – bestätigter Verbündeter (CI offen)
+
+- Der bisherige reine Helper-Check für einen nahen, bewussten Verbündeten genügt nicht mehr allein. Der alternative SRD-5.2.1-Weg zum Hinterhältigen Angriff verlangt nun zusätzlich bestätigte Nähe des Verbündeten **zum Ziel** und das bestätigte Fehlen des Zustands `Incapacitated`.
+- Direkter Angriffsvorteil qualifiziert weiterhin unabhängig; bei aufgehobenem Vorteil/Nachteil genügt ein bloß anwesender oder kampfunfähiger Verbündeter nicht.
+- Zusätzliche Unit-Regressionen und präziser `partial`-Eintrag in der SRD-Anforderungsmatrix. Keine frei erfundene Verbündetenposition. Die Kampfengine besitzt noch keine bestätigte Positionsintegration und setzt ihre bisherige Verbündetenangabe unverändert auf `false`.
+- SQLite-Version 2, JSON-Spielstandsformat 1 unverändert; neue CI und Realgerät-Abnahme noch offen.
+
+---
+
 ## 23.10.2026 – 0.8.35+85: Bestätigte Sicht für SRD-Zauberreichweite „Sight“ (CI ausstehend)
 
 - SRD-5.2.1-Zielvorprüfung akzeptiert `Sight` nur mit explizit bestätigter Sicht, zulässiger räumlicher Ursprungsklasse und unabhängig bestätigtem freiem Weg.
