@@ -79,7 +79,7 @@ void main() {
     expect(find.text('Mit Tieren umgehen: +4'), findsOneWidget);
     final list = tester.widget<ListView>(find.byType(ListView).last);
     // Eighteen SRD skills; the introductory title and divider are separate.
-    expect(list.children.length, 20);
+    expect((list.childrenDelegate as SliverChildListDelegate).children.length, 20);
     await tester.scrollUntilVisible(
       find.text('Heilkunde: +7 · geübt'),
       130,
@@ -125,7 +125,7 @@ void main() {
       await tester.tap(button);
       await tester.pumpAndSettle();
       final list = tester.widget<ListView>(find.byType(ListView).last);
-      expect(list.children.length, 20); // one canonical row, no duplicate
+      expect((list.childrenDelegate as SliverChildListDelegate).children.length, 20); // one canonical row, no duplicate
       await tester.scrollUntilVisible(
         find.text('Heilkunde: +7 · geübt'),
         135,
@@ -166,7 +166,7 @@ void main() {
     await tester.tap(button);
     await tester.pumpAndSettle();
     final list = tester.widget<ListView>(find.byType(ListView).last);
-    expect(list.children.length, 21); // 18 + one genuine legacy + title/divider
+    expect((list.childrenDelegate as SliverChildListDelegate).children.length, 21); // 18 + one genuine legacy + title/divider
     await tester.scrollUntilVisible(
       find.text('Heilkunde: – · geübt'),
       135,
