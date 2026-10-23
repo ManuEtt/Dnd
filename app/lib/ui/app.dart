@@ -1024,8 +1024,10 @@ class _AdventurePageState extends State<_AdventurePage> {
     super.dispose();
   }
 
-  Future<void> _send() async {
-    final text = _input.text.trim();
+  // Quick actions use the same validated controller path as typed and
+  // recognized speech, but must not replace an unfinished player draft.
+  Future<void> _send({String? quickAction}) async {
+    final text = (quickAction ?? _input.text).trim();
     if (text.isEmpty || widget.controller.busy) return;
     await widget.voice.stopListening();
     await widget.voice.stopSpeaking();
@@ -1033,7 +1035,7 @@ class _AdventurePageState extends State<_AdventurePage> {
     await widget.controller.sendAction(text);
     if (!mounted) return;
     if (widget.controller.error == null) {
-      _input.clear();
+      if (quickAction == null) _input.clear();
       await _afterTurn(previousMessageId);
     }
   }
@@ -2169,8 +2171,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                       pendingShieldDecision:
                           campaign.pendingEnemyShieldHit != null,
                       onAction: (text) {
-                        _input.text = text;
-                        _send();
+                        _send(quickAction: text);
                       },
                       busy: widget.controller.busy,
                       onManageSpells:
@@ -2463,14 +2464,20 @@ class _AdventurePageState extends State<_AdventurePage> {
         busy: widget.controller.busy,
         listening: widget.voice.listening,
         onSpeech: _toggleMic,
-        onInspect: () {
-          _input.text = 'Ich untersuche die Umgebung.';
-          _send();
-        },
-        onAttack: () {
-          _input.text = 'Ich greife an.';
-          _send();
-        },
+        attackEnabled: campaign.encounter != null &&
+            !campaign.encounter!.isFinished &&
+            campaign.encounter!.activeParticipant == 'hero' &&
+            campaign.pendingRoll == null &&
+            campaign.pendingDeathSave == null &&
+            campaign.pendingEnemyShieldHit == null,
+        attackUnavailableReason: campaign.encounter == null ||
+                campaign.encounter!.isFinished
+            ? 'Angriff erst mit einem bestätigten aktiven Kampf möglich.'
+            : campaign.encounter!.activeParticipant != 'hero'
+                ? 'Ein anderer Kampfteilnehmer ist am Zug.'
+                : 'Eine ausstehende Entscheidung muss zuerst geklärt werden.',
+        onInspect: () => _send(quickAction: 'Ich untersuche die Umgebung.'),
+        onAttack: () => _send(quickAction: 'Ich greife an.'),
         onRoll: _roll,
       ),
     );
