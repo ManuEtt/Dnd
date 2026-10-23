@@ -1,6 +1,7 @@
 ## 23.10.2026 – Unabhängige Settings-Schreiber transaktional absichern (CI ausstehend)
 
 - **IMPLEMENTIERT im Entwicklungsbranch:** `AtomicSettingsStore` und SQLite-`updateSettingsEntries` speichern selektive Einstellungsfelder innerhalb einer Transaktion. `GameController` (Kampagnen-ID und Backend-Präferenzen) und `BootstrapApp` (Sprachpräferenzen) rufen `repository.patchSettings` auf; übrige Felder bleiben auch bei konkurrierenden Schreibvorgängen erhalten. Bestehender Komplett-Reset behält Full-Replace-Verhalten.
+- **DATENRESET-KORREKTUR:** Persistente PlayerActionOutbox-Einträge werden beim Löschen ihrer Kampagne in derselben SQLite-Transaktion entfernt. Ein vollständiger Datenreset entfernt auch verwaiste ausstehende Handlungen; Regressionstests sind ergänzt.
 - **TESTS ANGELEGT, CI NOCH OFFEN:** `app/test/atomic_settings_updates_test.dart` mit gleichzeitigen unabhängigen Schlüsseln, 24 Überschneidungen, Feldentfernung, ungültigem Patch/Rollback, PlayerActionOutbox und Neustart der Kampagnenauswahl.
 - **KEINE SPEICHERFORMATMIGRATION:** DB-Schema 2 aus #134 bleibt, JSON-Exportschema 1 bleibt, App-Version `0.8.32+82`. **NICHT GETESTET:** neuer finaler CI-HEAD, APK auf Android-Gerät, Langzeitupdate. **BESTÄTIGTE BASIS:** vorangegangene CI #39940517928 ist grün für #134-HEAD `8162388e`, nicht für den neuen Branch.
 - **NÄCHSTER SCHRITT:** Github-CI des neuen Stands auswerten und bei Fehlern korrigieren; anschließend gestapelte PRs in Abhängigkeitsreihenfolge reviewen und Geräteprüfung der DB-1→2-Migration separat vorbereiten.
