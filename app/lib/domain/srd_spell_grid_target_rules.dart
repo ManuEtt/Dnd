@@ -65,12 +65,16 @@ class SrdSpellGridTargetRequest {
     required this.caster,
     required this.origin,
     this.withinTouchReachConfirmed = false,
+    this.originVisibleConfirmed = false,
   });
 
   final SrdSpellGridMap map;
   final SrdGridCell caster;
   final SrdGridCell origin;
   final bool withinTouchReachConfirmed;
+
+  /// Deliberate sight confirmation, separate from map obstruction checks.
+  final bool originVisibleConfirmed;
 }
 
 /// Deterministic 2D center-ray witness and SRD spell-origin distance.
@@ -131,6 +135,7 @@ class SrdSpellGridTargetRules {
       mode: SrdSpellOriginMode.distant,
       originDistanceFeet: distanceFeet(request.caster, request.origin),
       clearPathConfirmed: true,
+      visibleOriginConfirmed: request.originVisibleConfirmed,
     );
   }
 
