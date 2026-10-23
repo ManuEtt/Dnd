@@ -1,3 +1,12 @@
+## 23.10.2026 – 0.8.33+83: Atomarer vollständiger Datenreset (CI ausstehend)
+
+- SQLite-Implementierung von `AtomicUserDataReset`: Kampagnen, bestätigte Events, Revisionshistorie, Charaktere, Einstellungen und PlayerActionOutbox werden im gleichen Transaktionscommit gelöscht oder bei einem Fehler vollständig erhalten.
+- `GameController.deleteAllData` nutzt den atomaren SQLite-Vertrag; Test-/Legacy-Repositories behalten den bisherigen Fallback.
+- Neuer SQLite-Regressionstest prüft Erhalt der Daten und Controlleransicht bei einem erzwungenen späten Löschfehler, erneutes Löschen sowie Neustart ohne zurückgebliebene Einträge.
+- Keine Migration von Datenbankschema 2 oder JSON-Spielstandsformat 1, keine SRD-Regeländerung. Endgültige CI und reale Geräteabnahme für diesen Branch noch offen.
+
+---
+
 ## 23.10.2026 – 0.8.32+82: atomare Änderungen der App-Einstellungen (CI ausstehend)
 
 - Campagneauswahl, Narrator-Verbindung und Sprachpräferenzen nutzen statt veralteter kompletter Settings-Snapshots transaktionale Teilupdates in SQLite.
