@@ -1,3 +1,13 @@
+# Aktueller Codex-Entwicklungscheckpoint
+
+**Operativer Live-Stand (23.10.2026):** [docs/CODEX_CHECKPOINT.md](docs/CODEX_CHECKPOINT.md). Der aktuelle [Fortsetzungs-Prompt](docs/CODEX_CONTINUATION_PROMPT.md) verpflichtet zu einem aktualisierten Checkpoint und einem README-Nachtrag am Ende jedes Codex-Zyklus.
+
+**Verifizierte Ausgangsbasis:** `main` `b1fa9c67b2ee0eec9571c2bdf25e52a8ec8349d9`, Flutter-Version `0.8.30+80`, [GitHub Actions #39932399488](https://github.com/ManuEtt/Dnd/actions/runs/39932399488) vollständig erfolgreich. Dieser Dokumentations-PR ist noch kein getesteter App-Build.
+
+**Chronikhinweis:** Die bisherigen Einträge unterhalb dieses Abschnitts dokumentieren ältere Entwicklungsschritte, teilweise mit früheren Zwischenständen und damals offenen CI-Fragen. Sie dürfen den oben verlinkten Live-Checkpoint nicht überschreiben.
+
+---
+
 ## Abnahme / Merge 20.10.2026 – Version 0.8.21+71
 
 **CI- und Merge-Abnahme (20.10.2026):** SRD-Inkrement `0.8.21+71` über [PR #52](https://github.com/ManuEtt/Dnd/pull/52) erfolgreich nach `main` integriert. [GitHub-Actions-CI #39421141308](https://github.com/ManuEtt/Dnd/actions/runs/39421141308) auf finalem Code-HEAD `9156b972d240de4c5a588c09ebb5ac8adeca99ad`: **success**, inklusive Python-/Strukturtests, Backend-Typecheck/Build/Tests, Dart-Formatierung, Flutter-Analyse und Tests, Android-Debug-APK, native Android-Tests, Alpha-APK-Pakete und Checkpoint-Artefakt. Merge-Commit [`b87e53591df75bc40b9e9f534529666fb168c6f3`](https://github.com/ManuEtt/Dnd/commit/b87e53591df75bc40b9e9f534529666fb168c6f3). **Nicht getestet:** echte Android-Geräteinstallation; mehrere unabhängige Monster und unterschiedliche Attackenprofile; vollständige SRD-Abdeckung.
