@@ -2558,6 +2558,10 @@ class _AdventurePageState extends State<_AdventurePage> {
               accent: FantasyPalette.blue,
               child: Column(
                 children: [
+                  if (_submittingAction)
+                    const SizedBox.shrink(
+                      key: ValueKey('adventure-action-submitting'),
+                    ),
                   if (_pendingAction != null) ...[
                     const Text(
                       'Ausstehende Handlung – noch nicht sicher bestätigt',
