@@ -2,9 +2,12 @@
 
 **Deutschsprachige Android-Fantasy-Rollenspiel-App mit Soloabenteuern, Charakterverwaltung, D&D-Regelunterstützung und optionalem KI-Erzähler.**
 
-> **Projektstatus (23. Oktober 2026):** Aktive Android-Alpha, **Version 0.8.34+84**. [PR #140](https://github.com/ManuEtt/Dnd/pull/140) ist nach vollständiger [PR-CI #39968525780](https://github.com/ManuEtt/Dnd/actions/runs/39968525780) in `main` integriert (Merge `a3dec619`). [PR #141](https://github.com/ManuEtt/Dnd/pull/141) ergänzt gefüllte Legacy-SQLite-Migrationstests, ist noch nicht integriert; seine [CI #39994226404](https://github.com/ManuEtt/Dnd/actions/runs/39994226404) war vor Merge-Basisaktualisierung erfolgreich. Weder echter Android-Gerätetest noch vollständiges SRD-5.2.1-Regelwerk sind nachgewiesen.
+> **Projektstatus (23. Oktober 2026):** Aktive deutschsprachige Android-Alpha. `main` bei `2dac48e0` nach den zusammengeführten PRs #140/#141, App-Version `0.8.34+84`; neue Entwicklungsbranch-Version `0.8.35+85` benötigt noch eigene vollständige CI. Es liegen weder ein echter Android-Gerätetest noch eine vollständige SRD-5.2.1-Regelumsetzung vor.
 
 ## Aktueller Stand und autonome Fortsetzung (23.10.2026)
+
+> **Entwicklungszyklus 8 – SRD 5.2.1 / Reichweite Sicht (23.10.2026, Version `0.8.35+85`):** Die Zauber-Zielprüfung verarbeitet `Sight` jetzt nur bei ausdrücklich bestätigter Sicht **und** freiem Weg. Ein freier Kartenstrahl allein erteilt keine Sichtbestätigung; ein voller Blocker oder fehlende Kartenaufnahme verhindert die Prüfung. `Unlimited` und `Special` bleiben gesperrt, ebenso die tatsächliche 10-Minuten-Wirkung von `Mirage Arcane`. Regressionstests für alle 339 katalogisierten Reichweiten, unbestätigte Sicht, Hindernisse und Richtungsangaben ergänzt. **Die neue CI und eine echte Geräteabnahme stehen noch aus**; Quelle und Grenzen unter [SRD Sight Range Preflight](docs/SRD_SIGHT_RANGE_PREFLIGHT_20261023.md). `main` steht auf `2dac48e0` mit gemergten PRs #140/#141; die App-Version des Hauptbranches bleibt `0.8.34+84`.
+
 
 > **Fortsetzung 23.10.2026 / PR #141:** Tests für einen gefüllten SQLite-1-Spielstand (Kampagnen, Journal, Charaktere, Einstellungen und ausstehende Handlung) sowie für den atomaren Migrations-Rollback bei ungültigen oder doppelten Request-IDs. Die Tests wurden nach Zusammenführung von [PR #140](https://github.com/ManuEtt/Dnd/pull/140) auf die aktualisierte Basis angepasst; **vollständige CI auf der aktuellen Merge-Basis bleibt bis zum Abschluss des neuen Laufs offen**. Bestehende App-Version 0.8.34+84, DB-Schema 2 und Exportformat 1 bleiben unverändert. Eine reale Android-Migration mit vorheriger Datensicherung ist weiterhin erforderlich.
 
