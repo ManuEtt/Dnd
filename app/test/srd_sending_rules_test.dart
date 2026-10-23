@@ -74,7 +74,7 @@ void main() {
       throwsFormatException,
     );
     expect(() => prepare(isCreature: false), throwsFormatException);
-    for (final id in ['', '    ', 'x' * 161]) {
+    for (final id in ['', '    ', List.filled(161, 'x').join()]) {
       expect(() => prepare(recipientId: id), throwsFormatException);
     }
   });
