@@ -83,7 +83,7 @@ void main() {
     var index = 0;
     final outbox = PlayerActionOutbox(
       repository,
-      newRequestId: () => 'id-' + (++index).toString(),
+      newRequestId: () => 'id-${++index}',
     );
     final first = await outbox.stage('one', 'Ich lausche.');
     final second = await outbox.stage('two', 'Ich untersuche die Truhe.');
