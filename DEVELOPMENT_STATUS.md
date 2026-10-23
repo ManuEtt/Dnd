@@ -1,3 +1,12 @@
+## 23.10.2026 – Vollständigen Spielstand-Reset atomar ausführen (neuer PR, CI ausstehend)
+
+- **IMPLEMENTIERT:** `AtomicUserDataReset` im CampaignRepository-Kontext; SQLite `deleteAllUserData()` löscht sechs lokale Nutzerdatentabellen in einer Datenbanktransaktion. Controller nutzt diesen Pfad und setzt `currentCampaign` erst nach erfolgreichem Commit auf null; Legacy-/Testimplementierungen behalten das bisherige Verhalten.
+- **REGRESSIONSTESTS GESCHRIEBEN, NICHT LOKAL AUSGEFÜHRT:** `app/test/atomic_full_data_reset_test.dart` prüft eine vollständige Löschung samt Archiv und Eventjournal, Neustart, Wiederholung sowie SQLite-ABORT-Trigger mitten in der Löschfolge: ohne Teilverlust von Kampagne, Held, Settings, Outbox oder Journal. Kein Android-/Flutter-SDK lokal; GitHub-CI des finalen PR-HEAD muss die Tests abnehmen.
+- **BASIS ERFOLGREICH GETESTET:** PR #135 SHA `d8f0cf6958d5c401de9a7f12ae37e69abb45c954`, [Actions #39942663270](https://github.com/ManuEtt/Dnd/actions/runs/39942663270) completed/success. **NICHT GETESTET:** aktuelle Datenreset-Erweiterung bis CI, echte Android-Geräteinstallation und Nutzerdaten-Migration. **FORMAT:** DB-Schema 2, Kampagnen-`schemaVersion=1`; App-Version `0.8.33+83`.
+- **NÄCHSTES PAKET:** Gestapelte PR-Abhängigkeiten nach Review auflösen, Android-Migration anhand eines gesicherten Altspielstands auf echtem Gerät abnehmen; kein automatisches Testlabel aus früherer CI übernehmen.
+
+---
+
 ## 23.10.2026 – Unabhängige Settings-Schreiber transaktional absichern (CI ausstehend)
 
 - **IMPLEMENTIERT im Entwicklungsbranch:** `AtomicSettingsStore` und SQLite-`updateSettingsEntries` speichern selektive Einstellungsfelder innerhalb einer Transaktion. `GameController` (Kampagnen-ID und Backend-Präferenzen) und `BootstrapApp` (Sprachpräferenzen) rufen `repository.patchSettings` auf; übrige Felder bleiben auch bei konkurrierenden Schreibvorgängen erhalten. Bestehender Komplett-Reset behält Full-Replace-Verhalten.
