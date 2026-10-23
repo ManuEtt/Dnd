@@ -297,7 +297,7 @@ void main() {
       );
       final unchanged = await databaseFactoryFfi.openDatabase(databasePath);
       expect(await unchanged.getVersion(), 99);
-      await unchanged.setVersion(1);
+      await unchanged.setVersion(2);
       await unchanged.close();
       repository = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,

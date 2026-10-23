@@ -8,7 +8,7 @@ import 'campaign_repository.dart';
 
 /// SQLite holds both the current snapshot and an immutable revision journal.
 /// Narration providers never receive this object or a database handle.
-class SqliteCampaignRepository implements CampaignRepository {
+class SqliteCampaignRepository implements CampaignRepository, PendingActionStore {
   SqliteCampaignRepository._(this._database);
   final Database _database;
 
@@ -26,12 +26,18 @@ class SqliteCampaignRepository implements CampaignRepository {
     final database = await selectedFactory.openDatabase(
       databasePath,
       options: OpenDatabaseOptions(
-        version: 1,
+        version: 2,
         onConfigure: (database) async {
           await database.execute('PRAGMA foreign_keys = ON');
         },
         onDowngrade: (database, oldVersion, newVersion) async {
           throw UnsupportedDatabaseVersion(oldVersion);
+        },
+        onUpgrade: (database, oldVersion, newVersion) async {
+          if (oldVersion < 2) {
+            await _createPendingActionsTable(database);
+            await _migrateLegacyPendingActions(database);
+          }
         },
         onCreate: (database, version) async {
           await database.execute('''
@@ -73,6 +79,7 @@ CREATE TABLE settings (
   id INTEGER PRIMARY KEY CHECK (id = 1),
   snapshot TEXT NOT NULL
 )''');
+          await _createPendingActionsTable(database);
         },
       ),
     );
@@ -356,6 +363,78 @@ CREATE TABLE settings (
     await _database.delete('characters', where: 'id = ?', whereArgs: [id]);
   }
 
+  /// The outbox is stored separately from preferences. Both the checks and
+  /// writes below are serialized by SQLite, including across connections.
+  @override
+  Future<Map<String, dynamic>?> pendingActionFor(String campaignId) async {
+    final rows = await _database.query(
+      'pending_player_actions',
+      where: 'campaign_id = ?',
+      whereArgs: [campaignId],
+      limit: 1,
+    );
+    if (rows.isEmpty) return null;
+    return {
+      'campaignId': rows.single['campaign_id'],
+      'requestId': rows.single['request_id'],
+      'text': rows.single['action_text'],
+    };
+  }
+
+  @override
+  Future<void> stagePendingAction({
+    required String campaignId,
+    required String requestId,
+    required String text,
+  }) async {
+    await _database.transaction((transaction) async {
+      final existing = await transaction.query(
+        'pending_player_actions',
+        where: 'campaign_id = ? OR request_id = ?',
+        whereArgs: [campaignId, requestId],
+        limit: 1,
+      );
+      if (existing.isNotEmpty) {
+        throw StateError(
+          existing.single['campaign_id'] == campaignId
+              ? 'Zuerst die ausstehende Handlung klären.'
+              : 'Handlungskennung bereits vergeben.',
+        );
+      }
+      await transaction.insert('pending_player_actions', {
+        'campaign_id': campaignId,
+        'request_id': requestId,
+        'action_text': text,
+      });
+    });
+  }
+
+  @override
+  Future<void> removePendingAction({
+    required String campaignId,
+    required String requestId,
+    required String text,
+  }) async {
+    await _database.transaction((transaction) async {
+      final rows = await transaction.query(
+        'pending_player_actions',
+        where: 'campaign_id = ?',
+        whereArgs: [campaignId],
+        limit: 1,
+      );
+      if (rows.isEmpty) return;
+      if (rows.single['request_id'] != requestId ||
+          rows.single['action_text'] != text) {
+        throw StateError('Die ausstehende Handlung hat sich geändert.');
+      }
+      await transaction.delete(
+        'pending_player_actions',
+        where: 'campaign_id = ? AND request_id = ? AND action_text = ?',
+        whereArgs: [campaignId, requestId, text],
+      );
+    });
+  }
+
   @override
   Future<Map<String, dynamic>> loadSettings() async {
     final rows = await _database.query('settings', where: 'id = 1', limit: 1);
@@ -438,6 +517,68 @@ CREATE TABLE settings (
 
   @override
   Future<void> close() => _database.close();
+}
+
+/// SQLite schema 2 adds an independent, uniqueness-constrained outbox.
+/// Import/export schemaVersion=1 for campaign JSON is unchanged.
+Future<void> _createPendingActionsTable(DatabaseExecutor database) async {
+  await database.execute('''
+CREATE TABLE pending_player_actions (
+  campaign_id TEXT PRIMARY KEY NOT NULL,
+  request_id TEXT NOT NULL UNIQUE,
+  action_text TEXT NOT NULL
+)''');
+}
+
+/// Upgrade is one SQLite migration transaction. Never silently discard a
+/// malformed legacy intent or erase unrelated settings on failure.
+Future<void> _migrateLegacyPendingActions(DatabaseExecutor database) async {
+  final rows = await database.query('settings', where: 'id = 1', limit: 1);
+  if (rows.isEmpty) return;
+  final decoded = jsonDecode(rows.single['snapshot'] as String);
+  if (decoded is! Map) {
+    throw const FormatException('Ungültige Einstellungen in der Datenbank.');
+  }
+  final settings = Map<String, dynamic>.from(decoded);
+  final legacy = settings['pendingPlayerActionsV1'];
+  if (legacy == null) return;
+  if (legacy is! Map) {
+    throw const FormatException('Der ausstehende Handlungsstatus ist beschädigt.');
+  }
+  for (final entry in legacy.entries) {
+    final item = entry.value;
+    if (entry.key is! String || item is! Map) {
+      throw const FormatException('Ungültige ausstehende Handlung.');
+    }
+    final action = Map<String, dynamic>.from(item);
+    final campaignId = action['campaignId'];
+    final requestId = action['requestId'];
+    final text = action['text'];
+    if (campaignId is! String ||
+        campaignId != entry.key ||
+        campaignId.isEmpty ||
+        campaignId.length > 128 ||
+        requestId is! String ||
+        requestId.isEmpty ||
+        requestId.length > 128 ||
+        RegExp(r'[^A-Za-z0-9_-]').hasMatch(requestId) ||
+        text is! String ||
+        text.isEmpty ||
+        text.length > 4000) {
+      throw const FormatException('Ungültige ausstehende Handlung.');
+    }
+    await database.insert('pending_player_actions', {
+      'campaign_id': campaignId,
+      'request_id': requestId,
+      'action_text': text,
+    });
+  }
+  settings.remove('pendingPlayerActionsV1');
+  await database.update(
+    'settings',
+    {'snapshot': _canonical(settings)},
+    where: 'id = 1',
+  );
 }
 
 /// An older campaign must not erase confirmed XP from a newer hero record.
