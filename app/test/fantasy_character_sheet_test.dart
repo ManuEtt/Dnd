@@ -8,7 +8,7 @@ import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 void main() {
   for (final width in [320.0, 360.0, 400.0]) {
     testWidgets(
-      'Statistik- und Attributkarten bei ${width.toInt()} dp ohne Überlauf',
+      'Statistikkarten und separate Rettungswürfe bei ${width.toInt()} dp ohne Überlauf',
       (tester) async {
         tester.view.physicalSize = Size(width, 800);
         tester.view.devicePixelRatio = 1;
@@ -30,10 +30,9 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.text('RÜSTUNGSKLASSE'), findsOneWidget);
         expect(find.text('ÜBUNGSBONUS'), findsOneWidget);
-        // Regression: the explicit delegate is required for mainAxisExtent.
-        // Passing mainAxisExtent to GridView.count breaks flutter analyze.
-        // The sheet deliberately has separate summary, abilities and saves
-        // grids. Looking up an arbitrary GridView is ambiguous on phones.
+        // Summary tiles and the six parchment attributes remain separate.
+        // The former SECOND six-card ability grid has been removed, while
+        // the six real saving throws stay in the detailed rules tab.
         final summary = tester.widget<GridView>(
           find.byKey(const ValueKey('sheet-summary-grid')),
         );
@@ -42,21 +41,33 @@ void main() {
         expect(summaryDelegate.crossAxisCount, 2);
         expect(summaryDelegate.mainAxisExtent, greaterThanOrEqualTo(124));
         expect(tester.takeException(), isNull);
-        // Scroll the full section into view to exercise the six actual cards,
-        // not only the four summary stats above them.
+        // Only the single parchment attributes grid remains.
         await tester.scrollUntilVisible(
-          find.text('Rettungswürfe'.toUpperCase()),
-          240,
+          find.byKey(const ValueKey('sheet-parchment-abilities')),
+          220,
           scrollable: find.byType(Scrollable).first,
         );
         await tester.pumpAndSettle();
         final abilities = tester.widget<GridView>(
-          find.byKey(const ValueKey('sheet-abilities-grid')),
+          find.byKey(const ValueKey('sheet-preview-attributes-grid')),
         );
         final abilitiesDelegate =
             abilities.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
-        expect(abilitiesDelegate.crossAxisCount, 2);
-        expect(abilitiesDelegate.mainAxisExtent, greaterThanOrEqualTo(160));
+        expect(abilitiesDelegate.crossAxisCount, 3);
+        expect(find.byKey(const ValueKey('sheet-abilities-grid')), findsNothing);
+        await tester.scrollUntilVisible(
+          find.text('RETTUNGSWÜRFE'),
+          240,
+          scrollable: find.byType(Scrollable).first,
+        );
+        await tester.pumpAndSettle();
+        for (final ability in [
+          'strength', 'dexterity', 'constitution',
+          'intelligence', 'wisdom', 'charisma',
+        ]) {
+          expect(find.byKey(ValueKey('sheet-saving-throw-$ability')),
+              findsOneWidget);
+        }
         expect(tester.takeException(), isNull);
       },
     );
@@ -99,13 +110,15 @@ void main() {
       scrollable: find.byType(Scrollable).first,
     );
     await tester.pumpAndSettle();
-    final abilities = tester.widget<GridView>(
-      find.byKey(const ValueKey('sheet-abilities-grid')),
-    );
-    final delegate =
-        abilities.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
-    // 1.4x system text needs more vertical space than normal text; no clips.
-    expect(delegate.mainAxisExtent, greaterThan(200));
+    expect(find.byKey(const ValueKey('sheet-abilities-grid')), findsNothing);
+    for (final ability in [
+      'strength', 'dexterity', 'constitution',
+      'intelligence', 'wisdom', 'charisma',
+    ]) {
+      expect(find.byKey(ValueKey('sheet-saving-throw-$ability')),
+          findsOneWidget);
+    }
+    // Retained saving throw rows are readable even under enlarged system text.
     expect(tester.takeException(), isNull);
   });
   testWidgets(
