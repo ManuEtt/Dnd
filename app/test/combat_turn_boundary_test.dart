@@ -622,12 +622,17 @@ void main() {
         FantasyButtonStyle.iron,
       );
       await tester.tap(button);
-      await tester.pump();
-      await tester.runAsync(() async {
-        for (var i = 0; i < 200 && controller.busy; i++) {
-          await Future<void>.delayed(const Duration(milliseconds: 10));
+      for (var i = 0; i < 200; i++) {
+        await tester.runAsync(() =>
+            Future<void>.delayed(const Duration(milliseconds: 10)));
+        await tester.pump();
+        if (!controller.busy &&
+            find.byKey(const ValueKey('adventure-action-submitting'))
+                .evaluate()
+                .isEmpty) {
+          break;
         }
-      });
+      }
       await tester.pumpAndSettle();
       expect(controller.error, isNull);
       expect(controller.currentCampaign!.encounter!.round, 2);
