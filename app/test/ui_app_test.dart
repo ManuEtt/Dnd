@@ -117,7 +117,9 @@ void main() {
 
   testWidgets('app restores an unconfirmed player action without auto-sending',
       (tester) async {
-    final directory = await Directory.systemTemp.createTemp('outbox-widget-');
+    final directory = (await tester.runAsync(
+      () => Directory.systemTemp.createTemp('outbox-widget-'),
+    ))!;
     final repository = (await tester.runAsync(
       () => SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
@@ -173,7 +175,9 @@ void main() {
 
   testWidgets('already committed action can be acknowledged after UI restart',
       (tester) async {
-    final directory = await Directory.systemTemp.createTemp('outbox-widget-');
+    final directory = (await tester.runAsync(
+      () => Directory.systemTemp.createTemp('outbox-widget-'),
+    ))!;
     final repository = (await tester.runAsync(
       () => SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
@@ -703,7 +707,9 @@ void main() {
     (tester) async {
       // Use a fresh SQLite file: unrelated widget tests must not contribute
       // campaigns to this import-count assertion.
-      final directory = await Directory.systemTemp.createTemp('import-widget-');
+      final directory = (await tester.runAsync(
+        () => Directory.systemTemp.createTemp('import-widget-'),
+      ))!;
       final repository = (await tester.runAsync(
         () => SqliteCampaignRepository.open(
           factory: databaseFactoryFfi,
