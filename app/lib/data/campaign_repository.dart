@@ -21,6 +21,13 @@ abstract interface class CampaignRepository {
   Future<void> close();
 }
 
+/// Selective campaign deletion including the persisted selected-campaign
+/// preference. Implementations commit both changes atomically, without
+/// overwriting a newer selection made by another repository connection.
+abstract interface class AtomicCampaignDeletion {
+  Future<void> deleteCampaignAndReconcileSelection(String id);
+}
+
 /// Delete every local user data table in a single durable transaction.
 /// Implementations must leave every table unchanged if any deletion fails.
 abstract interface class AtomicUserDataReset {

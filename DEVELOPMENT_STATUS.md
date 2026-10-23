@@ -1,3 +1,12 @@
+## 23.10.2026 – Kampagnenlöschung schützt gleichzeitig gespeicherte Auswahl (CI ausstehend)
+
+- **IMPLEMENTIERT:** `AtomicCampaignDeletion` mit `SqliteCampaignRepository.deleteCampaignAndReconcileSelection` führt Löschung samt Outbox und selektivem `lastCampaignId`-Cleanup in einer SQLite-Transaktion aus. Der Controller schreibt die Auswahl bei SQLite nicht erneut, wodurch eine andere gleichzeitig gewählte Kampagne nicht überschrieben wird.
+- **TESTS ANGELEGT, NICHT LOKAL AUSGEFÜHRT:** `app/test/atomic_campaign_deletion_test.dart`: ausgewählte/nicht ausgewählte Kampagnen, parallele Auswahländerung durch getrennte SQLite-Repository-Instanzen, ausstehende Spielerhandlung, Neustart und ABORT-Trigger für Settings-Rollback.
+- **BASIS:** `main` `4061d651`; [Main-CI #39967425937](https://github.com/ManuEtt/Dnd/actions/runs/39967425937) zum Start noch nicht abgeschlossen. Frühere PRs #133–#136 nach `main` integriert; Test-PR #137 geschlossen ohne Merge. **NEUE CODE-CI AUSSTEHEND.**
+- **KOMPATIBILITÄT:** App `0.8.34+84`; DB-Schema 2; JSON-Formatversion 1. **NICHT GETESTET:** echter Android-Geräte-/Migrationspfad, produktive Signierung. **NÄCHSTES PAKET:** GitHub-CI auswerten, Fehler beheben; danach reale Altgerät-/Backup-Migration abnehmen.
+
+---
+
 ## 23.10.2026 – Vollständigen Spielstand-Reset atomar ausführen (Code-CI erfolgreich)
 
 - **IMPLEMENTIERT:** `AtomicUserDataReset` im CampaignRepository-Kontext; SQLite `deleteAllUserData()` löscht sechs lokale Nutzerdatentabellen in einer Datenbanktransaktion. Controller nutzt diesen Pfad und setzt `currentCampaign` erst nach erfolgreichem Commit auf null; Legacy-/Testimplementierungen behalten das bisherige Verhalten.

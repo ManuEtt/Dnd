@@ -956,11 +956,16 @@ class GameController extends ChangeNotifier {
   });
 
   Future<void> deleteCampaign(String id) => _run(() async {
-    await repository.deleteCampaign(id);
-    if (currentCampaign?.id == id) {
-      currentCampaign = null;
-      await _remember(null);
+    if (repository case AtomicCampaignDeletion store) {
+      await store.deleteCampaignAndReconcileSelection(id);
+    } else {
+      // Compatibility path for legacy/test repositories without transactions.
+      await repository.deleteCampaign(id);
+      if (currentCampaign?.id == id) {
+        await _remember(null);
+      }
     }
+    if (currentCampaign?.id == id) currentCampaign = null;
     await _reload();
   });
 

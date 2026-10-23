@@ -13,7 +13,8 @@ class SqliteCampaignRepository
         CampaignRepository,
         PendingActionStore,
         AtomicSettingsStore,
-        AtomicUserDataReset {
+        AtomicUserDataReset,
+        AtomicCampaignDeletion {
   SqliteCampaignRepository._(this._database);
   final Database _database;
 
@@ -287,13 +288,37 @@ CREATE TABLE settings (
   }
 
   @override
-  Future<void> deleteCampaign(String id) async {
+  Future<void> deleteCampaign(String id) =>
+      deleteCampaignAndReconcileSelection(id);
+
+  /// The selected campaign is a foreign reference in settings JSON, not an
+  /// SQLite foreign key. Keep its cleanup in the SAME transaction as deleting
+  /// the campaign and its pending command. A concurrently selected different
+  /// campaign must never be cleared.
+  @override
+  Future<void> deleteCampaignAndReconcileSelection(String id) async {
     await _database.transaction((transaction) async {
       await transaction.delete('campaigns', where: 'id = ?', whereArgs: [id]);
       await transaction.delete(
         'pending_player_actions',
         where: 'campaign_id = ?',
         whereArgs: [id],
+      );
+      final rows = await transaction.query(
+        'settings',
+        where: 'id = 1',
+        limit: 1,
+      );
+      if (rows.isEmpty) return;
+      final settings = Map<String, dynamic>.from(
+        jsonDecode(rows.single['snapshot'] as String) as Map,
+      );
+      if (settings['lastCampaignId'] != id) return;
+      settings['lastCampaignId'] = null;
+      await transaction.update(
+        'settings',
+        {'snapshot': _canonical(settings)},
+        where: 'id = 1',
       );
     });
   }
