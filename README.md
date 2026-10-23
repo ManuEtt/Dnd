@@ -2,7 +2,19 @@
 
 **Deutschsprachige Android-Fantasy-Rollenspiel-App mit Soloabenteuern, Charakterverwaltung, D&D-Regelunterstützung und optionalem KI-Erzähler.**
 
-> **Projektstatus (20. Oktober 2026):** Aktive **Android-Alpha**, in Entwicklung. Im Flutter-Quellprojekt steht **Version `0.8.21+71`** (Version 0.8.21, Build 71); verbindlich ist immer [`app/pubspec.yaml`](app/pubspec.yaml). Diese Quellcode-Version bedeutet **nicht**, dass eine identisch geprüfte oder veröffentlichte APK bereits auf jedem Gerät installiert ist. Das vollständige D&D-Regelwerk ist **nicht** implementiert.
+> **Projektstatus (23. Oktober 2026):** Aktive **Android-Alpha**, in Entwicklung. Die aktuelle Quellversion ist **`0.8.30+80`** gemäß [`app/pubspec.yaml`](app/pubspec.yaml). Verifizierter `main`-Stand bei dieser Aktualisierung: [`b1fa9c67`](https://github.com/ManuEtt/Dnd/commit/b1fa9c67b2ee0eec9571c2bdf25e52a8ec8349d9), [vollständig erfolgreicher GitHub-Actions-Lauf #39932399488](https://github.com/ManuEtt/Dnd/actions/runs/39932399488) einschließlich Flutter-/Backend-Tests, nativer Android-Tests, Debug- und Alpha-APK-Builds. **Weder eine reale Android-Geräteabnahme noch das vollständige SRD-5.2.1-Regelwerk sind damit belegt.** Ältere datierte Abschnitte weiter unten bleiben als Entwicklungshistorie erhalten.
+
+## Aktueller Stand und autonome Fortsetzung (23.10.2026)
+
+**Neuer Einstieg für Codex:** [`docs/CODEX_CONTINUATION_PROMPT.md`](docs/CODEX_CONTINUATION_PROMPT.md) ist die aktuelle, direkt verwendbare Entwicklungsanweisung. Sie startet mit einer neuen Git-/CI-Bestandsaufnahme, wählt **ein** überprüfbares Arbeitspaket, setzt es einschließlich Regel-/Story-/UI-/Android-Tests um und aktualisiert am Zyklusende **Checkpoint und README**. Der ältere [Master-Prompt](docs/CODEX_MASTER_PROMPT.md) beschreibt historische Langfristziele; tatsächliche GitHub-Fakten dürfen daraus nicht ungeprüft übernommen werden.
+
+**Lebender Übergabe-Checkpoint:** [`docs/CODEX_CHECKPOINT.md`](docs/CODEX_CHECKPOINT.md). Darin stehen der letzte beobachtete Main-HEAD und CI-Nachweis, abgeschlossene Funktionen, ausdrücklich nicht getestete Teile, Risiken, Blocker und der **konkrete nächste Entwicklungsschritt**. Codex muss diesen Checkpoint nach jedem aktiven Entwicklungszyklus aktualisieren. [`CHECKPOINT.md`](CHECKPOINT.md) bleibt als ältere technische Entwicklungschronik erhalten. Ein Checkpoint ist **kein** Ersatz für ein tatsächliches Quell-ZIP oder eine erfolgreiche APK.
+
+**Zuletzt integrierte Stabilisierung:** PRs [#128](https://github.com/ManuEtt/Dnd/pull/128)–[#132](https://github.com/ManuEtt/Dnd/pull/132) ergänzen kontextgeprüfte Schnellaktionen, idempotente Handlungskennungen, das dauerhafte Wiederaufnehmen ausstehender Aktionen, UI-/SQLite-Regressionstests und den Abgleich paralleler Bestätigungen. Ein verloren gegangenes Spieler-Action-Acknowledgement soll **keine zweite bestätigte Regelaktion** auslösen. Ein externer KI-Provider ist damit **nicht** kosten-idempotent; vor Commit erfolgte Anfrage kann bei bewusster Wiederholung erneut kosten.
+
+**Empfohlenes nächstes Arbeitsziel:** die bisher im Settings-JSON liegende Outbox bei konkurrierenden Einstellungen-Schreibern transaktional absichern, inklusive Alt-SQLite-Migration, Rollback-/Neustart-Tests und grünem Android-CI-Nachweis. Stellt Codex beim Neustart wichtigere rote CI-Fehler fest, haben diese Vorrang. Das vollständige D&D-SRD 5.2.1, universelles NPC-Langzeitgedächtnis, Geräteabnahme und produktive Signierung bleiben offene Arbeit.
+
+**Ausführung:** Ein Codex-Agent arbeitet nur innerhalb einer gestarteten Sitzung mit tatsächlichem Repository-Zugriff selbstständig. Dieses Repository führt bewusst **keine unbeaufsichtigte kostenpflichtige Codex-Entwicklung in GitHub Actions** aus. Die Actions dienen Builds, Tests und validierten ZIP-/APK-Artefakten. Für rein dokumentarische PRs startet die normale Android-CI wegen ihrer Pfadfilter nicht automatisch.
 
 ## GitHub-Branch-Bereinigung (20.10.2026)
 
@@ -20,6 +32,7 @@ Gegner können nach ausdrücklicher Auswahl im Kampfmenü **1 bis 4 Angriffe je 
 
 ## Inhaltsverzeichnis
 
+- [Aktueller Stand und autonome Fortsetzung](#aktueller-stand-und-autonome-fortsetzung-23102026)
 - [Funktionsstand](#funktionsstand)
 - [Klassenaufstieg und Erfahrungspunkte](#klassenaufstieg-und-erfahrungspunkte)
 - [Technik und Projektstruktur](#technik-und-projektstruktur)
@@ -148,6 +161,10 @@ Auf Linux benötigen die SQLite-Tests gegebenenfalls `libsqlite3-dev`. Weitere D
 
 ## Build- und Teststand
 
+**Aktuelle CI-Abnahme auf `main` (23.10.2026):** [Android-Alpha GitHub Actions #39932399488](https://github.com/ManuEtt/Dnd/actions/runs/39932399488) für [Commit `b1fa9c67b2ee0eec9571c2bdf25e52a8ec8349d9`](https://github.com/ManuEtt/Dnd/commit/b1fa9c67b2ee0eec9571c2bdf25e52a8ec8349d9) **completed / success**. Projekt-/Python-Prüfungen, Backend-Typen/Build/Tests, Dart-Format, Flutter-Analyse und -Tests, Android-Debug-APK, native Android-Unit-Tests, ARM64/ARM/x64-Alpha-APKs und Release-/Quell-ZIP-Artefakt-Schritte wurden erfolgreich ausgeführt. Ohne separaten Gerätetest keine Gerätefreigabe.
+
+### Historische CI-Einträge (Stand 20.10.2026)
+
 **Letzter erfolgreicher Code-CI-Lauf (0.8.20+70):** [#39406260656](https://github.com/ManuEtt/Dnd/actions/runs/39406260656) auf finalem PR-Head `011c53826956e609994930c65221bca9c33d9985` und Merge `ff1b043652e46a99c4ac3038698d047fb0d3f380`. Flutter, Backend, Python, Android-Debug, native Unit-Tests und Alpha-APKs bestanden. Gerätetest offen. Diese zusätzliche Statusaktualisierung enthält nur Markdown.
 
 
@@ -197,4 +214,4 @@ Das Projekt verwendet ausgewählte Inhalte des **System Reference Document 5.2.1
 
 ---
 
-*Diese README beschreibt den nachweisbaren Stand einschließlich PR #40 auf `main` am 20.10.2026. Die Ergebnisse beziehen sich auf den verifizierten Code-HEAD des PR; für weitere Änderungen sind GitHub Actions und Quellcode erneut zu prüfen.*
+*Aktueller Überblick zuletzt am 23.10.2026 anhand von Main-Commit `b1fa9c67` und CI #39932399488 überarbeitet. Historische Meilensteine weiter unten sind datierte Nachweise, keine Beschreibung des aktuellen HEAD; bei Folgesitzungen neu verifizieren.*
