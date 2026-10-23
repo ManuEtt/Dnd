@@ -185,9 +185,8 @@ class GameController extends ChangeNotifier {
     await _reload();
   }
 
-  /// A caller can reuse [requestId] after a lost acknowledgement or app
-  /// restart. The confirmed action is recognized from the persisted event
-  /// journal, not an in-memory cache. Null retains the legacy input contract.
+  /// Stable request IDs let callers retry after a lost acknowledgement.
+  /// A matching confirmed event is never executed or narrated again.
   Future<void> sendAction(String text, {String? requestId}) => _run(() async {
     final campaign = currentCampaign;
     if (campaign == null) {
@@ -199,8 +198,71 @@ class GameController extends ChangeNotifier {
       );
     }
     if (requestId != null) {
-      if (!RegExp(r'^[A-Za-z0-9_-]{1,128}
+      if (requestId.isEmpty ||
+          requestId.length > 128 ||
+          RegExp(r'[^A-Za-z0-9_-]').hasMatch(requestId)) {
+        throw const FormatException('Ungültige Handlungskennung.');
+      }
+      // The persisted journal is checked before rolls or provider requests.
+      final saved = await repository.getCampaign(campaign.id);
+      if (saved == null) {
+        throw const FormatException('Der Spielstand wurde nicht gefunden.');
+      }
+      for (final event in saved.events) {
+        if (event.payload['actionRequestId'] != requestId) continue;
+        if (event.payload['actionRequestText'] != text.trim()) {
+          throw const FormatException(
+            'Diese Handlungskennung gehört bereits zu einem anderen Text.',
+          );
+        }
+        currentCampaign = saved;
+        await _reload();
+        return; // Previously confirmed: no second application of rules.
+      }
+      if (saved.revision != campaign.revision) {
+        throw const CampaignConflictException(
+          'Der Spielstand wurde inzwischen geändert. Bitte neu laden.',
+        );
+      }
+    }
+    final update = await _withNarration(engine.act(campaign, text), text);
+    await _commit(requestId == null
+        ? update
+        : _withActionReceipt(update, requestId, text.trim()));
+  });
 
+  /// Attaches a durable receipt to the first confirmed event, without an
+  /// additional event or a migration of the existing SQLite schema.
+  GameUpdate _withActionReceipt(
+    GameUpdate update,
+    String requestId,
+    String action,
+  ) {
+    if (update.events.isEmpty) {
+      throw StateError('Die Handlung besitzt kein bestätigbares Ereignis.');
+    }
+    final original = update.events.first;
+    final receipt = GameEvent(
+      id: original.id,
+      campaignId: original.campaignId,
+      sessionId: original.sessionId,
+      timestamp: original.timestamp,
+      type: original.type,
+      entities: original.entities,
+      payload: {
+        ...original.payload,
+        'actionRequestId': requestId,
+        'actionRequestText': action,
+      },
+    );
+    return GameUpdate(
+      campaign: update.campaign.copyWith(events: [
+        for (final event in update.campaign.events)
+          event.id == original.id ? receipt : event,
+      ]),
+      events: [receipt, ...update.events.skip(1)],
+    );
+  }
   Future<GameUpdate> _withNarration(GameUpdate update, String action) async {
     // Mechanical results and roll requests always use the authoritative local
     // text. External narration can enrich only a validated narrative turn.
