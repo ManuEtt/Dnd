@@ -2,9 +2,12 @@
 
 **Deutschsprachige Android-Fantasy-Rollenspiel-App mit Soloabenteuern, Charakterverwaltung, D&D-Regelunterstützung und optionalem KI-Erzähler.**
 
-> **Projektstatus (23. Oktober 2026):** Aktive deutschsprachige Android-Alpha. `main` bei `2dac48e0` nach den zusammengeführten PRs #140/#141, App-Version `0.8.34+84`; neue Entwicklungsbranch-Version `0.8.35+85` benötigt noch eigene vollständige CI. Es liegen weder ein echter Android-Gerätetest noch eine vollständige SRD-5.2.1-Regelumsetzung vor.
+> **Projektstatus (23. Oktober 2026):** Aktive Android-Alpha. Der Hauptbranch steht zu Beginn dieses Pakets auf `f71c287e` und Version `0.8.35+85`; PR #142 ist integriert, seine Main-CI muss gesondert beobachtet werden. Neuer Sending-Regelbranch `0.8.36+86` wird geprüft und ist noch nicht in `main`. Kein echter Android-Gerätetest und keine vollständige SRD-5.2.1-Regelabdeckung nachgewiesen.
 
 ## Aktueller Stand und autonome Fortsetzung (23.10.2026)
+
+> **Entwicklungszyklus 9 – SRD Sending (23.10.2026, Version `0.8.36+86`):** Der neue Regeldienst validiert den Zauber `Sending` mit bestätigtem Empfänger (persönlich bekannt oder von einem Zeugen beschrieben), höchstens 25 Wörtern und gesondert bestätigter Ebenenlage. Bei bestätigten verschiedenen Ebenen verwendet ein bereits vorhandener W100-Wert genau die 5-%-Fehlschlagsgrenze; bei unbestätigten Voraussetzungen bleibt das Ergebnis ungeklärt. Eine bekannte achtstündige Empfängersperre wird berücksichtigt, aber nicht automatisch zeitlich nachverfolgt. Dies ist **keine automatische Zauberausführung, Nachricht, Antwort oder Slot-Abbuchung**. Tests und technische Grenzen unter [Sending-Regelprüfung](docs/SRD_SENDING_MESSAGE_RULES_20261023.md). **Die neue CI und Realgerät-Abnahme stehen noch aus**. `main`-Ausgangsversion `0.8.35+85`, Commit `f71c287e`.
+
 
 > **Entwicklungszyklus 8 – SRD 5.2.1 / Reichweite Sicht (23.10.2026, Version `0.8.35+85`):** Die Zauber-Zielprüfung verarbeitet `Sight` jetzt nur bei ausdrücklich bestätigter Sicht **und** freiem Weg. Ein freier Kartenstrahl allein erteilt keine Sichtbestätigung; ein voller Blocker oder fehlende Kartenaufnahme verhindert die Prüfung. `Unlimited` und `Special` bleiben gesperrt, ebenso die tatsächliche 10-Minuten-Wirkung von `Mirage Arcane`. Regressionstests für alle 339 katalogisierten Reichweiten, unbestätigte Sicht, Hindernisse und Richtungsangaben ergänzt. **Die neue CI und eine echte Geräteabnahme stehen noch aus**; Quelle und Grenzen unter [SRD Sight Range Preflight](docs/SRD_SIGHT_RANGE_PREFLIGHT_20261023.md). `main` steht auf `2dac48e0` mit gemergten PRs #140/#141; die App-Version des Hauptbranches bleibt `0.8.34+84`.
 
