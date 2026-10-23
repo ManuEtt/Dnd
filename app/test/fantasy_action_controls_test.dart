@@ -11,6 +11,8 @@ void main() {
     WidgetTester tester, {
     bool busy = false,
     bool listening = false,
+    bool attackEnabled = true,
+    String? attackUnavailableReason,
     VoidCallback? speech,
     VoidCallback? inspect,
     VoidCallback? attack,
@@ -24,6 +26,8 @@ void main() {
             child: FantasyPinnedActionBar(
               busy: busy,
               listening: listening,
+              attackEnabled: attackEnabled,
+              attackUnavailableReason: attackUnavailableReason,
               onSpeech: speech ?? () {},
               onInspect: inspect ?? () {},
               onAttack: attack ?? () {},
@@ -105,6 +109,38 @@ void main() {
     await mouse.removePointer();
     await tester.pumpAndSettle();
     expect(stateOf(tester, 'inspect'), FantasyButtonState.normal);
+  });
+
+  testWidgets('Angriff ist ohne bestätigten Kampf deaktiviert und begründet', (
+    tester,
+  ) async {
+    var attacks = 0;
+    var inspections = 0;
+    await mountActions(
+      tester,
+      attackEnabled: false,
+      attackUnavailableReason: 'Kein bestätigter Gegner.',
+      attack: () => attacks++,
+      inspect: () => inspections++,
+    );
+
+    final attack = find.byKey(const ValueKey('adventure-shortcut-attack'));
+    expect(stateOf(tester, 'attack'), FantasyButtonState.disabled);
+    expect(
+      tester.widget<FantasyShortcutTile>(attack).onTap,
+      isNull,
+    );
+    final tooltip = find.ancestor(
+      of: attack,
+      matching: find.byType(Tooltip),
+    );
+    expect(tester.widget<Tooltip>(tooltip).message, 'Kein bestätigter Gegner.');
+    await tester.tap(attack);
+    await tester.tap(find.byKey(const ValueKey('adventure-shortcut-inspect')));
+    await tester.pumpAndSettle();
+    expect(attacks, 0);
+    expect(inspections, 1);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('Während Busy sind alle vier Aktionen deaktiviert', (
