@@ -117,7 +117,7 @@ class _CharacterSheetPageState extends State<CharacterSheetPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             for (final entry in [
-              (0, 'Attribute und Rettungswürfe'),
+              (0, 'Regeln und Rettungswürfe'),
               (1, 'Zustände und Merkmale'),
               (2, 'Verteidigung und Trefferwürfel'),
             ])
@@ -603,7 +603,7 @@ class _SectionNavigation extends StatelessWidget {
   final ValueChanged<int> onSelected;
   @override
   Widget build(BuildContext context) {
-    const labels = ['Attribute', 'Zustände', 'Verteidigung'];
+    const labels = ['Regeln', 'Zustände', 'Verteidigung'];
     const icons = [
       Icons.auto_awesome_outlined,
       Icons.healing_outlined,
@@ -854,40 +854,6 @@ class _AbilitiesSection extends StatelessWidget {
           ),
           const SizedBox(height: 22),
         ],
-        const _OrnateHeading('Attribute', icon: Icons.auto_awesome),
-        const SizedBox(height: 12),
-        LayoutBuilder(
-          builder: (context, constraints) {
-            final columns = constraints.maxWidth >= 560 ? 3 : 2;
-            // A fixed childAspectRatio shrinks the six ability cards to roughly
-            // 112 dp on narrow screens. Icon, label, modifier and score need
-            // independent vertical space (especially with large system text).
-            // Size the rows from the active text scaler, not the tile width.
-            final scaler = MediaQuery.textScalerOf(context);
-            final abilityHeight = 80.0 + scaler.scale(90);
-            return GridView(
-              key: const ValueKey('sheet-abilities-grid'),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: columns,
-                mainAxisExtent: abilityHeight,
-                mainAxisSpacing: 11,
-                crossAxisSpacing: 11,
-              ),
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                for (final ability in _abilities)
-                  _AbilityCard(
-                    label: ability.label,
-                    score: hero.abilities[ability.id],
-                    icon: ability.icon,
-                    color: ability.color,
-                  ),
-              ],
-            );
-          },
-        ),
-        const SizedBox(height: 24),
         const _OrnateHeading('Rettungswürfe', icon: Icons.shield_outlined),
         const SizedBox(height: 10),
         LayoutBuilder(
@@ -943,79 +909,6 @@ class _AbilitiesSection extends StatelessWidget {
             ],
           ),
       ],
-    );
-  }
-}
-
-class _AbilityCard extends StatelessWidget {
-  const _AbilityCard({
-    required this.label,
-    required this.score,
-    required this.icon,
-    required this.color,
-  });
-  final String label;
-  final int? score;
-  final IconData icon;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    final modifier = _modifier(score);
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: color.withValues(alpha: .7)),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [color.withValues(alpha: .26), _panel, _night],
-        ),
-      ),
-      padding: const EdgeInsets.all(10),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Icon(icon, color: color, size: 25),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              label.toUpperCase(),
-              maxLines: 1,
-              style: const TextStyle(
-                fontSize: 11,
-                color: _ivory,
-                fontWeight: FontWeight.w700,
-                letterSpacing: .6,
-              ),
-            ),
-          ),
-          Text(
-            modifier == null ? '–' : _signed(modifier),
-            style: const TextStyle(
-              fontSize: 31,
-              color: _ivory,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: color, width: 1.5),
-              color: _night,
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            child: Text(
-              score?.toString() ?? '–',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: _ivory,
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
