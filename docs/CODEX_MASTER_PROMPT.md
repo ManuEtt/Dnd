@@ -1,4 +1,6 @@
 # ULTIMATIVER MASTER-PROMPT FÜR CODEX
+
+> **Aktueller Codex-Einstieg (23.10.2026):** Bitte für neue Sitzungen stattdessen [CODEX_CONTINUATION_PROMPT.md](CODEX_CONTINUATION_PROMPT.md) lesen und den [lebenden Checkpoint](CODEX_CHECKPOINT.md) fortschreiben. Dieser ältere Master-Prompt bleibt als langfristige Produktvision erhalten; referenzierte frühe PRs, Versionen und Testzustände (z. B. PR #6) sind **historisch**. Neuen Git-/CI-Stand vor jeder Entwicklung prüfen.
 ## Würfelraunen – autonome, regelkonforme Weiterentwicklung der D&D-Spielleiter-App
 
 > **Diesen gesamten Text als neuen Auftrag an Codex übergeben.** Er ist ein Arbeitsauftrag, keine bloße Analyse. Setze die Aufgaben soweit wie möglich im tatsächlichen Repository um. Arbeite iterativ, überprüfbar und ohne unnötige Rückfragen. Eine Ausführung setzt eine laufende Codex-Sitzung bzw. eine ausdrücklich eingerichtete Ausführungsumgebung voraus; behaupte keine unabhängige Hintergrundarbeit.
