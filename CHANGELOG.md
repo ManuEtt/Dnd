@@ -2,6 +2,7 @@
 
 - Campagneauswahl, Narrator-Verbindung und Sprachpräferenzen nutzen statt veralteter kompletter Settings-Snapshots transaktionale Teilupdates in SQLite.
 - Gleichzeitige Änderungen unabhängiger Schlüssel werden nicht mehr durch den zuletzt schreibenden alten Snapshot verworfen. Explizite Löschung einzelner Felder wird unterstützt; `saveSettings({})` für absichtliches Datenlöschen bleibt bestehen.
+- Korrektur: Die eigenständige Outbox wird beim gezielten Löschen einer Kampagne beziehungsweise beim vollständigen Datenreset ebenfalls bereinigt; andere Kampagnen bleiben erhalten.
 - Regressionstests für konkurrierende DB-Verbindungen, beschädigte Patch-Eingaben/Rollback, Outbox-Isolation und Laden der Kampagne nach Neustart. Bestehende Datenbankschema-Version 2 und Kampagnen-Exportversion 1 bleiben unverändert. GitHub-CI des neuen Branches und reale Geräteabnahme noch offen.
 
 ---
