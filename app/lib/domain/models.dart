@@ -12,6 +12,8 @@ import 'class_resource_rules.dart';
 import 'skill_check_passives.dart';
 import 'cover_rules.dart';
 import 'enemy_force_defense.dart';
+import 'sneak_attack_ally_rules.dart';
+import 'rules_engine.dart';
 
 /// Versioned, provider-independent game data. Unknown historical values stay null.
 const abilityNames = <String>[
@@ -1176,6 +1178,7 @@ class PendingRoll {
     this.minimumNatural = 0,
     this.advantage = false,
     this.disadvantage = false,
+    this.sneakAttackAlly,
   });
   final String id, type, targetId, targetName, weaponId, expression;
   final int modifier, difficulty;
@@ -1184,6 +1187,7 @@ class PendingRoll {
   /// The verified skill check's lower natural d20 limit, 0 or 10.
   final int minimumNatural;
   final bool advantage, disadvantage;
+  final SneakAttackAllyConfirmation? sneakAttackAlly;
   Map<String, dynamic> toJson() => {
     'id': id,
     'type': type,
@@ -1198,6 +1202,7 @@ class PendingRoll {
     if (minimumNatural > 0) 'minimumNatural': minimumNatural,
     if (advantage) 'advantage': true,
     if (disadvantage) 'disadvantage': true,
+    if (sneakAttackAlly != null) 'sneakAttackAlly': sneakAttackAlly!.toJson(),
   };
   factory PendingRoll.fromJson(Map<String, dynamic> j) {
     final type = _string(j['type'], 'Probeart');
@@ -1236,6 +1241,11 @@ class PendingRoll {
       fallback: 0,
       max: 1,
     );
+    if (j['sneakAttackAlly'] != null && type != 'attack') {
+      throw const FormatException(
+        'Verbündetenbestätigung nur für Hauptwaffenangriffe.',
+      );
+    }
     if ((type != 'death' && deathVersion != 0) ||
         (type == 'death' &&
             (_bool(j['advantage'], 'Vorteil') ||
@@ -1243,6 +1253,11 @@ class PendingRoll {
       throw const FormatException('Unzulässige Todesrettungsanweisung.');
     }
     return PendingRoll(
+      sneakAttackAlly: j['sneakAttackAlly'] == null
+          ? null
+          : SneakAttackAllyConfirmation.fromJson(
+              _map(j['sneakAttackAlly'], 'Verbündetenbestätigung'),
+            ),
       deathSaveRulesVersion: deathVersion,
       minimumNatural: minimumNatural,
       id: _string(j['id'], 'Probe-ID'),
@@ -2320,10 +2335,7 @@ class Campaign {
               : 'strength';
           return modifier(ability) + prof + exhaustion;
         }(),
-        'attack' =>
-          modifier(hero.weaponAbility) +
-              (hero.weaponProficient ? prof : 0) +
-              exhaustion,
+        'attack' => RulesEngine.attackBonus(hero),
         'perception' =>
           modifier('wisdom') + skillBonus('Wahrnehmung') + exhaustion,
         'preparedCheck' => () {
@@ -2459,6 +2471,12 @@ class Campaign {
       if (pending.type == 'escape' && encounter == null) {
         throw const FormatException('Fluchtprobe ohne Kampf.');
       }
+      SneakAttackAllyRules.validate(
+        campaignId: id,
+        hero: hero,
+        pending: pending,
+        fight: encounter,
+      );
       if (pending.type == 'death' &&
           (hero.hitPoints != 0 ||
               hero.isDead ||

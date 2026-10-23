@@ -21,6 +21,7 @@ import 'class_feature_resources.dart';
 import 'class_resource_rules.dart';
 import 'skill_check_passives.dart';
 import 'class_combat_features.dart';
+import 'sneak_attack_ally_rules.dart';
 import 'combat_class_actions.dart';
 import 'two_weapon_fighting_rules.dart';
 import 'monk_focus_actions.dart';
@@ -55,6 +56,73 @@ class GameEngine {
   int _sequence = 0;
   String _id(String prefix) =>
       '$prefix-${_clock().microsecondsSinceEpoch}-${_sequence++}';
+
+  GameUpdate confirmSneakAttackAlly(
+    Campaign campaign, {
+    required String rollId,
+    required String allyName,
+    required bool withinFiveFeetOfTargetConfirmed,
+    required bool notIncapacitatedConfirmed,
+  }) {
+    if (!SneakAttackAllyRules.canPrepare(campaign) ||
+        campaign.pendingRoll!.id != rollId) {
+      throw const FormatException(
+        'Zuerst einen zulässigen eigenen Hauptwaffenangriff anfordern.',
+      );
+    }
+    final pending = campaign.pendingRoll!;
+    final confirmation = SneakAttackAllyConfirmation.fromJson(
+      SneakAttackAllyConfirmation(
+        campaignId: campaign.id,
+        rollId: rollId,
+        targetId: pending.targetId,
+        allyName: allyName.trim(),
+        withinFiveFeetOfTargetConfirmed: withinFiveFeetOfTargetConfirmed,
+        notIncapacitatedConfirmed: notIncapacitatedConfirmed,
+      ).toJson(),
+    );
+    final prepared = PendingRoll.fromJson({
+      ...pending.toJson(),
+      'sneakAttackAlly': confirmation.toJson(),
+    });
+    SneakAttackAllyRules.validate(
+      campaignId: campaign.id,
+      hero: campaign.hero,
+      pending: prepared,
+      fight: campaign.encounter,
+    );
+    return _commit(
+      campaign,
+      campaign.copyWith(pendingRoll: prepared),
+      '${confirmation.allyName}: Nähe zum Ziel und fehlende Handlungsunfähigkeit für diesen Angriff bestätigt. '
+      'Hinterhältiger Angriff wird erst bei einem zulässigen Treffer gewürfelt.',
+      type: 'combat.sneakAttackAllyConfirmed',
+      payload: confirmation.toJson(),
+    );
+  }
+
+  GameUpdate clearSneakAttackAlly(Campaign campaign, {required String rollId}) {
+    final pending = campaign.pendingRoll;
+    if (pending == null ||
+        pending.id != rollId ||
+        pending.sneakAttackAlly == null) {
+      throw const FormatException(
+        'Diese Angriffsbestätigung ist nicht mehr vorhanden.',
+      );
+    }
+    return _commit(
+      campaign,
+      campaign.copyWith(
+        pendingRoll: PendingRoll.fromJson({
+          ...pending.toJson(),
+          'sneakAttackAlly': null,
+        }),
+      ),
+      'Verbündetenbestätigung für diesen Angriff entfernt.',
+      type: 'combat.sneakAttackAllyCleared',
+      payload: {'rollId': rollId, 'targetId': pending.targetId},
+    );
+  }
 
   /// Story-state mutations are owned by a separate story module.
   /// Existing GameEngine callers and persistence formats remain unchanged.
@@ -3816,7 +3884,9 @@ class GameEngine {
   }) {
     final pending = campaign.pendingRoll;
     if (pending == null) throw StateError('Es ist keine Probe offen.');
-    if (pending.type == 'death') Campaign.fromJson(campaign.toJson());
+    if (pending.type == 'death' || pending.sneakAttackAlly != null) {
+      Campaign.fromJson(campaign.toJson());
+    }
     final result = dice.check(
       modifier: pending.modifier,
       natural: natural,
@@ -3975,7 +4045,11 @@ class GameEngine {
           next.hero,
           hasAdvantage: pending.advantage,
           hasDisadvantage: pending.disadvantage,
-          adjacentConsciousAlly: false, // No confirmed ally positioning yet.
+          adjacentConsciousAlly: pending.sneakAttackAlly != null,
+          allyWithinFiveFeetOfTargetConfirmed:
+              pending.sneakAttackAlly?.withinFiveFeetOfTargetConfirmed ?? false,
+          allyNotIncapacitatedConfirmed:
+              pending.sneakAttackAlly?.notIncapacitatedConfirmed ?? false,
           alreadyUsedThisTurn: foe.sneakAttackUsedThisTurn,
         );
         final sneakRoll = sneakDice > 0
@@ -3988,6 +4062,9 @@ class GameEngine {
         final damage = weaponDamage + rageBonus + (sneakRoll?.total ?? 0);
         if (rageBonus > 0) payload['rageDamageBonus'] = rageBonus;
         if (sneakRoll != null) payload['sneakAttackRoll'] = sneakRoll.toJson();
+        if (pending.sneakAttackAlly != null) {
+          payload['sneakAttackAlly'] = pending.sneakAttackAlly!.toJson();
+        }
         final hp = RulesEngine.remainingHitPoints(
           hitPoints: foe.enemyHitPoints,
           damage: damage,

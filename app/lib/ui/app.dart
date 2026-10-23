@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../domain/models.dart';
+import '../domain/sneak_attack_ally_rules.dart';
 import '../data/srd_spell_catalog_loader.dart';
 import '../domain/campaign_experience.dart';
 import '../domain/rabenwacht_campaign.dart';
@@ -26,6 +27,7 @@ import 'backup_dialogs.dart';
 import 'character_editor.dart';
 import 'character_effect_dialog.dart';
 import 'condition_effect_dialog.dart';
+import 'sneak_attack_ally_dialog.dart';
 import 'confirmed_spell_effect_dialog.dart';
 import 'hero_shield_reaction_dialog.dart';
 import '../domain/hero_shield_reaction_rules.dart';
@@ -1286,6 +1288,52 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previousMessageId);
   }
 
+  Future<void> _confirmSneakAttackAlly() async {
+    final campaign = widget.controller.currentCampaign;
+    if (campaign == null ||
+        !_canInteract ||
+        !SneakAttackAllyRules.canPrepare(campaign)) {
+      return;
+    }
+    final pending = campaign.pendingRoll!;
+    final choice = await showDialog<SneakAttackAllyChoice>(
+      context: context,
+      builder: (_) => SneakAttackAllyDialog(
+        targetName: pending.targetName.isNotEmpty
+            ? pending.targetName
+            : campaign.encounter!.enemyName,
+      ),
+    );
+    if (choice == null || !mounted) return;
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    await widget.controller.confirmSneakAttackAlly(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      rollId: pending.id,
+      allyName: choice.allyName,
+      withinFiveFeetOfTargetConfirmed: choice.withinFiveFeetOfTargetConfirmed,
+      notIncapacitatedConfirmed: choice.notIncapacitatedConfirmed,
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
+  Future<void> _clearSneakAttackAlly() async {
+    final campaign = widget.controller.currentCampaign;
+    final pending = campaign?.pendingRoll;
+    if (campaign == null || pending?.sneakAttackAlly == null || !_canInteract) {
+      return;
+    }
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    await widget.controller.clearSneakAttackAlly(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      rollId: pending!.id,
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
   Future<void> _confirmCharacterEffect() async {
     final campaign = widget.controller.currentCampaign;
     if (campaign == null || widget.controller.busy) return;
@@ -2534,6 +2582,47 @@ class _AdventurePageState extends State<_AdventurePage> {
                                   '${pending['label'] ?? pending['type'] ?? 'Probe'} · '
                                   'Modifikator ${_signed(pending['modifier'] ?? pending['bonus'] ?? 0)}',
                                 ),
+                                if (campaign.pendingRoll!.type == 'attack' &&
+                                    campaign.pendingRoll!.sneakAttackAlly !=
+                                        null) ...[
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    'Bestätigter Verbündeter: ${campaign.pendingRoll!.sneakAttackAlly!.allyName}',
+                                    key: const ValueKey(
+                                      'adventure-sneak-attack-ally-source',
+                                    ),
+                                  ),
+                                  const Text(
+                                    'Innerhalb von 5 Fuß des Ziels und nicht handlungsunfähig bestätigt. Gilt nur für diesen Angriff.',
+                                  ),
+                                  FantasyTextButton(
+                                    key: const ValueKey(
+                                      'adventure-clear-sneak-attack-ally',
+                                    ),
+                                    label: 'Verbündetenbestätigung entfernen',
+                                    icon: Icons.close,
+                                    style: FantasyButtonStyle.iron,
+                                    onPressed: _canInteract
+                                        ? _clearSneakAttackAlly
+                                        : null,
+                                  ),
+                                ] else if (SneakAttackAllyRules.canPrepare(
+                                  campaign,
+                                )) ...[
+                                  const SizedBox(height: 12),
+                                  FantasyTextButton(
+                                    key: const ValueKey(
+                                      'adventure-confirm-sneak-attack-ally',
+                                    ),
+                                    label:
+                                        'Verbündeten für Hinterhältigen Angriff bestätigen',
+                                    icon: Icons.group_outlined,
+                                    style: FantasyButtonStyle.arcane,
+                                    onPressed: _canInteract
+                                        ? _confirmSneakAttackAlly
+                                        : null,
+                                  ),
+                                ],
                                 const SizedBox(height: 12),
                                 FantasyTextButton(
                                   label: 'Wurf durchführen',

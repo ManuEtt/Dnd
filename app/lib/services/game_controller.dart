@@ -424,6 +424,35 @@ class GameController extends ChangeNotifier {
     await _commit(engine.resolveRoll(campaign, natural: natural, total: total));
   });
 
+  Future<void> confirmSneakAttackAlly({
+    required String campaignId,
+    required int expectedRevision,
+    required String rollId,
+    required String allyName,
+    required bool withinFiveFeetOfTargetConfirmed,
+    required bool notIncapacitatedConfirmed,
+  }) => _run(() async {
+    final campaign = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.confirmSneakAttackAlly(
+        campaign,
+        rollId: rollId,
+        allyName: allyName,
+        withinFiveFeetOfTargetConfirmed: withinFiveFeetOfTargetConfirmed,
+        notIncapacitatedConfirmed: notIncapacitatedConfirmed,
+      ),
+    );
+  });
+
+  Future<void> clearSneakAttackAlly({
+    required String campaignId,
+    required int expectedRevision,
+    required String rollId,
+  }) => _run(() async {
+    final campaign = _effectCampaign(campaignId, expectedRevision);
+    await _commit(engine.clearSneakAttackAlly(campaign, rollId: rollId));
+  });
+
   Future<void> resolveDeathSaveDecision({
     required String campaignId,
     required int expectedRevision,
