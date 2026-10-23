@@ -153,4 +153,45 @@ void main() {
       controller.dispose();
     }
   });
+  test('deleting one campaign clears only its pending command', () async {
+    var index = 0;
+    final outbox = PlayerActionOutbox(
+      first,
+      newRequestId: () => 'deletion-${++index}',
+    );
+    await outbox.stage('campaign-one', 'Ich lausche.');
+    final other = await outbox.stage('campaign-two', 'Ich warte.');
+    await first.deleteCampaign('campaign-one');
+    expect(await outbox.pendingFor('campaign-one'), isNull);
+    expect(
+      (await outbox.pendingFor('campaign-two'))!.requestId,
+      other.requestId,
+    );
+  });
+
+  test('delete all data also removes orphaned durable pending actions',
+      () async {
+    final controller = GameController(repository: first);
+    try {
+      await controller.initialize();
+      await controller.createDemo();
+      expect(controller.error, isNull);
+      final campaignId = controller.currentCampaign!.id;
+      final outbox = PlayerActionOutbox(
+        first,
+        newRequestId: () => 'orphaned-intent',
+      );
+      await outbox.stage('orphan-id', 'Ich kehre zurück.');
+      expect(await outbox.pendingFor('orphan-id'), isNotNull);
+      await controller.deleteAllData();
+      expect(controller.error, isNull);
+      expect(await first.loadCampaigns(), isEmpty);
+      expect(await outbox.pendingFor('orphan-id'), isNull);
+      expect(await outbox.pendingFor(campaignId), isNull);
+      expect(await second.loadSettings(), isEmpty);
+    } finally {
+      controller.dispose();
+    }
+  });
+
 }
