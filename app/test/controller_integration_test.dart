@@ -17,6 +17,7 @@ class ControlledRepository implements CampaignRepository {
   ControlledRepository(this.delegate);
   final CampaignRepository delegate;
   bool failNextSave = false;
+  bool dropNextSaveResponse = false;
   Completer<void>? saveBarrier;
 
   @override
@@ -35,6 +36,10 @@ class ControlledRepository implements CampaignRepository {
       events: events,
       expectedRevision: expectedRevision,
     );
+    if (dropNextSaveResponse) {
+      dropNextSaveResponse = false;
+      throw const InvalidSaveException('Test: Antwort nach Commit verloren.');
+    }
   }
 
   @override
@@ -124,6 +129,123 @@ void main() {
       expect(controller.currentCampaign!.revision, 1);
     },
   );
+
+  test('gleiche Handlungskennung nach verlorener Antwort wird genau einmal gebucht',
+      () async {
+    await controller.createDemo();
+    final initial = controller.currentCampaign!;
+    repository.dropNextSaveResponse = true;
+    await controller.sendAction(
+      'Ich untersuche den Brunnen',
+      requestId: 'action-potion-001',
+    );
+    expect(controller.error, contains('Antwort nach Commit verloren'));
+    expect(controller.currentCampaign!.revision, initial.revision);
+
+    final durable = (await sqlite.getCampaign(initial.id))!;
+    expect(durable.revision, initial.revision + 1);
+    expect(durable.hero.inventory.where((item) => item.id == 'brass-key'),
+        hasLength(1));
+    expect(durable.events.last.payload['actionRequestId'],
+        'action-potion-001');
+    expect(durable.events.last.payload['actionRequestText'],
+        'Ich untersuche den Brunnen');
+
+    await controller.sendAction(
+      'Ich untersuche den Brunnen',
+      requestId: 'action-potion-001',
+    );
+    expect(controller.error, isNull);
+    expect(controller.currentCampaign!.toJson(), durable.toJson());
+    expect((await sqlite.getCampaign(initial.id))!.toJson(), durable.toJson());
+
+    // A different input is never accepted under a confirmed request ID.
+    await controller.sendAction(
+      'Ich nehme eine andere Belohnung',
+      requestId: 'action-potion-001',
+    );
+    expect(controller.error, contains('anderen Text'));
+    expect((await sqlite.getCampaign(initial.id))!.toJson(), durable.toJson());
+  });
+
+  test('neuer Controller erkennt bestätigte Aktion nach Neustart', () async {
+    await controller.createDemo();
+    const id = 'stable-action-after-restart';
+    await controller.sendAction(
+      'Ich untersuche den Brunnen',
+      requestId: id,
+    );
+    expect(controller.error, isNull);
+    final confirmed = controller.currentCampaign!;
+    controller.dispose();
+    await sqlite.close();
+    sqlite = await SqliteCampaignRepository.open(
+      factory: databaseFactoryFfi,
+      path: databasePath,
+    );
+    repository = ControlledRepository(sqlite);
+    controller = GameController(repository: repository);
+    await controller.initialize();
+    await controller.sendAction(
+      'Ich untersuche den Brunnen',
+      requestId: id,
+    );
+    expect(controller.error, isNull);
+    expect(controller.currentCampaign!.toJson(), confirmed.toJson());
+    expect((await sqlite.getCampaign(confirmed.id))!.toJson(),
+        confirmed.toJson());
+
+    // A fresh ID is a new player decision, even for identical words.
+    await controller.sendAction(
+      'Ich untersuche den Brunnen',
+      requestId: 'different-request-02',
+    );
+    expect(controller.error, isNull);
+    expect(controller.currentCampaign!.revision, confirmed.revision + 1);
+    expect(
+      controller.currentCampaign!.hero.inventory
+          .where((item) => item.id == 'brass-key'),
+      hasLength(1),
+    );
+  });
+
+  test('fehlgeschlagener Commit verbraucht keine Handlungskennung', () async {
+    await controller.createDemo();
+    final original = controller.currentCampaign!;
+    repository.failNextSave = true;
+    await controller.sendAction('Ich untersuche den Brunnen',
+        requestId: 'retry-after-rejection');
+    expect(controller.error, contains('Speicherung abgelehnt'));
+    expect((await sqlite.getCampaign(original.id))!.toJson(),
+        original.toJson());
+    await controller.sendAction('Ich untersuche den Brunnen',
+        requestId: 'retry-after-rejection');
+    expect(controller.error, isNull);
+    expect(controller.currentCampaign!.revision, original.revision + 1);
+    expect(controller.currentCampaign!.events.last.payload['actionRequestId'],
+        'retry-after-rejection');
+    await controller.sendAction('Ich untersuche den Brunnen',
+        requestId: 'retry-after-rejection');
+    expect(controller.error, isNull);
+    expect(controller.currentCampaign!.revision, original.revision + 1);
+  });
+
+  test('ungültige Kennungen und alte Aufrufe bleiben kompatibel', () async {
+    await controller.createDemo();
+    final original = controller.currentCampaign!;
+    await controller.sendAction('Ich untersuche den Brunnen',
+        requestId: '../bad');
+    expect(controller.error, contains('Ungültige Handlungskennung'));
+    expect(controller.currentCampaign!.toJson(), original.toJson());
+    await controller.sendAction('Ich untersuche den Brunnen');
+    expect(controller.error, isNull);
+    expect(controller.currentCampaign!.revision, original.revision + 1);
+    expect(
+      controller.currentCampaign!.events.last.payload
+          .containsKey('actionRequestId'),
+      isFalse,
+    );
+  });
 
   test(
     'last campaign, inventory and memory restore after repository restart',
