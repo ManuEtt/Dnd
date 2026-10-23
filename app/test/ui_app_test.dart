@@ -743,7 +743,10 @@ void main() {
       scrollable: find.byType(Scrollable).first,
     );
     await tester.pumpAndSettle();
-    expect(find.text('Attribute'), findsOneWidget);
+    // The former Attribute tab is now the rules/saving-throw details tab.
+    // The six attributes live only in the scrollable parchment overview.
+    expect(find.text('Regeln'), findsOneWidget);
+    expect(find.byKey(const ValueKey('sheet-abilities-grid')), findsNothing);
     expect(tester.takeException(), isNull);
     await tester.pageBack();
     await tester.pumpAndSettle();
