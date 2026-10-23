@@ -8,7 +8,7 @@ import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 void main() {
   for (final width in [320.0, 360.0, 400.0]) {
     testWidgets(
-      'Statistik- und Attributkarten bei ${width.toInt()} dp ohne Überlauf',
+      'Statistik- und einmalige Pergamentattribute bei ${width.toInt()} dp ohne Überlauf',
       (tester) async {
         tester.view.physicalSize = Size(width, 800);
         tester.view.devicePixelRatio = 1;
@@ -30,10 +30,8 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.text('RÜSTUNGSKLASSE'), findsOneWidget);
         expect(find.text('ÜBUNGSBONUS'), findsOneWidget);
-        // Regression: the explicit delegate is required for mainAxisExtent.
-        // Passing mainAxisExtent to GridView.count breaks flutter analyze.
-        // The sheet deliberately has separate summary, abilities and saves
-        // grids. Looking up an arbitrary GridView is ambiguous on phones.
+        // Main statistics stay separate from the ONE parchment attribute grid.
+        // The removed legacy details grid must never appear again.
         final summary = tester.widget<GridView>(
           find.byKey(const ValueKey('sheet-summary-grid')),
         );
@@ -42,21 +40,28 @@ void main() {
         expect(summaryDelegate.crossAxisCount, 2);
         expect(summaryDelegate.mainAxisExtent, greaterThanOrEqualTo(124));
         expect(tester.takeException(), isNull);
-        // Scroll the full section into view to exercise the six actual cards,
-        // not only the four summary stats above them.
+        await tester.scrollUntilVisible(
+          find.byKey(const ValueKey('sheet-parchment-abilities')),
+          200,
+          scrollable: find.byType(Scrollable).first,
+        );
+        await tester.pumpAndSettle();
+        final parchment = tester.widget<GridView>(
+          find.byKey(const ValueKey('sheet-preview-attributes-grid')),
+        );
+        final attributesDelegate =
+            parchment.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
+        expect(attributesDelegate.crossAxisCount, 3);
+        expect(attributesDelegate.mainAxisExtent, greaterThanOrEqualTo(140));
+        expect(find.byKey(const ValueKey('sheet-abilities-grid')), findsNothing);
         await tester.scrollUntilVisible(
           find.text('Rettungswürfe'.toUpperCase()),
           240,
           scrollable: find.byType(Scrollable).first,
         );
         await tester.pumpAndSettle();
-        final abilities = tester.widget<GridView>(
-          find.byKey(const ValueKey('sheet-abilities-grid')),
-        );
-        final abilitiesDelegate =
-            abilities.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
-        expect(abilitiesDelegate.crossAxisCount, 2);
-        expect(abilitiesDelegate.mainAxisExtent, greaterThanOrEqualTo(160));
+        expect(find.text('Rettungswürfe'.toUpperCase()), findsOneWidget);
+        expect(find.byKey(const ValueKey('sheet-abilities-grid')), findsNothing);
         expect(tester.takeException(), isNull);
       },
     );
@@ -94,18 +99,19 @@ void main() {
     expect(find.text('RÜSTUNGSKLASSE'), findsOneWidget);
     expect(tester.takeException(), isNull);
     await tester.scrollUntilVisible(
-      find.text('Rettungswürfe'.toUpperCase()),
-      240,
+      find.byKey(const ValueKey('sheet-parchment-abilities')),
+      200,
       scrollable: find.byType(Scrollable).first,
     );
     await tester.pumpAndSettle();
-    final abilities = tester.widget<GridView>(
-      find.byKey(const ValueKey('sheet-abilities-grid')),
+    final attributes = tester.widget<GridView>(
+      find.byKey(const ValueKey('sheet-preview-attributes-grid')),
     );
     final delegate =
-        abilities.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
-    // 1.4x system text needs more vertical space than normal text; no clips.
-    expect(delegate.mainAxisExtent, greaterThan(200));
+        attributes.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
+    // The surviving parchment grid respects 1.4x Android text scaling.
+    expect(delegate.mainAxisExtent, greaterThan(160));
+    expect(find.byKey(const ValueKey('sheet-abilities-grid')), findsNothing);
     expect(tester.takeException(), isNull);
   });
   testWidgets(
