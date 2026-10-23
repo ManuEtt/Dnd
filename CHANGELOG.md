@@ -1,3 +1,12 @@
+## 23.10.2026 – 0.8.34+84: Atomare Kampagnenlöschung und Auswahlbereinigung (CI ausstehend)
+
+- Beim gezielten Kampagnenlöschen werden Kampagnenstand, ausstehende Spielerhandlung und ein eventuell auf sie verweisendes `lastCampaignId` atomar bereinigt. Neuere, auf eine andere Kampagne gerichtete Auswahl und unabhängige Einstellungen bleiben bestehen.
+- `GameController` nutzt den neuen `AtomicCampaignDeletion`-Vertrag für SQLite und verhindert das alte zweite Schreiben mit `_remember(null)`; bisheriges Verhalten für Test-/Legacy-Repositories bleibt verfügbar.
+- Regressionstests für gleichzeitige SQLite-Verbindungen, Neustart, unveränderte andere Auswahl und vollständigen Rollback bei einem fehlgeschlagenen Settings-Update.
+- Ohne DB- oder Kampagnen-JSON-Schemamigration, ohne zusätzliche Regel-, KI-, Story- oder Berechtigungsänderungen. Neue CI und Realgerätetest noch offen.
+
+---
+
 ## 23.10.2026 – 0.8.33+83: Atomarer vollständiger Datenreset (Code-CI erfolgreich)
 
 - SQLite-Implementierung von `AtomicUserDataReset`: Kampagnen, bestätigte Events, Revisionshistorie, Charaktere, Einstellungen und PlayerActionOutbox werden im gleichen Transaktionscommit gelöscht oder bei einem Fehler vollständig erhalten.
