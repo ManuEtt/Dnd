@@ -1,3 +1,12 @@
+## 23.10.2026 – Vollständiger Legacy-Upgrade-Test in CI grün
+
+- **GETESTET:** [GitHub-Actions #39964813706](https://github.com/ManuEtt/Dnd/actions/runs/39964813706) `completed/success` für PR-#137-Code-Head `ebf2a6f35e24b78dad4c0f1b172c1a1bc31fe928`; Python/Backend/Dart/Flutter, Android-Debug-/Alpha-Builds und native Tests erfolgreich.
+- **IMPLEMENTIERT:** `app/test/populated_legacy_upgrade_test.dart` mit Migration eines bestätigten kompletten Kampagnen- und Archivstands von SQLite 1 auf 2, stabilem Pending-Request, Altexport, Reopen sowie Rollback/Korrektur fehlerhafter Legacy-Outbox. Keine Änderung an Produktcode/Schema/Regeln. App-Version `0.8.33+83` unverändert.
+- **NICHT GETESTET:** Echter Android-Altdaten-Upgradepfad und Storage Access Framework Backup/Restore; nachfolgende Dokumentationsänderungen sind nicht derselbe Code-SHA. **BLOCKIERT:** Gerät nicht verfügbar. **NOCH NICHT IMPLEMENTIERT:** Vollständige SRD-5.2.1-Regeln, Anbieter-Exactly-once.
+- **NÄCHSTER SCHRITT:** Offene PR-Kette #133–#137 nach Review integrieren und Gerätetest mit zuvor gesichertem v1-Spielstand durchspielen; nicht ungeprüft nach `main` mergen.
+
+---
+
 ## 23.10.2026 – Gefülltes SQLite-v1-Archiv gegen Upgrade auf DB v2 testen (Testpaket/CI offen)
 
 - **IMPLEMENTIERT:** `app/test/populated_legacy_upgrade_test.dart` simuliert anhand eines echten durch `GameController` und SQLite gespeicherten, bestätigten Kampagnenstandes die bisherige DB-Struktur (Schema 1) und testet Upgrade auf Schema 2 ohne Änderungen an Events, Revisionen, Held, Einstellungen, Pending-Request-ID oder JSON-Kampagnenexport.
