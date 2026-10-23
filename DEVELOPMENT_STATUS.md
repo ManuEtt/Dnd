@@ -1,3 +1,13 @@
+## 23.10.2026 – XP-Belohnungs-ID-Konflikt fail-closed (Branch `fix/xp-reward-id-conflict-20261023`)
+
+- **IMPLEMENTIERT:** Identische XP-Belohnungs-ID wird in `ExperienceProgression.grant` nur bei exakt gleichem gespeichertem Betrag idempotent bestätigt. Anderer/defekter Betrag löst `FormatException` aus; ursprüngliche Kampagne bleibt unverändert.
+- **REGRESSIONSTESTS ERSTELLT:** `app/test/experience_progression_test.dart` prüft Roundtrip-Duplikat, Widerspruch und beschädigten Historieneintrag.
+- **GETESTET:** Main-Baseline `5958579e5321338bb7b4e46abb859fd3bfd1515f` mit GitHub-CI [#40012217485](https://github.com/ManuEtt/Dnd/actions/runs/40012217485) erfolgreich, nicht neuer Branch. **NICHT GETESTET:** neuer Flutter-Code-HEAD bis CI fertig ist. **BLOCKIERT:** Flutter/Android lokal nicht installiert; reales Android-Gerät nicht verfügbar.
+- **KOMPATIBILITÄT:** Keine SQLite-/JSON-Migration, unveränderte SRD-Regelmechanik und KI-/Story-Grenze. `0.8.36+86` bleibt vorerst unverändert wegen parallelem PR #144.
+- **NÄCHSTER KONKRETER SCHRITT:** Finale PR-CI/Flutter-Tests auswerten, dann idempotentes persistentes XP-Gutschriftjournal inklusive GameController-/SQLite-Revisionen gesondert testen.
+
+---
+
 ## 23.10.2026 – Schurken-Hinterhältiger-Angriff nach SRD 5.2.1 sichern (CI offen)
 
 - **IMPLEMENTIERT:** `ClassCombatFeatures.eligibleSneakAttackDice` verlangt bei Angriff ohne echten Vorteil zwei unabhängige Bestätigungen: ein Verbündeter befindet sich höchstens 5 Fuß vom ZIEL entfernt und er besitzt nicht `Incapacitated`. Kein stilles Auslösen aus bloßer Bewusstheit oder Nähe zur Spielfigur. Ergänzte Negativtests bei gestunnten/fehlpositionierten Verbündeten und beim Aufheben von Vorteil/Nachteil.

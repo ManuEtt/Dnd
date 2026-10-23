@@ -56,6 +56,57 @@ void main() {
     );
   });
 
+  test('Wiederholte Belohnungs-ID mit anderer XP-Menge wird abgewiesen', () {
+    final original = GameEngine().createDemo();
+    final first = ExperienceProgression.grant(
+      original,
+      rewardId: 'quest-belohnung',
+      amount: 300,
+    );
+    final restored = Campaign.fromJson(first.toJson());
+
+    // Identische bestätigte Events dürfen weiterhin beliebig wiederholt
+    // werden, ohne XP oder Journaldaten ein zweites Mal zu ändern.
+    expect(
+      ExperienceProgression.grant(
+        restored,
+        rewardId: 'quest-belohnung',
+        amount: 300,
+      ).toJson(),
+      restored.toJson(),
+    );
+
+    // Ein neues Event mit derselben ID, aber einem anderen Betrag ist
+    // ein Konflikt und darf nicht stillschweigend quittiert werden.
+    expect(
+      () => ExperienceProgression.grant(
+        restored,
+        rewardId: 'quest-belohnung',
+        amount: 450,
+      ),
+      throwsFormatException,
+    );
+    expect(restored.hero.experience, 300);
+    expect(restored.facts['xp.reward.quest-belohnung'], '300');
+  });
+
+  test('Manipulierter historischer Belohnungseintrag bleibt unverändert', () {
+    final original = GameEngine().createDemo();
+    final corrupt = original.copyWith(
+      facts: {...original.facts, 'xp.reward.quest-belohnung': 'unbekannt'},
+    );
+    expect(
+      () => ExperienceProgression.grant(
+        corrupt,
+        rewardId: 'quest-belohnung',
+        amount: 300,
+      ),
+      throwsFormatException,
+    );
+    expect(corrupt.hero.experience, original.hero.experience);
+    expect(corrupt.facts['xp.reward.quest-belohnung'], 'unbekannt');
+  });
+
   test('Unbestätigte historische XP werden nicht stillschweigend zu null', () {
     final original = GameEngine().createDemo();
     final unknown = original.copyWith(

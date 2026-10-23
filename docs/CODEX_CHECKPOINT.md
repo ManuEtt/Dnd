@@ -1,3 +1,14 @@
+## Zyklus 2026-10-23 (Europe/Berlin) – Widersprüchliche XP-Belohnungs-ID ablehnen (PR-/CI-Prüfung)
+
+- **LIVE-BASIS:** `main` `5958579e5321338bb7b4e46abb859fd3bfd1515f`, GitHub Actions [#40012217485](https://github.com/ManuEtt/Dnd/actions/runs/40012217485) **completed / success** ausschließlich auf diesem Main-SHA. Bei Beginn war [PR #144](https://github.com/ManuEtt/Dnd/pull/144) zum Zauber `Sending` offen; dessen [CI #40012034969](https://github.com/ManuEtt/Dnd/actions/runs/40012034969) erfolgreich für einen **anderen** Code-HEAD. Arbeitsbranch `fix/xp-reward-id-conflict-20261023`, Ausgangsversion `0.8.36+86`; kein paralleler Versionssprung wegen offenem PR #144.
+- **IMPLEMENTIERT:** `ExperienceProgression.grant` bestätigt eine wiederholte ID nur noch bei **exakt gleichem** bereits gespeicherten XP-Betrag; abweichende oder unlesbare Bestandswerte führen zu `FormatException` ohne Zustandsänderung. Bekannte identische Bestätigungen bleiben idempotent. **Kein geänderter SRD-Mechanismus:** Es handelt sich um Konsistenzprüfung der lokalen Belohnungsbelege.
+- **TESTS GESCHRIEBEN:** `app/test/experience_progression_test.dart` – bestätigte Duplikate nach JSON-Roundtrip, ID-Kollision mit abweichendem Betrag und manipulierter Legacy-Beleg ohne Veränderung von Held/XP/Fakten. Die lokale Ausführungsumgebung hat **kein Dart-/Flutter-SDK**; Tests werden erst nach tatsächlichem erfolgreichem CI-Lauf als bestanden bezeichnet.
+- **KOMPATIBILITÄT:** SQLite-Schema 2 und Kampagnen-JSON `schemaVersion=1` unverändert, kein KI-Provider, keine Migration. Widersprüchliche Altdaten werden nicht automatisch überschrieben.
+- **GETESTET:** Main-CI #40012217485 nur als Vorher-Baseline. **NICHT GETESTET:** Neue Branch-CI und Android-Gerät bis eindeutige Ergebnisse vorliegen. **BLOCKIERT:** Lokale Flutter-/Android-/Geräteprüfungen mangels SDK/Gerät. **NOCH NICHT IMPLEMENTIERT:** Vollständige SRD-5.2.1-Regelabdeckung sowie Validierung externer Erzählungs-/Belohnungsquellen.
+- **NÄCHSTER KONKRETER SCHRITT:** Den PR-Workflow auf dem **finalen** Branch-SHA auswerten und Fehler beheben; anschließend separat eine bestätigte, revidierbare XP-Belohnungsaktion von GameEngine/GameController bis SQLite-Journal auf Doppel-IDs und Neustart prüfen. Keine automatische Integration in `main` ohne PR-Abnahme.
+
+---
+
 ## Zyklus 23.10.2026 – SRD-5.2.1-Schurke: Hinterhältiger Angriff mit bestätigtem Verbündeten
 
 - **LIVE-BASIS:** `main` nach Merge von [PR #142](https://github.com/ManuEtt/Dnd/pull/142) auf `f71c287e4cdade3c678dbe6a93d080b3c31b9e80`, Flutter-App `0.8.35+85`; die zugehörige [main-CI #40010469412](https://github.com/ManuEtt/Dnd/actions/runs/40010469412) lief beim Start dieses Zyklus noch. Nachweis für den **vorherigen** Stand `2dac48e0`: [CI #40008013311](https://github.com/ManuEtt/Dnd/actions/runs/40008013311) erfolgreich. Neuer Branch `fix/srd-rogue-sneak-attack-ally-20261023` und neue App-Version `0.8.36+86`.

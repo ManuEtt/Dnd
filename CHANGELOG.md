@@ -1,3 +1,12 @@
+## 23.10.2026 – XP-Belohnungsbelege: doppelte ID mit widersprüchlichem Betrag abweisen
+
+- `ExperienceProgression.grant` akzeptiert bestätigte identische Wiederholungen weiterhin ohne doppelte XP-Gutschrift.
+- Derselbe Belohnungs-Identifier mit abweichendem oder beschädigtem gespeicherten Betrag wird nun als Datenkonflikt abgewiesen, statt als erfolgreicher Aufruf zu gelten.
+- Regressionstests für JSON-Roundtrip, unveränderte Originaldaten und widersprüchliche Duplikate. Eigene CI/Flutter-/Android-Tests müssen für den neuen Code-HEAD erst nachgewiesen werden; bestehender Main-Lauf #40012217485 gehört zum Vorher-Stand.
+- Keine Änderung am SQLite-Schema 2 oder JSON-Spielstandsformat 1, keine neue App-Version im parallel entwickelten Branch.
+
+---
+
 ## 23.10.2026 – 0.8.36+86: Schurken-Hinterhältiger-Angriff – bestätigter Verbündeter (CI offen)
 
 - Der bisherige reine Helper-Check für einen nahen, bewussten Verbündeten genügt nicht mehr allein. Der alternative SRD-5.2.1-Weg zum Hinterhältigen Angriff verlangt nun zusätzlich bestätigte Nähe des Verbündeten **zum Ziel** und das bestätigte Fehlen des Zustands `Incapacitated`.
