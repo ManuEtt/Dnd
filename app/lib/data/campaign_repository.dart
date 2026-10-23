@@ -39,7 +39,9 @@ extension CampaignSettingsUpdates on CampaignRepository {
     Set<String> removeKeys = const <String>{},
   }) async {
     if (removeKeys.any(changes.containsKey)) {
-      throw ArgumentError('Ein Einstellungsfeld darf nicht zugleich gesetzt und entfernt werden.');
+      throw ArgumentError(
+        'Ein Einstellungsfeld darf nicht zugleich gesetzt und entfernt werden.',
+      );
     }
     if (this case AtomicSettingsStore store) {
       await store.updateSettingsEntries(changes, removeKeys: removeKeys);
