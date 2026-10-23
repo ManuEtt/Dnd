@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
+
+import 'package:path/path.dart' as paths;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -107,10 +110,11 @@ void main() {
 
   testWidgets('app restores an unconfirmed player action without auto-sending',
       (tester) async {
+    final directory = await Directory.systemTemp.createTemp('outbox-widget-');
     final repository = (await tester.runAsync(
       () => SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
-        path: inMemoryDatabasePath,
+        path: paths.join(directory.path, 'campaign.sqlite'),
       ),
     ))!;
     final controller = GameController(repository: repository);
@@ -128,6 +132,10 @@ void main() {
       LivingGameApp(controller: controller, voice: voice),
     );
     await tester.tap(find.text('Abenteuer'));
+    await tester.pumpAndSettle();
+    await tester.runAsync(() => Future<void>.delayed(
+      const Duration(milliseconds: 100),
+    ));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('adventure-pending-action-text')),
         findsOneWidget);
@@ -155,15 +163,19 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
     controller.dispose();
     voice.dispose();
-    await tester.runAsync(repository.close);
+    await tester.runAsync(() async {
+      await repository.close();
+      await directory.delete(recursive: true);
+    });
   });
 
   testWidgets('already committed action can be acknowledged after UI restart',
       (tester) async {
+    final directory = await Directory.systemTemp.createTemp('outbox-widget-');
     final repository = (await tester.runAsync(
       () => SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
-        path: inMemoryDatabasePath,
+        path: paths.join(directory.path, 'campaign.sqlite'),
       ),
     ))!;
     final controller = GameController(repository: repository);
@@ -186,6 +198,10 @@ void main() {
     );
     await tester.tap(find.text('Abenteuer'));
     await tester.pumpAndSettle();
+    await tester.runAsync(() => Future<void>.delayed(
+      const Duration(milliseconds: 100),
+    ));
+    await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('adventure-retry-action')),
         findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('adventure-retry-action')));
@@ -202,7 +218,10 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
     controller.dispose();
     voice.dispose();
-    await tester.runAsync(repository.close);
+    await tester.runAsync(() async {
+      await repository.close();
+      await directory.delete(recursive: true);
+    });
   });
 
   testWidgets('home does not ship a fixed Arescan campaign', (tester) async {
