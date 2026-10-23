@@ -32,7 +32,7 @@ void main() {
   });
 
   Future<Campaign> createPopulatedV1({
-    required Map<String, dynamic> pending,
+    required Map<String, dynamic> Function(String campaignId) pendingFor,
   }) async {
     final repository = await SqliteCampaignRepository.open(
       factory: databaseFactoryFfi,
@@ -53,7 +53,7 @@ void main() {
           'lastCampaignId': snapshot.id,
           'voiceLocale': 'de-DE',
           'backendRequestLimit': 7,
-          'pendingPlayerActionsV1': pending,
+          'pendingPlayerActionsV1': pendingFor(snapshot.id),
         });
         return snapshot;
       } finally {
@@ -94,34 +94,17 @@ void main() {
 
   test('populated v1 game journal, hero and pending action survive upgrade',
       () async {
-    // Obtain the real demo ID before constructing its legacy outbox entry.
     final legacyId = 'legacy-resume-id';
-    final draft = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: path,
-    );
-    late final String campaignId;
-    try {
-      final controller = GameController(repository: draft);
-      try {
-        await controller.initialize();
-        await controller.createDemo();
-        expect(controller.error, isNull);
-        campaignId = controller.currentCampaign!.id;
-      } finally {
-        controller.dispose();
-      }
-    } finally {
-      await draft.close();
-    }
-
-    final expected = await createPopulatedV1(pending: {
-      campaignId: {
-        'campaignId': campaignId,
-        'requestId': legacyId,
-        'text': 'Ich betrachte die Runen.',
+    final expected = await createPopulatedV1(
+      pendingFor: (campaignId) => {
+        campaignId: {
+          'campaignId': campaignId,
+          'requestId': legacyId,
+          'text': 'Ich betrachte die Runen.',
+        },
       },
-    });
+    );
+    final campaignId = expected.id;
     await assertVersion1AndNoOutboxTable();
 
     var upgraded = await SqliteCampaignRepository.open(
@@ -181,7 +164,7 @@ void main() {
 
   test('invalid pending entry rolls back schema and retains the saved game',
       () async {
-    final existing = await createPopulatedV1(pending: {
+    final existing = await createPopulatedV1(pendingFor: (_) => {
       'other-campaign': {
         'campaignId': 'mismatched-id',
         'requestId': 'legacy-invalid',
