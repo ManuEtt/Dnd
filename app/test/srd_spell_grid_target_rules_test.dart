@@ -268,15 +268,20 @@ void main() {
     },
   );
 
-  test('unsupported special range stays unsupported with a surveyed map', () {
-    final spell = catalog.spells.firstWhere((entry) => entry.range == 'Sight');
-    expect(
-      () => SrdSpellGridTargetRules.validateOrigin(
-        spell,
-        _request(_map(), const SrdGridCell(1, 1)),
-      ),
-      throwsUnsupportedError,
-    );
+  test('Unlimited and Special stay unsupported with surveyed grid', () {
+    for (final range in ['Unlimited', 'Special']) {
+      final spell = catalog.spells.firstWhere(
+        (entry) => entry.range == range,
+      );
+      expect(
+        () => SrdSpellGridTargetRules.validateOrigin(
+          spell,
+          _request(_map(), const SrdGridCell(1, 1)),
+        ),
+        throwsUnsupportedError,
+        reason: spell.name,
+      );
+    }
   });
 
   test('preflight cannot mix manually claimed geometry with grid evidence', () {
