@@ -9,7 +9,11 @@ import 'campaign_repository.dart';
 /// SQLite holds both the current snapshot and an immutable revision journal.
 /// Narration providers never receive this object or a database handle.
 class SqliteCampaignRepository
-    implements CampaignRepository, PendingActionStore, AtomicSettingsStore {
+    implements
+        CampaignRepository,
+        PendingActionStore,
+        AtomicSettingsStore,
+        AtomicUserDataReset {
   SqliteCampaignRepository._(this._database);
   final Database _database;
 
@@ -291,6 +295,21 @@ CREATE TABLE settings (
         where: 'campaign_id = ?',
         whereArgs: [id],
       );
+    });
+  }
+
+  /// Clear the entire local archive atomically. If one table fails,
+  /// SQLite restores every deleted row, including revisions and the outbox.
+  /// New writes by another connection after commit form a separate operation.
+  @override
+  Future<void> deleteAllUserData() async {
+    await _database.transaction((transaction) async {
+      await transaction.delete('game_events');
+      await transaction.delete('campaign_revisions');
+      await transaction.delete('campaigns');
+      await transaction.delete('characters');
+      await transaction.delete('settings');
+      await transaction.delete('pending_player_actions');
     });
   }
 

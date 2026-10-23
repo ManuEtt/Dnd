@@ -1,3 +1,12 @@
+## 23.10.2026 – 0.8.33+83: Atomarer vollständiger Datenreset (Code-CI erfolgreich)
+
+- SQLite-Implementierung von `AtomicUserDataReset`: Kampagnen, bestätigte Events, Revisionshistorie, Charaktere, Einstellungen und PlayerActionOutbox werden im gleichen Transaktionscommit gelöscht oder bei einem Fehler vollständig erhalten.
+- `GameController.deleteAllData` nutzt den atomaren SQLite-Vertrag; Test-/Legacy-Repositories behalten den bisherigen Fallback.
+- Neuer SQLite-Regressionstest prüft Erhalt der Daten und Controlleransicht bei einem erzwungenen späten Löschfehler, erneutes Löschen sowie Neustart ohne zurückgebliebene Einträge.
+- Keine Migration von Datenbankschema 2 oder JSON-Spielstandsformat 1, keine SRD-Regeländerung. Die erste CI #39945364361 deckte einen Fehler in der Testverbindung auf; nach getrennten SQLite-Testverbindungen ist [GitHub-Actions-Lauf #39946157697](https://github.com/ManuEtt/Dnd/actions/runs/39946157697) auf Code-HEAD `0145108c` mit Flutter-, Backend-, nativen Android-Tests sowie Debug-/Alpha-APKs erfolgreich. Reale Geräteabnahme weiterhin offen.
+
+---
+
 ## 23.10.2026 – 0.8.32+82: atomare Änderungen der App-Einstellungen (CI ausstehend)
 
 - Campagneauswahl, Narrator-Verbindung und Sprachpräferenzen nutzen statt veralteter kompletter Settings-Snapshots transaktionale Teilupdates in SQLite.

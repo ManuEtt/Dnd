@@ -1006,16 +1006,21 @@ class GameController extends ChangeNotifier {
 
   Future<void> deleteAllData() => _run(() async {
     narrator.disconnect();
-    for (final campaign in await repository.loadCampaigns()) {
-      await repository.deleteCampaign(campaign.id);
+    if (repository case AtomicUserDataReset store) {
+      await store.deleteAllUserData();
+    } else {
+      // Legacy and controlled test repositories retain their previous API.
+      for (final campaign in await repository.loadCampaigns()) {
+        await repository.deleteCampaign(campaign.id);
+      }
+      for (final hero in await repository.loadCharacters()) {
+        await repository.deleteCharacter(hero.id);
+      }
+      if (repository case PendingActionStore pendingStore) {
+        await pendingStore.clearAllPendingActions();
+      }
+      await repository.saveSettings({});
     }
-    for (final hero in await repository.loadCharacters()) {
-      await repository.deleteCharacter(hero.id);
-    }
-    if (repository case PendingActionStore store) {
-      await store.clearAllPendingActions();
-    }
-    await repository.saveSettings({});
     currentCampaign = null;
     await _reload();
   });
