@@ -1,3 +1,12 @@
+## 23.10.2026 – SRD Sight als ausdrücklich bestätigte Zauberreichweite (CI ausstehend)
+
+- **IMPLEMENTIERT:** Reine regeltechnische `Sight`-Vorprüfung für verifiziert sichtbaren Zauberursprung und getrennt bestätigten freien Weg; Kartenprüfer transportiert den vom Spieler/Spielleiter bestätigten Sichtfakt ohne Annahme aus Hindernissen. Keine neuen Zauberwirkungen, Automatikwürfe oder Ressourcenbuchungen. `Unlimited`/`Special` bleiben ausdrücklich nicht freigeschaltet.
+- **TESTS GESCHRIEBEN, CI OFFEN:** `app/test/srd_spell_target_rules_test.dart` und `app/test/srd_spell_grid_target_rules_test.dart`, einschließlich weiterhin gesperrter Sonderreichweiten, Sicht-/Deckungsfehler und unveränderter Katalogabdeckung. Keine lokale Flutter-/Geräteausführung. [SRD Sight Dokumentation](docs/SRD_SIGHT_RANGE_PREFLIGHT_20261023.md) und Maschinenregister führen diese Regel als `partial`.
+- **BASIS:** `main` `2dac48e0` nach Integration von #140/#141, App `0.8.34+84`. Feature-Branch-Version **0.8.35+85**. Basis-PR-CI #40004287299 erfolgreich; Main-Merge-CI #40008013311 war zu Beginn noch offen.
+- **NICHT GETESTET:** neue vollständige CI, Android-Gerät, echte Spellcast-UI und alle übrigen SRD-Regeln. **BLOCKIERT:** kein Android-Gerät. **NÄCHSTER SCHRITT:** neue CI prüfen und Fehler korrigieren; nach Review integrieren, 3D/Sicht- und Spezialreichweiten später einzeln implementieren.
+
+---
+
 ## 23.10.2026 – Bestandsmigrationstests mit atomarer Kampagnenlöschung vereinigt
 
 - **IMPLEMENTIERT:** Neue `app/test/populated_legacy_upgrade_test.dart` deckt SQLite-v1→v2-Migration mit tatsächlich gespeicherter Kampagne, Revisionsjournal, Events, Charakterarchiv, Settings und älterer Outbox ab. Zusätzlich erzwingt ein Duplikat-Request-ID-Test den kompletten Upgrade-Rollback.
