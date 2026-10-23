@@ -69,12 +69,19 @@ Future<void> waitForController(
   GameController controller, {
   bool hasError = false,
 }) async {
-  await tester.runAsync(() async {
-    // Let filesystem/isolate work finish in real time before settling animations.
-    for (var attempt = 0; attempt < 200 && controller.busy; attempt++) {
-      await Future<void>.delayed(const Duration(milliseconds: 10));
+  // Outbox staging is asynchronous *before* GameController.busy flips.
+  // Pump both stages, including SQLite work outside the fake widget clock.
+  for (var attempt = 0; attempt < 200; attempt++) {
+    await tester.runAsync(() =>
+        Future<void>.delayed(const Duration(milliseconds: 10)));
+    await tester.pump();
+    if (!controller.busy &&
+        find.byKey(const ValueKey('adventure-action-submitting'))
+            .evaluate()
+            .isEmpty) {
+      break;
     }
-  });
+  }
   expect(controller.busy, isFalse);
   expect(controller.error, hasError ? isNotNull : isNull);
 }
