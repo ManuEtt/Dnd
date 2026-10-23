@@ -324,6 +324,63 @@ void main() {
     },
   );
 
+  testWidgets(
+    'Schnellaktion erhält freien Entwurf und sperrt unbegründeten Angriff',
+    (tester) async {
+      tester.view.physicalSize = const Size(360, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final repository = (await tester.runAsync(
+        () => SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: inMemoryDatabasePath,
+        ),
+      ))!;
+      final controller = GameController(repository: repository);
+      final voice = _SilentVoice();
+      await tester.runAsync(controller.createDemo);
+      await tester.pumpWidget(
+        LivingGameApp(controller: controller, voice: voice),
+      );
+      await tester.tap(find.text('Abenteuer'));
+      await tester.pumpAndSettle();
+
+      final input = find.widgetWithText(TextField, 'Was möchtest du tun?');
+      const draft = 'Ich möchte zunächst mit der Wache verhandeln.';
+      await tester.enterText(input, draft);
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pumpAndSettle();
+
+      final attack = find.byKey(const ValueKey('adventure-shortcut-attack'));
+      expect(
+        tester.widget<FantasyShortcutTile>(attack).onTap,
+        isNull,
+        reason: 'Ohne bestätigten Kampf darf es keinen Angriffskurzbefehl geben.',
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('adventure-shortcut-inspect')),
+      );
+      await waitForController(tester, controller);
+      await tester.pumpAndSettle();
+
+      expect(tester.widget<TextField>(input).controller?.text, draft);
+      expect(
+        controller.currentCampaign!.messages.any(
+          (message) =>
+              message.role == 'player' &&
+              message.text == 'Ich untersuche die Umgebung.',
+        ),
+        isTrue,
+      );
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+      controller.dispose();
+      voice.dispose();
+      await tester.runAsync(repository.close);
+    },
+  );
+
   testWidgets('Schnellaktionen nur in der Abenteueransicht', (tester) async {
     tester.view.physicalSize = const Size(360, 800);
     tester.view.devicePixelRatio = 1;
