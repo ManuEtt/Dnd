@@ -1,3 +1,11 @@
+## 23.10.2026 – Gefüllten SQLite-Altspielstand nach Version 2 prüfen (CI offen)
+
+- Neuer vollständiger Integrationstest für die bestehende SQLite-Migration 1→2: Kampagnen, bestätigte Events, Revisionsjournal, Charakterarchiv, Einstellungen und PlayerActionOutbox mit stabiler Request-ID.
+- Negative Migration simuliert beschädigten Legacy-Outbox-Eintrag, prüft Rollback der Tabellenanlage und Version, den unveränderten historischen Spielstand und die sichere Wiederaufnahme nach Reparatur.
+- Test-/Dokumentationspaket ohne Produktlogik- oder Versionsänderung; unverändert App `0.8.33+83`, SQLite-Schema 2, Kampagnen-JSON-Version 1. Die neue CI/Realgerät-Abnahme steht noch aus.
+
+---
+
 ## 23.10.2026 – 0.8.33+83: Atomarer vollständiger Datenreset (Code-CI erfolgreich)
 
 - SQLite-Implementierung von `AtomicUserDataReset`: Kampagnen, bestätigte Events, Revisionshistorie, Charaktere, Einstellungen und PlayerActionOutbox werden im gleichen Transaktionscommit gelöscht oder bei einem Fehler vollständig erhalten.
