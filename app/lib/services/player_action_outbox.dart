@@ -77,6 +77,17 @@ class PlayerActionOutbox {
   }
 
   Future<PendingPlayerAction?> pendingFor(String campaignId) async {
+    if (repository case PendingActionStore store) {
+      final raw = await store.pendingActionFor(campaignId);
+      if (raw == null) return null;
+      final action = PendingPlayerAction.fromJson(raw);
+      if (action.campaignId != campaignId) {
+        throw const FormatException(
+          'Die ausstehende Handlung gehört zu einem anderen Spielstand.',
+        );
+      }
+      return action;
+    }
     final entries = _pendingMap(await repository.loadSettings());
     final raw = entries[campaignId];
     if (raw == null) return null;
@@ -93,17 +104,27 @@ class PlayerActionOutbox {
     if (cleaned.isEmpty || cleaned.length > 4000) {
       throw const FormatException('Die Handlung muss 1 bis 4000 Zeichen enthalten.');
     }
-    final settings = await repository.loadSettings();
-    final entries = _pendingMap(settings);
-    if (entries.containsKey(campaignId)) {
-      throw StateError('Zuerst die ausstehende Handlung klären.');
-    }
     final requestId = _newRequestId();
     final action = PendingPlayerAction.fromJson({
       'campaignId': campaignId,
       'requestId': requestId,
       'text': cleaned,
     });
+    if (repository case PendingActionStore store) {
+      await store.stagePendingAction(
+        campaignId: action.campaignId,
+        requestId: action.requestId,
+        text: action.text,
+      );
+      return action;
+    }
+    // Legacy repositories without a transactional store retain the old
+    // settings path. Production SQLite always uses the dedicated table.
+    final settings = await repository.loadSettings();
+    final entries = _pendingMap(settings);
+    if (entries.containsKey(campaignId)) {
+      throw StateError('Zuerst die ausstehende Handlung klären.');
+    }
     // Reject collisions across campaigns as well; retries are unambiguous.
     for (final raw in entries.values) {
       if (PendingPlayerAction.fromJson(raw).requestId == action.requestId) {
@@ -118,6 +139,14 @@ class PlayerActionOutbox {
 
   /// A stale completion must never clear a newer queued action.
   Future<void> remove(PendingPlayerAction action) async {
+    if (repository case PendingActionStore store) {
+      await store.removePendingAction(
+        campaignId: action.campaignId,
+        requestId: action.requestId,
+        text: action.text,
+      );
+      return;
+    }
     final settings = await repository.loadSettings();
     final entries = _pendingMap(settings);
     final raw = entries[action.campaignId];
