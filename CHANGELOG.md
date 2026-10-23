@@ -1,3 +1,11 @@
+## 23.10.2026 – Gefüllte SQLite-1→2-Migration vollständig in CI getestet
+
+- [CI #39964813706](https://github.com/ManuEtt/Dnd/actions/runs/39964813706) auf Test-Code-Head `ebf2a6f35e24b78dad4c0f1b172c1a1bc31fe928` erfolgreich: vollständige Flutter-Tests, Backend, Android-Debug/Alpha-APKs, native Tests.
+- Verifiziert: bestätigter Kampagnen-/Helden-/Event-/Revisionsstand, Legacy-Request-ID und Settings überstehen Upgrade/Neustart; fehlerhafte alte Outbox rollt Migration vollständig zurück und bleibt nach Reparatur migrierbar.
+- Kein neuer produktiver Code oder Schemazähler; weiterhin `0.8.33+83`. Reales Android-Geräteupdate ist weiterhin ausstehend. Dokumentationsnachtrag nach dem Code-CI-Head.
+
+---
+
 ## 23.10.2026 – Gefüllten SQLite-Altspielstand nach Version 2 prüfen (CI offen)
 
 - Neuer vollständiger Integrationstest für die bestehende SQLite-Migration 1→2: Kampagnen, bestätigte Events, Revisionsjournal, Charakterarchiv, Einstellungen und PlayerActionOutbox mit stabiler Request-ID.
