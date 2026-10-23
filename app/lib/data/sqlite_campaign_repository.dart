@@ -284,7 +284,14 @@ CREATE TABLE settings (
 
   @override
   Future<void> deleteCampaign(String id) async {
-    await _database.delete('campaigns', where: 'id = ?', whereArgs: [id]);
+    await _database.transaction((transaction) async {
+      await transaction.delete('campaigns', where: 'id = ?', whereArgs: [id]);
+      await transaction.delete(
+        'pending_player_actions',
+        where: 'campaign_id = ?',
+        whereArgs: [id],
+      );
+    });
   }
 
   /// Repairs archives created before campaign progress was synchronized.
@@ -434,6 +441,11 @@ CREATE TABLE settings (
         whereArgs: [campaignId, requestId, text],
       );
     });
+  }
+
+  @override
+  Future<void> clearAllPendingActions() async {
+    await _database.delete('pending_player_actions');
   }
 
   @override
