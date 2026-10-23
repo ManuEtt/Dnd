@@ -2562,7 +2562,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                     const SizedBox.shrink(
                       key: ValueKey('adventure-action-submitting'),
                     ),
-                  if (_pendingAction != null) ...[
+                  if (_pendingAction != null && !_submittingAction) ...[
                     const Text(
                       'Ausstehende Handlung – noch nicht sicher bestätigt',
                       style: TextStyle(fontWeight: FontWeight.bold),
