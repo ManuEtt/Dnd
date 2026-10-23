@@ -216,6 +216,17 @@ void main() {
     await directory.delete(recursive: true);
   });
 
+  test('duplicate request ID never calls external narrator twice', () async {
+    await connect();
+    await controller.sendAction(_action, requestId: 'narrator-retry-1');
+    expect(controller.error, isNull);
+    final confirmed = controller.currentCampaign!;
+    expect(transport.narrationRequests, hasLength(1));
+    await controller.sendAction(_action, requestId: 'narrator-retry-1');
+    expect(controller.error, isNull);
+    expect(transport.narrationRequests, hasLength(1));
+    await expectConfirmed(confirmed);
+  });
   test('default offline play makes no network request', () async {
     final before = controller.currentCampaign!;
     await controller.sendAction(_action);
