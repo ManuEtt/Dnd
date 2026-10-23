@@ -18,6 +18,7 @@ import '../domain/monk_flurry_rules.dart';
 import '../domain/monk_self_restoration.dart';
 import '../services/backup_files.dart';
 import '../services/game_controller.dart';
+import '../services/player_action_outbox.dart';
 import '../services/voice_controller.dart';
 import 'app_build_info.dart';
 import 'backend_settings_panel.dart';
@@ -1013,7 +1014,56 @@ class _AdventurePage extends StatefulWidget {
 class _AdventurePageState extends State<_AdventurePage> {
   final _input = TextEditingController();
   final _scroll = ScrollController();
+  late final PlayerActionOutbox _outbox;
+  PendingPlayerAction? _pendingAction;
+  String? _loadedCampaignId;
+  String? _outboxError;
+  bool _outboxReady = false;
+  bool _submittingAction = false;
   bool _combat = false;
+
+  bool get _canSubmit =>
+      _outboxReady &&
+      _pendingAction == null &&
+      !_submittingAction &&
+      !widget.controller.busy;
+
+  @override
+  void initState() {
+    super.initState();
+    _outbox = PlayerActionOutbox(widget.controller.repository);
+    _loadPending();
+  }
+
+  @override
+  void didUpdateWidget(covariant _AdventurePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_loadedCampaignId != widget.controller.currentCampaign?.id) {
+      _loadPending();
+    }
+  }
+
+  void _loadPending() {
+    final campaignId = widget.controller.currentCampaign?.id;
+    _loadedCampaignId = campaignId;
+    _outboxReady = campaignId == null;
+    _pendingAction = null;
+    _outboxError = null;
+    if (campaignId == null) return;
+    _outbox.pendingFor(campaignId).then((action) {
+      if (!mounted || _loadedCampaignId != campaignId) return;
+      setState(() {
+        _pendingAction = action;
+        _outboxReady = true;
+      });
+    }).catchError((Object failure) {
+      if (!mounted || _loadedCampaignId != campaignId) return;
+      setState(() {
+        _outboxError = 'Ausstehende Handlung konnte nicht geladen werden.';
+        _outboxReady = false; // Fail closed: never overwrite an unknown intent.
+      });
+    });
+  }
 
   @override
   void dispose() {
@@ -1024,33 +1074,120 @@ class _AdventurePageState extends State<_AdventurePage> {
     super.dispose();
   }
 
-  // Quick actions use the same validated controller path as typed and
-  // recognized speech, but must not replace an unfinished player draft.
+  // Typed text, reviewed speech, combat and fixed shortcuts all stage the
+  // exact intent before the shared authoritative controller can execute it.
   Future<void> _send({String? quickAction}) async {
     final text = (quickAction ?? _input.text).trim();
-    if (text.isEmpty || widget.controller.busy) return;
-    await widget.voice.stopListening();
-    await widget.voice.stopSpeaking();
-    final previousMessageId = _lastMessageId;
-    await widget.controller.sendAction(text);
-    if (!mounted) return;
-    if (widget.controller.error == null) {
-      if (quickAction == null) _input.clear();
-      await _afterTurn(previousMessageId);
+    final campaign = widget.controller.currentCampaign;
+    if (text.isEmpty || campaign == null || !_canSubmit) return;
+    setState(() {
+      _submittingAction = true;
+      _outboxError = null;
+    });
+    try {
+      final action = await _outbox.stage(campaign.id, text);
+      if (!mounted) return; // Durable action survives disposed page.
+      setState(() => _pendingAction = action);
+      await _dispatch(action, clearDraft: quickAction == null);
+    } catch (_) {
+      if (mounted) {
+        setState(() => _outboxError =
+            'Die Handlung konnte nicht sicher vorgemerkt oder abgeschlossen werden.');
+      }
+    } finally {
+      if (mounted) setState(() => _submittingAction = false);
     }
   }
 
-  /// Read-only in-game recap; it never replaces an unfinished typed action.
-  Future<void> _recap() async {
-    if (widget.controller.busy) return;
+  Future<void> _dispatch(
+    PendingPlayerAction action, {
+    bool clearDraft = false,
+  }) async {
+    if (widget.controller.currentCampaign?.id != action.campaignId) return;
     await widget.voice.stopListening();
     await widget.voice.stopSpeaking();
     final previousMessageId = _lastMessageId;
-    await widget.controller.sendAction(
-      'Fasse unsere bisherige Geschichte zusammen.',
-    );
-    if (mounted) await _afterTurn(previousMessageId);
+    await widget.controller.sendAction(action.text, requestId: action.requestId);
+    if (!mounted || widget.controller.error != null) return;
+    // Success also includes replay of an already committed request.
+    await _outbox.remove(action);
+    if (!mounted) return;
+    setState(() {
+      _pendingAction = null;
+      _outboxError = null;
+    });
+    if (clearDraft && _input.text.trim() == action.text) _input.clear();
+    await _afterTurn(previousMessageId);
   }
+
+  Future<void> _retryPending() async {
+    final action = _pendingAction;
+    if (action == null || !_outboxReady || _submittingAction ||
+        widget.controller.busy) {
+      return;
+    }
+    setState(() {
+      _submittingAction = true;
+      _outboxError = null;
+    });
+    try {
+      // Never generate a second request ID during a retry.
+      await _dispatch(action);
+    } catch (_) {
+      if (mounted) {
+        setState(() => _outboxError =
+            'Die Handlung bleibt vorgemerkt. Du kannst sie erneut bestätigen.');
+      }
+    } finally {
+      if (mounted) setState(() => _submittingAction = false);
+    }
+  }
+
+  Future<void> _discardPending() async {
+    final action = _pendingAction;
+    if (action == null || _submittingAction || widget.controller.busy) return;
+    final discard = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Handlung verwerfen?'),
+        content: const Text(
+          'Dies entfernt nur den ausstehenden Sendeauftrag. '
+          'Eine bereits gespeicherte Handlung wird nicht rückgängig gemacht.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Abbrechen'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Auftrag verwerfen'),
+          ),
+        ],
+      ),
+    );
+    if (discard != true || !mounted) return;
+    setState(() => _submittingAction = true);
+    try {
+      await _outbox.remove(action);
+      if (mounted) {
+        setState(() {
+          _pendingAction = null;
+          _outboxError = null;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() => _outboxError =
+            'Der Sendeauftrag konnte nicht sicher entfernt werden.');
+      }
+    } finally {
+      if (mounted) setState(() => _submittingAction = false);
+    }
+  }
+
+  Future<void> _recap() =>
+      _send(quickAction: 'Fasse unsere bisherige Geschichte zusammen.');
 
   String? get _lastMessageId {
     final messages = widget.controller.currentCampaign?.messages;
@@ -2411,11 +2548,61 @@ class _AdventurePageState extends State<_AdventurePage> {
               accent: FantasyPalette.blue,
               child: Column(
                 children: [
+                  if (_pendingAction != null) ...[
+                    const Text(
+                      'Ausstehende Handlung – noch nicht sicher bestätigt',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      _pendingAction!.text,
+                      key: const ValueKey('adventure-pending-action-text'),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 6),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      children: [
+                        FantasyTextButton(
+                          key: const ValueKey('adventure-retry-action'),
+                          label: 'Erneut bestätigen',
+                          icon: Icons.refresh,
+                          style: FantasyButtonStyle.woodGold,
+                          onPressed: _submittingAction ||
+                                  widget.controller.busy
+                              ? null
+                              : _retryPending,
+                        ),
+                        FantasyTextButton(
+                          key: const ValueKey('adventure-discard-action'),
+                          label: 'Verwerfen',
+                          icon: Icons.close,
+                          style: FantasyButtonStyle.iron,
+                          onPressed: _submittingAction ||
+                                  widget.controller.busy
+                              ? null
+                              : _discardPending,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                  if (_outboxError != null)
+                    Text(
+                      _outboxError!,
+                      key: const ValueKey('adventure-outbox-error'),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Expanded(
                         child: TextField(
+                          enabled: _canSubmit,
                           controller: _input,
                           minLines: 1,
                           maxLines: 4,
@@ -2432,7 +2619,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                       ),
                       const SizedBox(width: 10),
                       FantasyIconButton(
-                        onPressed: widget.controller.busy ? null : _send,
+                        onPressed: _canSubmit ? _send : null,
                         tooltip: 'Handlung senden',
                         icon: Icons.send,
                       ),
@@ -2449,7 +2636,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                         label: 'Rückblick',
                         icon: Icons.history,
                         style: FantasyButtonStyle.iron,
-                        onPressed: widget.controller.busy ? null : _recap,
+                        onPressed: _canSubmit ? _recap : null,
                       ),
                     ),
                   ],
@@ -2461,7 +2648,7 @@ class _AdventurePageState extends State<_AdventurePage> {
       ),
       // Permanently docked below the composer and above main navigation.
       bottomNavigationBar: FantasyPinnedActionBar(
-        busy: widget.controller.busy,
+        busy: !_canSubmit,
         listening: widget.voice.listening,
         onSpeech: _toggleMic,
         attackEnabled: campaign.encounter != null &&

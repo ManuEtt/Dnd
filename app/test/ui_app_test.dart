@@ -6,6 +6,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'package:lebendiger_spielleiter/data/sqlite_campaign_repository.dart';
 import 'package:lebendiger_spielleiter/services/game_controller.dart';
+import 'package:lebendiger_spielleiter/services/player_action_outbox.dart';
 import 'package:lebendiger_spielleiter/services/voice_controller.dart';
 import 'package:lebendiger_spielleiter/ui/app.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
@@ -103,6 +104,106 @@ void main() {
   setUpAll(sqfliteFfiInit);
   setUp(() => WidgetController.hitTestWarningShouldBeFatal = true);
   tearDown(() => WidgetController.hitTestWarningShouldBeFatal = false);
+
+  testWidgets('app restores an unconfirmed player action without auto-sending',
+      (tester) async {
+    final repository = (await tester.runAsync(
+      () => SqliteCampaignRepository.open(
+        factory: databaseFactoryFfi,
+        path: inMemoryDatabasePath,
+      ),
+    ))!;
+    final controller = GameController(repository: repository);
+    final voice = _SilentVoice();
+    await tester.runAsync(controller.createDemo);
+    final campaign = controller.currentCampaign!;
+    final outbox = PlayerActionOutbox(
+      repository,
+      newRequestId: () => 'recovered-player-intent',
+    );
+    final staged = (await tester.runAsync(
+      () => outbox.stage(campaign.id, 'Ich untersuche den Brunnen'),
+    ))!;
+    await tester.pumpWidget(
+      LivingGameApp(controller: controller, voice: voice),
+    );
+    await tester.tap(find.text('Abenteuer'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('adventure-pending-action-text')),
+        findsOneWidget);
+    expect(find.byKey(const ValueKey('adventure-retry-action')),
+        findsOneWidget);
+    expect(controller.currentCampaign!.revision, 0); // No implicit replay.
+    final input = tester.widget<TextField>(
+      find.widgetWithText(TextField, 'Was möchtest du tun?'),
+    );
+    expect(input.enabled, isFalse);
+    await tester.tap(find.byKey(const ValueKey('adventure-retry-action')));
+    await tester.runAsync(() async {
+      for (var i = 0; i < 200; i++) {
+        if ((await outbox.pendingFor(campaign.id)) == null) break;
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+      }
+    });
+    await tester.pumpAndSettle();
+    expect(controller.error, isNull);
+    expect(controller.currentCampaign!.revision, 1);
+    expect(controller.currentCampaign!.events.last.payload['actionRequestId'],
+        staged.requestId);
+    expect(await tester.runAsync(() => outbox.pendingFor(campaign.id)), isNull);
+    expect(find.byKey(const ValueKey('adventure-retry-action')), findsNothing);
+    await tester.pumpWidget(const SizedBox.shrink());
+    controller.dispose();
+    voice.dispose();
+    await tester.runAsync(repository.close);
+  });
+
+  testWidgets('already committed action can be acknowledged after UI restart',
+      (tester) async {
+    final repository = (await tester.runAsync(
+      () => SqliteCampaignRepository.open(
+        factory: databaseFactoryFfi,
+        path: inMemoryDatabasePath,
+      ),
+    ))!;
+    final controller = GameController(repository: repository);
+    final voice = _SilentVoice();
+    await tester.runAsync(controller.createDemo);
+    final campaign = controller.currentCampaign!;
+    final outbox = PlayerActionOutbox(
+      repository,
+      newRequestId: () => 'confirmed-but-unacknowledged',
+    );
+    final action = (await tester.runAsync(
+      () => outbox.stage(campaign.id, 'Ich untersuche den Brunnen'),
+    ))!;
+    await tester.runAsync(() =>
+        controller.sendAction(action.text, requestId: action.requestId));
+    final confirmed = controller.currentCampaign!;
+    expect(confirmed.revision, 1);
+    await tester.pumpWidget(
+      LivingGameApp(controller: controller, voice: voice),
+    );
+    await tester.tap(find.text('Abenteuer'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('adventure-retry-action')),
+        findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('adventure-retry-action')));
+    await tester.runAsync(() async {
+      for (var i = 0; i < 200; i++) {
+        if ((await outbox.pendingFor(campaign.id)) == null) break;
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+      }
+    });
+    await tester.pumpAndSettle();
+    expect(controller.error, isNull);
+    expect(controller.currentCampaign!.toJson(), confirmed.toJson());
+    expect(await tester.runAsync(() => outbox.pendingFor(campaign.id)), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+    controller.dispose();
+    voice.dispose();
+    await tester.runAsync(repository.close);
+  });
 
   testWidgets('home does not ship a fixed Arescan campaign', (tester) async {
     final repository = (await tester.runAsync(
