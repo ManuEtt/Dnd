@@ -72,7 +72,13 @@ class FantasyCharacterOverview extends StatelessWidget {
     return rule.modifier < 0 ? '${rule.modifier}' : '+${rule.modifier}';
   }
 
-  void _all(BuildContext context, String title, List<String> lines) {
+  void _all(
+    BuildContext context,
+    String title,
+    List<String> lines, {
+    bool searchable = false,
+  }) {
+    var query = '';
     showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
@@ -81,22 +87,88 @@ class FantasyCharacterOverview extends StatelessWidget {
       builder: (context) => SafeArea(
         top: false,
         child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * .72),
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-            shrinkWrap: true,
-            children: [
-              Text(title, style: const TextStyle(fontFamily: 'serif', fontSize: 23, color: gold)),
-              const Divider(color: gold),
-              if (lines.isEmpty)
-                const Text('Keine bestätigten Einträge vorhanden.', style: TextStyle(color: dim)),
-              for (final line in lines)
-                ListTile(
-                  dense: true,
-                  leading: const Icon(Icons.auto_awesome_outlined, color: gold, size: 19),
-                  title: Text(line, style: const TextStyle(color: ivory)),
-                ),
-            ],
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * .72,
+          ),
+          child: StatefulBuilder(
+            builder: (context, setModalState) {
+              final normalized = query.trim().toLowerCase();
+              final visible = normalized.isEmpty
+                  ? lines
+                  : lines.where((line) =>
+                      line.toLowerCase().contains(normalized)).toList();
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (searchable)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
+                      child: TextField(
+                        key: const ValueKey('sheet-skill-search'),
+                        onChanged: (value) =>
+                            setModalState(() => query = value),
+                        style: const TextStyle(color: ivory),
+                        decoration: InputDecoration(
+                          labelText: 'Fertigkeit suchen',
+                          labelStyle: const TextStyle(color: dim),
+                          hintText: 'Name, Bonus oder geübt',
+                          hintStyle: const TextStyle(color: dim),
+                          prefixIcon: const Icon(
+                            Icons.search,
+                            color: gold,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: gold.withValues(alpha: .65),
+                            ),
+                          ),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(color: gold, width: 2),
+                          ),
+                        ),
+                      ),
+                    ),
+                  Flexible(
+                    child: ListView(
+                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                      shrinkWrap: true,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            fontFamily: 'serif',
+                            fontSize: 23,
+                            color: gold,
+                          ),
+                        ),
+                        const Divider(color: gold),
+                        if (visible.isEmpty)
+                          Text(
+                            lines.isEmpty
+                                ? 'Keine bestätigten Einträge vorhanden.'
+                                : 'Keine passenden Fertigkeiten.',
+                            key: const ValueKey('sheet-skill-search-empty'),
+                            style: const TextStyle(color: dim),
+                          ),
+                        for (final line in visible)
+                          ListTile(
+                            dense: true,
+                            leading: const Icon(
+                              Icons.auto_awesome_outlined,
+                              color: gold,
+                              size: 19,
+                            ),
+                            title: Text(
+                              line,
+                              style: const TextStyle(color: ivory),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -136,7 +208,7 @@ class FantasyCharacterOverview extends StatelessWidget {
               _ReferencePanel(
                 title: 'Fertigkeiten',
                 icon: Icons.stars_outlined,
-                onAll: () => _all(context, 'Fertigkeiten', skillLines),
+                onAll: () => _all(context, 'Fertigkeiten', skillLines, searchable: true),
                 child: Column(
                   children: [
                     for (final skill in skills)
