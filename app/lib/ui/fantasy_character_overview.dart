@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../domain/character_rule_engine.dart';
 import '../domain/models.dart';
+import '../domain/srd_skill_ability_catalog.dart';
 import '../domain/rules_engine.dart';
 import 'fantasy_ui.dart';
 import 'fantasy_character_ornaments.dart';
@@ -38,14 +39,35 @@ class FantasyCharacterOverview extends StatelessWidget {
     (name: 'Athletik', ability: 'strength', icon: Icons.sports_martial_arts_outlined),
   ];
 
+  /// Resolve display-only historical skill labels without changing saves.
+  /// For example, older sheets may contain "Medizin", while the canonical
+  /// SRD class-creation choice is "Heilkunde".
+  String _canonicalSkill(String name) {
+    for (final alias in srdLegacySkillAliases.entries) {
+      if (alias.value == name) return alias.key;
+    }
+    return name;
+  }
+
+  String _recordedSkill(String name) {
+    final canonical = _canonicalSkill(name);
+    if (hero.skills.contains(canonical)) return canonical;
+    final oldName = srdLegacySkillAliases[canonical];
+    if (oldName != null && hero.skills.contains(oldName)) return oldName;
+    return canonical;
+  }
+
+  bool _isSkillProficient(String name) =>
+      hero.skills.contains(_recordedSkill(name));
+
   String _skillBonus(String name, String ability) {
     if (hero.abilities[ability] == null) return '–';
-    final proficient = hero.skills.contains(name);
+    final recorded = _recordedSkill(name);
     final rule = CharacterRuleEngine.abilityCheck(
       hero,
       ability,
-      proficient: proficient,
-      skill: name,
+      proficient: hero.skills.contains(recorded),
+      skill: recorded,
     );
     return rule.modifier < 0 ? '${rule.modifier}' : '+${rule.modifier}';
   }
@@ -84,12 +106,18 @@ class FantasyCharacterOverview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scale = MediaQuery.textScalerOf(context).scale(1);
+    // All 18 canonical SRD skills in the details view, not just the six
+    // selected for the compact graphic. Unknown ability scores stay "–".
     final skillLines = [
-      for (final skill in skills)
+      for (final skill in srdSkillAbilities)
         '${skill.name}: ${_skillBonus(skill.name, skill.ability)}'
-        '${hero.skills.contains(skill.name) ? ' · geübt' : ''}',
+        '${_isSkillProficient(skill.name) ? ' · geübt' : ''}',
+      // Preserve genuinely noncatalogued names from imported/old sheets.
+      // The known "Medizin" alias is already represented by "Heilkunde".
       for (final other in hero.skills)
-        if (!skills.any((skill) => skill.name == other)) '$other · geübt',
+        if (!srdSkillAbilities.any((skill) => skill.name == other) &&
+            !srdLegacySkillAliases.containsValue(other))
+          '$other · historischer Eintrag (keine automatische Berechnung)',
     ];
     final itemLines = [
       for (final item in hero.inventory)
@@ -116,7 +144,7 @@ class FantasyCharacterOverview extends StatelessWidget {
                         icon: skill.icon,
                         label: skill.name,
                         value: _skillBonus(skill.name, skill.ability),
-                        selected: hero.skills.contains(skill.name),
+                        selected: _isSkillProficient(skill.name),
                       ),
                   ],
                 ),

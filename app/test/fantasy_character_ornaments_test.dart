@@ -91,7 +91,7 @@ void main() {
       await tester.tap(buttons.first);
       await tester.pumpAndSettle();
       expect(find.text('Fertigkeiten'), findsWidgets);
-      expect(find.textContaining('Medizin: +7'), findsOneWidget);
+      expect(find.textContaining('Heilkunde: +7'), findsOneWidget);
       expect(hero.toJson(), before);
       expect(tester.takeException(), isNull);
     });
