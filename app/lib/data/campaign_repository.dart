@@ -21,6 +21,22 @@ abstract interface class CampaignRepository {
   Future<void> close();
 }
 
+/// Dedicated durable command storage. Independent of the general settings JSON.
+/// Implementations must serialize checks and mutations in one transaction.
+abstract interface class PendingActionStore {
+  Future<Map<String, dynamic>?> pendingActionFor(String campaignId);
+  Future<void> stagePendingAction({
+    required String campaignId,
+    required String requestId,
+    required String text,
+  });
+  Future<void> removePendingAction({
+    required String campaignId,
+    required String requestId,
+    required String text,
+  });
+}
+
 class CampaignConflictException implements Exception {
   const CampaignConflictException(this.message);
   final String message;
@@ -40,5 +56,5 @@ class UnsupportedDatabaseVersion implements Exception {
   final int version;
   @override
   String toString() =>
-      'Datenbankversion $version ist neuer als die unterstützte Version 1.';
+      'Datenbankversion $version ist neuer als die unterstützte Version 2.';
 }
