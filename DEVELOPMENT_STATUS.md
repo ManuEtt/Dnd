@@ -1,9 +1,17 @@
-## 23.10.2026 – Gefüllte Legacy-DB-Upgrades erneut absichern (CI ausstehend)
+## 23.10.2026 – Bestandsmigrationstests mit atomarer Kampagnenlöschung vereinigt
 
-- **IMPLEMENTIERT:** Der ohne Merge geschlossene PR #137 hatte bestandene Tests zum SQLite-v1→v2-Upgrade einer gefüllten alten Datenbank. Diese Tests wurden auf neuem Branch von `main` wiederhergestellt. Zusätzlich testet `app/test/populated_legacy_upgrade_test.dart` zwei ausstehende Legacy-Aktionen mit derselben Request-ID und verlangt Rollback der gesamten Migration, inklusive des alten Schema-Stands und des vorhandenen Kampagnenarchivs.
-- **GETESTET:** Hauptbranch `4061d651` ([CI #39967425937](https://github.com/ManuEtt/Dnd/actions/runs/39967425937), success); #140 auf eigenem Head ([CI #39968525780](https://github.com/ManuEtt/Dnd/actions/runs/39968525780), success). Die ursprünglichen Testfälle aus #137 bestanden [CI #39966829461](https://github.com/ManuEtt/Dnd/actions/runs/39966829461), jedoch **nicht** der neue Duplicate-ID-Fall.
-- **NICHT GETESTET:** vollständige GitHub-CI des neuen PR, Android-Geräteinstallation, Upgrade realer v1-Nutzerdaten und Backup/Restore. **BLOCKIERT:** kein lokales Flutter-SDK oder echtes Gerät. **FORMAT:** unverändert SQLite-Version 2, Kampagnenexport-Version 1, App 0.8.33+83.
-- **NÄCHSTER SCHRITT:** neue CI auswerten, Defekte beheben; nach Review PR mergen und auf neuem `main` nochmals prüfen. PR #140 bleibt separat offen; echte Android-Geräteabnahme weiterhin notwendig.
+- **IMPLEMENTIERT:** Neue `app/test/populated_legacy_upgrade_test.dart` deckt SQLite-v1→v2-Migration mit tatsächlich gespeicherter Kampagne, Revisionsjournal, Events, Charakterarchiv, Settings und älterer Outbox ab. Zusätzlich erzwingt ein Duplikat-Request-ID-Test den kompletten Upgrade-Rollback.
+- **GETESTET:** PR #140 CI [#39968525780](https://github.com/ManuEtt/Dnd/actions/runs/39968525780) erfolgreich; PR #141 auf altem Stand CI [#39994226404](https://github.com/ManuEtt/Dnd/actions/runs/39994226404) vollständig erfolgreich. **NICHT GETESTET:** neuer Merge-HEAD bis zu dessen CI und Android-Geräteupgrade mit altem Spielstand.
+- **MAIN:** `a3dec619` nach Integration von #140, App `0.8.34+84`. **BLOCKIERT:** kein reales Gerät / keine lokale Android-Installation; **NOCH NICHT IMPLEMENTIERT:** reale Backup-/Restore-Abnahme. **NÄCHSTER SCHRITT:** CI des auf `main` aktualisierten #141 und endgültigen Main-Merge prüfen.
+
+---
+
+## 23.10.2026 – Kampagnenlöschung schützt gleichzeitig gespeicherte Auswahl (CI ausstehend)
+
+- **IMPLEMENTIERT:** `AtomicCampaignDeletion` mit `SqliteCampaignRepository.deleteCampaignAndReconcileSelection` führt Löschung samt Outbox und selektivem `lastCampaignId`-Cleanup in einer SQLite-Transaktion aus. Der Controller schreibt die Auswahl bei SQLite nicht erneut, wodurch eine andere gleichzeitig gewählte Kampagne nicht überschrieben wird.
+- **TESTS ANGELEGT, NICHT LOKAL AUSGEFÜHRT:** `app/test/atomic_campaign_deletion_test.dart`: ausgewählte/nicht ausgewählte Kampagnen, parallele Auswahländerung durch getrennte SQLite-Repository-Instanzen, ausstehende Spielerhandlung, Neustart und ABORT-Trigger für Settings-Rollback.
+- **BASIS:** `main` `4061d651`; [Main-CI #39967425937](https://github.com/ManuEtt/Dnd/actions/runs/39967425937) zum Start noch nicht abgeschlossen. Frühere PRs #133–#136 nach `main` integriert; Test-PR #137 geschlossen ohne Merge. **NEUE CODE-CI AUSSTEHEND.**
+- **KOMPATIBILITÄT:** App `0.8.34+84`; DB-Schema 2; JSON-Formatversion 1. **NICHT GETESTET:** echter Android-Geräte-/Migrationspfad, produktive Signierung. **NÄCHSTES PAKET:** GitHub-CI auswerten, Fehler beheben; danach reale Altgerät-/Backup-Migration abnehmen.
 
 ---
 

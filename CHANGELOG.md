@@ -1,8 +1,17 @@
-## 23.10.2026 – gefüllte Schema-1-Spielstände und doppelte Request-IDs prüfen (CI ausstehend)
+## 23.10.2026 – Aus Alt-PR übernommene Bestandsmigrationstests (#141)
 
-- Regres­sionstest aus geschlossenem, nicht integriertem PR #137 für den v1→v2-Upgrade einer *gefüllten* SQLite-Datenbank mit Kampagne, Revisionsjournal, bestätigten Ereignissen, Heldenarchiv, Settings und Outbox wieder aufgenommen.
-- Neuer zusätzlicher Migrationskonflikt: Mehrere alte Aufträge mit identischer Request-ID müssen ohne Teilmigration abgewiesen werden und das gesamte ältere Archiv erhalten.
-- Reine Test- und Dokumentationsänderung; App bleibt 0.8.33+83. Keine produktive Migration, DB-Struktur oder SRD-Regeländerung. Neue GitHub-CI und reale Geräteabnahme ausstehend.
+- Tests für gefüllte SQLite-v1-Spielstände, inklusive Kampagne, Revisionen, bestätigtem Ereignisjournal, Heldenarchiv und Einstellungen, auf aktuellem Main-Stand wiederhergestellt.
+- Weitere Regression auf doppelte ausstehende Request-IDs mit vollständig rückgängig gemachter Version-1→2-Migration, ohne Daten- oder Journalverlust.
+- Die PR-CI #39994226404 war vor Merge-Konflikt-Auflösung vollständig erfolgreich; neuer kombinierter HEAD verlangt erneute CI. Produktversion bleibt **0.8.34+84**, SQLite-Version 2, JSON-Exportschema 1.
+
+---
+
+## 23.10.2026 – 0.8.34+84: Atomare Kampagnenlöschung und Auswahlbereinigung (CI ausstehend)
+
+- Beim gezielten Kampagnenlöschen werden Kampagnenstand, ausstehende Spielerhandlung und ein eventuell auf sie verweisendes `lastCampaignId` atomar bereinigt. Neuere, auf eine andere Kampagne gerichtete Auswahl und unabhängige Einstellungen bleiben bestehen.
+- `GameController` nutzt den neuen `AtomicCampaignDeletion`-Vertrag für SQLite und verhindert das alte zweite Schreiben mit `_remember(null)`; bisheriges Verhalten für Test-/Legacy-Repositories bleibt verfügbar.
+- Regressionstests für gleichzeitige SQLite-Verbindungen, Neustart, unveränderte andere Auswahl und vollständigen Rollback bei einem fehlgeschlagenen Settings-Update.
+- Ohne DB- oder Kampagnen-JSON-Schemamigration, ohne zusätzliche Regel-, KI-, Story- oder Berechtigungsänderungen. Neue CI und Realgerätetest noch offen.
 
 ---
 
