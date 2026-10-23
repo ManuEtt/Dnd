@@ -8,7 +8,12 @@ import 'campaign_repository.dart';
 
 /// SQLite holds both the current snapshot and an immutable revision journal.
 /// Narration providers never receive this object or a database handle.
-class SqliteCampaignRepository implements CampaignRepository, PendingActionStore {
+class SqliteCampaignRepository
+    implements
+        CampaignRepository,
+        PendingActionStore,
+        AtomicSettingsStore,
+        AtomicUserDataReset {
   SqliteCampaignRepository._(this._database);
   final Database _database;
 
@@ -283,7 +288,29 @@ CREATE TABLE settings (
 
   @override
   Future<void> deleteCampaign(String id) async {
-    await _database.delete('campaigns', where: 'id = ?', whereArgs: [id]);
+    await _database.transaction((transaction) async {
+      await transaction.delete('campaigns', where: 'id = ?', whereArgs: [id]);
+      await transaction.delete(
+        'pending_player_actions',
+        where: 'campaign_id = ?',
+        whereArgs: [id],
+      );
+    });
+  }
+
+  /// Clear the entire local archive atomically. If one table fails,
+  /// SQLite restores every deleted row, including revisions and the outbox.
+  /// New writes by another connection after commit form a separate operation.
+  @override
+  Future<void> deleteAllUserData() async {
+    await _database.transaction((transaction) async {
+      await transaction.delete('game_events');
+      await transaction.delete('campaign_revisions');
+      await transaction.delete('campaigns');
+      await transaction.delete('characters');
+      await transaction.delete('settings');
+      await transaction.delete('pending_player_actions');
+    });
   }
 
   /// Repairs archives created before campaign progress was synchronized.
@@ -436,6 +463,11 @@ CREATE TABLE settings (
   }
 
   @override
+  Future<void> clearAllPendingActions() async {
+    await _database.delete('pending_player_actions');
+  }
+
+  @override
   Future<Map<String, dynamic>> loadSettings() async {
     final rows = await _database.query('settings', where: 'id = 1', limit: 1);
     return rows.isEmpty
@@ -451,6 +483,41 @@ CREATE TABLE settings (
       'id': 1,
       'snapshot': _canonical(settings),
     }, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  /// Serialize each partial settings change with any other SQLite writer.
+  /// Unlike loadSettings/saveSettings, independent callers cannot lose
+  /// unrelated changes by submitting a stale full snapshot.
+  @override
+  Future<void> updateSettingsEntries(
+    Map<String, dynamic> changes, {
+    Set<String> removeKeys = const <String>{},
+  }) async {
+    if (removeKeys.any(changes.containsKey)) {
+      throw ArgumentError(
+        'Ein Einstellungsfeld darf nicht zugleich gesetzt und entfernt werden.',
+      );
+    }
+    await _database.transaction((transaction) async {
+      final rows = await transaction.query(
+        'settings',
+        where: 'id = 1',
+        limit: 1,
+      );
+      final settings = rows.isEmpty
+          ? <String, dynamic>{}
+          : Map<String, dynamic>.from(
+              jsonDecode(rows.single['snapshot'] as String) as Map,
+            );
+      for (final key in removeKeys) {
+        settings.remove(key);
+      }
+      settings.addAll(changes);
+      await transaction.insert('settings', {
+        'id': 1,
+        'snapshot': _canonical(settings),
+      }, conflictAlgorithm: ConflictAlgorithm.replace);
+    });
   }
 
   @override

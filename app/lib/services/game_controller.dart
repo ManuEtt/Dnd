@@ -89,9 +89,7 @@ class GameController extends ChangeNotifier {
   });
 
   Future<void> _remember(String? id) async {
-    final settings = await repository.loadSettings();
-    settings['lastCampaignId'] = id;
-    await repository.saveSettings(settings);
+    await repository.patchSettings({'lastCampaignId': id});
   }
 
   Future<void> _create(Campaign campaign) async {
@@ -400,10 +398,10 @@ class GameController extends ChangeNotifier {
     );
     if (!narrator.enabled) return;
     try {
-      final settings = await repository.loadSettings();
-      settings['backendUrl'] = narrator.backendUrl;
-      settings['backendRequestLimit'] = narrator.requestLimit;
-      await repository.saveSettings(settings);
+      await repository.patchSettings({
+        'backendUrl': narrator.backendUrl,
+        'backendRequestLimit': narrator.requestLimit,
+      });
     } catch (_) {
       narrator.disconnect();
       rethrow;
@@ -1008,13 +1006,21 @@ class GameController extends ChangeNotifier {
 
   Future<void> deleteAllData() => _run(() async {
     narrator.disconnect();
-    for (final campaign in await repository.loadCampaigns()) {
-      await repository.deleteCampaign(campaign.id);
+    if (repository case AtomicUserDataReset store) {
+      await store.deleteAllUserData();
+    } else {
+      // Legacy and controlled test repositories retain their previous API.
+      for (final campaign in await repository.loadCampaigns()) {
+        await repository.deleteCampaign(campaign.id);
+      }
+      for (final hero in await repository.loadCharacters()) {
+        await repository.deleteCharacter(hero.id);
+      }
+      if (repository case PendingActionStore pendingStore) {
+        await pendingStore.clearAllPendingActions();
+      }
+      await repository.saveSettings({});
     }
-    for (final hero in await repository.loadCharacters()) {
-      await repository.deleteCharacter(hero.id);
-    }
-    await repository.saveSettings({});
     currentCampaign = null;
     await _reload();
   });

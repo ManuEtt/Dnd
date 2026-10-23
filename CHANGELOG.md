@@ -1,3 +1,21 @@
+## 23.10.2026 – 0.8.33+83: Atomarer vollständiger Datenreset (Code-CI erfolgreich)
+
+- SQLite-Implementierung von `AtomicUserDataReset`: Kampagnen, bestätigte Events, Revisionshistorie, Charaktere, Einstellungen und PlayerActionOutbox werden im gleichen Transaktionscommit gelöscht oder bei einem Fehler vollständig erhalten.
+- `GameController.deleteAllData` nutzt den atomaren SQLite-Vertrag; Test-/Legacy-Repositories behalten den bisherigen Fallback.
+- Neuer SQLite-Regressionstest prüft Erhalt der Daten und Controlleransicht bei einem erzwungenen späten Löschfehler, erneutes Löschen sowie Neustart ohne zurückgebliebene Einträge.
+- Keine Migration von Datenbankschema 2 oder JSON-Spielstandsformat 1, keine SRD-Regeländerung. Die erste CI #39945364361 deckte einen Fehler in der Testverbindung auf; nach getrennten SQLite-Testverbindungen ist [GitHub-Actions-Lauf #39946157697](https://github.com/ManuEtt/Dnd/actions/runs/39946157697) auf Code-HEAD `0145108c` mit Flutter-, Backend-, nativen Android-Tests sowie Debug-/Alpha-APKs erfolgreich. Reale Geräteabnahme weiterhin offen.
+
+---
+
+## 23.10.2026 – 0.8.32+82: atomare Änderungen der App-Einstellungen (CI ausstehend)
+
+- Campagneauswahl, Narrator-Verbindung und Sprachpräferenzen nutzen statt veralteter kompletter Settings-Snapshots transaktionale Teilupdates in SQLite.
+- Gleichzeitige Änderungen unabhängiger Schlüssel werden nicht mehr durch den zuletzt schreibenden alten Snapshot verworfen. Explizite Löschung einzelner Felder wird unterstützt; `saveSettings({})` für absichtliches Datenlöschen bleibt bestehen.
+- Korrektur: Die eigenständige Outbox wird beim gezielten Löschen einer Kampagne beziehungsweise beim vollständigen Datenreset ebenfalls bereinigt; andere Kampagnen bleiben erhalten.
+- Regressionstests für konkurrierende DB-Verbindungen, beschädigte Patch-Eingaben/Rollback, Outbox-Isolation und Laden der Kampagne nach Neustart. Bestehende Datenbankschema-Version 2 und Kampagnen-Exportversion 1 bleiben unverändert. GitHub-CI des neuen Branches und reale Geräteabnahme noch offen.
+
+---
+
 ## 23.10.2026 – 0.8.31+81: transaktionale Spielerhandlungs-Outbox (Code-CI grün)
 
 - SQLite-DB-Schema 2 hält ausstehende Handlungen getrennt von übrigen Einstellungen; Eindeutigkeit der Aktionskennung und Kampagnenbindung werden in Transaktionen geprüft.

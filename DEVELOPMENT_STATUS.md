@@ -1,3 +1,22 @@
+## 23.10.2026 – Vollständigen Spielstand-Reset atomar ausführen (Code-CI erfolgreich)
+
+- **IMPLEMENTIERT:** `AtomicUserDataReset` im CampaignRepository-Kontext; SQLite `deleteAllUserData()` löscht sechs lokale Nutzerdatentabellen in einer Datenbanktransaktion. Controller nutzt diesen Pfad und setzt `currentCampaign` erst nach erfolgreichem Commit auf null; Legacy-/Testimplementierungen behalten das bisherige Verhalten.
+- **REGRESSIONSTESTS BESTANDEN IN GITHUB-CI:** `app/test/atomic_full_data_reset_test.dart` prüft eine vollständige Löschung samt Archiv und Eventjournal, Neustart, Wiederholung sowie SQLite-ABORT-Trigger mitten in der Löschfolge: ohne Teilverlust von Kampagne, Held, Settings, Outbox oder Journal. Kein Android-/Flutter-SDK lokal; [GitHub-CI #39946157697](https://github.com/ManuEtt/Dnd/actions/runs/39946157697) auf Code-HEAD `0145108c57c562e3a6635a2ea6440d4649278222` vollständig **success** (Python, Backend, Dart/Flutter, native Android, Debug- und Alpha-APKs). Initiale CI #39945364361 scheiterte an einer gemeinsam geschlossenen Test-DB-Verbindung und wurde durch `singleInstance:false` repariert.
+- **BASIS ERFOLGREICH GETESTET:** PR #135 SHA `d8f0cf6958d5c401de9a7f12ae37e69abb45c954`, [Actions #39942663270](https://github.com/ManuEtt/Dnd/actions/runs/39942663270) completed/success. **NICHT GETESTET:** echte Android-Geräteinstallation, Nutzerdaten-Migration auf Geräten und langlebige Release-Signierung. **FORMAT:** DB-Schema 2, Kampagnen-`schemaVersion=1`; App-Version `0.8.33+83`.
+- **NÄCHSTES PAKET:** Gestapelte PR-Abhängigkeiten nach Review auflösen, Android-Migration anhand eines gesicherten Altspielstands auf echtem Gerät abnehmen; kein automatisches Testlabel aus früherer CI übernehmen.
+
+---
+
+## 23.10.2026 – Unabhängige Settings-Schreiber transaktional absichern (CI ausstehend)
+
+- **IMPLEMENTIERT im Entwicklungsbranch:** `AtomicSettingsStore` und SQLite-`updateSettingsEntries` speichern selektive Einstellungsfelder innerhalb einer Transaktion. `GameController` (Kampagnen-ID und Backend-Präferenzen) und `BootstrapApp` (Sprachpräferenzen) rufen `repository.patchSettings` auf; übrige Felder bleiben auch bei konkurrierenden Schreibvorgängen erhalten. Bestehender Komplett-Reset behält Full-Replace-Verhalten.
+- **DATENRESET-KORREKTUR:** Persistente PlayerActionOutbox-Einträge werden beim Löschen ihrer Kampagne in derselben SQLite-Transaktion entfernt. Ein vollständiger Datenreset entfernt auch verwaiste ausstehende Handlungen; Regressionstests sind ergänzt.
+- **TESTS ANGELEGT, CI NOCH OFFEN:** `app/test/atomic_settings_updates_test.dart` mit gleichzeitigen unabhängigen Schlüsseln, 24 Überschneidungen, Feldentfernung, ungültigem Patch/Rollback, PlayerActionOutbox und Neustart der Kampagnenauswahl.
+- **KEINE SPEICHERFORMATMIGRATION:** DB-Schema 2 aus #134 bleibt, JSON-Exportschema 1 bleibt, App-Version `0.8.32+82`. **NICHT GETESTET:** neuer finaler CI-HEAD, APK auf Android-Gerät, Langzeitupdate. **BESTÄTIGTE BASIS:** vorangegangene CI #39940517928 ist grün für #134-HEAD `8162388e`, nicht für den neuen Branch.
+- **NÄCHSTER SCHRITT:** Github-CI des neuen Stands auswerten und bei Fehlern korrigieren; anschließend gestapelte PRs in Abhängigkeitsreihenfolge reviewen und Geräteprüfung der DB-1→2-Migration separat vorbereiten.
+
+---
+
 ## 23.10.2026 – Pending-Action-Outbox von Settings entkoppeln (Code-CI grün)
 
 - **IMPLEMENTIERT:** SQL-Tabelle `pending_player_actions` (DB-Version 2), transaktionales Stage/Remove, Migration gültiger ausstehender Handlungen aus `pendingPlayerActionsV1` samt unveränderter Request-IDs; bestehende übrige Einstellungen bleiben erhalten. `PlayerActionOutbox` nutzt den neuen Vertrag für SQLite, Legacy-`CampaignRepository`-Implementierungen behalten ihren bisherigen Pfad.

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'data/campaign_repository.dart';
 import 'data/sqlite_campaign_repository.dart';
 import 'services/game_controller.dart';
 import 'services/voice_controller.dart';
@@ -45,9 +46,7 @@ class _BootstrapAppState extends State<BootstrapApp>
       }
       final voice = VoiceController(
         onPreferencesChanged: (changes) async {
-          final settings = await repository.loadSettings();
-          settings.addAll(changes);
-          await repository.saveSettings(settings);
+          await repository.patchSettings(changes);
         },
       );
       voice.configure(await repository.loadSettings());
