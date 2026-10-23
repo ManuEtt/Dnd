@@ -54,7 +54,10 @@ void main() {
         final abilitiesDelegate =
             abilities.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
         expect(abilitiesDelegate.crossAxisCount, 3);
-        expect(find.byKey(const ValueKey('sheet-abilities-grid')), findsNothing);
+        expect(
+          find.byKey(const ValueKey('sheet-abilities-grid')),
+          findsNothing,
+        );
         await tester.scrollUntilVisible(
           find.text('RETTUNGSWÜRFE'),
           240,
@@ -62,11 +65,17 @@ void main() {
         );
         await tester.pumpAndSettle();
         for (final ability in [
-          'strength', 'dexterity', 'constitution',
-          'intelligence', 'wisdom', 'charisma',
+          'strength',
+          'dexterity',
+          'constitution',
+          'intelligence',
+          'wisdom',
+          'charisma',
         ]) {
-          expect(find.byKey(ValueKey('sheet-saving-throw-$ability')),
-              findsOneWidget);
+          expect(
+            find.byKey(ValueKey('sheet-saving-throw-$ability')),
+            findsOneWidget,
+          );
         }
         expect(tester.takeException(), isNull);
       },
@@ -112,11 +121,17 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('sheet-abilities-grid')), findsNothing);
     for (final ability in [
-      'strength', 'dexterity', 'constitution',
-      'intelligence', 'wisdom', 'charisma',
+      'strength',
+      'dexterity',
+      'constitution',
+      'intelligence',
+      'wisdom',
+      'charisma',
     ]) {
-      expect(find.byKey(ValueKey('sheet-saving-throw-$ability')),
-          findsOneWidget);
+      expect(
+        find.byKey(ValueKey('sheet-saving-throw-$ability')),
+        findsOneWidget,
+      );
     }
     // Retained saving throw rows are readable even under enlarged system text.
     expect(tester.takeException(), isNull);
@@ -216,10 +231,7 @@ void main() {
       await tester.ensureVisible(conditionsTab);
       await tester.pumpAndSettle();
       expect(conditionsTab.hitTestable(), findsOneWidget);
-      expect(
-        tester.widget<FantasyToggleButton>(conditionsTab).compact,
-        isTrue,
-      );
+      expect(tester.widget<FantasyToggleButton>(conditionsTab).compact, isTrue);
       await tester.tap(conditionsTab);
       await tester.pumpAndSettle();
       expect(
@@ -238,10 +250,7 @@ void main() {
       expect(defensesTab.hitTestable(), findsOneWidget);
       await tester.tap(defensesTab);
       await tester.pumpAndSettle();
-      expect(
-        tester.widget<FantasyToggleButton>(defensesTab).selected,
-        isTrue,
-      );
+      expect(tester.widget<FantasyToggleButton>(defensesTab).selected, isTrue);
       expect(
         find.text(
           'Resistenzen und Immunitäten sind im aktuellen Charaktermodell nicht gesondert erfasst.',
@@ -266,8 +275,10 @@ void main() {
       ),
     );
     final edit = find.byTooltip('Charakter bearbeiten');
-    expect(find.ancestor(of: edit, matching: find.byType(FantasyIconButton)),
-        findsOneWidget);
+    expect(
+      find.ancestor(of: edit, matching: find.byType(FantasyIconButton)),
+      findsOneWidget,
+    );
     await tester.tap(edit);
     expect(edits, 1);
     expect(tester.takeException(), isNull);

@@ -233,10 +233,8 @@ class SrdLineAreaRules {
           point.$1 * axis.$1 + point.$2 * axis.$2;
       final rectangleDots = rectangle.map(dot);
       final squareDots = square.map(dot);
-      if (rectangleDots.reduce(math.max) <
-              squareDots.reduce(math.min) - 1e-9 ||
-          squareDots.reduce(math.max) <
-              rectangleDots.reduce(math.min) - 1e-9) {
+      if (rectangleDots.reduce(math.max) < squareDots.reduce(math.min) - 1e-9 ||
+          squareDots.reduce(math.max) < rectangleDots.reduce(math.min) - 1e-9) {
         return false;
       }
     }

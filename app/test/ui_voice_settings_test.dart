@@ -227,7 +227,9 @@ void main() {
     expect(find.text('Sprachausgabe wird geprüft …'), findsOneWidget);
     expect(
       tester
-          .widget<FantasyTextButton>(find.byKey(const ValueKey('refresh-voices')))
+          .widget<FantasyTextButton>(
+            find.byKey(const ValueKey('refresh-voices')),
+          )
           .onPressed,
       isNull,
     );

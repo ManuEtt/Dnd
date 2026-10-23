@@ -44,44 +44,47 @@ void main() {
       expect(find.text('Runde 2 · Zugfolge'), findsOneWidget);
       expect(find.byKey(const ValueKey('combat-turn-hero')), findsOneWidget);
       expect(find.byKey(const ValueKey('combat-turn-enemy')), findsOneWidget);
-      expect(find.byKey(const ValueKey('turn-tracker-active-marker')),
-          findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('turn-tracker-active-marker')),
+        findsOneWidget,
+      );
       expect(find.text('INI 18'), findsOneWidget);
       expect(find.text('INI 11'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   }
 
-  testWidgets('Aktiver Gegner wird korrekt markiert, Initiative bleibt gleich',
-      (tester) async {
-    await tester.pumpWidget(timeline(active: 'enemy'));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'Aktiver Gegner wird korrekt markiert, Initiative bleibt gleich',
+    (tester) async {
+      await tester.pumpWidget(timeline(active: 'enemy'));
+      await tester.pumpAndSettle();
 
-    final marker = find.byKey(const ValueKey('turn-tracker-active-marker'));
-    expect(
-      find.descendant(
-        of: find.byKey(const ValueKey('combat-turn-enemy')),
-        matching: marker,
-      ),
-      findsOneWidget,
-    );
-    expect(
-      find.descendant(
-        of: find.byKey(const ValueKey('combat-turn-hero')),
-        matching: marker,
-      ),
-      findsNothing,
-    );
-    expect(tester.takeException(), isNull);
-  });
+      final marker = find.byKey(const ValueKey('turn-tracker-active-marker'));
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('combat-turn-enemy')),
+          matching: marker,
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('combat-turn-hero')),
+          matching: marker,
+        ),
+        findsNothing,
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
 
-  testWidgets('Nicht bestätigte Initiative wird nie als Zugfolge erfunden',
-      (tester) async {
-    await tester.pumpWidget(timeline(
-      heroInitiative: 0,
-      enemyInitiative: 0,
-      active: 'enemy',
-    ));
+  testWidgets('Nicht bestätigte Initiative wird nie als Zugfolge erfunden', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      timeline(heroInitiative: 0, enemyInitiative: 0, active: 'enemy'),
+    );
     await tester.pumpAndSettle();
 
     expect(
@@ -92,13 +95,12 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Gleichstand meldet Unklarheit statt erfundener Priorität',
-      (tester) async {
-    await tester.pumpWidget(timeline(
-      heroInitiative: 15,
-      enemyInitiative: 15,
-      active: 'enemy',
-    ));
+  testWidgets('Gleichstand meldet Unklarheit statt erfundener Priorität', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      timeline(heroInitiative: 15, enemyInitiative: 15, active: 'enemy'),
+    );
     expect(
       find.text('Initiative-Gleichstand: aktiver Zug ist maßgeblich'),
       findsOneWidget,
@@ -106,8 +108,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Beendeter Kampf zeigt keinen aktiven Zug',
-      (tester) async {
+  testWidgets('Beendeter Kampf zeigt keinen aktiven Zug', (tester) async {
     await tester.pumpWidget(timeline(finished: true));
     expect(find.text('Begegnung beendet'), findsOneWidget);
     expect(
@@ -117,8 +118,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Zuganzeige übernimmt bestätigten Rundenwechsel',
-      (tester) async {
+  testWidgets('Zuganzeige übernimmt bestätigten Rundenwechsel', (tester) async {
     await tester.pumpWidget(timeline());
     expect(find.text('Runde 2 · Zugfolge'), findsOneWidget);
 

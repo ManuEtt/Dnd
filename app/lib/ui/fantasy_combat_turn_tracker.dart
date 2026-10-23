@@ -56,10 +56,7 @@ class FantasyCombatTurnTracker extends StatelessWidget {
               heroInitiative <= 0 || enemyInitiative <= 0
                   ? 'Initiative noch nicht vollständig bestätigt'
                   : 'Initiative-Gleichstand: aktiver Zug ist maßgeblich',
-              style: const TextStyle(
-                color: FantasyPalette.muted,
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: FantasyPalette.muted, fontSize: 12),
             ),
             const SizedBox(height: 10),
           ],
@@ -71,7 +68,8 @@ class FantasyCombatTurnTracker extends StatelessWidget {
               name: sides[index] ? heroName : enemyName,
               hero: sides[index],
               initiative: sides[index] ? heroInitiative : enemyInitiative,
-              active: !isFinished &&
+              active:
+                  !isFinished &&
                   activeParticipant == (sides[index] ? 'hero' : 'enemy'),
               finished: isFinished,
             ),
@@ -126,7 +124,8 @@ class _TurnEntry extends StatelessWidget {
     final initiativeLabel = initiative > 0 ? '$initiative' : '?';
     final turnLabel = active ? 'Jetzt am Zug' : 'Nicht am Zug';
     return Semantics(
-      label: '${hero ? 'Held' : 'Gegner'}: $name. Initiative '
+      label:
+          '${hero ? 'Held' : 'Gegner'}: $name. Initiative '
           '${initiative > 0 ? initiativeLabel : 'unbekannt'}. '
           '${finished ? 'Begegnung beendet' : turnLabel}.',
       child: ExcludeSemantics(

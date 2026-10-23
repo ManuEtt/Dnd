@@ -41,7 +41,10 @@ void main() {
     expect(line.widthFeet, 5);
     expect(line.at(origin)!.originCellRequiresReview, isTrue);
     expect(line.at(origin)!.centerWithinLine, isFalse);
-    expect(east(map(), includeOrigin: true).at(origin)!.centerWithinLine, isTrue);
+    expect(
+      east(map(), includeOrigin: true).at(origin)!.centerWithinLine,
+      isTrue,
+    );
     expect(line.at(const SrdGridCell(13, 10))!.centerWithinLine, isTrue);
     expect(line.at(const SrdGridCell(11, 9))!.centerWithinLine, isFalse);
     expect(line.at(const SrdGridCell(14, 10)), isNull);
@@ -80,10 +83,7 @@ void main() {
   });
 
   test('blocked center ray requests cover review, never immunity', () {
-    final line = east(
-      map(blockers: const [SrdGridCell(11, 10)]),
-      length: 25,
-    );
+    final line = east(map(blockers: const [SrdGridCell(11, 10)]), length: 25);
     expect(line.at(const SrdGridCell(11, 10)), isNull);
     expect(
       line.at(const SrdGridCell(12, 10))!.centerRay,
@@ -131,51 +131,54 @@ void main() {
     expect(line.at(const SrdGridCell(-1, 0)), isNull);
   });
 
-  test('Lightning Bolt checks Self origin separately from verified line size', () async {
-    final catalog = await SrdSpellCatalogLoader.load();
-    final bolt = catalog.find('Lightning Bolt')!;
-    expect(bolt.range, 'Self');
-    final request = SrdSpellGridTargetRequest(
-      map: map(),
-      caster: origin,
-      origin: origin,
-    );
-    final line = SrdLineAreaRules.previewConfirmedSpell(
-      spell: bolt,
-      gridTarget: request,
-      lineShapeVerifiedFromEffect: true,
-      verifiedEffectLengthFeet: 100,
-      verifiedEffectWidthFeet: 5,
-      direction: SrdLineDirection.east,
-    );
-    expect(line.lengthFeet, 100);
-    expect(line.widthFeet, 5);
-    expect(line.at(const SrdGridCell(29, 10))!.centerWithinLine, isTrue);
-    expect(
-      () => SrdLineAreaRules.previewConfirmedSpell(
+  test(
+    'Lightning Bolt checks Self origin separately from verified line size',
+    () async {
+      final catalog = await SrdSpellCatalogLoader.load();
+      final bolt = catalog.find('Lightning Bolt')!;
+      expect(bolt.range, 'Self');
+      final request = SrdSpellGridTargetRequest(
+        map: map(),
+        caster: origin,
+        origin: origin,
+      );
+      final line = SrdLineAreaRules.previewConfirmedSpell(
         spell: bolt,
         gridTarget: request,
-        lineShapeVerifiedFromEffect: false,
-        verifiedEffectLengthFeet: 100,
-        verifiedEffectWidthFeet: 5,
-        direction: SrdLineDirection.east,
-      ),
-      throwsFormatException,
-    );
-    expect(
-      () => SrdLineAreaRules.previewConfirmedSpell(
-        spell: bolt,
-        gridTarget: SrdSpellGridTargetRequest(
-          map: map(),
-          caster: origin,
-          origin: const SrdGridCell(11, 10),
-        ),
         lineShapeVerifiedFromEffect: true,
         verifiedEffectLengthFeet: 100,
         verifiedEffectWidthFeet: 5,
         direction: SrdLineDirection.east,
-      ),
-      throwsFormatException,
-    );
-  });
+      );
+      expect(line.lengthFeet, 100);
+      expect(line.widthFeet, 5);
+      expect(line.at(const SrdGridCell(29, 10))!.centerWithinLine, isTrue);
+      expect(
+        () => SrdLineAreaRules.previewConfirmedSpell(
+          spell: bolt,
+          gridTarget: request,
+          lineShapeVerifiedFromEffect: false,
+          verifiedEffectLengthFeet: 100,
+          verifiedEffectWidthFeet: 5,
+          direction: SrdLineDirection.east,
+        ),
+        throwsFormatException,
+      );
+      expect(
+        () => SrdLineAreaRules.previewConfirmedSpell(
+          spell: bolt,
+          gridTarget: SrdSpellGridTargetRequest(
+            map: map(),
+            caster: origin,
+            origin: const SrdGridCell(11, 10),
+          ),
+          lineShapeVerifiedFromEffect: true,
+          verifiedEffectLengthFeet: 100,
+          verifiedEffectWidthFeet: 5,
+          direction: SrdLineDirection.east,
+        ),
+        throwsFormatException,
+      );
+    },
+  );
 }

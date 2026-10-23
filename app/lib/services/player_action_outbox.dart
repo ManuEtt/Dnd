@@ -71,7 +71,9 @@ class PlayerActionOutbox {
     final raw = settings[_settingsKey];
     if (raw == null) return <String, dynamic>{};
     if (raw is! Map) {
-      throw const FormatException('Der ausstehende Handlungsstatus ist beschädigt.');
+      throw const FormatException(
+        'Der ausstehende Handlungsstatus ist beschädigt.',
+      );
     }
     return Map<String, dynamic>.from(raw);
   }
@@ -93,7 +95,9 @@ class PlayerActionOutbox {
     if (raw == null) return null;
     final action = PendingPlayerAction.fromJson(raw);
     if (action.campaignId != campaignId) {
-      throw const FormatException('Die ausstehende Handlung gehört zu einem anderen Spielstand.');
+      throw const FormatException(
+        'Die ausstehende Handlung gehört zu einem anderen Spielstand.',
+      );
     }
     return action;
   }
@@ -102,7 +106,9 @@ class PlayerActionOutbox {
   Future<PendingPlayerAction> stage(String campaignId, String text) async {
     final cleaned = text.trim();
     if (cleaned.isEmpty || cleaned.length > 4000) {
-      throw const FormatException('Die Handlung muss 1 bis 4000 Zeichen enthalten.');
+      throw const FormatException(
+        'Die Handlung muss 1 bis 4000 Zeichen enthalten.',
+      );
     }
     final requestId = _newRequestId();
     final action = PendingPlayerAction.fromJson({

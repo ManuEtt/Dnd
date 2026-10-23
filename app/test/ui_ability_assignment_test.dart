@@ -208,7 +208,9 @@ void main() {
       'Verfügbar: 0 von 27 Punkten',
     );
     expect(
-      tester.widget<FantasyIconButton>(keyed('increase-intelligence')).onPressed,
+      tester
+          .widget<FantasyIconButton>(keyed('increase-intelligence'))
+          .onPressed,
       isNull,
     );
     expect(
@@ -224,7 +226,9 @@ void main() {
       'Verfügbar: 2 von 27 Punkten',
     );
     expect(
-      tester.widget<FantasyIconButton>(keyed('increase-intelligence')).onPressed,
+      tester
+          .widget<FantasyIconButton>(keyed('increase-intelligence'))
+          .onPressed,
       isNotNull,
     );
   });

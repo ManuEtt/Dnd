@@ -14,11 +14,7 @@ class FantasyDiceBreakdown extends StatelessWidget {
     final data = event.payload;
     final lines = <String>[];
 
-    void addRoll(
-      String label,
-      Object? source, {
-      bool includeModifier = true,
-    }) {
+    void addRoll(String label, Object? source, {bool includeModifier = true}) {
       if (source is! Map) return;
       final values = source['rolls'];
       if (values is! List ||

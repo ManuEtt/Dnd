@@ -72,11 +72,13 @@ Future<void> waitForController(
   // Outbox staging is asynchronous *before* GameController.busy flips.
   // Pump both stages, including SQLite work outside the fake widget clock.
   for (var attempt = 0; attempt < 200; attempt++) {
-    await tester.runAsync(() =>
-        Future<void>.delayed(const Duration(milliseconds: 10)));
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 10)),
+    );
     await tester.pump();
     if (!controller.busy &&
-        find.byKey(const ValueKey('adventure-action-submitting'))
+        find
+            .byKey(const ValueKey('adventure-action-submitting'))
             .evaluate()
             .isEmpty) {
       break;
@@ -115,66 +117,81 @@ void main() {
   setUp(() => WidgetController.hitTestWarningShouldBeFatal = true);
   tearDown(() => WidgetController.hitTestWarningShouldBeFatal = false);
 
-  testWidgets('app restores an unconfirmed player action without auto-sending',
-      (tester) async {
-    final directory = (await tester.runAsync(
-      () => Directory.systemTemp.createTemp('outbox-widget-'),
-    ))!;
-    final repository = (await tester.runAsync(
-      () => SqliteCampaignRepository.open(
-        factory: databaseFactoryFfi,
-        path: paths.join(directory.path, 'campaign.sqlite'),
-      ),
-    ))!;
-    final controller = GameController(repository: repository);
-    final voice = _SilentVoice();
-    await tester.runAsync(controller.createDemo);
-    final campaign = controller.currentCampaign!;
-    final outbox = PlayerActionOutbox(
-      repository,
-      newRequestId: () => 'recovered-player-intent',
-    );
-    final staged = (await tester.runAsync(
-      () => outbox.stage(campaign.id, 'Ich untersuche den Brunnen'),
-    ))!;
-    await tester.pumpWidget(
-      LivingGameApp(controller: controller, voice: voice),
-    );
-    await tester.tap(find.text('Abenteuer'));
-    await tester.pumpAndSettle();
-    await tester.runAsync(() => Future<void>.delayed(
-      const Duration(milliseconds: 100),
-    ));
-    await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('adventure-pending-action-text')),
-        findsOneWidget);
-    expect(find.byKey(const ValueKey('adventure-retry-action')),
-        findsOneWidget);
-    expect(controller.currentCampaign!.revision, 0); // No implicit replay.
-    final input = tester.widget<TextField>(
-      find.widgetWithText(TextField, 'Was möchtest du tun?'),
-    );
-    expect(input.enabled, isFalse);
-    await tester.tap(find.byKey(const ValueKey('adventure-retry-action')));
-    await waitForController(tester, controller);
-    await tester.pumpAndSettle();
-    expect(controller.error, isNull);
-    expect(controller.currentCampaign!.revision, 1);
-    expect(controller.currentCampaign!.events.last.payload['actionRequestId'],
-        staged.requestId);
-    expect(await tester.runAsync(() => outbox.pendingFor(campaign.id)), isNull);
-    expect(find.byKey(const ValueKey('adventure-retry-action')), findsNothing);
-    await tester.pumpWidget(const SizedBox.shrink());
-    controller.dispose();
-    voice.dispose();
-    await tester.runAsync(() async {
-      await repository.close();
-      await directory.delete(recursive: true);
-    });
-  });
+  testWidgets(
+    'app restores an unconfirmed player action without auto-sending',
+    (tester) async {
+      final directory = (await tester.runAsync(
+        () => Directory.systemTemp.createTemp('outbox-widget-'),
+      ))!;
+      final repository = (await tester.runAsync(
+        () => SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: paths.join(directory.path, 'campaign.sqlite'),
+        ),
+      ))!;
+      final controller = GameController(repository: repository);
+      final voice = _SilentVoice();
+      await tester.runAsync(controller.createDemo);
+      final campaign = controller.currentCampaign!;
+      final outbox = PlayerActionOutbox(
+        repository,
+        newRequestId: () => 'recovered-player-intent',
+      );
+      final staged = (await tester.runAsync(
+        () => outbox.stage(campaign.id, 'Ich untersuche den Brunnen'),
+      ))!;
+      await tester.pumpWidget(
+        LivingGameApp(controller: controller, voice: voice),
+      );
+      await tester.tap(find.text('Abenteuer'));
+      await tester.pumpAndSettle();
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('adventure-pending-action-text')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('adventure-retry-action')),
+        findsOneWidget,
+      );
+      expect(controller.currentCampaign!.revision, 0); // No implicit replay.
+      final input = tester.widget<TextField>(
+        find.widgetWithText(TextField, 'Was möchtest du tun?'),
+      );
+      expect(input.enabled, isFalse);
+      await tester.tap(find.byKey(const ValueKey('adventure-retry-action')));
+      await waitForController(tester, controller);
+      await tester.pumpAndSettle();
+      expect(controller.error, isNull);
+      expect(controller.currentCampaign!.revision, 1);
+      expect(
+        controller.currentCampaign!.events.last.payload['actionRequestId'],
+        staged.requestId,
+      );
+      expect(
+        await tester.runAsync(() => outbox.pendingFor(campaign.id)),
+        isNull,
+      );
+      expect(
+        find.byKey(const ValueKey('adventure-retry-action')),
+        findsNothing,
+      );
+      await tester.pumpWidget(const SizedBox.shrink());
+      controller.dispose();
+      voice.dispose();
+      await tester.runAsync(() async {
+        await repository.close();
+        await directory.delete(recursive: true);
+      });
+    },
+  );
 
-  testWidgets('already committed action can be acknowledged after UI restart',
-      (tester) async {
+  testWidgets('already committed action can be acknowledged after UI restart', (
+    tester,
+  ) async {
     final directory = (await tester.runAsync(
       () => Directory.systemTemp.createTemp('outbox-widget-'),
     ))!;
@@ -195,8 +212,9 @@ void main() {
     final action = (await tester.runAsync(
       () => outbox.stage(campaign.id, 'Ich untersuche den Brunnen'),
     ))!;
-    await tester.runAsync(() =>
-        controller.sendAction(action.text, requestId: action.requestId));
+    await tester.runAsync(
+      () => controller.sendAction(action.text, requestId: action.requestId),
+    );
     final confirmed = controller.currentCampaign!;
     expect(confirmed.revision, 1);
     await tester.pumpWidget(
@@ -204,12 +222,14 @@ void main() {
     );
     await tester.tap(find.text('Abenteuer'));
     await tester.pumpAndSettle();
-    await tester.runAsync(() => Future<void>.delayed(
-      const Duration(milliseconds: 100),
-    ));
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 100)),
+    );
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('adventure-retry-action')),
-        findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('adventure-retry-action')),
+      findsOneWidget,
+    );
     await tester.tap(find.byKey(const ValueKey('adventure-retry-action')));
     await waitForController(tester, controller);
     await tester.pumpAndSettle();
@@ -303,9 +323,11 @@ void main() {
         ],
       );
       expect(
-        tester.widget<FantasySelectedNavigationRune>(
-          find.byKey(const ValueKey('fantasy-appbar-rune')),
-        ).rune,
+        tester
+            .widget<FantasySelectedNavigationRune>(
+              find.byKey(const ValueKey('fantasy-appbar-rune')),
+            )
+            .rune,
         FantasyRune.compass,
       );
       // The illustrated home header increases the content height on 360 dp.
@@ -325,9 +347,11 @@ void main() {
       await tester.pumpAndSettle();
       expect(controller.currentCampaign, isNotNull);
       expect(
-        tester.widget<FantasySelectedNavigationRune>(
-          find.byKey(const ValueKey('fantasy-appbar-rune')),
-        ).rune,
+        tester
+            .widget<FantasySelectedNavigationRune>(
+              find.byKey(const ValueKey('fantasy-appbar-rune')),
+            )
+            .rune,
         FantasyRune.dice,
       );
       expect(find.text('Was möchtest du tun?'), findsOneWidget);
@@ -344,9 +368,11 @@ void main() {
       await tester.tap(find.text('Tagebuch'));
       await tester.pumpAndSettle();
       expect(
-        tester.widget<FantasySelectedNavigationRune>(
-          find.byKey(const ValueKey('fantasy-appbar-rune')),
-        ).rune,
+        tester
+            .widget<FantasySelectedNavigationRune>(
+              find.byKey(const ValueKey('fantasy-appbar-rune')),
+            )
+            .rune,
         FantasyRune.tome,
       );
       await tester.scrollUntilVisible(
@@ -477,7 +503,8 @@ void main() {
       expect(
         tester.widget<FantasyShortcutTile>(attack).onTap,
         isNull,
-        reason: 'Ohne bestätigten Kampf darf es keinen Angriffskurzbefehl geben.',
+        reason:
+            'Ohne bestätigten Kampf darf es keinen Angriffskurzbefehl geben.',
       );
       await tester.tap(
         find.byKey(const ValueKey('adventure-shortcut-inspect')),
@@ -791,8 +818,10 @@ void main() {
       expect(voice.spoken, hasLength(1));
       expect(controller.currentCampaign!.toJson(), confirmed);
       expect(find.text('Ich gehe zum Waldschrein.'), findsOneWidget);
-      expect(find.byKey(const ValueKey('adventure-outbox-error')),
-          findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('adventure-outbox-error')),
+        findsOneWidget,
+      );
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
       controller.dispose();
@@ -866,9 +895,11 @@ void main() {
     await tester.ensureVisible(button);
     await tester.pumpAndSettle();
     expect(
-      tester.widget<FantasyTextButton>(
-        find.widgetWithText(FantasyTextButton, 'Softwarelizenzen anzeigen'),
-      ).style,
+      tester
+          .widget<FantasyTextButton>(
+            find.widgetWithText(FantasyTextButton, 'Softwarelizenzen anzeigen'),
+          )
+          .style,
       FantasyButtonStyle.iron,
     );
     expect(

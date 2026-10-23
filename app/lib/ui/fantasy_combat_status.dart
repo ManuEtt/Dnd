@@ -88,8 +88,7 @@ class _ActionSeal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final accent =
-        color ??
-        (available ? FantasyPalette.success : FantasyPalette.muted);
+        color ?? (available ? FantasyPalette.success : FantasyPalette.muted);
     return Semantics(
       label: '$label: $value',
       child: ExcludeSemantics(
@@ -161,9 +160,7 @@ class FantasyCombatCoverPanel extends StatelessWidget {
             for (final target in const ['Held', 'Gegner'])
               PopupMenuButton<CoverLevel>(
                 key: ValueKey(
-                  target == 'Held'
-                      ? 'combat-hero-cover'
-                      : 'combat-enemy-cover',
+                  target == 'Held' ? 'combat-hero-cover' : 'combat-enemy-cover',
                 ),
                 tooltip: 'Deckung für $target ändern',
                 enabled: canChange,
@@ -204,9 +201,7 @@ class FantasyCombatCoverPanel extends StatelessWidget {
                       const SizedBox(width: 6),
                       Flexible(
                         child: Text(
-                          '$target: ${CoverRules.label(
-                            target == 'Held' ? heroCover : enemyCover,
-                          )}',
+                          '$target: ${CoverRules.label(target == 'Held' ? heroCover : enemyCover)}',
                           maxLines: 2,
                           style: const TextStyle(fontSize: 12),
                         ),

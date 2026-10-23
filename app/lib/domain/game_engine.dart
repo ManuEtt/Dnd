@@ -742,7 +742,9 @@ class GameEngine {
   }) {
     _requireExternalEffect(campaign, source);
     if (campaign.pendingEnemyShieldHit != null) {
-      throw const FormatException('Zuerst die offene Schildreaktion abschließen.');
+      throw const FormatException(
+        'Zuerst die offene Schildreaktion abschließen.',
+      );
     }
     final name = spellName.trim();
     if (name.isEmpty || name.length > 200 || name != spellName) {
@@ -755,8 +757,10 @@ class GameEngine {
       encounterId = null;
       endRound = null;
     } else {
-      if (ownTurnEnds < 1 || ownTurnEnds > 100 ||
-          fight == null || fight.isFinished ||
+      if (ownTurnEnds < 1 ||
+          ownTurnEnds > 100 ||
+          fight == null ||
+          fight.isFinished ||
           fight.activeParticipant != 'hero' ||
           fight.round < 1 ||
           fight.round > 1000000 - (ownTurnEnds - 1)) {
@@ -802,19 +806,13 @@ class GameEngine {
         campaign.pendingEnemyShieldHit != null) {
       throw const FormatException('Zuerst einen offenen Wurf abschließen.');
     }
-    final updated = ConfirmedSpellEffectRules.remove(
-      campaign.hero,
-      effectId,
-    );
+    final updated = ConfirmedSpellEffectRules.remove(campaign.hero, effectId);
     return _commit(
       campaign,
       campaign.copyWith(hero: updated),
       'Bestätigter Zauberwirkungseintrag beendet.',
       type: 'spell.effect.recordRemoved',
-      payload: {
-        'effectId': effectId,
-        'targetId': campaign.hero.id,
-      },
+      payload: {'effectId': effectId, 'targetId': campaign.hero.id},
     );
   }
 

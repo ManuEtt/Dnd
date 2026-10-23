@@ -39,9 +39,7 @@ void main() {
     });
   }
 
-  testWidgets('Charakterbogen verwendet eigene Heldenkulisse', (
-    tester,
-  ) async {
+  testWidgets('Charakterbogen verwendet eigene Heldenkulisse', (tester) async {
     tester.view.physicalSize = const Size(320, 760);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);

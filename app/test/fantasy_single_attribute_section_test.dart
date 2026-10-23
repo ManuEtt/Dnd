@@ -34,27 +34,33 @@ void main() {
       addTearDown(tester.view.resetDevicePixelRatio);
 
       final before = hero.toJson();
-      await tester.pumpWidget(MaterialApp(
-        home: CharacterSheetPage(hero: hero),
-      ));
+      await tester.pumpWidget(
+        MaterialApp(home: CharacterSheetPage(hero: hero)),
+      );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const ValueKey('sheet-fixed-quick-navigation')),
-          findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('sheet-fixed-quick-navigation')),
+        findsOneWidget,
+      );
       await tester.scrollUntilVisible(
         find.byKey(const ValueKey('sheet-parchment-abilities')),
         200,
         scrollable: find.byType(Scrollable).first,
       );
       await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('sheet-preview-attributes-grid')),
-          findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('sheet-preview-attributes-grid')),
+        findsOneWidget,
+      );
       expect(find.text('Attribute'), findsOneWidget);
       expect(find.byKey(const ValueKey('sheet-abilities-grid')), findsNothing);
 
       final rulesTab = find.byKey(const ValueKey('sheet-tab-0'));
       await tester.scrollUntilVisible(
-        rulesTab, 210, scrollable: find.byType(Scrollable).first,
+        rulesTab,
+        210,
+        scrollable: find.byType(Scrollable).first,
       );
       await tester.pumpAndSettle();
       expect(rulesTab, findsOneWidget);
@@ -75,8 +81,7 @@ void main() {
         'wisdom',
         'charisma',
       ]) {
-        expect(find.byKey(ValueKey('sheet-saving-throw-$id')),
-            findsOneWidget);
+        expect(find.byKey(ValueKey('sheet-saving-throw-$id')), findsOneWidget);
       }
       expect(find.byKey(const ValueKey('sheet-abilities-grid')), findsNothing);
       expect(hero.toJson(), before);
@@ -87,9 +92,7 @@ void main() {
   testWidgets('Der Mehr-Dialog verweist auf Regeln statt zweite Attribute', (
     tester,
   ) async {
-    await tester.pumpWidget(MaterialApp(
-      home: CharacterSheetPage(hero: hero),
-    ));
+    await tester.pumpWidget(MaterialApp(home: CharacterSheetPage(hero: hero)));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('sheet-quick-mehr')));
     await tester.pumpAndSettle();

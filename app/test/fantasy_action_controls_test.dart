@@ -126,14 +126,8 @@ void main() {
 
     final attack = find.byKey(const ValueKey('adventure-shortcut-attack'));
     expect(stateOf(tester, 'attack'), FantasyButtonState.disabled);
-    expect(
-      tester.widget<FantasyShortcutTile>(attack).onTap,
-      isNull,
-    );
-    final tooltip = find.ancestor(
-      of: attack,
-      matching: find.byType(Tooltip),
-    );
+    expect(tester.widget<FantasyShortcutTile>(attack).onTap, isNull);
+    final tooltip = find.ancestor(of: attack, matching: find.byType(Tooltip));
     expect(tester.widget<Tooltip>(tooltip).message, 'Kein bestätigter Gegner.');
     await tester.tap(attack);
     await tester.tap(find.byKey(const ValueKey('adventure-shortcut-inspect')));

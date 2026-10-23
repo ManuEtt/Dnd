@@ -204,7 +204,9 @@ class HeroCharacter {
        inventory = List.unmodifiable(inventory),
        manualConditions = List.unmodifiable(conditions),
        conditionEffects = ConditionEffectRules.validated(conditionEffects),
-       confirmedSpellEffects = ConfirmedSpellEffectRules.validated(confirmedSpellEffects),
+       confirmedSpellEffects = ConfirmedSpellEffectRules.validated(
+         confirmedSpellEffects,
+       ),
        spentHitDice = Map.unmodifiable(spentHitDice),
        spentSpellSlots = Map.unmodifiable(spentSpellSlots),
        spentClassResources = Map.unmodifiable(spentClassResources),
@@ -448,7 +450,9 @@ class HeroCharacter {
     if (conditionEffects.isNotEmpty)
       'conditionEffects': conditionEffects.map((e) => e.toJson()).toList(),
     if (confirmedSpellEffects.isNotEmpty)
-      'confirmedSpellEffects': confirmedSpellEffects.map((e) => e.toJson()).toList(),
+      'confirmedSpellEffects': confirmedSpellEffects
+          .map((e) => e.toJson())
+          .toList(),
     if (exhaustionLevel > 0) 'exhaustionLevel': exhaustionLevel,
     if (spentHitDice.isNotEmpty) 'spentHitDice': spentHitDice,
     if (spentSpellSlots.isNotEmpty) 'spentSpellSlots': spentSpellSlots,

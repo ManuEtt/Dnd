@@ -21,22 +21,61 @@ class FantasyCharacterOverview extends StatelessWidget {
   static const gold = Color(0xffddb96c);
   static const dim = Color(0xffb4c1ce);
 
-  static const abilities = <({String id, String label, IconData icon, Color color})>[
-    (id: 'strength', label: 'Stärke', icon: Icons.fitness_center, color: Color(0xff974f48)),
-    (id: 'dexterity', label: 'Geschicklichkeit', icon: Icons.air, color: Color(0xff397f6a)),
-    (id: 'constitution', label: 'Konstitution', icon: Icons.favorite, color: Color(0xffaa5849)),
-    (id: 'intelligence', label: 'Intelligenz', icon: Icons.menu_book, color: Color(0xff376d98)),
-    (id: 'wisdom', label: 'Weisheit', icon: Icons.visibility, color: Color(0xff9d781f)),
-    (id: 'charisma', label: 'Charisma', icon: Icons.auto_awesome, color: Color(0xff674980)),
-  ];
+  static const abilities =
+      <({String id, String label, IconData icon, Color color})>[
+        (
+          id: 'strength',
+          label: 'Stärke',
+          icon: Icons.fitness_center,
+          color: Color(0xff974f48),
+        ),
+        (
+          id: 'dexterity',
+          label: 'Geschicklichkeit',
+          icon: Icons.air,
+          color: Color(0xff397f6a),
+        ),
+        (
+          id: 'constitution',
+          label: 'Konstitution',
+          icon: Icons.favorite,
+          color: Color(0xffaa5849),
+        ),
+        (
+          id: 'intelligence',
+          label: 'Intelligenz',
+          icon: Icons.menu_book,
+          color: Color(0xff376d98),
+        ),
+        (
+          id: 'wisdom',
+          label: 'Weisheit',
+          icon: Icons.visibility,
+          color: Color(0xff9d781f),
+        ),
+        (
+          id: 'charisma',
+          label: 'Charisma',
+          icon: Icons.auto_awesome,
+          color: Color(0xff674980),
+        ),
+      ];
 
   static const skills = <({String name, String ability, IconData icon})>[
     (name: 'Religion', ability: 'intelligence', icon: Icons.menu_book_outlined),
     (name: 'Überzeugen', ability: 'charisma', icon: Icons.handshake_outlined),
     (name: 'Medizin', ability: 'wisdom', icon: Icons.healing_outlined),
-    (name: 'Einschüchtern', ability: 'charisma', icon: Icons.theater_comedy_outlined),
+    (
+      name: 'Einschüchtern',
+      ability: 'charisma',
+      icon: Icons.theater_comedy_outlined,
+    ),
     (name: 'Wahrnehmung', ability: 'wisdom', icon: Icons.visibility_outlined),
-    (name: 'Athletik', ability: 'strength', icon: Icons.sports_martial_arts_outlined),
+    (
+      name: 'Athletik',
+      ability: 'strength',
+      icon: Icons.sports_martial_arts_outlined,
+    ),
   ];
 
   /// Resolve display-only historical skill labels without changing saves.
@@ -95,8 +134,11 @@ class FantasyCharacterOverview extends StatelessWidget {
               final normalized = query.trim().toLowerCase();
               final visible = normalized.isEmpty
                   ? lines
-                  : lines.where((line) =>
-                      line.toLowerCase().contains(normalized)).toList();
+                  : lines
+                        .where(
+                          (line) => line.toLowerCase().contains(normalized),
+                        )
+                        .toList();
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -113,10 +155,7 @@ class FantasyCharacterOverview extends StatelessWidget {
                           labelStyle: const TextStyle(color: dim),
                           hintText: 'Name, Bonus oder geübt',
                           hintStyle: const TextStyle(color: dim),
-                          prefixIcon: const Icon(
-                            Icons.search,
-                            color: gold,
-                          ),
+                          prefixIcon: const Icon(Icons.search, color: gold),
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                               color: gold.withValues(alpha: .65),
@@ -183,7 +222,7 @@ class FantasyCharacterOverview extends StatelessWidget {
     final skillLines = [
       for (final skill in srdSkillAbilities)
         '${skill.name}: ${_skillBonus(skill.name, skill.ability)}'
-        '${_isSkillProficient(skill.name) ? ' · geübt' : ''}',
+            '${_isSkillProficient(skill.name) ? ' · geübt' : ''}',
       // Preserve genuinely noncatalogued names from imported/old sheets.
       // The known "Medizin" alias is already represented by "Heilkunde".
       for (final other in hero.skills)
@@ -208,7 +247,8 @@ class FantasyCharacterOverview extends StatelessWidget {
               _ReferencePanel(
                 title: 'Fertigkeiten',
                 icon: Icons.stars_outlined,
-                onAll: () => _all(context, 'Fertigkeiten', skillLines, searchable: true),
+                onAll: () =>
+                    _all(context, 'Fertigkeiten', skillLines, searchable: true),
                 child: Column(
                   children: [
                     for (final skill in skills)
@@ -225,15 +265,11 @@ class FantasyCharacterOverview extends StatelessWidget {
                 title: 'Zauber',
                 icon: Icons.auto_awesome,
                 accent: const Color(0xff70b9ed),
-                onAll: () => _all(
-                  context,
-                  'Bekannte Zauber',
-                  [
-                    ...hero.spells,
-                    if (hero.concentratingOn.isNotEmpty)
-                      'Konzentration: ${hero.concentratingOn}',
-                  ],
-                ),
+                onAll: () => _all(context, 'Bekannte Zauber', [
+                  ...hero.spells,
+                  if (hero.concentratingOn.isNotEmpty)
+                    'Konzentration: ${hero.concentratingOn}',
+                ]),
                 child: hero.spells.isEmpty
                     ? const _ReferenceEmpty('Keine bekannten Zauber erfasst.')
                     : Column(
@@ -242,7 +278,9 @@ class FantasyCharacterOverview extends StatelessWidget {
                             _ReferenceRow(
                               icon: Icons.auto_awesome_outlined,
                               label: spell,
-                              value: spell == hero.concentratingOn ? 'Konz.' : '',
+                              value: spell == hero.concentratingOn
+                                  ? 'Konz.'
+                                  : '',
                               selected: spell == hero.concentratingOn,
                               color: const Color(0xff70b9ed),
                             ),
@@ -258,22 +296,25 @@ class FantasyCharacterOverview extends StatelessWidget {
                 title: 'Zustände',
                 icon: Icons.favorite_outline,
                 accent: const Color(0xffe0837c),
-                onAll: () => _all(
-                  context,
-                  'Bestätigte Zustände',
-                  [
-                    ...hero.conditions,
-                    if (hero.exhaustionLevel > 0)
-                      'Erschöpfung: Stufe ${hero.exhaustionLevel}',
-                  ],
-                ),
+                onAll: () => _all(context, 'Bestätigte Zustände', [
+                  ...hero.conditions,
+                  if (hero.exhaustionLevel > 0)
+                    'Erschöpfung: Stufe ${hero.exhaustionLevel}',
+                ]),
                 child: hero.conditions.isEmpty && hero.exhaustionLevel == 0
                     ? const Row(
                         children: [
-                          Icon(Icons.check_circle_outline, color: FantasyPalette.success, size: 29),
+                          Icon(
+                            Icons.check_circle_outline,
+                            color: FantasyPalette.success,
+                            size: 29,
+                          ),
                           SizedBox(width: 9),
                           Expanded(
-                            child: Text('Keine Zustände', style: TextStyle(color: ivory)),
+                            child: Text(
+                              'Keine Zustände',
+                              style: TextStyle(color: ivory),
+                            ),
                           ),
                         ],
                       )
@@ -288,7 +329,10 @@ class FantasyCharacterOverview extends StatelessWidget {
                               color: const Color(0xffe0837c),
                             ),
                           if (hero.exhaustionLevel > 0)
-                            Text('Erschöpfung: Stufe ${hero.exhaustionLevel}', style: const TextStyle(color: dim)),
+                            Text(
+                              'Erschöpfung: Stufe ${hero.exhaustionLevel}',
+                              style: const TextStyle(color: dim),
+                            ),
                         ],
                       ),
               ),
@@ -304,7 +348,9 @@ class FantasyCharacterOverview extends StatelessWidget {
                             _ReferenceRow(
                               icon: Icons.inventory_2_outlined,
                               label: item.name,
-                              value: item.quantity > 1 ? '×${item.quantity}' : '',
+                              value: item.quantity > 1
+                                  ? '×${item.quantity}'
+                                  : '',
                             ),
                         ],
                       ),
@@ -358,88 +404,90 @@ class _ParchmentAbilities extends StatelessWidget {
     return FantasyApprovedCornerFrame(
       cornerSize: 31,
       child: FantasyEngravedFrame(
-      parchment: true,
-      child: Container(
-        key: const ValueKey('sheet-parchment-abilities'),
-        padding: const EdgeInsets.fromLTRB(9, 12, 9, 14),
-        decoration: BoxDecoration(
-          color: FantasyCharacterOverview.parchment,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: FantasyCharacterOverview.gold, width: 2),
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xfff0dab4), Color(0xffc8aa7a)],
+        parchment: true,
+        child: Container(
+          key: const ValueKey('sheet-parchment-abilities'),
+          padding: const EdgeInsets.fromLTRB(9, 12, 9, 14),
+          decoration: BoxDecoration(
+            color: FantasyCharacterOverview.parchment,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: FantasyCharacterOverview.gold, width: 2),
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xfff0dab4), Color(0xffc8aa7a)],
+            ),
+            boxShadow: const [
+              BoxShadow(color: Color(0x66000000), blurRadius: 10),
+            ],
           ),
-          boxShadow: const [BoxShadow(color: Color(0x66000000), blurRadius: 10)],
-        ),
-        child: Column(
-          children: [
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.auto_awesome,
-                  size: 17,
-                  color: FantasyCharacterOverview.ink,
-                ),
-                SizedBox(width: 9),
-                Expanded(
-                  child: Text(
-                    'Attribute',
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontFamily: 'serif',
-                      fontSize: 23,
-                      fontWeight: FontWeight.bold,
-                      color: FantasyCharacterOverview.ink,
+          child: Column(
+            children: [
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.auto_awesome,
+                    size: 17,
+                    color: FantasyCharacterOverview.ink,
+                  ),
+                  SizedBox(width: 9),
+                  Expanded(
+                    child: Text(
+                      'Attribute',
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontFamily: 'serif',
+                        fontSize: 23,
+                        fontWeight: FontWeight.bold,
+                        color: FantasyCharacterOverview.ink,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(width: 9),
-                Icon(
-                  Icons.auto_awesome,
-                  size: 17,
-                  color: FantasyCharacterOverview.ink,
-                ),
-              ],
-            ),
-            const Divider(color: Color(0x994a351d), height: 13),
-            LayoutBuilder(
-              builder: (context, box) {
-                final columns = box.maxWidth >= 705
-                    ? 6
-                    : box.maxWidth >= 270
-                    ? 3
-                    : 2;
-                final rowsHeight = 93 + scaler.scale(49);
-                return GridView(
-                  key: const ValueKey('sheet-preview-attributes-grid'),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: columns,
-                    mainAxisExtent: rowsHeight,
-                    mainAxisSpacing: 5,
-                    crossAxisSpacing: 5,
+                  SizedBox(width: 9),
+                  Icon(
+                    Icons.auto_awesome,
+                    size: 17,
+                    color: FantasyCharacterOverview.ink,
                   ),
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    for (final a in FantasyCharacterOverview.abilities)
-                      _ParchmentAbility(
-                        label: a.label,
-                        icon: a.icon,
-                        color: a.color,
-                        value: hero.abilities[a.id],
-                      ),
-                  ],
-                );
-              },
-            ),
-          ],
+                ],
+              ),
+              const Divider(color: Color(0x994a351d), height: 13),
+              LayoutBuilder(
+                builder: (context, box) {
+                  final columns = box.maxWidth >= 705
+                      ? 6
+                      : box.maxWidth >= 270
+                      ? 3
+                      : 2;
+                  final rowsHeight = 93 + scaler.scale(49);
+                  return GridView(
+                    key: const ValueKey('sheet-preview-attributes-grid'),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: columns,
+                      mainAxisExtent: rowsHeight,
+                      mainAxisSpacing: 5,
+                      crossAxisSpacing: 5,
+                    ),
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: [
+                      for (final a in FantasyCharacterOverview.abilities)
+                        _ParchmentAbility(
+                          label: a.label,
+                          icon: a.icon,
+                          color: a.color,
+                          value: hero.abilities[a.id],
+                        ),
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
         ),
-      ),
       ),
     );
   }
@@ -492,8 +540,13 @@ class _ParchmentAbility extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: color,
-              border: Border.all(color: FantasyCharacterOverview.gold, width: 1.3),
-              boxShadow: const [BoxShadow(color: Color(0x66000000), blurRadius: 5)],
+              border: Border.all(
+                color: FantasyCharacterOverview.gold,
+                width: 1.3,
+              ),
+              boxShadow: const [
+                BoxShadow(color: Color(0x66000000), blurRadius: 5),
+              ],
             ),
             child: Icon(icon, color: FantasyCharacterOverview.ivory, size: 25),
           ),
@@ -507,7 +560,11 @@ class _ParchmentAbility extends StatelessWidget {
             ),
           ),
           Text(
-            mod == null ? '–' : mod < 0 ? '$mod' : '+$mod',
+            mod == null
+                ? '–'
+                : mod < 0
+                ? '$mod'
+                : '+$mod',
             style: const TextStyle(
               fontSize: 15,
               color: FantasyCharacterOverview.ink,
@@ -540,47 +597,52 @@ class _ReferencePanel extends StatelessWidget {
     cornerSize: 24,
     child: FantasyEngravedFrame(
       child: Container(
-      key: ValueKey('sheet-preview-${title.toLowerCase()}'),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(colors: [Color(0xff172a38), Color(0xff0c1825)]),
-        border: Border.all(color: accent.withValues(alpha: .65)),
-        borderRadius: BorderRadius.circular(11),
-      ),
-      padding: const EdgeInsets.fromLTRB(11, 10, 11, 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              Icon(icon, color: accent, size: 23),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    color: FantasyCharacterOverview.ivory,
-                    fontFamily: 'serif',
-                    fontSize: 19,
-                    fontWeight: FontWeight.bold,
+        key: ValueKey('sheet-preview-${title.toLowerCase()}'),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xff172a38), Color(0xff0c1825)],
+          ),
+          border: Border.all(color: accent.withValues(alpha: .65)),
+          borderRadius: BorderRadius.circular(11),
+        ),
+        padding: const EdgeInsets.fromLTRB(11, 10, 11, 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Icon(icon, color: accent, size: 23),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      color: FantasyCharacterOverview.ivory,
+                      fontFamily: 'serif',
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
-              TextButton(
-                onPressed: onAll,
-                style: TextButton.styleFrom(
-                  foregroundColor: const Color(0xffa9d6ef),
-                  visualDensity: VisualDensity.compact,
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                TextButton(
+                  onPressed: onAll,
+                  style: TextButton.styleFrom(
+                    foregroundColor: const Color(0xffa9d6ef),
+                    visualDensity: VisualDensity.compact,
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                  ),
+                  child: const Text(
+                    'Alle anzeigen',
+                    style: TextStyle(fontSize: 11),
+                  ),
                 ),
-                child: const Text('Alle anzeigen', style: TextStyle(fontSize: 11)),
-              ),
-            ],
-          ),
-          Divider(color: accent.withValues(alpha: .3), height: 10),
-          child,
-        ],
+              ],
+            ),
+            Divider(color: accent.withValues(alpha: .3), height: 10),
+            child,
+          ],
+        ),
       ),
-    ),
     ),
   );
 }
@@ -618,7 +680,10 @@ class _ReferenceRow extends StatelessWidget {
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: FantasyCharacterOverview.ivory, fontSize: 13),
+            style: const TextStyle(
+              color: FantasyCharacterOverview.ivory,
+              fontSize: 13,
+            ),
           ),
         ),
         const SizedBox(width: 6),
@@ -641,7 +706,10 @@ class _ReferenceEmpty extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 13),
-    child: Text(message, style: const TextStyle(color: FantasyCharacterOverview.dim)),
+    child: Text(
+      message,
+      style: const TextStyle(color: FantasyCharacterOverview.dim),
+    ),
   );
 }
 
@@ -679,15 +747,18 @@ class FantasyCharacterQuickNavigation extends StatelessWidget {
         border: const Border(
           top: BorderSide(color: FantasyCharacterOverview.gold, width: 1.5),
         ),
-        boxShadow: const [
-          BoxShadow(color: Color(0xaa000000), blurRadius: 12),
-        ],
+        boxShadow: const [BoxShadow(color: Color(0xaa000000), blurRadius: 12)],
       ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(5, 6, 5, 6),
         child: Row(
           children: [
-            _action('Charakter', Icons.person_outline, onCharacter, selected: true),
+            _action(
+              'Charakter',
+              Icons.person_outline,
+              onCharacter,
+              selected: true,
+            ),
             _action('Inventar', Icons.backpack_outlined, onInventory),
             Expanded(
               flex: 2,
@@ -713,11 +784,13 @@ class FantasyCharacterQuickNavigation extends StatelessWidget {
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              gradient: const RadialGradient(colors: [
-                                Color(0xff329ad8),
-                                Color(0xff164580),
-                                Color(0xff081a32),
-                              ]),
+                              gradient: const RadialGradient(
+                                colors: [
+                                  Color(0xff329ad8),
+                                  Color(0xff164580),
+                                  Color(0xff081a32),
+                                ],
+                              ),
                               border: Border.all(
                                 color: FantasyCharacterOverview.gold,
                                 width: 2,
@@ -798,7 +871,9 @@ class FantasyCharacterQuickNavigation extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 1),
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  color: selected ? const Color(0x333fa8dd) : Colors.transparent,
+                  color: selected
+                      ? const Color(0x333fa8dd)
+                      : Colors.transparent,
                   border: selected
                       ? Border.all(color: const Color(0x99ddb96c))
                       : null,
