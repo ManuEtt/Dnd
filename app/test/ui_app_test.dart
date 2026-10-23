@@ -782,12 +782,15 @@ void main() {
       await tester.runAsync(repository.close);
       await tester.enterText(input, 'Ich gehe zum Waldschrein.');
       await tester.tap(find.byTooltip('Handlung senden'));
-      await waitForController(tester, controller, hasError: true);
+      await waitForController(tester, controller);
       await tester.pumpAndSettle();
+      // Outbox staging fails before entering the controller when SQLite is
+      // closed. The UI reports that storage error without fake rule events.
       expect(voice.spoken, hasLength(1));
       expect(controller.currentCampaign!.toJson(), confirmed);
       expect(find.text('Ich gehe zum Waldschrein.'), findsOneWidget);
-      expect(find.byType(MaterialBanner), findsOneWidget);
+      expect(find.byKey(const ValueKey('adventure-outbox-error')),
+          findsOneWidget);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
       controller.dispose();
