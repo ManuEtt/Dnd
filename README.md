@@ -6,6 +6,9 @@
 
 ## Aktueller Stand und autonome Fortsetzung (23.10.2026)
 
+> **Erfolgreiche Abnahme Entwicklungszyklus 4 (23.10.2026):** Die neue Prüfung gefüllter Altspielstände aus SQLite-Version 1 nach 2 hat die vollständige [GitHub-CI #39964813706](https://github.com/ManuEtt/Dnd/actions/runs/39964813706) auf Code-Head `ebf2a6f35e24b78dad4c0f1b172c1a1bc31fe928` **bestanden**: Flutter/Backend-Tests, native Android-Tests, Debug- und kleine Alpha-APKs. [PR #137](https://github.com/ManuEtt/Dnd/pull/137) ist weiterhin offen; App-Version `0.8.33+83`. Artefakte sind in diesem CI-Lauf abrufbar. Diese spätere Dokumentationsaktualisierung ändert nur Markdown und ist kein neuer Produkt-Buildnachweis. **Realer Geräte-Upgrade- und Backup-/Restore-Test bleibt offen.** Nächster Schritt: die gestapelten PRs #133–#137 nach Review in Reihenfolge integrieren und ein Altspielstand-Update auf Android real abnehmen.
+
+
 > **Entwicklungszyklus 4 (23.10.2026, Test-Branch `test/sqlite-v1-to-v2-real-save-migration-20261023`):** Neue Ende-zu-Ende-SQLite-Regression für die Migration einer **gefüllten** alten Version-1-Datenbank: bestätigte Kampagne, Revisionsjournal, Ereignisse, Charakterarchiv, Einstellungen und ausstehende Spielerhandlung werden in Version 2 gemeinsam geprüft. Ein korrupter Legacy-Outbox-Eintrag muss den Upgradeversuch vollständig zurückrollen; nach Reparatur bleibt die Kampagne wieder aufrufbar. **Neue CI steht noch aus**; Basis-PR #136 hat auf SHA `12e4ca53` bereits [Actions #39947668601](https://github.com/ManuEtt/Dnd/actions/runs/39947668601) bestanden. App-Version unverändert `0.8.33+83`; keine echte Android-Upgrade-Abnahme behauptet. Nächster Schritt: neue Test-CI und gestapelte PR-Reviews, danach Realgerät-Abnahme.
 
 
