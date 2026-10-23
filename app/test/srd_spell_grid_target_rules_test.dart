@@ -78,6 +78,51 @@ void main() {
     );
   });
 
+  test('Sight grid needs separately confirmed actual visibility', () {
+    final spell = catalog.find('Mirage Arcane')!;
+    final safeMap = _map();
+    final origin = const SrdGridCell(8, 4);
+    final unconfirmed = SrdSpellGridTargetRequest(
+      map: safeMap,
+      caster: _caster,
+      origin: origin,
+    );
+    expect(
+      () => SrdSpellGridTargetRules.validateOrigin(spell, unconfirmed),
+      throwsFormatException,
+    );
+
+    final visible = SrdSpellGridTargetRequest(
+      map: safeMap,
+      caster: _caster,
+      origin: origin,
+      originVisibleConfirmed: true,
+    );
+    final assessment = SrdSpellGridTargetRules.validateOrigin(spell, visible);
+    expect(assessment.range, 'Sight');
+    expect(assessment.maxOriginDistanceFeet, isNull);
+    expect(assessment.originDistanceFeet, 40);
+
+    // A visibility flag cannot override confirmed cover or an unsurveyed map.
+    for (final map in [
+      _map(blockers: const [SrdGridCell(2, 1)]),
+      _map(surveyed: false),
+    ]) {
+      expect(
+        () => SrdSpellGridTargetRules.validateOrigin(
+          spell,
+          SrdSpellGridTargetRequest(
+            map: map,
+            caster: _caster,
+            origin: origin,
+            originVisibleConfirmed: true,
+          ),
+        ),
+        throwsFormatException,
+      );
+    }
+  });
+
   test('full blocker on the ray rejects spell despite valid distance', () {
     final spell = catalog.find('Magic Missile')!;
     final blocked = _map(blockers: const [SrdGridCell(2, 0)]);
