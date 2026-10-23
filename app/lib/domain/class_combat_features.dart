@@ -18,14 +18,19 @@ class ClassCombatFeatures {
     return 20;
   }
 
-  /// SRD 2024 Sneak Attack: finesse or ranged weapon, once per turn,
-  /// advantage OR active ally within 5 feet, and no disadvantage when relying
-  /// on that ally. Not triggered from an unverified attack or narration.
+  /// SRD 5.2.1, Rogue Sneak Attack: finesse or ranged weapon, once
+  /// per turn; advantage OR an ally within 5 feet OF THE TARGET who lacks
+  /// the Incapacitated condition. No disadvantage for the ally alternative.
+  /// Both ally facts must be confirmed independently. Conscious alone is
+  /// insufficient: an ally can be conscious but Stunned/Incapacitated.
+  /// Still requires a separately confirmed hit and turn-use guard.
   static int eligibleSneakAttackDice(
     HeroCharacter hero, {
     required bool hasAdvantage,
     required bool hasDisadvantage,
     required bool adjacentConsciousAlly,
+    bool allyWithinFiveFeetOfTargetConfirmed = false,
+    bool allyNotIncapacitatedConfirmed = false,
     required bool alreadyUsedThisTurn,
   }) {
     final level = ClassResourceRules.level(hero, 'Schurke');
@@ -44,7 +49,11 @@ class ClassCombatFeatures {
     // Equal sources cancel: when both exist, the final roll has neither.
     final effectiveDisadvantage = hasDisadvantage && !hasAdvantage;
     final advantage = hasAdvantage && !hasDisadvantage;
-    final ally = adjacentConsciousAlly && !effectiveDisadvantage;
+    final ally =
+        adjacentConsciousAlly &&
+        allyWithinFiveFeetOfTargetConfirmed &&
+        allyNotIncapacitatedConfirmed &&
+        !effectiveDisadvantage;
     return (advantage || ally) ? ClassResourceRules.sneakAttackDice(level) : 0;
   }
 
