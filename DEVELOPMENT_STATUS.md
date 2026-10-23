@@ -1,3 +1,12 @@
+## 23.10.2026 – Gefülltes SQLite-v1-Archiv gegen Upgrade auf DB v2 testen (Testpaket/CI offen)
+
+- **IMPLEMENTIERT:** `app/test/populated_legacy_upgrade_test.dart` simuliert anhand eines echten durch `GameController` und SQLite gespeicherten, bestätigten Kampagnenstandes die bisherige DB-Struktur (Schema 1) und testet Upgrade auf Schema 2 ohne Änderungen an Events, Revisionen, Held, Einstellungen, Pending-Request-ID oder JSON-Kampagnenexport.
+- **NEGATIVFALL:** Ungültige gespeicherte ausstehende Handlung muss die Migration mit vollständig erhaltenem Altbestand und unveränderter SQLite-Version zurückrollen. Nach kontrollierter Reparatur wird erneut auf Version 2 aktualisiert.
+- **TESTS GESCHRIEBEN, NEUE CI OFFEN:** Vorherige PR-#136-CI [#39947668601](https://github.com/ManuEtt/Dnd/actions/runs/39947668601) auf SHA `12e4ca53` vollständig erfolgreich; kein Nachweis für diesen neuen Teststand. Keine lokale Flutter-/Android-Laufzeit und kein echtes Gerät. App-Version weiter `0.8.33+83`.
+- **NÄCHSTES PAKET:** Neuen Test-PR CI-abnehmen, gestapelte PRs nach Review integrieren und eine reale Geräte-Migration mit vorherigem Backup separat nachweisen.
+
+---
+
 ## 23.10.2026 – Vollständigen Spielstand-Reset atomar ausführen (Code-CI erfolgreich)
 
 - **IMPLEMENTIERT:** `AtomicUserDataReset` im CampaignRepository-Kontext; SQLite `deleteAllUserData()` löscht sechs lokale Nutzerdatentabellen in einer Datenbanktransaktion. Controller nutzt diesen Pfad und setzt `currentCampaign` erst nach erfolgreichem Commit auf null; Legacy-/Testimplementierungen behalten das bisherige Verhalten.
