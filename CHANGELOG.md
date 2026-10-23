@@ -1,3 +1,11 @@
+## 23.10.2026 – Aus Alt-PR übernommene Bestandsmigrationstests (#141)
+
+- Tests für gefüllte SQLite-v1-Spielstände, inklusive Kampagne, Revisionen, bestätigtem Ereignisjournal, Heldenarchiv und Einstellungen, auf aktuellem Main-Stand wiederhergestellt.
+- Weitere Regression auf doppelte ausstehende Request-IDs mit vollständig rückgängig gemachter Version-1→2-Migration, ohne Daten- oder Journalverlust.
+- Die PR-CI #39994226404 war vor Merge-Konflikt-Auflösung vollständig erfolgreich; neuer kombinierter HEAD verlangt erneute CI. Produktversion bleibt **0.8.34+84**, SQLite-Version 2, JSON-Exportschema 1.
+
+---
+
 ## 23.10.2026 – 0.8.34+84: Atomare Kampagnenlöschung und Auswahlbereinigung (CI ausstehend)
 
 - Beim gezielten Kampagnenlöschen werden Kampagnenstand, ausstehende Spielerhandlung und ein eventuell auf sie verweisendes `lastCampaignId` atomar bereinigt. Neuere, auf eine andere Kampagne gerichtete Auswahl und unabhängige Einstellungen bleiben bestehen.

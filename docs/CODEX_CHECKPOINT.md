@@ -1,3 +1,12 @@
+## Zyklus 23.10.2026 – SQLite-v1-Bestandsmigration auf integriertem Stand (PR #141)
+- **Git-Basis:** `main` ist nach geprüftem Merge von [PR #140](https://github.com/ManuEtt/Dnd/pull/140) bei `a3dec6196e0b97acc185a77b525fdd9c5cc676da`, App **0.8.34+84**. PR #140: [CI #39968525780](https://github.com/ManuEtt/Dnd/actions/runs/39968525780) **completed/success** auf Head `012c51d09f599ea4daf004834aef8e23d71c2fcc`; neuer Main-Merge-Commit muss separat in [Actions](https://github.com/ManuEtt/Dnd/actions) geprüft werden.
+- **IMPLEMENTIERT:** [PR #141](https://github.com/ManuEtt/Dnd/pull/141) übernimmt `app/test/populated_legacy_upgrade_test.dart` aus dem ohne Merge geschlossenen #137 und ergänzt einen Test auf **doppelte Legacy-Request-IDs** mit vollständigem v1-Rollback. Gespeicherte Kampagnen, Heldenarchive, Ereignisse, Revisionshistorie, Einstellungen, Outbox-Request-ID, Wiederöffnung und altes JSON-Exportformat werden geprüft. Kein Produktcode und kein DB-Schema geändert.
+- **GETESTET:** Vor der Auflösung des Dokumentationskonflikts bestand die vollständige PR-CI [#39994226404](https://github.com/ManuEtt/Dnd/actions/runs/39994226404) auf `625e043cd6f7d0d4f976603e485864634bc14017`, einschließlich aller Tests und Android-APK-Builds. **NICHT GETESTET:** der neue zusammengeführte Branch-HEAD, bevor dessen CI abgeschlossen ist; echtes Android-Geräteupgrade mit Sicherung und Rückspielung.
+- **BLOCKIERT:** reales Android-Gerät lokal nicht verfügbar. **NOCH NICHT IMPLEMENTIERT:** vollständige SRD-5.2.1-Abdeckung und Drittanbieter-Exactly-once-Garantie.
+- **NÄCHSTER KONKRETER SCHRITT:** Merge-Reconciliation-CI auf finalem PR #141-HEAD prüfen, danach PR nach Review integrieren; die Hauptbranch-CI anschließend ausdrücklich getrennt verifizieren. Echte Geräte- und Altspielstandabnahme weiterhin offen.
+
+---
+
 ## Zyklus 23.10.2026 – Atomare Kampagnenlöschung und gespeicherte Auswahl (CI ausstehend)
 
 - **LIVE-BASIS:** `main` bei Beginn `4061d6510dd7072f980e317155b878317790eecc`. Die zuvor gestapelten PRs #133–#136 wurden inzwischen integriert (teilweise über neue Merge-PRs #138/#139). Der gefüllte v1→v2-Test-PR [#137](https://github.com/ManuEtt/Dnd/pull/137) ist **geschlossen, nicht gemergt**, seine [CI #39964813706](https://github.com/ManuEtt/Dnd/actions/runs/39964813706) war auf Test-HEAD `ebf2a6f` erfolgreich. Für `main`-HEAD `4061d651` läuft [CI #39967425937](https://github.com/ManuEtt/Dnd/actions/runs/39967425937) noch; keine Freigabe für diesen HEAD behaupten.
