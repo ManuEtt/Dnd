@@ -203,21 +203,13 @@ class GameController extends ChangeNotifier {
           RegExp(r'[^A-Za-z0-9_-]').hasMatch(requestId)) {
         throw const FormatException('Ungültige Handlungskennung.');
       }
-      // The persisted journal is checked before rolls or provider requests.
+      // First read protects ordinary retries before dice or provider calls.
       final saved = await repository.getCampaign(campaign.id);
       if (saved == null) {
         throw const FormatException('Der Spielstand wurde nicht gefunden.');
       }
-      for (final event in saved.events) {
-        if (event.payload['actionRequestId'] != requestId) continue;
-        if (event.payload['actionRequestText'] != text.trim()) {
-          throw const FormatException(
-            'Diese Handlungskennung gehört bereits zu einem anderen Text.',
-          );
-        }
-        currentCampaign = saved;
-        await _reload();
-        return; // Previously confirmed: no second application of rules.
+      if (await _restoreConfirmedAction(saved, requestId, text.trim())) {
+        return;
       }
       if (saved.revision != campaign.revision) {
         throw const CampaignConflictException(
@@ -226,10 +218,45 @@ class GameController extends ChangeNotifier {
       }
     }
     final update = await _withNarration(engine.act(campaign, text), text);
-    await _commit(requestId == null
-        ? update
-        : _withActionReceipt(update, requestId, text.trim()));
+    try {
+      await _commit(requestId == null
+          ? update
+          : _withActionReceipt(update, requestId, text.trim()));
+    } on CampaignConflictException {
+      // Another writer may confirm this *same* ID between the first read and
+      // the SQLite revision check. Accept its durable receipt, never retry
+      // rules or a paid narrator. Unrelated writes remain real conflicts.
+      if (requestId != null) {
+        final latest = await repository.getCampaign(campaign.id);
+        if (latest != null &&
+            await _restoreConfirmedAction(latest, requestId, text.trim())) {
+          return;
+        }
+      }
+      rethrow;
+    }
   });
+
+  /// Returns true only for an already-confirmed matching ID and action.
+  /// A reused ID with different text is a hard error, including after races.
+  Future<bool> _restoreConfirmedAction(
+    Campaign saved,
+    String requestId,
+    String action,
+  ) async {
+    for (final event in saved.events) {
+      if (event.payload['actionRequestId'] != requestId) continue;
+      if (event.payload['actionRequestText'] != action) {
+        throw const FormatException(
+          'Diese Handlungskennung gehört bereits zu einem anderen Text.',
+        );
+      }
+      currentCampaign = saved;
+      await _reload();
+      return true;
+    }
+    return false;
+  }
 
   /// Attaches a durable receipt to the first confirmed event, without an
   /// additional event or a migration of the existing SQLite schema.
