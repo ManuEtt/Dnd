@@ -441,6 +441,11 @@ void main() {
       'Ich lausche dem Wind.',
     );
     await tester.tap(find.byTooltip('Handlung senden'));
+    await tester.runAsync(() async {
+      for (var i = 0; i < 200 && !transport.narrationRequested; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+      }
+    });
     await tester.pump();
     expect(transport.narrationRequested, isTrue);
     expect(controller.busy, isTrue);
