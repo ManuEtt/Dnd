@@ -6,6 +6,9 @@
 
 ## Aktueller Stand und autonome Fortsetzung (23.10.2026)
 
+> **Entwicklungszyklus 4 (23.10.2026, Test-Branch `test/sqlite-v1-to-v2-real-save-migration-20261023`):** Neue Ende-zu-Ende-SQLite-Regression für die Migration einer **gefüllten** alten Version-1-Datenbank: bestätigte Kampagne, Revisionsjournal, Ereignisse, Charakterarchiv, Einstellungen und ausstehende Spielerhandlung werden in Version 2 gemeinsam geprüft. Ein korrupter Legacy-Outbox-Eintrag muss den Upgradeversuch vollständig zurückrollen; nach Reparatur bleibt die Kampagne wieder aufrufbar. **Neue CI steht noch aus**; Basis-PR #136 hat auf SHA `12e4ca53` bereits [Actions #39947668601](https://github.com/ManuEtt/Dnd/actions/runs/39947668601) bestanden. App-Version unverändert `0.8.33+83`; keine echte Android-Upgrade-Abnahme behauptet. Nächster Schritt: neue Test-CI und gestapelte PR-Reviews, danach Realgerät-Abnahme.
+
+
 > **Entwicklungszyklus 3 (23.10.2026, Version `0.8.33+83`, [PR #136](https://github.com/ManuEtt/Dnd/pull/136)):** Der vollständige Datenreset entfernt Kampagnen, Revisionsjournal, Spielereignisse, Charakterarchiv, Einstellungen und offene Spielerhandlungen jetzt in **einer SQLite-Transaktion**. Bei Abbruch bleiben alle ursprünglichen Daten erhalten; ein zweiter Löschversuch und Neustart sind getestet. Die erste CI fand einen Fehler in der Testverbindung; nach dessen Behebung sind **sämtliche Tests und Android-APK-Builds erfolgreich**: [GitHub Actions #39946157697](https://github.com/ManuEtt/Dnd/actions/runs/39946157697) auf Head `0145108c57c562e3a6635a2ea6440d4649278222`. [Alpha- und Quellcode-Artefakte](https://github.com/ManuEtt/Dnd/actions/runs/39946157697) sind verfügbar. **Nicht geprüft:** Realgerät, altes Android-Update, langfristige Release-Signierung. #136 baut auf den offenen PRs #133–#135 auf und ist nicht in `main` integriert. Nächster Schritt: Reviews/Merges der PR-Reihe und reale Geräteabnahme.
 
 
