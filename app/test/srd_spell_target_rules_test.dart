@@ -37,9 +37,15 @@ void main() {
         final facts = switch (spell.range) {
           'Self' => _self,
           'Touch' => _touch,
+          'Sight' => const SrdSpellTargetFacts(
+            mode: SrdSpellOriginMode.distant,
+            originDistanceFeet: 0,
+            clearPathConfirmed: true,
+            visibleOriginConfirmed: true,
+          ),
           _ => _ranged(0),
         };
-        if (const {'Sight', 'Unlimited', 'Special'}.contains(spell.range)) {
+        if (const {'Unlimited', 'Special'}.contains(spell.range)) {
           unsupported++;
           expect(
             () => SrdSpellTargetRules.validateOrigin(spell, facts),
@@ -51,7 +57,7 @@ void main() {
           expect(checked.range, spell.range, reason: spell.name);
         }
       }
-      expect(unsupported, 3);
+      expect(unsupported, 2);
     },
   );
 
@@ -139,6 +145,59 @@ void main() {
         throwsFormatException,
       );
     }
+  });
+
+  test('Sight needs explicit visibility and a confirmed clear path', () {
+    final spell = catalog.find('Mirage Arcane')!;
+    expect(spell.range, 'Sight');
+
+    final valid = SrdSpellTargetRules.validateOrigin(
+      spell,
+      const SrdSpellTargetFacts(
+        mode: SrdSpellOriginMode.distant,
+        originDistanceFeet: 50000,
+        clearPathConfirmed: true,
+        visibleOriginConfirmed: true,
+      ),
+    );
+    expect(valid.range, 'Sight');
+    expect(valid.maxOriginDistanceFeet, isNull);
+    expect(valid.originDistanceFeet, 50000);
+
+    for (final facts in [
+      _ranged(10),
+      _ranged(0),
+      const SrdSpellTargetFacts(
+        mode: SrdSpellOriginMode.distant,
+        clearPathConfirmed: true,
+        visibleOriginConfirmed: false,
+      ),
+      const SrdSpellTargetFacts(
+        mode: SrdSpellOriginMode.distant,
+        visibleOriginConfirmed: true,
+      ),
+      const SrdSpellTargetFacts(
+        mode: SrdSpellOriginMode.caster,
+        originDistanceFeet: 0,
+        clearPathConfirmed: true,
+        visibleOriginConfirmed: true,
+      ),
+      const SrdSpellTargetFacts(
+        mode: SrdSpellOriginMode.distant,
+        originDistanceFeet: -1,
+        clearPathConfirmed: true,
+        visibleOriginConfirmed: true,
+      ),
+    ]) {
+      expect(
+        () => SrdSpellTargetRules.validateOrigin(spell, facts),
+        throwsFormatException,
+      );
+    }
+
+    // Sight is only spatial preflight: Mirage Arcane's ten-minute casting
+    // time is still unsupported by one-action casting, as intended.
+    expect(spell.supportsSingleTurnPreparation, isFalse);
   });
 
   test('feet and mile conversions are exact, special ranges fail closed', () {
