@@ -93,15 +93,91 @@ void main() {
     await outbox.remove(second);
   });
 
-  test('invalid/corrupt pending settings block new commands', () async {
-    await repository.saveSettings({
-      'pendingPlayerActionsV1': {
-        'one': {'campaignId': 'other', 'requestId': 'ok', 'text': 'Ja'},
-      },
-    });
-    final outbox = PlayerActionOutbox(repository);
-    await expectLater(outbox.pendingFor('one'), throwsFormatException);
-    await expectLater(outbox.stage('one', 'Ich lausche.'), throwsStateError);
+  test('invalid pending action is rejected before SQLite mutation', () async {
+    final outbox = PlayerActionOutbox(
+      repository,
+      newRequestId: () => 'invalid identifier',
+    );
+    await expectLater(
+      outbox.stage('one', 'Ich lausche.'),
+      throwsFormatException,
+    );
+    expect(await outbox.pendingFor('one'), isNull);
+  });
+
+  test('stale settings writes cannot remove the durable outbox', () async {
+    final staleSettings = await repository.loadSettings();
+    final outbox = PlayerActionOutbox(
+      repository,
+      newRequestId: () => 'durable-req',
+    );
+    final staged = await outbox.stage('one', 'Ich lausche.');
+    staleSettings['backendUrl'] = 'https://example.invalid';
+    await repository.saveSettings(staleSettings);
+    expect((await outbox.pendingFor('one'))!.requestId, staged.requestId);
+    await outbox.remove(staged);
+    expect((await repository.loadSettings())['backendUrl'],
+        'https://example.invalid');
+  });
+
+  test('two SQLite connections cannot stage two actions for one campaign',
+      () async {
+    final secondRepository = await SqliteCampaignRepository.open(
+      factory: databaseFactoryFfi,
+      path: path,
+    );
+    try {
+      final first = PlayerActionOutbox(
+        repository,
+        newRequestId: () => 'request-one',
+      );
+      final second = PlayerActionOutbox(
+        secondRepository,
+        newRequestId: () => 'request-two',
+      );
+      final outcomes = await Future.wait([
+        first.stage('one', 'Ich lausche.').then((_) => true)
+            .catchError((_) => false),
+        second.stage('one', 'Ich greife an.').then((_) => true)
+            .catchError((_) => false),
+      ]);
+      expect(outcomes.where((success) => success).length, 1);
+      final saved = await first.pendingFor('one');
+      expect(saved, isNotNull);
+      expect(
+        saved!.requestId,
+        anyOf('request-one', 'request-two'),
+      );
+      final restored = await second.pendingFor('one');
+      expect(restored!.toJson(), saved.toJson());
+    } finally {
+      await secondRepository.close();
+    }
+  });
+
+  test('two different campaigns keep both concurrent requests', () async {
+    final otherRepository = await SqliteCampaignRepository.open(
+      factory: databaseFactoryFfi,
+      path: path,
+    );
+    try {
+      final first = PlayerActionOutbox(
+        repository,
+        newRequestId: () => 'id-one',
+      );
+      final second = PlayerActionOutbox(
+        otherRepository,
+        newRequestId: () => 'id-two',
+      );
+      await Future.wait([
+        first.stage('one', 'Ich lausche.'),
+        second.stage('two', 'Ich warte.'),
+      ]);
+      expect((await first.pendingFor('one'))!.requestId, 'id-one');
+      expect((await second.pendingFor('two'))!.requestId, 'id-two');
+    } finally {
+      await otherRepository.close();
+    }
   });
 
   test('stale removal never clears a different outstanding request', () async {

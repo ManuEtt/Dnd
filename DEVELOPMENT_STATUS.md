@@ -1,3 +1,12 @@
+## 23.10.2026 – Pending-Action-Outbox von Settings entkoppeln (Code-CI grün)
+
+- **IMPLEMENTIERT:** SQL-Tabelle `pending_player_actions` (DB-Version 2), transaktionales Stage/Remove, Migration gültiger ausstehender Handlungen aus `pendingPlayerActionsV1` samt unveränderter Request-IDs; bestehende übrige Einstellungen bleiben erhalten. `PlayerActionOutbox` nutzt den neuen Vertrag für SQLite, Legacy-`CampaignRepository`-Implementierungen behalten ihren bisherigen Pfad.
+- **GETESTET:** konkurrierende SQLite-Verbindungen und Kampagnen, stale Settings, Neustart nach Migration, Rollback bei inkonsistentem Altstand – vollständige [GitHub-Actions-CI #39938760852](https://github.com/ManuEtt/Dnd/actions/runs/39938760852) auf Code-SHA `1ca83e63c5d78c84b1babebcc15c0a392725b7a3` **success** inklusive Python, Backend, Dart/Flutter, nativen Android-Tests, Debug-APK, ABI-Alpha-APKs und Release-/Quell-Artefakten; kein lokales Flutter/Dart-SDK.
+- **NICHT GETESTET:** realer Geräte-/Upgradepfad, parallele Drittanbieterabrufe und langfristige Release-Signierung; vollständige SRD-Automatisierung bleibt offen. Dokumentationsnachtrag nach dem grünen Code-Lauf separat betrachten. App `0.8.31+81`, JSON-Sicherung weiterhin `schemaVersion=1`.
+- **NÄCHSTER SCHRITT:** Basis-PR #133 nach Review integrieren, #134 auf `main` umstellen und neuen CI-Lauf prüfen; anschließend separate atomare Teilupdates für andere App-Einstellungen planen. Baseline-CI auf `main` #39932399488 gehört zu `b1fa9c67`, nicht zum neuen PR.
+
+---
+
 ## 22.10.2026 – SRD 5.2.1: Linien-AoE-Rastervorschau (PR/CI offen)
 
 - **IMPLEMENTIERT:** Regelreine `SrdLineAreaRules` für acht Himmelsrichtungen auf bestätigter 5-Fuß-Karte mit getrennten, vom konkreten Zaubereffekt bestätigten Linienlängen/-breiten, inklusiver Rechteck/Zell-Schnittprüfung, getrenntem Mittelpunkt-/Randmerkmal und expliziter Ursprungsfeldprüfung.
