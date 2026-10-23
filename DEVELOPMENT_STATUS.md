@@ -1,3 +1,12 @@
+## 23.10.2026 – Gefüllte Legacy-DB-Upgrades erneut absichern (CI ausstehend)
+
+- **IMPLEMENTIERT:** Der ohne Merge geschlossene PR #137 hatte bestandene Tests zum SQLite-v1→v2-Upgrade einer gefüllten alten Datenbank. Diese Tests wurden auf neuem Branch von `main` wiederhergestellt. Zusätzlich testet `app/test/populated_legacy_upgrade_test.dart` zwei ausstehende Legacy-Aktionen mit derselben Request-ID und verlangt Rollback der gesamten Migration, inklusive des alten Schema-Stands und des vorhandenen Kampagnenarchivs.
+- **GETESTET:** Hauptbranch `4061d651` ([CI #39967425937](https://github.com/ManuEtt/Dnd/actions/runs/39967425937), success); #140 auf eigenem Head ([CI #39968525780](https://github.com/ManuEtt/Dnd/actions/runs/39968525780), success). Die ursprünglichen Testfälle aus #137 bestanden [CI #39966829461](https://github.com/ManuEtt/Dnd/actions/runs/39966829461), jedoch **nicht** der neue Duplicate-ID-Fall.
+- **NICHT GETESTET:** vollständige GitHub-CI des neuen PR, Android-Geräteinstallation, Upgrade realer v1-Nutzerdaten und Backup/Restore. **BLOCKIERT:** kein lokales Flutter-SDK oder echtes Gerät. **FORMAT:** unverändert SQLite-Version 2, Kampagnenexport-Version 1, App 0.8.33+83.
+- **NÄCHSTER SCHRITT:** neue CI auswerten, Defekte beheben; nach Review PR mergen und auf neuem `main` nochmals prüfen. PR #140 bleibt separat offen; echte Android-Geräteabnahme weiterhin notwendig.
+
+---
+
 ## 23.10.2026 – Vollständigen Spielstand-Reset atomar ausführen (Code-CI erfolgreich)
 
 - **IMPLEMENTIERT:** `AtomicUserDataReset` im CampaignRepository-Kontext; SQLite `deleteAllUserData()` löscht sechs lokale Nutzerdatentabellen in einer Datenbanktransaktion. Controller nutzt diesen Pfad und setzt `currentCampaign` erst nach erfolgreichem Commit auf null; Legacy-/Testimplementierungen behalten das bisherige Verhalten.
