@@ -1,3 +1,12 @@
+## 23.10.2026 – Unabhängige Settings-Schreiber transaktional absichern (CI ausstehend)
+
+- **IMPLEMENTIERT im Entwicklungsbranch:** `AtomicSettingsStore` und SQLite-`updateSettingsEntries` speichern selektive Einstellungsfelder innerhalb einer Transaktion. `GameController` (Kampagnen-ID und Backend-Präferenzen) und `BootstrapApp` (Sprachpräferenzen) rufen `repository.patchSettings` auf; übrige Felder bleiben auch bei konkurrierenden Schreibvorgängen erhalten. Bestehender Komplett-Reset behält Full-Replace-Verhalten.
+- **TESTS ANGELEGT, CI NOCH OFFEN:** `app/test/atomic_settings_updates_test.dart` mit gleichzeitigen unabhängigen Schlüsseln, 24 Überschneidungen, Feldentfernung, ungültigem Patch/Rollback, PlayerActionOutbox und Neustart der Kampagnenauswahl.
+- **KEINE SPEICHERFORMATMIGRATION:** DB-Schema 2 aus #134 bleibt, JSON-Exportschema 1 bleibt, App-Version `0.8.32+82`. **NICHT GETESTET:** neuer finaler CI-HEAD, APK auf Android-Gerät, Langzeitupdate. **BESTÄTIGTE BASIS:** vorangegangene CI #39940517928 ist grün für #134-HEAD `8162388e`, nicht für den neuen Branch.
+- **NÄCHSTER SCHRITT:** Github-CI des neuen Stands auswerten und bei Fehlern korrigieren; anschließend gestapelte PRs in Abhängigkeitsreihenfolge reviewen und Geräteprüfung der DB-1→2-Migration separat vorbereiten.
+
+---
+
 ## 23.10.2026 – Pending-Action-Outbox von Settings entkoppeln (Code-CI grün)
 
 - **IMPLEMENTIERT:** SQL-Tabelle `pending_player_actions` (DB-Version 2), transaktionales Stage/Remove, Migration gültiger ausstehender Handlungen aus `pendingPlayerActionsV1` samt unveränderter Request-IDs; bestehende übrige Einstellungen bleiben erhalten. `PlayerActionOutbox` nutzt den neuen Vertrag für SQLite, Legacy-`CampaignRepository`-Implementierungen behalten ihren bisherigen Pfad.
