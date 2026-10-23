@@ -1,3 +1,11 @@
+## 23.10.2026 – gefüllte Schema-1-Spielstände und doppelte Request-IDs prüfen (CI ausstehend)
+
+- Regres­sionstest aus geschlossenem, nicht integriertem PR #137 für den v1→v2-Upgrade einer *gefüllten* SQLite-Datenbank mit Kampagne, Revisionsjournal, bestätigten Ereignissen, Heldenarchiv, Settings und Outbox wieder aufgenommen.
+- Neuer zusätzlicher Migrationskonflikt: Mehrere alte Aufträge mit identischer Request-ID müssen ohne Teilmigration abgewiesen werden und das gesamte ältere Archiv erhalten.
+- Reine Test- und Dokumentationsänderung; App bleibt 0.8.33+83. Keine produktive Migration, DB-Struktur oder SRD-Regeländerung. Neue GitHub-CI und reale Geräteabnahme ausstehend.
+
+---
+
 ## 23.10.2026 – 0.8.33+83: Atomarer vollständiger Datenreset (Code-CI erfolgreich)
 
 - SQLite-Implementierung von `AtomicUserDataReset`: Kampagnen, bestätigte Events, Revisionshistorie, Charaktere, Einstellungen und PlayerActionOutbox werden im gleichen Transaktionscommit gelöscht oder bei einem Fehler vollständig erhalten.
