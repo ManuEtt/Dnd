@@ -19,6 +19,7 @@ class ControlledRepository implements CampaignRepository {
   bool failNextSave = false;
   bool dropNextSaveResponse = false;
   Completer<void>? saveBarrier;
+  Completer<void>? saveEntered;
 
   @override
   Future<void> saveCampaign(
@@ -26,6 +27,9 @@ class ControlledRepository implements CampaignRepository {
     List<GameEvent> events = const [],
     int? expectedRevision,
   }) async {
+    if (saveEntered != null && !saveEntered!.isCompleted) {
+      saveEntered!.complete();
+    }
     await saveBarrier?.future;
     if (failNextSave) {
       failNextSave = false;
@@ -167,6 +171,148 @@ void main() {
     expect(controller.error, contains('anderen Text'));
     expect((await sqlite.getCampaign(initial.id))!.toJson(), durable.toJson());
   });
+
+  test(
+    'zwei Controller mit derselben ID erkennen parallelen Commit ohne Doppelbuchung',
+    () async {
+      await controller.createDemo();
+      final original = controller.currentCampaign!;
+      final second = GameController(repository: sqlite);
+      try {
+        await second.initialize();
+        repository.saveBarrier = Completer<void>();
+        repository.saveEntered = Completer<void>();
+        final firstCommit = controller.sendAction(
+          'Ich untersuche den Brunnen',
+          requestId: 'parallel-confirmation-001',
+        );
+        await repository.saveEntered!.future.timeout(
+          const Duration(seconds: 5),
+        );
+
+        // The second controller wins SQLite revision 1 while the first
+        // caller is paused immediately before its save.
+        await second.sendAction(
+          'Ich untersuche den Brunnen',
+          requestId: 'parallel-confirmation-001',
+        );
+        expect(second.error, isNull);
+        final confirmed = second.currentCampaign!;
+        expect(confirmed.revision, original.revision + 1);
+        repository.saveBarrier!.complete();
+        await firstCommit;
+
+        expect(controller.error, isNull);
+        expect(controller.currentCampaign!.toJson(), confirmed.toJson());
+        expect(
+          (await sqlite.getCampaign(original.id))!.toJson(),
+          confirmed.toJson(),
+        );
+        expect(
+          confirmed.hero.inventory.where((item) => item.id == 'brass-key'),
+          hasLength(1),
+        );
+        expect(
+          confirmed.events.where(
+            (event) =>
+                event.payload['actionRequestId'] == 'parallel-confirmation-001',
+          ),
+          hasLength(1),
+        );
+      } finally {
+        second.dispose();
+        if (repository.saveBarrier != null &&
+            !repository.saveBarrier!.isCompleted) {
+          repository.saveBarrier!.complete();
+        }
+      }
+    },
+  );
+
+  test(
+    'paralleler Aufruf mit gleicher ID und anderem Text bleibt ein Fehler',
+    () async {
+      await controller.createDemo();
+      final original = controller.currentCampaign!;
+      final second = GameController(repository: sqlite);
+      try {
+        await second.initialize();
+        repository.saveBarrier = Completer<void>();
+        repository.saveEntered = Completer<void>();
+        final firstCommit = controller.sendAction(
+          'Ich untersuche den Brunnen',
+          requestId: 'parallel-text-mismatch',
+        );
+        await repository.saveEntered!.future.timeout(
+          const Duration(seconds: 5),
+        );
+        await second.sendAction(
+          'Ich lausche dem Wind.',
+          requestId: 'parallel-text-mismatch',
+        );
+        expect(second.error, isNull);
+        final confirmed = second.currentCampaign!;
+        repository.saveBarrier!.complete();
+        await firstCommit;
+
+        expect(controller.error, contains('anderen Text'));
+        expect(controller.currentCampaign!.toJson(), original.toJson());
+        expect(
+          (await sqlite.getCampaign(original.id))!.toJson(),
+          confirmed.toJson(),
+        );
+      } finally {
+        second.dispose();
+        if (repository.saveBarrier != null &&
+            !repository.saveBarrier!.isCompleted) {
+          repository.saveBarrier!.complete();
+        }
+      }
+    },
+  );
+
+  test(
+    'eine andere parallele Handlungskennung erzeugt echten Revisionskonflikt',
+    () async {
+      await controller.createDemo();
+      final original = controller.currentCampaign!;
+      final second = GameController(repository: sqlite);
+      try {
+        await second.initialize();
+        repository.saveBarrier = Completer<void>();
+        repository.saveEntered = Completer<void>();
+        final firstCommit = controller.sendAction(
+          'Ich untersuche den Brunnen',
+          requestId: 'parallel-first-request',
+        );
+        await repository.saveEntered!.future.timeout(
+          const Duration(seconds: 5),
+        );
+        await second.sendAction(
+          'Ich untersuche den Brunnen',
+          requestId: 'parallel-other-request',
+        );
+        expect(second.error, isNull);
+        final confirmed = second.currentCampaign!;
+        repository.saveBarrier!.complete();
+        await firstCommit;
+
+        expect(controller.error, contains('inzwischen geändert'));
+        expect(controller.currentCampaign!.toJson(), original.toJson());
+        expect(
+          (await sqlite.getCampaign(original.id))!.toJson(),
+          confirmed.toJson(),
+        );
+        expect(confirmed.revision, original.revision + 1);
+      } finally {
+        second.dispose();
+        if (repository.saveBarrier != null &&
+            !repository.saveBarrier!.isCompleted) {
+          repository.saveBarrier!.complete();
+        }
+      }
+    },
+  );
 
   test('neuer Controller erkennt bestätigte Aktion nach Neustart', () async {
     await controller.createDemo();
