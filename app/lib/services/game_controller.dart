@@ -89,9 +89,7 @@ class GameController extends ChangeNotifier {
   });
 
   Future<void> _remember(String? id) async {
-    final settings = await repository.loadSettings();
-    settings['lastCampaignId'] = id;
-    await repository.saveSettings(settings);
+    await repository.patchSettings({'lastCampaignId': id});
   }
 
   Future<void> _create(Campaign campaign) async {
@@ -400,10 +398,10 @@ class GameController extends ChangeNotifier {
     );
     if (!narrator.enabled) return;
     try {
-      final settings = await repository.loadSettings();
-      settings['backendUrl'] = narrator.backendUrl;
-      settings['backendRequestLimit'] = narrator.requestLimit;
-      await repository.saveSettings(settings);
+      await repository.patchSettings({
+        'backendUrl': narrator.backendUrl,
+        'backendRequestLimit': narrator.requestLimit,
+      });
     } catch (_) {
       narrator.disconnect();
       rethrow;
