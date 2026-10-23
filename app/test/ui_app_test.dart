@@ -154,12 +154,7 @@ void main() {
     );
     expect(input.enabled, isFalse);
     await tester.tap(find.byKey(const ValueKey('adventure-retry-action')));
-    await tester.runAsync(() async {
-      for (var i = 0; i < 200; i++) {
-        if ((await outbox.pendingFor(campaign.id)) == null) break;
-        await Future<void>.delayed(const Duration(milliseconds: 10));
-      }
-    });
+    await waitForController(tester, controller);
     await tester.pumpAndSettle();
     expect(controller.error, isNull);
     expect(controller.currentCampaign!.revision, 1);
@@ -212,12 +207,7 @@ void main() {
     expect(find.byKey(const ValueKey('adventure-retry-action')),
         findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('adventure-retry-action')));
-    await tester.runAsync(() async {
-      for (var i = 0; i < 200; i++) {
-        if ((await outbox.pendingFor(campaign.id)) == null) break;
-        await Future<void>.delayed(const Duration(milliseconds: 10));
-      }
-    });
+    await waitForController(tester, controller);
     await tester.pumpAndSettle();
     expect(controller.error, isNull);
     expect(controller.currentCampaign!.toJson(), confirmed.toJson());
@@ -711,10 +701,13 @@ void main() {
   testWidgets(
     'failed import stays on campaign selection and successful import opens the new campaign',
     (tester) async {
+      // Use a fresh SQLite file: unrelated widget tests must not contribute
+      // campaigns to this import-count assertion.
+      final directory = await Directory.systemTemp.createTemp('import-widget-');
       final repository = (await tester.runAsync(
         () => SqliteCampaignRepository.open(
           factory: databaseFactoryFfi,
-          path: inMemoryDatabasePath,
+          path: paths.join(directory.path, 'campaign.sqlite'),
         ),
       ))!;
       final controller = GameController(repository: repository);
@@ -749,7 +742,10 @@ void main() {
       await tester.pumpWidget(const SizedBox.shrink());
       controller.dispose();
       voice.dispose();
-      await tester.runAsync(repository.close);
+      await tester.runAsync(() async {
+        await repository.close();
+        await directory.delete(recursive: true);
+      });
     },
   );
 
