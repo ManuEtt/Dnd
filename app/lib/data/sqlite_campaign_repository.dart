@@ -8,7 +8,8 @@ import 'campaign_repository.dart';
 
 /// SQLite holds both the current snapshot and an immutable revision journal.
 /// Narration providers never receive this object or a database handle.
-class SqliteCampaignRepository implements CampaignRepository, PendingActionStore {
+class SqliteCampaignRepository
+    implements CampaignRepository, PendingActionStore, AtomicSettingsStore {
   SqliteCampaignRepository._(this._database);
   final Database _database;
 
@@ -451,6 +452,41 @@ CREATE TABLE settings (
       'id': 1,
       'snapshot': _canonical(settings),
     }, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  /// Serialize each partial settings change with any other SQLite writer.
+  /// Unlike loadSettings/saveSettings, independent callers cannot lose
+  /// unrelated changes by submitting a stale full snapshot.
+  @override
+  Future<void> updateSettingsEntries(
+    Map<String, dynamic> changes, {
+    Set<String> removeKeys = const <String>{},
+  }) async {
+    if (removeKeys.any(changes.containsKey)) {
+      throw ArgumentError(
+        'Ein Einstellungsfeld darf nicht zugleich gesetzt und entfernt werden.',
+      );
+    }
+    await _database.transaction((transaction) async {
+      final rows = await transaction.query(
+        'settings',
+        where: 'id = 1',
+        limit: 1,
+      );
+      final settings = rows.isEmpty
+          ? <String, dynamic>{}
+          : Map<String, dynamic>.from(
+              jsonDecode(rows.single['snapshot'] as String) as Map,
+            );
+      for (final key in removeKeys) {
+        settings.remove(key);
+      }
+      settings.addAll(changes);
+      await transaction.insert('settings', {
+        'id': 1,
+        'snapshot': _canonical(settings),
+      }, conflictAlgorithm: ConflictAlgorithm.replace);
+    });
   }
 
   @override
