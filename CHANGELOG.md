@@ -1,3 +1,11 @@
+## 23.10.2026 – 0.8.32+82: atomare Änderungen der App-Einstellungen (CI ausstehend)
+
+- Campagneauswahl, Narrator-Verbindung und Sprachpräferenzen nutzen statt veralteter kompletter Settings-Snapshots transaktionale Teilupdates in SQLite.
+- Gleichzeitige Änderungen unabhängiger Schlüssel werden nicht mehr durch den zuletzt schreibenden alten Snapshot verworfen. Explizite Löschung einzelner Felder wird unterstützt; `saveSettings({})` für absichtliches Datenlöschen bleibt bestehen.
+- Regressionstests für konkurrierende DB-Verbindungen, beschädigte Patch-Eingaben/Rollback, Outbox-Isolation und Laden der Kampagne nach Neustart. Bestehende Datenbankschema-Version 2 und Kampagnen-Exportversion 1 bleiben unverändert. GitHub-CI des neuen Branches und reale Geräteabnahme noch offen.
+
+---
+
 ## 23.10.2026 – 0.8.31+81: transaktionale Spielerhandlungs-Outbox (Code-CI grün)
 
 - SQLite-DB-Schema 2 hält ausstehende Handlungen getrennt von übrigen Einstellungen; Eindeutigkeit der Aktionskennung und Kampagnenbindung werden in Transaktionen geprüft.
