@@ -7087,7 +7087,7 @@
         "app/lib/domain/game_engine.dart",
         "app/lib/domain/srd_spell_grid_target_rules.dart"
       ],
-      "note": "Teilabdeckung: bestätigtes 5-Fuß-Kartenraster berechnet selbst diagonal-korrekte SRD-Ursprungsabstände und validiert feste Zauberreichweiten, Self und Touch. 3D, Mehrfeldziele, Spezialreichweiten und automatische Zielwirkung fehlen."
+      "note": "Teilabdeckung: bestätigtes 5-Fuß-Kartenraster berechnet selbst diagonal-korrekte SRD-Ursprungsabstände und validiert feste Zauberreichweiten, Self und Touch. Die Sonderreichweite Sight wird nur bei eigens bestätigter Sicht auf den Ursprung UND freiem Weg akzeptiert; ein freier Kartenstrahl allein belegt keine Sicht. Unlimited, Special, 3D, Mehrfeldziele, eigene Zielwirkungen und längere Zauberdauern bleiben offen. Tests: srd_spell_target_rules_test.dart und srd_spell_grid_target_rules_test.dart. Eine Ziel-/Wirkungsfreigabe folgt daraus nicht."
     },
     {
       "id": "RULE-SPELLS-SPELL-TARGETS",
