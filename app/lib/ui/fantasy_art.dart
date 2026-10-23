@@ -588,6 +588,19 @@ class FantasyPinnedActionBar extends StatelessWidget {
     final keyboardOpen =
         MediaQuery.viewInsetsOf(context).bottom > 0 ||
         View.of(context).viewInsets.bottom > 0;
+    // Keep the existing InkWell tree untouched while the action is enabled:
+    // an always-on Tooltip would alter the pointer-down/pressed interaction.
+    final attackShortcut = FantasyShortcutTile(
+      key: const ValueKey('adventure-shortcut-attack'),
+      label: 'Angriff',
+      style: FantasyButtonStyle.wax,
+      approvedIconIndex: 1,
+      icon: Icons.sports_martial_arts,
+      color: FantasyPalette.danger,
+      width: double.infinity,
+      compact: true,
+      onTap: busy || !attackEnabled ? null : onAttack,
+    );
     return DecoratedBox(
       key: const ValueKey('adventure-fixed-shortcuts'),
       decoration: const BoxDecoration(
@@ -663,25 +676,15 @@ class FantasyPinnedActionBar extends StatelessWidget {
                 ),
                 const SizedBox(width: 7),
                 Expanded(
-                  child: Tooltip(
-                    message: busy
-                        ? 'Eine Handlung wird bereits verarbeitet.'
-                        : attackEnabled
-                            ? 'Angriff im bestätigten Kampf ausführen'
-                            : attackUnavailableReason ??
-                                'Hier ist derzeit kein Angriff möglich.',
-                    child: FantasyShortcutTile(
-                      key: const ValueKey('adventure-shortcut-attack'),
-                      label: 'Angriff',
-                      style: FantasyButtonStyle.wax,
-                      approvedIconIndex: 1,
-                      icon: Icons.sports_martial_arts,
-                      color: FantasyPalette.danger,
-                      width: double.infinity,
-                      compact: true,
-                      onTap: busy || !attackEnabled ? null : onAttack,
-                    ),
-                  ),
+                  child: busy || !attackEnabled
+                      ? Tooltip(
+                          message: busy
+                              ? 'Eine Handlung wird bereits verarbeitet.'
+                              : attackUnavailableReason ??
+                                  'Hier ist derzeit kein Angriff möglich.',
+                          child: attackShortcut,
+                        )
+                      : attackShortcut,
                 ),
                 const SizedBox(width: 7),
                 Expanded(
