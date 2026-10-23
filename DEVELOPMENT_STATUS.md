@@ -1,3 +1,12 @@
+## 23.10.2026 – Pending-Action-Outbox von Settings entkoppeln (Branch; CI ausstehend)
+
+- **IMPLEMENTIERT:** SQL-Tabelle `pending_player_actions` (DB-Version 2), transaktionales Stage/Remove, Migration gültiger ausstehender Handlungen aus `pendingPlayerActionsV1` samt unveränderter Request-IDs; bestehende übrige Einstellungen bleiben erhalten. `PlayerActionOutbox` nutzt den neuen Vertrag für SQLite, Legacy-`CampaignRepository`-Implementierungen behalten ihren bisherigen Pfad.
+- **TESTS HINZUGEFÜGT, NICHT AUSGEFÜHRT:** konkurrierende SQLite-Verbindungen und Kampagnen, stale Settings, Neustart nach Migration, Rollback bei inkonsistentem Altstand; kein lokales Flutter/Dart-SDK.
+- **NICHT GETESTET:** finale CI, Android-APK, realer Geräte-/Upgradepfad, parallele Drittanbieterabrufe; vollständige SRD-Automatisierung bleibt offen. App `0.8.31+81`, JSON-Sicherung weiterhin `schemaVersion=1`.
+- **NÄCHSTER SCHRITT:** CI-Lauf dieses finalen PR-HEAD prüfen und Defekte beheben; anschließend separate atomare Teilupdates für andere App-Einstellungen planen. Baseline-CI auf `main` #39932399488 gehört zu `b1fa9c67`, nicht zum neuen PR.
+
+---
+
 ## 22.10.2026 – SRD 5.2.1: Linien-AoE-Rastervorschau (PR/CI offen)
 
 - **IMPLEMENTIERT:** Regelreine `SrdLineAreaRules` für acht Himmelsrichtungen auf bestätigter 5-Fuß-Karte mit getrennten, vom konkreten Zaubereffekt bestätigten Linienlängen/-breiten, inklusiver Rechteck/Zell-Schnittprüfung, getrenntem Mittelpunkt-/Randmerkmal und expliziter Ursprungsfeldprüfung.
