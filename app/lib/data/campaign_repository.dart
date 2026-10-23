@@ -21,6 +21,12 @@ abstract interface class CampaignRepository {
   Future<void> close();
 }
 
+/// Delete every local user data table in a single durable transaction.
+/// Implementations must leave every table unchanged if any deletion fails.
+abstract interface class AtomicUserDataReset {
+  Future<void> deleteAllUserData();
+}
+
 /// Atomic partial settings updates prevent stale independent writers from
 /// replacing each other's unrelated preferences. A full saveSettings remains
 /// available for deliberate complete replacements (for example, data reset).
