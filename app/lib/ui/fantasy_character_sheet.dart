@@ -869,6 +869,7 @@ class _AbilitiesSection extends StatelessWidget {
               children: [
                 for (final ability in _abilities)
                   _SavingThrowTile(
+                    key: ValueKey('sheet-saving-throw-${ability.id}'),
                     label: ability.label,
                     icon: ability.icon,
                     color: ability.color,
@@ -915,6 +916,7 @@ class _AbilitiesSection extends StatelessWidget {
 
 class _SavingThrowTile extends StatelessWidget {
   const _SavingThrowTile({
+    super.key,
     required this.label,
     required this.icon,
     required this.color,
