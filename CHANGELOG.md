@@ -1,3 +1,11 @@
+## 23.10.2026 – 0.8.31+81: transaktionale Spielerhandlungs-Outbox (Entwicklungs-PR, CI ausstehend)
+
+- SQLite-DB-Schema 2 hält ausstehende Handlungen getrennt von übrigen Einstellungen; Eindeutigkeit der Aktionskennung und Kampagnenbindung werden in Transaktionen geprüft.
+- Upgrade der Datenbank von Version 1 übernimmt gespeicherte Aufträge und Settings ohne stillen Datenverlust, verweigert beschädigte Altaufträge; JSON-Kampagnenexportformat bleibt bei Version 1.
+- Tests ergänzt für gleichzeitige SQLite-Schreiber, veraltete Einstellungen, Recovery und fehlerhafte Migration. Flutter-/Android-CI und echte Geräteabnahme stehen für diesen Branch noch aus.
+
+---
+
 ## 22.10.2026 – SRD-5.2.1-Linienvorschau (CI offen)
 
 - Neue read-only-2D-Vorschau für Linienflächen mit bestätigter Länge, Breite, Richtung und geprüftem Zauberursprung.
