@@ -1,3 +1,12 @@
+## 23.10.2026 – 0.8.36+86: SRD Sending mit bestätigtem Empfänger und Ebenenrisiko (CI ausstehend)
+
+- Neuer reiner Regeldienst `SrdSendingRules` mit zielgebundenem 25-Wort-Limit und ausdrücklicher Unterscheidung persönlich getroffener Kreaturen vs. Zeugenaussage.
+- Bestätigte Empfängersperre, unbekannter Block-/Ebenenstatus und verifizierter W100-Wurf für andere Ebenen: Ergebnisse 1–5 sind nicht zustellbar, 6–100 grundsätzlich zustellbar. Keine automatische Zustellung, Erzählung, Charakter- oder Kampagnenänderung.
+- 10 neue Regressionstests, Regel-API-Export, maschinenlesbare SRD-Matrix und Quellenbeschreibung ergänzt; keine Änderung an SQLite-Schema 2 oder Spielstands-JSON-Version 1.
+- Vollständige GitHub-CI dieses neuen Entwicklungsbranches und reale Android-Abnahme stehen noch aus; Sending-Komponenten, Aktionsverbrauch, Slots, Antwort, Sperrablauf und Journaleinträge bleiben für ein späteres Integrationsinkrement offen.
+
+---
+
 ## 23.10.2026 – 0.8.35+85: Bestätigte Sicht für SRD-Zauberreichweite „Sight“ (CI ausstehend)
 
 - SRD-5.2.1-Zielvorprüfung akzeptiert `Sight` nur mit explizit bestätigter Sicht, zulässiger räumlicher Ursprungsklasse und unabhängig bestätigtem freiem Weg.
