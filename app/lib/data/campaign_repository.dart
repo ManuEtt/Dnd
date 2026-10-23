@@ -70,6 +70,9 @@ abstract interface class PendingActionStore {
     required String requestId,
     required String text,
   });
+
+  /// Explicitly clear all pending commands during a user-requested data reset.
+  Future<void> clearAllPendingActions();
 }
 
 class CampaignConflictException implements Exception {
