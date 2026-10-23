@@ -1,3 +1,12 @@
+## 23.10.2026 – 0.8.35+85: Bestätigte Sicht für SRD-Zauberreichweite „Sight“ (CI ausstehend)
+
+- SRD-5.2.1-Zielvorprüfung akzeptiert `Sight` nur mit explizit bestätigter Sicht, zulässiger räumlicher Ursprungsklasse und unabhängig bestätigtem freiem Weg.
+- Taktische Rasterkarten übermitteln eine eigene Sichtbestätigung, ohne aus einem nicht blockierten Strahl Sicht zu folgern. Unbestätigte Sicht und Blocker bleiben fail-closed.
+- Ziel-/Rasterregressionen erweitert; `Unlimited` und `Special` weiterhin unimplementiert, `Mirage Arcane` kann wegen 10-minütiger Zauberzeit nicht als Ein-Aktions-Zauber ausgeführt werden.
+- Ohne Änderung an Datenbankversion 2, Spielstandsschema 1, Ressourcen, KI und Story. Neue CI-/Geräteabnahme noch offen.
+
+---
+
 ## 23.10.2026 – Aus Alt-PR übernommene Bestandsmigrationstests (#141)
 
 - Tests für gefüllte SQLite-v1-Spielstände, inklusive Kampagne, Revisionen, bestätigtem Ereignisjournal, Heldenarchiv und Einstellungen, auf aktuellem Main-Stand wiederhergestellt.

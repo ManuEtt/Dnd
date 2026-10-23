@@ -78,6 +78,51 @@ void main() {
     );
   });
 
+  test('Sight grid needs separately confirmed actual visibility', () {
+    final spell = catalog.find('Mirage Arcane')!;
+    final safeMap = _map();
+    final origin = const SrdGridCell(8, 4);
+    final unconfirmed = SrdSpellGridTargetRequest(
+      map: safeMap,
+      caster: _caster,
+      origin: origin,
+    );
+    expect(
+      () => SrdSpellGridTargetRules.validateOrigin(spell, unconfirmed),
+      throwsFormatException,
+    );
+
+    final visible = SrdSpellGridTargetRequest(
+      map: safeMap,
+      caster: _caster,
+      origin: origin,
+      originVisibleConfirmed: true,
+    );
+    final assessment = SrdSpellGridTargetRules.validateOrigin(spell, visible);
+    expect(assessment.range, 'Sight');
+    expect(assessment.maxOriginDistanceFeet, isNull);
+    expect(assessment.originDistanceFeet, 40);
+
+    // A visibility flag cannot override confirmed cover or an unsurveyed map.
+    for (final map in [
+      _map(blockers: const [SrdGridCell(2, 1)]),
+      _map(surveyed: false),
+    ]) {
+      expect(
+        () => SrdSpellGridTargetRules.validateOrigin(
+          spell,
+          SrdSpellGridTargetRequest(
+            map: map,
+            caster: _caster,
+            origin: origin,
+            originVisibleConfirmed: true,
+          ),
+        ),
+        throwsFormatException,
+      );
+    }
+  });
+
   test('full blocker on the ray rejects spell despite valid distance', () {
     final spell = catalog.find('Magic Missile')!;
     final blocked = _map(blockers: const [SrdGridCell(2, 0)]);
@@ -223,15 +268,20 @@ void main() {
     },
   );
 
-  test('unsupported special range stays unsupported with a surveyed map', () {
-    final spell = catalog.spells.firstWhere((entry) => entry.range == 'Sight');
-    expect(
-      () => SrdSpellGridTargetRules.validateOrigin(
-        spell,
-        _request(_map(), const SrdGridCell(1, 1)),
-      ),
-      throwsUnsupportedError,
-    );
+  test('Unlimited and Special stay unsupported with surveyed grid', () {
+    for (final range in ['Unlimited', 'Special']) {
+      final spell = catalog.spells.firstWhere(
+        (entry) => entry.range == range,
+      );
+      expect(
+        () => SrdSpellGridTargetRules.validateOrigin(
+          spell,
+          _request(_map(), const SrdGridCell(1, 1)),
+        ),
+        throwsUnsupportedError,
+        reason: spell.name,
+      );
+    }
   });
 
   test('preflight cannot mix manually claimed geometry with grid evidence', () {

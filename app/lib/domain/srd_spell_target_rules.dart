@@ -11,12 +11,16 @@ class SrdSpellTargetFacts {
     required this.mode,
     this.originDistanceFeet,
     this.clearPathConfirmed = false,
+    this.visibleOriginConfirmed = false,
     this.withinTouchReachConfirmed = false,
   });
 
   final SrdSpellOriginMode mode;
   final int? originDistanceFeet;
   final bool clearPathConfirmed;
+  /// True only after sight of the spell origin was explicitly confirmed.
+  /// A clear ray through surveyed obstacles does not establish visibility.
+  final bool visibleOriginConfirmed;
   final bool withinTouchReachConfirmed;
 }
 
@@ -37,7 +41,9 @@ class SrdSpellTargetAssessment {
 }
 
 /// SRD 5.2.1: Range, Targets, and clear path to the target.
-/// Supports Self, Touch and fixed distances in feet or miles.
+/// Supports Self, Touch, fixed distances and explicitly verified Sight.
+ /// 'Unlimited' and 'Special' remain unsupported until their own spell rules
+ /// can validate the target, not merely the range description.
 ///
 /// This is a *limited, conservative* preflight, NOT a full target engine:
 /// spell-specific targeting, creature types, invalid targets, areas of
@@ -94,6 +100,24 @@ class SrdSpellTargetRules {
         );
       }
       return SrdSpellTargetAssessment(mode: facts.mode, range: range);
+    }
+
+    if (range == 'Sight') {
+      // "Sight" has no numeric maximum: known distance does not establish
+      // visibility. Conversely a clear grid ray alone is not sufficient.
+      if (facts.mode != SrdSpellOriginMode.distant ||
+          !facts.visibleOriginConfirmed ||
+          !facts.clearPathConfirmed) {
+        throw const FormatException(
+          'Reichweite Sicht benötigt einen ausdrücklich sichtbaren '
+          'Zauberursprung und einen bestätigten freien Weg.',
+        );
+      }
+      return SrdSpellTargetAssessment(
+        mode: facts.mode,
+        range: range,
+        originDistanceFeet: distance,
+      );
     }
 
     final maximum = maxRangeFeet(range);
