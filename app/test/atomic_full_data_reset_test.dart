@@ -53,7 +53,10 @@ void main() {
 
   Future<int> rowCount(String table) async {
     // Fixed test-only table names; never interpolate user input.
-    final database = await databaseFactoryFfi.openDatabase(path);
+    final database = await databaseFactoryFfi.openDatabase(
+      path,
+      options: OpenDatabaseOptions(singleInstance: false),
+    );
     try {
       final rows = await database.rawQuery('SELECT COUNT(*) AS total FROM $table');
       return rows.single['total'] as int;
@@ -121,7 +124,10 @@ void main() {
       before[table] = await rowCount(table);
     }
 
-    final database = await databaseFactoryFfi.openDatabase(path);
+    final database = await databaseFactoryFfi.openDatabase(
+      path,
+      options: OpenDatabaseOptions(singleInstance: false),
+    );
     try {
       await database.execute('''
 CREATE TRIGGER reject_character_deletion
