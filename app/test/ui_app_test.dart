@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
+
+import 'package:path/path.dart' as paths;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -66,12 +69,19 @@ Future<void> waitForController(
   GameController controller, {
   bool hasError = false,
 }) async {
-  await tester.runAsync(() async {
-    // Let filesystem/isolate work finish in real time before settling animations.
-    for (var attempt = 0; attempt < 200 && controller.busy; attempt++) {
-      await Future<void>.delayed(const Duration(milliseconds: 10));
+  // Outbox staging is asynchronous *before* GameController.busy flips.
+  // Pump both stages, including SQLite work outside the fake widget clock.
+  for (var attempt = 0; attempt < 200; attempt++) {
+    await tester.runAsync(() =>
+        Future<void>.delayed(const Duration(milliseconds: 10)));
+    await tester.pump();
+    if (!controller.busy &&
+        find.byKey(const ValueKey('adventure-action-submitting'))
+            .evaluate()
+            .isEmpty) {
+      break;
     }
-  });
+  }
   expect(controller.busy, isFalse);
   expect(controller.error, hasError ? isNotNull : isNull);
 }
@@ -107,10 +117,13 @@ void main() {
 
   testWidgets('app restores an unconfirmed player action without auto-sending',
       (tester) async {
+    final directory = (await tester.runAsync(
+      () => Directory.systemTemp.createTemp('outbox-widget-'),
+    ))!;
     final repository = (await tester.runAsync(
       () => SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
-        path: inMemoryDatabasePath,
+        path: paths.join(directory.path, 'campaign.sqlite'),
       ),
     ))!;
     final controller = GameController(repository: repository);
@@ -129,6 +142,10 @@ void main() {
     );
     await tester.tap(find.text('Abenteuer'));
     await tester.pumpAndSettle();
+    await tester.runAsync(() => Future<void>.delayed(
+      const Duration(milliseconds: 100),
+    ));
+    await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('adventure-pending-action-text')),
         findsOneWidget);
     expect(find.byKey(const ValueKey('adventure-retry-action')),
@@ -139,12 +156,7 @@ void main() {
     );
     expect(input.enabled, isFalse);
     await tester.tap(find.byKey(const ValueKey('adventure-retry-action')));
-    await tester.runAsync(() async {
-      for (var i = 0; i < 200; i++) {
-        if ((await outbox.pendingFor(campaign.id)) == null) break;
-        await Future<void>.delayed(const Duration(milliseconds: 10));
-      }
-    });
+    await waitForController(tester, controller);
     await tester.pumpAndSettle();
     expect(controller.error, isNull);
     expect(controller.currentCampaign!.revision, 1);
@@ -155,15 +167,21 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
     controller.dispose();
     voice.dispose();
-    await tester.runAsync(repository.close);
+    await tester.runAsync(() async {
+      await repository.close();
+      await directory.delete(recursive: true);
+    });
   });
 
   testWidgets('already committed action can be acknowledged after UI restart',
       (tester) async {
+    final directory = (await tester.runAsync(
+      () => Directory.systemTemp.createTemp('outbox-widget-'),
+    ))!;
     final repository = (await tester.runAsync(
       () => SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
-        path: inMemoryDatabasePath,
+        path: paths.join(directory.path, 'campaign.sqlite'),
       ),
     ))!;
     final controller = GameController(repository: repository);
@@ -186,15 +204,14 @@ void main() {
     );
     await tester.tap(find.text('Abenteuer'));
     await tester.pumpAndSettle();
+    await tester.runAsync(() => Future<void>.delayed(
+      const Duration(milliseconds: 100),
+    ));
+    await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('adventure-retry-action')),
         findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('adventure-retry-action')));
-    await tester.runAsync(() async {
-      for (var i = 0; i < 200; i++) {
-        if ((await outbox.pendingFor(campaign.id)) == null) break;
-        await Future<void>.delayed(const Duration(milliseconds: 10));
-      }
-    });
+    await waitForController(tester, controller);
     await tester.pumpAndSettle();
     expect(controller.error, isNull);
     expect(controller.currentCampaign!.toJson(), confirmed.toJson());
@@ -202,7 +219,10 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
     controller.dispose();
     voice.dispose();
-    await tester.runAsync(repository.close);
+    await tester.runAsync(() async {
+      await repository.close();
+      await directory.delete(recursive: true);
+    });
   });
 
   testWidgets('home does not ship a fixed Arescan campaign', (tester) async {
@@ -685,10 +705,15 @@ void main() {
   testWidgets(
     'failed import stays on campaign selection and successful import opens the new campaign',
     (tester) async {
+      // Use a fresh SQLite file: unrelated widget tests must not contribute
+      // campaigns to this import-count assertion.
+      final directory = (await tester.runAsync(
+        () => Directory.systemTemp.createTemp('import-widget-'),
+      ))!;
       final repository = (await tester.runAsync(
         () => SqliteCampaignRepository.open(
           factory: databaseFactoryFfi,
-          path: inMemoryDatabasePath,
+          path: paths.join(directory.path, 'campaign.sqlite'),
         ),
       ))!;
       final controller = GameController(repository: repository);
@@ -723,7 +748,10 @@ void main() {
       await tester.pumpWidget(const SizedBox.shrink());
       controller.dispose();
       voice.dispose();
-      await tester.runAsync(repository.close);
+      await tester.runAsync(() async {
+        await repository.close();
+        await directory.delete(recursive: true);
+      });
     },
   );
 
@@ -756,12 +784,15 @@ void main() {
       await tester.runAsync(repository.close);
       await tester.enterText(input, 'Ich gehe zum Waldschrein.');
       await tester.tap(find.byTooltip('Handlung senden'));
-      await waitForController(tester, controller, hasError: true);
+      await waitForController(tester, controller);
       await tester.pumpAndSettle();
+      // Outbox staging fails before entering the controller when SQLite is
+      // closed. The UI reports that storage error without fake rule events.
       expect(voice.spoken, hasLength(1));
       expect(controller.currentCampaign!.toJson(), confirmed);
       expect(find.text('Ich gehe zum Waldschrein.'), findsOneWidget);
-      expect(find.byType(MaterialBanner), findsOneWidget);
+      expect(find.byKey(const ValueKey('adventure-outbox-error')),
+          findsOneWidget);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
       controller.dispose();

@@ -1019,11 +1019,11 @@ class _AdventurePageState extends State<_AdventurePage> {
   String? _loadedCampaignId;
   String? _outboxError;
   bool _outboxReady = false;
+  Future<void>? _loadingOutbox;
   bool _submittingAction = false;
   bool _combat = false;
 
-  bool get _canSubmit =>
-      _outboxReady &&
+  bool get _canInteract =>
       _pendingAction == null &&
       !_submittingAction &&
       !widget.controller.busy;
@@ -1049,8 +1049,11 @@ class _AdventurePageState extends State<_AdventurePage> {
     _outboxReady = campaignId == null;
     _pendingAction = null;
     _outboxError = null;
-    if (campaignId == null) return;
-    _outbox.pendingFor(campaignId).then((action) {
+    if (campaignId == null) {
+      _loadingOutbox = null;
+      return;
+    }
+    _loadingOutbox = _outbox.pendingFor(campaignId).then((action) {
       if (!mounted || _loadedCampaignId != campaignId) return;
       setState(() {
         _pendingAction = action;
@@ -1079,12 +1082,19 @@ class _AdventurePageState extends State<_AdventurePage> {
   Future<void> _send({String? quickAction}) async {
     final text = (quickAction ?? _input.text).trim();
     final campaign = widget.controller.currentCampaign;
-    if (text.isEmpty || campaign == null || !_canSubmit) return;
+    if (text.isEmpty || campaign == null || !_canInteract) return;
     setState(() {
       _submittingAction = true;
       _outboxError = null;
     });
     try {
+      // A tap during loading must wait for the saved command.
+      await _loadingOutbox;
+      if (!_outboxReady ||
+          _pendingAction != null ||
+          widget.controller.currentCampaign?.id != campaign.id) {
+        return;
+      }
       final action = await _outbox.stage(campaign.id, text);
       if (!mounted) return; // Durable action survives disposed page.
       setState(() => _pendingAction = action);
@@ -2548,7 +2558,11 @@ class _AdventurePageState extends State<_AdventurePage> {
               accent: FantasyPalette.blue,
               child: Column(
                 children: [
-                  if (_pendingAction != null) ...[
+                  if (_submittingAction)
+                    const SizedBox.shrink(
+                      key: ValueKey('adventure-action-submitting'),
+                    ),
+                  if (_pendingAction != null && !_submittingAction) ...[
                     const Text(
                       'Ausstehende Handlung – noch nicht sicher bestätigt',
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -2602,7 +2616,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                     children: [
                       Expanded(
                         child: TextField(
-                          enabled: _canSubmit,
+                          enabled: _canInteract,
                           controller: _input,
                           minLines: 1,
                           maxLines: 4,
@@ -2619,7 +2633,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                       ),
                       const SizedBox(width: 10),
                       FantasyIconButton(
-                        onPressed: _canSubmit ? _send : null,
+                        onPressed: _canInteract ? _send : null,
                         tooltip: 'Handlung senden',
                         icon: Icons.send,
                       ),
@@ -2636,7 +2650,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                         label: 'Rückblick',
                         icon: Icons.history,
                         style: FantasyButtonStyle.iron,
-                        onPressed: _canSubmit ? _recap : null,
+                        onPressed: _canInteract ? _recap : null,
                       ),
                     ),
                   ],
@@ -2648,7 +2662,7 @@ class _AdventurePageState extends State<_AdventurePage> {
       ),
       // Permanently docked below the composer and above main navigation.
       bottomNavigationBar: FantasyPinnedActionBar(
-        busy: !_canSubmit,
+        busy: !_canInteract,
         listening: widget.voice.listening,
         onSpeech: _toggleMic,
         attackEnabled: campaign.encounter != null &&

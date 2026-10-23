@@ -441,7 +441,15 @@ void main() {
       'Ich lausche dem Wind.',
     );
     await tester.tap(find.byTooltip('Handlung senden'));
-    await tester.pump();
+    // Pump the widget zone while the persisted outbox is staged before the
+    // controller begins its request. Sleeping in runAsync alone can starve
+    // the callback that drives the fake Flutter frame.
+    for (var i = 0; i < 300 && !transport.narrationRequested; i++) {
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 10)),
+      );
+      await tester.pump();
+    }
     expect(transport.narrationRequested, isTrue);
     expect(controller.busy, isTrue);
     // The indeterminate progress indicator intentionally keeps animating while
