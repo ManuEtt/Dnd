@@ -1,3 +1,12 @@
+## 23.10.2026 – SRD Sending: 25 Wörter, überprüfter Empfänger und Ebenenrisiko (CI ausstehend)
+
+- **IMPLEMENTIERT:** Rein lesender SRD-5.2.1-`Sending`-Prüfbaustein als `SrdSendingRules.prepare` und `assessDelivery`. Er verlangt eine bestätigte Kreatur, die persönlich getroffen oder durch eine Person mit Erstkontakt beschrieben wurde, 1–25 Wörter, eindeutige Empfängerkennung, bestätigte Block-/Ebenenlage und für bestätigte verschiedene Ebenen einen bereits vorhandenen W100-Wurf. Fehlende Informationen bleiben `unresolved`. Keine Slot-/Inventar-/Story-/SQLite-Mutation und keine automatische Nachricht.
+- **TESTS GESCHRIEBEN, CI AUSSTEHEND:** `app/test/srd_sending_rules_test.dart` deckt Quellenmetadaten, Fremdzauber, Inputgrenzen, den W100 1/5/6/100, Blockade sowie unbestätigte Lage ab. SRD-Matrix bleibt `partial`, siehe `docs/SRD_SENDING_MESSAGE_RULES_20261023.md`.
+- **BASIS:** Main `f71c287e`, App-Version `0.8.35+85`, PR #142 integriert; neuer Featurebranch `0.8.36+86`. **GETESTET:** vorbestehende Main-/PR-CI, **NICHT GETESTET:** finale CI des aktuellen Feature-HEAD, reales Gerät, vollständige Zauberausführung/Persistenz. **BLOCKIERT:** kein Flutter-/Android-SDK und kein echtes Gerät in dieser Sitzung.
+- **NÄCHSTER SCHRITT:** vollständige aktuelle GitHub-CI einschließlich Flutter, Backend, Android Debug/Alpha abnehmen; Fehler korrigieren, PR prüfen/integrieren, dann tatsächliche Spielleiter-/Bestätigungsaktion mit geregeltem Würfel-/Slot-/Journalcommit entwickeln.
+
+---
+
 ## 23.10.2026 – SRD Sight als ausdrücklich bestätigte Zauberreichweite (CI ausstehend)
 
 - **IMPLEMENTIERT:** Reine regeltechnische `Sight`-Vorprüfung für verifiziert sichtbaren Zauberursprung und getrennt bestätigten freien Weg; Kartenprüfer transportiert den vom Spieler/Spielleiter bestätigten Sichtfakt ohne Annahme aus Hindernissen. Keine neuen Zauberwirkungen, Automatikwürfe oder Ressourcenbuchungen. `Unlimited`/`Special` bleiben ausdrücklich nicht freigeschaltet.
