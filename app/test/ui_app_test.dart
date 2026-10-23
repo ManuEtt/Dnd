@@ -743,7 +743,9 @@ void main() {
       scrollable: find.byType(Scrollable).first,
     );
     await tester.pumpAndSettle();
-    expect(find.text('Attribute'), findsOneWidget);
+    // The old detail tab became rules/saves: attributes are only on parchment.
+    expect(find.text('Regeln'), findsOneWidget);
+    expect(find.byKey(const ValueKey('sheet-abilities-grid')), findsNothing);
     expect(tester.takeException(), isNull);
     await tester.pageBack();
     await tester.pumpAndSettle();
