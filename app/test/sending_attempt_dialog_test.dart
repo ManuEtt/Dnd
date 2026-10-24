@@ -55,8 +55,24 @@ void main() {
 
   Future<void> press(WidgetTester tester, String id) async {
     final target = key(id);
+    FocusManager.instance.primaryFocus?.unfocus();
+    tester.testTextInput.hide();
+    await tester.pumpAndSettle();
     await tester.ensureVisible(target);
     await tester.pumpAndSettle();
+    if (target.hitTestable().evaluate().isEmpty &&
+        find.byType(SendingAttemptDialog).evaluate().isNotEmpty) {
+      await tester.scrollUntilVisible(
+        target,
+        100,
+        scrollable: find.descendant(
+          of: find.byType(SendingAttemptDialog),
+          matching: find.byType(Scrollable),
+        ).first,
+      );
+      await tester.pumpAndSettle();
+    }
+    expect(target.hitTestable(), findsOneWidget);
     await tester.tap(target);
     await tester.pumpAndSettle();
   }
@@ -245,8 +261,28 @@ void main() {
       );
       await tester.ensureVisible(action);
       await tester.pumpAndSettle();
+      // The adventure outbox loads asynchronously; do not tap a disabled
+      // action before its pending-command check has completed.
+      for (var retry = 0; retry < 100; retry++) {
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 10)),
+        );
+        await tester.pump();
+        if (tester.widget<FantasyTextButton>(action).onPressed != null) {
+          break;
+        }
+      }
+      expect(tester.widget<FantasyTextButton>(action).onPressed, isNotNull);
       await tester.tap(action);
-      await tester.pumpAndSettle();
+      for (var retry = 0; retry < 100; retry++) {
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 10)),
+        );
+        await tester.pump();
+        if (find.byType(SendingAttemptDialog).evaluate().isNotEmpty) {
+          break;
+        }
+      }
       expect(find.byType(SendingAttemptDialog), findsOneWidget);
       await fillFacts(tester);
       await press(tester, 'sending-consent');
