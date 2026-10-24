@@ -1,5 +1,46 @@
 # CODEX-CHECKPOINT – Würfelraunen
 
+## Aktueller Entwicklungszyklus 24.10.2026 (Europe/Berlin) – PR #162
+
+**Git/Produkt:** Beim Beginn `main=b60ffe7ff1aae502ea927cb77153b988be33e397`, eigene Basis `fix/backend-limiter-capacity-20261024`; [PR #162](https://github.com/ManuEtt/Dnd/pull/162) offen, Entwurf bis CI-Abnahme. Parallele PRs #159 (Sending), #160 (Schurken-Nebenhand), #161 (Schutz geschlossener Handlungsstränge) jeweils mit eigenem erfolgreichen CI-Lauf, nicht in main integriert. App-Version aus `app/pubspec.yaml` **0.8.38+88**, SQLite **2**, Export-JSON **1**. Keine Migration, kein direkter Commit auf main, keine heimliche Branch-Löschung.
+
+### IMPLEMENTIERT
+
+`backend/src/limits.ts`: `WindowLimiter` verdrängt bei voller Map nicht mehr einen noch gültigen Schlüsselslot, wodurch dessen Requestkontingent zurückgesetzt wurde. Nur abgelaufene oder bei rückläufiger Uhr ungültig gewordene Einträge werden entfernt; wenn alle weiterhin aktiv sind, wird eine neue Identität abgelehnt. Bereits verbrauchte Kontingente bleiben vollständig erhalten. Backend-Routen und `Retry-After`-Werte unverändert.
+
+`backend/test/backend.test.ts`: Sicherheitsregressionen mit Kapazität=2 für Key-Rotation, kein Quoten-Reset, vollständige Kapazität, selektive Ablaufbereinigung, exakte Fenstergrenze, rückläufige Systemzeit. Der vorherige Test erwartete unsicheres Live-Eviction und wurde korrigiert. `docs/BACKEND_LIMITER_CAPACITY_20261024.md` dokumentiert Begründung, Performancegrenzen und offene Multi-Instanz-Limits. Dokumentation in README, Changelog, Backend-README und Entwicklungsstatus. Die Änderung ist ein Backend-Bugfix, **keine** Erweiterung der SRD-Regelabdeckung.
+
+### GETESTET
+
+**Bereits tatsächlich grün, aber vor diesem Paket:** PR #161 [CI #40113090963](https://github.com/ManuEtt/Dnd/actions/runs/40113090963) auf `9428738266df72956c3e57ebc25238b0d38a0fce`, vollständig erfolgreich (100 Python-, 33 Backend-, 1505 Flutter-Tests; Android-Build, native Tests und ABI-Alpha). Das ist **kein** Nachweis für den neuen Limit-Fix.
+
+**PR #162:** Neue Backend-Tests und Quelländerung geschrieben, auf eigenem GitHub-Branch gesichert. Finaler CI-Code-/Dokumentations-HEAD, Backend-Tests und Gesamt-Android-CI: [PR-Checks](https://github.com/ManuEtt/Dnd/pull/162/checks). Keine Erfolgsaussage bis GitHub einen vollständigen `completed/success`-Lauf auf dem exakten HEAD nachweist.
+
+### NICHT GETESTET
+
+Neuer letzter PR-#162-Code-/Dokumentationsstand bis zu einem vollständigen GitHub-Actions-Endstatus. Reale Installation auf Android, historisches Nutzer-Spielstandsupdate, produktive Release-Signierung. Keine ZIP/APK-Datei dieses neuen PR lokal erzeugt.
+
+### BLOCKIERT
+
+Echter Gerätetest und produktiver Signierschlüssel in dieser Sitzung nicht vorhanden. Der Projekt-Workflow kann den Code dagegen unabhängig in GitHub Actions validieren.
+
+### NOCH NICHT IMPLEMENTIERT
+
+Verteilter, mehrinstanzenfester globaler Quoten-Speicher; vollständige SRD-5.2.1-Regelwirkung; generische automatische Kampagnenwelt-Synchronisation. Keine Behauptung neuer KI-Rechte oder spielmechanischer Zustandsänderungen.
+
+### NÄCHSTER KONKRETER SCHRITT
+
+Die gesamte GitHub-CI **auf dem letzten PR-#162-HEAD** prüfen: `backend npm ci/typecheck/build/test`, Python- und SRD-Basisaudit, Flutter-Format/Analyse/Volltests, Android-Debug-/Alpha-APKs und native Gradle-Tests. Lauf und SHA im PR nachtragen, eventuelle Fehler korrigieren, dann PR #162 zur Review freigeben. Andere PRs nicht ungeprüft mergen; gleichzeitige Änderungen an Checkpoint/README bei späterer Integration abstimmen.
+
+### Änderungsverlauf
+
+24.10.2026 (MESZ): Live-Repository und PRs gelesen, vorherigen PR #161 nach vollständiger CI zur Review freigegeben, unabhängigen Rate-Limiter-Fix implementiert, Regressionen ergänzt, Branch und PR #162 angelegt, Dokumentation begonnen. Keine Hintergrundausführung.
+
+---
+
+## Frühere Hauptbranch-Übergabe (historisch)
+
+
 Stand **2026-10-24T12:20:50+00:00**, lokal vollständig abgenommenes Paket. Frühere operative Angaben vollständig in [Historie](history/main_0.8.37_20261024/CODEX_CHECKPOINT.md) erhalten. Vor Wiederaufnahme Live-Git/PR/CI erneut prüfen.
 
 ## Git und Produkt
