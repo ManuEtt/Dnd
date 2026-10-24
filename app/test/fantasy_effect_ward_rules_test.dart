@@ -11,11 +11,8 @@ HeroCharacter _caster() => HeroCharacter(
   concentratingOn: 'Schutzzauber',
 );
 
-ConditionEffect _effect(String id, String condition) => ConditionEffect(
-  id: id,
-  condition: condition,
-  source: 'Bestätigte Falle',
-);
+ConditionEffect _effect(String id, String condition) =>
+    ConditionEffect(id: id, condition: condition, source: 'Bestätigte Falle');
 
 void main() {
   for (final condition in [
@@ -53,43 +50,46 @@ void main() {
     });
   }
 
-  test('nur die bestätigte eigene Zuggrenze beendet eine befristete Quelle', () {
-    final caster = _caster();
-    final updated = ConditionEffectRules.add(
-      caster,
-      ConditionEffect(
-        id: 'poison',
-        condition: 'vergiftet',
-        source: 'Giftwolke',
-        expiresInEncounterId: 'encounter-a',
-        expiresAtOwnTurnEndRound: 4,
-      ),
-    );
-    expect(
-      ConditionEffectRules.expireAtOwnTurnEnd(
-        updated,
-        encounterId: 'encounter-b',
-        round: 99,
-      ).conditionEffects,
-      hasLength(1),
-    );
-    expect(
-      ConditionEffectRules.expireAtOwnTurnEnd(
+  test(
+    'nur die bestätigte eigene Zuggrenze beendet eine befristete Quelle',
+    () {
+      final caster = _caster();
+      final updated = ConditionEffectRules.add(
+        caster,
+        ConditionEffect(
+          id: 'poison',
+          condition: 'vergiftet',
+          source: 'Giftwolke',
+          expiresInEncounterId: 'encounter-a',
+          expiresAtOwnTurnEndRound: 4,
+        ),
+      );
+      expect(
+        ConditionEffectRules.expireAtOwnTurnEnd(
+          updated,
+          encounterId: 'encounter-b',
+          round: 99,
+        ).conditionEffects,
+        hasLength(1),
+      );
+      expect(
+        ConditionEffectRules.expireAtOwnTurnEnd(
+          updated,
+          encounterId: 'encounter-a',
+          round: 3,
+        ).conditionEffects,
+        hasLength(1),
+      );
+      final expired = ConditionEffectRules.expireAtOwnTurnEnd(
         updated,
         encounterId: 'encounter-a',
-        round: 3,
-      ).conditionEffects,
-      hasLength(1),
-    );
-    final expired = ConditionEffectRules.expireAtOwnTurnEnd(
-      updated,
-      encounterId: 'encounter-a',
-      round: 4,
-    );
-    expect(expired.conditionEffects, isEmpty);
-    expect(expired.concentratingOn, 'Schutzzauber');
-    expect(updated.conditionEffects, hasLength(1));
-  });
+        round: 4,
+      );
+      expect(expired.conditionEffects, isEmpty);
+      expect(expired.concentratingOn, 'Schutzzauber');
+      expect(updated.conditionEffects, hasLength(1));
+    },
+  );
 
   test('Doppelte Quellen-ID verändert Konzentration nicht', () {
     final first = ConditionEffectRules.add(

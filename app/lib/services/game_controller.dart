@@ -299,9 +299,11 @@ class GameController extends ChangeNotifier {
     }
     final update = await _withNarration(engine.act(campaign, text), text);
     try {
-      await _commit(requestId == null
-          ? update
-          : _withActionReceipt(update, requestId, text.trim()));
+      await _commit(
+        requestId == null
+            ? update
+            : _withActionReceipt(update, requestId, text.trim()),
+      );
     } on CampaignConflictException {
       // Another writer may confirm this *same* ID between the first read and
       // the SQLite revision check. Accept its durable receipt, never retry
@@ -363,13 +365,16 @@ class GameController extends ChangeNotifier {
       },
     );
     return GameUpdate(
-      campaign: update.campaign.copyWith(events: [
-        for (final event in update.campaign.events)
-          event.id == original.id ? receipt : event,
-      ]),
+      campaign: update.campaign.copyWith(
+        events: [
+          for (final event in update.campaign.events)
+            event.id == original.id ? receipt : event,
+        ],
+      ),
       events: [receipt, ...update.events.skip(1)],
     );
   }
+
   Future<GameUpdate> _withNarration(GameUpdate update, String action) async {
     // Mechanical results and roll requests always use the authoritative local
     // text. External narration can enrich only a validated narrative turn.
@@ -501,6 +506,35 @@ class GameController extends ChangeNotifier {
     await _commit(engine.resolveRoll(campaign, natural: natural, total: total));
   });
 
+  Future<void> confirmSneakAttackAlly({
+    required String campaignId,
+    required int expectedRevision,
+    required String rollId,
+    required String allyName,
+    required bool withinFiveFeetOfTargetConfirmed,
+    required bool notIncapacitatedConfirmed,
+  }) => _run(() async {
+    final campaign = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.confirmSneakAttackAlly(
+        campaign,
+        rollId: rollId,
+        allyName: allyName,
+        withinFiveFeetOfTargetConfirmed: withinFiveFeetOfTargetConfirmed,
+        notIncapacitatedConfirmed: notIncapacitatedConfirmed,
+      ),
+    );
+  });
+
+  Future<void> clearSneakAttackAlly({
+    required String campaignId,
+    required int expectedRevision,
+    required String rollId,
+  }) => _run(() async {
+    final campaign = _effectCampaign(campaignId, expectedRevision);
+    await _commit(engine.clearSneakAttackAlly(campaign, rollId: rollId));
+  });
+
   Future<void> resolveDeathSaveDecision({
     required String campaignId,
     required int expectedRevision,
@@ -596,10 +630,9 @@ class GameController extends ChangeNotifier {
     required String effectId,
   }) => _run(() async {
     final current = _effectCampaign(campaignId, expectedRevision);
-    await _commit(engine.removeConfirmedSpellEffect(
-      current,
-      effectId: effectId,
-    ));
+    await _commit(
+      engine.removeConfirmedSpellEffect(current, effectId: effectId),
+    );
   });
 
   Future<void> applyConditionEffect({

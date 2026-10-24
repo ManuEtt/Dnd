@@ -1,37 +1,36 @@
-## 24.10.2026 – Fantasy-UI zur ausdrücklichen XP-Bestätigung
+## 24.10.2026 – Fantasy-Bestätigungsdialog für EP-Belohnungen auf neuer Integrationsbasis
 
-- Dialog für manuelle, bestätigte EP-Belohnungen mit prüfbarer Identität, Menge, Vorher-/Nachher-Vorschau und separater Spielerzustimmung; keine Belohnung durch KI-Narration.
-- Abenteuer-Fortschrittspanel öffnet den Dialog, Controller prüft die SQLite-Revision, gespeichertes Ereignis und Duplikat-ID; Quittung erst nach erfolgreichem Commit.
-- Deterministische `xp_`-Request-IDs ermöglichen erneute Prüfung nach App-Neustart/Antwortverlust; bereits vorhandene XP-Belohnungen werden als Buchungsprüfung behandelt.
-- Flutter-Widgettests für Abbruch, Validierung, 320dp/große Schrift, ungültigen Historienstand und vollständigen Abenteuer->SQLite-Commit geschrieben. **Neue CI ausstehend** und kein Android-Gerätetest.
-- Unveränderte DB-/JSON-Schemas, App-Version und SRD-Zuordnung.
+- **IMPLEMENTIERT:** Der Dialog aus PR #151 ist in die erhaltene Abenteueransicht mit Schurken-/Kampflogik, XP-Ereignisschutz und unabhängiger Sending-Vorprüfung integriert: bestätigte Kennung und Betrag, Vorschau, separate Checkbox-Zustimmung, stabile Request-ID und Buchungsquittung nur bei gespeichertem Ereignis.
+- **REGRESSIONSTESTS ÜBERNOMMEN:** `app/test/experience_reward_dialog_test.dart` mit Abbruch, 320dp/Schriftvergrößerung, Duplikat-/Neustart und echtem SQLite-Commit. **GETESTET:** der ursprüngliche Branch besitzt nur die jeweils einzeln belegten GitHub-CI-Ergebnisse. **NICHT GETESTET:** der kombinierte neue Stand bis zur vollständigen eigenen CI und reales Android-Gerät.
+- **KONSOLIDIERUNG:** PR #150 bietet eine alternative, überlappende Darstellung derselben XP-Interaktion; vor dessen Schließung wird noch der tatsächliche Funktions-/Testumfang mit dem übernommenen PR #151 abgeglichen. Keine doppelte XP-Aktion in der App erzeugen.
 
----
+## 24.10.2026 – Unabhängigen SRD-Sending-Regelkern übernommen
 
-## 24.10.2026 – Transaktionale, bestätigte XP-Aktion (API, UI noch ausstehend)
+- **IMPLEMENTIERT:** Die reine Regelvorprüfung für den SRD-5.2.1-Zauber `Sending` prüft bestätigten Kreaturenempfänger, Wissensnachweis, 1–25 Wörter, bestätigte Blockade und den extern nachgewiesenen W100-Ebenenwurf (1–5 verfehlt; 6–100 erfolgreich). Keine KI-generierte Regelwirkung, keine automatische Nachrichtenzustellung und keine SQLite-Mutation.
+- **TESTS ÜBERNOMMEN:** `app/test/srd_sending_rules_test.dart`; ursprüngliche vollständige CI von PR #144 auf `83a56383` war erfolgreich. **NICHT GETESTET:** neuer, mit den EP-/Schurkenänderungen vereinter HEAD bis zur eigenen CI.
+- **INTEGRATION:** öffentliche Fassade `rules_api.dart`, Anforderungsregister und `docs/SRD_SENDING_MESSAGE_RULES_20261023.md`. Die aktuelle App-Version `0.8.37+87` wird nicht auf die ältere Branch-Version `0.8.36+86` zurückgesetzt.
 
-- Regelengine nimmt nur ausdrücklich bestätigte XP-Zuteilungen mit stabilen Reward-/Request-IDs und positivem XP-Betrag an.
-- Controller vergleicht bekannte Bestätigungsbelege vor Revisionsprüfung, stellt sie nach SQLite-Neustart und verlorener Commit-Antwort wieder her und sperrt widersprüchliche Wiederholungen.
-- SQLite schreibt XP, Heldenarchiv, Event und Snapshot weiterhin in einer Transaktion; Regression testet absichtlich fehlschlagenden Ereignis-Insert mit vollständigem Rollback.
-- Neue `confirmed_xp_reward_storage_test.dart` ergänzt. **Neue eigene CI noch offen**. Kein Dialog-/Gerätetest, keine Datenmigration, unveränderte App-Version.
+## 24.10.2026 – Integrierte EP-Sicherung auf aktuellem Schurken-/Kampfstand
 
----
+- **IMPLEMENTIERT:** Die bisher getrennten Korrekturen aus PR #149 wurden gegen `main` `f99f27ac` als konfliktaufgelöster Merge zusammengesetzt: fehlerhafte Rabenwacht-XP-Marker werden abgelehnt; `GameEngine.confirmExperienceReward` und `GameController.confirmExperienceReward` sichern ausschließlich ausdrücklich bestätigte, idempotente XP-Ereignisse und SQLite-Revisionsrennen.
+- **REGRESSIONSTESTS ÜBERNOMMEN:** beschädigte Marker und SQLite-Neustart, Request-ID-Duplikate, abweichende Belohnungen, konkurrierende Controller, Rollback und alte Revision. Die zuvor in `main` integrierte Schurken-/Kampfimplementierung bleibt erhalten.
+- **GETESTET:** Vorläufer-PR #149 hatte erfolgreiche GitHub-CI auf `cfea52f2`; `main` hatte erfolgreiche CI auf `f99f27ac`. **NICHT GETESTET:** die jetzt neu zusammengeführte Kombination bis zum eigenen GitHub-Actions-Lauf. Kein reales Android-Gerät geprüft.
+- **KOMPATIBILITÄT:** DB-Schema 2 und Export-JSON-Schema 1 bleiben unverändert. Fantasy-EP-Dialoge der alternativen PRs #150/#151 sind noch getrennt zu prüfen; SRD-Sending aus PR #144 bleibt unabhängig.
 
-## 24.10.2026 – Rabenwacht: beschädigte XP-Belohnungsmarker nicht erneut gutschreiben
+## 24.10.2026 – Integration des Main-XP-Fixes aus PR #145
 
-- Vorhandene `xpReward:`-Fakten mit anderem Wert als `true` werden als widersprüchlicher Speicherbeleg zurückgewiesen, statt eine erneute Belohnung auszulösen.
-- Identisch bestätigter Beleg bleibt nach SQLite-Neustart idempotent, ein fehlender Beleg weiterhin belohnbar.
-- Zusätzliche Domain-/JSON- und SQLite-Regressionen mit echten Rabenwacht-Spielzügen, Ereignisjournal und Revisionskonflikt.
-- Kein DB-/Exportformatwechsel, keine neue App-Version; neue Branch-CI und Android-Geräteabnahme bis zu ihrem Abschluss offen.
+Main1c2eeab wird mit dem bestehenden Sneak-Attack-Paket vereinigt. XP-Belohnungs-ID und Betrag müssen bei einer Wiederholung zusammenpassen; beschädigte Belege werden ohne Mutation abgewiesen. Die zwei Main-Regressionstests bleiben erhalten. Neue gemeinsame Prüfung ausstehend; bisherige Nachweise beziehen sich auf bfc991f vor dieser Integration.
 
 ---
 
-## 23.10.2026 – XP-Belohnungsbelege: doppelte ID mit widersprüchlichem Betrag abweisen
+## 23.10.2026 – 0.8.37+87: Hinterhältiger Angriff mit bestätigtem Verbündeten
 
-- `ExperienceProgression.grant` akzeptiert bestätigte identische Wiederholungen weiterhin ohne doppelte XP-Gutschrift.
-- Derselbe Belohnungs-Identifier mit abweichendem oder beschädigtem gespeicherten Betrag wird nun als Datenkonflikt abgewiesen, statt als erfolgreicher Aufruf zu gelten.
-- Regressionstests für JSON-Roundtrip, unveränderte Originaldaten und widersprüchliche Duplikate. Eigene CI/Flutter-/Android-Tests müssen für den neuen Code-HEAD erst nachgewiesen werden; bestehender Main-Lauf #40012217485 gehört zum Vorher-Stand.
-- Keine Änderung am SQLite-Schema 2 oder JSON-Spielstandsformat 1, keine neue App-Version im parallel entwickelten Branch.
+- Tatsächliche Hauptwaffen-Kampfintegration statt ausschließlich Helper: explizite Nähe zum Ziel und fehlende Handlungsunfähigkeit, pro Kampagne/Ziel/Probe gespeichert, vor dem Würfeln entfernbar.
+- Zusatzschaden, kritische Treffer und einmalige Nutzung im eigenen Zug über bestehende Engine; keine aus Erzählung abgeleiteten Fakten.
+- SQLite-Neustart, Backup, Journal, stale Revision und später Speicherfehler durch 11 neue Domain-/Integrationstests; 6 neue Widgettests einschließlich 360dp, großer Schrift und Tastatur.
+- Gespeicherte Angriffsboni verwenden dieselbe Berechnung wie die Ausführung (einschließlich Mehrklassen-Bogenschießen).
+- Vollständige Dart-Formatprüfung in CI wiederhergestellt; reine Normalisierung bestehender Dateien separat in 309b07e.
+- SQLite2/JSON1 bleiben kompatibel. Lokaler Gesamtcheck mit 1.448 Flutter-, 100 Python- und 31 Backend-Tests erfolgreich. Debug-APK und12 native Tests erfolgreich; GitHub-Code-CI40056875863 auf182f44b vollständig grün, ARM64-Alpha geprüft, Realgerät offen; Ergebnis siehe docs/CODEX_CHECKPOINT.md.
 
 ---
 
@@ -1042,3 +1041,15 @@ Erfolgreich geprüft: Flutter-Analyse ohne Befunde, 74 Flutter-Tests, 17 Backend
 - Kämpfer Stufe 1: Pflichtwahl von Kampfstil und drei unterschiedlichen Waffenmeisterschaften, Startausrüstung und Vorschlag für W10 + KO-Start-TP.
 - Zweite Luft wird als dokumentiertes Merkmal mit zwei Anwendungen sichtbar; bestehende Spiele und importierte Charakterbögen bleiben unverändert.
 - Neue Domain- und UI-Tests für die Charaktererstellung. CI- und Android-Ergebnisse sind erst nach einem Branch-Build bestätigt.
+
+
+## Übernommener Status aus Main145 (historisch)
+
+## 23.10.2026 – XP-Belohnungsbelege: doppelte ID mit widersprüchlichem Betrag abweisen
+
+- `ExperienceProgression.grant` akzeptiert bestätigte identische Wiederholungen weiterhin ohne doppelte XP-Gutschrift.
+- Derselbe Belohnungs-Identifier mit abweichendem oder beschädigtem gespeicherten Betrag wird nun als Datenkonflikt abgewiesen, statt als erfolgreicher Aufruf zu gelten.
+- Regressionstests für JSON-Roundtrip, unveränderte Originaldaten und widersprüchliche Duplikate. Eigene CI/Flutter-/Android-Tests müssen für den neuen Code-HEAD erst nachgewiesen werden; bestehender Main-Lauf #40012217485 gehört zum Vorher-Stand.
+- Keine Änderung am SQLite-Schema 2 oder JSON-Spielstandsformat 1, keine neue App-Version im parallel entwickelten Branch.
+
+---

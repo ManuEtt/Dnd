@@ -292,7 +292,10 @@ void main() {
         find.textContaining('Kein ausreichender freier Zauberplatz'),
         findsOneWidget,
       );
-      expect(tester.widget<FantasyTextButton>(control('confirm')).onPressed, isNull);
+      expect(
+        tester.widget<FantasyTextButton>(control('confirm')).onPressed,
+        isNull,
+      );
       expect(hero.spentSpellSlots, {'1': 2});
     },
   );

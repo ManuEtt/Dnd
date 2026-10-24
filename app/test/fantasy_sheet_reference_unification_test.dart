@@ -35,9 +35,7 @@ void main() {
   ) async {
     final hero = _hero();
     final before = hero.toJson();
-    await tester.pumpWidget(MaterialApp(
-      home: CharacterSheetPage(hero: hero),
-    ));
+    await tester.pumpWidget(MaterialApp(home: CharacterSheetPage(hero: hero)));
     await tester.pumpAndSettle();
     await tester.scrollUntilVisible(
       find.byKey(const ValueKey('sheet-preview-fertigkeiten')),
@@ -47,22 +45,38 @@ void main() {
     await tester.pumpAndSettle();
     final skills = find.byKey(const ValueKey('sheet-preview-fertigkeiten'));
     expect(skills, findsOneWidget);
-    expect(find.descendant(of: skills, matching: find.text('Medizin')),
-        findsOneWidget);
-    expect(find.descendant(of: skills, matching: find.text('Wahrnehmung')),
-        findsOneWidget);
-    expect(find.descendant(of: skills, matching: find.text('+7')),
-        findsNWidgets(2)); // Wisdom +4 + level-5 proficiency +3.
-    expect(find.descendant(of: skills, matching: find.text('Athletik')),
-        findsOneWidget);
-    expect(find.descendant(of: skills, matching: find.text('+0')),
-        findsOneWidget);
-    expect(find.descendant(of: skills, matching: find.text('Religion')),
-        findsOneWidget);
-    expect(find.descendant(of: skills, matching: find.text('+4')),
-        findsOneWidget); // Intelligence +1 + proficiency +3.
-    expect(find.byKey(const ValueKey('sheet-parchment-abilities')),
-        findsOneWidget);
+    expect(
+      find.descendant(of: skills, matching: find.text('Medizin')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: skills, matching: find.text('Wahrnehmung')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: skills, matching: find.text('+7')),
+      findsNWidgets(2),
+    ); // Wisdom +4 + level-5 proficiency +3.
+    expect(
+      find.descendant(of: skills, matching: find.text('Athletik')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: skills, matching: find.text('+0')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: skills, matching: find.text('Religion')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: skills, matching: find.text('+4')),
+      findsOneWidget,
+    ); // Intelligence +1 + proficiency +3.
+    expect(
+      find.byKey(const ValueKey('sheet-parchment-abilities')),
+      findsOneWidget,
+    );
     expect(hero.toJson(), before);
     expect(tester.takeException(), isNull);
   });
@@ -82,9 +96,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      final bar = find.byKey(
-        const ValueKey('sheet-fixed-quick-navigation'),
-      );
+      final bar = find.byKey(const ValueKey('sheet-fixed-quick-navigation'));
       final top = tester.getTopLeft(bar).dy;
       for (final key in [
         'sheet-quick-charakter',
@@ -101,8 +113,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(tester.getTopLeft(bar).dy, closeTo(top, 1));
-      expect(find.byKey(const ValueKey('sheet-d20-medallion')),
-          findsOneWidget);
+      expect(find.byKey(const ValueKey('sheet-d20-medallion')), findsOneWidget);
       await tester.tap(find.byKey(const ValueKey('sheet-quick-roll')));
       expect(rolls, 1);
       expect(tester.takeException(), isNull);
@@ -119,9 +130,9 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            textScaler: const TextScaler.linear(1.6),
-          ),
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: const TextScaler.linear(1.6)),
           child: child!,
         ),
         home: CharacterSheetPage(hero: _hero()),
@@ -140,25 +151,28 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Unbekannte Charakterwerte bleiben auch in der neuen Übersicht unbekannt', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: CharacterSheetPage(
-          hero: HeroCharacter(id: 'historical', name: 'Historisch'),
+  testWidgets(
+    'Unbekannte Charakterwerte bleiben auch in der neuen Übersicht unbekannt',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: CharacterSheetPage(
+            hero: HeroCharacter(id: 'historical', name: 'Historisch'),
+          ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(
-      find.byKey(const ValueKey('sheet-parchment-abilities')),
-      230,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('sheet-parchment-abilities')),
-        findsOneWidget);
-    expect(tester.takeException(), isNull);
-  });
+      );
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('sheet-parchment-abilities')),
+        230,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('sheet-parchment-abilities')),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
 }

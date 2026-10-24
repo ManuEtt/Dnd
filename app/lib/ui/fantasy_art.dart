@@ -681,7 +681,7 @@ class FantasyPinnedActionBar extends StatelessWidget {
                           message: busy
                               ? 'Eine Handlung wird bereits verarbeitet.'
                               : attackUnavailableReason ??
-                                  'Hier ist derzeit kein Angriff möglich.',
+                                    'Hier ist derzeit kein Angriff möglich.',
                           child: attackShortcut,
                         )
                       : attackShortcut,

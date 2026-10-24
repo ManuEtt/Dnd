@@ -187,7 +187,10 @@ END
           expectedRevision: initial.revision,
         );
         final withEffect = (await repository.getCampaign(initial.id))!;
-        expect(withEffect.hero.conditionEffects.single.expiresAtOwnTurnEndRound, 4);
+        expect(
+          withEffect.hero.conditionEffects.single.expiresAtOwnTurnEndRound,
+          4,
+        );
         final firstTurn = engine.endHeroTurn(withEffect);
         await repository.saveCampaign(
           firstTurn.campaign,
@@ -201,7 +204,10 @@ END
         );
         var restored = (await repository.getCampaign(initial.id))!;
         expect(restored.encounter!.round, 3);
-        expect(restored.hero.conditionEffects.single.expiresAtOwnTurnEndRound, 4);
+        expect(
+          restored.hero.conditionEffects.single.expiresAtOwnTurnEndRound,
+          4,
+        );
         for (var i = 0; i < 2; i++) {
           final next = engine.endHeroTurn(restored);
           await repository.saveCampaign(
@@ -214,12 +220,14 @@ END
         expect(restored.hero.conditionEffects, isEmpty);
         expect(restored.hero.conditions, isNot(contains('vergiftet')));
         expect(restored.encounter!.round, 5);
-        expect((await repository.getCampaign(initial.id))!.toJson(), restored.toJson());
+        expect(
+          (await repository.getCampaign(initial.id))!.toJson(),
+          restored.toJson(),
+        );
       } finally {
         await repository.close();
         await directory.delete(recursive: true);
       }
     },
   );
-
 }

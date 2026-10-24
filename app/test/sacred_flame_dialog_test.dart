@@ -90,7 +90,9 @@ void main() {
     );
     expect(
       tester
-          .widget<FantasyTextButton>(find.byKey(const ValueKey('sacred-flame-cast')))
+          .widget<FantasyTextButton>(
+            find.byKey(const ValueKey('sacred-flame-cast')),
+          )
           .onPressed,
       isNull,
     );

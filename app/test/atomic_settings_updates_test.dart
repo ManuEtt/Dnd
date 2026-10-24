@@ -42,10 +42,7 @@ void main() {
     });
     await Future.wait([
       first.patchSettings({'lastCampaignId': 'campaign-a'}),
-      second.patchSettings({
-        'voiceLocale': 'de-DE',
-        'voiceRate': 0.9,
-      }),
+      second.patchSettings({'voiceLocale': 'de-DE', 'voiceRate': 0.9}),
     ]);
 
     final stored = await first.loadSettings();
@@ -88,23 +85,26 @@ void main() {
     expect(settings['lastCampaignId'], 'campaign-b');
   });
 
-  test('failed patch rolls back without altering durable preferences', () async {
-    await first.patchSettings({'voiceLocale': 'de-DE'});
-    await expectLater(
-      second.patchSettings({'unsupported': Object()}),
-      throwsA(isA<Object>()),
-    );
-    expect(await first.loadSettings(), {'voiceLocale': 'de-DE'});
+  test(
+    'failed patch rolls back without altering durable preferences',
+    () async {
+      await first.patchSettings({'voiceLocale': 'de-DE'});
+      await expectLater(
+        second.patchSettings({'unsupported': Object()}),
+        throwsA(isA<Object>()),
+      );
+      expect(await first.loadSettings(), {'voiceLocale': 'de-DE'});
 
-    await expectLater(
-      first.patchSettings(
-        {'voiceLocale': 'de-AT'},
-        removeKeys: {'voiceLocale'},
-      ),
-      throwsArgumentError,
-    );
-    expect(await second.loadSettings(), {'voiceLocale': 'de-DE'});
-  });
+      await expectLater(
+        first.patchSettings(
+          {'voiceLocale': 'de-AT'},
+          removeKeys: {'voiceLocale'},
+        ),
+        throwsArgumentError,
+      );
+      expect(await second.loadSettings(), {'voiceLocale': 'de-DE'});
+    },
+  );
 
   test('concurrent settings updates cannot remove a pending action', () async {
     final outbox = PlayerActionOutbox(
@@ -129,10 +129,7 @@ void main() {
       expect(controller.error, isNull);
       await Future.wait([
         controller.createDemo(),
-        second.patchSettings({
-          'voiceLocale': 'de-DE',
-          'voiceRate': 1.0,
-        }),
+        second.patchSettings({'voiceLocale': 'de-DE', 'voiceRate': 1.0}),
       ]);
       expect(controller.error, isNull);
       final saved = controller.currentCampaign;
@@ -169,29 +166,30 @@ void main() {
     );
   });
 
-  test('delete all data also removes orphaned durable pending actions',
-      () async {
-    final controller = GameController(repository: first);
-    try {
-      await controller.initialize();
-      await controller.createDemo();
-      expect(controller.error, isNull);
-      final campaignId = controller.currentCampaign!.id;
-      final outbox = PlayerActionOutbox(
-        first,
-        newRequestId: () => 'orphaned-intent',
-      );
-      await outbox.stage('orphan-id', 'Ich kehre zurück.');
-      expect(await outbox.pendingFor('orphan-id'), isNotNull);
-      await controller.deleteAllData();
-      expect(controller.error, isNull);
-      expect(await first.loadCampaigns(), isEmpty);
-      expect(await outbox.pendingFor('orphan-id'), isNull);
-      expect(await outbox.pendingFor(campaignId), isNull);
-      expect(await second.loadSettings(), isEmpty);
-    } finally {
-      controller.dispose();
-    }
-  });
-
+  test(
+    'delete all data also removes orphaned durable pending actions',
+    () async {
+      final controller = GameController(repository: first);
+      try {
+        await controller.initialize();
+        await controller.createDemo();
+        expect(controller.error, isNull);
+        final campaignId = controller.currentCampaign!.id;
+        final outbox = PlayerActionOutbox(
+          first,
+          newRequestId: () => 'orphaned-intent',
+        );
+        await outbox.stage('orphan-id', 'Ich kehre zurück.');
+        expect(await outbox.pendingFor('orphan-id'), isNotNull);
+        await controller.deleteAllData();
+        expect(controller.error, isNull);
+        expect(await first.loadCampaigns(), isEmpty);
+        expect(await outbox.pendingFor('orphan-id'), isNull);
+        expect(await outbox.pendingFor(campaignId), isNull);
+        expect(await second.loadSettings(), isEmpty);
+      } finally {
+        controller.dispose();
+      }
+    },
+  );
 }

@@ -36,16 +36,18 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: Builder(builder: (context) => TextButton(
-            onPressed: () => showDialog<ConfirmedSpellEffectChoice>(
-              context: context,
-              builder: (_) => ConfirmedSpellEffectDialog(
-                hero: heroWithEffects(),
-                encounter: encounter,
+          body: Builder(
+            builder: (context) => TextButton(
+              onPressed: () => showDialog<ConfirmedSpellEffectChoice>(
+                context: context,
+                builder: (_) => ConfirmedSpellEffectDialog(
+                  hero: heroWithEffects(),
+                  encounter: encounter,
+                ),
               ),
+              child: const Text('Öffnen'),
             ),
-            child: const Text('Öffnen'),
-          )),
+          ),
         ),
       ),
     );
@@ -53,7 +55,9 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('Zuglaufzeiten erscheinen nur beim aktiven eigenen Zug', (tester) async {
+  testWidgets('Zuglaufzeiten erscheinen nur beim aktiven eigenen Zug', (
+    tester,
+  ) async {
     await openDialog(tester, encounter: fight());
     await tester.tap(find.byKey(const ValueKey('spell-effect-duration')));
     await tester.pumpAndSettle();
@@ -68,7 +72,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('ohne eigene Runde keine Zuglaufzeit, Abbruch ohne Änderung', (tester) async {
+  testWidgets('ohne eigene Runde keine Zuglaufzeit, Abbruch ohne Änderung', (
+    tester,
+  ) async {
     await openDialog(tester);
     await tester.tap(find.byKey(const ValueKey('spell-effect-duration')));
     await tester.pumpAndSettle();
@@ -83,7 +89,9 @@ void main() {
     expect(find.byType(ConfirmedSpellEffectDialog), findsNothing);
   });
 
-  testWidgets('vorhandene bestätigte Quelle ist einzeln entfernbar', (tester) async {
+  testWidgets('vorhandene bestätigte Quelle ist einzeln entfernbar', (
+    tester,
+  ) async {
     await openDialog(tester, encounter: fight());
     await tester.tap(find.byKey(const ValueKey('spell-effect-remove-mode')));
     await tester.pumpAndSettle();
@@ -96,50 +104,75 @@ void main() {
   });
 
   for (final width in [320.0, 360.0, 960.0]) {
-    testWidgets('Fantasy-Zauberkarte bei $width dp zeigt Quelle und echten Restzähler', (tester) async {
-      tester.view.physicalSize = Size(width, 1300);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-      var managed = 0;
-      final hero = heroWithEffects();
-      final before = hero.toJson();
-      await tester.pumpWidget(MaterialApp(
-        theme: buildFantasyTheme(),
-        home: Scaffold(
-          body: ListView(children: [
-            FantasyEffectWard(
-              hero: hero,
-              encounter: fight(),
-              expandDetailsInitially: true,
-              onManageSpells: () => managed++,
+    testWidgets(
+      'Fantasy-Zauberkarte bei $width dp zeigt Quelle und echten Restzähler',
+      (tester) async {
+        tester.view.physicalSize = Size(width, 1300);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        var managed = 0;
+        final hero = heroWithEffects();
+        final before = hero.toJson();
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: buildFantasyTheme(),
+            home: Scaffold(
+              body: ListView(
+                children: [
+                  FantasyEffectWard(
+                    hero: hero,
+                    encounter: fight(),
+                    expandDetailsInitially: true,
+                    onManageSpells: () => managed++,
+                  ),
+                ],
+              ),
             ),
-          ]),
-        ),
-      ));
-      await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('ward-spell-effect-spell-one')), findsOneWidget);
-      expect(find.byKey(const ValueKey('spell-effect-source-spell-one')), findsOneWidget);
-      expect(find.textContaining('noch 4 eigene Zugenden'), findsOneWidget);
-      await tester.ensureVisible(find.byKey(const ValueKey('ward-manage-spell-effects')));
-      await tester.tap(find.byKey(const ValueKey('ward-manage-spell-effects')));
-      expect(managed, 1);
-      expect(hero.toJson(), before);
-      expect(tester.takeException(), isNull);
-    });
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('ward-spell-effect-spell-one')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('spell-effect-source-spell-one')),
+          findsOneWidget,
+        );
+        expect(find.textContaining('noch 4 eigene Zugenden'), findsOneWidget);
+        await tester.ensureVisible(
+          find.byKey(const ValueKey('ward-manage-spell-effects')),
+        );
+        await tester.tap(
+          find.byKey(const ValueKey('ward-manage-spell-effects')),
+        );
+        expect(managed, 1);
+        expect(hero.toJson(), before);
+        expect(tester.takeException(), isNull);
+      },
+    );
   }
 
-  testWidgets('Zauberfremde Begegnung zeigt keinen errechneten Countdown', (tester) async {
-    await tester.pumpWidget(MaterialApp(
-      theme: buildFantasyTheme(),
-      home: Scaffold(body: ListView(children: [
-        FantasyEffectWard(
-          hero: heroWithEffects(),
-          encounter: fight(id: 'other'),
-          expandDetailsInitially: true,
+  testWidgets('Zauberfremde Begegnung zeigt keinen errechneten Countdown', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildFantasyTheme(),
+        home: Scaffold(
+          body: ListView(
+            children: [
+              FantasyEffectWard(
+                hero: heroWithEffects(),
+                encounter: fight(id: 'other'),
+                expandDetailsInitially: true,
+              ),
+            ],
+          ),
         ),
-      ])),
-    ));
+      ),
+    );
     await tester.pumpAndSettle();
     expect(find.textContaining('andere Begegnung'), findsOneWidget);
     expect(find.textContaining('noch 4 eigene Zugenden'), findsNothing);

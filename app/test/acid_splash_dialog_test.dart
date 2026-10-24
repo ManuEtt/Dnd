@@ -87,7 +87,9 @@ void main() {
     expect(find.text('Säurespritzer ist nicht vorbereitet.'), findsOneWidget);
     expect(
       tester
-          .widget<FantasyTextButton>(find.byKey(const ValueKey('acid-splash-cast')))
+          .widget<FantasyTextButton>(
+            find.byKey(const ValueKey('acid-splash-cast')),
+          )
           .onPressed,
       isNull,
     );

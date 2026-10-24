@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../domain/models.dart';
+import '../domain/sneak_attack_ally_rules.dart';
 import '../data/srd_spell_catalog_loader.dart';
 import '../domain/campaign_experience.dart';
 import '../domain/rabenwacht_campaign.dart';
@@ -26,6 +27,7 @@ import 'backup_dialogs.dart';
 import 'character_editor.dart';
 import 'character_effect_dialog.dart';
 import 'condition_effect_dialog.dart';
+import 'sneak_attack_ally_dialog.dart';
 import 'confirmed_spell_effect_dialog.dart';
 import 'experience_reward_dialog.dart';
 import 'hero_shield_reaction_dialog.dart';
@@ -1025,9 +1027,7 @@ class _AdventurePageState extends State<_AdventurePage> {
   bool _combat = false;
 
   bool get _canInteract =>
-      _pendingAction == null &&
-      !_submittingAction &&
-      !widget.controller.busy;
+      _pendingAction == null && !_submittingAction && !widget.controller.busy;
 
   @override
   void initState() {
@@ -1054,19 +1054,23 @@ class _AdventurePageState extends State<_AdventurePage> {
       _loadingOutbox = null;
       return;
     }
-    _loadingOutbox = _outbox.pendingFor(campaignId).then((action) {
-      if (!mounted || _loadedCampaignId != campaignId) return;
-      setState(() {
-        _pendingAction = action;
-        _outboxReady = true;
-      });
-    }).catchError((Object failure) {
-      if (!mounted || _loadedCampaignId != campaignId) return;
-      setState(() {
-        _outboxError = 'Ausstehende Handlung konnte nicht geladen werden.';
-        _outboxReady = false; // Fail closed: never overwrite an unknown intent.
-      });
-    });
+    _loadingOutbox = _outbox
+        .pendingFor(campaignId)
+        .then((action) {
+          if (!mounted || _loadedCampaignId != campaignId) return;
+          setState(() {
+            _pendingAction = action;
+            _outboxReady = true;
+          });
+        })
+        .catchError((Object failure) {
+          if (!mounted || _loadedCampaignId != campaignId) return;
+          setState(() {
+            _outboxError = 'Ausstehende Handlung konnte nicht geladen werden.';
+            _outboxReady =
+                false; // Fail closed: never overwrite an unknown intent.
+          });
+        });
   }
 
   @override
@@ -1102,8 +1106,10 @@ class _AdventurePageState extends State<_AdventurePage> {
       await _dispatch(action, clearDraft: quickAction == null);
     } catch (_) {
       if (mounted) {
-        setState(() => _outboxError =
-            'Die Handlung konnte nicht sicher vorgemerkt oder abgeschlossen werden.');
+        setState(
+          () => _outboxError =
+              'Die Handlung konnte nicht sicher vorgemerkt oder abgeschlossen werden.',
+        );
       }
     } finally {
       if (mounted) setState(() => _submittingAction = false);
@@ -1118,7 +1124,10 @@ class _AdventurePageState extends State<_AdventurePage> {
     await widget.voice.stopListening();
     await widget.voice.stopSpeaking();
     final previousMessageId = _lastMessageId;
-    await widget.controller.sendAction(action.text, requestId: action.requestId);
+    await widget.controller.sendAction(
+      action.text,
+      requestId: action.requestId,
+    );
     if (!mounted || widget.controller.error != null) return;
     // Success also includes replay of an already committed request.
     await _outbox.remove(action);
@@ -1133,7 +1142,9 @@ class _AdventurePageState extends State<_AdventurePage> {
 
   Future<void> _retryPending() async {
     final action = _pendingAction;
-    if (action == null || !_outboxReady || _submittingAction ||
+    if (action == null ||
+        !_outboxReady ||
+        _submittingAction ||
         widget.controller.busy) {
       return;
     }
@@ -1146,8 +1157,10 @@ class _AdventurePageState extends State<_AdventurePage> {
       await _dispatch(action);
     } catch (_) {
       if (mounted) {
-        setState(() => _outboxError =
-            'Die Handlung bleibt vorgemerkt. Du kannst sie erneut bestätigen.');
+        setState(
+          () => _outboxError =
+              'Die Handlung bleibt vorgemerkt. Du kannst sie erneut bestätigen.',
+        );
       }
     } finally {
       if (mounted) setState(() => _submittingAction = false);
@@ -1189,8 +1202,10 @@ class _AdventurePageState extends State<_AdventurePage> {
       }
     } catch (_) {
       if (mounted) {
-        setState(() => _outboxError =
-            'Der Sendeauftrag konnte nicht sicher entfernt werden.');
+        setState(
+          () => _outboxError =
+              'Der Sendeauftrag konnte nicht sicher entfernt werden.',
+        );
       }
     } finally {
       if (mounted) setState(() => _submittingAction = false);
@@ -1272,6 +1287,52 @@ class _AdventurePageState extends State<_AdventurePage> {
       total: result.total,
     );
     if (mounted) await _afterTurn(previousMessageId);
+  }
+
+  Future<void> _confirmSneakAttackAlly() async {
+    final campaign = widget.controller.currentCampaign;
+    if (campaign == null ||
+        !_canInteract ||
+        !SneakAttackAllyRules.canPrepare(campaign)) {
+      return;
+    }
+    final pending = campaign.pendingRoll!;
+    final choice = await showDialog<SneakAttackAllyChoice>(
+      context: context,
+      builder: (_) => SneakAttackAllyDialog(
+        targetName: pending.targetName.isNotEmpty
+            ? pending.targetName
+            : campaign.encounter!.enemyName,
+      ),
+    );
+    if (choice == null || !mounted) return;
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    await widget.controller.confirmSneakAttackAlly(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      rollId: pending.id,
+      allyName: choice.allyName,
+      withinFiveFeetOfTargetConfirmed: choice.withinFiveFeetOfTargetConfirmed,
+      notIncapacitatedConfirmed: choice.notIncapacitatedConfirmed,
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
+  Future<void> _clearSneakAttackAlly() async {
+    final campaign = widget.controller.currentCampaign;
+    final pending = campaign?.pendingRoll;
+    if (campaign == null || pending?.sneakAttackAlly == null || !_canInteract) {
+      return;
+    }
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    await widget.controller.clearSneakAttackAlly(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      rollId: pending!.id,
+    );
+    if (mounted) await _afterTurn(previous);
   }
 
   Future<void> _confirmExperienceReward() async {
@@ -2013,7 +2074,8 @@ class _AdventurePageState extends State<_AdventurePage> {
                   ),
                 FantasyTextButton(
                   key: const ValueKey('adventure-manage-spell-effects'),
-                  onPressed: widget.controller.busy ||
+                  onPressed:
+                      widget.controller.busy ||
                           campaign.pendingRoll != null ||
                           campaign.pendingDeathSave != null ||
                           campaign.pendingEnemyShieldHit != null ||
@@ -2574,6 +2636,47 @@ class _AdventurePageState extends State<_AdventurePage> {
                                   '${pending['label'] ?? pending['type'] ?? 'Probe'} · '
                                   'Modifikator ${_signed(pending['modifier'] ?? pending['bonus'] ?? 0)}',
                                 ),
+                                if (campaign.pendingRoll!.type == 'attack' &&
+                                    campaign.pendingRoll!.sneakAttackAlly !=
+                                        null) ...[
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    'Bestätigter Verbündeter: ${campaign.pendingRoll!.sneakAttackAlly!.allyName}',
+                                    key: const ValueKey(
+                                      'adventure-sneak-attack-ally-source',
+                                    ),
+                                  ),
+                                  const Text(
+                                    'Innerhalb von 5 Fuß des Ziels und nicht handlungsunfähig bestätigt. Gilt nur für diesen Angriff.',
+                                  ),
+                                  FantasyTextButton(
+                                    key: const ValueKey(
+                                      'adventure-clear-sneak-attack-ally',
+                                    ),
+                                    label: 'Verbündetenbestätigung entfernen',
+                                    icon: Icons.close,
+                                    style: FantasyButtonStyle.iron,
+                                    onPressed: _canInteract
+                                        ? _clearSneakAttackAlly
+                                        : null,
+                                  ),
+                                ] else if (SneakAttackAllyRules.canPrepare(
+                                  campaign,
+                                )) ...[
+                                  const SizedBox(height: 12),
+                                  FantasyTextButton(
+                                    key: const ValueKey(
+                                      'adventure-confirm-sneak-attack-ally',
+                                    ),
+                                    label:
+                                        'Verbündeten für Hinterhältigen Angriff bestätigen',
+                                    icon: Icons.group_outlined,
+                                    style: FantasyButtonStyle.arcane,
+                                    onPressed: _canInteract
+                                        ? _confirmSneakAttackAlly
+                                        : null,
+                                  ),
+                                ],
                                 const SizedBox(height: 12),
                                 FantasyTextButton(
                                   label: 'Wurf durchführen',
@@ -2638,8 +2741,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                           label: 'Erneut bestätigen',
                           icon: Icons.refresh,
                           style: FantasyButtonStyle.woodGold,
-                          onPressed: _submittingAction ||
-                                  widget.controller.busy
+                          onPressed: _submittingAction || widget.controller.busy
                               ? null
                               : _retryPending,
                         ),
@@ -2648,8 +2750,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                           label: 'Verwerfen',
                           icon: Icons.close,
                           style: FantasyButtonStyle.iron,
-                          onPressed: _submittingAction ||
-                                  widget.controller.busy
+                          onPressed: _submittingAction || widget.controller.busy
                               ? null
                               : _discardPending,
                         ),
@@ -2719,18 +2820,19 @@ class _AdventurePageState extends State<_AdventurePage> {
         busy: !_canInteract,
         listening: widget.voice.listening,
         onSpeech: _toggleMic,
-        attackEnabled: campaign.encounter != null &&
+        attackEnabled:
+            campaign.encounter != null &&
             !campaign.encounter!.isFinished &&
             campaign.encounter!.activeParticipant == 'hero' &&
             campaign.pendingRoll == null &&
             campaign.pendingDeathSave == null &&
             campaign.pendingEnemyShieldHit == null,
-        attackUnavailableReason: campaign.encounter == null ||
-                campaign.encounter!.isFinished
+        attackUnavailableReason:
+            campaign.encounter == null || campaign.encounter!.isFinished
             ? 'Angriff erst mit einem bestätigten aktiven Kampf möglich.'
             : campaign.encounter!.activeParticipant != 'hero'
-                ? 'Ein anderer Kampfteilnehmer ist am Zug.'
-                : 'Eine ausstehende Entscheidung muss zuerst geklärt werden.',
+            ? 'Ein anderer Kampfteilnehmer ist am Zug.'
+            : 'Eine ausstehende Entscheidung muss zuerst geklärt werden.',
         onInspect: () => _send(quickAction: 'Ich untersuche die Umgebung.'),
         onAttack: () => _send(quickAction: 'Ich greife an.'),
         onRoll: _roll,
@@ -2997,7 +3099,8 @@ class _CombatView extends StatelessWidget {
                 encounter.enemyAttacksRemaining > 0)
               FantasyTextButton(
                 key: const ValueKey('enemy-attack-continue'),
-                label: 'Gegnerangriff fortsetzen '
+                label:
+                    'Gegnerangriff fortsetzen '
                     '(${encounter.enemyAttacksRemaining} übrig)',
                 icon: Icons.arrow_forward,
                 style: FantasyButtonStyle.wax,
@@ -3103,7 +3206,8 @@ class _CombatView extends StatelessWidget {
             if (ClassResourceRules.level(hero, 'Paladin') >= 1) ...[
               FantasyTextButton(
                 key: const ValueKey('paladin-lay-on-hands-heal'),
-                label: 'Handauflegen · '
+                label:
+                    'Handauflegen · '
                     '${ClassResourceRules.remaining(hero, 'layOnHands')} TP-Vorrat',
                 icon: Icons.healing_outlined,
                 style: FantasyButtonStyle.woodGold,
