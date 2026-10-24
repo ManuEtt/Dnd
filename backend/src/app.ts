@@ -4,6 +4,7 @@ import { bearerToken, issueSession, secureEqual, verifySession } from './auth.js
 import { WindowLimiter } from './limits.js';
 import { createNarrator, type NarrationInput, type Narrator } from './providers.js';
 import { parseStoryPlan, parseStoryTurn, type StoryStartInput, type StoryTurnInput } from './story.js';
+import { guardStoryPlanSecrets, guardStoryTurnSecrets } from './story_secret_guard.js';
 
 interface AppDependencies {
   clock?: () => number;
@@ -121,7 +122,7 @@ export function buildApp(config: Config, dependencies: AppDependencies = {}) {
       } } }, preHandler: storyRateLimit,
   }, async (request, reply) => {
     if (!narrator.startStory) return reply.code(503).send({ error: 'story_unavailable' });
-    try { return { provider: config.provider, stateChanges: [], story: parseStoryPlan(await narrator.startStory(request.body)) }; }
+    try { return { provider: config.provider, stateChanges: [], story: guardStoryPlanSecrets(parseStoryPlan(await narrator.startStory(request.body))) }; }
     catch { return reply.code(502).send({ error: 'provider_unavailable' }); }
   });
   app.post<{ Body: StoryTurnInput }>('/v1/story/advance', {
@@ -138,7 +139,7 @@ export function buildApp(config: Config, dependencies: AppDependencies = {}) {
       } } }, preHandler: storyRateLimit,
   }, async (request, reply) => {
     if (!narrator.advanceStory) return reply.code(503).send({ error: 'story_unavailable' });
-    try { return { provider: config.provider, stateChanges: [], turn: parseStoryTurn(await narrator.advanceStory(request.body), request.body) }; }
+    try { return { provider: config.provider, stateChanges: [], turn: guardStoryTurnSecrets(parseStoryTurn(await narrator.advanceStory(request.body), request.body), request.body.secret) }; }
     catch { return reply.code(502).send({ error: 'provider_unavailable' }); }
   });
 
