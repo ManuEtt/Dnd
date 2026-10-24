@@ -34,18 +34,21 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: fantasyTheme(),
-        home: MediaQuery(
-          data: MediaQueryData(textScaler: TextScaler.linear(textScale)),
-          child: Scaffold(
-            body: Builder(
-              builder: (context) => TextButton(
-                key: const ValueKey('open-xp-dialog'),
-                onPressed: () => showDialog<ExperienceRewardChoice>(
-                  context: context,
-                  builder: (_) => ExperienceRewardDialog(campaign: campaign),
-                ),
-                child: const Text('Dialog öffnen'),
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(textScale)),
+          child: child!,
+        ),
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => TextButton(
+              key: const ValueKey('open-xp-dialog'),
+              onPressed: () => showDialog<ExperienceRewardChoice>(
+                context: context,
+                builder: (_) => ExperienceRewardDialog(campaign: campaign),
               ),
+              child: const Text('Dialog öffnen'),
             ),
           ),
         ),
@@ -246,7 +249,7 @@ void main() {
       await tester.scrollUntilVisible(
         action,
         160,
-        scrollable: find.byType(ListView).first,
+        scrollable: find.byType(Scrollable).first,
       );
       await tester.ensureVisible(action);
       await tester.pumpAndSettle();
