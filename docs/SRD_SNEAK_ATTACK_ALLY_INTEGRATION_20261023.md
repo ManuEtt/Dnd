@@ -26,7 +26,7 @@ Quelle: offizielles [SRD 5.2.1](https://media.dndbeyond.com/compendium-images/sr
 
 ## Nachweise und Grenzen
 
-11 neue Domain-/SQLite-Tests und 6 Widgettests erfolgreich. Vollständige Prüfkette erfolgreich: 1.448 Flutter-Tests, 100 Python-Tests, 31 Backend-Tests, Format und Analyse. Android-/CI-Ergebnisse separat im operativen Checkpoint. Die vorhandene Rule-/Story-Grenze bleibt aktiv.
+11 neue Domain-/SQLite-Tests und 6 Widgettests erfolgreich. Vollständige Prüfkette erfolgreich: 1.448 Flutter-Tests, 100 Python-Tests, 31 Backend-Tests, Format und Analyse. Debug-APK, ARM64-Alpha und12 native Tests erfolgreich. Vollständige GitHub-Code-CI40056875863 auf182f44b grün; Details und finale Dokumentationsstände im operativen Checkpoint. Die vorhandene Rule-/Story-Grenze bleibt aktiv.
 
 Der Verbündete ist eine manuell bestätigte Beobachtung, kein neues automatisch verwaltetes Kampfobjekt. Nebenhand, Gelegenheitsangriffe, vollständiger Positionskampf und vollständige SRD-Abdeckung sind offen. Die bereits vorhandene automatische Auslösung über echten Angriffsvorteil bleibt erhalten. Keine Änderung an Backend, Anbieterfreigaben, Outbox oder Geräteberechtigungen.
 

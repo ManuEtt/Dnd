@@ -1,34 +1,37 @@
 # CODEX-CHECKPOINT – Würfelraunen
 
-Stand **2026-10-23T19:47:39+00:00**, aktive Sitzung. Vollständige vorige Übergabe: [Historie](history/main_0.8.36_20261023/CODEX_CHECKPOINT.md). Vor Wiederaufnahme tatsächliches main, PRs und CI erneut abfragen.
+Stand **2026-10-24T03:20:14+00:00**, aktive Sitzung. Vollständige vorige Übergabe: [Historie](history/main_0.8.36_20261023/CODEX_CHECKPOINT.md). Vor Wiederaufnahme tatsächliches main, PRs und CI erneut abfragen.
 
 ## Git und Produkt
 
 - Basis-main: `5958579e5321338bb7b4e46abb859fd3bfd1515f` (PR143 integriert).
 - Arbeitsbranch: `feature/sneak-attack-ally-integration-20261023`.
 - Formatnormalisierung: `309b07e`; funktionaler Code: `0a56aba7057dc12d80750759443f6d70ed510dc1`.
-- Version: **0.8.37+87**, Android-Alpha. Eigener PR/Push noch ausstehend.
+- Version: **0.8.37+87**, Android-Alpha. Auf GitHub gesichert; [PR147](https://github.com/ManuEtt/Dnd/pull/147) offen und konfliktfrei gegen Basis5958579. Veröffentlichter Dokumentationsstand vor Abschluss:182f44bee57a0b7531396fd2893cd7f077256179.
 - Offener Fremd-PR bei Bestandsaufnahme: [144 / Sending](https://github.com/ManuEtt/Dnd/pull/144), nicht dupliziert.
+- Vollständige Code-CI: [40056875863](https://github.com/ManuEtt/Dnd/actions/runs/40056875863), **completed/success** auf PR-HEAD `182f44bee57a0b7531396fd2893cd7f077256179`; geprüfter Merge-Teststand `de67cd3d0899c8aec351e3fcc77905179450080f`. Alle Projekt-/Backend-/Flutter-/Android-/Alpha-/Artefaktschritte erfolgreich. Der nachfolgende reine Dokumentationscommit enthält denselben ausführbaren Code. Aktuellen PR-HEAD und neueste Checks bei Wiederaufnahme erneut lesen.
 - Letzter vollständig erfolgreicher Basisworkflow: [40012217485](https://github.com/ManuEtt/Dnd/actions/runs/40012217485), geprüftes SHA5958579. Kein Nachweis für neuen Code.
 
 ## IMPLEMENTIERT
 
 Hinterhältiger Angriff mit manuell bestätigtem Verbündeten für einen offenen Hauptwaffenangriff. Beide Fakten (5Fuß zum Ziel, nicht Incapacitated) werden separat erfasst und an Kampagne/Ziel/Wurf gebunden. Vorbereitung würfelt nicht und verbraucht keine Ressourcen; erst der gültige Treffer erzeugt Zusatzwürfel und Nutzung. Entfernen, Krit, Miss und neue Probe sind angebunden. Keine aus KI-Text erfundenen Werte. Requirement `CLASS-SCHURKE-1-BASE-SNEAK-ATTACK-1` bleibt partial.
 
-Import und Ausführung prüfen dieselbe Bindung, eigene Zugberechtigung, Finesse/Fernkampf und Nutzung. Gespeicherter Angriffsbonus kommt aus RulesEngine einschließlich Bogenschießen. Story darf pendingRoll nicht verändern. SQLite2 und Kampagnen-JSON1 bleiben erhalten; optionales PendingRoll.sneakAttackAlly hat nestedVersion1, Alt-JSON bleibt gültig.
+Import und Ausführung prüfen dieselbe Bindung, eigene Zugberechtigung, Finesse/Fernkampf und Nutzung. Gespeicherter Angriffsbonus kommt aus RulesEngine einschließlich Bogenschießen. Story darf pendingRoll nicht verändern. SQLite 2 und Kampagnen-JSON 1 bleiben erhalten; optionales PendingRoll.sneakAttackAlly hat nestedVersion1, Alt-JSON bleibt gültig.
 
 Dateien: neue Domain `app/lib/domain/sneak_attack_ally_rules.dart`, Models, GameEngine, Controller, rules_api, Abenteuer-UI, neuer Dialog und zwei neue Testdateien; App-Version, CI-Formatgate, Requirement-Register und Statusdokumentation. Backend, Outbox und Berechtigungen unverändert.
 
 ## GETESTET
 
 - Normalisierte Basis: scripts/check.sh vollständig erfolgreich; **1.431 Flutter-Tests**, **100 Python-Tests**, Backend-Typecheck/Build/**31 Tests**, Analyse und Formatierung.
+- Android: Debug-APK erfolgreich aus dem geprüften ZIP gebaut; CRC, aapt-Metadaten/minSdk24/targetSdk36/Build 87, drei ABIs und apksigner-Signatur erfolgreich. **12 native JUnit-Tests** ohne Fehler, Gradle BUILD SUCCESSFUL. 461 Dateien zwischen ZIP, Buildkopie und Arbeitsstand per SHA256 identisch.
+- ARM64-Alpha: 19.728.422 Bytes, Build 87 ohne ABI-Offset, CRC/Metadaten/Signatur erfolgreich.
 - Neuer Code gezielt: **11 Domain-/SQLite-Tests** und **6 Widgettests** erfolgreich. Abgedeckt: vor Zufall validieren, Treffer/Miss/Krit, 1x-pro-Zug, Datenmanipulation, verbrauchte/fremde Ziele, Storygrenze, Neustart, Export/Import, Rekonstruktion, stale Dialog, verspäteter Eventfehler/Rollback, Abbruch, Eingabeentwurf, 360dp/Schrift1,8/Tastatur260dp.
-- Neuer vollständiger Lauf erfolgreich: **1.448 Flutter-Tests**, Format344-Dateien/Analyse ohne Befunde, Backend31 und Python100 erfolgreich.
+- Neuer vollständiger Lauf erfolgreich: **1.448 Flutter-Tests**, Format 344-Dateien/Analyse ohne Befunde, Backend 31 und Python 100 erfolgreich.
 - Prüfprotokolle: `/workspace/validation/20261023-sneak-full-check.log`, `20261023-sneak-domain.log`, `20261023-sneak-ally-ui-final.log`.
 
 ## NICHT GETESTET
 
-Neue GitHub-CI, Android-APK/native Tests (Build aus dem geprüften ZIP läuft) und reales Gerät. Keine fremde grüne CI als neue Freigabe ausgeben.
+Reales Gerät und sicherer App-Updatepfad nicht getestet. Die dokumentierte Code-CI ist vollständig grün; nachfolgende Dokumentationsstände sind getrennt zu identifizieren. Keine fremde grüne CI als neue Freigabe ausgeben.
 
 ## BLOCKIERT
 
@@ -40,7 +43,18 @@ Allgemeine Verbündeten-/Positionsverwaltung, bestätigter Nebenhandkontext und 
 
 ## Noch laufender Abschluss / Artefakte
 
-Gesamtlauf erfolgreich. Unveränderten Code aus vollständigem ZIP auf Android bauen, native Tests ausführen, Ergebnisse und Artefakt-SHA aktualisieren. Danach commit/push/PR, finale CI beobachten. Main nicht ungeprüft verändern. ZIP und Patch werden mit scripts/create_checkpoint.py gegen explizite Basis5958579 erzeugt; keine erfolgreiche Bereitstellung vor Dateiprüfung behaupten.
+Gesamtlauf, Debug-APK und native Tests erfolgreich. Lokale Prüfungen und vollständige GitHub-Code-CI erfolgreich. Branch/PR147 sind erstellt. Abschließender Dokumentationsnachtrag, aktualisiertes Quell-ZIP/Patch und tatsächliche finale PR-Checks sind getrennt vom bereits geprüften Code zu sichern. Main nicht ungeprüft verändern. ZIP/Patch entstehen mit scripts/create_checkpoint.py gegen Basis5958579. Tatsächlich geprüftes Build-Quell-ZIP: `/workspace/artifacts/Wuerfelraunen_0.8.37+87_20261023T194739479771Z_sneak-attack-vor-android_Vollprojekt.zip`, SHA256 `3df17f778c328594ec093b3c9aebdceccd62d7f41ae00a7edb5a991f658fc832` (617 Dateien). Finales ZIP wird mit aktueller Dokumentation erneuert; Hash steht separat in SHA256SUMS.txt.
+
+ARM64-Alpha: `/workspace/artifacts/Wuerfelraunen_0.8.37+87_arm64-v8a_Alpha.apk`, SHA256 `7347f06e25ce2fcf02f06c6d25ceef6f41c114dd3bc916dbf4118c5ed89d7f03`, Metadaten `Wuerfelraunen_0.8.37+87_ARM64_Alpha_Pruefung.json`. Releaseoptimierung mit derselben lokalen Debug-Testsignatur, keine Gerätefreigabe.
+
+Debug-APK: `/workspace/artifacts/Wuerfelraunen_0.8.37+87_Debug.apk`, 144077056 Bytes, SHA256 `3d3ac043c4f9cbc2342fda8524cd6a0bccbdb0cc0e35eba3fc2ab8f642307fb7`. Metadaten: `Wuerfelraunen_0.8.37+87_APK_Pruefung.json`; Gesamtprotokoll: `Wuerfelraunen_0.8.37+87_Pruefergebnisse.json`. Workspace-Dateien sind keine behaupteten externen Uploads. Beobachtete GitHub-Artefakte aus grünem Lauf40056875863 (nicht abgelaufen):
+
+- [Quell-ZIP](https://github.com/ManuEtt/Dnd/actions/runs/40056875863/artifacts/12546510086), GitHub-Archiv-Digest `eea30931ca5b8197a73fb6b57e039e74bf2914f3cf538f4b887bde18ccab499c`.
+- [Drei Alpha-APKs](https://github.com/ManuEtt/Dnd/actions/runs/40056875863/artifacts/12546286030), GitHub-Archiv-Digest `32b497ac50103416f8a115bad20ac1bb5616ee84bc152481e87e9b31b3983d69`.
+- [Versioniertes Alpha-Release-Paket](https://github.com/ManuEtt/Dnd/actions/runs/40056875863/artifacts/12546311528).
+- [PR-Gesamtpatch](https://github.com/ManuEtt/Dnd/pull/147.diff); lokale versionierte ZIP/Patch/SHA256-Paare in /workspace/artifacts.
+
+GitHub-Artefakte haben begrenzte Aufbewahrung und eigene Build-/Signaturherkunft. Ihre Digests gehören zum GitHub-Archiv, nicht zu den separat lokal gebauten Dateien. Import: [ARTIFACT_IMPORT_20261024.md](ARTIFACT_IMPORT_20261024.md).
 
 ## Genau ein nächster fachlicher Schritt
 

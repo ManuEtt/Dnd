@@ -36,3 +36,5 @@ In ein frisches Verzeichnis entpacken. app/, backend/, scripts/ und .github/ mü
 - Lokale Dateien dieser Umgebung: `/workspace/artifacts/`; `Wuerfelraunen_LATEST_Vollprojekt.zip` und SHA256SUMS.txt zeigen auf den zuletzt geprüften lokalen Quellen-Checkpoint.
 - GitHub-Workflow `Android-Alpha bauen`: erfolgreicher Lauf liefert eigenen Quellcode-Checkpoint sowie Debug- und ABI-Alpha-APKs unter den echten Actions-Artefakten. Deren Namen/Links erst nach Beobachtung des konkreten Laufs übernehmen.
 - Ein Workspace-Dateipfad ist kein Beleg für einen externen Upload. APK-Build, Signaturprüfung, Gerätestart und sichere Installation über eine frühere App sind getrennte Nachweise.
+
+Konkreter überprüfter Code-Lauf dieses Pakets: [CI40056875863](https://github.com/ManuEtt/Dnd/actions/runs/40056875863) erfolgreich, PR-HEAD182f44b / Merge-Testde67cd3. [Quell-ZIP](https://github.com/ManuEtt/Dnd/actions/runs/40056875863/artifacts/12546510086) und [Alpha-APKs](https://github.com/ManuEtt/Dnd/actions/runs/40056875863/artifacts/12546286030) sind tatsächlich vorhanden. Abschließende Dokumentationsupdates ändern den ausführbaren Code nicht.

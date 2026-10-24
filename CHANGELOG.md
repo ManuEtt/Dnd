@@ -5,7 +5,7 @@
 - SQLite-Neustart, Backup, Journal, stale Revision und später Speicherfehler durch 11 neue Domain-/Integrationstests; 6 neue Widgettests einschließlich 360dp, großer Schrift und Tastatur.
 - Gespeicherte Angriffsboni verwenden dieselbe Berechnung wie die Ausführung (einschließlich Mehrklassen-Bogenschießen).
 - Vollständige Dart-Formatprüfung in CI wiederhergestellt; reine Normalisierung bestehender Dateien separat in 309b07e.
-- SQLite2/JSON1 bleiben kompatibel. Lokaler Gesamtcheck mit 1.448 Flutter-, 100 Python- und 31 Backend-Tests erfolgreich. Neue CI/APK/Realgerät-Abnahme noch offen; Ergebnis siehe docs/CODEX_CHECKPOINT.md.
+- SQLite2/JSON1 bleiben kompatibel. Lokaler Gesamtcheck mit 1.448 Flutter-, 100 Python- und 31 Backend-Tests erfolgreich. Debug-APK und12 native Tests erfolgreich; GitHub-Code-CI40056875863 auf182f44b vollständig grün, ARM64-Alpha geprüft, Realgerät offen; Ergebnis siehe docs/CODEX_CHECKPOINT.md.
 
 ---
 

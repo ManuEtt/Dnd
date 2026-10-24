@@ -2,9 +2,9 @@
 
 Deutschsprachige Android-Alpha für Soloabenteuer, Charakterverwaltung und regelgeprüfte D&D-Spielabläufe. Flutter/Dart-App mit SQLite, optionalem Fastify-/TypeScript-Erzähler und Fantasy-Oberfläche. **Das vollständige SRD 5.2.1 ist noch nicht implementiert.**
 
-## Aktueller Stand und autonome Fortsetzung (23.10.2026)
+## Aktueller Stand und autonome Fortsetzung (24.10.2026)
 
-**Version `0.8.37+87`**, Entwicklungsbranch `feature/sneak-attack-ally-integration-20261023`. Funktionaler Code-Commit: `0a56aba7057dc12d80750759443f6d70ed510dc1`; Basis `main`: `5958579e5321338bb7b4e46abb859fd3bfd1515f`. Der vollständige [Basis-CI-Lauf #40012217485](https://github.com/ManuEtt/Dnd/actions/runs/40012217485) ist erfolgreich. Er belegt die Basis, nicht automatisch diesen Entwicklungsbranch.
+**Version `0.8.37+87`**, Entwicklungsbranch `feature/sneak-attack-ally-integration-20261023`. Funktionaler Code-Commit: [`0a56aba`](https://github.com/ManuEtt/Dnd/commit/0a56aba7057dc12d80750759443f6d70ed510dc1); Basis `main`: `5958579e5321338bb7b4e46abb859fd3bfd1515f`. Der vollständige [Basis-CI-Lauf #40012217485](https://github.com/ManuEtt/Dnd/actions/runs/40012217485) ist erfolgreich. Er belegt die Basis, nicht automatisch diesen Entwicklungsbranch.
 
 **Neu: Hinterhältiger Angriff mit bestätigtem Verbündeten im tatsächlichen Kampf.** Vor einem offenen Hauptwaffenangriff kann ein Schurke einen Verbündeten benennen und zwei Fakten unabhängig bestätigen: innerhalb von 5 Fuß **des Ziels** und nicht handlungsunfähig (`Incapacitated`). Die Bestätigung gilt nur für diese Kampagne, dieses Ziel und diesen Wurf. Sie lässt sich vor dem Würfeln entfernen. Erst ein regelgültiger Treffer würfelt den zusätzlichen Schaden; kritische Treffer verdoppeln die Schadenswürfel. Die bestehende Begrenzung pro eigenem Zug bleibt erhalten.
 
@@ -22,9 +22,13 @@ Zusätzlich korrigiert: gespeicherte Hauptwaffenproben prüfen den Angriffsbonus
 | Backend | Typecheck, Build und 31 Tests erfolgreich |
 | Dart/Flutter | 344 Dateien unverändert formatiert, Analyse ohne Befunde |
 | Vollständige neue Flutter-Suite | **1.448 Tests erfolgreich** |
-| Neue Android-APK / native Tests | Build aus geprüftem ZIP läuft; native Tests anschließend |
-| GitHub-PR / neue CI | Erstellung und Abnahme ausstehend |
+| Android-Debug / native Tests | APK gebaut, Metadaten/CRC/Signatur geprüft; **12 native Tests erfolgreich** |
+| GitHub-PR / Code-CI | [PR #147](https://github.com/ManuEtt/Dnd/pull/147); [CI #40056875863](https://github.com/ManuEtt/Dnd/actions/runs/40056875863) vollständig erfolgreich auf `182f44b` |
 | Echtes Android-Gerät | nicht getestet |
+
+APK-Herkunft: aus dem vollständigen Quell-ZIP gebaut, 461 ausführungsrelevante Quelldateien per SHA256 abgeglichen; Version 0.8.37/Build 87, minSdk24/targetSdk36, ARM64/ARMv7/x64, Debug-Testsignatur. Kein echter Geräte-/Update-Test. Die kleinere ARM64-Alpha ist gebaut und geprüft (**19,7MB**, gleicher Build 87, lokale Debug-Testsignatur).
+
+**GitHub-Downloads:** [Vollprojekt-ZIP](https://github.com/ManuEtt/Dnd/actions/runs/40056875863/artifacts/12546510086) · [Alpha-APKs (ARM64/ARM/x64)](https://github.com/ManuEtt/Dnd/actions/runs/40056875863/artifacts/12546286030) · [Git-Patch](https://github.com/ManuEtt/Dnd/pull/147.diff). Der erfolgreiche Lauf prüft den veröffentlichten Code-Stand `182f44b` (Merge-Test `de67cd3`); dieser abschließende Dokumentationsnachtrag ändert keinen ausführbaren Code. Aktuelle Checks stehen am PR.
 
 Aktuelle Übergabe: [docs/CODEX_CHECKPOINT.md](docs/CODEX_CHECKPOINT.md). Regelquelle, Akzeptanzkriterien und Grenzen: [Hinterhältiger Angriff](docs/SRD_SNEAK_ATTACK_ALLY_INTEGRATION_20261023.md).
 
@@ -68,6 +72,7 @@ Weitere offene Arbeiten: vollständige Quelleninventur, Zauberwirkungen, Klassen
 
 - [Aktueller Fortsetzungsprompt](docs/CODEX_CONTINUATION_PROMPT.md) · [Operativer Checkpoint](docs/CODEX_CHECKPOINT.md)
 - [Architektur](ARCHITECTURE.md) · [Regel-/Story-Grenze](docs/ARCHITEKTUR_REGELENGINE_STORY_TRENNUNG.md) · [Tests](TESTING.md)
+- [Artefakte importieren](docs/ARTIFACT_IMPORT_20261024.md) · [Validierungsbericht](docs/VALIDATION_0_8_37_20261024.md)
 - [Entwicklungsstatus](DEVELOPMENT_STATUS.md) · [Changelog](CHANGELOG.md) · [Roadmap](ROADMAP.md)
 - [README vor diesem Zyklus](docs/history/main_0.8.36_20261023/README.md) · [ältere Historie](docs/README_HISTORIE_BIS_20261020.md)
 

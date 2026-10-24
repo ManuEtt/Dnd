@@ -4,7 +4,7 @@ Basis main5958579, Code0a56aba, Branch feature/sneak-attack-ally-integration-202
 
 **IMPLEMENTIERT:** Hauptwaffen-Sneak-Attack über bestätigten Verbündeten mit echter UI, ziel-/wurfgebundener Speicherung, Schadensauflösung und Revisionsschutz. Die bestehende Regel-/Story-Grenze verhindert narrative Bestätigungen.
 
-**GETESTET:** 1.431 Flutter-Tests der normalisierten Basis, 11 neue Domain-/SQLite- und 6 neue Widgettests, aktuelle Analyse/Formatierung, Python100 und Backend31. Vollständige neue Suite mit **1.448 Flutter-Tests erfolgreich**; CI/APK/Realgerät noch nicht abgenommen. Frühere Item-WIP-Dateien separat gesichert, kein Überschreiben aktueller Main-Modelle.
+**GETESTET:** 1.431 Flutter-Tests der normalisierten Basis, 11 neue Domain-/SQLite- und 6 neue Widgettests, aktuelle Analyse/Formatierung, Python100 und Backend31. Vollständige neue Suite mit **1.448 Flutter-Tests erfolgreich**; Debug-APK inklusive CRC/Metadaten/Signatur und12 native Tests erfolgreich; [PR147](https://github.com/ManuEtt/Dnd/pull/147) erstellt, [Code-CI40056875863](https://github.com/ManuEtt/Dnd/actions/runs/40056875863) auf182f44b vollständig erfolgreich, Realgerät nicht getestet. ARM64-Alpha19,7MB erfolgreich gebaut und geprüft. Frühere Item-WIP-Dateien separat gesichert, kein Überschreiben aktueller Main-Modelle.
 
 **NÄCHSTER KONKRETER SCHRITT:** Tatsächlich angreifende Nebenhandwaffe für Sneak-Attack-Eignung verwenden und denselben sicheren Bestätigungspfad anbinden; aktuelle Hauptwaffe, alte Spielstände und einmalige Zugnutzung regressionsfrei erhalten.
 
