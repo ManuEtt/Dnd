@@ -1,8 +1,9 @@
 import 'class_combat_features.dart';
 import 'condition_rules.dart';
 import 'models.dart';
+import 'two_weapon_fighting_rules.dart';
 
-/// Explicit player observations for one pending main-hand attack. SRD 5.2.1,
+/// Explicit player observations for one pending weapon attack. SRD 5.2.1,
 /// Rogue: Sneak Attack, pp.61–62, CC BY 4.0. No facts come from narration.
 class SneakAttackAllyConfirmation {
   const SneakAttackAllyConfirmation({
@@ -74,8 +75,8 @@ class SneakAttackAllyConfirmation {
 class SneakAttackAllyRules {
   const SneakAttackAllyRules._();
 
-  /// This increment covers the pending primary attack in the existing solo
-  /// encounter. No general ally movement, offhand or opportunity attack model.
+  /// This covers an already authorized primary or offhand attack in the solo
+  /// encounter. It does not create a bonus action or confirm ally movement.
   static bool canPrepare(Campaign campaign) =>
       campaign.pendingDeathSave == null &&
       campaign.pendingEnemyShieldHit == null &&
@@ -87,17 +88,31 @@ class SneakAttackAllyRules {
     Encounter? fight,
   ) =>
       pending != null &&
-      pending.type == 'attack' &&
+      (pending.type == 'attack' || pending.type == 'offhandAttack') &&
       fight != null &&
       !fight.isFinished &&
       fight.activeParticipant == 'hero' &&
       fight.id == pending.targetId &&
+      (pending.type == 'attack' ||
+          (pending.weaponId.isNotEmpty &&
+              fight.actionUsed &&
+              fight.attacksRemaining == 0 &&
+              fight.bonusActionUsed &&
+              fight.lightAttackAvailable &&
+              TwoWeaponFightingRules.confirmedOffhand(
+                    hero,
+                    pending.weaponId,
+                  ) !=
+                  null)) &&
       hero.hitPoints != null &&
       hero.hitPoints! > 0 &&
       !hero.isDead &&
       ConditionRules.canTakeActions(hero) &&
       ClassCombatFeatures.eligibleSneakAttackDice(
             hero,
+            attackingWeaponId: pending.type == 'offhandAttack'
+                ? pending.weaponId
+                : null,
             hasAdvantage: pending.advantage,
             hasDisadvantage: pending.disadvantage,
             adjacentConsciousAlly: true,
