@@ -1,3 +1,12 @@
+## 24.10.2026 – Verlässliche Handlungsstrang-Statuswerte im Backend (PR #161)
+
+- Abgeschlossene (`resolved`) oder aufgegebene (`abandoned`) Handlungsstränge werden nicht mehr durch eine unbestätigte Erzählerantwort stillschweigend wieder geöffnet oder gegenseitig umklassifiziert.
+- Gleichbleibender Terminalstatus mit neuer narrativer Notiz weiterhin zulässig; manuelles Wiederöffnen durch den Spieler im vorhandenen Editor bleibt möglich.
+- Zwei neue Backend-Regressionsfälle für erlaubte/verbotene Übergänge und API-Fehlerantworten ohne Anbieter-Geheimnisse. Backend-/Android-/Gesamt-CI beim Dokumentationszeitpunkt noch ausstehend.
+- Keine SQLite-/JSON-Migration, keine SRD-Regeländerung und keine externe Anbieter-Kostenfreigabe. [Details](docs/STORY_TERMINAL_THREAD_GUARD_20261024.md) · [PR](https://github.com/ManuEtt/Dnd/pull/161).
+
+---
+
 ## 24.10.2026 – 0.8.38+88: tatsächliche Nebenhandwaffe für Hinterhältigen Angriff
 
 Die vorhandene Nebenhandauflösung prüft jetzt ihre bestätigte Inventarwaffe auf Finesse/Fernkampf. Ein Hauptdolch verleiht einer Nebenhandaxt keinen Zusatzschaden; ein Nebendolch verliert seine Eignung nicht durch eine Haupthandaxt. Krit/Miss und bestehende gemeinsame Zugnutzung bleiben erhalten. 27 bestehende/Helper- und acht neue Kampf-/SQLite-Tests erfolgreich. Vollständige lokale Abnahme: 1505 Flutter-,100 Python-,31 Backend- und12 native Tests erfolgreich, Format/Analyse/Importgrenzen ohne Befund. Neue Debug-APK und ARM64-Alpha gebaut und geprüft. Eigene finale GitHub-Checks am PR158 getrennt geführt; Realgerät nicht getestet. SQLite2/JSON1 kompatibel. Details und nächstes Paket: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md).
