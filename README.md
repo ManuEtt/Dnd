@@ -2,7 +2,21 @@
 
 Deutschsprachige Android-Alpha für Soloabenteuer, regelgeprüfte Kämpfe und lokale Kampagnen mit SQLite. Flutter/Dart-App und optionaler Fastify-/TypeScript-Erzähler. Das vollständige SRD 5.2.1 ist noch nicht implementiert.
 
-## Aktueller Stand und autonome Fortsetzung (24.10.2026)
+## Aktueller Entwicklungszyklus – bestätigter Verbündeter für Nebenhand (24.10.2026)
+
+**Neu in [PR #160](https://github.com/ManuEtt/Dnd/pull/160), eigener Branch `feature/sneak-attack-offhand-ally-20261024` (Basis main `b60ffe7`):** Bei einem bereits regulär erlaubten Nebenhandangriff mit tatsächlicher Finesse-Waffe kann jetzt derselbe revisionsgeschützte Dialog zwei unabhängig beobachtete Verbündetenfakten bestätigen wie bei einem Hauptwaffenangriff. Die Bestätigung bleibt an Kampagne/Ziel/Wurf gebunden, wird erst bei einem Treffer auf Schaden angewandt und kann vor dem Würfeln entfernt werden. Nebenhandaxt mit Hauptdolch, Nachteil, bereits verwendeter Hinterhältiger Angriff und gefälschte Bindungen bleiben ausgeschlossen.
+
+**Code und Tests geschrieben:** erweiterte Rule-/Import-Prüfung, Android-Abenteueranzeige, neue Domain-/JSON-/SQLite-Regressionen in `sneak_attack_offhand_ally_test.dart` und zwei neue UI-Tests. Die erste Gesamt-CI entdeckte eine Formatter-Abweichung und eine zu breite Alt-JSON-Assertion; beide wurden korrigiert. **Der vollständige neue CI-Lauf ist bis zum separaten Erfolgsnachweis nicht als bestanden zu betrachten.** Ältere erfolgreiche CI [#40095802925](https://github.com/ManuEtt/Dnd/actions/runs/40095802925) auf PR #159 belegt **nicht** PR #160. Der noch offene [Sending-PR #159](https://github.com/ManuEtt/Dnd/pull/159) wird nicht überschrieben.
+
+Version **0.8.38+88**, SQLite **2**, Export-JSON **1** unverändert; SRD-Anforderung `CLASS-SCHURKE-1-BASE-SNEAK-ATTACK-1` bleibt `partial`. Keine automatische Verbündetenposition, neue Bonusaktion oder KI-bestätigten Regelwerte. Echtes Android-Gerät/Altspielstand-Upgrade und produktive Signierung weiterhin nicht getestet. [Regel-/Abnahmebeleg](docs/SRD_SNEAK_ATTACK_OFFHAND_ALLY_20261024.md) · [aktueller Checkpoint](docs/CODEX_CHECKPOINT.md) · [CI-Checks](https://github.com/ManuEtt/Dnd/pull/160/checks).
+
+### Nächster konkreter Schritt
+
+Die vollständige finale CI für PR #160 samt Python, Backend, Dart-Format, Flutter, SQLite und Android abwarten und Fehler beheben. Nach erfolgreicher Abnahme PR #160 zur Review freigeben und ausschließlich nach Prüfung sicher integrieren.
+
+---
+
+## Vorheriger abgenommener Entwicklungsstand (PR #158, inzwischen main)
 
 **Version 0.8.38+88**, Branch `fix/sneak-attack-offhand-weapon-20261024`, [PR #158](https://github.com/ManuEtt/Dnd/pull/158). Funktionaler Code [`aa79ce5`](https://github.com/ManuEtt/Dnd/commit/aa79ce593790e5763e9125743b0adeab55b581d5), Basis-main `dcb42c5efff40a757994d4f5b5f8e98b2ff128e9` (PR #157 integriert). Eigene aktuelle [GitHub-Checks](https://github.com/ManuEtt/Dnd/pull/158/checks) zeigen den jeweiligen finalen HEAD; Basisprüfungen und lokale Abnahme werden getrennt geführt. Main bleibt durch diesen Zyklus unverändert.
 
