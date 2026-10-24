@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
+import 'package:lebendiger_spielleiter/data/sqlite_campaign_repository.dart';
+import 'package:lebendiger_spielleiter/services/game_controller.dart';
+import 'package:lebendiger_spielleiter/services/voice_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:lebendiger_spielleiter/domain/experience_progression.dart';
@@ -8,7 +13,19 @@ import 'package:lebendiger_spielleiter/ui/app.dart';
 import 'package:lebendiger_spielleiter/ui/experience_reward_dialog.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 
+class _SilentRewardVoice extends VoiceController {
+  @override
+  Future<void> stopListening() async {}
+
+  @override
+  Future<void> stopSpeaking() async {}
+
+  @override
+  Future<void> speak(String text) async {}
+}
+
 void main() {
+  setUpAll(sqfliteFfiInit);
   Future<void> openDialog(
     WidgetTester tester,
     Campaign campaign, {
@@ -201,5 +218,90 @@ void main() {
       ).onPressed,
       isNull,
     );
+  });  testWidgets('Abenteuerdialog bestätigt XP wirklich einmal im SQLite-Journal', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final repository = (await tester.runAsync(
+      () => SqliteCampaignRepository.open(
+        factory: databaseFactoryFfi,
+        path: inMemoryDatabasePath,
+      ),
+    ))!;
+    final controller = GameController(repository: repository);
+    final voice = _SilentRewardVoice();
+    try {
+      await tester.runAsync(controller.createDemo);
+      await tester.pumpWidget(
+        LivingGameApp(controller: controller, voice: voice),
+      );
+      await tester.tap(find.text('Abenteuer'));
+      await tester.pumpAndSettle();
+      final action = find.byKey(
+        const ValueKey('adventure-confirm-xp-reward'),
+      );
+      await tester.scrollUntilVisible(
+        action,
+        160,
+        scrollable: find.byType(ListView).first,
+      );
+      await tester.ensureVisible(action);
+      await tester.pumpAndSettle();
+      await tester.tap(action);
+      await tester.pumpAndSettle();
+      expect(find.byType(ExperienceRewardDialog), findsOneWidget);
+      await tester.enterText(
+        find.byKey(const ValueKey('xp-reward-id')),
+        'musterquest-1',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('xp-reward-amount')),
+        '300',
+      );
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('xp-reward-consent')),
+      );
+      await tester.tap(find.byKey(const ValueKey('xp-reward-consent')));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('xp-reward-confirm')));
+      for (var retry = 0; retry < 100; retry++) {
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 10)),
+        );
+        await tester.pump();
+        if (controller.currentCampaign?.revision == 1 && !controller.busy) {
+          break;
+        }
+      }
+      expect(controller.error, isNull);
+      final campaign = controller.currentCampaign!;
+      expect(campaign.hero.experience, 300);
+      expect(campaign.revision, 1);
+      expect(campaign.events.single.type, 'xp.reward.confirmed');
+      expect(
+        campaign.events.single.payload['actionRequestId'],
+        'xp_musterquest-1',
+      );
+      expect(
+        (await tester.runAsync(() => repository.getCampaign(campaign.id)))!
+            .toJson(),
+        campaign.toJson(),
+      );
+      expect(
+        find.byKey(const ValueKey('xp-reward-receipt')),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      controller.dispose();
+      voice.dispose();
+      await tester.runAsync(repository.close);
+    }
   });
+
+
 }
