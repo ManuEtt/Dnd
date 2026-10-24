@@ -1355,7 +1355,8 @@ class _AdventurePageState extends State<_AdventurePage> {
     );
     if (!mounted || widget.controller.error != null) return;
     final saved = widget.controller.currentCampaign;
-    final confirmed = saved != null &&
+    final confirmed =
+        saved != null &&
         saved.events.any(
           (event) =>
               event.type == 'xp.reward.confirmed' &&
@@ -2507,11 +2508,14 @@ class _AdventurePageState extends State<_AdventurePage> {
                                 minHeight: 5,
                               ),
                             FantasyTextButton(
-                              key: const ValueKey('adventure-confirm-xp-reward'),
+                              key: const ValueKey(
+                                'adventure-confirm-xp-reward',
+                              ),
                               label: 'EP-Belohnung bestätigen',
                               icon: Icons.military_tech_outlined,
                               style: FantasyButtonStyle.woodGold,
-                              onPressed: !_canInteract ||
+                              onPressed:
+                                  !_canInteract ||
                                       campaign.hero.experience == null ||
                                       campaign.pendingRoll != null ||
                                       campaign.pendingDeathSave != null ||

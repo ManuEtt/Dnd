@@ -27,28 +27,30 @@ void main() {
     recipientIsCreatureConfirmed: isCreature,
   );
 
-  test('Sending is uniquely identified by published level and spell metadata',
-      () {
-    expect(sending.name, 'Sending');
-    expect(sending.level, 3);
-    expect(sending.range, 'Unlimited');
-    expect(sending.castingTime, 'Action');
-    expect(sending.concentration, isFalse);
+  test(
+    'Sending is uniquely identified by published level and spell metadata',
+    () {
+      expect(sending.name, 'Sending');
+      expect(sending.level, 3);
+      expect(sending.range, 'Unlimited');
+      expect(sending.castingTime, 'Action');
+      expect(sending.concentration, isFalse);
 
-    for (final name in ['Dream', 'Magic Missile', 'Mirage Arcane']) {
-      expect(
-        () => SrdSendingRules.prepare(
-          spell: catalog.find(name)!,
-          recipientId: 'npc-01',
-          message: 'Hallo',
-          knowledge: SendingRecipientKnowledge.personallyMet,
-          recipientIsCreatureConfirmed: true,
-        ),
-        throwsUnsupportedError,
-        reason: name,
-      );
-    }
-  });
+      for (final name in ['Dream', 'Magic Missile', 'Mirage Arcane']) {
+        expect(
+          () => SrdSendingRules.prepare(
+            spell: catalog.find(name)!,
+            recipientId: 'npc-01',
+            message: 'Hallo',
+            knowledge: SendingRecipientKnowledge.personallyMet,
+            recipientIsCreatureConfirmed: true,
+          ),
+          throwsUnsupportedError,
+          reason: name,
+        );
+      }
+    },
+  );
 
   test('a confirmed creature met personally qualifies with 25 words', () {
     final words = List.filled(25, 'Wort').join(' ');
@@ -59,14 +61,16 @@ void main() {
     expect(plan.recipientKnowledge, SendingRecipientKnowledge.personallyMet);
   });
 
-  test('an eyewitness description also qualifies, no personal visit required',
-      () {
-    final plan = prepare(
-      knowledge: SendingRecipientKnowledge.describedByEyewitness,
-      message: 'Hallo,\nwir sprechen morgen!\tBis dann.',
-    );
-    expect(plan.wordCount, 6);
-  });
+  test(
+    'an eyewitness description also qualifies, no personal visit required',
+    () {
+      final plan = prepare(
+        knowledge: SendingRecipientKnowledge.describedByEyewitness,
+        message: 'Hallo,\nwir sprechen morgen!\tBis dann.',
+      );
+      expect(plan.wordCount, 6);
+    },
+  );
 
   test('unknown recipient evidence and noncreatures fail closed', () {
     expect(
@@ -168,14 +172,8 @@ void main() {
   test('unverified block or plane stays unresolved without a die', () {
     final plan = prepare();
     for (final facts in [
-      (
-        SendingBlockStatus.unverified,
-        SendingPlaneRelation.samePlaneConfirmed,
-      ),
-      (
-        SendingBlockStatus.notBlockedConfirmed,
-        SendingPlaneRelation.unverified,
-      ),
+      (SendingBlockStatus.unverified, SendingPlaneRelation.samePlaneConfirmed),
+      (SendingBlockStatus.notBlockedConfirmed, SendingPlaneRelation.unverified),
       (SendingBlockStatus.unverified, SendingPlaneRelation.unverified),
     ]) {
       final result = SrdSendingRules.assessDelivery(

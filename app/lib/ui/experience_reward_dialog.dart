@@ -9,10 +9,7 @@ import 'fantasy_ui.dart';
 /// A deterministic request ID is derived from the explicitly supplied reward
 /// ID. Reopening the form after a lost acknowledgement uses the same receipt.
 class ExperienceRewardChoice {
-  const ExperienceRewardChoice({
-    required this.rewardId,
-    required this.amount,
-  });
+  const ExperienceRewardChoice({required this.rewardId, required this.amount});
 
   final String rewardId;
   final int amount;
@@ -50,10 +47,12 @@ class _ExperienceRewardDialogState extends State<ExperienceRewardDialog> {
     Campaign? preview;
     String? error;
     if (widget.campaign.hero.experience == null) {
-      error = 'Bitte zuerst den bisherigen EP-Stand im Charakterbogen bestätigen.';
+      error =
+          'Bitte zuerst den bisherigen EP-Stand im Charakterbogen bestätigen.';
     } else if (id.isNotEmpty || _amount.text.isNotEmpty) {
       if (!RegExp(r'^[A-Za-z0-9_-]{1,100}$').hasMatch(id)) {
-        error = 'Eindeutige Kennung: 1–100 Zeichen, Buchstaben, Ziffern, _ oder -.';
+        error =
+            'Eindeutige Kennung: 1–100 Zeichen, Buchstaben, Ziffern, _ oder -.';
       } else if (amount == null || amount < 1 || amount > 100000) {
         error = 'Bitte 1 bis 100000 EP eingeben.';
       } else {
@@ -68,8 +67,8 @@ class _ExperienceRewardDialogState extends State<ExperienceRewardDialog> {
         }
       }
     }
-    final alreadyBooked = preview != null &&
-        identical(preview, widget.campaign);
+    final alreadyBooked =
+        preview != null && identical(preview, widget.campaign);
     final canSubmit = preview != null && _approved;
     final currentXp = widget.campaign.hero.experience;
     return AlertDialog(
@@ -96,7 +95,8 @@ class _ExperienceRewardDialogState extends State<ExperienceRewardDialog> {
                 decoration: const InputDecoration(
                   labelText: 'Eindeutige Belohnungskennung',
                   hintText: 'z. B. quest-kapitel-1',
-                  helperText: 'Für dieselbe Belohnung immer dieselbe Kennung nutzen.',
+                  helperText:
+                      'Für dieselbe Belohnung immer dieselbe Kennung nutzen.',
                   helperMaxLines: 2,
                 ),
                 onChanged: (_) => setState(() => _approved = false),
@@ -135,7 +135,7 @@ class _ExperienceRewardDialogState extends State<ExperienceRewardDialog> {
                         Text(
                           alreadyBooked
                               ? 'Bereits gebucht: keine zusätzlichen EP. '
-                                  'Die vorhandene Quittung wird geprüft.'
+                                    'Die vorhandene Quittung wird geprüft.'
                               : 'Nach Bestätigung: ${preview.hero.experience} EP',
                           key: const ValueKey('xp-reward-preview'),
                         ),
@@ -157,8 +157,11 @@ class _ExperienceRewardDialogState extends State<ExperienceRewardDialog> {
                 contentPadding: EdgeInsets.zero,
                 controlAffinity: ListTileControlAffinity.leading,
                 value: _approved,
-                title: const Text('Ich bestätige diese EP-Belohnung ausdrücklich.'),
-                onChanged: (value) => setState(() => _approved = value ?? false),
+                title: const Text(
+                  'Ich bestätige diese EP-Belohnung ausdrücklich.',
+                ),
+                onChanged: (value) =>
+                    setState(() => _approved = value ?? false),
               ),
             ],
           ),
@@ -177,9 +180,9 @@ class _ExperienceRewardDialogState extends State<ExperienceRewardDialog> {
           label: alreadyBooked ? 'Buchung prüfen' : 'EP verbindlich buchen',
           style: FantasyButtonStyle.arcane,
           onPressed: canSubmit
-              ? () => Navigator.of(context).pop(
-                    ExperienceRewardChoice(rewardId: id, amount: amount!),
-                  )
+              ? () => Navigator.of(
+                  context,
+                ).pop(ExperienceRewardChoice(rewardId: id, amount: amount!))
               : null,
         ),
       ],
