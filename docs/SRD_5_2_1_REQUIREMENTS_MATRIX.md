@@ -162,3 +162,8 @@ Dies ist ein **explizit unvollständiger Ausgangsauszug**, keine behauptete Gesa
 | CORE-UNCONSCIOUS-PRONE | Rules Glossary, Unconscious (S.191) | Bewusstlos bewirkt Liegend; nach Ende von Bewusstlos bleibt Liegend selbständig bestehen | HeroCharacter, ConditionEffect | `condition_rules.dart`, `rules_engine.dart`, `condition_effects.dart`, `death_saving_throw_rules.dart`, `game_engine.dart` | Bestehender Charakterbogen/Zustände | manuelle Liegend-Folge getrennt vom Effekt-Register, additive Schema-1-Werte | `unconscious_prone_test.dart` | IMPLEMENTIERT_UNGETESTET: neuer CI-Lauf offen; abgelegte Gegenstände, Aufstehen/Bewegung nicht enthalten |
 
 **Nächste Abnahme:** CI-/Format-/Analyse-/Backend-/Android-Status prüfen, dann explizite Controller-Aktionen, effektgebundene Konzentrations-/Rage-/Dodgefolgen und transaktionale End-to-End-Tests ergänzen. Bis dahin das Gesamtmerkmal `EFFECT-SOURCE-DURATION` ausdrücklich nur als **TEILWEISE** führen.
+
+
+## 24.10.2026 – Waffenreferenz bei Hinterhältigem Angriff
+
+`CLASS-SCHURKE-1-BASE-SNEAK-ATTACK-1` bleibt partial. SRD5.2.1 Rogue/Sneak Attack S.61–62, CC BY4.0: tatsächliche Finesse-/Fernkampfwaffe maßgeblich. GameEngine übergibt die bestätigte Nebenhand-ID an ClassCombatFeatures.eligibleSneakAttackDice; alte Hauptwaffenaufrufe bleiben gültig. Neue sneak_attack_weapon_context_test.dart: acht bestandene Kampf-/JSON-/SQLite-Regressionen; Helpertest schützt leere/fehlende/mehrdeutige/verbrauchte Referenzen. Gesamtabnahme separat im operativen Checkpoint; keine globale SRD-Quote.

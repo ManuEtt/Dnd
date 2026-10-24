@@ -1,3 +1,9 @@
+## Aktueller nächster Schritt (24.10.2026)
+
+Nach Abnahme der Waffenreferenzkorrektur 0.8.38+88: manuelle Verbündetenbestätigung für zulässige Nebenhandwaffen über denselben revisionsgeschützten Dialog-/Controllerpfad ergänzen. Akzeptanz und reale Ergebnisse: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md). Folgende Einträge sind historisch.
+
+---
+
 ## Nächstes Inkrement nach PR #7 – quellgebundene Zustände (18.10.2026)
 
 1. PR #7 erst nach vollständig grünen Flutter-/Dart-/Backend-/Android-Checks abnehmen; notwendige Fehlerursachen tatsächlich beheben.

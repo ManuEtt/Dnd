@@ -113,4 +113,61 @@ void main() {
       throwsRangeError,
     );
   });
+
+  test('Sneak Attack uses only the explicitly attacking inventory weapon', () {
+    final rogue = HeroCharacter(
+      id: 'r',
+      name: 'Dieb',
+      className: 'Schurke',
+      level: 5,
+      equippedWeaponId: 'axe',
+      inventory: const [
+        InventoryItem(id: 'axe', name: 'Handaxt', catalogId: 'weapon-handaxe'),
+        InventoryItem(id: 'dagger', name: 'Dolch', catalogId: 'weapon-dagger'),
+      ],
+    );
+    int eligible(HeroCharacter hero, {String? weaponId}) =>
+        ClassCombatFeatures.eligibleSneakAttackDice(
+          hero,
+          attackingWeaponId: weaponId,
+          hasAdvantage: true,
+          hasDisadvantage: false,
+          adjacentConsciousAlly: false,
+          alreadyUsedThisTurn: false,
+        );
+
+    expect(eligible(rogue), 0);
+    expect(eligible(rogue, weaponId: 'dagger'), 3);
+    final daggerPrimary = rogue.copyWith(equippedWeaponId: 'dagger');
+    expect(eligible(daggerPrimary), 3);
+    expect(eligible(daggerPrimary, weaponId: 'axe'), 0);
+    // An explicit missing weapon must never fall back to the primary dagger.
+    expect(eligible(daggerPrimary, weaponId: ''), 0);
+    expect(eligible(daggerPrimary, weaponId: 'missing'), 0);
+    expect(
+      eligible(
+        daggerPrimary.copyWith(
+          inventory: [...rogue.inventory, rogue.inventory.last],
+        ),
+        weaponId: 'dagger',
+      ),
+      0,
+    );
+    expect(
+      eligible(
+        daggerPrimary.copyWith(
+          inventory: const [
+            InventoryItem(
+              id: 'dagger',
+              name: 'Dolch',
+              catalogId: 'weapon-dagger',
+              quantity: 0,
+            ),
+          ],
+        ),
+        weaponId: 'dagger',
+      ),
+      0,
+    );
+  });
 }

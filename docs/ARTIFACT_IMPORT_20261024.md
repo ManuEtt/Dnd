@@ -1,40 +1,55 @@
-# Projektpaket und Patch importieren
+# Vollprojekt und Git-Patch importieren
 
-Der aktuelle operative Stand und echte GitHub-PR-/CI-Links stehen in [CODEX_CHECKPOINT.md](CODEX_CHECKPOINT.md). Quellcode-ZIP und Git-Patch entstehen mit:
+Aktuelle Version: **0.8.38+88**. Patchbasis: `dcb42c5efff40a757994d4f5b5f8e98b2ff128e9`.
+Code und tatsächliche Prüfungen: [CODEX_CHECKPOINT](CODEX_CHECKPOINT.md).
 
-```bash
-python3 scripts/create_checkpoint.py --output-dir /pfad/ausserhalb-des-projekts \
-  --base 5958579e5321338bb7b4e46abb859fd3bfd1515f --label sneak-attack-abschluss
-```
+## Im bestehenden Repository
 
-Das Skript prüft ZIP-Integrität, Dateihashes und die Anwendung des Patches gegen genau diesen Basis-Commit. Versionierte Pakete werden erhalten. Das ZIP enthält den vollständigen importierbaren Quellcode einschließlich Tests, Assets, Backend, scripts/ und verstecktem .github/-Verzeichnis; keine SDK-Caches, Zugangsdaten oder APKs. Android-Binaries bleiben separate Artefakte.
-
-## Bestehendes GitHub-Repository
-
-Den Patch auf einem eigenen Branch vom angegebenen Basis-Commit anwenden:
+Der vorhandene Entwicklungs-PR ist der bevorzugte Integrationsweg. Alternativ den
+versionierten Patch auf einem eigenen Branch von seiner exakten Basis anwenden:
 
 ```bash
 git clone https://github.com/ManuEtt/Dnd.git
 cd Dnd
-git switch -c import/sneak-attack-checkpoint 5958579e5321338bb7b4e46abb859fd3bfd1515f
+git switch -c import/offhand-waffenpruefung dcb42c5efff40a757994d4f5b5f8e98b2ff128e9
 git apply --check /pfad/Wuerfelraunen_Aenderungen.patch
 git apply /pfad/Wuerfelraunen_Aenderungen.patch
 bash scripts/check.sh
 git add .
-git commit -m "Import tested Sneak Attack checkpoint"
-git push -u origin import/sneak-attack-checkpoint
+git commit -m "Import tested offhand weapon correction"
+git push -u origin import/offhand-waffenpruefung
 ```
 
-Den tatsächlichen versionierten Dateinamen verwenden. Anschließend PR nach main erstellen. Hat main inzwischen weitere Änderungen, Konflikte und gesamte gemeinsame Testbasis vor dem Merge prüfen. Weder main überschreiben noch Force-Push verwenden.
+Tatsächlichen heruntergeladenen Patch-Dateinamen einsetzen. Danach einen PR nach
+main erstellen. Wenn main inzwischen weiterentwickelt wurde, gemeinsame Prüfungen
+und Konflikte vor Integration bearbeiten. Kein Force-Push und main nicht ersetzen.
 
 ## Vollprojekt-ZIP
 
-In ein frisches Verzeichnis entpacken. app/, backend/, scripts/ und .github/ müssen unmittelbar in dessen Wurzel liegen. Bei GitHub-Upload auch das versteckte .github/-Verzeichnis übertragen. Persönliche Spielstände und lokale Geheimnisse separat behalten. Die bereits vorhandene PR-Variante ist für das bestehende Repository vorzuziehen.
+Das lokale Projekt-ZIP enthält app/, backend/, scripts/, Tests, Assets, Dokumentation
+und das versteckte .github/-Verzeichnis direkt in seiner Wurzel. In ein frisches
+Verzeichnis entpacken; bei GitHub-Upload auch versteckte Dateien übertragen. Ein
+kanonisches GitHub-Quellarchiv enthält zusätzlich einen äußeren Projektordner.
+SDKs, Caches, private Spielstände, Geheimnisse und APKs gehören nicht in das Quell-ZIP.
 
-## Artefakte
+```bash
+python3 scripts/create_checkpoint.py --output-dir /pfad/ausserhalb-des-projekts \
+  --base dcb42c5efff40a757994d4f5b5f8e98b2ff128e9 --label offhand-waffenpruefung-abschluss
+```
 
-- Lokale Dateien dieser Umgebung: `/workspace/artifacts/`; `Wuerfelraunen_LATEST_Vollprojekt.zip` und SHA256SUMS.txt zeigen auf den zuletzt geprüften lokalen Quellen-Checkpoint.
-- GitHub-Workflow `Android-Alpha bauen`: erfolgreicher Lauf liefert eigenen Quellcode-Checkpoint sowie Debug- und ABI-Alpha-APKs unter den echten Actions-Artefakten. Deren Namen/Links erst nach Beobachtung des konkreten Laufs übernehmen.
-- Ein Workspace-Dateipfad ist kein Beleg für einen externen Upload. APK-Build, Signaturprüfung, Gerätestart und sichere Installation über eine frühere App sind getrennte Nachweise.
+Das Werkzeug prüft ZIP-CRC, Dateimanifest und die tatsächliche Patch-Anwendung auf
+der angegebenen Basis. Versionierte Dateien bleiben erhalten. Prüfsummen stehen
+separat in SHA256SUMS.txt; den ZIP-Selbsthash nicht in das ZIP hineinschreiben.
 
-Konkreter überprüfter Code-Lauf dieses Pakets: [CI40056875863](https://github.com/ManuEtt/Dnd/actions/runs/40056875863) erfolgreich, PR-HEAD182f44b / Merge-Testde67cd3. [Quell-ZIP](https://github.com/ManuEtt/Dnd/actions/runs/40056875863/artifacts/12546510086) und [Alpha-APKs](https://github.com/ManuEtt/Dnd/actions/runs/40056875863/artifacts/12546286030) sind tatsächlich vorhanden. Abschließende Dokumentationsupdates ändern den ausführbaren Code nicht.
+## Artefakte und Herkunft
+
+Lokale Pakete: `/workspace/artifacts/`; neue Debug-/ARM64-APKs und ihre Metadaten:
+`/workspace/artifacts/0.8.38+88/`. Ältere APKs bleiben unverändert erhalten und sind
+kein Nachweis für diese Version. LATEST-Dateien verweisen auf den zuletzt erzeugten
+Checkpoint; dessen Manifest nennt tatsächlichen HEAD und Teststatus.
+
+Echte GitHub-Actions-Artefakte und PR-Links erst nach ihrer Erzeugung im operativen
+Checkpoint übernehmen. Ein lokaler Dateipfad beweist keinen externen Upload.
+Lokale und GitHub-APKs haben jeweils eigene Signatur-/Archivdigests. Build,
+Signaturprüfung, Geräteinstallation und erfolgreiches Upgrade mit alten
+Spielständen sind unterschiedliche Nachweise.

@@ -4148,6 +4148,9 @@ class GameEngine {
         );
         final sneakDice = ClassCombatFeatures.eligibleSneakAttackDice(
           next.hero,
+          attackingWeaponId: isOffhand
+              ? pending.weaponId
+              : next.hero.equippedWeaponId,
           hasAdvantage: pending.advantage,
           hasDisadvantage: pending.disadvantage,
           adjacentConsciousAlly: pending.sneakAttackAlly != null,
