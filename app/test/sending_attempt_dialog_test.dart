@@ -244,7 +244,10 @@ void main() {
       expect(find.textContaining('W100-Wurf erforderlich'), findsOneWidget);
       await tester.enterText(key('sending-percentile'), '6');
       await tester.pump();
-      expect(find.textContaining('keine tatsächliche Zustellung'), findsOneWidget);
+      expect(
+        find.textContaining('keine tatsächliche Zustellung'),
+        findsOneWidget,
+      );
       await press(tester, 'sending-consent');
       expect(submit(tester).onPressed, isNotNull);
 
