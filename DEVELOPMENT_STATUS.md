@@ -1,3 +1,11 @@
+## 24.10.2026 – Sending-Vorprüfung: vollständige Flutter-/Android-CI erfolgreich
+
+- **GETESTET:** [GitHub-Actions #40071729227](https://github.com/ManuEtt/Dnd/actions/runs/40071729227) **completed/success** auf funktionalem Code `efed3d732459478b072452ab8e92ef3c674e39fd`: Python/Backend, Dart-Format/Analyse, Flutter-Gesamtsuite einschließlich neuer Klassen-/Slot-/Komponenten-/W100-Tests, Android-Debug, native Tests, ABI-APKs, vollständige Release- und Source-Artefakte. [PR #154](https://github.com/ManuEtt/Dnd/pull/154) ist weiterhin offen und konfliktfrei, `main` unverändert.
+- **NICHT GETESTET:** echtes Android-Gerät, historische Backups im Upgradepfad und ein tatsächlich verbuchter Sending-Zauber. **BLOCKIERT:** kein lokales SDK/Handy. **NOCH NICHT IMPLEMENTIERT:** Cast-Transaktion, Slot-/Aktionsevent, Nachrichtenzustellung.
+- **KOMPATIBILITÄT:** Flutter-App 0.8.37+87, SQLite 2, JSON 1 unverändert. **NÄCHSTER SCHRITT:** PR-Review und separates bestätigtes Cast-Inkrement.
+
+---
+
 ## 24.10.2026 – Sending-Rule-Komposition ohne Ressourcenmutation
 
 - **IMPLEMENTIERT:** Reiner `SrdSendingCastPreflightRules` integriert den Sending-Validator mit bestehender `SrdSpellPreflightRules`-Klassen-/Slot-/Komponentenprüfung und danach der Blockade-/Ebenen-W100-Prüfung. Katalogmetadaten werden gegen stille Pflichtkomponenten-Änderungen geschützt; Ergebnis bleibt read-only.

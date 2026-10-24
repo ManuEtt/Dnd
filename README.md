@@ -6,6 +6,8 @@
 
 ### Sending-Zauber: Nachricht, Klasse und Ressourcen gemeinsam prüfen (24.10.2026)
 
+**Code-Abnahme erfolgreich:** [PR-CI #40071729227](https://github.com/ManuEtt/Dnd/actions/runs/40071729227) auf ausführbarem Commit `efed3d732459478b072452ab8e92ef3c674e39fd`: Python/Backend, Dart-Format und Analyse, vollständige Flutter-Suite einschließlich acht neuer Sending-Cast-Tests, Android-Debug/native Tests, Alpha-APKs und versioniertes Alpha-Quell-/APK-Paket **success**. Kein echter Gerätetest und weiterhin keine tatsächliche Zauberausführung. [PR #154](https://github.com/ManuEtt/Dnd/pull/154) ist offen und wurde nicht nach main gemergt.
+
 Der nicht gespeicherte Regel-Dry-run sperrt außerdem Zauberaktionen bei 0 TP, Handlungsunfähigkeit oder ungeübter angelegter Rüstung. Manipulierte Sending-Klassenmetadaten dürfen keine fremden Klassen freigeben.
 
 Der neue reine Rule-Dienst `SrdSendingCastPreflightRules` prüft die

@@ -1,3 +1,10 @@
+## 24.10.2026 – Sending-Resource-Preflight vollständig CI-validiert
+
+- Vollständige [PR-CI #40071729227](https://github.com/ManuEtt/Dnd/actions/runs/40071729227) grün auf Code-Commit `efed3d732459478b072452ab8e92ef3c674e39fd`: Flutter, Python/Backend, native Android-/APK-Builds und Alpha-/Source-Artefakte.
+- Der neue reine Rule-Preflight führt weiterhin weder eine Nachrichtenzustellung noch eine Spielstandbuchung aus; reine Dokumentationsfortschreibung nach der erfolgreichen Code-Abnahme. Kein reales Android-Gerät getestet.
+
+---
+
 ## 24.10.2026 – Sending-Vorprüfung mit bestätigter Zauberressource
 
 - `SrdSendingCastPreflightRules.preview` verbindet Ziel-/Nachrichtenprüfung mit Klassen-, Stufen-, vorbereiteter Zauber-, Slot-, Komponenten- und Aktionsbestätigung; keine Zustandsmutation.

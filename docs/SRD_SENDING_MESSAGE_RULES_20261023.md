@@ -2,6 +2,8 @@
 
 ## Regelverbund: Sending-Nachricht und Zauberressourcen (24.10.2026)
 
+**GitHub-Abnahme:** Der ausführbare Commit `${base}` ist in der vollständigen [CI #40071729227](https://github.com/ManuEtt/Dnd/actions/runs/40071729227) erfolgreich geprüft (Python/Backend, Dart/Flutter, native Android-Tests, Debug- und Alpha-APKs). Acht neue Testgruppen einschließlich Dry-run-Handlungsfähigkeit und manipulierter Klassenlisten. Der bestätigte Sending-Spellcast mit Slot-/Action-Persistenz bleibt offen; keine Geräteinstallation durchgeführt.
+
 **Arbeits-ID:** `SPELL-ENTRY-SENDING`, vorerst **partial**; keine vollständig
 automatisierte Zauberwirkung. Fachquelle: SRD 5.2.1, *Sending* (S. 161;
 CC BY 4.0), *Casting Spells / Components* sowie *Spell Slots*.
