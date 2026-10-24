@@ -54,8 +54,12 @@ class SrdSendingRules {
   // Disallow invisible separators and direction controls before the
   // whitespace-based 25-word check; otherwise reviews are misleading.
   static const int maxMessageCodeUnits = 2048;
+  // Reject other invisible formatting/annotation code points as well.
+  // This protects the reviewable player text, not the SRD word limit itself.
   static final RegExp _unsafeControls = RegExp(
-    r'[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F\u200B-\u200F\u202A-\u202E\u2060\u2066-\u2069\uFEFF]',
+    r'[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F'
+    r'\u00AD\u034F\u061C\u180E\u200B-\u200F'
+    r'\u202A-\u202E\u2060-\u206F\uFEFF\uFFF9-\uFFFB]',
   );
 
   static SendingMessagePlan prepare({
