@@ -6,6 +6,9 @@
 
 ## Aktueller Stand und autonome Fortsetzung (23.10.2026)
 
+> **Qualitätsinkrement (23.10.2026, Branch `fix/xp-reward-id-conflict-20261023`):** XP-Belohnungen mit bereits verwendeter ID werden nur bei identisch bestätigtem Betrag idempotent quittiert. Abweichende oder beschädigte Beträge lösen einen Konflikt aus; keine zweite Auszahlung und keine stillschweigende Bestätigung. JSON-Roundtrip- und Manipulationsregressionstests ergänzt. Die neue CI ist zunächst **noch nicht bestätigt**; die letzte geprüfte Main-CI bleibt [#40012217485](https://github.com/ManuEtt/Dnd/actions/runs/40012217485) auf `5958579e5321`. Kein SQLite-/JSON-Schemawechsel, kein Versionssprung gegenüber `0.8.36+86` während PR #144 offen ist. Echter Android-Test weiterhin offen.
+
+
 > **Neues SRD-Regelpaket 23.10.2026 – `0.8.36+86`, Branch `fix/srd-rogue-sneak-attack-ally-20261023`:** Der reine Schurkenregel-Helper verlangt jetzt eine ausdrücklich bestätigte Position des Verbündeten innerhalb von 5 Fuß des **Ziels** sowie das bestätigte Fehlen von `Incapacitated`, bevor er Hinterhältigen Angriff ohne Vorteil zulässt. Bei fehlender Bestätigung wird nicht gewürfelt; echter Angriffsvorteil bleibt eigenständig. Unit-Regressionen ergänzen die Abdeckung. **Keine echte Verbündeten-/Kartenzuordnung in der aktiven GameEngine implementiert**, daher SRD-Matrixstatus nur `partial`. Eigene CI und Android-Geräteabnahme stehen noch aus; App-Version `0.8.36+86`, DB 2 und JSON-Format 1.
 
 
