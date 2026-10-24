@@ -142,7 +142,7 @@ void main() {
     expect(controller.currentCampaign!.toJson(), persisted.toJson());
     await award(amount: 301);
     expect(controller.error, contains('anderen Bestätigung'));
-    await award(id: 'xp-002');
+    await award(id: 'xp-002', revision: persisted.revision);
     expect(controller.error, contains('bereits bestätigt'));
     await controller.sendAction('Ich gehe zur Quelle', requestId: 'xp-001');
     expect(controller.error, contains('anderen Text'));
