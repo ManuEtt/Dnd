@@ -2749,7 +2749,9 @@ class _AdventurePageState extends State<_AdventurePage> {
                                   '${pending['label'] ?? pending['type'] ?? 'Probe'} · '
                                   'Modifikator ${_signed(pending['modifier'] ?? pending['bonus'] ?? 0)}',
                                 ),
-                                if (campaign.pendingRoll!.type == 'attack' &&
+                                if ((campaign.pendingRoll!.type == 'attack' ||
+                                        campaign.pendingRoll!.type ==
+                                            'offhandAttack') &&
                                     campaign.pendingRoll!.sneakAttackAlly !=
                                         null) ...[
                                   const SizedBox(height: 12),

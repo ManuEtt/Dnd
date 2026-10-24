@@ -221,6 +221,92 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets(
+    'W100 erscheint nur bei bestätigter anderer Ebene ohne Blockade',
+    (tester) async {
+      await open(tester, hero: _sendingHero(), onChoice: (_) {});
+      await fillFacts(tester);
+      await press(tester, 'sending-plane');
+      await tester.tap(find.text('Andere Ebene – bestätigt').last);
+      await tester.pumpAndSettle();
+
+      // A confirmed other plane alone cannot authorize a roll:
+      // unverified blocking status must remain an unresolved preview.
+      expect(key('sending-percentile'), findsNothing);
+      expect(find.textContaining('Zustellung ungeklärt'), findsOneWidget);
+      await press(tester, 'sending-consent');
+      expect(submit(tester).onPressed, isNotNull);
+
+      await press(tester, 'sending-block');
+      await tester.tap(find.text('Nicht blockiert – bestätigt').last);
+      await tester.pumpAndSettle();
+      expect(key('sending-percentile'), findsOneWidget);
+      expect(find.textContaining('W100-Wurf erforderlich'), findsOneWidget);
+      await tester.enterText(key('sending-percentile'), '6');
+      await tester.pump();
+      expect(
+        find.textContaining('keine tatsächliche Zustellung'),
+        findsOneWidget,
+      );
+      await press(tester, 'sending-consent');
+      expect(submit(tester).onPressed, isNotNull);
+
+      await press(tester, 'sending-block');
+      await tester.tap(find.text('Blockiert – bestätigt').last);
+      await tester.pumpAndSettle();
+      expect(key('sending-percentile'), findsNothing);
+      expect(find.textContaining('Bestätigte Blockade'), findsOneWidget);
+      expect(submit(tester).onPressed, isNull);
+
+      await press(tester, 'sending-block');
+      await tester.tap(find.text('Nicht blockiert – bestätigt').last);
+      await tester.pumpAndSettle();
+      expect(key('sending-percentile'), findsOneWidget);
+      expect(
+        tester.widget<TextField>(key('sending-percentile')).controller!.text,
+        isEmpty,
+      );
+      expect(find.textContaining('W100-Wurf erforderlich'), findsOneWidget);
+      expect(submit(tester).onPressed, isNull);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('Unbestätigte Blockade verwirft vorherigen W100 und Zustimmung', (
+    tester,
+  ) async {
+    await open(tester, hero: _sendingHero(), onChoice: (_) {});
+    await fillFacts(tester);
+    await press(tester, 'sending-block');
+    await tester.tap(find.text('Nicht blockiert – bestätigt').last);
+    await tester.pumpAndSettle();
+    await press(tester, 'sending-plane');
+    await tester.tap(find.text('Andere Ebene – bestätigt').last);
+    await tester.pumpAndSettle();
+    await tester.enterText(key('sending-percentile'), '5');
+    await tester.pump();
+    expect(find.textContaining('scheitert'), findsOneWidget);
+    await press(tester, 'sending-consent');
+    expect(submit(tester).onPressed, isNotNull);
+
+    await press(tester, 'sending-block');
+    await tester.tap(find.text('Unbekannt').last);
+    await tester.pumpAndSettle();
+    expect(key('sending-percentile'), findsNothing);
+    expect(find.textContaining('Zustellung ungeklärt'), findsOneWidget);
+    expect(submit(tester).onPressed, isNull);
+    await press(tester, 'sending-block');
+    await tester.tap(find.text('Nicht blockiert – bestätigt').last);
+    await tester.pumpAndSettle();
+    expect(key('sending-percentile'), findsOneWidget);
+    expect(
+      tester.widget<TextField>(key('sending-percentile')).controller!.text,
+      isEmpty,
+    );
+    expect(find.textContaining('W100-Wurf erforderlich'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('320 dp mit großer Schrift: Dialog bleibt bedienbar', (
     tester,
   ) async {

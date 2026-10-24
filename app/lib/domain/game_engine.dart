@@ -69,7 +69,7 @@ class GameEngine {
     if (!SneakAttackAllyRules.canPrepare(campaign) ||
         campaign.pendingRoll!.id != rollId) {
       throw const FormatException(
-        'Zuerst einen zulässigen eigenen Hauptwaffenangriff anfordern.',
+        'Zuerst einen zulässigen eigenen Waffenangriff anfordern.',
       );
     }
     final pending = campaign.pendingRoll!;

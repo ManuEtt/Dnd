@@ -1,5 +1,54 @@
 # CODEX-CHECKPOINT – Würfelraunen
 
+## Aktuelle Integrationsübergabe 24.10.2026 – PR #164
+
+**Live-Basis:** `main=b60ffe7ff1aae502ea927cb77153b988be33e397` bei Beginn, App `0.8.38+88`, SQLite 2, Export-JSON 1. **Arbeitsbranch:** `integration/approved-pr159-163-20261024`, eigener Integrations-[PR #164](https://github.com/ManuEtt/Dnd/pull/164). Original-PRs [#159](https://github.com/ManuEtt/Dnd/pull/159), [#160](https://github.com/ManuEtt/Dnd/pull/160), [#161](https://github.com/ManuEtt/Dnd/pull/161), [#162](https://github.com/ManuEtt/Dnd/pull/162) und [#163](https://github.com/ManuEtt/Dnd/pull/163) bei Erstabgleich alle offen und reviewbereit, jeweils konfliktfrei gegenüber bisherigem main. Kein Commit auf main, kein Force-Push, keine Löschung anderer Branches.
+
+### IMPLEMENTIERT
+
+Ein neuer gemeinsamer Baum bewahrt **unverändert** die fachlichen Code- und Testdateien aller fünf isolierten PRs. Die ausführbaren Quelldateien und die JSON-SRD-Anforderungsmatrix hatten keine konkurrierenden Pfadänderungen. Kombiniert werden der Sending-W100-Dialog, die an tatsächliche Nebenhandattacke gebundene Verbündetenbestätigung, unveränderliche terminale Erzähler-Handlungsstränge, fail-closed Rate-Limiter-Kapazität und die Prüfung kompletter wörtlicher Plot-Secret-Veröffentlichungen.
+
+Fünf überlappende Dokumentationsserien wurden bewusst konsolidiert: CHANGELOG, DEVELOPMENT_STATUS, ROADMAP und backend/README behalten alle PR-spezifischen Erweiterungen; die aktuelle README enthält eine gemeinsame Übersicht statt widersprüchlicher fünf Einzel-HEADs. Zusätzlich bleiben die fünf originalen CODEX_CHECKPOINT-Dateien als historische Kopien in `docs/history/integration_20261024/` verfügbar. Die vier Fachbelege der PRs #160–#163 sind unverändert enthalten.
+
+Die GameController-/SQLite-Atomarität, `StoryRuleBoundary`, offenes Kampagnen-JSON v1, SQLite v2 und `pubspec.yaml` wurden nicht umgestellt. Das SRD-Inventar `CLASS-SCHURKE-1-BASE-SNEAK-ATTACK-1` bleibt `partial`; die Regelregister wurden nicht als vollständig bezeichnet. Die Backend-Spoilerprüfung ist **nur wörtlich**, kein semantischer Filter. Die Quoten sind nur pro Backendprozess, nicht zwischen Serverinstanzen geteilt.
+
+### GETESTET
+
+**Einzel-PR-CIs unabhängig erfolgreich auf den jeweiligen HEADs:**
+
+- #159 [Actions #40095802925](https://github.com/ManuEtt/Dnd/actions/runs/40095802925), `15c1626`.
+- #160 [Actions #40100211878](https://github.com/ManuEtt/Dnd/actions/runs/40100211878), `6f2ebbc`.
+- #161 [Actions #40113090963](https://github.com/ManuEtt/Dnd/actions/runs/40113090963), `9428738`.
+- #162 [Actions #40115897734](https://github.com/ManuEtt/Dnd/actions/runs/40115897734), `56128f2`.
+- #163 [Actions #40118411876](https://github.com/ManuEtt/Dnd/actions/runs/40118411876), `032af6a`.
+
+Diese Nachweise belegen **nicht automatisch** den kombinierten Code. Die neue [CI von PR #164](https://github.com/ManuEtt/Dnd/pull/164/checks) muss Format, Flutter-Analyse/Volltests, alle Backend-/Python-/Boundary- und SRD-Basisaudits sowie Android-/native Tests erfolgreich durchlaufen. Aktueller Abschlussstatus noch **ausstehend**.
+
+### NICHT GETESTET
+
+Vollständiger kombinierter Stand bis zur neuen CI; Installation auf realem Android-Gerät, Aktualisierung persönlicher Altkampagnen, produktive Release-Signierung. Keine Behauptung automatischer Secret-Freigaben, vollständiger SRD-Implementierung oder Online-Multiplayer-Reife.
+
+### BLOCKIERT
+
+Kein echtes Android-Testgerät oder produktiver Signierschlüssel in dieser Entwicklungsumgebung. CI ist verfügbar und erlaubt technische Android-Testartefakte.
+
+### NOCH NICHT IMPLEMENTIERT
+
+Beobachtbare KI-/NPC-Nachrichten-Zustellung für Sending, vollständige SRD-5.2.1-Ziel-/Positionsmechanik und Zauberwirkungen, semantischer Geheimnisschutz, autoritativ bestätigtes Freigeben eines bislang geheimen Plots, global verteilter Rate-Limiter sowie öffentliche produktive Mehrspieler-Architektur.
+
+### NÄCHSTER KONKRETER SCHRITT
+
+Die finale CI des Integrations-PRs #164 prüfen und etwaige gemeinsame Regressionen beheben. Erst bei tatsächlich komplett grüner CI den PR reviewbereit stellen. Vor Merge alle fünf ursprünglichen PRs anhand ihrer Änderungen als durch #164 ersetzt markieren; nicht dieselben Änderungen zweimal mergen. Reviewer muss Integration ausdrücklich genehmigen. Eine reale APK-Installation bleibt gesondert nötig.
+
+### Historische Checkpoints
+
+Die ursprünglichen Checkpoints der PRs #159–#163 sind als unveränderte Schnappschüsse in `docs/history/integration_20261024/` erhalten; folgende frühere Hauptbranch-Übergabe bleibt aus Gründen der Nachvollziehbarkeit erhalten.
+
+---
+
+## Historischer Hauptbranch-Checkpoint vor Integration
+
+
 Stand **2026-10-24T12:20:50+00:00**, lokal vollständig abgenommenes Paket. Frühere operative Angaben vollständig in [Historie](history/main_0.8.37_20261024/CODEX_CHECKPOINT.md) erhalten. Vor Wiederaufnahme Live-Git/PR/CI erneut prüfen.
 
 ## Git und Produkt

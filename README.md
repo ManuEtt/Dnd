@@ -1,30 +1,24 @@
 # Würfelraunen – Der lebendige Spielleiter
 
-Deutschsprachige Android-Alpha für Soloabenteuer, regelgeprüfte Kämpfe und lokale Kampagnen mit SQLite. Flutter/Dart-App und optionaler Fastify-/TypeScript-Erzähler. Das vollständige SRD 5.2.1 ist noch nicht implementiert.
+Deutschsprachige Android-Alpha für Soloabenteuer, SRD-geprüfte Teilsysteme, regelgeprüfte Kämpfe und lokale Kampagnen mit SQLite. Flutter-/Dart-App in `app/`, optionaler Fastify-/TypeScript-Erzähler in `backend/`. **Das vollständige D&D-SRD-5.2.1-Regelwerk ist weiterhin nicht implementiert.**
 
-## Aktueller Stand und autonome Fortsetzung (24.10.2026)
+## Aktueller Integrationsvorschlag (24.10.2026)
 
-**Version 0.8.38+88**, Branch `fix/sneak-attack-offhand-weapon-20261024`, [PR #158](https://github.com/ManuEtt/Dnd/pull/158). Funktionaler Code [`aa79ce5`](https://github.com/ManuEtt/Dnd/commit/aa79ce593790e5763e9125743b0adeab55b581d5), Basis-main `dcb42c5efff40a757994d4f5b5f8e98b2ff128e9` (PR #157 integriert). Eigene aktuelle [GitHub-Checks](https://github.com/ManuEtt/Dnd/pull/158/checks) zeigen den jeweiligen finalen HEAD; Basisprüfungen und lokale Abnahme werden getrennt geführt. Main bleibt durch diesen Zyklus unverändert.
+**Basis:** `main` `b60ffe7`, App-Version **0.8.38+88**, SQLite **2**, Kampagnen-Export-JSON **1**. Der Branch `integration/approved-pr159-163-20261024` bündelt fünf einzeln grün getestete, **noch nicht nach main gemergte** PRs [#159](https://github.com/ManuEtt/Dnd/pull/159)–[#163](https://github.com/ManuEtt/Dnd/pull/163). Der gemeinsame Integrations-PR **#164** erfordert eine **neue vollständige CI auf seinem eigenen Commit** und menschliche Review, bevor Änderungen in `main` übernommen werden. Die originalen PR-Branches bleiben für die Überprüfung erhalten.
 
-**Korrigiert: Hinterhältiger Angriff prüft die tatsächlich angreifende Waffe.** Bisher wurde bei einer Nebenhandprobe die Hauptwaffe auf Finesse/Fernkampf geprüft. Ein bestätigter Dolch-Nebenhandangriff kann jetzt seine eigene Eignung nutzen; eine Handaxt erhält keine Eignung durch einen Dolch in der Hauptwaffe. Angriff, Schaden, kritische Treffer, einmalige Zugnutzung und Journal bleiben im vorhandenen Kampffluss.
-
-Das betrifft auch gespeicherte offene Angriffe mit bereits bestätigtem Vorteil. Die Änderung erzeugt keinen Vorteil und erweitert die bisherigen Nebenhandvoraussetzungen nicht. Die Verbündetenbestätigung bleibt vorerst auf Hauptwaffenangriffe begrenzt. SQLite-Schema 2 und Kampagnen-JSON 1 bleiben erhalten; keine Migration und keine erfundenen KI-Regelwerte.
-
-### Tatsächlicher Prüfstand dieses Pakets
-
-| Prüfung | Beobachtetes Ergebnis |
+| Ursprünglicher PR | Kombinierte Änderung |
 | --- | --- |
-| Gezielte Regressionen | 27 bestehende/Helper- und 8 neue Kampf-/SQLite-Tests erfolgreich |
-| Vollständige Flutter-Suite | **1505 Tests erfolgreich** |
-| Python / Backend | 100 /31 Tests, Typecheck und Build erfolgreich |
-| Dart / Flutter-Analyse | 356 Dateien ohne Formatänderung; keine Befunde |
-| Android | Debug-APK und ARM64-Alpha gebaut und geprüft; 12 native Tests erfolgreich |
-| GitHub | [PR158 und aktuelle Checks](https://github.com/ManuEtt/Dnd/pull/158/checks), separat von lokalen Ergebnissen |
-| Echtes Gerät / produktive Signierung | nicht getestet |
+| [#159 – Sending](https://github.com/ManuEtt/Dnd/pull/159) | W100 nur bei ausdrücklich bestätigter Nichtblockade **und** bestätigter anderer Ebene anbieten; alte Eingabe nach Änderung löschen |
+| [#160 – Schurke](https://github.com/ManuEtt/Dnd/pull/160) | Bereits autorisierte Nebenhandattacke mit echter Finesse-Waffe darf denselben bestätigten Verbündetenbeleg für Hinterhältigen Angriff nutzen; Miss/Krit, einmaliger Zugverbrauch, SQLite und Import |
+| [#161 – Story](https://github.com/ManuEtt/Dnd/pull/161) | Erzähler darf `resolved`/`abandoned` nicht unbemerkt neu öffnen; explizite Spieleränderung im lokalen Editor bleibt möglich |
+| [#162 – Rate-Limiter](https://github.com/ManuEtt/Dnd/pull/162) | Aktive Quoten bei vollem Backend-Schlüsselspeicher erhalten, nur abgelaufene Fenster entsorgen, ansonsten fail-closed ablehnen |
+| [#163 – Plot-Geheimnisse](https://github.com/ManuEtt/Dnd/pull/163) | Wörtliche Komplett-Offenlegung geheimer Plottexte in öffentlichen KI-Antwortfeldern unterbinden; keine Garantie für sinngemäße Spoiler |
 
-APKs wurden aus dem vollständigen Quell-ZIP gebaut; 474 ausführungsrelevante Dateien per SHA256 abgeglichen. Version 0.8.38/Build 88, minSdk24/targetSdk36; Debug mit ARM64/ARMv7/x64, kleine Alpha nur ARM64, jeweils lokale Debug-Testsignatur. Vollprojekt-ZIP, Patch und Prüfsummen unter `/workspace/artifacts/`; neue APKs unter `/workspace/artifacts/0.8.38+88/`. [Importanleitung](docs/ARTIFACT_IMPORT_20261024.md).
+**Prüfstatus:** Alle fünf Einzel-PRs haben auf ihren jeweiligen finalen HEADs eigenständige erfolgreiche GitHub-CIs. Die kombinierte CI von [Integrations-PR #164](https://github.com/ManuEtt/Dnd/pull/164/checks) wird separat geprüft und ist **bis zum tatsächlichen Erfolgsnachweis noch offen**. Keine neue Version, keine Datenmigration und keine automatisch als erfolgreich markierten realen Android-Gerätetests.
 
-Aktuelle Übergabe: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md). [Regelquelle und Abnahmekriterien](docs/SRD_SNEAK_ATTACK_WEAPON_CONTEXT_20261024.md). Vorherige Sending-, XP- und Schurkenstände sind integriert; deren frühere Entwicklungsangaben stehen separat in der [README-Historie](docs/history/main_0.8.37_20261024/README.md).
+Die ursprünglichen Fachbelege bleiben in `docs/SRD_SNEAK_ATTACK_OFFHAND_ALLY_20261024.md`, `docs/STORY_TERMINAL_THREAD_GUARD_20261024.md`, `docs/BACKEND_LIMITER_CAPACITY_20261024.md` und `docs/STORY_SECRET_OUTPUT_GUARD_20261024.md`. Frühere operative Checkpoints sind historisch gesichert unter `docs/history/integration_20261024/`. [Aktuelle Gesamtprüfung/Review](https://github.com/ManuEtt/Dnd/pull/164) · [Checkpoint](docs/CODEX_CHECKPOINT.md).
+
+---
 
 ## Vorhandene Funktionen und Grenzen
 

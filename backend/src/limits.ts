@@ -10,8 +10,15 @@ export class WindowLimiter {
     if (!entry || now - entry.started >= windowMs || now < entry.started) {
       this.windows.delete(key);
       if (this.windows.size >= this.maxEntries) {
-        const oldest = this.windows.keys().next().value;
-        if (oldest !== undefined) this.windows.delete(oldest);
+        // Reclaim only expired entries. Evicting an active entry would reset
+        // that principal's quota and let key churn bypass the rate limit.
+        for (const [otherKey, window] of this.windows) {
+          if (now < window.started || now - window.started >= windowMs) {
+            this.windows.delete(otherKey);
+          }
+        }
+        // Fail closed if every slot is still active; never remove live quotas.
+        if (this.windows.size >= this.maxEntries) return false;
       }
       entry = { started: now, count: 0 };
       this.windows.set(key, entry);

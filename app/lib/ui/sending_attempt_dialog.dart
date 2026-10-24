@@ -157,7 +157,7 @@ class _SendingAttemptDialogState extends State<SendingAttemptDialog> {
           blockStatus: _block,
           planeRelation: _plane,
           percentileRoll:
-              _block != SendingBlockStatus.blockedConfirmed &&
+              _block == SendingBlockStatus.notBlockedConfirmed &&
                   _plane == SendingPlaneRelation.differentPlaneConfirmed
               ? int.tryParse(_percentile.text)
               : null,
@@ -311,9 +311,11 @@ class _SendingAttemptDialogState extends State<SendingAttemptDialog> {
                     child: Text('Nicht blockiert – bestätigt'),
                   ),
                 ],
-                onChanged: (value) => _change(
-                  () => _block = value ?? SendingBlockStatus.unverified,
-                ),
+                onChanged: (value) => _change(() {
+                  _block = value ?? SendingBlockStatus.unverified;
+                  // A new block assessment invalidates a previous plane roll.
+                  _percentile.clear();
+                }),
               ),
               DropdownButtonFormField<SendingPlaneRelation>(
                 key: const ValueKey('sending-plane'),
@@ -339,7 +341,7 @@ class _SendingAttemptDialogState extends State<SendingAttemptDialog> {
                   _percentile.clear();
                 }),
               ),
-              if (_block != SendingBlockStatus.blockedConfirmed &&
+              if (_block == SendingBlockStatus.notBlockedConfirmed &&
                   _plane == SendingPlaneRelation.differentPlaneConfirmed)
                 TextField(
                   key: const ValueKey('sending-percentile'),
