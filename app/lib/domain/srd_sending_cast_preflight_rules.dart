@@ -1,0 +1,130 @@
+import 'models.dart';
+import 'spellcasting_rules.dart';
+import 'srd_sending_rules.dart';
+import 'srd_spell_catalog.dart';
+import 'srd_spell_component_rules.dart';
+import 'srd_spell_preflight_rules.dart';
+
+/// Narrow, READ-ONLY Sending integration preflight (SRD 5.2.1 / Sending).
+///
+/// This checks the message recipient and delivery facts *and* the existing
+/// class/preparation/action/slot/component rules. It never casts, reserves
+/// resources, produces an event, sends a message or grants an effect.
+///
+/// Unlike ordinary ranged spells, Sending has the spell-specific Unlimited
+/// range. The validated recipient plan is the only target confirmation here;
+/// generic spatial geometry is intentionally NOT treated as evidence.
+class SrdSendingCastPreflightRules {
+  const SrdSendingCastPreflightRules._();
+
+  static SrdSendingCastPreview preview(
+    HeroCharacter hero, {
+    required SrdSpellDefinition spell,
+    required String castingClass,
+    required int slotLevel,
+    required String recipientId,
+    required String message,
+    required SendingRecipientKnowledge recipientKnowledge,
+    required bool recipientIsCreatureConfirmed,
+    required SendingBlockStatus blockStatus,
+    required SendingPlaneRelation planeRelation,
+    int? percentileRoll,
+    bool pactMagic = false,
+    required bool actionAvailableConfirmed,
+    required bool slotTurnLimitConfirmed,
+    required bool verbalComponentConfirmed,
+    required bool somaticComponentConfirmed,
+    required bool materialComponentConfirmed,
+    SrdSpellMaterialSource materialSource =
+        SrdSpellMaterialSource.specificComponents,
+    bool focusUseAuthorizedConfirmed = false,
+  }) {
+    // The ordinary preflight uses the caller's targetRulesConfirmed flag.
+    // Only accept that flag internally after our specific Sending checks.
+    // Spell metadata is pinned so a forged catalogue entry cannot erase
+    // the required copper-wire V/S/M costs or instant duration.
+    if (spell.id != 'spell-sending' ||
+        spell.name != 'Sending' ||
+        spell.school != 'Divination' ||
+        spell.level != 3 ||
+        spell.castingTime != 'Action' ||
+        spell.range != 'Unlimited' ||
+        spell.components != 'V, S, M (a copper wire)' ||
+        !spell.verbal ||
+        !spell.somatic ||
+        !spell.material ||
+        spell.concentration ||
+        spell.ritual ||
+        spell.duration != 'Instantaneous') {
+      throw UnsupportedError(
+        'Nur die belegte SRD-5.2.1-Sending-Definition ist zulässig.',
+      );
+    }
+
+    final recipient = SrdSendingRules.prepare(
+      spell: spell,
+      recipientId: recipientId,
+      message: message,
+      knowledge: recipientKnowledge,
+      recipientIsCreatureConfirmed: recipientIsCreatureConfirmed,
+    );
+    final resources = SrdSpellPreflightRules.preflight(
+      hero,
+      spell: spell,
+      castingClass: castingClass,
+      slotLevel: slotLevel,
+      pactMagic: pactMagic,
+      actionAvailableConfirmed: actionAvailableConfirmed,
+      // This follows only from verified Sending-specific recipient facts.
+      targetRulesConfirmed: true,
+      verbalComponentConfirmed: verbalComponentConfirmed,
+      somaticComponentConfirmed: somaticComponentConfirmed,
+      materialComponentConfirmed: materialComponentConfirmed,
+      materialSource: materialSource,
+      focusUseAuthorizedConfirmed: focusUseAuthorizedConfirmed,
+      slotTurnLimitConfirmed: slotTurnLimitConfirmed,
+    );
+    final assessment = SrdSendingRules.assessDelivery(
+      recipient,
+      blockStatus: blockStatus,
+      planeRelation: planeRelation,
+      percentileRoll: percentileRoll,
+    );
+    final remaining = pactMagic
+        ? SpellcastingRules.availablePactSlots(hero) - 1
+        : (SpellcastingRules.availableSlots(hero)[resources.slotLevel] ?? 0) - 1;
+    if (remaining < 0) {
+      throw StateError('Kein bestätigter Zauberplatz verfügbar.');
+    }
+    return SrdSendingCastPreview._(
+      recipient: recipient,
+      assessment: assessment,
+      castingClass: resources.castingClass,
+      slotLevel: resources.slotLevel,
+      pactMagic: resources.pactMagic,
+      remainingSlotsIfCommitted: remaining,
+    );
+  }
+}
+
+/// An informational snapshot only: there is deliberately NO method to spend
+/// the previewed resource or to send a message.
+class SrdSendingCastPreview {
+  const SrdSendingCastPreview._({
+    required this.recipient,
+    required this.assessment,
+    required this.castingClass,
+    required this.slotLevel,
+    required this.pactMagic,
+    required this.remainingSlotsIfCommitted,
+  });
+
+  final SendingMessagePlan recipient;
+  final SendingDeliveryAssessment assessment;
+  final String castingClass;
+  final int slotLevel;
+  final bool pactMagic;
+
+  /// Hypothetical remaining slots; the original hero is NOT changed.
+  final int remainingSlotsIfCommitted;
+}
