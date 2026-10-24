@@ -1,3 +1,15 @@
+## 24.10.2026 – Sending-W100-Dialog an autoritative Regelprüfung angeglichen (PR #159)
+
+**IMPLEMENTIERT:** `sending_attempt_dialog.dart` stellt die manuelle Ebenen-W100-Eingabe nur bei bestätigter anderer Ebene **und** bestätigter Nichtblockade bereit. Die Vorschau erhält denselben Vorfilter. Ein Blockadewechsel löscht einen früheren W100 und setzt die explizite Zustimmung zurück. Keine Story- oder Regelmoduländerung; keine KI-Autorität über bestätigte Daten.
+
+**TESTS ERGÄNZT:** Zwei Widgettests sichern unbekannte/blockierte/nicht blockierte Empfänger, Neuprüfung, W100-Löschung, Zurücksetzen der Zustimmung und unveränderten Vorschaufluss ab. **GETESTET:** Quelltextabgleich mit bestehender `SrdSendingRules.assessDelivery`; bisherige Main- und Schurken-CI sind keine Freigabe dieser Änderung. **NICHT GETESTET:** Neue Flutter-Suite, Android-Debug-/APK-Build und physisches Gerät bis zur finalen CI/Abnahme. Ein früherer PR-Lauf scheiterte an Dart-Formatierung; Formatkorrektur am Test wurde vorgenommen, erneuter Lauf ausstehend. **BLOCKIERT:** Lokal kein Flutter-/Dart-SDK; GitHub-Actions-Abnahme notwendig. **NOCH NICHT IMPLEMENTIERT:** echte Sending-Zustellung, Empfängerantwort und automatische 8h-Weltzeitsperre.
+
+**Git:** Basis-main `dcb42c5`, während der Arbeit PR #158 als Main-Merge `b60ffe7` integriert; Feature-Branch ohne Force-Push mit Main zusammengeführt, [PR #159](https://github.com/ManuEtt/Dnd/pull/159) offen. Version 0.8.38+88, SQLite2/JSON1 unverändert, kein Migrationseingriff.
+
+**Nächster konkreter Schritt:** Den vollständigen GitHub-CI-Lauf des finalen PR-#159-HEAD einschließlich Dart-Format, Flutter-Widgettests, Android und SQLite überprüfen, auftretende Fehler beheben, erst dann PR zur Integration freigeben.
+
+---
+
 ## 24.10.2026 – 0.8.38+88: tatsächliche Nebenhandwaffe für Hinterhältigen Angriff
 
 Die vorhandene Nebenhandauflösung prüft jetzt ihre bestätigte Inventarwaffe auf Finesse/Fernkampf. Ein Hauptdolch verleiht einer Nebenhandaxt keinen Zusatzschaden; ein Nebendolch verliert seine Eignung nicht durch eine Haupthandaxt. Krit/Miss und bestehende gemeinsame Zugnutzung bleiben erhalten. 27 bestehende/Helper- und acht neue Kampf-/SQLite-Tests erfolgreich. Vollständige lokale Abnahme: 1505 Flutter-,100 Python-,31 Backend- und12 native Tests erfolgreich, Format/Analyse/Importgrenzen ohne Befund. Neue Debug-APK und ARM64-Alpha gebaut und geprüft. Eigene finale GitHub-Checks am PR158 getrennt geführt; Realgerät nicht getestet. SQLite2/JSON1 kompatibel. Details und nächstes Paket: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md).
