@@ -90,9 +90,10 @@ class SrdSendingCastPreflightRules {
       planeRelation: planeRelation,
       percentileRoll: percentileRoll,
     );
-    final remaining = pactMagic
-        ? SpellcastingRules.availablePactSlots(hero) - 1
-        : (SpellcastingRules.availableSlots(hero)[resources.slotLevel] ?? 0) - 1;
+    final available = pactMagic
+        ? SpellcastingRules.availablePactSlots(hero)
+        : (SpellcastingRules.availableSlots(hero)[resources.slotLevel] ?? 0);
+    final remaining = available - 1;
     if (remaining < 0) {
       throw StateError('Kein bestätigter Zauberplatz verfügbar.');
     }

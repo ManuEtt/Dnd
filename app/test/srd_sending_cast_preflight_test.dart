@@ -83,7 +83,7 @@ void main() {
     focusUseAuthorizedConfirmed: focusAuthorized,
   );
 
-  test('legal wizard and cleric plans preview the correct third-level slot', () {
+  test('all eligible classes preview a third-level slot', () {
     for (final name in ['Magier', 'Kleriker', 'Barde']) {
       final hero = _caster(className: name);
       final before = hero.toJson();
