@@ -1,3 +1,15 @@
+## 24.10.2026 – Sicherheitsgrenzen der SRD-Sending-Nachrichten
+
+- **LIVE-BASIS:** `main` `d2a8dca87f5dd7ee76fd926de6c213d344f235fc`, nach PRs #144/#149/#151 und Konsolidierung #152. Zum Start keine offenen PRs. Beide letzten Main-CI-Läufe [#40066464900](https://github.com/ManuEtt/Dnd/actions/runs/40066464900) und [#40066464899](https://github.com/ManuEtt/Dnd/actions/runs/40066464899) auf genau diesem SHA **completed/success**. App `0.8.37+87`.
+- **PROBLEM:** Bisher zählte der Sending-Validator nur durch Leerraum getrennte Tokens. Unsichtbare Zeichen wie U+200B/2060 und Richtungssteuerung konnten die Prüfung des vom Spieler wahrgenommenen Textes umgehen; auch eine Einwort-Nachricht von Millionen Zeichen war zulässig. Manipulierte Empfängerkennungen mit Kontrollzeichen waren nicht gesperrt.
+- **IMPLEMENTIERT:** `SrdSendingRules.prepare` verbietet unsichtbare Steuer-, Trenn- und Bidizeichen und begrenzt die Nachricht auf technisch 2048 UTF-16-Codeeinheiten. Die 25-Wörter-SRD-Grenze, bestätigte Empfängeridentität, deutsche Umlaute, normale Zeilenumbrüche und Tabulatoren sind unverändert. Rein lesende Validierung, kein Zauber-Commit.
+- **TESTS GESCHRIEBEN:** vier Domain-Testgruppen in `app/test/srd_sending_rules_test.dart` (zulässige 25 deutsche Wörter mit Zeilenumbrüchen; unsichtbare 26-Wort-Kette, NUL/ESC/Bidi; exakt 2048 vs 2049; manipulierte Empfängerkennungen). Positiv- und Manipulationspfade vorhanden.
+- **GETESTET:** Nur die beiden grünen Basis-CI-Läufe #40066464900/#40066464899. **NICHT GETESTET:** neuer Code vor eigenem CI, reales Android-Gerät und ausführbarer Sending-Zauber. **BLOCKIERT:** keine lokale Flutter-/Android-Toolchain. **NOCH NICHT IMPLEMENTIERT:** Sender-Zauberkosten, Ausführung, Slots, Antwort, Acht-Stunden-Weltuhr; vollständige SRD-Automatik.
+- **KOMPATIBILITÄT:** DB 2, JSON 1 und App-Version `0.8.37+87` unverändert. 2048-Einheiten sind ausdrücklich **technisches App-Limit**, keine SRD-Regel. Regelregister bleibt partiell, keine globale Vollständigkeitsbehauptung.
+- **NÄCHSTER KONKRETER SCHRITT:** neuen PR gegen main erstellen, CI auf finalem HEAD inkl. Dart-Format, Flutter-Tests und Android-APK abnehmen; Fehler vollständig beheben. Später separate vollständige Sending-Spellcast-Aktion.
+
+---
+
 ## 24.10.2026 – Fantasy-Bestätigungsdialog für EP-Belohnungen auf neuer Integrationsbasis
 
 - **IMPLEMENTIERT:** Der Dialog aus PR #151 ist in die erhaltene Abenteueransicht mit Schurken-/Kampflogik, XP-Ereignisschutz und unabhängiger Sending-Vorprüfung integriert: bestätigte Kennung und Betrag, Vorschau, separate Checkbox-Zustimmung, stabile Request-ID und Buchungsquittung nur bei gespeichertem Ereignis.

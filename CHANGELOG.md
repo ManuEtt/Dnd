@@ -1,3 +1,12 @@
+## 24.10.2026 – SRD-Sending: Nachrichten- und Kennungsintegrität
+
+- Versteckte Wortseparatoren, Bidi- und ASCII-Kontrollzeichen werden vor dem Zählen abgewiesen.
+- Technische App-Grenze 2048 UTF-16-Einheiten statt unbeschränkt langer Tokens; dies ist keine zusätzliche SRD-Regel. Whitespace-25-Wort-Regel weiterhin unverändert.
+- Domain-Manipulations- und Positivtests ergänzt. Neue PR-CI und reale Android-Abnahme noch offen.
+- Keine Änderung an Slots, Kampagnen, SQLite/JSON oder Version.
+
+---
+
 ## 24.10.2026 – Fantasy-Bestätigungsdialog für EP-Belohnungen auf neuer Integrationsbasis
 
 - **IMPLEMENTIERT:** Der Dialog aus PR #151 ist in die erhaltene Abenteueransicht mit Schurken-/Kampflogik, XP-Ereignisschutz und unabhängiger Sending-Vorprüfung integriert: bestätigte Kennung und Betrag, Vorschau, separate Checkbox-Zustimmung, stabile Request-ID und Buchungsquittung nur bei gespeichertem Ereignis.

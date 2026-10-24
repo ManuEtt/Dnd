@@ -1,5 +1,26 @@
 # SRD 5.2.1 – Sending: bestätigte Nachricht und Empfänger
 
+## Eingabeintegrität – 24.10.2026
+
+**Neue lokale Sicherheitsprüfung:** `SrdSendingRules.prepare` verwirft
+vor der Zählung unsichtbare Unicode-Worttrenner/-Steuerzeichen (u. a.
+U+200B, U+200D, U+2060, U+202E, U+2066), eingebettete Steuerbytes und
+Nachrichten über 2048 UTF-16-Codeeinheiten. Diese **2048-Grenze ist eine
+technische Schutzmaßnahme der App**, keine zusätzliche Regel im SRD.
+Die offizielle **25-Wörter-Grenze** bleibt unverändert und zählt weiterhin
+Whitespace-Tokens. Umlaute, normale Interpunktion, Zeilenumbrüche und Tabs
+bleiben zulässig. Empfängerkennungen mit internen Leerzeichen oder verdeckten
+Steuerzeichen werden abgelehnt; äußeres Whitespace-Trim bleibt kompatibel.
+
+**Regressionen:** 25 reguläre Wörter mit deutschen Umlauten/CRLF, 26
+durch versteckte Zeichen verbundene Wörter, Bidi-/Null-/ESC-Steuerzeichen,
+2048/2049-Einheiten sowie manipulierte Empfänger-IDs. Keine Story-/
+Zauberzustandsänderung, Slot-Verbrauch, Nachrichtenzustellung oder
+Datenmigration. Teststatus neuer CI noch offen.
+
+---
+
+
 **Entwicklungsstand 23.10.2026 · Würfelraunen 0.8.36+86 · Neue CI ausstehend**
 
 ## Regelquelle und Lizenz
