@@ -67,7 +67,21 @@ jobs:
               core.info('Alternative #150 als Git-Tag gesichert.');
             }
 
-            const candidates = [...merged, [alternativeBranch, alternativeSha]];
+            // The cleanup branch is removed only after its PR is merged.
+            const cleanupBranch = 'chore/audited-branch-consolidation-20261024';
+            const cleanupPr = await github.rest.pulls.get({
+              owner, repo, pull_number: 152,
+            });
+            if (!cleanupPr.data.merged ||
+                cleanupPr.data.head.ref !== cleanupBranch ||
+                cleanupPr.data.head.repo?.full_name !== owner + '/' + repo) {
+              throw new Error('Cleanup PR #152 ist nicht korrekt in main gemergt.');
+            }
+            const candidates = [
+              ...merged,
+              [alternativeBranch, alternativeSha],
+              [cleanupBranch, cleanupPr.data.head.sha],
+            ];
             for (const [name, expectedSha] of candidates) {
               if (name === 'main') throw new Error('main darf nie gelöscht werden.');
               let current;

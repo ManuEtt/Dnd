@@ -28,6 +28,8 @@ Diese Branches sind nach GitHub-Commitvergleich vollständig von `main` umfasst 
 
 Ein einmaliger, zusätzlich manuell auslösbarer [GitHub-Actions-Workflow](../.github/workflows/cleanup-merged-branches-20261024.yml) verwendet nur `GITHUB_TOKEN` mit begrenzten Schreibrechten auf Repository-Inhalte. Er läuft erstmals nur auf `main` beim Hinzufügen seiner Workflowdatei. Vor der Änderung von Referenzen prüft er, ob der jeweilige Branch noch auf dem exakt geprüften SHA steht; für fünf gemergte Branches zusätzlich, ob der Commit über den gemeinsamen Main-HEAD erreichbar ist. PR #150 muss geschlossen sein; dessen alternativer Commit wird vorher mit einem eigenen Tag gesichert. `main` wird niemals gelöscht oder zurückgesetzt. Ist eine Bedingung nicht erfüllt, bleibt der betroffene Branch bestehen.
 
+Auch der neue `chore/audited-branch-consolidation-20261024`-Branch wird nur nach tatsächlich gemergtem PR #152, aktuellem PR-Head-SHA und erfolgreicher Ancestry-Prüfung gegen `main` gelöscht.
+
 Eine erfolgreich ausgeführte Branchbereinigung ist **erst durch abgeschlossenen GitHub-Actions-Lauf und neue Branchliste bestätigt**, nicht durch bloßes Anlegen oder Mergen dieses Workflows. Es gibt keinen Force-Push. Zusätzliche Apps/Geheimnisse sind nicht erforderlich.
 
 ## Grenzen
