@@ -1,3 +1,11 @@
+## 24.10.2026 – Vollständige CI-Abnahme der Sending-Eingabeintegrität
+
+- **GETESTET:** [PR-CI #40068321150](https://github.com/ManuEtt/Dnd/actions/runs/40068321150), Code-HEAD `fb96641db97598a5ee1b59416ad254f5e0e63e29`, **completed/success**: Python, Backend, Dart-Format, Flutter-Analyse, vollständige Flutter-Suite inklusive Unicode-Grenztests, Android-Debug-Build, native Tests, kleine Alpha-APKs, versioniertes Alpha und Source-Checkpoint. [PR #153](https://github.com/ManuEtt/Dnd/pull/153) bleibt für Review offen; `main` unverändert.
+- **NICHT GETESTET:** reale Installation/Upgrade und tatsächliche Sending-Zauberausführung. **BLOCKIERT:** kein Testgerät/Flutter-SDK lokal. **NOCH NICHT IMPLEMENTIERT:** vollständige Zauber-Aktions-/Slot-/Kommunikationswirkung. **KOMPATIBILITÄT:** App 0.8.37+87, SQLite 2 und JSON 1 unverändert.
+- **NÄCHSTER SCHRITT:** Review des fertig geprüften Sicherheits-PRs; danach getrennte SRD-Spellcast-Implementierung.
+
+---
+
 ## 24.10.2026 – Sending-Eingaben gegen verdeckte Zeichen absichern
 
 - **IMPLEMENTIERT:** Die bestehende lesende SRD-Sending-Vorprüfung verwirft versteckte Unicode-Separatoren/Bidi-Kontrollen, Steuerzeichen und Nachrichten über 2048 UTF-16-Einheiten (technischer Grenzwert). Empfängerkennungen mit inneren Leerzeichen/unsichtbaren Zeichen werden gesperrt. 25-Wörter-Regel, Zeilenumbrüche und Umlaute bleiben erhalten.

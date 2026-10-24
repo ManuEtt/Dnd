@@ -6,6 +6,8 @@
 
 ### Sending-Nachrichten vor verdeckten Steuerzeichen schützen (24.10.2026)
 
+**CI-Abnahme:** [GitHub Actions #40068321150](https://github.com/ManuEtt/Dnd/actions/runs/40068321150) auf Code-HEAD `fb96641db97598a5ee1b59416ad254f5e0e63e29` vollständig **success**, einschließlich Python, Backend, Dart/Flutter, nativer Android-Tests, Android-Debug, kleiner Alpha-APKs und versioniertem Alpha-Artefakt. Kein reales Android-Gerät getestet. Keine neue App-Versionsnummer oder DB-/JSON-Migration.
+
 Sending weist jetzt unsichtbare Unicode-Worttrenner, bidirektionale
 Steuerzeichen, eingebettete Kontrollbytes und technisch überlange Eingaben
 (über 2048 UTF-16-Codeeinheiten) ab. Diese Längengrenze ist ein technischer
