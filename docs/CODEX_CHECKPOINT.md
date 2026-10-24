@@ -1,5 +1,51 @@
 # CODEX-CHECKPOINT – Würfelraunen
 
+## Aktueller Inkrementstand 24.10.2026 (MESZ) – Nebenhand-Verbündetenbestätigung
+
+- **Produkt:** Würfelraunen – Der lebendige Spielleiter, App `0.8.38+88`; SQLite 2, Export-JSON 1; keinerlei Migration.
+- **Live-Basis:** `main` `b60ffe7ff1aae502ea927cb77153b988be33e397`. PR #158 integriert. **Offene PRs bei Abgleich:** [#159](https://github.com/ManuEtt/Dnd/pull/159) (Sending-W100, grün und reviewbereit), [#160](https://github.com/ManuEtt/Dnd/pull/160) (dieses Inkrement, Draft bis CI). Arbeitsbranch `feature/sneak-attack-offhand-ally-20261024`; Kopf und neue Commit-SHAs jederzeit am PR prüfen. Kein direkter main-Push, kein Force-Push.
+- **Anforderung:** `CLASS-SCHURKE-1-BASE-SNEAK-ATTACK-1` **partial**, Wizards of the Coast SRD 5.2.1 Rogue/Sneak Attack S. 61–62 (CC BY 4.0). Kein Gesamtprozentsatz aus den 1.419 Inventurpunkten abgeleitet.
+
+### IMPLEMENTIERT
+
+`app/lib/domain/sneak_attack_ally_rules.dart`: Für `offhandAttack` nur zugelassene laufende Zweiwaffen-Bonusaktion und tatsächlich bestätigte Inventarwaffe akzeptieren. Vor Freigabe Held/Ziel/Zug, ungenutzten Sneak Attack, Finesse-/Fernkampfwaffe, kein Netto-Nachteil, beide manuell bestätigten Verbündetenfakten prüfen. Die beiden Fakten bleiben an Kampagnen-, Ziel- und ausstehende Wurf-ID gebunden.
+
+`app/lib/domain/models.dart`: bestehendes `SneakAttackAllyConfirmation`-Schema 1 für Haupt- **oder** Nebenhand-Waffenangriff validieren; kein neues Spielstandsformat. `app/lib/domain/game_engine.dart`: bestehende Bestätigungsmeldung allgemein auf erlaubte Waffenangriffe erweitern. `app/lib/ui/app.dart`: bestätigten Verbündeten auch bei offenem Nebenhandwurf mit Entfernungsaktion anzeigen. Controller/Regelwürfel bleiben unverändert. KI-/Story-Importgrenze und externe Erzähldienste unverändert.
+
+**Neu:** `app/test/sneak_attack_offhand_ally_test.dart` mit Treffer/Krit/Miss, ungültiger Nebenhandaxt, Nachteil, falschen/stale IDs, Wiederholung, SQLite-Reopen, JSON-Sicherung, doppelter Auflösung; `app/test/sneak_attack_ally_ui_test.dart` mit zwei Nebenhand-Widgets. Neues Quelldokument `docs/SRD_SNEAK_ATTACK_OFFHAND_ALLY_20261024.md` und Anforderungsmatrix im Status `partial` ergänzt.
+
+### GETESTET
+
+- Letzter vor diesem Inkrement vollständig grüner, **anderer** Code-Stand: [CI #40095802925](https://github.com/ManuEtt/Dnd/actions/runs/40095802925), SHA `15c1626057adb33f40d0acbe6e228f30f606d007`, PR #159. Auf `main` vorherige erfolgreiche [CI #40092582286](https://github.com/ManuEtt/Dnd/actions/runs/40092582286), SHA `dcb42c5`. Diese Läufe sind kein Nachweis für PR #160.
+- Erste PR-#160-Läufe scheiterten an Dart-Formatabweichung in drei Dateien. Temporärer Formatter-Diagnoseworkflow gab exakten Diff aus; dieser wurde auf Branch übernommen, und die GitHub-Workflow-Datei anschließend exakt auf `main` zurückgesetzt.
+- Diagnose-Lauf auf nicht finalem Quellstand: **1.513 Flutter-Tests bestanden, 1 neuer Test fehlgeschlagen**. Ursache war keine Regelabweichung, sondern ein vollständiger JSON-Gleichheitsvergleich, der vom erlaubten automatischen Katalog-Stat-Import betroffene Inventardaten einbezog. Testassertion nach Datenmodellprüfung auf identische offene Probe/Bestätigung präzisiert. Bereits erfolgreich: beide neuen UI-Tests.
+- Frischer kompletter Code-/CI-Erfolg und APK des **endgültigen** Branch-HEAD zum Zeitpunkt dieses Checkpoints **ausstehend**, siehe [PR #160 – Checks](https://github.com/ManuEtt/Dnd/pull/160/checks).
+
+### NICHT GETESTET
+
+Die korrigierte finale vollständige Flutter-Suite und Android-APK/native Tests bis zum erfolgreichen neuen CI-Lauf. Echter Android-Gerätetest, Upgrade eines historischen persönlichen Spielstands, produktive Release-Signierung. Neue ZIP-/APK-/Digest-Links für PR #160 erst nach sichtbaren GitHub-Artefakten ergänzen.
+
+### BLOCKIERT
+
+In dieser Sitzung lokal kein Flutter-/Dart-SDK und keine GitHub-DNS-Erreichbarkeit für einen vollen Checkout; die unabhängige GitHub-CI ist verfügbar. Kein reales Android-Gerät und keine produktive Signatur.
+
+### NOCH NICHT IMPLEMENTIERT
+
+Allgemeine Mehrakteur-Positionsverwaltung, Gelegenheitsangriffe, nicht unterstützte Waffenmeisterschaften und vollständige SRD-Abdeckung. Weder erzählerische Behauptungen noch KI-NPCs dürfen Regelzustand bestätigen.
+
+### NÄCHSTER KONKRETER SCHRITT – Definition of Done
+
+Den vollständigen **finalen** GitHub-CI-Lauf von [PR #160](https://github.com/ManuEtt/Dnd/pull/160/checks) auswerten, etwaige verbleibende Fehler beheben und nach grüner CI PR reviewbereit machen. Gates: `python3 scripts/verify_project.py`, `python3 scripts/check_domain_boundaries.py`, `python3 scripts/srd_coverage.py --json`, `python3 -m unittest discover -s scripts/tests -v`, Backend-Typecheck/Build/Tests, `dart format --output=none --set-exit-if-changed lib test`, `flutter analyze`, komplette `flutter test`, `flutter build apk --debug` und native Gradle-Tests. Vor Integration mit dem dann aktuellen main neu abgleichen; beide parallelen PRs nicht ohne Review mergen.
+
+### Änderungsprotokoll
+
+- 24.10.2026 (MESZ): Live-Bestand geprüft, zulässigen Nebenhand-Verbündetenpfad samt JSON/UI erweitert; deterministische Kampf-/SQLite-/Widgetregressionen ergänzt; Formatter- und Testassertionsfehler der Vorläufer-CI repariert; CI-Abnahme ausstehend. Kein Hintergrundlauf außerhalb dieser Sitzung.
+
+---
+
+## Vorherige Übergabe (PR #158, inzwischen integriert)
+
+
 Stand **2026-10-24T12:20:50+00:00**, lokal vollständig abgenommenes Paket. Frühere operative Angaben vollständig in [Historie](history/main_0.8.37_20261024/CODEX_CHECKPOINT.md) erhalten. Vor Wiederaufnahme Live-Git/PR/CI erneut prüfen.
 
 ## Git und Produkt
