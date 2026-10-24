@@ -446,7 +446,7 @@ class _SendingAttemptDialogState extends State<SendingAttemptDialog> {
           onPressed: canApprove
               ? () => Navigator.of(context).pop(
                   SendingAttemptChoice(
-                    preview: preview,
+                    preview: preview!,
                     requestId: _requestId,
                   ),
                 )
