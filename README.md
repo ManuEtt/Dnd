@@ -4,6 +4,12 @@ Deutschsprachige Android-Alpha für Soloabenteuer, regelgeprüfte Kämpfe und lo
 
 ## Aktueller Stand und autonome Fortsetzung (24.10.2026)
 
+**Neuer Fehlerkorrektur-PR [#159](https://github.com/ManuEtt/Dnd/pull/159): Sending-W100 nur nach zwei bestätigten Fakten.** Die Oberfläche bietet einen Ebenen-W100 nur an, wenn die andere Ebene **und** die Nichtblockade ausdrücklich bestätigt sind – passend zur bereits vorhandenen Regelprüfung. Jeder Wechsel der Blockadebewertung löscht den bisherigen Wurf und hebt die Zustimmung auf. Zwei neue Widget-Regressionen decken unbestätigte/gesperrte Blockaden, spätere Freigabe und alten Würfeltext ab. **Implementiert, neue CI noch nicht als bestanden belegt**; unveränderte Version `0.8.38+88`, SQLite 2, Export-JSON 1. Kein Versand einer echten Sending-Nachricht.
+
+**Live-Git-Abgleich:** [PR #158](https://github.com/ManuEtt/Dnd/pull/158) wurde inzwischen in `main` übernommen (Merge `b60ffe7`); das folgende Schurken-Paket ist damit ein historischer Prüfbericht und kein noch offener PR. Der neue Sending-Branch wurde ohne Force-Push auf diesen integrierten Hauptstand gebracht. Die letzten **vollständig erfolgreichen** Tests für den neuen UI-Patch müssen unter [PR #159 – Checks](https://github.com/ManuEtt/Dnd/pull/159/checks) nachgewiesen werden. Lokales Flutter/Android-SDK und echte Geräteabnahme sind in dieser Sitzung nicht verfügbar.
+
+### Zuvor abgenommenes Schurken-Paket (PR #158, jetzt in main)
+
 **Version 0.8.38+88**, Branch `fix/sneak-attack-offhand-weapon-20261024`, [PR #158](https://github.com/ManuEtt/Dnd/pull/158). Funktionaler Code [`aa79ce5`](https://github.com/ManuEtt/Dnd/commit/aa79ce593790e5763e9125743b0adeab55b581d5), Basis-main `dcb42c5efff40a757994d4f5b5f8e98b2ff128e9` (PR #157 integriert). Eigene aktuelle [GitHub-Checks](https://github.com/ManuEtt/Dnd/pull/158/checks) zeigen den jeweiligen finalen HEAD; Basisprüfungen und lokale Abnahme werden getrennt geführt. Main bleibt durch diesen Zyklus unverändert.
 
 **Korrigiert: Hinterhältiger Angriff prüft die tatsächlich angreifende Waffe.** Bisher wurde bei einer Nebenhandprobe die Hauptwaffe auf Finesse/Fernkampf geprüft. Ein bestätigter Dolch-Nebenhandangriff kann jetzt seine eigene Eignung nutzen; eine Handaxt erhält keine Eignung durch einen Dolch in der Hauptwaffe. Angriff, Schaden, kritische Treffer, einmalige Zugnutzung und Journal bleiben im vorhandenen Kampffluss.
@@ -57,6 +63,8 @@ bash ./gradlew :app:testDebugUnitTest --no-daemon
 Die Demo benötigt keinen externen KI-Anbieter. Für einen eigenen Erzähler siehe [Backend](backend/README.md) und [Verbindung](docs/BACKEND_CONNECTION.md). Dauerhafte Anbieter-Schlüssel gehören ausschließlich auf den Server.
 
 ## Nächster konkreter Entwicklungsschritt
+
+Zuerst die finale GitHub-CI des Sending-Fixes [PR #159](https://github.com/ManuEtt/Dnd/pull/159) auf dem tatsächlich letzten Code-/Dokumentations-HEAD prüfen, Fehler vor einer Integration korrigieren und erst nach grüner Abnahme reviewen. Danach das separate fachliche Nebenhand-Verbündetenpaket aus der folgenden Vorläuferplanung beginnen.
 
 Die manuelle Verbündetenbestätigung für zulässige Nebenhandangriffe an denselben sicheren Dialog-/Controllerpfad anbinden. Abnahme: Eignung der tatsächlichen Angriffswaffe, ziel-/wurfgebundene Zustimmung, gemeinsame einmalige Zugnutzung, Krit/Miss, Ablehnung, alte Hauptwaffen-/JSON-Abläufe und SQLite-Neustart. Allgemeine Gelegenheitsangriffe bleiben ein eigenes Arbeitspaket.
 
