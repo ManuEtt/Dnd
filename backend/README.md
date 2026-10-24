@@ -1,3 +1,11 @@
+## Backend-Limits – sichere Kapazitätsgrenze (24.10.2026, PR #162)
+
+Die In-Memory-Quoten des lokalen Erzählers bewahren bei vollständig belegtem Schlüsselspeicher jetzt aktive Zähler; nur abgelaufene Fenstereinträge werden verdrängt. Sind weiterhin alle Plätze belegt, wird ein neuer Schlüssel **abgelehnt**, statt die Quote eines bestehenden Schlüssels vorzeitig freizugeben. Dies kann bei sehr vielen gleichzeitig aktiven Clients konservativ zu `429` führen. Bestehende Limits pro Minute/Tag und `Retry-After` bleiben unverändert.
+
+Der Fix verhindert keine Umgehung über mehrere Backendinstanzen oder einen Prozessneustart; dafür wäre ein gemeinsamer externer Limitspeicher erforderlich. [PR #162](https://github.com/ManuEtt/Dnd/pull/162) · [Details](../docs/BACKEND_LIMITER_CAPACITY_20261024.md).
+
+---
+
 ## 0.3.1 – bestätigbare Abenteuerangebote
 
 `POST /v1/story/advance` antwortet zusätzlich mit `turn.adventure: null` oder einem narrativen Vorschlag `{id,title,description,archetype,questTitle,questDescription}`. Zulässige Profile sind `bandit`, `wolf`, `skeleton`, `goblin`, `orc`, `investigation`; sämtliche Monsterwerte und Beute stammen von der **lokalen App**. Der neue Rückgabetyp erfordert aktualisierte Android-/Flutter-App 0.3.8+14. Backend liest/schreibt keine Kampagnendaten. Kostenzustimmung und Sitzungs-Ratelimits bleiben erhalten.
