@@ -123,6 +123,7 @@ class SrdSendingCastPreflightRules {
       remainingSlotsIfCommitted: remaining,
     );
   }
+
   /// Records the resource cost of an explicitly confirmed Sending attempt.
   ///
   /// This is still a PURE transition: only GameEngine/Controller may persist
