@@ -82,6 +82,13 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
+      - name: TEMP Formatdiagnose Nebenhand (nach Korrektur entfernen)
+        working-directory: app
+        run: |
+          dart format lib/domain/sneak_attack_ally_rules.dart test/sneak_attack_ally_ui_test.dart test/sneak_attack_offhand_ally_test.dart
+          echo "FORMAT_DIFF_BEGIN"
+          git diff -- lib/domain/sneak_attack_ally_rules.dart test/sneak_attack_ally_ui_test.dart test/sneak_attack_offhand_ally_test.dart
+          echo "FORMAT_DIFF_END"
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
