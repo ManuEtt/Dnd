@@ -1,3 +1,11 @@
+## 24.10.2026 – PR #160: neue Verbündeten-Nebenhandregeln vollständig in CI geprüft
+
+**Vollständige GitHub-CI [#40099238901](https://github.com/ManuEtt/Dnd/actions/runs/40099238901): completed/success** auf geprüftem PR-HEAD `5563c60ba0dbbd1f12a19877f62581a51485b6d9` (24.10.2026). **1.514 Flutter-, 100 Python- und 31 Backend-Tests bestanden**; Dart-Formatierung 357 Dateien ohne Änderungen, Flutter-Analyse und Backend-Typecheck/Build erfolgreich. Android-Debug-APK, native Gradle-Tests und ARM64/ARMv7/x64-Alpha-APKs erfolgreich; letzte Artefaktschritte abgeschlossen. Ein echter Android-Gerätetest, ein Altspielstand-Upgrade und produktive Signierung fehlen weiterhin. Dieser Nachtrag berichtet die nach dem damaligen Vorab-Checkpoint eingetroffene finale Abnahme.
+
+[Alpha-APKs](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562551949) · [Debug-APK](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12561909697) · [Alpha-Release](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562517123) · [Quellcode-Checkpoint](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562163517). Die SHA256-Digests der GitHub-Artefaktarchive sind **nicht** automatisch Einzel-APK-Prüfsummen.
+
+---
+
 ## 24.10.2026 – SRD-Sneak-Attack: Verbündeter auch bei bestätigtem Nebenhandwurf (PR #160)
 
 Die vorhandene manuelle Verbündetenbestätigung wird auf bereits erlaubte Nebenhandangriffe erweitert. Der Berechtigungscheck verwendet die angreifende Inventarwaffe, kontrolliert den bestehenden Bonusaktions-/Zugstatus, die fehlende einmalige Nutzung des Sneak Attack sowie bestätigte Nähe zum Ziel und Nicht-Incapacitated. Version 0.8.38+88, SQLite 2 und Export-JSON 1 unverändert; keine automatische Kampfposition oder KI-Regelentscheidung.

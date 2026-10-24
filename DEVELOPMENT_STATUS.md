@@ -1,3 +1,11 @@
+## 24.10.2026 – Nachtrag: vollständige CI-Abnahme PR #160
+
+**Vollständige GitHub-CI [#40099238901](https://github.com/ManuEtt/Dnd/actions/runs/40099238901): completed/success** auf geprüftem PR-HEAD `5563c60ba0dbbd1f12a19877f62581a51485b6d9` (24.10.2026). **1.514 Flutter-, 100 Python- und 31 Backend-Tests bestanden**; Dart-Formatierung 357 Dateien ohne Änderungen, Flutter-Analyse und Backend-Typecheck/Build erfolgreich. Android-Debug-APK, native Gradle-Tests und ARM64/ARMv7/x64-Alpha-APKs erfolgreich; letzte Artefaktschritte abgeschlossen. Ein echter Android-Gerätetest, ein Altspielstand-Upgrade und produktive Signierung fehlen weiterhin. Dieser Nachtrag berichtet die nach dem damaligen Vorab-Checkpoint eingetroffene finale Abnahme.
+
+[Alpha-APKs](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562551949) · [Debug-APK](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12561909697) · [Alpha-Release](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562517123) · [Quellcode-Checkpoint](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562163517). Die SHA256-Digests der GitHub-Artefaktarchive sind **nicht** automatisch Einzel-APK-Prüfsummen.
+
+---
+
 ## 24.10.2026 – PR #160: kontrollierter Hinterhältiger Angriff mit Nebenhand-Verbündetenquelle
 
 **IMPLEMENTIERT:** Regel-/Import-Grenze `SneakAttackAllyRules.eligible` und `PendingRoll.fromJson` akzeptieren zulässige Nebenhandangriffe mit separat bestätigtem Verbündeten; echte angreifende Waffe und bereits reservierte Bonusaktion erforderlich. Gleiche Kampagnen-/Ziel-/Wurfbindung, Bestätigungs- und Entfernungs-Controller, UI-Anzeige auch für Nebenhand, unveränderter atomarer SQLite-Kampfabschluss. **GETESTET:** Vorläufer-CI bis einschl. Flutter-Analyse/Widgets, 1.513 bestandene Flutter-Tests, 1 fehlgeschlagene zu breite JSON-Assertion – inzwischen gezielt korrigiert; **keine finale neue CI-Erfolgsbehauptung**. **NICHT GETESTET:** finaler CI-/APK-HEAD, echtes Android-Gerät und Altspielstand-Upgrade. **BLOCKIERT:** lokal kein Flutter/Dart oder eigener Android-Test. **NOCH NICHT IMPLEMENTIERT:** vollautomatische Positions-/Gelegenheitsangriffe und vollständige SRD.

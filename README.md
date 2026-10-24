@@ -2,6 +2,16 @@
 
 Deutschsprachige Android-Alpha für Soloabenteuer, regelgeprüfte Kämpfe und lokale Kampagnen mit SQLite. Flutter/Dart-App und optionaler Fastify-/TypeScript-Erzähler. Das vollständige SRD 5.2.1 ist noch nicht implementiert.
 
+## Verifizierte CI-Abnahme – PR #160 (24.10.2026)
+
+**Vollständige GitHub-CI [#40099238901](https://github.com/ManuEtt/Dnd/actions/runs/40099238901): completed/success** auf geprüftem PR-HEAD `5563c60ba0dbbd1f12a19877f62581a51485b6d9` (24.10.2026). **1.514 Flutter-, 100 Python- und 31 Backend-Tests bestanden**; Dart-Formatierung 357 Dateien ohne Änderungen, Flutter-Analyse und Backend-Typecheck/Build erfolgreich. Android-Debug-APK, native Gradle-Tests und ARM64/ARMv7/x64-Alpha-APKs erfolgreich; letzte Artefaktschritte abgeschlossen. Ein echter Android-Gerätetest, ein Altspielstand-Upgrade und produktive Signierung fehlen weiterhin. Dieser Nachtrag berichtet die nach dem damaligen Vorab-Checkpoint eingetroffene finale Abnahme.
+
+[Alpha-APKs](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562551949) · [Debug-APK](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12561909697) · [Alpha-Release](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562517123) · [Quellcode-Checkpoint](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562163517). Die SHA256-Digests der GitHub-Artefaktarchive sind **nicht** automatisch Einzel-APK-Prüfsummen.
+
+**Status:** Implementierung und Tests sind auf dem Branch gesichert; PR #160 wird nach dieser dokumentierten grünen CI für menschliche Review bereitgestellt, `main` bleibt unverändert. Die folgenden älteren Vorababschnitte sind historische Prüfstände.
+
+---
+
 ## Aktueller Entwicklungszyklus – bestätigter Verbündeter für Nebenhand (24.10.2026)
 
 **Neu in [PR #160](https://github.com/ManuEtt/Dnd/pull/160), eigener Branch `feature/sneak-attack-offhand-ally-20261024` (Basis main `b60ffe7`):** Bei einem bereits regulär erlaubten Nebenhandangriff mit tatsächlicher Finesse-Waffe kann jetzt derselbe revisionsgeschützte Dialog zwei unabhängig beobachtete Verbündetenfakten bestätigen wie bei einem Hauptwaffenangriff. Die Bestätigung bleibt an Kampagne/Ziel/Wurf gebunden, wird erst bei einem Treffer auf Schaden angewandt und kann vor dem Würfeln entfernt werden. Nebenhandaxt mit Hauptdolch, Nachteil, bereits verwendeter Hinterhältiger Angriff und gefälschte Bindungen bleiben ausgeschlossen.

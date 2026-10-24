@@ -1,5 +1,20 @@
 # CODEX-CHECKPOINT – Würfelraunen
 
+## Aktualisierte CI-Abnahme und PR-Übergabe – 24.10.2026 (MESZ)
+
+**Vollständige GitHub-CI [#40099238901](https://github.com/ManuEtt/Dnd/actions/runs/40099238901): completed/success** auf geprüftem PR-HEAD `5563c60ba0dbbd1f12a19877f62581a51485b6d9` (24.10.2026). **1.514 Flutter-, 100 Python- und 31 Backend-Tests bestanden**; Dart-Formatierung 357 Dateien ohne Änderungen, Flutter-Analyse und Backend-Typecheck/Build erfolgreich. Android-Debug-APK, native Gradle-Tests und ARM64/ARMv7/x64-Alpha-APKs erfolgreich; letzte Artefaktschritte abgeschlossen. Ein echter Android-Gerätetest, ein Altspielstand-Upgrade und produktive Signierung fehlen weiterhin. Dieser Nachtrag berichtet die nach dem damaligen Vorab-Checkpoint eingetroffene finale Abnahme.
+
+[Alpha-APKs](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562551949) · [Debug-APK](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12561909697) · [Alpha-Release](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562517123) · [Quellcode-Checkpoint](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562163517). Die SHA256-Digests der GitHub-Artefaktarchive sind **nicht** automatisch Einzel-APK-Prüfsummen.
+
+**Branch/PR:** `feature/sneak-attack-offhand-ally-20261024`, [PR #160](https://github.com/ManuEtt/Dnd/pull/160), Ausgangs-main `b60ffe7`. Ausführbarer Code-Commit `afa5b7b0709075447a174d1e39b880e0726ada07` separat durch [CI #40098917971](https://github.com/ManuEtt/Dnd/actions/runs/40098917971) erfolgreich getestet; vollständiger Dokumentations-/Code-HEAD `5563c60` nochmals in #40099238901 erfolgreich. Nachtrag nur an Quellen- und Statusdateien. Vor Release eine **neue** CI des endgültigen Nachtrags-HEAD prüfen; vorherige grüne CI bleibt Beleg für unveränderte ausführbare Quelldateien. Version `0.8.38+88`, SQLite 2/Export-JSON 1 unverändert, SRD-Anforderung bleibt `partial`.
+
+**Statusklassen:** IMPLEMENTIERT: bestätigter Nebenhand-Verbündeter und JSON-/SQLite-/UI-Grenzen. GETESTET: vollständige GitHub-CI #40099238901 samt Android und 1.514 Fluttertests. NICHT GETESTET: echter Geräteeinsatz, historische Update-Installation, produktive Signierung. BLOCKIERT: fehlendes lokales Flutter/Dart-SDK und reales Android-Testgerät. NOCH NICHT IMPLEMENTIERT: allgemeine Positions- und Gelegenheitsangriffssystematik sowie vollständige SRD-5.2.1-Automatisierung.
+
+**Nächster konkreter Schritt:** Nach dem durch diese Dokumentationsaktualisierung ausgelösten finalen PR-Check den PR #160 reviewen, mit dann aktuellem `main` konfliktfrei integrieren, Main-CI erneut kontrollieren. Keine direkte oder automatische Merge-Aktion in diesem Zyklus.
+
+---
+
+
 ## Aktueller Inkrementstand 24.10.2026 (MESZ) – Nebenhand-Verbündetenbestätigung
 
 - **Produkt:** Würfelraunen – Der lebendige Spielleiter, App `0.8.38+88`; SQLite 2, Export-JSON 1; keinerlei Migration.
