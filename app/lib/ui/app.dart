@@ -30,7 +30,6 @@ import 'condition_effect_dialog.dart';
 import 'sneak_attack_ally_dialog.dart';
 import 'confirmed_spell_effect_dialog.dart';
 import 'sending_attempt_dialog.dart';
-import '../domain/srd_sending_cast_preflight_rules.dart';
 import 'experience_reward_dialog.dart';
 import 'hero_shield_reaction_dialog.dart';
 import '../domain/hero_shield_reaction_rules.dart';
@@ -1367,17 +1366,17 @@ class _AdventurePageState extends State<_AdventurePage> {
       }
       final choice = await showDialog<SendingAttemptChoice>(
         context: context,
-        builder: (_) => SendingAttemptDialog(
-          hero: campaign.hero,
-          sending: sending,
-        ),
+        builder: (_) =>
+            SendingAttemptDialog(hero: campaign.hero, sending: sending),
       );
       if (choice == null || !mounted) return;
       if (widget.controller.currentCampaign?.id != campaign.id ||
           widget.controller.currentCampaign?.revision != campaign.revision) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Der Spielstand wurde geändert. Sending bitte neu prüfen.'),
+            content: Text(
+              'Der Spielstand wurde geändert. Sending bitte neu prüfen.',
+            ),
           ),
         );
         return;
@@ -1393,13 +1392,14 @@ class _AdventurePageState extends State<_AdventurePage> {
       );
       if (!mounted) return;
       if (widget.controller.error != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(widget.controller.error!)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(widget.controller.error!)));
         return;
       }
       final saved = widget.controller.currentCampaign;
-      final confirmed = saved != null &&
+      final confirmed =
+          saved != null &&
           saved.id == campaign.id &&
           saved.events.any(
             (event) =>

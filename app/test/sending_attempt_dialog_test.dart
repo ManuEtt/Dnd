@@ -5,7 +5,6 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:lebendiger_spielleiter/data/srd_spell_catalog_loader.dart';
 import 'package:lebendiger_spielleiter/data/sqlite_campaign_repository.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
-import 'package:lebendiger_spielleiter/domain/srd_sending_cast_preflight_rules.dart';
 import 'package:lebendiger_spielleiter/domain/srd_sending_rules.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_catalog.dart';
 import 'package:lebendiger_spielleiter/services/game_controller.dart';
@@ -72,9 +71,9 @@ void main() {
       MaterialApp(
         theme: fantasyTheme(),
         builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            textScaler: TextScaler.linear(textScale),
-          ),
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(textScale)),
           child: child!,
         ),
         home: Scaffold(
@@ -85,10 +84,8 @@ void main() {
                 onChoice(
                   await showDialog<SendingAttemptChoice>(
                     context: context,
-                    builder: (_) => SendingAttemptDialog(
-                      hero: hero,
-                      sending: sending,
-                    ),
+                    builder: (_) =>
+                        SendingAttemptDialog(hero: hero, sending: sending),
                   ),
                 );
               },
@@ -154,7 +151,10 @@ void main() {
       expect(choice, isNotNull);
       expect(choice!.preview.recipient.recipientId, 'npc-tarek');
       expect(choice!.preview.recipient.message, 'Bitte antworte.');
-      expect(choice!.preview.assessment.outcome, SendingDeliveryOutcome.unresolved);
+      expect(
+        choice!.preview.assessment.outcome,
+        SendingDeliveryOutcome.unresolved,
+      );
       expect(choice!.preview.slotLevel, 3);
       expect(choice!.requestId, startsWith('sending_'));
       expect(hero.spentSpellSlots, isEmpty);
@@ -167,7 +167,10 @@ void main() {
   ) async {
     await open(tester, hero: _sendingHero(), onChoice: (_) {});
     await fillFacts(tester);
-    await tester.enterText(key('sending-message'), List.filled(26, 'Wort').join(' '));
+    await tester.enterText(
+      key('sending-message'),
+      List.filled(26, 'Wort').join(' '),
+    );
     await tester.pump();
     expect(find.textContaining('höchstens 25 Wörter'), findsWidgets);
     expect(submit(tester).onPressed, isNull);
@@ -200,12 +203,7 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
-    await open(
-      tester,
-      hero: _sendingHero(),
-      onChoice: (_) {},
-      textScale: 1.4,
-    );
+    await open(tester, hero: _sendingHero(), onChoice: (_) {}, textScale: 1.4);
     await fillFacts(tester);
     await press(tester, 'sending-consent');
     expect(submit(tester).onPressed, isNotNull);

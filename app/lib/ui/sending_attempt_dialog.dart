@@ -13,10 +13,7 @@ import 'fantasy_ui.dart';
 /// The UI returns a read-only, validated preview. Only GameController can
 /// charge resources and persist a receipt after the dialog is dismissed.
 class SendingAttemptChoice {
-  const SendingAttemptChoice({
-    required this.preview,
-    required this.requestId,
-  });
+  const SendingAttemptChoice({required this.preview, required this.requestId});
 
   final SrdSendingCastPreview preview;
   final String requestId;
@@ -54,13 +51,19 @@ class _SendingAttemptDialogState extends State<SendingAttemptDialog> {
   bool _componentsConfirmed = false;
   bool _approved = false;
 
-  List<String> get _eligibleClasses => [
+  List<String> get _eligibleClasses {
+    final classes = <String>[];
     for (final name in [
       widget.hero.className,
       if (widget.hero.hasSecondClass) widget.hero.secondaryClassName,
-    ])
-      if (const ['Magier', 'Kleriker', 'Barde'].contains(name)) name,
-  ].toSet().toList();
+    ]) {
+      if (const {'Magier', 'Kleriker', 'Barde'}.contains(name) &&
+          !classes.contains(name)) {
+        classes.add(name);
+      }
+    }
+    return classes;
+  }
 
   Map<int, int> get _slots => SpellcastingRules.availableSlots(widget.hero);
 
@@ -120,7 +123,8 @@ class _SendingAttemptDialogState extends State<SendingAttemptDialog> {
     }
     bool pactAvailable = false;
     try {
-      pactAvailable = SpellcastingRules.pactSlotLevel(widget.hero) >= 3 &&
+      pactAvailable =
+          SpellcastingRules.pactSlotLevel(widget.hero) >= 3 &&
           SpellcastingRules.availablePactSlots(widget.hero) > 0;
     } on FormatException catch (error) {
       failure = error.message;
@@ -128,7 +132,8 @@ class _SendingAttemptDialogState extends State<SendingAttemptDialog> {
     final selectedGrade = _pactMagic
         ? SpellcastingRules.pactSlotLevel(widget.hero)
         : _slotLevel;
-    final hasSlot = selectedGrade != null &&
+    final hasSlot =
+        selectedGrade != null &&
         (_pactMagic ? pactAvailable : grades.contains(selectedGrade));
     SrdSendingCastPreview? preview;
     if (_recipient.text.trim().isNotEmpty &&
@@ -143,7 +148,7 @@ class _SendingAttemptDialogState extends State<SendingAttemptDialog> {
           widget.hero,
           spell: widget.sending,
           castingClass: _castingClass!,
-          slotLevel: selectedGrade!,
+          slotLevel: selectedGrade,
           pactMagic: _pactMagic,
           recipientId: _recipient.text,
           message: _message.text,
@@ -217,7 +222,8 @@ class _SendingAttemptDialogState extends State<SendingAttemptDialog> {
                   ),
                 ],
                 onChanged: (value) => _change(
-                  () => _knowledge = value ?? SendingRecipientKnowledge.unverified,
+                  () => _knowledge =
+                      value ?? SendingRecipientKnowledge.unverified,
                 ),
               ),
               CheckboxListTile(
@@ -251,8 +257,7 @@ class _SendingAttemptDialogState extends State<SendingAttemptDialog> {
                   for (final name in classes)
                     DropdownMenuItem(value: name, child: Text(name)),
                 ],
-                onChanged: (value) =>
-                    _change(() => _castingClass = value),
+                onChanged: (value) => _change(() => _castingClass = value),
               ),
               if (grades.isNotEmpty)
                 DropdownButtonFormField<int>(
