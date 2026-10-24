@@ -18,7 +18,7 @@ class ConfirmedExperienceRewardChoice {
 
   /// Derived from the campaign-local reward key: retrying after restart uses
   /// the exact same receipt, never a fresh timestamp or random request ID.
-  String get requestId => 'xp-ui-' + rewardId;
+  String get requestId => 'xp-ui-$rewardId';
 }
 
 /// Explicit player confirmation of a manually established milestone.
@@ -51,7 +51,7 @@ class _ConfirmedExperienceRewardDialogState
 
   int? get _parsedAmount => int.tryParse(_amount.text.trim());
   String get _id => _rewardId.text.trim();
-  String? get _receipt => widget.campaign.facts['xp.reward.' + _id];
+  String? get _receipt => widget.campaign.facts['xp.reward.$_id'];
 
   String? _validateId(String? value) {
     final id = (value ?? '').trim();
@@ -130,9 +130,8 @@ class _ConfirmedExperienceRewardDialogState
                     ],
                   ),
                   const SizedBox(height: 10),
-                  Text('Held: ' + widget.campaign.hero.name),
-                  Text('Bisher: ' +
-                      (xp == null ? 'nicht bestätigt' : xp.toString() + ' EP')),
+                  Text('Held: ${widget.campaign.hero.name}'),
+                  Text('Bisher: ${xp == null ? 'nicht bestätigt' : '$xp EP'}'),
                   const SizedBox(height: 10),
                   const Text(
                     'Nur tatsächlich erreichte, geprüfte Questziele '
@@ -166,8 +165,7 @@ class _ConfirmedExperienceRewardDialogState
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Danach: ' +
-                        (after == null ? '—' : after.toString() + ' EP'),
+                    'Danach: ${after == null ? '—' : '$after EP'}',
                     key: const ValueKey('xp-reward-preview'),
                     style: Theme.of(context).textTheme.titleMedium,
                   ),

@@ -75,7 +75,7 @@ void main() {
   }
 
   for (final width in [320.0, 360.0]) {
-    testWidgets('Fantasy-Vorschau und Abbrechen bei ' + width.toString() + ' dp', (tester) async {
+    testWidgets('Fantasy-Vorschau und Abbrechen bei $width dp', (tester) async {
       final campaign = GameEngine().createDemo();
       ConfirmedExperienceRewardChoice? selected;
       await showReward(
