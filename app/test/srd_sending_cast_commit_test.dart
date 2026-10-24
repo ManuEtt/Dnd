@@ -167,95 +167,107 @@ void main() {
       await directory.delete(recursive: true);
     });
 
-    test('confirmed cast is persisted once; retry and restart are safe', () async {
-      final start = controller.currentCampaign!;
-      final preview = _preview(start.hero, sending);
-      Future<void> cast() => controller.confirmSendingAttempt(
-        campaignId: start.id,
-        expectedRevision: start.revision,
-        preview: preview,
-        requestId: 'sending-once',
-        playerConfirmed: true,
-      );
-      await cast();
-      expect(controller.error, isNull);
-      final saved = (await sqlite.getCampaign(start.id))!;
-      expect(saved.hero.spentSpellSlots, {'3': 1});
-      expect(saved.events, hasLength(1));
-      expect(saved.events.single.payload['message'], 'Bitte antworte.');
-      expect(saved.events.single.payload['deliveryNotPerformed'], true);
-      expect(
-        (await sqlite.reconstructCampaign(start.id, revision: 1))!.toJson(),
-        saved.toJson(),
-      );
-      await cast();
-      expect(controller.error, isNull);
-      expect(controller.currentCampaign!.toJson(), saved.toJson());
+    test(
+      'confirmed cast is persisted once; retry and restart are safe',
+      () async {
+        final start = controller.currentCampaign!;
+        final preview = _preview(start.hero, sending);
+        Future<void> cast() => controller.confirmSendingAttempt(
+          campaignId: start.id,
+          expectedRevision: start.revision,
+          preview: preview,
+          requestId: 'sending-once',
+          playerConfirmed: true,
+        );
+        await cast();
+        expect(controller.error, isNull);
+        final saved = (await sqlite.getCampaign(start.id))!;
+        expect(saved.hero.spentSpellSlots, {'3': 1});
+        expect(saved.events, hasLength(1));
+        expect(saved.events.single.payload['message'], 'Bitte antworte.');
+        expect(saved.events.single.payload['deliveryNotPerformed'], true);
+        expect(
+          (await sqlite.reconstructCampaign(start.id, revision: 1))!.toJson(),
+          saved.toJson(),
+        );
+        await cast();
+        expect(controller.error, isNull);
+        expect(controller.currentCampaign!.toJson(), saved.toJson());
 
-      controller.dispose();
-      await sqlite.close();
-      sqlite = await SqliteCampaignRepository.open(
-        factory: databaseFactoryFfi,
-        path: dbPath,
-      );
-      controller = GameController(repository: sqlite);
-      await controller.initialize();
-      expect(controller.currentCampaign!.toJson(), saved.toJson());
-      await cast();
-      expect(controller.error, isNull);
-      expect(controller.currentCampaign!.toJson(), saved.toJson());
-      final different = _preview(start.hero, sending, message: 'Anderer Text');
-      await controller.confirmSendingAttempt(
-        campaignId: start.id,
-        expectedRevision: start.revision,
-        preview: different,
-        requestId: 'sending-once',
-        playerConfirmed: true,
-      );
-      expect(controller.error, contains('anderen Bestätigung'));
-      expect((await sqlite.getCampaign(start.id))!.toJson(), saved.toJson());
-    });
+        controller.dispose();
+        await sqlite.close();
+        sqlite = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: dbPath,
+        );
+        controller = GameController(repository: sqlite);
+        await controller.initialize();
+        expect(controller.currentCampaign!.toJson(), saved.toJson());
+        await cast();
+        expect(controller.error, isNull);
+        expect(controller.currentCampaign!.toJson(), saved.toJson());
+        final different = _preview(
+          start.hero,
+          sending,
+          message: 'Anderer Text',
+        );
+        await controller.confirmSendingAttempt(
+          campaignId: start.id,
+          expectedRevision: start.revision,
+          preview: different,
+          requestId: 'sending-once',
+          playerConfirmed: true,
+        );
+        expect(controller.error, contains('anderen Bestätigung'));
+        expect((await sqlite.getCampaign(start.id))!.toJson(), saved.toJson());
+      },
+    );
 
-    test('unconfirmed, stale and invalid requests cannot spend a slot', () async {
-      final start = controller.currentCampaign!;
-      final preview = _preview(start.hero, sending);
-      await controller.confirmSendingAttempt(
-        campaignId: start.id,
-        expectedRevision: start.revision,
-        preview: preview,
-        requestId: 'sending-not-approved',
-        playerConfirmed: false,
-      );
-      expect(controller.error, contains('ausdrücklich'));
-      expect(controller.currentCampaign!.toJson(), start.toJson());
-      await controller.confirmSendingAttempt(
-        campaignId: start.id,
-        expectedRevision: start.revision + 1,
-        preview: preview,
-        requestId: 'sending-stale',
-        playerConfirmed: true,
-      );
-      expect(controller.error, contains('inzwischen geändert'));
-      await controller.confirmSendingAttempt(
-        campaignId: start.id,
-        expectedRevision: start.revision,
-        preview: preview,
-        requestId: 'has spaces',
-        playerConfirmed: true,
-      );
-      expect(controller.error, contains('Ungültige'));
-      expect((await sqlite.getCampaign(start.id))!.toJson(), start.toJson());
-    });
+    test(
+      'unconfirmed, stale and invalid requests cannot spend a slot',
+      () async {
+        final start = controller.currentCampaign!;
+        final preview = _preview(start.hero, sending);
+        await controller.confirmSendingAttempt(
+          campaignId: start.id,
+          expectedRevision: start.revision,
+          preview: preview,
+          requestId: 'sending-not-approved',
+          playerConfirmed: false,
+        );
+        expect(controller.error, contains('ausdrücklich'));
+        expect(controller.currentCampaign!.toJson(), start.toJson());
+        await controller.confirmSendingAttempt(
+          campaignId: start.id,
+          expectedRevision: start.revision + 1,
+          preview: preview,
+          requestId: 'sending-stale',
+          playerConfirmed: true,
+        );
+        expect(controller.error, contains('inzwischen geändert'));
+        await controller.confirmSendingAttempt(
+          campaignId: start.id,
+          expectedRevision: start.revision,
+          preview: preview,
+          requestId: 'has spaces',
+          playerConfirmed: true,
+        );
+        expect(controller.error, contains('Ungültige'));
+        expect((await sqlite.getCampaign(start.id))!.toJson(), start.toJson());
+      },
+    );
 
-    test('SQLite journal failure rolls back slot and campaign revision', () async {
-      final start = controller.currentCampaign!;
-      final preview = _preview(start.hero, sending);
-      final db = await databaseFactoryFfi.openDatabase(
-        dbPath,
-        options: OpenDatabaseOptions(singleInstance: false),
-      );
-      try {
-        await db.execute("""
+    test(
+      'SQLite journal failure rolls back slot and campaign revision',
+      () async {
+        final start = controller.currentCampaign!;
+        final preview = _preview(start.hero, sending);
+        final db = await databaseFactoryFfi.openDatabase(
+          dbPath,
+          options: OpenDatabaseOptions(singleInstance: false),
+        );
+        try {
+          await db.execute("""
 CREATE TRIGGER reject_sending
 BEFORE INSERT ON game_events
 WHEN instr(NEW.event_json, '"spell.sending.attemptConfirmed"') > 0
@@ -263,20 +275,27 @@ BEGIN
   SELECT RAISE(ABORT, 'test rejected sending');
 END
 """);
-        await controller.confirmSendingAttempt(
-          campaignId: start.id,
-          expectedRevision: start.revision,
-          preview: preview,
-          requestId: 'sending-rollback',
-          playerConfirmed: true,
-        );
-        expect(controller.error, isNotNull);
-        expect(controller.currentCampaign!.toJson(), start.toJson());
-        expect((await sqlite.getCampaign(start.id))!.toJson(), start.toJson());
-        expect(await sqlite.reconstructCampaign(start.id, revision: 1), isNull);
-      } finally {
-        await db.close();
-      }
-    });
+          await controller.confirmSendingAttempt(
+            campaignId: start.id,
+            expectedRevision: start.revision,
+            preview: preview,
+            requestId: 'sending-rollback',
+            playerConfirmed: true,
+          );
+          expect(controller.error, isNotNull);
+          expect(controller.currentCampaign!.toJson(), start.toJson());
+          expect(
+            (await sqlite.getCampaign(start.id))!.toJson(),
+            start.toJson(),
+          );
+          expect(
+            await sqlite.reconstructCampaign(start.id, revision: 1),
+            isNull,
+          );
+        } finally {
+          await db.close();
+        }
+      },
+    );
   });
 }
