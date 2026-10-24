@@ -96,9 +96,10 @@ void main() {
       25,
       (i) => i.isEven ? 'Grüße,' : 'für-dich!',
     );
-    final msg = '${words.take(10).join(' ')}\n'
-        '${words.skip(10).take(10).join('\t')}\r\n'
-        '${words.skip(20).join(' ')}';
+    final first = words.take(10).join(' ');
+    final second = words.skip(10).take(10).join('\t');
+    final last = words.skip(20).join(' ');
+    final msg = '$first\n$second\r\n$last';
     final plan = prepare(message: msg);
     expect(plan.wordCount, 25);
     expect(plan.message, msg);
@@ -122,7 +123,7 @@ void main() {
     expect(() => prepare(message: disguised), throwsFormatException);
   });
 
-  test('technical input limit does not replace the SRD word-count boundary', () {
+  test('technical bound is independent of SRD word-count rule', () {
     final withinLimit = List.filled(
       SrdSendingRules.maxMessageCodeUnits,
       'a',

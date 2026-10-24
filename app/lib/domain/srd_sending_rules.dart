@@ -58,7 +58,6 @@ class SrdSendingRules {
     r'[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F\u200B-\u200F\u202A-\u202E\u2060\u2066-\u2069\uFEFF]',
   );
 
-
   static SendingMessagePlan prepare({
     required SrdSpellDefinition spell,
     required String recipientId,
