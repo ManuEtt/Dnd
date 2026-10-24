@@ -1,3 +1,19 @@
+## 24.10.2026 – Vollständige CI-Abnahme der Sending-Eingabeintegrität
+
+- **GETESTET:** [PR-CI #40068321150](https://github.com/ManuEtt/Dnd/actions/runs/40068321150), Code-HEAD `fb96641db97598a5ee1b59416ad254f5e0e63e29`, **completed/success**: Python, Backend, Dart-Format, Flutter-Analyse, vollständige Flutter-Suite inklusive Unicode-Grenztests, Android-Debug-Build, native Tests, kleine Alpha-APKs, versioniertes Alpha und Source-Checkpoint. [PR #153](https://github.com/ManuEtt/Dnd/pull/153) bleibt für Review offen; `main` unverändert.
+- **NICHT GETESTET:** reale Installation/Upgrade und tatsächliche Sending-Zauberausführung. **BLOCKIERT:** kein Testgerät/Flutter-SDK lokal. **NOCH NICHT IMPLEMENTIERT:** vollständige Zauber-Aktions-/Slot-/Kommunikationswirkung. **KOMPATIBILITÄT:** App 0.8.37+87, SQLite 2 und JSON 1 unverändert.
+- **NÄCHSTER SCHRITT:** Review des fertig geprüften Sicherheits-PRs; danach getrennte SRD-Spellcast-Implementierung.
+
+---
+
+## 24.10.2026 – Sending-Eingaben gegen verdeckte Zeichen absichern
+
+- **IMPLEMENTIERT:** Die bestehende lesende SRD-Sending-Vorprüfung verwirft versteckte Unicode-Separatoren/Bidi-Kontrollen, Steuerzeichen und Nachrichten über 2048 UTF-16-Einheiten (technischer Grenzwert). Empfängerkennungen mit inneren Leerzeichen/unsichtbaren Zeichen werden gesperrt. 25-Wörter-Regel, Zeilenumbrüche und Umlaute bleiben erhalten.
+- **TESTS GESCHRIEBEN:** vier neue Regressionen für 25 reguläre Wörter, versteckte 26-Wort-Kette, problematische Unicode/ASCII-Steuerzeichen, Nachrichtenlänge 2048/2049 und Empfängerkennung. **GETESTET:** Main-CI #40066464900/#40066464899 vor Änderung vollständig grün. **NICHT GETESTET:** neuer Code vor PR-CI, echte Android-Geräte. **BLOCKIERT:** kein lokales Flutter/Android-SDK. **NOCH NICHT IMPLEMENTIERT:** wirklicher Sending-Zauber, Slots, Weltzeit und Nachrichtenzustellung.
+- **KOMPATIBILITÄT:** App 0.8.37+87, SQLite 2, JSON-Schema 1 unverändert. **NÄCHSTER SCHRITT:** finale Code-CI prüfen und ggf. reparieren.
+
+---
+
 ## 24.10.2026 – Fantasy-Bestätigungsdialog für EP-Belohnungen auf neuer Integrationsbasis
 
 - **IMPLEMENTIERT:** Der Dialog aus PR #151 ist in die erhaltene Abenteueransicht mit Schurken-/Kampflogik, XP-Ereignisschutz und unabhängiger Sending-Vorprüfung integriert: bestätigte Kennung und Betrag, Vorschau, separate Checkbox-Zustimmung, stabile Request-ID und Buchungsquittung nur bei gespeichertem Ereignis.

@@ -1,3 +1,29 @@
+## 24.10.2026 – Abnahme der SRD-Sending-Eingabeintegrität (CI vollständig erfolgreich)
+
+- **IMPLEMENTIERT:** Validierte Sendernachrichten gegen unsichtbare Unicode-Trenner, Bidikontrollen, ASCII/C1-Steuerzeichen sowie technisch unbeschränkte Eingaben; 25-Wörter-SRD-Grenze und normaler deutscher Text bleiben unverändert. Rein lesende Vorprüfung.
+- **GETESTET:** [GitHub Actions PR-Workflow #40068321150](https://github.com/ManuEtt/Dnd/actions/runs/40068321150) mit gemeldetem PR-Code-HEAD `fb96641db97598a5ee1b59416ad254f5e0e63e29`: **completed/success**. Erfolgreich: Python-Projektprüfungen, Backend-Typen/Build/Tests, Dart-Format, Flutter-Analyse, gezielte Dialogtests, **gesamte Flutter-Test-Suite inkl. neuer Sending-Regressionen**, Android-Debug-APK, native Android-Dateisicherungstests, kleine Alpha-APKs und vollständige versionierte Alpha-/Quellcode-Artefakte. Frühere Formatrots auf `eaa3b67b...` und `6bbfbeb5...` wurden über den Commit `fb96641db97598a5ee1b59416ad254f5e0e63e29` behoben.
+- **ARTEFAKTE:** [Versioniertes Alpha-Paket](https://github.com/ManuEtt/Dnd/actions/runs/40068321150/artifacts/12550461977) (ZIP-Digest SHA-256 `47e86a1cc0c854b648369d63078930ccce4c132b144863ce0c919f62aa3e8e70`); [kleine Alpha-APKs](https://github.com/ManuEtt/Dnd/actions/runs/40068321150/artifacts/12549624430), [Debug-APK](https://github.com/ManuEtt/Dnd/actions/runs/40068321150/artifacts/12549499860), [Quellcode-Checkpoint](https://github.com/ManuEtt/Dnd/actions/runs/40068321150/artifacts/12549798592). Der Präfix `bc315e3c...` in Dateinamen ist der vom PR-Workflow ausgecheckte Test-Merge-Commit, kein anderer Code-Branch-HEAD. Artefakte sind zeitlich befristet.
+- **LIVE-GIT:** `main` zuletzt `d2a8dca87f5dd7ee76fd926de6c213d344f235fc`, offener [PR #153](https://github.com/ManuEtt/Dnd/pull/153), Code-HEAD `fb96641db97598a5ee1b59416ad254f5e0e63e29`, mergeable true. **Keine** Änderung an `main` und kein automatischer Merge.
+- **NICHT GETESTET:** echte Android-Geräteinstallation/-Aktualisierung, produktive Signierung und vollständiger Sending-Spellcast. **BLOCKIERT:** kein Gerät/SKD für lokale Abnahme. **NOCH NICHT IMPLEMENTIERT:** Sending-Slot-/Aktionsverbrauch, Nachrichtenzustellung, Empfängerantwort, Acht-Stunden-Sperrzeit.
+- **DATENFORMAT:** App `0.8.37+87`, SQLite 2, Export-JSON 1 unverändert. Das nun folgende reine Dokumentationsupdate enthält keine Änderungen an dem vollständig getesteten ausführbaren Code.
+- **NÄCHSTES INKREMENT:** Nach PR-Review neuen eigenständigen Sending-Spellcast-Vertrag mit ausdrücklicher Ressourcen-/Aktionsbestätigung und atomarer SQLite-Ereignisverbuchung planen und mit SRD-Quelle prüfen; keine Ausführung als gegeben behaupten.
+
+---
+
+## 24.10.2026 – Sicherheitsgrenzen der SRD-Sending-Nachrichten
+
+- **CI-Befund und Korrektur:** Erster [Push-Lauf #40068069124](https://github.com/ManuEtt/Dnd/actions/runs/40068069124) (SHA `eaa3b67b8e4e5b0f6f0263156a86b63358081c81`) scheiterte beim strikt geprüften Dart-Formatter: zwei geänderte Dateien, Folgeschritte noch nicht ausgeführt. Im Anschluss die zusätzliche Leerzeile in der Domain entfernt sowie mehrzeilige Testzeichenkette und langen Testtitel auf formattergerechte kurze Ausdrücke umgestellt. Der neue Code-Head benötigt erneut eine vollständige eigene CI.
+
+- **LIVE-BASIS:** `main` `d2a8dca87f5dd7ee76fd926de6c213d344f235fc`, nach PRs #144/#149/#151 und Konsolidierung #152. Zum Start keine offenen PRs. Beide letzten Main-CI-Läufe [#40066464900](https://github.com/ManuEtt/Dnd/actions/runs/40066464900) und [#40066464899](https://github.com/ManuEtt/Dnd/actions/runs/40066464899) auf genau diesem SHA **completed/success**. App `0.8.37+87`.
+- **PROBLEM:** Bisher zählte der Sending-Validator nur durch Leerraum getrennte Tokens. Unsichtbare Zeichen wie U+200B/2060 und Richtungssteuerung konnten die Prüfung des vom Spieler wahrgenommenen Textes umgehen; auch eine Einwort-Nachricht von Millionen Zeichen war zulässig. Manipulierte Empfängerkennungen mit Kontrollzeichen waren nicht gesperrt.
+- **IMPLEMENTIERT:** `SrdSendingRules.prepare` verbietet unsichtbare Steuer-, Trenn- und Bidizeichen und begrenzt die Nachricht auf technisch 2048 UTF-16-Codeeinheiten. Die 25-Wörter-SRD-Grenze, bestätigte Empfängeridentität, deutsche Umlaute, normale Zeilenumbrüche und Tabulatoren sind unverändert. Rein lesende Validierung, kein Zauber-Commit.
+- **TESTS GESCHRIEBEN:** vier Domain-Testgruppen in `app/test/srd_sending_rules_test.dart` (zulässige 25 deutsche Wörter mit Zeilenumbrüchen; unsichtbare 26-Wort-Kette, NUL/ESC/Bidi; exakt 2048 vs 2049; manipulierte Empfängerkennungen). Positiv- und Manipulationspfade vorhanden.
+- **GETESTET:** Nur die beiden grünen Basis-CI-Läufe #40066464900/#40066464899. **NICHT GETESTET:** neuer Code vor eigenem CI, reales Android-Gerät und ausführbarer Sending-Zauber. **BLOCKIERT:** keine lokale Flutter-/Android-Toolchain. **NOCH NICHT IMPLEMENTIERT:** Sender-Zauberkosten, Ausführung, Slots, Antwort, Acht-Stunden-Weltuhr; vollständige SRD-Automatik.
+- **KOMPATIBILITÄT:** DB 2, JSON 1 und App-Version `0.8.37+87` unverändert. 2048-Einheiten sind ausdrücklich **technisches App-Limit**, keine SRD-Regel. Regelregister bleibt partiell, keine globale Vollständigkeitsbehauptung.
+- **NÄCHSTER KONKRETER SCHRITT:** neuen PR gegen main erstellen, CI auf finalem HEAD inkl. Dart-Format, Flutter-Tests und Android-APK abnehmen; Fehler vollständig beheben. Später separate vollständige Sending-Spellcast-Aktion.
+
+---
+
 ## 24.10.2026 – Fantasy-Bestätigungsdialog für EP-Belohnungen auf neuer Integrationsbasis
 
 - **IMPLEMENTIERT:** Der Dialog aus PR #151 ist in die erhaltene Abenteueransicht mit Schurken-/Kampflogik, XP-Ereignisschutz und unabhängiger Sending-Vorprüfung integriert: bestätigte Kennung und Betrag, Vorschau, separate Checkbox-Zustimmung, stabile Request-ID und Buchungsquittung nur bei gespeichertem Ereignis.

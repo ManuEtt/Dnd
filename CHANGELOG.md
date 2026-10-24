@@ -1,3 +1,19 @@
+## 24.10.2026 – Abnahme der Sending-Input-Regressionsfälle
+
+- Vollständige [GitHub-Actions-CI #40068321150](https://github.com/ManuEtt/Dnd/actions/runs/40068321150) auf Code-HEAD `fb96641db97598a5ee1b59416ad254f5e0e63e29` erfolgreich, inklusive Flutter-/SQLite, Android-Debug/native Tests, kleiner Alpha-APKs und versioniertem Alpha-Artefakt.
+- Nur Dokumentationsnachtrag nach dem grünen Code-Lauf. Android-Gerätetest und vollständiger Spellcast bleiben offen.
+
+---
+
+## 24.10.2026 – SRD-Sending: Nachrichten- und Kennungsintegrität
+
+- Versteckte Wortseparatoren, Bidi- und ASCII-Kontrollzeichen werden vor dem Zählen abgewiesen.
+- Technische App-Grenze 2048 UTF-16-Einheiten statt unbeschränkt langer Tokens; dies ist keine zusätzliche SRD-Regel. Whitespace-25-Wort-Regel weiterhin unverändert.
+- Domain-Manipulations- und Positivtests ergänzt. Neue PR-CI und reale Android-Abnahme noch offen.
+- Keine Änderung an Slots, Kampagnen, SQLite/JSON oder Version.
+
+---
+
 ## 24.10.2026 – Fantasy-Bestätigungsdialog für EP-Belohnungen auf neuer Integrationsbasis
 
 - **IMPLEMENTIERT:** Der Dialog aus PR #151 ist in die erhaltene Abenteueransicht mit Schurken-/Kampflogik, XP-Ereignisschutz und unabhängiger Sending-Vorprüfung integriert: bestätigte Kennung und Betrag, Vorschau, separate Checkbox-Zustimmung, stabile Request-ID und Buchungsquittung nur bei gespeichertem Ereignis.
