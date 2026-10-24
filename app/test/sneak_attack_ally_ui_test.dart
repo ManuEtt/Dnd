@@ -153,10 +153,7 @@ Future<GameController> _start(
   var active = pending;
   if (offhand) {
     final miss = engine.resolveRoll(pending, natural: 1);
-    final second = engine.act(
-      miss.campaign,
-      'Nebenhandangriff: offhand',
-    );
+    final second = engine.act(miss.campaign, 'Nebenhandangriff: offhand');
     expect(second.campaign.pendingRoll?.type, 'offhandAttack');
     await tester.runAsync(
       () => repository.saveCampaign(
@@ -390,7 +387,10 @@ void main() {
       final saved = await tester.runAsync(
         () => controller.repository.getCampaign(confirmed.id),
       );
-      expect(saved!.pendingRoll!.sneakAttackAlly!.rollId, before.pendingRoll!.id);
+      expect(
+        saved!.pendingRoll!.sneakAttackAlly!.rollId,
+        before.pendingRoll!.id,
+      );
       await _tap(
         tester,
         _key('adventure-clear-sneak-attack-ally'),
