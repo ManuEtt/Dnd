@@ -1,3 +1,11 @@
+## 24.10.2026 – PR #160: kontrollierter Hinterhältiger Angriff mit Nebenhand-Verbündetenquelle
+
+**IMPLEMENTIERT:** Regel-/Import-Grenze `SneakAttackAllyRules.eligible` und `PendingRoll.fromJson` akzeptieren zulässige Nebenhandangriffe mit separat bestätigtem Verbündeten; echte angreifende Waffe und bereits reservierte Bonusaktion erforderlich. Gleiche Kampagnen-/Ziel-/Wurfbindung, Bestätigungs- und Entfernungs-Controller, UI-Anzeige auch für Nebenhand, unveränderter atomarer SQLite-Kampfabschluss. **GETESTET:** Vorläufer-CI bis einschl. Flutter-Analyse/Widgets, 1.513 bestandene Flutter-Tests, 1 fehlgeschlagene zu breite JSON-Assertion – inzwischen gezielt korrigiert; **keine finale neue CI-Erfolgsbehauptung**. **NICHT GETESTET:** finaler CI-/APK-HEAD, echtes Android-Gerät und Altspielstand-Upgrade. **BLOCKIERT:** lokal kein Flutter/Dart oder eigener Android-Test. **NOCH NICHT IMPLEMENTIERT:** vollautomatische Positions-/Gelegenheitsangriffe und vollständige SRD.
+
+Der Code nutzt SRD 5.2.1 Rogue/Sneak Attack S.61–62, `CLASS-SCHURKE-1-BASE-SNEAK-ATTACK-1` bleibt `partial`. App `0.8.38+88`, SQLite 2 / JSON 1 ohne Migration. Branch `feature/sneak-attack-offhand-ally-20261024`, offener [PR #160](https://github.com/ManuEtt/Dnd/pull/160); PR #159 (Sending) bleibt unabhängig und grün. Nächster Schritt: PR160-Code in vollständiger CI inklusive Android nachprüfen, Fehler beheben und für Review freigeben. [Checkpoint](docs/CODEX_CHECKPOINT.md).
+
+---
+
 ## 24.10.2026 – 0.8.38+88: tatsächliche Nebenhandwaffe für Hinterhältigen Angriff
 
 Die vorhandene Nebenhandauflösung prüft jetzt ihre bestätigte Inventarwaffe auf Finesse/Fernkampf. Ein Hauptdolch verleiht einer Nebenhandaxt keinen Zusatzschaden; ein Nebendolch verliert seine Eignung nicht durch eine Haupthandaxt. Krit/Miss und bestehende gemeinsame Zugnutzung bleiben erhalten. 27 bestehende/Helper- und acht neue Kampf-/SQLite-Tests erfolgreich. Vollständige lokale Abnahme: 1505 Flutter-,100 Python-,31 Backend- und12 native Tests erfolgreich, Format/Analyse/Importgrenzen ohne Befund. Neue Debug-APK und ARM64-Alpha gebaut und geprüft. Eigene finale GitHub-Checks am PR158 getrennt geführt; Realgerät nicht getestet. SQLite2/JSON1 kompatibel. Details und nächstes Paket: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md).
