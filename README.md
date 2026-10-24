@@ -2,7 +2,19 @@
 
 Deutschsprachige Android-Alpha für Soloabenteuer, regelgeprüfte Kämpfe und lokale Kampagnen mit SQLite. Flutter/Dart-App und optionaler Fastify-/TypeScript-Erzähler. Das vollständige SRD 5.2.1 ist noch nicht implementiert.
 
-## Aktueller Stand und autonome Fortsetzung (24.10.2026)
+## Aktueller Entwicklungszyklus – Backend-Anfragelimit sicher begrenzen (24.10.2026)
+
+Im eigenen [PR #162](https://github.com/ManuEtt/Dnd/pull/162) auf Branch `fix/backend-limiter-capacity-20261024` wurde ein tatsächlicher Sicherheits-/Stabilitätsfehler des `WindowLimiter` behoben: Wenn mehr Schlüssel als die intern erlaubten Slots auftreten, werden bisher noch **aktive** Kontingente gelöscht. Dadurch könnten Nutzer derselben Identität vor Ablauf des Zeitfensters erneut Anfragen stellen. Ab jetzt werden nur abgelaufene Slots aufgeräumt; eine voll ausgelastete Tabelle lehnt neue Schlüssel sicher ab und schützt bestehende Limits.
+
+**IMPLEMENTIERT:** Backend-Korrektur und zwei deterministische Regressionen für aktive Kontingente, Schlüsselrotation, Kapazitätsgrenze, Zeitablauf und rückläufige Uhr. **GETESTET:** die vorige grüne CI für [PR #161](https://github.com/ManuEtt/Dnd/actions/runs/40113090963) belegt ausschließlich den vorherigen Story-Code. **NICHT GETESTET:** finale neue Gesamt-CI/Android-Artefakte von PR #162 bis zum Abschluss. **BLOCKIERT:** physischer Android-Gerätetest und produktive Signierung. **NOCH NICHT IMPLEMENTIERT:** global verteilter Rate-Limiter bei mehreren Backendinstanzen.
+
+Aktuelles Basis-`main` zum Start `b60ffe7`, die bereits grünen PRs [#159](https://github.com/ManuEtt/Dnd/pull/159), [#160](https://github.com/ManuEtt/Dnd/pull/160), [#161](https://github.com/ManuEtt/Dnd/pull/161) bleiben unabhängig offen, letzterer jetzt reviewbereit. App **0.8.38+88**, SQLite 2, Export-JSON 1 unverändert; kein neues SRD-Regelinkrement. [Fach-/Sicherheitsbeleg](docs/BACKEND_LIMITER_CAPACITY_20261024.md) · [Checkpoint](docs/CODEX_CHECKPOINT.md) · [CI-Status](https://github.com/ManuEtt/Dnd/pull/162/checks).
+
+**Nächster konkreter Schritt:** CI auf dem letzten PR-#162-HEAD vollständig prüfen und Fehler beheben, danach zur Review freigeben, nicht ungeprüft nach `main` mergen.
+
+---
+
+## Vorheriger Main-Stand – historische Abnahme PR #158
 
 **Version 0.8.38+88**, Branch `fix/sneak-attack-offhand-weapon-20261024`, [PR #158](https://github.com/ManuEtt/Dnd/pull/158). Funktionaler Code [`aa79ce5`](https://github.com/ManuEtt/Dnd/commit/aa79ce593790e5763e9125743b0adeab55b581d5), Basis-main `dcb42c5efff40a757994d4f5b5f8e98b2ff128e9` (PR #157 integriert). Eigene aktuelle [GitHub-Checks](https://github.com/ManuEtt/Dnd/pull/158/checks) zeigen den jeweiligen finalen HEAD; Basisprüfungen und lokale Abnahme werden getrennt geführt. Main bleibt durch diesen Zyklus unverändert.
 
