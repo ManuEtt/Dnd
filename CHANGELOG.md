@@ -1,3 +1,12 @@
+## 24.10.2026 – Sending-Unicode-Formatsteuerung absichern (Draft-PR #155)
+
+- U+00AD, U+034F, U+061C, U+180E, U+2061–U+206F und U+FFF9–U+FFFB werden zusätzlich als unsichtbare Format-/Annotationszeichen in Sending-Nachrichten und Empfänger-IDs abgewiesen.
+- Neue Domain-/Casting-Preview-Regressionen: versteckte 26-Wort-Nachrichten und manipulierte Empfängeridentitäten.
+- Version `0.8.37+87`, SQLite 2 und Export-JSON 1 unverändert; keine Zauberausführung und keine neue SRD-Mechanik.
+- Lokaler Regex-Sanity-Check erfolgreich; vollständige neue Dart-/Flutter-/Android-CI noch nicht abgenommen. Vorherige grüne CI gehört zu einem anderen Commit.
+
+---
+
 ## 24.10.2026 – Sending-Resource-Preflight vollständig CI-validiert
 
 - Vollständige [PR-CI #40071729227](https://github.com/ManuEtt/Dnd/actions/runs/40071729227) grün auf Code-Commit `efed3d732459478b072452ab8e92ef3c674e39fd`: Flutter, Python/Backend, native Android-/APK-Builds und Alpha-/Source-Artefakte.
