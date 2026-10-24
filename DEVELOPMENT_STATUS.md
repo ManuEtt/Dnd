@@ -1,3 +1,15 @@
+## Aktuell – 0.8.37+87, 23.10.2026
+
+Basis main5958579, Code0a56aba, Branch feature/sneak-attack-ally-integration-20261023. Operative Fakten und Wiederaufnahme: [docs/CODEX_CHECKPOINT.md](docs/CODEX_CHECKPOINT.md); ältere Einträge unten sind datierte Historie.
+
+**IMPLEMENTIERT:** Hauptwaffen-Sneak-Attack über bestätigten Verbündeten mit echter UI, ziel-/wurfgebundener Speicherung, Schadensauflösung und Revisionsschutz. Die bestehende Regel-/Story-Grenze verhindert narrative Bestätigungen.
+
+**GETESTET:** 1.431 Flutter-Tests der normalisierten Basis, 11 neue Domain-/SQLite- und 6 neue Widgettests, aktuelle Analyse/Formatierung, Python100 und Backend31. Vollständige neue Suite mit **1.448 Flutter-Tests erfolgreich**; CI/APK/Realgerät noch nicht abgenommen. Frühere Item-WIP-Dateien separat gesichert, kein Überschreiben aktueller Main-Modelle.
+
+**NÄCHSTER KONKRETER SCHRITT:** Tatsächlich angreifende Nebenhandwaffe für Sneak-Attack-Eignung verwenden und denselben sicheren Bestätigungspfad anbinden; aktuelle Hauptwaffe, alte Spielstände und einmalige Zugnutzung regressionsfrei erhalten.
+
+---
+
 ## 23.10.2026 – Schurken-Hinterhältiger-Angriff nach SRD 5.2.1 sichern (CI offen)
 
 - **IMPLEMENTIERT:** `ClassCombatFeatures.eligibleSneakAttackDice` verlangt bei Angriff ohne echten Vorteil zwei unabhängige Bestätigungen: ein Verbündeter befindet sich höchstens 5 Fuß vom ZIEL entfernt und er besitzt nicht `Incapacitated`. Kein stilles Auslösen aus bloßer Bewusstheit oder Nähe zur Spielfigur. Ergänzte Negativtests bei gestunnten/fehlpositionierten Verbündeten und beim Aufheben von Vorteil/Nachteil.

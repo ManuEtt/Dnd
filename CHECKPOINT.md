@@ -1,3 +1,9 @@
+## Aktueller operativer Checkpoint (23.10.2026)
+
+Version0.8.37+87, funktionaler Code0a56aba, Basis-main5958579. Verbindlicher aktueller Prüf-/Branch-/Artefaktstand und Wiederaufnahme stehen in [docs/CODEX_CHECKPOINT.md](docs/CODEX_CHECKPOINT.md). Die folgenden Abschnitte sind historische Entwicklungsprotokolle.
+
+---
+
 # Aktueller Codex-Entwicklungscheckpoint
 
 **Operativer Live-Stand (23.10.2026):** [docs/CODEX_CHECKPOINT.md](docs/CODEX_CHECKPOINT.md). Der aktuelle [Fortsetzungs-Prompt](docs/CODEX_CONTINUATION_PROMPT.md) verpflichtet zu einem aktualisierten Checkpoint und einem README-Nachtrag am Ende jedes Codex-Zyklus.

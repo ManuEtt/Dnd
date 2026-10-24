@@ -1,3 +1,14 @@
+## 23.10.2026 – 0.8.37+87: Hinterhältiger Angriff mit bestätigtem Verbündeten
+
+- Tatsächliche Hauptwaffen-Kampfintegration statt ausschließlich Helper: explizite Nähe zum Ziel und fehlende Handlungsunfähigkeit, pro Kampagne/Ziel/Probe gespeichert, vor dem Würfeln entfernbar.
+- Zusatzschaden, kritische Treffer und einmalige Nutzung im eigenen Zug über bestehende Engine; keine aus Erzählung abgeleiteten Fakten.
+- SQLite-Neustart, Backup, Journal, stale Revision und später Speicherfehler durch 11 neue Domain-/Integrationstests; 6 neue Widgettests einschließlich 360dp, großer Schrift und Tastatur.
+- Gespeicherte Angriffsboni verwenden dieselbe Berechnung wie die Ausführung (einschließlich Mehrklassen-Bogenschießen).
+- Vollständige Dart-Formatprüfung in CI wiederhergestellt; reine Normalisierung bestehender Dateien separat in 309b07e.
+- SQLite2/JSON1 bleiben kompatibel. Lokaler Gesamtcheck mit 1.448 Flutter-, 100 Python- und 31 Backend-Tests erfolgreich. Neue CI/APK/Realgerät-Abnahme noch offen; Ergebnis siehe docs/CODEX_CHECKPOINT.md.
+
+---
+
 ## 23.10.2026 – 0.8.36+86: Schurken-Hinterhältiger-Angriff – bestätigter Verbündeter (CI offen)
 
 - Der bisherige reine Helper-Check für einen nahen, bewussten Verbündeten genügt nicht mehr allein. Der alternative SRD-5.2.1-Weg zum Hinterhältigen Angriff verlangt nun zusätzlich bestätigte Nähe des Verbündeten **zum Ziel** und das bestätigte Fehlen des Zustands `Incapacitated`.
