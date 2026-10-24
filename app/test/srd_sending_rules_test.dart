@@ -130,10 +130,7 @@ void main() {
     final disguised = List.filled(26, 'Wort').join('\u200B');
     expect(() => prepare(message: disguised), throwsFormatException);
     final operatorDisguised = List.filled(26, 'Wort').join('\u2063');
-    expect(
-      () => prepare(message: operatorDisguised),
-      throwsFormatException,
-    );
+    expect(() => prepare(message: operatorDisguised), throwsFormatException);
   });
 
   test('technical bound is independent of SRD word-count rule', () {
