@@ -17,7 +17,7 @@ class ExperienceRewardChoice {
   final String rewardId;
   final int amount;
 
-  String get requestId => 'xp_' + rewardId;
+  String get requestId => 'xp_$rewardId';
 }
 
 /// This form previews only. No XP, game events or hero data are mutated until
@@ -129,18 +129,14 @@ class _ExperienceRewardDialogState extends State<ExperienceRewardDialog> {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'Bisher: ' +
-                            (currentXp?.toString() ?? 'nicht bestätigt') +
-                            ' EP',
+                        'Bisher: ${currentXp?.toString() ?? 'nicht bestätigt'} EP',
                       ),
                       if (preview != null)
                         Text(
                           alreadyBooked
                               ? 'Bereits gebucht: keine zusätzlichen EP. '
                                   'Die vorhandene Quittung wird geprüft.'
-                              : 'Nach Bestätigung: ' +
-                                  preview.hero.experience.toString() +
-                                  ' EP',
+                              : 'Nach Bestätigung: ${preview.hero.experience} EP',
                           key: const ValueKey('xp-reward-preview'),
                         ),
                       if (error != null)

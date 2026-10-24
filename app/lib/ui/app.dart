@@ -1307,9 +1307,7 @@ class _AdventurePageState extends State<_AdventurePage> {
       SnackBar(
         key: const ValueKey('xp-reward-receipt'),
         content: Text(
-          'Bestätigte EP-Belohnung gespeichert. Neuer Stand: ' +
-              saved.hero.experience.toString() +
-              ' EP.',
+          'Bestätigte EP-Belohnung gespeichert. Neuer Stand: ${saved.hero.experience} EP.',
         ),
       ),
     );
