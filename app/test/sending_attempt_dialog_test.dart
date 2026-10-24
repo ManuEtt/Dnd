@@ -65,16 +65,25 @@ void main() {
       await tester.scrollUntilVisible(
         target,
         100,
-        scrollable: find.descendant(
-          of: find.byType(SendingAttemptDialog),
-          matching: find.byType(Scrollable),
-        ).first,
+        scrollable: find
+            .descendant(
+              of: find.byType(SendingAttemptDialog),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       await tester.pumpAndSettle();
     }
     expect(target.hitTestable(), findsOneWidget);
     await tester.tap(target);
-    await tester.pumpAndSettle();
+    if (id == 'sending-confirm') {
+      // The full adventure view animates continuously while SQLite commits.
+      // Advance the dialog pop without waiting for every app animation to stop.
+      await tester.pump(const Duration(milliseconds: 350));
+      await tester.pump();
+    } else {
+      await tester.pumpAndSettle();
+    }
   }
 
   Future<void> open(
