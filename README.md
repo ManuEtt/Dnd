@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+### SRD-Sending-Vorprüfung integriert (24.10.2026)
+
+Der reine Dart-Regeldienst aus [PR #144](https://github.com/ManuEtt/Dnd/pull/144) validiert bestätigte Empfänger und Wissensherkunft, 25-Wörter-Grenze und dokumentierte Ebenen-/Blockadebedingungen für `Sending`. Er führt **keinen Zauberspruch und keine Nachricht** aus; Slotverbrauch und Spielzustandsänderungen sind nicht implementiert. Eigenständige Tests wurden übernommen. Ursprüngliche Sending-CI war erfolgreich; **der kombinierte Integrationsstand braucht neue CI**. Version und bestehende Schurken-/EP-Funktionen bleiben erhalten.
+
 
 ### Integrationsstand 24.10.2026 – bestätigte EP-Belohnungen
 

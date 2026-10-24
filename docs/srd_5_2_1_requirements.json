@@ -7089,15 +7089,17 @@
       "tests": [
         "app/test/srd_spell_target_rules_test.dart",
         "app/test/srd_spell_inventory_persistence_test.dart",
-        "app/test/srd_spell_grid_target_rules_test.dart"
+        "app/test/srd_spell_grid_target_rules_test.dart",
+        "app/test/srd_sending_rules_test.dart"
       ],
       "code": [
         "app/lib/domain/srd_spell_target_rules.dart",
         "app/lib/domain/srd_spell_preflight_rules.dart",
         "app/lib/domain/game_engine.dart",
-        "app/lib/domain/srd_spell_grid_target_rules.dart"
+        "app/lib/domain/srd_spell_grid_target_rules.dart",
+        "app/lib/domain/srd_sending_rules.dart"
       ],
-      "note": "Teilabdeckung: bestätigtes 5-Fuß-Kartenraster berechnet selbst diagonal-korrekte SRD-Ursprungsabstände und validiert feste Zauberreichweiten, Self und Touch. Die Sonderreichweite Sight wird nur bei eigens bestätigter Sicht auf den Ursprung UND freiem Weg akzeptiert; ein freier Kartenstrahl allein belegt keine Sicht. Unlimited, Special, 3D, Mehrfeldziele, eigene Zielwirkungen und längere Zauberdauern bleiben offen. Tests: srd_spell_target_rules_test.dart und srd_spell_grid_target_rules_test.dart. Eine Ziel-/Wirkungsfreigabe folgt daraus nicht."
+      "note": "Teilabdeckung: bestätigtes 5-Fuß-Kartenraster berechnet selbst diagonal-korrekte SRD-Ursprungsabstände und validiert feste Zauberreichweiten, Self und Touch. Die Sonderreichweite Sight wird nur bei eigens bestätigter Sicht auf den Ursprung UND freiem Weg akzeptiert; ein freier Kartenstrahl allein belegt keine Sicht. Unlimited und Special bleiben in der generischen Reichweitenengine gesperrt; nur der spezielle Sending-Plan prüft bereits nachweisbare Empfänger und maximal 25 Wörter sowie eine separat bestätigte Blockade und das Risiko zwischen Ebenen (keine effektive Zauberausführung). Special, übrige unlimitiert reichende Zauber, 3D, Mehrfeldziele, tatsächliche Wirkungen und längere Zauberdauern bleiben offen. Tests: srd_spell_target_rules_test.dart und srd_spell_grid_target_rules_test.dart. Eine Ziel-/Wirkungsfreigabe folgt daraus nicht."
     },
     {
       "id": "RULE-SPELLS-SPELL-TARGETS",
