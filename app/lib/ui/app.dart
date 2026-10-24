@@ -25,6 +25,7 @@ import 'backend_settings_panel.dart';
 import 'backup_dialogs.dart';
 import 'character_editor.dart';
 import 'character_effect_dialog.dart';
+import 'confirmed_experience_reward_dialog.dart';
 import 'condition_effect_dialog.dart';
 import 'confirmed_spell_effect_dialog.dart';
 import 'hero_shield_reaction_dialog.dart';
@@ -1273,6 +1274,32 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previousMessageId);
   }
 
+  Future<void> _confirmExperienceReward() async {
+    final campaign = widget.controller.currentCampaign;
+    if (campaign == null ||
+        !_canInteract ||
+        !_outboxReady ||
+        campaign.hero.experience == null) {
+      return;
+    }
+    final choice = await showDialog<ConfirmedExperienceRewardChoice>(
+      context: context,
+      builder: (_) => ConfirmedExperienceRewardDialog(campaign: campaign),
+    );
+    if (choice == null || !mounted) return;
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    await widget.controller.confirmExperienceReward(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      rewardId: choice.rewardId,
+      amount: choice.amount,
+      requestId: choice.requestId,
+      playerConfirmed: true,
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
   Future<void> _confirmCharacterEffect() async {
     final campaign = widget.controller.currentCampaign;
     if (campaign == null || widget.controller.busy) return;
@@ -2403,6 +2430,21 @@ class _AdventurePageState extends State<_AdventurePage> {
                                 ),
                                 minHeight: 5,
                               ),
+                            const SizedBox(height: 10),
+                            FantasyTextButton(
+                              key: const ValueKey('adventure-confirm-xp-reward'),
+                              label: 'EP-Belohnung bestätigen',
+                              icon: Icons.stars_outlined,
+                              style: FantasyButtonStyle.woodGold,
+                              onPressed: !_canInteract ||
+                                      !_outboxReady ||
+                                      campaign.hero.experience == null ||
+                                      campaign.pendingRoll != null ||
+                                      campaign.pendingDeathSave != null ||
+                                      campaign.pendingEnemyShieldHit != null
+                                  ? null
+                                  : _confirmExperienceReward,
+                            ),
                             if (CampaignExperience.canLevelUp(campaign.hero))
                               FantasyTextButton(
                                 key: const ValueKey('adventure-levelup-ready'),

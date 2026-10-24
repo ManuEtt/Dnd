@@ -1,3 +1,12 @@
+## 24.10.2026 – Manuelle XP-Bestätigung als Fantasy-Dialog
+
+- Abenteueransicht: `EP-Belohnung bestätigen` unmittelbar neben dem EP-Fortschritt. Quittung nur nach positiver Auswahl.
+- Neuer responsiver Fantasy-Dialog für vorhandene bestätigte EP, Belohnungskennung, 1–100.000 EP, eindeutige Nutzervorschau und eindeutige Schaltflächen `Abbrechen`/`EP verbindlich bestätigen`.
+- Identische Request-ID aus Kampagnenbelohnungskennung, auch nach Neustart oder verlorener SQLite-Antwort; keine Doppelbuchung.
+- Widget-/End-to-End-Regressionen für 320/360dp, große Schrift, Validierungen und SQLite-Commit ergänzt. Eigene CI ist erst nach PR zu prüfen; Gerätetest ausstehend.
+
+---
+
 ## 24.10.2026 – Transaktionale, bestätigte XP-Aktion (API, UI noch ausstehend)
 
 - Regelengine nimmt nur ausdrücklich bestätigte XP-Zuteilungen mit stabilen Reward-/Request-IDs und positivem XP-Betrag an.

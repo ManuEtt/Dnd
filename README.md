@@ -6,6 +6,9 @@
 
 ## Aktueller Stand und autonome Fortsetzung (23.10.2026)
 
+> **24.10.2026 – Neue Fantasy-EP-Bestätigung:** In der Abenteueransicht steht ein manueller Bestätigungsdialog bereit. Er zeigt EP vor/nach der Vergabe, prüft eindeutige Kennung und maximal 100.000 EP pro Buchung, bietet `Abbrechen` oder eine ausdrückliche Bestätigung und verwendet eine stabile Kennung für den Neustart-/Wiederholungsfall. Die geprüfte Controller-/SQLite-API stammt aus [PR #149](https://github.com/ManuEtt/Dnd/pull/149) mit [grüner CI #40058692527](https://github.com/ManuEtt/Dnd/actions/runs/40058692527); **die neue Dialog-UI ist bis zur eigenen GitHub-CI nicht getestet**. Keine Veränderung an Datenformat oder App-Version, kein automatisches Schließen von Meilensteinen durch KI-Erzählung.
+
+
 > **Neues XP-Integrationspaket (24.10.2026):** `GameEngine.confirmExperienceReward` und `GameController.confirmExperienceReward` verlangen eine ausdrückliche Bestätigung, positive EP, eindeutige Reward-/Request-IDs und eine aktuelle Spielstandsrevision. Die bestehende SQLite-Transaktion speichert XP, Heldenarchiv, revisionsgebundenen Snapshot und `xp.reward.confirmed`-Ereignis gemeinsam. Nach verlorener Bestätigungsantwort/Neustart wird dieselbe Kennung nur quittiert; abweichender Betrag, fremde Kennung und stale Revision werden abgelehnt. Neue SQLite- und Domain-Tests wurden geschrieben; **letzter CI-Stand: #40058169046 mit 1.439 bestandenen und einem an der Testvorbedingung gescheiterten Test; neuer Recovery-Branch fix/confirmed-xp-ci-recovery-20261024 korrigiert die Revision, dessen CI steht aus**. Noch kein UI-Dialog, keine neue Datenmigration, kein Android-Gerätetest. Gestapelt auf [PR #146](https://github.com/ManuEtt/Dnd/pull/146), dessen vollständige [CI #40056990387](https://github.com/ManuEtt/Dnd/actions/runs/40056990387) auf `97d0075df0a4a2d78a35662f8ee16fd5b247513b` erfolgreich abgeschlossen ist.
 
 

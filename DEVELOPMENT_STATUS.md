@@ -1,3 +1,12 @@
+## 24.10.2026 – EP-Dialog und direkter Abenteuer-Einstieg
+
+- **IMPLEMENTIERT:** `ConfirmedExperienceRewardDialog` mit expliziter Nutzerauswahl, Vorher-/Nachher-EP, eigenständiger Belohnungskennung, dauerhafter Anfrage-ID und Hinweis auf schon gespeicherte Buchung. `app.dart` ruft nur bei bestätigtem Dialog-Ergebnis die vorhandene `GameController.confirmExperienceReward`-Transaktion auf.
+- **TESTS GESCHRIEBEN:** Widgettests bei 320/360dp, hoher Textskalierung, Abbrechen, falschen Werten, unverifizierten historischen EP und Doppelbuchungs-Vorschau. UI-/SQLite-Integrationstest klickt Abenteuer-Belohnung und prüft ein bestätigtes Event ohne Duplikat. Neue CI noch ausstehend; keine Behauptung einer erfolgreichen Geräteabnahme.
+- **ABHÄNGIGKEIT:** Basis PR #149 mit CI #40058692527 (success) auf SHA `cfea52f2903fd0ce63a22de19ba61b1aa31e7497`, gestapelter Feature-PR wird nach dessen Merge neu auf main geprüft. **NICHT GETESTET:** eigenständiger UI-HEAD bis zum finalen CI; Android-Echtgerät/Screenreader. **NOCH NICHT IMPLEMENTIERT:** bestätigte KI-Meilenstein-Vorschläge mit sicherem deduplizierten UI-Workflow.
+- **KOMPATIBILITÄT:** SQLite 2, JSON 1, Version 0.8.36+86 unverändert; kein automatischer KI-Regelzugriff. **NÄCHSTER SCHRITT:** neue UI-CI prüfen, Fehler beheben und nach vorgelagertem Merge retargeten.
+
+---
+
 ## 24.10.2026 – Bestätigte XP-Belohnung mit Ereignis- und Revisionsschutz
 
 - **IMPLEMENTIERT:** `GameEngine.confirmExperienceReward` erzeugt nach expliziter Spielerbestätigung ein getyptes XP-Event mit eindeutiger Anfragekennung; `GameController.confirmExperienceReward` schützt veraltete Revisionen und quittiert identische persistierte Bestätigungen nach Neustart ohne doppelte EP. Geschützte Story-/Regel-Grenze bleibt erhalten.
