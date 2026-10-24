@@ -22,6 +22,19 @@
 
 ---
 
+## 24.10.2026 – Aktiver Sending-Unicode-Sicherheitszyklus (PR #155)
+
+- **LIVE:** main `b6b0fdb` (PR #154 bereits integriert), neuer Draft-PR [#155](https://github.com/ManuEtt/Dnd/pull/155). Main-Workflow #40074505420 bei Beginn noch aktiv.
+- **IMPLEMENTIERT:** Neue Fail-Closed-Sperren gegen unsichtbare Unicode-Zeichen in Nachricht und Empfänger-ID, plus Domain-/Integrationstests; SRD-ID `SPELL-ENTRY-SENDING` weiterhin partial.
+- **GETESTET:** JS-RegExp-Sanity-Check. Vorherige vollständige grüne CI [#40072501279](https://github.com/ManuEtt/Dnd/actions/runs/40072501279) auf `05fc6dd` belegt diesen PR nicht.
+- **NICHT GETESTET:** Dart-Format, Flutter-Tests/Analyse, Android-/APK-Build und Realgerät auf neuem Branch.
+- **BLOCKIERT:** Dart-/Flutter-/Android-SDK und reales Testgerät lokal nicht verfügbar.
+- **NOCH NICHT IMPLEMENTIERT:** Persistenter tatsächlicher Sending-Cast und Nachrichtenzustellung.
+- **KOMPATIBILITÄT:** 0.8.37+87, SQLite 2 und Export-JSON 1 unverändert.
+- **NÄCHSTER SCHRITT:** Finale GitHub-CI für PR #155 auf letzter Revision prüfen und gegebenenfalls reparieren, bevor der PR für Integration freigegeben wird.
+
+---
+
 ## 24.10.2026 – Sending-Vorprüfung: vollständige Flutter-/Android-CI erfolgreich
 
 - **GETESTET:** [GitHub-Actions #40071729227](https://github.com/ManuEtt/Dnd/actions/runs/40071729227) **completed/success** auf funktionalem Code `efed3d732459478b072452ab8e92ef3c674e39fd`: Python/Backend, Dart-Format/Analyse, Flutter-Gesamtsuite einschließlich neuer Klassen-/Slot-/Komponenten-/W100-Tests, Android-Debug, native Tests, ABI-APKs, vollständige Release- und Source-Artefakte. [PR #154](https://github.com/ManuEtt/Dnd/pull/154) ist weiterhin offen und konfliktfrei, `main` unverändert.

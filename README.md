@@ -1,5 +1,7 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+**Aktuelle Integration:** PR #155 wurde in `main` als `4c6040c` integriert. Die bestätigte Sending-Slotbuchung aus PR #156 wurde anschließend konfliktfrei mit diesem Stand kombiniert; **eine neue gemeinsame CI ist erforderlich**. Ältere PR-Statusangaben unten sind historische Entwicklungsstände.
+
 ### Abgenommener Sending-Versuch: Slot & Ereignis (24.10.2026)
 
 [PR #156](https://github.com/ManuEtt/Dnd/pull/156) wurde auf ausführbarem Code-Commit `2566a84e9a5f3c374c0ca0efd2f0ec558cc5bbfe` in der [vollständigen GitHub-CI #40078375498](https://github.com/ManuEtt/Dnd/actions/runs/40078375498) erfolgreich geprüft: Python, Backend, Dart-Format, Flutter-Analyse und komplette Tests, Android-Debug/native Tests, kleine Alpha-APKs und Quell-Checkpoint. Eine versehentlich duplizierte Quellcodepassage und anfängliche Dart-Formatfehler wurden vor der grünen Abnahme behoben; der temporäre Diagnoseworkflow ist entfernt. [Alpha-APKs](https://github.com/ManuEtt/Dnd/actions/runs/40078375498/artifacts/12554522162) · [Debug-APK](https://github.com/ManuEtt/Dnd/actions/runs/40078375498/artifacts/12554482327) · [Source-Checkpoint](https://github.com/ManuEtt/Dnd/actions/runs/40078375498/artifacts/12554527162).
@@ -12,6 +14,18 @@ Die neue API bestätigt nur **Sending-Versuch und Slotverbrauch mit atomarem SQL
 [Draft-PR #156](https://github.com/ManuEtt/Dnd/pull/156) ergänzt den bisherigen **rein lesenden** Sending-Preview um eine **separate ausdrückliche Bestätigung**: Ein unveränderter Heldenzustand wird vor der Ressourcenbuchung überprüft, ein passender Slot genau einmal im SQLite-Spielstand gebucht und `spell.sending.attemptConfirmed` atomar journalisiert. Wiederholte identische Anfrage-IDs werden nach Neustart als bereits gesichert quittiert, abweichende IDs/Inhalte und alte Revisionen abgelehnt. Laufende Kämpfe und offene Würfe bleiben gesperrt. **Keine automatische Nachrichtenzustellung, KI-Antwort oder Behauptung eines Empfangs**. Domain-/SQLite-Regressionstests hinzugefügt, neue CI-Auswertung für dieses Paket noch erforderlich. App 0.8.37+87, SQLite 2 und Kampagnen-JSON 1 unverändert.
 
 Die vorherige Unicode-Korrektur [PR #155](https://github.com/ManuEtt/Dnd/pull/155) ist separat vollständig grün, aber nicht Bestandteil dieses von main gestarteten Inkrements. Sie wird nicht überschrieben.
+
+
+### Bestätigte CI für Sending-Unicode (24.10.2026)
+
+Der ausführbare Code aus [PR #155](https://github.com/ManuEtt/Dnd/pull/155) (`1db4830778d69b5d2f8c8903bb71e75cc211919f`) ist in der [vollständigen GitHub-CI #40075349670](https://github.com/ManuEtt/Dnd/actions/runs/40075349670) mit **success** geprüft: Python, Backend, Dart-Format und Flutter-Analyse, gesamte Flutter-Suite, Android-Debug-APK, native Android-Tests, kleine Alpha-APKs und Release-/Source-Artefakte. Der erste Dart-Formatfehler wurde vor diesem erfolgreichen Lauf korrigiert. [Alpha-APKs](https://github.com/ManuEtt/Dnd/actions/runs/40075349670/artifacts/12553380888) · [Debug-APK](https://github.com/ManuEtt/Dnd/actions/runs/40075349670/artifacts/12552987060) · [Quellcode-Checkpoint](https://github.com/ManuEtt/Dnd/actions/runs/40075349670/artifacts/12553435809). Eine **Geräteinstallation, ein Altspielstand-Update und produktive Signierung** wurden nicht getestet. App-Version, SQLite und Exportformat unverändert. Dieser reine Dokumentationsnachtrag ändert den ausführbaren Code nicht.
+
+
+### Aktueller Entwicklungszyklus: Sending-Eingabeintegrität (24.10.2026)
+
+[Draft-PR #155](https://github.com/ManuEtt/Dnd/pull/155) härtet die vorhandene Sending-Vorprüfung gegen weitere unsichtbare Unicode-Format-/Annotationszeichen (U+00AD, U+034F, U+061C, U+180E, U+2061–U+206F und U+FFF9–U+FFFB). Neue Domain- und Casting-Preview-Regressionen prüfen Nachrichten, Empfängerkennungen und falsche 26-Wort-Eingaben. Die 25-Wörter-Regel und bestehende deutsche Nachrichten mit Tab/Zeilenumbruch bleiben bestehen. **Keine Ressourcenbuchung, Datenmigration oder neue App-Version.**
+
+Live-Basis `main` `b6b0fdb`; PR #154 ist bereits integriert. Main-CI [#40074505420](https://github.com/ManuEtt/Dnd/actions/runs/40074505420) lief bei Bestandsaufnahme; die erfolgreiche [Vorläufer-CI #40072501279](https://github.com/ManuEtt/Dnd/actions/runs/40072501279) testet den neuen Branch **nicht**. Nur lokaler Regex-Sanity-Check durchgeführt, Flutter-/Android-PR-CI ausstehend. [Aktueller Checkpoint](docs/CODEX_CHECKPOINT.md).
 
 
 ### Fantasy-EP-Dialog in der Abenteueransicht (Integrations-PR #151)
