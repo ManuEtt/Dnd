@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -15,6 +16,8 @@ class _LostAckRepository implements CampaignRepository {
   _LostAckRepository(this.db);
   final CampaignRepository db;
   bool loseResponse = false;
+  Completer<void>? saveEntered;
+  Completer<void>? saveBarrier;
 
   @override
   Future<void> saveCampaign(
@@ -22,6 +25,10 @@ class _LostAckRepository implements CampaignRepository {
     List<GameEvent> events = const [],
     int? expectedRevision,
   }) async {
+    if (saveEntered != null && !saveEntered!.isCompleted) {
+      saveEntered!.complete();
+    }
+    await saveBarrier?.future;
     await db.saveCampaign(campaign, events: events, expectedRevision: expectedRevision);
     if (loseResponse) {
       loseResponse = false;
@@ -155,6 +162,50 @@ void main() {
     await award(id: 'xp-003', rewardId: 'quest-003', revision: 0);
     expect(controller.error, contains('inzwischen geändert'));
     expect((await sqlite.getCampaign(initial.id))!.toJson(), persisted.toJson());
+  });
+
+  test('zwei Controller quittieren gleiche ID trotz parallelem SQLite-Commit', () async {
+    final initial = controller.currentCampaign!;
+    final second = GameController(repository: sqlite);
+    try {
+      await second.initialize();
+      expect(second.currentCampaign!.id, initial.id);
+      repository.saveEntered = Completer<void>();
+      repository.saveBarrier = Completer<void>();
+      final firstAttempt = controller.confirmExperienceReward(
+        campaignId: initial.id, expectedRevision: initial.revision,
+        rewardId: 'quest-parallel', amount: 300,
+        requestId: 'xp-parallel-001', playerConfirmed: true,
+      );
+      await repository.saveEntered!.future.timeout(const Duration(seconds: 5));
+      // Another controller commits the exact same request while the first
+      // one has not reached its SQLite revision check.
+      await second.confirmExperienceReward(
+        campaignId: initial.id, expectedRevision: initial.revision,
+        rewardId: 'quest-parallel', amount: 300,
+        requestId: 'xp-parallel-001', playerConfirmed: true,
+      );
+      expect(second.error, isNull);
+      final confirmed = second.currentCampaign!;
+      repository.saveBarrier!.complete();
+      await firstAttempt;
+      expect(controller.error, isNull);
+      expect(controller.currentCampaign!.toJson(), confirmed.toJson());
+      expect(confirmed.hero.experience, 300);
+      expect(
+        confirmed.events.where(
+          (event) => event.payload['actionRequestId'] == 'xp-parallel-001',
+        ),
+        hasLength(1),
+      );
+      expect((await sqlite.getCampaign(initial.id))!.toJson(), confirmed.toJson());
+    } finally {
+      if (repository.saveBarrier != null &&
+          !repository.saveBarrier!.isCompleted) {
+        repository.saveBarrier!.complete();
+      }
+      second.dispose();
+    }
   });
 
   test('SQL-Fehler rollt XP, Journal, Revision und Heldenarchiv zurück', () async {
