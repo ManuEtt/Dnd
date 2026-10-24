@@ -8,7 +8,6 @@ import 'package:lebendiger_spielleiter/data/campaign_repository.dart';
 import 'package:lebendiger_spielleiter/data/sqlite_campaign_repository.dart';
 import 'package:lebendiger_spielleiter/domain/campaign_experience.dart';
 import 'package:lebendiger_spielleiter/domain/game_engine.dart';
-import 'package:lebendiger_spielleiter/domain/models.dart';
 
 void main() {
   sqfliteFfiInit();
