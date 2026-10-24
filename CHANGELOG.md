@@ -1,3 +1,13 @@
+## 24.10.2026 – Sending-Bestätigungsdialog (neuer Entwicklungsbranch, CI offen)
+
+- Deutschsprachiger, scrollbarer Dialog für Empfänger, Nachricht, Klasse/Zauberplatz und manuell bestätigte SRD-Fakten. Vor Bestätigung keine Zustandänderung, Eingabeänderung widerruft Zustimmung.
+- Statusvorschau für verbleibende Slots und unbekannte/blockierte/planar fehlgeschlagene Zustellung; `Sending` in der Abenteueransicht nur außerhalb aktiver Kämpfe/offener Würfe.
+- Bestehender Controller schreibt ausschließlich lokale Slot-/SQLite-Quittung; UI zeigt Erfolg nur bei gespeichertem passendem Ereignis. Keine echte magische Zustellung.
+- Neue Widget- und SQLite-Integrationsregressionen; `main` vor der Änderung vollständig grün in CI #40084074765, neue PR-CI noch ausstehend.
+- Keine Änderung an App-Version, Datenbankschema, Export-JSON oder SRD-`partial`-Status.
+
+---
+
 ## 24.10.2026 – Sending-Slot-/Journal-Code vollständig CI-grün (PR #156)
 
 - [Workflow #40078375498](https://github.com/ManuEtt/Dnd/actions/runs/40078375498) auf ausführbarem SHA `2566a84e` erfolgreich: Python/Backend, Dart/Flutter inklusive neuer SQLite-Regressionen, nativer Android-Test, Debug-/ABI-Alpha-Artefakte und Source-ZIP.

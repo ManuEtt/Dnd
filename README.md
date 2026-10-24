@@ -1,5 +1,11 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+### Sending-Dialog für explizit bestätigten Zauberversuch (Entwicklungsbranch, 24.10.2026)
+
+Der neue `SendingAttemptDialog` wird in der Abenteueransicht nur für Helden mit vorbereitetem `Sending` angeboten. Alle Fakten (Kreatur/Empfängerkenntnis, verfügbare Aktion/Slotbegrenzung, V/S/Kupferdraht, Slot/Klasse, Blockade/Ebene und gegebenenfalls W100) sind manuell zu bestätigen; der originale Text bleibt unverändert. Die Vorschau zeigt verbleibende Zauberplätze und ausdrücklich **keine reale Nachrichtenzustellung**. Nach Zustimmung bucht ausschließlich `GameController.confirmSendingAttempt` den Ressourcenverbrauch und das atomare SQLite-Ereignis. Stale-Revisionsschutz, Sperre bei offenen Würfen/Kämpfen und doppelte Aufrufe bleiben erhalten. Dialog- und Android-Integrationstests sind neu; **CI dieses neuen Pakets steht aus**. [Sending-Regeldokument](docs/SRD_SENDING_MESSAGE_RULES_20261023.md).
+
+**Basisnachweis:** Nach Merge von PR #156 ist die vollständige [Main-CI #40084074765](https://github.com/ManuEtt/Dnd/actions/runs/40084074765) auf `3b5affde4bf4ff5be24ab31f1c4ec39412f66867` erfolgreich abgeschlossen. Der neue UI-Branch hat noch keinen eigenen Testerfolg. App `0.8.37+87`, SQLite 2 und Export-JSON 1 unverändert; reale Geräteabnahme und produktive Signierung weiter offen.
+
 **Aktuelle Integration:** PR #155 wurde in `main` als `4c6040c` integriert. Die bestätigte Sending-Slotbuchung aus PR #156 wurde anschließend konfliktfrei mit diesem Stand kombiniert; **eine neue gemeinsame CI ist erforderlich**. Ältere PR-Statusangaben unten sind historische Entwicklungsstände.
 
 ### Abgenommener Sending-Versuch: Slot & Ereignis (24.10.2026)
