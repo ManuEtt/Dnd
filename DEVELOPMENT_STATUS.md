@@ -1,29 +1,25 @@
-## 24.10.2026 – Bestätigte XP-Belohnung mit Ereignis- und Revisionsschutz
+## 24.10.2026 – Integrierte EP-Sicherung auf aktuellem Schurken-/Kampfstand
 
-- **IMPLEMENTIERT:** `GameEngine.confirmExperienceReward` erzeugt nach expliziter Spielerbestätigung ein getyptes XP-Event mit eindeutiger Anfragekennung; `GameController.confirmExperienceReward` schützt veraltete Revisionen und quittiert identische persistierte Bestätigungen nach Neustart ohne doppelte EP. Geschützte Story-/Regel-Grenze bleibt erhalten.
-- **TESTS GESCHRIEBEN:** `app/test/confirmed_xp_reward_storage_test.dart` für Bestätigungspflicht, ungültige Eingaben, SQLite-Transaktion/Archive, verlorene Antwort, identischen und widersprüchlichen Retry, Neustart, stale Revision und SQL-Rollback. Keine externen KI-Kosten.
-- **GETESTET:** Erfolgreiche Vorläufer-CI #40056990387 für PR #146 auf `97d0075df0a4a2d78a35662f8ee16fd5b247513b`; **NICHT GETESTET:** eigener neuer Branch bis zum Abschluss dessen CI, echtes Android-Upgrade/Backups. **BLOCKIERT:** lokales Flutter/Android-SDK und Testgerät nicht vorhanden. **NOCH NICHT IMPLEMENTIERT:** Nutzeroberfläche zur Vorschau/Bestätigung von XP; SRD-Restinventur.
-- **DATENFORMAT:** SQLite 2, JSON 1 unverändert; alter Spielstand und Spielregel bleiben kompatibel, keine Änderungen an Gratis-/KI-Provider. **NÄCHSTER SCHRITT:** neue PR-CI prüfen und gegebenenfalls Codefehler beheben, dann UI-Inkrement mit manueller Bestätigung und klarer Quittung.
+- **IMPLEMENTIERT:** Die bisher getrennten Korrekturen aus PR #149 wurden gegen `main` `f99f27ac` als konfliktaufgelöster Merge zusammengesetzt: fehlerhafte Rabenwacht-XP-Marker werden abgelehnt; `GameEngine.confirmExperienceReward` und `GameController.confirmExperienceReward` sichern ausschließlich ausdrücklich bestätigte, idempotente XP-Ereignisse und SQLite-Revisionsrennen.
+- **REGRESSIONSTESTS ÜBERNOMMEN:** beschädigte Marker und SQLite-Neustart, Request-ID-Duplikate, abweichende Belohnungen, konkurrierende Controller, Rollback und alte Revision. Die zuvor in `main` integrierte Schurken-/Kampfimplementierung bleibt erhalten.
+- **GETESTET:** Vorläufer-PR #149 hatte erfolgreiche GitHub-CI auf `cfea52f2`; `main` hatte erfolgreiche CI auf `f99f27ac`. **NICHT GETESTET:** die jetzt neu zusammengeführte Kombination bis zum eigenen GitHub-Actions-Lauf. Kein reales Android-Gerät geprüft.
+- **KOMPATIBILITÄT:** DB-Schema 2 und Export-JSON-Schema 1 bleiben unverändert. Fantasy-EP-Dialoge der alternativen PRs #150/#151 sind noch getrennt zu prüfen; SRD-Sending aus PR #144 bleibt unabhängig.
 
----
+## 24.10.2026 – Integration des Main-XP-Fixes aus PR #145
 
-## 24.10.2026 – Rabenwacht-EP-Markerintegrität und SQLite-Neustart-Regression
-
-- **IMPLEMENTIERT:** `CampaignExperience.awardOnce` sperrt vorhandene fehlerhafte Belohnungsfakten mit `FormatException` (kein zweiter XP-Zuwachs, keine automatische Datenreparatur).
-- **TESTS ERSTELLT:** Zusätzlicher Domänentest für korrupte Marker nach JSON-Ladevorgang; neuer `rabenwacht_xp_sqlite_test.dart` durchläuft Spielentscheidungen bis zur Mühle, SQLite-Commit und Neustart, doppelte Belohnung, widersprüchlichen Marker und veralteten Schreibversuch.
-- **BESTÄTIGTE BASIS:** `main` `5958579e5321338bb7b4e46abb859fd3bfd1515f` mit CI #40012217485, vorgelagerter PR #145-Head `41da7ee40344fe0fb03ecedb505ea3e39662b25b` mit [CI #40014984206](https://github.com/ManuEtt/Dnd/actions/runs/40014984206) **success**. Eigene neue CI erst nach PR-Erstellung auswerten; nicht den Basislauf als Beweis verwenden.
-- **NICHT GETESTET:** Echtgerät, Installationsupgrade, Provider, neuer finaler PR-HEAD vor eigener CI. **BLOCKIERT:** Flutter-/Android-SDK lokal nicht installiert. **NOCH NICHT IMPLEMENTIERT:** autorisierte XP-Zuweisung durch den Controller mit Request-ID und expliziter Bestätigung.
-- **KOMPATIBILITÄT:** DB-Schema 2, Kampagnen-JSON 1 unverändert; keine automatische Änderung von Bestandsdaten. Nächste Aufgabe nach CI/gestapeltem PR-Merge: XP-Befehle mit GameController-Eventjournal atomar bestätigen und mit Race-/Neustart-Tests absichern.
+Main1c2eeab wird mit dem bestehenden Sneak-Attack-Paket vereinigt. XP-Belohnungs-ID und Betrag müssen bei einer Wiederholung zusammenpassen; beschädigte Belege werden ohne Mutation abgewiesen. Die zwei Main-Regressionstests bleiben erhalten. Neue gemeinsame Prüfung ausstehend; bisherige Nachweise beziehen sich auf bfc991f vor dieser Integration.
 
 ---
 
-## 23.10.2026 – XP-Belohnungs-ID-Konflikt fail-closed (Branch `fix/xp-reward-id-conflict-20261023`)
+## Aktuell – 0.8.37+87, 23.10.2026
 
-- **IMPLEMENTIERT:** Identische XP-Belohnungs-ID wird in `ExperienceProgression.grant` nur bei exakt gleichem gespeichertem Betrag idempotent bestätigt. Anderer/defekter Betrag löst `FormatException` aus; ursprüngliche Kampagne bleibt unverändert.
-- **REGRESSIONSTESTS ERSTELLT:** `app/test/experience_progression_test.dart` prüft Roundtrip-Duplikat, Widerspruch und beschädigten Historieneintrag.
-- **GETESTET:** Main-Baseline `5958579e5321338bb7b4e46abb859fd3bfd1515f` mit GitHub-CI [#40012217485](https://github.com/ManuEtt/Dnd/actions/runs/40012217485) erfolgreich, nicht neuer Branch. **NICHT GETESTET:** neuer Flutter-Code-HEAD bis CI fertig ist. **BLOCKIERT:** Flutter/Android lokal nicht installiert; reales Android-Gerät nicht verfügbar.
-- **KOMPATIBILITÄT:** Keine SQLite-/JSON-Migration, unveränderte SRD-Regelmechanik und KI-/Story-Grenze. `0.8.36+86` bleibt vorerst unverändert wegen parallelem PR #144.
-- **NÄCHSTER KONKRETER SCHRITT:** Finale PR-CI/Flutter-Tests auswerten, dann idempotentes persistentes XP-Gutschriftjournal inklusive GameController-/SQLite-Revisionen gesondert testen.
+Basis main5958579, Code0a56aba, Branch feature/sneak-attack-ally-integration-20261023. Operative Fakten und Wiederaufnahme: [docs/CODEX_CHECKPOINT.md](docs/CODEX_CHECKPOINT.md); ältere Einträge unten sind datierte Historie.
+
+**IMPLEMENTIERT:** Hauptwaffen-Sneak-Attack über bestätigten Verbündeten mit echter UI, ziel-/wurfgebundener Speicherung, Schadensauflösung und Revisionsschutz. Die bestehende Regel-/Story-Grenze verhindert narrative Bestätigungen.
+
+**GETESTET:** 1.431 Flutter-Tests der normalisierten Basis, 11 neue Domain-/SQLite- und 6 neue Widgettests, aktuelle Analyse/Formatierung, Python100 und Backend31. Vollständige neue Suite mit **1.448 Flutter-Tests erfolgreich**; Debug-APK inklusive CRC/Metadaten/Signatur und12 native Tests erfolgreich; [PR147](https://github.com/ManuEtt/Dnd/pull/147) erstellt, [Code-CI40056875863](https://github.com/ManuEtt/Dnd/actions/runs/40056875863) auf182f44b vollständig erfolgreich, Realgerät nicht getestet. ARM64-Alpha19,7MB erfolgreich gebaut und geprüft. Frühere Item-WIP-Dateien separat gesichert, kein Überschreiben aktueller Main-Modelle.
+
+**NÄCHSTER KONKRETER SCHRITT:** Tatsächlich angreifende Nebenhandwaffe für Sneak-Attack-Eignung verwenden und denselben sicheren Bestätigungspfad anbinden; aktuelle Hauptwaffe, alte Spielstände und einmalige Zugnutzung regressionsfrei erhalten.
 
 ---
 
@@ -1120,3 +1116,16 @@ nicht durch die Wahl eines Merkmaltexts aktiviert.
 Lokale Python-Projekttests ausgeführt; Flutter-Test, Flutter-Analyse und
 Android-Build noch auf GitHub mit Flutter-SDK ausführen. Neues Inkrement
 nicht als abgenommene Android-Version bezeichnen.
+
+
+## Übernommener Status aus Main145 (historisch)
+
+## 23.10.2026 – XP-Belohnungs-ID-Konflikt fail-closed (Branch `fix/xp-reward-id-conflict-20261023`)
+
+- **IMPLEMENTIERT:** Identische XP-Belohnungs-ID wird in `ExperienceProgression.grant` nur bei exakt gleichem gespeichertem Betrag idempotent bestätigt. Anderer/defekter Betrag löst `FormatException` aus; ursprüngliche Kampagne bleibt unverändert.
+- **REGRESSIONSTESTS ERSTELLT:** `app/test/experience_progression_test.dart` prüft Roundtrip-Duplikat, Widerspruch und beschädigten Historieneintrag.
+- **GETESTET:** Main-Baseline `5958579e5321338bb7b4e46abb859fd3bfd1515f` mit GitHub-CI [#40012217485](https://github.com/ManuEtt/Dnd/actions/runs/40012217485) erfolgreich, nicht neuer Branch. **NICHT GETESTET:** neuer Flutter-Code-HEAD bis CI fertig ist. **BLOCKIERT:** Flutter/Android lokal nicht installiert; reales Android-Gerät nicht verfügbar.
+- **KOMPATIBILITÄT:** Keine SQLite-/JSON-Migration, unveränderte SRD-Regelmechanik und KI-/Story-Grenze. `0.8.36+86` bleibt vorerst unverändert wegen parallelem PR #144.
+- **NÄCHSTER KONKRETER SCHRITT:** Finale PR-CI/Flutter-Tests auswerten, dann idempotentes persistentes XP-Gutschriftjournal inklusive GameController-/SQLite-Revisionen gesondert testen.
+
+---

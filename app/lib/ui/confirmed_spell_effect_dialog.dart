@@ -100,7 +100,8 @@ class _ConfirmedSpellEffectDialogState
     }
     if (_bound && widget.hero.concentratingOn != name) {
       setState(
-        () => _error = 'Zuerst aktive Konzentration auf diesen Zauber bestätigen.',
+        () => _error =
+            'Zuerst aktive Konzentration auf diesen Zauber bestätigen.',
       );
       return;
     }
@@ -162,7 +163,9 @@ class _ConfirmedSpellEffectDialogState
                   key: const ValueKey('spell-effect-name'),
                   isExpanded: true,
                   initialValue: _spellName,
-                  decoration: const InputDecoration(labelText: 'Bekannter Zauber'),
+                  decoration: const InputDecoration(
+                    labelText: 'Bekannter Zauber',
+                  ),
                   items: [
                     for (final name in known)
                       DropdownMenuItem(
@@ -189,7 +192,9 @@ class _ConfirmedSpellEffectDialogState
                   key: const ValueKey('spell-effect-duration'),
                   isExpanded: true,
                   initialValue: _ownTurnEnds,
-                  decoration: const InputDecoration(labelText: 'Bestätigtes Ende'),
+                  decoration: const InputDecoration(
+                    labelText: 'Bestätigtes Ende',
+                  ),
                   items: [
                     const DropdownMenuItem<int?>(
                       value: null,

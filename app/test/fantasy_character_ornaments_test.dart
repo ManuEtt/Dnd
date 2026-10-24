@@ -30,7 +30,9 @@ HeroCharacter _hero() => HeroCharacter(
 );
 
 void main() {
-  testWidgets('Runenporträt zeigt echten Kindinhalt unverändert', (tester) async {
+  testWidgets('Runenporträt zeigt echten Kindinhalt unverändert', (
+    tester,
+  ) async {
     var taps = 0;
     await tester.pumpWidget(
       MaterialApp(
@@ -49,8 +51,10 @@ void main() {
         ),
       ),
     );
-    expect(find.byKey(const ValueKey('sheet-portrait-medallion')),
-        findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('sheet-portrait-medallion')),
+      findsOneWidget,
+    );
     expect(find.byKey(const ValueKey('sheet-portrait-halo')), findsOneWidget);
     expect(find.text('Heldinnenporträt'), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('sheet-portrait-medallion')));
@@ -78,14 +82,22 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('sheet-parchment-abilities')),
-          findsOneWidget);
-      expect(find.byKey(const ValueKey('sheet-parchment-filigree')),
-          findsOneWidget);
-      expect(find.byKey(const ValueKey('sheet-panel-filigree')),
-          findsNWidgets(4));
-      expect(find.byKey(const ValueKey('sheet-preview-fertigkeiten')),
-          findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('sheet-parchment-abilities')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('sheet-parchment-filigree')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('sheet-panel-filigree')),
+        findsNWidgets(4),
+      );
+      expect(
+        find.byKey(const ValueKey('sheet-preview-fertigkeiten')),
+        findsOneWidget,
+      );
       final buttons = find.text('Alle anzeigen');
       await tester.ensureVisible(buttons.first);
       await tester.tap(buttons.first);
@@ -97,9 +109,7 @@ void main() {
     });
   }
 
-  testWidgets('320 dp + große Schrift: Rahmen bleiben passiv', (
-    tester,
-  ) async {
+  testWidgets('320 dp + große Schrift: Rahmen bleiben passiv', (tester) async {
     tester.view.physicalSize = const Size(320, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -107,9 +117,9 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            textScaler: const TextScaler.linear(1.4),
-          ),
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: const TextScaler.linear(1.4)),
           child: child!,
         ),
         home: Scaffold(
@@ -120,10 +130,14 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('sheet-parchment-filigree')),
-        findsOneWidget);
-    expect(find.byKey(const ValueKey('sheet-panel-filigree')),
-        findsNWidgets(4));
+    expect(
+      find.byKey(const ValueKey('sheet-parchment-filigree')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('sheet-panel-filigree')),
+      findsNWidgets(4),
+    );
     expect(tester.takeException(), isNull);
   });
 
@@ -133,17 +147,21 @@ void main() {
     final original = HeroCharacter(id: 'legacy', name: 'Unbekannte Heldin');
     final before = original.toJson();
     await tester.pumpWidget(
-      MaterialApp(
-        home: CharacterSheetPage(hero: original),
-      ),
+      MaterialApp(home: CharacterSheetPage(hero: original)),
     );
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('sheet-reference-header')),
-        findsOneWidget);
-    expect(find.byKey(const ValueKey('sheet-portrait-medallion')),
-        findsOneWidget);
-    expect(find.byKey(const ValueKey('sheet-avatar-placeholder')),
-        findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('sheet-reference-header')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('sheet-portrait-medallion')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('sheet-avatar-placeholder')),
+      findsOneWidget,
+    );
     expect(find.byKey(const ValueKey('sheet-hero-portrait')), findsNothing);
     expect(original.toJson(), before);
     expect(tester.takeException(), isNull);

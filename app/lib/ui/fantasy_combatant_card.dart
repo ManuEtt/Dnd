@@ -152,11 +152,7 @@ class FantasyCombatantCard extends StatelessWidget {
                       value: armorClass?.toString() ?? '?',
                       color: accent,
                     ),
-                    _CombatStatTag(
-                      label: 'TP',
-                      value: hp,
-                      color: accent,
-                    ),
+                    _CombatStatTag(label: 'TP', value: hp, color: accent),
                     if (isHero && temporaryHitPoints > 0)
                       _CombatStatTag(
                         label: 'TEMP',
@@ -169,10 +165,7 @@ class FantasyCombatantCard extends StatelessWidget {
                 if (progress == null)
                   const Text(
                     'Trefferpunkte nicht vollständig bestätigt',
-                    style: TextStyle(
-                      color: FantasyPalette.muted,
-                      fontSize: 11,
-                    ),
+                    style: TextStyle(color: FantasyPalette.muted, fontSize: 11),
                   )
                 else
                   Semantics(
@@ -233,10 +226,7 @@ class _CombatStatTag extends StatelessWidget {
           ),
           TextSpan(
             text: value,
-            style: const TextStyle(
-              color: FantasyPalette.ivory,
-              fontSize: 12,
-            ),
+            style: const TextStyle(color: FantasyPalette.ivory, fontSize: 12),
           ),
         ],
       ),

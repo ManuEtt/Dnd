@@ -517,9 +517,11 @@ void main() {
       findsOneWidget,
     );
     expect(
-      tester.widget<FantasyTextButton>(
-        find.byKey(const ValueKey('death-save-reroll-focus')),
-      ).style,
+      tester
+          .widget<FantasyTextButton>(
+            find.byKey(const ValueKey('death-save-reroll-focus')),
+          )
+          .style,
       FantasyButtonStyle.arcane,
     );
     expect(

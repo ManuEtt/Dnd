@@ -130,5 +130,4 @@ void main() {
     expect(find.text('Nach 3 eigenen Zugenden'), findsNothing);
     expect(tester.takeException(), isNull);
   });
-
 }

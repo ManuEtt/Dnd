@@ -153,10 +153,7 @@ class _ThreatSeal extends StatelessWidget {
             Text(
               label,
               softWrap: true,
-              style: const TextStyle(
-                fontSize: 12,
-                color: FantasyPalette.ivory,
-              ),
+              style: const TextStyle(fontSize: 12, color: FantasyPalette.ivory),
             ),
           ],
         ),

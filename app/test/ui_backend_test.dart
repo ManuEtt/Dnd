@@ -467,7 +467,10 @@ void main() {
       of: disconnect,
       matching: find.byWidgetPredicate((widget) => widget is FantasyTextButton),
     );
-    expect(tester.widget<FantasyTextButton>(disconnectButton).onPressed, isNotNull);
+    expect(
+      tester.widget<FantasyTextButton>(disconnectButton).onPressed,
+      isNotNull,
+    );
     await tester.tap(disconnect);
     await tester.pump();
     expect(controller.narrator.enabled, isFalse);

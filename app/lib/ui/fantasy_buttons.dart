@@ -54,6 +54,7 @@ class FantasyButton extends StatefulWidget {
   final String? tooltip;
   final VoidCallback? onSound;
   final double? minWidth;
+
   /// Narrow vertically stacked icon/label layout for three-column tab bars.
   final bool compact;
 
@@ -156,7 +157,8 @@ class _FantasyButtonState extends State<FantasyButton> {
               constraints: BoxConstraints(
                 minHeight: size,
                 minWidth:
-                    widget.minWidth ?? (widget.compact ? 0 : (iconOnly ? size : 108)),
+                    widget.minWidth ??
+                    (widget.compact ? 0 : (iconOnly ? size : 108)),
               ),
               child: Stack(
                 fit: StackFit.passthrough,

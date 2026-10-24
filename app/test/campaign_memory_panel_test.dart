@@ -42,8 +42,10 @@ void main() {
     expect(find.text('Offene Handlungsstränge'), findsOneWidget);
     expect(find.text('NPC-Beziehungen'), findsOneWidget);
     final create = find.byKey(const ValueKey('create-story-thread'));
-    expect(tester.widget<FantasyTextButton>(create).style,
-        FantasyButtonStyle.woodGold);
+    expect(
+      tester.widget<FantasyTextButton>(create).style,
+      FantasyButtonStyle.woodGold,
+    );
     await tester.ensureVisible(create);
     await tester.tap(create);
     await tester.pumpAndSettle();

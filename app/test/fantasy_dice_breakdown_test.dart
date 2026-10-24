@@ -18,9 +18,7 @@ GameEvent confirmed(String id, String type, Map<String, dynamic> payload) =>
 Widget chronicle(List<GameEvent> events) => MaterialApp(
   theme: buildFantasyTheme(),
   home: Scaffold(
-    body: ListView(
-      children: [FantasyCombatChronicle(events: events)],
-    ),
+    body: ListView(children: [FantasyCombatChronicle(events: events)]),
   ),
 );
 
@@ -159,11 +157,7 @@ void main() {
 
   test('Mehr als acht sichere Würfel zeigen gekennzeichneten Ausschnitt', () {
     final event = confirmed('many', 'dice.freeRoll', {
-      'roll': {
-        'rolls': List<int>.filled(12, 4),
-        'total': 48,
-        'modifier': 0,
-      },
+      'roll': {'rolls': List<int>.filled(12, 4), 'total': 48, 'modifier': 0},
     });
     final details = FantasyDiceBreakdown.describe(event);
     expect(details, hasLength(1));
@@ -181,9 +175,9 @@ void main() {
         'total': 14,
       },
     });
-    expect(
-      FantasyDiceBreakdown.describe(event),
-      ['KRITISCHER TREFFER bestätigt', 'Kritische Zusatzwürfel: 5, 2'],
-    );
+    expect(FantasyDiceBreakdown.describe(event), [
+      'KRITISCHER TREFFER bestätigt',
+      'Kritische Zusatzwürfel: 5, 2',
+    ]);
   });
 }

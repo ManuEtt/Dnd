@@ -52,7 +52,10 @@ void main() {
       expect(find.byKey(const ValueKey('enemy')), findsOneWidget);
       expect(find.text('Elowen'), findsOneWidget);
       expect(find.text('Schattenläufer'), findsOneWidget);
-      expect(find.byKey(const ValueKey('combatant-active-turn')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('combatant-active-turn')),
+        findsOneWidget,
+      );
       final hero = tester.widget<FantasyCombatantCard>(
         find.byKey(const ValueKey('hero')),
       );
@@ -87,9 +90,9 @@ void main() {
     expect(find.byType(LinearProgressIndicator), findsNothing);
     expect(find.byKey(const ValueKey('combatant-active-turn')), findsOneWidget);
     expect(
-      tester.widget<FantasyCombatantCard>(
-        find.byType(FantasyCombatantCard),
-      ).healthProgress,
+      tester
+          .widget<FantasyCombatantCard>(find.byType(FantasyCombatantCard))
+          .healthProgress,
       isNull,
     );
     expect(tester.takeException(), isNull);
