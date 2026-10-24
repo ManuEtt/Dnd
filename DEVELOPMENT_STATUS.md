@@ -1,3 +1,13 @@
+## 24.10.2026 – Backend-Rate-Limiter vor aktiver Quotenverdrängung geschützt (PR #162)
+
+**IMPLEMENTIERT:** Der bisher aktive Eintrag in `WindowLimiter` wird bei voller Kapazität nicht mehr verdrängt; abgelaufene Slots werden aufgeräumt, andernfalls neue Schlüssel fail-closed abgelehnt. Vorhandene Schlüssel bleiben begrenzt. Zwei neue Backend-Regressionen schützen Kontingentverbrauch, wechselnde Identitäten, Ablaufgrenzen und Zeitsprünge. Eigenständiger [PR #162](https://github.com/ManuEtt/Dnd/pull/162) basierend auf `main=b60ffe7`, offene PRs #159–#161 erhalten.
+
+**GETESTET:** vorherige [PR-#161-CI #40113090963](https://github.com/ManuEtt/Dnd/actions/runs/40113090963) grün, jedoch anderer Quellstand. **NICHT GETESTET:** endgültige PR-#162-Backend-/Android-CI bis zum echten Nachweis; physisches Android-Gerät und Signierung. **BLOCKIERT:** Geräteabnahme/Produktivschlüssel. **NOCH NICHT IMPLEMENTIERT:** mehrere Backends mit zentral verwalteter Quote. Version 0.8.38+88, SQLite2/Export-JSON1 und SRD-Anforderungsstatus unverändert.
+
+**Ein nächster Schritt:** finalen PR-#162-CI-Lauf auswerten, Fehler beheben, danach zur Review freigeben. [Checkpoint](docs/CODEX_CHECKPOINT.md) · [technischer Beleg](docs/BACKEND_LIMITER_CAPACITY_20261024.md).
+
+---
+
 ## 24.10.2026 – 0.8.38+88: tatsächliche Nebenhandwaffe für Hinterhältigen Angriff
 
 Die vorhandene Nebenhandauflösung prüft jetzt ihre bestätigte Inventarwaffe auf Finesse/Fernkampf. Ein Hauptdolch verleiht einer Nebenhandaxt keinen Zusatzschaden; ein Nebendolch verliert seine Eignung nicht durch eine Haupthandaxt. Krit/Miss und bestehende gemeinsame Zugnutzung bleiben erhalten. 27 bestehende/Helper- und acht neue Kampf-/SQLite-Tests erfolgreich. Vollständige lokale Abnahme: 1505 Flutter-,100 Python-,31 Backend- und12 native Tests erfolgreich, Format/Analyse/Importgrenzen ohne Befund. Neue Debug-APK und ARM64-Alpha gebaut und geprüft. Eigene finale GitHub-Checks am PR158 getrennt geführt; Realgerät nicht getestet. SQLite2/JSON1 kompatibel. Details und nächstes Paket: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md).
