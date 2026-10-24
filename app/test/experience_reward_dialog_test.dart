@@ -104,7 +104,7 @@ void main() {
     final campaign = GameEngine().createDemo();
     await openDialog(tester, campaign);
 
-    Future<void> assertBlocked() async {
+    void assertBlocked() {
       expect(
         tester
             .widget<FantasyTextButton>(
@@ -127,7 +127,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('xp-reward-consent')));
     await tester.pump();
     expect(find.textContaining('Eindeutige Kennung'), findsOneWidget);
-    await assertBlocked();
+    assertBlocked();
 
     await tester.enterText(
       find.byKey(const ValueKey('xp-reward-id')),
@@ -139,21 +139,21 @@ void main() {
     );
     await tester.pump();
     expect(find.textContaining('1 bis 100000 EP'), findsOneWidget);
-    await assertBlocked();
+    assertBlocked();
 
     await tester.enterText(
       find.byKey(const ValueKey('xp-reward-amount')),
       '100001',
     );
     await tester.pump();
-    await assertBlocked();
+    assertBlocked();
 
     await tester.enterText(
       find.byKey(const ValueKey('xp-reward-amount')),
       '300',
     );
     await tester.pump();
-    await assertBlocked(); // Editing always revokes the previous consent.
+    assertBlocked(); // Editing always revokes the previous consent.
 
     await tester.ensureVisible(find.byKey(const ValueKey('xp-reward-consent')));
     await tester.tap(find.byKey(const ValueKey('xp-reward-consent')));
@@ -172,7 +172,7 @@ void main() {
       '200',
     );
     await tester.pump();
-    await assertBlocked();
+    assertBlocked();
     expect(campaign.hero.experience, 0);
     expect(campaign.revision, 0);
     expect(campaign.events, isEmpty);
