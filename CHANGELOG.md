@@ -1,3 +1,9 @@
+## 24.10.2026 – 0.8.38+88: tatsächliche Nebenhandwaffe für Hinterhältigen Angriff
+
+Die vorhandene Nebenhandauflösung prüft jetzt ihre bestätigte Inventarwaffe auf Finesse/Fernkampf. Ein Hauptdolch verleiht einer Nebenhandaxt keinen Zusatzschaden; ein Nebendolch verliert seine Eignung nicht durch eine Haupthandaxt. Krit/Miss und bestehende gemeinsame Zugnutzung bleiben erhalten. 27 bestehende/Helper- und acht neue Kampf-/SQLite-Tests erfolgreich. Vollständige Suite, eigene CI und Android-Abnahme laufen; kein Geräteerfolg behauptet. SQLite2/JSON1 kompatibel. Details und nächstes Paket: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md).
+
+---
+
 ## 24.10.2026 – Sending-Bestätigungsdialog (neuer Entwicklungsbranch, CI offen)
 
 - Deutschsprachiger, scrollbarer Dialog für Empfänger, Nachricht, Klasse/Zauberplatz und manuell bestätigte SRD-Fakten. Vor Bestätigung keine Zustandänderung, Eingabeänderung widerruft Zustimmung.

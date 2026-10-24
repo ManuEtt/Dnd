@@ -1,3 +1,9 @@
+## 24.10.2026 – 0.8.38+88: tatsächliche Nebenhandwaffe für Hinterhältigen Angriff
+
+Die vorhandene Nebenhandauflösung prüft jetzt ihre bestätigte Inventarwaffe auf Finesse/Fernkampf. Ein Hauptdolch verleiht einer Nebenhandaxt keinen Zusatzschaden; ein Nebendolch verliert seine Eignung nicht durch eine Haupthandaxt. Krit/Miss und bestehende gemeinsame Zugnutzung bleiben erhalten. 27 bestehende/Helper- und acht neue Kampf-/SQLite-Tests erfolgreich. Vollständige Suite, eigene CI und Android-Abnahme laufen; kein Geräteerfolg behauptet. SQLite2/JSON1 kompatibel. Details und nächstes Paket: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md).
+
+---
+
 ## 24.10.2026 – Sending-Dialog in der Abenteueransicht (PR-CI ausstehend)
 
 - **IMPLEMENTIERT:** Widget `SendingAttemptDialog` für ausdrücklich bestätigte Nachricht, Empfänger, Klasse, Slot, Kreatur, Komponenten, Aktionsökonomie und beobachtete Blockade/Ebenenfakten. Direkte Verbindung zur vorhandenen, idempotenten SQLite-`confirmSendingAttempt`-API. Bei Textänderung Zustimmung erneut erforderlich; Erfolg nur bei auditierbarem Beleg, keine Zustellungserzählung.

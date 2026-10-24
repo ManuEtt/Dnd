@@ -1,3 +1,9 @@
+## Operativer Checkpoint 24.10.2026 – 0.8.38+88
+
+Aktueller Branch, Prüfungen und Fortsetzung: [docs/CODEX_CHECKPOINT.md](docs/CODEX_CHECKPOINT.md). Alle folgenden Einträge sind historische Stände.
+
+---
+
 ## Aktueller operativer Checkpoint (23.10.2026)
 
 Version0.8.37+87, funktionaler Code0a56aba, Basis-main5958579. Verbindlicher aktueller Prüf-/Branch-/Artefaktstand und Wiederaufnahme stehen in [docs/CODEX_CHECKPOINT.md](docs/CODEX_CHECKPOINT.md). Die folgenden Abschnitte sind historische Entwicklungsprotokolle.

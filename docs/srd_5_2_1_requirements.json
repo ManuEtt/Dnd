@@ -3953,7 +3953,8 @@
       "tests": [
         "app/test/class_combat_features_test.dart",
         "app/test/sneak_attack_ally_integration_test.dart",
-        "app/test/sneak_attack_ally_ui_test.dart"
+        "app/test/sneak_attack_ally_ui_test.dart",
+        "app/test/sneak_attack_weapon_context_test.dart"
       ],
       "code": [
         "app/lib/domain/srd_class_feature_catalog.dart",
@@ -3964,7 +3965,7 @@
         "app/lib/ui/sneak_attack_ally_dialog.dart",
         "app/lib/domain/models.dart"
       ],
-      "note": "Teilimplementierung mit echter Hauptwaffen-Kampfintegration: zwei unabhängig bestätigte Verbündetenfakten (innerhalb 5 Fuß des Ziels, nicht Incapacitated), an Kampagne/Ziel/ausstehenden Wurf gebunden. Explizite Bestätigung/Entfernung, kritische Treffer, einmal pro eigenem Zug, SQLite/Backup/Revisionsschutz und Rollback geprüft. Keine allgemeine Positions-, Nebenhand- oder Gelegenheitsangriffssteuerung; Android-Gerätetest offen. Regelwirkung nie aus KI-Erzählung ableiten."
+      "note": "Teilimplementierung mit echter Hauptwaffen-Kampfintegration: zwei unabhängig bestätigte Verbündetenfakten (innerhalb 5 Fuß des Ziels, nicht Incapacitated), an Kampagne/Ziel/ausstehenden Wurf gebunden. Explizite Bestätigung/Entfernung, kritische Treffer, einmal pro eigenem Zug, SQLite/Backup/Revisionsschutz und Rollback geprüft. Keine allgemeine Positions-, Nebenhand- oder Gelegenheitsangriffssteuerung; Android-Gerätetest offen. Regelwirkung nie aus KI-Erzählung ableiten. Korrektur 24.10.2026: Vorhandene Nebenhandauflösung prüft die tatsächlich angreifende Inventarwaffe statt der Hauptwaffe; keine neue Vorteilsquelle oder allgemeine Nebenhandfreigabe. Neue Kampf-/Speicherregressionen vor Freigabe ausführen. Manuelle Verbündetenbestätigung für Nebenhand weiterhin offen."
     },
     {
       "id": "CLASS-SCHURKE-1-BASE-THIEVES-CANT-2",
