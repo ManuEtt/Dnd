@@ -6,6 +6,9 @@
 
 ## Aktueller Stand und autonome Fortsetzung (23.10.2026)
 
+> **Neues XP-Integrationspaket (24.10.2026):** `GameEngine.confirmExperienceReward` und `GameController.confirmExperienceReward` verlangen eine ausdrückliche Bestätigung, positive EP, eindeutige Reward-/Request-IDs und eine aktuelle Spielstandsrevision. Die bestehende SQLite-Transaktion speichert XP, Heldenarchiv, revisionsgebundenen Snapshot und `xp.reward.confirmed`-Ereignis gemeinsam. Nach verlorener Bestätigungsantwort/Neustart wird dieselbe Kennung nur quittiert; abweichender Betrag, fremde Kennung und stale Revision werden abgelehnt. Neue SQLite- und Domain-Tests wurden geschrieben; **eigene CI dieses PRs noch ausstehend**. Noch kein UI-Dialog, keine neue Datenmigration, kein Android-Gerätetest. Gestapelt auf [PR #146](https://github.com/ManuEtt/Dnd/pull/146), dessen vollständige [CI #40056990387](https://github.com/ManuEtt/Dnd/actions/runs/40056990387) auf `97d0075df0a4a2d78a35662f8ee16fd5b247513b` erfolgreich abgeschlossen ist.
+
+
 > **Fortsetzung 24.10.2026 – Rabenwacht-EP-Sicherheit, Branch `fix/rabenwacht-xp-marker-integrity-20261024`:** Vorhandene, widersprüchliche `xpReward:`-Marker werden nicht mehr als fehlende Belohnung interpretiert. Ein bestätigter Marker bleibt idempotent, ein fehlender Marker ist weiterhin zulässig, ein beschädigter Marker wird abgelehnt. Regressionen einschließlich tatsächlicher Rabenwacht-Handlungen, SQLite-Neustart und Revisionskonflikt ergänzt. Branch ist auf [PR #145](https://github.com/ManuEtt/Dnd/pull/145) gestapelt; dessen [CI #40014984206](https://github.com/ManuEtt/Dnd/actions/runs/40014984206) ist vollständig grün. Erster CI-Lauf #40056860284 scheiterte an einem unbenutzten Testimport; korrigiert, erneute CI ausstehend, keine Geräteabnahme; keine Änderung am SQLite-/JSON-Schema oder der App-Version.
 
 

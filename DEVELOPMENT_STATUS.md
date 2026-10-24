@@ -1,3 +1,12 @@
+## 24.10.2026 – Bestätigte XP-Belohnung mit Ereignis- und Revisionsschutz
+
+- **IMPLEMENTIERT:** `GameEngine.confirmExperienceReward` erzeugt nach expliziter Spielerbestätigung ein getyptes XP-Event mit eindeutiger Anfragekennung; `GameController.confirmExperienceReward` schützt veraltete Revisionen und quittiert identische persistierte Bestätigungen nach Neustart ohne doppelte EP. Geschützte Story-/Regel-Grenze bleibt erhalten.
+- **TESTS GESCHRIEBEN:** `app/test/confirmed_xp_reward_storage_test.dart` für Bestätigungspflicht, ungültige Eingaben, SQLite-Transaktion/Archive, verlorene Antwort, identischen und widersprüchlichen Retry, Neustart, stale Revision und SQL-Rollback. Keine externen KI-Kosten.
+- **GETESTET:** Erfolgreiche Vorläufer-CI #40056990387 für PR #146 auf `97d0075df0a4a2d78a35662f8ee16fd5b247513b`; **NICHT GETESTET:** eigener neuer Branch bis zum Abschluss dessen CI, echtes Android-Upgrade/Backups. **BLOCKIERT:** lokales Flutter/Android-SDK und Testgerät nicht vorhanden. **NOCH NICHT IMPLEMENTIERT:** Nutzeroberfläche zur Vorschau/Bestätigung von XP; SRD-Restinventur.
+- **DATENFORMAT:** SQLite 2, JSON 1 unverändert; alter Spielstand und Spielregel bleiben kompatibel, keine Änderungen an Gratis-/KI-Provider. **NÄCHSTER SCHRITT:** neue PR-CI prüfen und gegebenenfalls Codefehler beheben, dann UI-Inkrement mit manueller Bestätigung und klarer Quittung.
+
+---
+
 ## 24.10.2026 – Rabenwacht-EP-Markerintegrität und SQLite-Neustart-Regression
 
 - **IMPLEMENTIERT:** `CampaignExperience.awardOnce` sperrt vorhandene fehlerhafte Belohnungsfakten mit `FormatException` (kein zweiter XP-Zuwachs, keine automatische Datenreparatur).

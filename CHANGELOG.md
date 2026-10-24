@@ -1,3 +1,12 @@
+## 24.10.2026 – Transaktionale, bestätigte XP-Aktion (API, UI noch ausstehend)
+
+- Regelengine nimmt nur ausdrücklich bestätigte XP-Zuteilungen mit stabilen Reward-/Request-IDs und positivem XP-Betrag an.
+- Controller vergleicht bekannte Bestätigungsbelege vor Revisionsprüfung, stellt sie nach SQLite-Neustart und verlorener Commit-Antwort wieder her und sperrt widersprüchliche Wiederholungen.
+- SQLite schreibt XP, Heldenarchiv, Event und Snapshot weiterhin in einer Transaktion; Regression testet absichtlich fehlschlagenden Ereignis-Insert mit vollständigem Rollback.
+- Neue `confirmed_xp_reward_storage_test.dart` ergänzt. **Neue eigene CI noch offen**. Kein Dialog-/Gerätetest, keine Datenmigration, unveränderte App-Version.
+
+---
+
 ## 24.10.2026 – Rabenwacht: beschädigte XP-Belohnungsmarker nicht erneut gutschreiben
 
 - Vorhandene `xpReward:`-Fakten mit anderem Wert als `true` werden als widersprüchlicher Speicherbeleg zurückgewiesen, statt eine erneute Belohnung auszulösen.
