@@ -1,3 +1,12 @@
+## 24.10.2026 – Rabenwacht: beschädigte XP-Belohnungsmarker nicht erneut gutschreiben
+
+- Vorhandene `xpReward:`-Fakten mit anderem Wert als `true` werden als widersprüchlicher Speicherbeleg zurückgewiesen, statt eine erneute Belohnung auszulösen.
+- Identisch bestätigter Beleg bleibt nach SQLite-Neustart idempotent, ein fehlender Beleg weiterhin belohnbar.
+- Zusätzliche Domain-/JSON- und SQLite-Regressionen mit echten Rabenwacht-Spielzügen, Ereignisjournal und Revisionskonflikt.
+- Kein DB-/Exportformatwechsel, keine neue App-Version; neue Branch-CI und Android-Geräteabnahme bis zu ihrem Abschluss offen.
+
+---
+
 ## 23.10.2026 – XP-Belohnungsbelege: doppelte ID mit widersprüchlichem Betrag abweisen
 
 - `ExperienceProgression.grant` akzeptiert bestätigte identische Wiederholungen weiterhin ohne doppelte XP-Gutschrift.

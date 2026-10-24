@@ -47,7 +47,15 @@ class CampaignExperience {
       throw const FormatException('Falsche Kampagne für diese EP-Belohnung.');
     }
     final marker = 'xpReward:$milestone';
-    if (campaign.facts[marker] == 'true') {
+    if (campaign.facts.containsKey(marker)) {
+      // A persisted reward receipt has exactly one confirmed representation.
+      // A malformed legacy value must not be interpreted as 'not yet earned':
+      // doing so would grant the same campaign milestone a second time.
+      if (campaign.facts[marker] != 'true') {
+        throw const FormatException(
+          'Der gespeicherte EP-Belohnungsbeleg ist widersprüchlich.',
+        );
+      }
       return ExperienceAward(campaign, 0, '');
     }
     final experience = campaign.hero.experience;

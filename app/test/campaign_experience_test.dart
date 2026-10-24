@@ -101,6 +101,34 @@ void main() {
   );
 
   test(
+    'Beschädigter Belohnungsmarker wird auch nach JSON-Roundtrip abgewiesen',
+    () {
+      final engine = GameEngine();
+      final original = engine.createRabenwacht(engine.createDemo().hero);
+      for (final invalid in ['false', '0', 'unbekannt']) {
+        final legacy = Campaign.fromJson(
+          original.copyWith(
+            facts: {
+              ...original.facts,
+              'xpReward:reach-mill': invalid,
+            },
+          ).toJson(),
+        );
+        expect(
+          () => CampaignExperience.awardOnce(legacy, 'reach-mill'),
+          throwsFormatException,
+        );
+        expect(legacy.hero.experience, original.hero.experience);
+        expect(legacy.facts['xpReward:reach-mill'], invalid);
+      }
+      // An old save with no marker is not corrupted and remains awardable.
+      final awarded = CampaignExperience.awardOnce(original, 'reach-mill');
+      expect(awarded.points, 200);
+      expect(awarded.campaign.facts['xpReward:reach-mill'], 'true');
+    },
+  );
+
+  test(
     'Unbestätigte historische XP werden niemals stillschweigend erfunden',
     () {
       final engine = GameEngine();

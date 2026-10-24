@@ -6,6 +6,9 @@
 
 ## Aktueller Stand und autonome Fortsetzung (23.10.2026)
 
+> **Fortsetzung 24.10.2026 – Rabenwacht-EP-Sicherheit, Branch `fix/rabenwacht-xp-marker-integrity-20261024`:** Vorhandene, widersprüchliche `xpReward:`-Marker werden nicht mehr als fehlende Belohnung interpretiert. Ein bestätigter Marker bleibt idempotent, ein fehlender Marker ist weiterhin zulässig, ein beschädigter Marker wird abgelehnt. Regressionen einschließlich tatsächlicher Rabenwacht-Handlungen, SQLite-Neustart und Revisionskonflikt ergänzt. Branch ist auf [PR #145](https://github.com/ManuEtt/Dnd/pull/145) gestapelt; dessen [CI #40014984206](https://github.com/ManuEtt/Dnd/actions/runs/40014984206) ist vollständig grün. **Eigene CI dieses Inkrements ausstehend**, keine Geräteabnahme; keine Änderung am SQLite-/JSON-Schema oder der App-Version.
+
+
 > **Qualitätsinkrement (23.10.2026, Branch `fix/xp-reward-id-conflict-20261023`):** XP-Belohnungen mit bereits verwendeter ID werden nur bei identisch bestätigtem Betrag idempotent quittiert. Abweichende oder beschädigte Beträge lösen einen Konflikt aus; keine zweite Auszahlung und keine stillschweigende Bestätigung. JSON-Roundtrip- und Manipulationsregressionstests ergänzt. Die neue CI ist zunächst **noch nicht bestätigt**; die letzte geprüfte Main-CI bleibt [#40012217485](https://github.com/ManuEtt/Dnd/actions/runs/40012217485) auf `5958579e5321`. Kein SQLite-/JSON-Schemawechsel, kein Versionssprung gegenüber `0.8.36+86` während PR #144 offen ist. Echter Android-Test weiterhin offen.
 
 

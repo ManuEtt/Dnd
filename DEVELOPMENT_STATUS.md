@@ -1,3 +1,13 @@
+## 24.10.2026 – Rabenwacht-EP-Markerintegrität und SQLite-Neustart-Regression
+
+- **IMPLEMENTIERT:** `CampaignExperience.awardOnce` sperrt vorhandene fehlerhafte Belohnungsfakten mit `FormatException` (kein zweiter XP-Zuwachs, keine automatische Datenreparatur).
+- **TESTS ERSTELLT:** Zusätzlicher Domänentest für korrupte Marker nach JSON-Ladevorgang; neuer `rabenwacht_xp_sqlite_test.dart` durchläuft Spielentscheidungen bis zur Mühle, SQLite-Commit und Neustart, doppelte Belohnung, widersprüchlichen Marker und veralteten Schreibversuch.
+- **BESTÄTIGTE BASIS:** `main` `5958579e5321338bb7b4e46abb859fd3bfd1515f` mit CI #40012217485, vorgelagerter PR #145-Head `41da7ee40344fe0fb03ecedb505ea3e39662b25b` mit [CI #40014984206](https://github.com/ManuEtt/Dnd/actions/runs/40014984206) **success**. Eigene neue CI erst nach PR-Erstellung auswerten; nicht den Basislauf als Beweis verwenden.
+- **NICHT GETESTET:** Echtgerät, Installationsupgrade, Provider, neuer finaler PR-HEAD vor eigener CI. **BLOCKIERT:** Flutter-/Android-SDK lokal nicht installiert. **NOCH NICHT IMPLEMENTIERT:** autorisierte XP-Zuweisung durch den Controller mit Request-ID und expliziter Bestätigung.
+- **KOMPATIBILITÄT:** DB-Schema 2, Kampagnen-JSON 1 unverändert; keine automatische Änderung von Bestandsdaten. Nächste Aufgabe nach CI/gestapeltem PR-Merge: XP-Befehle mit GameController-Eventjournal atomar bestätigen und mit Race-/Neustart-Tests absichern.
+
+---
+
 ## 23.10.2026 – XP-Belohnungs-ID-Konflikt fail-closed (Branch `fix/xp-reward-id-conflict-20261023`)
 
 - **IMPLEMENTIERT:** Identische XP-Belohnungs-ID wird in `ExperienceProgression.grant` nur bei exakt gleichem gespeichertem Betrag idempotent bestätigt. Anderer/defekter Betrag löst `FormatException` aus; ursprüngliche Kampagne bleibt unverändert.
