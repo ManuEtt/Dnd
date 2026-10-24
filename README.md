@@ -2,7 +2,19 @@
 
 Deutschsprachige Android-Alpha für Soloabenteuer, regelgeprüfte Kämpfe und lokale Kampagnen mit SQLite. Flutter/Dart-App und optionaler Fastify-/TypeScript-Erzähler. Das vollständige SRD 5.2.1 ist noch nicht implementiert.
 
-## Aktueller Stand und autonome Fortsetzung (24.10.2026)
+## Aktueller Entwicklungszyklus – Handlungsstränge sicher fortsetzen (24.10.2026)
+
+[PR #161](https://github.com/ManuEtt/Dnd/pull/161) auf `fix/story-terminal-thread-reopen-20261024` behebt eine Kontinuitätslücke des **Backend-Erzählers**: Ein von Spielerentscheidungen bereits `resolved` oder `abandoned` gespeicherter Handlungsstrang darf durch eine spätere generierte `/v1/story/advance`-Antwort nicht stillschweigend wieder auf `open` gesetzt oder anders abgeschlossen werden. Unveränderter Terminalstatus und neue rein narrative Notizen bleiben zulässig. Spieler können weiterhin ausdrücklich im lokalen Thread-Editor wiederöffnen; der bestätigte neue `open`-Stand ist danach die Eingabe für den Erzähler.
+
+**IMPLEMENTIERT:** kleine Validatoränderung in `backend/src/story.ts` und zwei neue Backend-Regressionen (geschlossene Statuswechsel, manuelle Wiederöffnung und HTTP-502 ohne Leckage). **GETESTET:** bis zur vollständig grünen CI von [PR #161](https://github.com/ManuEtt/Dnd/pull/161/checks) noch nicht als abgeschlossen melden. **NICHT GETESTET:** lokales Android-Gerät/Altspielstandupgrade. **BLOCKIERT:** kein lokaler Checkout mit Android-SDK; GitHub-CI verfügbar. **NOCH NICHT IMPLEMENTIERT:** vollständige autonome KI-Weltzustandsverwaltung und SRD-5.2.1-Vollabdeckung.
+
+Unverändert App-Version **0.8.38+88**, SQLite **2**, Export-JSON **1**. `main` steht beim Start dieses Zyklus auf `b60ffe7`; [PR #159](https://github.com/ManuEtt/Dnd/pull/159) (Sending) und [PR #160](https://github.com/ManuEtt/Dnd/pull/160) (Nebenhandverbündeter) bleiben getrennt offen. PR #160 hat eine vollständige grüne CI [#40100211878](https://github.com/ManuEtt/Dnd/actions/runs/40100211878). Diese ist kein Nachweis des neuen Backend-Fixes. [Regelgrenze/Regression](docs/STORY_TERMINAL_THREAD_GUARD_20261024.md) · [Checkpoint](docs/CODEX_CHECKPOINT.md).
+
+**Nächster Schritt:** finale CI und Tests für PR #161 auswerten, etwaige Fehler beheben, dann zur Review freigeben. Vor Merge sind parallele Dokumentationsänderungen aus PRs #159/#160 abzugleichen.
+
+---
+
+## Vorheriger Main-Dokumentationsstand (historischer PR #158)
 
 **Version 0.8.38+88**, Branch `fix/sneak-attack-offhand-weapon-20261024`, [PR #158](https://github.com/ManuEtt/Dnd/pull/158). Funktionaler Code [`aa79ce5`](https://github.com/ManuEtt/Dnd/commit/aa79ce593790e5763e9125743b0adeab55b581d5), Basis-main `dcb42c5efff40a757994d4f5b5f8e98b2ff128e9` (PR #157 integriert). Eigene aktuelle [GitHub-Checks](https://github.com/ManuEtt/Dnd/pull/158/checks) zeigen den jeweiligen finalen HEAD; Basisprüfungen und lokale Abnahme werden getrennt geführt. Main bleibt durch diesen Zyklus unverändert.
 
