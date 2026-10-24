@@ -1,3 +1,11 @@
+## Aktiver Integrationsabschluss – 24.10.2026
+
+Während der abschließenden CI wurde PR #145 nach main1c2eeabcd6479a69bfaf5cfd5bf001390fc4fcdd übernommen. Dokumentationskonflikte werden unter Erhalt beider Historien aufgelöst; XP-Code und beide Tests unverändert integriert. Keine neue Regelphase begonnen. Die bisher unten belegte grüne CI40057898163 auf bfc991f prüft den Vorintegrationsstand. Die neue Kombination muss erneut vollständig geprüft und als eigenes ZIP/Patch gesichert werden. APKs des alten Standes bleiben erhalten und gelten nicht automatisch für diesen neuen Source-Stand.
+
+Nächste notwendige Aktion: Integration committen, Format/Analyse/Flutter/Backend/Python und Android aus neuem Quell-ZIP abnehmen, PR147 aktualisieren. Alte geprüfte Artefakte liegen unverändert in /workspace/artifacts, vollständige ZIPs+Patches vorhanden. Neue Binaries unter /workspace/artifacts/0.8.37+87_main_1c2ee erzeugen; keine alten Dateien überschreiben.
+
+---
+
 # CODEX-CHECKPOINT – Würfelraunen
 
 Stand **2026-10-24T03:20:14+00:00**, aktive Sitzung. Vollständige vorige Übergabe: [Historie](history/main_0.8.36_20261023/CODEX_CHECKPOINT.md). Vor Wiederaufnahme tatsächliches main, PRs und CI erneut abfragen.
@@ -63,3 +71,17 @@ GitHub-Artefakte haben begrenzte Aufbewahrung und eigene Build-/Signaturherkunft
 Prüfung: `bash scripts/check.sh`; `python3 scripts/check_domain_boundaries.py`; `python3 scripts/srd_coverage.py --json`; `cd app && flutter build apk --debug`; `cd android && bash ./gradlew :app:testDebugUnitTest --no-daemon`. SDK-/SQLite-Pfade dieser Umgebung: `/workspace/validation/TOOLCHAIN.md`.
 
 Keine automatische Wiederaufnahme außerhalb einer tatsächlich laufenden Sitzung.
+
+
+## Übernommener Status aus Main145 (historisch)
+
+## Zyklus 2026-10-23 (Europe/Berlin) – Widersprüchliche XP-Belohnungs-ID ablehnen (PR-/CI-Prüfung)
+
+- **LIVE-BASIS:** `main` `5958579e5321338bb7b4e46abb859fd3bfd1515f`, GitHub Actions [#40012217485](https://github.com/ManuEtt/Dnd/actions/runs/40012217485) **completed / success** ausschließlich auf diesem Main-SHA. Bei Beginn war [PR #144](https://github.com/ManuEtt/Dnd/pull/144) zum Zauber `Sending` offen; dessen [CI #40012034969](https://github.com/ManuEtt/Dnd/actions/runs/40012034969) erfolgreich für einen **anderen** Code-HEAD. Arbeitsbranch `fix/xp-reward-id-conflict-20261023`, Ausgangsversion `0.8.36+86`; kein paralleler Versionssprung wegen offenem PR #144.
+- **IMPLEMENTIERT:** `ExperienceProgression.grant` bestätigt eine wiederholte ID nur noch bei **exakt gleichem** bereits gespeicherten XP-Betrag; abweichende oder unlesbare Bestandswerte führen zu `FormatException` ohne Zustandsänderung. Bekannte identische Bestätigungen bleiben idempotent. **Kein geänderter SRD-Mechanismus:** Es handelt sich um Konsistenzprüfung der lokalen Belohnungsbelege.
+- **TESTS GESCHRIEBEN:** `app/test/experience_progression_test.dart` – bestätigte Duplikate nach JSON-Roundtrip, ID-Kollision mit abweichendem Betrag und manipulierter Legacy-Beleg ohne Veränderung von Held/XP/Fakten. Die lokale Ausführungsumgebung hat **kein Dart-/Flutter-SDK**; Tests werden erst nach tatsächlichem erfolgreichem CI-Lauf als bestanden bezeichnet.
+- **KOMPATIBILITÄT:** SQLite-Schema 2 und Kampagnen-JSON `schemaVersion=1` unverändert, kein KI-Provider, keine Migration. Widersprüchliche Altdaten werden nicht automatisch überschrieben.
+- **GETESTET:** Main-CI #40012217485 nur als Vorher-Baseline. **NICHT GETESTET:** Neue Branch-CI und Android-Gerät bis eindeutige Ergebnisse vorliegen. **BLOCKIERT:** Lokale Flutter-/Android-/Geräteprüfungen mangels SDK/Gerät. **NOCH NICHT IMPLEMENTIERT:** Vollständige SRD-5.2.1-Regelabdeckung sowie Validierung externer Erzählungs-/Belohnungsquellen.
+- **NÄCHSTER KONKRETER SCHRITT:** Den PR-Workflow auf dem **finalen** Branch-SHA auswerten und Fehler beheben; anschließend separat eine bestätigte, revidierbare XP-Belohnungsaktion von GameEngine/GameController bis SQLite-Journal auf Doppel-IDs und Neustart prüfen. Keine automatische Integration in `main` ohne PR-Abnahme.
+
+---

@@ -1,3 +1,9 @@
+## 24.10.2026 – Integration des Main-XP-Fixes aus PR #145
+
+Main1c2eeab wird mit dem bestehenden Sneak-Attack-Paket vereinigt. XP-Belohnungs-ID und Betrag müssen bei einer Wiederholung zusammenpassen; beschädigte Belege werden ohne Mutation abgewiesen. Die zwei Main-Regressionstests bleiben erhalten. Neue gemeinsame Prüfung ausstehend; bisherige Nachweise beziehen sich auf bfc991f vor dieser Integration.
+
+---
+
 ## Aktuell – 0.8.37+87, 23.10.2026
 
 Basis main5958579, Code0a56aba, Branch feature/sneak-attack-ally-integration-20261023. Operative Fakten und Wiederaufnahme: [docs/CODEX_CHECKPOINT.md](docs/CODEX_CHECKPOINT.md); ältere Einträge unten sind datierte Historie.
@@ -1103,3 +1109,16 @@ nicht durch die Wahl eines Merkmaltexts aktiviert.
 Lokale Python-Projekttests ausgeführt; Flutter-Test, Flutter-Analyse und
 Android-Build noch auf GitHub mit Flutter-SDK ausführen. Neues Inkrement
 nicht als abgenommene Android-Version bezeichnen.
+
+
+## Übernommener Status aus Main145 (historisch)
+
+## 23.10.2026 – XP-Belohnungs-ID-Konflikt fail-closed (Branch `fix/xp-reward-id-conflict-20261023`)
+
+- **IMPLEMENTIERT:** Identische XP-Belohnungs-ID wird in `ExperienceProgression.grant` nur bei exakt gleichem gespeichertem Betrag idempotent bestätigt. Anderer/defekter Betrag löst `FormatException` aus; ursprüngliche Kampagne bleibt unverändert.
+- **REGRESSIONSTESTS ERSTELLT:** `app/test/experience_progression_test.dart` prüft Roundtrip-Duplikat, Widerspruch und beschädigten Historieneintrag.
+- **GETESTET:** Main-Baseline `5958579e5321338bb7b4e46abb859fd3bfd1515f` mit GitHub-CI [#40012217485](https://github.com/ManuEtt/Dnd/actions/runs/40012217485) erfolgreich, nicht neuer Branch. **NICHT GETESTET:** neuer Flutter-Code-HEAD bis CI fertig ist. **BLOCKIERT:** Flutter/Android lokal nicht installiert; reales Android-Gerät nicht verfügbar.
+- **KOMPATIBILITÄT:** Keine SQLite-/JSON-Migration, unveränderte SRD-Regelmechanik und KI-/Story-Grenze. `0.8.36+86` bleibt vorerst unverändert wegen parallelem PR #144.
+- **NÄCHSTER KONKRETER SCHRITT:** Finale PR-CI/Flutter-Tests auswerten, dann idempotentes persistentes XP-Gutschriftjournal inklusive GameController-/SQLite-Revisionen gesondert testen.
+
+---

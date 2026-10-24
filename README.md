@@ -12,6 +12,10 @@ Bestätigung, Würfelergebnis und Schadensfolgen werden über die Regelengine un
 
 Zusätzlich korrigiert: gespeicherte Hauptwaffenproben prüfen den Angriffsbonus über dieselbe Regelberechnung wie die Ausführung, einschließlich Bogenschießen bei Mehrklassen. Die vollständige Dart-Formatprüfung ist wieder lokal und in GitHub CI aktiv; 70 bereits vorhandene Dateien wurden in einem getrennten Format-Commit normalisiert.
 
+### Integration des inzwischen aktualisierten Main
+
+`main` wurde während der CI um PR #145 auf `1c2eeabcd6479a69bfaf5cfd5bf001390fc4fcdd` erweitert. Der XP-Fix wird übernommen: dieselbe Belohnungs-ID quittiert nur denselben gespeicherten Betrag; widersprüchliche oder beschädigte Belege werden ohne Zustandsänderung abgewiesen. Die gemeinsame Abnahme läuft erneut. Die nachfolgenden grünen 1.448-Tests-/APK-/CI-Nachweise beziehen sich auf den geprüften Vorintegrationsstand `bfc991f`; sie werden nicht als Test der neuen Kombination ausgegeben.
+
 ### Tatsächlicher Prüfstand
 
 | Prüfung | Ergebnis dieses Zyklus |
@@ -28,7 +32,7 @@ Zusätzlich korrigiert: gespeicherte Hauptwaffenproben prüfen den Angriffsbonus
 
 APK-Herkunft: aus dem vollständigen Quell-ZIP gebaut, 461 ausführungsrelevante Quelldateien per SHA256 abgeglichen; Version 0.8.37/Build 87, minSdk24/targetSdk36, ARM64/ARMv7/x64, Debug-Testsignatur. Kein echter Geräte-/Update-Test. Die kleinere ARM64-Alpha ist gebaut und geprüft (**19,7MB**, gleicher Build 87, lokale Debug-Testsignatur).
 
-**GitHub-Downloads:** [Vollprojekt-ZIP](https://github.com/ManuEtt/Dnd/actions/runs/40056875863/artifacts/12546510086) · [Alpha-APKs (ARM64/ARM/x64)](https://github.com/ManuEtt/Dnd/actions/runs/40056875863/artifacts/12546286030) · [Git-Patch](https://github.com/ManuEtt/Dnd/pull/147.diff). Der erfolgreiche Lauf prüft den veröffentlichten Code-Stand `182f44b` (Merge-Test `de67cd3`); dieser abschließende Dokumentationsnachtrag ändert keinen ausführbaren Code. Aktuelle Checks stehen am PR.
+**GitHub-Downloads:** [Vollprojekt-ZIP](https://github.com/ManuEtt/Dnd/actions/runs/40056875863/artifacts/12546510086) · [Alpha-APKs (ARM64/ARM/x64)](https://github.com/ManuEtt/Dnd/actions/runs/40056875863/artifacts/12546286030) · [Git-Patch](https://github.com/ManuEtt/Dnd/pull/147.diff). Der erfolgreiche Lauf prüft den veröffentlichten Code-Stand `182f44b` (Merge-Test `de67cd3`); der damalige Dokumentationsnachtrag änderte keinen ausführbaren Code; für die anschließende Main-Integration ist eine neue gemeinsame Abnahme erforderlich. Aktuelle Checks stehen am PR.
 
 Aktuelle Übergabe: [docs/CODEX_CHECKPOINT.md](docs/CODEX_CHECKPOINT.md). Regelquelle, Akzeptanzkriterien und Grenzen: [Hinterhältiger Angriff](docs/SRD_SNEAK_ATTACK_ALLY_INTEGRATION_20261023.md).
 
