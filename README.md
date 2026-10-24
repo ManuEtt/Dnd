@@ -4,7 +4,7 @@ Deutschsprachige Android-Alpha für Soloabenteuer, Charakterverwaltung und regel
 
 ## Aktueller Stand und autonome Fortsetzung (24.10.2026)
 
-**Version `0.8.37+87`**, Entwicklungsbranch `feature/sneak-attack-ally-integration-20261023`. Funktionaler Code-Commit: [`0a56aba`](https://github.com/ManuEtt/Dnd/commit/0a56aba7057dc12d80750759443f6d70ed510dc1); Basis `main`: `5958579e5321338bb7b4e46abb859fd3bfd1515f`. Der vollständige [Basis-CI-Lauf #40012217485](https://github.com/ManuEtt/Dnd/actions/runs/40012217485) ist erfolgreich. Er belegt die Basis, nicht automatisch diesen Entwicklungsbranch.
+**Version `0.8.37+87`**, Entwicklungsbranch `feature/sneak-attack-ally-integration-20261023`, [PR #147](https://github.com/ManuEtt/Dnd/pull/147). Vollständig geprüfter integrierter Code-Commit: [`a6a949c`](https://github.com/ManuEtt/Dnd/commit/a6a949cbc00d3b6abd6a6281cbc4d1ed8a8d6244); Main-Basis: `1c2eeabcd6479a69bfaf5cfd5bf001390fc4fcdd`. Der Branch enthält den inzwischen integrierten XP-Fix aus PR #145. Main bleibt durch diese Sitzung unverändert.
 
 **Neu: Hinterhältiger Angriff mit bestätigtem Verbündeten im tatsächlichen Kampf.** Vor einem offenen Hauptwaffenangriff kann ein Schurke einen Verbündeten benennen und zwei Fakten unabhängig bestätigen: innerhalb von 5 Fuß **des Ziels** und nicht handlungsunfähig (`Incapacitated`). Die Bestätigung gilt nur für diese Kampagne, dieses Ziel und diesen Wurf. Sie lässt sich vor dem Würfeln entfernen. Erst ein regelgültiger Treffer würfelt den zusätzlichen Schaden; kritische Treffer verdoppeln die Schadenswürfel. Die bestehende Begrenzung pro eigenem Zug bleibt erhalten.
 
@@ -14,7 +14,7 @@ Zusätzlich korrigiert: gespeicherte Hauptwaffenproben prüfen den Angriffsbonus
 
 ### Integration des inzwischen aktualisierten Main
 
-`main` wurde während der CI um PR #145 auf `1c2eeabcd6479a69bfaf5cfd5bf001390fc4fcdd` erweitert. Der XP-Fix wird übernommen: dieselbe Belohnungs-ID quittiert nur denselben gespeicherten Betrag; widersprüchliche oder beschädigte Belege werden ohne Zustandsänderung abgewiesen. Die gemeinsame Abnahme läuft erneut. Die nachfolgenden grünen 1.448-Tests-/APK-/CI-Nachweise beziehen sich auf den geprüften Vorintegrationsstand `bfc991f`; sie werden nicht als Test der neuen Kombination ausgegeben.
+PR #145 wurde konfliktfrei übernommen: Dieselbe XP-Belohnungs-ID quittiert nur denselben gespeicherten Betrag. Widersprüchliche oder beschädigte Belege werden ohne Zustandsänderung abgewiesen. Beide Regressionstests und das gesamte Sneak-Attack-Paket sind auf dem gemeinsamen Stand erneut erfolgreich geprüft.
 
 ### Tatsächlicher Prüfstand
 
@@ -25,14 +25,14 @@ Zusätzlich korrigiert: gespeicherte Hauptwaffenproben prüfen den Angriffsbonus
 | Python-Projekt-/Pakettests | 100 erfolgreich |
 | Backend | Typecheck, Build und 31 Tests erfolgreich |
 | Dart/Flutter | 344 Dateien unverändert formatiert, Analyse ohne Befunde |
-| Vollständige neue Flutter-Suite | **1.448 Tests erfolgreich** |
+| Vollständige neue Flutter-Suite | **1.450 Tests erfolgreich** |
 | Android-Debug / native Tests | APK gebaut, Metadaten/CRC/Signatur geprüft; **12 native Tests erfolgreich** |
-| GitHub-PR / Code-CI | [PR #147](https://github.com/ManuEtt/Dnd/pull/147); [CI #40056875863](https://github.com/ManuEtt/Dnd/actions/runs/40056875863) vollständig erfolgreich auf `182f44b` |
+| GitHub-PR / Code-CI | [PR #147](https://github.com/ManuEtt/Dnd/pull/147); [CI #40059091439](https://github.com/ManuEtt/Dnd/actions/runs/40059091439) vollständig erfolgreich auf `a6a949c` |
 | Echtes Android-Gerät | nicht getestet |
 
 APK-Herkunft: aus dem vollständigen Quell-ZIP gebaut, 461 ausführungsrelevante Quelldateien per SHA256 abgeglichen; Version 0.8.37/Build 87, minSdk24/targetSdk36, ARM64/ARMv7/x64, Debug-Testsignatur. Kein echter Geräte-/Update-Test. Die kleinere ARM64-Alpha ist gebaut und geprüft (**19,7MB**, gleicher Build 87, lokale Debug-Testsignatur).
 
-**GitHub-Downloads:** [Vollprojekt-ZIP](https://github.com/ManuEtt/Dnd/actions/runs/40056875863/artifacts/12546510086) · [Alpha-APKs (ARM64/ARM/x64)](https://github.com/ManuEtt/Dnd/actions/runs/40056875863/artifacts/12546286030) · [Git-Patch](https://github.com/ManuEtt/Dnd/pull/147.diff). Der erfolgreiche Lauf prüft den veröffentlichten Code-Stand `182f44b` (Merge-Test `de67cd3`); der damalige Dokumentationsnachtrag änderte keinen ausführbaren Code; für die anschließende Main-Integration ist eine neue gemeinsame Abnahme erforderlich. Aktuelle Checks stehen am PR.
+**GitHub-Downloads:** [Vollprojekt-ZIP](https://github.com/ManuEtt/Dnd/actions/runs/40059091439/artifacts/12547141868) · [Alpha-APKs (ARM64/ARM/x64)](https://github.com/ManuEtt/Dnd/actions/runs/40059091439/artifacts/12546708433) · [Git-Patch](https://github.com/ManuEtt/Dnd/pull/147.diff). Der erfolgreiche Lauf prüft den integrierten Code `a6a949c` (Merge-Test `30fb8f2`). Nachfolgende Abschlussdokumentation verändert den ausführbaren Code nicht; deren aktuelle Checks stehen getrennt am PR. Lokale ZIPs, Patches, APKs und Prüfsummen liegen zusätzlich unter `/workspace/artifacts/`; neue Binaries im Unterordner `0.8.37+87_main_1c2ee`.
 
 Aktuelle Übergabe: [docs/CODEX_CHECKPOINT.md](docs/CODEX_CHECKPOINT.md). Regelquelle, Akzeptanzkriterien und Grenzen: [Hinterhältiger Angriff](docs/SRD_SNEAK_ATTACK_ALLY_INTEGRATION_20261023.md).
 

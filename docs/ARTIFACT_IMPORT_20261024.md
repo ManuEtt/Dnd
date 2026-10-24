@@ -4,7 +4,7 @@ Der aktuelle operative Stand und echte GitHub-PR-/CI-Links stehen in [CODEX_CHEC
 
 ```bash
 python3 scripts/create_checkpoint.py --output-dir /pfad/ausserhalb-des-projekts \
-  --base 5958579e5321338bb7b4e46abb859fd3bfd1515f --label sneak-attack-abschluss
+  --base 1c2eeabcd6479a69bfaf5cfd5bf001390fc4fcdd --label sneak-main-integriert-abschluss
 ```
 
 Das Skript prüft ZIP-Integrität, Dateihashes und die Anwendung des Patches gegen genau diesen Basis-Commit. Versionierte Pakete werden erhalten. Das ZIP enthält den vollständigen importierbaren Quellcode einschließlich Tests, Assets, Backend, scripts/ und verstecktem .github/-Verzeichnis; keine SDK-Caches, Zugangsdaten oder APKs. Android-Binaries bleiben separate Artefakte.
@@ -16,7 +16,7 @@ Den Patch auf einem eigenen Branch vom angegebenen Basis-Commit anwenden:
 ```bash
 git clone https://github.com/ManuEtt/Dnd.git
 cd Dnd
-git switch -c import/sneak-attack-checkpoint 5958579e5321338bb7b4e46abb859fd3bfd1515f
+git switch -c import/sneak-attack-checkpoint 1c2eeabcd6479a69bfaf5cfd5bf001390fc4fcdd
 git apply --check /pfad/Wuerfelraunen_Aenderungen.patch
 git apply /pfad/Wuerfelraunen_Aenderungen.patch
 bash scripts/check.sh
@@ -37,4 +37,4 @@ In ein frisches Verzeichnis entpacken. app/, backend/, scripts/ und .github/ mü
 - GitHub-Workflow `Android-Alpha bauen`: erfolgreicher Lauf liefert eigenen Quellcode-Checkpoint sowie Debug- und ABI-Alpha-APKs unter den echten Actions-Artefakten. Deren Namen/Links erst nach Beobachtung des konkreten Laufs übernehmen.
 - Ein Workspace-Dateipfad ist kein Beleg für einen externen Upload. APK-Build, Signaturprüfung, Gerätestart und sichere Installation über eine frühere App sind getrennte Nachweise.
 
-Konkreter überprüfter Code-Lauf dieses Pakets: [CI40056875863](https://github.com/ManuEtt/Dnd/actions/runs/40056875863) erfolgreich, PR-HEAD182f44b / Merge-Testde67cd3. [Quell-ZIP](https://github.com/ManuEtt/Dnd/actions/runs/40056875863/artifacts/12546510086) und [Alpha-APKs](https://github.com/ManuEtt/Dnd/actions/runs/40056875863/artifacts/12546286030) sind tatsächlich vorhanden. Abschließende Dokumentationsupdates ändern den ausführbaren Code nicht.
+Konkreter überprüfter integrierter Code-Lauf: [CI40059091439](https://github.com/ManuEtt/Dnd/actions/runs/40059091439), completed/success auf a6a949c / Merge-Test30fb8f2. [Quell-ZIP](https://github.com/ManuEtt/Dnd/actions/runs/40059091439/artifacts/12547141868) und [Alpha-APKs](https://github.com/ManuEtt/Dnd/actions/runs/40059091439/artifacts/12546708433) sind tatsächlich vorhanden. Abschlussdokumentation verändert den ausführbaren Code nicht. Neue lokale APKs liegen unter `/workspace/artifacts/0.8.37+87_main_1c2ee/`; alte Vorintegrationsartefakte bleiben erhalten. Die neue Patchbasis ist1c2eeab.

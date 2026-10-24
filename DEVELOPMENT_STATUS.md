@@ -1,6 +1,6 @@
 ## 24.10.2026 – Integration des Main-XP-Fixes aus PR #145
 
-Main1c2eeab wird mit dem bestehenden Sneak-Attack-Paket vereinigt. XP-Belohnungs-ID und Betrag müssen bei einer Wiederholung zusammenpassen; beschädigte Belege werden ohne Mutation abgewiesen. Die zwei Main-Regressionstests bleiben erhalten. Neue gemeinsame Prüfung ausstehend; bisherige Nachweise beziehen sich auf bfc991f vor dieser Integration.
+Main `1c2eeab` konfliktfrei in `a6a949c` integriert: XP-Belohnungs-ID und Betrag müssen bei Wiederholung übereinstimmen; beschädigte Belege werden ohne Mutation abgewiesen. Beide Main-Regressionstests bleiben erhalten. Gemeinsame Abnahme erfolgreich: **1.450 Flutter-, 100 Python-, 31 Backend- und12 native Android-Tests**, Format/Analyse/Importgrenzen, Debug-APK und ARM64-Alpha aus neuem Quell-ZIP. [GitHub-CI 40059091439](https://github.com/ManuEtt/Dnd/actions/runs/40059091439) vollständig erfolgreich auf a6a949c. SQLite 2/JSON 1 unverändert; Realgerät und produktive Signierung offen. Aktueller Stand: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md). Folgende Einträge sind die datierte Vorintegrationshistorie.
 
 ---
 

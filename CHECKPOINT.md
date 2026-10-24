@@ -1,6 +1,6 @@
-## Aktueller operativer Checkpoint (23.10.2026)
+## Aktueller operativer Checkpoint (24.10.2026)
 
-Version0.8.37+87, funktionaler Code0a56aba, Basis-main5958579. Verbindlicher aktueller Prüf-/Branch-/Artefaktstand und Wiederaufnahme stehen in [docs/CODEX_CHECKPOINT.md](docs/CODEX_CHECKPOINT.md). Die folgenden Abschnitte sind historische Entwicklungsprotokolle.
+Version0.8.37+87, vollständig geprüfter integrierter Codea6a949c, Main-Basis1c2eeab. Lokal1450 Flutter-/100 Python-/31 Backend-/12 native Tests und Code-CI40059091439 erfolgreich. Verbindlicher aktueller Prüf-/Branch-/Artefaktstand und Wiederaufnahme stehen in [docs/CODEX_CHECKPOINT.md](docs/CODEX_CHECKPOINT.md). Die folgenden Abschnitte sind historische Entwicklungsprotokolle.
 
 ---
 
