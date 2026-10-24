@@ -1,3 +1,30 @@
+## CI-Abschluss 2026-10-24T09:56+02:00 – Sending-Unicode-PR #155
+
+- **IMPLEMENTIERT:** Die auf dem Branch `fix/sending-unicode-format-controls-20261024` ergänzten Unicode-Formatzeichen-Sperren und die Regressionstests sind unverändert. Letzter ausführbarer Commit: `1db4830778d69b5d2f8c8903bb71e75cc211919f`; Basis-main: `b6b0fdb433330fec2a7b98fe62451ebfbfbec822`. [PR #155](https://github.com/ManuEtt/Dnd/pull/155) bleibt ungemergt.
+- **GETESTET:** [Vollständige GitHub-Actions-CI #40075349670](https://github.com/ManuEtt/Dnd/actions/runs/40075349670) auf exakt `1db4830`: **completed/success**. Python-/Strukturprüfungen, Backend-Typecheck/Build/Tests, Dart-Format, Flutter-Analyse, gezielte und vollständige Flutter-Tests, Android-Debug-APK, native Android-Tests, kleine Alpha-APKs und versioniertes Alpha-/Source-Artefakt bestanden. Ein früherer CI-Formatfehler auf `6080017` wurde mit `1db4830` nachweislich behoben; vollständige Abnahme enthält 34 erfolgreiche Jobschritte.
+- **BELEGTE ARTEFAKTE:** [Quell-Checkpoint](https://github.com/ManuEtt/Dnd/actions/runs/40075349670/artifacts/12553435809) (Archiv-SHA256 `fc6fe1a7930f42f0231ecc4b878a843bee39492f15844e55cbdd7e571d236443`), [kleine Alpha-APKs](https://github.com/ManuEtt/Dnd/actions/runs/40075349670/artifacts/12553380888) (Archiv-SHA256 `6e03bcaad2af27212daea7df5571803ffdab1044608250eac32303d59ae3c0ff`), [Debug-APK](https://github.com/ManuEtt/Dnd/actions/runs/40075349670/artifacts/12552987060), [versioniertes Alpha](https://github.com/ManuEtt/Dnd/actions/runs/40075349670/artifacts/12552987062). Artefakte sind zeitlich befristet; Archiv-SHA ist nicht die SHA einer individuellen APK.
+- **NICHT GETESTET:** Physisches Android-Gerät, Installation/Upgrade mit Altspielstand, produktive Signierung; die nachfolgende Dokumentationskorrektur selbst besitzt keinen eigenen vollständigen Code-Test.
+- **BLOCKIERT:** Lokale Flutter-/Android-SDKs und Testgerät fehlen weiterhin. **NOCH NICHT IMPLEMENTIERT:** Tatsächlicher Sending-Cast samt atomarem Slot-/Aktionsereignis; `SPELL-ENTRY-SENDING` bleibt **partial**.
+- **KOMPATIBILITÄT:** Version 0.8.37+87, SQLite 2, Kampagnen-JSON 1, KI-/Story-Grenzen unverändert. Dieser Nachtrag ändert nur die Dokumentation, nicht den erfolgreich getesteten ausführbaren Stand.
+- **NÄCHSTER KONKRETER SCHRITT:** PR #155 anhand der finalen Statusprüfungen reviewen und konfliktfrei integrieren; vor neuem Casting-Paket den aktualisierten main-HEAD als Basis nachweisen.
+
+---
+
+## Zyklus 2026-10-24T09:40+02:00 – Sending-Unicode-Eingabeintegrität (PR #155)
+
+- **LIVE:** main `b6b0fdb433330fec2a7b98fe62451ebfbfbec822`, PR #154 inzwischen gemergt; beim Start keine offenen PRs. Eigener [Draft-PR #155](https://github.com/ManuEtt/Dnd/pull/155), Branch `fix/sending-unicode-format-controls-20261024`. Main-Actions [#40074505420](https://github.com/ManuEtt/Dnd/actions/runs/40074505420) beim Start **in_progress**.
+- **VERSION/REGEL:** Würfelraunen `0.8.37+87`; `SPELL-ENTRY-SENDING` weiter **partial**. Quelle: offizielles SRD 5.2.1, *Sending*, S. 161 (CC BY 4.0). Rein technische Eingabesicherung, keine zusätzliche SRD-Regel.
+- **IMPLEMENTIERT:** `app/lib/domain/srd_sending_rules.dart` sperrt zusätzlich U+00AD, U+034F, U+061C, U+180E, U+2061–U+206F und U+FFF9–U+FFFB in Nachrichten und Empfängerkennungen. Die 25-Wort-SRD-Grenze und technische 2048-UTF-16-Grenze bleiben unverändert. Neue Gegenbeispiele in `app/test/srd_sending_rules_test.dart` und `app/test/srd_sending_cast_preflight_test.dart` einschließlich 26 durch U+2063 verbundener Wörter, manipulierter ID und kombinierter Sending-Vorschau.
+- **GETESTET:** Lokaler JavaScript-RegExp-Sanity-Check auf die neu gesperrten Codepunkte und normale deutsche Zeichen. Vorherige vollständige [PR-CI #40072501279](https://github.com/ManuEtt/Dnd/actions/runs/40072501279) auf Quell-HEAD `05fc6dde3c8d05748ce010e2d39b6fe909aba729` erfolgreich; sie belegt **nicht** PR #155.
+- **NICHT GETESTET:** Neue Dart-/Flutter-Tests, Dart-Formatter, Flutter-Analyse, Android/native Tests, Debug/Alpha-APK, echte Geräteinstallation und Update alter Spielstände bis eigener PR-CI. Keine APK für PR #155 behauptet.
+- **BLOCKIERT:** Aktive lokale Umgebung ohne Dart-/Flutter-/Android-SDK; Java 21 statt CI-Java 17. GitHub Actions muss die neue Codebasis verifizieren.
+- **NOCH NICHT IMPLEMENTIERT:** Transaktionaler Sending-Cast mit Slot-/Aktionsereignis und tatsächlicher Nachrichtenzustellung; vollständiges SRD 5.2.1.
+- **KOMPATIBILITÄT:** Keine Änderung an SQLite 2, Kampagnen-JSON 1, App-Version, KI-/Storygrenzen, API-Anbietern oder gespeicherten Charakteren. Main bleibt unverändert, keine Branchlöschungen.
+- **DATEIEN:** `app/lib/domain/srd_sending_rules.dart`, zwei Sending-Testdateien, `docs/SRD_SENDING_MESSAGE_RULES_20261023.md`, diese Checkpoint-Datei, `README.md`, `CHANGELOG.md` und `DEVELOPMENT_STATUS.md`.
+- **GENAU EIN NÄCHSTER SCHRITT:** Finale GitHub-CI von PR #155 am letzten Branch-HEAD kontrollieren (Format, beide Sending-Tests, Flutter-Gesamtsuite, Android); fehlgeschlagene Schritte reparieren. Erst nach vollständig belegter Abnahme über Integration entscheiden. Keine automatische Ausführung nach Sitzungsende.
+
+---
+
 ## 24.10.2026 – Sending-Ressourcen-Vorprüfung vollständig in GitHub-CI abgenommen
 
 - **IMPLEMENTIERT:** Explizit bestätigte Sending-Empfänger-/Nachrichtenfakten kombiniert mit vorbereiteter eigener Klasse, Zaubergrad/-platz, Komponenten, Action und Slot-Zuglimit; danach spezielle Blockade-/Ebenen-W100-Prüfung. Rein lesende Vorschau. Zusätzlicher reiner Spellcasting-Dry-run verhindert Vorschauen bei 0 TP/kampfunfähig/untrainierter Rüstung. Gefälschte Sending-Elemente/Klassen werden abgewiesen.

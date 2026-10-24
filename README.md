@@ -1,5 +1,17 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+### Bestätigte CI für Sending-Unicode (24.10.2026)
+
+Der ausführbare Code aus [PR #155](https://github.com/ManuEtt/Dnd/pull/155) (`1db4830778d69b5d2f8c8903bb71e75cc211919f`) ist in der [vollständigen GitHub-CI #40075349670](https://github.com/ManuEtt/Dnd/actions/runs/40075349670) mit **success** geprüft: Python, Backend, Dart-Format und Flutter-Analyse, gesamte Flutter-Suite, Android-Debug-APK, native Android-Tests, kleine Alpha-APKs und Release-/Source-Artefakte. Der erste Dart-Formatfehler wurde vor diesem erfolgreichen Lauf korrigiert. [Alpha-APKs](https://github.com/ManuEtt/Dnd/actions/runs/40075349670/artifacts/12553380888) · [Debug-APK](https://github.com/ManuEtt/Dnd/actions/runs/40075349670/artifacts/12552987060) · [Quellcode-Checkpoint](https://github.com/ManuEtt/Dnd/actions/runs/40075349670/artifacts/12553435809). Eine **Geräteinstallation, ein Altspielstand-Update und produktive Signierung** wurden nicht getestet. App-Version, SQLite und Exportformat unverändert. Dieser reine Dokumentationsnachtrag ändert den ausführbaren Code nicht.
+
+
+### Aktueller Entwicklungszyklus: Sending-Eingabeintegrität (24.10.2026)
+
+[Draft-PR #155](https://github.com/ManuEtt/Dnd/pull/155) härtet die vorhandene Sending-Vorprüfung gegen weitere unsichtbare Unicode-Format-/Annotationszeichen (U+00AD, U+034F, U+061C, U+180E, U+2061–U+206F und U+FFF9–U+FFFB). Neue Domain- und Casting-Preview-Regressionen prüfen Nachrichten, Empfängerkennungen und falsche 26-Wort-Eingaben. Die 25-Wörter-Regel und bestehende deutsche Nachrichten mit Tab/Zeilenumbruch bleiben bestehen. **Keine Ressourcenbuchung, Datenmigration oder neue App-Version.**
+
+Live-Basis `main` `b6b0fdb`; PR #154 ist bereits integriert. Main-CI [#40074505420](https://github.com/ManuEtt/Dnd/actions/runs/40074505420) lief bei Bestandsaufnahme; die erfolgreiche [Vorläufer-CI #40072501279](https://github.com/ManuEtt/Dnd/actions/runs/40072501279) testet den neuen Branch **nicht**. Nur lokaler Regex-Sanity-Check durchgeführt, Flutter-/Android-PR-CI ausstehend. [Aktueller Checkpoint](docs/CODEX_CHECKPOINT.md).
+
+
 ### Fantasy-EP-Dialog in der Abenteueransicht (Integrations-PR #151)
 
 „EP-Belohnung bestätigen“ öffnet eine validierte, scrollbare EP-Vorschau. Erst die gesonderte ausdrückliche Zustimmung übergibt eine beständige `xp_<Belohnungskennung>` an den Controller. Doppelte Bestätigungen und Fehler erzeugen keine zweite Gutschrift; eine Erfolgsmeldung setzt einen gespeicherten `xp.reward.confirmed`-Beleg voraus. Vorherige Schurken-, SQLite- und SRD-Sending-Funktionen bleiben vorhanden. Neue kombinierte CI ist erforderlich.
