@@ -1,3 +1,15 @@
+## CI-Abschluss 2026-10-24T09:56+02:00 – Sending-Unicode-PR #155
+
+- **IMPLEMENTIERT:** Die auf dem Branch `fix/sending-unicode-format-controls-20261024` ergänzten Unicode-Formatzeichen-Sperren und die Regressionstests sind unverändert. Letzter ausführbarer Commit: `1db4830778d69b5d2f8c8903bb71e75cc211919f`; Basis-main: `b6b0fdb433330fec2a7b98fe62451ebfbfbec822`. [PR #155](https://github.com/ManuEtt/Dnd/pull/155) bleibt ungemergt.
+- **GETESTET:** [Vollständige GitHub-Actions-CI #40075349670](https://github.com/ManuEtt/Dnd/actions/runs/40075349670) auf exakt `1db4830`: **completed/success**. Python-/Strukturprüfungen, Backend-Typecheck/Build/Tests, Dart-Format, Flutter-Analyse, gezielte und vollständige Flutter-Tests, Android-Debug-APK, native Android-Tests, kleine Alpha-APKs und versioniertes Alpha-/Source-Artefakt bestanden. Ein früherer CI-Formatfehler auf `6080017` wurde mit `1db4830` nachweislich behoben; vollständige Abnahme enthält 34 erfolgreiche Jobschritte.
+- **BELEGTE ARTEFAKTE:** [Quell-Checkpoint](https://github.com/ManuEtt/Dnd/actions/runs/40075349670/artifacts/12553435809) (Archiv-SHA256 `fc6fe1a7930f42f0231ecc4b878a843bee39492f15844e55cbdd7e571d236443`), [kleine Alpha-APKs](https://github.com/ManuEtt/Dnd/actions/runs/40075349670/artifacts/12553380888) (Archiv-SHA256 `6e03bcaad2af27212daea7df5571803ffdab1044608250eac32303d59ae3c0ff`), [Debug-APK](https://github.com/ManuEtt/Dnd/actions/runs/40075349670/artifacts/12552987060), [versioniertes Alpha](https://github.com/ManuEtt/Dnd/actions/runs/40075349670/artifacts/12552987062). Artefakte sind zeitlich befristet; Archiv-SHA ist nicht die SHA einer individuellen APK.
+- **NICHT GETESTET:** Physisches Android-Gerät, Installation/Upgrade mit Altspielstand, produktive Signierung; die nachfolgende Dokumentationskorrektur selbst besitzt keinen eigenen vollständigen Code-Test.
+- **BLOCKIERT:** Lokale Flutter-/Android-SDKs und Testgerät fehlen weiterhin. **NOCH NICHT IMPLEMENTIERT:** Tatsächlicher Sending-Cast samt atomarem Slot-/Aktionsereignis; `SPELL-ENTRY-SENDING` bleibt **partial**.
+- **KOMPATIBILITÄT:** Version 0.8.37+87, SQLite 2, Kampagnen-JSON 1, KI-/Story-Grenzen unverändert. Dieser Nachtrag ändert nur die Dokumentation, nicht den erfolgreich getesteten ausführbaren Stand.
+- **NÄCHSTER KONKRETER SCHRITT:** PR #155 anhand der finalen Statusprüfungen reviewen und konfliktfrei integrieren; vor neuem Casting-Paket den aktualisierten main-HEAD als Basis nachweisen.
+
+---
+
 ## Zyklus 2026-10-24T09:40+02:00 – Sending-Unicode-Eingabeintegrität (PR #155)
 
 - **LIVE:** main `b6b0fdb433330fec2a7b98fe62451ebfbfbec822`, PR #154 inzwischen gemergt; beim Start keine offenen PRs. Eigener [Draft-PR #155](https://github.com/ManuEtt/Dnd/pull/155), Branch `fix/sending-unicode-format-controls-20261024`. Main-Actions [#40074505420](https://github.com/ManuEtt/Dnd/actions/runs/40074505420) beim Start **in_progress**.
