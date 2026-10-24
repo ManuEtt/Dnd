@@ -175,6 +175,10 @@ void main() {
       () => preview(hero, message: 'Zwei\u200BWörter'),
       throwsFormatException,
     );
+    expect(
+      () => preview(hero, message: 'Bitte\u2063antworten'),
+      throwsFormatException,
+    );
   });
 
   test('confirmed planar roll, block and unknown facts remain distinct', () {
