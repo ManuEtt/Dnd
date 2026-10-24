@@ -24,6 +24,8 @@ class ClassCombatFeatures {
   /// Both ally facts must be confirmed independently. Conscious alone is
   /// insufficient: an ally can be conscious but Stunned/Incapacitated.
   /// Still requires a separately confirmed hit and turn-use guard.
+  /// The caller validates which inventory weapon actually makes the attack;
+  /// omitted context retains the existing primary-weapon behavior.
   static int eligibleSneakAttackDice(
     HeroCharacter hero, {
     required bool hasAdvantage,
@@ -32,11 +34,13 @@ class ClassCombatFeatures {
     bool allyWithinFiveFeetOfTargetConfirmed = false,
     bool allyNotIncapacitatedConfirmed = false,
     required bool alreadyUsedThisTurn,
+    String? attackingWeaponId,
   }) {
     final level = ClassResourceRules.level(hero, 'Schurke');
     if (level == 0 || alreadyUsedThisTurn) return 0;
+    final weaponId = attackingWeaponId ?? hero.equippedWeaponId;
     final items = hero.inventory.where(
-      (i) => i.id == hero.equippedWeaponId && hero.equippedWeaponId.isNotEmpty,
+      (i) => i.id == weaponId && weaponId.isNotEmpty && i.quantity > 0,
     );
     if (items.length != 1) return 0;
     final weapon = SrdEquipmentCatalog.byId(items.single.catalogId);
