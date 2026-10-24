@@ -1,5 +1,46 @@
 # CODEX-CHECKPOINT – Würfelraunen
 
+## Aktuelle Übergabe am 24.10.2026 um 19:48 MESZ – PR #163
+
+**Stand beim Beginn dieses Zyklus:** `main=b60ffe7ff1aae502ea927cb77153b988be33e397`, Produkt `0.8.38+88`. Offene PRs #159, #160, #161 und #162, alle mit vollständig grüner eigener GitHub-CI. #162 wurde nach verifizierter [CI #40115897734](https://github.com/ManuEtt/Dnd/actions/runs/40115897734) (`56128f213cc2404269a6f358d1c2aa62908474df`) zur Review freigegeben. Keiner der vier PRs wurde von diesem Zyklus gemergt.
+
+**Neuer Arbeitsbranch:** `fix/story-secret-output-guard-20261024`, von `main=b60ffe7`; [PR #163](https://github.com/ManuEtt/Dnd/pull/163) als Draft. Gemeinsame Dateien in parallelen PRs nicht überschreiben. Nur narrativer Backend-Ausgang; keine App-/Android-/Regelmodell-/SQL-Änderung.
+
+### IMPLEMENTIERT
+
+Neue reine Backend-Sicherung `backend/src/story_secret_guard.ts` prüft, ob öffentlich sichtbare Texte eines `StoryPlan` oder `StoryTurn` die **vollständige wörtliche interne Geheimnisformulierung** enthalten. Einfache Case-/Whitespace-/Unicode-Varianten werden erfasst, Wortgrenzen verhindern beispielsweise eine Auslösung bei zufälligen Teilwörtern. Gültige Antworten werden unverändert durchgereicht; ein vollständiges Textleck führt fail-closed zum bestehenden generischen HTTP-502-Fehler.
+
+`backend/src/app.ts` ruft die Prüfung nach der vorhandenen Strukturvalidierung für `/v1/story/start` und `/v1/story/advance` auf. Plan-`secret` bleibt als **interner Kontext** für die lokale Kampagnenbibel enthalten, wird aber nicht als Spieleranzeigetext behandelt. `stateChanges: []`, Spielleiter-UI, KI-Berechtigungen und Regel-/Story-Grenze bleiben unverändert. Ausdrücklich **keine semantische Erkennung**, keine automatischen Story-Reveal-Entscheidungen und keine Aussage zum Zeitpunkt legitimer Enthüllungen.
+
+Neue Backendtests `backend/test/story_secret_guard.test.ts`: Schutz sichtbarer Plan-/Turn-Felder, validierte Normalisierung, Wortgrenzen, authentifizierte Fastify-API-Antworten (invalid generativ ⇒ HTTP502 ohne Geheimtext; gültig ⇒ unverändert), keine externen KI-Kosten. README, Entwicklungsstatus, Changelog und Dokumentation `docs/STORY_SECRET_OUTPUT_GUARD_20261024.md` aktualisiert. Keine Änderung der Version 0.8.38+88, SQLite 2, Kampagnen-JSON 1; keine Migration und keine SRD-5.2.1-Abdeckungsquote erhöht.
+
+### GETESTET
+
+**Vorheriger anderer PR:** #162 GitHub Actions [#40115897734](https://github.com/ManuEtt/Dnd/actions/runs/40115897734) vollständig erfolgreich auf `56128f213cc2404269a6f358d1c2aa62908474df`: 100 Python-, 32 Backend- und 1.505 Fluttertests; Android-Debug-/Alpha-APK, native Tests und Formatierung erfolgreich. PR #161 eigene grüne CI #40113090963.
+
+**Neuer PR #163:** Nur Code und Tests angelegt, tatsächlicher finaler CI-Status separat unter [Checks](https://github.com/ManuEtt/Dnd/pull/163/checks) zu bestätigen. Alle Tests des neuen Pakets bis dahin ausdrücklich **NICHT als erfolgreich behaupten**.
+
+### NICHT GETESTET
+
+Finale neue Backend-/Python-/Flutter-/Android-CI, bis zum nachgewiesenen Abschluss. Physisches Android-Gerät, historischer persönlicher Kampagnenspielstand, produktive Release-Signierung. Semantische Plot-Paraphrasen außerhalb der Wortgleichheit.
+
+### BLOCKIERT
+
+Kein privates Android-Gerät und kein produktiver Android-Signierschlüssel in dieser Sitzung; GitHub-Workflow kann technische Abnahme liefern.
+
+### NOCH NICHT IMPLEMENTIERT
+
+Sicherer expliziter Freigabestatus für dem Spieler enthüllte Geheimnisse, semantischer Spoilerschutz und vollständige autonome Kampagnenwelt; das vollständige SRD-5.2.1-Regelwerk bleibt teilweise offen. Kein automatisches Merging paralleler PRs.
+
+### NÄCHSTER KONKRETER SCHRITT
+
+Die finale [PR-#163-CI](https://github.com/ManuEtt/Dnd/pull/163/checks) anhand tatsächlichen SHA prüfen: Python- und Boundarychecks, Backend `npm ci`/Typecheck/Build/Tests, Flutter-Format/Analyse/Vollsuite, Android-Debug-/Alpha-APK und native Tests. Fehler ohne Testdeaktivierung beheben und nach vollständiger grüner CI PR reviewbereit stellen. Kein Merge ohne Überprüfung aktueller HEADs und möglicher gemeinsamer Dokumentationsänderungen.
+
+---
+
+## Historische Hauptbranch-Übergabe (PR #158)
+
+
 Stand **2026-10-24T12:20:50+00:00**, lokal vollständig abgenommenes Paket. Frühere operative Angaben vollständig in [Historie](history/main_0.8.37_20261024/CODEX_CHECKPOINT.md) erhalten. Vor Wiederaufnahme Live-Git/PR/CI erneut prüfen.
 
 ## Git und Produkt

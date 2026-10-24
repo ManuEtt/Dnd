@@ -1,3 +1,9 @@
+## Nächste Abnahme 24.10.2026 – Plot-Geheimnisse im Erzähler schützen (PR #163)
+
+Ein eng begrenzter Backend-Ausgangsfilter verhindert im neuen [PR #163](https://github.com/ManuEtt/Dnd/pull/163) direkte wörtliche Komplett-Offenlegungen des geheimen Kampagnenplots in sichtbaren Erzähltexten, NPC-Notizen oder Angeboten. **Erst finale vollständige CI und Review, dann Integration.** Kein semantischer Filter; die spätere legitime Enthüllung eines Geheimnisses verlangt eine separat bestätigte lokale Storyentscheidung. Version/SQL/JSON unverändert. Die offenen PRs #159–#162 bleiben bestehen.
+
+---
+
 ## Aktueller nächster Schritt (24.10.2026)
 
 Nach Abnahme der Waffenreferenzkorrektur 0.8.38+88: manuelle Verbündetenbestätigung für zulässige Nebenhandwaffen über denselben revisionsgeschützten Dialog-/Controllerpfad ergänzen. Akzeptanz und reale Ergebnisse: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md). Folgende Einträge sind historisch.

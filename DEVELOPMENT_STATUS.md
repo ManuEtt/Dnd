@@ -1,3 +1,9 @@
+## 24.10.2026 – Geheimnis-Leak-Schutz am KI-Kampagnenausgang (PR #163)
+
+**IMPLEMENTIERT:** Backend-Guard in `story_secret_guard.ts` und `app.ts`: Beim Story-Start und in Fortsetzungen vollständige wörtliche Enthüllungen des internen Kampagnen-Secrets in sichtbaren Textfeldern fail-closed ablehnen; Normalisierungsvarianten abdecken, aber keine semantische Garantie. Neue HTTP-/Unit-Tests geschrieben; `stateChanges: []` und Regelautorität bleiben unverändert. **GETESTET:** bislang nur vorheriger anderer PR #162 CI #40115897734 vollständig grün. **NICHT GETESTET:** finaler PR-#163-Workflow und realer Android-Test. **BLOCKIERT:** echtes Testgerät, produktive Signatur. **NOCH NICHT IMPLEMENTIERT:** lokal bestätigte Story-Geheimnisfreigabe oder semantische Erkennung. Keine Datenmigration: App 0.8.38+88, SQLite2/JSON1. Eigener [PR #163](https://github.com/ManuEtt/Dnd/pull/163), offene PRs #159–#162 erhalten. [Details](docs/STORY_SECRET_OUTPUT_GUARD_20261024.md). **Nächster Schritt:** gesamte neue CI prüfen und erst nach Erfolg PR reviewbereit machen.
+
+---
+
 ## 24.10.2026 – 0.8.38+88: tatsächliche Nebenhandwaffe für Hinterhältigen Angriff
 
 Die vorhandene Nebenhandauflösung prüft jetzt ihre bestätigte Inventarwaffe auf Finesse/Fernkampf. Ein Hauptdolch verleiht einer Nebenhandaxt keinen Zusatzschaden; ein Nebendolch verliert seine Eignung nicht durch eine Haupthandaxt. Krit/Miss und bestehende gemeinsame Zugnutzung bleiben erhalten. 27 bestehende/Helper- und acht neue Kampf-/SQLite-Tests erfolgreich. Vollständige lokale Abnahme: 1505 Flutter-,100 Python-,31 Backend- und12 native Tests erfolgreich, Format/Analyse/Importgrenzen ohne Befund. Neue Debug-APK und ARM64-Alpha gebaut und geprüft. Eigene finale GitHub-Checks am PR158 getrennt geführt; Realgerät nicht getestet. SQLite2/JSON1 kompatibel. Details und nächstes Paket: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md).

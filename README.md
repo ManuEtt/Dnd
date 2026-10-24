@@ -2,6 +2,20 @@
 
 Deutschsprachige Android-Alpha für Soloabenteuer, regelgeprüfte Kämpfe und lokale Kampagnen mit SQLite. Flutter/Dart-App und optionaler Fastify-/TypeScript-Erzähler. Das vollständige SRD 5.2.1 ist noch nicht implementiert.
 
+## Neuer Entwicklungszyklus 24.10.2026 – Geheimnisse nicht unbemerkt erzählen (PR #163)
+
+**IMPLEMENTIERT (Branch `fix/story-secret-output-guard-20261024`):** Der optionale KI-Spielleiter wird am Backend-API-Ausgang überprüft. Gibt ein Kampagnenstart oder eine Story-Fortsetzung die vollständige geheime Plotformulierung direkt in sichtbaren Texten wieder, wird die Antwort zurückgewiesen statt als Szene oder NPC-/Questnotiz an die App zu senden. Geprüft werden zusätzlich einfache Schreibvarianten (Unicode, Whitespace, Groß-/Kleinschreibung), nicht jedoch semantische Paraphrasen. Kein neues Regelrecht für den Erzähler.
+
+**Neue Tests:** `backend/test/story_secret_guard.test.ts` mit beiden Fastify-Routen, Start-/Fortsetzungsfeldern, Authentifizierung, gültigen Mock-Ergebnissen und generischem HTTP-502 ohne Geheimnisleck. **CI für diesen Commit noch ausstehend**, siehe [PR #163](https://github.com/ManuEtt/Dnd/pull/163/checks). Der letzte tatsächlich vollständig grüne, **andere** PR ist [#162 / CI #40115897734](https://github.com/ManuEtt/Dnd/actions/runs/40115897734) (1.505 Flutter-, 100 Python-, 32 Backendtests). Die vier PRs [#159](https://github.com/ManuEtt/Dnd/pull/159), [#160](https://github.com/ManuEtt/Dnd/pull/160), [#161](https://github.com/ManuEtt/Dnd/pull/161) und [#162](https://github.com/ManuEtt/Dnd/pull/162) sind offen und unabhängig; #162 wurde nach grüner CI reviewbereit gestellt.
+
+**Grenzen:** Nur vollständige wörtliche Secrets werden mit Varianten abgefangen; keine automatische Freigabe/Erkennung partiell enthüllter Plots. App-Version `0.8.38+88`, SQLite 2, Export-JSON 1 und SRD-Regelregister unverändert. Kein Test auf realem Android-Gerät. [Technische Dokumentation](docs/STORY_SECRET_OUTPUT_GUARD_20261024.md) · [operativer Checkpoint](docs/CODEX_CHECKPOINT.md).
+
+**Nächster Schritt:** Gesamte GitHub-CI auf dem finalen PR-#163-HEAD prüfen, Fehler zielgerichtet korrigieren, dokumentieren und erst anschließend PR zur Review freigeben.
+
+---
+
+## Historische Hauptbranch-Dokumentation (PR #158)
+
 ## Aktueller Stand und autonome Fortsetzung (24.10.2026)
 
 **Version 0.8.38+88**, Branch `fix/sneak-attack-offhand-weapon-20261024`, [PR #158](https://github.com/ManuEtt/Dnd/pull/158). Funktionaler Code [`aa79ce5`](https://github.com/ManuEtt/Dnd/commit/aa79ce593790e5763e9125743b0adeab55b581d5), Basis-main `dcb42c5efff40a757994d4f5b5f8e98b2ff128e9` (PR #157 integriert). Eigene aktuelle [GitHub-Checks](https://github.com/ManuEtt/Dnd/pull/158/checks) zeigen den jeweiligen finalen HEAD; Basisprüfungen und lokale Abnahme werden getrennt geführt. Main bleibt durch diesen Zyklus unverändert.

@@ -1,3 +1,11 @@
+## 24.10.2026 – Backend-Erzähler: wörtliche Geheimnisoffenlegung sperren (PR #163)
+
+- `/v1/story/start` und `/v1/story/advance` validieren neu, dass sichtbare Erzählfelder den intern gespeicherten Plot-Secret-Text nicht vollständig wörtlich enthalten. Normalisierter Case-/Whitespace-/Unicode-Abgleich und Wortgrenzen; bei Verstoß 502 ohne Durchreichen des Geheimnisses.
+- Eigener reiner Backend-Guard und neue positive/negative Fastify-/Unit-Regressionen, keine externen Anbieteraufrufe. **CI auf finalem HEAD noch ausstehend**; keine Behauptung vollständiger semantischer Spoilererkennung.
+- Version, Android-App und lokale Spielstände unverändert. [PR #163](https://github.com/ManuEtt/Dnd/pull/163) · [Details](docs/STORY_SECRET_OUTPUT_GUARD_20261024.md).
+
+---
+
 ## 24.10.2026 – 0.8.38+88: tatsächliche Nebenhandwaffe für Hinterhältigen Angriff
 
 Die vorhandene Nebenhandauflösung prüft jetzt ihre bestätigte Inventarwaffe auf Finesse/Fernkampf. Ein Hauptdolch verleiht einer Nebenhandaxt keinen Zusatzschaden; ein Nebendolch verliert seine Eignung nicht durch eine Haupthandaxt. Krit/Miss und bestehende gemeinsame Zugnutzung bleiben erhalten. 27 bestehende/Helper- und acht neue Kampf-/SQLite-Tests erfolgreich. Vollständige lokale Abnahme: 1505 Flutter-,100 Python-,31 Backend- und12 native Tests erfolgreich, Format/Analyse/Importgrenzen ohne Befund. Neue Debug-APK und ARM64-Alpha gebaut und geprüft. Eigene finale GitHub-Checks am PR158 getrennt geführt; Realgerät nicht getestet. SQLite2/JSON1 kompatibel. Details und nächstes Paket: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md).
