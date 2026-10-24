@@ -82,6 +82,9 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
+      - name: Temporäre Sending-Formatdiagnose (wird wieder entfernt)
+        working-directory: app
+        run: dart format --output=show test/sending_attempt_dialog_test.dart
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
