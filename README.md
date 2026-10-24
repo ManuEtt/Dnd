@@ -6,6 +6,8 @@
 
 ### Sending-Zauber: Nachricht, Klasse und Ressourcen gemeinsam prüfen (24.10.2026)
 
+Der nicht gespeicherte Regel-Dry-run sperrt außerdem Zauberaktionen bei 0 TP, Handlungsunfähigkeit oder ungeübter angelegter Rüstung. Manipulierte Sending-Klassenmetadaten dürfen keine fremden Klassen freigeben.
+
 Der neue reine Rule-Dienst `SrdSendingCastPreflightRules` prüft die
 Sending-Nachricht und Empfängerbestätigung gemeinsam mit
 Klassen-/Vorbereitungsstatus, bestätigter Aktion,

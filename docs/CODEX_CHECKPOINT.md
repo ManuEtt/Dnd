@@ -1,5 +1,7 @@
 ## 24.10.2026 – Sending-Regelverbund aus Empfänger und Zauberressourcen
 
+- **Korrektur nach CI-Analyse:** Der Validator nutzt zusätzlich einen nicht gespeicherten `SpellcastingRules.cast`-Dry-run. Er verweigert eine positive Vorschau für kampfunfähige Figuren, 0 Trefferpunkte oder ungeübte angelegte Rüstung. Der hypothetische Held wird nicht gespeichert. Die erlaubten drei Sending-Klassen sind gegen Katalogmanipulation fixiert; Negativtests ergänzt. Die erste/zweite CI endete am Dart-Formatgate (#40070752407 / #40071043289). Die exakte Formatter-Differenz wurde einmalig durch einen nur lesenden temporären GitHub-Workflow ermittelt, der in diesem Commit entfernt wird. Neue vollständige CI erforderlich.
+
 - **CI-Fix:** Erste Code-Push-CI [#40070752407](https://github.com/ManuEtt/Dnd/actions/runs/40070752407) auf `99ff7626057f60a0cf7d47cd42ba1859f8d02e42` stoppte bei `dart format`: zwei neue Dateien mussten formatiert werden; spätere Flutter-/Android-Checks nicht ausgeführt. Den langen ternären Ausdruck in kurze Zwischenvariable zerlegt und den langen Testtitel gekürzt. Vollständige neue CI des nächsten Code-Commits notwendig.
 
 - **LIVE-BASIS:** Main `da80d3f2895098952b701fffe31586f8be07be1e`, [Main-GitHub-CI #40069427402](https://github.com/ManuEtt/Dnd/actions/runs/40069427402) vollständig success. PR #153 bereits in main integriert, am Sitzungsbeginn keine offenen PRs. App-Version `0.8.37+87`, SQLite 2, Export-JSON 1.

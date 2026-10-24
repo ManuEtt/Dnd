@@ -49,8 +49,7 @@ void main() {
     SendingRecipientKnowledge recipientKnowledge =
         SendingRecipientKnowledge.personallyMet,
     bool creature = true,
-    SendingBlockStatus blockStatus =
-        SendingBlockStatus.notBlockedConfirmed,
+    SendingBlockStatus blockStatus = SendingBlockStatus.notBlockedConfirmed,
     SendingPlaneRelation planeRelation =
         SendingPlaneRelation.samePlaneConfirmed,
     int? roll,
@@ -60,8 +59,7 @@ void main() {
     bool somatic = true,
     bool material = true,
     bool focusAuthorized = false,
-    SrdSpellMaterialSource source =
-        SrdSpellMaterialSource.specificComponents,
+    SrdSpellMaterialSource source = SrdSpellMaterialSource.specificComponents,
   }) => SrdSendingCastPreflightRules.preview(
     hero,
     spell: spell ?? sending,
@@ -105,21 +103,12 @@ void main() {
       () => preview(_caster(spells: const ['Light'])),
       throwsFormatException,
     );
+    expect(() => preview(_caster(className: 'Kämpfer')), throwsFormatException);
     expect(
-      () => preview(_caster(className: 'Kämpfer')),
+      () => preview(_caster(className: 'Magier'), castingClass: 'Kleriker'),
       throwsFormatException,
     );
-    expect(
-      () => preview(
-        _caster(className: 'Magier'),
-        castingClass: 'Kleriker',
-      ),
-      throwsFormatException,
-    );
-    expect(
-      () => preview(_caster(level: 4)),
-      throwsFormatException,
-    );
+    expect(() => preview(_caster(level: 4)), throwsFormatException);
   });
 
   test('action, once-per-turn slot and V/S/M proofs are all mandatory', () {
@@ -130,10 +119,7 @@ void main() {
     expect(() => preview(hero, somatic: false), throwsFormatException);
     expect(() => preview(hero, material: false), throwsFormatException);
     expect(
-      () => preview(
-        hero,
-        source: SrdSpellMaterialSource.spellcastingFocus,
-      ),
+      () => preview(hero, source: SrdSpellMaterialSource.spellcastingFocus),
       throwsFormatException,
     );
     final focus = preview(
@@ -155,12 +141,22 @@ void main() {
     expect(hero.spentSpellSlots, isEmpty);
   });
 
+  test('preview rejects zero HP and untrained equipped armor', () {
+    final hero = _caster();
+    final unable = hero.copyWith(hitPoints: 0);
+    expect(() => preview(unable), throwsStateError);
+    final untrained = hero.copyWith(
+      equippedArmorId: 'armor-untrained',
+      equippedArmorTrained: false,
+    );
+    expect(() => preview(untrained), throwsStateError);
+    expect(hero.spentSpellSlots, isEmpty);
+    expect(untrained.spentSpellSlots, isEmpty);
+  });
+
   test('25-word messages and verified recipient stay mandatory', () {
     final hero = _caster();
-    final accepted = preview(
-      hero,
-      message: List.filled(25, 'Wort').join(' '),
-    );
+    final accepted = preview(hero, message: List.filled(25, 'Wort').join(' '));
     expect(accepted.recipient.wordCount, 25);
     expect(
       () => preview(hero, message: List.filled(26, 'Wort').join(' ')),
@@ -188,10 +184,7 @@ void main() {
       planeRelation: SendingPlaneRelation.differentPlaneConfirmed,
       roll: 5,
     );
-    expect(
-      different.assessment.outcome,
-      SendingDeliveryOutcome.planarFailure,
-    );
+    expect(different.assessment.outcome, SendingDeliveryOutcome.planarFailure);
     final passed = preview(
       hero,
       planeRelation: SendingPlaneRelation.differentPlaneConfirmed,
@@ -245,8 +238,25 @@ void main() {
       concentration: false,
       ritual: false,
     );
+    expect(() => preview(_caster(), spell: altered), throwsUnsupportedError);
+    final wrongClasses = SrdSpellDefinition(
+      id: source.id,
+      name: source.name,
+      level: source.level,
+      school: source.school,
+      classes: [...source.classes, 'Sorcerer'],
+      castingTime: source.castingTime,
+      range: source.range,
+      components: source.components,
+      duration: source.duration,
+      verbal: source.verbal,
+      somatic: source.somatic,
+      material: source.material,
+      concentration: source.concentration,
+      ritual: source.ritual,
+    );
     expect(
-      () => preview(_caster(), spell: altered),
+      () => preview(_caster(), spell: wrongClasses),
       throwsUnsupportedError,
     );
     expect(

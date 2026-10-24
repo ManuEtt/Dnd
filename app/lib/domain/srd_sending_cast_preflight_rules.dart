@@ -46,6 +46,8 @@ class SrdSendingCastPreflightRules {
     if (spell.id != 'spell-sending' ||
         spell.name != 'Sending' ||
         spell.school != 'Divination' ||
+        spell.classes.length != 3 ||
+        !const {'Bard', 'Cleric', 'Wizard'}.containsAll(spell.classes) ||
         spell.level != 3 ||
         spell.castingTime != 'Action' ||
         spell.range != 'Unlimited' ||
@@ -90,10 +92,20 @@ class SrdSendingCastPreflightRules {
       planeRelation: planeRelation,
       percentileRoll: percentileRoll,
     );
+    // A pure dry-run of the current casting rule also checks zero HP,
+    // action-limiting conditions and untrained armor. Its hero is discarded.
+    final hypothetical = SpellcastingRules.cast(
+      hero,
+      spellName: resources.preparedName,
+      spellLevel: resources.spell.level,
+      slotLevel: resources.slotLevel,
+      pactMagic: resources.pactMagic,
+    );
     final available = pactMagic
-        ? SpellcastingRules.availablePactSlots(hero)
-        : (SpellcastingRules.availableSlots(hero)[resources.slotLevel] ?? 0);
-    final remaining = available - 1;
+        ? SpellcastingRules.availablePactSlots(hypothetical.hero)
+        : (SpellcastingRules.availableSlots(hypothetical.hero)[resources.slotLevel] ??
+            0);
+    final remaining = available;
     if (remaining < 0) {
       throw StateError('Kein bestätigter Zauberplatz verfügbar.');
     }
