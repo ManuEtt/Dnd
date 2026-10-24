@@ -519,7 +519,10 @@ void main() {
             path: inMemoryDatabasePath,
           ),
         ))!;
-        final controller = GameController(repository: repository, engine: engine);
+        final controller = GameController(
+          repository: repository,
+          engine: engine,
+        );
         final voice = _Voice();
         addTearDown(() async {
           await tester.pumpWidget(const SizedBox.shrink());
@@ -595,17 +598,21 @@ void main() {
       await tester.pumpAndSettle();
       expect(combatToggle.hitTestable(), findsOneWidget);
       expect(
-        tester.widget<FantasyToggleButton>(
-          find.byKey(const ValueKey('adventure-combat-mode-toggle')),
-        ).selected,
+        tester
+            .widget<FantasyToggleButton>(
+              find.byKey(const ValueKey('adventure-combat-mode-toggle')),
+            )
+            .selected,
         isFalse,
       );
       await tester.tap(combatToggle);
       await tester.pumpAndSettle();
       expect(
-        tester.widget<FantasyToggleButton>(
-          find.byKey(const ValueKey('adventure-combat-mode-toggle')),
-        ).selected,
+        tester
+            .widget<FantasyToggleButton>(
+              find.byKey(const ValueKey('adventure-combat-mode-toggle')),
+            )
+            .selected,
         isTrue,
       );
       final button = find.byKey(const ValueKey('combat-end-hero-turn'));
@@ -623,11 +630,13 @@ void main() {
       );
       await tester.tap(button);
       for (var i = 0; i < 200; i++) {
-        await tester.runAsync(() =>
-            Future<void>.delayed(const Duration(milliseconds: 10)));
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 10)),
+        );
         await tester.pump();
         if (!controller.busy &&
-            find.byKey(const ValueKey('adventure-action-submitting'))
+            find
+                .byKey(const ValueKey('adventure-action-submitting'))
                 .evaluate()
                 .isEmpty) {
           break;

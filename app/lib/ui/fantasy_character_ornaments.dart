@@ -115,8 +115,7 @@ class FantasyPortraitHaloPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant FantasyPortraitHaloPainter oldDelegate) =>
-      false;
+  bool shouldRepaint(covariant FantasyPortraitHaloPainter oldDelegate) => false;
 }
 
 class FantasyPortraitRimPainter extends CustomPainter {
@@ -139,9 +138,12 @@ class FantasyPortraitRimPainter extends CustomPainter {
     // Four compass jewels, at the rim: thin enough to leave the portrait clear.
     for (var i = 0; i < 4; i++) {
       final angle = i * math.pi / 2 - math.pi / 2;
-      final point = center +
-          Offset(math.cos(angle) * radius * .94,
-              math.sin(angle) * radius * .94);
+      final point =
+          center +
+          Offset(
+            math.cos(angle) * radius * .94,
+            math.sin(angle) * radius * .94,
+          );
       final diamond = Path()
         ..moveTo(point.dx, point.dy - 5)
         ..lineTo(point.dx + 4, point.dy)
@@ -154,8 +156,7 @@ class FantasyPortraitRimPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant FantasyPortraitRimPainter oldDelegate) =>
-      false;
+  bool shouldRepaint(covariant FantasyPortraitRimPainter oldDelegate) => false;
 }
 
 class FantasyFiligreePainter extends CustomPainter {
@@ -166,9 +167,7 @@ class FantasyFiligreePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (size.width < 68 || size.height < 66) return;
-    final color = parchment
-        ? const Color(0x885f432a)
-        : const Color(0x99bf9753);
+    final color = parchment ? const Color(0x885f432a) : const Color(0x99bf9753);
     final paint = Paint()
       ..color = color
       ..strokeWidth = .9
@@ -189,8 +188,10 @@ class FantasyFiligreePainter extends CustomPainter {
     for (final left in [true, false]) {
       for (final top in [true, false]) {
         canvas.save();
-        canvas.translate(left ? inset + 6 : size.width - inset - 6,
-            top ? inset + 6 : size.height - inset - 6);
+        canvas.translate(
+          left ? inset + 6 : size.width - inset - 6,
+          top ? inset + 6 : size.height - inset - 6,
+        );
         canvas.scale(left ? 1 : -1, top ? 1 : -1);
         final flourish = Path()
           ..moveTo(0, 22)

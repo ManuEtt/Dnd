@@ -145,10 +145,7 @@ class FantasyEffectWard extends StatelessWidget {
               'Bestätigte Kampfrunde: ${encounter!.round}. '
               'Ein Effekt endet ausschließlich am bestätigten '
               'eigenen Zugende seiner Begegnung.',
-              style: const TextStyle(
-                color: FantasyPalette.muted,
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: FantasyPalette.muted, fontSize: 12),
             ),
           ),
         if (onManageSpells != null)
@@ -182,8 +179,8 @@ class FantasyEffectWard extends StatelessWidget {
       effect,
       encounter,
     );
-    final foreign = encounter != null &&
-        encounter!.id != effect.expiresInEncounterId;
+    final foreign =
+        encounter != null && encounter!.id != effect.expiresInEncounterId;
     return 'Ende des eigenen Zugs: Runde $round '
         '(${effect.expiresInEncounterId})'
         '${foreign ? ' · andere Begegnung' : ''}'
@@ -195,8 +192,9 @@ class FantasyEffectWard extends StatelessWidget {
         .where((effect) => effect.condition == condition)
         .length;
     if (count == 0) return 'Manuell / historisch';
-    final sourceLabel =
-        count == 1 ? '1 bestätigte Quelle' : '$count bestätigte Quellen';
+    final sourceLabel = count == 1
+        ? '1 bestätigte Quelle'
+        : '$count bestätigte Quellen';
     return hero.manualConditions.contains(condition)
         ? '$sourceLabel · auch manuell'
         : sourceLabel;
@@ -225,9 +223,7 @@ class FantasyEffectWard extends StatelessWidget {
   static String _speedLabel(HeroCharacter hero) {
     final speed = ExhaustionRules.effectiveSpeedMeters(hero);
     if (speed == null) return 'nicht bestätigt';
-    return speed == speed.roundToDouble()
-        ? '${speed.toInt()} m'
-        : '$speed m';
+    return speed == speed.roundToDouble() ? '${speed.toInt()} m' : '$speed m';
   }
 
   static String _title(String condition) => condition.isEmpty
@@ -288,10 +284,7 @@ class _WardCard extends StatelessWidget {
       ),
       subtitle: Text(
         summary,
-        style: const TextStyle(
-          color: FantasyPalette.ivory,
-          fontSize: 12,
-        ),
+        style: const TextStyle(color: FantasyPalette.ivory, fontSize: 12),
       ),
       childrenPadding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
       expandedAlignment: Alignment.centerLeft,
@@ -301,10 +294,7 @@ class _WardCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 5),
             child: DefaultTextStyle.merge(
-              style: const TextStyle(
-                color: FantasyPalette.muted,
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: FantasyPalette.muted, fontSize: 12),
               child: detail,
             ),
           ),
@@ -326,10 +316,7 @@ class _RuneSeal extends StatelessWidget {
     child: Stack(
       alignment: Alignment.center,
       children: [
-        CustomPaint(
-          size: const Size(40, 40),
-          painter: _RuneRing(color),
-        ),
+        CustomPaint(size: const Size(40, 40), painter: _RuneRing(color)),
         Icon(icon, color: color, size: 19),
       ],
     ),

@@ -4,6 +4,7 @@
 // Legacy implementations stay in domain/ while the existing app migrates.
 export '../domain/dice_engine.dart';
 export '../domain/rules_engine.dart';
+export '../domain/sneak_attack_ally_rules.dart';
 export '../domain/damage_rules.dart';
 export '../domain/condition_rules.dart';
 export '../domain/cover_rules.dart';

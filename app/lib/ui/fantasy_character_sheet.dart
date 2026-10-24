@@ -28,7 +28,12 @@ const _ivory = Color(0xfff4ead6);
 const _muted = Color(0xffadc0cf);
 
 class CharacterSheetPage extends StatefulWidget {
-  const CharacterSheetPage({super.key, required this.hero, this.onEdit, this.onRoll});
+  const CharacterSheetPage({
+    super.key,
+    required this.hero,
+    this.onEdit,
+    this.onRoll,
+  });
 
   final HeroCharacter hero;
   final VoidCallback? onEdit;
@@ -64,17 +69,28 @@ class _CharacterSheetPageState extends State<CharacterSheetPage> {
             shrinkWrap: true,
             padding: const EdgeInsets.fromLTRB(18, 6, 18, 22),
             children: [
-              Text(title, style: const TextStyle(
-                color: _gold, fontFamily: 'serif', fontSize: 24,
-              )),
+              Text(
+                title,
+                style: const TextStyle(
+                  color: _gold,
+                  fontFamily: 'serif',
+                  fontSize: 24,
+                ),
+              ),
               const Divider(color: _gold),
               if (values.isEmpty)
-                const Text('Keine bestätigten Einträge.',
-                    style: TextStyle(color: _muted)),
+                const Text(
+                  'Keine bestätigten Einträge.',
+                  style: TextStyle(color: _muted),
+                ),
               for (final value in values)
                 ListTile(
                   dense: true,
-                  leading: const Icon(Icons.auto_awesome, color: _gold, size: 19),
+                  leading: const Icon(
+                    Icons.auto_awesome,
+                    color: _gold,
+                    size: 19,
+                  ),
                   title: Text(value, style: const TextStyle(color: _ivory)),
                 ),
             ],
@@ -216,22 +232,16 @@ class _CharacterSheetPageState extends State<CharacterSheetPage> {
             );
           }
         },
-        onInventory: () => _showCollection(
-          'Ausrüstung und Inventar',
-          [
-            for (final item in widget.hero.inventory)
-              '${item.name}${item.quantity > 1 ? ' ×${item.quantity}' : ''}',
-          ],
-        ),
+        onInventory: () => _showCollection('Ausrüstung und Inventar', [
+          for (final item in widget.hero.inventory)
+            '${item.name}${item.quantity > 1 ? ' ×${item.quantity}' : ''}',
+        ]),
         onRoll: _rollFromSheet,
-        onSpells: () => _showCollection(
-          'Bekannte Zauber',
-          [
-            ...widget.hero.spells,
-            if (widget.hero.concentratingOn.isNotEmpty)
-              'Konzentration: ${widget.hero.concentratingOn}',
-          ],
-        ),
+        onSpells: () => _showCollection('Bekannte Zauber', [
+          ...widget.hero.spells,
+          if (widget.hero.concentratingOn.isNotEmpty)
+            'Konzentration: ${widget.hero.concentratingOn}',
+        ]),
         onMore: _moreDetails,
       ),
     );
@@ -246,8 +256,12 @@ class _CharacterHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final initials = hero.name.trim().isEmpty
         ? '?'
-        : hero.name.trim().split(RegExp(r'\\s+'))
-            .take(2).map((part) => part[0].toUpperCase()).join();
+        : hero.name
+              .trim()
+              .split(RegExp(r'\\s+'))
+              .take(2)
+              .map((part) => part[0].toUpperCase())
+              .join();
     return FantasyApprovedCornerFrame(
       cornerSize: 30,
       child: Container(
@@ -282,7 +296,8 @@ class _CharacterHeader extends StatelessWidget {
                 children: [
                   FantasyPortraitMedallion(
                     size: 112,
-                    child: hero.portraitPreset >= 0 ||
+                    child:
+                        hero.portraitPreset >= 0 ||
                             hero.portraitPhotoBase64.isNotEmpty
                         ? FantasyCharacterPortrait(
                             key: const ValueKey('sheet-hero-portrait'),
@@ -312,13 +327,16 @@ class _CharacterHeader extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('WÜRFELRAUNEN', style: TextStyle(
-                          fontFamily: 'serif',
-                          fontSize: 12,
-                          letterSpacing: 1.2,
-                          fontWeight: FontWeight.bold,
-                          color: _gold,
-                        )),
+                        const Text(
+                          'WÜRFELRAUNEN',
+                          style: TextStyle(
+                            fontFamily: 'serif',
+                            fontSize: 12,
+                            letterSpacing: 1.2,
+                            fontWeight: FontWeight.bold,
+                            color: _gold,
+                          ),
+                        ),
                         const SizedBox(height: 6),
                         Text(
                           hero.name.isEmpty ? 'Unbenannter Held' : hero.name,
@@ -385,43 +403,48 @@ class _SummaryGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dex = _modifier(hero.abilities['dexterity']);
-    final initiative = dex == null ? '–' : _signed(RulesEngine.initiativeBonus(hero));
+    final initiative = dex == null
+        ? '–'
+        : _signed(RulesEngine.initiativeBonus(hero));
     final maximum = hero.maxHitPoints;
     final current = hero.hitPoints;
     final hpFraction = current != null && maximum != null && maximum > 0
         ? (current / maximum).clamp(0.0, 1.0).toDouble()
         : null;
-    final values = <({String label, String value, IconData icon, Color accent})>[
-      (
-        label: 'TREFFERPUNKTE',
-        value: '${current ?? '–'} / ${maximum ?? '–'}',
-        icon: Icons.favorite,
-        accent: const Color(0xffdb7064),
-      ),
-      (
-        label: 'RÜSTUNGSKLASSE',
-        value: hero.armorClass?.toString() ?? '–',
-        icon: Icons.shield_outlined,
-        accent: const Color(0xffa7c8dc),
-      ),
-      (
-        label: 'INITIATIVE',
-        value: initiative,
-        icon: Icons.sports_martial_arts,
-        accent: _gold,
-      ),
-      (
-        label: 'BEWEGUNG',
-        value: _meters(CharacterRuleEngine.speedMeters(hero)),
-        icon: Icons.directions_run_outlined,
-        accent: _gold,
-      ),
-    ];
+    final values =
+        <({String label, String value, IconData icon, Color accent})>[
+          (
+            label: 'TREFFERPUNKTE',
+            value: '${current ?? '–'} / ${maximum ?? '–'}',
+            icon: Icons.favorite,
+            accent: const Color(0xffdb7064),
+          ),
+          (
+            label: 'RÜSTUNGSKLASSE',
+            value: hero.armorClass?.toString() ?? '–',
+            icon: Icons.shield_outlined,
+            accent: const Color(0xffa7c8dc),
+          ),
+          (
+            label: 'INITIATIVE',
+            value: initiative,
+            icon: Icons.sports_martial_arts,
+            accent: _gold,
+          ),
+          (
+            label: 'BEWEGUNG',
+            value: _meters(CharacterRuleEngine.speedMeters(hero)),
+            icon: Icons.directions_run_outlined,
+            accent: _gold,
+          ),
+        ];
     return LayoutBuilder(
       builder: (context, constraints) {
         final columns = constraints.maxWidth < 580 ? 2 : 4;
         final scaler = MediaQuery.textScalerOf(context);
-        final tileHeight = (76 + scaler.scale(50)).clamp(124.0, 230.0).toDouble();
+        final tileHeight = (76 + scaler.scale(50))
+            .clamp(124.0, 230.0)
+            .toDouble();
         return GridView(
           key: const ValueKey('sheet-summary-grid'),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -437,8 +460,19 @@ class _SummaryGrid extends StatelessWidget {
               FantasyApprovedCornerFrame(
                 cornerSize: 20,
                 child: Container(
-                  key: ValueKey('sheet-summary-${i == 0 ? 'hp' : i == 1 ? 'ac' : i == 2 ? 'initiative' : 'speed'}'),
-                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 8),
+                  key: ValueKey(
+                    'sheet-summary-${i == 0
+                        ? 'hp'
+                        : i == 1
+                        ? 'ac'
+                        : i == 2
+                        ? 'initiative'
+                        : 'speed'}',
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 7,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: i == 0 ? const Color(0xff351c25) : _panel,
                     border: Border.all(color: _gold.withValues(alpha: .55)),
@@ -466,9 +500,13 @@ class _SummaryGrid extends StatelessWidget {
                         fit: BoxFit.scaleDown,
                         child: Text(
                           values[i].value,
-                          key: i == 0 ? const ValueKey('sheet-hit-points') : null,
+                          key: i == 0
+                              ? const ValueKey('sheet-hit-points')
+                              : null,
                           style: const TextStyle(
-                            fontSize: 23, fontWeight: FontWeight.bold, color: _ivory,
+                            fontSize: 23,
+                            fontWeight: FontWeight.bold,
+                            color: _ivory,
                           ),
                         ),
                       ),
@@ -488,8 +526,10 @@ class _SummaryGrid extends StatelessWidget {
                           ),
                         ),
                       if (i == 0 && hpFraction == null)
-                        const Text('Noch nicht erfasst',
-                          style: TextStyle(color: _muted, fontSize: 10)),
+                        const Text(
+                          'Noch nicht erfasst',
+                          style: TextStyle(color: _muted, fontSize: 10),
+                        ),
                       if (i == 0 && hero.temporaryHitPoints > 0)
                         Text(
                           '+${hero.temporaryHitPoints} temporäre TP',
@@ -547,9 +587,10 @@ class _PassivePerceptionStrip extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('ÜBUNGSBONUS', style: TextStyle(
-              color: _muted, fontSize: 9, letterSpacing: .25,
-            )),
+            const Text(
+              'ÜBUNGSBONUS',
+              style: TextStyle(color: _muted, fontSize: 9, letterSpacing: .25),
+            ),
             Text(
               proficiency,
               style: const TextStyle(color: _gold, fontSize: 17),
@@ -561,7 +602,9 @@ class _PassivePerceptionStrip extends StatelessWidget {
           score?.toString() ?? '–',
           key: const ValueKey('sheet-passive-perception-score'),
           style: const TextStyle(
-            color: _gold, fontSize: 25, fontWeight: FontWeight.bold,
+            color: _gold,
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ],
@@ -574,7 +617,11 @@ class _PassivePerceptionStrip extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.visibility_outlined, color: _gold, size: 24),
+                    const Icon(
+                      Icons.visibility_outlined,
+                      color: _gold,
+                      size: 24,
+                    ),
                     const SizedBox(width: 9),
                     Expanded(child: description),
                   ],

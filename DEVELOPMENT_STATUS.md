@@ -1,9 +1,40 @@
-## 23.10.2026 – SRD Sending: 25 Wörter, überprüfter Empfänger und Ebenenrisiko (CI ausstehend)
+## 24.10.2026 – Unabhängigen SRD-Sending-Regelkern übernommen
 
-- **IMPLEMENTIERT:** Rein lesender SRD-5.2.1-`Sending`-Prüfbaustein als `SrdSendingRules.prepare` und `assessDelivery`. Er verlangt eine bestätigte Kreatur, die persönlich getroffen oder durch eine Person mit Erstkontakt beschrieben wurde, 1–25 Wörter, eindeutige Empfängerkennung, bestätigte Block-/Ebenenlage und für bestätigte verschiedene Ebenen einen bereits vorhandenen W100-Wurf. Fehlende Informationen bleiben `unresolved`. Keine Slot-/Inventar-/Story-/SQLite-Mutation und keine automatische Nachricht.
-- **TESTS GESCHRIEBEN, CI AUSSTEHEND:** `app/test/srd_sending_rules_test.dart` deckt Quellenmetadaten, Fremdzauber, Inputgrenzen, den W100 1/5/6/100, Blockade sowie unbestätigte Lage ab. SRD-Matrix bleibt `partial`, siehe `docs/SRD_SENDING_MESSAGE_RULES_20261023.md`.
-- **BASIS:** Main `f71c287e`, App-Version `0.8.35+85`, PR #142 integriert; neuer Featurebranch `0.8.36+86`. **GETESTET:** vorbestehende Main-/PR-CI, **NICHT GETESTET:** finale CI des aktuellen Feature-HEAD, reales Gerät, vollständige Zauberausführung/Persistenz. **BLOCKIERT:** kein Flutter-/Android-SDK und kein echtes Gerät in dieser Sitzung.
-- **NÄCHSTER SCHRITT:** vollständige aktuelle GitHub-CI einschließlich Flutter, Backend, Android Debug/Alpha abnehmen; Fehler korrigieren, PR prüfen/integrieren, dann tatsächliche Spielleiter-/Bestätigungsaktion mit geregeltem Würfel-/Slot-/Journalcommit entwickeln.
+- **IMPLEMENTIERT:** Die reine Regelvorprüfung für den SRD-5.2.1-Zauber `Sending` prüft bestätigten Kreaturenempfänger, Wissensnachweis, 1–25 Wörter, bestätigte Blockade und den extern nachgewiesenen W100-Ebenenwurf (1–5 verfehlt; 6–100 erfolgreich). Keine KI-generierte Regelwirkung, keine automatische Nachrichtenzustellung und keine SQLite-Mutation.
+- **TESTS ÜBERNOMMEN:** `app/test/srd_sending_rules_test.dart`; ursprüngliche vollständige CI von PR #144 auf `83a56383` war erfolgreich. **NICHT GETESTET:** neuer, mit den EP-/Schurkenänderungen vereinter HEAD bis zur eigenen CI.
+- **INTEGRATION:** öffentliche Fassade `rules_api.dart`, Anforderungsregister und `docs/SRD_SENDING_MESSAGE_RULES_20261023.md`. Die aktuelle App-Version `0.8.37+87` wird nicht auf die ältere Branch-Version `0.8.36+86` zurückgesetzt.
+
+## 24.10.2026 – Integrierte EP-Sicherung auf aktuellem Schurken-/Kampfstand
+
+- **IMPLEMENTIERT:** Die bisher getrennten Korrekturen aus PR #149 wurden gegen `main` `f99f27ac` als konfliktaufgelöster Merge zusammengesetzt: fehlerhafte Rabenwacht-XP-Marker werden abgelehnt; `GameEngine.confirmExperienceReward` und `GameController.confirmExperienceReward` sichern ausschließlich ausdrücklich bestätigte, idempotente XP-Ereignisse und SQLite-Revisionsrennen.
+- **REGRESSIONSTESTS ÜBERNOMMEN:** beschädigte Marker und SQLite-Neustart, Request-ID-Duplikate, abweichende Belohnungen, konkurrierende Controller, Rollback und alte Revision. Die zuvor in `main` integrierte Schurken-/Kampfimplementierung bleibt erhalten.
+- **GETESTET:** Vorläufer-PR #149 hatte erfolgreiche GitHub-CI auf `cfea52f2`; `main` hatte erfolgreiche CI auf `f99f27ac`. **NICHT GETESTET:** die jetzt neu zusammengeführte Kombination bis zum eigenen GitHub-Actions-Lauf. Kein reales Android-Gerät geprüft.
+- **KOMPATIBILITÄT:** DB-Schema 2 und Export-JSON-Schema 1 bleiben unverändert. Fantasy-EP-Dialoge der alternativen PRs #150/#151 sind noch getrennt zu prüfen; SRD-Sending aus PR #144 bleibt unabhängig.
+
+## 24.10.2026 – Integration des Main-XP-Fixes aus PR #145
+
+Main1c2eeab wird mit dem bestehenden Sneak-Attack-Paket vereinigt. XP-Belohnungs-ID und Betrag müssen bei einer Wiederholung zusammenpassen; beschädigte Belege werden ohne Mutation abgewiesen. Die zwei Main-Regressionstests bleiben erhalten. Neue gemeinsame Prüfung ausstehend; bisherige Nachweise beziehen sich auf bfc991f vor dieser Integration.
+
+---
+
+## Aktuell – 0.8.37+87, 23.10.2026
+
+Basis main5958579, Code0a56aba, Branch feature/sneak-attack-ally-integration-20261023. Operative Fakten und Wiederaufnahme: [docs/CODEX_CHECKPOINT.md](docs/CODEX_CHECKPOINT.md); ältere Einträge unten sind datierte Historie.
+
+**IMPLEMENTIERT:** Hauptwaffen-Sneak-Attack über bestätigten Verbündeten mit echter UI, ziel-/wurfgebundener Speicherung, Schadensauflösung und Revisionsschutz. Die bestehende Regel-/Story-Grenze verhindert narrative Bestätigungen.
+
+**GETESTET:** 1.431 Flutter-Tests der normalisierten Basis, 11 neue Domain-/SQLite- und 6 neue Widgettests, aktuelle Analyse/Formatierung, Python100 und Backend31. Vollständige neue Suite mit **1.448 Flutter-Tests erfolgreich**; Debug-APK inklusive CRC/Metadaten/Signatur und12 native Tests erfolgreich; [PR147](https://github.com/ManuEtt/Dnd/pull/147) erstellt, [Code-CI40056875863](https://github.com/ManuEtt/Dnd/actions/runs/40056875863) auf182f44b vollständig erfolgreich, Realgerät nicht getestet. ARM64-Alpha19,7MB erfolgreich gebaut und geprüft. Frühere Item-WIP-Dateien separat gesichert, kein Überschreiben aktueller Main-Modelle.
+
+**NÄCHSTER KONKRETER SCHRITT:** Tatsächlich angreifende Nebenhandwaffe für Sneak-Attack-Eignung verwenden und denselben sicheren Bestätigungspfad anbinden; aktuelle Hauptwaffe, alte Spielstände und einmalige Zugnutzung regressionsfrei erhalten.
+
+---
+
+## 23.10.2026 – Schurken-Hinterhältiger-Angriff nach SRD 5.2.1 sichern (CI offen)
+
+- **IMPLEMENTIERT:** `ClassCombatFeatures.eligibleSneakAttackDice` verlangt bei Angriff ohne echten Vorteil zwei unabhängige Bestätigungen: ein Verbündeter befindet sich höchstens 5 Fuß vom ZIEL entfernt und er besitzt nicht `Incapacitated`. Kein stilles Auslösen aus bloßer Bewusstheit oder Nähe zur Spielfigur. Ergänzte Negativtests bei gestunnten/fehlpositionierten Verbündeten und beim Aufheben von Vorteil/Nachteil.
+- **QUELLE:** SRD 5.2.1, Rogue/Sneak Attack S. 62, CC BY 4.0. Requirement `CLASS-SCHURKE-1-BASE-SNEAK-ATTACK-1` ist nur `partial`, keine Vollständigkeitsbehauptung: `GameEngine` hat noch keine Positions- und Ally-Condition-Integration; automatisch nur bestätigte Angriffe mit Vorteil aus ihrem bisherigen Pfad.
+- **BASIS:** Main `f71c287e` nach PR #142. Neuer Branch `fix/srd-rogue-sneak-attack-ally-20261023`, Version `0.8.36+86`, CI noch ausstehend. Ohne DB-Migration oder neue Kampagnen-JSON-Version. Kein Geräte-, Altspielstand- und Release-Signaturtest.
+- **NÄCHSTER SCHRITT:** neuen CI-Lauf prüfen, Fehler beheben; dann in separatem Inkrement bestätigte Karte/Verbündetenstatus im Kampfdialog und im Journal verarbeiten.
 
 ---
 
@@ -1091,3 +1122,16 @@ nicht durch die Wahl eines Merkmaltexts aktiviert.
 Lokale Python-Projekttests ausgeführt; Flutter-Test, Flutter-Analyse und
 Android-Build noch auf GitHub mit Flutter-SDK ausführen. Neues Inkrement
 nicht als abgenommene Android-Version bezeichnen.
+
+
+## Übernommener Status aus Main145 (historisch)
+
+## 23.10.2026 – XP-Belohnungs-ID-Konflikt fail-closed (Branch `fix/xp-reward-id-conflict-20261023`)
+
+- **IMPLEMENTIERT:** Identische XP-Belohnungs-ID wird in `ExperienceProgression.grant` nur bei exakt gleichem gespeichertem Betrag idempotent bestätigt. Anderer/defekter Betrag löst `FormatException` aus; ursprüngliche Kampagne bleibt unverändert.
+- **REGRESSIONSTESTS ERSTELLT:** `app/test/experience_progression_test.dart` prüft Roundtrip-Duplikat, Widerspruch und beschädigten Historieneintrag.
+- **GETESTET:** Main-Baseline `5958579e5321338bb7b4e46abb859fd3bfd1515f` mit GitHub-CI [#40012217485](https://github.com/ManuEtt/Dnd/actions/runs/40012217485) erfolgreich, nicht neuer Branch. **NICHT GETESTET:** neuer Flutter-Code-HEAD bis CI fertig ist. **BLOCKIERT:** Flutter/Android lokal nicht installiert; reales Android-Gerät nicht verfügbar.
+- **KOMPATIBILITÄT:** Keine SQLite-/JSON-Migration, unveränderte SRD-Regelmechanik und KI-/Story-Grenze. `0.8.36+86` bleibt vorerst unverändert wegen parallelem PR #144.
+- **NÄCHSTER KONKRETER SCHRITT:** Finale PR-CI/Flutter-Tests auswerten, dann idempotentes persistentes XP-Gutschriftjournal inklusive GameController-/SQLite-Revisionen gesondert testen.
+
+---

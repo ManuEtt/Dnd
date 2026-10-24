@@ -58,25 +58,68 @@ void main() {
       options: OpenDatabaseOptions(singleInstance: false),
     );
     try {
-      final rows = await database.rawQuery('SELECT COUNT(*) AS total FROM $table');
+      final rows = await database.rawQuery(
+        'SELECT COUNT(*) AS total FROM $table',
+      );
       return rows.single['total'] as int;
     } finally {
       await database.close();
     }
   }
 
-  test('confirmed full reset clears all tables and stays empty after restart',
-      () async {
-    final (controller, outbox, id) = await seededGame();
-    try {
-      await controller.deleteAllData();
-      expect(controller.error, isNull);
-      expect(controller.currentCampaign, isNull);
-      expect(await repository.getCampaign(id), isNull);
+  test(
+    'confirmed full reset clears all tables and stays empty after restart',
+    () async {
+      final (controller, outbox, id) = await seededGame();
+      try {
+        await controller.deleteAllData();
+        expect(controller.error, isNull);
+        expect(controller.currentCampaign, isNull);
+        expect(await repository.getCampaign(id), isNull);
+        expect(await repository.loadCharacters(), isEmpty);
+        expect(await repository.loadSettings(), isEmpty);
+        expect(await outbox.pendingFor('orphaned-command'), isNull);
+
+        for (final table in [
+          'campaigns',
+          'campaign_revisions',
+          'game_events',
+          'characters',
+          'settings',
+          'pending_player_actions',
+        ]) {
+          expect(await rowCount(table), 0, reason: table);
+        }
+        // Repeat is intentionally harmless and must not recreate old data.
+        await controller.deleteAllData();
+        expect(controller.error, isNull);
+      } finally {
+        controller.dispose();
+      }
+
+      await repository.close();
+      repository = await SqliteCampaignRepository.open(
+        factory: databaseFactoryFfi,
+        path: path,
+      );
+      expect(await repository.loadCampaigns(), isEmpty);
       expect(await repository.loadCharacters(), isEmpty);
       expect(await repository.loadSettings(), isEmpty);
-      expect(await outbox.pendingFor('orphaned-command'), isNull);
+      expect(
+        await PlayerActionOutbox(repository).pendingFor('orphaned-command'),
+        isNull,
+      );
+    },
+  );
 
+  test(
+    'late SQLite failure rolls back campaigns journal settings and outbox',
+    () async {
+      final (controller, outbox, id) = await seededGame();
+      final saved = (await repository.getCampaign(id))!;
+      final settings = await repository.loadSettings();
+      final character = (await repository.loadCharacters()).single;
+      final before = <String, int>{};
       for (final table in [
         'campaigns',
         'campaign_revisions',
@@ -85,78 +128,50 @@ void main() {
         'settings',
         'pending_player_actions',
       ]) {
-        expect(await rowCount(table), 0, reason: table);
+        before[table] = await rowCount(table);
       }
-      // Repeat is intentionally harmless and must not recreate old data.
-      await controller.deleteAllData();
-      expect(controller.error, isNull);
-    } finally {
-      controller.dispose();
-    }
 
-    await repository.close();
-    repository = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: path,
-    );
-    expect(await repository.loadCampaigns(), isEmpty);
-    expect(await repository.loadCharacters(), isEmpty);
-    expect(await repository.loadSettings(), isEmpty);
-    expect(await PlayerActionOutbox(repository).pendingFor('orphaned-command'),
-        isNull);
-  });
-
-  test('late SQLite failure rolls back campaigns journal settings and outbox',
-      () async {
-    final (controller, outbox, id) = await seededGame();
-    final saved = (await repository.getCampaign(id))!;
-    final settings = await repository.loadSettings();
-    final character = (await repository.loadCharacters()).single;
-    final before = <String, int>{};
-    for (final table in [
-      'campaigns',
-      'campaign_revisions',
-      'game_events',
-      'characters',
-      'settings',
-      'pending_player_actions',
-    ]) {
-      before[table] = await rowCount(table);
-    }
-
-    final database = await databaseFactoryFfi.openDatabase(
-      path,
-      options: OpenDatabaseOptions(singleInstance: false),
-    );
-    try {
-      await database.execute('''
+      final database = await databaseFactoryFfi.openDatabase(
+        path,
+        options: OpenDatabaseOptions(singleInstance: false),
+      );
+      try {
+        await database.execute('''
 CREATE TRIGGER reject_character_deletion
 BEFORE DELETE ON characters
 BEGIN
   SELECT RAISE(ABORT, 'test rollback of all local data');
 END''');
 
-      await controller.deleteAllData();
-      expect(controller.error, isNotNull);
-      expect(controller.currentCampaign?.id, id);
-      expect((await repository.getCampaign(id))!.toJson(), saved.toJson());
-      expect((await repository.loadCharacters()).single.toJson(),
-          character.toJson());
-      expect(await repository.loadSettings(), settings);
-      expect((await outbox.pendingFor('orphaned-command'))!.requestId,
-          'pending-atomic-reset');
-      for (final entry in before.entries) {
-        expect(await rowCount(entry.key), entry.value,
-            reason: 'rollback of ${entry.key}');
+        await controller.deleteAllData();
+        expect(controller.error, isNotNull);
+        expect(controller.currentCampaign?.id, id);
+        expect((await repository.getCampaign(id))!.toJson(), saved.toJson());
+        expect(
+          (await repository.loadCharacters()).single.toJson(),
+          character.toJson(),
+        );
+        expect(await repository.loadSettings(), settings);
+        expect(
+          (await outbox.pendingFor('orphaned-command'))!.requestId,
+          'pending-atomic-reset',
+        );
+        for (final entry in before.entries) {
+          expect(
+            await rowCount(entry.key),
+            entry.value,
+            reason: 'rollback of ${entry.key}',
+          );
+        }
+        await database.execute('DROP TRIGGER reject_character_deletion');
+        await controller.deleteAllData();
+        expect(controller.error, isNull);
+        expect(await repository.loadCampaigns(), isEmpty);
+        expect(await outbox.pendingFor('orphaned-command'), isNull);
+      } finally {
+        controller.dispose();
+        await database.close();
       }
-      await database.execute('DROP TRIGGER reject_character_deletion');
-      await controller.deleteAllData();
-      expect(controller.error, isNull);
-      expect(await repository.loadCampaigns(), isEmpty);
-      expect(await outbox.pendingFor('orphaned-command'), isNull);
-    } finally {
-      controller.dispose();
-      await database.close();
-    }
-  });
+    },
+  );
 }

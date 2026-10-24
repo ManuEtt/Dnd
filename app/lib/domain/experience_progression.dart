@@ -46,7 +46,17 @@ class ExperienceProgression {
       throw const FormatException('Ungültige XP-Vergabe.');
     }
     final key = 'xp.reward.$rewardId';
-    if (campaign.facts.containsKey(key)) return campaign;
+    if (campaign.facts.containsKey(key)) {
+      // A repeated receipt is idempotent only if it agrees with the
+      // confirmed amount. Mismatched/corrupt history must fail closed
+      // rather than silently acknowledging a different reward.
+      if (campaign.facts[key] != '$amount') {
+        throw const FormatException(
+          'Belohnungs-ID wurde mit anderer XP-Menge bereits bestätigt.',
+        );
+      }
+      return campaign;
+    }
 
     final oldXp = campaign.hero.experience;
     if (oldXp == null) {

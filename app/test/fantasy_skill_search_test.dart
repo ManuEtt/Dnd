@@ -33,27 +33,35 @@ void main() {
     );
     final panel = find.byKey(const ValueKey('sheet-preview-fertigkeiten'));
     await tester.ensureVisible(panel);
-    await tester.tap(find.descendant(
-      of: panel,
-      matching: find.text('Alle anzeigen'),
-    ));
+    await tester.tap(
+      find.descendant(of: panel, matching: find.text('Alle anzeigen')),
+    );
     await tester.pumpAndSettle();
     final search = find.byKey(const ValueKey('sheet-skill-search'));
     expect(search, findsOneWidget);
     final list = tester.widget<ListView>(find.byType(ListView).last);
-    expect((list.childrenDelegate as SliverChildListDelegate).children.length, 20);
+    expect(
+      (list.childrenDelegate as SliverChildListDelegate).children.length,
+      20,
+    );
     await tester.enterText(search, 'HEIL');
     await tester.pumpAndSettle();
     expect(find.text('Heilkunde: +7 · geübt'), findsOneWidget);
     expect(find.text('Athletik: +0'), findsNothing);
     await tester.enterText(search, 'kein treffer');
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('sheet-skill-search-empty')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('sheet-skill-search-empty')),
+      findsOneWidget,
+    );
     expect(find.text('Keine passenden Fertigkeiten.'), findsOneWidget);
     await tester.enterText(search, '');
     await tester.pumpAndSettle();
     final restored = tester.widget<ListView>(find.byType(ListView).last);
-    expect((restored.childrenDelegate as SliverChildListDelegate).children.length, 20);
+    expect(
+      (restored.childrenDelegate as SliverChildListDelegate).children.length,
+      20,
+    );
     expect(hero.toJson(), original);
     expect(tester.takeException(), isNull);
   });
@@ -78,10 +86,9 @@ void main() {
     );
     final panel = find.byKey(const ValueKey('sheet-preview-fertigkeiten'));
     await tester.ensureVisible(panel);
-    await tester.tap(find.descendant(
-      of: panel,
-      matching: find.text('Alle anzeigen'),
-    ));
+    await tester.tap(
+      find.descendant(of: panel, matching: find.text('Alle anzeigen')),
+    );
     await tester.pumpAndSettle();
     final search = find.byKey(const ValueKey('sheet-skill-search'));
     expect(search.hitTestable(), findsOneWidget);

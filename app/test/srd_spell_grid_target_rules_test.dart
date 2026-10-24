@@ -270,9 +270,7 @@ void main() {
 
   test('Unlimited and Special stay unsupported with surveyed grid', () {
     for (final range in ['Unlimited', 'Special']) {
-      final spell = catalog.spells.firstWhere(
-        (entry) => entry.range == range,
-      );
+      final spell = catalog.spells.firstWhere((entry) => entry.range == range);
       expect(
         () => SrdSpellGridTargetRules.validateOrigin(
           spell,

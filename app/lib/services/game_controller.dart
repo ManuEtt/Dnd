@@ -183,6 +183,88 @@ class GameController extends ChangeNotifier {
     await _reload();
   }
 
+  /// A confirmed XP request is idempotent across SQLite restarts and lost ACKs.
+  Future<void> confirmExperienceReward({
+    required String campaignId,
+    required int expectedRevision,
+    required String rewardId,
+    required int amount,
+    required String requestId,
+    required bool playerConfirmed,
+  }) => _run(() async {
+    if (!playerConfirmed) {
+      throw const FormatException('Die EP-Belohnung muss ausdrücklich bestätigt werden.');
+    }
+    if (!RegExp(r'^[A-Za-z0-9_-]{1,100}$').hasMatch(rewardId) ||
+        !RegExp(r'^[A-Za-z0-9_-]{1,128}$').hasMatch(requestId) ||
+        amount < 1 || amount > 100000) {
+      throw const FormatException('Ungültige EP-Belohnung oder Handlungskennung.');
+    }
+    final current = currentCampaign;
+    if (current == null || current.id != campaignId) {
+      throw const FormatException('Keine passende aktive Kampagne.');
+    }
+    final saved = await repository.getCampaign(campaignId);
+    if (saved == null) {
+      throw const FormatException('Der Spielstand wurde nicht gefunden.');
+    }
+    if (await _restoreConfirmedExperienceAward(
+      saved, requestId: requestId, rewardId: rewardId, amount: amount,
+    )) {
+      return;
+    }
+    if (current.revision != expectedRevision ||
+        saved.revision != expectedRevision) {
+      throw const CampaignConflictException(
+        'Der Spielstand wurde inzwischen geändert. Bitte neu laden.',
+      );
+    }
+    final update = engine.confirmExperienceReward(
+      current,
+      rewardId: rewardId,
+      amount: amount,
+      requestId: requestId,
+      playerConfirmed: true,
+    );
+    try {
+      await _commit(update);
+    } on CampaignConflictException {
+      // A second writer may have confirmed this exact ID meanwhile.
+      final latest = await repository.getCampaign(campaignId);
+      if (latest != null &&
+          await _restoreConfirmedExperienceAward(
+            latest, requestId: requestId, rewardId: rewardId, amount: amount,
+          )) {
+        return;
+      }
+      rethrow;
+    }
+  });
+
+  Future<bool> _restoreConfirmedExperienceAward(
+    Campaign saved, {
+    required String requestId,
+    required String rewardId,
+    required int amount,
+  }) async {
+    for (final event in saved.events) {
+      // Shares the same request-ID namespace as free player actions.
+      if (event.payload['actionRequestId'] != requestId) continue;
+      if (event.type != 'xp.reward.confirmed' ||
+          event.payload['rewardId'] != rewardId ||
+          event.payload['amount'] != amount ||
+          event.payload['playerConfirmed'] != true) {
+        throw const FormatException(
+          'Diese Handlungskennung gehört zu einer anderen Bestätigung.',
+        );
+      }
+      currentCampaign = saved;
+      await _reload();
+      return true;
+    }
+    return false;
+  }
+
   /// Stable request IDs let callers retry after a lost acknowledgement.
   /// A matching confirmed event is never executed or narrated again.
   Future<void> sendAction(String text, {String? requestId}) => _run(() async {
@@ -217,9 +299,11 @@ class GameController extends ChangeNotifier {
     }
     final update = await _withNarration(engine.act(campaign, text), text);
     try {
-      await _commit(requestId == null
-          ? update
-          : _withActionReceipt(update, requestId, text.trim()));
+      await _commit(
+        requestId == null
+            ? update
+            : _withActionReceipt(update, requestId, text.trim()),
+      );
     } on CampaignConflictException {
       // Another writer may confirm this *same* ID between the first read and
       // the SQLite revision check. Accept its durable receipt, never retry
@@ -281,13 +365,16 @@ class GameController extends ChangeNotifier {
       },
     );
     return GameUpdate(
-      campaign: update.campaign.copyWith(events: [
-        for (final event in update.campaign.events)
-          event.id == original.id ? receipt : event,
-      ]),
+      campaign: update.campaign.copyWith(
+        events: [
+          for (final event in update.campaign.events)
+            event.id == original.id ? receipt : event,
+        ],
+      ),
       events: [receipt, ...update.events.skip(1)],
     );
   }
+
   Future<GameUpdate> _withNarration(GameUpdate update, String action) async {
     // Mechanical results and roll requests always use the authoritative local
     // text. External narration can enrich only a validated narrative turn.
@@ -419,6 +506,35 @@ class GameController extends ChangeNotifier {
     await _commit(engine.resolveRoll(campaign, natural: natural, total: total));
   });
 
+  Future<void> confirmSneakAttackAlly({
+    required String campaignId,
+    required int expectedRevision,
+    required String rollId,
+    required String allyName,
+    required bool withinFiveFeetOfTargetConfirmed,
+    required bool notIncapacitatedConfirmed,
+  }) => _run(() async {
+    final campaign = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.confirmSneakAttackAlly(
+        campaign,
+        rollId: rollId,
+        allyName: allyName,
+        withinFiveFeetOfTargetConfirmed: withinFiveFeetOfTargetConfirmed,
+        notIncapacitatedConfirmed: notIncapacitatedConfirmed,
+      ),
+    );
+  });
+
+  Future<void> clearSneakAttackAlly({
+    required String campaignId,
+    required int expectedRevision,
+    required String rollId,
+  }) => _run(() async {
+    final campaign = _effectCampaign(campaignId, expectedRevision);
+    await _commit(engine.clearSneakAttackAlly(campaign, rollId: rollId));
+  });
+
   Future<void> resolveDeathSaveDecision({
     required String campaignId,
     required int expectedRevision,
@@ -514,10 +630,9 @@ class GameController extends ChangeNotifier {
     required String effectId,
   }) => _run(() async {
     final current = _effectCampaign(campaignId, expectedRevision);
-    await _commit(engine.removeConfirmedSpellEffect(
-      current,
-      effectId: effectId,
-    ));
+    await _commit(
+      engine.removeConfirmedSpellEffect(current, effectId: effectId),
+    );
   });
 
   Future<void> applyConditionEffect({

@@ -54,7 +54,10 @@ void main() {
         findsOneWidget,
       );
       if (scene == FantasyBackdropScene.home) {
-        expect(find.byKey(const ValueKey('fantasy-backdrop-art-home')), findsNothing);
+        expect(
+          find.byKey(const ValueKey('fantasy-backdrop-art-home')),
+          findsNothing,
+        );
       } else {
         expect(
           find.byKey(ValueKey('fantasy-backdrop-art-${scene.name}')),

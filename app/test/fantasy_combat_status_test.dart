@@ -46,14 +46,15 @@ void main() {
       expect(find.text('Bonusaktion: verfügbar'), findsOneWidget);
       expect(find.text('Reaktion: verbraucht'), findsOneWidget);
       expect(find.text('Bewegung: 6 m'), findsOneWidget);
-      expect(find.text('Zauberplatz: in diesem Zug verbraucht'), findsOneWidget);
+      expect(
+        find.text('Zauberplatz: in diesem Zug verbraucht'),
+        findsOneWidget,
+      );
       expect(tester.takeException(), isNull);
     });
   }
 
-  testWidgets('Deckungsmenü sendet nur bestätigten SRD-Befehl', (
-    tester,
-  ) async {
+  testWidgets('Deckungsmenü sendet nur bestätigten SRD-Befehl', (tester) async {
     final actions = <String>[];
     await tester.pumpWidget(
       MaterialApp(
