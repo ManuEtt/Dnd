@@ -91,6 +91,61 @@ void main() {
     expect(() => prepare(message: tooMany), throwsFormatException);
   });
 
+  test('25 German words with punctuation and line breaks remain valid', () {
+    final words = List<String>.generate(
+      25,
+      (i) => i.isEven ? 'Grüße,' : 'für-dich!',
+    );
+    final msg = '${words.take(10).join(' ')}\n'
+        '${words.skip(10).take(10).join('\t')}\r\n'
+        '${words.skip(20).join(' ')}';
+    final plan = prepare(message: msg);
+    expect(plan.wordCount, 25);
+    expect(plan.message, msg);
+  });
+
+  test('invisible separators and direction controls fail closed', () {
+    final invalid = [
+      'Zwei\u200BWörter',
+      'Bitte\u2060antworten',
+      'Hallo\uFEFFWelt',
+      'Nachricht\u200Dmit\u200DSteuerung',
+      'Hallo \u202E Welt',
+      'Hallo \u2066 Welt',
+      'Hallo\u0000Welt',
+      'Hallo\u001BWelt',
+    ];
+    for (final message in invalid) {
+      expect(() => prepare(message: message), throwsFormatException);
+    }
+    final disguised = List.filled(26, 'Wort').join('\u200B');
+    expect(() => prepare(message: disguised), throwsFormatException);
+  });
+
+  test('technical input limit does not replace the SRD word-count boundary', () {
+    final withinLimit = List.filled(
+      SrdSendingRules.maxMessageCodeUnits,
+      'a',
+    ).join();
+    expect(prepare(message: withinLimit).wordCount, 1);
+    expect(() => prepare(message: '${withinLimit}a'), throwsFormatException);
+    expect(() => prepare(message: 'eins\tzwei\r\ndrei'), returnsNormally);
+  });
+
+  test('recipient identity rejects whitespace and invisible controls', () {
+    for (final recipientId in [
+      'npc 01',
+      'npc\n01',
+      'npc\t01',
+      'npc\u200B01',
+      'npc\u202E01',
+      'npc\u000001',
+    ]) {
+      expect(() => prepare(recipientId: recipientId), throwsFormatException);
+    }
+    expect(prepare(recipientId: '  npc:07-Ö_2  ').recipientId, 'npc:07-Ö_2');
+  });
+
   test('confirmed same plane is deliverable without a percentile roll', () {
     final plan = prepare();
     final outcome = SrdSendingRules.assessDelivery(

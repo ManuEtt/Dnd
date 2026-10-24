@@ -50,6 +50,15 @@ class SendingDeliveryAssessment {
 class SrdSendingRules {
   const SrdSendingRules._();
 
+  // Application integrity bound, NOT a new SRD word-count requirement.
+  // Disallow invisible separators and direction controls before the
+  // whitespace-based 25-word check; otherwise reviews are misleading.
+  static const int maxMessageCodeUnits = 2048;
+  static final RegExp _unsafeControls = RegExp(
+    r'[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F\u200B-\u200F\u202A-\u202E\u2060\u2066-\u2069\uFEFF]',
+  );
+
+
   static SendingMessagePlan prepare({
     required SrdSpellDefinition spell,
     required String recipientId,
@@ -67,7 +76,10 @@ class SrdSendingRules {
       );
     }
     final id = recipientId.trim();
-    if (id.isEmpty || id.length > 160) {
+    if (id.isEmpty ||
+        id.length > 160 ||
+        _unsafeControls.hasMatch(recipientId) ||
+        RegExp(r'\s').hasMatch(id)) {
       throw const FormatException(
         'Eine eindeutige bestätigte Empfängerkennung ist erforderlich.',
       );
@@ -77,6 +89,15 @@ class SrdSendingRules {
       throw const FormatException(
         'Sending benötigt eine bestätigte Kreatur, die du getroffen hast '
         'oder die von einem Zeugen beschrieben wurde.',
+      );
+    }
+    // Preserve normal spaces, tabs and line breaks, but never silently
+    // interpret hidden text controls or unbounded payloads as one word.
+    if (message.length > maxMessageCodeUnits ||
+        _unsafeControls.hasMatch(message)) {
+      throw const FormatException(
+        'Die Sending-Nachricht enthält unsichtbare Steuerzeichen '
+        'oder überschreitet die technische Eingabegrenze.',
       );
     }
     final trimmed = message.trim();
