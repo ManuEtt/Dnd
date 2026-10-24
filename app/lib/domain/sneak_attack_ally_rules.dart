@@ -99,10 +99,7 @@ class SneakAttackAllyRules {
               fight.attacksRemaining == 0 &&
               fight.bonusActionUsed &&
               fight.lightAttackAvailable &&
-              TwoWeaponFightingRules.confirmedOffhand(
-                    hero,
-                    pending.weaponId,
-                  ) !=
+              TwoWeaponFightingRules.confirmedOffhand(hero, pending.weaponId) !=
                   null)) &&
       hero.hitPoints != null &&
       hero.hitPoints! > 0 &&
