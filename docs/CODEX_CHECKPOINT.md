@@ -1,5 +1,46 @@
 # CODEX-CHECKPOINT – Würfelraunen
 
+## Operative Übergabe 24.10.2026, 18:37 MESZ – PR #161
+
+**Git / Version:** `main` beim Start `b60ffe7ff1aae502ea927cb77153b988be33e397`, App `0.8.38+88`. Branch `fix/story-terminal-thread-reopen-20261024` von diesem SHA. [PR #161](https://github.com/ManuEtt/Dnd/pull/161) ist eigenes Backend-Paket. Daneben offen und unabhängig: [PR #159](https://github.com/ManuEtt/Dnd/pull/159) für Sending, [PR #160](https://github.com/ManuEtt/Dnd/pull/160) für Nebenhandverbündete. Kein Force-Push, keine fremden PRs verändert und kein main-Merge.
+
+### IMPLEMENTIERT
+
+Der Backend-Validator `parseStoryTurn` gleicht `threadUpdates` nicht mehr nur gegen erlaubte IDs und Enum-Werte ab, sondern auch gegen den **letzten bestätigten Threadstatus**. Bereits `resolved` oder `abandoned` abgeschlossene Handlungsstränge dürfen durch den generativen Erzähler nicht unbemerkt neu geöffnet oder umklassifiziert werden. Eine narrative Statusnotiz ohne Statuswechsel bleibt möglich. Spieler können im bestehenden lokalen Editor den Thread weiterhin ausdrücklich wieder öffnen; danach kommt er als `open` im gültigen Narrationsinput an. Fehlerhafte Anbieterantwort wird vom API-Endpunkt als generischer 502 ohne geheime Anbieter-/Textdetails abgelehnt.
+
+Geändert: `backend/src/story.ts`, `backend/test/story.test.ts`, `docs/STORY_TERMINAL_THREAD_GUARD_20261024.md`, README, Checkpoint, Changelog und Entwicklungsstatus. Keine Änderung an Android-App, Rule-Engine, KI-Kostenfreigabe oder Persistenz. SQLite 2, Kampagnen-JSON 1 und Backend-API-Verträge bleiben unverändert. Dies ist **kein SRD-Regelincrement**; keine künstliche Erhöhung der SRD-Abdeckungsquote.
+
+### GETESTET
+
+Zuvor [PR #160 CI #40100211878](https://github.com/ManuEtt/Dnd/actions/runs/40100211878), HEAD `6f2ebbc893fb5ee053d069410a103a102662aa4d`, **vollständig grün**; für **andere Dateien**. Davor [PR #159 CI #40095802925](https://github.com/ManuEtt/Dnd/actions/runs/40095802925) auf HEAD `15c1626` grün. Keiner dieser Läufe validiert PR #161.
+
+Neue Regressionen in `backend/test/story.test.ts` geschrieben: `resolved`/ `abandoned` dürfen nicht von der KI in `open` bzw. den jeweils anderen Terminalzustand gesetzt werden, idempotente Notizen sind erlaubt, der zuvor manuell geänderte Status `open` erlaubt erneute Updates, der HTTP-Endpunkt gibt bei böswilliger Provider-Antwort nur einen generischen 502 zurück. **Prüfergebnisse müssen aus dem endgültigen [PR #161 CI-Lauf](https://github.com/ManuEtt/Dnd/pull/161/checks) nachgetragen werden; keine grüne CI vor tatsächlichem Nachweis.**
+
+### NICHT GETESTET
+
+Ausstehender vollständiger GitHub-CI-Durchlauf für den abschließenden Dokumentations-HEAD (Backend-Tests, Python, Flutter, Android-Build und native Tests). Reales Android-Gerät, historische Benutzerspieldateien und produktive Signierung nicht getestet. Kein lokales vollständiges Flutter-SDK für einen vergleichbaren Android-Lauf.
+
+### BLOCKIERT
+
+Keine tatsächlichen Android-Gerätetests oder produktiven Signierschlüssel in dieser Sitzung. Der CI-Workflow ist verfügbar, die abschließenden Ergebnisse sind abzufragen.
+
+### NOCH NICHT IMPLEMENTIERT
+
+Vollständige KI-Kampagnenwelt, bidirektionale KI-Verwaltung manueller Wiederöffnungsentscheidungen, umfassendes SRD 5.2.1 sowie produktive öffentliche Mehrspieler-Serverarchitektur.
+
+### NÄCHSTER KONKRETER SCHRITT
+
+**Finale CI auf dem letzten PR-#161-HEAD prüfen; Fehler beheben, vor Review grün abnehmen.** Akzeptanz: `cd backend && npm ci && npm run typecheck && npm run build && npm test`; `python3 scripts/verify_project.py`, `python3 scripts/check_domain_boundaries.py`, `python3 scripts/srd_coverage.py --json`, `python3 -m unittest discover -s scripts/tests -v`, `cd app && dart format --output=none --set-exit-if-changed lib test && flutter analyze && flutter test && flutter build apk --debug` sowie native Gradle-Tests. Nur reale GitHub-Actions-Artefakte melden und finalen SHA nachprüfen. Nach grüner CI Reviewfreigabe und vor möglicher Integration Konfliktprüfung für die offenen Dokumentations-PRs.
+
+### Änderungsprotokoll
+
+24.10.2026 MESZ: Live-Repository und offene PRs geprüft, unabhängigen Story-Fix implementiert, Backend-Regressionen geschrieben, Branch und PR #161 gesichert, Dokumentation fortgeschrieben. Keine automatische Arbeit außerhalb aktiver Sitzung.
+
+---
+
+## Frühere Übergabe (historisch; PR #158)
+
+
 Stand **2026-10-24T12:20:50+00:00**, lokal vollständig abgenommenes Paket. Frühere operative Angaben vollständig in [Historie](history/main_0.8.37_20261024/CODEX_CHECKPOINT.md) erhalten. Vor Wiederaufnahme Live-Git/PR/CI erneut prüfen.
 
 ## Git und Produkt
