@@ -1,5 +1,55 @@
 # SRD 5.2.1 – Sending: bestätigte Nachricht und Empfänger
 
+## Regelverbund: Sending-Nachricht und Zauberressourcen (24.10.2026)
+
+**GitHub-Abnahme:** Der ausführbare Commit `${base}` ist in der vollständigen [CI #40071729227](https://github.com/ManuEtt/Dnd/actions/runs/40071729227) erfolgreich geprüft (Python/Backend, Dart/Flutter, native Android-Tests, Debug- und Alpha-APKs). Acht neue Testgruppen einschließlich Dry-run-Handlungsfähigkeit und manipulierter Klassenlisten. Der bestätigte Sending-Spellcast mit Slot-/Action-Persistenz bleibt offen; keine Geräteinstallation durchgeführt.
+
+**Arbeits-ID:** `SPELL-ENTRY-SENDING`, vorerst **partial**; keine vollständig
+automatisierte Zauberwirkung. Fachquelle: SRD 5.2.1, *Sending* (S. 161;
+CC BY 4.0), *Casting Spells / Components* sowie *Spell Slots*.
+
+`SrdSendingCastPreflightRules.preview` in
+`app/lib/domain/srd_sending_cast_preflight_rules.dart` verbindet die
+vorhandenen, **unveränderten** Rule-Dienste
+`SrdSendingRules.prepare`, `SrdSpellPreflightRules.preflight` und
+`SrdSendingRules.assessDelivery`. Die Vorprüfung verlangt ausdrücklich:
+
+- Katalogeintrag `spell-sending` mit allen originalen Metadaten
+  (Grad 3, Divination, Action, Unlimited, V/S/M, Kupferdraht,
+  Instantaneous). Manipulierte Metadaten werden abgewiesen.
+- Bekannte und vorbereitete Zauberwahl für Barde, Kleriker oder Magier
+  sowie Stufe/Slot 3 oder höher mit tatsächlich verfügbarem Slot.
+- Bestätigte verfügbare Aktion, Slot-pro-Zug-Sperre, verbale, somatische
+  und materielle Komponenten. Fokus statt Kupferdraht nur mit
+  eigenständig bestätigter Nutzungsberechtigung.
+- Eindeutige Empfänger-ID, bestätigte Kreatureigenschaft und persönliche
+  Begegnung beziehungsweise Zeugenschilderung, endgültiger Nachrichtentext
+  mit höchstens 25 Wörtern und den zuvor ergänzten Unicode-Sicherungen.
+- Getrennte bestätigte Blockade-/Ebenenfakten. Bekannte andere Ebene
+  erfordert den nachweisbaren W100-Wert; unbekannte Lage bleibt
+  `unresolved`, bestätigte Blockade `blocked`.
+
+Das Ergebnis ist eine **rein lesende Vorschau**, einschließlich
+hypothetisch verbleibender Zauberplätze. Für `Unlimited` wird keine
+Entfernung erfunden: Die Sending-spezifische Empfängerprüfung erfüllt die
+zielbezogene Vorprüfung; die generische Reichweitenengine bleibt
+unverändert auf `Unlimited` gesperrt. Es gibt **keine**
+Controller-Aktion, keine Ressourcenbuchung, kein Ereignis, keine
+echte Zustellung und keine Antwortsimulation.
+
+Neue Tests: `app/test/srd_sending_cast_preflight_test.dart` (sieben
+Gruppen für Klassenwahl, vorbereitete Zauber, Klasse/Stufe/Slots,
+Action/V/S/M, Fokusberechtigung, Empfänger/Unicode/25 Wörter,
+W100-Grenzen und manipuliertes SRD-Metadatum). Keine Datenmigration,
+DB-Schema 2, Export-JSON 1 und Version 0.8.37+87 unverändert.
+
+**Abnahme:** Dieser neue Source-Commit braucht eine eigene vollständige
+GitHub-CI. Insbesondere ist noch kein ausführbarer, atomar gespeicherter
+Sending-Spellcast implementiert; das ist ein späteres eigenständiges
+Integrationspaket.
+
+---
+
 ## Eingabeintegrität – 24.10.2026
 
 **Neue lokale Sicherheitsprüfung:** `SrdSendingRules.prepare` verwirft

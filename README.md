@@ -4,6 +4,22 @@
 
 „EP-Belohnung bestätigen“ öffnet eine validierte, scrollbare EP-Vorschau. Erst die gesonderte ausdrückliche Zustimmung übergibt eine beständige `xp_<Belohnungskennung>` an den Controller. Doppelte Bestätigungen und Fehler erzeugen keine zweite Gutschrift; eine Erfolgsmeldung setzt einen gespeicherten `xp.reward.confirmed`-Beleg voraus. Vorherige Schurken-, SQLite- und SRD-Sending-Funktionen bleiben vorhanden. Neue kombinierte CI ist erforderlich.
 
+### Sending-Zauber: Nachricht, Klasse und Ressourcen gemeinsam prüfen (24.10.2026)
+
+**Code-Abnahme erfolgreich:** [PR-CI #40071729227](https://github.com/ManuEtt/Dnd/actions/runs/40071729227) auf ausführbarem Commit `efed3d732459478b072452ab8e92ef3c674e39fd`: Python/Backend, Dart-Format und Analyse, vollständige Flutter-Suite einschließlich acht neuer Sending-Cast-Tests, Android-Debug/native Tests, Alpha-APKs und versioniertes Alpha-Quell-/APK-Paket **success**. Kein echter Gerätetest und weiterhin keine tatsächliche Zauberausführung. [PR #154](https://github.com/ManuEtt/Dnd/pull/154) ist offen und wurde nicht nach main gemergt.
+
+Der nicht gespeicherte Regel-Dry-run sperrt außerdem Zauberaktionen bei 0 TP, Handlungsunfähigkeit oder ungeübter angelegter Rüstung. Manipulierte Sending-Klassenmetadaten dürfen keine fremden Klassen freigeben.
+
+Der neue reine Rule-Dienst `SrdSendingCastPreflightRules` prüft die
+Sending-Nachricht und Empfängerbestätigung gemeinsam mit
+Klassen-/Vorbereitungsstatus, bestätigter Aktion,
+Dritte-Grad-Zauberplatz, V/S/M-Komponenten (Kupferdraht oder
+autorisiertem Ersatz) und bekannten/unsicheren Ebenen-/Blockadefakten.
+Er erzeugt ausschließlich eine Vorschau und **verbraucht noch keinen
+Zauberplatz oder Spielzustand**. Sieben neue Domain-Testgruppen angelegt;
+eigene CI noch ausstehend. Bestehende Reichweiten-Sperre für andere
+`Unlimited`-Zauber und JSON-/SQLite-Datenformat bleiben erhalten.
+
 ### Sending-Nachrichten vor verdeckten Steuerzeichen schützen (24.10.2026)
 
 **CI-Abnahme:** [GitHub Actions #40068321150](https://github.com/ManuEtt/Dnd/actions/runs/40068321150) auf Code-HEAD `fb96641db97598a5ee1b59416ad254f5e0e63e29` vollständig **success**, einschließlich Python, Backend, Dart/Flutter, nativer Android-Tests, Android-Debug, kleiner Alpha-APKs und versioniertem Alpha-Artefakt. Kein reales Android-Gerät getestet. Keine neue App-Versionsnummer oder DB-/JSON-Migration.
