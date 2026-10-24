@@ -1,3 +1,13 @@
+## 24.10.2026 – Sending-Versuch nach expliziter Bestätigung buchen (PR #156)
+
+- Vorschaugebundenes Helden-Snapshot verhindert veraltete Zauberplatzbuchung.
+- GameEngine/Controller protokollieren bestätigten Sending-Versuch und Slotverbrauch atomar als lokales SQLite-Ereignis; kein magischer Nachrichtentransport.
+- Übergreifende Anfrage-ID schützt vor Duplikat und widersprüchlicher Bestätigung, auch bei erneutem Aufruf/SQLite-Neustart.
+- Neue Domain-/Persistenztests für Bestätigung, Ablehnung, Revision, IDs und SQL-Rollback. Vollständige Flutter-/Android-CI dieses PRs zunächst ausstehend.
+- Keine Änderung an Version, Schema, SRD-Vollständigkeitsstatus oder produktiver Signierung.
+
+---
+
 ## 24.10.2026 – Sending-Resource-Preflight vollständig CI-validiert
 
 - Vollständige [PR-CI #40071729227](https://github.com/ManuEtt/Dnd/actions/runs/40071729227) grün auf Code-Commit `efed3d732459478b072452ab8e92ef3c674e39fd`: Flutter, Python/Backend, native Android-/APK-Builds und Alpha-/Source-Artefakte.

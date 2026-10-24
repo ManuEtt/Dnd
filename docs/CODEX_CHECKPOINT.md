@@ -1,3 +1,18 @@
+## Zyklus 24.10.2026 – Sending-Slotbuchung mit bestätigtem Ereignis (PR #156)
+
+- **LIVE-BASIS:** main `b6b0fdb433330fec2a7b98fe62451ebfbfbec822`, letzte Main-CI [#40074505420](https://github.com/ManuEtt/Dnd/actions/runs/40074505420) erfolgreich. PR [#155](https://github.com/ManuEtt/Dnd/pull/155) bleibt offen, war auf Head `d73f3cf` vollständig [CI-grün](https://github.com/ManuEtt/Dnd/actions/runs/40076142566), inzwischen zur Review bereit. Neues unabhängiges Inkrement: [Draft-PR #156](https://github.com/ManuEtt/Dnd/pull/156) auf `feat/sending-confirmed-slot-journal-20261024`; keine direkte Main-Mutation.
+- **PRODUKT:** Würfelraunen 0.8.37+87; `SPELL-ENTRY-SENDING` weiter **partial** nach SRD 5.2.1, *Sending*, S. 161 (CC BY 4.0).
+- **IMPLEMENTIERT:** Vorher rein lesende Vorschau hält intern den ursprünglichen `SrdSpellCastPlan` (Hero-Snapshot). Der separate bestätigte Versuch verbucht höchstens einen zulässigen Zauberplatz über `SpellcastingRules.cast`, verweigert abgelehnte und veraltete Vorschauen. `GameEngine.confirmSendingAttempt` sperrt aktive Kämpfe/offene Würfe und identitätskollidierende Handlungen; `GameController.confirmSendingAttempt` prüft Revisionen und kann bereits bestätigte Belege idempotent nach Neustart oder verlorenem ACK laden. Das Ereignis `spell.sending.attemptConfirmed` dokumentiert Versuch, Nachricht, Empfänger und unverifizierten/gesperrten/fehlgeschlagenen Zustellstatus; **keine Nachrichtenzustellung oder KI-Antwort**.
+- **TESTS GESCHRIEBEN:** `app/test/srd_sending_cast_commit_test.dart` mit Domain-Verbrauch und Ablehnung, alter Hero-Snapshot, doppelter ID, bestätigtem SQLite-Restart und erneutem Aufruf, abweichender Nachricht, veralteter Revision sowie SQL-Trigger-Rollback. Bestehende Sending-Preflight-/Spellcasting-Suites sollen unverändert bleiben.
+- **GETESTET:** Bisher grüne Basis-CI und PR #155 für jeweils ältere/andere Commits; **keine neue erfolgreiche CI für PR #156 behauptet**, bis dieser HEAD tatsächlich abgenommen ist.
+- **NICHT GETESTET:** Neue Dart-/Flutter-Tests, Flutter-Format und Analyse, native Android-Tests, APK/Alpha, reales Android-Gerät bis jeweiliges Ergebnis verifiziert wurde.
+- **BLOCKIERT:** Kein lokales Flutter/Android-SDK oder reales Gerät in der aktiven Umgebung; GitHub-CI übernimmt Build/Tests.
+- **NOCH NICHT IMPLEMENTIERT:** UI-Bestätigungsdialog, Provider-Zustellung, Empfängerantwort, 8h-Sperr-Weltuhr, Sending im Kampf, allgemeine vollständige SRD-Automatik.
+- **DATEN/ARCHITEKTUR:** SQLite 2, Kampagnen-JSON 1 und App-Version unverändert. Regel-Entscheidung ausschließlich lokal, Event+Heldensnapshot in Repositorytransaktion. Story/KI löst keine Ressourcenänderung aus. Quelldateien: `app/lib/domain/srd_sending_cast_preflight_rules.dart`, `app/lib/domain/game_engine.dart`, `app/lib/services/game_controller.dart`, neuer Test und diese Dokumentation.
+- **NÄCHSTER KONKRETER SCHRITT:** Auf finalem PR-#156-HEAD vollständige CI-Format-, Flutter- und Android-Prüfungen kontrollieren, Fehler reparieren und erst dann Review/Integration erwägen. Danach eigener UI-Schritt mit ausdrücklicher Casting-Zustimmung und offener Zustellanzeige. Keine automatische Hintergrundfortsetzung.
+
+---
+
 ## 24.10.2026 – Sending-Ressourcen-Vorprüfung vollständig in GitHub-CI abgenommen
 
 - **IMPLEMENTIERT:** Explizit bestätigte Sending-Empfänger-/Nachrichtenfakten kombiniert mit vorbereiteter eigener Klasse, Zaubergrad/-platz, Komponenten, Action und Slot-Zuglimit; danach spezielle Blockade-/Ebenen-W100-Prüfung. Rein lesende Vorschau. Zusätzlicher reiner Spellcasting-Dry-run verhindert Vorschauen bei 0 TP/kampfunfähig/untrainierter Rüstung. Gefälschte Sending-Elemente/Klassen werden abgewiesen.

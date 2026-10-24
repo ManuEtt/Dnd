@@ -1,5 +1,10 @@
 # SRD 5.2.1 – Sending: bestätigte Nachricht und Empfänger
 
+## Technische Erweiterung 24.10.2026 – bestätigter Sending-Versuch (PR #156)
+
+Der bisherige `SrdSendingCastPreflightRules.preview` bleibt eine **unverändernde** Vorschau. Ein separater expliziter Bestätigungsschritt kann nun den Zauberplatz bei unverändertem Helden-Snapshot abbuchen. GameEngine und GameController führen den Ressourcenwechsel und `spell.sending.attemptConfirmed` in der SQLite-Transaktion zusammen. Bereits bestätigte Handlungs-IDs werden nicht erneut belastet; geänderte Texte/Empfänger oder Ressourcen-/Revisionskonflikte werden abgelehnt. Nur außerhalb laufender Kämpfe/offener Würfe. Ein Zustellstatus wie `blocked`, `planarFailure` oder `unresolved` wird dokumentiert, niemals stillschweigend in `deliverable` umgewandelt. Die App hat **noch keine Nachrichtenübermittlung und keinen UI-Auslösepfad**. Neue Dart-/SQLite-Regressionen in `app/test/srd_sending_cast_commit_test.dart`; CI-Abnahme des PR-HEAD wird separat beobachtet. Datenformatschemas unverändert.
+
+
 ## Regelverbund: Sending-Nachricht und Zauberressourcen (24.10.2026)
 
 **GitHub-Abnahme:** Der ausführbare Commit `${base}` ist in der vollständigen [CI #40071729227](https://github.com/ManuEtt/Dnd/actions/runs/40071729227) erfolgreich geprüft (Python/Backend, Dart/Flutter, native Android-Tests, Debug- und Alpha-APKs). Acht neue Testgruppen einschließlich Dry-run-Handlungsfähigkeit und manipulierter Klassenlisten. Der bestätigte Sending-Spellcast mit Slot-/Action-Persistenz bleibt offen; keine Geräteinstallation durchgeführt.

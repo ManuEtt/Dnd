@@ -1,5 +1,12 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+### Sending – bestätigter Slotverbrauch und lokales Ereignis (Entwicklungs-PR #156)
+
+[Draft-PR #156](https://github.com/ManuEtt/Dnd/pull/156) ergänzt den bisherigen **rein lesenden** Sending-Preview um eine **separate ausdrückliche Bestätigung**: Ein unveränderter Heldenzustand wird vor der Ressourcenbuchung überprüft, ein passender Slot genau einmal im SQLite-Spielstand gebucht und `spell.sending.attemptConfirmed` atomar journalisiert. Wiederholte identische Anfrage-IDs werden nach Neustart als bereits gesichert quittiert, abweichende IDs/Inhalte und alte Revisionen abgelehnt. Laufende Kämpfe und offene Würfe bleiben gesperrt. **Keine automatische Nachrichtenzustellung, KI-Antwort oder Behauptung eines Empfangs**. Domain-/SQLite-Regressionstests hinzugefügt, neue CI-Auswertung für dieses Paket noch erforderlich. App 0.8.37+87, SQLite 2 und Kampagnen-JSON 1 unverändert.
+
+Die vorherige Unicode-Korrektur [PR #155](https://github.com/ManuEtt/Dnd/pull/155) ist separat vollständig grün, aber nicht Bestandteil dieses von main gestarteten Inkrements. Sie wird nicht überschrieben.
+
+
 ### Fantasy-EP-Dialog in der Abenteueransicht (Integrations-PR #151)
 
 „EP-Belohnung bestätigen“ öffnet eine validierte, scrollbare EP-Vorschau. Erst die gesonderte ausdrückliche Zustimmung übergibt eine beständige `xp_<Belohnungskennung>` an den Controller. Doppelte Bestätigungen und Fehler erzeugen keine zweite Gutschrift; eine Erfolgsmeldung setzt einen gespeicherten `xp.reward.confirmed`-Beleg voraus. Vorherige Schurken-, SQLite- und SRD-Sending-Funktionen bleiben vorhanden. Neue kombinierte CI ist erforderlich.

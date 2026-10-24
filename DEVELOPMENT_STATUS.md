@@ -1,3 +1,15 @@
+## 24.10.2026 – Sending-Cast-Bestätigung/Slot/Journal (Draft-PR #156)
+
+- **IMPLEMENTIERT:** Eigener bestätigter Sending-Versuch außerhalb von Kämpfen und offenen Würfen; Snapshot-/Anfrage-ID-Schutz, Slotverbrauch durch Rule-Engine und lokale atomare SQLite-Journalbuchung. Wiederholte Anfragen nach Neustart über vorhandenen Beleg idempotent. Kein Netzwerk-/KI-Effekt.
+- **GETESTET:** Main-CI #40074505420 und ältere unabhängige PR #155 erfolgreich, **nicht** als Test dieses neuen Codes. Neue CI braucht eigenen Erfolgsnachweis.
+- **NICHT GETESTET:** Neue Domain-/SQLite-Tests, Formatter, Flutter-Analyse/-Gesamttest, Android-/APK/Realgerät bis CI/Build abgeschlossen ist.
+- **BLOCKIERT:** Lokal kein Flutter-/Android-SDK und kein Testgerät.
+- **NOCH NICHT IMPLEMENTIERT:** Endnutzer-Dialog und tatsächlicher externer Sending-Transport samt Empfängerantwort; keine Kampfaktualisierung.
+- **VERSION UND SICHERHEIT:** SRD `SPELL-ENTRY-SENDING` bleibt partial, App 0.8.37+87, SQLite 2, JSON 1, keine Migration.
+- **NÄCHSTER SCHRITT:** PR-#156-CI auf dem letzten Code- und Dokumentations-Head vollständig auswerten, rote Tests reparieren, Review erst nach nachgewiesener Code-Abnahme.
+
+---
+
 ## 24.10.2026 – Sending-Vorprüfung: vollständige Flutter-/Android-CI erfolgreich
 
 - **GETESTET:** [GitHub-Actions #40071729227](https://github.com/ManuEtt/Dnd/actions/runs/40071729227) **completed/success** auf funktionalem Code `efed3d732459478b072452ab8e92ef3c674e39fd`: Python/Backend, Dart-Format/Analyse, Flutter-Gesamtsuite einschließlich neuer Klassen-/Slot-/Komponenten-/W100-Tests, Android-Debug, native Tests, ABI-APKs, vollständige Release- und Source-Artefakte. [PR #154](https://github.com/ManuEtt/Dnd/pull/154) ist weiterhin offen und konfliktfrei, `main` unverändert.
