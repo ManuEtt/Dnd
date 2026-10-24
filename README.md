@@ -1,5 +1,12 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+### Aktueller Entwicklungszyklus: Sending-Eingabeintegrität (24.10.2026)
+
+[Draft-PR #155](https://github.com/ManuEtt/Dnd/pull/155) härtet die vorhandene Sending-Vorprüfung gegen weitere unsichtbare Unicode-Format-/Annotationszeichen (U+00AD, U+034F, U+061C, U+180E, U+2061–U+206F und U+FFF9–U+FFFB). Neue Domain- und Casting-Preview-Regressionen prüfen Nachrichten, Empfängerkennungen und falsche 26-Wort-Eingaben. Die 25-Wörter-Regel und bestehende deutsche Nachrichten mit Tab/Zeilenumbruch bleiben bestehen. **Keine Ressourcenbuchung, Datenmigration oder neue App-Version.**
+
+Live-Basis `main` `b6b0fdb`; PR #154 ist bereits integriert. Main-CI [#40074505420](https://github.com/ManuEtt/Dnd/actions/runs/40074505420) lief bei Bestandsaufnahme; die erfolgreiche [Vorläufer-CI #40072501279](https://github.com/ManuEtt/Dnd/actions/runs/40072501279) testet den neuen Branch **nicht**. Nur lokaler Regex-Sanity-Check durchgeführt, Flutter-/Android-PR-CI ausstehend. [Aktueller Checkpoint](docs/CODEX_CHECKPOINT.md).
+
+
 ### Fantasy-EP-Dialog in der Abenteueransicht (Integrations-PR #151)
 
 „EP-Belohnung bestätigen“ öffnet eine validierte, scrollbare EP-Vorschau. Erst die gesonderte ausdrückliche Zustimmung übergibt eine beständige `xp_<Belohnungskennung>` an den Controller. Doppelte Bestätigungen und Fehler erzeugen keine zweite Gutschrift; eine Erfolgsmeldung setzt einen gespeicherten `xp.reward.confirmed`-Beleg voraus. Vorherige Schurken-, SQLite- und SRD-Sending-Funktionen bleiben vorhanden. Neue kombinierte CI ist erforderlich.
