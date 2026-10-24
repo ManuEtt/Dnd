@@ -109,6 +109,14 @@ void main() {
     final invalid = [
       'Zwei\u200BWörter',
       'Bitte\u2060antworten',
+      'Wort\u00ADmitTrenner',
+      'Wort\u034FmitJoiner',
+      'Bitte\u061Cantworte',
+      'Wort\u180EmitTrenner',
+      'Bitte\u2061antworten',
+      'Bitte\u2063antworten',
+      'Bitte\u206Aantworten',
+      'Hallo\uFFF9Welt',
       'Hallo\uFEFFWelt',
       'Nachricht\u200Dmit\u200DSteuerung',
       'Hallo \u202E Welt',
@@ -121,6 +129,11 @@ void main() {
     }
     final disguised = List.filled(26, 'Wort').join('\u200B');
     expect(() => prepare(message: disguised), throwsFormatException);
+    final operatorDisguised = List.filled(26, 'Wort').join('\u2063');
+    expect(
+      () => prepare(message: operatorDisguised),
+      throwsFormatException,
+    );
   });
 
   test('technical bound is independent of SRD word-count rule', () {
@@ -139,6 +152,9 @@ void main() {
       'npc\n01',
       'npc\t01',
       'npc\u200B01',
+      'npc\u00AD01',
+      'npc\u061C01',
+      'npc\u206301',
       'npc\u202E01',
       'npc\u000001',
     ]) {
