@@ -29,6 +29,8 @@ import 'character_effect_dialog.dart';
 import 'condition_effect_dialog.dart';
 import 'sneak_attack_ally_dialog.dart';
 import 'confirmed_spell_effect_dialog.dart';
+import 'sending_attempt_dialog.dart';
+import '../domain/srd_sending_cast_preflight_rules.dart';
 import 'experience_reward_dialog.dart';
 import 'hero_shield_reaction_dialog.dart';
 import '../domain/hero_shield_reaction_rules.dart';
@@ -1024,6 +1026,7 @@ class _AdventurePageState extends State<_AdventurePage> {
   bool _outboxReady = false;
   Future<void>? _loadingOutbox;
   bool _submittingAction = false;
+  bool _sendingInFlight = false;
   bool _combat = false;
 
   bool get _canInteract =>
@@ -1333,6 +1336,94 @@ class _AdventurePageState extends State<_AdventurePage> {
       rollId: pending!.id,
     );
     if (mounted) await _afterTurn(previous);
+  }
+
+  /// The dialog reviews a pure Sending preview. The authoritative resource
+  /// charge and event journal belong exclusively to the controller.
+  Future<void> _confirmSendingAttempt() async {
+    final campaign = widget.controller.currentCampaign;
+    if (campaign == null ||
+        !_canInteract ||
+        !_outboxReady ||
+        _sendingInFlight ||
+        campaign.pendingRoll != null ||
+        campaign.pendingDeathSave != null ||
+        campaign.pendingEnemyShieldHit != null ||
+        (campaign.encounter != null && !campaign.encounter!.isFinished)) {
+      return;
+    }
+    setState(() => _sendingInFlight = true);
+    try {
+      final catalog = await SrdSpellCatalogLoader.load();
+      if (!mounted || widget.controller.currentCampaign?.id != campaign.id) {
+        return;
+      }
+      final sending = catalog.find('Sending');
+      if (sending == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('SRD-Sending ist nicht verfügbar.')),
+        );
+        return;
+      }
+      final choice = await showDialog<SendingAttemptChoice>(
+        context: context,
+        builder: (_) => SendingAttemptDialog(
+          hero: campaign.hero,
+          sending: sending,
+        ),
+      );
+      if (choice == null || !mounted) return;
+      if (widget.controller.currentCampaign?.id != campaign.id ||
+          widget.controller.currentCampaign?.revision != campaign.revision) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Der Spielstand wurde geändert. Sending bitte neu prüfen.'),
+          ),
+        );
+        return;
+      }
+      final previousMessageId = _lastMessageId;
+      await widget.voice.stopSpeaking();
+      await widget.controller.confirmSendingAttempt(
+        campaignId: campaign.id,
+        expectedRevision: campaign.revision,
+        preview: choice.preview,
+        requestId: choice.requestId,
+        playerConfirmed: true,
+      );
+      if (!mounted) return;
+      if (widget.controller.error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(widget.controller.error!)),
+        );
+        return;
+      }
+      final saved = widget.controller.currentCampaign;
+      final confirmed = saved != null &&
+          saved.id == campaign.id &&
+          saved.events.any(
+            (event) =>
+                event.type == 'spell.sending.attemptConfirmed' &&
+                event.payload['actionRequestId'] == choice.requestId &&
+                event.payload['recipientId'] ==
+                    choice.preview.recipient.recipientId &&
+                event.payload['message'] == choice.preview.recipient.message &&
+                event.payload['deliveryNotPerformed'] == true,
+          );
+      if (!confirmed) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          key: ValueKey('sending-attempt-receipt'),
+          content: Text(
+            'Sending-Versuch und Zauberplatz gespeichert. '
+            'Eine Nachricht wurde nicht zugestellt.',
+          ),
+        ),
+      );
+      await _afterTurn(previousMessageId);
+    } finally {
+      if (mounted) setState(() => _sendingInFlight = false);
+    }
   }
 
   Future<void> _confirmExperienceReward() async {
@@ -2087,6 +2178,24 @@ class _AdventurePageState extends State<_AdventurePage> {
                   style: FantasyButtonStyle.iron,
                   label: 'Zauberwirkungen verwalten',
                 ),
+                if (campaign.hero.spells.contains('Sending'))
+                  FantasyTextButton(
+                    key: const ValueKey('adventure-confirm-sending'),
+                    label: 'Sending versuchen',
+                    icon: Icons.mark_email_unread_outlined,
+                    style: FantasyButtonStyle.arcane,
+                    onPressed:
+                        !_canInteract ||
+                            !_outboxReady ||
+                            _sendingInFlight ||
+                            campaign.pendingRoll != null ||
+                            campaign.pendingDeathSave != null ||
+                            campaign.pendingEnemyShieldHit != null ||
+                            (campaign.encounter != null &&
+                                !campaign.encounter!.isFinished)
+                        ? null
+                        : _confirmSendingAttempt,
+                  ),
                 FantasyTextButton(
                   key: const ValueKey('adventure-manage-condition-effects'),
                   onPressed:

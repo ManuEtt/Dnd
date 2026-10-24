@@ -1,3 +1,15 @@
+## 24.10.2026 – Sending-Dialog in der Abenteueransicht (PR-CI ausstehend)
+
+- **IMPLEMENTIERT:** Widget `SendingAttemptDialog` für ausdrücklich bestätigte Nachricht, Empfänger, Klasse, Slot, Kreatur, Komponenten, Aktionsökonomie und beobachtete Blockade/Ebenenfakten. Direkte Verbindung zur vorhandenen, idempotenten SQLite-`confirmSendingAttempt`-API. Bei Textänderung Zustimmung erneut erforderlich; Erfolg nur bei auditierbarem Beleg, keine Zustellungserzählung.
+- **GETESTET:** Ausgangsbasis `main` `3b5affde4bf4ff5be24ab31f1c4ec39412f66867`, [GitHub CI #40084074765](https://github.com/ManuEtt/Dnd/actions/runs/40084074765) **success**.
+- **NICHT GETESTET:** Neu implementierter UI-Code und fünf Widget-/SQLite-Szenarien bis zur neuen CI; reale Geräteabnahme, Upgrade-/Signierungsversuche.
+- **BLOCKIERT:** Flutter-/Android-SDK lokal nicht installiert, reales Android-Gerät nicht verfügbar.
+- **NOCH NICHT IMPLEMENTIERT:** Tatsächliche Sender-zu-Empfänger-Zustellung, NPC-Reaktion, 8h-Sperr-Zeitlogik und Sending im Kampf.
+- **KOMPATIBILITÄT:** SRD `SPELL-ENTRY-SENDING` bleibt `partial`; Flutter-App 0.8.37+87, SQLite 2, Kampagnen-JSON 1 unverändert.
+- **NÄCHSTER SCHRITT:** PR-Head per Android/Flutter-CI abnehmen, Dialog-/Formatfehler beheben, anschließend Merge. Keine unbeaufsichtigte Hintergrundarbeit.
+
+---
+
 ## 24.10.2026 – Sending-Versuch mit SQLite-Quittung erfolgreich in GitHub-CI geprüft
 
 - **IMPLEMENTIERT:** Die Regeln verbuchen nach bestätigtem originalen Preview-Snapshot einen Sending-Slot und `spell.sending.attemptConfirmed` atomar; Schutz vor Doppel-IDs, alten Revisionen, unbestätigtem Text und laufenden Kämpfen. Keine KI- oder Netzwerkwirkung.

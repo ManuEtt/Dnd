@@ -1,5 +1,9 @@
 # SRD 5.2.1 – Sending: bestätigte Nachricht und Empfänger
 
+## UI-Vorbereitung 24.10.2026 – bestätigter Sending-Versuch
+
+Der neue Flutter-Dialog erfasst die bestätigte Kenntnis einer realen Kreatur, Empfängerkennung, die originale Nachricht (SRD-Grenze 25 Wörter), Klasse, Platzgrad, explizite V/S/Kupferdraht- und Aktionsbestätigung. Bekannte andere Ebenen verlangen W100 (1–5 Fehlschlag), unbekannte Fakten bleiben `unresolved`. Änderungen an Eingaben widerrufen die bisherige Zustimmung. Erst nach ausdrücklichem Abschluss bestätigt die Abenteueransicht den reinen Preview über `GameController.confirmSendingAttempt` und kontrolliert das persistente Ereignis. Der Bildschirm führt **keine** Nachrichtenzustellung, NPC-Antwort oder automatische 8h-Sperrberechnung aus. Für die UI gelten Widgettests, schmale 320dp-Breite, SQLite-Regression, vollständige GitHub-CI und getrennte Geräteabnahme; neue Code-CI derzeit ausstehend.
+
 ## Abschluss 24.10.2026 – Ressourcenerfassung (PR #156)
 
 [GitHub-Workflow #40078375498](https://github.com/ManuEtt/Dnd/actions/runs/40078375498) bestätigt den neuen ausführbaren Stand `2566a84e` mit vollständiger Flutter-Test-Suite, nativen Android-Tests und APK-/Source-Artefakten. Der optionale neue `GameController.confirmSendingAttempt`-Pfad überträgt **keine** Sending-Nachricht; sein Ereignis beweist nur die bestätigte lokale Slotbuchung und dokumentiert bekannte/unbekannte Zustellbewertung. Kein UI-Dialog und kein echtes Endgerät geprüft. Der Zaubereintrag bleibt `partial`, da die gesamte SRD-Wirkung und Zustellung noch nicht implementiert sind.

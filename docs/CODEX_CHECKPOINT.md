@@ -1,3 +1,18 @@
+## Aktiver UI-Zyklus 24.10.2026 – Sending ausdrücklich bestätigen
+
+- **BASIS:** `main` = `3b5affde4bf4ff5be24ab31f1c4ec39412f66867`, darin PR #155 (Unicode) und #156 (Slot/Journal) integriert. Vollständige Main-CI [#40084074765](https://github.com/ManuEtt/Dnd/actions/runs/40084074765) **completed/success**. Zu Beginn keine offenen PRs.
+- **BRANCH:** `feature/sending-confirmation-dialog-20261024`. Gegenstand ist ausschließlich die explizite UI-Bestätigung von `SPELL-ENTRY-SENDING` (SRD 5.2.1, Sending, S. 161, CC BY 4.0). Der Requirement-Status bleibt `partial`.
+- **IMPLEMENTIERT:** Separater deutscher `SendingAttemptDialog`; editierbarer und validierter Empfänger/Nachricht, Kenntnis-/Kreaturbeleg, Komponenten/Aktion, Klasse/Slot, unbekannte/gesperrte Ebene, bei bestätigter anderer Ebene manueller W100, explizite Zustimmung; die Vorschau ist unverändernd. Abenteueransicht delegiert an vorhandene Controller-API, wertet nur gespeicherte Quittung als Erfolg. Keine Nachrichtenübertragung und keine KI-Wirkung.
+- **TESTS GESCHRIEBEN:** `app/test/sending_attempt_dialog_test.dart` (Abbruch, Zustimmung, Eingabeänderung, Wort-/Unicode-Grenzen, W100 und 320dp) einschließlich Integration mit Android-Abenteueransicht und SQLite. Frühere Domain-/Controller-Tests bleiben erhalten.
+- **GETESTET:** grüner Ausgangscommit `3b5affd` mittels GitHub Actions #40084074765, **kein Nachweis** für neuen UI-Code.
+- **NICHT GETESTET:** Format/Analyse/Flutter-Tests und APK auf neuem Commit bis zur erfolgreichen PR-CI; ebenso echte Android-Installation und Altspielstand-Upgrade.
+- **BLOCKIERT:** Kein lokales Flutter-/Android-SDK bzw. echtes Android-Testgerät. GitHub-CI ist die vorgesehene Build-Abnahme.
+- **NOCH NICHT IMPLEMENTIERT:** Realer Nachrichtentransport/Antwort, allgemeine Sending-Aktionsökonomie im Kampf, automatische 8h-Weltuhr-Sperre und vollständige SRD-Regelabdeckung.
+- **KOMPATIBILITÄT:** Version 0.8.37+87, SQLite-Schema 2 und Export-JSON-Schema 1 unverändert; kein Hintergrunddienst.
+- **NÄCHSTER SCHRITT:** Neuen PR-HEAD vollständig mit GitHub Actions prüfen, Fehler korrigieren und den UI-Dialog nach erfolgreicher Abnahme integrieren. Danach gesondertes Paket für noch nicht modellierte Sending-Zustellung/8h-Fakten vorbereiten, ohne Empfang zu erfinden.
+
+---
+
 ## Integration 24.10.2026 – PR #155 übernommen, PR #156 rebasiert
 
 - **LIVE:** `main` enthält PR #155 seit Commit `4c6040c063c96444d75523cacbfa84c4b36800fa` (Unicode-Formatzeichenschutz). Beide unabhängigen Codeänderungen wurden in diesem Integrations-Merge zusammengeführt; keine Variante entfernt.
