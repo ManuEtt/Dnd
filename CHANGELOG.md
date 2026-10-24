@@ -1,3 +1,13 @@
+## 24.10.2026 – Fantasy-UI zur ausdrücklichen XP-Bestätigung
+
+- Dialog für manuelle, bestätigte EP-Belohnungen mit prüfbarer Identität, Menge, Vorher-/Nachher-Vorschau und separater Spielerzustimmung; keine Belohnung durch KI-Narration.
+- Abenteuer-Fortschrittspanel öffnet den Dialog, Controller prüft die SQLite-Revision, gespeichertes Ereignis und Duplikat-ID; Quittung erst nach erfolgreichem Commit.
+- Deterministische `xp_`-Request-IDs ermöglichen erneute Prüfung nach App-Neustart/Antwortverlust; bereits vorhandene XP-Belohnungen werden als Buchungsprüfung behandelt.
+- Flutter-Widgettests für Abbruch, Validierung, 320dp/große Schrift, ungültigen Historienstand und vollständigen Abenteuer->SQLite-Commit geschrieben. **Neue CI ausstehend** und kein Android-Gerätetest.
+- Unveränderte DB-/JSON-Schemas, App-Version und SRD-Zuordnung.
+
+---
+
 ## 24.10.2026 – Transaktionale, bestätigte XP-Aktion (API, UI noch ausstehend)
 
 - Regelengine nimmt nur ausdrücklich bestätigte XP-Zuteilungen mit stabilen Reward-/Request-IDs und positivem XP-Betrag an.

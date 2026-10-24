@@ -1,3 +1,12 @@
+## 24.10.2026 – Bestätigte XP-Vergabe in der Fantasy-Abenteueroberfläche
+
+- **IMPLEMENTIERT:** Neuer `ExperienceRewardDialog` mit validiertem Reward-ID-/EP-Feld, read-only EP-Prognose, separater Nutzer-Zustimmung, gespeicherten Belegprüfungen und stabiler `xp_`-Request-ID. Abenteuer-Fortschrittspanel bietet eigene Aktion. Buchungs-SnackBar nur nach bestätigter Controller-/SQLite-Rechnung.
+- **TESTS GESCHRIEBEN:** 6 Flutter-Widgettests inkl. 320dp/erhöhter Schrift und vollständig persistierter Abenteuer-/Controller-Aktion; Vorläufer PR #149 besitzt Race/ACK/SQLite-Rollbacktests. 
+- **GETESTET:** PR #149 [CI #40058692527](https://github.com/ManuEtt/Dnd/actions/runs/40058692527) vollständig grün, UI-Branch-CI zunächst noch ausstehend. **NICHT GETESTET:** echter Android-Screenreader, Geräte-Upgrade und UI-PR-HEAD vor eigener CI. **BLOCKIERT:** lokale Flutter-/Android-Toolchain nicht vorhanden. **NOCH NICHT IMPLEMENTIERT:** Auswahl offener Abenteuer-Etappenziele aus geprüfter Questhistorie und komplette SRD-Regeln.
+- **DATENFORMAT:** SQLite-Schema 2, Kampagnen-JSON 1 unverändert; keine Migration oder neue Paid-Provider-Abhängigkeit. **NÄCHSTER SCHRITT:** neue PR-CI ausführen/Fehler reparieren; nach Review/Basisintegration UI-PR retargeten.
+
+---
+
 ## 24.10.2026 – Bestätigte XP-Belohnung mit Ereignis- und Revisionsschutz
 
 - **IMPLEMENTIERT:** `GameEngine.confirmExperienceReward` erzeugt nach expliziter Spielerbestätigung ein getyptes XP-Event mit eindeutiger Anfragekennung; `GameController.confirmExperienceReward` schützt veraltete Revisionen und quittiert identische persistierte Bestätigungen nach Neustart ohne doppelte EP. Geschützte Story-/Regel-Grenze bleibt erhalten.
