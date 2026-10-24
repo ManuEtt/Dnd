@@ -1,5 +1,15 @@
 # SRD 5.2.1 – Sending: bestätigte Nachricht und Empfänger
 
+## Abschluss 24.10.2026 – Ressourcenerfassung (PR #156)
+
+[GitHub-Workflow #40078375498](https://github.com/ManuEtt/Dnd/actions/runs/40078375498) bestätigt den neuen ausführbaren Stand `2566a84e` mit vollständiger Flutter-Test-Suite, nativen Android-Tests und APK-/Source-Artefakten. Der optionale neue `GameController.confirmSendingAttempt`-Pfad überträgt **keine** Sending-Nachricht; sein Ereignis beweist nur die bestätigte lokale Slotbuchung und dokumentiert bekannte/unbekannte Zustellbewertung. Kein UI-Dialog und kein echtes Endgerät geprüft. Der Zaubereintrag bleibt `partial`, da die gesamte SRD-Wirkung und Zustellung noch nicht implementiert sind.
+
+
+## Technische Erweiterung 24.10.2026 – bestätigter Sending-Versuch (PR #156)
+
+Der bisherige `SrdSendingCastPreflightRules.preview` bleibt eine **unverändernde** Vorschau. Ein separater expliziter Bestätigungsschritt kann nun den Zauberplatz bei unverändertem Helden-Snapshot abbuchen. GameEngine und GameController führen den Ressourcenwechsel und `spell.sending.attemptConfirmed` in der SQLite-Transaktion zusammen. Bereits bestätigte Handlungs-IDs werden nicht erneut belastet; geänderte Texte/Empfänger oder Ressourcen-/Revisionskonflikte werden abgelehnt. Nur außerhalb laufender Kämpfe/offener Würfe. Ein Zustellstatus wie `blocked`, `planarFailure` oder `unresolved` wird dokumentiert, niemals stillschweigend in `deliverable` umgewandelt. Die App hat **noch keine Nachrichtenübermittlung und keinen UI-Auslösepfad**. Neue Dart-/SQLite-Regressionen in `app/test/srd_sending_cast_commit_test.dart`; CI-Abnahme des PR-HEAD wird separat beobachtet. Datenformatschemas unverändert.
+
+
 ## Technische Ergänzung 24.10.2026 – Unicode-Formatzeichen (PR #155)
 
 Die Sending-Eingabevalidierung verwirft zusätzlich U+00AD, U+034F, U+061C, U+180E, U+2061–U+206F und U+FFF9–U+FFFB in Nachrichten und Empfängerkennungen. Dadurch werden weitere unsichtbare Operator-, Bidi- und Annotationszeichen beim Spielerreview abgefangen. Domain-Regressionen prüfen außerdem 26 durch U+2063 verbundene Wörter und den unveränderten, rein lesenden Casting-Preview. **Keine zusätzliche SRD-Regel:** Die 25-Wort-Grenze bleibt maßgeblich, das technische UTF-16-Limit bleibt unverändert. Tests auf dem finalen Branch-Head sind erst nach erfolgreicher eigener GitHub-CI belegt. Keine Schema-/Versionserhöhung, keine Slot-/Aktionsbuchung.

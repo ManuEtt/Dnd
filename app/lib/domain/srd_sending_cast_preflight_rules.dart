@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'models.dart';
 import 'spellcasting_rules.dart';
 import 'srd_sending_rules.dart';
@@ -112,6 +114,7 @@ class SrdSendingCastPreflightRules {
       throw StateError('Kein bestätigter Zauberplatz verfügbar.');
     }
     return SrdSendingCastPreview._(
+      resourcePlan: resources,
       recipient: recipient,
       assessment: assessment,
       castingClass: resources.castingClass,
@@ -120,20 +123,52 @@ class SrdSendingCastPreflightRules {
       remainingSlotsIfCommitted: remaining,
     );
   }
+
+  /// Records the resource cost of an explicitly confirmed Sending attempt.
+  ///
+  /// This is still a PURE transition: only GameEngine/Controller may persist
+  /// its result and event atomically. It does not deliver a message, generate
+  /// an answer or turn an unresolved delivery assessment into success.
+  static SpellCastResult confirmAttemptResourceUse(
+    HeroCharacter hero,
+    SrdSendingCastPreview preview, {
+    required bool playerConfirmed,
+  }) {
+    if (!playerConfirmed) {
+      throw const FormatException(
+        'Der Sending-Zauberversuch muss ausdrücklich bestätigt werden.',
+      );
+    }
+    final plan = preview._resourcePlan;
+    if (jsonEncode(hero.toJson()) != plan.sourceSnapshot) {
+      throw const FormatException(
+        'Der Charakter wurde seit der Sending-Vorschau verändert.',
+      );
+    }
+    return SpellcastingRules.cast(
+      hero,
+      spellName: plan.preparedName,
+      spellLevel: 3,
+      slotLevel: plan.slotLevel,
+      pactMagic: plan.pactMagic,
+    );
+  }
 }
 
 /// An informational snapshot only: there is deliberately NO method to spend
 /// the previewed resource or to send a message.
 class SrdSendingCastPreview {
   const SrdSendingCastPreview._({
+    required SrdSpellCastPlan resourcePlan,
     required this.recipient,
     required this.assessment,
     required this.castingClass,
     required this.slotLevel,
     required this.pactMagic,
     required this.remainingSlotsIfCommitted,
-  });
+  }) : _resourcePlan = resourcePlan;
 
+  final SrdSpellCastPlan _resourcePlan;
   final SendingMessagePlan recipient;
   final SendingDeliveryAssessment assessment;
   final String castingClass;

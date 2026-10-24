@@ -45,6 +45,7 @@ import 'rest_rules.dart';
 import 'spellcasting_rules.dart';
 import 'srd_spell_preflight_rules.dart';
 import 'srd_spell_inventory_rules.dart';
+import 'srd_sending_cast_preflight_rules.dart';
 
 /// A free-text, deterministic narrator. It cannot execute SQL or provider tools.
 /// Every accepted turn produces a validated state checkpoint and an audit event.
@@ -611,6 +612,65 @@ class GameEngine {
               'quantity': material.quantity,
             },
         ],
+      },
+    );
+  }
+
+  /// Commit an explicitly approved, preview-bound Sending attempt.
+  /// Only the slot resource and audit event are authoritative here.
+  /// Recipient delivery and an answer are NOT produced or implied.
+  GameUpdate confirmSendingAttempt(
+    Campaign campaign, {
+    required SrdSendingCastPreview preview,
+    required String requestId,
+    required bool playerConfirmed,
+  }) {
+    if (!RegExp(r'^[A-Za-z0-9_-]{1,128}$').hasMatch(requestId)) {
+      throw const FormatException('Ungültige Sending-Handlungskennung.');
+    }
+    if (campaign.events.any(
+      (event) => event.payload['actionRequestId'] == requestId,
+    )) {
+      throw const FormatException(
+        'Diese Handlungskennung wurde bereits verwendet.',
+      );
+    }
+    if (campaign.pendingRoll != null ||
+        campaign.pendingDeathSave != null ||
+        campaign.pendingEnemyShieldHit != null ||
+        (campaign.encounter != null && !campaign.encounter!.isFinished)) {
+      throw const FormatException(
+        'Sending im laufenden Kampf oder bei offenen Würfen '
+        'benötigt eine eigene Aktionsökonomie.',
+      );
+    }
+    final result = SrdSendingCastPreflightRules.confirmAttemptResourceUse(
+      campaign.hero,
+      preview,
+      playerConfirmed: playerConfirmed,
+    );
+    return _commit(
+      campaign,
+      campaign.copyWith(hero: result.hero),
+      'Sending wurde nach ausdrücklicher Bestätigung versucht. '
+      'Der Zauberplatz ist verbraucht. '
+      'Über eine Nachrichtenzustellung oder Antwort wird hier '
+      'keine zusätzliche Behauptung getroffen.',
+      type: 'spell.sending.attemptConfirmed',
+      payload: {
+        'actionRequestId': requestId,
+        'playerConfirmed': true,
+        'spell': 'Sending',
+        'recipientId': preview.recipient.recipientId,
+        'message': preview.recipient.message,
+        'wordCount': preview.recipient.wordCount,
+        'recipientKnowledge': preview.recipient.recipientKnowledge.name,
+        'castingClass': preview.castingClass,
+        'slotLevel': result.slotLevel,
+        'pactMagic': result.pactMagic,
+        'deliveryOutcome': preview.assessment.outcome.name,
+        'percentileRoll': preview.assessment.percentileRoll,
+        'deliveryNotPerformed': true,
       },
     );
   }

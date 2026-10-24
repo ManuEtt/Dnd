@@ -10,6 +10,7 @@ import '../domain/acid_splash_rules.dart';
 import '../domain/srd_extra_creature_attack_rules.dart';
 import '../domain/srd_spell_preflight_rules.dart';
 import '../domain/srd_spell_inventory_rules.dart';
+import '../domain/srd_sending_cast_preflight_rules.dart';
 import '../domain/hero_shield_reaction_rules.dart';
 import '../domain/damage_rules.dart';
 import '../domain/enemy_force_defense.dart';
@@ -265,6 +266,99 @@ class GameController extends ChangeNotifier {
           event.payload['rewardId'] != rewardId ||
           event.payload['amount'] != amount ||
           event.payload['playerConfirmed'] != true) {
+        throw const FormatException(
+          'Diese Handlungskennung gehört zu einer anderen Bestätigung.',
+        );
+      }
+      currentCampaign = saved;
+      await _reload();
+      return true;
+    }
+    return false;
+  }
+
+  /// Only a previously validated Sending preview may charge a slot.
+  /// A persisted request ID is idempotent even after an ACK loss or restart.
+  Future<void> confirmSendingAttempt({
+    required String campaignId,
+    required int expectedRevision,
+    required SrdSendingCastPreview preview,
+    required String requestId,
+    required bool playerConfirmed,
+  }) => _run(() async {
+    if (!playerConfirmed) {
+      throw const FormatException(
+        'Der Sending-Zauberversuch muss ausdrücklich bestätigt werden.',
+      );
+    }
+    if (!RegExp(r'^[A-Za-z0-9_-]{1,128}$').hasMatch(requestId)) {
+      throw const FormatException('Ungültige Sending-Handlungskennung.');
+    }
+    final current = currentCampaign;
+    if (current == null || current.id != campaignId) {
+      throw const FormatException('Keine passende aktive Kampagne.');
+    }
+    final saved = await repository.getCampaign(campaignId);
+    if (saved == null) {
+      throw const FormatException('Der Spielstand wurde nicht gefunden.');
+    }
+    if (await _restoreConfirmedSendingAttempt(
+      saved,
+      preview: preview,
+      requestId: requestId,
+    )) {
+      return;
+    }
+    if (current.revision != expectedRevision ||
+        saved.revision != expectedRevision) {
+      throw const CampaignConflictException(
+        'Der Spielstand wurde inzwischen geändert. Bitte neu laden.',
+      );
+    }
+    final update = engine.confirmSendingAttempt(
+      current,
+      preview: preview,
+      requestId: requestId,
+      playerConfirmed: true,
+    );
+    try {
+      await _commit(update);
+    } on CampaignConflictException {
+      final latest = await repository.getCampaign(campaignId);
+      if (latest != null &&
+          await _restoreConfirmedSendingAttempt(
+            latest,
+            preview: preview,
+            requestId: requestId,
+          )) {
+        return;
+      }
+      rethrow;
+    }
+  });
+
+  Future<bool> _restoreConfirmedSendingAttempt(
+    Campaign saved, {
+    required SrdSendingCastPreview preview,
+    required String requestId,
+  }) async {
+    for (final event in saved.events) {
+      if (event.payload['actionRequestId'] != requestId) continue;
+      final payload = event.payload;
+      if (event.type != 'spell.sending.attemptConfirmed' ||
+          payload['playerConfirmed'] != true ||
+          payload['spell'] != 'Sending' ||
+          payload['recipientId'] != preview.recipient.recipientId ||
+          payload['message'] != preview.recipient.message ||
+          payload['wordCount'] != preview.recipient.wordCount ||
+          payload['recipientKnowledge'] !=
+              preview.recipient.recipientKnowledge.name ||
+          payload['castingClass'] != preview.castingClass ||
+          payload['slotLevel'] != preview.slotLevel ||
+          payload['pactMagic'] != preview.pactMagic ||
+          payload['deliveryOutcome'] != preview.assessment.outcome.name ||
+          payload['percentileRoll'] != preview.assessment.percentileRoll ||
+          payload['deliveryNotPerformed'] != true) {
         throw const FormatException(
           'Diese Handlungskennung gehört zu einer anderen Bestätigung.',
         );

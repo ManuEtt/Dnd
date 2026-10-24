@@ -1,3 +1,21 @@
+## 24.10.2026 – Sending-Slot-/Journal-Code vollständig CI-grün (PR #156)
+
+- [Workflow #40078375498](https://github.com/ManuEtt/Dnd/actions/runs/40078375498) auf ausführbarem SHA `2566a84e` erfolgreich: Python/Backend, Dart/Flutter inklusive neuer SQLite-Regressionen, nativer Android-Test, Debug-/ABI-Alpha-Artefakte und Source-ZIP.
+- Frühe Format- und Quelltextduplikationsfehler vor dieser Abnahme repariert. Kein temporärer Diagnoselauf im finalen Quellbaum.
+- Keine geänderten Datenbankschemas, kein echter Nachrichtenversand, keine Geräteabnahme. Nachtrag nur Dokumentation.
+
+---
+
+## 24.10.2026 – Sending-Versuch nach expliziter Bestätigung buchen (PR #156)
+
+- Vorschaugebundenes Helden-Snapshot verhindert veraltete Zauberplatzbuchung.
+- GameEngine/Controller protokollieren bestätigten Sending-Versuch und Slotverbrauch atomar als lokales SQLite-Ereignis; kein magischer Nachrichtentransport.
+- Übergreifende Anfrage-ID schützt vor Duplikat und widersprüchlicher Bestätigung, auch bei erneutem Aufruf/SQLite-Neustart.
+- Neue Domain-/Persistenztests für Bestätigung, Ablehnung, Revision, IDs und SQL-Rollback. Vollständige Flutter-/Android-CI dieses PRs zunächst ausstehend.
+- Keine Änderung an Version, Schema, SRD-Vollständigkeitsstatus oder produktiver Signierung.
+
+---
+
 ## 24.10.2026 – Sending-Unicode-Formatsteuerung absichern (Draft-PR #155)
 
 - U+00AD, U+034F, U+061C, U+180E, U+2061–U+206F und U+FFF9–U+FFFB werden zusätzlich als unsichtbare Format-/Annotationszeichen in Sending-Nachrichten und Empfänger-IDs abgewiesen.

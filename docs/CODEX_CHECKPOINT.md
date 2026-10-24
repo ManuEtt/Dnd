@@ -1,3 +1,40 @@
+## Integration 24.10.2026 – PR #155 übernommen, PR #156 rebasiert
+
+- **LIVE:** `main` enthält PR #155 seit Commit `4c6040c063c96444d75523cacbfa84c4b36800fa` (Unicode-Formatzeichenschutz). Beide unabhängigen Codeänderungen wurden in diesem Integrations-Merge zusammengeführt; keine Variante entfernt.
+- **TESTS:** Vorläufer-CI #40076142566 und #40079373346 jeweils erfolgreich auf getrennten Heads. **Die neue Kombination ist NICHT getestet**, bis GitHub Actions auf dem Merge-HEAD erfolgreich abgeschlossen ist.
+- **KOMPATIBILITÄT:** App 0.8.37+87, SQLite-Schema 2, Export-JSON 1 unverändert; Sending-Zustellvorgang und UI bleiben offen.
+- **NÄCHSTER SCHRITT:** Neue kombinierte CI einschließlich Flutter, Backend, SQLite und Android abnehmen; danach PR #156 integrieren.
+
+---
+
+## CI-Abnahme 24.10.2026 – bestätigter Sending-Versuch (PR #156)
+
+- **LIVE:** Unveränderte Ausgangsbasis `main` `b6b0fdb433330fec2a7b98fe62451ebfbfbec822`. [PR #155](https://github.com/ManuEtt/Dnd/pull/155) ist separat grün und reviewbereit, aber nicht gemergt. Neues Inkrement [PR #156](https://github.com/ManuEtt/Dnd/pull/156), ausführbarer Code-HEAD `2566a84e9a5f3c374c0ca0efd2f0ec558cc5bbfe`.
+- **IMPLEMENTIERT:** Explizit bestätigter Sending-Versuch nur außerhalb aktiver Kämpfe/offener Würfe, originaler Hero-Snapshot vor Ressourcenverbrauch, gesicherter Zauberplatzverbrauch, lokale `spell.sending.attemptConfirmed`-Quittung, Anfrage-ID-Duplikatschutz und Revisionsschutz. Kein Zustell- oder KI-Effekt.
+- **GETESTET:** [Vollständige GitHub Actions #40078375498](https://github.com/ManuEtt/Dnd/actions/runs/40078375498) auf dem ausführbaren Commit `2566a84e` **completed / success**, 34 erfolgreiche Jobschritte einschließlich Python/Struktur, Backend-Typecheck/Build/Tests, Dart-Formatierung, Flutter-Analyse, gezielte Flutter-Dialogtests, **komplette Flutter-Suite mit neuen Sending-Domain-/SQLite-Regressionen**, Android-Debug-APK, nativer Android-Dateisicherungstests, kleinen ABI-Alpha-APKs, versioniertem Alpha-Paket und Quellcode-Checkpoint. Frühere rote CI-Befunde (Dart-Formatierung und versehentlich duplizierte Quellcodeabschnitte) wurden korrigiert. Temporärer Diagnoseworkflow ist entfernt.
+- **CI-ARTEFAKTE:** [Source-Checkpoint](https://github.com/ManuEtt/Dnd/actions/runs/40078375498/artifacts/12554527162) (GitHub-Archiv-SHA256 `e61adb24a44e1cba632df308d3d09153f8b2c2e1358fa31d0f86d77e56737227`), [kleine Alpha-APKs](https://github.com/ManuEtt/Dnd/actions/runs/40078375498/artifacts/12554522162) (Archiv-SHA256 `665f29a1b510c3df2921e62963418ccaa15c14686306c1b177bd169d9cbb9af1`), [Debug-APK](https://github.com/ManuEtt/Dnd/actions/runs/40078375498/artifacts/12554482327) und [versioniertes Alpha-Paket](https://github.com/ManuEtt/Dnd/actions/runs/40078375498/artifacts/12554626816). Artefaktnamen nutzen den generierten PR-Test-Merge-SHA; GitHub-Archiv-Digest ist **nicht** der SHA einer einzelnen APK.
+- **NICHT GETESTET:** Echte Android-Geräteinstallation, Upgrade historischer Spielstände und produktive Release-Signierung. Der folgende reine Dokumentationsnachtrag ist **kein** weiterer ausführbarer Code-Commit; separate finale PR-Checks müssen ebenfalls beobachtet werden.
+- **BLOCKIERT:** Kein physisches Gerät für direkte Abnahme, lokal kein Flutter-/Android-SDK. **NOCH NICHT IMPLEMENTIERT:** Sending-UI-Bestätigungsdialog, tatsächliche magische/Netzwerk-Zustellung, Antwort, empfängerbezogene Weltuhr-Sperre sowie allgemeine Zauberaktion im Kampf.
+- **KOMPATIBILITÄT:** App `0.8.37+87`, SQLite 2, Kampagnen-JSON 1, Rule-/Story-/KI-Grenzen unverändert; SRD-5.2.1-`SPELL-ENTRY-SENDING` bleibt `partial`.
+- **NÄCHSTER KONKRETER SCHRITT:** PR #156 nach finalen Dokumentations-CI-Checks reviewen und sicher integrieren; anschließend als **separates** Paket einen expliziten deutschen Sending-Dialog mit bestätigter Nachricht, Kostenanzeige, Abbruch- und Revisionsschutz auf 320–360dp bauen und testen. Kein automatischer Hintergrundlauf.
+
+---
+
+## Zyklus 24.10.2026 – Sending-Slotbuchung mit bestätigtem Ereignis (PR #156)
+
+- **LIVE-BASIS:** main `b6b0fdb433330fec2a7b98fe62451ebfbfbec822`, letzte Main-CI [#40074505420](https://github.com/ManuEtt/Dnd/actions/runs/40074505420) erfolgreich. PR [#155](https://github.com/ManuEtt/Dnd/pull/155) bleibt offen, war auf Head `d73f3cf` vollständig [CI-grün](https://github.com/ManuEtt/Dnd/actions/runs/40076142566), inzwischen zur Review bereit. Neues unabhängiges Inkrement: [Draft-PR #156](https://github.com/ManuEtt/Dnd/pull/156) auf `feat/sending-confirmed-slot-journal-20261024`; keine direkte Main-Mutation.
+- **PRODUKT:** Würfelraunen 0.8.37+87; `SPELL-ENTRY-SENDING` weiter **partial** nach SRD 5.2.1, *Sending*, S. 161 (CC BY 4.0).
+- **IMPLEMENTIERT:** Vorher rein lesende Vorschau hält intern den ursprünglichen `SrdSpellCastPlan` (Hero-Snapshot). Der separate bestätigte Versuch verbucht höchstens einen zulässigen Zauberplatz über `SpellcastingRules.cast`, verweigert abgelehnte und veraltete Vorschauen. `GameEngine.confirmSendingAttempt` sperrt aktive Kämpfe/offene Würfe und identitätskollidierende Handlungen; `GameController.confirmSendingAttempt` prüft Revisionen und kann bereits bestätigte Belege idempotent nach Neustart oder verlorenem ACK laden. Das Ereignis `spell.sending.attemptConfirmed` dokumentiert Versuch, Nachricht, Empfänger und unverifizierten/gesperrten/fehlgeschlagenen Zustellstatus; **keine Nachrichtenzustellung oder KI-Antwort**.
+- **TESTS GESCHRIEBEN:** `app/test/srd_sending_cast_commit_test.dart` mit Domain-Verbrauch und Ablehnung, alter Hero-Snapshot, doppelter ID, bestätigtem SQLite-Restart und erneutem Aufruf, abweichender Nachricht, veralteter Revision sowie SQL-Trigger-Rollback. Bestehende Sending-Preflight-/Spellcasting-Suites sollen unverändert bleiben.
+- **GETESTET:** Bisher grüne Basis-CI und PR #155 für jeweils ältere/andere Commits; **keine neue erfolgreiche CI für PR #156 behauptet**, bis dieser HEAD tatsächlich abgenommen ist.
+- **NICHT GETESTET:** Neue Dart-/Flutter-Tests, Flutter-Format und Analyse, native Android-Tests, APK/Alpha, reales Android-Gerät bis jeweiliges Ergebnis verifiziert wurde.
+- **BLOCKIERT:** Kein lokales Flutter/Android-SDK oder reales Gerät in der aktiven Umgebung; GitHub-CI übernimmt Build/Tests.
+- **NOCH NICHT IMPLEMENTIERT:** UI-Bestätigungsdialog, Provider-Zustellung, Empfängerantwort, 8h-Sperr-Weltuhr, Sending im Kampf, allgemeine vollständige SRD-Automatik.
+- **DATEN/ARCHITEKTUR:** SQLite 2, Kampagnen-JSON 1 und App-Version unverändert. Regel-Entscheidung ausschließlich lokal, Event+Heldensnapshot in Repositorytransaktion. Story/KI löst keine Ressourcenänderung aus. Quelldateien: `app/lib/domain/srd_sending_cast_preflight_rules.dart`, `app/lib/domain/game_engine.dart`, `app/lib/services/game_controller.dart`, neuer Test und diese Dokumentation.
+- **NÄCHSTER KONKRETER SCHRITT:** Auf finalem PR-#156-HEAD vollständige CI-Format-, Flutter- und Android-Prüfungen kontrollieren, Fehler reparieren und erst dann Review/Integration erwägen. Danach eigener UI-Schritt mit ausdrücklicher Casting-Zustimmung und offener Zustellanzeige. Keine automatische Hintergrundfortsetzung.
+
+---
+
 ## CI-Abschluss 2026-10-24T09:56+02:00 – Sending-Unicode-PR #155
 
 - **IMPLEMENTIERT:** Die auf dem Branch `fix/sending-unicode-format-controls-20261024` ergänzten Unicode-Formatzeichen-Sperren und die Regressionstests sind unverändert. Letzter ausführbarer Commit: `1db4830778d69b5d2f8c8903bb71e75cc211919f`; Basis-main: `b6b0fdb433330fec2a7b98fe62451ebfbfbec822`. [PR #155](https://github.com/ManuEtt/Dnd/pull/155) bleibt ungemergt.
