@@ -1,4 +1,5 @@
 import 'dice_engine.dart';
+import 'experience_progression.dart';
 import 'death_saving_throw_rules.dart';
 import 'condition_rules.dart';
 import 'cover_rules.dart';
@@ -325,6 +326,50 @@ class GameEngine {
     description: description,
     status: status,
   );
+
+  /// Only an explicitly confirmed local action can create an XP reward.
+  /// Narrator text and suggested AI outcomes are never authoritative.
+  GameUpdate confirmExperienceReward(
+    Campaign campaign, {
+    required String rewardId,
+    required int amount,
+    required String requestId,
+    required bool playerConfirmed,
+  }) {
+    if (!playerConfirmed) {
+      throw const FormatException(
+        'Die EP-Belohnung muss ausdrücklich bestätigt werden.',
+      );
+    }
+    if (!RegExp(r'^[A-Za-z0-9_-]{1,100}$').hasMatch(rewardId) ||
+        !RegExp(r'^[A-Za-z0-9_-]{1,128}$').hasMatch(requestId) ||
+        amount < 1 ||
+        amount > 100000) {
+      throw const FormatException(
+        'Ungültige EP-Belohnung oder Handlungskennung.',
+      );
+    }
+    final next = ExperienceProgression.grant(
+      campaign,
+      rewardId: rewardId,
+      amount: amount,
+    );
+    if (identical(next, campaign)) {
+      throw const FormatException('Die EP-Belohnung wurde bereits bestätigt.');
+    }
+    return _commit(
+      campaign,
+      next,
+      '$amount Erfahrungspunkte wurden ausdrücklich bestätigt.',
+      type: 'xp.reward.confirmed',
+      payload: {
+        'rewardId': rewardId,
+        'amount': amount,
+        'actionRequestId': requestId,
+        'playerConfirmed': true,
+      },
+    );
+  }
 
   GameUpdate rollDice(Campaign campaign, String expression) {
     final result = dice.roll(expression);

@@ -1,3 +1,10 @@
+## 24.10.2026 – Integrierte EP-Sicherung auf aktuellem Schurken-/Kampfstand
+
+- **IMPLEMENTIERT:** Die bisher getrennten Korrekturen aus PR #149 wurden gegen `main` `f99f27ac` als konfliktaufgelöster Merge zusammengesetzt: fehlerhafte Rabenwacht-XP-Marker werden abgelehnt; `GameEngine.confirmExperienceReward` und `GameController.confirmExperienceReward` sichern ausschließlich ausdrücklich bestätigte, idempotente XP-Ereignisse und SQLite-Revisionsrennen.
+- **REGRESSIONSTESTS ÜBERNOMMEN:** beschädigte Marker und SQLite-Neustart, Request-ID-Duplikate, abweichende Belohnungen, konkurrierende Controller, Rollback und alte Revision. Die zuvor in `main` integrierte Schurken-/Kampfimplementierung bleibt erhalten.
+- **GETESTET:** Vorläufer-PR #149 hatte erfolgreiche GitHub-CI auf `cfea52f2`; `main` hatte erfolgreiche CI auf `f99f27ac`. **NICHT GETESTET:** die jetzt neu zusammengeführte Kombination bis zum eigenen GitHub-Actions-Lauf. Kein reales Android-Gerät geprüft.
+- **KOMPATIBILITÄT:** DB-Schema 2 und Export-JSON-Schema 1 bleiben unverändert. Fantasy-EP-Dialoge der alternativen PRs #150/#151 sind noch getrennt zu prüfen; SRD-Sending aus PR #144 bleibt unabhängig.
+
 ## Aktiver Integrationsabschluss – 24.10.2026
 
 Während der abschließenden CI wurde PR #145 nach main1c2eeabcd6479a69bfaf5cfd5bf001390fc4fcdd übernommen. Dokumentationskonflikte werden unter Erhalt beider Historien aufgelöst; XP-Code und beide Tests unverändert integriert. Keine neue Regelphase begonnen. Die bisher unten belegte grüne CI40057898163 auf bfc991f prüft den Vorintegrationsstand. Die neue Kombination muss erneut vollständig geprüft und als eigenes ZIP/Patch gesichert werden. APKs des alten Standes bleiben erhalten und gelten nicht automatisch für diesen neuen Source-Stand.

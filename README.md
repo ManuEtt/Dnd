@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+
+### Integrationsstand 24.10.2026 – bestätigte EP-Belohnungen
+
+Der XP-Kern aus [PR #149](https://github.com/ManuEtt/Dnd/pull/149) ist auf den neueren Schurken-/Kampfstand aus `main` portiert: manuelle Bestätigung, idempotente Anfragekennungen, persistentes XP-Ereignisjournal, atomare SQLite-Transaktion sowie Schutz bei veralteten Revisionen und beschädigten Rabenwacht-Belohnungsbelegen. Regressionstests für Duplikate, Race-Bedingungen und Neustarts wurden übernommen. **Gemeinsame neue CI ausstehend**, obwohl die getrennten Vorläuferstände grün waren. Die alternativen UI-PRs #150/#151 und die SRD-Sending-PR #144 sind noch nicht Bestandteil dieser Integration.
+
 Deutschsprachige Android-Alpha für Soloabenteuer, Charakterverwaltung und regelgeprüfte D&D-Spielabläufe. Flutter/Dart-App mit SQLite, optionalem Fastify-/TypeScript-Erzähler und Fantasy-Oberfläche. **Das vollständige SRD 5.2.1 ist noch nicht implementiert.**
 
 ## Aktueller Stand und autonome Fortsetzung (24.10.2026)
