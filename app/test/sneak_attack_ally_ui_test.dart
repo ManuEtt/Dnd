@@ -90,6 +90,8 @@ Future<GameController> _start(
   WidgetTester tester, {
   String className = 'Schurke',
   String weapon = 'weapon-dagger',
+  bool offhand = false,
+  bool offhandDagger = true,
 }) async {
   final repository = (await tester.runAsync(
     () => SqliteCampaignRepository.open(
@@ -104,13 +106,28 @@ Future<GameController> _start(
   final armed = demo.copyWith(
     hero: demo.hero.copyWith(
       className: className,
-      level: 3,
+      level: offhand ? 4 : 3,
+      secondaryClassName: offhand ? 'Kämpfer' : '',
+      secondaryClassLevel: offhand ? 1 : 0,
+      features: offhand
+          ? const ['Kampfstil: Kampf mit zwei Waffen']
+          : demo.hero.features,
       equippedWeaponId: 'main',
-      weaponDamage: '1d4',
-      weaponAbility: 'dexterity',
+      weaponDamage: offhand ? '1d6' : '1d4',
+      weaponAbility: offhand ? 'strength' : 'dexterity',
       weaponProficient: true,
       inventory: [
-        InventoryItem(id: 'main', name: 'Bestätigte Waffe', catalogId: weapon),
+        InventoryItem(
+          id: 'main',
+          name: 'Bestätigte Waffe',
+          catalogId: offhand ? 'weapon-handaxe' : weapon,
+        ),
+        if (offhand)
+          InventoryItem(
+            id: 'offhand',
+            name: 'Nebenhandwaffe',
+            catalogId: offhandDagger ? 'weapon-dagger' : 'weapon-handaxe',
+          ),
       ],
     ),
   );
@@ -133,7 +150,31 @@ Future<GameController> _start(
       expectedRevision: combat.campaign.revision,
     ),
   );
-  await tester.runAsync(() => controller.openCampaign(pending.id));
+  var active = pending;
+  if (offhand) {
+    final miss = engine.resolveRoll(pending, natural: 1);
+    final second = engine.act(
+      miss.campaign,
+      'Nebenhandangriff: offhand',
+    );
+    expect(second.campaign.pendingRoll?.type, 'offhandAttack');
+    await tester.runAsync(
+      () => repository.saveCampaign(
+        miss.campaign,
+        events: miss.events,
+        expectedRevision: pending.revision,
+      ),
+    );
+    await tester.runAsync(
+      () => repository.saveCampaign(
+        second.campaign,
+        events: second.events,
+        expectedRevision: miss.campaign.revision,
+      ),
+    );
+    active = second.campaign;
+  }
+  await tester.runAsync(() => controller.openCampaign(active.id));
   expect(controller.error, isNull);
   addTearDown(() async {
     await tester.pumpWidget(const SizedBox.shrink());
@@ -324,6 +365,65 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets(
+    'Nebenhanddolch erlaubt bestätigten Verbündeten und löscht nur die Bestätigung',
+    (tester) async {
+      _view(tester);
+      final controller = await _start(tester, offhand: true);
+      final before = controller.currentCampaign!;
+      expect(before.pendingRoll!.type, 'offhandAttack');
+      await _showPending(tester, _openConfirmation);
+      expect(_openConfirmation, findsOneWidget);
+      await _tap(tester, _openConfirmation);
+      await tester.enterText(_key('sneak-attack-ally-name'), 'Mira');
+      await _tap(tester, _key('sneak-attack-ally-near-target'));
+      await _tap(tester, _key('sneak-attack-ally-not-incapacitated'));
+      await _tap(tester, _confirm, settle: false);
+      await _wait(tester, controller);
+      final confirmed = controller.currentCampaign!;
+      expect(confirmed.pendingRoll!.type, 'offhandAttack');
+      expect(confirmed.pendingRoll!.weaponId, 'offhand');
+      expect(confirmed.pendingRoll!.sneakAttackAlly!.allyName, 'Mira');
+      expect(confirmed.revision, before.revision + 1);
+      expect(_key('adventure-sneak-attack-ally-source'), findsOneWidget);
+      final saved = await tester.runAsync(
+        () => controller.repository.getCampaign(confirmed.id),
+      );
+      expect(saved!.pendingRoll!.sneakAttackAlly!.rollId, before.pendingRoll!.id);
+      await _tap(
+        tester,
+        _key('adventure-clear-sneak-attack-ally'),
+        settle: false,
+      );
+      await _wait(tester, controller);
+      final cleared = controller.currentCampaign!;
+      expect(cleared.pendingRoll!.type, 'offhandAttack');
+      expect(cleared.pendingRoll!.sneakAttackAlly, isNull);
+      expect(cleared.pendingRoll!.id, before.pendingRoll!.id);
+      expect(cleared.revision, before.revision + 2);
+      expect(_openConfirmation, findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('Nebenhandaxt erhält keinen Verbündeten-Bestätigungsbutton', (
+    tester,
+  ) async {
+    _view(tester);
+    final controller = await _start(
+      tester,
+      offhand: true,
+      offhandDagger: false,
+    );
+    await _showPending(
+      tester,
+      find.widgetWithText(FantasyTextButton, 'Wurf durchführen'),
+    );
+    expect(controller.currentCampaign!.pendingRoll!.type, 'offhandAttack');
+    expect(_openConfirmation, findsNothing);
+    expect(tester.takeException(), isNull);
+  });
 
   for (final entry in [
     (className: 'Kämpfer', weapon: 'weapon-dagger'),
