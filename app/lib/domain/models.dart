@@ -1241,9 +1241,11 @@ class PendingRoll {
       fallback: 0,
       max: 1,
     );
-    if (j['sneakAttackAlly'] != null && type != 'attack') {
+    if (j['sneakAttackAlly'] != null &&
+        type != 'attack' &&
+        type != 'offhandAttack') {
       throw const FormatException(
-        'Verbündetenbestätigung nur für Hauptwaffenangriffe.',
+        'Verbündetenbestätigung nur für Waffenangriffe.',
       );
     }
     if ((type != 'death' && deathVersion != 0) ||
