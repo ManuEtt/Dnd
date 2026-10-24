@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+### Fantasy-EP-Dialog in der Abenteueransicht (Integrations-PR #151)
+
+„EP-Belohnung bestätigen“ öffnet eine validierte, scrollbare EP-Vorschau. Erst die gesonderte ausdrückliche Zustimmung übergibt eine beständige `xp_<Belohnungskennung>` an den Controller. Doppelte Bestätigungen und Fehler erzeugen keine zweite Gutschrift; eine Erfolgsmeldung setzt einen gespeicherten `xp.reward.confirmed`-Beleg voraus. Vorherige Schurken-, SQLite- und SRD-Sending-Funktionen bleiben vorhanden. Neue kombinierte CI ist erforderlich.
+
 ### SRD-Sending-Vorprüfung integriert (24.10.2026)
 
 Der reine Dart-Regeldienst aus [PR #144](https://github.com/ManuEtt/Dnd/pull/144) validiert bestätigte Empfänger und Wissensherkunft, 25-Wörter-Grenze und dokumentierte Ebenen-/Blockadebedingungen für `Sending`. Er führt **keinen Zauberspruch und keine Nachricht** aus; Slotverbrauch und Spielzustandsänderungen sind nicht implementiert. Eigenständige Tests wurden übernommen. Ursprüngliche Sending-CI war erfolgreich; **der kombinierte Integrationsstand braucht neue CI**. Version und bestehende Schurken-/EP-Funktionen bleiben erhalten.

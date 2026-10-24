@@ -29,6 +29,7 @@ import 'character_effect_dialog.dart';
 import 'condition_effect_dialog.dart';
 import 'sneak_attack_ally_dialog.dart';
 import 'confirmed_spell_effect_dialog.dart';
+import 'experience_reward_dialog.dart';
 import 'hero_shield_reaction_dialog.dart';
 import '../domain/hero_shield_reaction_rules.dart';
 import 'magic_missile_dialog.dart';
@@ -1334,6 +1335,47 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previous);
   }
 
+  Future<void> _confirmExperienceReward() async {
+    final campaign = widget.controller.currentCampaign;
+    if (campaign == null || !_canInteract) return;
+    final choice = await showDialog<ExperienceRewardChoice>(
+      context: context,
+      builder: (_) => ExperienceRewardDialog(campaign: campaign),
+    );
+    if (choice == null || !mounted) return;
+    final previousMessageId = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    await widget.controller.confirmExperienceReward(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      rewardId: choice.rewardId,
+      amount: choice.amount,
+      requestId: choice.requestId,
+      playerConfirmed: true,
+    );
+    if (!mounted || widget.controller.error != null) return;
+    final saved = widget.controller.currentCampaign;
+    final confirmed =
+        saved != null &&
+        saved.events.any(
+          (event) =>
+              event.type == 'xp.reward.confirmed' &&
+              event.payload['actionRequestId'] == choice.requestId &&
+              event.payload['rewardId'] == choice.rewardId &&
+              event.payload['amount'] == choice.amount,
+        );
+    if (!confirmed) return; // Never show a success notice without a receipt.
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        key: const ValueKey('xp-reward-receipt'),
+        content: Text(
+          'Bestätigte EP-Belohnung gespeichert. Neuer Stand: ${saved.hero.experience} EP.',
+        ),
+      ),
+    );
+    await _afterTurn(previousMessageId);
+  }
+
   Future<void> _confirmCharacterEffect() async {
     final campaign = widget.controller.currentCampaign;
     if (campaign == null || widget.controller.busy) return;
@@ -2465,6 +2507,22 @@ class _AdventurePageState extends State<_AdventurePage> {
                                 ),
                                 minHeight: 5,
                               ),
+                            FantasyTextButton(
+                              key: const ValueKey(
+                                'adventure-confirm-xp-reward',
+                              ),
+                              label: 'EP-Belohnung bestätigen',
+                              icon: Icons.military_tech_outlined,
+                              style: FantasyButtonStyle.woodGold,
+                              onPressed:
+                                  !_canInteract ||
+                                      campaign.hero.experience == null ||
+                                      campaign.pendingRoll != null ||
+                                      campaign.pendingDeathSave != null ||
+                                      campaign.pendingEnemyShieldHit != null
+                                  ? null
+                                  : _confirmExperienceReward,
+                            ),
                             if (CampaignExperience.canLevelUp(campaign.hero))
                               FantasyTextButton(
                                 key: const ValueKey('adventure-levelup-ready'),

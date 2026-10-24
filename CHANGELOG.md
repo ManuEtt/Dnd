@@ -1,3 +1,9 @@
+## 24.10.2026 – Fantasy-Bestätigungsdialog für EP-Belohnungen auf neuer Integrationsbasis
+
+- **IMPLEMENTIERT:** Der Dialog aus PR #151 ist in die erhaltene Abenteueransicht mit Schurken-/Kampflogik, XP-Ereignisschutz und unabhängiger Sending-Vorprüfung integriert: bestätigte Kennung und Betrag, Vorschau, separate Checkbox-Zustimmung, stabile Request-ID und Buchungsquittung nur bei gespeichertem Ereignis.
+- **REGRESSIONSTESTS ÜBERNOMMEN:** `app/test/experience_reward_dialog_test.dart` mit Abbruch, 320dp/Schriftvergrößerung, Duplikat-/Neustart und echtem SQLite-Commit. **GETESTET:** der ursprüngliche Branch besitzt nur die jeweils einzeln belegten GitHub-CI-Ergebnisse. **NICHT GETESTET:** der kombinierte neue Stand bis zur vollständigen eigenen CI und reales Android-Gerät.
+- **KONSOLIDIERUNG:** PR #150 bietet eine alternative, überlappende Darstellung derselben XP-Interaktion; vor dessen Schließung wird noch der tatsächliche Funktions-/Testumfang mit dem übernommenen PR #151 abgeglichen. Keine doppelte XP-Aktion in der App erzeugen.
+
 ## 24.10.2026 – Unabhängigen SRD-Sending-Regelkern übernommen
 
 - **IMPLEMENTIERT:** Die reine Regelvorprüfung für den SRD-5.2.1-Zauber `Sending` prüft bestätigten Kreaturenempfänger, Wissensnachweis, 1–25 Wörter, bestätigte Blockade und den extern nachgewiesenen W100-Ebenenwurf (1–5 verfehlt; 6–100 erfolgreich). Keine KI-generierte Regelwirkung, keine automatische Nachrichtenzustellung und keine SQLite-Mutation.
