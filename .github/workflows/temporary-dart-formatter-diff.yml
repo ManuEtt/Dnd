@@ -1,0 +1,21 @@
+name: Temporary Dart format diagnostics
+on:
+  push:
+    branches:
+      - feat/sending-cast-resource-preflight-20261024
+jobs:
+  formatting-diff:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Print Dart formatter corrections for this PR
+        run: |
+          cd app
+          dart format lib/domain/srd_sending_cast_preflight_rules.dart test/srd_sending_cast_preflight_test.dart
+          git diff -- lib/domain/srd_sending_cast_preflight_rules.dart test/srd_sending_cast_preflight_test.dart
