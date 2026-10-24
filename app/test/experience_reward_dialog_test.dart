@@ -97,6 +97,84 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Ungültige Kennung und EP-Beträge sperren die Bestätigung', (
+    tester,
+  ) async {
+    final campaign = GameEngine().createDemo();
+    await openDialog(tester, campaign);
+
+    void assertBlocked() {
+      expect(
+        tester
+            .widget<FantasyTextButton>(
+              find.byKey(const ValueKey('xp-reward-confirm')),
+            )
+            .onPressed,
+        isNull,
+      );
+    }
+
+    await tester.enterText(
+      find.byKey(const ValueKey('xp-reward-id')),
+      'enthält Leerzeichen',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('xp-reward-amount')),
+      '300',
+    );
+    await tester.ensureVisible(find.byKey(const ValueKey('xp-reward-consent')));
+    await tester.tap(find.byKey(const ValueKey('xp-reward-consent')));
+    await tester.pump();
+    expect(find.textContaining('Eindeutige Kennung'), findsOneWidget);
+    assertBlocked();
+
+    await tester.enterText(
+      find.byKey(const ValueKey('xp-reward-id')),
+      'quest-gueltig',
+    );
+    await tester.enterText(find.byKey(const ValueKey('xp-reward-amount')), '0');
+    await tester.pump();
+    expect(find.textContaining('1 bis 100000 EP'), findsOneWidget);
+    assertBlocked();
+
+    await tester.enterText(
+      find.byKey(const ValueKey('xp-reward-amount')),
+      '100001',
+    );
+    await tester.pump();
+    assertBlocked();
+
+    await tester.enterText(
+      find.byKey(const ValueKey('xp-reward-amount')),
+      '300',
+    );
+    await tester.pump();
+    assertBlocked(); // Editing always revokes the previous consent.
+
+    await tester.ensureVisible(find.byKey(const ValueKey('xp-reward-consent')));
+    await tester.tap(find.byKey(const ValueKey('xp-reward-consent')));
+    await tester.pump();
+    expect(
+      tester
+          .widget<FantasyTextButton>(
+            find.byKey(const ValueKey('xp-reward-confirm')),
+          )
+          .onPressed,
+      isNotNull,
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('xp-reward-amount')),
+      '200',
+    );
+    await tester.pump();
+    assertBlocked();
+    expect(campaign.hero.experience, 0);
+    expect(campaign.revision, 0);
+    expect(campaign.events, isEmpty);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Bestätigung liefert stabile IDs und ändert kein Domainmodell', (
     tester,
   ) async {

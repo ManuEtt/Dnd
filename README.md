@@ -94,3 +94,8 @@ Weitere offene Arbeiten: vollständige Quelleninventur, Zauberwirkungen, Klassen
 - [README vor diesem Zyklus](docs/history/main_0.8.36_20261023/README.md) · [ältere Historie](docs/README_HISTORIE_BIS_20261020.md)
 
 Nur ausgewählte Inhalte des **SRD 5.2.1 von Wizards of the Coast unter CC BY 4.0** sowie eigene/lizenzierte Inhalte verwenden. [Namensnennung und Lizenzen](THIRD_PARTY_NOTICES.md) erhalten. Neue Arbeit erfolgt während einer aktiven Sitzung in einem eigenen Branch und PR; keine automatische Fortsetzung außerhalb einer laufenden Sitzung.
+
+
+### Branch-Konsolidierung (24.10.2026)
+
+Die abgeschlossenen Integrationen #149, #144 und #151 sowie die SHA-geprüfte Bereinigung der bisherigen Arbeitsbranches sind in [docs/BRANCH_MIGRATION_AUDIT_20261024.md](docs/BRANCH_MIGRATION_AUDIT_20261024.md) dokumentiert. Alternative UI-Tests aus #150 wurden auf den Hauptdialog übertragen; der alternative Quellstand wird vor der Referenzlöschung als Git-Tag archiviert. Eine abgeschlossene Bereinigung ist erst durch den erfolgreichen Cleanup-Workflow und erneute Branchprüfung belegt. Der Hauptbranch ist gegenwärtig eine Android-Alpha; reale Geräteabnahme bleibt offen.

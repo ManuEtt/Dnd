@@ -1,0 +1,119 @@
+name: Einmalige Branchbereinigung nach Integration
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cleanup-merged-branches-20261024.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  cleanup:
+    if: github.repository == 'ManuEtt/Dnd'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Commit-SHA und PR prüfen, Alternative archivieren, Altbranches löschen
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            if (context.ref !== 'refs/heads/main') {
+              throw new Error('Branchbereinigung nur auf main erlaubt.');
+            }
+            const main = await github.rest.git.getRef({
+              owner, repo, ref: 'heads/main',
+            });
+            if (main.data.object.sha !== context.sha) {
+              throw new Error('main hat sich seit Beginn dieses Laufs geändert. Keine Bereinigung.');
+            }
+
+            // Immutable audit: branches are not modified when their expected
+            // exact head commit SHA changes. Never force-push.
+            const merged = [
+              ['fix/atomic-campaign-deletion-selection-20261023', '012c51d09f599ea4daf004834aef8e23d71c2fcc'],
+              ['fix/rabenwacht-xp-marker-integrity-20261024', 'ca9167cfec691c11710ea40cc364f245ae00202a'],
+              ['fix/confirmed-xp-ci-recovery-20261024', '4a3821b44adacfeef8cd68c76b40d9bf7568030b'],
+              ['feat/srd-sending-message-rules-20261023', 'e8197465f298fff6f05b000bd6d145aecca0c2fc'],
+              ['feat/xp-reward-confirmation-ui-20261024', 'b89f2a2d4b248e485fdf0a5540627c4b7c4cc8b8'],
+            ];
+            const alternativeBranch = 'feat/confirmed-xp-dialog-20261024';
+            const alternativeSha = '6a977715e26ba17afb4577879f69f1ee4c57308e';
+            const tag = 'archive/2026-10-24/pr150-alternative-xp-dialog';
+            const reference = 'tags/' + tag;
+
+            const pr = await github.rest.pulls.get({owner, repo, pull_number: 150});
+            if (pr.data.state !== 'closed' || pr.data.merged) {
+              throw new Error('Alternative PR #150 ist nicht geschlossen/ersetzt.');
+            }
+            if (pr.data.head.sha !== alternativeSha) {
+              throw new Error('Alternative PR #150 hat nicht den geprüften Commit.');
+            }
+
+            // Preserve the unmerged alternative before deleting its branch.
+            try {
+              const existing = await github.rest.git.getRef({owner, repo, ref: reference});
+              if (existing.data.object.sha !== alternativeSha) {
+                throw new Error('Archiv-Tag existiert mit fremdem SHA.');
+              }
+            } catch (error) {
+              if (error.status !== 404) throw error;
+              await github.rest.git.createRef({
+                owner, repo, ref: 'refs/' + reference, sha: alternativeSha,
+              });
+              core.info('Alternative #150 als Git-Tag gesichert.');
+            }
+
+            // The cleanup branch is removed only after its PR is merged.
+            const cleanupBranch = 'chore/audited-branch-consolidation-20261024';
+            const cleanupPr = await github.rest.pulls.get({
+              owner, repo, pull_number: 152,
+            });
+            if (!cleanupPr.data.merged ||
+                cleanupPr.data.head.ref !== cleanupBranch ||
+                cleanupPr.data.head.repo?.full_name !== owner + '/' + repo) {
+              throw new Error('Cleanup PR #152 ist nicht korrekt in main gemergt.');
+            }
+            const candidates = [
+              ...merged,
+              [alternativeBranch, alternativeSha],
+              [cleanupBranch, cleanupPr.data.head.sha],
+            ];
+            for (const [name, expectedSha] of candidates) {
+              if (name === 'main') throw new Error('main darf nie gelöscht werden.');
+              let current;
+              try {
+                current = await github.rest.git.getRef({
+                  owner, repo, ref: 'heads/' + name,
+                });
+              } catch (error) {
+                if (error.status === 404) {
+                  core.info('Bereits bereinigt: ' + name);
+                  continue;
+                }
+                throw error;
+              }
+
+              if (current.data.object.sha !== expectedSha) {
+                core.warning('Branch verändert, bleibt erhalten: ' + name);
+                continue;
+              }
+
+              if (name !== alternativeBranch) {
+                const diff = await github.rest.repos.compareCommits({
+                  owner, repo, base: expectedSha, head: context.sha,
+                });
+                if (diff.data.behind_by !== 0 ||
+                    !['ahead', 'identical'].includes(diff.data.status)) {
+                  core.warning('Nicht sicher in main enthalten: ' + name);
+                  continue;
+                }
+              }
+              await github.rest.git.deleteRef({
+                owner, repo, ref: 'heads/' + name,
+              });
+              core.info('Geprüften alten Branch gelöscht: ' + name);
+            }
