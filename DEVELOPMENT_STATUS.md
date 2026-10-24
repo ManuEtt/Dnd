@@ -1,3 +1,9 @@
+## 24.10.2026 – Backend-Story-Statuskontinuität, PR #161
+
+**IMPLEMENTIERT:** `parseStoryTurn` verhindert, dass eine Anbieterantwort bestehende `resolved`- oder `abandoned`-Stränge ohne manuelle Spieleränderung in einen anderen Status zurückversetzt; idempotente Notizen und zuvor lokal bestätigtes `open` bleiben erlaubt. Zwei neue Backendtests mit HTTP-Fail-Closed-Prüfung. Eigener [PR #161](https://github.com/ManuEtt/Dnd/pull/161) auf Basis `main=b60ffe7`, PR #159 und #160 unangetastet. **GETESTET:** neue CI ausstehend; die grüne CI von PR #160 ist nur ein älterer, anderer Quellstand. **NICHT GETESTET:** finales Backend/Android-Gesamtergebnis und echtes Gerät. **BLOCKIERT:** physische Geräteabnahme und produktive Signierung. **NOCH NICHT IMPLEMENTIERT:** allgemeine KI-Verwaltung von Spielerentscheidungen, SRD-Vollständigkeit. Keine Änderung an 0.8.38+88 / SQLite2 / JSON1. **Nächster Schritt:** finale PR-#161-CI prüfen, Fehler beheben, für Review freigeben. [Checkpoint](docs/CODEX_CHECKPOINT.md).
+
+---
+
 ## 24.10.2026 – 0.8.38+88: tatsächliche Nebenhandwaffe für Hinterhältigen Angriff
 
 Die vorhandene Nebenhandauflösung prüft jetzt ihre bestätigte Inventarwaffe auf Finesse/Fernkampf. Ein Hauptdolch verleiht einer Nebenhandaxt keinen Zusatzschaden; ein Nebendolch verliert seine Eignung nicht durch eine Haupthandaxt. Krit/Miss und bestehende gemeinsame Zugnutzung bleiben erhalten. 27 bestehende/Helper- und acht neue Kampf-/SQLite-Tests erfolgreich. Vollständige lokale Abnahme: 1505 Flutter-,100 Python-,31 Backend- und12 native Tests erfolgreich, Format/Analyse/Importgrenzen ohne Befund. Neue Debug-APK und ARM64-Alpha gebaut und geprüft. Eigene finale GitHub-Checks am PR158 getrennt geführt; Realgerät nicht getestet. SQLite2/JSON1 kompatibel. Details und nächstes Paket: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md).
