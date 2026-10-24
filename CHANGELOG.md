@@ -1,3 +1,11 @@
+## 24.10.2026 – Sending-Vorprüfung mit bestätigter Zauberressource
+
+- `SrdSendingCastPreflightRules.preview` verbindet Ziel-/Nachrichtenprüfung mit Klassen-, Stufen-, vorbereiteter Zauber-, Slot-, Komponenten- und Aktionsbestätigung; keine Zustandsmutation.
+- Manipulierte Sending-Metadaten und fehlender Kupferdraht-/Fokusbeleg werden verweigert. Bekannte andere Ebene verlangt belegten W100, unbekannte Fakten bleiben unbekannt.
+- Sieben neue Rule-Domain-Regressionsgruppen; CI für den neuen Stand noch ausstehend. Keine Datenmigration oder App-Versionserhöhung.
+
+---
+
 ## 24.10.2026 – Abnahme der Sending-Input-Regressionsfälle
 
 - Vollständige [GitHub-Actions-CI #40068321150](https://github.com/ManuEtt/Dnd/actions/runs/40068321150) auf Code-HEAD `fb96641db97598a5ee1b59416ad254f5e0e63e29` erfolgreich, inklusive Flutter-/SQLite, Android-Debug/native Tests, kleiner Alpha-APKs und versioniertem Alpha-Artefakt.

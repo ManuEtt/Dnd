@@ -1,3 +1,11 @@
+## 24.10.2026 – Sending-Rule-Komposition ohne Ressourcenmutation
+
+- **IMPLEMENTIERT:** Reiner `SrdSendingCastPreflightRules` integriert den Sending-Validator mit bestehender `SrdSpellPreflightRules`-Klassen-/Slot-/Komponentenprüfung und danach der Blockade-/Ebenen-W100-Prüfung. Katalogmetadaten werden gegen stille Pflichtkomponenten-Änderungen geschützt; Ergebnis bleibt read-only.
+- **TESTS GESCHRIEBEN:** `srd_sending_cast_preflight_test.dart` mit sieben fachlichen Gegenprüfungen. **GETESTET:** Main-Basis `da80d3f2`, GitHub-CI #40069427402 success. **NICHT GETESTET:** neuer Featurecode bis eigener CI, echter Geräteeinsatz. **BLOCKIERT:** kein lokales SDK. **NOCH NICHT IMPLEMENTIERT:** Casting, Ressourcen-/Aktionstransaktion, Zustellung/Antwort und Acht-Stunden-Timer.
+- **KOMPATIBILITÄT:** SRD-Arbeits-ID `SPELL-ENTRY-SENDING` bleibt partial. DB 2, JSON 1, Version 0.8.37+87 unverändert. **NÄCHSTER SCHRITT:** PR-CI auf finalem Code-HEAD, Fehler beheben, danach konkretes Cast-Integrationspaket.
+
+---
+
 ## 24.10.2026 – Vollständige CI-Abnahme der Sending-Eingabeintegrität
 
 - **GETESTET:** [PR-CI #40068321150](https://github.com/ManuEtt/Dnd/actions/runs/40068321150), Code-HEAD `fb96641db97598a5ee1b59416ad254f5e0e63e29`, **completed/success**: Python, Backend, Dart-Format, Flutter-Analyse, vollständige Flutter-Suite inklusive Unicode-Grenztests, Android-Debug-Build, native Tests, kleine Alpha-APKs, versioniertes Alpha und Source-Checkpoint. [PR #153](https://github.com/ManuEtt/Dnd/pull/153) bleibt für Review offen; `main` unverändert.

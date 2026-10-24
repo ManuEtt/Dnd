@@ -1,3 +1,15 @@
+## 24.10.2026 – Sending-Regelverbund aus Empfänger und Zauberressourcen
+
+- **LIVE-BASIS:** Main `da80d3f2895098952b701fffe31586f8be07be1e`, [Main-GitHub-CI #40069427402](https://github.com/ManuEtt/Dnd/actions/runs/40069427402) vollständig success. PR #153 bereits in main integriert, am Sitzungsbeginn keine offenen PRs. App-Version `0.8.37+87`, SQLite 2, Export-JSON 1.
+- **REGELQUELLE/ARBEITS-ID:** SRD 5.2.1, S. 161, *Sending* plus *Casting Spells/Components/Spell Slots*, CC BY 4.0; `SPELL-ENTRY-SENDING` bleibt **partial**, weil nur die Vorprüfung erweitert wird.
+- **IMPLEMENTIERT:** `app/lib/domain/srd_sending_cast_preflight_rules.dart` mit `SrdSendingCastPreflightRules.preview`. Es kombiniert `SrdSendingRules.prepare`, `SrdSpellPreflightRules.preflight` und `SrdSendingRules.assessDelivery` ohne Story- oder UI-Import. Strikte Katalogmetadaten, Klasse, Vorbereitung, Mindeststufe, Slot/Slot-pro-Zug, bestätigte Aktion/V/S/M, Kupferdraht/Fokusrecht, empfängerbezogene `Unlimited`-Validierung und korrekt abgegrenzte Blockade-/Ebenenprüfung. Hypothetischen Restslot anzeigen; Held/DB/Ereignisse bleiben unverändert.
+- **TESTS GESCHRIEBEN:** sieben Domain-Regressionsgruppen in `app/test/srd_sending_cast_preflight_test.dart` – Barde/Kleriker/Magier, falsche Klasse/vorbereiteter Zauber/Level, Slots 2/9/aufgebraucht, Aktion/V/S/M/Fokus, Empfänger-25-Wörter/Unicode, bestätigte W100/Blockade/unbekannte Lage und gefälschte Zaubermetadaten.
+- **GETESTET:** Die Ausgangsversion Main mit [#40069427402](https://github.com/ManuEtt/Dnd/actions/runs/40069427402) vollständig grün. **NICHT GETESTET:** neuer Branch-Code bis eigener CI, echte Android-Installation und vollständiger Sending-Zaubervollzug. **BLOCKIERT:** kein lokales Flutter/Android-SDK und kein physisches Testgerät. **NOCH NICHT IMPLEMENTIERT:** atomarer Zauberplatz- und Aktionsverbrauch, konkreter Liefer-/Sperrbeleg, Empfängerantwort und Acht-Stunden-Weltuhr.
+- **KOMPATIBILITÄT:** keine Änderung an Existing-Rule APIs, generischen `Unlimited`-/`Special`-Sperren, SQLite 2, JSON 1 oder Version `0.8.37+87`. Kein bezahlter KI-Provider.
+- **NÄCHSTER KONKRETER SCHRITT:** Branch-PR auf `main` mit vollständiger Python-/Backend-/Dart-/Flutter-/Android-/APK-CI verifizieren. Erst danach als eigenes Feature einen ausdrücklich bestätigten Sending-Cast mit atomarer DB- und Ressourcenbuchung betrachten.
+
+---
+
 ## 24.10.2026 – Abnahme der SRD-Sending-Eingabeintegrität (CI vollständig erfolgreich)
 
 - **IMPLEMENTIERT:** Validierte Sendernachrichten gegen unsichtbare Unicode-Trenner, Bidikontrollen, ASCII/C1-Steuerzeichen sowie technisch unbeschränkte Eingaben; 25-Wörter-SRD-Grenze und normaler deutscher Text bleiben unverändert. Rein lesende Vorprüfung.

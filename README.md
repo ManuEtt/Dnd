@@ -4,6 +4,18 @@
 
 „EP-Belohnung bestätigen“ öffnet eine validierte, scrollbare EP-Vorschau. Erst die gesonderte ausdrückliche Zustimmung übergibt eine beständige `xp_<Belohnungskennung>` an den Controller. Doppelte Bestätigungen und Fehler erzeugen keine zweite Gutschrift; eine Erfolgsmeldung setzt einen gespeicherten `xp.reward.confirmed`-Beleg voraus. Vorherige Schurken-, SQLite- und SRD-Sending-Funktionen bleiben vorhanden. Neue kombinierte CI ist erforderlich.
 
+### Sending-Zauber: Nachricht, Klasse und Ressourcen gemeinsam prüfen (24.10.2026)
+
+Der neue reine Rule-Dienst `SrdSendingCastPreflightRules` prüft die
+Sending-Nachricht und Empfängerbestätigung gemeinsam mit
+Klassen-/Vorbereitungsstatus, bestätigter Aktion,
+Dritte-Grad-Zauberplatz, V/S/M-Komponenten (Kupferdraht oder
+autorisiertem Ersatz) und bekannten/unsicheren Ebenen-/Blockadefakten.
+Er erzeugt ausschließlich eine Vorschau und **verbraucht noch keinen
+Zauberplatz oder Spielzustand**. Sieben neue Domain-Testgruppen angelegt;
+eigene CI noch ausstehend. Bestehende Reichweiten-Sperre für andere
+`Unlimited`-Zauber und JSON-/SQLite-Datenformat bleiben erhalten.
+
 ### Sending-Nachrichten vor verdeckten Steuerzeichen schützen (24.10.2026)
 
 **CI-Abnahme:** [GitHub Actions #40068321150](https://github.com/ManuEtt/Dnd/actions/runs/40068321150) auf Code-HEAD `fb96641db97598a5ee1b59416ad254f5e0e63e29` vollständig **success**, einschließlich Python, Backend, Dart/Flutter, nativer Android-Tests, Android-Debug, kleiner Alpha-APKs und versioniertem Alpha-Artefakt. Kein reales Android-Gerät getestet. Keine neue App-Versionsnummer oder DB-/JSON-Migration.
