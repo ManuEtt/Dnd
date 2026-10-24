@@ -337,15 +337,22 @@ class GameEngine {
     required bool playerConfirmed,
   }) {
     if (!playerConfirmed) {
-      throw const FormatException('Die EP-Belohnung muss ausdrücklich bestätigt werden.');
+      throw const FormatException(
+        'Die EP-Belohnung muss ausdrücklich bestätigt werden.',
+      );
     }
     if (!RegExp(r'^[A-Za-z0-9_-]{1,100}$').hasMatch(rewardId) ||
         !RegExp(r'^[A-Za-z0-9_-]{1,128}$').hasMatch(requestId) ||
-        amount < 1 || amount > 100000) {
-      throw const FormatException('Ungültige EP-Belohnung oder Handlungskennung.');
+        amount < 1 ||
+        amount > 100000) {
+      throw const FormatException(
+        'Ungültige EP-Belohnung oder Handlungskennung.',
+      );
     }
     final next = ExperienceProgression.grant(
-      campaign, rewardId: rewardId, amount: amount,
+      campaign,
+      rewardId: rewardId,
+      amount: amount,
     );
     if (identical(next, campaign)) {
       throw const FormatException('Die EP-Belohnung wurde bereits bestätigt.');
