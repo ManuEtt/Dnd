@@ -97,7 +97,6 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-
   testWidgets('Ungültige Kennung und EP-Beträge sperren die Bestätigung', (
     tester,
   ) async {
@@ -133,10 +132,7 @@ void main() {
       find.byKey(const ValueKey('xp-reward-id')),
       'quest-gueltig',
     );
-    await tester.enterText(
-      find.byKey(const ValueKey('xp-reward-amount')),
-      '0',
-    );
+    await tester.enterText(find.byKey(const ValueKey('xp-reward-amount')), '0');
     await tester.pump();
     expect(find.textContaining('1 bis 100000 EP'), findsOneWidget);
     assertBlocked();
