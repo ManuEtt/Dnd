@@ -1,5 +1,12 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+### Abgenommener Sending-Versuch: Slot & Ereignis (24.10.2026)
+
+[PR #156](https://github.com/ManuEtt/Dnd/pull/156) wurde auf ausführbarem Code-Commit `2566a84e9a5f3c374c0ca0efd2f0ec558cc5bbfe` in der [vollständigen GitHub-CI #40078375498](https://github.com/ManuEtt/Dnd/actions/runs/40078375498) erfolgreich geprüft: Python, Backend, Dart-Format, Flutter-Analyse und komplette Tests, Android-Debug/native Tests, kleine Alpha-APKs und Quell-Checkpoint. Eine versehentlich duplizierte Quellcodepassage und anfängliche Dart-Formatfehler wurden vor der grünen Abnahme behoben; der temporäre Diagnoseworkflow ist entfernt. [Alpha-APKs](https://github.com/ManuEtt/Dnd/actions/runs/40078375498/artifacts/12554522162) · [Debug-APK](https://github.com/ManuEtt/Dnd/actions/runs/40078375498/artifacts/12554482327) · [Source-Checkpoint](https://github.com/ManuEtt/Dnd/actions/runs/40078375498/artifacts/12554527162).
+
+Die neue API bestätigt nur **Sending-Versuch und Slotverbrauch mit atomarem SQLite-Ereignis**, ausdrücklich keine echte Zustellung oder NPC-Antwort. Die UI-Anbindung sowie Installation/Update auf einem echten Gerät fehlen weiterhin. Version `0.8.37+87`, SQLite 2 und Kampagnen-JSON 1 bleiben unverändert. Dieser Nachtrag ist nur Dokumentation; CI des finalen Dokumentations-HEAD getrennt prüfen.
+
+
 ### Sending – bestätigter Slotverbrauch und lokales Ereignis (Entwicklungs-PR #156)
 
 [Draft-PR #156](https://github.com/ManuEtt/Dnd/pull/156) ergänzt den bisherigen **rein lesenden** Sending-Preview um eine **separate ausdrückliche Bestätigung**: Ein unveränderter Heldenzustand wird vor der Ressourcenbuchung überprüft, ein passender Slot genau einmal im SQLite-Spielstand gebucht und `spell.sending.attemptConfirmed` atomar journalisiert. Wiederholte identische Anfrage-IDs werden nach Neustart als bereits gesichert quittiert, abweichende IDs/Inhalte und alte Revisionen abgelehnt. Laufende Kämpfe und offene Würfe bleiben gesperrt. **Keine automatische Nachrichtenzustellung, KI-Antwort oder Behauptung eines Empfangs**. Domain-/SQLite-Regressionstests hinzugefügt, neue CI-Auswertung für dieses Paket noch erforderlich. App 0.8.37+87, SQLite 2 und Kampagnen-JSON 1 unverändert.

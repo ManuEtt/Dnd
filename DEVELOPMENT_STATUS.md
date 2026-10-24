@@ -1,3 +1,15 @@
+## 24.10.2026 – Sending-Versuch mit SQLite-Quittung erfolgreich in GitHub-CI geprüft
+
+- **IMPLEMENTIERT:** Die Regeln verbuchen nach bestätigtem originalen Preview-Snapshot einen Sending-Slot und `spell.sending.attemptConfirmed` atomar; Schutz vor Doppel-IDs, alten Revisionen, unbestätigtem Text und laufenden Kämpfen. Keine KI- oder Netzwerkwirkung.
+- **GETESTET:** [PR-CI #40078375498](https://github.com/ManuEtt/Dnd/actions/runs/40078375498), Code-HEAD `2566a84e`, **completed/success**, mit neuen Domain-/SQLite-Regressionen und vollständigem Flutter-/Android-/Backend-/Python-Lauf.
+- **NICHT GETESTET:** Reale Installation, historischer Gerätestand, produktive Signierung; nachfolgende Dokumentations-CI noch separat zu prüfen.
+- **BLOCKIERT:** Kein Android-Gerät/lokales Android-/Flutter-SDK.
+- **NOCH NICHT IMPLEMENTIERT:** UI-Bestätigung und tatsächliche Sending-Nachrichtenübertragung/Antwort.
+- **KOMPATIBILITÄT:** SQLite 2, Export-JSON 1, Version 0.8.37+87; `SPELL-ENTRY-SENDING` weiterhin partial.
+- **NÄCHSTER SCHRITT:** PR-Review nach Dokumentations-CI; dann eigenständiger Sending-Dialog mit Nutzerbestätigung, 360dp, Abbruch und Replay-Prüfung.
+
+---
+
 ## 24.10.2026 – Sending-Cast-Bestätigung/Slot/Journal (Draft-PR #156)
 
 - **IMPLEMENTIERT:** Eigener bestätigter Sending-Versuch außerhalb von Kämpfen und offenen Würfen; Snapshot-/Anfrage-ID-Schutz, Slotverbrauch durch Rule-Engine und lokale atomare SQLite-Journalbuchung. Wiederholte Anfragen nach Neustart über vorhandenen Beleg idempotent. Kein Netzwerk-/KI-Effekt.

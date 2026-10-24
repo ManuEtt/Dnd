@@ -1,3 +1,11 @@
+## 24.10.2026 – Sending-Slot-/Journal-Code vollständig CI-grün (PR #156)
+
+- [Workflow #40078375498](https://github.com/ManuEtt/Dnd/actions/runs/40078375498) auf ausführbarem SHA `2566a84e` erfolgreich: Python/Backend, Dart/Flutter inklusive neuer SQLite-Regressionen, nativer Android-Test, Debug-/ABI-Alpha-Artefakte und Source-ZIP.
+- Frühe Format- und Quelltextduplikationsfehler vor dieser Abnahme repariert. Kein temporärer Diagnoselauf im finalen Quellbaum.
+- Keine geänderten Datenbankschemas, kein echter Nachrichtenversand, keine Geräteabnahme. Nachtrag nur Dokumentation.
+
+---
+
 ## 24.10.2026 – Sending-Versuch nach expliziter Bestätigung buchen (PR #156)
 
 - Vorschaugebundenes Helden-Snapshot verhindert veraltete Zauberplatzbuchung.
