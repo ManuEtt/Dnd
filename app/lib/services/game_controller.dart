@@ -193,12 +193,17 @@ class GameController extends ChangeNotifier {
     required bool playerConfirmed,
   }) => _run(() async {
     if (!playerConfirmed) {
-      throw const FormatException('Die EP-Belohnung muss ausdrücklich bestätigt werden.');
+      throw const FormatException(
+        'Die EP-Belohnung muss ausdrücklich bestätigt werden.',
+      );
     }
     if (!RegExp(r'^[A-Za-z0-9_-]{1,100}$').hasMatch(rewardId) ||
         !RegExp(r'^[A-Za-z0-9_-]{1,128}$').hasMatch(requestId) ||
-        amount < 1 || amount > 100000) {
-      throw const FormatException('Ungültige EP-Belohnung oder Handlungskennung.');
+        amount < 1 ||
+        amount > 100000) {
+      throw const FormatException(
+        'Ungültige EP-Belohnung oder Handlungskennung.',
+      );
     }
     final current = currentCampaign;
     if (current == null || current.id != campaignId) {
@@ -209,7 +214,10 @@ class GameController extends ChangeNotifier {
       throw const FormatException('Der Spielstand wurde nicht gefunden.');
     }
     if (await _restoreConfirmedExperienceAward(
-      saved, requestId: requestId, rewardId: rewardId, amount: amount,
+      saved,
+      requestId: requestId,
+      rewardId: rewardId,
+      amount: amount,
     )) {
       return;
     }
@@ -233,7 +241,10 @@ class GameController extends ChangeNotifier {
       final latest = await repository.getCampaign(campaignId);
       if (latest != null &&
           await _restoreConfirmedExperienceAward(
-            latest, requestId: requestId, rewardId: rewardId, amount: amount,
+            latest,
+            requestId: requestId,
+            rewardId: rewardId,
+            amount: amount,
           )) {
         return;
       }
