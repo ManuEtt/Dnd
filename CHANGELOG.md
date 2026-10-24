@@ -1,3 +1,12 @@
+## 24.10.2026 – Backend-Anfragelimits fail-closed bei voller Kapazität (PR #162)
+
+- Sicherheitskorrektur: der `WindowLimiter` verwirft bei Überfüllung nicht länger gültige Quoten anderer Anfrageschlüssel. Stattdessen werden nur abgelaufene Einträge bereinigt; falls alle aktiv sind, wird die zusätzliche Anfrage sicher abgelehnt.
+- Zwei deterministische Backend-Regressionen für Quoten-Wahrung, Wiederholungen/Schlüsselwechsel, exakten Ablauf, partielle Bereinigung und zurücklaufende Uhr; veraltete unsichere Testerwartung korrigiert.
+- Keine Änderung der Rate-Werte, Backend-API oder `Retry-After`, keine SRD-Regeländerung oder SQLite-/JSON-Migration. Verteilte Backendinstanzen benötigen weiterhin einen gemeinsamen persistenten Limitspeicher.
+- Tests der neuen Version ausschließlich nach tatsächlicher PR-#162-GitHub-CI als bestanden ausweisen; reale Android-Geräteabnahme offen. [PR #162](https://github.com/ManuEtt/Dnd/pull/162) · [technische Notiz](docs/BACKEND_LIMITER_CAPACITY_20261024.md).
+
+---
+
 ## 24.10.2026 – 0.8.38+88: tatsächliche Nebenhandwaffe für Hinterhältigen Angriff
 
 Die vorhandene Nebenhandauflösung prüft jetzt ihre bestätigte Inventarwaffe auf Finesse/Fernkampf. Ein Hauptdolch verleiht einer Nebenhandaxt keinen Zusatzschaden; ein Nebendolch verliert seine Eignung nicht durch eine Haupthandaxt. Krit/Miss und bestehende gemeinsame Zugnutzung bleiben erhalten. 27 bestehende/Helper- und acht neue Kampf-/SQLite-Tests erfolgreich. Vollständige lokale Abnahme: 1505 Flutter-,100 Python-,31 Backend- und12 native Tests erfolgreich, Format/Analyse/Importgrenzen ohne Befund. Neue Debug-APK und ARM64-Alpha gebaut und geprüft. Eigene finale GitHub-Checks am PR158 getrennt geführt; Realgerät nicht getestet. SQLite2/JSON1 kompatibel. Details und nächstes Paket: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md).
