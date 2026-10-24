@@ -107,12 +107,11 @@ void main() {
       final original = engine.createRabenwacht(engine.createDemo().hero);
       for (final invalid in ['false', '0', 'unbekannt']) {
         final legacy = Campaign.fromJson(
-          original.copyWith(
-            facts: {
-              ...original.facts,
-              'xpReward:reach-mill': invalid,
-            },
-          ).toJson(),
+          original
+              .copyWith(
+                facts: {...original.facts, 'xpReward:reach-mill': invalid},
+              )
+              .toJson(),
         );
         expect(
           () => CampaignExperience.awardOnce(legacy, 'reach-mill'),
