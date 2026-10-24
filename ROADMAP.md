@@ -1,3 +1,9 @@
+## Aktueller Arbeitsauftrag 24.10.2026 – Nebenhand-Verbündetenquelle (PR #160)
+
+Für bereits korrekt autorisierte Nebenhandangriffe mit tatsächlicher Finesse-Waffe ist die separate Verbündetenbestätigung einschließlich UI, JSON, Controller und Regressionen im Entwicklungsbranch umgesetzt. Die erste Testreihe zeigte einen reparierten Formatterbefund und einen anschließend präzisierten JSON-Assertion-Fehler. Vollständige neue CI steht separat unter [PR #160](https://github.com/ManuEtt/Dnd/pull/160/checks). Nach grüner CI Review und sichere Integration, keine direkte main-Änderung. Regelstatus `CLASS-SCHURKE-1-BASE-SNEAK-ATTACK-1` bleibt partial; automatische Verbündetenposition und allgemeine Gelegenheitsangriffe weiterhin offen.
+
+---
+
 ## Aktueller nächster Schritt (24.10.2026)
 
 Nach Abnahme der Waffenreferenzkorrektur 0.8.38+88: manuelle Verbündetenbestätigung für zulässige Nebenhandwaffen über denselben revisionsgeschützten Dialog-/Controllerpfad ergänzen. Akzeptanz und reale Ergebnisse: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md). Folgende Einträge sind historisch.
