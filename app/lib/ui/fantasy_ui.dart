@@ -360,8 +360,7 @@ class FantasyBackdrop extends StatelessWidget {
                   child: Image.asset(
                     'assets/fantasy/night_sky.webp',
                     fit: BoxFit.cover,
-                    errorBuilder: (_, error, stack) =>
-                        const SizedBox.shrink(),
+                    errorBuilder: (_, error, stack) => const SizedBox.shrink(),
                   ),
                 ),
               ),
@@ -382,7 +381,8 @@ class FantasyBackdrop extends StatelessWidget {
             child: IgnorePointer(
               child: CustomPaint(
                 painter: _FantasyBackdropFramePainter(
-                  warm: scene == FantasyBackdropScene.journal ||
+                  warm:
+                      scene == FantasyBackdropScene.journal ||
                       scene == FantasyBackdropScene.heroes ||
                       scene == FantasyBackdropScene.combat,
                 ),
@@ -634,10 +634,7 @@ class FantasyPanel extends StatelessWidget {
       Color(0xff35271f),
       Color(0xff151b23),
     ],
-    FantasyPanelMaterial.iron => const [
-      Color(0xff29343c),
-      Color(0xff141c25),
-    ],
+    FantasyPanelMaterial.iron => const [Color(0xff29343c), Color(0xff141c25)],
   };
 
   @override

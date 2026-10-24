@@ -31,6 +31,4 @@ const srdSkillAbilities = <({String name, String ability})>[
 /// whereas confirmed class creation and the canonical SRD roster use
 /// "Heilkunde". Historical saves must not lose that trained skill.
 /// Never silently rewrite saved data or assign proficiency to a new skill.
-const srdLegacySkillAliases = <String, String>{
-  'Heilkunde': 'Medizin',
-};
+const srdLegacySkillAliases = <String, String>{'Heilkunde': 'Medizin'};

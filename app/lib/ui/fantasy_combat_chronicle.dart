@@ -63,10 +63,7 @@ class FantasyCombatChronicle extends StatelessWidget {
             Text(
               'Zeige die letzten $maxEntries von ${relevant.length} '
               'bestätigten Ereignissen.',
-              style: const TextStyle(
-                color: FantasyPalette.muted,
-                fontSize: 11,
-              ),
+              style: const TextStyle(color: FantasyPalette.muted, fontSize: 11),
             ),
         ],
       ),
@@ -88,30 +85,31 @@ class _ChronicleEntry extends StatelessWidget {
     final when =
         '${_two(date.day)}.${_two(date.month)}.${date.year} '
         '${_two(date.hour)}:${_two(date.minute)}';
-    final attack = event.type == 'attack' ||
+    final attack =
+        event.type == 'attack' ||
         event.type == 'offhandAttack' ||
         event.type.startsWith('combat.enemyAttack') ||
         event.type == 'combat.turnCompleted';
     final accent = attack ? FantasyPalette.danger : FantasyPalette.gold;
 
     return Semantics(
-      label: '$label, $when${details.isEmpty ? '' : ', ${details.join(', ')}'}${diceDetails.isEmpty ? '' : ', ${diceDetails.join(', ')}'}',
+      label:
+          '$label, $when${details.isEmpty ? '' : ', ${details.join(', ')}'}${diceDetails.isEmpty ? '' : ', ${diceDetails.join(', ')}'}',
       child: ExcludeSemantics(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
           decoration: BoxDecoration(
             color: FantasyPalette.night.withValues(alpha: .64),
             borderRadius: BorderRadius.circular(9),
-            border: Border.all(
-              color: accent.withValues(alpha: .5),
-              width: 1.3,
-            ),
+            border: Border.all(color: accent.withValues(alpha: .5), width: 1.3),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Icon(
-                attack ? Icons.sports_martial_arts : Icons.auto_stories_outlined,
+                attack
+                    ? Icons.sports_martial_arts
+                    : Icons.auto_stories_outlined,
                 color: accent,
                 size: 20,
               ),
@@ -188,8 +186,7 @@ class _EventSummary {
     'saving.roll' => 'Rettungswurf',
     'saving.rerolled' => 'Rettungswurf wiederholt',
     _ when type.startsWith('class.') => 'Klassenfähigkeit bestätigt',
-    _ when type.startsWith('condition.effect.') =>
-      'Zustandsänderung bestätigt',
+    _ when type.startsWith('condition.effect.') => 'Zustandsänderung bestätigt',
     _ when type.startsWith('spell.') => 'Zauberwirkung bestätigt',
     _ => 'Kampfereignis bestätigt',
   };

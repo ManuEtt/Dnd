@@ -315,11 +315,9 @@ CREATE TABLE settings (
       );
       if (settings['lastCampaignId'] != id) return;
       settings['lastCampaignId'] = null;
-      await transaction.update(
-        'settings',
-        {'snapshot': _canonical(settings)},
-        where: 'id = 1',
-      );
+      await transaction.update('settings', {
+        'snapshot': _canonical(settings),
+      }, where: 'id = 1');
     });
   }
 
@@ -635,7 +633,9 @@ Future<void> _migrateLegacyPendingActions(DatabaseExecutor database) async {
   final legacy = settings['pendingPlayerActionsV1'];
   if (legacy == null) return;
   if (legacy is! Map) {
-    throw const FormatException('Der ausstehende Handlungsstatus ist beschädigt.');
+    throw const FormatException(
+      'Der ausstehende Handlungsstatus ist beschädigt.',
+    );
   }
   for (final entry in legacy.entries) {
     final item = entry.value;
@@ -666,11 +666,9 @@ Future<void> _migrateLegacyPendingActions(DatabaseExecutor database) async {
     });
   }
   settings.remove('pendingPlayerActionsV1');
-  await database.update(
-    'settings',
-    {'snapshot': _canonical(settings)},
-    where: 'id = 1',
-  );
+  await database.update('settings', {
+    'snapshot': _canonical(settings),
+  }, where: 'id = 1');
 }
 
 /// An older campaign must not erase confirmed XP from a newer hero record.

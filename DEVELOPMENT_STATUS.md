@@ -1,10 +1,18 @@
-## 23.10.2026 – XP-Belohnungs-ID-Konflikt fail-closed (Branch `fix/xp-reward-id-conflict-20261023`)
+## 24.10.2026 – Integration des Main-XP-Fixes aus PR #145
 
-- **IMPLEMENTIERT:** Identische XP-Belohnungs-ID wird in `ExperienceProgression.grant` nur bei exakt gleichem gespeichertem Betrag idempotent bestätigt. Anderer/defekter Betrag löst `FormatException` aus; ursprüngliche Kampagne bleibt unverändert.
-- **REGRESSIONSTESTS ERSTELLT:** `app/test/experience_progression_test.dart` prüft Roundtrip-Duplikat, Widerspruch und beschädigten Historieneintrag.
-- **GETESTET:** Main-Baseline `5958579e5321338bb7b4e46abb859fd3bfd1515f` mit GitHub-CI [#40012217485](https://github.com/ManuEtt/Dnd/actions/runs/40012217485) erfolgreich, nicht neuer Branch. **NICHT GETESTET:** neuer Flutter-Code-HEAD bis CI fertig ist. **BLOCKIERT:** Flutter/Android lokal nicht installiert; reales Android-Gerät nicht verfügbar.
-- **KOMPATIBILITÄT:** Keine SQLite-/JSON-Migration, unveränderte SRD-Regelmechanik und KI-/Story-Grenze. `0.8.36+86` bleibt vorerst unverändert wegen parallelem PR #144.
-- **NÄCHSTER KONKRETER SCHRITT:** Finale PR-CI/Flutter-Tests auswerten, dann idempotentes persistentes XP-Gutschriftjournal inklusive GameController-/SQLite-Revisionen gesondert testen.
+Main1c2eeab wird mit dem bestehenden Sneak-Attack-Paket vereinigt. XP-Belohnungs-ID und Betrag müssen bei einer Wiederholung zusammenpassen; beschädigte Belege werden ohne Mutation abgewiesen. Die zwei Main-Regressionstests bleiben erhalten. Neue gemeinsame Prüfung ausstehend; bisherige Nachweise beziehen sich auf bfc991f vor dieser Integration.
+
+---
+
+## Aktuell – 0.8.37+87, 23.10.2026
+
+Basis main5958579, Code0a56aba, Branch feature/sneak-attack-ally-integration-20261023. Operative Fakten und Wiederaufnahme: [docs/CODEX_CHECKPOINT.md](docs/CODEX_CHECKPOINT.md); ältere Einträge unten sind datierte Historie.
+
+**IMPLEMENTIERT:** Hauptwaffen-Sneak-Attack über bestätigten Verbündeten mit echter UI, ziel-/wurfgebundener Speicherung, Schadensauflösung und Revisionsschutz. Die bestehende Regel-/Story-Grenze verhindert narrative Bestätigungen.
+
+**GETESTET:** 1.431 Flutter-Tests der normalisierten Basis, 11 neue Domain-/SQLite- und 6 neue Widgettests, aktuelle Analyse/Formatierung, Python100 und Backend31. Vollständige neue Suite mit **1.448 Flutter-Tests erfolgreich**; Debug-APK inklusive CRC/Metadaten/Signatur und12 native Tests erfolgreich; [PR147](https://github.com/ManuEtt/Dnd/pull/147) erstellt, [Code-CI40056875863](https://github.com/ManuEtt/Dnd/actions/runs/40056875863) auf182f44b vollständig erfolgreich, Realgerät nicht getestet. ARM64-Alpha19,7MB erfolgreich gebaut und geprüft. Frühere Item-WIP-Dateien separat gesichert, kein Überschreiben aktueller Main-Modelle.
+
+**NÄCHSTER KONKRETER SCHRITT:** Tatsächlich angreifende Nebenhandwaffe für Sneak-Attack-Eignung verwenden und denselben sicheren Bestätigungspfad anbinden; aktuelle Hauptwaffe, alte Spielstände und einmalige Zugnutzung regressionsfrei erhalten.
 
 ---
 
@@ -1101,3 +1109,16 @@ nicht durch die Wahl eines Merkmaltexts aktiviert.
 Lokale Python-Projekttests ausgeführt; Flutter-Test, Flutter-Analyse und
 Android-Build noch auf GitHub mit Flutter-SDK ausführen. Neues Inkrement
 nicht als abgenommene Android-Version bezeichnen.
+
+
+## Übernommener Status aus Main145 (historisch)
+
+## 23.10.2026 – XP-Belohnungs-ID-Konflikt fail-closed (Branch `fix/xp-reward-id-conflict-20261023`)
+
+- **IMPLEMENTIERT:** Identische XP-Belohnungs-ID wird in `ExperienceProgression.grant` nur bei exakt gleichem gespeichertem Betrag idempotent bestätigt. Anderer/defekter Betrag löst `FormatException` aus; ursprüngliche Kampagne bleibt unverändert.
+- **REGRESSIONSTESTS ERSTELLT:** `app/test/experience_progression_test.dart` prüft Roundtrip-Duplikat, Widerspruch und beschädigten Historieneintrag.
+- **GETESTET:** Main-Baseline `5958579e5321338bb7b4e46abb859fd3bfd1515f` mit GitHub-CI [#40012217485](https://github.com/ManuEtt/Dnd/actions/runs/40012217485) erfolgreich, nicht neuer Branch. **NICHT GETESTET:** neuer Flutter-Code-HEAD bis CI fertig ist. **BLOCKIERT:** Flutter/Android lokal nicht installiert; reales Android-Gerät nicht verfügbar.
+- **KOMPATIBILITÄT:** Keine SQLite-/JSON-Migration, unveränderte SRD-Regelmechanik und KI-/Story-Grenze. `0.8.36+86` bleibt vorerst unverändert wegen parallelem PR #144.
+- **NÄCHSTER KONKRETER SCHRITT:** Finale PR-CI/Flutter-Tests auswerten, dann idempotentes persistentes XP-Gutschriftjournal inklusive GameController-/SQLite-Revisionen gesondert testen.
+
+---

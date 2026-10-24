@@ -3944,21 +3944,27 @@
       "class_name": "Schurke",
       "subclass": null,
       "class_level": 1,
-      "source": "Classes: Schurke / level 1",
+      "source": "SRD 5.2.1, Rogue: Sneak Attack, S.61–62",
       "source_url": "https://www.dndbeyond.com/srd",
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#schurke_1_base_sneak-attack_1",
       "unlocks_catalogued": true,
       "rule_implemented": "partial",
       "tests": [
-        "app/test/class_combat_features_test.dart"
+        "app/test/class_combat_features_test.dart",
+        "app/test/sneak_attack_ally_integration_test.dart",
+        "app/test/sneak_attack_ally_ui_test.dart"
       ],
       "code": [
         "app/lib/domain/srd_class_feature_catalog.dart",
         "app/lib/domain/class_combat_features.dart",
-        "app/lib/domain/game_engine.dart"
+        "app/lib/domain/game_engine.dart",
+        "app/lib/domain/sneak_attack_ally_rules.dart",
+        "app/lib/services/game_controller.dart",
+        "app/lib/ui/sneak_attack_ally_dialog.dart",
+        "app/lib/domain/models.dart"
       ],
-      "note": "Teilimplementierung: Finesse/Fernkampf, Vorteil oder bestätigter Verbündeter innerhalb von 5 Fuß des Ziels, ausdrücklich nicht Incapacitated, ohne Nachteil sowie 1x pro Zug. GameEngine setzt Verbündetenposition derzeit immer auf false; keine vollständige Positions- oder Mehrgegnerintegration. Geprüft im Helper-Test app/test/class_combat_features_test.dart; Android-Geraetetest noch offen."
+      "note": "Teilimplementierung mit echter Hauptwaffen-Kampfintegration: zwei unabhängig bestätigte Verbündetenfakten (innerhalb 5 Fuß des Ziels, nicht Incapacitated), an Kampagne/Ziel/ausstehenden Wurf gebunden. Explizite Bestätigung/Entfernung, kritische Treffer, einmal pro eigenem Zug, SQLite/Backup/Revisionsschutz und Rollback geprüft. Keine allgemeine Positions-, Nebenhand- oder Gelegenheitsangriffssteuerung; Android-Gerätetest offen. Regelwirkung nie aus KI-Erzählung ableiten."
     },
     {
       "id": "CLASS-SCHURKE-1-BASE-THIEVES-CANT-2",

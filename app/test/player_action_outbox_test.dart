@@ -41,8 +41,10 @@ void main() {
     expect(staged.requestId, 'request-first');
     expect(staged.text, 'Ich öffne die Tür.');
     expect((await outbox.pendingFor('campaign-a'))!.toJson(), staged.toJson());
-    expect((await repository.loadSettings())['backendUrl'],
-        'https://example.invalid');
+    expect(
+      (await repository.loadSettings())['backendUrl'],
+      'https://example.invalid',
+    );
 
     await repository.close();
     repository = await SqliteCampaignRepository.open(
@@ -50,34 +52,38 @@ void main() {
       path: path,
     );
     final restored = PlayerActionOutbox(repository);
-    expect((await restored.pendingFor('campaign-a'))!.toJson(),
-        staged.toJson());
+    expect(
+      (await restored.pendingFor('campaign-a'))!.toJson(),
+      staged.toJson(),
+    );
     await restored.remove(staged);
     expect(await restored.pendingFor('campaign-a'), isNull);
     expect((await repository.loadSettings())['lastCampaignId'], 'campaign-a');
   });
 
-  test('unconfirmed intent never silently overwritten by a second action',
-      () async {
-    final outbox = PlayerActionOutbox(
-      repository,
-      newRequestId: () => 'same-request',
-    );
-    final first = await outbox.stage('one', 'Ich lausche.');
-    await expectLater(
-      outbox.stage('one', 'Ich greife an.'),
-      throwsStateError,
-    );
-    await expectLater(
-      outbox.stage('two', 'Ich untersuche die Truhe.'),
-      throwsStateError,
-    );
-    expect((await outbox.pendingFor('one'))!.text, first.text);
-    expect(await outbox.pendingFor('two'), isNull);
+  test(
+    'unconfirmed intent never silently overwritten by a second action',
+    () async {
+      final outbox = PlayerActionOutbox(
+        repository,
+        newRequestId: () => 'same-request',
+      );
+      final first = await outbox.stage('one', 'Ich lausche.');
+      await expectLater(
+        outbox.stage('one', 'Ich greife an.'),
+        throwsStateError,
+      );
+      await expectLater(
+        outbox.stage('two', 'Ich untersuche die Truhe.'),
+        throwsStateError,
+      );
+      expect((await outbox.pendingFor('one'))!.text, first.text);
+      expect(await outbox.pendingFor('two'), isNull);
 
-    await outbox.remove(first);
-    expect(await outbox.pendingFor('one'), isNull);
-  });
+      await outbox.remove(first);
+      expect(await outbox.pendingFor('one'), isNull);
+    },
+  );
 
   test('pending intent in another campaign remains untouched', () async {
     var index = 0;
@@ -116,44 +122,49 @@ void main() {
     await repository.saveSettings(staleSettings);
     expect((await outbox.pendingFor('one'))!.requestId, staged.requestId);
     await outbox.remove(staged);
-    expect((await repository.loadSettings())['backendUrl'],
-        'https://example.invalid');
+    expect(
+      (await repository.loadSettings())['backendUrl'],
+      'https://example.invalid',
+    );
   });
 
-  test('two SQLite connections cannot stage two actions for one campaign',
-      () async {
-    final secondRepository = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: path,
-    );
-    try {
-      final first = PlayerActionOutbox(
-        repository,
-        newRequestId: () => 'request-one',
+  test(
+    'two SQLite connections cannot stage two actions for one campaign',
+    () async {
+      final secondRepository = await SqliteCampaignRepository.open(
+        factory: databaseFactoryFfi,
+        path: path,
       );
-      final second = PlayerActionOutbox(
-        secondRepository,
-        newRequestId: () => 'request-two',
-      );
-      final outcomes = await Future.wait([
-        first.stage('one', 'Ich lausche.').then((_) => true)
-            .catchError((_) => false),
-        second.stage('one', 'Ich greife an.').then((_) => true)
-            .catchError((_) => false),
-      ]);
-      expect(outcomes.where((success) => success).length, 1);
-      final saved = await first.pendingFor('one');
-      expect(saved, isNotNull);
-      expect(
-        saved!.requestId,
-        anyOf('request-one', 'request-two'),
-      );
-      final restored = await second.pendingFor('one');
-      expect(restored!.toJson(), saved.toJson());
-    } finally {
-      await secondRepository.close();
-    }
-  });
+      try {
+        final first = PlayerActionOutbox(
+          repository,
+          newRequestId: () => 'request-one',
+        );
+        final second = PlayerActionOutbox(
+          secondRepository,
+          newRequestId: () => 'request-two',
+        );
+        final outcomes = await Future.wait([
+          first
+              .stage('one', 'Ich lausche.')
+              .then((_) => true)
+              .catchError((_) => false),
+          second
+              .stage('one', 'Ich greife an.')
+              .then((_) => true)
+              .catchError((_) => false),
+        ]);
+        expect(outcomes.where((success) => success).length, 1);
+        final saved = await first.pendingFor('one');
+        expect(saved, isNotNull);
+        expect(saved!.requestId, anyOf('request-one', 'request-two'));
+        final restored = await second.pendingFor('one');
+        expect(restored!.toJson(), saved.toJson());
+      } finally {
+        await secondRepository.close();
+      }
+    },
+  );
 
   test('two different campaigns keep both concurrent requests', () async {
     final otherRepository = await SqliteCampaignRepository.open(
@@ -187,11 +198,13 @@ void main() {
     );
     final saved = await outbox.stage('one', 'Ich lausche.');
     await expectLater(
-      outbox.remove(PendingPlayerAction(
-        campaignId: saved.campaignId,
-        requestId: 'stale-req',
-        text: saved.text,
-      )),
+      outbox.remove(
+        PendingPlayerAction(
+          campaignId: saved.campaignId,
+          requestId: 'stale-req',
+          text: saved.text,
+        ),
+      ),
       throwsStateError,
     );
     expect((await outbox.pendingFor('one'))!.requestId, saved.requestId);

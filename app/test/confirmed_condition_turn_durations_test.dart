@@ -43,10 +43,7 @@ void main() {
       final effect = update.campaign.hero.conditionEffects.single;
       expect(effect.expiresAtOwnTurnEndRound, 3 + entry.value - 1);
       expect(effect.expiresInEncounterId, 'fight-3');
-      expect(
-        update.events.single.payload['effect'],
-        effect.toJson(),
-      );
+      expect(update.events.single.payload['effect'], effect.toJson());
       expect(original.hero.conditionEffects, isEmpty);
       expect(
         ConditionEffectRules.remainingOwnTurnEnds(
@@ -60,10 +57,7 @@ void main() {
         final finished = engine.endHeroTurn(current);
         current = finished.campaign;
         expect(current.encounter!.round, 3 + n);
-        expect(
-          current.hero.conditionEffects.isEmpty,
-          n == entry.value,
-        );
+        expect(current.hero.conditionEffects.isEmpty, n == entry.value);
         if (n < entry.value) {
           expect(
             ConditionEffectRules.remainingOwnTurnEnds(
@@ -79,20 +73,23 @@ void main() {
     });
   }
 
-  test('Grenzwert wird vor Ereignis, ID-Vergabe oder Spielstandänderung geprüft', () {
-    final campaign = fighting(round: 999997);
-    expect(
-      () => engine.applyConditionEffect(
-        campaign,
-        source: 'Quellennachweis',
-        condition: 'blind',
-        duration: ConditionEffectDuration.tenOwnTurnEnds,
-      ),
-      throwsFormatException,
-    );
-    expect(campaign.hero.conditionEffects, isEmpty);
-    expect(campaign.revision, 0);
-  });
+  test(
+    'Grenzwert wird vor Ereignis, ID-Vergabe oder Spielstandänderung geprüft',
+    () {
+      final campaign = fighting(round: 999997);
+      expect(
+        () => engine.applyConditionEffect(
+          campaign,
+          source: 'Quellennachweis',
+          condition: 'blind',
+          duration: ConditionEffectDuration.tenOwnTurnEnds,
+        ),
+        throwsFormatException,
+      );
+      expect(campaign.hero.conditionEffects, isEmpty);
+      expect(campaign.revision, 0);
+    },
+  );
 
   test('Zeitgebundener Eintrag benötigt lebende eigene aktive Begegnung', () {
     final enemyTurn = fighting().copyWith(
@@ -124,8 +121,10 @@ void main() {
     final persisted = HeroCharacter.fromJson(
       jsonDecode(jsonEncode(effective.toJson())) as Map<String, dynamic>,
     );
-    expect(persisted.conditionEffects.single.toJson(),
-        effective.conditionEffects.single.toJson());
+    expect(
+      persisted.conditionEffects.single.toJson(),
+      effective.conditionEffects.single.toJson(),
+    );
     expect(
       ConditionEffectRules.remainingOwnTurnEnds(
         persisted.conditionEffects.single,
@@ -154,42 +153,45 @@ void main() {
     expect(after.conditionEffects.single.id, 'another-source');
   });
 
-  test('Restlaufzeit wird außerhalb eigener bestätigter Kampfrunde verborgen', () {
-    final effect = ConditionEffect(
-      id: 'timed',
-      condition: 'blind',
-      source: 'Zauber',
-      expiresInEncounterId: 'fight-3',
-      expiresAtOwnTurnEndRound: 8,
-    );
-    expect(
-      ConditionEffectRules.remainingOwnTurnEnds(
-        effect,
-        fighting(round: 7).encounter,
-      ),
-      2,
-    );
-    expect(
-      ConditionEffectRules.remainingOwnTurnEnds(
-        effect,
-        fighting(round: 7, id: 'other').encounter,
-      ),
-      isNull,
-    );
-    expect(
-      ConditionEffectRules.remainingOwnTurnEnds(
-        effect,
-        fighting(round: 9).encounter,
-      ),
-      isNull,
-    );
-    expect(
-      ConditionEffectRules.remainingOwnTurnEnds(
-        effect,
-        fighting(round: 7).encounter!.copyWith(activeParticipant: 'enemy'),
-      ),
-      isNull,
-    );
-    expect(ConditionEffectRules.remainingOwnTurnEnds(effect, null), isNull);
-  });
+  test(
+    'Restlaufzeit wird außerhalb eigener bestätigter Kampfrunde verborgen',
+    () {
+      final effect = ConditionEffect(
+        id: 'timed',
+        condition: 'blind',
+        source: 'Zauber',
+        expiresInEncounterId: 'fight-3',
+        expiresAtOwnTurnEndRound: 8,
+      );
+      expect(
+        ConditionEffectRules.remainingOwnTurnEnds(
+          effect,
+          fighting(round: 7).encounter,
+        ),
+        2,
+      );
+      expect(
+        ConditionEffectRules.remainingOwnTurnEnds(
+          effect,
+          fighting(round: 7, id: 'other').encounter,
+        ),
+        isNull,
+      );
+      expect(
+        ConditionEffectRules.remainingOwnTurnEnds(
+          effect,
+          fighting(round: 9).encounter,
+        ),
+        isNull,
+      );
+      expect(
+        ConditionEffectRules.remainingOwnTurnEnds(
+          effect,
+          fighting(round: 7).encounter!.copyWith(activeParticipant: 'enemy'),
+        ),
+        isNull,
+      );
+      expect(ConditionEffectRules.remainingOwnTurnEnds(effect, null), isNull);
+    },
+  );
 }

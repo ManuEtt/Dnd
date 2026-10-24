@@ -19,10 +19,7 @@ class SrdCubeAreaPreview {
 }
 
 class SrdCubeCellCandidate {
-  const SrdCubeCellCandidate({
-    required this.cell,
-    required this.centerRay,
-  });
+  const SrdCubeCellCandidate({required this.cell, required this.centerRay});
 
   final SrdGridCell cell;
   final SrdSphereCenterRay centerRay;
@@ -55,18 +52,33 @@ class SrdCubeAreaRules {
     }
     final side = sideFeet ~/ 5;
     final candidates = <SrdCubeCellCandidate>[];
-    for (var row = origin.row; row < origin.row + side && row < map.height; row++) {
-      for (var col = origin.column; col < origin.column + side && col < map.width; col++) {
+    for (
+      var row = origin.row;
+      row < origin.row + side && row < map.height;
+      row++
+    ) {
+      for (
+        var col = origin.column;
+        col < origin.column + side && col < map.width;
+        col++
+      ) {
         final cell = SrdGridCell(col, row);
         if (map.fullBlockers.contains(cell)) continue;
-        candidates.add(SrdCubeCellCandidate(
-          cell: cell,
-          centerRay: SrdSpellGridTargetRules.hasClearCenterRay(map, origin, cell)
-              ? SrdSphereCenterRay.clear
-              : SrdSphereCenterRay.requiresCoverReview,
-        ));
+        candidates.add(
+          SrdCubeCellCandidate(
+            cell: cell,
+            centerRay:
+                SrdSpellGridTargetRules.hasClearCenterRay(map, origin, cell)
+                ? SrdSphereCenterRay.clear
+                : SrdSphereCenterRay.requiresCoverReview,
+          ),
+        );
       }
     }
-    return SrdCubeAreaPreview(origin: origin, sideFeet: sideFeet, candidates: candidates);
+    return SrdCubeAreaPreview(
+      origin: origin,
+      sideFeet: sideFeet,
+      candidates: candidates,
+    );
   }
 }

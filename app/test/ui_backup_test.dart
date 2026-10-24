@@ -320,11 +320,15 @@ void main() {
       isNull,
     );
     expect(
-      tester.widget<FantasyTextButton>(_button<FantasyTextButton>('Kopieren')).onPressed,
+      tester
+          .widget<FantasyTextButton>(_button<FantasyTextButton>('Kopieren'))
+          .onPressed,
       isNull,
     );
     expect(
-      tester.widget<FantasyTextButton>(_button<FantasyTextButton>('Schließen')).onPressed,
+      tester
+          .widget<FantasyTextButton>(_button<FantasyTextButton>('Schließen'))
+          .onPressed,
       isNull,
     );
     await tester.binding.handlePopRoute();
@@ -361,18 +365,24 @@ void main() {
       );
       expect(
         tester
-            .widget<FantasyTextButton>(_button<FantasyTextButton>('Datei wählen'))
+            .widget<FantasyTextButton>(
+              _button<FantasyTextButton>('Datei wählen'),
+            )
             .onPressed,
         isNull,
       );
       expect(
         tester
-            .widget<FantasyTextButton>(_button<FantasyTextButton>('Importieren'))
+            .widget<FantasyTextButton>(
+              _button<FantasyTextButton>('Importieren'),
+            )
             .onPressed,
         isNull,
       );
       expect(
-        tester.widget<FantasyTextButton>(_button<FantasyTextButton>('Abbrechen')).onPressed,
+        tester
+            .widget<FantasyTextButton>(_button<FantasyTextButton>('Abbrechen'))
+            .onPressed,
         isNull,
       );
       await tester.binding.handlePopRoute();

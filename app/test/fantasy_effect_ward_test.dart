@@ -22,11 +22,7 @@ HeroCharacter _hero() => HeroCharacter(
       expiresInEncounterId: 'battle',
       expiresAtOwnTurnEndRound: 4,
     ),
-    ConditionEffect(
-      id: 'curse',
-      condition: 'vergiftet',
-      source: 'Fluch',
-    ),
+    ConditionEffect(id: 'curse', condition: 'vergiftet', source: 'Fluch'),
   ],
 );
 
@@ -76,12 +72,18 @@ void main() {
         find.byKey(const ValueKey('ward-condition-vergiftet')),
         findsOneWidget,
       );
-      expect(find.byKey(const ValueKey('ward-condition-liegend')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('ward-condition-liegend')),
+        findsOneWidget,
+      );
       expect(find.byKey(const ValueKey('source-effect-trap')), findsOneWidget);
       expect(find.byKey(const ValueKey('source-effect-curse')), findsOneWidget);
       expect(find.textContaining('Runde 4 (battle)'), findsOneWidget);
       expect(find.textContaining('noch 2 eigene Zugenden'), findsOneWidget);
-      expect(find.textContaining('Wirkungsdauer ist nicht bestätigt'), findsOneWidget);
+      expect(
+        find.textContaining('Wirkungsdauer ist nicht bestätigt'),
+        findsOneWidget,
+      );
       expect(tester.takeException(), isNull);
     });
   }
@@ -93,10 +95,16 @@ void main() {
     final before = hero.toJson();
     await tester.pumpWidget(_page(hero, encounter: _encounter()));
     expect(find.text('Konzentration'), findsOneWidget);
-    expect(find.textContaining('Wirkungsdauer ist nicht bestätigt'), findsNothing);
+    expect(
+      find.textContaining('Wirkungsdauer ist nicht bestätigt'),
+      findsNothing,
+    );
     await tester.tap(find.text('Konzentration'));
     await tester.pumpAndSettle();
-    expect(find.textContaining('Wirkungsdauer ist nicht bestätigt'), findsOneWidget);
+    expect(
+      find.textContaining('Wirkungsdauer ist nicht bestätigt'),
+      findsOneWidget,
+    );
     expect(hero.toJson(), before);
     expect(tester.takeException(), isNull);
   });
@@ -105,9 +113,7 @@ void main() {
     tester,
   ) async {
     var opened = 0;
-    await tester.pumpWidget(
-      _page(_hero(), onManage: () => opened++),
-    );
+    await tester.pumpWidget(_page(_hero(), onManage: () => opened++));
     await tester.tap(find.byKey(const ValueKey('ward-manage-effects')));
     expect(opened, 1);
     expect(find.text('Giftfalle'), findsNothing);
@@ -129,17 +135,10 @@ void main() {
     expect(find.textContaining('Bestätigte Kampfrunde: 3'), findsOneWidget);
   });
 
-  testWidgets('Keine erfundenen Werte für alte leere Bögen', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      _page(HeroCharacter(id: 'old', name: 'Alt')),
-    );
+  testWidgets('Keine erfundenen Werte für alte leere Bögen', (tester) async {
+    await tester.pumpWidget(_page(HeroCharacter(id: 'old', name: 'Alt')));
     expect(find.text('Keine aktive Konzentration'), findsOneWidget);
-    expect(
-      find.text('Keine Zustände eingetragen.'),
-      findsOneWidget,
-    );
+    expect(find.text('Keine Zustände eingetragen.'), findsOneWidget);
     expect(find.byKey(const ValueKey('ward-exhaustion')), findsNothing);
     expect(find.byKey(const ValueKey('ward-manage-effects')), findsNothing);
     expect(tester.takeException(), isNull);
@@ -155,5 +154,4 @@ void main() {
     expect(find.textContaining('noch 1 eigenes Zugende'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
-
 }

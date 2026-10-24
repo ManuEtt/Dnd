@@ -40,11 +40,14 @@ void main() {
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
-      await tester.pumpWidget(MaterialApp(
-        home: CharacterSheetPage(hero: _sample()),
-      ));
+      await tester.pumpWidget(
+        MaterialApp(home: CharacterSheetPage(hero: _sample())),
+      );
       await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('sheet-reference-header')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('sheet-reference-header')),
+        findsOneWidget,
+      );
       expect(find.byKey(const ValueKey('sheet-summary-hp')), findsOneWidget);
       expect(find.byKey(const ValueKey('sheet-summary-ac')), findsOneWidget);
       expect(find.text('38 / 38'), findsOneWidget);
@@ -55,7 +58,10 @@ void main() {
         scrollable: find.byType(Scrollable).first,
       );
       await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('sheet-parchment-abilities')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('sheet-parchment-abilities')),
+        findsOneWidget,
+      );
       final grid = tester.widget<GridView>(
         find.byKey(const ValueKey('sheet-preview-attributes-grid')),
       );
@@ -70,44 +76,50 @@ void main() {
         scrollable: find.byType(Scrollable).first,
       );
       await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('sheet-preview-fertigkeiten')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('sheet-preview-fertigkeiten')),
+        findsOneWidget,
+      );
       expect(tester.takeException(), isNull);
     });
   }
 
-  testWidgets('Feste untere Navigation nutzt echte Aktionen und speichert nichts', (
-    tester,
-  ) async {
-    var rolls = 0;
-    final hero = _sample();
-    final before = hero.toJson();
-    await tester.pumpWidget(MaterialApp(
-      home: CharacterSheetPage(hero: hero, onRoll: () => rolls++),
-    ));
-    await tester.tap(find.byKey(const ValueKey('sheet-quick-roll')));
-    expect(rolls, 1);
-    await tester.tap(find.byKey(const ValueKey('sheet-quick-inventar')));
-    await tester.pumpAndSettle();
-    expect(find.text('Ausrüstung und Inventar'), findsOneWidget);
-    expect(find.textContaining('Heiltrank'), findsWidgets);
-    await tester.tapAt(const Offset(5, 90));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('sheet-quick-zauber')));
-    await tester.pumpAndSettle();
-    expect(find.text('Bekannte Zauber'), findsOneWidget);
-    expect(find.text('Segen'), findsWidgets);
-    await tester.tapAt(const Offset(5, 90));
-    await tester.pumpAndSettle();
-    expect(hero.toJson(), before);
-    expect(tester.takeException(), isNull);
-  });
+  testWidgets(
+    'Feste untere Navigation nutzt echte Aktionen und speichert nichts',
+    (tester) async {
+      var rolls = 0;
+      final hero = _sample();
+      final before = hero.toJson();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: CharacterSheetPage(hero: hero, onRoll: () => rolls++),
+        ),
+      );
+      await tester.tap(find.byKey(const ValueKey('sheet-quick-roll')));
+      expect(rolls, 1);
+      await tester.tap(find.byKey(const ValueKey('sheet-quick-inventar')));
+      await tester.pumpAndSettle();
+      expect(find.text('Ausrüstung und Inventar'), findsOneWidget);
+      expect(find.textContaining('Heiltrank'), findsWidgets);
+      await tester.tapAt(const Offset(5, 90));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('sheet-quick-zauber')));
+      await tester.pumpAndSettle();
+      expect(find.text('Bekannte Zauber'), findsOneWidget);
+      expect(find.text('Segen'), findsWidgets);
+      await tester.tapAt(const Offset(5, 90));
+      await tester.pumpAndSettle();
+      expect(hero.toJson(), before);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('Ohne aktiven Abenteuercontroller simuliert W20 keinen Wurf', (
     tester,
   ) async {
-    await tester.pumpWidget(MaterialApp(
-      home: CharacterSheetPage(hero: _sample()),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(home: CharacterSheetPage(hero: _sample())),
+    );
     await tester.tap(find.byKey(const ValueKey('sheet-quick-roll')));
     await tester.pumpAndSettle();
     expect(
@@ -120,16 +132,24 @@ void main() {
   testWidgets('Unbekannte Attribute und leere Daten werden nicht erfunden', (
     tester,
   ) async {
-    await tester.pumpWidget(MaterialApp(
-      home: CharacterSheetPage(
-        hero: HeroCharacter(id: 'legacy', name: 'Historischer Held'),
+    await tester.pumpWidget(
+      MaterialApp(
+        home: CharacterSheetPage(
+          hero: HeroCharacter(id: 'legacy', name: 'Historischer Held'),
+        ),
       ),
-    ));
+    );
     await tester.pumpAndSettle();
     expect(find.text('– / –'), findsOneWidget);
     expect(find.text('Noch nicht erfasst'), findsOneWidget);
-    expect(find.byKey(const ValueKey('sheet-avatar-placeholder')), findsOneWidget);
-    expect(find.byKey(const ValueKey('sheet-parchment-abilities')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('sheet-avatar-placeholder')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('sheet-parchment-abilities')),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
   });
 
@@ -140,15 +160,17 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
-    await tester.pumpWidget(MaterialApp(
-      builder: (context, child) => MediaQuery(
-        data: MediaQuery.of(context).copyWith(
-          textScaler: const TextScaler.linear(1.4),
+    await tester.pumpWidget(
+      MaterialApp(
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: const TextScaler.linear(1.4)),
+          child: child!,
         ),
-        child: child!,
+        home: CharacterSheetPage(hero: _sample()),
       ),
-      home: CharacterSheetPage(hero: _sample()),
-    ));
+    );
     await tester.pumpAndSettle();
     await tester.scrollUntilVisible(
       find.byKey(const ValueKey('sheet-parchment-abilities')),
@@ -156,7 +178,10 @@ void main() {
       scrollable: find.byType(Scrollable).first,
     );
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('sheet-parchment-abilities')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('sheet-parchment-abilities')),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
   });
 }

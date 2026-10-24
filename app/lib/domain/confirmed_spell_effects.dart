@@ -62,6 +62,7 @@ class ConfirmedSpellEffect {
       }
       return field;
     }
+
     final bound = value['concentrationBound'];
     if (bound != null && bound is! bool) {
       throw const FormatException('Ungültige Konzentrationsbindung.');
@@ -107,10 +108,7 @@ class ConfirmedSpellEffectRules {
     return List.unmodifiable(effects);
   }
 
-  static HeroCharacter add(
-    HeroCharacter hero,
-    ConfirmedSpellEffect effect,
-  ) {
+  static HeroCharacter add(HeroCharacter hero, ConfirmedSpellEffect effect) {
     if (!hero.spells.contains(effect.spellName)) {
       throw const FormatException('Zauber ist dem Helden nicht bekannt.');
     }
@@ -164,12 +162,14 @@ class ConfirmedSpellEffectRules {
     if (encounterId.isEmpty || round < 1) {
       throw ArgumentError('Ungültiger bestätigter Zauber-Zugendpunkt.');
     }
-    final expired = hero.confirmedSpellEffects.where(
-      (effect) =>
-          effect.expiresInEncounterId == encounterId &&
-          effect.expiresAtOwnTurnEndRound != null &&
-          effect.expiresAtOwnTurnEndRound! <= round,
-    ).toList();
+    final expired = hero.confirmedSpellEffects
+        .where(
+          (effect) =>
+              effect.expiresInEncounterId == encounterId &&
+              effect.expiresAtOwnTurnEndRound != null &&
+              effect.expiresAtOwnTurnEndRound! <= round,
+        )
+        .toList();
     if (expired.isEmpty) return hero;
     final endingConcentration = expired.any(
       (e) => e.concentrationBound && e.spellName == hero.concentratingOn,
