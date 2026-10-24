@@ -19,12 +19,7 @@ enum SendingPlaneRelation {
   differentPlaneConfirmed,
 }
 
-enum SendingDeliveryOutcome {
-  unresolved,
-  blocked,
-  planarFailure,
-  deliverable,
-}
+enum SendingDeliveryOutcome { unresolved, blocked, planarFailure, deliverable }
 
 /// Read-only candidate. This is not a spell action or permission to subtract
 /// slots, transmit chat messages, invent recipient knowledge or record events.
@@ -152,9 +147,7 @@ class SrdSendingRules {
         null,
       );
     }
-    if (percentileRoll == null ||
-        percentileRoll < 1 ||
-        percentileRoll > 100) {
+    if (percentileRoll == null || percentileRoll < 1 || percentileRoll > 100) {
       throw const FormatException(
         'Für bestätigte verschiedene Ebenen ist ein W100-Wurf erforderlich.',
       );
