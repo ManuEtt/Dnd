@@ -1,3 +1,12 @@
+## 24.10.2026 – Sending-W100-Dialog nur bei bestätigter Nichtblockade (PR #159)
+
+- **IMPLEMENTIERT:** Der manuelle W100 zur bestätigten anderen Ebene erscheint nur nach explizit bestätigter Nichtblockade; bei unbestätigter oder bestätigter Blockade bleibt das Feld verborgen. Der Wert wird auch nur unter genau diesen Bedingungen an die unverändernde Sending-Vorschau weitergereicht.
+- Jede Änderung der Blockadeauskunft verwirft den zuvor eingegebenen W100 und die Zustimmung. Zwei neue Widget-Regressionsfälle betreffen Statuswechsel und das Verbot der stillschweigenden Wiederverwendung.
+- **GETESTET:** Vorherige erfolgreiche Main-CI #40092582286 (auf dcb42c5) und PR-#158-CI #40093571340 (auf 80b615e) gelten nur für ihre jeweiligen Quellstände.
+- **NICHT GETESTET:** Neue PR-#159-CI sowie echtes Gerät bis zu eigenständigem Nachweis. Version 0.8.38+88, SQLite 2 und JSON 1 unverändert; kein Sender-/Empfängertransport, keine neue SRD-Regel.
+
+---
+
 ## 24.10.2026 – 0.8.38+88: tatsächliche Nebenhandwaffe für Hinterhältigen Angriff
 
 Die vorhandene Nebenhandauflösung prüft jetzt ihre bestätigte Inventarwaffe auf Finesse/Fernkampf. Ein Hauptdolch verleiht einer Nebenhandaxt keinen Zusatzschaden; ein Nebendolch verliert seine Eignung nicht durch eine Haupthandaxt. Krit/Miss und bestehende gemeinsame Zugnutzung bleiben erhalten. 27 bestehende/Helper- und acht neue Kampf-/SQLite-Tests erfolgreich. Vollständige lokale Abnahme: 1505 Flutter-,100 Python-,31 Backend- und12 native Tests erfolgreich, Format/Analyse/Importgrenzen ohne Befund. Neue Debug-APK und ARM64-Alpha gebaut und geprüft. Eigene finale GitHub-Checks am PR158 getrennt geführt; Realgerät nicht getestet. SQLite2/JSON1 kompatibel. Details und nächstes Paket: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md).
