@@ -7260,10 +7260,14 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Spells",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_class_spell_stats_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/srd_spell_saving_throw_rules.dart"
+      ],
+      "note": "Klassenattribut und Grund-Angriffsmodifikator rein lesend geprüft. Keine individuelle Zauberberechtigung, W20-Wurf-, Treffer-, Krit-, Ziel- oder Persistenzintegration; keine vollständige Regelwirkung."
     },
     {
       "id": "RULE-SPELLS-SPELL-SAVE-DC",
@@ -7275,10 +7279,14 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Spells",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_class_spell_stats_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/srd_spell_saving_throw_rules.dart"
+      ],
+      "note": "Klassenattribut und Grund-Rettungswurf-SG rein lesend geprüft. Zauber-/Zielautorisierung, spezielle Boni und tatsächliche Rettungswurf-/Effektabwicklung bleiben separate Integrationsschritte."
     },
     {
       "id": "RULE-SPELLS-BONUS-ACTION-CASTING",
