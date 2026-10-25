@@ -207,7 +207,10 @@ void main() {
     expect(selected.first.length, lessThanOrEqualTo(400));
     expect(selected.first, isNot(contains('\n')));
     expect(selected.first.endsWith('…'), isTrue);
-    expect(selected.first.runes.any((rune) => rune >= 0xd800 && rune <= 0xdfff), isFalse);
+    expect(
+      selected.first.runes.any((rune) => rune >= 0xd800 && rune <= 0xdfff),
+      isFalse,
+    );
     for (final limit in [0, 21]) {
       expect(
         () => NpcNarratorMemory.merge(campaign, 'Mira', [], limit: limit),
