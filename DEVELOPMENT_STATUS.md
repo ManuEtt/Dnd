@@ -1,3 +1,9 @@
+## 25.10.2026 – vollständige Branch-Migration, gemeinsame Abnahme offen
+
+Alle13 initialen Remote-Köpfe remote per Archivtag und lokal per geprüftem Bundle gesichert. Funktionsstände164/165/166 vereinigt, bereits enthaltene Squash-/Historienvarianten anhand konkreter Bäume/Patches erkannt und ohne Rücksetzen aktuellen Codes in die Historie aufgenommen. Alle Originalköpfe Vorfahren des Kandidaten;20 Dokumentkonflikt-/Altdateien historisch gesichert. Neue Gesamt-/Android-/CI-Abnahme vor Main-Merge und Branchlöschung verpflichtend. Version0.8.39+89, SQLite2/JSON1 unverändert.
+
+---
+
 ## 25.10.2026 – Ergänzender lokaler Story-Endzustandschutz (PR #165)
 
 **IMPLEMENTIERT:** `AiStoryStep.fromJson` lehnt KI-erzeugte Rücksetzungen eines `resolved`- oder `abandoned`-Storystrangs auf `open` oder den anderen Terminalstatus ab; rein narrative Notizen und ausdrücklich manuelles Wiederöffnen bleiben möglich. Die bestehende Validierung vor dem tatsächlichen Anwenden verhindert auch Stale-Reply-Rücksetzungen. Drei neue Flutter-Regressionen inklusive JSON-/Event-Checkpoint und Regel-/Heldeninvarianz. **GETESTET:** gestapelte Basis #164 auf Commit `6776bd1` vollständig grün [#40123094457](https://github.com/ManuEtt/Dnd/actions/runs/40123094457). **NICHT GETESTET:** aktueller Code von #165 bis zur eigenen neuen CI, echtes Android-Gerät. **BLOCKIERT:** reale Android-Geräteabnahme/Produktivsignatur. **NOCH NICHT IMPLEMENTIERT:** freie KI-Schreibrechte oder semantischer Geheimnisschutz; SRD weiterhin nur teilweise umgesetzt. Kein SQL-/JSON-/Versionswechsel. Gestapelter [PR #165](https://github.com/ManuEtt/Dnd/pull/165) auf [PR #164](https://github.com/ManuEtt/Dnd/pull/164), `main` unverändert.

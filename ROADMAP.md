@@ -1,3 +1,9 @@
+## Aktuell25.10.2026 – Branch-Migration abschließen
+
+Gemeinsamen Kandidaten vollständig testen, via geprüftem PR nach Main übernehmen, Main-CI abnehmen und erst danach archivierte unveränderte Altbranches entfernen. Echte Ergebnisse: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md). Ältere Aufgaben unten sind Historie.
+
+---
+
 ## 25.10.2026 – Lokalen Endzustand nach KI-Antwort bewahren (PR #165)
 
 Die lokale Flutter-Validierungsgrenze für KI-Storyupdates blockiert nun unautorisierte Änderungen bereits abgeschlossener/aufgegebener Handlungsfäden. Drei Regressionen zu bestätigtem Status, manueller Wiederöffnung und zwischenzeitlich veralteter KI-Antwort. Gestapelter [PR #165](https://github.com/ManuEtt/Dnd/pull/165) baut auf [PR #164](https://github.com/ManuEtt/Dnd/pull/164) auf. **Nächster konkreter Schritt:** neue komplette #165-CI auswerten, nach Grün Review; erst #164 reviewen/integrieren, dann #165 gegen `main` rebasen/erneut prüfen. Alle historischen Commit-/Statusmeldungen darunter sind Momentaufnahmen.

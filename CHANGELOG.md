@@ -1,3 +1,9 @@
+## 25.10.2026 – vollständige Branch-Migration, gemeinsame Abnahme offen
+
+Alle13 initialen Remote-Köpfe remote per Archivtag und lokal per geprüftem Bundle gesichert. Funktionsstände164/165/166 vereinigt, bereits enthaltene Squash-/Historienvarianten anhand konkreter Bäume/Patches erkannt und ohne Rücksetzen aktuellen Codes in die Historie aufgenommen. Alle Originalköpfe Vorfahren des Kandidaten;20 Dokumentkonflikt-/Altdateien historisch gesichert. Neue Gesamt-/Android-/CI-Abnahme vor Main-Merge und Branchlöschung verpflichtend. Version0.8.39+89, SQLite2/JSON1 unverändert.
+
+---
+
 ## 25.10.2026 – Lokaler Schutz geschlossener Story-Fäden (PR #165)
 
 - Ergänzt die bereits serverseitige Schutzprüfung aus PR #161 in `app/lib/story/ai_story.dart`: generative `threadUpdates` können einen vom Spieler zuvor `resolved`/`abandoned` markierten Strang nicht automatisch wieder öffnen oder umklassifizieren.

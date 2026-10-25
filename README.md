@@ -1,32 +1,16 @@
 # Würfelraunen – Der lebendige Spielleiter
 
-Deutschsprachige Android-Alpha für Soloabenteuer, SRD-geprüfte Teilsysteme, regelgeprüfte Kämpfe und lokale Kampagnen mit SQLite. Flutter-/Dart-App in `app/`, optionaler Fastify-/TypeScript-Erzähler in `backend/`. **Das vollständige D&D-SRD-5.2.1-Regelwerk ist weiterhin nicht implementiert.**
+Deutschsprachige Android-Alpha für Soloabenteuer und regelgeprüfte Kampagnen. Das vollständige SRD5.2.1 bleibt in Arbeit.
 
-## Weiterentwicklung 25.10.2026: lokal gesicherte Story-Endzustände
+## Aktueller Stand und autonome Fortsetzung (25.10.2026)
 
-**Neu in [PR #165](https://github.com/ManuEtt/Dnd/pull/165):** Der Android-Story-Validator verbietet nun ebenfalls, dass ein generativer Erzähler einen bereits abgeschlossenen (`resolved`) oder aufgegebenen (`abandoned`) Handlungsstrang unbemerkt wieder öffnet oder anders abschließt. Positive manuelle Wiederöffnung im vorhandenen Editor bleibt zulässig; vor dem Anwenden werden sogar früher vorbereitete KI-Antworten erneut geprüft. Neue Domain-/JSON-/Eventregressionen in `app/test/ai_story_test.dart`. Kein Schema- oder Versionswechsel.
+**Version0.8.39+89 – vollständige Branch-Migration.** Der Kandidat `09f498d1b617890765ad534e4efbfdd1387c2f0b` auf `integration/all-branches-20261025` vereinigt alle13 anfänglich vorhandenen GitHub-Branch-Köpfe. Basis-main `b60ffe7ff1aae502ea927cb77153b988be33e397`. Main-Veröffentlichung, gemeinsame CI und anschließende Löschung werden getrennt nachgewiesen; derzeit läuft die kombinierte Abnahme.
 
-**Branchmodell:** PR #165 ist auf dem vollständig grünen, aber **noch nicht nach main gemergten** [Integrations-PR #164](https://github.com/ManuEtt/Dnd/pull/164) aufgebaut. Die **neue CI #165 muss separat grünes Ergebnis liefern**; der erfolgreiche Basislauf [#40123094457](https://github.com/ManuEtt/Dnd/actions/runs/40123094457) beweist nur die ältere Basis. [Technischer Nachweis](docs/STORY_LOCAL_TERMINAL_GUARD_20261025.md) · [Checkpoint](docs/CODEX_CHECKPOINT.md).
+Enthalten sind allgemeiner Light-Nahkampfbonus mit bestätigtem Waffenkontext, Nebenhand-Sneak-Attack, Sending-W100-Validierung, Backend-Limiter-Schutz sowie lokale und serverseitige Story-/Geheimnissicherungen. SQLite2 und Kampagnen-JSON1 bleiben kompatibel. Alle Vorgängerfunktionen und Tests erhalten.
 
----
+Originalbranches sind über **archive/branch-migration-20261025T075644Z** sowie ein verifiziertes Git-Bundle wiederherstellbar. Historische Dokumente und beide Seiten der fünf Statuskonflikte separat archiviert. Alte Branches werden erst nach erfolgreicher gemeinsamer Abnahme, Main-Integration und erneuter SHA-/Abstammungsprüfung gelöscht.
 
-## Aktueller Integrationsvorschlag (24.10.2026)
-
-**Basis:** `main` `b60ffe7`, App-Version **0.8.38+88**, SQLite **2**, Kampagnen-Export-JSON **1**. Der Branch `integration/approved-pr159-163-20261024` bündelt fünf einzeln grün getestete, **noch nicht nach main gemergte** PRs [#159](https://github.com/ManuEtt/Dnd/pull/159)–[#163](https://github.com/ManuEtt/Dnd/pull/163). Der gemeinsame Integrations-PR **#164** erfordert eine **neue vollständige CI auf seinem eigenen Commit** und menschliche Review, bevor Änderungen in `main` übernommen werden. Die originalen PR-Branches bleiben für die Überprüfung erhalten.
-
-| Ursprünglicher PR | Kombinierte Änderung |
-| --- | --- |
-| [#159 – Sending](https://github.com/ManuEtt/Dnd/pull/159) | W100 nur bei ausdrücklich bestätigter Nichtblockade **und** bestätigter anderer Ebene anbieten; alte Eingabe nach Änderung löschen |
-| [#160 – Schurke](https://github.com/ManuEtt/Dnd/pull/160) | Bereits autorisierte Nebenhandattacke mit echter Finesse-Waffe darf denselben bestätigten Verbündetenbeleg für Hinterhältigen Angriff nutzen; Miss/Krit, einmaliger Zugverbrauch, SQLite und Import |
-| [#161 – Story](https://github.com/ManuEtt/Dnd/pull/161) | Erzähler darf `resolved`/`abandoned` nicht unbemerkt neu öffnen; explizite Spieleränderung im lokalen Editor bleibt möglich |
-| [#162 – Rate-Limiter](https://github.com/ManuEtt/Dnd/pull/162) | Aktive Quoten bei vollem Backend-Schlüsselspeicher erhalten, nur abgelaufene Fenster entsorgen, ansonsten fail-closed ablehnen |
-| [#163 – Plot-Geheimnisse](https://github.com/ManuEtt/Dnd/pull/163) | Wörtliche Komplett-Offenlegung geheimer Plottexte in öffentlichen KI-Antwortfeldern unterbinden; keine Garantie für sinngemäße Spoiler |
-
-**Prüfstatus:** Alle fünf Einzel-PRs haben auf ihren jeweiligen finalen HEADs eigenständige erfolgreiche GitHub-CIs. Die kombinierte CI von [Integrations-PR #164](https://github.com/ManuEtt/Dnd/pull/164/checks) wird separat geprüft und ist **bis zum tatsächlichen Erfolgsnachweis noch offen**. Keine neue Version, keine Datenmigration und keine automatisch als erfolgreich markierten realen Android-Gerätetests.
-
-Die ursprünglichen Fachbelege bleiben in `docs/SRD_SNEAK_ATTACK_OFFHAND_ALLY_20261024.md`, `docs/STORY_TERMINAL_THREAD_GUARD_20261024.md`, `docs/BACKEND_LIMITER_CAPACITY_20261024.md` und `docs/STORY_SECRET_OUTPUT_GUARD_20261024.md`. Frühere operative Checkpoints sind historisch gesichert unter `docs/history/integration_20261024/`. [Aktuelle Gesamtprüfung/Review](https://github.com/ManuEtt/Dnd/pull/164) · [Checkpoint](docs/CODEX_CHECKPOINT.md).
-
----
+Aktuelle Ergebnisse und Wiederaufnahme: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md). [Migrationsaudit](docs/BRANCH_MIGRATION_AUDIT_20261025.md) · [Maschinenlesbare Herkunft](docs/branch_migration_20261025.json). Artefakte unter `/workspace/artifacts/branch-migration-20261025/`. Geräteabnahme und produktive Signierung bleiben offen.
 
 ## Vorhandene Funktionen und Grenzen
 
