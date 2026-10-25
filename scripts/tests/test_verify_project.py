@@ -1,6 +1,7 @@
 """Regression tests for incomplete uploads; no Flutter, Java or network required."""
 from pathlib import Path
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -72,6 +73,47 @@ class VerifyProjectTests(unittest.TestCase):
         with zipfile.ZipFile(path, 'w') as archive:
             archive.writestr('README.txt', 'wrong archive')
         self.assertTrue(any('Gradle-Wrapper-JAR' in error for error in verify_project(self.root)))
+
+    def test_duplicate_start_class_is_rejected_even_with_valid_crc(self):
+        path = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(path, 'w') as archive:
+            archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbeoriginal')
+            with self.assertWarns(UserWarning):
+                archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbeother')
+        errors = verify_project(self.root)
+        self.assertTrue(any('Gradle-Wrapper-JAR' in message for message in errors))
+
+    def test_wrapper_rejects_unsafe_archive_paths(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        for bad_name in ('../escape', 'META-INF/../../outside',
+                         '/absolute', 'C:/drive', 'META-INF\\evil',
+                         'META-INF/./normalized'):
+            with self.subTest(name=bad_name):
+                with zipfile.ZipFile(jar, 'w') as archive:
+                    archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+                    archive.writestr(bad_name, b'other')
+                self.assertTrue(any(
+                    'Gradle-Wrapper-JAR' in msg for msg in verify_project(self.root)
+                ))
+
+    def test_symlink_wrapper_member_is_rejected(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        link = zipfile.ZipInfo('META-INF/short-cut')
+        link.create_system = 3
+        link.external_attr = (stat.S_IFLNK | 0o777) << 16
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+            archive.writestr(link, '../outside')
+        self.assertTrue(any(
+            'Gradle-Wrapper-JAR' in msg for msg in verify_project(self.root)
+        ))
+
+    def test_normal_wrapper_jar_directory_is_allowed(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr('META-INF/', b'')
+            archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+        self.assertEqual([], verify_project(self.root))
 
     def test_start_class_replaced_by_text_is_rejected(self):
         path = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
