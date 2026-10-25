@@ -1,3 +1,14 @@
+## 25.10.2026 – Quell-ZIP gegen abgefangene Schreibabbrüche absichern (PR #172)
+
+- **IMPLEMENTIERT:** Temporäre ZIP-/SHA256-Erzeugung vor Veröffentlichung; ZIP-CRC-Prüfung, `os.replace` und Wiederherstellung des zuvor gültigen ZIPs bei abgefangenem Prüfsummen-Veröffentlichungsfehler. Neue Tests für normalen Austausch, neuen/alten Ausgabepfad und simulierte Fehler.
+- **GETESTET:** Basis-PR #170: vollständige [CI #40191043877](https://github.com/ManuEtt/Dnd/actions/runs/40191043877) `success` auf `daf6bd8`. Neuer PR #172: Python-Paket-/Strukturtests auf Commit `a1a8dd9` im GitHub Actions Job erfolgreich; Backend-, Format-, Analyse-Schritte in laufender PR-CI ebenfalls bereits grün. Keine Gleichsetzung des früheren roten Zwischencommits mit dem korrigierten Stand.
+- **NICHT GETESTET:** Vollständige finale CI und Android-APK auf letztem Dokumentations-Commit; abruptes Betriebssystemende zwischen zwei `os.replace`-Operationen, parallele Schreiber, echtes Android-Gerät.
+- **BLOCKIERT:** Lokaler öffentlicher Git-Klon hier mangels DNS-Auflösung nicht möglich; Flutter-/Android-Toolchains nicht lokal verfügbar. Unabhängige GitHub Actions laufen.
+- **NOCH NICHT IMPLEMENTIERT:** Zweidatei-Transaktion gegen plötzlichen Stromausfall; außerdem unverändert offene Gameplay-/SRD-Arbeiten aus PR #171.
+- **Git:** [Gestapelter PR #172](https://github.com/ManuEtt/Dnd/pull/172) basiert auf [PR #170](https://github.com/ManuEtt/Dnd/pull/170), `main` bleibt `b60ffe7` (0.8.38+88). SQLite 2 / Kampagnen-JSON 1 unverändert. [Checkpoint](docs/CODEX_CHECKPOINT.md).
+
+---
+
 ## 25.10.2026 – Quell-ZIP-Secret-Schutz (PR #170)
 
 - **IMPLEMENTIERT:** Dateinamensvergleich für Secrets, SQLite-Journals und Cache-/SDK-Pfade unabhängig von Groß-/Kleinschreibung; tatsächlicher ZIP-Regressionstest in `scripts/tests/test_package_project.py`.
