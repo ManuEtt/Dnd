@@ -1,3 +1,40 @@
+# Chat D – D-004: Gradle-Wrapper-JAR mit sicheren ZIP-Dateinamen prüfen
+
+## Ausgangsstand
+
+- **Datum:** 25.10.2026
+- **Basis-main-SHA:** `45bea9c2a897275583bdbe32ed50afde5d0a76b0`.
+- **Branch:** `fix/chat-d/gradle-wrapper-jar-safety-20261025`.
+- **Technischer Commit:** `944762a8412ddd4eb5801d7832e424b238197deb` (vor Checkpoint-/README-Nachtrag).
+- **PR:** auf eigenem Branch in GitHub zu erstellen.
+- **Parallel:** Chat-D-PR #183 (Release-APK-Archivprüfung), andere Chat-PRs #178–#181, #184–#185.
+- **Geänderte technische Dateien:** `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`. Kein technischer Konflikt zu den offenen PR-Dateien bekannt.
+
+## Ausgangsproblem und Akzeptanzkriterien
+
+Die bestehende Gradle-Wrapper-Prüfung validiert die ZIP-CRC und das Java-Startklassen-Magic. Doppelte Dateinamen oder Pfad-Traversal und ZIP-Symlinks wurden dabei nicht abgewiesen. Akzeptiert bleiben legitime ZIP-Unterverzeichnisse und der bisher geprüfte Gradle-Wrapper. Erwartet wird ein abbrechender Projektcheck vor Android-SDK-/Gradle-Ausführung.
+
+## Implementiert
+
+- Frühzeitige Ablehnung doppelter ZIP-Mitglieder, bevor `GradleWrapperMain.class` gelesen wird.
+- Normalisierte Pfad-Sicherheitsprüfung gegen absolute Namen, Traversal-/Punktsegmente, Rückwärtsschrägstriche, Steuerzeichen und Windows-Laufwerkspfade.
+- ZIP-Symlink-Erkennung per `stat.S_ISLNK`.
+- Vier neue Python-Regressionstests: doppelte Startklasse, sechs unsichere Namen, Symlink-Member, erlaubtes normales ZIP-Verzeichnis.
+- Bestehende Fehlerausgabe bleibt ein sicherer deutschsprachiger Hinweis auf ein ungültiges Gradle-Wrapper-JAR; keine Secrets ausgegeben.
+
+## Tests und Migrationsfolgen
+
+- **GETESTET:** Nach dem Push beide technischen Branch-Dateien über GitHub gelesen und Korrektur-/Testmethoden nachgewiesen.
+- **NICHT GETESTET:** Python-Unittests und vollständige neue GitHub-CI des finalen D-004-Commits, npm, Flutter, Android-Builds und native Tests. Keine grünen Testläufe behaupten, solange Actions sie nicht bestätigt.
+- **BLOCKIERT:** Vollständige lokale Android-/Flutter-Toolchain/Repository-Checkout in der Chat-Umgebung fehlen.
+- **Migration:** keine Änderung an Android-Gradle-Wrapper-JAR, app/, SQLite, JSON, Gameplay oder SRD-Regeln. Keine Spielstandmigration erforderlich.
+
+## Genau ein nächster Schritt
+
+Vollständige GitHub-CI auf dem **finalen** D-004-PR-Head kontrollieren; negative Testfälle und bisherige Wrapper-Kompatibilität bestätigen. Nach anschließendem Main-Abgleich die gemeinsamen Dokumentationsdateien mit PR #183 und anderen Chats additiv konsolidieren. Ohne vollständigen erfolgreichen Test- und Dateiabgleich kein Merge.
+
+---
+
 # CHAT D – Qualität und Integration: laufender Stand
 
 ## D-002-Abgleich nach vollständiger Integration von PR #177
