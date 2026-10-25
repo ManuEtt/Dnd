@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – Lesbare aktive Heldenkarte bei 200 % Schrift (25.10.2026)
+
+Im isolierten Branch `feat/chat-c/accessible-active-hero-20261025` reagieren die Trefferpunkte-, Rüstungsklasse- und Bewegungsfelder der aktiven Heldenübersicht auf starke Android-Schriftvergrößerung: Ab 180 % und bei weniger als 500 dp werden drei schmale Spalten in vollständige Zeilen umgebaut. Das Verkleinern über `FittedBox` entfällt, bestätigte Werte bleiben unverändert, unbekannte bleiben explizit unbekannt. Die Screenreader-Labels benennen jede Zahl auf Deutsch. Drei neue Widgettests prüfen 320/360 dp bei 200 %, Vorlesetexte, Fortsetzung und unbestätigte Werte. **CI-Abnahme des finalen Pull Requests steht noch aus; keine APK behauptet.** Keine Spielstands-, SRD-, Story- oder Schemaänderung. [Chat-C-Checkpoint](docs/parallel/CHAT_C_ACTIVE_HERO_20261025.md).
+
 ## Qualitätspaket Chat D D-004 – Gradle-Wrapper-JAR-Validierung
 
 Nach der vollständigen Integration von [PR #183](https://github.com/ManuEtt/Dnd/pull/183) ergänzt [PR #186](https://github.com/ManuEtt/Dnd/pull/186) den Projektprüfer um die frühe Zurückweisung doppelter ZIP-Dateinamen, Pfad-Traversal/absoluter Namen und symbolischer Einträge im Gradle-Wrapper-JAR. Vier neue Python-Regressionen erfassen Positiv- und Negativfälle. Die vollständige GitHub-CI des mit `main` synchronisierten D-004-Commits bleibt bis zum Abschluss gesondert zu prüfen. Keine Spielstands-, SQLite-/JSON-, UI- oder SRD-Regeländerung. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
