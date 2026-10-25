@@ -267,15 +267,14 @@ void main() {
     expect(find.text('? / ?'), findsOneWidget);
     expect(find.text('?'), findsNWidgets(2));
     for (final label in ['Trefferpunkte', 'Rüstungsklasse', 'Bewegung']) {
-      expect(
-        find.bySemanticsLabel('$label: nicht bestätigt'),
-        findsOneWidget,
-      );
+      expect(find.bySemanticsLabel('$label: nicht bestätigt'), findsOneWidget);
     }
     expect(
-      tester.widget<FantasyTextButton>(
-        find.byKey(const ValueKey('fantasy-hero-continue')),
-      ).onPressed,
+      tester
+          .widget<FantasyTextButton>(
+            find.byKey(const ValueKey('fantasy-hero-continue')),
+          )
+          .onPressed,
       isNull,
     );
     expect(find.text('Erfahrungspunkte: nicht bestätigt'), findsOneWidget);
