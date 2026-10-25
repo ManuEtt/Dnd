@@ -3,6 +3,8 @@ set -euo pipefail
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$PROJECT_ROOT"
 python3 scripts/verify_project.py
+python3 scripts/check_domain_boundaries.py
+python3 scripts/srd_coverage.py --json
 python3 -m unittest discover -s scripts/tests -v
 cd "$PROJECT_ROOT/backend"
 npm ci

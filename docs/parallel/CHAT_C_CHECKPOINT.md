@@ -1,6 +1,7 @@
 # CHAT C – Android und Fantasy-UI
 
 **Stand:** 2026-10-25 (Europe/Berlin)  
+**Zusätzlich nachgezogener Main-Stand:** `97a06118f17d71cc77be2cb15a2fc9a53db20ee0` (enthält Chat D PR #177, dessen zusätzliche CI-Gates; alte Dokumentation bewahrt)  
 **Nachgezogener Main-Stand:** `fb788a980b8ee9eb60439c249f3e1f5092a9f188` (enthält PR #176; Merge ausschließlich auf dem Feature-Branch)  
 **Basis-Main-SHA:** `5c1499a9342449050bb946542659b221ac2653da`  
 **Branch:** `fix/chat-c/npc-chronicle-fallback-20261025`  

@@ -4,6 +4,12 @@
 
 Auf dem separaten Branch `fix/chat-c/npc-chronicle-fallback-20261025` behandelt `CampaignMemoryPanel` gespeicherte NPC-Beziehungsnotizen robust, wenn der referenzierte NPC im aktuellen In-Memory-Kampagnenobjekt fehlt. Statt eines `firstWhere`-Absturzes wird „NPC nicht mehr vorhanden“ angezeigt; bestehende Namen, Notizen und der bestätigte Spielzustand bleiben unverändert. Zwei neue Widgettests decken gemischte Referenzen sowie eine vollständig leere NPC-Liste ab. **CI erfolgreich abgenommen:** [Android-Alpha #40218237100](https://github.com/ManuEtt/Dnd/actions/runs/40218237100) für den Code-/Merge-Commit `0500ce52ce88eda8a1e7d1259293ce5530327d22` (`completed/success`): Formatierung, Analyse, vollständige Flutter- und Backend-Tests, nativer Android-Test, Debug-APK und kleine Alpha-APKs erfolgreich. Version `0.8.40+90` wurde aus dem zwischenzeitlich gemergten PR #176 übernommen, nicht von Chat C erhöht. Reales Gerät und produktive Signierung noch nicht geprüft; keine JSON-/SQLite-/Regeländerung. [PR #178](https://github.com/ManuEtt/Dnd/pull/178) bleibt offen und ist nicht gemergt. Separater [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md). Die parallel offenen Änderungen von PR #176 sind nicht Teil dieses UI-Pakets.
 
+D## Qualitätssicherung – Chat D (PR #177, 25.10.2026)
+
+[PR #177](https://github.com/ManuEtt/Dnd/pull/177) ergänzt zwei bislang nicht automatisch ausgeführte CI-Gates: `python3 scripts/check_domain_boundaries.py` und `python3 scripts/srd_coverage.py --json`. Beide laufen jetzt in der Android-CI und in `scripts/check.sh` vor den regulären Python-Tests. Der neue Konfigurationstest enthält positive und negative Fälle. Auf dem bisherigen PR-Commit `1fdd3c0` waren Architektur-/SRD-Prüfung, Python-Tests, Backend-Tests sowie Flutter-Analyse und Flutter-Tests erfolgreich; Android-Build und vollständige Release-Abnahme wurden noch nicht als erfolgreich bestätigt. Keine Änderung an SQLite, JSON, Spielregeln oder der App-Version. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
+Dieser PR wurde gegen den inzwischen gemergten Main-Stand von [PR #176](https://github.com/ManuEtt/Dnd/pull/176) erneut abgeglichen; die dort eingeführte gespeicherte Gelegenheitsreaktion bleibt erhalten. PRs #178–#180 anderer Chats bleiben getrennt zur Prüfung offen.
+
 Deutschsprachige Android-Alpha für Soloabenteuer und regelgeprüfte Kampagnen. Das vollständige SRD 5.2.1 bleibt in Arbeit.
 
 ## Aktueller Stand und autonome Fortsetzung (25.10.2026)
