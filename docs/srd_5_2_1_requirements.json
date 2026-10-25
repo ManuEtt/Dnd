@@ -6529,10 +6529,14 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Playing the Game",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_spell_attack_roll_rules_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/srd_spell_attack_roll_rules.dart"
+      ],
+      "note": "Bestätigte einzelne SRD-Zauberangriffs-W20 werden mit Vorteils-/Nachteilsauswahl, natürlicher 1/20 und wirksamer bestätigter Deckung rein lesend ausgewertet. Zauberberechtigung, Ziele, tatsächliche Effekte, Ressourcen- und Spielstandsänderungen sind nicht implementiert; kein vollständiger Attack-Rolls-Nachweis."
     },
     {
       "id": "RULE-CORE-RULES-ADVANTAGE-AND-DISADVANTAGE",
