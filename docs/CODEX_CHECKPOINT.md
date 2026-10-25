@@ -1,3 +1,15 @@
+# Chat D – rekursive Architekturgrenzen (25.10.2026)
+
+- **Basis-Main:** `fb788a980b8ee9eb60439c249f3e1f5092a9f188` nach Merge #176; **Branch:** `fix/chat-d/nested-boundary-scan-20261025`; **Code-/Test-Commit:** `5d8a60d1133b7bb907597177395cb766bfd9c13e`.
+- **IMPLEMENTIERT:** `check_domain_boundaries.py` scannt `story/` und `domain/` rekursiv und normalisiert relative Dart-Imports; sechs positive/negative Python-Regressionen.
+- **GETESTET:** Sechs neue Python-Unittests in einer isolierten lokalen Projektstruktur bestanden; kein Beweis einer vollständigen Repository- oder Android-Abnahme.
+- **NICHT GETESTET:** vollständiger Python-/Flutter-/Backend-/Android-CI-Job und APK für diesen Commit; echte Geräteinstallation.
+- **BLOCKIERT:** umfassende lokale Toolchain/Checkout fehlen. Keine Änderung an SQLite, JSON oder regelmechanischem Spielzustand und keine Migration.
+- **INTEGRATION:** Separater Chat-D-PR #177 läuft; offene PRs #178–#180 besitzen andere technische Dateipfade, überschneiden sich aber in README/Checkpoint. Alle Statusabschnitte bei späterem Merge erhalten. [Persönlicher Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
+- **NÄCHSTER SCHRITT:** vollständige GitHub-CI auf finalem D-002-Head erfolgreich abschließen und konfliktfreie Integration absichern.
+
+---
+
 # CODEX-CHECKPOINT – gespeicherte Gelegenheitsreaktion
 
 Stand **2026-10-25T17:17:46+00:00**, aktives Paket auf `feature/opportunity-reaction-offer-20261025`, Arbeitskopie `/workspace/Dnd-opportunity-20261025`.
