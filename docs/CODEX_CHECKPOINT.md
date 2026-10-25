@@ -93,3 +93,17 @@ Nach Abnahme dieses Pakets: eigener Reaktionsangriff auf dem gespeicherten Angeb
 ## Sicherung und Wiederaufnahme
 
 Geprüfte Main-Basis zusätzlich als ZIP/Patch unter `/workspace/artifacts/main-407c2e1-20261025/` gesichert. Neuer Quellcheckpoint nach diesem Update unter `/workspace/artifacts/0.8.40+90/`; Dateimanifest und tatsächlich gegen `407c2e1ef8ee310b30d1543a263fb66b3331a26e` angewandter Patch. Vor endgültigem Abschluss neue Ergebnisse und PR/Commit eintragen. Historische lokale Worktrees/Item-Entwürfe erhalten. Keine automatische Fortsetzung außerhalb aktiver Sitzung.
+
+
+---
+
+## Chat B – eindeutig zuordenbare NPC-Erinnerungen am Backend-Gateway (25.10.2026)
+
+- **Ausgangsbasis:** `main` `5f9a01dd73f68ad4f9e226f859a8ca87803b8337`; eigener Branch `fix/chat-b/npc-memory-name-guard-20261025`.
+- **IMPLEMENTIERT:** `backend/src/story_npc_memory_guard.ts` und `backend/src/app.ts` verhindern die Weitergabe falsch oder mehrdeutig zugeordneter NPC-Tagebuchnotizen an `/v1/story/advance`. Allgemeiner Kontext bleibt erhalten. Keine JSON-/SQLite- oder Regeländerung.
+- **TESTS GESCHRIEBEN:** Fünf neue positive/negative Backendtests einschließlich echter Fastify-Route mit Mock-Erzähler; Namen, Umlaute, doppelte Anzeigennamen, ungültige Präfixe und Unveränderlichkeit der Ursprungsdaten.
+- **GETESTET:** Offene Pull Requests auf Dateipfadüberschneidungen kontrolliert. Der laufende PR #191 wurde dabei nicht verändert; vollständige neue CI noch nicht behauptet.
+- **NICHT GETESTET:** Finaler PR-HEAD über TypeScript/Backend/Flutter/Android-CI, reales Gerät, externer Anbieter.
+- **SICHERHEITSGRENZE:** Ein clientseitiges „bestätigt“-Präfix bleibt nicht vertrauenswürdiger Kontext und beweist keine NPC-ID. Bei Namensmehrdeutigkeit wird der Eintrag verworfen, nicht geraten.
+- **NÄCHSTER SCHRITT:** eigenes, revisionsgeschütztes ID-basiertes Story-Kontextprotokoll nach Koordination mit parallelen PRs.
+- **Individueller Checkpoint:** `docs/parallel/CHAT_B_NPC_NAME_GUARD_20261025.md`.
