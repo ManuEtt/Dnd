@@ -4,14 +4,14 @@ Stand **2026-10-25T11:58:39+00:00**. Nutzerauftrag: alle GitHub-Branches integri
 
 ## Git und Sicherung
 
-- Initialer Main **b60ffe7ff1aae502ea927cb77153b988be33e397**, Branch `integration/all-branches-20261025`, aktuell integrierter Funktions-/Historienstand **09f498d1b617890765ad534e4efbfdd1387c2f0b**. Version0.8.39+89, SQLite2/JSON1 unverändert.
-- Alle13 initialen Remote-Köpfe gesichert: Präfix **archive/branch-migration-20261025T075644Z**, remote auf exakte ursprüngliche SHA geprüft. Vollständiges geprüftes Git-Bundle `/workspace/artifacts/branch-migration-20261025/Wuerfelraunen_Branches_vor_Migration_20261025T075644Z.bundle`, SHA256 `5cf905026c49bdee6b301bd047bbe1f52dbe1c9b6001aabd31cc287c0e758831`. Manifest `/workspace/validation/20261025-branch-backup-manifest.json`.
-- Konsolidierte164/165 und Light166 normal zusammengeführt. Sieben zusätzliche Historien-Merges ändern keinen Git-Baum: zwei alte Squash-Endbäume komplett identisch mit Main-Vorfahren, vier schon enthaltene Laufzeitpatches rückwärts anwendbar geprüft, ein reiner Alt-Dokumentationscommit vollständig archiviert.
-- Alle13 initialen Köpfe sind echte Vorfahren des Kandidaten. **Noch keine Branchlöschung/Main-Veröffentlichung durchgeführt.** Prüfbare Details [branch_migration_20261025.json](branch_migration_20261025.json).
+- Initialer Main **b60ffe7ff1aae502ea927cb77153b988be33e397**, Branch `integration/all-branches-20261025`, aktuell integrierter Funktions-/Historienstand **1cddc4a3d590d0959733b532a5ec349b4195dcf4**. Version0.8.39+89, SQLite2/JSON1 unverändert.
+- Alle18 initialen Remote-Köpfe gesichert: Präfix **archive/branch-migration-20261025T075644Z**, remote auf exakte ursprüngliche SHA geprüft. Vollständiges geprüftes Git-Bundle `/workspace/artifacts/branch-migration-20261025/Wuerfelraunen_Branches_vor_Migration_20261025T075644Z.bundle`, SHA256 `5cf905026c49bdee6b301bd047bbe1f52dbe1c9b6001aabd31cc287c0e758831`. Manifest `/workspace/validation/20261025-branch-backup-manifest.json`.
+- Konsolidierte164/165 und Light166 normal zusammengeführt. Neun zusätzliche Historien-Merges ändern keinen Git-Baum: zwei alte Squash-Endbäume komplett identisch mit Main-Vorfahren, vier schon enthaltene Laufzeitpatches rückwärts anwendbar geprüft, ein reiner Alt-Dokumentationscommit vollständig archiviert.
+- Alle18 initialen Köpfe sind echte Vorfahren des Kandidaten. **Noch keine Branchlöschung/Main-Veröffentlichung durchgeführt.** Prüfbare Details [branch_migration_20261025.json](branch_migration_20261025.json).
 
 ## IMPLEMENTIERT
 
-Gemeinsamer Stand enthält Sending-W100-Sicherung, Nebenhand-Verbündetenbestätigung, Backend-Limiter-Kapazitätsschutz, Backend- und lokale Sperre gegen Wiederöffnen abgeschlossener Storyfäden, Plot-Geheimnisschutz sowie vollständiges bestehendes Light-Paket einschließlich Attribut/Übung/Rage/Schadenssummen. Keine alte Variante über neueren Funktionscode kopiert. Fünf Dokumentationskonflikte aufgelöst, beide Seiten und zehn historische Altdateien bytegenau archiviert;20 Dateien mit SHA256 unter docs/history/branch_migration_20261025/.
+Gemeinsamer Stand enthält Sending-W100-Sicherung, Nebenhand-Verbündetenbestätigung, Backend-Limiter-Kapazitätsschutz, Backend- und lokale Sperre gegen Wiederöffnen abgeschlossener Storyfäden, Plot-Geheimnisschutz sowie vollständiges bestehendes Light-Paket einschließlich Attribut/Übung/Rage/Schadenssummen. Keine alte Variante über neueren Funktionscode kopiert. Fünf Dokumentationskonflikte aufgelöst, beide Seiten und zehn historische Altdateien bytegenau archiviert;38 Dateien mit SHA256 unter docs/history/branch_migration_20261025/.
 
 ## GETESTET
 
@@ -34,3 +34,10 @@ Gesamtprüfungen beenden, Fehler korrigieren, neuen Integrations-PR erstellen un
 Arbeitskopie `/workspace/Dnd-migration-20261025`. Initiale Branch-/PR-Liste in `/workspace/validation/20261025-branch-migration-start.json`. Aktueller Git-Status/HEAD und laufende Tests zuerst prüfen. Alle Originalköpfe durch Remote-Tags und Bundle wiederherstellbar. Prüf- und Löschberichte unter `/workspace/artifacts/branch-migration-20261025/` nachführen. Lokale historische Worktrees/ungeprüfte Item-Entwürfe erhalten; Auftrag bezieht sich auf GitHub-Branches.
 
 Nächster konkreter Schritt: vollständige kombinierte Abnahme einschließlich Android, Quelle-ZIP/Patch, Integrations-PR und erfolgreiche Main-Veröffentlichung. Keine Branchlöschung vor diesen Nachweisen. Keine automatische Fortsetzung außerhalb aktiver Sitzung.
+
+
+## Erweiterung nach erneutem Live-Abgleich
+
+Vier weitere Sourcebranches167–170 seit ursprünglicher13er-Aufnahme erkannt, vor Integration plus eigenem erstem Integrationskopf gesichert: nun18 Archivtags/Köpfe. Story169 und Archivfilter170 normal integriert;167/168 nach fokussiertem Rückwärts-Patchnachweis ohne Baumänderung in die Historie aufgenommen. Alle18 gesicherten Köpfe echte Vorfahren. Neun Historien-Merges insgesamt,38 Status-/Altdateien historisch archiviert. Ursprüngliches Bundle bleibt erhalten; aktuelles erweitertes Bundle: Wuerfelraunen_Branches_vor_Migration_20261025_erweitert.bundle, SHA256 e54ffc8cc6084985aac8a5cb9b18caca07a50fa7c564caeab94bee236a1954ba.
+
+Gefundener Fehler im neuen Archivfilter: casefold des Dateinamens verglich gegen noch gemischt geschriebene Ausschlussnamen. .DS_Store und GeneratedPluginRegistrant.java konnten dadurch einbezogen werden. Regression vor Fix nachgewiesen, Lookup einmalig symmetrisch normalisiert;11 Archivtests danach grün. Neuer kompletter kombinierter Lauf unter /workspace/validation/20261025-migration-final-full-check.log. Erster13er-Kandidat separat1549 Flutter-/100 Python-/38 Backend-Tests erfolgreich, kein Test der erweiterten Kombination. Neue endgültige Zahlen erst nach Beobachtung übernehmen.

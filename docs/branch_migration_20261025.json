@@ -1,10 +1,10 @@
 {
   "initial_main": "b60ffe7ff1aae502ea927cb77153b988be33e397",
-  "candidate_after_history": "09f498d1b617890765ad534e4efbfdd1387c2f0b",
+  "candidate_after_history": "1cddc4a3d590d0959733b532a5ec349b4195dcf4",
   "backup_tag_prefix": "archive/branch-migration-20261025T075644Z",
-  "backup_bundle": "/workspace/artifacts/branch-migration-20261025/Wuerfelraunen_Branches_vor_Migration_20261025T075644Z.bundle",
+  "backup_bundle": "/workspace/artifacts/branch-migration-20261025/Wuerfelraunen_Branches_vor_Migration_20261025_erweitert.bundle",
   "all_initial_heads_are_ancestors": true,
-  "deletion_status": "not started; requires successful candidate and Main validation",
+  "deletion_status": "not started; requires final combined and Main validation",
   "branches": [
     {
       "branch": "feat/sending-confirmed-slot-journal-20261024",
@@ -142,6 +142,67 @@
       "ancestor_before_history_record": true,
       "preservation": "actual ancestry through previous or functional integration merges",
       "ancestor_of_candidate": true
+    },
+    {
+      "branch": "fix/case-insensitive-secret-archive-filter-20261025",
+      "sha": "daf6bd870b0582864beafe7497a75bd92011335e",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/fix/case-insensitive-secret-archive-filter-20261025",
+      "supplemental": true,
+      "own_integration_checkpoint": false,
+      "ancestor_of_initial_main": false,
+      "ancestor_before_history_record": true,
+      "preservation": "normal functional merge or own earlier integration checkpoint ancestor",
+      "ancestor_of_candidate": true
+    },
+    {
+      "branch": "fix/local-ai-duplicate-npc-ids-20261025",
+      "sha": "e157801b929f27a6244e087baa0d8f9fd0ad69d2",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/fix/local-ai-duplicate-npc-ids-20261025",
+      "supplemental": true,
+      "own_integration_checkpoint": false,
+      "ancestor_of_initial_main": false,
+      "ancestor_before_history_record": true,
+      "preservation": "normal functional merge or own earlier integration checkpoint ancestor",
+      "ancestor_of_candidate": true
+    },
+    {
+      "branch": "fix/story-duplicate-context-ids-20261025",
+      "sha": "4072a6d8b3e7a598e207d4a76bc2082ec53f29c7",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/fix/story-duplicate-context-ids-20261025",
+      "supplemental": true,
+      "own_integration_checkpoint": false,
+      "ancestor_of_initial_main": false,
+      "ancestor_before_history_record": false,
+      "runtime_reverse_patch_verified": true,
+      "history_record_commit": "1cddc4a3d590d0959733b532a5ec349b4195dcf4",
+      "history_merge_changed_tree": false,
+      "preservation": "focused feature patch already included by normal merge169; reverse check verified",
+      "ancestor_of_candidate": true
+    },
+    {
+      "branch": "integration/all-branches-20261025",
+      "sha": "1bd332663d80e54c7c867a02fb2e334b036631db",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/integration/all-branches-20261025",
+      "supplemental": true,
+      "own_integration_checkpoint": true,
+      "ancestor_of_initial_main": false,
+      "ancestor_before_history_record": true,
+      "preservation": "normal functional merge or own earlier integration checkpoint ancestor",
+      "ancestor_of_candidate": true
+    },
+    {
+      "branch": "integration/story-safety-pr165-167-168-20261025",
+      "sha": "721c4ed953ea67a9a79adcabf800ddd54cb63008",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/integration/story-safety-pr165-167-168-20261025",
+      "supplemental": true,
+      "own_integration_checkpoint": false,
+      "ancestor_of_initial_main": false,
+      "ancestor_before_history_record": true,
+      "preservation": "normal functional merge or own earlier integration checkpoint ancestor",
+      "ancestor_of_candidate": true
     }
-  ]
+  ],
+  "expanded_branch_count": 18,
+  "all_snapshotted_heads_are_ancestors": true,
+  "additional_fix": "Casefold both filename and exclusion lookup; generated/system filenames regression proved failing then all11 archive tests passed"
 }

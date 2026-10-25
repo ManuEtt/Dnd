@@ -4,7 +4,7 @@ Deutschsprachige Android-Alpha für Soloabenteuer und regelgeprüfte Kampagnen. 
 
 ## Aktueller Stand und autonome Fortsetzung (25.10.2026)
 
-**Version0.8.39+89 – vollständige Branch-Migration.** Der Kandidat `09f498d1b617890765ad534e4efbfdd1387c2f0b` auf `integration/all-branches-20261025` vereinigt alle13 anfänglich vorhandenen GitHub-Branch-Köpfe. Basis-main `b60ffe7ff1aae502ea927cb77153b988be33e397`. Main-Veröffentlichung, gemeinsame CI und anschließende Löschung werden getrennt nachgewiesen; derzeit läuft die kombinierte Abnahme.
+**Version0.8.39+89 – vollständige Branch-Migration.** Der Kandidat `1cddc4a3d590d0959733b532a5ec349b4195dcf4` auf `integration/all-branches-20261025` vereinigt alle18 anfänglich vorhandenen GitHub-Branch-Köpfe. Basis-main `b60ffe7ff1aae502ea927cb77153b988be33e397`. Main-Veröffentlichung, gemeinsame CI und anschließende Löschung werden getrennt nachgewiesen; derzeit läuft die kombinierte Abnahme.
 
 Enthalten sind allgemeiner Light-Nahkampfbonus mit bestätigtem Waffenkontext, Nebenhand-Sneak-Attack, Sending-W100-Validierung, Backend-Limiter-Schutz sowie lokale und serverseitige Story-/Geheimnissicherungen. SQLite2 und Kampagnen-JSON1 bleiben kompatibel. Alle Vorgängerfunktionen und Tests erhalten.
 
@@ -57,3 +57,10 @@ Weitere offene Arbeiten: vollständige Quelleninventur, Zauberwirkungen, Klassen
 - [README vor diesem Zyklus](docs/history/main_0.8.36_20261023/README.md) · [ältere Historie](docs/README_HISTORIE_BIS_20261020.md)
 
 Nur ausgewählte Inhalte des **SRD 5.2.1 von Wizards of the Coast unter CC BY 4.0** sowie eigene/lizenzierte Inhalte verwenden. [Namensnennung und Lizenzen](THIRD_PARTY_NOTICES.md) erhalten. Neue Arbeit erfolgt während einer aktiven Sitzung in einem eigenen Branch und PR; keine automatische Fortsetzung außerhalb einer laufenden Sitzung.
+
+
+## Erweiterung nach erneutem Live-Abgleich
+
+Vier weitere Sourcebranches167–170 seit ursprünglicher13er-Aufnahme erkannt, vor Integration plus eigenem erstem Integrationskopf gesichert: nun18 Archivtags/Köpfe. Story169 und Archivfilter170 normal integriert;167/168 nach fokussiertem Rückwärts-Patchnachweis ohne Baumänderung in die Historie aufgenommen. Alle18 gesicherten Köpfe echte Vorfahren. Neun Historien-Merges insgesamt,38 Status-/Altdateien historisch archiviert. Ursprüngliches Bundle bleibt erhalten; aktuelles erweitertes Bundle: Wuerfelraunen_Branches_vor_Migration_20261025_erweitert.bundle, SHA256 e54ffc8cc6084985aac8a5cb9b18caca07a50fa7c564caeab94bee236a1954ba.
+
+Gefundener Fehler im neuen Archivfilter: casefold des Dateinamens verglich gegen noch gemischt geschriebene Ausschlussnamen. .DS_Store und GeneratedPluginRegistrant.java konnten dadurch einbezogen werden. Regression vor Fix nachgewiesen, Lookup einmalig symmetrisch normalisiert;11 Archivtests danach grün. Neuer kompletter kombinierter Lauf unter /workspace/validation/20261025-migration-final-full-check.log. Erster13er-Kandidat separat1549 Flutter-/100 Python-/38 Backend-Tests erfolgreich, kein Test der erweiterten Kombination. Neue endgültige Zahlen erst nach Beobachtung übernehmen.

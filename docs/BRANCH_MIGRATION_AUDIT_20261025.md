@@ -1,12 +1,12 @@
 # Branch-Migrationsaudit –25.10.2026
 
-Initialer Main `b60ffe7ff1aae502ea927cb77153b988be33e397`,13 Remote-Branches einschließlich Main. Nutzer hat ausdrücklich Integration, Fehlerbehebung und anschließende Löschung alter Branches beauftragt.
+Initialer Main `b60ffe7ff1aae502ea927cb77153b988be33e397`,18 gesicherte Remote-Köpfe einschließlich Main und dem ersten eigenen Integrationscheckpoint. Nutzer hat ausdrücklich Integration, Fehlerbehebung und anschließende Löschung alter Branches beauftragt.
 
 ## Sicherung und vollständige Herkunft
 
 Alle initialen Köpfe vor Änderungen als `archive/branch-migration-20261025T075644Z/<Branchname>` remote gesichert und auf ursprüngliche SHA geprüft. Vollständiges Git-Bundle `Wuerfelraunen_Branches_vor_Migration_20261025T075644Z.bundle`,SHA256 `5cf905026c49bdee6b301bd047bbe1f52dbe1c9b6001aabd31cc287c0e758831`, mit git bundle verify geprüft. Original-Commitbäume bleiben dadurch unabhängig von gelöschten Branchnamen zugänglich.
 
-[JSON-Audit](branch_migration_20261025.json) enthält alle Branch-/SHA-/Tag-/Erhaltungsentscheidungen. Alle13 Köpfe sind nach Funktions- und Historienintegration echte Vorfahren des Kandidaten `09f498d1b617890765ad534e4efbfdd1387c2f0b`. Historien-Merges mit ours ändern keine Inhaltsbäume; sie werden ausschließlich nach konkreter Herkunftsprüfung verwendet.
+[JSON-Audit](branch_migration_20261025.json) enthält alle Branch-/SHA-/Tag-/Erhaltungsentscheidungen. Alle18 Köpfe sind nach Funktions- und Historienintegration echte Vorfahren des Kandidaten `1cddc4a3d590d0959733b532a5ec349b4195dcf4`. Historien-Merges mit ours ändern keine Inhaltsbäume; sie werden ausschließlich nach konkreter Herkunftsprüfung verwendet.
 
 - Sending-Journalb90c21d: gesamter Git-Baum identisch mit Main-Vorfahr3b5affd.
 - Unicode-D73f3cf: gesamter Git-Baum identisch mit Main-Vorfahr4c6040c.
@@ -34,3 +34,10 @@ git switch -c restore/branch archive/branch-migration-20261025T075644Z/<Branchna
 ```
 
 Alternativ git clone <Bundlepfad> oder das vollständige finale Projekt-ZIP. Quellen- und APK-Artefakte getrennt halten; persönliche Spielstände und lokale nicht veröffentlichte Entwürfe nicht entfernen.
+
+
+## Erweiterung nach erneutem Live-Abgleich
+
+Vier weitere Sourcebranches167–170 seit ursprünglicher13er-Aufnahme erkannt, vor Integration plus eigenem erstem Integrationskopf gesichert: nun18 Archivtags/Köpfe. Story169 und Archivfilter170 normal integriert;167/168 nach fokussiertem Rückwärts-Patchnachweis ohne Baumänderung in die Historie aufgenommen. Alle18 gesicherten Köpfe echte Vorfahren. Neun Historien-Merges insgesamt,38 Status-/Altdateien historisch archiviert. Ursprüngliches Bundle bleibt erhalten; aktuelles erweitertes Bundle: Wuerfelraunen_Branches_vor_Migration_20261025_erweitert.bundle, SHA256 e54ffc8cc6084985aac8a5cb9b18caca07a50fa7c564caeab94bee236a1954ba.
+
+Gefundener Fehler im neuen Archivfilter: casefold des Dateinamens verglich gegen noch gemischt geschriebene Ausschlussnamen. .DS_Store und GeneratedPluginRegistrant.java konnten dadurch einbezogen werden. Regression vor Fix nachgewiesen, Lookup einmalig symmetrisch normalisiert;11 Archivtests danach grün. Neuer kompletter kombinierter Lauf unter /workspace/validation/20261025-migration-final-full-check.log. Erster13er-Kandidat separat1549 Flutter-/100 Python-/38 Backend-Tests erfolgreich, kein Test der erweiterten Kombination. Neue endgültige Zahlen erst nach Beobachtung übernehmen.

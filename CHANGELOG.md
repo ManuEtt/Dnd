@@ -1,6 +1,6 @@
 ## 25.10.2026 – vollständige Branch-Migration, gemeinsame Abnahme offen
 
-Alle13 initialen Remote-Köpfe remote per Archivtag und lokal per geprüftem Bundle gesichert. Funktionsstände164/165/166 vereinigt, bereits enthaltene Squash-/Historienvarianten anhand konkreter Bäume/Patches erkannt und ohne Rücksetzen aktuellen Codes in die Historie aufgenommen. Alle Originalköpfe Vorfahren des Kandidaten;20 Dokumentkonflikt-/Altdateien historisch gesichert. Neue Gesamt-/Android-/CI-Abnahme vor Main-Merge und Branchlöschung verpflichtend. Version0.8.39+89, SQLite2/JSON1 unverändert.
+Alle18 initialen Remote-Köpfe remote per Archivtag und lokal per geprüftem Bundle gesichert. Funktionsstände164/165/166 vereinigt, bereits enthaltene Squash-/Historienvarianten anhand konkreter Bäume/Patches erkannt und ohne Rücksetzen aktuellen Codes in die Historie aufgenommen. Alle Originalköpfe Vorfahren des Kandidaten;20 Dokumentkonflikt-/Altdateien historisch gesichert. Neue Gesamt-/Android-/CI-Abnahme vor Main-Merge und Branchlöschung verpflichtend. Version0.8.39+89, SQLite2/JSON1 unverändert.
 
 ---
 
