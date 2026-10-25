@@ -1,5 +1,12 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – SRD-Klassen-Zauberwerte (25.10.2026, neuer PR)
+
+Eigener Arbeitsbranch `feat/chat-a/spell-class-stats-20261025` ergänzt die reine `SrdSpellSavingThrowRules.statsForClass`-Auswertung: klassenrichtiges INT/WIS/CHA-Attribut, Übungsbonus aus der Gesamtstufe, Zauberangriffsmodifikator und Zauber-SG. Besonders bei Mehrklassen-Charakteren werden die beiden Zauberklassen nicht vermischt. Ungültige und unbestätigte Werte werden abgelehnt. Acht Dart-Testgruppen ergänzen positive und negative Fälle. SRD 5.2.1, Spell Attack Rolls, Spell Save DC und Multiclass Spellcasting, CC BY 4.0. Die beiden Anforderungen stehen im maschinenlesbaren Register bewusst nur auf `partial`. Keine Auswirkungen auf bestehende Spielstände, keine Angriffs-/Zauberwirkung, keine Migration. [Fachbeleg](docs/SRD_SPELL_CLASS_STATS_20261025.md) und [isolierter Chat-A-Checkpoint](docs/parallel/CHAT_A_SPELL_STATS_20261025.md).
+
+**Prüfstatus:** Dart-Tests, vollständige GitHub-Actions-CI und Android-Build auf diesem neuen Branch vor PR-Abnahme noch nachzuweisen. Gleichzeitige README/Checkpoint-Änderungen anderer Chats sind bei Integration zu konsolidieren.
+
+
 ## Qualitätssicherung – Chat D (PR #177, 25.10.2026)
 
 [PR #177](https://github.com/ManuEtt/Dnd/pull/177) ergänzt zwei bislang nicht automatisch ausgeführte CI-Gates: `python3 scripts/check_domain_boundaries.py` und `python3 scripts/srd_coverage.py --json`. Beide laufen jetzt in der Android-CI und in `scripts/check.sh` vor den regulären Python-Tests. Der neue Konfigurationstest enthält positive und negative Fälle. Auf dem bisherigen PR-Commit `1fdd3c0` waren Architektur-/SRD-Prüfung, Python-Tests, Backend-Tests sowie Flutter-Analyse und Flutter-Tests erfolgreich; Android-Build und vollständige Release-Abnahme wurden noch nicht als erfolgreich bestätigt. Keine Änderung an SQLite, JSON, Spielregeln oder der App-Version. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
