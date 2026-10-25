@@ -7215,10 +7215,14 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Spells",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_ritual_casting_rules_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/srd_ritual_casting_rules.dart"
+      ],
+      "note": "Quellgebundene SRD-5.2.1-Vorprüfung für vorbereitete Ritualzauber: Klasse und Stufe, V/S/M und teure/verbrauchte Materialien, Zusatzzeit +10 Minuten, Bestätigung langer Konzentration, ohne Slot- oder Persistenzmutation. Keine tatsächliche Ausführung, Zeitfortschreibung oder vollständige Effektintegration; nur partial."
     },
     {
       "id": "RULE-SPELLS-CASTING-AT-HIGHER-LEVEL",
