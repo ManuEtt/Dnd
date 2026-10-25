@@ -70,33 +70,21 @@ void main() {
     });
 
     test('natural 1 always misses even with very large attack bonus', () {
-      final result = _attack(
-        natural: 1,
-        attackModifier: 30,
-        armorClass: 1,
-      );
+      final result = _attack(natural: 1, attackModifier: 30, armorClass: 1);
       expect(result.roll.total, 31);
       expect(result.hit, isFalse);
       expect(result.critical, isFalse);
     });
 
     test('natural 20 always hits and crits regardless of target AC', () {
-      final result = _attack(
-        natural: 20,
-        attackModifier: -30,
-        armorClass: 100,
-      );
+      final result = _attack(natural: 20, attackModifier: -30, armorClass: 100);
       expect(result.roll.total, -10);
       expect(result.hit, isTrue);
       expect(result.critical, isTrue);
     });
 
     test('half and three-quarter cover change AC only when applicable', () {
-      final half = _attack(
-        natural: 12,
-        armorClass: 15,
-        cover: CoverLevel.half,
-      );
+      final half = _attack(natural: 12, armorClass: 15, cover: CoverLevel.half);
       expect(half.effectiveArmorClass, 17);
       expect(half.hit, isFalse);
       expect(half.appliedCover, CoverLevel.half);
@@ -175,17 +163,10 @@ void main() {
     });
 
     test('manual single d20 cannot masquerade as advantage roll', () {
-      for (final flags in [
-        (true, false),
-        (false, true),
-        (true, true),
-      ]) {
+      for (final flags in [(true, false), (false, true), (true, true)]) {
         expect(
-          () => _attack(
-            natural: 20,
-            advantage: flags.$1,
-            disadvantage: flags.$2,
-          ),
+          () =>
+              _attack(natural: 20, advantage: flags.$1, disadvantage: flags.$2),
           throwsFormatException,
         );
       }
@@ -222,16 +203,10 @@ void main() {
         );
       }
       for (final value in [0, 101]) {
-        expect(
-          () => _attack(dice: dice, armorClass: value),
-          throwsRangeError,
-        );
+        expect(() => _attack(dice: dice, armorClass: value), throwsRangeError);
       }
       for (final value in [0, 21]) {
-        expect(
-          () => _attack(dice: dice, natural: value),
-          throwsRangeError,
-        );
+        expect(() => _attack(dice: dice, natural: value), throwsRangeError);
       }
       expect(rng.calls, 0);
     });
