@@ -1,5 +1,53 @@
 # CODEX-CHECKPOINT – Würfelraunen
 
+Stand **2026-10-25T12:56:12+01:00 (Europe/Berlin)**. Dies ist der aktuelle eigenständige Sicherheitszyklus; vorheriger Stand vom 24.10.2026 bleibt unten historisch erhalten.
+
+## Git, Produkt und parallele Arbeit
+
+- Hauptrepository `ManuEtt/Dnd`, `main`-Basis **`b60ffe7ff1aae502ea927cb77153b988be33e397`** (Merge #158). Version aus `app/pubspec.yaml`: **0.8.38+88**.
+- Neuer Branch **`fix/case-insensitive-secret-archive-filter-20261025`**, [PR #170](https://github.com/ManuEtt/Dnd/pull/170). Implementierungs- und Test-Commit **`cf75153c583febb0bf0e248d2719d81810bbc167`**, nachfolgende Dokumentations-Commits auf demselben Branch; der tatsächlich letzte HEAD ist auf [PR #170/commits](https://github.com/ManuEtt/Dnd/pull/170/commits) einzusehen.
+- Vor Beginn **elf offene PRs #159–#169** geprüft. #164 integriert den Vorschlag von #159–#163, #169 integriert #165/#167/#168; #160/#166 verändern Kampfregeln. Keine dieser Änderungen wird überschrieben oder nach `main` gemergt.
+- Letzter vollständig bestätigter **main**-Workflow: [#40094794864](https://github.com/ManuEtt/Dnd/actions/runs/40094794864) für exakt **`b60ffe7`**, `completed/success`. Neue Branch-CI [#40190804413](https://github.com/ManuEtt/Dnd/actions/runs/40190804413) und PR-CI [#40190851746](https://github.com/ManuEtt/Dnd/actions/runs/40190851746) beim Erfassen **in Bearbeitung** auf `cf75153c`. Die Zwischen-Commit-CI #40190774551 war **abgebrochen**, kein grüner Nachweis.
+
+## IMPLEMENTIERT
+
+- `scripts/package_project.py`: schließt Namen und Verzeichnisbestandteile im ZIP-Export per `casefold()` aus; schützt damit vor abweichender Schreibweise von `.env*`, `.npmrc`, geheimen Dateien, Cache-Ordnern und SQLite-`-wal/-shm/-journal`-Dateien. Originalschreibweise der erlaubten Archiveinträge bleibt erhalten.
+- `scripts/tests/test_package_project.py`: Regression mit wirklichem ZIP und gefährlichen gemischt geschriebenen Dateinamen; erlaubt harmlose `.ENV.EXAMPLE`-Vorlage und eine Grafik.
+- `README.md`, `CHANGELOG.md`, `DEVELOPMENT_STATUS.md`, dieser Checkpoint: Übergabe. Keine SRD-Requirement-ID neu als `tested` markiert: ausschließlich Exportwerkzeug, keine Regeländerung.
+- Keine Änderung an GameEngine, KI/Story, Backend, Android, SQLite-Schema 2, Kampagnen-JSON 1, Paketversion oder Lizenzen; keine Migration erforderlich.
+
+## GETESTET
+
+- Unveränderte `main`-Baseline: GitHub-Workflow #40094794864 `completed/success` auf `b60ffe7`. **Nicht** auf diesen neuen Code übertragbar.
+- Neue Testfälle sind hinzugefügt, aber bis zum Abschluss eines eigenen erfolgreichen Workflows **noch nicht als bestanden gewertet**.
+
+## NICHT GETESTET
+
+- Finale CI auf dem letzten Dokumentations-HEAD des PR #170, vollständige Python-Suite, Flutter-Analyse/-Tests, Backend, native Android-Tests und Android-APK bis zum tatsächlichen erfolgreichen Lauf.
+- Echte Android-Geräteinstallation, Upgrade historischer Spielstände, produktive Signatur.
+
+## BLOCKIERT
+
+- In dieser aktiven Umgebung kein Git-Checkout aus öffentlichem GitHub über lokalen Netzwerkzugriff (`Could not resolve host: github.com`), kein lokales Flutter-/Dart-/Android-SDK. Der GitHub-Connector kann Branch, Dateien, PR und Actions prüfen. CI-Nachweise müssen am jeweiligen Commit vorliegen.
+
+## NOCH NICHT IMPLEMENTIERT
+
+- Atomarer Quell-ZIP-Export bei Schreib- und Komprimierungsabbruch, vollständiges SRD, ausstehende Story-/Kampf-/UI-Funktionen aus den anderen PRs. Diese sind nicht Teil des vorliegenden Export-Sicherheitsfixes.
+
+## Nächster exakt abgegrenzter Schritt
+
+**Quell-ZIP-Erstellung bei Schreibabbruch atomar absichern.** Definition of Done: Ein vorheriger vollständiger ZIP-Export und seine SHA-256-Datei bleiben bei fehlgeschlagener Komprimierung unverändert, temporäre Dateien werden entfernt, bei Erfolg stimmen ZIP-Integrität und SHA-256 weiterhin; Regressionen für simulierte Dateifehler und vorhandene Exporte bestehen. Erst **nach** Abnahme von PR #170 beginnen.
+
+Aktueller Abnahmebefehl für PR #170: `python3 scripts/verify_project.py && python3 -m unittest discover -s scripts/tests -v && python3 scripts/check_domain_boundaries.py && bash scripts/check.sh`; auf GitHub außerdem `flutter build apk --debug` und native Gradle-Tests gemäß Workflow. Keine neue APK/ZIP-Datei in dieser Sitzung erzeugt oder geprüft, keine Artefakt-SHA erfunden. Main nach Review getrennt integrieren.
+
+### Änderungsprotokoll
+
+- 25.10.2026: Sicherheitsfilter um Groß-/Kleinschreibung ergänzt; neue ZIP-Regressionen; PR #170 eröffnet, Actions zunächst laufend.
+
+---
+
+## Historischer Checkpoint vom 24.10.2026
+
 Stand **2026-10-24T12:20:50+00:00**, lokal vollständig abgenommenes Paket. Frühere operative Angaben vollständig in [Historie](history/main_0.8.37_20261024/CODEX_CHECKPOINT.md) erhalten. Vor Wiederaufnahme Live-Git/PR/CI erneut prüfen.
 
 ## Git und Produkt
