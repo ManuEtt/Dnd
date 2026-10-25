@@ -1,5 +1,12 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – bestätigter SRD-Zauberangriff (25.10.2026, offener PR)
+
+Neuer unabhängiger Regelbaustein zur Auflösung **eines** vorher bestätigten Zauberangriffs: W20/Modifikator, natürliche 1/20, Vorteil und Nachteil sowie Deckung (+2/+5, volle Deckung blockiert). Unberechtigte Ziele oder unbestätigte Umstände werden vor dem Würfeln abgelehnt. Kein selbstständiger Zauber, keine Slotbuchung, keine HP-/Kampagnenänderung; unveränderte Speicherformate. [Regelbeleg](docs/SRD_SPELL_ATTACK_ROLL_RESOLUTION_20261025.md) und [Chat-A-Checkpoint](docs/parallel/CHAT_A_ATTACK_ROLL_20261025.md). Die Anforderung `RULE-CORE-RULES-ATTACK-ROLLS` ist bewusst nur `partial`; separate Klassen-Zauberwerte bleiben in PR #184, Zauberdauern in PR #180.
+
+**Prüfstatus:** Tests geschrieben, endgültige Dart-/Flutter-/Android-CI des neuen Branches noch offen; keine Fertigstellung oder Mergefreigabe vor deren Bestätigung.
+
+
 ## Qualitätssicherung – Chat D: rekursiver Story-/Regelimportprüfer (25.10.2026)
 
 Nach dem vollständig getesteten und regulär integrierten [Chat-D-PR #177](https://github.com/ManuEtt/Dnd/pull/177) ergänzt das neue [Paket D-002](docs/parallel/CHAT_D_CHECKPOINT.md) den Architekturprüfer: Dart-Unterordner von `app/lib/story/` und `app/lib/domain/` werden rekursiv geprüft; relative `../`- und `./`-Importvarianten werden vor dem Berechtigungscheck normalisiert. Sechs neue positive/negative Testfälle und sechs bisherige Grenztests wurden **in einer isolierten Python-Projektstruktur** gemeinsam ausgeführt (**12 bestanden**); die vollständige GitHub-CI und neue APKs sind erst nach Abschluss der Läufe auf dem finalen D-002-Commit belegt. Keine Änderung an SRD-Spielregeln, SQLite, JSON oder der App-Version.
