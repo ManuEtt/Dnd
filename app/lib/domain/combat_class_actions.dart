@@ -25,14 +25,20 @@ class CombatClassActions {
   }
 
   /// No Rage bonus on ranged or Dexterity attacks, and no invented weapons.
-  static int rageDamageBonus(HeroCharacter hero, Encounter fight) {
+  static int rageDamageBonus(
+    HeroCharacter hero,
+    Encounter fight, {
+    String? attackAbility,
+    String? attackingWeaponId,
+  }) {
     if (!rageActive(fight) ||
-        hero.weaponAbility != 'strength' ||
+        (attackAbility ?? hero.weaponAbility) != 'strength' ||
         hasHeavyArmor(hero)) {
       return 0;
     }
+    final weaponId = attackingWeaponId ?? hero.equippedWeaponId;
     final items = hero.inventory.where(
-      (i) => i.id == hero.equippedWeaponId && hero.equippedWeaponId.isNotEmpty,
+      (i) => i.id == weaponId && weaponId.isNotEmpty && i.quantity > 0,
     );
     if (items.length != 1) {
       return 0;

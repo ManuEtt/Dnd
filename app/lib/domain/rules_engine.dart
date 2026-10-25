@@ -52,6 +52,21 @@ class RulesEngine {
     required DiceResult baseRoll,
     DiceResult? criticalExtra,
   }) {
+    final result = weaponDamageSubtotal(
+      hero,
+      baseRoll: baseRoll,
+      criticalExtra: criticalExtra,
+    );
+    return result < 0 ? 0 : result;
+  }
+
+  /// Raw weapon subtotal. A complete attack adds its class damage before the
+  /// final zero floor, so a negative ability modifier is never discarded early.
+  static int weaponDamageSubtotal(
+    HeroCharacter hero, {
+    required DiceResult baseRoll,
+    DiceResult? criticalExtra,
+  }) {
     final result =
         baseRoll.total +
         (criticalExtra == null
@@ -65,7 +80,7 @@ class RulesEngine {
                 hero,
                 criticalExtra,
               ));
-    return result < 0 ? 0 : result;
+    return result;
   }
 
   static int remainingHitPoints({required int hitPoints, required int damage}) {

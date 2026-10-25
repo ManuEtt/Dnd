@@ -7636,15 +7636,29 @@
       "area": "combat",
       "kind": "cross_cutting_rule",
       "name": "Two-Weapon Fighting",
-      "source": "Playing the Game / Combat",
-      "source_url": "https://www.dndbeyond.com/srd",
+      "source": "SRD 5.2.1 Weapons / Light S.89; Two-Weapon Fighting S.88; Rage S.29; Damage Rolls S.16",
+      "source_url": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Playing the Game / Combat",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/two_weapon_fighting_test.dart",
+        "app/test/light_weapon_bonus_attack_test.dart",
+        "app/test/offhand_attack_dialog_test.dart",
+        "app/test/combat_class_actions_test.dart",
+        "app/test/domain_rules_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/two_weapon_fighting_rules.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/domain/models.dart",
+        "app/lib/services/game_controller.dart",
+        "app/lib/ui/offhand_attack_dialog.dart",
+        "app/lib/domain/combat_class_actions.dart",
+        "app/lib/domain/rules_engine.dart"
+      ],
+      "note": "Allgemeiner Light-Nahkampfbonus nach abgeschlossener eigener Angriffsaktion, getrennte bestätigte andere Waffe/Attribut/Übung/gehaltene Waffen, reservierte Bonusaktion und optionaler typisierter PendingRoll-Kontext. Ohne Kampfstil kein positiver Attributsschaden, negative Werte bleiben. Kampfrausch nutzt tatsächliche Waffen-ID/Attribut; endgültige Nullgrenze erst nach Klassenboni. Ziel-, Zustands-, Revisions- und JSON/SQLite-Prüfung vor Auflösung. Gezielte Regel-/Kampf-/Widget-/Persistenztests erfolgreich; vollständige Abnahme siehe Checkpoint. Nur Nahkampf und bisher bestätigter Fighter-Stil, kein Nick, Light-Fernkampf oder allgemeines Waffenwechselmodell."
     },
     {
       "id": "RULE-COMBAT-WEAPON-MASTERY",

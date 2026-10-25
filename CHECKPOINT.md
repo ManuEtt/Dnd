@@ -1,3 +1,9 @@
+## Operativer Checkpoint 25.10.2026 – 0.8.39+89
+
+Aktueller Light-Regelzyklus: [docs/CODEX_CHECKPOINT.md](docs/CODEX_CHECKPOINT.md). Folgende Stände sind Historie.
+
+---
+
 ## Operativer Checkpoint 24.10.2026 – 0.8.38+88
 
 Aktueller Branch, Prüfungen und Fortsetzung: [docs/CODEX_CHECKPOINT.md](docs/CODEX_CHECKPOINT.md). Alle folgenden Einträge sind historische Stände.

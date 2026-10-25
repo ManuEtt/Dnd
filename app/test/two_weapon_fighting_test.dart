@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/dice_engine.dart';
 import 'package:lebendiger_spielleiter/domain/game_engine.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
+import 'package:lebendiger_spielleiter/domain/srd_equipment_catalog.dart';
 import 'package:lebendiger_spielleiter/domain/two_weapon_fighting_rules.dart';
 
 class LowRandom implements Random {
@@ -71,7 +72,7 @@ void main() {
     expect(TwoWeaponFightingRules.offhandChoices(fighter()), hasLength(1));
     expect(
       TwoWeaponFightingRules.offhandChoices(fighter(style: false)),
-      isEmpty,
+      hasLength(1),
     );
     expect(
       TwoWeaponFightingRules.offhandChoices(fighter(shield: true)),
@@ -108,13 +109,23 @@ void main() {
     expect(resolved.events.last.payload['criticalExtra'], isNotNull);
   });
 
-  test('No chosen style or carrying shield gives no offhand attack', () {
-    for (final hero in [fighter(style: false), fighter(shield: true)]) {
-      final engine = gm();
-      final before = battle(engine, hero);
-      final after = missPrimary(engine, before);
-      expect(after.encounter!.round, before.encounter!.round + 1);
-    }
+  test('Light extra attack works without style and omits positive damage', () {
+    final engine = gm();
+    final before = battle(engine, fighter(style: false));
+    final after = missPrimary(engine, before);
+    expect(after.encounter!.round, before.encounter!.round);
+    expect(TwoWeaponFightingRules.canPrepare(after), isTrue);
+    final requested = engine.act(after, 'Nebenhandangriff mit Dolch').campaign;
+    final resolved = engine.resolveRoll(requested, natural: 15).campaign;
+    expect(resolved.events.last.payload['damage'], 1);
+  });
+
+  test('Carrying a shield prevents the extra offhand attack', () {
+    final engine = gm();
+    final before = battle(engine, fighter(shield: true));
+    final after = missPrimary(engine, before);
+    expect(after.encounter!.round, before.encounter!.round + 1);
+    expect(TwoWeaponFightingRules.canPrepare(after), isFalse);
   });
 
   test('Player can end turn without making the optional offhand strike', () {
@@ -155,4 +166,146 @@ void main() {
     final restored = Campaign.fromJson(data);
     expect(restored.encounter!.lightAttackAvailable, isFalse);
   });
+
+  test(
+    'Light helper: every class can use a confirmed pair of Light weapons',
+    () {
+      final rogue = fighter(style: false).copyWith(className: 'Schurke');
+      expect(TwoWeaponFightingRules.offhandChoices(rogue), hasLength(1));
+      final dagger = SrdEquipmentCatalog.byId('weapon-dagger')!;
+      expect(
+        TwoWeaponFightingRules.attackBonus(
+          rogue,
+          dagger,
+          attackAbility: 'dexterity',
+          proficient: true,
+        ),
+        5,
+      );
+      expect(
+        TwoWeaponFightingRules.attackBonus(
+          rogue,
+          dagger,
+          attackAbility: 'dexterity',
+          proficient: false,
+        ),
+        3,
+      );
+      expect(
+        () => TwoWeaponFightingRules.attackBonus(rogue, dagger),
+        throwsFormatException,
+      );
+      // A fake style label on a class without the implemented style feature
+      // does not grant a damage modifier.
+      expect(
+        TwoWeaponFightingRules.damage(
+          rogue.copyWith(features: const ['Kampfstil: Kampf mit zwei Waffen']),
+          dagger,
+          2,
+        ),
+        2,
+      );
+    },
+  );
+
+  test(
+    'Light helper: damage omits positive modifiers and keeps negative ones',
+    () {
+      final dagger = SrdEquipmentCatalog.byId('weapon-dagger')!;
+      expect(
+        TwoWeaponFightingRules.damage(fighter(style: false), dagger, 4),
+        4,
+      );
+      expect(TwoWeaponFightingRules.damage(fighter(), dagger, 4), 7);
+      final weak = fighter(
+        style: false,
+      ).copyWith(abilities: const {'strength': 8, 'dexterity': 6});
+      expect(TwoWeaponFightingRules.damage(weak, dagger, 4), 2);
+      expect(TwoWeaponFightingRules.damage(weak, dagger, 1), 0);
+      expect(
+        TwoWeaponFightingRules.damage(
+          weak.copyWith(features: const ['Kampfstil: Kampf mit zwei Waffen']),
+          dagger,
+          4,
+        ),
+        2,
+      );
+    },
+  );
+
+  test(
+    'Light helper: actual Finesse weapon permits an independent ability',
+    () {
+      final dagger = SrdEquipmentCatalog.byId('weapon-dagger')!;
+      final handaxe = SrdEquipmentCatalog.byId('weapon-handaxe')!;
+      final hero = fighter(style: false).copyWith(weaponAbility: 'strength');
+      expect(
+        TwoWeaponFightingRules.attackBonus(
+          hero,
+          dagger,
+          attackAbility: 'dexterity',
+        ),
+        5,
+      );
+      expect(
+        TwoWeaponFightingRules.attackBonus(
+          hero,
+          dagger,
+          attackAbility: 'strength',
+        ),
+        3,
+      );
+      for (final invalid in ['dexterity', 'intelligence', '']) {
+        expect(
+          () => TwoWeaponFightingRules.ability(
+            hero,
+            handaxe,
+            attackAbility: invalid,
+          ),
+          throwsFormatException,
+        );
+      }
+      expect(
+        () => TwoWeaponFightingRules.ability(
+          hero.copyWith(abilities: const {'strength': 12}),
+          dagger,
+          attackAbility: 'dexterity',
+        ),
+        throwsFormatException,
+      );
+    },
+  );
+
+  test(
+    'Light helper: preparation requires the remaining confirmed Bonus Action',
+    () {
+      final engine = gm();
+      final after = missPrimary(engine, battle(engine, fighter(style: false)));
+      expect(TwoWeaponFightingRules.canPrepare(after), isTrue);
+      final fight = after.encounter!;
+      for (final invalid in [
+        after.copyWith(encounter: fight.copyWith(actionUsed: false)),
+        after.copyWith(encounter: fight.copyWith(attacksRemaining: 1)),
+        after.copyWith(encounter: fight.copyWith(bonusActionUsed: true)),
+        after.copyWith(encounter: fight.copyWith(lightAttackAvailable: false)),
+        after.copyWith(encounter: fight.copyWith(activeParticipant: 'enemy')),
+        after.copyWith(encounter: fight.copyWith(surgeReserved: true)),
+        after.copyWith(hero: after.hero.copyWith(hitPoints: 0)),
+        after.copyWith(hero: fighter(shield: true)),
+        after.copyWith(
+          hero: after.hero.copyWith(conditions: const ['bewusstlos']),
+        ),
+        after.copyWith(
+          pendingRoll: const PendingRoll(
+            id: 'still-open',
+            type: 'perception',
+            modifier: 0,
+            difficulty: 10,
+          ),
+        ),
+      ]) {
+        expect(TwoWeaponFightingRules.canPrepare(invalid), isFalse);
+      }
+    },
+  );
 }
