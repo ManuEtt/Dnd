@@ -187,13 +187,15 @@ void main() {
       provider: 'mock',
     );
     for (final terminal in ['resolved', 'abandoned']) {
-      final saved = engine.saveStoryThread(
-        created,
-        threadId: 'hafen',
-        title: 'Die Hafenspuren',
-        description: 'Diese Entscheidung ist abgeschlossen.',
-        status: terminal,
-      ).campaign;
+      final saved = engine
+          .saveStoryThread(
+            created,
+            threadId: 'hafen',
+            title: 'Die Hafenspuren',
+            description: 'Diese Entscheidung ist abgeschlossen.',
+            status: terminal,
+          )
+          .campaign;
       final roundtrip = Campaign.fromJson(saved.toJson());
       expect(roundtrip.storyThreads.first.status, terminal);
       for (final forbidden in [
@@ -241,20 +243,24 @@ void main() {
       AiStoryPlan.fromJson(samplePlan()),
       provider: 'mock',
     );
-    final closed = engine.saveStoryThread(
-      created,
-      threadId: 'hafen',
-      title: 'Die Hafenspuren',
-      description: 'Die Suche ist beendet.',
-      status: 'abandoned',
-    ).campaign;
-    final reopened = engine.saveStoryThread(
-      Campaign.fromJson(closed.toJson()),
-      threadId: 'hafen',
-      title: 'Die Hafenspuren',
-      description: 'Spieler entscheidet sich zur Rückkehr.',
-      status: 'open',
-    ).campaign;
+    final closed = engine
+        .saveStoryThread(
+          created,
+          threadId: 'hafen',
+          title: 'Die Hafenspuren',
+          description: 'Die Suche ist beendet.',
+          status: 'abandoned',
+        )
+        .campaign;
+    final reopened = engine
+        .saveStoryThread(
+          Campaign.fromJson(closed.toJson()),
+          threadId: 'hafen',
+          title: 'Die Hafenspuren',
+          description: 'Spieler entscheidet sich zur Rückkehr.',
+          status: 'open',
+        )
+        .campaign;
     expect(reopened.storyThreads.first.status, 'open');
     expect(reopened.events.last.type, 'memory.storyThreadSaved');
     final action = engine.act(reopened, 'Ich verfolge die Spur erneut.');
@@ -301,11 +307,7 @@ void main() {
     final originallyValid = AiStoryStep.fromJson({
       'narration': 'Die alte Spur wird wieder aktuell.',
       'threadUpdates': [
-        {
-          'id': 'hafen',
-          'status': 'open',
-          'description': 'Noch ein Hinweis.',
-        },
+        {'id': 'hafen', 'status': 'open', 'description': 'Noch ein Hinweis.'},
       ],
       'newThreads': [],
       'npcUpdates': [],
@@ -313,9 +315,7 @@ void main() {
     final closed = local.campaign.copyWith(
       storyThreads: [
         for (final thread in local.campaign.storyThreads)
-          thread.id == 'hafen'
-              ? thread.copyWith(status: 'resolved')
-              : thread,
+          thread.id == 'hafen' ? thread.copyWith(status: 'resolved') : thread,
       ],
     );
     final changed = GameUpdate(campaign: closed, events: local.events);
@@ -331,5 +331,4 @@ void main() {
     );
     expect(changed.campaign.toJson(), before);
   });
-
 }
