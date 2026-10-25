@@ -1,3 +1,15 @@
+# Chat C – Aktive Heldenkarte bei starker Schriftvergrößerung (25.10.2026)
+
+- **Basis:** `main` `af70a48c84d83c133ced4200be04ca81a91abf1b`; isolierter Branch `feat/chat-c/accessible-active-hero-20261025`.
+- **IMPLEMENTIERT:** In `fantasy_campaign_dashboard.dart` statt dreier unflexibler Metrikspalten ein textskalierungsbewusstes, einspaltiges Layout bei 180 %+ und weniger als 500 dp. Keine `FittedBox`-Verkleinerung von Zahlen; neue vollständige Screenreader-Texte für bestätigte und unbekannte Werte.
+- **TESTS ERGÄNZT:** Drei `fantasy_campaign_dashboard_test.dart`-Widgettests: 320/360 dp bei 200 %, Semantik, Anordnung, Fortsetzung und unbekannte Werte; Live-CI [#40233056288](https://github.com/ManuEtt/Dnd/actions/runs/40233056288) zunächst ohne finale Abnahme.
+- **NICHT GETESTET:** Finale vollständige Flutter-/Android-/Backend-/Python-/SRD-CI, echtes Android-Gerät/TalkBack und Produktivsignierung.
+- **MIGRATION:** keine; Basisversion `0.8.40+90`, SQLite 2 / JSON 1 unverändert.
+- **Nächster Schritt:** PR-CI prüfen, Fehlerursachen mit Regression korrigieren; danach unabhängiges UI-Modul wählen.
+- [Detaillierte Übergabe](parallel/CHAT_C_ACTIVE_HERO_20261025.md). Vorherige Checkpoints bleiben unten erhalten.
+
+---
+
 # Chat D D-004 – Gradle-Wrapper-JAR-Sicherheit (25.10.2026)
 
 - **Basis:** `main` `713b8cc2831f9d8039ef4e6ebf37c10682aec675` mit bereits integriertem D-003-PR #183; D-004-Branch `fix/chat-d/gradle-wrapper-jar-safety-20261025`.
