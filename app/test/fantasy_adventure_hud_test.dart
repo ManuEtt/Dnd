@@ -294,7 +294,6 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     final semantics = tester.ensureSemantics();
-    addTearDown(semantics.dispose);
     final hero = HeroCharacter(id: 'unknown-hud', name: 'Unbekannt');
     await tester.pumpWidget(
       MaterialApp(
