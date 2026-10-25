@@ -89,6 +89,7 @@ jobs:
           echo LOCAL_STORY_FORMAT_BEGIN
           git diff -- lib/story/ai_story.dart test/ai_story_test.dart
           echo LOCAL_STORY_FORMAT_END
+          exit 1 # TEMP: stop after exact formatter diff; remove before release
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
