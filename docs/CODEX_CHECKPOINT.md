@@ -1,9 +1,10 @@
 # Ergänzung – Chat A: Dauerklassifikation für Zauber (25.10.2026)
 
-- **Basis:** `main=5c1499a9342449050bb946542659b221ac2653da`; Branch `feat/chat-a/spell-duration-classification-20261025`; PR nach Erstellung im GitHub-Pull-Request nachschlagen.
+- **Basis:** `main=5c1499a9342449050bb946542659b221ac2653da` zu Beginn, neuester eingearbeiteter Main-Stand `fb788a980b8ee9eb60439c249f3e1f5092a9f188`; Branch `feat/chat-a/spell-duration-classification-20261025`; [PR #180](https://github.com/ManuEtt/Dnd/pull/180).
 - **IMPLEMENTIERT:** Rein lesende SRD-5.2.1-Zauberdauerprüfung ohne Zustandsänderung, Testdatei, öffentliche Regel-Fassade. [Fachliche Details](SRD_SPELL_DURATION_CLASSIFICATION_20261025.md), [Chat-A-Status](parallel/CHAT_A_CHECKPOINT.md).
 - **GETESTET:** Eigenständiger Abgleich aller 339 vorhandenen Katalog-Dauerwerte: 338 klassifizierbar, `Creation: Special` bewusst abgelehnt, keine widersprüchlichen Dauer-/Konzentrationsmerkmale. Dies ist kein Dart-Lauf.
-- **NICHT GETESTET:** Neue Dart-Testgruppen, Dart-Format, Flutter-Analyse/-Tests, Android-APKs, vollständige Python-/Backend-Kette und Geräteprüfung bis zum nachgewiesenen GitHub-Actions-Ergebnis.
+- **GETESTET – CI-Nachtrag:** Auf Codecommit `1082061990fae7ec4e41e96d9c70bd908d867263` sind in [Actions #40218067128](https://github.com/ManuEtt/Dnd/actions/runs/40218067128) Python-Strukturprüfung, Backend-Typecheck/-Build/-Tests, Dart-Format, Flutter-Analyse, gezielte Dialogtests und vollständiger Flutter-Testlauf erfolgreich abgeschlossen. Der Android-Build war bei diesem Nachtrag noch in Bearbeitung.
+- **NICHT GETESTET:** Android-APK, native Android-Tests, Realgerät und produktive Signierung bis zum jeweiligen tatsächlich erfolgreichen Nachweis.
 - **BLOCKIERT:** Flutter-/Dart-/Android-SDK lokal nicht verfügbar; PR #176 berührt gemeinsame README/CODEX_CHECKPOINT-Dateien und wird nicht überschrieben. Konsolidierung beim Merge durch Chat D.
 - **NOCH NICHT IMPLEMENTIERT:** Tatsächlicher Spielzeitfortschritt, Ablauf von Zauberzuständen, besondere Einzelzauberbedingungen, amtliche Vollinventur.
 - **NÄCHSTER SCHRITT:** Nach Integration und konfliktfreier Prüfung genau eine konkrete, bestätigte Zeitdauer-Wirkung mit persistiertem Zustandsablauf und Wiederholungs-/Neustart-Tests anbinden.
