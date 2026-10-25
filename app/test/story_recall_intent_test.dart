@@ -62,8 +62,8 @@ void main() {
   test('a diary interaction remains a player turn, not a recalled memory', () {
     final campaign = _campaign();
     final original = jsonEncode(campaign.toJson());
-    final update = GameEngine(clock: () => DateTime.utc(2026, 10, 25))
-        .act(campaign, 'Ich lese das Tagebuch am Feuer.');
+    final engine = GameEngine(clock: () => DateTime.utc(2026, 10, 25));
+    final update = engine.act(campaign, 'Ich lese das Tagebuch am Feuer.');
 
     expect(update.events, hasLength(1));
     expect(update.events.single.type, isNot('memory.recalled'));
@@ -73,8 +73,8 @@ void main() {
 
   test('explicit memory question still uses confirmed facts', () {
     final campaign = _campaign();
-    final update = GameEngine(clock: () => DateTime.utc(2026, 10, 25))
-        .act(campaign, 'Was weißt du über Mira?');
+    final engine = GameEngine(clock: () => DateTime.utc(2026, 10, 25));
+    final update = engine.act(campaign, 'Was weißt du über Mira?');
 
     expect(update.events.single.type, 'memory.recalled');
     expect(update.narration, contains('Mira bewacht das Stadttor.'));
