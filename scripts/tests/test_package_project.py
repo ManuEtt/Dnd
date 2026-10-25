@@ -111,6 +111,35 @@ class ProjectArchiveTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'symlinked directories'):
             packaging.create_archive(self.root, self.base / 'bad.zip')
 
+    def test_mixed_case_secrets_and_cache_directories_are_excluded(self):
+        # A ZIP generated on Linux must not leak names supplied by a
+        # case-insensitive filesystem or imported with mixed casing.
+        secrets = [
+            '.ENV', 'backend/.Env.production', 'backend/.NPMRC',
+            'credentials.JSON', 'signing.JKS', 'app/backup.DB-WAL',
+            'app/backup.db-ShM', 'app/backup.db-JOURNAL',
+            'NODE_MODULES/sensitive.txt', 'Build/private.txt',
+            '.GIT/config', 'app/.DART_TOOL/secrets.json',
+        ]
+        for name in secrets:
+            path = self.root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text('must not export', encoding='utf-8')
+
+        # Public samples and ordinary case-preserved assets remain valid.
+        allowed = ['backend/.ENV.EXAMPLE', 'app/assets/FantasyArt.PNG']
+        for name in allowed:
+            path = self.root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text('safe to export', encoding='utf-8')
+        output = self.base / 'mixed-case.zip'
+        count, _ = packaging.create_archive(self.root, output, layout='root')
+        with zipfile.ZipFile(output) as archive:
+            self.assertEqual(set(archive.namelist()),
+                             packaging.REQUIRED_FILES | set(allowed))
+            self.assertIsNone(archive.testzip())
+        self.assertEqual(count, len(packaging.REQUIRED_FILES) + len(allowed))
+
     def test_invalid_layout_cannot_create_an_ambiguous_archive(self):
         with self.assertRaisesRegex(ValueError, 'layout'):
             packaging.create_archive(self.root, self.base / 'bad.zip', layout='nested')
