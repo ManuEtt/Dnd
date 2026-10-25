@@ -241,4 +241,83 @@ void main() {
     expect(loaded.toJson(), initialJson);
     expect(loaded.encounter!.reactionUsed, isFalse);
   });
+
+  test('gültiges Angebot ist erneut prüfbar und verändert keine Daten', () {
+    final campaign = _campaign();
+    final trigger = _trigger();
+    final before = campaign.toJson();
+    final offer = SrdOpportunityAttackRules.prepare(campaign, trigger);
+
+    final checked = SrdOpportunityAttackRules.revalidate(
+      campaign,
+      trigger,
+      offer,
+    );
+    expect(checked.encounterId, offer.encounterId);
+    expect(checked.revision, offer.revision);
+    expect(checked.weaponId, offer.weaponId);
+    expect(checked.beforeDistanceFeet, offer.beforeDistanceFeet);
+    expect(checked.afterDistanceFeet, offer.afterDistanceFeet);
+    expect(checked.reachFeet, offer.reachFeet);
+    expect(campaign.toJson(), before);
+    expect(campaign.encounter!.reactionUsed, isFalse);
+  });
+
+  test('revisionsveraltete und vertauschte Bewegungsangebote scheitern', () {
+    final campaign = _campaign();
+    final trigger = _trigger();
+    final offer = SrdOpportunityAttackRules.prepare(campaign, trigger);
+
+    expect(
+      () => SrdOpportunityAttackRules.revalidate(
+        campaign.copyWith(revision: campaign.revision + 1),
+        trigger,
+        offer,
+      ),
+      throwsFormatException,
+    );
+    for (final altered in [
+      _trigger(before: 4),
+      _trigger(after: 15),
+      _trigger(reach: 10),
+      _trigger(encounterId: 'anderer-gegner'),
+      _trigger(strike: OpportunityStrike.unarmedStrike, weaponId: ''),
+      _trigger(weaponId: 'bow'),
+    ]) {
+      expect(
+        () => SrdOpportunityAttackRules.revalidate(
+          campaign,
+          altered,
+          offer,
+        ),
+        throwsFormatException,
+      );
+    }
+  });
+
+  test('Reaktionsverbrauch und Waffenwechsel entwerten ein Angebot', () {
+    final campaign = _campaign();
+    final trigger = _trigger();
+    final offer = SrdOpportunityAttackRules.prepare(campaign, trigger);
+
+    final consumed = campaign.copyWith(
+      encounter: campaign.encounter!.copyWith(reactionUsed: true),
+    );
+    expect(
+      () => SrdOpportunityAttackRules.revalidate(consumed, trigger, offer),
+      throwsFormatException,
+    );
+
+    final changedWeapon = campaign.copyWith(
+      hero: campaign.hero.copyWith(equippedWeaponId: 'bow'),
+    );
+    expect(
+      () => SrdOpportunityAttackRules.revalidate(
+        changedWeapon,
+        trigger,
+        offer,
+      ),
+      throwsFormatException,
+    );
+  });
 }
