@@ -60,3 +60,12 @@ Weitere offene Bereiche: vollständige amtliche Quelleninventur, zahlreiche Zaub
 Vollprojekt-ZIP, Patch und Prüfsummen unter `/workspace/artifacts/0.8.40+90/`; aktuelle Dateinamen im dortigen Artefaktindex nach Abschluss. Patchbasis dieses Pakets: `407c2e1ef8ee310b30d1543a263fb66b3331a26e`. ZIP in eine Arbeitskopie entpacken oder Patch mit `git apply --check`/`git apply` auf dieser Basis übernehmen, eigenen Branch pushen und PR öffnen. Keine alten Dateistände ungeprüft über Main kopieren.
 
 Nur rechtmäßig verwendbare Inhalte des **SRD 5.2.1 von Wizards of the Coast unter CC BY 4.0** sowie eigene/lizenzierte Inhalte nutzen. [Namensnennung](THIRD_PARTY_NOTICES.md) erhalten. Keine automatische Weiterarbeit außerhalb einer aktiven Sitzung.
+
+
+---
+
+## Chat B: bestätigte NPC-Kontinuität über Sitzungen (25.10.2026 – PR-Prüfung)
+
+Branch `feat/chat-b/npc-continuity-20261025` ergänzt eine eigenständige, **nur lesende** `NpcContinuityReader`-Projektion im Story-Modul. Sie liefert für eine eindeutig bekannte NPC-ID den bestätigten Lebens- und Beziehungsstatus sowie bis zu 20 protokollierte Beziehungsnotizen (standardmäßig fünf) zeitlich absteigend und deterministisch. Fremde NPC-Notizen, freie Erzähltexte und Dialoge werden nicht als bestätigte Erinnerungen behandelt; unbekannte IDs und ungültige Limits werden abgewiesen. Alte JSON-Spielstände bleiben kompatibel; Regeln, Quests, Inventar und SQLite werden nicht verändert.
+
+Sechs neue Flutter-Regressionstests wurden geschrieben. GitHub-CI und APK-Abnahme gelten erst nach tatsächlich erfolgreichem Workflow auf dem finalen PR-HEAD als nachgewiesen. Die API ist über `app/lib/story/story_api.dart` verfügbar, **noch nicht automatisch an einen KI-Provider angeschlossen**. Weitere Details: [isolierter Chat-B-Checkpoint](docs/parallel/CHAT_B_NPC_CONTINUITY_20261025.md). Parallele gemeinsame Dokumentationsänderungen bei der Integration mit Chat D abstimmen.
