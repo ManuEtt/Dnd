@@ -76,3 +76,18 @@ Nach Abnahme dieses Pakets: eigener Reaktionsangriff auf dem gespeicherten Angeb
 ## Sicherung und Wiederaufnahme
 
 Geprüfte Main-Basis zusätzlich als ZIP/Patch unter `/workspace/artifacts/main-407c2e1-20261025/` gesichert. Neuer Quellcheckpoint nach diesem Update unter `/workspace/artifacts/0.8.40+90/`; Dateimanifest und tatsächlich gegen `407c2e1ef8ee310b30d1543a263fb66b3331a26e` angewandter Patch. Vor endgültigem Abschluss neue Ergebnisse und PR/Commit eintragen. Historische lokale Worktrees/Item-Entwürfe erhalten. Keine automatische Fortsetzung außerhalb aktiver Sitzung.
+
+
+---
+
+## Chat B – Mock-Erzähler übernimmt NPC-Tagebucheinträge (25.10.2026)
+
+- **Basis:** `main` `af70a48c84d83c133ced4200be04ca81a91abf1b`, Branch `feat/chat-b/mock-npc-recall-20261025`.
+- **IMPLEMENTIERT:** `backend/src/mock_npc_memory.ts` identifiziert formell markierte, einem im aktuellen Spielertext erwähnten und eindeutig benannten NPC zugeordnete Tagebuchnotizen. `backend/src/story.ts` fügt einen Unicode-sicheren, bis 160 Codepunkte begrenzten Hinweis in `mockStoryTurn` ein; vorheriger generischer Ablauf bleibt bei fehlendem Treffer identisch.
+- **TESTS GESCHRIEBEN:** sechs positive und negative Backendtests in `backend/test/mock-npc-memory.test.ts`; exakte Namensgrenzen, Ambiguität, alte/missing Notizen, Unicode, unveränderte mechanische Felder.
+- **GETESTET:** Github-Live-`main`, offene PRs und geänderte Fachdateipfade kontrolliert; die vorherige Chat-B-CI #40222745973 war grün für **einen anderen**, nicht gemergten Commit aus PR #187.
+- **NICHT GETESTET:** Neues Paket per finaler CI (`npm`, Flutter, Android) zum Zeitpunkt der Änderung; reale Installation und echter Provider.
+- **BLOCKIERT:** Keine lokale Abnahme über angeschlossenes Flutter-SDK. README-/Checkpoint-Dokumentation vor Integration mit Chat D konsolidieren.
+- **AUSWIRKUNGEN:** Keine DB-/JSON-/Version-Migration. Alle Request-Erinnerungen bleiben untrusted; Mock-Satz begründet niemals bestätigte Spielmechanik.
+- **NÄCHSTER SCHRITT:** Bei gleicher sichtbarer NPC-Namensform nur über lokal bestätigte IDs unterscheiden, ohne mechanischen Regelzustand oder freie KI-Behauptungen zu übernehmen.
+- **Statusdatei:** `docs/parallel/CHAT_B_MOCK_NPC_RECALL_20261025.md`.
