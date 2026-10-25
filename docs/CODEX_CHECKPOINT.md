@@ -14,6 +14,23 @@
 
 **CI-Nachweis und letzter Main-Abgleich:** PR [#178](https://github.com/ManuEtt/Dnd/pull/178) bestand [Actions #40219700324](https://github.com/ManuEtt/Dnd/actions/runs/40219700324) vollständig auf `907d665a38db150684d290314120765d8d651eb4` (Flutter/Python/Backend, Architektur/SRD, Android-Debug/Alpha). Neuer `main` `af70a48c84d83c133ced4200be04ca81a91abf1b` mit Chat-D-Sicherheitsarbeiten übernommen; der neue Merge-Commit benötigt eigene Prüfung. Reale Geräteinstallation/TalkBack/Produktionssignierung offen.
 
+# Chat C – barrierefreier Abenteuerstatus (25.10.2026)
+
+- **Main-Basis:** initial `97a06118f17d71cc77be2cb15a2fc9a53db20ee0`, jetzt `45bea9c2a897275583bdbe32ed50afde5d0a76b0`; Branch `feat/chat-c/accessible-status-hud-20261025`.
+- **IMPLEMENTIERT:** Statuskarten reagieren ab 180 % auf schmale Android-Breiten mit Einspalten-Layout; Werte statt per `FittedBox` visuell geschrumpft zu werden als umbrechbarer Text; Screenreader benennt Trefferpunkte, Rüstungsklasse, Bewegung und EP sowie bestätigte HP-/XP-Prozentwerte. Unbekannte Werte bleiben unbekannt.
+- **GETESTET:** nach Korrektur der Dart-Formatierung bisher Python-Strukturtests, Architekturgrenzen, SRD-Abdeckung, Backend-Typecheck/-Build/-Tests, Dart-Format und Flutter-Analyse im Actions-Lauf [#40221062928](https://github.com/ManuEtt/Dnd/actions/runs/40221062928) erfolgreich; vollständige Flutter-/Android-Abnahme für diesen finalen Merge-Stand steht noch aus.
+- **NICHT GETESTET:** finaler GitHub-Workflow inklusive gesamter Flutter-Suite, Android-Debug-/Alpha-APKs, reales Smartphone, TalkBack auf einem Android-Gerät und produktive Signierung.
+- **BLOCKIERT:** keine SDKs für eine lokale Dart-/Flutter-Ausführung verfügbar; automatisierte CI ist für finale technische Abnahme vorgesehen.
+- **NOCH NICHT IMPLEMENTIERT:** keine Regel-/Controller-/Story-/Datenmodelländerung; keine JSON-/SQLite-Migration. App-Version `0.8.40+90` aus Main unverändert.
+- **Nächster eigenständiger Schritt:** Quest-Board-Beschriftungen bei 320 dp/200 % samt Screenreader prüfen; positives/negatives Widgettestpaar, keine Änderung an Questzuständen.
+- [Detaillierter persönlicher Checkpoint](parallel/CHAT_C_HUD_ACCESSIBILITY_20261025.md). Den historischen Verlauf anderer Chats unterhalb erhalten.
+
+---
+
+---
+
+**Nachgewiesene CI-Abnahme (historischer, vollständig bestandener Head):** [Actions #40222374831](https://github.com/ManuEtt/Dnd/actions/runs/40222374831) auf `91d007120e3a1a7b4beea9e91a7e8cffb2d831d8`, `completed/success`. Alle HUD-Regressionen, Flutter-Gesamtsuite, Backend, Python, Architektur/SRD, Android-Build und Artefakterzeugung bestanden. Hauptbranch wurde zwischenzeitlich durch Chat-D-PR #186 auf `af70a48c84d83c133ced4200be04ca81a91abf1b` erhöht; aktuelle gemeinsame CI für den neu synchronisierten Dokumentationsstand ist noch nicht abgenommen. Reales TalkBack und produktive Signierung nicht getestet.
+
 # Chat D D-004 – Gradle-Wrapper-JAR-Sicherheit (25.10.2026)
 
 - **Basis:** `main` `713b8cc2831f9d8039ef4e6ebf37c10682aec675` mit bereits integriertem D-003-PR #183; D-004-Branch `fix/chat-d/gradle-wrapper-jar-safety-20261025`.
