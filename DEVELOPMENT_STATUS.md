@@ -1,3 +1,14 @@
+## 25.10.2026 – PR #171 gemergt, eigenständige Main-CI läuft
+
+- **IMPLEMENTIERT:** Sämtliche Migrations-PR-Änderungen aus #171 mittels regulärem Merge nach `main` überführt, resultierender Commit `635773db33724f543d61bacde9a9ebe679b9b1e9`.
+- **GETESTET:** Finale [PR-CI #40192473811](https://github.com/ManuEtt/Dnd/actions/runs/40192473811) vollständig grün auf `255a5a0`. Alle 19 archivierten SHA-Köpfe und 19 Ancestry-Vergleiche live via GitHub geprüft.
+- **NICHT GETESTET:** Main-CI [#40193476536](https://github.com/ManuEtt/Dnd/actions/runs/40193476536) noch im Lauf, reales Android-Gerät und altes Gerätedaten-Upgrade.
+- **BLOCKIERT:** Exakte Remote-Branchlöschung über derzeitigen GitHub-Connector nicht verfügbar; keine ungesicherte Löschung versucht.
+- **NOCH NICHT IMPLEMENTIERT:** Abschließendes Schließen überholter gestapelter PRs nach Main-CI und SHA-Recheck. Vollständiges SRD weiterhin offen.
+- **Versionsstand:** 0.8.39+89, SQLite-Schema 2, Kampagnen-JSON 1 unverändert; Details [Checkpoint](docs/CODEX_CHECKPOINT.md).
+
+---
+
 ## 25.10.2026 – alle Branches integriert und lokal abgenommen
 
 Sending-W100-Validierung, Verbündetenbestätigung bei zulässigen Nebenhandangriffen, allgemeine Light-Nahkampfbonusangriffe, Schutz abgeschlossener Storyfäden, lokale und serverseitige ID-Kollisionssperren, Plot-Geheimnisschutz, Backend-Limiter und sichere Projektarchive sind vereinigt. Der bei der Integration gefundene Casefold-Fehler für generierte/Systemdateien ist mit Regressionstest behoben. Fehler beim ZIP-Schreiben oder Veröffentlichen der Prüfsumme bewahren das zuvor vorhandene Archiv; keine Zusage einer absturzübergreifend atomaren Dateipaar-Transaktion.
