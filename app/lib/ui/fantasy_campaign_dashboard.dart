@@ -177,7 +177,8 @@ class FantasyActiveHeroCard extends StatelessWidget {
                             key: const ValueKey('active-hero-metric-hp'),
                             label: 'Trefferpunkte',
                             value: _hitPoints,
-                            spokenValue: hero.hitPoints == null ||
+                            spokenValue:
+                                hero.hitPoints == null ||
                                     hero.maxHitPoints == null
                                 ? null
                                 : '${hero.hitPoints} von ${hero.maxHitPoints}',
