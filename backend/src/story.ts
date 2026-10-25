@@ -98,7 +98,18 @@ export function parseAdventureDraft(raw: unknown): AdventureDraft {
     questDescription: string(o.questDescription, 500) };
 }
 
+/**
+ * Untrusted requests cannot provide two conflicting versions of the same
+ * saved thread or NPC. Validate this before invoking a paid storyteller,
+ * and again when parsing any provider output outside the HTTP endpoint.
+ */
+export function validateStoryTurnContext(input: StoryTurnInput): void {
+  unique(input.threads.map(thread => thread.id));
+  unique(input.npcs.map(npc => npc.id));
+}
+
 export function parseStoryTurn(raw: unknown, input: StoryTurnInput): StoryTurn {
+  validateStoryTurnContext(input);
   const o = object(raw);
   const knownThreads = new Map(input.threads.map(x => [x.id, x.status]));
   const knownNpcs = new Set(input.npcs.map(x => x.id));

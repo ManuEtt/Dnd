@@ -1,3 +1,9 @@
+## 25.10.2026 – Doppelte Story-Kennungen vor Erzähleraufruf sperren (PR #167)
+
+Vor `/v1/story/advance` prüft `validateStoryTurnContext`, dass gespeicherte Story-Threads und NPCs jeweils **eindeutige IDs** besitzen. Verstößt der Request dagegen, gibt der Server einen generischen `400 invalid_request` zurück, **ohne** `narrator.advanceStory` aufzurufen. Das verhindert unklare Thread-Status-/NPC-Zuordnungen und unnötige mögliche KI-Kosten. Auch der direkte `parseStoryTurn`-Pfad führt den Check aus; beide Kategorien bilden separate ID-Namespaces. Kein API-Schemaformat, keine Android-/SQLite-Änderung. [Beleg](../docs/STORY_CONTEXT_DUPLICATE_IDS_20261025.md), [PR #167](https://github.com/ManuEtt/Dnd/pull/167).
+
+---
+
 ## Gemeinsame Backend-Integration – PRs #161–#163 (24.10.2026)
 
 Der Integrationsbranch übernimmt die einzeln grün geprüften Story- und Sicherheitspakete: keine unbestätigte Rücknahme abgeschlossener Erzählstränge, kein Verdrängen aktiver Ratelimitkontingente und Abweisung vollständiger wörtlicher Plot-Geheimnis-Lecks aus öffentlich sichtbaren Erzählantworten. Die finale kombinierte Backend- und Android-CI ist ein gesonderter Abnahmeschritt. Unverändert: lokale Spielzustandsautorität, API-Verträge und Kostenfreigabe. Weiterhin nicht garantiert: verteilter Schutz mehrerer Backendinstanzen und Erkennung sinngemäßer Plot-Paraphrasen.

@@ -118,5 +118,65 @@
     "path": "docs/history/sneak_before_main_20261024/VALIDATION_0_8_37_20261024.md",
     "archive_path": "docs/history/branch_migration_20261025/legacy_d54f554/docs/history/sneak_before_main_20261024/VALIDATION_0_8_37_20261024.md",
     "sha256": "021b365fa5b13dad759c6bf76762a1a77f801dc1c31a239eff55bbe0fab7f2a1"
+  },
+  {
+    "source": "migration_before169",
+    "path": "CHANGELOG.md",
+    "archive_path": "docs/history/branch_migration_20261025/migration_before169/CHANGELOG.md",
+    "sha256": "683fe51b5e1b0189e920c4831d7512c69d6c5f0bba3433b3d0b7715c85d90b55"
+  },
+  {
+    "source": "story169",
+    "path": "CHANGELOG.md",
+    "archive_path": "docs/history/branch_migration_20261025/story169/CHANGELOG.md",
+    "sha256": "223e518ab689f1c20b3220aab6aacd16c19f8d6b1f255b3fd815e9cd7bd9acc1"
+  },
+  {
+    "source": "migration_before169",
+    "path": "DEVELOPMENT_STATUS.md",
+    "archive_path": "docs/history/branch_migration_20261025/migration_before169/DEVELOPMENT_STATUS.md",
+    "sha256": "0af7e42710d7066784cb9effebac8aa646025a79a9e9420962013845a4705272"
+  },
+  {
+    "source": "story169",
+    "path": "DEVELOPMENT_STATUS.md",
+    "archive_path": "docs/history/branch_migration_20261025/story169/DEVELOPMENT_STATUS.md",
+    "sha256": "4751f8a6d80d53d9262a23c1176626f788c8d6a5fe0c0b8dd803ae21d5ad02f3"
+  },
+  {
+    "source": "migration_before169",
+    "path": "README.md",
+    "archive_path": "docs/history/branch_migration_20261025/migration_before169/README.md",
+    "sha256": "078938498a5b4f07f435b419b611a5f9e8274d3fe5aaa8d1346a7e785c4b046a"
+  },
+  {
+    "source": "story169",
+    "path": "README.md",
+    "archive_path": "docs/history/branch_migration_20261025/story169/README.md",
+    "sha256": "2ded0c81bd2afe4b9afebc4f122fad0cfd9126246c4db618dbeb6ff7a50930b0"
+  },
+  {
+    "source": "migration_before169",
+    "path": "ROADMAP.md",
+    "archive_path": "docs/history/branch_migration_20261025/migration_before169/ROADMAP.md",
+    "sha256": "ab4e1e43180bed95620d19c220383d9913ce115d9c1db0f36df280c22aba775e"
+  },
+  {
+    "source": "story169",
+    "path": "ROADMAP.md",
+    "archive_path": "docs/history/branch_migration_20261025/story169/ROADMAP.md",
+    "sha256": "3974c6282c83bb40c3f4d8fa2dcf78ed66788b98bc82461817079b7dcb0f4d8f"
+  },
+  {
+    "source": "migration_before169",
+    "path": "docs/CODEX_CHECKPOINT.md",
+    "archive_path": "docs/history/branch_migration_20261025/migration_before169/docs/CODEX_CHECKPOINT.md",
+    "sha256": "06747807634f08340242918ed142d8dd4cf7fc8a137b8da3cfef6307b8bd13fa"
+  },
+  {
+    "source": "story169",
+    "path": "docs/CODEX_CHECKPOINT.md",
+    "archive_path": "docs/history/branch_migration_20261025/story169/docs/CODEX_CHECKPOINT.md",
+    "sha256": "52cc5d398b963cd174617f80c6e2dffb510b954e0a35f03b531c5792dceb8fb9"
   }
 ]

@@ -3,7 +3,7 @@ import type { Config } from './config.js';
 import { bearerToken, issueSession, secureEqual, verifySession } from './auth.js';
 import { WindowLimiter } from './limits.js';
 import { createNarrator, type NarrationInput, type Narrator } from './providers.js';
-import { parseStoryPlan, parseStoryTurn, type StoryStartInput, type StoryTurnInput } from './story.js';
+import { parseStoryPlan, parseStoryTurn, validateStoryTurnContext, type StoryStartInput, type StoryTurnInput } from './story.js';
 import { guardStoryPlanSecrets, guardStoryTurnSecrets } from './story_secret_guard.js';
 
 interface AppDependencies {
@@ -138,6 +138,10 @@ export function buildApp(config: Config, dependencies: AppDependencies = {}) {
         recentActions: { type: 'array', maxItems: 8, items: nonBlankString(2000) },
       } } }, preHandler: storyRateLimit,
   }, async (request, reply) => {
+    // Reject ambiguous saved identifiers before making a potentially paid
+    // provider call. A provider failure is 502; bad input is always 400.
+    try { validateStoryTurnContext(request.body); }
+    catch { return reply.code(400).send({ error: 'invalid_request', message: 'Die Kampagnendaten sind ungültig.' }); }
     if (!narrator.advanceStory) return reply.code(503).send({ error: 'story_unavailable' });
     try { return { provider: config.provider, stateChanges: [], turn: guardStoryTurnSecrets(parseStoryTurn(await narrator.advanceStory(request.body), request.body), request.body.secret) }; }
     catch { return reply.code(502).send({ error: 'provider_unavailable' }); }
