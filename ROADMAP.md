@@ -1,3 +1,9 @@
+## Aktuell 25.10.2026 – Light-Nahkampfbonus
+
+Allgemeine leichte Bonusaktion mit eigener Attributs-/Übungsbestätigung wird abgenommen. Danach Light-Fernkampf/Munition und Nick getrennt behandeln; vorher Main-/PR-Integrationslage neu prüfen. Prüfungen und Wiederaufnahme: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md). Ältere Reihenfolge unten ist historisch.
+
+---
+
 ## Finaler Testnachweis PR #160 – 24.10.2026
 
 **Vollständige GitHub-CI [#40099238901](https://github.com/ManuEtt/Dnd/actions/runs/40099238901): completed/success** auf geprüftem PR-HEAD `5563c60ba0dbbd1f12a19877f62581a51485b6d9` (24.10.2026). **1.514 Flutter-, 100 Python- und 31 Backend-Tests bestanden**; Dart-Formatierung 357 Dateien ohne Änderungen, Flutter-Analyse und Backend-Typecheck/Build erfolgreich. Android-Debug-APK, native Gradle-Tests und ARM64/ARMv7/x64-Alpha-APKs erfolgreich; letzte Artefaktschritte abgeschlossen. Ein echter Android-Gerätetest, ein Altspielstand-Upgrade und produktive Signierung fehlen weiterhin. Dieser Nachtrag berichtet die nach dem damaligen Vorab-Checkpoint eingetroffene finale Abnahme.

@@ -14,6 +14,7 @@ import 'cover_rules.dart';
 import 'enemy_force_defense.dart';
 import 'sneak_attack_ally_rules.dart';
 import 'rules_engine.dart';
+import 'two_weapon_fighting_rules.dart';
 
 /// Versioned, provider-independent game data. Unknown historical values stay null.
 const abilityNames = <String>[
@@ -1179,6 +1180,9 @@ class PendingRoll {
     this.advantage = false,
     this.disadvantage = false,
     this.sneakAttackAlly,
+    this.offhandAttackAbility,
+    this.offhandWeaponProficient,
+    this.offhandWeaponsHeldConfirmed,
   });
   final String id, type, targetId, targetName, weaponId, expression;
   final int modifier, difficulty;
@@ -1188,6 +1192,11 @@ class PendingRoll {
   final int minimumNatural;
   final bool advantage, disadvantage;
   final SneakAttackAllyConfirmation? sneakAttackAlly;
+
+  /// Explicit per-weapon facts for new Light bonus attacks. All absent means
+  /// the legacy Fighter-style request; never infer new proficiency from text.
+  final String? offhandAttackAbility;
+  final bool? offhandWeaponProficient, offhandWeaponsHeldConfirmed;
   Map<String, dynamic> toJson() => {
     'id': id,
     'type': type,
@@ -1203,6 +1212,12 @@ class PendingRoll {
     if (advantage) 'advantage': true,
     if (disadvantage) 'disadvantage': true,
     if (sneakAttackAlly != null) 'sneakAttackAlly': sneakAttackAlly!.toJson(),
+    if (offhandAttackAbility != null)
+      'offhandAttackAbility': offhandAttackAbility,
+    if (offhandWeaponProficient != null)
+      'offhandWeaponProficient': offhandWeaponProficient,
+    if (offhandWeaponsHeldConfirmed != null)
+      'offhandWeaponsHeldConfirmed': offhandWeaponsHeldConfirmed,
   };
   factory PendingRoll.fromJson(Map<String, dynamic> j) {
     final type = _string(j['type'], 'Probeart');
@@ -1235,6 +1250,18 @@ class PendingRoll {
     if ((type == 'offhandAttack') != weaponId.isNotEmpty) {
       throw const FormatException('Ungültige Nebenhand-Angriffsanweisung.');
     }
+    final attackAbility = j['offhandAttackAbility'];
+    final proficient = j['offhandWeaponProficient'];
+    final held = j['offhandWeaponsHeldConfirmed'];
+    if ((attackAbility != null || proficient != null || held != null) &&
+        (type != 'offhandAttack' ||
+            (attackAbility != 'strength' && attackAbility != 'dexterity') ||
+            proficient is! bool ||
+            held != true)) {
+      throw const FormatException(
+        'Unvollständige Nebenhand-Waffenbestätigung.',
+      );
+    }
     final deathVersion = _int(
       j['deathSaveRulesVersion'],
       'Todesrettungsregelversion',
@@ -1255,6 +1282,9 @@ class PendingRoll {
       throw const FormatException('Unzulässige Todesrettungsanweisung.');
     }
     return PendingRoll(
+      offhandAttackAbility: attackAbility as String?,
+      offhandWeaponProficient: proficient as bool?,
+      offhandWeaponsHeldConfirmed: held as bool?,
       sneakAttackAlly: j['sneakAttackAlly'] == null
           ? null
           : SneakAttackAllyConfirmation.fromJson(
@@ -2316,26 +2346,21 @@ class Campaign {
       final exhaustion = ExhaustionRules.d20Modifier(hero);
       final expected = switch (pending.type) {
         'offhandAttack' => () {
-          final candidates = hero.inventory.where(
-            (item) => item.id == pending.weaponId && item.quantity > 0,
+          final weapon = TwoWeaponFightingRules.confirmedOffhand(
+            hero,
+            pending.weaponId,
           );
-          if (candidates.length != 1) {
-            throw const FormatException('Nebenhandwaffe nicht eindeutig.');
-          }
-          final weapon = SrdEquipmentCatalog.byId(candidates.single.catalogId);
-          if (weapon == null ||
-              !weapon.hasProperty('light') ||
-              (weapon.category != EquipmentCategory.simpleMelee &&
-                  weapon.category != EquipmentCategory.martialMelee)) {
+          if (weapon == null) {
             throw const FormatException(
               'Keine bestätigte leichte Nebenhandwaffe.',
             );
           }
-          final ability =
-              weapon.hasProperty('finesse') && hero.weaponAbility == 'dexterity'
-              ? 'dexterity'
-              : 'strength';
-          return modifier(ability) + prof + exhaustion;
+          return TwoWeaponFightingRules.attackBonus(
+            hero,
+            weapon,
+            attackAbility: pending.offhandAttackAbility,
+            proficient: pending.offhandWeaponProficient,
+          );
         }(),
         'attack' => RulesEngine.attackBonus(hero),
         'perception' =>
@@ -2432,25 +2457,20 @@ class Campaign {
         );
       }
       if (pending.type == 'offhandAttack') {
-        final primary = hero.inventory.where(
-          (item) => item.id == hero.equippedWeaponId && item.quantity > 0,
-        );
-        final mainWeapon = primary.length == 1
-            ? SrdEquipmentCatalog.byId(primary.single.catalogId)
-            : null;
-        if (!hero.features.contains('Kampfstil: Kampf mit zwei Waffen') ||
-            ClassResourceRules.level(hero, 'Kämpfer') < 1 ||
-            hero.equippedShieldId.isNotEmpty ||
+        final legacy = pending.offhandAttackAbility == null;
+        if ((legacy && !TwoWeaponFightingRules.getStyle(hero)) ||
+            !TwoWeaponFightingRules.eligiblePrimary(hero) ||
             pending.weaponId == hero.equippedWeaponId ||
-            (mainWeapon == null ||
-                !mainWeapon.hasProperty('light') ||
-                (mainWeapon.category != EquipmentCategory.simpleMelee &&
-                    mainWeapon.category != EquipmentCategory.martialMelee)) ||
+            hero.hitPoints == null ||
+            hero.hitPoints! <= 0 ||
+            hero.isDead ||
+            !ConditionRules.canTakeActions(hero) ||
             encounter == null ||
             encounter.isFinished ||
             encounter.activeParticipant != 'hero' ||
             !encounter.actionUsed ||
             encounter.attacksRemaining != 0 ||
+            encounter.surgeReserved ||
             !encounter.bonusActionUsed ||
             !encounter.lightAttackAvailable) {
           throw const FormatException('Unzulässiger offener Nebenhandangriff.');

@@ -1,112 +1,33 @@
-# CODEX-CHECKPOINT – Würfelraunen
+# CODEX-CHECKPOINT – aktiver Light-Regelzyklus
 
-## Aktualisierte CI-Abnahme und PR-Übergabe – 24.10.2026 (MESZ)
+Stand 2026-10-25T06:30:16+00:00. Version **0.8.39+89**, Branch `feature/light-weapon-bonus-attack-20261024`. Arbeitsverzeichnis `/workspace/Dnd-offhand-ally-20261024`.
 
-**Vollständige GitHub-CI [#40099238901](https://github.com/ManuEtt/Dnd/actions/runs/40099238901): completed/success** auf geprüftem PR-HEAD `5563c60ba0dbbd1f12a19877f62581a51485b6d9` (24.10.2026). **1.514 Flutter-, 100 Python- und 31 Backend-Tests bestanden**; Dart-Formatierung 357 Dateien ohne Änderungen, Flutter-Analyse und Backend-Typecheck/Build erfolgreich. Android-Debug-APK, native Gradle-Tests und ARM64/ARMv7/x64-Alpha-APKs erfolgreich; letzte Artefaktschritte abgeschlossen. Ein echter Android-Gerätetest, ein Altspielstand-Upgrade und produktive Signierung fehlen weiterhin. Dieser Nachtrag berichtet die nach dem damaligen Vorab-Checkpoint eingetroffene finale Abnahme.
+## Basis und Abhängigkeiten
 
-[Alpha-APKs](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562551949) · [Debug-APK](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12561909697) · [Alpha-Release](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562517123) · [Quellcode-Checkpoint](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562163517). Die SHA256-Digests der GitHub-Artefaktarchive sind **nicht** automatisch Einzel-APK-Prüfsummen.
+Main b60ffe7ff1aae502ea927cb77153b988be33e397 (PR158 integriert), Main-CI40094794864 vollständig erfolgreich. PR159 Sending-W100 separat grün; PR160 Nebenhand-Verbündeter bereits vorhanden, wird nicht dupliziert. Neues Paket baut auf dessen HEAD **6f2ebbc893fb5ee053d069410a103a102662aa4d** auf. Zunächst gestapelter PR gegen `feature/sneak-attack-offhand-ally-20261024`, nach deren Integration auf main umstellen. Keine direkten Mainänderungen/Force-Pushes. Historie vollständig unter docs/history/pr160_0.8.38_20261024/.
 
-**Branch/PR:** `feature/sneak-attack-offhand-ally-20261024`, [PR #160](https://github.com/ManuEtt/Dnd/pull/160), Ausgangs-main `b60ffe7`. Ausführbarer Code-Commit `afa5b7b0709075447a174d1e39b880e0726ada07` separat durch [CI #40098917971](https://github.com/ManuEtt/Dnd/actions/runs/40098917971) erfolgreich getestet; vollständiger Dokumentations-/Code-HEAD `5563c60` nochmals in #40099238901 erfolgreich. Nachtrag nur an Quellen- und Statusdateien. Vor Release eine **neue** CI des endgültigen Nachtrags-HEAD prüfen; vorherige grüne CI bleibt Beleg für unveränderte ausführbare Quelldateien. Version `0.8.38+88`, SQLite 2/Export-JSON 1 unverändert, SRD-Anforderung bleibt `partial`.
+## IMPLEMENTIERT (Arbeitsstand)
 
-**Statusklassen:** IMPLEMENTIERT: bestätigter Nebenhand-Verbündeter und JSON-/SQLite-/UI-Grenzen. GETESTET: vollständige GitHub-CI #40099238901 samt Android und 1.514 Fluttertests. NICHT GETESTET: echter Geräteeinsatz, historische Update-Installation, produktive Signierung. BLOCKIERT: fehlendes lokales Flutter/Dart-SDK und reales Android-Testgerät. NOCH NICHT IMPLEMENTIERT: allgemeine Positions- und Gelegenheitsangriffssystematik sowie vollständige SRD-5.2.1-Automatisierung.
-
-**Nächster konkreter Schritt:** Nach dem durch diese Dokumentationsaktualisierung ausgelösten finalen PR-Check den PR #160 reviewen, mit dann aktuellem `main` konfliktfrei integrieren, Main-CI erneut kontrollieren. Keine direkte oder automatische Merge-Aktion in diesem Zyklus.
-
----
-
-
-## Aktueller Inkrementstand 24.10.2026 (MESZ) – Nebenhand-Verbündetenbestätigung
-
-- **Produkt:** Würfelraunen – Der lebendige Spielleiter, App `0.8.38+88`; SQLite 2, Export-JSON 1; keinerlei Migration.
-- **Live-Basis:** `main` `b60ffe7ff1aae502ea927cb77153b988be33e397`. PR #158 integriert. **Offene PRs bei Abgleich:** [#159](https://github.com/ManuEtt/Dnd/pull/159) (Sending-W100, grün und reviewbereit), [#160](https://github.com/ManuEtt/Dnd/pull/160) (dieses Inkrement, Draft bis CI). Arbeitsbranch `feature/sneak-attack-offhand-ally-20261024`; Kopf und neue Commit-SHAs jederzeit am PR prüfen. Kein direkter main-Push, kein Force-Push.
-- **Anforderung:** `CLASS-SCHURKE-1-BASE-SNEAK-ATTACK-1` **partial**, Wizards of the Coast SRD 5.2.1 Rogue/Sneak Attack S. 61–62 (CC BY 4.0). Kein Gesamtprozentsatz aus den 1.419 Inventurpunkten abgeleitet.
-
-### IMPLEMENTIERT
-
-`app/lib/domain/sneak_attack_ally_rules.dart`: Für `offhandAttack` nur zugelassene laufende Zweiwaffen-Bonusaktion und tatsächlich bestätigte Inventarwaffe akzeptieren. Vor Freigabe Held/Ziel/Zug, ungenutzten Sneak Attack, Finesse-/Fernkampfwaffe, kein Netto-Nachteil, beide manuell bestätigten Verbündetenfakten prüfen. Die beiden Fakten bleiben an Kampagnen-, Ziel- und ausstehende Wurf-ID gebunden.
-
-`app/lib/domain/models.dart`: bestehendes `SneakAttackAllyConfirmation`-Schema 1 für Haupt- **oder** Nebenhand-Waffenangriff validieren; kein neues Spielstandsformat. `app/lib/domain/game_engine.dart`: bestehende Bestätigungsmeldung allgemein auf erlaubte Waffenangriffe erweitern. `app/lib/ui/app.dart`: bestätigten Verbündeten auch bei offenem Nebenhandwurf mit Entfernungsaktion anzeigen. Controller/Regelwürfel bleiben unverändert. KI-/Story-Importgrenze und externe Erzähldienste unverändert.
-
-**Neu:** `app/test/sneak_attack_offhand_ally_test.dart` mit Treffer/Krit/Miss, ungültiger Nebenhandaxt, Nachteil, falschen/stale IDs, Wiederholung, SQLite-Reopen, JSON-Sicherung, doppelter Auflösung; `app/test/sneak_attack_ally_ui_test.dart` mit zwei Nebenhand-Widgets. Neues Quelldokument `docs/SRD_SNEAK_ATTACK_OFFHAND_ALLY_20261024.md` und Anforderungsmatrix im Status `partial` ergänzt.
-
-### GETESTET
-
-- Letzter vor diesem Inkrement vollständig grüner, **anderer** Code-Stand: [CI #40095802925](https://github.com/ManuEtt/Dnd/actions/runs/40095802925), SHA `15c1626057adb33f40d0acbe6e228f30f606d007`, PR #159. Auf `main` vorherige erfolgreiche [CI #40092582286](https://github.com/ManuEtt/Dnd/actions/runs/40092582286), SHA `dcb42c5`. Diese Läufe sind kein Nachweis für PR #160.
-- Erste PR-#160-Läufe scheiterten an Dart-Formatabweichung in drei Dateien. Temporärer Formatter-Diagnoseworkflow gab exakten Diff aus; dieser wurde auf Branch übernommen, und die GitHub-Workflow-Datei anschließend exakt auf `main` zurückgesetzt.
-- Diagnose-Lauf auf nicht finalem Quellstand: **1.513 Flutter-Tests bestanden, 1 neuer Test fehlgeschlagen**. Ursache war keine Regelabweichung, sondern ein vollständiger JSON-Gleichheitsvergleich, der vom erlaubten automatischen Katalog-Stat-Import betroffene Inventardaten einbezog. Testassertion nach Datenmodellprüfung auf identische offene Probe/Bestätigung präzisiert. Bereits erfolgreich: beide neuen UI-Tests.
-- Frischer kompletter Code-/CI-Erfolg und APK des **endgültigen** Branch-HEAD zum Zeitpunkt dieses Checkpoints **ausstehend**, siehe [PR #160 – Checks](https://github.com/ManuEtt/Dnd/pull/160/checks).
-
-### NICHT GETESTET
-
-Die korrigierte finale vollständige Flutter-Suite und Android-APK/native Tests bis zum erfolgreichen neuen CI-Lauf. Echter Android-Gerätetest, Upgrade eines historischen persönlichen Spielstands, produktive Release-Signierung. Neue ZIP-/APK-/Digest-Links für PR #160 erst nach sichtbaren GitHub-Artefakten ergänzen.
-
-### BLOCKIERT
-
-In dieser Sitzung lokal kein Flutter-/Dart-SDK und keine GitHub-DNS-Erreichbarkeit für einen vollen Checkout; die unabhängige GitHub-CI ist verfügbar. Kein reales Android-Gerät und keine produktive Signatur.
-
-### NOCH NICHT IMPLEMENTIERT
-
-Allgemeine Mehrakteur-Positionsverwaltung, Gelegenheitsangriffe, nicht unterstützte Waffenmeisterschaften und vollständige SRD-Abdeckung. Weder erzählerische Behauptungen noch KI-NPCs dürfen Regelzustand bestätigen.
-
-### NÄCHSTER KONKRETER SCHRITT – Definition of Done
-
-Den vollständigen **finalen** GitHub-CI-Lauf von [PR #160](https://github.com/ManuEtt/Dnd/pull/160/checks) auswerten, etwaige verbleibende Fehler beheben und nach grüner CI PR reviewbereit machen. Gates: `python3 scripts/verify_project.py`, `python3 scripts/check_domain_boundaries.py`, `python3 scripts/srd_coverage.py --json`, `python3 -m unittest discover -s scripts/tests -v`, Backend-Typecheck/Build/Tests, `dart format --output=none --set-exit-if-changed lib test`, `flutter analyze`, komplette `flutter test`, `flutter build apk --debug` und native Gradle-Tests. Vor Integration mit dem dann aktuellen main neu abgleichen; beide parallelen PRs nicht ohne Review mergen.
-
-### Änderungsprotokoll
-
-- 24.10.2026 (MESZ): Live-Bestand geprüft, zulässigen Nebenhand-Verbündetenpfad samt JSON/UI erweitert; deterministische Kampf-/SQLite-/Widgetregressionen ergänzt; Formatter- und Testassertionsfehler der Vorläufer-CI repariert; CI-Abnahme ausstehend. Kein Hintergrundlauf außerhalb dieser Sitzung.
-
----
-
-## Vorherige Übergabe (PR #158, inzwischen integriert)
-
-
-Stand **2026-10-24T12:20:50+00:00**, lokal vollständig abgenommenes Paket. Frühere operative Angaben vollständig in [Historie](history/main_0.8.37_20261024/CODEX_CHECKPOINT.md) erhalten. Vor Wiederaufnahme Live-Git/PR/CI erneut prüfen.
-
-## Git und Produkt
-
-- Produktversion **0.8.38+88**; Branch `fix/sneak-attack-offhand-weapon-20261024`.
-- Basis-main **dcb42c5efff40a757994d4f5b5f8e98b2ff128e9**, PR #157 bereits integriert, keine offenen PRs bei der Bestandsaufnahme.
-- Main-CI [40092582286](https://github.com/ManuEtt/Dnd/actions/runs/40092582286) auf dcb42c5: **success** zum Dokumentationszeitpunkt. Vorher vollständig grüner Main-Lauf [40084074765](https://github.com/ManuEtt/Dnd/actions/runs/40084074765) auf3b5affd. Kein Nachweis für neue Änderungen.
-- Früheres Paket PR #147 seit f99f27ac zusammengeführt; eigener integrierter Code a6a949c in CI40059091439 erfolgreich. Späterer Quellencheckpoint d54f554 mit ZIP/Patch separat erhalten; nicht über neueren Main kopiert.
-- Funktionaler Code **aa79ce593790e5763e9125743b0adeab55b581d5**, auf GitHub gesichert. [PR #158](https://github.com/ManuEtt/Dnd/pull/158) offen und gegen Basisdcb42c5 konfliktfrei. Eigene Code-CI40093220106 auf aa79ce5 gestartet; aktuelle finale Checks **live am [PR](https://github.com/ManuEtt/Dnd/pull/158/checks)** prüfen. Abschlussdokumentation verändert keinen ausführbaren Code; der finale Dokumentations-HEAD wird im externen Artefaktmanifest ausgewiesen. Main nicht direkt verändert.
-
-## IMPLEMENTIERT
-
-Hinterhältiger Angriff prüft bei bestehender Nebenhandauflösung `pendingRoll.weaponId` statt der angelegten Hauptwaffe. Der Helper erhält optional `attackingWeaponId`; alte Hauptwaffenaufrufe bleiben gültig. Eindeutiger vorhandener Inventareintrag mit positiver Menge erforderlich. Kein Rückfall auf Hauptwaffe bei explizit ungültiger Referenz.
-
-Beide gemischten Waffenrichtungen, zulässiger Zusatzschaden, Krit/Miss und bestehende einmalige Nutzung pro eigenem Zug sind angebunden. Die bisherige Abenteueraktion und deren Würfel-/Schadensjournal verwenden die Regel direkt; kein neuer Menüpfad. Die Änderung erfindet keinen Vorteil und erweitert weder Kampfstil-/Bonusaktionsvoraussetzungen noch die manuelle Verbündetenbestätigung auf Nebenhand.
-
-Dateien: class_combat_features.dart, game_engine.dart, pubspec.yaml, ein bestehender Helpertest und neue sneak_attack_weapon_context_test.dart, Regelregister und Statusdokumentation. SQLite2 und Kampagnen-JSON1 unverändert; keine Migration. Story/KI/Backend/Berechtigungen unverändert. Requirement `CLASS-SCHURKE-1-BASE-SNEAK-ATTACK-1` bleibt partial, SRD5.2.1 Rogue/Sneak Attack S.61–62, CC BY4.0.
+Light-Nahkampfbonus ohne Klassen-/Stilpflicht, getrennte Finesse-Attributwahl und ausdrücklich bestätigte Waffenübung. Positiver Schadensmodifikator nur mit bestehendem Two-Weapon-Fighting-Stil, negative Werte immer. Neue Engine-/Controller-Vorbereitung mit eigener Zug-/Aktions-/Waffen-/Bestätigungsprüfung. Optional gespeicherte PendingRoll-Felder offhandAttackAbility/offhandWeaponProficient/offhandWeaponsHeldConfirmed nur gemeinsam; alte Fighter-Stil-Proben ohne Zusatzfelder bleiben gültig. Vor jeder Nebenhandauflösung Importvertrag vor RNG prüfen. Abenteuerdialog/Button samt Zustimmung, Vorschau und Revisionsschutz implementiert und gezielt getestet. SRD5.2.1 Light S89/Fighting Style S88, CC BY4.0; nur Nahkampf, kein Nick oder freie Zusatzaktion.
 
 ## GETESTET
 
-- **27** bestehende Domain-/Kampf-/SQLite-/Widgetregressionen einschließlich zusätzlichem Waffenreferenztest erfolgreich.
-- **8** neue tatsächliche Kampf-/Speichertests erfolgreich: beide Waffenrichtungen, zulässiger/unzulässiger Krit, Miss, aufgehobener Vorteil, gemeinsame Nutzung und erneute Freigabe im nächsten Zug; JSON-Import/Export, SQLite schließen/öffnen, Controller-Auflösung, Ereignisrekonstruktion und doppelte Auflösung.
-- Neue Tests verwenden bereits bestätigten, normal importierten PendingRoll-Vorteil. Sie behaupten keinen neuen Vorteilsauslöser in der Oberfläche.
-- Flutter3.35.7/Dart3.9.2, Java17, Node22.14 lokal geprüft. Gezielter Dart-Formatter ohne Änderungen.
-- Protokolle: `/workspace/validation/20261024-offhand-existing-regressions.log`, `20261024-weapon-context-tests.log`. Gesamtlauf erfolgreich: **1505 Flutter-, 100 Python-, 31 Backend-Tests**, Typecheck/Build,356 Dateien ohne Formatänderung und Analyse ohne Befund; Backend-Protokolltest eingeschlossen. Log: `20261024-offhand-full-check.log`.
-- Android: neue Debug-APK und ARM64-Alpha aus validiertem Quell-ZIP gebaut; **12 native Tests**, 0 Fehler/übersprungen. CRC, aapt-Version/ABIs, Signatur und **474 identische ausführungsrelevante Quelldateien** zwischen ZIP, Buildkopie und Branch geprüft. Version 0.8.38/Build 88, minSdk24/targetSdk36; lokale Debug-Testsignatur, keine Gerätefreigabe.
-- Story-/Rules-Importgrenzen erfolgreich; Coverage 1.419 Prüfaufträge, 9 Inventurlücken, keine globale Quote.
+12 TwoWeaponFighting-Domain-/bisherige Kampfregressionen, 18 neue Kampf-/SQLite-Tests und 7 Widgettests erfolgreich; negative Schadenssummen mit Rage/Sneak und beide Waffenplätze geprüft. Ein kombinierter Lauf inklusive domain_rules_test und combat_class_actions_test hat55 Tests bestanden. 34 bestehende Sneak-/Speicher-/Widgetregressionen ebenfalls erfolgreich. Kampfrausch verwendet nun die tatsächliche Angriffswaffe und ihr Attribut. Negative Modifikatoren werden erst nach sämtlichen Klassenboni auf insgesamt mindestens null begrenzt. Voriger Gesamtcheck wurde für diese notwendige Codeergänzung bewusst gestoppt und wird vollständig neu ausgeführt. Einzelaufruf enthielt zunächst einen nicht vorhandenen Testdateinamen; in domain_rules_test.dart korrigiert, kein übersprungener Produkttest. Ursprüngliche 12er-Prüfung: Log `/workspace/validation/20261024-light-domain-full.log`. Frühere PR160-Code-CI40099238901 erfolgreich; neue Kombination benötigt eigene vollständige Abnahme. SDKs lokal vorhanden.
 
 ## NICHT GETESTET
 
-Echtes Android-Gerät, Altspielstand-Update und produktive Release-Signierung offen. GitHub-Prüfungen sind ein eigener Nachweis; deren aktuellen finalen HEAD und Status unter [PR158/checks](https://github.com/ManuEtt/Dnd/pull/158/checks) lesen. Lokale und GitHub-APKs tragen eigene Archiv-/Signaturdigests. Kein älterer grüner Lauf ist eine Freigabe für ungeprüfte neue Codeänderungen.
+Neue UI-/Integrationstests bestanden; vollständiger Gesamtcheck läuft erneut unter /workspace/validation/20261025-light-full-check.log. Neue APK/native Prüfungen noch nicht ausgeführt. Echtes Gerät/Altspielstand-Upgrade nicht getestet.
 
 ## BLOCKIERT
 
-Kein Android-Realgerät und kein produktiver Signaturschlüssel. Lokale SDKs verfügbar; frühere fehlende-SDK-Angaben sind historisch. Bisher keine Fehler in den abgeschlossenen neuen Tests.
+Kein echtes Android-Gerät oder produktiver Signaturschlüssel. Kein aktueller SDK-/Git-Zugriffsblocker.
 
 ## NOCH NICHT IMPLEMENTIERT
 
-Manuelle Verbündetenbestätigung für Nebenhand, neue Vorteilsquellen, allgemeine Positionsverwaltung, Gelegenheitsangriffe und vollständiges SRD. Sending-Dialog samt Slot-/Journalpfad aus Main erhalten; Nachrichtenzustellung/Antwort/8h-Weltuhr weiterhin offen. Kleiner beobachteter Sending-UI-Fall: W100-Feld erscheint auch bei unbestätigter Blockade; separat behandeln.
+Light-Fernkampf/Munition, Nick, Waffenwechsel-/Positionssystematik und vollständiges SRD. Strukturierte Item-Overrides weiter separat offen.
 
-## Abschluss und nächster Schritt
+## Wiederaufnahme und Sicherung
 
-Lokaler Gesamtcheck, beide APKs und native Tests abgeschlossen. Branch und PR158 gesichert. Abschließendes ZIP/Patch mit `scripts/create_checkpoint.py --output-dir /workspace/artifacts --base dcb42c5efff40a757994d4f5b5f8e98b2ff128e9 --label offhand-waffenpruefung-abschluss` erzeugen bzw. über externen Artefaktindex wiederfinden. Die endgültigen Namen, HEADs und SHA256 stehen im Manifest und SHA256SUMS; ältere Pakete bleiben erhalten.
+Die getrennten Agentenarbeiten sind abgeschlossen; voriger UI-Agent erreichte nach sieben grünen Widgettests sein Kontingent. Keine weitere Agentengruppe starten; Root schließt das bestehende Paket ab. Root besitzt models.dart/game_engine.dart/game_controller.dart/Version/Dokumentation. Bei Unterbrechung zuerst tatsächlichen Git-Status und laufende Prozesse prüfen, keine alten Modelle kopieren. Vollprojekt-ZIP/Patch gegen6f2ebbc mit scripts/create_checkpoint.py vor Abnahme als Zwischenstand erzeugen; finale Pakete erst nach erfolgreichen Prüfungen als abgenommen benennen.
 
-Build-Quell-ZIP: `Wuerfelraunen_0.8.38+88_20261024T121355251852Z_offhand-waffenpruefung-vor-abnahme_Vollprojekt.zip`, SHA256 **93d18f63ae4542ee7b93b613aac18d31e206c8f6c883127aaecb094ba5cc6f31**,637 Dateien,Code aa79ce5. Neue APKs unter `/workspace/artifacts/0.8.38+88/`: Debug SHA256 `cab6226cb0b71fdbbc1e9ed184e66a67d8c6a80560f5c38c9402f18c0eb59fb5`; ARM64 SHA256 `a0e31900676e923ea3d001df95e1b3bae16016b001507cdeb9c264eb3f96bbd9`. Gesamtprotokoll `Wuerfelraunen_0.8.38+88_Pruefergebnisse.json`, einzelne APK-Prüfungen und SHA-Dateien daneben. Aktuelle Actions-Quell-/APK-Artefakte am PR nach tatsächlicher Erzeugung auswählen. [Importanleitung](ARTIFACT_IMPORT_20261024.md) und [Validierung](VALIDATION_0_8_38_20261024.md).
-
-Genau ein nächstes fachliches Paket: **Verbündetenbestätigung für die tatsächlich angreifende Nebenhandwaffe**. DoD: Finesse/Fernkampf der echten Waffe, an Ziel/Probe gebundene Zustimmung, keine Nutzung vor Treffer, gemeinsame einmalige Zugnutzung, Krit/Miss, stale Revision, JSON/SQLite-Neustart; alte Hauptwaffen unverändert.
-
-Prüfbefehle: `bash scripts/check.sh`, `python3 scripts/check_domain_boundaries.py`, `python3 scripts/srd_coverage.py --json`, `cd app && flutter build apk --debug`, `cd android && bash ./gradlew :app:testDebugUnitTest --no-daemon`. Toolchainpfade dieser Umgebung: `/workspace/validation/TOOLCHAIN.md`. Keine automatische Fortsetzung außerhalb aktiver Sitzung.
+Nächster konkreter Schritt: gezielte neue UI-/SQLite-Tests, dann scripts/check.sh, Importgrenzen, Coverage, Android-Debug/native/ARM64 aus neuem ZIP; Branch/PR sichern und Checkpoint/README mit tatsächlichen Ergebnissen aktualisieren. Keine automatische Wiederaufnahme behaupten.

@@ -631,6 +631,28 @@ class GameController extends ChangeNotifier {
     );
   });
 
+  Future<void> prepareOffhandAttack({
+    required String campaignId,
+    required int expectedRevision,
+    required String weaponId,
+    required String attackAbility,
+    required bool weaponProficient,
+    required bool weaponsHeldConfirmed,
+    required bool playerConfirmed,
+  }) => _run(() async {
+    final campaign = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.prepareOffhandAttack(
+        campaign,
+        weaponId: weaponId,
+        attackAbility: attackAbility,
+        weaponProficient: weaponProficient,
+        weaponsHeldConfirmed: weaponsHeldConfirmed,
+        playerConfirmed: playerConfirmed,
+      ),
+    );
+  });
+
   Future<void> clearSneakAttackAlly({
     required String campaignId,
     required int expectedRevision,

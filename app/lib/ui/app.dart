@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../domain/models.dart';
 import '../domain/sneak_attack_ally_rules.dart';
+import '../domain/two_weapon_fighting_rules.dart';
 import '../data/srd_spell_catalog_loader.dart';
 import '../domain/campaign_experience.dart';
 import '../domain/rabenwacht_campaign.dart';
@@ -28,6 +29,7 @@ import 'character_editor.dart';
 import 'character_effect_dialog.dart';
 import 'condition_effect_dialog.dart';
 import 'sneak_attack_ally_dialog.dart';
+import 'offhand_attack_dialog.dart';
 import 'confirmed_spell_effect_dialog.dart';
 import 'sending_attempt_dialog.dart';
 import 'experience_reward_dialog.dart';
@@ -1291,6 +1293,36 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previousMessageId);
   }
 
+  Future<void> _prepareOffhandAttack() async {
+    final campaign = widget.controller.currentCampaign;
+    if (campaign == null ||
+        !_canInteract ||
+        !_outboxReady ||
+        !TwoWeaponFightingRules.canPrepare(campaign)) {
+      return;
+    }
+    final choice = await showDialog<OffhandAttackChoice>(
+      context: context,
+      builder: (_) => OffhandAttackDialog(
+        hero: campaign.hero,
+        targetName: campaign.encounter!.enemyName,
+      ),
+    );
+    if (choice == null || !mounted) return;
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    await widget.controller.prepareOffhandAttack(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      weaponId: choice.weaponId,
+      attackAbility: choice.attackAbility,
+      weaponProficient: choice.weaponProficient,
+      weaponsHeldConfirmed: choice.weaponsHeldConfirmed,
+      playerConfirmed: choice.playerConfirmed,
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
   Future<void> _confirmSneakAttackAlly() async {
     final campaign = widget.controller.currentCampaign;
     if (campaign == null ||
@@ -2534,6 +2566,12 @@ class _AdventurePageState extends State<_AdventurePage> {
                         _send(quickAction: text);
                       },
                       busy: widget.controller.busy,
+                      onPrepareOffhandAttack:
+                          _canInteract &&
+                              _outboxReady &&
+                              TwoWeaponFightingRules.canPrepare(campaign)
+                          ? _prepareOffhandAttack
+                          : null,
                       onManageSpells:
                           widget.controller.busy ||
                               campaign.pendingRoll != null ||
@@ -3068,6 +3106,7 @@ class _CombatView extends StatelessWidget {
     required this.busy,
     required this.onManageEffects,
     required this.onManageSpells,
+    required this.onPrepareOffhandAttack,
     required this.header,
   });
   final Encounter encounter;
@@ -3078,6 +3117,7 @@ class _CombatView extends StatelessWidget {
   final bool busy;
   final VoidCallback? onManageEffects;
   final VoidCallback? onManageSpells;
+  final VoidCallback? onPrepareOffhandAttack;
   final Widget header;
 
   @override
@@ -3164,7 +3204,8 @@ class _CombatView extends StatelessWidget {
           'Beschreibe deinen Angriff oder deine Entscheidung. Trefferpunkte '
           'ändern sich erst nach einer bestätigten Probe durch die Regelengine. '
           'Der Solo-Kampf löst den Gegnerzug nach abgeschlossenen Aktionen '
-          'auf; Mönche können zuvor noch ihre freie Bonusaktion nutzen.',
+          'auf. Eine verfügbare Nebenhand- oder Klassen-Bonusaktion kannst '
+          'du vorher nutzen oder deinen Zug ausdrücklich beenden.',
         ),
         const SizedBox(height: 16),
         if (ClassResourceRules.level(hero, 'Kämpfer') >= 9 ||
@@ -3189,6 +3230,14 @@ class _CombatView extends StatelessWidget {
                   ? null
                   : () => onAction('Ich greife an.'),
             ),
+            if (onPrepareOffhandAttack != null)
+              FantasyTextButton(
+                key: const ValueKey('combat-prepare-offhand-attack'),
+                label: 'Nebenhandangriff vorbereiten',
+                icon: Icons.sports_martial_arts,
+                style: FantasyButtonStyle.wax,
+                onPressed: onPrepareOffhandAttack,
+              ),
             PopupMenuButton<int>(
               key: const ValueKey('enemy-multiattack-count'),
               tooltip: 'Bestätigte Gegner-Angriffe',

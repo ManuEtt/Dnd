@@ -1,3 +1,14 @@
+## 25.10.2026 – 0.8.39+89: allgemeiner Light-Nahkampfbonus
+
+- Klassenunabhängige Light-Bonusaktion; Kampfstil steuert den positiven Attributsschaden statt die Erlaubnis zum Angriff.
+- Pro Waffenprobe bestätigtes Attribut/Übung/gehaltene Waffen, deutscher Vorschau-/Bestätigungsdialog, unveränderte freie Eingabeentwürfe.
+- Optionale typisierte PendingRoll-Felder, Legacy-Fighter-Proben kompatibel, Validierung vor RNG und atomare revisionsgeschützte SQLite-Buchung.
+- Kampfrausch nutzt tatsächliche Waffen-ID und Attribut; endgültige Schadensnullgrenze nach Klassenboni.
+- 55 Regel-/Kampf-,12 Zweiwaffen-,7 neue Widget- und34 bestehende Regressionen erfolgreich. Vollständige neue Suite/Android/CI noch in Abnahme; Details im operativen Checkpoint.
+- SRD5.2.1 Light S89/TWF S88/Rage S29/Damage Rolls S16, CC BY4.0. Requirement RULE-COMBAT-TWO-WEAPON-FIGHTING bleibt partial; kein Nick/Light-Fernkampf. Keine DB-/Exportmigration.
+
+---
+
 ## 24.10.2026 – Nachtrag: vollständige CI-Abnahme PR #160
 
 **Vollständige GitHub-CI [#40099238901](https://github.com/ManuEtt/Dnd/actions/runs/40099238901): completed/success** auf geprüftem PR-HEAD `5563c60ba0dbbd1f12a19877f62581a51485b6d9` (24.10.2026). **1.514 Flutter-, 100 Python- und 31 Backend-Tests bestanden**; Dart-Formatierung 357 Dateien ohne Änderungen, Flutter-Analyse und Backend-Typecheck/Build erfolgreich. Android-Debug-APK, native Gradle-Tests und ARM64/ARMv7/x64-Alpha-APKs erfolgreich; letzte Artefaktschritte abgeschlossen. Ein echter Android-Gerätetest, ein Altspielstand-Upgrade und produktive Signierung fehlen weiterhin. Dieser Nachtrag berichtet die nach dem damaligen Vorab-Checkpoint eingetroffene finale Abnahme.

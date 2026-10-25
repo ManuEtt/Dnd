@@ -59,6 +59,105 @@ class GameEngine {
   String _id(String prefix) =>
       '$prefix-${_clock().microsecondsSinceEpoch}-${_sequence++}';
 
+  GameUpdate prepareOffhandAttack(
+    Campaign campaign, {
+    required String weaponId,
+    required String attackAbility,
+    required bool weaponProficient,
+    required bool weaponsHeldConfirmed,
+    required bool playerConfirmed,
+  }) => _prepareOffhandAttack(
+    campaign,
+    campaign,
+    weaponId: weaponId,
+    attackAbility: attackAbility,
+    weaponProficient: weaponProficient,
+    weaponsHeldConfirmed: weaponsHeldConfirmed,
+    playerConfirmed: playerConfirmed,
+  );
+
+  GameUpdate _prepareOffhandAttack(
+    Campaign before,
+    Campaign current, {
+    required String weaponId,
+    required String attackAbility,
+    required bool weaponProficient,
+    required bool weaponsHeldConfirmed,
+    required bool playerConfirmed,
+  }) {
+    if (!playerConfirmed || !weaponsHeldConfirmed) {
+      throw const FormatException(
+        'Leichte Waffen und Bonusangriff ausdrücklich bestätigen.',
+      );
+    }
+    if (!TwoWeaponFightingRules.canPrepare(current)) {
+      throw const FormatException(
+        'Der leichte Zusatzangriff benötigt eine vorherige Angriffsaktion '
+        'im eigenen Zug und eine freie Bonusaktion.',
+      );
+    }
+    final weapon = TwoWeaponFightingRules.confirmedOffhand(
+      current.hero,
+      weaponId,
+    );
+    if (weapon == null) {
+      throw const FormatException(
+        'Keine eindeutige andere leichte Nahkampfwaffe.',
+      );
+    }
+    final fight = current.encounter!;
+    if (!CoverRules.canTargetDirectly(fight.enemyCover)) {
+      throw const FormatException(
+        'Vollständige Deckung verhindert den Angriff.',
+      );
+    }
+    final bonus = TwoWeaponFightingRules.attackBonus(
+      current.hero,
+      weapon,
+      attackAbility: attackAbility,
+      proficient: weaponProficient,
+    );
+    final attackRule = CharacterRuleEngine.attack(current.hero);
+    final pending = PendingRoll(
+      id: _id('roll'),
+      type: 'offhandAttack',
+      modifier: bonus,
+      advantage: attackRule.advantage,
+      disadvantage: attackRule.disadvantage,
+      difficulty: CoverRules.armorClass(
+        fight.effectiveEnemyArmorClass,
+        fight.enemyCover,
+      ),
+      targetId: fight.id,
+      targetName: fight.enemyName,
+      weaponId: weaponId,
+      offhandAttackAbility: attackAbility,
+      offhandWeaponProficient: weaponProficient,
+      offhandWeaponsHeldConfirmed: true,
+    );
+    final next = current.copyWith(
+      encounter: fight.copyWith(bonusActionUsed: true),
+      pendingRoll: pending,
+    );
+    // Validate the same saved-state contract before reserving the bonus action.
+    Campaign.fromJson(next.toJson());
+    return _commit(
+      before,
+      next,
+      'Leichter Zusatzangriff: Würfle W20 ${_signed(bonus)} gegen RK '
+      '${pending.difficulty}. Die Bonusaktion ist reserviert; '
+      'Schaden entsteht erst durch den bestätigten Treffer.',
+      type: 'roll.requested',
+      payload: {
+        'offhandWeaponId': weaponId,
+        'offhandAttackAbility': attackAbility,
+        'offhandWeaponProficient': weaponProficient,
+        'weaponsHeldConfirmed': true,
+        'playerConfirmed': true,
+      },
+    );
+  }
+
   GameUpdate confirmSneakAttackAlly(
     Campaign campaign, {
     required String rollId,
@@ -3806,34 +3905,23 @@ class GameEngine {
           type: 'rules.blocked',
         );
       }
-      final attackRule = CharacterRuleEngine.attack(current.hero);
-      final bonus = TwoWeaponFightingRules.attackBonus(current.hero, offhand);
-      return _commit(
+      if (ClassResourceRules.level(current.hero, 'Kämpfer') < 1) {
+        return _commit(
+          before,
+          current,
+          'Bestätige Waffenattribut und Waffenübung über '
+          '„Leichten Zusatzangriff vorbereiten“ in der Abenteueransicht.',
+          type: 'rules.blocked',
+        );
+      }
+      return _prepareOffhandAttack(
         before,
-        current.copyWith(
-          encounter: encounter.copyWith(bonusActionUsed: true),
-          pendingRoll: PendingRoll(
-            id: _id('roll'),
-            type: 'offhandAttack',
-            modifier: bonus,
-            advantage: attackRule.advantage,
-            disadvantage: attackRule.disadvantage,
-            difficulty: CoverRules.armorClass(
-              encounter.effectiveEnemyArmorClass,
-              encounter.enemyCover,
-            ),
-            targetId: encounter.id,
-            targetName: encounter.enemyName,
-            weaponId: choices.single.id,
-          ),
-        ),
-        'Nebenhandangriff mit ${choices.single.name}: Würfle W20 '
-        '${_signed(bonus)} gegen RK '
-        '${CoverRules.armorClass(encounter.effectiveEnemyArmorClass, encounter.enemyCover)} '
-        '(inklusive Deckung). '
-        'Die Bonusaktion ist reserviert.',
-        type: 'roll.requested',
-        payload: {'offhandWeaponId': choices.single.id},
+        current,
+        weaponId: choices.single.id,
+        attackAbility: TwoWeaponFightingRules.ability(current.hero, offhand),
+        weaponProficient: true,
+        weaponsHeldConfirmed: true,
+        playerConfirmed: true,
       );
     }
     if (encounter.actionUsed &&
@@ -3989,7 +4077,9 @@ class GameEngine {
   }) {
     final pending = campaign.pendingRoll;
     if (pending == null) throw StateError('Es ist keine Probe offen.');
-    if (pending.type == 'death' || pending.sneakAttackAlly != null) {
+    if (pending.type == 'death' ||
+        pending.type == 'offhandAttack' ||
+        pending.sneakAttackAlly != null) {
       Campaign.fromJson(campaign.toJson());
     }
     final result = dice.check(
@@ -4132,12 +4222,14 @@ class GameEngine {
         final base = dice.roll(expression);
         final extra = outcome.critical ? dice.roll(expression) : null;
         final weaponDamage = isOffhand
-            ? TwoWeaponFightingRules.damage(
-                next.hero,
-                offhand!,
-                base.total + (extra?.total ?? 0),
-              )
-            : RulesEngine.weaponDamage(
+            ? base.total +
+                  (extra?.total ?? 0) +
+                  TwoWeaponFightingRules.damageModifier(
+                    next.hero,
+                    offhand!,
+                    attackAbility: pending.offhandAttackAbility,
+                  )
+            : RulesEngine.weaponDamageSubtotal(
                 next.hero,
                 baseRoll: base,
                 criticalExtra: extra,
@@ -4145,6 +4237,16 @@ class GameEngine {
         final rageBonus = CombatClassActions.rageDamageBonus(
           next.hero,
           rolledFight,
+          attackAbility: isOffhand
+              ? TwoWeaponFightingRules.ability(
+                  next.hero,
+                  offhand!,
+                  attackAbility: pending.offhandAttackAbility,
+                )
+              : next.hero.weaponAbility,
+          attackingWeaponId: isOffhand
+              ? pending.weaponId
+              : next.hero.equippedWeaponId,
         );
         final sneakDice = ClassCombatFeatures.eligibleSneakAttackDice(
           next.hero,
@@ -4167,7 +4269,8 @@ class GameEngine {
                 critical: outcome.critical,
               )
             : null;
-        final damage = weaponDamage + rageBonus + (sneakRoll?.total ?? 0);
+        final subtotal = weaponDamage + rageBonus + (sneakRoll?.total ?? 0);
+        final damage = subtotal < 0 ? 0 : subtotal;
         if (rageBonus > 0) payload['rageDamageBonus'] = rageBonus;
         if (sneakRoll != null) payload['sneakAttackRoll'] = sneakRoll.toJson();
         if (pending.sneakAttackAlly != null) {

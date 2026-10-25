@@ -1,54 +1,22 @@
 # Würfelraunen – Der lebendige Spielleiter
 
-Deutschsprachige Android-Alpha für Soloabenteuer, regelgeprüfte Kämpfe und lokale Kampagnen mit SQLite. Flutter/Dart-App und optionaler Fastify-/TypeScript-Erzähler. Das vollständige SRD 5.2.1 ist noch nicht implementiert.
+Deutschsprachige Android-Alpha für Soloabenteuer, regelgeprüfte Kämpfe und lokale SQLite-Kampagnen. Das vollständige SRD 5.2.1 ist weiterhin in Arbeit.
 
-## Verifizierte CI-Abnahme – PR #160 (24.10.2026)
+## Aktueller Stand und autonome Fortsetzung (25.10.2026)
 
-**Vollständige GitHub-CI [#40099238901](https://github.com/ManuEtt/Dnd/actions/runs/40099238901): completed/success** auf geprüftem PR-HEAD `5563c60ba0dbbd1f12a19877f62581a51485b6d9` (24.10.2026). **1.514 Flutter-, 100 Python- und 31 Backend-Tests bestanden**; Dart-Formatierung 357 Dateien ohne Änderungen, Flutter-Analyse und Backend-Typecheck/Build erfolgreich. Android-Debug-APK, native Gradle-Tests und ARM64/ARMv7/x64-Alpha-APKs erfolgreich; letzte Artefaktschritte abgeschlossen. Ein echter Android-Gerätetest, ein Altspielstand-Upgrade und produktive Signierung fehlen weiterhin. Dieser Nachtrag berichtet die nach dem damaligen Vorab-Checkpoint eingetroffene finale Abnahme.
+**Version 0.8.39+89**, Branch `feature/light-weapon-bonus-attack-20261024`. Basis **6f2ebbc893fb5ee053d069410a103a102662aa4d** aus [PR160](https://github.com/ManuEtt/Dnd/pull/160); dessen finale [CI40100211878](https://github.com/ManuEtt/Dnd/actions/runs/40100211878) ist erfolgreich. Der neue Branch wird als eigenes Folgepaket geprüft. Main bei Bestandsaufnahme b60ffe7, offene Integrations-PR164 berücksichtigt; keine direkten Mainänderungen.
 
-[Alpha-APKs](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562551949) · [Debug-APK](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12561909697) · [Alpha-Release](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562517123) · [Quellcode-Checkpoint](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562163517). Die SHA256-Digests der GitHub-Artefaktarchive sind **nicht** automatisch Einzel-APK-Prüfsummen.
+**Neu: allgemeiner Light-Nahkampfbonus statt Kämpfer-Stilpflicht.** Nach einer abgeschlossenen Angriffsaktion mit leichter Waffe kann jede Klasse eine andere bestätigte leichte Nahkampfwaffe für ihre freie Bonusaktion wählen. Der deutsche Dialog in der Abenteueransicht erfasst die Waffe, Stärke/Finesse-Geschicklichkeit, bestätigte Übung und gehaltene Waffen. Vorschau und abschließende Zustimmung gehen der Buchung voraus; Änderungen widerrufen die Zustimmung. Freie Eingaben bleiben erhalten.
 
-**Status:** Implementierung und Tests sind auf dem Branch gesichert; PR #160 wird nach dieser dokumentierten grünen CI für menschliche Review bereitgestellt, `main` bleibt unverändert. Die folgenden älteren Vorababschnitte sind historische Prüfstände.
+Ohne Kampfstil wird kein positiver Attributsmodifikator zum Zusatzangriffsschaden addiert; negative Modifikatoren bleiben. Der bisherige bestätigte Kämpfer-Kampfstil fügt den Modifikator einmal hinzu. Kampfrausch prüft das tatsächliche Angriffsattribut und die konkrete Waffe. Schadenssummen werden erst nach allen zugehörigen Klassenboni auf mindestens null begrenzt.
 
----
+SQLite2 und Kampagnen-JSON1 bleiben kompatibel: neue optionale, gemeinsam validierte Nebenhandfelder, alte Fighter-Stil-Proben weiterhin lesbar. Revisions- und Transaktionsschutz gelten für Vorbereitung, Neustart und Auflösung. Ohne bestätigte Übung wird kein Bonus erfunden. Nick, Light-Fernkampf und allgemeines Waffenwechseln sind nicht Teil dieser Umsetzung.
 
-## Aktueller Entwicklungszyklus – bestätigter Verbündeter für Nebenhand (24.10.2026)
+### Tatsächlicher Prüfstand
 
-**Neu in [PR #160](https://github.com/ManuEtt/Dnd/pull/160), eigener Branch `feature/sneak-attack-offhand-ally-20261024` (Basis main `b60ffe7`):** Bei einem bereits regulär erlaubten Nebenhandangriff mit tatsächlicher Finesse-Waffe kann jetzt derselbe revisionsgeschützte Dialog zwei unabhängig beobachtete Verbündetenfakten bestätigen wie bei einem Hauptwaffenangriff. Die Bestätigung bleibt an Kampagne/Ziel/Wurf gebunden, wird erst bei einem Treffer auf Schaden angewandt und kann vor dem Würfeln entfernt werden. Nebenhandaxt mit Hauptdolch, Nachteil, bereits verwendeter Hinterhältiger Angriff und gefälschte Bindungen bleiben ausgeschlossen.
+55 Regel-/Kampftests,12 Zweiwaffentests,7 neue Widgettests und34 bestehende Sneak-/Speicher-/Widgetregressionen erfolgreich. Neuer Gesamtcheck läuft nach der Kampfrausch-/Schadenssummenkorrektur erneut; neue APK/native Tests und eigene finale CI noch offen. Frühere Zwischen-ZIPs/Patches bereits unter `/workspace/artifacts/` gesichert. Reales Gerät und produktive Signierung bleiben offen.
 
-**Code und Tests geschrieben:** erweiterte Rule-/Import-Prüfung, Android-Abenteueranzeige, neue Domain-/JSON-/SQLite-Regressionen in `sneak_attack_offhand_ally_test.dart` und zwei neue UI-Tests. Die erste Gesamt-CI entdeckte eine Formatter-Abweichung und eine zu breite Alt-JSON-Assertion; beide wurden korrigiert. **Der vollständige neue CI-Lauf ist bis zum separaten Erfolgsnachweis nicht als bestanden zu betrachten.** Ältere erfolgreiche CI [#40095802925](https://github.com/ManuEtt/Dnd/actions/runs/40095802925) auf PR #159 belegt **nicht** PR #160. Der noch offene [Sending-PR #159](https://github.com/ManuEtt/Dnd/pull/159) wird nicht überschrieben.
-
-Version **0.8.38+88**, SQLite **2**, Export-JSON **1** unverändert; SRD-Anforderung `CLASS-SCHURKE-1-BASE-SNEAK-ATTACK-1` bleibt `partial`. Keine automatische Verbündetenposition, neue Bonusaktion oder KI-bestätigten Regelwerte. Echtes Android-Gerät/Altspielstand-Upgrade und produktive Signierung weiterhin nicht getestet. [Regel-/Abnahmebeleg](docs/SRD_SNEAK_ATTACK_OFFHAND_ALLY_20261024.md) · [aktueller Checkpoint](docs/CODEX_CHECKPOINT.md) · [CI-Checks](https://github.com/ManuEtt/Dnd/pull/160/checks).
-
-### Nächster konkreter Schritt
-
-Die vollständige finale CI für PR #160 samt Python, Backend, Dart-Format, Flutter, SQLite und Android abwarten und Fehler beheben. Nach erfolgreicher Abnahme PR #160 zur Review freigeben und ausschließlich nach Prüfung sicher integrieren.
-
----
-
-## Vorheriger abgenommener Entwicklungsstand (PR #158, inzwischen main)
-
-**Version 0.8.38+88**, Branch `fix/sneak-attack-offhand-weapon-20261024`, [PR #158](https://github.com/ManuEtt/Dnd/pull/158). Funktionaler Code [`aa79ce5`](https://github.com/ManuEtt/Dnd/commit/aa79ce593790e5763e9125743b0adeab55b581d5), Basis-main `dcb42c5efff40a757994d4f5b5f8e98b2ff128e9` (PR #157 integriert). Eigene aktuelle [GitHub-Checks](https://github.com/ManuEtt/Dnd/pull/158/checks) zeigen den jeweiligen finalen HEAD; Basisprüfungen und lokale Abnahme werden getrennt geführt. Main bleibt durch diesen Zyklus unverändert.
-
-**Korrigiert: Hinterhältiger Angriff prüft die tatsächlich angreifende Waffe.** Bisher wurde bei einer Nebenhandprobe die Hauptwaffe auf Finesse/Fernkampf geprüft. Ein bestätigter Dolch-Nebenhandangriff kann jetzt seine eigene Eignung nutzen; eine Handaxt erhält keine Eignung durch einen Dolch in der Hauptwaffe. Angriff, Schaden, kritische Treffer, einmalige Zugnutzung und Journal bleiben im vorhandenen Kampffluss.
-
-Das betrifft auch gespeicherte offene Angriffe mit bereits bestätigtem Vorteil. Die Änderung erzeugt keinen Vorteil und erweitert die bisherigen Nebenhandvoraussetzungen nicht. Die Verbündetenbestätigung bleibt vorerst auf Hauptwaffenangriffe begrenzt. SQLite-Schema 2 und Kampagnen-JSON 1 bleiben erhalten; keine Migration und keine erfundenen KI-Regelwerte.
-
-### Tatsächlicher Prüfstand dieses Pakets
-
-| Prüfung | Beobachtetes Ergebnis |
-| --- | --- |
-| Gezielte Regressionen | 27 bestehende/Helper- und 8 neue Kampf-/SQLite-Tests erfolgreich |
-| Vollständige Flutter-Suite | **1505 Tests erfolgreich** |
-| Python / Backend | 100 /31 Tests, Typecheck und Build erfolgreich |
-| Dart / Flutter-Analyse | 356 Dateien ohne Formatänderung; keine Befunde |
-| Android | Debug-APK und ARM64-Alpha gebaut und geprüft; 12 native Tests erfolgreich |
-| GitHub | [PR158 und aktuelle Checks](https://github.com/ManuEtt/Dnd/pull/158/checks), separat von lokalen Ergebnissen |
-| Echtes Gerät / produktive Signierung | nicht getestet |
-
-APKs wurden aus dem vollständigen Quell-ZIP gebaut; 474 ausführungsrelevante Dateien per SHA256 abgeglichen. Version 0.8.38/Build 88, minSdk24/targetSdk36; Debug mit ARM64/ARMv7/x64, kleine Alpha nur ARM64, jeweils lokale Debug-Testsignatur. Vollprojekt-ZIP, Patch und Prüfsummen unter `/workspace/artifacts/`; neue APKs unter `/workspace/artifacts/0.8.38+88/`. [Importanleitung](docs/ARTIFACT_IMPORT_20261024.md).
-
-Aktuelle Übergabe: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md). [Regelquelle und Abnahmekriterien](docs/SRD_SNEAK_ATTACK_WEAPON_CONTEXT_20261024.md). Vorherige Sending-, XP- und Schurkenstände sind integriert; deren frühere Entwicklungsangaben stehen separat in der [README-Historie](docs/history/main_0.8.37_20261024/README.md).
+Aktuelle Übergabe: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md). [Regelquelle und Scope](docs/SRD_LIGHT_BONUS_ATTACK_20261025.md). Vollständiger vorheriger Stand: [README-Historie](docs/history/pr160_0.8.38_20261024/README.md).
 
 ## Vorhandene Funktionen und Grenzen
 
@@ -82,9 +50,7 @@ Die Demo benötigt keinen externen KI-Anbieter. Für einen eigenen Erzähler sie
 
 ## Nächster konkreter Entwicklungsschritt
 
-Die manuelle Verbündetenbestätigung für zulässige Nebenhandangriffe an denselben sicheren Dialog-/Controllerpfad anbinden. Abnahme: Eignung der tatsächlichen Angriffswaffe, ziel-/wurfgebundene Zustimmung, gemeinsame einmalige Zugnutzung, Krit/Miss, Ablehnung, alte Hauptwaffen-/JSON-Abläufe und SQLite-Neustart. Allgemeine Gelegenheitsangriffe bleiben ein eigenes Arbeitspaket.
-
-Weitere offene Arbeiten: vollständige Quelleninventur, Zauberwirkungen, Klassen-/Monstermechaniken, strukturierte Item-Overrides, Android-Upgrade mit echten Spielständen und produktive Signierung. Der frühere lokale Item-Entwurf ist separat gesichert und wurde nicht über neuere Main-Dateien kopiert.
+Nach Abnahme dieses Pakets die noch offenen Light-Fernkampf-/Munitions- und Nick-Regeln getrennt planen. Zunächst aktuelle Main-/PR-Integrationslage neu prüfen; keine freien Bonusaktionen oder gehaltene Waffen aus Erzähltext ableiten. Strukturierte Item-Overrides und vollständige SRD-Quelleninventur bleiben offen.
 
 ## Dokumentation und Historie
 
