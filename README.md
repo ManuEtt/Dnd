@@ -86,3 +86,14 @@ Weitere offene Bereiche: vollständige amtliche Quelleninventur, zahlreiche Zaub
 Vollprojekt-ZIP, Patch und Prüfsummen unter `/workspace/artifacts/0.8.40+90/`; aktuelle Dateinamen im dortigen Artefaktindex nach Abschluss. Patchbasis dieses Pakets: `407c2e1ef8ee310b30d1543a263fb66b3331a26e`. ZIP in eine Arbeitskopie entpacken oder Patch mit `git apply --check`/`git apply` auf dieser Basis übernehmen, eigenen Branch pushen und PR öffnen. Keine alten Dateistände ungeprüft über Main kopieren.
 
 Nur rechtmäßig verwendbare Inhalte des **SRD 5.2.1 von Wizards of the Coast unter CC BY 4.0** sowie eigene/lizenzierte Inhalte nutzen. [Namensnennung](THIRD_PARTY_NOTICES.md) erhalten. Keine automatische Weiterarbeit außerhalb einer aktiven Sitzung.
+
+
+---
+
+## Chat B – Schutz vor falscher Zuordnung von NPC-Tagebucheinträgen (25.10.2026)
+
+Ein isoliertes Backend-Paket auf `fix/chat-b/npc-memory-name-guard-20261025` filtert als NPC-Beziehungsnotizen markierte Kontextstrings für die KI-Spielleitung: Ein Eintrag wird nur weitergereicht, wenn sein NPC-Anzeigename genau **einer** bekannten Figur mit ID zugeordnet ist. Bei Namensgleichheit, unbekannten Figuren, unvollständigem Marker oder mehrzeiligen Einträgen entfällt der Eintrag. Allgemeine Erinnerungen bleiben unverändert. Die Filterung erfolgt in der bestehenden `/v1/story/advance`-Route **vor dem Erzähler-Provider**.
+
+Wichtig: Die Clientkennzeichnung „Bestätigte NPC-Beziehungsnotiz“ ist keine Server-Authentifizierung. Die Änderung verhindert eine nachweisbare Namensverwechslung, kann aber keine Textbehauptung kryptographisch verifizieren. Es werden weder Backend-API-Schema noch Spielstände, Regelmechanik oder App-Version verändert.
+
+Fünf neue Backend-Regressionsfälle inklusive Fastify-/Mock-Provider-Integration wurden implementiert. CI-Freigabe erst nach tatsächlich erfolgreichem Testlauf auf dem finalen PR-HEAD. Status: [Chat-B-Checkpoint](docs/parallel/CHAT_B_NPC_NAME_GUARD_20261025.md).
