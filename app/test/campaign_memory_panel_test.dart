@@ -146,9 +146,11 @@ void main() {
       findsOneWidget,
     );
     expect(
-      tester.widget<FantasyTextButton>(
-        find.byKey(const ValueKey('edit-npc-relationship')),
-      ).onPressed,
+      tester
+          .widget<FantasyTextButton>(
+            find.byKey(const ValueKey('edit-npc-relationship')),
+          )
+          .onPressed,
       isNull,
     );
     expect(tester.takeException(), isNull);
