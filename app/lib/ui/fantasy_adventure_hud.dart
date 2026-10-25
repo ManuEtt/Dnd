@@ -139,16 +139,17 @@ class FantasyAdventureStatusHud extends StatelessWidget {
           if (hpRatio != null) ...[
             const SizedBox(height: 9),
             Semantics(
-              label: 'Trefferpunkte-Fortschritt: ${(hpRatio * 100).round()} Prozent',
+              label:
+                  'Trefferpunkte-Fortschritt: ${(hpRatio * 100).round()} Prozent',
               child: ExcludeSemantics(
                 child: _MeterTrack(
-                value: hpRatio,
-                height: 6,
-                color: hpRatio > .5
-                    ? FantasyPalette.success
-                    : hpRatio > .2
-                    ? FantasyPalette.gold
-                    : FantasyPalette.danger,
+                  value: hpRatio,
+                  height: 6,
+                  color: hpRatio > .5
+                      ? FantasyPalette.success
+                      : hpRatio > .2
+                      ? FantasyPalette.gold
+                      : FantasyPalette.danger,
                 ),
               ),
             ),
@@ -160,10 +161,10 @@ class FantasyAdventureStatusHud extends StatelessWidget {
                   'Erfahrungsfortschritt: ${(experienceRatio * 100).round()} Prozent',
               child: ExcludeSemantics(
                 child: _MeterTrack(
-                key: const ValueKey('adventure-xp-progress'),
-                value: experienceRatio,
-                height: 4,
-                color: FantasyPalette.blue,
+                  key: const ValueKey('adventure-xp-progress'),
+                  value: experienceRatio,
+                  height: 4,
+                  color: FantasyPalette.blue,
                 ),
               ),
             ),
@@ -205,6 +206,7 @@ class FantasyAdventureStatusHud extends StatelessWidget {
 
 class _StatusTile extends StatelessWidget {
   const _StatusTile({
+    super.key,
     required this.label,
     required this.value,
     required this.icon,
@@ -221,56 +223,59 @@ class _StatusTile extends StatelessWidget {
   final String? semanticValue;
 
   @override
-  Widget build(BuildContext context) => Semantics(
-    container: true,
-    excludeSemantics: true,
-    label:
-        '$semanticName: ${semanticValue ?? (value.contains('?') ? 'nicht bestätigt' : value)}',
-    child: DecoratedBox(
-    decoration: BoxDecoration(
-      color: FantasyPalette.night.withValues(alpha: .85),
-      border: Border.all(color: color.withValues(alpha: .32)),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+  Widget build(BuildContext context) {
+    final spokenValue =
+        semanticValue ?? (value.contains('?') ? 'nicht bestätigt' : value);
+    return Semantics(
+      container: true,
+      excludeSemantics: true,
+      label: '$semanticName: $spokenValue',
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: FantasyPalette.night.withValues(alpha: .85),
+          border: Border.all(color: color.withValues(alpha: .32)),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
+          child: Column(
             children: [
-              Icon(icon, size: 15, color: color),
-              const SizedBox(width: 4),
-              Flexible(
-                child: Text(
-                  label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: FantasyPalette.muted,
-                    fontSize: 11,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(icon, size: 15, color: color),
+                  const SizedBox(width: 4),
+                  Flexible(
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: FantasyPalette.muted,
+                        fontSize: 11,
+                      ),
+                    ),
                   ),
+                ],
+              ),
+              const SizedBox(height: 3),
+              Text(
+                value,
+                textAlign: TextAlign.center,
+                softWrap: true,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: FantasyPalette.ivory,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'serif',
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 3),
-          Text(
-              value,
-              textAlign: TextAlign.center,
-              softWrap: true,
-              style: const TextStyle(
-                fontSize: 16,
-                color: FantasyPalette.ivory,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'serif',
-              ),
-          ),
-        ],
+        ),
       ),
-    ),
-    ),
-  );
+    );
+  }
 }
 
 /// The painted HUD meters must not look like an async loading indicator.
