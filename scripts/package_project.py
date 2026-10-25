@@ -28,13 +28,16 @@ EXCLUDED_SUFFIXES = {
 
 def include(path: Path, root: Path = ROOT) -> bool:
     relative = path.relative_to(root)
-    if any(part in EXCLUDED_DIRS for part in relative.parts):
+    # File names on Android/Windows may arrive with different casing. Protect
+    # exports on case-sensitive hosts too, including mixed-case secrets.
+    if any(part.casefold() in EXCLUDED_DIRS for part in relative.parts):
         return False
-    if path.name in EXCLUDED_NAMES or path.suffix.lower() in EXCLUDED_SUFFIXES:
+    name = path.name.casefold()
+    if name in EXCLUDED_NAMES or path.suffix.casefold() in EXCLUDED_SUFFIXES:
         return False
-    if path.name.startswith('.env') and path.name != '.env.example':
+    if name.startswith('.env') and name != '.env.example':
         return False
-    if any(path.name.endswith(suffix) for suffix in ('-wal', '-shm', '-journal')):
+    if any(name.endswith(suffix) for suffix in ('-wal', '-shm', '-journal')):
         return False
     return True
 
