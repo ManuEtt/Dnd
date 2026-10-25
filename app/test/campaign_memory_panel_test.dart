@@ -140,7 +140,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      find.text('NPC nicht mehr vorhanden: Unbekannt – Nur im Journal erhalten'),
+      find.text(
+        'NPC nicht mehr vorhanden: Unbekannt – Nur im Journal erhalten',
+      ),
       findsOneWidget,
     );
     expect(
