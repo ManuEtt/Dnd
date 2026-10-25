@@ -1,0 +1,22 @@
+[
+  {
+    "main_sha": "5c1499a9342449050bb946542659b221ac2653da",
+    "path": "README.md",
+    "sha256": "8957582fb931cd40c0191c9bcaacdcc76ee683770ae1410f2f580b31e287d93a"
+  },
+  {
+    "main_sha": "5c1499a9342449050bb946542659b221ac2653da",
+    "path": "CHANGELOG.md",
+    "sha256": "86f4be43942192f1eda0136ef0886f6a825ea9d60310e0811b3190c549d52d4e"
+  },
+  {
+    "main_sha": "5c1499a9342449050bb946542659b221ac2653da",
+    "path": "DEVELOPMENT_STATUS.md",
+    "sha256": "78ff6849ded90efd339e66b506ae5577d9cc751f845bccb7f9da6f4b96fc75eb"
+  },
+  {
+    "main_sha": "5c1499a9342449050bb946542659b221ac2653da",
+    "path": "docs/CODEX_CHECKPOINT.md",
+    "sha256": "642dd7b204b0a71e11385a54e913a56e6ec40018fff4ccc9916966713b8a31fc"
+  }
+]
