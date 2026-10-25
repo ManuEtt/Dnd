@@ -1,3 +1,9 @@
+## Aktueller Schritt – gespeicherte Gelegenheitsreaktion abnehmen
+
+Nach vollständiger Abnahme einen eigenen Reaktionsangriff auf dem gespeicherten Angebot entwickeln; genaue Kriterien und bekannte Zug-/Sneak-Attack-Grenzen im README. Keine alten Migrationsaufgaben erneut ausführen: Live-Bestand vor diesem Paket nur Main, keine offenen PRs. Ältere Einträge unten sind Historie.
+
+---
+
 ## Aktueller Schritt – geprüfte Migration abschließen
 
 PR #171 und tatsächliche Main-CI abnehmen, danach nur gesicherte unveränderte integrierte Altbranches entfernen. Anschließend allgemeine Gelegenheitsangriffe als eigenes quellgeprüftes Regelpaket; Akzeptanzkriterien im README. Frühere Einträge unten sind historische Momentaufnahmen.

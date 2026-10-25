@@ -16,6 +16,7 @@ import '../domain/damage_rules.dart';
 import '../domain/enemy_force_defense.dart';
 import '../domain/condition_effects.dart';
 import '../domain/saving_throw_class_actions.dart';
+import '../domain/srd_opportunity_attack_rules.dart';
 import 'backend_narrator.dart';
 
 /// UI state changes only after an atomic repository commit succeeds.
@@ -46,12 +47,21 @@ class GameController extends ChangeNotifier {
     _changed();
   }
 
-  Future<void> _run(Future<void> Function() action) async {
+  Future<void> _run(
+    Future<void> Function() action, {
+    bool allowPendingOpportunity = false,
+  }) async {
     if (busy) return;
     busy = true;
     error = null;
     _changed();
     try {
+      if (!allowPendingOpportunity &&
+          currentCampaign?.pendingOpportunityAttack != null) {
+        throw const FormatException(
+          'Zuerst die offene Gelegenheitsreaktion entscheiden.',
+        );
+      }
       await action();
     } catch (failure) {
       error = switch (failure) {
@@ -87,7 +97,7 @@ class GameController extends ChangeNotifier {
     }
     final id = settings['lastCampaignId'];
     if (id is String) currentCampaign = await repository.getCampaign(id);
-  });
+  }, allowPendingOpportunity: true);
 
   Future<void> _remember(String? id) async {
     await repository.patchSettings({'lastCampaignId': id});
@@ -171,7 +181,7 @@ class GameController extends ChangeNotifier {
     }
     currentCampaign = loaded;
     await _remember(id);
-  });
+  }, allowPendingOpportunity: true);
 
   Future<void> _commit(GameUpdate update) async {
     final previous = currentCampaign;
@@ -837,6 +847,31 @@ class GameController extends ChangeNotifier {
     );
   });
 
+  Future<void> confirmOpportunityMovement({
+    required String campaignId,
+    required int expectedRevision,
+    required ConfirmedOpportunityTrigger trigger,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(engine.confirmOpportunityMovement(current, trigger));
+  });
+
+  Future<void> declineOpportunityAttack({
+    required String campaignId,
+    required int expectedRevision,
+    required String offerId,
+    required bool playerConfirmed,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.declineOpportunityAttack(
+        current,
+        offerId: offerId,
+        playerConfirmed: playerConfirmed,
+      ),
+    );
+  }, allowPendingOpportunity: true);
+
   Future<void> endTurnWithShield({
     required String campaignId,
     required int expectedRevision,
@@ -1209,7 +1244,7 @@ class GameController extends ChangeNotifier {
     }
     if (currentCampaign?.id == id) currentCampaign = null;
     await _reload();
-  });
+  }, allowPendingOpportunity: true);
 
   Future<void> deleteCharacter(String id) => _run(() async {
     await repository.deleteCharacter(id);
@@ -1270,7 +1305,7 @@ class GameController extends ChangeNotifier {
     }
     currentCampaign = null;
     await _reload();
-  });
+  }, allowPendingOpportunity: true);
 
   @override
   void dispose() {
