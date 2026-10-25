@@ -1,3 +1,16 @@
+# Chat A – geprüfter Zauberangriffs-W20, 25.10.2026
+
+- **IMPLEMENTIERT:** neuer reiner `SrdSpellAttackRollRules.resolve` mit bestätigtem Gesamtbonus, Ziel/RK, Deckung, natürlicher 1/20, Vorteil/Nachteil sowie zehn positiven/negativen Testfällen. SRD-Anforderung `RULE-CORE-RULES-ATTACK-ROLLS` nur `partial`.
+- **Basis/Branch:** `45bea9c2a897275583bdbe32ed50afde5d0a76b0` / `feat/chat-a/spell-attack-roll-resolution-20261025`; bestehende PRs #180 und #184 unangetastet.
+- **GETESTET:** GitHub CI auf aktuellem Branch-HEAD noch nicht bestätigt; Tests geschrieben, nicht vorab als bestanden gemeldet.
+- **NICHT GETESTET:** Flutter/Dart lokal mangels SDK, Android-Gerät, reale Persistenz/Upgrade, Release-Signierung.
+- **BLOCKIERT:** Volle Aktion erfordert eigene bestätigte Zauberberechtigung, Zielauswahl, Slot/Aktionskosten und persistente Controller-Integration.
+- **NOCH NICHT IMPLEMENTIERT:** Schäden, Magieeffekte, Slotbuchung und Zustandänderung.
+- **NÄCHSTER SCHRITT:** nach CI und Abgleich aller Chat-A-PRs einen konkret bestätigten Zauberangriff atomar ausführen, auf alte Zustände/Doppelantworten testen.
+- [Regelbeleg](SRD_SPELL_ATTACK_ROLL_RESOLUTION_20261025.md) · [Chat-A-Checkpoint](parallel/CHAT_A_ATTACK_ROLL_20261025.md).
+
+---
+
 # Chat D – rekursive Modulgrenzen (25.10.2026, D-002)
 
 - **Integrationsbasis:** `main` = `97a06118f17d71cc77be2cb15a2fc9a53db20ee0` mit bereits integriertem und geprüftem [PR #177](https://github.com/ManuEtt/Dnd/pull/177). D-002-Branch: `fix/chat-d/nested-boundary-scan-20261025`.
