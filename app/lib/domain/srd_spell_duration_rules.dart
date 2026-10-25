@@ -31,8 +31,7 @@ class SrdSpellDurationAssessment {
   final SrdSpellDurationUnit? unit;
 
   bool get hasTimeLimit => amount != null && unit != null;
-  bool get requiresConcentration =>
-      kind == SrdSpellDurationKind.concentration;
+  bool get requiresConcentration => kind == SrdSpellDurationKind.concentration;
 
   /// "Up to" is only a ceiling; the spell-specific ending rule is separate.
   bool get hasExplicitEarlyEnding =>
