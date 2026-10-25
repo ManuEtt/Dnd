@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – Gradle-Wrapper-JAR vor unsicheren ZIP-Einträgen schützen (D-004, 25.10.2026)
+
+Der Projektprüfer kontrolliert nun auch doppelte und unsichere ZIP-Member sowie symbolische Links im Gradle-Wrapper-JAR, bevor die bestehende Startklassen-/CRC-Prüfung erfolgt. Vier neue Python-Regressionstests decken zulässige und unerlaubte ZIP-Varianten ab. CI-Abnahme und ein neuer Android-Build müssen auf dem finalen Branch-Commit separat bestätigt werden. Keine Änderung an Spielmechanik, Datenformat, Android-App-Quellen oder Spielständen. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
 ## Qualitätssicherung – Chat D: rekursiver Story-/Regelimportprüfer (25.10.2026)
 
 Nach dem vollständig getesteten und regulär integrierten [Chat-D-PR #177](https://github.com/ManuEtt/Dnd/pull/177) ergänzt das neue [Paket D-002](docs/parallel/CHAT_D_CHECKPOINT.md) den Architekturprüfer: Dart-Unterordner von `app/lib/story/` und `app/lib/domain/` werden rekursiv geprüft; relative `../`- und `./`-Importvarianten werden vor dem Berechtigungscheck normalisiert. Sechs neue positive/negative Testfälle und sechs bisherige Grenztests wurden **in einer isolierten Python-Projektstruktur** gemeinsam ausgeführt (**12 bestanden**); die vollständige GitHub-CI und neue APKs sind erst nach Abschluss der Läufe auf dem finalen D-002-Commit belegt. Keine Änderung an SRD-Spielregeln, SQLite, JSON oder der App-Version.
