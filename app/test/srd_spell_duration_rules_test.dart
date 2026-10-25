@@ -111,7 +111,7 @@ void main() {
           invalid,
           concentrationRequired: invalid.startsWith('Concentration'),
         ),
-        throwsA(isA<Exception>().or(isA<UnsupportedError>())),
+        throwsA(anyOf(isA<FormatException>(), isA<UnsupportedError>())),
         reason: invalid,
       );
     }
