@@ -1,0 +1,17 @@
+name: Chat B temporary Dart formatter diagnostic
+on:
+  push:
+    branches:
+      - feat/chat-b/npc-continuity-20261025
+jobs:
+  format-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Display precise Dart formatter diff
+        run: |
+          dart format app/test/npc_continuity_reader_test.dart
+          git diff -- app/test/npc_continuity_reader_test.dart
