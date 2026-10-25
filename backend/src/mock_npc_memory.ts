@@ -55,8 +55,10 @@ export function mockNpcDiaryHint(input: MockNpcContext): string {
     if (!matching) continue;
     const note = oneLine(parsed[3]!);
     if (!note) continue;
+    const excerpt = shorten(note, 160);
+    const ending = /[.!?…]$/u.test(excerpt) ? ' ' : '. ';
     return 'Dein Tagebuch zu ' + oneLine(matching.name) +
-      ' vermerkt: „' + shorten(note, 160) + '“. ';
+      ' vermerkt: „' + excerpt + '“' + ending;
   }
   return '';
 }
