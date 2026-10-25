@@ -1,3 +1,11 @@
+## 25.10.2026 – Sicherheitskorrektur Quell-ZIP-Export (PR #170)
+
+- **Implementiert:** `scripts/package_project.py` prüft die Ausschlüsse für Secret-Dateinamen, `.env*`, SQLite-Journals und Caches jetzt auch bei gemischter Groß-/Kleinschreibung. Betroffene Dateien werden nicht ins Quellarchiv aufgenommen. Ein neuer ZIP-Regressionstest deckt diese Pfade ab; öffentliche Beispielkonfiguration und Grafiken bleiben erhalten.
+- **Baseline:** `main` `b60ffe7`, erfolgreicher Workflow [#40094794864](https://github.com/ManuEtt/Dnd/actions/runs/40094794864). Das ist **kein Prüfergebnis des neuen Codes**; [PR #170](https://github.com/ManuEtt/Dnd/pull/170/checks) separat auswerten.
+- **Kompatibilität:** Version 0.8.38+88, SQLite-Schema 2, Kampagnen-JSON 1, Regeln und Story unverändert; kein Gerätebuild/Release dieses Zyklus behauptet.
+
+---
+
 ## 24.10.2026 – 0.8.38+88: tatsächliche Nebenhandwaffe für Hinterhältigen Angriff
 
 Die vorhandene Nebenhandauflösung prüft jetzt ihre bestätigte Inventarwaffe auf Finesse/Fernkampf. Ein Hauptdolch verleiht einer Nebenhandaxt keinen Zusatzschaden; ein Nebendolch verliert seine Eignung nicht durch eine Haupthandaxt. Krit/Miss und bestehende gemeinsame Zugnutzung bleiben erhalten. 27 bestehende/Helper- und acht neue Kampf-/SQLite-Tests erfolgreich. Vollständige lokale Abnahme: 1505 Flutter-,100 Python-,31 Backend- und12 native Tests erfolgreich, Format/Analyse/Importgrenzen ohne Befund. Neue Debug-APK und ARM64-Alpha gebaut und geprüft. Eigene finale GitHub-Checks am PR158 getrennt geführt; Realgerät nicht getestet. SQLite2/JSON1 kompatibel. Details und nächstes Paket: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md).
