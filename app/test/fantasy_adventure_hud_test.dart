@@ -237,9 +237,9 @@ void main() {
         MaterialApp(
           theme: buildFantasyTheme(),
           builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(context).copyWith(
-              textScaler: const TextScaler.linear(2),
-            ),
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: const TextScaler.linear(2)),
             child: child!,
           ),
           home: Scaffold(
@@ -279,9 +279,7 @@ void main() {
       expect(find.bySemanticsLabel('Bewegung: 9 m'), findsOneWidget);
       expect(find.bySemanticsLabel('Erfahrungspunkte: 950'), findsOneWidget);
       expect(
-        find.bySemanticsLabel(
-          RegExp('Erfahrungsfortschritt: [0-9]+ Prozent'),
-        ),
+        find.bySemanticsLabel(RegExp('Erfahrungsfortschritt: [0-9]+ Prozent')),
         findsOneWidget,
       );
       expect(tester.takeException(), isNull);
@@ -302,9 +300,9 @@ void main() {
       MaterialApp(
         theme: buildFantasyTheme(),
         builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            textScaler: const TextScaler.linear(2),
-          ),
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: const TextScaler.linear(2)),
           child: child!,
         ),
         home: Scaffold(
