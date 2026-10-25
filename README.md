@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Qualitätssicherung – Chat D: verschachtelte Modulgrenzen (25.10.2026)
+
+Das zweite unabhängige Chat-D-Paket verhindert, dass neue Dart-Unterordner die geprüfte Trennung zwischen Regelengine und Story versehentlich umgehen. `scripts/check_domain_boundaries.py` untersucht jetzt rekursiv alle `*.dart` in `app/lib/story/` und `app/lib/domain/` und normalisiert relative Importe vor der Zulässigkeitsprüfung. Sechs neue Regressionstests (zulässige und verbotene Verschachtelungen) wurden **in einer isolierten lokalen Python-Teststruktur** erfolgreich ausgeführt; Repository-/Flutter-/APK-Abnahme auf dem neuen Commit bleibt offen. Keine Änderung an Spielstand, Datenformat oder SRD-Regelwirkung. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md). Der frühere [Chat-D-PR #177](https://github.com/ManuEtt/Dnd/pull/177) ergänzt die CI-Gates; beide unabhängigen Pakete benötigen eine abschließende konfliktfreie Dokumentationszusammenführung.
+
 Deutschsprachige Android-Alpha für Soloabenteuer und regelgeprüfte Kampagnen. Das vollständige SRD 5.2.1 bleibt in Arbeit.
 
 ## Aktueller Stand und autonome Fortsetzung (25.10.2026)
