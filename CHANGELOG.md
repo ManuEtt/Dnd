@@ -1,3 +1,9 @@
+## 25.10.2026 – GitHub-Integration PR #171 tatsächlich nach main gemergt
+
+Der verifizierte Integrationskopf `255a5a0` wurde als normaler Merge (kein Squash) mit Main-Commit `635773db33724f543d61bacde9a9ebe679b9b1e9` übernommen. Vollständige [PR-CI #40192473811](https://github.com/ManuEtt/Dnd/actions/runs/40192473811) erfolgreich; unabhängige [Main-CI #40193476536](https://github.com/ManuEtt/Dnd/actions/runs/40193476536) zum Zeitpunkt dieses Nachtrags noch laufend. 19/19 Archive-Tag-SHAs und 19/19 Vorfahren im GitHub-Commitvergleich bestätigt. Remote-Branches noch nicht gelöscht. App 0.8.39+89, SQLite2 und Kampagnen-JSON1.
+
+---
+
 ## 25.10.2026 – alle Branches integriert und lokal abgenommen
 
 Sending-W100-Validierung, Verbündetenbestätigung bei zulässigen Nebenhandangriffen, allgemeine Light-Nahkampfbonusangriffe, Schutz abgeschlossener Storyfäden, lokale und serverseitige ID-Kollisionssperren, Plot-Geheimnisschutz, Backend-Limiter und sichere Projektarchive sind vereinigt. Der bei der Integration gefundene Casefold-Fehler für generierte/Systemdateien ist mit Regressionstest behoben. Fehler beim ZIP-Schreiben oder Veröffentlichen der Prüfsumme bewahren das zuvor vorhandene Archiv; keine Zusage einer absturzübergreifend atomaren Dateipaar-Transaktion.
