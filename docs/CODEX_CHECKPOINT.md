@@ -1,3 +1,18 @@
+# Chat D D-005 – Doppelte Gradle-Distributionseinstellungen abweisen (25.10.2026)
+
+- **Basis:** `main` `af70a48c84d83c133ced4200be04ca81a91abf1b`, **Branch:** `fix/chat-d/gradle-properties-duplicate-guard-20261025`; D-001 bis D-004 bereits regulär integriert.
+- **IMPLEMENTIERT:** genaue einmalige Ermittlung der `distributionUrl` und `distributionSha256Sum` mit Java-Properties-Separatoren; doppelte/mehrdeutige Schlüssel werden abgelehnt. Sechs zusätzliche Python-Regressionstests.
+- **GETESTET:** Branch-Dateien über GitHub nach Push geprüft; isolierter Regex-/URL-Fall geprüft. Vollständige CI noch nicht abgeschlossen.
+- **NICHT GETESTET:** vollständige Python-/Backend-/Flutter-/Android-Abnahme, Alpha-APK und Realgerät.
+- **BLOCKIERT:** Abschluss der finalen CI auf eigenem Branch und zusätzlicher GitHub-Main-Abgleich.
+- **PERSISTENZ:** keine Änderungen an SQLite, JSON, Spielmechanik oder App-Version; keine Migration.
+- **NÄCHSTER SCHRITT:** finale Actions-Ergebnisse auf dem aktuellen PR-HEAD validieren, nötigenfalls korrigieren und erst danach konfliktfrei integrieren. [Chat-D-Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
+
+---
+
+
+---
+
 # Chat D D-004 – Gradle-Wrapper-JAR-Sicherheit (25.10.2026)
 
 - **Basis:** `main` `713b8cc2831f9d8039ef4e6ebf37c10682aec675` mit bereits integriertem D-003-PR #183; D-004-Branch `fix/chat-d/gradle-wrapper-jar-safety-20261025`.
