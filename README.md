@@ -78,3 +78,12 @@ Weitere offene Bereiche: vollständige amtliche Quelleninventur, zahlreiche Zaub
 Vollprojekt-ZIP, Patch und Prüfsummen unter `/workspace/artifacts/0.8.40+90/`; aktuelle Dateinamen im dortigen Artefaktindex nach Abschluss. Patchbasis dieses Pakets: `407c2e1ef8ee310b30d1543a263fb66b3331a26e`. ZIP in eine Arbeitskopie entpacken oder Patch mit `git apply --check`/`git apply` auf dieser Basis übernehmen, eigenen Branch pushen und PR öffnen. Keine alten Dateistände ungeprüft über Main kopieren.
 
 Nur rechtmäßig verwendbare Inhalte des **SRD 5.2.1 von Wizards of the Coast unter CC BY 4.0** sowie eigene/lizenzierte Inhalte nutzen. [Namensnennung](THIRD_PARTY_NOTICES.md) erhalten. Keine automatische Weiterarbeit außerhalb einer aktiven Sitzung.
+
+
+---
+
+## Chat B – bestätigtes NPC-Tagebuch für Mock-Kampagnen (25.10.2026)
+
+Auf dem isolierten Branch `feat/chat-b/mock-npc-recall-20261025` ergänzt die rein erzählerische Backend-Mock-Spielleitung einen kurzen Tagebuchhinweis, wenn die aktuelle Spielerhandlung einen eindeutig benannten bekannten NPC ausdrücklich erwähnt und im vorhandenen `memories`-Kontext eine passend markierte Beziehungsnotiz steht. Verschiedene NPCs werden nicht vermischt, Teilwort-Treffer genügen nicht und doppelte NPC-Namen lösen keinen Hinweis aus. Die Tagebuch-Notiz wird einzeilig und auf 160 Unicode-Codepunkte begrenzt.
+
+Die neue Funktion ändert weder Spielmechanik noch NPC-Beziehungen, Quests, Trefferpunkte oder Speicherformate. Die übermittelten Erinnerungsstrings bleiben aus Sicht des Backends nicht vertrauenswürdige Nutzereingaben, selbst wenn ihre Kennzeichnung „bestätigt“ lautet. Sechs Backend-Regressionen wurden angelegt; **CI-/APK-Ergebnisse müssen auf dem finalen PR-Commit nachgewiesen werden**. Frühere eigene PRs #179/#181/#187 bleiben eigenständig und werden nicht überschrieben. Details: [Chat-B-Checkpoint](docs/parallel/CHAT_B_MOCK_NPC_RECALL_20261025.md).
