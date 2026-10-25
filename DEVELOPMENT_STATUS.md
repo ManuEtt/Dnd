@@ -1,3 +1,14 @@
+## 25.10.2026 – Quell-ZIP-Secret-Schutz (PR #170)
+
+- **IMPLEMENTIERT:** Dateinamensvergleich für Secrets, SQLite-Journals und Cache-/SDK-Pfade unabhängig von Groß-/Kleinschreibung; tatsächlicher ZIP-Regressionstest in `scripts/tests/test_package_project.py`.
+- **GETESTET:** Die vorherige `main`-Baseline `b60ffe7` war in [Actions #40094794864](https://github.com/ManuEtt/Dnd/actions/runs/40094794864) vollständig erfolgreich. **Keine** Ableitung für PR #170.
+- **NICHT GETESTET:** Neue branchbezogene Python-/Flutter-/Backend-/Android-CI bis zum Abschluss auf finalem SHA; Geräteabnahme, produktive Signierung.
+- **BLOCKIERT:** Kein lokales Git-Netzwerk für einen Checkout sowie kein Flutter-/Android-SDK in der aktuellen Umgebung; GitHub Actions als unabhängige Prüfstrecke vorhanden.
+- **NOCH NICHT IMPLEMENTIERT:** Atomarer Export bei Schreibabbruch; andere Story-/Kampf-Inkremente bleiben in bereits offenen PRs.
+- **Git:** Branch `fix/case-insensitive-secret-archive-filter-20261025` auf `b60ffe7`, [PR #170](https://github.com/ManuEtt/Dnd/pull/170). SQLite 2, JSON 1, Version 0.8.38+88 ohne Änderung. [Operativer Checkpoint](docs/CODEX_CHECKPOINT.md).
+
+---
+
 ## 24.10.2026 – 0.8.38+88: tatsächliche Nebenhandwaffe für Hinterhältigen Angriff
 
 Die vorhandene Nebenhandauflösung prüft jetzt ihre bestätigte Inventarwaffe auf Finesse/Fernkampf. Ein Hauptdolch verleiht einer Nebenhandaxt keinen Zusatzschaden; ein Nebendolch verliert seine Eignung nicht durch eine Haupthandaxt. Krit/Miss und bestehende gemeinsame Zugnutzung bleiben erhalten. 27 bestehende/Helper- und acht neue Kampf-/SQLite-Tests erfolgreich. Vollständige lokale Abnahme: 1505 Flutter-,100 Python-,31 Backend- und12 native Tests erfolgreich, Format/Analyse/Importgrenzen ohne Befund. Neue Debug-APK und ARM64-Alpha gebaut und geprüft. Eigene finale GitHub-Checks am PR158 getrennt geführt; Realgerät nicht getestet. SQLite2/JSON1 kompatibel. Details und nächstes Paket: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md).
