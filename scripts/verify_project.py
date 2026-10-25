@@ -4,6 +4,7 @@ from pathlib import Path
 import argparse
 import json
 import re
+import stat
 import sys
 import zipfile
 import zlib
@@ -57,7 +58,23 @@ def verify_project(root: Path) -> list[str]:
     if wrapper.is_file() and wrapper.stat().st_size:
         try:
             with zipfile.ZipFile(wrapper) as archive:
-                if archive.testzip() is not None or not archive.read(WRAPPER_MAIN).startswith(b'\xca\xfe\xba\xbe'):
+                # A valid CRC does not make duplicate ZIP names or path
+                # traversal unambiguous. Reject these before reading the JAR.
+                members = archive.infolist()
+                names = [member.filename for member in members]
+                if len(names) != len(set(names)):
+                    raise ValueError('duplicate wrapper JAR entries')
+                for member in members:
+                    name = member.filename
+                    segments = name.rstrip('/').split('/')
+                    if (not name or name.startswith('/') or '\\' in name
+                            or re.match(r'^[A-Za-z]:', name)
+                            or any(segment in ('', '.', '..') for segment in segments)
+                            or any(ord(char) < 32 or ord(char) == 127 for char in name)
+                            or stat.S_ISLNK(member.external_attr >> 16)):
+                        raise ValueError('unsafe wrapper JAR entry')
+                if (archive.testzip() is not None
+                        or not archive.read(WRAPPER_MAIN).startswith(b'\xca\xfe\xba\xbe')):
                     raise ValueError('invalid wrapper')
         except (OSError, KeyError, ValueError, RuntimeError, zipfile.BadZipFile, zlib.error):
             errors.append(

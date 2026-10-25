@@ -12,6 +12,42 @@
 
 ---
 
+**CI-Nachweis und letzter Main-Abgleich:** PR [#178](https://github.com/ManuEtt/Dnd/pull/178) bestand [Actions #40219700324](https://github.com/ManuEtt/Dnd/actions/runs/40219700324) vollständig auf `907d665a38db150684d290314120765d8d651eb4` (Flutter/Python/Backend, Architektur/SRD, Android-Debug/Alpha). Neuer `main` `af70a48c84d83c133ced4200be04ca81a91abf1b` mit Chat-D-Sicherheitsarbeiten übernommen; der neue Merge-Commit benötigt eigene Prüfung. Reale Geräteinstallation/TalkBack/Produktionssignierung offen.
+
+# Chat D D-004 – Gradle-Wrapper-JAR-Sicherheit (25.10.2026)
+
+- **Basis:** `main` `713b8cc2831f9d8039ef4e6ebf37c10682aec675` mit bereits integriertem D-003-PR #183; D-004-Branch `fix/chat-d/gradle-wrapper-jar-safety-20261025`.
+- **Implementiert:** `scripts/verify_project.py` rejectiert mehrdeutige doppelte ZIP-Namen, unsichere Pfadvarianten und ZIP-Symlinks vor dem Gradle-Start; vier zusätzliche positive/negative Tests.
+- **Status:** Frühere CI auf `c7f2df12a9df474e6204ad1de4011f7c5b6e3e7f` belegt **nicht** den neuen Synchronisations-Commit. Vollständige Actions-Abnahme und Android-Artefakte des neuen Standes sind noch offen.
+- **Keine Migration:** SQLite/JSON, App-Version und bestehende Spielmechanik unverändert.
+- **Nächster Schritt:** finale CI prüfen, gegen aktuellen `main` konfliktfrei abgleichen, erst danach Zusammenführung freigeben.
+- **Checkpoint:** [CHAT_D_CHECKPOINT.md](parallel/CHAT_D_CHECKPOINT.md).
+
+---
+
+# Chat D – PR #183 APK-Archivschutz nach Integration #182
+
+- **Neuer Main-HEAD:** `45bea9c2a897275583bdbe32ed50afde5d0a76b0`. Die beiden Chat-D-PRs #177 und #182 sind inzwischen integriert; dieser Branch übernimmt ihre technischen Dateien und Statusdokumentation unverändert.
+- **Implementiert:** `scripts/prepare_alpha_release.py` weist doppelte Archivnamen, Traversal-/absolute Pfade, Rückwärtsschrägstriche, Steuerzeichen und ZIP-Symlinks zurück; vier neue positive/negative Regressionen.
+- **GETESTET:** Code/Testdateien über GitHub auf eigenem Branch überprüft. Die ältere PR-183-CI auf `ae0efbe` ist **kein** Abnahmenachweis des neu kombinierten Commits.
+- **NICHT GETESTET:** finale Python-/Flutter-/Backend-/Android-CI auf dem neuen PR-183-HEAD; reales Gerät. Keine Datenmigration.
+- **NÄCHSTER SCHRITT:** exakte neue PR-/Push-CI abnehmen, aktuelle Parallel-PR-Dateien vergleichen, danach nur bei grüner CI und Konfliktfreiheit integrieren.
+- **Vollständiger Status:** [CHAT_D_CHECKPOINT.md](parallel/CHAT_D_CHECKPOINT.md).
+
+---
+
+# Chat D – rekursive Modulgrenzen (25.10.2026, D-002)
+
+- **Integrationsbasis:** `main` = `97a06118f17d71cc77be2cb15a2fc9a53db20ee0` mit bereits integriertem und geprüftem [PR #177](https://github.com/ManuEtt/Dnd/pull/177). D-002-Branch: `fix/chat-d/nested-boundary-scan-20261025`.
+- **IMPLEMENTIERT:** `scripts/check_domain_boundaries.py` durchsucht beide Dart-Domainbereiche rekursiv und normalisiert Importpfade, sodass Unterordner und äquivalente Traversal-Imports die Grenze nicht umgehen. Sechs neue Regressionen.
+- **GETESTET:** 6 neue und 6 bisherige Python-Grenztests in einer isolierten Teststruktur erfolgreich. Die neue D-002-PR-CI bezieht sich auf einen anderen Commit und muss nach dieser Main-Synchronisierung vollständig neu abgenommen werden.
+- **NICHT GETESTET:** Repositoryweite finale Python-/Flutter-/Android-CI und APK auf dem neuen D-002-Kombinationscommit, Realgerät.
+- **BLOCKIERT:** laufende CI; keine lokalen Android-/Flutter-SDKs/kompletter Checkout. Keine Spielstand-/Schemamigration und kein neuer SRD-Fertigstellungsnachweis.
+- **NÄCHSTER SCHRITT:** vollständige finale PR-CI auf dem neuen Commit prüfen und danach separat mergefähig freigeben; parallele PRs ohne überschreibende Dokumentationsupdates behandeln.
+- **Detaillierter Stand:** [Chat-D-Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
+
+---
+
 # Chat D – Qualität und Integration, 25.10.2026 (PR #177)
 
 - **Main-Abgleich:** neuer Main-HEAD `fb788a980b8ee9eb60439c249f3e1f5092a9f188` nach Merge von PR #176; ursprüngliche PR-D-Basis `5c1499a9342449050bb946542659b221ac2653da`.
