@@ -7,7 +7,7 @@
 - **NICHT GETESTET:** Eigenständige [Main-CI #40193476536](https://github.com/ManuEtt/Dnd/actions/runs/40193476536) bis zu ihrem tatsächlichen Abschluss; reales Android-Gerät/Upgrade mit alten Spielständen, produktive Signierung. Kein neues Paket/kein neuer SHA256-Digest vorgetäuscht.
 - **BLOCKIERT:** Physische Geräteabnahme und GitHub-Branch-Löschung über die aktuell verfügbare Connector-Schnittstelle (kein sicherer `delete_ref`-Endpunkt). Lokale Git-Bundle-Prüfung aus dokumentiertem Fremd-Arbeitsverzeichnis wurde hier nicht unabhängig wiederholt. Archivtags bleiben bestehen.
 - **NOCH NICHT IMPLEMENTIERT:** Haupt- und Nebenbranch-Bereinigung erst nach grüner Main-CI und nochmaliger SHA-/Backup-Abstammungsprüfung. Vollständige SRD-Automatik, reale KI-/Gerätefreigabe offen.
-- **Nächster konkreter Schritt:** Nach Abschluss der exakten Main-CI `635773d`: seis sechs gestapelte PRs #165/#166/#167/#168/#169/#172, deren Head SHA weiterhin in `main` enthalten ist, ohne Re-Merge schließen; Remote-Branch-Löschung nur über einen SHA-gesicherten `delete_ref`-Workflow nach gesonderter Berechtigungs-/Backup-Prüfung. Bei neuer SHA/roter CI zuerst abklären, nichts löschen.
+- **Nächster konkreter Schritt:** Nach Abschluss der exakten Main-CI `635773d`: die sechs gestapelte PRs #165/#166/#167/#168/#169/#172, deren Head SHA weiterhin in `main` enthalten ist, ohne Re-Merge schließen; Remote-Branch-Löschung nur über einen SHA-gesicherten `delete_ref`-Workflow nach gesonderter Berechtigungs-/Backup-Prüfung. Bei neuer SHA/roter CI zuerst abklären, nichts löschen.
 
 ---
 
