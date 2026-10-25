@@ -4,6 +4,7 @@
 - Projekt: Würfelraunen – Chat B (KI-Spielleitung und Kampagne).
 - Ausgangs-`main`: `af70a48c84d83c133ced4200be04ca81a91abf1b`.
 - Branch: `feat/chat-b/mock-npc-recall-20261025`.
+- Pull Request: [#191](https://github.com/ManuEtt/Dnd/pull/191), gegen `main` geöffnet, nicht gemergt.
 - Offene PRs bei der Auswahl: #178, #179, #180, #181, #184, #185, #187, #188 und #189. Die neue Fachänderung liegt ausschließlich in `backend/src/story.ts`, `backend/src/mock_npc_memory.ts` und `backend/test/mock-npc-memory.test.ts`; keiner dieser Pfade war in den offenen PRs geändert.
 - PR #187 zur gezielten Weitergabe gespeicherter NPC-Notizen hat auf `80f103a3ba5ab8a95670375140e87dd1d4b459bc` vollständige grüne GitHub-CI #40222745973. PR #187 ist noch nicht in `main` gemergt und wird weder kopiert noch überschrieben.
 
@@ -35,3 +36,8 @@ Die serverseitige Mock-Kampagnenfortsetzung ignoriert bisher auch dann die über
 
 ## Ein nächster Schritt
 Nach CI und Review den Story-Betrieb hinsichtlich eindeutig identifizierbarer Figuren bei gleicher sichtbarer Namensform absichern. Akzeptanz: keine fremden Notizen bei Namensgleichheit, lesbare Unterscheidung über bestätigte NPC-ID und keine Übernahme unbestätigter KI-Fakten.
+
+## GitHub-Prüfnachtrag
+- Die vollständige GitHub-CI für das vor diesem Nachtrag veröffentlichte HEAD `60560472443ce39991d7fc46ca5b70857fd61fdf` wird unter [Workflow #40233174237](https://github.com/ManuEtt/Dnd/actions/runs/40233174237) ausgeführt. Der genaue Status ist nach Abschluss erneut am Commit zu prüfen.
+- Ursprüngliche CI des Feature-Codes `adebe697a77ae3f198fb114552bd29f1c8fa459f` hat die Backendtests bereits erfolgreich ausgeführt; das ist keine CI-Freigabe für spätere Dokumentationscommits.
+- Dokumentationsdateien sind bei einem späteren Merge durch Chat D abzugleichen. Kein automatischer Merge durch Chat B.
