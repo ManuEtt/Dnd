@@ -1,3 +1,15 @@
+# Chat D – rekursive Modulgrenzen (25.10.2026, D-002)
+
+- **Integrationsbasis:** `main` = `97a06118f17d71cc77be2cb15a2fc9a53db20ee0` mit bereits integriertem und geprüftem [PR #177](https://github.com/ManuEtt/Dnd/pull/177). D-002-Branch: `fix/chat-d/nested-boundary-scan-20261025`.
+- **IMPLEMENTIERT:** `scripts/check_domain_boundaries.py` durchsucht beide Dart-Domainbereiche rekursiv und normalisiert Importpfade, sodass Unterordner und äquivalente Traversal-Imports die Grenze nicht umgehen. Sechs neue Regressionen.
+- **GETESTET:** 6 neue und 6 bisherige Python-Grenztests in einer isolierten Teststruktur erfolgreich. Die neue D-002-PR-CI bezieht sich auf einen anderen Commit und muss nach dieser Main-Synchronisierung vollständig neu abgenommen werden.
+- **NICHT GETESTET:** Repositoryweite finale Python-/Flutter-/Android-CI und APK auf dem neuen D-002-Kombinationscommit, Realgerät.
+- **BLOCKIERT:** laufende CI; keine lokalen Android-/Flutter-SDKs/kompletter Checkout. Keine Spielstand-/Schemamigration und kein neuer SRD-Fertigstellungsnachweis.
+- **NÄCHSTER SCHRITT:** vollständige finale PR-CI auf dem neuen Commit prüfen und danach separat mergefähig freigeben; parallele PRs ohne überschreibende Dokumentationsupdates behandeln.
+- **Detaillierter Stand:** [Chat-D-Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
+
+---
+
 # Chat D – Qualität und Integration, 25.10.2026 (PR #177)
 
 - **Main-Abgleich:** neuer Main-HEAD `fb788a980b8ee9eb60439c249f3e1f5092a9f188` nach Merge von PR #176; ursprüngliche PR-D-Basis `5c1499a9342449050bb946542659b221ac2653da`.

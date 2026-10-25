@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Qualitätssicherung – Chat D: rekursiver Story-/Regelimportprüfer (25.10.2026)
+
+Nach dem vollständig getesteten und regulär integrierten [Chat-D-PR #177](https://github.com/ManuEtt/Dnd/pull/177) ergänzt das neue [Paket D-002](docs/parallel/CHAT_D_CHECKPOINT.md) den Architekturprüfer: Dart-Unterordner von `app/lib/story/` und `app/lib/domain/` werden rekursiv geprüft; relative `../`- und `./`-Importvarianten werden vor dem Berechtigungscheck normalisiert. Sechs neue positive/negative Testfälle und sechs bisherige Grenztests wurden **in einer isolierten Python-Projektstruktur** gemeinsam ausgeführt (**12 bestanden**); die vollständige GitHub-CI und neue APKs sind erst nach Abschluss der Läufe auf dem finalen D-002-Commit belegt. Keine Änderung an SRD-Spielregeln, SQLite, JSON oder der App-Version.
+
 ## Qualitätssicherung – Chat D (PR #177, 25.10.2026)
 
 [PR #177](https://github.com/ManuEtt/Dnd/pull/177) ergänzt zwei bislang nicht automatisch ausgeführte CI-Gates: `python3 scripts/check_domain_boundaries.py` und `python3 scripts/srd_coverage.py --json`. Beide laufen jetzt in der Android-CI und in `scripts/check.sh` vor den regulären Python-Tests. Der neue Konfigurationstest enthält positive und negative Fälle. Auf dem bisherigen PR-Commit `1fdd3c0` waren Architektur-/SRD-Prüfung, Python-Tests, Backend-Tests sowie Flutter-Analyse und Flutter-Tests erfolgreich; Android-Build und vollständige Release-Abnahme wurden noch nicht als erfolgreich bestätigt. Keine Änderung an SQLite, JSON, Spielregeln oder der App-Version. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
