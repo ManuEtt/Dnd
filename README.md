@@ -1,5 +1,12 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – SRD-5.2.1-Ritualzauber (25.10.2026, eigener PR)
+
+Ein neues reines Regelmodul prüft **Ritualzauber ohne Zauberplatzverbrauch**: die 29 im SRD-Arbeitskatalog gekennzeichneten Rituale, die richtige eigene Zauberklasse/Stufe, ausdrücklich vorbereitete Zauber, V-/S-/M-Komponenten, Zeit/Ziel/Konzentration, ungeübte Rüstung sowie veraltete Charakterdaten. Es vermerkt zehn Minuten zusätzliche Zauberzeit (bei einer `Action` keine erfundene minutengenaue Rundung). Der Prüfplan führt **keine** Zauberwirkung und **keine** Zeit-, Slot-, Material- oder Spielstandänderung aus. Requirement `RULE-SPELLS-RITUAL-CASTING` bleibt `partial`. [Fachbeleg](docs/SRD_RITUAL_CASTING_PREFLIGHT_20261025.md) · [Chat-A-Checkpoint](docs/parallel/CHAT_A_RITUAL_CASTING_20261025.md).
+
+**CI:** Auf dem finalen Branch-Commit noch zu prüfen. Die bisherigen Chat-A-PRs #180, #184 und #188 bleiben voneinander und von diesem Ritualmodul getrennt.
+
+
 ## Qualitätspaket Chat D D-004 – Gradle-Wrapper-JAR-Validierung
 
 Nach der vollständigen Integration von [PR #183](https://github.com/ManuEtt/Dnd/pull/183) ergänzt [PR #186](https://github.com/ManuEtt/Dnd/pull/186) den Projektprüfer um die frühe Zurückweisung doppelter ZIP-Dateinamen, Pfad-Traversal/absoluter Namen und symbolischer Einträge im Gradle-Wrapper-JAR. Vier neue Python-Regressionen erfassen Positiv- und Negativfälle. Die vollständige GitHub-CI des mit `main` synchronisierten D-004-Commits bleibt bis zum Abschluss gesondert zu prüfen. Keine Spielstands-, SQLite-/JSON-, UI- oder SRD-Regeländerung. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
