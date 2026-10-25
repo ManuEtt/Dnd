@@ -4,6 +4,8 @@ from pathlib import Path
 import argparse
 import hashlib
 import os
+import shutil
+import tempfile
 import zipfile
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -89,17 +91,41 @@ def create_archive(root: Path, output: Path, *, layout: str = 'folder') -> tuple
         raise ValueError(f'Missing required project files: {sorted(missing)}')
     output.parent.mkdir(parents=True, exist_ok=True)
     prefix = Path('Dnd') if layout == 'folder' else Path()
-    with zipfile.ZipFile(output, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
-        for path in paths:
-            archive.write(path, prefix / path.relative_to(root))
-    with zipfile.ZipFile(output) as archive:
-        bad = archive.testzip()
-        if bad:
-            raise RuntimeError(f'Corrupt ZIP entry: {bad}')
-    digest = hashlib.sha256(output.read_bytes()).hexdigest()
-    output.with_suffix(output.suffix + '.sha256').write_text(
-        f'{digest}  {output.name}\n', encoding='utf-8',
-    )
+    checksum = output.with_suffix(output.suffix + '.sha256')
+
+    # Build and validate outside the published archive. A partial write must
+    # never truncate a previously usable ZIP or its checksum.
+    with tempfile.TemporaryDirectory(prefix=f'.{output.name}.', dir=output.parent) as tmp:
+        temporary = Path(tmp)
+        staged_zip = temporary / output.name
+        staged_sha = temporary / checksum.name
+        with zipfile.ZipFile(staged_zip, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
+            for path in paths:
+                archive.write(path, prefix / path.relative_to(root))
+        with zipfile.ZipFile(staged_zip) as archive:
+            bad = archive.testzip()
+            if bad:
+                raise RuntimeError(f'Corrupt ZIP entry: {bad}')
+        digest = hashlib.sha256(staged_zip.read_bytes()).hexdigest()
+        staged_sha.write_text(f'{digest}  {output.name}\n', encoding='utf-8')
+
+        # Preserve both previous files until the staged pair is ready. If the
+        # second replacement fails, restore the previous ZIP as well.
+        previous_zip = temporary / 'previous.zip'
+        if output.is_file():
+            shutil.copy2(output, previous_zip)
+        published_zip = False
+        try:
+            os.replace(staged_zip, output)
+            published_zip = True
+            os.replace(staged_sha, checksum)
+        except BaseException:
+            if published_zip:
+                if previous_zip.is_file():
+                    os.replace(previous_zip, output)
+                else:
+                    output.unlink(missing_ok=True)
+            raise
     return len(paths), digest
 
 def main() -> None:

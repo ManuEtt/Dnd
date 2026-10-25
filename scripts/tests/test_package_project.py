@@ -2,6 +2,7 @@ import importlib.util
 from pathlib import Path
 import tempfile
 import unittest
+from unittest import mock
 import zipfile
 
 
@@ -153,6 +154,73 @@ class ProjectArchiveTests(unittest.TestCase):
         with zipfile.ZipFile(output) as archive:
             self.assertEqual(set(archive.namelist()), packaging.REQUIRED_FILES)
             self.assertIsNone(archive.testzip())
+
+    def test_failed_zip_write_does_not_damage_previous_zip_or_checksum(self):
+        output = self.base / 'saved.zip'
+        packaging.create_archive(self.root, output, layout='root')
+        checksum = output.with_suffix('.zip.sha256')
+        previous = (output.read_bytes(), checksum.read_bytes())
+        before = set(self.base.iterdir())
+
+        with mock.patch.object(packaging.zipfile.ZipFile, 'write',
+                               side_effect=OSError('simulated disk full')):
+            with self.assertRaisesRegex(OSError, 'simulated disk full'):
+                packaging.create_archive(self.root, output, layout='root')
+
+        self.assertEqual((output.read_bytes(), checksum.read_bytes()), previous)
+        self.assertEqual(set(self.base.iterdir()), before)
+        with zipfile.ZipFile(output) as archive:
+            self.assertIsNone(archive.testzip())
+
+    def test_failed_new_zip_write_leaves_no_partial_publication(self):
+        output = self.base / 'new.zip'
+        before = set(self.base.iterdir())
+        with mock.patch.object(packaging.zipfile.ZipFile, 'write',
+                               side_effect=OSError('simulated write failure')):
+            with self.assertRaisesRegex(OSError, 'simulated write failure'):
+                packaging.create_archive(self.root, output, layout='folder')
+        self.assertFalse(output.exists())
+        self.assertFalse(output.with_suffix('.zip.sha256').exists())
+        self.assertEqual(set(self.base.iterdir()), before)
+
+    def test_failed_checksum_publication_rolls_back_previous_archive(self):
+        output = self.base / 'published.zip'
+        packaging.create_archive(self.root, output, layout='root')
+        checksum = output.with_suffix('.zip.sha256')
+        previous = (output.read_bytes(), checksum.read_bytes())
+        before = set(self.base.iterdir())
+        (self.root / 'app/lib/main.dart').write_text('new version', encoding='utf-8')
+
+        original_replace = packaging.os.replace
+
+        def fail_checksum_replacement(source, destination):
+            if Path(destination) == checksum:
+                raise OSError('simulated checksum replacement failure')
+            return original_replace(source, destination)
+
+        with mock.patch.object(packaging.os, 'replace',
+                               side_effect=fail_checksum_replacement):
+            with self.assertRaisesRegex(OSError, 'checksum replacement failure'):
+                packaging.create_archive(self.root, output, layout='root')
+
+        self.assertEqual((output.read_bytes(), checksum.read_bytes()), previous)
+        self.assertEqual(set(self.base.iterdir()), before)
+
+    def test_successful_overwrite_replaces_zip_and_checksum_together(self):
+        output = self.base / 'published.zip'
+        packaging.create_archive(self.root, output, layout='root')
+        old_archive = output.read_bytes()
+        (self.root / 'app/lib/main.dart').write_text('new version', encoding='utf-8')
+        count, digest = packaging.create_archive(self.root, output, layout='root')
+        self.assertEqual(count, len(packaging.REQUIRED_FILES))
+        self.assertNotEqual(output.read_bytes(), old_archive)
+        with zipfile.ZipFile(output) as archive:
+            self.assertEqual(archive.read('app/lib/main.dart'), b'new version')
+            self.assertIsNone(archive.testzip())
+        self.assertEqual(output.with_suffix('.zip.sha256').read_text(),
+                         f'{digest}  {output.name}\n')
+        self.assertEqual(set(self.base.iterdir()),
+                         {self.root, output, output.with_suffix('.zip.sha256')})
 
     def test_invalid_layout_cannot_create_an_ambiguous_archive(self):
         with self.assertRaisesRegex(ValueError, 'layout'):
