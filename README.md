@@ -1,5 +1,12 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Neues unabhängiges Chat-A-Regelpaket – Zauberdauer-Metadaten (25.10.2026)
+
+Arbeitsbranch `feat/chat-a/spell-duration-classification-20261025`: Neuer rein lesender Klassifikator `SrdSpellDurationRules` in `app/lib/domain/srd_spell_duration_rules.dart` und über `app/lib/rules/rules_api.dart` exportiert. Feste Zeitspannen, Konzentrationshöchstdauern, einmalige Wirkungen, Bannung und auslösergebundene Enden werden unterschieden; unbekannte Sonderfälle bleiben gesperrt. **Keine** automatische Wirkungsauflösung, Kampfrundenzeit oder Migration. Fünf Dart-Testgruppen wurden ergänzt; eine getrennte Katalogdatenprüfung erkannte 338 von 339 Dauerformen, `Creation: Special` bleibt offen. Dart-/Flutter-/APK-Nachweise sind bis zum tatsächlich erfolgreichen PR-Workflow ausstehend. Quelle SRD 5.2.1 *Spells / Duration*, S. 106, CC BY 4.0. Details: [Regeldokumentation](docs/SRD_SPELL_DURATION_CLASSIFICATION_20261025.md) und [Chat-A-Checkpoint](docs/parallel/CHAT_A_CHECKPOINT.md).
+
+**Parallelentwicklungs-Hinweis:** PR #176 bearbeitet Gelegenheitsreaktionen. Ein Konflikt bei README/Checkpoint darf nur nach bewusster Konsolidierung gelöst werden.
+
+
 ## Aktuelles Entwicklungsinkrement (2026-10-25T18:11:00+01:00 – Angebots-Revalidierung)
 
 [PR #175](https://github.com/ManuEtt/Dnd/pull/175) auf Branch `fix/opportunity-offer-revalidation-20261025` schützt das in PR #174 eingeführte **rein lesende** Gelegenheitsangriff-Angebot vor stiller Weiterverwendung nach einer Kampagnenrevision oder dem Austausch der bestätigten Bewegungsgeometrie. `SrdOpportunityAttackRules.revalidate` prüft das bisherige Angebot gegen Encounter, Revision, Angriffstyp, Waffenreferenz und alle drei Reichweiten-/Abstandsangaben und führt dann die vollständige bestehende Vorprüfung auf dem aktuellen Zustand erneut aus. Dadurch werden auch zwischenzeitlich verbrauchte Reaktionen oder gewechselte Waffen abgewiesen.
