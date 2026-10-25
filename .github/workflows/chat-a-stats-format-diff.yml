@@ -1,0 +1,20 @@
+name: Chat A Spell Stats Formatting Diagnosis
+on:
+  pull_request:
+    paths:
+      - 'app/test/srd_class_spell_stats_test.dart'
+      - '.github/workflows/chat-a-stats-format-diff.yml'
+jobs:
+  show-format-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Print exact format delta
+        run: |
+          dart format app/test/srd_class_spell_stats_test.dart
+          git --no-pager diff -- app/test/srd_class_spell_stats_test.dart
