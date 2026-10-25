@@ -95,6 +95,7 @@ class SrdOpportunityAttackRules {
         fight.id != trigger.encounterId ||
         fight.activeParticipant != 'enemy' ||
         fight.reactionUsed ||
+        campaign.pendingOpportunityAttack != null ||
         campaign.pendingRoll != null ||
         campaign.pendingDeathSave != null ||
         campaign.pendingEnemyShieldHit != null ||

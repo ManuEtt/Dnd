@@ -1,8 +1,6 @@
-## Unveröffentlicht – 25.10.2026: Gelegenheitsangriff-Angebote erneut prüfen
+## 25.10.2026 – 0.8.40+90: persistierte Bewegungsunterbrechung
 
-- `SrdOpportunityAttackRules.revalidate` prüft aktuelle Kampagnenrevision, Encounter, Angriff, Waffe und ursprünglich bestätigte Bewegungsgeometrie, bevor ein bestehendes Angebot erneut als zulässig gelten kann.
-- Drei neue Domänentests für erneute unveränderte Prüfung, vertauschte/veraltete Auslöser, Waffenwechsel und Reaktionsverbrauch ergänzt; Flutter-/Android-CI dieses Branches bei Eintrag noch nicht ausgeführt.
-- Keine Änderung der gespeicherten Spielstände, SQLite 2 / Export-JSON 1 / App-Version 0.8.39+89 unverändert; keine Angriffsabwicklung oder neue APK.
+Bestätigter Auslöser einer Gelegenheitsreaktion wird im Abenteuer als revisionsgebundene Entscheidung gespeichert. Neustart, expliziter Verzicht, Gegnerzug-Sperre und Schutz vor alten UI-/Controller-Antworten. Keine Würfel/Schäden/Reaktionskosten, daher weiter `partial`. SQLite2/JSON1 bleiben kompatibel. Gezielte Domain-/SQLite-/Widgettests erfolgreich; vollständige neue Abnahme separat ausstehend. [Fachlicher Umfang](docs/SRD_OPPORTUNITY_MOVEMENT_20261025.md), [operativer Checkpoint](docs/CODEX_CHECKPOINT.md). Ältere Einträge unten sind Historie.
 
 ---
 
