@@ -222,7 +222,6 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
       final semantics = tester.ensureSemantics();
-      addTearDown(semantics.dispose);
       final hero = HeroCharacter(
         id: 'accessible-hud',
         name: 'Elowen',
@@ -283,6 +282,7 @@ void main() {
         findsOneWidget,
       );
       expect(tester.takeException(), isNull);
+      semantics.dispose();
     });
   }
 
@@ -331,5 +331,6 @@ void main() {
       findsNothing,
     );
     expect(tester.takeException(), isNull);
+    semantics.dispose();
   });
 }
