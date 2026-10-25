@@ -1,3 +1,9 @@
+## 25.10.2026 – RULE-COMBAT-OPPORTUNITY-ATTACKS weiterhin partial
+
+Zur reinen Vorprüfung kommen atomar gespeichertes Angebot, Abenteuerdialog, Neustart und ausdrücklicher Verzicht hinzu. Kein Angriff, Schaden oder Reaktionsverbrauch. Aktueller Umfang/Testnachweis: [Fachbericht](SRD_OPPORTUNITY_MOVEMENT_20261025.md) und [Checkpoint](CODEX_CHECKPOINT.md). Die folgenden Einträge bleiben ein historisches Änderungsjournal, keine Gesamtquote.
+
+---
+
 **Aktueller zählbarer Arbeitsstand (20.10.2026):** Die [maschinenlesbare SRD-5.2.1-Inventur](SRD_5_2_1_COVERAGE_AUDIT.md) enthält **1.419 eindeutige Prüf-IDs** mit offenen Scope-Lücken und Herkunftsnachweisen; davon **282 Klassen-Freischaltungen**. Die vorliegende Markdown-Matrix ist ein **historisches Inkrement-Journal**, dessen frühere Statuszeilen durch spätere Implementierungen überholt sein können. **1.419 ist kein vollständiger SRD-Nenner und kein Fertigstellungsprozent.** CI dieser Dokumentationsänderung ist noch offen.
 
 ---

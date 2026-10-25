@@ -46,6 +46,7 @@ import 'spellcasting_rules.dart';
 import 'srd_spell_preflight_rules.dart';
 import 'srd_spell_inventory_rules.dart';
 import 'srd_sending_cast_preflight_rules.dart';
+import 'srd_opportunity_attack_rules.dart';
 
 /// A free-text, deterministic narrator. It cannot execute SQL or provider tools.
 /// Every accepted turn produces a validated state checkpoint and an audit event.
@@ -58,6 +59,82 @@ class GameEngine {
   int _sequence = 0;
   String _id(String prefix) =>
       '$prefix-${_clock().microsecondsSinceEpoch}-${_sequence++}';
+
+  static void _ensureNoOpportunity(Campaign campaign) {
+    if (campaign.pendingOpportunityAttack != null) {
+      throw const FormatException(
+        'Zuerst die offene Gelegenheitsreaktion entscheiden.',
+      );
+    }
+  }
+
+  GameUpdate confirmOpportunityMovement(
+    Campaign campaign,
+    ConfirmedOpportunityTrigger trigger,
+  ) {
+    Campaign.fromJson(campaign.toJson());
+    final offer = SrdOpportunityAttackRules.prepare(campaign, trigger);
+    final fight = campaign.encounter!;
+    final pending = PendingOpportunityAttack(
+      id: _id('opportunity'),
+      encounterId: offer.encounterId,
+      round: fight.round,
+      offeredAtRevision: campaign.revision + 1,
+      beforeDistanceFeet: trigger.beforeDistanceFeet,
+      afterDistanceFeet: trigger.afterDistanceFeet,
+      reachFeet: trigger.reachFeet,
+      weaponId: offer.weaponId,
+      unarmedStrike: offer.strike == OpportunityStrike.unarmedStrike,
+    );
+    return _commit(
+      campaign,
+      campaign.copyWith(pendingOpportunityAttack: pending),
+      'Die bestätigte Bewegung von ${fight.enemyName} wird vor dem '
+      'Verlassen deiner Reichweite unterbrochen. Deine Entscheidung bleibt '
+      'gespeichert; es wurde weder angegriffen noch eine Reaktion verbraucht.',
+      type: 'combat.opportunityOffered',
+      payload: pending.toJson(),
+    );
+  }
+
+  GameUpdate declineOpportunityAttack(
+    Campaign campaign, {
+    required String offerId,
+    required bool playerConfirmed,
+  }) {
+    final pending = campaign.pendingOpportunityAttack;
+    if (!playerConfirmed || pending == null || pending.id != offerId) {
+      throw const FormatException(
+        'Kein passendes bestätigtes Reaktionsangebot.',
+      );
+    }
+    Campaign.fromJson(campaign.toJson());
+    SrdOpportunityAttackRules.prepare(
+      campaign.copyWith(pendingOpportunityAttack: null),
+      ConfirmedOpportunityTrigger(
+        encounterId: pending.encounterId,
+        beforeDistanceFeet: pending.beforeDistanceFeet,
+        afterDistanceFeet: pending.afterDistanceFeet,
+        reachFeet: pending.reachFeet,
+        targetVisibleConfirmed: true,
+        playerAuthorizedReaction: true,
+        movement: OpportunityMovement.ordinary,
+        strike: pending.unarmedStrike
+            ? OpportunityStrike.unarmedStrike
+            : OpportunityStrike.equippedMeleeWeapon,
+        weaponId: pending.weaponId,
+      ),
+    );
+    return _commit(
+      campaign,
+      campaign.copyWith(pendingOpportunityAttack: null),
+      'Du verzichtest auf den Gelegenheitsangriff. Die bestätigte Bewegung '
+      'darf fortgesetzt werden; deine Reaktion bleibt verfügbar. '
+      'Weitere Gegnerangriffe werden erst auf deine Eingabe fortgesetzt.',
+      type: 'combat.opportunityDeclined',
+      payload: {...pending.toJson(), 'playerConfirmed': true},
+    );
+  }
 
   GameUpdate prepareOffhandAttack(
     Campaign campaign, {
@@ -472,6 +549,7 @@ class GameEngine {
   }
 
   GameUpdate rollDice(Campaign campaign, String expression) {
+    _ensureNoOpportunity(campaign);
     final result = dice.roll(expression);
     final natural = result.natural == null
         ? ''
@@ -602,6 +680,7 @@ class GameEngine {
   }
 
   GameUpdate updateHero(Campaign campaign, HeroCharacter hero) {
+    _ensureNoOpportunity(campaign);
     // Round-trip validation also checks imported edits made outside the engine.
     final parsed = HeroCharacter.fromJson(hero.toJson());
     var validated = ConditionRules.retainProneFromUnconscious(
@@ -2116,6 +2195,7 @@ class GameEngine {
   }
 
   GameUpdate continueEnemyTurn(Campaign campaign) {
+    _ensureNoOpportunity(campaign);
     final fight = campaign.encounter;
     if (fight == null ||
         fight.isFinished ||
@@ -2178,6 +2258,7 @@ class GameEngine {
     Campaign campaign, {
     HeroShieldReactionPlan? shieldPlan,
   }) {
+    _ensureNoOpportunity(campaign);
     final pending = campaign.pendingEnemyShieldHit;
     final fight = campaign.encounter;
     if (pending == null ||
@@ -2304,6 +2385,7 @@ class GameEngine {
   }
 
   GameUpdate act(Campaign campaign, String input) {
+    _ensureNoOpportunity(campaign);
     final text = input.trim();
     if (text.isEmpty || text.length > 4000) {
       throw const FormatException(
@@ -4997,6 +5079,7 @@ class GameEngine {
     String type = 'narrative.turn',
     Map<String, dynamic> payload = const {},
   }) {
+    if (type != 'combat.opportunityDeclined') _ensureNoOpportunity(before);
     // A separately tracked concentration effect must never outlive
     // independently confirmed concentration loss or replacement.
     final reconciled = next.copyWith(
