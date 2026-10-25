@@ -67,14 +67,17 @@ class SrdSpellAttackRollRules {
     }
     if (confirmedNaturalRoll != null &&
         (confirmedNaturalRoll < 1 || confirmedNaturalRoll > 20)) {
-      throw RangeError.range(confirmedNaturalRoll, 1, 20, 'confirmedNaturalRoll');
+      throw RangeError.range(
+        confirmedNaturalRoll,
+        1,
+        20,
+        'confirmedNaturalRoll',
+      );
     }
 
     // Cover is relative to the attack origin, never inferred from narration.
     // Full cover rejects direct targeting *before* any die can be consumed.
-    final applicableCover = sourceOppositeCover
-        ? targetCover
-        : CoverLevel.none;
+    final applicableCover = sourceOppositeCover ? targetCover : CoverLevel.none;
     final effectiveArmorClass = CoverRules.armorClass(
       confirmedTargetArmorClass,
       applicableCover,
