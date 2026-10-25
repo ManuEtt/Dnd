@@ -1,3 +1,9 @@
+## Operativer Migrationscheckpoint – 25.10.2026
+
+1.552 Flutter-, 106 Python-, 40 Backend- und 12 native Android-Tests sowie Debug-/ARM64-Builds erfolgreich. Finaler PR-/Main-/Löschstand: [docs/CODEX_CHECKPOINT.md](docs/CODEX_CHECKPOINT.md). Alle folgenden Einträge sind Historie.
+
+---
+
 ## Operativer Migrationscheckpoint25.10.2026
 
 [docs/CODEX_CHECKPOINT.md](docs/CODEX_CHECKPOINT.md) dokumentiert gemeinsame Abnahme, Main-Integration und sichere Branchbereinigung. Folgende Stände sind historisch.

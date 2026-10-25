@@ -1,3 +1,9 @@
+## Aktueller Schritt – geprüfte Migration abschließen
+
+PR #171 und tatsächliche Main-CI abnehmen, danach nur gesicherte unveränderte integrierte Altbranches entfernen. Anschließend allgemeine Gelegenheitsangriffe als eigenes quellgeprüftes Regelpaket; Akzeptanzkriterien im README. Frühere Einträge unten sind historische Momentaufnahmen.
+
+---
+
 ## Aktuell25.10.2026 – Branch-Migration abschließen
 
 Gemeinsamen Kandidaten vollständig testen, via geprüftem PR nach Main übernehmen, Main-CI abnehmen und erst danach archivierte unveränderte Altbranches entfernen. Echte Ergebnisse: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md). Ältere Aufgaben unten sind Historie.

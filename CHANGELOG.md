@@ -1,3 +1,11 @@
+## 25.10.2026 – alle Branches integriert und lokal abgenommen
+
+Sending-W100-Validierung, Verbündetenbestätigung bei zulässigen Nebenhandangriffen, allgemeine Light-Nahkampfbonusangriffe, Schutz abgeschlossener Storyfäden, lokale und serverseitige ID-Kollisionssperren, Plot-Geheimnisschutz, Backend-Limiter und sichere Projektarchive sind vereinigt. Der bei der Integration gefundene Casefold-Fehler für generierte/Systemdateien ist mit Regressionstest behoben. Fehler beim ZIP-Schreiben oder Veröffentlichen der Prüfsumme bewahren das zuvor vorhandene Archiv; keine Zusage einer absturzübergreifend atomaren Dateipaar-Transaktion.
+
+**1.552 Flutter-, 106 Python-, 40 Backend- und 12 native Android-Tests bestanden.** Dart-Formatierung: 360 Dateien unverändert; Flutter-Analyse sowie Backend-Typecheck und -Build erfolgreich. Debug-APK und ARM64-Alpha gebaut; Version, ZIP-CRC, ABI und lokale Debug-Signatur geprüft. Funktionscommit `cd724629c79a169ff1a078517031a33cf73ae130`, [PR #171](https://github.com/ManuEtt/Dnd/pull/171); Main-CI und sichere Bereinigung noch ausstehend. 19 Köpfe gesichert und als Vorfahren erhalten, 38 Dokumentvarianten archiviert. Version 0.8.39+89 / SQLite2 / JSON1. Operativer Stand: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md).
+
+---
+
 ## 25.10.2026 – vollständige Branch-Migration, gemeinsame Abnahme offen
 
 Alle18 initialen Remote-Köpfe remote per Archivtag und lokal per geprüftem Bundle gesichert. Funktionsstände164/165/166 vereinigt, bereits enthaltene Squash-/Historienvarianten anhand konkreter Bäume/Patches erkannt und ohne Rücksetzen aktuellen Codes in die Historie aufgenommen. Alle Originalköpfe Vorfahren des Kandidaten;20 Dokumentkonflikt-/Altdateien historisch gesichert. Neue Gesamt-/Android-/CI-Abnahme vor Main-Merge und Branchlöschung verpflichtend. Version0.8.39+89, SQLite2/JSON1 unverändert.

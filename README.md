@@ -1,16 +1,18 @@
 # Würfelraunen – Der lebendige Spielleiter
 
-Deutschsprachige Android-Alpha für Soloabenteuer und regelgeprüfte Kampagnen. Das vollständige SRD5.2.1 bleibt in Arbeit.
+Deutschsprachige Android-Alpha für Soloabenteuer und regelgeprüfte Kampagnen. Die vollständige Umsetzung des SRD 5.2.1 bleibt in Arbeit.
 
 ## Aktueller Stand und autonome Fortsetzung (25.10.2026)
 
-**Version0.8.39+89 – vollständige Branch-Migration.** Der Kandidat `1cddc4a3d590d0959733b532a5ec349b4195dcf4` auf `integration/all-branches-20261025` vereinigt alle18 anfänglich vorhandenen GitHub-Branch-Köpfe. Basis-main `b60ffe7ff1aae502ea927cb77153b988be33e397`. Main-Veröffentlichung, gemeinsame CI und anschließende Löschung werden getrennt nachgewiesen; derzeit läuft die kombinierte Abnahme.
+**Version 0.8.39+89 – geprüfter Integrationsstand aller 19 erfassten GitHub-Branches.** [PR #171](https://github.com/ManuEtt/Dnd/pull/171) vereinigt ihre Änderungen auf `integration/all-branches-20261025`; Funktionscommit `cd724629c79a169ff1a078517031a33cf73ae130`. Ausgangs-Main: `b60ffe7ff1aae502ea927cb77153b988be33e397`. Main-Übernahme, Main-CI und abschließende Branchlöschung sind noch ausstehende Schritte dieses Auftrags.
 
-Enthalten sind allgemeiner Light-Nahkampfbonus mit bestätigtem Waffenkontext, Nebenhand-Sneak-Attack, Sending-W100-Validierung, Backend-Limiter-Schutz sowie lokale und serverseitige Story-/Geheimnissicherungen. SQLite2 und Kampagnen-JSON1 bleiben kompatibel. Alle Vorgängerfunktionen und Tests erhalten.
+Sending-W100-Validierung, Verbündetenbestätigung bei zulässigen Nebenhandangriffen, allgemeine Light-Nahkampfbonusangriffe, Schutz abgeschlossener Storyfäden, lokale und serverseitige ID-Kollisionssperren, Plot-Geheimnisschutz, Backend-Limiter und sichere Projektarchive sind vereinigt. Der bei der Integration gefundene Casefold-Fehler für generierte/Systemdateien ist mit Regressionstest behoben. Fehler beim ZIP-Schreiben oder Veröffentlichen der Prüfsumme bewahren das zuvor vorhandene Archiv; keine Zusage einer absturzübergreifend atomaren Dateipaar-Transaktion.
 
-Originalbranches sind über **archive/branch-migration-20261025T075644Z** sowie ein verifiziertes Git-Bundle wiederherstellbar. Historische Dokumente und beide Seiten der fünf Statuskonflikte separat archiviert. Alte Branches werden erst nach erfolgreicher gemeinsamer Abnahme, Main-Integration und erneuter SHA-/Abstammungsprüfung gelöscht.
+**1.552 Flutter-, 106 Python-, 40 Backend- und 12 native Android-Tests bestanden.** Dart-Formatierung: 360 Dateien unverändert; Flutter-Analyse sowie Backend-Typecheck und -Build erfolgreich. Debug-APK und ARM64-Alpha gebaut; Version, ZIP-CRC, ABI und lokale Debug-Signatur geprüft. Flutter-/Backend-Abnahme und APK-Quelle: `6aef90d`; App, Backend und Workflow sind im neueren Integrationscommit bytegleich. Die nachfolgende reine Archivänderung hat alle 106 Python-Tests bestanden. Gemeinsame finale GitHub-CI wird gesondert auf dem finalen PR-Head abgenommen. Echtes Gerät, Altspielstand-Upgrade auf einem Gerät und produktive Signierung sind nicht getestet.
 
-Aktuelle Ergebnisse und Wiederaufnahme: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md). [Migrationsaudit](docs/BRANCH_MIGRATION_AUDIT_20261025.md) · [Maschinenlesbare Herkunft](docs/branch_migration_20261025.json). Artefakte unter `/workspace/artifacts/branch-migration-20261025/`. Geräteabnahme und produktive Signierung bleiben offen.
+Alle 19 erfassten Köpfe sind echte Vorfahren. Vorherige Branchstände bleiben über remote geprüfte Tags unter `archive/branch-migration-20261025T075644Z` und vollständige, verifizierte Git-Bundles wiederherstellbar. 38 konfliktbehaftete/historische Dokumente sind bytegenau archiviert. SQLite-Version 2 und Kampagnen-JSON-Version 1 bleiben unverändert.
+
+[Operativer Checkpoint](docs/CODEX_CHECKPOINT.md) · [Migrationsaudit](docs/BRANCH_MIGRATION_AUDIT_20261025.md) · [Herkunft](docs/branch_migration_20261025.json) · [lokale Prüfnachweise](docs/branch_migration_validation_20261025.json). ZIPs, Patches, APKs und Git-Bundles: `/workspace/artifacts/branch-migration-20261025/`.
 
 ## Vorhandene Funktionen und Grenzen
 
@@ -44,23 +46,19 @@ Die Demo benötigt keinen externen KI-Anbieter. Für einen eigenen Erzähler sie
 
 ## Nächster konkreter Entwicklungsschritt
 
-Die manuelle Verbündetenbestätigung für zulässige Nebenhandangriffe an denselben sicheren Dialog-/Controllerpfad anbinden. Abnahme: Eignung der tatsächlichen Angriffswaffe, ziel-/wurfgebundene Zustimmung, gemeinsame einmalige Zugnutzung, Krit/Miss, Ablehnung, alte Hauptwaffen-/JSON-Abläufe und SQLite-Neustart. Allgemeine Gelegenheitsangriffe bleiben ein eigenes Arbeitspaket.
+Zuerst diesen Migrationsauftrag abschließen: finale PR-CI abnehmen, PR #171 normal nach Main mergen, Main-CI auf dem tatsächlichen Merge-Commit abwarten und ausschließlich unveränderte, gesicherte, in Main enthaltene Altbranches entfernen. Neu verschobene Köpfe erneut prüfen und erhalten.
 
-Weitere offene Arbeiten: vollständige Quelleninventur, Zauberwirkungen, Klassen-/Monstermechaniken, strukturierte Item-Overrides, Android-Upgrade mit echten Spielständen und produktive Signierung. Der frühere lokale Item-Entwurf ist separat gesichert und wurde nicht über neuere Main-Dateien kopiert.
+Danach als eigenes Regelpaket die bisher fehlenden allgemeinen Gelegenheitsangriffe bearbeiten: belegter Reichweitenwechsel und ausdrückliche Bestätigung, verfügbare Reaktion, tatsächliche Nahkampfwaffe, Treffer-/Schadensauflösung und atomare SQLite-Speicherung. Ablehnung, bereits verbrauchte Reaktion, Disengage, Teleportation/erzwungene Bewegung, veralteter Zustand und Alt-JSON gezielt prüfen. Keine Positionen oder Waffenwerte aus KI-Erzählung erfinden. SRD-Quelle vor Umsetzung verifizieren.
 
-## Dokumentation und Historie
+Weitere offene Arbeiten: vollständige Quelleninventur, Zauberwirkungen, Klassen-/Monstermechaniken, strukturierte Item-Overrides und reale Android-Abnahme. Ein früherer lokaler Item-Entwurf bleibt separat erhalten.
 
-- [Aktueller Fortsetzungsprompt](docs/CODEX_CONTINUATION_PROMPT.md) · [Operativer Checkpoint](docs/CODEX_CHECKPOINT.md)
+## Dokumentation, Sicherung und Historie
+
+- [Fortsetzungsprompt](docs/CODEX_CONTINUATION_PROMPT.md) · [aktueller Checkpoint](docs/CODEX_CHECKPOINT.md)
 - [Architektur](ARCHITECTURE.md) · [Regel-/Story-Grenze](docs/ARCHITEKTUR_REGELENGINE_STORY_TRENNUNG.md) · [Tests](TESTING.md)
-- [Artefakte importieren](docs/ARTIFACT_IMPORT_20261024.md) · [Validierungsbericht](docs/VALIDATION_0_8_38_20261024.md)
+- [Historische Branch-Dokumente](docs/history/branch_migration_20261025/README.md) · [README vor Migration](docs/history/branch_migration_20261025/README_before_migration.md)
 - [Entwicklungsstatus](DEVELOPMENT_STATUS.md) · [Changelog](CHANGELOG.md) · [Roadmap](ROADMAP.md)
-- [README vor diesem Zyklus](docs/history/main_0.8.36_20261023/README.md) · [ältere Historie](docs/README_HISTORIE_BIS_20261020.md)
 
-Nur ausgewählte Inhalte des **SRD 5.2.1 von Wizards of the Coast unter CC BY 4.0** sowie eigene/lizenzierte Inhalte verwenden. [Namensnennung und Lizenzen](THIRD_PARTY_NOTICES.md) erhalten. Neue Arbeit erfolgt während einer aktiven Sitzung in einem eigenen Branch und PR; keine automatische Fortsetzung außerhalb einer laufenden Sitzung.
+Projekt-ZIP ohne äußeren Ordner in eine Arbeitskopie entpacken oder den Patch auf dem dokumentierten Basiscommit mit `git apply --check` und `git apply` importieren. Danach auf einen eigenen Branch pushen und einen PR öffnen. Für die vollständige Git-Historie das Bundle klonen; einzelne Altbranches aus den Archivtags wiederherstellen. Details im [Migrationsaudit](docs/BRANCH_MIGRATION_AUDIT_20261025.md).
 
-
-## Erweiterung nach erneutem Live-Abgleich
-
-Vier weitere Sourcebranches167–170 seit ursprünglicher13er-Aufnahme erkannt, vor Integration plus eigenem erstem Integrationskopf gesichert: nun18 Archivtags/Köpfe. Story169 und Archivfilter170 normal integriert;167/168 nach fokussiertem Rückwärts-Patchnachweis ohne Baumänderung in die Historie aufgenommen. Alle18 gesicherten Köpfe echte Vorfahren. Neun Historien-Merges insgesamt,38 Status-/Altdateien historisch archiviert. Ursprüngliches Bundle bleibt erhalten; aktuelles erweitertes Bundle: Wuerfelraunen_Branches_vor_Migration_20261025_erweitert.bundle, SHA256 e54ffc8cc6084985aac8a5cb9b18caca07a50fa7c564caeab94bee236a1954ba.
-
-Gefundener Fehler im neuen Archivfilter: casefold des Dateinamens verglich gegen noch gemischt geschriebene Ausschlussnamen. .DS_Store und GeneratedPluginRegistrant.java konnten dadurch einbezogen werden. Regression vor Fix nachgewiesen, Lookup einmalig symmetrisch normalisiert;11 Archivtests danach grün. Neuer kompletter kombinierter Lauf unter /workspace/validation/20261025-migration-final-full-check.log. Erster13er-Kandidat separat1549 Flutter-/100 Python-/38 Backend-Tests erfolgreich, kein Test der erweiterten Kombination. Neue endgültige Zahlen erst nach Beobachtung übernehmen.
+Nur ausgewählte Inhalte des **SRD 5.2.1 von Wizards of the Coast unter CC BY 4.0** sowie eigene/lizenzierte Inhalte verwenden. [Namensnennung und Lizenzen](THIRD_PARTY_NOTICES.md) erhalten. Keine automatische Weiterarbeit außerhalb einer aktiven Sitzung.

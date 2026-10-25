@@ -1,43 +1,41 @@
-# CODEX-CHECKPOINT – vollständige Branch-Migration
+# CODEX-CHECKPOINT – Branch-Migration
 
-Stand **2026-10-25T11:58:39+00:00**. Nutzerauftrag: alle GitHub-Branches integrieren, Fehler beheben und anschließend alte Branches löschen. Diese ausdrückliche Freigabe erlaubt die geprüfte Main-Integration und berechtigte Bereinigung ohne erneute Rückfrage.
+Stand **2026-10-25T12:16:00+00:00**. Nutzerauftrag: alle GitHub-Branches migrieren, Fehler beheben und alte Branches löschen. Die ausdrückliche Freigabe umfasst geprüfte Main-Integration und anschließende sichere Bereinigung.
 
-## Git und Sicherung
+## Git und Herkunft
 
-- Initialer Main **b60ffe7ff1aae502ea927cb77153b988be33e397**, Branch `integration/all-branches-20261025`, aktuell integrierter Funktions-/Historienstand **1cddc4a3d590d0959733b532a5ec349b4195dcf4**. Version0.8.39+89, SQLite2/JSON1 unverändert.
-- Alle18 initialen Remote-Köpfe gesichert: Präfix **archive/branch-migration-20261025T075644Z**, remote auf exakte ursprüngliche SHA geprüft. Vollständiges geprüftes Git-Bundle `/workspace/artifacts/branch-migration-20261025/Wuerfelraunen_Branches_vor_Migration_20261025T075644Z.bundle`, SHA256 `5cf905026c49bdee6b301bd047bbe1f52dbe1c9b6001aabd31cc287c0e758831`. Manifest `/workspace/validation/20261025-branch-backup-manifest.json`.
-- Konsolidierte164/165 und Light166 normal zusammengeführt. Neun zusätzliche Historien-Merges ändern keinen Git-Baum: zwei alte Squash-Endbäume komplett identisch mit Main-Vorfahren, vier schon enthaltene Laufzeitpatches rückwärts anwendbar geprüft, ein reiner Alt-Dokumentationscommit vollständig archiviert.
-- Alle18 initialen Köpfe sind echte Vorfahren des Kandidaten. **Noch keine Branchlöschung/Main-Veröffentlichung durchgeführt.** Prüfbare Details [branch_migration_20261025.json](branch_migration_20261025.json).
+- Arbeitskopie `/workspace/Dnd-migration-20261025`, Branch `integration/all-branches-20261025`, [PR #171](https://github.com/ManuEtt/Dnd/pull/171).
+- Ausgangs-Main `b60ffe7ff1aae502ea927cb77153b988be33e397`; Funktions-/Integrationscommit `cd724629c79a169ff1a078517031a33cf73ae130`. Version **0.8.39+89**, SQLite **2**, Kampagnen-JSON **1** unverändert.
+- 19 erfasste Remote-Köpfe vor Integration gesichert, remote tags SHA-genau geprüft; alle Köpfe echte Vorfahren. Ursprünglich 13, später vier Sourcebranches plus eigener Integrationscheckpoint und Atomic-Archivbranch hinzugekommen.
+- Sicherung: `Wuerfelraunen_Branches_vor_Migration_20261025_erweitert19_final.bundle`, SHA256 `fb75e843f3146d23044818dc7278487c44f024b2ba25475dbd450999aca299b7`. Unter `/workspace/artifacts/branch-migration-20261025/`; dort auch ältere unveränderte Bundles und Manifeste. Archivtags unter `archive/branch-migration-20261025T075644Z`. Atomic-Zwischenkopf und finaler geprüfter Atomic-Kopf separat erhalten.
+- Reguläre Funktions-Merges, neun nach konkreter Inhaltsprüfung unveränderte Historien-Merges; 38 bytegenau archivierte Dokumente. [JSON-Herkunft](branch_migration_20261025.json), [Audit](BRANCH_MIGRATION_AUDIT_20261025.md).
 
 ## IMPLEMENTIERT
 
-Gemeinsamer Stand enthält Sending-W100-Sicherung, Nebenhand-Verbündetenbestätigung, Backend-Limiter-Kapazitätsschutz, Backend- und lokale Sperre gegen Wiederöffnen abgeschlossener Storyfäden, Plot-Geheimnisschutz sowie vollständiges bestehendes Light-Paket einschließlich Attribut/Übung/Rage/Schadenssummen. Keine alte Variante über neueren Funktionscode kopiert. Fünf Dokumentationskonflikte aufgelöst, beide Seiten und zehn historische Altdateien bytegenau archiviert;38 Dateien mit SHA256 unter docs/history/branch_migration_20261025/.
+Sending-W100-Validierung, Verbündetenbestätigung bei zulässigen Nebenhandangriffen, allgemeine Light-Nahkampfbonusangriffe, Schutz abgeschlossener Storyfäden, lokale und serverseitige ID-Kollisionssperren, Plot-Geheimnisschutz, Backend-Limiter und sichere Projektarchive sind vereinigt. Der bei der Integration gefundene Casefold-Fehler für generierte/Systemdateien ist mit Regressionstest behoben. Fehler beim ZIP-Schreiben oder Veröffentlichen der Prüfsumme bewahren das zuvor vorhandene Archiv; keine Zusage einer absturzübergreifend atomaren Dateipaar-Transaktion.
 
 ## GETESTET
 
-Vorgänger-CIs164=40123094457,165=40170005782,166=40169851171 jeweils grün auf ihren exakten getrennten Heads. Historien-/Patch-/Baumidentität und Archivtags geprüft. Neue kombinierte scripts/check.sh-Abnahme läuft unter `/workspace/validation/20261025-migration-full-check.log`; nicht aus alten grünen Läufen ableiten. Importgrenzen erfolgreich, Coverage erneut ermittelt.
+**1.552 Flutter-, 106 Python-, 40 Backend- und 12 native Android-Tests bestanden.** Dart-Formatierung: 360 Dateien unverändert; Flutter-Analyse sowie Backend-Typecheck und -Build erfolgreich. Debug-APK und ARM64-Alpha gebaut; Version, ZIP-CRC, ABI und lokale Debug-Signatur geprüft.
+
+Vollständiger Lauf `/workspace/validation/20261025-migration-final-full-check.log`: Flutter 1.552 / Python 102 / Backend 40 auf Quelle `6aef90d`. Danach nur Archivskript/-tests geändert; `/workspace/validation/20261025-migration-atomic-python-tests.log`: **106/106**. App, Backend und Workflow weiterhin bytegleich; kein Wiederholungslauf dieser unveränderten Quellen nötig. APK-Bau aus geprüftem Projekt-ZIP `6aef90d`; 424 App-Eingabedateien für ARM64 gegen ZIP, Arbeitskopie und Buildkopie geprüft. Alle 19 gesicherten Köpfe auf Ancestry geprüft. Casefold-Regression vor Fix fehlgeschlagen, danach grün. [Prüfnachweise](branch_migration_validation_20261025.json).
 
 ## NICHT GETESTET
 
-Vollständige neue Kombination, neue Android-Builds und endgültige neue PR-/Main-CI bis tatsächlicher Abnahme. Echtes Gerät/Altspielstand-Upgrade und produktive Signierung offen.
+Finale gemeinsame PR-CI und anschließende Main-CI bis tatsächlichem Abschluss separat ausstehend. Alte Einzel-CIs ersetzen diese Prüfung nicht. Kein reales Android-Gerät, kein reales Geräte-Upgrade mit historischem Spielstand, keine produktive Signierung. SRD-Gesamtumfang nicht fertig.
 
 ## BLOCKIERT
 
-Kein Geräte-/Produktivsignierungsschlüssel. SDKs lokal vorhanden; Platz durch Entfernung eines verifizierten alten temporären Build-Caches freigegeben. Keine Quellarchive oder APKs gelöscht.
+Geräteabnahme und produktive Signierung mangels Gerät/Schlüssel. GitHub-Schreibrechte, SDKs und lokale Tests funktionieren; keine weiteren technischen Blocker beobachtet.
 
-## NOCH OFFEN
+## NOCH NICHT IMPLEMENTIERT / NÄCHSTER SCHRITT
 
-Gesamtprüfungen beenden, Fehler korrigieren, neuen Integrations-PR erstellen und nach eigener erfolgreicher Prüfung per normalem Merge nach Main übernehmen. Main-CI auf tatsächlichem Merge-SHA beobachten. Erst danach alte PRs schließen, jede exakte Remote-SHA/Archivtag/Main-Abstammung erneut prüfen und alte Remote-Branches bedingt löschen. Main niemals löschen. Geänderte neue Köpfe erneut integrieren, nicht ungeprüft entfernen.
+**Zuerst Migration abschließen:** aktuellen finalen PR-Head pushen/CI abnehmen, normaler Merge mit erwartetem Head (kein Squash), tatsächliche Main-CI prüfen. Danach offene Vorgänger-PRs nur bei in Main enthaltenem Kopf schließen. Remote-SHAs erneut mit Backup vergleichen, Tags und Main-Abstammung prüfen, bedingte atomare Branchlöschung; Main erhalten. Neue oder verschobene Branches erneut sichern/integrieren. Ergebnisse in README, Checkpoint und Löschbericht nachführen.
 
-## Wiederaufnahme
+Nach vollständigem Abschluss eigenes SRD-Paket allgemeine Gelegenheitsangriffe; konkrete Gegenfälle und Akzeptanzkriterien in README. Weitere Zauber-/Klassen-/Monsterwirkungen, Inventur, Item-Overrides und reale Android-Abnahme bleiben offen.
 
-Arbeitskopie `/workspace/Dnd-migration-20261025`. Initiale Branch-/PR-Liste in `/workspace/validation/20261025-branch-migration-start.json`. Aktueller Git-Status/HEAD und laufende Tests zuerst prüfen. Alle Originalköpfe durch Remote-Tags und Bundle wiederherstellbar. Prüf- und Löschberichte unter `/workspace/artifacts/branch-migration-20261025/` nachführen. Lokale historische Worktrees/ungeprüfte Item-Entwürfe erhalten; Auftrag bezieht sich auf GitHub-Branches.
+## Artefakte und Wiederaufnahme
 
-Nächster konkreter Schritt: vollständige kombinierte Abnahme einschließlich Android, Quelle-ZIP/Patch, Integrations-PR und erfolgreiche Main-Veröffentlichung. Keine Branchlöschung vor diesen Nachweisen. Keine automatische Fortsetzung außerhalb aktiver Sitzung.
+`/workspace/artifacts/branch-migration-20261025/`: versionierte Vollprojekt-ZIPs, tatsächlich gegen Basis-Main angewandte Git-Patches, SHA256/Dateimanifeste, Git-Bundles und geprüfte Debug-/ARM64-APKs. Beide lokalen APKs verwenden den lokalen Android-Debugschlüssel, keine Gerätezulassung. Aktuelle Dateinamen nach jeder Paketierung im Artefaktindex nachführen.
 
-
-## Erweiterung nach erneutem Live-Abgleich
-
-Vier weitere Sourcebranches167–170 seit ursprünglicher13er-Aufnahme erkannt, vor Integration plus eigenem erstem Integrationskopf gesichert: nun18 Archivtags/Köpfe. Story169 und Archivfilter170 normal integriert;167/168 nach fokussiertem Rückwärts-Patchnachweis ohne Baumänderung in die Historie aufgenommen. Alle18 gesicherten Köpfe echte Vorfahren. Neun Historien-Merges insgesamt,38 Status-/Altdateien historisch archiviert. Ursprüngliches Bundle bleibt erhalten; aktuelles erweitertes Bundle: Wuerfelraunen_Branches_vor_Migration_20261025_erweitert.bundle, SHA256 e54ffc8cc6084985aac8a5cb9b18caca07a50fa7c564caeab94bee236a1954ba.
-
-Gefundener Fehler im neuen Archivfilter: casefold des Dateinamens verglich gegen noch gemischt geschriebene Ausschlussnamen. .DS_Store und GeneratedPluginRegistrant.java konnten dadurch einbezogen werden. Regression vor Fix nachgewiesen, Lookup einmalig symmetrisch normalisiert;11 Archivtests danach grün. Neuer kompletter kombinierter Lauf unter /workspace/validation/20261025-migration-final-full-check.log. Erster13er-Kandidat separat1549 Flutter-/100 Python-/38 Backend-Tests erfolgreich, kein Test der erweiterten Kombination. Neue endgültige Zahlen erst nach Beobachtung übernehmen.
+Zuerst Git-Status/HEAD, Main, offene PRs und laufende Workflows neu prüfen. Manifest `/workspace/validation/20261025-branch-backup-manifest.json`; Löschwerkzeug `/workspace/validation/cleanup_migrated_branches.py` prüft grüne exakte Main-CI, Inventar, SHA, Archivtag und Ancestry vor SHA-gebundener Löschung. **Noch keine Main-Veröffentlichung oder Branchlöschung erfolgt.** Historische lokale Worktrees und unveröffentlichte Entwürfe nicht entfernen. Keine automatische Fortsetzung außerhalb einer aktiven Sitzung.

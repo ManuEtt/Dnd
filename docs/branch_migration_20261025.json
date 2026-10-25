@@ -1,8 +1,8 @@
 {
   "initial_main": "b60ffe7ff1aae502ea927cb77153b988be33e397",
-  "candidate_after_history": "1cddc4a3d590d0959733b532a5ec349b4195dcf4",
+  "candidate_after_history": "cd724629c79a169ff1a078517031a33cf73ae130",
   "backup_tag_prefix": "archive/branch-migration-20261025T075644Z",
-  "backup_bundle": "/workspace/artifacts/branch-migration-20261025/Wuerfelraunen_Branches_vor_Migration_20261025_erweitert.bundle",
+  "backup_bundle": "/workspace/artifacts/branch-migration-20261025/Wuerfelraunen_Branches_vor_Migration_20261025_erweitert19_final.bundle",
   "all_initial_heads_are_ancestors": true,
   "deletion_status": "not started; requires final combined and Main validation",
   "branches": [
@@ -200,9 +200,28 @@
       "ancestor_before_history_record": true,
       "preservation": "normal functional merge or own earlier integration checkpoint ancestor",
       "ancestor_of_candidate": true
+    },
+    {
+      "branch": "fix/atomic-source-archive-publication-20261025",
+      "sha": "a1a8dd9802cd827b34580219c13c6764d9ff502f",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/atomic-source-final-a1a8dd9",
+      "supplemental": true,
+      "own_integration_checkpoint": false,
+      "previous_backups": [
+        {
+          "sha": "587d8f32e34e4b91c8ae0d312d5cde3df7ec23d5",
+          "backup_tag": "archive/branch-migration-20261025T075644Z/fix/atomic-source-archive-publication-20261025"
+        }
+      ],
+      "ancestor_of_candidate": true,
+      "preservation": "normal source merge; all four publication rollback tests and local casefold regression retained",
+      "merge_commit": "cd724629c79a169ff1a078517031a33cf73ae130"
     }
   ],
   "expanded_branch_count": 18,
   "all_snapshotted_heads_are_ancestors": true,
-  "additional_fix": "Casefold both filename and exclusion lookup; generated/system filenames regression proved failing then all11 archive tests passed"
+  "additional_fix": "Casefold both filename and exclusion lookup; generated/system filenames regression proved failing then all11 archive tests passed",
+  "backup_bundle_sha256": "fb75e843f3146d23044818dc7278487c44f024b2ba25475dbd450999aca299b7",
+  "captured_branch_count": 19,
+  "validation": "Local combined checks passed; final PR/Main CI and deletion pending"
 }

@@ -1,0 +1,29 @@
+{
+  "at": "2026-10-25T12:16:00+00:00",
+  "integration_code_commit": "cd724629c79a169ff1a078517031a33cf73ae130",
+  "flutter_backend_source_commit": "6aef90d80756502ea9262dde6131022a7e2c8918",
+  "app_backend_workflow_identical_after_archive_merge": true,
+  "flutter_tests": 1552,
+  "python_tests": 106,
+  "backend_tests": 40,
+  "native_android_tests": 12,
+  "dart_formatted_files": 360,
+  "dart_format_changed_files": 0,
+  "flutter_analyze": "No issues found",
+  "backend_typecheck_build": "passed",
+  "debug_apk": "built; version, signature, three ABIs and CRC verified",
+  "arm64_alpha_apk": "built; version, signature, ARM64-only and CRC verified",
+  "saves": "SQLite2 / campaign JSON1 unchanged; regression suite includes persistence, old JSON and rollback",
+  "not_tested": [
+    "real Android device",
+    "real historical-device upgrade",
+    "production signing"
+  ],
+  "logs": {
+    "20261025-migration-final-full-check.log": "cf17e13654a7917a83bd129e02173b7ba7efa085675fb6bf4c0c752512c10dec",
+    "20261025-migration-atomic-python-tests.log": "1d7ee932090f1d687ef294666d920445db7e9761b7db8776bb4f026ad16678e6",
+    "20261025-migration-final-debug-build.log": "c981dd8f4c86458b0a267c602cb7cd5cdb5c2cf76d4c4b44006bb34967acdbff",
+    "20261025-migration-final-native-tests.log": "ac35c96e6e955eea42b41463713de35ca4c0d85827a0288ce11bd4d68787e5b1",
+    "20261025-migration-final-alpha-build.log": "29ffa447e6e1b975b829f47007160fd07a54921274b64140535395edd209d740"
+  }
+}
