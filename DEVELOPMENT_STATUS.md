@@ -4,7 +4,7 @@
 - Pro Waffenprobe bestätigtes Attribut/Übung/gehaltene Waffen, deutscher Vorschau-/Bestätigungsdialog, unveränderte freie Eingabeentwürfe.
 - Optionale typisierte PendingRoll-Felder, Legacy-Fighter-Proben kompatibel, Validierung vor RNG und atomare revisionsgeschützte SQLite-Buchung.
 - Kampfrausch nutzt tatsächliche Waffen-ID und Attribut; endgültige Schadensnullgrenze nach Klassenboni.
-- 55 Regel-/Kampf-,12 Zweiwaffen-,7 neue Widget- und34 bestehende Regressionen erfolgreich. Vollständige neue Suite/Android/CI noch in Abnahme; Details im operativen Checkpoint.
+- 55 Regel-/Kampf-,12 Zweiwaffen-,7 neue Widget- und34 bestehende Regressionen erfolgreich. Vollständige lokale Abnahme:1544 Flutter-,100 Python-,31 Backend- und12 native Tests erfolgreich, Format/Analyse/Importgrenzen ohne Befund. Debug und ARM64 gebaut/geprüft; eigene finale CI unter PR166 separat verfolgen. Gerät nicht getestet. Details im operativen Checkpoint.
 - SRD5.2.1 Light S89/TWF S88/Rage S29/Damage Rolls S16, CC BY4.0. Requirement RULE-COMBAT-TWO-WEAPON-FIGHTING bleibt partial; kein Nick/Light-Fernkampf. Keine DB-/Exportmigration.
 
 ---
