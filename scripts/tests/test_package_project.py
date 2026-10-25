@@ -204,7 +204,7 @@ class ProjectArchiveTests(unittest.TestCase):
             self.assertEqual(archive.read('app/lib/main.dart'), b'new version')
             self.assertIsNone(archive.testzip())
         self.assertEqual(output.with_suffix('.zip.sha256').read_text(),
-                         f'{digest}  {output.name}\\n')
+                         f'{digest}  {output.name}\n')
         self.assertEqual(set(self.base.iterdir()),
                          {self.root, output, output.with_suffix('.zip.sha256')})
 
