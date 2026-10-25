@@ -1,3 +1,13 @@
+## 25.10.2026 – Angebots-Revalidierung vor späterem Gelegenheitsangriff
+
+- **IMPLEMENTIERT:** `SrdOpportunityAttackRules.revalidate` bindet ein bereits ausgegebenes Angebot an Encounter/Revision, Angriffstyp, Waffen-ID und ursprüngliche Bewegungsgeometrie; wiederholt aktuelle Reaktions-/Held-/Waffenprüfung, ohne Kampagne zu verändern.
+- **TESTS ERGÄNZT, NICHT GETESTET:** Drei neue Dart-Regressionen für unveränderte erfolgreiche Wiederprüfung, Stale-/Substitutionsfälle, Waffenwechsel und verbrauchte Reaktion. Flutter/Dart lokal nicht verfügbar; neue Branch-CI erst nach PR prüfen.
+- **BLOCKIERT:** Realgerät/Signierung und lokaler SDK-Test; keine neue APK oder Backup-Migration behauptet.
+- **NOCH NICHT IMPLEMENTIERT:** dauerhafte Bewegungsunterbrechung, Spielerentscheidung, atomarer Reaktionsverbrauch, Schaden und UI. Version 0.8.39+89, SQLite 2, JSON 1 unverändert; `RULE-COMBAT-OPPORTUNITY-ATTACKS` bleibt partial.
+- **Nächster Schritt:** bestätigten Gegnerbewegungs-Unterbrechungspunkt transaktional und wiederaufnehmbar speichern, inklusive Double-submit-/Alt-JSON-/Schild-Konflikt-Tests.
+
+---
+
 ## 25.10.2026 – Regelvorprüfung für bestätigten Gelegenheitsangriff (PR #174)
 
 - **IMPLEMENTIERT:** Lesen der ausdrücklich bestätigten Auslöser und Erstellen eines `OpportunityAttackOffer` ohne Spielstandänderung: nur sichtbares Verlassen bestätigter Reichweite während eines gültigen Gegnerzugs, eigene freie Reaktion und Autorisierung; Rückzug/Teleport/erzwungene Bewegung gesperrt; ausgerüstete eindeutige SRD-Nahkampfwaffe oder waffenlos.
