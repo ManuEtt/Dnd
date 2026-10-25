@@ -1,8 +1,19 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Aktuelles Entwicklungsinkrement (2026-10-25T18:11:00+01:00 – Angebots-Revalidierung)
+
+Branch `fix/opportunity-offer-revalidation-20261025` schützt das in PR #174 eingeführte **rein lesende** Gelegenheitsangriff-Angebot vor stiller Weiterverwendung nach einer Kampagnenrevision oder dem Austausch der bestätigten Bewegungsgeometrie. `SrdOpportunityAttackRules.revalidate` prüft das bisherige Angebot gegen Encounter, Revision, Angriffstyp, Waffenreferenz und alle drei Reichweiten-/Abstandsangaben und führt dann die vollständige bestehende Vorprüfung auf dem aktuellen Zustand erneut aus. Dadurch werden auch zwischenzeitlich verbrauchte Reaktionen oder gewechselte Waffen abgewiesen.
+
+**Status:** Implementiert, drei gezielte neue Dart-Tests geschrieben (gültiger erneuter Check ohne Mutation, veraltete oder vertauschte Angebote, verbrauchte Reaktion und Waffenwechsel). Bei Erstellung dieses Eintrags **noch nicht durch Flutter oder die neue PR-CI getestet**. Kein Android-Dialog, kein verbuchter Angriff, keine neue persistente Entscheidung, kein Treffer-/Schadenswurf und keine neue APK aus diesem Inkrement. Unverändert: App **0.8.39+89**, SQLite **2**, Export-JSON **1**; `RULE-COMBAT-OPPORTUNITY-ATTACKS` bleibt **partial**. Bestehende Spielstände werden weder migriert noch verändert.
+
+**Nächster abgegrenzter Schritt:** bestätigte Gegnerbewegung mit wartender Entscheidungs-ID, Controller-Transaktion und SQLite-Neustart-/Doppelbestätigungstests modellieren. Auch mit `revalidate` gilt keine Exactly-once- oder Reaktionsverbrauchsgarantie ohne diese transaktionale Integration.
+
+---
+
+
 Deutschsprachige Android-Alpha für Soloabenteuer und regelgeprüfte Kampagnen. Die vollständige Umsetzung des SRD 5.2.1 bleibt in Arbeit.
 
-## Aktuelles Entwicklungsinkrement (25.10.2026 – SRD-Gelegenheitsangriff)
+## Vorheriges Entwicklungsinkrement (25.10.2026 – SRD-Gelegenheitsangriff)
 
 [PR #174](https://github.com/ManuEtt/Dnd/pull/174) erweitert die reine Regelengine um eine **bestätigungsgebundene Vorprüfung für Gelegenheitsangriffe** (SRD 5.2.1, Seite 15, CC BY 4.0). Sie akzeptiert nur ein sichtbares Verlassen zuvor bestätigter Reichweite, ausdrücklich genehmigte freie Reaktion und eindeutige Nahkampfwaffe oder waffenlosen Schlag. Rückzug, Teleportation, Fremdbewegung, doppelte/fehlende Waffenreferenzen und blockierte Reaktionen werden abgewiesen. Rückgabe ist ausschließlich ein lesbares, an Encounter und Revision gebundenes Angebot.
 
