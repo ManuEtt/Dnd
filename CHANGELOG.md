@@ -1,6 +1,6 @@
 ## 25.10.2026 – GitHub-Integration PR #171 tatsächlich nach main gemergt
 
-Der verifizierte Integrationskopf `255a5a0` wurde als normaler Merge (kein Squash) mit Main-Commit `635773db33724f543d61bacde9a9ebe679b9b1e9` übernommen. Vollständige [PR-CI #40192473811](https://github.com/ManuEtt/Dnd/actions/runs/40192473811) erfolgreich; unabhängige [Main-CI #40193476536](https://github.com/ManuEtt/Dnd/actions/runs/40193476536) zum Zeitpunkt dieses Nachtrags noch laufend. 19/19 Archive-Tag-SHAs und 19/19 Vorfahren im GitHub-Commitvergleich bestätigt. Remote-Branches noch nicht gelöscht. App 0.8.39+89, SQLite2 und Kampagnen-JSON1.
+Der verifizierte Integrationskopf `255a5a0` wurde als normaler Merge (kein Squash) mit Main-Commit `635773db33724f543d61bacde9a9ebe679b9b1e9` übernommen. Vollständige [PR-CI #40192473811](https://github.com/ManuEtt/Dnd/actions/runs/40192473811) erfolgreich; unabhängige [Main-CI #40193476536](https://github.com/ManuEtt/Dnd/actions/runs/40193476536) vollständig erfolgreich auf dem Merge-Commit. 19/19 Archive-Tag-SHAs und 19/19 Vorfahren im GitHub-Commitvergleich bestätigt. Die sechs bereits in Main enthaltenen gestapelten Vorgänger-PRs #165/#166/#167/#168/#169/#172 wurden danach ohne Doppel-Merge geschlossen. Remote-Branches noch nicht gelöscht. App 0.8.39+89, SQLite2 und Kampagnen-JSON1.
 
 ---
 
