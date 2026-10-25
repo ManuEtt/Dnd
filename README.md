@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – eindeutige Gradle-Wrapper-Downloadparameter (D-005, 25.10.2026)
+
+Der Projektprüfer lehnt mehrdeutige oder mehrfach vorkommende `distributionUrl`- und `distributionSha256Sum`-Einträge in `gradle-wrapper.properties` ab. Sechs neue Python-Regressionstests prüfen schädliche Dopplungen und gültige Kommentar-/Schreibweisen. Das Paket ändert weder Android-App-Code noch SRD-Regeln oder gespeicherte Spielstände. Die abschließende GitHub-CI des finalen Branch-Commits ist separat nachzuweisen. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
 ## Qualitätspaket Chat D D-004 – Gradle-Wrapper-JAR-Validierung
 
 Nach der vollständigen Integration von [PR #183](https://github.com/ManuEtt/Dnd/pull/183) ergänzt [PR #186](https://github.com/ManuEtt/Dnd/pull/186) den Projektprüfer um die frühe Zurückweisung doppelter ZIP-Dateinamen, Pfad-Traversal/absoluter Namen und symbolischer Einträge im Gradle-Wrapper-JAR. Vier neue Python-Regressionen erfassen Positiv- und Negativfälle. Die vollständige GitHub-CI des mit `main` synchronisierten D-004-Commits bleibt bis zum Abschluss gesondert zu prüfen. Keine Spielstands-, SQLite-/JSON-, UI- oder SRD-Regeländerung. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
