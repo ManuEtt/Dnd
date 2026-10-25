@@ -140,6 +140,20 @@ class ProjectArchiveTests(unittest.TestCase):
             self.assertIsNone(archive.testzip())
         self.assertEqual(count, len(packaging.REQUIRED_FILES) + len(allowed))
 
+    def test_generated_and_system_files_stay_excluded_in_all_casings(self):
+        for name in ['.DS_Store', '.ds_store', '.Ds_StOrE',
+                     'GeneratedPluginRegistrant.java',
+                     'app/android/GeneratedPluginRegistrant.java',
+                     'app/android/generatedpluginregistrant.JAVA']:
+            path = self.root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text('generated or system fixture', encoding='utf-8')
+        output = self.base / 'no-generated-files.zip'
+        packaging.create_archive(self.root, output, layout='root')
+        with zipfile.ZipFile(output) as archive:
+            self.assertEqual(set(archive.namelist()), packaging.REQUIRED_FILES)
+            self.assertIsNone(archive.testzip())
+
     def test_invalid_layout_cannot_create_an_ambiguous_archive(self):
         with self.assertRaisesRegex(ValueError, 'layout'):
             packaging.create_archive(self.root, self.base / 'bad.zip', layout='nested')

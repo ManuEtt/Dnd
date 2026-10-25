@@ -20,6 +20,9 @@ EXCLUDED_NAMES = {
     '.netrc', '.npmrc', '.pypirc', '.git-credentials', 'credentials.json',
     'service-account.json', 'id_rsa', 'id_dsa', 'id_ecdsa', 'id_ed25519',
 }
+# Normalize both sides: the historical names intentionally retain their
+# spelling, including .DS_Store and GeneratedPluginRegistrant.java.
+_CASEFOLDED_EXCLUDED_NAMES = frozenset(name.casefold() for name in EXCLUDED_NAMES)
 EXCLUDED_SUFFIXES = {
     '.apk', '.aab', '.log', '.iml', '.jks', '.keystore', '.db', '.sqlite', '.sqlite3',
     '.pem', '.key', '.p12', '.pfx', '.pyc', '.pyo', '.zip', '.tar', '.tgz',
@@ -33,7 +36,7 @@ def include(path: Path, root: Path = ROOT) -> bool:
     if any(part.casefold() in EXCLUDED_DIRS for part in relative.parts):
         return False
     name = path.name.casefold()
-    if name in EXCLUDED_NAMES or path.suffix.casefold() in EXCLUDED_SUFFIXES:
+    if name in _CASEFOLDED_EXCLUDED_NAMES or path.suffix.casefold() in EXCLUDED_SUFFIXES:
         return False
     if name.startswith('.env') and name != '.env.example':
         return False
