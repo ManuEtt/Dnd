@@ -1,3 +1,21 @@
+# CODEX-CHECKPOINT – Angebots-Revalidierung für Gelegenheitsangriffe
+
+**Stand:** 2026-10-25T18:11:00+01:00; **Produkt:** Würfelraunen – Der lebendige Spielleiter, `app/pubspec.yaml` **0.8.39+89**.
+
+- **Git/Basis:** zuletzt direkt überprüfter `main`-HEAD `407c2e1ef8ee310b30d1543a263fb66b3331a26e` (PR #174 gemergt); beim Beginn keine offenen PRs. Arbeitsbranch: `fix/opportunity-offer-revalidation-20261025`. Code-Commit `af99da8571aa38a1648b58662ebb8cbe3a7745ea`, Test-Commit `18b3fcbd39ad756a77988f77e01cedd82b0a2c96`. PR wird nach vollständiger Dokumentation erstellt; tatsächlichen finalen HEAD und CI bei Abschluss erneut prüfen.
+- **Letzte nachgewiesene erfolgreiche Main-CI vor diesem Paket:** [Android-Alpha #40203583841](https://github.com/ManuEtt/Dnd/actions/runs/40203583841), `completed/success` für `407c2e1ef8ee310b30d1543a263fb66b3331a26e`. Dies ist **kein** Nachweis für den neuen Branch.
+- **IMPLEMENTIERT:** `SrdOpportunityAttackRules.revalidate` vergleicht das ausgegebene Angebot mit der bestätigten Bewegung (Encounter, Revision, Angriffstyp, Waffen-ID und Distanz-/Reichweitenwerte) und wiederholt danach sämtliche bestehenden Regelprüfungen. Das Angebot selbst enthält hierfür drei unveränderliche Bewegungsangaben. Keine Spielstandmutation.
+- **GETESTET:** Bis zum Zeitpunkt dieses Schreibens **keine neuen Flutter-/Dart-Tests ausgeführt**. Der vorherige Main-Workflow war grün; kein Testresultat des neuen Branches daraus abgeleitet.
+- **NICHT GETESTET:** Drei ergänzte Dart-Testfälle in `app/test/srd_opportunity_attack_rules_test.dart`; vollständige Format-/Analyze-/Flutter-/Backend-/Android-PR-CI; echte Android-Geräteinstallation und Upgrade historischer Spielstände.
+- **BLOCKIERT:** In dieser Ausführungsumgebung fehlen Flutter-/Dart- und Android-SDKs; GitHub Actions ist die vorgesehene neue Codeabnahme. Keine produktive Signierung/Realgerät vorhanden.
+- **NOCH NICHT IMPLEMENTIERT:** dauerhafter Bewegungsauslöser, wartende Spielerentscheidung, transaktionale Reaktionsverbrauchs-/Idempotenzgarantie, Angriffswurf/Schaden und Android-UI. `RULE-COMBAT-OPPORTUNITY-ATTACKS` bleibt **partial**, SRD 5.2.1 *Opportunity Attacks* S. 15, CC BY 4.0.
+- **Änderungen:** `app/lib/domain/srd_opportunity_attack_rules.dart`, `app/test/srd_opportunity_attack_rules_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/SRD_OPPORTUNITY_ATTACK_PREFLIGHT_20261025.md`, `DEVELOPMENT_STATUS.md`, `CHANGELOG.md`. Keine Schema- oder JSON-Migration (SQLite 2/JSON 1), keine Anpassung an KI/Story, bestehender Regelfassaden-Export bleibt erhalten. Keine geheimen Daten oder Assets ergänzt; Lizenzhinweise bleiben unverändert.
+- **Artefakte:** kein branchbezogenes ZIP und keine branchbezogene APK erzeugt; keine neuen Downloads oder Digests behauptet.
+- **Genau ein nächster Schritt:** bestätigte Gegnerbewegung als gespeicherten, eindeutigen Unterbrechungspunkt mit Controller-Transaktion und ausdrücklicher Spielerwahl einführen; DoD: persistierter Übergang, Ablehnung und Wiederaufnahme, Stale Revision, doppelte ID, Reaktionskonflikt mit Schild und Alt-JSON regressionsgetestet. Befehle: `python3 scripts/verify_project.py`, `python3 scripts/check_domain_boundaries.py`, `python3 -m unittest discover -s scripts/tests -v`, `cd app && dart format --output=none --set-exit-if-changed lib test && flutter analyze && flutter test && flutter build apk --debug`.
+- **Änderungsprotokoll:** 2026-10-25T18:11:00+01:00 – die bisher fehlende Angebots-Revalidierung für spätere bestätigte Aktionen als eigenständige, speicherneutrale Regelvorprüfung ergänzt. PR- und Teststand nach Rückmeldung der CI aktualisieren.
+
+---
+
 # CODEX-CHECKPOINT – Regelvorprüfung für Gelegenheitsangriffe
 
 Stand **25.10.2026**. Ein begrenztes neues SRD-Inkrement nach erfolgreichem Main-Merge. Der Stand der vorherigen Integration bleibt nach dem Trenner erhalten.
