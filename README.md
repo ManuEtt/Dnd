@@ -2,6 +2,14 @@
 
 Deutschsprachige Android-Alpha für Soloabenteuer und regelgeprüfte Kampagnen. Die vollständige Umsetzung des SRD 5.2.1 bleibt in Arbeit.
 
+## Aktuelles Entwicklungsinkrement (25.10.2026 – SRD-Gelegenheitsangriff)
+
+[PR #174](https://github.com/ManuEtt/Dnd/pull/174) erweitert die reine Regelengine um eine **bestätigungsgebundene Vorprüfung für Gelegenheitsangriffe** (SRD 5.2.1, Seite 15, CC BY 4.0). Sie akzeptiert nur ein sichtbares Verlassen zuvor bestätigter Reichweite, ausdrücklich genehmigte freie Reaktion und eindeutige Nahkampfwaffe oder waffenlosen Schlag. Rückzug, Teleportation, Fremdbewegung, doppelte/fehlende Waffenreferenzen und blockierte Reaktionen werden abgewiesen. Rückgabe ist ausschließlich ein lesbares, an Encounter und Revision gebundenes Angebot.
+
+**Noch nicht implementiert:** Automatische Bewegungserkennung, Android-Auswahl, Treffer-/Schadenswurf, reaktionssichere Controller-/SQLite-Verbuchung; daher kein vollständig spielbarer Gelegenheitsangriff. **Tests:** Neue Domain-/JSON-Regressionen wurden geschrieben, die finale eigene GitHub-CI ist getrennt am [PR #174](https://github.com/ManuEtt/Dnd/pull/174/checks) abzunehmen. Unveränderte App-Version **0.8.39+89**, SQLite 2 und Kampagnen-JSON 1. Regelanforderung `RULE-COMBAT-OPPORTUNITY-ATTACKS` bleibt **partial**, kein Gesamt-SRD-Fertigstellungsgrad. [Technische Abgrenzung](docs/SRD_OPPORTUNITY_ATTACK_PREFLIGHT_20261025.md).
+
+**Nächster fachlicher Schritt:** eine bestätigte gegnerische Bewegungsunterbrechung einschließlich gespeicherter Entscheidung und Revisionsschutz ergänzen, bevor Angriffs-/Schadens- und Reaktionsverbrauch implementiert werden. Alte Remotebranches bleiben separat gesichert; dieser PR löscht keine Branches.
+
 ## Aktueller Stand und autonome Fortsetzung (25.10.2026, nach Main-Merge)
 
 **PR #171 wurde regulär (ohne Squash) nach `main` gemergt:** [Merge-Commit `635773db33724f543d61bacde9a9ebe679b9b1e9`](https://github.com/ManuEtt/Dnd/commit/635773db33724f543d61bacde9a9ebe679b9b1e9). Version **0.8.39+89**, SQLite 2 und Kampagnen-JSON 1 unverändert. Kombinierte finale [PR-CI #40192473811](https://github.com/ManuEtt/Dnd/actions/runs/40192473811) auf `255a5a0` **erfolgreich**. Die eigenständige [Main-CI #40193476536](https://github.com/ManuEtt/Dnd/actions/runs/40193476536) auf exakt `635773db` ist **vollständig erfolgreich**: einschließlich Flutter-/Backend-Tests, Android-Debug-APK, nativen Tests, ARM-/Alpha-APKs und Quellcode-Checkpoint.
