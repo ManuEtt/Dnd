@@ -1,0 +1,86 @@
+name: One-time cleanup verified historical branches v2
+on:
+  push:
+    branches:
+      - maintenance/prune-merged-safe-20261025-v2
+permissions:
+  contents: write
+  actions: read
+  pull-requests: read
+jobs:
+  prune:
+    if: github.repository == 'ManuEtt/Dnd'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    concurrency:
+      group: prune-20261025-v2
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Verify baseline, archive immutable commits, prune only merged heads
+        shell: bash
+        run: |
+          set -euo pipefail
+          REPO='ManuEtt/Dnd'
+          BASE='af70a48c84d83c133ced4200be04ca81a91abf1b'
+          GOOD_MAIN_CI='40225100282'
+          TAG_PREFIX='archive/branch-prune-20261025-v2'
+          CI=$(gh api "repos/$REPO/actions/runs/$GOOD_MAIN_CI" --jq '[.head_sha,.head_branch,.status,.conclusion] | join("|")')
+          [[ "$CI" == "$BASE|main|completed|success" ]] || { echo "ABORT: main baseline CI not green: $CI"; exit 1; }
+          git fetch --quiet origin main
+          git merge-base --is-ancestor "$BASE" origin/main || { echo 'ABORT: tested main baseline not ancestral'; exit 1; }
+          mapfile -t rows <<'ROWS'
+          feature/opportunity-reaction-offer-20261025|6e6de1bc304047a42aa8481c863d8e1e6c41fbcb
+          fix/chat-d/apk-zip-validation-20261025|cc82f8d59fee8d56b785680721fe49787e387727
+          fix/chat-d/ci-rule-quality-gates-20261025|93cdd9bc936e784331474ad4c97b5352c264946b
+          fix/chat-d/gradle-wrapper-jar-safety-20261025|bafd9b693de42d1918000d6b87996eaf8e3772e1
+          fix/chat-d/nested-boundary-scan-20261025|ca38ce40b3996ab7f0b91b04ff199599ff572ba8
+          ROWS
+          open_heads=$(gh api --paginate "repos/$REPO/pulls?state=open&per_page=100" --jq '.[].head.ref')
+          for row in "${rows[@]}"; do
+            IFS='|' read -r branch expected <<< "$row"
+            [[ "$branch" != main && "$branch" != maintenance/* ]] || exit 1
+            ! grep -Fxq -- "$branch" <<< "$open_heads" || { echo "ABORT: open PR uses $branch"; exit 1; }
+            remote=$(git ls-remote origin "refs/heads/$branch" | cut -f1)
+            [[ "$remote" == "$expected" ]] || { echo "ABORT: changed head $branch ($remote)"; exit 1; }
+            git merge-base --is-ancestor "$expected" "$BASE" || { echo "ABORT: not merged $branch"; exit 1; }
+            tag="$TAG_PREFIX/$branch"
+            tagged=$(git ls-remote origin "refs/tags/$tag" | cut -f1)
+            [[ -z "$tagged" || "$tagged" == "$expected" ]] || { echo "ABORT: tag conflict $tag"; exit 1; }
+          done
+          for row in "${rows[@]}"; do
+            IFS='|' read -r branch expected <<< "$row"
+            tag="$TAG_PREFIX/$branch"
+            if [[ -z "$(git ls-remote origin "refs/tags/$tag" | cut -f1)" ]]; then
+              git tag "$tag" "$expected"
+              git push origin "refs/tags/$tag:refs/tags/$tag"
+            fi
+            git push --force-with-lease="refs/heads/$branch:$expected" origin ":refs/heads/$branch"
+            [[ -z "$(git ls-remote origin "refs/heads/$branch" | cut -f1)" ]] || exit 1
+            echo "REMOVED merged branch $branch"
+          done
+          OLD='maintenance/cleanup-pr176-20261025'
+          OLD_SHA='f451259d24d66646f6b47d3edaee9dd7bdb81b7a'
+          old_remote=$(git ls-remote origin "refs/heads/$OLD" | cut -f1)
+          if [[ "$old_remote" == "$OLD_SHA" ]]; then
+            oldtag="$TAG_PREFIX/superseded-pr176-cleanup-$OLD_SHA"
+            git tag "$oldtag" "$OLD_SHA"
+            git push origin "refs/tags/$oldtag:refs/tags/$oldtag"
+            git push --force-with-lease="refs/heads/$OLD:$OLD_SHA" origin ":refs/heads/$OLD"
+            echo "REMOVED archived superseded maintenance branch $OLD"
+          elif [[ -n "$old_remote" ]]; then
+            echo "PRESERVED changed maintenance ref $OLD"
+          fi
+          SELF='maintenance/prune-merged-safe-20261025-v2'
+          self_remote=$(git ls-remote origin "refs/heads/$SELF" | cut -f1)
+          [[ "$self_remote" == "$GITHUB_SHA" ]] || { echo "ABORT: self branch changed: $self_remote"; exit 1; }
+          selftag="$TAG_PREFIX/completed-workflow-$GITHUB_SHA"
+          git tag "$selftag" "$GITHUB_SHA"
+          git push origin "refs/tags/$selftag:refs/tags/$selftag"
+          git push --force-with-lease="refs/heads/$SELF:$GITHUB_SHA" origin ":refs/heads/$SELF"
+          echo 'SUCCESS: only already-merged historical refs were deleted. Active PR heads preserved.'
