@@ -1,3 +1,12 @@
+## 25.10.2026 – Fehlertolerante Quell-ZIP-Veröffentlichung (gestapelter PR #172)
+
+- `scripts/package_project.py`: ZIP/Prüfsumme zuerst im temporären Zielverzeichnis erzeugen und ZIP prüfen. Erst danach `os.replace`; bei Fehler der zweiten Ersetzung altes ZIP aus zuvor gesicherter Kopie wiederherstellen.
+- Vier zusätzliche Regressionen in `scripts/tests/test_package_project.py`: Fehler bei existierendem/neuem Archiv, Fehler beim Prüfsummen-Ersetzen und gültiges Ersetzen von ZIP plus SHA256.
+- Auf Basis von [PR #170](https://github.com/ManuEtt/Dnd/pull/170), dessen finale [CI #40191043877](https://github.com/ManuEtt/Dnd/actions/runs/40191043877) erfolgreich war. Neuer gestapelter [PR #172](https://github.com/ManuEtt/Dnd/pull/172); eigener CI-Status am letzten Commit prüfen. Erster neuer Zwischenstand war wegen Test-Escaping rot, Korrektur auf `a1a8dd9`; Python-Paket-/Strukturtest danach grün.
+- Kein absoluter Schutz gegen Stromverlust zwischen zwei Dateiersetzungen oder konkurrierende Prozesse; keine Änderung an Spielständen, Regeln, Backend, SQLite 2, JSON 1, App-Version 0.8.38+88.
+
+---
+
 ## 25.10.2026 – Sicherheitskorrektur Quell-ZIP-Export (PR #170)
 
 - **Implementiert:** `scripts/package_project.py` prüft die Ausschlüsse für Secret-Dateinamen, `.env*`, SQLite-Journals und Caches jetzt auch bei gemischter Groß-/Kleinschreibung. Betroffene Dateien werden nicht ins Quellarchiv aufgenommen. Ein neuer ZIP-Regressionstest deckt diese Pfade ab; öffentliche Beispielkonfiguration und Grafiken bleiben erhalten.
