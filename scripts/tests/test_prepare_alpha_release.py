@@ -4,6 +4,7 @@ import importlib.util
 import hashlib
 from pathlib import Path
 import tempfile
+import stat
 import unittest
 import zipfile
 
@@ -69,6 +70,42 @@ class AlphaReleaseTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Keine gebaute ARM64-APK'):
             release.prepare_release(self.root, self.out)
         self.assertFalse(self.out.exists())
+
+
+    def test_duplicate_required_component_is_rejected(self):
+        with zipfile.ZipFile(self.apk, 'a') as archive:
+            with self.assertWarns(UserWarning):
+                archive.writestr('lib/arm64-v8a/libapp.so', b'other bytes')
+        with self.assertRaisesRegex(ValueError, 'doppelte ZIP-Einträge'):
+            release.prepare_release(self.root, self.out)
+        self.assertFalse(self.out.exists())
+
+    def test_unsafe_apk_entry_paths_are_rejected(self):
+        for unsafe in ('../escape', 'assets/../../private',
+                       '/absolute', 'C:/drive', 'assets\\payload',
+                       'assets/./dot'):
+            with self.subTest(path=unsafe):
+                self.create_apk()
+                with zipfile.ZipFile(self.apk, 'a') as archive:
+                    archive.writestr(unsafe, b'unsafe')
+                with self.assertRaisesRegex(ValueError, 'unsichere ZIP-Pfade'):
+                    release.prepare_release(self.root, self.out)
+                self.assertFalse(self.out.exists())
+
+    def test_apk_symlink_entry_is_rejected(self):
+        link = zipfile.ZipInfo('assets/shortcut')
+        link.create_system = 3
+        link.external_attr = (stat.S_IFLNK | 0o777) << 16
+        with zipfile.ZipFile(self.apk, 'a') as archive:
+            archive.writestr(link, b'../../secrets')
+        with self.assertRaisesRegex(ValueError, 'symbolische ZIP-Links'):
+            release.prepare_release(self.root, self.out)
+        self.assertFalse(self.out.exists())
+
+    def test_normal_directory_entry_remains_accepted(self):
+        with zipfile.ZipFile(self.apk, 'a') as archive:
+            archive.writestr('assets/', b'')
+        release.validate_arm64_apk(self.apk)
 
     def test_wrong_architecture_is_rejected(self):
         self.create_apk(omit={'lib/arm64-v8a/libapp.so'})
