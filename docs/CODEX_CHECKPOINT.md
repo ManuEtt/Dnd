@@ -111,3 +111,18 @@ Nach vollständigem Abschluss eigenes SRD-Paket allgemeine Gelegenheitsangriffe;
 Zuerst Git-Status/HEAD, Main, offene PRs und laufende Workflows neu prüfen. Manifest `/workspace/validation/20261025-branch-backup-manifest.json`; Löschwerkzeug `/workspace/validation/cleanup_migrated_branches.py` prüft grüne exakte Main-CI, Inventar, SHA, Archivtag und Ancestry vor SHA-gebundener Löschung. **Noch keine Main-Veröffentlichung oder Branchlöschung erfolgt.** Historische lokale Worktrees und unveröffentlichte Entwürfe nicht entfernen. Keine automatische Fortsetzung außerhalb einer aktiven Sitzung.
 
 Nachtrag: späterer Atomic-Dokumentationskopf `1eb8046` ebenfalls remote gesichert, alle vier einzigartigen Statusdateien bytegenau archiviert und mit unverändertem Inhaltsbaum als Vorfahr aufgenommen. Nun zehn geprüfte Historien-Merges und 42 Archivdateien. App/Backend/Skripte bleiben gegenüber geprüftem Funktionscommit `cd72462` unverändert.
+
+
+---
+
+# Paralleles Entwicklungsinkrement Chat B – Recall-Absicht (25.10.2026)
+
+- **Ausgangs-`main`-SHA:** `5c1499a9342449050bb946542659b221ac2653da` (PR #175 bereits integriert).
+- **Branch:** `fix/chat-b/recall-intent-20261025`; Code `90a280d5565eae42044f80135450d46b2c4c9b90`, Tests zuletzt `c3959e4f088729bbd48f3993c35ca1ac298ca62d`.
+- **IMPLEMENTIERT:** `app/lib/story/story_memory_engine.dart` wertet nur ausdrücklich angeforderte bestätigte Erinnerungen als Recall. Die gewöhnliche Interaktion mit einem Tagebuch und berichtete Erinnerungen bleiben Spielhandlungen. Vier neue Tests in `app/test/story_recall_intent_test.dart`. Keine Änderung an Regelzuständen/Schema/JSON.
+- **GETESTET:** Live-GitHub-HEAD, offene PRs #176 (Kampf) und #177 (CI) und betroffene Dateipfade zum Zeitpunkt der Bearbeitung geprüft. Kein lokaler Flutter-Testlauf.
+- **NICHT GETESTET:** Neuer Story-Code per `flutter test`, Dart-Formatierung/Analyse, Debug-APK, neue PR-CI auf finalem Head, Realgerät. Main-CI `40216189451` zum ersten Abruf noch in Ausführung; nicht als neues Grün ausgeben.
+- **BLOCKIERT:** Lokales Dart-/Flutter-SDK und lokaler Repository-Checkout fehlen. Die zentralen README-/Checkpoint-Änderungen müssen bei der Integration durch Chat D abgeglichen werden.
+- **NOCH NICHT IMPLEMENTIERT:** Qualitativ stärkerer bestätigter NPC-Notiz-Abruf über mehrere Sessions; weder neue KI-Providerlogik noch SRD-Regeln in diesem Paket.
+- **NÄCHSTER SCHRITT:** Gezielten, bestätigten Abruf von NPC-Beziehungsnotizen über mehrere Sitzungen isoliert entwickeln und positiv/negativ testen.
+- **Eigenständiger Checkpoint:** `docs/parallel/CHAT_B_CHECKPOINT.md`. PR-/CI-Details werden an den tatsächlichen GitHub-Ergebnissen gemessen.
