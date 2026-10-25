@@ -42,7 +42,8 @@ Campaign _campaign({
       timestamp: DateTime.utc(2026, 10, 25),
     ),
   ],
-  npcs: npcs ??
+  npcs:
+      npcs ??
       const [
         WorldNpc(id: 'mira', name: 'Mira', relationship: 'misstrauisch'),
         WorldNpc(id: 'tarek', name: 'Tarek', relationship: 'neutral'),
@@ -88,10 +89,7 @@ void main() {
     expect(snapshot.name, 'Mira');
     expect(snapshot.alive, isTrue);
     expect(snapshot.currentRelationship, 'misstrauisch');
-    expect(snapshot.recentNotes.map((e) => e.id).toList(), [
-      'recent',
-      'old',
-    ]);
+    expect(snapshot.recentNotes.map((e) => e.id).toList(), ['recent', 'old']);
     expect(snapshot.confirmedContext, contains('Mira zeigte Aria'));
     expect(snapshot.confirmedContext, contains('Mira sah die geöffnete'));
     expect(snapshot.confirmedContext, isNot(contains('Seiteneingang')));
@@ -152,11 +150,7 @@ void main() {
     }
     for (final limit in [0, -1, 21, 999]) {
       expect(
-        () => NpcContinuityReader.read(
-          campaign,
-          npcId: 'mira',
-          limit: limit,
-        ),
+        () => NpcContinuityReader.read(campaign, npcId: 'mira', limit: limit),
         throwsFormatException,
       );
     }
@@ -175,10 +169,7 @@ void main() {
   test('old save without optional notes and real confirmed update work', () {
     final oldJson = _campaign().toJson()..remove('npcRelationshipNotes');
     final old = Campaign.fromJson(oldJson);
-    expect(
-      NpcContinuityReader.read(old, npcId: 'mira').recentNotes,
-      isEmpty,
-    );
+    expect(NpcContinuityReader.read(old, npcId: 'mira').recentNotes, isEmpty);
 
     final engine = GameEngine(clock: () => DateTime.utc(2026, 10, 25));
     final updated = engine.recordNpcRelationship(
