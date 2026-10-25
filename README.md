@@ -70,3 +70,11 @@ Weitere offene Bereiche: vollständige amtliche Quelleninventur, zahlreiche Zaub
 Vollprojekt-ZIP, Patch und Prüfsummen unter `/workspace/artifacts/0.8.40+90/`; aktuelle Dateinamen im dortigen Artefaktindex nach Abschluss. Patchbasis dieses Pakets: `407c2e1ef8ee310b30d1543a263fb66b3331a26e`. ZIP in eine Arbeitskopie entpacken oder Patch mit `git apply --check`/`git apply` auf dieser Basis übernehmen, eigenen Branch pushen und PR öffnen. Keine alten Dateistände ungeprüft über Main kopieren.
 
 Nur rechtmäßig verwendbare Inhalte des **SRD 5.2.1 von Wizards of the Coast unter CC BY 4.0** sowie eigene/lizenzierte Inhalte nutzen. [Namensnennung](THIRD_PARTY_NOTICES.md) erhalten. Keine automatische Weiterarbeit außerhalb einer aktiven Sitzung.
+
+---
+
+## Chat B – NPC-Beziehungserinnerungen gezielt an den KI-Erzähler (25.10.2026)
+
+Das unabhängige Paket auf Branch `feat/chat-b/npc-narrator-memory-20261025` ergänzt die bereits vorhandene KI-Geschichtenübergabe um eine begrenzte Auswahl **bestätigter** NPC-Beziehungsnotizen für aktuell erwähnte Personen. `NpcNarratorMemory.merge` sortiert zeitlich absteigend, ordnet nur eindeutige NPC-IDs zu und reserviert höchstens drei der bisher maximal zwölf Erinnerungsslots. Alte allgemeine Erinnerungen bleiben ansonsten nutzbar; unbestätigte Freitexte aus Szenen/Nachrichten werden nicht als NPC-Notizen verwendet. Die bestehende `GameController._withNarration`-Schnittstelle zum optionalen Backend sendet die Auswahl im unveränderten `memories`-Feld.
+
+Neue Unit- und SQLite/Backend-Mock-Integrationstests decken die Auswahl, Limits, Fremd-NPCs, Alt-JSON und tatsächliche Payload-Übermittlung ab. **Die Tests sind geschrieben; ein vollständiges CI-Ergebnis des neuen PR-HEAD ist separat abzunehmen.** Keine neue Providerbezahlung, keine Änderungen an Regeldaten, SQLite-/JSON-Schema oder Version. Parallele PRs #179/#181 bleiben unangetastet. [Chat-B-Checkpoint](docs/parallel/CHAT_B_NARRATOR_MEMORY_20261025.md).
