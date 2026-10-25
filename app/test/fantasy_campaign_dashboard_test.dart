@@ -146,4 +146,140 @@ void main() {
     expect(find.text('Stufenaufstieg möglich'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  for (final width in [320.0, 360.0]) {
+    testWidgets('Aktive Heldenkarte bei $width dp und 200 % gut lesbar', (
+      tester,
+    ) async {
+      tester.view.physicalSize = Size(width, 1300);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final semantics = tester.ensureSemantics();
+      var continued = 0;
+      final hero = HeroCharacter(
+        id: 'accessible-overview',
+        name: 'Arescan',
+        level: 3,
+        hitPoints: 18,
+        maxHitPoints: 24,
+        armorClass: 16,
+        speed: 9,
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildFantasyTheme(),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: const TextScaler.linear(2)),
+            child: child!,
+          ),
+          home: Scaffold(
+            body: ListView(
+              children: [
+                FantasyActiveHeroCard(
+                  hero: hero,
+                  campaignName: 'Nebelwacht',
+                  onContinue: () => continued++,
+                  onHeroes: () {},
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final keys = [
+        const ValueKey('active-hero-metric-hp'),
+        const ValueKey('active-hero-metric-ac'),
+        const ValueKey('active-hero-metric-speed'),
+      ];
+      final positions = [
+        for (final key in keys) tester.getTopLeft(find.byKey(key)),
+      ];
+      expect(positions[1].dx, closeTo(positions[0].dx, 1));
+      expect(positions[2].dx, closeTo(positions[0].dx, 1));
+      expect(positions[1].dy, greaterThan(positions[0].dy));
+      expect(positions[2].dy, greaterThan(positions[1].dy));
+      expect(find.text('18 / 24'), findsOneWidget);
+      expect(find.text('16'), findsOneWidget);
+      expect(find.text('9 m'), findsOneWidget);
+      expect(
+        find.ancestor(
+          of: find.text('18 / 24'),
+          matching: find.byType(FittedBox),
+        ),
+        findsNothing,
+      );
+      expect(find.bySemanticsLabel('Trefferpunkte: 18 von 24'), findsOneWidget);
+      expect(find.bySemanticsLabel('Rüstungsklasse: 16'), findsOneWidget);
+      expect(find.bySemanticsLabel('Bewegung: 9 m'), findsOneWidget);
+
+      final resume = find.byKey(const ValueKey('fantasy-hero-continue'));
+      await tester.ensureVisible(resume);
+      await tester.tap(resume);
+      expect(continued, 1);
+      expect(tester.takeException(), isNull);
+      semantics.dispose();
+    });
+  }
+
+  testWidgets('Unbestätigte Kartenwerte sind bei 200 % kenntlich', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 1300);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final semantics = tester.ensureSemantics();
+    final hero = HeroCharacter(
+      id: 'unknown-overview',
+      name: 'Unbekannter Held',
+      level: 1,
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildFantasyTheme(),
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: const TextScaler.linear(2)),
+          child: child!,
+        ),
+        home: Scaffold(
+          body: ListView(
+            children: [
+              FantasyActiveHeroCard(
+                hero: hero,
+                campaignName: 'Unbestätigt',
+                onContinue: null,
+                onHeroes: () {},
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('? / ?'), findsOneWidget);
+    expect(find.text('?'), findsNWidgets(2));
+    for (final label in ['Trefferpunkte', 'Rüstungsklasse', 'Bewegung']) {
+      expect(
+        find.bySemanticsLabel('$label: nicht bestätigt'),
+        findsOneWidget,
+      );
+    }
+    expect(
+      tester.widget<FantasyTextButton>(
+        find.byKey(const ValueKey('fantasy-hero-continue')),
+      ).onPressed,
+      isNull,
+    );
+    expect(find.text('Erfahrungspunkte: nicht bestätigt'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    semantics.dispose();
+  });
 }
