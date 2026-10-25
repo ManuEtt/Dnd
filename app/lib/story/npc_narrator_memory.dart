@@ -48,7 +48,7 @@ class NpcNarratorMemory {
       final normalizedNote = _oneLine(note.note);
       final text = _truncate(
         'Bestätigte NPC-Beziehungsnotiz zu ${_oneLine(entry.npc.name)} '
-        '(${_oneLine(note.relationship)}): ${normalizedNote}',
+        '(${_oneLine(note.relationship)}): $normalizedNote',
         400,
       );
       if (result.contains(text)) continue;
