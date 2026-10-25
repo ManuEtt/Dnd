@@ -1,3 +1,9 @@
+# Chat D D-004 – Main-Synchronisierung nach PR #183
+
+Neuer Basis-Main-HEAD `713b8cc2831f9d8039ef4e6ebf37c10682aec675` enthält D-001, D-002 und D-003. Branch D-004 wird per **normalem Merge-Commit ohne Force-Push** mit Main synchronisiert. Nur die zwei Python-Projektprüfer-/Testdateien werden aus D-004 übernommen; Dokumentation aus aktuellem Main bleibt erhalten und wird additiv ergänzt. Frühere Code-Tests/CIs auf `c7f2df12a9df474e6204ad1de4011f7c5b6e3e7f` sind keine finale Abnahme nach Synchronisierung. Offene PRs anderer Chats bleiben unverändert.
+
+---
+
 # Chat D – D-004: Gradle-Wrapper-JAR mit sicheren ZIP-Dateinamen prüfen
 
 ## Ausgangsstand
@@ -32,6 +38,55 @@ Die bestehende Gradle-Wrapper-Prüfung validiert die ZIP-CRC und das Java-Startk
 ## Genau ein nächster Schritt
 
 Vollständige GitHub-CI auf dem **finalen** D-004-PR-Head kontrollieren; negative Testfälle und bisherige Wrapper-Kompatibilität bestätigen. Nach anschließendem Main-Abgleich die gemeinsamen Dokumentationsdateien mit PR #183 und anderen Chats additiv konsolidieren. Ohne vollständigen erfolgreichen Test- und Dateiabgleich kein Merge.
+
+
+---
+
+# CHAT D – Integrations-Update D-003 (25.10.2026)
+
+D-001 PR #177 und D-002 PR #182 wurden nach vollständig erfolgreicher CI in `main` integriert. Neuer Main-HEAD `45bea9c2a897275583bdbe32ed50afde5d0a76b0`, alter D-003-HEAD `ae0efbe2d1da4284093433c0851b147f101e3301`. Der neue D-003-Commit führt beide Stände als regulären Merge zusammen und erhält alle technischen Dateien und bisherigen Checkpoints. D-003 umfasst ausschließlich APK-ZIP-Validierungsdateien plus ergänzende Dokumentation; keine Spielstände, Story oder Regeln betroffen. Der neue Commit braucht eine eigene vollständige CI; alte CI-Ergebnisse sind nicht übertragbar. PRs #178–#181 und #184 haben eigene technische Module und überlappende README-/Checkpoint-Dokumentation. Keine fremden Änderungen zusammenführen oder überschreiben.
+
+---
+
+
+## D-003 – vollständiges ursprüngliches Paketprotokoll
+
+# Chat D – D-003: Eindeutige, sichere APK-ZIP-Einträge
+
+- **Datum / Zuständigkeit:** 25.10.2026 / Chat D Qualität, Speicherung, Integration.
+- **Ausgangs-main-SHA:** `97a06118f17d71cc77be2cb15a2fc9a53db20ee0` (PR #177 integriert, PR #182 noch separat in Abnahme).
+- **Branch:** `fix/chat-d/apk-zip-validation-20261025`.
+- **Code-/Test-Commit:** `91c1911efcf39cc4a7708603e89a47c56c16cf32`.
+- **Pull Request:** wird anschließend gegen `main` angelegt; PR und finale SHA dort überprüfen.
+- **Offene parallele PRs:** Chat D #182 (anderer Prüfpfad), Chat A #180, Chat B #179/#181, Chat C #178; keine Regel-, Story-, Android-UI- oder Speicherdatei geändert.
+
+## Ausgangsproblem
+
+`validate_arm64_apk` in `scripts/prepare_alpha_release.py` prüfte native Komponenten und ZIP-CRC, akzeptierte jedoch doppelte Archivnamen und unsafe ZIP-Pfade. Zwei unterschiedlich enthaltene `lib/arm64-v8a/libapp.so`-Mitglieder erlauben beispielsweise eine mehrdeutige Prüfaussage. Unsichere Eintragsnamen oder symbolische Links gehören nicht in das Alpha-Paket.
+
+## IMPLEMENTIERT
+
+- Alle ZIP-Membernamen vor der Bestimmung erforderlicher Komponenten auf Eindeutigkeit prüfen.
+- Absolute Pfade, Laufwerkspfade, Rückwärtsschrägstriche, leere/`.`/`..`-Segmente und Steuerzeichen abweisen.
+- Symbolische ZIP-Links anhand der ZIP-Dateimodus-Metadaten ablehnen.
+- Legitime Verzeichniseinträge mit abschließendem `/` weiterhin zulassen.
+- Vier zusätzliche positive und negative Tests in `scripts/tests/test_prepare_alpha_release.py`.
+
+## Geänderte Dateien
+
+`scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, `docs/parallel/CHAT_D_CHECKPOINT.md`, `docs/CODEX_CHECKPOINT.md`, `README.md`.
+
+## Tests, CI, Spielstände
+
+- **GETESTET:** GitHub-Connector hat beide veränderten Skript-/Testdateien auf dem Branch erneut gelesen; erwartete Korrektur ist dort vorhanden. Frühere Tests gelten nur für frühere Commits.
+- **NICHT GETESTET:** Neue vier Regressionen und vollständige Repository-/Python-/Backend-/Flutter-/Android-CI dieses Commitstands sind noch abzunehmen. Aktive Push-CI: [#40220308644](https://github.com/ManuEtt/Dnd/actions/runs/40220308644). Keine grüne CI oder installierbare neue APK für diesen Commit behaupten.
+- **Migration:** keine Änderungen an App- oder Backendcode, SQLite-Version, Datenformat, gespeicherten Spielständen oder SRD-Regeln. Keine Migration.
+- **BLOCKIERT:** lokale vollständige Projekt-Toolchain/Checkout fehlen. Finale Actions-Läufe und Integration anderer Chats benötigen Koordination. README und zentraler Checkpoint können mit den anderen PRs kollidieren und müssen additiv zusammengeführt werden.
+
+## Genau ein nächster Schritt
+
+CI des finalen D-003-PR-Commitstands vollständig (inkl. Tests für den korrigierten Release-Paketpfad und erzeugte APK-Release-Artefakte) erfolgreich abnehmen, echten Main-/PR-Dateiabgleich wiederholen und erst danach integrationsbereit stellen. Keine fremden PRs mergen oder Branches löschen.
+
 
 ---
 

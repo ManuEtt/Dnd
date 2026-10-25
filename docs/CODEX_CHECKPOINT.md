@@ -1,15 +1,22 @@
-# Chat D – Gradle-Wrapper-ZIP-Sicherheit D-004 (25.10.2026)
+# Chat D D-004 – Gradle-Wrapper-JAR-Sicherheit (25.10.2026)
 
-- **Basis:** `main` `45bea9c2a897275583bdbe32ed50afde5d0a76b0`, **Branch:** `fix/chat-d/gradle-wrapper-jar-safety-20261025`, technischer Commit `944762a8412ddd4eb5801d7832e424b238197deb`.
-- **Implementiert:** Frühe Gradle-Wrapper-JAR-Validierung gegen doppelte, unsichere und symbolische ZIP-Mitglieder; vier positive/negative Python-Regressionsmethoden.
-- **GETESTET:** Dateien im GitHub-Branch nach Commit abgerufen.
-- **NICHT GETESTET:** finale vollständige Python-/Flutter-/Backend-/Android-CI und APK auf diesem Code-Commit. Auch keine echte Geräteinstallation.
-- **BLOCKIERT:** CI ausstehend; D-003-PR #183 wird separat abgenommen.
-- **Migration:** unveränderte SQLite-/JSON-Spielstände, App-Version, Regel- und Storymodule.
-- **NÄCHSTER SCHRITT:** vollständige finale CI und Main-/PR-Konfliktprüfung abnehmen, additive Dokumentationsintegration koordinieren. [Persönlicher Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
+- **Basis:** `main` `713b8cc2831f9d8039ef4e6ebf37c10682aec675` mit bereits integriertem D-003-PR #183; D-004-Branch `fix/chat-d/gradle-wrapper-jar-safety-20261025`.
+- **Implementiert:** `scripts/verify_project.py` rejectiert mehrdeutige doppelte ZIP-Namen, unsichere Pfadvarianten und ZIP-Symlinks vor dem Gradle-Start; vier zusätzliche positive/negative Tests.
+- **Status:** Frühere CI auf `c7f2df12a9df474e6204ad1de4011f7c5b6e3e7f` belegt **nicht** den neuen Synchronisations-Commit. Vollständige Actions-Abnahme und Android-Artefakte des neuen Standes sind noch offen.
+- **Keine Migration:** SQLite/JSON, App-Version und bestehende Spielmechanik unverändert.
+- **Nächster Schritt:** finale CI prüfen, gegen aktuellen `main` konfliktfrei abgleichen, erst danach Zusammenführung freigeben.
+- **Checkpoint:** [CHAT_D_CHECKPOINT.md](parallel/CHAT_D_CHECKPOINT.md).
 
 ---
 
+# Chat D – PR #183 APK-Archivschutz nach Integration #182
+
+- **Neuer Main-HEAD:** `45bea9c2a897275583bdbe32ed50afde5d0a76b0`. Die beiden Chat-D-PRs #177 und #182 sind inzwischen integriert; dieser Branch übernimmt ihre technischen Dateien und Statusdokumentation unverändert.
+- **Implementiert:** `scripts/prepare_alpha_release.py` weist doppelte Archivnamen, Traversal-/absolute Pfade, Rückwärtsschrägstriche, Steuerzeichen und ZIP-Symlinks zurück; vier neue positive/negative Regressionen.
+- **GETESTET:** Code/Testdateien über GitHub auf eigenem Branch überprüft. Die ältere PR-183-CI auf `ae0efbe` ist **kein** Abnahmenachweis des neu kombinierten Commits.
+- **NICHT GETESTET:** finale Python-/Flutter-/Backend-/Android-CI auf dem neuen PR-183-HEAD; reales Gerät. Keine Datenmigration.
+- **NÄCHSTER SCHRITT:** exakte neue PR-/Push-CI abnehmen, aktuelle Parallel-PR-Dateien vergleichen, danach nur bei grüner CI und Konfliktfreiheit integrieren.
+- **Vollständiger Status:** [CHAT_D_CHECKPOINT.md](parallel/CHAT_D_CHECKPOINT.md).
 
 ---
 

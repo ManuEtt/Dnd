@@ -1,8 +1,12 @@
 # Würfelraunen – Der lebendige Spielleiter
 
-## Chat D – Gradle-Wrapper-JAR vor unsicheren ZIP-Einträgen schützen (D-004, 25.10.2026)
+## Qualitätspaket Chat D D-004 – Gradle-Wrapper-JAR-Validierung
 
-Der Projektprüfer kontrolliert nun auch doppelte und unsichere ZIP-Member sowie symbolische Links im Gradle-Wrapper-JAR, bevor die bestehende Startklassen-/CRC-Prüfung erfolgt. Vier neue Python-Regressionstests decken zulässige und unerlaubte ZIP-Varianten ab. CI-Abnahme und ein neuer Android-Build müssen auf dem finalen Branch-Commit separat bestätigt werden. Keine Änderung an Spielmechanik, Datenformat, Android-App-Quellen oder Spielständen. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+Nach der vollständigen Integration von [PR #183](https://github.com/ManuEtt/Dnd/pull/183) ergänzt [PR #186](https://github.com/ManuEtt/Dnd/pull/186) den Projektprüfer um die frühe Zurückweisung doppelter ZIP-Dateinamen, Pfad-Traversal/absoluter Namen und symbolischer Einträge im Gradle-Wrapper-JAR. Vier neue Python-Regressionen erfassen Positiv- und Negativfälle. Die vollständige GitHub-CI des mit `main` synchronisierten D-004-Commits bleibt bis zum Abschluss gesondert zu prüfen. Keine Spielstands-, SQLite-/JSON-, UI- oder SRD-Regeländerung. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
+## Chat D – APK-ZIP-Härtung (25.10.2026, PR #183)
+
+Nach den erfolgreich geprüften Integrationen von [PR #177](https://github.com/ManuEtt/Dnd/pull/177) und [PR #182](https://github.com/ManuEtt/Dnd/pull/182) wird die Alpha-Release-Prüfung mit [PR #183](https://github.com/ManuEtt/Dnd/pull/183) gegen mehrdeutige doppelte ZIP-Member, unsichere Eintragspfade und symbolische Links abgesichert. Vier neue Regressionstests prüfen auch erlaubte ZIP-Verzeichnisse. **Finale CI auf dem neu mit Main synchronisierten Commit ausstehend**. Keine SQLite-/JSON-Migration, keine Änderung an App-Code, Regelmechanik oder Build-Version. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
 
 ## Qualitätssicherung – Chat D: rekursiver Story-/Regelimportprüfer (25.10.2026)
 
