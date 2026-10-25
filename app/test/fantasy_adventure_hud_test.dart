@@ -212,4 +212,126 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  for (final width in [320.0, 360.0]) {
+    testWidgets('HUD bleibt bei $width dp und 200 % Schrift lesbar', (
+      tester,
+    ) async {
+      tester.view.physicalSize = Size(width, 1200);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final semantics = tester.ensureSemantics();
+      addTearDown(semantics.dispose);
+      final hero = HeroCharacter(
+        id: 'accessible-hud',
+        name: 'Elowen',
+        level: 3,
+        experience: 950,
+        hitPoints: 12,
+        maxHitPoints: 24,
+        armorClass: 16,
+        speed: 9,
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildFantasyTheme(),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              textScaler: const TextScaler.linear(2),
+            ),
+            child: child!,
+          ),
+          home: Scaffold(
+            body: ListView(children: [FantasyAdventureStatusHud(hero: hero)]),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final statKeys = [
+        const ValueKey('adventure-stat-hp'),
+        const ValueKey('adventure-stat-ac'),
+        const ValueKey('adventure-stat-speed'),
+        const ValueKey('adventure-stat-xp'),
+      ];
+      final topLefts = [
+        for (final key in statKeys) tester.getTopLeft(find.byKey(key)),
+      ];
+      for (var i = 1; i < topLefts.length; i++) {
+        expect(topLefts[i].dx, closeTo(topLefts.first.dx, 1));
+        expect(topLefts[i].dy, greaterThan(topLefts[i - 1].dy));
+      }
+
+      expect(find.text('12 / 24'), findsOneWidget);
+      expect(find.text('16'), findsOneWidget);
+      expect(find.text('9 m'), findsOneWidget);
+      expect(find.text('950'), findsOneWidget);
+      expect(
+        find.ancestor(
+          of: find.text('12 / 24'),
+          matching: find.byType(FittedBox),
+        ),
+        findsNothing,
+      );
+      expect(find.bySemanticsLabel('Trefferpunkte: 12 von 24'), findsOneWidget);
+      expect(find.bySemanticsLabel('Rüstungsklasse: 16'), findsOneWidget);
+      expect(find.bySemanticsLabel('Bewegung: 9 m'), findsOneWidget);
+      expect(find.bySemanticsLabel('Erfahrungspunkte: 950'), findsOneWidget);
+      expect(
+        find.bySemanticsLabel(
+          RegExp('Erfahrungsfortschritt: [0-9]+ Prozent'),
+        ),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets('HUD sagt unbekannte Werte auch bei 200 % korrekt an', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 1100);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final semantics = tester.ensureSemantics();
+    addTearDown(semantics.dispose);
+    final hero = HeroCharacter(id: 'unknown-hud', name: 'Unbekannt');
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildFantasyTheme(),
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaler: const TextScaler.linear(2),
+          ),
+          child: child!,
+        ),
+        home: Scaffold(
+          body: ListView(children: [FantasyAdventureStatusHud(hero: hero)]),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('? / ?'), findsOneWidget);
+    expect(find.text('?'), findsNWidgets(3));
+    for (final statName in [
+      'Trefferpunkte',
+      'Rüstungsklasse',
+      'Bewegung',
+      'Erfahrungspunkte',
+    ]) {
+      expect(
+        find.bySemanticsLabel('$statName: nicht bestätigt'),
+        findsOneWidget,
+      );
+    }
+    expect(find.byKey(const ValueKey('adventure-xp-progress')), findsNothing);
+    expect(
+      find.bySemanticsLabel(RegExp('Erfahrungsfortschritt:')),
+      findsNothing,
+    );
+    expect(tester.takeException(), isNull);
+  });
 }
