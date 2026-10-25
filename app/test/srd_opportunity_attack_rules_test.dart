@@ -117,35 +117,35 @@ void main() {
   test(
     'keine Reaktion bei fremdem Ziel, falschem Zug oder verbrauchter Reaktion',
     () {
-    final initial = _campaign();
-    expect(
-      () => SrdOpportunityAttackRules.prepare(
-        initial,
-        _trigger(encounterId: 'other-target'),
-      ),
-      throwsFormatException,
-    );
-    for (final invalid in [
-      initial.encounter!.copyWith(activeParticipant: 'hero'),
-      initial.encounter!.copyWith(reactionUsed: true),
-      initial.encounter!.copyWith(enemyHitPoints: 0),
-    ]) {
+      final initial = _campaign();
       expect(
         () => SrdOpportunityAttackRules.prepare(
-          initial.copyWith(encounter: invalid),
+          initial,
+          _trigger(encounterId: 'other-target'),
+        ),
+        throwsFormatException,
+      );
+      for (final invalid in [
+        initial.encounter!.copyWith(activeParticipant: 'hero'),
+        initial.encounter!.copyWith(reactionUsed: true),
+        initial.encounter!.copyWith(enemyHitPoints: 0),
+      ]) {
+        expect(
+          () => SrdOpportunityAttackRules.prepare(
+            initial.copyWith(encounter: invalid),
+            _trigger(),
+          ),
+          throwsFormatException,
+        );
+      }
+      expect(
+        () => SrdOpportunityAttackRules.prepare(
+          initial.copyWith(encounter: null),
           _trigger(),
         ),
         throwsFormatException,
       );
-    }
-    expect(
-      () => SrdOpportunityAttackRules.prepare(
-        initial.copyWith(encounter: null),
-        _trigger(),
-      ),
-      throwsFormatException,
-    );
-  },
+    },
   );
 
   test('aktionsunfähiger und kampfunfähiger Held erhält keine Reaktion', () {
