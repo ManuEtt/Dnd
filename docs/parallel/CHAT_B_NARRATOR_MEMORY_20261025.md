@@ -4,7 +4,7 @@
 
 - Ausgangs-`main`: `45bea9c2a897275583bdbe32ed50afde5d0a76b0` (PR #182 integriert).
 - Eigener Branch: `feat/chat-b/npc-narrator-memory-20261025`.
-- PR: Wird nach der Code- und Dokumentationssicherung gegen `main` eröffnet.
+- PR: [#187](https://github.com/ManuEtt/Dnd/pull/187) gegen `main` geöffnet; kein Merge.
 - Andere offene PRs zum Start: #178, #179, #180, #181, #183, #184, später #185. Der Dateiabgleich ergab **keine** Überschneidung mit den hier geänderten Story-/Controller-/Testdateien. README und zentraler Checkpoint sind gemeinsam genutzte Dokumentation und vor Integration mit Chat D abzugleichen.
 - PR #179: Erinnerungserkennung separat, nicht überschrieben. PR #181: eigenständige NPC-Historienprojektion separat, nicht überschrieben und noch nicht Voraussetzung dieses Pakets.
 
@@ -43,3 +43,11 @@ Der bestehende `GameController._withNarration` versendet die ersten zwölf allge
 ## Nächster einzelner Schritt
 
 Eine persistente, explizite NPC-Auswahl für die KI-Kontextpflege auch bei Namensgleichheit entwickeln, ohne IDs aus KI-Freitext zu übernehmen. Akzeptanz: bestätigte NPC-ID, Ablehnung unbekannter ID und Stale-Revision, keine Änderung an Regel-/Speichermodellen ohne Integrationskoordination.
+
+## Prüfnachtrag zur ersten CI und Korrektur
+
+- Ursprünglicher Android-Workflow [#40221964428](https://github.com/ManuEtt/Dnd/actions/runs/40221964428) wurde wegen Dart-Formatierung in drei neuen Dateien als `failure` beendet. Dies ist kein bestandener Testlauf.
+- Ein temporärer, eigener Formatter-Diagnoseworkflow ermittelte die exakten Diffs. Alle Abweichungen wurden korrigiert; der abschließende Diagnose-Lauf `40222315922` meldete `Formatted 3 files (0 changed)` und `completed/success` auf der damals geprüften Branchfassung `4105b8cfce4fb859c093665505b74fbd6ef2107f`.
+- Die temporäre Workflowdatei wurde mit `a5e898bcb00b4d5fed07d6fd83400b26f7e60c62` vollständig entfernt. Dieser Cleanup-Commit ist noch kein vollständiger Android-Testnachweis.
+- Vollständiger finaler Android-Workflow: [#40222338654](https://github.com/ManuEtt/Dnd/actions/runs/40222338654) ist für den bereinigten Code gestartet. Dessen Abschlussstatus ist gesondert zu kontrollieren.
+- Weitere PRs wurden erneut auf geänderte Pfade geprüft: #185 (UI) und #186 (Qualitäts-Skripte) überschneiden sich nicht mit dem Chat-B-Fachcode. Main wurde zwischenzeitlich weiterentwickelt; keinerlei fremde Änderungen überschrieben.
