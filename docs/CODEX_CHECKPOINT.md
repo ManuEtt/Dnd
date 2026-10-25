@@ -54,3 +54,16 @@ Nach Abnahme dieses Pakets: eigener Reaktionsangriff auf dem gespeicherten Angeb
 ## Sicherung und Wiederaufnahme
 
 Geprüfte Main-Basis zusätzlich als ZIP/Patch unter `/workspace/artifacts/main-407c2e1-20261025/` gesichert. Neuer Quellcheckpoint nach diesem Update unter `/workspace/artifacts/0.8.40+90/`; Dateimanifest und tatsächlich gegen `407c2e1ef8ee310b30d1543a263fb66b3331a26e` angewandter Patch. Vor endgültigem Abschluss neue Ergebnisse und PR/Commit eintragen. Historische lokale Worktrees/Item-Entwürfe erhalten. Keine automatische Fortsetzung außerhalb aktiver Sitzung.
+
+---
+
+## Chat B – optionale NPC-Beziehungsnotizen im KI-Erzählkontext (25.10.2026)
+
+- **Basis-`main`:** `45bea9c2a897275583bdbe32ed50afde5d0a76b0`, Branch `feat/chat-b/npc-narrator-memory-20261025`.
+- **IMPLEMENTIERT:** Eine reine Story-Auswahlfunktion `NpcNarratorMemory.merge` hebt bis zu drei nachweisbar persistierte Notizen namentlich erwähnter eindeutiger NPCs hervor; `GameController._withNarration` nutzt das bestehende Backend-`memories`-Feld ohne Vertragsänderung. Keine Veränderung an Helden, Regelwerten, Kampagnenpersistenz, JSON/SQLite oder App-Version.
+- **TESTS HINZUGEFÜGT:** sieben reine Flutter-Regressionen in `npc_narrator_memory_test.dart` und ein SQLite/GameController/Provider-Mock-Integrationstest in `npc_narrator_memory_integration_test.dart`.
+- **GETESTET:** Live-`main`/offene Pull Requests und deren Dateipfade geprüft; lokale Flutter-/Dart-Ausführung nicht verfügbar. **Kein CI-Erfolg für diesen neuen Code vor abschließender GitHub-Prüfung behauptet.**
+- **NICHT GETESTET:** endgültiger PR-Commit in CI, Android-Installation auf Gerät, produktiver Provider und historisches Geräte-Upgrade.
+- **KOORDINATION:** PR #179 und #181 bleiben offen; zentrale README-/Checkpoint-Einträge vor Integration mit Chat D konsolidieren. Separate Regel-/UI-PRs nicht überschrieben.
+- **NÄCHSTER SCHRITT:** explizite bestätigte NPC-ID-Auswahl mit Stale-Revisions-Schutz, ohne ungeprüfte KI-Text-IDs als Autorität.
+- **Details:** `docs/parallel/CHAT_B_NARRATOR_MEMORY_20261025.md`.
