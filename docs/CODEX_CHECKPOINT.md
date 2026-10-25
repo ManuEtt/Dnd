@@ -1,5 +1,52 @@
 # CODEX-CHECKPOINT – Würfelraunen
 
+Stand **2026-10-25T13:15:00+01:00 (Europe/Berlin)**. Neuer begrenzter Folgezyklus. Der Checkpoint von PR #170 und davor steht vollständig unter der Trennlinie; der tatsächliche Git- und CI-Stand wurde vor Änderungen erneut geprüft.
+
+## Aktuelle Git-Lage
+
+- **`main`-SHA:** `b60ffe7ff1aae502ea927cb77153b988be33e397`; App-Version aus `app/pubspec.yaml` **0.8.38+88**. Main wurde nicht verändert. Zu Beginn 13 offene PRs #159–#171; #171 konsolidiert bestehende Spiel-/Story-Branches und verändert den ZIP-Exporter nicht.
+- Abhängige Basis: [PR #170](https://github.com/ManuEtt/Dnd/pull/170), Branch `fix/case-insensitive-secret-archive-filter-20261025`, HEAD **`daf6bd870b0582864beafe7497a75bd92011335e`**.
+- **Neuer Branch:** `fix/atomic-source-archive-publication-20261025`, von exakt `daf6bd8` abgeleitet; **[PR #172](https://github.com/ManuEtt/Dnd/pull/172)** mit Zielbranch von PR #170. Code/Test nach Testkorrektur auf **`a1a8dd9802cd827b34580219c13c6764d9ff502f`**, darauffolgende README-/Changelog-/Status-/Checkpoint-Commits. Finalen HEAD unter [PR #172/commits](https://github.com/ManuEtt/Dnd/pull/172/commits) lesen; nicht behaupten, `main` enthalte schon die Änderungen.
+- Letzter vollständig erfolgreicher GitHub-Basisworkflow: **[#40191043877](https://github.com/ManuEtt/Dnd/actions/runs/40191043877)** auf **`daf6bd870b0582864beafe7497a75bd92011335e`**, `completed/success`; letzter Main-Lauf [#40094794864](https://github.com/ManuEtt/Dnd/actions/runs/40094794864) auf `b60ffe7` `success`. Das ist **kein** Erfolgsnachweis für den neuen Code. Branch-PR-CI für [#172](https://github.com/ManuEtt/Dnd/pull/172/checks) am finalen HEAD erneut prüfen.
+
+## IMPLEMENTIERT
+
+- `scripts/package_project.py`: Vorhandene Ausgabearchive werden bei ZIP-Erstellung nicht mehr direkt geöffnet/überschrieben. Erstelle ZIP und Prüfsummendatei temporär im selben Zielverzeichnis, prüfe ZIP mit `testzip()`, berechne SHA256 und publiziere erst dann mit `os.replace`. Bei Ausnahme während der zweiten Ersetzung wird das zuvor gesicherte ZIP wiederhergestellt. Temporäres Verzeichnis wird per Kontextmanager aufgeräumt.
+- `scripts/tests/test_package_project.py`: vier neue Regressionen für unversehrtes altes ZIP und alte Prüfsumme bei simuliertem Fehler, keinen halben neuen Export, Rollback bei Fehler der Prüfsummen-Ersetzung und normalen Ersatz beider Dateien. Alte Pakettests und Fallunterscheidungen aus PR #170 erhalten.
+- `README.md`, `CHANGELOG.md`, `DEVELOPMENT_STATUS.md` und `docs/CODEX_CHECKPOINT.md` angepasst. Kein neuer SRD-Anforderungseintrag, keine Versionserhöhung, keine Änderungen an Flutter, KI, Story, Backend, SQLite-Schema 2, JSON-Spielständen 1 oder Lizenzen.
+
+## GETESTET
+
+- **Basis**: #170 vollständig grün auf `daf6bd8` in Actions #40191043877.
+- **Neuer Code:** GitHub Actions auf `a1a8dd9` hat Projektstruktur-, Paket- und Python-Unit-Tests, Backend-Typprüfung/-Build/-Tests und die Flutter-Analyse sowie gezielte Flutter-Dialogtests erfolgreich abgeschlossen; spätere Schritte des PR-Laufs wurden durch neue Dokumentationscommits unterbrochen. Insbesondere alle neu hinzugefügten Python-Regressionen bei diesem Code-Commit bestanden.
+- **Transparente Fehlerhistorie:** Actions [#40191974478](https://github.com/ManuEtt/Dnd/actions/runs/40191974478) auf `c30adee` schlug wegen des falsch escapten Test-Strings für den abschließenden Zeilenumbruch fehl. Fehlersuche aus Job-Log verifiziert. Der Fehler ist in `a1a8dd9` behoben; spätere Python-Prüfung grün.
+
+## NICHT GETESTET
+
+- Vollständige **finale** Android-/Flutter-/Backend-/Python-CI auf dem abschließenden Dokumentations-HEAD von PR #172, neue APK-/Artefakt-Checks und echte Geräteinstallation erst nach spezifischem Workflow-Nachweis. Stromverlust zwischen zwei Dateiersetzungen sowie konkurrierende Exporte sind ausdrücklich nicht abgedeckt; die beiden Dateien sind kein betriebssystemweit atomar ersetzbares Paar.
+
+## BLOCKIERT
+
+- Lokaler Repo-Klon über direkten Git-Zugriff scheitert in dieser Laufzeit mit `Could not resolve host: github.com`; Flutter-/Android-SDK nicht lokal vorhanden. Quelldateien wurden mit GitHub-Berechtigung direkt auf einem isolierten Branch gesichert, die unabhängigen Tests in GitHub Actions gestartet.
+
+## NOCH NICHT IMPLEMENTIERT
+
+- Echtes Crash-Consistent Zwei-Dateien-Commit für Stromausfall und parallele Schreiber. Vollständige SRD-5.2.1-Engine, generelle Mehrspieler-/Story-Funktionalität und produktive Android-Signierung sind weiterhin unabhängig offen.
+
+## Genau ein nächster konkreter Schritt
+
+**Nach vollständig grünem finalem CI-Lauf die Integration von #171 → #170 → #172 anhand der aktuellen Commits prüfen**, den gestapelten PR #172 nach Integration seiner Basis auf den neuen `main`-Stand umstellen und erst nach konfliktfreier Validierung und Review in `main` integrieren. Definition of Done: Main-HEAD und Merge-Basis nach jedem Schritt neu prüfen; keine doppelten Commit-Inhalte, alle ZIP-Schutztests in finaler CI grün, kein ungeprüfter Branch gelöscht und keine Spielstands-/Datenbankänderung. Befehle lokal bzw. CI: `python3 scripts/verify_project.py`, `python3 -m unittest discover -s scripts/tests -v`, `python3 scripts/check_domain_boundaries.py`, `bash scripts/check.sh`, `cd app && flutter build apk --debug`, `cd app/android && ./gradlew :app:testDebugUnitTest --no-daemon`.
+
+Keine neue ZIP-/APK-SHA oder Realgerätetest in dieser Sitzung behauptet; vorhandene GitHub-Artefakte nur nach bestätigter finaler Actions-Abnahme verlinken.
+
+### Änderungsprotokoll
+
+- 25.10.2026: ZIP-Veröffentlichung gegen abgefangene Schreib-/Publikationsfehler abgesichert; vier Tests; Python-Zwischenfehler korrigiert; gestapelter PR #172 erstellt.
+
+---
+
+## Voriger Checkpoint: Sicherheits-PR #170
+
 Stand **2026-10-25T12:56:12+01:00 (Europe/Berlin)**. Dies ist der aktuelle eigenständige Sicherheitszyklus; vorheriger Stand vom 24.10.2026 bleibt unten historisch erhalten.
 
 ## Git, Produkt und parallele Arbeit
