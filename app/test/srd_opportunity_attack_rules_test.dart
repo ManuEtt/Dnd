@@ -103,7 +103,10 @@ void main() {
 
   test('Sicht und ausdrückliche Einwilligung sind obligatorisch', () {
     final campaign = _campaign();
-    for (final invalid in [_trigger(visible: false), _trigger(authorized: false)]) {
+    for (final invalid in [
+      _trigger(visible: false),
+      _trigger(authorized: false),
+    ]) {
       expect(
         () => SrdOpportunityAttackRules.prepare(campaign, invalid),
         throwsFormatException,
@@ -111,7 +114,9 @@ void main() {
     }
   });
 
-  test('keine Reaktion bei fremdem Ziel, falschem Zug oder verbrauchter Reaktion', () {
+  test(
+    'keine Reaktion bei fremdem Ziel, falschem Zug oder verbrauchter Reaktion',
+    () {
     final initial = _campaign();
     expect(
       () => SrdOpportunityAttackRules.prepare(
@@ -140,7 +145,8 @@ void main() {
       ),
       throwsFormatException,
     );
-  });
+  },
+  );
 
   test('aktionsunfähiger und kampfunfähiger Held erhält keine Reaktion', () {
     final initial = _campaign();
@@ -168,14 +174,27 @@ void main() {
       _hero().copyWith(equippedWeaponId: ''),
       _hero().copyWith(inventory: const []),
       _hero().copyWith(inventory: const [
-        InventoryItem(id: 'dagger', name: 'Dolch 1', catalogId: 'weapon-dagger'),
-        InventoryItem(id: 'dagger', name: 'Dolch 2', catalogId: 'weapon-dagger'),
+        InventoryItem(
+          id: 'dagger',
+          name: 'Dolch 1',
+          catalogId: 'weapon-dagger',
+        ),
+        InventoryItem(
+          id: 'dagger',
+          name: 'Dolch 2',
+          catalogId: 'weapon-dagger',
+        ),
       ]),
       _hero().copyWith(inventory: const [
         InventoryItem(id: 'dagger', name: 'Unbekanntes Erbstück'),
       ]),
       _hero().copyWith(inventory: const [
-        InventoryItem(id: 'dagger', name: 'Dolch', catalogId: 'weapon-dagger', quantity: 0),
+        InventoryItem(
+          id: 'dagger',
+          name: 'Dolch',
+          catalogId: 'weapon-dagger',
+          quantity: 0,
+        ),
       ]),
     ];
     for (final hero in badHeroes) {
