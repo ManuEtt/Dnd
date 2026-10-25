@@ -1,0 +1,20 @@
+name: Chat A Attack Roll Formatting Diagnosis
+on:
+  push:
+    branches:
+      - feat/chat-a/spell-attack-roll-resolution-20261025
+  workflow_dispatch:
+jobs:
+  formatter-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Show exact Dart formatter diff
+        run: |
+          dart format app/lib/domain/srd_spell_attack_roll_rules.dart app/test/srd_spell_attack_roll_rules_test.dart
+          git --no-pager diff -- app/lib/domain/srd_spell_attack_roll_rules.dart app/test/srd_spell_attack_roll_rules_test.dart
