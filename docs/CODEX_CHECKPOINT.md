@@ -1,3 +1,15 @@
+# Chat D – APK-Archivvalidierung (25.10.2026)
+
+- **BASIS:** `main` 97a06118f17d71cc77be2cb15a2fc9a53db20ee0; **Branch:** `fix/chat-d/apk-zip-validation-20261025`; **technischer Commit:** `91c1911efcf39cc4a7708603e89a47c56c16cf32`.
+- **IMPLEMENTIERT:** `prepare_alpha_release.py` lehnt doppelte ZIP-Member, unsichere/Traversal-Pfade und symbolische Links bei ARM64-APK-Prüfung ab; vier zusätzliche Tests, erlaubte Verzeichnis-Einträge beibehalten.
+- **GETESTET:** Änderungen nach Push über GitHub erneut gelesen. Kein kompletter erfolgreich ausgeführter CI-Lauf auf diesem Stand belegt.
+- **NICHT GETESTET:** vollständige Python-, Flutter-, Backend- und Android-CI inklusive Alpha-Release-Paketierung auf endgültigem Commit; echter Android-Gerätetest.
+- **BLOCKIERT:** finale CI-Abnahme steht aus. Kein SQLite-/JSON- oder APK-Versionseingriff, keine Migration. Andere Entwicklungs-PRs bleiben unabhängig.
+- **NÄCHSTER SCHRITT:** finale CI auf aktuellem PR-HEAD abnehmen, geänderte Main-/PR-Dateien erneut prüfen und konfliktfrei integrieren.
+- [Persönlicher Chat-D-Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
+
+---
+
 # Chat D – Qualität und Integration, 25.10.2026 (PR #177)
 
 - **Main-Abgleich:** neuer Main-HEAD `fb788a980b8ee9eb60439c249f3e1f5092a9f188` nach Merge von PR #176; ursprüngliche PR-D-Basis `5c1499a9342449050bb946542659b221ac2653da`.
