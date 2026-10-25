@@ -1,3 +1,18 @@
+# Chat D – Gradle-Wrapper-ZIP-Sicherheit D-004 (25.10.2026)
+
+- **Basis:** `main` `45bea9c2a897275583bdbe32ed50afde5d0a76b0`, **Branch:** `fix/chat-d/gradle-wrapper-jar-safety-20261025`, technischer Commit `944762a8412ddd4eb5801d7832e424b238197deb`.
+- **Implementiert:** Frühe Gradle-Wrapper-JAR-Validierung gegen doppelte, unsichere und symbolische ZIP-Mitglieder; vier positive/negative Python-Regressionsmethoden.
+- **GETESTET:** Dateien im GitHub-Branch nach Commit abgerufen.
+- **NICHT GETESTET:** finale vollständige Python-/Flutter-/Backend-/Android-CI und APK auf diesem Code-Commit. Auch keine echte Geräteinstallation.
+- **BLOCKIERT:** CI ausstehend; D-003-PR #183 wird separat abgenommen.
+- **Migration:** unveränderte SQLite-/JSON-Spielstände, App-Version, Regel- und Storymodule.
+- **NÄCHSTER SCHRITT:** vollständige finale CI und Main-/PR-Konfliktprüfung abnehmen, additive Dokumentationsintegration koordinieren. [Persönlicher Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
+
+---
+
+
+---
+
 # Chat D – rekursive Modulgrenzen (25.10.2026, D-002)
 
 - **Integrationsbasis:** `main` = `97a06118f17d71cc77be2cb15a2fc9a53db20ee0` mit bereits integriertem und geprüftem [PR #177](https://github.com/ManuEtt/Dnd/pull/177). D-002-Branch: `fix/chat-d/nested-boundary-scan-20261025`.
