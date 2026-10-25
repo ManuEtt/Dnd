@@ -332,53 +332,56 @@ void main() {
     expect(changed.campaign.toJson(), before);
   });
 
-  test('duplicate confirmed NPC IDs cannot fan out one AI relationship update', () {
-    final engine = GameEngine();
-    final created = engine.createAiCampaign(
-      hero,
-      AiStoryPlan.fromJson(samplePlan()),
-      provider: 'mock',
-    );
-    final turn = engine.act(created, 'Ich spreche mit Tela.');
-    final response = {
-      'narration': 'Tela berichtet vom Hafen.',
-      'threadUpdates': [],
-      'newThreads': [],
-      'npcUpdates': [
-        {
-          'id': 'tela',
-          'relationship': 'freundlich',
-          'note': 'Ein bestätigtes Gespräch.',
-        },
-      ],
-    };
-    final valid = AiStoryStep.fromJson(response, turn.campaign);
-    expect(valid.npcUpdates.single.id, 'tela');
-
-    final ambiguous = turn.campaign.copyWith(
-      npcs: [
-        ...turn.campaign.npcs,
-        turn.campaign.npcs.first.copyWith(relationship: 'misstrauisch'),
-      ],
-    );
-    final before = ambiguous.toJson();
-    expect(
-      () => AiStoryStep.fromJson(response, ambiguous),
-      throwsFormatException,
-    );
-    // Even a formerly valid response is rechecked before story commit.
-    expect(
-      () => engine.applyAiStoryStep(
-        GameUpdate(campaign: ambiguous, events: turn.events),
-        valid,
+  test(
+    'duplicate confirmed NPC IDs cannot fan out one AI relationship update',
+    () {
+      final engine = GameEngine();
+      final created = engine.createAiCampaign(
+        hero,
+        AiStoryPlan.fromJson(samplePlan()),
         provider: 'mock',
-        decision: 'Ich spreche mit Tela.',
-      ),
-      throwsFormatException,
-    );
-    expect(ambiguous.toJson(), before);
-    expect(ambiguous.hero.toJson(), turn.campaign.hero.toJson());
-  });
+      );
+      final turn = engine.act(created, 'Ich spreche mit Tela.');
+      final response = {
+        'narration': 'Tela berichtet vom Hafen.',
+        'threadUpdates': [],
+        'newThreads': [],
+        'npcUpdates': [
+          {
+            'id': 'tela',
+            'relationship': 'freundlich',
+            'note': 'Ein bestätigtes Gespräch.',
+          },
+        ],
+      };
+      final valid = AiStoryStep.fromJson(response, turn.campaign);
+      expect(valid.npcUpdates.single.id, 'tela');
+
+      final ambiguous = turn.campaign.copyWith(
+        npcs: [
+          ...turn.campaign.npcs,
+          turn.campaign.npcs.first.copyWith(relationship: 'misstrauisch'),
+        ],
+      );
+      final before = ambiguous.toJson();
+      expect(
+        () => AiStoryStep.fromJson(response, ambiguous),
+        throwsFormatException,
+      );
+      // Even a formerly valid response is rechecked before story commit.
+      expect(
+        () => engine.applyAiStoryStep(
+          GameUpdate(campaign: ambiguous, events: turn.events),
+          valid,
+          provider: 'mock',
+          decision: 'Ich spreche mit Tela.',
+        ),
+        throwsFormatException,
+      );
+      expect(ambiguous.toJson(), before);
+      expect(ambiguous.hero.toJson(), turn.campaign.hero.toJson());
+    },
+  );
 
   test('conflicting saved thread IDs cannot be silently collapsed', () {
     final engine = GameEngine();
@@ -434,11 +437,7 @@ void main() {
     final step = AiStoryStep.fromJson({
       'narration': 'Die Kapitänin weist auf die Hafenspur.',
       'threadUpdates': [
-        {
-          'id': 'hafen',
-          'status': 'open',
-          'description': 'Noch ungelöst.',
-        },
+        {'id': 'hafen', 'status': 'open', 'description': 'Noch ungelöst.'},
       ],
       'newThreads': [],
       'npcUpdates': [
