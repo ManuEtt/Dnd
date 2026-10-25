@@ -1,10 +1,6 @@
-## 25.10.2026 – Angebots-Revalidierung vor späterem Gelegenheitsangriff
+## 25.10.2026 – 0.8.40+90: persistierte Bewegungsunterbrechung
 
-- **IMPLEMENTIERT:** `SrdOpportunityAttackRules.revalidate` bindet ein bereits ausgegebenes Angebot an Encounter/Revision, Angriffstyp, Waffen-ID und ursprüngliche Bewegungsgeometrie; wiederholt aktuelle Reaktions-/Held-/Waffenprüfung, ohne Kampagne zu verändern.
-- **TESTS ERGÄNZT, NICHT GETESTET:** Drei neue Dart-Regressionen für unveränderte erfolgreiche Wiederprüfung, Stale-/Substitutionsfälle, Waffenwechsel und verbrauchte Reaktion. Erste CI #40215191126 meldete Dart-Formatproblem; Korrektur-Commit b14c3de gepusht, neue PR-CI #40215558767 ist offen. Lokales Flutter/Dart fehlt. PR #175 offen.
-- **BLOCKIERT:** Realgerät/Signierung und lokaler SDK-Test; keine neue APK oder Backup-Migration behauptet.
-- **NOCH NICHT IMPLEMENTIERT:** dauerhafte Bewegungsunterbrechung, Spielerentscheidung, atomarer Reaktionsverbrauch, Schaden und UI. Version 0.8.39+89, SQLite 2, JSON 1 unverändert; `RULE-COMBAT-OPPORTUNITY-ATTACKS` bleibt partial.
-- **Nächster Schritt:** bestätigten Gegnerbewegungs-Unterbrechungspunkt transaktional und wiederaufnehmbar speichern, inklusive Double-submit-/Alt-JSON-/Schild-Konflikt-Tests.
+Bestätigter Auslöser einer Gelegenheitsreaktion wird im Abenteuer als revisionsgebundene Entscheidung gespeichert. Neustart, expliziter Verzicht, Gegnerzug-Sperre und Schutz vor alten UI-/Controller-Antworten. Keine Würfel/Schäden/Reaktionskosten, daher weiter `partial`. SQLite2/JSON1 bleiben kompatibel. Gezielte Domain-/SQLite-/Widgettests erfolgreich; vollständige neue Abnahme separat ausstehend. [Fachlicher Umfang](docs/SRD_OPPORTUNITY_MOVEMENT_20261025.md), [operativer Checkpoint](docs/CODEX_CHECKPOINT.md). Ältere Einträge unten sind Historie.
 
 ---
 

@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import '../domain/models.dart';
 import '../domain/sneak_attack_ally_rules.dart';
 import '../domain/two_weapon_fighting_rules.dart';
+import '../domain/condition_rules.dart';
+import '../domain/srd_opportunity_attack_rules.dart';
 import '../data/srd_spell_catalog_loader.dart';
 import '../domain/campaign_experience.dart';
 import '../domain/rabenwacht_campaign.dart';
@@ -30,6 +32,7 @@ import 'character_effect_dialog.dart';
 import 'condition_effect_dialog.dart';
 import 'sneak_attack_ally_dialog.dart';
 import 'offhand_attack_dialog.dart';
+import 'opportunity_movement_dialog.dart';
 import 'confirmed_spell_effect_dialog.dart';
 import 'sending_attempt_dialog.dart';
 import 'experience_reward_dialog.dart';
@@ -1030,8 +1033,12 @@ class _AdventurePageState extends State<_AdventurePage> {
   bool _sendingInFlight = false;
   bool _combat = false;
 
+  bool get _ruleInteractionBlocked =>
+      widget.controller.busy ||
+      widget.controller.currentCampaign?.pendingOpportunityAttack != null;
+
   bool get _canInteract =>
-      _pendingAction == null && !_submittingAction && !widget.controller.busy;
+      _pendingAction == null && !_submittingAction && !_ruleInteractionBlocked;
 
   @override
   void initState() {
@@ -1149,7 +1156,7 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (action == null ||
         !_outboxReady ||
         _submittingAction ||
-        widget.controller.busy) {
+        _ruleInteractionBlocked) {
       return;
     }
     setState(() {
@@ -1173,7 +1180,7 @@ class _AdventurePageState extends State<_AdventurePage> {
 
   Future<void> _discardPending() async {
     final action = _pendingAction;
-    if (action == null || _submittingAction || widget.controller.busy) return;
+    if (action == null || _submittingAction || _ruleInteractionBlocked) return;
     final discard = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -1501,7 +1508,7 @@ class _AdventurePageState extends State<_AdventurePage> {
 
   Future<void> _confirmCharacterEffect() async {
     final campaign = widget.controller.currentCampaign;
-    if (campaign == null || widget.controller.busy) return;
+    if (campaign == null || _ruleInteractionBlocked) return;
     final choice = await showDialog<CharacterEffectChoice>(
       context: context,
       builder: (_) => CharacterEffectDialog(hero: campaign.hero),
@@ -1544,7 +1551,7 @@ class _AdventurePageState extends State<_AdventurePage> {
 
   Future<void> _standUp() async {
     final campaign = widget.controller.currentCampaign;
-    if (campaign == null || widget.controller.busy) return;
+    if (campaign == null || _ruleInteractionBlocked) return;
     final previous = _lastMessageId;
     await widget.voice.stopSpeaking();
     await widget.controller.standUp(
@@ -1556,7 +1563,7 @@ class _AdventurePageState extends State<_AdventurePage> {
 
   Future<void> _crawl(int distanceFeet, bool difficultTerrain) async {
     final campaign = widget.controller.currentCampaign;
-    if (campaign == null || widget.controller.busy) return;
+    if (campaign == null || _ruleInteractionBlocked) return;
     final previous = _lastMessageId;
     await widget.voice.stopSpeaking();
     await widget.controller.crawl(
@@ -1570,7 +1577,7 @@ class _AdventurePageState extends State<_AdventurePage> {
 
   Future<void> _manageConfirmedSpellEffects() async {
     final campaign = widget.controller.currentCampaign;
-    if (campaign == null || widget.controller.busy) return;
+    if (campaign == null || _ruleInteractionBlocked) return;
     final choice = await showDialog<ConfirmedSpellEffectChoice>(
       context: context,
       builder: (_) => ConfirmedSpellEffectDialog(
@@ -1602,7 +1609,7 @@ class _AdventurePageState extends State<_AdventurePage> {
 
   Future<void> _manageConditionEffects() async {
     final campaign = widget.controller.currentCampaign;
-    if (campaign == null || widget.controller.busy) return;
+    if (campaign == null || _ruleInteractionBlocked) return;
     final choice = await showDialog<ConditionEffectChoice>(
       context: context,
       builder: (_) => ConditionEffectDialog(
@@ -1649,7 +1656,7 @@ class _AdventurePageState extends State<_AdventurePage> {
     final current = widget.controller.currentCampaign;
     if (current == null ||
         current.encounter == null ||
-        widget.controller.busy ||
+        _ruleInteractionBlocked ||
         current.hero.isDead) {
       return;
     }
@@ -1668,11 +1675,61 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(prior);
   }
 
+  bool _canConfirmOpportunityMovement(Campaign campaign) {
+    final fight = campaign.encounter;
+    return !_ruleInteractionBlocked &&
+        _outboxReady &&
+        _pendingAction == null &&
+        !_submittingAction &&
+        fight != null &&
+        !fight.isFinished &&
+        fight.activeParticipant == 'enemy' &&
+        !fight.reactionUsed &&
+        campaign.pendingRoll == null &&
+        campaign.pendingDeathSave == null &&
+        campaign.pendingEnemyShieldHit == null &&
+        campaign.hero.isComplete &&
+        (campaign.hero.hitPoints ?? 0) > 0 &&
+        ConditionRules.canTakeActions(campaign.hero);
+  }
+
+  Future<void> _confirmOpportunityMovement() async {
+    final campaign = widget.controller.currentCampaign;
+    if (campaign == null || !_canConfirmOpportunityMovement(campaign)) return;
+    final trigger = await showDialog<ConfirmedOpportunityTrigger>(
+      context: context,
+      builder: (_) => OpportunityMovementDialog(campaign: campaign),
+    );
+    if (trigger == null || !mounted) return;
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    await widget.controller.confirmOpportunityMovement(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      trigger: trigger,
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
+  Future<void> _declineOpportunityAttack(Campaign campaign) async {
+    final offer = campaign.pendingOpportunityAttack;
+    if (offer == null || widget.controller.busy) return;
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    await widget.controller.declineOpportunityAttack(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      offerId: offer.id,
+      playerConfirmed: true,
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
   Future<void> _decideEnemyShieldHit({required bool castShield}) async {
     final current = widget.controller.currentCampaign;
     if (current == null ||
         current.pendingEnemyShieldHit == null ||
-        widget.controller.busy) {
+        _ruleInteractionBlocked) {
       return;
     }
     HeroShieldReactionPlan? plan;
@@ -1697,7 +1754,7 @@ class _AdventurePageState extends State<_AdventurePage> {
     final campaign = widget.controller.currentCampaign;
     if (campaign == null ||
         campaign.encounter == null ||
-        widget.controller.busy) {
+        _ruleInteractionBlocked) {
       return;
     }
     final choice = await showDialog<ManualAttackChoice>(
@@ -1721,7 +1778,7 @@ class _AdventurePageState extends State<_AdventurePage> {
     final campaign = widget.controller.currentCampaign;
     if (campaign == null ||
         campaign.encounter == null ||
-        widget.controller.busy) {
+        _ruleInteractionBlocked) {
       return;
     }
     final choice = await showDialog<ManualTurnQueueChoice>(
@@ -1751,7 +1808,7 @@ class _AdventurePageState extends State<_AdventurePage> {
     final campaign = widget.controller.currentCampaign;
     if (campaign == null ||
         campaign.encounter == null ||
-        widget.controller.busy) {
+        _ruleInteractionBlocked) {
       return;
     }
     final choice = await showDialog<ConfirmedInitiativeChoice>(
@@ -1792,7 +1849,7 @@ class _AdventurePageState extends State<_AdventurePage> {
     final campaign = widget.controller.currentCampaign;
     if (campaign == null ||
         campaign.encounter == null ||
-        widget.controller.busy) {
+        _ruleInteractionBlocked) {
       return;
     }
     final creature = await showDialog<TrackedAreaCreature>(
@@ -1816,7 +1873,7 @@ class _AdventurePageState extends State<_AdventurePage> {
   Future<void> _castAcidSplash() async {
     final campaign = widget.controller.currentCampaign;
     final fight = campaign?.encounter;
-    if (campaign == null || fight == null || widget.controller.busy) return;
+    if (campaign == null || fight == null || _ruleInteractionBlocked) return;
     final choice = await showDialog<AcidSplashChoice>(
       context: context,
       builder: (_) => AcidSplashDialog(
@@ -1856,7 +1913,7 @@ class _AdventurePageState extends State<_AdventurePage> {
   Future<void> _castSacredFlame() async {
     final campaign = widget.controller.currentCampaign;
     final fight = campaign?.encounter;
-    if (campaign == null || fight == null || widget.controller.busy) return;
+    if (campaign == null || fight == null || _ruleInteractionBlocked) return;
     final choice = await showDialog<SacredFlameChoice>(
       context: context,
       builder: (_) => SacredFlameDialog(hero: campaign.hero, encounter: fight),
@@ -1886,7 +1943,7 @@ class _AdventurePageState extends State<_AdventurePage> {
   Future<void> _castFireBolt() async {
     final campaign = widget.controller.currentCampaign;
     final fight = campaign?.encounter;
-    if (campaign == null || fight == null || widget.controller.busy) return;
+    if (campaign == null || fight == null || _ruleInteractionBlocked) return;
     final choice = await showDialog<FireBoltChoice>(
       context: context,
       builder: (_) => FireBoltDialog(hero: campaign.hero, encounter: fight),
@@ -1919,7 +1976,7 @@ class _AdventurePageState extends State<_AdventurePage> {
   Future<void> _castMagicMissile() async {
     final campaign = widget.controller.currentCampaign;
     final fight = campaign?.encounter;
-    if (campaign == null || fight == null || widget.controller.busy) return;
+    if (campaign == null || fight == null || _ruleInteractionBlocked) return;
     final choice = await showDialog<MagicMissileChoice>(
       context: context,
       builder: (_) => MagicMissileDialog(hero: campaign.hero, encounter: fight),
@@ -1949,7 +2006,7 @@ class _AdventurePageState extends State<_AdventurePage> {
 
   Future<void> _castHealingSpell() async {
     final campaign = widget.controller.currentCampaign;
-    if (campaign == null || widget.controller.busy) return;
+    if (campaign == null || _ruleInteractionBlocked) return;
     final choice = await showDialog<HealingSpellChoice>(
       context: context,
       builder: (_) => HealingSpellDialog(hero: campaign.hero),
@@ -1971,6 +2028,7 @@ class _AdventurePageState extends State<_AdventurePage> {
   }
 
   Future<void> _editHero() async {
+    if (_ruleInteractionBlocked) return;
     final hero = widget.controller.currentCampaign?.hero;
     if (hero == null) return;
     final result = await Navigator.of(context).push<HeroCharacter>(
@@ -1993,7 +2051,7 @@ class _AdventurePageState extends State<_AdventurePage> {
             Navigator.of(sheetContext).pop();
             if (mounted) _roll();
           },
-          onEdit: widget.controller.busy
+          onEdit: _ruleInteractionBlocked
               ? null
               : () {
                   Navigator.of(sheetContext).pop();
@@ -2022,6 +2080,9 @@ class _AdventurePageState extends State<_AdventurePage> {
     final pending = _map(data['pendingRoll']);
     final messages = _list(data['messages']);
     final encounter = _map(data['encounter']);
+    final opportunityWeapons = campaign.hero.inventory
+        .where((item) => item.id == campaign.pendingOpportunityAttack?.weaponId)
+        .toList();
     // Scene details share the scroll area with the story so the composer remains
     // reachable on small screens while the software keyboard is open.
     final header = Padding(
@@ -2107,7 +2168,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                   label: const Text('Charakterbogen ansehen'),
                 ),
                 IconButton(
-                  onPressed: widget.controller.busy ? null : _editHero,
+                  onPressed: _ruleInteractionBlocked ? null : _editHero,
                   tooltip: 'Charakterbogen bearbeiten',
                   icon: const Icon(Icons.person_outline),
                 ),
@@ -2119,7 +2180,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                 FantasyTextButton(
                   key: const ValueKey('adventure-confirm-character-effect'),
                   onPressed:
-                      widget.controller.busy ||
+                      _ruleInteractionBlocked ||
                           campaign.pendingRoll != null ||
                           campaign.pendingDeathSave != null ||
                           campaign.hero.hitPoints == null ||
@@ -2134,7 +2195,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                   FantasyTextButton(
                     key: const ValueKey('adventure-stand-up'),
                     onPressed:
-                        widget.controller.busy ||
+                        _ruleInteractionBlocked ||
                             campaign.pendingRoll != null ||
                             campaign.pendingDeathSave != null ||
                             campaign.hero.isDead ||
@@ -2154,7 +2215,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                     key: const ValueKey('adventure-crawl'),
                     tooltip: 'Kriechstrecke und Gelände bestätigen',
                     enabled:
-                        !widget.controller.busy &&
+                        !_ruleInteractionBlocked &&
                         campaign.pendingRoll == null &&
                         campaign.pendingDeathSave == null &&
                         !campaign.hero.isDead &&
@@ -2199,7 +2260,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                 FantasyTextButton(
                   key: const ValueKey('adventure-manage-spell-effects'),
                   onPressed:
-                      widget.controller.busy ||
+                      _ruleInteractionBlocked ||
                           campaign.pendingRoll != null ||
                           campaign.pendingDeathSave != null ||
                           campaign.pendingEnemyShieldHit != null ||
@@ -2231,7 +2292,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                 FantasyTextButton(
                   key: const ValueKey('adventure-manage-condition-effects'),
                   onPressed:
-                      widget.controller.busy ||
+                      _ruleInteractionBlocked ||
                           campaign.pendingRoll != null ||
                           campaign.pendingDeathSave != null ||
                           campaign.hero.hitPoints == null ||
@@ -2249,7 +2310,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                   FantasyTextButton(
                     key: const ValueKey('adventure-end-turn-with-shield'),
                     onPressed:
-                        widget.controller.busy ||
+                        _ruleInteractionBlocked ||
                             campaign.pendingRoll != null ||
                             campaign.pendingDeathSave != null ||
                             campaign.hero.isDead ||
@@ -2262,11 +2323,25 @@ class _AdventurePageState extends State<_AdventurePage> {
                     label: 'Zug beenden: Schild ggf. wirken',
                   ),
                 if (campaign.encounter != null &&
+                    !campaign.encounter!.isFinished &&
+                    campaign.encounter!.activeParticipant == 'enemy')
+                  FantasyTextButton(
+                    key: const ValueKey(
+                      'adventure-confirm-opportunity-movement',
+                    ),
+                    onPressed: _canConfirmOpportunityMovement(campaign)
+                        ? _confirmOpportunityMovement
+                        : null,
+                    icon: Icons.pause_circle_outline,
+                    style: FantasyButtonStyle.iron,
+                    label: 'Gegnerbewegung bestätigen',
+                  ),
+                if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished)
                   FantasyTextButton(
                     key: const ValueKey('adventure-register-area-creature'),
                     onPressed:
-                        widget.controller.busy ||
+                        _ruleInteractionBlocked ||
                             campaign.trackedAreaCreatures.length >= 19
                         ? null
                         : _trackAreaCreature,
@@ -2280,7 +2355,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                   FantasyTextButton(
                     key: const ValueKey('adventure-initiative-roster'),
                     onPressed:
-                        widget.controller.busy ||
+                        _ruleInteractionBlocked ||
                             campaign.pendingRoll != null ||
                             campaign.pendingDeathSave != null ||
                             campaign.pendingEnemyShieldHit != null
@@ -2296,7 +2371,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                   FantasyTextButton(
                     key: const ValueKey('adventure-manual-turn-queue'),
                     onPressed:
-                        widget.controller.busy ||
+                        _ruleInteractionBlocked ||
                             campaign.pendingRoll != null ||
                             campaign.pendingDeathSave != null ||
                             campaign.pendingEnemyShieldHit != null
@@ -2326,7 +2401,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                   FantasyTextButton(
                     key: const ValueKey('adventure-manual-extra-attack'),
                     onPressed:
-                        widget.controller.busy ||
+                        _ruleInteractionBlocked ||
                             campaign.pendingRoll != null ||
                             campaign.pendingDeathSave != null ||
                             campaign.pendingEnemyShieldHit != null
@@ -2356,7 +2431,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                   FantasyTextButton(
                     key: const ValueKey('adventure-cast-acid-splash'),
                     onPressed:
-                        widget.controller.busy ||
+                        _ruleInteractionBlocked ||
                             campaign.pendingRoll != null ||
                             campaign.pendingDeathSave != null ||
                             campaign.pendingEnemyShieldHit != null ||
@@ -2377,7 +2452,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                   FantasyTextButton(
                     key: const ValueKey('adventure-cast-sacred-flame'),
                     onPressed:
-                        widget.controller.busy ||
+                        _ruleInteractionBlocked ||
                             campaign.pendingRoll != null ||
                             campaign.pendingDeathSave != null ||
                             campaign.pendingEnemyShieldHit != null ||
@@ -2397,7 +2472,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                   FantasyTextButton(
                     key: const ValueKey('adventure-cast-fire-bolt'),
                     onPressed:
-                        widget.controller.busy ||
+                        _ruleInteractionBlocked ||
                             campaign.pendingRoll != null ||
                             campaign.pendingDeathSave != null ||
                             campaign.hero.isDead ||
@@ -2416,7 +2491,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                   FantasyTextButton(
                     key: const ValueKey('adventure-cast-magic-missile'),
                     onPressed:
-                        widget.controller.busy ||
+                        _ruleInteractionBlocked ||
                             campaign.pendingRoll != null ||
                             campaign.pendingDeathSave != null ||
                             campaign.hero.isDead ||
@@ -2432,7 +2507,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                   ),
                 FantasyTextButton(
                   key: const ValueKey('adventure-fireball-area-preview'),
-                  onPressed: widget.controller.busy
+                  onPressed: _ruleInteractionBlocked
                       ? null
                       : _showFireballGridPreview,
                   icon: Icons.grid_on_outlined,
@@ -2445,7 +2520,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                   FantasyTextButton(
                     key: const ValueKey('adventure-cast-healing-spell'),
                     onPressed:
-                        widget.controller.busy ||
+                        _ruleInteractionBlocked ||
                             campaign.pendingRoll != null ||
                             campaign.pendingDeathSave != null ||
                             campaign.hero.isDead ||
@@ -2458,6 +2533,55 @@ class _AdventurePageState extends State<_AdventurePage> {
                   ),
               ],
             ),
+            if (campaign.pendingOpportunityAttack != null)
+              FantasyPanel(
+                key: const ValueKey('pending-opportunity-attack'),
+                title: 'Offene Reaktionsentscheidung',
+                icon: Icons.pause_circle_outline,
+                accent: FantasyPalette.gold,
+                material: FantasyPanelMaterial.iron,
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Gelegenheitsangriffs-Angebot gegen '
+                        '${campaign.encounter?.enemyName ?? "den bestätigten Gegner"} '
+                        'in Runde ${campaign.pendingOpportunityAttack!.round}.',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Bestätigter Abstand: '
+                        '${campaign.pendingOpportunityAttack!.beforeDistanceFeet} '
+                        '→ ${campaign.pendingOpportunityAttack!.afterDistanceFeet} Fuß. '
+                        'Reichweite: '
+                        '${campaign.pendingOpportunityAttack!.reachFeet} Fuß. '
+                        '${campaign.pendingOpportunityAttack!.unarmedStrike ? "Waffenloser Schlag." : "Waffe: ${opportunityWeapons.length == 1 ? opportunityWeapons.single.name : "bestätigte Nahkampfwaffe"}."}',
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Ein Angriff wird hier noch nicht gewürfelt. '
+                        'Trefferpunkte und Reaktion bleiben unverändert. '
+                        'Du kannst die Entscheidung gespeichert offen lassen '
+                        'oder ausdrücklich auf den Gelegenheitsangriff '
+                        'verzichten. Bis dahin bleibt der Gegnerzug unterbrochen.',
+                      ),
+                      const SizedBox(height: 8),
+                      FantasyTextButton(
+                        key: const ValueKey('opportunity-attack-decline'),
+                        label: 'Auf Gelegenheitsangriff verzichten',
+                        icon: Icons.close,
+                        style: FantasyButtonStyle.iron,
+                        onPressed: widget.controller.busy
+                            ? null
+                            : () => _declineOpportunityAttack(campaign),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             if (campaign.pendingEnemyShieldHit != null)
               FantasyPanel(
                 key: const ValueKey('pending-enemy-shield-hit'),
@@ -2489,7 +2613,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                             label: 'Jetzt Schild wirken',
                             icon: Icons.shield_outlined,
                             style: FantasyButtonStyle.arcane,
-                            onPressed: widget.controller.busy
+                            onPressed: _ruleInteractionBlocked
                                 ? null
                                 : () => _decideEnemyShieldHit(castShield: true),
                           ),
@@ -2498,7 +2622,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                             label: 'Treffer hinnehmen',
                             icon: Icons.shield_moon_outlined,
                             style: FantasyButtonStyle.iron,
-                            onPressed: widget.controller.busy
+                            onPressed: _ruleInteractionBlocked
                                 ? null
                                 : () =>
                                       _decideEnemyShieldHit(castShield: false),
@@ -2513,7 +2637,7 @@ class _AdventurePageState extends State<_AdventurePage> {
               DeathSaveDecisionPanel(
                 hero: campaign.hero,
                 pending: campaign.pendingDeathSave!,
-                busy: widget.controller.busy,
+                busy: _ruleInteractionBlocked,
                 onAccept: () => _decideDeathSave(campaign),
                 onReroll: (feature) =>
                     _decideDeathSave(campaign, feature: feature),
@@ -2565,7 +2689,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                       onAction: (text) {
                         _send(quickAction: text);
                       },
-                      busy: widget.controller.busy,
+                      busy: _ruleInteractionBlocked,
                       onPrepareOffhandAttack:
                           _canInteract &&
                               _outboxReady &&
@@ -2573,7 +2697,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                           ? _prepareOffhandAttack
                           : null,
                       onManageSpells:
-                          widget.controller.busy ||
+                          _ruleInteractionBlocked ||
                               campaign.pendingRoll != null ||
                               campaign.pendingDeathSave != null ||
                               campaign.pendingEnemyShieldHit != null ||
@@ -2581,7 +2705,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                           ? null
                           : _manageConfirmedSpellEffects,
                       onManageEffects:
-                          widget.controller.busy ||
+                          _ruleInteractionBlocked ||
                               campaign.pendingRoll != null ||
                               campaign.pendingDeathSave != null ||
                               campaign.hero.hitPoints == null ||
@@ -2677,7 +2801,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                                 icon: Icons.trending_up_outlined,
                                 style: FantasyButtonStyle.woodGold,
                                 onPressed:
-                                    widget.controller.busy ||
+                                    _ruleInteractionBlocked ||
                                         campaign.pendingRoll != null ||
                                         campaign.encounter != null ||
                                         campaign.pendingDeathSave != null
@@ -2730,7 +2854,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                                       label: 'Begegnung annehmen',
                                       icon: Icons.check_circle_outline,
                                       style: FantasyButtonStyle.woodGold,
-                                      onPressed: widget.controller.busy
+                                      onPressed: _ruleInteractionBlocked
                                           ? null
                                           : () async {
                                               final prior = _lastMessageId;
@@ -2746,7 +2870,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                                       label: 'Anderen Weg wählen',
                                       icon: Icons.alt_route_outlined,
                                       style: FantasyButtonStyle.iron,
-                                      onPressed: widget.controller.busy
+                                      onPressed: _ruleInteractionBlocked
                                           ? null
                                           : () async {
                                               final prior = _lastMessageId;
@@ -2835,7 +2959,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                                   label: 'Wurf durchführen',
                                   icon: Icons.casino_outlined,
                                   style: FantasyButtonStyle.dice,
-                                  onPressed: widget.controller.busy
+                                  onPressed: _ruleInteractionBlocked
                                       ? null
                                       : _roll,
                                 ),
@@ -2894,7 +3018,8 @@ class _AdventurePageState extends State<_AdventurePage> {
                           label: 'Erneut bestätigen',
                           icon: Icons.refresh,
                           style: FantasyButtonStyle.woodGold,
-                          onPressed: _submittingAction || widget.controller.busy
+                          onPressed:
+                              _submittingAction || _ruleInteractionBlocked
                               ? null
                               : _retryPending,
                         ),
@@ -2903,7 +3028,8 @@ class _AdventurePageState extends State<_AdventurePage> {
                           label: 'Verwerfen',
                           icon: Icons.close,
                           style: FantasyButtonStyle.iron,
-                          onPressed: _submittingAction || widget.controller.busy
+                          onPressed:
+                              _submittingAction || _ruleInteractionBlocked
                               ? null
                               : _discardPending,
                         ),
@@ -2979,7 +3105,8 @@ class _AdventurePageState extends State<_AdventurePage> {
             campaign.encounter!.activeParticipant == 'hero' &&
             campaign.pendingRoll == null &&
             campaign.pendingDeathSave == null &&
-            campaign.pendingEnemyShieldHit == null,
+            campaign.pendingEnemyShieldHit == null &&
+            campaign.pendingOpportunityAttack == null,
         attackUnavailableReason:
             campaign.encounter == null || campaign.encounter!.isFinished
             ? 'Angriff erst mit einem bestätigten aktiven Kampf möglich.'
