@@ -109,10 +109,8 @@ def create_archive(root: Path, output: Path, *, layout: str = 'folder') -> tuple
         # Preserve both previous files until the staged pair is ready. If the
         # second replacement fails, restore the previous ZIP as well.
         previous_zip = temporary / 'previous.zip'
-        previous_sha = temporary / 'previous.sha256'
-        for current, backup in ((output, previous_zip), (checksum, previous_sha)):
-            if current.is_file():
-                shutil.copy2(current, backup)
+        if output.is_file():
+            shutil.copy2(output, previous_zip)
         published_zip = False
         try:
             os.replace(staged_zip, output)
