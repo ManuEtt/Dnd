@@ -144,8 +144,9 @@ class SrdRitualCastingRules {
       spellLevel: spell.level,
       normalCastingTime: spell.castingTime,
       additionalMinutes: 10,
-      totalCastingMinutes:
-          ordinaryMinutes == null ? null : ordinaryMinutes + 10,
+      totalCastingMinutes: ordinaryMinutes == null
+          ? null
+          : ordinaryMinutes + 10,
       hasConsumedMaterial: materials.isConsumed,
     );
   }
