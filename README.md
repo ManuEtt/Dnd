@@ -2,6 +2,14 @@
 
 Deutschsprachige Android-Alpha für Soloabenteuer, SRD-geprüfte Teilsysteme, regelgeprüfte Kämpfe und lokale Kampagnen mit SQLite. Flutter-/Dart-App in `app/`, optionaler Fastify-/TypeScript-Erzähler in `backend/`. **Das vollständige D&D-SRD-5.2.1-Regelwerk ist weiterhin nicht implementiert.**
 
+## 25.10.2026 – KI-Story schützt lokale NPC- und Thread-IDs (PR #168)
+
+In [PR #168](https://github.com/ManuEtt/Dnd/pull/168) wird ein weiterer lokaler Datenkonsistenzfehler behoben: Der Android-Validator lehnt doppelte gespeicherte NPC- oder Handlungsstrang-IDs **vor** der Anwendung einer erzählerischen KI-Antwort ab. Drei neue Tests schützen davor, dass identische Referenzen mehrere NPC-Beziehungen oder widersprüchliche Threadstatus ändern; unterschiedliche Referenztypen bleiben unabhängig. Der bestehende zweite Check bei der Spielzugübernahme deckt veraltete Antworten ab. Kein Spielstandsformatwechsel.
+
+Dieser PR ist auf [#165](https://github.com/ManuEtt/Dnd/pull/165) gestapelt (dessen [CI #40170005782](https://github.com/ManuEtt/Dnd/actions/runs/40170005782) vollständig grün), und damit mittelbar auf [#164](https://github.com/ManuEtt/Dnd/pull/164). Die eigene finale CI für PR #168 steht noch aus und darf nicht durch die vorherige ersetzt werden. Der unabhängige Backend-PR [#167](https://github.com/ManuEtt/Dnd/pull/167) ist ebenfalls grün. [Technischer Beleg](docs/STORY_LOCAL_DUPLICATE_IDS_20261025.md) · [Checkpoint](docs/CODEX_CHECKPOINT.md).
+
+---
+
 ## Weiterentwicklung 25.10.2026: lokal gesicherte Story-Endzustände
 
 **Neu in [PR #165](https://github.com/ManuEtt/Dnd/pull/165):** Der Android-Story-Validator verbietet nun ebenfalls, dass ein generativer Erzähler einen bereits abgeschlossenen (`resolved`) oder aufgegebenen (`abandoned`) Handlungsstrang unbemerkt wieder öffnet oder anders abschließt. Positive manuelle Wiederöffnung im vorhandenen Editor bleibt zulässig; vor dem Anwenden werden sogar früher vorbereitete KI-Antworten erneut geprüft. Neue Domain-/JSON-/Eventregressionen in `app/test/ai_story_test.dart`. Kein Schema- oder Versionswechsel.

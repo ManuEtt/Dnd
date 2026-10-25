@@ -1,3 +1,9 @@
+## 25.10.2026 – Lokale Story-Identitäten vor KI-Updates eindeutig machen (PR #168)
+
+Neue lokale Prüfung verhindert doppelte NPC-/Thread-ID in generativen Story-Updates. Drei neue Tests einschließlich Idempotenz/Stale-Replay; keine Model- oder SQLite-Migration. [PR #168](https://github.com/ManuEtt/Dnd/pull/168) ist auf #165, mittelbar #164, gestapelt. Erst neue vollständige CI prüfen, dann Review; der separate Backend-PR #167 bleibt erhalten.
+
+---
+
 ## 25.10.2026 – Lokalen Endzustand nach KI-Antwort bewahren (PR #165)
 
 Die lokale Flutter-Validierungsgrenze für KI-Storyupdates blockiert nun unautorisierte Änderungen bereits abgeschlossener/aufgegebener Handlungsfäden. Drei Regressionen zu bestätigtem Status, manueller Wiederöffnung und zwischenzeitlich veralteter KI-Antwort. Gestapelter [PR #165](https://github.com/ManuEtt/Dnd/pull/165) baut auf [PR #164](https://github.com/ManuEtt/Dnd/pull/164) auf. **Nächster konkreter Schritt:** neue komplette #165-CI auswerten, nach Grün Review; erst #164 reviewen/integrieren, dann #165 gegen `main` rebasen/erneut prüfen. Alle historischen Commit-/Statusmeldungen darunter sind Momentaufnahmen.

@@ -1,5 +1,32 @@
 # CODEX-CHECKPOINT – Würfelraunen
 
+## Aktueller Zyklus 25.10.2026 – lokale Story-Identitäten validieren (PR #168)
+
+**Live geprüft:** `main=b60ffe7ff1aae502ea927cb77153b988be33e397`, offene PRs #159–#167; die Integrationsbasis [#164](https://github.com/ManuEtt/Dnd/pull/164) war grün auf `6776bd1` ([Actions #40123094457](https://github.com/ManuEtt/Dnd/actions/runs/40123094457)). Das darauf gestapelte [#165](https://github.com/ManuEtt/Dnd/pull/165) war grün auf `9324af0` ([Actions #40170005782](https://github.com/ManuEtt/Dnd/actions/runs/40170005782)). [#167](https://github.com/ManuEtt/Dnd/pull/167) hat eine unabhängige grüne Backend-ID-Validierung ([Actions #40180964702](https://github.com/ManuEtt/Dnd/actions/runs/40180964702)). PR #166 betrifft separate Kampfregeln. Kein PR wurde in dieser Sitzung gemergt.
+
+### IMPLEMENTIERT
+Neuer gestapelter Branch `fix/local-ai-duplicate-npc-ids-20261025` auf HEAD #165. `app/lib/story/ai_story.dart` validiert nun eindeutige gespeicherte `storyThreads[].id` und `npcs[].id` je Namespace, bevor Antwort-IDs durch Map/Set aufgelöst werden. Doppelte NPCs können nicht mehr durch einen Erzählerupdate kollektiv verändert werden; widersprüchliche Threadstatus nicht mehr zusammenfallen. Der bestehende zweite `AiStoryStep.fromJson`-Check in `applyAiStoryStep` verhindert veralteten Identitätskontext.
+
+Drei neue `app/test/ai_story_test.dart`-Regressionen für NPC-Duplikat mit Stale-Replay, Thread-Duplikat mit widersprüchlichem Status und gültige Überschneidung **zwischen** Namespaces. Dokumentation in `docs/STORY_LOCAL_DUPLICATE_IDS_20261025.md`; README/CHANGELOG/Status/Roadmap fortgeschrieben. Keine weiteren Änderungen an Android-Schema oder gemeinsamen Modell-/Controllerdateien.
+
+### GETESTET
+Alte Basis-CI #165 vollständig grün auf anderem SHA. **Neuer letzter #168-Code noch nicht durch die eigene abschließende CI abgenommen.** [CI-Checks](https://github.com/ManuEtt/Dnd/pull/168/checks) auswerten; Ergebnisse erst nach tatsächlichem Erfolg nachtragen.
+
+### NICHT GETESTET
+Finale GitHub-CI für das neue Paket, echter Android-Gerätetest, historisches Savegame-Upgrade, produktive Signierung. Keine globale Campaign.fromJson-Duplikatsanierung behaupten.
+
+### BLOCKIERT
+Kein physisches Gerät oder produktiver Signaturschlüssel; CI verfügbar.
+
+### NOCH NICHT IMPLEMENTIERT
+Vollständige SRD-5.2.1-Automatik, globale NPC-Eindeutigkeit in sämtlichen Importen und semantischer Spoilerschutz.
+
+### NÄCHSTER KONKRETER SCHRITT
+CI #168 mit Dart-Format/Flutter-Vollsuite, Python-/Backendtests und Android-Build/native/Alpha-Artefakten vollständig prüfen; bei Fehlern korrigieren. Nach Erfolg PR reviewbereit stellen. Anschließend Stack #164 → #165 → #168 reviewen/integrationsreif gegen aktuelles main prüfen. Parallel PR #167 und #166 unverändert erhalten, keine Double-Merges.
+
+---
+
+
 ## Aktueller Arbeitszyklus 25.10.2026 – lokaler Story-Endzustandschutz, PR #165
 
 **Live-Abgleich:** `main=b60ffe7ff1aae502ea927cb77153b988be33e397` und PRs #159–#164 offen. Der konsolidierte [PR #164](https://github.com/ManuEtt/Dnd/pull/164) steht auf Commit `6776bd1bdfef648431da8b20780053e0860d998d`, [GitHub-CI #40123094457](https://github.com/ManuEtt/Dnd/actions/runs/40123094457) vollständig erfolgreich: 100 Python-, 38 Backend- und 1516 Flutter-Tests, Android Debug und native Tests grün. **#164 ist reviewbereit, aber nicht gemergt.**

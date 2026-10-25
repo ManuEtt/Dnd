@@ -1,3 +1,9 @@
+## 25.10.2026 – Lokale doppelte KI-Referenzkennungen ablehnen (PR #168)
+
+`AiStoryStep.fromJson` verhindert, dass gespeicherte doppelte NPC-IDs / widersprüchliche Handlungsstrang-IDs in KI-Antworten aufgelöst und dadurch mehrere Entities verändert werden. Drei Flutter-Regressionsfälle einschließlich veralteter Antwort und getrennter Namespaces. Keine Migration, keine Änderung an 0.8.38+88 / SQLite2 / JSON1. CI dieses neuen PR bei initialer Dokumentation ausstehend. [PR #168](https://github.com/ManuEtt/Dnd/pull/168) · [Fachbeleg](docs/STORY_LOCAL_DUPLICATE_IDS_20261025.md).
+
+---
+
 ## 25.10.2026 – Lokaler Schutz geschlossener Story-Fäden (PR #165)
 
 - Ergänzt die bereits serverseitige Schutzprüfung aus PR #161 in `app/lib/story/ai_story.dart`: generative `threadUpdates` können einen vom Spieler zuvor `resolved`/`abandoned` markierten Strang nicht automatisch wieder öffnen oder umklassifizieren.
