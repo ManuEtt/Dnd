@@ -7626,10 +7626,15 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Playing the Game / Combat",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_opportunity_attack_rules_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/srd_opportunity_attack_rules.dart",
+        "app/lib/rules/rules_api.dart"
+      ],
+      "note": "Vorbereitende, rein lesende Fail-Closed-Prüfung für sichtbar die bestätigte Reichweite verlassende Gegner mit freier Reaktion und ausdrücklicher Zustimmung. Rückzug, Teleportation und erzwungene Bewegung ausgeschlossen; eindeutige angelegte SRD-Nahkampfwaffe oder waffenloser Schlag. Exakte Kampagnen-/Zielbindung und Revisionsmarke, keine Annahmen aus KI-Text. Noch keine Bewegungs-UI, atomare Reaktionsreservierung, Trefferauflösung, HP-/SQLite-Ereignis oder voller Opportunity-Attack-Flow. Quelle: SRD 5.2.1, Playing the Game, S. 15; CC BY 4.0. Teststatus bis finale CI abnehmen. Kein globaler Fertigstellungsgrad."
     },
     {
       "id": "RULE-COMBAT-TWO-WEAPON-FIGHTING",
