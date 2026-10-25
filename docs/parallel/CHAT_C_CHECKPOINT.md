@@ -4,7 +4,7 @@
 **Basis-Main-SHA:** `5c1499a9342449050bb946542659b221ac2653da`  
 **Branch:** `fix/chat-c/npc-chronicle-fallback-20261025`  
 **Letzter überprüfter Code-/Testcommit:** `65fbfc21ab347f4e4dd1d57bbd08a58304bd7c40`  
-**Pull Request:** noch nicht eröffnet (nach Veröffentlichung ergänzen)
+**Pull Request:** [#178 – NPC-Chronik absturzsicher anzeigen](https://github.com/ManuEtt/Dnd/pull/178) (offen, keine Main-Integration)
 
 ## Ausgangsproblem und Akzeptanzkriterien
 
@@ -30,7 +30,7 @@ Akzeptanz:
 
 - Flutter/Dart-Formatierung, `flutter analyze`, gezielter Widgettest und Gesamt-`flutter test`; Android-Debug-APK und echtes Android-Gerät.
 - Python-Projekttests und Backend-Checks in dieser Sitzung ebenfalls nicht ausgeführt.
-- CI zum konkreten Branch erst nach Eröffnung des PR überprüfbar.
+- Branch- und PR-CI müssen anhand des finalen Head-SHA ausgewertet werden; keine erfolgreiche Abnahme vorweggenommen.
 
 ## BLOCKIERT
 
