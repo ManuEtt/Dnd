@@ -193,7 +193,7 @@ void main() {
         _note(
           id: 'long',
           npcId: 'mira',
-          value: 'Langer Bericht:\n' + ('🐉' * 300),
+          value: 'Langer Bericht:\n${'🐉' * 300}',
           time: DateTime.utc(2026, 10, 25),
         ),
       ],
