@@ -44,6 +44,10 @@ jobs:
             echo "Projektdateien fehlen: ZIP entpacken und app/, backend/, scripts/ sowie .github/ direkt in die Repositorywurzel übertragen."
             exit 1
           fi
+      - name: Regel- und Story-Modulgrenzen prüfen
+        run: python3 scripts/check_domain_boundaries.py
+      - name: SRD-5.2.1-Anforderungsregister prüfen
+        run: python3 scripts/srd_coverage.py --json
       - name: Paket- und Strukturtests ausführen
         run: python3 -m unittest discover -s scripts/tests -v
       - name: Java 17 installieren

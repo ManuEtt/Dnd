@@ -1,5 +1,11 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Qualitätssicherung – Chat D (PR #177, 25.10.2026)
+
+[PR #177](https://github.com/ManuEtt/Dnd/pull/177) ergänzt zwei bislang nicht automatisch ausgeführte CI-Gates: `python3 scripts/check_domain_boundaries.py` und `python3 scripts/srd_coverage.py --json`. Beide laufen jetzt in der Android-CI und in `scripts/check.sh` vor den regulären Python-Tests. Der neue Konfigurationstest enthält positive und negative Fälle. Auf dem bisherigen PR-Commit `1fdd3c0` waren Architektur-/SRD-Prüfung, Python-Tests, Backend-Tests sowie Flutter-Analyse und Flutter-Tests erfolgreich; Android-Build und vollständige Release-Abnahme wurden noch nicht als erfolgreich bestätigt. Keine Änderung an SQLite, JSON, Spielregeln oder der App-Version. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
+Dieser PR wurde gegen den inzwischen gemergten Main-Stand von [PR #176](https://github.com/ManuEtt/Dnd/pull/176) erneut abgeglichen; die dort eingeführte gespeicherte Gelegenheitsreaktion bleibt erhalten. PRs #178–#180 anderer Chats bleiben getrennt zur Prüfung offen.
+
 Deutschsprachige Android-Alpha für Soloabenteuer und regelgeprüfte Kampagnen. Das vollständige SRD 5.2.1 bleibt in Arbeit.
 
 ## Aktueller Stand und autonome Fortsetzung (25.10.2026)

@@ -1,3 +1,16 @@
+# Chat D – Qualität und Integration, 25.10.2026 (PR #177)
+
+- **Main-Abgleich:** neuer Main-HEAD `fb788a980b8ee9eb60439c249f3e1f5092a9f188` nach Merge von PR #176; ursprüngliche PR-D-Basis `5c1499a9342449050bb946542659b221ac2653da`.
+- **IMPLEMENTIERT:** zwei verpflichtende Prüfungen im Android-Actions-Workflow und im lokalen `scripts/check.sh`: `scripts/check_domain_boundaries.py` sowie `scripts/srd_coverage.py --json`; dazu vier Konfigurations-Regressionstests einschließlich negativer Fälle.
+- **GEPRÜFT:** die zwei neuen Gates, reguläre Python-Tests, Backend-Tests, Flutter-Analyse und Flutter-Tests sind in [Actions #40217436454](https://github.com/ManuEtt/Dnd/actions/runs/40217436454) auf dem vorherigen Commit `1fdd3c0` erfolgreich durchgelaufen. Das ist noch kein CI-Nachweis des hier neu synchronisierten Commit-Stands.
+- **NICHT GETESTET:** abschließende CI/Android-Builds für den neuen kombinierten Stand, reale Geräteinstallation und Upgrade älterer Spielstände. Keine vollständige SRD-Abdeckung behauptet.
+- **BLOCKIERT:** endgültige GitHub-Actions-Abnahme; Flutter-/Android-SDK lokal hier nicht verfügbar. Nicht freigegebene PRs #178 (Chat C), #179 (Chat B), #180 (Chat A) dürfen nicht ungeprüft zusammengeführt werden.
+- **PERSISTENZ:** keine Änderungen an SQLite- oder JSON-Schema, keine Migration und keine Spielstandsänderung durch dieses CI-Arbeitspaket.
+- **PR:** [#177](https://github.com/ManuEtt/Dnd/pull/177) auf `fix/chat-d/ci-rule-quality-gates-20261025`. Persönliche Details: [CHAT_D_CHECKPOINT.md](parallel/CHAT_D_CHECKPOINT.md).
+- **NÄCHSTER SCHRITT:** CI des **finalen** PR-D-Commits vollständig abnehmen, danach Integration erst mit konfliktfreier Dokumentation und ohne stilles Zusammenführen der fremden PRs.
+
+---
+
 # CODEX-CHECKPOINT – gespeicherte Gelegenheitsreaktion
 
 Stand **2026-10-25T17:17:46+00:00**, aktives Paket auf `feature/opportunity-reaction-offer-20261025`, Arbeitskopie `/workspace/Dnd-opportunity-20261025`.
