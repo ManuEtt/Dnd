@@ -16,8 +16,7 @@ class NpcNarratorMemory {
     int limit = 12,
     int npcNoteLimit = 3,
   }) {
-    if (limit < 1 || limit > 20 ||
-        npcNoteLimit < 0 || npcNoteLimit > limit) {
+    if (limit < 1 || limit > 20 || npcNoteLimit < 0 || npcNoteLimit > limit) {
       throw const FormatException('Ungültige Erzähler-Erinnerungsgrenzen.');
     }
 
@@ -59,7 +58,9 @@ class NpcNarratorMemory {
     for (final raw in general) {
       final value = _oneLine(raw);
       if (value.isEmpty ||
-          selectedNotes.any((note) => note.isNotEmpty && value.contains(note))) {
+          selectedNotes.any(
+            (note) => note.isNotEmpty && value.contains(note),
+          )) {
         continue;
       }
       final text = _truncate(value, 400);
