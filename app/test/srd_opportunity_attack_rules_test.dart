@@ -12,8 +12,9 @@ HeroCharacter _hero() => GameEngine().createDemo().hero.copyWith(
   ],
 );
 
-Campaign _campaign({HeroCharacter? hero, Encounter? fight}) =>
-    GameEngine().createDemo(hero: hero ?? _hero()).copyWith(
+Campaign _campaign({HeroCharacter? hero, Encounter? fight}) => GameEngine()
+    .createDemo(hero: hero ?? _hero())
+    .copyWith(
       encounter:
           fight ??
           const Encounter(
@@ -173,29 +174,35 @@ void main() {
       _hero().copyWith(equippedWeaponId: 'bow'),
       _hero().copyWith(equippedWeaponId: ''),
       _hero().copyWith(inventory: const []),
-      _hero().copyWith(inventory: const [
-        InventoryItem(
-          id: 'dagger',
-          name: 'Dolch 1',
-          catalogId: 'weapon-dagger',
-        ),
-        InventoryItem(
-          id: 'dagger',
-          name: 'Dolch 2',
-          catalogId: 'weapon-dagger',
-        ),
-      ]),
-      _hero().copyWith(inventory: const [
-        InventoryItem(id: 'dagger', name: 'Unbekanntes Erbstück'),
-      ]),
-      _hero().copyWith(inventory: const [
-        InventoryItem(
-          id: 'dagger',
-          name: 'Dolch',
-          catalogId: 'weapon-dagger',
-          quantity: 0,
-        ),
-      ]),
+      _hero().copyWith(
+        inventory: const [
+          InventoryItem(
+            id: 'dagger',
+            name: 'Dolch 1',
+            catalogId: 'weapon-dagger',
+          ),
+          InventoryItem(
+            id: 'dagger',
+            name: 'Dolch 2',
+            catalogId: 'weapon-dagger',
+          ),
+        ],
+      ),
+      _hero().copyWith(
+        inventory: const [
+          InventoryItem(id: 'dagger', name: 'Unbekanntes Erbstück'),
+        ],
+      ),
+      _hero().copyWith(
+        inventory: const [
+          InventoryItem(
+            id: 'dagger',
+            name: 'Dolch',
+            catalogId: 'weapon-dagger',
+            quantity: 0,
+          ),
+        ],
+      ),
     ];
     for (final hero in badHeroes) {
       expect(
