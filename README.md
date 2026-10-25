@@ -6,6 +6,9 @@ Neuer unabhängiger Regelbaustein zur Auflösung **eines** vorher bestätigten Z
 
 **Prüfstatus:** Tests geschrieben, endgültige Dart-/Flutter-/Android-CI des neuen Branches noch offen; keine Fertigstellung oder Mergefreigabe vor deren Bestätigung.
 
+## Chat D – APK-ZIP-Härtung (25.10.2026, PR #183)
+
+Nach den erfolgreich geprüften Integrationen von [PR #177](https://github.com/ManuEtt/Dnd/pull/177) und [PR #182](https://github.com/ManuEtt/Dnd/pull/182) wird die Alpha-Release-Prüfung mit [PR #183](https://github.com/ManuEtt/Dnd/pull/183) gegen mehrdeutige doppelte ZIP-Member, unsichere Eintragspfade und symbolische Links abgesichert. Vier neue Regressionstests prüfen auch erlaubte ZIP-Verzeichnisse. **Finale CI auf dem neu mit Main synchronisierten Commit ausstehend**. Keine SQLite-/JSON-Migration, keine Änderung an App-Code, Regelmechanik oder Build-Version. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
 
 ## Qualitätssicherung – Chat D: rekursiver Story-/Regelimportprüfer (25.10.2026)
 
