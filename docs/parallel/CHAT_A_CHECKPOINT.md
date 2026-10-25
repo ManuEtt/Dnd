@@ -4,7 +4,7 @@
 - Ausgangs-`main`: `5c1499a9342449050bb946542659b221ac2653da`
 - Arbeitsbranch: `feat/chat-a/spell-duration-classification-20261025`
 - Letzter reiner Code-/Test-/API-Commit vor Dokumentation: `00bec4b970058bacc8837d9f3e7333ae8f36e605`
-- PR: bei Anlage des Checkpoints noch zu erstellen; verbindlicher PR-HEAD steht anschließend im Pull Request.
+- Pull Request: [#180](https://github.com/ManuEtt/Dnd/pull/180); geprüfter Code-/Teststand im CI-Workflow [#40218067128](https://github.com/ManuEtt/Dnd/actions/runs/40218067128) auf `1082061990fae7ec4e41e96d9c70bd908d867263`.
 - Überschneidungen: PR #176 berührt Kampf, Modelle, Controller und außerdem README/CODEX_CHECKPOINT. Keine Änderungen von Chat A an Kampf-/Speichermodellen; Chat D konsolidiert gemeinsame Dokumentation beim Merge.
 
 ## IMPLEMENTIERT
@@ -21,9 +21,13 @@ Reine SRD-5.2.1-Dauerklassifikation und fünf Dart-Testgruppen, exportiert über
 
 Vorprüfung des tatsächlichen JSON-Zauberkatalogs durch gesonderte Metadaten-Auswertung: 338 von 339 Dauerangaben klassifizierbar; `Creation: Special` bewusst nicht klassifiziert, 0 widersprüchliche Katalogangaben. Kein ausführbarer Dart-Test in dieser Umgebung.
 
+## GETESTET – CI-Nachtrag
+
+Auf dem Codecommit `1082061990fae7ec4e41e96d9c70bd908d867263` sind in GitHub Actions `40218067128` die Python-Strukturprüfungen, Backend-Typecheck/Build/Tests, Dart-Format, Flutter-Analyse, gezielte Dialogtests und der vollständige Flutter-Testlauf bereits erfolgreich abgeschlossen. Der Android-Build ist bei dieser Aktualisierung **noch in Arbeit**.
+
 ## NICHT GETESTET / BLOCKIERT
 
-Flutter/Dart-SDK und Android-SDK lokal nicht vorhanden. Dart-Formatierung, Flutter-Analyse, Flutter-Tests, APK, vollständige Python-/Backend-/CI-Kette und Geräteprüfung nur nach explizitem erfolgreichem Actions-Nachweis als bestanden bezeichnen. Keine persistenten Daten und keine Migration geändert.
+Flutter/Dart-SDK und Android-SDK lokal nicht vorhanden. Android-APK, native Android-Prüfung und Realgerät bis zum expliziten erfolgreichen Actions-Nachweis als nicht abgeschlossen bezeichnen. Keine persistenten Daten und keine Migration geändert.
 
 ## NOCH NICHT IMPLEMENTIERT
 
