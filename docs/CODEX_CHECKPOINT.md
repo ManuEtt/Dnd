@@ -1,3 +1,40 @@
+# CODEX-CHECKPOINT – Regelvorprüfung für Gelegenheitsangriffe
+
+Stand **25.10.2026**. Ein begrenztes neues SRD-Inkrement nach erfolgreichem Main-Merge. Der Stand der vorherigen Integration bleibt nach dem Trenner erhalten.
+
+## Git und Referenzen
+
+- Letzter beobachteter `main`-HEAD vor diesem Paket: `5175a4b39b1dd8968b91dd963b664690956885bd` (Dokumentations-Merge #173 nach vollständig grüner Code-Main-CI [#40193476536](https://github.com/ManuEtt/Dnd/actions/runs/40193476536) auf dessen Vorgänger `635773db`). Keine offenen PRs beim Start.
+- Neuer Entwicklungsbranch `feat/srd-opportunity-preflight-20261025`; [PR #174](https://github.com/ManuEtt/Dnd/pull/174) auf `main`. Die finalen Checks beziehen sich auf den **letzten Commit** im PR, nicht auf frühere grüne Runs.
+- App-Version `0.8.39+89`, SQLite-Schema 2, Kampagnen-JSON 1 unverändert; keine Datenmigration oder Umgehung der Story/Rules-Grenze.
+
+## IMPLEMENTIERT
+
+- Reiner Domänen-Preflight `SrdOpportunityAttackRules.prepare`: nur bei bestätigter Gegnerbewegung aus Sicht- und Reichweitenkontakt nach draußen, eigener Reaktionsfreigabe, eigenem handlungsfähigen Helden, freier Reaktion und passender Encounter-ID. Die drei SRD-Ausnahmen Disengage, Teleport und Fremdbewegung sind explizit ausgeschieden.
+- Waffe: nur eindeutiger vorhandener ausgerüsteter Nahkampf-Katalogeintrag oder `Unarmed Strike`, ohne unbestätigten Waffen-/Monsterwert. Rückgabe: unveränderliche Angebotsdaten mit Encounter-ID, Revision und Angriffstyp; **kein** Schadens-/Wurf-/Ressourcen- oder JSON-Update.
+- Öffentliche Regel-Fassade, maschinenlesbare Anforderung `RULE-COMBAT-OPPORTUNITY-ATTACKS` (**partial**) und Fachbeschreibung aktualisiert. Offizielle SRD 5.2.1, *Playing the Game*, Seite 15; Wizards of the Coast LLC unter CC BY 4.0. [Details](SRD_OPPORTUNITY_ATTACK_PREFLIGHT_20261025.md).
+
+## GETESTET
+
+- Vorherige Main-Codebasis: unabhängige [CI #40193476536](https://github.com/ManuEtt/Dnd/actions/runs/40193476536) `completed/success` auf `635773db`; **kein** Nachweis für neuen PR #174.
+- Neue Positiv-/Negativregressionen in `app/test/srd_opportunity_attack_rules_test.dart` erfasst; bis tatsächlichem erfolgreichen Workflow auf dem neuen finalen Head **noch nicht als bestanden gewertet**.
+
+## NICHT GETESTET / BLOCKIERT
+
+- Eigener finaler CI-Lauf mit Python, Format, Flutter-Analyse/Tests, Backend, Android-Debug/Alpha und nativen Gradle-Tests; echtes Android-Gerät/Upgrade und produktive Signierung.
+- In der verfügbaren Umgebung kein lokales Dart-/Flutter-/Android-SDK; GitHub Actions übernehmen Build- und Formatprüfung.
+- Alte Remote-Branches konnten mangels SHA-gebundener GitHub-Ref-Löschfunktion nicht entfernt werden; Archivtags bleiben erhalten.
+
+## NOCH NICHT IMPLEMENTIERT
+
+- Echte Positions-/Bewegungsverfolgung und Unterbrechung des Gegnerzugs, gespeicherte Reaktionsentscheidung, atomarer Controller-/SQLite-Ressourcenverbrauch, Treffer/Schaden, Miss/Krit, automatische Reaktion auf Fremd-/Schildereignisse sowie Android-Dialog. Kein Gelegenheitsangriff vollständig spielbar.
+
+## Ein einziger nächster Schritt
+
+**Ausdrücklich bestätigte Gegnerbewegung mit persistiertem, eindeutigen Reaktions-Angebot unterbrechen**, inklusive Kampf-ID, Ziel, Reichweite, Sicht, Bewegungsart und Revision. Testen: doppelte/stale Bestätigung, Rückzug/Teleport/Fremdbewegung, parallele Schildreaktion, Spielstand-JSON/SQLite-Neustart und Ablehnung ohne HP-/Ressourcenänderung. Erst danach Treffer-/Schadensmechanik eigenständig ergänzen.
+
+---
+
 # CODEX-CHECKPOINT – Live-Nachtrag nach Branch-Merge (25.10.2026)
 
 **Geprüfter Stand:** `main=635773db33724f543d61bacde9a9ebe679b9b1e9` nach regulärem GitHub-Merge [PR #171](https://github.com/ManuEtt/Dnd/pull/171), Integrations-HEAD `255a5a0bdf8dc4915bfd70e808a69862f3d0708a`. App **0.8.39+89**, SQLite 2, Kampagnen-JSON 1 unverändert. Nur ein separater Dokumentationsbranch wird bearbeitet, `main` nicht erneut direkt verändert.
