@@ -35,7 +35,8 @@ Campaign _campaign({
       timestamp: DateTime.utc(2026, 10, 25),
     ),
   ],
-  npcs: npcs ??
+  npcs:
+      npcs ??
       const [
         WorldNpc(id: 'mira', name: 'Mira'),
         WorldNpc(id: 'tarek', name: 'Tarek'),
@@ -87,10 +88,7 @@ void main() {
     expect(selected.join(' '), isNot(contains('999 Gold')));
     expect(selected.join(' '), isNot(contains('verrät angeblich')));
     expect(jsonEncode(saved.toJson()), before);
-    expect(
-      () => selected.add('Erfundene Notiz'),
-      throwsUnsupportedError,
-    );
+    expect(() => selected.add('Erfundene Notiz'), throwsUnsupportedError);
   });
 
   test('no matching NPC does not inject unrelated NPC history', () {
@@ -108,10 +106,9 @@ void main() {
       NpcNarratorMemory.merge(campaign, 'Ich gehe zum Tor.', ['Tor bestätigt']),
       ['Tor bestätigt'],
     );
-    expect(
-      NpcNarratorMemory.merge(campaign, 'Ich frage Mirabella.', ['Tor']),
-      ['Tor'],
-    );
+    expect(NpcNarratorMemory.merge(campaign, 'Ich frage Mirabella.', ['Tor']), [
+      'Tor',
+    ]);
   });
 
   test('German names are matched at word boundaries, not as substrings', () {
@@ -154,12 +151,10 @@ void main() {
         ),
       ],
     );
-    final selected = NpcNarratorMemory.merge(
-      campaign,
-      'Ich besuche Mira.',
-      ['Beziehung zu Mira: Mira bewachte den Turm.', 'Historischer Fakt'],
-      npcNoteLimit: 2,
-    );
+    final selected = NpcNarratorMemory.merge(campaign, 'Ich besuche Mira.', [
+      'Beziehung zu Mira: Mira bewachte den Turm.',
+      'Historischer Fakt',
+    ], npcNoteLimit: 2);
     expect(selected[0], contains('Turm'));
     expect(selected[1], contains('Brücke'));
     expect(selected, hasLength(3));
@@ -189,10 +184,7 @@ void main() {
         WorldNpc(id: 'mira', name: 'Mira'),
       ],
     );
-    expect(
-      NpcNarratorMemory.merge(duplicate, 'Mira und Ghost', []),
-      isEmpty,
-    );
+    expect(NpcNarratorMemory.merge(duplicate, 'Mira und Ghost', []), isEmpty);
   });
 
   test('limits, line breaks and emoji are wire-safe', () {
@@ -237,9 +229,8 @@ void main() {
   test('missing note fields in old JSON keep general context unchanged', () {
     final legacy = _campaign().toJson()..remove('npcRelationshipNotes');
     final loaded = Campaign.fromJson(legacy);
-    expect(
-      NpcNarratorMemory.merge(loaded, 'Ich frage Mira.', ['Alter Fakt']),
-      ['Alter Fakt'],
-    );
+    expect(NpcNarratorMemory.merge(loaded, 'Ich frage Mira.', ['Alter Fakt']), [
+      'Alter Fakt',
+    ]);
   });
 }
