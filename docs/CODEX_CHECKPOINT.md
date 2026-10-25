@@ -1,3 +1,16 @@
+# CHAT D – CI-Qualitätsgates (25.10.2026, PR #177)
+
+- **Basis:** `main` = `5c1499a9342449050bb946542659b221ac2653da`; **Branch:** `fix/chat-d/ci-rule-quality-gates-20261025`; **Code-/Test-Commit:** `40bb07cd98f4e8ed65ea373acc913d016f60d4b6`.
+- **IMPLEMENTIERT:** `check_domain_boundaries.py` und `srd_coverage.py --json` als aktive, vor den Python-Tests liegende Gates im Android-Actions-Workflow sowie in `scripts/check.sh`; vier positive/negative Konfigurationstests.
+- **GETESTET:** vier neue Python-Unittests in einer isolierten lokalen Dateistruktur erfolgreich, GitHub-Branchdateien für Workflow, Skript und Tests erneut gelesen. Dies ist keine vollständige Repository-Abnahme.
+- **NICHT GETESTET:** vollständiger Checkout, reale Ausführung beider Gates, komplette Python-/Backend-/Flutter-/Android-Prüfungen und APK am finalen Branch-Commit. PR-CI steht bei dieser Dokumentation noch aus.
+- **BLOCKIERT:** Kein lokaler vollständiger Checkout/Flutter-/Android-SDK in der verfügbaren Ausführungsumgebung; endgültige GitHub-Actions-Nachweise fehlen. Paralleler PR #176 berührt `README.md` und diese Checkpoint-Datei und erfordert koordinierte Dokumentationszusammenführung.
+- **NOCH NICHT IMPLEMENTIERT:** keine produktive Spielmechanik Teil dieses CI-Pakets; keine Datenmigration oder neue APK behauptet.
+- **PR:** [#177](https://github.com/ManuEtt/Dnd/pull/177) als Draft, **nicht gemergt**. Persönlicher Status: [CHAT_D_CHECKPOINT.md](parallel/CHAT_D_CHECKPOINT.md).
+- **Genau ein nächster Schritt:** abschließende CI auf dem endgültigen PR-Commit prüfen und die notwendigen Dokumentationskonflikte mit PR #176 ohne Verlust fremder Fortschritte konsolidieren.
+
+---
+
 # CODEX-CHECKPOINT – Angebots-Revalidierung für Gelegenheitsangriffe
 
 **Stand:** 2026-10-25T18:11:00+01:00; **Produkt:** Würfelraunen – Der lebendige Spielleiter, `app/pubspec.yaml` **0.8.39+89**.
