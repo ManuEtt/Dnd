@@ -7,6 +7,14 @@ Ein neues reines Regelmodul prüft **Ritualzauber ohne Zauberplatzverbrauch**: d
 **CI:** Auf dem finalen Branch-Commit noch zu prüfen. Die bisherigen Chat-A-PRs #180, #184 und #188 bleiben voneinander und von diesem Ritualmodul getrennt.
 
 
+## Chat C – Zugänglicher Heldenstatus (25.10.2026, PR offen)
+
+Der unabhängige Branch `feat/chat-c/accessible-status-hud-20261025` verbessert ausschließlich die Darstellung von `FantasyAdventureStatusHud`: ab 180 % Systemschrift bei 320–360 dp einspaltige Statuskarten; die angezeigten Werte schrumpfen nicht mehr über `FittedBox`. TP, RK, Bewegung und Erfahrung besitzen vollständige deutsche Screenreader-Texte; unbekannte Werte werden ausdrücklich als „nicht bestätigt“ angesagt. TP-/EP-Balken erhalten verständliche Prozent-Semantik. Drei Widgettests prüfen 320/360 dp bei 200 % und den unbekannten Zustand.
+
+**Verifikation:** Architektur-/SRD-Gates, Python-/Backend-Prüfungen, Dart-Formatierung und Flutter-Analyse wurden in der ersten CI nach Formatkorrektur bereits erfolgreich geprüft; die vollständige Flutter-Testsuite und der Android-APK-Build benötigen die finale Branch-CI. Keine Spielzustands-, JSON-, SQLite-, KI- oder Regeländerung, keine neue App-Version. Andere offene PRs (#178–#184) bleiben unberührt; README-/Checkpoint-Notizen sind bei Integration durch Chat D bewusst zu konsolidieren. [Detail-Checkpoint](docs/parallel/CHAT_C_HUD_ACCESSIBILITY_20261025.md).
+
+**Abnahme:** [GitHub Actions #40222374831](https://github.com/ManuEtt/Dnd/actions/runs/40222374831) auf Commit `91d007120e3a1a7b4beea9e91a7e8cffb2d831d8`: **completed/success** – inkl. der drei HUD-Widgettests, vollständigem Flutter-Testlauf, Flutter-Analyse, Backend und Android-Debug-/Alpha-APKs. Nach diesem erfolgreichen Lauf wurde zusätzlich Chat D über PR #186 nach `main` integriert. Die neue gemeinsame CI nach diesem Dokumentations-Merge wird getrennt geprüft. Realgerät und TalkBack nicht geprüft.
+
 ## Qualitätspaket Chat D D-004 – Gradle-Wrapper-JAR-Validierung
 
 Nach der vollständigen Integration von [PR #183](https://github.com/ManuEtt/Dnd/pull/183) ergänzt [PR #186](https://github.com/ManuEtt/Dnd/pull/186) den Projektprüfer um die frühe Zurückweisung doppelter ZIP-Dateinamen, Pfad-Traversal/absoluter Namen und symbolischer Einträge im Gradle-Wrapper-JAR. Vier neue Python-Regressionen erfassen Positiv- und Negativfälle. Die vollständige GitHub-CI des mit `main` synchronisierten D-004-Commits bleibt bis zum Abschluss gesondert zu prüfen. Keine Spielstands-, SQLite-/JSON-, UI- oder SRD-Regeländerung. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
