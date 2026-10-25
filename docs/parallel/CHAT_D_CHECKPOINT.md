@@ -1,3 +1,38 @@
+# Chat D – D-005: Eindeutige Gradle-Distributionseinstellungen
+
+## Ausgangslage und GitHub
+- Datum: 25.10.2026.
+- **Main zum Arbeitsbeginn:** `af70a48c84d83c133ced4200be04ca81a91abf1b` mit D-001 bis D-004 erfolgreich integriert.
+- **Branch:** `fix/chat-d/gradle-properties-duplicate-guard-20261025`.
+- **Fachlicher Umfang:** `scripts/verify_project.py` und `scripts/tests/test_verify_project.py`.
+- **Andere PRs:** Chat A, B und C bearbeiten Regel-, Story- und UI-Module getrennt; gemeinsame README-/Checkpoint-Dateien additiv konsolidieren.
+- **GitHub-PR:** wird nach Dokumentation als Draft angelegt und dort verlinkt.
+
+## Ausgangsproblem
+
+`verify_project` akzeptierte eine gültige `distributionUrl=` und eine gültige `distributionSha256Sum=`, obwohl in derselben Java-Properties-Datei weitere, abweichende Deklarationen desselben Schlüssels standen. Eine Laufzeit, die bei mehrfachen Keys den letzten Wert verwendet, kann dadurch etwas anderes benutzen als der Sicherheitsprüfer bestätigt hat.
+
+## Implementiert
+
+- `unique_gradle_property` durchsucht nicht auskommentierte Java-Properties-Zeilen und berücksichtigt `=`, `:` und Whitespace als übliche Separatoren.
+- Wenn der jeweilige Schlüssel fehlt, doppelt vorkommt oder uneindeutig formuliert ist, liefert er keinen validierten Wert.
+- Einmalige SHA-256-Prüfsumme muss weiterhin exakt 64 Hex-Zeichen enthalten; Download-URL muss weiterhin den bisherigen festgelegten HTTPS-/Gradle-Version-Regeln entsprechen.
+- Sechs neue Regressionstests: doppelte URL, identischer doppelter Hash, gemischte Separatoren, Kommentar-Zeilen, legitime URL ohne Escape sowie zusätzlicher leerer URL-Schlüssel.
+- Bestehende deutschsprachige Diagnosetexte bleiben erhalten; keine Werte oder Geheimnisse werden in Fehlermeldungen ausgegeben.
+
+## GETESTET / NICHT GETESTET / BLOCKIERT
+
+- **GETESTET:** Änderungen wurden nach GitHub-Push aus den beiden Branchdateien erneut eingelesen und auf korrekte Funktionszuordnung geprüft. Der URL-Ausdruck wurde zusätzlich isoliert mit legitimer, escaped HTTPS-URL sowie HTTP-Negativfall überprüft. **Das ist kein Nachweis einer vollständigen Repository-CI.**
+- **NICHT GETESTET:** sämtliche Python-/Flutter-/Backend-/Android-Tests sowie APK-/Release-Builds für den finalen D-005-HEAD; Testlauf auf echten Android-Geräten.
+- **BLOCKIERT:** Finale GitHub-Actions-Abnahme und eventuelle Änderungen im Hauptbranch. Keine lokale vollständige Flutter-/Android-Toolchain.
+- **Sicherheit/Kompatibilität:** kein Eingriff in den echten Gradle-Wrapper, Android-Code, SQLite, Kampagnen-JSON, KI-Erzählung oder SRD-Regeln. Keine Datenmigration.
+
+## Genau ein nächster Schritt
+
+Finalen GitHub-CI-Lauf dieses PR-Commits prüfen und gegebenenfalls Testfehler im eigenen Branch korrigieren, anschließend neuen Main-HEAD und die gemeinsamen Dokumentationsdateien konfliktfrei synchronisieren und erst nach vollständiger Abnahme zur Integration freigeben.
+
+---
+
 # Chat D D-004 – Main-Synchronisierung nach PR #183
 
 Neuer Basis-Main-HEAD `713b8cc2831f9d8039ef4e6ebf37c10682aec675` enthält D-001, D-002 und D-003. Branch D-004 wird per **normalem Merge-Commit ohne Force-Push** mit Main synchronisiert. Nur die zwei Python-Projektprüfer-/Testdateien werden aus D-004 übernommen; Dokumentation aus aktuellem Main bleibt erhalten und wird additiv ergänzt. Frühere Code-Tests/CIs auf `c7f2df12a9df474e6204ad1de4011f7c5b6e3e7f` sind keine finale Abnahme nach Synchronisierung. Offene PRs anderer Chats bleiben unverändert.
