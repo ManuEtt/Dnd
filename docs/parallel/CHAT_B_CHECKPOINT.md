@@ -6,7 +6,7 @@
 - Arbeitsbranch: `fix/chat-b/recall-intent-20261025`.
 - Fach-Commit: `90a280d5565eae42044f80135450d46b2c4c9b90`.
 - Test-/Format-Commit: `c3959e4f088729bbd48f3993c35ca1ac298ca62d`.
-- Pull Request: siehe PR dieses Branches (bei Erstellung dieses Checkpoints noch nicht eröffnet).
+- Pull Request: [#179](https://github.com/ManuEtt/Dnd/pull/179) – geöffnet, CI für finalen HEAD zum Zeitpunkt dieser Aktualisierung noch nicht abgenommen.
 - Offene fremde PRs während der Bearbeitung: #176 (Gelegenheitsreaktion/Kampf/UI/Modelle) und #177 (CI-Qualitätsgates). Keine der dort geänderten Fachdateien wurde bearbeitet.
 - Main-Workflow `40216189451` war bei der Ausgangsprüfung noch `in_progress`; frühere grüne Läufe sind kein Nachweis für Chat B.
 
