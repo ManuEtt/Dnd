@@ -1,3 +1,11 @@
+## 25.10.2026 – Android-/Backend-Storyschutz vereint (Integrations-PR #169)
+
+**IMPLEMENTIERT:** Der vollständig grüne Android-Basisstand #168 (enthält #165) ist mit den originalen geprüften Backend-Code-/Testdateien aus #167 zusammengeführt. Doppelte Story-IDs werden nun in Android und vor dem Backend-Anbieteraufruf abgewehrt; lokal bestätigte Endzustände bleiben vor KI-Rücksetzung geschützt. Ursprüngliche Einzeländerungen und Fachbelege bleiben erhalten. **GETESTET:** je Ursprungs-PR vollständige CI auf separatem SHA. **NICHT GETESTET:** kombinierte #169-CI bis zu tatsächlichem abgeschlossenem Erfolg, Android-Echtgerät/Altsave-Upgrade. **BLOCKIERT:** Produktivsignierung/Realgerät. **NOCH NICHT IMPLEMENTIERT:** vollständige SRD-5.2.1-Regeln, globales NPC-Importsanieren und Integration von Kampf-PR #166. Basis [#164](https://github.com/ManuEtt/Dnd/pull/164) noch offen; `main` unverändert. `0.8.38+88`, SQLite2, JSON1 unverändert.
+
+**Nächster Schritt:** [Neue CI #169](https://github.com/ManuEtt/Dnd/pull/169/checks) prüfen, erst danach Review. [Integrationsbeleg](docs/STORY_SAFETY_INTEGRATION_20261025.md).
+
+---
+
 ## 25.10.2026 – Lokale KI-Beziehungsreferenzen schützen (PR #168)
 
 **IMPLEMENTIERT:** Die Flutter-Storygrenze `AiStoryStep.fromJson` prüft doppelte gespeicherte NPC-/Thread-IDs bevor generative Updates zugeordnet werden; auch ein Stale-AI-Reply wird bei `applyAiStoryStep` erneut geprüft. Drei Fluttertests (NPC/Thread-Duplikat, gültige Namespaces). **GETESTET:** vorherige #165-Basis-CI grün, eigenständige neue #168-CI noch ausstehend. **NICHT GETESTET:** finale neue Flutter-/Android-Gesamtsuite und physisches Gerät. **BLOCKIERT:** Echtgerät/Signierung. **NOCH NICHT IMPLEMENTIERT:** globale Duplikatsanierung sämtlicher Campaign-Importe und SRD-Vollständigkeit. Keine Schema-/Versionsänderung. Auf #165 gestapelter [PR #168](https://github.com/ManuEtt/Dnd/pull/168). **Nächster Schritt:** neue CI und Code-Review, nach Freigabe sichere Integration der Stack-Basis.

@@ -1,3 +1,11 @@
+## 25.10.2026 – Story-Sicherheitsgrenzen gemeinsam integrieren (PR #169)
+
+- Vollständige lokale Schutzwirkung #165/#168 plus serverseitiges frühes ID-Fail-Closed #167 erstmals auf **einem** separaten Integrationsbranch zusammengeführt. Code- und Test-BLOBs aus den Original-PRs ohne Verhaltensneuschreibung übernommen.
+- Zusammengeführter Schutz vor KI-Wiederöffnung bestätigter Story-Endzustände, mehrdeutigen lokalen NPC-/Thread-IDs und doppelten Backend-Anfrage-IDs **vor** Provideraufruf.
+- Einzel-CIs grün, kombinierte CI #169 bis zur tatsächlichen Abnahme ausstehend. App 0.8.38+88 / SQLite 2 / JSON 1 und Hauptbranch unverändert. [PR #169](https://github.com/ManuEtt/Dnd/pull/169) · [Beleg](docs/STORY_SAFETY_INTEGRATION_20261025.md).
+
+---
+
 ## 25.10.2026 – Lokale doppelte KI-Referenzkennungen ablehnen (PR #168)
 
 `AiStoryStep.fromJson` verhindert, dass gespeicherte doppelte NPC-IDs / widersprüchliche Handlungsstrang-IDs in KI-Antworten aufgelöst und dadurch mehrere Entities verändert werden. Drei Flutter-Regressionsfälle einschließlich veralteter Antwort und getrennter Namespaces. Keine Migration, keine Änderung an 0.8.38+88 / SQLite2 / JSON1. CI dieses neuen PR bei initialer Dokumentation ausstehend. [PR #168](https://github.com/ManuEtt/Dnd/pull/168) · [Fachbeleg](docs/STORY_LOCAL_DUPLICATE_IDS_20261025.md).

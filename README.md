@@ -2,6 +2,16 @@
 
 Deutschsprachige Android-Alpha für Soloabenteuer, SRD-geprüfte Teilsysteme, regelgeprüfte Kämpfe und lokale Kampagnen mit SQLite. Flutter-/Dart-App in `app/`, optionaler Fastify-/TypeScript-Erzähler in `backend/`. **Das vollständige D&D-SRD-5.2.1-Regelwerk ist weiterhin nicht implementiert.**
 
+## Neuer kombinierter Story-Sicherheitsstand, 25.10.2026 – PR #169
+
+Der neue [Integrations-PR #169](https://github.com/ManuEtt/Dnd/pull/169) führt die **lokale KI-Story-Validierung** aus #165/#168 und den **Backend-Kontextschutz** aus #167 zusammen, jeweils auf der vollständig grünen Basis #164. Die zuvor unabhängigen Funktionen werden so erstmals gemeinsam durch die Projekt-CI geprüft: endgültige Story-Threadstatus bleiben unverändert ohne Spielerfreigabe; NPC-/Thread-Duplikate werden lokal vor generativer Übernahme und serverseitig vor eventuell kostenpflichtigem KI-Aufruf blockiert. Die drei Backend-Code-/Testdateien aus #167 und die bereits enthaltenen Android-Dateien aus #168 bleiben unverändert.
+
+**Abnahme:** Alle einzelnen Ursprungs-PRs sind grün. Die **neue Gesamt-CI** von [#169](https://github.com/ManuEtt/Dnd/pull/169/checks) ist bis zum tatsächlichen `completed/success`-Nachweis nicht bestanden. Keine Änderung an `main`, `0.8.38+88`, SQLite2/JSON1 oder SRD-Regelautorität. #166 (Light-Kampf) bleibt ein unabhängiger Track. [Technisches Integrationsprotokoll](docs/STORY_SAFETY_INTEGRATION_20261025.md).
+
+**Nächster Schritt:** Letzte CI des Integrations-PRs auswerten, eventuelle Fehler beheben und erst danach zur Review freigeben.
+
+---
+
 ## 25.10.2026 – KI-Story schützt lokale NPC- und Thread-IDs (PR #168)
 
 In [PR #168](https://github.com/ManuEtt/Dnd/pull/168) wird ein weiterer lokaler Datenkonsistenzfehler behoben: Der Android-Validator lehnt doppelte gespeicherte NPC- oder Handlungsstrang-IDs **vor** der Anwendung einer erzählerischen KI-Antwort ab. Drei neue Tests schützen davor, dass identische Referenzen mehrere NPC-Beziehungen oder widersprüchliche Threadstatus ändern; unterschiedliche Referenztypen bleiben unabhängig. Der bestehende zweite Check bei der Spielzugübernahme deckt veraltete Antworten ab. Kein Spielstandsformatwechsel.

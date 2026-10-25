@@ -1,3 +1,9 @@
+## 25.10.2026 – Einen gemeinsam getesteten Story-Stand herstellen (PR #169)
+
+Die erfolgreichen, aber bis dahin separat entwickelten Sicherheitsfixes #165 (lokal bestätigte Story-Endzustände), #168 (lokale IDs) und #167 (Backend-IDs vor optionalem Anbieteraufruf) werden in [PR #169](https://github.com/ManuEtt/Dnd/pull/169) auf der geprüften Basis #164 zusammen getestet. Ausführbarer Code unverändert aus Originalzweigen übernommen, Fachbelege erhalten. **Ein nächster Schritt:** neue voll grüne CI und menschliche Review, danach unter Projektfreigabe zuerst #164 in main integrieren und #169 neu darauf ausrichten. #166 (Light-Kampfregel) bewusst separat.
+
+---
+
 ## 25.10.2026 – Lokale Story-Identitäten vor KI-Updates eindeutig machen (PR #168)
 
 Neue lokale Prüfung verhindert doppelte NPC-/Thread-ID in generativen Story-Updates. Drei neue Tests einschließlich Idempotenz/Stale-Replay; keine Model- oder SQLite-Migration. [PR #168](https://github.com/ManuEtt/Dnd/pull/168) ist auf #165, mittelbar #164, gestapelt. Erst neue vollständige CI prüfen, dann Review; der separate Backend-PR #167 bleibt erhalten.

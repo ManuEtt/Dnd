@@ -1,5 +1,30 @@
 # CODEX-CHECKPOINT – Würfelraunen
 
+## Aktueller Integrationszyklus 25.10.2026 – vereinte Story-Sicherheitsgrenzen, PR #169
+
+**Git-Stand:** `main=b60ffe7ff1aae502ea927cb77153b988be33e397` beim Start, **nicht gemergt**. Offen: original #159–#163, getestete Basis #164 (`6776bd1`, [CI #40123094457](https://github.com/ManuEtt/Dnd/actions/runs/40123094457)), gestapelter lokaler Schutz #165 (`9324af0`, [CI #40170005782](https://github.com/ManuEtt/Dnd/actions/runs/40170005782)), selbständiger Backendschutz #167 (`4072a6d`, [CI #40180964702](https://github.com/ManuEtt/Dnd/actions/runs/40180964702)) und lokaler Duplikatscheck #168 (`e157801`, [CI #40182898798](https://github.com/ManuEtt/Dnd/actions/runs/40182898798)). Kampf-PR #166 unabhängig. Neuer Branch `integration/story-safety-pr165-167-168-20261025`, PR #169, direkt aus #168.
+
+### IMPLEMENTIERT
+Die vollständigen Android-Schutzmaßnahmen aus #165 und #168 bleiben unverändert. Zusätzlich exakt die geprüften drei Backend-Quell-/Test-BLOBs aus #167 übernommen: `backend/src/story.ts`, `backend/src/app.ts`, `backend/test/story.test.ts`. Damit werden mehrdeutige IDs bei der Backend-Anfrage (HTTP 400, **0** KI-Aufrufe), bei lokaler generativer Verarbeitung und bei der tatsächlichen Spielzugübernahme geschützt. Keine parallele API- oder Datenmodellmigration. `backend/README.md` und fachlicher Backend-Beleg ebenfalls aus #167 übernommen. Eigenes kombiniertes Dokument `docs/STORY_SAFETY_INTEGRATION_20261025.md`; README/CHANGELOG/ROADMAP/DEVELOPMENT_STATUS/Checkpoint auf Gesamtstand ergänzt.
+
+### GETESTET
+**Je Quell-PR bestätigt, jedoch anderes Commit:** #164, #165, #167 und #168 vollständige grüne GitHub CI auf deren jeweils eigenem finalen HEAD. Die neue gemeinsame CI des PR #169 muss auf **dessen exaktem letzten HEAD** geprüft werden: [Checks](https://github.com/ManuEtt/Dnd/pull/169/checks). Bis zum bestätigten Ende ausdrücklich keine Erfolgsbehauptung für das neue Paket.
+
+### NICHT GETESTET
+Neue kombinierte Backend-/Android-Gesamt-CI bis zu deren Abschluss; Upgrade persönlicher Altkampagnen, echtes Android-Gerät, produktive Signierung. Der lokale Guard saniert **nicht** alle potenziellen doppelten NPCs in beliebigen Importen.
+
+### BLOCKIERT
+Reale Gerätetests/Release-Signaturschlüssel stehen in dieser Umgebung nicht zur Verfügung; CI verfügbar.
+
+### NOCH NICHT IMPLEMENTIERT
+Vollständiges SRD-5.2.1-Regelwerk, semantischer Spoilerschutz und global verteilter Rate-Limiter. Kampf-Light-PR #166 ist nicht in diesem Storypaket integriert.
+
+### NÄCHSTER KONKRETER SCHRITT
+Vollständigen finalen [GitHub-CI-Lauf #169](https://github.com/ManuEtt/Dnd/pull/169/checks) prüfen, bei Bedarf zielgenau reparieren, dann zur menschlichen Review freigeben. Nach ausdrücklicher Genehmigung zuerst #164 mergen, den Stack #169 gegen aktuelles main abgleichen und **erneut** CI prüfen. Die durch #169 ersetzten PRs #165/#167/#168 nicht zusätzlich ungeprüft mergen. #166 bleibt eigenständig.
+
+---
+
+
 ## Aktueller Zyklus 25.10.2026 – lokale Story-Identitäten validieren (PR #168)
 
 **Live geprüft:** `main=b60ffe7ff1aae502ea927cb77153b988be33e397`, offene PRs #159–#167; die Integrationsbasis [#164](https://github.com/ManuEtt/Dnd/pull/164) war grün auf `6776bd1` ([Actions #40123094457](https://github.com/ManuEtt/Dnd/actions/runs/40123094457)). Das darauf gestapelte [#165](https://github.com/ManuEtt/Dnd/pull/165) war grün auf `9324af0` ([Actions #40170005782](https://github.com/ManuEtt/Dnd/actions/runs/40170005782)). [#167](https://github.com/ManuEtt/Dnd/pull/167) hat eine unabhängige grüne Backend-ID-Validierung ([Actions #40180964702](https://github.com/ManuEtt/Dnd/actions/runs/40180964702)). PR #166 betrifft separate Kampfregeln. Kein PR wurde in dieser Sitzung gemergt.
