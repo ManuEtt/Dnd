@@ -89,3 +89,12 @@ Weitere offene Arbeiten: vollständige Quelleninventur, Zauberwirkungen, Klassen
 Projekt-ZIP ohne äußeren Ordner in eine Arbeitskopie entpacken oder den Patch auf dem dokumentierten Basiscommit mit `git apply --check` und `git apply` importieren. Danach auf einen eigenen Branch pushen und einen PR öffnen. Für die vollständige Git-Historie das Bundle klonen; einzelne Altbranches aus den Archivtags wiederherstellen. Details im [Migrationsaudit](docs/BRANCH_MIGRATION_AUDIT_20261025.md).
 
 Nur ausgewählte Inhalte des **SRD 5.2.1 von Wizards of the Coast unter CC BY 4.0** sowie eigene/lizenzierte Inhalte verwenden. [Namensnennung und Lizenzen](THIRD_PARTY_NOTICES.md) erhalten. Keine automatische Weiterarbeit außerhalb einer aktiven Sitzung.
+
+
+---
+
+## Chat B: Erinnerungswünsche von Spielerhandlungen trennen (25.10.2026, PR-CI ausstehend)
+
+Im isolierten Branch `fix/chat-b/recall-intent-20261025` erkennt die Story-Engine ausdrückliche deutschsprachige Erinnerungsanfragen gezielt, statt bereits jedes Vorkommen von „Tagebuch“, „bisherig“ oder „erinnere“ als Rückblick zu behandeln. Damit bleiben z. B. „Ich lese das Tagebuch“ und „Mira erinnert sich …“ reguläre Spielerhandlungen. Direkte Anfragen wie „Was weißt du über Mira?“, „Erinnere dich an Mira“ und „Fasse unsere bisherige Geschichte zusammen“ behalten ihren bestätigten Gedächtnisabruf.
+
+Vier Regressionstests in `app/test/story_recall_intent_test.dart` wurden geschrieben (positive und negative Intentfälle, echte Engine-Integration); **der neue PR-HEAD ist damit noch nicht als erfolgreich getestet nachgewiesen**. Kein lokales Flutter-/Dart-SDK. Shared Models, Controller, SQLite und JSON unverändert. Keine automatischen KI-Regeländerungen. Integration erst nach PR- und CI-Prüfung; zentrale Dokumentationskonflikte bei Chat D konsolidieren. Persönlicher Status: [Chat B Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md).
