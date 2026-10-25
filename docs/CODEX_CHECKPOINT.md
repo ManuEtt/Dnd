@@ -1,3 +1,15 @@
+# Chat C – UI-Checkpoint (25.10.2026)
+
+- **IMPLEMENTIERT:** Separater Branch `fix/chat-c/npc-chronicle-fallback-20261025` (Basis `5c1499a9342449050bb946542659b221ac2653da`). Die NPC-Beziehungsnotizen im `CampaignMemoryPanel` werden auch ohne zugehörigen NPC-Stammdatensatz lesbar gerendert, ohne Daten oder Regeln zu verändern; zwei gezielte Widgettests ergänzt.
+- **GETESTET:** Live-`main`, PR #176 und dessen geänderte Dateien abgeglichen; eigener GitHub-Diff nach Code-Commit kontrolliert. **Kein Dart-Testlauf behauptet.**
+- **NICHT GETESTET:** Flutter-Format, `flutter analyze`, `flutter test`, Android-Build, Python- und Backend-Prüfungen, Realgerät. Flutter-/Dart-SDK hier nicht verfügbar; CI noch ausstehend.
+- **BLOCKIERT:** Flutter-SDK in dieser Ausführungsumgebung und potenzielle Dokumentkonflikte mit PR #176 bei `README.md` und `docs/CODEX_CHECKPOINT.md`; Dokumente bei Integration bewusst zusammenführen.
+- **NOCH NICHT IMPLEMENTIERT:** Änderung an Importvalidierung, NPC-Stammdatenpflege oder Rule-/Story-Modulen. Version `0.8.39+89`, SQLite 2 / JSON 1 unverändert.
+- **Genau ein nächster Schritt:** Unabhängigen `FantasyAdventureStatusHud` mit 320 dp / 200 % Schriftgröße und Screenreader-Semantik regressionsprüfen; alle vier Statuswerte erreichbar und kein Overflow.
+- Detailnachweise: [docs/parallel/CHAT_C_CHECKPOINT.md](parallel/CHAT_C_CHECKPOINT.md).
+
+---
+
 # CODEX-CHECKPOINT – Angebots-Revalidierung für Gelegenheitsangriffe
 
 **Stand:** 2026-10-25T18:11:00+01:00; **Produkt:** Würfelraunen – Der lebendige Spielleiter, `app/pubspec.yaml` **0.8.39+89**.
