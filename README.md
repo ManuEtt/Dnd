@@ -2,7 +2,17 @@
 
 Deutschsprachige Android-Alpha für Soloabenteuer, regelgeprüfte Kämpfe und lokale Kampagnen mit SQLite. Flutter/Dart-App und optionaler Fastify-/TypeScript-Erzähler. Das vollständige SRD 5.2.1 ist noch nicht implementiert.
 
-## Aktueller Stand und autonome Fortsetzung (24.10.2026)
+## Aktueller Stand und autonome Fortsetzung (25.10.2026 – Sicherheits-PR #170)
+
+**Version auf `main`: 0.8.38+88; Basis-HEAD: `b60ffe7ff1aae502ea927cb77153b988be33e397`.** Neuer Branch `fix/case-insensitive-secret-archive-filter-20261025`, [PR #170](https://github.com/ManuEtt/Dnd/pull/170). Die bereits offenen PRs #159–#169, insbesondere die Integrations-PRs #164 und #169, wurden vor Beginn geprüft; diese Änderungen bleiben unangetastet. Keine Änderung direkt auf `main`.
+
+**Implementiert:** Der Quell-ZIP-Export in `scripts/package_project.py` schließt vertrauliche Dateien, Cache-Verzeichnisse und SQLite-Journaldateien nun auch bei gemischter Groß-/Kleinschreibung aus. Ein neuer Python-Regressionstest erstellt ein Archiv mit solchen Dateinamen, prüft ihre Abwesenheit und erhält harmlose `.env.example`-Vorlagen sowie Fantasy-Grafikdateien. Namen tatsächlich enthaltener Dateien werden nicht geändert. App, Spielstände, SRD, SQLite 2 und Kampagnen-JSON 1 bleiben unverändert.
+
+**Prüfstatus:** Letzter nachgewiesen grüner `main`-Gesamtlauf ist [Actions #40094794864](https://github.com/ManuEtt/Dnd/actions/runs/40094794864) auf `b60ffe7`. Der neue PR erfordert einen **eigenen** erfolgreichen [Actions-Lauf](https://github.com/ManuEtt/Dnd/pull/170/checks) auf dem finalen Commit. Ohne diesen Nachweis gilt die neue Änderung nicht als CI-abgenommen. Kein lokales Flutter-/Android-SDK, keine unabhängige Geräteabnahme oder neue APK in dieser Sitzung nachgewiesen.
+
+**Nächster konkreter Schritt:** Nach finalem grünem PR-Check und Review die Korrektur integrieren; danach einen getrennten, getesteten Schutz gegen beschädigte/halb geschriebene Quell-ZIPs bei Schreibabbruch entwickeln. Aktuelle Details und Grenzen stehen in [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md).
+
+## Vorheriger Entwicklungsstand und autonome Fortsetzung (24.10.2026)
 
 **Version 0.8.38+88**, Branch `fix/sneak-attack-offhand-weapon-20261024`, [PR #158](https://github.com/ManuEtt/Dnd/pull/158). Funktionaler Code [`aa79ce5`](https://github.com/ManuEtt/Dnd/commit/aa79ce593790e5763e9125743b0adeab55b581d5), Basis-main `dcb42c5efff40a757994d4f5b5f8e98b2ff128e9` (PR #157 integriert). Eigene aktuelle [GitHub-Checks](https://github.com/ManuEtt/Dnd/pull/158/checks) zeigen den jeweiligen finalen HEAD; Basisprüfungen und lokale Abnahme werden getrennt geführt. Main bleibt durch diesen Zyklus unverändert.
 
