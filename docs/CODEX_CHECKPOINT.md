@@ -1,12 +1,23 @@
-# Chat D – APK-Archivvalidierung (25.10.2026)
+# Chat D – PR #183 APK-Archivschutz nach Integration #182
 
-- **BASIS:** `main` 97a06118f17d71cc77be2cb15a2fc9a53db20ee0; **Branch:** `fix/chat-d/apk-zip-validation-20261025`; **technischer Commit:** `91c1911efcf39cc4a7708603e89a47c56c16cf32`.
-- **IMPLEMENTIERT:** `prepare_alpha_release.py` lehnt doppelte ZIP-Member, unsichere/Traversal-Pfade und symbolische Links bei ARM64-APK-Prüfung ab; vier zusätzliche Tests, erlaubte Verzeichnis-Einträge beibehalten.
-- **GETESTET:** Änderungen nach Push über GitHub erneut gelesen. Kein kompletter erfolgreich ausgeführter CI-Lauf auf diesem Stand belegt.
-- **NICHT GETESTET:** vollständige Python-, Flutter-, Backend- und Android-CI inklusive Alpha-Release-Paketierung auf endgültigem Commit; echter Android-Gerätetest.
-- **BLOCKIERT:** finale CI-Abnahme steht aus. Kein SQLite-/JSON- oder APK-Versionseingriff, keine Migration. Andere Entwicklungs-PRs bleiben unabhängig.
-- **NÄCHSTER SCHRITT:** finale CI auf aktuellem PR-HEAD abnehmen, geänderte Main-/PR-Dateien erneut prüfen und konfliktfrei integrieren.
-- [Persönlicher Chat-D-Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
+- **Neuer Main-HEAD:** `45bea9c2a897275583bdbe32ed50afde5d0a76b0`. Die beiden Chat-D-PRs #177 und #182 sind inzwischen integriert; dieser Branch übernimmt ihre technischen Dateien und Statusdokumentation unverändert.
+- **Implementiert:** `scripts/prepare_alpha_release.py` weist doppelte Archivnamen, Traversal-/absolute Pfade, Rückwärtsschrägstriche, Steuerzeichen und ZIP-Symlinks zurück; vier neue positive/negative Regressionen.
+- **GETESTET:** Code/Testdateien über GitHub auf eigenem Branch überprüft. Die ältere PR-183-CI auf `ae0efbe` ist **kein** Abnahmenachweis des neu kombinierten Commits.
+- **NICHT GETESTET:** finale Python-/Flutter-/Backend-/Android-CI auf dem neuen PR-183-HEAD; reales Gerät. Keine Datenmigration.
+- **NÄCHSTER SCHRITT:** exakte neue PR-/Push-CI abnehmen, aktuelle Parallel-PR-Dateien vergleichen, danach nur bei grüner CI und Konfliktfreiheit integrieren.
+- **Vollständiger Status:** [CHAT_D_CHECKPOINT.md](parallel/CHAT_D_CHECKPOINT.md).
+
+---
+
+# Chat D – rekursive Modulgrenzen (25.10.2026, D-002)
+
+- **Integrationsbasis:** `main` = `97a06118f17d71cc77be2cb15a2fc9a53db20ee0` mit bereits integriertem und geprüftem [PR #177](https://github.com/ManuEtt/Dnd/pull/177). D-002-Branch: `fix/chat-d/nested-boundary-scan-20261025`.
+- **IMPLEMENTIERT:** `scripts/check_domain_boundaries.py` durchsucht beide Dart-Domainbereiche rekursiv und normalisiert Importpfade, sodass Unterordner und äquivalente Traversal-Imports die Grenze nicht umgehen. Sechs neue Regressionen.
+- **GETESTET:** 6 neue und 6 bisherige Python-Grenztests in einer isolierten Teststruktur erfolgreich. Die neue D-002-PR-CI bezieht sich auf einen anderen Commit und muss nach dieser Main-Synchronisierung vollständig neu abgenommen werden.
+- **NICHT GETESTET:** Repositoryweite finale Python-/Flutter-/Android-CI und APK auf dem neuen D-002-Kombinationscommit, Realgerät.
+- **BLOCKIERT:** laufende CI; keine lokalen Android-/Flutter-SDKs/kompletter Checkout. Keine Spielstand-/Schemamigration und kein neuer SRD-Fertigstellungsnachweis.
+- **NÄCHSTER SCHRITT:** vollständige finale PR-CI auf dem neuen Commit prüfen und danach separat mergefähig freigeben; parallele PRs ohne überschreibende Dokumentationsupdates behandeln.
+- **Detaillierter Stand:** [Chat-D-Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
 
 ---
 

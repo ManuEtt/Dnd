@@ -1,8 +1,12 @@
 # Würfelraunen – Der lebendige Spielleiter
 
-## Chat D – sichere Alpha-APK-Archive (PR D-003, 25.10.2026)
+## Chat D – APK-ZIP-Härtung (25.10.2026, PR #183)
 
-Die finale Alpha-Release-Prüfung lehnt nun mehrdeutige doppelte ZIP-Member, absolute/unsichere ZIP-Pfade und symbolische Links ausdrücklich ab. Vier neue positive und negative Regressionstests ergänzen `scripts/tests/test_prepare_alpha_release.py`. Das Arbeitspaket verändert keine Spielstände, SRD-Spielmechanik oder Android-App-Version. Die CI auf dem neuen Branch ist **noch nicht vollständig abgenommen**. [Persönlicher Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+Nach den erfolgreich geprüften Integrationen von [PR #177](https://github.com/ManuEtt/Dnd/pull/177) und [PR #182](https://github.com/ManuEtt/Dnd/pull/182) wird die Alpha-Release-Prüfung mit [PR #183](https://github.com/ManuEtt/Dnd/pull/183) gegen mehrdeutige doppelte ZIP-Member, unsichere Eintragspfade und symbolische Links abgesichert. Vier neue Regressionstests prüfen auch erlaubte ZIP-Verzeichnisse. **Finale CI auf dem neu mit Main synchronisierten Commit ausstehend**. Keine SQLite-/JSON-Migration, keine Änderung an App-Code, Regelmechanik oder Build-Version. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
+## Qualitätssicherung – Chat D: rekursiver Story-/Regelimportprüfer (25.10.2026)
+
+Nach dem vollständig getesteten und regulär integrierten [Chat-D-PR #177](https://github.com/ManuEtt/Dnd/pull/177) ergänzt das neue [Paket D-002](docs/parallel/CHAT_D_CHECKPOINT.md) den Architekturprüfer: Dart-Unterordner von `app/lib/story/` und `app/lib/domain/` werden rekursiv geprüft; relative `../`- und `./`-Importvarianten werden vor dem Berechtigungscheck normalisiert. Sechs neue positive/negative Testfälle und sechs bisherige Grenztests wurden **in einer isolierten Python-Projektstruktur** gemeinsam ausgeführt (**12 bestanden**); die vollständige GitHub-CI und neue APKs sind erst nach Abschluss der Läufe auf dem finalen D-002-Commit belegt. Keine Änderung an SRD-Spielregeln, SQLite, JSON oder der App-Version.
 
 ## Qualitätssicherung – Chat D (PR #177, 25.10.2026)
 
