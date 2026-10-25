@@ -65,7 +65,18 @@ class FantasyAdventureStatusHud extends StatelessWidget {
           const SizedBox(height: 9),
           LayoutBuilder(
             builder: (context, constraints) {
-              final columns = constraints.maxWidth >= 380 ? 4 : 2;
+              // At high Android text scale, give the metrics enough width to
+              // retain their actual type size rather than shrinking them.
+              var columns = constraints.maxWidth >= 380 ? 4 : 2;
+              if (MediaQuery.textScalerOf(context).scale(1) >= 1.8) {
+                if (constraints.maxWidth < 500) {
+                  columns = 1;
+                } else if (constraints.maxWidth < 800) {
+                  columns = 2;
+                } else {
+                  columns = 4;
+                }
+              }
               final tileWidth =
                   (constraints.maxWidth - 8 * (columns - 1)) / columns;
               return Wrap(
@@ -75,7 +86,12 @@ class FantasyAdventureStatusHud extends StatelessWidget {
                   SizedBox(
                     width: tileWidth,
                     child: _StatusTile(
+                      key: const ValueKey('adventure-stat-hp'),
                       label: 'TP',
+                      semanticName: 'Trefferpunkte',
+                      semanticValue: hpValue == '? / ?'
+                          ? null
+                          : '${hero.hitPoints} von ${hero.maxHitPoints}',
                       value: hpValue,
                       icon: Icons.favorite_outline,
                       color: FantasyPalette.danger,
@@ -84,7 +100,9 @@ class FantasyAdventureStatusHud extends StatelessWidget {
                   SizedBox(
                     width: tileWidth,
                     child: _StatusTile(
+                      key: const ValueKey('adventure-stat-ac'),
                       label: 'RK',
+                      semanticName: 'Rüstungsklasse',
                       value: hero.armorClass?.toString() ?? '?',
                       icon: Icons.shield_outlined,
                       color: FantasyPalette.gold,
@@ -93,7 +111,9 @@ class FantasyAdventureStatusHud extends StatelessWidget {
                   SizedBox(
                     width: tileWidth,
                     child: _StatusTile(
+                      key: const ValueKey('adventure-stat-speed'),
                       label: 'Tempo',
+                      semanticName: 'Bewegung',
                       value: speedText,
                       icon: Icons.directions_run_outlined,
                       color: FantasyPalette.blue,
@@ -102,7 +122,9 @@ class FantasyAdventureStatusHud extends StatelessWidget {
                   SizedBox(
                     width: tileWidth,
                     child: _StatusTile(
+                      key: const ValueKey('adventure-stat-xp'),
                       label: 'EP',
+                      semanticName: 'Erfahrungspunkte',
                       value: hero.experience == null
                           ? '?'
                           : '${hero.experience}',
@@ -117,9 +139,9 @@ class FantasyAdventureStatusHud extends StatelessWidget {
           if (hpRatio != null) ...[
             const SizedBox(height: 9),
             Semantics(
-              label:
-                  'Trefferpunkte: ${hero.hitPoints} von ${hero.maxHitPoints}',
-              child: _MeterTrack(
+              label: 'Trefferpunkte-Fortschritt: ${(hpRatio * 100).round()} Prozent',
+              child: ExcludeSemantics(
+                child: _MeterTrack(
                 value: hpRatio,
                 height: 6,
                 color: hpRatio > .5
@@ -127,18 +149,22 @@ class FantasyAdventureStatusHud extends StatelessWidget {
                     : hpRatio > .2
                     ? FantasyPalette.gold
                     : FantasyPalette.danger,
+                ),
               ),
             ),
           ],
           if (experienceRatio != null) ...[
             const SizedBox(height: 7),
             Semantics(
-              label: 'Erfahrungsfortschritt',
-              child: _MeterTrack(
+              label:
+                  'Erfahrungsfortschritt: ${(experienceRatio * 100).round()} Prozent',
+              child: ExcludeSemantics(
+                child: _MeterTrack(
                 key: const ValueKey('adventure-xp-progress'),
                 value: experienceRatio,
                 height: 4,
                 color: FantasyPalette.blue,
+                ),
               ),
             ),
           ],
@@ -183,15 +209,24 @@ class _StatusTile extends StatelessWidget {
     required this.value,
     required this.icon,
     required this.color,
+    required this.semanticName,
+    this.semanticValue,
   });
 
   final String label;
   final String value;
   final IconData icon;
   final Color color;
+  final String semanticName;
+  final String? semanticValue;
 
   @override
-  Widget build(BuildContext context) => DecoratedBox(
+  Widget build(BuildContext context) => Semantics(
+    container: true,
+    excludeSemantics: true,
+    label:
+        '$semanticName: ${semanticValue ?? (value.contains('?') ? 'nicht bestätigt' : value)}',
+    child: DecoratedBox(
     decoration: BoxDecoration(
       color: FantasyPalette.night.withValues(alpha: .85),
       border: Border.all(color: color.withValues(alpha: .32)),
@@ -220,21 +255,20 @@ class _StatusTile extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 3),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
+          Text(
               value,
-              maxLines: 1,
+              textAlign: TextAlign.center,
+              softWrap: true,
               style: const TextStyle(
                 fontSize: 16,
                 color: FantasyPalette.ivory,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'serif',
               ),
-            ),
           ),
         ],
       ),
+    ),
     ),
   );
 }
