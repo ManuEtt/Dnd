@@ -13,6 +13,19 @@
 
 ---
 
+**Nachgewiesene CI-Abnahme (historischer, vollständig bestandener Head):** [Actions #40222374831](https://github.com/ManuEtt/Dnd/actions/runs/40222374831) auf `91d007120e3a1a7b4beea9e91a7e8cffb2d831d8`, `completed/success`. Alle HUD-Regressionen, Flutter-Gesamtsuite, Backend, Python, Architektur/SRD, Android-Build und Artefakterzeugung bestanden. Hauptbranch wurde zwischenzeitlich durch Chat-D-PR #186 auf `af70a48c84d83c133ced4200be04ca81a91abf1b` erhöht; aktuelle gemeinsame CI für den neu synchronisierten Dokumentationsstand ist noch nicht abgenommen. Reales TalkBack und produktive Signierung nicht getestet.
+
+# Chat D D-004 – Gradle-Wrapper-JAR-Sicherheit (25.10.2026)
+
+- **Basis:** `main` `713b8cc2831f9d8039ef4e6ebf37c10682aec675` mit bereits integriertem D-003-PR #183; D-004-Branch `fix/chat-d/gradle-wrapper-jar-safety-20261025`.
+- **Implementiert:** `scripts/verify_project.py` rejectiert mehrdeutige doppelte ZIP-Namen, unsichere Pfadvarianten und ZIP-Symlinks vor dem Gradle-Start; vier zusätzliche positive/negative Tests.
+- **Status:** Frühere CI auf `c7f2df12a9df474e6204ad1de4011f7c5b6e3e7f` belegt **nicht** den neuen Synchronisations-Commit. Vollständige Actions-Abnahme und Android-Artefakte des neuen Standes sind noch offen.
+- **Keine Migration:** SQLite/JSON, App-Version und bestehende Spielmechanik unverändert.
+- **Nächster Schritt:** finale CI prüfen, gegen aktuellen `main` konfliktfrei abgleichen, erst danach Zusammenführung freigeben.
+- **Checkpoint:** [CHAT_D_CHECKPOINT.md](parallel/CHAT_D_CHECKPOINT.md).
+
+---
+
 # Chat D – PR #183 APK-Archivschutz nach Integration #182
 
 - **Neuer Main-HEAD:** `45bea9c2a897275583bdbe32ed50afde5d0a76b0`. Die beiden Chat-D-PRs #177 und #182 sind inzwischen integriert; dieser Branch übernimmt ihre technischen Dateien und Statusdokumentation unverändert.

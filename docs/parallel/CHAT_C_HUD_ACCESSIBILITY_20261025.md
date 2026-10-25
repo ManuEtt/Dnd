@@ -2,6 +2,7 @@
 
 **Datum:** 25.10.2026 (Europe/Berlin)  
 **Ausgangs-main:** `97a06118f17d71cc77be2cb15a2fc9a53db20ee0`  
+**Neuester Main-Abgleich:** `af70a48c84d83c133ced4200be04ca81a91abf1b` (Chat-D-PR #186; ohne Überschreiben anderer Module)  
 **Letzter nachgezogener main:** `713b8cc2831f9d8039ef4e6ebf37c10682aec675` (enthält Chat D PR #183 mit APK-ZIP-Validierung)  
 **Vorheriger Main-Abgleich:** `45bea9c2a897275583bdbe32ed50afde5d0a76b0`  
 **Branch:** `feat/chat-c/accessible-status-hud-20261025`  
@@ -50,3 +51,9 @@ Keine Datenmigration, keine SRD-Änderung, keine Persistenzänderung. `0.8.40+90
 ## NÄCHSTER SCHRITT
 
 Eigenständige Questboard-Barrierefreiheitsprüfung für 320 dp/200 %: Labels sollen ohne Abschneiden lesbar und für Screenreader vollständig sein, positiver und negativer Widgettest, keine Quest-/Speichermutation.
+
+## Erfolgreiche Abnahme und erneute Integration
+
+- **Geprüfter HUD-/Main-Abgleich:** `91d007120e3a1a7b4beea9e91a7e8cffb2d831d8` – [GitHub Actions #40222374831](https://github.com/ManuEtt/Dnd/actions/runs/40222374831) `completed/success`, einschließlich aller drei HUD-Regressionstests, Flutter-Gesamtsuite, Python-/Backend-Prüfungen, nativer Android-Tests, Debug-APK, kleiner Alpha-APKs und Quell-Checkpoint.
+- **Neue Main-Integration:** Chat-D-PR #186 bis `af70a48c84d83c133ced4200be04ca81a91abf1b` übernommen; nur README/Checkpoint dokumentationsseitig kombiniert. CI auf dem dadurch neu entstandenen Merge-Commit getrennt kontrollieren.
+- **Nicht getestet:** reales Smartphone mit TalkBack, reguläre Play-Store-Signierung/Veröffentlichung.

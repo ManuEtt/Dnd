@@ -6,6 +6,12 @@ Der unabhängige Branch `feat/chat-c/accessible-status-hud-20261025` verbessert 
 
 **Verifikation:** Architektur-/SRD-Gates, Python-/Backend-Prüfungen, Dart-Formatierung und Flutter-Analyse wurden in der ersten CI nach Formatkorrektur bereits erfolgreich geprüft; die vollständige Flutter-Testsuite und der Android-APK-Build benötigen die finale Branch-CI. Keine Spielzustands-, JSON-, SQLite-, KI- oder Regeländerung, keine neue App-Version. Andere offene PRs (#178–#184) bleiben unberührt; README-/Checkpoint-Notizen sind bei Integration durch Chat D bewusst zu konsolidieren. [Detail-Checkpoint](docs/parallel/CHAT_C_HUD_ACCESSIBILITY_20261025.md).
 
+**Abnahme:** [GitHub Actions #40222374831](https://github.com/ManuEtt/Dnd/actions/runs/40222374831) auf Commit `91d007120e3a1a7b4beea9e91a7e8cffb2d831d8`: **completed/success** – inkl. der drei HUD-Widgettests, vollständigem Flutter-Testlauf, Flutter-Analyse, Backend und Android-Debug-/Alpha-APKs. Nach diesem erfolgreichen Lauf wurde zusätzlich Chat D über PR #186 nach `main` integriert. Die neue gemeinsame CI nach diesem Dokumentations-Merge wird getrennt geprüft. Realgerät und TalkBack nicht geprüft.
+
+## Qualitätspaket Chat D D-004 – Gradle-Wrapper-JAR-Validierung
+
+Nach der vollständigen Integration von [PR #183](https://github.com/ManuEtt/Dnd/pull/183) ergänzt [PR #186](https://github.com/ManuEtt/Dnd/pull/186) den Projektprüfer um die frühe Zurückweisung doppelter ZIP-Dateinamen, Pfad-Traversal/absoluter Namen und symbolischer Einträge im Gradle-Wrapper-JAR. Vier neue Python-Regressionen erfassen Positiv- und Negativfälle. Die vollständige GitHub-CI des mit `main` synchronisierten D-004-Commits bleibt bis zum Abschluss gesondert zu prüfen. Keine Spielstands-, SQLite-/JSON-, UI- oder SRD-Regeländerung. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
 ## Chat D – APK-ZIP-Härtung (25.10.2026, PR #183)
 
 Nach den erfolgreich geprüften Integrationen von [PR #177](https://github.com/ManuEtt/Dnd/pull/177) und [PR #182](https://github.com/ManuEtt/Dnd/pull/182) wird die Alpha-Release-Prüfung mit [PR #183](https://github.com/ManuEtt/Dnd/pull/183) gegen mehrdeutige doppelte ZIP-Member, unsichere Eintragspfade und symbolische Links abgesichert. Vier neue Regressionstests prüfen auch erlaubte ZIP-Verzeichnisse. **Finale CI auf dem neu mit Main synchronisierten Commit ausstehend**. Keine SQLite-/JSON-Migration, keine Änderung an App-Code, Regelmechanik oder Build-Version. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
