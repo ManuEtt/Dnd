@@ -1,3 +1,11 @@
+## 25.10.2026 – Ergänzender lokaler Story-Endzustandschutz (PR #165)
+
+**IMPLEMENTIERT:** `AiStoryStep.fromJson` lehnt KI-erzeugte Rücksetzungen eines `resolved`- oder `abandoned`-Storystrangs auf `open` oder den anderen Terminalstatus ab; rein narrative Notizen und ausdrücklich manuelles Wiederöffnen bleiben möglich. Die bestehende Validierung vor dem tatsächlichen Anwenden verhindert auch Stale-Reply-Rücksetzungen. Drei neue Flutter-Regressionen inklusive JSON-/Event-Checkpoint und Regel-/Heldeninvarianz. **GETESTET:** gestapelte Basis #164 auf Commit `6776bd1` vollständig grün [#40123094457](https://github.com/ManuEtt/Dnd/actions/runs/40123094457). **NICHT GETESTET:** aktueller Code von #165 bis zur eigenen neuen CI, echtes Android-Gerät. **BLOCKIERT:** reale Android-Geräteabnahme/Produktivsignatur. **NOCH NICHT IMPLEMENTIERT:** freie KI-Schreibrechte oder semantischer Geheimnisschutz; SRD weiterhin nur teilweise umgesetzt. Kein SQL-/JSON-/Versionswechsel. Gestapelter [PR #165](https://github.com/ManuEtt/Dnd/pull/165) auf [PR #164](https://github.com/ManuEtt/Dnd/pull/164), `main` unverändert.
+
+**Nächster Schritt:** neue PR-#165-CI vollständig prüfen, nach Grün Review und später nach Integration #164 gegen main neu abnehmen. [Beleg](docs/STORY_LOCAL_TERMINAL_GUARD_20261025.md) · [Checkpoint](docs/CODEX_CHECKPOINT.md).
+
+---
+
 ## 24.10.2026 – Integrationsstand der fünf offenen PRs #159–#163
 
 **IMPLEMENTIERT im Integrationsbranch:** alle jeweils unabhängig abgenommenen Produktänderungen (Sending W100, Schurken-Nebenhandbestätigung, Story-Endstatus, Rate-Limiter-Kapazität, wörtliche Geheimnisprüfung) und Regressionstests in einem gemeinsamen Codebaum; parallele Dateien der eigentlichen Features überschneiden sich nicht. Die originalen Detailberichte der fünf PRs stehen direkt unter diesem Eintrag und werden nicht verworfen. Die App-Version 0.8.38+88, SQLite 2 und Export-JSON 1 bleiben unverändert.

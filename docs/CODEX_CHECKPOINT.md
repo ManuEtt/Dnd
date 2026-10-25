@@ -1,5 +1,40 @@
 # CODEX-CHECKPOINT – Würfelraunen
 
+## Aktueller Arbeitszyklus 25.10.2026 – lokaler Story-Endzustandschutz, PR #165
+
+**Live-Abgleich:** `main=b60ffe7ff1aae502ea927cb77153b988be33e397` und PRs #159–#164 offen. Der konsolidierte [PR #164](https://github.com/ManuEtt/Dnd/pull/164) steht auf Commit `6776bd1bdfef648431da8b20780053e0860d998d`, [GitHub-CI #40123094457](https://github.com/ManuEtt/Dnd/actions/runs/40123094457) vollständig erfolgreich: 100 Python-, 38 Backend- und 1516 Flutter-Tests, Android Debug und native Tests grün. **#164 ist reviewbereit, aber nicht gemergt.**
+
+**Eigener Branch:** `fix/local-story-terminal-thread-guard-20261025`, als **Stacked PR [#165](https://github.com/ManuEtt/Dnd/pull/165)** direkt auf dem bereits geprüften Integrationsbranch, ohne #164/`main` zu überschreiben. App `0.8.38+88`, SQLite 2, Export-JSON 1.
+
+### IMPLEMENTIERT
+
+`app/lib/story/ai_story.dart::AiStoryStep.fromJson` prüft neu gegen die aktuell bestätigten Threadstatus der lokalen Kampagne: `resolved` und `abandoned` dürfen von einem generativen Vorschlag nicht wieder auf `open` oder auf den jeweils anderen Terminalstatus gesetzt werden. Eine rein narrative Notiz ohne Statuswechsel bleibt möglich; explizites manuelles Öffnen via `saveStoryThread` bleibt autoritativ. Beim `applyAiStoryStep` verhindert die bestehende zweite lokale Validierung die Übernahme einer zwischenzeitlich veralteten Antwort.
+
+Drei neue Domain-/JSON-/Eventregressionen in `app/test/ai_story_test.dart` prüfen beide Terminalzustände, gespeicherte Altformate, freiwilliges Wiederöffnen und Stale-Antwort ohne Mutation. Dokumentiert in `docs/STORY_LOCAL_TERMINAL_GUARD_20261025.md`. Backend selbst, KI-Zugang, SRD-Regelautorität und Spielstandsformat unverändert.
+
+### GETESTET
+
+**Basis #164:** [CI #40123094457](https://github.com/ManuEtt/Dnd/actions/runs/40123094457) grün, aber für **anderen HEAD**. **Neue #165-CI** noch zu verifizieren: [Checks](https://github.com/ManuEtt/Dnd/pull/165/checks). Neue Code- und Testdateien auf eigenem GitHub-Branch committet; keine unbelegte Erfolgsmeldung.
+
+### NICHT GETESTET
+
+Vollständiger neuer GitHub-Actions-Lauf auf letztem #165-HEAD, echtes Android-Gerät, Upgrade eines persönlichen Spielstands und produktive Signierung. Die neue lokale Ablehnung ist keine semantische Plotauswertung.
+
+### BLOCKIERT
+
+Kein reales Testgerät oder produktiver Signierschlüssel; Flutter/Dart lokal nicht installiert. GitHub Actions verfügbar.
+
+### NOCH NICHT IMPLEMENTIERT
+
+Vollständige SRD-5.2.1-Regelabdeckung, NPC-basierte allgemeine Positionsautomatik, semantischer Plot-Geheimnisschutz, produktiver Mehrspielerbetrieb. Keine automatische Integration nach main.
+
+### NÄCHSTER KONKRETER SCHRITT
+
+Neuen finalen GitHub-CI-Lauf für #165 vollständig prüfen (Python, Backend, Dart-Format, Flutter-Analyse/Vollsuite, Android-Debug, Gradle, Alpha). Falls rot, konkrete Fehler korrigieren; erst bei vollem Grün zur Review stellen. Danach zuerst #164 mit Freigabe in `main` integrieren und #165 **neu gegen dann aktuelles main ausrichten** und testen. Alte PRs nicht doppelt mergen.
+
+---
+
+
 ## Aktuelle Integrationsübergabe 24.10.2026 – PR #164
 
 **Live-Basis:** `main=b60ffe7ff1aae502ea927cb77153b988be33e397` bei Beginn, App `0.8.38+88`, SQLite 2, Export-JSON 1. **Arbeitsbranch:** `integration/approved-pr159-163-20261024`, eigener Integrations-[PR #164](https://github.com/ManuEtt/Dnd/pull/164). Original-PRs [#159](https://github.com/ManuEtt/Dnd/pull/159), [#160](https://github.com/ManuEtt/Dnd/pull/160), [#161](https://github.com/ManuEtt/Dnd/pull/161), [#162](https://github.com/ManuEtt/Dnd/pull/162) und [#163](https://github.com/ManuEtt/Dnd/pull/163) bei Erstabgleich alle offen und reviewbereit, jeweils konfliktfrei gegenüber bisherigem main. Kein Commit auf main, kein Force-Push, keine Löschung anderer Branches.

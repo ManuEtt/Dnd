@@ -2,6 +2,14 @@
 
 Deutschsprachige Android-Alpha für Soloabenteuer, SRD-geprüfte Teilsysteme, regelgeprüfte Kämpfe und lokale Kampagnen mit SQLite. Flutter-/Dart-App in `app/`, optionaler Fastify-/TypeScript-Erzähler in `backend/`. **Das vollständige D&D-SRD-5.2.1-Regelwerk ist weiterhin nicht implementiert.**
 
+## Weiterentwicklung 25.10.2026: lokal gesicherte Story-Endzustände
+
+**Neu in [PR #165](https://github.com/ManuEtt/Dnd/pull/165):** Der Android-Story-Validator verbietet nun ebenfalls, dass ein generativer Erzähler einen bereits abgeschlossenen (`resolved`) oder aufgegebenen (`abandoned`) Handlungsstrang unbemerkt wieder öffnet oder anders abschließt. Positive manuelle Wiederöffnung im vorhandenen Editor bleibt zulässig; vor dem Anwenden werden sogar früher vorbereitete KI-Antworten erneut geprüft. Neue Domain-/JSON-/Eventregressionen in `app/test/ai_story_test.dart`. Kein Schema- oder Versionswechsel.
+
+**Branchmodell:** PR #165 ist auf dem vollständig grünen, aber **noch nicht nach main gemergten** [Integrations-PR #164](https://github.com/ManuEtt/Dnd/pull/164) aufgebaut. Die **neue CI #165 muss separat grünes Ergebnis liefern**; der erfolgreiche Basislauf [#40123094457](https://github.com/ManuEtt/Dnd/actions/runs/40123094457) beweist nur die ältere Basis. [Technischer Nachweis](docs/STORY_LOCAL_TERMINAL_GUARD_20261025.md) · [Checkpoint](docs/CODEX_CHECKPOINT.md).
+
+---
+
 ## Aktueller Integrationsvorschlag (24.10.2026)
 
 **Basis:** `main` `b60ffe7`, App-Version **0.8.38+88**, SQLite **2**, Kampagnen-Export-JSON **1**. Der Branch `integration/approved-pr159-163-20261024` bündelt fünf einzeln grün getestete, **noch nicht nach main gemergte** PRs [#159](https://github.com/ManuEtt/Dnd/pull/159)–[#163](https://github.com/ManuEtt/Dnd/pull/163). Der gemeinsame Integrations-PR **#164** erfordert eine **neue vollständige CI auf seinem eigenen Commit** und menschliche Review, bevor Änderungen in `main` übernommen werden. Die originalen PR-Branches bleiben für die Überprüfung erhalten.

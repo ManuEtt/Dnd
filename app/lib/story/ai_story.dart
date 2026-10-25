@@ -124,15 +124,26 @@ class AiStoryStep {
   final AdventureOffer? adventure;
 
   factory AiStoryStep.fromJson(Map<String, dynamic> json, Campaign campaign) {
-    final knownThreads = campaign.storyThreads.map((e) => e.id).toSet();
+    final knownThreads = {
+      for (final thread in campaign.storyThreads) thread.id: thread.status,
+    };
     final knownNpcs = campaign.npcs.map((e) => e.id).toSet();
     final threadUpdates = _items(json['threadUpdates'], 6, (entry) {
       final j = _obj(entry);
       final id = _id(j['id']);
       final status = _text(j['status'], 16);
-      if (!knownThreads.contains(id) ||
+      if (!knownThreads.containsKey(id) ||
           !const ['open', 'resolved', 'abandoned'].contains(status)) {
         throw const FormatException('Unbekannter KI-Handlungsstrang.');
+      }
+      // Confirmed endings belong to the player. A generated reply may
+      // annotate them but must not reopen or reclassify their status.
+      // Explicit edits through saveStoryThread remain authoritative.
+      final previous = knownThreads[id];
+      if (previous != 'open' && status != previous) {
+        throw const FormatException(
+          'Abgeschlossene Handlungsstränge können nur manuell geändert werden.',
+        );
       }
       return AiThreadUpdate(id, status, _text(j['description'], 1000));
     });
@@ -159,7 +170,7 @@ class AiStoryStep {
     _unique(threadUpdates.map((x) => x.id));
     _unique(newThreads.map((x) => x.id));
     _unique(npcUpdates.map((x) => x.id));
-    if (newThreads.any((x) => knownThreads.contains(x.id)) ||
+    if (newThreads.any((x) => knownThreads.containsKey(x.id)) ||
         campaign.storyThreads.length + newThreads.length > 100 ||
         campaign.npcRelationshipNotes.length + npcUpdates.length > 300) {
       throw const FormatException('KI-Handlungsstränge überschneiden sich.');
