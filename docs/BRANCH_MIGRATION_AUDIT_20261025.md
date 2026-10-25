@@ -1,5 +1,18 @@
 # Branch-Migrationsaudit – 25.10.2026
 
+## Abschluss-Nachtrag nach unabhängiger GitHub-CI
+
+- [PR #171](https://github.com/ManuEtt/Dnd/pull/171) wurde **ohne Squash** gemergt. Tatsächlicher `main`-Merge-Commit: `635773db33724f543d61bacde9a9ebe679b9b1e9`. Integrations-HEAD: `255a5a0bdf8dc4915bfd70e808a69862f3d0708a`.
+- Finale Integrations-CI [#40192473811](https://github.com/ManuEtt/Dnd/actions/runs/40192473811) und eigenständige [Main-CI #40193476536](https://github.com/ManuEtt/Dnd/actions/runs/40193476536) jeweils `completed/success` auf ihren exakten Commits, einschließlich Flutter/Backend/Python/Android/APKs/Artefakten.
+- Alle **19/19** in `docs/branch_migration_20261025.json` erfassten SHA-Tags wurden erneut mit tatsächlichen Remote-Tag-Refs verglichen; **19/19** GitHub-Commitvergleiche bestätigen Ancestor-Beziehung zur finalen Main-Historie. Der nachträglich weiterentwickelte Integrationskopf besitzt einen eigenen Archivtag `archive/branch-migration-20261025T075644Z/integration-final-255a5a0`, SHA `255a5a0`.
+- Sechs nach dem Merge noch offene gestapelte Vorgänger-PRs **#165, #166, #167, #168, #169, #172** sind nach Ancestry-Recheck **ohne erneutes Mergen geschlossen**. Ihre Git-Branches und sämtliche Sicherungstags bestehen weiter.
+- **Remote-Branch-Löschung noch nicht erfolgt.** Der GitHub-Connector bietet in dieser Sitzung keinen SHA-gebundenen `delete_ref`-Aufruf; die vorgesehene lokale Bundle-Datei wurde hier nicht unabhängig geprüft. Vor einem späteren Löschlauf Backup-Tags, dann aktuelle Heads und Main-Ancestry erneut verifizieren und per `--force-with-lease`-ähnlicher atomarer Bedingung löschen. **Kein Force-Push und keine Löschung von `main`, neuen oder verschobenen Branches.**
+- App-Version `0.8.39+89`, SQLite 2, Kampagnen-JSON 1. Kein reales Gerät/Upgrade oder produktive Release-Signatur abgenommen.
+
+Die folgenden Abschnitte dokumentieren die **ursprünglichen Prüfbedingungen vor dem Merge** und bleiben als historische Audit-Spur erhalten.
+
+---
+
 Ausgangs-Main `b60ffe7ff1aae502ea927cb77153b988be33e397`; Nutzer beauftragt Integration, Fehlerbehebung und anschließende Löschung alter GitHub-Branches. [PR #171](https://github.com/ManuEtt/Dnd/pull/171), Integrationscode `cd724629c79a169ff1a078517031a33cf73ae130`. **Main-Übernahme und Branchbereinigung noch ausstehend.**
 
 ## Sicherung und Herkunft

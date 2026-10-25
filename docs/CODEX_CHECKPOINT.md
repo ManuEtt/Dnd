@@ -1,3 +1,18 @@
+# CODEX-CHECKPOINT – Live-Nachtrag nach Branch-Merge (25.10.2026)
+
+**Geprüfter Stand:** `main=635773db33724f543d61bacde9a9ebe679b9b1e9` nach regulärem GitHub-Merge [PR #171](https://github.com/ManuEtt/Dnd/pull/171), Integrations-HEAD `255a5a0bdf8dc4915bfd70e808a69862f3d0708a`. App **0.8.39+89**, SQLite 2, Kampagnen-JSON 1 unverändert. Nur ein separater Dokumentationsbranch wird bearbeitet, `main` nicht erneut direkt verändert.
+
+- **IMPLEMENTIERT:** Alle im untenstehenden Migrationscheckpoint beschriebenen Feature- und Sicherheitsänderungen auf `main` integriert, ohne Squash, historische Branch-SHAs behalten.
+- **GETESTET:** [PR-CI #40192473811](https://github.com/ManuEtt/Dnd/actions/runs/40192473811) für exakt `255a5a0`: `completed/success` mit Python, Backend, Flutter, Android-/APK- und Artefaktschritten. Unabhängig 19/19 verzeichnete Archive-Tag-Refs und GitHub-Ancestry gegen Integrations-HEAD positiv geprüft; sechs nach dem Merge als enthalten erkannte gestapelte PRs mit Heads, die Vorfahren von `main` sind.
+- **GETESTET (Main):** Auch die eigenständige [Main-CI #40193476536](https://github.com/ManuEtt/Dnd/actions/runs/40193476536) auf exakt `635773db33724f543d61bacde9a9ebe679b9b1e9` ist `completed/success`, einschließlich Python/Backend/Flutter, Debug-APK, nativen Tests, ARM-/Alpha-Paket und Quell-ZIP-Artefakten.
+- **NICHT GETESTET:** Reales Android-Gerät, Upgrade mit historischen Gerätespielständen, produktive Signierung und lokales Bundle erneut in dieser Umgebung. Kein zusätzlicher ZIP-/APK-Digest vorgetäuscht.
+- **BLOCKIERT:** Physische Geräteabnahme und GitHub-Branch-Löschung über die aktuell verfügbare Connector-Schnittstelle (kein sicherer `delete_ref`-Endpunkt). Lokale Git-Bundle-Prüfung aus dokumentiertem Fremd-Arbeitsverzeichnis wurde hier nicht unabhängig wiederholt. Archivtags bleiben bestehen.
+- **NOCH NICHT IMPLEMENTIERT:** Die abschließende Remote-Branchlöschung erfordert einen SHA-gebundenen Ref-Löschzugriff; die aktuell verfügbare GitHub-Connector-Schnittstelle bietet diesen nicht. Vollständige SRD-Automatik und produktive Gerätefreigabe bleiben offen.
+- **PR-Bereinigung:** Nach grüner Main-CI und Prüfung ihrer Head-SHAs wurden #165, #166, #167, #168, #169 und #172 ohne Doppel-Merge geschlossen. Nur Dokumentations-PR #173 ist noch offen.
+- **Nächster konkreter Schritt:** Die verbleibenden, bereits nach Main migrierten Remote-Branches erst über einen passenden GitHub-Ref-Löschzugriff oder geprüfte lokale Git-CLI mit erwarteter SHA-Lease löschen. Vor jedem Löschen Branch-SHA, zugehörigen unveränderten Archivtag und Main-Abstammung erneut prüfen; `main` und unbekannte/weiterentwickelte Heads erhalten. Danach Löschprotokoll und README aktualisieren. Bis dahin keine Branchlöschung als erledigt melden.
+
+---
+
 # CODEX-CHECKPOINT – Branch-Migration
 
 Stand **2026-10-25T12:16:00+00:00**. Nutzerauftrag: alle GitHub-Branches migrieren, Fehler beheben und alte Branches löschen. Die ausdrückliche Freigabe umfasst geprüfte Main-Integration und anschließende sichere Bereinigung.
