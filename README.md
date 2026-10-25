@@ -2,6 +2,14 @@
 
 Deutschsprachige Android-Alpha für Soloabenteuer und regelgeprüfte Kampagnen. Die vollständige Umsetzung des SRD 5.2.1 bleibt in Arbeit.
 
+## Nachtrag: GitHub-Migration nach `main` (25.10.2026)
+
+**PR #171 wurde regulär (ohne Squash) nach `main` gemergt:** [Merge-Commit `635773db33724f543d61bacde9a9ebe679b9b1e9`](https://github.com/ManuEtt/Dnd/commit/635773db33724f543d61bacde9a9ebe679b9b1e9). Version **0.8.39+89**, SQLite 2 und Kampagnen-JSON 1 unverändert. Kombinierte finale [PR-CI #40192473811](https://github.com/ManuEtt/Dnd/actions/runs/40192473811) auf `255a5a0` **erfolgreich**. Die eigenständige [Main-CI #40193476536](https://github.com/ManuEtt/Dnd/actions/runs/40193476536) wurde nach dem Merge gestartet; ihr Abschluss ist gesondert zu prüfen.
+
+Unabhängiger GitHub-Abgleich: **19/19** Migrations-Archivtags zeigen auf ihre protokollierten Original-SHAs; **19/19** Originalköpfe sind Vorfahren von `255a5a0`. Der finale Integrationskopf besitzt einen zusätzlichen [Archivtag](https://github.com/ManuEtt/Dnd/tree/archive/branch-migration-20261025T075644Z/integration-final-255a5a0). Die lokale Bundle-Datei wurde in dieser Sitzung nicht erneut geöffnet.
+
+Sechs gestapelte Vorgänger-PRs blieben unmittelbar nach dem Merge offen, obwohl deren Head-Commits nachweislich in `main` enthalten sind. Eine Schließung erfolgt nur nach erfolgreicher Main-CI; **remote Branches wurden nicht gelöscht**. Weitere Schritte und Vorbehalte: [aktueller Checkpoint](docs/CODEX_CHECKPOINT.md).
+
 ## Aktueller Stand und autonome Fortsetzung (25.10.2026)
 
 **Version 0.8.39+89 – geprüfter Integrationsstand aller 19 erfassten GitHub-Branches.** [PR #171](https://github.com/ManuEtt/Dnd/pull/171) vereinigt ihre Änderungen auf `integration/all-branches-20261025`; Funktionscommit `cd724629c79a169ff1a078517031a33cf73ae130`. Ausgangs-Main: `b60ffe7ff1aae502ea927cb77153b988be33e397`. Main-Übernahme, Main-CI und abschließende Branchlöschung sind noch ausstehende Schritte dieses Auftrags.
