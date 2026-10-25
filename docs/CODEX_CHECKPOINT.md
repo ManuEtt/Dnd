@@ -1,3 +1,15 @@
+# Chat A – Ritualvorprüfung (25.10.2026)
+
+- **IMPLEMENTIERT:** Reine SRD-5.2.1-Vorprüfung in `srd_ritual_casting_rules.dart`: vorbereitetes Ritual, eigene Klasse/Grad, 10 Minuten Zusatzzeit, Material-/Komponentenbestätigung, zustandsfreie Ablehnung ohne Slotverbrauch und veralteter Snapshot. Der Regelregistereintrag bleibt nur `partial`.
+- **GETESTET:** Testfälle geschrieben, CI auf finalem PR-HEAD noch nicht bestätigt.
+- **NICHT GETESTET:** Android-Gerät, echte Casting-/Zeit-/Materialaktion und persistierte Wiederaufnahme.
+- **BLOCKIERT:** finale GitHub-CI, nachgelagerte Engine/Controller-Integration und Abstimmung der parallelen PRs.
+- **NOCH NICHT IMPLEMENTIERT:** Ritual wirklich ausführen, Wirkungen, Zeit oder Slots buchen.
+- **NÄCHSTER SCHRITT:** vollständige grüne PR-CI abnehmen; danach einen ritualisierten Casting-Lifecycle mit Unterbrechung, idempotenter Journalbuchung, Zeit und Material im nächsten isolierten Paket ausarbeiten.
+- [Details](parallel/CHAT_A_RITUAL_CASTING_20261025.md) · [Regelquelle](SRD_RITUAL_CASTING_PREFLIGHT_20261025.md).
+
+---
+
 # Chat D D-004 – Gradle-Wrapper-JAR-Sicherheit (25.10.2026)
 
 - **Basis:** `main` `713b8cc2831f9d8039ef4e6ebf37c10682aec675` mit bereits integriertem D-003-PR #183; D-004-Branch `fix/chat-d/gradle-wrapper-jar-safety-20261025`.
