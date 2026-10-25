@@ -1,3 +1,11 @@
+# Chat A – PR #180 mit neuer Main-Basis (25.10.2026)
+
+- **IMPLEMENTIERT:** Bereits geprüfte Dauerklassifikation aus PR #180 unverändert; kein Einfluss auf Zauberzustand oder Speicherformate.
+- **GETESTET:** Vorheriger Head `47fdc427` vollständig grün in [Actions #40218764142](https://github.com/ManuEtt/Dnd/actions/runs/40218764142).
+- **NICHT GETESTET:** Neuer kombinierter Merge-Head mit den aktuellen Chat-D-CI-/Sicherheitskorrekturen; seine vollständige CI steht erneut aus. Reale Android-Geräteabnahme separat offen.
+- **BLOCKIERT:** Review und separate Integration; fremde PRs bleiben unangetastet.
+- **NÄCHSTER SCHRITT:** Neueste CI auf Merge-Head prüfen, danach koordiniert mit Chat D integrieren.
+
 # Ergänzung – Chat A: Dauerklassifikation für Zauber (25.10.2026)
 
 - **Basis:** `main=5c1499a9342449050bb946542659b221ac2653da` zu Beginn, neuester eingearbeiteter Main-Stand `fb788a980b8ee9eb60439c249f3e1f5092a9f188`; Branch `feat/chat-a/spell-duration-classification-20261025`; [PR #180](https://github.com/ManuEtt/Dnd/pull/180).
@@ -8,6 +16,42 @@
 - **BLOCKIERT:** Flutter-/Dart-/Android-SDK lokal nicht verfügbar; PR #176 berührt gemeinsame README/CODEX_CHECKPOINT-Dateien und wird nicht überschrieben. Konsolidierung beim Merge durch Chat D.
 - **NOCH NICHT IMPLEMENTIERT:** Tatsächlicher Spielzeitfortschritt, Ablauf von Zauberzuständen, besondere Einzelzauberbedingungen, amtliche Vollinventur.
 - **NÄCHSTER SCHRITT:** Nach Integration und konfliktfreier Prüfung genau eine konkrete, bestätigte Zeitdauer-Wirkung mit persistiertem Zustandsablauf und Wiederholungs-/Neustart-Tests anbinden.
+
+---
+
+# Chat D – PR #183 APK-Archivschutz nach Integration #182
+
+- **Neuer Main-HEAD:** `45bea9c2a897275583bdbe32ed50afde5d0a76b0`. Die beiden Chat-D-PRs #177 und #182 sind inzwischen integriert; dieser Branch übernimmt ihre technischen Dateien und Statusdokumentation unverändert.
+- **Implementiert:** `scripts/prepare_alpha_release.py` weist doppelte Archivnamen, Traversal-/absolute Pfade, Rückwärtsschrägstriche, Steuerzeichen und ZIP-Symlinks zurück; vier neue positive/negative Regressionen.
+- **GETESTET:** Code/Testdateien über GitHub auf eigenem Branch überprüft. Die ältere PR-183-CI auf `ae0efbe` ist **kein** Abnahmenachweis des neu kombinierten Commits.
+- **NICHT GETESTET:** finale Python-/Flutter-/Backend-/Android-CI auf dem neuen PR-183-HEAD; reales Gerät. Keine Datenmigration.
+- **NÄCHSTER SCHRITT:** exakte neue PR-/Push-CI abnehmen, aktuelle Parallel-PR-Dateien vergleichen, danach nur bei grüner CI und Konfliktfreiheit integrieren.
+- **Vollständiger Status:** [CHAT_D_CHECKPOINT.md](parallel/CHAT_D_CHECKPOINT.md).
+
+---
+
+# Chat D – rekursive Modulgrenzen (25.10.2026, D-002)
+
+- **Integrationsbasis:** `main` = `97a06118f17d71cc77be2cb15a2fc9a53db20ee0` mit bereits integriertem und geprüftem [PR #177](https://github.com/ManuEtt/Dnd/pull/177). D-002-Branch: `fix/chat-d/nested-boundary-scan-20261025`.
+- **IMPLEMENTIERT:** `scripts/check_domain_boundaries.py` durchsucht beide Dart-Domainbereiche rekursiv und normalisiert Importpfade, sodass Unterordner und äquivalente Traversal-Imports die Grenze nicht umgehen. Sechs neue Regressionen.
+- **GETESTET:** 6 neue und 6 bisherige Python-Grenztests in einer isolierten Teststruktur erfolgreich. Die neue D-002-PR-CI bezieht sich auf einen anderen Commit und muss nach dieser Main-Synchronisierung vollständig neu abgenommen werden.
+- **NICHT GETESTET:** Repositoryweite finale Python-/Flutter-/Android-CI und APK auf dem neuen D-002-Kombinationscommit, Realgerät.
+- **BLOCKIERT:** laufende CI; keine lokalen Android-/Flutter-SDKs/kompletter Checkout. Keine Spielstand-/Schemamigration und kein neuer SRD-Fertigstellungsnachweis.
+- **NÄCHSTER SCHRITT:** vollständige finale PR-CI auf dem neuen Commit prüfen und danach separat mergefähig freigeben; parallele PRs ohne überschreibende Dokumentationsupdates behandeln.
+- **Detaillierter Stand:** [Chat-D-Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
+
+---
+
+# Chat D – Qualität und Integration, 25.10.2026 (PR #177)
+
+- **Main-Abgleich:** neuer Main-HEAD `fb788a980b8ee9eb60439c249f3e1f5092a9f188` nach Merge von PR #176; ursprüngliche PR-D-Basis `5c1499a9342449050bb946542659b221ac2653da`.
+- **IMPLEMENTIERT:** zwei verpflichtende Prüfungen im Android-Actions-Workflow und im lokalen `scripts/check.sh`: `scripts/check_domain_boundaries.py` sowie `scripts/srd_coverage.py --json`; dazu vier Konfigurations-Regressionstests einschließlich negativer Fälle.
+- **GEPRÜFT:** die zwei neuen Gates, reguläre Python-Tests, Backend-Tests, Flutter-Analyse und Flutter-Tests sind in [Actions #40217436454](https://github.com/ManuEtt/Dnd/actions/runs/40217436454) auf dem vorherigen Commit `1fdd3c0` erfolgreich durchgelaufen. Das ist noch kein CI-Nachweis des hier neu synchronisierten Commit-Stands.
+- **NICHT GETESTET:** abschließende CI/Android-Builds für den neuen kombinierten Stand, reale Geräteinstallation und Upgrade älterer Spielstände. Keine vollständige SRD-Abdeckung behauptet.
+- **BLOCKIERT:** endgültige GitHub-Actions-Abnahme; Flutter-/Android-SDK lokal hier nicht verfügbar. Nicht freigegebene PRs #178 (Chat C), #179 (Chat B), #180 (Chat A) dürfen nicht ungeprüft zusammengeführt werden.
+- **PERSISTENZ:** keine Änderungen an SQLite- oder JSON-Schema, keine Migration und keine Spielstandsänderung durch dieses CI-Arbeitspaket.
+- **PR:** [#177](https://github.com/ManuEtt/Dnd/pull/177) auf `fix/chat-d/ci-rule-quality-gates-20261025`. Persönliche Details: [CHAT_D_CHECKPOINT.md](parallel/CHAT_D_CHECKPOINT.md).
+- **NÄCHSTER SCHRITT:** CI des **finalen** PR-D-Commits vollständig abnehmen, danach Integration erst mit konfliktfreier Dokumentation und ohne stilles Zusammenführen der fremden PRs.
 
 ---
 

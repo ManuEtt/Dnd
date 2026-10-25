@@ -7,6 +7,22 @@
 **Parallelentwicklungs-Hinweis:** PR #176 bearbeitet Gelegenheitsreaktionen. Ein Konflikt bei README/Checkpoint darf nur nach bewusster Konsolidierung gelöst werden.
 
 
+**CI-Nachtrag:** Vollständige GitHub-CI [#40218764142](https://github.com/ManuEtt/Dnd/actions/runs/40218764142) war auf dem vorherigen PR-Kopf `47fdc427` erfolgreich, einschließlich Android-Builds. Die neue Integration mit dem aktuellen `main` muss erneut geprüft werden; dies ist keine automatische Mergefreigabe.
+
+
+## Chat D – APK-ZIP-Härtung (25.10.2026, PR #183)
+
+Nach den erfolgreich geprüften Integrationen von [PR #177](https://github.com/ManuEtt/Dnd/pull/177) und [PR #182](https://github.com/ManuEtt/Dnd/pull/182) wird die Alpha-Release-Prüfung mit [PR #183](https://github.com/ManuEtt/Dnd/pull/183) gegen mehrdeutige doppelte ZIP-Member, unsichere Eintragspfade und symbolische Links abgesichert. Vier neue Regressionstests prüfen auch erlaubte ZIP-Verzeichnisse. **Finale CI auf dem neu mit Main synchronisierten Commit ausstehend**. Keine SQLite-/JSON-Migration, keine Änderung an App-Code, Regelmechanik oder Build-Version. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
+## Qualitätssicherung – Chat D: rekursiver Story-/Regelimportprüfer (25.10.2026)
+
+Nach dem vollständig getesteten und regulär integrierten [Chat-D-PR #177](https://github.com/ManuEtt/Dnd/pull/177) ergänzt das neue [Paket D-002](docs/parallel/CHAT_D_CHECKPOINT.md) den Architekturprüfer: Dart-Unterordner von `app/lib/story/` und `app/lib/domain/` werden rekursiv geprüft; relative `../`- und `./`-Importvarianten werden vor dem Berechtigungscheck normalisiert. Sechs neue positive/negative Testfälle und sechs bisherige Grenztests wurden **in einer isolierten Python-Projektstruktur** gemeinsam ausgeführt (**12 bestanden**); die vollständige GitHub-CI und neue APKs sind erst nach Abschluss der Läufe auf dem finalen D-002-Commit belegt. Keine Änderung an SRD-Spielregeln, SQLite, JSON oder der App-Version.
+
+## Qualitätssicherung – Chat D (PR #177, 25.10.2026)
+
+[PR #177](https://github.com/ManuEtt/Dnd/pull/177) ergänzt zwei bislang nicht automatisch ausgeführte CI-Gates: `python3 scripts/check_domain_boundaries.py` und `python3 scripts/srd_coverage.py --json`. Beide laufen jetzt in der Android-CI und in `scripts/check.sh` vor den regulären Python-Tests. Der neue Konfigurationstest enthält positive und negative Fälle. Auf dem bisherigen PR-Commit `1fdd3c0` waren Architektur-/SRD-Prüfung, Python-Tests, Backend-Tests sowie Flutter-Analyse und Flutter-Tests erfolgreich; Android-Build und vollständige Release-Abnahme wurden noch nicht als erfolgreich bestätigt. Keine Änderung an SQLite, JSON, Spielregeln oder der App-Version. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
+Dieser PR wurde gegen den inzwischen gemergten Main-Stand von [PR #176](https://github.com/ManuEtt/Dnd/pull/176) erneut abgeglichen; die dort eingeführte gespeicherte Gelegenheitsreaktion bleibt erhalten. PRs #178–#180 anderer Chats bleiben getrennt zur Prüfung offen.
 
 Deutschsprachige Android-Alpha für Soloabenteuer und regelgeprüfte Kampagnen. Das vollständige SRD 5.2.1 bleibt in Arbeit.
 
