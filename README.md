@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – NPC-Chronik gegen fehlende Stammdaten abgesichert (25.10.2026)
+
+Auf dem separaten Branch `fix/chat-c/npc-chronicle-fallback-20261025` behandelt `CampaignMemoryPanel` gespeicherte NPC-Beziehungsnotizen robust, wenn der referenzierte NPC im aktuellen In-Memory-Kampagnenobjekt fehlt. Statt eines `firstWhere`-Absturzes wird „NPC nicht mehr vorhanden“ angezeigt; bestehende Namen, Notizen und der bestätigte Spielzustand bleiben unverändert. Zwei neue Widgettests decken gemischte Referenzen sowie eine vollständig leere NPC-Liste ab. **Tests geschrieben, in dieser Sitzung mangels Flutter/Dart-SDK noch nicht ausgeführt; CI-Auswertung offen.** Keine neue APK und keine JSON-/SQLite-/Regeländerung. Separater [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md). Die parallel offenen Änderungen von PR #176 sind nicht Teil dieses UI-Pakets.
+
 ## Aktuelles Entwicklungsinkrement (2026-10-25T18:11:00+01:00 – Angebots-Revalidierung)
 
 [PR #175](https://github.com/ManuEtt/Dnd/pull/175) auf Branch `fix/opportunity-offer-revalidation-20261025` schützt das in PR #174 eingeführte **rein lesende** Gelegenheitsangriff-Angebot vor stiller Weiterverwendung nach einer Kampagnenrevision oder dem Austausch der bestätigten Bewegungsgeometrie. `SrdOpportunityAttackRules.revalidate` prüft das bisherige Angebot gegen Encounter, Revision, Angriffstyp, Waffenreferenz und alle drei Reichweiten-/Abstandsangaben und führt dann die vollständige bestehende Vorprüfung auf dem aktuellen Zustand erneut aus. Dadurch werden auch zwischenzeitlich verbrauchte Reaktionen oder gewechselte Waffen abgewiesen.
