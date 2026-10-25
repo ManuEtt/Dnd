@@ -1,10 +1,12 @@
-## 25.10.2026 – PR #171 gemergt, eigenständige Main-CI läuft
+## 25.10.2026 – PR #171 und Main-CI erfolgreich, gestapelte PRs bereinigt
 
 - **IMPLEMENTIERT:** Sämtliche Migrations-PR-Änderungen aus #171 mittels regulärem Merge nach `main` überführt, resultierender Commit `635773db33724f543d61bacde9a9ebe679b9b1e9`.
 - **GETESTET:** Finale [PR-CI #40192473811](https://github.com/ManuEtt/Dnd/actions/runs/40192473811) vollständig grün auf `255a5a0`. Alle 19 archivierten SHA-Köpfe und 19 Ancestry-Vergleiche live via GitHub geprüft.
-- **NICHT GETESTET:** Main-CI [#40193476536](https://github.com/ManuEtt/Dnd/actions/runs/40193476536) noch im Lauf, reales Android-Gerät und altes Gerätedaten-Upgrade.
+- **GETESTET (Main):** [CI #40193476536](https://github.com/ManuEtt/Dnd/actions/runs/40193476536) auf `635773db` vollständig erfolgreich, inklusive Flutter/Backend/Python, Debug-APK, nativen Android-Tests, Alpha-APKs und Quellartefakt.
+- **NICHT GETESTET:** Reales Android-Gerät, Upgrade historischer Gerätedaten und produktive Signierung.
 - **BLOCKIERT:** Exakte Remote-Branchlöschung über derzeitigen GitHub-Connector nicht verfügbar; keine ungesicherte Löschung versucht.
-- **NOCH NICHT IMPLEMENTIERT:** Abschließendes Schließen überholter gestapelter PRs nach Main-CI und SHA-Recheck. Vollständiges SRD weiterhin offen.
+- **BEREINIGT:** Gestapelte PRs #165/#166/#167/#168/#169/#172 nach SHA-Recheck als bereits integriert geschlossen; kein Re-Merge und keine Branchlöschung.
+- **NOCH NICHT IMPLEMENTIERT:** Remote-Branchlöschung per SHA-Lease (passende GitHub-Ref-Löschfunktion hier nicht verfügbar). Vollständiges SRD weiterhin offen.
 - **Versionsstand:** 0.8.39+89, SQLite-Schema 2, Kampagnen-JSON 1 unverändert; Details [Checkpoint](docs/CODEX_CHECKPOINT.md).
 
 ---
