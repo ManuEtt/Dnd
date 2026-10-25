@@ -4,16 +4,17 @@ Ausgangs-Main `b60ffe7ff1aae502ea927cb77153b988be33e397`; Nutzer beauftragt Inte
 
 ## Sicherung und Herkunft
 
-19 erfasste Köpfe remote über geprüfte Archivtags unter `archive/branch-migration-20261025T075644Z` und lokal per vollständigem Bundle gesichert. Aktuelles Bundle `Wuerfelraunen_Branches_vor_Migration_20261025_erweitert19_final.bundle`, SHA256 `fb75e843f3146d23044818dc7278487c44f024b2ba25475dbd450999aca299b7`; `git bundle verify` erfolgreich. Frühere Bundles unverändert erhalten. [JSON-Audit](branch_migration_20261025.json) dokumentiert alle exakten Köpfe und Erhaltungsentscheidungen. Alle sind echte Vorfahren des Integrationsstands.
+19 erfasste Köpfe remote über geprüfte Archivtags unter `archive/branch-migration-20261025T075644Z` und lokal per vollständigem Bundle gesichert. Aktuelles Bundle `Wuerfelraunen_Branches_vor_Migration_20261025_19_final_mit_Dokumentation.bundle`, SHA256 `fb75e843f3146d23044818dc7278487c44f024b2ba25475dbd450999aca299b7`; `git bundle verify` erfolgreich. Frühere Bundles unverändert erhalten. [JSON-Audit](branch_migration_20261025.json) dokumentiert alle exakten Köpfe und Erhaltungsentscheidungen. Alle sind echte Vorfahren des Integrationsstands.
 
-Reguläre Merges integrieren die Funktionsstände 164, 165, 166, 169, 170 und den neu veröffentlichten Atomic-Archivbranch. Neun zusätzliche Historien-Merges ändern keinen Inhaltsbaum und beruhen auf diesen Nachweisen:
+Reguläre Merges integrieren die Funktionsstände 164, 165, 166, 169, 170 und den neu veröffentlichten Atomic-Archivbranch. Zehn zusätzliche Historien-Merges ändern keinen Inhaltsbaum und beruhen auf diesen Nachweisen:
 
 - Sending-Journal `b90c21d`: gesamter Git-Baum identisch zu Main-Vorfahr `3b5affd`.
 - Unicode `d73f3cf`: gesamter Git-Baum identisch zu Main-Vorfahr `4c6040c`.
 - Alt-Schurke `d54f554`: nur zehn einzigartige Dokumentänderungen, alle bytegenau archiviert; Laufzeitcode bereits übernommen.
 - PRs 159/161/162/163/167/168: enthaltene Laufzeithunks mittels fokussiertem rückwärtigem Patchcheck nachgewiesen.
+- Späterer Atomic-Kopf `1eb8046`: nur vier einzigartige Statusdateien gegenüber bereits integriertem `a1a8dd9`; komplett historisch archiviert, unveränderter Baum beim Historien-Merge.
 
-38 historische/konfliktbehaftete Dokumentdateien unter [Historie](history/branch_migration_20261025/README.md); beide Seiten aller Statuskonflikte erhalten. Der spätere Testkonflikt zwischen Casefold-Regression und vier Atomic-Tests wurde durch Erhalt sämtlicher fünf Fälle aufgelöst. Keine Laufzeitfunktion durch eine alte Vollkopie ersetzt.
+42 historische/konfliktbehaftete Dokumentdateien unter [Historie](history/branch_migration_20261025/README.md); beide Seiten aller Statuskonflikte erhalten. Der spätere Testkonflikt zwischen Casefold-Regression und vier Atomic-Tests wurde durch Erhalt sämtlicher fünf Fälle aufgelöst. Keine Laufzeitfunktion durch eine alte Vollkopie ersetzt.
 
 ## Fehlerbehebung und Abnahme
 

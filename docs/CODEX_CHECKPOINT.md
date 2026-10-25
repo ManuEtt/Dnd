@@ -7,8 +7,8 @@ Stand **2026-10-25T12:16:00+00:00**. Nutzerauftrag: alle GitHub-Branches migrier
 - Arbeitskopie `/workspace/Dnd-migration-20261025`, Branch `integration/all-branches-20261025`, [PR #171](https://github.com/ManuEtt/Dnd/pull/171).
 - Ausgangs-Main `b60ffe7ff1aae502ea927cb77153b988be33e397`; Funktions-/Integrationscommit `cd724629c79a169ff1a078517031a33cf73ae130`. Version **0.8.39+89**, SQLite **2**, Kampagnen-JSON **1** unverändert.
 - 19 erfasste Remote-Köpfe vor Integration gesichert, remote tags SHA-genau geprüft; alle Köpfe echte Vorfahren. Ursprünglich 13, später vier Sourcebranches plus eigener Integrationscheckpoint und Atomic-Archivbranch hinzugekommen.
-- Sicherung: `Wuerfelraunen_Branches_vor_Migration_20261025_erweitert19_final.bundle`, SHA256 `fb75e843f3146d23044818dc7278487c44f024b2ba25475dbd450999aca299b7`. Unter `/workspace/artifacts/branch-migration-20261025/`; dort auch ältere unveränderte Bundles und Manifeste. Archivtags unter `archive/branch-migration-20261025T075644Z`. Atomic-Zwischenkopf und finaler geprüfter Atomic-Kopf separat erhalten.
-- Reguläre Funktions-Merges, neun nach konkreter Inhaltsprüfung unveränderte Historien-Merges; 38 bytegenau archivierte Dokumente. [JSON-Herkunft](branch_migration_20261025.json), [Audit](BRANCH_MIGRATION_AUDIT_20261025.md).
+- Sicherung: `Wuerfelraunen_Branches_vor_Migration_20261025_19_final_mit_Dokumentation.bundle`, SHA256 `fb75e843f3146d23044818dc7278487c44f024b2ba25475dbd450999aca299b7`. Unter `/workspace/artifacts/branch-migration-20261025/`; dort auch ältere unveränderte Bundles und Manifeste. Archivtags unter `archive/branch-migration-20261025T075644Z`. Atomic-Zwischenkopf und finaler geprüfter Atomic-Kopf separat erhalten.
+- Reguläre Funktions-Merges, zehn nach konkreter Inhaltsprüfung unveränderte Historien-Merges; 42 bytegenau archivierte Dokumente. [JSON-Herkunft](branch_migration_20261025.json), [Audit](BRANCH_MIGRATION_AUDIT_20261025.md).
 
 ## IMPLEMENTIERT
 
@@ -39,3 +39,5 @@ Nach vollständigem Abschluss eigenes SRD-Paket allgemeine Gelegenheitsangriffe;
 `/workspace/artifacts/branch-migration-20261025/`: versionierte Vollprojekt-ZIPs, tatsächlich gegen Basis-Main angewandte Git-Patches, SHA256/Dateimanifeste, Git-Bundles und geprüfte Debug-/ARM64-APKs. Beide lokalen APKs verwenden den lokalen Android-Debugschlüssel, keine Gerätezulassung. Aktuelle Dateinamen nach jeder Paketierung im Artefaktindex nachführen.
 
 Zuerst Git-Status/HEAD, Main, offene PRs und laufende Workflows neu prüfen. Manifest `/workspace/validation/20261025-branch-backup-manifest.json`; Löschwerkzeug `/workspace/validation/cleanup_migrated_branches.py` prüft grüne exakte Main-CI, Inventar, SHA, Archivtag und Ancestry vor SHA-gebundener Löschung. **Noch keine Main-Veröffentlichung oder Branchlöschung erfolgt.** Historische lokale Worktrees und unveröffentlichte Entwürfe nicht entfernen. Keine automatische Fortsetzung außerhalb einer aktiven Sitzung.
+
+Nachtrag: späterer Atomic-Dokumentationskopf `1eb8046` ebenfalls remote gesichert, alle vier einzigartigen Statusdateien bytegenau archiviert und mit unverändertem Inhaltsbaum als Vorfahr aufgenommen. Nun zehn geprüfte Historien-Merges und 42 Archivdateien. App/Backend/Skripte bleiben gegenüber geprüftem Funktionscommit `cd72462` unverändert.

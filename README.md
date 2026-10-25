@@ -10,7 +10,7 @@ Sending-W100-Validierung, Verbündetenbestätigung bei zulässigen Nebenhandangr
 
 **1.552 Flutter-, 106 Python-, 40 Backend- und 12 native Android-Tests bestanden.** Dart-Formatierung: 360 Dateien unverändert; Flutter-Analyse sowie Backend-Typecheck und -Build erfolgreich. Debug-APK und ARM64-Alpha gebaut; Version, ZIP-CRC, ABI und lokale Debug-Signatur geprüft. Flutter-/Backend-Abnahme und APK-Quelle: `6aef90d`; App, Backend und Workflow sind im neueren Integrationscommit bytegleich. Die nachfolgende reine Archivänderung hat alle 106 Python-Tests bestanden. Gemeinsame finale GitHub-CI wird gesondert auf dem finalen PR-Head abgenommen. Echtes Gerät, Altspielstand-Upgrade auf einem Gerät und produktive Signierung sind nicht getestet.
 
-Alle 19 erfassten Köpfe sind echte Vorfahren. Vorherige Branchstände bleiben über remote geprüfte Tags unter `archive/branch-migration-20261025T075644Z` und vollständige, verifizierte Git-Bundles wiederherstellbar. 38 konfliktbehaftete/historische Dokumente sind bytegenau archiviert. SQLite-Version 2 und Kampagnen-JSON-Version 1 bleiben unverändert.
+Alle 19 erfassten Köpfe sind echte Vorfahren. Vorherige Branchstände bleiben über remote geprüfte Tags unter `archive/branch-migration-20261025T075644Z` und vollständige, verifizierte Git-Bundles wiederherstellbar. 42 konfliktbehaftete/historische Dokumente sind bytegenau archiviert. SQLite-Version 2 und Kampagnen-JSON-Version 1 bleiben unverändert.
 
 [Operativer Checkpoint](docs/CODEX_CHECKPOINT.md) · [Migrationsaudit](docs/BRANCH_MIGRATION_AUDIT_20261025.md) · [Herkunft](docs/branch_migration_20261025.json) · [lokale Prüfnachweise](docs/branch_migration_validation_20261025.json). ZIPs, Patches, APKs und Git-Bundles: `/workspace/artifacts/branch-migration-20261025/`.
 
