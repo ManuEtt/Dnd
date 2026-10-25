@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – sichere Alpha-APK-Archive (PR D-003, 25.10.2026)
+
+Die finale Alpha-Release-Prüfung lehnt nun mehrdeutige doppelte ZIP-Member, absolute/unsichere ZIP-Pfade und symbolische Links ausdrücklich ab. Vier neue positive und negative Regressionstests ergänzen `scripts/tests/test_prepare_alpha_release.py`. Das Arbeitspaket verändert keine Spielstände, SRD-Spielmechanik oder Android-App-Version. Die CI auf dem neuen Branch ist **noch nicht vollständig abgenommen**. [Persönlicher Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
 ## Qualitätssicherung – Chat D (PR #177, 25.10.2026)
 
 [PR #177](https://github.com/ManuEtt/Dnd/pull/177) ergänzt zwei bislang nicht automatisch ausgeführte CI-Gates: `python3 scripts/check_domain_boundaries.py` und `python3 scripts/srd_coverage.py --json`. Beide laufen jetzt in der Android-CI und in `scripts/check.sh` vor den regulären Python-Tests. Der neue Konfigurationstest enthält positive und negative Fälle. Auf dem bisherigen PR-Commit `1fdd3c0` waren Architektur-/SRD-Prüfung, Python-Tests, Backend-Tests sowie Flutter-Analyse und Flutter-Tests erfolgreich; Android-Build und vollständige Release-Abnahme wurden noch nicht als erfolgreich bestätigt. Keine Änderung an SQLite, JSON, Spielregeln oder der App-Version. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
