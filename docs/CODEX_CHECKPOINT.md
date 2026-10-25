@@ -1,3 +1,17 @@
+# Chat A – Zauberklassenwerte, 25.10.2026
+
+- **Baseline:** `main=97a06118f17d71cc77be2cb15a2fc9a53db20ee0`; Branch `feat/chat-a/spell-class-stats-20261025` (neues isoliertes Arbeitspaket neben offenem PR #180).
+- **IMPLEMENTIERT:** Rein lesender Klassenvergleich für Zauberangriffsbonus und Zauber-SG einschließlich Mehrklassencharaktere in `app/lib/domain/srd_spell_saving_throw_rules.dart`; acht neue Dart-Testgruppen; die Requirements `RULE-SPELLS-SPELL-ATTACK-ROLLS` und `RULE-SPELLS-SPELL-SAVE-DC` bleiben nur `partial`.
+- **GETESTET:** Noch kein bestätigter finaler PR-CI-Testlauf für dieses neue Paket; frühere grüne Läufe von PR #180 gelten nicht als Nachweis.
+- **NICHT GETESTET:** Neuer Flutter-Testlauf, Dart-Format/Analyse, Backend/Python, APK/Android und Geräteabnahme bis zu einem tatsächlich abgeschlossenen Workflow.
+- **BLOCKIERT:** Flutter-/Dart-/Android-SDK lokal nicht verfügbar; gemeinsame README/Checkpoint-Dateien anderer PRs vor Merge konsolidieren.
+- **NOCH NICHT IMPLEMENTIERT:** Echte Zuordnung des konkreten Zaubers, Angriffswurf/Ziel/Schaden, Inventareffekte, persistente Ausführung.
+- **NÄCHSTER SCHRITT:** Nach Abnahme genau eine bestätigte Zauberangriffsaktion mit klassengeprüftem Modifikator, Ziel und deterministischem W20 in einen eigenen Integrationszyklus überführen.
+
+[Eigener Chat-A-Checkpoint](parallel/CHAT_A_SPELL_STATS_20261025.md) · [fachliche SRD-Dokumentation](SRD_SPELL_CLASS_STATS_20261025.md)
+
+---
+
 # Chat D – Qualität und Integration, 25.10.2026 (PR #177)
 
 - **Main-Abgleich:** neuer Main-HEAD `fb788a980b8ee9eb60439c249f3e1f5092a9f188` nach Merge von PR #176; ursprüngliche PR-D-Basis `5c1499a9342449050bb946542659b221ac2653da`.
