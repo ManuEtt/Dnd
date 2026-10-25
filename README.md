@@ -6,6 +6,10 @@ Der unabhängige Branch `feat/chat-c/accessible-status-hud-20261025` verbessert 
 
 **Verifikation:** Architektur-/SRD-Gates, Python-/Backend-Prüfungen, Dart-Formatierung und Flutter-Analyse wurden in der ersten CI nach Formatkorrektur bereits erfolgreich geprüft; die vollständige Flutter-Testsuite und der Android-APK-Build benötigen die finale Branch-CI. Keine Spielzustands-, JSON-, SQLite-, KI- oder Regeländerung, keine neue App-Version. Andere offene PRs (#178–#184) bleiben unberührt; README-/Checkpoint-Notizen sind bei Integration durch Chat D bewusst zu konsolidieren. [Detail-Checkpoint](docs/parallel/CHAT_C_HUD_ACCESSIBILITY_20261025.md).
 
+## Chat D – APK-ZIP-Härtung (25.10.2026, PR #183)
+
+Nach den erfolgreich geprüften Integrationen von [PR #177](https://github.com/ManuEtt/Dnd/pull/177) und [PR #182](https://github.com/ManuEtt/Dnd/pull/182) wird die Alpha-Release-Prüfung mit [PR #183](https://github.com/ManuEtt/Dnd/pull/183) gegen mehrdeutige doppelte ZIP-Member, unsichere Eintragspfade und symbolische Links abgesichert. Vier neue Regressionstests prüfen auch erlaubte ZIP-Verzeichnisse. **Finale CI auf dem neu mit Main synchronisierten Commit ausstehend**. Keine SQLite-/JSON-Migration, keine Änderung an App-Code, Regelmechanik oder Build-Version. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
 ## Qualitätssicherung – Chat D: rekursiver Story-/Regelimportprüfer (25.10.2026)
 
 Nach dem vollständig getesteten und regulär integrierten [Chat-D-PR #177](https://github.com/ManuEtt/Dnd/pull/177) ergänzt das neue [Paket D-002](docs/parallel/CHAT_D_CHECKPOINT.md) den Architekturprüfer: Dart-Unterordner von `app/lib/story/` und `app/lib/domain/` werden rekursiv geprüft; relative `../`- und `./`-Importvarianten werden vor dem Berechtigungscheck normalisiert. Sechs neue positive/negative Testfälle und sechs bisherige Grenztests wurden **in einer isolierten Python-Projektstruktur** gemeinsam ausgeführt (**12 bestanden**); die vollständige GitHub-CI und neue APKs sind erst nach Abschluss der Läufe auf dem finalen D-002-Commit belegt. Keine Änderung an SRD-Spielregeln, SQLite, JSON oder der App-Version.

@@ -2,9 +2,10 @@
 
 **Datum:** 25.10.2026 (Europe/Berlin)  
 **Ausgangs-main:** `97a06118f17d71cc77be2cb15a2fc9a53db20ee0`  
-**Nachgezogener main:** `45bea9c2a897275583bdbe32ed50afde5d0a76b0` (einschließlich Chat-D-Importprüfungen)  
+**Letzter nachgezogener main:** `713b8cc2831f9d8039ef4e6ebf37c10682aec675` (enthält Chat D PR #183 mit APK-ZIP-Validierung)  
+**Vorheriger Main-Abgleich:** `45bea9c2a897275583bdbe32ed50afde5d0a76b0`  
 **Branch:** `feat/chat-c/accessible-status-hud-20261025`  
-**PR:** wird nach diesem Merge eröffnet (im PR selbst verifizieren).  
+**PR:** [#185](https://github.com/ManuEtt/Dnd/pull/185) (offen).  
 **Code-/Testcommit:** `ada88fa8c11f6c79df13a1872a52755f7a7f90ce` (vor dem Dokumentationsmerge)
 
 ## Problem
@@ -29,6 +30,10 @@
 ## GETESTET
 
 Die erste Actions-CI brach beim Dart-Formatcheck in der neuen Widgettestdatei ab; vorherige Python-, Backend- und Architekturprüfungen waren erfolgreich. Die kanonische Dart-3.9-Formatierung wurde durch einen temporären GitHub-Workflow ermittelt und unverändert übernommen. Der Diagnose-Workflow wurde wieder entfernt. Auf dem formatierten Commit der aktuelle [Workflow #40221062928](https://github.com/ManuEtt/Dnd/actions/runs/40221062928): Python-/Backend-, Architektur-/SRD-, Format- und Analyse-Schritte nachweislich erfolgreich. Der vollständige Abschluss ist getrennt zu prüfen.
+
+## Nachgewiesene Regression und Korrektur
+
+[CI #40221062928](https://github.com/ManuEtt/Dnd/actions/runs/40221062928): 1.585 Flutter-Tests bestanden, drei neue Tests zunächst wegen nicht rechtzeitig geschlossener Semantik-Handles fehlgeschlagen. Codeänderung nicht erforderlich. Im folgenden Lauf #40221632170 bestanden die beiden positiven HUD-Tests; ein negativer Test war wegen doppelter Semantik-Handle-Freigabe noch rot. Diese doppelte Freigabe ist im Commit `410e994a42562071f706785a71b47299a6268e25` beseitigt. Die vollständige CI des nachgezogenen Main-/Dokumentationsstands steht noch aus. Keine falsche Erfolgsbehauptung.
 
 ## NICHT GETESTET
 
