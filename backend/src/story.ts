@@ -98,15 +98,30 @@ export function parseAdventureDraft(raw: unknown): AdventureDraft {
     questDescription: string(o.questDescription, 500) };
 }
 
+/**
+ * Untrusted requests cannot provide two conflicting versions of the same
+ * saved thread or NPC. Validate this before invoking a paid storyteller,
+ * and again when parsing any provider output outside the HTTP endpoint.
+ */
+export function validateStoryTurnContext(input: StoryTurnInput): void {
+  unique(input.threads.map(thread => thread.id));
+  unique(input.npcs.map(npc => npc.id));
+}
+
 export function parseStoryTurn(raw: unknown, input: StoryTurnInput): StoryTurn {
+  validateStoryTurnContext(input);
   const o = object(raw);
-  const knownThreads = new Set(input.threads.map(x => x.id));
+  const knownThreads = new Map(input.threads.map(x => [x.id, x.status]));
   const knownNpcs = new Set(input.npcs.map(x => x.id));
   const threadUpdates = list(o.threadUpdates, 6, (raw) => {
     const item = object(raw);
     const target = id(item.id);
     const status = string(item.status, 16);
     if (!knownThreads.has(target) || !['open', 'resolved', 'abandoned'].includes(status)) throw new Error('unknown_story_thread');
+    // Terminal outcomes are player history. The narrator cannot undo them.
+    // A player may still reopen a thread explicitly through the local editor.
+    const previous = knownThreads.get(target);
+    if (previous !== 'open' && status !== previous) throw new Error('closed_story_thread');
     return { id: target, status: status as 'open' | 'resolved' | 'abandoned', description: string(item.description, 1000) };
   });
   const newThreads = list(o.newThreads, 2, thread);

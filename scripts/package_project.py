@@ -4,6 +4,8 @@ from pathlib import Path
 import argparse
 import hashlib
 import os
+import shutil
+import tempfile
 import zipfile
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -20,6 +22,9 @@ EXCLUDED_NAMES = {
     '.netrc', '.npmrc', '.pypirc', '.git-credentials', 'credentials.json',
     'service-account.json', 'id_rsa', 'id_dsa', 'id_ecdsa', 'id_ed25519',
 }
+# Normalize both sides: the historical names intentionally retain their
+# spelling, including .DS_Store and GeneratedPluginRegistrant.java.
+_CASEFOLDED_EXCLUDED_NAMES = frozenset(name.casefold() for name in EXCLUDED_NAMES)
 EXCLUDED_SUFFIXES = {
     '.apk', '.aab', '.log', '.iml', '.jks', '.keystore', '.db', '.sqlite', '.sqlite3',
     '.pem', '.key', '.p12', '.pfx', '.pyc', '.pyo', '.zip', '.tar', '.tgz',
@@ -28,13 +33,16 @@ EXCLUDED_SUFFIXES = {
 
 def include(path: Path, root: Path = ROOT) -> bool:
     relative = path.relative_to(root)
-    if any(part in EXCLUDED_DIRS for part in relative.parts):
+    # File names on Android/Windows may arrive with different casing. Protect
+    # exports on case-sensitive hosts too, including mixed-case secrets.
+    if any(part.casefold() in EXCLUDED_DIRS for part in relative.parts):
         return False
-    if path.name in EXCLUDED_NAMES or path.suffix.lower() in EXCLUDED_SUFFIXES:
+    name = path.name.casefold()
+    if name in _CASEFOLDED_EXCLUDED_NAMES or path.suffix.casefold() in EXCLUDED_SUFFIXES:
         return False
-    if path.name.startswith('.env') and path.name != '.env.example':
+    if name.startswith('.env') and name != '.env.example':
         return False
-    if any(path.name.endswith(suffix) for suffix in ('-wal', '-shm', '-journal')):
+    if any(name.endswith(suffix) for suffix in ('-wal', '-shm', '-journal')):
         return False
     return True
 
@@ -83,17 +91,41 @@ def create_archive(root: Path, output: Path, *, layout: str = 'folder') -> tuple
         raise ValueError(f'Missing required project files: {sorted(missing)}')
     output.parent.mkdir(parents=True, exist_ok=True)
     prefix = Path('Dnd') if layout == 'folder' else Path()
-    with zipfile.ZipFile(output, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
-        for path in paths:
-            archive.write(path, prefix / path.relative_to(root))
-    with zipfile.ZipFile(output) as archive:
-        bad = archive.testzip()
-        if bad:
-            raise RuntimeError(f'Corrupt ZIP entry: {bad}')
-    digest = hashlib.sha256(output.read_bytes()).hexdigest()
-    output.with_suffix(output.suffix + '.sha256').write_text(
-        f'{digest}  {output.name}\n', encoding='utf-8',
-    )
+    checksum = output.with_suffix(output.suffix + '.sha256')
+
+    # Build and validate outside the published archive. A partial write must
+    # never truncate a previously usable ZIP or its checksum.
+    with tempfile.TemporaryDirectory(prefix=f'.{output.name}.', dir=output.parent) as tmp:
+        temporary = Path(tmp)
+        staged_zip = temporary / output.name
+        staged_sha = temporary / checksum.name
+        with zipfile.ZipFile(staged_zip, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
+            for path in paths:
+                archive.write(path, prefix / path.relative_to(root))
+        with zipfile.ZipFile(staged_zip) as archive:
+            bad = archive.testzip()
+            if bad:
+                raise RuntimeError(f'Corrupt ZIP entry: {bad}')
+        digest = hashlib.sha256(staged_zip.read_bytes()).hexdigest()
+        staged_sha.write_text(f'{digest}  {output.name}\n', encoding='utf-8')
+
+        # Preserve both previous files until the staged pair is ready. If the
+        # second replacement fails, restore the previous ZIP as well.
+        previous_zip = temporary / 'previous.zip'
+        if output.is_file():
+            shutil.copy2(output, previous_zip)
+        published_zip = False
+        try:
+            os.replace(staged_zip, output)
+            published_zip = True
+            os.replace(staged_sha, checksum)
+        except BaseException:
+            if published_zip:
+                if previous_zip.is_file():
+                    os.replace(previous_zip, output)
+                else:
+                    output.unlink(missing_ok=True)
+            raise
     return len(paths), digest
 
 def main() -> None:

@@ -167,3 +167,8 @@ Dies ist ein **explizit unvollständiger Ausgangsauszug**, keine behauptete Gesa
 ## 24.10.2026 – Waffenreferenz bei Hinterhältigem Angriff
 
 `CLASS-SCHURKE-1-BASE-SNEAK-ATTACK-1` bleibt partial. SRD5.2.1 Rogue/Sneak Attack S.61–62, CC BY4.0: tatsächliche Finesse-/Fernkampfwaffe maßgeblich. GameEngine übergibt die bestätigte Nebenhand-ID an ClassCombatFeatures.eligibleSneakAttackDice; alte Hauptwaffenaufrufe bleiben gültig. Neue sneak_attack_weapon_context_test.dart: acht bestandene Kampf-/JSON-/SQLite-Regressionen; Helpertest schützt leere/fehlende/mehrdeutige/verbrauchte Referenzen. Gesamtabnahme separat im operativen Checkpoint; keine globale SRD-Quote.
+
+
+## 25.10.2026 – Light-Bonusangriff und bestätigter Waffenkontext
+
+RULE-COMBAT-TWO-WEAPON-FIGHTING: partial. Allgemeine leichte Nahkampf-Bonusaktion, explizite Waffen-/Attributs-/Übungs-/Handbestätigung und unabhängige Schadensregel des Fighter-Stils. JSON/SQLite/UI angebunden. Kampfrausch nutzt die Angriffswaffe und ihr Attribut; Nullgrenze nach sämtlichen Klassenboni. Quellen SRD5.2.1 S89/S88/S29/S16, CC BY4.0. Gezielte Tests erfolgreich, vollständige Abnahme separat im Checkpoint. Nick/Fernkampf/Weapon-Juggling offen; keine globale SRD-Quote.

@@ -1,0 +1,235 @@
+{
+  "initial_main": "b60ffe7ff1aae502ea927cb77153b988be33e397",
+  "candidate_after_history": "6187dd900b68bc1baf19f1fab0fbad99caf43ae7",
+  "backup_tag_prefix": "archive/branch-migration-20261025T075644Z",
+  "backup_bundle": "/workspace/artifacts/branch-migration-20261025/Wuerfelraunen_Branches_vor_Migration_20261025_19_final_mit_Dokumentation.bundle",
+  "all_initial_heads_are_ancestors": true,
+  "deletion_status": "not started; requires final combined and Main validation",
+  "branches": [
+    {
+      "branch": "feat/sending-confirmed-slot-journal-20261024",
+      "sha": "b90c21d421a85757aa7fe9b1be12c40ac8860a5d",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/feat/sending-confirmed-slot-journal-20261024",
+      "ancestor_of_initial_main": false,
+      "ancestor_before_history_record": false,
+      "preservation": "entire tree identical to existing Main squash ancestor3b5affd",
+      "equivalent_tree": "aa45fbc8cb00ce7b62b43eab51d7046231d5e758",
+      "history_record_commit": "aa5f6bf7b61c107bb4a321e942fc056f96ae3e47",
+      "history_merge_changed_tree": false,
+      "ancestor_of_candidate": true
+    },
+    {
+      "branch": "feature/light-weapon-bonus-attack-20261024",
+      "sha": "fa14a0897bacb15d012377116c53a0dadd42f6a4",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/feature/light-weapon-bonus-attack-20261024",
+      "ancestor_of_initial_main": false,
+      "ancestor_before_history_record": true,
+      "preservation": "actual ancestry through previous or functional integration merges",
+      "ancestor_of_candidate": true
+    },
+    {
+      "branch": "feature/sneak-attack-ally-integration-20261023",
+      "sha": "d54f5548fa00ae02a6c36fa9a2b2656319ec1c58",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/feature/sneak-attack-ally-integration-20261023",
+      "ancestor_of_initial_main": false,
+      "ancestor_before_history_record": false,
+      "preservation": "only ten unique documentation files, all byte-exact historical copies archived; runtime already Main",
+      "history_record_commit": "6586644f1be1ae21d53624cd8f45067a892d501e",
+      "history_merge_changed_tree": false,
+      "ancestor_of_candidate": true
+    },
+    {
+      "branch": "feature/sneak-attack-offhand-ally-20261024",
+      "sha": "6f2ebbc893fb5ee053d069410a103a102662aa4d",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/feature/sneak-attack-offhand-ally-20261024",
+      "ancestor_of_initial_main": false,
+      "ancestor_before_history_record": true,
+      "preservation": "actual ancestry through previous or functional integration merges",
+      "ancestor_of_candidate": true
+    },
+    {
+      "branch": "fix/backend-limiter-capacity-20261024",
+      "sha": "56128f213cc2404269a6f358d1c2aa62908474df",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/fix/backend-limiter-capacity-20261024",
+      "ancestor_of_initial_main": false,
+      "ancestor_before_history_record": false,
+      "preservation": "all runtime feature hunks already preserved in reviewed integration; reverse-apply check passed",
+      "runtime_reverse_patch_verified": true,
+      "history_record_commit": "e96ce36ba1cfd64781220070b791da273c888690",
+      "history_merge_changed_tree": false,
+      "ancestor_of_candidate": true
+    },
+    {
+      "branch": "fix/local-story-terminal-thread-guard-20261025",
+      "sha": "9324af079436282596cd734a32e54613aa337208",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/fix/local-story-terminal-thread-guard-20261025",
+      "ancestor_of_initial_main": false,
+      "ancestor_before_history_record": true,
+      "preservation": "actual ancestry through previous or functional integration merges",
+      "ancestor_of_candidate": true
+    },
+    {
+      "branch": "fix/sending-percentile-block-validation-20261024",
+      "sha": "15c1626057adb33f40d0acbe6e228f30f606d007",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/fix/sending-percentile-block-validation-20261024",
+      "ancestor_of_initial_main": false,
+      "ancestor_before_history_record": false,
+      "preservation": "all runtime feature hunks already preserved in reviewed integration; reverse-apply check passed",
+      "runtime_reverse_patch_verified": true,
+      "history_record_commit": "69e9ca770054935bbdc432f74f9c5ec9cd597525",
+      "history_merge_changed_tree": false,
+      "ancestor_of_candidate": true
+    },
+    {
+      "branch": "fix/sending-unicode-format-controls-20261024",
+      "sha": "d73f3cfdc6969b5d5b6f54d173458e4126e3165f",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/fix/sending-unicode-format-controls-20261024",
+      "ancestor_of_initial_main": false,
+      "ancestor_before_history_record": false,
+      "preservation": "entire tree identical to existing Main squash ancestor4c6040c",
+      "equivalent_tree": "959e3a1731b2811e6e5388f29d82b9bc81ce7f7d",
+      "history_record_commit": "fddd0f03f782fb94adb67fdabfd062cfa06621b1",
+      "history_merge_changed_tree": false,
+      "ancestor_of_candidate": true
+    },
+    {
+      "branch": "fix/sneak-attack-offhand-weapon-20261024",
+      "sha": "80b615e3f2438ca65777945340c96dccbcc3e36f",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/fix/sneak-attack-offhand-weapon-20261024",
+      "ancestor_of_initial_main": true,
+      "ancestor_before_history_record": true,
+      "preservation": "actual ancestry through previous or functional integration merges",
+      "ancestor_of_candidate": true
+    },
+    {
+      "branch": "fix/story-secret-output-guard-20261024",
+      "sha": "032af6ace3f56f13ec4961f56b43b6adcdf899b9",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/fix/story-secret-output-guard-20261024",
+      "ancestor_of_initial_main": false,
+      "ancestor_before_history_record": false,
+      "preservation": "all runtime feature hunks already preserved in reviewed integration; reverse-apply check passed",
+      "runtime_reverse_patch_verified": true,
+      "history_record_commit": "751bb780a04e776f7f2966100fca419c93b5c230",
+      "history_merge_changed_tree": false,
+      "ancestor_of_candidate": true
+    },
+    {
+      "branch": "fix/story-terminal-thread-reopen-20261024",
+      "sha": "9428738266df72956c3e57ebc25238b0d38a0fce",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/fix/story-terminal-thread-reopen-20261024",
+      "ancestor_of_initial_main": false,
+      "ancestor_before_history_record": false,
+      "preservation": "all runtime feature hunks already preserved in reviewed integration; reverse-apply check passed",
+      "runtime_reverse_patch_verified": true,
+      "history_record_commit": "09f498d1b617890765ad534e4efbfdd1387c2f0b",
+      "history_merge_changed_tree": false,
+      "ancestor_of_candidate": true
+    },
+    {
+      "branch": "integration/approved-pr159-163-20261024",
+      "sha": "6776bd1bdfef648431da8b20780053e0860d998d",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/integration/approved-pr159-163-20261024",
+      "ancestor_of_initial_main": false,
+      "ancestor_before_history_record": true,
+      "preservation": "actual ancestry through previous or functional integration merges",
+      "ancestor_of_candidate": true
+    },
+    {
+      "branch": "main",
+      "sha": "b60ffe7ff1aae502ea927cb77153b988be33e397",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/main",
+      "ancestor_of_initial_main": true,
+      "ancestor_before_history_record": true,
+      "preservation": "actual ancestry through previous or functional integration merges",
+      "ancestor_of_candidate": true
+    },
+    {
+      "branch": "fix/case-insensitive-secret-archive-filter-20261025",
+      "sha": "daf6bd870b0582864beafe7497a75bd92011335e",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/fix/case-insensitive-secret-archive-filter-20261025",
+      "supplemental": true,
+      "own_integration_checkpoint": false,
+      "ancestor_of_initial_main": false,
+      "ancestor_before_history_record": true,
+      "preservation": "normal functional merge or own earlier integration checkpoint ancestor",
+      "ancestor_of_candidate": true
+    },
+    {
+      "branch": "fix/local-ai-duplicate-npc-ids-20261025",
+      "sha": "e157801b929f27a6244e087baa0d8f9fd0ad69d2",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/fix/local-ai-duplicate-npc-ids-20261025",
+      "supplemental": true,
+      "own_integration_checkpoint": false,
+      "ancestor_of_initial_main": false,
+      "ancestor_before_history_record": true,
+      "preservation": "normal functional merge or own earlier integration checkpoint ancestor",
+      "ancestor_of_candidate": true
+    },
+    {
+      "branch": "fix/story-duplicate-context-ids-20261025",
+      "sha": "4072a6d8b3e7a598e207d4a76bc2082ec53f29c7",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/fix/story-duplicate-context-ids-20261025",
+      "supplemental": true,
+      "own_integration_checkpoint": false,
+      "ancestor_of_initial_main": false,
+      "ancestor_before_history_record": false,
+      "runtime_reverse_patch_verified": true,
+      "history_record_commit": "1cddc4a3d590d0959733b532a5ec349b4195dcf4",
+      "history_merge_changed_tree": false,
+      "preservation": "focused feature patch already included by normal merge169; reverse check verified",
+      "ancestor_of_candidate": true
+    },
+    {
+      "branch": "integration/all-branches-20261025",
+      "sha": "1bd332663d80e54c7c867a02fb2e334b036631db",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/integration/all-branches-20261025",
+      "supplemental": true,
+      "own_integration_checkpoint": true,
+      "ancestor_of_initial_main": false,
+      "ancestor_before_history_record": true,
+      "preservation": "normal functional merge or own earlier integration checkpoint ancestor",
+      "ancestor_of_candidate": true
+    },
+    {
+      "branch": "integration/story-safety-pr165-167-168-20261025",
+      "sha": "721c4ed953ea67a9a79adcabf800ddd54cb63008",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/integration/story-safety-pr165-167-168-20261025",
+      "supplemental": true,
+      "own_integration_checkpoint": false,
+      "ancestor_of_initial_main": false,
+      "ancestor_before_history_record": true,
+      "preservation": "normal functional merge or own earlier integration checkpoint ancestor",
+      "ancestor_of_candidate": true
+    },
+    {
+      "branch": "fix/atomic-source-archive-publication-20261025",
+      "sha": "1eb8046228d51437f9657b82a359f2498ad67654",
+      "backup_tag": "archive/branch-migration-20261025T075644Z/atomic-docs-final-1eb8046",
+      "supplemental": true,
+      "own_integration_checkpoint": false,
+      "previous_backups": [
+        {
+          "sha": "587d8f32e34e4b91c8ae0d312d5cde3df7ec23d5",
+          "backup_tag": "archive/branch-migration-20261025T075644Z/fix/atomic-source-archive-publication-20261025"
+        },
+        {
+          "sha": "a1a8dd9802cd827b34580219c13c6764d9ff502f",
+          "backup_tag": "archive/branch-migration-20261025T075644Z/atomic-source-final-a1a8dd9"
+        }
+      ],
+      "ancestor_of_candidate": true,
+      "preservation": "runtime source normally merged; later four documentation-only changes archived byte-exact; no-content history merge retains final source head",
+      "merge_commit": "cd724629c79a169ff1a078517031a33cf73ae130",
+      "normal_source_merge_commit": "cd724629c79a169ff1a078517031a33cf73ae130",
+      "history_record_commit": "6187dd900b68bc1baf19f1fab0fbad99caf43ae7",
+      "history_merge_changed_tree": false
+    }
+  ],
+  "expanded_branch_count": 18,
+  "all_snapshotted_heads_are_ancestors": true,
+  "additional_fix": "Casefold both filename and exclusion lookup; generated/system filenames regression proved failing then all11 archive tests passed",
+  "backup_bundle_sha256": "344e499cd8b21f04148903002428fe81ba58b83bf8aa67832f4a02a71476c973",
+  "captured_branch_count": 19,
+  "validation": "Local combined checks passed; final PR/Main CI and deletion pending",
+  "archived_document_count": 42
+}

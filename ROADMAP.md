@@ -1,3 +1,47 @@
+## Aktueller Schritt – geprüfte Migration abschließen
+
+PR #171 und tatsächliche Main-CI abnehmen, danach nur gesicherte unveränderte integrierte Altbranches entfernen. Anschließend allgemeine Gelegenheitsangriffe als eigenes quellgeprüftes Regelpaket; Akzeptanzkriterien im README. Frühere Einträge unten sind historische Momentaufnahmen.
+
+---
+
+## Aktuell25.10.2026 – Branch-Migration abschließen
+
+Gemeinsamen Kandidaten vollständig testen, via geprüftem PR nach Main übernehmen, Main-CI abnehmen und erst danach archivierte unveränderte Altbranches entfernen. Echte Ergebnisse: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md). Ältere Aufgaben unten sind Historie.
+
+---
+
+## 25.10.2026 – Lokalen Endzustand nach KI-Antwort bewahren (PR #165)
+
+Die lokale Flutter-Validierungsgrenze für KI-Storyupdates blockiert nun unautorisierte Änderungen bereits abgeschlossener/aufgegebener Handlungsfäden. Drei Regressionen zu bestätigtem Status, manueller Wiederöffnung und zwischenzeitlich veralteter KI-Antwort. Gestapelter [PR #165](https://github.com/ManuEtt/Dnd/pull/165) baut auf [PR #164](https://github.com/ManuEtt/Dnd/pull/164) auf. **Nächster konkreter Schritt:** neue komplette #165-CI auswerten, nach Grün Review; erst #164 reviewen/integrieren, dann #165 gegen `main` rebasen/erneut prüfen. Alle historischen Commit-/Statusmeldungen darunter sind Momentaufnahmen.
+
+---
+
+## Aktueller integrierter Entwicklungsplan (24.10.2026, Integrations-PR)
+
+Fünf einzeln grüne, aber noch nicht in `main` integrierte PRs #159–#163 werden auf einem gemeinsamen, separat geprüften Integrationsbranch kombiniert. **Aktuelles Arbeitspaket:** alle unveränderten Quell-/Testdateien dieser fünf Pakete, originalen Fachbelege sowie widerspruchsfrei konsolidierte Checkpoint-, README- und Statusdokumentation. **Definition of Done:** 100 Python-/Backend-/Flutter-Gates wie in CI, Android-Debug- und ABI-Alpha-Build, native Tests auf dem neuen Integration-HEAD; danach Review. Main, Release-Signierung und reales Android-Gerät bleiben getrennte Schritte. SRD-5.2.1-Abdeckung ausdrücklich weiter nur teilweise; lokale Zustandsautorität unverändert.
+
+---
+
+## Nächste Abnahme 24.10.2026 – Plot-Geheimnisse im Erzähler schützen (PR #163)
+
+Ein eng begrenzter Backend-Ausgangsfilter verhindert im neuen [PR #163](https://github.com/ManuEtt/Dnd/pull/163) direkte wörtliche Komplett-Offenlegungen des geheimen Kampagnenplots in sichtbaren Erzähltexten, NPC-Notizen oder Angeboten. **Erst finale vollständige CI und Review, dann Integration.** Kein semantischer Filter; die spätere legitime Enthüllung eines Geheimnisses verlangt eine separat bestätigte lokale Storyentscheidung. Version/SQL/JSON unverändert. Die offenen PRs #159–#162 bleiben bestehen.
+
+---
+
+## Finaler Testnachweis PR #160 – 24.10.2026
+
+**Vollständige GitHub-CI [#40099238901](https://github.com/ManuEtt/Dnd/actions/runs/40099238901): completed/success** auf geprüftem PR-HEAD `5563c60ba0dbbd1f12a19877f62581a51485b6d9` (24.10.2026). **1.514 Flutter-, 100 Python- und 31 Backend-Tests bestanden**; Dart-Formatierung 357 Dateien ohne Änderungen, Flutter-Analyse und Backend-Typecheck/Build erfolgreich. Android-Debug-APK, native Gradle-Tests und ARM64/ARMv7/x64-Alpha-APKs erfolgreich; letzte Artefaktschritte abgeschlossen. Ein echter Android-Gerätetest, ein Altspielstand-Upgrade und produktive Signierung fehlen weiterhin. Dieser Nachtrag berichtet die nach dem damaligen Vorab-Checkpoint eingetroffene finale Abnahme.
+
+[Alpha-APKs](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562551949) · [Debug-APK](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12561909697) · [Alpha-Release](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562517123) · [Quellcode-Checkpoint](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562163517). Die SHA256-Digests der GitHub-Artefaktarchive sind **nicht** automatisch Einzel-APK-Prüfsummen.
+
+---
+
+## Aktueller Arbeitsauftrag 24.10.2026 – Nebenhand-Verbündetenquelle (PR #160)
+
+Für bereits korrekt autorisierte Nebenhandangriffe mit tatsächlicher Finesse-Waffe ist die separate Verbündetenbestätigung einschließlich UI, JSON, Controller und Regressionen im Entwicklungsbranch umgesetzt. Die erste Testreihe zeigte einen reparierten Formatterbefund und einen anschließend präzisierten JSON-Assertion-Fehler. Vollständige neue CI steht separat unter [PR #160](https://github.com/ManuEtt/Dnd/pull/160/checks). Nach grüner CI Review und sichere Integration, keine direkte main-Änderung. Regelstatus `CLASS-SCHURKE-1-BASE-SNEAK-ATTACK-1` bleibt partial; automatische Verbündetenposition und allgemeine Gelegenheitsangriffe weiterhin offen.
+
+---
+
 ## Aktueller nächster Schritt (24.10.2026)
 
 Nach Abnahme der Waffenreferenzkorrektur 0.8.38+88: manuelle Verbündetenbestätigung für zulässige Nebenhandwaffen über denselben revisionsgeschützten Dialog-/Controllerpfad ergänzen. Akzeptanz und reale Ergebnisse: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md). Folgende Einträge sind historisch.

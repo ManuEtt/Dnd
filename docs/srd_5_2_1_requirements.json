@@ -3954,7 +3954,8 @@
         "app/test/class_combat_features_test.dart",
         "app/test/sneak_attack_ally_integration_test.dart",
         "app/test/sneak_attack_ally_ui_test.dart",
-        "app/test/sneak_attack_weapon_context_test.dart"
+        "app/test/sneak_attack_weapon_context_test.dart",
+        "app/test/sneak_attack_offhand_ally_test.dart"
       ],
       "code": [
         "app/lib/domain/srd_class_feature_catalog.dart",
@@ -3965,7 +3966,7 @@
         "app/lib/ui/sneak_attack_ally_dialog.dart",
         "app/lib/domain/models.dart"
       ],
-      "note": "Teilimplementierung mit echter Hauptwaffen-Kampfintegration: zwei unabhängig bestätigte Verbündetenfakten (innerhalb 5 Fuß des Ziels, nicht Incapacitated), an Kampagne/Ziel/ausstehenden Wurf gebunden. Explizite Bestätigung/Entfernung, kritische Treffer, einmal pro eigenem Zug, SQLite/Backup/Revisionsschutz und Rollback geprüft. Keine allgemeine Positions-, Nebenhand- oder Gelegenheitsangriffssteuerung; Android-Gerätetest offen. Regelwirkung nie aus KI-Erzählung ableiten. Korrektur 24.10.2026: Vorhandene Nebenhandauflösung prüft die tatsächlich angreifende Inventarwaffe statt der Hauptwaffe; keine neue Vorteilsquelle oder allgemeine Nebenhandfreigabe. Acht neue Kampf-/Speicherregressionen und vollständige lokale Suite erfolgreich; tatsächliche CI separat am PR158 belegt. Manuelle Verbündetenbestätigung für Nebenhand weiterhin offen."
+      "note": "Teilimplementierung mit echter Hauptwaffen-Kampfintegration: zwei unabhängig bestätigte Verbündetenfakten (innerhalb 5 Fuß des Ziels, nicht Incapacitated), an Kampagne/Ziel/ausstehenden Wurf gebunden. Explizite Bestätigung/Entfernung, kritische Treffer, einmal pro eigenem Zug, SQLite/Backup/Revisionsschutz und Rollback geprüft. Keine allgemeine Positions-, Nebenhand- oder Gelegenheitsangriffssteuerung; Android-Gerätetest offen. Regelwirkung nie aus KI-Erzählung ableiten. Korrektur 24.10.2026: Vorhandene Nebenhandauflösung prüft die tatsächlich angreifende Inventarwaffe statt der Hauptwaffe; keine neue Vorteilsquelle oder allgemeine Nebenhandfreigabe. Acht neue Kampf-/Speicherregressionen und vollständige lokale Suite erfolgreich; tatsächliche CI separat am PR158 belegt. Manuelle Verbündetenbestätigung für Nebenhand war zu diesem historischen Stand offen. Neues Inkrement am 24.10.2026: PR #160 erweitert den revisionsgeschützten Bestätigungs-/Entfernungspfad auf bereits erlaubte leichte Nebenhandangriffe mit tatsächlicher Finessewaffe. Regressionen für ungültige Waffe, Nachteil, falsche Roll-/Zielkennung, Miss/Krit, SQLite-Neustart, JSON-Export und Android-Widget geschrieben. Vollständige GitHub-PR-CI #40099238901 auf Code-/Dokumentations-HEAD 5563c60ba0dbbd1f12a19877f62581a51485b6d9 completed/success: 1514 Flutter-, 100 Python-, 31 Backend-Tests sowie Dart-Analyse, Android-Debug und native Tests erfolgreich; echtes Android-Gerät nicht geprüft. Keine Behauptung allgemeiner Nebenhand-/Positionsregeln."
     },
     {
       "id": "CLASS-SCHURKE-1-BASE-THIEVES-CANT-2",
@@ -7635,15 +7636,29 @@
       "area": "combat",
       "kind": "cross_cutting_rule",
       "name": "Two-Weapon Fighting",
-      "source": "Playing the Game / Combat",
-      "source_url": "https://www.dndbeyond.com/srd",
+      "source": "SRD 5.2.1 Weapons / Light S.89; Two-Weapon Fighting S.88; Rage S.29; Damage Rolls S.16",
+      "source_url": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Playing the Game / Combat",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/two_weapon_fighting_test.dart",
+        "app/test/light_weapon_bonus_attack_test.dart",
+        "app/test/offhand_attack_dialog_test.dart",
+        "app/test/combat_class_actions_test.dart",
+        "app/test/domain_rules_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/two_weapon_fighting_rules.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/domain/models.dart",
+        "app/lib/services/game_controller.dart",
+        "app/lib/ui/offhand_attack_dialog.dart",
+        "app/lib/domain/combat_class_actions.dart",
+        "app/lib/domain/rules_engine.dart"
+      ],
+      "note": "Allgemeiner Light-Nahkampfbonus nach abgeschlossener eigener Angriffsaktion, getrennte bestätigte andere Waffe/Attribut/Übung/gehaltene Waffen, reservierte Bonusaktion und optionaler typisierter PendingRoll-Kontext. Ohne Kampfstil kein positiver Attributsschaden, negative Werte bleiben. Kampfrausch nutzt tatsächliche Waffen-ID/Attribut; endgültige Nullgrenze erst nach Klassenboni. Ziel-, Zustands-, Revisions- und JSON/SQLite-Prüfung vor Auflösung. Gezielte Regel-/Kampf-/Widget-/Persistenztests erfolgreich; vollständige Abnahme siehe Checkpoint. Nur Nahkampf und bisher bestätigter Fighter-Stil, kein Nick, Light-Fernkampf oder allgemeines Waffenwechselmodell."
     },
     {
       "id": "RULE-COMBAT-WEAPON-MASTERY",

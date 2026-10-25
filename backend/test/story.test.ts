@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { buildApp } from '../src/app.js';
-import { mockStoryPlan, mockStoryTurn, parseStoryPlan, parseStoryTurn } from '../src/story.js';
+import { mockStoryPlan, mockStoryTurn, parseStoryPlan, parseStoryTurn, validateStoryTurnContext } from '../src/story.js';
 import type { StoryTurnInput } from '../src/story.js';
 import type { Config } from '../src/config.js';
 
@@ -152,4 +152,140 @@ test('mock story continuation accepts journal threads without a description', as
   assert.equal(continued.statusCode, 200);
   assert.deepEqual(continued.json().turn.threadUpdates, []);
   assert.deepEqual(continued.json().stateChanges, []);
+});
+
+test('closed story threads cannot be reopened or rewritten by the narrator', () => {
+  for (const terminal of ['resolved', 'abandoned'] as const) {
+    const closed: StoryTurnInput = {
+      ...action,
+      threads: [{ ...action.threads[0]!, status: terminal }, action.threads[1]!],
+    };
+    const turn = mockStoryTurn(closed);
+    assert.deepEqual(turn.threadUpdates.map(x => x.id), ['bund']);
+    const update = {
+      narration: 'Eine neue Erinnerung wird sichtbar.',
+      threadUpdates: [{ id: 'spur', status: 'open', description: 'Unbemerkt wieder eröffnet' }],
+      newThreads: [],
+      npcUpdates: [],
+      adventure: null,
+    };
+    assert.throws(() => parseStoryTurn(update, closed), /closed_story_thread/);
+    assert.throws(() => parseStoryTurn({
+      ...update, threadUpdates: [{ ...update.threadUpdates[0]!, status: terminal === 'resolved' ? 'abandoned' : 'resolved' }],
+    }, closed), /closed_story_thread/);
+
+    // Harmless notes with the *same* terminal status remain possible.
+    assert.deepEqual(
+      parseStoryTurn({
+        ...update, threadUpdates: [{ ...update.threadUpdates[0]!, status: terminal }],
+      }, closed).threadUpdates,
+      [{ id: 'spur', status: terminal, description: 'Unbemerkt wieder eröffnet' }],
+    );
+
+    // An explicit user-side change in the supplied saved state is authoritative.
+    const manuallyReopened: StoryTurnInput = {
+      ...closed,
+      threads: [{ ...closed.threads[0]!, status: 'open' }, closed.threads[1]!],
+    };
+    assert.deepEqual(parseStoryTurn(update, manuallyReopened).threadUpdates[0]?.status, 'open');
+  }
+});
+
+test('story endpoint rejects attempted reopening without leaking provider details', async (t) => {
+  const closed: StoryTurnInput = {
+    ...action,
+    threads: [{ ...action.threads[0]!, status: 'abandoned' }, action.threads[1]!],
+  };
+  const app = buildApp(config, {
+    narrator: {
+      narrate: async () => ({ text: 'Unverändert.', provider: 'mock', stateChanges: [] }),
+      advanceStory: async () => ({
+        narration: 'Der Spurenstrang ist plötzlich wieder offen.',
+        threadUpdates: [{ id: 'spur', status: 'open', description: 'Nicht bestätigt' }],
+        newThreads: [],
+        npcUpdates: [],
+        adventure: null,
+      }),
+    },
+  });
+  t.after(() => app.close());
+  const issued = await app.inject({
+    method: 'POST', url: '/v1/session',
+    headers: { authorization: `Bearer ${token}` }, payload: {},
+  });
+  assert.equal(issued.statusCode, 200);
+  const response = await app.inject({
+    method: 'POST', url: '/v1/story/advance',
+    headers: { authorization: `Bearer ${issued.json<{ token: string }>().token}` },
+    payload: closed,
+  });
+  assert.equal(response.statusCode, 502);
+  assert.equal(response.json().error, 'provider_unavailable');
+  assert.doesNotMatch(response.body, /Spurenstrang|Nicht bestätigt|closed_story_thread/);
+});
+
+test('ambiguous saved thread or NPC IDs are rejected before parsing provider output', () => {
+  const duplicateThreads: StoryTurnInput = {
+    ...action,
+    threads: [...action.threads, { ...action.threads[0]!, status: 'resolved' }],
+  };
+  const duplicateNpcs: StoryTurnInput = {
+    ...action,
+    npcs: [...action.npcs, { ...action.npcs[0]!, relationship: 'misstrauisch' }],
+  };
+  const response = {
+    narration: 'Eine alte Spur führt weiter.',
+    threadUpdates: [], newThreads: [], npcUpdates: [], adventure: null,
+  };
+  for (const ambiguous of [duplicateThreads, duplicateNpcs]) {
+    assert.throws(() => validateStoryTurnContext(ambiguous), /duplicate_story_id/);
+    assert.throws(() => parseStoryTurn(response, ambiguous), /duplicate_story_id/);
+    assert.throws(() => mockStoryTurn(ambiguous), /duplicate_story_id/);
+  }
+  assert.doesNotThrow(() => validateStoryTurnContext(action));
+  assert.deepEqual(parseStoryTurn(response, action), response);
+  // Different entity namespaces must not be mixed together.
+  assert.doesNotThrow(() => validateStoryTurnContext({
+    ...action,
+    npcs: [{ ...action.npcs[0]!, id: action.threads[0]!.id }],
+  }));
+});
+
+test('story endpoint rejects duplicate saved IDs with HTTP 400 before calling narrator', async (t) => {
+  let providerCalls = 0;
+  const app = buildApp(config, {
+    narrator: {
+      narrate: async () => ({ text: 'Unverändert.', provider: 'mock', stateChanges: [] }),
+      advanceStory: async (input) => {
+        providerCalls += 1;
+        return mockStoryTurn(input);
+      },
+    },
+  });
+  t.after(() => app.close());
+  const issued = await app.inject({
+    method: 'POST', url: '/v1/session',
+    headers: { authorization: `Bearer ${token}` }, payload: {},
+  });
+  assert.equal(issued.statusCode, 200);
+  const headers = { authorization: `Bearer ${issued.json<{ token: string }>().token}` };
+  const bad = [
+    { ...action, threads: [action.threads[0]!, { ...action.threads[0]!, status: 'abandoned' }] },
+    { ...action, npcs: [...action.npcs, { ...action.npcs[0]!, relationship: 'verwirrt' }] },
+  ];
+  for (const payload of bad) {
+    const response = await app.inject({
+      method: 'POST', url: '/v1/story/advance', headers, payload,
+    });
+    assert.equal(response.statusCode, 400);
+    assert.equal(response.json().error, 'invalid_request');
+    assert.doesNotMatch(response.body, /duplicate_story_id|abandoned|verwirrt/);
+  }
+  assert.equal(providerCalls, 0);
+  const good = await app.inject({
+    method: 'POST', url: '/v1/story/advance', headers, payload: action,
+  });
+  assert.equal(good.statusCode, 200);
+  assert.equal(providerCalls, 1);
+  assert.deepEqual(good.json().stateChanges, []);
 });
