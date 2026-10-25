@@ -1,3 +1,9 @@
+## 25.10.2026 – Backend-Storykontext mit eindeutigem Identitätsmodell (PR #167)
+
+Unklare und doppelte Thread-/NPC-IDs werden vor potentiell kostenpflichtigem Story-Provideraufruf fail-closed abgewiesen; direkte Storyvalidierung erzwingt dieselbe Grenze. Zwei neue Backend-/HTTP-Regressionen. Gestapelter PR [#167](https://github.com/ManuEtt/Dnd/pull/167) auf grünem, aber nicht in main gemergtem [#164](https://github.com/ManuEtt/Dnd/pull/164); [#165](https://github.com/ManuEtt/Dnd/pull/165) und Kampf-PR #166 bleiben unabhängig. **Nächster Schritt:** eigene vollständige CI #167 prüfen, erst nach Grün Review, dann freigegebene Integrationsreihenfolge abgleichen.
+
+---
+
 ## Aktueller integrierter Entwicklungsplan (24.10.2026, Integrations-PR)
 
 Fünf einzeln grüne, aber noch nicht in `main` integrierte PRs #159–#163 werden auf einem gemeinsamen, separat geprüften Integrationsbranch kombiniert. **Aktuelles Arbeitspaket:** alle unveränderten Quell-/Testdateien dieser fünf Pakete, originalen Fachbelege sowie widerspruchsfrei konsolidierte Checkpoint-, README- und Statusdokumentation. **Definition of Done:** 100 Python-/Backend-/Flutter-Gates wie in CI, Android-Debug- und ABI-Alpha-Build, native Tests auf dem neuen Integration-HEAD; danach Review. Main, Release-Signierung und reales Android-Gerät bleiben getrennte Schritte. SRD-5.2.1-Abdeckung ausdrücklich weiter nur teilweise; lokale Zustandsautorität unverändert.

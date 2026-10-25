@@ -1,3 +1,11 @@
+## 25.10.2026 – Eindeutige Story-Kontext-IDs vor KI-Provideraufrufen (PR #167)
+
+- Das Backend lehnt bei Story-Fortsetzungen mehrere Threads beziehungsweise NPCs mit derselben ID **vor** einem möglichen Anbieteraufruf ab. HTTP 400 mit generischem Fehlertext statt stillschweigendem Map-Overwrite oder späterem Anbieterfehler.
+- `validateStoryTurnContext` gilt auch beim direkten `parseStoryTurn`-Aufruf; unabhängige Namespaces bleiben zulässig. Zwei neue Backend-/HTTP-Tests für ungültige und gültige Eingaben, inklusive tatsächlichem Mock-Provider-Aufrufzähler.
+- Keine neue SRD-Regelwirkung, SQLite-/JSON-Migration oder Android-Versionsänderung. [PR #167](https://github.com/ManuEtt/Dnd/pull/167) · [Dokumentation](docs/STORY_CONTEXT_DUPLICATE_IDS_20261025.md). Finale CI des neuen PR bis zum tatsächlichen Nachweis ausstehend.
+
+---
+
 ## 24.10.2026 – Integrationsprüfung PR #159–#163
 
 Der technische Integrationsbranch bündelt fünf einzeln CI-geprüfte Pakete aus Sending-W100, Nebenhand-Verbündetenbestätigung, Abschlussstatus-Schutz, Backend-Quotenschutz und verbatim Plot-Secret-Schutz. Detaillierte Änderungen stehen in den folgenden überlieferten PR-Changelog-Abschnitten und in `docs/INTEGRATION_PR159_163_20261024.md`. **Die gemeinsame CI ist ein eigenständiges Gate und ist vor Abschluss des Integrations-PR erneut zu prüfen; `main` bleibt unverändert.** Spielstandsformate 0.8.38+88 / SQLite2 / JSON1 unverändert.

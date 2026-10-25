@@ -1,5 +1,36 @@
 # CODEX-CHECKPOINT – Würfelraunen
 
+## Aktueller Entwicklungszyklus 25.10.2026 – Mehrdeutige Erzählreferenzen vor Provideraufrufen ablehnen (PR #167)
+
+**Live-Stand:** `main=b60ffe7ff1aae502ea927cb77153b988be33e397`. Offen: Einzel-PRs #159–#163, kombinierter reviewbereiter [Integrations-PR #164](https://github.com/ManuEtt/Dnd/pull/164) (GitHub Actions [#40123094457](https://github.com/ManuEtt/Dnd/actions/runs/40123094457) grün, Commit `6776bd1`), [PR #165](https://github.com/ManuEtt/Dnd/pull/165) (lokaler Endzustandschutz, CI [#40170005782](https://github.com/ManuEtt/Dnd/actions/runs/40170005782) grün auf `9324af0`) und [PR #166](https://github.com/ManuEtt/Dnd/pull/166) (separater Kampf-Track). Neuer [PR #167](https://github.com/ManuEtt/Dnd/pull/167) auf Branch `fix/story-duplicate-context-ids-20261025`, gestapelt auf `integration/approved-pr159-163-20261024`. Keine fremden Branches geändert; `main` nicht überschrieben.
+
+### IMPLEMENTIERT
+
+`backend/src/story.ts`: `validateStoryTurnContext` erzwingt eindeutige IDs je bestätigter Thread-/NPC-Liste. Direkte Parsing-/Mockwege können doppelte Eingabereferenzen nicht mehr über `Map`/Set stillschweigend überschreiben. `backend/src/app.ts`: `/v1/story/advance` verweigert solchen Kontext als generischen HTTP 400 **vor** `narrator.advanceStory`; der kostenpflichtige Providerpfad wird gar nicht betreten. `backend/test/story.test.ts`: neue Domain- und HTTP-Regressionen mit explizitem 0-Aufrufzähler, gültiger Anfrage weiter mit `stateChanges: []`. Keine SQL-/JSON-/App-Version-/Regelmigration.
+
+### GETESTET
+
+**Bereits vorher bestätigt, nicht gleichzusetzen mit neuer CI:** #164 [CI #40123094457](https://github.com/ManuEtt/Dnd/actions/runs/40123094457), #165 [CI #40170005782](https://github.com/ManuEtt/Dnd/actions/runs/40170005782), jeweils grün. Der neue Quell-/Teststand ist auf eigenem Branch und PR #167 gesichert. **Finale #167-CI ist noch zu verifizieren:** [Checks](https://github.com/ManuEtt/Dnd/pull/167/checks). Bis zu tatsächlichem Erfolg keine Aussagen über bestandene neue Tests oder APK.
+
+### NICHT GETESTET
+
+Neuer finaler Backend-/Flutter-/Android-Code bis erfolgreicher GitHub-CI. Android-Echtgerät, historisches Nutzer-Spielstandsupgrade, produktive Signierung. Keine Aussage über globale Mehrinstanz-Providerkosten oder komplette SRD-Regelabdeckung.
+
+### BLOCKIERT
+
+Kein eigenes physisches Android-Gerät und keine produktiven Signaturschlüssel für die Geräteabnahme. CI verfügbar.
+
+### NOCH NICHT IMPLEMENTIERT
+
+Allgemeine mehrinstanzfähige Backend-Quoten, semantischer Spoilerschutz, vollständig automatisierte SRD-5.2.1-Regelwirkung. Dieser PR behebt ausschließlich die eindeutigen Story-Kontext-IDs und verändert keinen Kampfrule-Track.
+
+### NÄCHSTER KONKRETER SCHRITT
+
+Die unabhängige [PR-#167-CI](https://github.com/ManuEtt/Dnd/pull/167/checks) inklusive Backend, Python, Flutter, Android und native Tests auf **letztem PR-HEAD** prüfen, Fehler korrigieren, erst nach komplett grüner CI zur Review freigeben. Anschließend #164 nur nach ausdrücklichem Projekt-Review mergen; #165 und #167 getrennt auf das dann aktuelle main ausrichten und erneut CI prüfen, den parallelen #166 nicht doppelt integrieren.
+
+---
+
+
 ## Aktuelle Integrationsübergabe 24.10.2026 – PR #164
 
 **Live-Basis:** `main=b60ffe7ff1aae502ea927cb77153b988be33e397` bei Beginn, App `0.8.38+88`, SQLite 2, Export-JSON 1. **Arbeitsbranch:** `integration/approved-pr159-163-20261024`, eigener Integrations-[PR #164](https://github.com/ManuEtt/Dnd/pull/164). Original-PRs [#159](https://github.com/ManuEtt/Dnd/pull/159), [#160](https://github.com/ManuEtt/Dnd/pull/160), [#161](https://github.com/ManuEtt/Dnd/pull/161), [#162](https://github.com/ManuEtt/Dnd/pull/162) und [#163](https://github.com/ManuEtt/Dnd/pull/163) bei Erstabgleich alle offen und reviewbereit, jeweils konfliktfrei gegenüber bisherigem main. Kein Commit auf main, kein Force-Push, keine Löschung anderer Branches.

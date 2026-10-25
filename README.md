@@ -2,6 +2,14 @@
 
 Deutschsprachige Android-Alpha für Soloabenteuer, SRD-geprüfte Teilsysteme, regelgeprüfte Kämpfe und lokale Kampagnen mit SQLite. Flutter-/Dart-App in `app/`, optionaler Fastify-/TypeScript-Erzähler in `backend/`. **Das vollständige D&D-SRD-5.2.1-Regelwerk ist weiterhin nicht implementiert.**
 
+## Weiterentwicklung 25.10.2026: Backend-Kontext vor KI-Anfragen absichern
+
+**Neu in [PR #167](https://github.com/ManuEtt/Dnd/pull/167):** Der Backend-Erzähler lehnt duplizierte Handlungsstrang- oder NPC-Kennungen mit HTTP 400 **vor** einer optional kostenpflichtigen KI-Abfrage ab. Die bestehende Regel-/Story-Grenze bleibt erhalten. Zwei Backendtests für doppelte IDs, sichere Fehlermeldung und unveränderten gültigen Pfad wurden ergänzt. Der PR ist wie [#165](https://github.com/ManuEtt/Dnd/pull/165) auf dem vollständig grünen, noch nicht gemergten [Integrations-PR #164](https://github.com/ManuEtt/Dnd/pull/164) aufgebaut; der neue vollständige CI-Lauf muss separat geprüft werden.
+
+Keine App- oder Speicherformatänderung: `0.8.38+88`, SQLite 2, Export-JSON 1. [Technischer Nachweis](docs/STORY_CONTEXT_DUPLICATE_IDS_20261025.md) · [Checkpoint](docs/CODEX_CHECKPOINT.md).
+
+---
+
 ## Aktueller Integrationsvorschlag (24.10.2026)
 
 **Basis:** `main` `b60ffe7`, App-Version **0.8.38+88**, SQLite **2**, Kampagnen-Export-JSON **1**. Der Branch `integration/approved-pr159-163-20261024` bündelt fünf einzeln grün getestete, **noch nicht nach main gemergte** PRs [#159](https://github.com/ManuEtt/Dnd/pull/159)–[#163](https://github.com/ManuEtt/Dnd/pull/163). Der gemeinsame Integrations-PR **#164** erfordert eine **neue vollständige CI auf seinem eigenen Commit** und menschliche Review, bevor Änderungen in `main` übernommen werden. Die originalen PR-Branches bleiben für die Überprüfung erhalten.

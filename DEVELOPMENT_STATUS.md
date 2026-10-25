@@ -1,3 +1,11 @@
+## 25.10.2026 – Story-Kontext vor Erzählaufrufen eindeutig validieren (PR #167)
+
+**IMPLEMENTIERT:** `validateStoryTurnContext` prüft doppelte IDs unabhängig in gespeicherten Thread- und NPC-Listen; `parseStoryTurn` wiederholt die Prüfung. Der HTTP-Endpunkt `/v1/story/advance` verweigert Mehrdeutigkeit mit generischem HTTP 400 **vor** einem möglichen externen KI-Anbieteraufruf. Zwei Regressionstests mit 0-Anbieteraufrufen bei unzulässigem Kontext und gültigem HTTP-200-Pfad. **GETESTET:** ältere getrennte Integrations- und Flutter-Sicherheits-PRs #164/#165 grün, aber kein Nachweis für #167. **NICHT GETESTET:** vollständige neue #167-CI bis zum Abschluss, echtes Android-Gerät. **BLOCKIERT:** Produktivsignatur und Geräteabnahme. **NOCH NICHT IMPLEMENTIERT:** umfassende SRD-Automatik oder globale Backend-Quoten. Basis-PR #164 weiterhin offen; PR #165 und Kampf-PR #166 parallel unverändert. Version `0.8.38+88`, SQLite 2, JSON 1 ohne Migration.
+
+**Nächster Schritt:** Finale CI für [PR #167](https://github.com/ManuEtt/Dnd/pull/167/checks) auswerten, bei Grün Review. [Beleg](docs/STORY_CONTEXT_DUPLICATE_IDS_20261025.md).
+
+---
+
 ## 24.10.2026 – Integrationsstand der fünf offenen PRs #159–#163
 
 **IMPLEMENTIERT im Integrationsbranch:** alle jeweils unabhängig abgenommenen Produktänderungen (Sending W100, Schurken-Nebenhandbestätigung, Story-Endstatus, Rate-Limiter-Kapazität, wörtliche Geheimnisprüfung) und Regressionstests in einem gemeinsamen Codebaum; parallele Dateien der eigentlichen Features überschneiden sich nicht. Die originalen Detailberichte der fünf PRs stehen direkt unter diesem Eintrag und werden nicht verworfen. Die App-Version 0.8.38+88, SQLite 2 und Export-JSON 1 bleiben unverändert.
