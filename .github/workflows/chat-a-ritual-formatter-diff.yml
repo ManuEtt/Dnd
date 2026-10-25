@@ -1,0 +1,21 @@
+name: Chat A Ritual Formatter Diagnosis
+on:
+  push:
+    paths:
+      - '.github/workflows/chat-a-ritual-formatter-diff.yml'
+      - 'app/lib/domain/srd_ritual_casting_rules.dart'
+      - 'app/test/srd_ritual_casting_rules_test.dart'
+jobs:
+  show-exact-format-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Format and show patch
+        run: |
+          dart format app/lib/domain/srd_ritual_casting_rules.dart app/test/srd_ritual_casting_rules_test.dart
+          git --no-pager diff -- app/lib/domain/srd_ritual_casting_rules.dart app/test/srd_ritual_casting_rules_test.dart
