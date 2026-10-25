@@ -98,60 +98,66 @@ class _CapturedTransport implements BackendTransport {
 void main() {
   sqfliteFfiInit();
 
-  test('confirmed NPC history reaches mock AI after a saved relationship', () async {
-    final dir = await Directory.systemTemp.createTemp('npc-context-');
-    final dbPath = paths.join(dir.path, 'npc.sqlite');
-    final repository = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: dbPath,
-    );
-    final transport = _CapturedTransport();
-    final narrator = BackendNarrator(transport: transport, clock: () => _time);
-    final controller = GameController(
-      repository: repository,
-      narrator: narrator,
-    );
+  test(
+    'confirmed NPC history reaches mock AI after a saved relationship',
+    () async {
+      final dir = await Directory.systemTemp.createTemp('npc-context-');
+      final dbPath = paths.join(dir.path, 'npc.sqlite');
+      final repository = await SqliteCampaignRepository.open(
+        factory: databaseFactoryFfi,
+        path: dbPath,
+      );
+      final transport = _CapturedTransport();
+      final narrator = BackendNarrator(
+        transport: transport,
+        clock: () => _time,
+      );
+      final controller = GameController(
+        repository: repository,
+        narrator: narrator,
+      );
 
-    try {
-      await controller.connectNarrator(
-        url: 'https://narrator.example.test',
-        sessionToken: 'test.session',
-      );
-      expect(controller.error, isNull);
-      await controller.newAiCampaign(
-        HeroCharacter(id: 'aria', name: 'Aria'),
-        theme: 'Die alte Stadt',
-      );
-      expect(controller.error, isNull);
-      final originalHero = controller.currentCampaign!.hero.toJson();
+      try {
+        await controller.connectNarrator(
+          url: 'https://narrator.example.test',
+          sessionToken: 'test.session',
+        );
+        expect(controller.error, isNull);
+        await controller.newAiCampaign(
+          HeroCharacter(id: 'aria', name: 'Aria'),
+          theme: 'Die alte Stadt',
+        );
+        expect(controller.error, isNull);
+        final originalHero = controller.currentCampaign!.hero.toJson();
 
-      await controller.recordNpcRelationship(
-        npcId: 'mira',
-        relationship: 'freundlich',
-        note: 'Mira verriet Aria den verborgenen Bibliotheksweg.',
-      );
-      expect(controller.error, isNull);
-      final confirmed = controller.currentCampaign!;
-      expect(confirmed.npcRelationshipNotes, hasLength(1));
+        await controller.recordNpcRelationship(
+          npcId: 'mira',
+          relationship: 'freundlich',
+          note: 'Mira verriet Aria den verborgenen Bibliotheksweg.',
+        );
+        expect(controller.error, isNull);
+        final confirmed = controller.currentCampaign!;
+        expect(confirmed.npcRelationshipNotes, hasLength(1));
 
-      await controller.sendAction('Ich frage Mira nach dem Bibliotheksweg.');
-      expect(controller.error, isNull);
-      expect(transport.sentMemories, hasLength(1));
-      final memories = transport.sentMemories.single;
-      expect(memories, isNotEmpty);
-      expect(memories.first, startsWith('Bestätigte NPC-Beziehungsnotiz'));
-      expect(memories.first, contains('Bibliotheksweg'));
-      expect(memories.every((entry) => entry.length <= 400), isTrue);
-      expect(memories.length, lessThanOrEqualTo(12));
-      expect(controller.currentCampaign!.hero.toJson(), originalHero);
-      expect(
-        (await repository.getCampaign(confirmed.id))!.hero.toJson(),
-        originalHero,
-      );
-    } finally {
-      controller.dispose();
-      await repository.close();
-      await dir.delete(recursive: true);
-    }
-  });
+        await controller.sendAction('Ich frage Mira nach dem Bibliotheksweg.');
+        expect(controller.error, isNull);
+        expect(transport.sentMemories, hasLength(1));
+        final memories = transport.sentMemories.single;
+        expect(memories, isNotEmpty);
+        expect(memories.first, startsWith('Bestätigte NPC-Beziehungsnotiz'));
+        expect(memories.first, contains('Bibliotheksweg'));
+        expect(memories.every((entry) => entry.length <= 400), isTrue);
+        expect(memories.length, lessThanOrEqualTo(12));
+        expect(controller.currentCampaign!.hero.toJson(), originalHero);
+        expect(
+          (await repository.getCampaign(confirmed.id))!.hero.toJson(),
+          originalHero,
+        );
+      } finally {
+        controller.dispose();
+        await repository.close();
+        await dir.delete(recursive: true);
+      }
+    },
+  );
 }
