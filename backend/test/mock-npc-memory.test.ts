@@ -31,7 +31,7 @@ test('offline mock recalls the first matching NPC diary note as prose only', () 
   const input = context();
   assert.equal(
     mockNpcDiaryHint(input),
-    'Dein Tagebuch zu Mira vermerkt: „Mira zeigte uns den Brunnen.“. ',
+    'Dein Tagebuch zu Mira vermerkt: „Mira zeigte uns den Brunnen.“ ',
   );
   const first = mockStoryTurn(input);
   const second = mockStoryTurn(input);
@@ -100,7 +100,7 @@ test('notes are bounded, one-line and Unicode-codepoint-safe', () => {
   assert.ok(hint.length > 0);
   assert.doesNotMatch(hint, /[\r\n]/u);
   assert.match(hint, /Eine Zeile/);
-  assert.match(hint, /…“. $/u);
+  assert.match(hint, /…“ $/u);
   assert.equal(Array.from(hint.split('„')[1]!.split('“')[0]!).length, 160);
   assert.equal(
     Array.from(hint).some(char => /[\uD800-\uDFFF]/u.test(char)),
