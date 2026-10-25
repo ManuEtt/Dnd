@@ -1,3 +1,9 @@
+## 25.10.2026 – Lokalen Endzustand nach KI-Antwort bewahren (PR #165)
+
+Die lokale Flutter-Validierungsgrenze für KI-Storyupdates blockiert nun unautorisierte Änderungen bereits abgeschlossener/aufgegebener Handlungsfäden. Drei Regressionen zu bestätigtem Status, manueller Wiederöffnung und zwischenzeitlich veralteter KI-Antwort. Gestapelter [PR #165](https://github.com/ManuEtt/Dnd/pull/165) baut auf [PR #164](https://github.com/ManuEtt/Dnd/pull/164) auf. **Nächster konkreter Schritt:** neue komplette #165-CI auswerten, nach Grün Review; erst #164 reviewen/integrieren, dann #165 gegen `main` rebasen/erneut prüfen. Alle historischen Commit-/Statusmeldungen darunter sind Momentaufnahmen.
+
+---
+
 ## Aktueller integrierter Entwicklungsplan (24.10.2026, Integrations-PR)
 
 Fünf einzeln grüne, aber noch nicht in `main` integrierte PRs #159–#163 werden auf einem gemeinsamen, separat geprüften Integrationsbranch kombiniert. **Aktuelles Arbeitspaket:** alle unveränderten Quell-/Testdateien dieser fünf Pakete, originalen Fachbelege sowie widerspruchsfrei konsolidierte Checkpoint-, README- und Statusdokumentation. **Definition of Done:** 100 Python-/Backend-/Flutter-Gates wie in CI, Android-Debug- und ABI-Alpha-Build, native Tests auf dem neuen Integration-HEAD; danach Review. Main, Release-Signierung und reales Android-Gerät bleiben getrennte Schritte. SRD-5.2.1-Abdeckung ausdrücklich weiter nur teilweise; lokale Zustandsautorität unverändert.

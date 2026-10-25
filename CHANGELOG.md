@@ -1,3 +1,12 @@
+## 25.10.2026 – Lokaler Schutz geschlossener Story-Fäden (PR #165)
+
+- Ergänzt die bereits serverseitige Schutzprüfung aus PR #161 in `app/lib/story/ai_story.dart`: generative `threadUpdates` können einen vom Spieler zuvor `resolved`/`abandoned` markierten Strang nicht automatisch wieder öffnen oder umklassifizieren.
+- Spieler kann manuell durch `saveStoryThread` erneut auf `open` setzen; danach normale KI-Fortsetzung. Bestehende zweite Importprüfung bei `applyAiStoryStep` blockiert veraltete KI-Antworten.
+- Drei neue Domain-/JSON-/Eventtests; **finale neue CI auf PR #165 ausstehend**, grüne Basis aus PR #164 ist kein Nachweis. Keine Versions-/Schemaänderung.
+- [PR #165](https://github.com/ManuEtt/Dnd/pull/165) · [Fachlicher Beleg](docs/STORY_LOCAL_TERMINAL_GUARD_20261025.md).
+
+---
+
 ## 24.10.2026 – Integrationsprüfung PR #159–#163
 
 Der technische Integrationsbranch bündelt fünf einzeln CI-geprüfte Pakete aus Sending-W100, Nebenhand-Verbündetenbestätigung, Abschlussstatus-Schutz, Backend-Quotenschutz und verbatim Plot-Secret-Schutz. Detaillierte Änderungen stehen in den folgenden überlieferten PR-Changelog-Abschnitten und in `docs/INTEGRATION_PR159_163_20261024.md`. **Die gemeinsame CI ist ein eigenständiges Gate und ist vor Abschluss des Integrations-PR erneut zu prüfen; `main` bleibt unverändert.** Spielstandsformate 0.8.38+88 / SQLite2 / JSON1 unverändert.
