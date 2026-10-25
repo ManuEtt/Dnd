@@ -1,3 +1,61 @@
+## 24.10.2026 – Integrationsstand der fünf offenen PRs #159–#163
+
+**IMPLEMENTIERT im Integrationsbranch:** alle jeweils unabhängig abgenommenen Produktänderungen (Sending W100, Schurken-Nebenhandbestätigung, Story-Endstatus, Rate-Limiter-Kapazität, wörtliche Geheimnisprüfung) und Regressionstests in einem gemeinsamen Codebaum; parallele Dateien der eigentlichen Features überschneiden sich nicht. Die originalen Detailberichte der fünf PRs stehen direkt unter diesem Eintrag und werden nicht verworfen. Die App-Version 0.8.38+88, SQLite 2 und Export-JSON 1 bleiben unverändert.
+
+**GETESTET:** die jeweiligen Einzel-PR-Workflows waren grün; gemeinsame CI des Integrationsbranches bis zu deren tatsächlichem Abschluss nicht behaupten. **NICHT GETESTET:** finale kombinierten Android-/Flutter-/Backend-Gates und echtes Android-Gerät. **BLOCKIERT:** physischer Gerätetest, Produktionssignierung. **NOCH NICHT IMPLEMENTIERT:** vollständiges SRD-5.2.1-Regelwerk, generelle Positionsverwaltung, semantischer Geheimnisschutz und Mehrinstanz-Backendlimitierung. **NÄCHSTER SCHRITT:** integrale CI grün prüfen; Review und anschließende Integration erst nach explizit geprüfter Freigabe.
+
+---
+
+## 24.10.2026 – Geheimnis-Leak-Schutz am KI-Kampagnenausgang (PR #163)
+
+**IMPLEMENTIERT:** Backend-Guard in `story_secret_guard.ts` und `app.ts`: Beim Story-Start und in Fortsetzungen vollständige wörtliche Enthüllungen des internen Kampagnen-Secrets in sichtbaren Textfeldern fail-closed ablehnen; Normalisierungsvarianten abdecken, aber keine semantische Garantie. Neue HTTP-/Unit-Tests geschrieben; `stateChanges: []` und Regelautorität bleiben unverändert. **GETESTET:** bislang nur vorheriger anderer PR #162 CI #40115897734 vollständig grün. **NICHT GETESTET:** finaler PR-#163-Workflow und realer Android-Test. **BLOCKIERT:** echtes Testgerät, produktive Signatur. **NOCH NICHT IMPLEMENTIERT:** lokal bestätigte Story-Geheimnisfreigabe oder semantische Erkennung. Keine Datenmigration: App 0.8.38+88, SQLite2/JSON1. Eigener [PR #163](https://github.com/ManuEtt/Dnd/pull/163), offene PRs #159–#162 erhalten. [Details](docs/STORY_SECRET_OUTPUT_GUARD_20261024.md). **Nächster Schritt:** gesamte neue CI prüfen und erst nach Erfolg PR reviewbereit machen.
+
+---
+
+## 24.10.2026 – Backend-Rate-Limiter vor aktiver Quotenverdrängung geschützt (PR #162)
+
+**IMPLEMENTIERT:** Der bisher aktive Eintrag in `WindowLimiter` wird bei voller Kapazität nicht mehr verdrängt; abgelaufene Slots werden aufgeräumt, andernfalls neue Schlüssel fail-closed abgelehnt. Vorhandene Schlüssel bleiben begrenzt. Zwei neue Backend-Regressionen schützen Kontingentverbrauch, wechselnde Identitäten, Ablaufgrenzen und Zeitsprünge. Eigenständiger [PR #162](https://github.com/ManuEtt/Dnd/pull/162) basierend auf `main=b60ffe7`, offene PRs #159–#161 erhalten.
+
+**GETESTET:** vorherige [PR-#161-CI #40113090963](https://github.com/ManuEtt/Dnd/actions/runs/40113090963) grün, jedoch anderer Quellstand. **NICHT GETESTET:** endgültige PR-#162-Backend-/Android-CI bis zum echten Nachweis; physisches Android-Gerät und Signierung. **BLOCKIERT:** Geräteabnahme/Produktivschlüssel. **NOCH NICHT IMPLEMENTIERT:** mehrere Backends mit zentral verwalteter Quote. Version 0.8.38+88, SQLite2/Export-JSON1 und SRD-Anforderungsstatus unverändert.
+
+**Ein nächster Schritt:** finalen PR-#162-CI-Lauf auswerten, Fehler beheben, danach zur Review freigeben. [Checkpoint](docs/CODEX_CHECKPOINT.md) · [technischer Beleg](docs/BACKEND_LIMITER_CAPACITY_20261024.md).
+
+---
+
+## 24.10.2026 – Backend-Story-Statuskontinuität, PR #161
+
+**IMPLEMENTIERT:** `parseStoryTurn` verhindert, dass eine Anbieterantwort bestehende `resolved`- oder `abandoned`-Stränge ohne manuelle Spieleränderung in einen anderen Status zurückversetzt; idempotente Notizen und zuvor lokal bestätigtes `open` bleiben erlaubt. Zwei neue Backendtests mit HTTP-Fail-Closed-Prüfung. Eigener [PR #161](https://github.com/ManuEtt/Dnd/pull/161) auf Basis `main=b60ffe7`, PR #159 und #160 unangetastet. **GETESTET:** neue CI ausstehend; die grüne CI von PR #160 ist nur ein älterer, anderer Quellstand. **NICHT GETESTET:** finales Backend/Android-Gesamtergebnis und echtes Gerät. **BLOCKIERT:** physische Geräteabnahme und produktive Signierung. **NOCH NICHT IMPLEMENTIERT:** allgemeine KI-Verwaltung von Spielerentscheidungen, SRD-Vollständigkeit. Keine Änderung an 0.8.38+88 / SQLite2 / JSON1. **Nächster Schritt:** finale PR-#161-CI prüfen, Fehler beheben, für Review freigeben. [Checkpoint](docs/CODEX_CHECKPOINT.md).
+
+---
+
+## 24.10.2026 – Nachtrag: vollständige CI-Abnahme PR #160
+
+**Vollständige GitHub-CI [#40099238901](https://github.com/ManuEtt/Dnd/actions/runs/40099238901): completed/success** auf geprüftem PR-HEAD `5563c60ba0dbbd1f12a19877f62581a51485b6d9` (24.10.2026). **1.514 Flutter-, 100 Python- und 31 Backend-Tests bestanden**; Dart-Formatierung 357 Dateien ohne Änderungen, Flutter-Analyse und Backend-Typecheck/Build erfolgreich. Android-Debug-APK, native Gradle-Tests und ARM64/ARMv7/x64-Alpha-APKs erfolgreich; letzte Artefaktschritte abgeschlossen. Ein echter Android-Gerätetest, ein Altspielstand-Upgrade und produktive Signierung fehlen weiterhin. Dieser Nachtrag berichtet die nach dem damaligen Vorab-Checkpoint eingetroffene finale Abnahme.
+
+[Alpha-APKs](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562551949) · [Debug-APK](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12561909697) · [Alpha-Release](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562517123) · [Quellcode-Checkpoint](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562163517). Die SHA256-Digests der GitHub-Artefaktarchive sind **nicht** automatisch Einzel-APK-Prüfsummen.
+
+---
+
+## 24.10.2026 – PR #160: kontrollierter Hinterhältiger Angriff mit Nebenhand-Verbündetenquelle
+
+**IMPLEMENTIERT:** Regel-/Import-Grenze `SneakAttackAllyRules.eligible` und `PendingRoll.fromJson` akzeptieren zulässige Nebenhandangriffe mit separat bestätigtem Verbündeten; echte angreifende Waffe und bereits reservierte Bonusaktion erforderlich. Gleiche Kampagnen-/Ziel-/Wurfbindung, Bestätigungs- und Entfernungs-Controller, UI-Anzeige auch für Nebenhand, unveränderter atomarer SQLite-Kampfabschluss. **GETESTET:** Vorläufer-CI bis einschl. Flutter-Analyse/Widgets, 1.513 bestandene Flutter-Tests, 1 fehlgeschlagene zu breite JSON-Assertion – inzwischen gezielt korrigiert; **keine finale neue CI-Erfolgsbehauptung**. **NICHT GETESTET:** finaler CI-/APK-HEAD, echtes Android-Gerät und Altspielstand-Upgrade. **BLOCKIERT:** lokal kein Flutter/Dart oder eigener Android-Test. **NOCH NICHT IMPLEMENTIERT:** vollautomatische Positions-/Gelegenheitsangriffe und vollständige SRD.
+
+Der Code nutzt SRD 5.2.1 Rogue/Sneak Attack S.61–62, `CLASS-SCHURKE-1-BASE-SNEAK-ATTACK-1` bleibt `partial`. App `0.8.38+88`, SQLite 2 / JSON 1 ohne Migration. Branch `feature/sneak-attack-offhand-ally-20261024`, offener [PR #160](https://github.com/ManuEtt/Dnd/pull/160); PR #159 (Sending) bleibt unabhängig und grün. Nächster Schritt: PR160-Code in vollständiger CI inklusive Android nachprüfen, Fehler beheben und für Review freigeben. [Checkpoint](docs/CODEX_CHECKPOINT.md).
+
+---
+
+## 24.10.2026 – Sending-W100-Dialog an autoritative Regelprüfung angeglichen (PR #159)
+
+**IMPLEMENTIERT:** `sending_attempt_dialog.dart` stellt die manuelle Ebenen-W100-Eingabe nur bei bestätigter anderer Ebene **und** bestätigter Nichtblockade bereit. Die Vorschau erhält denselben Vorfilter. Ein Blockadewechsel löscht einen früheren W100 und setzt die explizite Zustimmung zurück. Keine Story- oder Regelmoduländerung; keine KI-Autorität über bestätigte Daten.
+
+**TESTS ERGÄNZT:** Zwei Widgettests sichern unbekannte/blockierte/nicht blockierte Empfänger, Neuprüfung, W100-Löschung, Zurücksetzen der Zustimmung und unveränderten Vorschaufluss ab. **GETESTET:** Quelltextabgleich mit bestehender `SrdSendingRules.assessDelivery`; bisherige Main- und Schurken-CI sind keine Freigabe dieser Änderung. **NICHT GETESTET:** Neue Flutter-Suite, Android-Debug-/APK-Build und physisches Gerät bis zur finalen CI/Abnahme. Ein früherer PR-Lauf scheiterte an Dart-Formatierung; Formatkorrektur am Test wurde vorgenommen, erneuter Lauf ausstehend. **BLOCKIERT:** Lokal kein Flutter-/Dart-SDK; GitHub-Actions-Abnahme notwendig. **NOCH NICHT IMPLEMENTIERT:** echte Sending-Zustellung, Empfängerantwort und automatische 8h-Weltzeitsperre.
+
+**Git:** Basis-main `dcb42c5`, während der Arbeit PR #158 als Main-Merge `b60ffe7` integriert; Feature-Branch ohne Force-Push mit Main zusammengeführt, [PR #159](https://github.com/ManuEtt/Dnd/pull/159) offen. Version 0.8.38+88, SQLite2/JSON1 unverändert, kein Migrationseingriff.
+
+**Nächster konkreter Schritt:** Den vollständigen GitHub-CI-Lauf des finalen PR-#159-HEAD einschließlich Dart-Format, Flutter-Widgettests, Android und SQLite überprüfen, auftretende Fehler beheben, erst dann PR zur Integration freigeben.
+
+---
+
 ## 24.10.2026 – 0.8.38+88: tatsächliche Nebenhandwaffe für Hinterhältigen Angriff
 
 Die vorhandene Nebenhandauflösung prüft jetzt ihre bestätigte Inventarwaffe auf Finesse/Fernkampf. Ein Hauptdolch verleiht einer Nebenhandaxt keinen Zusatzschaden; ein Nebendolch verliert seine Eignung nicht durch eine Haupthandaxt. Krit/Miss und bestehende gemeinsame Zugnutzung bleiben erhalten. 27 bestehende/Helper- und acht neue Kampf-/SQLite-Tests erfolgreich. Vollständige lokale Abnahme: 1505 Flutter-,100 Python-,31 Backend- und12 native Tests erfolgreich, Format/Analyse/Importgrenzen ohne Befund. Neue Debug-APK und ARM64-Alpha gebaut und geprüft. Eigene finale GitHub-Checks am PR158 getrennt geführt; Realgerät nicht getestet. SQLite2/JSON1 kompatibel. Details und nächstes Paket: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md).

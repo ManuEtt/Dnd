@@ -1,3 +1,25 @@
+## Gemeinsame Backend-Integration – PRs #161–#163 (24.10.2026)
+
+Der Integrationsbranch übernimmt die einzeln grün geprüften Story- und Sicherheitspakete: keine unbestätigte Rücknahme abgeschlossener Erzählstränge, kein Verdrängen aktiver Ratelimitkontingente und Abweisung vollständiger wörtlicher Plot-Geheimnis-Lecks aus öffentlich sichtbaren Erzählantworten. Die finale kombinierte Backend- und Android-CI ist ein gesonderter Abnahmeschritt. Unverändert: lokale Spielzustandsautorität, API-Verträge und Kostenfreigabe. Weiterhin nicht garantiert: verteilter Schutz mehrerer Backendinstanzen und Erkennung sinngemäßer Plot-Paraphrasen.
+
+---
+
+## 24.10.2026 – Wörtlicher Spoilerschutz bei generierter Story (PR #163)
+
+Die beiden Story-Endpunkte prüfen nach der bestehenden JSON-/Referenzvalidierung zusätzlich alle öffentlich sichtbaren Textfelder auf ein vollständig wörtlich wiederholtes internes Plot-Secret. Unicode-NFKC-, Leerzeichen- und Groß-/Kleinschreibungsvarianten werden verglichen. Bei einem direkten Leak gibt der Server generisch `502 provider_unavailable` zurück, ohne den Secret-Text zurückzusenden. Der eigene `secret`-Kontext des Plans wird für die App weiterhin mitgesendet und **nicht** als Spielertext behandelt.
+
+Dies ist keine Garantie gegen Paraphrasen, Teilenthüllungen oder Geheimnisse in unkontrollierten Kanälen. Es gibt noch keinen autoritativen Reveal-Status; Story-/Regelrechte und Spielstände sind unverändert. Details unter [docs/STORY_SECRET_OUTPUT_GUARD_20261024.md](../docs/STORY_SECRET_OUTPUT_GUARD_20261024.md) und [PR #163](https://github.com/ManuEtt/Dnd/pull/163).
+
+---
+
+## Backend-Limits – sichere Kapazitätsgrenze (24.10.2026, PR #162)
+
+Die In-Memory-Quoten des lokalen Erzählers bewahren bei vollständig belegtem Schlüsselspeicher jetzt aktive Zähler; nur abgelaufene Fenstereinträge werden verdrängt. Sind weiterhin alle Plätze belegt, wird ein neuer Schlüssel **abgelehnt**, statt die Quote eines bestehenden Schlüssels vorzeitig freizugeben. Dies kann bei sehr vielen gleichzeitig aktiven Clients konservativ zu `429` führen. Bestehende Limits pro Minute/Tag und `Retry-After` bleiben unverändert.
+
+Der Fix verhindert keine Umgehung über mehrere Backendinstanzen oder einen Prozessneustart; dafür wäre ein gemeinsamer externer Limitspeicher erforderlich. [PR #162](https://github.com/ManuEtt/Dnd/pull/162) · [Details](../docs/BACKEND_LIMITER_CAPACITY_20261024.md).
+
+---
+
 ## 0.3.1 – bestätigbare Abenteuerangebote
 
 `POST /v1/story/advance` antwortet zusätzlich mit `turn.adventure: null` oder einem narrativen Vorschlag `{id,title,description,archetype,questTitle,questDescription}`. Zulässige Profile sind `bandit`, `wolf`, `skeleton`, `goblin`, `orc`, `investigation`; sämtliche Monsterwerte und Beute stammen von der **lokalen App**. Der neue Rückgabetyp erfordert aktualisierte Android-/Flutter-App 0.3.8+14. Backend liest/schreibt keine Kampagnendaten. Kostenzustimmung und Sitzungs-Ratelimits bleiben erhalten.

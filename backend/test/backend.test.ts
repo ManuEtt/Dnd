@@ -334,12 +334,39 @@ test('configuration defaults to free local mock and rejects unsafe settings', ()
   assert.equal(paid.provider, 'openai');
 });
 
-test('limiter is bounded, deterministic and handles time moving backward', () => {
+test('limiter fails closed on capacity rather than evicting live quotas', () => {
   const limiter = new WindowLimiter(2);
   assert.equal(limiter.take('one', now, 1000, 1), true);
   assert.equal(limiter.take('one', now, 1000, 1), false);
   assert.equal(limiter.take('two', now, 1000, 1), true);
-  assert.equal(limiter.take('three', now, 1000, 1), true);
-  assert.equal(limiter.take('one', now, 1000, 1), true);
-  assert.equal(limiter.take('one', now - 1000, 1000, 1), true);
+  // A third principal cannot reset the first principal's quota.
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    assert.equal(limiter.take('three', now, 1000, 1), false);
+    assert.equal(limiter.take('one', now, 1000, 1), false);
+    assert.equal(limiter.take('two', now, 1000, 1), false);
+  }
+  // Existing principals stay limited, even while new principals are rejected.
+  assert.equal(limiter.take('one', now + 999, 1000, 1), false);
+  assert.equal(limiter.take('three', now + 999, 1000, 1), false);
+  // Expired slots are reclaimed without evicting an active one.
+  assert.equal(limiter.take('three', now + 1000, 1000, 1), true);
+  assert.equal(limiter.take('one', now + 1000, 1000, 1), true);
+  assert.equal(limiter.take('two', now + 1000, 1000, 1), false);
+  assert.equal(limiter.take('three', now + 1000, 1000, 1), false);
+});
+
+test('limiter reclaims only expired quotas at capacity and tolerates clock rollback', () => {
+  const limiter = new WindowLimiter(2);
+  assert.equal(limiter.take('old', now, 1000, 1), true);
+  assert.equal(limiter.take('active', now + 500, 1000, 1), true);
+  assert.equal(limiter.take('blocked', now + 999, 1000, 1), false);
+  assert.equal(limiter.take('blocked', now + 1000, 1000, 1), true);
+  // The still-active second window was not discarded to make room.
+  assert.equal(limiter.take('active', now + 1000, 1000, 1), false);
+  assert.equal(limiter.take('old', now + 1000, 1000, 1), false);
+  // A backwards-moving clock invalidates future-started windows.
+  assert.equal(limiter.take('rollback', now - 1000, 1000, 1), true);
+  assert.equal(limiter.take('rollback', now - 1000, 1000, 1), false);
+  assert.equal(limiter.take('other', now - 1000, 1000, 1), true);
+  assert.equal(limiter.take('third', now - 1000, 1000, 1), false);
 });

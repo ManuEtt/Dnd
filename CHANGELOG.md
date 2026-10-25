@@ -1,3 +1,60 @@
+## 24.10.2026 – Integrationsprüfung PR #159–#163
+
+Der technische Integrationsbranch bündelt fünf einzeln CI-geprüfte Pakete aus Sending-W100, Nebenhand-Verbündetenbestätigung, Abschlussstatus-Schutz, Backend-Quotenschutz und verbatim Plot-Secret-Schutz. Detaillierte Änderungen stehen in den folgenden überlieferten PR-Changelog-Abschnitten und in `docs/INTEGRATION_PR159_163_20261024.md`. **Die gemeinsame CI ist ein eigenständiges Gate und ist vor Abschluss des Integrations-PR erneut zu prüfen; `main` bleibt unverändert.** Spielstandsformate 0.8.38+88 / SQLite2 / JSON1 unverändert.
+
+---
+
+## 24.10.2026 – Backend-Erzähler: wörtliche Geheimnisoffenlegung sperren (PR #163)
+
+- `/v1/story/start` und `/v1/story/advance` validieren neu, dass sichtbare Erzählfelder den intern gespeicherten Plot-Secret-Text nicht vollständig wörtlich enthalten. Normalisierter Case-/Whitespace-/Unicode-Abgleich und Wortgrenzen; bei Verstoß 502 ohne Durchreichen des Geheimnisses.
+- Eigener reiner Backend-Guard und neue positive/negative Fastify-/Unit-Regressionen, keine externen Anbieteraufrufe. **CI auf finalem HEAD noch ausstehend**; keine Behauptung vollständiger semantischer Spoilererkennung.
+- Version, Android-App und lokale Spielstände unverändert. [PR #163](https://github.com/ManuEtt/Dnd/pull/163) · [Details](docs/STORY_SECRET_OUTPUT_GUARD_20261024.md).
+
+---
+
+## 24.10.2026 – Backend-Anfragelimits fail-closed bei voller Kapazität (PR #162)
+
+- Sicherheitskorrektur: der `WindowLimiter` verwirft bei Überfüllung nicht länger gültige Quoten anderer Anfrageschlüssel. Stattdessen werden nur abgelaufene Einträge bereinigt; falls alle aktiv sind, wird die zusätzliche Anfrage sicher abgelehnt.
+- Zwei deterministische Backend-Regressionen für Quoten-Wahrung, Wiederholungen/Schlüsselwechsel, exakten Ablauf, partielle Bereinigung und zurücklaufende Uhr; veraltete unsichere Testerwartung korrigiert.
+- Keine Änderung der Rate-Werte, Backend-API oder `Retry-After`, keine SRD-Regeländerung oder SQLite-/JSON-Migration. Verteilte Backendinstanzen benötigen weiterhin einen gemeinsamen persistenten Limitspeicher.
+- Tests der neuen Version ausschließlich nach tatsächlicher PR-#162-GitHub-CI als bestanden ausweisen; reale Android-Geräteabnahme offen. [PR #162](https://github.com/ManuEtt/Dnd/pull/162) · [technische Notiz](docs/BACKEND_LIMITER_CAPACITY_20261024.md).
+
+---
+
+## 24.10.2026 – Verlässliche Handlungsstrang-Statuswerte im Backend (PR #161)
+
+- Abgeschlossene (`resolved`) oder aufgegebene (`abandoned`) Handlungsstränge werden nicht mehr durch eine unbestätigte Erzählerantwort stillschweigend wieder geöffnet oder gegenseitig umklassifiziert.
+- Gleichbleibender Terminalstatus mit neuer narrativer Notiz weiterhin zulässig; manuelles Wiederöffnen durch den Spieler im vorhandenen Editor bleibt möglich.
+- Zwei neue Backend-Regressionsfälle für erlaubte/verbotene Übergänge und API-Fehlerantworten ohne Anbieter-Geheimnisse. Backend-/Android-/Gesamt-CI beim Dokumentationszeitpunkt noch ausstehend.
+- Keine SQLite-/JSON-Migration, keine SRD-Regeländerung und keine externe Anbieter-Kostenfreigabe. [Details](docs/STORY_TERMINAL_THREAD_GUARD_20261024.md) · [PR](https://github.com/ManuEtt/Dnd/pull/161).
+
+---
+
+## 24.10.2026 – PR #160: neue Verbündeten-Nebenhandregeln vollständig in CI geprüft
+
+**Vollständige GitHub-CI [#40099238901](https://github.com/ManuEtt/Dnd/actions/runs/40099238901): completed/success** auf geprüftem PR-HEAD `5563c60ba0dbbd1f12a19877f62581a51485b6d9` (24.10.2026). **1.514 Flutter-, 100 Python- und 31 Backend-Tests bestanden**; Dart-Formatierung 357 Dateien ohne Änderungen, Flutter-Analyse und Backend-Typecheck/Build erfolgreich. Android-Debug-APK, native Gradle-Tests und ARM64/ARMv7/x64-Alpha-APKs erfolgreich; letzte Artefaktschritte abgeschlossen. Ein echter Android-Gerätetest, ein Altspielstand-Upgrade und produktive Signierung fehlen weiterhin. Dieser Nachtrag berichtet die nach dem damaligen Vorab-Checkpoint eingetroffene finale Abnahme.
+
+[Alpha-APKs](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562551949) · [Debug-APK](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12561909697) · [Alpha-Release](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562517123) · [Quellcode-Checkpoint](https://github.com/ManuEtt/Dnd/actions/runs/40099238901/artifacts/12562163517). Die SHA256-Digests der GitHub-Artefaktarchive sind **nicht** automatisch Einzel-APK-Prüfsummen.
+
+---
+
+## 24.10.2026 – SRD-Sneak-Attack: Verbündeter auch bei bestätigtem Nebenhandwurf (PR #160)
+
+Die vorhandene manuelle Verbündetenbestätigung wird auf bereits erlaubte Nebenhandangriffe erweitert. Der Berechtigungscheck verwendet die angreifende Inventarwaffe, kontrolliert den bestehenden Bonusaktions-/Zugstatus, die fehlende einmalige Nutzung des Sneak Attack sowie bestätigte Nähe zum Ziel und Nicht-Incapacitated. Version 0.8.38+88, SQLite 2 und Export-JSON 1 unverändert; keine automatische Kampfposition oder KI-Regelentscheidung.
+
+Neue Domain-/JSON-/SQLite- und zwei Widgetregressionen. Frühe CI: 1.513 Flutter-Tests bestanden, **ein Test wegen zu breitem Legacy-Inventar-JSON-Vergleich fehlgeschlagen**; Test präzisiert und Format korrekt nach GitHub-Dart-Formatter angewandt. Abschließende CI/Android-APK für korrigierten Commit noch ausstehend, reale Android-Abnahme und produktive Signierung weiterhin offen. [PR #160](https://github.com/ManuEtt/Dnd/pull/160) · [Details](docs/SRD_SNEAK_ATTACK_OFFHAND_ALLY_20261024.md).
+
+---
+
+## 24.10.2026 – Sending-W100-Dialog nur bei bestätigter Nichtblockade (PR #159)
+
+- **IMPLEMENTIERT:** Der manuelle W100 zur bestätigten anderen Ebene erscheint nur nach explizit bestätigter Nichtblockade; bei unbestätigter oder bestätigter Blockade bleibt das Feld verborgen. Der Wert wird auch nur unter genau diesen Bedingungen an die unverändernde Sending-Vorschau weitergereicht.
+- Jede Änderung der Blockadeauskunft verwirft den zuvor eingegebenen W100 und die Zustimmung. Zwei neue Widget-Regressionsfälle betreffen Statuswechsel und das Verbot der stillschweigenden Wiederverwendung.
+- **GETESTET:** Vorherige erfolgreiche Main-CI #40092582286 (auf dcb42c5) und PR-#158-CI #40093571340 (auf 80b615e) gelten nur für ihre jeweiligen Quellstände.
+- **NICHT GETESTET:** Neue PR-#159-CI sowie echtes Gerät bis zu eigenständigem Nachweis. Version 0.8.38+88, SQLite 2 und JSON 1 unverändert; kein Sender-/Empfängertransport, keine neue SRD-Regel.
+
+---
+
 ## 24.10.2026 – 0.8.38+88: tatsächliche Nebenhandwaffe für Hinterhältigen Angriff
 
 Die vorhandene Nebenhandauflösung prüft jetzt ihre bestätigte Inventarwaffe auf Finesse/Fernkampf. Ein Hauptdolch verleiht einer Nebenhandaxt keinen Zusatzschaden; ein Nebendolch verliert seine Eignung nicht durch eine Haupthandaxt. Krit/Miss und bestehende gemeinsame Zugnutzung bleiben erhalten. 27 bestehende/Helper- und acht neue Kampf-/SQLite-Tests erfolgreich. Vollständige lokale Abnahme: 1505 Flutter-,100 Python-,31 Backend- und12 native Tests erfolgreich, Format/Analyse/Importgrenzen ohne Befund. Neue Debug-APK und ARM64-Alpha gebaut und geprüft. Eigene finale GitHub-Checks am PR158 getrennt geführt; Realgerät nicht getestet. SQLite2/JSON1 kompatibel. Details und nächstes Paket: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md).
