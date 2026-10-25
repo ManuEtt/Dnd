@@ -124,6 +124,11 @@ class AiStoryStep {
   final AdventureOffer? adventure;
 
   factory AiStoryStep.fromJson(Map<String, dynamic> json, Campaign campaign) {
+    // A validated provider update must never fan out to several NPCs with
+    // the same ID or silently collapse contradictory saved story threads.
+    // Check the actual local state even when no corresponding update is sent.
+    _unique(campaign.storyThreads.map((thread) => thread.id));
+    _unique(campaign.npcs.map((npc) => npc.id));
     final knownThreads = {
       for (final thread in campaign.storyThreads) thread.id: thread.status,
     };
