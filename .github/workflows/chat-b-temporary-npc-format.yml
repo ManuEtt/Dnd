@@ -1,0 +1,17 @@
+name: Chat B temporary formatter diagnostics
+on:
+  push:
+    branches:
+      - feat/chat-b/npc-narrator-memory-20261025
+jobs:
+  print-format-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Show exact Dart format differences
+        run: |
+          dart format app/lib/story/npc_narrator_memory.dart app/test/npc_narrator_memory_test.dart app/test/npc_narrator_memory_integration_test.dart
+          git diff -- app/lib/story/npc_narrator_memory.dart app/test/npc_narrator_memory_test.dart app/test/npc_narrator_memory_integration_test.dart
