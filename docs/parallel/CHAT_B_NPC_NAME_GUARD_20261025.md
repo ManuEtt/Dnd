@@ -4,7 +4,7 @@
 - Repository: `ManuEtt/Dnd`
 - Ausgangs-`main`: `5f9a01dd73f68ad4f9e226f859a8ca87803b8337`.
 - Branch: `fix/chat-b/npc-memory-name-guard-20261025`.
-- Pull Request: folgt nach Dokumentation; keine automatische Zusammenführung.
+- Pull Request: [#193](https://github.com/ManuEtt/Dnd/pull/193), weiterhin offen; kein automatischer Merge.
 - Parallele PRs bei der Auswahl: #178, #179, #180, #181, #184, #187, #188, #189, #190, #191, #192. Alle geänderten Dateipfade wurden auf Überschneidungen geprüft.
 - Eigener PR #191 bleibt separat; `backend/src/story.ts` und `backend/src/mock_npc_memory.ts` werden hier nicht geändert.
 
@@ -40,3 +40,7 @@
 
 ## Genau ein nächster Schritt
 Nach tatsächlicher CI-Abnahme ein separates, revisionsgeschütztes **ID-basiertes** Story-Kontextprotokoll entwerfen und positiv/negativ testen. Eine neue ID-basierte API darf erst nach Abstimmung mit den bereits offenen Client- und Story-PRs integriert werden.
+
+## Nachtrag der ersten Prüfung
+- GitHub Actions [#40234248441](https://github.com/ManuEtt/Dnd/actions/runs/40234248441) wurde für die erste Version des dokumentierten PRs gestartet; dies ist kein vollständiger Testnachweis des späteren finalen Checkpoint-Commits.
+- Frühere erfolgreiche Backendtests gehören zum Code-Commit `301e1b4e9b5424b9ee9393fbce9182a330490cf4` und gelten nicht automatisch für den endgültigen PR-HEAD.
