@@ -1,3 +1,14 @@
+## 25.10.2026 – Regelvorprüfung für bestätigten Gelegenheitsangriff (PR #174)
+
+- **IMPLEMENTIERT:** Lesen der ausdrücklich bestätigten Auslöser und Erstellen eines `OpportunityAttackOffer` ohne Spielstandänderung: nur sichtbares Verlassen bestätigter Reichweite während eines gültigen Gegnerzugs, eigene freie Reaktion und Autorisierung; Rückzug/Teleport/erzwungene Bewegung gesperrt; ausgerüstete eindeutige SRD-Nahkampfwaffe oder waffenlos.
+- **TESTS ERGÄNZT:** Neue Domänen-Regressionsdatei mit negativen/positiven Bewegungs-, Zustands-, Inventar- und JSON-Szenarien. Der finale PR-Lauf muss erst erfolgreich abgeschlossen sein, bevor `GETESTET` für diesen Code behauptet werden darf.
+- **NICHT GETESTET:** Finale Flutter-/Backend-/Android-CI auf #174, tatsächliche Geräteinstallation, historisches Geräte-Upgrade, produktive Signatur.
+- **BLOCKIERT:** Kein lokales Flutter-/Android-SDK in dieser Sitzung; keine SHA-gebundene Löschung alter Remote-Branches über den verbundenen GitHub-Connector.
+- **NOCH NICHT IMPLEMENTIERT:** Bewegungs-/Positionsmodell, Android-Dialog, dauerhaftes Angriffsangebot, eigener Reaktionsverbrauch und Würfel-/Schadensabwicklung. Anforderung `RULE-COMBAT-OPPORTUNITY-ATTACKS` bleibt `partial`.
+- **Version und Format:** App `0.8.39+89`, SQLite 2, Kampagnen-JSON 1 unverändert. [Fach- und SRD-Beleg](docs/SRD_OPPORTUNITY_ATTACK_PREFLIGHT_20261025.md). Nächster Schritt: gespeicherter Gegnerbewegungs-Unterbrechungspunkt mit Stale-/Doppelbestätigungstests.
+
+---
+
 ## 25.10.2026 – PR #171 und Main-CI erfolgreich, gestapelte PRs bereinigt
 
 - **IMPLEMENTIERT:** Sämtliche Migrations-PR-Änderungen aus #171 mittels regulärem Merge nach `main` überführt, resultierender Commit `635773db33724f543d61bacde9a9ebe679b9b1e9`.
