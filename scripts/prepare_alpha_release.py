@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 import re
 import shutil
+import stat
 import zipfile
 
 from package_project import create_archive
@@ -41,6 +42,22 @@ def validate_arm64_apk(apk: Path) -> None:
     if not zipfile.is_zipfile(apk):
         raise ValueError('Die Android-APK ist kein gültiges ZIP-Containerformat.')
     with zipfile.ZipFile(apk) as archive:
+        # CRC-valid ZIPs can still contain ambiguous members, traversal paths
+        # or symbolic links. Reject these before checking required resources.
+        entries = archive.infolist()
+        names = [entry.filename for entry in entries]
+        if len(names) != len(set(names)):
+            raise ValueError('Die ARM64-APK enthält doppelte ZIP-Einträge.')
+        for entry in entries:
+            name = entry.filename
+            parts = name.rstrip('/').split('/')
+            if (not name or name.startswith('/') or '\\' in name
+                    or re.match(r'^[A-Za-z]:', name)
+                    or any(part in ('', '.', '..') for part in parts)
+                    or any(ord(char) < 32 or ord(char) == 127 for char in name)):
+                raise ValueError('Die ARM64-APK enthält unsichere ZIP-Pfade.')
+            if stat.S_ISLNK(entry.external_attr >> 16):
+                raise ValueError('Die ARM64-APK enthält symbolische ZIP-Links.')
         if archive.testzip() is not None:
             raise ValueError('Die ARM64-APK enthält beschädigte ZIP-Einträge.')
         present = set(archive.namelist())
