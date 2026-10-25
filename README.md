@@ -1,5 +1,13 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Qualitätssicherung – Chat D, 25.10.2026 (PR #177, Draft)
+
+[PR #177](https://github.com/ManuEtt/Dnd/pull/177) ergänzt zwei bisher nicht verbindlich in CI ausgeführte Prüfungen: `python3 scripts/check_domain_boundaries.py` und `python3 scripts/srd_coverage.py --json`. Beide laufen künftig im Android-Actions-Workflow und in `scripts/check.sh` vor den Python-Tests. Vier neue Python-Konfigurationstests wurden **in einer isolierten Testumgebung** erfolgreich ausgeführt; die vollständige CI auf dem PR-HEAD und ein neuer Android-Build bleiben zu verifizieren. Keine App-, Schema- oder Exportformatänderung, keine Migration und keine vollständige SRD-Abdeckung behauptet. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
+**Integrationshinweis:** Parallel offener [PR #176](https://github.com/ManuEtt/Dnd/pull/176) ändert ebenfalls README und `docs/CODEX_CHECKPOINT.md`; beide Dokumentationsstände vor einem Merge erhalten und konsolidieren.
+
+---
+
 ## Aktuelles Entwicklungsinkrement (2026-10-25T18:11:00+01:00 – Angebots-Revalidierung)
 
 [PR #175](https://github.com/ManuEtt/Dnd/pull/175) auf Branch `fix/opportunity-offer-revalidation-20261025` schützt das in PR #174 eingeführte **rein lesende** Gelegenheitsangriff-Angebot vor stiller Weiterverwendung nach einer Kampagnenrevision oder dem Austausch der bestätigten Bewegungsgeometrie. `SrdOpportunityAttackRules.revalidate` prüft das bisherige Angebot gegen Encounter, Revision, Angriffstyp, Waffenreferenz und alle drei Reichweiten-/Abstandsangaben und führt dann die vollständige bestehende Vorprüfung auf dem aktuellen Zustand erneut aus. Dadurch werden auch zwischenzeitlich verbrauchte Reaktionen oder gewechselte Waffen abgewiesen.
