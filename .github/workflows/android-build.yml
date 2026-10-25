@@ -82,6 +82,14 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
+      - name: TEMP – lokales Story-ID-Dart-Formatdiagnosepaket
+        working-directory: app
+        run: |
+          dart format lib/story/ai_story.dart test/ai_story_test.dart
+          echo LOCAL_DUPLICATE_FORMAT_BEGIN
+          git diff -- lib/story/ai_story.dart test/ai_story_test.dart
+          echo LOCAL_DUPLICATE_FORMAT_END
+          exit 1
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
