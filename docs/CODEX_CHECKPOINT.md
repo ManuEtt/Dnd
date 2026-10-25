@@ -29,3 +29,18 @@ Nach Abnahme dieses Pakets: eigener Reaktionsangriff auf dem gespeicherten Angeb
 ## Sicherung und Wiederaufnahme
 
 Geprüfte Main-Basis zusätzlich als ZIP/Patch unter `/workspace/artifacts/main-407c2e1-20261025/` gesichert. Neuer Quellcheckpoint nach diesem Update unter `/workspace/artifacts/0.8.40+90/`; Dateimanifest und tatsächlich gegen `407c2e1ef8ee310b30d1543a263fb66b3331a26e` angewandter Patch. Vor endgültigem Abschluss neue Ergebnisse und PR/Commit eintragen. Historische lokale Worktrees/Item-Entwürfe erhalten. Keine automatische Fortsetzung außerhalb aktiver Sitzung.
+
+
+---
+
+## Paralleles Chat-B-Paket – bestätigter NPC-Verlauf (25.10.2026)
+
+- **Basis:** Main-`fb788a980b8ee9eb60439c249f3e1f5092a9f188`; Branch `feat/chat-b/npc-continuity-20261025`. PR #179 aus dem vorherigen Chat-B-Zyklus ist offen, dessen vollständige GitHub-CI #40217711273 auf `7778df9081e7c053599a9e7a05cd1235943f7056` erfolgreich.
+- **IMPLEMENTIERT:** Neuer `app/lib/story/npc_continuity_reader.dart` und Export über `app/lib/story/story_api.dart`: bestätigte NPC-ID, Status, aktuelle Beziehung und begrenzte, stabil sortierte persistierte Notizen als unveränderliche Projektion. Keine Regeln, keine Narrative als Tatsachen, keine JSON-/SQLite-Migration.
+- **TESTS HINZUGEFÜGT:** Sechs positive und negative Fälle in `app/test/npc_continuity_reader_test.dart` einschließlich altem JSON und erneut geladenem Spielstand.
+- **GETESTET:** GitHub-Livebasis und Dateipfade der offenen PRs #177–#180 verglichen; lokales `flutter`/`dart` nicht installiert. Dies ist noch kein erfolgreicher fachlicher Test des neuen Pakets.
+- **NICHT GETESTET:** finale PR-CI, Flutter-/APK-Build am endgültigen Branchstand und Android-Gerät.
+- **BLOCKIERT:** SDK fehlt lokal; gemeinsame README-/Checkpoint-Historie vor Merge koordinieren.
+- **NOCH NICHT IMPLEMENTIERT:** Automatische Einbindung der NPC-Projektion in KI-Prompt/Storyvorschläge, semantische Konflikterkennung, providerübergreifende E2E-Abnahme.
+- **NÄCHSTER SCHRITT:** kontrollierte Verwendung der Projektion als optionaler NPC-Kontext mit Provider-Mocks und Negativtests.
+- **Individueller Beleg:** `docs/parallel/CHAT_B_NPC_CONTINUITY_20261025.md`. Die bestehende `docs/parallel/CHAT_B_CHECKPOINT.md` gehört noch zu offenem PR #179 und wird zur Konfliktvermeidung in diesem PR nicht ersetzt.
