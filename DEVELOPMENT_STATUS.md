@@ -1,3 +1,9 @@
+## 25.10.2026 – 0.8.40+90: persistierte Bewegungsunterbrechung
+
+Bestätigter Auslöser einer Gelegenheitsreaktion wird im Abenteuer als revisionsgebundene Entscheidung gespeichert. Neustart, expliziter Verzicht, Gegnerzug-Sperre und Schutz vor alten UI-/Controller-Antworten. Keine Würfel/Schäden/Reaktionskosten, daher weiter `partial`. SQLite2/JSON1 bleiben kompatibel. Gezielte Domain-/SQLite-/Widgettests erfolgreich; vollständige neue Abnahme separat ausstehend. [Fachlicher Umfang](docs/SRD_OPPORTUNITY_MOVEMENT_20261025.md), [operativer Checkpoint](docs/CODEX_CHECKPOINT.md). Ältere Einträge unten sind Historie.
+
+---
+
 ## 25.10.2026 – Regelvorprüfung für bestätigten Gelegenheitsangriff (PR #174)
 
 - **IMPLEMENTIERT:** Lesen der ausdrücklich bestätigten Auslöser und Erstellen eines `OpportunityAttackOffer` ohne Spielstandänderung: nur sichtbares Verlassen bestätigter Reichweite während eines gültigen Gegnerzugs, eigene freie Reaktion und Autorisierung; Rückzug/Teleport/erzwungene Bewegung gesperrt; ausgerüstete eindeutige SRD-Nahkampfwaffe oder waffenlos.

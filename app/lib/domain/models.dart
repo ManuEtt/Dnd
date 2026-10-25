@@ -2004,6 +2004,74 @@ class ManualCombatTurnQueue {
   }
 }
 
+/// A confirmed movement segment awaiting the player's reaction decision.
+/// No attack, movement completion or reaction resource has been booked yet.
+class PendingOpportunityAttack {
+  const PendingOpportunityAttack({
+    required this.id,
+    required this.encounterId,
+    required this.round,
+    required this.offeredAtRevision,
+    required this.beforeDistanceFeet,
+    required this.afterDistanceFeet,
+    required this.reachFeet,
+    required this.weaponId,
+    required this.unarmedStrike,
+  });
+  final String id, encounterId, weaponId;
+  final int round, offeredAtRevision;
+  final int beforeDistanceFeet, afterDistanceFeet, reachFeet;
+  final bool unarmedStrike;
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'encounterId': encounterId,
+    'round': round,
+    'offeredAtRevision': offeredAtRevision,
+    'beforeDistanceFeet': beforeDistanceFeet,
+    'afterDistanceFeet': afterDistanceFeet,
+    'reachFeet': reachFeet,
+    'weaponId': weaponId,
+    'unarmedStrike': unarmedStrike,
+    'targetVisibleConfirmed': true,
+    'playerAuthorizedReaction': true,
+    'movement': 'ordinary',
+  };
+  factory PendingOpportunityAttack.fromJson(Map<String, dynamic> j) {
+    if (j['targetVisibleConfirmed'] != true ||
+        j['playerAuthorizedReaction'] != true ||
+        j['movement'] != 'ordinary' ||
+        j['unarmedStrike'] is! bool) {
+      throw const FormatException('Unbestätigte Bewegungsunterbrechung.');
+    }
+    final before = _int(j['beforeDistanceFeet'], 'Vorherige Entfernung');
+    final after = _int(j['afterDistanceFeet'], 'Nachfolgende Entfernung');
+    final reach = _int(j['reachFeet'], 'Bestätigte Reichweite', min: 1);
+    final unarmed = j['unarmedStrike'] as bool;
+    final weapon = _string(j['weaponId'], 'Reaktionswaffe', fallback: '');
+    if (before > reach || after <= reach || unarmed != weapon.isEmpty) {
+      throw const FormatException(
+        'Ungültiger Auslöser der Gelegenheitsreaktion.',
+      );
+    }
+    return PendingOpportunityAttack(
+      id: _string(j['id'], 'Reaktionsangebot-ID'),
+      encounterId: _string(j['encounterId'], 'Reaktionsangebot-Kampf'),
+      round: _int(j['round'], 'Reaktionsangebot-Runde', min: 1),
+      offeredAtRevision: _int(
+        j['offeredAtRevision'],
+        'Angebotsrevision',
+        min: 1,
+      ),
+      beforeDistanceFeet: before,
+      afterDistanceFeet: after,
+      reachFeet: reach,
+      weaponId: weapon,
+      unarmedStrike: unarmed,
+    );
+  }
+}
+
 class Campaign {
   Campaign({
     required this.id,
@@ -2027,6 +2095,7 @@ class Campaign {
     this.pendingRoll,
     this.pendingDeathSave,
     this.pendingEnemyShieldHit,
+    this.pendingOpportunityAttack,
     this.encounter,
     this.adventureOffer,
     this.revision = 0,
@@ -2062,6 +2131,7 @@ class Campaign {
   final PendingRoll? pendingRoll;
   final PendingDeathSave? pendingDeathSave;
   final PendingEnemyShieldHit? pendingEnemyShieldHit;
+  final PendingOpportunityAttack? pendingOpportunityAttack;
   final Encounter? encounter;
   final AdventureOffer? adventureOffer;
   final int revision;
@@ -2084,6 +2154,7 @@ class Campaign {
     Object? pendingRoll = _unchanged,
     Object? pendingDeathSave = _unchanged,
     Object? pendingEnemyShieldHit = _unchanged,
+    Object? pendingOpportunityAttack = _unchanged,
     Object? encounter = _unchanged,
     Object? adventureOffer = _unchanged,
     int? revision,
@@ -2122,6 +2193,9 @@ class Campaign {
     pendingEnemyShieldHit: identical(pendingEnemyShieldHit, _unchanged)
         ? this.pendingEnemyShieldHit
         : pendingEnemyShieldHit as PendingEnemyShieldHit?,
+    pendingOpportunityAttack: identical(pendingOpportunityAttack, _unchanged)
+        ? this.pendingOpportunityAttack
+        : pendingOpportunityAttack as PendingOpportunityAttack?,
     encounter: identical(encounter, _unchanged)
         ? this.encounter
         : encounter as Encounter?,
@@ -2160,6 +2234,8 @@ class Campaign {
       'pendingDeathSave': pendingDeathSave!.toJson(),
     if (pendingEnemyShieldHit != null)
       'pendingEnemyShieldHit': pendingEnemyShieldHit!.toJson(),
+    if (pendingOpportunityAttack != null)
+      'pendingOpportunityAttack': pendingOpportunityAttack!.toJson(),
     'encounter': encounter?.toJson(),
     'adventureOffer': adventureOffer?.toJson(),
     'revision': revision,
@@ -2247,6 +2323,45 @@ class Campaign {
                       encounter.heroCover,
                     )))) {
       throw const FormatException('Ungültiger offener Gegnerangriff.');
+    }
+    final opportunity = j['pendingOpportunityAttack'] == null
+        ? null
+        : PendingOpportunityAttack.fromJson(
+            _map(j['pendingOpportunityAttack'], 'Offene Gelegenheitsreaktion'),
+          );
+    if (opportunity != null) {
+      final weapons = hero.inventory
+          .where(
+            (item) =>
+                item.id == opportunity.weaponId &&
+                item.id == hero.equippedWeaponId &&
+                item.quantity > 0,
+          )
+          .toList();
+      final weapon = weapons.length == 1
+          ? SrdEquipmentCatalog.byId(weapons.single.catalogId)
+          : null;
+      if (encounter == null ||
+          encounter.isFinished ||
+          encounter.activeParticipant != 'enemy' ||
+          encounter.reactionUsed ||
+          encounter.id != opportunity.encounterId ||
+          encounter.round != opportunity.round ||
+          opportunity.offeredAtRevision >
+              _int(j['revision'], 'Revision', fallback: 0) ||
+          pending != null ||
+          deathChoice != null ||
+          pendingEnemyShieldHit != null ||
+          !hero.isComplete ||
+          hero.hitPoints == null ||
+          hero.hitPoints! <= 0 ||
+          !ConditionRules.canTakeActions(hero) ||
+          (!opportunity.unarmedStrike &&
+              (weapon == null ||
+                  (weapon.category != EquipmentCategory.simpleMelee &&
+                      weapon.category != EquipmentCategory.martialMelee)))) {
+        throw const FormatException('Ungültige offene Gelegenheitsreaktion.');
+      }
     }
     final adventureOffer = j['adventureOffer'] == null
         ? null
@@ -2551,6 +2666,7 @@ class Campaign {
       pendingRoll: pending,
       pendingDeathSave: deathChoice,
       pendingEnemyShieldHit: pendingEnemyShieldHit,
+      pendingOpportunityAttack: opportunity,
       encounter: encounter,
       adventureOffer: adventureOffer,
       revision: _int(j['revision'], 'Revision', fallback: 0),

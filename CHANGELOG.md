@@ -1,3 +1,9 @@
+## 25.10.2026 – 0.8.40+90: persistierte Bewegungsunterbrechung
+
+Bestätigter Auslöser einer Gelegenheitsreaktion wird im Abenteuer als revisionsgebundene Entscheidung gespeichert. Neustart, expliziter Verzicht, Gegnerzug-Sperre und Schutz vor alten UI-/Controller-Antworten. Keine Würfel/Schäden/Reaktionskosten, daher weiter `partial`. SQLite2/JSON1 bleiben kompatibel. Gezielte Domain-/SQLite-/Widgettests erfolgreich; vollständige neue Abnahme separat ausstehend. [Fachlicher Umfang](docs/SRD_OPPORTUNITY_MOVEMENT_20261025.md), [operativer Checkpoint](docs/CODEX_CHECKPOINT.md). Ältere Einträge unten sind Historie.
+
+---
+
 ## 25.10.2026 – SRD-5.2.1-Gelegenheitsangriff: nur bestätigte Auslöser vorbereiten (#174)
 
 Im neuen [PR #174](https://github.com/ManuEtt/Dnd/pull/174) reine `SrdOpportunityAttackRules.prepare`-Regelprüfung eingeführt. Prüft explizite Bewegungsstrecke von innerhalb nach außerhalb der Reichweite, Sicht, Spielerzustimmung, freie Reaktion, Encounter-/Revisionszuordnung, Nahkampfwaffe oder waffenlosen Schlag; Disengage, Teleport und erzwungene Bewegung gesperrt. Positiv- und Negativregressionen inklusive JSON-Roundtrip. Status `RULE-COMBAT-OPPORTUNITY-ATTACKS=partial` (SRD 5.2.1, S. 15, CC BY 4.0). Keine Android-Auslösung, noch keine Reaktions-/Schadensbuchung oder Speicherung, keine Versionserhöhung. Finaler GitHub-CI-Nachweis getrennt abwarten. [Fachnotiz](docs/SRD_OPPORTUNITY_ATTACK_PREFLIGHT_20261025.md).

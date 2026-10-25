@@ -1,34 +1,18 @@
 # Würfelraunen – Der lebendige Spielleiter
 
-Deutschsprachige Android-Alpha für Soloabenteuer und regelgeprüfte Kampagnen. Die vollständige Umsetzung des SRD 5.2.1 bleibt in Arbeit.
+Deutschsprachige Android-Alpha für Soloabenteuer und regelgeprüfte Kampagnen. Das vollständige SRD 5.2.1 bleibt in Arbeit.
 
-## Aktuelles Entwicklungsinkrement (25.10.2026 – SRD-Gelegenheitsangriff)
+## Aktueller Stand und autonome Fortsetzung (25.10.2026)
 
-[PR #174](https://github.com/ManuEtt/Dnd/pull/174) erweitert die reine Regelengine um eine **bestätigungsgebundene Vorprüfung für Gelegenheitsangriffe** (SRD 5.2.1, Seite 15, CC BY 4.0). Sie akzeptiert nur ein sichtbares Verlassen zuvor bestätigter Reichweite, ausdrücklich genehmigte freie Reaktion und eindeutige Nahkampfwaffe oder waffenlosen Schlag. Rückzug, Teleportation, Fremdbewegung, doppelte/fehlende Waffenreferenzen und blockierte Reaktionen werden abgewiesen. Rückgabe ist ausschließlich ein lesbares, an Encounter und Revision gebundenes Angebot.
+**Version 0.8.40+90 – gespeicherte Bewegungsunterbrechung für Gelegenheitsreaktionen.** Auf Basis des geprüften Main-Commits `407c2e1ef8ee310b30d1543a263fb66b3331a26e` entsteht der separate Branch `feature/opportunity-reaction-offer-20261025`. Letzte vollständig erfolgreiche Main-CI: [#40203583841](https://github.com/ManuEtt/Dnd/actions/runs/40203583841); sie belegt die Basis, keine neuen Änderungen.
 
-**Noch nicht implementiert:** Automatische Bewegungserkennung, Android-Auswahl, Treffer-/Schadenswurf, reaktionssichere Controller-/SQLite-Verbuchung; daher kein vollständig spielbarer Gelegenheitsangriff. **Tests:** Neue Domain-/JSON-Regressionen wurden geschrieben, die finale eigene GitHub-CI ist getrennt am [PR #174](https://github.com/ManuEtt/Dnd/pull/174/checks) abzunehmen. Unveränderte App-Version **0.8.39+89**, SQLite 2 und Kampagnen-JSON 1. Regelanforderung `RULE-COMBAT-OPPORTUNITY-ATTACKS` bleibt **partial**, kein Gesamt-SRD-Fertigstellungsgrad. [Technische Abgrenzung](docs/SRD_OPPORTUNITY_ATTACK_PREFLIGHT_20261025.md).
+In der Abenteueransicht kann ein ausdrücklich bestätigtes, sichtbares Verlassen der Nahkampfreichweite den laufenden Gegnerzug unterbrechen. Das eindeutige Angebot mit Kampf, Runde, Waffe, Entfernungen und Ursprungsrevision wird zusammen mit dem Ereignis atomar gespeichert. Es erscheint nach Neustart wieder. Weitere Regeln und Gegnerangriffe warten, bis der Spieler ausdrücklich verzichtet; dabei bleiben Reaktion, Trefferpunkte, Plätze, Aktionsbudget und übrige Gegnerangriffe unverändert. Dialogabbruch verändert nichts. Alte Dialoge und konkurrierende Schreibvorgänge dürfen kein neueres Angebot ersetzen oder ablehnen.
 
-**Nächster fachlicher Schritt:** eine bestätigte gegnerische Bewegungsunterbrechung einschließlich gespeicherter Entscheidung und Revisionsschutz ergänzen, bevor Angriffs-/Schadens- und Reaktionsverbrauch implementiert werden. Alte Remotebranches bleiben separat gesichert; dieser PR löscht keine Branches.
+**Bewusste Grenze:** Noch kein Angriffswurf, Schaden oder Reaktionsverbrauch und keine automatische Positionsverfolgung. Das Angebot kann offen bleiben oder ausdrücklich abgelehnt werden. `RULE-COMBAT-OPPORTUNITY-ATTACKS` bleibt **partial**. SQLite 2 und Kampagnen-JSON 1 bleiben kompatibel; alte Exporte enthalten das neue optionale Feld nicht.
 
-## Aktueller Stand und autonome Fortsetzung (25.10.2026, nach Main-Merge)
+Gezielte Domain-/SQLite- und Android-Widgettests sind ausgeführt; vollständige neue Suite, Builds und PR-CI werden erst nach Abschluss als erfolgreich dokumentiert. Aktueller Nachweis: [CODEX_CHECKPOINT](docs/CODEX_CHECKPOINT.md). [Fachliche Abgrenzung](docs/SRD_OPPORTUNITY_MOVEMENT_20261025.md).
 
-**PR #171 wurde regulär (ohne Squash) nach `main` gemergt:** [Merge-Commit `635773db33724f543d61bacde9a9ebe679b9b1e9`](https://github.com/ManuEtt/Dnd/commit/635773db33724f543d61bacde9a9ebe679b9b1e9). Version **0.8.39+89**, SQLite 2 und Kampagnen-JSON 1 unverändert. Kombinierte finale [PR-CI #40192473811](https://github.com/ManuEtt/Dnd/actions/runs/40192473811) auf `255a5a0` **erfolgreich**. Die eigenständige [Main-CI #40193476536](https://github.com/ManuEtt/Dnd/actions/runs/40193476536) auf exakt `635773db` ist **vollständig erfolgreich**: einschließlich Flutter-/Backend-Tests, Android-Debug-APK, nativen Tests, ARM-/Alpha-APKs und Quellcode-Checkpoint.
-
-Unabhängiger GitHub-Abgleich: **19/19** Migrations-Archivtags zeigen auf ihre protokollierten Original-SHAs; **19/19** Originalköpfe sind Vorfahren von `255a5a0`. Der finale Integrationskopf besitzt einen zusätzlichen [Archivtag](https://github.com/ManuEtt/Dnd/tree/archive/branch-migration-20261025T075644Z/integration-final-255a5a0). Die lokale Bundle-Datei wurde in dieser Sitzung nicht erneut geöffnet.
-
-Die sechs gestapelten Vorgänger-PRs **#165, #166, #167, #168, #169 und #172** wurden nach erfolgreicher Main-CI und erneutem Ancestry-Check geschlossen, ohne Doppel-Merge. **Remote-Branches wurden nicht gelöscht**, die gesicherten SHA-Tags bleiben bestehen. Die abschließende Branchlöschung erfordert einen SHA-gesicherten GitHub-Ref-Löschzugriff, der in dieser Sitzung nicht verfügbar ist. Weitere Schritte und Vorbehalte: [aktueller Checkpoint](docs/CODEX_CHECKPOINT.md).
-
-## Historischer Integrationsstand vor dem Main-Merge (25.10.2026)
-
-**Version 0.8.39+89 – geprüfter Integrationsstand aller 19 erfassten GitHub-Branches.** [PR #171](https://github.com/ManuEtt/Dnd/pull/171) vereinigt ihre Änderungen auf `integration/all-branches-20261025`; Funktionscommit `cd724629c79a169ff1a078517031a33cf73ae130`. Ausgangs-Main: `b60ffe7ff1aae502ea927cb77153b988be33e397`. Main-Übernahme, Main-CI und abschließende Branchlöschung sind noch ausstehende Schritte dieses Auftrags.
-
-Sending-W100-Validierung, Verbündetenbestätigung bei zulässigen Nebenhandangriffen, allgemeine Light-Nahkampfbonusangriffe, Schutz abgeschlossener Storyfäden, lokale und serverseitige ID-Kollisionssperren, Plot-Geheimnisschutz, Backend-Limiter und sichere Projektarchive sind vereinigt. Der bei der Integration gefundene Casefold-Fehler für generierte/Systemdateien ist mit Regressionstest behoben. Fehler beim ZIP-Schreiben oder Veröffentlichen der Prüfsumme bewahren das zuvor vorhandene Archiv; keine Zusage einer absturzübergreifend atomaren Dateipaar-Transaktion.
-
-**1.552 Flutter-, 106 Python-, 40 Backend- und 12 native Android-Tests bestanden.** Dart-Formatierung: 360 Dateien unverändert; Flutter-Analyse sowie Backend-Typecheck und -Build erfolgreich. Debug-APK und ARM64-Alpha gebaut; Version, ZIP-CRC, ABI und lokale Debug-Signatur geprüft. Flutter-/Backend-Abnahme und APK-Quelle: `6aef90d`; App, Backend und Workflow sind im neueren Integrationscommit bytegleich. Die nachfolgende reine Archivänderung hat alle 106 Python-Tests bestanden. Gemeinsame finale GitHub-CI wird gesondert auf dem finalen PR-Head abgenommen. Echtes Gerät, Altspielstand-Upgrade auf einem Gerät und produktive Signierung sind nicht getestet.
-
-Alle 19 erfassten Köpfe sind echte Vorfahren. Vorherige Branchstände bleiben über remote geprüfte Tags unter `archive/branch-migration-20261025T075644Z` und vollständige, verifizierte Git-Bundles wiederherstellbar. 42 konfliktbehaftete/historische Dokumente sind bytegenau archiviert. SQLite-Version 2 und Kampagnen-JSON-Version 1 bleiben unverändert.
-
-[Operativer Checkpoint](docs/CODEX_CHECKPOINT.md) · [Migrationsaudit](docs/BRANCH_MIGRATION_AUDIT_20261025.md) · [Herkunft](docs/branch_migration_20261025.json) · [lokale Prüfnachweise](docs/branch_migration_validation_20261025.json). ZIPs, Patches, APKs und Git-Bundles: `/workspace/artifacts/branch-migration-20261025/`.
+Der Live-Abgleich vor diesem Zyklus ergab nur `main` und keine offenen PRs: Die vorherige Branch-Migration und Bereinigung sind bereits übernommen. Originalstände bleiben über Archivtags und lokale Bundles erhalten. Frühere abweichende Statusmeldungen stehen [separat in der Historie](docs/history/opportunity_before_20261025/README.md).
 
 ## Vorhandene Funktionen und Grenzen
 
@@ -62,19 +46,17 @@ Die Demo benötigt keinen externen KI-Anbieter. Für einen eigenen Erzähler sie
 
 ## Nächster konkreter Entwicklungsschritt
 
-Zuerst diesen Migrationsauftrag abschließen: finale PR-CI abnehmen, PR #171 normal nach Main mergen, Main-CI auf dem tatsächlichen Merge-Commit abwarten und ausschließlich unveränderte, gesicherte, in Main enthaltene Altbranches entfernen. Neu verschobene Köpfe erneut prüfen und erhalten.
+Einen eigenen, revisionsgebundenen Reaktionsangriff auf dem gespeicherten Angebot ergänzen. Den normalen Angriffsaktionspfad nicht unverändert verwenden: Gegnerzug und restliche Gegnerangriffe erhalten, keine Extra-Attack-/Light-Freischaltung, Reaktion genau einmal verbrauchen, tatsächliche Waffe oder waffenlosen Schaden korrekt auflösen und Ergebnis/Event atomar speichern. Krit/Miss, Schildkonkurrenz, Sneak Attack pro tatsächlichem Zug, Abbruch, Stale Revision und SQLite-Neustart prüfen. SRD-Quelle vor Erweiterung erneut verifizieren.
 
-Danach als eigenes Regelpaket die bisher fehlenden allgemeinen Gelegenheitsangriffe bearbeiten: belegter Reichweitenwechsel und ausdrückliche Bestätigung, verfügbare Reaktion, tatsächliche Nahkampfwaffe, Treffer-/Schadensauflösung und atomare SQLite-Speicherung. Ablehnung, bereits verbrauchte Reaktion, Disengage, Teleportation/erzwungene Bewegung, veralteter Zustand und Alt-JSON gezielt prüfen. Keine Positionen oder Waffenwerte aus KI-Erzählung erfinden. SRD-Quelle vor Umsetzung verifizieren.
-
-Weitere offene Arbeiten: vollständige Quelleninventur, Zauberwirkungen, Klassen-/Monstermechaniken, strukturierte Item-Overrides und reale Android-Abnahme. Ein früherer lokaler Item-Entwurf bleibt separat erhalten.
+Weitere offene Bereiche: vollständige amtliche Quelleninventur, zahlreiche Zauber-, Klassen- und Monsterwirkungen, strukturierte Item-Overrides, reale Android-Abnahme und produktive Signierung. Frühere lokale Entwürfe bleiben erhalten.
 
 ## Dokumentation, Sicherung und Historie
 
-- [Fortsetzungsprompt](docs/CODEX_CONTINUATION_PROMPT.md) · [aktueller Checkpoint](docs/CODEX_CHECKPOINT.md)
+- [Fortsetzungsprompt](docs/CODEX_CONTINUATION_PROMPT.md) · [operativer Checkpoint](docs/CODEX_CHECKPOINT.md)
 - [Architektur](ARCHITECTURE.md) · [Regel-/Story-Grenze](docs/ARCHITEKTUR_REGELENGINE_STORY_TRENNUNG.md) · [Tests](TESTING.md)
-- [Historische Branch-Dokumente](docs/history/branch_migration_20261025/README.md) · [README vor Migration](docs/history/branch_migration_20261025/README_before_migration.md)
-- [Entwicklungsstatus](DEVELOPMENT_STATUS.md) · [Changelog](CHANGELOG.md) · [Roadmap](ROADMAP.md)
+- [Changelog](CHANGELOG.md) · [Entwicklungsstatus](DEVELOPMENT_STATUS.md) · [Roadmap](ROADMAP.md)
+- [README vor diesem Paket](docs/history/opportunity_before_20261025/README.md) · [Branch-Migrationsaudit](docs/BRANCH_MIGRATION_AUDIT_20261025.md)
 
-Projekt-ZIP ohne äußeren Ordner in eine Arbeitskopie entpacken oder den Patch auf dem dokumentierten Basiscommit mit `git apply --check` und `git apply` importieren. Danach auf einen eigenen Branch pushen und einen PR öffnen. Für die vollständige Git-Historie das Bundle klonen; einzelne Altbranches aus den Archivtags wiederherstellen. Details im [Migrationsaudit](docs/BRANCH_MIGRATION_AUDIT_20261025.md).
+Vollprojekt-ZIP, Patch und Prüfsummen unter `/workspace/artifacts/0.8.40+90/`; aktuelle Dateinamen im dortigen Artefaktindex nach Abschluss. Patchbasis dieses Pakets: `407c2e1ef8ee310b30d1543a263fb66b3331a26e`. ZIP in eine Arbeitskopie entpacken oder Patch mit `git apply --check`/`git apply` auf dieser Basis übernehmen, eigenen Branch pushen und PR öffnen. Keine alten Dateistände ungeprüft über Main kopieren.
 
-Nur ausgewählte Inhalte des **SRD 5.2.1 von Wizards of the Coast unter CC BY 4.0** sowie eigene/lizenzierte Inhalte verwenden. [Namensnennung und Lizenzen](THIRD_PARTY_NOTICES.md) erhalten. Keine automatische Weiterarbeit außerhalb einer aktiven Sitzung.
+Nur rechtmäßig verwendbare Inhalte des **SRD 5.2.1 von Wizards of the Coast unter CC BY 4.0** sowie eigene/lizenzierte Inhalte nutzen. [Namensnennung](THIRD_PARTY_NOTICES.md) erhalten. Keine automatische Weiterarbeit außerhalb einer aktiven Sitzung.
