@@ -1,3 +1,15 @@
+# Ergänzung – Chat A: Dauerklassifikation für Zauber (25.10.2026)
+
+- **Basis:** `main=5c1499a9342449050bb946542659b221ac2653da`; Branch `feat/chat-a/spell-duration-classification-20261025`; PR nach Erstellung im GitHub-Pull-Request nachschlagen.
+- **IMPLEMENTIERT:** Rein lesende SRD-5.2.1-Zauberdauerprüfung ohne Zustandsänderung, Testdatei, öffentliche Regel-Fassade. [Fachliche Details](SRD_SPELL_DURATION_CLASSIFICATION_20261025.md), [Chat-A-Status](parallel/CHAT_A_CHECKPOINT.md).
+- **GETESTET:** Eigenständiger Abgleich aller 339 vorhandenen Katalog-Dauerwerte: 338 klassifizierbar, `Creation: Special` bewusst abgelehnt, keine widersprüchlichen Dauer-/Konzentrationsmerkmale. Dies ist kein Dart-Lauf.
+- **NICHT GETESTET:** Neue Dart-Testgruppen, Dart-Format, Flutter-Analyse/-Tests, Android-APKs, vollständige Python-/Backend-Kette und Geräteprüfung bis zum nachgewiesenen GitHub-Actions-Ergebnis.
+- **BLOCKIERT:** Flutter-/Dart-/Android-SDK lokal nicht verfügbar; PR #176 berührt gemeinsame README/CODEX_CHECKPOINT-Dateien und wird nicht überschrieben. Konsolidierung beim Merge durch Chat D.
+- **NOCH NICHT IMPLEMENTIERT:** Tatsächlicher Spielzeitfortschritt, Ablauf von Zauberzuständen, besondere Einzelzauberbedingungen, amtliche Vollinventur.
+- **NÄCHSTER SCHRITT:** Nach Integration und konfliktfreier Prüfung genau eine konkrete, bestätigte Zeitdauer-Wirkung mit persistiertem Zustandsablauf und Wiederholungs-/Neustart-Tests anbinden.
+
+---
+
 # CODEX-CHECKPOINT – Angebots-Revalidierung für Gelegenheitsangriffe
 
 **Stand:** 2026-10-25T18:11:00+01:00; **Produkt:** Würfelraunen – Der lebendige Spielleiter, `app/pubspec.yaml` **0.8.39+89**.
