@@ -26,6 +26,29 @@ REQUIRED_FILES = (
 WRAPPER_MAIN = 'org/gradle/wrapper/GradleWrapperMain.class'
 
 
+def unique_gradle_property(text: str, key: str) -> str | None:
+    """Fail closed on duplicate/ambiguous Gradle Java-properties declarations.
+
+    Java properties accept '=', ':' and whitespace separators; duplicate keys
+    are ambiguous for a security check because the runtime may use the last.
+    """
+    candidates: list[str] = []
+    pattern = re.compile(rf"^{re.escape(key)}(?=$|[\s=:])")
+    definition = re.compile(rf"^{re.escape(key)}(?:\s*[:=]\s*|\s+)(.*)$")
+    for line in text.splitlines():
+        stripped = line.lstrip()
+        if not stripped or stripped.startswith(("#", "!")):
+            continue
+        if not pattern.match(stripped):
+            continue
+        match = definition.fullmatch(stripped)
+        if match is None:
+            return None
+        candidates.append(match.group(1).strip())
+    return candidates[0] if len(candidates) == 1 else None
+
+
+
 def verify_project(root: Path) -> list[str]:
     """Return safe, actionable errors; allow arbitrary additional project files."""
     if not root.is_dir():
@@ -82,28 +105,6 @@ def verify_project(root: Path) -> list[str]:
                 'app/android/gradle/wrapper/gradle-wrapper.jar unverändert aus dem Quell-ZIP übernehmen.',
             )
 
-
-
-def unique_gradle_property(text: str, key: str) -> str | None:
-    """Fail closed on duplicate/ambiguous Gradle Java-properties declarations.
-
-    Java properties accept '=', ':' and whitespace separators; duplicate keys
-    are ambiguous for a security check because the runtime may use the last.
-    """
-    candidates: list[str] = []
-    pattern = re.compile(rf"^{re.escape(key)}(?=$|[\s=:])")
-    definition = re.compile(rf"^{re.escape(key)}(?:\s*[:=]\s*|\s+)(.*)$")
-    for line in text.splitlines():
-        stripped = line.lstrip()
-        if not stripped or stripped.startswith(("#", "!")):
-            continue
-        if not pattern.match(stripped):
-            continue
-        match = definition.fullmatch(stripped)
-        if match is None:
-            return None
-        candidates.append(match.group(1).strip())
-    return candidates[0] if len(candidates) == 1 else None
 
 
     properties = root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
