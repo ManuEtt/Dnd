@@ -285,11 +285,7 @@ void main() {
       _trigger(weaponId: 'bow'),
     ]) {
       expect(
-        () => SrdOpportunityAttackRules.revalidate(
-          campaign,
-          altered,
-          offer,
-        ),
+        () => SrdOpportunityAttackRules.revalidate(campaign, altered, offer),
         throwsFormatException,
       );
     }
@@ -312,11 +308,7 @@ void main() {
       hero: campaign.hero.copyWith(equippedWeaponId: 'bow'),
     );
     expect(
-      () => SrdOpportunityAttackRules.revalidate(
-        changedWeapon,
-        trigger,
-        offer,
-      ),
+      () => SrdOpportunityAttackRules.revalidate(changedWeapon, trigger, offer),
       throwsFormatException,
     );
   });
