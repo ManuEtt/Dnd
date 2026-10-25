@@ -1,0 +1,66 @@
+name: One-time verified cleanup of merged PR 176
+on:
+  push:
+    branches:
+      - maintenance/cleanup-pr176-20261025
+permissions:
+  contents: write
+  actions: read
+  pull-requests: read
+jobs:
+  cleanup:
+    if: github.repository == 'ManuEtt/Dnd'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    concurrency:
+      group: cleanup-pr176-20261025
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Confirm exact heads, green CI and archive before deletion
+        shell: bash
+        run: |
+          set -euo pipefail
+          BRANCH='feature/opportunity-reaction-offer-20261025'
+          EXPECTED_HEAD='6e6de1bc304047a42aa8481c863d8e1e6c41fbcb'
+          MERGE_SHA='fb788a980b8ee9eb60439c249f3e1f5092a9f188'
+          ARCHIVE_TAG='archive/branch-migration-20261025T075644Z/feature/opportunity-reaction-offer-20261025'
+          PR_CHECK=40216637813
+          MAIN_CHECK=40217633646
+          meta=$(gh api repos/ManuEtt/Dnd/pulls/176 --jq '[.merged,.head.sha,.base.ref,.merge_commit_sha] | join("|")')
+          [[ "$meta" == "true|$EXPECTED_HEAD|main|$MERGE_SHA" ]] || { echo "PR 176 has unexpected state: $meta"; exit 1; }
+          check=$(gh api "repos/ManuEtt/Dnd/actions/runs/$PR_CHECK" --jq '[.status,.conclusion,.head_sha] | join("|")')
+          [[ "$check" == "completed|success|$EXPECTED_HEAD" ]] || { echo "PR CI not green: $check"; exit 1; }
+          main_check=''
+          for i in $(seq 1 30); do
+            main_check=$(gh api "repos/ManuEtt/Dnd/actions/runs/$MAIN_CHECK" --jq '[.status,.conclusion,.head_sha] | join("|")')
+            if [[ "$main_check" == "completed|success|$MERGE_SHA" ]]; then break; fi
+            if [[ "$main_check" == completed\|* ]]; then echo "Main CI completed unsuccessfully: $main_check"; exit 1; fi
+            sleep 20
+          done
+          [[ "$main_check" == "completed|success|$MERGE_SHA" ]] || { echo "Timed out before green Main CI: $main_check"; exit 1; }
+          git fetch --quiet origin main
+          git merge-base --is-ancestor "$MERGE_SHA" origin/main || { echo 'Merge commit no longer on main'; exit 1; }
+          git merge-base --is-ancestor "$EXPECTED_HEAD" origin/main || { echo 'Head not integrated'; exit 1; }
+          actual=$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)
+          [[ "$actual" == "$EXPECTED_HEAD" ]] || { echo "Branch moved: $actual"; exit 1; }
+          archive=$(git ls-remote origin "refs/tags/$ARCHIVE_TAG" | cut -f1)
+          if [[ -n "$archive" && "$archive" != "$EXPECTED_HEAD" ]]; then echo 'Archive tag mismatch'; exit 1; fi
+          if [[ -z "$archive" ]]; then
+            git tag "$ARCHIVE_TAG" "$EXPECTED_HEAD"
+            git push origin "refs/tags/$ARCHIVE_TAG:refs/tags/$ARCHIVE_TAG"
+          fi
+          git push --force-with-lease="refs/heads/$BRANCH:$EXPECTED_HEAD" origin ":refs/heads/$BRANCH"
+          [[ -z "$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)" ]] || { echo 'Branch deletion unconfirmed'; exit 1; }
+          SELF='maintenance/cleanup-pr176-20261025'
+          self_expected="$GITHUB_SHA"
+          self_tag="archive/branch-migration-20261025T075644Z/cleanup-pr176-${self_expected:0:12}"
+          git tag "$self_tag" "$self_expected"
+          git push origin "refs/tags/$self_tag:refs/tags/$self_tag"
+          git push --force-with-lease="refs/heads/$SELF:$self_expected" origin ":refs/heads/$SELF"
+          echo 'SUCCESS: merged PR #176 and cleanup maintenance branch preserved by archival tags'
