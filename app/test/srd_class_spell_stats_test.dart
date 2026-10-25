@@ -112,10 +112,7 @@ void main() {
       throwsFormatException,
     );
     expect(
-      () => _stats(
-        _caster(className: 'Unbekannte Klasse'),
-        'Magier',
-      ),
+      () => _stats(_caster(className: 'Unbekannte Klasse'), 'Magier'),
       throwsFormatException,
     );
   });
@@ -132,10 +129,7 @@ void main() {
     );
     for (final score in <int?>[null, 0, -2, 31]) {
       final hero = _caster(
-        abilities: {
-          ..._caster().abilities,
-          'intelligence': score,
-        },
+        abilities: {..._caster().abilities, 'intelligence': score},
       );
       expect(() => _stats(hero, 'Magier'), throwsFormatException);
     }
@@ -146,21 +140,9 @@ void main() {
       _caster(level: 0),
       _caster(level: 21),
       _caster(level: 3, secondaryClassLevel: 1),
-      _caster(
-        level: 5,
-        secondaryClassName: 'Zauberer',
-        secondaryClassLevel: 0,
-      ),
-      _caster(
-        level: 5,
-        secondaryClassName: 'Zauberer',
-        secondaryClassLevel: 5,
-      ),
-      _caster(
-        level: 5,
-        secondaryClassName: 'Magier',
-        secondaryClassLevel: 2,
-      ),
+      _caster(level: 5, secondaryClassName: 'Zauberer', secondaryClassLevel: 0),
+      _caster(level: 5, secondaryClassName: 'Zauberer', secondaryClassLevel: 5),
+      _caster(level: 5, secondaryClassName: 'Magier', secondaryClassLevel: 2),
       _caster(
         level: 5,
         secondaryClassName: 'Unbekannt',
