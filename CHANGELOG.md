@@ -1,3 +1,11 @@
+## Unveröffentlicht – 25.10.2026: Gelegenheitsangriff-Angebote erneut prüfen
+
+- `SrdOpportunityAttackRules.revalidate` prüft aktuelle Kampagnenrevision, Encounter, Angriff, Waffe und ursprünglich bestätigte Bewegungsgeometrie, bevor ein bestehendes Angebot erneut als zulässig gelten kann.
+- Drei neue Domänentests für erneute unveränderte Prüfung, vertauschte/veraltete Auslöser, Waffenwechsel und Reaktionsverbrauch ergänzt; Flutter-/Android-CI dieses Branches bei Eintrag noch nicht ausgeführt.
+- Keine Änderung der gespeicherten Spielstände, SQLite 2 / Export-JSON 1 / App-Version 0.8.39+89 unverändert; keine Angriffsabwicklung oder neue APK.
+
+---
+
 ## 25.10.2026 – SRD-5.2.1-Gelegenheitsangriff: nur bestätigte Auslöser vorbereiten (#174)
 
 Im neuen [PR #174](https://github.com/ManuEtt/Dnd/pull/174) reine `SrdOpportunityAttackRules.prepare`-Regelprüfung eingeführt. Prüft explizite Bewegungsstrecke von innerhalb nach außerhalb der Reichweite, Sicht, Spielerzustimmung, freie Reaktion, Encounter-/Revisionszuordnung, Nahkampfwaffe oder waffenlosen Schlag; Disengage, Teleport und erzwungene Bewegung gesperrt. Positiv- und Negativregressionen inklusive JSON-Roundtrip. Status `RULE-COMBAT-OPPORTUNITY-ATTACKS=partial` (SRD 5.2.1, S. 15, CC BY 4.0). Keine Android-Auslösung, noch keine Reaktions-/Schadensbuchung oder Speicherung, keine Versionserhöhung. Finaler GitHub-CI-Nachweis getrennt abwarten. [Fachnotiz](docs/SRD_OPPORTUNITY_ATTACK_PREFLIGHT_20261025.md).

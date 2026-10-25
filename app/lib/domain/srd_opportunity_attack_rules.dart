@@ -41,18 +41,48 @@ class OpportunityAttackOffer {
     required this.revision,
     required this.strike,
     required this.weaponId,
+    required this.beforeDistanceFeet,
+    required this.afterDistanceFeet,
+    required this.reachFeet,
   });
 
   final String encounterId;
   final int revision;
   final OpportunityStrike strike;
   final String weaponId;
+
+  /// The exact confirmed movement geometry this offer was issued for.
+  final int beforeDistanceFeet, afterDistanceFeet, reachFeet;
 }
 
 /// Fail-closed opportunity-attack preflight, without changes to save formats.
 /// No positions, reach, abilities or monster facts are inferred from the story.
 class SrdOpportunityAttackRules {
   const SrdOpportunityAttackRules._();
+
+  /// Rejects stale or substituted offers before a later confirmed action.
+  /// This is read-only: callers must repeat the check in their atomic
+  /// controller/repository transaction before spending a reaction.
+  static OpportunityAttackOffer revalidate(
+    Campaign campaign,
+    ConfirmedOpportunityTrigger trigger,
+    OpportunityAttackOffer offer,
+  ) {
+    if (campaign.revision != offer.revision ||
+        campaign.encounter?.id != offer.encounterId ||
+        trigger.encounterId != offer.encounterId ||
+        trigger.strike != offer.strike ||
+        trigger.weaponId != offer.weaponId ||
+        trigger.beforeDistanceFeet != offer.beforeDistanceFeet ||
+        trigger.afterDistanceFeet != offer.afterDistanceFeet ||
+        trigger.reachFeet != offer.reachFeet) {
+      throw const FormatException(
+        'Das Gelegenheitsangriff-Angebot ist veraltet oder verändert.',
+      );
+    }
+
+    return prepare(campaign, trigger);
+  }
 
   static OpportunityAttackOffer prepare(
     Campaign campaign,
@@ -117,6 +147,9 @@ class SrdOpportunityAttackRules {
       revision: campaign.revision,
       strike: trigger.strike,
       weaponId: trigger.weaponId,
+      beforeDistanceFeet: trigger.beforeDistanceFeet,
+      afterDistanceFeet: trigger.afterDistanceFeet,
+      reachFeet: trigger.reachFeet,
     );
   }
 }
