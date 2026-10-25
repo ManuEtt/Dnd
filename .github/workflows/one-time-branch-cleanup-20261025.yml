@@ -1,0 +1,91 @@
+name: One-time safe cleanup of merged branches
+on:
+  push:
+    branches:
+      - maintenance/safe-branch-cleanup-20261025
+permissions:
+  contents: write
+  actions: read
+  pull-requests: read
+jobs:
+  cleanup:
+    if: github.repository == 'ManuEtt/Dnd'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: cleanup-merged-20261025
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Verify ancestry, archives, CI, and delete only exact old refs
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXPECTED_MAIN=407c2e1ef8ee310b30d1543a263fb66b3331a26e
+          PREFIX=archive/branch-migration-20261025T075644Z
+          SELF_BRANCH=maintenance/safe-branch-cleanup-20261025
+          current_main=$(git ls-remote origin refs/heads/main | cut -f1)
+          [[ "$current_main" == "$EXPECTED_MAIN" ]] || { echo 'ABORT: main moved'; exit 1; }
+          [[ "$(gh api repos/ManuEtt/Dnd/pulls?state=open --jq 'length')" == '0' ]] || { echo 'ABORT: open pull requests'; exit 1; }
+          ci=$(gh api repos/ManuEtt/Dnd/actions/runs/40203583841 --jq '[.head_sha,.head_branch,.status,.conclusion] | join("|")')
+          [[ "$ci" == "${EXPECTED_MAIN}|main|completed|success" ]] || { echo "ABORT: main CI not confirmed: $ci"; exit 1; }
+          [[ "$(git ls-remote --heads origin | wc -l | tr -d ' ')" == '21' ]] || { echo 'ABORT: unexpected branch count'; exit 1; }
+          mapfile -t rows <<'ROWS'
+          docs/post-merge-migration-verification-20261025|d3ef3a4f2e7e0807c5b4d68182ad18c11530a491|docs/post-merge-migration-verification-20261025
+          feat/sending-confirmed-slot-journal-20261024|b90c21d421a85757aa7fe9b1be12c40ac8860a5d|feat/sending-confirmed-slot-journal-20261024
+          feature/light-weapon-bonus-attack-20261024|fa14a0897bacb15d012377116c53a0dadd42f6a4|feature/light-weapon-bonus-attack-20261024
+          feature/sneak-attack-ally-integration-20261023|d54f5548fa00ae02a6c36fa9a2b2656319ec1c58|feature/sneak-attack-ally-integration-20261023
+          feature/sneak-attack-offhand-ally-20261024|6f2ebbc893fb5ee053d069410a103a102662aa4d|feature/sneak-attack-offhand-ally-20261024
+          fix/atomic-source-archive-publication-20261025|1eb8046228d51437f9657b82a359f2498ad67654|atomic-docs-final-1eb8046
+          fix/backend-limiter-capacity-20261024|56128f213cc2404269a6f358d1c2aa62908474df|fix/backend-limiter-capacity-20261024
+          fix/case-insensitive-secret-archive-filter-20261025|daf6bd870b0582864beafe7497a75bd92011335e|fix/case-insensitive-secret-archive-filter-20261025
+          fix/local-ai-duplicate-npc-ids-20261025|e157801b929f27a6244e087baa0d8f9fd0ad69d2|fix/local-ai-duplicate-npc-ids-20261025
+          fix/local-story-terminal-thread-guard-20261025|9324af079436282596cd734a32e54613aa337208|fix/local-story-terminal-thread-guard-20261025
+          fix/sending-percentile-block-validation-20261024|15c1626057adb33f40d0acbe6e228f30f606d007|fix/sending-percentile-block-validation-20261024
+          fix/sending-unicode-format-controls-20261024|d73f3cfdc6969b5d5b6f54d173458e4126e3165f|fix/sending-unicode-format-controls-20261024
+          fix/sneak-attack-offhand-weapon-20261024|80b615e3f2438ca65777945340c96dccbcc3e36f|fix/sneak-attack-offhand-weapon-20261024
+          fix/story-duplicate-context-ids-20261025|4072a6d8b3e7a598e207d4a76bc2082ec53f29c7|fix/story-duplicate-context-ids-20261025
+          fix/story-secret-output-guard-20261024|032af6ace3f56f13ec4961f56b43b6adcdf899b9|fix/story-secret-output-guard-20261024
+          fix/story-terminal-thread-reopen-20261024|9428738266df72956c3e57ebc25238b0d38a0fce|fix/story-terminal-thread-reopen-20261024
+          integration/all-branches-20261025|255a5a0bdf8dc4915bfd70e808a69862f3d0708a|integration-final-255a5a0
+          integration/approved-pr159-163-20261024|6776bd1bdfef648431da8b20780053e0860d998d|integration/approved-pr159-163-20261024
+          integration/story-safety-pr165-167-168-20261025|721c4ed953ea67a9a79adcabf800ddd54cb63008|integration/story-safety-pr165-167-168-20261025
+          ROWS
+          [[ "${#rows[@]}" -eq 19 ]] || { echo 'ABORT: inventory count mismatch'; exit 1; }
+          for row in "${rows[@]}"; do
+            IFS='|' read -r branch expected tag_suffix <<< "$row"
+            actual=$(git ls-remote origin "refs/heads/$branch" | cut -f1)
+            [[ "$actual" == "$expected" ]] || { echo "ABORT: ref changed $branch"; exit 1; }
+            git merge-base --is-ancestor "$expected" "$EXPECTED_MAIN" || { echo "ABORT: unmerged $branch"; exit 1; }
+            archive=$(git ls-remote origin "refs/tags/$PREFIX/$tag_suffix" | cut -f1)
+            if [[ "$tag_suffix" == 'docs/post-merge-migration-verification-20261025' && -z "$archive" ]]; then
+              echo 'Docs archive tag will be created before cleanup'
+            else
+              [[ "$archive" == "$expected" ]] || { echo "ABORT: tag missing or changed $branch"; exit 1; }
+            fi
+          done
+          [[ "$(git ls-remote origin refs/heads/main | cut -f1)" == "$EXPECTED_MAIN" ]] || { echo 'ABORT: main moved during preflight'; exit 1; }
+          doc_tag="$PREFIX/docs/post-merge-migration-verification-20261025"
+          if [[ -z "$(git ls-remote origin "refs/tags/$doc_tag" | cut -f1)" ]]; then
+            git tag "$doc_tag" d3ef3a4f2e7e0807c5b4d68182ad18c11530a491
+            git push origin "refs/tags/$doc_tag:refs/tags/$doc_tag"
+          fi
+          for row in "${rows[@]}"; do
+            IFS='|' read -r branch expected tag_suffix <<< "$row"
+            [[ "$(git ls-remote origin refs/heads/main | cut -f1)" == "$EXPECTED_MAIN" ]] || { echo 'ABORT: main moved'; exit 1; }
+            git push --force-with-lease="refs/heads/$branch:$expected" origin ":refs/heads/$branch"
+            [[ -z "$(git ls-remote origin "refs/heads/$branch" | cut -f1)" ]] || { echo "ABORT: delete not confirmed $branch"; exit 1; }
+            echo "DELETED: $branch (archived as $PREFIX/$tag_suffix)"
+          done
+          [[ "$(git ls-remote --heads origin | wc -l | tr -d ' ')" == '2' ]] || { echo 'ABORT: unexpected branches after cleanup'; exit 1; }
+          self_tag="$PREFIX/maintenance-cleanup-${GITHUB_SHA:0:12}"
+          git tag "$self_tag" "$GITHUB_SHA"
+          git push origin "refs/tags/$self_tag:refs/tags/$self_tag"
+          git push --force-with-lease="refs/heads/$SELF_BRANCH:$GITHUB_SHA" origin ":refs/heads/$SELF_BRANCH"
+          [[ "$(git ls-remote --heads origin | wc -l | tr -d ' ')" == '1' ]] || { echo 'ABORT: main not the only branch'; exit 1; }
+          echo 'SUCCESS: 19 archived branches removed. Only main remains.'
