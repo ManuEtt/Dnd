@@ -178,5 +178,53 @@
     "path": "docs/CODEX_CHECKPOINT.md",
     "archive_path": "docs/history/branch_migration_20261025/story169/docs/CODEX_CHECKPOINT.md",
     "sha256": "52cc5d398b963cd174617f80c6e2dffb510b954e0a35f03b531c5792dceb8fb9"
+  },
+  {
+    "source": "migration_before170",
+    "path": "CHANGELOG.md",
+    "archive_path": "docs/history/branch_migration_20261025/migration_before170/CHANGELOG.md",
+    "sha256": "683fe51b5e1b0189e920c4831d7512c69d6c5f0bba3433b3d0b7715c85d90b55"
+  },
+  {
+    "source": "archive_filter170",
+    "path": "CHANGELOG.md",
+    "archive_path": "docs/history/branch_migration_20261025/archive_filter170/CHANGELOG.md",
+    "sha256": "0ba94f59b7e3e07cc7233b871bef79e528d4cacc1845d81aef64cc885ee8a797"
+  },
+  {
+    "source": "migration_before170",
+    "path": "DEVELOPMENT_STATUS.md",
+    "archive_path": "docs/history/branch_migration_20261025/migration_before170/DEVELOPMENT_STATUS.md",
+    "sha256": "0af7e42710d7066784cb9effebac8aa646025a79a9e9420962013845a4705272"
+  },
+  {
+    "source": "archive_filter170",
+    "path": "DEVELOPMENT_STATUS.md",
+    "archive_path": "docs/history/branch_migration_20261025/archive_filter170/DEVELOPMENT_STATUS.md",
+    "sha256": "96cc86d33af2a716c0d8fb6d5c170cd8460916818597391df11dc39c39357c54"
+  },
+  {
+    "source": "migration_before170",
+    "path": "README.md",
+    "archive_path": "docs/history/branch_migration_20261025/migration_before170/README.md",
+    "sha256": "078938498a5b4f07f435b419b611a5f9e8274d3fe5aaa8d1346a7e785c4b046a"
+  },
+  {
+    "source": "archive_filter170",
+    "path": "README.md",
+    "archive_path": "docs/history/branch_migration_20261025/archive_filter170/README.md",
+    "sha256": "6202786ddecdb01e194f52f8441ab9bb523c3cc0502582ed1560e38a9362ca38"
+  },
+  {
+    "source": "migration_before170",
+    "path": "docs/CODEX_CHECKPOINT.md",
+    "archive_path": "docs/history/branch_migration_20261025/migration_before170/docs/CODEX_CHECKPOINT.md",
+    "sha256": "06747807634f08340242918ed142d8dd4cf7fc8a137b8da3cfef6307b8bd13fa"
+  },
+  {
+    "source": "archive_filter170",
+    "path": "docs/CODEX_CHECKPOINT.md",
+    "archive_path": "docs/history/branch_migration_20261025/archive_filter170/docs/CODEX_CHECKPOINT.md",
+    "sha256": "f86521d18f41f80af00f68e4bc45828af3c01ec8a55329fab8ec3e2c62059ed0"
   }
 ]
