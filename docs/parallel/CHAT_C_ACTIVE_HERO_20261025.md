@@ -44,3 +44,9 @@ In `FantasyActiveHeroCard` standen die drei Metriken Trefferpunkte, Rüstungskla
 ## NÄCHSTER SCHRITT
 
 Nach grüner finaler CI ein separates, noch nicht von anderen PRs beanspruchtes UI-Modul auf 320 dp/200 % plus korrektes Screenreader-Verhalten prüfen. Beim nächsten Paket wieder offenen PR- und Main-Bestand kontrollieren.
+
+## Revalidierung nach Main-Merge von PR #185
+
+- `main` `5f9a01dd73f68ad4f9e226f859a8ca87803b8337` beinhaltet jetzt die vollständig CI-geprüfte und integrierte Chat-C-HUD-Arbeit PR #185; sie bleibt erhalten. Eigene Dateien dieses Pakets bleiben `fantasy_campaign_dashboard.dart` und Widgettests, komplett unabhängig von `fantasy_adventure_hud.dart`.
+- CI [#40233351659](https://github.com/ManuEtt/Dnd/actions/runs/40233351659) hat die Flutter-Gesamtsuite nach kanonischer Formatierung auf dem früheren Testcommit erfolgreich ausgeführt; aktuelle PR-/Merge-Commit-CI separat prüfen.
+- Keine Datenmigration, kein automatischer Main-Merge.
