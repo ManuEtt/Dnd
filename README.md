@@ -2,6 +2,18 @@
 
 Deutschsprachige Android-Alpha für Soloabenteuer, regelgeprüfte Kämpfe und lokale Kampagnen mit SQLite. Flutter/Dart-App und optionaler Fastify-/TypeScript-Erzähler. Das vollständige SRD 5.2.1 ist noch nicht implementiert.
 
+## Aktueller Stand und autonome Fortsetzung (25.10.2026 – PR #172, atomare ZIP-Veröffentlichung)
+
+**Neues Paket:** [PR #172](https://github.com/ManuEtt/Dnd/pull/172) im Branch `fix/atomic-source-archive-publication-20261025`. Der PR basiert auf dem noch offenen, nun vollständig [CI-grünen PR #170](https://github.com/ManuEtt/Dnd/pull/170); er ist bewusst gegen dessen Branch und **nicht** direkt gegen `main` gerichtet. Die parallele [Konsolidierung #171](https://github.com/ManuEtt/Dnd/pull/171) wurde geprüft und wird nicht überschrieben. `main` bleibt bei **`b60ffe7` / App 0.8.38+88**.
+
+**Neu implementiert:** `scripts/package_project.py` schreibt ZIP und SHA256-Prüfsumme zunächst in ein temporäres Verzeichnis neben dem Ziel. Erst nach ZIP-Integritätsprüfung werden die Dateien einzeln mit `os.replace` veröffentlicht. Bei einem abgefangenen Fehler beim Ersetzen der Prüfsumme wird das bisherige ZIP wiederhergestellt. Temporäre Dateien werden beim normalen Fehlerpfad entfernt. Vier neue Regressionstests decken erfolgreiches Ersetzen, fehlgeschlagenes Schreiben bei vorhandenem bzw. neuem Archiv sowie eine fehlgeschlagene Prüfsummen-Veröffentlichung ab.
+
+**Realer Prüfstand:** [Basis-PR #170: CI #40191043877](https://github.com/ManuEtt/Dnd/actions/runs/40191043877) auf `daf6bd8` vollständig erfolgreich. Ein früher Zwischen-Commit von PR #172 schlug wegen einer fehlerhaft escapten Test-Zeichenfolge fehl; dies wurde in `a1a8dd9` behoben. Die [aktuellen PR-#172-Checks](https://github.com/ManuEtt/Dnd/pull/172/checks) sind für den finalen HEAD maßgeblich. Python-Paket-/Strukturtests waren beim letzten Prüfen auf diesem HEAD erfolgreich; Flutter-/Android-Gesamt-CI war noch nicht abgeschlossen. **Keine neue APK oder Geräteabnahme behauptet.**
+
+**Grenzen:** Der Fix schützt gegen abgefangene Schreib-/Publikationsfehler. Ein plötzlicher Stromausfall *zwischen den zwei Dateiersetzungen* oder konkurrierende Schreiber ist keine atomare Transaktion über beide Dateien. Spielstände, SRD, KI, SQLite-Schema 2, Kampagnen-JSON 1 und Flutter-App bleiben unverändert. [Checkpoint](docs/CODEX_CHECKPOINT.md).
+
+**Nächster konkreter Schritt:** PR #172 auf finalem HEAD vollständig in CI abnehmen, danach nach Review und ohne Änderung an `main` die Merge-Reihenfolge von #171, #170 und #172 konfliktfrei festlegen und prüfen.
+
 ## Aktueller Stand und autonome Fortsetzung (25.10.2026 – Sicherheits-PR #170)
 
 **Version auf `main`: 0.8.38+88; Basis-HEAD: `b60ffe7ff1aae502ea927cb77153b988be33e397`.** Neuer Branch `fix/case-insensitive-secret-archive-filter-20261025`, [PR #170](https://github.com/ManuEtt/Dnd/pull/170). Die bereits offenen PRs #159–#169, insbesondere die Integrations-PRs #164 und #169, wurden vor Beginn geprüft; diese Änderungen bleiben unangetastet. Keine Änderung direkt auf `main`.
