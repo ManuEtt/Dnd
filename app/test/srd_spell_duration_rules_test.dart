@@ -73,9 +73,7 @@ void main() {
   });
 
   test('conditional or dispelled durations invent no expiry time', () {
-    final forever = SrdSpellDurationRules.inspect(
-      catalog.find('Arcane Lock')!,
-    );
+    final forever = SrdSpellDurationRules.inspect(catalog.find('Arcane Lock')!);
     expect(forever.kind, SrdSpellDurationKind.untilDispelled);
     expect(forever.hasTimeLimit, isFalse);
     expect(forever.explicitlyEndsOnDispel, isTrue);
@@ -123,10 +121,8 @@ void main() {
       throwsFormatException,
     );
     expect(
-      () => SrdSpellDurationRules.parse(
-        '1 minute',
-        concentrationRequired: true,
-      ),
+      () =>
+          SrdSpellDurationRules.parse('1 minute', concentrationRequired: true),
       throwsFormatException,
     );
   });
