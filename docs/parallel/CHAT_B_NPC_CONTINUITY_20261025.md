@@ -39,3 +39,12 @@ Persistierte NPC-Beziehungsnotizen werden zwar gespeichert und innerhalb des all
 
 ## Genau ein nächster Schritt
 In einem weiteren eigenständigen Story-PR die neue NPC-Kontinuitätsprojektion als optionalen, strikt begrenzten Narrationskontext an die bestehende Storyvorbereitung anbinden. Akzeptanz: nur nach expliziter NPC-ID, keine Überschreitung von Antwort-/Kontextgrenzen, bestätigter lokaler Regelzustand unverändert, mindestens ein Provider-Mock- und ein Negativtest. Zuerst Überschneidungen mit dann offenen PRs prüfen.
+
+
+## GitHub-Nachtrag zum Entwicklungszyklus
+- Pull Request: [#181](https://github.com/ManuEtt/Dnd/pull/181) gegen `main`, weiterhin **nicht gemergt**.
+- Implementierung `ef0e7978e03d82b0f73d6b1a8944c7d356a646e9`, Story-API `b4f9337b8d284b945fe67068712814e68b266c08`, Testdatei `9d2b7e12275c9f7ed054dcbfec942bad297ac22e`.
+- Ursprüngliche GitHub-CI #40219009241 und #40219188924 meldete ausschließlich am Schritt „Dart-Formatierung prüfen“ einen Fehler in der neuen Testdatei. Die vorübergehende dedizierte Diagnose-CI #40219405615 zeigte den genauen Formatter-Diff und lief erfolgreich, ist **keine Gesamtabnahme**.
+- Exakter Formatfix `f4eced4040618a5f7e76dc95a49daa25b7dab6f4`. Die temporäre Diagnose-Workflowdatei wurde anschließend mit `24470a5cc612aed9313a06400fffee9afbb67c9b` vollständig entfernt.
+- Inzwischen wurde Chat-D-PR #177 nach `main` integriert (neuer Live-Main-HEAD `97a06118f17d71cc77be2cb15a2fc9a53db20ee0`). Neuer PR #182 von Chat D ändert ausschließlich Python-Grenzprüfungen sowie gemeinsame Dokumentation. **Keine Quellcode-/Testpfad-Überschneidung**; README und zentraler Checkpoint müssen bei Integration konsolidiert werden.
+- Finale vollständige CI am letzten eigenen Dokumentationscommit steht aus und wird nur bei sichtbarem Erfolg als bestanden ausgewiesen. Tests/Android-Ergebnisse der Main-CI dürfen nicht diesem PR zugeschrieben werden.
