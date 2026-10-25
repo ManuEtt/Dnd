@@ -4,7 +4,7 @@ Ausgangs-Main `b60ffe7ff1aae502ea927cb77153b988be33e397`; Nutzer beauftragt Inte
 
 ## Sicherung und Herkunft
 
-19 erfasste Köpfe remote über geprüfte Archivtags unter `archive/branch-migration-20261025T075644Z` und lokal per vollständigem Bundle gesichert. Aktuelles Bundle `Wuerfelraunen_Branches_vor_Migration_20261025_19_final_mit_Dokumentation.bundle`, SHA256 `fb75e843f3146d23044818dc7278487c44f024b2ba25475dbd450999aca299b7`; `git bundle verify` erfolgreich. Frühere Bundles unverändert erhalten. [JSON-Audit](branch_migration_20261025.json) dokumentiert alle exakten Köpfe und Erhaltungsentscheidungen. Alle sind echte Vorfahren des Integrationsstands.
+19 erfasste Köpfe remote über geprüfte Archivtags unter `archive/branch-migration-20261025T075644Z` und lokal per vollständigem Bundle gesichert. Aktuelles Bundle `Wuerfelraunen_Branches_vor_Migration_20261025_19_final_mit_Dokumentation.bundle`, SHA256 `344e499cd8b21f04148903002428fe81ba58b83bf8aa67832f4a02a71476c973`; `git bundle verify` erfolgreich. Frühere Bundles unverändert erhalten. [JSON-Audit](branch_migration_20261025.json) dokumentiert alle exakten Köpfe und Erhaltungsentscheidungen. Alle sind echte Vorfahren des Integrationsstands.
 
 Reguläre Merges integrieren die Funktionsstände 164, 165, 166, 169, 170 und den neu veröffentlichten Atomic-Archivbranch. Zehn zusätzliche Historien-Merges ändern keinen Inhaltsbaum und beruhen auf diesen Nachweisen:
 

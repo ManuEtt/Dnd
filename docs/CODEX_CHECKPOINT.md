@@ -7,7 +7,7 @@ Stand **2026-10-25T12:16:00+00:00**. Nutzerauftrag: alle GitHub-Branches migrier
 - Arbeitskopie `/workspace/Dnd-migration-20261025`, Branch `integration/all-branches-20261025`, [PR #171](https://github.com/ManuEtt/Dnd/pull/171).
 - Ausgangs-Main `b60ffe7ff1aae502ea927cb77153b988be33e397`; Funktions-/Integrationscommit `cd724629c79a169ff1a078517031a33cf73ae130`. Version **0.8.39+89**, SQLite **2**, Kampagnen-JSON **1** unverändert.
 - 19 erfasste Remote-Köpfe vor Integration gesichert, remote tags SHA-genau geprüft; alle Köpfe echte Vorfahren. Ursprünglich 13, später vier Sourcebranches plus eigener Integrationscheckpoint und Atomic-Archivbranch hinzugekommen.
-- Sicherung: `Wuerfelraunen_Branches_vor_Migration_20261025_19_final_mit_Dokumentation.bundle`, SHA256 `fb75e843f3146d23044818dc7278487c44f024b2ba25475dbd450999aca299b7`. Unter `/workspace/artifacts/branch-migration-20261025/`; dort auch ältere unveränderte Bundles und Manifeste. Archivtags unter `archive/branch-migration-20261025T075644Z`. Atomic-Zwischenkopf und finaler geprüfter Atomic-Kopf separat erhalten.
+- Sicherung: `Wuerfelraunen_Branches_vor_Migration_20261025_19_final_mit_Dokumentation.bundle`, SHA256 `344e499cd8b21f04148903002428fe81ba58b83bf8aa67832f4a02a71476c973`. Unter `/workspace/artifacts/branch-migration-20261025/`; dort auch ältere unveränderte Bundles und Manifeste. Archivtags unter `archive/branch-migration-20261025T075644Z`. Atomic-Zwischenkopf und finaler geprüfter Atomic-Kopf separat erhalten.
 - Reguläre Funktions-Merges, zehn nach konkreter Inhaltsprüfung unveränderte Historien-Merges; 42 bytegenau archivierte Dokumente. [JSON-Herkunft](branch_migration_20261025.json), [Audit](BRANCH_MIGRATION_AUDIT_20261025.md).
 
 ## IMPLEMENTIERT
