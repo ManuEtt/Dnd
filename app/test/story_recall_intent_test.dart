@@ -38,7 +38,7 @@ void main() {
     }
   });
 
-  test('ordinary player actions and quoted questions do not trigger recall', () {
+  test('player actions and quoted questions do not trigger recall', () {
     for (final action in [
       'Ich erinnere mich an Mira und gehe weiter.',
       'Ich lese das Tagebuch am Feuer.',
