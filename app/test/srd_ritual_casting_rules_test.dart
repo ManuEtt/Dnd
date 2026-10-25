@@ -95,32 +95,35 @@ void main() {
     catalog = await SrdSpellCatalogLoader.load();
   });
 
-  test('all 29 tagged ritual entries pass class and prepared spell preflight', () {
-    const byEnglish = {
-      'Bard': 'Barde',
-      'Cleric': 'Kleriker',
-      'Druid': 'Druide',
-      'Paladin': 'Paladin',
-      'Ranger': 'Waldläufer',
-      'Sorcerer': 'Zauberer',
-      'Warlock': 'Hexenmeister',
-      'Wizard': 'Magier',
-    };
-    final spells = catalog.spells.where((spell) => spell.ritual).toList();
-    expect(spells, hasLength(29));
-    for (final spell in spells) {
-      final name = byEnglish[spell.classes.first]!;
-      final hero = _hero(className: name, spells: [spell.name]);
-      final before = jsonEncode(hero.toJson());
-      final plan = _plan(hero, spell);
-      expect(plan.spellName, spell.name);
-      expect(plan.castingClass, name);
-      expect(plan.spellSlotCost, 0);
-      expect(plan.additionalMinutes, 10);
-      expect(jsonEncode(hero.toJson()), before);
-      plan.validateUnchanged(hero);
-    }
-  });
+  test(
+    'all 29 tagged ritual entries pass class and prepared spell preflight',
+    () {
+      const byEnglish = {
+        'Bard': 'Barde',
+        'Cleric': 'Kleriker',
+        'Druid': 'Druide',
+        'Paladin': 'Paladin',
+        'Ranger': 'Waldläufer',
+        'Sorcerer': 'Zauberer',
+        'Warlock': 'Hexenmeister',
+        'Wizard': 'Magier',
+      };
+      final spells = catalog.spells.where((spell) => spell.ritual).toList();
+      expect(spells, hasLength(29));
+      for (final spell in spells) {
+        final name = byEnglish[spell.classes.first]!;
+        final hero = _hero(className: name, spells: [spell.name]);
+        final before = jsonEncode(hero.toJson());
+        final plan = _plan(hero, spell);
+        expect(plan.spellName, spell.name);
+        expect(plan.castingClass, name);
+        expect(plan.spellSlotCost, 0);
+        expect(plan.additionalMinutes, 10);
+        expect(jsonEncode(hero.toJson()), before);
+        plan.validateUnchanged(hero);
+      }
+    },
+  );
 
   test('Action + 10 minutes is not silently rounded to an invented minute', () {
     final plan = _plan(_hero(), catalog.find('Detect Magic')!);
@@ -137,9 +140,7 @@ void main() {
       ('Find Familiar', 70),
     ]) {
       final spell = catalog.find(data.$1)!;
-      final className = spell.classes.first == 'Cleric'
-          ? 'Kleriker'
-          : 'Magier';
+      final className = spell.classes.first == 'Cleric' ? 'Kleriker' : 'Magier';
       final plan = _plan(
         _hero(className: className, spells: [spell.name]),
         spell,
@@ -152,18 +153,12 @@ void main() {
     final hero = _hero();
     final valid = catalog.find('Detect Magic')!;
     final invalid = catalog.find('Magic Missile')!;
-    expect(
-      () => _plan(hero, invalid),
-      throwsFormatException,
-    );
+    expect(() => _plan(hero, invalid), throwsFormatException);
     expect(
       () => _plan(hero, _alter(valid, ritual: false)),
       throwsFormatException,
     );
-    expect(
-      () => _plan(hero, _alter(valid, level: 0)),
-      throwsFormatException,
-    );
+    expect(() => _plan(hero, _alter(valid, level: 0)), throwsFormatException);
     expect(
       () => _plan(hero, _alter(valid, castingTime: 'Special or Ritual')),
       throwsUnsupportedError,
@@ -172,10 +167,7 @@ void main() {
 
   test('unprepared ritual and wrong class cannot claim free casting', () {
     final detect = catalog.find('Detect Magic')!;
-    expect(
-      () => _plan(_hero(spells: const []), detect),
-      throwsFormatException,
-    );
+    expect(() => _plan(_hero(spells: const []), detect), throwsFormatException);
     expect(
       () => _plan(_hero(), detect, preparedForClass: false),
       throwsFormatException,
@@ -188,10 +180,7 @@ void main() {
       () => _plan(_hero(className: 'Kämpfer'), detect),
       throwsFormatException,
     );
-    expect(
-      () => _plan(_hero(className: 'Magierin'), detect),
-      returnsNormally,
-    );
+    expect(() => _plan(_hero(className: 'Magierin'), detect), returnsNormally);
   });
 
   test('class-specific spell limit applies even with a high total level', () {
@@ -247,37 +236,19 @@ void main() {
       () => _plan(hero, spell, concentration: false),
       throwsFormatException,
     );
-    expect(
-      () => _plan(hero, spell, target: false),
-      throwsFormatException,
-    );
+    expect(() => _plan(hero, spell, target: false), throwsFormatException);
   });
 
   test('verbal, somatic and material requirements cannot be bypassed', () {
     final ritual = catalog.find('Identify')!;
     final hero = _hero();
+    expect(() => _plan(hero, ritual, verbal: false), throwsFormatException);
+    expect(() => _plan(hero, ritual, somatic: false), throwsFormatException);
+    expect(() => _plan(hero, ritual, material: false), throwsFormatException);
+    expect(() => _plan(hero, ritual, costly: false), throwsFormatException);
     expect(
-      () => _plan(hero, ritual, verbal: false),
-      throwsFormatException,
-    );
-    expect(
-      () => _plan(hero, ritual, somatic: false),
-      throwsFormatException,
-    );
-    expect(
-      () => _plan(hero, ritual, material: false),
-      throwsFormatException,
-    );
-    expect(
-      () => _plan(hero, ritual, costly: false),
-      throwsFormatException,
-    );
-    expect(
-      () => _plan(
-        hero,
-        ritual,
-        source: SrdSpellMaterialSource.spellcastingFocus,
-      ),
+      () =>
+          _plan(hero, ritual, source: SrdSpellMaterialSource.spellcastingFocus),
       throwsFormatException,
     );
   });
@@ -306,19 +277,22 @@ void main() {
     }
   });
 
-  test('ritual eligibility neither spends exhausted slots nor mutates hero', () {
-    final hero = _hero().copyWith(
-      spentSpellSlots: {'1': 4, '2': 3, '3': 3},
-      spentPactSlots: 1,
-      concentratingOn: 'Existing concentration',
-    );
-    final before = jsonEncode(hero.toJson());
-    final plan = _plan(hero, catalog.find('Detect Magic')!);
-    expect(plan.spellSlotCost, 0);
-    expect(jsonEncode(hero.toJson()), before);
-    expect(hero.concentratingOn, 'Existing concentration');
-    expect(hero.spentSpellSlots['1'], 4);
-  });
+  test(
+    'ritual eligibility neither spends exhausted slots nor mutates hero',
+    () {
+      final hero = _hero().copyWith(
+        spentSpellSlots: {'1': 4, '2': 3, '3': 3},
+        spentPactSlots: 1,
+        concentratingOn: 'Existing concentration',
+      );
+      final before = jsonEncode(hero.toJson());
+      final plan = _plan(hero, catalog.find('Detect Magic')!);
+      expect(plan.spellSlotCost, 0);
+      expect(jsonEncode(hero.toJson()), before);
+      expect(hero.concentratingOn, 'Existing concentration');
+      expect(hero.spentSpellSlots['1'], 4);
+    },
+  );
 
   test('character changes make a formerly valid ritual plan stale', () {
     final hero = _hero();
