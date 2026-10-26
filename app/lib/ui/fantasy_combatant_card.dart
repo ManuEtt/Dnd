@@ -239,8 +239,27 @@ class _CombatStatTag extends StatelessWidget {
   final Color color;
 
   @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+  Widget build(BuildContext context) {
+    // Keep the visual abbreviations compact while announcing confirmed
+    // values and unknown imported values clearly to screen readers.
+    final accessibleName = switch (label) {
+      'INI' => 'Initiative',
+      'RK' => 'Rüstungsklasse',
+      'TP' => 'Trefferpunkte',
+      'TEMP' => 'Temporäre Trefferpunkte',
+      _ => label,
+    };
+    final accessibleValue = value == '?' || value == '? / ?'
+        ? 'nicht bestätigt'
+        : label == 'TP'
+        ? value.replaceFirst(' / ', ' von ')
+        : value;
+    return Semantics(
+      container: true,
+      label: '$accessibleName: $accessibleValue',
+      child: ExcludeSemantics(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
     decoration: BoxDecoration(
       color: FantasyPalette.night.withValues(alpha: .86),
       borderRadius: BorderRadius.circular(7),
@@ -263,8 +282,10 @@ class _CombatStatTag extends StatelessWidget {
           ),
         ],
       ),
-    ),
-  );
+        ),
+      ),
+    );
+  }
 }
 
 /// Fine vector filigree that scales with narrow phones and tablets.
