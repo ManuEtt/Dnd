@@ -45,6 +45,7 @@ class DeathSaveDecisionPanel extends StatelessWidget {
           if (busy) ...[
             const SizedBox(height: 8),
             Semantics(
+              container: true,
               liveRegion: true,
               label:
                   'Todesrettungswurf: Entscheidung wird verarbeitet. '
