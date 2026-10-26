@@ -102,6 +102,7 @@ class _DieFacePlaque extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final accent = critical ? FantasyPalette.danger : FantasyPalette.gold;
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.8;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 7),
       decoration: BoxDecoration(
@@ -111,8 +112,10 @@ class _DieFacePlaque extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.casino_outlined, size: 17, color: accent),
-          const SizedBox(width: 8),
+          if (!largeText) ...[
+            Icon(Icons.casino_outlined, size: 17, color: accent),
+            const SizedBox(width: 8),
+          ],
           Expanded(
             child: Text(
               label,
