@@ -28,44 +28,64 @@ class FantasyCombatActionEconomy extends StatelessWidget {
     icon: Icons.hourglass_bottom_outlined,
     accent: FantasyPalette.blue,
     material: FantasyPanelMaterial.iron,
-    child: Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: [
-        _ActionSeal(
-          label: 'Aktion',
-          value: actionUsed ? 'verbraucht' : 'verfügbar',
-          available: !actionUsed,
-          icon: Icons.sports_martial_arts,
-        ),
-        _ActionSeal(
-          label: 'Bonusaktion',
-          value: bonusActionUsed ? 'verbraucht' : 'verfügbar',
-          available: !bonusActionUsed,
-          icon: Icons.auto_awesome_outlined,
-        ),
-        _ActionSeal(
-          label: 'Reaktion',
-          value: reactionUsed ? 'verbraucht' : 'verfügbar',
-          available: !reactionUsed,
-          icon: Icons.shield_outlined,
-        ),
-        _ActionSeal(
-          label: 'Bewegung',
-          value: movementRemainingLabel,
-          available: false,
-          icon: Icons.directions_run_outlined,
-          color: FantasyPalette.blue,
-        ),
-        if (spellSlotExpendedThisTurn)
-          const _ActionSeal(
-            label: 'Zauberplatz',
-            value: 'in diesem Zug verbraucht',
-            available: false,
-            icon: Icons.auto_awesome,
-            color: FantasyPalette.danger,
-          ),
-      ],
+    child: LayoutBuilder(
+      builder: (context, constraints) {
+        // At 200% Android system text, keep each confirmed resource
+        // readable in its own row instead of squeezing neighboring seals.
+        final useFullWidth =
+            constraints.maxWidth < 500 &&
+            MediaQuery.textScalerOf(context).scale(1) >= 1.8;
+        final sealWidth = useFullWidth ? constraints.maxWidth : null;
+        return Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            _ActionSeal(
+              key: const ValueKey('combat-action-state'),
+              label: 'Aktion',
+              value: actionUsed ? 'verbraucht' : 'verfügbar',
+              available: !actionUsed,
+              icon: Icons.sports_martial_arts,
+              width: sealWidth,
+            ),
+            _ActionSeal(
+              key: const ValueKey('combat-bonus-action-state'),
+              label: 'Bonusaktion',
+              value: bonusActionUsed ? 'verbraucht' : 'verfügbar',
+              available: !bonusActionUsed,
+              icon: Icons.auto_awesome_outlined,
+              width: sealWidth,
+            ),
+            _ActionSeal(
+              key: const ValueKey('combat-reaction-state'),
+              label: 'Reaktion',
+              value: reactionUsed ? 'verbraucht' : 'verfügbar',
+              available: !reactionUsed,
+              icon: Icons.shield_outlined,
+              width: sealWidth,
+            ),
+            _ActionSeal(
+              key: const ValueKey('combat-movement-state'),
+              label: 'Bewegung',
+              value: movementRemainingLabel,
+              available: false,
+              icon: Icons.directions_run_outlined,
+              color: FantasyPalette.blue,
+              width: sealWidth,
+            ),
+            if (spellSlotExpendedThisTurn)
+              _ActionSeal(
+                key: const ValueKey('combat-spell-slot-state'),
+                label: 'Zauberplatz',
+                value: 'in diesem Zug verbraucht',
+                available: false,
+                icon: Icons.auto_awesome,
+                color: FantasyPalette.danger,
+                width: sealWidth,
+              ),
+          ],
+        );
+      },
     ),
   );
 }
@@ -77,6 +97,7 @@ class _ActionSeal extends StatelessWidget {
     required this.available,
     required this.icon,
     this.color,
+    this.width,
   });
 
   final String label;
@@ -84,14 +105,18 @@ class _ActionSeal extends StatelessWidget {
   final bool available;
   final IconData icon;
   final Color? color;
+  final double? width;
 
   @override
   Widget build(BuildContext context) {
     final accent =
         color ?? (available ? FantasyPalette.success : FantasyPalette.muted);
-    return Semantics(
-      label: '$label: $value',
-      child: ExcludeSemantics(
+    return SizedBox(
+      width: width,
+      child: Semantics(
+        container: true,
+        label: '$label: $value',
+        child: ExcludeSemantics(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
           decoration: BoxDecoration(
@@ -116,6 +141,7 @@ class _ActionSeal extends StatelessWidget {
             ],
           ),
         ),
+      ),
       ),
     );
   }
