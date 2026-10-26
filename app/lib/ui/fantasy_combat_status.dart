@@ -143,76 +143,128 @@ class FantasyCombatCoverPanel extends StatelessWidget {
     title: 'Deckung gegen diesen Gegner',
     icon: Icons.shield_outlined,
     material: FantasyPanelMaterial.iron,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Nur ausdrücklich bestätigte Hindernisse gelten. '
-          'Höchste Deckung zählt; eine Bewegung beendet die '
-          'bisher bestätigte Deckungsposition des Helden.',
-          style: TextStyle(fontSize: 12),
-        ),
-        const SizedBox(height: 10),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
+    child: LayoutBuilder(
+      builder: (context, constraints) {
+        final useFullWidth =
+            constraints.maxWidth < 500 &&
+            MediaQuery.textScalerOf(context).scale(1) >= 1.8;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            for (final target in const ['Held', 'Gegner'])
-              PopupMenuButton<CoverLevel>(
-                key: ValueKey(
-                  target == 'Held' ? 'combat-hero-cover' : 'combat-enemy-cover',
+            const Text(
+              'Nur ausdrücklich bestätigte Hindernisse gelten. '
+              'Höchste Deckung zählt; eine Bewegung beendet die '
+              'bisher bestätigte Deckungsposition des Helden.',
+              style: TextStyle(fontSize: 12),
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                _CombatCoverSelector(
+                  target: 'Held',
+                  cover: heroCover,
+                  canChange: canChange,
+                  onAction: onAction,
+                  fullWidth: useFullWidth ? constraints.maxWidth : null,
+                  showFullLabel: useFullWidth,
                 ),
-                tooltip: 'Deckung für $target ändern',
-                enabled: canChange,
-                onSelected: (grade) => onAction(
-                  'Deckung: $target ${CoverRules.commandValue(grade)}',
+                _CombatCoverSelector(
+                  target: 'Gegner',
+                  cover: enemyCover,
+                  canChange: canChange,
+                  onAction: onAction,
+                  fullWidth: useFullWidth ? constraints.maxWidth : null,
+                  showFullLabel: useFullWidth,
                 ),
-                itemBuilder: (_) => [
-                  for (final grade in CoverLevel.values)
-                    PopupMenuItem<CoverLevel>(
-                      value: grade,
-                      child: Text(CoverRules.label(grade)),
-                    ),
-                ],
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 9,
-                  ),
-                  decoration: BoxDecoration(
-                    color: FantasyPalette.night.withValues(alpha: .85),
-                    borderRadius: BorderRadius.circular(9),
-                    border: Border.all(
-                      color: FantasyPalette.gold.withValues(
-                        alpha: canChange ? .65 : .28,
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.shield_outlined,
-                        color: canChange
-                            ? FantasyPalette.gold
-                            : FantasyPalette.muted,
-                        size: 17,
-                      ),
-                      const SizedBox(width: 6),
-                      Flexible(
-                        child: Text(
-                          '$target: ${CoverRules.label(target == 'Held' ? heroCover : enemyCover)}',
-                          maxLines: 2,
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              ],
+            ),
           ],
-        ),
-      ],
+        );
+      },
     ),
   );
+}
+
+class _CombatCoverSelector extends StatelessWidget {
+  const _CombatCoverSelector({
+    required this.target,
+    required this.cover,
+    required this.canChange,
+    required this.onAction,
+    required this.fullWidth,
+    required this.showFullLabel,
+  });
+
+  final String target;
+  final CoverLevel cover;
+  final bool canChange;
+  final ValueChanged<String> onAction;
+  final double? fullWidth;
+  final bool showFullLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final coverLabel = CoverRules.label(cover);
+    return SizedBox(
+      width: fullWidth,
+      child: Semantics(
+        container: true,
+        label:
+            'Deckung für $target: $coverLabel. '
+            '${canChange ? 'Änderbar' : 'Nicht änderbar'}.',
+        child: PopupMenuButton<CoverLevel>(
+          key: ValueKey(
+            target == 'Held' ? 'combat-hero-cover' : 'combat-enemy-cover',
+          ),
+          tooltip: canChange
+              ? 'Deckung für $target ändern'
+              : 'Deckung für $target derzeit nicht änderbar',
+          enabled: canChange,
+          onSelected: (grade) => onAction(
+            'Deckung: $target ${CoverRules.commandValue(grade)}',
+          ),
+          itemBuilder: (_) => [
+            for (final grade in CoverLevel.values)
+              PopupMenuItem<CoverLevel>(
+                value: grade,
+                child: Text(CoverRules.label(grade)),
+              ),
+          ],
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+            decoration: BoxDecoration(
+              color: FantasyPalette.night.withValues(alpha: .85),
+              borderRadius: BorderRadius.circular(9),
+              border: Border.all(
+                color: FantasyPalette.gold.withValues(
+                  alpha: canChange ? .65 : .28,
+                ),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.shield_outlined,
+                  color: canChange ? FantasyPalette.gold : FantasyPalette.muted,
+                  size: 17,
+                ),
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(
+                    '$target: $coverLabel',
+                    maxLines: showFullLabel ? null : 2,
+                    softWrap: true,
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
