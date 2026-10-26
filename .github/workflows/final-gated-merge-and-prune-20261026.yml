@@ -1,0 +1,129 @@
+name: Final gated integration and archive cleanup 2026-10-26
+on:
+  push:
+    branches:
+      - maintenance/finalize-last-integration-20261026
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+jobs:
+  finalize:
+    if: github.repository == 'ManuEtt/Dnd'
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    concurrency:
+      group: final-gated-integration-20261026
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Require PR tests, merge only exact head, dispatch new main CI, archive and prune exact refs
+        shell: bash
+        run: |
+          set -euo pipefail
+          REPO='ManuEtt/Dnd'
+          PR=209
+          HEAD_SHA='d981757ba422f07bd1c50131b3db854ebc86a1de'
+          INITIAL_MAIN='76ab5ae404144d4bb6f8de0b0cc429e009d03edd'
+          TAG_PREFIX='archive/final-merge-20261026'
+          SELF='maintenance/finalize-last-integration-20261026'
+          mapfile -t rows <<'BRANCH_ROWS'
+          feat/chat-a/eldritch-blast-encounter-20261026|6db42ab13f90d9f5202eaf2d2f7a31a0b6cd82a8|206
+          feat/chat-b/negotiated-npc-transport-20261026|9840ed64ac7c55d536ac708f0894fcd697fcc610|208
+          fix/chat-d/release-dangling-symlinks-20261026|5c45af1bd12ec1f6ae9946d43166b40da975269a|207
+          integration/final-three-workstreams-20261026|d981757ba422f07bd1c50131b3db854ebc86a1de|209
+          BRANCH_ROWS
+          gh api "repos/$REPO/pulls/$PR" > /tmp/final-pr.json
+          [[ "$(jq -r '.head.sha' /tmp/final-pr.json)" == "$HEAD_SHA" ]] || { echo 'PR #209 head changed'; exit 1; }
+          [[ "$(jq -r '.draft' /tmp/final-pr.json)" == 'false' ]] || { echo 'PR #209 is draft'; exit 1; }
+          [[ "$(jq -r '.base.ref' /tmp/final-pr.json)" == main ]] || { echo 'PR #209 base is not main'; exit 1; }
+          [[ "$(jq -r '.state' /tmp/final-pr.json)" == open ]] || { echo 'PR #209 not open'; exit 1; }
+          git fetch --quiet origin main
+          git merge-base --is-ancestor "$INITIAL_MAIN" "$HEAD_SHA" || { echo 'Final head lacks main baseline'; exit 1; }
+          for row in "${rows[@]}"; do
+            IFS='|' read -r branch expected pr_number <<< "$row"
+            current=$(git ls-remote origin "refs/heads/$branch" | cut -f1)
+            [[ "$current" == "$expected" ]] || { echo "SOURCE CHANGED $branch $current"; exit 1; }
+            git merge-base --is-ancestor "$expected" "$HEAD_SHA" || { echo "NOT CONTAINED $branch"; exit 1; }
+            if [[ "$pr_number" != "$PR" ]]; then
+              prhead=$(gh api "repos/$REPO/pulls/$pr_number" --jq '.head.sha')
+              [[ "$prhead" == "$expected" ]] || { echo "SOURCE PR CHANGED $pr_number"; exit 1; }
+            fi
+          done
+          echo 'Verified all exact source SHAs are ancestors of PR #209.'
+          ci='waiting'
+          for i in $(seq 1 120); do
+            gh api "repos/$REPO/commits/$HEAD_SHA/check-runs?per_page=100" > /tmp/final-checks.json
+            ci=$(jq -r '.check_runs | if length < 2 then "waiting" elif any(.[]; .status == "completed" and .conclusion != "success") then "failure" elif all(.[]; .status == "completed" and .conclusion == "success") then "success" else "waiting" end' /tmp/final-checks.json)
+            [[ "$ci" != failure ]] || { echo 'Final PR #209 CI failed; no merge performed'; exit 1; }
+            if [[ "$ci" == success ]]; then break; fi
+            sleep 20
+          done
+          [[ "$ci" == success ]] || { echo 'Timed out before final PR #209 CI success'; exit 1; }
+          echo 'PR #209 exact HEAD full CI is green.'
+          actual_main=$(gh api "repos/$REPO/git/ref/heads/main" --jq '.object.sha')
+          [[ "$actual_main" == "$INITIAL_MAIN" ]] || { echo "Main changed during CI ($actual_main); do not merge stale branch"; exit 1; }
+          prhead=$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')
+          [[ "$prhead" == "$HEAD_SHA" ]] || { echo 'PR head moved during CI'; exit 1; }
+          for row in "${rows[@]}"; do
+            IFS='|' read -r branch expected pr_number <<< "$row"
+            tag="$TAG_PREFIX/$branch"
+            oldtag=$(git ls-remote origin "refs/tags/$tag" | cut -f1)
+            [[ -z "$oldtag" || "$oldtag" == "$expected" ]] || { echo "Archive collision $tag"; exit 1; }
+            [[ "$(git ls-remote origin "refs/heads/$branch" | cut -f1)" == "$expected" ]] || { echo "Branch moved $branch"; exit 1; }
+            if [[ -z "$oldtag" ]]; then
+              git tag "$tag" "$expected"
+              git push origin "refs/tags/$tag:refs/tags/$tag"
+            fi
+          done
+          echo 'All four source SHA snapshots archived before merging.'
+          gh api --method PUT "repos/$REPO/pulls/$PR/merge" -f merge_method=merge -f "sha=$HEAD_SHA" > /tmp/final-merge.json
+          [[ "$(jq -r '.merged' /tmp/final-merge.json)" == true ]] || { echo 'Merge did not complete'; exit 1; }
+          MERGE_SHA=$(jq -r '.sha' /tmp/final-merge.json)
+          [[ "$MERGE_SHA" =~ ^[a-f0-9]{40}$ ]] || { echo 'Malformed merge SHA'; exit 1; }
+          merged_main=$(gh api "repos/$REPO/git/ref/heads/main" --jq '.object.sha')
+          [[ "$merged_main" == "$MERGE_SHA" ]] || { echo "Unexpected main head after merge: $merged_main"; exit 1; }
+          echo "Merged final PR #209 at $MERGE_SHA; dispatching Main CI explicitly."
+          gh api --method POST "repos/$REPO/actions/workflows/android-build.yml/dispatches" -f ref=main
+          main_ci='waiting'
+          for i in $(seq 1 145); do
+            gh api "repos/$REPO/actions/workflows/android-build.yml/runs?event=workflow_dispatch&per_page=100" > /tmp/main-runs.json
+            main_ci=$(jq -r --arg sha "$MERGE_SHA" '[.workflow_runs[] | select(.head_sha == $sha)] | if length == 0 then "waiting" elif any(.[]; .status == "completed" and .conclusion != "success") then "failure" elif any(.[]; .status == "completed" and .conclusion == "success") then "success" else "waiting" end' /tmp/main-runs.json)
+            [[ "$main_ci" != failure ]] || { echo 'Integrated main CI failed; preserve branches and tags'; exit 1; }
+            if [[ "$main_ci" == success ]]; then break; fi
+            sleep 20
+          done
+          [[ "$main_ci" == success ]] || { echo 'Timed out before successful main CI; preserving source branches'; exit 1; }
+          echo 'Integrated main commit passed explicitly dispatched Android/Flutter/Backend CI.'
+          git fetch --quiet origin main
+          git merge-base --is-ancestor "$MERGE_SHA" origin/main || { echo 'Merged commit no longer on main'; exit 1; }
+          for row in "${rows[@]}"; do
+            IFS='|' read -r branch expected pr_number <<< "$row"
+            git merge-base --is-ancestor "$expected" origin/main || { echo "NOT merged: $branch"; exit 1; }
+            current=$(git ls-remote origin "refs/heads/$branch" | cut -f1)
+            [[ -z "$current" || "$current" == "$expected" ]] || { echo "CHANGED branch, stop: $branch $current"; exit 1; }
+            if [[ "$pr_number" != "$PR" ]]; then
+              prstate=$(gh api "repos/$REPO/pulls/$pr_number" --jq '.state')
+              if [[ "$prstate" == open ]]; then
+                gh api --method PATCH "repos/$REPO/pulls/$pr_number" -f state=closed > /dev/null
+                echo "Closed redundant incorporated PR #$pr_number"
+              fi
+            fi
+            if [[ -n "$current" ]]; then
+              git push --force-with-lease="refs/heads/$branch:$expected" origin ":refs/heads/$branch"
+            fi
+            [[ -z "$(git ls-remote origin "refs/heads/$branch" | cut -f1)" ]] || { echo "Not deleted: $branch"; exit 1; }
+            echo "ARCHIVED AND DELETED $branch"
+          done
+          SELF_EXPECTED="$GITHUB_SHA"
+          [[ "$(git ls-remote origin "refs/heads/$SELF" | cut -f1)" == "$SELF_EXPECTED" ]] || { echo 'Maintenance branch changed'; exit 1; }
+          self_tag="$TAG_PREFIX/maintenance-finalize-$SELF_EXPECTED"
+          git tag "$self_tag" "$SELF_EXPECTED"
+          git push origin "refs/tags/$self_tag:refs/tags/$self_tag"
+          git push --force-with-lease="refs/heads/$SELF:$SELF_EXPECTED" origin ":refs/heads/$SELF"
+          echo "SUCCESS final main=$MERGE_SHA; all work integrated, 4 source branches and maintenance deleted."
