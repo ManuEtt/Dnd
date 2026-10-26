@@ -3,12 +3,12 @@
 - **Basis-main:** `5e3116f9e3f8de0af6e8125a97b3962cb8910cdf`; **Branch:** `fix/chat-a/spell-component-metadata-20261026`.
 - **Regelbereich:** `RULE-SPELLS-SPELL-COMPONENTS` bleibt **partial**; SRD 5.2.1, *Spells → Casting Spells → Components*, Wizards of the Coast LLC, CC BY 4.0.
 - **IMPLEMENTIERT:** `SrdSpellDefinition.fromJson` lehnt unbekannte oder doppelte V/S/M-Symbole, nicht-kanonische Reihenfolgen, ungeprüfte Zusatzangaben und fehlende/leer/malformed Materialbeschreibungen ab. Die bestehende boolesche Komponenten-Konsistenzprüfung bleibt erhalten.
-- **Dateien:** `app/lib/domain/srd_spell_catalog.dart`, `app/test/srd_spell_catalog_preflight_test.dart`, README sowie zentraler und persönlicher Checkpoint.
+- **Dateien:** `app/lib/domain/srd_spell_catalog.dart`, `app/test/srd_spell_component_metadata_test.dart`, README sowie zentraler und persönlicher Checkpoint.
 - **GETESTET:** Ein nicht-Dart-basiertes Metadaten-Prüfskript im GitHub-Connector akzeptiert sämtliche **339** aktuellen Einträge mit der neuen Grammatik (statische Katalogprüfung, **kein** Flutter-Test).
 - **NICHT GETESTET:** Dart-Format, `flutter analyze`, Flutter-Tests, Debug-APK, Android-Gerät sowie alle vollständigen Python-/Backend-Kommandos; GitHub-Actions-Status beim Verfassen offen.
 - **Kompatibilität:** keine Schema-, JSON-Spielstand- oder SQLite-Migration; vorhandene gültige SRD-Katalogeinträge bleiben akzeptiert. Ungültige zukünftige Metadatendateien werden früh abgewiesen.
 - **Konflikte:** offene PRs #236 und #242 bearbeiten andere Regelmodule; PR #243 enthält Dokumentationsüberschneidungen, die Chat D vor einem Merge konsolidieren muss.
-- **GITHUB:** Aktueller Code-/Test-Fix `5b7c13eb096a80b1f3c48ea4c79b81aa64ee3e0c`; [PR #247](https://github.com/ManuEtt/Dnd/pull/247). Frühere CI auf fehlerhaftem Regex-Commit scheiterte bei Dart-Formatierung; Fix eingecheckt, aktuelle vollständige CI noch offen.
+- **GITHUB:** Aktueller Code-/Test-Commit `7fd249149d0882dc868487a6fb0a4d5f79b506dd`; [PR #247](https://github.com/ManuEtt/Dnd/pull/247). Frühere CI scheiterte zunächst an Quellcodeübertragung, danach an Testformatierung; Regeldatei aus sauberem `main` wiederhergestellt und Regression in isolierte Testdatei verschoben. Aktuelle vollständige CI noch offen.
 - **NÄCHSTER SCHRITT:** CI auf diesem PR prüfen, bei Fehlern Format/Tests im selben Branch korrigieren und erst nach vollständiger Abnahme als mergefähig markieren.
 
 ---
