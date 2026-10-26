@@ -380,7 +380,7 @@ void main() {
     );
     expect(tester.takeException(), isNull);
     semantics.dispose();
-  }
+  });
 
   testWidgets('Normale Schrift behält kompakte Kampfressourcen', (
     tester,
