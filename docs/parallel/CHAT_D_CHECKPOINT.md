@@ -1,3 +1,17 @@
+# Chat D D-007 – Ausführbare Skripte und atomare ZIP-Tests wiederherstellen
+
+- **Datum:** 26.10.2026, **Main-Basis:** `e903ae38c6ae99abfa99a432e7f7777f0eee853f`, **Branch:** `fix/chat-d/restore-checkpoint-zip-executable-modes-20261026`.
+- **Analyse:** Quell-ZIP nutzt inzwischen `writestr()` nach sicherem Dateiinhalt-/Statistikvergleich, was im Gegensatz zu `ZipFile.write()` keine Unix-Dateimodi übernimmt. `create_checkpoint.validate_archive` vergleicht diese Modi mit dem Manifest und hat deshalb in der Python-Gesamtsuite versagt. Zwei ältere Tests mockten `ZipFile.write`, das im Produktionspfad nicht mehr verwendet wird. Die erste CI auf dem anderen Paket D-008 bestätigte diese drei **bestehenden** Fehler; sie sind nicht durch dessen Gradle-Code verursacht.
+- **IMPLEMENTIERT:** `scripts/package_project.py` setzt für `ZipInfo` die regulären Dateimodus-/Ausführungsbits via `stat.S_IFREG | stat.S_IMODE(before.st_mode)`, behält `ZIP_DEFLATED` und den zuvor verifizierten Dateidateninhalt. Kein Rückfall auf den TOCTOU-anfälligeren direkten `ZipFile.write()`-Pfad.
+- **TESTS ERGÄNZT:** Neuer ZIP-Metadaten-Regressionsfall mit `0755` und `0644`; bestehende zwei Rollbacktests simulieren Schreibfehler nun in `ZipFile.writestr` und prüfen, dass bestehende ZIP-/SHA256-Dateien unangetastet bleiben.
+- **GEPRÜFT:** Technische Dateien über den GitHub-Connector auf den Branch gepusht. Die vollständige neue CI auf dem endgültigen Commit noch nicht abschließend bestätigt.
+- **NICHT GETESTET:** Android-Realgerät, manuelle Installation sowie finale vollständige Flutter-/Backend-/Android-/Alpha-CI des neuesten Branch-Stands.
+- **BLOCKIERT:** CI-Freigabe und anschließend Konfliktvergleich mit dem dann aktuellen Main. Unabhängiger nächster D-008-Branch (Java-Properties-escapte Schlüssel) bleibt technisch separat.
+- **PERSISTENZ:** SQLite, JSON, App-Version und Regel-/Storydateien unverändert. Keine Migration.
+- **NOCH NICHT IMPLEMENTIERT:** Keine funktionalen Erweiterungen der Kampagne, Regelengine oder UI in diesem Qualitätspaket.
+- **NÄCHSTER SCHRITT:** CI der finalen Branch-SHA vollständig prüfen, Fehler korrigieren, PR konfliktfrei nach `main` integrieren; danach D-008 auf diesen geprüften Main synchronisieren.
+
+---
 # Chat D – D-006 Main-Abgleich nach A/B-Integrationen, 26.10.2026
 
 Alter CI-geprüfter D-006 HEAD `46b869eb27c23cd8b250e7747b86b0b54ad6eed1`; neuester Main-HEAD `f1f3e997bc8650a757d34234eff49d870dcf9369`, enthält SRD-Zauber- und NPC-Erinnerungsintegrationen. Nur `scripts/package_project.py` und zugehörige Tests aus D-006 übernommen, Main-Historie und Dateien vollständig erhalten. Neues finales CI erforderlich, kein Force-Push.

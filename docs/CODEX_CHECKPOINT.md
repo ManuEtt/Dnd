@@ -1,3 +1,15 @@
+# Chat D D-007 – Checkpoint-ZIP-Ausführungsrechte (26.10.2026)
+
+- **Basis:** `main` `e903ae38c6ae99abfa99a432e7f7777f0eee853f`. Eigener Branch `fix/chat-d/restore-checkpoint-zip-executable-modes-20261026`.
+- **IMPLEMENTIERT:** Verlorene Unix-Modebits bei `ZipFile.writestr()` wiederhergestellt und zwei stale `ZipFile.write`-Mocks korrigiert. Ein zusätzlicher Modus-Roundtrip-Test.
+- **GETESTET:** Dateien über GitHub committed; vorherige CI reproduzierte drei Paket-/Checkpointfehler. **Die neue abschließende CI ist noch offen.**
+- **NICHT GETESTET:** vollständige finale Python-/Flutter-/Backend-/Android-CI und realer Geräte-/APK-Installationscheck.
+- **BLOCKIERT:** PR- und Main-CI-Abnahme und Main-Abgleich.
+- **Keine Migration:** App, Datenformat, Regeln, Story und Android-Version unverändert.
+- **NÄCHSTER SCHRITT:** finale CI abnehmen; anschließend sicheren Merge durchführen und D-008 fortsetzen. [Chat-D-Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
+
+---
+
 # Chat C – Kampf-Deckung bei 200 % Systemschrift (26.10.2026)
 
 - **Basis-main:** `864b53dba0a7186bf6beef46bcfb1499077d6dc2`; Feature-Branch `feat/chat-c/combat-cover-large-text-20261026`. Vorherige PRs #197 und #199 integriert.

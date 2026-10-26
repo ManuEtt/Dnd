@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – Quell-ZIP und Checkpoint-Dateirechte (D-007, 26.10.2026)
+
+Die aktuelle Quell-ZIP-Implementierung verifiziert Quelldaten beim Lesen mit `writestr()`; dabei gingen jedoch die Unix-Ausführungsrechte von Skripten verloren. D-007 übernimmt die geprüften Datei-Modusbits explizit in die ZIP-Metadaten und aktualisiert zwei veraltete Fehler-/Rollbacktests auf den tatsächlich verwendeten Schreibweg. Ein neuer Positiv-/Negativtest überprüft ausführbare und nicht ausführbare Dateien. Diese Fehler waren in der alten CI beim Pakettest reproduzierbar; die vollständige CI für den neuen D-007-Commit muss separat erfolgreich sein. Keine Änderung an App-Code, Speicherformat, SRD-Regeln oder echten Spielständen. [Details](docs/parallel/CHAT_D_CHECKPOINT.md).
+
 ## Chat C – Kampf-Deckung bei 200 % Schrift (26.10.2026)
 
 Der unabhängige Branch `feat/chat-c/combat-cover-large-text-20261026` verbessert `FantasyCombatCoverPanel`: Bei 320–360 dp und 200 % Android-Schrift erhalten die Popup-Auswahlen für Held und Gegner jeweils die gesamte Zeilenbreite und zeigen bestätigte Deckungswerte ohne Textkürzung. Die Bedienhilfen nennen Deckungsstufe und Änderbarkeit. Auswahlwerte, bestehende `Deckung: ...`-Befehle und Sperren bei `canChange == false` bleiben unverändert. Drei zusätzliche Widgettests prüfen Layout, Screenreader, Auswahl und gesperrte Aktionen. **Finale CI-/Android-Abnahme steht noch aus.** Keine SRD-, KI-, Kampagnen- oder Datenmigration. [Detaillierter Chat-C-Checkpoint](docs/parallel/CHAT_C_COVER_ACCESSIBILITY_20261026.md).
