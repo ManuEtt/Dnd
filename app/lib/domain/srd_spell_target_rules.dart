@@ -56,13 +56,101 @@ class SrdSpellTargetRules {
 
   static int? maxRangeFeet(String range) {
     final match = RegExp(
-      r'^(\d+) (feet|foot|mile|miles)$',
+      r'^([1-9][0-9]*) (foot|feet|mile|miles)
+
+  static SrdSpellTargetAssessment validateOrigin(
+    SrdSpellDefinition spell,
+    SrdSpellTargetFacts facts,
+  ) {
+    final range = spell.range.trim();
+    final distance = facts.originDistanceFeet;
+    if (distance != null && distance < 0) {
+      throw const FormatException(
+        'Der Ursprungabstand darf nicht negativ sein.',
+      );
+    }
+
+    if (range == 'Self') {
+      if (facts.mode != SrdSpellOriginMode.caster || distance != 0) {
+        throw const FormatException(
+          'Bei Reichweite Selbst muss der Zauber am Wirker beginnen.',
+        );
+      }
+      return SrdSpellTargetAssessment(
+        mode: facts.mode,
+        range: range,
+        originDistanceFeet: 0,
+      );
+    }
+
+    if (range == 'Touch') {
+      if (facts.mode != SrdSpellOriginMode.touched ||
+          distance != null ||
+          !facts.withinTouchReachConfirmed ||
+          !facts.clearPathConfirmed) {
+        throw const FormatException(
+          'Berührung benötigt eine bestätigte erreichbare Berührungsstelle '
+          'ohne vollständige Deckung.',
+        );
+      }
+      return SrdSpellTargetAssessment(mode: facts.mode, range: range);
+    }
+
+    if (range == 'Sight') {
+      // "Sight" has no numeric maximum: known distance does not establish
+      // visibility. Conversely a clear grid ray alone is not sufficient.
+      if (facts.mode != SrdSpellOriginMode.distant ||
+          !facts.visibleOriginConfirmed ||
+          !facts.clearPathConfirmed) {
+        throw const FormatException(
+          'Reichweite Sicht benötigt einen ausdrücklich sichtbaren '
+          'Zauberursprung und einen bestätigten freien Weg.',
+        );
+      }
+      return SrdSpellTargetAssessment(
+        mode: facts.mode,
+        range: range,
+        originDistanceFeet: distance,
+      );
+    }
+
+    final maximum = maxRangeFeet(range);
+    if (maximum == null) {
+      throw UnsupportedError(
+        'Die Reichweite $range benötigt eine spezielle SRD-Regel.',
+      );
+    }
+    if (facts.mode != SrdSpellOriginMode.distant ||
+        distance == null ||
+        distance > maximum ||
+        !facts.clearPathConfirmed) {
+      throw const FormatException(
+        'Zauberursprung außerhalb der Reichweite oder ohne freien Weg.',
+      );
+    }
+    return SrdSpellTargetAssessment(
+      mode: facts.mode,
+      range: range,
+      maxOriginDistanceFeet: maximum,
+      originDistanceFeet: distance,
+    );
+  }
+}
+,
       caseSensitive: false,
     ).firstMatch(range.trim());
     if (match == null) return null;
-    final value = int.parse(match.group(1)!);
-    return value *
-        (match.group(2)!.toLowerCase().startsWith('mile') ? 5280 : 1);
+
+    final amount = int.tryParse(match.group(1)!);
+    if (amount == null) return null;
+    final unit = match.group(2)!.toLowerCase();
+    final isSingular = unit == 'foot' || unit == 'mile';
+    if ((amount == 1) != isSingular) return null;
+
+    // Avoid signed 64-bit overflow when untrusted metadata uses miles.
+    final multiplier = unit.startsWith('mile') ? 5280 : 1;
+    if (amount > 0x7fffffffffffffff ~/ multiplier) return null;
+    return amount * multiplier;
   }
 
   static SrdSpellTargetAssessment validateOrigin(
