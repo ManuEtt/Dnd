@@ -102,7 +102,7 @@ test('unknown IDs, stale revisions, and swapped notes cannot be narrated', () =>
 
 test('structured note is kept to a single codepoint-safe narration excerpt', () => {
   const request = input();
-  request.npcContexts![0]!.notes[0]!.note = '🐉'.repeat(120);
+  request.npcContexts![0]!.notes[0]!.note = '🐉'.repeat(240);
   const hint = mockNpcIdentityHint(request);
   assert.equal(Array.from(hint.split('„')[1]!.split('“')[0]!).length, 160);
   assert.match(hint, /…“ $/u);
