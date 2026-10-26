@@ -1,3 +1,9 @@
+## 26.10.2026 – Chat A: Eldritch Blast unbekannte Primärklasse (PR-Prüfung offen)
+
+Eng begrenzte Vorprüfung in `SrdEldritchBlastRules`: eine Hexenmeister-Zweitklasse darf eine unbekannte Hauptklasse bei der Strahlauflösung nicht legitimieren. Negativtest aus importiertem Charakter und positiver Alias-Mehrklassentest ergänzt, jeweils ohne Änderungen der Ausgangs-JSON. Code-Review/Branch-CI stehen aus, frühere grüne Main-CI ist kein Nachweis dieser Änderung. SQLite2 und JSON1 unverändert; keine Migration. Details unter [Chat A Eldritch](docs/parallel/CHAT_A_ELDRITCH_PRIMARY_VALIDATION_20261026.md).
+
+---
+
 ## 26.10.2026 – 0.8.41+91: Heilige Flamme mit gültigen Klassenwerten
 
 Geprüften Klassenwerte-Rechner aus PR #184 in den echten Zauberablauf integriert. Alias-Doppelklassen, unbekannte Partner und ungültige Stufen lösen keine Würfel/Aktion/HP-Änderung aus. Bestehende Importe bleiben lesbar; WIS-/Gesamtstufen-Übung gültiger Profile erhalten. Bestätigungsgebundene SG-Vorschau und scrollbar bedienbarer Android-Dialog. 1.703 Flutter-, 141 Python-, 57 Backend- und zwölf native Android-Tests bestanden; Format/Analyse/Backend-Build sowie Debug-/ARM64-APKs erfolgreich. Codequelle `7c9441e`, PR #217. Realgerät/Produktivsignierung offen. SQLite 2 / JSON 1 kompatibel. [Fachbericht](docs/SACRED_FLAME_CLASS_VALIDATION_20261026.md) · [Checkpoint](docs/CODEX_CHECKPOINT.md). Ältere Einträge unten sind Historie.

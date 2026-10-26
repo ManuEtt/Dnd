@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – Eldritch-Blast-Klassenprüfung (26.10.2026)
+
+Auf dem separaten Branch `fix/chat-a/eldritch-primary-class-validation-20261026` wird eine importierte **unbekannte Hauptklasse** bei gültiger Hexenmeister-Zweitklasse vor sämtlichen Strahlwürfen abgewiesen. Normale und englisch benannte Mehrklassen bleiben zulässig. Zwei deterministische Regressionstests ergänzen den Regelkern; die neue CI ist erst nach einem tatsächlichen erfolgreichen Lauf freigegeben. SQLite 2 / Kampagnen-JSON 1 bleiben kompatibel, keine automatische Datenbereinigung. [Fachbericht](docs/parallel/CHAT_A_ELDRITCH_PRIMARY_VALIDATION_20261026.md). Das vollständige SRD 5.2.1 bleibt offen.
+
+
 ## Chat B – NPC-Zeitstempel strikt prüfen (Arbeitsbranch, 26.10.2026)
 
 Im isolierten [PR #220](https://github.com/ManuEtt/Dnd/pull/220) auf Branch `fix/chat-b/npc-timestamp-validation-20261026` wird ein Fehler bei Datumsangaben bestätigter NPC-Beziehungsnotizen behoben: JavaScript normalisiert bisher einen ungültigen 30. Februar stillschweigend auf März. Die Prüfung verlangt jetzt zusätzlich die unveränderte UTC-Kalendersekunde und weist überlaufende Tage oder 24:00 zurück. Gültige Schalttage, Sekundenpräzision und Mikrosekunden bleiben zugelassen. Backend-Unit- und HTTP-Gegenfälle wurden ergänzt. **CI- und Gesamt-Tests dieses Branches sind erst nach dem konkreten Pull-Request-Lauf belegt; hier wird kein Grün behauptet.** Keine Änderung an Spielregeln, JSON-/SQLite-Schema oder bestehenden Spielständen. Andere offene PRs #216/#218/#219 nicht angefasst; gemeinsame Dokumentabschnitte von Chat D konsolidieren lassen. Fachlicher Stand: [Chat-B-Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md).

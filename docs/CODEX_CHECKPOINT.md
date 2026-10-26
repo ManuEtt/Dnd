@@ -1,3 +1,15 @@
+# CHAT A – Eldritch-Blast-Klassenprüfung (26.10.2026)
+
+- Main `42d14ad36cc947691f7e5a1e8647a43f5421b86e` bei Brancherstellung, eigener Branch `fix/chat-a/eldritch-primary-class-validation-20261026`; separate Fachdatei [Chat-A-Eldritch-Validierung](parallel/CHAT_A_ELDRITCH_PRIMARY_VALIDATION_20261026.md).
+- IMPLEMENTIERT: unbekannte Hauptklasse trotz gültiger Hexenmeister-Zweitklasse vor RNG verweigern. Gültige Wizard/Warlock-Aliase bleiben nutzbar. Keine Migration, Änderung nur im Domain-Resolver und den Tests.
+- GETESTET: vollständige Main-Baseline-CI #40329543284/#40329543416 (nicht diese Änderung).
+- NICHT GETESTET: neue Flutter-Tests und Android-CI auf diesem Branch vor tatsächlichem GitHub-Lauf; physisches Gerät, Upgrade, produktive Signierung.
+- BLOCKIERT: Flutter/Dart in dieser Sitzung lokal nicht installiert.
+- NOCH NICHT IMPLEMENTIERT: weitere Monster-/Zaubermechaniken und vollständige SRD-Inventur.
+- NÄCHSTER SCHRITT: Säurespritzer-SG klassenbezogen überprüfen, nur bei reproduzierbarer Lücke als eigenes Inkrement implementieren.
+
+---
+
 # Chat B – Offline-Mock verwendet strukturierte NPC-Erinnerung (26.10.2026)
 
 - **Basis:** `main` `20098805d8c70cbd361a13862379894c47ef4eb6`, Branch `feat/chat-b/mock-structured-npc-recall-20261026`. Offene PRs #216/#218/#219 vor Implementierung samt Dateipfaden geprüft: keine Überschneidung mit den Fachdateien.
