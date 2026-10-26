@@ -12,6 +12,54 @@ class NpcIdentityStoryPayload {
   final int campaignRevision;
   final List<Map<String, Object>> npcContexts;
 
+  /// Revalidate every selected ID against the campaign immediately before
+  /// handing the prepared payload to the network transport.
+  void requireCurrent(Campaign campaign) {
+    if (campaign.revision != campaignRevision) {
+      throw const FormatException('NPC-Kontext ist nicht mehr aktuell.');
+    }
+    for (final context in npcContexts) {
+      final npcId = context['npcId'];
+      if (npcId is! String) {
+        throw const FormatException('Ungültige NPC-ID im Story-Kontext.');
+      }
+      final current = NpcIdentityMemory.read(
+        campaign,
+        npcId: npcId,
+        expectedRevision: campaignRevision,
+        maxNotes: (context['notes'] as List).length == 0
+            ? 1
+            : (context['notes'] as List).length,
+      );
+      NpcIdentityMemory.requireCurrent(campaign, current);
+      if (!_sameContext(current.toContextMap(), context)) {
+        throw const FormatException('NPC-Kontext wurde zwischenzeitlich geändert.');
+      }
+    }
+  }
+
+  static bool _sameContext(Map<String, Object> a, Map<String, Object> b) {
+    return _deepEqual(a, b);
+  }
+
+  static bool _deepEqual(Object? a, Object? b) {
+    if (a is Map && b is Map) {
+      if (a.length != b.length) return false;
+      for (final key in a.keys) {
+        if (!b.containsKey(key) || !_deepEqual(a[key], b[key])) return false;
+      }
+      return true;
+    }
+    if (a is List && b is List) {
+      if (a.length != b.length) return false;
+      for (var i = 0; i < a.length; i++) {
+        if (!_deepEqual(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    return a == b;
+  }
+
   static NpcIdentityStoryPayload? prepare(
     Campaign campaign,
     String playerAction, {
