@@ -6,10 +6,14 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 import zipfile
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from verify_project import REQUIRED_FILES, ROOT, WRAPPER_MAIN, verify_project
+from verify_project import (
+    MAX_WRAPPER_ENTRIES, MAX_WRAPPER_UNCOMPRESSED_BYTES,
+    REQUIRED_FILES, ROOT, WRAPPER_MAIN, verify_project,
+)
 
 
 class VerifyProjectTests(unittest.TestCase):
@@ -113,6 +117,37 @@ class VerifyProjectTests(unittest.TestCase):
         with zipfile.ZipFile(jar, 'w') as archive:
             archive.writestr('META-INF/', b'')
             archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+        self.assertEqual([], verify_project(self.root))
+
+    def test_compressed_wrapper_zip_bomb_is_rejected_before_crc_decompression(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(jar, 'w', zipfile.ZIP_DEFLATED) as archive:
+            archive.writestr(WRAPPER_MAIN, b'\\xca\\xfe\\xba\\xbevalid')
+            archive.writestr('META-INF/oversized.bin',
+                             b'x' * (MAX_WRAPPER_UNCOMPRESSED_BYTES + 1))
+        # Fail closed before reading even the first CRC chunk of this ZIP bomb.
+        with mock.patch.object(zipfile.ZipFile, 'testzip',
+                               side_effect=AssertionError('unexpected decompression')):
+            errors = verify_project(self.root)
+        self.assertTrue(any('Gradle-Wrapper-JAR' in msg for msg in errors))
+
+    def test_wrapper_with_excessive_member_count_is_rejected_before_crc(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr(WRAPPER_MAIN, b'\\xca\\xfe\\xba\\xbevalid')
+            for index in range(MAX_WRAPPER_ENTRIES):
+                archive.writestr(f'META-INF/extra-{index}.txt', b'x')
+        with mock.patch.object(zipfile.ZipFile, 'testzip',
+                               side_effect=AssertionError('unexpected decompression')):
+            errors = verify_project(self.root)
+        self.assertTrue(any('Gradle-Wrapper-JAR' in msg for msg in errors))
+
+    def test_existing_wrapper_jar_stays_within_validation_limits(self):
+        jar = ROOT / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(jar) as archive:
+            self.assertLessEqual(len(archive.infolist()), MAX_WRAPPER_ENTRIES)
+            self.assertLessEqual(sum(info.file_size for info in archive.infolist()),
+                                 MAX_WRAPPER_UNCOMPRESSED_BYTES)
         self.assertEqual([], verify_project(self.root))
 
     def test_start_class_replaced_by_text_is_rejected(self):
