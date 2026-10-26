@@ -1108,6 +1108,7 @@ class GameController extends ChangeNotifier {
     required bool noFireResistanceOrImmunityConfirmed,
     required bool noUnresolvedShieldReactionConfirmed,
     required bool situationalAttackConditionsConfirmed,
+    required bool noUnmodelledAttackModifiersConfirmed,
     bool advantage = false,
     bool disadvantage = false,
     bool targetProne = false,
@@ -1128,6 +1129,8 @@ class GameController extends ChangeNotifier {
             noUnresolvedShieldReactionConfirmed,
         situationalAttackConditionsConfirmed:
             situationalAttackConditionsConfirmed,
+        noUnmodelledAttackModifiersConfirmed:
+            noUnmodelledAttackModifiersConfirmed,
         advantage: advantage,
         disadvantage: disadvantage,
         targetProne: targetProne,
