@@ -1,17 +1,32 @@
-# Chat D D-005 – Doppelte Gradle-Distributionseinstellungen abweisen (25.10.2026)
+# Chat D D-005 – Eindeutige Gradle-Distributionsparameter (26.10.2026)
 
-- **Basis:** `main` `af70a48c84d83c133ced4200be04ca81a91abf1b`, **Branch:** `fix/chat-d/gradle-properties-duplicate-guard-20261025`; D-001 bis D-004 bereits regulär integriert.
-- **IMPLEMENTIERT:** genaue einmalige Ermittlung der `distributionUrl` und `distributionSha256Sum` mit Java-Properties-Separatoren; doppelte/mehrdeutige Schlüssel werden abgelehnt. Sechs zusätzliche Python-Regressionstests.
-- **GETESTET:** Branch-Dateien über GitHub nach Push geprüft; isolierter Regex-/URL-Fall geprüft. Vollständige CI noch nicht abgeschlossen.
-- **NICHT GETESTET:** vollständige Python-/Backend-/Flutter-/Android-Abnahme, Alpha-APK und Realgerät.
-- **BLOCKIERT:** Abschluss der finalen CI auf eigenem Branch und zusätzlicher GitHub-Main-Abgleich.
-- **PERSISTENZ:** keine Änderungen an SQLite, JSON, Spielmechanik oder App-Version; keine Migration.
-- **NÄCHSTER SCHRITT:** finale Actions-Ergebnisse auf dem aktuellen PR-HEAD validieren, nötigenfalls korrigieren und erst danach konfliktfrei integrieren. [Chat-D-Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
+- **Main-Abgleich:** letzter geprüfter `main` `5f9a01dd73f68ad4f9e226f859a8ca87803b8337`; alter D-005-Head `87a0d4b7d62aaacf7aa99886c629d6aa5f17a119`; neuer Merge-Commit wird durch GitHub-PR #189 nachgewiesen.
+- **IMPLEMENTIERT:** Doppelte `distributionUrl` und `distributionSha256Sum` werden durch `unique_gradle_property` einschließlich `=`, `:` und Whitespace-Separatoren gesperrt; sechs neue Python-Tests.
+- **GETESTET:** Vollständige GitHub-CI [#40225531530](https://github.com/ManuEtt/Dnd/actions/runs/40225531530) auf altem Head `87a0d4b7d62aaacf7aa99886c629d6aa5f17a119` erfolgreich (36 Prüfschritte). Dies gilt nicht automatisch für den neuen kombinierten Main-Stand.
+- **NICHT GETESTET:** Abschließende vollständige CI auf dem neuen synchronisierten Commit sowie echte Geräteinstallation.
+- **BLOCKIERT:** endgültige Freigabe erst nach finaler Actions-CI; unabhängige PRs #178–#197 der anderen Chats bleiben unberührt.
+- **MIGRATION:** keine Änderung an SQLite, JSON, App-Version oder SRD-Regeln.
+- **NÄCHSTER SCHRITT:** exakte neue CI auf D-005-Head prüfen und erst nach konfliktfreier Dokumentation und grünem Build integrieren.
+- [Detail-Checkpoint Chat D](parallel/CHAT_D_CHECKPOINT.md).
+
+---
+
+# Chat C – barrierefreier Abenteuerstatus (25.10.2026)
+
+- **Main-Basis:** initial `97a06118f17d71cc77be2cb15a2fc9a53db20ee0`, jetzt `45bea9c2a897275583bdbe32ed50afde5d0a76b0`; Branch `feat/chat-c/accessible-status-hud-20261025`.
+- **IMPLEMENTIERT:** Statuskarten reagieren ab 180 % auf schmale Android-Breiten mit Einspalten-Layout; Werte statt per `FittedBox` visuell geschrumpft zu werden als umbrechbarer Text; Screenreader benennt Trefferpunkte, Rüstungsklasse, Bewegung und EP sowie bestätigte HP-/XP-Prozentwerte. Unbekannte Werte bleiben unbekannt.
+- **GETESTET:** nach Korrektur der Dart-Formatierung bisher Python-Strukturtests, Architekturgrenzen, SRD-Abdeckung, Backend-Typecheck/-Build/-Tests, Dart-Format und Flutter-Analyse im Actions-Lauf [#40221062928](https://github.com/ManuEtt/Dnd/actions/runs/40221062928) erfolgreich; vollständige Flutter-/Android-Abnahme für diesen finalen Merge-Stand steht noch aus.
+- **NICHT GETESTET:** finaler GitHub-Workflow inklusive gesamter Flutter-Suite, Android-Debug-/Alpha-APKs, reales Smartphone, TalkBack auf einem Android-Gerät und produktive Signierung.
+- **BLOCKIERT:** keine SDKs für eine lokale Dart-/Flutter-Ausführung verfügbar; automatisierte CI ist für finale technische Abnahme vorgesehen.
+- **NOCH NICHT IMPLEMENTIERT:** keine Regel-/Controller-/Story-/Datenmodelländerung; keine JSON-/SQLite-Migration. App-Version `0.8.40+90` aus Main unverändert.
+- **Nächster eigenständiger Schritt:** Quest-Board-Beschriftungen bei 320 dp/200 % samt Screenreader prüfen; positives/negatives Widgettestpaar, keine Änderung an Questzuständen.
+- [Detaillierter persönlicher Checkpoint](parallel/CHAT_C_HUD_ACCESSIBILITY_20261025.md). Den historischen Verlauf anderer Chats unterhalb erhalten.
 
 ---
 
-
 ---
+
+**Nachgewiesene CI-Abnahme (historischer, vollständig bestandener Head):** [Actions #40222374831](https://github.com/ManuEtt/Dnd/actions/runs/40222374831) auf `91d007120e3a1a7b4beea9e91a7e8cffb2d831d8`, `completed/success`. Alle HUD-Regressionen, Flutter-Gesamtsuite, Backend, Python, Architektur/SRD, Android-Build und Artefakterzeugung bestanden. Hauptbranch wurde zwischenzeitlich durch Chat-D-PR #186 auf `af70a48c84d83c133ced4200be04ca81a91abf1b` erhöht; aktuelle gemeinsame CI für den neu synchronisierten Dokumentationsstand ist noch nicht abgenommen. Reales TalkBack und produktive Signierung nicht getestet.
 
 # Chat D D-004 – Gradle-Wrapper-JAR-Sicherheit (25.10.2026)
 

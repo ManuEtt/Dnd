@@ -1,3 +1,9 @@
+# Chat D D-005 – Main-Rebase-freie Synchronisation (26.10.2026)
+
+Der auf `87a0d4b7d62aaacf7aa99886c629d6aa5f17a119` vollständig CI-geprüfte D-005-PR #189 wurde mit dem aktuellen Main-HEAD `5f9a01dd73f68ad4f9e226f859a8ca87803b8337` (PR #185 integriert) per zusätzlichem Elterncommit synchronisiert, ohne Force-Push und ohne fremde technische Änderungen. Neue endgültige CI erforderlich; frühere Dokumentation erhalten.
+
+---
+
 # Chat D – D-005: Eindeutige Gradle-Distributionseinstellungen
 
 ## Ausgangslage und GitHub
@@ -30,6 +36,7 @@
 ## Genau ein nächster Schritt
 
 Finalen GitHub-CI-Lauf dieses PR-Commits prüfen und gegebenenfalls Testfehler im eigenen Branch korrigieren, anschließend neuen Main-HEAD und die gemeinsamen Dokumentationsdateien konfliktfrei synchronisieren und erst nach vollständiger Abnahme zur Integration freigeben.
+
 
 ---
 
