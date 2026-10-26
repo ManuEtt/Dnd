@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat B – ID-gebundenes NPC-Tagebuch im kostenlosen Mock (26.10.2026)
+
+Ein unabhängiges Story-Paket auf Branch `feat/chat-b/mock-structured-npc-recall-20261026` verbessert den Offline-Erzähler: Der Mock greift für eine eindeutig erwähnte Figur nun zuerst auf die per NPC-ID und Kampagnenrevision validierte, zuletzt gespeicherte Beziehungsnotiz zurück. Bei unvollständigem Kontext bleibt das Legacy-Verhalten erhalten; bei mehreren gleichnamigen Figuren wird keine ID erraten. Die Notiz bleibt **reiner Erzähltext** und verändert weder D&D-Regelwerte noch Quests. Neue Backend-Regressionstests einschließlich Fastify-/Mock-Endpunkt, falschen Revisionen und Unicode wurden geschrieben. Der vollständige CI-/Android-Status ist separat am finalen Branch-Commit zu verifizieren. Keine Daten- oder API-Migration und keine automatische Verschmelzung anderer PRs. [Chat-B-Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md).
+
+
 Deutschsprachige Android-Alpha für regelgeprüfte Soloabenteuer und lokale Kampagnen. Das vollständige SRD 5.2.1 bleibt in Arbeit.
 
 ## Aktueller Stand und autonome Fortsetzung (26.10.2026)
