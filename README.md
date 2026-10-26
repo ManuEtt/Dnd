@@ -1,62 +1,148 @@
 # Würfelraunen – Der lebendige Spielleiter
 
-Deutschsprachige Flutter-Android-Alpha für lokale Soloabenteuer, bestätigte D&D-SRD-5.2.1-Regeln und optionalen KI-Erzähler. Das vollständige Regelwerk bleibt in Arbeit.
+**Würfelraunen** ist eine deutschsprachige, in Entwicklung befindliche **Fantasy-Rollenspiel-App für Android**. Sie verbindet lokale Soloabenteuer, Charakter- und Kampagnenverwaltung, ausgewählte Regeln aus dem **D&D System Reference Document (SRD) 5.2.1** und eine optionale KI-gestützte Erzählung.
 
-## Aktueller Stand und autonome Fortsetzung (26.10.2026)
+Die App ist eine **Alpha-Version**, kein fertiger Ersatz für einen menschlichen Spielleiter und keine vollständige D&D-5e-Regelimplementierung. **Zum lokalen Spielen ist weder ein Account noch ein KI-Server erforderlich.**
 
-**Version 0.8.42+92 – gemeinsame Branch-Migration.** Basis-Main `5e3116f9e3f8de0af6e8125a97b3962cb8910cdf`, Integrationsbranch `integration/all-branches-20261026b`. Acht Branch-Namen (Main plus sieben Entwicklungsbranches) samt später hinzugekommenem Reichweitenbranch und fortgeschriebenen Köpfen wurden vorab als Remote-Archivtags und geprüftes Git-Bundle gesichert. Alle zehn gesicherten Ursprungs-/Fortschreibungsköpfe sind im Integrationsbranch als Vorfahren erhalten; ursprüngliche README-/Checkpoint-Fassungen mit SHA256 archiviert.
+> **Projektstand (26.10.2026):** Die Flutter-App deklariert Version **0.8.42+92**. Die Versionsnummer kennzeichnet den Entwicklungsstand, nicht eine abgeschlossene Geräte- oder Release-Abnahme. Aktuelle Integrationen, Testnachweise und offene Arbeiten stehen in [Entwicklungsstatus](DEVELOPMENT_STATUS.md) und [Codex-Checkpoint](docs/CODEX_CHECKPOINT.md).
 
-Zusammengeführt:
+## Was kann Würfelraunen?
 
-- Numerische Zauberreichweiten akzeptieren nur bestätigte Fuß-/Meilen-Einheiten und verweigern übergroße Werte; Syntaxfehler der neu eingetroffenen Source-Fassung behoben und exakte 64-Bit-Grenzfälle ergänzt.
+Du erstellst einen Charakter, wählst ein Abenteuer und bestimmst mit eigenen Aktionen, wie sich die Geschichte entwickelt. Die App verwaltet die bestätigten Spielinformationen und trennt dabei **Spielregeln**, **Erzählung** und **gespeicherte Entscheidungen**.
 
-- Eldritch Blast verwirft unbekannte Hauptklassen auch bei vorhandener Hexenmeister-Zweitklasse vor RNG und Zustandsänderung; gültige Klassenaliase bleiben erlaubt.
-- Eine ausdrücklich gewählte NPC-ID kann capability- und revisionsgeprüft über den optionalen Client-/Backendvertrag übertragen werden. **Android-Oberfläche und GameController reichen die gewählte ID noch nicht durch**; keine vollständige UI-Integration behauptet. Der Erzähler erhält keine freie Regelzustandsautorität.
-- Kampfmöglichkeiten bleiben bei 200% Schrift getrennt lesbar und semantisch angekündigt; die Würfelanzeige blendet bei großer Schrift ein dekoratives Icon aus, damit Inhalt Platz behält.
-- Quell-ZIP und Checkpoint-Manifeste lesen Dateien und Verzeichnisse auf POSIX über geprüfte Deskriptoren mit `O_NOFOLLOW`. Windows-Fallback bleibt best-effort.
+- **Charaktere erstellen und verwalten:** Attribute, Fertigkeiten, Klassen, Ausrüstung, Ressourcen, Trefferpunkte und Charakterporträts bearbeiten. Die zwölf SRD-Klassen sind als Grundlage vorhanden; Klassenmerkmale und Stufenentwicklung sind noch nicht vollständig automatisiert.
+- **Soloabenteuer spielen:** Lokale Demo und die eigene **Rabenwacht**-Kampagnenwelt mit Szenen, Entscheidungen, Quests, Figuren und Journal.
+- **Würfeln und Kämpfen:** W20-Proben, Angriffe, Schaden, Initiative sowie ausgewählte Zustände, Aktionen, Reaktionen und Zauber regelgestützt behandeln. Komplexe Mehrfigurenkämpfe und das gesamte Zaubersystem sind noch nicht vollständig abgebildet.
+- **Eine fortlaufende Geschichte behalten:** Kampagnen, Ereignisse, Entscheidungen, NPCs und bestätigte Weltinformationen lokal speichern und nach einem App-Neustart fortführen.
+- **Deutschsprachige Fantasy-Oberfläche nutzen:** Charakterbogen, Abenteueransicht, Würfelanzeige, Kampf- und Zauberdialoge sowie Schnellaktionen in einer Fantasy-Gestaltung.
+- **Sprache einsetzen:** Erzähltexte über Text-to-Speech vorlesen lassen und Spieleraktionen per Spracheingabe vorbereiten. Sprachdienste und ihre Offline-Fähigkeit hängen vom Android-Gerät und den installierten Anbietern ab.
+- **Optional einen KI-Erzähler anbinden:** Ein eigener HTTPS-Backenddienst kann Erzähltexte ausgestalten und begrenzte Abenteuerideen vorschlagen. Im Standardmodus übernimmt ein kostenloser lokaler Demo-Erzähler diese Aufgabe.
 
-**Gefundener Fehler behoben:** Die neuen Würfelanzeige-Tests scheiterten in [CI #40369637672](https://github.com/ManuEtt/Dnd/actions/runs/40369637672) an Dart-Formatierung. Mit Dart3.9.2 formatiert; keine Assertion entfernt. Im später hinzugekommenen Reichweitenbranch wurde außerdem ein nicht kompilierender kopierter Methodenblock im RegExp gefunden; Reparatur und 17 gezielte Flutter-Tests sind erfolgreich; vollständige gemeinsame Abnahme folgt. 155 Python-Tests bisher erfolgreich; neue gemeinsame Flutter-/Backend-/Android-/CI-Abnahme steht bis zu ihrem tatsächlichen Abschluss separat aus.
+### Funktionsstand im Überblick
 
-**Spielstände bleiben erhalten:** SQLite2 und Kampagnen-JSON1 unverändert, keine Historien-, Helden-, Event- oder Inventarmigration. Main und zu löschende Remote-Branches werden erst nach erfolgreicher kombinierter Abnahme verändert. Branchlöschung nur nach geprüftem Main-Vorfahrenvergleich, Archivtag und unveränderter Remote-SHA.
+| Bereich | Heute vorhanden | Wichtige Grenzen |
+| --- | --- | --- |
+| Charakterbogen | Charakterdaten, Attribute, Ausrüstung, Klassen-/Stufengrundlagen und ausgewählte Klassenaktionen | Keine vollständige Automatik sämtlicher SRD-Klassenmerkmale |
+| Regeln und Kampf | Getestete Einzelmechaniken für Würfel, Angriffe, Ressourcen, Schaden, Zustände und einzelne Zauber | Nicht alle Kampf-, Ziel-, Monster- und Zauberregeln integriert |
+| Kampagnen und Gedächtnis | Lokale Solo-Kampagnen, Rabenwacht, Journal, Quests und strukturierte NPC-/Weltdaten | Keine universell autonome Spielleitung |
+| Spielstände | Lokales SQLite, bestätigte Ereignisse/Revisionen und JSON-Import/-Export | Keine Cloud-Synchronisierung und keine Verschlüsselung der lokalen Datenbank |
+| Erzähler-Backend | Optionaler Fastify-Dienst mit Demo-Provider, Sitzungen, Validierung und Nutzungslimits | Kein fertig betriebener öffentlicher Dienst; externe KI nur nach eigener Einrichtung |
+| Android | Flutter-App, Fantasy-UI, Sprache, Datei-Backup und automatisierte Tests | Produktive Signierung, vollständige Echtgeräte-/TalkBack-Abnahme und Store-Veröffentlichung offen |
 
-[Operativer Checkpoint](docs/CODEX_CHECKPOINT.md) · [Migrationsinventar](docs/BRANCH_MIGRATION_20261026_INVENTORY.json) · [Originaldokumente](docs/history/branch_migration_20261026T173427Z/manifest.json).
+**Wichtig:** Ein vorhandener Zauber-, Gegenstands- oder Klassenkatalog bedeutet nicht automatisch, dass jede darin genannte Wirkung bereits spielbar ist. Die technische Regelabdeckung wird gesondert erfasst: [Regelabdeckung](docs/RULE_COVERAGE.md) · [SRD-5.2.1-Audit](docs/SRD_5_2_1_COVERAGE_AUDIT.md).
 
-## Vorhandene Funktionen und Grenzen
+## Technischer Aufbau
 
-| Bereich | Implementierter Umfang |
+| Verzeichnis | Aufgabe |
 | --- | --- |
-| Charaktere | Zwölf SRD-Klassen, bestätigte Attribute/Ausrüstung, XP-Schwellen, bestätigte idempotente EP-Belohnungen und einzelne Aufstiege; zahlreiche Klassen-/Talentwirkungen offen |
-| Kampf und Magie | Regelgeprüfte Angriffe/Schäden, ausgewählte Klassen-/Zustands-/Zauberwirkungen, Ressourcen, Deckung und Bewegung; vollständige Mehrakteur-, Monster- und Zauberautomatik offen |
-| Kampagnen | Lokale Solo-Demo, Rabenwacht, Journal, NPC-Erinnerung und Story-Fortsetzungen; keine universell fertige autonome Spielleitung |
-| Daten und Backend | Transaktionale lokale Speicherung/Revisionen, JSON-Sicherungen, Spielerhandlungs-Outbox; optionaler HTTPS-Erzähler mit Mocks und Protokollvalidierung, keine automatische kostenpflichtige Wiederholung |
-| Android und Fantasy-UI | Deutsche Oberfläche, Fantasy-Komponenten, Charakterbogen, Sprache/TTS und Abenteueraktionen; reale Geräte-/Upgrade-/TalkBack-Abnahme und produktive Signierung offen |
+| `app/` | Flutter-/Dart-App für Android mit Oberfläche, Charakteren, lokaler Regel- und Spielsteuerung |
+| `app/lib/domain/` | Modelle, Würfel-, Klassen-, Kampf-, Ausrüstungs- und Zauberlogik |
+| `app/lib/story/` | Kampagnen, Handlung, Story-Gedächtnis und Grenzen zwischen Erzählen und Regeln |
+| `app/lib/data/` | SQLite-Kampagnenspeicherung und Datenzugriff |
+| `app/lib/services/` | GameController, Sprachdienste, Backend-Verbindung und Sicherungen |
+| `app/lib/ui/` | Fantasy-Oberfläche, Charakterbogen und Spiel-/Regeldialoge |
+| `backend/` | Optionaler Node.js-/TypeScript-/Fastify-Erzähler mit Mock- oder konfiguriertem Anbieter |
+| `scripts/` | Projektprüfung, Regelabdeckungsprüfung, Grafikerzeugung und Paketierung |
+| `.github/workflows/` | Automatisierte Tests und Android-Alpha-Builds |
+| `docs/` | Detaillierte Architektur-, Regel-, Entwicklungs- und Testdokumentation |
 
-Katalogeinträge und reine Regelhelper zählen nicht als vollständige Spielmechanik. Die 1.419 Prüfaufträge und neun offenen Quellen-Inventurlücken sind kein vollständiger SRD-Nenner; keine globale Fertigstellungsquote.
+**Architekturprinzip:** Die lokale Regelengine bestätigt regelrelevante Aktionen und speichert sie zusammen mit dem Ereignisverlauf. Der KI-Erzähler darf Texte und validierte Vorschläge liefern, aber **nicht eigenmächtig Trefferpunkte, Würfe, Inventar oder andere Regelzustände ändern**. Mehr dazu in [ARCHITECTURE.md](ARCHITECTURE.md).
 
-## Lokal entwickeln und prüfen
+## Android-App lokal starten
 
-Toolchain wie CI: Flutter3.35.7/Dart3.9.2, Java17, Node22.14.0, Android-SDK. Linux-SQLite-Tests brauchen `libsqlite3-dev`.
+Benötigt werden **Flutter 3.35.7**, **Dart 3.9.2**, **Java 17**, eine funktionierende **Android-SDK-Toolchain** sowie ein Android-Gerät oder Emulator. Das sind die im CI-Workflow verwendeten Toolchain-Versionen.
 
-```bash
+~~~bash
+git clone https://github.com/ManuEtt/Dnd.git
+cd Dnd
+
+# Fantasy-Button-Grafiken vor Analyse/Build reproduzierbar erzeugen
 python3 scripts/generate_fantasy_buttons.py
-bash scripts/check.sh
-python3 scripts/srd_coverage.py --json
+
+cd app
+flutter pub get
+flutter run
+~~~
+
+Eine lokale Debug-APK erstellen:
+
+~~~bash
 cd app
 flutter build apk --debug
-cd android
-bash ./gradlew :app:testDebugUnitTest --no-daemon
-```
+~~~
 
-Die 30 originalen Button-Grafiken werden deterministisch generiert; die CI führt diesen Schritt vor Tests/Build aus. Alpha-APKs bleiben mit Debug-Testsignatur versehen. Geräteinstallation und historisches Geräte-Upgrade sind eigene Abnahmen.
+Der Build-Befehl wird **aus dem Projektwurzelverzeichnis** mit `cd app` aufgerufen; wer bereits im Verzeichnis `app/` steht, lässt diesen Schritt weg. Die lokale Demo benötigt **keinen laufenden Backendserver**.
 
-## Sicherung und Import
+### Optionale KI-Erzählung einrichten
 
-Migrationsbundle, Inventar, ZIPs/Patches, Manifeste und SHA256: `/workspace/artifacts/branch-migration-20261026T173427Z/`. Downloadlinks und tatsächliche Abschlussbelege folgen im Integrations-PR. ZIPs enthalten Quellcode ohne SDKs, private Daten oder APKs. Patch auf der im Manifest angegebenen Basis zuerst mit `git apply --check` prüfen. Main nicht mit einer älteren ZIP überschreiben.
+Das Backend ist **optional**. Zum lokalen Entwickeln zunächst den kostenlosen Mock-Provider nutzen:
 
-[Architektur](ARCHITECTURE.md) · [Tests](TESTING.md) · [Changelog](CHANGELOG.md) · [Entwicklungsstatus](DEVELOPMENT_STATUS.md). Historische Versionsstände stehen unter `docs/history/` sowie in den bisherigen Journalen.
+~~~bash
+cd backend
+cp .env.example .env
+# In .env einen eigenen, ausreichend langen LOCAL_ACCESS_TOKEN setzen.
+# AI_PROVIDER=mock und ALLOW_PAID_AI=false beibehalten.
+npm ci
+npm run dev
+~~~
 
-## Nächster konkreter Entwicklungsschritt
+Für die **Android-App** wird ein eigener, gültig TLS-gesicherter **HTTPS-Endpunkt** benötigt; reines Loopback-HTTP ist nur für lokale Backend-/Entwicklungstests gedacht. In der App erfolgt die Verbindung unter **Einstellungen → KI & Kosten → Backend verbinden**, mit einem kurzlebigen Sitzungstoken.
 
-Nach vollständiger Migration die vorhandene explizite NPC-Auswahl aus der Android-Oberfläche durch den GameController an den neuen optionalen Wire-Vertrag weiterreichen. Bei gleichnamigen Figuren ID ausdrücklich wählen; fehlende Capability, Ablehnung, Stale Revision und Neustart ohne Netzwerk-/Kosten- oder Regelzustandsänderung testen. Bestehende Protokollhelper und Auswahlmodelle wiederverwenden.
+Ein kostenpflichtiger KI-Anbieter wird **nicht automatisch aktiviert**: Anbieter, serverseitiger API-Schlüssel, Modell und ausdrückliche Kostenfreigabe müssen separat konfiguriert werden. Der Server speichert keine lokalen Kampagnendaten. Details und Token-Erstellung: [Backend verbinden](docs/BACKEND_CONNECTION.md) · [Backend-Dokumentation](backend/README.md).
 
-SRD5.2.1 von Wizards of the Coast LLC unter CC BY4.0 sowie eigene/lizenzierte Inhalte; [Namensnennung](THIRD_PARTY_NOTICES.md) erhalten. Keine automatische Weiterarbeit außerhalb einer aktiven Sitzung.
+## Tests und Qualitätssicherung
+
+Die zentrale lokale Prüfroutine führt Python-/Projektprüfungen, Backend-Checks sowie Flutter-Analyse und Tests aus:
+
+~~~bash
+# In der Repositorywurzel
+bash scripts/check.sh
+~~~
+
+Einzelne Prüfungen sind auch möglich:
+
+~~~bash
+python3 scripts/verify_project.py
+python3 scripts/check_domain_boundaries.py
+python3 scripts/srd_coverage.py --json
+python3 -m unittest discover -s scripts/tests -v
+
+cd backend
+npm ci
+npm run typecheck
+npm test
+npm run build
+
+cd ../app
+flutter pub get
+flutter analyze
+flutter test
+~~~
+
+Unter Linux benötigen SQLite-Tests `libsqlite3-dev`. Die CI-Definition steht in [android-build.yml](.github/workflows/android-build.yml); Einzelheiten in [TESTING.md](TESTING.md). **Eine reine README-Änderung löst wegen der Workflow-Pfadfilter keinen automatischen Android-Testlauf aus.** Ein vorhandenes oder grünes CI-Ergebnis gilt nur für den tatsächlich geprüften Commit.
+
+## Spielstände und Alpha-APKs
+
+- **Lokal gespeichert:** Charaktere, Kampagnen, bestätigte Aktionen und Erinnerungen liegen in der App-Datenbank. Ereignisse und Spielzustand werden konsistent gespeichert.
+- **Import/Export:** JSON-Sicherungen sind über die App nutzbar; Android-Dateidialoge verwenden das Storage Access Framework. Ein Import wird vor der tatsächlichen Übernahme geprüft und bestätigt.
+- **Vor Updates sichern:** Alpha-APKs verwenden derzeit eine Testsignatur. Ein Upgrade oder Wechsel zwischen Buildvarianten ist daher nicht in allen Fällen garantiert.
+- **Buildartefakte:** Erfolgreiche GitHub-Actions-Läufe können Debug-APKs, Android-ARM64-Alpha und ein dazugehöriges Quellpaket bereitstellen. Ein Quellcode-Checkpoint allein ist **keine installierbare APK**.
+
+Anleitungen: [Sicherungen](docs/SAVE_BACKUPS.md) · [Alpha-Artefakte](docs/ALPHA_RELEASES.md) · [APK-Download](docs/APK_DOWNLOAD.md).
+
+## Entwicklungsstand und nächste Schritte
+
+Das Projekt wird in kleinen, überprüfbaren Inkrementen entwickelt. Vorrangig sind:
+
+1. Laufende Branch-/PR-Integrationen mit nachvollziehbaren Tests abschließen; keine historischen Ergebnisse als neue Abnahme ausgeben.
+2. Vorhandene NPC-Auswahl durchgehend von der Android-Oberfläche bis zum validierten optionalen Erzählvertrag anbinden.
+3. **SRD 5.2.1 schrittweise vervollständigen**: Klassen-, Kampf-, Zauber-, Monster- und Ausrüstungswirkungen jeweils mit Tests und belegter Regelquelle ergänzen.
+4. Fantasy-Oberfläche, Barrierefreiheit, Android-Echtgeräteprüfung, belastbare Release-Signierung und Updateabläufe weiter absichern.
+
+Die technische Detailplanung wird nicht in dieser Einführungsseite dupliziert. Maßgeblich sind die **aktuellen** Dateien [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md), [ROADMAP.md](ROADMAP.md) und [docs/CODEX_CHECKPOINT.md](docs/CODEX_CHECKPOINT.md). Historische Checkpoints und Branch-Migrationen sind dort bzw. unter `docs/history/` dokumentiert.
+
+## Regeln, Inhalte und Hinweise
+
+Die Umsetzung orientiert sich an **D&D SRD 5.2.1** von **Wizards of the Coast LLC**, lizenziert unter **Creative Commons Attribution 4.0 International (CC BY 4.0)**. Die erforderlichen Namensnennungen und weiteren Hinweise stehen in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Eigene Fantasy-Geschichten und Grafiken werden getrennt von den SRD-Regeln behandelt.
+
+Das Repository enthält Entwicklungssoftware. **Vollständige SRD-Konformität, fehlerfreien Spielbetrieb, Produktionssicherheit oder eine Veröffentlichung im Play Store werden nicht behauptet.**
