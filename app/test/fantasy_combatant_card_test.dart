@@ -191,9 +191,9 @@ void main() {
       final header = find.descendant(of: hero, matching: find.byType(Flex));
       expect(tester.widget<Flex>(header.first).direction, Axis.vertical);
       expect(
-        tester.getTopLeft(
-          find.byKey(const ValueKey('combatant-active-turn')),
-        ).dy,
+        tester
+            .getTopLeft(find.byKey(const ValueKey('combatant-active-turn')))
+            .dy,
         greaterThan(tester.getBottomLeft(heroText).dy),
       );
       expect(
@@ -217,9 +217,7 @@ void main() {
     });
   }
 
-  testWidgets('200 %: unbestätigte Werte werden nicht ersetzt', (
-    tester,
-  ) async {
+  testWidgets('200 %: unbestätigte Werte werden nicht ersetzt', (tester) async {
     tester.view.physicalSize = const Size(320, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -257,9 +255,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Normale Schrift behält die kompakte Kopfzeile', (
-    tester,
-  ) async {
+  testWidgets('Normale Schrift behält die kompakte Kopfzeile', (tester) async {
     tester.view.physicalSize = const Size(360, 800);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -277,9 +273,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    final text = tester.widget<Text>(
-      find.text('Elowen von der Nebelwacht'),
-    );
+    final text = tester.widget<Text>(find.text('Elowen von der Nebelwacht'));
     expect(text.maxLines, 2);
     expect(text.overflow, TextOverflow.ellipsis);
     expect(
