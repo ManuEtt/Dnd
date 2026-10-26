@@ -75,7 +75,7 @@ jobs:
             ;;
            maintenance)
             mapfile -t maintenance_files < <(git diff --name-only "$BASE" "$expected")
-            [[ "${#maintenance_files[@]}" -eq 1 && "${maintenance_files[0]}" == '.github/workflows/retire-integrated-branches-20261026.yml' ]] || { echo 'ABORT unexpected maintenance changes'; exit 1; }
+            [[ "${#maintenance_files[@]}" -eq 2 && "${maintenance_files[0]}" == '.github/workflows/retire-integrated-branches-20261026.yml' && "${maintenance_files[1]}" == 'docs/BRANCH_MIGRATION_20261026.md' ]] || { echo 'ABORT unexpected maintenance changes'; exit 1; }
             ;;
            *) echo "ABORT invalid category $kind"; exit 1;;
            esac
