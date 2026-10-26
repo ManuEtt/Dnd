@@ -155,10 +155,7 @@ void main() {
       );
 
       final transport = _RecordedNpcTransport();
-      final narrator = BackendNarrator(
-        transport: transport,
-        clock: () => _now,
-      );
+      final narrator = BackendNarrator(transport: transport, clock: () => _now);
       try {
         await narrator.connect(
           url: 'https://story.example.test',
