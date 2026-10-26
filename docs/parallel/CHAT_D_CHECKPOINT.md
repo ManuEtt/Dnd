@@ -1,3 +1,17 @@
+# Chat D D-012 – ZIP-Bomb-Schutz bei Gradle-Wrapper-Vorprüfung (26.10.2026)
+
+- **Ausgangs-main:** `67f146e690306b13d490bd8e7fd5636bb187c77e`. **Arbeitsbranch:** `fix/chat-d/gradle-jar-zip-bomb-guard-20261026`. Implementierung `77a431955351e30a1dcf54e0dea7f8ba7b7b497a`, Regressionstests `86634965c6784994ecb731c4bacab476a9f50ffa`.
+- **Ausgangsproblem:** `scripts/verify_project.py` prüft die JAR per `ZipFile.testzip()` und lädt danach die Startklasse; ein hochkomprimiertes manipuliertes JAR konnte ohne Begrenzung der Gesamtauspackgröße oder Eintragsanzahl CPU-/Speicheraufwand verursachen.
+- **IMPLEMENTIERT:** Vor dem ersten CRC-Lesen maximal 16 MiB komprimierte JAR-Dateigröße, 16 MiB Summe entpackter Einträge und 512 ZIP-Mitglieder verlangen. Bestehende ZIP-Pfad-, Duplikat-, Symlink-, CRC- und Java-Bytecode-Kontrollen bleiben aktiv; bei Überschreitung gilt weiterhin dieselbe knappe Benutzerfehlermeldung ohne Dateiinhalte.
+- **TESTS ERGÄNZT:** Deflate-ZIP-Bomb-Regression mit Mock, der einen unerwarteten `testzip()`-Aufruf erkennen würde; ZIP mit zu vielen Einträgen; positiver Test gegen unverändertes originales Gradle-Wrapper-JAR. Bestehende Upload-/Kopiertests weiter aktiv.
+- **TESTSTATUS:** GitHub-CI für diesen Branch ist gestartet/noch auf dem exakten finalen HEAD zu verifizieren. Keine lokalen Vollprojekttests, da der Container das GitHub-Repository nicht per DNS auschecken kann. Früheres erfolgreiches GitHub-CI von PR #246 gehört zu D-011, nicht zu diesem Paket.
+- **KOMPATIBILITÄT:** Nur `scripts/verify_project.py` und `scripts/tests/test_verify_project.py` verändert (außer Statusdokumenten). Weder Flutter-/Backend-Produktcode noch SRD-/Storymechanik, App-Version, SQLite 2 oder Kampagnen-JSON 1 geändert. Keine Migration.
+- **KOORDINATION:** Vor Beginn alle offenen PRs #244–#254 geprüft; keine davon ändert die genannten zwei Python-Dateien. PR #250 übernimmt die technischen Dateien aus PR #246 bytegleich; kein paralleler Eingriff dort. `README.md`/`docs/CODEX_CHECKPOINT.md` nur additiv, spätere Integration durch Chat D konfliktbewusst.
+- **NICHT GETESTET:** Finales CI/Android-APK auf Dokumentations-HEAD, reales Android-Gerät, produktive Signatur, historische Upgradepfade.
+- **NÄCHSTER SCHRITT:** Exakte PR-HEAD-CI vollständig prüfen, bei Fehlern Korrekturen nur auf diesem Branch vornehmen, vor Merge erneut Main/PR-Konflikte und gemeinsame Dokumente vergleichen.
+
+---
+
 # Chat D D-010 – symlinksichere Checkpoint-Dateimanifeste (26.10.2026)
 
 - **Basis-`main`:** `5e3116f9e3f8de0af6e8125a97b3962cb8910cdf`, PR #238 für Quell-ZIP sicher integriert. **Branch:** `fix/chat-d/checkpoint-manifest-nofollow-20261026`.
