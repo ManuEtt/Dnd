@@ -1,3 +1,18 @@
+# Chat D D-009 – Quell-ZIP gegen nachträglichen Symlink-Austausch schützen (26.10.2026)
+
+- **Ausgangs-`main`:** `42d14ad36cc947691f7e5a1e8647a43f5421b86e`, Push/PR-CI auf `main` vorher erfolgreich. **Branch:** `fix/chat-d/source-zip-symlink-swap-20261026`.
+- **Problem:** `source_paths` sperrt symbolische Links beim Auflisten, aber bisher konnten Quelldateien oder Verzeichnis-Ahnen nach dem Scan und vor `path.open('rb')` durch Symlinks auf externe/private Dateien ersetzt werden. Die alte `stat`/`fstat`-Konsistenzprüfung schützt nicht, wenn der Austausch vor dem ersten `stat` stattfand.
+- **IMPLEMENTIERT:** `read_verified_source(root, path)` liest unter POSIX über Verzeichnis-Dateideskriptoren und `O_DIRECTORY|O_NOFOLLOW` alle Elternkomponenten und `O_NOFOLLOW|O_NONBLOCK` die Quelldatei; Typprüfung auf reguläre Dateien und bestehender Dreifachvergleich (Lstat/Fstat/Lstat, Größe) bleiben fail-closed. Windows-/Non-POSIX-Fallback prüft Symlinks/Projektgrenze best-effort, ist aber **nicht** garantiert rennbedingungsfrei.
+- **TESTS ERGÄNZT:** Drei Regressionen simulieren nach der Dateiauflistung ausgetauschte Dateisymlinks (inklusive Erhalt alter ZIP-/SHA256-Paare), ausgetauschte Verzeichnis-Symlinks und private externe Quellen. Der ältere `fstat`-Testmock enthält nun das beim Dateitypvergleich erforderliche `st_mode`.
+- **GETESTET:** Neue und vorhandene Python-Tests wurden durch GitHub Actions auf frühen Commits gestartet. Erste zwei Push-CIs meldeten den **Mockfehler `AttributeError: Changed.st_mode`**, ohne dass der Symlink-Schutz entfernt wurde. Dieser Testmock ist in Commit `273c3c5d` korrigiert. Neuer Push-Run [#40358698621](https://github.com/ManuEtt/Dnd/actions/runs/40358698621) läuft; finale PR-/Push-CI nach diesem Dokumentationscommit **noch nicht vollständig bestätigt**.
+- **NICHT GETESTET:** Reales Android-Gerät, Windows-Race-Sicherheit, vollständiger Flutter-/Backend-/Android-/Alpha-End-zu-Ende-Build auf finaler Branch-SHA.
+- **BLOCKIERT:** endgültiger Actions-Lauf; weitere Merge-Konflikte, falls sich `main` parallel verschiebt.
+- **KEINE MIGRATION:** SQLite-/JSON-Spielstände, SRD-Regeln, Story, Android-UI und App-Version unverändert. Nur Quellarchiv-Export und Python-Regressionen betroffen.
+- **NOCH NICHT IMPLEMENTIERT:** Dieser Schutz härtet `package_project.py` auf POSIX ab; er ersetzt kein separates formales Hardening sämtlicher Dateilesewege von `create_checkpoint.file_manifest`.
+- **NÄCHSTER SCHRITT:** finale CI auf exaktem PR-Head prüfen, bei Fehlern auf diesem Branch korrigieren, und erst nach aktuellem Main-/Datei-Abgleich integrieren. Fremde PRs #236/#237 nicht überschreiben.
+
+---
+
 ## D-007 – zusätzliche CI-Blocker bereinigt
 
 Der Python-/Checkpoint-Fix war auf dem ersten D-007-Commit erfolgreich; die reguläre CI stoppte danach an unabhängigen Dart-Problemen. Die frühere Eldritch-Test-Formatierung ist durch Main-PR #214 bereits korrigiert. Ein vorübergehender, inzwischen vollständig entfernter CI-Diagnoseschritt zeigte exakt den Format-Diff in `app/lib/story/npc_identity_story_payload.dart`: Dort ist jetzt `length == 0` verhaltensgleich als `isEmpty` geschrieben und ein langer `FormatException`-Aufruf entsprechend dem Dart-Formatter umgebrochen. Keine NPC-Identitäts-, Auswahl-, Speicher- oder Regelwirkung geändert. Die unveränderte Workflowdatei aus `main` wird explizit wiederhergestellt. Die erste diagnostisch instrumentierte CI zählt nicht als finale Abnahme; reguläre vollständige CI auf dem neuen Head abwarten.

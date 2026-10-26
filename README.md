@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – Quell-ZIP vor Symlink-Austausch nach dem Scan schützen (D-009, 26.10.2026)
+
+Der Quellarchiv-Export nutzt auf POSIX nun vor jedem Dateilesen gesicherte Verzeichnis-Deskriptoren und `O_NOFOLLOW`, damit ein nach der Auflistung eingeschleuster Link nicht unbemerkt projektfremde Daten archiviert. Drei neue Regressionstests prüfen solche Datei-/Verzeichniswechsel sowie den Erhalt bereits veröffentlichter ZIP-/SHA256-Dateien; ein veralteter Testmock wurde aktualisiert. Non-POSIX-Plattformen erhalten eine zusätzliche Best-Effort-Prüfung, jedoch keine Garantie gegen alle Race Conditions. **Die finale CI auf dem aktuellen PR-Commit ist noch abzunehmen.** Keine Änderungen am Spielstandformat, App-Code oder Regelwerk. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
 ## Chat B – NPC-Zeitstempel strikt prüfen (Arbeitsbranch, 26.10.2026)
 
 Im isolierten [PR #220](https://github.com/ManuEtt/Dnd/pull/220) auf Branch `fix/chat-b/npc-timestamp-validation-20261026` wird ein Fehler bei Datumsangaben bestätigter NPC-Beziehungsnotizen behoben: JavaScript normalisiert bisher einen ungültigen 30. Februar stillschweigend auf März. Die Prüfung verlangt jetzt zusätzlich die unveränderte UTC-Kalendersekunde und weist überlaufende Tage oder 24:00 zurück. Gültige Schalttage, Sekundenpräzision und Mikrosekunden bleiben zugelassen. Backend-Unit- und HTTP-Gegenfälle wurden ergänzt. **CI- und Gesamt-Tests dieses Branches sind erst nach dem konkreten Pull-Request-Lauf belegt; hier wird kein Grün behauptet.** Keine Änderung an Spielregeln, JSON-/SQLite-Schema oder bestehenden Spielständen. Andere offene PRs #216/#218/#219 nicht angefasst; gemeinsame Dokumentabschnitte von Chat D konsolidieren lassen. Fachlicher Stand: [Chat-B-Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md).

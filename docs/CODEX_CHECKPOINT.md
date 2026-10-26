@@ -1,3 +1,16 @@
+# Chat D D-009 – sichere Quell-ZIP-Dateilesepfade (26.10.2026)
+
+- **Basis-`main`:** `42d14ad36cc947691f7e5a1e8647a43f5421b86e`; **Branch:** `fix/chat-d/source-zip-symlink-swap-20261026`.
+- **IMPLEMENTIERT:** Descriptor-relative POSIX-`O_NOFOLLOW`-Prüfung aller Verzeichniskomponenten und finaler Quelldatei während der ZIP-Erstellung, bestehende Stale-Source-Konsistenzprüfung bleibt erhalten.
+- **TESTS:** 3 Symlink-Austausch-Regressionen und Korrektur eines alten `fstat`-Mocks. Erste CI entdeckte fehlendes `st_mode` im Mock; Code-/Testkorrektur veröffentlicht.
+- **GETESTET:** bisher nur frühere Python-Teil-CIs und einzelne GitHub-Logs nachgewiesen; finale vollständige CI offen.
+- **NICHT GETESTET:** finaler vollständiger Python-/Backend-/Flutter-/Android-CI-/Alpha-Build und Gerät; Windows-Nachschau nicht race-free.
+- **BLOCKIERT:** finale CI und späterer Main-Abgleich; zwei offene unabhängige Chat-A/B-PRs #236, #237.
+- **MIGRATION:** keine Persistenz-, Regel- oder App-Versionsänderung.
+- **NÄCHSTER SCHRITT:** finalen CI-Nachweis auf PR-HEAD abnehmen; konfliktfrei integrieren. [Persönlicher D-009-Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
+
+---
+
 # Chat B – Offline-Mock verwendet strukturierte NPC-Erinnerung (26.10.2026)
 
 - **Basis:** `main` `20098805d8c70cbd361a13862379894c47ef4eb6`, Branch `feat/chat-b/mock-structured-npc-recall-20261026`. Offene PRs #216/#218/#219 vor Implementierung samt Dateipfaden geprüft: keine Überschneidung mit den Fachdateien.
