@@ -552,10 +552,12 @@ class BackendNarrator extends ChangeNotifier {
     }
     if (npcContexts != null &&
         (!supportsNpcIdentityContexts ||
-         campaignRevision! < 0 ||
-         campaignRevision! > 2147483647 ||
-         npcContexts.length > 3)) {
-      throw const FormatException('NPC-ID-Kontext vom Server nicht freigegeben.');
+            campaignRevision! < 0 ||
+            campaignRevision! > 2147483647 ||
+            npcContexts.length > 3)) {
+      throw const FormatException(
+        'NPC-ID-Kontext vom Server nicht freigegeben.',
+      );
     }
     if (!RegExp(r'^[a-zA-Z0-9_-]{1,128}$').hasMatch(campaignId) ||
         action.trim().isEmpty ||
@@ -599,4 +601,3 @@ class BackendNarrator extends ChangeNotifier {
     super.dispose();
   }
 }
-
