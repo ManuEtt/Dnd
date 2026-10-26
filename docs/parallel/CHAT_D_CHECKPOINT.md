@@ -1,3 +1,17 @@
+# Chat D D-011 – Package-Import-Grenze schließen (26.10.2026)
+
+- **Main-Basis:** `5e3116f9e3f8de0af6e8125a97b3962cb8910cdf`. **Branch:** `fix/chat-d/domain-package-uri-boundary-20261026`; Code-Commit `213b35df88aa61389caf038105d9d9e21641a2c1`, Test-Commit `44ca615064ffc9db2004310ff4c45205971e4d73`.
+- **Problem:** `scripts/check_domain_boundaries.py` übersprang in `app/lib/domain/**` alle URIs mit Doppelpunkt. So blieb ein `package:lebendiger_spielleiter/story/...`-Import ohne Meldung, obwohl dieselbe Story-Datei via relativen Import gesperrt ist.
+- **IMPLEMENTIERT:** Paket-URI des tatsächlichen Flutter-Pakets `lebendiger_spielleiter` zum kanonischen Repositorypfad auflösen; normale Paketpfade, `./`, `../` und doppelte Slashes der Story-Grenze unterwerfen. Fremdpakete, Dart-Standardbibliothek und Domänenimporte bleiben erlaubt.
+- **TESTS:** Zusätzliche positive/negative Python-Regressionen für Import und Export, Umgehungsvarianten, legitime Pakete und den Paketnamen aus `app/pubspec.yaml`. Isolierter Python-Smoketest mit vergleichbarer Prüferlogik: fünf Tests erfolgreich; **vollständige Repository-Python-Suite, Flutter, Backend und Android/CI auf tatsächlichem Branch-HEAD noch zu verifizieren**.
+- **Dateien:** `scripts/check_domain_boundaries.py`, `scripts/tests/test_domain_boundaries.py`, `docs/parallel/CHAT_D_CHECKPOINT.md`, `docs/CODEX_CHECKPOINT.md`, `README.md`.
+- **Kompatibilität:** Keine Spielstands-, Schema-, Import-/Export-, Regel-, Story-, UI- oder App-Versionsänderung; SQLite 2 und Kampagnen-JSON 1 unverändert; keine Migration.
+- **Koordination:** PR #243 integriert andere Arbeiten; auch PRs #241/#242/#236/#237/#239/#240 bleiben unberührt. Produktions- und Testpfade sind von allen zu Beginn geprüften offenen PRs unabhängig; zentrale Dokumentdateien können beim späteren Merge Konflikte erfordern.
+- **BLOCKIERT/NICHT GETESTET:** Kein kompletter lokaler Git-Checkout wegen GitHub-DNS in der Containerumgebung; Flutter/Dart nicht installiert. Finale CI und APK auf exaktem Branch-HEAD ausstehend; kein Realgerät, keine produktive Signierung.
+- **NÄCHSTER SCHRITT:** Eigene PR-CI auf endgültigem HEAD vollständig prüfen, dort aufgedeckte Fehler im eigenen Branch korrigieren und vor Integration aktuelle Main-/PR-Dateipfade abgleichen.
+
+---
+
 # Chat D D-009 – Quell-ZIP gegen nachträglichen Symlink-Austausch schützen (26.10.2026)
 
 - **Ausgangs-`main`:** `42d14ad36cc947691f7e5a1e8647a43f5421b86e`, Push/PR-CI auf `main` vorher erfolgreich. **Branch:** `fix/chat-d/source-zip-symlink-swap-20261026`.
