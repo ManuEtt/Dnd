@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat B – Bestätigte Story-Abschlüsse über Controller-Neustart bewahren (26.10.2026)
+
+Ergänzend zu den gestapelten PRs [#253](https://github.com/ManuEtt/Dnd/pull/253) und [#256](https://github.com/ManuEtt/Dnd/pull/256) prüft ein neuer GameController-/SQLite-/Mock-Backend-Integrationstest die sichere Wiederaufnahme beider Terminalstatus `resolved` und `abandoned`. Der Spieler bestätigt und korrigiert den Abschluss im Tagebuch, startet App-Controller und Datenbank neu und verbindet den Erzähler ausdrücklich erneut. Eine spätere KI-Umschreibung wird verworfen, ohne den bestätigten Abschluss zu verändern oder den lokalen Zug zu verlieren. Eine Antwort mit identischem Abschluss darf dagegen die Kampagne regulär fortsetzen. **Kein Produktivcode, keine Datenmigration und keine externe KI-Nutzung; vollständige Test-/APK-CI für diesen neuen Branch separat prüfen.** [Chat-B-Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md).
+
+
 ## Chat B – Bestätigte Story-Enden nach Neustart erhalten (26.10.2026)
 
 Ein neuer SQLite-Integrationstest erweitert den [Schutz abgeschlossener Handlungsstränge aus PR #253](https://github.com/ManuEtt/Dnd/pull/253): Nach explizitem `resolved`- oder `abandoned`-Abschluss wird die vom Spieler gespeicherte Beschreibung im Tagebuch berichtigt, über mehrere SQLite-Neustarts rekonstruiert und gegen nachträgliche KI-Beschreibungsänderungen geprüft. Eine wörtlich unveränderte Story-Fortsetzung bleibt möglich. Die neue Test-Erweiterung ist von PR #253 abhängig und benötigt dessen Schutzcode für erfolgreiche CI. Keine Änderungen an Produktionslogik, SQLite-/JSON-Schema oder D&D-Regeln. [Chat-B-Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md).
