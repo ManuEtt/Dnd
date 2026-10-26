@@ -1,3 +1,15 @@
+# Chat B – Offline-Mock verwendet strukturierte NPC-Erinnerung (26.10.2026)
+
+- **Basis:** `main` `20098805d8c70cbd361a13862379894c47ef4eb6`, Branch `feat/chat-b/mock-structured-npc-recall-20261026`. Offene PRs #216/#218/#219 vor Implementierung samt Dateipfaden geprüft: keine Überschneidung mit den Fachdateien.
+- **IMPLEMENTIERT:** neuer rein lesender Erzähler-Auszug `backend/src/mock_npc_identity_hint.ts`; `mockStoryTurn` bevorzugt IDs und die zuletzt gespeicherte valide NPC-Notiz, fällt auf die bisherigen Legacy-Texte zurück und rät bei Mehrdeutigkeit keine NPC-ID.
+- **TESTS GESCHRIEBEN:** neue positive/negative `backend/test/mock-npc-identity-hint.test.ts` mit Fastify-HTTP, Unicode, Legacy-Vertrag, Revision, Fremd-ID und Regel-/Narrationsgrenzen. PR [#222](https://github.com/ManuEtt/Dnd/pull/222); Code-/Testfix-Commit `29263f811ea78aa95d32c0202776286289613251`. Früherer CI-Lauf #40289475911 scheiterte an fehlerhafter *Testeingabe* (120 Emoji statt mehr als 160), Testfix in `29263f8...`. Finale CI-Abnahme nur für den späteren PR-HEAD.
+- **KEINE MIGRATION:** unverändertes Fastify-Schema, SQLite, Kampagnen-JSON, Regelwerte und App-Version. Nichts wird vom Mock an bestätigtem Spielzustand geschrieben.
+- **NICHT GETESTET:** reales Android, Store-Signierung, produktiver OpenAI-Provider; lokale Flutter/Dart-Ausführung mangels SDK; direkter Container-Checkout mangels GitHub-DNS.
+- **NÄCHSTER KONKRETER SCHRITT:** explizite NPC-ID-Auswahl für gleichnamige Figuren durch die Story-UI im eigenen koordinierbaren PR; die Mock-Engine bleibt bis dahin fail-closed.
+- **Details:** [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md). Bei Zusammenführung gemeinsam mit Chat D die zentralen Einträge konsolidieren; andere Prüfergebnisse bleiben erhalten.
+
+---
+
 # CODEX-CHECKPOINT – Klassenprüfung für Heilige Flamme
 
 ## Ergänzung Chat B (26.10.2026) – strikte NPC-Zeitstempel

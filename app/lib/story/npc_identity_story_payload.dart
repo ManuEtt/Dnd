@@ -1,5 +1,6 @@
 import '../domain/models.dart';
 import 'npc_identity_memory.dart';
+import 'npc_story_selection.dart';
 
 /// A bounded, read-only NPC snapshot prepared for a negotiated Story API.
 ///
@@ -67,6 +68,7 @@ class NpcIdentityStoryPayload {
     String playerAction, {
     int maxNpcs = 3,
     int maxNotes = 3,
+    NpcStorySelection? selectedNpc,
   }) {
     if (campaign.revision < 0 ||
         campaign.revision > 2147483647 ||
@@ -76,6 +78,9 @@ class NpcIdentityStoryPayload {
         maxNotes > 5) {
       throw const FormatException('Ungültige NPC-Kontextgrenzen.');
     }
+    // An explicit choice is authoritative for identity selection only. Check
+    // it before inspecting names or constructing any provider payload.
+    selectedNpc?.requireCurrent(campaign);
     final counts = <String, int>{};
     for (final npc in campaign.npcs) {
       final name = _fold(npc.name);
@@ -86,8 +91,9 @@ class NpcIdentityStoryPayload {
     for (final npc in campaign.npcs) {
       final name = _fold(npc.name);
       if (name.isEmpty ||
-          counts[name] != 1 ||
-          !_mentions(playerAction, name) ||
+          (selectedNpc != null
+              ? npc.id != selectedNpc.npcId
+              : counts[name] != 1 || !_mentions(playerAction, name)) ||
           !_validId(npc.id) ||
           !_validText(npc.name, 80) ||
           !_validText(npc.relationship, 80)) {

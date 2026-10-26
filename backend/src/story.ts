@@ -1,4 +1,6 @@
 import { mockNpcDiaryHint } from './mock_npc_memory.js';
+import { mockNpcIdentityHint } from './mock_npc_identity_hint.js';
+import type { StoryTurnWithNpcIdentities } from './story_npc_identity_context.js';
 
 /** A provider proposes fiction only. All returned values are validated before being sent to a client. */
 export interface StoryStartInput {
@@ -155,12 +157,12 @@ export function mockStoryPlan(input: StoryStartInput): StoryPlan {
     places: [{ id: 'eiren', name: 'Eiren', description: 'Nebelverhangene Hafenstadt.' }],
   });
 }
-export function mockStoryTurn(input: StoryTurnInput): StoryTurn {
+export function mockStoryTurn(input: StoryTurnWithNpcIdentities): StoryTurn {
   // Journal threads may have no description. Do not turn that valid local
   // state into an invalid provider update or invent a replacement note.
   const first = input.threads.find(x => x.status === 'open' && x.description.trim());
   return parseStoryTurn({
-    narration: `${input.heroName}, deine Entscheidung „${input.action.slice(0, 110)}“ bleibt nicht unbemerkt. In ${input.scene.slice(0, 140)} zeichnet sich eine neue Spur ab. ${mockNpcDiaryHint(input)}Was möchtest du als Nächstes tun?`,
+    narration: `${input.heroName}, deine Entscheidung „${input.action.slice(0, 110)}“ bleibt nicht unbemerkt. In ${input.scene.slice(0, 140)} zeichnet sich eine neue Spur ab. ${mockNpcIdentityHint(input) || mockNpcDiaryHint(input)}Was möchtest du als Nächstes tun?`,
     threadUpdates: first ? [{ id: first.id, status: 'open', description: first.description }] : [],
     newThreads: [], npcUpdates: [],
     adventure: /gefahr|hinterhalt|begegnung|gegner|kampf|spur|untersuch|geheimnis/i.test(input.action)

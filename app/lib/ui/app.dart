@@ -1965,6 +1965,8 @@ class _AdventurePageState extends State<_AdventurePage> {
           choice.noUnresolvedShieldReactionConfirmed,
       situationalAttackConditionsConfirmed:
           choice.situationalAttackConditionsConfirmed,
+      noUnmodelledAttackModifiersConfirmed:
+          choice.noUnmodelledAttackModifiersConfirmed,
       advantage: choice.advantage,
       disadvantage: choice.disadvantage,
       targetProne: choice.targetProne,
