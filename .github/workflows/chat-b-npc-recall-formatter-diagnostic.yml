@@ -1,0 +1,17 @@
+name: Chat B temporary NPC recall Dart formatting diagnostic
+on:
+  push:
+    branches:
+      - fix/chat-b/disambiguate-recalled-npc-memories-20261026
+jobs:
+  formatter-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Format and print exact patch
+        run: |
+          dart format app/test/memory_recall_npc_identity_test.dart app/lib/story/story_memory_engine.dart
+          git diff -- app/test/memory_recall_npc_identity_test.dart app/lib/story/story_memory_engine.dart
