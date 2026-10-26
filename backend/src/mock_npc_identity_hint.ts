@@ -29,7 +29,7 @@ const mentionsName = (action: string, name: string): boolean => {
   const normalized = fold(name);
   if (!normalized) return false;
   const escaped = normalized.split('').map(char =>
-    /[a-z0-9 ]/u.test(char) ? char : '\\' + char).join('');
+    /[a-z0-9 ]/u.test(char) ? char : '\\u{' + char.codePointAt(0)!.toString(16) + '}').join('');
   return new RegExp('(?:^|[^a-z0-9])' + escaped +
     '(?=$|[^a-z0-9])', 'u').test(fold(action));
 };
