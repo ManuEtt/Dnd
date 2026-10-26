@@ -226,10 +226,7 @@ void main() {
       () => _cast(
         engine,
         halfCovered,
-        declaredBeams: _targets(
-          cover: CoverLevel.half,
-          opposite: false,
-        ),
+        declaredBeams: _targets(cover: CoverLevel.half, opposite: false),
       ),
       throwsFormatException,
     );
@@ -246,10 +243,7 @@ void main() {
     final update = _cast(
       engine,
       covered,
-      declaredBeams: _targets(
-        cover: CoverLevel.half,
-        opposite: true,
-      ),
+      declaredBeams: _targets(cover: CoverLevel.half, opposite: true),
     );
     final beams = update.events.single.payload['beams'] as List<dynamic>;
     expect(beams[0]['effectiveArmorClass'], 16);
