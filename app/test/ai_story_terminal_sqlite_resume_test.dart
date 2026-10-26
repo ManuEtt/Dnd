@@ -45,10 +45,7 @@ Map<String, dynamic> _plan() => {
   ],
 };
 
-Map<String, dynamic> _storyReply(
-  String status,
-  String description,
-) => {
+Map<String, dynamic> _storyReply(String status, String description) => {
   'narration': 'Die Reise führt am Hafen weiter. Was unternimmst du?',
   'threadUpdates': [
     {'id': 'hafen', 'status': status, 'description': description},
@@ -118,8 +115,9 @@ void main() {
           events: corrected.events,
           expectedRevision: loaded.revision,
         );
-        final afterCorrection =
-            (await repository.reconstructCampaign(original.id))!;
+        final afterCorrection = (await repository.reconstructCampaign(
+          original.id,
+        ))!;
         expect(afterCorrection.toJson(), corrected.campaign.toJson());
         expect(
           afterCorrection.storyThreads.first.description,
