@@ -54,10 +54,19 @@
       "source_sha": "3746c5769f5ddb01842762184b0f477845d11740",
       "archive_tag": "archive/branch-migration-20261026T173427Z/round2/fix/chat-d/checkpoint-manifest-nofollow-20261026",
       "observed_utc": "2026-10-26T17:42:55.026122+00:00"
+    },
+    {
+      "branch": "fix/chat-a/spell-range-unit-validation-20261026",
+      "source_sha": "10f14cccd4f487bbbca5fee0938464d744d10e9d",
+      "archive_tag": "archive/branch-migration-20261026T173427Z/round3/fix/chat-a/spell-range-unit-validation-20261026"
     }
   ],
   "round2_bundle": {
     "file": "/workspace/artifacts/branch-migration-20261026T173427Z/Alle_Branchstaende_Runde2.bundle",
     "sha256": "e26e0d3cd17149beb9f780801d620736cf3911de731ed7aeac003be0eb41c44b"
+  },
+  "round3_bundle": {
+    "file": "/workspace/artifacts/branch-migration-20261026T173427Z/Alle_Branchstaende_Runde3.bundle",
+    "sha256": "7d371f35dea17f98cd7abe0f9868bafc9e5e6ff2c228345b0bee55bcb38ade0a"
   }
 }
