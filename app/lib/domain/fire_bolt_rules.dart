@@ -3,7 +3,7 @@ import 'cover_rules.dart';
 import 'dice_engine.dart';
 import 'magic_missile_rules.dart';
 import 'models.dart';
-import 'rules_engine.dart';
+import 'srd_spell_saving_throw_rules.dart';
 import 'spellcasting_rules.dart';
 import 'srd_character_classes.dart';
 
@@ -48,6 +48,7 @@ class FireBoltRules {
     required bool noFireResistanceOrImmunityConfirmed,
     required bool noUnresolvedShieldReactionConfirmed,
     required bool situationalAttackConditionsConfirmed,
+    required bool noUnmodelledAttackModifiersConfirmed,
     bool advantage = false,
     bool disadvantage = false,
     bool targetProne = false,
@@ -75,15 +76,15 @@ class FireBoltRules {
         'und Angriffsumstände müssen bestätigt sein.',
       );
     }
+    final stats = SrdSpellSavingThrowRules.statsForClass(
+      hero,
+      castingClass: selected,
+      noUnmodelledModifiersConfirmed: noUnmodelledAttackModifiersConfirmed,
+    );
     final effectiveArmorClass = CoverRules.armorClass(
       targetArmorClass,
       targetCover,
     );
-    final ability = selected == 'Magier' ? 'intelligence' : 'charisma';
-    final score = hero.abilities[ability];
-    if (score == null || score < 1 || score > 30) {
-      throw StateError('Das Zauberattribut ist nicht bestätigt.');
-    }
     // Resource validation must happen before any random roll.
     final resource = MagicMissileRules.normalized(hero);
     final spent = SpellcastingRules.cast(
@@ -95,9 +96,7 @@ class FireBoltRules {
         ConditionRules.hasUnconditionalAttackDisadvantage(hero) ||
         (targetProne && !targetWithinFiveFeet);
     final attackBonus =
-        RulesEngine.abilityModifier(score) +
-        RulesEngine.proficiencyBonus(hero.level) +
-        ExhaustionRules.d20Modifier(hero);
+        stats.spellAttackModifier + ExhaustionRules.d20Modifier(hero);
     final attack = dice.check(
       modifier: attackBonus,
       advantage: advantage,
@@ -116,8 +115,8 @@ class FireBoltRules {
         className: hero.className,
         secondaryClassName: hero.secondaryClassName,
       ),
-      castingClass: selected,
-      spellcastingAbility: ability,
+      castingClass: stats.castingClass,
+      spellcastingAbility: stats.ability,
       attackRoll: attack,
       damageRoll: damageRoll,
       attackBonus: attackBonus,
