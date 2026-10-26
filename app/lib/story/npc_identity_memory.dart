@@ -128,8 +128,8 @@ class NpcIdentityMemory {
           current.note != old.note ||
           current.recordedAt != old.recordedAt) {
         throw const FormatException(
-        'NPC-Kontext wurde zwischenzeitlich geändert.',
-      );
+          'NPC-Kontext wurde zwischenzeitlich geändert.',
+        );
       }
     }
   }
