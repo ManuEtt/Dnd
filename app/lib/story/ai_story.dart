@@ -130,7 +130,7 @@ class AiStoryStep {
     _unique(campaign.storyThreads.map((thread) => thread.id));
     _unique(campaign.npcs.map((npc) => npc.id));
     final knownThreads = {
-      for (final thread in campaign.storyThreads) thread.id: thread.status,
+      for (final thread in campaign.storyThreads) thread.id: thread,
     };
     final knownNpcs = campaign.npcs.map((e) => e.id).toSet();
     final threadUpdates = _items(json['threadUpdates'], 6, (entry) {
@@ -141,16 +141,17 @@ class AiStoryStep {
           !const ['open', 'resolved', 'abandoned'].contains(status)) {
         throw const FormatException('Unbekannter KI-Handlungsstrang.');
       }
-      // Confirmed endings belong to the player. A generated reply may
-      // annotate them but must not reopen or reclassify their status.
-      // Explicit edits through saveStoryThread remain authoritative.
-      final previous = knownThreads[id];
-      if (previous != 'open' && status != previous) {
+      // Confirmed endings include their description. AI may neither reopen
+      // nor rewrite them; manual saveStoryThread edits remain authoritative.
+      final previous = knownThreads[id]!;
+      final description = _text(j['description'], 1000);
+      if (previous.status != 'open' &&
+          (status != previous.status || description != previous.description)) {
         throw const FormatException(
           'Abgeschlossene Handlungsstränge können nur manuell geändert werden.',
         );
       }
-      return AiThreadUpdate(id, status, _text(j['description'], 1000));
+      return AiThreadUpdate(id, status, description);
     });
     final newThreads = _items(json['newThreads'], 2, (entry) {
       final j = _obj(entry);
