@@ -1,0 +1,26 @@
+name: Chat C quest board format diagnostic
+
+on:
+  push:
+    branches:
+      - feat/chat-c/quest-board-large-text-20261026
+    paths:
+      - .github/workflows/chat-c-quest-format.yml
+
+permissions:
+  contents: read
+
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Print canonical quest board Dart
+        run: dart format --output=show app/lib/ui/fantasy_adventure_hud.dart
+      - name: Print canonical quest widget tests
+        run: dart format --output=show app/test/fantasy_adventure_hud_test.dart
