@@ -222,9 +222,8 @@ class _CombatCoverSelector extends StatelessWidget {
               ? 'Deckung für $target ändern'
               : 'Deckung für $target derzeit nicht änderbar',
           enabled: canChange,
-          onSelected: (grade) => onAction(
-            'Deckung: $target ${CoverRules.commandValue(grade)}',
-          ),
+          onSelected: (grade) =>
+              onAction('Deckung: $target ${CoverRules.commandValue(grade)}'),
           itemBuilder: (_) => [
             for (final grade in CoverLevel.values)
               PopupMenuItem<CoverLevel>(
