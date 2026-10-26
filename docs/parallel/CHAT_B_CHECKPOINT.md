@@ -1,3 +1,41 @@
+# Chat B – ID-sichere NPC-Kontinuität im Offline-Mock (26.10.2026)
+
+## Ausgangslage und PR
+- Ausgangs-`main`: `20098805d8c70cbd361a13862379894c47ef4eb6` nach Merge von PR #217.
+- Eigener Branch: `feat/chat-b/mock-structured-npc-recall-20261026`. PR/HEAD stehen im entsprechenden GitHub-Branch (bei CI-Abnahme PR-HEAD kontrollieren).
+- Offene PRs zu Arbeitsbeginn: #216 (Kampfteilnehmer-Karte), #218 (Gradle-Properties), #219 (deren Integration); **keine Fachdateiüberschneidung**. Main-CI #40288770032 zu Beginn noch laufend; vorherige grüne Main-CI #40285915083 zum älteren HEAD `0212e99...`.
+- Alle acht Pflichtdokumente anhand der tatsächlichen Dateien in `main` abgeglichen, einschließlich der aktuellen Story-/Backend-Verträge.
+
+## Ausgangsproblem
+Das Backend validierte schon `campaignRevision` und `npcContexts` für `/v1/story/advance`, und die Flutter-App konnte diese optional senden. Trotzdem verwendete `mockStoryTurn` beim Offline-/kostenlosen Mock ausschließlich `memories: string[]`. So blieb die bereits validierte, eindeutig per NPC-ID zugeordnete Bestätigung ohne Erzähleffekt.
+
+## Akzeptanz
+1. Bei gültiger, eindeutig zu einem angesprochenen NPC gehörender ID-Notiz erinnert der Mock an die neueste bestätigte Notiz – vor älteren namenbasierten Einträgen.
+2. Bei Legacy-Clients, ungültigen, unpassenden, mehrdeutigen IDs, Namen oder Revisionen bleibt der bisherige sichere Fallback erhalten.
+3. Keine ungewollten NPC-, Quest-, HP-, Ressourcen- oder Kampfänderungen. Anbieter- und Datenbankzugriffe entfallen.
+4. Begrenztes, einzeiliges, Unicode-sicheres Zitat; auch nichtdeutsche Namen mit diakritischen Zeichen dürfen keine Regex-Fehler erzeugen.
+5. Echte HTTP-Route mit Mock-Provider muss neue ID-Notiz narrativ wiedergeben und fremde Revision mit HTTP 400 abweisen.
+
+## Implementiert
+- `backend/src/mock_npc_identity_hint.ts` **NEU**: rein lesender ID-gestützter Mock-Erinnerungsauszug nach vorheriger serverseitiger Kontextvalidierung. Nur bei **genau einem** erwähnten, anhand seines Namens eindeutig zuordenbaren NPC; doppelte Anzeigenamen werden fail-closed nicht erraten. Neueste (absteigend validierte) Notiz, maximal 160 Unicode-Codepoints als einzeilige Erzählung.
+- `backend/src/story.ts`: `mockStoryTurn` akzeptiert die bestehenden optionalen Felder und bevorzugt den neuen Auszug mit Legacy-Fallback. Keine Änderungen am Story-HTTP-Vertrag oder an der Antwort- und Regelgrenze.
+- `backend/test/mock-npc-identity-hint.test.ts` **NEU**: positive und negative Tests, deterministische Wiederholung, UTF-/Diakritik-Fall, Altclient-Fallback, falsche IDs und Revisionen sowie echte Fastify-Route mit Mock-Anbieter.
+
+## Sicherheitsgrenzen und Kompatibilität
+- Der Server kann Client-Erinnerungen nicht unabhängig authentifizieren; ein vom Client gelieferter Tagebuchtext ist nur Erzählkontext, keine bestätigte Serverwahrheit.
+- Keine SQLite-/JSON-Migration, keine App-Version oder Änderung an D&D-Mechaniken. Ältere Clients bleiben funktional.
+- Keine Produktionsexterne KI, reale Android-Installation, Store-Signierung und kostenpflichtige Provider-Nutzung für dieses Paket geplant.
+
+## Prüfstand
+- Node.js 22.16.0, npm, Git und Python lokal verfügbar; **kein lokales Flutter/Dart-SDK**. Eine direkte GitHub-Checkout-Verbindung im Arbeitscontainer ist wegen fehlender DNS-Auflösung nicht verfügbar. Testdurchläufe erfolgen über die GitHub-CI.
+- Der finale CI-Status und der genaue HEAD sind anhand der Actions-Resultate, nicht aus früheren erfolgreichen Runs, zu belegen.
+- Eigenständiger Integrations-Pull-Request gegen `main`; kein automatischer Merge.
+
+## Genau ein nächster Schritt
+Nach grüner CI: Verhalten für zwei gleichnamige NPCs erst nach **expliziter UI-Auswahl einer NPC-ID** erweitern; bis dahin keine automatische Zuordnung aus der Spielerprosa ableiten.
+
+---
+
 # Chat B – KI-Spielleitung und Kampagnen (25.10.2026)
 
 ## Live-Ausgangslage
