@@ -328,6 +328,7 @@ class FantasyAdventureQuestBoard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.8;
     final active = campaign.quests
         .where((quest) => quest.status == 'active')
         .toList();
@@ -348,7 +349,10 @@ class FantasyAdventureQuestBoard extends StatelessWidget {
         shape: const Border(),
         collapsedShape: const Border(),
         tilePadding: const EdgeInsets.symmetric(horizontal: 12),
-        leading: const FantasyRuneEmblem(rune: FantasyRune.tome, size: 35),
+        // The decorative emblem gives way to readable text at high scale.
+        leading: largeText
+            ? null
+            : const FantasyRuneEmblem(rune: FantasyRune.tome, size: 35),
         title: const Text(
           'Auftragsübersicht',
           style: TextStyle(
@@ -360,8 +364,8 @@ class FantasyAdventureQuestBoard extends StatelessWidget {
           active.isEmpty
               ? 'Keine aktiven Aufträge bestätigt'
               : '${active.length} aktiv · ${active.first.title}',
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
+          maxLines: largeText ? null : 2,
+          overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
           style: const TextStyle(color: FantasyPalette.muted),
         ),
         children: [
@@ -425,6 +429,7 @@ class _QuestLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.8;
     final color = quest.status == 'completed'
         ? FantasyPalette.success
         : quest.status == 'failed'
@@ -435,43 +440,56 @@ class _QuestLine extends StatelessWidget {
         : quest.status == 'failed'
         ? 'Gescheitert'
         : 'Aktiv';
+    final description = quest.description.trim();
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 10, 12, 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            quest.status == 'completed'
-                ? Icons.check_circle_outline
-                : quest.status == 'failed'
-                ? Icons.cancel_outlined
-                : Icons.adjust,
-            size: 21,
-            color: color,
-          ),
-          const SizedBox(width: 9),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(quest.title, maxLines: 3, overflow: TextOverflow.ellipsis),
-                const SizedBox(height: 2),
-                Text(status, style: TextStyle(color: color, fontSize: 11)),
-                if (quest.description.trim().isNotEmpty)
-                  Text(
-                    quest.description,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: FantasyPalette.muted,
-                      fontSize: 12,
-                    ),
-                  ),
-              ],
+    return Semantics(
+      container: true,
+      excludeSemantics: true,
+      label: '$status: ${quest.title}${description.isEmpty ? '' : ', $description'}',
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 10, 12, 4),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(
+              quest.status == 'completed'
+                  ? Icons.check_circle_outline
+                  : quest.status == 'failed'
+                  ? Icons.cancel_outlined
+                  : Icons.adjust,
+              size: 21,
+              color: color,
             ),
-          ),
-        ],
+            const SizedBox(width: 9),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    quest.title,
+                    maxLines: largeText ? null : 3,
+                    overflow:
+                        largeText ? TextOverflow.visible : TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(status, style: TextStyle(color: color, fontSize: 11)),
+                  if (description.isNotEmpty)
+                    Text(
+                      quest.description,
+                      maxLines: largeText ? null : 3,
+                      overflow: largeText
+                          ? TextOverflow.visible
+                          : TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: FantasyPalette.muted,
+                        fontSize: 12,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
