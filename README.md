@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat B – Gleichnamige NPCs bei Erzähl-Erinnerungen nicht verwechseln (26.10.2026)
+
+Der unstrukturierte Erzähler-Erinnerungsabruf darf nach einer bloßen Namensnennung nicht mehrere NPCs mit gleichen oder normalisiert gleichlautenden Anzeigenamen auswählen. [PR #248](https://github.com/ManuEtt/Dnd/pull/248) prüft daher vor dem Einfügen bestätigter NPC-Notizen die Eindeutigkeit des Namens über die ganze Kampagne. Explizite revisionsgesicherte NPC-ID-Auswahl bleibt unverändert. Neue negative/positive Unit-Regressionen prüfen gleiche „Mira“, „Große Hüterin“/„GROSSE HUETERIN“ und den eindeutig benannten Tarek. Keine Regeländerungen, Migration oder Spielstandsänderung. Vollständige CI am finalen PR-Commit ist separat abzunehmen. [Chat-B-Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md).
+
+
 ## Chat D – Quell-ZIP vor Symlink-Austausch nach dem Scan schützen (D-009, 26.10.2026)
 
 Der Quellarchiv-Export nutzt auf POSIX nun vor jedem Dateilesen gesicherte Verzeichnis-Deskriptoren und `O_NOFOLLOW`, damit ein nach der Auflistung eingeschleuster Link nicht unbemerkt projektfremde Daten archiviert. Drei neue Regressionstests prüfen solche Datei-/Verzeichniswechsel sowie den Erhalt bereits veröffentlichter ZIP-/SHA256-Dateien; ein veralteter Testmock wurde aktualisiert. Non-POSIX-Plattformen erhalten eine zusätzliche Best-Effort-Prüfung, jedoch keine Garantie gegen alle Race Conditions. **Die finale CI auf dem aktuellen PR-Commit ist noch abzunehmen.** Keine Änderungen am Spielstandformat, App-Code oder Regelwerk. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
