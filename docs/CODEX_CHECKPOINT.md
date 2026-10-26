@@ -1,3 +1,16 @@
+# Chat B – doppelte NPC-Anzeigenamen beim Erinnerungstransport blockieren (26.10.2026)
+
+- **Main-Ausgang:** `5e3116f9e3f8de0af6e8125a97b3962cb8910cdf`; **Branch:** `fix/chat-b/npc-name-ambiguous-recall-20261026`; **Fach-/Test-SHA:** `63b0b7bf3fa259f05830b29470514308d1c349c0`; [PR #248](https://github.com/ManuEtt/Dnd/pull/248).
+- **IMPLEMENTIERT:** Namensbasierter `NpcNarratorMemory.merge`-Abruf wählt NPC-spezifische Notizen nur bei kampagnenweit eindeutigem normalisiertem Anzeigenamen aus. Getrennter expliziter NPC-ID-Pfad unverändert. Testfälle für mehrdeutige Mira/Große Hüterin und eindeutigen Tarek.
+- **GETESTET:** GitHub Live-Code-, Main-/PR- und geänderte Dateiprüfung. Vor Abschluss der aktuellen GitHub-CI keine vollständige Testsuite als bestanden deklarieren.
+- **NICHT GETESTET:** Flutter-/Backend-/Python-Gesamtsuite, Android APK und Realgerät lokal mangels Checkout/SDK.
+- **BLOCKIERT:** PR-CI auf finalem Commit noch abzunehmen; zentrale Dokumentation mit PR #243/#244 und anderen parallelen PRs durch Chat D zusammenführen.
+- **MIGRATION:** keine; SQLite, Kampagnen-JSON, Regel- und bestätigter Storyzustand unverändert.
+- **NÄCHSTER SCHRITT:** getrennten Integrationstest für identitätsgebundenen Storytransport bei gleichnamigen NPCs anlegen, nach CI-Freigabe dieses Pakets.
+- [Eigener Checkpoint](parallel/CHAT_B_CHECKPOINT.md). Historische Abschnitte darunter erhalten.
+
+---
+
 # Chat D D-009 – sichere Quell-ZIP-Dateilesepfade (26.10.2026)
 
 - **Basis-`main`:** `42d14ad36cc947691f7e5a1e8647a43f5421b86e`; **Branch:** `fix/chat-d/source-zip-symlink-swap-20261026`.
