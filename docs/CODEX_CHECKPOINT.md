@@ -1,3 +1,15 @@
+# Chat C – Zauber-Restdauer grammatikalisch korrekt (26.10.2026)
+
+- **Basis-`main`:** `12e2df634c1f60e972681cef4ca08b41e2d29410` (zum Anlegen des Branches).
+- **Branch:** `fix/chat-c/spell-effect-countdown-20261026`.
+- **Code/Test:** `app/lib/ui/fantasy_effect_ward.dart`; `app/test/confirmed_spell_effect_widget_test.dart`; letzter technischer Commit `9e204e146dbbf35f2f226d1fbb5f487619b35c7d`.
+- **Problem/Lösung:** bestätigter Countdown `1` muss „noch 1 eigenes Zugende“ heißen; `2+` bleibt Plural; `null` bleibt ohne erfundene Countdown-Angabe.
+- **Zusätzliche Tests:** 320/360 dp und 200 % Systemschrift mit unverändertem Hero-JSON; Fremdbegegnung ohne Countdown. Neu implementiert, **noch nicht per neuer CI ausgeführt**.
+- **Scope:** nur Flutter-UI und Widgettest; keine Spielstand-, Regel-, Backend-, Domain- oder Controlleränderung. Keine Migration.
+- **Parallelität:** Bei Branch-Anlage keine offenen PRs mit überschneidenden technischen Dateipfaden. `README.md` und dieser Checkpoint werden von anderen Chats ebenfalls bearbeitet und erfordern konfliktbewusste Integration durch Chat D.
+- **Vorheriges Chat-C-Paket:** PR #245 vollständig erfolgreicher Actions-Workflow [#40375552456](https://github.com/ManuEtt/Dnd/actions/runs/40375552456) auf `8fa2a2166e3681605e5610cb7c93dc0fae8a5fa0`, ready for review; reales TalkBack-Gerät und Integration weiter offen.
+- **Genau ein nächster Schritt:** neue PR-CI inklusive Flutter-Analyse, Widgettests und Debug-APK auf dem finalen technischen Stand abnehmen, etwaige Fehler beheben und Chat D die Integration übergeben.
+
 # CODEX-CHECKPOINT – vollständige Branch-Migration
 
 Stand **2026-10-26T17:38:53+00:00**, Würfelraunen **0.8.42+92**, SQLite **2**, Kampagnen-JSON **1**.
