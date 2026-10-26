@@ -34,6 +34,10 @@ Kein Würfelwurf, kein Effekt, kein Ressourcenverbrauch und keine Speicherung im
 - Draft-Pull-Request: [#242](https://github.com/ManuEtt/Dnd/pull/242).
 - Finale PR-CI muss auf dem nach Dokumentationsabschluss gültigen Branch-HEAD geprüft werden.
 
+## Erster CI-Befund und Reparatur
+
+[Push-CI #40370318365](https://github.com/ManuEtt/Dnd/actions/runs/40370318365) ist **fehlgeschlagen**: das Quellfile war durch eine fehlerhafte textuelle Ersetzung abgeschnitten/dupliziert; `dart format` meldete Syntaxfehler, im Test zudem eine Formatabweichung. Keine Flutter-Analyse/-Tests und kein APK-Build in diesem Lauf. Die Regellogik-Datei wurde anschließend aus der beobachteten Main-Basis mit korrekt begrenzter Ersetzung neu aufgebaut; Test-Formatierung angepasst. Neue CI ist auf dem Reparatur-HEAD separat nachzuweisen.
+
 ## Status
 
 Implementierung und Regressionstests sind eingecheckt; Test-/CI-Ergebnisse werden erst nach tatsächlich abgeschlossener Ausführung ergänzt. Kein Merge nach main.

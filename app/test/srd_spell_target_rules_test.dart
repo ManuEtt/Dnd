@@ -248,8 +248,11 @@ void main() {
       '9223372036854775808 feet',
       '1750000000000000 miles',
     ]) {
-      expect(SrdSpellTargetRules.maxRangeFeet(invalid), isNull,
-          reason: invalid);
+      expect(
+        SrdSpellTargetRules.maxRangeFeet(invalid),
+        isNull,
+        reason: invalid,
+      );
       expect(
         () => SrdSpellTargetRules.validateOrigin(
           withRange(invalid),
