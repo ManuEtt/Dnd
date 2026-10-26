@@ -149,7 +149,7 @@ def create_archive(root: Path, output: Path, *, layout: str = 'folder') -> tuple
                 if not (identity(before) == identity(after) == identity(final)
                         and len(data) == before.st_size):
                     raise RuntimeError('Source changed during archive creation.')
-                archive.writestr(prefix / path.relative_to(root).as_posix(), data)
+                archive.writestr((prefix / path.relative_to(root)).as_posix(), data)
         with zipfile.ZipFile(staged_zip) as archive:
             bad = archive.testzip()
             if bad:
