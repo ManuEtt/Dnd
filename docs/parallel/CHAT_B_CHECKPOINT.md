@@ -1,3 +1,20 @@
+# Chat B – Bestätigte Story-Enden über SQLite-Neustart schützen (26.10.2026)
+
+- **Basis:** PR #253 `fix/chat-b/terminal-thread-description-20261026` auf `ba33a2497852ab13237b448427057b432ec222b6`, ursprünglicher `main` `67f146e690306b13d490bd8e7fd5636bb187c77e`.
+- **Branch:** `test/chat-b/terminal-thread-sqlite-resume-20261026`. Gestapelter, *von #253 abhängiger* PR; zunächst gegen dessen Branch, nach Integration des Basis-PRs regulär auf `main` umstellen.
+- **Ausgangsproblem:** Der abgeschlossene Parser-Schutz aus PR #253 braucht einen echten SQLite-Ende-zu-Ende-Nachweis nach manueller Berichtigung und Wiederaufnahme: Status und Wortlaut dürfen später nicht durch eine KI-Antwort überschrieben werden.
+- **IMPLEMENTIERT:** `app/test/ai_story_terminal_sqlite_resume_test.dart`. Für `resolved` und `abandoned`: neue KI-Kampagne in echter temporärer SQLite 2 anlegen, manuell als abgeschlossen speichern und Ereignis protokollieren, DB neu öffnen, denselben Abschluss ausdrücklich im Tagebuch berichtigen, mit erwarteter Revision speichern, Revisionscheckpoint rekonstruieren, DB nochmals neu öffnen, veränderte KI-Beschreibung bei unverändertem Terminalstatus ablehnen, gespeicherte unveränderte Antwort als normalen erzählerischen Zug akzeptieren und atomar speichern.
+- **AKZEPTANZ:** Persistierte Beschreibung aus explizitem Spieler-Journaleintrag, `memory.storyThreadSaved`, bleibt im Snapshot und Revisionscheckpoint erhalten; ungültige KI-Antwort verändert den gespeicherten Stand nicht; identische KI-Wiederholung ist zulässig. Helden-JSON und Quests bleiben unverändert. Keine externen KI- oder Netzwerk-Aufrufe.
+- **DATEIEN:** eine neue Flutter-Integrationstestdatei sowie `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_B_CHECKPOINT.md`; keine Änderung am bereits geprüften Parser in PR #253.
+- **PR-PRÜFUNG:** Vor dem Branch wurden #244–#254 und ihre Dateipfade geprüft; neue Testdatei wird in keinem anderen offenen PR verändert. PR #253 CI #40382876436 vollständig erfolgreich. Der neue PR ist jedoch ausdrücklich abhängig und darf nicht isoliert gegen den noch alten `main`-Parser geprüft/integriert werden.
+- **GETESTET:** GitHub-Quellcode, Parent-PR, Hauptbranch, fremde Dateipfade und persistente Repository-/Ereignisverträge geprüft. Neue CI nach finalem Commit erst als bestanden werten, wenn GitHub Actions Erfolg meldet.
+- **NICHT GETESTET:** Lokale Flutter/Android-Ausführung mangels lokalem SDK und Checkout; APK/Realgerät/produktive KI; neue Gesamtsuite noch gesondert abzunehmen.
+- **MIGRATION:** keine, keine Produktioncodeänderung, SQLite 2 / Kampagnen-JSON 1 unverändert.
+- **BLOCKIERT:** Integration von PR #253 vor eigenständigem Merge; Dokumentationsänderungen durch Chat D konsolidieren.
+- **NÄCHSTER SCHRITT:** Nach grüner abhängiger CI und Integration der Parent-Storyschutzfunktion die gleiche Datenkontinuität in einer echten Controller-Wiederaufnahme über den Backend-Mock prüfen. Kein neuer Datenbank- oder Regelpfad.
+
+---
+
 # Chat B – abgeschlossene Story-Fäden dürfen nicht von KI umgeschrieben werden (26.10.2026)
 
 - **Ausgangs-Main:** `67f146e690306b13d490bd8e7fd5636bb187c77e`, Branch `fix/chat-b/terminal-thread-description-20261026`.
