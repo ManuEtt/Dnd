@@ -66,10 +66,28 @@ jobs:
               const comparison = await github.rest.repos.compareCommits({
                 owner, repo, base: sha, head: context.sha,
               });
-              if (comparison.data.behind_by !== 0 ||
-                  !['ahead', 'identical'].includes(comparison.data.status)) {
-                core.info('Not a proven ancestor of main, keep: ' + name);
-                continue;
+              const isAncestor = comparison.data.behind_by === 0 &&
+                ['ahead', 'identical'].includes(comparison.data.status);
+              let archivalTag = null;
+              if (!isAncestor) {
+                // A duplicate integration may contain only documentation
+                // differences. Retain its exact history under an immutable
+                // archive tag before deleting the superseded branch.
+                const delta = await github.rest.repos.compareCommits({
+                  owner, repo, base: context.sha, head: sha,
+                });
+                const files = delta.data.files;
+                const docsOnly = Array.isArray(files) &&
+                  files.length < 300 &&
+                  files.every(file =>
+                    file.filename === 'README.md' ||
+                    file.filename === 'CHECKPOINT.md' ||
+                    file.filename.startsWith('docs/'));
+                if (!docsOnly) {
+                  core.info('Unmerged application/build changes; keep: ' + name);
+                  continue;
+                }
+                archivalTag = 'archive/2026-10-26/' + name.replace(/\\//g, '-');
               }
               const nowMain = await github.rest.git.getRef({owner, repo, ref: 'heads/main'});
               if (nowMain.data.object.sha !== context.sha) {
@@ -83,8 +101,24 @@ jobs:
                 core.info('Branch updated concurrently; keep: ' + name);
                 continue;
               }
+              if (archivalTag) {
+                const tagRef = 'tags/' + archivalTag;
+                try {
+                  const existing = await github.rest.git.getRef({owner, repo, ref: tagRef});
+                  if (existing.data.object.sha !== sha) {
+                    core.warning('Archive tag has different SHA; keep branch: ' + name);
+                    continue;
+                  }
+                } catch (error) {
+                  if (error.status !== 404) throw error;
+                  await github.rest.git.createRef({
+                    owner, repo, ref: 'refs/' + tagRef, sha,
+                  });
+                }
+                core.info('Archived docs-only duplicate as ' + archivalTag);
+              }
               await github.rest.git.deleteRef({
                 owner, repo, ref: 'heads/' + name,
               });
-              core.info('Deleted safely merged branch: ' + name + ' @ ' + sha);
+              core.info('Deleted verified or archived branch: ' + name + ' @ ' + sha);
             }
