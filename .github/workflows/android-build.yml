@@ -86,17 +86,6 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
-      - name: TEMP - Formatdiagnose für Charakter-Branch
-        working-directory: app
-        run: |
-          files="lib/domain/ability_generation.dart lib/ui/ability_assignment_dialog.dart test/ability_random_generation_test.dart test/ui_random_ability_assignment_test.dart"
-          dart format $files
-          for file in $files; do
-            echo "FORMAT_BEGIN:$file"
-            base64 -w0 "$file"
-            echo ""
-            echo "FORMAT_END:$file"
-          done
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test

@@ -18,7 +18,7 @@ class AbilityRoll {
 /// Six independent, immutable 4d6-drop-lowest rolls (SRD 5.2.1, p. 21).
 class AbilityRollSet {
   AbilityRollSet._(List<AbilityRoll> values)
-      : rolls = List.unmodifiable(values);
+    : rolls = List.unmodifiable(values);
 
   final List<AbilityRoll> rolls;
   List<int> get scores => List.unmodifiable(rolls.map((roll) => roll.score));
@@ -40,7 +40,6 @@ class AbilityRollSet {
     return AbilityRollSet._(rounds);
   }
 }
-
 
 /// The SRD backgrounds' ability choices, not their complete game features.
 /// SRD 5.2.1 p. 83 (German edition p. 93).
@@ -111,9 +110,9 @@ class AbilityAllocation {
       final actual = baseScores.values.toList()..sort();
       if (expected == null ||
           actual.length != expected.length ||
-          !Iterable<int>.generate(expected.length).every(
-            (i) => actual[i] == expected[i],
-          )) {
+          !Iterable<int>.generate(
+            expected.length,
+          ).every((i) => actual[i] == expected[i])) {
         result.add(
           'Die sechs unveränderten Würfelergebnisse müssen genau einmal zugewiesen werden.',
         );

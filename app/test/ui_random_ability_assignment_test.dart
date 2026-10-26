@@ -3,11 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/ui/ability_assignment_dialog.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 
-Future<void> choose(
-  WidgetTester tester,
-  Finder dropdown,
-  String label,
-) async {
+Future<void> choose(WidgetTester tester, Finder dropdown, String label) async {
   await tester.ensureVisible(dropdown);
   await tester.pumpAndSettle();
   await tester.tap(dropdown);
@@ -21,8 +17,30 @@ void main() {
     tester,
   ) async {
     const dice = [
-      6, 6, 6, 1, 5, 5, 5, 1, 4, 4, 4, 1,
-      3, 3, 3, 1, 2, 2, 2, 1, 1, 1, 1, 1,
+      6,
+      6,
+      6,
+      1,
+      5,
+      5,
+      5,
+      1,
+      4,
+      4,
+      4,
+      1,
+      3,
+      3,
+      3,
+      1,
+      2,
+      2,
+      2,
+      1,
+      1,
+      1,
+      1,
+      1,
     ];
     var calls = 0;
     AbilityAssignment? saved;
@@ -34,9 +52,8 @@ void main() {
               onPressed: () async {
                 saved = await showDialog<AbilityAssignment>(
                   context: context,
-                  builder: (_) => AbilityAssignmentDialog(
-                    rollD6: () => dice[calls++],
-                  ),
+                  builder: (_) =>
+                      AbilityAssignmentDialog(rollD6: () => dice[calls++]),
                 );
               },
               child: const Text('Start'),
@@ -67,9 +84,7 @@ void main() {
       '+1 auf alle drei',
     );
     expect(tester.widget<FantasyTextButton>(apply).onPressed, isNull);
-    final confirm = find.byKey(
-      const ValueKey('confirm-random-assignment'),
-    );
+    final confirm = find.byKey(const ValueKey('confirm-random-assignment'));
     await tester.ensureVisible(confirm);
     await tester.pumpAndSettle();
     await tester.tap(confirm);

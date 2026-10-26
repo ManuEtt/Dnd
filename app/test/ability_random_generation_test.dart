@@ -9,8 +9,30 @@ Map<String, int> assign(List<int> values) => {
 void main() {
   test('4W6: exactly 24 dice, six immutable rolls, lowest discarded', () {
     const dice = [
-      6, 6, 6, 1, 5, 5, 5, 1, 4, 4, 4, 1,
-      3, 3, 3, 1, 2, 2, 2, 1, 1, 1, 1, 1,
+      6,
+      6,
+      6,
+      1,
+      5,
+      5,
+      5,
+      1,
+      4,
+      4,
+      4,
+      1,
+      3,
+      3,
+      3,
+      1,
+      2,
+      2,
+      2,
+      1,
+      1,
+      1,
+      1,
+      1,
     ];
     var calls = 0;
     final rolled = AbilityRollSet.generate(rollD6: () => dice[calls++]);
@@ -45,11 +67,13 @@ void main() {
 
   test('duplicate rolled results retain exact multiplicity', () {
     var calls = 0;
-    final rolled = AbilityRollSet.generate(rollD6: () {
-      final value = calls < 12 ? 6 : 1;
-      calls++;
-      return value;
-    });
+    final rolled = AbilityRollSet.generate(
+      rollD6: () {
+        final value = calls < 12 ? 6 : 1;
+        calls++;
+        return value;
+      },
+    );
     expect(rolled.scores, [18, 18, 18, 3, 3, 3]);
     final wrong = AbilityAllocation(
       method: AbilityGenerationMethod.randomRoll,

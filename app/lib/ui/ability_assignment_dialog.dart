@@ -40,6 +40,7 @@ class AbilityAssignmentDialog extends StatefulWidget {
 
   final bool hasExistingValues;
   final int level;
+
   /// Injectable d6 function for deterministic UI tests.
   final int Function()? rollD6;
 
@@ -174,7 +175,7 @@ class _AbilityAssignmentDialogState extends State<AbilityAssignmentDialog> {
           )
         else if (_method == AbilityGenerationMethod.randomRoll)
           DropdownButtonFormField<int>(
-            key: ValueKey('rolled-' + key + '-' + _randomScores![key].toString()),
+            key: ValueKey('rolled-$key-${_randomScores![key]}'),
             initialValue: _randomScores![key],
             isExpanded: true,
             decoration: InputDecoration(labelText: abilityLabels[key]),
@@ -292,12 +293,14 @@ class _AbilityAssignmentDialogState extends State<AbilityAssignmentDialog> {
                 ),
               ],
               onChanged: (value) {
-                if (value != null) setState(() {
-                  _method = value;
-                  if (value == AbilityGenerationMethod.randomRoll) {
-                    _rollFirstSet();
-                  }
-                });
+                if (value != null) {
+                  setState(() {
+                    _method = value;
+                    if (value == AbilityGenerationMethod.randomRoll) {
+                      _rollFirstSet();
+                    }
+                  });
+                }
               },
             ),
             const SizedBox(height: 14),
@@ -315,9 +318,8 @@ class _AbilityAssignmentDialogState extends State<AbilityAssignmentDialog> {
               const SizedBox(height: 8),
               for (var i = 0; i < _rollSet!.rolls.length; i++)
                 Text(
-                  'Wurf ' + (i + 1).toString() + ': ' +
-                  _rollSet!.rolls[i].dice.join(' / ') + ' → ' +
-                  _rollSet!.rolls[i].score.toString(),
+                  'Wurf ${i + 1}: ${_rollSet!.rolls[i].dice.join(' / ')} '
+                  '→ ${_rollSet!.rolls[i].score}',
                   key: ValueKey('dice-roll-$i'),
                 ),
             ] else ...[
@@ -408,9 +410,8 @@ class _AbilityAssignmentDialogState extends State<AbilityAssignmentDialog> {
                 contentPadding: EdgeInsets.zero,
                 controlAffinity: ListTileControlAffinity.leading,
                 value: _confirmedRandomAssignment,
-                onChanged: (value) => setState(
-                  () => _confirmedRandomAssignment = value == true,
-                ),
+                onChanged: (value) =>
+                    setState(() => _confirmedRandomAssignment = value == true),
                 title: const Text(
                   'Diese sechs Würfelergebnisse ausdrücklich '
                   'den angezeigten Attributen zuweisen.',
