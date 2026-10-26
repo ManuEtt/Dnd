@@ -210,7 +210,10 @@ class _CombatCoverSelector extends StatelessWidget {
     return SizedBox(
       width: fullWidth,
       child: Semantics(
+        // Keep the confirmed status independent of the popup's native
+        // accessible action and tooltip; both must remain available.
         container: true,
+        explicitChildNodes: true,
         label:
             'Deckung für $target: $coverLabel. '
             '${canChange ? 'Änderbar' : 'Nicht änderbar'}.',
