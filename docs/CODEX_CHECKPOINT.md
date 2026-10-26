@@ -1,3 +1,15 @@
+# Chat C – Auftragsübersicht mit 200 % Textskalierung (26.10.2026)
+
+- **Startbasis:** `main` `5f9a01dd73f68ad4f9e226f859a8ca87803b8337`; Branch `feat/chat-c/quest-board-large-text-20261026`.
+- **IMPLEMENTIERT:** Quest-Header ohne dekorative Rune bei 180 %+, keine Trunkierung von bestätigten Unterzeilen/Questtiteln/Beschreibungen bei 180 %+; semantische Labels `Status: Titel, Beschreibung` aus gespeicherten `Quest`-Objekten.
+- **TESTS HINZUGEFÜGT:** drei Widgettests für 320/360 dp/200 %, bestätigte und fehlende Quests, Vorleseinhalt und weiterhin funktionierende Tagebuchaktion. **Vollständige CI auf finalem Commit noch ausstehend.**
+- **MIGRATION:** keine. App `0.8.40+90`, SQLite 2, JSON 1 unverändert. Keine Domain-, KI-, Backend- oder Speicheränderung.
+- **NICHT GETESTET:** echte Android-Gerätebedienung mit TalkBack und produktive APK-Signierung.
+- **NÄCHSTER SCHRITT:** PR-CI bis APK-/Testabschluss prüfen, etwaige Fehler am eigenen Branch korrigieren, keinen ungetesteten Merge vornehmen.
+- [Detail-Checkpoint](parallel/CHAT_C_QUEST_BOARD_20261026.md); Dokumentationshistorie der anderen Chats darunter erhalten.
+
+---
+
 # Chat C – barrierefreier Abenteuerstatus (25.10.2026)
 
 - **Main-Basis:** initial `97a06118f17d71cc77be2cb15a2fc9a53db20ee0`, jetzt `45bea9c2a897275583bdbe32ed50afde5d0a76b0`; Branch `feat/chat-c/accessible-status-hud-20261025`.
