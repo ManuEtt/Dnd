@@ -152,6 +152,51 @@ class CheckpointTests(unittest.TestCase):
             self.assertNotIn(b'private.pem', contents)
             self.assertNotIn(b'PRIVATE_FIXTURE', contents)
 
+    def test_manifest_rejects_source_symlink_swapped_after_listing(self):
+        paths = checkpoint.source_paths(self.root)
+        outside = self.directory / 'outside-private.txt'
+        outside.write_text('DO_NOT_HASH_PRIVATE_CONTENT', encoding='utf-8')
+        target = self.root / 'app/lib/main.dart'
+        target.unlink()
+        target.symlink_to(outside)
+        with mock.patch.object(checkpoint, 'source_paths', return_value=paths):
+            with self.assertRaisesRegex(ValueError, 'symlinked'):
+                checkpoint.file_manifest(self.root)
+
+    def test_manifest_rejects_swapped_parent_directory_symlink(self):
+        paths = checkpoint.source_paths(self.root)
+        assets = self.root / 'app/assets'
+        original_assets = self.directory / 'old-assets'
+        assets.rename(original_assets)
+        external = self.directory / 'external-assets'
+        external.mkdir()
+        (external / 'demo.json').write_text('PRIVATE_OUTSIDE', encoding='utf-8')
+        assets.symlink_to(external, target_is_directory=True)
+        with mock.patch.object(checkpoint, 'source_paths', return_value=paths):
+            with self.assertRaisesRegex(ValueError, 'symlinked'):
+                checkpoint.file_manifest(self.root)
+
+    def test_swapped_manifest_symlink_preserves_verified_checkpoint_files(self):
+        first = self.create()
+        previous = {p.name: p.read_bytes() for p in self.output.iterdir()}
+        paths = checkpoint.source_paths(self.root)
+        outside = self.directory / 'outside'
+        outside.write_text('never put this in a checkpoint', encoding='utf-8')
+        target = self.root / 'app/lib/main.dart'
+        target.unlink()
+        target.symlink_to(outside)
+        with mock.patch.object(checkpoint, 'source_paths', return_value=paths):
+            with self.assertRaisesRegex(ValueError, 'symlinked'):
+                self.create(label='swapped')
+        self.assertEqual(previous, {
+            p.name: p.read_bytes() for p in self.output.iterdir()
+        })
+        self.assertTrue(Path(first['latest_archive']).is_file())
+        self.assertNotIn(
+            b'never put this in a checkpoint',
+            Path(first['manifest']).read_bytes(),
+        )
+
     def test_concurrent_source_change_is_rejected_before_replacing_latest(self):
         self.create()
         before = {path.name: path.read_bytes() for path in self.output.iterdir()}
