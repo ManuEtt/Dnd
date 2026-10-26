@@ -93,6 +93,9 @@ class _ChronicleEntry extends StatelessWidget {
     final accent = attack ? FantasyPalette.danger : FantasyPalette.gold;
 
     return Semantics(
+      // Keep each persisted event as one independently reachable TalkBack node.
+      // Decorative icons and repeated die faces remain inside ExcludeSemantics.
+      container: true,
       label:
           '$label, $when${details.isEmpty ? '' : ', ${details.join(', ')}'}${diceDetails.isEmpty ? '' : ', ${diceDetails.join(', ')}'}',
       child: ExcludeSemantics(
