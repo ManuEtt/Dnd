@@ -56,10 +56,7 @@ void main() {
       final focus = find.byKey(const ValueKey('death-save-reroll-focus'));
       expect(accept, findsOneWidget);
       expect(focus, findsOneWidget);
-      expect(
-        find.text('Entscheidung wird verarbeitet …'),
-        findsOneWidget,
-      );
+      expect(find.text('Entscheidung wird verarbeitet …'), findsOneWidget);
       expect(
         find.bySemanticsLabel(
           'Todesrettungswurf: Entscheidung wird verarbeitet. '
