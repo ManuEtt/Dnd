@@ -1,3 +1,16 @@
+# Chat B – Story-Geheimnisse mit unsichtbarem Unicode schützen (26.10.2026)
+
+- Basis `main`: `5e3116f9e3f8de0af6e8125a97b3962cb8910cdf`; Branch: `fix/chat-b/story-secret-invisible-unicode-20261026`; Fach-/Test-HEAD: `ad66617396ad713de426d580cfe3b42ae27eeb39`; [PR #244](https://github.com/ManuEtt/Dnd/pull/244).
+- **IMPLEMENTIERT:** Story-Ausgabefilter entfernt vor wörtlichem Vollgeheimnis-Vergleich Default-Ignorable-Unicode-Zeichen auf beiden Seiten. Prüfungen für Storyplan, Spielzug und HTTP-Endpunkte ergänzt; Grenzen gegen Teilwort-Fehlalarme bleiben erhalten.
+- **GETESTET:** Fehler mit Originalnormalisierung isoliert in Node.js reproduziert, Korrektur für fünf unsichtbare Codepoints und eine harmlose Wortgrenze isoliert verifiziert.
+- **NICHT GETESTET:** Backend-Gesamtsuite, Typecheck, Flutter, Python und Android lokal; GitHub-CI noch auf finalem PR-Commit zu bestätigen.
+- **BLOCKIERT:** vollständiger Checkout lokal nicht erreichbar; zentrale Dokumente ebenfalls von PR #243 bearbeitet (Chat D koordiniert Konsolidierung).
+- **KEINE MIGRATION:** keine Änderungen an Regelwerten, autoritativen Zuständen, SQLite oder JSON.
+- **NÄCHSTER SCHRITT:** PR #244 auf finaler CI abnehmen, keine eigenmächtige Integration.
+- [Detail-Checkpoint](parallel/CHAT_B_CHECKPOINT.md). Ältere Einträge bleiben unten erhalten.
+
+---
+
 # Chat D D-009 – sichere Quell-ZIP-Dateilesepfade (26.10.2026)
 
 - **Basis-`main`:** `42d14ad36cc947691f7e5a1e8647a43f5421b86e`; **Branch:** `fix/chat-d/source-zip-symlink-swap-20261026`.
