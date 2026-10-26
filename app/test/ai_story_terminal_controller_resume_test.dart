@@ -42,11 +42,7 @@ Map<String, dynamic> _plan() => {
     },
   ],
   'places': [
-    {
-      'id': 'pier',
-      'name': 'Der Pier',
-      'description': 'Ein Anleger im Nebel.',
-    },
+    {'id': 'pier', 'name': 'Der Pier', 'description': 'Ein Anleger im Nebel.'},
   ],
 };
 
@@ -110,114 +106,120 @@ void main() {
   sqfliteFfiInit();
 
   for (final ending in ['resolved', 'abandoned']) {
-    test('controller resumes $ending ending without AI rewriting history',
-        () async {
-      final folder = await Directory.systemTemp.createTemp('story-controller-');
-      final path = paths.join(folder.path, 'campaign.sqlite');
-      final seedEngine = GameEngine(clock: () => _now);
-      final campaign = seedEngine.createAiCampaign(
-        HeroCharacter(id: 'hero-$ending', name: 'Eila'),
-        AiStoryPlan.fromJson(_plan()),
-        provider: 'mock',
-      );
-      var repo = await SqliteCampaignRepository.open(
-        factory: databaseFactoryFfi,
-        path: path,
-      );
-      GameController? active;
-      try {
-        await repo.saveCampaign(campaign);
-        active = GameController(repository: repo);
-        await active.initialize();
-        await active.openCampaign(campaign.id);
-        expect(active.error, isNull);
-        await active.saveStoryThread(
-          threadId: 'hafen',
-          title: 'Die Hafenspuren',
-          description: 'Zuerst bestätigter Abschluss.',
-          status: ending,
+    test(
+      'controller resumes $ending ending without AI rewriting history',
+      () async {
+        final folder = await Directory.systemTemp.createTemp(
+          'story-controller-',
         );
-        expect(active.error, isNull);
-        await active.saveStoryThread(
-          threadId: 'hafen',
-          title: 'Die Hafenspuren',
-          description: _corrected,
-          status: ending,
+        final path = paths.join(folder.path, 'campaign.sqlite');
+        final seedEngine = GameEngine(clock: () => _now);
+        final campaign = seedEngine.createAiCampaign(
+          HeroCharacter(id: 'hero-$ending', name: 'Eila'),
+          AiStoryPlan.fromJson(_plan()),
+          provider: 'mock',
         );
-        expect(active.error, isNull);
-        final beforeRestart = active.currentCampaign!;
-        final heroSnapshot = jsonEncode(beforeRestart.hero.toJson());
-        expect(beforeRestart.revision, campaign.revision + 2);
-        active.dispose();
-        active = null;
-        await repo.close();
-        repo = await SqliteCampaignRepository.open(
+        var repo = await SqliteCampaignRepository.open(
           factory: databaseFactoryFfi,
           path: path,
         );
+        GameController? active;
+        try {
+          await repo.saveCampaign(campaign);
+          active = GameController(repository: repo);
+          await active.initialize();
+          await active.openCampaign(campaign.id);
+          expect(active.error, isNull);
+          await active.saveStoryThread(
+            threadId: 'hafen',
+            title: 'Die Hafenspuren',
+            description: 'Zuerst bestätigter Abschluss.',
+            status: ending,
+          );
+          expect(active.error, isNull);
+          await active.saveStoryThread(
+            threadId: 'hafen',
+            title: 'Die Hafenspuren',
+            description: _corrected,
+            status: ending,
+          );
+          expect(active.error, isNull);
+          final beforeRestart = active.currentCampaign!;
+          final heroSnapshot = jsonEncode(beforeRestart.hero.toJson());
+          expect(beforeRestart.revision, campaign.revision + 2);
+          active.dispose();
+          active = null;
+          await repo.close();
+          repo = await SqliteCampaignRepository.open(
+            factory: databaseFactoryFfi,
+            path: path,
+          );
 
-        final transport = _EndingTransport();
-        final narrator = BackendNarrator(
-          transport: transport,
-          clock: () => _now,
-        );
-        active = GameController(repository: repo, narrator: narrator);
-        await active.initialize();
-        expect(active.error, isNull);
-        // Session credentials must not survive the app/controller restart.
-        expect(narrator.enabled, isFalse);
-        expect(active.currentCampaign!.id, campaign.id);
-        expect(active.currentCampaign!.storyThreads.first.status, ending);
-        expect(active.currentCampaign!.storyThreads.first.description,
-            _corrected);
+          final transport = _EndingTransport();
+          final narrator = BackendNarrator(
+            transport: transport,
+            clock: () => _now,
+          );
+          active = GameController(repository: repo, narrator: narrator);
+          await active.initialize();
+          expect(active.error, isNull);
+          // Session credentials must not survive the app/controller restart.
+          expect(narrator.enabled, isFalse);
+          expect(active.currentCampaign!.id, campaign.id);
+          expect(active.currentCampaign!.storyThreads.first.status, ending);
+          expect(
+            active.currentCampaign!.storyThreads.first.description,
+            _corrected,
+          );
 
-        await active.connectNarrator(
-          url: 'https://story.example.test',
-          sessionToken: 'story.session',
-        );
-        expect(active.error, isNull);
-        expect(narrator.enabled, isTrue);
+          await active.connectNarrator(
+            url: 'https://story.example.test',
+            sessionToken: 'story.session',
+          );
+          expect(active.error, isNull);
+          expect(narrator.enabled, isTrue);
 
-        final originalRevision = active.currentCampaign!.revision;
-        await active.sendAction('Ich gehe zum Hafen.');
-        expect(active.error, isNull);
-        expect(transport.advances, 1);
-        expect(transport.requests.single['campaignId'], campaign.id);
-        expect(narrator.statusMessage, contains('nicht übernommen'));
-        final afterRejected = active.currentCampaign!;
-        expect(afterRejected.revision, originalRevision + 1);
-        expect(afterRejected.storyBible['turnCount'], '0');
-        expect(afterRejected.storyThreads.first.status, ending);
-        expect(afterRejected.storyThreads.first.description, _corrected);
-        expect(jsonEncode(afterRejected.hero.toJson()), heroSnapshot);
-        expect(afterRejected.quests, isEmpty);
-        expect(
-          (await repo.reconstructCampaign(campaign.id))!.toJson(),
-          afterRejected.toJson(),
-        );
+          final originalRevision = active.currentCampaign!.revision;
+          await active.sendAction('Ich gehe zum Hafen.');
+          expect(active.error, isNull);
+          expect(transport.advances, 1);
+          expect(transport.requests.single['campaignId'], campaign.id);
+          expect(narrator.statusMessage, contains('nicht übernommen'));
+          final afterRejected = active.currentCampaign!;
+          expect(afterRejected.revision, originalRevision + 1);
+          expect(afterRejected.storyBible['turnCount'], '0');
+          expect(afterRejected.storyThreads.first.status, ending);
+          expect(afterRejected.storyThreads.first.description, _corrected);
+          expect(jsonEncode(afterRejected.hero.toJson()), heroSnapshot);
+          expect(afterRejected.quests, isEmpty);
+          expect(
+            (await repo.reconstructCampaign(campaign.id))!.toJson(),
+            afterRejected.toJson(),
+          );
 
-        transport.rewriteEnding = false;
-        await active.sendAction('Ich untersuche die Anlegestelle.');
-        expect(active.error, isNull);
-        expect(transport.advances, 2);
-        final afterAccepted = active.currentCampaign!;
-        expect(afterAccepted.revision, originalRevision + 2);
-        expect(afterAccepted.storyBible['turnCount'], '1');
-        expect(afterAccepted.scene, contains('Hafen bleibt unverändert'));
-        expect(afterAccepted.storyThreads.first.status, ending);
-        expect(afterAccepted.storyThreads.first.description, _corrected);
-        expect(jsonEncode(afterAccepted.hero.toJson()), heroSnapshot);
-        expect(afterAccepted.quests, isEmpty);
-        expect(afterAccepted.events.last.payload['storyProvider'], 'mock');
-        expect(
-          (await repo.reconstructCampaign(campaign.id))!.toJson(),
-          afterAccepted.toJson(),
-        );
-      } finally {
-        active?.dispose();
-        await repo.close();
-        await folder.delete(recursive: true);
-      }
-    });
+          transport.rewriteEnding = false;
+          await active.sendAction('Ich untersuche die Anlegestelle.');
+          expect(active.error, isNull);
+          expect(transport.advances, 2);
+          final afterAccepted = active.currentCampaign!;
+          expect(afterAccepted.revision, originalRevision + 2);
+          expect(afterAccepted.storyBible['turnCount'], '1');
+          expect(afterAccepted.scene, contains('Hafen bleibt unverändert'));
+          expect(afterAccepted.storyThreads.first.status, ending);
+          expect(afterAccepted.storyThreads.first.description, _corrected);
+          expect(jsonEncode(afterAccepted.hero.toJson()), heroSnapshot);
+          expect(afterAccepted.quests, isEmpty);
+          expect(afterAccepted.events.last.payload['storyProvider'], 'mock');
+          expect(
+            (await repo.reconstructCampaign(campaign.id))!.toJson(),
+            afterAccepted.toJson(),
+          );
+        } finally {
+          active?.dispose();
+          await repo.close();
+          await folder.delete(recursive: true);
+        }
+      },
+    );
   }
 }
