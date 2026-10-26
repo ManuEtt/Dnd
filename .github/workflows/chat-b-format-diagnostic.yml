@@ -1,0 +1,15 @@
+name: Chat B temporary Dart format diagnostic
+on:
+  push:
+    branches:
+      - feat/chat-b/npc-selection-resume-20261026
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Print formatted test
+        run: dart format --output=show app/test/npc_selection_resume_sqlite_test.dart
