@@ -28,6 +28,8 @@ export interface StoryNpcIdentityContext {
 export interface StoryTurnWithNpcIdentities extends StoryTurnInput {
   campaignRevision?: number;
   npcContexts?: StoryNpcIdentityContext[];
+  /** Player-chosen NPC ID; never infer this value from narrative text. */
+  selectedNpcId?: string;
 }
 
 const safeId = (value: unknown): value is string =>
@@ -63,11 +65,26 @@ export function validateNpcIdentityContext(input: StoryTurnWithNpcIdentities): v
   if (suppliedRevision !== suppliedContexts) {
     throw new Error('incomplete_npc_identity_context');
   }
-  if (!suppliedRevision) return;
+  if (!suppliedRevision) {
+    if (input.selectedNpcId !== undefined) {
+      throw new Error('orphan_npc_selection');
+    }
+    return;
+  }
   if (!validRevision(input.campaignRevision) ||
       !Array.isArray(input.npcContexts) ||
       input.npcContexts.length > 3) {
     throw new Error('invalid_npc_identity_context');
+  }
+
+  // Explicit selection is intentionally stricter than a general contextual
+  // request: it must identify one and only one submitted saved NPC history.
+  if (input.selectedNpcId !== undefined &&
+      (!safeId(input.selectedNpcId) ||
+        input.npcContexts.length !== 1 ||
+        input.npcContexts[0]?.npcId !== input.selectedNpcId ||
+        input.npcContexts[0]?.notes.length === 0)) {
+    throw new Error('invalid_npc_selection');
   }
 
   const known = new Map<string, { id: string; name: string; relationship: string }>();
