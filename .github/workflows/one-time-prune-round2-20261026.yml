@@ -1,0 +1,63 @@
+name: One-time archive merged branches round2
+on:
+  push:
+    branches:
+      - maintenance/prune-merged-20261026-round2
+permissions:
+  contents: write
+  actions: read
+  pull-requests: read
+jobs:
+  cleanup:
+    if: github.repository == 'ManuEtt/Dnd'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Compare, archive and delete only exact integrated branch heads
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          BASE='0212e99b6222f9fcae0714a2ee09123c3c78347c'
+          CI=$(gh api repos/ManuEtt/Dnd/actions/runs/40285915083 --jq '[.status,.conclusion,.head_sha] | join("|")')
+          [[ "$CI" == "completed|success|$BASE" ]] || { echo "ABORT green main baseline $CI"; exit 1; }
+          git merge-base --is-ancestor "$BASE" origin/main || exit 1
+          open_heads=$(gh api --paginate 'repos/ManuEtt/Dnd/pulls?state=open&per_page=100' --jq '.[].head.ref')
+          mapfile -t items <<'REFS'
+          fix/chat-d/restore-checkpoint-zip-executable-modes-20261026|c0816001026b9bda0bcf1adc8d101756ba4d0ac3
+          fix/sacred-flame-caster-validation-20261026|7fc371475711f3d40d7af3d7723789ce7294844c
+          REFS
+          PREFIX='archive/retirement-20261026-round2'
+          for item in "${items[@]}"; do
+           IFS='|' read -r branch sha <<< "$item"
+           ! grep -Fxq "$branch" <<< "$open_heads" || { echo "ABORT open PR $branch"; exit 1; }
+           actual=$(git ls-remote origin "refs/heads/$branch" | cut -f1)
+           [[ "$actual" == "$sha" ]] || { echo "ABORT moving branch $branch: $actual"; exit 1; }
+           git merge-base --is-ancestor "$sha" origin/main || { echo "ABORT not merged $branch"; exit 1; }
+           old=$(git ls-remote origin "refs/tags/$PREFIX/$branch" | cut -f1)
+           [[ -z "$old" || "$old" == "$sha" ]] || exit 1
+          done
+          for item in "${items[@]}"; do
+           IFS='|' read -r branch sha <<< "$item"
+           tag="$PREFIX/$branch"
+           if [[ -z "$(git ls-remote origin "refs/tags/$tag" | cut -f1)" ]]; then
+            git tag "$tag" "$sha"
+            git push origin "refs/tags/$tag:refs/tags/$tag"
+           fi
+           git push --force-with-lease="refs/heads/$branch:$sha" origin ":refs/heads/$branch"
+           [[ -z "$(git ls-remote origin "refs/heads/$branch" | cut -f1)" ]] || exit 1
+           echo "ARCHIVED AND DELETED $branch"
+          done
+          SELF='maintenance/prune-merged-20261026-round2'
+          [[ "$(git ls-remote origin "refs/heads/$SELF" | cut -f1)" == "$GITHUB_SHA" ]] || exit 1
+          tag="$PREFIX/workflow-$GITHUB_SHA"
+          git tag "$tag" "$GITHUB_SHA"
+          git push origin "refs/tags/$tag:refs/tags/$tag"
+          git push --force-with-lease="refs/heads/$SELF:$GITHUB_SHA" origin ":refs/heads/$SELF"
+          echo 'SUCCESS: two merged branches archived and removed'
