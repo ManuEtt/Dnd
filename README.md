@@ -1,5 +1,18 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – Unicode- und Zeilenfortsetzungs-Duplikate in Gradle-Properties (D-008, 26.10.2026)
+
+Die durch D-005 hinzugefügte Gradle-Distributionsprüfung unterscheidet doppelte `distributionUrl`- und `distributionSha256Sum`-Schlüssel bisher nur anhand ihrer wörtlichen Schreibweise. D-008 erkennt mit Java-Properties-konformer Schlüsselinterpretation auch Backslash-/Unicode-Escapes und logisch fortgesetzte Zeilen, sodass versteckte zusätzliche Parameter fail-closed zurückgewiesen werden. Acht neue Regressionstests haben im ersten gezielten Python-Lauf jeweils bestanden; der vollständige frühere Lauf war durch die inzwischen mit [PR #215](https://github.com/ManuEtt/Dnd/pull/215) korrigierten ZIP-/Checkpoint-Baselinefehler blockiert. Der neue D-008-Commit benötigt deshalb eine eigenständige vollständige CI. Keine Spielstands-, SQLite-, JSON-, SRD- oder App-Änderungen. [Technischer Detail-Checkpoint](docs/parallel/CHAT_D_D008_JAVA_PROPERTIES_ESCAPED_KEYS.md).
+
+## Chat D – Quell-ZIP-Ausführungsrechte (D-007, 26.10.2026)
+
+Nach dem Wechsel auf race-geprüfte `ZipFile.writestr()`-Archivierung waren ausführbare Unix-Dateimodi nicht mehr im Quell-ZIP enthalten. D-007 bewahrt diese Modebits mit `ZipInfo.external_attr`; die zwei bestehenden Rollbacktests mocken wieder den tatsächlich verwendeten ZIP-Schreibweg. Neuer 0755/0644-Test ergänzt. Python-Checkpointtests haben auf dem technischen D-007-Stand bestanden; die damalige Gesamt-CI scheiterte anschließend am Dart-Format von zwei **anderen** Dateien. Der Branch wird mit dem neueren `main` aus PR #214 synchronisiert, wo die Eldritch-Testdatei bereits verändert wurde; die verbleibende Formatabweichung wird gesondert untersucht. Keine Spielstand-/Regeländerung. [Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
+## Chat A – Schutz vor manipulierter Eldritch-Blast-Deckung (26.10.2026)
+
+Der bestehende persistierte Mehrstrahl-Kampfpfad ist erweitert: Wenn der aktuelle Gegner bestätigte Deckung hat, darf ein Strahl diese nicht durch `sourceOppositeCover: false` umgehen. Eine Inkonsistenz stoppt den gesamten Zauber **vor** dem ersten Würfel. Dazu lehnt der reine Resolver Basis-RK 0 frühzeitig ab; der doppelte RK-100-Vergleich ist entfernt. Positive und negative Regressionstests liegen in den Eldritch-Blast-Regel- und Encounter-Tests. Die vorherige globale Main-CI war wegen *unabhängiger* ZIP-Qualitätstests rot; der neue Branch ist bis zum endgültigen CI-Nachweis nicht mergefreigegeben. [Regelbeleg](docs/SRD_ELDRITCH_COVER_SNAPSHOT_20261026.md) · [Chat-A-Checkpoint](docs/parallel/CHAT_A_ELDRITCH_COVER_20261026.md).
+
+
 ## Chat C – Kampf-Deckung bei 200 % Schrift (26.10.2026)
 
 Der unabhängige Branch `feat/chat-c/combat-cover-large-text-20261026` verbessert `FantasyCombatCoverPanel`: Bei 320–360 dp und 200 % Android-Schrift erhalten die Popup-Auswahlen für Held und Gegner jeweils die gesamte Zeilenbreite und zeigen bestätigte Deckungswerte ohne Textkürzung. Die Bedienhilfen nennen Deckungsstufe und Änderbarkeit. Auswahlwerte, bestehende `Deckung: ...`-Befehle und Sperren bei `canChange == false` bleiben unverändert. Drei zusätzliche Widgettests prüfen Layout, Screenreader, Auswahl und gesperrte Aktionen. **Finale CI-/Android-Abnahme steht noch aus.** Keine SRD-, KI-, Kampagnen- oder Datenmigration. [Detaillierter Chat-C-Checkpoint](docs/parallel/CHAT_C_COVER_ACCESSIBILITY_20261026.md).

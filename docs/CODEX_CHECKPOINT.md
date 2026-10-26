@@ -1,3 +1,38 @@
+# Chat D – D-008: Escapte Gradle-Distributionsschlüssel (26.10.2026)
+
+- **Basis:** aktueller `main` `0212e99b6222f9fcae0714a2ee09123c3c78347c` enthält bereits den vollständig CI-getesteten D-007-PR #215; alter D-008-Head `06c0acd8e0739db80847f0f1fcb9abfb5d7ee484`, mit zusätzlichen Elterncommit ohne Force-Push synchronisiert.
+- **IMPLEMENTIERT:** `scripts/verify_project.py` verarbeitet Java-Properties-Zeilenfortsetzungen und Schlüssel-Escapes einschließlich `\\uXXXX` vor dem Eindeutigkeitsvergleich; acht neue positive/negative Python-Regressionen.
+- **GETESTET:** alle acht neuen Tests im GitHub-Actions-Lauf #40283160431 bestanden. Die vollständige frühere Suite scheiterte ausschließlich an den inzwischen korrigierten Python-Checkpoint-/ZIP-Baselinefehlern, daher auf dem neuen D-008-Head noch **nicht** abschließend abgenommen.
+- **NICHT GETESTET:** vollständige neue Python-/Backend-/Flutter-/Android-CI und Alpha-Artefakte; Gerätetest.
+- **BLOCKIERT:** neue finale GitHub-CI und Abgleich mit weiteren Parallel-PRs #216/#217.
+- **MIGRATION:** keine Änderung an echter Gradle-Distribution, Android-App-Code, SQLite, Kampagnen-JSON, SRD-Mechanik, Story oder Version.
+- **NÄCHSTER SCHRITT:** finale CI auf neuem D-008-HEAD erfolgreich abnehmen, danach kontrolliert integrationsbereit machen. [Detailprotokoll](parallel/CHAT_D_D008_JAVA_PROPERTIES_ESCAPED_KEYS.md).
+
+---
+
+# Chat D D-007 – Main-Abgleich nach PR #214
+
+- **Neuer Main-SHA:** `d03faea7ce032e8918da2204228473bd9999932c`; **D-007-Head davor:** `8eaf1fc1787ccf80c4c676fec3df1ce91da16034`.
+- **IMPLEMENTIERT:** geprüfte `writestr`-Archive bewahren ausführbare Modebits; zwei veraltete Rollback-Mocks und Mode-Test korrigiert.
+- **GETESTET:** Python-/Backend-Tests auf vorherigem D-007-Codecommit grün. Main-/CI-Formatfehler in fremden Dartdateien wurden erkannt, kein final grünes CI behauptet.
+- **NICHT GETESTET:** finale kombinierte Android-/Flutter-/Alpha-CI, reale Geräteinstallation.
+- **BLOCKIERT:** eine unabhängige Formatabweichung im NPC-Story-Payload; GitHub-CI auf neuem D-007-HEAD erforderlich.
+- **PERSISTENZ:** SQLite/JSON, App-Version und Story-/Regelverhalten unangetastet.
+- **NÄCHSTER SCHRITT:** Formatabweichung koordinieren, finale CI auf synchronisiertem D-007-Head abnehmen und erst danach integrieren.
+
+---
+
+# Chat A – Eldritch Blast Deckungs-Snapshot (26.10.2026)
+
+- **IMPLEMENTIERT:** Request-Deckungsrichtung pro Strahl gegen gespeicherte Gegnerdeckung validiert, Basis-RK 0 frühzeitig verworfen, redundante Obergrenze entfernt; SRD-Regeltests und persistierte GameEngine-Tests aktualisiert.
+- **GETESTET:** Tests ergänzt, globales CI-Ergebnis für finalen Branch-HEAD noch offen.
+- **NICHT GETESTET:** physisches Android, Release und Migration.
+- **BLOCKIERT:** Ausgangs-`main e903ae38c6ae99abfa99a432e7f7777f0eee853f` hatte unabhängige rote ZIP-/Sicherungstests; keine Fremdskripte verändert.
+- **NOCH NICHT IMPLEMENTIERT:** persistente Mehrgegnerstrahlen mit individuellen AC-/Resistenz-Snapshots.
+- **NÄCHSTER SCHRITT:** eigene Dart-/Flutter-CI abnehmen, unabhängigen Main-ZIP-Testfehler koordinieren und erst danach integrieren. [Regelbeleg](SRD_ELDRITCH_COVER_SNAPSHOT_20261026.md) / [Checkpoint](parallel/CHAT_A_ELDRITCH_COVER_20261026.md).
+
+---
+
 # Chat C – Kampf-Deckung bei 200 % Systemschrift (26.10.2026)
 
 - **Basis-main:** `864b53dba0a7186bf6beef46bcfb1499077d6dc2`; Feature-Branch `feat/chat-c/combat-cover-large-text-20261026`. Vorherige PRs #197 und #199 integriert.

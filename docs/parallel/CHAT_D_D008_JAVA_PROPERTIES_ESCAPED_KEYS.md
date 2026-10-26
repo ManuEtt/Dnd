@@ -1,3 +1,9 @@
+## Aktualisierung nach D-007 (26.10.2026)
+
+Neuer Main-Stand `0212e99b6222f9fcae0714a2ee09123c3c78347c` nach vollständig erfolgreicher Integration von PR #215. Der alte D-008-Head `06c0acd8e0739db80847f0f1fcb9abfb5d7ee484` wurde mit dem aktuellen Main in einem **nicht-erzwungenen** Merge-Commit synchronisiert. Die acht gezielten Parser-Regressionstests haben im früheren Lauf bestanden; vollständige CI-Abnahme auf dem neuen Commit folgt. Die ursprünglichen D-008-Anforderungen und Testergebnisse unten bleiben erhalten.
+
+---
+
 # Chat D – D-008: Escapte Java-Properties-Schlüssel sicher erkennen
 
 **Datum:** 26.10.2026  
@@ -14,7 +20,7 @@ Java-`Properties` unterstützt mit Backslashes escapte Schlüsselnamen (`distrib
 
 - `scripts/verify_project.py`: `_gradle_logical_lines` baut fortgesetzte Java-Properties-Zeilen vor der Schlüsselerkennung zusammen, ohne unescapte Werte zu verändern.
 - `_decode_java_property_key` interpretiert `\\uXXXX`, einfache Backslash-Escapes, `\\t`, `\\r`, `\\n` und `\\f` für den Keyvergleich.
-- `unique_gradle_property` findet damit sämtliche efffektiv gleichen sicherheitsrelevanten Schlüssel und weist doppelte oder uneindeutige Angaben wie vorher fail-closed zurück. Die bestehende HTTPS-/Version-/SHA256-Formatprüfung bleibt unangetastet.
+- `unique_gradle_property` findet damit sämtliche effektiv gleichen sicherheitsrelevanten Schlüssel und weist doppelte oder uneindeutige Angaben wie vorher fail-closed zurück. Die bestehende HTTPS-/Version-/SHA256-Formatprüfung bleibt unangetastet.
 - Acht neue Regressionen in `scripts/tests/test_verify_project.py`: kodierter URL-Key, kodierter SHA256-Key, einfacher Escape, Zeilenfortsetzung, abweichender escapeter Doppelpunkt-Key, einzelne gültige kodierte Deklaration, Kommentare sowie gerade Backslash-Anzahlen ohne Fortsetzung.
 
 ## Tests

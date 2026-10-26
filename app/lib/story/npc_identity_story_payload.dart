@@ -27,13 +27,15 @@ class NpcIdentityStoryPayload {
         campaign,
         npcId: npcId,
         expectedRevision: campaignRevision,
-        maxNotes: (context['notes'] as List).length == 0
+        maxNotes: (context['notes'] as List).isEmpty
             ? 1
             : (context['notes'] as List).length,
       );
       NpcIdentityMemory.requireCurrent(campaign, current);
       if (!_sameContext(current.toContextMap(), context)) {
-        throw const FormatException('NPC-Kontext wurde zwischenzeitlich geändert.');
+        throw const FormatException(
+          'NPC-Kontext wurde zwischenzeitlich geändert.',
+        );
       }
     }
   }

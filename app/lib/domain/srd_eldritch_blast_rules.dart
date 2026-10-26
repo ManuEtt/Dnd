@@ -102,8 +102,7 @@ class SrdEldritchBlastRules {
           !target.attackCircumstancesConfirmed ||
           target.distanceFeet < 0 ||
           target.distanceFeet > 120 ||
-          target.baseArmorClass < 0 ||
-          target.baseArmorClass > 100 ||
+          target.baseArmorClass < 1 ||
           target.baseArmorClass > 100) {
         throw const FormatException(
           'Jeder Strahl benötigt ein gültiges, erreichbares und '
