@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat B – Versteckte Unicode-Zeichen in Plotgeheimnissen blockieren (26.10.2026)
+
+Der optionale Erzähler prüft veröffentlichte Storytexte auf vollständige, bislang geheime Plotpassagen. Bislang konnten U+200B (Zero Width Space), weiche Trennzeichen und ähnliche unsichtbare Unicode-Zeichen eine ansonsten wörtliche Geheimnis-Offenlegung am Filter vorbeischleusen. [PR #244](https://github.com/ManuEtt/Dnd/pull/244) entfernt solche Default-Ignorable-Codepoints beim Vergleich beider Texte und ergänzt Storyplan-/Spielzug-/HTTP-Regressionen. Der Schutz bleibt **wörtlich**, ist keine semantische Spoiler-Erkennung und autorisiert keine Enthüllung. Keine Änderungen an Regelzuständen, SQLite oder altem Kampagnen-JSON. Isolierte Node.js-Reproduktion durchgeführt; eine erfolgreiche Gesamtsuite oder APK für den finalen Commit ist noch gesondert nachzuweisen. [Chat-B-Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md).
+
+
 ## Chat D – Quell-ZIP vor Symlink-Austausch nach dem Scan schützen (D-009, 26.10.2026)
 
 Der Quellarchiv-Export nutzt auf POSIX nun vor jedem Dateilesen gesicherte Verzeichnis-Deskriptoren und `O_NOFOLLOW`, damit ein nach der Auflistung eingeschleuster Link nicht unbemerkt projektfremde Daten archiviert. Drei neue Regressionstests prüfen solche Datei-/Verzeichniswechsel sowie den Erhalt bereits veröffentlichter ZIP-/SHA256-Dateien; ein veralteter Testmock wurde aktualisiert. Non-POSIX-Plattformen erhalten eine zusätzliche Best-Effort-Prüfung, jedoch keine Garantie gegen alle Race Conditions. **Die finale CI auf dem aktuellen PR-Commit ist noch abzunehmen.** Keine Änderungen am Spielstandformat, App-Code oder Regelwerk. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
