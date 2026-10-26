@@ -48,7 +48,7 @@ void main() {
     }
   });
 
-  test('embedded control characters and special durations stay unsupported', () {
+  test('embedded controls and special durations remain unsupported', () {
     for (final invalid in [
       '1 minute\n2 minutes',
       '1 minute\u200B',
