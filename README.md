@@ -86,3 +86,12 @@ Weitere offene Bereiche: vollständige amtliche Quelleninventur, zahlreiche Zaub
 Vollprojekt-ZIP, Patch und Prüfsummen unter `/workspace/artifacts/0.8.40+90/`; aktuelle Dateinamen im dortigen Artefaktindex nach Abschluss. Patchbasis dieses Pakets: `407c2e1ef8ee310b30d1543a263fb66b3331a26e`. ZIP in eine Arbeitskopie entpacken oder Patch mit `git apply --check`/`git apply` auf dieser Basis übernehmen, eigenen Branch pushen und PR öffnen. Keine alten Dateistände ungeprüft über Main kopieren.
 
 Nur rechtmäßig verwendbare Inhalte des **SRD 5.2.1 von Wizards of the Coast unter CC BY 4.0** sowie eigene/lizenzierte Inhalte nutzen. [Namensnennung](THIRD_PARTY_NOTICES.md) erhalten. Keine automatische Weiterarbeit außerhalb einer aktiven Sitzung.
+
+
+---
+
+## Chat B – bestätigte NPC-IDs mit Revisionsschutz (26.10.2026)
+
+Im isolierten Branch `feat/chat-b/npc-revision-context-20261026` entsteht ein ID-basierter, revisionsgebundener **lokaler** NPC-Kontext für die zukünftige KI-Kampagnenfortsetzung. `NpcIdentityMemory.read` unterscheidet selbst gleichnamige NPCs über ihre gespeicherten IDs, ordnet bis zu 20 bestätigte Beziehungsnotizen reproduzierbar und lehnt fremde IDs sowie veraltete Kampagnenrevisionen ab. `requireCurrent` schützt zusätzlich vor still veränderten Snapshots. Der bestätigte Regel-, Quest-, Helden- und Inventarzustand wird nicht geändert. Alte JSON-Spielstände bleiben kompatibel; sechs neue Flutter-Tests wurden geschrieben.
+
+Die neue Projektion ist **noch nicht** an den existierenden stringbasierten KI-Backendvertrag angeschlossen. Die gesonderten Chat-B-PRs #181, #187/#194, #191 und #193 bleiben unberührt. Ein Provider-/Geräte-/APK-Nachweis für diesen neuen Branch darf erst nach vollständiger GitHub-CI gemeldet werden. [Eigener Chat-B-Checkpoint](docs/parallel/CHAT_B_NPC_REVISION_CONTEXT_20261026.md).
