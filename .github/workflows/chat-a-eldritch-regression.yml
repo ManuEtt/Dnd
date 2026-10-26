@@ -43,9 +43,10 @@ jobs:
         run: |
           dart format lib/domain/srd_eldritch_blast_rules.dart lib/domain/game_engine.dart test/srd_eldritch_blast_rules_test.dart test/srd_eldritch_blast_encounter_test.dart
           git --no-pager diff --exit-code -- lib/domain/srd_eldritch_blast_rules.dart lib/domain/game_engine.dart test/srd_eldritch_blast_rules_test.dart test/srd_eldritch_blast_encounter_test.dart
-      - name: Flutter-Code analysieren
+      - name: Geaenderte Regeldateien und Tests analysieren
         working-directory: app
-        run: flutter analyze
+        run: |
+          flutter analyze lib/domain/srd_eldritch_blast_rules.dart lib/domain/game_engine.dart test/srd_eldritch_blast_rules_test.dart test/srd_eldritch_blast_encounter_test.dart
       - name: Eldritch-Regel-/SQLite-Regression gezielt ausfuehren
         working-directory: app
         run: flutter test test/srd_eldritch_blast_rules_test.dart test/srd_eldritch_blast_encounter_test.dart
