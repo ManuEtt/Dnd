@@ -50,9 +50,13 @@ jobs:
             const closed = await github.paginate(
               github.rest.pulls.list, { ...repo, state: 'closed', per_page: 100 }
             );
-            const active = new Set(open.filter(p =>
-              p.head.repo?.full_name === 'ManuEtt/Dnd'
-            ).map(p => p.head.ref));
+            const active = new Set([
+              ...open.filter(p => p.head.repo?.full_name === 'ManuEtt/Dnd')
+                .map(p => p.head.ref),
+              // An open dependent PR can use another branch as its base.
+              // Never remove either side of a still-active PR.
+              ...open.map(p => p.base.ref)
+            ]);
 
             const ported = new Map([
               [244, ['backend/src/story_secret_guard.ts', 'backend/test/story_secret_guard.test.ts']],
