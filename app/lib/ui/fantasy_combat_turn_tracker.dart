@@ -136,10 +136,7 @@ class _TurnEntry extends StatelessWidget {
         ),
         Text(
           hero ? 'Held' : 'Gegner',
-          style: const TextStyle(
-            color: FantasyPalette.muted,
-            fontSize: 11,
-          ),
+          style: const TextStyle(color: FantasyPalette.muted, fontSize: 11),
         ),
       ],
     );
