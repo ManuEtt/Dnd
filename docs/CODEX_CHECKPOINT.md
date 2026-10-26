@@ -1,3 +1,15 @@
+# Chat D – plattformübergreifende Quell-ZIP-Pfade D-006 (26.10.2026)
+
+- **Main-Basis:** `5f9a01dd73f68ad4f9e226f859a8ca87803b8337`; eigener Branch `fix/chat-d/portable-source-zip-paths-20261026`.
+- **IMPLEMENTIERT:** Archivpfade vor Publikation per Unicode-NFC, Casefold und Windows-Dateinamenregeln validieren; auch Verzeichnisprefixe. Sechs neue Python-Regressionen inklusive Bewahrung alter ZIP-/Prüfsummenpaare.
+- **GETESTET:** Code und Tests committed; Basis-`main` hatte eine vollständig erfolgreiche CI, **nicht** der neue Branch.
+- **NICHT GETESTET:** finale Python-/Flutter-/Backend-/Android-CI und Quell-ZIP/Alpha-Artefakt-Erstellung für D-006; manuelles Entpacken unter Windows/macOS.
+- **BLOCKIERT:** neuer CI-Nachweis. PR #189 für Gradle-Properties unabhängig; keine technischen Pfade überschneiden sich.
+- **MIGRATION:** SQLite, JSON, Gameplay, App-Version und SRD-Regelmechanik unverändert.
+- **NÄCHSTER SCHRITT:** finale CI und Quellen-ZIP abnehmen; aktuelle Main- und gemeinsame README-/Checkpoint-Änderungen konfliktfrei integrieren. [Persönlicher Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
+
+---
+
 # Chat C – barrierefreier Abenteuerstatus (25.10.2026)
 
 - **Main-Basis:** initial `97a06118f17d71cc77be2cb15a2fc9a53db20ee0`, jetzt `45bea9c2a897275583bdbe32ed50afde5d0a76b0`; Branch `feat/chat-c/accessible-status-hud-20261025`.
