@@ -1,3 +1,16 @@
+# Chat B – bestätigte Story-Enden nach SQLite-Wiederaufnahme (26.10.2026)
+
+- **Basiskette:** `main` `67f146e690306b13d490bd8e7fd5636bb187c77e` → [PR #253](https://github.com/ManuEtt/Dnd/pull/253), Head `ba33a2497852ab13237b448427057b432ec222b6` → Branch `test/chat-b/terminal-thread-sqlite-resume-20261026`.
+- **IMPLEMENTIERT:** neue Flutter-/SQLite-Ende-zu-Ende-Testdatei `app/test/ai_story_terminal_sqlite_resume_test.dart`: zwei Terminalstatus, manuelle Abschlusskorrektur im Journal, zweimal DB-Schließen/Neuöffnen, Revisionswiederherstellung, Verweigerung nachträglicher KI-Beschreibungskorrektur, idempotente Fortsetzung und unveränderte Heldendaten.
+- **GETESTET:** Fach- und SQLite-Verträge im GitHub-Code abgeglichen; Parent-PR #253 hat vollständige GitHub-CI [#40382876436](https://github.com/ManuEtt/Dnd/actions/runs/40382876436) bestanden. Neue Tests erst nach deren eigenem CI als bestanden markieren.
+- **NICHT GETESTET:** neue Tests lokal / Realgerät / produktiver KI-Provider.
+- **BLOCKIERT:** abhängiger PR setzt Schutz aus #253 voraus; vor späterem Merge zuerst #253 integrieren. Dokumentation von Chat D zusammenführen.
+- **MIGRATION:** keine; keine Produktionscode-, Datenbank-, JSON-, Regel- oder App-Version-Änderung.
+- **NÄCHSTER SCHRITT:** Controller-Wiederaufnahme mit Narrator-Mock nach grünem Test-Inkrement und parent Merge.
+- [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md). Ältere Einträge bleiben erhalten.
+
+---
+
 # Chat B – Schutz bestätigter Story-Abschlussbeschreibungen (26.10.2026)
 
 - **Ausgangs-Main:** `67f146e690306b13d490bd8e7fd5636bb187c77e`; **Branch:** `fix/chat-b/terminal-thread-description-20261026`; **PR:** nach Veröffentlichung auf GitHub ermitteln.
