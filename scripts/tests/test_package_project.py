@@ -301,6 +301,7 @@ class ProjectArchiveTests(unittest.TestCase):
             if not altered:
                 altered = True
                 class Changed:
+                    st_mode = stat.st_mode
                     st_dev = stat.st_dev
                     st_ino = stat.st_ino
                     st_size = stat.st_size
