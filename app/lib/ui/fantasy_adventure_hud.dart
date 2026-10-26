@@ -445,7 +445,8 @@ class _QuestLine extends StatelessWidget {
     return Semantics(
       container: true,
       excludeSemantics: true,
-      label: '$status: ${quest.title}${description.isEmpty ? '' : ', $description'}',
+      label:
+          '$status: ${quest.title}${description.isEmpty ? '' : ', $description'}',
       child: Padding(
         padding: const EdgeInsets.fromLTRB(12, 10, 12, 4),
         child: Row(
@@ -468,8 +469,9 @@ class _QuestLine extends StatelessWidget {
                   Text(
                     quest.title,
                     maxLines: largeText ? null : 3,
-                    overflow:
-                        largeText ? TextOverflow.visible : TextOverflow.ellipsis,
+                    overflow: largeText
+                        ? TextOverflow.visible
+                        : TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 2),
                   Text(status, style: TextStyle(color: color, fontSize: 11)),
