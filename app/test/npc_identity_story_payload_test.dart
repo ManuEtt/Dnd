@@ -92,7 +92,7 @@ void main() {
       throwsFormatException,
     );
     expect(
-      NpcIdentityStoryPayload.prepare(
+      () => NpcIdentityStoryPayload.prepare(
         campaign.copyWith(revision: -1),
         'Ich frage Mira.',
       ),
