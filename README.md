@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – Auftragsübersicht bei großer Android-Schrift (26.10.2026)
+
+Auf dem separaten Branch `feat/chat-c/quest-board-large-text-20261026` bleibt der Inhalt gespeicherter Aufträge bei 320/360 dp und 200 % Schrift vollständig lesbar. Die Unterzeile sowie Quest-Titel/-Beschreibungen verzichten bei ab 180 % Textskalierung auf feste Zeilengrenzen; eine rein dekorative Rune macht dann Platz für die Überschrift. Screenreader erhalten den bestätigten Status, Titel und die Beschreibung jeder Quest in einer zusammenhängenden, deutschen Beschriftung. Drei Widgettests prüfen große Schrift, Vorlesetexte, unveränderte Questdaten, Tagebuchaktion und leeren Spielstand. **Abnahme des finalen PR-Commits steht noch aus**; kein Android-Gerät manuell geprüft. Kein Daten-/SRD-/Story-Eingriff, keine Versionsänderung. [Chat-C-Checkpoint](docs/parallel/CHAT_C_QUEST_BOARD_20261026.md).
+
 ## Chat C – Zugänglicher Heldenstatus (25.10.2026, PR offen)
 
 Der unabhängige Branch `feat/chat-c/accessible-status-hud-20261025` verbessert ausschließlich die Darstellung von `FantasyAdventureStatusHud`: ab 180 % Systemschrift bei 320–360 dp einspaltige Statuskarten; die angezeigten Werte schrumpfen nicht mehr über `FittedBox`. TP, RK, Bewegung und Erfahrung besitzen vollständige deutsche Screenreader-Texte; unbekannte Werte werden ausdrücklich als „nicht bestätigt“ angesagt. TP-/EP-Balken erhalten verständliche Prozent-Semantik. Drei Widgettests prüfen 320/360 dp bei 200 % und den unbekannten Zustand.
