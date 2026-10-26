@@ -2103,7 +2103,7 @@ class GameEngine {
       next,
       'Eldritch Blast gegen ${fight.enemyName}: '
       '${blasts.beams.length} Strahl(en), ${adjusted.appliedTotal} '
-      'Energieschaden. Gegner-TP ${remaining}. '
+      'Energieschaden. Gegner-TP $remaining. '
       'Magieaktion verbraucht, kein Zauberplatz.',
       type: 'spell.eldritchBlast',
       payload: payload,
