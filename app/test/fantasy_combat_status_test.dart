@@ -461,7 +461,8 @@ void main() {
         await tester.pumpAndSettle();
         expect(actions, ['Deckung: Held voll']);
         expect(tester.takeException(), isNull);
-      });
+        },
+      );
     }
   }
 
