@@ -43,3 +43,5 @@ jobs:
       - name: Run focused combat UI tests
         working-directory: app
         run: flutter test test/fantasy_combat_status_test.dart
+
+# Repeat after fixing the Dart widget test syntax.
