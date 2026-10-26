@@ -1,0 +1,61 @@
+name: Chat C combatant card isolated Flutter validation
+
+on:
+  push:
+    branches:
+      - feat/chat-c/combatant-card-large-text-20261026
+    paths:
+      - .github/workflows/chat-c-combatant-ci.yml
+
+permissions:
+  contents: read
+
+jobs:
+  combatant-card:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate source-controlled fantasy UI assets
+        run: python3 scripts/generate_fantasy_buttons.py
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Install SQLite for Flutter tests
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsqlite3-dev
+      - name: Resolve Flutter dependencies
+        working-directory: app
+        run: flutter pub get
+      - name: Verify Dart formatting
+        working-directory: app
+        run: dart format --output=none --set-exit-if-changed lib test
+      - name: Analyze Flutter code
+        working-directory: app
+        run: flutter analyze
+      - name: Verify combatant-card regressions
+        working-directory: app
+        run: flutter test test/fantasy_combatant_card_test.dart
+      - name: Full Flutter test suite (independent of unrelated Python packaging tests)
+        working-directory: app
+        run: flutter test
+      - uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: '12266719'
+          packages: 'platform-tools'
+          log-accepted-android-sdk-licenses: 'false'
+      - name: Install Android platform tools
+        run: bash scripts/install_android_sdk_packages.sh
+      - name: Build Android debug APK
+        working-directory: app
+        run: |
+          chmod +x android/gradlew
+          flutter build apk --debug
