@@ -38,10 +38,7 @@ void main() {
           body: SingleChildScrollView(
             child: DeathSaveDecisionPanel(
               hero: hero,
-              pending: const PendingDeathSave(
-                originalNatural: 1,
-                modifier: 5,
-              ),
+              pending: const PendingDeathSave(originalNatural: 1, modifier: 5),
               busy: busy,
               onAccept: () => accepts++,
               onReroll: rerolls.add,
