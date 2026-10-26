@@ -1,3 +1,15 @@
+# Chat C – Kampf-Deckung bei 200 % Systemschrift (26.10.2026)
+
+- **Basis-main:** `864b53dba0a7186bf6beef46bcfb1499077d6dc2`; Feature-Branch `feat/chat-c/combat-cover-large-text-20261026`. Vorherige PRs #197 und #199 integriert.
+- **IMPLEMENTIERT:** `fantasy_combat_status.dart` verwendet bei hoher Textskalierung und unter 500 dp volle Zeilen für Held-/Gegner-Deckung. Kein Abschneiden bestätigter Deckungsnamen; eigene deutsche Screenreader-Labels und korrekte Änderbarkeits-Texte. Popup-Befehle und Controller-Sperren unverändert.
+- **TESTS ERGÄNZT:** Zwei positive 320/360-dp-/200-%-Tests mit bestätigtem `Deckung: Held voll`-Befehl; ein negativer Test für gesperrte Auswahlen, unveränderte Deckung und keine Absendung. Keine Behauptung vollständiger CI-Abnahme vor Abschluss der GitHub Actions.
+- **NICHT GETESTET:** Finale Flutter-/Backend-/Architektur-/SRD-/Android-CI, reales Android mit TalkBack und produktive Signierung.
+- **DATENKOMPATIBILITÄT:** `0.8.40+90`, SQLite 2, JSON 1 unverändert; keinerlei Schema-, KI-, Kampfregel- oder Storyänderung.
+- **NÄCHSTER SCHRITT:** Formatter-Ausgabe übernehmen, eigene PR-CI prüfen, Regressionen vor Integration beheben. Keine automatischen Main-Merges.
+- [Persönlicher Checkpoint](parallel/CHAT_C_COVER_ACCESSIBILITY_20261026.md). Historische Abschnitte anderer Chats folgen unverändert.
+
+---
+
 # Chat C – barrierefreier Abenteuerstatus (25.10.2026)
 
 - **Main-Basis:** initial `97a06118f17d71cc77be2cb15a2fc9a53db20ee0`, jetzt `45bea9c2a897275583bdbe32ed50afde5d0a76b0`; Branch `feat/chat-c/accessible-status-hud-20261025`.
