@@ -2,7 +2,45 @@ import 'models.dart';
 
 /// SRD 5.2.1, character creation, p. 21 (German edition p. 24).
 /// These methods generate base scores; background increases are a separate step.
-enum AbilityGenerationMethod { standardArray, pointBuy }
+enum AbilityGenerationMethod { standardArray, pointBuy, randomRoll }
+
+/// Immutable evidence of one four-d6 throw. The lowest die is excluded.
+class AbilityRoll {
+  AbilityRoll._(List<int> values) : dice = List.unmodifiable(values);
+  final List<int> dice;
+
+  int get score {
+    final sorted = dice.toList()..sort();
+    return sorted.skip(1).fold<int>(0, (sum, die) => sum + die);
+  }
+}
+
+/// Six independent, immutable 4d6-drop-lowest rolls (SRD 5.2.1, p. 21).
+class AbilityRollSet {
+  AbilityRollSet._(List<AbilityRoll> values)
+      : rolls = List.unmodifiable(values);
+
+  final List<AbilityRoll> rolls;
+  List<int> get scores => List.unmodifiable(rolls.map((roll) => roll.score));
+
+  /// Injected d6 source permits deterministic tests; invalid dice fail closed.
+  factory AbilityRollSet.generate({required int Function() rollD6}) {
+    final rounds = <AbilityRoll>[];
+    for (var round = 0; round < 6; round++) {
+      final dice = <int>[];
+      for (var die = 0; die < 4; die++) {
+        final value = rollD6();
+        if (value < 1 || value > 6) {
+          throw const FormatException('Ein W6 muss 1 bis 6 ergeben.');
+        }
+        dice.add(value);
+      }
+      rounds.add(AbilityRoll._(dice));
+    }
+    return AbilityRollSet._(rounds);
+  }
+}
+
 
 /// The SRD backgrounds' ability choices, not their complete game features.
 /// SRD 5.2.1 p. 83 (German edition p. 93).
@@ -33,6 +71,7 @@ class AbilityAllocation {
   AbilityAllocation({
     required this.method,
     required Map<String, int> baseScores,
+    this.rollSet,
   }) : baseScores = Map.unmodifiable(baseScores);
 
   static const standardArray = <int>[15, 14, 13, 12, 10, 8];
@@ -50,6 +89,7 @@ class AbilityAllocation {
 
   final AbilityGenerationMethod method;
   final Map<String, int> baseScores;
+  final AbilityRollSet? rollSet;
 
   List<String> get errors {
     final result = _abilityKeyErrors(baseScores);
@@ -63,6 +103,18 @@ class AbilityAllocation {
           )) {
         result.add(
           'Der Standardsatz muss 15, 14, 13, 12, 10 und 8 jeweils einmal enthalten.',
+        );
+      }
+    } else if (method == AbilityGenerationMethod.randomRoll) {
+      final expected = rollSet?.scores.toList()..sort();
+      final actual = baseScores.values.toList()..sort();
+      if (expected == null ||
+          actual.length != expected.length ||
+          !Iterable<int>.generate(expected.length).every(
+            (i) => actual[i] == expected[i],
+          )) {
+        result.add(
+          'Die sechs unveränderten Würfelergebnisse müssen genau einmal zugewiesen werden.',
         );
       }
     } else {
@@ -108,6 +160,7 @@ class AbilityAllocation {
     return AbilityAllocation(
       method: method,
       baseScores: {...baseScores, ability: score},
+      rollSet: rollSet,
     );
   }
 
