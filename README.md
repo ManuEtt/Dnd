@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – sichere Dateinamen im Quellcode-ZIP (D-006, 26.10.2026)
+
+Der Quell-ZIP-Ersteller prüft jetzt vor der Veröffentlichung plattformübergreifend uneindeutige Datei- und Verzeichnispfade: Groß-/Kleinschreibung, NFC/NFD-Unicode sowie problematische Windows-Dateinamen. Sechs neue Python-Regressionsmethoden einschließlich Rückrollschutz für bereits veröffentlichte ZIP-/SHA256-Paare sind ergänzt. Das Arbeitspaket ändert keine App-Funktionen oder Spielstände; vollständige CI und Paketerstellung auf dem finalen Commit müssen noch separat nachgewiesen werden. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
 ## Chat C – Zugänglicher Heldenstatus (25.10.2026, PR offen)
 
 Der unabhängige Branch `feat/chat-c/accessible-status-hud-20261025` verbessert ausschließlich die Darstellung von `FantasyAdventureStatusHud`: ab 180 % Systemschrift bei 320–360 dp einspaltige Statuskarten; die angezeigten Werte schrumpfen nicht mehr über `FittedBox`. TP, RK, Bewegung und Erfahrung besitzen vollständige deutsche Screenreader-Texte; unbekannte Werte werden ausdrücklich als „nicht bestätigt“ angesagt. TP-/EP-Balken erhalten verständliche Prozent-Semantik. Drei Widgettests prüfen 320/360 dp bei 200 % und den unbekannten Zustand.
