@@ -1,3 +1,15 @@
+# Chat C – Kampf-Zugfolge bei großer Systemschrift (26.10.2026)
+
+- **Basis:** `main` `5f9a01dd73f68ad4f9e226f859a8ca87803b8337`, Branch `feat/chat-c/turn-tracker-large-text-20261026`.
+- **IMPLEMENTIERT:** `FantasyCombatTurnTracker` nutzt bei Textskalierung ab 180 % und unter 500 dp eine vertikale Anzeige der Initiative und des Zugmarkers. Lange Namen werden ohne `maxLines`-Abschneiden angezeigt; bestätigte Reihenfolge und bestehende Screenreader-Texte bleiben erhalten.
+- **TESTS ERGÄNZT:** 320/360 dp und 200 %; positive bestätigte und negative unbekannte/beendete Begegnungen in `fantasy_combat_turn_tracker_test.dart`. GitHub-CI auf finalem Commit noch nicht abgeschlossen.
+- **NICHT GETESTET:** finale Flutter-Analyse/-Gesamttests, Backend-/SRD-/Python-Prüfungen und Android-APK/Alpha-Release sowie manuelles TalkBack/Realgerät und produktive Signierung.
+- **MIGRATION:** keine. `0.8.40+90` / SQLite 2 / JSON 1 unverändert.
+- **NÄCHSTER SCHRITT:** Dart-Format herstellen, PR öffnen, Gesamt-CI bis zum Ergebnis abnehmen, dann separat nächste UI-Aufgabe prüfen.
+- [Detaillierter Checkpoint](parallel/CHAT_C_TURN_TRACKER_20261026.md). Geschichte anderer Chats folgt unverändert.
+
+---
+
 # Chat C – barrierefreier Abenteuerstatus (25.10.2026)
 
 - **Main-Basis:** initial `97a06118f17d71cc77be2cb15a2fc9a53db20ee0`, jetzt `45bea9c2a897275583bdbe32ed50afde5d0a76b0`; Branch `feat/chat-c/accessible-status-hud-20261025`.
