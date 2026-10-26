@@ -1,0 +1,64 @@
+name: One-time prune integrated Chat C branches
+on:
+  push:
+    branches:
+      - maintenance/prune-chat-c-20261026
+permissions:
+  contents: write
+  actions: read
+  pull-requests: read
+jobs:
+  prune:
+    if: github.repository == 'ManuEtt/Dnd'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Check original heads, archive and delete
+        shell: bash
+        run: |
+          set -euo pipefail
+          PREFIX='archive/branch-prune-chat-c-20261026'
+          MERGE='f03f319e48b021a2ab34216284eaca4d677b6a5b'
+          CI=$(gh api repos/ManuEtt/Dnd/actions/runs/40271492626 --jq '[.status,.conclusion,.head_sha] | join("|")')
+          [[ "$CI" == 'completed|success|4017f50fd9a357139b74fb39c34b490e480542cb' ]] || { echo "ABORT PR CI $CI"; exit 1; }
+          git fetch --quiet origin main
+          git merge-base --is-ancestor "$MERGE" origin/main || { echo 'ABORT merged main head not ancestral'; exit 1; }
+          open_heads=$(gh api --paginate 'repos/ManuEtt/Dnd/pulls?state=open&per_page=100' --jq '.[].head.ref')
+          mapfile -t rows <<'ROWS'
+          feat/chat-c/quest-board-large-text-20261026|5b30c0dc6df502069927fd39b356be6a3feb2519
+          feat/chat-c/accessible-active-hero-20261025|4cb7e6547ee64f990413a4e24e20ceb631c5cc1b
+          fix/chat-c/npc-chronicle-fallback-20261025|2787247cda7b041e27c373ca36a07aa8cb2b399f
+          integration/chat-c-ui-fixes-20261026|4017f50fd9a357139b74fb39c34b490e480542cb
+          ROWS
+          for row in "${rows[@]}"; do
+           IFS='|' read -r branch expected <<< "$row"
+           ! grep -Fxq "$branch" <<< "$open_heads" || { echo "ABORT open PR $branch"; exit 1; }
+           [[ "$(git ls-remote origin "refs/heads/$branch" | cut -f1)" == "$expected" ]] || { echo "ABORT head changed $branch"; exit 1; }
+           git merge-base --is-ancestor "$expected" origin/main || { echo "ABORT not ancestor $branch"; exit 1; }
+           old=$(git ls-remote origin "refs/tags/$PREFIX/$branch" | cut -f1)
+           [[ -z "$old" || "$old" == "$expected" ]] || { echo "ABORT archive conflict $branch"; exit 1; }
+          done
+          for row in "${rows[@]}"; do
+           IFS='|' read -r branch expected <<< "$row"
+           tag="$PREFIX/$branch"
+           if [[ -z "$(git ls-remote origin "refs/tags/$tag" | cut -f1)" ]]; then
+            git tag "$tag" "$expected"
+            git push origin "refs/tags/$tag:refs/tags/$tag"
+           fi
+           git push --force-with-lease="refs/heads/$branch:$expected" origin ":refs/heads/$branch"
+           [[ -z "$(git ls-remote origin "refs/heads/$branch" | cut -f1)" ]] || exit 1
+           echo "ARCHIVED & REMOVED $branch"
+          done
+          SELF='maintenance/prune-chat-c-20261026'
+          [[ "$(git ls-remote origin "refs/heads/$SELF" | cut -f1)" == "$GITHUB_SHA" ]] || exit 1
+          tag="$PREFIX/workflow-$GITHUB_SHA"
+          git tag "$tag" "$GITHUB_SHA"
+          git push origin "refs/tags/$tag:refs/tags/$tag"
+          git push --force-with-lease="refs/heads/$SELF:$GITHUB_SHA" origin ":refs/heads/$SELF"
+          echo 'SUCCESS: four merged Chat C branches archived and deleted.'
