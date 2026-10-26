@@ -132,7 +132,7 @@ Anleitungen: [Sicherungen](docs/SAVE_BACKUPS.md) · [Alpha-Artefakte](docs/ALPHA
 
 ### Chat D D-012: Sichere Gradle-Wrapper-Vorprüfung (26.10.2026)
 
-Die Upload-/Projektprüfung weist nun manipulierte Gradle-Wrapper-ZIP-Dateien mit mehr als 512 Einträgen oder mehr als 16 MiB entpackten Daten zurück, bevor sie mit CRC-Prüfung entpackt werden; auch die JAR-Datei selbst ist auf 16 MiB begrenzt. Neue Python-Regressionstests prüfen komprimierte ZIP-Bombs, übergroße Eintragslisten und das weiterhin gültige originale Wrapper-JAR. Die bestehende Android-/Flutter-App und Spielstände ändern sich nicht; **vollständige CI dieses Arbeitsbranches noch abzunehmen**. Details: [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+Die Upload-/Projektprüfung weist nun manipulierte Gradle-Wrapper-ZIP-Dateien mit mehr als 512 Einträgen oder mehr als 16 MiB entpackten Daten zurück, bevor sie mit CRC-Prüfung entpackt werden; auch die JAR-Datei selbst ist auf 16 MiB begrenzt. Neue Python-Regressionstests prüfen zu große JAR-Dateien, komprimierte ZIP-Bombs, übergroße Eintragslisten und das weiterhin gültige originale Wrapper-JAR. Die bestehende Android-/Flutter-App und Spielstände ändern sich nicht; **vollständige CI dieses Arbeitsbranches noch abzunehmen**. Details: [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
 
 ## Entwicklungsstand und nächste Schritte
 
