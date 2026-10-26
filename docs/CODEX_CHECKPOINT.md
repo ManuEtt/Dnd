@@ -94,3 +94,5 @@ Logs `/workspace/validation/20261026-sacred-*`, isolierte Buildkopie `/workspace
 - **NICHT GETESTET:** produktiver Provider, echtes Gerät, Store-Signierung. Kein lokales Dart-/Flutter-SDK verfügbar.
 - **NOCH NICHT IMPLEMENTIERT:** benutzergesteuerte NPC-Auswahl aus dem Android-Kampagnendialog in `GameController`. Das bleibt der nächste koordinierte UI-/Story-Schritt.
 - **Fachcheckpoint:** [Chat B NPC-ID-Protokoll](parallel/CHAT_B_NPC_SELECTION_WIRE_20261026.md). Historische Ergebnisse darunter erhalten, zentrale Dokumentüberschneidungen von Chat D konsolidieren.
+
+**Chat B GitHub-Update (26.10.2026):** Die zuvor auf dem eigenen Branch vorbereitete Auswahlübertragung ist [PR #237](https://github.com/ManuEtt/Dnd/pull/237). Backend und vollständige Flutter-Suite auf Code-/Format-Commit `65bb3d29ac2aeead857073e2062c6c7fc0fa985a` im Actions-Lauf #40342521532 bereits erfolgreich; Android- und finaler Dokumentations-HEAD noch abnehmen. Keine UI-Freigabe behaupten.

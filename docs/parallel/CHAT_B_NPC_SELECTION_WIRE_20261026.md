@@ -45,3 +45,9 @@ Die lokale Story-Bibliothek kann unter `NpcStorySelection.choose` zwei gleichnam
 ## Genau ein nächster Schritt
 
 Eine gezielte **Bedienoberfläche für die Auswahl zweier gleichnamiger NPCs** nach Abstimmung mit Chat C implementieren, die die bereits erstellte Auswahl sicher an `GameController` übergibt und bei einer zwischenzeitlichen Kampagnenrevision die Auswahl wieder verlangt.
+
+## Aktueller Pull Request
+
+- [PR #237](https://github.com/ManuEtt/Dnd/pull/237) gegen `main`, Basis `42d14ad36cc947691f7e5a1e8647a43f5421b86e`.
+- Fachcode und Testkorrekturen bis Commit `65bb3d29ac2aeead857073e2062c6c7fc0fa985a` nachgewiesen; die endgültige PR-HEAD-SHA ergibt sich aus diesem Dokumentationscommit.
+- GitHub Actions [#40342521532](https://github.com/ManuEtt/Dnd/actions/runs/40342521532): Backend-Typecheck/-Build/-Tests, Dart-Formatierung, Flutter-Analyse, gezielte Fantasy-Dialogtests und vollständige Flutter-Suite **bestanden**; Android-Build beim letzten Abruf noch in Arbeit. Der finale CI-Lauf des neuen Dokumentations-HEAD ist gesondert zu prüfen.
