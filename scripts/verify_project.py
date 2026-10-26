@@ -26,25 +26,83 @@ REQUIRED_FILES = (
 WRAPPER_MAIN = 'org/gradle/wrapper/GradleWrapperMain.class'
 
 
-def unique_gradle_property(text: str, key: str) -> str | None:
-    """Fail closed on duplicate/ambiguous Gradle Java-properties declarations.
+def _gradle_logical_lines(text: str):
+    """Join Java-properties continuation lines before inspecting keys.
 
-    Java properties accept '=', ':' and whitespace separators; duplicate keys
-    are ambiguous for a security check because the runtime may use the last.
+    Odd trailing backslashes continue a logical line. Leading whitespace on
+    subsequent physical lines is ignored by java.util.Properties.
+    """
+    pending = ''
+    continued = False
+    for physical in text.splitlines():
+        fragment = physical.lstrip(' \t\f') if continued else physical
+        trailing = len(fragment) - len(fragment.rstrip('\\'))
+        if trailing % 2:
+            pending += fragment[:-1]
+            continued = True
+            continue
+        yield pending + fragment
+        pending = ''
+        continued = False
+    if continued:
+        yield pending
+
+
+def _decode_java_property_key(raw: str) -> str | None:
+    """Interpret Java Properties key escapes without normalizing their value."""
+    decoded = []
+    index = 0
+    while index < len(raw):
+        char = raw[index]
+        if char != '\\':
+            decoded.append(char)
+            index += 1
+            continue
+        index += 1
+        if index >= len(raw):
+            return None
+        escape = raw[index]
+        if escape == 'u':
+            digits = raw[index + 1:index + 5]
+            if len(digits) != 4 or re.fullmatch(r'[0-9a-fA-F]{4}', digits) is None:
+                return None
+            decoded.append(chr(int(digits, 16)))
+            index += 5
+            continue
+        decoded.append({'t': '\t', 'r': '\r', 'n': '\n', 'f': '\f'}.get(escape, escape))
+        index += 1
+    return ''.join(decoded)
+
+
+def unique_gradle_property(text: str, key: str) -> str | None:
+    """Require exactly one effective Java-Properties declaration of *key*.
+
+    Java supports escaped key names (including backslash-u escapes) and continued physical
+    lines. Comparing the raw spelling could approve a safe URL while Gradle
+    uses a second, hidden declaration. Leave values in their original form
+    for the existing strict HTTPS/SHA-256 checks.
     """
     candidates: list[str] = []
-    pattern = re.compile(rf"^{re.escape(key)}(?=$|[\s=:])")
-    definition = re.compile(rf"^{re.escape(key)}(?:\s*[:=]\s*|\s+)(.*)$")
-    for line in text.splitlines():
-        stripped = line.lstrip()
-        if not stripped or stripped.startswith(("#", "!")):
+    for line in _gradle_logical_lines(text):
+        stripped = line.lstrip(' \t\f')
+        if not stripped or stripped.startswith(('#', '!')):
             continue
-        if not pattern.match(stripped):
+        index = 0
+        while index < len(stripped):
+            char = stripped[index]
+            if char == '\\':
+                index += 2
+                continue
+            if char in ' \t\f=:':
+                break
+            index += 1
+        decoded_key = _decode_java_property_key(stripped[:index])
+        if decoded_key != key:
             continue
-        match = definition.fullmatch(stripped)
-        if match is None:
-            return None
-        candidates.append(match.group(1).strip())
+        suffix = stripped[index:].lstrip(' \t\f')
+        if suffix.startswith(('=', ':')):
+            suffix = suffix[1:]
+        candidates.append(suffix.strip())
     return candidates[0] if len(candidates) == 1 else None
 
 
