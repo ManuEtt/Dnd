@@ -1,3 +1,9 @@
+> **Charaktererstellung (26.10.2026):** Die offizielle 4W6-Methode
+> einschließlich expliziter Zuordnung wurde als [Draft-PR #264](https://github.com/ManuEtt/Dnd/pull/264)
+> ergänzt. Weitere Pflichtfunktionen fehlen weiterhin; Tests und Android-APK
+> für den finalen PR-Head sind erst nach grüner CI bestätigt.
+> [Aktuelle Teilabdeckung](docs/CHARACTER_CREATION_COMPLETE.md).
+
 # Würfelraunen – Der lebendige Spielleiter
 
 ## Chat B – Fortsetzung einer expliziten NPC-Auswahl nach Neustart (26.10.2026)

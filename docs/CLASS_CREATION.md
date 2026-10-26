@@ -5,7 +5,7 @@ Quelle: SRD 5.2.1, Abschnitt „Classes“: https://www.dndbeyond.com/srd
 ## Verwendung auf Android
 
 1. **Neuen Helden erschaffen** öffnen. Name, Spezies und Stufe 1 eintragen.
-2. Über **Attribute ermitteln** die offiziellen Grundwerte bestimmen (Standardsatz oder 27-Punkte-Kauf); Hintergrundboni ausdrücklich zuweisen.
+2. Über **Attribute ermitteln** die offiziellen Grundwerte bestimmen (Standardsatz, 27-Punkte-Kauf oder 4W6 mit gestrichenem niedrigsten Würfel); Hintergrundboni ausdrücklich zuweisen.
 3. **D&D-Klasse und Fertigkeiten wählen** öffnen und eine der zwölf unterstützten Klassen auswählen.
 4. Die vorgeschriebene Anzahl unterschiedlicher, für diese Klasse erlaubter Fertigkeiten wählen. Die zwei passenden Rettungswurf-Übungen werden angezeigt.
 5. Optional den Start-TP-Vorschlag einschalten, sobald ein bestätigter KO-Wert vorliegt. Bei einer neuen, noch nicht ausgestatteten Figur kann auch die SRD-Startausrüstung oder ein Startgoldpaket gewählt werden.
@@ -57,3 +57,12 @@ Regeltexte sind für die Benutzeroberfläche vereinfacht und in eigene deutsche 
 Regelquellen: https://www.dndbeyond.com/srd, SRD v5.2.1:
 *Character Creation/Level Advancement*, *Classes/Fighter* und
 *Feats/Fighting Style Feats* (CC BY 4.0).
+
+## Ergänzung 26.10.2026 – 4W6-Attributmethode, PR #264
+
+Die neue Methode ist auf einem Draft-Branch implementiert und besitzt
+deterministische Domain- und UI-Tests. Noch nicht als vollständig
+abgenommen: CI des letzten PR-Commits, lokale Flutter-/Android-Prüfung,
+Persistenz der einzelnen Würfel und der Attribut-Provenienz,
+übrige Pflichtentscheidungen. Details:
+[Charaktererstellung](CHARACTER_CREATION_COMPLETE.md).

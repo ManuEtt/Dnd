@@ -1,3 +1,29 @@
+## 26.10.2026 – Charaktererstellung: 4W6-Attributmethode, Draft-PR #264
+
+- **Branch:** `feat/character-random-ability-rolls-20261026`;
+  [PR #264](https://github.com/ManuEtt/Dnd/pull/264).
+- **Implementiert:** Unveränderliche 4W6-Würfe, sechs Summen nach
+  Streichen des niedrigsten Würfels, unverfälschbare Verteilung,
+  explizite Zuordnung im deutschen Flutter-Assistenten.
+- **Tests geschrieben:** `ability_random_generation_test.dart`,
+  `ui_random_ability_assignment_test.dart`. **Bestanden:** bis zum
+  nächsten geprüften finalen Workflow-Lauf nicht nachgewiesen.
+- **Ungeprüft:** Gesamtsuite, Debug/ARM64-APK auf finalem Commit,
+  Realgerät/TalkBack. Keine lokale Flutter-/Dart-Toolchain verfügbar.
+- **Kompatibilität:** SQLite 2, Kampagnen-JSON 1 und Hero-Schema
+  unverändert; alte Speicherstände werden nicht neu berechnet.
+- **Offen:** Protokollierung von Basisattributen und Würfeln als
+  versionierte Provenienz; alle Hintergrund-Startmerkmale,
+  Charaktererstellungs-Wizard und die übrigen 12 Klassenfunktionen.
+- **Nächster Schritt:** bestätigte Attribut-Provenienz mit
+  rückwärtskompatibler Speicherung; danach Hintergrundpakete mit
+  Übungen/Talenten und ausdrücklicher Ausrüstungswahl.
+- **Detailnachweis:** [Teilabdeckung](CHARACTER_CREATION_COMPLETE.md)
+  und [Matrix](CHARACTER_CREATION_COVERAGE.json). Kein vollständiger
+  SRD-Abschluss behauptet.
+
+---
+
 # Chat B – Persistierte NPC-ID-Wiederaufnahme (26.10.2026)
 
 - Ausgangs-`main`: `67f146e690306b13d490bd8e7fd5636bb187c77e`, Branch `feat/chat-b/npc-selection-resume-20261026`, Test-Commit `945f6a18c3ce1570f52d95d8d21e453dbaf519dc`.

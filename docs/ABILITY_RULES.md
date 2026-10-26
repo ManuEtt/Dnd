@@ -6,6 +6,24 @@ historische Erzählungen erzeugen keine Werte. Bestehende Charakterbögen und
 unbestätigte Arescan-Werte bleiben unverändert, bis der Benutzer eine neue
 Verteilung übernimmt und den Charakter speichert.
 
+## Dritte offizielle Methode: Würfeln (Entwicklungspaket #264)
+
+SRD 5.2.1, S. 21: Sechsmal vier W6 werfen, jeweils den niedrigsten
+Würfel streichen, die sechs Summen ausdrücklich auf die Attribute
+verteilen. Die neue `AbilityRollSet`-Domäne zeigt alle 24 Würfelzahlen,
+prüft 1 bis 6 pro W6 und die exakte Häufigkeit aller sechs Summen.
+Die Würfelquelle ist für reproduzierbare Tests injizierbar. Ein Moduswechsel
+erzeugt keinen zweiten Wurf. Die UI verlangt eine ausdrückliche
+Werte-Zuordnung und weiterhin eine gültige Hintergrundwahl.
+
+**Wichtige Grenze:** Die Attribut-Provenienz (Methode, Rohwürfel und
+Hintergrundverteilung) wird noch nicht dauerhaft in älteren und neuen
+Helden gespeichert. Der bisherige Editor übernimmt nur die bestätigten
+Endwerte. Somit ist die Charaktererstellung insgesamt noch unvollständig.
+Neue Tests sind geschrieben, aber ohne erfolgreiche finale CI noch
+nicht als bestanden nachgewiesen. Siehe
+[Teilabdeckung](CHARACTER_CREATION_COMPLETE.md).
+
 ## Geprüfte offizielle Quellen
 
 Die folgenden offiziellen Dateien wurden am 14. Oktober 2026 geladen und
