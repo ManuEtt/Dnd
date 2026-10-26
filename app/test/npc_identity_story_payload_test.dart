@@ -50,7 +50,10 @@ void main() {
 
   test('irrelevant, partial and oversize context cannot leak to server', () {
     final campaign = _campaign();
-    expect(NpcIdentityStoryPayload.prepare(campaign, 'Ich gehe allein.'), isNull);
+    expect(
+      NpcIdentityStoryPayload.prepare(campaign, 'Ich gehe allein.'),
+      isNull,
+    );
     expect(
       NpcIdentityStoryPayload.prepare(campaign, 'Ich frage Mirabelle.'),
       isNull,
