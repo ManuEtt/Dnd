@@ -77,7 +77,22 @@ class SrdSpellDefinition {
     // duplicates, unknown tokens and malformed material descriptions before
     // an untrusted catalogue can authorize an incomplete casting preflight.
     final componentMatch = RegExp(
-      r'^(V(?:,\s*S)?(?:,\s*M)?|S(?:,\s*M)?|M)(?:\s*\(([^()]*)\))?    for (final symbol in ['V', 'S', 'M']) {
+      r'^(V(?:,\s*S)?(?:,\s*M)?|S(?:,\s*M)?|M)(?:\s*\(([^()]*)\))?$',
+    ).firstMatch(components);
+    if (componentMatch == null ||
+        componentMatch.group(0) != components ||
+        (componentMatch.group(2) != null) != material ||
+        (material && componentMatch.group(2)!.trim().isEmpty)) {
+      throw const FormatException(
+        'SRD-Zauberkomponenten haben ein ungültiges Format.',
+      );
+    }
+    final symbols = componentMatch
+        .group(1)!
+        .split(',')
+        .map((symbol) => symbol.trim())
+        .toList();
+    for (final symbol in ['V', 'S', 'M']) {
       final expected = switch (symbol) {
         'V' => verbal,
         'S' => somatic,
