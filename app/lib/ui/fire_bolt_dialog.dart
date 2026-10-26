@@ -4,6 +4,7 @@ import 'fantasy_buttons.dart';
 import '../domain/cover_rules.dart';
 import '../domain/fire_bolt_rules.dart';
 import '../domain/models.dart';
+import '../domain/srd_spell_saving_throw_rules.dart';
 
 /// Confirmation only. The rules engine owns the dice, damage and checkpoint.
 class FireBoltChoice {
@@ -16,6 +17,7 @@ class FireBoltChoice {
     required this.noFireResistanceOrImmunityConfirmed,
     required this.noUnresolvedShieldReactionConfirmed,
     required this.situationalAttackConditionsConfirmed,
+    required this.noUnmodelledAttackModifiersConfirmed,
     required this.advantage,
     required this.disadvantage,
     required this.targetProne,
@@ -28,6 +30,7 @@ class FireBoltChoice {
   final bool noFireResistanceOrImmunityConfirmed;
   final bool noUnresolvedShieldReactionConfirmed;
   final bool situationalAttackConditionsConfirmed;
+  final bool noUnmodelledAttackModifiersConfirmed;
   final bool advantage, disadvantage, targetProne, targetWithinFiveFeet;
 }
 
@@ -56,6 +59,7 @@ class _FireBoltDialogState extends State<FireBoltDialog> {
   bool _fireDefenses = false;
   bool _shieldReaction = false;
   bool _circumstances = false;
+  bool _noAttackModifiers = false;
   bool _advantage = false;
   bool _disadvantage = false;
   bool _prone = false;
@@ -92,6 +96,19 @@ class _FireBoltDialogState extends State<FireBoltDialog> {
     }),
   );
 
+  SrdClassSpellStats? get _confirmedStats {
+    if (!_noAttackModifiers || _castingClass == null) return null;
+    try {
+      return SrdSpellSavingThrowRules.statsForClass(
+        widget.hero,
+        castingClass: _castingClass!,
+        noUnmodelledModifiersConfirmed: _noAttackModifiers,
+      );
+    } on FormatException {
+      return null;
+    }
+  }
+
   void _confirm() {
     if (_castingClass == null ||
         _setupError != null ||
@@ -102,6 +119,7 @@ class _FireBoltDialogState extends State<FireBoltDialog> {
         !_fireDefenses ||
         !_shieldReaction ||
         !_circumstances ||
+        _confirmedStats == null ||
         widget.encounter.enemyCover == CoverLevel.total) {
       setState(() {
         _error =
@@ -120,6 +138,7 @@ class _FireBoltDialogState extends State<FireBoltDialog> {
         noFireResistanceOrImmunityConfirmed: _fireDefenses,
         noUnresolvedShieldReactionConfirmed: _shieldReaction,
         situationalAttackConditionsConfirmed: _circumstances,
+        noUnmodelledAttackModifiersConfirmed: _noAttackModifiers,
         advantage: _advantage,
         disadvantage: _disadvantage,
         targetProne: _prone,
@@ -201,6 +220,28 @@ class _FireBoltDialogState extends State<FireBoltDialog> {
               _circumstances,
               (v) => _circumstances = v,
             ),
+
+            _check(
+              'attack-modifiers',
+              'Keine ungeprüften Merkmale oder Gegenstände verändern '
+                  'den Zauberangriff.',
+              _noAttackModifiers,
+              (v) => _noAttackModifiers = v,
+            ),
+            if (_confirmedStats case final stats?)
+              Text(
+                'Klasse: ${stats.castingClass}, '
+                '${stats.ability == 'intelligence' ? 'Intelligenz' : 'Charisma'} '
+                '${stats.abilityScore}, Übungsbonus +${stats.proficiencyBonus}, '
+                'Basisangriff +${stats.spellAttackModifier}. '
+                'Erschöpfung wird beim W20 zusätzlich berücksichtigt.',
+                key: const ValueKey('fire-bolt-class-stats'),
+              )
+            else if (_noAttackModifiers)
+              const Text(
+                'Klassenstufen oder Zauberattribut sind ungültig.',
+                key: ValueKey('fire-bolt-class-stats-invalid'),
+              ),
             _check('advantage', 'Bestätigter Vorteil.', _advantage, (v) {
               _advantage = v;
             }),
@@ -235,7 +276,8 @@ class _FireBoltDialogState extends State<FireBoltDialog> {
         onPressed:
             _castingClass == null ||
                 _setupError != null ||
-                FireBoltRules.preparedName(widget.hero) == null
+                FireBoltRules.preparedName(widget.hero) == null ||
+                (_noAttackModifiers && _confirmedStats == null)
             ? null
             : _confirm,
       ),
