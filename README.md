@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – Zugfolge bei 200 % Systemschrift (26.10.2026, PR in Vorbereitung)
+
+Der eigene Branch `feat/chat-c/turn-tracker-large-text-20261026` macht `FantasyCombatTurnTracker` bei 320/360 dp und 200 % Schrift lesbar. Helden- und Gegnernamen werden nicht mehr nach zwei Zeilen abgeschnitten; Initiativwert und aktiver Zug erscheinen bei starker Schrift unterhalb des Namens. Die bestätigte Reihenfolge, Initiative, vorhandene deutsche Semantik und unbekannte Werte bleiben unverändert. Drei Widgettests prüfen große Schrift, aktiven Zug, unbekannte Initiative und beendete Begegnungen. **Abnahme der finalen CI steht noch aus.** Keine SRD-, Spielstands-, KI-, JSON-/SQLite- oder Versionsänderung. [Details](docs/parallel/CHAT_C_TURN_TRACKER_20261026.md).
+
 ## Chat C – Zugänglicher Heldenstatus (25.10.2026, PR offen)
 
 Der unabhängige Branch `feat/chat-c/accessible-status-hud-20261025` verbessert ausschließlich die Darstellung von `FantasyAdventureStatusHud`: ab 180 % Systemschrift bei 320–360 dp einspaltige Statuskarten; die angezeigten Werte schrumpfen nicht mehr über `FittedBox`. TP, RK, Bewegung und Erfahrung besitzen vollständige deutsche Screenreader-Texte; unbekannte Werte werden ausdrücklich als „nicht bestätigt“ angesagt. TP-/EP-Balken erhalten verständliche Prozent-Semantik. Drei Widgettests prüfen 320/360 dp bei 200 % und den unbekannten Zustand.
