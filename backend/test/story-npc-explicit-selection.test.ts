@@ -10,7 +10,7 @@ import type { Config } from '../src/config.js';
 const request = (): StoryTurnWithNpcIdentities => ({
   campaignId: 'choice-demo',
   heroName: 'Aria',
-  action: 'Ich untersuche das geheimnisvolle Zeichen.',
+  action: 'Ich betrachte das Zeichen.',
   scene: 'Die Bibliothek',
   premise: 'Ein alter Schwur',
   goal: 'Die Stadt retten',
