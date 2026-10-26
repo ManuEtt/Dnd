@@ -3,6 +3,8 @@
 from pathlib import Path
 import argparse
 import hashlib
+import contextlib
+import errno
 import os
 import shutil
 import stat
@@ -113,6 +115,69 @@ REQUIRED_FILES = {
     '.github/workflows/android-build.yml', 'app/assets/demo.json', 'README.md',
 }
 
+def read_verified_source(root: Path, path: Path) -> tuple[bytes, os.stat_result]:
+    """Read one source file without following newly swapped symlinks.
+
+    On POSIX each directory component is opened relative to the previous
+    directory descriptor with O_NOFOLLOW, so replacing an enumerated parent
+    directory or leaf file with a link cannot escape the repository root.
+    """
+    relative = path.relative_to(root)
+    before = path.lstat()
+    if not stat.S_ISREG(before.st_mode):
+        raise ValueError('Source archive must not contain symlinked or non-regular files.')
+    with contextlib.ExitStack() as stack:
+        if (os.name == 'posix' and hasattr(os, 'O_NOFOLLOW')
+                and hasattr(os, 'O_DIRECTORY')):
+            flags = os.O_RDONLY | os.O_NOFOLLOW | os.O_DIRECTORY
+            try:
+                directory_fd = os.open(root, flags)
+                stack.callback(os.close, directory_fd)
+                for component in relative.parts[:-1]:
+                    next_fd = os.open(component, flags, dir_fd=directory_fd)
+                    stack.callback(os.close, next_fd)
+                    directory_fd = next_fd
+                file_fd = os.open(
+                    relative.name,
+                    os.O_RDONLY | os.O_NOFOLLOW | getattr(os, 'O_NONBLOCK', 0),
+                    dir_fd=directory_fd,
+                )
+                source = stack.enter_context(os.fdopen(file_fd, 'rb'))
+                after = os.fstat(source.fileno())
+                if not stat.S_ISREG(after.st_mode):
+                    raise ValueError('Source archive requires regular source files.')
+                data = source.read()
+            except OSError as error:
+                if error.errno in (errno.ELOOP, errno.ENOTDIR):
+                    raise ValueError(
+                        'Source archive must not follow symlinked directories or files.'
+                    ) from error
+                raise
+        else:
+            # Best-effort fallback for platforms without descriptor-relative,
+            # no-follow opens. POSIX builds use the race-safe branch above.
+            parent = root
+            for component in relative.parts[:-1]:
+                parent = parent / component
+                if parent.is_symlink():
+                    raise ValueError('Source archive must not follow symlinked directories.')
+            if path.is_symlink() or not path.resolve().is_relative_to(root):
+                raise ValueError('Source archive must not follow symlinked files.')
+            source = stack.enter_context(path.open('rb'))
+            after = os.fstat(source.fileno())
+            if not stat.S_ISREG(after.st_mode):
+                raise ValueError('Source archive requires regular source files.')
+            data = source.read()
+    final = path.lstat()
+    identity = lambda item: (
+        item.st_dev, item.st_ino, item.st_size, item.st_mtime_ns, item.st_ctime_ns,
+    )
+    if not (identity(before) == identity(after) == identity(final)
+            and len(data) == before.st_size):
+        raise RuntimeError('Source changed during archive creation.')
+    return data, before
+
+
 def create_archive(root: Path, output: Path, *, layout: str = 'folder') -> tuple[int, str]:
     """A root layout can be copied straight into a GitHub repository."""
     if layout not in {'folder', 'root'}:
@@ -138,18 +203,7 @@ def create_archive(root: Path, output: Path, *, layout: str = 'folder') -> tuple
         staged_sha = temporary / checksum.name
         with zipfile.ZipFile(staged_zip, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
             for path in paths:
-                # Refuse source files changed after enumeration. Otherwise a
-                # concurrent build/editor can silently alter a verified export.
-                before = path.stat()
-                with path.open('rb') as source:
-                    data = source.read()
-                    after = os.fstat(source.fileno())
-                final = path.stat()
-                identity = lambda st: (st.st_dev, st.st_ino, st.st_size,
-                                       st.st_mtime_ns, st.st_ctime_ns)
-                if not (identity(before) == identity(after) == identity(final)
-                        and len(data) == before.st_size):
-                    raise RuntimeError('Source changed during archive creation.')
+                data, before = read_verified_source(root, path)
                 # writestr() does not inherit filesystem mode bits, unlike
                 # ZipFile.write(). Keep executable source scripts recoverable
                 # while retaining the verified same-file read above.

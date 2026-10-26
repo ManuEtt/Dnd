@@ -1,5 +1,6 @@
 import importlib.util
 from pathlib import Path
+import os
 import tempfile
 import stat
 import unittest
@@ -232,6 +233,60 @@ class ProjectArchiveTests(unittest.TestCase):
             self.assertEqual(set(archive.namelist()), packaging.REQUIRED_FILES)
             self.assertIsNone(archive.testzip())
 
+    @unittest.skipUnless(os.name == 'posix', 'POSIX no-follow descriptors required')
+    def test_swapped_source_file_link_is_rejected_before_export(self):
+        output = self.base / 'previous.zip'
+        packaging.create_archive(self.root, output, layout='root')
+        old_pair = (
+            output.read_bytes(),
+            output.with_suffix('.zip.sha256').read_bytes(),
+        )
+        enumerated = packaging.source_paths(self.root)
+        private = self.base / 'external-private.txt'
+        private.write_text('never package this secret', encoding='utf-8')
+        target = self.root / 'README.md'
+        target.unlink()
+        target.symlink_to(private)
+        with mock.patch.object(packaging, 'source_paths', return_value=enumerated):
+            with self.assertRaisesRegex(ValueError, 'symlinked'):
+                packaging.create_archive(self.root, output, layout='root')
+        self.assertEqual(old_pair, (
+            output.read_bytes(),
+            output.with_suffix('.zip.sha256').read_bytes(),
+        ))
+        with zipfile.ZipFile(output) as archive:
+            self.assertNotIn(b'never package this secret', archive.read('README.md'))
+
+    @unittest.skipUnless(os.name == 'posix', 'POSIX no-follow descriptors required')
+    def test_swapped_parent_directory_symlink_is_rejected(self):
+        original_paths = packaging.source_paths(self.root)
+        assets = self.root / 'app/assets'
+        moved = self.base / 'original-assets'
+        assets.rename(moved)
+        outside = self.base / 'outside-assets'
+        outside.mkdir()
+        (outside / 'demo.json').write_text('outside secret', encoding='utf-8')
+        assets.symlink_to(outside, target_is_directory=True)
+        output = self.base / 'unsafe-parent.zip'
+        with mock.patch.object(packaging, 'source_paths', return_value=original_paths):
+            with self.assertRaisesRegex(ValueError, 'symlinked'):
+                packaging.create_archive(self.root, output, layout='root')
+        self.assertFalse(output.exists())
+        self.assertFalse(output.with_suffix('.zip.sha256').exists())
+
+    @unittest.skipUnless(os.name == 'posix', 'POSIX no-follow descriptors required')
+    def test_symlink_swapped_for_regular_file_cannot_be_used_as_source(self):
+        original_paths = packaging.source_paths(self.root)
+        private = self.base / 'outside'
+        private.write_text('outside content', encoding='utf-8')
+        target = self.root / 'app/lib/main.dart'
+        target.unlink()
+        target.symlink_to(private)
+        with mock.patch.object(packaging, 'source_paths', return_value=original_paths):
+            with self.assertRaisesRegex(ValueError, 'symlinked'):
+                packaging.create_archive(self.root, self.base / 'new.zip')
+        self.assertFalse((self.base / 'new.zip').exists())
+
     def test_source_change_during_read_does_not_replace_published_zip(self):
         output = self.base / 'existing.zip'
         packaging.create_archive(self.root, output, layout='root')
@@ -246,6 +301,7 @@ class ProjectArchiveTests(unittest.TestCase):
             if not altered:
                 altered = True
                 class Changed:
+                    st_mode = stat.st_mode
                     st_dev = stat.st_dev
                     st_ino = stat.st_ino
                     st_size = stat.st_size
