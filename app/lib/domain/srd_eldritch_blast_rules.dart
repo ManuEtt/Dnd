@@ -45,7 +45,8 @@ class SrdEldritchBlastRules {
     final secondary = caster.hasSecondClass
         ? findSrdClass(caster.secondaryClassName)?.name
         : null;
-    if (caster.primaryClassLevel < 1 ||
+    if (primary == null ||
+        caster.primaryClassLevel < 1 ||
         caster.secondaryClassLevel < 0 ||
         (caster.hasSecondClass &&
             (caster.secondaryClassLevel < 1 ||

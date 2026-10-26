@@ -26,7 +26,8 @@ import subprocess
 import tempfile
 import zipfile
 
-from package_project import REQUIRED_FILES, ROOT, create_archive, include, source_paths
+from package_project import (REQUIRED_FILES, ROOT, create_archive, include,
+                             read_verified_source, source_paths)
 from prepare_alpha_release import read_version, sha256
 
 
@@ -61,8 +62,15 @@ def file_manifest(root: Path) -> dict[str, dict]:
         name = path.relative_to(root).as_posix()
         if not safe_name(name):
             raise ValueError('Unsafe source filename.')
-        entries[name] = {'sha256': sha256(path), 'size': path.stat().st_size,
-                         'executable': bool(path.stat().st_mode & stat.S_IXUSR)}
+        # Use the same no-follow descriptor-relative source read as the ZIP
+        # exporter. The previous sha256(path) followed any symlink swapped
+        # in after source_paths(), even though the original scan rejected it.
+        data, verified_stat = read_verified_source(root, path)
+        entries[name] = {
+            'sha256': hashlib.sha256(data).hexdigest(),
+            'size': len(data),
+            'executable': bool(verified_stat.st_mode & stat.S_IXUSR),
+        }
     missing = REQUIRED_FILES - entries.keys()
     if missing:
         raise ValueError('Missing required project files: ' + ', '.join(sorted(missing)))

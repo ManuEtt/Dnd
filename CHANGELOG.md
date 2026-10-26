@@ -1,3 +1,15 @@
+## 26.10.2026 – 0.8.42+92: sieben Entwicklungsbranches zusammenführen
+
+Zehn konkrete Köpfe aus acht Branch-Namen einschließlich Main vorab remote per Archivtag und lokal per geprüftem Bundle gesichert. Eldritch-Klassenprüfung, NPC-ID-Wire-Vertrag (Android-Durchreichung noch offen), barrierearme Kampf-/Würfelanzeige und no-follow Checkpoint-Manifeste gemeinsam integriert. Formatfehler der Würfeltestdatei behoben; Syntaxfehler im später hinzugekommenen Reichweitenparser behoben, 17 gezielte Tests grün;155 Python-Tests bisher grün, vollständige kombinierte Abnahme noch offen. SQLite2/JSON1 unverändert. [Checkpoint](docs/CODEX_CHECKPOINT.md). Ältere Einträge unten sind Historie.
+
+---
+
+## 26.10.2026 – Chat A: Eldritch-Blast-Zweitklassenvalidierung (CI offen)
+
+Unbekannte Hauptklasse vor dem Wirken von `Eldritch Blast` zurückweisen, auch bei gültiger Hexenmeister-Zweitklasse. Neue deterministische Positiv-/Negativtests; keine Ressourcen-/Speicherformatänderung oder neue Spielregel. Bis zur vollständigen GitHub-CI als nicht abgenommen behandeln. [Fachbeleg](docs/parallel/CHAT_A_ELDRITCH_PRIMARY_VALIDATION_20261026.md).
+
+---
+
 ## 26.10.2026 – 0.8.41+91: Heilige Flamme mit gültigen Klassenwerten
 
 Geprüften Klassenwerte-Rechner aus PR #184 in den echten Zauberablauf integriert. Alias-Doppelklassen, unbekannte Partner und ungültige Stufen lösen keine Würfel/Aktion/HP-Änderung aus. Bestehende Importe bleiben lesbar; WIS-/Gesamtstufen-Übung gültiger Profile erhalten. Bestätigungsgebundene SG-Vorschau und scrollbar bedienbarer Android-Dialog. 1.703 Flutter-, 141 Python-, 57 Backend- und zwölf native Android-Tests bestanden; Format/Analyse/Backend-Build sowie Debug-/ARM64-APKs erfolgreich. Codequelle `7c9441e`, PR #217. Realgerät/Produktivsignierung offen. SQLite 2 / JSON 1 kompatibel. [Fachbericht](docs/SACRED_FLAME_CLASS_VALIDATION_20261026.md) · [Checkpoint](docs/CODEX_CHECKPOINT.md). Ältere Einträge unten sind Historie.

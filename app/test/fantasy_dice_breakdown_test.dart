@@ -180,4 +180,55 @@ void main() {
       'Kritische Zusatzwürfel: 5, 2',
     ]);
   });
+  for (final width in [320.0, 360.0]) {
+    testWidgets('Würfelplaketten bei $width dp und 200 % ohne Ziericon', (
+      tester,
+    ) async {
+      tester.view.physicalSize = Size(width, 1600);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildFantasyTheme(),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: const TextScaler.linear(2)),
+            child: child!,
+          ),
+          home: Scaffold(
+            body: ListView(
+              children: [
+                FantasyDiceBreakdown(
+                  event: confirmed('accessible', 'roll.resolved', {
+                    'attackRoll': {
+                      'rolls': [7, 19],
+                      'natural': 19,
+                      'modifier': 5,
+                    },
+                    'critical': true,
+                    'hit': true,
+                    'damageRoll': {
+                      'rolls': [6],
+                      'modifier': 3,
+                    },
+                  }),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Angriffswürfel: 7, 19 · W20 gewählt: 19 · Bonus: +5'),
+        findsOneWidget,
+      );
+      expect(find.text('KRITISCHER TREFFER bestätigt'), findsOneWidget);
+      expect(find.text('Schadenswürfel: 6 · Bonus: +3'), findsOneWidget);
+      expect(find.byIcon(Icons.casino_outlined), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+  }
 }

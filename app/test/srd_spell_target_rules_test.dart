@@ -218,6 +218,74 @@ void main() {
     );
   });
 
+  test('noncanonical and overflowing numeric range metadata fails closed', () {
+    final missile = catalog.find('Magic Missile')!;
+
+    SrdSpellDefinition withRange(String range) => SrdSpellDefinition(
+      id: missile.id,
+      name: missile.name,
+      level: missile.level,
+      school: missile.school,
+      classes: missile.classes,
+      castingTime: missile.castingTime,
+      range: range,
+      components: missile.components,
+      duration: missile.duration,
+      verbal: missile.verbal,
+      somatic: missile.somatic,
+      material: missile.material,
+      concentration: missile.concentration,
+      ritual: missile.ritual,
+    );
+
+    for (final invalid in [
+      '0 feet',
+      '01 mile',
+      '1 miles',
+      '1 feet',
+      '2 foot',
+      '2 mile',
+      '9223372036854775808 feet',
+      '1750000000000000 miles',
+      '1746850764555829 miles',
+    ]) {
+      expect(
+        SrdSpellTargetRules.maxRangeFeet(invalid),
+        isNull,
+        reason: invalid,
+      );
+      expect(
+        () =>
+            SrdSpellTargetRules.validateOrigin(withRange(invalid), _ranged(0)),
+        throwsUnsupportedError,
+        reason: invalid,
+      );
+    }
+
+    // Exact signed 64-bit boundaries prevent a one-mile overflow regression.
+    expect(
+      SrdSpellTargetRules.maxRangeFeet('9223372036854775807 feet'),
+      9223372036854775807,
+    );
+    expect(
+      SrdSpellTargetRules.maxRangeFeet('1746850764555828 miles'),
+      9223372036854771840,
+    );
+    expect(SrdSpellTargetRules.maxRangeFeet('1 foot'), 1);
+    expect(SrdSpellTargetRules.maxRangeFeet('2 miles'), 10560);
+    expect(
+      SrdSpellTargetRules.validateOrigin(
+        withRange('1 foot'),
+        _ranged(1),
+      ).maxOriginDistanceFeet,
+      1,
+    );
+    expect(
+      () => SrdSpellTargetRules.validateOrigin(withRange('1 foot'), _ranged(2)),
+      throwsFormatException,
+    );
+  });
+
   test(
     'typed geometry joins preflight without overruling specific targeting',
     () {

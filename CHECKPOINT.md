@@ -1,3 +1,9 @@
+## 26.10.2026 – 0.8.42+92: sieben Entwicklungsbranches zusammenführen
+
+Zehn konkrete Köpfe aus acht Branch-Namen einschließlich Main vorab remote per Archivtag und lokal per geprüftem Bundle gesichert. Eldritch-Klassenprüfung, NPC-ID-Wire-Vertrag (Android-Durchreichung noch offen), barrierearme Kampf-/Würfelanzeige und no-follow Checkpoint-Manifeste gemeinsam integriert. Formatfehler der Würfeltestdatei behoben; Syntaxfehler im später hinzugekommenen Reichweitenparser behoben, 17 gezielte Tests grün;155 Python-Tests bisher grün, vollständige kombinierte Abnahme noch offen. SQLite2/JSON1 unverändert. [Checkpoint](docs/CODEX_CHECKPOINT.md). Ältere Einträge unten sind Historie.
+
+---
+
 ## Operativer Checkpoint – 0.8.41+91
 
 Klassenprüfung für Heilige Flamme im eigenen Entwicklungsbranch lokal vollständig abgenommen; GitHub-Ergebnis im verlinkten Checkpoint. [Tatsächlicher Stand](docs/CODEX_CHECKPOINT.md). Frühere Einträge unten sind Historie.

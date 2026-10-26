@@ -64,3 +64,19 @@ Akzeptanz:
 
 ## Genau ein nächster unabhängiger Schritt
 Gezielten Abruf bestätigter NPC-Beziehungsnotizen auch bei mehreren aufeinanderfolgenden Sitzungen absichern. Akzeptanz: nur nachgewiesene Notizen, stabile Reihenfolge, keine unbestätigte KI-Dialogprosa, negative Tests für fremde NPC-IDs; eigene Storydateien und Tests, keine Änderung an Shared Models.
+
+---
+
+## Chat B – explizite NPC-Auswahl im Story-Protokoll (26.10.2026)
+
+- **Ausgangs-Main:** `42d14ad36cc947691f7e5a1e8647a43f5421b86e`; offene Pull Requests: keine. Main-Workflow #40329543416 und #40329543284 `success`.
+- **Eigener Branch:** `feat/chat-b/explicit-npc-wire-20261026`, PR gegen `main`; GitHub-PR-HEAD/CI bei Abschluss prüfen.
+- **Implementiert:** Streng optionales, separat angekündigtes `selectedNpcId` für identische Anzeigenamen. Der Offline-Mock verwendet exakt die ausdrücklich gewählte und id-/revisionsgebundene NPC-Chronik ohne Erraten. Flutter-Netzwerkclient akzeptiert das Feld nur bei `npc-selection-v1`; alte Server bleiben kompatibel. Lokale `NpcIdentityStoryPayload`-Projektion bewahrt die ID.
+- **Geänderte Fachdateien:** `backend/src/story_npc_identity_context.ts`, `backend/src/app.ts`, `backend/src/mock_npc_identity_hint.ts`, `app/lib/story/npc_identity_story_payload.dart`, `app/lib/services/backend_narrator.dart`.
+- **Tests:** `backend/test/story-npc-explicit-selection.test.ts`, `app/test/backend_explicit_npc_transport_test.dart`, `app/test/npc_story_selection_test.dart`; positive/negative Sicherheit und Legacy-Vertrag.
+- **Keine Migration:** keine SQLite-/JSON-/Rule-/Hero-/Quest-Mutation, keine Versionsänderung. Ältere Backendversionen melden das neue Capability nicht. Noch keine angeschlossene Android-UI-Auswahl.
+- **Abnahme:** vollständige CI auf finalem Commit erforderlich; keine Test- oder APK-Freigabe vor entsprechender GitHub-Action. Kein Produktiv-KI-/Gerätetest.
+- **Einziger nächster Schritt:** explizite NPC-ID-Auswahl im Story-Dialog samt Stale-Revisionsabbruch und automatisierten Widget-/Transporttests, abgestimmt mit Chat C. Siehe [Detailcheckpoint](CHAT_B_NPC_SELECTION_WIRE_20261026.md).
+
+
+**GitHub-Nachtrag Chat B (26.10.2026):** [PR #237](https://github.com/ManuEtt/Dnd/pull/237) enthält das optionale `selectedNpcId`-Protokoll. Im nachgewiesenen Lauf [#40342521532](https://github.com/ManuEtt/Dnd/actions/runs/40342521532) haben Backend, Dart-Format, Flutter-Analyse und komplette Flutter-Tests bestanden; Android-Build bei Abruf noch offen. Abschlussstatus gilt nur für exakt getesteten PR-HEAD. Keine Übernahme nach `main`, keine Spielstandmigration.

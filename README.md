@@ -1,53 +1,45 @@
 # Würfelraunen – Der lebendige Spielleiter
 
-## Chat D – Quell-ZIP vor Symlink-Austausch nach dem Scan schützen (D-009, 26.10.2026)
-
-Der Quellarchiv-Export nutzt auf POSIX nun vor jedem Dateilesen gesicherte Verzeichnis-Deskriptoren und `O_NOFOLLOW`, damit ein nach der Auflistung eingeschleuster Link nicht unbemerkt projektfremde Daten archiviert. Drei neue Regressionstests prüfen solche Datei-/Verzeichniswechsel sowie den Erhalt bereits veröffentlichter ZIP-/SHA256-Dateien; ein veralteter Testmock wurde aktualisiert. Non-POSIX-Plattformen erhalten eine zusätzliche Best-Effort-Prüfung, jedoch keine Garantie gegen alle Race Conditions. **Die finale CI auf dem aktuellen PR-Commit ist noch abzunehmen.** Keine Änderungen am Spielstandformat, App-Code oder Regelwerk. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
-
-## Chat B – NPC-Zeitstempel strikt prüfen (Arbeitsbranch, 26.10.2026)
-
-Im isolierten [PR #220](https://github.com/ManuEtt/Dnd/pull/220) auf Branch `fix/chat-b/npc-timestamp-validation-20261026` wird ein Fehler bei Datumsangaben bestätigter NPC-Beziehungsnotizen behoben: JavaScript normalisiert bisher einen ungültigen 30. Februar stillschweigend auf März. Die Prüfung verlangt jetzt zusätzlich die unveränderte UTC-Kalendersekunde und weist überlaufende Tage oder 24:00 zurück. Gültige Schalttage, Sekundenpräzision und Mikrosekunden bleiben zugelassen. Backend-Unit- und HTTP-Gegenfälle wurden ergänzt. **CI- und Gesamt-Tests dieses Branches sind erst nach dem konkreten Pull-Request-Lauf belegt; hier wird kein Grün behauptet.** Keine Änderung an Spielregeln, JSON-/SQLite-Schema oder bestehenden Spielständen. Andere offene PRs #216/#218/#219 nicht angefasst; gemeinsame Dokumentabschnitte von Chat D konsolidieren lassen. Fachlicher Stand: [Chat-B-Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md).
-
-
-Deutschsprachige Android-Alpha für regelgeprüfte Soloabenteuer und lokale Kampagnen. Das vollständige SRD 5.2.1 bleibt in Arbeit.
+Deutschsprachige Flutter-Android-Alpha für lokale Soloabenteuer, bestätigte D&D-SRD-5.2.1-Regeln und optionalen KI-Erzähler. Das vollständige Regelwerk bleibt in Arbeit.
 
 ## Aktueller Stand und autonome Fortsetzung (26.10.2026)
 
-**Version 0.8.41+91 – Klassenprüfung für Heilige Flamme.** Branch `fix/sacred-flame-caster-validation-20261026` integriert Main `0212e99b6222f9fcae0714a2ee09123c3c78347c` und die geprüfte Klassenwerte-Berechnung aus [PR #184](https://github.com/ManuEtt/Dnd/pull/184) in den tatsächlichen Zauberablauf.
+**Version 0.8.42+92 – gemeinsame Branch-Migration.** Basis-Main `5e3116f9e3f8de0af6e8125a97b3962cb8910cdf`, Integrationsbranch `integration/all-branches-20261026b`. Acht Branch-Namen (Main plus sieben Entwicklungsbranches) samt später hinzugekommenem Reichweitenbranch und fortgeschriebenen Köpfen wurden vorab als Remote-Archivtags und geprüftes Git-Bundle gesichert. Alle zehn gesicherten Ursprungs-/Fortschreibungsköpfe sind im Integrationsbranch als Vorfahren erhalten; ursprüngliche README-/Checkpoint-Fassungen mit SHA256 archiviert.
 
-Heilige Flamme lehnt doppelte Klassenaliase, unbekannte Partnerklassen und widersprüchliche Klassenstufen jetzt vor Würfeln, Schaden und Aktionsverbrauch ab. Für gültige Mehrklassencharaktere bleiben Kleriker-Weisheit und der Übungsbonus der Gesamtstufe maßgeblich. Nach der vorhandenen ausdrücklichen SG-Bestätigung zeigt der Dialog die verwendeten Werte; ungültige Profile können nicht bestätigt werden. Titel und Inhalt bleiben gemeinsam scrollbar, auch bei großer Schrift und eingeblendeter Tastatur.
+Zusammengeführt:
 
-**Spielstände bleiben erhalten:** keine globale Importverschärfung, kein Umschreiben historischer Werte oder Ereignisse, SQLite 2 und Kampagnen-JSON 1 unverändert. Alte Profile lassen sich weiterhin laden und bearbeiten; nur neue Zauberhandlungen benötigen gültige Klassenwerte.
+- Numerische Zauberreichweiten akzeptieren nur bestätigte Fuß-/Meilen-Einheiten und verweigern übergroße Werte; Syntaxfehler der neu eingetroffenen Source-Fassung behoben und exakte 64-Bit-Grenzfälle ergänzt.
 
-**Vollständig lokal geprüft:** 1.703 Flutter-, 141 Python-, 57 Backend- und zwölf native Android-Tests bestanden. Dart-Formatierung (389 Dateien), Flutter-Analyse, Backend-Typecheck/-Build und Backend-Protokolltest erfolgreich. Debug-APK und ARM64-Alpha tatsächlich aus dem geprüften Vollprojekt-ZIP gebaut; Version, Android-API24/36, ZIP-CRC, Architekturen, Signatur und Quellidentität geprüft. Beide APKs nutzen die lokale Debug-Testsignatur. Geräte-/Upgradeabnahme und produktive Signierung bleiben offen.
+- Eldritch Blast verwirft unbekannte Hauptklassen auch bei vorhandener Hexenmeister-Zweitklasse vor RNG und Zustandsänderung; gültige Klassenaliase bleiben erlaubt.
+- Eine ausdrücklich gewählte NPC-ID kann capability- und revisionsgeprüft über den optionalen Client-/Backendvertrag übertragen werden. **Android-Oberfläche und GameController reichen die gewählte ID noch nicht durch**; keine vollständige UI-Integration behauptet. Der Erzähler erhält keine freie Regelzustandsautorität.
+- Kampfmöglichkeiten bleiben bei 200% Schrift getrennt lesbar und semantisch angekündigt; die Würfelanzeige blendet bei großer Schrift ein dekoratives Icon aus, damit Inhalt Platz behält.
+- Quell-ZIP und Checkpoint-Manifeste lesen Dateien und Verzeichnisse auf POSIX über geprüfte Deskriptoren mit `O_NOFOLLOW`. Windows-Fallback bleibt best-effort.
 
-**GitHub:** [PR #217](https://github.com/ManuEtt/Dnd/pull/217), geprüfter Code-/APK-Quellcommit `7c9441e650a3b809db50f1a2d708d39bddfb39b7`. Vollständige [Android-CI #40284690640](https://github.com/ManuEtt/Dnd/actions/runs/40284690640) auf diesem Code-/Build-HEAD erfolgreich, einschließlich Debug-, nativer und drei Alpha-ABI-Builds. Spätere reine Dokumentationsnachträge sind über die [finalen PR-Checks](https://github.com/ManuEtt/Dnd/pull/217/checks) separat nachvollziehbar. [Checkpoint](docs/CODEX_CHECKPOINT.md) · [fachlicher Nachweis](docs/SACRED_FLAME_CLASS_VALIDATION_20261026.md).
+**Gefundener Fehler behoben:** Die neuen Würfelanzeige-Tests scheiterten in [CI #40369637672](https://github.com/ManuEtt/Dnd/actions/runs/40369637672) an Dart-Formatierung. Mit Dart3.9.2 formatiert; keine Assertion entfernt. Im später hinzugekommenen Reichweitenbranch wurde außerdem ein nicht kompilierender kopierter Methodenblock im RegExp gefunden; Reparatur und 17 gezielte Flutter-Tests sind erfolgreich; vollständige gemeinsame Abnahme folgt. 155 Python-Tests bisher erfolgreich; neue gemeinsame Flutter-/Backend-/Android-/CI-Abnahme steht bis zu ihrem tatsächlichen Abschluss separat aus.
 
-**Geerbte Buildfehler korrigiert:** PR #215 wurde inzwischen auch in Main integriert; die entsprechenden Quell-/Testdateien sind bytegleich mit unserer Abnahme. Die ZIP-Dateimodi und Schreibfehler-Regressionen aus PR #215 sind mit den Originalkorrekturen `340fe91`/`8fd2141` übernommen; der zusätzliche NPC-Analyzer-/Formatfehler ist in `5edf968` behoben. Die alte Baseline-Gesamtsuite wurde nach dem Main-Fortschritt bewusst abgebrochen und durch die vollständig erfolgreiche kombinierte Abnahme ersetzt.
+**Spielstände bleiben erhalten:** SQLite2 und Kampagnen-JSON1 unverändert, keine Historien-, Helden-, Event- oder Inventarmigration. Main und zu löschende Remote-Branches werden erst nach erfolgreicher kombinierter Abnahme verändert. Branchlöschung nur nach geprüftem Main-Vorfahrenvergleich, Archivtag und unveränderter Remote-SHA.
 
-Andere aktuelle Arbeitsstände stehen unter [docs/parallel](docs/parallel/). Frühere README-/Checkpoint-Fassungen von Main und PR #184 sind [bytegenau archiviert](docs/history/sacred_flame_before_20261026/manifest.json). Grüne Einzel-CIs sind kein Nachweis einer neuen Kombination.
+[Operativer Checkpoint](docs/CODEX_CHECKPOINT.md) · [Migrationsinventar](docs/BRANCH_MIGRATION_20261026_INVENTORY.json) · [Originaldokumente](docs/history/branch_migration_20261026T173427Z/manifest.json).
 
 ## Vorhandene Funktionen und Grenzen
 
 | Bereich | Implementierter Umfang |
 | --- | --- |
-| Charaktere und Aufstieg | Zwölf SRD-Klassen, Attribute, bestätigte Startwerte/Ausrüstung, XP-Schwellen und bestätigte idempotente EP-Belohnungen, einzelne Aufstiege bis Gesamtstufe 20, bestehende Zweitklasse; zahlreiche Merkmals- und Talentwirkungen weiterhin offen |
-| Kampf | W20/Vorteil/Nachteil, Angriff und Schaden, ausgewählte Zustände/Klassenaktionen, Bewegung/Aufstehen/Kriechen, Deckung, Einzelgegner mit bestätigten Mehrfachangriffen; keine vollständige Mehrakteur-Automatik |
-| Magie | Zauberkatalog und Vorprüfungen, Plätze/Paktressourcen/Konzentration, ausgewählte echte Wirkungen und Schildreaktionen; Sending mit bestätigtem Dialog, Slotverbrauch und SQLite-Beleg, ohne Nachrichtenzustellung; Katalogeinträge sind keine vollständigen Zauberwirkungen |
-| Kampagnen | Lokale Solo-Demo und Rabenwacht mit optionalen Fortsetzungen, Entscheidungen, NPC-Erinnerungen und Journal; keine universell fertige autonome Spielleitung |
-| Speicherung | Kampagnen, Ereignisse und Revisionen atomar; JSON-Sicherung, transaktionale Spielerhandlungs-Outbox, Settings-Teilupdates und Datenreset; SQLite-Version 2, Kampagnen-JSON-Version 1 |
-| Android und Fantasy-UI | Deutsche Oberfläche, Charakterbogen, vorhandene Fantasy-Assets/Porträts, Sprache/TTS und Abenteueraktionen; reale Geräteabnahme und produktive Signierung offen |
-| Optionaler Erzähler | Getrennter Backenddienst, bestätigter Regelzustand bleibt lokal; keine automatische kostenpflichtige Wiederholung und keine externe Exactly-once-Garantie |
+| Charaktere | Zwölf SRD-Klassen, bestätigte Attribute/Ausrüstung, XP-Schwellen, bestätigte idempotente EP-Belohnungen und einzelne Aufstiege; zahlreiche Klassen-/Talentwirkungen offen |
+| Kampf und Magie | Regelgeprüfte Angriffe/Schäden, ausgewählte Klassen-/Zustands-/Zauberwirkungen, Ressourcen, Deckung und Bewegung; vollständige Mehrakteur-, Monster- und Zauberautomatik offen |
+| Kampagnen | Lokale Solo-Demo, Rabenwacht, Journal, NPC-Erinnerung und Story-Fortsetzungen; keine universell fertige autonome Spielleitung |
+| Daten und Backend | Transaktionale lokale Speicherung/Revisionen, JSON-Sicherungen, Spielerhandlungs-Outbox; optionaler HTTPS-Erzähler mit Mocks und Protokollvalidierung, keine automatische kostenpflichtige Wiederholung |
+| Android und Fantasy-UI | Deutsche Oberfläche, Fantasy-Komponenten, Charakterbogen, Sprache/TTS und Abenteueraktionen; reale Geräte-/Upgrade-/TalkBack-Abnahme und produktive Signierung offen |
 
-Regelanforderungen stehen in [Coverage-Audit](docs/SRD_5_2_1_COVERAGE_AUDIT.md) und den beiden JSON-Registern. Die derzeitigen **1.419 Prüfaufträge und neun Inventurlücken sind kein vollständiger SRD-Nenner**. Eine globale Fertigstellungsquote wird nicht behauptet.
+Katalogeinträge und reine Regelhelper zählen nicht als vollständige Spielmechanik. Die 1.419 Prüfaufträge und neun offenen Quellen-Inventurlücken sind kein vollständiger SRD-Nenner; keine globale Fertigstellungsquote.
 
 ## Lokal entwickeln und prüfen
 
-Toolchain wie CI: Flutter 3.35.7 / Dart 3.9.2, Java 17, Node.js 22.14.0 und Android-SDK. Linux-SQLite-Tests benötigen `libsqlite3-dev`.
+Toolchain wie CI: Flutter3.35.7/Dart3.9.2, Java17, Node22.14.0, Android-SDK. Linux-SQLite-Tests brauchen `libsqlite3-dev`.
 
 ```bash
+python3 scripts/generate_fantasy_buttons.py
 bash scripts/check.sh
-python3 scripts/check_domain_boundaries.py
 python3 scripts/srd_coverage.py --json
 cd app
 flutter build apk --debug
@@ -55,20 +47,16 @@ cd android
 bash ./gradlew :app:testDebugUnitTest --no-daemon
 ```
 
-Die Demo benötigt keinen externen KI-Anbieter. Für einen eigenen Erzähler siehe [Backend](backend/README.md) und [Verbindung](docs/BACKEND_CONNECTION.md). Dauerhafte Anbieter-Schlüssel gehören ausschließlich auf den Server.
+Die 30 originalen Button-Grafiken werden deterministisch generiert; die CI führt diesen Schritt vor Tests/Build aus. Alpha-APKs bleiben mit Debug-Testsignatur versehen. Geräteinstallation und historisches Geräte-Upgrade sind eigene Abnahmen.
+
+## Sicherung und Import
+
+Migrationsbundle, Inventar, ZIPs/Patches, Manifeste und SHA256: `/workspace/artifacts/branch-migration-20261026T173427Z/`. Downloadlinks und tatsächliche Abschlussbelege folgen im Integrations-PR. ZIPs enthalten Quellcode ohne SDKs, private Daten oder APKs. Patch auf der im Manifest angegebenen Basis zuerst mit `git apply --check` prüfen. Main nicht mit einer älteren ZIP überschreiben.
+
+[Architektur](ARCHITECTURE.md) · [Tests](TESTING.md) · [Changelog](CHANGELOG.md) · [Entwicklungsstatus](DEVELOPMENT_STATUS.md). Historische Versionsstände stehen unter `docs/history/` sowie in den bisherigen Journalen.
 
 ## Nächster konkreter Entwicklungsschritt
 
-Die vorhandene klassenrichtige Feuerpfeil-Berechnung an dieselbe ausdrückliche Bestätigung unbekannter Zauberangriffsmodifikatoren anbinden. Fehlende Bestätigung muss vor RNG und Zustandseffekt abbrechen; vorhandene Magier-/Zauberer-Auswahl, Gesamtstufen-Übung und Erschöpfung genau einmal erhalten. Vorschau, Ablehnung, Stale Revision und SQLite-Rollback prüfen. Keine neue Klassenwahl oder bereits vorhandene reine Regelhelper duplizieren.
+Nach vollständiger Migration die vorhandene explizite NPC-Auswahl aus der Android-Oberfläche durch den GameController an den neuen optionalen Wire-Vertrag weiterreichen. Bei gleichnamigen Figuren ID ausdrücklich wählen; fehlende Capability, Ablehnung, Stale Revision und Neustart ohne Netzwerk-/Kosten- oder Regelzustandsänderung testen. Bestehende Protokollhelper und Auswahlmodelle wiederverwenden.
 
-Weiterhin offen: zahlreiche Zauber-/Klassen-/Monstermechaniken, amtliche Vollinventur, vollständiger Gelegenheitsangriff, Item-Overrides und reale Android-Abnahme. Kataloge oder Vorprüfungen ergeben keine globale SRD-Fertigstellungsquote.
-
-## Dokumentation, Sicherung und Import
-
-- [Fortsetzungsprompt](docs/CODEX_CONTINUATION_PROMPT.md) · [operativer Checkpoint](docs/CODEX_CHECKPOINT.md)
-- [Architektur](ARCHITECTURE.md) · [Regel-/Story-Grenze](docs/ARCHITEKTUR_REGELENGINE_STORY_TRENNUNG.md) · [Tests](TESTING.md)
-- [Changelog](CHANGELOG.md) · [Entwicklungsstatus](DEVELOPMENT_STATUS.md) · [Roadmap](ROADMAP.md)
-
-Downloadlinks zum überprüften Vollprojekt-ZIP und Patch stehen in [PR #217](https://github.com/ManuEtt/Dnd/pull/217). Vollprojekt-ZIP, Git-Patch, APKs, Prüfberichte, Dateimanifest und SHA256 lokal unter `/workspace/artifacts/0.8.41+91/`; aktuelle Dateinamen im dortigen Artefaktindex. Finale Patchbasis `0212e99b6222f9fcae0714a2ee09123c3c78347c` (die frühe Sicherung nennt ihre abweichende Basis im Manifest). ZIP in eine Arbeitskopie entpacken oder Patch auf dieser Basis mit `git apply --check` und `git apply` übernehmen, eigenen Branch pushen und PR öffnen. Keine alten Stände ungeprüft über Main kopieren. APKs werden separat bereitgestellt.
-
-Nur rechtmäßig nutzbare Inhalte des **SRD 5.2.1 von Wizards of the Coast unter CC BY 4.0** sowie eigene/lizenzierte Inhalte nutzen. [Namensnennung](THIRD_PARTY_NOTICES.md) erhalten. Keine automatische Weiterarbeit außerhalb einer aktiven Sitzung.
+SRD5.2.1 von Wizards of the Coast LLC unter CC BY4.0 sowie eigene/lizenzierte Inhalte; [Namensnennung](THIRD_PARTY_NOTICES.md) erhalten. Keine automatische Weiterarbeit außerhalb einer aktiven Sitzung.

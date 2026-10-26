@@ -266,4 +266,152 @@ void main() {
     expect(tester.takeException(), isNull);
     semantics.dispose();
   });
+  for (final width in [320.0, 360.0]) {
+    testWidgets('Kampfressourcen bei $width dp und 200 % einzeln vorlesbar', (
+      tester,
+    ) async {
+      tester.view.physicalSize = Size(width, 1400);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final semantics = tester.ensureSemantics();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildFantasyTheme(),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: const TextScaler.linear(2)),
+            child: child!,
+          ),
+          home: Scaffold(
+            body: ListView(
+              children: [
+                FantasyCombatActionEconomy(
+                  actionUsed: true,
+                  bonusActionUsed: false,
+                  reactionUsed: true,
+                  movementRemainingLabel: '6 m',
+                  spellSlotExpendedThisTurn: true,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      const labels = [
+        'Aktion: verbraucht',
+        'Bonusaktion: verfügbar',
+        'Reaktion: verbraucht',
+        'Bewegung: 6 m',
+        'Zauberplatz: in diesem Zug verbraucht',
+      ];
+      for (final label in labels) {
+        expect(find.bySemanticsLabel(label), findsOneWidget);
+        expect(find.text(label), findsOneWidget);
+      }
+
+      final keys = [
+        const ValueKey('combat-action-state'),
+        const ValueKey('combat-bonus-action-state'),
+        const ValueKey('combat-reaction-state'),
+        const ValueKey('combat-movement-state'),
+        const ValueKey('combat-spell-slot-state'),
+      ];
+      for (var i = 1; i < keys.length; i++) {
+        final previous = find.byKey(keys[i - 1]);
+        final next = find.byKey(keys[i]);
+        expect(
+          tester.getTopLeft(next).dx,
+          closeTo(tester.getTopLeft(previous).dx, 1),
+        );
+        expect(
+          tester.getTopLeft(next).dy,
+          greaterThan(tester.getBottomLeft(previous).dy),
+        );
+      }
+      expect(tester.takeException(), isNull);
+      semantics.dispose();
+    });
+  }
+
+  testWidgets('200 %: unbekannte Bewegung bleibt unbekannt', (tester) async {
+    tester.view.physicalSize = const Size(320, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final semantics = tester.ensureSemantics();
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildFantasyTheme(),
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: const TextScaler.linear(2)),
+          child: child!,
+        ),
+        home: Scaffold(
+          body: ListView(
+            children: [
+              FantasyCombatActionEconomy(
+                actionUsed: false,
+                bonusActionUsed: false,
+                reactionUsed: false,
+                movementRemainingLabel: 'nicht bestätigt',
+                spellSlotExpendedThisTurn: false,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.bySemanticsLabel('Bewegung: nicht bestätigt'), findsOneWidget);
+    expect(find.bySemanticsLabel('Aktion: verfügbar'), findsOneWidget);
+    expect(find.byKey(const ValueKey('combat-spell-slot-state')), findsNothing);
+    expect(tester.takeException(), isNull);
+    semantics.dispose();
+  });
+
+  testWidgets('Normale Schrift behält kompakte Kampfressourcen', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(960, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildFantasyTheme(),
+        home: Scaffold(
+          body: ListView(
+            children: [
+              FantasyCombatActionEconomy(
+                actionUsed: true,
+                bonusActionUsed: false,
+                reactionUsed: false,
+                movementRemainingLabel: '9 m',
+                spellSlotExpendedThisTurn: false,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      tester.getTopLeft(find.byKey(const ValueKey('combat-action-state'))).dy,
+      closeTo(
+        tester
+            .getTopLeft(find.byKey(const ValueKey('combat-bonus-action-state')))
+            .dy,
+        1,
+      ),
+    );
+    expect(find.text('Bewegung: 9 m'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }

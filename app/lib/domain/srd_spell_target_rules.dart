@@ -56,13 +56,21 @@ class SrdSpellTargetRules {
 
   static int? maxRangeFeet(String range) {
     final match = RegExp(
-      r'^(\d+) (feet|foot|mile|miles)$',
+      r'^([1-9][0-9]*) (foot|feet|mile|miles)$',
       caseSensitive: false,
     ).firstMatch(range.trim());
     if (match == null) return null;
-    final value = int.parse(match.group(1)!);
-    return value *
-        (match.group(2)!.toLowerCase().startsWith('mile') ? 5280 : 1);
+
+    final amount = int.tryParse(match.group(1)!);
+    if (amount == null) return null;
+    final unit = match.group(2)!.toLowerCase();
+    final isSingular = unit == 'foot' || unit == 'mile';
+    if ((amount == 1) != isSingular) return null;
+
+    // Avoid signed 64-bit overflow when untrusted metadata uses miles.
+    final multiplier = unit.startsWith('mile') ? 5280 : 1;
+    if (amount > 0x7fffffffffffffff ~/ multiplier) return null;
+    return amount * multiplier;
   }
 
   static SrdSpellTargetAssessment validateOrigin(

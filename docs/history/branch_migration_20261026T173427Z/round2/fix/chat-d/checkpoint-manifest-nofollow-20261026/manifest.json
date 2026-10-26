@@ -1,0 +1,12 @@
+[
+  {
+    "source_sha": "3746c5769f5ddb01842762184b0f477845d11740",
+    "source_path": "README.md",
+    "sha256": "30639c022265b1c6287c9c46f273bde52b960ee3e50d5bb8a5909a91e5569739"
+  },
+  {
+    "source_sha": "3746c5769f5ddb01842762184b0f477845d11740",
+    "source_path": "docs/CODEX_CHECKPOINT.md",
+    "sha256": "300185446690f06b5eaf24f2dab92e9dfe5a1bb301a894cd6475b027fde53334"
+  }
+]

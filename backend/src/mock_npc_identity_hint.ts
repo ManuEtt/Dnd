@@ -37,8 +37,8 @@ const mentionsName = (action: string, name: string): boolean => {
 /**
  * Prefer newest ID-owned note when one unambiguously mentioned NPC exists.
  * Empty or malformed optional contexts are ignored; the legacy mock path can
- * then operate unchanged. Identical display names are deliberately refused
- * until the player action carries an explicit selected identity.
+ * then operate unchanged. Display-name ambiguity is refused unless the client
+ * supplies an explicit, validated selectedNpcId with one matching context.
  */
 export function mockNpcIdentityHint(input: StoryTurnWithNpcIdentities): string {
   if (input.campaignRevision === undefined || !input.npcContexts?.length) {
@@ -52,8 +52,10 @@ export function mockNpcIdentityHint(input: StoryTurnWithNpcIdentities): string {
 
   const eligible = input.npcContexts.filter(context =>
     context.notes.length > 0 &&
-    mentionsName(input.action, context.npcName) &&
-    input.npcs.filter(npc => fold(npc.name) === fold(context.npcName)).length === 1,
+    (input.selectedNpcId !== undefined
+      ? context.npcId === input.selectedNpcId
+      : mentionsName(input.action, context.npcName) &&
+        input.npcs.filter(npc => fold(npc.name) === fold(context.npcName)).length === 1),
   );
   if (eligible.length !== 1) return '';
 

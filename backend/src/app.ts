@@ -76,7 +76,7 @@ export function buildApp(config: Config, dependencies: AppDependencies = {}) {
       expiresIn: config.sessionTtlSeconds,
       provider: config.provider,
       scope: 'narration:read-only',
-      capabilities: ['npc-identity-v1'],
+      capabilities: ['npc-identity-v1', 'npc-selection-v1'],
     };
   });
 
@@ -90,7 +90,7 @@ export function buildApp(config: Config, dependencies: AppDependencies = {}) {
       scope: 'narration:read-only',
       provider: config.provider,
       expiresAt: new Date(session.expiresAt * 1000).toISOString(),
-      capabilities: ['npc-identity-v1'],
+      capabilities: ['npc-identity-v1', 'npc-selection-v1'],
     };
   });
 
@@ -160,6 +160,7 @@ export function buildApp(config: Config, dependencies: AppDependencies = {}) {
         recentActions: { type: 'array', maxItems: 8, items: nonBlankString(2000) },
         campaignRevision: { type: 'integer', minimum: 0, maximum: 2147483647 },
         npcContexts: { type: 'array', maxItems: 3, items: npcIdentitySchema },
+        selectedNpcId: { type: 'string', minLength: 1, maxLength: 64, pattern: '^[a-zA-Z0-9_-]+$' },
       } } }, preHandler: storyRateLimit,
   }, async (request, reply) => {
     // Reject ambiguous saved identifiers before making a potentially paid
