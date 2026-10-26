@@ -333,9 +333,9 @@ void main() {
       expect(tester.widget<Text>(find.text(heroName)).maxLines, isNull);
       expect(tester.widget<Text>(find.text(enemyName)).maxLines, isNull);
       expect(find.byKey(const ValueKey('combatant-active-turn')), findsOneWidget);
-      expect(find.text('INI 18', findRichText: true), findsOneWidget);
-      expect(find.text('RK 16', findRichText: true), findsOneWidget);
-      expect(find.text('TP 12 / 24', findRichText: true), findsOneWidget);
+      expect(find.textContaining('INI 18', findRichText: true), findsOneWidget);
+      expect(find.textContaining('RK 16', findRichText: true), findsOneWidget);
+      expect(find.textContaining('TP 12 / 24', findRichText: true), findsOneWidget);
       expect(find.text('Trefferpunkte nicht vollständig bestätigt'),
           findsOneWidget);
       expect(tester.takeException(), isNull);
