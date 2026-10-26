@@ -80,23 +80,26 @@ void main() {
     expect(jsonEncode(campaign.toJson()), unchanged);
   });
 
-  test('explicit identity is sufficient without guessing from player prose', () {
-    final campaign = _campaign();
-    final choice = NpcStorySelection.choose(campaign, 'mira-two');
-    final payload = NpcIdentityStoryPayload.prepare(
-      campaign,
-      'Ich möchte die Karte untersuchen.',
-      selectedNpc: choice,
-    );
-    expect(payload!.npcContexts.single['npcId'], 'mira-two');
-    expect(
-      NpcIdentityStoryPayload.prepare(
+  test(
+    'explicit identity is sufficient without guessing from player prose',
+    () {
+      final campaign = _campaign();
+      final choice = NpcStorySelection.choose(campaign, 'mira-two');
+      final payload = NpcIdentityStoryPayload.prepare(
         campaign,
         'Ich möchte die Karte untersuchen.',
-      ),
-      isNull,
-    );
-  });
+        selectedNpc: choice,
+      );
+      expect(payload!.npcContexts.single['npcId'], 'mira-two');
+      expect(
+        NpcIdentityStoryPayload.prepare(
+          campaign,
+          'Ich möchte die Karte untersuchen.',
+        ),
+        isNull,
+      );
+    },
+  );
 
   test('stale revision and foreign campaign reject a selected identity', () {
     final campaign = _campaign();
@@ -105,10 +108,7 @@ void main() {
       campaign.copyWith(revision: 9),
       _campaign(id: 'other-campaign'),
     ]) {
-      expect(
-        () => choice.requireCurrent(changed),
-        throwsFormatException,
-      );
+      expect(() => choice.requireCurrent(changed), throwsFormatException);
       expect(
         () => NpcIdentityStoryPayload.prepare(
           changed,
@@ -125,11 +125,7 @@ void main() {
     final choice = NpcStorySelection.choose(campaign, 'mira-one');
     final changed = campaign.copyWith(
       npcs: const [
-        WorldNpc(
-          id: 'mira-one',
-          name: 'Mira',
-          relationship: 'feindlich',
-        ),
+        WorldNpc(id: 'mira-one', name: 'Mira', relationship: 'feindlich'),
         WorldNpc(id: 'mira-two', name: 'MIRA'),
       ],
     );
@@ -160,9 +156,7 @@ void main() {
     }
     final choice = NpcStorySelection.choose(campaign, 'mira-one');
     final onlyOtherNote = campaign.copyWith(
-      npcRelationshipNotes: [
-        campaign.npcRelationshipNotes.last,
-      ],
+      npcRelationshipNotes: [campaign.npcRelationshipNotes.last],
     );
     expect(
       NpcIdentityStoryPayload.prepare(
