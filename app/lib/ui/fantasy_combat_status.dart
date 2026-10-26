@@ -262,6 +262,9 @@ class _CombatCoverSelector extends StatelessWidget {
               ),
           ],
           child: Container(
+            // Keep the actual popup hit area at least 48 dp tall, even when
+            // using compact labels or when changing cover is disabled.
+            constraints: const BoxConstraints(minHeight: 48),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
             decoration: BoxDecoration(
               color: FantasyPalette.night.withValues(alpha: .85),

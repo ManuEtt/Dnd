@@ -181,10 +181,14 @@ class FantasyEffectWard extends StatelessWidget {
     );
     final foreign =
         encounter != null && encounter!.id != effect.expiresInEncounterId;
+    final countdown = rest == null
+        ? ''
+        : rest == 1
+        ? ' · noch 1 eigenes Zugende'
+        : ' · noch $rest eigene Zugenden';
     return 'Ende des eigenen Zugs: Runde $round '
         '(${effect.expiresInEncounterId})'
-        '${foreign ? ' · andere Begegnung' : ''}'
-        '${rest == null ? '' : ' · noch $rest eigene Zugenden'}';
+        '${foreign ? ' · andere Begegnung' : ''}$countdown';
   }
 
   String _summary(String condition) {
