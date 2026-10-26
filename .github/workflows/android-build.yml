@@ -86,12 +86,6 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
-      # TEMPORARY CHAT-C FORMAT DIAGNOSTIC – MUST BE REVERTED AFTER REVIEW
-      - name: Chat C – genaue Formatierungsdifferenz anzeigen
-        working-directory: app
-        run: |
-          dart format test/death_save_decision_panel_busy_test.dart
-          git diff -- test/death_save_decision_panel_busy_test.dart
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
