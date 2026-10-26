@@ -51,7 +51,6 @@ void main() {
   test('embedded control characters and special durations stay unsupported', () {
     for (final invalid in [
       '1 minute\n2 minutes',
-      'Concentration,\tup to 1 minute',
       '1 minute\u200B',
     ]) {
       expect(
@@ -63,6 +62,13 @@ void main() {
         reason: invalid,
       );
     }
+    expect(
+      () => SrdSpellDurationRules.parse(
+        'Concentration,\tup to 1 minute',
+        concentrationRequired: true,
+      ),
+      throwsFormatException,
+    );
     expect(
       () => SrdSpellDurationRules.parse(
         'Special',
