@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – Kampf-Deckung bei 200 % Schrift (26.10.2026)
+
+Der unabhängige Branch `feat/chat-c/combat-cover-large-text-20261026` verbessert `FantasyCombatCoverPanel`: Bei 320–360 dp und 200 % Android-Schrift erhalten die Popup-Auswahlen für Held und Gegner jeweils die gesamte Zeilenbreite und zeigen bestätigte Deckungswerte ohne Textkürzung. Die Bedienhilfen nennen Deckungsstufe und Änderbarkeit. Auswahlwerte, bestehende `Deckung: ...`-Befehle und Sperren bei `canChange == false` bleiben unverändert. Drei zusätzliche Widgettests prüfen Layout, Screenreader, Auswahl und gesperrte Aktionen. **Finale CI-/Android-Abnahme steht noch aus.** Keine SRD-, KI-, Kampagnen- oder Datenmigration. [Detaillierter Chat-C-Checkpoint](docs/parallel/CHAT_C_COVER_ACCESSIBILITY_20261026.md).
+
 ## Chat C – Zugänglicher Heldenstatus (25.10.2026, PR offen)
 
 Der unabhängige Branch `feat/chat-c/accessible-status-hud-20261025` verbessert ausschließlich die Darstellung von `FantasyAdventureStatusHud`: ab 180 % Systemschrift bei 320–360 dp einspaltige Statuskarten; die angezeigten Werte schrumpfen nicht mehr über `FittedBox`. TP, RK, Bewegung und Erfahrung besitzen vollständige deutsche Screenreader-Texte; unbekannte Werte werden ausdrücklich als „nicht bestätigt“ angesagt. TP-/EP-Balken erhalten verständliche Prozent-Semantik. Drei Widgettests prüfen 320/360 dp bei 200 % und den unbekannten Zustand.
