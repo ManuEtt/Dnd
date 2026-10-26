@@ -163,6 +163,9 @@ class _TurnEntry extends StatelessWidget {
     );
 
     return Semantics(
+      // Keep this entire combatant announcement as one independent node,
+      // rather than merging two competitors into the panel semantics.
+      container: true,
       label:
           '${hero ? 'Held' : 'Gegner'}: $name. Initiative '
           '${initiative > 0 ? initiativeLabel : 'unbekannt'}. '
