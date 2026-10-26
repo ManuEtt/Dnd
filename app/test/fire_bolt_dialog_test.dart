@@ -92,9 +92,11 @@ void main() {
     await tester.ensureVisible(checkbox);
     await tester.tap(checkbox);
     await tester.pumpAndSettle();
-    final preview = tester.widget<Text>(
-      find.byKey(const ValueKey('fire-bolt-class-stats')),
-    ).data!;
+    final preview = tester
+        .widget<Text>(
+          find.byKey(const ValueKey('fire-bolt-class-stats')),
+        )
+        .data!;
     expect(preview, contains('Basisangriff +6'));
     expect(preview, contains('Intelligenz 16'));
     expect(hero.toJson(), before);
