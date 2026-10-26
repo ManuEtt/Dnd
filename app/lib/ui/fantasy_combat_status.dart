@@ -92,6 +92,7 @@ class FantasyCombatActionEconomy extends StatelessWidget {
 
 class _ActionSeal extends StatelessWidget {
   const _ActionSeal({
+    super.key,
     required this.label,
     required this.value,
     required this.available,
