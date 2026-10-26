@@ -64,7 +64,9 @@ jobs:
               [253, ['app/lib/story/ai_story.dart', 'app/test/ai_story_test.dart', 'backend/src/story.ts', 'backend/test/story.test.ts']],
               [254, ['app/lib/ui/fantasy_combat_status.dart', 'app/test/fantasy_combat_status_test.dart']],
               [256, ['app/lib/story/ai_story.dart', 'app/test/ai_story_test.dart', 'backend/src/story.ts', 'backend/test/story.test.ts', 'app/test/ai_story_terminal_sqlite_resume_test.dart']],
-              [257, ['app/lib/domain/srd_spell_duration_rules.dart', 'app/test/srd_spell_duration_integrity_test.dart']]
+              [257, ['app/lib/domain/srd_spell_duration_rules.dart', 'app/test/srd_spell_duration_integrity_test.dart']],
+              [259, ['app/lib/domain/srd_class_feature_catalog.dart', 'app/lib/domain/srd_class_level_up.dart', 'app/lib/ui/srd_class_level_up_dialog.dart', 'app/test/srd_class_level_up_test.dart', 'app/test/ui_srd_class_level_up_test.dart', 'docs/srd_5_2_1_requirements.json', 'docs/parallel/CHAT_A_CLASS_CAPSTONES_20261026.md']],
+              [255, ['app/lib/ui/death_save_decision_panel.dart', 'app/test/death_save_decision_panel_busy_test.dart']]
             ]);
 
             const blob = async (path, ref) => {
