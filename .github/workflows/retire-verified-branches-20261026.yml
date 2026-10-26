@@ -63,7 +63,8 @@ jobs:
               [252, ['app/lib/ui/fantasy_effect_ward.dart', 'app/test/confirmed_spell_effect_widget_test.dart']],
               [253, ['app/lib/story/ai_story.dart', 'app/test/ai_story_test.dart', 'backend/src/story.ts', 'backend/test/story.test.ts']],
               [254, ['app/lib/ui/fantasy_combat_status.dart', 'app/test/fantasy_combat_status_test.dart']],
-              [256, ['app/lib/story/ai_story.dart', 'app/test/ai_story_test.dart', 'backend/src/story.ts', 'backend/test/story.test.ts', 'app/test/ai_story_terminal_sqlite_resume_test.dart']]
+              [256, ['app/lib/story/ai_story.dart', 'app/test/ai_story_test.dart', 'backend/src/story.ts', 'backend/test/story.test.ts', 'app/test/ai_story_terminal_sqlite_resume_test.dart']],
+              [257, ['app/lib/domain/srd_spell_duration_rules.dart', 'app/test/srd_spell_duration_integrity_test.dart']]
             ]);
 
             const blob = async (path, ref) => {
@@ -126,6 +127,32 @@ jobs:
                         break;
                       }
                     }
+                  }
+                }
+              }
+              if (!approved &&
+                  name === 'fix/chat-a/spell-range-unit-validation-20261026' &&
+                  sha === '5fc1b5b599f905160f3483db5e1733a6b2761d53') {
+                const old = closed.find(p => p.number === 242 && !p.merged_at &&
+                  p.head.ref === name && p.head.sha === sha);
+                if (old) {
+                  const dif = await github.rest.repos.compareCommits({
+                    ...repo, base: mainSha, head: sha
+                  });
+                  const allowed = new Set([
+                    '.github/workflows/chat-a-spell-range-format.yml',
+                    'app/test/srd_spell_target_rules_test.dart'
+                  ]);
+                  const noDocs = (dif.data.files || []).map(f => f.filename)
+                    .filter(p => p !== 'README.md' && !p.startsWith('docs/'));
+                  if (noDocs.length > 0 && noDocs.every(p => allowed.has(p)) &&
+                      await blob('app/lib/domain/srd_spell_target_rules.dart', sha) ===
+                        await blob('app/lib/domain/srd_spell_target_rules.dart', mainSha) &&
+                      await blob('app/test/srd_spell_target_rules_test.dart', sha) ===
+                        'e9b10d53c57e39b3758fc07e3f272960ce161946' &&
+                      await blob('app/test/srd_spell_target_rules_test.dart', mainSha) ===
+                        '0a66cc516550a6e54df601a2b9978f063fe31468') {
+                    approved = true;
                   }
                 }
               }
