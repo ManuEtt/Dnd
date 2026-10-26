@@ -65,6 +65,13 @@ void main() {
           .value,
       false,
     );
+    final modifiers = find.byKey(const ValueKey('fire-bolt-attack-modifiers'));
+    expect(tester.widget<CheckboxListTile>(modifiers).value, isFalse);
+    expect(find.byKey(const ValueKey('fire-bolt-class-stats')), findsNothing);
+    await tester.ensureVisible(modifiers);
+    await tester.tap(modifiers);
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Basisangriff +6'), findsOneWidget);
     final cast = find.byKey(const ValueKey('fire-bolt-cast'));
     await tester.tap(cast);
     await tester.pumpAndSettle();

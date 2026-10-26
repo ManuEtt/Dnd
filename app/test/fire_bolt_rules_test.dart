@@ -71,6 +71,7 @@ FireBoltResult _cast(
   bool defense = true,
   bool shield = true,
   bool circumstances = true,
+  bool modifiersConfirmed = true,
   bool advantage = false,
   bool disadvantage = false,
   bool prone = false,
@@ -88,13 +89,18 @@ FireBoltResult _cast(
   noFireResistanceOrImmunityConfirmed: defense,
   noUnresolvedShieldReactionConfirmed: shield,
   situationalAttackConditionsConfirmed: circumstances,
+  noUnmodelledAttackModifiersConfirmed: modifiersConfirmed,
   advantage: advantage,
   disadvantage: disadvantage,
   targetProne: prone,
   targetWithinFiveFeet: near,
 );
 
-GameUpdate _engine(GameEngine engine, Campaign game) => engine.castFireBolt(
+GameUpdate _engine(
+  GameEngine engine,
+  Campaign game, {
+  bool modifiersConfirmed = true,
+}) => engine.castFireBolt(
   game,
   castingClass: 'Magier',
   targetVisibleConfirmed: true,
@@ -104,6 +110,7 @@ GameUpdate _engine(GameEngine engine, Campaign game) => engine.castFireBolt(
   noFireResistanceOrImmunityConfirmed: true,
   noUnresolvedShieldReactionConfirmed: true,
   situationalAttackConditionsConfirmed: true,
+  noUnmodelledAttackModifiersConfirmed: modifiersConfirmed,
 );
 
 void main() {
@@ -117,6 +124,77 @@ void main() {
     expect(FireBoltRules.diceCount(17), 4);
     expect(FireBoltRules.diceCount(20), 4);
     expect(() => FireBoltRules.diceCount(21), throwsRangeError);
+  });
+
+  test('unconfirmed attack modifiers fail before RNG and campaign changes', () {
+    final random = _SequenceRandom([19]);
+    final hero = _caster();
+    final snapshot = hero.toJson();
+    expect(
+      () => _cast(hero, random, modifiersConfirmed: false),
+      throwsFormatException,
+    );
+    expect(random.calls, 0);
+    expect(hero.toJson(), snapshot);
+
+    final engine = GameEngine(dice: DiceEngine(random: random));
+    final campaign = engine.createDemo().copyWith(
+      hero: hero,
+      encounter: _encounter,
+    );
+    final before = campaign.toJson();
+    expect(
+      () => _engine(engine, campaign, modifiersConfirmed: false),
+      throwsFormatException,
+    );
+    expect(campaign.toJson(), before);
+    expect(random.calls, 0);
+  });
+
+  test('class validation rejects alias collisions and unknown multiclass', () {
+    final rng = _SequenceRandom([19]);
+    for (final invalid in [
+      _caster().copyWith(
+        className: 'Wizard',
+        secondaryClassName: 'Magier',
+        secondaryClassLevel: 1,
+      ),
+      _caster().copyWith(
+        className: 'Unbekannt',
+        secondaryClassName: 'Magier',
+        secondaryClassLevel: 1,
+      ),
+      _caster().copyWith(
+        className: 'Wizard',
+        secondaryClassName: 'Sorcerer',
+        secondaryClassLevel: 5,
+      ),
+    ]) {
+      expect(() => _cast(invalid, rng), throwsFormatException);
+    }
+    expect(rng.calls, 0);
+  });
+
+  test('multiclass aliases use selected class stat and total level once', () {
+    final hero = _caster(level: 6, className: 'Wizard').copyWith(
+      secondaryClassName: 'Sorcerer',
+      secondaryClassLevel: 1,
+      exhaustionLevel: 1,
+    );
+    final wizard = _cast(hero, _SequenceRandom([11]));
+    expect(wizard.castingClass, 'Magier');
+    expect(wizard.spellcastingAbility, 'intelligence');
+    // INT +3, total level proficiency +3, exhaustion -2.
+    expect(wizard.attackBonus, 4);
+    final sorcerer = _cast(
+      hero,
+      _SequenceRandom([11]),
+      castingClass: 'Sorcerer',
+    );
+    expect(sorcerer.castingClass, 'Zauberer');
+    expect(sorcerer.spellcastingAbility, 'charisma');
+    expect(sorcerer.attackBonus, 3);
+    expect(hero.spentSpellSlots, isEmpty);
   });
 
   test('Natural 20 always hits, doubles dice, never spends a slot', () {
