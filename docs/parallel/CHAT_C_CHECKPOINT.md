@@ -1,5 +1,19 @@
 # CHAT C – Android und Fantasy-UI
 
+## Chat C – C-003: 48-dp-Touchziele bei Deckungswahl (26.10.2026)
+
+- **Basis:** `67f146e690306b13d490bd8e7fd5636bb187c77e` auf `main`.
+- **Branch:** `feat/chat-c/cover-touch-target-20261026`. Offener PR wird nach Anlage ergänzt.
+- **Stand:** Technik-Commits `d0d0d98d7b7fb53adf21133075dcf7ab47ff797b` und `b375aa553a8ac4f6e816214c7094bf79674fc299`; reine UI/Text-Konstraints sowie Widget-Regressionen.
+- **Motivation:** Die custom `PopupMenuButton`-Kindfläche der Deckungsauswahl hatte keine garantierte minimale Klick-/Tapphöhe. `BoxConstraints(minHeight: 48)` hält das Bedienelement auch bei kleiner Schrift antippbar.
+- **Akzeptanz:** 320/360 dp, 100/200 % Schrift; jeweils beide Popupfelder mindestens 48 dp hoch, gültige Auswahl produziert genau den alten SRD-Befehl, gesperrte Felder bleiben ohne Aktion. Vorhandene Semantik und Auswahlinhalte unverändert.
+- **Dateien:** `app/lib/ui/fantasy_combat_status.dart`, `app/test/fantasy_combat_status_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, diese Datei.
+- **Tests:** GitHub-CI für neuen Code-HEAD bei Dokumentation noch ausstehend. Kein lokaler Flutter-/Dart-SDK-Zugriff und kein realer Gerätetest behauptet.
+- **Domain & Migration:** keine Regel-, Erzählungs-, Controller-, Datenformat- oder SQLite-Änderung; keine Speicherung/Migration.
+- **Konflikte:** Zum Anlegezeitpunkt keine offenen PRs mit Änderungen an den beiden technischen Dateien. Gemeinsame Dokumentationsdateien sind vor Merge erneut abzugleichen.
+- **Nächster Schritt:** endgültige CI auf der eigenen Commitbasis abnehmen, nötige Korrekturen übernehmen und PR zur Review freigeben; keine parallelen Branches selbst löschen.
+
+
 **Stand:** 2026-10-25 (Europe/Berlin)  
 **Zusätzlich nachgezogener Main-Stand:** `97a06118f17d71cc77be2cb15a2fc9a53db20ee0` (enthält Chat D PR #177, dessen zusätzliche CI-Gates; alte Dokumentation bewahrt)  
 **Nachgezogener Main-Stand:** `fb788a980b8ee9eb60439c249f3e1f5092a9f188` (enthält PR #176; Merge ausschließlich auf dem Feature-Branch)  
