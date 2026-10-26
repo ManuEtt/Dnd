@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – lesbare Restdauer bestätigter Zauberwirkungen (26.10.2026, Entwicklungs-PR)
+
+Die Anzeige des arkanen Zustandskreises unterscheidet jetzt **„noch 1 eigenes Zugende“** von **„noch 4 eigene Zugenden“**. Bisher wurde der Singular als „1 eigene Zugenden“ dargestellt. Die Anzeige eines nicht bestätigten Countdowns bei fremden Begegnungen bleibt weiterhin gesperrt. Drei zusätzliche Widgettestfälle prüfen 320/360 dp, 200 % Systemschrift, Singular/Plural und eine andere Begegnung. Nur `app/lib/ui/fantasy_effect_ward.dart` sowie `app/test/confirmed_spell_effect_widget_test.dart` sind technisch geändert; keine Anpassung an Regelentscheidung, Restzeitberechnung, JSON oder SQLite. Neue Flutter-CI auf diesem Arbeitsbranch ist bei Dokumentation noch offen; kein Geräteerfolg behauptet. Diese Arbeit ist noch nicht in `main` enthalten und muss bei der Integration gegen parallele PRs geprüft werden.
+
+
 Deutschsprachige Flutter-Android-Alpha für lokale Soloabenteuer, bestätigte D&D-SRD-5.2.1-Regeln und optionalen KI-Erzähler. Das vollständige Regelwerk bleibt in Arbeit.
 
 ## Aktueller Stand und autonome Fortsetzung (26.10.2026)
