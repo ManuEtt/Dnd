@@ -1,3 +1,40 @@
+# Chat D – D-006: plattformübergreifend sichere Quell-ZIP-Namen
+
+## GitHub und Scope
+
+- **Datum:** 26.10.2026
+- **Ausgangs-Main:** `5f9a01dd73f68ad4f9e226f859a8ca87803b8337`, [Main-CI #40233719625](https://github.com/ManuEtt/Dnd/actions/runs/40233719625) erfolgreich.
+- **Branch:** `fix/chat-d/portable-source-zip-paths-20261026`.
+- **Technischer Commit:** `381d512d82fc9218c1d4769d25ec43629adc7012` (vor Dokumentation).
+- **Vorgesehen:** eigener Draft-PR; finales CI-Ergebnis und URL im PR verifizieren.
+- **Technische Pfade:** `scripts/package_project.py`, `scripts/tests/test_package_project.py`. Diese Pfade sind getrennt von PR #189 und den A/B/C-PRs.
+- **Gemeinsam bearbeitete Dokumentation:** `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`; gegen neuen Main vor dem Merge additiv abgleichen.
+
+## Problem
+
+ZIP-Namen unterscheiden Groß- und Kleinschreibung. Windows sowie viele macOS-Volumes und Unicode-normalisierende Dateisysteme können `Card.png` und `card.PNG`, `Icons/` und `icons/` oder aus NFC/NFD zusammengesetzte Unicode-Namen beim Entpacken nicht eindeutig getrennt darstellen. Das bisherige Quellarchiv könnte daher beim Übertragen Dateien zusammenfallen lassen.
+
+## IMPLEMENTIERT
+
+- `validate_portable_source_paths(root, paths)` prüft alle für den Export zugelassenen relativen Datei- und Verzeichnisprefixe **bevor** die ZIP-Erstellung oder der Ersatz vorhandener Archive beginnt.
+- Unicode-NFC plus `casefold()` kennzeichnen plattformübergreifende Dateinamenkollisionen, ohne rechtmäßige Großschreibung im ZIP zu verändern.
+- Windows-unzulässige Zeichen, reservierte Namen, Steuerzeichen und abschließende Punkte/Leerzeichen werden vor dem Verpacken abgewiesen.
+- **Sechs neue Tests:** Dateinamenskollision, Verzeichniskollision, Unicode-NFC/NFD-Kollision, unportable Windows-Namen, vollständige Bewahrung zuvor veröffentlichter ZIP-/SHA256-Paare bei Fehlprüfung, reguläre unterschiedliche Dateinamen.
+- Normale ZIP-Ausgabe und bereits vorhandene Secrets-/SDK-Filter sind unverändert.
+
+## Tests
+
+- **GEPRÜFT:** über GitHub am Branch veröffentlichte Änderungen in den beiden technischen Dateien vorhanden; [Main-CI](https://github.com/ManuEtt/Dnd/actions/runs/40233719625) deckt lediglich die vorherige Basis ab.
+- **NICHT GETESTET:** volle Python-/Flutter-/Android-/Backend-CI und ZIP-Artefakte des finalen D-006-Commits; außerdem reales Entpacken auf Windows/macOS.
+- **BLOCKIERT:** unabhängige finale GitHub-Actions-Abnahme und GitHub-Main-Abgleich nach parallelen Merges.
+- **PERSISTENZ/REGELN:** kein Datenbank- oder JSON-Eingriff, keine Android-App- oder SRD-Regeländerung, keine Migration.
+
+## Genau ein nächster Schritt
+
+Den **finalen** CI-Lauf für D-006 samt vollständiger Python-Regressionen und Alpha-Release-Quellarchiv abschließen, den aktuellen Main-Stand prüfen und Checkpoint-/README-Änderungen erst bei vollständiger Abnahme konfliktfrei zusammenführen.
+
+---
+
 # Chat D D-004 – Main-Synchronisierung nach PR #183
 
 Neuer Basis-Main-HEAD `713b8cc2831f9d8039ef4e6ebf37c10682aec675` enthält D-001, D-002 und D-003. Branch D-004 wird per **normalem Merge-Commit ohne Force-Push** mit Main synchronisiert. Nur die zwei Python-Projektprüfer-/Testdateien werden aus D-004 übernommen; Dokumentation aus aktuellem Main bleibt erhalten und wird additiv ergänzt. Frühere Code-Tests/CIs auf `c7f2df12a9df474e6204ad1de4011f7c5b6e3e7f` sind keine finale Abnahme nach Synchronisierung. Offene PRs anderer Chats bleiben unverändert.
