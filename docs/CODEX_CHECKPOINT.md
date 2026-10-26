@@ -1,3 +1,16 @@
+# Chat D D-010 – No-follow Checkpoint-Manifest (26.10.2026)
+
+- **Main-Basis:** `5e3116f9e3f8de0af6e8125a97b3962cb8910cdf`, separater `fix/chat-d/checkpoint-manifest-nofollow-20261026`-Branch.
+- **IMPLEMENTIERT:** `file_manifest` verwendet den seit D-009 abgesicherten `read_verified_source` statt `sha256(path)` und mehrerer unsynchronisierter `stat()`-Aufrufe.
+- **TESTS:** Drei zusätzliche Symlink-Swap-/Vorversions-Unveränderlichkeitstests. Finale GitHub-CI auf der letzten Commit-SHA noch ausstehend.
+- **NICHT GETESTET:** vollständiger neuer Android-/Flutter-/Backend-/Alpha-Lauf, echte Android-Installation; nicht-POSIX-TOCTOU-Schutz nur best-effort.
+- **BLOCKIERT:** neue finale CI; Main-Koordinierung nach unabhängigen PRs.
+- **Keine Spielstandmigration:** SQLite-/JSON-Verträge, App-Version, Spielregeln und Story unverändert.
+- **NÄCHSTER SCHRITT:** vollständige CI, PR-Dateiabgleich und konfliktfreien kontrollierten Merge nach `main` abnehmen.
+- [Persönlicher Chat-D-Checkpoint](parallel/CHAT_D_CHECKPOINT.md)
+
+---
+
 # Chat D D-009 – sichere Quell-ZIP-Dateilesepfade (26.10.2026)
 
 - **Basis-`main`:** `42d14ad36cc947691f7e5a1e8647a43f5421b86e`; **Branch:** `fix/chat-d/source-zip-symlink-swap-20261026`.

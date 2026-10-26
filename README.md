@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – Checkpoint-Dateimanifest ohne Symlink-Nachverfolgung (D-010, 26.10.2026)
+
+Das Checkpoint-Dateimanifest nutzt jetzt denselben descriptor-relativen, auf POSIX gegen Symlink-Austausch geschützten Leseweg wie der Quell-ZIP-Exporter, statt externe Zielinhalte durch ein nach dem Verzeichnis-Scan ausgetauschtes Dateisystemobjekt zu lesen. Drei neue Regressionstests schützen Dateisymlinks, Verzeichnis-Symlinks und bereits verifizierte Checkpoint-Aliase. Keine Änderung an SQLite, JSON-Spielständen, SRD-Regeln oder Android-App. Finale GitHub-CI ist nach dem letzten Dokumentationscommit gesondert abzunehmen. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
 ## Chat D – Quell-ZIP vor Symlink-Austausch nach dem Scan schützen (D-009, 26.10.2026)
 
 Der Quellarchiv-Export nutzt auf POSIX nun vor jedem Dateilesen gesicherte Verzeichnis-Deskriptoren und `O_NOFOLLOW`, damit ein nach der Auflistung eingeschleuster Link nicht unbemerkt projektfremde Daten archiviert. Drei neue Regressionstests prüfen solche Datei-/Verzeichniswechsel sowie den Erhalt bereits veröffentlichter ZIP-/SHA256-Dateien; ein veralteter Testmock wurde aktualisiert. Non-POSIX-Plattformen erhalten eine zusätzliche Best-Effort-Prüfung, jedoch keine Garantie gegen alle Race Conditions. **Die finale CI auf dem aktuellen PR-Commit ist noch abzunehmen.** Keine Änderungen am Spielstandformat, App-Code oder Regelwerk. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
