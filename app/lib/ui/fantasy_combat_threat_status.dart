@@ -135,6 +135,9 @@ class _ThreatSeal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
+    // Each confirmed threat must be a separate TalkBack announcement instead
+    // of merging adjacent seals into one inaccessible status.
+    container: true,
     label: label,
     child: ExcludeSemantics(
       child: Container(
