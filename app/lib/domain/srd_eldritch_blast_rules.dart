@@ -205,8 +205,6 @@ class SrdEldritchBlastResolution {
 
   final int characterLevel;
   final List<SrdEldritchBlastBeamResult> beams;
-  int get totalRawForceDamage => beams.fold<int>(
-    0,
-    (total, beam) => total + beam.rawForceDamage,
-  );
+  int get totalRawForceDamage =>
+      beams.fold<int>(0, (total, beam) => total + beam.rawForceDamage);
 }
