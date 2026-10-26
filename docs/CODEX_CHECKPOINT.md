@@ -1,3 +1,16 @@
+# Chat C – Kampfteilnehmerkarten bei 200 % Android-Schrift (26.10.2026)
+
+- **Ausgangs-main:** `e903ae38c6ae99abfa99a432e7f7777f0eee853f`; Branch `feat/chat-c/combatant-card-large-text-20261026`.
+- **IMPLEMENTIERT:** Die `FantasyCombatantCard` zeigt vollständige bestätigte Namen in vertikaler Kopfzeile ab 180 % Textskalierung; Status „AM ZUG“ bleibt sichtbar. `Flexible` nur bei horizontaler, begrenzter Flex-Achse, um RenderFlex-Fehler zu vermeiden. INI/RK/TP/TEMP und bestätigte Fortschrittsanzeige unverändert.
+- **TESTS ERGÄNZT:** Vier Widgettests: 320/360 dp bei 200 %, unbekannte Werte ohne erfundene Trefferpunkte, normaler kompakter Modus.
+- **BLOCKIERT:** Die unveränderte `main`-CI [#40282602855](https://github.com/ManuEtt/Dnd/actions/runs/40282602855) und der ursprüngliche Feature-Branch [#40282720333](https://github.com/ManuEtt/Dnd/actions/runs/40282720333) scheitern bereits an drei Python-Archiv-/Checkpoint-Tests, bevor Flutter startet. Separate Flutter- und Android-Validierung erforderlich; keine falsche Angabe einer erfolgreichen Gesamt-CI.
+- **NICHT GETESTET:** reale Android-/TalkBack-Bedienung, produktive Signierung, komplette Gesamt-CI ohne Baseline-Fehler.
+- **MIGRATION:** keine. App `0.8.40+90`, SQLite 2/JSON 1 unverändert.
+- **NÄCHSTER SCHRITT:** isolierte Flutter-Regressionen und Android-Debug-Build prüfen, PR öffnen, keine eigenmächtige Main-Integration.
+- [Detail-Checkpoint](parallel/CHAT_C_COMBATANT_CARD_20261026.md). Historie anderer Chats folgt unverändert.
+
+---
+
 # Chat C – Kampf-Deckung bei 200 % Systemschrift (26.10.2026)
 
 - **Basis-main:** `864b53dba0a7186bf6beef46bcfb1499077d6dc2`; Feature-Branch `feat/chat-c/combat-cover-large-text-20261026`. Vorherige PRs #197 und #199 integriert.
