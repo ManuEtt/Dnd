@@ -153,10 +153,14 @@ void main() {
       final enemyName = find.text('Schattenwächter des vergessenen Passes');
       expect(tester.widget<Text>(heroName).maxLines, isNull);
       expect(tester.widget<Text>(enemyName).maxLines, isNull);
-      expect(tester.getTopLeft(find.text('INI 18')).dy,
-          greaterThan(tester.getBottomLeft(heroName).dy));
-      expect(tester.getTopLeft(find.text('INI 11')).dy,
-          greaterThan(tester.getBottomLeft(enemyName).dy));
+      expect(
+        tester.getTopLeft(find.text('INI 18')).dy,
+        greaterThan(tester.getBottomLeft(heroName).dy),
+      );
+      expect(
+        tester.getTopLeft(find.text('INI 11')).dy,
+        greaterThan(tester.getBottomLeft(enemyName).dy),
+      );
       expect(
         find.bySemanticsLabel(
           'Held: Elowen die Wanderin. Initiative 18. Jetzt am Zug.',
