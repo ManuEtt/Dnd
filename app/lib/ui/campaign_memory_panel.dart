@@ -199,6 +199,9 @@ class CampaignMemoryPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final campaign = controller.currentCampaign;
     if (campaign == null) return const SizedBox.shrink();
+    // Historical notes may outlive their referenced NPC in memory.
+    // Rendering must not mutate, discard, or reinterpret these notes.
+    final npcNamesById = {for (final npc in campaign.npcs) npc.id: npc.name};
     return Column(
       children: [
         if (campaign.storyBible['mode'] == 'ai')
@@ -286,7 +289,7 @@ class CampaignMemoryPanel extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 8),
               child: Text(
-                '${campaign.npcs.firstWhere((npc) => npc.id == note.npcId).name}: '
+                '${npcNamesById[note.npcId] ?? 'NPC nicht mehr vorhanden'}: '
                 '${note.relationship} – ${note.note}',
               ),
             ),
