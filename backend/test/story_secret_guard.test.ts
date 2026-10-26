@@ -65,6 +65,24 @@ test('story start protects the secret across all public plan fields', () => {
   }), /story_secret_exposed/);
 });
 
+test('invisible Unicode cannot conceal a complete confirmed plot secret', () => {
+  for (const invisible of ['\u200B', '\u00AD', '\uFE0F', '\u034F', '\u200D']) {
+    const disguised = input.secret.replace('Nebelkrone', 'Nebel' + invisible + 'krone');
+    assert.notEqual(disguised, input.secret);
+    assert.throws(
+      () => guardStoryPlanSecrets({ ...plan, opening: 'Hinweis: ' + disguised }),
+      /story_secret_exposed/,
+    );
+    assert.throws(
+      () => guardStoryTurnSecrets({ ...turn, narration: disguised }, input.secret),
+      /story_secret_exposed/,
+    );
+  }
+  // Stripping invisible characters must not relax whole-word boundaries.
+  const harmless = { ...turn, narration: 'Ein Bogen\u200Bläufer erscheint.' };
+  assert.equal(guardStoryTurnSecrets(harmless, 'Bogen'), harmless);
+});
+
 test('story turn protects dialogue, NPC notes, updates and adventure offers', () => {
   assert.equal(guardStoryTurnSecrets(turn, input.secret), turn);
   for (const changed of [
@@ -98,14 +116,19 @@ test('whole-secret matching avoids false positives inside innocent names', () =>
 
 test('story routes reject exposed plot secrets without echoing private text', async (t) => {
   let leaked = true;
+  let invisible = false;
   const narrator: Narrator = {
     narrate: async () => ({ text: 'Unverändert.', provider: 'mock', stateChanges: [] }),
     startStory: async () => leaked
-      ? { ...plan, opening: 'Unerwartet: ' + plan.secret }
+      ? { ...plan, opening: 'Unerwartet: ' + (invisible
+        ? plan.secret.replace('Nebelkrone', 'Nebel\u200Bkrone')
+        : plan.secret) }
       : plan,
     advanceStory: async () => leaked
       ? { ...turn, npcUpdates: [
-        { id: 'seli', relationship: 'vorsichtig', note: input.secret },
+        { id: 'seli', relationship: 'vorsichtig', note: invisible
+          ? input.secret.replace('Nebelkrone', 'Nebel\u200Bkrone')
+          : input.secret },
       ] }
       : turn,
   };
@@ -118,6 +141,17 @@ test('story routes reject exposed plot secrets without echoing private text', as
   assert.equal(issued.statusCode, 200);
   const headers = { authorization: 'Bearer ' + issued.json<{ token: string }>().token };
   const startPayload = { heroName: 'Eila', heroClass: 'Waldläufer', theme: 'Küste' };
+  for (const [url, payload] of [
+    ['/v1/story/start', startPayload],
+    ['/v1/story/advance', input],
+  ] as const) {
+    const refused = await app.inject({ method: 'POST', url, headers, payload });
+    assert.equal(refused.statusCode, 502);
+    assert.deepEqual(refused.json(), { error: 'provider_unavailable' });
+    assert.doesNotMatch(refused.body, /Nebelkrone|verborgener Schwur|story_secret_exposed/);
+  }
+  // The HTTP contract must reject visually identical, Unicode-hidden leaks.
+  invisible = true;
   for (const [url, payload] of [
     ['/v1/story/start', startPayload],
     ['/v1/story/advance', input],
