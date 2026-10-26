@@ -193,6 +193,81 @@ class VerifyProjectTests(unittest.TestCase):
             'HTTPS-Distribution' in msg for msg in verify_project(self.root)
         ))
 
+    def test_unicode_escaped_distribution_url_key_is_duplicate(self):
+        properties = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        properties.write_text(
+            properties.read_text() +
+            r'distribution\u0055rl=http://untrusted.invalid/gradle-8.12-all.zip' + '\n'
+        )
+        self.assertTrue(any(
+            'HTTPS-Distribution' in error for error in verify_project(self.root)
+        ))
+
+    def test_unicode_escaped_checksum_key_is_duplicate(self):
+        properties = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        properties.write_text(
+            properties.read_text() +
+            r'distributionSha256S\u0075m=' + 'a' * 64 + '\n'
+        )
+        self.assertTrue(any(
+            'prüfsumme' in error for error in verify_project(self.root)
+        ))
+
+    def test_simple_escaped_first_letter_is_duplicate(self):
+        properties = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        properties.write_text(
+            properties.read_text() +
+            r'\distributionUrl=http://untrusted.invalid/gradle-8.12-all.zip' + '\n'
+        )
+        self.assertTrue(any(
+            'HTTPS-Distribution' in error for error in verify_project(self.root)
+        ))
+
+    def test_continued_distribution_key_is_duplicate(self):
+        properties = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        properties.write_text(
+            properties.read_text() +
+            'distributionU\\\n   rl=http://untrusted.invalid/gradle-8.12-all.zip\n'
+        )
+        self.assertTrue(any(
+            'HTTPS-Distribution' in error for error in verify_project(self.root)
+        ))
+
+    def test_escaped_colon_in_other_key_is_not_a_duplicate(self):
+        properties = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        properties.write_text(
+            properties.read_text() +
+            r'distributionUrl\:=not-the-distribution-url' + '\n'
+        )
+        self.assertEqual([], verify_project(self.root))
+
+    def test_single_unicode_escaped_key_stays_valid(self):
+        properties = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        content = properties.read_text()
+        self.assertIn('distributionUrl=', content)
+        properties.write_text(
+            content.replace('distributionUrl=', r'distribution\u0055rl=')
+        )
+        self.assertEqual([], verify_project(self.root))
+
+    def test_comments_with_escaped_key_names_stay_ignored(self):
+        properties = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        properties.write_text(
+            properties.read_text() +
+            '# ' + r'distribution\u0055rl=http://ignored.invalid' + '\n' +
+            '! ' + r'distributionSha256S\u0075m=ignored' + '\n'
+        )
+        self.assertEqual([], verify_project(self.root))
+
+    def test_continuation_with_even_backslashes_is_not_combined(self):
+        properties = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        properties.write_text(
+            properties.read_text() +
+            'unusedValue=two\\\\\n'
+            '   safeSubkey=ok\n'
+        )
+        self.assertEqual([], verify_project(self.root))
+
     def test_windows_shebang_is_rejected(self):
         (self.root / 'app/android/gradlew').write_bytes(b'#!/usr/bin/env bash\r\n')
         self.assertTrue(any('LF-Zeilenende' in error for error in verify_project(self.root)))
