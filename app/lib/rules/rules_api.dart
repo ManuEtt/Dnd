@@ -10,6 +10,7 @@ export '../domain/condition_rules.dart';
 export '../domain/cover_rules.dart';
 export '../domain/spellcasting_rules.dart';
 export '../domain/srd_spell_component_rules.dart';
+export '../domain/srd_spell_duration_rules.dart';
 export '../domain/srd_spell_catalog.dart';
 export '../domain/srd_spell_preflight_rules.dart';
 export '../domain/srd_spell_target_rules.dart';
