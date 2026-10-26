@@ -146,3 +146,7 @@ Die technische Detailplanung wird nicht in dieser Einführungsseite dupliziert. 
 Die Umsetzung orientiert sich an **D&D SRD 5.2.1** von **Wizards of the Coast LLC**, lizenziert unter **Creative Commons Attribution 4.0 International (CC BY 4.0)**. Die erforderlichen Namensnennungen und weiteren Hinweise stehen in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Eigene Fantasy-Geschichten und Grafiken werden getrennt von den SRD-Regeln behandelt.
 
 Das Repository enthält Entwicklungssoftware. **Vollständige SRD-Konformität, fehlerfreien Spielbetrieb, Produktionssicherheit oder eine Veröffentlichung im Play Store werden nicht behauptet.**
+
+## Chat A – Zauberdauerprüfung (26.10.2026)
+
+Im isolierten Regelwerk-Branch `fix/chat-a/spell-duration-integrity-20261026` werden nicht kanonische Randzeichen in der SRD-Zauberdauer abgewiesen, statt einen manipulierten Katalogwert stillschweigend zu normalisieren. Neue positive/negative Domain-Tests stehen zur CI-Prüfung. Kein Eingriff in gespeicherte Kampagnen, Wirkungen oder Ressourcen. Details: [Chat-A-Checkpoint](docs/parallel/CHAT_A_CHECKPOINT.md).
