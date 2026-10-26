@@ -1,3 +1,23 @@
+# Chat B – doppelte NPC-Anzeigenamen beim freien Erinnerungsabruf (26.10.2026)
+
+- **Ausgangs-main:** `5e3116f9e3f8de0af6e8125a97b3962cb8910cdf`.
+- **Eigener Branch:** `fix/chat-b/npc-name-ambiguous-recall-20261026`.
+- **Fach-/Test-Commit:** `63b0b7bf3fa259f05830b29470514308d1c349c0`.
+- **Pull Request:** [#248](https://github.com/ManuEtt/Dnd/pull/248).
+- **Geprüfte offene PRs:** #236, #237, #239, #240, #241, #242, #243, #244, #245, #246, #247; keine davon ändert die beiden Fachdateien. Zentrale Dokumentationsdateien werden von anderen PRs geändert und müssen von Chat D konsolidiert werden.
+- **Ausgangsproblem:** `NpcNarratorMemory.merge` prüfte eindeutige NPC-IDs, aber nicht, ob derselbe normalisierte Anzeigename zu mehreren unterschiedlichen IDs gehörte. Freier Text wie „Ich frage Mira“ konnte zwei NPC-Erinnerungen ohne ID-Kennzeichnung zugleich in den optionalen Erzähler einspeisen.
+- **IMPLEMENTIERT:** Namen innerhalb derselben Kampagne normalisieren und zählen; NPC-spezifische Notizen nur bei genau einem Vorkommen dieses Namens aus unstrukturierter Prosa wählen. Bereits bestehende Prüfung mehrdeutiger IDs bleibt erhalten. Getrennter expliziter ID-Transport wird nicht berührt.
+- **GEÄNDERTE DATEIEN:** `app/lib/story/npc_narrator_memory.dart`, `app/test/npc_narrator_memory_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **AKZEPTANZ:** Zwei „Mira“ mit verschiedenen IDs oder zwei gleichlautende normalisierte Namen erzeugen ohne explizite Auswahl keine Namensnotizen; eindeutiger „Tarek“ liefert weiterhin die richtige Notiz. Unveränderte Kampagnen-JSON-Repräsentation, unveränderbare Rückgabe und kompatible Legacy-Memory-Liste.
+- **TESTS ERGÄNZT:** Positive und negative Flutter-Unit-Regressionen in `npc_narrator_memory_test.dart` samt Nachweis, dass die kampagneneigenen Daten durch den Abruf nicht verändert werden.
+- **GETESTET:** Aktuellen Main-, PR- und Dateistand direkt über GitHub geprüft; geänderte Dateiabschnitte nach GitHub-Commit erneut gelesen.
+- **NICHT GETESTET:** Lokale Dart-/Flutter-Unit-/Gesamtsuite, Backend, APK und echter Gerätetest (kein Flutter-SDK oder lokaler GitHub-Checkout). GitHub Actions auf finalem PR-HEAD separat prüfen.
+- **BLOCKIERT:** lokale SDK-Verfügbarkeit; gemeinsame README-/Checkpoint-Merges erfordern Chat-D-Integration.
+- **MIGRATION:** keine; SQLite 2 und Kampagnen-JSON 1 bleiben unverändert; keine Regel-, Quest-, Inventar- oder Ressourcenmutation.
+- **NÄCHSTER SCHRITT:** Nach erfolgreicher CI von PR #248 einen separaten Integrationstest für die unstrukturierte Legacy-Memory-Übertragung mit zwei namensgleichen NPCs und ausdrücklich gewählter NPC-ID ergänzen (ID-Payload darf nur die ausgewählte Identität enthalten).
+
+---
+
 # CHAT B – Checkpoint: NPC-Zeitstempel, 26.10.2026
 
 - **Ausgangs-Main-SHA:** `20098805d8c70cbd361a13862379894c47ef4eb6`.
