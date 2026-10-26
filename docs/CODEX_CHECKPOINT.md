@@ -1,14 +1,12 @@
-# Chat D D-007 – Schutz der Release-Zielpfade (26.10.2026)
+# Chat D D-007 – Main-Synchronisierung 26.10.2026
 
-- **Basis:** `main` `f1f3e997bc8650a757d34234eff49d870dcf9369` und eigener Branch `fix/chat-d/release-dangling-symlinks-20261026`.
-- **IMPLEMENTIERT:** `scripts/prepare_alpha_release.py` prüft vor dem Veröffentlichen alle fünf erzeugten Release-Dateien, einschließlich `_Source.zip.sha256`, mit `exists() or is_symlink()`. Verwaiste Symlinks können nicht zum Schreiben außerhalb der Release-Ausgabe missbraucht werden.
-- **Tests:** Zwei neue Regressionstestmethoden mit fünf Symlink-Varianten und einem bestehenden Prüfsummen-Sidecar.
-- **GEPRÜFT:** GitHub-Commits für Code und Tests erstellt.
-- **NICHT GETESTET:** finale GitHub-CI (Python/Backend/Flutter/Android und Alpha-Artefakt) sowie reales Android-Gerät.
-- **BLOCKIERT:** finale CI, Main-Reabgleich; D-005 und D-006 werden separat abgenommen.
-- **MIGRATION:** keine App-/SQLite-/JSON-/SRD-Spielstandsänderung.
-- **NÄCHSTER SCHRITT:** CI auf neuem Commit erfolgreich abschließen und dann kontrolliert integrieren.
-- [Chat-D-Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
+- **Aktuelle Main-Basis:** `76ab5ae404144d4bb6f8de0b0cc429e009d03edd`; ursprünglicher D-007-Head `d4596e2707625226694462facea2bc122cadb38d`.
+- **IMPLEMENTIERT:** `scripts/prepare_alpha_release.py` prüft neben bestehenden Dateien auch verwaiste Symlinks, einschließlich der Quell-ZIP-SHA256-Sidecar-Datei. Zwei neue Python-Regressionen.
+- **GETESTET:** vollständiger PR-CI-Lauf #40275142584 auf `d4596e2707625226694462facea2bc122cadb38d` bestanden, inklusive Alpha-APKs. Die neue kombinierte Version erfordert neue exakte CI.
+- **NICHT GETESTET:** finale neue CI und reale Android-Installation.
+- **INTEGRATION:** aktueller Main enthält andere A/B/C/D-Arbeiten, diese bleiben technisch und dokumentarisch erhalten.
+- **MIGRATION:** keine Änderung an Spielständen, SQLite, JSON, Gameplay oder Version.
+- **NÄCHSTER SCHRITT:** neue finale CI auf PR-Head abnehmen, Main-/PR-Vergleich prüfen und dann kontrolliert integrieren. [Persönlicher Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
 
 ---
 

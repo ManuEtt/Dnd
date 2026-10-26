@@ -26,6 +26,29 @@ REQUIRED_FILES = (
 WRAPPER_MAIN = 'org/gradle/wrapper/GradleWrapperMain.class'
 
 
+def unique_gradle_property(text: str, key: str) -> str | None:
+    """Fail closed on duplicate/ambiguous Gradle Java-properties declarations.
+
+    Java properties accept '=', ':' and whitespace separators; duplicate keys
+    are ambiguous for a security check because the runtime may use the last.
+    """
+    candidates: list[str] = []
+    pattern = re.compile(rf"^{re.escape(key)}(?=$|[\s=:])")
+    definition = re.compile(rf"^{re.escape(key)}(?:\s*[:=]\s*|\s+)(.*)$")
+    for line in text.splitlines():
+        stripped = line.lstrip()
+        if not stripped or stripped.startswith(("#", "!")):
+            continue
+        if not pattern.match(stripped):
+            continue
+        match = definition.fullmatch(stripped)
+        if match is None:
+            return None
+        candidates.append(match.group(1).strip())
+    return candidates[0] if len(candidates) == 1 else None
+
+
+
 def verify_project(root: Path) -> list[str]:
     """Return safe, actionable errors; allow arbitrary additional project files."""
     if not root.is_dir():
@@ -82,16 +105,22 @@ def verify_project(root: Path) -> list[str]:
                 'app/android/gradle/wrapper/gradle-wrapper.jar unverändert aus dem Quell-ZIP übernehmen.',
             )
 
+
+
     properties = root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
     if properties.is_file() and properties.stat().st_size:
         try:
             text = properties.read_text(encoding='utf-8')
         except (OSError, UnicodeError):
             text = ''
-        if not re.search(r'^distributionSha256Sum=[a-fA-F0-9]{64}\s*$', text, re.MULTILINE):
-            errors.append('Gradle-Distributionsprüfsumme fehlt oder ist ungültig in gradle-wrapper.properties.')
-        if not re.search(r'^distributionUrl=https\\?://[^\s]+/gradle-\d+\.\d+(?:\.\d+)?-(?:all|bin)\.zip\s*$', text, re.MULTILINE):
-            errors.append('Gradle benötigt eine festgelegte HTTPS-Distribution in gradle-wrapper.properties.')
+        checksum = unique_gradle_property(text, 'distributionSha256Sum')
+        if checksum is None or re.fullmatch(r'[a-fA-F0-9]{64}', checksum) is None:
+            errors.append('Gradle-Distributionsprüfsumme fehlt, ist mehrfach oder ungültig in gradle-wrapper.properties.')
+        distribution_url = unique_gradle_property(text, 'distributionUrl')
+        if (distribution_url is None or re.fullmatch(
+                r'https\\?://[^\s]+/gradle-\d+\.\d+(?:\.\d+)?-(?:all|bin)\.zip',
+                distribution_url) is None):
+            errors.append('Gradle benötigt genau eine gültige festgelegte HTTPS-Distribution in gradle-wrapper.properties.')
 
     launcher = root / 'app/android/gradlew'
     if launcher.is_file() and launcher.stat().st_size:

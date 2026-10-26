@@ -1,25 +1,50 @@
-# Chat D – D-007: Alpha-Release-Dateien vor verwaisten Symlinks schützen
+# Chat D – D-007 Main-Abgleich vom 26.10.2026
 
-**Datum:** 26.10.2026. **Basis-Main:** `f1f3e997bc8650a757d34234eff49d870dcf9369`. **Branch:** `fix/chat-d/release-dangling-symlinks-20261026`. **Technischer Commit:** `0772fa845f8bcfa234c3e44c8138f3a76dd58019`.
+Neuer Hauptbranch `76ab5ae404144d4bb6f8de0b0cc429e009d03edd` enthält laufende Integrationen aus den parallelen Chats, einschließlich D-005 und D-006. Der vorher vollständig auf PR-CI geprüfte D-007-Head `d4596e2707625226694462facea2bc122cadb38d` wird mit Main in einem zweielterigen Merge ohne Force-Push zusammengeführt. Nur die zwei Alpha-Release-Validierungsdateien werden aus D-007 übernommen, alle anderen Dateien bleiben auf dem neuesten Main. **Der neue Endstand benötigt eine neue vollständige CI.**
 
-## Problem und Änderung
+---
 
-`scripts/prepare_alpha_release.py` verwendete bisher nur `Path.exists()` für die vier Release-Zieldateien. Dieser Aufruf gibt `False` für einen auf ein nicht vorhandenes Ziel zeigenden symbolischen Link zurück. Anschließendes `write_text` oder `shutil.copy2` könnte dem Link folgen und außerhalb des Releases schreiben. Der durch die Quell-ZIP-Erstellung zusätzlich angelegte `_Source.zip.sha256`-Sidecar war von der Existenzprüfung ausgeschlossen.
+# Chat D – D-006 Main-Abgleich nach A/B-Integrationen, 26.10.2026
 
-**IMPLEMENTIERT:** Alle fünf geplanten Release-Dateien einschließlich der SHA256-Sidecar-Datei werden vor jeglichem Schreibzugriff mit `path.exists() or path.is_symlink()` geprüft. Das bewahrt vorhandene gültige Dateien und weist auch verwaiste symbolische Links zurück. Der bestehende Release-Erfolgspfad bleibt unverändert.
+Alter CI-geprüfter D-006 HEAD `46b869eb27c23cd8b250e7747b86b0b54ad6eed1`; neuester Main-HEAD `f1f3e997bc8650a757d34234eff49d870dcf9369`, enthält SRD-Zauber- und NPC-Erinnerungsintegrationen. Nur `scripts/package_project.py` und zugehörige Tests aus D-006 übernommen, Main-Historie und Dateien vollständig erhalten. Neues finales CI erforderlich, kein Force-Push.
 
-**Neue Regressionstests:** `test_dangling_symlinks_never_publish_or_write_outside_release` testet alle fünf Release-Zieldateien als Dangling-Symlinks und prüft, dass außerhalb nichts entsteht und bestehende Symlinks unverändert bleiben; `test_existing_checksum_sidecar_is_preserved` prüft das Verhindern einer Überschreibung einer vorhandenen Prüfsummendatei.
+---
 
-## Testabnahme, Integration, Migration
+# Chat D – D-006: plattformübergreifend sichere Quell-ZIP-Namen
 
-- **GEPRÜFT:** Quellcode- und Teständerungen über GitHub in getrennten Commits veröffentlicht.
-- **NICHT GETESTET:** neue Python-/Flutter-/Backend-/Android-Tests und APK-Paketierung des finalen D-007-Commits, echte Installation.
-- **BLOCKIERT:** finale GitHub Actions und Main-Synchronisation. D-005 PR #189 und D-006 PR #200 sind technische unabhängige Pakete. Gemeinsame Dokumentationen additiv abgleichen.
-- **MIGRATION:** keine Änderungen an `app/`, SQLite, JSON, Kampagnen, SRD, Gradle-JAR oder Android-Version; keine Migration erforderlich.
+## GitHub und Scope
+
+- **Datum:** 26.10.2026
+- **Ausgangs-Main:** `5f9a01dd73f68ad4f9e226f859a8ca87803b8337`, [Main-CI #40233719625](https://github.com/ManuEtt/Dnd/actions/runs/40233719625) erfolgreich.
+- **Branch:** `fix/chat-d/portable-source-zip-paths-20261026`.
+- **Technischer Commit:** `381d512d82fc9218c1d4769d25ec43629adc7012` (vor Dokumentation).
+- **Vorgesehen:** eigener Draft-PR; finales CI-Ergebnis und URL im PR verifizieren.
+- **Technische Pfade:** `scripts/package_project.py`, `scripts/tests/test_package_project.py`. Diese Pfade sind getrennt von PR #189 und den A/B/C-PRs.
+- **Gemeinsam bearbeitete Dokumentation:** `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`; gegen neuen Main vor dem Merge additiv abgleichen.
+
+## Problem
+
+ZIP-Namen unterscheiden Groß- und Kleinschreibung. Windows sowie viele macOS-Volumes und Unicode-normalisierende Dateisysteme können `Card.png` und `card.PNG`, `Icons/` und `icons/` oder aus NFC/NFD zusammengesetzte Unicode-Namen beim Entpacken nicht eindeutig getrennt darstellen. Das bisherige Quellarchiv könnte daher beim Übertragen Dateien zusammenfallen lassen.
+
+## IMPLEMENTIERT
+
+- `validate_portable_source_paths(root, paths)` prüft alle für den Export zugelassenen relativen Datei- und Verzeichnisprefixe **bevor** die ZIP-Erstellung oder der Ersatz vorhandener Archive beginnt.
+- Unicode-NFC plus `casefold()` kennzeichnen plattformübergreifende Dateinamenkollisionen, ohne rechtmäßige Großschreibung im ZIP zu verändern.
+- Windows-unzulässige Zeichen, reservierte Namen, Steuerzeichen und abschließende Punkte/Leerzeichen werden vor dem Verpacken abgewiesen.
+- **Sechs neue Tests:** Dateinamenskollision, Verzeichniskollision, Unicode-NFC/NFD-Kollision, unportable Windows-Namen, vollständige Bewahrung zuvor veröffentlichter ZIP-/SHA256-Paare bei Fehlprüfung, reguläre unterschiedliche Dateinamen.
+- Normale ZIP-Ausgabe und bereits vorhandene Secrets-/SDK-Filter sind unverändert.
+
+## Tests
+
+- **GEPRÜFT:** über GitHub am Branch veröffentlichte Änderungen in den beiden technischen Dateien vorhanden; [Main-CI](https://github.com/ManuEtt/Dnd/actions/runs/40233719625) deckt lediglich die vorherige Basis ab.
+- **NICHT GETESTET:** volle Python-/Flutter-/Android-/Backend-CI und ZIP-Artefakte des finalen D-006-Commits; außerdem reales Entpacken auf Windows/macOS.
+- **BLOCKIERT:** unabhängige finale GitHub-Actions-Abnahme und GitHub-Main-Abgleich nach parallelen Merges.
+- **PERSISTENZ/REGELN:** kein Datenbank- oder JSON-Eingriff, keine Android-App- oder SRD-Regeländerung, keine Migration.
 
 ## Genau ein nächster Schritt
 
-Die finale CI auf dem exakten GitHub-PR-Head vollständig abnehmen; danach neuesten Main-Stand konfliktfrei übernehmen, erneut prüfen und erst bei grüner CI integrieren. Keine Fremd-PRs mergen oder Branches löschen.
+Den **finalen** CI-Lauf für D-006 samt vollständiger Python-Regressionen und Alpha-Release-Quellarchiv abschließen, den aktuellen Main-Stand prüfen und Checkpoint-/README-Änderungen erst bei vollständiger Abnahme konfliktfrei zusammenführen.
+
 
 ---
 

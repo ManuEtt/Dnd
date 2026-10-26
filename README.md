@@ -1,8 +1,8 @@
 # Würfelraunen – Der lebendige Spielleiter
 
-## Chat D – Alpha-Release vor verwaisten Symlinks schützen (D-007, 26.10.2026)
+## Chat D – sichere Alpha-Release-Ziele (D-007, 26.10.2026)
 
-Die Release-Ausgabe lehnt nun auch ins Leere zeigende symbolische Links auf allen fünf Ausgabezielpfaden und bereits vorhandene Quell-ZIP-Prüfsummendateien ab. Zwei neue Python-Regressionen sichern ab, dass Dateien außerhalb des Release-Verzeichnisses nicht angelegt und bestehende Prüfsummen nicht überschrieben werden. Die vollständige CI-Abnahme auf dem finalen Commit steht noch aus. Keine Spielstands-/Android-App-/SRD-Regeländerung. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+[PR #207](https://github.com/ManuEtt/Dnd/pull/207) lehnt verwaiste symbolische Links auf den fünf geplanten Alpha-Release-Dateien einschließlich Source-ZIP-SHA256-Sidecar vor jeder Ausgabe ab. Zwei Python-Testmethoden decken fünf Symlink-Namen und einen vorhandenen Prüfsummen-Sidecar ab. Der Ausgangs-HEAD `d4596e2` hat [GitHub-CI #40275142584](https://github.com/ManuEtt/Dnd/actions/runs/40275142584) erfolgreich durchlaufen (36 Schritte). Der neu kombinierte Stand mit Main `76ab5ae` benötigt neue vollständige CI. Keine Spielstand- oder App-Regeländerungen. [Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
 
 ## Chat C – Zugänglicher Heldenstatus (25.10.2026, PR offen)
 
