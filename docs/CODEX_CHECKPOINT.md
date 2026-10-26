@@ -1,111 +1,51 @@
-# Chat D D-009 – sichere Quell-ZIP-Dateilesepfade (26.10.2026)
+# CODEX-CHECKPOINT – vollständige Branch-Migration
 
-- **Basis-`main`:** `42d14ad36cc947691f7e5a1e8647a43f5421b86e`; **Branch:** `fix/chat-d/source-zip-symlink-swap-20261026`.
-- **IMPLEMENTIERT:** Descriptor-relative POSIX-`O_NOFOLLOW`-Prüfung aller Verzeichniskomponenten und finaler Quelldatei während der ZIP-Erstellung, bestehende Stale-Source-Konsistenzprüfung bleibt erhalten.
-- **TESTS:** 3 Symlink-Austausch-Regressionen und Korrektur eines alten `fstat`-Mocks. Erste CI entdeckte fehlendes `st_mode` im Mock; Code-/Testkorrektur veröffentlicht.
-- **GETESTET:** bisher nur frühere Python-Teil-CIs und einzelne GitHub-Logs nachgewiesen; finale vollständige CI offen.
-- **NICHT GETESTET:** finaler vollständiger Python-/Backend-/Flutter-/Android-CI-/Alpha-Build und Gerät; Windows-Nachschau nicht race-free.
-- **BLOCKIERT:** finale CI und späterer Main-Abgleich; zwei offene unabhängige Chat-A/B-PRs #236, #237.
-- **MIGRATION:** keine Persistenz-, Regel- oder App-Versionsänderung.
-- **NÄCHSTER SCHRITT:** finalen CI-Nachweis auf PR-HEAD abnehmen; konfliktfrei integrieren. [Persönlicher D-009-Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
+Stand **2026-10-26T17:38:53+00:00**, Würfelraunen **0.8.42+92**, SQLite **2**, Kampagnen-JSON **1**.
 
----
+## Git und Sicherungen
 
-# Chat B – Offline-Mock verwendet strukturierte NPC-Erinnerung (26.10.2026)
+Basis-Main **`5e3116f9e3f8de0af6e8125a97b3962cb8910cdf`**, Arbeitsbranch **`integration/all-branches-20261026b`**, Worktree `/workspace/Dnd-all-branches-20261026`. Funktionsmerges bis `a64ffe7`; anschließender Formatter-/Versions-/Dokumentationscommit ist im aktuellen `git log` nachzusehen. Main bisher unverändert.
 
-- **Basis:** `main` `20098805d8c70cbd361a13862379894c47ef4eb6`, Branch `feat/chat-b/mock-structured-npc-recall-20261026`. Offene PRs #216/#218/#219 vor Implementierung samt Dateipfaden geprüft: keine Überschneidung mit den Fachdateien.
-- **IMPLEMENTIERT:** neuer rein lesender Erzähler-Auszug `backend/src/mock_npc_identity_hint.ts`; `mockStoryTurn` bevorzugt IDs und die zuletzt gespeicherte valide NPC-Notiz, fällt auf die bisherigen Legacy-Texte zurück und rät bei Mehrdeutigkeit keine NPC-ID.
-- **TESTS GESCHRIEBEN:** neue positive/negative `backend/test/mock-npc-identity-hint.test.ts` mit Fastify-HTTP, Unicode, Legacy-Vertrag, Revision, Fremd-ID und Regel-/Narrationsgrenzen. PR [#222](https://github.com/ManuEtt/Dnd/pull/222); Code-/Testfix-Commit `29263f811ea78aa95d32c0202776286289613251`. Früherer CI-Lauf #40289475911 scheiterte an fehlerhafter *Testeingabe* (120 Emoji statt mehr als 160), Testfix in `29263f8...`. Finale CI-Abnahme nur für den späteren PR-HEAD.
-- **KEINE MIGRATION:** unverändertes Fastify-Schema, SQLite, Kampagnen-JSON, Regelwerte und App-Version. Nichts wird vom Mock an bestätigtem Spielzustand geschrieben.
-- **NICHT GETESTET:** reales Android, Store-Signierung, produktiver OpenAI-Provider; lokale Flutter/Dart-Ausführung mangels SDK; direkter Container-Checkout mangels GitHub-DNS.
-- **NÄCHSTER KONKRETER SCHRITT:** explizite NPC-ID-Auswahl für gleichnamige Figuren durch die Story-UI im eigenen koordinierbaren PR; die Mock-Engine bleibt bis dahin fail-closed.
-- **Details:** [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md). Bei Zusammenführung gemeinsam mit Chat D die zentralen Einträge konsolidieren; andere Prüfergebnisse bleiben erhalten.
+Alle folgenden sieben Köpfe als Remote-Archivtags und lokalem geprüften Bundle gesichert, alle Vorfahren des Integrationsstands. Die sechs Nicht-Main-Branches werden erst nach gemeinsam grünen Checks, PR-Merge und grüner Main-Abnahme mit exakter SHA-Lease gelöscht. Neue/weitergeschriebene Köpfe vor Löschung erneut sichern und integrieren; Main und Archivtags niemals löschen.
 
----
+| Branch | gesicherte SHA | Remote-Archivtag |
+| --- | --- | --- |
+| `feat/chat-b/explicit-npc-wire-20261026` | `40ea6cb9b62daf70dcee3a5d8f993bf7e9a1b5cf` | `archive/branch-migration-20261026T173427Z/feat/chat-b/explicit-npc-wire-20261026` |
+| `feat/chat-c/action-economy-large-text-20261026` | `92fb423d19c84d3b9710fc3237d10206b9ef4712` | `archive/branch-migration-20261026T173427Z/feat/chat-c/action-economy-large-text-20261026` |
+| `feat/chat-c/dice-plaque-large-text-20261026` | `771405675381687200900cfd17c900ad7d049e5e` | `archive/branch-migration-20261026T173427Z/feat/chat-c/dice-plaque-large-text-20261026` |
+| `fix/chat-a/eldritch-primary-class-validation-20261026` | `1be828a91b124dd95443b7212d5220ab82710fb2` | `archive/branch-migration-20261026T173427Z/fix/chat-a/eldritch-primary-class-validation-20261026` |
+| `fix/chat-d/checkpoint-manifest-nofollow-20261026` | `15ff60b251fb64d76b5c65bf93e93fe47545024c` | `archive/branch-migration-20261026T173427Z/fix/chat-d/checkpoint-manifest-nofollow-20261026` |
+| `fix/chat-d/source-zip-symlink-swap-20261026` | `2904fabdfbd28ec5d0ae74c568fb709c87d493f7` | `archive/branch-migration-20261026T173427Z/fix/chat-d/source-zip-symlink-swap-20261026` |
+| `main` | `5e3116f9e3f8de0af6e8125a97b3962cb8910cdf` | `archive/branch-migration-20261026T173427Z/main` |
 
-# CODEX-CHECKPOINT – Klassenprüfung für Heilige Flamme
-
-## Ergänzung Chat B (26.10.2026) – strikte NPC-Zeitstempel
-
-Ausgangs-`main` `20098805d8c70cbd361a13862379894c47ef4eb6`, Branch `fix/chat-b/npc-timestamp-validation-20261026`, Implementierungscommit `d7d47523d0b6679c3210ab5a9e86e7c430b2933d`, [PR #220](https://github.com/ManuEtt/Dnd/pull/220). Im Story-Backend wird die stille Normalisierung ungültiger Kalenderdaten in optionalen bestätigten NPC-Identitätsnotizen abgewiesen. Die Änderungen umfassen den Validator und positive/negative Unit-/HTTP-Regressionstests. Bestehende Kampagnen-JSON-Version 1 und SQLite-Version 2 bleiben unverändert; keine Migration. Kein Eingriff in HP, Inventar, Quest- oder Regelzustand.
-
-**GETESTET:** Backend-/Android-CI über PR #220 gestartet, zum Zeitpunkt dieses Nachtrags noch **in progress**, daher keine vollständige grüne Suite nachgewiesen. **NICHT GETESTET:** Backend-Typecheck/-Build/-Tests, Flutter, Python-Gates und APK auf finalem HEAD. **BLOCKIERT:** In dieser Sitzungsumgebung kein Flutter-/Android-SDK und kein vollständiger lokaler Repositorycheckout; CI-Ergebnis abwarten und prüfen. **NOCH NICHT IMPLEMENTIERT:** weitere KI-Erzählfunktionen; nächste isolierte Aufgabe nach Integration: validierte NPC-Revisionskontexte gezielt im kostenlosen Mock erzählerisch nutzen, ohne Statusänderung. [Detailcheckpoint](docs/parallel/CHAT_B_CHECKPOINT.md). Ältere Klassenprüfungs-Abnahme bleibt nachfolgend historisch erhalten.
-
-
-Stand **2026-10-26T07:26:16+00:00**. Würfelraunen **0.8.41+91**, SQLite **2**, Kampagnen-JSON **1**.
-
-## Git und überprüfbare Quellen
-
-- Ursprungsbasis `575a885bd34ecae2bd173dc183abf88a367a69af`, regulär integriertes Main und finale Patchbasis `0212e99b6222f9fcae0714a2ee09123c3c78347c`. Main in diesem Paket nicht verändert.
-- Arbeitskopie `/workspace/Dnd-sacred-flame-20261026`, Branch `fix/sacred-flame-caster-validation-20261026`, [PR #217](https://github.com/ManuEtt/Dnd/pull/217). Code-/Build-HEAD **`7c9441e650a3b809db50f1a2d708d39bddfb39b7`**; anschließende Dokumentationscommits ändern keine Build-Eingaben. Den neuesten Branch-HEAD bei Wiederaufnahme mit `git rev-parse HEAD` feststellen.
-- Fachfix `cc0d309`, Main-Merge `a377ba8`. Klassenrechner aus PR #184 inzwischen auch in Main; kein zweiter Rechner. ZIP-Reparaturen aus PR #215 (`340fe91`/`8fd2141`) mit Autorenhistorie als `20afc25`/`14a75fb` übernommen. Geerbter NPC-Lint/Formatfehler in `5edf968` korrigiert; keine temporäre CI-Diagnose übernommen.
-- Vollständige [PR-Android-CI #40284760958](https://github.com/ManuEtt/Dnd/actions/runs/40284760958) auf diesem Code-/Build-HEAD erfolgreich, einschließlich Debug-, nativer und drei Alpha-ABI-Builds. Spätere reine Dokumentationsnachträge sind über die [finalen PR-Checks](https://github.com/ManuEtt/Dnd/pull/217/checks) separat nachvollziehbar.
-- Bei Bestandsaufnahme Main-Android-CI [#40283858187](https://github.com/ManuEtt/Dnd/actions/runs/40283858187) auf d03 fehlgeschlagen: drei ZIP-Pythontests, alle späteren Gates übersprungen. PR-#215-Läufe #40284284178/#40284279247 danach wegen `prefer_is_empty` rot. Beide Ursachen im aktuellen Code korrigiert. Grüne #40283858195 war ausschließlich eine Eldritch-Teilstrecke.
-- Ursprüngliche Main-/PR-#184-Fassungen sowie d03 und cc0d309 unter `docs/history/sacred_flame_before_20261026/` bytegenau mit Commit/SHA256 archiviert. PR #215 wurde danach in Main integriert; anschließend regulär synchronisiert, sämtliche Laufzeit-/Builddateien weiter bytegleich zur abgenommenen Quelle7c9441e. Andere aktive PRs zuletzt #216 (Kampfkarte/große Schrift) und #218 (Gradle-Property-Schlüssel); vor Übernahme neue Köpfe und Checks live lesen, nicht automatisch schließen/löschen.
+Bundle **`/workspace/artifacts/branch-migration-20261026T173427Z/Alle_Branchstaende.bundle`**, SHA256 `1ee5f7814ffd02c6e88775c54b46064d52f23bf03d48b51f01b3d635e6e8bc0e`. Originale README-/Checkpoint-Fassungen bytegenau unter `docs/history/branch_migration_20261026T173427Z/`, Commit-/SHA256-Manifest dort. Inventar `docs/BRANCH_MIGRATION_20261026_INVENTORY.json`.
 
 ## IMPLEMENTIERT
 
-Heilige Flamme verwendet den klassenbezogenen Rechner im echten Domain-/GameEngine-/Controllerpfad. Doppelte Klassenaliase, unbekannte Partner und widersprüchliche Klassenstufen werden vor RNG, HP-, Aktions- oder Journaländerung abgelehnt. Bestehende ausdrückliche SG-Bestätigung bleibt Voraussetzung. Gültige Kleriker-Zweitklasse nutzt WIS und Gesamtstufen-Übung. Der deutsche Dialog zeigt bestätigte Werte, sperrt ungültige Profile und scrollt Titel/Inhalt gemeinsam bei kleiner Android-Fläche.
-
-Keine globale Klassen-/Importverschärfung: historische Profile und Ereignisse bleiben lesbar/bearbeitbar. Event, Snapshot und Revision weiterhin in der vorhandenen SQLite-Transaktion. Kein neues Schema, kein Netzwerk-/KI-Aufruf. Requirements `SPELL-ENTRY-SACRED-FLAME` / `RULE-SPELLS-SPELL-SAVE-DC` bleiben **partial**. Quelle SRD5.2.1 S25/S37, Wizards of the Coast LLC, CC BY4.0; `THIRD_PARTY_NOTICES.md` erhalten.
+Eldritch-Hauptklassenprüfung; optionaler revisions-/capabilitygeprüfter NPC-ID-Wire-Vertrag; große Schrift/semantische Trennung für Kampfmöglichkeiten und Würfelanzeige; O_NOFOLLOW-Leseweg auch für Checkpoint-Manifeste. **NPC-Auswahl ist noch nicht durch Android/GameController bis zum Wire-Aufruf verbunden.** Keine neue Speicher-/Event-/JSON-Struktur, keine Regeländerung durch Erzählung, keine realen Anbieteraufrufe. Quelle und Fachumfang in den erhaltenen `docs/parallel/`-Berichten; SRD-Anforderungen weiter nur teilweise umgesetzt.
 
 ## GETESTET
 
-**Vollständiges `scripts/check.sh` mit Exit0:** 1.703 Flutter-, 141 Python- und 57 Backend-Tests; 389 Dart-Dateien ohne Formatabweichung, Flutter-Analyse ohne Befund, Backend-Typecheck/-Build und Backend-Protokoll-Smoke erfolgreich. 518 Laufzeit-/Buildquelldateien stimmen mit der APK-Quelle überein.
+155 Python-Tests lokal erfolgreich. Einzelkopf-CIs A236 #40339812512, B237 #40343591766, C239 #40360058998, Symlink2904 #40359044253 erfolgreich; diese Einzelbelege ersetzen keine neue kombinierte Abnahme. Letzte beim Start vollständig beobachtete Main-CI #40329543416 auf `42d14ad36cc947691f7e5a1e8647a43f5421b86e` grün; neue Main-CI #40369467941 auf5e3116f noch laufend. Alle sieben Ancestry-/Remote-Archivtag-/Bundle-Nachweise geprüft.
 
-Gezielte Abnahme: 20 Domain-, vier echte SQLite-/Controller- und sieben Widgettests. Sieben neue Domain-Gegenfälle zuerst rot gegen alten Code, nach Korrektur grün. Importierte Alias-/Unknown-Profile bleiben lesbar, erzeugen bei Ablehnung aber keine Würfel, Aktion, HP-, Revisions- oder Journaländerung. Wizard5/Cleric1 mit INT20/WIS12 nutzt SG12 und 2W8. Stale Revision, Wiederholung, Journal/Replay/Neustart und echter SQLite-Event-Insert-Fehler mit vollständigem Rollback geprüft. UI bei 360 dp, 1,8×Schrift und Tastatur.
+## FEHLER UND KORREKTUR
 
-**Android aus frischer isolierter ZIP-Kopie:** Debug gebaut, zwölf native JVM-Tests ohne Fehler/Skips, ARM64-Alpha gebaut. Version0.8.41/Code91, minSdk24/targetSdk36, CRC, ABIs und `apksigner` geprüft. Beide APKs mit derselben lokalen Debug-Testsignatur; keine produktive Signierung behauptet.
-
-SRD-Register neu gezählt: 1.419 Prüfaufträge (8 tested, 32 partial, 7 missing, 1.372 unverified), 282 Klassenfreischaltungen, neun offene Inventurlücken. Kein vollständiger SRD-Nenner und keine globale Fertigstellungsquote.
+Dice-PR240 / Kopf7714056 scheiterte in #40369637672 bei Dart-Formatierung von `app/test/fantasy_dice_breakdown_test.dart`. Testdatei mit gepinntem Dart3.9.2 formatiert; alle Assertions erhalten. Andere Fachprüfungen fanden keine Blocker. Gemeinsame Suite prüft erst den korrigierten Integrationsstand.
 
 ## NICHT GETESTET
 
-Echtes Android-Gerät, TalkBack, historisches Geräte-Upgrade, reale Dokumentauswahl, produktive Signierung/Store-Freigabe. Die erste alte Baseline-Gesamtsuite nach Main-Fortschritt gezielt mit SIGTERM/Exit143 abgebrochen; nur der neue kombinierte Lauf zählt als bestanden.
+Neue komplette Flutter-/Backend-/Android-/CI-Kombination bis zum tatsächlichen Abschluss offen. Echtgerät, TalkBack-Geräteabnahme, historisches installiertes Daten-Upgrade und produktive Signierung offen. Keine alten Erfolge als neue CI ausgeben.
 
 ## BLOCKIERT
 
-Kein echtes Gerät/Produktivschlüssel. Flutter3.35.7/Dart3.9.2, Java17, Node22.14 und Android-SDK lokal vorhanden; Tests/Builds deshalb tatsächlich ausgeführt. Kein offener reproduzierbarer Fehler im abgenommenen Paket bekannt.
+Kein reales Gerät/Produktivschlüssel. Lokale Toolchain vorhanden; keine SDK-Ausrede. Während Inventur entstanden Dice-PR240 und der Manifest-Branch; neu erfasste SHA7714056/15ff60b sind mitgesichert. Bei späterem Drift keine ungeprüfte Löschung.
 
-## Artefakte und Import
+## Abschluss, Artefakte und Fortsetzung
 
-Lokal **`/workspace/artifacts/0.8.41+91/`**: vollständige Quell-ZIPs, tatsächlich angewendete Git-Patches, Dateimanifeste, Prüfsummen, Debug-/ARM64-APKs und Test-/Buildberichte. Abschließende Dateinamen/SHA256 und neueste CI im dortigen Artefaktindex sowie im [PR #217](https://github.com/ManuEtt/Dnd/pull/217). ZIPs enthalten keine SDKs, Buildcaches, Geheimnisse oder APKs.
+Frühzeitigen kompletten Quell-ZIP-/Patch-Checkpoint unter `/workspace/artifacts/branch-migration-20261026T173427Z/` erstellen, anschließend Gesamtprüfungen/Builds ausführen, Kopf auf GitHub sichern, Integrations-PR erstellen. Nach grüner exakter PR-CI per regulärem Merge integrieren, Main-CI tatsächlich abwarten, dann nur gesicherte enthaltene unveränderte Branches per SHA-Lease löschen. Vorhandene uncommittete Worktrees und frühere Artefakte erhalten.
 
-Tatsächliche APK-Quell-ZIP: `Wuerfelraunen_0.8.41+91_20261026T071518295880Z_kombinierter-buildquellstand_Vollprojekt.zip`, SHA256 **`b3d48e90c00cbbac1290c5ee02b2dd7b0654e343319756608b57e1e8158993e6`**, Commit **`7c9441e650a3b809db50f1a2d708d39bddfb39b7`**, 815 Dateien vor Build einschließlich ausführbarer Modi/CRC geprüft. Spätere finale Quellen enthalten zusätzliche Abnahmedokumentation; Laufzeit-/Builddateien bleiben byteidentisch.
-
-- Debug `Wuerfelraunen_0.8.41+91_Debug.apk`,144.196.020Bytes,SHA256 `e3f207e75b0d7a723a1de4a85cf2cc3c9aad74cc35f014cc519eb5feecf92beb`, ARM64/ARMv7/x64.
-- Alpha `Wuerfelraunen_0.8.41+91_arm64-v8a_Alpha.apk`,19.925.182Bytes,SHA256 `913c2aafe70ce5164ade4cb93eb85a2790cc97abfaf957ffc0f1aa89b3d9c3e2`, ausschließlich ARM64.
-
-Am einfachsten bestehenden Branch abrufen und PR prüfen. Für Offlineimport: ZIP-Wurzel mit `app/`, `backend/`, `scripts/` und `.github/` in eine eigene Arbeitskopie übernehmen. Alternativ Patch auf `0212e99` mit `git apply --check` und `git apply` anwenden, Tests ausführen, eigenen Branch pushen/PR erstellen. Keine alten Stände ungeprüft über Main schreiben. Frühere uncommittete Worktrees und deren Checkpoints erhalten.
+Test-/Buildlogs `/workspace/validation/20261026-migration-*`. Prüfung `bash scripts/check.sh`; Android `flutter build apk --debug`, `bash app/android/gradlew :app:testDebugUnitTest --no-daemon` aus dem passenden Android-Verzeichnis; Alpha separat nach CI. Quell-ZIP ohne APKs, private Daten oder Toolchains, Patchbasis und SHA256 im Manifest.
 
 ## NOCH NICHT IMPLEMENTIERT / genau ein nächster Schritt
 
-**Feuerpfeil: unbekannte Zauberangriffsmodifikatoren ausdrücklich bestätigen.** Den vorhandenen klassenbezogenen Rechner im tatsächlichen FireBolt-Pfad nutzen; bestehende Magier-/Zauberer-Auswahl, Übung der Gesamtstufe und Erschöpfung genau einmal erhalten. Kein neuer paralleler Klassenrechner.
-
-Definition of Done: fehlende/abgelehnte Bestätigung, ungültige Klassen und Grenzfälle des tatsächlich verwendeten Zauberattributs vor RNG/Zustandsänderung abweisen; bestehende englische/deutsche Aliasprofile laden; SG-/Angriffsvorschau erst nach echter Zustimmung; gültige Mehrklassen-/Erschöpfungskontrolle, Stale Revision, Neustart und SQLite-Rollback testen. Aktuelle Main-/PR-Stände zuerst prüfen, dann kleines eigenes Paket. Fachlich nur die für den gewählten Feuerpfeil-Klassenpfad maßgeblichen Attribute validieren.
-
-```bash
-bash scripts/check.sh
-python3 scripts/srd_coverage.py --json
-cd app
-flutter build apk --debug
-cd android
-bash ./gradlew :app:testDebugUnitTest --no-daemon
-```
-
-Logs `/workspace/validation/20261026-sacred-*`, isolierte Buildkopie `/workspace/validation/build-0.8.41`. Keine automatische Weiterarbeit außerhalb einer aktiven Sitzung.
-
----
-
-## Chat B – optionales NPC-Auswahlprotokoll (26.10.2026)
-
-- **Basis:** Main `42d14ad36cc947691f7e5a1e8647a43f5421b86e` (zwei vollständige erfolgreiche Main-CIs). Zu Beginn keine offenen Pull Requests; ursprüngliche Chat-B-Pakete #222/#224 bereits integriert.
-- **Branch:** `feat/chat-b/explicit-npc-wire-20261026`, Pull Request gegen `main` (PR-Nummer nach Erstellung ergänzen).
-- **IMPLEMENTIERT:** explizites `selectedNpcId` im Backend-Protokoll mit genauer Kampagnen-/Revisions- und NPC-Kontextbindung; getrenntes Sitzungs-Capability `npc-selection-v1`. Flutter-Narrator sendet die Auswahl ausschließlich nach Verhandlung; Mock erinnert bei gleichnamigen Figuren nur die gewählte. Keine Regelzustandsänderung, keine Persistenzmigration.
-- **TESTS GESCHRIEBEN:** Backend-Fastify und Mock-Regressionsfälle, Dart-Transporttests für Capability-/ID-/Logout-Grenzen, ergänzte Payload-ID-Prüfungen.
-- **GETESTET:** exakten finalen GitHub-CI-Commit noch ausweisen, sobald die Vollprüfung abgeschlossen ist. Frühe Zwischencommits mit ungültiger Schema-/Dart-Syntax korrigiert.
-- **NICHT GETESTET:** produktiver Provider, echtes Gerät, Store-Signierung. Kein lokales Dart-/Flutter-SDK verfügbar.
-- **NOCH NICHT IMPLEMENTIERT:** benutzergesteuerte NPC-Auswahl aus dem Android-Kampagnendialog in `GameController`. Das bleibt der nächste koordinierte UI-/Story-Schritt.
-- **Fachcheckpoint:** [Chat B NPC-ID-Protokoll](parallel/CHAT_B_NPC_SELECTION_WIRE_20261026.md). Historische Ergebnisse darunter erhalten, zentrale Dokumentüberschneidungen von Chat D konsolidieren.
-
-**Chat B GitHub-Update (26.10.2026):** Die zuvor auf dem eigenen Branch vorbereitete Auswahlübertragung ist [PR #237](https://github.com/ManuEtt/Dnd/pull/237). Backend und vollständige Flutter-Suite auf Code-/Format-Commit `65bb3d29ac2aeead857073e2062c6c7fc0fa985a` im Actions-Lauf #40342521532 bereits erfolgreich; Android- und finaler Dokumentations-HEAD noch abnehmen. Keine UI-Freigabe behaupten.
+Explizite NPC-ID-Auswahl von Android über GameController an den bereits vorhandenen Wire-Vertrag durchreichen. Definition of Done: gleichnamige Figuren ausdrücklich per ID auswählen, fehlende Capability und Stale Revision vor Netzwerk/Kosten ablehnen, Abbruch/Neustart/SQLite testen, Regel-/Story-Grenze erhalten. Erst nach vollständigem Migrationsabschluss beginnen; aktuelle Main-/Branch-/CI-Stände erneut lesen. Keine automatische Wiederaufnahme außerhalb einer aktiven Sitzung.

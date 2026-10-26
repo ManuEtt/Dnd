@@ -1,3 +1,9 @@
+## 26.10.2026 – 0.8.42+92: sechs Entwicklungsbranches zusammenführen
+
+Sieben Köpfe einschließlich Main vorab remote per Archivtag und lokal per geprüftem Bundle gesichert. Eldritch-Klassenprüfung, NPC-ID-Wire-Vertrag (Android-Durchreichung noch offen), barrierearme Kampf-/Würfelanzeige und no-follow Checkpoint-Manifeste gemeinsam integriert. Formatfehler der Würfeltestdatei behoben;155 Python-Tests bisher grün, vollständige kombinierte Abnahme noch offen. SQLite2/JSON1 unverändert. [Checkpoint](docs/CODEX_CHECKPOINT.md). Ältere Einträge unten sind Historie.
+
+---
+
 ## 26.10.2026 – Chat A: Eldritch-Blast-Zweitklassenvalidierung (CI offen)
 
 Unbekannte Hauptklasse vor dem Wirken von `Eldritch Blast` zurückweisen, auch bei gültiger Hexenmeister-Zweitklasse. Neue deterministische Positiv-/Negativtests; keine Ressourcen-/Speicherformatänderung oder neue Spielregel. Bis zur vollständigen GitHub-CI als nicht abgenommen behandeln. [Fachbeleg](docs/parallel/CHAT_A_ELDRITCH_PRIMARY_VALIDATION_20261026.md).
