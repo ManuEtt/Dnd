@@ -8,14 +8,27 @@ import 'npc_story_selection.dart';
 /// displayed name is unique across the campaign. Equal names must be selected
 /// by explicit NPC ID in a future UI, never guessed from player prose.
 class NpcIdentityStoryPayload {
-  NpcIdentityStoryPayload._(this.campaignRevision, this.npcContexts);
+  NpcIdentityStoryPayload._(
+    this.campaignRevision,
+    this.npcContexts,
+    this.selectedNpcId,
+  );
 
   final int campaignRevision;
   final List<Map<String, Object>> npcContexts;
 
+  /// Non-null exclusively when the player explicitly chose the saved ID.
+  /// The backend may use it only after advertising npc-selection-v1.
+  final String? selectedNpcId;
+
   /// Revalidate every selected ID against the campaign immediately before
   /// handing the prepared payload to the network transport.
   void requireCurrent(Campaign campaign) {
+    if (selectedNpcId != null &&
+        (npcContexts.length != 1 ||
+            npcContexts.single['npcId'] != selectedNpcId)) {
+      throw const FormatException('NPC-Auswahl passt nicht zum Story-Kontext.');
+    }
     if (campaign.revision != campaignRevision) {
       throw const FormatException('NPC-Kontext ist nicht mehr aktuell.');
     }
@@ -123,6 +136,7 @@ class NpcIdentityStoryPayload {
     return NpcIdentityStoryPayload._(
       campaign.revision,
       List.unmodifiable(selected),
+      selectedNpc?.npcId,
     );
   }
 
