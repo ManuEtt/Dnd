@@ -87,7 +87,7 @@ jobs:
                   core.info('Unmerged application/build changes; keep: ' + name);
                   continue;
                 }
-                archivalTag = 'archive/2026-10-26/' + name.replace(/\\//g, '-');
+                archivalTag = 'archive/2026-10-26/' + name.split('/').join('-');
               }
               const nowMain = await github.rest.git.getRef({owner, repo, ref: 'heads/main'});
               if (nowMain.data.object.sha !== context.sha) {
