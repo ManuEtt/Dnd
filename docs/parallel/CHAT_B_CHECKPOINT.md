@@ -1,3 +1,43 @@
+# Chat B – explizite NPC-ID-Auswahl für Story-Kontext (26.10.2026)
+
+## Ausgangslage und Koordination
+- Repository: `ManuEtt/Dnd`; Ausgangs-`main`: `20098805d8c70cbd361a13862379894c47ef4eb6`.
+- Branch: `feat/chat-b/explicit-npc-identity-selection-20261026`.
+- Bei Start offen: PR #216, #218, #219 (UI/Gradle), #220 (Backend-Zeitstempelprüfung), #221 (Feuerpfeil-Regelwerk/Controller), #222 (Mock-NPC-Erinnerungen).
+- Keine der offenen PRs verändert `app/lib/story/npc_identity_story_payload.dart`, `app/lib/story/npc_story_selection.dart` oder `app/test/npc_story_selection_test.dart`; gemeinsame README- und Checkpoint-Dateien beim Merge durch Chat D konsolidieren.
+- PR #222 auf HEAD `35add6aa122a5059472e952243094d717f3f833f`: CI #40289940245 zum Start noch `in_progress` beim Android-Debug-Build, Backend- und Flutter-Tests vorher grün. #222 bleibt eigener PR.
+
+## Problem
+Der lokale ID-gebundene Story-Kontext konnte bislang nur anhand einer eindeutigen Erwähnung des **sichtbaren Namens** zusammengestellt werden. Haben zwei gespeicherte NPCs denselben Namen, wurde zur Vermeidung von Fehlzuordnung gar kein Kontext ausgewählt. Eine bewusste, vorab getroffene Auswahl anhand ihrer NPC-ID hatte die Story-Schicht bislang nicht als eigenen Typ.
+
+## Akzeptanz
+1. Ohne explizite Auswahl bleiben gleichnamige NPCs nicht anhand der Spielerprosa unterscheidbar (fail-closed).
+2. `NpcStorySelection.choose(campaign, npcId)` akzeptiert nur genau eine gespeicherte, wohlgeformte NPC-ID, bindet sie an Kampagnenkennung, Revision sowie den bestätigten Namen/Lebens-/Beziehungsstatus.
+3. `NpcIdentityStoryPayload.prepare(..., selectedNpc: choice)` projiziert auch bei gleichen sichtbaren Namen **nur** die Notizen dieser einen bewusst gewählten ID. Unbeteiligte Figuren dürfen nicht in den Payload rutschen.
+4. Veraltete Revision, andere Kampagnen, geänderter oder doppelt gespeicherter NPC scheitern mit `FormatException`; kein stilles Ersetzen einer ungültigen Auswahl.
+5. Ohne gespeicherte Notiz gibt es keinen Kontext statt eines fremden Fallbacks. Eine Änderung der Notizen bei unveränderter Revision wird vor dem Versand durch `payload.requireCurrent` erkannt.
+6. Kein Rules-/Quest-/HP-/Inventar-Mutieren; keine Änderung an Daten-/API-Schema oder SQLite; Alt-JSON nach Roundtrip kompatibel.
+
+## IMPLEMENTIERT
+- `app/lib/story/npc_story_selection.dart` (neu): unveränderliche, revisionsgeschützte, explizite ID-Auswahl mit `choose` und `requireCurrent`.
+- `app/lib/story/npc_identity_story_payload.dart`: optionaler Parameter `selectedNpc` an `prepare`. Bei Auswahl Vorrang der gespeicherten ID vor namengebundener Erwähnung. Die bestehende namensbasierte Auswahl für eindeutig bezeichnete NPCs bleibt unverändert.
+- `app/test/npc_story_selection_test.dart` (neu): sechs positive/negative Testgruppen für Doppelname, eindeutige ID, stille Änderungen/Stale-State, unbekannte/doppelte IDs, Alt-JSON und reine Lesesicherheit.
+
+## Grenzen / Nicht implementiert
+- **Noch keine UI-Auswahl:** Die Android-Oberfläche (Chat C) und der gemeinsame `game_controller.dart` (gleichzeitig in Chat-A-PR #221) wurden absichtlich nicht geändert. Diese Änderung bietet den getesteten Story-Vertrag, aber noch keinen klickbaren NPC-Auswahldialog.
+- Der aktuelle Backend-Mock behandelt ausdrücklich gleiche Anzeigenamen weiterhin vorsichtig; dessen späterer Umgang mit expliziter Clientauswahl muss gesondert in einem abgestimmten Protokoll-PR erfolgen. Eine nur im lokalen Request vorhandene ID darf nicht fälschlich als im Backend bestätigte UI-Auswahl ausgegeben werden.
+- Kein realer Android-Gerätetest und keine produktive KI-Anbieterprüfung. Es werden keine Regel- oder Erzähl-Ergebnisse persistiert.
+
+## Teststatus
+- Source-Code und sechs Regressionstests sind in GitHub versioniert.
+- Exakter vollständiger CI-Status des finalen PR-HEAD wird nach Dokumentation geprüft und bei Bedarf im PR kommentiert. `scripts/verify_project.py`, `scripts/check_domain_boundaries.py`, `scripts/srd_coverage.py --json`, die Python-Pakettests sowie Backend- und Flutter-/APK-Prüfungen führt die CI aus.
+- Lokaler Dart-/Flutter-Build oder reales Gerät hier nicht als abgeschlossen gemeldet.
+
+## Nächster unabhängiger Schritt
+Eine von Chat C ausgelöste explizite NPC-Auswahl durch den Story-Controller (in separatem Integrationspaket, **nach** PR #221) verdrahten und zusammen mit dem Backend-Mock ein optionales ausgewähltes NPC-ID-Protokoll positiv/negativ testen. Die Auswahl muss vor dem Netzaufruf erneut revisionsgebunden geprüft werden.
+
+---
+
 # Chat B – KI-Spielleitung und Kampagnen (25.10.2026)
 
 ## Live-Ausgangslage
