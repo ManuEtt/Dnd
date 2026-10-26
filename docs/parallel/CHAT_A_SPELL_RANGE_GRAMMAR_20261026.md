@@ -38,6 +38,10 @@ Kein Würfelwurf, kein Effekt, kein Ressourcenverbrauch und keine Speicherung im
 
 [Push-CI #40370318365](https://github.com/ManuEtt/Dnd/actions/runs/40370318365) ist **fehlgeschlagen**: das Quellfile war durch eine fehlerhafte textuelle Ersetzung abgeschnitten/dupliziert; `dart format` meldete Syntaxfehler, im Test zudem eine Formatabweichung. Keine Flutter-Analyse/-Tests und kein APK-Build in diesem Lauf. Die Regellogik-Datei wurde anschließend aus der beobachteten Main-Basis mit korrekt begrenzter Ersetzung neu aufgebaut; Test-Formatierung angepasst. Neue CI ist auf dem Reparatur-HEAD separat nachzuweisen.
 
+## Formatdiagnose auf Reparatur-HEAD
+
+Die vollständige [Push-CI #40370952477](https://github.com/ManuEtt/Dnd/actions/runs/40370952477) kam über Python-/SRD-/Backendprüfungen hinaus, scheiterte aber bei Dart-Formatierung einer Testdatei; Flutter-Analyse, vollständige Tests und APK blieben übersprungen. Der temporäre [Diagnoselauf #40371428009](https://github.com/ManuEtt/Dnd/actions/runs/40371428009) zeigte genau zwei Formatierungsstellen im neuen Test. Diese werden nun bytegetreu nach Format-Diff korrigiert. Die temporäre Diagnose-Workflowdatei wird im selben Änderungscommit aus dem Branch entfernt.
+
 ## Status
 
 Implementierung und Regressionstests sind eingecheckt; Test-/CI-Ergebnisse werden erst nach tatsächlich abgeschlossener Ausführung ergänzt. Kein Merge nach main.

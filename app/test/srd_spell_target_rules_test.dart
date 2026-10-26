@@ -254,10 +254,8 @@ void main() {
         reason: invalid,
       );
       expect(
-        () => SrdSpellTargetRules.validateOrigin(
-          withRange(invalid),
-          _ranged(0),
-        ),
+        () =>
+            SrdSpellTargetRules.validateOrigin(withRange(invalid), _ranged(0)),
         throwsUnsupportedError,
         reason: invalid,
       );
@@ -273,10 +271,7 @@ void main() {
       1,
     );
     expect(
-      () => SrdSpellTargetRules.validateOrigin(
-        withRange('1 foot'),
-        _ranged(2),
-      ),
+      () => SrdSpellTargetRules.validateOrigin(withRange('1 foot'), _ranged(2)),
       throwsFormatException,
     );
   });
