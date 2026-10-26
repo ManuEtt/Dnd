@@ -1,3 +1,28 @@
+# Chat D – D-007: Alpha-Release-Dateien vor verwaisten Symlinks schützen
+
+**Datum:** 26.10.2026. **Basis-Main:** `f1f3e997bc8650a757d34234eff49d870dcf9369`. **Branch:** `fix/chat-d/release-dangling-symlinks-20261026`. **Technischer Commit:** `0772fa845f8bcfa234c3e44c8138f3a76dd58019`.
+
+## Problem und Änderung
+
+`scripts/prepare_alpha_release.py` verwendete bisher nur `Path.exists()` für die vier Release-Zieldateien. Dieser Aufruf gibt `False` für einen auf ein nicht vorhandenes Ziel zeigenden symbolischen Link zurück. Anschließendes `write_text` oder `shutil.copy2` könnte dem Link folgen und außerhalb des Releases schreiben. Der durch die Quell-ZIP-Erstellung zusätzlich angelegte `_Source.zip.sha256`-Sidecar war von der Existenzprüfung ausgeschlossen.
+
+**IMPLEMENTIERT:** Alle fünf geplanten Release-Dateien einschließlich der SHA256-Sidecar-Datei werden vor jeglichem Schreibzugriff mit `path.exists() or path.is_symlink()` geprüft. Das bewahrt vorhandene gültige Dateien und weist auch verwaiste symbolische Links zurück. Der bestehende Release-Erfolgspfad bleibt unverändert.
+
+**Neue Regressionstests:** `test_dangling_symlinks_never_publish_or_write_outside_release` testet alle fünf Release-Zieldateien als Dangling-Symlinks und prüft, dass außerhalb nichts entsteht und bestehende Symlinks unverändert bleiben; `test_existing_checksum_sidecar_is_preserved` prüft das Verhindern einer Überschreibung einer vorhandenen Prüfsummendatei.
+
+## Testabnahme, Integration, Migration
+
+- **GEPRÜFT:** Quellcode- und Teständerungen über GitHub in getrennten Commits veröffentlicht.
+- **NICHT GETESTET:** neue Python-/Flutter-/Backend-/Android-Tests und APK-Paketierung des finalen D-007-Commits, echte Installation.
+- **BLOCKIERT:** finale GitHub Actions und Main-Synchronisation. D-005 PR #189 und D-006 PR #200 sind technische unabhängige Pakete. Gemeinsame Dokumentationen additiv abgleichen.
+- **MIGRATION:** keine Änderungen an `app/`, SQLite, JSON, Kampagnen, SRD, Gradle-JAR oder Android-Version; keine Migration erforderlich.
+
+## Genau ein nächster Schritt
+
+Die finale CI auf dem exakten GitHub-PR-Head vollständig abnehmen; danach neuesten Main-Stand konfliktfrei übernehmen, erneut prüfen und erst bei grüner CI integrieren. Keine Fremd-PRs mergen oder Branches löschen.
+
+---
+
 # Chat D D-004 – Main-Synchronisierung nach PR #183
 
 Neuer Basis-Main-HEAD `713b8cc2831f9d8039ef4e6ebf37c10682aec675` enthält D-001, D-002 und D-003. Branch D-004 wird per **normalem Merge-Commit ohne Force-Push** mit Main synchronisiert. Nur die zwei Python-Projektprüfer-/Testdateien werden aus D-004 übernommen; Dokumentation aus aktuellem Main bleibt erhalten und wird additiv ergänzt. Frühere Code-Tests/CIs auf `c7f2df12a9df474e6204ad1de4011f7c5b6e3e7f` sind keine finale Abnahme nach Synchronisierung. Offene PRs anderer Chats bleiben unverändert.
