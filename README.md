@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – Alpha-Release vor verwaisten Symlinks schützen (D-007, 26.10.2026)
+
+Die Release-Ausgabe lehnt nun auch ins Leere zeigende symbolische Links auf allen fünf Ausgabezielpfaden und bereits vorhandene Quell-ZIP-Prüfsummendateien ab. Zwei neue Python-Regressionen sichern ab, dass Dateien außerhalb des Release-Verzeichnisses nicht angelegt und bestehende Prüfsummen nicht überschrieben werden. Die vollständige CI-Abnahme auf dem finalen Commit steht noch aus. Keine Spielstands-/Android-App-/SRD-Regeländerung. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
 ## Chat C – Zugänglicher Heldenstatus (25.10.2026, PR offen)
 
 Der unabhängige Branch `feat/chat-c/accessible-status-hud-20261025` verbessert ausschließlich die Darstellung von `FantasyAdventureStatusHud`: ab 180 % Systemschrift bei 320–360 dp einspaltige Statuskarten; die angezeigten Werte schrumpfen nicht mehr über `FittedBox`. TP, RK, Bewegung und Erfahrung besitzen vollständige deutsche Screenreader-Texte; unbekannte Werte werden ausdrücklich als „nicht bestätigt“ angesagt. TP-/EP-Balken erhalten verständliche Prozent-Semantik. Drei Widgettests prüfen 320/360 dp bei 200 % und den unbekannten Zustand.
