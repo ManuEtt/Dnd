@@ -98,6 +98,97 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  for (final width in [320.0, 360.0]) {
+    testWidgets('TalkBack benennt bestätigte Kampfwerte bei $width dp', (
+      tester,
+    ) async {
+      tester.view.physicalSize = Size(width, 1100);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final semantics = tester.ensureSemantics();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildFantasyTheme(),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: const TextScaler.linear(2)),
+            child: child!,
+          ),
+          home: const Scaffold(
+            body: SingleChildScrollView(
+              child: FantasyCombatantCard(
+                name: 'Elowen',
+                isHero: true,
+                isActive: true,
+                initiative: 18,
+                hitPoints: 12,
+                maxHitPoints: 24,
+                armorClass: 16,
+                temporaryHitPoints: 3,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.bySemanticsLabel('Initiative: 18'), findsOneWidget);
+      expect(find.bySemanticsLabel('Rüstungsklasse: 16'), findsOneWidget);
+      expect(find.bySemanticsLabel('Trefferpunkte: 12 von 24'), findsWidgets);
+      expect(
+        find.bySemanticsLabel('Temporäre Trefferpunkte: 3'),
+        findsOneWidget,
+      );
+      expect(find.text('INI 18', findRichText: true), findsWidgets);
+      expect(find.text('RK 16', findRichText: true), findsWidgets);
+      expect(find.text('TP 12 / 24', findRichText: true), findsWidgets);
+      expect(tester.takeException(), isNull);
+      semantics.dispose();
+    });
+  }
+
+  testWidgets('TalkBack erfindet keine unbestätigten Kampfwerte', (
+    tester,
+  ) async {
+    final semantics = tester.ensureSemantics();
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildFantasyTheme(),
+        home: const Scaffold(
+          body: FantasyCombatantCard(
+            name: 'Unbekannter Gegner',
+            isHero: false,
+            isActive: false,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.bySemanticsLabel('Initiative: nicht bestätigt'),
+      findsOneWidget,
+    );
+    expect(
+      find.bySemanticsLabel('Rüstungsklasse: nicht bestätigt'),
+      findsOneWidget,
+    );
+    expect(
+      find.bySemanticsLabel('Trefferpunkte: nicht bestätigt'),
+      findsOneWidget,
+    );
+    expect(
+      find.bySemanticsLabel(RegExp('Temporäre Trefferpunkte:')),
+      findsNothing,
+    );
+    expect(find.byType(LinearProgressIndicator), findsNothing);
+    expect(tester.takeException(), isNull);
+    semantics.dispose();
+  });
+
   test('Lebenspunkte-Balken begrenzt bestätigte Extremwerte', () {
     const defeated = FantasyCombatantCard(
       name: 'Gefallener',
