@@ -3,7 +3,7 @@
 ## Abhängigkeiten und unabhängiger Branch
 - GitHub: `ManuEtt/Dnd`.
 - Branch: `feat/chat-b/negotiated-npc-transport-20261026`, ab `main` `f1f3e997bc8650a757d34234eff49d870dcf9369` (Integration Chat B aus PR #204 bereits enthalten).
-- Voraussetzung für die neue Übertragung: gestapelter Backend-PR #198 **nach** PR #193. PR #198 liefert das optionale `npcContexts`-/`campaignRevision`-Schema und ab neuem Commit eine authentifizierte Server-Fähigkeitsmeldung `npc-identity-v1`.
+- Voraussetzung für die neue Übertragung: Backend-Vertrag `npcContexts`/`campaignRevision` und authentifizierte Fähigkeitsmeldung `npc-identity-v1`. **Durch den zwischenzeitlichen Integrations-Merge #205 sind beide inzwischen auf `main` enthalten**. Die historischen Einzel-PRs #193/#198 sind für die Nachvollziehbarkeit verlinkt; ein installierter Backend-Server muss diese Version tatsächlich ausführen.
 - Basiscode aus PR #196 (lokale NPC-ID- und Revisionschronik) wurde durch Integrations-PR #204 in `main` übernommen; deshalb keine Änderung an offenen Integrationsbranches notwendig.
 
 ## Implementiert
@@ -28,7 +28,7 @@
 - Ohne Fähigkeit und nach Disconnect keine zusätzlichen Felder oder bleibende Freigabe.
 - Bei identischen sichtbaren Namen niemals raten; alle unbestätigten oder unpassenden Daten weglassen.
 - Vollständige GitHub-Workflowprüfung erforderlich: Format, Analyse, Flutter-Testgesamtmenge, Backend-Pipeline, Android-Debug/Alpha und Quelle-ZIP. Reale Geräteinstallation sowie kostenpflichtige KI-Betreiber **nicht geprüft**.
-- Anfänglicher Quellstand zeigte Dart-Formatierungsbedarf; kein vollständiger Test-/APK-Erfolg behauptet, bevor die CI am endgültigen PR-HEAD vollständig grün ist.
+- Frühere Zwischencommits zeigten Dart-Format-, Syntax- und Analysefehler; nach deren Korrektur bestanden bei CI #40276027697 Backendtests, Format, Analyse, 1.661 Fluttertests einschließlich beider neuen SQLite-Integrationstests. Ein einzelner fehlerhafter Testaufruf (Exception vor Expect) wurde im Folgecommit korrigiert. Vollständiger Test-/APK-Erfolg erst durch final grüne CI.
 
 ## Folgeschritt
-Nach Integration von PR #193/#198 und diesem Client-PR gemeinsamer Mock-End-to-End-Test gegen denselben vollständigen Branch sowie reale Android-/TTS-Tests. Nutzeroberfläche für explizite Auswahl gleichnamiger NPCs separat.
+Nach Integration dieses Client-PRs gemeinsamer Mock-End-to-End-Test gegen denselben vollständigen Branch sowie reale Android-/TTS-Tests. Nutzeroberfläche für explizite Auswahl gleichnamiger NPCs separat.
