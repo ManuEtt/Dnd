@@ -44,12 +44,12 @@ class DeathSaveDecisionPanel extends StatelessWidget {
           ),
           if (busy) ...[
             const SizedBox(height: 8),
-            const Semantics(
+            Semantics(
               liveRegion: true,
               label:
                   'Todesrettungswurf: Entscheidung wird verarbeitet. '
                   'Weitere Eingaben sind gesperrt.',
-              child: ExcludeSemantics(
+              child: const ExcludeSemantics(
                 child: Text(
                   'Entscheidung wird verarbeitet …',
                   key: ValueKey('death-save-busy-status'),
