@@ -1,3 +1,15 @@
+# Chat C – Todesrettungsentscheidung: sichtbarer und vorlesbarer Wartezustand (26.10.2026)
+
+- **Main-Basis:** `67f146e690306b13d490bd8e7fd5636bb187c77e`.
+- **Branch:** `feat/chat-c/death-save-busy-feedback-20261026`; PR und finale CI bei Erstellung offen.
+- **IMPLEMENTIERT:** `DeathSaveDecisionPanel` zeigt bei `busy == true` einen verständlichen Status `Entscheidung wird verarbeitet …` und bietet einen eigenen `Semantics(liveRegion: true)`-Knoten. Andere Texte, Fantasy-Buttons und bestehende Action-Callback-Verträge bleiben unangetastet.
+- **TESTS ERGÄNZT:** `app/test/death_save_decision_panel_busy_test.dart`: 320/360 dp mit 200 % Text, Status- und TalkBack-Knoten, deaktivierte Annahme/Wiederholung ohne Callback, Rückkehr zur verfügbaren Fokus-Wiederholung, ursprünglicher Hero-JSON unverändert.
+- **GETESTET:** PR-Vorgänger #254 ist auf exakt `af8ee164bdaf20bef1d898977fb114f8eadc5a18` durch [Actions #40383763474](https://github.com/ManuEtt/Dnd/actions/runs/40383763474) vollständig grün; zur Review freigegeben. Das ist **kein** Testbeleg für dieses neue Paket.
+- **NICHT GETESTET:** neue vollständige GitHub-CI/Android-Builds und Realgeräte-/TalkBack-Abnahme auf diesem Branch bei Erstellung offen.
+- **BLOCKIERT:** lokales Flutter-/Dart-SDK nicht verfügbar; Tests über GitHub Actions. Gemeinsame README/Checkpoint-Dokumente vor Merge konfliktbewusst zusammenführen.
+- **Architektur/Sicherheit:** UI-Darstellung und Semantik; keine Änderung an Regeln, RNG, Ressourcen, Datenformat, Controller oder Persistenz, keine Migration.
+- **NOCH NICHT IMPLEMENTIERT / nächster Schritt:** finale Branch-CI mit Dart-Formatierung, Flutter-Analyse, vollständigen Fluttertests und Android-APK abnehmen; Fehler korrigieren und erst danach PR zur Integration freigeben.
+
 # CODEX-CHECKPOINT – vollständige Branch-Migration
 
 Stand **2026-10-26T17:38:53+00:00**, Würfelraunen **0.8.42+92**, SQLite **2**, Kampagnen-JSON **1**.
