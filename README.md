@@ -86,3 +86,14 @@ Weitere offene Bereiche: vollständige amtliche Quelleninventur, zahlreiche Zaub
 Vollprojekt-ZIP, Patch und Prüfsummen unter `/workspace/artifacts/0.8.40+90/`; aktuelle Dateinamen im dortigen Artefaktindex nach Abschluss. Patchbasis dieses Pakets: `407c2e1ef8ee310b30d1543a263fb66b3331a26e`. ZIP in eine Arbeitskopie entpacken oder Patch mit `git apply --check`/`git apply` auf dieser Basis übernehmen, eigenen Branch pushen und PR öffnen. Keine alten Dateistände ungeprüft über Main kopieren.
 
 Nur rechtmäßig verwendbare Inhalte des **SRD 5.2.1 von Wizards of the Coast unter CC BY 4.0** sowie eigene/lizenzierte Inhalte nutzen. [Namensnennung](THIRD_PARTY_NOTICES.md) erhalten. Keine automatische Weiterarbeit außerhalb einer aktiven Sitzung.
+
+
+---
+
+## Chat B – Fähigkeitsgeprüfter NPC-ID-Transport (26.10.2026)
+
+Der eigenständige Branch `feat/chat-b/negotiated-npc-transport-20261026` bindet die bereits in `main` integrierte NPC-ID-/Revisionschronik an den optionalen KI-Kampagnentransport an. Nach einer erfolgreich authentifizierten `GET /v1/session`-Antwort wird **nur** bei exakt ausgewiesener Fähigkeit `npc-identity-v1` ein optionaler strukturierter Kontext (`campaignRevision`, `npcContexts`) an `/v1/story/advance` gesendet. Fehlt diese Freigabe, bleibt das bisherige Anfrageformat ohne Zusatzfelder bestehen.
+
+Das neue Story-Hilfsmodul verwendet ausschließlich eindeutig zuordenbare NPC-IDs, höchstens drei Figuren und je drei bestätigte Notizen; gleichnamige NPCs werden nicht durch bloße Textsuche willkürlich ausgewählt. Eine neue SQLite-/GameController-/Mock-Transport-Integration prüft beide Servermodi, zusätzliche Unit-Tests verifizieren Mehrdeutigkeit, irrelevante Spielertexte und Revisionsgrenzen. Der vorhandene Regel- und Spielstandsschutz bleibt unverändert. `disconnect` löscht die ausgehandelte Fähigkeit.
+
+**Integration:** Der erforderliche Backend-API-/Fähigkeitsvertrag liegt im noch offenen, auf PR #193 gestapelten PR #198. Der Flutter-Transport funktioniert mit älteren Servern weiter, auch solange dieser Backend-PR nicht gemergt wurde. Bei Integration PR #198 nach PR #193 einplanen. Keine echte Geräteinstallation, kostenpflichtige Backendausführung oder produktive Signierung behauptet. [Technischer Checkpoint](docs/parallel/CHAT_B_NEGOTIATED_NPC_TRANSPORT_20261026.md).
