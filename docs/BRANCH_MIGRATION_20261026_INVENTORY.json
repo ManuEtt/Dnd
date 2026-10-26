@@ -1,0 +1,45 @@
+{
+  "created_utc": "2026-10-26T17:34:42.606908+00:00",
+  "repository": "ManuEtt/Dnd",
+  "base_main": "5e3116f9e3f8de0af6e8125a97b3962cb8910cdf",
+  "bundle": "/workspace/artifacts/branch-migration-20261026T173427Z/Alle_Branchstaende.bundle",
+  "bundle_sha256": "1ee5f7814ffd02c6e88775c54b46064d52f23bf03d48b51f01b3d635e6e8bc0e",
+  "remote_tags_verified": true,
+  "branches": [
+    {
+      "branch": "feat/chat-b/explicit-npc-wire-20261026",
+      "source_sha": "40ea6cb9b62daf70dcee3a5d8f993bf7e9a1b5cf",
+      "archive_tag": "archive/branch-migration-20261026T173427Z/feat/chat-b/explicit-npc-wire-20261026"
+    },
+    {
+      "branch": "feat/chat-c/action-economy-large-text-20261026",
+      "source_sha": "92fb423d19c84d3b9710fc3237d10206b9ef4712",
+      "archive_tag": "archive/branch-migration-20261026T173427Z/feat/chat-c/action-economy-large-text-20261026"
+    },
+    {
+      "branch": "feat/chat-c/dice-plaque-large-text-20261026",
+      "source_sha": "771405675381687200900cfd17c900ad7d049e5e",
+      "archive_tag": "archive/branch-migration-20261026T173427Z/feat/chat-c/dice-plaque-large-text-20261026"
+    },
+    {
+      "branch": "fix/chat-a/eldritch-primary-class-validation-20261026",
+      "source_sha": "1be828a91b124dd95443b7212d5220ab82710fb2",
+      "archive_tag": "archive/branch-migration-20261026T173427Z/fix/chat-a/eldritch-primary-class-validation-20261026"
+    },
+    {
+      "branch": "fix/chat-d/checkpoint-manifest-nofollow-20261026",
+      "source_sha": "15ff60b251fb64d76b5c65bf93e93fe47545024c",
+      "archive_tag": "archive/branch-migration-20261026T173427Z/fix/chat-d/checkpoint-manifest-nofollow-20261026"
+    },
+    {
+      "branch": "fix/chat-d/source-zip-symlink-swap-20261026",
+      "source_sha": "2904fabdfbd28ec5d0ae74c568fb709c87d493f7",
+      "archive_tag": "archive/branch-migration-20261026T173427Z/fix/chat-d/source-zip-symlink-swap-20261026"
+    },
+    {
+      "branch": "main",
+      "source_sha": "5e3116f9e3f8de0af6e8125a97b3962cb8910cdf",
+      "archive_tag": "archive/branch-migration-20261026T173427Z/main"
+    }
+  ]
+}
