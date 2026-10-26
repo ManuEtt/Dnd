@@ -30,7 +30,8 @@ Campaign _campaign({
   sessionId: 'second-session',
   hero: HeroCharacter(id: 'hero', name: 'Aria', hitPoints: 13),
   scene: 'Ein unbestätigtes Gerücht über Mira.',
-  npcs: npcs ??
+  npcs:
+      npcs ??
       const [
         WorldNpc(id: 'mira-a', name: 'Mira', relationship: 'freundlich'),
         WorldNpc(id: 'mira-b', name: 'Mira', relationship: 'feindlich'),
@@ -182,11 +183,7 @@ void main() {
           name: 'Mira',
           relationship: 'misstrauisch',
         ),
-        const WorldNpc(
-          id: 'mira-b',
-          name: 'Mira',
-          relationship: 'feindlich',
-        ),
+        const WorldNpc(id: 'mira-b', name: 'Mira', relationship: 'feindlich'),
       ],
     );
     expect(
@@ -199,11 +196,7 @@ void main() {
     final original = _campaign();
     for (final id in ['', 'unknown', ' mira-a', 'mira-a ']) {
       expect(
-        () => NpcIdentityMemory.read(
-          original,
-          npcId: id,
-          expectedRevision: 7,
-        ),
+        () => NpcIdentityMemory.read(original, npcId: id, expectedRevision: 7),
         throwsFormatException,
       );
     }
@@ -252,10 +245,7 @@ void main() {
       npcId: 'mira-a',
       expectedRevision: 7,
     );
-    expect(
-      () => snapshot.notes.clear(),
-      throwsUnsupportedError,
-    );
+    expect(() => snapshot.notes.clear(), throwsUnsupportedError);
     final serialized = snapshot.toContextMap();
     final entries = serialized['notes'] as List;
     expect((entries.single as Map)['npcId'], 'mira-a');
