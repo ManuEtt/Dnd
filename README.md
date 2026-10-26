@@ -130,6 +130,12 @@ Unter Linux benötigen SQLite-Tests `libsqlite3-dev`. Die CI-Definition steht in
 
 Anleitungen: [Sicherungen](docs/SAVE_BACKUPS.md) · [Alpha-Artefakte](docs/ALPHA_RELEASES.md) · [APK-Download](docs/APK_DOWNLOAD.md).
 
+## Chat C – Statusanzeige bei vorläufiger Todesrettungsentscheidung (26.10.2026; PR offen)
+
+Während der Controller eine bereits gewählte Entscheidung zu einem fehlgeschlagenen Todesrettungswurf verarbeitet, zeigt das Android-Fantasy-Panel jetzt **„Entscheidung wird verarbeitet …“** an. Ein eigener **TalkBack-Live-Region**-Status kündigt an, dass weitere Eingaben währenddessen gesperrt sind. Die schon vorhandene Sperre von „Wurf annehmen“ und der regelgeprüften Klassen-Wiederholungen bleibt unverändert; weder weitere Würfe noch ein Ressourcenverbrauch werden durch die Anzeige ausgelöst. Zwei neue Widgettests prüfen 320/360 dp bei 200 % Systemschrift, das gesperrte Verhalten, die Rückkehr zur Bedienbarkeit und unveränderte Charakterdaten.
+
+Betroffene technische Dateien: `app/lib/ui/death_save_decision_panel.dart`, `app/test/death_save_decision_panel_busy_test.dart`. Keine Änderungen an Regeln, GameController, JSON oder SQLite; neue vollständige GitHub-CI und reale Geräteabnahme werden separat dokumentiert. Der Branch bleibt bis zur Review-Integration unabhängig von `main`.
+
 ## Entwicklungsstand und nächste Schritte
 
 Das Projekt wird in kleinen, überprüfbaren Inkrementen entwickelt. Vorrangig sind:
