@@ -1,8 +1,13 @@
 # Würfelraunen – Der lebendige Spielleiter
 
-## Chat D – Quell-ZIP und Checkpoint-Dateirechte (D-007, 26.10.2026)
+## Chat D – Quell-ZIP-Ausführungsrechte (D-007, 26.10.2026)
 
-Die aktuelle Quell-ZIP-Implementierung verifiziert Quelldaten beim Lesen mit `writestr()`; dabei gingen jedoch die Unix-Ausführungsrechte von Skripten verloren. D-007 übernimmt die geprüften Datei-Modusbits explizit in die ZIP-Metadaten und aktualisiert zwei veraltete Fehler-/Rollbacktests auf den tatsächlich verwendeten Schreibweg. Ein neuer Positiv-/Negativtest überprüft ausführbare und nicht ausführbare Dateien. Diese Fehler waren in der alten CI beim Pakettest reproduzierbar; die vollständige CI für den neuen D-007-Commit muss separat erfolgreich sein. Keine Änderung an App-Code, Speicherformat, SRD-Regeln oder echten Spielständen. [Details](docs/parallel/CHAT_D_CHECKPOINT.md).
+Nach dem Wechsel auf race-geprüfte `ZipFile.writestr()`-Archivierung waren ausführbare Unix-Dateimodi nicht mehr im Quell-ZIP enthalten. D-007 bewahrt diese Modebits mit `ZipInfo.external_attr`; die zwei bestehenden Rollbacktests mocken wieder den tatsächlich verwendeten ZIP-Schreibweg. Neuer 0755/0644-Test ergänzt. Python-Checkpointtests haben auf dem technischen D-007-Stand bestanden; die damalige Gesamt-CI scheiterte anschließend am Dart-Format von zwei **anderen** Dateien. Der Branch wird mit dem neueren `main` aus PR #214 synchronisiert, wo die Eldritch-Testdatei bereits verändert wurde; die verbleibende Formatabweichung wird gesondert untersucht. Keine Spielstand-/Regeländerung. [Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
+## Chat A – Schutz vor manipulierter Eldritch-Blast-Deckung (26.10.2026)
+
+Der bestehende persistierte Mehrstrahl-Kampfpfad ist erweitert: Wenn der aktuelle Gegner bestätigte Deckung hat, darf ein Strahl diese nicht durch `sourceOppositeCover: false` umgehen. Eine Inkonsistenz stoppt den gesamten Zauber **vor** dem ersten Würfel. Dazu lehnt der reine Resolver Basis-RK 0 frühzeitig ab; der doppelte RK-100-Vergleich ist entfernt. Positive und negative Regressionstests liegen in den Eldritch-Blast-Regel- und Encounter-Tests. Die vorherige globale Main-CI war wegen *unabhängiger* ZIP-Qualitätstests rot; der neue Branch ist bis zum endgültigen CI-Nachweis nicht mergefreigegeben. [Regelbeleg](docs/SRD_ELDRITCH_COVER_SNAPSHOT_20261026.md) · [Chat-A-Checkpoint](docs/parallel/CHAT_A_ELDRITCH_COVER_20261026.md).
+
 
 ## Chat C – Kampf-Deckung bei 200 % Schrift (26.10.2026)
 

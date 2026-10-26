@@ -1,12 +1,23 @@
-# Chat D D-007 – Checkpoint-ZIP-Ausführungsrechte (26.10.2026)
+# Chat D D-007 – Main-Abgleich nach PR #214
 
-- **Basis:** `main` `e903ae38c6ae99abfa99a432e7f7777f0eee853f`. Eigener Branch `fix/chat-d/restore-checkpoint-zip-executable-modes-20261026`.
-- **IMPLEMENTIERT:** Verlorene Unix-Modebits bei `ZipFile.writestr()` wiederhergestellt und zwei stale `ZipFile.write`-Mocks korrigiert. Ein zusätzlicher Modus-Roundtrip-Test.
-- **GETESTET:** Dateien über GitHub committed; vorherige CI reproduzierte drei Paket-/Checkpointfehler. **Die neue abschließende CI ist noch offen.**
-- **NICHT GETESTET:** vollständige finale Python-/Flutter-/Backend-/Android-CI und realer Geräte-/APK-Installationscheck.
-- **BLOCKIERT:** PR- und Main-CI-Abnahme und Main-Abgleich.
-- **Keine Migration:** App, Datenformat, Regeln, Story und Android-Version unverändert.
-- **NÄCHSTER SCHRITT:** finale CI abnehmen; anschließend sicheren Merge durchführen und D-008 fortsetzen. [Chat-D-Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
+- **Neuer Main-SHA:** `d03faea7ce032e8918da2204228473bd9999932c`; **D-007-Head davor:** `8eaf1fc1787ccf80c4c676fec3df1ce91da16034`.
+- **IMPLEMENTIERT:** geprüfte `writestr`-Archive bewahren ausführbare Modebits; zwei veraltete Rollback-Mocks und Mode-Test korrigiert.
+- **GETESTET:** Python-/Backend-Tests auf vorherigem D-007-Codecommit grün. Main-/CI-Formatfehler in fremden Dartdateien wurden erkannt, kein final grünes CI behauptet.
+- **NICHT GETESTET:** finale kombinierte Android-/Flutter-/Alpha-CI, reale Geräteinstallation.
+- **BLOCKIERT:** eine unabhängige Formatabweichung im NPC-Story-Payload; GitHub-CI auf neuem D-007-HEAD erforderlich.
+- **PERSISTENZ:** SQLite/JSON, App-Version und Story-/Regelverhalten unangetastet.
+- **NÄCHSTER SCHRITT:** Formatabweichung koordinieren, finale CI auf synchronisiertem D-007-Head abnehmen und erst danach integrieren.
+
+---
+
+# Chat A – Eldritch Blast Deckungs-Snapshot (26.10.2026)
+
+- **IMPLEMENTIERT:** Request-Deckungsrichtung pro Strahl gegen gespeicherte Gegnerdeckung validiert, Basis-RK 0 frühzeitig verworfen, redundante Obergrenze entfernt; SRD-Regeltests und persistierte GameEngine-Tests aktualisiert.
+- **GETESTET:** Tests ergänzt, globales CI-Ergebnis für finalen Branch-HEAD noch offen.
+- **NICHT GETESTET:** physisches Android, Release und Migration.
+- **BLOCKIERT:** Ausgangs-`main e903ae38c6ae99abfa99a432e7f7777f0eee853f` hatte unabhängige rote ZIP-/Sicherungstests; keine Fremdskripte verändert.
+- **NOCH NICHT IMPLEMENTIERT:** persistente Mehrgegnerstrahlen mit individuellen AC-/Resistenz-Snapshots.
+- **NÄCHSTER SCHRITT:** eigene Dart-/Flutter-CI abnehmen, unabhängigen Main-ZIP-Testfehler koordinieren und erst danach integrieren. [Regelbeleg](SRD_ELDRITCH_COVER_SNAPSHOT_20261026.md) / [Checkpoint](parallel/CHAT_A_ELDRITCH_COVER_20261026.md).
 
 ---
 
