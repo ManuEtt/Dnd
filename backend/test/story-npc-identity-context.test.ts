@@ -176,13 +176,13 @@ test('HTTP rejects incoherent context before any provider call', async (t) => {
     headers: { authorization: 'Bearer ' + config.accessToken }, payload: {},
   });
   assert.equal(auth.statusCode, 200);
-  assert.deepEqual(auth.json().capabilities, ['npc-identity-v1']);
+  assert.deepEqual(auth.json().capabilities, ['npc-identity-v1', 'npc-selection-v1']);
   const headers = { authorization: 'Bearer ' + auth.json<{token:string}>().token };
   const capability = await app.inject({
     method: 'GET', url: '/v1/session', headers,
   });
   assert.equal(capability.statusCode, 200);
-  assert.deepEqual(capability.json().capabilities, ['npc-identity-v1']);
+  assert.deepEqual(capability.json().capabilities, ['npc-identity-v1', 'npc-selection-v1']);
   const send = async (body: object) => app.inject({
     method: 'POST', url: '/v1/story/advance', headers, payload: body,
   });

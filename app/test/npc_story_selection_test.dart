@@ -61,6 +61,7 @@ void main() {
     );
     expect(firstPayload, isNotNull);
     expect(firstPayload!.npcContexts, hasLength(1));
+    expect(firstPayload.selectedNpcId, 'mira-one');
     expect(firstPayload.npcContexts.single['npcId'], 'mira-one');
     expect(firstPayload.npcContexts.toString(), contains('alte Karte'));
     expect(firstPayload.npcContexts.toString(), isNot(contains('Stadttor')));
@@ -73,6 +74,7 @@ void main() {
     );
     expect(secondPayload, isNotNull);
     expect(secondPayload!.npcContexts.single['npcId'], 'mira-two');
+    expect(secondPayload.selectedNpcId, 'mira-two');
     expect(secondPayload.npcContexts.toString(), contains('Stadttor'));
     expect(secondPayload.npcContexts.toString(), isNot(contains('alte Karte')));
     firstPayload.requireCurrent(campaign);
