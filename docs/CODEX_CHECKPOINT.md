@@ -1,3 +1,13 @@
+# Chat A – Komponenten-Katalog schützt vor manipulierten V/S/M-Kürzeln (26.10.2026)
+
+- Basis-main `5e3116f9e3f8de0af6e8125a97b3962cb8910cdf`, Branch `fix/chat-a/spell-component-metadata-20261026`. Regressionen für unbekannte, doppelte und nicht kanonische Komponentenbezeichner sowie fehlende/mehrfach geklammerte Materialbeschreibungen hinzugefügt.
+- Statische Prüfung: **339/339** bisherige Katalogeinträge bleiben mit der neuen Syntax kompatibel. Dies ist **kein** bestandener Dart-/Flutter-Test.
+- `RULE-SPELLS-SPELL-COMPONENTS` bleibt **partial**. Keine Schema-/JSON-Spielstands-/SQLite-Änderung; Wirkung der Zauber und Ressourcenbuchung unverändert.
+- Vollständige Tests, CI- und Geräteabnahme beim Verfassen **offen**. PR #243 berührt gemeinsame Dokumentation; Integration ausschließlich koordiniert durch Chat D.
+- Persönlicher Nachweis: [Chat A Checkpoint](parallel/CHAT_A_CHECKPOINT.md).
+
+---
+
 # Chat D D-009 – sichere Quell-ZIP-Dateilesepfade (26.10.2026)
 
 - **Basis-`main`:** `42d14ad36cc947691f7e5a1e8647a43f5421b86e`; **Branch:** `fix/chat-d/source-zip-symlink-swap-20261026`.
