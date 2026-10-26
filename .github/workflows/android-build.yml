@@ -86,6 +86,11 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
+      - name: Temporäre Dart-Formatdiagnose
+        working-directory: app
+        run: |
+          dart format lib/story/npc_identity_story_payload.dart
+          git --no-pager diff -- lib/story/npc_identity_story_payload.dart
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
