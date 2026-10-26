@@ -3,7 +3,7 @@ import type { Config } from './config.js';
 import { bearerToken, issueSession, secureEqual, verifySession } from './auth.js';
 import { WindowLimiter } from './limits.js';
 import { createNarrator, type NarrationInput, type Narrator } from './providers.js';
-import { parseStoryPlan, parseStoryTurn, validateStoryTurnContext, type StoryStartInput, type StoryTurnInput } from './story.js';
+import { parseStoryPlan, parseStoryTurn, validateStoryTurnContext, type StoryStartInput } from './story.js';
 import { guardStoryPlanSecrets, guardStoryTurnSecrets } from './story_secret_guard.js';
 import { filterAmbiguousNpcDiaryMemories } from './story_npc_memory_guard.js';
 import { validateNpcIdentityContext, type StoryTurnWithNpcIdentities } from './story_npc_identity_context.js';
