@@ -20,9 +20,22 @@ class NpcNarratorMemory {
       throw const FormatException('Ungültige Erzähler-Erinnerungsgrenzen.');
     }
 
+    // A name in free player text never identifies one of several saved NPCs
+    // sharing that display name. Explicit ID selection has its own separate
+    // revision-checked story transport; do not guess an identity here.
+    final nameCounts = <String, int>{};
+    for (final npc in campaign.npcs) {
+      final name = _normalize(npc.name);
+      if (name.isNotEmpty) {
+        nameCounts[name] = (nameCounts[name] ?? 0) + 1;
+      }
+    }
+
     final mentioned = <String, WorldNpc>{};
     for (final npc in campaign.npcs) {
-      if (npc.id.isNotEmpty && _mentions(action, npc.name)) {
+      if (npc.id.isNotEmpty &&
+          nameCounts[_normalize(npc.name)] == 1 &&
+          _mentions(action, npc.name)) {
         // Ambiguous repeated IDs cannot authorize NPC-specific memories.
         if (campaign.npcs.where((other) => other.id == npc.id).length == 1) {
           mentioned[npc.id] = npc;
