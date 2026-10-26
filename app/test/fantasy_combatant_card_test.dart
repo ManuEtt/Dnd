@@ -98,7 +98,6 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-
   for (final width in [320.0, 360.0]) {
     testWidgets('TalkBack benennt bestätigte Kampfwerte bei $width dp', (
       tester,
