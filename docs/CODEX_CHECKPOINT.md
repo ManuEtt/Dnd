@@ -81,3 +81,16 @@ bash ./gradlew :app:testDebugUnitTest --no-daemon
 ```
 
 Logs `/workspace/validation/20261026-sacred-*`, isolierte Buildkopie `/workspace/validation/build-0.8.41`. Keine automatische Weiterarbeit außerhalb einer aktiven Sitzung.
+
+---
+
+## Chat B – optionales NPC-Auswahlprotokoll (26.10.2026)
+
+- **Basis:** Main `42d14ad36cc947691f7e5a1e8647a43f5421b86e` (zwei vollständige erfolgreiche Main-CIs). Zu Beginn keine offenen Pull Requests; ursprüngliche Chat-B-Pakete #222/#224 bereits integriert.
+- **Branch:** `feat/chat-b/explicit-npc-wire-20261026`, Pull Request gegen `main` (PR-Nummer nach Erstellung ergänzen).
+- **IMPLEMENTIERT:** explizites `selectedNpcId` im Backend-Protokoll mit genauer Kampagnen-/Revisions- und NPC-Kontextbindung; getrenntes Sitzungs-Capability `npc-selection-v1`. Flutter-Narrator sendet die Auswahl ausschließlich nach Verhandlung; Mock erinnert bei gleichnamigen Figuren nur die gewählte. Keine Regelzustandsänderung, keine Persistenzmigration.
+- **TESTS GESCHRIEBEN:** Backend-Fastify und Mock-Regressionsfälle, Dart-Transporttests für Capability-/ID-/Logout-Grenzen, ergänzte Payload-ID-Prüfungen.
+- **GETESTET:** exakten finalen GitHub-CI-Commit noch ausweisen, sobald die Vollprüfung abgeschlossen ist. Frühe Zwischencommits mit ungültiger Schema-/Dart-Syntax korrigiert.
+- **NICHT GETESTET:** produktiver Provider, echtes Gerät, Store-Signierung. Kein lokales Dart-/Flutter-SDK verfügbar.
+- **NOCH NICHT IMPLEMENTIERT:** benutzergesteuerte NPC-Auswahl aus dem Android-Kampagnendialog in `GameController`. Das bleibt der nächste koordinierte UI-/Story-Schritt.
+- **Fachcheckpoint:** [Chat B NPC-ID-Protokoll](parallel/CHAT_B_NPC_SELECTION_WIRE_20261026.md). Historische Ergebnisse darunter erhalten, zentrale Dokumentüberschneidungen von Chat D konsolidieren.
