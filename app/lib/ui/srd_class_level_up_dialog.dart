@@ -286,6 +286,13 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
                   for (final feature in proposal.features)
                     Text('• ${feature.name} – ${feature.automation.name}'),
                 ],
+                if (proposal.automaticAbilityIncreases.isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    'Automatisches Klassenmerkmal: ${proposal.automaticAbilityIncreases.entries.map((e) => '${abilityLabels[e.key]} +${e.value}').join(', ')}',
+                    key: const ValueKey('levelup-automatic-abilities'),
+                  ),
+                ],
                 if (proposal.abilityIncreases.isNotEmpty)
                   Text(
                     'Attributsverbesserung: ${proposal.abilityIncreases.entries.map((e) => '${abilityLabels[e.key]} +${e.value}').join(', ')}',
@@ -311,8 +318,9 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
               const SizedBox(height: 10),
               const Text(
                 'Nach Bestätigung werden Klassenstufe, feste Trefferpunkte '
-                'und nur ausdrücklich gewählte Attributsverbesserungen '
-                '(einschließlich rückwirkender TP durch KO) übernommen. '
+                'und ausdrücklich gewählte Attributsverbesserungen sowie '
+                'automatische Klassenmerkmale der Stufe 20 übernommen '
+                '(einschließlich rückwirkender TP durch KO). '
                 'Andere Talente, Zauber und Unterklassenwirkungen '
                 'müssen separat bestätigt werden.',
                 style: TextStyle(fontSize: 12),
