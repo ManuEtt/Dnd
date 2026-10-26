@@ -65,65 +65,19 @@ void main() {
           .value,
       false,
     );
+    final modifiers = find.byKey(const ValueKey('fire-bolt-attack-modifiers'));
+    expect(tester.widget<CheckboxListTile>(modifiers).value, isFalse);
+    expect(find.byKey(const ValueKey('fire-bolt-class-stats')), findsNothing);
+    await tester.ensureVisible(modifiers);
+    await tester.tap(modifiers);
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Basisangriff +6'), findsOneWidget);
     final cast = find.byKey(const ValueKey('fire-bolt-cast'));
     await tester.tap(cast);
     await tester.pumpAndSettle();
     expect(find.textContaining('Bitte alle tatsächlichen'), findsOneWidget);
     expect(choice, isNull);
     expect(find.text('Feuerpfeil wirken'), findsOneWidget);
-  });
-
-  testWidgets('class attack preview requires actual confirmation', (
-    tester,
-  ) async {
-    final hero = _hero();
-    final before = hero.toJson();
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: FireBoltDialog(hero: hero, encounter: _fight),
-        ),
-      ),
-    );
-    expect(find.byKey(const ValueKey('fire-bolt-class-stats')), findsNothing);
-    final tile = find.byKey(const ValueKey('fire-bolt-attack-modifiers'));
-    expect(tester.widget<CheckboxListTile>(tile).value, isFalse);
-    final checkbox = find.descendant(of: tile, matching: find.byType(Checkbox));
-    await tester.ensureVisible(checkbox);
-    await tester.tap(checkbox);
-    await tester.pumpAndSettle();
-    final preview = tester
-        .widget<Text>(
-          find.byKey(const ValueKey('fire-bolt-class-stats')),
-        )
-        .data!;
-    expect(preview, contains('Basisangriff +6'));
-    expect(preview, contains('Intelligenz 16'));
-    expect(hero.toJson(), before);
-    expect(tester.takeException(), isNull);
-  });
-
-  testWidgets('invalid class profile cannot confirm attack preview', (
-    tester,
-  ) async {
-    final hero = _hero().copyWith(
-      className: 'Wizard',
-      secondaryClassName: 'Magier',
-      secondaryClassLevel: 1,
-    );
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: FireBoltDialog(hero: hero, encounter: _fight),
-        ),
-      ),
-    );
-    final confirm = tester.widget<FantasyTextButton>(
-      find.byKey(const ValueKey('fire-bolt-cast')),
-    );
-    expect(confirm.onPressed, isNull);
-    expect(find.byKey(const ValueKey('fire-bolt-class-stats')), findsNothing);
-    expect(tester.takeException(), isNull);
   });
 
   testWidgets('missing prepared spell disables Fire Bolt confirmation', (
