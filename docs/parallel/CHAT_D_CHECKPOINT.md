@@ -1,6 +1,6 @@
-# Chat D – D-005 Hauptbranch-Synchronisierung, 26.10.2026
+# Chat D – D-005 Main-Abgleich nach A/B-Integration am 26.10.2026
 
-Der vorherige D-005-Head `39847a2f8a8aff23bb0be09762e19d8f37968b1c` wird mit Main `f03f319e48b021a2ab34216284eaca4d677b6a5b` aus dem Merge von Chat C (#201) in einem nicht-erzwingenden Merge-Commit vereint. Zwei technische Gradle-Prüfdateien stammen aus D-005; alle übrigen Main-Dateien bleiben erhalten. Der neue PR-HEAD muss erneut vollständig CI-geprüft werden; keine stillschweigende Übertragung grüner alter Testresultate.
+Vorheriger D-005-HEAD `68264d63e506f2105469384545ae11def60338f3`, neuester Main `f1f3e997bc8650a757d34234eff49d870dcf9369`. Der Branch erhält regulär einen neuen Merge-Commit mit aktuellem Main als zweitem Parent. Technische Änderungen beschränken sich auf `scripts/verify_project.py` und `scripts/tests/test_verify_project.py`, A/B/C-Änderungen verbleiben auf Main. Frühere CI-Ergebnisse sind nicht ausreichend für den neuen HEAD.
 
 ---
 

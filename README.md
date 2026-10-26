@@ -1,8 +1,8 @@
 # Würfelraunen – Der lebendige Spielleiter
 
-## Chat D – Gradle-Distributionsparameter eindeutig prüfen (D-005, 26.10.2026)
+## Chat D – Schutz eindeutiger Gradle-Distributionseinstellungen (D-005, 26.10.2026)
 
-[PR #189](https://github.com/ManuEtt/Dnd/pull/189) sperrt mehrdeutige und doppelte `distributionUrl`-/`distributionSha256Sum`-Einträge in `gradle-wrapper.properties` unabhängig vom Properties-Separator. Sechs Regressionstests ergänzt. Die CI auf dem zuvor kombinierten Head `39847a2` ist erfolgreich; nach dem Abgleich mit dem aktuellen Hauptbranch `f03f319` ist eine neue Abnahme auf dem finalen Commit erforderlich. Keine Änderung an SQLite, JSON, Android-App-Code, SRD-Regeln oder Spielständen. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+Der [Chat-D-PR #189](https://github.com/ManuEtt/Dnd/pull/189) weist doppelte oder mehrdeutige `distributionUrl`- und `distributionSha256Sum`-Angaben in `gradle-wrapper.properties` sicher ab, auch bei verschiedenen Java-Properties-Separatoren. Sechs zusätzliche Python-Regressionstests; voriger D-005-HEAD `68264d6` hat vollständige GitHub-CI bestanden. Nach neuem Main-Abgleich `f1f3e99` ist **erneute finale CI** erforderlich. Keine Migration und keine Eingriffe in Gameplay, Backend oder Android-Oberfläche. [Detail-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
 
 ## Chat C – Zugänglicher Heldenstatus (25.10.2026, PR offen)
 

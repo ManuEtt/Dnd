@@ -8,3 +8,5 @@ export 'ai_story.dart' show AiStoryPlan, AiStoryStep;
 export 'rabenwacht_campaign.dart' show RabenwachtStoryModule, RabenwachtTurn;
 export 'story_rule_port.dart'
     show StoryRulePort, StoryAbilityCheck, StoryMilestoneAward;
+export 'npc_continuity_reader.dart'
+    show NpcContinuityReader, NpcContinuitySnapshot;

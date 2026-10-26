@@ -5,6 +5,7 @@ import { WindowLimiter } from './limits.js';
 import { createNarrator, type NarrationInput, type Narrator } from './providers.js';
 import { parseStoryPlan, parseStoryTurn, validateStoryTurnContext, type StoryStartInput, type StoryTurnInput } from './story.js';
 import { guardStoryPlanSecrets, guardStoryTurnSecrets } from './story_secret_guard.js';
+import { filterAmbiguousNpcDiaryMemories } from './story_npc_memory_guard.js';
 
 interface AppDependencies {
   clock?: () => number;
@@ -143,7 +144,23 @@ export function buildApp(config: Config, dependencies: AppDependencies = {}) {
     try { validateStoryTurnContext(request.body); }
     catch { return reply.code(400).send({ error: 'invalid_request', message: 'Die Kampagnendaten sind ungültig.' }); }
     if (!narrator.advanceStory) return reply.code(503).send({ error: 'story_unavailable' });
-    try { return { provider: config.provider, stateChanges: [], turn: guardStoryTurnSecrets(parseStoryTurn(await narrator.advanceStory(request.body), request.body), request.body.secret) }; }
+    try {
+      // Never guess which same-name saved NPC a client-provided diary note
+      // describes. Keep ordinary memories and the existing wire schema.
+      const context: StoryTurnInput = {
+        ...request.body,
+        memories: filterAmbiguousNpcDiaryMemories(request.body),
+      };
+      const proposed = await narrator.advanceStory(context);
+      return {
+        provider: config.provider,
+        stateChanges: [],
+        turn: guardStoryTurnSecrets(
+          parseStoryTurn(proposed, context),
+          context.secret,
+        ),
+      };
+    }
     catch { return reply.code(502).send({ error: 'provider_unavailable' }); }
   });
 

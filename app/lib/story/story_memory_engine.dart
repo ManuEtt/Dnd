@@ -8,18 +8,34 @@ class MemoryEngine {
   /// Recognizes explicit requests for established adventure memories.
   /// Free player actions mentioning historical nouns are not recall commands.
   static bool isRecallRequest(String text) {
-    final normalized = _memoryNormalize(text);
-    return RegExp(
-          r'\b(?:erinner\w*|bisher\w*|tagebuch|'
-          r'zusammenfass\w*|rueckblick)\b',
-        ).hasMatch(normalized) ||
-        RegExp(
-          r'\b(?:meine|unsere|bisherige)\s+geschichte\b',
-        ).hasMatch(normalized) ||
-        RegExp(r'\bwas\s+weisst\s+du\b').hasMatch(normalized) ||
-        RegExp(
-          r'\berzaehl\w*\s+(?:mir\s+)?(?:etwas\s+)?(?:ueber|von)\b',
-        ).hasMatch(normalized);
+    // A mention of a diary or of remembering is not necessarily a request.
+    // Otherwise "Ich lese das Tagebuch" silently becomes a recall instead
+    // of a player action. Only explicit questions and commands opt in.
+    final request = _memoryNormalize(text)
+        .replaceAll(RegExp(r'[.!?]+$'), '')
+        .replaceFirst(RegExp(r'^bitte\s+'), '')
+        .trim();
+    if (request.isEmpty) return false;
+
+    return <RegExp>[
+      RegExp(r'^erinnere\s+dich\b'),
+      RegExp(r'^erinnerst\s+du\s+dich\b'),
+      RegExp(r'^(?:kannst|koenntest)\s+du\s+dich\b.*\berinnern\b'),
+      RegExp(r'^(?:was\s+weisst\s+du|weisst\s+du\s+noch)\b'),
+      RegExp(r'^was\s+(?:ist|war)\s+bisher\s+(?:passiert|geschehen)\b'),
+      RegExp(r'^erzaehl\w*\s+(?:mir\s+)?(?:etwas\s+)?(?:ueber|von)\b'),
+      RegExp(
+        r'^fass(?:e|t)\b.*\b(?:geschichte|abenteuer|kampagne|sitzung|erlebnisse)\b.*\bzusammen\b',
+      ),
+      RegExp(r'^(?:rueckblick|tagebuch|zusammenfassung|erinnerungen)\b'),
+      RegExp(r'^(?:zeig(?:e)?|oeffne)\s+(?:mir\s+)?(?:das\s+)?tagebuch\b'),
+      RegExp(
+        r'^(?:gib|zeige|erstelle)\s+(?:mir\s+)?(?:einen?\s+|die\s+)?(?:rueckblick|zusammenfassung)\b',
+      ),
+      RegExp(
+        r'^ich\s+moechte\s+(?:einen?\s+|die\s+)?(?:rueckblick|zusammenfassung)\b',
+      ),
+    ].any((pattern) => pattern.hasMatch(request));
   }
 
   /// Selects confirmed memories by lexical relevance without model inference.

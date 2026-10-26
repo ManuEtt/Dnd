@@ -1,12 +1,12 @@
-# Chat D – D-005 Main-Abgleich am 26.10.2026
+# Chat D – D-005 synchronisiert nach Chat-A/B-Merges (26.10.2026)
 
-- **Basis:** `f03f319e48b021a2ab34216284eaca4d677b6a5b`, D-005-Head vor Synchronisation `39847a2f8a8aff23bb0be09762e19d8f37968b1c`; GitHub-PR #189.
-- **IMPLEMENTIERT:** genau ein gültiger URL-/SHA256-Key in Java-Properties-Konfiguration, einschließlich Separatoren `=`, `:` und Whitespace; sechs Regressionen.
-- **GEPRÜFT:** vorherige vollständige PR- und Push-CI auf `39847a2f8a8aff23bb0be09762e19d8f37968b1c` erfolgreich. Der neue synchronisierte Stand benötigt eine **eigenständige** komplette Actions-CI.
-- **NICHT GETESTET:** neuer finaler Commit, Android-Installation auf Realgerät.
-- **MIGRATION:** keine App-, SQLite-, JSON- oder SRD-Regeländerungen.
-- **INTEGRATION:** neue Main-Änderungen aus Chat C erhalten, fremde offene PRs nicht verändert.
-- **NÄCHSTER SCHRITT:** finale grüne CI/Artefakte abnehmen, Main/Head nochmals prüfen, danach kontrolliert integrieren. [Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
+- **Basis:** `main` `f1f3e997bc8650a757d34234eff49d870dcf9369`, D-005-Head bisher `68264d63e506f2105469384545ae11def60338f3`, PR #189.
+- **IMPLEMENTIERT:** genau einmalige Gradle-Properties-`distributionUrl`/`distributionSha256Sum` unabhängig von Separator; sechs Python-Regressionsfälle.
+- **GEPRÜFT:** ältere vollständige Actions Push-/PR-CI für `68264d63e506f2105469384545ae11def60338f3` erfolgreich, neu synchronisierter Stand benötigt erneut eigene vollständige CI.
+- **NICHT GETESTET:** Endversion und reale Installation.
+- **BLOCKIERT:** erneute finale CI; PR #200 für portable ZIP-Dateinamen bleibt unabhängig.
+- **MIGRATION:** keine App-, SQLite-, JSON-, Story- oder SRD-Änderungen durch D-005.
+- **NÄCHSTER SCHRITT:** finale CI und Artefakte prüfen, dann Main/PR-Vergleich und kontrollierten Merge durchführen. [Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
 
 ---
 
