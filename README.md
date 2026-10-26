@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – strikte Zauberreichweiten-Vorprüfung (PR #242, 26.10.2026)
+
+In [PR #242](https://github.com/ManuEtt/Dnd/pull/242) wird eine unabhängige SRD-5.2.1-Eingabeprüfung ergänzt: ungültige Mengen (`0 feet`), widersprüchliche Singular-/Pluralangaben (`1 miles`, `2 foot`), führende Nullen und zu große Fuß-/Meilenwerte ergeben keine akzeptierte numerische Zauberreichweite mehr. Gültige Katalogwerte, andere Ziele und die bisherigen Reichweitengrenzen bleiben unverändert. Neue positive und negative Tests in `srd_spell_target_rules_test.dart`; auf dem Arbeitsbranch noch keine endgültige CI-Abnahme behauptet. Keine Persistenz-/Schemaänderung (SQLite 2, JSON 1) oder Veränderung bestätigter Regelzustände. Branch `fix/chat-a/spell-range-unit-validation-20261026`, Ausgangs-main `5e3116f9e3f8`; [Fachcheckpoint](docs/parallel/CHAT_A_SPELL_RANGE_GRAMMAR_20261026.md). Vor Merge vollständige SHA-gebundene GitHub-CI prüfen und Dokumentationsänderungen aus parallelen PRs konsolidieren.
+
 ## Chat D – Quell-ZIP vor Symlink-Austausch nach dem Scan schützen (D-009, 26.10.2026)
 
 Der Quellarchiv-Export nutzt auf POSIX nun vor jedem Dateilesen gesicherte Verzeichnis-Deskriptoren und `O_NOFOLLOW`, damit ein nach der Auflistung eingeschleuster Link nicht unbemerkt projektfremde Daten archiviert. Drei neue Regressionstests prüfen solche Datei-/Verzeichniswechsel sowie den Erhalt bereits veröffentlichter ZIP-/SHA256-Dateien; ein veralteter Testmock wurde aktualisiert. Non-POSIX-Plattformen erhalten eine zusätzliche Best-Effort-Prüfung, jedoch keine Garantie gegen alle Race Conditions. **Die finale CI auf dem aktuellen PR-Commit ist noch abzunehmen.** Keine Änderungen am Spielstandformat, App-Code oder Regelwerk. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).

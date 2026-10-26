@@ -28,6 +28,12 @@
 
 Kein Würfelwurf, kein Effekt, kein Ressourcenverbrauch und keine Speicherung im geänderten Parser. SQLite 2, Kampagnen-JSON 1 und alle vorhandenen Spielstände bleiben unverändert; keine Migration nötig.
 
+## GitHub-Referenzen
+
+- Code-Commit: `ff8e781c0b6642255c015fc37701b8eb74e10dfe`.
+- Draft-Pull-Request: [#242](https://github.com/ManuEtt/Dnd/pull/242).
+- Finale PR-CI muss auf dem nach Dokumentationsabschluss gültigen Branch-HEAD geprüft werden.
+
 ## Status
 
 Implementierung und Regressionstests sind eingecheckt; Test-/CI-Ergebnisse werden erst nach tatsächlich abgeschlossener Ausführung ergänzt. Kein Merge nach main.
