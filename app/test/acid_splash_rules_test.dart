@@ -165,11 +165,7 @@ void main() {
       'fo\u007Fe',
     ]) {
       expect(
-        () => _cast(
-          hero,
-          rng,
-          targets: [_target('valid'), _target(invalidId)],
-        ),
+        () => _cast(hero, rng, targets: [_target('valid'), _target(invalidId)]),
         throwsFormatException,
         reason: 'Ambiguous ID: $invalidId',
       );
