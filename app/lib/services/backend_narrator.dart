@@ -126,6 +126,8 @@ class BackendNarrator extends ChangeNotifier {
 
   /// True only for the active, validated session of an NPC-ID-capable server.
   bool supportsNpcIdentityContexts = false;
+  /// Negotiated separately: older backends do not accept selectedNpcId.
+  bool supportsExplicitNpcSelection = false;
 
   String? _sessionToken;
   String? _authorizedProvider;
@@ -149,6 +151,7 @@ class BackendNarrator extends ChangeNotifier {
     requestsUsed = 0;
     allowPaidProvider = false;
     supportsNpcIdentityContexts = false;
+    supportsExplicitNpcSelection = false;
   }
 
   bool _current(int generation) => !_disposed && generation == _generation;
@@ -311,6 +314,9 @@ class BackendNarrator extends ChangeNotifier {
       supportsNpcIdentityContexts =
           body['capabilities'] is List &&
           (body['capabilities'] as List).contains('npc-identity-v1');
+      supportsExplicitNpcSelection =
+          supportsNpcIdentityContexts &&
+          (body['capabilities'] as List).contains('npc-selection-v1');
       enabled = true;
       statusMessage =
           'Backend verbunden. Es erhält nur Erzählkontext und darf keine Spielwerte verändern.';
@@ -546,6 +552,7 @@ class BackendNarrator extends ChangeNotifier {
     required List<String> recentActions,
     int? campaignRevision,
     List<Map<String, Object>>? npcContexts,
+    String? selectedNpcId,
   }) {
     if ((campaignRevision == null) != (npcContexts == null)) {
       throw const FormatException('Unvollständiger NPC-ID-Kontext.');
@@ -572,6 +579,43 @@ class BackendNarrator extends ChangeNotifier {
         memories.length > 20 ||
         recentActions.length > 8) {
       throw const FormatException('KI-Geschichtenkontext ungültig.');
+    }
+    if (selectedNpcId != null &&
+        (!supportsExplicitNpcSelection ||
+            npcContexts == null ||
+            npcContexts.length != 1 ||
+            npcContexts.single['npcId'] != selectedNpcId ||
+            !RegExp(r'^[a-zA-Z0-9_-]{1,64}
+      'campaignId': campaignId,
+      'heroName': heroName,
+      'action': action,
+      'scene': scene,
+      'premise': premise,
+      'goal': goal,
+      'secret': secret,
+      'threads': threads,
+      'npcs': npcs,
+      'memories': memories,
+      'recentActions': recentActions,
+      if (npcContexts != null) ...{
+        'campaignRevision': campaignRevision,
+        'npcContexts': npcContexts,
+      },
+      if (selectedNpcId != null) 'selectedNpcId': selectedNpcId,
+    }, 'turn');
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    ++_generation;
+    _clearSession();
+    _cancelPending();
+    super.dispose();
+  }
+}
+).hasMatch(selectedNpcId))) {
+      throw const FormatException('Ungültige explizite NPC-Auswahl.');
     }
     return _storyRequest('/v1/story/advance', {
       'campaignId': campaignId,
