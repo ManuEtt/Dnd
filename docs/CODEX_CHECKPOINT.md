@@ -1,3 +1,16 @@
+
+## Chat B – Rückblick bei namensgleichen NPCs eindeutiger (26.10.2026)
+
+- **Ausgangs-main:** `dbeac3f7da4fa3a9759d447ef9e9eeb41d575970`; eigener Branch `fix/chat-b/disambiguate-recalled-npc-memories-20261026`. Offene PRs samt Dateipfaden geprüft; Fachänderungen überschneiden sich nicht.
+- **IMPLEMENTIERT:** `app/lib/story/story_memory_engine.dart` kennzeichnet im bestätigten Erinnerungsabruf gleichnamige NPCs mit gespeicherten IDs; verweigert widersprüchlich doppelte NPC-IDs und unterdrückt gekürzte Zeilen, die ihre Identität verlieren würden. Keine Änderungen an Regelzustand, Persistenzschema oder Erzähler-HTTP.
+- **TESTS GESCHRIEBEN:** `app/test/memory_recall_npc_identity_test.dart` mit sechs Fällen zu gleichnamigen NPCs, gleichen Notiztexten, Legacy-JSON, doppelten IDs, Kürzung und unbeteiligten Fakten. Abnahme ausschließlich auf dem finalen GitHub-CI-HEAD.
+- **NICHT GETESTET:** reale Android-Installation, manueller Screenreader, externer KI-Provider. Lokal kein Flutter-/Dart-SDK installiert.
+- **KOORDINATION:** PR #224 behandelt bereits explizite NPC-ID-Auswahl. Das neue Paket ergänzt ausschließlich den vorhandenen lokalen Erinnerungstext-Abruf; gemeinsame README-/Checkpoint-Einträge sind beim Merge zu konsolidieren.
+- **GENAU EIN NÄCHSTER SCHRITT:** Nach Integration von PR #224 eine tatsächliche UI-Auswahl bis zum ID-konformen Erzählertransport integrieren, mit positiver/negativer Roundtrip-Abnahme.
+- **Detailcheckpoint:** `docs/parallel/CHAT_B_NPC_RECALL_DISAMBIGUATION_20261026.md`.
+
+---
+
 # CODEX-CHECKPOINT – Klassenprüfung für Heilige Flamme
 
 Stand **2026-10-26T07:26:16+00:00**. Würfelraunen **0.8.41+91**, SQLite **2**, Kampagnen-JSON **1**.
