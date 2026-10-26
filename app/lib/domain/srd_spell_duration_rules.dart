@@ -57,7 +57,14 @@ class SrdSpellDurationRules {
     String duration, {
     required bool concentrationRequired,
   }) {
-    final value = duration.trim();
+    // Do not silently turn an unverified catalogue value into an approved
+    // duration. Whitespace/control characters can hide an altered rule entry.
+    if (duration != duration.trim()) {
+      throw const FormatException(
+        'Zauberdauer enthält nicht bestätigte Randzeichen.',
+      );
+    }
+    final value = duration;
     const concentrationPrefix = 'Concentration, up to ';
     const upToPrefix = 'Up to ';
     final concentration = value.startsWith(concentrationPrefix);
