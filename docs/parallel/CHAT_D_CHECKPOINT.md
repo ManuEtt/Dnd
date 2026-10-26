@@ -1,3 +1,7 @@
+## D-007 – zusätzliche CI-Blocker bereinigt
+
+Der Python-/Checkpoint-Fix war auf dem ersten D-007-Commit erfolgreich; die reguläre CI stoppte danach an unabhängigen Dart-Problemen. Die frühere Eldritch-Test-Formatierung ist durch Main-PR #214 bereits korrigiert. Ein vorübergehender, inzwischen vollständig entfernter CI-Diagnoseschritt zeigte exakt den Format-Diff in `app/lib/story/npc_identity_story_payload.dart`: Dort ist jetzt `length == 0` verhaltensgleich als `isEmpty` geschrieben und ein langer `FormatException`-Aufruf entsprechend dem Dart-Formatter umgebrochen. Keine NPC-Identitäts-, Auswahl-, Speicher- oder Regelwirkung geändert. Die unveränderte Workflowdatei aus `main` wird explizit wiederhergestellt. Die erste diagnostisch instrumentierte CI zählt nicht als finale Abnahme; reguläre vollständige CI auf dem neuen Head abwarten.
+
 # D-007 – Synchronisierung mit Hauptbranch (26.10.2026)
 
 Main `d03faea7ce032e8918da2204228473bd9999932c` enthält zwischenzeitlich PR #214 (Eldritch-Cover). Der eigene D-007-Branch `8eaf1fc1787ccf80c4c676fec3df1ce91da16034` wurde regulär mit `main` als weiterem Parent zusammengeführt. Die beiden D-007-Python-Dateien bleiben die einzigen technischen Änderungen. Frühere grüne Python-Schritte und die rote Format-CI gelten nicht als Freigabe des neuen Merge-Commits; alle finalen Tests erneut prüfen. Aktuelle fremde README-/Checkpoint-Fortschritte sind additiv erhalten.
