@@ -6,7 +6,11 @@ import type { StoryPlan, StoryTurn } from './story.js';
  * paraphrases require a separate, explicit reveal policy in the local app.
  */
 const normalize = (value: string): string =>
-  value.normalize('NFKC').replace(/\s+/g, ' ').trim().toLocaleLowerCase('de-DE');
+  value.normalize('NFKC')
+    // Unicode format/variation controls are invisible to players, but would
+    // otherwise split an exact plot secret and bypass whole-secret matching.
+    .replace(/\p{Default_Ignorable_Code_Point}/gu, '')
+    .replace(/\s+/g, ' ').trim().toLocaleLowerCase('de-DE');
 
 function containsWholeSecret(text: string, secret: string): boolean {
   const needle = normalize(secret);
