@@ -93,3 +93,17 @@ Nach Abnahme dieses Pakets: eigener Reaktionsangriff auf dem gespeicherten Angeb
 ## Sicherung und Wiederaufnahme
 
 Geprüfte Main-Basis zusätzlich als ZIP/Patch unter `/workspace/artifacts/main-407c2e1-20261025/` gesichert. Neuer Quellcheckpoint nach diesem Update unter `/workspace/artifacts/0.8.40+90/`; Dateimanifest und tatsächlich gegen `407c2e1ef8ee310b30d1543a263fb66b3331a26e` angewandter Patch. Vor endgültigem Abschluss neue Ergebnisse und PR/Commit eintragen. Historische lokale Worktrees/Item-Entwürfe erhalten. Keine automatische Fortsetzung außerhalb aktiver Sitzung.
+
+
+---
+
+## Chat B – ID- und revisionsgeschützte NPC-Chronik (26.10.2026)
+
+- **Basis:** `main` `5f9a01dd73f68ad4f9e226f859a8ca87803b8337`, Branch `feat/chat-b/npc-revision-context-20261026`; parallele PRs vor Entwicklung geprüft.
+- **IMPLEMENTIERT:** `app/lib/story/npc_identity_memory.dart` stellt eine unveränderliche NPC-Projektion nach eindeutiger ID bereit, einschließlich Kampagnen-ID/-Revision, Lebensstatus, Beziehung und bis zu 20 chronologischen Notizen. `requireCurrent` verwirft stale Revisionen, fremde Kampagnen und widersprüchliche gleichrevisionierte Daten.
+- **TESTS GESCHRIEBEN:** Sechs Flutter-Regressionen in `app/test/npc_identity_memory_test.dart`: gleichnamige NPCs, Sitzung/JSON, stabile Datumsordnung, stale/missing/doppelte IDs, Legacy-Fälle, reine Lesesicherheit.
+- **GETESTET:** GitHub-`main`/offene PRs auf Dateipfad- und Integrationskonflikte geprüft; verbindliche neue CI erst nach Pull Request.
+- **NICHT GETESTET:** finaler Flutter-/Android-Workflow und echte Android-Installation; keine produktive KI-Anbindung oder serverseitige ID-Validierung.
+- **GRENZE:** `toContextMap` ist eine lokale Vorstufe und kein akzeptierter Request des bestehenden Backends. Das Server-API bleibt stringbasiert und unverändert.
+- **NÄCHSTER SCHRITT:** ID-/Revisionskontext erst nach PR-Integration in einem eigenen, serverseitig validierten optionalen Story-API-Feld übertragen.
+- **Einzelcheckpoint:** `docs/parallel/CHAT_B_NPC_REVISION_CONTEXT_20261026.md`. README-/zentraler Checkpoint bei Integration mit Chat D abgleichen.
