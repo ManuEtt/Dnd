@@ -137,10 +137,7 @@ void main() {
         'V, S\nM',
       ]) {
         expect(
-          () => SrdSpellDefinition.fromJson({
-            ...missile,
-            'components': invalid,
-          }),
+          () => SrdSpellDefinition.fromJson({...missile, 'components': invalid}),
           throwsFormatException,
           reason: invalid,
         );
@@ -156,10 +153,7 @@ void main() {
         'V, S, M (ash)\nX',
       ]) {
         expect(
-          () => SrdSpellDefinition.fromJson({
-            ...fireball,
-            'components': invalid,
-          }),
+          () => SrdSpellDefinition.fromJson({...fireball, 'components': invalid}),
           throwsFormatException,
           reason: invalid,
         );
