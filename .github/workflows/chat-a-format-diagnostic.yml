@@ -1,0 +1,23 @@
+name: Chat A format diagnostic
+on:
+  push:
+    branches:
+      - fix/chat-a/spell-duration-integrity-20261026
+    paths:
+      - .github/workflows/chat-a-format-diagnostic.yml
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Show formatter difference only
+        shell: bash
+        run: |
+          dart --version
+          dart format app/test/srd_spell_duration_integrity_test.dart
+          git diff -- app/test/srd_spell_duration_integrity_test.dart
