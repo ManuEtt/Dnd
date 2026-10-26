@@ -101,13 +101,18 @@ class SrdEldritchBlastRules {
           !target.coverCircumstancesConfirmed ||
           !target.attackCircumstancesConfirmed ||
           target.distanceFeet < 0 ||
-          target.distanceFeet > 120) {
+          target.distanceFeet > 120 ||
+          target.baseArmorClass < 0 ||
+          target.baseArmorClass > 100 ||
+          (target.advantage && target.disadvantage &&
+              !target.attackCircumstancesConfirmed)) {
         throw const FormatException(
           'Jeder Strahl benötigt ein gültiges, erreichbares und '
           'ausdrücklich bestätigtes Einzelziel.',
         );
       }
-      // A total-cover target cannot be attacked, even on a natural 20.
+      // Reject unverified/invalid AC before any random rolls. A total-cover
+      // target cannot be attacked, even on a natural 20.
       final relativeCover = target.sourceOppositeCover
           ? target.cover
           : CoverLevel.none;
