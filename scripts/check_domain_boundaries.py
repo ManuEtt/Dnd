@@ -17,6 +17,8 @@ STORY_ALLOWED = {
     "app/lib/domain/models.dart",
     "app/lib/domain/ai_story.dart",
 }
+# Keep this in sync with app/pubspec.yaml; the regression test checks the name.
+APPLICATION_PACKAGE = "lebendiger_spielleiter"
 # The facade composes both modules. The two legacy shims must expose
 # precisely these canonically owned story implementations and nothing else.
 DOMAIN_STORY_IMPORT_ALLOWED = {
@@ -36,6 +38,14 @@ DOMAIN_STORY_IMPORT_ALLOWED = {
 def _target(relative_path: str, uri: str) -> str:
     """Resolve relative Dart imports in repository-relative POSIX paths."""
     return posixpath.normpath(posixpath.join(posixpath.dirname(relative_path), uri))
+
+
+def _package_target(uri: str) -> str | None:
+    """Resolve this app's package URIs to canonical repository-relative paths."""
+    prefix = f"package:{APPLICATION_PACKAGE}/"
+    if not uri.startswith(prefix):
+        return None
+    return posixpath.normpath("app/lib/" + uri[len(prefix):].lstrip("/"))
 
 
 def check_imports(relative_path: str, content: str) -> list[str]:
@@ -59,6 +69,11 @@ def check_imports(relative_path: str, content: str) -> list[str]:
     elif relative_path.startswith("app/lib/domain/"):
         allowed = DOMAIN_STORY_IMPORT_ALLOWED.get(relative_path, set())
         for uri in sources:
+            if uri.startswith("package:"):
+                target = _package_target(uri)
+                if target is not None and target.startswith("app/lib/story/"):
+                    violations.append(f"{relative_path}: rule module imports story {uri}")
+                continue
             if ":" in uri:
                 continue
             if _target(relative_path, uri).startswith("app/lib/story/") and uri not in allowed:

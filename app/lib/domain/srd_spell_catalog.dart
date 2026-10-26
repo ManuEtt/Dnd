@@ -72,7 +72,22 @@ class SrdSpellDefinition {
     final verbal = requiredBool('verbal');
     final somatic = requiredBool('somatic');
     final material = requiredBool('material');
-    final symbols = components.split('(').first.replaceAll(' ', '').split(',');
+    // Fail closed on duplicate, unknown or out-of-order component symbols.
+    // A material component requires one nonempty, unambiguous description.
+    // The published V/S/M flags are still verified individually below.
+    final componentMatch = RegExp(
+      r'^(V(?:,\s*S)?(?:,\s*M)?|S(?:,\s*M)?|M)(?:\s*\(([^()]*)\))?$',
+    ).firstMatch(components);
+    if (componentMatch == null ||
+        componentMatch.group(0) != components ||
+        (componentMatch.group(2) != null) != material ||
+        (material && componentMatch.group(2)!.trim().isEmpty)) {
+      throw const FormatException(
+        'SRD-Zauberkomponenten haben ein ungültiges Format.',
+      );
+    }
+    final componentTokens = componentMatch.group(1)!.split(',');
+    final symbols = componentTokens.map((symbol) => symbol.trim()).toSet();
     for (final symbol in ['V', 'S', 'M']) {
       final expected = switch (symbol) {
         'V' => verbal,

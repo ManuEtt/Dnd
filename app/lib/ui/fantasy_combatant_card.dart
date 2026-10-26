@@ -239,32 +239,57 @@ class _CombatStatTag extends StatelessWidget {
   final Color color;
 
   @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-    decoration: BoxDecoration(
-      color: FantasyPalette.night.withValues(alpha: .86),
-      borderRadius: BorderRadius.circular(7),
-      border: Border.all(color: color.withValues(alpha: .30)),
-    ),
-    child: Text.rich(
-      TextSpan(
-        children: [
-          TextSpan(
-            text: '$label ',
-            style: TextStyle(
-              color: color,
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
+  Widget build(BuildContext context) {
+    // Keep compact visual abbreviations but announce the underlying stat
+    // and unconfirmed legacy values plainly to assistive technology.
+    final accessibleName = switch (label) {
+      'INI' => 'Initiative',
+      'RK' => 'Rüstungsklasse',
+      'TP' => 'Trefferpunkte',
+      'TEMP' => 'Temporäre Trefferpunkte',
+      _ => label,
+    };
+    final accessibleValue = value == '?' || value == '? / ?'
+        ? 'nicht bestätigt'
+        : label == 'TP'
+        ? value.replaceFirst(' / ', ' von ')
+        : value;
+    return Semantics(
+      container: true,
+      label: '$accessibleName: $accessibleValue',
+      child: ExcludeSemantics(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          decoration: BoxDecoration(
+            color: FantasyPalette.night.withValues(alpha: .86),
+            borderRadius: BorderRadius.circular(7),
+            border: Border.all(color: color.withValues(alpha: .30)),
+          ),
+          child: Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: '$label ',
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                TextSpan(
+                  text: value,
+                  style: const TextStyle(
+                    color: FantasyPalette.ivory,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
             ),
           ),
-          TextSpan(
-            text: value,
-            style: const TextStyle(color: FantasyPalette.ivory, fontSize: 12),
-          ),
-        ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 /// Fine vector filigree that scales with narrow phones and tablets.
