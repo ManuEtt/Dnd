@@ -8,7 +8,7 @@
 - **NICHT GETESTET:** Dart-Format, `flutter analyze`, Flutter-Tests, Debug-APK, Android-Gerät sowie alle vollständigen Python-/Backend-Kommandos; GitHub-Actions-Status beim Verfassen offen.
 - **Kompatibilität:** keine Schema-, JSON-Spielstand- oder SQLite-Migration; vorhandene gültige SRD-Katalogeinträge bleiben akzeptiert. Ungültige zukünftige Metadatendateien werden früh abgewiesen.
 - **Konflikte:** offene PRs #236 und #242 bearbeiten andere Regelmodule; PR #243 enthält Dokumentationsüberschneidungen, die Chat D vor einem Merge konsolidieren muss.
-- **GITHUB:** Code-/Test-Commit `6bfde6a3e7d3a7e195567f477ed4839aa10d513c`. PR/CI nach Eröffnung gesondert prüfen.
+- **GITHUB:** Aktueller Code-/Test-Fix `5b7c13eb096a80b1f3c48ea4c79b81aa64ee3e0c`; [PR #247](https://github.com/ManuEtt/Dnd/pull/247). Frühere CI auf fehlerhaftem Regex-Commit scheiterte bei Dart-Formatierung; Fix eingecheckt, aktuelle vollständige CI noch offen.
 - **NÄCHSTER SCHRITT:** CI auf diesem PR prüfen, bei Fehlern Format/Tests im selben Branch korrigieren und erst nach vollständiger Abnahme als mergefähig markieren.
 
 ---
