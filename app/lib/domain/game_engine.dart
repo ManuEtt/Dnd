@@ -2121,6 +2121,7 @@ class GameEngine {
     required bool noFireResistanceOrImmunityConfirmed,
     required bool noUnresolvedShieldReactionConfirmed,
     required bool situationalAttackConditionsConfirmed,
+    required bool noUnmodelledAttackModifiersConfirmed,
     bool advantage = false,
     bool disadvantage = false,
     bool targetProne = false,
@@ -2160,6 +2161,8 @@ class GameEngine {
       noUnresolvedShieldReactionConfirmed: noUnresolvedShieldReactionConfirmed,
       situationalAttackConditionsConfirmed:
           situationalAttackConditionsConfirmed,
+      noUnmodelledAttackModifiersConfirmed:
+          noUnmodelledAttackModifiersConfirmed,
       advantage: advantage,
       disadvantage: disadvantage,
       targetProne: targetProne,
@@ -2189,6 +2192,7 @@ class GameEngine {
       'noFireResistanceOrImmunityConfirmed': true,
       'noUnresolvedShieldReactionConfirmed': true,
       'situationalAttackConditionsConfirmed': true,
+      'noUnmodelledAttackModifiersConfirmed': true,
       'advantage': advantage,
       'disadvantage': disadvantage,
       'targetProne': targetProne,
