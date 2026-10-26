@@ -149,7 +149,9 @@ void main() {
       matchingOnly: true,
       maxCharacters: 40,
     );
-    expect(recalled, isEmpty);
+    expect(recalled, isNotEmpty);
+    expect(recalled.every((item) => item.contains('NPC-ID:')), isTrue);
+    expect(recalled.join(' '), isNot(contains('Beziehung zu')));
     expect(campaign.revision, 7);
     expect(campaign.hero.hitPoints, 13);
   });
@@ -164,7 +166,7 @@ void main() {
       'Was weißt du über den Schlüssel?',
       matchingOnly: true,
     );
-    expect(memories, contains('Fakt Schlüssel:. Der Schlüssel wurde gefunden.'));
+    expect(memories, contains('Fakt Schlüssel: Der Schlüssel wurde gefunden.'));
     expect(memories.join(' '), isNot(contains('NPC-ID:')));
   });
 }
