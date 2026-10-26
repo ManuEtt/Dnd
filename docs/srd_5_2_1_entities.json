@@ -1549,10 +1549,17 @@
       "source_url": "https://www.dndbeyond.com/srd",
       "transcription_url": "https://github.com/azemoning/omni-5e/blob/main/data/raw/5.2.1/spells.md",
       "license": "CC-BY-4.0",
-      "rule_implemented": "unverified",
-      "code": [],
-      "tests": [],
-      "note": "Name und ggf. Kategorie aus öffentlicher SRD-Transkription. Gegen offizielles SRD 5.2.1 und konkrete Domain-Wirkung/Tests noch zu verifizieren."
+      "rule_implemented": "partial",
+      "code": [
+        "app/lib/domain/srd_eldritch_blast_rules.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/services/game_controller.dart"
+      ],
+      "tests": [
+        "app/test/srd_eldritch_blast_rules_test.dart",
+        "app/test/srd_eldritch_blast_encounter_test.dart"
+      ],
+      "note": "Teilmechanik SRD 5.2.1 Eldritch Blast: 1/2/3/4 unabhängige Strahlen nach Charakterstufe und bestätigte einzelne Angriffe. Zusätzlich vorab validierte Single-Foe-Encounter-Aktion mit getrennten Force-Schadensinstanzen, aktionsverbrauch, revisionierter Controller-SQLite-Buchung und Ereignisjournal. Mehrziel-Kampagnenzustände, Invocations, UI, echte Geräteabnahme und nicht modellierte Abwehr fehlen; keine vollständige Zauberwirkung."
     },
     {
       "id": "SPELL-ENTRY-ELEMENTALISM",

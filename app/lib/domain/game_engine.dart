@@ -11,6 +11,7 @@ import 'character_rule_engine.dart';
 import 'character_effect_rules.dart';
 import 'magic_missile_rules.dart';
 import 'fire_bolt_rules.dart';
+import 'srd_eldritch_blast_rules.dart';
 import 'sacred_flame_rules.dart';
 import 'acid_splash_rules.dart';
 import 'healing_spell_rules.dart';
@@ -1960,6 +1961,152 @@ class GameEngine {
       '${cast.savingThrow.succeeded ? 'Erfolgreich, kein Schaden.' : '${cast.damage} Strahlenschaden.'} '
       'Gegner-TP $remaining. Magieaktion verbraucht, kein Zauberplatz.',
       type: 'spell.sacredFlame',
+      payload: payload,
+    );
+  }
+
+  /// First persisted Eldritch Blast action: every beam targets the currently
+  /// stored, sole enemy. Other creatures need their OWN saved HP and therefore
+  /// cannot be represented by this one-foe Encounter.
+  ///
+  /// The request is checked in full before dice are consumed. The controller
+  /// additionally enforces campaign ID/revision and an atomic SQLite commit.
+  GameUpdate castEldritchBlastSingleEnemy(
+    Campaign campaign, {
+    required List<SrdEldritchBlastTarget> declaredBeams,
+    required bool currentEnemyIsOnlyTargetConfirmed,
+    required bool verbalComponentConfirmed,
+    required bool somaticComponentConfirmed,
+    required bool noUnmodelledAttackOrDamageModifiersConfirmed,
+    required bool noUnresolvedShieldReactionConfirmed,
+    required bool situationalAttackConditionsConfirmed,
+  }) {
+    _requireExternalEffect(campaign, 'Eldritch Blast');
+    _ensureNoOpportunity(campaign);
+    final fight = campaign.encounter;
+    if (fight == null ||
+        fight.isFinished ||
+        fight.activeParticipant != 'hero' ||
+        !campaign.hero.isComplete ||
+        fight.actionUsed ||
+        fight.surgeReserved ||
+        fight.surgeUsedThisTurn ||
+        CombatClassActions.rageActive(fight) ||
+        campaign.pendingEnemyShieldHit != null ||
+        !currentEnemyIsOnlyTargetConfirmed ||
+        !noUnresolvedShieldReactionConfirmed ||
+        !situationalAttackConditionsConfirmed) {
+      throw const FormatException(
+        'Eldritch Blast benötigt einen bestätigten einzelnen Gegner, '
+        'einen freien eigenen Kampfzug und geklärte Reaktionen.',
+      );
+    }
+    if (fight.enemyForceDefense == EnemyForceDefense.unknown) {
+      throw const FormatException(
+        'Energieschadensresistenz und -immunität zuerst bestätigen.',
+      );
+    }
+
+    // Reject a stale/forged target record instead of silently applying
+    // damage to the currently selected encounter's unrelated enemy.
+    for (final beam in declaredBeams) {
+      if (beam.targetId != fight.id ||
+          beam.baseArmorClass != fight.effectiveEnemyArmorClass ||
+          beam.cover != fight.enemyCover ||
+          (fight.enemyCover != CoverLevel.none && !beam.sourceOppositeCover)) {
+        throw const FormatException(
+          'Jeder Strahl muss zum aktuellen bestätigten Gegner und '
+          'dessen gespeicherter Rüstungsklasse/Deckung gehören.',
+        );
+      }
+    }
+
+    // A cantrip still uses a Magic action and must pass the existing armor,
+    // consciousness and known-spell checks, but never spends a spell slot.
+    final validatedCast = SpellcastingRules.cast(
+      MagicMissileRules.normalized(campaign.hero),
+      spellName: 'Eldritch Blast',
+      spellLevel: 0,
+    );
+    final charisma = campaign.hero.abilities['charisma'];
+    if (charisma == null || charisma < 1 || charisma > 30) {
+      throw const FormatException(
+        'Das bestätigte Hexenmeister-Zauberattribut fehlt.',
+      );
+    }
+    final attackBonus =
+        RulesEngine.abilityModifier(charisma) +
+        RulesEngine.proficiencyBonus(campaign.hero.level) +
+        ExhaustionRules.d20Modifier(campaign.hero);
+    final blasts = SrdEldritchBlastRules.resolve(
+      caster: campaign.hero,
+      dice: dice,
+      beams: declaredBeams,
+      confirmedSpellAttackModifier: attackBonus,
+      warlockSpellPreparationConfirmed: true,
+      actionAvailableConfirmed: true,
+      verbalComponentConfirmed: verbalComponentConfirmed,
+      somaticComponentConfirmed: somaticComponentConfirmed,
+      noUnmodelledAttackOrDamageModifiersConfirmed:
+          noUnmodelledAttackOrDamageModifiersConfirmed,
+    );
+
+    // Resolve defenses PER beam, not against the summed damage. 1 point of
+    // Force damage under Resistance becomes 0 per instance.
+    final adjusted = EnemyForceDefenseRules.apply(
+      blasts.beams.map((beam) => beam.rawForceDamage),
+      defense: fight.enemyForceDefense,
+    );
+    final remaining = RulesEngine.remainingHitPoints(
+      hitPoints: fight.enemyHitPoints,
+      damage: adjusted.appliedTotal,
+    );
+    final payload = <String, dynamic>{
+      'spellName': 'Eldritch Blast',
+      'spellLevel': 0,
+      'castingClass': 'Hexenmeister',
+      'spellcastingAbility': 'charisma',
+      'attackBonus': attackBonus,
+      'targetId': fight.id,
+      'beamCount': blasts.beams.length,
+      'beams': [
+        for (var i = 0; i < blasts.beams.length; i++)
+          {
+            'targetId': blasts.beams[i].targetId,
+            'attackRoll': blasts.beams[i].attack.toJson(),
+            'effectiveArmorClass': blasts.beams[i].effectiveArmorClass,
+            'hit': blasts.beams[i].hit,
+            'critical': blasts.beams[i].critical,
+            'damageRoll': blasts.beams[i].forceDamageRoll?.toJson(),
+            'rawForceDamage': blasts.beams[i].rawForceDamage,
+            'appliedForceDamage': adjusted.appliedPerMissile[i],
+          },
+      ],
+      'rawForceDamage': adjusted.rawTotal,
+      'damage': adjusted.appliedTotal,
+      'damageType': 'force',
+      'enemyForceDefense': fight.enemyForceDefense.name,
+      'enemyHitPoints': remaining,
+      'noSpellSlotSpent': true,
+    };
+    var next = campaign.copyWith(
+      hero: validatedCast.hero.copyWith(
+        className: campaign.hero.className,
+        secondaryClassName: campaign.hero.secondaryClassName,
+      ),
+      encounter: fight.copyWith(enemyHitPoints: remaining, actionUsed: true),
+    );
+    if (remaining == 0) {
+      next = _afterFlurryVictory(next, payload);
+    }
+    return _commit(
+      campaign,
+      next,
+      'Eldritch Blast gegen ${fight.enemyName}: '
+      '${blasts.beams.length} Strahl(en), ${adjusted.appliedTotal} '
+      'Energieschaden. Gegner-TP $remaining. '
+      'Magieaktion verbraucht, kein Zauberplatz.',
+      type: 'spell.eldritchBlast',
       payload: payload,
     );
   }

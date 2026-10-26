@@ -91,9 +91,13 @@ def prepare_release(root: Path, output: Path, *, commit: str = 'lokal',
     target_apk = output / f'{stem}_arm64.apk'
     notes = output / f'{stem}_ReleaseNotes.md'
     sums = output / f'{stem}_SHA256.txt'
-    generated = [source, target_apk, notes, sums]
+    # Also protect the SHA256 sidecar created by package_project.create_archive.
+    # Path.exists() alone misses dangling symlinks: later write_text/copy2
+    # could otherwise follow those links to a path outside the release folder.
+    source_checksum = source.with_suffix(source.suffix + '.sha256')
+    generated = [source, target_apk, notes, sums, source_checksum]
     # A failed second packaging attempt must not silently replace a verified release.
-    if any(path.exists() for path in generated):
+    if any(path.exists() or path.is_symlink() for path in generated):
         raise ValueError('Es sind bereits Release-Dateien mit derselben Version vorhanden.')
     output.mkdir(parents=True, exist_ok=True)
     try:

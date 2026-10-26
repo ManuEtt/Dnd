@@ -128,6 +128,33 @@ class AlphaReleaseTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'außerhalb'):
             release.prepare_release(self.root, self.root / 'release')
 
+    def test_dangling_symlinks_never_publish_or_write_outside_release(self):
+        self.out.mkdir()
+        stem = 'Wuerfelraunen_v0.5.4_24'
+        for suffix in ('Source.zip', 'arm64.apk', 'ReleaseNotes.md',
+                       'SHA256.txt', 'Source.zip.sha256'):
+            with self.subTest(suffix=suffix):
+                target = self.out / f'{stem}_{suffix}'
+                destination = self.base / f'outside-{suffix}'
+                target.symlink_to(destination)
+                self.assertTrue(target.is_symlink())
+                self.assertFalse(target.exists())
+                with self.assertRaisesRegex(ValueError, 'bereits Release-Dateien'):
+                    release.prepare_release(self.root, self.out)
+                self.assertFalse(destination.exists())
+                self.assertTrue(target.is_symlink())
+                self.assertEqual([target], list(self.out.iterdir()))
+                target.unlink()
+
+    def test_existing_checksum_sidecar_is_preserved(self):
+        self.out.mkdir()
+        sidecar = self.out / 'Wuerfelraunen_v0.5.4_24_Source.zip.sha256'
+        sidecar.write_bytes(b'previous verified checksum')
+        with self.assertRaisesRegex(ValueError, 'bereits Release-Dateien'):
+            release.prepare_release(self.root, self.out)
+        self.assertEqual(sidecar.read_bytes(), b'previous verified checksum')
+        self.assertEqual([sidecar], list(self.out.iterdir()))
+
     def test_never_overwrite_a_verified_release(self):
         release.prepare_release(self.root, self.out)
         with self.assertRaisesRegex(ValueError, 'bereits Release-Dateien'):

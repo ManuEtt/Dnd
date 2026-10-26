@@ -3,8 +3,10 @@ import type { Config } from './config.js';
 import { bearerToken, issueSession, secureEqual, verifySession } from './auth.js';
 import { WindowLimiter } from './limits.js';
 import { createNarrator, type NarrationInput, type Narrator } from './providers.js';
-import { parseStoryPlan, parseStoryTurn, validateStoryTurnContext, type StoryStartInput, type StoryTurnInput } from './story.js';
+import { parseStoryPlan, parseStoryTurn, validateStoryTurnContext, type StoryStartInput } from './story.js';
 import { guardStoryPlanSecrets, guardStoryTurnSecrets } from './story_secret_guard.js';
+import { filterAmbiguousNpcDiaryMemories } from './story_npc_memory_guard.js';
+import { validateNpcIdentityContext, type StoryTurnWithNpcIdentities } from './story_npc_identity_context.js';
 
 interface AppDependencies {
   clock?: () => number;
@@ -74,6 +76,7 @@ export function buildApp(config: Config, dependencies: AppDependencies = {}) {
       expiresIn: config.sessionTtlSeconds,
       provider: config.provider,
       scope: 'narration:read-only',
+      capabilities: ['npc-identity-v1'],
     };
   });
 
@@ -87,6 +90,7 @@ export function buildApp(config: Config, dependencies: AppDependencies = {}) {
       scope: 'narration:read-only',
       provider: config.provider,
       expiresAt: new Date(session.expiresAt * 1000).toISOString(),
+      capabilities: ['npc-identity-v1'],
     };
   });
 
@@ -115,6 +119,24 @@ export function buildApp(config: Config, dependencies: AppDependencies = {}) {
     required: ['id', 'name', 'relationship'], properties: {
       id: nonBlankString(64), name: nonBlankString(80), relationship: nonBlankString(80),
     } };
+  // Optional identity-bearing story context. Bounds match the read-only
+  // client snapshot; older story clients can omit both optional fields.
+  const npcIdentityNoteSchema = { type: 'object', additionalProperties: false,
+    required: ['id', 'npcId', 'relationship', 'note', 'recordedAt'],
+    properties: {
+      id: nonBlankString(64), npcId: nonBlankString(64),
+      relationship: nonBlankString(80), note: nonBlankString(500),
+      recordedAt: nonBlankString(35),
+    } };
+  const npcIdentitySchema = { type: 'object', additionalProperties: false,
+    required: ['campaignId', 'campaignRevision', 'npcId', 'npcName', 'alive', 'relationship', 'notes'],
+    properties: {
+      campaignId: nonBlankString(128),
+      campaignRevision: { type: 'integer', minimum: 0, maximum: 2147483647 },
+      npcId: nonBlankString(64), npcName: nonBlankString(80),
+      alive: { type: 'boolean' }, relationship: nonBlankString(80),
+      notes: { type: 'array', maxItems: 5, items: npcIdentityNoteSchema },
+    } };
   app.post<{ Body: StoryStartInput }>('/v1/story/start', {
     schema: { body: { type: 'object', additionalProperties: false,
       required: ['heroName', 'heroClass', 'theme'], properties: {
@@ -125,7 +147,7 @@ export function buildApp(config: Config, dependencies: AppDependencies = {}) {
     try { return { provider: config.provider, stateChanges: [], story: guardStoryPlanSecrets(parseStoryPlan(await narrator.startStory(request.body))) }; }
     catch { return reply.code(502).send({ error: 'provider_unavailable' }); }
   });
-  app.post<{ Body: StoryTurnInput }>('/v1/story/advance', {
+  app.post<{ Body: StoryTurnWithNpcIdentities }>('/v1/story/advance', {
     schema: { body: { type: 'object', additionalProperties: false,
       required: ['campaignId', 'heroName', 'action', 'scene', 'premise', 'goal', 'secret', 'threads', 'npcs', 'memories', 'recentActions'],
       properties: {
@@ -136,14 +158,32 @@ export function buildApp(config: Config, dependencies: AppDependencies = {}) {
         npcs: { type: 'array', maxItems: 50, items: npcSchema },
         memories: { type: 'array', maxItems: 20, items: nonBlankString(400) },
         recentActions: { type: 'array', maxItems: 8, items: nonBlankString(2000) },
+        campaignRevision: { type: 'integer', minimum: 0, maximum: 2147483647 },
+        npcContexts: { type: 'array', maxItems: 3, items: npcIdentitySchema },
       } } }, preHandler: storyRateLimit,
   }, async (request, reply) => {
     // Reject ambiguous saved identifiers before making a potentially paid
     // provider call. A provider failure is 502; bad input is always 400.
-    try { validateStoryTurnContext(request.body); }
+    try { validateStoryTurnContext(request.body); validateNpcIdentityContext(request.body); }
     catch { return reply.code(400).send({ error: 'invalid_request', message: 'Die Kampagnendaten sind ungültig.' }); }
     if (!narrator.advanceStory) return reply.code(503).send({ error: 'story_unavailable' });
-    try { return { provider: config.provider, stateChanges: [], turn: guardStoryTurnSecrets(parseStoryTurn(await narrator.advanceStory(request.body), request.body), request.body.secret) }; }
+    try {
+      // Never guess which same-name saved NPC a client-provided diary note
+      // describes. Keep ordinary memories and the existing wire schema.
+      const context: StoryTurnWithNpcIdentities = {
+        ...request.body,
+        memories: filterAmbiguousNpcDiaryMemories(request.body),
+      };
+      const proposed = await narrator.advanceStory(context);
+      return {
+        provider: config.provider,
+        stateChanges: [],
+        turn: guardStoryTurnSecrets(
+          parseStoryTurn(proposed, context),
+          context.secret,
+        ),
+      };
+    }
     catch { return reply.code(502).send({ error: 'provider_unavailable' }); }
   });
 
