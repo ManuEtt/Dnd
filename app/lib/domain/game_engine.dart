@@ -2013,8 +2013,7 @@ class GameEngine {
       if (beam.targetId != fight.id ||
           beam.baseArmorClass != fight.effectiveEnemyArmorClass ||
           beam.cover != fight.enemyCover ||
-          (fight.enemyCover != CoverLevel.none &&
-              !beam.sourceOppositeCover)) {
+          (fight.enemyCover != CoverLevel.none && !beam.sourceOppositeCover)) {
         throw const FormatException(
           'Jeder Strahl muss zum aktuellen bestätigten Gegner und '
           'dessen gespeicherter Rüstungsklasse/Deckung gehören.',
