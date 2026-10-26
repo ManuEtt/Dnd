@@ -114,7 +114,7 @@ class ProjectArchiveTests(unittest.TestCase):
         self.assertFalse(output.exists())
 
     def test_unsupported_windows_filenames_are_rejected(self):
-        for name in ('CON.txt', 'LPT1.log', 'notes?.txt', 'trailing.',
+        for name in ('CON.txt', 'LPT1.txt', 'notes?.txt', 'trailing.',
                      'tailspace ', 'line\nbreak.txt'):
             with self.subTest(name=name):
                 path = self.root / 'app/assets' / name
@@ -124,6 +124,15 @@ class ProjectArchiveTests(unittest.TestCase):
                     packaging.create_archive(self.root, output)
                 self.assertFalse(output.exists())
                 path.unlink()
+
+    def test_excluded_log_does_not_enter_archive_or_block_safe_export(self):
+        log = self.root / 'app/assets/LPT1.log'
+        log.write_text('excluded log data', encoding='utf-8')
+        output = self.base / 'ignored-log.zip'
+        packaging.create_archive(self.root, output, layout='root')
+        with zipfile.ZipFile(output) as archive:
+            self.assertNotIn('app/assets/LPT1.log', archive.namelist())
+            self.assertEqual(set(archive.namelist()), packaging.REQUIRED_FILES)
 
     def test_failed_portability_check_keeps_prior_zip_and_checksum(self):
         output = self.base / 'existing.zip'
