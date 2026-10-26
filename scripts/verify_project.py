@@ -77,7 +77,7 @@ def _decode_java_property_key(raw: str) -> str | None:
 def unique_gradle_property(text: str, key: str) -> str | None:
     """Require exactly one effective Java-Properties declaration of *key*.
 
-    Java supports escaped key names (including \uXXXX) and continued physical
+    Java supports escaped key names (including backslash-u escapes) and continued physical
     lines. Comparing the raw spelling could approve a safe URL while Gradle
     uses a second, hidden declaration. Leave values in their original form
     for the existing strict HTTPS/SHA-256 checks.
