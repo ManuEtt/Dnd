@@ -119,10 +119,7 @@ void main() {
       expect(SrdEldritchBlastRules.beamCount(entry.key), entry.value);
     }
     for (final invalid in [0, 21]) {
-      expect(
-        () => SrdEldritchBlastRules.beamCount(invalid),
-        throwsRangeError,
-      );
+      expect(() => SrdEldritchBlastRules.beamCount(invalid), throwsRangeError);
     }
     final hero = _warlock(
       level: 11,
@@ -139,24 +136,27 @@ void main() {
     expect(result.characterLevel, 11);
   });
 
-  test('separate attacks can hit different targets with independent damage', () {
-    final hero = _warlock(level: 5);
-    final before = jsonEncode(hero.toJson());
-    final result = _resolve(
-      caster: hero,
-      beams: [_target('goblin'), _target('orc')],
-      random: _SequenceRandom([9, 3, 2]),
-    );
-    expect(result.beams.map((e) => e.targetId), ['goblin', 'orc']);
-    expect(result.beams[0].attack.natural, 10);
-    expect(result.beams[0].hit, isTrue);
-    expect(result.beams[0].rawForceDamage, 4);
-    expect(result.beams[1].attack.natural, 3);
-    expect(result.beams[1].hit, isFalse);
-    expect(result.beams[1].forceDamageRoll, isNull);
-    expect(result.totalRawForceDamage, 4);
-    expect(jsonEncode(hero.toJson()), before);
-  });
+  test(
+    'separate attacks can hit different targets with independent damage',
+    () {
+      final hero = _warlock(level: 5);
+      final before = jsonEncode(hero.toJson());
+      final result = _resolve(
+        caster: hero,
+        beams: [_target('goblin'), _target('orc')],
+        random: _SequenceRandom([9, 3, 2]),
+      );
+      expect(result.beams.map((e) => e.targetId), ['goblin', 'orc']);
+      expect(result.beams[0].attack.natural, 10);
+      expect(result.beams[0].hit, isTrue);
+      expect(result.beams[0].rawForceDamage, 4);
+      expect(result.beams[1].attack.natural, 3);
+      expect(result.beams[1].hit, isFalse);
+      expect(result.beams[1].forceDamageRoll, isNull);
+      expect(result.totalRawForceDamage, 4);
+      expect(jsonEncode(hero.toJson()), before);
+    },
+  );
 
   test('all beams may use SAME target, with a distinct attack for each', () {
     final result = _resolve(
@@ -204,7 +204,10 @@ void main() {
     final rng = _SequenceRandom([19, 9]);
     expect(
       () => _resolve(
-        beams: [_target('clear'), _target('wall', cover: CoverLevel.total)],
+        beams: [
+          _target('clear'),
+          _target('wall', cover: CoverLevel.total),
+        ],
         random: rng,
       ),
       throwsFormatException,
@@ -228,28 +231,31 @@ void main() {
     expect(result.beams.last.rawForceDamage, 2);
   });
 
-  test('wrong beam count, target kind/path/range fail without consuming RNG', () {
-    final bad = [
-      [_target('a')],
-      [_target('a'), _target('b'), _target('c')],
-      [_target('a'), _target('b', distance: 121)],
-      [_target('a'), _target('b', distance: -1)],
-      [_target('a'), _target('b', pathConfirmed: false)],
-      [_target('a'), _target('b', kindConfirmed: false)],
-      [_target('a'), _target('b', coverConfirmed: false)],
-      [_target('a'), _target('b', circumstancesConfirmed: false)],
-      [_target('a'), _target('')],
-      [_target('a'), _target(' b')],
-    ];
-    for (final beams in bad) {
-      final rng = _SequenceRandom([19, 0]);
-      expect(
-        () => _resolve(beams: beams, random: rng),
-        throwsFormatException,
-      );
-      expect(rng.calls, 0);
-    }
-  });
+  test(
+    'wrong beam count, target kind/path/range fail without consuming RNG',
+    () {
+      final bad = [
+        [_target('a')],
+        [_target('a'), _target('b'), _target('c')],
+        [_target('a'), _target('b', distance: 121)],
+        [_target('a'), _target('b', distance: -1)],
+        [_target('a'), _target('b', pathConfirmed: false)],
+        [_target('a'), _target('b', kindConfirmed: false)],
+        [_target('a'), _target('b', coverConfirmed: false)],
+        [_target('a'), _target('b', circumstancesConfirmed: false)],
+        [_target('a'), _target('')],
+        [_target('a'), _target(' b')],
+      ];
+      for (final beams in bad) {
+        final rng = _SequenceRandom([19, 0]);
+        expect(
+          () => _resolve(beams: beams, random: rng),
+          throwsFormatException,
+        );
+        expect(rng.calls, 0);
+      }
+    },
+  );
 
   test('spell eligibility, turn action and components fail closed', () {
     for (final hero in [
@@ -278,10 +284,7 @@ void main() {
   });
 
   test('no resources, HP or state are changed; output is read-only', () {
-    final hero = _warlock().copyWith(
-      spentPactSlots: 1,
-      concentratingOn: 'Hex',
-    );
+    final hero = _warlock().copyWith(spentPactSlots: 1, concentratingOn: 'Hex');
     final snapshot = jsonEncode(hero.toJson());
     final result = _resolve(
       caster: hero,
@@ -292,9 +295,6 @@ void main() {
     expect(jsonEncode(hero.toJson()), snapshot);
     expect(hero.spentPactSlots, 1);
     expect(hero.concentratingOn, 'Hex');
-    expect(
-      () => result.beams.add(result.beams.first),
-      throwsUnsupportedError,
-    );
+    expect(() => result.beams.add(result.beams.first), throwsUnsupportedError);
   });
 }
