@@ -1,3 +1,16 @@
+# Chat B – Story-Controller und bestätigtes Ende über Neustart (26.10.2026)
+
+- **Abhängigkeiten:** PR #253 → PR #256 (Head `2b3fb89f184480bb5a53d29d0c374d0fc71cf36f`) → eigener Branch `test/chat-b/controller-terminal-recovery-20261026`. `main` bei Start `08bcd4dda585224c2ca8671786adecaf263d736c`. Chronologische Integration erforderlich.
+- **IMPLEMENTIERT:** Zwei echte SQLite-/GameController-/Fake-Backend-Tests in `app/test/ai_story_terminal_controller_resume_test.dart`; abgeschlossene Handlungsstränge nach Controller-Neustart, explizit neu verhandelter Mock-Session, abgelehnter unbestätigter KI-Umschreibung, festgehaltener lokaler Erzählrevision und zugelassener identischer Folgestory. Helden-/Questzustand und rekonstruierter Event-/Snapshotstand kontrolliert.
+- **GETESTET:** Parent-PR #256 hat volle GitHub-CI [40391505655](https://github.com/ManuEtt/Dnd/actions/runs/40391505655) erfolgreich abgeschlossen. Exakte offizielle Dart-Formatierung auf neuem Test übernommen und Diagnose-Workflowdatei entfernt.
+- **NICHT GETESTET:** finale GitHub-CI des eigenen PR und reale Android-Geräte, lokale SDK-Ausführung, externer KI-Provider.
+- **BLOCKIERT:** Parent-PRs #253 und #256 offen; gemeinsame Dokumentation muss bei Integration durch Chat D sorgfältig zusammengeführt werden.
+- **MIGRATION:** keine; keine Änderung an Produktioncode, SQLite, Kampagnen-JSON, Regeln oder Version.
+- **NÄCHSTER SCHRITT:** Nach grünem finalen CI-Lauf PRs #253, #256, neuen PR in dieser Reihenfolge integrieren lassen, aktuelle Main-CI erneut validieren.
+- [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md); vorhandene Abschnitte unten vollständig erhalten.
+
+---
+
 # Chat B – bestätigte Story-Enden nach SQLite-Wiederaufnahme (26.10.2026)
 
 - **Basiskette:** `main` `67f146e690306b13d490bd8e7fd5636bb187c77e` → [PR #253](https://github.com/ManuEtt/Dnd/pull/253), Head `ba33a2497852ab13237b448427057b432ec222b6` → Branch `test/chat-b/terminal-thread-sqlite-resume-20261026`.
