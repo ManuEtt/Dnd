@@ -17,6 +17,7 @@ import '../domain/enemy_force_defense.dart';
 import '../domain/condition_effects.dart';
 import '../domain/saving_throw_class_actions.dart';
 import '../domain/srd_opportunity_attack_rules.dart';
+import '../story/npc_narrator_memory.dart';
 import 'backend_narrator.dart';
 
 /// UI state changes only after an atomic repository commit succeeds.
@@ -533,12 +534,7 @@ class GameController extends ChangeNotifier {
                 'relationship': npc.relationship,
               },
           ],
-          memories: memories
-              .take(12)
-              .map(
-                (value) => value.length > 400 ? value.substring(0, 400) : value,
-              )
-              .toList(),
+          memories: NpcNarratorMemory.merge(campaign, action, memories),
           recentActions: recent.reversed
               .take(6)
               .toList()
