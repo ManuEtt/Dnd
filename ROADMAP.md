@@ -1,6 +1,6 @@
 ## 26.10.2026 – aktive Migration
 
-Gemeinsame Abnahme, regulärer PR-Merge, grüne Main-CI und SHA-gesicherte Bereinigung der sechs Entwicklungsbranches. Anschließend genau ein Paket: bestehende NPC-ID-Auswahl durch Controller/UI an Wire-Vertrag anbinden; Akzeptanzkriterien im Checkpoint. Folgende Einträge sind Historie.
+Gemeinsame Abnahme, regulärer PR-Merge, grüne Main-CI und SHA-gesicherte Bereinigung der sieben Entwicklungsbranches. Anschließend genau ein Paket: bestehende NPC-ID-Auswahl durch Controller/UI an Wire-Vertrag anbinden; Akzeptanzkriterien im Checkpoint. Folgende Einträge sind Historie.
 
 ---
 
