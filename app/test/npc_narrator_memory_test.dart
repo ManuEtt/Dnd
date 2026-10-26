@@ -187,6 +187,82 @@ void main() {
     expect(NpcNarratorMemory.merge(duplicate, 'Mira und Ghost', []), isEmpty);
   });
 
+  test('same-name NPCs never receive guessed memories from prose', () {
+    final time = DateTime.utc(2026, 10, 25);
+    final campaign = _campaign(
+      npcs: const [
+        WorldNpc(id: 'mira_a', name: 'Mira', relationship: 'freundlich'),
+        WorldNpc(id: 'mira_b', name: 'Mira', relationship: 'misstrauisch'),
+      ],
+      notes: [
+        _note(
+          id: 'a-note',
+          npcId: 'mira_a',
+          value: 'Nur Mira A kennt den geheimen Pfad.',
+          time: time,
+        ),
+        _note(
+          id: 'b-note',
+          npcId: 'mira_b',
+          value: 'Nur Mira B hält den Schlüssel.',
+          time: time,
+        ),
+      ],
+    );
+    final before = jsonEncode(campaign.toJson());
+    final general = ['Neutrale bestätigte Ortsinformation'];
+    final result = NpcNarratorMemory.merge(
+      campaign,
+      'Ich frage Mira nach dem Pfad.',
+      general,
+    );
+
+    expect(result, general);
+    expect(result.join(' '), isNot(contains('geheimen Pfad')));
+    expect(result.join(' '), isNot(contains('Schlüssel')));
+    expect(jsonEncode(campaign.toJson()), before);
+    expect(() => result.add('Erfundene Erinnerung'), throwsUnsupportedError);
+  });
+
+  test('normalized duplicate names are ambiguous, unique names still work', () {
+    final time = DateTime.utc(2026, 10, 25);
+    final campaign = _campaign(
+      npcs: const [
+        WorldNpc(id: 'keeper_a', name: 'Große Hüterin'),
+        WorldNpc(id: 'keeper_b', name: 'GROSSE HUETERIN'),
+        WorldNpc(id: 'tarek', name: 'Tarek'),
+      ],
+      notes: [
+        _note(
+          id: 'keeper-note',
+          npcId: 'keeper_a',
+          value: 'Hüterin A kennt den Tempel.',
+          time: time,
+        ),
+        _note(
+          id: 'tarek-note',
+          npcId: 'tarek',
+          value: 'Tarek kennt den Brunnen.',
+          time: time,
+        ),
+      ],
+    );
+    final ambiguous = NpcNarratorMemory.merge(
+      campaign,
+      'Ich frage die große Hüterin.',
+      ['Allgemeine Nachricht'],
+    );
+    expect(ambiguous, ['Allgemeine Nachricht']);
+    final distinct = NpcNarratorMemory.merge(
+      campaign,
+      'Ich frage Tarek und die GROSSE HUETERIN.',
+      [],
+    );
+    expect(distinct, hasLength(1));
+    expect(distinct.single, contains('Tarek kennt den Brunnen'));
+    expect(distinct.single, isNot(contains('Tempel')));
+  });
+
   test('limits, line breaks and emoji are wire-safe', () {
     final campaign = _campaign(
       notes: [
