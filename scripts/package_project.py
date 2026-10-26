@@ -137,7 +137,19 @@ def create_archive(root: Path, output: Path, *, layout: str = 'folder') -> tuple
         staged_sha = temporary / checksum.name
         with zipfile.ZipFile(staged_zip, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
             for path in paths:
-                archive.write(path, prefix / path.relative_to(root))
+                # Refuse source files changed after enumeration. Otherwise a
+                # concurrent build/editor can silently alter a verified export.
+                before = path.stat()
+                with path.open('rb') as source:
+                    data = source.read()
+                    after = os.fstat(source.fileno())
+                final = path.stat()
+                identity = lambda st: (st.st_dev, st.st_ino, st.st_size,
+                                       st.st_mtime_ns, st.st_ctime_ns)
+                if not (identity(before) == identity(after) == identity(final)
+                        and len(data) == before.st_size):
+                    raise RuntimeError('Source changed during archive creation.')
+                archive.writestr((prefix / path.relative_to(root)).as_posix(), data)
         with zipfile.ZipFile(staged_zip) as archive:
             bad = archive.testzip()
             if bad:

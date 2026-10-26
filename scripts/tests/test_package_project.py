@@ -231,6 +231,33 @@ class ProjectArchiveTests(unittest.TestCase):
             self.assertEqual(set(archive.namelist()), packaging.REQUIRED_FILES)
             self.assertIsNone(archive.testzip())
 
+    def test_source_change_during_read_does_not_replace_published_zip(self):
+        output = self.base / 'existing.zip'
+        packaging.create_archive(self.root, output, layout='root')
+        checksum = output.with_suffix('.zip.sha256')
+        previous = output.read_bytes(), checksum.read_bytes()
+        original_fstat = packaging.os.fstat
+        altered = False
+
+        def changed_stat(fd):
+            nonlocal altered
+            stat = original_fstat(fd)
+            if not altered:
+                altered = True
+                class Changed:
+                    st_dev = stat.st_dev
+                    st_ino = stat.st_ino
+                    st_size = stat.st_size
+                    st_mtime_ns = stat.st_mtime_ns + 1
+                    st_ctime_ns = stat.st_ctime_ns
+                return Changed()
+            return stat
+
+        with mock.patch.object(packaging.os, 'fstat', side_effect=changed_stat):
+            with self.assertRaisesRegex(RuntimeError, 'Source changed'):
+                packaging.create_archive(self.root, output, layout='root')
+        self.assertEqual((output.read_bytes(), checksum.read_bytes()), previous)
+
     def test_failed_zip_write_does_not_damage_previous_zip_or_checksum(self):
         output = self.base / 'saved.zip'
         packaging.create_archive(self.root, output, layout='root')
