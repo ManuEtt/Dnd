@@ -420,47 +420,47 @@ void main() {
       testWidgets(
         'Deckung hat bei $width dp und ${scale * 100}% ein 48-dp-Ziel',
         (tester) async {
-        tester.view.physicalSize = Size(width, 1200);
-        tester.view.devicePixelRatio = 1;
-        addTearDown(tester.view.resetPhysicalSize);
-        addTearDown(tester.view.resetDevicePixelRatio);
-        final actions = <String>[];
+          tester.view.physicalSize = Size(width, 1200);
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+          final actions = <String>[];
 
-        await tester.pumpWidget(
-          MaterialApp(
-            theme: buildFantasyTheme(),
-            builder: (context, child) => MediaQuery(
-              data: MediaQuery.of(
-                context,
-              ).copyWith(textScaler: TextScaler.linear(scale)),
-              child: child!,
-            ),
-            home: Scaffold(
-              body: ListView(
-                children: [
-                  FantasyCombatCoverPanel(
-                    heroCover: CoverLevel.none,
-                    enemyCover: CoverLevel.half,
-                    canChange: true,
-                    onAction: actions.add,
-                  ),
-                ],
+          await tester.pumpWidget(
+            MaterialApp(
+              theme: buildFantasyTheme(),
+              builder: (context, child) => MediaQuery(
+                data: MediaQuery.of(
+                  context,
+                ).copyWith(textScaler: TextScaler.linear(scale)),
+                child: child!,
+              ),
+              home: Scaffold(
+                body: ListView(
+                  children: [
+                    FantasyCombatCoverPanel(
+                      heroCover: CoverLevel.none,
+                      enemyCover: CoverLevel.half,
+                      canChange: true,
+                      onAction: actions.add,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-        await tester.pumpAndSettle();
+          );
+          await tester.pumpAndSettle();
 
-        final hero = find.byKey(const ValueKey('combat-hero-cover'));
-        final enemy = find.byKey(const ValueKey('combat-enemy-cover'));
-        expect(tester.getSize(hero).height, greaterThanOrEqualTo(48));
-        expect(tester.getSize(enemy).height, greaterThanOrEqualTo(48));
-        await tester.tap(hero);
-        await tester.pumpAndSettle();
-        await tester.tap(find.text('vollständige Deckung').last);
-        await tester.pumpAndSettle();
-        expect(actions, ['Deckung: Held voll']);
-        expect(tester.takeException(), isNull);
+          final hero = find.byKey(const ValueKey('combat-hero-cover'));
+          final enemy = find.byKey(const ValueKey('combat-enemy-cover'));
+          expect(tester.getSize(hero).height, greaterThanOrEqualTo(48));
+          expect(tester.getSize(enemy).height, greaterThanOrEqualTo(48));
+          await tester.tap(hero);
+          await tester.pumpAndSettle();
+          await tester.tap(find.text('vollständige Deckung').last);
+          await tester.pumpAndSettle();
+          expect(actions, ['Deckung: Held voll']);
+          expect(tester.takeException(), isNull);
         },
       );
     }
