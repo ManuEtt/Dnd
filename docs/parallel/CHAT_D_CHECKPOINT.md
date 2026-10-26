@@ -1,3 +1,17 @@
+# Chat D D-010 – symlinksichere Checkpoint-Dateimanifeste (26.10.2026)
+
+- **Basis-`main`:** `5e3116f9e3f8de0af6e8125a97b3962cb8910cdf`, PR #238 für Quell-ZIP sicher integriert. **Branch:** `fix/chat-d/checkpoint-manifest-nofollow-20261026`.
+- **Ausgangsproblem:** `create_checkpoint.file_manifest` verwendete nach `source_paths` eine ungeschützte `sha256(path)`-Leseoperation und wiederholte `path.stat()`-Aufrufe. Ein nach der Auflistung vertauschter Datei- oder Ordner-Symlink konnte dabei auf fremde Daten zeigen, obwohl die ZIP-Paketierung seit D-009 auf POSIX dagegen gehärtet ist.
+- **IMPLEMENTIERT:** Manifest liest durch `package_project.read_verified_source(root, path)` mit POSIX-Dateideskriptoren und `O_NOFOLLOW` bzw. Best-Effort-Fallback auf anderen Plattformen; SHA-256, Größe und Ausführbarkeit stammen aus **demselben geprüften Dateiinhalt und fstat/lstat** statt mehreren möglicherweise unterschiedlichen Dateizugriffen.
+- **TESTS ERGÄNZT:** Drei konkrete negative Regressionen gegen nach Scan ausgetauschte Datei-/Elternordner-Symlinks sowie Erhalt zuvor gesicherter ZIP-, Patch-, Manifest- und Prüfsummenartefakte bei Fehlschlag. Bestehende normale Checkpoint-Roundtrip- und Unix-Modus-Tests bleiben aktiv.
+- **GETESTET:** Branch-Code und Tests über GitHub gespeichert; die volle GitHub-CI auf dem finalen Stand ist noch **nicht** abgenommen. Eine erfolgreiche Basis-Main-CI beweist diesen neuen Branch nicht.
+- **NICHT GETESTET:** vollständige neue Python-/Backend-/Flutter-/Android-/Alpha-CI auf finaler SHA, Android-/Windows-Realgerät, nicht-POSIX-Race-Sicherheit.
+- **BLOCKIERT:** endgültige CI und erneuter Main-/PR-Dateiabgleich nach eventuellen parallelen Merges. PRs #236/#237/#239 anderer Chats bleiben unverändert.
+- **KEINE MIGRATION:** App, SQLite, JSON, Regelengine, Story, Versionscode und gespeicherte Spielstände unverändert. Nur Checkpoint-Erstellung/Tests.
+- **NÄCHSTER SCHRITT:** Finale CI und Checkpoint-Artefakte des tatsächlichen PR-HEAD kontrollieren, mögliche Fehler auf eigenem Branch beheben, nach konfliktfreier Synchronisierung integrieren.
+
+---
+
 # Chat D D-009 – Quell-ZIP gegen nachträglichen Symlink-Austausch schützen (26.10.2026)
 
 - **Ausgangs-`main`:** `42d14ad36cc947691f7e5a1e8647a43f5421b86e`, Push/PR-CI auf `main` vorher erfolgreich. **Branch:** `fix/chat-d/source-zip-symlink-swap-20261026`.
