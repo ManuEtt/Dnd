@@ -1,3 +1,19 @@
+# Chat B – abgeschlossene Story-Fäden dürfen nicht von KI umgeschrieben werden (26.10.2026)
+
+- **Ausgangs-Main:** `67f146e690306b13d490bd8e7fd5636bb187c77e`, Branch `fix/chat-b/terminal-thread-description-20261026`.
+- **Ausgangsproblem:** Die bisherigen Flutter-/Backend-Parser schützten für `resolved`/`abandoned` nur den Status, ließen aber bei unverändertem Terminalstatus vom Erzähler vorgeschlagene neue Beschreibungen zu. Das konnte bestätigte Abschlüsse stillschweigend umdeuten.
+- **Implementiert:** `app/lib/story/ai_story.dart` und `backend/src/story.ts` prüfen für terminale Handlungsstränge nun **Status UND gespeicherte Beschreibung**. Identische Wiederholungen bleiben akzeptiert. Die manuellen `saveStoryThread`-Änderungen (inklusive ausdrücklich wieder geöffneter Story-Fäden) bleiben erlaubt.
+- **Tests:** `app/test/ai_story_test.dart` prüft beide Terminalstatus, abgewiesene Beschreibungsänderungen, identische Antworten, gespeicherte manuelle Berichtigung und erlaubte Wiederöffnung. `backend/test/story.test.ts` prüft Parser und HTTP-Fehlerantworten ohne Echo unbestätigter Texte.
+- **Weitere Dateien:** `README.md`, `docs/CODEX_CHECKPOINT.md`, dieses Chat-B-Checkpointdokument. Alle alten Abschnitte bleiben erhalten.
+- **GitHub-Koordination:** Vorher offene PRs #244–#252 und deren geänderte Fachdateien geprüft; kein paralleler PR betrifft die beiden Parser oder ihre konkreten Tests. PR #250 integriert frühere Pakete; Konflikte gemeinsamer Dokumentation sind von Chat D beim Merge zu behandeln. PR #251 (NPC-Auswahl nach SQLite-Wiederaufnahme) wurde auf dem finalen Code-Commit `333d9afa` erfolgreich durch GitHub Actions #40379164281 und #40379171344 geprüft, bleibt zum Zeitpunkt dieses Zyklus aber offen.
+- **GETESTET:** Live-Main, offene PR-Dateipfade, fachliche Parser, vorhandene Backend-/Flutter-Tests und manuellen Editor gegen aktuellen Stand geprüft.
+- **NICHT GETESTET:** Neu implementierte Gesamtsuite und APK lokal mangels Flutter-SDK und Repository-Checkout. CI-Ergebnisse auf finalem Branch-HEAD separat verifizieren; Realgerät und produktive KI nicht getestet.
+- **BLOCKIERT:** Offene parallele PRs und zentrale Dokumentationsmerges, keine technische Schema-Migration.
+- **MIGRATION:** keine; SQLite 2, Kampagnen-JSON 1, D&D-Regelzustand, Helden-/Questdaten und vorhandene Spielstände unverändert.
+- **NÄCHSTER SCHRITT:** Nach CI/Integration einen unabhängigen Kontinuitätstest für bestätigte Abschlüsse über SQLite-Wiederaufnahme und manuelle Berichtigung hinweg ergänzen; keine automatische Retro-Korrektur durch KI.
+
+---
+
 # CHAT B – Checkpoint: NPC-Zeitstempel, 26.10.2026
 
 - **Ausgangs-Main-SHA:** `20098805d8c70cbd361a13862379894c47ef4eb6`.
