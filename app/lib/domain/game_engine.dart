@@ -2093,10 +2093,7 @@ class GameEngine {
         className: campaign.hero.className,
         secondaryClassName: campaign.hero.secondaryClassName,
       ),
-      encounter: fight.copyWith(
-        enemyHitPoints: remaining,
-        actionUsed: true,
-      ),
+      encounter: fight.copyWith(enemyHitPoints: remaining, actionUsed: true),
     );
     if (remaining == 0) {
       next = _afterFlurryVictory(next, payload);
