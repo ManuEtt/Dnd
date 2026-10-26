@@ -1,0 +1,20 @@
+name: Chat A spell-range format diagnostics
+on:
+  push:
+    branches:
+      - fix/chat-a/spell-range-unit-validation-20261026
+jobs:
+  dart-format-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Format and print exact difference
+        run: |
+          cd app
+          dart format lib/domain/srd_spell_target_rules.dart test/srd_spell_target_rules_test.dart
+          git diff -- lib/domain/srd_spell_target_rules.dart test/srd_spell_target_rules_test.dart
+          git diff --exit-code -- lib/domain/srd_spell_target_rules.dart test/srd_spell_target_rules_test.dart
