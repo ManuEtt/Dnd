@@ -158,35 +158,57 @@ class FantasyActiveHeroCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 13),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _HeroMetric(
-                        label: 'Trefferpunkte',
-                        value: _hitPoints,
-                        icon: Icons.favorite_border,
-                        color: FantasyPalette.danger,
-                      ),
-                    ),
-                    const SizedBox(width: 7),
-                    Expanded(
-                      child: _HeroMetric(
-                        label: 'Rüstungsklasse',
-                        value: hero.armorClass?.toString() ?? '?',
-                        icon: Icons.shield_outlined,
-                        color: FantasyPalette.gold,
-                      ),
-                    ),
-                    const SizedBox(width: 7),
-                    Expanded(
-                      child: _HeroMetric(
-                        label: 'Bewegung',
-                        value: _movement,
-                        icon: Icons.directions_run,
-                        color: FantasyPalette.blue,
-                      ),
-                    ),
-                  ],
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final largeText =
+                        MediaQuery.textScalerOf(context).scale(1) >= 1.8;
+                    final singleColumn =
+                        largeText && constraints.maxWidth < 500;
+                    final tileWidth = singleColumn
+                        ? constraints.maxWidth
+                        : (constraints.maxWidth - 14) / 3;
+                    return Wrap(
+                      spacing: 7,
+                      runSpacing: 7,
+                      children: [
+                        SizedBox(
+                          width: tileWidth,
+                          child: _HeroMetric(
+                            key: const ValueKey('active-hero-metric-hp'),
+                            label: 'Trefferpunkte',
+                            value: _hitPoints,
+                            spokenValue:
+                                hero.hitPoints == null ||
+                                    hero.maxHitPoints == null
+                                ? null
+                                : '${hero.hitPoints} von ${hero.maxHitPoints}',
+                            icon: Icons.favorite_border,
+                            color: FantasyPalette.danger,
+                          ),
+                        ),
+                        SizedBox(
+                          width: tileWidth,
+                          child: _HeroMetric(
+                            key: const ValueKey('active-hero-metric-ac'),
+                            label: 'Rüstungsklasse',
+                            value: hero.armorClass?.toString() ?? '?',
+                            icon: Icons.shield_outlined,
+                            color: FantasyPalette.gold,
+                          ),
+                        ),
+                        SizedBox(
+                          width: tileWidth,
+                          child: _HeroMetric(
+                            key: const ValueKey('active-hero-metric-speed'),
+                            label: 'Bewegung',
+                            value: _movement,
+                            icon: Icons.directions_run,
+                            color: FantasyPalette.blue,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
                 if (hitPointsRatio == null) ...[
                   const SizedBox(height: 9),
@@ -314,53 +336,67 @@ class FantasyActiveHeroCard extends StatelessWidget {
 /// Adaptable metric tile with compact artwork and explicit unknown values.
 class _HeroMetric extends StatelessWidget {
   const _HeroMetric({
+    super.key,
     required this.label,
     required this.value,
     required this.icon,
     required this.color,
+    this.spokenValue,
   });
 
   final String label;
   final String value;
+  final String? spokenValue;
   final IconData icon;
   final Color color;
 
   @override
-  Widget build(BuildContext context) => DecoratedBox(
-    decoration: BoxDecoration(
-      color: FantasyPalette.night.withValues(alpha: .80),
-      borderRadius: BorderRadius.circular(9),
-      border: Border.all(color: color.withValues(alpha: .35)),
-    ),
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 9),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: color, size: 18),
-          const SizedBox(height: 3),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              value,
-              style: TextStyle(
-                color: FantasyPalette.ivory,
-                fontSize: 17,
-                fontWeight: FontWeight.w700,
-                fontFamily: 'serif',
+  Widget build(BuildContext context) {
+    final accessibleValue = value.contains('?')
+        ? 'nicht bestätigt'
+        : (spokenValue ?? value);
+    return Semantics(
+      container: true,
+      excludeSemantics: true,
+      label: '$label: $accessibleValue',
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: FantasyPalette.night.withValues(alpha: .80),
+          borderRadius: BorderRadius.circular(9),
+          border: Border.all(color: color.withValues(alpha: .35)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 9),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, color: color, size: 18),
+              const SizedBox(height: 3),
+              Text(
+                value,
+                softWrap: true,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: FantasyPalette.ivory,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                  fontFamily: 'serif',
+                ),
               ),
-            ),
+              const SizedBox(height: 3),
+              Text(
+                label,
+                softWrap: true,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: FantasyPalette.muted,
+                  fontSize: 10,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 3),
-          Text(
-            label,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-            style: const TextStyle(color: FantasyPalette.muted, fontSize: 10),
-          ),
-        ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }

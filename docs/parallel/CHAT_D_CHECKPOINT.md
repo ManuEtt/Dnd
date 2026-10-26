@@ -1,51 +1,6 @@
-# Chat D – Main-Synchronisierung D-005
+# Chat D – D-005 Hauptbranch-Synchronisierung, 26.10.2026
 
-## Aktualisierung nach Main-Merge #195 – 26.10.2026
-
-Neue Basis `575a885bd34ecae2bd173dc183abf88a367a69af`; der D-005-Stand `95fcf11c828e28f2de358b31636e5dc9898edfb6` war auf `main` `5f9a01d` integriert und wird in einem weiteren regulären Merge-Commit mit neuem Main vereinigt. Die technischen Änderungen bleiben auf genau zwei Gradle-Prüfdateien begrenzt. GitHub CI auf dem **neuen** kombinierten Commit erneut nötig; frühere erfolgreiche CI-Läufe gelten nur für ältere Heads. Die aktuellen Main-Änderungen der anderen Chats (SRD-Zauberdauer, NPC-Erinnerung) bleiben erhalten.
-
-
----
-
-# Chat D D-005 – Main-Rebase-freie Synchronisation (26.10.2026)
-
-Der auf `87a0d4b7d62aaacf7aa99886c629d6aa5f17a119` vollständig CI-geprüfte D-005-PR #189 wurde mit dem aktuellen Main-HEAD `5f9a01dd73f68ad4f9e226f859a8ca87803b8337` (PR #185 integriert) per zusätzlichem Elterncommit synchronisiert, ohne Force-Push und ohne fremde technische Änderungen. Neue endgültige CI erforderlich; frühere Dokumentation erhalten.
-
----
-
-# Chat D – D-005: Eindeutige Gradle-Distributionseinstellungen
-
-## Ausgangslage und GitHub
-- Datum: 25.10.2026.
-- **Main zum Arbeitsbeginn:** `af70a48c84d83c133ced4200be04ca81a91abf1b` mit D-001 bis D-004 erfolgreich integriert.
-- **Branch:** `fix/chat-d/gradle-properties-duplicate-guard-20261025`.
-- **Fachlicher Umfang:** `scripts/verify_project.py` und `scripts/tests/test_verify_project.py`.
-- **Andere PRs:** Chat A, B und C bearbeiten Regel-, Story- und UI-Module getrennt; gemeinsame README-/Checkpoint-Dateien additiv konsolidieren.
-- **GitHub-PR:** wird nach Dokumentation als Draft angelegt und dort verlinkt.
-
-## Ausgangsproblem
-
-`verify_project` akzeptierte eine gültige `distributionUrl=` und eine gültige `distributionSha256Sum=`, obwohl in derselben Java-Properties-Datei weitere, abweichende Deklarationen desselben Schlüssels standen. Eine Laufzeit, die bei mehrfachen Keys den letzten Wert verwendet, kann dadurch etwas anderes benutzen als der Sicherheitsprüfer bestätigt hat.
-
-## Implementiert
-
-- `unique_gradle_property` durchsucht nicht auskommentierte Java-Properties-Zeilen und berücksichtigt `=`, `:` und Whitespace als übliche Separatoren.
-- Wenn der jeweilige Schlüssel fehlt, doppelt vorkommt oder uneindeutig formuliert ist, liefert er keinen validierten Wert.
-- Einmalige SHA-256-Prüfsumme muss weiterhin exakt 64 Hex-Zeichen enthalten; Download-URL muss weiterhin den bisherigen festgelegten HTTPS-/Gradle-Version-Regeln entsprechen.
-- Sechs neue Regressionstests: doppelte URL, identischer doppelter Hash, gemischte Separatoren, Kommentar-Zeilen, legitime URL ohne Escape sowie zusätzlicher leerer URL-Schlüssel.
-- Bestehende deutschsprachige Diagnosetexte bleiben erhalten; keine Werte oder Geheimnisse werden in Fehlermeldungen ausgegeben.
-
-## GETESTET / NICHT GETESTET / BLOCKIERT
-
-- **GETESTET:** Änderungen wurden nach GitHub-Push aus den beiden Branchdateien erneut eingelesen und auf korrekte Funktionszuordnung geprüft. Der URL-Ausdruck wurde zusätzlich isoliert mit legitimer, escaped HTTPS-URL sowie HTTP-Negativfall überprüft. **Das ist kein Nachweis einer vollständigen Repository-CI.**
-- **NICHT GETESTET:** sämtliche Python-/Flutter-/Backend-/Android-Tests sowie APK-/Release-Builds für den finalen D-005-HEAD; Testlauf auf echten Android-Geräten.
-- **BLOCKIERT:** Finale GitHub-Actions-Abnahme und eventuelle Änderungen im Hauptbranch. Keine lokale vollständige Flutter-/Android-Toolchain.
-- **Sicherheit/Kompatibilität:** kein Eingriff in den echten Gradle-Wrapper, Android-Code, SQLite, Kampagnen-JSON, KI-Erzählung oder SRD-Regeln. Keine Datenmigration.
-
-## Genau ein nächster Schritt
-
-Finalen GitHub-CI-Lauf dieses PR-Commits prüfen und gegebenenfalls Testfehler im eigenen Branch korrigieren, anschließend neuen Main-HEAD und die gemeinsamen Dokumentationsdateien konfliktfrei synchronisieren und erst nach vollständiger Abnahme zur Integration freigeben.
-
+Der vorherige D-005-Head `39847a2f8a8aff23bb0be09762e19d8f37968b1c` wird mit Main `f03f319e48b021a2ab34216284eaca4d677b6a5b` aus dem Merge von Chat C (#201) in einem nicht-erzwingenden Merge-Commit vereint. Zwei technische Gradle-Prüfdateien stammen aus D-005; alle übrigen Main-Dateien bleiben erhalten. Der neue PR-HEAD muss erneut vollständig CI-geprüft werden; keine stillschweigende Übertragung grüner alter Testresultate.
 
 ---
 

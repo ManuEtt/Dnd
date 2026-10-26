@@ -1,22 +1,12 @@
-# D-005 – aktueller Main-Abgleich
+# Chat D – D-005 Main-Abgleich am 26.10.2026
 
-## Aktualisierung nach Main-Merge #195 – 26.10.2026
-
-Neue Basis `575a885bd34ecae2bd173dc183abf88a367a69af`; der D-005-Stand `95fcf11c828e28f2de358b31636e5dc9898edfb6` war auf `main` `5f9a01d` integriert und wird in einem weiteren regulären Merge-Commit mit neuem Main vereinigt. Die technischen Änderungen bleiben auf genau zwei Gradle-Prüfdateien begrenzt. GitHub CI auf dem **neuen** kombinierten Commit erneut nötig; frühere erfolgreiche CI-Läufe gelten nur für ältere Heads. Die aktuellen Main-Änderungen der anderen Chats (SRD-Zauberdauer, NPC-Erinnerung) bleiben erhalten.
-
-
----
-
-# Chat D D-005 – Eindeutige Gradle-Distributionsparameter (26.10.2026)
-
-- **Main-Abgleich:** letzter geprüfter `main` `5f9a01dd73f68ad4f9e226f859a8ca87803b8337`; alter D-005-Head `87a0d4b7d62aaacf7aa99886c629d6aa5f17a119`; neuer Merge-Commit wird durch GitHub-PR #189 nachgewiesen.
-- **IMPLEMENTIERT:** Doppelte `distributionUrl` und `distributionSha256Sum` werden durch `unique_gradle_property` einschließlich `=`, `:` und Whitespace-Separatoren gesperrt; sechs neue Python-Tests.
-- **GETESTET:** Vollständige GitHub-CI [#40225531530](https://github.com/ManuEtt/Dnd/actions/runs/40225531530) auf altem Head `87a0d4b7d62aaacf7aa99886c629d6aa5f17a119` erfolgreich (36 Prüfschritte). Dies gilt nicht automatisch für den neuen kombinierten Main-Stand.
-- **NICHT GETESTET:** Abschließende vollständige CI auf dem neuen synchronisierten Commit sowie echte Geräteinstallation.
-- **BLOCKIERT:** endgültige Freigabe erst nach finaler Actions-CI; unabhängige PRs #178–#197 der anderen Chats bleiben unberührt.
-- **MIGRATION:** keine Änderung an SQLite, JSON, App-Version oder SRD-Regeln.
-- **NÄCHSTER SCHRITT:** exakte neue CI auf D-005-Head prüfen und erst nach konfliktfreier Dokumentation und grünem Build integrieren.
-- [Detail-Checkpoint Chat D](parallel/CHAT_D_CHECKPOINT.md).
+- **Basis:** `f03f319e48b021a2ab34216284eaca4d677b6a5b`, D-005-Head vor Synchronisation `39847a2f8a8aff23bb0be09762e19d8f37968b1c`; GitHub-PR #189.
+- **IMPLEMENTIERT:** genau ein gültiger URL-/SHA256-Key in Java-Properties-Konfiguration, einschließlich Separatoren `=`, `:` und Whitespace; sechs Regressionen.
+- **GEPRÜFT:** vorherige vollständige PR- und Push-CI auf `39847a2f8a8aff23bb0be09762e19d8f37968b1c` erfolgreich. Der neue synchronisierte Stand benötigt eine **eigenständige** komplette Actions-CI.
+- **NICHT GETESTET:** neuer finaler Commit, Android-Installation auf Realgerät.
+- **MIGRATION:** keine App-, SQLite-, JSON- oder SRD-Regeländerungen.
+- **INTEGRATION:** neue Main-Änderungen aus Chat C erhalten, fremde offene PRs nicht verändert.
+- **NÄCHSTER SCHRITT:** finale grüne CI/Artefakte abnehmen, Main/Head nochmals prüfen, danach kontrolliert integrieren. [Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
 
 ---
 
