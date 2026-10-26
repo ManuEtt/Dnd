@@ -1,0 +1,17 @@
+name: Chat B temporary Dart formatting diagnostic
+on:
+  push:
+    branches:
+      - feat/chat-b/explicit-npc-wire-20261026
+jobs:
+  diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Show exact formatting changes
+        run: |
+          dart format app/lib/services/backend_narrator.dart app/test/backend_explicit_npc_transport_test.dart
+          git diff -- app/lib/services/backend_narrator.dart app/test/backend_explicit_npc_transport_test.dart
