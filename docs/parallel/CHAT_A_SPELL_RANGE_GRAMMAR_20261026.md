@@ -42,6 +42,15 @@ Kein Würfelwurf, kein Effekt, kein Ressourcenverbrauch und keine Speicherung im
 
 Die vollständige [Push-CI #40370952477](https://github.com/ManuEtt/Dnd/actions/runs/40370952477) kam über Python-/SRD-/Backendprüfungen hinaus, scheiterte aber bei Dart-Formatierung einer Testdatei; Flutter-Analyse, vollständige Tests und APK blieben übersprungen. Der temporäre [Diagnoselauf #40371428009](https://github.com/ManuEtt/Dnd/actions/runs/40371428009) zeigte genau zwei Formatierungsstellen im neuen Test. Diese werden nun bytegetreu nach Format-Diff korrigiert. Die temporäre Diagnose-Workflowdatei wird im selben Änderungscommit aus dem Branch entfernt.
 
-## Status
+## Finale Abnahme des Code-/Test-/Buildstands
 
-Implementierung und Regressionstests sind eingecheckt; Test-/CI-Ergebnisse werden erst nach tatsächlich abgeschlossener Ausführung ergänzt. Kein Merge nach main.
+- **Code-/Test-/Build-HEAD:** `03f56ad0cc330487d206d4dfe7f7c09bffd8664b`.
+- **GETESTET:** [vollständige PR-CI #40371835081](https://github.com/ManuEtt/Dnd/actions/runs/40371835081): `completed/success`, darunter SRD/Python/Backend, 392 Dart-Dateien unverändert formatiert, Flutter-Analyse, gezielte Dialogtests, **1732 Flutter-Tests**, Android-Debug-APK, native Tests, drei ABI-Alpha-APKs sowie Quellcode-Checkpoint.
+- **APK-/Quellartefakte:** [Debug-APK](https://github.com/ManuEtt/Dnd/actions/runs/40371835081/artifacts/12674640310), [kleine Alpha-APKs](https://github.com/ManuEtt/Dnd/actions/runs/40371835081/artifacts/12674385840), [Alpha-Release](https://github.com/ManuEtt/Dnd/actions/runs/40371835081/artifacts/12672164651), [Quell-Checkpoint](https://github.com/ManuEtt/Dnd/actions/runs/40371835081/artifacts/12672159602).
+- **NICHT GETESTET:** reales Android-Gerät, Upgrade älterer realer Datenbestände, TalkBack und Produktionssignierung. Dokumentationsnachträge nach diesem HEAD erfordern eigenständigen CI-Nachweis.
+- **BLOCKIERT:** kein lokales Flutter-/Android-SDK im aktuellen Container, kein lokaler Checkout durch fehlendes GitHub-DNS. Remote-CI führte die relevanten Tests erfolgreich aus; kein bekannter Fehler im final getesteten Codepaket.
+- **MIGRATIONEN:** keine. SQLite 2, Kampagnen-JSON 1 unverändert.
+- **NOCH NICHT IMPLEMENTIERT:** vollständige Erkennung konkreter SRD-Zieltypen, Deckungs-/Sichtlinienlogik, globale SRD-Zauberabdeckung.
+- **NÄCHSTER SCHRITT:** separat prüfen, ob `SrdSpellTargetRules` bei numerischen `Sight`-Metadaten jede nicht ausdrücklich bestätigte Sichtlinie und Hindernisquelle fail-closed behandelt; Akzeptanz: bestätigte Sicht akzeptiert, fehlender Sicht-/Pfadnachweis verweigert, ohne RNG, Slot, JSON- oder Zustandsänderung.
+
+Kein Merge nach main. README und zentraler Checkpoint nach CI additiv aktualisiert.

@@ -3,8 +3,8 @@
 - **Ausgangs-main:** `5e3116f9e3f8de0af6e8125a97b3962cb8910cdf`, **Branch:** `fix/chat-a/spell-range-unit-validation-20261026`, **erster Code-/Testcommit:** `ff8e781c0b6642255c015fc37701b8eb74e10dfe`, [Draft-PR #242](https://github.com/ManuEtt/Dnd/pull/242).
 - **IMPLEMENTIERT:** `maxRangeFeet` lässt nur positive kanonische Mengen mit richtigem foot/feet bzw. mile/miles zu und verweigert nicht darstellbare signed-64-bit-Fußwerte. `validateOrigin` lehnt diese Reichweiten vor einer Ziel-Freigabe weiter ab.
 - **TESTS ERGÄNZT:** acht ungültige/überlaufende Varianten, exakte Positiv-/Negativgrenzen und alle 339 bisherigen SRD-Katalogzauber in bestehendem Test.
-- **GETESTET:** Remote-GitHub-CI zur Implementierung gestartet; endgültige SHA-gebundene Abnahme ausstehend. Kein lokales Flutter/Dart.
-- **NICHT GETESTET:** finale gesamte CI/Android-Build, Gerät/Upgrade, produktive Signierung. Teststatus nach Run-Ergebnis aktualisieren.
+- **GETESTET:** [vollständige Android-PR-CI #40371835081](https://github.com/ManuEtt/Dnd/actions/runs/40371835081) auf Code-/Test-/Build-HEAD `03f56ad0cc330487d206d4dfe7f7c09bffd8664b` `completed/success`: Struktur, Regeln/Story-Grenzen, SRD-Inventar, Python, Backend-Typecheck/-Build/-Tests, Dart-Format (392 Dateien/0 Änderungen), Flutter-Analyse, Dialogtests, 1732 Flutter-Tests, Debug-APK, native Android-Tests, Alpha-APKs und Quellartefakt. Kein lokales Flutter/Dart.
+- **NICHT GETESTET:** reales Android-Gerät, Upgrade historischer Gerätedaten, TalkBack, produktive Signierung; zusätzlicher Dokumentationsnachtrag erfordert separaten HEAD-Check.
 - **MIGRATION:** keine; SQLite 2 / Kampagnen-JSON 1 und bestätigte Spielwerte unverändert.
 - **PARALLELITÄT:** #236 verändert `docs/parallel/CHAT_A_CHECKPOINT.md`, daher eigener [Fachcheckpoint](parallel/CHAT_A_SPELL_RANGE_GRAMMAR_20261026.md) statt Überschreiben desselben Pfads. README und diese zentrale Datei sind bei Integration additiv zu konsolidieren.
 - **NÄCHSTER SCHRITT:** vollständigen GitHub-Workflow auf finalem PR-HEAD prüfen, bei Fehler korrigieren, danach Chat-D-Review zur sicheren Integration.
