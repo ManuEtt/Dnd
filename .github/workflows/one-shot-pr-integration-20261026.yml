@@ -1,0 +1,80 @@
+name: Einmalige konsolidierende PR-Integration 2026-10-26
+
+on:
+  push:
+    branches:
+      - 'chore/migrate-open-prs-20261026'
+    paths:
+      - '.github/workflows/one-shot-pr-integration-20261026.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    if: github.repository == 'ManuEtt/Dnd'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Merge only verified source heads; stop on source conflicts
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          echo "Starting on $(git rev-parse HEAD); remote main $(git rev-parse origin/main)"
+          branches=(
+            'feat/chat-a/fire-bolt-confirmed-modifiers-20261026'
+            'feat/chat-b/mock-structured-npc-recall-20261026'
+            'feat/chat-b/explicit-npc-identity-selection-20261026'
+          )
+          numbers=(221 222 224)
+          expected=(
+            '981425b552243580365122a40d23d5c00c98a5f0'
+            '35add6aa122a5059472e952243094d717f3f833f'
+            '4b0b9ad62f74e32f0659a39ffac8706a2fbb040f'
+          )
+          for i in "${!branches[@]}"; do
+            b="${branches[i]}"
+            git fetch --no-tags origin "refs/heads/$b"
+            actual=$(git rev-parse FETCH_HEAD)
+            if [[ "$actual" != "${expected[i]}" ]]; then
+              echo "::error::Source $b moved; expected ${expected[i]}, found $actual"
+              exit 1
+            fi
+            echo "Integrating PR #${numbers[i]} at $actual"
+            if ! git merge --no-ff --no-commit "$actual"; then
+              mapfile -t conflicts < <(git diff --name-only --diff-filter=U)
+              if (( ${#conflicts[@]} == 0 )); then
+                echo "::error::Git merge failed without conflict details"
+                exit 1
+              fi
+              for path in "${conflicts[@]}"; do
+                case "$path" in
+                  README.md|docs/CODEX_CHECKPOINT.md|docs/parallel/CHAT_A_CHECKPOINT.md|docs/parallel/CHAT_B_CHECKPOINT.md)
+                    echo "Retaining current live documentation during historical merge: $path"
+                    git checkout --ours -- "$path"
+                    git add -- "$path"
+                    ;;
+                  *)
+                    echo "::error::Source conflict needs manual review: $path"
+                    exit 1
+                    ;;
+                esac
+              done
+              if [[ -n "$(git diff --name-only --diff-filter=U)" ]]; then
+                echo "::error::Unresolved conflicts remain"
+                exit 1
+              fi
+            fi
+            git commit -m "Integrate PR #${numbers[i]} onto current main without replacing active docs"
+          done
+          python3 scripts/verify_project.py
+          python3 scripts/check_domain_boundaries.py
+          python3 scripts/srd_coverage.py --json
+          python3 -m unittest discover -s scripts/tests -q
+          git push origin "HEAD:refs/heads/chore/migrate-open-prs-20261026"
