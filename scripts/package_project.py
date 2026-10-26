@@ -5,6 +5,7 @@ import argparse
 import hashlib
 import os
 import shutil
+import stat
 import tempfile
 import unicodedata
 import zipfile
@@ -149,7 +150,16 @@ def create_archive(root: Path, output: Path, *, layout: str = 'folder') -> tuple
                 if not (identity(before) == identity(after) == identity(final)
                         and len(data) == before.st_size):
                     raise RuntimeError('Source changed during archive creation.')
-                archive.writestr((prefix / path.relative_to(root)).as_posix(), data)
+                # writestr() does not inherit filesystem mode bits, unlike
+                # ZipFile.write(). Keep executable source scripts recoverable
+                # while retaining the verified same-file read above.
+                info = zipfile.ZipInfo((prefix / path.relative_to(root)).as_posix())
+                info.create_system = 3
+                info.external_attr = (
+                    stat.S_IFREG | stat.S_IMODE(before.st_mode)
+                ) << 16
+                info.compress_type = zipfile.ZIP_DEFLATED
+                archive.writestr(info, data)
         with zipfile.ZipFile(staged_zip) as archive:
             bad = archive.testzip()
             if bad:

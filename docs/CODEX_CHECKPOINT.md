@@ -1,3 +1,15 @@
+# Chat D D-007 – Main-Abgleich nach PR #214
+
+- **Neuer Main-SHA:** `d03faea7ce032e8918da2204228473bd9999932c`; **D-007-Head davor:** `8eaf1fc1787ccf80c4c676fec3df1ce91da16034`.
+- **IMPLEMENTIERT:** geprüfte `writestr`-Archive bewahren ausführbare Modebits; zwei veraltete Rollback-Mocks und Mode-Test korrigiert.
+- **GETESTET:** Python-/Backend-Tests auf vorherigem D-007-Codecommit grün. Main-/CI-Formatfehler in fremden Dartdateien wurden erkannt, kein final grünes CI behauptet.
+- **NICHT GETESTET:** finale kombinierte Android-/Flutter-/Alpha-CI, reale Geräteinstallation.
+- **BLOCKIERT:** eine unabhängige Formatabweichung im NPC-Story-Payload; GitHub-CI auf neuem D-007-HEAD erforderlich.
+- **PERSISTENZ:** SQLite/JSON, App-Version und Story-/Regelverhalten unangetastet.
+- **NÄCHSTER SCHRITT:** Formatabweichung koordinieren, finale CI auf synchronisiertem D-007-Head abnehmen und erst danach integrieren.
+
+---
+
 # Chat A – Eldritch Blast Deckungs-Snapshot (26.10.2026)
 
 - **IMPLEMENTIERT:** Request-Deckungsrichtung pro Strahl gegen gespeicherte Gegnerdeckung validiert, Basis-RK 0 frühzeitig verworfen, redundante Obergrenze entfernt; SRD-Regeltests und persistierte GameEngine-Tests aktualisiert.

@@ -1,6 +1,7 @@
 import importlib.util
 from pathlib import Path
 import tempfile
+import stat
 import unittest
 from unittest import mock
 import zipfile
@@ -258,6 +259,21 @@ class ProjectArchiveTests(unittest.TestCase):
                 packaging.create_archive(self.root, output, layout='root')
         self.assertEqual((output.read_bytes(), checksum.read_bytes()), previous)
 
+    def test_verified_source_zip_preserves_executable_flags(self):
+        runnable = self.root / 'app/lib/main.dart'
+        ordinary = self.root / 'README.md'
+        runnable.chmod(0o755)
+        ordinary.chmod(0o644)
+        output = self.base / 'modes.zip'
+        packaging.create_archive(self.root, output, layout='root')
+        with zipfile.ZipFile(output) as archive:
+            runnable_mode = archive.getinfo('app/lib/main.dart').external_attr >> 16
+            ordinary_mode = archive.getinfo('README.md').external_attr >> 16
+            self.assertTrue(stat.S_ISREG(runnable_mode))
+            self.assertTrue(stat.S_ISREG(ordinary_mode))
+            self.assertEqual(runnable_mode & 0o777, 0o755)
+            self.assertEqual(ordinary_mode & 0o777, 0o644)
+
     def test_failed_zip_write_does_not_damage_previous_zip_or_checksum(self):
         output = self.base / 'saved.zip'
         packaging.create_archive(self.root, output, layout='root')
@@ -265,7 +281,7 @@ class ProjectArchiveTests(unittest.TestCase):
         previous = (output.read_bytes(), checksum.read_bytes())
         before = set(self.base.iterdir())
 
-        with mock.patch.object(packaging.zipfile.ZipFile, 'write',
+        with mock.patch.object(packaging.zipfile.ZipFile, 'writestr',
                                side_effect=OSError('simulated disk full')):
             with self.assertRaisesRegex(OSError, 'simulated disk full'):
                 packaging.create_archive(self.root, output, layout='root')
@@ -278,7 +294,7 @@ class ProjectArchiveTests(unittest.TestCase):
     def test_failed_new_zip_write_leaves_no_partial_publication(self):
         output = self.base / 'new.zip'
         before = set(self.base.iterdir())
-        with mock.patch.object(packaging.zipfile.ZipFile, 'write',
+        with mock.patch.object(packaging.zipfile.ZipFile, 'writestr',
                                side_effect=OSError('simulated write failure')):
             with self.assertRaisesRegex(OSError, 'simulated write failure'):
                 packaging.create_archive(self.root, output, layout='folder')
