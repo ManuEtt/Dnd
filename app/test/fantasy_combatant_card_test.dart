@@ -282,4 +282,64 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+  for (final width in [320.0, 360.0]) {
+    testWidgets('Kampfteilnehmer bei $width dp und 200 % vollständig lesbar', (
+      tester,
+    ) async {
+      tester.view.physicalSize = Size(width, 1200);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      const heroName =
+          'Elowen die Wanderin aus den vergessenen Nebelbergen';
+      const enemyName =
+          'Schattenwächter der verlassenen Sternwarte';
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildFantasyTheme(),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              textScaler: const TextScaler.linear(2),
+            ),
+            child: child!,
+          ),
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: Column(
+                children: const [
+                  FantasyCombatantCard(
+                    key: ValueKey('large-hero'),
+                    name: heroName,
+                    isHero: true,
+                    isActive: true,
+                    initiative: 18,
+                    hitPoints: 12,
+                    maxHitPoints: 24,
+                    armorClass: 16,
+                  ),
+                  FantasyCombatantCard(
+                    key: ValueKey('large-enemy'),
+                    name: enemyName,
+                    isHero: false,
+                    isActive: false,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.widget<Text>(find.text(heroName)).maxLines, isNull);
+      expect(tester.widget<Text>(find.text(enemyName)).maxLines, isNull);
+      expect(find.byKey(const ValueKey('combatant-active-turn')), findsOneWidget);
+      expect(find.text('INI 18', findRichText: true), findsOneWidget);
+      expect(find.text('RK 16', findRichText: true), findsOneWidget);
+      expect(find.text('TP 12 / 24', findRichText: true), findsOneWidget);
+      expect(find.text('Trefferpunkte nicht vollständig bestätigt'),
+          findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
 }
