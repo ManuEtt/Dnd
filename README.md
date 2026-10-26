@@ -1,5 +1,11 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – Kampfteilnehmerkarten mit 200 % Android-Schrift (26.10.2026)
+
+Im unabhängigen Branch `feat/chat-c/combatant-card-large-text-20261026` bleiben lange Helden- und Gegnernamen bei 320/360 dp und starker Systemschrift vollständig sichtbar. Ab 180 % Schrift wechselt die Kopfzeile zu einer vertikalen Anordnung; „AM ZUG“ bleibt unter dem Namen erkennbar. Ein `Flexible`-Widget wurde aus diesem vertikalen Layout entfernt, um RenderFlex-Fehler ohne begrenzte Höhe zu vermeiden. Vier Widgettests prüfen die breite Darstellung, Initiative/RK/TP/temporäre TP, unbekannte Werte und die kompakte normale Schrift.
+
+**CI:** Der reguläre Branch-Workflow erbt derzeit drei bereits auf `main` vorhandene Python-ZIP-/Checkpoint-Testfehler; daher startet Flutter dort nicht. Ein isolierter Flutter-/Android-Prüflauf wird zur technischen Verifikation verwendet. Die Gesamt-CI darf bis zur Reparatur der Main-Blockade nicht als grün bezeichnet werden. Keine Änderung an SRD, Spielständen, Datenbankformaten oder App-Version. [Chat-C-Checkpoint](docs/parallel/CHAT_C_COMBATANT_CARD_20261026.md).
+
 ## Chat C – Kampf-Deckung bei 200 % Schrift (26.10.2026)
 
 Der unabhängige Branch `feat/chat-c/combat-cover-large-text-20261026` verbessert `FantasyCombatCoverPanel`: Bei 320–360 dp und 200 % Android-Schrift erhalten die Popup-Auswahlen für Held und Gegner jeweils die gesamte Zeilenbreite und zeigen bestätigte Deckungswerte ohne Textkürzung. Die Bedienhilfen nennen Deckungsstufe und Änderbarkeit. Auswahlwerte, bestehende `Deckung: ...`-Befehle und Sperren bei `canChange == false` bleiben unverändert. Drei zusätzliche Widgettests prüfen Layout, Screenreader, Auswahl und gesperrte Aktionen. **Finale CI-/Android-Abnahme steht noch aus.** Keine SRD-, KI-, Kampagnen- oder Datenmigration. [Detaillierter Chat-C-Checkpoint](docs/parallel/CHAT_C_COVER_ACCESSIBILITY_20261026.md).
