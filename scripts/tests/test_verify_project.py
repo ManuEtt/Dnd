@@ -146,6 +146,53 @@ class VerifyProjectTests(unittest.TestCase):
         self.assertTrue(any('prüfsumme' in error for error in errors))
         self.assertTrue(any('HTTPS-Distribution' in error for error in errors))
 
+
+    def test_duplicate_distribution_url_is_rejected_before_gradle_runs(self):
+        path = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        path.write_text(path.read_text() +
+                        'distributionUrl=http://untrusted.example/gradle-8.12-all.zip\n')
+        errors = verify_project(self.root)
+        self.assertTrue(any('HTTPS-Distribution' in error for error in errors))
+
+    def test_duplicate_checksum_is_rejected_even_if_values_match(self):
+        path = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        original = path.read_text()
+        checksum = next(line for line in original.splitlines()
+                        if line.startswith('distributionSha256Sum='))
+        path.write_text(original + checksum + '\n')
+        errors = verify_project(self.root)
+        self.assertTrue(any('prüfsumme' in error for error in errors))
+
+    def test_mixed_gradle_properties_separators_still_detect_duplicates(self):
+        path = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        content = path.read_text()
+        path.write_text(content +
+                        'distributionUrl : https://services.gradle.org/distributions/gradle-8.13-bin.zip\n'
+                        'distributionSha256Sum ' + 'a' * 64 + '\n')
+        errors = verify_project(self.root)
+        self.assertTrue(any('HTTPS-Distribution' in error for error in errors))
+        self.assertTrue(any('prüfsumme' in error for error in errors))
+
+    def test_comments_do_not_count_as_duplicate_gradle_properties(self):
+        path = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        path.write_text(path.read_text() +
+                        '# distributionUrl=http://invalid.example/gradle-8.12-bin.zip\n'
+                        '! distributionSha256Sum=not-a-checksum\n')
+        self.assertEqual([], verify_project(self.root))
+
+    def test_single_unescaped_https_url_and_valid_checksum_are_allowed(self):
+        path = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        current = path.read_text()
+        path.write_text(current.replace('https\\:', 'https:'))
+        self.assertEqual([], verify_project(self.root))
+
+    def test_empty_second_distribution_value_is_rejected(self):
+        path = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        path.write_text(path.read_text() + 'distributionUrl\n')
+        self.assertTrue(any(
+            'HTTPS-Distribution' in msg for msg in verify_project(self.root)
+        ))
+
     def test_windows_shebang_is_rejected(self):
         (self.root / 'app/android/gradlew').write_bytes(b'#!/usr/bin/env bash\r\n')
         self.assertTrue(any('LF-Zeilenende' in error for error in verify_project(self.root)))

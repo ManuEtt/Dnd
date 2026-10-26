@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – Schutz eindeutiger Gradle-Distributionseinstellungen (D-005, 26.10.2026)
+
+Der [Chat-D-PR #189](https://github.com/ManuEtt/Dnd/pull/189) weist doppelte oder mehrdeutige `distributionUrl`- und `distributionSha256Sum`-Angaben in `gradle-wrapper.properties` sicher ab, auch bei verschiedenen Java-Properties-Separatoren. Sechs zusätzliche Python-Regressionstests; voriger D-005-HEAD `68264d6` hat vollständige GitHub-CI bestanden. Nach neuem Main-Abgleich `f1f3e99` ist **erneute finale CI** erforderlich. Keine Migration und keine Eingriffe in Gameplay, Backend oder Android-Oberfläche. [Detail-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
 ## Chat C – Zugänglicher Heldenstatus (25.10.2026, PR offen)
 
 Der unabhängige Branch `feat/chat-c/accessible-status-hud-20261025` verbessert ausschließlich die Darstellung von `FantasyAdventureStatusHud`: ab 180 % Systemschrift bei 320–360 dp einspaltige Statuskarten; die angezeigten Werte schrumpfen nicht mehr über `FittedBox`. TP, RK, Bewegung und Erfahrung besitzen vollständige deutsche Screenreader-Texte; unbekannte Werte werden ausdrücklich als „nicht bestätigt“ angesagt. TP-/EP-Balken erhalten verständliche Prozent-Semantik. Drei Widgettests prüfen 320/360 dp bei 200 % und den unbekannten Zustand.

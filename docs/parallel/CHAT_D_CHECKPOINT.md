@@ -1,3 +1,9 @@
+# Chat D – D-005 Main-Abgleich nach A/B-Integration am 26.10.2026
+
+Vorheriger D-005-HEAD `68264d63e506f2105469384545ae11def60338f3`, neuester Main `f1f3e997bc8650a757d34234eff49d870dcf9369`. Der Branch erhält regulär einen neuen Merge-Commit mit aktuellem Main als zweitem Parent. Technische Änderungen beschränken sich auf `scripts/verify_project.py` und `scripts/tests/test_verify_project.py`, A/B/C-Änderungen verbleiben auf Main. Frühere CI-Ergebnisse sind nicht ausreichend für den neuen HEAD.
+
+---
+
 # Chat D D-004 – Main-Synchronisierung nach PR #183
 
 Neuer Basis-Main-HEAD `713b8cc2831f9d8039ef4e6ebf37c10682aec675` enthält D-001, D-002 und D-003. Branch D-004 wird per **normalem Merge-Commit ohne Force-Push** mit Main synchronisiert. Nur die zwei Python-Projektprüfer-/Testdateien werden aus D-004 übernommen; Dokumentation aus aktuellem Main bleibt erhalten und wird additiv ergänzt. Frühere Code-Tests/CIs auf `c7f2df12a9df474e6204ad1de4011f7c5b6e3e7f` sind keine finale Abnahme nach Synchronisierung. Offene PRs anderer Chats bleiben unverändert.

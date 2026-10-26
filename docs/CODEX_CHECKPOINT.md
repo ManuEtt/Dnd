@@ -1,3 +1,15 @@
+# Chat D – D-005 synchronisiert nach Chat-A/B-Merges (26.10.2026)
+
+- **Basis:** `main` `f1f3e997bc8650a757d34234eff49d870dcf9369`, D-005-Head bisher `68264d63e506f2105469384545ae11def60338f3`, PR #189.
+- **IMPLEMENTIERT:** genau einmalige Gradle-Properties-`distributionUrl`/`distributionSha256Sum` unabhängig von Separator; sechs Python-Regressionsfälle.
+- **GEPRÜFT:** ältere vollständige Actions Push-/PR-CI für `68264d63e506f2105469384545ae11def60338f3` erfolgreich, neu synchronisierter Stand benötigt erneut eigene vollständige CI.
+- **NICHT GETESTET:** Endversion und reale Installation.
+- **BLOCKIERT:** erneute finale CI; PR #200 für portable ZIP-Dateinamen bleibt unabhängig.
+- **MIGRATION:** keine App-, SQLite-, JSON-, Story- oder SRD-Änderungen durch D-005.
+- **NÄCHSTER SCHRITT:** finale CI und Artefakte prüfen, dann Main/PR-Vergleich und kontrollierten Merge durchführen. [Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
+
+---
+
 # Chat C – barrierefreier Abenteuerstatus (25.10.2026)
 
 - **Main-Basis:** initial `97a06118f17d71cc77be2cb15a2fc9a53db20ee0`, jetzt `45bea9c2a897275583bdbe32ed50afde5d0a76b0`; Branch `feat/chat-c/accessible-status-hud-20261025`.
