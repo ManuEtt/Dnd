@@ -115,18 +115,22 @@ export function validateStoryTurnContext(input: StoryTurnInput): void {
 export function parseStoryTurn(raw: unknown, input: StoryTurnInput): StoryTurn {
   validateStoryTurnContext(input);
   const o = object(raw);
-  const knownThreads = new Map(input.threads.map(x => [x.id, x.status]));
+  const knownThreads = new Map(input.threads.map(x => [x.id, x]));
   const knownNpcs = new Set(input.npcs.map(x => x.id));
   const threadUpdates = list(o.threadUpdates, 6, (raw) => {
     const item = object(raw);
     const target = id(item.id);
     const status = string(item.status, 16);
     if (!knownThreads.has(target) || !['open', 'resolved', 'abandoned'].includes(status)) throw new Error('unknown_story_thread');
-    // Terminal outcomes are player history. The narrator cannot undo them.
-    // A player may still reopen a thread explicitly through the local editor.
-    const previous = knownThreads.get(target);
-    if (previous !== 'open' && status !== previous) throw new Error('closed_story_thread');
-    return { id: target, status: status as 'open' | 'resolved' | 'abandoned', description: string(item.description, 1000) };
+    // A closed lead is confirmed player history, including its description.
+    // Only explicit local edits may reopen or rewrite it.
+    const previous = knownThreads.get(target)!;
+    const description = string(item.description, 1000);
+    if (previous.status !== 'open' &&
+        (status !== previous.status || description !== previous.description)) {
+      throw new Error('closed_story_thread');
+    }
+    return { id: target, status: status as 'open' | 'resolved' | 'abandoned', description };
   });
   const newThreads = list(o.newThreads, 2, thread);
   const npcUpdates = list(o.npcUpdates, 4, (raw) => {
