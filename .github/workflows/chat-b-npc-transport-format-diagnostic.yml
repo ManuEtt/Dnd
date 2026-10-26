@@ -1,0 +1,17 @@
+name: Chat B temporary Dart formatting diagnostic
+on:
+  push:
+    branches:
+      - feat/chat-b/negotiated-npc-transport-20261026
+jobs:
+  dart-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Show exact formatter changes
+        run: |
+          dart format app/lib/story/npc_identity_story_payload.dart app/lib/services/backend_narrator.dart app/lib/services/game_controller.dart app/test/npc_identity_story_payload_test.dart app/test/npc_identity_transport_integration_test.dart
+          git diff -- app/lib/story/npc_identity_story_payload.dart app/lib/services/backend_narrator.dart app/lib/services/game_controller.dart app/test/npc_identity_story_payload_test.dart app/test/npc_identity_transport_integration_test.dart
