@@ -1,0 +1,106 @@
+name: One-time verified final branch retirement 2026-10-26
+on:
+  push:
+    branches:
+      - maintenance/safe-retire-all-20261026
+permissions:
+  contents: write
+  actions: read
+  pull-requests: read
+jobs:
+  retire:
+    if: github.repository == 'ManuEtt/Dnd'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    concurrency:
+      group: final-branch-retirement-20261026
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Verify merge, CI, historical heads and content before retirement
+        shell: bash
+        run: |
+          set -euo pipefail
+          REPO='ManuEtt/Dnd'
+          BASE='542e0d46f0b4d858011fa90c1e0c2ba8800b8d0f'
+          MAIN='42d14ad36cc947691f7e5a1e8647a43f5421b86e'
+          PRHEAD='0ed6bba297f88dcd44e83ae91dcbf2e4b97f8339'
+          PREFIX='archive/final-branch-migration-20261026'
+          git fetch --quiet origin main
+          [[ "$(git ls-remote origin refs/heads/main | cut -f1)" == "$MAIN" ]] || { echo 'ABORT: main moved'; exit 1; }
+          pr=$(gh api "repos/$REPO/pulls/233" --jq '[.merged,.head.sha,.merge_commit_sha] | join("|")')
+          [[ "$pr" == "true|$PRHEAD|$MAIN" ]] || { echo "ABORT PR 233: $pr"; exit 1; }
+          prci=$(gh api "repos/$REPO/actions/runs/40327530670" --jq '[.status,.conclusion,.head_sha] | join("|")')
+          [[ "$prci" == "completed|success|$PRHEAD" ]] || { echo "ABORT combined Android CI: $prci"; exit 1; }
+          mainreg=$(gh api "repos/$REPO/actions/runs/40329543284" --jq '[.status,.conclusion,.head_sha] | join("|")')
+          [[ "$mainreg" == "completed|success|$MAIN" ]] || { echo "ABORT main regression: $mainreg"; exit 1; }
+          open=$(gh api --paginate "repos/$REPO/pulls?state=open&per_page=100" --jq '.[].head.ref')
+          [[ -z "$open" ]] || { echo "ABORT: remaining open PR heads: $open"; exit 1; }
+          mapfile -t rows <<'ROWS'
+          chore/migrate-open-prs-20261026|0ed6bba297f88dcd44e83ae91dcbf2e4b97f8339|merged
+          chore/retire-merged-branches-20261026|ceb42f78dd6d2ba052049ecf6b1cc1d2df492aad|maintenance
+          feat/chat-a/fire-bolt-confirmed-modifiers-20261026|981425b552243580365122a40d23d5c00c98a5f0|merged
+          feat/chat-b/explicit-npc-identity-selection-20261026|4b0b9ad62f74e32f0659a39ffac8706a2fbb040f|merged
+          feat/chat-b/mock-structured-npc-recall-20261026|35add6aa122a5059472e952243094d717f3f833f|merged
+          fix/chat-a/acid-splash-target-identities-20261026|e8740bc4dfc938c74c7eee6c908c5fb0ae028e24|merged
+          fix/chat-b/disambiguate-recalled-npc-memories-20261026|81400163b996d9e9f4fe2b796c232ffb63a3f24e|merged
+          integration/feature-pr221-222-224-20261026|46ba0894730e08480b3f5c104f68ca5a9da0c949|duplicate
+          integration/fire-bolt-modifiers-20261026|45fc72208f04b0f0490f7f8d6722d5d0b78bb985|duplicate
+          integration/fire-bolt-npc-selection-20261026|febf082fab268fc9a4f69c1c470a045be6bd716c|duplicate
+          integration/npc-acid-identity-fixes-20261026|f3aeae58a07f99098715c6df635061b173c5c97a|duplicate
+          integration/npc-recall-acid-splash-20261026|df46336e9255c0146da32a2bc81426368e8fe051|duplicate
+          integration/npc-story-selection-20261026|8c9960127904d75a4d4389dad0dad4fb3ce0223c|duplicate
+          ROWS
+          for row in "${rows[@]}"; do
+           IFS='|' read -r branch expected kind <<< "$row"
+           [[ "$branch" != main && "$branch" != maintenance/* ]] || { echo 'ABORT protected branch'; exit 1; }
+           actual=$(git ls-remote origin "refs/heads/$branch" | cut -f1)
+           [[ "$actual" == "$expected" ]] || { echo "ABORT branch changed $branch $actual"; exit 1; }
+           git cat-file -e "$expected^{commit}" || { echo "ABORT missing commit $branch"; exit 1; }
+           case "$kind" in
+           merged)
+            git merge-base --is-ancestor "$expected" origin/main || { echo "ABORT unmerged source $branch"; exit 1; }
+            ;;
+           duplicate)
+            while IFS= read -r -d '' path; do
+             a=$(git rev-parse --verify "$expected:$path" 2>/dev/null || echo MISSING)
+             b=$(git rev-parse --verify "origin/main:$path" 2>/dev/null || echo MISSING)
+             [[ "$a" == "$b" && "$a" != MISSING ]] || { echo "ABORT unmerged source file: $branch/$path"; exit 1; }
+            done < <(git diff --name-only -z "$BASE" "$expected" -- app/lib app/test backend/src backend/test scripts)
+            ;;
+           maintenance)
+            mapfile -t maintenance_files < <(git diff --name-only "$BASE" "$expected")
+            [[ "${#maintenance_files[@]}" -eq 1 && "${maintenance_files[0]}" == '.github/workflows/retire-integrated-branches-20261026.yml' ]] || { echo 'ABORT unexpected maintenance changes'; exit 1; }
+            ;;
+           *) echo "ABORT invalid category $kind"; exit 1;;
+           esac
+           existing=$(git ls-remote origin "refs/tags/$PREFIX/$branch" | cut -f1)
+           [[ -z "$existing" || "$existing" == "$expected" ]] || { echo "ABORT archive tag collision $branch"; exit 1; }
+          done
+          SELF='maintenance/safe-retire-all-20261026'
+          self_remote=$(git ls-remote origin "refs/heads/$SELF" | cut -f1)
+          [[ "$self_remote" == "$GITHUB_SHA" ]] || { echo "ABORT maintenance branch moved $self_remote"; exit 1; }
+          for row in "${rows[@]}"; do
+           IFS='|' read -r branch expected kind <<< "$row"
+           tag="$PREFIX/$branch"
+           if [[ -z "$(git ls-remote origin "refs/tags/$tag" | cut -f1)" ]]; then
+            git tag "$tag" "$expected"
+            git push origin "refs/tags/$tag:refs/tags/$tag"
+           fi
+           git push --force-with-lease="refs/heads/$branch:$expected" origin ":refs/heads/$branch"
+           [[ -z "$(git ls-remote origin "refs/heads/$branch" | cut -f1)" ]] || { echo "ABORT ref still exists $branch"; exit 1; }
+           echo "ARCHIVED AND DELETED $branch @ $expected"
+          done
+          git fetch --quiet origin "refs/heads/$SELF"
+          selftag="$PREFIX/maintenance-cleanup-$GITHUB_SHA"
+          git tag "$selftag" "$GITHUB_SHA"
+          git push origin "refs/tags/$selftag:refs/tags/$selftag"
+          git push --force-with-lease="refs/heads/$SELF:$GITHUB_SHA" origin ":refs/heads/$SELF"
+          heads=$(git ls-remote --heads origin | wc -l)
+          [[ "$heads" -eq 1 ]] || { echo "WARNING: $heads refs remain; check concurrent branches"; exit 1; }
+          echo 'SUCCESS: all known stale branches archived and removed, only main remains.'
