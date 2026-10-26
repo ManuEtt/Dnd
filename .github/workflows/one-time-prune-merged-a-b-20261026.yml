@@ -1,0 +1,78 @@
+name: One-time cleanup of merged A and B branches
+on:
+  push:
+    branches:
+      - maintenance/prune-merged-a-b-20261026
+permissions:
+  contents: write
+  actions: read
+  pull-requests: read
+jobs:
+  cleanup:
+    if: github.repository == 'ManuEtt/Dnd'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Confirm green main, archived exact heads and PR safety before deletion
+        shell: bash
+        run: |
+          set -euo pipefail
+          PREFIX='archive/merged-20261026-a-b'
+          BASE='f1f3e997bc8650a757d34234eff49d870dcf9369'
+          MAIN_CI=40274487785
+          result=''
+          for i in $(seq 1 90); do
+           result=$(gh api "repos/ManuEtt/Dnd/actions/runs/$MAIN_CI" --jq '[.head_sha,.status,.conclusion] | join("|")')
+           if [[ "$result" == "$BASE|completed|success" ]]; then break; fi
+           if [[ "$result" == "$BASE|completed|"* ]]; then echo "ABORT main CI finished unsuccessfully: $result"; exit 1; fi
+           sleep 30
+          done
+          [[ "$result" == "$BASE|completed|success" ]] || { echo "ABORT waiting main CI result: $result"; exit 1; }
+          git fetch --quiet origin main
+          git merge-base --is-ancestor "$BASE" origin/main || { echo 'ABORT reviewed main no longer an ancestor'; exit 1; }
+          open_head_and_bases=$(gh api --paginate 'repos/ManuEtt/Dnd/pulls?state=open&per_page=100' --jq '.[] | .head.ref, .base.ref')
+          mapfile -t rows <<'ROWS'
+          feat/chat-a/ritual-casting-preflight-20261025|2477bee3a0d3dc75de9802a91c32ddbef51e6fff
+          feat/chat-a/spell-attack-roll-resolution-20261025|79eecfe19b760cfd35c1241236efa979d5d567f6
+          feat/chat-a/spell-class-stats-20261025|0a7f3dc75161cf6936163b85c04dc9a78bfb12c1
+          feat/chat-b/mock-npc-recall-20261025|1b2dbd50aab80061f3ad462e6244d62880c1be4d
+          feat/chat-b/npc-continuity-20261025|87020c81c621cf94b1d8178132a1ad556091f6a9
+          feat/chat-b/npc-revision-context-20261026|11fd21c6addd502adbadabbf18272a58906c4643
+          fix/chat-b/recall-intent-20261025|7778df9081e7c053599a9e7a05cd1235943f7056
+          integration/chat-a-srd-rules-20261026|83276d8a39407f1098f57a577eb541b294524cf7
+          integration/chat-b-npc-memory-20261026|c14433c7879500f7cfe4d43b1499325929e4d3c1
+          ROWS
+          for row in "${rows[@]}"; do
+           IFS='|' read -r branch expected <<< "$row"
+           [[ "$branch" != main && "$branch" != maintenance/* ]] || exit 1
+           ! grep -Fxq -- "$branch" <<< "$open_head_and_bases" || { echo "ABORT referenced by open PR: $branch"; exit 1; }
+           actual=$(git ls-remote origin "refs/heads/$branch" | cut -f1)
+           [[ "$actual" == "$expected" ]] || { echo "ABORT changed branch $branch: $actual"; exit 1; }
+           git merge-base --is-ancestor "$expected" origin/main || { echo "ABORT unmerged head: $branch"; exit 1; }
+           backup=$(git ls-remote origin "refs/tags/$PREFIX/$branch" | cut -f1)
+           [[ -z "$backup" || "$backup" == "$expected" ]] || { echo "ABORT archive collision $branch"; exit 1; }
+          done
+          for row in "${rows[@]}"; do
+           IFS='|' read -r branch expected <<< "$row"
+           tag="$PREFIX/$branch"
+           if [[ -z "$(git ls-remote origin "refs/tags/$tag" | cut -f1)" ]]; then
+            git tag "$tag" "$expected"
+            git push origin "refs/tags/$tag:refs/tags/$tag"
+           fi
+           git push --force-with-lease="refs/heads/$branch:$expected" origin ":refs/heads/$branch"
+           [[ -z "$(git ls-remote origin "refs/heads/$branch" | cut -f1)" ]] || exit 1
+           echo "ARCHIVED & REMOVED $branch"
+          done
+          SELF='maintenance/prune-merged-a-b-20261026'
+          [[ "$(git ls-remote origin "refs/heads/$SELF" | cut -f1)" == "$GITHUB_SHA" ]] || { echo 'ABORT cleanup branch moved'; exit 1; }
+          tag="$PREFIX/maintenance-workflow-$GITHUB_SHA"
+          git tag "$tag" "$GITHUB_SHA"
+          git push origin "refs/tags/$tag:refs/tags/$tag"
+          git push --force-with-lease="refs/heads/$SELF:$GITHUB_SHA" origin ":refs/heads/$SELF"
+          echo 'SUCCESS: all 9 safe branches and maintenance branch deleted with archive tags'
