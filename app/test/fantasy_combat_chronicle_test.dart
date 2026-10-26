@@ -214,9 +214,9 @@ void main() {
         MaterialApp(
           theme: buildFantasyTheme(),
           builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(context).copyWith(
-              textScaler: const TextScaler.linear(2),
-            ),
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: const TextScaler.linear(2)),
             child: child!,
           ),
           home: Scaffold(
@@ -249,7 +249,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.bySemanticsLabel(RegExp(r'^Angriffswurf, .*Wurf: 19, Treffer, Schaden: 6')),
+        find.bySemanticsLabel(
+          RegExp(r'^Angriffswurf, .*Wurf: 19, Treffer, Schaden: 6'),
+        ),
         findsOneWidget,
       );
       expect(
@@ -257,24 +259,29 @@ void main() {
         findsOneWidget,
       );
       expect(
-        tester.getTopLeft(
-          find.byKey(const ValueKey('chronicle-event-heal-accessible')),
-        ).dy,
+        tester
+            .getTopLeft(
+              find.byKey(const ValueKey('chronicle-event-heal-accessible')),
+            )
+            .dy,
         lessThan(
-          tester.getTopLeft(
-            find.byKey(const ValueKey('chronicle-event-roll-accessible')),
-          ).dy,
+          tester
+              .getTopLeft(
+                find.byKey(const ValueKey('chronicle-event-roll-accessible')),
+              )
+              .dy,
         ),
       );
       expect(
         find.bySemanticsLabel(RegExp('DO_NOT_ANNOUNCE_INTERNAL_CHECKPOINT')),
         findsNothing,
       );
-      expect(find.textContaining('DO_NOT_ANNOUNCE_INTERNAL_CHECKPOINT'),
-          findsNothing);
+      expect(
+        find.textContaining('DO_NOT_ANNOUNCE_INTERNAL_CHECKPOINT'),
+        findsNothing,
+      );
       expect(tester.takeException(), isNull);
       semantics.dispose();
     });
   }
-
 }
