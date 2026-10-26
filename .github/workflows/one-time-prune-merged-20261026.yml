@@ -1,0 +1,68 @@
+name: One-time prune integrated historical branches 2026-10-26
+on:
+  push:
+    branches:
+      - maintenance/prune-merged-20261026
+permissions:
+  contents: write
+  actions: read
+  pull-requests: read
+jobs:
+  prune:
+    if: github.repository == 'ManuEtt/Dnd'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Confirm archives, Git ancestry, branch SHAs and delete exact refs
+        shell: bash
+        run: |
+          set -euo pipefail
+          PREFIX='archive/branch-prune-20261026'
+          BASE='5f9a01dd73f68ad4f9e226f859a8ca87803b8337'
+          CI=$(gh api repos/ManuEtt/Dnd/actions/runs/40233719625 --jq '[.head_sha,.status,.conclusion] | join("|")')
+          [[ "$CI" == "$BASE|completed|success" ]] || { echo "ABORT baseline CI $CI"; exit 1; }
+          git fetch --quiet origin main
+          git merge-base --is-ancestor "$BASE" origin/main || { echo 'ABORT tested base not on main'; exit 1; }
+          open_heads=$(gh api --paginate 'repos/ManuEtt/Dnd/pulls?state=open&per_page=100' --jq '.[].head.ref')
+          mapfile -t rows <<'ROWS'
+          feat/chat-c/accessible-status-hud-20261025|3a7c5cb89c2dc8ca1b1115f8693e5dbd98a2e5e6
+          feat/chat-b/npc-narrator-memory-20261025|80f103a3ba5ab8a95670375140e87dd1d4b459bc
+          feat/chat-a/spell-duration-classification-20261025|154bdcd538e155c196d0fd8611e6ef62bbd220fc
+          integration/npc-narrator-memory-main-20261025|fb6dc116368639b21c6b32931c4544cea10641de
+          integration/spell-duration-main-20261025|f6204c1b11913bb7fed8afa69b9da5ec31e0fd7c
+          ROWS
+          for row in "${rows[@]}"; do
+            IFS='|' read -r branch expected <<< "$row"
+            [[ "$branch" != main && "$branch" != maintenance/* ]] || exit 1
+            ! grep -Fxq "$branch" <<< "$open_heads" || { echo "ABORT open PR: $branch"; exit 1; }
+            actual=$(git ls-remote origin "refs/heads/$branch" | cut -f1)
+            [[ "$actual" == "$expected" ]] || { echo "ABORT changed head $branch $actual"; exit 1; }
+            git merge-base --is-ancestor "$expected" origin/main || { echo "ABORT unmerged: $branch"; exit 1; }
+            backup=$(git ls-remote origin "refs/tags/$PREFIX/$branch" | cut -f1)
+            [[ -z "$backup" || "$backup" == "$expected" ]] || { echo "ABORT tag conflict $branch"; exit 1; }
+          done
+          for row in "${rows[@]}"; do
+            IFS='|' read -r branch expected <<< "$row"
+            tag="$PREFIX/$branch"
+            if [[ -z "$(git ls-remote origin "refs/tags/$tag" | cut -f1)" ]]; then
+              git tag "$tag" "$expected"
+              git push origin "refs/tags/$tag:refs/tags/$tag"
+            fi
+            git push --force-with-lease="refs/heads/$branch:$expected" origin ":refs/heads/$branch"
+            [[ -z "$(git ls-remote origin "refs/heads/$branch" | cut -f1)" ]] || { echo "ABORT deletion not confirmed $branch"; exit 1; }
+            echo "DELETED and archived $branch"
+          done
+          SELF='maintenance/prune-merged-20261026'
+          actual_self=$(git ls-remote origin "refs/heads/$SELF" | cut -f1)
+          [[ "$actual_self" == "$GITHUB_SHA" ]] || { echo 'ABORT self changed'; exit 1; }
+          tag="$PREFIX/workflow-$GITHUB_SHA"
+          git tag "$tag" "$GITHUB_SHA"
+          git push origin "refs/tags/$tag:refs/tags/$tag"
+          git push --force-with-lease="refs/heads/$SELF:$GITHUB_SHA" origin ":refs/heads/$SELF"
+          echo 'SUCCESS: retired 5 merged branches plus cleanup branch; tags kept.'
