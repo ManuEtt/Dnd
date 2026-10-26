@@ -129,7 +129,7 @@ void main() {
       'V, S, S',
       'S, V',
       'V, S (unapproved details)',
-      'V, S\\nM',
+      'V, S\nM',
     ]) {
       expect(
         () => SrdSpellDefinition.fromJson({
@@ -148,7 +148,7 @@ void main() {
       'V, S, M ()',
       'V, S, M (ash) (other)',
       'V, S, M, M (ash)',
-      'V, S, M (ash)\\nX',
+      'V, S, M (ash)\nX',
     ]) {
       expect(
         () => SrdSpellDefinition.fromJson({
