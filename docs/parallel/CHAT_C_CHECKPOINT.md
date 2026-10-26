@@ -5,7 +5,7 @@
 - **Ausgangs-`main`:** `12e2df634c1f60e972681cef4ca08b41e2d29410`
 - **Branch:** `fix/chat-c/spell-effect-countdown-20261026`
 - **Letzter technischer Commit:** `9e204e146dbbf35f2f226d1fbb5f487619b35c7d` (anschließende Dokumentationscommits auf demselben Branch)
-- **Pull Request:** zugeordnet nach Erstellung; Branch aktuell noch nicht in `main`.
+- **Pull Request:** [#252](https://github.com/ManuEtt/Dnd/pull/252), Draft bis finale CI bestätigt; Branch aktuell nicht in `main`.
 - **Problem:** `FantasyEffectWard._spellDuration` zeigte bei genau einem bestätigten eigenen Zugende fälschlich den Plural „noch 1 eigene Zugenden“; frühere Tests prüften nur vier verbleibende Zugenden.
 - **Akzeptanz:** 1 Ende = „noch 1 eigenes Zugende“; mehrere Enden = korrekter Plural; fremde/nicht bestätigte Begegnungen = keine spekulative Restzeit; gespeicherte Zaubereffekte bleiben unverändert.
 - **Änderungen:** `app/lib/ui/fantasy_effect_ward.dart`; `app/test/confirmed_spell_effect_widget_test.dart`; `README.md`; `docs/CODEX_CHECKPOINT.md`; dieser Checkpoint.
