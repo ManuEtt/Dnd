@@ -83,7 +83,8 @@ export function validateNpcIdentityContext(input: StoryTurnWithNpcIdentities): v
       (!safeId(input.selectedNpcId) ||
         input.npcContexts.length !== 1 ||
         input.npcContexts[0]?.npcId !== input.selectedNpcId ||
-        input.npcContexts[0]?.notes.length === 0)) {
+        (!Array.isArray(input.npcContexts[0]?.notes) ||
+          input.npcContexts[0]!.notes.length === 0))) {
     throw new Error('invalid_npc_selection');
   }
 
