@@ -2,7 +2,7 @@
 
 ## Ausgangslage und Koordination
 - Repository: `ManuEtt/Dnd`; Ausgangs-`main`: `20098805d8c70cbd361a13862379894c47ef4eb6`.
-- Branch: `feat/chat-b/explicit-npc-identity-selection-20261026`.
+- Branch: `feat/chat-b/explicit-npc-identity-selection-20261026`; Pull Request [#224](https://github.com/ManuEtt/Dnd/pull/224). Quell-/Formatter-Korrektur-Commit: `99fe532c988a00799d9ae7c82625814e36926bbc`; der endgültige Dokumentations-HEAD steht unmittelbar am PR.
 - Bei Start offen: PR #216, #218, #219 (UI/Gradle), #220 (Backend-Zeitstempelprüfung), #221 (Feuerpfeil-Regelwerk/Controller), #222 (Mock-NPC-Erinnerungen).
 - Keine der offenen PRs verändert `app/lib/story/npc_identity_story_payload.dart`, `app/lib/story/npc_story_selection.dart` oder `app/test/npc_story_selection_test.dart`; gemeinsame README- und Checkpoint-Dateien beim Merge durch Chat D konsolidieren.
 - PR #222 auf HEAD `35add6aa122a5059472e952243094d717f3f833f`: CI #40289940245 zum Start noch `in_progress` beim Android-Debug-Build, Backend- und Flutter-Tests vorher grün. #222 bleibt eigener PR.
