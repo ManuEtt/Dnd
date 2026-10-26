@@ -2,7 +2,7 @@
 
 ## Ausgangslage und PR
 - Ausgangs-`main`: `20098805d8c70cbd361a13862379894c47ef4eb6` nach Merge von PR #217.
-- Eigener Branch: `feat/chat-b/mock-structured-npc-recall-20261026`. PR/HEAD stehen im entsprechenden GitHub-Branch (bei CI-Abnahme PR-HEAD kontrollieren).
+- Eigener Branch: `feat/chat-b/mock-structured-npc-recall-20261026`; PR [#222](https://github.com/ManuEtt/Dnd/pull/222); Fach-/Testfix-Commit `29263f811ea78aa95d32c0202776286289613251`. Der GitHub-PR-HEAD enthält anschließend zusätzliche Dokumentationscommits; CI muss daher jeweils an der exakten SHA geprüft werden.
 - Offene PRs zu Arbeitsbeginn: #216 (Kampfteilnehmer-Karte), #218 (Gradle-Properties), #219 (deren Integration); **keine Fachdateiüberschneidung**. Main-CI #40288770032 zu Beginn noch laufend; vorherige grüne Main-CI #40285915083 zum älteren HEAD `0212e99...`.
 - Alle acht Pflichtdokumente anhand der tatsächlichen Dateien in `main` abgeglichen, einschließlich der aktuellen Story-/Backend-Verträge.
 
