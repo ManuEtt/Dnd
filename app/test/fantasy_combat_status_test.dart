@@ -280,12 +280,12 @@ void main() {
         MaterialApp(
           theme: buildFantasyTheme(),
           builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(context).copyWith(
-              textScaler: const TextScaler.linear(2),
-            ),
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: const TextScaler.linear(2)),
             child: child!,
           ),
-          home: const Scaffold(
+          home: Scaffold(
             body: ListView(
               children: [
                 FantasyCombatActionEconomy(
@@ -348,12 +348,12 @@ void main() {
       MaterialApp(
         theme: buildFantasyTheme(),
         builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            textScaler: const TextScaler.linear(2),
-          ),
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: const TextScaler.linear(2)),
           child: child!,
         ),
-        home: const Scaffold(
+        home: Scaffold(
           body: ListView(
             children: [
               FantasyCombatActionEconomy(
@@ -369,15 +369,9 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(
-      find.bySemanticsLabel('Bewegung: nicht bestätigt'),
-      findsOneWidget,
-    );
+    expect(find.bySemanticsLabel('Bewegung: nicht bestätigt'), findsOneWidget);
     expect(find.bySemanticsLabel('Aktion: verfügbar'), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('combat-spell-slot-state')),
-      findsNothing,
-    );
+    expect(find.byKey(const ValueKey('combat-spell-slot-state')), findsNothing);
     expect(tester.takeException(), isNull);
     semantics.dispose();
   });
@@ -392,7 +386,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: buildFantasyTheme(),
-        home: const Scaffold(
+        home: Scaffold(
           body: ListView(
             children: [
               FantasyCombatActionEconomy(
@@ -411,14 +405,13 @@ void main() {
     expect(
       tester.getTopLeft(find.byKey(const ValueKey('combat-action-state'))).dy,
       closeTo(
-        tester.getTopLeft(
-          find.byKey(const ValueKey('combat-bonus-action-state')),
-        ).dy,
+        tester
+            .getTopLeft(find.byKey(const ValueKey('combat-bonus-action-state')))
+            .dy,
         1,
       ),
     );
     expect(find.text('Bewegung: 9 m'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
-
 }
