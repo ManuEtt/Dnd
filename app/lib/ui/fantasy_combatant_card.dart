@@ -94,7 +94,10 @@ class FantasyCombatantCard extends StatelessWidget {
                       color: accent,
                       size: 42,
                     ),
-                    SizedBox(width: largeText ? 0 : 10, height: largeText ? 8 : 0),
+                    SizedBox(
+                      width: largeText ? 0 : 10,
+                      height: largeText ? 8 : 0,
+                    ),
                     if (largeText)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
