@@ -115,7 +115,9 @@ class NpcIdentityMemory {
         actual.alive != context.alive ||
         actual.relationship != context.relationship ||
         actual.notes.length != context.notes.length) {
-      throw const FormatException('NPC-Kontext wurde zwischenzeitlich geändert.');
+      throw const FormatException(
+        'NPC-Kontext wurde zwischenzeitlich geändert.',
+      );
     }
     for (var i = 0; i < actual.notes.length; i++) {
       final current = actual.notes[i];
@@ -125,11 +127,12 @@ class NpcIdentityMemory {
           current.relationship != old.relationship ||
           current.note != old.note ||
           current.recordedAt != old.recordedAt) {
-        throw const FormatException('NPC-Kontext wurde zwischenzeitlich geändert.');
+        throw const FormatException(
+        'NPC-Kontext wurde zwischenzeitlich geändert.',
+      );
       }
     }
   }
 }
 
-String _oneLine(String value) =>
-    value.replaceAll(RegExp(r'\s+'), ' ').trim();
+String _oneLine(String value) => value.replaceAll(RegExp(r'\s+'), ' ').trim();
