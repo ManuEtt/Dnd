@@ -4,7 +4,7 @@ Deutschsprachige Android-Alpha für regelgeprüfte Soloabenteuer und lokale Kamp
 
 ## Aktueller Stand und autonome Fortsetzung (26.10.2026)
 
-**Version 0.8.41+91 – Klassenprüfung für Heilige Flamme.** Branch `fix/sacred-flame-caster-validation-20261026` integriert Main `d03faea7ce032e8918da2204228473bd9999932c` und die geprüfte Klassenwerte-Berechnung aus [PR #184](https://github.com/ManuEtt/Dnd/pull/184) in den tatsächlichen Zauberablauf.
+**Version 0.8.41+91 – Klassenprüfung für Heilige Flamme.** Branch `fix/sacred-flame-caster-validation-20261026` integriert Main `0212e99b6222f9fcae0714a2ee09123c3c78347c` und die geprüfte Klassenwerte-Berechnung aus [PR #184](https://github.com/ManuEtt/Dnd/pull/184) in den tatsächlichen Zauberablauf.
 
 Heilige Flamme lehnt doppelte Klassenaliase, unbekannte Partnerklassen und widersprüchliche Klassenstufen jetzt vor Würfeln, Schaden und Aktionsverbrauch ab. Für gültige Mehrklassencharaktere bleiben Kleriker-Weisheit und der Übungsbonus der Gesamtstufe maßgeblich. Nach der vorhandenen ausdrücklichen SG-Bestätigung zeigt der Dialog die verwendeten Werte; ungültige Profile können nicht bestätigt werden. Titel und Inhalt bleiben gemeinsam scrollbar, auch bei großer Schrift und eingeblendeter Tastatur.
 
@@ -14,7 +14,7 @@ Heilige Flamme lehnt doppelte Klassenaliase, unbekannte Partnerklassen und wider
 
 **GitHub:** [PR #217](https://github.com/ManuEtt/Dnd/pull/217), geprüfter Code-/APK-Quellcommit `7c9441e650a3b809db50f1a2d708d39bddfb39b7`. Vollständige [Android-CI #40284690640](https://github.com/ManuEtt/Dnd/actions/runs/40284690640) auf diesem Code-/Build-HEAD erfolgreich, einschließlich Debug-, nativer und drei Alpha-ABI-Builds. Spätere reine Dokumentationsnachträge sind über die [finalen PR-Checks](https://github.com/ManuEtt/Dnd/pull/217/checks) separat nachvollziehbar. [Checkpoint](docs/CODEX_CHECKPOINT.md) · [fachlicher Nachweis](docs/SACRED_FLAME_CLASS_VALIDATION_20261026.md).
 
-**Geerbte Buildfehler korrigiert:** Die ZIP-Dateimodi und Schreibfehler-Regressionen aus PR #215 sind mit den Originalkorrekturen `340fe91`/`8fd2141` übernommen; der zusätzliche NPC-Analyzer-/Formatfehler ist in `5edf968` behoben. Die alte Baseline-Gesamtsuite wurde nach dem Main-Fortschritt bewusst abgebrochen und durch die vollständig erfolgreiche kombinierte Abnahme ersetzt.
+**Geerbte Buildfehler korrigiert:** PR #215 wurde inzwischen auch in Main integriert; die entsprechenden Quell-/Testdateien sind bytegleich mit unserer Abnahme. Die ZIP-Dateimodi und Schreibfehler-Regressionen aus PR #215 sind mit den Originalkorrekturen `340fe91`/`8fd2141` übernommen; der zusätzliche NPC-Analyzer-/Formatfehler ist in `5edf968` behoben. Die alte Baseline-Gesamtsuite wurde nach dem Main-Fortschritt bewusst abgebrochen und durch die vollständig erfolgreiche kombinierte Abnahme ersetzt.
 
 Andere aktuelle Arbeitsstände stehen unter [docs/parallel](docs/parallel/). Frühere README-/Checkpoint-Fassungen von Main und PR #184 sind [bytegenau archiviert](docs/history/sacred_flame_before_20261026/manifest.json). Grüne Einzel-CIs sind kein Nachweis einer neuen Kombination.
 
@@ -60,6 +60,6 @@ Weiterhin offen: zahlreiche Zauber-/Klassen-/Monstermechaniken, amtliche Vollinv
 - [Architektur](ARCHITECTURE.md) · [Regel-/Story-Grenze](docs/ARCHITEKTUR_REGELENGINE_STORY_TRENNUNG.md) · [Tests](TESTING.md)
 - [Changelog](CHANGELOG.md) · [Entwicklungsstatus](DEVELOPMENT_STATUS.md) · [Roadmap](ROADMAP.md)
 
-Downloadlinks zum überprüften Vollprojekt-ZIP und Patch stehen in [PR #217](https://github.com/ManuEtt/Dnd/pull/217). Vollprojekt-ZIP, Git-Patch, APKs, Prüfberichte, Dateimanifest und SHA256 lokal unter `/workspace/artifacts/0.8.41+91/`; aktuelle Dateinamen im dortigen Artefaktindex. Finale Patchbasis `d03faea7ce032e8918da2204228473bd9999932c` (die frühe Sicherung nennt ihre abweichende Basis im Manifest). ZIP in eine Arbeitskopie entpacken oder Patch auf dieser Basis mit `git apply --check` und `git apply` übernehmen, eigenen Branch pushen und PR öffnen. Keine alten Stände ungeprüft über Main kopieren. APKs werden separat bereitgestellt.
+Downloadlinks zum überprüften Vollprojekt-ZIP und Patch stehen in [PR #217](https://github.com/ManuEtt/Dnd/pull/217). Vollprojekt-ZIP, Git-Patch, APKs, Prüfberichte, Dateimanifest und SHA256 lokal unter `/workspace/artifacts/0.8.41+91/`; aktuelle Dateinamen im dortigen Artefaktindex. Finale Patchbasis `0212e99b6222f9fcae0714a2ee09123c3c78347c` (die frühe Sicherung nennt ihre abweichende Basis im Manifest). ZIP in eine Arbeitskopie entpacken oder Patch auf dieser Basis mit `git apply --check` und `git apply` übernehmen, eigenen Branch pushen und PR öffnen. Keine alten Stände ungeprüft über Main kopieren. APKs werden separat bereitgestellt.
 
 Nur rechtmäßig nutzbare Inhalte des **SRD 5.2.1 von Wizards of the Coast unter CC BY 4.0** sowie eigene/lizenzierte Inhalte nutzen. [Namensnennung](THIRD_PARTY_NOTICES.md) erhalten. Keine automatische Weiterarbeit außerhalb einer aktiven Sitzung.

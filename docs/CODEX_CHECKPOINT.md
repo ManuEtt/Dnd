@@ -4,12 +4,12 @@ Stand **2026-10-26T07:26:16+00:00**. Würfelraunen **0.8.41+91**, SQLite **2**, 
 
 ## Git und überprüfbare Quellen
 
-- Ursprungsbasis `575a885bd34ecae2bd173dc183abf88a367a69af`, regulär integriertes Main und finale Patchbasis `d03faea7ce032e8918da2204228473bd9999932c`. Main in diesem Paket nicht verändert.
+- Ursprungsbasis `575a885bd34ecae2bd173dc183abf88a367a69af`, regulär integriertes Main und finale Patchbasis `0212e99b6222f9fcae0714a2ee09123c3c78347c`. Main in diesem Paket nicht verändert.
 - Arbeitskopie `/workspace/Dnd-sacred-flame-20261026`, Branch `fix/sacred-flame-caster-validation-20261026`, [PR #217](https://github.com/ManuEtt/Dnd/pull/217). Code-/Build-HEAD **`7c9441e650a3b809db50f1a2d708d39bddfb39b7`**; anschließende Dokumentationscommits ändern keine Build-Eingaben. Den neuesten Branch-HEAD bei Wiederaufnahme mit `git rev-parse HEAD` feststellen.
 - Fachfix `cc0d309`, Main-Merge `a377ba8`. Klassenrechner aus PR #184 inzwischen auch in Main; kein zweiter Rechner. ZIP-Reparaturen aus PR #215 (`340fe91`/`8fd2141`) mit Autorenhistorie als `20afc25`/`14a75fb` übernommen. Geerbter NPC-Lint/Formatfehler in `5edf968` korrigiert; keine temporäre CI-Diagnose übernommen.
-- Vollständige [Android-CI #40284690640](https://github.com/ManuEtt/Dnd/actions/runs/40284690640) auf diesem Code-/Build-HEAD erfolgreich, einschließlich Debug-, nativer und drei Alpha-ABI-Builds. Spätere reine Dokumentationsnachträge sind über die [finalen PR-Checks](https://github.com/ManuEtt/Dnd/pull/217/checks) separat nachvollziehbar.
+- Vollständige [PR-Android-CI #40284760958](https://github.com/ManuEtt/Dnd/actions/runs/40284760958) auf diesem Code-/Build-HEAD erfolgreich, einschließlich Debug-, nativer und drei Alpha-ABI-Builds. Spätere reine Dokumentationsnachträge sind über die [finalen PR-Checks](https://github.com/ManuEtt/Dnd/pull/217/checks) separat nachvollziehbar.
 - Bei Bestandsaufnahme Main-Android-CI [#40283858187](https://github.com/ManuEtt/Dnd/actions/runs/40283858187) auf d03 fehlgeschlagen: drei ZIP-Pythontests, alle späteren Gates übersprungen. PR-#215-Läufe #40284284178/#40284279247 danach wegen `prefer_is_empty` rot. Beide Ursachen im aktuellen Code korrigiert. Grüne #40283858195 war ausschließlich eine Eldritch-Teilstrecke.
-- Ursprüngliche Main-/PR-#184-Fassungen sowie d03 und cc0d309 unter `docs/history/sacred_flame_before_20261026/` bytegenau mit Commit/SHA256 archiviert. Weitere aktive PRs zuletzt #215 (ZIP-Modi) und #216 (Kampfkarte/große Schrift); vor Übernahme neue Köpfe und Checks live lesen, nicht automatisch schließen/löschen.
+- Ursprüngliche Main-/PR-#184-Fassungen sowie d03 und cc0d309 unter `docs/history/sacred_flame_before_20261026/` bytegenau mit Commit/SHA256 archiviert. PR #215 wurde danach in Main integriert; anschließend regulär synchronisiert, sämtliche Laufzeit-/Builddateien weiter bytegleich zur abgenommenen Quelle7c9441e. Andere aktive PRs zuletzt #216 (Kampfkarte/große Schrift) und #218 (Gradle-Property-Schlüssel); vor Übernahme neue Köpfe und Checks live lesen, nicht automatisch schließen/löschen.
 
 ## IMPLEMENTIERT
 
@@ -44,7 +44,7 @@ Tatsächliche APK-Quell-ZIP: `Wuerfelraunen_0.8.41+91_20261026T071518295880Z_kom
 - Debug `Wuerfelraunen_0.8.41+91_Debug.apk`,144.196.020Bytes,SHA256 `e3f207e75b0d7a723a1de4a85cf2cc3c9aad74cc35f014cc519eb5feecf92beb`, ARM64/ARMv7/x64.
 - Alpha `Wuerfelraunen_0.8.41+91_arm64-v8a_Alpha.apk`,19.925.182Bytes,SHA256 `913c2aafe70ce5164ade4cb93eb85a2790cc97abfaf957ffc0f1aa89b3d9c3e2`, ausschließlich ARM64.
 
-Am einfachsten bestehenden Branch abrufen und PR prüfen. Für Offlineimport: ZIP-Wurzel mit `app/`, `backend/`, `scripts/` und `.github/` in eine eigene Arbeitskopie übernehmen. Alternativ Patch auf d03 mit `git apply --check` und `git apply` anwenden, Tests ausführen, eigenen Branch pushen/PR erstellen. Keine alten Stände ungeprüft über Main schreiben. Frühere uncommittete Worktrees und deren Checkpoints erhalten.
+Am einfachsten bestehenden Branch abrufen und PR prüfen. Für Offlineimport: ZIP-Wurzel mit `app/`, `backend/`, `scripts/` und `.github/` in eine eigene Arbeitskopie übernehmen. Alternativ Patch auf `0212e99` mit `git apply --check` und `git apply` anwenden, Tests ausführen, eigenen Branch pushen/PR erstellen. Keine alten Stände ungeprüft über Main schreiben. Frühere uncommittete Worktrees und deren Checkpoints erhalten.
 
 ## NOCH NICHT IMPLEMENTIERT / genau ein nächster Schritt
 
