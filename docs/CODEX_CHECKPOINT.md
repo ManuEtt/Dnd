@@ -1,3 +1,18 @@
+## Chat A – Zauberdauer-Metadaten konservativ prüfen (26.10.2026)
+
+- **Ausgangs-main:** `67f146e690306b13d490bd8e7fd5636bb187c77e`; **Branch:** `fix/chat-a/spell-duration-integrity-20261026`.
+- **Problem:** `SrdSpellDurationRules.parse` hat bisher durch `trim()` manipulierbare führende oder abschließende Leer-/Zeilenzeichen stillschweigend entfernt und damit einen anderen, nicht geprüften Katalogwert als gültige Zauberdauer behandelt.
+- **IMPLEMENTIERT:** Kein stilles Normalisieren mehr. Dauertexte mit Randzeichen werden vor der Klassifikation als `FormatException` verweigert; bestehende kanonische Instant-/Zeit-/Konzentrationsdauern bleiben gültig.
+- **Tests hinzugefügt:** `app/test/srd_spell_duration_integrity_test.dart` mit positiven Formen, Zeilenumbruch-/Whitespace-Manipulationen, inneren Steuerzeichen und unverändert nicht unterstützter `Special`-Dauer.
+- **SRD:** Wizards of the Coast LLC, SRD 5.2.1, Abschnitt *Spells / Duration*, CC BY 4.0; Registerpunkt `RULE-SPELLS-SPELL-DURATION` bleibt unvollständig, denn dies ist nur Metadatenprüfung.
+- **Kompatibilität:** Kein Spielstands-, SQLite-, API- oder JSON-Schemawechsel; keine Ablauf-Uhr, keine autonome Zauberwirkung oder Ressourcenbuchung.
+- **GETESTET:** Katalog-Check der Basis zeigte **339/339** Einträge ohne Randzeichen; dies ist kein Flutter-/Android-Test.
+- **NICHT GETESTET:** Neue Dart-Tests, Gesamtanalyse und Android-CI stehen beim Erstellen dieser Notiz noch aus; Teststatus anhand des zugehörigen Workflows beurteilen.
+- **Koordination:** Andere offene PRs #247 und #250 behandeln Zauberkomponenten, nicht den Fachpfad `srd_spell_duration_rules.dart`; gemeinsame README-/Checkpoint-Änderungen vor Merge durch Chat D konsolidieren.
+- **NÄCHSTER SCHRITT:** Auf dem finalen PR-HEAD vollständige CI abnehmen und bei Fehlern den eigenen Branch korrigieren; erst danach konfliktfreie Integration durch Chat D.
+
+---
+
 # CODEX-CHECKPOINT – vollständige Branch-Migration
 
 Stand **2026-10-26T17:38:53+00:00**, Würfelraunen **0.8.42+92**, SQLite **2**, Kampagnen-JSON **1**.
