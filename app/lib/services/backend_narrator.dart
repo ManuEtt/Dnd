@@ -124,6 +124,9 @@ class BackendNarrator extends ChangeNotifier {
   int requestsUsed = 0;
   bool allowPaidProvider = false;
 
+  /// True only for the active, validated session of an NPC-ID-capable server.
+  bool supportsNpcIdentityContexts = false;
+
   String? _sessionToken;
   String? _authorizedProvider;
   Uri? _baseUri;
@@ -145,6 +148,7 @@ class BackendNarrator extends ChangeNotifier {
     expiresAt = null;
     requestsUsed = 0;
     allowPaidProvider = false;
+    supportsNpcIdentityContexts = false;
   }
 
   bool _current(int generation) => !_disposed && generation == _generation;
@@ -304,6 +308,9 @@ class BackendNarrator extends ChangeNotifier {
       provider = _authorizedProvider;
       expiresAt = expiry;
       this.allowPaidProvider = allowPaidProvider;
+      supportsNpcIdentityContexts =
+          body['capabilities'] is List &&
+          (body['capabilities'] as List).contains('npc-identity-v1');
       enabled = true;
       statusMessage =
           'Backend verbunden. Es erhält nur Erzählkontext und darf keine Spielwerte verändern.';
@@ -537,7 +544,21 @@ class BackendNarrator extends ChangeNotifier {
     required List<Map<String, String>> npcs,
     required List<String> memories,
     required List<String> recentActions,
+    int? campaignRevision,
+    List<Map<String, Object>>? npcContexts,
   }) {
+    if ((campaignRevision == null) != (npcContexts == null)) {
+      throw const FormatException('Unvollständiger NPC-ID-Kontext.');
+    }
+    if (npcContexts != null &&
+        (!supportsNpcIdentityContexts ||
+            campaignRevision! < 0 ||
+            campaignRevision > 2147483647 ||
+            npcContexts.length > 3)) {
+      throw const FormatException(
+        'NPC-ID-Kontext vom Server nicht freigegeben.',
+      );
+    }
     if (!RegExp(r'^[a-zA-Z0-9_-]{1,128}$').hasMatch(campaignId) ||
         action.trim().isEmpty ||
         action.length > 2000 ||
@@ -564,6 +585,10 @@ class BackendNarrator extends ChangeNotifier {
       'npcs': npcs,
       'memories': memories,
       'recentActions': recentActions,
+      if (npcContexts != null) ...{
+        'campaignRevision': campaignRevision,
+        'npcContexts': npcContexts,
+      },
     }, 'turn');
   }
 

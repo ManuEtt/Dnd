@@ -1551,12 +1551,15 @@
       "license": "CC-BY-4.0",
       "rule_implemented": "partial",
       "code": [
-        "app/lib/domain/srd_eldritch_blast_rules.dart"
+        "app/lib/domain/srd_eldritch_blast_rules.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/services/game_controller.dart"
       ],
       "tests": [
-        "app/test/srd_eldritch_blast_rules_test.dart"
+        "app/test/srd_eldritch_blast_rules_test.dart",
+        "app/test/srd_eldritch_blast_encounter_test.dart"
       ],
-      "note": "Offizielles SRD 5.2.1, Eldritch Blast: 1/2/3/4 eigene Strahlen ab Charakterstufen 1/5/11/17, unabhängige Angriffswürfe gegen gleiche oder verschiedene ausdrücklich bestätigte Ziele, pro Treffer 1d10 Force und bei kritischem Treffer doppelte Würfel. Rein lesendes Fachpaket ohne Slot-/Aktions-/HP-/Kampagnenbuchung; volle SRD-Zauberwirkung, Zielverwaltung, Invocations und Android-Geräteabnahme fehlen."
+      "note": "Teilmechanik SRD 5.2.1 Eldritch Blast: 1/2/3/4 unabhängige Strahlen nach Charakterstufe und bestätigte einzelne Angriffe. Zusätzlich vorab validierte Single-Foe-Encounter-Aktion mit getrennten Force-Schadensinstanzen, aktionsverbrauch, revisionierter Controller-SQLite-Buchung und Ereignisjournal. Mehrziel-Kampagnenzustände, Invocations, UI, echte Geräteabnahme und nicht modellierte Abwehr fehlen; keine vollständige Zauberwirkung."
     },
     {
       "id": "SPELL-ENTRY-ELEMENTALISM",
