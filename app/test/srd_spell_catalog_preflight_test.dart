@@ -115,7 +115,9 @@ void main() {
   test(
     'component grammar rejects forged symbols and material descriptions',
     () async {
-      final source = await rootBundle.loadString('assets/srd_5_2_1_spells.json');
+      final source = await rootBundle.loadString(
+        'assets/srd_5_2_1_spells.json',
+      );
       final decoded = jsonDecode(source) as Map<String, dynamic>;
       final entries = decoded['spells'] as List<dynamic>;
       Map<String, dynamic> spellNamed(String name) {
