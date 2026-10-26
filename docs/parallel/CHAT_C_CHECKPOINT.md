@@ -1,5 +1,23 @@
 # CHAT C – Android und Fantasy-UI
 
+## Chat C – Zyklus C-002: Zauber-Restdauer korrekt deklinieren (26.10.2026)
+
+- **Ausgangs-`main`:** `12e2df634c1f60e972681cef4ca08b41e2d29410`
+- **Branch:** `fix/chat-c/spell-effect-countdown-20261026`
+- **Letzter technischer Commit:** `9e204e146dbbf35f2f226d1fbb5f487619b35c7d` (anschließende Dokumentationscommits auf demselben Branch)
+- **Pull Request:** zugeordnet nach Erstellung; Branch aktuell noch nicht in `main`.
+- **Problem:** `FantasyEffectWard._spellDuration` zeigte bei genau einem bestätigten eigenen Zugende fälschlich den Plural „noch 1 eigene Zugenden“; frühere Tests prüften nur vier verbleibende Zugenden.
+- **Akzeptanz:** 1 Ende = „noch 1 eigenes Zugende“; mehrere Enden = korrekter Plural; fremde/nicht bestätigte Begegnungen = keine spekulative Restzeit; gespeicherte Zaubereffekte bleiben unverändert.
+- **Änderungen:** `app/lib/ui/fantasy_effect_ward.dart`; `app/test/confirmed_spell_effect_widget_test.dart`; `README.md`; `docs/CODEX_CHECKPOINT.md`; dieser Checkpoint.
+- **Tests hinzugefügt:** zwei bestätigte Widgetfälle für 320/360 dp mit 200 % Systemschrift, jeweils Singular, Plural und unverändertes Hero-JSON; ein Negativtest für eine fremde Begegnung.
+- **GETESTET:** Neuer Code noch nicht per CI geprüft. Lokales Flutter-/Dart-SDK nicht vorhanden; kein Android-Gerätetest.
+- **BLOCKIERT:** Keine lokale Flutter-Ausführung; vollständige Prüfung über CI nötig. Shared-Dokumentationspfade erfordern Integrationskoordination.
+- **Migration:** keine. Unveränderte Regel-/RNG-/Kampfdaten, SQLite, JSON und Schnittstellen.
+- **Koordination:** Bei Branch-Anlage kein offener PR zu den beiden technischen Dateipfaden. Main und offene PRs vor Merge erneut prüfen. Kein direktes `main`-Update und kein Merge.
+- **Voriger Zyklus C-001:** PR [#245](https://github.com/ManuEtt/Dnd/pull/245) mit vollständig erfolgreicher CI [#40375552456](https://github.com/ManuEtt/Dnd/actions/runs/40375552456) auf `8fa2a2166e3681605e5610cb7c93dc0fae8a5fa0`, ready for review, **noch nicht gemergt**. Realgerätetest offen.
+- **Nächster konkreter Schritt:** vollständige GitHub-CI des neuen Branch-HEADs abnehmen, Format/Analyse/Tests/Debug-APK korrigieren und PR erst nach grünem Lauf zur Integration freigeben.
+
+
 **Stand:** 2026-10-25 (Europe/Berlin)  
 **Zusätzlich nachgezogener Main-Stand:** `97a06118f17d71cc77be2cb15a2fc9a53db20ee0` (enthält Chat D PR #177, dessen zusätzliche CI-Gates; alte Dokumentation bewahrt)  
 **Nachgezogener Main-Stand:** `fb788a980b8ee9eb60439c249f3e1f5092a9f188` (enthält PR #176; Merge ausschließlich auf dem Feature-Branch)  
