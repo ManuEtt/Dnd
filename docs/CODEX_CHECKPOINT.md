@@ -1,5 +1,11 @@
 # CODEX-CHECKPOINT – vollständige Branch-Migration
 
+## Separates Chat-A-Regelpaket: Klassenstufe-20-Kapstones (26.10.2026)
+
+Branch `feat/chat-a/srd-capstone-level20-20261026`, Basis `main` `67f146e`. **Nicht** Teil des weiter unten dokumentierten Integrationsbranches. Automatische Attributssteigerungen gemäß SRD 5.2.1 für Barbar/Primal Champion (STR/KON +4, max. 25) und Mönch/Body and Mind (DEX/WEI +4, max. 25) sind in `SrdClassLevelUpRules` implementiert; Barbar-TP werden bei KON-Modifikatoränderung für alle Stufen korrigiert. UI-Vorschau und Domain-/Widgetregressionen ergänzt. Keine anderen Tabellenmerkmale als vollständig automatisiert melden. Kein Wechsel von SQLite-, Event- oder JSON-Schema. **Teststatus:** lokale Toolchain in dieser Connector-Sitzung nicht vorhanden; GitHub-Actions-Abnahme bis zum tatsächlichen erfolgreichen finalen Head **offen**. Details und offener Folgeauftrag: `docs/parallel/CHAT_A_CLASS_CAPSTONES_20261026.md`.
+
+---
+
 Stand **2026-10-26T17:38:53+00:00**, Würfelraunen **0.8.42+92**, SQLite **2**, Kampagnen-JSON **1**.
 
 ## Git und Sicherungen
