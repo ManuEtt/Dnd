@@ -1,3 +1,16 @@
+
+# Chat B – NPC-Erinnerungen bei Namensgleichheit sicher unterscheiden (26.10.2026)
+
+- **Main-Basis:** `dbeac3f7da4fa3a9759d447ef9e9eeb41d575970`, Branch `fix/chat-b/disambiguate-recalled-npc-memories-20261026`.
+- **IMPLEMENTIERT:** bestätigte `MemoryEngine.retrieve`-Rückblicke führen NPC-IDs nur bei mehrdeutigen Namen mit; keine Zusammenfassung verschiedener NPCs unter demselben Namen oder Verlust durch Textdubletten. Doppelte gespeicherte IDs sind nicht autoritativ, und gekürzte Ausgaben dürfen den einzigen Unterscheidungsmarker nicht entfernen.
+- **TESTS ERSTELLT:** sechs Flutter-Regressionen in `app/test/memory_recall_npc_identity_test.dart`. Finale CI anhand des PR-HEAD prüfen.
+- **KOMPATIBILITÄT:** Legacy-Ausgaben eindeutig benannter Figuren sowie Kampagnen-JSON/SQLite unverändert, keine Regelzustandsänderung.
+- **ABSTIMMUNG:** Offene PRs #220–#225 geprüft; keine Überschneidung an Story-Fachdateien, Dokumente mit Chat D konsolidieren.
+- **NÄCHSTER SCHRITT:** UI-Auswahl und end-to-end ID-Transport nach Integration des bestehenden PR #224.
+- [Ausführlicher Checkpoint](CHAT_B_NPC_RECALL_DISAMBIGUATION_20261026.md).
+
+---
+
 # Chat B – KI-Spielleitung und Kampagnen (25.10.2026)
 
 ## Live-Ausgangslage
