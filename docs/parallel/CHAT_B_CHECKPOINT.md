@@ -1,3 +1,21 @@
+# Chat B – Unicode-Spoilerschutz (26.10.2026)
+
+- **Ausgangs-Main-SHA:** `5e3116f9e3f8de0af6e8125a97b3962cb8910cdf`.
+- **Eigener Branch:** `fix/chat-b/story-secret-invisible-unicode-20261026`.
+- **Fach-/Test-Commit:** `ad66617396ad713de426d580cfe3b42ae27eeb39`; [PR #244](https://github.com/ManuEtt/Dnd/pull/244), Ziel `main`.
+- **PR-Prüfung vor der Arbeit:** #236, #237, #239, #240, #241, #242 und Integrations-PR #243. Keine der offenen Änderungen betrifft `backend/src/story_secret_guard.ts` oder `backend/test/story_secret_guard.test.ts`. PR #243 greift in gemeinsame README-/Checkpoint-Dateien ein: bei Integration mit Chat D konsolidieren, nicht überschreiben.
+- **Ausgangsproblem:** Vollständige Story-Geheimnisse werden durch unsichtbare Unicode-Codepoints (beispielsweise U+200B in „Nebelkrone“) visuell offenbart, aber im bisherigen exakten Ausgabefilter nicht erkannt.
+- **IMPLEMENTIERT:** Im Backend-Spoilerschutz NFKC plus Entfernung von Unicode `Default_Ignorable_Code_Point` *vor* dem Whole-word-Vergleich beider Seiten. Bereits bestätigte Story- und Regelzustände bleiben unberührt.
+- **DATEIEN:** `backend/src/story_secret_guard.ts`, `backend/test/story_secret_guard.test.ts`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **REGRESSIONSTESTS:** Storyplan und Storyturn mit U+200B, U+00AD, U+FE0F, U+034F, U+200D; negative Wortgrenze (Bogen/Bogenläufer); HTTP-Ablehnung auf `/v1/story/start` und `/v1/story/advance` ohne Geheimnis-Echo; bereits bestehende positive Anbieterantworten bleiben testbar.
+- **GETESTET:** Fehlverhalten des bestehenden Regex und reparierter Vergleich für fünf Unicode-Zeichen sowie harmlose Wortgrenzen im isolierten Node.js-22-Minimaltest lokal nachgewiesen. Main- und PR-Dateipfade live gelesen.
+- **NICHT GETESTET:** Projektbezogene `npm ci`, `npm run typecheck`, `npm run build`, `npm test`, Python-/Flutter-/Android-Suite und reales Gerät in der lokalen Umgebung (kein vollständiger Checkout bzw. kein Flutter-/Android-SDK). CI-Ergebnis ausschließlich nach Beobachtung des finalen PR-HEAD angeben.
+- **MIGRATION:** keine. SQLite-Version 2, Kampagnen-JSON 1, Regelzustände und API-Format unverändert. Keine bestehenden Spielstände werden automatisch umgeschrieben.
+- **BLOCKIERT:** lokale Gesamtsuite durch fehlenden GitHub-DNS-/Checkout-Zugriff; parallele Änderungen an zentralen Dokumenten im Integrations-PR.
+- **NÄCHSTER SCHRITT:** Nur falls PR #244 inklusive finalem CI erfolgreich abgenommen und integriert ist, separat einen Test gegen direkte Plotgeheimnis-Ausgabe in weiteren bereits vorhandenen narrativen Textfeldern prüfen; keine semantische Geheimniserkennung ohne freigegebenen Story-Reveal-Vertrag.
+
+---
+
 # CHAT B – Checkpoint: NPC-Zeitstempel, 26.10.2026
 
 - **Ausgangs-Main-SHA:** `20098805d8c70cbd361a13862379894c47ef4eb6`.
