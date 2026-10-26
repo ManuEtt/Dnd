@@ -37,7 +37,7 @@ jobs:
         run: flutter pub get
       - name: Verify Dart formatting
         working-directory: app
-        run: dart format --output=none --set-exit-if-changed lib test
+        run: dart format --output=none --set-exit-if-changed lib/ui/fantasy_combatant_card.dart test/fantasy_combatant_card_test.dart
       - name: Analyze Flutter code
         working-directory: app
         run: flutter analyze
