@@ -115,53 +115,53 @@ void main() {
   test(
     'component grammar rejects forged symbols and material descriptions',
     () async {
-    final source = await rootBundle.loadString('assets/srd_5_2_1_spells.json');
-    final decoded = jsonDecode(source) as Map<String, dynamic>;
-    final entries = decoded['spells'] as List<dynamic>;
-    Map<String, dynamic> spellNamed(String name) {
-      final raw = entries.firstWhere((entry) => entry['name'] == name) as Map;
-      return Map<String, dynamic>.from(raw);
-    }
+      final source = await rootBundle.loadString('assets/srd_5_2_1_spells.json');
+      final decoded = jsonDecode(source) as Map<String, dynamic>;
+      final entries = decoded['spells'] as List<dynamic>;
+      Map<String, dynamic> spellNamed(String name) {
+        final raw = entries.firstWhere((entry) => entry['name'] == name) as Map;
+        return Map<String, dynamic>.from(raw);
+      }
 
-    final missile = spellNamed('Magic Missile');
-    expect(SrdSpellDefinition.fromJson(missile).components, 'V, S');
-    for (final invalid in [
-      'V, S, X',
-      'V, V, S',
-      'V,, S',
-      'V, S, S',
-      'S, V',
-      'V, S (unapproved details)',
-      'V, S\nM',
-    ]) {
-      expect(
-        () => SrdSpellDefinition.fromJson({
-          ...missile,
-          'components': invalid,
-        }),
-        throwsFormatException,
-        reason: invalid,
-      );
-    }
+      final missile = spellNamed('Magic Missile');
+      expect(SrdSpellDefinition.fromJson(missile).components, 'V, S');
+      for (final invalid in [
+        'V, S, X',
+        'V, V, S',
+        'V,, S',
+        'V, S, S',
+        'S, V',
+        'V, S (unapproved details)',
+        'V, S\nM',
+      ]) {
+        expect(
+          () => SrdSpellDefinition.fromJson({
+            ...missile,
+            'components': invalid,
+          }),
+          throwsFormatException,
+          reason: invalid,
+        );
+      }
 
-    final fireball = spellNamed('Fireball');
-    expect(SrdSpellDefinition.fromJson(fireball).material, isTrue);
-    for (final invalid in [
-      'V, S, M',
-      'V, S, M ()',
-      'V, S, M (ash) (other)',
-      'V, S, M, M (ash)',
-      'V, S, M (ash)\nX',
-    ]) {
-      expect(
-        () => SrdSpellDefinition.fromJson({
-          ...fireball,
-          'components': invalid,
-        }),
-        throwsFormatException,
-        reason: invalid,
-      );
-    }
+      final fireball = spellNamed('Fireball');
+      expect(SrdSpellDefinition.fromJson(fireball).material, isTrue);
+      for (final invalid in [
+        'V, S, M',
+        'V, S, M ()',
+        'V, S, M (ash) (other)',
+        'V, S, M, M (ash)',
+        'V, S, M (ash)\nX',
+      ]) {
+        expect(
+          () => SrdSpellDefinition.fromJson({
+            ...fireball,
+            'components': invalid,
+          }),
+          throwsFormatException,
+          reason: invalid,
+        );
+      }
     },
   );
 
