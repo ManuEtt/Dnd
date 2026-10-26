@@ -55,7 +55,7 @@ jobs:
               fi
               for path in "${conflicts[@]}"; do
                 case "$path" in
-                  README.md|docs/CODEX_CHECKPOINT.md|docs/parallel/CHAT_A_CHECKPOINT.md|docs/parallel/CHAT_B_CHECKPOINT.md)
+                  README.md|docs/*CHECKPOINT.md|docs/parallel/CHAT_A_CHECKPOINT.md|docs/parallel/CHAT_B_CHECKPOINT.md)
                     echo "Retaining current live documentation during historical merge: $path"
                     git checkout --ours -- "$path"
                     git add -- "$path"
