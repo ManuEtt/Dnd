@@ -1,3 +1,16 @@
+# Chat A – persistenter Eldritch Blast Einzelgegner (26.10.2026)
+
+- **IMPLEMENTIERT:** gestapelter Branch `feat/chat-a/eldritch-blast-encounter-20261026` auf PR #202, mit `GameEngine.castEldritchBlastSingleEnemy`, `GameController.castEldritchBlastSingleEnemy`, Einzelstrahl-/Kraftabwehrberechnung, einem Action-/HP-Commit und Journalereignis `spell.eldritchBlast`.
+- **TESTS:** eigener Domain- und SQLite-Test für Treffer/Resistenz, Revision, Neustart und rollback bei absichtlich defektem Event-Insert geschrieben.
+- **GETESTET:** grüner Baseline-Nachweis #202 GitHub-CI #40271848617; **neuer Branch-HEAD noch nicht final durch CI bestätigt**.
+- **NICHT GETESTET:** Android-Gerät, GUI-Dialog, Mehrgegner-Ziele, Release-Signierung.
+- **BLOCKIERT:** mehr als ein Gegner ist im aktuellen Encounter nicht zuverlässig mit eigenen HP persistent; keine Multi-Target-Persistenz simulieren. Alte/konkurrierende Chat-B/C/D-PRs unverändert lassen.
+- **NOCH NICHT IMPLEMENTIERT:** Invocations/Hex, unmodellierte Schadenserweiterungen, Bedienoberfläche.
+- **NÄCHSTER SCHRITT:** CI auf dem neuen HEAD, gegebenenfalls Codefehler korrigieren, danach stacked PR nach Merge #202 konfliktfrei in `main` integrieren und getrennt den Android-Dialog entwickeln.
+- [Chat-A-Fachbeleg](SRD_ELDRITCH_BLAST_ENCOUNTER_20261026.md) · [eigener Checkpoint](parallel/CHAT_A_ELDRITCH_ENCOUNTER_20261026.md).
+
+---
+
 # Chat A – Eldritch Blast Mehrstrahl, 26.10.2026
 
 - **IMPLEMENTIERT:** `SrdEldritchBlastRules` für insgesamt 1/2/3/4 getrennte Strahlen auf Gesamtstufe 1/5/11/17, mehrere bestätigte Ziel-IDs, unabhängige W20-/Krit-/1d10-Energieschadenswürfe, Deckung/Vorteil/Nachteil und Vorab-Abbruch ohne RNG bei unbestätigten Zielen.
