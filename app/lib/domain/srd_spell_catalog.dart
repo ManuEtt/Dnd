@@ -72,10 +72,9 @@ class SrdSpellDefinition {
     final verbal = requiredBool('verbal');
     final somatic = requiredBool('somatic');
     final material = requiredBool('material');
-    // The boolean flags alone are insufficient: the component string must
-    // contain ONLY canonical V/S/M tokens in their published order. Reject
-    // duplicates, unknown tokens and malformed material descriptions before
-    // an untrusted catalogue can authorize an incomplete casting preflight.
+    // Fail closed on duplicate, unknown or out-of-order component symbols.
+    // A material component requires one nonempty, unambiguous description.
+    // The published V/S/M flags are still verified individually below.
     final componentMatch = RegExp(
       r'^(V(?:,\s*S)?(?:,\s*M)?|S(?:,\s*M)?|M)(?:\s*\(([^()]*)\))?$',
     ).firstMatch(components);
@@ -87,110 +86,8 @@ class SrdSpellDefinition {
         'SRD-Zauberkomponenten haben ein ungültiges Format.',
       );
     }
-    final symbols = componentMatch
-        .group(1)!
-        .split(',')
-        .map((symbol) => symbol.trim())
-        .toList();
-    for (final symbol in ['V', 'S', 'M']) {
-      final expected = switch (symbol) {
-        'V' => verbal,
-        'S' => somatic,
-        _ => material,
-      };
-      if (symbols.contains(symbol) != expected) {
-        throw const FormatException(
-          'SRD-Zauberkomponenten widersprechen sich.',
-        );
-      }
-    }
-    final concentration = requiredBool('concentration');
-    final ritual = requiredBool('ritual');
-    if (concentration != duration.startsWith('Concentration') ||
-        ritual != castingTime.contains('Ritual')) {
-      throw const FormatException(
-        'SRD-Zauberdauer oder Ritualangabe ungültig.',
-      );
-    }
-    return SrdSpellDefinition(
-      id: requiredText('id'),
-      name: requiredText('name'),
-      level: level,
-      school: requiredText('school'),
-      classes: classes,
-      castingTime: castingTime,
-      range: requiredText('range'),
-      components: components,
-      duration: duration,
-      verbal: verbal,
-      somatic: somatic,
-      material: material,
-      concentration: concentration,
-      ritual: ritual,
-    );
-  }
-
-  bool get supportsSingleTurnPreparation =>
-      castingTime == 'Action' ||
-      castingTime == 'Bonus Action' ||
-      castingTime == 'Action or Ritual';
-}
-
-class SrdSpellCatalog {
-  SrdSpellCatalog._(this.spells, this.byName);
-
-  final List<SrdSpellDefinition> spells;
-  final Map<String, SrdSpellDefinition> byName;
-
-  static SrdSpellCatalog fromJsonString(String source) {
-    final decoded = jsonDecode(source);
-    if (decoded is! Map<String, dynamic> ||
-        decoded['schema_version'] != 1 ||
-        decoded['srd_version'] != '5.2.1' ||
-        decoded['official_full_reconciliation_complete'] is! bool ||
-        decoded['effect_engine_complete'] is! bool) {
-      throw const FormatException('Unbekannter SRD-Zauberkatalog.');
-    }
-    final raw = decoded['spells'];
-    if (raw is! List || raw.isEmpty) {
-      throw const FormatException('SRD-Zauberkatalog ist leer.');
-    }
-    final definitions = <SrdSpellDefinition>[];
-    final ids = <String>{};
-    final names = <String>{};
-    for (final entry in raw) {
-      if (entry is! Map<String, dynamic>) {
-        throw const FormatException('SRD-Zaubereintrag ist kein Objekt.');
-      }
-      final spell = SrdSpellDefinition.fromJson(entry);
-      if (!ids.add(spell.id) || !names.add(spell.name)) {
-        throw const FormatException('SRD-Zauber-ID oder Name doppelt.');
-      }
-      definitions.add(spell);
-    }
-    return SrdSpellCatalog._(
-      List.unmodifiable(definitions),
-      Map.unmodifiable({for (final spell in definitions) spell.name: spell}),
-    );
-  }
-
-  SrdSpellDefinition? find(String englishName) => byName[englishName.trim()];
-}
-,
-    ).firstMatch(components);
-    if (componentMatch == null ||
-        componentMatch.group(0) != components ||
-        (componentMatch.group(2) != null) != material ||
-        (material && componentMatch.group(2)!.trim().isEmpty)) {
-      throw const FormatException(
-        'SRD-Zauberkomponenten haben ein ungültiges Format.',
-      );
-    }
-    final symbols = componentMatch
-        .group(1)!
-        .split(',')
-        .map((symbol) => symbol.trim())
-        .toList();
+    final componentTokens = componentMatch.group(1)!.split(',');
+    final symbols = componentTokens.map((symbol) => symbol.trim()).toSet();
     for (final symbol in ['V', 'S', 'M']) {
       final expected = switch (symbol) {
         'V' => verbal,
