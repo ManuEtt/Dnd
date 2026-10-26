@@ -76,6 +76,7 @@ export function buildApp(config: Config, dependencies: AppDependencies = {}) {
       expiresIn: config.sessionTtlSeconds,
       provider: config.provider,
       scope: 'narration:read-only',
+      capabilities: ['npc-identity-v1'],
     };
   });
 
@@ -89,6 +90,7 @@ export function buildApp(config: Config, dependencies: AppDependencies = {}) {
       scope: 'narration:read-only',
       provider: config.provider,
       expiresAt: new Date(session.expiresAt * 1000).toISOString(),
+      capabilities: ['npc-identity-v1'],
     };
   });
 
