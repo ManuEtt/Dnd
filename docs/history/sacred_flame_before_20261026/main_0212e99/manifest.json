@@ -1,0 +1,14 @@
+[
+  {
+    "source_commit": "0212e99b6222f9fcae0714a2ee09123c3c78347c",
+    "source_path": "README.md",
+    "path": "docs/history/sacred_flame_before_20261026/main_0212e99/README.md",
+    "sha256": "14a9c5f1b46193c32fbe035fb590f8bb6ef8ca47ff7c8e1f0e7831ffed680a43"
+  },
+  {
+    "source_commit": "0212e99b6222f9fcae0714a2ee09123c3c78347c",
+    "source_path": "docs/CODEX_CHECKPOINT.md",
+    "path": "docs/history/sacred_flame_before_20261026/main_0212e99/docs/CODEX_CHECKPOINT.md",
+    "sha256": "598ff6ac50e111ac36f0985e3f693cdf8d23f4d3e1c48628fde50d65a51bf96f"
+  }
+]

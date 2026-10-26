@@ -1,3 +1,11 @@
+## Aktuell 26.10.2026 – Heilige-Flamme-Klassenprüfung abnehmen
+
+Als nächstes Feuerpfeil an ausdrückliche Bestätigung unbekannter Angriffsmodifikatoren anschließen; Kriterien im README. Frühere Status-/Aufgabenabschnitte unten sind Historie.
+
+Abnahme: 1.703 Flutter-, 141 Python-, 57 Backend- und zwölf native Android-Tests bestanden; Debug/ARM64-Alpha verifiziert, Codequelle `7c9441e`, PR #217. Realgerät/Produktivsignierung offen.
+
+---
+
 ## Aktueller Schritt – gespeicherte Gelegenheitsreaktion abnehmen
 
 Nach vollständiger Abnahme einen eigenen Reaktionsangriff auf dem gespeicherten Angebot entwickeln; genaue Kriterien und bekannte Zug-/Sneak-Attack-Grenzen im README. Keine alten Migrationsaufgaben erneut ausführen: Live-Bestand vor diesem Paket nur Main, keine offenen PRs. Ältere Einträge unten sind Historie.

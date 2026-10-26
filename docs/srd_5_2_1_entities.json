@@ -3976,9 +3976,11 @@
       ],
       "tests": [
         "app/test/sacred_flame_rules_test.dart",
-        "app/test/sacred_flame_dialog_test.dart"
+        "app/test/sacred_flame_dialog_test.dart",
+        "app/test/sacred_flame_class_validation_storage_test.dart",
+        "app/test/sacred_flame_class_stats_dialog_test.dart"
       ],
-      "note": "SRD 5.2.1 Heilige Flamme: vorbereiteter Klerikerzaubertrick, bestätigter vollständiger GES-Monsterrettungswurfbonus, SG-Formel, W20/adv/disadv, 1-4W8 Strahlenschaden, keine halbe/3/4-Deckung beim Save, Aktions-/HP-/Journalpersistenz. Ungeprüft: automatische Monsterstats, magische Modifikatoren, besondere Rettungswurftraits, mehrere Ziele, echte Karten-/Sichtverifikation und Android-Gerätetest."
+      "note": "SRD 5.2.1 Heilige Flamme: vorbereiteter Klerikerzaubertrick, bestätigter vollständiger GES-Monsterrettungswurfbonus, SG-Formel, W20/adv/disadv, 1-4W8 Strahlenschaden, keine halbe/3/4-Deckung beim Save, Aktions-/HP-/Journalpersistenz. Ungeprüft: automatische Monsterstats, magische Modifikatoren, besondere Rettungswurftraits, mehrere Ziele, echte Karten-/Sichtverifikation und Android-Gerätetest. Klassenbezogener SG-Rechner im echten Heilige-Flamme-Ablauf: kanonische Doppel-/Unknown-Klassen und Stufenwidersprüche vor RNG ablehnen; gültige WIS-/Gesamtstufenwerte, SQLite und bestätigte UI-Vorschau konkret regressionsgeprüft. Umfang und vollständiger Abnahmestand: docs/SACRED_FLAME_CLASS_VALIDATION_20261026.md / CODEX_CHECKPOINT.md; bleibt partial."
     },
     {
       "id": "SPELL-ENTRY-SANCTUARY",

@@ -245,6 +245,82 @@ void main() {
     expect(cast.hero.spentPactSlots, 0);
   });
 
+  test('Wizard 5 / Cleric 1 uses Wisdom and total-level proficiency', () {
+    final base = _hero(level: 6, className: 'Wizard');
+    final hero = HeroCharacter.fromJson(
+      base
+          .copyWith(
+            secondaryClassName: 'Cleric',
+            secondaryClassLevel: 1,
+            abilities: {...base.abilities, 'intelligence': 20, 'wisdom': 12},
+          )
+          .toJson(),
+    );
+    final before = hero.toJson();
+    final random = _FixedRandom([11]);
+
+    final cast = _cast(hero, random);
+
+    // 8 + Wisdom 1 + total-level proficiency 3.
+    expect(cast.savingThrow.dc, 12);
+    expect(cast.savingThrow.succeeded, isTrue);
+    expect(cast.damageRoll, isNull);
+    expect(random.calls, 1);
+    expect(cast.hero.toJson(), before);
+    expect(hero.toJson(), before);
+  });
+
+  for (final classes in {
+    'alias duplicate': ['Cleric', 'Kleriker'],
+    'unknown primary': ['Unbekannt', 'Cleric'],
+    'unknown secondary': ['Cleric', 'Unbekannt'],
+  }.entries) {
+    test('Imported ${classes.key} rejects Sacred Flame before RNG', () {
+      // Historical spellings remain importable; casting must still validate
+      // the complete class combination before authorizing an effect.
+      final hero = HeroCharacter.fromJson(
+        _hero(level: 6, className: classes.value.first)
+            .copyWith(
+              secondaryClassName: classes.value.last,
+              secondaryClassLevel: 1,
+            )
+            .toJson(),
+      );
+      final before = hero.toJson();
+      final random = _FixedRandom([0]);
+
+      expect(() => _cast(hero, random), throwsFormatException);
+      expect(random.calls, 0);
+      expect(hero.toJson(), before);
+    });
+  }
+
+  for (final entry in {
+    'secondary levels without a class': _hero(
+      level: 6,
+    ).copyWith(secondaryClassLevel: 1),
+    'secondary class without levels': _hero(
+      level: 6,
+    ).copyWith(secondaryClassName: 'Wizard'),
+    'no primary levels': _hero(
+      level: 6,
+      className: 'Wizard',
+    ).copyWith(secondaryClassName: 'Cleric', secondaryClassLevel: 6),
+    'negative secondary levels': _hero(
+      level: 6,
+    ).copyWith(secondaryClassName: 'Wizard', secondaryClassLevel: -1),
+  }.entries) {
+    test('Contradictory ${entry.key} reject Sacred Flame before RNG', () {
+      final hero = entry.value;
+      final before = hero.toJson();
+      final random = _FixedRandom([0]);
+
+      expect(() => _cast(hero, random), throwsFormatException);
+      expect(random.calls, 0);
+      expect(hero.toJson(), before);
+    });
+  }
+
   test('Enemy save rejects unconfirmed modifiers before randomness', () {
     final rng = _FixedRandom([19]);
     expect(

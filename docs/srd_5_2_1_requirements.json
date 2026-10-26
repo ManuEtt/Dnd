@@ -7293,12 +7293,17 @@
       "unlocks_catalogued": false,
       "rule_implemented": "partial",
       "tests": [
-        "app/test/srd_class_spell_stats_test.dart"
+        "app/test/srd_class_spell_stats_test.dart",
+        "app/test/sacred_flame_rules_test.dart",
+        "app/test/sacred_flame_class_validation_storage_test.dart",
+        "app/test/sacred_flame_class_stats_dialog_test.dart"
       ],
       "code": [
-        "app/lib/domain/srd_spell_saving_throw_rules.dart"
+        "app/lib/domain/srd_spell_saving_throw_rules.dart",
+        "app/lib/domain/sacred_flame_rules.dart",
+        "app/lib/ui/sacred_flame_dialog.dart"
       ],
-      "note": "Klassenattribut und Grund-Rettungswurf-SG rein lesend geprüft. Zauber-/Zielautorisierung, spezielle Boni und tatsächliche Rettungswurf-/Effektabwicklung bleiben separate Integrationsschritte."
+      "note": "Klassenattribut und Grund-Rettungswurf-SG rein lesend geprüft. Zauber-/Zielautorisierung, spezielle Boni und tatsächliche Rettungswurf-/Effektabwicklung bleiben separate Integrationsschritte. Klassenbezogener SG-Rechner im echten Heilige-Flamme-Ablauf: kanonische Doppel-/Unknown-Klassen und Stufenwidersprüche vor RNG ablehnen; gültige WIS-/Gesamtstufenwerte, SQLite und bestätigte UI-Vorschau konkret regressionsgeprüft. Umfang und vollständiger Abnahmestand: docs/SACRED_FLAME_CLASS_VALIDATION_20261026.md / CODEX_CHECKPOINT.md; bleibt partial."
     },
     {
       "id": "RULE-SPELLS-BONUS-ACTION-CASTING",

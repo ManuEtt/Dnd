@@ -82,11 +82,11 @@ class SacredFlameRules {
       );
     }
     // All static inputs are checked before RNG and HP/resource changes.
-    final dc = SrdSpellSavingThrowRules.spellSaveDc(
+    final dc = SrdSpellSavingThrowRules.statsForClass(
       hero,
-      spellcastingAbility: 'wisdom',
-      noUnmodelledDcModifiersConfirmed: noUnmodelledDcModifiersConfirmed,
-    );
+      castingClass: 'Kleriker',
+      noUnmodelledModifiersConfirmed: noUnmodelledDcModifiersConfirmed,
+    ).spellSaveDc;
     if (!saveCircumstancesConfirmed ||
         confirmedTargetDexteritySaveModifier < -30 ||
         confirmedTargetDexteritySaveModifier > 30) {

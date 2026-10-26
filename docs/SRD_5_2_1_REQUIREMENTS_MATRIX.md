@@ -1,3 +1,11 @@
+## 26.10.2026 – klassenbezogener SG in Heilige Flamme
+
+Reiner Rechner aus PR #184 im echten Zauber-/UI-/SQLite-Pfad integriert, sieben Klassen-Gegenfälle zuerst rot belegt. Anforderungen bleiben partial; aktuelle Quellen/Tests/Grenzen im [Fachbericht](SACRED_FLAME_CLASS_VALIDATION_20261026.md). Keine globale Quote aus diesem historischen Journal.
+
+Abnahme: 1.703 Flutter-, 141 Python-, 57 Backend- und zwölf native Android-Tests bestanden; Debug/ARM64-Alpha verifiziert, Codequelle `7c9441e`, PR #217. Realgerät/Produktivsignierung offen.
+
+---
+
 ## 25.10.2026 – RULE-COMBAT-OPPORTUNITY-ATTACKS weiterhin partial
 
 Zur reinen Vorprüfung kommen atomar gespeichertes Angebot, Abenteuerdialog, Neustart und ausdrücklicher Verzicht hinzu. Kein Angriff, Schaden oder Reaktionsverbrauch. Aktueller Umfang/Testnachweis: [Fachbericht](SRD_OPPORTUNITY_MOVEMENT_20261025.md) und [Checkpoint](CODEX_CHECKPOINT.md). Die folgenden Einträge bleiben ein historisches Änderungsjournal, keine Gesamtquote.

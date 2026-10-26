@@ -1,0 +1,32 @@
+[
+  {
+    "path": "docs/history/sacred_flame_before_20261026/sacred_cc0d309/README.md",
+    "source_path": "README.md",
+    "source_commit": "cc0d309a3a0b0bab393e5bb20f1bfb28e516040c",
+    "sha256": "9ed48861904fbbbf8632542e8d967db137885bff5a000314b83398765b37660d"
+  },
+  {
+    "path": "docs/history/sacred_flame_before_20261026/sacred_cc0d309/CHANGELOG.md",
+    "source_path": "CHANGELOG.md",
+    "source_commit": "cc0d309a3a0b0bab393e5bb20f1bfb28e516040c",
+    "sha256": "3ffdbc614a0bebabf7df4d2a6ce6ef65a4af55a267b35faf9b0439a7135e3d82"
+  },
+  {
+    "path": "docs/history/sacred_flame_before_20261026/sacred_cc0d309/DEVELOPMENT_STATUS.md",
+    "source_path": "DEVELOPMENT_STATUS.md",
+    "source_commit": "cc0d309a3a0b0bab393e5bb20f1bfb28e516040c",
+    "sha256": "15a88bc96945ffd5dfe640ca912dbd115ce5e8d8678bde56ea0dcf3132e3d0c8"
+  },
+  {
+    "path": "docs/history/sacred_flame_before_20261026/sacred_cc0d309/docs/CODEX_CHECKPOINT.md",
+    "source_path": "docs/CODEX_CHECKPOINT.md",
+    "source_commit": "cc0d309a3a0b0bab393e5bb20f1bfb28e516040c",
+    "sha256": "1e663476568c4b8f0ed3976dc8b2f1cdd80ce4ad9ad36a75efb324e069222fe1"
+  },
+  {
+    "path": "docs/history/sacred_flame_before_20261026/sacred_cc0d309/ROADMAP.md",
+    "source_path": "ROADMAP.md",
+    "source_commit": "cc0d309a3a0b0bab393e5bb20f1bfb28e516040c",
+    "sha256": "9609e6a49b70d858b7d77b0e96ec2c64eb558939a5d596effe946075db1c6f66"
+  }
+]
