@@ -40,10 +40,17 @@ const validText = (value: unknown, limit: number): value is string =>
   !/[\x00-\x1f\x7f-\x9f\u2028\u2029]/u.test(value);
 const validRevision = (value: unknown): value is number =>
   Number.isSafeInteger(value) && Number(value) >= 0 && Number(value) <= 2147483647;
-const validTimestamp = (value: unknown): value is string =>
-  typeof value === 'string' &&
-  /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{1,6})?Z$/u.test(value) &&
-  !Number.isNaN(Date.parse(value));
+const validTimestamp = (value: unknown): value is string => {
+  if (typeof value !== 'string' ||
+      !/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{1,6})?Z$/u.test(value)) {
+    return false;
+  }
+  const parsed = Date.parse(value);
+  // Date.parse normalizes impossible dates (e.g. Feb 30) and 24:00 into
+  // another calendar day. Such a rewritten NPC history is not accepted.
+  return !Number.isNaN(parsed) &&
+    new Date(parsed).toISOString().slice(0, 19) === value.slice(0, 19);
+};
 
 /**
  * Fail closed before invoking a paid provider. No silent truncation, remapping

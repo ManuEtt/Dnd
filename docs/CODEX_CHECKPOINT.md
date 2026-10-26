@@ -1,5 +1,12 @@
 # CODEX-CHECKPOINT – Klassenprüfung für Heilige Flamme
 
+## Ergänzung Chat B (26.10.2026) – strikte NPC-Zeitstempel
+
+Ausgangs-`main` `20098805d8c70cbd361a13862379894c47ef4eb6`, Branch `fix/chat-b/npc-timestamp-validation-20261026`. Im Story-Backend wird die stille Normalisierung ungültiger Kalenderdaten in optionalen bestätigten NPC-Identitätsnotizen abgewiesen. Die Änderungen umfassen den Validator und positive/negative Unit-/HTTP-Regressionstests. Bestehende Kampagnen-JSON-Version 1 und SQLite-Version 2 bleiben unverändert; keine Migration. Kein Eingriff in HP, Inventar, Quest- oder Regelzustand.
+
+**GETESTET:** Vor Commit keine vollständige Suite und keine CI dieses Branches nachgewiesen. **NICHT GETESTET:** Backend-Typecheck/-Build/-Tests, Flutter, Python-Gates und APK auf finalem HEAD. **BLOCKIERT:** In dieser Sitzungsumgebung kein Flutter-/Android-SDK und kein vollständiger lokaler Repositorycheckout; CI-Ergebnis abwarten und prüfen. **NOCH NICHT IMPLEMENTIERT:** weitere KI-Erzählfunktionen; nächste isolierte Aufgabe nach Integration: validierte NPC-Revisionskontexte gezielt im kostenlosen Mock erzählerisch nutzen, ohne Statusänderung. [Detailcheckpoint](docs/parallel/CHAT_B_CHECKPOINT.md). Ältere Klassenprüfungs-Abnahme bleibt nachfolgend historisch erhalten.
+
+
 Stand **2026-10-26T07:26:16+00:00**. Würfelraunen **0.8.41+91**, SQLite **2**, Kampagnen-JSON **1**.
 
 ## Git und überprüfbare Quellen

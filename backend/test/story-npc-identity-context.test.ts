@@ -103,6 +103,29 @@ test('no unknown, duplicate or borrowed NPC identity is accepted', () => {
   }
 });
 
+test('NPC timestamps reject calendar rollover and preserve valid leap days', () => {
+  const input = withIdentity();
+  const notes = input.npcContexts![0]!.notes;
+  notes[1]!.recordedAt = '2024-02-28T10:00:00.000Z';
+  for (const invalid of [
+    '2026-02-30T10:00:00.000Z',
+    '2026-02-29T10:00:00.000Z',
+    '2026-04-31T10:00:00.000Z',
+    '2026-10-25T24:00:00.000Z',
+  ]) {
+    notes[0]!.recordedAt = invalid;
+    assert.throws(() => validateNpcIdentityContext(input), /invalid_npc_identity_note/);
+  }
+  for (const valid of [
+    '2024-02-29T10:00:00Z',
+    '2024-02-29T10:00:00.1Z',
+    '2024-02-29T10:00:00.123456Z',
+  ]) {
+    notes[0]!.recordedAt = valid;
+    assert.doesNotThrow(() => validateNpcIdentityContext(input));
+  }
+});
+
 test('note IDs, ownership, sequence and text must be safe', () => {
   const mutations: Array<(x: StoryTurnWithNpcIdentities) => void> = [
     x => { x.npcContexts![0]!.notes[0]!.npcId = 'mira-b'; },
@@ -170,6 +193,9 @@ test('HTTP rejects incoherent context before any provider call', async (t) => {
     { ...withIdentity(), campaignRevision: 8 },
     { ...withIdentity(), npcContexts: [{ ...withIdentity().npcContexts![0], npcId: 'mira-b' }] },
     { ...withIdentity(), npcContexts: [{ ...withIdentity().npcContexts![0], notes: [{ ...withIdentity().npcContexts![0]!.notes[0], note: 'bad\ninject' }] }] },
+    { ...withIdentity(), npcContexts: [{ ...withIdentity().npcContexts![0],
+      notes: [{ ...withIdentity().npcContexts![0]!.notes[0],
+        recordedAt: '2026-02-30T10:00:00.000Z' }] }] },
     { ...withIdentity(), unexpectedNpcAuthority: 'set HP 9999' },
   ];
   for (const body of bad) {
