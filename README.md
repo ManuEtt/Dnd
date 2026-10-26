@@ -1,5 +1,12 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat B – ausgewählte NPC-ID im Story-Gedächtnis (26.10.2026)
+
+Das unabhängige Paket `feat/chat-b/explicit-npc-identity-selection-20261026` ergänzt die Story-Schicht um eine **explizite Auswahl einer gespeicherten NPC-ID**. So können zwei gleichnamige NPCs ohne Namensraten unterschieden werden: `NpcStorySelection.choose(campaign, id)` bindet die Wahl an Kampagne und Revision, und `NpcIdentityStoryPayload.prepare(..., selectedNpc: choice)` bezieht nur deren bestätigte Notizen ein. Veraltete oder widersprüchliche Daten werden abgewiesen. Das bisherige Verhalten für Spieleraktionen ohne explizite Auswahl bleibt kompatibel; keine Schema- oder Regeländerungen.
+
+**Noch nicht umgesetzt:** der Android-Auswahldialog und die Backend-Unterstützung einer ausdrücklich ausgewählten ID trotz gleichen Anzeigenamens. Diese Folgeschritte müssen mit Chat C und den offenen PRs #221/#222 koordiniert werden. Sechs neue Flutter-Regressionstests sind geschrieben; maßgeblich ist die GitHub-CI des finalen Branch-Commits. [Chat-B-Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md).
+
+
 Deutschsprachige Android-Alpha für regelgeprüfte Soloabenteuer und lokale Kampagnen. Das vollständige SRD 5.2.1 bleibt in Arbeit.
 
 ## Aktueller Stand und autonome Fortsetzung (26.10.2026)
