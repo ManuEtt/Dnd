@@ -236,6 +236,30 @@ void main() {
     expect(rng.calls, 0);
   });
 
+  test('confirmed half cover applies +2 AC to each beam', () {
+    final rng = _Rolls([9, 3, 2]);
+    final engine = GameEngine(dice: DiceEngine(random: rng));
+    final covered = _campaign(
+      engine,
+      encounter: _encounter(cover: CoverLevel.half),
+    );
+    final update = _cast(
+      engine,
+      covered,
+      declaredBeams: _targets(
+        cover: CoverLevel.half,
+        opposite: true,
+      ),
+    );
+    final beams = update.events.single.payload['beams'] as List<dynamic>;
+    expect(beams[0]['effectiveArmorClass'], 16);
+    expect(beams[0]['hit'], isTrue);
+    expect(beams[1]['effectiveArmorClass'], 16);
+    expect(beams[1]['hit'], isFalse);
+    expect(update.campaign.encounter!.enemyHitPoints, 46);
+    expect(rng.calls, 3);
+  });
+
   test('blocked action, missing confirmation and cover fail closed', () {
     final rng = _Rolls([19]);
     final engine = GameEngine(dice: DiceEngine(random: rng));
