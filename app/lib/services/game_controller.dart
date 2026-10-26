@@ -18,6 +18,7 @@ import '../domain/condition_effects.dart';
 import '../domain/saving_throw_class_actions.dart';
 import '../domain/srd_opportunity_attack_rules.dart';
 import '../story/npc_narrator_memory.dart';
+import '../story/npc_identity_story_payload.dart';
 import 'backend_narrator.dart';
 
 /// UI state changes only after an atomic repository commit succeeds.
@@ -509,6 +510,11 @@ class GameController extends ChangeNotifier {
             .map((message) => message.text)
             .where((value) => value.trim().isNotEmpty)
             .toList();
+        // The optional structured context is sent only after an authenticated
+        // session advertises support. Existing servers receive legacy fields.
+        final npcIdentityPayload = narrator.supportsNpcIdentityContexts
+            ? NpcIdentityStoryPayload.prepare(campaign, action)
+            : null;
         final response = await narrator.advanceStory(
           campaignId: campaign.id,
           heroName: campaign.hero.name,
@@ -535,6 +541,8 @@ class GameController extends ChangeNotifier {
               },
           ],
           memories: NpcNarratorMemory.merge(campaign, action, memories),
+          campaignRevision: npcIdentityPayload?.campaignRevision,
+          npcContexts: npcIdentityPayload?.npcContexts,
           recentActions: recent.reversed
               .take(6)
               .toList()
