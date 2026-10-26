@@ -107,3 +107,16 @@ Geprüfte Main-Basis zusätzlich als ZIP/Patch unter `/workspace/artifacts/main-
 - **SICHERHEITSGRENZE:** Ein clientseitiges „bestätigt“-Präfix bleibt nicht vertrauenswürdiger Kontext und beweist keine NPC-ID. Bei Namensmehrdeutigkeit wird der Eintrag verworfen, nicht geraten.
 - **NÄCHSTER SCHRITT:** eigenes, revisionsgeschütztes ID-basiertes Story-Kontextprotokoll nach Koordination mit parallelen PRs.
 - **Individueller Checkpoint:** `docs/parallel/CHAT_B_NPC_NAME_GUARD_20261025.md`.
+
+
+---
+
+## Chat B – gestapelte optionale NPC-ID-Story-API (26.10.2026)
+
+- **Basis:** PR #193 auf `bdd95cac4006a0f575d96fef614091464c0e748e` (vollständig grüne CI), eigener Branch `feat/chat-b/structured-npc-context-20261026` und PR ausschließlich gegen den #193-Branch. Letzter `main`-Stand `5f9a01dd73f68ad4f9e226f859a8ca87803b8337`.
+- **IMPLEMENTIERT:** Optionaler `campaignRevision`-/`npcContexts`-Vertrag in `backend/src/app.ts`, geprüft durch `backend/src/story_npc_identity_context.ts` **vor dem Provider**. Gleichnamige NPCs über eindeutige IDs; max. drei Kontexte mit je fünf Notizen, Altclients kompatibel; keine Änderung an Regelautorität oder Speicherformat.
+- **TESTS GESCHRIEBEN:** sechs neue Gruppen in `backend/test/story-npc-identity-context.test.ts` mit Positiv-/Negativfällen und Fastify/Mock-Integration. Vollständige CI für den neuen PR-HEAD erst nach Pull-Request-Lauf bestätigt.
+- **GRENZE:** Das zustandslose Backend kann die tatsächliche Aktualität der behaupteten Revision nicht mit einer Server-Datenbank abgleichen. Der Android-Client überträgt dieses optionale Feld noch nicht. Keine produktive KI-Provider-Abnahme.
+- **KOORDINATION:** PR #193 muss vor dieser gestapelten Folgeänderung integriert und dieser PR danach auf `main` umgebasiert werden. Parallel offene PRs #194/#196 bleiben unangetastet. Gemeinsame Dokumentation mit Chat D koordinieren.
+- **NÄCHSTER SCHRITT:** Flutter-Transport nach Integration des lokalen ID-Revisionslesers und der Backend-API, mit stale-state- und Provider-Mock-Negativtests.
+- **Detailcheckpoint:** `docs/parallel/CHAT_B_STRUCTURED_NPC_CONTEXT_20261026.md`.
