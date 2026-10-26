@@ -132,14 +132,42 @@ class MemoryEngine {
         priority: thread.status == 'open' ? 210 : 70,
       );
     }
+    // A visible name is not a saved identity: two distinct NPCs may both be
+    // called Mira. Keep their confirmed histories individually attributable
+    // in *all* recalls, including short summaries and topical retrieval.
+    final npcNameCounts = <String, int>{};
+    final npcIdCounts = <String, int>{};
+    for (final npc in campaign.npcs) {
+      final nameKey = _memoryNormalize(npc.name);
+      if (nameKey.isNotEmpty) {
+        npcNameCounts[nameKey] = (npcNameCounts[nameKey] ?? 0) + 1;
+      }
+      if (npc.id.trim().isNotEmpty) {
+        npcIdCounts[npc.id] = (npcIdCounts[npc.id] ?? 0) + 1;
+      }
+    }
+    String? npcLabel(WorldNpc npc) {
+      // Malformed duplicate IDs cannot establish which NPC owns a note.
+      if (npc.id.trim().isEmpty || npcIdCounts[npc.id] != 1) return null;
+      final nameKey = _memoryNormalize(npc.name);
+      if (nameKey.isEmpty) return null;
+      return npcNameCounts[nameKey] == 1
+          ? npc.name
+          : '${npc.name} (NPC-ID: ${npc.id})';
+    }
+
     for (final note in campaign.npcRelationshipNotes.reversed) {
-      final npc = campaign.npcs.where((entry) => entry.id == note.npcId);
-      if (npc.isEmpty) continue;
-      add(
-        'Beziehung zu ${npc.first.name}: ${note.relationship}',
-        note.note,
-        priority: 220,
-      );
+      final matches = campaign.npcs.where((npc) => npc.id == note.npcId);
+      if (matches.length != 1) continue;
+      final label = npcLabel(matches.single);
+      if (label == null) continue;
+      final heading = 'Beziehung zu $label: ${note.relationship}';
+      // Never truncate the distinguishing ID off a same-name entry.
+      if (npcNameCounts[_memoryNormalize(matches.single.name)] != 1 &&
+          heading.length + 1 > maxCharacters) {
+        continue;
+      }
+      add(heading, note.note, priority: 220);
     }
     for (final item in campaign.hero.inventory) {
       add(
@@ -162,8 +190,15 @@ class MemoryEngine {
       );
     }
     for (final npc in campaign.npcs) {
+      final label = npcLabel(npc);
+      if (label == null) continue;
+      final heading = 'NPC ${npc.alive ? 'lebendig' : 'tot'}: $label';
+      if (npcNameCounts[_memoryNormalize(npc.name)] != 1 &&
+          heading.length + 1 > maxCharacters) {
+        continue;
+      }
       add(
-        'NPC ${npc.alive ? 'lebendig' : 'tot'}: ${npc.name}',
+        heading,
         'Beziehung: ${npc.relationship}. ${npc.description}',
         priority: npc.alive ? 100 : 500,
       );

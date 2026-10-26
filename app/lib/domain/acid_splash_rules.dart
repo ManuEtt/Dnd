@@ -155,7 +155,9 @@ class AcidSplashRules {
     }
     final ids = <String>{};
     for (final target in targets) {
-      if (target.id.isEmpty ||
+      if (target.id.trim().isEmpty ||
+          target.id.trim() != target.id ||
+          target.id.contains(RegExp(r'[\x00-\x1F\x7F]')) ||
           target.id.length > 128 ||
           target.name.trim().isEmpty ||
           target.name.length > 128 ||
