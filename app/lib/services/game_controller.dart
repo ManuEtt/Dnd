@@ -1054,6 +1054,37 @@ class GameController extends ChangeNotifier {
     );
   });
 
+  /// Revision-bound single-enemy Eldritch Blast. An already committed
+  /// revision cannot be replayed; the engine writes all beams as one event.
+  Future<void> castEldritchBlastSingleEnemy({
+    required String campaignId,
+    required int expectedRevision,
+    required List<SrdEldritchBlastTarget> declaredBeams,
+    required bool currentEnemyIsOnlyTargetConfirmed,
+    required bool verbalComponentConfirmed,
+    required bool somaticComponentConfirmed,
+    required bool noUnmodelledAttackOrDamageModifiersConfirmed,
+    required bool noUnresolvedShieldReactionConfirmed,
+    required bool situationalAttackConditionsConfirmed,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.castEldritchBlastSingleEnemy(
+        current,
+        declaredBeams: declaredBeams,
+        currentEnemyIsOnlyTargetConfirmed: currentEnemyIsOnlyTargetConfirmed,
+        verbalComponentConfirmed: verbalComponentConfirmed,
+        somaticComponentConfirmed: somaticComponentConfirmed,
+        noUnmodelledAttackOrDamageModifiersConfirmed:
+            noUnmodelledAttackOrDamageModifiersConfirmed,
+        noUnresolvedShieldReactionConfirmed:
+            noUnresolvedShieldReactionConfirmed,
+        situationalAttackConditionsConfirmed:
+            situationalAttackConditionsConfirmed,
+      ),
+    );
+  });
+
   Future<void> castFireBolt({
     required String campaignId,
     required int expectedRevision,
