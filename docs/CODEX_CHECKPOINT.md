@@ -1,3 +1,17 @@
+# Chat D D-007 – Schutz der Release-Zielpfade (26.10.2026)
+
+- **Basis:** `main` `f1f3e997bc8650a757d34234eff49d870dcf9369` und eigener Branch `fix/chat-d/release-dangling-symlinks-20261026`.
+- **IMPLEMENTIERT:** `scripts/prepare_alpha_release.py` prüft vor dem Veröffentlichen alle fünf erzeugten Release-Dateien, einschließlich `_Source.zip.sha256`, mit `exists() or is_symlink()`. Verwaiste Symlinks können nicht zum Schreiben außerhalb der Release-Ausgabe missbraucht werden.
+- **Tests:** Zwei neue Regressionstestmethoden mit fünf Symlink-Varianten und einem bestehenden Prüfsummen-Sidecar.
+- **GEPRÜFT:** GitHub-Commits für Code und Tests erstellt.
+- **NICHT GETESTET:** finale GitHub-CI (Python/Backend/Flutter/Android und Alpha-Artefakt) sowie reales Android-Gerät.
+- **BLOCKIERT:** finale CI, Main-Reabgleich; D-005 und D-006 werden separat abgenommen.
+- **MIGRATION:** keine App-/SQLite-/JSON-/SRD-Spielstandsänderung.
+- **NÄCHSTER SCHRITT:** CI auf neuem Commit erfolgreich abschließen und dann kontrolliert integrieren.
+- [Chat-D-Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
+
+---
+
 # Chat C – barrierefreier Abenteuerstatus (25.10.2026)
 
 - **Main-Basis:** initial `97a06118f17d71cc77be2cb15a2fc9a53db20ee0`, jetzt `45bea9c2a897275583bdbe32ed50afde5d0a76b0`; Branch `feat/chat-c/accessible-status-hud-20261025`.
