@@ -226,7 +226,10 @@ void main() {
       () => _cast(
         engine,
         halfCovered,
-        declaredBeams: _targets(cover: CoverLevel.half, opposite: false),
+        declaredBeams: [
+          _targets(cover: CoverLevel.half).first,
+          _targets(cover: CoverLevel.half, opposite: false).last,
+        ],
       ),
       throwsFormatException,
     );
