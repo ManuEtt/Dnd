@@ -23,9 +23,7 @@ class _Transport implements BackendTransport {
         body: {
           'scope': 'narration:read-only',
           'provider': 'mock',
-          'expiresAt': _now
-              .add(const Duration(minutes: 5))
-              .toIso8601String(),
+          'expiresAt': _now.add(const Duration(minutes: 5)).toIso8601String(),
           'capabilities': [
             'npc-identity-v1',
             if (supportsSelection) 'npc-selection-v1',
@@ -69,10 +67,8 @@ Map<String, Object> _identity() => {
   ],
 };
 
-Future<void> _connect(BackendNarrator narrator) => narrator.connect(
-  url: 'https://story.example.test',
-  sessionToken: _token,
-);
+Future<void> _connect(BackendNarrator narrator) =>
+    narrator.connect(url: 'https://story.example.test', sessionToken: _token);
 
 Future<Map<String, dynamic>?> _send(
   BackendNarrator narrator, {
@@ -99,70 +95,82 @@ Future<Map<String, dynamic>?> _send(
 );
 
 void main() {
-  test('explicit selection is sent only after separate capability negotiation', () async {
-    final transport = _Transport(supportsSelection: true);
-    final narrator = BackendNarrator(transport: transport, clock: () => _now);
-    addTearDown(narrator.dispose);
-    await _connect(narrator);
-    expect(narrator.enabled, isTrue);
-    expect(narrator.supportsNpcIdentityContexts, isTrue);
-    expect(narrator.supportsExplicitNpcSelection, isTrue);
+  test(
+    'explicit selection is sent only after separate capability negotiation',
+    () async {
+      final transport = _Transport(supportsSelection: true);
+      final narrator = BackendNarrator(transport: transport, clock: () => _now);
+      addTearDown(narrator.dispose);
+      await _connect(narrator);
+      expect(narrator.enabled, isTrue);
+      expect(narrator.supportsNpcIdentityContexts, isTrue);
+      expect(narrator.supportsExplicitNpcSelection, isTrue);
 
-    final result = await _send(narrator, selectedNpcId: 'mira-two');
-    expect(result?['narration'], contains('Karte'));
-    expect(transport.requests, hasLength(1));
-    expect(transport.requests.single['selectedNpcId'], 'mira-two');
-    expect(transport.requests.single['campaignRevision'], 8);
-    final contexts = transport.requests.single['npcContexts'] as List;
-    expect((contexts.single as Map)['npcId'], 'mira-two');
-    expect(narrator.requestsUsed, 1);
-  });
+      final result = await _send(narrator, selectedNpcId: 'mira-two');
+      expect(result?['narration'], contains('Karte'));
+      expect(transport.requests, hasLength(1));
+      expect(transport.requests.single['selectedNpcId'], 'mira-two');
+      expect(transport.requests.single['campaignRevision'], 8);
+      final contexts = transport.requests.single['npcContexts'] as List;
+      expect((contexts.single as Map)['npcId'], 'mira-two');
+      expect(narrator.requestsUsed, 1);
+    },
+  );
 
-  test('older identity-only server receives no unsupported selection', () async {
-    final transport = _Transport(supportsSelection: false);
-    final narrator = BackendNarrator(transport: transport, clock: () => _now);
-    addTearDown(narrator.dispose);
-    await _connect(narrator);
-    expect(narrator.supportsNpcIdentityContexts, isTrue);
-    expect(narrator.supportsExplicitNpcSelection, isFalse);
+  test(
+    'older identity-only server receives no unsupported selection',
+    () async {
+      final transport = _Transport(supportsSelection: false);
+      final narrator = BackendNarrator(transport: transport, clock: () => _now);
+      addTearDown(narrator.dispose);
+      await _connect(narrator);
+      expect(narrator.supportsNpcIdentityContexts, isTrue);
+      expect(narrator.supportsExplicitNpcSelection, isFalse);
 
-    expect(
-      () => _send(narrator, selectedNpcId: 'mira-two'),
-      throwsFormatException,
-    );
-    expect(transport.requests, isEmpty);
-    expect(narrator.requestsUsed, 0);
+      expect(
+        () => _send(narrator, selectedNpcId: 'mira-two'),
+        throwsFormatException,
+      );
+      expect(transport.requests, isEmpty);
+      expect(narrator.requestsUsed, 0);
 
-    final legacy = await _send(narrator);
-    expect(legacy, isNotNull);
-    expect(transport.requests, hasLength(1));
-    expect(transport.requests.single.containsKey('selectedNpcId'), isFalse);
-  });
+      final legacy = await _send(narrator);
+      expect(legacy, isNotNull);
+      expect(transport.requests, hasLength(1));
+      expect(transport.requests.single.containsKey('selectedNpcId'), isFalse);
+    },
+  );
 
-  test('unknown, mismatched and ambiguous ID selections fail before network', () async {
-    final transport = _Transport(supportsSelection: true);
-    final narrator = BackendNarrator(transport: transport, clock: () => _now);
-    addTearDown(narrator.dispose);
-    await _connect(narrator);
+  test(
+    'unknown, mismatched and ambiguous ID selections fail before network',
+    () async {
+      final transport = _Transport(supportsSelection: true);
+      final narrator = BackendNarrator(transport: transport, clock: () => _now);
+      addTearDown(narrator.dispose);
+      await _connect(narrator);
 
-    for (final invalid in ['', 'mira-one', '../mira-two', 'ghost']) {
-      expect(() => _send(narrator, selectedNpcId: invalid), throwsFormatException);
-    }
-    expect(
-      () => _send(narrator, selectedNpcId: 'mira-two', contexts: []),
-      throwsFormatException,
-    );
-    expect(
-      () => _send(
-        narrator,
-        selectedNpcId: 'mira-two',
-        contexts: [_identity(), _identity()],
-      ),
-      throwsFormatException,
-    );
-    expect(transport.requests, isEmpty);
-    expect(narrator.requestsUsed, 0);
-  });
+      for (final invalid in ['', 'mira-one', '../mira-two', 'ghost']) {
+        expect(
+          () => _send(narrator, selectedNpcId: invalid),
+          throwsFormatException,
+        );
+      }
+      expect(
+        () => _send(narrator, selectedNpcId: 'mira-two', contexts: []),
+        throwsFormatException,
+      );
+      expect(
+        () => _send(
+          narrator,
+          selectedNpcId: 'mira-two',
+          contexts: [_identity(), _identity()],
+        ),
+        throwsFormatException,
+      );
+      expect(transport.requests, isEmpty);
+      expect(narrator.requestsUsed, 0);
+    },
+  );
 
   test('disconnect revokes negotiated selection capability', () async {
     final transport = _Transport(supportsSelection: true);
