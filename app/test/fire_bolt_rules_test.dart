@@ -184,7 +184,8 @@ void main() {
     final wizard = _cast(hero, _SequenceRandom([11]));
     expect(wizard.castingClass, 'Magier');
     expect(wizard.spellcastingAbility, 'intelligence');
-    expect(wizard.attackBonus, 4); // INT +3, total level proficiency +3, exhaustion -2
+    // INT +3, total level proficiency +3, exhaustion -2.
+    expect(wizard.attackBonus, 4);
     final sorcerer = _cast(
       hero,
       _SequenceRandom([11]),

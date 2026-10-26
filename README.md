@@ -1,5 +1,11 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A: Feuerpfeil-Klassenwerte und Modifikatorbestätigung (26.10.2026)
+
+[PR #221](https://github.com/ManuEtt/Dnd/pull/221) führt eine eng begrenzte Prüfung für Feuerpfeil ein: klassenbezogene Zauberangriffswerte aus dem vorhandenen SRD-Rechner, ausgewählte INT-/CHA-Klasse, explizite Bestätigung bislang unmodellierter Angriffsboni und eine Vorschau erst nach Zustimmung. Ungültige Profile und verweigerte Bestätigung stoppen den Würfelwurf und jede neue Zustandsänderung. Neue Domain-/Dialog-Regressionen sind enthalten. Die zugehörige vollständige Android-/Flutter-CI ist erst nach finalem erfolgreich abgeschlossenen Branchlauf abgenommen; keine neue APK oder Gerätetest wird behauptet. Keine Spielstandmigration, SQLite 2/JSON 1 unverändert.
+
+[Chat-A-Checkpoint](docs/parallel/CHAT_A_CHECKPOINT.md) · [Fachbeleg](docs/FIRE_BOLT_CLASS_VALIDATION_20261026.md). Der folgende Abschnitt beschreibt die zuvor abgenommene Heilige-Flamme-Basis; seine früheren Nachweise beziehen sich nicht auf die noch zu prüfende Feuerpfeiländerung.
+
 Deutschsprachige Android-Alpha für regelgeprüfte Soloabenteuer und lokale Kampagnen. Das vollständige SRD 5.2.1 bleibt in Arbeit.
 
 ## Aktueller Stand und autonome Fortsetzung (26.10.2026)

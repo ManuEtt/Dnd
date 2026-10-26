@@ -1,5 +1,7 @@
 # CODEX-CHECKPOINT – Klassenprüfung für Heilige Flamme
 
+> **Neues unabhängiges Chat-A-Paket (26.10.2026):** [PR #221](https://github.com/ManuEtt/Dnd/pull/221), `feat/chat-a/fire-bolt-confirmed-modifiers-20261026` ab main `20098805d`. Feuerpfeil prüft vor RNG nun Klassen-/Attributstufen über den bestehenden SRD-Rechner und verlangt ausdrückliche Bestätigung unbekannter Angriffsmodifikatoren. Dialogvorschau und positive/negative Tests ergänzt; SQLite 2/JSON 1 unverändert. Erste Android-CI #40289603452 scheiterte nur am Dart-Format der zwei neuen Testdateien; Korrektur ist im Folgecommit. **Vollständige CI auf finalem HEAD erst abwarten**, keine neue APK oder Geräteabnahme behaupten. Der ausführliche eigene [Chat-A-Checkpoint](parallel/CHAT_A_CHECKPOINT.md) und [Fachbeleg](FIRE_BOLT_CLASS_VALIDATION_20261026.md) enthalten Dateiliste, Tests und verbleibende Lücken. Nachstehend bleibt der ältere, separat geprüfte Heilige-Flamme-Bericht unverändert erhalten.
+
 Stand **2026-10-26T07:26:16+00:00**. Würfelraunen **0.8.41+91**, SQLite **2**, Kampagnen-JSON **1**.
 
 ## Git und überprüfbare Quellen

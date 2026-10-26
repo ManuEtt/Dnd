@@ -73,11 +73,17 @@ void main() {
     expect(find.text('Feuerpfeil wirken'), findsOneWidget);
   });
 
-  testWidgets('class attack preview requires actual confirmation', (tester) async {
+  testWidgets('class attack preview requires actual confirmation', (
+    tester,
+  ) async {
     final hero = _hero();
     final before = hero.toJson();
     await tester.pumpWidget(
-      MaterialApp(home: Scaffold(body: FireBoltDialog(hero: hero, encounter: _fight))),
+      MaterialApp(
+        home: Scaffold(
+          body: FireBoltDialog(hero: hero, encounter: _fight),
+        ),
+      ),
     );
     expect(find.byKey(const ValueKey('fire-bolt-class-stats')), findsNothing);
     final tile = find.byKey(const ValueKey('fire-bolt-attack-modifiers'));
@@ -95,14 +101,20 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('invalid class profile cannot confirm attack preview', (tester) async {
+  testWidgets('invalid class profile cannot confirm attack preview', (
+    tester,
+  ) async {
     final hero = _hero().copyWith(
       className: 'Wizard',
       secondaryClassName: 'Magier',
       secondaryClassLevel: 1,
     );
     await tester.pumpWidget(
-      MaterialApp(home: Scaffold(body: FireBoltDialog(hero: hero, encounter: _fight))),
+      MaterialApp(
+        home: Scaffold(
+          body: FireBoltDialog(hero: hero, encounter: _fight),
+        ),
+      ),
     );
     final confirm = tester.widget<FantasyTextButton>(
       find.byKey(const ValueKey('fire-bolt-cast')),
