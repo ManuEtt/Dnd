@@ -1,6 +1,8 @@
 ## Operativer Checkpoint – 0.8.41+91
 
-Klassenprüfung für Heilige Flamme im eigenen Entwicklungsbranch; neue Gesamtabnahme noch ausstehend. [Tatsächlicher Stand](docs/CODEX_CHECKPOINT.md). Frühere Einträge unten sind Historie.
+Klassenprüfung für Heilige Flamme im eigenen Entwicklungsbranch lokal vollständig abgenommen; GitHub-Ergebnis im verlinkten Checkpoint. [Tatsächlicher Stand](docs/CODEX_CHECKPOINT.md). Frühere Einträge unten sind Historie.
+
+Abnahme: 1.703 Flutter-, 141 Python-, 57 Backend- und zwölf native Android-Tests bestanden; Debug/ARM64-Alpha verifiziert, Codequelle `7c9441e`, PR #217. Realgerät/Produktivsignierung offen.
 
 ---
 

@@ -1,6 +1,8 @@
 ## Aktuell 26.10.2026 – Heilige-Flamme-Klassenprüfung abnehmen
 
-Nach Gesamtabnahme Feuerpfeil an ausdrückliche Bestätigung unbekannter Angriffsmodifikatoren anschließen; Kriterien im README. Frühere Status-/Aufgabenabschnitte unten sind Historie.
+Als nächstes Feuerpfeil an ausdrückliche Bestätigung unbekannter Angriffsmodifikatoren anschließen; Kriterien im README. Frühere Status-/Aufgabenabschnitte unten sind Historie.
+
+Abnahme: 1.703 Flutter-, 141 Python-, 57 Backend- und zwölf native Android-Tests bestanden; Debug/ARM64-Alpha verifiziert, Codequelle `7c9441e`, PR #217. Realgerät/Produktivsignierung offen.
 
 ---
 

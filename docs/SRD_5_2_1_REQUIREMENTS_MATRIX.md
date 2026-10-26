@@ -2,6 +2,8 @@
 
 Reiner Rechner aus PR #184 im echten Zauber-/UI-/SQLite-Pfad integriert, sieben Klassen-Gegenfälle zuerst rot belegt. Anforderungen bleiben partial; aktuelle Quellen/Tests/Grenzen im [Fachbericht](SACRED_FLAME_CLASS_VALIDATION_20261026.md). Keine globale Quote aus diesem historischen Journal.
 
+Abnahme: 1.703 Flutter-, 141 Python-, 57 Backend- und zwölf native Android-Tests bestanden; Debug/ARM64-Alpha verifiziert, Codequelle `7c9441e`, PR #217. Realgerät/Produktivsignierung offen.
+
 ---
 
 ## 25.10.2026 – RULE-COMBAT-OPPORTUNITY-ATTACKS weiterhin partial

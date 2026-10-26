@@ -21,3 +21,7 @@ Bestehende Importe dürfen historische freie Klassennamen behalten. Die bloße M
 `sacred_flame_rules_test.dart`: sieben zuvor fehlschlagende Klassenfälle, gültige Multiclasskontrolle und bestehende Wirkungsregeln. `sacred_flame_class_validation_storage_test.dart`: reale Importe/Controller/SQLite, Ablehnung vor RNG, gültige WIS-Wirkung, Journal/Replay/Neustart, Stale Revision und Event-Insert-Rollback. `sacred_flame_class_stats_dialog_test.dart`: bestätigungsgebundene Vorschau, ungültige Klassen, gültige Rückgabe und 360dp/1,8×Schrift/Tastatur.
 
 Automatische Monsterwerte, ungeprüfte Magieboni, zusätzliche Ziele und reale Geräteabnahme bleiben offen. Das Paket ersetzt keine vollständige SRD-Implementierung. Vollständige Abnahme nur nach tatsächlicher Gesamtsuite und finaler eigener CI dokumentieren.
+
+## Vollständige lokale Abnahme
+
+Code-/APK-Quelle `7c9441e650a3b809db50f1a2d708d39bddfb39b7`, PR #217: `scripts/check.sh` Exit0 mit 1.703 Flutter-, 141 Python- und 57 Backend-Tests; Format/Analyse/Typecheck/Build erfolgreich. Debug- und ARM64-Alpha aus geprüftem ZIP gebaut; zwölf native Android-Tests ohne Fehler/Skips. Die geerbten ZIP-Modus-/Rollbackfehler und der NPC-Analyzerfehler sind korrigiert. Finale CI-Nachweise und herunterladbare Sicherungen im PR/Artefaktindex; reale Geräteabnahme offen.

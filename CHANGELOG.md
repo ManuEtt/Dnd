@@ -1,8 +1,8 @@
 ## 26.10.2026 – 0.8.41+91: Heilige Flamme mit gültigen Klassenwerten
 
-Geprüften Klassenwerte-Rechner aus PR #184 in den echten Zauberablauf integriert. Alias-Doppelklassen, unbekannte Partner und ungültige Stufen lösen keine Würfel/Aktion/HP-Änderung aus. Bestehende Importe bleiben lesbar; WIS-/Gesamtstufen-Übung gültiger Profile erhalten. Bestätigungsgebundene SG-Vorschau und scrollbar bedienbarer Android-Dialog. 20 Domain-, vier SQLite- und sieben Widgettests bisher grün; Gesamtabnahme noch separat ausstehend. SQLite2/JSON1 kompatibel. [Fachbericht](docs/SACRED_FLAME_CLASS_VALIDATION_20261026.md) · [Checkpoint](docs/CODEX_CHECKPOINT.md). Ältere Einträge unten sind Historie.
+Geprüften Klassenwerte-Rechner aus PR #184 in den echten Zauberablauf integriert. Alias-Doppelklassen, unbekannte Partner und ungültige Stufen lösen keine Würfel/Aktion/HP-Änderung aus. Bestehende Importe bleiben lesbar; WIS-/Gesamtstufen-Übung gültiger Profile erhalten. Bestätigungsgebundene SG-Vorschau und scrollbar bedienbarer Android-Dialog. 1.703 Flutter-, 141 Python-, 57 Backend- und zwölf native Android-Tests bestanden; Format/Analyse/Backend-Build sowie Debug-/ARM64-APKs erfolgreich. Codequelle `7c9441e`, PR #217. Realgerät/Produktivsignierung offen. SQLite 2 / JSON 1 kompatibel. [Fachbericht](docs/SACRED_FLAME_CLASS_VALIDATION_20261026.md) · [Checkpoint](docs/CODEX_CHECKPOINT.md). Ältere Einträge unten sind Historie.
 
-Main `d03faea` regulär integriert; geerbte ZIP-Modus-/Rollback-Testfehler mit Originalkorrekturen aus PR #215 übernommen, NPC-Analyzer-/Formatfehler behoben. Gesamtabnahme auf Kombination erneut gestartet.
+Main `d03faea` regulär integriert; geerbte ZIP-Modus-/Rollback-Testfehler mit Originalkorrekturen aus PR #215 übernommen, NPC-Analyzer-/Formatfehler behoben. Gesamtabnahme auf Kombination vollständig lokal erfolgreich: 1.703 Flutter-, 141 Python-, 57 Backend- und zwölf native Tests; Debug/ARM64-Alpha geprüft.
 
 ---
 

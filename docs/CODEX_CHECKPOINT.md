@@ -1,36 +1,64 @@
 # CODEX-CHECKPOINT – Klassenprüfung für Heilige Flamme
 
-Stand **2026-10-26T07:15:18+00:00**. Version **0.8.41+91**, SQLite **2**, Kampagnen-JSON **1**.
+Stand **2026-10-26T07:26:16+00:00**. Würfelraunen **0.8.41+91**, SQLite **2**, Kampagnen-JSON **1**.
 
-## Git und Quellen
+## Git und überprüfbare Quellen
 
-- Ursprungsbasis `575a885bd34ecae2bd173dc183abf88a367a69af`, integriertes Main `d03faea7ce032e8918da2204228473bd9999932c`, Arbeitskopie `/workspace/Dnd-sacred-flame-20261026`, Branch `fix/sacred-flame-caster-validation-20261026`. Main in diesem Paket nicht verändert.
-- [PR #184](https://github.com/ManuEtt/Dnd/pull/184), Source-Head `0a7f3dc75161cf6936163b85c04dc9a78bfb12c1`, normal integriert; originale Source-CI #40220880850 erfolgreich. Dieser Einzelbeleg ersetzt nicht die neue gemeinsame Abnahme.
-- Letzte vor dem Paket vollständig beobachtete Main-CI [#40233719625](https://github.com/ManuEtt/Dnd/actions/runs/40233719625) auf `5f9a01dd73f68ad4f9e226f859a8ca87803b8337` erfolgreich. Spätere Main-Integrationen #194/#195 separat vom alten Beleg unterscheiden.
-- Fachänderung `cc0d309`, Main-Merge `a377ba8`, technische PR-#215-Korrekturen `20afc25`/`14a75fb` aus `340fe91`/`8fd2141`, NPC-Lint/Format `5edf968`. Keine temporäre Diagnoseworkflow-Änderung übernommen. README-/Checkpoint-/Changelog-/Statusfassungen von Main und PR #184 archiviert; manifeste SHA256 unter `docs/history/sacred_flame_before_20261026/`.
+- Ursprungsbasis `575a885bd34ecae2bd173dc183abf88a367a69af`, regulär integriertes Main und finale Patchbasis `d03faea7ce032e8918da2204228473bd9999932c`. Main in diesem Paket nicht verändert.
+- Arbeitskopie `/workspace/Dnd-sacred-flame-20261026`, Branch `fix/sacred-flame-caster-validation-20261026`, [PR #217](https://github.com/ManuEtt/Dnd/pull/217). Code-/Build-HEAD **`7c9441e650a3b809db50f1a2d708d39bddfb39b7`**; anschließende Dokumentationscommits ändern keine Build-Eingaben. Den neuesten Branch-HEAD bei Wiederaufnahme mit `git rev-parse HEAD` feststellen.
+- Fachfix `cc0d309`, Main-Merge `a377ba8`. Klassenrechner aus PR #184 inzwischen auch in Main; kein zweiter Rechner. ZIP-Reparaturen aus PR #215 (`340fe91`/`8fd2141`) mit Autorenhistorie als `20afc25`/`14a75fb` übernommen. Geerbter NPC-Lint/Formatfehler in `5edf968` korrigiert; keine temporäre CI-Diagnose übernommen.
+- Vollständige [Android-CI #40284690640](https://github.com/ManuEtt/Dnd/actions/runs/40284690640) auf diesem Code-/Build-HEAD erfolgreich, einschließlich Debug-, nativer und drei Alpha-ABI-Builds. Spätere reine Dokumentationsnachträge sind über die [finalen PR-Checks](https://github.com/ManuEtt/Dnd/pull/217/checks) separat nachvollziehbar.
+- Bei Bestandsaufnahme Main-Android-CI [#40283858187](https://github.com/ManuEtt/Dnd/actions/runs/40283858187) auf d03 fehlgeschlagen: drei ZIP-Pythontests, alle späteren Gates übersprungen. PR-#215-Läufe #40284284178/#40284279247 danach wegen `prefer_is_empty` rot. Beide Ursachen im aktuellen Code korrigiert. Grüne #40283858195 war ausschließlich eine Eldritch-Teilstrecke.
+- Ursprüngliche Main-/PR-#184-Fassungen sowie d03 und cc0d309 unter `docs/history/sacred_flame_before_20261026/` bytegenau mit Commit/SHA256 archiviert. Weitere aktive PRs zuletzt #215 (ZIP-Modi) und #216 (Kampfkarte/große Schrift); vor Übernahme neue Köpfe und Checks live lesen, nicht automatisch schließen/löschen.
 
 ## IMPLEMENTIERT
 
-Heilige Flamme verwendet den klassenbezogenen Rechner im echten Domain-/GameEngine-/Controllerpfad. Alias-Doppelklassen, unbekannte Partner und ungültige Klassenstufen werden vor RNG abgelehnt. Bestehende ausdrückliche SG-Bestätigung bleibt Voraussetzung; kein erfundenes Zustimmungstrue. Gültige Kleriker-Zweitklasse nutzt WIS und Gesamtstufen-Übung. UI zeigt diese Werte erst nach Bestätigung und sperrt ungültige Profile; Titel/Inhalt scrollen gemeinsam bei kleiner Android-Fläche.
+Heilige Flamme verwendet den klassenbezogenen Rechner im echten Domain-/GameEngine-/Controllerpfad. Doppelte Klassenaliase, unbekannte Partner und widersprüchliche Klassenstufen werden vor RNG, HP-, Aktions- oder Journaländerung abgelehnt. Bestehende ausdrückliche SG-Bestätigung bleibt Voraussetzung. Gültige Kleriker-Zweitklasse nutzt WIS und Gesamtstufen-Übung. Der deutsche Dialog zeigt bestätigte Werte, sperrt ungültige Profile und scrollt Titel/Inhalt gemeinsam bei kleiner Android-Fläche.
 
-Keine globale Klassen-/Importmigration: historische Profile und gespeicherte Ereignisse bleiben lesbar. Event, Snapshot und Revision weiterhin durch vorhandene SQLite-Transaktion; keine neuen Netzwerk-/KI-Aufrufe.
+Keine globale Klassen-/Importverschärfung: historische Profile und Ereignisse bleiben lesbar/bearbeitbar. Event, Snapshot und Revision weiterhin in der vorhandenen SQLite-Transaktion. Kein neues Schema, kein Netzwerk-/KI-Aufruf. Requirements `SPELL-ENTRY-SACRED-FLAME` / `RULE-SPELLS-SPELL-SAVE-DC` bleiben **partial**. Quelle SRD5.2.1 S25/S37, Wizards of the Coast LLC, CC BY4.0; `THIRD_PARTY_NOTICES.md` erhalten.
 
 ## GETESTET
 
-20 Domain-, vier reale SQLite-/Controller- und sieben Widgettests erfolgreich. Sieben neue Domain-Gegenfälle zuerst rot gegen alten Code, nach Korrektur grün. Reale importierte Alias-/Unknown-Profile bleiben lesbar, erzeugen aber keine Würfel, Aktion, HP- oder Journaländerung. Gültiger Wizard5/Cleric1 mit INT20/WIS12 nutzt SG12, 2W8 Schaden und unveränderten Ressourcenumfang. Neustart/Rekonstruktion, Stale Revision, Wiederholung und echter SQLite-Eventfehler mit vollständigem Rollback geprüft. UI bei 360dp, 1,8×Schrift und Tastatur geprüft. Importgrenzen/Projektstruktur erfolgreich.
+**Vollständiges `scripts/check.sh` mit Exit0:** 1.703 Flutter-, 141 Python- und 57 Backend-Tests; 389 Dart-Dateien ohne Formatabweichung, Flutter-Analyse ohne Befund, Backend-Typecheck/-Build und Backend-Protokoll-Smoke erfolgreich. 518 Laufzeit-/Buildquelldateien stimmen mit der APK-Quelle überein.
+
+Gezielte Abnahme: 20 Domain-, vier echte SQLite-/Controller- und sieben Widgettests. Sieben neue Domain-Gegenfälle zuerst rot gegen alten Code, nach Korrektur grün. Importierte Alias-/Unknown-Profile bleiben lesbar, erzeugen bei Ablehnung aber keine Würfel, Aktion, HP-, Revisions- oder Journaländerung. Wizard5/Cleric1 mit INT20/WIS12 nutzt SG12 und 2W8. Stale Revision, Wiederholung, Journal/Replay/Neustart und echter SQLite-Event-Insert-Fehler mit vollständigem Rollback geprüft. UI bei 360 dp, 1,8×Schrift und Tastatur.
+
+**Android aus frischer isolierter ZIP-Kopie:** Debug gebaut, zwölf native JVM-Tests ohne Fehler/Skips, ARM64-Alpha gebaut. Version0.8.41/Code91, minSdk24/targetSdk36, CRC, ABIs und `apksigner` geprüft. Beide APKs mit derselben lokalen Debug-Testsignatur; keine produktive Signierung behauptet.
+
+SRD-Register neu gezählt: 1.419 Prüfaufträge (8 tested, 32 partial, 7 missing, 1.372 unverified), 282 Klassenfreischaltungen, neun offene Inventurlücken. Kein vollständiger SRD-Nenner und keine globale Fertigstellungsquote.
 
 ## NICHT GETESTET
 
-Komplette kombinierte Suite, neue Android-Builds und finale PR-CI noch ausstehend. Alte Baseline-Gesamtsuite nach Main-Fortschritt nachweislich mit SIGTERM/143 abgebrochen; kein Erfolg behauptet. Main-CI #40283858187 auf d03 scheiterte an drei ZIP-Pythontests; PR-#215-Läufe #40284284178/#40284279247 danach an `prefer_is_empty`. Beide Ursachen im aktuellen Code korrigiert; neue Abnahme läuft. Grüne #40283858195 ist nur Eldritch-Teilstrecke. Echtes Android-Gerät, reales historisches Geräte-Upgrade, TalkBack und produktive Signierung bleiben offen. SRD insgesamt nicht fertig.
+Echtes Android-Gerät, TalkBack, historisches Geräte-Upgrade, reale Dokumentauswahl, produktive Signierung/Store-Freigabe. Die erste alte Baseline-Gesamtsuite nach Main-Fortschritt gezielt mit SIGTERM/Exit143 abgebrochen; nur der neue kombinierte Lauf zählt als bestanden.
 
 ## BLOCKIERT
 
-Kein echtes Gerät/Produktivschlüssel. Flutter3.35.7/Dart3.9.2, Java17, Node22.14 und Android-SDK lokal vorhanden; keine fehlende Toolchain als Begründung übernehmen.
+Kein echtes Gerät/Produktivschlüssel. Flutter3.35.7/Dart3.9.2, Java17, Node22.14 und Android-SDK lokal vorhanden; Tests/Builds deshalb tatsächlich ausgeführt. Kein offener reproduzierbarer Fehler im abgenommenen Paket bekannt.
 
-## NOCH NICHT IMPLEMENTIERT / GENAU EIN NÄCHSTER SCHRITT
+## Artefakte und Import
 
-Nach Abnahme: Feuerpfeil mit ausdrücklicher Bestätigung unbekannter Zauberangriffsmodifikatoren an Klassenwerte-Rechner anschließen; vorhandene Klassenwahl und Erschöpfung erhalten. Vor Bestätigung keine RNG-/Ressourcen-/HP-/Aktionsänderung. Details im README. Keine neue Klassenwahl oder bereits vorhandene reine Module duplizieren.
+Lokal **`/workspace/artifacts/0.8.41+91/`**: vollständige Quell-ZIPs, tatsächlich angewendete Git-Patches, Dateimanifeste, Prüfsummen, Debug-/ARM64-APKs und Test-/Buildberichte. Abschließende Dateinamen/SHA256 und neueste CI im dortigen Artefaktindex sowie im [PR #217](https://github.com/ManuEtt/Dnd/pull/217). ZIPs enthalten keine SDKs, Buildcaches, Geheimnisse oder APKs.
 
-## Sicherung und Fortsetzung
+Tatsächliche APK-Quell-ZIP: `Wuerfelraunen_0.8.41+91_20261026T071518295880Z_kombinierter-buildquellstand_Vollprojekt.zip`, SHA256 **`b3d48e90c00cbbac1290c5ee02b2dd7b0654e343319756608b57e1e8158993e6`**, Commit **`7c9441e650a3b809db50f1a2d708d39bddfb39b7`**, 815 Dateien vor Build einschließlich ausführbarer Modi/CRC geprüft. Spätere finale Quellen enthalten zusätzliche Abnahmedokumentation; Laufzeit-/Builddateien bleiben byteidentisch.
 
-Vollprojekt-ZIP/Patch/Manifest/SHA nach diesem Update unter `/workspace/artifacts/0.8.41+91/`. Patchbasis `575a885bd34ecae2bd173dc183abf88a367a69af`. Vor Abschluss tatsächliche Gesamttests, Buildquelle, Commit/PR und CI eintragen. Logs unter `/workspace/validation/20261026-sacred-*`. Frühere uncommittete Checkpoints und historische Worktrees nicht entfernen. Zuerst Main und aktive PRs neu prüfen; mehrere Chats entwickeln parallel. Keine automatische Fortsetzung außerhalb aktiver Sitzung.
+- Debug `Wuerfelraunen_0.8.41+91_Debug.apk`,144.196.020Bytes,SHA256 `e3f207e75b0d7a723a1de4a85cf2cc3c9aad74cc35f014cc519eb5feecf92beb`, ARM64/ARMv7/x64.
+- Alpha `Wuerfelraunen_0.8.41+91_arm64-v8a_Alpha.apk`,19.925.182Bytes,SHA256 `913c2aafe70ce5164ade4cb93eb85a2790cc97abfaf957ffc0f1aa89b3d9c3e2`, ausschließlich ARM64.
+
+Am einfachsten bestehenden Branch abrufen und PR prüfen. Für Offlineimport: ZIP-Wurzel mit `app/`, `backend/`, `scripts/` und `.github/` in eine eigene Arbeitskopie übernehmen. Alternativ Patch auf d03 mit `git apply --check` und `git apply` anwenden, Tests ausführen, eigenen Branch pushen/PR erstellen. Keine alten Stände ungeprüft über Main schreiben. Frühere uncommittete Worktrees und deren Checkpoints erhalten.
+
+## NOCH NICHT IMPLEMENTIERT / genau ein nächster Schritt
+
+**Feuerpfeil: unbekannte Zauberangriffsmodifikatoren ausdrücklich bestätigen.** Den vorhandenen klassenbezogenen Rechner im tatsächlichen FireBolt-Pfad nutzen; bestehende Magier-/Zauberer-Auswahl, Übung der Gesamtstufe und Erschöpfung genau einmal erhalten. Kein neuer paralleler Klassenrechner.
+
+Definition of Done: fehlende/abgelehnte Bestätigung, ungültige Klassen und Grenzfälle des tatsächlich verwendeten Zauberattributs vor RNG/Zustandsänderung abweisen; bestehende englische/deutsche Aliasprofile laden; SG-/Angriffsvorschau erst nach echter Zustimmung; gültige Mehrklassen-/Erschöpfungskontrolle, Stale Revision, Neustart und SQLite-Rollback testen. Aktuelle Main-/PR-Stände zuerst prüfen, dann kleines eigenes Paket. Fachlich nur die für den gewählten Feuerpfeil-Klassenpfad maßgeblichen Attribute validieren.
+
+```bash
+bash scripts/check.sh
+python3 scripts/srd_coverage.py --json
+cd app
+flutter build apk --debug
+cd android
+bash ./gradlew :app:testDebugUnitTest --no-daemon
+```
+
+Logs `/workspace/validation/20261026-sacred-*`, isolierte Buildkopie `/workspace/validation/build-0.8.41`. Keine automatische Weiterarbeit außerhalb einer aktiven Sitzung.
