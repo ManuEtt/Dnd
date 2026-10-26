@@ -41,5 +41,23 @@
       "source_sha": "5e3116f9e3f8de0af6e8125a97b3962cb8910cdf",
       "archive_tag": "archive/branch-migration-20261026T173427Z/main"
     }
-  ]
+  ],
+  "updates": [
+    {
+      "branch": "fix/chat-a/spell-range-unit-validation-20261026",
+      "source_sha": "95057282286f93f3f46ee39196c047166d3cddf2",
+      "archive_tag": "archive/branch-migration-20261026T173427Z/round2/fix/chat-a/spell-range-unit-validation-20261026",
+      "observed_utc": "2026-10-26T17:42:52.714909+00:00"
+    },
+    {
+      "branch": "fix/chat-d/checkpoint-manifest-nofollow-20261026",
+      "source_sha": "3746c5769f5ddb01842762184b0f477845d11740",
+      "archive_tag": "archive/branch-migration-20261026T173427Z/round2/fix/chat-d/checkpoint-manifest-nofollow-20261026",
+      "observed_utc": "2026-10-26T17:42:55.026122+00:00"
+    }
+  ],
+  "round2_bundle": {
+    "file": "/workspace/artifacts/branch-migration-20261026T173427Z/Alle_Branchstaende_Runde2.bundle",
+    "sha256": "e26e0d3cd17149beb9f780801d620736cf3911de731ed7aeac003be0eb41c44b"
+  }
 }
