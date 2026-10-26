@@ -2,6 +2,8 @@
 
 Geprüften Klassenwerte-Rechner aus PR #184 in den echten Zauberablauf integriert. Alias-Doppelklassen, unbekannte Partner und ungültige Stufen lösen keine Würfel/Aktion/HP-Änderung aus. Bestehende Importe bleiben lesbar; WIS-/Gesamtstufen-Übung gültiger Profile erhalten. Bestätigungsgebundene SG-Vorschau und scrollbar bedienbarer Android-Dialog. 20 Domain-, vier SQLite- und sieben Widgettests bisher grün; Gesamtabnahme noch separat ausstehend. SQLite2/JSON1 kompatibel. [Fachbericht](docs/SACRED_FLAME_CLASS_VALIDATION_20261026.md) · [Checkpoint](docs/CODEX_CHECKPOINT.md). Ältere Einträge unten sind Historie.
 
+Main `d03faea` regulär integriert; geerbte ZIP-Modus-/Rollback-Testfehler mit Originalkorrekturen aus PR #215 übernommen, NPC-Analyzer-/Formatfehler behoben. Gesamtabnahme auf Kombination erneut gestartet.
+
 ---
 
 ## 25.10.2026 – 0.8.40+90: persistierte Bewegungsunterbrechung

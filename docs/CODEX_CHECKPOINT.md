@@ -1,13 +1,13 @@
 # CODEX-CHECKPOINT – Klassenprüfung für Heilige Flamme
 
-Stand **2026-10-26T05:08:37+00:00**. Version **0.8.41+91**, SQLite **2**, Kampagnen-JSON **1**.
+Stand **2026-10-26T07:15:18+00:00**. Version **0.8.41+91**, SQLite **2**, Kampagnen-JSON **1**.
 
 ## Git und Quellen
 
-- Basis-Main `575a885bd34ecae2bd173dc183abf88a367a69af`, Arbeitskopie `/workspace/Dnd-sacred-flame-20261026`, Branch `fix/sacred-flame-caster-validation-20261026`. Main in diesem Paket nicht verändert.
+- Ursprungsbasis `575a885bd34ecae2bd173dc183abf88a367a69af`, integriertes Main `d03faea7ce032e8918da2204228473bd9999932c`, Arbeitskopie `/workspace/Dnd-sacred-flame-20261026`, Branch `fix/sacred-flame-caster-validation-20261026`. Main in diesem Paket nicht verändert.
 - [PR #184](https://github.com/ManuEtt/Dnd/pull/184), Source-Head `0a7f3dc75161cf6936163b85c04dc9a78bfb12c1`, normal integriert; originale Source-CI #40220880850 erfolgreich. Dieser Einzelbeleg ersetzt nicht die neue gemeinsame Abnahme.
 - Letzte vor dem Paket vollständig beobachtete Main-CI [#40233719625](https://github.com/ManuEtt/Dnd/actions/runs/40233719625) auf `5f9a01dd73f68ad4f9e226f859a8ca87803b8337` erfolgreich. Spätere Main-Integrationen #194/#195 separat vom alten Beleg unterscheiden.
-- Aktueller Integrationscommit vor Fachänderung `ac51d6b`; Fach-/UI-/Regressionen noch im Arbeitsstand. README-/Checkpoint-/Changelog-/Statusfassungen von Main und PR #184 archiviert; manifeste SHA256 unter `docs/history/sacred_flame_before_20261026/`.
+- Fachänderung `cc0d309`, Main-Merge `a377ba8`, technische PR-#215-Korrekturen `20afc25`/`14a75fb` aus `340fe91`/`8fd2141`, NPC-Lint/Format `5edf968`. Keine temporäre Diagnoseworkflow-Änderung übernommen. README-/Checkpoint-/Changelog-/Statusfassungen von Main und PR #184 archiviert; manifeste SHA256 unter `docs/history/sacred_flame_before_20261026/`.
 
 ## IMPLEMENTIERT
 
@@ -21,7 +21,7 @@ Keine globale Klassen-/Importmigration: historische Profile und gespeicherte Ere
 
 ## NICHT GETESTET
 
-Komplette neue Suite, neue Android-Builds und finale PR-CI noch ausstehend. Echtes Android-Gerät, reales historisches Geräte-Upgrade, TalkBack und produktive Signierung bleiben offen. SRD insgesamt nicht fertig.
+Komplette kombinierte Suite, neue Android-Builds und finale PR-CI noch ausstehend. Alte Baseline-Gesamtsuite nach Main-Fortschritt nachweislich mit SIGTERM/143 abgebrochen; kein Erfolg behauptet. Main-CI #40283858187 auf d03 scheiterte an drei ZIP-Pythontests; PR-#215-Läufe #40284284178/#40284279247 danach an `prefer_is_empty`. Beide Ursachen im aktuellen Code korrigiert; neue Abnahme läuft. Grüne #40283858195 ist nur Eldritch-Teilstrecke. Echtes Android-Gerät, reales historisches Geräte-Upgrade, TalkBack und produktive Signierung bleiben offen. SRD insgesamt nicht fertig.
 
 ## BLOCKIERT
 
