@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – Eldritch Blast im gespeicherten Kampf (26.10.2026, gestapelter PR)
+
+Die bereits in [PR #202](https://github.com/ManuEtt/Dnd/pull/202) getrennt geprüften Eldritch-Blast-Strahlen sind in einem weiteren isolierten Paket an `GameEngine` und `GameController` angeschlossen. Die aktuelle Kampagne speichert nur **einen** aktiven Gegner: Deshalb dürfen alle Strahlen derzeit nur gegen dessen bestätigte Gegner-ID gerichtet sein. Die Aktion prüft RK/Deckung, noch freie Magic-Aktion, Komponenten und Energieschadensabwehr, bucht Resistenz pro Strahl, erzeugt **ein** Event und wird mit Revisionsschutz in SQLite gespeichert. Alte Revisionen und Datenbankfehler dürfen nicht zu doppeltem/teilweisem Schadensstand führen. Keine neue Datenbankmigration oder Änderung des Persistenzformats. [Fachbeleg](docs/SRD_ELDRITCH_BLAST_ENCOUNTER_20261026.md) · [Chat-A-Checkpoint](docs/parallel/CHAT_A_ELDRITCH_ENCOUNTER_20261026.md). Die vollständige Abnahme **dieses** PRs ist noch offen; `SPELL-ENTRY-ELDRITCH-BLAST` bleibt nur `partial`.
+
+
 ## Chat A – Eldritch Blast: getrennte SRD-Strahlen (26.10.2026, PR offen)
 
 Eigenständiges SRD-5.2.1-Regelpaket für den Hexenmeister-Zaubertrick *Eldritch Blast*: ab Gesamtstufen 5/11/17 zwei/drei/vier einzelne Strahlen mit jeweils eigenem W20-Zauberangriff und 1d10 Energieschaden (2d10 Krit); verschiedene oder gleiche bestätigte Ziele. Vorausgesetzte Komponenten, Reichweite, Deckung und Angriffsbedingungen werden vor dem **ersten** Würfel validiert. Keine Slot-/Aktions-/Trefferpunktbuchung und keine Änderung am Spielstand oder der Persistenz. Die SRD-Aufgaben `SPELL-ENTRY-ELDRITCH-BLAST` und `RULE-SPELLS-CANTRIP-SCALING` sind bewusst nur **partial**. [Regelbeleg](docs/SRD_ELDRITCH_BLAST_MULTIBEAM_20261026.md) · [Chat-A-Checkpoint](docs/parallel/CHAT_A_ELDRITCH_BLAST_20261026.md). Tests sind geschrieben; die CI auf finalem Commit bleibt separat abzunehmen.
