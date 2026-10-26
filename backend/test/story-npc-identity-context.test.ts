@@ -154,7 +154,7 @@ test('HTTP rejects incoherent context before any provider call', async (t) => {
   });
   assert.equal(auth.statusCode, 200);
   const headers = { authorization: 'Bearer ' + auth.json<{token:string}>().token };
-  const send = (body: unknown) => app.inject({
+  const send = async (body: object) => app.inject({
     method: 'POST', url: '/v1/story/advance', headers, payload: body,
   });
 
