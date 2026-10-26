@@ -585,36 +585,9 @@ class BackendNarrator extends ChangeNotifier {
             npcContexts == null ||
             npcContexts.length != 1 ||
             npcContexts.single['npcId'] != selectedNpcId ||
-            !RegExp(r'^[a-zA-Z0-9_-]{1,64}
-      'campaignId': campaignId,
-      'heroName': heroName,
-      'action': action,
-      'scene': scene,
-      'premise': premise,
-      'goal': goal,
-      'secret': secret,
-      'threads': threads,
-      'npcs': npcs,
-      'memories': memories,
-      'recentActions': recentActions,
-      if (npcContexts != null) ...{
-        'campaignRevision': campaignRevision,
-        'npcContexts': npcContexts,
-      },
-      if (selectedNpcId != null) 'selectedNpcId': selectedNpcId,
-    }, 'turn');
-  }
-
-  @override
-  void dispose() {
-    _disposed = true;
-    ++_generation;
-    _clearSession();
-    _cancelPending();
-    super.dispose();
-  }
-}
-).hasMatch(selectedNpcId))) {
+            selectedNpcId.isEmpty ||
+            selectedNpcId.length > 64 ||
+            RegExp(r'[^a-zA-Z0-9_-]').hasMatch(selectedNpcId))) {
       throw const FormatException('Ungültige explizite NPC-Auswahl.');
     }
     return _storyRequest('/v1/story/advance', {
@@ -633,6 +606,7 @@ class BackendNarrator extends ChangeNotifier {
         'campaignRevision': campaignRevision,
         'npcContexts': npcContexts,
       },
+      if (selectedNpcId != null) 'selectedNpcId': selectedNpcId,
     }, 'turn');
   }
 
