@@ -1,6 +1,7 @@
 import 'dice_engine.dart';
 import 'models.dart';
 import 'rules_engine.dart';
+import 'srd_character_classes.dart';
 
 /// SRD 5.2.1 Spellcasting: 8 + ability modifier + proficiency bonus.
 /// No equipment, subclass, magical focus or GM-confirmed bonus is inferred.
@@ -30,6 +31,89 @@ class SrdSpellSavingThrowRules {
     return 8 +
         RulesEngine.proficiencyBonus(caster.level) +
         RulesEngine.abilityModifier(score);
+  }
+
+  /// Canonical SRD spellcasting abilities for the eight spellcasting classes.
+  /// Subclass-only spells, magic items and unverified overrides are not
+  /// automatically authorized by this restricted class-based calculator.
+  static const _classSpellAbilities = <String, String>{
+    'Barde': 'charisma',
+    'Kleriker': 'wisdom',
+    'Druide': 'wisdom',
+    'Paladin': 'charisma',
+    'Waldläufer': 'wisdom',
+    'Zauberer': 'charisma',
+    'Hexenmeister': 'charisma',
+    'Magier': 'intelligence',
+  };
+
+  /// SRD 5.2.1: Spell Save DC / Spell Attack Rolls and multiclass spells.
+  ///
+  /// Read-only: this calculates class-specific base numbers but DOES NOT
+  /// confirm that an individual spell is prepared, legal or successfully cast.
+  /// A multiclass spell uses its own class's spellcasting ability, while
+  /// proficiency is based on the total character level.
+  ///
+  /// The caller must explicitly confirm that no unmodelled item/feature
+  /// modifies either number. No class or ability is inferred from narration.
+  static SrdClassSpellStats statsForClass(
+    HeroCharacter caster, {
+    required String castingClass,
+    required bool noUnmodelledModifiersConfirmed,
+  }) {
+    if (!noUnmodelledModifiersConfirmed) {
+      throw const FormatException(
+        'Ungeprüfte Merkmale oder Gegenstände könnten Zauberwerte verändern.',
+      );
+    }
+    final canonical = findSrdClass(castingClass)?.name;
+    final ability = _classSpellAbilities[canonical];
+    if (ability == null) {
+      throw const FormatException(
+        'Keine bestätigte SRD-Zauberklasse ausgewählt.',
+      );
+    }
+    final secondarySelected = caster.secondaryClassName.trim().isNotEmpty;
+    if (caster.level < 1 ||
+        caster.level > 20 ||
+        caster.secondaryClassLevel < 0 ||
+        caster.secondaryClassLevel >= caster.level ||
+        (secondarySelected && caster.secondaryClassLevel == 0) ||
+        (!secondarySelected && caster.secondaryClassLevel != 0)) {
+      throw const FormatException(
+        'Klassenstufen sind für die Zauberwerte ungültig.',
+      );
+    }
+
+    final primary = findSrdClass(caster.className)?.name;
+    final secondary = secondarySelected
+        ? findSrdClass(caster.secondaryClassName)?.name
+        : null;
+    if (primary == null ||
+        (secondarySelected && (secondary == null || primary == secondary)) ||
+        (canonical != primary && canonical != secondary)) {
+      throw const FormatException(
+        'Die gewählte Zauberklasse gehört nicht zum Charakter.',
+      );
+    }
+
+    final score = caster.abilities[ability];
+    if (score == null || score < 1 || score > 30) {
+      throw const FormatException(
+        'Das Zauberattribut ist nicht regelkonform bestätigt.',
+      );
+    }
+    final modifier = RulesEngine.abilityModifier(score);
+    final proficiency = RulesEngine.proficiencyBonus(caster.level);
+    return SrdClassSpellStats(
+      castingClass: canonical!,
+      ability: ability,
+      abilityScore: score,
+      abilityModifier: modifier,
+      proficiencyBonus: proficiency,
+      spellAttackModifier: modifier + proficiency,
+      spellSaveDc: 8 + modifier + proficiency,
+    );
   }
 
   /// For monster stat blocks, the *full* save modifier (not just the ability
@@ -85,4 +169,24 @@ class SrdSpellSaveResolution {
   final int dc, modifier;
   final DiceResult roll;
   final bool succeeded;
+}
+
+/// Validated, immutable class-specific base spell numbers.
+///
+/// An attack still needs its own authorized d20 roll, target AC and modifiers.
+/// These values do not spend slots, roll dice or apply spell effects.
+class SrdClassSpellStats {
+  const SrdClassSpellStats({
+    required this.castingClass,
+    required this.ability,
+    required this.abilityScore,
+    required this.abilityModifier,
+    required this.proficiencyBonus,
+    required this.spellAttackModifier,
+    required this.spellSaveDc,
+  });
+
+  final String castingClass, ability;
+  final int abilityScore, abilityModifier, proficiencyBonus;
+  final int spellAttackModifier, spellSaveDc;
 }

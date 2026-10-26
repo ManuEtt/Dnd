@@ -1,12 +1,12 @@
-# Chat D – plattformübergreifende Quell-ZIP-Pfade D-006 (26.10.2026)
+# Chat D – D-006 synchronisiert mit neuem Main am 26.10.2026
 
-- **Main-Basis:** `5f9a01dd73f68ad4f9e226f859a8ca87803b8337`; eigener Branch `fix/chat-d/portable-source-zip-paths-20261026`.
-- **IMPLEMENTIERT:** Archivpfade vor Publikation per Unicode-NFC, Casefold und Windows-Dateinamenregeln validieren; auch Verzeichnisprefixe. Sechs neue Python-Regressionen inklusive Bewahrung alter ZIP-/Prüfsummenpaare.
-- **GETESTET:** Code und Tests committed; Basis-`main` hatte eine vollständig erfolgreiche CI, **nicht** der neue Branch.
-- **NICHT GETESTET:** finale Python-/Flutter-/Backend-/Android-CI und Quell-ZIP/Alpha-Artefakt-Erstellung für D-006; manuelles Entpacken unter Windows/macOS.
-- **BLOCKIERT:** neuer CI-Nachweis. PR #189 für Gradle-Properties unabhängig; keine technischen Pfade überschneiden sich.
-- **MIGRATION:** SQLite, JSON, Gameplay, App-Version und SRD-Regelmechanik unverändert.
-- **NÄCHSTER SCHRITT:** finale CI und Quellen-ZIP abnehmen; aktuelle Main- und gemeinsame README-/Checkpoint-Änderungen konfliktfrei integrieren. [Persönlicher Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
+- **Main-Basis:** `f1f3e997bc8650a757d34234eff49d870dcf9369`, vorheriger D-006-HEAD `46b869eb27c23cd8b250e7747b86b0b54ad6eed1`, PR #200.
+- **IMPLEMENTIERT:** ZIP-Dateipfad-Portabilität mit Unicode-NFC, Casefold und Windows-Dateinamenregeln, sieben zusätzliche Python-Tests.
+- **GETESTET:** vorherige Push- und PR-CI auf `46b869eb27c23cd8b250e7747b86b0b54ad6eed1` vollständig erfolgreich, einschließlich Quell-ZIP und Android-Alpha.
+- **NICHT GETESTET:** endgültige kombinierte Version nach dem neuesten Merge von Chat A/B, tatsächliche Entpack-Tests auf Windows/macOS.
+- **BLOCKIERT:** finale neue CI; der parallele D-005 PR #189 wird getrennt integriert.
+- **MIGRATION:** keine Änderung an SQLite, JSON, Spielständen, SRD-Regelwerk oder Android-Version.
+- **NÄCHSTER SCHRITT:** neue exakte CI/Artefakte prüfen, dann konfliktfrei integrieren. [Detail-Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
 
 ---
 

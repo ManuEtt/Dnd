@@ -1,8 +1,8 @@
 # Würfelraunen – Der lebendige Spielleiter
 
-## Chat D – sichere Dateinamen im Quellcode-ZIP (D-006, 26.10.2026)
+## Chat D – plattformübergreifende ZIP-Archivpfade (D-006, 26.10.2026)
 
-Der Quell-ZIP-Ersteller prüft jetzt vor der Veröffentlichung plattformübergreifend uneindeutige Datei- und Verzeichnispfade: Groß-/Kleinschreibung, NFC/NFD-Unicode sowie problematische Windows-Dateinamen. Sechs neue Python-Regressionsmethoden einschließlich Rückrollschutz für bereits veröffentlichte ZIP-/SHA256-Paare sind ergänzt. Das Arbeitspaket ändert keine App-Funktionen oder Spielstände; vollständige CI und Paketerstellung auf dem finalen Commit müssen noch separat nachgewiesen werden. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+[PR #200](https://github.com/ManuEtt/Dnd/pull/200) lehnt casefold- oder Unicode-kollidierende Datei-/Verzeichnisnamen und Windows-unzulässige Quell-ZIP-Einträge vor Veröffentlichung ab. Sieben Python-Regressionstests überprüfen positive und negative Fälle, einschließlich alter ZIP-/SHA256-Paare und weiterhin ausgeschlossener Logs. Der vorherige D-006-HEAD `46b869e` hat vollständige Push-/PR-CI bestanden, für den aktuellen Main-Abgleich `f1f3e99` ist eine eigene neue vollständige CI notwendig. Keine Änderung an Spielregeln oder Spielständen. [Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
 
 ## Chat C – Zugänglicher Heldenstatus (25.10.2026, PR offen)
 

@@ -1,3 +1,9 @@
+# Chat D – D-006 Main-Abgleich nach A/B-Integrationen, 26.10.2026
+
+Alter CI-geprüfter D-006 HEAD `46b869eb27c23cd8b250e7747b86b0b54ad6eed1`; neuester Main-HEAD `f1f3e997bc8650a757d34234eff49d870dcf9369`, enthält SRD-Zauber- und NPC-Erinnerungsintegrationen. Nur `scripts/package_project.py` und zugehörige Tests aus D-006 übernommen, Main-Historie und Dateien vollständig erhalten. Neues finales CI erforderlich, kein Force-Push.
+
+---
+
 # Chat D – D-006: plattformübergreifend sichere Quell-ZIP-Namen
 
 ## GitHub und Scope
@@ -32,6 +38,7 @@ ZIP-Namen unterscheiden Groß- und Kleinschreibung. Windows sowie viele macOS-Vo
 ## Genau ein nächster Schritt
 
 Den **finalen** CI-Lauf für D-006 samt vollständiger Python-Regressionen und Alpha-Release-Quellarchiv abschließen, den aktuellen Main-Stand prüfen und Checkpoint-/README-Änderungen erst bei vollständiger Abnahme konfliktfrei zusammenführen.
+
 
 ---
 
