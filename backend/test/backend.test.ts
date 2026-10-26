@@ -57,6 +57,7 @@ test('session inspection validates short-lived token without invoking provider o
   assert.deepEqual(inspected.json(), {
     scope: 'narration:read-only', provider: 'openai',
     expiresAt: new Date(now + 300000).toISOString(),
+    capabilities: ['npc-identity-v1'],
   });
   assert.equal(providerCalls, 0);
   assert.equal(inspected.headers['cache-control'], 'no-store');
