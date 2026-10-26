@@ -63,7 +63,11 @@ void main() {
       );
       expect(tester.widget<FantasyTextButton>(accept).onPressed, isNull);
       expect(tester.widget<FantasyTextButton>(focus).onPressed, isNull);
+      await tester.ensureVisible(accept);
+      await tester.pumpAndSettle();
       await tester.tap(accept);
+      await tester.ensureVisible(focus);
+      await tester.pumpAndSettle();
       await tester.tap(focus);
       await tester.pumpAndSettle();
       expect(accepts, 0);
@@ -86,6 +90,8 @@ void main() {
       );
       expect(tester.widget<FantasyTextButton>(accept).onPressed, isNotNull);
       expect(tester.widget<FantasyTextButton>(focus).onPressed, isNotNull);
+      await tester.ensureVisible(focus);
+      await tester.pumpAndSettle();
       await tester.tap(focus);
       await tester.pumpAndSettle();
       expect(rerolls, [SavingThrowRerollFeature.disciplinedSurvivor]);
