@@ -417,9 +417,9 @@ void main() {
 
   for (final width in [320.0, 360.0]) {
     for (final scale in [1.0, 2.0]) {
-      testWidgets('Deckung hat bei $width dp und ${scale * 100}% ein 48-dp-Ziel', (
-        tester,
-      ) async {
+      testWidgets(
+        'Deckung hat bei $width dp und ${scale * 100}% ein 48-dp-Ziel',
+        (tester) async {
         tester.view.physicalSize = Size(width, 1200);
         tester.view.devicePixelRatio = 1;
         addTearDown(tester.view.resetPhysicalSize);
