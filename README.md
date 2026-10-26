@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – sichere SRD-Zauberkomponenten-Metadaten (26.10.2026)
+
+Ein separater Regelwerk-Branch prüft nun V/S/M-Komponentenkürzel beim Import des SRD-Zauberkatalogs strikt auf erlaubte Reihenfolge, Dubletten, unbekannte Symbole und vollständige Materialbeschreibungen. Eine statische Grammatikprüfung akzeptiert alle **339** bestehenden Einträge; die neuen Flutter-Regressionstests und die Android-CI sind beim Verfassen noch **nicht** abgenommen. Unveränderte Spielstände, kein neues Schema. Nachweise in [Chat A](docs/parallel/CHAT_A_CHECKPOINT.md); mögliche README-/Checkpoint-Konflikte mit PR #243 koordiniert Chat D.
+
+
 ## Chat D – Quell-ZIP vor Symlink-Austausch nach dem Scan schützen (D-009, 26.10.2026)
 
 Der Quellarchiv-Export nutzt auf POSIX nun vor jedem Dateilesen gesicherte Verzeichnis-Deskriptoren und `O_NOFOLLOW`, damit ein nach der Auflistung eingeschleuster Link nicht unbemerkt projektfremde Daten archiviert. Drei neue Regressionstests prüfen solche Datei-/Verzeichniswechsel sowie den Erhalt bereits veröffentlichter ZIP-/SHA256-Dateien; ein veralteter Testmock wurde aktualisiert. Non-POSIX-Plattformen erhalten eine zusätzliche Best-Effort-Prüfung, jedoch keine Garantie gegen alle Race Conditions. **Die finale CI auf dem aktuellen PR-Commit ist noch abzunehmen.** Keine Änderungen am Spielstandformat, App-Code oder Regelwerk. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
