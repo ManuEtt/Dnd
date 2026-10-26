@@ -1,3 +1,15 @@
+# Chat C – Kampfstatistiken für TalkBack (PR #245, 26.10.2026)
+
+- Basis-`main`: `5e3116f9e3f8de0af6e8125a97b3962cb8910cdf`.
+- Branch: `feat/chat-c/combat-stats-talkback-20261026`; Implementierungs-/Testcommit: `3952c1955883b2eff6459ca2608fbe7ef7ba7b57`.
+- PR: https://github.com/ManuEtt/Dnd/pull/245 (Draft, bis zur geprüften CI).
+- Implementiert: schreibgeschützte `_CombatStatTag`-Semantik in `app/lib/ui/fantasy_combatant_card.dart`; unbekannte Werte werden nicht erfunden.
+- Testdatei: `app/test/fantasy_combatant_card_test.dart` (positive 320/360-dp-/200-%-Fälle und negativer Unbekannt-Fall ergänzt).
+- Teststand zum Verfassen: weder lokales Flutter-/Dart-SDK noch lokale Flutter-Analyse; neue CI/Android-APK noch nicht belegt. Tests nur implementiert, nicht erfolgreich ausgeführt.
+- Persistenz/Migration: keine. Rule/Story/Controller/SQLite/JSON bleiben unberührt.
+- Überlappung: kein geänderter Quell-/Testpfad anderer offener PRs; `README.md` und diese zentrale Datei sind gemeinsam und benötigen Integrationskoordination durch Chat D.
+- Nächster Schritt: CI für PR #245 abnehmen und etwaige Widgettest-/Formatfehler auf demselben Branch korrigieren.
+
 # Chat D D-009 – sichere Quell-ZIP-Dateilesepfade (26.10.2026)
 
 - **Basis-`main`:** `42d14ad36cc947691f7e5a1e8647a43f5421b86e`; **Branch:** `fix/chat-d/source-zip-symlink-swap-20261026`.
