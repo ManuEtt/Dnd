@@ -1,3 +1,13 @@
+## Chat D D-011 (26.10.2026) – Package-URI-Storygrenze
+
+Ausgangs-`main` `5e3116f9e3f8de0af6e8125a97b3962cb8910cdf`; Arbeitsbranch `fix/chat-d/domain-package-uri-boundary-20261026`. Die Python-Architekturkontrolle kann `package:lebendiger_spielleiter/story/...` aus Domänenmodulen jetzt nicht mehr durch den bisherigen Doppelpunkt-Filter übersehen. Direkte Imports/Exports und kanonisierte Alias-Pfade werden fail-closed abgewiesen; andere Pakete und Domänentypen bleiben erlaubt. Neue Tests sichern positive/negative Fälle und den App-Paketnamen ab. Code `213b35d`, Test `44ca615`.
+
+**GETESTET:** lokal fünf isolierte Python-Fälle der vergleichbaren Prüferlogik bestanden; neue komplette Repository-Tests noch offen. **NICHT GETESTET:** vollständige Python-/Backend-/Flutter-/Android-Suite, reale Installation, Release-Signierung und finale CI für den exakten Branch-HEAD. **BLOCKIERT:** GitHub-DNS für kompletten lokalen Checkout und Flutter-/Dart-SDK fehlen hier. **NOCH NICHT IMPLEMENTIERT:** keine Änderungen an App-Spielregeln, Story oder Persistenz. **MIGRATION:** keine; SQLite 2/JSON 1 und Version 0.8.41+91 bleiben unverändert.
+
+Offene PRs zum Start: #243, #242, #241, #240, #239, #237, #236. Code/Test-Dateien konfliktfrei zur geprüften offenen PR-Liste; README/Checkpoint sind gemeinsam genutzt und bedürfen Integrationsabstimmung. [Fachcheckpoint](parallel/CHAT_D_CHECKPOINT.md). **Nächster Schritt:** finalen PR-CI-Stand und exakte SHA abnehmen.
+
+---
+
 # Chat D D-009 – sichere Quell-ZIP-Dateilesepfade (26.10.2026)
 
 - **Basis-`main`:** `42d14ad36cc947691f7e5a1e8647a43f5421b86e`; **Branch:** `fix/chat-d/source-zip-symlink-swap-20261026`.
