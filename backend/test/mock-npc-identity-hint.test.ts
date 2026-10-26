@@ -76,6 +76,14 @@ test('similar names and duplicate visible names never imply an NPC identity', ()
   assert.doesNotMatch(mockStoryTurn(duplicates).narration, /Dein Tagebuch/);
 });
 
+test('diacritics in a non-German NPC name never break Unicode matching', () => {
+  const request = input();
+  request.npcs[0]!.name = 'Éloïse';
+  request.npcContexts![0]!.npcName = 'Éloïse';
+  request.action = 'Ich spreche Éloïse an.';
+  assert.match(mockNpcIdentityHint(request), /silbernen Ring/u);
+});
+
 test('unknown IDs, stale revisions, and swapped notes cannot be narrated', () => {
   const mutations: Array<(value: StoryTurnWithNpcIdentities) => void> = [
     v => { v.campaignRevision = 18; },
