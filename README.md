@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat B – bestätigte Story-Abschlüsse vor KI-Umschreiben schützen (26.10.2026)
+
+Die bestehenden Backend- und Flutter-Story-Validatoren blockieren jetzt auch Änderungen an der **gespeicherten Beschreibung** eines bereits als `resolved` oder `abandoned` abgeschlossenen Handlungsstrangs. Eine bloße Wiederholung des gespeicherten Status und Wortlauts bleibt erlaubt. Der Spieler kann einen Eintrag weiterhin ausdrücklich im Tagebuch berichtigen oder erneut öffnen. Positive/negative Tests prüfen Parser, sicheren HTTP-Fehlerweg und erlaubte manuelle Änderungen. Keine Änderungen an SRD-Regeln, Heldenwerten, SQLite- oder JSON-Schema. Der vollständige CI-Nachweis ist auf dem PR-HEAD gesondert zu prüfen. [Chat-B-Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md).
+
+
 **Würfelraunen** ist eine deutschsprachige, in Entwicklung befindliche **Fantasy-Rollenspiel-App für Android**. Sie verbindet lokale Soloabenteuer, Charakter- und Kampagnenverwaltung, ausgewählte Regeln aus dem **D&D System Reference Document (SRD) 5.2.1** und eine optionale KI-gestützte Erzählung.
 
 Die App ist eine **Alpha-Version**, kein fertiger Ersatz für einen menschlichen Spielleiter und keine vollständige D&D-5e-Regelimplementierung. **Zum lokalen Spielen ist weder ein Account noch ein KI-Server erforderlich.**
