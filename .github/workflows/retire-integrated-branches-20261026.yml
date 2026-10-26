@@ -1,0 +1,90 @@
+name: Audited one-time retirement of integrated 2026-10-26 branches
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/retire-integrated-branches-20261026.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  prune:
+    if: github.repository == 'ManuEtt/Dnd' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete only reviewed, unchanged, fully merged branch heads
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const head = await github.rest.git.getRef({owner, repo, ref: 'heads/main'});
+            if (head.data.object.sha !== context.sha) {
+              core.warning('main changed after workflow start. No deletion.');
+              return;
+            }
+            // Only exact known October 26 source/integration branches, not other work.
+            const candidates = [
+              'feat/chat-a/fire-bolt-confirmed-modifiers-20261026',
+              'feat/chat-b/mock-structured-npc-recall-20261026',
+              'feat/chat-b/explicit-npc-identity-selection-20261026',
+              'fix/chat-b/disambiguate-recalled-npc-memories-20261026',
+              'fix/chat-a/acid-splash-target-identities-20261026',
+              'integration/npc-story-selection-20261026',
+              'integration/feature-pr221-222-224-20261026',
+              'integration/fire-bolt-npc-selection-20261026',
+              'integration/fire-bolt-modifiers-20261026',
+              'integration/npc-acid-identity-fixes-20261026',
+              'integration/npc-recall-acid-splash-20261026',
+              'chore/migrate-open-prs-20261026',
+              'chore/retire-merged-branches-20261026',
+            ];
+            const prs = await github.paginate(github.rest.pulls.list, {
+              owner, repo, state: 'open', per_page: 100,
+            });
+            const active = new Set(prs.filter(pr =>
+              pr.head.repo?.full_name === owner + '/' + repo
+            ).map(pr => pr.head.ref));
+            for (const name of candidates) {
+              if (active.has(name)) {
+                core.info('Open PR; keep branch: ' + name);
+                continue;
+              }
+              let original;
+              try {
+                original = await github.rest.git.getRef({
+                  owner, repo, ref: 'heads/' + name,
+                });
+              } catch (error) {
+                if (error.status === 404) continue;
+                throw error;
+              }
+              const sha = original.data.object.sha;
+              const comparison = await github.rest.repos.compareCommits({
+                owner, repo, base: sha, head: context.sha,
+              });
+              if (comparison.data.behind_by !== 0 ||
+                  !['ahead', 'identical'].includes(comparison.data.status)) {
+                core.info('Not a proven ancestor of main, keep: ' + name);
+                continue;
+              }
+              const nowMain = await github.rest.git.getRef({owner, repo, ref: 'heads/main'});
+              if (nowMain.data.object.sha !== context.sha) {
+                core.warning('main moved while cleaning; stopping.');
+                return;
+              }
+              const now = await github.rest.git.getRef({
+                owner, repo, ref: 'heads/' + name,
+              });
+              if (now.data.object.sha !== sha) {
+                core.info('Branch updated concurrently; keep: ' + name);
+                continue;
+              }
+              await github.rest.git.deleteRef({
+                owner, repo, ref: 'heads/' + name,
+              });
+              core.info('Deleted safely merged branch: ' + name + ' @ ' + sha);
+            }
