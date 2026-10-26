@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – Schutz vor manipulierter Eldritch-Blast-Deckung (26.10.2026)
+
+Der bestehende persistierte Mehrstrahl-Kampfpfad ist erweitert: Wenn der aktuelle Gegner bestätigte Deckung hat, darf ein Strahl diese nicht durch `sourceOppositeCover: false` umgehen. Eine Inkonsistenz stoppt den gesamten Zauber **vor** dem ersten Würfel. Dazu lehnt der reine Resolver Basis-RK 0 frühzeitig ab; der doppelte RK-100-Vergleich ist entfernt. Positive und negative Regressionstests liegen in den Eldritch-Blast-Regel- und Encounter-Tests. Die vorherige globale Main-CI war wegen *unabhängiger* ZIP-Qualitätstests rot; der neue Branch ist bis zum endgültigen CI-Nachweis nicht mergefreigegeben. [Regelbeleg](docs/SRD_ELDRITCH_COVER_SNAPSHOT_20261026.md) · [Chat-A-Checkpoint](docs/parallel/CHAT_A_ELDRITCH_COVER_20261026.md).
+
+
 ## Chat C – Kampf-Deckung bei 200 % Schrift (26.10.2026)
 
 Der unabhängige Branch `feat/chat-c/combat-cover-large-text-20261026` verbessert `FantasyCombatCoverPanel`: Bei 320–360 dp und 200 % Android-Schrift erhalten die Popup-Auswahlen für Held und Gegner jeweils die gesamte Zeilenbreite und zeigen bestätigte Deckungswerte ohne Textkürzung. Die Bedienhilfen nennen Deckungsstufe und Änderbarkeit. Auswahlwerte, bestehende `Deckung: ...`-Befehle und Sperren bei `canChange == false` bleiben unverändert. Drei zusätzliche Widgettests prüfen Layout, Screenreader, Auswahl und gesperrte Aktionen. **Finale CI-/Android-Abnahme steht noch aus.** Keine SRD-, KI-, Kampagnen- oder Datenmigration. [Detaillierter Chat-C-Checkpoint](docs/parallel/CHAT_C_COVER_ACCESSIBILITY_20261026.md).
