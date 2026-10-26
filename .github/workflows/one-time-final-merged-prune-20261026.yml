@@ -1,0 +1,70 @@
+name: Safe cleanup seven integrated branches
+on:
+  push:
+    branches:
+      - maintenance/prune-final-merged-20261026
+permissions:
+  contents: write
+  actions: read
+  pull-requests: read
+jobs:
+  prune:
+    if: github.repository == 'ManuEtt/Dnd'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Validate exact merged heads and retain archive tags
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXPECTED_MAIN='76ab5ae404144d4bb6f8de0b0cc429e009d03edd'
+          CI_HEAD='fdf8487336fa841be7702ada30e02a66b07420b8'
+          PREFIX='archive/final-merge-20261026'
+          ci=$(gh api repos/ManuEtt/Dnd/actions/runs/40275092590 --jq '[.head_sha,.status,.conclusion] | join("|")')
+          [[ "$ci" == "$CI_HEAD|completed|success" ]] || { echo "ABORT PR205 CI $ci"; exit 1; }
+          git fetch --quiet origin main
+          [[ "$(git rev-parse origin/main)" == "$EXPECTED_MAIN" ]] || { echo "ABORT main advanced: $(git rev-parse origin/main)"; exit 1; }
+          git merge-base --is-ancestor "$CI_HEAD" origin/main || { echo 'ABORT CI-covered feature head not merged'; exit 1; }
+          open_branches=$(gh api --paginate 'repos/ManuEtt/Dnd/pulls?state=open&per_page=100' --jq '.[] | .head.ref, .base.ref')
+          mapfile -t rows <<'ROWS'
+          feat/chat-a/eldritch-blast-multibeam-20261026|31136c840ebc82f84923fa799065151cf1a118a6
+          feat/chat-b/structured-npc-context-20261026|8775bfa25682c8448cba855dc44349bdfec20363
+          feat/chat-c/turn-tracker-large-text-20261026|399625c92ced66529ce058cc47c53f7fc167c962
+          fix/chat-b/npc-memory-name-guard-20261025|bdd95cac4006a0f575d96fef614091464c0e748e
+          fix/chat-d/gradle-properties-duplicate-guard-20261025|284558948eb751f9ce84ed74d3557cc68dfe0015
+          fix/chat-d/portable-source-zip-paths-20261026|1ceccc839a702630d0c953fd07fc9033a5e66594
+          integration/remaining-features-20261026|fdf8487336fa841be7702ada30e02a66b07420b8
+          ROWS
+          for row in "${rows[@]}"; do
+           IFS='|' read -r branch sha <<< "$row"
+           [[ "$branch" != main && "$branch" != maintenance/* ]] || exit 1
+           ! grep -Fxq -- "$branch" <<< "$open_branches" || { echo "ABORT active PR reference: $branch"; exit 1; }
+           [[ "$(git ls-remote origin "refs/heads/$branch" | cut -f1)" == "$sha" ]] || { echo "ABORT source head changed: $branch"; exit 1; }
+           git merge-base --is-ancestor "$sha" origin/main || { echo "ABORT missing history $branch"; exit 1; }
+           old=$(git ls-remote origin "refs/tags/$PREFIX/$branch" | cut -f1)
+           [[ -z "$old" || "$old" == "$sha" ]] || { echo "ABORT existing tag mismatch: $branch"; exit 1; }
+          done
+          for row in "${rows[@]}"; do
+           IFS='|' read -r branch sha <<< "$row"
+           tag="$PREFIX/$branch"
+           if [[ -z "$(git ls-remote origin "refs/tags/$tag" | cut -f1)" ]]; then
+            git tag "$tag" "$sha"
+            git push origin "refs/tags/$tag:refs/tags/$tag"
+           fi
+           git push --force-with-lease="refs/heads/$branch:$sha" origin ":refs/heads/$branch"
+           [[ -z "$(git ls-remote origin "refs/heads/$branch" | cut -f1)" ]] || exit 1
+           echo "ARCHIVED / DELETED $branch"
+          done
+          SELF='maintenance/prune-final-merged-20261026'
+          [[ "$(git ls-remote origin "refs/heads/$SELF" | cut -f1)" == "$GITHUB_SHA" ]] || { echo 'ABORT maintenance branch changed'; exit 1; }
+          selftag="$PREFIX/maintenance-$GITHUB_SHA"
+          git tag "$selftag" "$GITHUB_SHA"
+          git push origin "refs/tags/$selftag:refs/tags/$selftag"
+          git push --force-with-lease="refs/heads/$SELF:$GITHUB_SHA" origin ":refs/heads/$SELF"
+          echo 'SUCCESS: seven merged branches plus own maintenance branch deleted'
