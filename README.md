@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat B – Bestätigte Story-Enden nach Neustart erhalten (26.10.2026)
+
+Ein neuer SQLite-Integrationstest erweitert den [Schutz abgeschlossener Handlungsstränge aus PR #253](https://github.com/ManuEtt/Dnd/pull/253): Nach explizitem `resolved`- oder `abandoned`-Abschluss wird die vom Spieler gespeicherte Beschreibung im Tagebuch berichtigt, über mehrere SQLite-Neustarts rekonstruiert und gegen nachträgliche KI-Beschreibungsänderungen geprüft. Eine wörtlich unveränderte Story-Fortsetzung bleibt möglich. Die neue Test-Erweiterung ist von PR #253 abhängig und benötigt dessen Schutzcode für erfolgreiche CI. Keine Änderungen an Produktionslogik, SQLite-/JSON-Schema oder D&D-Regeln. [Chat-B-Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md).
+
+
 ## Chat B – bestätigte Story-Abschlüsse vor KI-Umschreiben schützen (26.10.2026)
 
 Die bestehenden Backend- und Flutter-Story-Validatoren blockieren jetzt auch Änderungen an der **gespeicherten Beschreibung** eines bereits als `resolved` oder `abandoned` abgeschlossenen Handlungsstrangs. Eine bloße Wiederholung des gespeicherten Status und Wortlauts bleibt erlaubt. Der Spieler kann einen Eintrag weiterhin ausdrücklich im Tagebuch berichtigen oder erneut öffnen. Positive/negative Tests prüfen Parser, sicheren HTTP-Fehlerweg und erlaubte manuelle Änderungen. Keine Änderungen an SRD-Regeln, Heldenwerten, SQLite- oder JSON-Schema. Der vollständige CI-Nachweis ist auf dem PR-HEAD gesondert zu prüfen. [Chat-B-Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md).
