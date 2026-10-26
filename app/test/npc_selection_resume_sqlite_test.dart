@@ -113,9 +113,7 @@ Future<void> _send(
 void main() {
   sqfliteFfiInit();
 
-  test(
-    'saved same-name NPC selection survives SQLite restart without cross-talk',
-    () async {
+  test('NPC identity survives SQLite restart without cross-talk', () async {
     final directory = await Directory.systemTemp.createTemp('npc-resume-');
     final path = paths.join(directory.path, 'campaign.sqlite');
     final saved = _campaign();
@@ -230,8 +228,7 @@ void main() {
       await repository.close();
       await directory.delete(recursive: true);
     }
-    },
-  );
+  });
 
   test('legacy JSON without NPC notes cannot invent saved NPC history', () {
     final old = _campaign().toJson()..remove('npcRelationshipNotes');
