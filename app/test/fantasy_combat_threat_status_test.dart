@@ -13,8 +13,15 @@ void main() {
     bool enemyShield = false,
     bool enemyReactionUsed = false,
     bool finished = false,
+    double textScale = 1,
   }) => MaterialApp(
     theme: buildFantasyTheme(),
+    builder: (context, child) => MediaQuery(
+      data: MediaQuery.of(
+        context,
+      ).copyWith(textScaler: TextScaler.linear(textScale)),
+      child: child!,
+    ),
     home: Scaffold(
       body: ListView(
         padding: const EdgeInsets.all(12),
@@ -176,4 +183,65 @@ void main() {
     expect(find.text('Schild des Helden aktiv'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+  for (final width in [320.0, 360.0]) {
+    testWidgets('200 %: einzelne Kampfhinweise auf $width dp vorlesbar', (
+      tester,
+    ) async {
+      tester.view.physicalSize = Size(width, 1200);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final semantics = tester.ensureSemantics();
+
+      await tester.pumpWidget(
+        screen(
+          textScale: 2,
+          pendingShield: true,
+          heroShield: true,
+          enemyShield: true,
+          enemyReactionUsed: true,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      const labels = [
+        'Gegnerzug läuft',
+        '2 weitere Gegnerangriffe',
+        'Schildentscheidung offen – Schaden nicht gewürfelt',
+        'Schild des Helden aktiv',
+        'Gegnerschild aktiv',
+        'Gegnerreaktion verbraucht',
+      ];
+      for (final label in labels) {
+        expect(
+          find.bySemanticsLabel(label),
+          findsOneWidget,
+          reason: 'TalkBack muss $label getrennt ankündigen',
+        );
+        expect(find.text(label), findsOneWidget);
+      }
+      expect(tester.takeException(), isNull);
+      semantics.dispose();
+    });
+  }
+
+  testWidgets('Abgeschlossen: nur Abschluss-Siegel vorlesbar', (tester) async {
+    final semantics = tester.ensureSemantics();
+    await tester.pumpWidget(
+      screen(
+        finished: true,
+        pendingShield: true,
+        heroShield: true,
+        enemyShield: true,
+        enemyReactionUsed: true,
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.bySemanticsLabel('Begegnung beendet'), findsOneWidget);
+    expect(find.bySemanticsLabel('Gegnerzug läuft'), findsNothing);
+    expect(find.bySemanticsLabel('Gegnerschild aktiv'), findsNothing);
+    expect(tester.takeException(), isNull);
+    semantics.dispose();
+  });
+
 }
