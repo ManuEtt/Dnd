@@ -106,7 +106,8 @@ class AbilityAllocation {
         );
       }
     } else if (method == AbilityGenerationMethod.randomRoll) {
-      final expected = rollSet?.scores.toList()..sort();
+      final expected = rollSet?.scores.toList();
+      expected?.sort();
       final actual = baseScores.values.toList()..sort();
       if (expected == null ||
           actual.length != expected.length ||
