@@ -2,7 +2,7 @@
 
 ## Chat A – sichere SRD-Zauberkomponenten-Metadaten (26.10.2026)
 
-Ein separater Regelwerk-Branch prüft nun V/S/M-Komponentenkürzel beim Import des SRD-Zauberkatalogs strikt auf erlaubte Reihenfolge, Dubletten, unbekannte Symbole und vollständige Materialbeschreibungen. Eine statische Grammatikprüfung akzeptiert alle **339** bestehenden Einträge; die neuen Flutter-Regressionstests und die Android-CI sind beim Verfassen noch **nicht** abgenommen. Unveränderte Spielstände, kein neues Schema. Nachweise in [Chat A](docs/parallel/CHAT_A_CHECKPOINT.md); mögliche README-/Checkpoint-Konflikte mit PR #243 koordiniert Chat D.
+In [PR #247](https://github.com/ManuEtt/Dnd/pull/247) prüft ein separater Regelwerk-Branch nun V/S/M-Komponentenkürzel beim Import des SRD-Zauberkatalogs strikt auf erlaubte Reihenfolge, Dubletten, unbekannte Symbole und vollständige Materialbeschreibungen. Eine statische Grammatikprüfung akzeptiert alle **339** bestehenden Einträge; die neuen Flutter-Regressionstests und die Android-CI sind beim Verfassen noch **nicht** abgenommen. Unveränderte Spielstände, kein neues Schema. Nachweise in [Chat A](docs/parallel/CHAT_A_CHECKPOINT.md); mögliche README-/Checkpoint-Konflikte mit PR #243 koordiniert Chat D.
 
 
 ## Chat D – Quell-ZIP vor Symlink-Austausch nach dem Scan schützen (D-009, 26.10.2026)
