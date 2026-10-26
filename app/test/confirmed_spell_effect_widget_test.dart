@@ -219,7 +219,10 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.textContaining('noch 1 eigenes Zugende'), findsOneWidget);
       expect(find.textContaining('noch 1 eigene Zugenden'), findsNothing);
-      expect(find.byKey(const ValueKey('ward-spell-effect-spell-one')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('ward-spell-effect-spell-one')),
+        findsOneWidget,
+      );
       expect(hero.toJson(), saved);
       expect(tester.takeException(), isNull);
     });
