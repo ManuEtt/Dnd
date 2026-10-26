@@ -290,17 +290,15 @@ void main() {
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
-      const heroName =
-          'Elowen die Wanderin aus den vergessenen Nebelbergen';
-      const enemyName =
-          'Schattenwächter der verlassenen Sternwarte';
+      const heroName = 'Elowen die Wanderin aus den vergessenen Nebelbergen';
+      const enemyName = 'Schattenwächter der verlassenen Sternwarte';
       await tester.pumpWidget(
         MaterialApp(
           theme: buildFantasyTheme(),
           builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(context).copyWith(
-              textScaler: const TextScaler.linear(2),
-            ),
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: const TextScaler.linear(2)),
             child: child!,
           ),
           home: Scaffold(
@@ -332,14 +330,21 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.widget<Text>(find.text(heroName)).maxLines, isNull);
       expect(tester.widget<Text>(find.text(enemyName)).maxLines, isNull);
-      expect(find.byKey(const ValueKey('combatant-active-turn')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('combatant-active-turn')),
+        findsOneWidget,
+      );
       expect(find.textContaining('INI 18', findRichText: true), findsWidgets);
       expect(find.textContaining('RK 16', findRichText: true), findsWidgets);
-      expect(find.textContaining('TP 12 / 24', findRichText: true), findsWidgets);
-      expect(find.text('Trefferpunkte nicht vollständig bestätigt'),
-          findsOneWidget);
+      expect(
+        find.textContaining('TP 12 / 24', findRichText: true),
+        findsWidgets,
+      );
+      expect(
+        find.text('Trefferpunkte nicht vollständig bestätigt'),
+        findsOneWidget,
+      );
       expect(tester.takeException(), isNull);
     });
   }
-
 }
