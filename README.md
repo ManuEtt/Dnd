@@ -130,6 +130,10 @@ Unter Linux benötigen SQLite-Tests `libsqlite3-dev`. Die CI-Definition steht in
 
 Anleitungen: [Sicherungen](docs/SAVE_BACKUPS.md) · [Alpha-Artefakte](docs/ALPHA_RELEASES.md) · [APK-Download](docs/APK_DOWNLOAD.md).
 
+## Chat C – Deckungssteuerung mit ausreichender Berührungsfläche (26.10.2026; PR offen)
+
+Die beiden Deckungs-Auswahlfelder **Held** und **Gegner** im Kampfpanel besitzen jetzt auch mit kompaktem Text eine Mindesthöhe der antippbaren Fläche von **48 dp**. Die Unterscheidung zwischen erlaubter und gesperrter Deckungsänderung, die bestätigungsgebundenen Kampfaktionen und die Screenreader-Beschriftungen bleiben unverändert. Zusätzliche Widgettests prüfen 320/360 dp bei normaler und doppelter Systemschrift, erfolgreiche Auswahlkommandos sowie deaktivierte Felder ohne Zustandsänderung. Änderungen betreffen nur `app/lib/ui/fantasy_combat_status.dart` und `app/test/fantasy_combat_status_test.dart`; keine neuen SRD-Regeln, keine JSON-/SQLite-Migration. Der final erfolgreiche CI-/Gerätestand dieser isolierten Änderung muss separat bestätigt werden; keine Änderung an `main` durch dieses Arbeitspaket.
+
 ## Entwicklungsstand und nächste Schritte
 
 Das Projekt wird in kleinen, überprüfbaren Inkrementen entwickelt. Vorrangig sind:
