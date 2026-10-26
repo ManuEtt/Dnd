@@ -1,5 +1,22 @@
 # CHAT C – Android und Fantasy-UI
 
+## 26.10.2026 – Chat C: Kampfstatistiken mit verständlicher TalkBack-Ansage (PR #245)
+
+- **Ausgangs-`main`-SHA:** `5e3116f9e3f8de0af6e8125a97b3962cb8910cdf`.
+- **Eigener Branch:** `feat/chat-c/combat-stats-talkback-20261026`.
+- **Implementierungs-/Testcommit:** `3952c1955883b2eff6459ca2608fbe7ef7ba7b57` (nachfolgende reine Dokumentationscommits auf demselben Branch).
+- **PR:** [#245](https://github.com/ManuEtt/Dnd/pull/245), Draft bis CI erfolgreich geprüft.
+- **Problem:** Initiative, RK, TP und temporäre TP werden in den Kampfteilnehmerkarten optisch als INI/RK/TP/TEMP bzw. „?“ angezeigt; screenreaderfähige Fachbezeichnungen fehlen.
+- **Implementiert:** Eigenständige Semantiklabels der vier `_CombatStatTag`-Varianten; „?“ und „? / ?“ als „nicht bestätigt“ statt erfundener Zahl; visuelle Kürzel und Balken unverändert.
+- **Geänderte Dateien:** `app/lib/ui/fantasy_combatant_card.dart`, `app/test/fantasy_combatant_card_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, dieses Checkpoint-Dokument.
+- **Tests hinzugefügt:** Zwei bestätigte positive Widget-Szenarien bei 320/360 dp und 200 % Textskalierung; negativer Szenariotyp für unbekannte Werte.
+- **GETESTET:** Flutter/Dart/Android lokal **nicht** ausführbar (Flutter und Dart fehlen). GitHub Actions beim Dokumentieren noch nicht ausgewertet; keine grüne CI oder APK behauptet.
+- **Migration/Spielstände:** keine; keine Regel-/Controller-/Story-/Persistenzänderung.
+- **Überschneidungsprüfung:** PRs #236, #237, #239, #240, #241, #242, #243 – keine gemeinsamen UI-/Testdateien. Gemeinsame README-/Checkpoint-Änderungen müssen durch Chat D konfliktbewusst konsolidiert werden.
+- **Bekannte Grenze:** Reale TalkBack-Geräteabnahme und CI-Abschluss ausstehend.
+- **Nächster Schritt (ein Paket):** PR #245 in Actions auf Flutter-Tests, Analyse und Debug-APK prüfen, etwaige Fehler in diesem Branch korrigieren.
+
+
 **Stand:** 2026-10-25 (Europe/Berlin)  
 **Zusätzlich nachgezogener Main-Stand:** `97a06118f17d71cc77be2cb15a2fc9a53db20ee0` (enthält Chat D PR #177, dessen zusätzliche CI-Gates; alte Dokumentation bewahrt)  
 **Nachgezogener Main-Stand:** `fb788a980b8ee9eb60439c249f3e1f5092a9f188` (enthält PR #176; Merge ausschließlich auf dem Feature-Branch)  
