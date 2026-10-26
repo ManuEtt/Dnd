@@ -1,0 +1,45 @@
+name: Chat C action economy temporary Flutter validation
+
+on:
+  push:
+    branches:
+      - feat/chat-c/action-economy-large-text-20261026
+    paths:
+      - .github/workflows/chat-c-action-economy-diagnostic.yml
+
+permissions:
+  contents: read
+
+jobs:
+  focused:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Generate fantasy assets
+        run: python3 scripts/generate_fantasy_buttons.py
+      - name: Resolve Flutter packages
+        working-directory: app
+        run: flutter pub get
+      - name: Show canonical combat action source formatting
+        working-directory: app
+        run: |
+          echo '===CHAT-C-ACTION-SOURCE-START==='
+          dart format --output=show lib/ui/fantasy_combat_status.dart
+          echo '===CHAT-C-ACTION-SOURCE-END==='
+      - name: Show canonical combat action test formatting
+        working-directory: app
+        run: |
+          echo '===CHAT-C-ACTION-TEST-START==='
+          dart format --output=show test/fantasy_combat_status_test.dart
+          echo '===CHAT-C-ACTION-TEST-END==='
+      - name: Analyze combat UI and tests
+        working-directory: app
+        run: flutter analyze lib/ui/fantasy_combat_status.dart test/fantasy_combat_status_test.dart
+      - name: Run focused combat UI tests
+        working-directory: app
+        run: flutter test test/fantasy_combat_status_test.dart
