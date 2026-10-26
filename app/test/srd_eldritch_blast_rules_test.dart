@@ -104,6 +104,43 @@ SrdEldritchBlastResolution _resolve({
 }
 
 void main() {
+  test('Unknown primary class cannot use valid secondary Warlock', () {
+    final random = _SequenceRandom([19, 0, 19, 0]);
+    final imported = HeroCharacter.fromJson(
+      _warlock(
+        className: 'Unbekannte Klasse',
+        secondary: 'Warlock',
+        secondaryLevel: 1,
+      ).toJson(),
+    );
+    final before = jsonEncode(imported.toJson());
+
+    expect(
+      () => _resolve(caster: imported, random: random),
+      throwsFormatException,
+    );
+    expect(random.calls, 0);
+    expect(jsonEncode(imported.toJson()), before);
+  });
+
+  test('Valid English multiclass aliases still resolve all beams', () {
+    final random = _SequenceRandom([9, 0, 9, 0]);
+    final caster = _warlock(
+      className: 'Wizard',
+      secondary: 'Warlock',
+      secondaryLevel: 1,
+    );
+    final before = jsonEncode(caster.toJson());
+    final result = _resolve(caster: caster, random: random);
+
+    expect(result.characterLevel, 5);
+    expect(result.beams, hasLength(2));
+    expect(result.beams.map((beam) => beam.hit), [true, true]);
+    expect(result.totalRawForceDamage, 2);
+    expect(random.calls, 4);
+    expect(jsonEncode(caster.toJson()), before);
+  });
+
   test('beam count uses CHARACTER level 1/5/11/17, not class level', () {
     const checkpoints = <int, int>{
       1: 1,
