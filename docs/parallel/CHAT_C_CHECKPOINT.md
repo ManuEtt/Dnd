@@ -1,5 +1,18 @@
 # CHAT C – Android und Fantasy-UI
 
+## Chat C – C-004: verarbeitetes Todesrettungsergebnis sichtbar ankündigen (26.10.2026)
+
+- **Basis/Branch:** `main` `67f146e690306b13d490bd8e7fd5636bb187c77e`; `feat/chat-c/death-save-busy-feedback-20261026`.
+- **Technische Commits:** `bcd1b7ea62163ccf8a5f66608e166fd188b07f04` (sichtbarer + TalkBack-Live-Status), `fd0898b3ed2043e4730c0de4ee44229b99a1a66a` (zwei Widgettests).
+- **Verhalten:** Nur bei `busy` erscheint „Entscheidung wird verarbeitet …“. Separater Semantik-Knoten: „Todesrettungswurf: Entscheidung wird verarbeitet. Weitere Eingaben sind gesperrt.“ Die vorhandenen Buttons bleiben bei `busy` deaktiviert, danach wieder bedienbar.
+- **Regressionen:** 320/360 dp und zweifache Android-Schriftgröße, Semantik, Unveränderlichkeit von Hero-JSON, keine zweite Auswahl/Ressourcenänderung im Wartezustand, Rückkehr der Fokus-Wiederholung danach.
+- **Sicherheits-/Regelgrenze:** Kein Kampf-/Save-/D&D-Regelcode, keine Controller-/SQLite-/JSON-Änderung und kein Backendzugriff. Nur lesende UI-Anzeige.
+- **Kollisionen:** Kein offener PR änderte bei Branch-Anlage die beiden technischen Dateipfade. README und zentraler Checkpoint werden von weiteren Chats verwendet, vor Integration aktuellen Inhalt erhalten.
+- **GETESTET:** Neuer CI-/Buildstand noch nicht final bestätigt. Vorheriger Chat-C-PR #254: [#40383763474](https://github.com/ManuEtt/Dnd/actions/runs/40383763474) erfolgreich, zur Review freigegeben, weiterhin ohne Echtgerät-Abnahme.
+- **BLOCKIERT:** kein lokales Flutter-/Dart-SDK in dieser Ausführungsumgebung.
+- **Nächster Schritt:** GitHub Actions für C-004 abschließen, Format-/Widgetfehler beheben, anschließend PR bereit zur Integration; nicht automatisch mergen.
+
+
 **Stand:** 2026-10-25 (Europe/Berlin)  
 **Zusätzlich nachgezogener Main-Stand:** `97a06118f17d71cc77be2cb15a2fc9a53db20ee0` (enthält Chat D PR #177, dessen zusätzliche CI-Gates; alte Dokumentation bewahrt)  
 **Nachgezogener Main-Stand:** `fb788a980b8ee9eb60439c249f3e1f5092a9f188` (enthält PR #176; Merge ausschließlich auf dem Feature-Branch)  
