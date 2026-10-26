@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – verständliche TalkBack-Kampfwerte (PR #245, 26.10.2026)
+
+Der separate Entwurfs-PR [#245](https://github.com/ManuEtt/Dnd/pull/245) ergänzt auf der schreibgeschützten Kampfteilnehmerkarte eindeutige Vorlesetexte für Initiative, Rüstungsklasse, Trefferpunkte und temporäre Trefferpunkte. Unbekannte Werte werden als „nicht bestätigt“ angekündigt. Das kompakte visuelle Design, Regeln, Controller und Spielstandformate bleiben unverändert. Drei neue Widgetfälle decken bestätigte Werte bei 320/360 dp mit 200 % Schrift sowie unbekannte importierte Werte ab. Flutter-/Android-Tests und CI sind bei Erstellung **noch nicht bestätigt**; echte TalkBack-Geräteabnahme bleibt offen. Die Änderungen liegen nur auf `feat/chat-c/combat-stats-talkback-20261026` und sind noch nicht in `main`. Gemeinsame Dokumentationsänderungen vor einer Integration mit Chat D abstimmen.
+
+
 ## Chat D – Quell-ZIP vor Symlink-Austausch nach dem Scan schützen (D-009, 26.10.2026)
 
 Der Quellarchiv-Export nutzt auf POSIX nun vor jedem Dateilesen gesicherte Verzeichnis-Deskriptoren und `O_NOFOLLOW`, damit ein nach der Auflistung eingeschleuster Link nicht unbemerkt projektfremde Daten archiviert. Drei neue Regressionstests prüfen solche Datei-/Verzeichniswechsel sowie den Erhalt bereits veröffentlichter ZIP-/SHA256-Dateien; ein veralteter Testmock wurde aktualisiert. Non-POSIX-Plattformen erhalten eine zusätzliche Best-Effort-Prüfung, jedoch keine Garantie gegen alle Race Conditions. **Die finale CI auf dem aktuellen PR-Commit ist noch abzunehmen.** Keine Änderungen am Spielstandformat, App-Code oder Regelwerk. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
