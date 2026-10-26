@@ -112,6 +112,55 @@ void main() {
     );
   });
 
+  test('component grammar rejects forged symbols and material descriptions', () async {
+    final source = await rootBundle.loadString('assets/srd_5_2_1_spells.json');
+    final entries = (jsonDecode(source) as Map<String, dynamic>)['spells']
+        as List<dynamic>;
+    Map<String, dynamic> spellNamed(String name) => Map<String, dynamic>.from(
+      entries.firstWhere((entry) => entry['name'] == name) as Map,
+    );
+
+    final missile = spellNamed('Magic Missile');
+    expect(SrdSpellDefinition.fromJson(missile).components, 'V, S');
+    for (final invalid in [
+      'V, S, X',
+      'V, V, S',
+      'V,, S',
+      'V, S, S',
+      'S, V',
+      'V, S (unapproved details)',
+      'V, S\\nM',
+    ]) {
+      expect(
+        () => SrdSpellDefinition.fromJson({
+          ...missile,
+          'components': invalid,
+        }),
+        throwsFormatException,
+        reason: invalid,
+      );
+    }
+
+    final fireball = spellNamed('Fireball');
+    expect(SrdSpellDefinition.fromJson(fireball).material, isTrue);
+    for (final invalid in [
+      'V, S, M',
+      'V, S, M ()',
+      'V, S, M (ash) (other)',
+      'V, S, M, M (ash)',
+      'V, S, M (ash)\\nX',
+    ]) {
+      expect(
+        () => SrdSpellDefinition.fromJson({
+          ...fireball,
+          'components': invalid,
+        }),
+        throwsFormatException,
+        reason: invalid,
+      );
+    }
+  });
+
   test(
     'preflight is read-only and resource commit requires resolved effect',
     () {
