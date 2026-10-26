@@ -76,7 +76,7 @@ export function buildApp(config: Config, dependencies: AppDependencies = {}) {
       expiresIn: config.sessionTtlSeconds,
       provider: config.provider,
       scope: 'narration:read-only',
-      capabilities: ['npc-identity-v1'],
+      capabilities: ['npc-identity-v1', 'npc-selection-v1'],
     };
   });
 
@@ -90,7 +90,7 @@ export function buildApp(config: Config, dependencies: AppDependencies = {}) {
       scope: 'narration:read-only',
       provider: config.provider,
       expiresAt: new Date(session.expiresAt * 1000).toISOString(),
-      capabilities: ['npc-identity-v1'],
+      capabilities: ['npc-identity-v1', 'npc-selection-v1'],
     };
   });
 
@@ -160,6 +160,61 @@ export function buildApp(config: Config, dependencies: AppDependencies = {}) {
         recentActions: { type: 'array', maxItems: 8, items: nonBlankString(2000) },
         campaignRevision: { type: 'integer', minimum: 0, maximum: 2147483647 },
         npcContexts: { type: 'array', maxItems: 3, items: npcIdentitySchema },
+        selectedNpcId: { type: 'string', pattern: '^[a-zA-Z0-9_-]{1,64}
+      } } }, preHandler: storyRateLimit,
+  }, async (request, reply) => {
+    // Reject ambiguous saved identifiers before making a potentially paid
+    // provider call. A provider failure is 502; bad input is always 400.
+    try { validateStoryTurnContext(request.body); validateNpcIdentityContext(request.body); }
+    catch { return reply.code(400).send({ error: 'invalid_request', message: 'Die Kampagnendaten sind ungültig.' }); }
+    if (!narrator.advanceStory) return reply.code(503).send({ error: 'story_unavailable' });
+    try {
+      // Never guess which same-name saved NPC a client-provided diary note
+      // describes. Keep ordinary memories and the existing wire schema.
+      const context: StoryTurnWithNpcIdentities = {
+        ...request.body,
+        memories: filterAmbiguousNpcDiaryMemories(request.body),
+      };
+      const proposed = await narrator.advanceStory(context);
+      return {
+        provider: config.provider,
+        stateChanges: [],
+        turn: guardStoryTurnSecrets(
+          parseStoryTurn(proposed, context),
+          context.secret,
+        ),
+      };
+    }
+    catch { return reply.code(502).send({ error: 'provider_unavailable' }); }
+  });
+
+  app.post<{ Body: NarrationInput }>('/v1/narrate', {
+    schema: { body: narrationSchema },
+    preHandler: async (request, reply) => {
+      const token = bearerToken(request.headers.authorization);
+      const session = token ? verifySession(token, config.sessionSecret, clock()) : undefined;
+      if (!session) return reply.code(401).send({ error: 'invalid_session', message: 'Die Sitzung ist abgelaufen. Bitte verbinde dich erneut.' });
+      const now = clock();
+      if (!minuteLimiter.take(session.subject, now, 60000, config.requestsPerMinute)) {
+        reply.header('Retry-After', '60');
+        return reply.code(429).send({ error: 'rate_limit', message: 'Das Minutenlimit ist erreicht. Bitte warte kurz.' });
+      }
+      if (!dayLimiter.take(session.subject, now, 86400000, config.requestsPerDay)) {
+        reply.header('Retry-After', '86400');
+        return reply.code(429).send({ error: 'daily_limit', message: 'Das tägliche Anfragelimit ist erreicht.' });
+      }
+    },
+  }, async (request, reply) => {
+    try {
+      return await narrator.narrate(request.body);
+    } catch {
+      // Provider errors can contain API keys, input and account details. Never forward them.
+      return reply.code(502).send({ error: 'provider_unavailable', message: 'Der Spielleiterdienst ist vorübergehend nicht erreichbar. Nutze den lokalen Demo-Modus oder versuche es später erneut.' });
+    }
+  });
+  return app;
+}
+, maxLength: 64 },
       } } }, preHandler: storyRateLimit,
   }, async (request, reply) => {
     // Reject ambiguous saved identifiers before making a potentially paid
