@@ -1,3 +1,21 @@
+# Chat B – Controller-Wiederaufnahme und KI-Erzählgrenze (26.10.2026)
+
+- **Stack-Basis:** PR #256 `test/chat-b/terminal-thread-sqlite-resume-20261026` / `2b3fb89f184480bb5a53d29d0c374d0fc71cf36f`. Dieser setzt wiederum den Schutz aus PR #253 voraus. `main` wurde inzwischen auf `08bcd4dda585224c2ca8671786adecaf263d736c` fortgeschrieben, enthält aber #253/#256 noch nicht.
+- **Eigener Branch:** `test/chat-b/controller-terminal-recovery-20261026`; ausschließlich gestapelt gegen Branch von #256 integrieren.
+- **Geprüfte Fremd-PRs:** #252–#259 (Chat A/C/D und Eltern-PRs) sowie aktuelle Branch-/CI-Stände. Kein PR bearbeitet den neuen Testpfad. Gemeinsame README-/Checkpoints über Chat D bei der Integration konsolidieren.
+- **IMPLEMENTIERT:** `app/test/ai_story_terminal_controller_resume_test.dart`. Für `resolved` und `abandoned` wird eine generierte Kampagne echt in SQLite gespeichert, über den öffentlichen `GameController.saveStoryThread` zweimal explizit bestätigt/berichtigt, Controller und DB neu gestartet und der Spielstand über `GameController.initialize` wiederhergestellt. Sessiontoken bleibt nach Neustart unverbunden; Verbindung muss explizit neu hergestellt werden. Ein lokaler `BackendTransport` zeichnet die an `/v1/story/advance` gesendeten bestätigten Threads auf.
+- **NEGATIVFALL:** Mock-Erzähler versucht, bei gleichem abgeschlossenen Status die gespeicherte Beschreibung umzuschreiben. Controller lehnt den unbestätigten KI-Fortschritt ab und speichert den lokalen Spielerzug ohne Änderung an Abschluss, Helden- oder Questwerten; SQLite-Revision und Rekonstruktion werden kontrolliert.
+- **POSITIVFALL:** Mock-Erzähler wiederholt danach exakt den gespeicherten Abschluss; Controller akzeptiert die Fortsetzung, erhöht Turncount/Revision einmal, übernimmt die neue Erzählung und bewahrt weiterhin die Spielerbeschreibung und Helden-/Questwerte.
+- **DATEIEN:** neue Flutter-/Controller-Integrationstestdatei plus `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_B_CHECKPOINT.md`. Produktionscode, Test-Infrastruktur und Workflow nach Diagnose unverändert.
+- **AKZEPTANZ:** Zwei vollständige Mock-Controller-Tests; beide Terminalstatus, gespeicherte History, Revisionen, negative Providerantwort und positive Folgeantwort, SQLite-Checkpoint, keine externen KI-Aufrufe oder Spielwert-Mutation.
+- **GETESTET:** Aktuelle GitHub-Code- und PR-Stände, Parent-PR #256 CI [#40391505655](https://github.com/ManuEtt/Dnd/actions/runs/40391505655) vollständig **success**. Exaktes Dart-3.9.2-Formatterergebnis für neue Testdatei via temporärem, danach gelöschtem Diagnoselauf nachgewiesen.
+- **NOCH NICHT GETESTET:** finale GitHub-CI auf neuem Branch, lokale Flutter-/APK-/Gerätetests; keine Produktiv-KI oder Kostendienste benutzt.
+- **BLOCKIERT:** Parent-PRs #253 und #256 noch offen; gegen aktualisiertes main erst nach deren regulärer Integration retargeten.
+- **MIGRATION:** keine, SQLite 2 / JSON 1 unverändert, keine Produktivdatei geändert.
+- **NÄCHSTER SCHRITT:** Nach erfolgreicher CI beide Eltern-PRs chronologisch integrieren lassen, anschließend Controller-Test integrieren und aktuelle `main`-CI prüfen.
+
+---
+
 # Chat B – Bestätigte Story-Enden über SQLite-Neustart schützen (26.10.2026)
 
 - **Basis:** PR #253 `fix/chat-b/terminal-thread-description-20261026` auf `ba33a2497852ab13237b448427057b432ec222b6`, ursprünglicher `main` `67f146e690306b13d490bd8e7fd5636bb187c77e`.
