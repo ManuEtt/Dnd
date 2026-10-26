@@ -1,0 +1,17 @@
+name: Chat B temporary NPC selection formatting check
+on:
+  push:
+    branches:
+      - feat/chat-b/explicit-npc-identity-selection-20261026
+jobs:
+  print-selection-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Print exact NPC selection formatter diff
+        run: |
+          dart format app/lib/story/npc_story_selection.dart app/lib/story/npc_identity_story_payload.dart app/test/npc_story_selection_test.dart
+          git diff -- app/lib/story/npc_story_selection.dart app/lib/story/npc_identity_story_payload.dart app/test/npc_story_selection_test.dart
