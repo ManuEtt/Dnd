@@ -599,41 +599,4 @@ class BackendNarrator extends ChangeNotifier {
     super.dispose();
   }
 }
-).hasMatch(campaignId) ||
-        action.trim().isEmpty ||
-        action.length > 2000 ||
-        premise.isEmpty ||
-        goal.isEmpty ||
-        secret.isEmpty ||
-        scene.isEmpty ||
-        scene.length > 4000 ||
-        threads.length > 100 ||
-        npcs.length > 50 ||
-        memories.length > 20 ||
-        recentActions.length > 8) {
-      throw const FormatException('KI-Geschichtenkontext ungültig.');
-    }
-    return _storyRequest('/v1/story/advance', {
-      'campaignId': campaignId,
-      'heroName': heroName,
-      'action': action,
-      'scene': scene,
-      'premise': premise,
-      'goal': goal,
-      'secret': secret,
-      'threads': threads,
-      'npcs': npcs,
-      'memories': memories,
-      'recentActions': recentActions,
-    }, 'turn');
-  }
 
-  @override
-  void dispose() {
-    _disposed = true;
-    ++_generation;
-    _clearSession();
-    _cancelPending();
-    super.dispose();
-  }
-}
