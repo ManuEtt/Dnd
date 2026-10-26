@@ -174,12 +174,19 @@ test('closed story threads cannot be reopened or rewritten by the narrator', () 
       ...update, threadUpdates: [{ ...update.threadUpdates[0]!, status: terminal === 'resolved' ? 'abandoned' : 'resolved' }],
     }, closed), /closed_story_thread/);
 
-    // Harmless notes with the *same* terminal status remain possible.
+    // Even with the same terminal status, the original description is history.
+    assert.throws(() => parseStoryTurn({
+      ...update, threadUpdates: [{ ...update.threadUpdates[0]!, status: terminal }],
+    }, closed), /closed_story_thread/);
+
+    // Idempotently repeating the exact saved ending remains safe.
     assert.deepEqual(
       parseStoryTurn({
-        ...update, threadUpdates: [{ ...update.threadUpdates[0]!, status: terminal }],
+        ...update, threadUpdates: [{
+          id: 'spur', status: terminal, description: closed.threads[0]!.description,
+        }],
       }, closed).threadUpdates,
-      [{ id: 'spur', status: terminal, description: 'Unbemerkt wieder eröffnet' }],
+      [{ id: 'spur', status: terminal, description: closed.threads[0]!.description }],
     );
 
     // An explicit user-side change in the supplied saved state is authoritative.
@@ -222,6 +229,39 @@ test('story endpoint rejects attempted reopening without leaking provider detail
   assert.equal(response.statusCode, 502);
   assert.equal(response.json().error, 'provider_unavailable');
   assert.doesNotMatch(response.body, /Spurenstrang|Nicht bestätigt|closed_story_thread/);
+});
+
+test('story endpoint hides attempted edits to confirmed ending descriptions', async (t) => {
+  const closed: StoryTurnInput = {
+    ...action,
+    threads: [{ ...action.threads[0]!, status: 'resolved' }, action.threads[1]!],
+  };
+  const app = buildApp(config, {
+    narrator: {
+      narrate: async () => ({ text: 'Unverändert.', provider: 'mock', stateChanges: [] }),
+      advanceStory: async () => ({
+        narration: 'Das Ende wird nachträglich umgedeutet.',
+        threadUpdates: [{
+          id: 'spur', status: 'resolved', description: 'Eine andere Wahrheit!',
+        }],
+        newThreads: [], npcUpdates: [], adventure: null,
+      }),
+    },
+  });
+  t.after(() => app.close());
+  const issued = await app.inject({
+    method: 'POST', url: '/v1/session',
+    headers: { authorization: `Bearer ${token}` }, payload: {},
+  });
+  assert.equal(issued.statusCode, 200);
+  const response = await app.inject({
+    method: 'POST', url: '/v1/story/advance',
+    headers: { authorization: `Bearer ${issued.json<{token:string}>().token}` },
+    payload: closed,
+  });
+  assert.equal(response.statusCode, 502);
+  assert.equal(response.json().error, 'provider_unavailable');
+  assert.doesNotMatch(response.body, /umgedeutet|andere Wahrheit|closed_story_thread/);
 });
 
 test('ambiguous saved thread or NPC IDs are rejected before parsing provider output', () => {
