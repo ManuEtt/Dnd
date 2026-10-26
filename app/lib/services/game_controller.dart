@@ -516,6 +516,9 @@ class GameController extends ChangeNotifier {
         final npcIdentityPayload = narrator.supportsNpcIdentityContexts
             ? NpcIdentityStoryPayload.prepare(campaign, action)
             : null;
+        // Revalidate the selected ID-bound snapshot at the transport boundary.
+        // No refresh by name: stale data falls back to the confirmed local turn.
+        npcIdentityPayload?.requireCurrent(campaign);
         final response = await narrator.advanceStory(
           campaignId: campaign.id,
           heroName: campaign.hero.name,
