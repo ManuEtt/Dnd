@@ -1,3 +1,17 @@
+# Chat B – Schutz bestätigter Story-Abschlussbeschreibungen (26.10.2026)
+
+- **Ausgangs-Main:** `67f146e690306b13d490bd8e7fd5636bb187c77e`; **Branch:** `fix/chat-b/terminal-thread-description-20261026`; **PR:** nach Veröffentlichung auf GitHub ermitteln.
+- **IMPLEMENTIERT:** Der TypeScript-Backend-Parser und der Flutter-Story-Parser lehnen bei `resolved`/`abandoned` nicht nur Statuswechsel, sondern auch unbestätigte Beschreibungskorrekturen durch KI ab. Identische Ausgabe bleibt akzeptiert; explizite Tagebuchbearbeitung und bewusste Wiederöffnung bleiben erlaubt.
+- **TESTS ERGÄNZT:** Backend-Unit, HTTP-502-Negativtest ohne geheimen KI-Text im Response, Flutter-Unit und manuelle Story-Editorregression.
+- **GETESTET:** Aktuelle Quellcode-/PR-/CI-Bestandsaufnahme; PR #251 hat vollständige GitHub-CI erfolgreich abgeschlossen. Eigener finaler CI-Nachweis für dieses Paket steht separat aus.
+- **NICHT GETESTET:** Lokale vollständige Flutter-/Backend-/Python- und Android-Builds; Gerät und echter Provider nicht getestet.
+- **BLOCKIERT:** Lokales Flutter-/Android-SDK und Repository-Checkout; parallele gemeinsame Dokumentation wird über Chat D konsolidiert.
+- **KEINE MIGRATION:** Keine Datenbank, Export-JSON-, Regel- oder Schnittstellenänderung.
+- **NÄCHSTER SCHRITT:** SQLite-Wiederaufnahmetest für manuell korrigierten abgeschlossenen Handlungsstrang nach der CI.
+- [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md), ältere Einträge unten unverändert.
+
+---
+
 # CODEX-CHECKPOINT – vollständige Branch-Migration
 
 Stand **2026-10-26T17:38:53+00:00**, Würfelraunen **0.8.42+92**, SQLite **2**, Kampagnen-JSON **1**.
