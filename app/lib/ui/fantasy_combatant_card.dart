@@ -95,9 +95,8 @@ class FantasyCombatantCard extends StatelessWidget {
                       size: 42,
                     ),
                     SizedBox(width: largeText ? 0 : 10, height: largeText ? 8 : 0),
-                    Flexible(
-                      fit: FlexFit.loose,
-                      child: Column(
+                    if (largeText)
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -118,8 +117,30 @@ class FantasyCombatantCard extends StatelessWidget {
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                         ],
+                      )
+                    else
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              isHero ? 'HELD' : 'GEGNER',
+                              style: TextStyle(
+                                color: accent,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.3,
+                                fontSize: 11,
+                              ),
+                            ),
+                            Text(
+                              name,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
                     if (isActive)
                       Container(
                         key: const ValueKey('combatant-active-turn'),
