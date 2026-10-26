@@ -1,3 +1,13 @@
+# Chat C – Mindesthöhe für Deckungs-Auswahlfelder (26.10.2026)
+
+- **Base:** `main` `67f146e690306b13d490bd8e7fd5636bb187c77e`; **eigener Branch:** `feat/chat-c/cover-touch-target-20261026`.
+- **Implementiert:** `app/lib/ui/fantasy_combat_status.dart`: direkte `PopupMenuButton`-Kindfläche der Deckungssteuerung erhält `BoxConstraints(minHeight: 48)` sowohl bei erlaubter als auch bei gesperrter Auswahl.
+- **Tests ergänzt:** `app/test/fantasy_combat_status_test.dart`: vier 320-/360-dp- und 100-/200-%-Kombinationen prüfen min. 48 dp und unveränderten Bestätigungsbefehl; ein gesperrter Zustand prüft min. 48 dp ohne Handlung. Neue Tests bei Erstellung noch nicht vollständig durch CI bestätigt.
+- **Zuständigkeit:** Chat C, reine Darstellung/Interaktion. Keine Änderungen an `CoverRules`, `GameController`, Persistenz, SRD/Story oder Netzwerk. Kein SQLite-/JSON-Migrationsbedarf.
+- **Koordination:** Bei Branch-Anlage keine Überschneidungen der technischen Dateien mit offenen PRs. Zentraldokumentation von parallelen Chats wird bei Integration konfliktbewusst zusammengeführt. Kein direkter Main-Merge und keine Branchbereinigung.
+- **Vorherige Pakete:** [#245](https://github.com/ManuEtt/Dnd/pull/245), [#252](https://github.com/ManuEtt/Dnd/pull/252): jeweils vollständige erfolgreiche CI [#40375552456](https://github.com/ManuEtt/Dnd/actions/runs/40375552456) bzw. [#40377546583](https://github.com/ManuEtt/Dnd/actions/runs/40377546583), aber weiterhin getrennt zur Review/Integration; Echtgerät und TalkBack-Geräteabnahme offen.
+- **Nächster überprüfbarer Schritt:** CI von Chat-C-Deckungs-Paket (Formatter, Analyzer, Fluttertests, Android-Debug-/Alpha-Build) endgültig auswerten; Fehler auf demselben Branch korrigieren, danach PR zur Integration freigeben.
+
 # CODEX-CHECKPOINT – vollständige Branch-Migration
 
 Stand **2026-10-26T17:38:53+00:00**, Würfelraunen **0.8.42+92**, SQLite **2**, Kampagnen-JSON **1**.
