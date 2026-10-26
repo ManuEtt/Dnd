@@ -42,6 +42,21 @@ class DeathSaveDecisionPanel extends StatelessWidget {
             'Ein Wiederholungswurf ersetzt diesen Wurf vollständig. '
             'Das neue Ergebnis gilt auch, wenn es schlechter ist.',
           ),
+          if (busy) ...[
+            const SizedBox(height: 8),
+            const Semantics(
+              liveRegion: true,
+              label:
+                  'Todesrettungswurf: Entscheidung wird verarbeitet. '
+                  'Weitere Eingaben sind gesperrt.',
+              child: ExcludeSemantics(
+                child: Text(
+                  'Entscheidung wird verarbeitet …',
+                  key: ValueKey('death-save-busy-status'),
+                ),
+              ),
+            ),
+          ],
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,
