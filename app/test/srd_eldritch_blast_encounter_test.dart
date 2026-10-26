@@ -71,11 +71,9 @@ Encounter _encounter({
   actionUsed: actionUsed,
 );
 
-Campaign _campaign(GameEngine engine, {Encounter? encounter}) =>
-    engine.createDemo().copyWith(
-      hero: _hero(),
-      encounter: encounter ?? _encounter(),
-    );
+Campaign _campaign(GameEngine engine, {Encounter? encounter}) => engine
+    .createDemo()
+    .copyWith(hero: _hero(), encounter: encounter ?? _encounter());
 
 List<SrdEldritchBlastTarget> _targets({
   String targetId = 'eb-foe',
@@ -155,10 +153,7 @@ void main() {
     expect(payload['damage'], 4);
     expect(update.campaign.encounter!.enemyHitPoints, 46);
     expect(update.campaign.encounter!.actionUsed, isTrue);
-    expect(
-      update.campaign.encounter!.spellSlotExpendedThisTurn,
-      isFalse,
-    );
+    expect(update.campaign.encounter!.spellSlotExpendedThisTurn, isFalse);
     expect(update.campaign.hero.spentSpellSlots, before.hero.spentSpellSlots);
     expect(update.campaign.hero.spentPactSlots, before.hero.spentPactSlots);
     expect(update.campaign.revision, before.revision + 1);
@@ -229,7 +224,8 @@ void main() {
     final engine = GameEngine(dice: DiceEngine(random: rng));
     final game = _campaign(engine);
     expect(
-      () => _cast(engine, game.copyWith(encounter: _encounter(actionUsed: true))),
+      () =>
+          _cast(engine, game.copyWith(encounter: _encounter(actionUsed: true))),
       throwsFormatException,
     );
     expect(
@@ -265,49 +261,52 @@ void main() {
     expect(rng.calls, 0);
   });
 
-  test('SQLite restart persists all beams; stale replay never repeats', () async {
-    final directory = await Directory.systemTemp.createTemp('eb-sqlite-');
-    final dbPath = p.join(directory.path, 'game.sqlite');
-    var repo = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: dbPath,
-    );
-    var controller = GameController(
-      repository: repo,
-      engine: GameEngine(dice: DiceEngine(random: _Rolls([9, 3, 2]))),
-    );
-    try {
-      final before = _campaign(GameEngine());
-      await repo.saveCampaign(before, events: before.events);
-      await controller.openCampaign(before.id);
-      await _controllerCast(controller, before);
-      expect(controller.error, isNull);
-      final after = controller.currentCampaign!;
-      expect(after.encounter!.enemyHitPoints, 46);
-      expect(after.encounter!.actionUsed, isTrue);
-      expect(after.events.last.type, 'spell.eldritchBlast');
-      expect(after.events.last.payload['beams'], hasLength(2));
-      await _controllerCast(controller, before);
-      expect(controller.error, contains('erneut öffnen'));
-      expect(controller.currentCampaign!.toJson(), after.toJson());
-      expect((await repo.getCampaign(before.id))!.toJson(), after.toJson());
-
-      controller.dispose();
-      await repo.close();
-      repo = await SqliteCampaignRepository.open(
+  test(
+    'SQLite restart persists all beams; stale replay never repeats',
+    () async {
+      final directory = await Directory.systemTemp.createTemp('eb-sqlite-');
+      final dbPath = p.join(directory.path, 'game.sqlite');
+      var repo = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: dbPath,
       );
-      controller = GameController(repository: repo);
-      await controller.openCampaign(before.id);
-      expect(controller.error, isNull);
-      expect(controller.currentCampaign!.toJson(), after.toJson());
-    } finally {
-      controller.dispose();
-      await repo.close();
-      await directory.delete(recursive: true);
-    }
-  });
+      var controller = GameController(
+        repository: repo,
+        engine: GameEngine(dice: DiceEngine(random: _Rolls([9, 3, 2]))),
+      );
+      try {
+        final before = _campaign(GameEngine());
+        await repo.saveCampaign(before, events: before.events);
+        await controller.openCampaign(before.id);
+        await _controllerCast(controller, before);
+        expect(controller.error, isNull);
+        final after = controller.currentCampaign!;
+        expect(after.encounter!.enemyHitPoints, 46);
+        expect(after.encounter!.actionUsed, isTrue);
+        expect(after.events.last.type, 'spell.eldritchBlast');
+        expect(after.events.last.payload['beams'], hasLength(2));
+        await _controllerCast(controller, before);
+        expect(controller.error, contains('erneut öffnen'));
+        expect(controller.currentCampaign!.toJson(), after.toJson());
+        expect((await repo.getCampaign(before.id))!.toJson(), after.toJson());
+
+        controller.dispose();
+        await repo.close();
+        repo = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: dbPath,
+        );
+        controller = GameController(repository: repo);
+        await controller.openCampaign(before.id);
+        expect(controller.error, isNull);
+        expect(controller.currentCampaign!.toJson(), after.toJson());
+      } finally {
+        controller.dispose();
+        await repo.close();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
 
   test('SQLite journal failure rolls back action and enemy HP', () async {
     final directory = await Directory.systemTemp.createTemp('eb-rollback-');
