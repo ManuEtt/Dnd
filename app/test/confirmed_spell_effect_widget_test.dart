@@ -177,4 +177,84 @@ void main() {
     expect(find.textContaining('andere Begegnung'), findsOneWidget);
     expect(find.textContaining('noch 4 eigene Zugenden'), findsNothing);
   });
+
+  for (final width in [320.0, 360.0]) {
+    testWidgets('Zauberzugenden bei $width dp und 200 % richtig dekliniert', (
+      tester,
+    ) async {
+      tester.view.physicalSize = Size(width, 1200);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final hero = heroWithEffects();
+      final saved = hero.toJson();
+
+      Widget page(Encounter encounter) => MaterialApp(
+        theme: buildFantasyTheme(),
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: const TextScaler.linear(2)),
+          child: child!,
+        ),
+        home: Scaffold(
+          body: ListView(
+            children: [
+              FantasyEffectWard(
+                hero: hero,
+                encounter: encounter,
+                expandDetailsInitially: true,
+              ),
+            ],
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(page(fight()));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('noch 4 eigene Zugenden'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+
+      await tester.pumpWidget(page(fight().copyWith(round: 6)));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('noch 1 eigenes Zugende'), findsOneWidget);
+      expect(find.textContaining('noch 1 eigene Zugenden'), findsNothing);
+      expect(find.byKey(const ValueKey('ward-spell-effect-spell-one')), findsOneWidget);
+      expect(hero.toJson(), saved);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets('Fremde Begegnung zeigt auch bei großer Schrift keine Restzeit', (
+    tester,
+  ) async {
+    final hero = heroWithEffects();
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildFantasyTheme(),
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: const TextScaler.linear(2)),
+          child: child!,
+        ),
+        home: Scaffold(
+          body: ListView(
+            children: [
+              FantasyEffectWard(
+                hero: hero,
+                encounter: fight(id: 'other'),
+                expandDetailsInitially: true,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.textContaining('andere Begegnung'), findsOneWidget);
+    expect(find.textContaining('noch 1 eigenes Zugende'), findsNothing);
+    expect(find.textContaining('noch 4 eigene Zugenden'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
 }
