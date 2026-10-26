@@ -6,6 +6,8 @@ Die App ist eine **Alpha-Version**, kein fertiger Ersatz für einen menschlichen
 
 > **Projektstand (26.10.2026):** Die Flutter-App deklariert Version **0.8.42+92**. Die Versionsnummer kennzeichnet den Entwicklungsstand, nicht eine abgeschlossene Geräte- oder Release-Abnahme. Aktuelle Integrationen, Testnachweise und offene Arbeiten stehen in [Entwicklungsstatus](DEVELOPMENT_STATUS.md) und [Codex-Checkpoint](docs/CODEX_CHECKPOINT.md).
 
+> **Neues Regel-Inkrement (Entwicklungsbranch, noch nicht in `main`):** Bei bestätigtem Aufstieg auf Klassenstufe 20 berechnet die App jetzt automatisch die Stärkungsmerkmale *Primal Champion* (Barbar) und *Body and Mind* (Mönch), einschließlich der rückwirkenden Trefferpunktkorrektur durch Konstitution. Die Stufenvorschau zeigt diese Änderungen. Umfang, Tests und Grenzen: [Chat-A-Klassenmerkmale](docs/parallel/CHAT_A_CLASS_CAPSTONES_20261026.md). GitHub-CI und Integration sind getrennt zu prüfen; sämtliche übrigen SRD-Klassenmerkmale sind **nicht** pauschal automatisiert.
+
 ## Was kann Würfelraunen?
 
 Du erstellst einen Charakter, wählst ein Abenteuer und bestimmst mit eigenen Aktionen, wie sich die Geschichte entwickelt. Die App verwaltet die bestätigten Spielinformationen und trennt dabei **Spielregeln**, **Erzählung** und **gespeicherte Entscheidungen**.
