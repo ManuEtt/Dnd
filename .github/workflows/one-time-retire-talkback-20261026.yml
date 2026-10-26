@@ -1,0 +1,59 @@
+name: One-time verified TalkBack branch retirement
+on:
+  push:
+    branches:
+      - maintenance/retire-talkback-20261026
+permissions:
+  contents: write
+  pull-requests: read
+jobs:
+  prune:
+    if: github.repository == 'ManuEtt/Dnd'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Verify main ancestry, PR state, backup tags and retire refs
+        shell: bash
+        run: |
+          set -euo pipefail
+          PREFIX='archive/retired-talkback-20261026'
+          git fetch --quiet origin main
+          mapfile -t rows <<'ROWS'
+          feat/chat-c/threat-status-talkback-20261026|a9ffb9c41c68dbc363ed25ad98e5bdf443de7c7c|223
+          feat/chat-c/chronicle-talkback-20261026|608d68e6a1fa41e8177a3ac9b3bfd5b057f41375|225
+          ROWS
+          for record in "${rows[@]}"; do
+            IFS='|' read -r branch expected number <<< "$record"
+            state=$(gh api "repos/ManuEtt/Dnd/pulls/$number" --jq '[.state,.merged,.head.sha] | join("|")')
+            [[ "$state" == "closed|true|$expected" ]] || { echo "PR $number not safely merged: $state"; exit 1; }
+            git merge-base --is-ancestor "$expected" origin/main || { echo "Original not in current main: $branch"; exit 1; }
+            actual=$(git ls-remote origin "refs/heads/$branch" | cut -f1)
+            [[ "$actual" == "$expected" ]] || { echo "Changed or missing branch: $branch $actual"; exit 1; }
+            tag="$PREFIX/$branch"
+            old=$(git ls-remote origin "refs/tags/$tag" | cut -f1)
+            [[ -z "$old" || "$old" == "$expected" ]] || { echo "Tag conflict $tag"; exit 1; }
+          done
+          for record in "${rows[@]}"; do
+            IFS='|' read -r branch expected number <<< "$record"
+            tag="$PREFIX/$branch"
+            if [[ -z "$(git ls-remote origin "refs/tags/$tag" | cut -f1)" ]]; then
+              git tag "$tag" "$expected"
+              git push origin "refs/tags/$tag:refs/tags/$tag"
+            fi
+            git push --force-with-lease="refs/heads/$branch:$expected" origin ":refs/heads/$branch"
+            [[ -z "$(git ls-remote origin "refs/heads/$branch" | cut -f1)" ]] || { echo "Deletion not verified $branch"; exit 1; }
+            echo "ARCHIVED & DELETED $branch"
+          done
+          SELF='maintenance/retire-talkback-20261026'
+          [[ "$(git ls-remote origin "refs/heads/$SELF" | cut -f1)" == "$GITHUB_SHA" ]] || { echo 'Self branch changed'; exit 1; }
+          tag="$PREFIX/cleanup-workflow-$GITHUB_SHA"
+          git tag "$tag" "$GITHUB_SHA"
+          git push origin "refs/tags/$tag:refs/tags/$tag"
+          git push --force-with-lease="refs/heads/$SELF:$GITHUB_SHA" origin ":refs/heads/$SELF"
+          echo 'SUCCESS: two TalkBack branches and temporary cleanup branch archived and removed.'
