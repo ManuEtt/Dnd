@@ -7,6 +7,7 @@ import '../domain/game_engine.dart';
 import '../domain/ai_story.dart';
 import '../domain/models.dart';
 import '../domain/acid_splash_rules.dart';
+import '../domain/srd_eldritch_blast_rules.dart';
 import '../domain/srd_extra_creature_attack_rules.dart';
 import '../domain/srd_spell_preflight_rules.dart';
 import '../domain/srd_spell_inventory_rules.dart';
