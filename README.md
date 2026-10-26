@@ -97,3 +97,12 @@ Ein isoliertes Backend-Paket auf `fix/chat-b/npc-memory-name-guard-20261025` fil
 Wichtig: Die Clientkennzeichnung „Bestätigte NPC-Beziehungsnotiz“ ist keine Server-Authentifizierung. Die Änderung verhindert eine nachweisbare Namensverwechslung, kann aber keine Textbehauptung kryptographisch verifizieren. Es werden weder Backend-API-Schema noch Spielstände, Regelmechanik oder App-Version verändert.
 
 Fünf neue Backend-Regressionsfälle inklusive Fastify-/Mock-Provider-Integration wurden implementiert. CI-Freigabe erst nach tatsächlich erfolgreichem Testlauf auf dem finalen PR-HEAD. Status: [Chat-B-Checkpoint](docs/parallel/CHAT_B_NPC_NAME_GUARD_20261025.md).
+
+
+---
+
+## Chat B – optionaler, strukturierter NPC-ID-Kontext für KI-Story (26.10.2026)
+
+Ein auf [PR #193](https://github.com/ManuEtt/Dnd/pull/193) aufbauender, **gestapelter** Chat-B-Branch ergänzt `/v1/story/advance` um zwei **optionale** Request-Felder: `campaignRevision` und `npcContexts`. Der bisherige Legacy-Request bleibt unverändert gültig. Die neue Validierung vergleicht Kampagnen-ID und angegebene Revision mit jedem lokalen NPC-Snapshot, weist unbekannte oder doppelte IDs und unsortierte/fremde/übergroße Notizen zurück und überprüft die Felder vor jedem Anbieteraufruf. Der alte Schutz gegen mehrdeutige, namenbasierte Tagebuchnotizen aus PR #193 bleibt aktiv. Die neue Struktur kann gleichnamige Figuren anhand ihrer IDs unterscheiden.
+
+**Grenze:** Das Backend besitzt keine eigene persistierte Kampagnenrevision. Es bestätigt daher nur die Konsistenz des Client-Requests, nicht unabhängig die Wahrheit des Inhalts. Der Flutter-Client nutzt den optionalen Vertrag bislang noch nicht; zuerst müssen die offenen PRs #193 und #196 integriert werden. Die sechs Backendtests inklusive Fastify-/Mock-Transport sind geschrieben. Erfolgreiche CI- oder Android-Artefakte des neuen Branches werden erst nach Prüfung des finalen HEAD behauptet. [Checkpoint](docs/parallel/CHAT_B_STRUCTURED_NPC_CONTEXT_20261026.md).
