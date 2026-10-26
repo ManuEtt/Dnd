@@ -201,4 +201,87 @@ void main() {
       findsNothing,
     );
   });
+  for (final width in [320.0, 360.0]) {
+    testWidgets('Chronik bei $width dp und 200 % getrennt vorlesbar', (
+      tester,
+    ) async {
+      tester.view.physicalSize = Size(width, 1400);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final semantics = tester.ensureSemantics();
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildFantasyTheme(),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: const TextScaler.linear(2)),
+            child: child!,
+          ),
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: FantasyCombatChronicle(
+                events: [
+                  event(
+                    'roll-accessible',
+                    'attack',
+                    payload: {
+                      'roll': {'total': 19},
+                      'hit': true,
+                      'damage': 6,
+                      'stateAfter': {
+                        'private': 'DO_NOT_ANNOUNCE_INTERNAL_CHECKPOINT',
+                      },
+                    },
+                  ),
+                  event(
+                    'heal-accessible',
+                    'effect.healing',
+                    payload: {'hitPointsRestored': 8},
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.bySemanticsLabel(
+          RegExp(r'^Angriffswurf, .*Wurf: 19, Treffer, Schaden: 6'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.bySemanticsLabel(RegExp(r'^Heilung bestätigt, .*Geheilte TP: 8')),
+        findsOneWidget,
+      );
+      expect(
+        tester
+            .getTopLeft(
+              find.byKey(const ValueKey('chronicle-event-heal-accessible')),
+            )
+            .dy,
+        lessThan(
+          tester
+              .getTopLeft(
+                find.byKey(const ValueKey('chronicle-event-roll-accessible')),
+              )
+              .dy,
+        ),
+      );
+      expect(
+        find.bySemanticsLabel(RegExp('DO_NOT_ANNOUNCE_INTERNAL_CHECKPOINT')),
+        findsNothing,
+      );
+      expect(
+        find.textContaining('DO_NOT_ANNOUNCE_INTERNAL_CHECKPOINT'),
+        findsNothing,
+      );
+      expect(tester.takeException(), isNull);
+      semantics.dispose();
+    });
+  }
 }
