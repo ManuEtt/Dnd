@@ -43,6 +43,7 @@ class FantasyCombatantCard extends StatelessWidget {
         ? '? / ?'
         : '$hitPoints / $maxHitPoints';
     final progress = healthProgress;
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.8;
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
@@ -82,15 +83,20 @@ class FantasyCombatantCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                Flex(
+                  direction: largeText ? Axis.vertical : Axis.horizontal,
+                  crossAxisAlignment: largeText
+                      ? CrossAxisAlignment.start
+                      : CrossAxisAlignment.center,
                   children: [
                     FantasyRuneEmblem(
                       rune: isHero ? FantasyRune.hero : FantasyRune.dice,
                       color: accent,
                       size: 42,
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
+                    SizedBox(width: largeText ? 0 : 10, height: largeText ? 8 : 0),
+                    Flexible(
+                      fit: FlexFit.loose,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -105,8 +111,10 @@ class FantasyCombatantCard extends StatelessWidget {
                           ),
                           Text(
                             name,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                            maxLines: largeText ? null : 2,
+                            overflow: largeText
+                                ? TextOverflow.visible
+                                : TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                         ],
