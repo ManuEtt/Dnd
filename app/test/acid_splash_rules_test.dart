@@ -150,7 +150,7 @@ void main() {
     expect(hero.toJson(), previous);
   });
 
-  test('Whitespace and control characters in target IDs reject before RNG', () {
+  test('Reject ambiguous target IDs before any random roll', () {
     final rng = _FixedRandom([0]);
     final hero = _hero();
     final original = hero.toJson();
