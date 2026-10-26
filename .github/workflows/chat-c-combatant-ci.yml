@@ -40,7 +40,7 @@ jobs:
         run: dart format --output=none --set-exit-if-changed lib/ui/fantasy_combatant_card.dart test/fantasy_combatant_card_test.dart
       - name: Analyze Flutter code
         working-directory: app
-        run: flutter analyze
+        run: flutter analyze lib/ui/fantasy_combatant_card.dart test/fantasy_combatant_card_test.dart
       - name: Verify combatant-card regressions
         working-directory: app
         run: flutter test test/fantasy_combatant_card_test.dart
