@@ -1,3 +1,15 @@
+# Chat A – Eldritch Blast Mehrstrahl, 26.10.2026
+
+- **IMPLEMENTIERT:** `SrdEldritchBlastRules` für insgesamt 1/2/3/4 getrennte Strahlen auf Gesamtstufe 1/5/11/17, mehrere bestätigte Ziel-IDs, unabhängige W20-/Krit-/1d10-Energieschadenswürfe, Deckung/Vorteil/Nachteil und Vorab-Abbruch ohne RNG bei unbestätigten Zielen.
+- **GETESTET:** Neue Regressionstests geschrieben; endgültiger GitHub-Actions-Nachweis auf dem neuen Branch ausstehend.
+- **NICHT GETESTET:** Geräteinstallation, produktive Signierung und historisches Upgrade.
+- **BLOCKIERT:** Ausführung im GameEngine-/Controller-Journal bis zur separaten atomaren Integration; keine lokalen Flutter-/Dart-SDKs.
+- **NOCH NICHT IMPLEMENTIERT:** Invocations, Schadensabwehr/HP, persistente Zauberaktion und End-to-End-UI.
+- **NÄCHSTER SCHRITT:** Finalen PR-CI-Commit abnehmen; mit anderem Chat-A/Chat-D-PR-Stand konfliktfrei integrieren, anschließend genau eine persistente Aktion für mehrere bestätigte Strahlen entwickeln.
+- **SRD-Status:** `SPELL-ENTRY-ELDRITCH-BLAST` und `RULE-SPELLS-CANTRIP-SCALING` nur `partial`; vollständiges SRD nicht abgeschlossen. [Fachbeleg](SRD_ELDRITCH_BLAST_MULTIBEAM_20261026.md) · [Chat-A-Checkpoint](parallel/CHAT_A_ELDRITCH_BLAST_20261026.md).
+
+---
+
 # Chat C – barrierefreier Abenteuerstatus (25.10.2026)
 
 - **Main-Basis:** initial `97a06118f17d71cc77be2cb15a2fc9a53db20ee0`, jetzt `45bea9c2a897275583bdbe32ed50afde5d0a76b0`; Branch `feat/chat-c/accessible-status-hud-20261025`.
