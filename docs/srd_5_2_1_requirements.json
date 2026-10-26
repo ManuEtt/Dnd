@@ -469,12 +469,17 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#barbar_20_base_primal-champion_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_class_level_up_test.dart",
+        "app/test/ui_srd_class_level_up_test.dart"
+      ],
       "code": [
+        "app/lib/domain/srd_class_level_up.dart",
+        "app/lib/ui/srd_class_level_up_dialog.dart",
         "app/lib/domain/srd_class_feature_catalog.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "note": "SRD-5.2.1-Stufe-20-Kapstone: automatische Attributssteigerung (+4 bis 25), bei Barbar inklusive rückwirkendem KON-TP-Modifikator, nur auf bestätigter Klassenstufe 20; UI-Vorschau und Domain-/Widget-Regression ergänzt. finaler CI-Test/Android-Abnahme noch offen, deswegen partial statt tested. Keine implizite Rückmigration bestehender Stufe-20-Importe."
     },
     {
       "id": "CLASS-BARBAR-3-SUBCLASS-FRENZY-0",
@@ -2829,12 +2834,17 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#m-nch_20_base_body-and-mind_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_class_level_up_test.dart",
+        "app/test/ui_srd_class_level_up_test.dart"
+      ],
       "code": [
+        "app/lib/domain/srd_class_level_up.dart",
+        "app/lib/ui/srd_class_level_up_dialog.dart",
         "app/lib/domain/srd_class_feature_catalog.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "note": "SRD-5.2.1-Stufe-20-Kapstone: automatische Attributssteigerung (+4 bis 25), bei Barbar inklusive rückwirkendem KON-TP-Modifikator, nur auf bestätigter Klassenstufe 20; UI-Vorschau und Domain-/Widget-Regression ergänzt. finaler CI-Test/Android-Abnahme noch offen, deswegen partial statt tested. Keine implizite Rückmigration bestehender Stufe-20-Importe."
     },
     {
       "id": "CLASS-M-NCH-3-SUBCLASS-OPEN-HAND-TECHNIQUE-0",
