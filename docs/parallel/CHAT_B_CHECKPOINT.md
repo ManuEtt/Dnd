@@ -1,7 +1,7 @@
 
 # Chat B – NPC-Erinnerungen bei Namensgleichheit sicher unterscheiden (26.10.2026)
 
-- **Main-Basis:** `dbeac3f7da4fa3a9759d447ef9e9eeb41d575970`, Branch `fix/chat-b/disambiguate-recalled-npc-memories-20261026`.
+- **Main-Basis:** `dbeac3f7da4fa3a9759d447ef9e9eeb41d575970`, Branch `fix/chat-b/disambiguate-recalled-npc-memories-20261026`, [PR #226](https://github.com/ManuEtt/Dnd/pull/226). Fach- und Testformat-Commit `072f62c53a757111b500e0dff11cb3a24e114572`, temporäre Diagnosedatei in `923a987dadeb9c5501617b4cd716a40fa2f6f434` wieder entfernt.
 - **IMPLEMENTIERT:** bestätigte `MemoryEngine.retrieve`-Rückblicke führen NPC-IDs nur bei mehrdeutigen Namen mit; keine Zusammenfassung verschiedener NPCs unter demselben Namen oder Verlust durch Textdubletten. Doppelte gespeicherte IDs sind nicht autoritativ, und gekürzte Ausgaben dürfen den einzigen Unterscheidungsmarker nicht entfernen.
 - **TESTS ERSTELLT:** sechs Flutter-Regressionen in `app/test/memory_recall_npc_identity_test.dart`. Finale CI anhand des PR-HEAD prüfen.
 - **KOMPATIBILITÄT:** Legacy-Ausgaben eindeutig benannter Figuren sowie Kampagnen-JSON/SQLite unverändert, keine Regelzustandsänderung.
