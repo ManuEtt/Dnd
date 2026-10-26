@@ -334,102 +334,103 @@ void main() {
   });
 
   for (final width in [320.0, 360.0]) {
-    testWidgets('Auftragsübersicht bei $width dp und 200 % vollständig lesbar', (
-      tester,
-    ) async {
-      tester.view.physicalSize = Size(width, 1700);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-      final semantics = tester.ensureSemantics();
+    testWidgets(
+      'Auftragsübersicht bei $width dp und 200 % vollständig lesbar',
+      (tester) async {
+        tester.view.physicalSize = Size(width, 1700);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        final semantics = tester.ensureSemantics();
 
-      const activeTitle =
-          'Die verschollene Sternwarte hinter den vergessenen Bergen finden';
-      const activeDescription =
-          'Folge dem alten Pfad durch die Nebel und befrage die Wächterin '
-          'über das verschwundene Licht im hohen Turm.';
-      const completedTitle = 'Die erste Brücke überqueren';
-      final hero = HeroCharacter(
-        id: 'quest-a11y-hero',
-        name: 'Arescan',
-        level: 2,
-      );
-      final campaign = _campaign(
-        hero,
-        quests: const [
-          Quest(
-            id: 'quest-a11y-active',
-            title: activeTitle,
-            description: activeDescription,
-          ),
-          Quest(
-            id: 'quest-a11y-completed',
-            title: completedTitle,
-            status: 'completed',
-          ),
-        ],
-      );
-      var journalOpens = 0;
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: buildFantasyTheme(),
-          builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(
-              context,
-            ).copyWith(textScaler: const TextScaler.linear(2)),
-            child: child!,
-          ),
-          home: Scaffold(
-            body: ListView(
-              children: [
-                FantasyAdventureQuestBoard(
-                  campaign: campaign,
-                  onOpenJournal: () => journalOpens++,
-                ),
-              ],
+        const activeTitle =
+            'Die verschollene Sternwarte hinter den vergessenen Bergen finden';
+        const activeDescription =
+            'Folge dem alten Pfad durch die Nebel und befrage die Wächterin '
+            'über das verschwundene Licht im hohen Turm.';
+        const completedTitle = 'Die erste Brücke überqueren';
+        final hero = HeroCharacter(
+          id: 'quest-a11y-hero',
+          name: 'Arescan',
+          level: 2,
+        );
+        final campaign = _campaign(
+          hero,
+          quests: const [
+            Quest(
+              id: 'quest-a11y-active',
+              title: activeTitle,
+              description: activeDescription,
+            ),
+            Quest(
+              id: 'quest-a11y-completed',
+              title: completedTitle,
+              status: 'completed',
+            ),
+          ],
+        );
+        var journalOpens = 0;
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: buildFantasyTheme(),
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(
+                context,
+              ).copyWith(textScaler: const TextScaler.linear(2)),
+              child: child!,
+            ),
+            home: Scaffold(
+              body: ListView(
+                children: [
+                  FantasyAdventureQuestBoard(
+                    campaign: campaign,
+                    onOpenJournal: () => journalOpens++,
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      final summary = tester.widget<Text>(
-        find.text('1 aktiv · $activeTitle'),
-      );
-      expect(summary.maxLines, isNull);
-      expect(summary.overflow, TextOverflow.visible);
-      await tester.tap(find.text('Auftragsübersicht'));
-      await tester.pumpAndSettle();
+        final summary = tester.widget<Text>(
+          find.text('1 aktiv · $activeTitle'),
+        );
+        expect(summary.maxLines, isNull);
+        expect(summary.overflow, TextOverflow.visible);
+        await tester.tap(find.text('Auftragsübersicht'));
+        await tester.pumpAndSettle();
 
-      final activeText = tester.widget<Text>(find.text(activeTitle));
-      final descriptionText = tester.widget<Text>(
-        find.text(activeDescription),
-      );
-      expect(activeText.maxLines, isNull);
-      expect(descriptionText.maxLines, isNull);
-      expect(activeText.overflow, TextOverflow.visible);
-      expect(descriptionText.overflow, TextOverflow.visible);
-      expect(
-        find.bySemanticsLabel('Aktiv: $activeTitle, $activeDescription'),
-        findsOneWidget,
-      );
-      expect(
-        find.bySemanticsLabel('Abgeschlossen: $completedTitle'),
-        findsOneWidget,
-      );
-      final journal = find.byKey(
-        const ValueKey('adventure-quest-open-journal'),
-      );
-      await tester.ensureVisible(journal);
-      await tester.pumpAndSettle();
-      await tester.tap(journal);
-      expect(journalOpens, 1);
-      expect(campaign.quests.length, 2);
-      expect(campaign.quests.first.status, 'active');
-      expect(campaign.quests.last.status, 'completed');
-      expect(tester.takeException(), isNull);
-      semantics.dispose();
-    });
+        final activeText = tester.widget<Text>(find.text(activeTitle));
+        final descriptionText = tester.widget<Text>(
+          find.text(activeDescription),
+        );
+        expect(activeText.maxLines, isNull);
+        expect(descriptionText.maxLines, isNull);
+        expect(activeText.overflow, TextOverflow.visible);
+        expect(descriptionText.overflow, TextOverflow.visible);
+        expect(
+          find.bySemanticsLabel('Aktiv: $activeTitle, $activeDescription'),
+          findsOneWidget,
+        );
+        expect(
+          find.bySemanticsLabel('Abgeschlossen: $completedTitle'),
+          findsOneWidget,
+        );
+        final journal = find.byKey(
+          const ValueKey('adventure-quest-open-journal'),
+        );
+        await tester.ensureVisible(journal);
+        await tester.pumpAndSettle();
+        await tester.tap(journal);
+        expect(journalOpens, 1);
+        expect(campaign.quests.length, 2);
+        expect(campaign.quests.first.status, 'active');
+        expect(campaign.quests.last.status, 'completed');
+        expect(tester.takeException(), isNull);
+        semantics.dispose();
+      },
+    );
   }
 
   testWidgets('Leere Auftragsübersicht erfindet auch bei 200 % nichts', (
@@ -477,7 +478,10 @@ void main() {
       find.text('Noch keine Aufträge im Spielstand dokumentiert.'),
       findsOneWidget,
     );
-    expect(find.byKey(const ValueKey('adventure-quest-quest-a11y-active')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('adventure-quest-quest-a11y-active')),
+      findsNothing,
+    );
     expect(find.bySemanticsLabel(RegExp('Aktiv:')), findsNothing);
     final journal = find.byKey(const ValueKey('adventure-quest-open-journal'));
     await tester.ensureVisible(journal);
