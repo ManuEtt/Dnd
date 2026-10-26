@@ -315,10 +315,7 @@ void main() {
       className: 'Mönch',
       method: LevelUpMethod.milestone,
     );
-    expect(proposal.automaticAbilityIncreases, {
-      'dexterity': 4,
-      'wisdom': 4,
-    });
+    expect(proposal.automaticAbilityIncreases, {'dexterity': 4, 'wisdom': 4});
     expect(proposal.hpGain, 7);
     final raised = proposal.applyTo(current);
     expect(raised.abilities['dexterity'], 18);
@@ -331,11 +328,7 @@ void main() {
 
   test('Klassenkapstone begrenzt auf 25; niemals Werte senken', () {
     final current = hero(className: 'Barbar', level: 19).copyWith(
-      abilities: {
-        ...hero().abilities,
-        'strength': 24,
-        'constitution': 26,
-      },
+      abilities: {...hero().abilities, 'strength': 24, 'constitution': 26},
     );
     final proposal = SrdClassLevelUpRules.propose(
       hero: current,
@@ -382,9 +375,10 @@ void main() {
   });
 
   test('Unbestätigte Kapstone-Attribute werden abgewiesen', () {
-    final current = hero(className: 'Mönch', level: 19).copyWith(
-      abilities: {...hero().abilities, 'wisdom': null},
-    );
+    final current = hero(
+      className: 'Mönch',
+      level: 19,
+    ).copyWith(abilities: {...hero().abilities, 'wisdom': null});
     expect(
       () => SrdClassLevelUpRules.propose(
         hero: current,
