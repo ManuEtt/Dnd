@@ -7253,10 +7253,14 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Spells",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_eldritch_blast_rules_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/srd_eldritch_blast_rules.dart"
+      ],
+      "note": "Teilmechanik Eldritch Blast: weitere unabhängig ausgewertete Strahlen auf Gesamtstufe 5/11/17 mit eigenen Treffer- und Schadenswürfen. Keine allgemeine Skalierung aller SRD-Zaubertricks oder End-to-End-Spielstandwirkung."
     },
     {
       "id": "RULE-SPELLS-SPELL-ATTACK-ROLLS",

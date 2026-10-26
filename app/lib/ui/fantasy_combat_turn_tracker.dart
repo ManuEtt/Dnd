@@ -123,7 +123,49 @@ class _TurnEntry extends StatelessWidget {
     final accent = hero ? FantasyPalette.gold : FantasyPalette.danger;
     final initiativeLabel = initiative > 0 ? '$initiative' : '?';
     final turnLabel = active ? 'Jetzt am Zug' : 'Nicht am Zug';
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.8;
+
+    final participant = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          name,
+          maxLines: largeText ? null : 2,
+          overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        Text(
+          hero ? 'Held' : 'Gegner',
+          style: const TextStyle(color: FantasyPalette.muted, fontSize: 11),
+        ),
+      ],
+    );
+    final initiativeDisplay = Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text('INI $initiativeLabel'),
+        if (active)
+          const Text(
+            'AM ZUG',
+            key: ValueKey('turn-tracker-active-marker'),
+            style: TextStyle(
+              color: FantasyPalette.gold,
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+      ],
+    );
+    final participantIcon = Icon(
+      hero ? Icons.person_outline : Icons.shield_outlined,
+      color: accent,
+      size: 21,
+    );
+
     return Semantics(
+      // Keep this entire combatant announcement as one independent node,
+      // rather than merging two competitors into the panel semantics.
+      container: true,
       label:
           '${hero ? 'Held' : 'Gegner'}: $name. Initiative '
           '${initiative > 0 ? initiativeLabel : 'unbekannt'}. '
@@ -141,52 +183,38 @@ class _TurnEntry extends StatelessWidget {
             ),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Row(
-            children: [
-              Icon(
-                hero ? Icons.person_outline : Icons.shield_outlined,
-                color: accent,
-                size: 21,
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Column(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // On compact Android screens at 200% text, show complete names
+              // first. The initiative and active-turn marker follow below.
+              final stackDetails = largeText && constraints.maxWidth < 500;
+              if (stackDetails) {
+                return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      name,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        participantIcon,
+                        const SizedBox(width: 8),
+                        Expanded(child: participant),
+                      ],
                     ),
-                    Text(
-                      hero ? 'Held' : 'Gegner',
-                      style: const TextStyle(
-                        color: FantasyPalette.muted,
-                        fontSize: 11,
-                      ),
-                    ),
+                    const SizedBox(height: 8),
+                    initiativeDisplay,
                   ],
-                ),
-              ),
-              const SizedBox(width: 5),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                );
+              }
+              return Row(
                 children: [
-                  Text('INI $initiativeLabel'),
-                  if (active)
-                    const Text(
-                      'AM ZUG',
-                      key: ValueKey('turn-tracker-active-marker'),
-                      style: TextStyle(
-                        color: FantasyPalette.gold,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                  participantIcon,
+                  const SizedBox(width: 8),
+                  Expanded(child: participant),
+                  const SizedBox(width: 5),
+                  initiativeDisplay,
                 ],
-              ),
-            ],
+              );
+            },
           ),
         ),
       ),

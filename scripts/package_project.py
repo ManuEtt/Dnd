@@ -6,6 +6,7 @@ import hashlib
 import os
 import shutil
 import tempfile
+import unicodedata
 import zipfile
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -72,6 +73,40 @@ def source_paths(root: Path) -> list[Path]:
                 paths.append(path)
     return sorted(paths)
 
+
+# ZIP names are case-sensitive, but common extraction targets (Windows and
+# many macOS filesystems) are not. Preserve the original names and reject
+# collisions before replacing any previously verified source archive.
+WINDOWS_RESERVED_STEMS = frozenset(
+    ('CON', 'PRN', 'AUX', 'NUL')
+    + tuple(f'COM{number}' for number in range(1, 10))
+    + tuple(f'LPT{number}' for number in range(1, 10))
+)
+WINDOWS_INVALID_CHARACTERS = frozenset('<>:"\\|?*')
+
+
+def validate_portable_source_paths(root: Path, paths: list[Path]) -> None:
+    """Reject archive names that can collide or fail on another filesystem."""
+    prefixes: dict[str, str] = {}
+    for path in paths:
+        parts = path.relative_to(root).parts
+        canonical: list[str] = []
+        for index, part in enumerate(parts):
+            if (part in ('.', '..') or part.endswith((' ', '.'))
+                    or any(char in WINDOWS_INVALID_CHARACTERS or
+                           ord(char) < 32 or ord(char) == 127 for char in part)
+                    or part.split('.', 1)[0].upper() in WINDOWS_RESERVED_STEMS):
+                raise ValueError('Source archive contains a non-portable filename.')
+            canonical.append(unicodedata.normalize('NFC', part).casefold())
+            folded_path = '/'.join(canonical)
+            original_path = '/'.join(parts[:index + 1])
+            previous = prefixes.setdefault(folded_path, original_path)
+            if previous != original_path:
+                raise ValueError(
+                    'Source archive contains case-insensitive or Unicode-equivalent '
+                    'filename collisions.'
+                )
+
 REQUIRED_FILES = {
     'app/lib/main.dart', 'app/pubspec.lock', 'backend/package-lock.json',
     '.github/workflows/android-build.yml', 'app/assets/demo.json', 'README.md',
@@ -89,6 +124,7 @@ def create_archive(root: Path, output: Path, *, layout: str = 'folder') -> tuple
     missing = REQUIRED_FILES - relative_names
     if missing:
         raise ValueError(f'Missing required project files: {sorted(missing)}')
+    validate_portable_source_paths(root, paths)
     output.parent.mkdir(parents=True, exist_ok=True)
     prefix = Path('Dnd') if layout == 'folder' else Path()
     checksum = output.with_suffix(output.suffix + '.sha256')
