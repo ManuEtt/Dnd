@@ -1,0 +1,26 @@
+name: Chat C turn tracker format diagnostic
+
+on:
+  push:
+    branches:
+      - feat/chat-c/turn-tracker-large-text-20261026
+    paths:
+      - .github/workflows/chat-c-turn-format.yml
+
+permissions:
+  contents: read
+
+jobs:
+  canonical-format:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Canonical turn tracker Dart
+        run: dart format --output=show app/lib/ui/fantasy_combat_turn_tracker.dart
+      - name: Canonical turn tracker widget tests
+        run: dart format --output=show app/test/fantasy_combat_turn_tracker_test.dart
