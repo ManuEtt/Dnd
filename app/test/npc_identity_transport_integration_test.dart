@@ -106,85 +106,87 @@ void main() {
 
   for (final supportsContext in [false, true]) {
     test(
-    'NPC identity transport negotiated=$supportsContext preserves SQLite and mechanics',
-    () async {
-      final dir = await Directory.systemTemp.createTemp('npc-context-');
-      final dbPath = paths.join(dir.path, 'npc.sqlite');
-      final repository = await SqliteCampaignRepository.open(
-        factory: databaseFactoryFfi,
-        path: dbPath,
-      );
-      final transport = _CapturedTransport(supportsContext);
-      final narrator = BackendNarrator(
-        transport: transport,
-        clock: () => _time,
-      );
-      final controller = GameController(
-        repository: repository,
-        narrator: narrator,
-      );
-
-      try {
-        await controller.connectNarrator(
-          url: 'https://narrator.example.test',
-          sessionToken: 'test.session',
+      'NPC identity transport negotiated=$supportsContext preserves SQLite and mechanics',
+      () async {
+        final dir = await Directory.systemTemp.createTemp('npc-context-');
+        final dbPath = paths.join(dir.path, 'npc.sqlite');
+        final repository = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: dbPath,
         );
-        expect(controller.error, isNull);
-        expect(narrator.supportsNpcIdentityContexts, supportsContext);
-        await controller.newAiCampaign(
-          HeroCharacter(id: 'aria', name: 'Aria'),
-          theme: 'Die alte Stadt',
+        final transport = _CapturedTransport(supportsContext);
+        final narrator = BackendNarrator(
+          transport: transport,
+          clock: () => _time,
         );
-        expect(controller.error, isNull);
-        final originalHero = controller.currentCampaign!.hero.toJson();
-
-        await controller.recordNpcRelationship(
-          npcId: 'mira',
-          relationship: 'freundlich',
-          note: 'Mira verriet Aria den verborgenen Bibliotheksweg.',
+        final controller = GameController(
+          repository: repository,
+          narrator: narrator,
         );
-        expect(controller.error, isNull);
-        final confirmed = controller.currentCampaign!;
-        expect(confirmed.npcRelationshipNotes, hasLength(1));
 
-        await controller.sendAction('Ich frage Mira nach dem Bibliotheksweg.');
-        expect(controller.error, isNull);
-        expect(transport.sentMemories, hasLength(1));
-        final memories = transport.sentMemories.single;
-        expect(memories, isNotEmpty);
-        expect(memories.first, startsWith('Bestätigte NPC-Beziehungsnotiz'));
-        expect(memories.first, contains('Bibliotheksweg'));
-        expect(memories.every((entry) => entry.length <= 400), isTrue);
-        expect(memories.length, lessThanOrEqualTo(12));
-        final payload = transport.sentPayloads.single;
-        if (supportsContext) {
-          expect(payload['campaignRevision'], confirmed.revision + 1);
-          final contexts = payload['npcContexts'] as List;
-          expect(contexts, hasLength(1));
-          final context = contexts.single as Map;
-          expect(context['campaignId'], confirmed.id);
-          expect(context['npcId'], 'mira');
-          expect(context['npcName'], 'Mira');
-          expect(context['relationship'], 'freundlich');
-          final notes = context['notes'] as List;
-          expect(notes, hasLength(1));
-          expect((notes.single as Map)['npcId'], 'mira');
-          expect((notes.single as Map)['note'], contains('Bibliotheksweg'));
-        } else {
-          expect(payload.containsKey('campaignRevision'), isFalse);
-          expect(payload.containsKey('npcContexts'), isFalse);
+        try {
+          await controller.connectNarrator(
+            url: 'https://narrator.example.test',
+            sessionToken: 'test.session',
+          );
+          expect(controller.error, isNull);
+          expect(narrator.supportsNpcIdentityContexts, supportsContext);
+          await controller.newAiCampaign(
+            HeroCharacter(id: 'aria', name: 'Aria'),
+            theme: 'Die alte Stadt',
+          );
+          expect(controller.error, isNull);
+          final originalHero = controller.currentCampaign!.hero.toJson();
+
+          await controller.recordNpcRelationship(
+            npcId: 'mira',
+            relationship: 'freundlich',
+            note: 'Mira verriet Aria den verborgenen Bibliotheksweg.',
+          );
+          expect(controller.error, isNull);
+          final confirmed = controller.currentCampaign!;
+          expect(confirmed.npcRelationshipNotes, hasLength(1));
+
+          await controller.sendAction(
+            'Ich frage Mira nach dem Bibliotheksweg.',
+          );
+          expect(controller.error, isNull);
+          expect(transport.sentMemories, hasLength(1));
+          final memories = transport.sentMemories.single;
+          expect(memories, isNotEmpty);
+          expect(memories.first, startsWith('Bestätigte NPC-Beziehungsnotiz'));
+          expect(memories.first, contains('Bibliotheksweg'));
+          expect(memories.every((entry) => entry.length <= 400), isTrue);
+          expect(memories.length, lessThanOrEqualTo(12));
+          final payload = transport.sentPayloads.single;
+          if (supportsContext) {
+            expect(payload['campaignRevision'], confirmed.revision + 1);
+            final contexts = payload['npcContexts'] as List;
+            expect(contexts, hasLength(1));
+            final context = contexts.single as Map;
+            expect(context['campaignId'], confirmed.id);
+            expect(context['npcId'], 'mira');
+            expect(context['npcName'], 'Mira');
+            expect(context['relationship'], 'freundlich');
+            final notes = context['notes'] as List;
+            expect(notes, hasLength(1));
+            expect((notes.single as Map)['npcId'], 'mira');
+            expect((notes.single as Map)['note'], contains('Bibliotheksweg'));
+          } else {
+            expect(payload.containsKey('campaignRevision'), isFalse);
+            expect(payload.containsKey('npcContexts'), isFalse);
+          }
+          expect(controller.currentCampaign!.hero.toJson(), originalHero);
+          expect(
+            (await repository.getCampaign(confirmed.id))!.hero.toJson(),
+            originalHero,
+          );
+        } finally {
+          controller.dispose();
+          await repository.close();
+          await dir.delete(recursive: true);
         }
-        expect(controller.currentCampaign!.hero.toJson(), originalHero);
-        expect(
-          (await repository.getCampaign(confirmed.id))!.hero.toJson(),
-          originalHero,
-        );
-      } finally {
-        controller.dispose();
-        await repository.close();
-        await dir.delete(recursive: true);
-      }
-    },
-  );
+      },
+    );
   }
 }
