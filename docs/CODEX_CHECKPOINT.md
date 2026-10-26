@@ -1,3 +1,15 @@
+# Chat B – explizite, revisionsgebundene NPC-Auswahl (26.10.2026)
+
+- **Ausgangs-`main`:** `20098805d8c70cbd361a13862379894c47ef4eb6`; **Branch:** `feat/chat-b/explicit-npc-identity-selection-20261026`; eigener Pull Request gegen `main`. Offene PRs #216/#218/#219/#220/#221/#222 vor Entwicklung samt geänderten Dateipfaden geprüft; keine Überschneidung an Story-Fachdateien.
+- **IMPLEMENTIERT:** `NpcStorySelection.choose` und `requireCurrent` erlauben die ausdrückliche, eindeutig gespeicherte NPC-ID mit Kampagnen- und Revisionsbindung. `NpcIdentityStoryPayload.prepare(..., selectedNpc: choice)` liefert nur die Notizen der ausgewählten Figur, auch wenn eine andere denselben Namen hat. Ohne Auswahl bleibt der sichere alte Namensabgleich bestehen.
+- **TESTS GESCHRIEBEN:** sechs Testgruppen in `app/test/npc_story_selection_test.dart` inklusive gleicher Namen, fehlender/duplizierter ID, Stale-Revision/Kampagne, geänderter NPC-Daten, erneut validierter Notizen, Unveränderlichkeit und gespeichertem JSON-Roundtrip. Endgültige CI für exakt letzten Branch-Commit maßgeblich.
+- **KEINE MIGRATION:** kein SQLite/JSON/API-Schema-Wechsel; keine Änderungen an Spielregeln, `game_controller.dart`, Flutter-UI oder Backend (PR #221/#222 geschützt).
+- **NICHT IMPLEMENTIERT:** UI-Dialog / Controller-Weitergabe der expliziten Auswahl; Backend-Anerkennung einer bewusst gewählten ID bei gleichnamigen Figuren. Dies ist ein unabhängiger, testbarer Story-Vorbau und noch keine Ende-zu-Ende-Auswahl.
+- **NÄCHSTER SCHRITT:** explizite UI-/Controller-Auswahl nach Koordination mit Chat C/PR #221 mit serverseitigem optionalem Identitätsfeld und Negativtests.
+- **Fachcheckpoint:** [docs/parallel/CHAT_B_CHECKPOINT.md](parallel/CHAT_B_CHECKPOINT.md). README und diesen Checkpoint beim Merge mit Chat D konsolidieren.
+
+---
+
 # CODEX-CHECKPOINT – Klassenprüfung für Heilige Flamme
 
 Stand **2026-10-26T07:26:16+00:00**. Würfelraunen **0.8.41+91**, SQLite **2**, Kampagnen-JSON **1**.
