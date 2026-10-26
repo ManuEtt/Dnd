@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat B – NPC-Erinnerungen sicher auseinanderhalten (26.10.2026)
+
+Das lokal bestätigte Kampagnengedächtnis unterscheidet bei gleichnamigen NPCs deren Status und Beziehungsnotizen nun über die gespeicherte NPC-ID. Unterschiedliche Figuren namens „Mira“ werden beim Rückblick nicht mehr unter einer gemeinsamen Identität angezeigt; identische Notiztexte zweier IDs bleiben getrennt. Ist eine doppelte NPC-ID gespeichert oder würde ein knappes Antwortlimit die einzige Unterscheidung abschneiden, lässt der Abruf den unklaren NPC-Eintrag weg. Eindeutige Namen und alte Spielstände bleiben unverändert, die Regelengine erhält keine Schreibzugriffe. Sechs neue Flutter-Regressionstests dokumentieren die Anforderungen. Der neue Branch berührt keine fachlichen Dateien anderer offener PRs. [Chat-B-Detailcheckpoint](docs/parallel/CHAT_B_NPC_RECALL_DISAMBIGUATION_20261026.md). Der CI-Nachweis für den finalen Commit wird separat geführt.
+
 Deutschsprachige Android-Alpha für regelgeprüfte Soloabenteuer und lokale Kampagnen. Das vollständige SRD 5.2.1 bleibt in Arbeit.
 
 ## Aktueller Stand und autonome Fortsetzung (26.10.2026)
