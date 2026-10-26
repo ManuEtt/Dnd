@@ -80,6 +80,7 @@ List<SrdEldritchBlastTarget> _targets({
   int count = 2,
   int ac = 14,
   CoverLevel cover = CoverLevel.none,
+  bool opposite = true,
   int distanceFeet = 40,
 }) => [
   for (var i = 0; i < count; i++)
@@ -92,7 +93,7 @@ List<SrdEldritchBlastTarget> _targets({
       clearPathConfirmed: true,
       coverCircumstancesConfirmed: true,
       attackCircumstancesConfirmed: true,
-      sourceOppositeCover: true,
+      sourceOppositeCover: opposite,
     ),
 ];
 
@@ -216,7 +217,44 @@ void main() {
       ),
       throwsFormatException,
     );
+    // An attacker may not forge away the current opponent's confirmed cover.
+    final halfCovered = _campaign(
+      engine,
+      encounter: _encounter(cover: CoverLevel.half),
+    );
+    expect(
+      () => _cast(
+        engine,
+        halfCovered,
+        declaredBeams: [
+          _targets(cover: CoverLevel.half).first,
+          _targets(cover: CoverLevel.half, opposite: false).last,
+        ],
+      ),
+      throwsFormatException,
+    );
     expect(rng.calls, 0);
+  });
+
+  test('confirmed half cover applies +2 AC to each beam', () {
+    final rng = _Rolls([9, 3, 2]);
+    final engine = GameEngine(dice: DiceEngine(random: rng));
+    final covered = _campaign(
+      engine,
+      encounter: _encounter(cover: CoverLevel.half),
+    );
+    final update = _cast(
+      engine,
+      covered,
+      declaredBeams: _targets(cover: CoverLevel.half, opposite: true),
+    );
+    final beams = update.events.single.payload['beams'] as List<dynamic>;
+    expect(beams[0]['effectiveArmorClass'], 16);
+    expect(beams[0]['hit'], isTrue);
+    expect(beams[1]['effectiveArmorClass'], 16);
+    expect(beams[1]['hit'], isFalse);
+    expect(update.campaign.encounter!.enemyHitPoints, 46);
+    expect(rng.calls, 3);
   });
 
   test('blocked action, missing confirmation and cover fail closed', () {

@@ -1,3 +1,14 @@
+# Chat A – Eldritch Blast Deckungs-Snapshot (26.10.2026)
+
+- **IMPLEMENTIERT:** Request-Deckungsrichtung pro Strahl gegen gespeicherte Gegnerdeckung validiert, Basis-RK 0 frühzeitig verworfen, redundante Obergrenze entfernt; SRD-Regeltests und persistierte GameEngine-Tests aktualisiert.
+- **GETESTET:** Tests ergänzt, globales CI-Ergebnis für finalen Branch-HEAD noch offen.
+- **NICHT GETESTET:** physisches Android, Release und Migration.
+- **BLOCKIERT:** Ausgangs-`main e903ae38c6ae99abfa99a432e7f7777f0eee853f` hatte unabhängige rote ZIP-/Sicherungstests; keine Fremdskripte verändert.
+- **NOCH NICHT IMPLEMENTIERT:** persistente Mehrgegnerstrahlen mit individuellen AC-/Resistenz-Snapshots.
+- **NÄCHSTER SCHRITT:** eigene Dart-/Flutter-CI abnehmen, unabhängigen Main-ZIP-Testfehler koordinieren und erst danach integrieren. [Regelbeleg](SRD_ELDRITCH_COVER_SNAPSHOT_20261026.md) / [Checkpoint](parallel/CHAT_A_ELDRITCH_COVER_20261026.md).
+
+---
+
 # Chat C – Kampf-Deckung bei 200 % Systemschrift (26.10.2026)
 
 - **Basis-main:** `864b53dba0a7186bf6beef46bcfb1499077d6dc2`; Feature-Branch `feat/chat-c/combat-cover-large-text-20261026`. Vorherige PRs #197 und #199 integriert.
