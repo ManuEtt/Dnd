@@ -144,6 +144,7 @@ class FantasyCombatantCard extends StatelessWidget {
                           ],
                         ),
                       ),
+                    if (largeText && isActive) const SizedBox(height: 8),
                     if (isActive)
                       Container(
                         key: const ValueKey('combatant-active-turn'),
