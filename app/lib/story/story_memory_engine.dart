@@ -161,11 +161,13 @@ class MemoryEngine {
       if (matches.length != 1) continue;
       final label = npcLabel(matches.single);
       if (label == null) continue;
-      add(
-        'Beziehung zu $label: ${note.relationship}',
-        note.note,
-        priority: 220,
-      );
+      final heading = 'Beziehung zu $label: ${note.relationship}';
+      // Never truncate the distinguishing ID off a same-name entry.
+      if (npcNameCounts[_memoryNormalize(matches.single.name)] != 1 &&
+          heading.length + 1 > maxCharacters) {
+        continue;
+      }
+      add(heading, note.note, priority: 220);
     }
     for (final item in campaign.hero.inventory) {
       add(
@@ -190,8 +192,13 @@ class MemoryEngine {
     for (final npc in campaign.npcs) {
       final label = npcLabel(npc);
       if (label == null) continue;
+      final heading = 'NPC ${npc.alive ? 'lebendig' : 'tot'}: $label';
+      if (npcNameCounts[_memoryNormalize(npc.name)] != 1 &&
+          heading.length + 1 > maxCharacters) {
+        continue;
+      }
       add(
-        'NPC ${npc.alive ? 'lebendig' : 'tot'}: $label',
+        heading,
         'Beziehung: ${npc.relationship}. ${npc.description}',
         priority: npc.alive ? 100 : 500,
       );
