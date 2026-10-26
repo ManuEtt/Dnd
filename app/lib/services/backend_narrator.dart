@@ -126,6 +126,7 @@ class BackendNarrator extends ChangeNotifier {
 
   /// True only for the active, validated session of an NPC-ID-capable server.
   bool supportsNpcIdentityContexts = false;
+
   /// Negotiated separately: older backends do not accept selectedNpcId.
   bool supportsExplicitNpcSelection = false;
 
