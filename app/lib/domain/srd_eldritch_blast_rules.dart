@@ -104,8 +104,7 @@ class SrdEldritchBlastRules {
           target.distanceFeet > 120 ||
           target.baseArmorClass < 0 ||
           target.baseArmorClass > 100 ||
-          (target.advantage && target.disadvantage &&
-              !target.attackCircumstancesConfirmed)) {
+          target.baseArmorClass > 100) {
         throw const FormatException(
           'Jeder Strahl benötigt ein gültiges, erreichbares und '
           'ausdrücklich bestätigtes Einzelziel.',
