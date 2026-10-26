@@ -1,5 +1,21 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Parallelpaket Chat A – Säurespritzer-Zielidentitäten (26.10.2026)
+
+- **Ausgangs-Main:** `dbeac3f7da4fa3a9759d447ef9e9eeb41d575970`
+- **Branch:** `fix/chat-a/acid-splash-target-identities-20261026`
+- **Bereich:** `app/lib/domain/acid_splash_rules.dart`, `app/test/acid_splash_rules_test.dart`
+- **Umsetzung:** Ziel-IDs dürfen weder nur aus Whitespace bestehen noch außen Whitespace oder unsichtbare ASCII-Steuerzeichen enthalten. Bereits bestätigte gültige IDs bleiben unverändert. Alle Zielprüfungen erfolgen vor jedem Rettungs- oder Schadenswurf. Positive und negative deterministische Regressionen ergänzt.
+- **Daten:** SQLite 2 / JSON 1 unverändert; kein Import-Migrationsschritt; alte Spielstände werden nicht umgeschrieben. Ungültige Alteinträge bleiben ladbar, sind für eine neue Säurespritzer-Wirkung jedoch erst nach Korrektur zulässig.
+- **SRD-Anforderung:** `SPELL-ENTRY-ACID-SPLASH` bleibt `partial`. Referenz: SRD 5.2.1, *Acid Splash*; Wizards of the Coast LLC, CC BY 4.0. Die ID-Gültigkeitsregel ist eine Anwendungssicherheitsbedingung, kein behaupteter zusätzlicher SRD-Regeltext.
+- **Tests:** Neue lokale Dart-/Flutter-Tests mangels installiertem SDK nicht ausgeführt. Vollständige GitHub-CI, Android-APK, native Tests und Geräteabnahme getrennt auswerten; nicht vorab als erfolgreich kennzeichnen.
+- **PR-/Commitstatus:** Der aktuelle Branch- und PR-HEAD ist vor Merge live zu überprüfen. Keine Änderung an offenen PRs, besonders #221.
+
+**Nächster unabhängiger Schritt:** Einheitliche klassenbezogene Zauber-SG-Berechnung bei Säurespritzer anstelle einer zweiten Direktberechnung nur nach nachweisbarem Gegenfall und ohne Berührung des offenen Feuerpfeil-PRs prüfen.
+
+Weitere Details: [Chat-A-Paketbericht](docs/parallel/CHAT_A_ACID_SPLASH_IDENTITIES_20261026.md).
+
+
 Deutschsprachige Android-Alpha für regelgeprüfte Soloabenteuer und lokale Kampagnen. Das vollständige SRD 5.2.1 bleibt in Arbeit.
 
 ## Aktueller Stand und autonome Fortsetzung (26.10.2026)

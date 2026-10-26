@@ -131,6 +131,53 @@ GameUpdate _engine(
 );
 
 void main() {
+  test('Valid target IDs stay distinct and share a single damage roll', () {
+    final rng = _FixedRandom([0, 0, 0, 0]);
+    final hero = _hero();
+    final previous = hero.toJson();
+    final outcome = _cast(
+      hero,
+      rng,
+      targets: [_target('creature-1'), _target('creature-2')],
+    );
+    expect(outcome.targets.map((impact) => impact.id), [
+      'creature-1',
+      'creature-2',
+    ]);
+    expect(outcome.targets.map((impact) => impact.damage), [2, 2]);
+    expect(outcome.damageRoll!.rolls, [1, 1]);
+    expect(rng.calls, 4);
+    expect(hero.toJson(), previous);
+  });
+
+  test('Whitespace and control characters in target IDs reject before RNG', () {
+    final rng = _FixedRandom([0]);
+    final hero = _hero();
+    final original = hero.toJson();
+    for (final invalidId in <String>[
+      ' ',
+      ' foe',
+      'foe ',
+      '\tfoe',
+      'foe\n',
+      'fo\noe',
+      'fo\u0000e',
+      'fo\u007Fe',
+    ]) {
+      expect(
+        () => _cast(
+          hero,
+          rng,
+          targets: [_target('valid'), _target(invalidId)],
+        ),
+        throwsFormatException,
+        reason: 'Ambiguous ID: $invalidId',
+      );
+    }
+    expect(rng.calls, 0);
+    expect(hero.toJson(), original);
+  });
+
   test('Cantrip scales at character levels 5, 11, 17', () {
     expect(AcidSplashRules.damageDice(1), 1);
     expect(AcidSplashRules.damageDice(4), 1);
