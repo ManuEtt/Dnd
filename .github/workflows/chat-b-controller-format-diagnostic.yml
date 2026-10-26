@@ -1,0 +1,15 @@
+name: Chat B controller Dart format diagnostic
+on:
+  push:
+    branches:
+      - test/chat-b/controller-terminal-recovery-20261026
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Print formatted controller test
+        run: dart format --output=show app/test/ai_story_terminal_controller_resume_test.dart
