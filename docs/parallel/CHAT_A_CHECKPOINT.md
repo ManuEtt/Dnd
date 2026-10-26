@@ -1,3 +1,18 @@
+# Chat A – Zauberkomponenten-Metadaten strikt validieren (26.10.2026)
+
+- **Basis-main:** `5e3116f9e3f8de0af6e8125a97b3962cb8910cdf`; **Branch:** `fix/chat-a/spell-component-metadata-20261026`.
+- **Regelbereich:** `RULE-SPELLS-SPELL-COMPONENTS` bleibt **partial**; SRD 5.2.1, *Spells → Casting Spells → Components*, Wizards of the Coast LLC, CC BY 4.0.
+- **IMPLEMENTIERT:** `SrdSpellDefinition.fromJson` lehnt unbekannte oder doppelte V/S/M-Symbole, nicht-kanonische Reihenfolgen, ungeprüfte Zusatzangaben und fehlende/leer/malformed Materialbeschreibungen ab. Die bestehende boolesche Komponenten-Konsistenzprüfung bleibt erhalten.
+- **Dateien:** `app/lib/domain/srd_spell_catalog.dart`, `app/test/srd_spell_catalog_preflight_test.dart`, README sowie zentraler und persönlicher Checkpoint.
+- **GETESTET:** Ein nicht-Dart-basiertes Metadaten-Prüfskript im GitHub-Connector akzeptiert sämtliche **339** aktuellen Einträge mit der neuen Grammatik (statische Katalogprüfung, **kein** Flutter-Test).
+- **NICHT GETESTET:** Dart-Format, `flutter analyze`, Flutter-Tests, Debug-APK, Android-Gerät sowie alle vollständigen Python-/Backend-Kommandos; GitHub-Actions-Status beim Verfassen offen.
+- **Kompatibilität:** keine Schema-, JSON-Spielstand- oder SQLite-Migration; vorhandene gültige SRD-Katalogeinträge bleiben akzeptiert. Ungültige zukünftige Metadatendateien werden früh abgewiesen.
+- **Konflikte:** offene PRs #236 und #242 bearbeiten andere Regelmodule; PR #243 enthält Dokumentationsüberschneidungen, die Chat D vor einem Merge konsolidieren muss.
+- **GITHUB:** Code-/Test-Commit `6bfde6a3e7d3a7e195567f477ed4839aa10d513c`. PR/CI nach Eröffnung gesondert prüfen.
+- **NÄCHSTER SCHRITT:** CI auf diesem PR prüfen, bei Fehlern Format/Tests im selben Branch korrigieren und erst nach vollständiger Abnahme als mergefähig markieren.
+
+---
+
 # Chat A – Regelwerk: Feuerpfeil-Klassenvalidierung
 
 Stand: 2026-10-26 09:15 Europe/Berlin. Dies ist ein gesonderter Arbeitsstand von Chat A, kein Merge nach main.
