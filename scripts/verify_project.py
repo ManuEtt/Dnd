@@ -24,6 +24,11 @@ REQUIRED_FILES = (
     'backend/package.json', 'backend/package-lock.json', 'backend/src/server.ts',
 )
 WRAPPER_MAIN = 'org/gradle/wrapper/GradleWrapperMain.class'
+# A copied Gradle wrapper is small. Bound validation work before ZIP CRC reads:
+# a compressed archive with a tiny on-disk footprint can expand enormously.
+MAX_WRAPPER_JAR_BYTES = 16 * 1024 * 1024
+MAX_WRAPPER_UNCOMPRESSED_BYTES = 16 * 1024 * 1024
+MAX_WRAPPER_ENTRIES = 512
 
 
 def _gradle_logical_lines(text: str):
@@ -138,10 +143,19 @@ def verify_project(root: Path) -> list[str]:
     wrapper = root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
     if wrapper.is_file() and wrapper.stat().st_size:
         try:
+            if wrapper.stat().st_size > MAX_WRAPPER_JAR_BYTES:
+                raise ValueError('wrapper JAR is too large')
             with zipfile.ZipFile(wrapper) as archive:
+                # Reject oversized or excessively populated compressed archives
+                # before testzip() decompresses any member or read() loads the class.
+                members = archive.infolist()
+                if (len(members) > MAX_WRAPPER_ENTRIES
+                        or any(member.file_size < 0 for member in members)
+                        or sum(member.file_size for member in members)
+                        > MAX_WRAPPER_UNCOMPRESSED_BYTES):
+                    raise ValueError('wrapper JAR has excessive expanded size')
                 # A valid CRC does not make duplicate ZIP names or path
                 # traversal unambiguous. Reject these before reading the JAR.
-                members = archive.infolist()
                 names = [member.filename for member in members]
                 if len(names) != len(set(names)):
                     raise ValueError('duplicate wrapper JAR entries')
