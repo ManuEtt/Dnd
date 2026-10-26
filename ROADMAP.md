@@ -1,3 +1,9 @@
+## Aktuell 26.10.2026 – Heilige-Flamme-Klassenprüfung abnehmen
+
+Nach Gesamtabnahme Feuerpfeil an ausdrückliche Bestätigung unbekannter Angriffsmodifikatoren anschließen; Kriterien im README. Frühere Status-/Aufgabenabschnitte unten sind Historie.
+
+---
+
 ## Aktueller Schritt – gespeicherte Gelegenheitsreaktion abnehmen
 
 Nach vollständiger Abnahme einen eigenen Reaktionsangriff auf dem gespeicherten Angebot entwickeln; genaue Kriterien und bekannte Zug-/Sneak-Attack-Grenzen im README. Keine alten Migrationsaufgaben erneut ausführen: Live-Bestand vor diesem Paket nur Main, keine offenen PRs. Ältere Einträge unten sind Historie.

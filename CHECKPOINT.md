@@ -1,3 +1,9 @@
+## Operativer Checkpoint – 0.8.41+91
+
+Klassenprüfung für Heilige Flamme im eigenen Entwicklungsbranch; neue Gesamtabnahme noch ausstehend. [Tatsächlicher Stand](docs/CODEX_CHECKPOINT.md). Frühere Einträge unten sind Historie.
+
+---
+
 ## Operativer Checkpoint – 0.8.40+90
 
 Gespeicherte Bewegungsunterbrechung im eigenen Entwicklungsbranch; vollständige neue Abnahme noch ausstehend. [Aktueller Stand](docs/CODEX_CHECKPOINT.md). Folgende Einträge sind Historie.

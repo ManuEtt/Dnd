@@ -1,3 +1,9 @@
+## 26.10.2026 – 0.8.41+91: Heilige Flamme mit gültigen Klassenwerten
+
+Geprüften Klassenwerte-Rechner aus PR #184 in den echten Zauberablauf integriert. Alias-Doppelklassen, unbekannte Partner und ungültige Stufen lösen keine Würfel/Aktion/HP-Änderung aus. Bestehende Importe bleiben lesbar; WIS-/Gesamtstufen-Übung gültiger Profile erhalten. Bestätigungsgebundene SG-Vorschau und scrollbar bedienbarer Android-Dialog. 20 Domain-, vier SQLite- und sieben Widgettests bisher grün; Gesamtabnahme noch separat ausstehend. SQLite2/JSON1 kompatibel. [Fachbericht](docs/SACRED_FLAME_CLASS_VALIDATION_20261026.md) · [Checkpoint](docs/CODEX_CHECKPOINT.md). Ältere Einträge unten sind Historie.
+
+---
+
 ## 25.10.2026 – 0.8.40+90: persistierte Bewegungsunterbrechung
 
 Bestätigter Auslöser einer Gelegenheitsreaktion wird im Abenteuer als revisionsgebundene Entscheidung gespeichert. Neustart, expliziter Verzicht, Gegnerzug-Sperre und Schutz vor alten UI-/Controller-Antworten. Keine Würfel/Schäden/Reaktionskosten, daher weiter `partial`. SQLite2/JSON1 bleiben kompatibel. Gezielte Domain-/SQLite-/Widgettests erfolgreich; vollständige neue Abnahme separat ausstehend. [Fachlicher Umfang](docs/SRD_OPPORTUNITY_MOVEMENT_20261025.md), [operativer Checkpoint](docs/CODEX_CHECKPOINT.md). Ältere Einträge unten sind Historie.

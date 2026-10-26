@@ -4,6 +4,7 @@ import 'fantasy_buttons.dart';
 import '../domain/cover_rules.dart';
 import '../domain/models.dart';
 import '../domain/sacred_flame_rules.dart';
+import '../domain/srd_spell_saving_throw_rules.dart';
 
 /// The monster's complete, verified Dexterity saving throw modifier is an
 /// explicit input. Neither AI prose nor the monster's AC determines it.
@@ -80,6 +81,21 @@ class _SacredFlameDialogState extends State<SacredFlameDialog> {
     }),
   );
 
+  // A preview is available only after the player confirms the existing
+  // exclusion of unmodelled DC modifiers. It never authorizes a cast.
+  SrdClassSpellStats? get _confirmedClassStats {
+    if (!_noExtraDc) return null;
+    try {
+      return SrdSpellSavingThrowRules.statsForClass(
+        widget.hero,
+        castingClass: 'Kleriker',
+        noUnmodelledModifiersConfirmed: _noExtraDc,
+      );
+    } on FormatException {
+      return null;
+    }
+  }
+
   void _confirm() {
     final parsed = int.tryParse(_saveModifier.text.trim());
     if (!SacredFlameRules.isClericCaster(widget.hero) ||
@@ -102,6 +118,16 @@ class _SacredFlameDialogState extends State<SacredFlameDialog> {
       );
       return;
     }
+    try {
+      SrdSpellSavingThrowRules.statsForClass(
+        widget.hero,
+        castingClass: 'Kleriker',
+        noUnmodelledModifiersConfirmed: _noExtraDc,
+      );
+    } on FormatException catch (error) {
+      setState(() => _error = error.message);
+      return;
+    }
     Navigator.of(context).pop(
       SacredFlameChoice(
         confirmedTargetDexteritySaveModifier: parsed,
@@ -120,86 +146,97 @@ class _SacredFlameDialogState extends State<SacredFlameDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
+    insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+    scrollable: true,
     title: const Text('Heilige Flamme wirken'),
     content: SizedBox(
       width: 470,
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Ziel: ${widget.encounter.enemyName}. '
+            '60 Fuß, Aktion, V/S. Geschicklichkeitsrettungswurf '
+            'gegen deinen Kleriker-Zauber-SG. Halbe und '
+            'Dreivierteldeckung geben keinen Rettungswurfbonus.',
+          ),
+          if (!SacredFlameRules.isClericCaster(widget.hero) ||
+              SacredFlameRules.preparedName(widget.hero) == null)
+            const Text('Kein bestätigter Kleriker-Zaubertrick verfügbar.'),
+          const SizedBox(height: 12),
+          TextField(
+            key: const ValueKey('sacred-flame-enemy-save-modifier'),
+            controller: _saveModifier,
+            keyboardType: const TextInputType.numberWithOptions(signed: true),
+            decoration: const InputDecoration(
+              labelText: 'Bestätigter vollständiger GES-Rettungswurfbonus',
+              helperText: 'Aus bestätigtem SRD-Statblock, z. B. +2 oder −1',
+              border: OutlineInputBorder(),
+            ),
+            onChanged: (_) => setState(() => _error = null),
+          ),
+          _check('visible', 'Ziel ist sichtbar.', _visible, (v) {
+            _visible = v;
+          }),
+          _check('range', 'Ziel ist innerhalb von 60 Fuß.', _range, (v) {
+            _range = v;
+          }),
+          _check('verbal', 'Verbale Komponente ist möglich.', _verbal, (v) {
+            _verbal = v;
+          }),
+          _check('somatic', 'Gestische Komponente ist möglich.', _somatic, (v) {
+            _somatic = v;
+          }),
+          _check(
+            'radiant-defense',
+            'Keine ungeklärte Strahlenschaden-Resistenz, '
+                '-immunität, -anfälligkeit oder sonstige Modifikation.',
+            _noRadiantDefense,
+            (v) => _noRadiantDefense = v,
+          ),
+          _check(
+            'dc',
+            'Keine weiteren Zauber-SG-Modifikatoren durch '
+                'Ausrüstung, magische Gegenstände oder Fähigkeiten.',
+            _noExtraDc,
+            (v) => _noExtraDc = v,
+          ),
+          _check(
+            'circumstances',
+            'Rettungswurf-Vorteil, -Nachteil und automatische '
+                'Fehlschläge aus Zuständen sind geprüft.',
+            _saveCircumstances,
+            (v) => _saveCircumstances = v,
+          ),
+          _check(
+            'advantage',
+            'Gegner hat bestätigten Vorteil auf diesen Rettungswurf.',
+            _saveAdvantage,
+            (v) => _saveAdvantage = v,
+          ),
+          _check(
+            'disadvantage',
+            'Gegner hat bestätigten Nachteil auf diesen Rettungswurf.',
+            _saveDisadvantage,
+            (v) => _saveDisadvantage = v,
+          ),
+          if (_noExtraDc && _confirmedClassStats == null)
+            const Text(
+              'Klassenkombination, Klassenstufen oder Weisheitswert sind '
+              'nicht bestätigt. Bitte prüfe den Charakterbogen.',
+              key: ValueKey('sacred-flame-class-stats-invalid'),
+            ),
+          if (_confirmedClassStats case final stats?)
             Text(
-              'Ziel: ${widget.encounter.enemyName}. '
-              '60 Fuß, Aktion, V/S. Geschicklichkeitsrettungswurf '
-              'gegen deinen Kleriker-Zauber-SG. Halbe und '
-              'Dreivierteldeckung geben keinen Rettungswurfbonus.',
+              'Kleriker: Weisheit ${stats.abilityScore}, '
+              'Übungsbonus +${stats.proficiencyBonus}, '
+              'Zauber-SG ${stats.spellSaveDc}.',
+              key: const ValueKey('sacred-flame-class-stats'),
             ),
-            if (!SacredFlameRules.isClericCaster(widget.hero) ||
-                SacredFlameRules.preparedName(widget.hero) == null)
-              const Text('Kein bestätigter Kleriker-Zaubertrick verfügbar.'),
-            const SizedBox(height: 12),
-            TextField(
-              key: const ValueKey('sacred-flame-enemy-save-modifier'),
-              controller: _saveModifier,
-              keyboardType: const TextInputType.numberWithOptions(signed: true),
-              decoration: const InputDecoration(
-                labelText: 'Bestätigter vollständiger GES-Rettungswurfbonus',
-                helperText: 'Aus bestätigtem SRD-Statblock, z. B. +2 oder −1',
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (_) => setState(() => _error = null),
-            ),
-            _check('visible', 'Ziel ist sichtbar.', _visible, (v) {
-              _visible = v;
-            }),
-            _check('range', 'Ziel ist innerhalb von 60 Fuß.', _range, (v) {
-              _range = v;
-            }),
-            _check('verbal', 'Verbale Komponente ist möglich.', _verbal, (v) {
-              _verbal = v;
-            }),
-            _check('somatic', 'Gestische Komponente ist möglich.', _somatic, (
-              v,
-            ) {
-              _somatic = v;
-            }),
-            _check(
-              'radiant-defense',
-              'Keine ungeklärte Strahlenschaden-Resistenz, '
-                  '-immunität, -anfälligkeit oder sonstige Modifikation.',
-              _noRadiantDefense,
-              (v) => _noRadiantDefense = v,
-            ),
-            _check(
-              'dc',
-              'Keine weiteren Zauber-SG-Modifikatoren durch '
-                  'Ausrüstung, magische Gegenstände oder Fähigkeiten.',
-              _noExtraDc,
-              (v) => _noExtraDc = v,
-            ),
-            _check(
-              'circumstances',
-              'Rettungswurf-Vorteil, -Nachteil und automatische '
-                  'Fehlschläge aus Zuständen sind geprüft.',
-              _saveCircumstances,
-              (v) => _saveCircumstances = v,
-            ),
-            _check(
-              'advantage',
-              'Gegner hat bestätigten Vorteil auf diesen Rettungswurf.',
-              _saveAdvantage,
-              (v) => _saveAdvantage = v,
-            ),
-            _check(
-              'disadvantage',
-              'Gegner hat bestätigten Nachteil auf diesen Rettungswurf.',
-              _saveDisadvantage,
-              (v) => _saveDisadvantage = v,
-            ),
-            if (_error != null)
-              Text(_error!, style: const TextStyle(color: Colors.redAccent)),
-          ],
-        ),
+          if (_error != null)
+            Text(_error!, style: const TextStyle(color: Colors.redAccent)),
+        ],
       ),
     ),
     actions: [
@@ -214,7 +251,8 @@ class _SacredFlameDialogState extends State<SacredFlameDialog> {
         style: FantasyButtonStyle.arcane,
         onPressed:
             !SacredFlameRules.isClericCaster(widget.hero) ||
-                SacredFlameRules.preparedName(widget.hero) == null
+                SacredFlameRules.preparedName(widget.hero) == null ||
+                (_noExtraDc && _confirmedClassStats == null)
             ? null
             : _confirm,
       ),
