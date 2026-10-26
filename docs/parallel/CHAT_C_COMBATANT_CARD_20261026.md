@@ -21,7 +21,7 @@ Alle bisherigen INI-/RK-/TP-/TEMP-Tags und der Trefferpunktebalken bleiben vorha
 
 Die CI auf dem anfänglichen Branch-Commit [#40282720333](https://github.com/ManuEtt/Dnd/actions/runs/40282720333) endet noch **vor** Flutter bei drei Python-ZIP-/Checkpoint-Testfehlern in `scripts/tests/test_create_checkpoint.py` und `scripts/tests/test_package_project.py`. Der aktuelle unveränderte Main-CI-Lauf [#40282602855](https://github.com/ManuEtt/Dnd/actions/runs/40282602855) meldet ebenfalls einen Fehler. Diese Tests sind nicht durch UI-Änderungen berührt; keine Behauptung einer grünen Gesamt-CI, solange der Main-Blocker nicht gelöst ist.
 
-Der temporäre Dart-Formatierungsworkflow und ein gezielter Flutter-Analyse-/Widget-Testlauf sind separat zu prüfen. **Status gezielter Testlauf:** noch ausstehend.
+Die gezielten beiden Dart-Dateien wurden im [Format-Diagnoselauf #40283036589](https://github.com/ManuEtt/Dnd/actions/runs/40283036589) kanonisch formatiert. Ein erster isolierter Flutter-Lauf [#40283406882](https://github.com/ManuEtt/Dnd/actions/runs/40283406882) scheiterte vor der Flutter-Analyse an zwei **anderen**, schon in `main` nicht kanonisch formatierten Dateien: `app/lib/story/npc_identity_story_payload.dart` und `app/test/srd_eldritch_blast_rules_test.dart`. Der erneute [isolierte Lauf #40283626717](https://github.com/ManuEtt/Dnd/actions/runs/40283626717) prüft die Formatierung nur der geänderten UI-/Testdateien, führt danach aber weiterhin `flutter analyze`, den Widgettest, die **gesamte** Flutter-Suite und den Android-Debug-APK-Build aus. **Status dieses Laufs:** noch ausstehend. Die reguläre Main-Gesamt-CI bleibt unabhängig davon rot.
 
 ## NICHT GETESTET / ABGRENZUNG
 
