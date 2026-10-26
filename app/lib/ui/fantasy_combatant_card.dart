@@ -240,8 +240,8 @@ class _CombatStatTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Keep the visual abbreviations compact while announcing confirmed
-    // values and unknown imported values clearly to screen readers.
+    // Keep compact visual abbreviations but announce the underlying stat
+    // and unconfirmed legacy values plainly to assistive technology.
     final accessibleName = switch (label) {
       'INI' => 'Initiative',
       'RK' => 'Rüstungsklasse',
@@ -260,28 +260,32 @@ class _CombatStatTag extends StatelessWidget {
       child: ExcludeSemantics(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-    decoration: BoxDecoration(
-      color: FantasyPalette.night.withValues(alpha: .86),
-      borderRadius: BorderRadius.circular(7),
-      border: Border.all(color: color.withValues(alpha: .30)),
-    ),
-    child: Text.rich(
-      TextSpan(
-        children: [
-          TextSpan(
-            text: '$label ',
-            style: TextStyle(
-              color: color,
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
+          decoration: BoxDecoration(
+            color: FantasyPalette.night.withValues(alpha: .86),
+            borderRadius: BorderRadius.circular(7),
+            border: Border.all(color: color.withValues(alpha: .30)),
+          ),
+          child: Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: '$label ',
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                TextSpan(
+                  text: value,
+                  style: const TextStyle(
+                    color: FantasyPalette.ivory,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
             ),
           ),
-          TextSpan(
-            text: value,
-            style: const TextStyle(color: FantasyPalette.ivory, fontSize: 12),
-          ),
-        ],
-      ),
         ),
       ),
     );
