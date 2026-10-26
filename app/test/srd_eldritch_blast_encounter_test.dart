@@ -80,6 +80,7 @@ List<SrdEldritchBlastTarget> _targets({
   int count = 2,
   int ac = 14,
   CoverLevel cover = CoverLevel.none,
+  bool opposite = true,
   int distanceFeet = 40,
 }) => [
   for (var i = 0; i < count; i++)
@@ -92,7 +93,7 @@ List<SrdEldritchBlastTarget> _targets({
       clearPathConfirmed: true,
       coverCircumstancesConfirmed: true,
       attackCircumstancesConfirmed: true,
-      sourceOppositeCover: true,
+      sourceOppositeCover: opposite,
     ),
 ];
 
@@ -213,6 +214,22 @@ void main() {
         engine,
         normal,
         declaredBeams: _targets(cover: CoverLevel.half),
+      ),
+      throwsFormatException,
+    );
+    // An attacker may not forge away the current opponent's confirmed cover.
+    final halfCovered = _campaign(
+      engine,
+      encounter: _encounter(cover: CoverLevel.half),
+    );
+    expect(
+      () => _cast(
+        engine,
+        halfCovered,
+        declaredBeams: _targets(
+          cover: CoverLevel.half,
+          opposite: false,
+        ),
       ),
       throwsFormatException,
     );
