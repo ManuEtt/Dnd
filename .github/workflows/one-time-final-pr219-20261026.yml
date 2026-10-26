@@ -1,0 +1,108 @@
+name: CI-gated one-time merge and retirement of PR219
+on:
+  push:
+    branches:
+      - maintenance/guarded-final-pr219-20261026
+permissions:
+  contents: write
+  actions: read
+  pull-requests: write
+jobs:
+  finish:
+    if: github.repository == 'ManuEtt/Dnd'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    concurrency:
+      group: finish-pr219-20261026
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Wait for successful verified CI, then merge and retire exactly matched branches
+        shell: bash
+        run: |
+          set -euo pipefail
+          REPO='ManuEtt/Dnd'
+          BASE='20098805d8c70cbd361a13862379894c47ef4eb6'
+          HEAD='fe716c72af0b4cf28788c8a2f6181c0303c624d4'
+          ARCHIVE='archive/retirement-20261026-pr219'
+          main_run=$(gh api repos/ManuEtt/Dnd/actions/runs/40288770032 --jq '[.head_sha,.status,.conclusion] | join("|")')
+          [[ "$main_run" == "$BASE|completed|success" ]] || { echo "Main baseline CI not green: $main_run"; exit 1; }
+          green=0
+          for attempt in $(seq 1 100); do
+            green=0
+            incomplete=0
+            for run in 40290249912 40290243615; do
+              status=$(gh api "repos/$REPO/actions/runs/$run" --jq '[.head_sha,.status,.conclusion] | join("|")')
+              case "$status" in
+                "$HEAD|completed|success") green=$((green+1)) ;;
+                "$HEAD|completed|failure"|"$HEAD|completed|timed_out"|"$HEAD|completed|action_required") echo "ABORT failing CI $run: $status"; exit 1 ;;
+                "$HEAD|in_progress|"|"$HEAD|queued|"|"$HEAD|pending|"|"$HEAD|waiting|") incomplete=$((incomplete+1)) ;;
+                "$HEAD|completed|cancelled") : ;;
+                *) echo "ABORT unexpected CI $run: $status"; exit 1 ;;
+              esac
+            done
+            if [[ "$green" -ge 1 && "$incomplete" -eq 0 ]]; then break; fi
+            sleep 20
+          done
+          [[ "$green" -ge 1 && "$incomplete" -eq 0 ]] || { echo 'ABORT timed out waiting green CI'; exit 1; }
+          git fetch --quiet origin main
+          [[ "$(git rev-parse origin/main)" == "$BASE" ]] || { echo 'ABORT main moved since test baseline'; exit 1; }
+          state=$(gh api repos/ManuEtt/Dnd/pulls/219 --jq '[.state,.head.sha,.base.sha,.draft] | map(tostring) | join("|")')
+          [[ "$state" == "open|$HEAD|$BASE|false" ]] || { echo "ABORT PR219 changed: $state"; exit 1; }
+          mapfile -t targets <<'BRANCHES'
+          feat/chat-c/combatant-card-large-text-20261026|1c89286def233ea36be703924f0fa4e7f4dd186f
+          fix/chat-d/gradle-java-property-escaped-keys-20261026|a8b4a151c07a95f13d9b1cdb99e9e2ddc7b539ae
+          integration/combatant-card-gradle-keys-20261026|fe716c72af0b4cf28788c8a2f6181c0303c624d4
+          BRANCHES
+          for line in "${targets[@]}"; do
+            IFS='|' read -r name sha <<< "$line"
+            actual=$(git ls-remote origin "refs/heads/$name" | cut -f1)
+            [[ "$actual" == "$sha" ]] || { echo "ABORT source branch moved $name: $actual"; exit 1; }
+            tag="$ARCHIVE/$name"
+            existing=$(git ls-remote origin "refs/tags/$tag" | cut -f1)
+            [[ -z "$existing" || "$existing" == "$sha" ]] || { echo "ABORT archival tag collision $tag"; exit 1; }
+          done
+          echo 'All branch SHA leases valid, merging tested PR 219'
+          merged=$(gh api -X PUT "repos/$REPO/pulls/219/merge" -f sha="$HEAD" -f merge_method='merge' -f commit_title='Merge PR #219: accessible combatant cards and safe Gradle escaped keys' --jq '[.merged,.sha] | join("|")')
+          [[ "$merged" == true\|* ]] || { echo "ABORT GitHub did not merge: $merged"; exit 1; }
+          merge_sha=${merged#true|}
+          git fetch --quiet origin main
+          [[ "$(git rev-parse origin/main)" == "$merge_sha" ]] || { echo 'ABORT main changed unexpectedly after merge'; exit 1; }
+          for line in "${targets[@]}"; do
+            IFS='|' read -r name sha <<< "$line"
+            git merge-base --is-ancestor "$sha" origin/main || { echo "ABORT original head not integrated: $name"; exit 1; }
+          done
+          for pr in 216 218; do
+            state=$(gh api "repos/$REPO/pulls/$pr" --jq .state)
+            if [[ "$state" == open ]]; then
+              got=$(gh api "repos/$REPO/pulls/$pr" --jq .head.sha)
+              expected='1c89286def233ea36be703924f0fa4e7f4dd186f'
+              [[ "$pr" == 218 ]] && expected='a8b4a151c07a95f13d9b1cdb99e9e2ddc7b539ae'
+              [[ "$got" == "$expected" ]] || { echo "ABORT original PR $pr changed"; exit 1; }
+              gh api -X PATCH "repos/$REPO/pulls/$pr" -f state=closed >/dev/null
+              echo "Closed superseded original PR $pr after its SHA became ancestor of main"
+            fi
+          done
+          for line in "${targets[@]}"; do
+            IFS='|' read -r name sha <<< "$line"
+            tag="$ARCHIVE/$name"
+            if [[ -z "$(git ls-remote origin "refs/tags/$tag" | cut -f1)" ]]; then
+              git tag "$tag" "$sha"
+              git push origin "refs/tags/$tag:refs/tags/$tag"
+            fi
+            git push --force-with-lease="refs/heads/$name:$sha" origin ":refs/heads/$name"
+            [[ -z "$(git ls-remote origin "refs/heads/$name" | cut -f1)" ]] || { echo "ABORT deletion not confirmed $name"; exit 1; }
+            echo "ARCHIVED & REMOVED $name"
+          done
+          SELF='maintenance/guarded-final-pr219-20261026'
+          [[ "$(git ls-remote origin "refs/heads/$SELF" | cut -f1)" == "$GITHUB_SHA" ]] || exit 1
+          tag="$ARCHIVE/workflow-$GITHUB_SHA"
+          git tag "$tag" "$GITHUB_SHA"
+          git push origin "refs/tags/$tag:refs/tags/$tag"
+          git push --force-with-lease="refs/heads/$SELF:$GITHUB_SHA" origin ":refs/heads/$SELF"
+          echo 'SUCCESS: verified CI, merged PR219, closed superseded PRs, archived and retired 3 source branches and self'
