@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – Eldritch Blast: getrennte SRD-Strahlen (26.10.2026, PR offen)
+
+Eigenständiges SRD-5.2.1-Regelpaket für den Hexenmeister-Zaubertrick *Eldritch Blast*: ab Gesamtstufen 5/11/17 zwei/drei/vier einzelne Strahlen mit jeweils eigenem W20-Zauberangriff und 1d10 Energieschaden (2d10 Krit); verschiedene oder gleiche bestätigte Ziele. Vorausgesetzte Komponenten, Reichweite, Deckung und Angriffsbedingungen werden vor dem **ersten** Würfel validiert. Keine Slot-/Aktions-/Trefferpunktbuchung und keine Änderung am Spielstand oder der Persistenz. Die SRD-Aufgaben `SPELL-ENTRY-ELDRITCH-BLAST` und `RULE-SPELLS-CANTRIP-SCALING` sind bewusst nur **partial**. [Regelbeleg](docs/SRD_ELDRITCH_BLAST_MULTIBEAM_20261026.md) · [Chat-A-Checkpoint](docs/parallel/CHAT_A_ELDRITCH_BLAST_20261026.md). Tests sind geschrieben; die CI auf finalem Commit bleibt separat abzunehmen.
+
+
 ## Chat C – Zugänglicher Heldenstatus (25.10.2026, PR offen)
 
 Der unabhängige Branch `feat/chat-c/accessible-status-hud-20261025` verbessert ausschließlich die Darstellung von `FantasyAdventureStatusHud`: ab 180 % Systemschrift bei 320–360 dp einspaltige Statuskarten; die angezeigten Werte schrumpfen nicht mehr über `FittedBox`. TP, RK, Bewegung und Erfahrung besitzen vollständige deutsche Screenreader-Texte; unbekannte Werte werden ausdrücklich als „nicht bestätigt“ angesagt. TP-/EP-Balken erhalten verständliche Prozent-Semantik. Drei Widgettests prüfen 320/360 dp bei 200 % und den unbekannten Zustand.
