@@ -118,31 +118,31 @@ class _ActionSeal extends StatelessWidget {
         container: true,
         label: '$label: $value',
         child: ExcludeSemantics(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
-          decoration: BoxDecoration(
-            color: FantasyPalette.night.withValues(alpha: .85),
-            borderRadius: BorderRadius.circular(9),
-            border: Border.all(color: accent.withValues(alpha: .48)),
-          ),
-          child: Wrap(
-            spacing: 6,
-            runSpacing: 4,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              Icon(icon, color: accent, size: 17),
-              Text(
-                '$label: $value',
-                softWrap: true,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: FantasyPalette.ivory,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
+            decoration: BoxDecoration(
+              color: FantasyPalette.night.withValues(alpha: .85),
+              borderRadius: BorderRadius.circular(9),
+              border: Border.all(color: accent.withValues(alpha: .48)),
+            ),
+            child: Wrap(
+              spacing: 6,
+              runSpacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Icon(icon, color: accent, size: 17),
+                Text(
+                  '$label: $value',
+                  softWrap: true,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: FantasyPalette.ivory,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
       ),
     );
   }
