@@ -1,3 +1,20 @@
+# Chat B – NPC-ID nach SQLite-Neustart sicher fortsetzen (26.10.2026)
+
+- **Ausgangs-`main`-SHA:** `67f146e690306b13d490bd8e7fd5636bb187c77e`.
+- **Eigener Branch:** `feat/chat-b/npc-selection-resume-20261026`.
+- **Implementierungs-/Test-Commit:** `945f6a18c3ce1570f52d95d8d21e453dbaf519dc`; PR und finaler Branch-SHA sind nach Veröffentlichung im GitHub-PR nachzusehen.
+- **Vor Aufgabenwahl geprüfte PRs:** #244, #245, #246, #247, #248; während des Inkrements wurde zusätzlich Integrations-PR #250 eröffnet. Der neue Testpfad wird in keinem dieser PRs geändert. Gemeinsame `README.md` und `docs/CODEX_CHECKPOINT.md` durch Chat D bei der Integration konsolidieren.
+- **AUSGANGSPROBLEM:** Nach Neustart gab es für zwei gleichnamige NPCs keinen einzelnen durchgängigen Regressionstest von bestätigtem SQLite-Spielstand über explizite Auswahl bis zum ausgehandelten Backend-Protokoll, einschließlich Revisionswechsel.
+- **IMPLEMENTIERT:** `app/test/npc_selection_resume_sqlite_test.dart` als neuer, deterministischer Integrationstest mit echter temporärer SQLite-DB und kostenlosem Fake-Transport: Campagne speichern, DB neu öffnen, gleichnamige Mira-NPCs nicht aus freier Prosa erraten, Mira-ID ausdrücklich wählen, exakt eine gespeicherte Notiz zum Erzähler transportieren, erneute Sitzung bestätigen, alte Auswahl bei neuer Revision sperren, neu wählen und nur dieselbe gespeicherte NPC-ID übertragen. Separater Negativtest für Legacy-JSON ohne optionale NPC-Notizen.
+- **GEÄNDERTE DATEIEN:** neuer Flutter-Test sowie `README.md`, `docs/CODEX_CHECKPOINT.md` und dieser Checkpoint. Keine Domain-, Controller-, Schema- oder Regelcodeänderung.
+- **AKZEPTANZ:** ausschließlich `mira-two` mit ihrer gespeicherten Notiz in `npcContexts` und `selectedNpcId`; `mira-one` und ihre Notiz nie im ID-Kontext; stale Revision abgewiesen; lokaler Held und Spielstand unverändert; ältere JSONs ohne NPC-Notizen produzieren keinen erfundenen Verlauf.
+- **TESTS:** Zwei Flutter-Tests neu erstellt. Ausführung über aktuelle GitHub-CI nachsehen, **nicht durch bloße Testdatei als bestanden werten**.
+- **NICHT GETESTET:** Flutter/Android lokal (kein Flutter-/Android-SDK); echtes Gerät, produktiver KI-Provider und Revisionsrace zwischen Anforderungsaufbau und HTTP-Senden.
+- **MIGRATION:** Keine. SQLite-Version 2 und Kampagnen-JSON 1 unverändert.
+- **NÄCHSTER SCHRITT:** Bei erfolgreicher CI und nach Integration #250 einen eigenständigen narrativen Test gegen Änderungen an bereits abgeschlossenen Handlungssträngen durch unveränderten Terminalstatus erstellen; bestehende manuelle Bearbeitung muss weiterhin möglich bleiben.
+
+---
+
 # CHAT B – Checkpoint: NPC-Zeitstempel, 26.10.2026
 
 - **Ausgangs-Main-SHA:** `20098805d8c70cbd361a13862379894c47ef4eb6`.

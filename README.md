@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat B – Fortsetzung einer expliziten NPC-Auswahl nach Neustart (26.10.2026)
+
+Ein neuer Integrationstest überprüft die bestehende explizite NPC-ID-Übertragung über eine tatsächlich gespeicherte SQLite-Kampagne hinweg: zwei gleichnamige Figuren, Auswahl nur per ID, Erzählkontext nur aus der passenden bestätigten NPC-Chronik, Neustart, Revisionswechsel und Ablehnung einer veralteten Auswahl. Fehlende optionale Notizen in Alt-JSONs dürfen keine Erinnerung erfinden. Der Test verwendet einen lokalen Fake-Backendtransport ohne kostenpflichtige KI-Aufrufe. **Der endgültige CI-/APK-Nachweis auf dem finalen Branch-Commit steht gesondert aus.** Keine Änderung an App-/Regelcode, Spielständen, SQLite- oder JSON-Schema. [Chat-B-Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md).
+
+
 **Würfelraunen** ist eine deutschsprachige, in Entwicklung befindliche **Fantasy-Rollenspiel-App für Android**. Sie verbindet lokale Soloabenteuer, Charakter- und Kampagnenverwaltung, ausgewählte Regeln aus dem **D&D System Reference Document (SRD) 5.2.1** und eine optionale KI-gestützte Erzählung.
 
 Die App ist eine **Alpha-Version**, kein fertiger Ersatz für einen menschlichen Spielleiter und keine vollständige D&D-5e-Regelimplementierung. **Zum lokalen Spielen ist weder ein Account noch ein KI-Server erforderlich.**
