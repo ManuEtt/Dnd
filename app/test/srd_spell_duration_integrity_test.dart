@@ -36,10 +36,7 @@ void main() {
     ];
     for (final value in invalid) {
       expect(
-        () => SrdSpellDurationRules.parse(
-          value,
-          concentrationRequired: false,
-        ),
+        () => SrdSpellDurationRules.parse(value, concentrationRequired: false),
         throwsFormatException,
       );
     }
@@ -55,10 +52,7 @@ void main() {
   test('unsupported syntax is not converted to a duration', () {
     for (final value in ['Special', '1 minute\n2 minutes', '1 minute\u200B']) {
       expect(
-        () => SrdSpellDurationRules.parse(
-          value,
-          concentrationRequired: false,
-        ),
+        () => SrdSpellDurationRules.parse(value, concentrationRequired: false),
         throwsUnsupportedError,
       );
     }
