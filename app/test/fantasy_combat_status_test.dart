@@ -195,9 +195,7 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.bySemanticsLabel(
-          'Deckung für Gegner: halbe Deckung. Änderbar.',
-        ),
+        find.bySemanticsLabel('Deckung für Gegner: halbe Deckung. Änderbar.'),
         findsOneWidget,
       );
 
@@ -250,9 +248,7 @@ void main() {
     expect(tester.widget<PopupMenuButton<CoverLevel>>(hero).enabled, false);
     expect(tester.widget<PopupMenuButton<CoverLevel>>(enemy).enabled, false);
     expect(
-      find.bySemanticsLabel(
-        'Deckung für Held: keine Deckung. Nicht änderbar.',
-      ),
+      find.bySemanticsLabel('Deckung für Held: keine Deckung. Nicht änderbar.'),
       findsOneWidget,
     );
     expect(
