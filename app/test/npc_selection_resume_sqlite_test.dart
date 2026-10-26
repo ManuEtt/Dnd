@@ -180,10 +180,10 @@ void main() {
       }
 
       // A later confirmed session invalidates both the old choice and payload.
-      final later = recovered.copyWith(
-        revision: recovered.revision + 1,
-        sessionId: 'zweite-sitzung',
-      );
+      final nextSession = recovered.toJson();
+      nextSession['revision'] = recovered.revision + 1;
+      nextSession['sessionId'] = 'zweite-sitzung';
+      final later = Campaign.fromJson(nextSession);
       await repository.saveCampaign(
         later,
         expectedRevision: recovered.revision,
