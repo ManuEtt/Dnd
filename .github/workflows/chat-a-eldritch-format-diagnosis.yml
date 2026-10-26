@@ -1,0 +1,20 @@
+name: Chat A Eldritch Dart Format Diagnosis
+on:
+  push:
+    paths:
+      - '.github/workflows/chat-a-eldritch-format-diagnosis.yml'
+  workflow_dispatch:
+jobs:
+  diagnostic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Exact formatter diff
+        run: |
+          dart format app/lib/domain/srd_eldritch_blast_rules.dart app/test/srd_eldritch_blast_rules_test.dart
+          git --no-pager diff -- app/lib/domain/srd_eldritch_blast_rules.dart app/test/srd_eldritch_blast_rules_test.dart
