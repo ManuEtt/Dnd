@@ -1,3 +1,12 @@
+# Chat D – Main-Synchronisierung D-005
+
+## Aktualisierung nach Main-Merge #195 – 26.10.2026
+
+Neue Basis `575a885bd34ecae2bd173dc183abf88a367a69af`; der D-005-Stand `95fcf11c828e28f2de358b31636e5dc9898edfb6` war auf `main` `5f9a01d` integriert und wird in einem weiteren regulären Merge-Commit mit neuem Main vereinigt. Die technischen Änderungen bleiben auf genau zwei Gradle-Prüfdateien begrenzt. GitHub CI auf dem **neuen** kombinierten Commit erneut nötig; frühere erfolgreiche CI-Läufe gelten nur für ältere Heads. Die aktuellen Main-Änderungen der anderen Chats (SRD-Zauberdauer, NPC-Erinnerung) bleiben erhalten.
+
+
+---
+
 # Chat D D-005 – Main-Rebase-freie Synchronisation (26.10.2026)
 
 Der auf `87a0d4b7d62aaacf7aa99886c629d6aa5f17a119` vollständig CI-geprüfte D-005-PR #189 wurde mit dem aktuellen Main-HEAD `5f9a01dd73f68ad4f9e226f859a8ca87803b8337` (PR #185 integriert) per zusätzlichem Elterncommit synchronisiert, ohne Force-Push und ohne fremde technische Änderungen. Neue endgültige CI erforderlich; frühere Dokumentation erhalten.
