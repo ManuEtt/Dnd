@@ -11,7 +11,7 @@ import zipfile
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from verify_project import (
-    MAX_WRAPPER_ENTRIES, MAX_WRAPPER_UNCOMPRESSED_BYTES,
+    MAX_WRAPPER_ENTRIES, MAX_WRAPPER_JAR_BYTES, MAX_WRAPPER_UNCOMPRESSED_BYTES,
     REQUIRED_FILES, ROOT, WRAPPER_MAIN, verify_project,
 )
 
@@ -118,6 +118,17 @@ class VerifyProjectTests(unittest.TestCase):
             archive.writestr('META-INF/', b'')
             archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
         self.assertEqual([], verify_project(self.root))
+
+    def test_oversized_wrapper_jar_is_rejected_before_zip_open(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        # A sparse file avoids allocating a large payload for the negative test.
+        with jar.open('wb') as stream:
+            stream.seek(MAX_WRAPPER_JAR_BYTES)
+            stream.write(b'0')
+        with mock.patch.object(zipfile, 'ZipFile',
+                               side_effect=AssertionError('unexpected ZIP parsing')):
+            errors = verify_project(self.root)
+        self.assertTrue(any('Gradle-Wrapper-JAR' in msg for msg in errors))
 
     def test_compressed_wrapper_zip_bomb_is_rejected_before_crc_decompression(self):
         jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
