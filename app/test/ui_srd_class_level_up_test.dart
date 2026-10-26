@@ -186,10 +186,7 @@ void main() {
       xp: 355000,
     ).copyWith(className: 'Barbar', level: 19);
     await openEditor(tester, barbarian, (value) => result = value);
-    await tapVisible(
-      tester,
-      find.byKey(const ValueKey('open-class-level-up')),
-    );
+    await tapVisible(tester, find.byKey(const ValueKey('open-class-level-up')));
     expect(
       find.textContaining('Automatisches Klassenmerkmal:'),
       findsOneWidget,
