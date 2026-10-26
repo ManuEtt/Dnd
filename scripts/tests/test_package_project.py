@@ -79,6 +79,73 @@ class ProjectArchiveTests(unittest.TestCase):
             packaging.create_archive(self.root, output)
         self.assertFalse(output.exists())
 
+
+    def test_case_insensitive_filename_collision_is_rejected(self):
+        first = self.root / 'app/assets/Card.png'
+        second = self.root / 'app/assets/card.PNG'
+        first.write_bytes(b'card one')
+        second.write_bytes(b'card two')
+        output = self.base / 'collision.zip'
+        with self.assertRaisesRegex(ValueError, 'case-insensitive'):
+            packaging.create_archive(self.root, output, layout='root')
+        self.assertFalse(output.exists())
+
+    def test_case_insensitive_directory_collision_is_rejected(self):
+        for name in ('app/assets/Icons/sword.svg',
+                     'app/assets/icons/shield.svg'):
+            path = self.root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text('fixture', encoding='utf-8')
+        output = self.base / 'directory-collision.zip'
+        with self.assertRaisesRegex(ValueError, 'case-insensitive'):
+            packaging.create_archive(self.root, output, layout='root')
+        self.assertFalse(output.exists())
+
+    def test_nfc_unicode_filename_collision_is_rejected(self):
+        first = self.root / 'app/assets/café.txt'
+        second = self.root / 'app/assets/cafe\u0301.txt'
+        first.write_text('composed', encoding='utf-8')
+        second.write_text('decomposed', encoding='utf-8')
+        if first.samefile(second):
+            self.skipTest('The filesystem already normalizes Unicode filenames')
+        output = self.base / 'unicode-collision.zip'
+        with self.assertRaisesRegex(ValueError, 'Unicode-equivalent'):
+            packaging.create_archive(self.root, output, layout='root')
+        self.assertFalse(output.exists())
+
+    def test_unsupported_windows_filenames_are_rejected(self):
+        for name in ('CON.txt', 'LPT1.log', 'notes?.txt', 'trailing.',
+                     'tailspace ', 'line\nbreak.txt'):
+            with self.subTest(name=name):
+                path = self.root / 'app/assets' / name
+                path.write_text('non portable', encoding='utf-8')
+                output = self.base / 'nonportable.zip'
+                with self.assertRaisesRegex(ValueError, 'non-portable'):
+                    packaging.create_archive(self.root, output)
+                self.assertFalse(output.exists())
+                path.unlink()
+
+    def test_failed_portability_check_keeps_prior_zip_and_checksum(self):
+        output = self.base / 'existing.zip'
+        packaging.create_archive(self.root, output, layout='root')
+        previous_zip = output.read_bytes()
+        previous_sum = output.with_suffix('.zip.sha256').read_bytes()
+        (self.root / 'app/assets/Card.svg').write_text('first', encoding='utf-8')
+        (self.root / 'app/assets/card.svg').write_text('second', encoding='utf-8')
+        with self.assertRaisesRegex(ValueError, 'case-insensitive'):
+            packaging.create_archive(self.root, output, layout='root')
+        self.assertEqual(previous_zip, output.read_bytes())
+        self.assertEqual(previous_sum, output.with_suffix('.zip.sha256').read_bytes())
+
+    def test_legitimate_distinct_filenames_still_export(self):
+        (self.root / 'app/assets/Icon.svg').write_bytes(b'sword')
+        (self.root / 'app/assets/Shield.svg').write_bytes(b'shield')
+        output = self.base / 'portable.zip'
+        packaging.create_archive(self.root, output, layout='root')
+        with zipfile.ZipFile(output) as archive:
+            self.assertIn('app/assets/Icon.svg', archive.namelist())
+            self.assertIn('app/assets/Shield.svg', archive.namelist())
+
     def test_symlink_to_external_file_is_rejected(self):
         outside = self.base / 'external.txt'
         outside.write_text('external fixture')
