@@ -93,3 +93,17 @@ Nach Abnahme dieses Pakets: eigener Reaktionsangriff auf dem gespeicherten Angeb
 ## Sicherung und Wiederaufnahme
 
 Geprüfte Main-Basis zusätzlich als ZIP/Patch unter `/workspace/artifacts/main-407c2e1-20261025/` gesichert. Neuer Quellcheckpoint nach diesem Update unter `/workspace/artifacts/0.8.40+90/`; Dateimanifest und tatsächlich gegen `407c2e1ef8ee310b30d1543a263fb66b3331a26e` angewandter Patch. Vor endgültigem Abschluss neue Ergebnisse und PR/Commit eintragen. Historische lokale Worktrees/Item-Entwürfe erhalten. Keine automatische Fortsetzung außerhalb aktiver Sitzung.
+
+
+---
+
+## Chat B – verhandelter NPC-Identitätstransport (26.10.2026)
+
+- **Branch:** `feat/chat-b/negotiated-npc-transport-20261026`; Ausgangsbasis `main` `f1f3e997bc8650a757d34234eff49d870dcf9369`, einschließlich Chat-B-Integration #204. Kein fremder Branch geändert.
+- **IMPLEMENTIERT:** `BackendNarrator.connect` wertet erst nach gültiger Scope-/Provider-/Ablaufprüfung optional `capabilities: ['npc-identity-v1']` aus. Bei Sitzungslöschung und Disconnect wird das Flag zurückgesetzt. `advanceStory` überträgt optional `campaignRevision` und bis zu drei `npcContexts` nur bei ausgehandelter Fähigkeit; alte Server bleiben kompatibel.
+- **IMPLEMENTIERT:** `NpcIdentityStoryPayload.prepare` bildet maximal drei eindeutige NPC-IDs mit je drei aus lokaler, revisionsgebundener bestätigter Historie ab. Namensduplikate, nicht passende Aktionstexte und ungültige Notizen führen zu **keiner** willkürlichen Zuordnung. `GameController` bindet diesen Kontext ausschließlich im bereits vorhandenen optionalen KI-Kampagnenpfad ein.
+- **TESTS GESCHRIEBEN:** `npc_identity_story_payload_test.dart` (Mehrdeutigkeit, Grenzen, Revisionsfehler, Kontrollzeichen) und `npc_identity_transport_integration_test.dart` (SQLite/GameController, Fähigkeitsserver vs. Legacy-Server, unveränderter Heldenzustand). Erste Zwischencommits mit Format-/Syntaxfehlern wurden korrigiert; aktuelle separate Formatterdiagnose `success` ohne Änderungen. Reguläre vollständige GitHub-CI des finalen PR-HEAD bleibt gesondert abzunehmen.
+- **NICHT GETESTET:** echter Android-Installations-/Updatepfad, produktive KI-Providerkosten, Release-Signierung.
+- **BLOCKER/ABHÄNGIGKEIT:** `/v1/session` mit `npc-identity-v1` wird erst durch Backend-PR #198 bereitgestellt, der nach #193 integriert werden muss. Ohne Capability benutzt der Client ausschließlich den bestehenden Story-Request.
+- **FOLGESCHRITT:** nach Backend-Integration gemeinsamer realer HTTP-Mock-End-to-End-Test; optionaler UI-Selektor für bewusst ausgewählte gleichnamige NPC-IDs.
+- **Persönlicher Checkpoint:** `docs/parallel/CHAT_B_NEGOTIATED_NPC_TRANSPORT_20261026.md`. Gemeinsame README-/Checkpoint-Zeilen beim Merge mit Chat D konsolidieren.
