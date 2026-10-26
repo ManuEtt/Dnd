@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – Domain/Story-Grenze für Package-Imports (D-011, 26.10.2026)
+
+Der Python-Architekturprüfer sperrt jetzt auch `package:lebendiger_spielleiter/story/...` aus Domänenmodulen, einschließlich normalisierter Pfad-Aliase, statt nur relative Story-Imports zu erkennen. Regressionstests schützen zulässige Framework-/Domänen-Imports und die Zuordnung zu `app/pubspec.yaml`. Dieser unabhängige Branch verändert keine App-Funktion, SQLite-/JSON-Spielstände oder Versionsnummer. **Die vollständige GitHub-PR-CI des finalen Heads steht noch aus.** Der Integrations-PR #243 und alle übrigen offenen Entwicklungs-PRs bleiben unangetastet. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
+
 ## Chat D – Quell-ZIP vor Symlink-Austausch nach dem Scan schützen (D-009, 26.10.2026)
 
 Der Quellarchiv-Export nutzt auf POSIX nun vor jedem Dateilesen gesicherte Verzeichnis-Deskriptoren und `O_NOFOLLOW`, damit ein nach der Auflistung eingeschleuster Link nicht unbemerkt projektfremde Daten archiviert. Drei neue Regressionstests prüfen solche Datei-/Verzeichniswechsel sowie den Erhalt bereits veröffentlichter ZIP-/SHA256-Dateien; ein veralteter Testmock wurde aktualisiert. Non-POSIX-Plattformen erhalten eine zusätzliche Best-Effort-Prüfung, jedoch keine Garantie gegen alle Race Conditions. **Die finale CI auf dem aktuellen PR-Commit ist noch abzunehmen.** Keine Änderungen am Spielstandformat, App-Code oder Regelwerk. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
