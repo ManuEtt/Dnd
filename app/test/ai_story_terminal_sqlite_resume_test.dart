@@ -62,8 +62,7 @@ void main() {
   sqfliteFfiInit();
 
   for (final ending in ['resolved', 'abandoned']) {
-    test('confirmed $ending thread survives manual edit and SQLite restart',
-        () async {
+    test('SQLite preserves corrected $ending ending after restart', () async {
       final directory = await Directory.systemTemp.createTemp('thread-end-');
       final path = paths.join(directory.path, 'story.sqlite');
       final engine = GameEngine(clock: () => DateTime.utc(2026, 10, 26, 12));
