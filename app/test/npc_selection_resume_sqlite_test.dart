@@ -113,8 +113,9 @@ Future<void> _send(
 void main() {
   sqfliteFfiInit();
 
-  test('saved same-name NPC selection survives SQLite restart without cross-talk',
-      () async {
+  test(
+    'saved same-name NPC selection survives SQLite restart without cross-talk',
+    () async {
     final directory = await Directory.systemTemp.createTemp('npc-resume-');
     final path = paths.join(directory.path, 'campaign.sqlite');
     final saved = _campaign();
@@ -150,10 +151,16 @@ void main() {
       expect(payload.npcContexts, hasLength(1));
       expect(payload.npcContexts.single['npcId'], 'mira-two');
       expect(payload.npcContexts.toString(), contains('bewacht das Tor'));
-      expect(payload.npcContexts.toString(), isNot(contains('verwahrt die Karte')));
+      expect(
+        payload.npcContexts.toString(),
+        isNot(contains('verwahrt die Karte')),
+      );
 
       final transport = _RecordedNpcTransport();
-      final narrator = BackendNarrator(transport: transport, clock: () => _now);
+      final narrator = BackendNarrator(
+        transport: transport,
+        clock: () => _now,
+      );
       try {
         await narrator.connect(
           url: 'https://story.example.test',
@@ -169,8 +176,10 @@ void main() {
         expect(contexts, hasLength(1));
         expect((contexts.single as Map)['npcId'], 'mira-two');
         expect(jsonEncode(recovered.toJson()), baseline);
-        expect((await repository.getCampaign(saved.id))!.hero.toJson(),
-            saved.hero.toJson());
+        expect(
+          (await repository.getCampaign(saved.id))!.hero.toJson(),
+          saved.hero.toJson(),
+        );
       } finally {
         narrator.dispose();
       }
@@ -213,12 +222,16 @@ void main() {
       renewed.requireCurrent(resumed);
       expect(renewed.campaignRevision, resumed.revision);
       expect(renewed.npcContexts.single['npcId'], 'mira-two');
-      expect(renewed.npcContexts.toString(), isNot(contains('verwahrt die Karte')));
+      expect(
+        renewed.npcContexts.toString(),
+        isNot(contains('verwahrt die Karte')),
+      );
     } finally {
       await repository.close();
       await directory.delete(recursive: true);
     }
-  });
+    },
+  );
 
   test('legacy JSON without NPC notes cannot invent saved NPC history', () {
     final old = _campaign().toJson()..remove('npcRelationshipNotes');
