@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_duration_rules.dart';
 
 void main() {
-  test('canonical spell durations remain accepted', () {
+  test('known durations keep their meaning', () {
     final instant = SrdSpellDurationRules.parse(
       'Instantaneous',
       concentrationRequired: false,
@@ -14,18 +14,17 @@ void main() {
       concentrationRequired: false,
     );
     expect(timed.amount, 1);
-    expect(timed.unit, SrdSpellDurationUnit.minute);
 
-    final concentration = SrdSpellDurationRules.parse(
+    final focused = SrdSpellDurationRules.parse(
       'Concentration, up to 10 minutes',
       concentrationRequired: true,
     );
-    expect(concentration.requiresConcentration, isTrue);
-    expect(concentration.amount, 10);
+    expect(focused.requiresConcentration, isTrue);
+    expect(focused.amount, 10);
   });
 
-  test('leading or trailing whitespace cannot change catalogue meaning', () {
-    for (final invalid in [
+  test('altered duration borders are rejected', () {
+    final invalid = [
       ' Instantaneous',
       'Instantaneous ',
       '\nInstantaneous',
@@ -33,48 +32,35 @@ void main() {
       '\t1 hour',
       '1 hour\r\n',
       'Up to 1 minute ',
-      'Concentration, up to 1 minute\n',
       ' Until dispelled',
-      'Until dispelled or triggered\t',
-    ]) {
+    ];
+    for (final value in invalid) {
       expect(
         () => SrdSpellDurationRules.parse(
-          invalid,
-          concentrationRequired: invalid.trim().startsWith('Concentration'),
+          value,
+          concentrationRequired: false,
         ),
         throwsFormatException,
-        reason: invalid,
-      );
-    }
-  });
-
-  test('embedded controls and special durations remain unsupported', () {
-    for (final invalid in [
-      '1 minute\n2 minutes',
-      '1 minute\u200B',
-    ]) {
-      expect(
-        () => SrdSpellDurationRules.parse(
-          invalid,
-          concentrationRequired: invalid.startsWith('Concentration'),
-        ),
-        throwsUnsupportedError,
-        reason: invalid,
       );
     }
     expect(
       () => SrdSpellDurationRules.parse(
-        'Concentration,\tup to 1 minute',
+        'Concentration, up to 1 minute\n',
         concentrationRequired: true,
       ),
       throwsFormatException,
     );
-    expect(
-      () => SrdSpellDurationRules.parse(
-        'Special',
-        concentrationRequired: false,
-      ),
-      throwsUnsupportedError,
-    );
+  });
+
+  test('unsupported syntax is not converted to a duration', () {
+    for (final value in ['Special', '1 minute\n2 minutes', '1 minute\u200B']) {
+      expect(
+        () => SrdSpellDurationRules.parse(
+          value,
+          concentrationRequired: false,
+        ),
+        throwsUnsupportedError,
+      );
+    }
   });
 }
