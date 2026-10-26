@@ -218,21 +218,73 @@ void main() {
           throwsFormatException,
         );
       }
-      final note = AiStoryStep.fromJson({
+      final unchanged = {
         'narration': 'Eine alte Erinnerung bleibt erhalten.',
         'threadUpdates': [
           {
             'id': 'hafen',
             'status': terminal,
-            'description': 'Eine ergänzende Notiz ohne Statusänderung.',
+            'description': roundtrip.storyThreads.first.description,
           },
         ],
         'newThreads': [],
         'npcUpdates': [],
-      }, roundtrip);
-      expect(note.threadUpdates.single.status, terminal);
+      };
+      final safe = AiStoryStep.fromJson(unchanged, roundtrip);
+      expect(safe.threadUpdates.single.status, terminal);
+      expect(
+        safe.threadUpdates.single.description,
+        'Diese Entscheidung ist abgeschlossen.',
+      );
+
+      // The narrator may not silently rewrite an already confirmed ending.
+      final changed = {
+        ...unchanged,
+        'threadUpdates': [
+          {
+            'id': 'hafen',
+            'status': terminal,
+            'description': 'Eine erfundene spätere Auflösung.',
+          },
+        ],
+      };
+      expect(
+        () => AiStoryStep.fromJson(changed, roundtrip),
+        throwsFormatException,
+      );
+
+      // An explicit journal edit, unlike provider text, may change history.
+      final edited = engine
+          .saveStoryThread(
+            roundtrip,
+            threadId: 'hafen',
+            title: roundtrip.storyThreads.first.title,
+            description: 'Spieler hat den Abschluss berichtigt.',
+            status: terminal,
+          )
+          .campaign;
+      expect(edited.storyThreads.first.status, terminal);
+      expect(
+        edited.storyThreads.first.description,
+        'Spieler hat den Abschluss berichtigt.',
+      );
+      expect(edited.events.last.type, 'memory.storyThreadSaved');
+      expect(
+        AiStoryStep.fromJson({
+          ...unchanged,
+          'threadUpdates': [
+            {
+              'id': 'hafen',
+              'status': terminal,
+              'description': edited.storyThreads.first.description,
+            },
+          ],
+        }, edited).threadUpdates.single.description,
+        'Spieler hat den Abschluss berichtigt.',
+      );
       expect(roundtrip.hero.toJson(), created.hero.toJson());
       expect(roundtrip.quests, created.quests);
+      expect(edited.hero.toJson(), created.hero.toJson());
     }
   });
 
