@@ -1,3 +1,5 @@
+import { mockNpcDiaryHint } from './mock_npc_memory.js';
+
 /** A provider proposes fiction only. All returned values are validated before being sent to a client. */
 export interface StoryStartInput {
   heroName: string;
@@ -158,7 +160,7 @@ export function mockStoryTurn(input: StoryTurnInput): StoryTurn {
   // state into an invalid provider update or invent a replacement note.
   const first = input.threads.find(x => x.status === 'open' && x.description.trim());
   return parseStoryTurn({
-    narration: `${input.heroName}, deine Entscheidung „${input.action.slice(0, 110)}“ bleibt nicht unbemerkt. In ${input.scene.slice(0, 140)} zeichnet sich eine neue Spur ab. Was möchtest du als Nächstes tun?`,
+    narration: `${input.heroName}, deine Entscheidung „${input.action.slice(0, 110)}“ bleibt nicht unbemerkt. In ${input.scene.slice(0, 140)} zeichnet sich eine neue Spur ab. ${mockNpcDiaryHint(input)}Was möchtest du als Nächstes tun?`,
     threadUpdates: first ? [{ id: first.id, status: 'open', description: first.description }] : [],
     newThreads: [], npcUpdates: [],
     adventure: /gefahr|hinterhalt|begegnung|gegner|kampf|spur|untersuch|geheimnis/i.test(input.action)
