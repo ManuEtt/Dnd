@@ -5,7 +5,7 @@ void main() {
   SrdLongJumpAssessment check({
     int? strength = 15,
     int runUp = 10,
-    bool onFoot = true,
+    bool confirmedRunUp = true,
     int distance = 450,
     int remaining = 500,
     bool? difficultLanding = false,
@@ -18,7 +18,7 @@ void main() {
     return SrdLongJumpRules.preflight(
       strengthScore: strength,
       runUpFeet: runUp,
-      runUpOnFootConfirmed: onFoot,
+      immediateRunUpConfirmed: confirmedRunUp,
       jumpDistanceCentimeters: distance,
       movementRemainingCentimeters: remaining,
       landingInDifficultTerrainConfirmed: difficultLanding,
@@ -46,7 +46,7 @@ void main() {
   test('standing or nine-foot run-up only permits half the distance', () {
     final standing = check(
       runUp: 0,
-      onFoot: false,
+      confirmedRunUp: false,
       distance: 225,
       remaining: 225,
     );
@@ -62,14 +62,14 @@ void main() {
       throwsFormatException,
     );
     expect(
-      () => check(runUp: 0, onFoot: false),
+      () => check(runUp: 0, confirmedRunUp: false),
       throwsFormatException,
     );
     expect(
       SrdLongJumpRules.maximumDistanceCentimeters(
         strengthScore: 13,
         runUpFeet: 0,
-        runUpOnFootConfirmed: false,
+        immediateRunUpConfirmed: false,
       ),
       195,
     );
@@ -84,9 +84,9 @@ void main() {
       );
     }
     expect(() => check(runUp: -1), throwsFormatException);
-    expect(() => check(onFoot: false), throwsFormatException);
+    expect(() => check(confirmedRunUp: false), throwsFormatException);
     expect(
-      () => check(runUp: 0, onFoot: true),
+      () => check(runUp: 0, confirmedRunUp: true),
       throwsFormatException,
     );
   });
