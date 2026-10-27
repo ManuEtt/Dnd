@@ -31,23 +31,31 @@ Future<Campaign> seedJump(
       heroCover: CoverLevel.half,
     ),
   );
-  if (withRunUp) {
-    final runUp = engine.act(state, 'Ich gehe 3 Meter.');
-    expect(runUp.events.single.type, 'combat.moved');
-    state = runUp.campaign;
-    expect(state.encounter!.remainingMovementDecimeters, 60);
-  }
   if (pendingRoll) {
     state = state.copyWith(
       pendingRoll: const PendingRoll(
         id: 'other-roll',
-        type: 'ability',
+        type: 'escape',
         modifier: 0,
         difficulty: 10,
       ),
     );
   }
+  // A new campaign must first be saved at revision zero. Normal movement
+  // must then be committed as the actual preceding revision-one event.
   await repository.saveCampaign(state, events: state.events);
+  if (withRunUp) {
+    final runUp = engine.act(state, 'Ich gehe 3 Meter.');
+    expect(runUp.events.single.type, 'combat.moved');
+    final updated = runUp.campaign;
+    expect(updated.encounter!.remainingMovementDecimeters, 60);
+    await repository.saveCampaign(
+      updated,
+      events: runUp.events,
+      expectedRevision: state.revision,
+    );
+    state = updated;
+  }
   return state;
 }
 
