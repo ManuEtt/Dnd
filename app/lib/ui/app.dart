@@ -25,6 +25,7 @@ import '../domain/monk_self_restoration.dart';
 import '../services/backup_files.dart';
 import '../services/game_controller.dart';
 import '../services/player_action_outbox.dart';
+import '../story/npc_story_selection.dart';
 import '../services/voice_controller.dart';
 import 'app_build_info.dart';
 import 'backend_settings_panel.dart';
@@ -66,6 +67,7 @@ import 'fantasy_combat_threat_status.dart';
 import 'fantasy_combat_chronicle.dart';
 import 'character_portrait_picker.dart';
 import 'campaign_memory_panel.dart';
+import 'npc_story_selection_dialog.dart';
 
 const _gold = Color(0xffddb96c);
 const _ink = Color(0xff0d1927);
@@ -1097,7 +1099,7 @@ class _AdventurePageState extends State<_AdventurePage> {
 
   // Typed text, reviewed speech, combat and fixed shortcuts all stage the
   // exact intent before the shared authoritative controller can execute it.
-  Future<void> _send({String? quickAction}) async {
+  Future<void> _send({String? quickAction, NpcStorySelection? selectedNpc}) async {
     final text = (quickAction ?? _input.text).trim();
     final campaign = widget.controller.currentCampaign;
     if (text.isEmpty || campaign == null || !_canInteract) return;
@@ -1113,7 +1115,12 @@ class _AdventurePageState extends State<_AdventurePage> {
           widget.controller.currentCampaign?.id != campaign.id) {
         return;
       }
-      final action = await _outbox.stage(campaign.id, text);
+      final action = await _outbox.stage(
+        campaign.id,
+        text,
+        selectedNpcId: selectedNpc?.npcId,
+        selectedNpcRevision: selectedNpc?.revision,
+      );
       if (!mounted) return; // Durable action survives disposed page.
       setState(() => _pendingAction = action);
       await _dispatch(action, clearDraft: quickAction == null);
@@ -1137,9 +1144,50 @@ class _AdventurePageState extends State<_AdventurePage> {
     await widget.voice.stopListening();
     await widget.voice.stopSpeaking();
     final previousMessageId = _lastMessageId;
+    NpcStorySelection? choice;
+    if (action.selectedNpcId != null) {
+      final campaign = widget.controller.currentCampaign!;
+      if (campaign.revision != action.selectedNpcRevision) {
+        // A lost ACK after a successful commit is safe to reconcile; a
+        // genuinely stale, uncommitted choice must never select a new version.
+        final alreadyConfirmed = campaign.events.any(
+          (event) =>
+              event.payload['actionRequestId'] == action.requestId &&
+              event.payload['actionRequestText'] == action.text &&
+              event.payload['actionSelectedNpcId'] == action.selectedNpcId,
+        );
+        if (!alreadyConfirmed) {
+          setState(
+            () => _outboxError =
+                'NPC-Auswahl ist nicht mehr aktuell. Bitte die ausstehende '
+                'Handlung verwerfen und erneut auswählen.',
+          );
+          return;
+        }
+        await _outbox.remove(action);
+        if (!mounted) return;
+        setState(() {
+          _pendingAction = null;
+          _outboxError = null;
+        });
+        await _afterTurn(previousMessageId);
+        return;
+      }
+      try {
+        choice = NpcStorySelection.choose(campaign, action.selectedNpcId!);
+      } on FormatException {
+        setState(
+          () => _outboxError =
+              'Der ausgewählte NPC ist nicht mehr verfügbar. '
+              'Bitte den Auftrag verwerfen.',
+        );
+        return;
+      }
+    }
     await widget.controller.sendAction(
       action.text,
       requestId: action.requestId,
+      selectedNpc: choice,
     );
     if (!mounted || widget.controller.error != null) return;
     // Success also includes replay of an already committed request.
@@ -1223,6 +1271,23 @@ class _AdventurePageState extends State<_AdventurePage> {
     } finally {
       if (mounted) setState(() => _submittingAction = false);
     }
+  }
+
+  Future<void> _chooseNpc() async {
+    final campaign = widget.controller.currentCampaign;
+    if (campaign == null || !_canInteract || !_outboxReady) return;
+    if (_input.text.trim().isEmpty) {
+      setState(() => _outboxError = 'Beschreibe zuerst deine Handlung.');
+      return;
+    }
+    final selection = await showNpcStorySelectionDialog(context, campaign);
+    if (!mounted || selection == null || !_canInteract) return;
+    if (widget.controller.currentCampaign?.id != selection.campaignId ||
+        widget.controller.currentCampaign?.revision != selection.revision) {
+      setState(() => _outboxError = 'NPC-Auswahl ist nicht mehr aktuell.');
+      return;
+    }
+    await _send(selectedNpc: selection);
   }
 
   Future<void> _recap() =>
@@ -3157,6 +3222,31 @@ class _AdventurePageState extends State<_AdventurePage> {
                       ),
                     ],
                   ),
+                  if (campaign.storyBible['mode'] == 'ai') ...[
+                    const SizedBox(height: 8),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: FantasyTextButton(
+                        key: const ValueKey('adventure-choose-npc'),
+                        label: 'NPC auswählen',
+                        icon: Icons.people_outline,
+                        style: FantasyButtonStyle.iron,
+                        onPressed: _canInteract &&
+                                _outboxReady &&
+                                widget.controller.narrator.supportsExplicitNpcSelection
+                            ? _chooseNpc
+                            : null,
+                      ),
+                    ),
+                    if (!widget.controller.narrator.supportsExplicitNpcSelection)
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'NPC-Auswahl nur mit verbundenem '
+                          'KI-Spielleiter und NPC-Auswahlunterstützung verfügbar.',
+                        ),
+                      ),
+                  ],
                   // Secondary action stays by the text composer. Speech and
                   // dice are available exactly once in the fixed bottom dock.
                   if (MediaQuery.viewInsetsOf(context).bottom == 0) ...[
