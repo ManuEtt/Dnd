@@ -1,5 +1,7 @@
 # Klassenwahl und Startpakete – Aetheria 0.3.3
 
+> **Neuer Teilstand (27.10.2026):** Für jede der zwölf SRD-Klassen ist bei der **neuen** Stufe-1-Klassenbestätigung jetzt ein gültiger Konstitutionswert für die Start-TP und, sofern die Klassen-Starterausrüstung noch auswählbar ist, eine ausdrückliche Ausrüstungs-/Goldwahl erforderlich. Die spätere Editor-Speicherung übernimmt die berechneten TP. Bereits gespeicherte Charaktere werden nicht zwangsweise umgerechnet. Die unten dokumentierten optionalen Kämpfer-/TP-Angaben stammen aus älteren Zwischenständen. Vollständige Klassenmerkmale, Zauber, Spezies- und Talentauswahl bleiben offen; nicht als abgeschlossene SRD-Erstellung verstehen. Nachweis: `docs/CHARACTER_CREATION_COVERAGE.json`.
+
 Quelle: SRD 5.2.1, Abschnitt „Classes“: https://www.dndbeyond.com/srd
 
 ## Verwendung auf Android

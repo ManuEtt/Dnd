@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Charaktererstellung – Klassenstartwerte für zwölf Klassen (27.10.2026, CI ausstehend)
+
+Neue Figuren benötigen im Klassenassistenten jetzt für jede der zwölf SRD-Klassen einen gültigen KO-Wert (Start-TP = maximaler Klassenwürfel + KO-Modifikator) und, wenn verfügbar, die ausdrückliche Wahl zwischen Klassenstartausrüstung und Startgold. Die bestehenden Vorschau-, Editor- und JSON/SQLite-Speicherfelder werden wiederverwendet; historische Figuren werden nicht stillschweigend neu berechnet. Die zwölf Klassen sind damit **nicht vollständig erstellt**: weitere Klassenmerkmale, Zauber, Talente, Spezies und ein vollständiger Entwurfswizard fehlen. Tests im Paket enthalten, finale CI und Android-Realgerät offen. Siehe [Charaktererstellungs-Matrix](docs/CHARACTER_CREATION_COVERAGE.json).
+
 ## Chat B – Zwölf KI-Erinnerungen bis zur Story-API-Grenze absichern (27.10.2026)
 
 Zwei neue Integrationstests prüfen das Erinnerungslimit **an der tatsächlich gesendeten Story-Anfrage**: Eine KI-Kampagne mit bestätigten Mira-Beziehungsnotizen und mindestens 18 allgemeinen Fakten wird in einer echten SQLite-Datei gespeichert, über den `GameController` fortgesetzt und mit einem lokalen Backend-Transport abgefragt. Sowohl mit als auch ohne `npc-identity-v1` erhält das Backend genau zwölf priorisierte und begrenzte Erinnerungseinträge. Die drei bestätigten NPC-Notizen bleiben zuerst; zusätzliche allgemeine Fakten verwenden lediglich die freien Plätze. Heldenwerte, Revision und gespeicherter Spielstand bleiben überprüfbar. Dieses Testpaket baut auf [PR #307](https://github.com/ManuEtt/Dnd/pull/307) auf und verändert keine Produktionslogik, Datenbankschemata oder SRD-Regeln.

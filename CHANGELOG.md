@@ -1,3 +1,14 @@
+## 27.10.2026 – SRD-Klassenstartwerte für alle zwölf Neucharakterklassen
+
+- Gemeinsame Prüfung von Stufe 1, Konstitution und Klassen-Ausrüstungs- oder
+  Goldentscheidung; bestätigte maximale und aktuelle TP verwenden den
+  vorhandenen Klassen-Trefferwürfel und KO-Modifikator.
+- Historische Charaktere nicht stillschweigend geändert, keine Datenmigration.
+- Domain-Tests für alle zwölf Klassen und Editor-Widget-Regression ergänzt;
+  CI- und Realgeräte-Abnahme stehen noch aus. Kein vollständiger Wizard.
+
+---
+
 ## 27.10.2026 – Charaktererstellung: vier SRD-Hintergrundpakete
 
 - Akolyth, Krimineller, Weiser, Soldat mit eigenen Fertigkeiten,

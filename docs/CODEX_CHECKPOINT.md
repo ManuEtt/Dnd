@@ -1,3 +1,16 @@
+# Charaktererstellung – gemeinsamer Stufe-1-Startprüfer (27.10.2026)
+
+- **Repository-Basis:** `main` `ff245cc253194cd0858385d535ae7b2c9132bb06`; Branch `feat/character-start-values-all-classes-20261027`.
+- **Beobachtete Lücke:** `SrdClassSelectionDialog` erzwang valide Start-TP/Starterkit bisher nur beim Kämpfer. Elf andere Klassen konnten die Klassenwahl ohne den betreffenden Startzustand übernehmen.
+- **Implementiert:** eigene regelnahe `SrdFirstClassStartValidation`, UI-Sperre für sämtliche zwölf Neucharakterklassen, erzwungene bestätigte Start-TP-Übernahme und ausdrückliche Ausrüstung/Goldwahl. Bestehende Charaktere unverändert; Fighter-Sonderwahlen weiterhin verpflichtend.
+- **Tests:** `app/test/srd_first_class_start_validation_test.dart` (alle Klassen, ungültige Werte, Mehrfachvergabe und Altcharakter) und ergänzter Waldläufer-End-to-End-Editor-Test. Neu eingefügt; vollständige CI auf finalem PR-HEAD und Realgerät noch offen.
+- **Parallelität:** Kein Eingriff in die neuen Zauberauswahl- und Audit-Branches #317 und #318; vor dem Merge deren aktuelle Zustände sowie aktualisiertes `main` prüfen.
+- **Nicht abgeschlossen:** sämtliche weiteren Pflichtentscheidungen der Klassen, SRD-Herkunftstalente, Speziesvarianten, Zauberlisten, vollwertiger Wizard und persistenter Entwurf; Starterkit-Wechsel innerhalb eines noch nicht bestätigten Editors weiter absichern.
+- **Nächster Schritt:** auf exaktem PR-HEAD Format/Flutter/Android-GitHub-CI prüfen und ggf. reparieren; danach Klassenwahl-/Kitänderung im ungespeicherten Entwurf transaktional austauschen, damit keine Startgegenstände einer früheren Klassenauswahl verbleiben.
+- **Quelle:** [SRD 5.2.1](https://www.dndbeyond.com/srd), CC BY 4.0. Keine kostenpflichtigen APIs, kein Force-Push, kein Main-Direktcommit.
+
+---
+
 # Chat B – Story-Transport mit randvollem Erinnerungslimit (27.10.2026)
 
 - **Basis:** [PR #307](https://github.com/ManuEtt/Dnd/pull/307) (`fix/chat-b/npc-memory-budget-20261027`, Head `47b4343fadd5f30b9030a702b3ccd701d701a598`). Gestapelter neuer Branch `test/chat-b/npc-memory-wire-budget-20261027`; erst #307 integrieren.

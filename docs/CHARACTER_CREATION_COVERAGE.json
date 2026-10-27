@@ -12,7 +12,7 @@
   "android_device_tested": false,
   "ci_final_head_verified": false,
   "existing_requirement_registers_unchanged": true,
-  "status_note": "Entwicklungspaket 3 im gestapelten PR #273: Hintergründe/Ausrüstung/Übungen und verbuchte Talente; Talent-Regelwirkung offen. CI für #273 bis zur finalen Abnahme ausstehend.",
+  "status_note": "Paket 27.10.2026: Start-TP und auswählbare Klassenpakete für alle zwölf neuen Charakterklassen verpflichtend, Code- und Testbelege vorhanden; CI final noch ausstehend. Alle anderen Statusangaben bleiben historische Teilnachweise. Entwicklungspaket 3 im gestapelten PR #273: Hintergründe/Ausrüstung/Übungen und verbuchte Talente; Talent-Regelwirkung offen. CI für #273 bis zur finalen Abnahme ausstehend.",
   "requirements": [
     {
       "id": "CHAR-ABILITY-STANDARD-ARRAY",
@@ -168,6 +168,258 @@
         "app/test/srd_background_package_test.dart",
         "app/test/srd_background_package_dialog_test.dart"
       ]
+    },
+    {
+      "id": "CHAR-CLASS-BARBAR-LEVEL1-HP-EQUIPMENT-GATE",
+      "title": "Barbar – Stufe-1-Trefferpunkte und Startausrüstung/Gold vor Klassenbestätigung prüfen",
+      "status": "implemented_ci_pending",
+      "scope": "validation_only_not_full_class_coverage",
+      "source": "SRD 5.2.1 – Character Creation / Classes",
+      "source_url": "https://www.dndbeyond.com/srd",
+      "code": [
+        "app/lib/domain/srd_first_class_start_validation.dart",
+        "app/lib/domain/starting_hit_points.dart"
+      ],
+      "ui": [
+        "app/lib/ui/srd_class_selection_dialog.dart",
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_first_class_start_validation_test.dart",
+        "app/test/ui_srd_class_selection_test.dart"
+      ],
+      "note": "Erfordert Stufe 1, gültige Konstitution, Start-TP-Übernahme und auswählbare Klassen-Ausrüstung/Gold. Frühere Charaktere werden nicht umgerechnet; Klassenmerkmale/Zauber sind NICHT damit abgedeckt."
+    },
+    {
+      "id": "CHAR-CLASS-BARDE-LEVEL1-HP-EQUIPMENT-GATE",
+      "title": "Barde – Stufe-1-Trefferpunkte und Startausrüstung/Gold vor Klassenbestätigung prüfen",
+      "status": "implemented_ci_pending",
+      "scope": "validation_only_not_full_class_coverage",
+      "source": "SRD 5.2.1 – Character Creation / Classes",
+      "source_url": "https://www.dndbeyond.com/srd",
+      "code": [
+        "app/lib/domain/srd_first_class_start_validation.dart",
+        "app/lib/domain/starting_hit_points.dart"
+      ],
+      "ui": [
+        "app/lib/ui/srd_class_selection_dialog.dart",
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_first_class_start_validation_test.dart",
+        "app/test/ui_srd_class_selection_test.dart"
+      ],
+      "note": "Erfordert Stufe 1, gültige Konstitution, Start-TP-Übernahme und auswählbare Klassen-Ausrüstung/Gold. Frühere Charaktere werden nicht umgerechnet; Klassenmerkmale/Zauber sind NICHT damit abgedeckt."
+    },
+    {
+      "id": "CHAR-CLASS-KLERIKER-LEVEL1-HP-EQUIPMENT-GATE",
+      "title": "Kleriker – Stufe-1-Trefferpunkte und Startausrüstung/Gold vor Klassenbestätigung prüfen",
+      "status": "implemented_ci_pending",
+      "scope": "validation_only_not_full_class_coverage",
+      "source": "SRD 5.2.1 – Character Creation / Classes",
+      "source_url": "https://www.dndbeyond.com/srd",
+      "code": [
+        "app/lib/domain/srd_first_class_start_validation.dart",
+        "app/lib/domain/starting_hit_points.dart"
+      ],
+      "ui": [
+        "app/lib/ui/srd_class_selection_dialog.dart",
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_first_class_start_validation_test.dart",
+        "app/test/ui_srd_class_selection_test.dart"
+      ],
+      "note": "Erfordert Stufe 1, gültige Konstitution, Start-TP-Übernahme und auswählbare Klassen-Ausrüstung/Gold. Frühere Charaktere werden nicht umgerechnet; Klassenmerkmale/Zauber sind NICHT damit abgedeckt."
+    },
+    {
+      "id": "CHAR-CLASS-DRUIDE-LEVEL1-HP-EQUIPMENT-GATE",
+      "title": "Druide – Stufe-1-Trefferpunkte und Startausrüstung/Gold vor Klassenbestätigung prüfen",
+      "status": "implemented_ci_pending",
+      "scope": "validation_only_not_full_class_coverage",
+      "source": "SRD 5.2.1 – Character Creation / Classes",
+      "source_url": "https://www.dndbeyond.com/srd",
+      "code": [
+        "app/lib/domain/srd_first_class_start_validation.dart",
+        "app/lib/domain/starting_hit_points.dart"
+      ],
+      "ui": [
+        "app/lib/ui/srd_class_selection_dialog.dart",
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_first_class_start_validation_test.dart",
+        "app/test/ui_srd_class_selection_test.dart"
+      ],
+      "note": "Erfordert Stufe 1, gültige Konstitution, Start-TP-Übernahme und auswählbare Klassen-Ausrüstung/Gold. Frühere Charaktere werden nicht umgerechnet; Klassenmerkmale/Zauber sind NICHT damit abgedeckt."
+    },
+    {
+      "id": "CHAR-CLASS-KAMPFER-LEVEL1-HP-EQUIPMENT-GATE",
+      "title": "Kämpfer – Stufe-1-Trefferpunkte und Startausrüstung/Gold vor Klassenbestätigung prüfen",
+      "status": "implemented_ci_pending",
+      "scope": "validation_only_not_full_class_coverage",
+      "source": "SRD 5.2.1 – Character Creation / Classes",
+      "source_url": "https://www.dndbeyond.com/srd",
+      "code": [
+        "app/lib/domain/srd_first_class_start_validation.dart",
+        "app/lib/domain/starting_hit_points.dart"
+      ],
+      "ui": [
+        "app/lib/ui/srd_class_selection_dialog.dart",
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_first_class_start_validation_test.dart",
+        "app/test/ui_srd_class_selection_test.dart"
+      ],
+      "note": "Erfordert Stufe 1, gültige Konstitution, Start-TP-Übernahme und auswählbare Klassen-Ausrüstung/Gold. Frühere Charaktere werden nicht umgerechnet; Klassenmerkmale/Zauber sind NICHT damit abgedeckt."
+    },
+    {
+      "id": "CHAR-CLASS-MONCH-LEVEL1-HP-EQUIPMENT-GATE",
+      "title": "Mönch – Stufe-1-Trefferpunkte und Startausrüstung/Gold vor Klassenbestätigung prüfen",
+      "status": "implemented_ci_pending",
+      "scope": "validation_only_not_full_class_coverage",
+      "source": "SRD 5.2.1 – Character Creation / Classes",
+      "source_url": "https://www.dndbeyond.com/srd",
+      "code": [
+        "app/lib/domain/srd_first_class_start_validation.dart",
+        "app/lib/domain/starting_hit_points.dart"
+      ],
+      "ui": [
+        "app/lib/ui/srd_class_selection_dialog.dart",
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_first_class_start_validation_test.dart",
+        "app/test/ui_srd_class_selection_test.dart"
+      ],
+      "note": "Erfordert Stufe 1, gültige Konstitution, Start-TP-Übernahme und auswählbare Klassen-Ausrüstung/Gold. Frühere Charaktere werden nicht umgerechnet; Klassenmerkmale/Zauber sind NICHT damit abgedeckt."
+    },
+    {
+      "id": "CHAR-CLASS-PALADIN-LEVEL1-HP-EQUIPMENT-GATE",
+      "title": "Paladin – Stufe-1-Trefferpunkte und Startausrüstung/Gold vor Klassenbestätigung prüfen",
+      "status": "implemented_ci_pending",
+      "scope": "validation_only_not_full_class_coverage",
+      "source": "SRD 5.2.1 – Character Creation / Classes",
+      "source_url": "https://www.dndbeyond.com/srd",
+      "code": [
+        "app/lib/domain/srd_first_class_start_validation.dart",
+        "app/lib/domain/starting_hit_points.dart"
+      ],
+      "ui": [
+        "app/lib/ui/srd_class_selection_dialog.dart",
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_first_class_start_validation_test.dart",
+        "app/test/ui_srd_class_selection_test.dart"
+      ],
+      "note": "Erfordert Stufe 1, gültige Konstitution, Start-TP-Übernahme und auswählbare Klassen-Ausrüstung/Gold. Frühere Charaktere werden nicht umgerechnet; Klassenmerkmale/Zauber sind NICHT damit abgedeckt."
+    },
+    {
+      "id": "CHAR-CLASS-WALDLAUFER-LEVEL1-HP-EQUIPMENT-GATE",
+      "title": "Waldläufer – Stufe-1-Trefferpunkte und Startausrüstung/Gold vor Klassenbestätigung prüfen",
+      "status": "implemented_ci_pending",
+      "scope": "validation_only_not_full_class_coverage",
+      "source": "SRD 5.2.1 – Character Creation / Classes",
+      "source_url": "https://www.dndbeyond.com/srd",
+      "code": [
+        "app/lib/domain/srd_first_class_start_validation.dart",
+        "app/lib/domain/starting_hit_points.dart"
+      ],
+      "ui": [
+        "app/lib/ui/srd_class_selection_dialog.dart",
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_first_class_start_validation_test.dart",
+        "app/test/ui_srd_class_selection_test.dart"
+      ],
+      "note": "Erfordert Stufe 1, gültige Konstitution, Start-TP-Übernahme und auswählbare Klassen-Ausrüstung/Gold. Frühere Charaktere werden nicht umgerechnet; Klassenmerkmale/Zauber sind NICHT damit abgedeckt."
+    },
+    {
+      "id": "CHAR-CLASS-SCHURKE-LEVEL1-HP-EQUIPMENT-GATE",
+      "title": "Schurke – Stufe-1-Trefferpunkte und Startausrüstung/Gold vor Klassenbestätigung prüfen",
+      "status": "implemented_ci_pending",
+      "scope": "validation_only_not_full_class_coverage",
+      "source": "SRD 5.2.1 – Character Creation / Classes",
+      "source_url": "https://www.dndbeyond.com/srd",
+      "code": [
+        "app/lib/domain/srd_first_class_start_validation.dart",
+        "app/lib/domain/starting_hit_points.dart"
+      ],
+      "ui": [
+        "app/lib/ui/srd_class_selection_dialog.dart",
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_first_class_start_validation_test.dart",
+        "app/test/ui_srd_class_selection_test.dart"
+      ],
+      "note": "Erfordert Stufe 1, gültige Konstitution, Start-TP-Übernahme und auswählbare Klassen-Ausrüstung/Gold. Frühere Charaktere werden nicht umgerechnet; Klassenmerkmale/Zauber sind NICHT damit abgedeckt."
+    },
+    {
+      "id": "CHAR-CLASS-ZAUBERER-LEVEL1-HP-EQUIPMENT-GATE",
+      "title": "Zauberer – Stufe-1-Trefferpunkte und Startausrüstung/Gold vor Klassenbestätigung prüfen",
+      "status": "implemented_ci_pending",
+      "scope": "validation_only_not_full_class_coverage",
+      "source": "SRD 5.2.1 – Character Creation / Classes",
+      "source_url": "https://www.dndbeyond.com/srd",
+      "code": [
+        "app/lib/domain/srd_first_class_start_validation.dart",
+        "app/lib/domain/starting_hit_points.dart"
+      ],
+      "ui": [
+        "app/lib/ui/srd_class_selection_dialog.dart",
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_first_class_start_validation_test.dart",
+        "app/test/ui_srd_class_selection_test.dart"
+      ],
+      "note": "Erfordert Stufe 1, gültige Konstitution, Start-TP-Übernahme und auswählbare Klassen-Ausrüstung/Gold. Frühere Charaktere werden nicht umgerechnet; Klassenmerkmale/Zauber sind NICHT damit abgedeckt."
+    },
+    {
+      "id": "CHAR-CLASS-HEXENMEISTER-LEVEL1-HP-EQUIPMENT-GATE",
+      "title": "Hexenmeister – Stufe-1-Trefferpunkte und Startausrüstung/Gold vor Klassenbestätigung prüfen",
+      "status": "implemented_ci_pending",
+      "scope": "validation_only_not_full_class_coverage",
+      "source": "SRD 5.2.1 – Character Creation / Classes",
+      "source_url": "https://www.dndbeyond.com/srd",
+      "code": [
+        "app/lib/domain/srd_first_class_start_validation.dart",
+        "app/lib/domain/starting_hit_points.dart"
+      ],
+      "ui": [
+        "app/lib/ui/srd_class_selection_dialog.dart",
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_first_class_start_validation_test.dart",
+        "app/test/ui_srd_class_selection_test.dart"
+      ],
+      "note": "Erfordert Stufe 1, gültige Konstitution, Start-TP-Übernahme und auswählbare Klassen-Ausrüstung/Gold. Frühere Charaktere werden nicht umgerechnet; Klassenmerkmale/Zauber sind NICHT damit abgedeckt."
+    },
+    {
+      "id": "CHAR-CLASS-MAGIER-LEVEL1-HP-EQUIPMENT-GATE",
+      "title": "Magier – Stufe-1-Trefferpunkte und Startausrüstung/Gold vor Klassenbestätigung prüfen",
+      "status": "implemented_ci_pending",
+      "scope": "validation_only_not_full_class_coverage",
+      "source": "SRD 5.2.1 – Character Creation / Classes",
+      "source_url": "https://www.dndbeyond.com/srd",
+      "code": [
+        "app/lib/domain/srd_first_class_start_validation.dart",
+        "app/lib/domain/starting_hit_points.dart"
+      ],
+      "ui": [
+        "app/lib/ui/srd_class_selection_dialog.dart",
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_first_class_start_validation_test.dart",
+        "app/test/ui_srd_class_selection_test.dart"
+      ],
+      "note": "Erfordert Stufe 1, gültige Konstitution, Start-TP-Übernahme und auswählbare Klassen-Ausrüstung/Gold. Frühere Charaktere werden nicht umgerechnet; Klassenmerkmale/Zauber sind NICHT damit abgedeckt."
     }
   ],
   "classes": [
@@ -311,5 +563,5 @@
     }
   ],
   "scope_note": "Talentnamen und Herkunftsübungen werden vermerkt; Auswirkungen der Talente und Magic-Initiate-Zauber sind nicht automatisiert.",
-  "next_task": "Herkunftstalente Alert/Savage Attacker und Magic Initiate mit Spell-Choices mechanisch und persistiert absichern."
+  "next_task": "Die übrigen erforderlichen Klassenentscheidungen (außer Kämpfer), vollständige Wizard-Persistenz und Spezies-/Zauber-/Talentregeln entwickeln; laufende PRs #317/#318 zuerst integrieren."
 }
