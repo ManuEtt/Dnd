@@ -86,6 +86,17 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
+      - name: TEMP - kanonische Formatdaten Attribut-Provenienz
+        working-directory: app
+        run: |
+          files="lib/domain/models.dart lib/domain/starting_ability_origin.dart test/ability_storage_integration_test.dart test/starting_ability_origin_test.dart test/ui_ability_assignment_test.dart"
+          dart format $files
+          for file in $files; do
+            echo "FORMAT_BEGIN:$file"
+            base64 -w0 "$file"
+            echo ""
+            echo "FORMAT_END:$file"
+          done
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
