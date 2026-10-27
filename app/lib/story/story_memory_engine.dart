@@ -237,13 +237,31 @@ class MemoryEngine {
       'abandoned' => 'aufgegeben',
       _ => status,
     };
+    // Recaps are persisted as confirmed history and later sent to the
+    // narrator. Display names alone cannot distinguish two saved NPCs.
+    // Keep unique legacy names unchanged; identify duplicates by saved ID.
+    final npcNameCounts = <String, int>{};
+    final npcIdCounts = <String, int>{};
+    for (final npc in campaign.npcs) {
+      final name = _memoryNormalize(npc.name);
+      npcNameCounts[name] = (npcNameCounts[name] ?? 0) + 1;
+      npcIdCounts[npc.id] = (npcIdCounts[npc.id] ?? 0) + 1;
+    }
+    final npcSummaries = <String>[
+      for (final npc in campaign.npcs)
+        // A duplicated stored ID is not proof of two independent identities.
+        if (npc.id.trim().isNotEmpty && npcIdCounts[npc.id] == 1)
+          '${npcNameCounts[_memoryNormalize(npc.name)] == 1 ? npc.name : '${npc.name} (NPC-ID: ${npc.id})'} '
+          '(${npc.alive ? 'lebendig' : 'tot'}, ${npc.relationship})',
+    ];
+
     final lines = <String>[
       'Kampagne: ${campaign.name}.',
       'Held: ${campaign.hero.name}.',
       if (campaign.quests.isNotEmpty)
         'Quests: ${campaign.quests.map((q) => '${q.title} (${questStatus(q.status)})').join('; ')}.',
-      if (campaign.npcs.isNotEmpty)
-        'Bekannte NPCs: ${campaign.npcs.map((n) => '${n.name} (${n.alive ? 'lebendig' : 'tot'}, ${n.relationship})').join('; ')}.',
+      if (npcSummaries.isNotEmpty)
+        'Bekannte NPCs: ${npcSummaries.join('; ')}.',
       if (campaign.storyThreads.isNotEmpty)
         'Handlungsstränge: ${campaign.storyThreads.map((t) => '${t.title} (${threadStatus(t.status)})').join('; ')}.',
       if (campaign.facts.isNotEmpty)
