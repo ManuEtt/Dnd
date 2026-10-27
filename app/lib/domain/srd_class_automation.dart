@@ -70,7 +70,6 @@ class SrdClassAutomation {
     'Improved Critical': 'ClassCombatFeatures.weaponCriticalThreshold',
     'Superior Critical': 'ClassCombatFeatures.weaponCriticalThreshold',
     'Jack of All Trades': 'CharacterRuleEngine.abilityCheck',
-    'Reliable Talent': 'CharacterRuleEngine.abilityCheck',
     'Slippery Mind': 'CharacterRuleEngine.savingThrowBonus',
     'Primal Champion': 'SrdClassLevelUpRules.propose',
     'Body and Mind': 'SrdClassLevelUpRules.propose',
@@ -82,8 +81,6 @@ class SrdClassAutomation {
     'Second Wind': 'ClassFeatureResources.useSecondWind',
     'Action Surge': 'ClassFeatureResources.spendActionSurge',
     'Lay On Hands': 'PaladinLayOnHands',
-    'Slow Fall': 'SrdMonkSlowFallRules',
-    'Feral Senses': 'SrdRangerFeralSensesRules',
   };
 
   // Rule fragments exist (e.g. counters, dice, prerequisite checks), but
@@ -104,6 +101,9 @@ class SrdClassAutomation {
     'Unarmored Defense': 'SrdStartingCombatValues',
     'Remarkable Athlete': 'CharacterRuleEngine.initiative',
     'Roving': 'SrdTerrainMovementRules',
+    'Reliable Talent': 'CharacterRuleEngine.abilityCheck (nur Fertigkeiten)',
+    'Slow Fall': 'SrdMonkSlowFallRules (Situations- und Ablaufprüfung)',
+    'Feral Senses': 'SrdRangerFeralSensesRules (bestätigte Sinnesdaten)',
   };
 
   static SrdFeatureRuntimeEntry inspect(SrdClassFeature feature) {
