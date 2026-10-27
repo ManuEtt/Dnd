@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import 'fantasy_buttons.dart';
 
 import '../domain/ability_generation.dart';
+import '../domain/starting_ability_origin.dart';
 import '../domain/models.dart';
 import '../domain/rules_engine.dart';
 
@@ -20,10 +23,12 @@ class AbilityAssignment {
   AbilityAssignment({
     required Map<String, int> scores,
     required this.background,
+    required this.origin,
   }) : scores = Map.unmodifiable(scores);
 
   final Map<String, int> scores;
   final String background;
+  final StartingAbilityOrigin origin;
 }
 
 enum _BonusPattern { split, allThree }
@@ -33,10 +38,14 @@ class AbilityAssignmentDialog extends StatefulWidget {
     super.key,
     this.hasExistingValues = false,
     this.level = 1,
+    this.rollD6,
   });
 
   final bool hasExistingValues;
   final int level;
+
+  /// Injectable d6 function for deterministic UI tests.
+  final int Function()? rollD6;
 
   @override
   State<AbilityAssignmentDialog> createState() =>
@@ -50,6 +59,9 @@ class _AbilityAssignmentDialogState extends State<AbilityAssignmentDialog> {
       abilityNames[i]: AbilityAllocation.standardArray[i],
   };
   final _pointBuy = <String, int>{for (final key in abilityNames) key: 8};
+  AbilityRollSet? _rollSet;
+  Map<String, int>? _randomScores;
+  bool _confirmedRandomAssignment = false;
   SrdBackground? _background;
   var _pattern = _BonusPattern.split;
   String? _plusTwo;
@@ -60,7 +72,10 @@ class _AbilityAssignmentDialogState extends State<AbilityAssignmentDialog> {
     method: _method,
     baseScores: _method == AbilityGenerationMethod.standardArray
         ? _standard
-        : _pointBuy,
+        : _method == AbilityGenerationMethod.pointBuy
+        ? _pointBuy
+        : _randomScores ?? const <String, int>{},
+    rollSet: _method == AbilityGenerationMethod.randomRoll ? _rollSet : null,
   );
 
   BackgroundAbilityBoost? get _boost {
@@ -99,6 +114,33 @@ class _AbilityAssignmentDialogState extends State<AbilityAssignmentDialog> {
     });
   }
 
+  void _rollFirstSet() {
+    if (_rollSet != null) return;
+    final source = widget.rollD6;
+    final random = source == null ? Random.secure() : null;
+    _rollSet = AbilityRollSet.generate(
+      rollD6: source ?? () => random!.nextInt(6) + 1,
+    );
+    _randomScores = {
+      for (var i = 0; i < abilityNames.length; i++)
+        abilityNames[i]: _rollSet!.scores[i],
+    };
+  }
+
+  void _setRandom(String key, int value) {
+    final assigned = _randomScores!;
+    if (assigned[key] == value) return;
+    // Swapping preserves the rolled multiset, including duplicate results.
+    final other = assigned.keys.firstWhere(
+      (candidate) => candidate != key && assigned[candidate] == value,
+    );
+    setState(() {
+      assigned[other] = assigned[key]!;
+      assigned[key] = value;
+      _confirmedRandomAssignment = false;
+    });
+  }
+
   bool _canIncrease(String key) {
     final value = _pointBuy[key]!;
     if (value >= 15) return false;
@@ -132,6 +174,20 @@ class _AbilityAssignmentDialogState extends State<AbilityAssignmentDialog> {
             ],
             onChanged: (value) {
               if (value != null) _setStandard(key, value);
+            },
+          )
+        else if (_method == AbilityGenerationMethod.randomRoll)
+          DropdownButtonFormField<int>(
+            key: ValueKey('rolled-$key-${_randomScores![key]}'),
+            initialValue: _randomScores![key],
+            isExpanded: true,
+            decoration: InputDecoration(labelText: abilityLabels[key]),
+            items: [
+              for (final value in _rollSet!.scores.toSet())
+                DropdownMenuItem(value: value, child: Text('$value')),
+            ],
+            onChanged: (value) {
+              if (value != null) _setRandom(key, value);
             },
           )
         else
@@ -234,9 +290,20 @@ class _AbilityAssignmentDialogState extends State<AbilityAssignmentDialog> {
                   value: AbilityGenerationMethod.pointBuy,
                   child: Text('Punkte-Kauf (27 Punkte)'),
                 ),
+                DropdownMenuItem(
+                  value: AbilityGenerationMethod.randomRoll,
+                  child: Text('Würfeln (4W6, niedrigster entfällt)'),
+                ),
               ],
               onChanged: (value) {
-                if (value != null) setState(() => _method = value);
+                if (value != null) {
+                  setState(() {
+                    _method = value;
+                    if (value == AbilityGenerationMethod.randomRoll) {
+                      _rollFirstSet();
+                    }
+                  });
+                }
               },
             ),
             const SizedBox(height: 14),
@@ -245,7 +312,20 @@ class _AbilityAssignmentDialogState extends State<AbilityAssignmentDialog> {
                 '15, 14, 13, 12, 10, 8 jeweils einmal verteilen. '
                 'Die Auswahl eines vergebenen Wertes tauscht beide Attribute.',
               )
-            else ...[
+            else if (_method == AbilityGenerationMethod.randomRoll) ...[
+              const Text(
+                'Sechsmal vier W6. Je Wurf entfällt der niedrigste Würfel. '
+                'Ordne alle sechs Ergebnisse ausdrücklich den Attributen zu. '
+                'Ein Wechsel der Methode würfelt nicht erneut.',
+              ),
+              const SizedBox(height: 8),
+              for (var i = 0; i < _rollSet!.rolls.length; i++)
+                Text(
+                  'Wurf ${i + 1}: ${_rollSet!.rolls[i].dice.join(' / ')} '
+                  '→ ${_rollSet!.rolls[i].score}',
+                  key: ValueKey('dice-roll-$i'),
+                ),
+            ] else ...[
               Text(
                 'Verfügbar: ${allocation.remainingPoints} von 27 Punkten',
                 key: const ValueKey('remaining-ability-points'),
@@ -327,6 +407,19 @@ class _AbilityAssignmentDialogState extends State<AbilityAssignmentDialog> {
             Text('Vorschau', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 12),
             for (final key in abilityNames) _scoreInput(key, result),
+            if (_method == AbilityGenerationMethod.randomRoll)
+              CheckboxListTile(
+                key: const ValueKey('confirm-random-assignment'),
+                contentPadding: EdgeInsets.zero,
+                controlAffinity: ListTileControlAffinity.leading,
+                value: _confirmedRandomAssignment,
+                onChanged: (value) =>
+                    setState(() => _confirmedRandomAssignment = value == true),
+                title: const Text(
+                  'Diese sechs Würfelergebnisse ausdrücklich '
+                  'den angezeigten Attributen zuweisen.',
+                ),
+              ),
             if (_requiresConfirmation) ...[
               Text(
                 widget.level > 1
@@ -367,12 +460,23 @@ class _AbilityAssignmentDialogState extends State<AbilityAssignmentDialog> {
           style: FantasyButtonStyle.woodGold,
           onPressed:
               result != null &&
+                  (_method != AbilityGenerationMethod.randomRoll ||
+                      _confirmedRandomAssignment) &&
                   (!_requiresConfirmation || _confirmedReplacement)
               ? () => Navigator.pop(
                   context,
                   AbilityAssignment(
                     scores: result.finalScores,
                     background: _background!.label,
+                    origin: StartingAbilityOrigin.confirmed(
+                      method: _method.name,
+                      baseScores: result.baseScores,
+                      background: _background!.label,
+                      increases: _boost!.increases,
+                      diceRolls: _method == AbilityGenerationMethod.randomRoll
+                          ? _rollSet!.rolls.map((roll) => roll.dice).toList()
+                          : const [],
+                    ),
                   ),
                 )
               : null,

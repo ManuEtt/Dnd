@@ -1487,6 +1487,34 @@ class SrdEquipmentCatalog {
       priceCp: 1000,
       weightLb: 1.0,
     ),
+    // SRD 5.2.1 Equipment, p. 97: Holy Symbols (CC BY 4.0).
+    // Item identity/weight/price alone never grants a spellcasting ability.
+    EquipmentEntry(
+      id: "item-holy-symbol-amulet",
+      name: "Heiliges Symbol: Amulett",
+      englishName: "Holy Symbol, Amulet",
+      category: EquipmentCategory.focus,
+      priceCp: 500,
+      weightLb: 1.0,
+      note: "Getragen oder gehalten.",
+    ),
+    EquipmentEntry(
+      id: "item-holy-symbol-emblem",
+      name: "Heiliges Symbol: Emblem",
+      englishName: "Holy Symbol, Emblem",
+      category: EquipmentCategory.focus,
+      priceCp: 500,
+      note: "Auf Stoff oder einem Schild angebracht.",
+    ),
+    EquipmentEntry(
+      id: "item-holy-symbol-reliquary",
+      name: "Heiliges Symbol: Reliquiar",
+      englishName: "Holy Symbol, Reliquary",
+      category: EquipmentCategory.focus,
+      priceCp: 500,
+      weightLb: 2.0,
+      note: "Wird in der Hand gehalten.",
+    ),
     EquipmentEntry(
       id: "item-alchemist-s-supplies",
       name: "Alchemistenausrüstung",
