@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat B – ausstehende NPC-Handlungen klar anzeigen (27.10.2026)
+
+Die Anzeige einer ausstehenden Spielhandlung ist nun als separate, zustandslose Komponente `PendingActionStatus` implementiert. Sie bewahrt die bisherigen UI-Kennungen für Wiederholen, Verwerfen, laufendes Senden und Fehlermeldungen. Bei einer ausdrücklich gewählten Figur erklärt sie, dass deren Auswahl an den gespeicherten Auftrag gebunden bleibt und bei veralteter Revision bewusst verworfen und neu getroffen werden muss. Fünf kleine Flutter-Widgettests prüfen die Darstellung und Buttons **ohne** SQLite, Netzwerk, TTS oder Widget-/FFI-Zeitsteuerungsabhängigkeiten. Der fachliche Controller-/SQLite-Schutz aus den Basis-PRs #288, #290 und #303 wird dadurch nicht verändert. Keine Datenbankmigration oder D&D-Regeländerung.
+
+
 ## Chat B – deterministische Wiederaufnahme von NPC-Sendeaufträgen (27.10.2026)
 
 Die sichere Wiederaufnahme einer ausdrücklich gewählten NPC-ID nach SQLite-Neustart wird jetzt durch die gemeinsame Funktion `resolvePendingNpcAction(campaign, action)` bestimmt. Sie unterscheidet normale, gültige, bereits bestätigte, veraltete und nicht mehr verfügbare Auswahlen, ohne selbst Netzwerkzugriffe oder Speicheränderungen auszuführen. Die Abenteueroberfläche nutzt dieselbe Funktion; eine verlorene Bestätigung wird nur anhand eines **exakt zu Text, Request-ID und NPC-ID passenden gespeicherten Ereignisses** abgeglichen. Andernfalls ist eine erneute bewusste NPC-Auswahl erforderlich.
