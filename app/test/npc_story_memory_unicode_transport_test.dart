@@ -79,10 +79,7 @@ void main() {
       path: paths.join(folder.path, 'campaign.sqlite'),
     );
     final transport = _UnicodeTransport();
-    final narrator = BackendNarrator(
-      transport: transport,
-      clock: () => _now,
-    );
+    final narrator = BackendNarrator(transport: transport, clock: () => _now);
     final controller = GameController(
       repository: repository,
       narrator: narrator,
