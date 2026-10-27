@@ -67,6 +67,8 @@ void main() {
         scrollable: find.byType(Scrollable).first,
       );
       await tester.enterText(constitution, '14');
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pumpAndSettle();
       await tapInEditor(
         tester,
         find.byKey(const ValueKey('allow-manual-abilities')),
