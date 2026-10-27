@@ -7,6 +7,7 @@ import '../domain/starting_hit_points.dart';
 import '../domain/fighter_creation_rules.dart';
 import '../domain/character_creation_progression.dart';
 import '../domain/starting_equipment_import.dart';
+import '../domain/starting_class_choice.dart';
 
 const _savingThrowLabels = <String, String>{
   'strength': 'Stärke',
@@ -25,6 +26,7 @@ class SrdClassSetupResult {
     required this.useSuggestedHitPoints,
     this.fighterChoices,
     this.equipmentChoices = const {},
+    this.startingClassChoice,
   });
 
   final SrdClassSelection selection;
@@ -34,6 +36,9 @@ class SrdClassSetupResult {
 
   /// Player-confirmed SRD starter catalog IDs keyed by the kit's choice label.
   final Map<String, String> equipmentChoices;
+
+  /// Bounded proof of this explicit new level-1 class decision.
+  final StartingClassChoice? startingClassChoice;
 }
 
 class SrdClassSelectionDialog extends StatefulWidget {
@@ -145,6 +150,16 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
               : _useHp && _startingHitPoints != null,
           fighterChoices: fighterChoices,
           equipmentChoices: Map.unmodifiable(_equipmentChoices),
+          startingClassChoice:
+              widget.isNewCharacter && widget.characterLevel == 1
+              ? StartingClassChoice.confirmed(
+                  className: selection.characterClass.name,
+                  skills: selection.skills,
+                  kitIndex: selection.kitIndex,
+                  equipmentChoices: _equipmentChoices,
+                  fighterChoices: fighterChoices,
+                )
+              : null,
         ),
       );
     } on FormatException catch (error) {
@@ -172,7 +187,9 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
             const Text(
               'SRD 5.2.1: Die Klassenwahl ist ein Vorschlag für einen '
               'Charakter der Stufe 1, kein automatischer Stufenaufstieg. '
-              'Andere Herkunfts- und Klassenmerkmale bleiben unverändert.',
+              'Bestätigt werden nur diese Klassen-, Fertigkeits- und '
+              'Paketentscheidungen. Weitere Pflichtmerkmale, Zauber und '
+              'Herkunftswahlen bleiben separat zu prüfen.',
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<SrdCharacterClass>(

@@ -1,3 +1,13 @@
+## 27.10.2026 – 0.8.45+95: bestätigte erste Klassenwahl
+
+Versionierter historischer `startingClassChoice`-Nachweis aus tatsächlicher
+Klassenassistent-Bestätigung; typisierte Paket-/Fertigkeits-/Kämpferwahlen,
+keine Doppelvergabe und keine Legacy-Neuberechnung. Strenge Importvalidierung,
+lesender Quellenabgleich und Korrektur der Mönch-Werkzeugauswahl.
+Gesamte Charaktererstellung bleibt unvollständig. Aktuelle Tests, PR und
+konkrete Fortsetzung im CODEX_CHECKPOINT und Fachnachweis
+`docs/CHARACTER_START_CLASS_CHOICE_20261027.md`; bisherige Abschnitte sind Historie.
+
 ## 27.10.2026 – 0.8.44+94: nachweisbasierte Charakterprüfung
 
 Sieben deutsche Prüfzustände ersetzen die bisherige Bestätigung nach bloßem
