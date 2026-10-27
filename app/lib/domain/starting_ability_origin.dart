@@ -118,6 +118,7 @@ class StartingAbilityOrigin {
         if (!_same(actual, expected) || diceRolls.isNotEmpty) {
           throw const FormatException('Ungültiger Standardsatz oder Wurfbeleg.');
         }
+        break;
       case 'pointBuy':
         if (diceRolls.isNotEmpty ||
             baseScores.values.any((value) => !_prices.containsKey(value)) ||
@@ -126,6 +127,7 @@ class StartingAbilityOrigin {
             ) > 27) {
           throw const FormatException('Ungültiger 27-Punkte-Kauf.');
         }
+        break;
       case 'randomRoll':
         if (diceRolls.length != 6 ||
             diceRolls.any((roll) =>
@@ -141,6 +143,7 @@ class StartingAbilityOrigin {
         if (!_same(actual, expected)) {
           throw const FormatException('Attributwerte passen nicht zu den Würfen.');
         }
+        break;
       default:
         throw const FormatException('Unbekannte Methode zur Attributerzeugung.');
     }
