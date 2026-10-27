@@ -1,3 +1,16 @@
+# Chat B – zwölf Erinnerungen am echten Story-Transport (27.10.2026)
+
+- **Abhängigkeit:** `test/chat-b/story-12-memory-transport-20261027` baut auf PR #307 (`fix/chat-b/npc-memory-budget-20261027`, Head `47b4343fadd5f30b9030a702b3ccd701d701a598`) auf. Nicht vor dem Basis-PR auf `main` integrieren.
+- **AUFGABE:** Den in #307 behobenen gemeinsamen NPC-/Allgemein-Erinnerungsdeckel nicht nur isoliert, sondern bis zum tatsächlich aufgebauten Backend-Request nachweisen.
+- **IMPLEMENTIERT:** Neuer Integrationstest `app/test/npc_memory_story_transport_limit_test.dart` für `identityContext=false/true` mit echter SQLite-Datei, KI-Spielzug im `GameController`, verhandelter `BackendNarrator`-Sitzung und ausschließlich lokalem Mock-Transport. Der Test liest und prüft den gesendeten `/v1/story/advance`-Request.
+- **AKZEPTANZ:** Genau zwölf Erinnerungen, drei neueste bestätigte NPC-Beziehungsnotizen zuerst, neun andere Fakten danach, keine Duplikate, jeweils maximal 400 Zeichen. Mit Capability bleibt der gesonderte NPC-Kontext konsistent; ohne Capability fehlen die Felder. `selectedNpcId` wird nicht geraten. Held, Fakten, Quest-/Regelzustand und gespeicherte Story-Rekonstruktion erhalten ihre Autorität.
+- **DATEIEN:** Neue Testdatei, README, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_B_CHECKPOINT.md`. Keine Produktionscode-, API-, SQLite-3-/JSON-1- oder SRD-Änderung.
+- **BISHERIGE PRÜFUNG:** Live-PRs und Fachdateien gelesen; Test mit offizieller Dart-3.9.2-Ausgabe formatiert; temporären CI-Diagnoseworkflow entfernt. Vollständige Flutter-/Android-CI erst nach Abschluss als erfolgreich bezeichnen.
+- **OFFEN:** Integration #307; echter Android-/Accessibility-/Live-KI-Test, spätere separate Sonderzeichen-Grenzfallregression. Andere parallele PRs unverändert.
+- **NÄCHSTER SCHRITT:** Multibyte- und Emoji-Übertragungsgrenzen gegen den bestehenden Story-Wire-Vertrag prüfen.
+
+---
+
 # Chat B – geteiltes Erinnerungslimit für NPC- und allgemeine Fakten (27.10.2026)
 
 - **Basis:** `main` `f9b2f72a4bf8e4216bf8baac60c7f92c4a8a997f`; Branch `fix/chat-b/npc-memory-budget-20261027`. Unabhängig von der NPC-Auswahl-/Outbox-Kette #288 → #290 → #292 → #300 → #303 → #305 und dem parallelen UI-Status-PR #304.
