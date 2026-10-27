@@ -88,3 +88,7 @@ Test-/Buildlogs `/workspace/validation/20261026-migration-*`. Prüfung `bash scr
 ## NOCH NICHT IMPLEMENTIERT / genau ein nächster Schritt
 
 Explizite NPC-ID-Auswahl von Android über GameController an den bereits vorhandenen Wire-Vertrag durchreichen. Definition of Done: gleichnamige Figuren ausdrücklich per ID auswählen, fehlende Capability und Stale Revision vor Netzwerk/Kosten ablehnen, Abbruch/Neustart/SQLite testen, Regel-/Story-Grenze erhalten. Erst nach vollständigem Migrationsabschluss beginnen; aktuelle Main-/Branch-/CI-Stände erneut lesen. Keine automatische Wiederaufnahme außerhalb einer aktiven Sitzung.
+
+## Chat A: Mehrere kostspielige Materialpositionen – 27.10.2026
+
+Branch `feat/chat-a/audited-multi-material-components-20261027` von `4bd97b4d`. Für vier konkret auditierte Mehrfachmaterial-Zauber wurden stabile Positions-IDs, unabhängige Preis-/Mengen-/Verbrauchsbestätigungen und Ablehnung bei Transkriptionsänderung oder Duplikaten ergänzt. Neues Testmodul: `app/test/srd_multi_material_audit_test.dart`. Der Gesamtstatus `RULE-SPELLS-MATERIAL-COMPONENTS` bleibt **partial**. Keine Inventar-Automatik, UI-Anbindung, Migration oder behauptete vollständige CI. Technische Abnahme und nächste Schritte: `docs/parallel/CHAT_A_MULTI_MATERIAL_20261027.md`.
