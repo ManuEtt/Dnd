@@ -1,3 +1,32 @@
+## 27.10.2026 – Vier SRD-Hintergrundpakete (Paket 3; PR #273)
+
+- **Stack:** #264 (Würfelmethode) → #272 (gespeicherte
+  Anfangsattribute) → [#273](https://github.com/ManuEtt/Dnd/pull/273).
+  #272: Actions [40443350659](https://github.com/ManuEtt/Dnd/actions/runs/40443350659)
+  grün; Paket 3 benötigt eigene CI.
+- Vier regelgetreue A-/B-Startausrüstungswahlen:
+  Akolyth 8 GM + Kit, Krimineller 16 GM + Kit,
+  Weiser 8 GM + Kit, Soldat 14 GM + Kit;
+  Alternative 50 GM ohne Paketgegenstände.
+- Zwei feste Fertigkeiten je Hintergrund, konkrete
+  Werkzeugübung, beim Soldaten bewusst ausgewähltes Spielset;
+  typisierte Inventargegenstände aus validierten SRD-IDs,
+  Pfeilbündel korrekt umgerechnet.
+- Einmalige Editor-Bestätigung und optional versioniertes
+  `startingBackgroundPackage` in Hero-JSON; Legacy-Daten
+  bleiben unverändert. Keine Direktänderung an `main`.
+- **Offen:** Alle Herkunftstalent-Effekte, Magic-Initiate-Zaubertricks,
+  Zauber und Attributwahl; Symbolvariante des Akolythen;
+  vollständige Erstellungsreihenfolge und weitere Klassenmerkmale.
+  Kein vollständig regelkonformer Charakter behauptet.
+- Tests ergänzt: `srd_background_package_test.dart` und
+  `srd_background_package_dialog_test.dart`. Android-Realgerät
+  noch nicht validiert.
+- **Nächste Aufgabe:** mechanisch vollständige Herkunftstalente
+  mit gezielter Magieinitiierter-Zauberauswahl.
+
+---
+
 ## 27.10.2026 – Attribut-Herkunft speichern (Entwicklungspaket 2; CI offen)
 
 - **Basis:** grüner PR #264, Head `7305c16`, Lauf

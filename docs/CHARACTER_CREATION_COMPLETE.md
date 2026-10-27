@@ -6,6 +6,47 @@ Dieser Dateiname kennzeichnet den geplanten Endzustand. **Weder die
 Charaktererstellung noch der SRD-5.2.1-Audit sind bereits vollständig.**
 Der jeweils letzte GitHub-Commit und dessen CI müssen gesondert geprüft werden.
 
+## Entwicklungspaket 3 – Vier SRD-Hintergrundpakete (27.10.2026)
+
+**Stack:** [#264](https://github.com/ManuEtt/Dnd/pull/264) →
+[#272](https://github.com/ManuEtt/Dnd/pull/272) →
+[#273](https://github.com/ManuEtt/Dnd/pull/273). Basis #272:
+Actions #40443350659 **erfolgreich** (CI) inkl. Android.
+Abnahme der Änderungen in #273 ist davon **separat**.
+
+- `srd_background_package.dart`: Akolyth, Krimineller, Weiser und
+  Soldat mit zwei fest vorgegebenen Übungen, Werkzeugübung,
+  Herkunftstalent-Vermerk und originalen Startpaketen A oder
+  ausdrücklich gewählten 50 GM B. Beim Soldaten ist ein
+  **konkretes** SRD-Spielset Voraussetzung und zugleich Ausrüstung
+  sowie Werkzeugübung.
+- `srd_background_package_dialog.dart` und Charakter-Editor:
+  ausdrückliche Bestätigung vor Hinzufügen; bestehende Helden,
+  andere Hintergründe, bereits verbuchte Pakete oder Stufen >1
+  werden nicht automatisch ausgestattet. Herkunftsinformationen
+  als optionales `startingBackgroundPackage` am Helden gespeichert.
+- SRD-Kataloggegenstände werden nach validierten IDs gespeichert;
+  20 Pfeile sind **eine** Munitionseinheit mit 20 Pfeilen.
+  Freie Varianten wie das konkrete Heilige Symbol bleiben
+  bewusst ungeklärt und erhalten keine erfundenen Spielwerte.
+- **Nicht fertig:** Regeln des Talents `Wachsam` und `Wilder
+  Angreifer` sowie insbesondere konkrete Entscheidungen für
+  `Magieinitiierter` (zwei Zaubertricks, ein Zauber 1. Grades und
+  Zauberattribut). Die Eintragung eines Talentnamens ist **keine**
+  vollständige Regelautomatik. Tool-Übungen werden als
+  Herkunftsmerkmal eingetragen, ihre Würfelmechanik bleibt
+  separat zu prüfen.
+- Tests: `app/test/srd_background_package_test.dart` und
+  `app/test/srd_background_package_dialog_test.dart`; finale
+  CI muss Format, Analyse, vollständige Tests, Android-Build und
+  Artefakte noch bestätigen.
+
+**Nächster Schritt:** vollständige Herkunftstalent- und Zauberwahl
+mit eigener SRD-Prüfung; danach weitere fehlende Klassen- und
+Speziesmerkmale.
+
+---
+
 ## Quellen und Regelgrenze
 
 Verbindlich ist das offiziell lizenzierte D&D SRD 5.2.1,

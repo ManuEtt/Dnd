@@ -1,3 +1,11 @@
+> **Charaktererstellung – Paket 3 (27.10.2026):**
+> Vier SRD-Hintergrundpakete als getrennte, ausdrücklich
+> bestätigte Stufe-1-Entscheidungen inkl. Ausrüstung A/50 GM B,
+> Fähigkeiten und Werkzeugübungen in [PR #273](https://github.com/ManuEtt/Dnd/pull/273).
+> Herkunftstalente und Magieinitiierter-Zauberwirkungen
+> sind noch nicht vollständig automatisiert.
+> [Teilabdeckung](docs/CHARACTER_CREATION_COMPLETE.md).
+
 > **Charakterattribute (27.10.2026):** Auf dem gestapelten
 > Entwicklungsbranch werden bestätigte Basiswerte, Erzeugungsmethode,
 > Herkunftsbonus und gegebenenfalls 24 Würfelzahlen als optionale,
