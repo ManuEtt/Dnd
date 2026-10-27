@@ -55,10 +55,7 @@ class SrdSpellInventoryRules {
       );
       actualConsumption = [
         for (final entry in quantities.entries)
-          SrdConsumedMaterial(
-            inventoryId: entry.key,
-            quantity: entry.value,
-          ),
+          SrdConsumedMaterial(inventoryId: entry.key, quantity: entry.value),
       ];
     } else {
       if (auditedBindings.isNotEmpty || confirmedTargetCount != null) {
@@ -69,8 +66,7 @@ class SrdSpellInventoryRules {
       actualConsumption = consumedMaterials;
     }
     if (plan.hasConsumedMaterial) {
-      if (!materialIdentityAndQuantityConfirmed ||
-          actualConsumption.isEmpty) {
+      if (!materialIdentityAndQuantityConfirmed || actualConsumption.isEmpty) {
         throw const FormatException(
           'Verbrauchsmaterial und benötigte Anzahl sind nicht bestätigt.',
         );
