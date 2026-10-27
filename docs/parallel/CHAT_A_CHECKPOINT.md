@@ -1,11 +1,11 @@
 # Chat A – SRD-Weitsprungprüfung (27.10.2026)
 
 - Ausgangs-`main`: `e7736bfc99427bfa6a1d0fd3ff887252c75c9413`.
-- Branch: `feat/chat-a/long-jump-preflight-20261027`; PR-Nummer und finalen Commit mit GitHub-Livezustand nach Erstellung ergänzen.
+- Branch: `feat/chat-a/long-jump-preflight-20261027`; Pull Request: [#284](https://github.com/ManuEtt/Dnd/pull/284), Basis `e7736bfc99427bfa6a1d0fd3ff887252c75c9413`. Die kanonische Dartformatierung wurde mit der temporären Diagnose [40471878051](https://github.com/ManuEtt/Dnd/actions/runs/40471878051) ermittelt, im Code korrigiert und die temporäre Workflowdatei auf `75fb868b5fdeaac14b1bffc6bcbe2109048aea54` wieder entfernt. Gesamte CI auf finalem Commit separat abwarten.
 - IMPLEMENTIERT: `SrdLongJumpRules`, sofort bestätigter Anlauf ab 10 Fuß, exakt halbierter Standweitsprung, Zentimeter-Bewegungsbudget, getrennte Akrobatik-Landung und optionale Athletik-Hindernisprobe; sichere Behandlung ausstehender Ergebnisse. Keine automatische Aktion oder Mutation.
 - GEÄNDERTE DATEIEN: `app/lib/domain/srd_long_jump_rules.dart`, `app/test/srd_long_jump_rules_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_A_CHECKPOINT.md` und `docs/parallel/CHAT_A_LONG_JUMP_20261027.md`.
 - GETESTET: offizielles SRD 5.2.1 (Druckseiten 184–185), Quellcode, offene PR-Dateipfade und vorherige Hochsprung-CI [40469553724](https://github.com/ManuEtt/Dnd/actions/runs/40469553724) **auf anderem Commit** geprüft.
-- NICHT GETESTET: neue Weitsprung-Tests lokal und gesamter Android-/CI-Build; finalen GitHub-Lauf gesondert auswerten.
+- NICHT GETESTET: neue Weitsprung-Tests lokal und gesamter Android-/CI-Build; finalen GitHub-Lauf gesondert auswerten. Frühere nicht finale Branch-Läufe scheiterten bereits am Dart-Format-Gate; nun wurde die echte Dart-Formatterausgabe übernommen. Kein grüner Gesamtbuild vorweggenommen.
 - BLOCKIERT: kein lokales Dart-/Flutter-SDK. GitHub-CI zur tatsächlichen Regelabnahme verwenden.
 - NOCH NICHT IMPLEMENTIERT: Weitsprung/Prone/Bewegung als transaktionale Kampfaktion, revisionsgebundene Ereignisse, Geräteabnahme.
 - MIGRATION: keine; SQLite 2, JSON 1, App-Version 0.8.42+92 unverändert. Keine zentralen Regel-/Story-Verträge geändert.
