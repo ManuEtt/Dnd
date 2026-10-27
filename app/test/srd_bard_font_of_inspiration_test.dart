@@ -47,7 +47,10 @@ void main() {
       hero: initial,
       slotLevel: 2,
     ).applyTo(initial);
-    expect(result.spentClassResources.containsKey('bardicInspiration'), isFalse);
+    expect(
+      result.spentClassResources.containsKey('bardicInspiration'),
+      isFalse,
+    );
     expect(result.spentSpellSlots['2'], 1);
   });
 
