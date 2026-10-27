@@ -1,3 +1,17 @@
+## 27.10.2026 – Chat A: Gestapelter Weitsprung-Kampfübergang (CI offen)
+
+- **Basis/Koordination:** [PR #284](https://github.com/ManuEtt/Dnd/pull/284), HEAD `4e15ba643a22b94e9ec3ba7da72e8330a0b0e56c`, stammt aus `main` `e7736bfc99427bfa6a1d0fd3ff887252c75c9413`. Neuer Branch `feat/chat-a/long-jump-encounter-plan-20261027` **mit PR-Zielbranch #284**, nicht ungeprüftem `main`.
+- **IMPLEMENTIERT:** `SrdLongJumpEncounterRules.prepare` und `SrdLongJumpEncounterPlan` projizieren eine bestätigte Sprungbewegung aus unveränderter `Campaign` / `Encounter`, prüfen aktive Runde, IDs, Revision, offene Würfe, Zustand, bezahlten Anlauf, D20-Würfe und exakte Dezimeter; bei bestätigtem misslungenem SG-10-Akrobatikwurf wird `liegend` nur im Kandidaten ergänzt. 15-cm-Reste bleiben ausdrücklich blockiert, nicht stillschweigend gerundet. Neue negative/positive Flutter-Domain-Tests. Keine gleichzeitige Änderung an #280-Engine/Controller-Dateien.
+- **GETESTET:** Offizieller SRD-Regeltext, Quellcode/PRs geprüft; Basis-PR #284 besitzt vollständig erfolgreiche [CI #40472176859](https://github.com/ManuEtt/Dnd/actions/runs/40472176859), aber dieser Lauf betrifft nicht den neuen Branch.
+- **NICHT GETESTET:** Finaler neuer Branch-Format-/Flutter-/Android-Gesamtlauf und echtes Android-Gerät. Lokales Dart-SDK fehlt.
+- **BLOCKIERT:** Engere Engine-/SQLite-Integration wartet auf koordinierte Geländebewegungs-PRs #280/#278/#276 und Revisions-/Ereignisschutz.
+- **NOCH NICHT IMPLEMENTIERT:** Kein `GameUpdate`, keine SQLite-Transaktion, keine Idempotenzkennung oder UI-Auswahl. Projizierter Zustand ist **keine** dauerhaft gespeicherte Aktion, keine Freigabe für Spielstände.
+- **Unverändert:** SQLite 2, JSON 1, App 0.8.42+92; keine Schemaänderung, keine globale SRD-Abdeckungsbehauptung.
+- **Weitere Details:** `docs/parallel/CHAT_A_LONG_JUMP_COMBAT_PLAN_20261027.md`.
+- **Genau ein nächster Schritt:** nach grüner CI und Integration von #284 und abgestimmtem #280-Rechtsstand koordinierter einmaliger GameEngine-/GameController-/Repository-Commit mit Ereignis-, Rollback- und Neustarttests.
+
+---
+
 ## 27.10.2026 – Chat A: Weitsprung-Vorprüfung (CI-Auswertung offen)
 
 - **Ausgangs-main:** `e7736bfc99427bfa6a1d0fd3ff887252c75c9413`; Branch `feat/chat-a/long-jump-preflight-20261027`; [PR #284](https://github.com/ManuEtt/Dnd/pull/284). Vorläufiger Formatterkorrektur-Commit `b7a58c67c0028f8c792ade9534124b20b1a4bece`; temporärer Workflow danach in `75fb868b5fdeaac14b1bffc6bcbe2109048aea54` gelöscht. Endgültige CI muss auf dem letzten Dokumentations-HEAD laufen.
