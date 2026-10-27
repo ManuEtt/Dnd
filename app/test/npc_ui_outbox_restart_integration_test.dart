@@ -107,7 +107,13 @@ Map<String, dynamic> _plan() => {
 };
 
 class _Fixture {
-  _Fixture(this.folder, this.path, this.repository, this.controller, this.transport);
+  _Fixture(
+    this.folder,
+    this.path,
+    this.repository,
+    this.controller,
+    this.transport,
+  );
 
   final Directory folder;
   final String path;
@@ -178,10 +184,8 @@ Future<_Fixture> _start(WidgetTester tester) async {
   ))!;
   final path = paths.join(folder.path, 'campaign.sqlite');
   final repo = (await tester.runAsync(
-    () => SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: path,
-    ),
+    () =>
+        SqliteCampaignRepository.open(factory: databaseFactoryFfi, path: path),
   ))!;
   final transport = _NpcTransport();
   final controller = GameController(
@@ -196,16 +200,8 @@ Future<_Fixture> _start(WidgetTester tester) async {
   );
   final campaign = initial.copyWith(
     npcs: const [
-      WorldNpc(
-        id: 'mira-one',
-        name: 'Mira',
-        relationship: 'freundlich',
-      ),
-      WorldNpc(
-        id: 'mira-two',
-        name: 'Mira',
-        relationship: 'misstrauisch',
-      ),
+      WorldNpc(id: 'mira-one', name: 'Mira', relationship: 'freundlich'),
+      WorldNpc(id: 'mira-two', name: 'Mira', relationship: 'misstrauisch'),
     ],
     npcRelationshipNotes: [
       NpcRelationshipNote(
@@ -235,10 +231,7 @@ Future<void> _pendingVisible(WidgetTester tester) async {
     () => Future<void>.delayed(const Duration(milliseconds: 60)),
   );
   await tester.pumpAndSettle();
-  expect(
-    find.byKey(const ValueKey('adventure-retry-action')),
-    findsOneWidget,
-  );
+  expect(find.byKey(const ValueKey('adventure-retry-action')), findsOneWidget);
 }
 
 void main() {
@@ -276,10 +269,7 @@ void main() {
     expect(contexts.toString(), isNot(contains('kennt den Brief')));
     expect(f.controller.currentCampaign!.revision, campaign.revision + 1);
     final outbox = PlayerActionOutbox(f.repository);
-    expect(
-      await tester.runAsync(() => outbox.pendingFor(campaign.id)),
-      isNull,
-    );
+    expect(await tester.runAsync(() => outbox.pendingFor(campaign.id)), isNull);
     expect(tester.takeException(), isNull);
   });
 
@@ -314,10 +304,7 @@ void main() {
     final confirmed = f.controller.currentCampaign!;
     expect(confirmed.revision, before.revision + 1);
     expect(f.transport.requests, hasLength(1));
-    expect(
-      confirmed.events.last.payload['actionSelectedNpcId'],
-      'mira-two',
-    );
+    expect(confirmed.events.last.payload['actionSelectedNpcId'], 'mira-two');
 
     await f.restart(tester);
     await f.adventure(tester);
@@ -389,7 +376,10 @@ void main() {
       () => Future<void>.delayed(const Duration(milliseconds: 140)),
     );
     await tester.pumpAndSettle();
-    expect(find.textContaining('NPC-Auswahl ist nicht mehr aktuell'), findsWidgets);
+    expect(
+      find.textContaining('NPC-Auswahl ist nicht mehr aktuell'),
+      findsWidgets,
+    );
     expect(f.transport.requests, isEmpty);
     expect(f.controller.currentCampaign!.toJson(), snapshot);
     expect(
