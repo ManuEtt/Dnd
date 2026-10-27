@@ -6,6 +6,7 @@ from pathlib import Path
 import tempfile
 import stat
 import unittest
+from unittest import mock
 import zipfile
 
 SCRIPTS = Path(__file__).resolve().parents[1]
@@ -71,6 +72,55 @@ class AlphaReleaseTests(unittest.TestCase):
             release.prepare_release(self.root, self.out)
         self.assertFalse(self.out.exists())
 
+
+    def test_oversized_apk_is_rejected_before_zip_probe(self):
+        with self.apk.open('wb') as stream:
+            stream.seek(release.MAX_ALPHA_APK_BYTES)
+            stream.write(b'x')
+        with mock.patch.object(zipfile, 'is_zipfile',
+                               side_effect=AssertionError('ZIP probe before size guard')):
+            with self.assertRaisesRegex(ValueError, 'zulässige Dateigröße'):
+                release.prepare_release(self.root, self.out)
+        self.assertFalse(self.out.exists())
+
+    def test_highly_compressible_apk_member_is_rejected_before_crc(self):
+        with zipfile.ZipFile(self.apk, 'a', compression=zipfile.ZIP_DEFLATED) as archive:
+            archive.writestr('assets/compressed-bomb.bin', b'x' * (4 * 1024 * 1024))
+        with mock.patch.object(zipfile.ZipFile, 'testzip',
+                               side_effect=AssertionError('CRC decompression attempted')):
+            with self.assertRaisesRegex(ValueError, 'stark komprimierte'):
+                release.prepare_release(self.root, self.out)
+        self.assertFalse(self.out.exists())
+
+    def test_declared_apk_expansion_over_budget_is_rejected_before_crc(self):
+        original_infolist = zipfile.ZipFile.infolist
+
+        def oversized_members(archive):
+            extra = zipfile.ZipInfo('assets/oversized.bin')
+            extra.file_size = release.MAX_ALPHA_APK_UNCOMPRESSED_BYTES + 1
+            extra.compress_size = extra.file_size
+            return list(original_infolist(archive)) + [extra]
+
+        with mock.patch.object(zipfile.ZipFile, 'infolist', oversized_members), \\
+             mock.patch.object(zipfile.ZipFile, 'testzip',
+                               side_effect=AssertionError('CRC decompression attempted')):
+            with self.assertRaisesRegex(ValueError, 'übergroße'):
+                release.validate_arm64_apk(self.apk)
+
+    def test_excessive_apk_member_count_is_rejected_before_crc(self):
+        original_infolist = zipfile.ZipFile.infolist
+
+        def too_many_members(archive):
+            return list(original_infolist(archive)) + [
+                zipfile.ZipInfo(f'assets/extra-{index}')
+                for index in range(release.MAX_ALPHA_APK_ENTRIES)
+            ]
+
+        with mock.patch.object(zipfile.ZipFile, 'infolist', too_many_members), \\
+             mock.patch.object(zipfile.ZipFile, 'testzip',
+                               side_effect=AssertionError('CRC decompression attempted')):
+            with self.assertRaisesRegex(ValueError, 'übergroße'):
+                release.validate_arm64_apk(self.apk)
 
     def test_duplicate_required_component_is_rejected(self):
         with zipfile.ZipFile(self.apk, 'a') as archive:
