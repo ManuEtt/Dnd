@@ -1,5 +1,12 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat B – NPC-Auswahl mit absturzsicherem Sendeauftrag (27.10.2026)
+
+In generativen KI-Kampagnen erscheint am Texteingabefeld die Aktion **„NPC auswählen“**, wenn die bestehende Erzählsitzung `npc-selection-v1` unterstützt. Ein deutscher, scrollbarer und für Screenreader beschrifteter Dialog zeigt bestätigte NPCs samt Beziehung und eindeutiger Kennung – auch wenn mehrere den gleichen Namen haben. Nur ein ausdrücklicher Tipp auf eine Figur bindet ihre ID an den ausstehenden Spielzug. Ohne NPC-Auswahl funktioniert die Texteingabe unverändert. Das Gegenstück ist die revisionsgeprüfte Controller-Anbindung aus [PR #288](https://github.com/ManuEtt/Dnd/pull/288).
+
+Die SQLite-Outbox wurde **transaktional von Version 2 auf 3** erweitert: ein optionales Paar aus NPC-ID und ursprünglicher Kampagnenrevision bleibt mit Text und Request-ID nach einem Neustart erhalten. Alte Sendeaufträge werden ohne NPC-Auswahl übernommen; eine veraltete Auswahl wird nicht unbemerkt neu gebunden. Bereits bestätigte Request-IDs können nach verlorenem Bestätigungssignal abgeglichen werden. Neue SQLite- und Flutter-Widget-Tests prüfen diese Grenzen. Kampagnen-JSON, Heldendaten und SRD-Mechaniken bleiben unverändert. Die volle CI-Abnahme auf dem PR-HEAD ist separat nachzuweisen.
+
+
 ## Chat B – Ausdrückliche NPC-ID bei KI-Handlungen (27.10.2026)
 
 Die Controller-Schnittstelle `sendAction(text, selectedNpc: NpcStorySelection.choose(campaign, npcId))` kann eine **vom Spieler ausdrücklich ausgewählte, revisionsgebundene NPC-ID** an einen geeigneten KI-Erzähler übergeben. Dazu muss dessen Sitzung sowohl `npc-identity-v1` als auch `npc-selection-v1` unterstützen und zum ausgewählten NPC mindestens eine bestätigte Beziehungsnotiz existieren. Ohne solche Auswahl bleibt die bisherige Namensauflösung unverändert. Die Prüfung erfolgt vor dem lokalen Spielzug, gegen die aktuelle SQLite-Revision und erneut beim Transport. Wiederholte Handlungskennungen sind auch an die gewählte NPC-ID gebunden. Vier neue SQLite-/Mock-Integrationstests prüfen die sichere Übertragung, fehlende Capability, veraltete Auswahl und Wiederholungs-ID-Kollision. **Die grafische NPC-Auswahl ist noch nicht angebunden** und die CI-Abnahme muss anhand des PR-Laufs erfolgen. Keine Regel-, Datenbank- oder Kampagnen-JSON-Migration.
