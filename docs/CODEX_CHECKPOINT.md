@@ -1,3 +1,17 @@
+## 27.10.2026 – Chat A: rein lesende Hochsprung-Vorprüfung
+
+- **Basis-main:** `1e2bdc411930d0cb9c12c702e4cdc9b643ee29f4`; **Branch:** `feat/chat-a/high-jump-preflight-20261027`. Die Überschneidungsprüfung berücksichtigte #259/#266, #271/#274/#277, #276/#278 und Integrations-PR #280; #175 geschlossen.
+- **IMPLEMENTIERT:** SRD-5.2.1-*High Jump*-Limit (Druckseite 183), unmittelbarer Anlauf, exakte halbe Fußhöhe, Bewegungsbudget und optionale Körper-Reichhöhe als read-only Domain-Preflight. Sieben deterministische Testgruppen hinzugefügt.
+- **GETESTET:** GitHub-Code und Main-HEAD eingesehen; letzter zum Prüfzeitpunkt vollständig erfolgreicher **main**-Android-CI-Lauf [40465579801](https://github.com/ManuEtt/Dnd/actions/runs/40465579801) auf `1e2bdc4` (nicht auf diesem Branch).
+- **NICHT GETESTET:** Neue Tests, Dart-Format, Flutter-Analyse, vollständige Flutter-/Backend-Suite, Android-APK und reales Gerät auf dieser Branch-SHA. CI gesondert prüfen.
+- **BLOCKIERT:** Git-Checkout/Dart-/Flutter-SDK in der zugänglichen Laufzeit nicht verfügbar; Branch-CI erforderlich.
+- **NOCH NICHT IMPLEMENTIERT:** Bestätigte Kampfzug-/Revisions-/SQLite-Buchung eines Hochsprungs sowie weitere Sprung- und DM-Sonderregeln.
+- **Geänderte Fachdateien:** `app/lib/domain/srd_high_jump_rules.dart`, `app/test/srd_high_jump_rules_test.dart`; eigenständiger Bericht `docs/parallel/CHAT_A_HIGH_JUMP_20261027.md`, Chat-A-Checkpoint und additive README-/Zentralcheckpoint-Nachträge.
+- **Kompatibilität:** kein JSON-/SQLite-Schemawechsel (SQLite 2 / JSON 1), keine App-Versionserhöhung (`0.8.42+92`), keine Regel-/Story-Vermischung. Bezug `COMBAT-TERRAIN-MAP` bleibt unvollständig und unverändert im Requirements-Register.
+- **Nächster Schritt:** Nach endgültig grüner Branch-CI ein separates read-only Weitsprungpaket mit gesicherten Landungs-/Hindernis-Gegenfällen entwickeln.
+
+---
+
 ## 27.10.2026 – Integrationskandidat der Charaktererstellung #264/#272/#273/#275
 
 - **Basis:** `main` `4bd97b4d72fc747228df9bea46b61c3d4c82c382`; komplette gestapelte Quelle `ae148053feca82f5db1741b37536385f4d7d41c5`; Merge-Tree anhand der Git-Blob-SHAs konfliktarm zusammengestellt, beide Herkunfts-Commits als Eltern erhalten. Nur README und diese Checkpoint-Datei redaktionell aus dem originalen Main additiv ergänzt; fremde Chat-B-/Chat-D-Einträge bleiben erhalten.
