@@ -1,3 +1,19 @@
+# Chat A – Hochsprung-Vorprüfung (27.10.2026)
+
+- Ausgangs-`main`: `1e2bdc411930d0cb9c12c702e4cdc9b643ee29f4`.
+- Branch: `feat/chat-a/high-jump-preflight-20261027`; Pull Request und abschließende CI werden nach Veröffentlichung separat ergänzt; Commit-SHA ist anhand des Branch-HEAD zu prüfen.
+- IMPLEMENTIERT: Regelreine, read-only SRD-5.2.1-Hochsprung-Vorprüfung; bestätigter 10-Fuß-Anlauf, Stärke/negativer Modifikator, stehender Halb-Sprung, Budget, exakte Reichhöhe; positive/negative Regressionstests.
+- GEÄNDERT: `app/lib/domain/srd_high_jump_rules.dart`, `app/test/srd_high_jump_rules_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, dieser Checkpoint und `docs/parallel/CHAT_A_HIGH_JUMP_20261027.md`.
+- GETESTET: Code-/PR-/Main- und CI-Metadaten in GitHub geprüft. Keine neuen Testläufe fälschlich als grün ausgewiesen; historische Main-CI [40465579801](https://github.com/ManuEtt/Dnd/actions/runs/40465579801) erfolgreich auf anderer SHA.
+- NICHT GETESTET: Dart-Format, Flutter-Analyse/Tests, Build, Backend, Realgerät auf dem neuen Branch; GitHub-CI nach Veröffentlichung prüfen.
+- BLOCKIERT: Kein lokales Dart-/Flutter-SDK, kein Git-Checkout wegen nicht auflösbarer GitHub-Domain in der Laufzeit.
+- NOCH NICHT IMPLEMENTIERT: Bestätigte Zug-/Persistenzbuchung, DM-Sonderregeln, vollständige Weit-/Hochsprung-Integration.
+- Migrationen: keine; bestehende SQLite 2 / JSON 1 und App-Version 0.8.42+92 unverändert.
+- NÄCHSTER KONKRETER SCHRITT: neue CI auf finaler Branch-SHA bestätigen und etwaige Format-/Analysefehler korrigieren; danach eigenes Weitsprungpaket.
+- Detail: [Chat-A-Hochsprungpaket](CHAT_A_HIGH_JUMP_20261027.md).
+
+---
+
 # Chat A – Checkpoint (26.10.2026): Eldritch-Blast-Klassenprüfung
 
 - Ausgangs-Main: `42d14ad36cc947691f7e5a1e8647a43f5421b86e`; Branch: `fix/chat-a/eldritch-primary-class-validation-20261026`.
