@@ -76,6 +76,7 @@ void main() {
       await tapInEditor(
         tester,
         find.byKey(const ValueKey('open-srd-class-selection')),
+        scrollDelta: -320,
       );
       expect(find.text('D&D-Klasse und Startwerte'), findsOneWidget);
       expect(find.textContaining('0 / 3'), findsOneWidget);
