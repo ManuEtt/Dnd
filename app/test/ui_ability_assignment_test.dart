@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:lebendiger_spielleiter/domain/ability_generation.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
+import 'package:lebendiger_spielleiter/domain/starting_ability_origin.dart';
 import 'package:lebendiger_spielleiter/ui/ability_assignment_dialog.dart';
 import 'package:lebendiger_spielleiter/ui/character_editor.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
@@ -474,7 +475,21 @@ void main() {
       'wisdom': 10,
       'charisma': 8,
     };
+    expected['startingAbilityOrigin'] = StartingAbilityOrigin.confirmed(
+      method: 'standardArray',
+      baseScores: {
+        'strength': 15,
+        'dexterity': 14,
+        'constitution': 13,
+        'intelligence': 12,
+        'wisdom': 10,
+        'charisma': 8,
+      },
+      background: 'Soldat',
+      increases: {'strength': 1, 'dexterity': 1, 'constitution': 1},
+    ).toJson();
     expect(saved!.toJson(), expected);
+    expect(saved!.startingAbilityOrigin!.baseScores['strength'], 15);
   });
 
   testWidgets('360 pixel dialog supports background, preview and apply', (
