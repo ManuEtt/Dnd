@@ -3,34 +3,33 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_character_sheet.dart';
 
-HeroCharacter sheetHero(int rangerLevel, {bool heavy = false}) =>
-    HeroCharacter(
-      id: 'roving-sheet',
-      name: 'Ari',
-      className: 'Waldläufer',
-      level: rangerLevel,
-      hitPoints: 18,
-      maxHitPoints: 18,
-      speed: 9,
-      armorClass: 14,
-      abilities: const {
-        'strength': 16,
-        'dexterity': 14,
-        'constitution': 14,
-        'intelligence': 12,
-        'wisdom': 14,
-        'charisma': 10,
-      },
-      inventory: const [
-        InventoryItem(
-          id: 'heavy',
-          name: 'Plattenrüstung',
-          catalogId: 'armor-plate-armor',
-        ),
-      ],
-      equippedArmorId: heavy ? 'heavy' : '',
-      equippedArmorTrained: true,
-    );
+HeroCharacter sheetHero(int rangerLevel, {bool heavy = false}) => HeroCharacter(
+  id: 'roving-sheet',
+  name: 'Ari',
+  className: 'Waldläufer',
+  level: rangerLevel,
+  hitPoints: 18,
+  maxHitPoints: 18,
+  speed: 9,
+  armorClass: 14,
+  abilities: const {
+    'strength': 16,
+    'dexterity': 14,
+    'constitution': 14,
+    'intelligence': 12,
+    'wisdom': 14,
+    'charisma': 10,
+  },
+  inventory: const [
+    InventoryItem(
+      id: 'heavy',
+      name: 'Plattenrüstung',
+      catalogId: 'armor-plate-armor',
+    ),
+  ],
+  equippedArmorId: heavy ? 'heavy' : '',
+  equippedArmorTrained: true,
+);
 
 Future<void> openDefenses(WidgetTester tester, HeroCharacter hero) async {
   tester.view.physicalSize = const Size(400, 940);
