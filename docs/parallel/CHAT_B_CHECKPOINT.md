@@ -1,3 +1,19 @@
+# Chat B – Gleiche NPC-Anzeigenamen in bestätigten Recaps unterscheiden (27.10.2026)
+
+- **Main bei Branchstart:** `ff245cc253194cd0858385d535ae7b2c9132bb06`
+- **Branch:** `feat/chat-b/session-recap-npc-identity-20261027`
+- **Fachcommits:** `0cb212b7ce0abc8ed9ecdb6fb35cb34c2431982d` und `da4b909269273cf5f558ef9019b9e118769e5100`, danach offizielle Formatcommits. **Finalen HEAD und PR im GitHub-Pull-Request verifizieren.**
+- **Ausgangsproblem:** `MemoryEngine.buildSessionSummary` bezeichnete zwei Miras mit demselben Anzeigenamen/Beziehungsstatus ohne Identitätsbeleg. `MemoryEngine.retrieve` löst das bereits per ID.
+- **Implementiert:** `app/lib/story/story_memory_engine.dart` zählt normalisierte Anzeigenamen und gespeicherte IDs. Gleiche Namen erhalten `(NPC-ID: ...)`, einzigartige Namen bleiben unverändert. Doppelt vorhandene gespeicherte IDs werden nicht als eindeutige Identität im Rückblick ausgegeben.
+- **Tests:** `app/test/session_recap_npc_identity_test.dart` ergänzt vier positive/negative Flutter-Tests einschließlich de-DE-Umlautvarianten, Legacy-JSON, beschädigten doppelten IDs und tatsächlichem `GameEngine.saveSessionRecap` plus JSON-Roundtrip. Heldenwerte bleiben unangetastet. Code mit Dart 3.9.2 formatiert. Vollständige CI nach finalem HEAD gesondert prüfen.
+- **Geändert:** `app/lib/story/story_memory_engine.dart`, neue Testdatei, `README.md`, `docs/CODEX_CHECKPOINT.md` und dieser Checkpoint.
+- **Abgrenzung:** Keine gemeinsamen Änderungen an `models.dart`, `game_engine.dart`, `game_controller.dart`, `data/*`, SRD oder Story-Transport; keine Änderung an bestehenden Spielständen, keine Migration.
+- **Konflikte:** Historische README-/Checkpoint-Passagen beim Merge durch Chat D konsolidieren; parallelen Branch zur NPC-Notiz-ID-Eindeutigkeit nicht überschreiben.
+- **Nicht getestet:** lokales Flutter, Realgerät, produktive KI, komplette CI bis Abschluss.
+- **Nächster unabhängiger Schritt:** Bei sehr langer identischer NPC-Beschreibung sicherstellen, dass die ID im 2.400-Zeichen-Sitzungsrückblick nicht still abgeschnitten wird; Grenzfälle inklusive Abkürzung/Formatierung testen.
+
+---
+
 # Chat B – transportierte NPC-Erinnerungen bleiben bei zwölf Einträgen (27.10.2026)
 
 - **Branch:** `test/chat-b/npc-memory-wire-budget-20261027`; Basis `fix/chat-b/npc-memory-budget-20261027` (PR #307, Head `47b4343fadd5f30b9030a702b3ccd701d701a598`). Gestapelter reiner Test-PR, kein unabhängiger Merge vor #307.
