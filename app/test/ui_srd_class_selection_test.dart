@@ -60,10 +60,7 @@ void main() {
         find.widgetWithText(TextFormField, 'Charaktername'),
         'Elowen',
       );
-      final constitution = find.widgetWithText(
-        TextFormField,
-        'Konstitution',
-      );
+      final constitution = find.widgetWithText(TextFormField, 'Konstitution');
       await tester.scrollUntilVisible(
         constitution,
         300,
