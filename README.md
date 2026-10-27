@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat B – Sichere Bestätigung ausdrücklich ausgewählter NPC-Handlungen (27.10.2026)
+
+Beim Entfernen eines ausstehenden Spielerauftrags vergleicht die SQLite-Outbox jetzt **Handlungskennung, exakten Text, gewählte NPC-ID und ursprüngliche Kampagnenrevision**, statt nur Kennung und Text. Ein verspätetes Bestätigungssignal für die erste „Mira“ kann daher keinen später neu angelegten Auftrag für die zweite „Mira“ beseitigen. Die Prüfung und Löschung erfolgen in einer SQLite-Transaktion; auch der Fallback für ältere Repository-Implementierungen vergleicht beide NPC-Felder. Zwei neue SQLite-Regressionstests prüfen falsche IDs/Revisionen und die Wiederverwendung derselben Test-Handlungskennung nach bewusster Auftragsersetzung. Zusätzlich nennt der Fehler für zu neue Datenbanken nun die tatsächlich unterstützte SQLite-Version 3. Kein Schema-, Export- oder SRD-Regelwechsel. Dieses Paket baut auf [PR #303](https://github.com/ManuEtt/Dnd/pull/303) auf.
+
+
 ## Chat B – deterministische Wiederaufnahme von NPC-Sendeaufträgen (27.10.2026)
 
 Die sichere Wiederaufnahme einer ausdrücklich gewählten NPC-ID nach SQLite-Neustart wird jetzt durch die gemeinsame Funktion `resolvePendingNpcAction(campaign, action)` bestimmt. Sie unterscheidet normale, gültige, bereits bestätigte, veraltete und nicht mehr verfügbare Auswahlen, ohne selbst Netzwerkzugriffe oder Speicheränderungen auszuführen. Die Abenteueroberfläche nutzt dieselbe Funktion; eine verlorene Bestätigung wird nur anhand eines **exakt zu Text, Request-ID und NPC-ID passenden gespeicherten Ereignisses** abgeglichen. Andernfalls ist eine erneute bewusste NPC-Auswahl erforderlich.
