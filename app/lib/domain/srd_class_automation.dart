@@ -200,7 +200,10 @@ class SrdClassAutomation {
             ClassFeatureResources.secondWindMaximum(hero),
           );
           if (level >= 2) {
-            add('Aktionsschub gesamt', ClassFeatureResources.actionSurgeMaximum(hero));
+            add(
+              'Aktionsschub gesamt',
+              ClassFeatureResources.actionSurgeMaximum(hero),
+            );
           }
         case 'Mönch':
           add(
@@ -208,7 +211,10 @@ class SrdClassAutomation {
             'W${ClassResourceRules.martialArtsDie(level)}',
           );
           if (level >= 2) {
-            add('Fokuspunkte gesamt', ClassResourceRules.maximum(hero, 'focusPoints'));
+            add(
+              'Fokuspunkte gesamt',
+              ClassResourceRules.maximum(hero, 'focusPoints'),
+            );
           }
         case 'Paladin':
           add(
