@@ -24,7 +24,8 @@ void main() {
     expect(record.startingScores['strength'], 17);
     expect(record.startingScores['constitution'], 14);
     final hero = HeroCharacter(
-      id: 'new', name: 'Held',
+      id: 'new',
+      name: 'Held',
       abilities: record.startingScores,
       background: 'Soldat',
       startingAbilityOrigin: record,
@@ -36,10 +37,16 @@ void main() {
     expect(restored.toJson(), encoded);
     expect(restored.startingAbilityOrigin!.baseScores, original);
     expect(restored.abilities['strength'], 17);
-    expect(restored.copyWith(level: 2, abilities: {
-      ...restored.abilities,
-      'strength': 18,
-    }).startingAbilityOrigin!.startingScores['strength'], 17);
+    expect(
+      restored
+          .copyWith(
+            level: 2,
+            abilities: {...restored.abilities, 'strength': 18},
+          )
+          .startingAbilityOrigin!
+          .startingScores['strength'],
+      17,
+    );
     expect(() => record.baseScores['strength'] = 8, throwsUnsupportedError);
     expect(() => record.increases['strength'] = 4, throwsUnsupportedError);
   });
@@ -49,38 +56,60 @@ void main() {
     final oldJson = oldHero.toJson();
     expect(oldJson.containsKey('startingAbilityOrigin'), false);
     expect(HeroCharacter.fromJson(oldJson).toJson(), oldJson);
-    expect(oldHero.copyWith(startingAbilityOrigin: soldier())
-        .copyWith(startingAbilityOrigin: null)
-        .toJson(), oldJson);
+    expect(
+      oldHero
+          .copyWith(startingAbilityOrigin: soldier())
+          .copyWith(startingAbilityOrigin: null)
+          .toJson(),
+      oldJson,
+    );
   });
 
   test('all three SRD methods accept faithful evidence', () {
     final point = StartingAbilityOrigin.confirmed(
       method: 'pointBuy',
       baseScores: {
-        'strength': 15, 'dexterity': 15, 'constitution': 15,
-        'intelligence': 8, 'wisdom': 8, 'charisma': 8,
+        'strength': 15,
+        'dexterity': 15,
+        'constitution': 15,
+        'intelligence': 8,
+        'wisdom': 8,
+        'charisma': 8,
       },
       background: 'Krimineller',
       increases: {'dexterity': 1, 'constitution': 1, 'intelligence': 1},
     );
     expect(point.startingScores['dexterity'], 16);
-    expect(StartingAbilityOrigin.fromJson(point.toJson()).toJson(), point.toJson());
+    expect(
+      StartingAbilityOrigin.fromJson(point.toJson()).toJson(),
+      point.toJson(),
+    );
     final random = StartingAbilityOrigin.confirmed(
       method: 'randomRoll',
       baseScores: {
-        'strength': 18, 'dexterity': 15, 'constitution': 12,
-        'intelligence': 9, 'wisdom': 6, 'charisma': 3,
+        'strength': 18,
+        'dexterity': 15,
+        'constitution': 12,
+        'intelligence': 9,
+        'wisdom': 6,
+        'charisma': 3,
       },
       background: 'Soldat',
       increases: {'strength': 1, 'dexterity': 1, 'constitution': 1},
       diceRolls: [
-        [6, 6, 6, 1], [5, 5, 5, 1], [4, 4, 4, 1],
-        [3, 3, 3, 1], [2, 2, 2, 1], [1, 1, 1, 1],
+        [6, 6, 6, 1],
+        [5, 5, 5, 1],
+        [4, 4, 4, 1],
+        [3, 3, 3, 1],
+        [2, 2, 2, 1],
+        [1, 1, 1, 1],
       ],
     );
     expect(random.startingScores['strength'], 19);
-    expect(StartingAbilityOrigin.fromJson(random.toJson()).toJson(), random.toJson());
+    expect(
+      StartingAbilityOrigin.fromJson(random.toJson()).toJson(),
+      random.toJson(),
+    );
     expect(() => random.diceRolls.first[0] = 1, throwsUnsupportedError);
   });
 
@@ -89,46 +118,94 @@ void main() {
     final malformed = <Map<String, dynamic>>[
       {...good, 'version': 2},
       {...good, 'method': 'dice-cheat'},
-      {...good, 'baseScores': {...original, 'luck': 9}},
-      {...good, 'baseScores': {...original}..remove('wisdom')},
-      {...good, 'increases': {'strength': 2, 'dexterity': 2}},
+      {
+        ...good,
+        'baseScores': {...original, 'luck': 9},
+      },
+      {
+        ...good,
+        'baseScores': {...original}..remove('wisdom'),
+      },
+      {
+        ...good,
+        'increases': {'strength': 2, 'dexterity': 2},
+      },
       {...good, 'background': 'Freier Hintergrund'},
-      {...good, 'diceRolls': [[6, 6, 6, 6]]},
+      {
+        ...good,
+        'diceRolls': [
+          [6, 6, 6, 6],
+        ],
+      },
       {...good, 'method': 'randomRoll', 'diceRolls': []},
-      {...good, 'method': 'pointBuy'},
+      {...good, 'method': 'pointBuy', 'baseScores': {...original, 'strength': 16}},
     ];
     for (final entry in malformed) {
-      expect(() => StartingAbilityOrigin.fromJson(entry), throwsFormatException);
+      expect(
+        () => StartingAbilityOrigin.fromJson(entry),
+        throwsFormatException,
+      );
     }
     final validRoll = StartingAbilityOrigin.confirmed(
       method: 'randomRoll',
       baseScores: {
-        'strength': 18, 'dexterity': 15, 'constitution': 12,
-        'intelligence': 9, 'wisdom': 6, 'charisma': 3,
+        'strength': 18,
+        'dexterity': 15,
+        'constitution': 12,
+        'intelligence': 9,
+        'wisdom': 6,
+        'charisma': 3,
       },
       background: 'Soldat',
       increases: {'strength': 1, 'dexterity': 1, 'constitution': 1},
       diceRolls: [
-        [6, 6, 6, 1], [5, 5, 5, 1], [4, 4, 4, 1],
-        [3, 3, 3, 1], [2, 2, 2, 1], [1, 1, 1, 1],
+        [6, 6, 6, 1],
+        [5, 5, 5, 1],
+        [4, 4, 4, 1],
+        [3, 3, 3, 1],
+        [2, 2, 2, 1],
+        [1, 1, 1, 1],
       ],
     ).toJson();
     for (final alteration in [
-      {...validRoll, 'diceRolls': [[6, 6, 6, 8]]},
-      {...validRoll, 'diceRolls': [[6, 6, 6, 1]]},
-      {...validRoll, 'diceRolls': [
-        [6, 6, 6, 1], [5, 5, 5, 1], [4, 4, 4, 1],
-        [3, 3, 3, 1], [2, 2, 2, 1], [1, 1, 1, 6],
-      ]},
+      {
+        ...validRoll,
+        'diceRolls': [
+          [6, 6, 6, 8],
+        ],
+      },
+      {
+        ...validRoll,
+        'diceRolls': [
+          [6, 6, 6, 1],
+        ],
+      },
+      {
+        ...validRoll,
+        'diceRolls': [
+          [6, 6, 6, 1],
+          [5, 5, 5, 1],
+          [4, 4, 4, 1],
+          [3, 3, 3, 1],
+          [2, 2, 2, 1],
+          [1, 1, 1, 6],
+        ],
+      },
     ]) {
-      expect(() => StartingAbilityOrigin.fromJson(alteration), throwsFormatException);
+      expect(
+        () => StartingAbilityOrigin.fromJson(alteration),
+        throwsFormatException,
+      );
     }
   });
 
   test('invalid payload cannot enter HeroCharacter by JSON', () {
-    final json = HeroCharacter(id: 'test', name: 'Tester')
-        .copyWith(startingAbilityOrigin: soldier()).toJson();
-    (json['startingAbilityOrigin'] as Map<String, dynamic>)['method'] = 'invalid';
+    final json = HeroCharacter(
+      id: 'test',
+      name: 'Tester',
+    ).copyWith(startingAbilityOrigin: soldier()).toJson();
+    (json['startingAbilityOrigin'] as Map<String, dynamic>)['method'] =
+        'invalid';
     expect(() => HeroCharacter.fromJson(json), throwsFormatException);
   });
 }

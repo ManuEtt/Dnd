@@ -413,49 +413,50 @@ END
     },
   );
 
-  test('confirmed 4W6 provenance survives SQLite restart and JSON export', () async {
-    const throws = <List<int>>[
-      [6, 6, 6, 1], [5, 5, 5, 1], [4, 4, 4, 1],
-      [3, 3, 3, 1], [2, 2, 2, 1], [1, 1, 1, 1],
-    ];
-    final origin = StartingAbilityOrigin.confirmed(
-      method: 'randomRoll',
-      baseScores: {
-        'strength': 18,
-        'dexterity': 15,
-        'constitution': 12,
-        'intelligence': 9,
-        'wisdom': 6,
-        'charisma': 3,
-      },
-      background: 'Soldat',
-      increases: {
-        'strength': 1,
-        'dexterity': 1,
-        'constitution': 1,
-      },
-      diceRolls: throws,
-    );
-    final hero = HeroCharacter(
-      id: 'provenance-hero',
-      name: 'Würfelheld',
-      background: 'Soldat',
-      abilities: origin.startingScores,
-      startingAbilityOrigin: origin,
-    );
-    await controller.saveStandaloneHero(hero);
-    expect(controller.error, isNull);
-    await restartController();
-    final saved = controller.characters.single;
-    expect(saved.startingAbilityOrigin!.diceRolls, throws);
-    expect(saved.startingAbilityOrigin!.baseScores['strength'], 18);
-    expect(saved.abilities['strength'], 19);
-    final exported = controller.exportHero(saved);
-    await controller.deleteCharacter(hero.id);
-    await controller.importHero(exported);
-    expect(controller.error, isNull);
-    expect(controller.characters.single.toJson(), hero.toJson());
-  });
-
-
+  test(
+    'confirmed 4W6 provenance survives SQLite restart and JSON export',
+    () async {
+      const throws = <List<int>>[
+        [6, 6, 6, 1],
+        [5, 5, 5, 1],
+        [4, 4, 4, 1],
+        [3, 3, 3, 1],
+        [2, 2, 2, 1],
+        [1, 1, 1, 1],
+      ];
+      final origin = StartingAbilityOrigin.confirmed(
+        method: 'randomRoll',
+        baseScores: {
+          'strength': 18,
+          'dexterity': 15,
+          'constitution': 12,
+          'intelligence': 9,
+          'wisdom': 6,
+          'charisma': 3,
+        },
+        background: 'Soldat',
+        increases: {'strength': 1, 'dexterity': 1, 'constitution': 1},
+        diceRolls: throws,
+      );
+      final hero = HeroCharacter(
+        id: 'provenance-hero',
+        name: 'Würfelheld',
+        background: 'Soldat',
+        abilities: origin.startingScores,
+        startingAbilityOrigin: origin,
+      );
+      await controller.saveStandaloneHero(hero);
+      expect(controller.error, isNull);
+      await restartController();
+      final saved = controller.characters.single;
+      expect(saved.startingAbilityOrigin!.diceRolls, throws);
+      expect(saved.startingAbilityOrigin!.baseScores['strength'], 18);
+      expect(saved.abilities['strength'], 19);
+      final exported = controller.exportHero(saved);
+      await controller.deleteCharacter(hero.id);
+      await controller.importHero(exported);
+      expect(controller.error, isNull);
+      expect(controller.characters.single.toJson(), hero.toJson());
+    },
+  );
 }

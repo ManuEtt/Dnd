@@ -26,7 +26,14 @@ class StartingAbilityOrigin {
   ];
   static const _standard = <int>[15, 14, 13, 12, 10, 8];
   static const _prices = <int, int>{
-    8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5, 14: 7, 15: 9,
+    8: 0,
+    9: 1,
+    10: 2,
+    11: 3,
+    12: 4,
+    13: 5,
+    14: 7,
+    15: 9,
   };
   static const _backgrounds = <String, List<String>>{
     'Akolyth': ['intelligence', 'wisdom', 'charisma'],
@@ -65,13 +72,16 @@ class StartingAbilityOrigin {
     if (raw is! Map ||
         raw.keys.any((key) => key is! String) ||
         raw.values.any((value) => value is! int)) {
-      throw FormatException('$label muss gültige ganze Attributswerte enthalten.');
+      throw FormatException(
+        '$label muss gültige ganze Attributswerte enthalten.',
+      );
     }
     return Map<String, int>.from(raw);
   }
 
   factory StartingAbilityOrigin.fromJson(Map<String, dynamic> json) {
-    if (json['version'] != 1 || json['method'] is! String ||
+    if (json['version'] != 1 ||
+        json['method'] is! String ||
         json['background'] is! String) {
       throw const FormatException('Unbekannte Attribut-Herkunftsversion.');
     }
@@ -81,7 +91,8 @@ class StartingAbilityOrigin {
     }
     final dice = <List<int>>[];
     for (final roll in rolls) {
-      if (roll is! List || roll.length != 4 ||
+      if (roll is! List ||
+          roll.length != 4 ||
           roll.any((value) => value is! int || value < 1 || value > 6)) {
         throw const FormatException('Ein Wurf benötigt vier gültige W6.');
       }
@@ -116,23 +127,28 @@ class StartingAbilityOrigin {
         final actual = baseScores.values.toList()..sort();
         final expected = _standard.toList()..sort();
         if (!_same(actual, expected) || diceRolls.isNotEmpty) {
-          throw const FormatException('Ungültiger Standardsatz oder Wurfbeleg.');
+          throw const FormatException(
+            'Ungültiger Standardsatz oder Wurfbeleg.',
+          );
         }
         break;
       case 'pointBuy':
         if (diceRolls.isNotEmpty ||
             baseScores.values.any((value) => !_prices.containsKey(value)) ||
             baseScores.values.fold<int>(
-              0, (sum, value) => sum + (_prices[value] ?? 100),
-            ) > 27) {
+                  0,
+                  (sum, value) => sum + (_prices[value] ?? 100),
+                ) >
+                27) {
           throw const FormatException('Ungültiger 27-Punkte-Kauf.');
         }
         break;
       case 'randomRoll':
         if (diceRolls.length != 6 ||
-            diceRolls.any((roll) =>
-              roll.length != 4 ||
-              roll.any((die) => die < 1 || die > 6))) {
+            diceRolls.any(
+              (roll) =>
+                  roll.length != 4 || roll.any((die) => die < 1 || die > 6),
+            )) {
           throw const FormatException('Es fehlen sechs gültige 4W6-Würfe.');
         }
         final actual = baseScores.values.toList()..sort();
@@ -141,11 +157,15 @@ class StartingAbilityOrigin {
           return sorted.skip(1).fold<int>(0, (sum, die) => sum + die);
         }).toList()..sort();
         if (!_same(actual, expected)) {
-          throw const FormatException('Attributwerte passen nicht zu den Würfen.');
+          throw const FormatException(
+            'Attributwerte passen nicht zu den Würfen.',
+          );
         }
         break;
       default:
-        throw const FormatException('Unbekannte Methode zur Attributerzeugung.');
+        throw const FormatException(
+          'Unbekannte Methode zur Attributerzeugung.',
+        );
     }
 
     final eligible = _backgrounds[background];

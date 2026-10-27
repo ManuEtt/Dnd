@@ -486,11 +486,7 @@ void main() {
         'charisma': 8,
       },
       background: 'Soldat',
-      increases: {
-        'strength': 1,
-        'dexterity': 1,
-        'constitution': 1,
-      },
+      increases: {'strength': 1, 'dexterity': 1, 'constitution': 1},
     ).toJson();
     expect(saved!.toJson(), expected);
     expect(saved!.startingAbilityOrigin!.baseScores['strength'], 15);
