@@ -89,7 +89,10 @@ void main() {
   test('identical prior-session event remains idempotent after session change', () {
     final seed = _seed();
     final update = engine.act(seed, 'Ich bleibe beim Brunnen.');
-    final later = update.campaign.copyWith(sessionId: 'session-two');
+    final later = Campaign.fromJson({
+      ...update.campaign.toJson(),
+      'sessionId': 'session-two',
+    });
     final before = jsonEncode(later.toJson());
 
     // This is already in the saved history: replay must not reject it merely
