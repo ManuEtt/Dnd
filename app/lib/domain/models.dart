@@ -1,5 +1,6 @@
 import 'srd_equipment_catalog.dart';
 import 'starting_ability_origin.dart';
+import 'srd_background_package.dart';
 import 'inventory_item_stats.dart';
 export 'inventory_item_stats.dart';
 import 'condition_rules.dart';
@@ -164,6 +165,7 @@ class HeroCharacter {
     this.portraitPhotoBase64 = '',
     Map<String, int?>? abilities,
     this.startingAbilityOrigin,
+    this.startingBackgroundPackage,
     this.hitPoints,
     this.maxHitPoints,
     this.temporaryHitPoints = 0,
@@ -241,6 +243,9 @@ class HeroCharacter {
 
   /// Initial confirmed choice only, not a claim about later level-up scores.
   final StartingAbilityOrigin? startingAbilityOrigin;
+
+  /// Explicit one-time initial background gear/tool/skill choice.
+  final SrdBackgroundPackageChoice? startingBackgroundPackage;
   final int? hitPoints, maxHitPoints, armorClass, speed;
 
   static int _readSpeedRemainder(dynamic raw) {
@@ -328,6 +333,7 @@ class HeroCharacter {
     String? portraitPhotoBase64,
     Map<String, int?>? abilities,
     Object? startingAbilityOrigin = _unchanged,
+    Object? startingBackgroundPackage = _unchanged,
     Object? hitPoints = _unchanged,
     Object? maxHitPoints = _unchanged,
     int? temporaryHitPoints,
@@ -381,6 +387,9 @@ class HeroCharacter {
     startingAbilityOrigin: identical(startingAbilityOrigin, _unchanged)
         ? this.startingAbilityOrigin
         : startingAbilityOrigin as StartingAbilityOrigin?,
+    startingBackgroundPackage: identical(startingBackgroundPackage, _unchanged)
+        ? this.startingBackgroundPackage
+        : startingBackgroundPackage as SrdBackgroundPackageChoice?,
     hitPoints: identical(hitPoints, _unchanged)
         ? this.hitPoints
         : hitPoints as int?,
@@ -446,6 +455,8 @@ class HeroCharacter {
     'abilities': abilities,
     if (startingAbilityOrigin != null)
       'startingAbilityOrigin': startingAbilityOrigin!.toJson(),
+    if (startingBackgroundPackage != null)
+      'startingBackgroundPackage': startingBackgroundPackage!.toJson(),
     'hitPoints': hitPoints,
     'maxHitPoints': maxHitPoints,
     if (temporaryHitPoints > 0) 'temporaryHitPoints': temporaryHitPoints,
@@ -750,6 +761,11 @@ class HeroCharacter {
           ? null
           : StartingAbilityOrigin.fromJson(
               _map(j['startingAbilityOrigin'], 'Attribut-Herkunft'),
+            ),
+      startingBackgroundPackage: j['startingBackgroundPackage'] == null
+          ? null
+          : SrdBackgroundPackageChoice.fromJson(
+              _map(j['startingBackgroundPackage'], 'Hintergrundpaket'),
             ),
       hitPoints: hp,
       maxHitPoints: maxHp,
@@ -1440,6 +1456,7 @@ class Encounter {
     this.surgeReserved = false,
     this.surgeUsedThisTurn = false,
     this.sneakAttackUsedThisTurn = false,
+    this.savageAttackerUsedThisTurn = false,
     this.rageUntilRound = 0,
     this.rageStartedRound = 0,
     this.selfRestorationChoice = '',
@@ -1500,6 +1517,10 @@ class Encounter {
   /// A Sneak Attack may be used once per turn, including extra Attack actions.
   final bool sneakAttackUsedThisTurn;
 
+  /// Confirmed Savage Attacker is expendable once per own turn.
+  /// Older schema-1 saves omit this flag and remain unspent.
+  final bool savageAttackerUsedThisTurn;
+
   /// Rage ends at the end of this hero turn unless extended by a qualifying act.
   /// Zero means no active Rage. The start round imposes the 100-round limit.
   final int rageUntilRound, rageStartedRound;
@@ -1539,6 +1560,7 @@ class Encounter {
     bool? surgeReserved,
     bool? surgeUsedThisTurn,
     bool? sneakAttackUsedThisTurn,
+    bool? savageAttackerUsedThisTurn,
     int? rageUntilRound,
     int? rageStartedRound,
     String? selfRestorationChoice,
@@ -1586,6 +1608,8 @@ class Encounter {
     surgeUsedThisTurn: surgeUsedThisTurn ?? this.surgeUsedThisTurn,
     sneakAttackUsedThisTurn:
         sneakAttackUsedThisTurn ?? this.sneakAttackUsedThisTurn,
+    savageAttackerUsedThisTurn:
+        savageAttackerUsedThisTurn ?? this.savageAttackerUsedThisTurn,
     rageUntilRound: rageUntilRound ?? this.rageUntilRound,
     rageStartedRound: rageStartedRound ?? this.rageStartedRound,
     selfRestorationChoice: selfRestorationChoice ?? this.selfRestorationChoice,
@@ -1632,6 +1656,7 @@ class Encounter {
     if (surgeReserved) 'surgeReserved': true,
     if (surgeUsedThisTurn) 'surgeUsedThisTurn': true,
     if (sneakAttackUsedThisTurn) 'sneakAttackUsedThisTurn': true,
+    if (savageAttackerUsedThisTurn) 'savageAttackerUsedThisTurn': true,
     if (rageUntilRound > 0) 'rageUntilRound': rageUntilRound,
     if (rageStartedRound > 0) 'rageStartedRound': rageStartedRound,
     if (selfRestorationChoice.isNotEmpty)
@@ -1858,6 +1883,10 @@ class Encounter {
       sneakAttackUsedThisTurn: _bool(
         j['sneakAttackUsedThisTurn'],
         'Hinterhältiger Angriff bereits genutzt',
+      ),
+      savageAttackerUsedThisTurn: _bool(
+        j['savageAttackerUsedThisTurn'],
+        'Wilder Angreifer bereits genutzt',
       ),
       rageUntilRound: rageEnd,
       rageStartedRound: rageStart,

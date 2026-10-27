@@ -4,6 +4,7 @@ import 'models.dart';
 import 'condition_rules.dart';
 import 'death_saving_throw_rules.dart';
 import 'fighter_style_combat_rules.dart';
+import 'srd_alert_origin_rules.dart';
 
 class AttackOutcome {
   const AttackOutcome({required this.hit, required this.critical});
@@ -41,7 +42,11 @@ class RulesEngine {
       ExhaustionRules.d20Modifier(hero);
 
   static int initiativeBonus(HeroCharacter hero) =>
-      _ability(hero, 'dexterity') + ExhaustionRules.d20Modifier(hero);
+      _ability(hero, 'dexterity') +
+      (SrdAlertOriginRules.hasInitiativeProficiency(hero)
+          ? proficiencyBonus(hero.level)
+          : 0) +
+      ExhaustionRules.d20Modifier(hero);
 
   static int initiative(HeroCharacter hero) => initiativeBonus(hero);
 

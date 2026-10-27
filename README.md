@@ -1,18 +1,8 @@
-> **Charakterattribute (27.10.2026):** Auf dem gestapelten
-> Entwicklungsbranch werden bestätigte Basiswerte, Erzeugungsmethode,
-> Herkunftsbonus und gegebenenfalls 24 Würfelzahlen als optionale,
-> versionierte Helden-Provenienz gespeichert. Die gesamte
-> Charaktererstellung ist weiterhin unvollständig; finale CI dieses
-> Pakets und Realgerätetest ausstehend.
-> [Teilabdeckung](docs/CHARACTER_CREATION_COMPLETE.md).
-
-> **Charaktererstellung (26.10.2026):** Die offizielle 4W6-Methode
-> einschließlich expliziter Zuordnung wurde als [Draft-PR #264](https://github.com/ManuEtt/Dnd/pull/264)
-> ergänzt. Weitere Pflichtfunktionen fehlen weiterhin; Tests und Android-APK
-> für den finalen PR-Head sind erst nach grüner CI bestätigt.
-> [Aktuelle Teilabdeckung](docs/CHARACTER_CREATION_COMPLETE.md).
-
 # Würfelraunen – Der lebendige Spielleiter
+
+## Charaktererstellung – Integrationskandidat (27.10.2026)
+
+Die gestapelte SRD-5.2.1-Entwicklung aus [#264](https://github.com/ManuEtt/Dnd/pull/264), [#272](https://github.com/ManuEtt/Dnd/pull/272), [#273](https://github.com/ManuEtt/Dnd/pull/273) und [#275](https://github.com/ManuEtt/Dnd/pull/275) ist gemeinsam in einem **Integrationsbranch** vorbereitet: 4W6-Würfelzuordnung; explizit bestätigte, versionierte Startattribut-Herkunft; vier Hintergrundpakete mit Werkzeug-/Fertigkeitsauswahl und A-/B-Ausrüstung; Akolythenauswahl aus drei geprüften Heiligen Symbolen. Die Einzelbranch-CIs sind grün, die **gemeinsame Main-Integration und Android-Geräteabnahme** müssen separat erfolgen. Herkunftstalentwirkungen, Magic-Initiate-Zauberwahl und vollständige SRD-Charaktererstellung fehlen weiterhin. [Integrationsbeleg](docs/CHARACTER_STACK_INTEGRATION_20261027.md).
 
 ## Chat B – Fortsetzung einer expliziten NPC-Auswahl nach Neustart (26.10.2026)
 

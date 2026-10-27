@@ -242,6 +242,14 @@ class CharacterRuleEngine {
     if (ClassResourceRules.level(hero, 'Barbar') >= 5 && !heavy) {
       bonusMeters += 3; // Fast Movement, 10 feet.
     }
+    // Ranger 6 (Roving): +10 ft only without Heavy armor. An unknown
+    // equipped catalog item must not be assumed to be light armor.
+    final armorConfirmed = hero.equippedArmorId.isEmpty || equipped != null;
+    if (ClassResourceRules.level(hero, 'Waldläufer') >= 6 &&
+        armorConfirmed &&
+        !heavy) {
+      bonusMeters += 3;
+    }
     final monk = ClassResourceRules.level(hero, 'Mönch');
     if (monk >= 2 &&
         hero.equippedArmorId.isEmpty &&
@@ -253,6 +261,21 @@ class CharacterRuleEngine {
 
   static int? movementWholeMeters(HeroCharacter hero) =>
       speedMeters(hero)?.floor();
+
+  /// SRD 5.2.1 Ranger 6 (Roving): both movement types match the effective
+  /// Speed, including exhaustion, conditions and verified armor penalties.
+  /// Heavy armor stops only the +10-foot bonus, not these two speeds.
+  /// Null means the character has no confirmed Roving speed from this class;
+  /// it does not assert they lack climb/swim speeds from other sources.
+  static double? rovingClimbSpeedMeters(HeroCharacter hero) =>
+      ClassResourceRules.level(hero, 'Waldläufer') < 6
+      ? null
+      : speedMeters(hero);
+
+  static double? rovingSwimSpeedMeters(HeroCharacter hero) =>
+      ClassResourceRules.level(hero, 'Waldläufer') < 6
+      ? null
+      : speedMeters(hero);
 
   /// Other optional equipment effects are left explicit, never invented.
   static bool _untrainedArmor(HeroCharacter hero) =>

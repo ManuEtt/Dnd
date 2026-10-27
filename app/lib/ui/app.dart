@@ -18,6 +18,8 @@ import '../domain/acid_splash_rules.dart';
 import '../domain/healing_spell_rules.dart';
 import '../domain/saving_throw_class_actions.dart';
 import '../domain/class_resource_rules.dart';
+import '../domain/srd_terrain_movement_rules.dart';
+import '../domain/prone_movement_rules.dart';
 import '../domain/monk_flurry_rules.dart';
 import '../domain/monk_self_restoration.dart';
 import '../services/backup_files.dart';
@@ -37,6 +39,7 @@ import 'confirmed_spell_effect_dialog.dart';
 import 'sending_attempt_dialog.dart';
 import 'experience_reward_dialog.dart';
 import 'hero_shield_reaction_dialog.dart';
+import 'monk_slow_fall_dialog.dart';
 import '../domain/hero_shield_reaction_rules.dart';
 import 'magic_missile_dialog.dart';
 import 'fire_bolt_dialog.dart';
@@ -1575,6 +1578,61 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previous);
   }
 
+  Future<void> _confirmSlowFall() async {
+    final campaign = widget.controller.currentCampaign;
+    final encounter = campaign?.encounter;
+    if (campaign == null ||
+        encounter == null ||
+        !_canInteract ||
+        encounter.isFinished ||
+        encounter.reactionUsed ||
+        ClassResourceRules.level(campaign.hero, 'Mönch') < 4) {
+      return;
+    }
+    final choice = await showDialog<ConfirmedSlowFallChoice>(
+      context: context,
+      builder: (_) =>
+          MonkSlowFallDialog(hero: campaign.hero, encounter: encounter),
+    );
+    if (choice == null || !mounted) return;
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    // Use the exact revision and encounter captured BEFORE opening the
+    // dialog. The controller rejects stale choices after concurrent changes.
+    await widget.controller.applyConfirmedSlowFall(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      encounterId: encounter.id,
+      confirmedFallDamage: choice.damageAfterDefenses,
+      fallConfirmed: true,
+      playerConfirmedReaction: true,
+      damageAfterOtherDefensesConfirmed: true,
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
+  Future<void> _moveOnConfirmedTerrain(
+    SrdTerrainMovement kind,
+    int distanceFeet,
+    bool difficultTerrain,
+  ) async {
+    final campaign = widget.controller.currentCampaign;
+    if (campaign == null || _ruleInteractionBlocked) return;
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    await widget.controller.moveOnConfirmedTerrain(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      kind: kind,
+      distanceFeet: distanceFeet,
+      difficultTerrain: difficultTerrain,
+      terrainConfirmed: true,
+      // Popup entries explicitly cover ordinary passable terrain, not
+      // slippery walls, dangerous currents or an unresolved Athletics check.
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
   Future<void> _manageConfirmedSpellEffects() async {
     final campaign = widget.controller.currentCampaign;
     if (campaign == null || _ruleInteractionBlocked) return;
@@ -2259,6 +2317,64 @@ class _AdventurePageState extends State<_AdventurePage> {
                       ),
                     ),
                   ),
+                if (campaign.encounter != null &&
+                    !campaign.encounter!.isFinished &&
+                    !campaign.hero.conditions.contains('liegend'))
+                  for (final kind in SrdTerrainMovement.values)
+                    PopupMenuButton<int>(
+                      key: ValueKey('adventure-terrain-${kind.name}'),
+                      tooltip:
+                          'Bestätigte Strecke und passierbares Gelände wählen',
+                      enabled:
+                          !_ruleInteractionBlocked &&
+                          campaign.pendingRoll == null &&
+                          campaign.pendingDeathSave == null &&
+                          campaign.pendingEnemyShieldHit == null &&
+                          campaign.pendingOpportunityAttack == null &&
+                          !campaign.hero.isDead &&
+                          (campaign.hero.hitPoints ?? 0) > 0 &&
+                          campaign.encounter!.activeParticipant == 'hero',
+                      onSelected: (value) => _moveOnConfirmedTerrain(
+                        kind,
+                        value >= 100 ? value - 100 : value,
+                        value >= 100,
+                      ),
+                      itemBuilder: (_) => [
+                        for (final distance in [5, 10])
+                          for (final difficult in [false, true])
+                            PopupMenuItem<int>(
+                              value: distance + (difficult ? 100 : 0),
+                              child: Text(
+                                '${distance * 0.3} m ${kind == SrdTerrainMovement.climb ? 'klettern' : 'schwimmen'} '
+                                '(${difficult ? 'schwieriges' : 'normales'} Gelände, '
+                                '${ProneMovementRules.formatDecimeters(SrdTerrainMovementRules.costDecimeters(campaign.hero, kind: kind, distanceFeet: distance, difficultTerrain: difficult))} Verbrauch)',
+                              ),
+                            ),
+                      ],
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 8,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              kind == SrdTerrainMovement.climb
+                                  ? Icons.terrain_outlined
+                                  : Icons.pool_outlined,
+                              size: 17,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              kind == SrdTerrainMovement.climb
+                                  ? 'Klettern'
+                                  : 'Schwimmen',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                 FantasyTextButton(
                   key: const ValueKey('adventure-manage-spell-effects'),
                   onPressed:
@@ -2337,6 +2453,26 @@ class _AdventurePageState extends State<_AdventurePage> {
                     icon: Icons.pause_circle_outline,
                     style: FantasyButtonStyle.iron,
                     label: 'Gegnerbewegung bestätigen',
+                  ),
+                if (campaign.encounter != null &&
+                    !campaign.encounter!.isFinished &&
+                    ClassResourceRules.level(campaign.hero, 'Mönch') >= 4)
+                  FantasyTextButton(
+                    key: const ValueKey('adventure-monk-slow-fall'),
+                    onPressed:
+                        !_canInteract ||
+                            campaign.pendingRoll != null ||
+                            campaign.pendingDeathSave != null ||
+                            campaign.pendingEnemyShieldHit != null ||
+                            campaign.encounter!.reactionUsed ||
+                            campaign.hero.isDead ||
+                            (campaign.hero.hitPoints ?? 0) <= 0 ||
+                            !ConditionRules.canTakeActions(campaign.hero)
+                        ? null
+                        : _confirmSlowFall,
+                    icon: Icons.airline_stops_outlined,
+                    style: FantasyButtonStyle.iron,
+                    label: 'Sanfter Fall',
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished)

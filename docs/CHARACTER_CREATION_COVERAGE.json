@@ -4,15 +4,15 @@
   "source_url": "https://www.dndbeyond.com/srd",
   "source_section": "Character Creation, p. 21; Classes; Character Origins",
   "license": "CC-BY-4.0",
-  "as_of": "2026-10-26",
+  "as_of": "2026-10-27",
   "baseline_main_sha": "08bcd4dda585224c2ca8671786adecaf263d736c",
-  "pr": 264,
+  "pr": 273,
   "coverage_complete": false,
   "all_required_choices_covered": false,
   "android_device_tested": false,
   "ci_final_head_verified": false,
   "existing_requirement_registers_unchanged": true,
-  "status_note": "Code- und Testdateien im Branch; Tests erst nach erfolgreicher CI als bestanden kennzeichnen. Keine Gesamt-SRD-Abdeckungsquote.",
+  "status_note": "Entwicklungspaket 3 im gestapelten PR #273: Hintergründe/Ausrüstung/Übungen und verbuchte Talente; Talent-Regelwirkung offen. CI für #273 bis zur finalen Abnahme ausstehend.",
   "requirements": [
     {
       "id": "CHAR-ABILITY-STANDARD-ARRAY",
@@ -150,6 +150,24 @@
       ],
       "ui": [],
       "tests": []
+    },
+    {
+      "id": "CHAR-BACKGROUND-PACKAGE-CHOICES",
+      "title": "Vier Herkunfts-Startpakete mit A/B-Ausrüstung, zwei Fertigkeiten und Werkzeugübungen",
+      "status": "implemented_ci_pending",
+      "source": "SRD 5.2.1 Character Origins / Character Backgrounds",
+      "code": [
+        "app/lib/domain/srd_background_package.dart",
+        "app/lib/domain/models.dart"
+      ],
+      "ui": [
+        "app/lib/ui/srd_background_package_dialog.dart",
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_background_package_test.dart",
+        "app/test/srd_background_package_dialog_test.dart"
+      ]
     }
   ],
   "classes": [
@@ -292,6 +310,6 @@
       "complete": false
     }
   ],
-  "scope_note": "Optionale versionierte Initial-Provenienz vorhanden, vollständiges revisionssicheres Historienjournal fehlt.",
-  "next_task": "Vollständige vier SRD-Hintergrundpakete (Übungen, Ursprungstalent, Ausrüstung) und zugehörige UI mit Tests."
+  "scope_note": "Talentnamen und Herkunftsübungen werden vermerkt; Auswirkungen der Talente und Magic-Initiate-Zauber sind nicht automatisiert.",
+  "next_task": "Herkunftstalente Alert/Savage Attacker und Magic Initiate mit Spell-Choices mechanisch und persistiert absichern."
 }

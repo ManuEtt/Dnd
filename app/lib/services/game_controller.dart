@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import '../data/campaign_repository.dart';
 import '../domain/game_engine.dart';
+import '../domain/srd_terrain_movement_rules.dart';
 import '../domain/ai_story.dart';
 import '../domain/models.dart';
 import '../domain/acid_splash_rules.dart';
@@ -745,6 +746,57 @@ class GameController extends ChangeNotifier {
         current,
         distanceFeet: distanceFeet,
         difficultTerrain: difficultTerrain,
+      ),
+    );
+  });
+
+  /// A confirmed, already-resolved fall invokes Monk 4 Slow Fall.
+  /// Revision and campaign IDs are checked before computing a rule update.
+  /// The repository writes HP, Reaction, event and revision atomically.
+  Future<void> applyConfirmedSlowFall({
+    required String campaignId,
+    required int expectedRevision,
+    required String encounterId,
+    required int confirmedFallDamage,
+    required bool fallConfirmed,
+    required bool playerConfirmedReaction,
+    required bool damageAfterOtherDefensesConfirmed,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.applyConfirmedSlowFall(
+        current,
+        encounterId: encounterId,
+        confirmedFallDamage: confirmedFallDamage,
+        fallConfirmed: fallConfirmed,
+        playerConfirmedReaction: playerConfirmedReaction,
+        damageAfterOtherDefensesConfirmed: damageAfterOtherDefensesConfirmed,
+      ),
+    );
+  });
+
+  /// Only an explicit player-confirmed terrain segment; no AI text can
+  /// submit movement or claim an Athletics result through this endpoint.
+  Future<void> moveOnConfirmedTerrain({
+    required String campaignId,
+    required int expectedRevision,
+    required SrdTerrainMovement kind,
+    required int distanceFeet,
+    required bool difficultTerrain,
+    required bool terrainConfirmed,
+    bool additionalCheckRequired = false,
+    bool additionalCheckPassedConfirmed = false,
+  }) => _run(() async {
+    final current = _effectCampaign(campaignId, expectedRevision);
+    await _commit(
+      engine.moveOnConfirmedTerrain(
+        current,
+        kind: kind,
+        distanceFeet: distanceFeet,
+        difficultTerrain: difficultTerrain,
+        terrainConfirmed: terrainConfirmed,
+        additionalCheckRequired: additionalCheckRequired,
+        additionalCheckPassedConfirmed: additionalCheckPassedConfirmed,
       ),
     );
   });

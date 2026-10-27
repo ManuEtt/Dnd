@@ -1,3 +1,12 @@
+## 27.10.2026 – Zusätzliche Herkunftspakete (Stack-PR #273)
+
+Die vier SRD-Hintergründe erhalten ausdrücklich bestätigte
+Fertigkeits-/Werkzeugübungen und die Wahl zwischen ihrem
+A-Ausrüstungspaket und 50 GM. Die Attributerhöhungen werden
+**nicht erneut angewendet**. Herkunftstalente werden nur als
+noch nicht vollständig automatisierte Merkmale vermerkt.
+Siehe [Charaktererstellungs-Audit](CHARACTER_CREATION_COMPLETE.md).
+
 ## 27.10.2026 – Bestätigte Ausgangswerte dauerhaft zuordnen
 
 Mit dem neuen optionalen `HeroCharacter.startingAbilityOrigin` werden die

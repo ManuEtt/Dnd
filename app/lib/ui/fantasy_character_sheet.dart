@@ -4,6 +4,8 @@ import '../domain/character_rule_engine.dart';
 import '../domain/class_progression_rules.dart';
 import '../domain/class_feature_resources.dart';
 import '../domain/class_resource_rules.dart';
+import '../domain/srd_ranger_feral_senses_rules.dart';
+import '../domain/srd_monk_slow_fall_rules.dart';
 import '../domain/srd_class_feature_catalog.dart';
 import '../domain/models.dart';
 import '../domain/multiclass_rules.dart';
@@ -1110,6 +1112,13 @@ class _DefensesSection extends StatelessWidget {
             value:
                 '${ClassResourceRules.remaining(hero, 'indomitable')} / ${ClassResourceRules.maximum(hero, 'indomitable')}',
           ),
+        if (SrdMonkSlowFallRules.maximumReduction(hero) != null)
+          _DetailRow(
+            icon: Icons.airline_stops_outlined,
+            label: 'Sanfter Fall (Reaktion)',
+            value:
+                'Bis zu ${SrdMonkSlowFallRules.maximumReduction(hero)} Schaden verhindern',
+          ),
         _DetailRow(
           icon: Icons.directions_run,
           label: 'Bewegung (effektiv)',
@@ -1117,6 +1126,20 @@ class _DefensesSection extends StatelessWidget {
               ? 'Nicht erfasst'
               : '${_meters(CharacterRuleEngine.speedMeters(hero))} (Basis ${hero.speed} m)',
         ),
+        if (ClassResourceRules.level(hero, 'Waldläufer') >= 6)
+          _DetailRow(
+            icon: Icons.pool_outlined,
+            label: 'Roving: Klettern / Schwimmen',
+            value:
+                '${_meters(CharacterRuleEngine.rovingClimbSpeedMeters(hero))} / '
+                '${_meters(CharacterRuleEngine.rovingSwimSpeedMeters(hero))}',
+          ),
+        if (SrdRangerFeralSensesRules.blindsightRangeFeet(hero) != null)
+          _DetailRow(
+            icon: Icons.visibility_outlined,
+            label: 'Blindsicht (Feral Senses)',
+            value: '9 m (30 Fuß)',
+          ),
         _DetailRow(
           icon: Icons.gps_fixed,
           label: 'Angriffe pro Angriffsaktion',

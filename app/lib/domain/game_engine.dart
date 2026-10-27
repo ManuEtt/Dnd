@@ -7,6 +7,8 @@ import 'condition_effects.dart';
 import 'confirmed_spell_effects.dart';
 import 'prone_movement_rules.dart';
 import 'crawling_movement_rules.dart';
+import 'srd_terrain_movement_rules.dart';
+import 'srd_monk_slow_fall_rules.dart';
 import 'character_rule_engine.dart';
 import 'character_effect_rules.dart';
 import 'magic_missile_rules.dart';
@@ -975,6 +977,158 @@ class GameEngine {
         'targetId': campaign.hero.id,
         'distanceFeet': distanceFeet,
         'difficultTerrain': difficultTerrain,
+        'movementSpentDecimeters': cost,
+        'movementRemainingDecimeters': updated.remainingMovementDecimeters,
+      },
+    );
+  }
+
+  /// One confirmed fall while the hero has a free combat Reaction.
+  ///
+  /// The damage number is explicitly confirmed *after any other defenses*,
+  /// before Slow Fall. It is never read from narration or rolled here.
+  /// Any remaining damage uses the existing SRD HP/temp-HP/concentration
+  /// engine; this action commits the resulting hero and spent Reaction together.
+  GameUpdate applyConfirmedSlowFall(
+    Campaign campaign, {
+    required String encounterId,
+    required int confirmedFallDamage,
+    required bool fallConfirmed,
+    required bool playerConfirmedReaction,
+    required bool damageAfterOtherDefensesConfirmed,
+  }) {
+    final fight = campaign.encounter;
+    if (fight == null ||
+        fight.id != encounterId ||
+        fight.isFinished ||
+        !damageAfterOtherDefensesConfirmed ||
+        campaign.pendingRoll != null ||
+        campaign.pendingDeathSave != null ||
+        campaign.pendingEnemyShieldHit != null) {
+      throw const FormatException(
+        'Sanfter Fall braucht einen laufenden Kampf ohne offene Würfe '
+        'und bestätigten Sturzschaden nach anderen Schadensregeln.',
+      );
+    }
+    _ensureNoOpportunity(campaign);
+    final plan = SrdMonkSlowFallRules.previewConfirmedReaction(
+      campaign.hero,
+      confirmedFallDamage: confirmedFallDamage,
+      fallConfirmed: fallConfirmed,
+      reactionAvailable: !fight.reactionUsed,
+      reactionConfirmed: playerConfirmedReaction,
+      encounter: fight,
+    );
+    if (confirmedFallDamage > 100000) {
+      throw const FormatException(
+        'Der bestätigte Sturzschaden überschreitet die Regelgrenze.',
+      );
+    }
+
+    // Unmodelled damage defenses are not guessed twice. This value is
+    // explicitly the already resolved damage after such adjustments.
+    final applied = CharacterEffectRules.untypedDamage(
+      campaign.hero,
+      amount: plan.remainingDamage,
+      dice: dice,
+    );
+    final nextFight = _encounterAfterHeroChange(
+      campaign,
+      applied.hero,
+    )!.copyWith(reactionUsed: true);
+    return _commit(
+      campaign,
+      campaign.copyWith(hero: applied.hero, encounter: nextFight),
+      'Sanfter Fall: Du nutzt deine Reaktion und verringerst '
+      '${plan.confirmedFallDamage} bestätigten Sturzschaden um '
+      '${plan.preventedDamage}. Es verbleiben ${applied.damage} Schaden. '
+      '${applied.temporaryHitPointsAbsorbed} temporäre TP absorbiert; '
+      'TP ${applied.hero.hitPoints}/${applied.hero.maxHitPoints}.',
+      type: 'combat.slowFallResolved',
+      payload: {
+        'targetId': campaign.hero.id,
+        'encounterId': fight.id,
+        'round': fight.round,
+        'fallConfirmed': true,
+        'damageAfterOtherDefensesConfirmed': true,
+        'playerConfirmedReaction': true,
+        'monkClassLevel': plan.monkClassLevel,
+        'incomingFallDamage': plan.confirmedFallDamage,
+        'maxDamageReduction': plan.maximumReduction,
+        'damagePrevented': plan.preventedDamage,
+        'reactionUsed': true,
+        ...applied.toJson(),
+      },
+    );
+  }
+
+  /// One explicit climbing/swimming segment during a confirmed hero turn.
+  /// The terrain and distance cannot be sourced from free narrative text.
+  /// A slippery climb or rough water may require a separately resolved
+  /// Athletics check; this command never invents or rolls its outcome.
+  GameUpdate moveOnConfirmedTerrain(
+    Campaign campaign, {
+    required SrdTerrainMovement kind,
+    required int distanceFeet,
+    required bool difficultTerrain,
+    required bool terrainConfirmed,
+    bool additionalCheckRequired = false,
+    bool additionalCheckPassedConfirmed = false,
+  }) {
+    final fight = campaign.encounter;
+    if (fight == null || fight.isFinished) {
+      throw const FormatException(
+        'Klettern/Schwimmen ist nur in einem laufenden Kampf verfügbar.',
+      );
+    }
+    if (fight.activeParticipant != 'hero') {
+      throw const FormatException('Bewegung ist nur im eigenen Zug erlaubt.');
+    }
+    if (campaign.pendingRoll != null ||
+        campaign.pendingDeathSave != null ||
+        campaign.hero.isDead) {
+      throw const FormatException('Zuerst den offenen Wurf abschließen.');
+    }
+    _ensureNoOpportunity(campaign);
+    final updated = SrdTerrainMovementRules.spend(
+      fight,
+      campaign.hero,
+      kind: kind,
+      distanceFeet: distanceFeet,
+      difficultTerrain: difficultTerrain,
+      terrainConfirmed: terrainConfirmed,
+      additionalCheckRequired: additionalCheckRequired,
+      additionalCheckPassedConfirmed: additionalCheckPassedConfirmed,
+    ).copyWith(heroCover: CoverLevel.none);
+    final cost = SrdTerrainMovementRules.costDecimeters(
+      campaign.hero,
+      kind: kind,
+      distanceFeet: distanceFeet,
+      difficultTerrain: difficultTerrain,
+    );
+    final isClimbing = kind == SrdTerrainMovement.climb;
+    final label = isClimbing ? 'kletterst' : 'schwimmst';
+    return _commit(
+      campaign,
+      campaign.copyWith(encounter: updated),
+      'Du $label ${ProneMovementRules.formatDecimeters(distanceFeet * 3)}'
+      '${difficultTerrain ? ' durch schwieriges Gelände' : ''}. '
+      'Bewegungskosten: ${ProneMovementRules.formatDecimeters(cost)}. '
+      'Verbleibend: ${updated.movementRemainingLabel}. '
+      'Deine vorherige Deckungsposition ist nicht mehr bestätigt.',
+      type: isClimbing ? 'combat.climbed' : 'combat.swam',
+      payload: {
+        'targetId': campaign.hero.id,
+        'distanceFeet': distanceFeet,
+        'movementMode': kind.name,
+        'difficultTerrain': difficultTerrain,
+        'terrainConfirmed': true,
+        'additionalCheckRequired': additionalCheckRequired,
+        'additionalCheckPassedConfirmed': additionalCheckPassedConfirmed,
+        'specialSpeedApplied': SrdTerrainMovementRules.hasSpecialSpeed(
+          campaign.hero,
+          kind,
+        ),
         'movementSpentDecimeters': cost,
         'movementRemainingDecimeters': updated.remainingMovementDecimeters,
       },
@@ -4912,6 +5066,7 @@ class GameEngine {
         surgeReserved: false,
         surgeUsedThisTurn: false,
         sneakAttackUsedThisTurn: false,
+        savageAttackerUsedThisTurn: false,
         selfRestorationChoice: '',
       );
       return _EnemyTurn(
@@ -5164,6 +5319,9 @@ class GameEngine {
           surgeUsedThisTurn: anotherAttack ? foe.surgeUsedThisTurn : false,
           sneakAttackUsedThisTurn: anotherAttack
               ? foe.sneakAttackUsedThisTurn
+              : false,
+          savageAttackerUsedThisTurn: anotherAttack
+              ? foe.savageAttackerUsedThisTurn
               : false,
           selfRestorationChoice: anotherAttack ? foe.selfRestorationChoice : '',
         ),

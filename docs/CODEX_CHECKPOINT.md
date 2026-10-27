@@ -1,54 +1,11 @@
-## 27.10.2026 – Attribut-Herkunft speichern (Entwicklungspaket 2; CI offen)
+## 27.10.2026 – Integrationskandidat der Charaktererstellung #264/#272/#273/#275
 
-- **Basis:** grüner PR #264, Head `7305c16`, Lauf
-  [40396631673](https://github.com/ManuEtt/Dnd/actions/runs/40396631673);
-  noch **nicht in main**.
-- **Stack-Branch:** `feat/character-ability-origin-persistence-20261027`,
-  auf geprüftem 4W6-Branch. Nicht direkt gegen main mergen.
-- **Implementiert:** optionale immutable `startingAbilityOrigin` (Version 1)
-  mit ursprünglicher Methode, sechs Basisscores, Hintergrundbonus, 24 W6;
-  strikte Eingabe- und Importvalidierung; ausdrücklich bestätigte
-  Stufe-1-Wahl im Editor; keine automatische Rückwirkung auf alte Helden.
-- **Testdateien:** `starting_ability_origin_test.dart`,
-  `ability_storage_integration_test.dart`,
-  `ui_ability_assignment_test.dart`.
-- **Offene Abnahme:** aktuelle Branch-CI auf finalem Commit inklusive
-  Flutter-Analyse, gesamter Flutter-/Android-Suite und ARM64 APK. Realgerät
-  weiterhin separat offen. Bei Fehlern anhand tatsächlicher Logs beheben.
-- **Schema:** `HeroCharacter.schemaVersion=1`, Kampagnen-JSON 1,
-  SQLite 2 unverändert; Zusatzfeld im Hero-JSON optional.
-- **Grenze:** kein vollständiges, revisionssicheres Charakteränderungs-
-  journal; vollständige Charaktererstellung und SRD-Abdeckung fehlen.
-- **Nächstes Paket:** vier Hintergründe mit allen Übungen,
-  Herkunftstalenten und eindeutig bestätigten Ausrüstungsoptionen.
-- **Nachweis:** [Charaktererstellung](CHARACTER_CREATION_COMPLETE.md)
-  und [JSON-Abdeckung](CHARACTER_CREATION_COVERAGE.json).
-
----
-
-## 26.10.2026 – Charaktererstellung: 4W6-Attributmethode, Draft-PR #264
-
-- **Branch:** `feat/character-random-ability-rolls-20261026`;
-  [PR #264](https://github.com/ManuEtt/Dnd/pull/264).
-- **Implementiert:** Unveränderliche 4W6-Würfe, sechs Summen nach
-  Streichen des niedrigsten Würfels, unverfälschbare Verteilung,
-  explizite Zuordnung im deutschen Flutter-Assistenten.
-- **Tests geschrieben:** `ability_random_generation_test.dart`,
-  `ui_random_ability_assignment_test.dart`. **Bestanden:** bis zum
-  nächsten geprüften finalen Workflow-Lauf nicht nachgewiesen.
-- **Ungeprüft:** Gesamtsuite, Debug/ARM64-APK auf finalem Commit,
-  Realgerät/TalkBack. Keine lokale Flutter-/Dart-Toolchain verfügbar.
-- **Kompatibilität:** SQLite 2, Kampagnen-JSON 1 und Hero-Schema
-  unverändert; alte Speicherstände werden nicht neu berechnet.
-- **Offen:** Protokollierung von Basisattributen und Würfeln als
-  versionierte Provenienz; alle Hintergrund-Startmerkmale,
-  Charaktererstellungs-Wizard und die übrigen 12 Klassenfunktionen.
-- **Nächster Schritt:** bestätigte Attribut-Provenienz mit
-  rückwärtskompatibler Speicherung; danach Hintergrundpakete mit
-  Übungen/Talenten und ausdrücklicher Ausrüstungswahl.
-- **Detailnachweis:** [Teilabdeckung](CHARACTER_CREATION_COMPLETE.md)
-  und [Matrix](CHARACTER_CREATION_COVERAGE.json). Kein vollständiger
-  SRD-Abschluss behauptet.
+- **Basis:** `main` `4bd97b4d72fc747228df9bea46b61c3d4c82c382`; komplette gestapelte Quelle `ae148053feca82f5db1741b37536385f4d7d41c5`; Merge-Tree anhand der Git-Blob-SHAs konfliktarm zusammengestellt, beide Herkunfts-Commits als Eltern erhalten. Nur README und diese Checkpoint-Datei redaktionell aus dem originalen Main additiv ergänzt; fremde Chat-B-/Chat-D-Einträge bleiben erhalten.
+- **Implementiert:** sechs Würfelergebnisse 4W6 (niedrigsten streichen), optionale versionierte Attribut-Herkunft, ausdrückliche Hintergrundpakete für Akolyth/Krimineller/Weiser/Soldat, konkrete Wahl von Spielset bzw. Heiligem Symbol, gültiges JSON/Inventar.
+- **GETESTET auf den Quell-PRs:** einzelne GitHub CI inklusive Flutter/Android (z. B. #275 [Lauf 40456350744](https://github.com/ManuEtt/Dnd/actions/runs/40456350744) vollständig erfolgreich).
+- **NOCH NICHT GETESTET:** gemeinsame Integrations-CI / auf main gemergter Code-HEAD sowie echte Android-Geräteinstallation, TalkBack, ältere Gerätedaten-Upgrades und produktive Signierung.
+- **OFFEN:** Magieinitiierter-Zaubertricks/Zauberattribut, tatsächliche Herkunftstalente, weitere Spezies- und Klassenauswahl. **Kein vollständiger SRD-Nachweis.** SQLite 2, Kampagnen-JSON 1 und App-Version 0.8.42+92 unverändert.
+- **Nächster Schritt:** Integrations-PR-CI auf finaler exakter SHA beobachten, Defekte beheben, danach nur nach grüner CI und geprüfter Main-Basis regulär mergen. Ursprungsbranches nicht vorschnell löschen. [Integrationsbeleg](CHARACTER_STACK_INTEGRATION_20261027.md).
 
 ---
 

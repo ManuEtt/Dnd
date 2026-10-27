@@ -1,3 +1,16 @@
+## 27.10.2026 – Charaktererstellung: vier SRD-Hintergrundpakete
+
+- Akolyth, Krimineller, Weiser, Soldat mit eigenen Fertigkeiten,
+  Werkzeugübungen, Talentvermerk und wählbarem Ausrüstungspaket
+  oder 50 Gold; Soldat-Spielset als explizite Auswahl.
+- Kein automatischer Eingriff in bestehende Charaktere,
+  optionale versionierte Herkunftsentscheidung; Tests.
+- Talentwirkungen, Zauberwahl und einige Ausrüstungsvarianten
+  noch **nicht** automatisiert. Gestapelter Draft-PR #273,
+  aktuelle CI und Realgerätetest noch offen.
+
+---
+
 ## 27.10.2026 – Versionierter Nachweis bestätigter Startattribute (PR-Entwurf)
 
 - Optionale, geprüfte Herkunft von sechs Ausgangswerten, SRD-Methode,
