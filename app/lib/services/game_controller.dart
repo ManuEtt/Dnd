@@ -734,6 +734,101 @@ class GameController extends ChangeNotifier {
     await _commit(engine.standUp(current));
   });
 
+  /// User-confirmed Long Jump saved through the same atomic revision/event
+  /// transaction as other combat actions. Replaying a matching request ID
+  /// after restart or a lost acknowledgment never spends movement twice.
+  Future<void> confirmLongJump({
+    required String campaignId,
+    required String encounterId,
+    required int expectedRevision,
+    required String requestId,
+    required bool playerConfirmed,
+    required int immediateRunUpFeet,
+    required int jumpDistanceCentimeters,
+    required bool? landingInDifficultTerrainConfirmed,
+    required bool obstacleFreePathConfirmed,
+    int? lowObstacleHeightCentimeters,
+    bool? dmRequiresAthleticsCheck,
+    int? confirmedLandingAcrobaticsTotal,
+    int? confirmedObstacleAthleticsTotal,
+  }) => _run(() async {
+    if (!playerConfirmed ||
+        !RegExp(r'^[A-Za-z0-9_-]{1,128}$').hasMatch(requestId)) {
+      throw const FormatException(
+        'Der Weitsprung benötigt eine eindeutige bestätigte Handlung.',
+      );
+    }
+    final current = currentCampaign;
+    if (current == null || current.id != campaignId) {
+      throw const FormatException('Keine passende aktive Kampagne.');
+    }
+    final saved = await repository.getCampaign(campaignId);
+    if (saved == null) {
+      throw const FormatException('Spielstand nicht gefunden.');
+    }
+
+    Future<bool> restore(Campaign snapshot) async {
+      for (final event in snapshot.events) {
+        if (event.payload['actionRequestId'] != requestId) continue;
+        final data = event.payload;
+        if (event.type != 'combat.longJumpConfirmed' ||
+            data['playerConfirmed'] != true ||
+            data['encounterId'] != encounterId ||
+            data['expectedRevision'] != expectedRevision ||
+            data['immediateRunUpFeet'] != immediateRunUpFeet ||
+            data['jumpDistanceCentimeters'] != jumpDistanceCentimeters ||
+            data['landingInDifficultTerrainConfirmed'] !=
+                landingInDifficultTerrainConfirmed ||
+            data['obstacleFreePathConfirmed'] != obstacleFreePathConfirmed ||
+            data['lowObstacleHeightCentimeters'] !=
+                lowObstacleHeightCentimeters ||
+            data['dmRequiresAthleticsCheck'] != dmRequiresAthleticsCheck ||
+            data['confirmedLandingAcrobaticsTotal'] !=
+                confirmedLandingAcrobaticsTotal ||
+            data['confirmedObstacleAthleticsTotal'] !=
+                confirmedObstacleAthleticsTotal) {
+          throw const FormatException(
+            'Diese Handlungskennung gehört zu einer anderen Bestätigung.',
+          );
+        }
+        currentCampaign = snapshot;
+        await _reload();
+        return true;
+      }
+      return false;
+    }
+
+    if (await restore(saved)) return;
+    if (current.revision != expectedRevision ||
+        saved.revision != expectedRevision) {
+      throw const CampaignConflictException(
+        'Der Spielstand wurde inzwischen geändert. Bitte neu laden.',
+      );
+    }
+    final update = engine.confirmLongJump(
+      current,
+      expectedEncounterId: encounterId,
+      expectedRevision: expectedRevision,
+      requestId: requestId,
+      playerConfirmed: playerConfirmed,
+      immediateRunUpFeet: immediateRunUpFeet,
+      jumpDistanceCentimeters: jumpDistanceCentimeters,
+      landingInDifficultTerrainConfirmed: landingInDifficultTerrainConfirmed,
+      obstacleFreePathConfirmed: obstacleFreePathConfirmed,
+      lowObstacleHeightCentimeters: lowObstacleHeightCentimeters,
+      dmRequiresAthleticsCheck: dmRequiresAthleticsCheck,
+      confirmedLandingAcrobaticsTotal: confirmedLandingAcrobaticsTotal,
+      confirmedObstacleAthleticsTotal: confirmedObstacleAthleticsTotal,
+    );
+    try {
+      await _commit(update);
+    } on CampaignConflictException {
+      final latest = await repository.getCampaign(campaignId);
+      if (latest != null && await restore(latest)) return;
+      rethrow;
+    }
+  });
+
   Future<void> crawl({
     required String campaignId,
     required int expectedRevision,

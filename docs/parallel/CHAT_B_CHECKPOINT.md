@@ -1,13 +1,12 @@
-# Chat B – zwölf Erinnerungen am echten Story-Transport (27.10.2026)
+# Chat B – transportierte NPC-Erinnerungen bleiben bei zwölf Einträgen (27.10.2026)
 
-- **Abhängigkeit:** `test/chat-b/story-12-memory-transport-20261027` baut auf PR #307 (`fix/chat-b/npc-memory-budget-20261027`, Head `47b4343fadd5f30b9030a702b3ccd701d701a598`) auf. Nicht vor dem Basis-PR auf `main` integrieren.
-- **AUFGABE:** Den in #307 behobenen gemeinsamen NPC-/Allgemein-Erinnerungsdeckel nicht nur isoliert, sondern bis zum tatsächlich aufgebauten Backend-Request nachweisen.
-- **IMPLEMENTIERT:** Neuer Integrationstest `app/test/npc_memory_story_transport_limit_test.dart` für `identityContext=false/true` mit echter SQLite-Datei, KI-Spielzug im `GameController`, verhandelter `BackendNarrator`-Sitzung und ausschließlich lokalem Mock-Transport. Der Test liest und prüft den gesendeten `/v1/story/advance`-Request.
-- **AKZEPTANZ:** Genau zwölf Erinnerungen, drei neueste bestätigte NPC-Beziehungsnotizen zuerst, neun andere Fakten danach, keine Duplikate, jeweils maximal 400 Zeichen. Mit Capability bleibt der gesonderte NPC-Kontext konsistent; ohne Capability fehlen die Felder. `selectedNpcId` wird nicht geraten. Held, Fakten, Quest-/Regelzustand und gespeicherte Story-Rekonstruktion erhalten ihre Autorität.
-- **DATEIEN:** Neue Testdatei, README, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_B_CHECKPOINT.md`. Keine Produktionscode-, API-, SQLite-3-/JSON-1- oder SRD-Änderung.
-- **BISHERIGE PRÜFUNG:** Live-PRs und Fachdateien gelesen; Test mit offizieller Dart-3.9.2-Ausgabe formatiert; temporären CI-Diagnoseworkflow entfernt. Vollständige Flutter-/Android-CI erst nach Abschluss als erfolgreich bezeichnen.
-- **OFFEN:** Integration #307; echter Android-/Accessibility-/Live-KI-Test, spätere separate Sonderzeichen-Grenzfallregression. Andere parallele PRs unverändert.
-- **NÄCHSTER SCHRITT:** Multibyte- und Emoji-Übertragungsgrenzen gegen den bestehenden Story-Wire-Vertrag prüfen.
+- **Branch:** `test/chat-b/npc-memory-wire-budget-20261027`; Basis `fix/chat-b/npc-memory-budget-20261027` (PR #307, Head `47b4343fadd5f30b9030a702b3ccd701d701a598`). Gestapelter reiner Test-PR, kein unabhängiger Merge vor #307.
+- **Konkret implementiert:** `app/test/npc_story_memory_wire_budget_test.dart` testet beide Backend-Fähigkeitsvarianten `npc-identity-v1` an/aus mit einer gespeicherten KI-Kampagne. Sie enthält 3 bestätigte Mira-Notizen und 18 allgemeine Fakten; `GameController.sendAction` führt über `NpcNarratorMemory.merge` zum Story-Transport, dessen `memories`-Payload erfasst wird.
+- **AKZEPTANZ:** Exakt 12 Erinnerungseinträge, maximal 400 UTF-16-Codeeinheiten je Text, 3 jüngste bestätigte Mira-Notizen vorn, ergänzende allgemeine Fakten nur auf Restplätzen. Je ausgehandelter Fähigkeit optionale `npcContexts` und passende Revision vorhanden oder vollständig abwesend. Held bleibt identisch, neue Revision und rekonstruierter SQLite-Zustand stimmen überein.
+- **KEINE PRODUKTIONSÄNDERUNG:** Nur neue Testdatei, README, zentrale und Chat-B-Checkpoints. Keine Android-Grafik/Bedienlogik, SRD, SQLite-Migration, Backend-API oder Providerkosten.
+- **GETESTET:** GitHub-Hauptbranch/PR-Abhängigkeit und Transport-/Persistenz-Verträge geprüft; offizielles Dart-Formatter-Ergebnis anwenden und CI auf finalem PR-Commit ausführen. Android-Realgerät und Live-KI ungetestet.
+- **PARALLEL:** Keine Fachdatei-Kollision mit den Chat-B-Outbox-PRs #303–#306. Dokumentationsdateien bei Integration konfliktarm konsolidieren.
+- **NÄCHSTER SCHRITT:** Nach vollständiger grüner CI den PR erst nach #307 integrieren; weitere Grenzfälle deduplizierter oder leerer Erinnerungen separat absichern.
 
 ---
 

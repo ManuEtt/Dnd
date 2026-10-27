@@ -1,8 +1,8 @@
 # Würfelraunen – Der lebendige Spielleiter
 
-## Chat B – 12 Erinnerungen bis zur Story-Anfrage absichern (27.10.2026)
+## Chat B – Zwölf KI-Erinnerungen bis zur Story-API-Grenze absichern (27.10.2026)
 
-Ein neuer SQLite-/GameController-/Fake-Backend-Integrationstest prüft die Übertragung von **genau zwölf** Erinnerungen in `/v1/story/advance`: drei priorisierte, bestätigte NPC-Notizen und neun allgemeine Erinnerungen aus einer Kampagne mit zahlreichen gespeicherten Fakten. Die Prüfung läuft mit und ohne ausgehandelte `npc-identity-v1`-Capability. NPC-Notizen anderer Figuren, D&D-Regelzustand und persistierte Kampagnenfakten werden nicht von der KI geändert. Der Test erweitert [PR #307](https://github.com/ManuEtt/Dnd/pull/307) und führt selbst keine Produktionsänderungen oder Migrationen ein.
+Zwei neue Integrationstests prüfen das Erinnerungslimit **an der tatsächlich gesendeten Story-Anfrage**: Eine KI-Kampagne mit bestätigten Mira-Beziehungsnotizen und mindestens 18 allgemeinen Fakten wird in einer echten SQLite-Datei gespeichert, über den `GameController` fortgesetzt und mit einem lokalen Backend-Transport abgefragt. Sowohl mit als auch ohne `npc-identity-v1` erhält das Backend genau zwölf priorisierte und begrenzte Erinnerungseinträge. Die drei bestätigten NPC-Notizen bleiben zuerst; zusätzliche allgemeine Fakten verwenden lediglich die freien Plätze. Heldenwerte, Revision und gespeicherter Spielstand bleiben überprüfbar. Dieses Testpaket baut auf [PR #307](https://github.com/ManuEtt/Dnd/pull/307) auf und verändert keine Produktionslogik, Datenbankschemata oder SRD-Regeln.
 
 
 ## Chat B – Gemeinsames Budget für NPC- und allgemeine KI-Erinnerungen (27.10.2026)

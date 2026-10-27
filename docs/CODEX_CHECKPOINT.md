@@ -1,14 +1,14 @@
-# Chat B – tatsächliches Story-Transportlimit von zwölf Erinnerungen (27.10.2026)
+# Chat B – Story-Transport mit randvollem Erinnerungslimit (27.10.2026)
 
-- **Basis-PR:** [#307](https://github.com/ManuEtt/Dnd/pull/307), Head `47b4343fadd5f30b9030a702b3ccd701d701a598`; eigener abhängiger Branch `test/chat-b/story-12-memory-transport-20261027`.
-- **IMPLEMENTIERT:** `app/test/npc_memory_story_transport_limit_test.dart` mit zwei vollständigen asynchronen SQLite-/GameController-/Fake-`BackendTransport`-Tests. KI-Kampagne mit 24 bestätigten Fakten und drei bestätigten Mira-Beziehungsnotizen, tatsächlicher Spielzug via `GameController.sendAction`, anschließende Prüfung des HTTP-Request-Bodys für `/v1/story/advance`.
-- **GEPRÜFTES VERHALTEN:** Exakt zwölf Einträge, zuerst die drei bestätigten NPC-Notizen, danach neun andere bestätigte Erinnerungen; keine Dubletten, pro Eintrag maximal 400 Zeichen; optionale `npc-identity-v1`-Aushandlung übermittelt gültige gesonderte NPC-Kontexte und die neue Zugrevision, ohne Capability keinerlei optionale ID-Felder. Keine implizite `selectedNpcId`.
-- **KONTINUITÄT:** Erfolgreiche lokale Story-Fortsetzung, unveränderte Heldendaten, Fakten und Anzahl bestätigter NPC-Notizen, persistente Revision und `reconstructCampaign`. Keine echte Anbieter-/Netzwerkverbindung, keine Flutter-Widget- oder Android-Geräteinteraktion.
-- **STATUS:** Offizielle Dart-3.9.2-Formatierung angewendet; temporäre Diagnoseworkflowdatei entfernt. Neue vollständige CI auf PR-HEAD separat abnehmen.
-- **MIGRATION:** keine; keine Änderung an App-, Backend-, SQLite-/JSON- oder SRD-Produktionsdateien.
-- **INTEGRATION:** PR #307 vor diesem abhängigen Test-PR integrieren. Gemeinsame README-/Checkpoint-Änderungen von Chat D konsolidieren, fremde Branches nicht verändern.
-- **NÄCHSTER SCHRITT:** Einen Story-Transport mit Sonderzeichen/Multibyte-Zeichen innerhalb des 400-Zeichen-Limits auf gleicher Speicherbasis prüfen.
-- [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md), bisherige Historie unverändert beibehalten.
+- **Basis:** [PR #307](https://github.com/ManuEtt/Dnd/pull/307) (`fix/chat-b/npc-memory-budget-20261027`, Head `47b4343fadd5f30b9030a702b3ccd701d701a598`). Gestapelter neuer Branch `test/chat-b/npc-memory-wire-budget-20261027`; erst #307 integrieren.
+- **IMPLEMENTIERT:** `app/test/npc_story_memory_wire_budget_test.dart`, zwei End-to-End-Regressionen mit echter SQLite-Kampagne, `GameController`, drei bestätigten NPC-Beziehungsnotizen und 18 voneinander unterscheidbaren allgemeinen Fakten. `sendAction` führt zur abgefangenen Story-Backend-Anfrage mit **exakt zwölf** Erinnerungen; die drei NPC-Notizen bleiben priorisiert, allgemeine Fakten nutzen freie Plätze. Testet `npc-identity-v1` sowohl ein- als auch ausgeschaltet.
+- **WEITERE PRÜFUNGEN:** Transport enthält keine überzähligen NPC-/allgemeinen Erinnerungen; Textlänge pro Eintrag höchstens 400 Zeichen; keine Duplikate; optionaler strukturierter NPC-Kontext enthält nur Mira; Helden-JSON bleibt unverändert, lokale Revision erhöht sich um eins, SQLite-Rekonstruktion entspricht gespeichertem Snapshot.
+- **GETESTET:** Testvertragsprüfung gegen GitHub-Quellcode; offizielle Dart-3.9.2-Formatierung wird vor PR-Abgabe durchgeführt. Die vollständige GitHub-CI auf dem **finalen PR-Head** ist erst bei nachgewiesener Ausführung als bestanden zu kennzeichnen.
+- **NICHT GETESTET:** echtes Android-Gerät oder produktiver KI-Provider. Kein lokales Flutter-SDK. Ein lokaler, nicht kostenpflichtiger Backend-Transport wird simuliert.
+- **MIGRATION:** keine – Test und Dokumentation allein; SRD-, SQLite-, Kampagnenexport- und Backend-Protokolle unverändert.
+- **BLOCKIERT:** Integration der Basisfunktion aus #307, gemeinsame Docs von Chat D konsolidieren.
+- **NÄCHSTER SCHRITT:** Nach CI-Erfolg weitere adversariale Tests für gesättigte Erinnerungslisten mit bereits vorhandenen Wiederholungen und leerem Kontext.
+- [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md), alte Historie bleibt erhalten.
 
 ---
 
