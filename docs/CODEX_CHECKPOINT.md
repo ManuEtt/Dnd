@@ -92,3 +92,7 @@ Explizite NPC-ID-Auswahl von Android über GameController an den bereits vorhand
 ## Chat A: Mehrere kostspielige Materialpositionen – 27.10.2026
 
 Branch `feat/chat-a/audited-multi-material-components-20261027` von `4bd97b4d`. Für vier konkret auditierte Mehrfachmaterial-Zauber wurden stabile Positions-IDs, unabhängige Preis-/Mengen-/Verbrauchsbestätigungen und Ablehnung bei Transkriptionsänderung oder Duplikaten ergänzt. Neues Testmodul: `app/test/srd_multi_material_audit_test.dart`. Der Gesamtstatus `RULE-SPELLS-MATERIAL-COMPONENTS` bleibt **partial**. Keine Inventar-Automatik, UI-Anbindung, Migration oder behauptete vollständige CI. Technische Abnahme und nächste Schritte: `docs/parallel/CHAT_A_MULTI_MATERIAL_20261027.md`.
+
+## Chat A – Auditierte Mehrfachmaterial-Inventarbindung, 27.10.2026
+
+Gestapelter Branch `feat/chat-a/audited-material-inventory-20261027` basiert auf offenem PR #271, HEAD `779137bb`. Neues reines Domainmodul `srd_spell_audited_inventory_rules.dart`, Anbindung an `srd_spell_inventory_rules.dart` und isolierte Regressionstests. Eine bestätigte Zuordnung pro Material-ID auf unverwechselbare Inventar-ID und ausreichende Menge wird nun vor dem Slot-Commit verlangt; ältere freie Materiallisten dürfen die vier auditieren Rezepte nicht umgehen. Umfang bleibt **partial**, für mehrzügige Zauber kein voller Cast. Keine UI-, Speicher- oder Story-Änderung; CI des finalen Folge-HEAD getrennt nachweisen. Detail: `docs/parallel/CHAT_A_AUDITED_INVENTORY_20261027.md`.
