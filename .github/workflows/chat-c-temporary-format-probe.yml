@@ -1,0 +1,17 @@
+name: Chat C temporary Dart formatter probe
+on:
+  push:
+    branches:
+      - feat/chat-c/button-semantics-20261027
+jobs:
+  format-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Print exact dart format diff
+        run: |
+          dart format app/test/fantasy_buttons_test.dart
+          git diff -- app/test/fantasy_buttons_test.dart
