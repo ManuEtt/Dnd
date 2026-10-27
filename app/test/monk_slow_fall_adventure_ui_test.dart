@@ -116,7 +116,9 @@ void main() {
         '28',
       );
       await tester.tap(find.byKey(const ValueKey('slow-fall-confirm-fall')));
-      await tester.tap(find.byKey(const ValueKey('slow-fall-confirm-defenses')));
+      await tester.tap(
+        find.byKey(const ValueKey('slow-fall-confirm-defenses')),
+      );
       await tester.pumpAndSettle();
       expect(find.textContaining('20 Schaden verhindert'), findsOneWidget);
       await tester.tap(find.byKey(const ValueKey('slow-fall-commit')));
