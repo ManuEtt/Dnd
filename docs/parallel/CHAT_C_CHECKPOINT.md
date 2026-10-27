@@ -1,7 +1,7 @@
 ## 27.10.2026 – Chat C: TalkBack-Toggle-Ansage bei Fantasy-Buttons
 
 - **Ausgangs-main:** `e3e166a507bf9c88a4286473ceb97fc4b14ec35b`.
-- **Branch:** `feat/chat-c/button-semantics-20261027`; PR und End-SHA später über GitHub ermitteln.
+- **Branch:** `feat/chat-c/button-semantics-20261027`; **Pull Request:** [#320](https://github.com/ManuEtt/Dnd/pull/320) (Draft). **Letzter Code-/Test-Commit:** `0f8e05ee4f0522ed5f6843a27ef6f315df4db8a8`; finaler Dokumentations-/PR-HEAD über GitHub prüfen.
 - **Ausgangsproblem:** `FantasyButton` meldete über `Semantics.toggled` bei normalen Aktionen `false`. TalkBack kann einen normalen Aktionsbutton irreführend als ausgeschalteten Schalter interpretieren.
 - **IMPLEMENTIERT:** `app/lib/ui/fantasy_buttons.dart`: expliziter `toggleable`-Marker (standardmäßig false); nur `FantasyToggleButton` aktiviert ihn. Normale Buttons besitzen keinen Toggle-Zustand; Schalter melden ihren echten Zustand. Klicks und grafische Hervorhebung sind unverändert.
 - **TESTS ERGÄNZT:** `app/test/fantasy_buttons_test.dart`: normaler hervorgehobener Aktionsbutton mit Callback, Schalter an/aus sowie deaktiviert.
