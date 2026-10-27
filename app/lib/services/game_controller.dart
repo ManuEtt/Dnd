@@ -21,6 +21,7 @@ import '../domain/saving_throw_class_actions.dart';
 import '../domain/srd_opportunity_attack_rules.dart';
 import '../story/npc_narrator_memory.dart';
 import '../story/npc_identity_story_payload.dart';
+import '../story/npc_story_selection.dart';
 import 'backend_narrator.dart';
 
 /// UI state changes only after an atomic repository commit succeeds.
@@ -386,7 +387,11 @@ class GameController extends ChangeNotifier {
 
   /// Stable request IDs let callers retry after a lost acknowledgement.
   /// A matching confirmed event is never executed or narrated again.
-  Future<void> sendAction(String text, {String? requestId}) => _run(() async {
+  Future<void> sendAction(
+    String text, {
+    String? requestId,
+    NpcStorySelection? selectedNpc,
+  }) => _run(() async {
     final campaign = currentCampaign;
     if (campaign == null) {
       throw const FormatException('Starte zuerst ein Abenteuer.');
@@ -407,7 +412,9 @@ class GameController extends ChangeNotifier {
       if (saved == null) {
         throw const FormatException('Der Spielstand wurde nicht gefunden.');
       }
-      if (await _restoreConfirmedAction(saved, requestId, text.trim())) {
+      if (await _restoreConfirmedAction(
+        saved, requestId, text.trim(), selectedNpc?.npcId,
+      )) {
         return;
       }
       if (saved.revision != campaign.revision) {
@@ -416,12 +423,54 @@ class GameController extends ChangeNotifier {
         );
       }
     }
-    final update = await _withNarration(engine.act(campaign, text), text);
+    if (selectedNpc != null) {
+      if (campaign.storyBible['mode'] != 'ai' ||
+          !narrator.enabled ||
+          !narrator.supportsExplicitNpcSelection) {
+        throw const FormatException(
+          'Die explizite NPC-Auswahl benötigt einen verbundenen KI-Spielleiter '
+          'mit NPC-Auswahlunterstützung.',
+        );
+      }
+      selectedNpc.requireCurrent(campaign);
+      final payload = NpcIdentityStoryPayload.prepare(
+        campaign,
+        text,
+        selectedNpc: selectedNpc,
+      );
+      if (payload == null) {
+        throw const FormatException(
+          'Für den ausgewählten NPC fehlt eine bestätigte Erinnerung.',
+        );
+      }
+      payload.requireCurrent(campaign);
+    }
+    final acted = engine.act(campaign, text);
+    if (selectedNpc != null) {
+      final nextNpc = NpcStorySelection.choose(
+        acted.campaign,
+        selectedNpc.npcId,
+      );
+      if (nextNpc.name != selectedNpc.name ||
+          nextNpc.relationship != selectedNpc.relationship ||
+          nextNpc.alive != selectedNpc.alive) {
+        throw const FormatException(
+          'Der ausgewählte NPC wurde während der Handlung verändert.',
+        );
+      }
+    }
+    final update = await _withNarration(
+      acted,
+      text,
+      selectedNpc: selectedNpc,
+    );
     try {
       await _commit(
         requestId == null
             ? update
-            : _withActionReceipt(update, requestId, text.trim()),
+            : _withActionReceipt(
+                update, requestId, text.trim(), selectedNpc?.npcId,
+              ),
       );
     } on CampaignConflictException {
       // Another writer may confirm this *same* ID between the first read and
@@ -430,7 +479,9 @@ class GameController extends ChangeNotifier {
       if (requestId != null) {
         final latest = await repository.getCampaign(campaign.id);
         if (latest != null &&
-            await _restoreConfirmedAction(latest, requestId, text.trim())) {
+            await _restoreConfirmedAction(
+              latest, requestId, text.trim(), selectedNpc?.npcId,
+            )) {
           return;
         }
       }
@@ -444,10 +495,12 @@ class GameController extends ChangeNotifier {
     Campaign saved,
     String requestId,
     String action,
+    String? selectedNpcId,
   ) async {
     for (final event in saved.events) {
       if (event.payload['actionRequestId'] != requestId) continue;
-      if (event.payload['actionRequestText'] != action) {
+      if (event.payload['actionRequestText'] != action ||
+          event.payload['actionSelectedNpcId'] != selectedNpcId) {
         throw const FormatException(
           'Diese Handlungskennung gehört bereits zu einem anderen Text.',
         );
@@ -465,6 +518,7 @@ class GameController extends ChangeNotifier {
     GameUpdate update,
     String requestId,
     String action,
+    String? selectedNpcId,
   ) {
     if (update.events.isEmpty) {
       throw StateError('Die Handlung besitzt kein bestätigbares Ereignis.');
@@ -481,6 +535,7 @@ class GameController extends ChangeNotifier {
         ...original.payload,
         'actionRequestId': requestId,
         'actionRequestText': action,
+        if (selectedNpcId != null) 'actionSelectedNpcId': selectedNpcId,
       },
     );
     return GameUpdate(
@@ -494,7 +549,11 @@ class GameController extends ChangeNotifier {
     );
   }
 
-  Future<GameUpdate> _withNarration(GameUpdate update, String action) async {
+  Future<GameUpdate> _withNarration(
+    GameUpdate update,
+    String action, {
+    NpcStorySelection? selectedNpc,
+  }) async {
     // Mechanical results and roll requests always use the authoritative local
     // text. External narration can enrich only a validated narrative turn.
     if (!narrator.enabled ||
@@ -514,8 +573,15 @@ class GameController extends ChangeNotifier {
             .toList();
         // The optional structured context is sent only after an authenticated
         // session advertises support. Existing servers receive legacy fields.
+        final selectedForTurn = selectedNpc == null
+            ? null
+            : NpcStorySelection.choose(campaign, selectedNpc.npcId);
         final npcIdentityPayload = narrator.supportsNpcIdentityContexts
-            ? NpcIdentityStoryPayload.prepare(campaign, action)
+            ? NpcIdentityStoryPayload.prepare(
+                campaign,
+                action,
+                selectedNpc: selectedForTurn,
+              )
             : null;
         // Revalidate the selected ID-bound snapshot at the transport boundary.
         // No refresh by name: stale data falls back to the confirmed local turn.
@@ -548,6 +614,7 @@ class GameController extends ChangeNotifier {
           memories: NpcNarratorMemory.merge(campaign, action, memories),
           campaignRevision: npcIdentityPayload?.campaignRevision,
           npcContexts: npcIdentityPayload?.npcContexts,
+          selectedNpcId: npcIdentityPayload?.selectedNpcId,
           recentActions: recent.reversed
               .take(6)
               .toList()
