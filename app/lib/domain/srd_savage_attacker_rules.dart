@@ -24,7 +24,9 @@ class SrdSavageAttackerRules {
       encounter.activeParticipant == 'hero' &&
       !encounter.savageAttackerUsedThisTurn &&
       !hero.isDead &&
-      hero.hitPoints != 0;
+      hero.isComplete &&
+      hero.hitPoints != null &&
+      hero.hitPoints! > 0;
 
   /// Select either *weapon* dice result, without touching ability modifiers,
   /// Sneak Attack, Rage, fighting styles, enemy defences or hit points.
