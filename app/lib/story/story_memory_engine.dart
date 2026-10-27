@@ -306,7 +306,11 @@ class MemoryEngine {
         }
         continue;
       }
-      seen[event.id] = event;
+      // An exact duplicate from an older saved session remains idempotent,
+      // but a NEW journal event must belong to the currently replayed session.
+      if (event.sessionId != state.sessionId) {
+        throw const FormatException('Fremdes Sitzungsereignis.');
+      }
       final raw = event.payload['stateAfter'];
       if (raw is Map<String, dynamic>) {
         final restored = Campaign.fromJson(raw);
@@ -315,8 +319,14 @@ class MemoryEngine {
             'Lücke oder falsche Reihenfolge im Ereignisprotokoll.',
           );
         }
+        if (restored.sessionId != event.sessionId) {
+          throw const FormatException(
+            'Der Ereignis-Checkpoint gehört zu einer anderen Sitzung.',
+          );
+        }
         state = restored;
       }
+      seen[event.id] = event;
       events = [...events, event];
       state = state.copyWith(events: events);
     }
