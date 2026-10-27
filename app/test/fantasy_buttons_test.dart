@@ -197,12 +197,15 @@ void main() {
     );
     await tester.pumpAndSettle();
     final semantic = tester.widget<Semantics>(
-      find.descendant(
-        of: find.byType(FantasyButton),
-        matching: find.byWidgetPredicate(
-          (widget) => widget is Semantics && widget.properties.button == true,
-        ),
-      ).first,
+      find
+          .descendant(
+            of: find.byType(FantasyButton),
+            matching: find.byWidgetPredicate(
+              (widget) =>
+                  widget is Semantics && widget.properties.button == true,
+            ),
+          )
+          .first,
     );
     expect(semantic.properties.button, isTrue);
     expect(semantic.properties.toggled, isNull);
@@ -234,12 +237,15 @@ void main() {
     }
 
     Semantics toggleSemantics() => tester.widget<Semantics>(
-      find.descendant(
-        of: find.byType(FantasyButton),
-        matching: find.byWidgetPredicate(
-          (widget) => widget is Semantics && widget.properties.button == true,
-        ),
-      ).first,
+      find
+          .descendant(
+            of: find.byType(FantasyButton),
+            matching: find.byWidgetPredicate(
+              (widget) =>
+                  widget is Semantics && widget.properties.button == true,
+            ),
+          )
+          .first,
     );
 
     await showToggle(selected: false);
