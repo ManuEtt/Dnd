@@ -299,6 +299,9 @@ class SrdClassFeatureCatalog {
     'Martial Arts',
     'Unarmored Defense',
     'Remarkable Athlete',
+    // Speed and derived movement types work; climbing/swimming terrain
+    // expenditure still requires a dedicated confirmed movement action.
+    'Roving',
   };
 
   static final Map<String, List<SrdClassFeature>> _catalog = {
