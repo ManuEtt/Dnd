@@ -150,9 +150,7 @@ class SrdSpellComponentRules {
 
   /// Only a verified exact metadata match can mint this item list.
   /// A changed transcription must be audited before it is accepted.
-  static List<SrdAuditedMaterialItem> auditedItems(
-    SrdSpellDefinition spell,
-  ) {
+  static List<SrdAuditedMaterialItem> auditedItems(SrdSpellDefinition spell) {
     final recipe = _auditedRecipes[spell.name];
     if (recipe == null) return const [];
     if (!spell.material || spell.components != recipe.catalogueText) {
@@ -248,10 +246,7 @@ class SrdSpellComponentRules {
     List<SrdMaterialItemConfirmation> confirmedMaterialItems = const [],
   }) {
     final needed = requirements(spell);
-    _validateItemConfirmations(
-      auditedItems(spell),
-      confirmedMaterialItems,
-    );
+    _validateItemConfirmations(auditedItems(spell), confirmedMaterialItems);
     if (!needed.hasMaterial) return needed;
     if (!materialComponentConfirmed) {
       throw const FormatException(
