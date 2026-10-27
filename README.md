@@ -159,3 +159,7 @@ Das Repository enthält Entwicklungssoftware. **Vollständige SRD-Konformität, 
 ### Chat A: Einzelprüfung mehrerer Zaubermaterialien (27.10.2026)
 
 Im Branch `feat/chat-a/audited-multi-material-components-20261027` werden für Astral Projection, Clone, Legend Lore und Secret Chest die einzelnen kostspieligen Materialpositionen, Mengen und unterschiedlichen Verbrauchsregeln unabhängig bestätigt. Der bestehende Zaubercast bleibt bis zur Einzelbestätigung gesperrt; UI, Inventartransaktion und Spielstände sind unverändert. [Chat-A-Detailnachweis](docs/parallel/CHAT_A_MULTI_MATERIAL_20261027.md). Branch-CI muss separat geprüft werden.
+
+### Chat A – Inventarzuordnung für mehrteilige SRD-Materialien (27.10.2026)
+
+Aufbauend auf [PR #271](https://github.com/ManuEtt/Dnd/pull/271) prüft ein gesonderter Folgebranch eindeutige Inventar-Stapel-IDs, erforderliche Mengen, bestätigte Preise und exakte Verbrauchspositionen vor dem Slot-/Inventar-Commit. Mehrzielmaterialien von Astral Projection und die vier Elfenbeinstreifen für Legend Lore werden bewusst einzeln geprüft. Lange Zauberzeiten und eine Android-UI für diese Bindungen bleiben offen. [Chat-A-Inventarcheckpoint](docs/parallel/CHAT_A_AUDITED_INVENTORY_20261027.md).
