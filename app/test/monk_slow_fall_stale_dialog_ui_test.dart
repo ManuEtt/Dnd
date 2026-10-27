@@ -129,8 +129,9 @@ void main() {
       expect(controller.error, isNull);
       expect(controller.currentCampaign!.toJson(), committed.toJson());
       expect(
-        controller.currentCampaign!.events
-            .where((event) => event.type == 'combat.slowFallResolved'),
+        controller.currentCampaign!.events.where(
+          (event) => event.type == 'combat.slowFallResolved',
+        ),
         hasLength(1),
       );
       expect(tester.takeException(), isNull);
