@@ -129,10 +129,7 @@ void main() {
         provider: 'mock',
       );
       final campaign = original.copyWith(
-        facts: {
-          for (var i = 0; i < 20; i++)
-            'stadt_$i': 'Bestätigter Ort $i',
-        },
+        facts: {for (var i = 0; i < 20; i++) 'stadt_$i': 'Bestätigter Ort $i'},
         npcRelationshipNotes: [
           NpcRelationshipNote(
             id: 'unicode-long',
