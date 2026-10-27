@@ -17,10 +17,7 @@ Campaign fighting({
   final initial = GameEngine().createDemo();
   return initial.copyWith(
     hero: initial.hero.copyWith(
-      abilities: {
-        ...initial.hero.abilities,
-        'strength': strength,
-      },
+      abilities: {...initial.hero.abilities, 'strength': strength},
       speed: speed,
       conditions: conditions,
     ),
@@ -91,11 +88,7 @@ void main() {
 
   test('failed difficult-terrain landing plans Prone exactly once', () {
     final before = fighting();
-    final result = plan(
-      before,
-      difficult: true,
-      acrobaticsTotal: 9,
-    );
+    final result = plan(before, difficult: true, acrobaticsTotal: 9);
     expect(result.addsProne, isTrue);
     expect(result.projectedCampaign.hero.conditions, contains('liegend'));
     expect(result.projectedCampaign.hero.manualConditions, ['liegend']);
@@ -104,21 +97,17 @@ void main() {
       Campaign.fromJson(result.projectedCampaign.toJson()).toJson(),
       result.projectedCampaign.toJson(),
     );
-    final passed = plan(
-      before,
-      difficult: true,
-      acrobaticsTotal: 10,
-    );
+    final passed = plan(before, difficult: true, acrobaticsTotal: 10);
     expect(passed.addsProne, isFalse);
-    expect(passed.projectedCampaign.hero.conditions, isNot(contains('liegend')));
+    expect(
+      passed.projectedCampaign.hero.conditions,
+      isNot(contains('liegend')),
+    );
   });
 
   test('unknown dice result and unpassed obstacle cannot produce a plan', () {
     final before = fighting();
-    expect(
-      () => plan(before, difficult: true),
-      throwsFormatException,
-    );
+    expect(() => plan(before, difficult: true), throwsFormatException);
     expect(
       () => plan(
         before,
@@ -148,33 +137,24 @@ void main() {
     expect(passed.projectedCampaign.encounter!.remainingMovementDecimeters, 12);
   });
 
-  test('wrong campaign, encounter, revision, turn, or finished fight block', () {
-    final before = fighting();
-    expect(
-      () => plan(before, campaignId: 'another'),
-      throwsFormatException,
-    );
-    expect(
-      () => plan(before, encounterId: 'another'),
-      throwsFormatException,
-    );
-    expect(
-      () => plan(before, revision: before.revision + 1),
-      throwsFormatException,
-    );
-    expect(
-      () => plan(fighting(participant: 'enemy')),
-      throwsFormatException,
-    );
-    expect(
-      () => plan(fighting(enemyHitPoints: 0)),
-      throwsFormatException,
-    );
-    expect(
-      () => plan(before.copyWith(encounter: null)),
-      throwsFormatException,
-    );
-  });
+  test(
+    'wrong campaign, encounter, revision, turn, or finished fight block',
+    () {
+      final before = fighting();
+      expect(() => plan(before, campaignId: 'another'), throwsFormatException);
+      expect(() => plan(before, encounterId: 'another'), throwsFormatException);
+      expect(
+        () => plan(before, revision: before.revision + 1),
+        throwsFormatException,
+      );
+      expect(() => plan(fighting(participant: 'enemy')), throwsFormatException);
+      expect(() => plan(fighting(enemyHitPoints: 0)), throwsFormatException);
+      expect(
+        () => plan(before.copyWith(encounter: null)),
+        throwsFormatException,
+      );
+    },
+  );
 
   test('all pending rule actions must finish before movement is prepared', () {
     final before = fighting();
@@ -228,80 +208,47 @@ void main() {
       () => plan(fighting(conditions: const ['gepackt'])),
       throwsFormatException,
     );
-    expect(
-      () => plan(fighting(speed: 0)),
-      throwsFormatException,
-    );
-    expect(
-      () => plan(fighting(jumpDoubled: true)),
-      throwsUnsupportedError,
-    );
-    expect(
-      () => plan(fighting(strength: null)),
-      throwsFormatException,
-    );
+    expect(() => plan(fighting(speed: 0)), throwsFormatException);
+    expect(() => plan(fighting(jumpDoubled: true)), throwsUnsupportedError);
+    expect(() => plan(fighting(strength: null)), throwsFormatException);
   });
 
   test('run-up must be accounted for before the jump, never twice', () {
     final before = fighting();
-    expect(
-      () => plan(before, runUpSpent: false),
-      throwsFormatException,
-    );
+    expect(() => plan(before, runUpSpent: false), throwsFormatException);
     expect(
       () => plan(before, runUpFeet: 0, runUpSpent: true),
       throwsFormatException,
     );
-    final standing = plan(
-      before,
-      runUpFeet: 0,
-      runUpSpent: false,
-      jumpCm: 220,
-    );
+    final standing = plan(before, runUpFeet: 0, runUpSpent: false, jumpCm: 220);
     expect(standing.assessment.maximumDistanceCentimeters, 225);
     expect(standing.movementSpentDecimeters, 22);
-    expect(standing.projectedCampaign.encounter!.remainingMovementDecimeters, 35);
-    final shortRun = plan(
-      before,
-      runUpFeet: 9,
-      runUpSpent: true,
-      jumpCm: 220,
+    expect(
+      standing.projectedCampaign.encounter!.remainingMovementDecimeters,
+      35,
     );
+    final shortRun = plan(before, runUpFeet: 9, runUpSpent: true, jumpCm: 220);
     expect(shortRun.assessment.runningStart, isFalse);
-    expect(shortRun.projectedCampaign.encounter!.remainingMovementDecimeters, 35);
+    expect(
+      shortRun.projectedCampaign.encounter!.remainingMovementDecimeters,
+      35,
+    );
   });
 
   test('unrepresentable half-foot values do not lose movement precision', () {
     final before = fighting();
     expect(
-      () => plan(
-        before,
-        runUpFeet: 0,
-        runUpSpent: false,
-        jumpCm: 225,
-      ),
+      () => plan(before, runUpFeet: 0, runUpSpent: false, jumpCm: 225),
       throwsFormatException,
     );
-    expect(
-      () => plan(before, jumpCm: 455),
-      throwsFormatException,
-    );
-    expect(
-      () => plan(before, jumpCm: 450 + 10),
-      throwsFormatException,
-    );
+    expect(() => plan(before, jumpCm: 455), throwsFormatException);
+    expect(() => plan(before, jumpCm: 450 + 10), throwsFormatException);
     expect(
       () => plan(fighting(wholeMeters: 4, remainder: 4)),
       throwsFormatException,
     );
-    expect(
-      () => plan(fighting(wholeMeters: -1)),
-      throwsFormatException,
-    );
-    expect(
-      () => plan(fighting(remainder: 10)),
-      throwsFormatException,
-    );
+    expect(() => plan(fighting(wholeMeters: -1)), throwsFormatException);
+    expect(() => plan(fighting(remainder: 10)), throwsFormatException);
   });
 
   test('expected revision is a caller guard, not a fake stored receipt', () {
