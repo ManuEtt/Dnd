@@ -36,7 +36,7 @@ Future<Campaign> seedJump(
       pendingRoll: const PendingRoll(
         id: 'other-roll',
         type: 'escape',
-        modifier: 0,
+        modifier: 2,
         difficulty: 10,
       ),
     );
