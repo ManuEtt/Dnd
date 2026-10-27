@@ -1019,7 +1019,7 @@ class GameEngine {
       reactionConfirmed: playerConfirmedReaction,
       encounter: fight,
     );
-    if (plan.remainingDamage > 100000) {
+    if (confirmedFallDamage > 100000) {
       throw const FormatException(
         'Der bestätigte Sturzschaden überschreitet die Regelgrenze.',
       );
