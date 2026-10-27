@@ -49,7 +49,7 @@ class SrdLongJumpRules {
   static int maximumDistanceCentimeters({
     required int? strengthScore,
     required int runUpFeet,
-    required bool runUpOnFootConfirmed,
+    required bool immediateRunUpConfirmed,
   }) {
     if (strengthScore == null || strengthScore < 1 || strengthScore > 30) {
       throw const FormatException(
@@ -57,8 +57,8 @@ class SrdLongJumpRules {
       );
     }
     if (runUpFeet < 0 ||
-        (runUpFeet > 0 && !runUpOnFootConfirmed) ||
-        (runUpFeet == 0 && runUpOnFootConfirmed)) {
+        (runUpFeet > 0 && !immediateRunUpConfirmed) ||
+        (runUpFeet == 0 && immediateRunUpConfirmed)) {
       throw const FormatException(
         'Der unmittelbar vorangegangene Anlauf muss bestätigt sein.',
       );
@@ -83,7 +83,7 @@ class SrdLongJumpRules {
   static SrdLongJumpAssessment preflight({
     required int? strengthScore,
     required int runUpFeet,
-    required bool runUpOnFootConfirmed,
+    required bool immediateRunUpConfirmed,
     required int jumpDistanceCentimeters,
     required int movementRemainingCentimeters,
     required bool? landingInDifficultTerrainConfirmed,
@@ -96,7 +96,7 @@ class SrdLongJumpRules {
     final maximum = maximumDistanceCentimeters(
       strengthScore: strengthScore,
       runUpFeet: runUpFeet,
-      runUpOnFootConfirmed: runUpOnFootConfirmed,
+      immediateRunUpConfirmed: immediateRunUpConfirmed,
     );
 
     if (jumpDistanceCentimeters <= 0 ||
@@ -144,7 +144,7 @@ class SrdLongJumpRules {
           'Hindernishöhe und Spielleitungsentscheidung fehlen.',
         );
       }
-      if (lowObstacleHeightCentimeters * 4 > jumpDistanceCentimeters) {
+      if (lowObstacleHeightCentimeters > jumpDistanceCentimeters ~/ 4) {
         throw UnsupportedError(
           'Höhere Hindernisse erfordern eine gesonderte Regelentscheidung.',
         );
