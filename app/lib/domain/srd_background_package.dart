@@ -233,7 +233,11 @@ class SrdBackgroundPackageChoice {
       }
     }
     final featureLabels = <String>[
-      'Herkunftstalent: $originFeat (Regelwirkung noch nicht automatisiert)',
+      background == SrdBackground.criminal
+          ? 'Herkunftstalent: $originFeat '
+                '(Initiative-Übungsbonus automatisch; '
+                'Initiative-Tausch noch nicht automatisiert)'
+          : 'Herkunftstalent: $originFeat (Regelwirkung noch nicht automatisiert)',
       'Werkzeugübung: $toolProficiency',
     ];
     return hero.copyWith(
