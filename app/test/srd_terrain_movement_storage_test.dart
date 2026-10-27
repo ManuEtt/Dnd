@@ -84,20 +84,22 @@ void main() {
     },
   );
 
-  test('SQLite event failure rolls back swim and revision atomically', () async {
-    final folder = await Directory.systemTemp.createTemp('swim-rollback-');
-    final path = p.join(folder.path, 'movement.sqlite');
-    final repository = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: path,
-    );
-    final controller = GameController(repository: repository);
-    try {
-      final before = await seed(repository);
-      await controller.openCampaign(before.id);
-      final database = await databaseFactoryFfi.openDatabase(path);
+  test(
+    'SQLite event failure rolls back swim and revision atomically',
+    () async {
+      final folder = await Directory.systemTemp.createTemp('swim-rollback-');
+      final path = p.join(folder.path, 'movement.sqlite');
+      final repository = await SqliteCampaignRepository.open(
+        factory: databaseFactoryFfi,
+        path: path,
+      );
+      final controller = GameController(repository: repository);
       try {
-        await database.execute('''
+        final before = await seed(repository);
+        await controller.openCampaign(before.id);
+        final database = await databaseFactoryFfi.openDatabase(path);
+        try {
+          await database.execute('''
 CREATE TRIGGER reject_swim
 BEFORE INSERT ON game_events
 WHEN instr(NEW.event_json, '"combat.swam"') > 0
@@ -105,29 +107,30 @@ BEGIN
   SELECT RAISE(ABORT, 'controlled swim event failure');
 END
 ''');
-        await controller.moveOnConfirmedTerrain(
-          campaignId: before.id,
-          expectedRevision: before.revision,
-          kind: SrdTerrainMovement.swim,
-          distanceFeet: 5,
-          difficultTerrain: false,
-          terrainConfirmed: true,
-        );
-        expect(controller.error, isNotNull);
-        expect(controller.currentCampaign!.toJson(), before.toJson());
-        expect(
-          (await repository.getCampaign(before.id))!.toJson(),
-          before.toJson(),
-        );
+          await controller.moveOnConfirmedTerrain(
+            campaignId: before.id,
+            expectedRevision: before.revision,
+            kind: SrdTerrainMovement.swim,
+            distanceFeet: 5,
+            difficultTerrain: false,
+            terrainConfirmed: true,
+          );
+          expect(controller.error, isNotNull);
+          expect(controller.currentCampaign!.toJson(), before.toJson());
+          expect(
+            (await repository.getCampaign(before.id))!.toJson(),
+            before.toJson(),
+          );
+        } finally {
+          await database.close();
+        }
       } finally {
-        await database.close();
+        controller.dispose();
+        await repository.close();
+        await folder.delete(recursive: true);
       }
-    } finally {
-      controller.dispose();
-      await repository.close();
-      await folder.delete(recursive: true);
-    }
-  });
+    },
+  );
 
   test('Unconfirmed water leaves persisted state unchanged', () async {
     final folder = await Directory.systemTemp.createTemp('swim-denied-');
@@ -150,7 +153,10 @@ END
       );
       expect(controller.error, isNotNull);
       expect(controller.currentCampaign!.toJson(), before.toJson());
-      expect((await repository.getCampaign(before.id))!.toJson(), before.toJson());
+      expect(
+        (await repository.getCampaign(before.id))!.toJson(),
+        before.toJson(),
+      );
     } finally {
       controller.dispose();
       await repository.close();
