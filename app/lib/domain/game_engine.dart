@@ -8,6 +8,7 @@ import 'confirmed_spell_effects.dart';
 import 'prone_movement_rules.dart';
 import 'crawling_movement_rules.dart';
 import 'srd_terrain_movement_rules.dart';
+import 'srd_long_jump_encounter_rules.dart';
 import 'srd_monk_slow_fall_rules.dart';
 import 'character_rule_engine.dart';
 import 'character_effect_rules.dart';
@@ -1131,6 +1132,106 @@ class GameEngine {
         ),
         'movementSpentDecimeters': cost,
         'movementRemainingDecimeters': updated.remainingMovementDecimeters,
+      },
+    );
+  }
+
+  /// Persistable Long Jump transition. The movement receipt must be the
+  /// immediately preceding confirmed foot movement in this very encounter.
+  ///
+  /// Controller/SQLite additionally guard request uniqueness and revisions.
+  GameUpdate confirmLongJump(
+    Campaign campaign, {
+    required String expectedEncounterId,
+    required int expectedRevision,
+    required String requestId,
+    required bool playerConfirmed,
+    required int immediateRunUpFeet,
+    required int jumpDistanceCentimeters,
+    required bool? landingInDifficultTerrainConfirmed,
+    required bool obstacleFreePathConfirmed,
+    int? lowObstacleHeightCentimeters,
+    bool? dmRequiresAthleticsCheck,
+    int? confirmedLandingAcrobaticsTotal,
+    int? confirmedObstacleAthleticsTotal,
+  }) {
+    if (!playerConfirmed) {
+      throw const FormatException(
+        'Der Weitsprung muss ausdrücklich bestätigt werden.',
+      );
+    }
+    if (!RegExp(r'^[A-Za-z0-9_-]{1,128}$').hasMatch(requestId)) {
+      throw const FormatException('Ungültige Weitsprung-Handlungskennung.');
+    }
+    _ensureNoOpportunity(campaign);
+    final hasRunUp = immediateRunUpFeet > 0;
+    if (hasRunUp) {
+      // Only full running-start distance is supported by the current
+      // whole-meter ordinary movement action. A partial receipt must not
+      // pretend to prove 9 feet, and a request flag alone proves nothing.
+      if (immediateRunUpFeet != 10 || campaign.events.isEmpty) {
+        throw const FormatException(
+          'Zum Anlauf ist ein unmittelbar verbuchter Fußweg nötig.',
+        );
+      }
+      final movement = campaign.events.last;
+      final snapshot = movement.payload['stateAfter'];
+      if (movement.type != 'combat.moved' ||
+          movement.payload['revision'] != campaign.revision ||
+          movement.payload['meters'] is! int ||
+          (movement.payload['meters'] as int) < 3 ||
+          !movement.entities.contains(campaign.hero.id) ||
+          snapshot is! Map ||
+          snapshot['encounter'] is! Map ||
+          (snapshot['encounter'] as Map)['id'] != expectedEncounterId) {
+        throw const FormatException(
+          'Der bestätigte 10-Fuß-Anlauf fehlt unmittelbar vor dem Sprung.',
+        );
+      }
+    } else if (immediateRunUpFeet != 0) {
+      throw const FormatException('Unzulässiger Weitsprung-Anlauf.');
+    }
+
+    final plan = SrdLongJumpEncounterRules.prepare(
+      campaign: campaign,
+      expectedCampaignId: campaign.id,
+      expectedEncounterId: expectedEncounterId,
+      expectedRevision: expectedRevision,
+      immediateRunUpFeet: immediateRunUpFeet,
+      runUpAlreadySpentConfirmed: hasRunUp,
+      jumpDistanceCentimeters: jumpDistanceCentimeters,
+      landingInDifficultTerrainConfirmed: landingInDifficultTerrainConfirmed,
+      obstacleFreePathConfirmed: obstacleFreePathConfirmed,
+      lowObstacleHeightCentimeters: lowObstacleHeightCentimeters,
+      dmRequiresAthleticsCheck: dmRequiresAthleticsCheck,
+      confirmedLandingAcrobaticsTotal: confirmedLandingAcrobaticsTotal,
+      confirmedObstacleAthleticsTotal: confirmedObstacleAthleticsTotal,
+    );
+    final rest = plan.projectedCampaign.encounter!;
+    return _commit(
+      campaign,
+      plan.projectedCampaign,
+      'Du springst ${ProneMovementRules.formatDecimeters(plan.movementSpentDecimeters)} '
+      'weit. Restbewegung: ${rest.movementRemainingLabel}. '
+      '${plan.addsProne ? 'Die Landung lässt dich liegend zurück.' : 'Der Sprung ist abgeschlossen.'}',
+      type: 'combat.longJumpConfirmed',
+      payload: {
+        'actionRequestId': requestId,
+        'playerConfirmed': true,
+        'encounterId': expectedEncounterId,
+        'expectedRevision': expectedRevision,
+        'immediateRunUpFeet': immediateRunUpFeet,
+        'jumpDistanceCentimeters': jumpDistanceCentimeters,
+        'landingInDifficultTerrainConfirmed':
+            landingInDifficultTerrainConfirmed,
+        'obstacleFreePathConfirmed': obstacleFreePathConfirmed,
+        'lowObstacleHeightCentimeters': lowObstacleHeightCentimeters,
+        'dmRequiresAthleticsCheck': dmRequiresAthleticsCheck,
+        'confirmedLandingAcrobaticsTotal': confirmedLandingAcrobaticsTotal,
+        'confirmedObstacleAthleticsTotal': confirmedObstacleAthleticsTotal,
+        'movementSpentDecimeters': plan.movementSpentDecimeters,
+        'movementRemainingDecimeters': rest.remainingMovementDecimeters,
+        'addsProne': plan.addsProne,
       },
     );
   }
