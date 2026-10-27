@@ -20,6 +20,7 @@ import 'fantasy_buttons.dart';
 import 'fantasy_character_overview.dart';
 import 'fantasy_character_ornaments.dart';
 import 'character_portrait_picker.dart';
+import 'starting_ability_origin_panel.dart';
 
 // A read-only presentation of the actual, confirmed character data. No state,
 // rule changes, generated portrait, or assumed missing character values.
@@ -210,6 +211,10 @@ class _CharacterSheetPageState extends State<CharacterSheetPage> {
                 _PassivePerceptionStrip(hero: hero),
                 const SizedBox(height: 16),
                 FantasyCharacterOverview(hero: hero),
+                if (hero.startingAbilityOrigin != null) ...[
+                  const SizedBox(height: 12),
+                  StartingAbilityOriginPanel(hero: hero),
+                ],
                 const SizedBox(height: 20),
                 _SectionNavigation(
                   selected: _section,

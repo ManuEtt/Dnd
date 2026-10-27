@@ -1,8 +1,30 @@
 # Würfelraunen – Der lebendige Spielleiter
 
-## Charaktererstellung – Integrationskandidat (27.10.2026)
+## Charaktererstellung – verlässliche Attributwahl (27.10.2026)
 
-Die gestapelte SRD-5.2.1-Entwicklung aus [#264](https://github.com/ManuEtt/Dnd/pull/264), [#272](https://github.com/ManuEtt/Dnd/pull/272), [#273](https://github.com/ManuEtt/Dnd/pull/273) und [#275](https://github.com/ManuEtt/Dnd/pull/275) ist gemeinsam in einem **Integrationsbranch** vorbereitet: 4W6-Würfelzuordnung; explizit bestätigte, versionierte Startattribut-Herkunft; vier Hintergrundpakete mit Werkzeug-/Fertigkeitsauswahl und A-/B-Ausrüstung; Akolythenauswahl aus drei geprüften Heiligen Symbolen. Die Einzelbranch-CIs sind grün, die **gemeinsame Main-Integration und Android-Geräteabnahme** müssen separat erfolgen. Herkunftstalentwirkungen, Magic-Initiate-Zauberwahl und vollständige SRD-Charaktererstellung fehlen weiterhin. [Integrationsbeleg](docs/CHARACTER_STACK_INTEGRATION_20261027.md).
+**0.8.43+93:** Der Attributdialog bewahrt bei einem Würfelfehler den bisherigen
+Entwurf und erlaubt einen neuen Versuch. Der Charakterbogen zeigt gespeicherte
+Basisattribute, Hintergrundboni und alle 24 Rohwürfel getrennt von aktuellen
+Werten. Alte Spielstände bleiben lesbar; Öffnen des Bogens verändert sie nicht.
+Layoutfehler bei 200 % Schrift im Fantasy-Bogen sind behoben.
+
+**Vollständige lokale Prüfung bestanden: 1.884 Flutter-, 164 Python-,
+72 Backend- und zwölf native Android-Tests**, einschließlich SQLite-Neustart,
+Event-Rollback, Import-/Export und 320/360-dp-Bedienung. Formatierung, Analyse,
+Backend-Build sowie Debug-APK mit geprüfter Version/Signatur erfolgreich.
+Produktcode `db2aab06b6bdd3f770ea400b8e67ee712ea61dd7`, Branch
+`feat/character-roll-provenance-20261027`, integrierte Main-Basis `4c2ad0a`.
+[PR #297](https://github.com/ManuEtt/Dnd/pull/297) enthält den finalen
+Dokumentationskopf; dessen CI-/Alpha-Artefakte separat abnehmen.
+Echtes Gerät, TalkBack und produktive Signatur bleiben offen.
+[Nachweise und Fortsetzung](docs/CODEX_CHECKPOINT.md).
+
+Die ursprünglichen Attribut-/Hintergrundpakete #264/#272/#273/#275 wurden bereits
+über #279 integriert und werden wiederverwendet. Vollständiger Assistent,
+Speziesmerkmale, sämtliche Klassenstartentscheidungen und Magic-Initiate-Auswahl
+bleiben offen. Nächstes Paket nach grüner Abnahme: tatsächliche Entscheidungen
+im `SrdCharacterCreationAudit` prüfen.
+[Ist-Soll-Matrix](docs/CHARACTER_CREATION_COMPLETE.md).
 
 ## Chat B – Fortsetzung einer expliziten NPC-Auswahl nach Neustart (26.10.2026)
 
@@ -13,7 +35,7 @@ Ein neuer Integrationstest überprüft die bestehende explizite NPC-ID-Übertrag
 
 Die App ist eine **Alpha-Version**, kein fertiger Ersatz für einen menschlichen Spielleiter und keine vollständige D&D-5e-Regelimplementierung. **Zum lokalen Spielen ist weder ein Account noch ein KI-Server erforderlich.**
 
-> **Projektstand (26.10.2026):** Die Flutter-App deklariert Version **0.8.42+92**. Die Versionsnummer kennzeichnet den Entwicklungsstand, nicht eine abgeschlossene Geräte- oder Release-Abnahme. Aktuelle Integrationen, Testnachweise und offene Arbeiten stehen in [Entwicklungsstatus](DEVELOPMENT_STATUS.md) und [Codex-Checkpoint](docs/CODEX_CHECKPOINT.md).
+> **Projektstand (27.10.2026):** Die Flutter-App deklariert Version **0.8.43+93**. Die Versionsnummer kennzeichnet den Entwicklungsstand, nicht eine abgeschlossene Geräte- oder Release-Abnahme. Aktuelle Integrationen, Testnachweise und offene Arbeiten stehen in [Entwicklungsstatus](DEVELOPMENT_STATUS.md) und [Codex-Checkpoint](docs/CODEX_CHECKPOINT.md).
 
 ## Was kann Würfelraunen?
 
@@ -148,7 +170,7 @@ Die Upload-/Projektprüfung weist nun manipulierte Gradle-Wrapper-ZIP-Dateien mi
 Das Projekt wird in kleinen, überprüfbaren Inkrementen entwickelt. Vorrangig sind:
 
 1. Laufende Branch-/PR-Integrationen mit nachvollziehbaren Tests abschließen; keine historischen Ergebnisse als neue Abnahme ausgeben.
-2. Vorhandene NPC-Auswahl durchgehend von der Android-Oberfläche bis zum validierten optionalen Erzählvertrag anbinden.
+2. Charaktererstellung: verbindliche Entscheidungsprüfung, persistente Entwürfe und geführten Assistenten auf bestehenden Modulen vervollständigen; parallele NPC-PRs separat belassen.
 3. **SRD 5.2.1 schrittweise vervollständigen**: Klassen-, Kampf-, Zauber-, Monster- und Ausrüstungswirkungen jeweils mit Tests und belegter Regelquelle ergänzen.
 4. Fantasy-Oberfläche, Barrierefreiheit, Android-Echtgeräteprüfung, belastbare Release-Signierung und Updateabläufe weiter absichern.
 

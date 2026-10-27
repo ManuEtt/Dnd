@@ -1,147 +1,166 @@
-# Charaktererstellung – Arbeits- und Abnahmenachweis (NICHT vollständig)
+# Charaktererstellung – überprüfbare Teilabdeckung
 
-## 27.10.2026 – Zusammengeführtes Charakterpaket (Integrationsprüfung)
+Stand 27.10.2026, Version **0.8.43+93**, Branch
+`feat/character-roll-provenance-20261027`, [PR #297](https://github.com/ManuEtt/Dnd/pull/297).
+**Die gesamte Charaktererstellung ist nicht vollständig.** Dieser Dateiname
+bezeichnet das Ziel, keinen erreichten Abschluss. Frühere Fassungen liegen unter
+`docs/history/character_rolls_20261027T031103Z/` mit SHA256-Nachweis.
 
-Die Pakete #264/#272/#273/#275 stehen gemeinsam im Integrationskandidaten. Insbesondere ersetzt PR #275 im Akolythenpaket A den zuvor unbestimmten Symbol-Platzhalter durch eine explizite Wahl zwischen Amulett, Emblem und Reliquiar; Option B erteilt nur 50 GM. Die in den nachfolgenden historischen Einzelpaket-Abschnitten genannten **offenen Symbole und Provenienz** sind damit überholt. Vollständige Klassen-/Spezies-/Talentauswahl und echte Geräteabnahme sind weiterhin nicht belegt. [Integrationsbeleg](CHARACTER_STACK_INTEGRATION_20261027.md).
+## Quelle und tatsächliche Basis
 
----
+Offizielles [D&D SRD 5.2.1](https://www.dndbeyond.com/srd), Wizards of the Coast
+LLC, CC BY 4.0. Amtliche englische PDF:
+https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf
+(SHA256 `8974902d109d6e63672d7c490bde9ccf052410503d9cfa768237154fbc5e3d87`).
+Erneut geprüft: gedruckte S. 21 Attributmethoden/Bonusgrenzen, S. 83 Hintergründe,
+S. 84–86 Spezies einschließlich ihrer verpflichtenden Herkunftswahlen.
+Lizenznachweis bleibt in `THIRD_PARTY_NOTICES.md` erhalten.
 
-**Stand:** 26.10.2026 · Branch `feat/character-random-ability-rolls-20261026` · Draft-PR #264.
+Main `4c2ad0ab8e00d22fac645c6f885c9f9cfcff2267` enthält bereits den über #279
+integrierten Charakterstack #264/#272/#273/#275 und spätere Regelergänzungen.
+Diese Funktionen werden verwendet, nicht erneut implementiert. Offene parallele
+Klassen-/Story-/Material-PRs bleiben separat. Normale Main-Integration im eigenen
+Branch, kein Main-Direktpush, kein Force-Push und keine fremde Branchlöschung.
 
-Dieser Dateiname kennzeichnet den geplanten Endzustand. **Weder die
-Charaktererstellung noch der SRD-5.2.1-Audit sind bereits vollständig.**
-Der jeweils letzte GitHub-Commit und dessen CI müssen gesondert geprüft werden.
+## Paket: sicherer Attributentwurf und lesbare Herkunft
 
-## Entwicklungspaket 3 – Vier SRD-Hintergrundpakete (27.10.2026)
+1. Die drei vorhandenen offiziellen Methoden bleiben erhalten: Standardsatz,
+   27-Punkte-Kauf und sechsmal 4W6, jeweils drei höchste Würfel. Grundwerte,
+   Hintergrundbonus und spätere aktuelle Werte sind getrennt.
+2. Beim Wurf wird zuerst ein vollständiger gültiger Satz erzeugt. Fehlgeschlagene
+   Zufallsquellen lassen Methode, Punktentwurf und Charakter unverändert;
+   deutsche Live-Fehlermeldung und neuer Versuch sind möglich. Ein erfolgreicher
+   Satz bleibt während desselben Dialogs auch beim Methodenwechsel erhalten.
+   Abbruch und erneutes Öffnen sind kein dauerhaftes Würfelprotokoll.
+3. `StartingAbilityOrigin.rolledScores` liefert unveränderliche aufgezeichnete
+   Summen ohne erneutes Würfeln. `fromJson` verlangt Version als int 1 und prüft
+   weiterhin Methoden, Würfel, Multiset, zulässige Boni und Obergrenze 20.
+   Die Struktur ist ein validierter Importdatensatz, kein kryptografischer
+   Echtheitsbeweis fremder Würfe.
+4. `StartingAbilityOriginPanel` im echten `CharacterSheetPage` zeigt Basis +
+   Hintergrund = Startwert sowie sämtliche Rohwürfel. Ein Stufe-5-Charakter darf
+   heute STR 20 haben und historisch STR 19 anzeigen. Öffnen/Schließen und
+   Scrollen ändern keine JSON-Daten. Altcharaktere erhalten kein neues Feld.
+5. Tatsächlich gefundene Überläufe im Fantasy-Theme bei 200 % Schrift repariert:
+   Attributkartenhöhe und Panelüberschriften/-navigation, Touchflächen ≥48 dp.
+   Schnellaktionen anderer Bereiche werden nicht verändert.
 
-**Stack:** [#264](https://github.com/ManuEtt/Dnd/pull/264) →
-[#272](https://github.com/ManuEtt/Dnd/pull/272) →
-[#273](https://github.com/ManuEtt/Dnd/pull/273). Basis #272:
-Actions #40443350659 **erfolgreich** (CI) inkl. Android.
-Abnahme der Änderungen in #273 ist davon **separat**.
+Code: `app/lib/domain/starting_ability_origin.dart`,
+`app/lib/ui/ability_assignment_dialog.dart`,
+`app/lib/ui/starting_ability_origin_panel.dart`,
+`app/lib/ui/fantasy_character_sheet.dart`,
+`app/lib/ui/fantasy_character_overview.dart`.
 
-- `srd_background_package.dart`: Akolyth, Krimineller, Weiser und
-  Soldat mit zwei fest vorgegebenen Übungen, Werkzeugübung,
-  Herkunftstalent-Vermerk und originalen Startpaketen A oder
-  ausdrücklich gewählten 50 GM B. Beim Soldaten ist ein
-  **konkretes** SRD-Spielset Voraussetzung und zugleich Ausrüstung
-  sowie Werkzeugübung.
-- `srd_background_package_dialog.dart` und Charakter-Editor:
-  ausdrückliche Bestätigung vor Hinzufügen; bestehende Helden,
-  andere Hintergründe, bereits verbuchte Pakete oder Stufen >1
-  werden nicht automatisch ausgestattet. Herkunftsinformationen
-  als optionales `startingBackgroundPackage` am Helden gespeichert.
-- SRD-Kataloggegenstände werden nach validierten IDs gespeichert;
-  20 Pfeile sind **eine** Munitionseinheit mit 20 Pfeilen.
-  Freie Varianten wie das konkrete Heilige Symbol bleiben
-  bewusst ungeklärt und erhalten keine erfundenen Spielwerte.
-- **Nicht fertig:** Regeln des Talents `Wachsam` und `Wilder
-  Angreifer` sowie insbesondere konkrete Entscheidungen für
-  `Magieinitiierter` (zwei Zaubertricks, ein Zauber 1. Grades und
-  Zauberattribut). Die Eintragung eines Talentnamens ist **keine**
-  vollständige Regelautomatik. Tool-Übungen werden als
-  Herkunftsmerkmal eingetragen, ihre Würfelmechanik bleibt
-  separat zu prüfen.
-- Tests: `app/test/srd_background_package_test.dart` und
-  `app/test/srd_background_package_dialog_test.dart`; finale
-  CI muss Format, Analyse, vollständige Tests, Android-Build und
-  Artefakte noch bestätigen.
+## Ist-Soll-Matrix
 
-**Nächster Schritt:** vollständige Herkunftstalent- und Zauberwahl
-mit eigener SRD-Prüfung; danach weitere fehlende Klassen- und
-Speziesmerkmale.
+Die Statusgruppen sind **vollständig implementiert und getestet** (nur enger
+benannter Teilmechanismus), **teilweise implementiert**, **vorhanden, aber ohne
+funktionierende Regelwirkung**, **fehlend** und **blockiert**. Nicht geprüftes
+Material bleibt ausdrücklich offen; ein Katalog oder Dateiname ist kein Beleg.
 
----
-
-## Quellen und Regelgrenze
-
-Verbindlich ist das offiziell lizenzierte D&D SRD 5.2.1,
-https://www.dndbeyond.com/srd, *Character Creation*, S. 21,
-„Generate Your Scores“ und „Assign Ability Scores“ (CC BY 4.0).
-Aus den drei Methoden werden nun Standard Array, Point Cost und Random
-Generation als separate, validierte Startwertquellen angeboten.
-
-## Implementierungspaket 1: Würfelergebnisse für Attribute
-
-- `app/lib/domain/ability_generation.dart`: `AbilityRollSet.generate`
-  würfelt exakt sechsmal vier W6, verwirft pro Durchgang den niedrigsten
-  Würfel, enthält alle 24 Würfelzahlen unveränderlich. Die Würfelquelle
-  ist injizierbar und daher ohne Zufall testbar. Der Attribut-Entwurf
-  ist nur gültig, wenn seine sechs Werte genau dem gewürfelten Multiset
-  entsprechen. Hintergrundboni werden nur aus den Basiswerten komponiert.
-- `app/lib/ui/ability_assignment_dialog.dart`: Dritte Auswahlmethode,
-  transparente Würfelhistorie, Tauschzuweisung aller sechs Ergebnisse
-  und obligatorische ausdrückliche Bestätigung. Der Benutzer muss
-  zusätzlich weiterhin Hintergrund und Erhöhungen selbst wählen.
-- `app/test/ability_random_generation_test.dart`: Anzahl, Gesamtsummen,
-  Duplikate, ungültige Würfelzahlen, unveränderliche Daten,
-  fehlende Würfelbelege und die einmalige Bonusanwendung.
-- `app/test/ui_random_ability_assignment_test.dart`: die sichtbare
-  Würfelmethode und die Bestätigungssperre mit festgelegter Würfelquelle.
-- Es wurde kein Speicherschema geändert. Der vorhandene Editor übernimmt
-  weiterhin nur die **ausdrücklich bestätigten Endwerte**; die 24
-  Würfelzahlen werden noch nicht dauerhaft mit dem Helden gespeichert.
-  **Dauerhafte Provenienz von Basiswerten/Bonusentscheidungen bleibt offen.**
-
-## Ist-Soll-Matrix (konservativ)
-
-| Bereich | Stand nach Paket 1 | Für Vollständigkeit offen |
+| Anforderung / bestehende Register-ID | Ist-Zustand | Konkrete Pflichtlücke |
 | --- | --- | --- |
-| Attribute – Standardsatz | vorhanden; bestehende Tests | finale CI auf Integrationsstand |
-| Attribute – Punktekauf | vorhanden; bestehende Tests | finale CI auf Integrationsstand |
-| Attribute – 4W6 | Code + Tests auf Draft-Branch | grüne CI, Persistenz der Würfel-Provenienz |
-| Hintergründe – vier SRD-Einträge | **teilweise**: Attributboni | Talente, Übungen, Ausrüstung, Entscheidungen |
-| Spezies – neun Basisfamilien | **teilweise/ungeprüft** | Varianten, Pflichtentscheidungen, Mechaniken, Persistenz |
-| Zwölf SRD-Klassen | **teilweise**: Katalog und Startpakete | sämtliche Startmerkmale, Zauber, Auswahlen, Tests |
-| Talente/Zauber | **nicht vollständig automatisiert** | Herkunftstalente, zulässige Klassenauswahl, Ressourcen |
-| Ausrüstung | **teilweise** | echte Paketübergabe, Doppelwahl-Verhinderung |
-| Stufenaufstieg/Mehrklassen | **teilweise** | vollständige verbindliche Pflichtentscheidungen |
-| Audit / Character Wizard | **teilweise** | echte SRD-Vollständigkeits-Validierung und geführter Ablauf |
-| SQLite/JSON/Android | bisherige Formate erhalten | Realgerät, persistente Entwürfe und End-to-End-Abnahme |
+| Attribute / `RULE-CHARACTER-CREATION-ABILITY-SCORES` | teilweise; alle drei Methoden, bestätigte Herkunft und Anzeige vorhanden | Gesamt-Audit, persistenter unbestätigter Entwurf und endgültige CI-Abnahme |
+| Historische Anzeige / `CHAR-ABILITY-SOURCE-DISPLAY` | enger Teilmechanismus lokal getestet | endgültige Branch-CI und Realgerät getrennt offen |
+| Klassen/Herkunft / `RULE-CHARACTER-CREATION-CLASS-AND-ORIGIN` | teilweise | vollständige Spezies-/Klassen-/Talententscheidungen |
+| Ausrüstung / `RULE-CHARACTER-CREATION-EQUIPMENT-CHOICES` | teilweise | vollständiger klassenübergreifender Herkunfts-/Doppelwahl-Nachweis |
+| Start-TP / `RULE-CHARACTER-CREATION-STARTING-HIT-POINTS` | teilweise | vollständige Kombination mit Spezies-/Talentmodifikatoren |
+| Stufenaufstieg / `RULE-CHARACTER-CREATION-LEVEL-ADVANCEMENT` | teilweise | sämtliche verpflichtenden Feature-/Unterklassenentscheidungen |
+| Mehrklassen / `RULE-CHARACTER-CREATION-MULTICLASS-REQUIREMENTS` und `-PROFICIENCIES`, `-SPELLCASTING` | teilweise | vollständige kombinierte Pflichtwahl-/Ressourcenabnahme |
+| Charakterbogen / `RULE-CHARACTER-CREATION-CHARACTER-SHEET` | teilweise | vollständiger abschließender Legalitätsnachweis |
+| Origin-Feat-Vermerke | teilweise; einzelne Wirkungen bereits vorhanden | insbesondere Magic Initiate mit zwei Tricks, Grad-1-Zauber und Attributwahl |
+| Vollständiger Schrittassistent mit Entwurf | fehlend als durchgehender Ablauf | Navigation, dauerhafter Entwurf, finale atomare Bestätigung |
+| Umfassender Audit mit sieben Zuständen | teilweise: drei vorhandene Statuswerte | ungültig/abhängig/Hausregel/nicht-SRD; keine Bestätigung allein durch Zeichenfolgen |
+| Echte Android-/TalkBack-Abnahme | blockiert | kein Gerät in dieser Sitzung |
 
-**Keine der Gruppen gilt durch diesen Eintrag als vollständig getestet.**
+Die ergänzenden `CHAR-*`-IDs stehen in `CHARACTER_CREATION_COVERAGE.json`;
+übergeordnete `RULE-*`-IDs behalten ihre bisherige Bedeutung. Kein globaler
+SRD-Fertigstellungsprozentsatz und keine Aussage, die Quelleninventur sei beendet.
 
-## Implementierungspaket 2: Versionierter Attribut-Herkunftsnachweis (Stack-PR)
+## Alle zwölf Klassen
 
-- `app/lib/domain/starting_ability_origin.dart` speichert die **Ausgangswerte**
-  vor Hintergrundbonus, Methode, bestätigte Hintergrunderhöhungen und bei
-  4W6 alle sechs Würfe mit jeweils vier Würfelzahlen. Die Struktur ist
-  unveränderlich, versioniert (`version: 1`) und wird beim JSON-Import
-  **regelkonform validiert**.
-- `HeroCharacter.startingAbilityOrigin` ist ein **optionales Feld** im
-  bestehenden Charakter-JSON `schemaVersion: 1`. Wenn es in alten
-  Daten fehlt, entsteht kein neuer Standardwert. Es ist **keine**
-  SQLite- oder Kampagnen-Schemaänderung notwendig.
-- Der bestehende Attributdialog übergibt erst nach expliziter Bestätigung
-  die Herkunft; der Charakter-Editor überträgt sie ausschließlich
-  beim Speichern passender, bestätigter Stufe-1-Werte.
-- `app/test/starting_ability_origin_test.dart`,
-  `app/test/ability_storage_integration_test.dart`,
-  `app/test/ui_ability_assignment_test.dart`: JSON-/Editor-Nachweis,
-  ungültige Quelle und Würfelwerte, vollständiger SQLite-Neustart sowie
-  Helden-Export/-Import.
-- Ein Herkunftsnachweis ist **historisch**: spätere Stufensteigerungen
-  dürfen ihn erhalten, ohne die heutigen Werte rückwirkend auf die
-  Anfangswerte zurückzusetzen. Der Nachweis selbst gewährt keine
-  erneuten Boni. Alte Charaktere erhalten keinen fingierten Wurf.
-- Weitere separate Verbesserung nötig: unveränderliche Änderungs-
-  bzw. Stufenaufstiegshistorie für **nachträglich ersetzte** Startwerte.
-  Die aktuelle Metadatenstruktur enthält einen bestätigten Anfangsstand,
-  noch kein vollständiges revisionssicheres Änderungsjournal.
+Gemeinsame Grundlage: `srd_character_classes.dart`, Klassen-/Fertigkeitsdialog,
+`starting_hit_points.dart`, `srd_class_level_up.dart`, `multiclass_rules.dart`.
+Vorhandene Fachtests sind in der JSON-Matrix verlinkt; sie beweisen keine
+vollständige Ende-zu-Ende-Erstellung aller Klassen. Quelle jeweils SRD *Classes*.
 
-**Abnahme:** Neue Tests wurden erstellt und als nächster GitHub-CI-Schritt
-vorgesehen; vor deren Erfolg kein vollständig getestetes Paket behaupten.
+| Klasse | Verifizierter Rahmen | Für vollständige Startentscheidung offen |
+| --- | --- | --- |
+| Barbar | Katalog, TP, Übungen, Ausrüstung; teilweise Features | vollständige Merkmals-/Ressourcen-/Waffenmeisterschafts-Abnahme |
+| Barde | Katalog, TP, Übungen, Ausrüstung, Magiegrundlagen | Instrumente, vollständige Trick-/Zauberwahl und Startmerkmale |
+| Kleriker | Katalog, TP, Übungen, Ausrüstung, Magiegrundlagen | vollständige Göttlicher-Orden-/Zauber-/Fokusentscheidungen |
+| Druide | Katalog, TP, Übungen, Ausrüstung, Magiegrundlagen | vollständige Urorden-/Zauber-/Fokusentscheidungen |
+| Kämpfer | zusätzlicher Stufe-1-Dialog für Stil, Meisterschaften und TP | vollständige kombinierte Herkunfts-/Talent-/Regelwirkung und E2E-Abnahme |
+| Mönch | Katalog, TP, Übungen, Ausrüstung; einzelne Aktionen | vollständige Werkzeug-/Startmerkmalsintegration |
+| Paladin | Katalog, TP, Übungen, Ausrüstung, Magiegrundlagen | vollständige Meisterschafts-/Zauber-/Fokusentscheidungen |
+| Waldläufer | Katalog, TP, Übungen, Ausrüstung; spätere Features vorhanden | vollständige Stufe-1-Meisterschafts-/Zauberentscheidungen |
+| Schurke | Katalog, TP, Übungen, Ausrüstung; einzelne Kampfregeln | vollständige Expertise-/Meisterschafts-/Startmerkmalsentscheidungen |
+| Zauberer | Katalog, TP, Übungen, Ausrüstung, Magiegrundlagen | vollständige Tricks/Zauber, Fokus und Startressourcen |
+| Hexenmeister | Katalog, TP, Übungen, Ausrüstung, Paktgrundlagen | vollständige Anrufungs-/Zauber-/Startentscheidungen |
+| Magier | Katalog, TP, Übungen, Ausrüstung, Magiegrundlagen | Zauberbuch, Ritual-/Vorbereitungs-/Fokusentscheidungen vollständig |
 
-## Qualitäts- und Abnahmegrenze
+Alle zwölf Klassen bleiben **teilweise implementiert**. Unterklassen werden
+auf ihrer vorgeschriebenen Klassenstufe benötigt, nicht pauschal auf Stufe 1.
+Einzelne spätere Kampfmerkmale ersetzen keine vollständige Charaktererstellung.
 
-Die neuen Tests und die bestehende CI sollen auf der **letzten**
-Branch-SHA ausgeführt werden. Weder das Schreiben eines Tests noch eine
-frühere grüne CI ist ein neuer bestandener Testnachweis.
-Der lokale Ausführungsrechner verfügt nicht über Flutter/Dart- oder
-Android-SDK; echte Android-Geräteprüfung ist weiterhin offen.
+## Vier Hintergründe
 
-## Nächster Implementierungsschritt
+Quelle SRD S. 83. Die bereits integrierten Module `srd_background_package.dart`
+und `srd_background_package_dialog.dart` erzeugen Fertigkeiten, Werkzeugübung,
+Talentvermerk und ausdrücklich gewählte Ausrüstung oder 50 Gold. Die gesonderten
+Attributboni kommen aus dem Attributdialog. Pakete sind nicht automatisch
+vollständige Talente; bestehende Charaktere werden nicht ungefragt geändert.
 
-Nach Abnahme des Attribut-Herkunftsnachweises die vier SRD-Hintergründe
-mit Herkunftstalenten, Übungs- und Ausrüstungsentscheidungen als eigene
-prüfbare Domain-/UI-Pakete einbinden. Anschließend die Speziesvarianten.
+| Hintergrund | Vorhandene Paketwahl | Offene Entscheidung / Wirkung |
+| --- | --- | --- |
+| Akolyth | Übungen, Kalligrafie, Heiliges Symbol A oder Gold B | Magieinitiierter (Kleriker) vollständig wählen und regeltechnisch anwenden |
+| Krimineller | Übungen, Diebeswerkzeug, Paket A / Gold B | vollständige Wachsam-Anbindung einschließlich zulässiger Initiativewahl nachweisen |
+| Weiser | Übungen, Kalligrafie, Paket A / Gold B | Magieinitiierter (Magier) vollständig wählen und regeltechnisch anwenden |
+| Soldat | Übungen, ausdrückliches Spielset, Paket A / Gold B | Wilder-Angreifer-Wirkung im tatsächlichen bestätigten Spielablauf vollständig anbinden |
+
+## Neun Spezies und amtliche Varianten
+
+Quelle SRD S. 84–86. Aktuell Bewegungsvorschläge und freie Identitätsangaben;
+**keine** vollständige strukturierte Speziesauswahl mit allen Startmerkmalen.
+Auch vorhandene allgemeine Resistenz-/Zaubermodule beweisen die Vergabe nicht.
+
+| Spezies | Erforderliche amtliche Auswahl / Merkmale | Status |
+| --- | --- | --- |
+| Drachenblütiger | 10 Ahnen: Black, Blue, Brass, Bronze, Copper, Gold, Green, Red, Silver, White; passende Resistenz/Atemressource | teilweise, Merkmalswahl offen |
+| Zwerg | Dunkelsicht, Giftwiderstand/-rettung, TP pro Stufe, Steingespür | teilweise, strukturierte Merkmale offen |
+| Elf | Drow / High Elf / Wood Elf; Zauberattribut, Sinnesskill, Trance und Herkunftszauber | teilweise, Variantenentscheidungen offen |
+| Gnom | Forest / Rock Gnome, Zauberattribut, Dunkelsicht, Gnomische Gerissenheit | teilweise, Variantenentscheidungen offen |
+| Goliath | Cloud / Fire / Frost / Hill / Stone / Storm; Ressource, Powerful Build | teilweise, Herkunftsentscheidung offen |
+| Halbling | Brave, Nimbleness, Luck, Naturally Stealthy | teilweise, Merkmalsvergabe/-wirkung offen |
+| Mensch | Small / Medium, Fertigkeit, zusätzliches Herkunftstalent, Inspiration | teilweise, verpflichtende Auswahl offen |
+| Ork | Adrenaline Rush, Dunkelsicht, Relentless Endurance | teilweise, Merkmalsvergabe/-ressourcen offen |
+| Tiefling | Abyssal / Chthonic / Infernal; Small / Medium; Zauberattribut, passende Resistenz/Zauber | teilweise, Variantenentscheidungen offen |
+
+## Tatsächlicher Testnachweis und Grenzen
+
+92 gezielte Tests gemeinsam bestanden (Log
+`/workspace/validation/20261027-character-combined.log`):
+`ability_generation_test.dart`, `ability_random_generation_test.dart`,
+`starting_ability_origin_test.dart`, `ability_storage_integration_test.dart`,
+`ui_ability_assignment_test.dart`, `ui_random_ability_assignment_test.dart`,
+`starting_ability_origin_panel_test.dart`, `fantasy_character_sheet_test.dart`,
+`fantasy_character_reference_design_test.dart`, `fantasy_character_ornaments_test.dart`.
+
+Das Paket prüft auch die echte Navigator-Route mit Fantasy-Theme, 320/360 dp,
+200 % Schrift und unverändertes Charakter-JSON; Würfeldialog mit Tastatur.
+Kein vollständiger Ende-zu-Ende-Assistent für alle zwölf Klassen behauptet.
+Vollständiges `scripts/check.sh` zusätzlich mit **1.884 Flutter-, 164 Python-
+und 72 Backend-Tests** erfolgreich; **zwölf native Android-Tests**,
+Debug-APK sowie Versions-/ABI-/Signaturprüfung bestanden. Finale CI und
+aktuelle Alpha-APK-Nachweise werden im
+[operativen Checkpoint](CODEX_CHECKPOINT.md) fortgeschrieben. Echtes Gerät,
+TalkBack, Produktivsignatur und historisches Geräteupgrade bleiben offen.
+
+## Genau nächster Implementierungsschritt
+
+Nach grüner Abnahme von #297 den bestehenden `SrdCharacterCreationAudit`
+überprüfbar erweitern: tatsächliche strukturierte Herkunft und verpflichtende
+Auswahlen statt bloßer Spezies-/Hintergrundnamen bestätigen; sieben Zustände
+modellieren, deutsche Fehlermeldungen und Negativ-/Legacy-Tests anbinden.
+Danach Magic-Initiate- und Speziesentscheidungen als gesonderte vollständige
+Pakete im geführten Entwurf. Vorher aktuelle Main-/PR-Arbeit erneut abgleichen.
