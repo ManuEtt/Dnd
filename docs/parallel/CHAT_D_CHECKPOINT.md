@@ -1,3 +1,18 @@
+# Chat D D-013 – APK-ZIP-Bomb-Abwehr vor Alpha-Veröffentlichung (27.10.2026)
+
+- **Ausgangs-main:** `f9b2f72a4bf8e4216bf8baac60c7f92c4a8a997f`, Branch `fix/chat-d/alpha-apk-zipbomb-guard-20261027`. Würfelraunen `0.8.42+92`, SQLite 2, Kampagnen-JSON 1 unverändert.
+- **Problem:** `scripts/prepare_alpha_release.py:validate_arm64_apk` durchlief `ZipFile.testzip()` ohne vorgelagerte Größen-/Kompressionsbegrenzung. Dadurch hätte eine manipulierte APK mit vielen oder hochkomprimierten ZIP-Einträgen bei der Verifikation sehr viel Zeit/Ressourcen beanspruchen können.
+- **IMPLEMENTIERT:** Fail-Closed-Limits: APK-Datei höchstens **512 MiB**, ZIP höchstens **20.000 Einträge**, Summe der angegebenen entpackten Größen höchstens **1 GiB**; Einträge ab **1 MiB** dürfen nicht mehr als **1000-fach** expandieren (laut ZIP-Zentralverzeichnis). Die Limits werden vor `testzip()` geprüft. Bisherige Erkennung von duplizierten/unsicheren Pfaden, Symlinks, CRC-Schäden und fehlenden oder leeren Android-ARM64-Pflichtbibliotheken bleibt bestehen.
+- **REGRESSIONEN:** Vier negative Python-Fälle: auf Datenträger zu große APK (ZIP-Prüfer darf nicht geöffnet werden), hochkomprimierter Deflate-Eintrag, fiktive zu große entpackte Gesamtsumme, ZIP mit überzähliger Eintragsliste. Die drei letzten Tests verlangen Ablehnung vor `testzip()`. Normale bestehende positive Release-Tests bleiben unverändert.
+- **Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, `docs/parallel/CHAT_D_CHECKPOINT.md`, `docs/CODEX_CHECKPOINT.md`, `README.md`. Codecommit `daea8b78d441b30c93fa8e825a5c2708ff104302`; Regressionen `912a662ed54dc8fa520a59d366bb4654a93c80ae`.
+- **GETESTET:** Vorgänger-PR #258 vollständig erfolgreich [GitHub-CI #40391878647](https://github.com/ManuEtt/Dnd/actions/runs/40391878647), 36/36 Schritte; PR #258 wurde in Main gemergt. Das belegt **nicht** D-013.
+- **NICHT GETESTET:** Neue Python-/Flutter-/Backend-/Android-/Alpha-CI auf finaler D-013-SHA, reale Android-Geräte, produktive APK-Signatur, alte Installationen. Kein lokaler vollständiger Checkout wegen GitHub-DNS-Ausfall.
+- **BLOCKIERT:** CI des neuen PR-HEADs und Abgleich gegen inzwischen verändertes Main. Keine fremden PRs/Branches berührt oder automatisch gemergt.
+- **KEINE MIGRATION:** Reine Alpha-Release-Prüfung, weder Spielregeln noch Story-/KI- oder SQLite-Code verändert; Schema 2 und Kampagnenformat 1 bleiben erhalten.
+- **NÄCHSTER SCHRITT:** PR-CI auf exaktem Dokumentations-HEAD abnehmen, Fehler ggf. im eigenen Branch korrigieren, vor Freigabe neuen Main-HEAD und offene PRs erneut prüfen. Ein echter APK-Release ersetzt keine Geräteprüfung.
+
+---
+
 # Chat D D-012 – ZIP-Bomb-Schutz bei Gradle-Wrapper-Vorprüfung (26.10.2026)
 
 - **Ausgangs-main:** `67f146e690306b13d490bd8e7fd5636bb187c77e`. **Arbeitsbranch:** `fix/chat-d/gradle-jar-zip-bomb-guard-20261026`. Implementierung `77a431955351e30a1dcf54e0dea7f8ba7b7b497a`, Regressionstests `86634965c6784994ecb731c4bacab476a9f50ffa`.
