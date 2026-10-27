@@ -60,3 +60,7 @@ Zusätzliche bestätigte magische Angriffsmodifikatoren als echte modellierte We
 
 ## NÄCHSTER SCHRITT
 Nach erfolgreichem Review dieses Pakets: **Feuerpfeil-Ziel- und Gegenstandsregeln unabhängig prüfen**. Akzeptanz: brennbare unbeaufsichtigte Objekte nur mit explizit bestätigtem Objekttyp und Reichweite; keine Änderung eines unbestätigten Objekts, kein RNG vor Validierung; deterministische positive/negative Tests sowie Alt-JSON- und Ablehnungsinvarianz.
+
+## Chat A – 27.10.2026 – Mehrere Zaubermaterialien
+
+Branch: `feat/chat-a/audited-multi-material-components-20261027` von `4bd97b4d`. IMPLEMENTIERT: auditiertes Einzelmaterial-Preflight für Astral Projection, Clone, Legend Lore, Secret Chest einschließlich Signatur- und Duplikatprüfung. TEST: `app/test/srd_multi_material_audit_test.dart` hinzugefügt; CI bis zum Abschluss separat auswerten. NICHT GETESTET: Echtgerät und bisher ausstehende Branch-CI. BLOCKIERT: echte Inventar-/UI-Anbindung wegen geteilter Integrationsgrenzen. NOCH NICHT IMPLEMENTIERT: automatische Mengen-/Wertprüfung, bestätigtes Verbrauchsjournal und vollständige SRD-Abdeckung. Details: `CHAT_A_MULTI_MATERIAL_20261027.md`.
