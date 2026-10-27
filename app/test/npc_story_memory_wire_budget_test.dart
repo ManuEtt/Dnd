@@ -164,9 +164,11 @@ void main() {
           expect(memories[1], contains('Notiz Nummer 1'));
           expect(memories[2], contains('Notiz Nummer 2'));
           expect(
-            memories.take(3).every(
-              (entry) => entry.startsWith('Bestätigte NPC-Beziehungsnotiz'),
-            ),
+            memories
+                .take(3)
+                .every(
+                  (entry) => entry.startsWith('Bestätigte NPC-Beziehungsnotiz'),
+                ),
             isTrue,
           );
           expect(
