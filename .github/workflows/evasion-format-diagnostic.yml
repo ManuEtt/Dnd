@@ -1,0 +1,21 @@
+name: Evasion formatter diagnostic
+on:
+  push:
+    branches:
+      - feat/chat-a/evasion-confirmed-saves-20261027
+permissions:
+  contents: read
+jobs:
+  diff:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Print canonical Dart formatter diff
+        run: |
+          dart format app/test/srd_evasion_rules_test.dart app/test/srd_evasion_sheet_test.dart
+          git diff -- app/test/srd_evasion_rules_test.dart app/test/srd_evasion_sheet_test.dart
