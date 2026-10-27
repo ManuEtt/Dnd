@@ -1,0 +1,21 @@
+name: Chat B temporary controller Dart format inspection
+on:
+  push:
+    branches:
+      - feat/chat-b/controller-explicit-npc-selection-20261027
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Show official formatter output
+        run: |
+          echo 'CHAT_B_BEGIN_CONTROLLER'
+          dart format --output=show app/lib/services/game_controller.dart
+          echo 'CHAT_B_END_CONTROLLER'
+          echo 'CHAT_B_BEGIN_TEST'
+          dart format --output=show app/test/npc_explicit_controller_selection_test.dart
+          echo 'CHAT_B_END_TEST'
