@@ -2334,8 +2334,8 @@ class _AdventurePageState extends State<_AdventurePage> {
                             const SizedBox(width: 6),
                             Text(
                               kind == SrdTerrainMovement.climb
-                                  ? 'Klettern (Gelände bestätigen)'
-                                  : 'Schwimmen (Gelände bestätigen)',
+                                  ? 'Klettern'
+                                  : 'Schwimmen',
                             ),
                           ],
                         ),
