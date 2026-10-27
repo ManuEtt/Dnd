@@ -4,7 +4,8 @@
 - Historische Basiswerte, Hintergrundboni und Rohwürfel im echten Charakterbogen.
 - Strenge ganzzahlige Herkunfts-Version und umfangreiche SQLite-/JSON-Regressionen.
 - Fantasy-Charakterbogen mit 200 % Schrift bei 320/360 dp ohne die gefundenen Überläufe.
-- 92 gezielte Flutter-Tests bestanden; vollständige aktuelle CI/Android-Abnahme noch offen.
+- 1.884 Flutter-, 164 Python-, 72 Backend- und zwölf native Android-Tests bestanden;
+  Format/Analyse, Backend- und Debug-APK-Build grün. Finale PR-CI / Realgerät separat offen.
 
 ---
 

@@ -12,7 +12,7 @@
   "android_device_tested": false,
   "ci_final_head_verified": false,
   "existing_requirement_registers_unchanged": false,
-  "status_note": "92 gezielte gemeinsame Flutter-Tests bestanden; Vollabnahme und exakte finale CI siehe CODEX_CHECKPOINT. Alle Gesamt-Vollständigkeitsflags bleiben false.",
+  "status_note": "Vollständige lokale Prüfung: 1884 Flutter-, 164 Python-, 72 Backend-, 12 native Android-Tests. Finale exakte PR-CI siehe #297/CODEX_CHECKPOINT. Keine vollständige Charaktererstellung behauptet.",
   "requirements": [
     {
       "id": "CHAR-ABILITY-STANDARD-ARRAY",
@@ -230,7 +230,12 @@
         "app/test/srd_class_level_up_test.dart",
         "app/test/multiclass_rules_test.dart"
       ],
-      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md."
+      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md.",
+      "register_requirement_ids": [
+        "CLASS-BARBAR-1-BASE-RAGE-0",
+        "CLASS-BARBAR-1-BASE-UNARMORED-DEFENSE-1",
+        "CLASS-BARBAR-1-BASE-WEAPON-MASTERY-2"
+      ]
     },
     {
       "name": "Barde",
@@ -254,7 +259,11 @@
         "app/test/srd_class_level_up_test.dart",
         "app/test/multiclass_rules_test.dart"
       ],
-      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md."
+      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md.",
+      "register_requirement_ids": [
+        "CLASS-BARDE-1-BASE-BARDIC-INSPIRATION-0",
+        "CLASS-BARDE-1-BASE-SPELLCASTING-1"
+      ]
     },
     {
       "name": "Kleriker",
@@ -278,7 +287,11 @@
         "app/test/srd_class_level_up_test.dart",
         "app/test/multiclass_rules_test.dart"
       ],
-      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md."
+      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md.",
+      "register_requirement_ids": [
+        "CLASS-KLERIKER-1-BASE-SPELLCASTING-0",
+        "CLASS-KLERIKER-1-BASE-DIVINE-ORDER-1"
+      ]
     },
     {
       "name": "Druide",
@@ -302,7 +315,12 @@
         "app/test/srd_class_level_up_test.dart",
         "app/test/multiclass_rules_test.dart"
       ],
-      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md."
+      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md.",
+      "register_requirement_ids": [
+        "CLASS-DRUIDE-1-BASE-SPELLCASTING-0",
+        "CLASS-DRUIDE-1-BASE-DRUIDIC-1",
+        "CLASS-DRUIDE-1-BASE-PRIMAL-ORDER-2"
+      ]
     },
     {
       "name": "Kämpfer",
@@ -326,7 +344,12 @@
         "app/test/srd_class_level_up_test.dart",
         "app/test/multiclass_rules_test.dart"
       ],
-      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md."
+      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md.",
+      "register_requirement_ids": [
+        "CLASS-K-MPFER-1-BASE-FIGHTING-STYLE-0",
+        "CLASS-K-MPFER-1-BASE-SECOND-WIND-1",
+        "CLASS-K-MPFER-1-BASE-WEAPON-MASTERY-2"
+      ]
     },
     {
       "name": "Mönch",
@@ -350,7 +373,11 @@
         "app/test/srd_class_level_up_test.dart",
         "app/test/multiclass_rules_test.dart"
       ],
-      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md."
+      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md.",
+      "register_requirement_ids": [
+        "CLASS-M-NCH-1-BASE-MARTIAL-ARTS-0",
+        "CLASS-M-NCH-1-BASE-UNARMORED-DEFENSE-1"
+      ]
     },
     {
       "name": "Paladin",
@@ -374,7 +401,12 @@
         "app/test/srd_class_level_up_test.dart",
         "app/test/multiclass_rules_test.dart"
       ],
-      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md."
+      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md.",
+      "register_requirement_ids": [
+        "CLASS-PALADIN-1-BASE-LAY-ON-HANDS-0",
+        "CLASS-PALADIN-1-BASE-SPELLCASTING-1",
+        "CLASS-PALADIN-1-BASE-WEAPON-MASTERY-2"
+      ]
     },
     {
       "name": "Waldläufer",
@@ -398,7 +430,12 @@
         "app/test/srd_class_level_up_test.dart",
         "app/test/multiclass_rules_test.dart"
       ],
-      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md."
+      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md.",
+      "register_requirement_ids": [
+        "CLASS-WALDL-UFER-1-BASE-SPELLCASTING-0",
+        "CLASS-WALDL-UFER-1-BASE-FAVORED-ENEMY-1",
+        "CLASS-WALDL-UFER-1-BASE-WEAPON-MASTERY-2"
+      ]
     },
     {
       "name": "Schurke",
@@ -422,7 +459,13 @@
         "app/test/srd_class_level_up_test.dart",
         "app/test/multiclass_rules_test.dart"
       ],
-      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md."
+      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md.",
+      "register_requirement_ids": [
+        "CLASS-SCHURKE-1-BASE-EXPERTISE-0",
+        "CLASS-SCHURKE-1-BASE-SNEAK-ATTACK-1",
+        "CLASS-SCHURKE-1-BASE-THIEVES-CANT-2",
+        "CLASS-SCHURKE-1-BASE-WEAPON-MASTERY-3"
+      ]
     },
     {
       "name": "Zauberer",
@@ -446,7 +489,11 @@
         "app/test/srd_class_level_up_test.dart",
         "app/test/multiclass_rules_test.dart"
       ],
-      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md."
+      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md.",
+      "register_requirement_ids": [
+        "CLASS-ZAUBERER-1-BASE-SPELLCASTING-0",
+        "CLASS-ZAUBERER-1-BASE-INNATE-SORCERY-1"
+      ]
     },
     {
       "name": "Hexenmeister",
@@ -470,7 +517,11 @@
         "app/test/srd_class_level_up_test.dart",
         "app/test/multiclass_rules_test.dart"
       ],
-      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md."
+      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md.",
+      "register_requirement_ids": [
+        "CLASS-HEXENMEISTER-1-BASE-ELDRITCH-INVOCATIONS-0",
+        "CLASS-HEXENMEISTER-1-BASE-PACT-MAGIC-1"
+      ]
     },
     {
       "name": "Magier",
@@ -494,7 +545,12 @@
         "app/test/srd_class_level_up_test.dart",
         "app/test/multiclass_rules_test.dart"
       ],
-      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md."
+      "note": "Vorhandene gemeinsame Module; keine komplette zwölfklassenweise E2E- und Pflichtwahlabnahme. Konkrete Lücken in CHARACTER_CREATION_COMPLETE.md.",
+      "register_requirement_ids": [
+        "CLASS-MAGIER-1-BASE-SPELLCASTING-0",
+        "CLASS-MAGIER-1-BASE-RITUAL-ADEPT-1",
+        "CLASS-MAGIER-1-BASE-ARCANE-RECOVERY-2"
+      ]
     }
   ],
   "backgrounds": [
@@ -513,7 +569,8 @@
         "app/test/srd_background_package_test.dart",
         "app/test/srd_background_package_dialog_test.dart"
       ],
-      "note": "Paketwahl vorhanden; komplette Herkunftstalentwirkung und Pflichtwahlabnahme offen."
+      "note": "Paketwahl vorhanden; komplette Herkunftstalentwirkung und Pflichtwahlabnahme offen.",
+      "register_requirement_id": "ORIGIN-BACKGROUND-ACOLYTE"
     },
     {
       "name": "Krimineller",
@@ -530,7 +587,8 @@
         "app/test/srd_background_package_test.dart",
         "app/test/srd_background_package_dialog_test.dart"
       ],
-      "note": "Paketwahl vorhanden; komplette Herkunftstalentwirkung und Pflichtwahlabnahme offen."
+      "note": "Paketwahl vorhanden; komplette Herkunftstalentwirkung und Pflichtwahlabnahme offen.",
+      "register_requirement_id": "ORIGIN-BACKGROUND-CRIMINAL"
     },
     {
       "name": "Weiser",
@@ -547,7 +605,8 @@
         "app/test/srd_background_package_test.dart",
         "app/test/srd_background_package_dialog_test.dart"
       ],
-      "note": "Paketwahl vorhanden; komplette Herkunftstalentwirkung und Pflichtwahlabnahme offen."
+      "note": "Paketwahl vorhanden; komplette Herkunftstalentwirkung und Pflichtwahlabnahme offen.",
+      "register_requirement_id": "ORIGIN-BACKGROUND-SAGE"
     },
     {
       "name": "Soldat",
@@ -564,7 +623,8 @@
         "app/test/srd_background_package_test.dart",
         "app/test/srd_background_package_dialog_test.dart"
       ],
-      "note": "Paketwahl vorhanden; komplette Herkunftstalentwirkung und Pflichtwahlabnahme offen."
+      "note": "Paketwahl vorhanden; komplette Herkunftstalentwirkung und Pflichtwahlabnahme offen.",
+      "register_requirement_id": "ORIGIN-BACKGROUND-SOLDIER"
     }
   ],
   "species": [
@@ -587,7 +647,19 @@
         "White"
       ],
       "variants_implemented": false,
-      "note": "Amtliche Variantenliste geprüft; strukturierte Startmerkmale/Entscheidungen und Wirkung nicht vollständig implementiert. Bewegung allein genügt nicht."
+      "note": "Amtliche Variantenliste geprüft; strukturierte Startmerkmale/Entscheidungen und Wirkung nicht vollständig implementiert. Bewegung allein genügt nicht.",
+      "register_requirement_id": "ORIGIN-SPECIES-DRAGONBORN",
+      "code": [
+        "app/lib/domain/srd_starting_combat_values.dart"
+      ],
+      "ui": [
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_starting_combat_values_test.dart",
+        "app/test/ui_starting_combat_values_test.dart"
+      ],
+      "test_scope": "Vorhandene Bewegungs-/Kampfwertvorschläge; keine vollständige Varianten-/Merkmalsabnahme."
     },
     {
       "name": "Zwerg",
@@ -597,7 +669,19 @@
       "source": "SRD 5.2.1 pp. 84-86",
       "official_variants": [],
       "variants_implemented": false,
-      "note": "Amtliche Variantenliste geprüft; strukturierte Startmerkmale/Entscheidungen und Wirkung nicht vollständig implementiert. Bewegung allein genügt nicht."
+      "note": "Amtliche Variantenliste geprüft; strukturierte Startmerkmale/Entscheidungen und Wirkung nicht vollständig implementiert. Bewegung allein genügt nicht.",
+      "register_requirement_id": "ORIGIN-SPECIES-DWARF",
+      "code": [
+        "app/lib/domain/srd_starting_combat_values.dart"
+      ],
+      "ui": [
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_starting_combat_values_test.dart",
+        "app/test/ui_starting_combat_values_test.dart"
+      ],
+      "test_scope": "Vorhandene Bewegungs-/Kampfwertvorschläge; keine vollständige Varianten-/Merkmalsabnahme."
     },
     {
       "name": "Elf",
@@ -611,7 +695,19 @@
         "Wood Elf"
       ],
       "variants_implemented": false,
-      "note": "Amtliche Variantenliste geprüft; strukturierte Startmerkmale/Entscheidungen und Wirkung nicht vollständig implementiert. Bewegung allein genügt nicht."
+      "note": "Amtliche Variantenliste geprüft; strukturierte Startmerkmale/Entscheidungen und Wirkung nicht vollständig implementiert. Bewegung allein genügt nicht.",
+      "register_requirement_id": "ORIGIN-SPECIES-ELF",
+      "code": [
+        "app/lib/domain/srd_starting_combat_values.dart"
+      ],
+      "ui": [
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_starting_combat_values_test.dart",
+        "app/test/ui_starting_combat_values_test.dart"
+      ],
+      "test_scope": "Vorhandene Bewegungs-/Kampfwertvorschläge; keine vollständige Varianten-/Merkmalsabnahme."
     },
     {
       "name": "Gnom",
@@ -624,7 +720,19 @@
         "Rock Gnome"
       ],
       "variants_implemented": false,
-      "note": "Amtliche Variantenliste geprüft; strukturierte Startmerkmale/Entscheidungen und Wirkung nicht vollständig implementiert. Bewegung allein genügt nicht."
+      "note": "Amtliche Variantenliste geprüft; strukturierte Startmerkmale/Entscheidungen und Wirkung nicht vollständig implementiert. Bewegung allein genügt nicht.",
+      "register_requirement_id": "ORIGIN-SPECIES-GNOME",
+      "code": [
+        "app/lib/domain/srd_starting_combat_values.dart"
+      ],
+      "ui": [
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_starting_combat_values_test.dart",
+        "app/test/ui_starting_combat_values_test.dart"
+      ],
+      "test_scope": "Vorhandene Bewegungs-/Kampfwertvorschläge; keine vollständige Varianten-/Merkmalsabnahme."
     },
     {
       "name": "Goliath",
@@ -641,7 +749,19 @@
         "Storm"
       ],
       "variants_implemented": false,
-      "note": "Amtliche Variantenliste geprüft; strukturierte Startmerkmale/Entscheidungen und Wirkung nicht vollständig implementiert. Bewegung allein genügt nicht."
+      "note": "Amtliche Variantenliste geprüft; strukturierte Startmerkmale/Entscheidungen und Wirkung nicht vollständig implementiert. Bewegung allein genügt nicht.",
+      "register_requirement_id": "ORIGIN-SPECIES-GOLIATH",
+      "code": [
+        "app/lib/domain/srd_starting_combat_values.dart"
+      ],
+      "ui": [
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_starting_combat_values_test.dart",
+        "app/test/ui_starting_combat_values_test.dart"
+      ],
+      "test_scope": "Vorhandene Bewegungs-/Kampfwertvorschläge; keine vollständige Varianten-/Merkmalsabnahme."
     },
     {
       "name": "Halbling",
@@ -651,7 +771,19 @@
       "source": "SRD 5.2.1 pp. 84-86",
       "official_variants": [],
       "variants_implemented": false,
-      "note": "Amtliche Variantenliste geprüft; strukturierte Startmerkmale/Entscheidungen und Wirkung nicht vollständig implementiert. Bewegung allein genügt nicht."
+      "note": "Amtliche Variantenliste geprüft; strukturierte Startmerkmale/Entscheidungen und Wirkung nicht vollständig implementiert. Bewegung allein genügt nicht.",
+      "register_requirement_id": "ORIGIN-SPECIES-HALFLING",
+      "code": [
+        "app/lib/domain/srd_starting_combat_values.dart"
+      ],
+      "ui": [
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_starting_combat_values_test.dart",
+        "app/test/ui_starting_combat_values_test.dart"
+      ],
+      "test_scope": "Vorhandene Bewegungs-/Kampfwertvorschläge; keine vollständige Varianten-/Merkmalsabnahme."
     },
     {
       "name": "Mensch",
@@ -661,7 +793,19 @@
       "source": "SRD 5.2.1 pp. 84-86",
       "official_variants": [],
       "variants_implemented": false,
-      "note": "Amtliche Variantenliste geprüft; strukturierte Startmerkmale/Entscheidungen und Wirkung nicht vollständig implementiert. Bewegung allein genügt nicht."
+      "note": "Amtliche Variantenliste geprüft; strukturierte Startmerkmale/Entscheidungen und Wirkung nicht vollständig implementiert. Bewegung allein genügt nicht.",
+      "register_requirement_id": "ORIGIN-SPECIES-HUMAN",
+      "code": [
+        "app/lib/domain/srd_starting_combat_values.dart"
+      ],
+      "ui": [
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_starting_combat_values_test.dart",
+        "app/test/ui_starting_combat_values_test.dart"
+      ],
+      "test_scope": "Vorhandene Bewegungs-/Kampfwertvorschläge; keine vollständige Varianten-/Merkmalsabnahme."
     },
     {
       "name": "Ork",
@@ -671,7 +815,19 @@
       "source": "SRD 5.2.1 pp. 84-86",
       "official_variants": [],
       "variants_implemented": false,
-      "note": "Amtliche Variantenliste geprüft; strukturierte Startmerkmale/Entscheidungen und Wirkung nicht vollständig implementiert. Bewegung allein genügt nicht."
+      "note": "Amtliche Variantenliste geprüft; strukturierte Startmerkmale/Entscheidungen und Wirkung nicht vollständig implementiert. Bewegung allein genügt nicht.",
+      "register_requirement_id": "ORIGIN-SPECIES-ORC",
+      "code": [
+        "app/lib/domain/srd_starting_combat_values.dart"
+      ],
+      "ui": [
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_starting_combat_values_test.dart",
+        "app/test/ui_starting_combat_values_test.dart"
+      ],
+      "test_scope": "Vorhandene Bewegungs-/Kampfwertvorschläge; keine vollständige Varianten-/Merkmalsabnahme."
     },
     {
       "name": "Tiefling",
@@ -685,7 +841,19 @@
         "Infernal"
       ],
       "variants_implemented": false,
-      "note": "Amtliche Variantenliste geprüft; strukturierte Startmerkmale/Entscheidungen und Wirkung nicht vollständig implementiert. Bewegung allein genügt nicht."
+      "note": "Amtliche Variantenliste geprüft; strukturierte Startmerkmale/Entscheidungen und Wirkung nicht vollständig implementiert. Bewegung allein genügt nicht.",
+      "register_requirement_id": "ORIGIN-SPECIES-TIEFLING",
+      "code": [
+        "app/lib/domain/srd_starting_combat_values.dart"
+      ],
+      "ui": [
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_starting_combat_values_test.dart",
+        "app/test/ui_starting_combat_values_test.dart"
+      ],
+      "test_scope": "Vorhandene Bewegungs-/Kampfwertvorschläge; keine vollständige Varianten-/Merkmalsabnahme."
     }
   ],
   "scope_note": "Begrenztes Attribut-/Herkunftspaket mit lokaler Teilabnahme; offizieller Gesamtabgleich, voller Assistent, persistente Entwürfe und Pflichtentscheidungen fehlen. Keine globale Regelquote.",
@@ -695,7 +863,12 @@
   "local_validation": {
     "targeted_flutter_count": 92,
     "log": "/workspace/validation/20261027-character-combined.log",
-    "full_suite": "pending",
+    "full_suite": {
+      "status": "success",
+      "flutter_passed": 1884,
+      "backend_smoke_enabled": true,
+      "log": "/workspace/validation/20261027-character-full-check.log"
+    },
     "native_android": {
       "passed": 12,
       "failures": 0
@@ -704,5 +877,11 @@
     "python_count": 164,
     "backend_count": 72,
     "debug_apk_code_commit": "db2aab06b6bdd3f770ea400b8e67ee712ea61dd7"
+  },
+  "status_labels": {
+    "implemented_local_tests_passed_ci_pending": "teilweise implementiert – enger Mechanismus lokal getestet, finale Abnahme offen",
+    "partial": "teilweise implementiert",
+    "missing": "fehlend",
+    "unverified": "noch zu prüfen; kein Vollständigkeitsnachweis"
   }
 }

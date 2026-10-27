@@ -3,9 +3,11 @@
 RNG-Fehler bewahren den Entwurf; lesbarer historischer Attributnachweis im echten
 Charakterbogen ohne erneute Boni. Strenge ganzzahlige Herkunftsversion;
 SQLite 2 / JSON 1 kompatibel. Fantasy-Bogen bei 200 % Schrift korrigiert.
-**92 gezielte Flutter-Tests bestanden** auf Main-Kombination `4c2ad0a` plus
-Produktänderungen. Gesamtsuite, finaler Branch-CI und neuer Android-Build beim
-frühen Checkpoint ausstehend; reales Gerät offen. Nach tatsächlicher
+**Vollständige lokale Abnahme: 1.884 Flutter-, 164 Python-, 72 Backend- und
+zwölf native Android-Tests bestanden**; Formatierung/Analyse, Backend-Build und
+Debug-APK erfolgreich, Version/ABIs/Testsignatur geprüft. Produktcode `db2aab0`
+auf Main-Kombination `4c2ad0a`; spätere Commits nur Dokumentation/Regelbelege.
+Finale PR-CI beim Schreiben noch abzunehmen; reales Gerät offen. Nach tatsächlicher
 Teilagent-Kontingentwarnung zuerst komplettes ZIP/Patch sichern. Branch
 `feat/character-roll-provenance-20261027`; [operativer Checkpoint](docs/CODEX_CHECKPOINT.md).
 Nächster konkreter Schritt: gemeinsame Prüfungen/PR abschließen, danach den

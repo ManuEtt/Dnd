@@ -149,7 +149,10 @@ Auch vorhandene allgemeine Resistenz-/Zaubermodule beweisen die Vergabe nicht.
 Das Paket prüft auch die echte Navigator-Route mit Fantasy-Theme, 320/360 dp,
 200 % Schrift und unverändertes Charakter-JSON; Würfeldialog mit Tastatur.
 Kein vollständiger Ende-zu-Ende-Assistent für alle zwölf Klassen behauptet.
-Gesamtabnahme, finale CI und aktuelle APK-Nachweise werden im
+Vollständiges `scripts/check.sh` zusätzlich mit **1.884 Flutter-, 164 Python-
+und 72 Backend-Tests** erfolgreich; **zwölf native Android-Tests**,
+Debug-APK sowie Versions-/ABI-/Signaturprüfung bestanden. Finale CI und
+aktuelle Alpha-APK-Nachweise werden im
 [operativen Checkpoint](CODEX_CHECKPOINT.md) fortgeschrieben. Echtes Gerät,
 TalkBack, Produktivsignatur und historisches Geräteupgrade bleiben offen.
 

@@ -8,11 +8,15 @@ Basisattribute, Hintergrundboni und alle 24 Rohwürfel getrennt von aktuellen
 Werten. Alte Spielstände bleiben lesbar; Öffnen des Bogens verändert sie nicht.
 Layoutfehler bei 200 % Schrift im Fantasy-Bogen sind behoben.
 
-**92 gezielte Flutter-Tests bestanden**, darunter SQLite-Neustart,
-Event-Rollback, Import-/Export und 320/360-dp-Bedienung. Vollständige gemeinsame
-Abnahme und CI des neuen Kopfes beim frühen Checkpoint noch offen; keine neue
-APK freigegeben. Branch `feat/character-roll-provenance-20261027`, integrierte
-Main-Basis `4c2ad0a`, Integration `78ae2b7`; finaler Kopf im Checkpointmanifest.
+**Vollständige lokale Prüfung bestanden: 1.884 Flutter-, 164 Python-,
+72 Backend- und zwölf native Android-Tests**, einschließlich SQLite-Neustart,
+Event-Rollback, Import-/Export und 320/360-dp-Bedienung. Formatierung, Analyse,
+Backend-Build sowie Debug-APK mit geprüfter Version/Signatur erfolgreich.
+Produktcode `db2aab06b6bdd3f770ea400b8e67ee712ea61dd7`, Branch
+`feat/character-roll-provenance-20261027`, integrierte Main-Basis `4c2ad0a`.
+[PR #297](https://github.com/ManuEtt/Dnd/pull/297) enthält den finalen
+Dokumentationskopf; dessen CI-/Alpha-Artefakte separat abnehmen.
+Echtes Gerät, TalkBack und produktive Signatur bleiben offen.
 [Nachweise und Fortsetzung](docs/CODEX_CHECKPOINT.md).
 
 Die ursprünglichen Attribut-/Hintergrundpakete #264/#272/#273/#275 wurden bereits
