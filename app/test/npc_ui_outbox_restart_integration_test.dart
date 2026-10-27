@@ -96,7 +96,13 @@ Map<String, dynamic> _plan() => {
 };
 
 class _Fixture {
-  _Fixture(this.folder, this.path, this.repository, this.controller, this.transport);
+  _Fixture(
+    this.folder,
+    this.path,
+    this.repository,
+    this.controller,
+    this.transport,
+  );
 
   final Directory folder;
   final String path;
@@ -230,138 +236,153 @@ void main() {
     }
   });
 
-  test('lost NPC receipt reconciles after SQLite restart without replay',
-      () async {
-    final fixture = await _start();
-    try {
-      await fixture.connect();
-      final before = fixture.controller.currentCampaign!;
-      final outbox = PlayerActionOutbox(
-        fixture.repository,
-        newRequestId: () => 'lost-ack-npc',
-      );
-      final action = await outbox.stage(
-        before.id,
-        'Ich frage Mira nach den Schlüsseln.',
-        selectedNpcId: 'mira-two',
-        selectedNpcRevision: before.revision,
-      );
-      final selected = resolvePendingNpcAction(before, action);
-      expect(selected.state, PendingNpcActionState.ready);
-      await fixture.controller.sendAction(
-        action.text,
-        requestId: action.requestId,
-        selectedNpc: selected.choice,
-      );
-      expect(fixture.controller.error, isNull);
-      final confirmed = fixture.controller.currentCampaign!;
-      expect(confirmed.events.last.payload['actionSelectedNpcId'], 'mira-two');
-      expect(fixture.transport.requests, hasLength(1));
+  test(
+    'lost NPC receipt reconciles after SQLite restart without replay',
+    () async {
+      final fixture = await _start();
+      try {
+        await fixture.connect();
+        final before = fixture.controller.currentCampaign!;
+        final outbox = PlayerActionOutbox(
+          fixture.repository,
+          newRequestId: () => 'lost-ack-npc',
+        );
+        final action = await outbox.stage(
+          before.id,
+          'Ich frage Mira nach den Schlüsseln.',
+          selectedNpcId: 'mira-two',
+          selectedNpcRevision: before.revision,
+        );
+        final selected = resolvePendingNpcAction(before, action);
+        expect(selected.state, PendingNpcActionState.ready);
+        await fixture.controller.sendAction(
+          action.text,
+          requestId: action.requestId,
+          selectedNpc: selected.choice,
+        );
+        expect(fixture.controller.error, isNull);
+        final confirmed = fixture.controller.currentCampaign!;
+        expect(
+          confirmed.events.last.payload['actionSelectedNpcId'],
+          'mira-two',
+        );
+        expect(fixture.transport.requests, hasLength(1));
 
-      // No acknowledgement: the outbox row intentionally remains on disk.
-      await fixture.restart();
-      final pending = (await PlayerActionOutbox(fixture.repository)
-          .pendingFor(before.id))!;
-      expect(pending.toJson(), action.toJson());
-      final restored = fixture.controller.currentCampaign!;
-      expect(restored.toJson(), confirmed.toJson());
-      expect(fixture.controller.narrator.enabled, isFalse);
-      final resolution = resolvePendingNpcAction(restored, pending);
-      expect(resolution.state, PendingNpcActionState.alreadyConfirmed);
-      expect(resolution.choice, isNull);
+        // No acknowledgement: the outbox row intentionally remains on disk.
+        await fixture.restart();
+        final pending = (await PlayerActionOutbox(
+          fixture.repository,
+        ).pendingFor(before.id))!;
+        expect(pending.toJson(), action.toJson());
+        final restored = fixture.controller.currentCampaign!;
+        expect(restored.toJson(), confirmed.toJson());
+        expect(fixture.controller.narrator.enabled, isFalse);
+        final resolution = resolvePendingNpcAction(restored, pending);
+        expect(resolution.state, PendingNpcActionState.alreadyConfirmed);
+        expect(resolution.choice, isNull);
 
-      // This is the same policy branch as the UI: remove the receipt, not
-      // resend to a disconnected or paid provider after losing the ACK.
-      await PlayerActionOutbox(fixture.repository).remove(pending);
-      expect(
-        await PlayerActionOutbox(fixture.repository).pendingFor(before.id),
-        isNull,
-      );
-      expect(fixture.transport.requests, hasLength(1));
-      expect(fixture.controller.currentCampaign!.toJson(), confirmed.toJson());
-    } finally {
-      await fixture.close();
-    }
-  });
+        // This is the same policy branch as the UI: remove the receipt, not
+        // resend to a disconnected or paid provider after losing the ACK.
+        await PlayerActionOutbox(fixture.repository).remove(pending);
+        expect(
+          await PlayerActionOutbox(fixture.repository).pendingFor(before.id),
+          isNull,
+        );
+        expect(fixture.transport.requests, hasLength(1));
+        expect(
+          fixture.controller.currentCampaign!.toJson(),
+          confirmed.toJson(),
+        );
+      } finally {
+        await fixture.close();
+      }
+    },
+  );
 
-  test('a stale selection stays queued after a competing SQLite revision',
-      () async {
-    final fixture = await _start();
-    try {
-      final before = fixture.controller.currentCampaign!;
-      final outbox = PlayerActionOutbox(
-        fixture.repository,
-        newRequestId: () => 'stale-npc-choice',
-      );
-      final action = await outbox.stage(
-        before.id,
-        'Ich frage Mira nach den Schlüsseln.',
-        selectedNpcId: 'mira-two',
-        selectedNpcRevision: before.revision,
-      );
-      final changed = GameEngine().saveStoryThread(
-        before,
-        threadId: 'tor',
-        title: 'Das Stadttor',
-        description: 'Eine bestätigte neue Erinnerung.',
-        status: 'open',
-      );
-      await fixture.repository.saveCampaign(
-        changed.campaign,
-        events: changed.events,
-        expectedRevision: before.revision,
-      );
-      await fixture.restart();
-      final current = fixture.controller.currentCampaign!;
-      final snapshot = current.toJson();
-      final pending = (await PlayerActionOutbox(fixture.repository)
-          .pendingFor(before.id))!;
-      final resolution = resolvePendingNpcAction(current, pending);
-      expect(resolution.state, PendingNpcActionState.stale);
-      expect(resolution.choice, isNull);
-      expect(fixture.transport.requests, isEmpty);
-      expect(fixture.controller.currentCampaign!.toJson(), snapshot);
-      expect(pending.toJson(), action.toJson());
-    } finally {
-      await fixture.close();
-    }
-  });
+  test(
+    'a stale selection stays queued after a competing SQLite revision',
+    () async {
+      final fixture = await _start();
+      try {
+        final before = fixture.controller.currentCampaign!;
+        final outbox = PlayerActionOutbox(
+          fixture.repository,
+          newRequestId: () => 'stale-npc-choice',
+        );
+        final action = await outbox.stage(
+          before.id,
+          'Ich frage Mira nach den Schlüsseln.',
+          selectedNpcId: 'mira-two',
+          selectedNpcRevision: before.revision,
+        );
+        final changed = GameEngine().saveStoryThread(
+          before,
+          threadId: 'tor',
+          title: 'Das Stadttor',
+          description: 'Eine bestätigte neue Erinnerung.',
+          status: 'open',
+        );
+        await fixture.repository.saveCampaign(
+          changed.campaign,
+          events: changed.events,
+          expectedRevision: before.revision,
+        );
+        await fixture.restart();
+        final current = fixture.controller.currentCampaign!;
+        final snapshot = current.toJson();
+        final pending = (await PlayerActionOutbox(
+          fixture.repository,
+        ).pendingFor(before.id))!;
+        final resolution = resolvePendingNpcAction(current, pending);
+        expect(resolution.state, PendingNpcActionState.stale);
+        expect(resolution.choice, isNull);
+        expect(fixture.transport.requests, isEmpty);
+        expect(fixture.controller.currentCampaign!.toJson(), snapshot);
+        expect(pending.toJson(), action.toJson());
+      } finally {
+        await fixture.close();
+      }
+    },
+  );
 
-  test('a matching text receipt for the other Mira cannot clear this choice',
-      () async {
-    final fixture = await _start();
-    try {
-      await fixture.connect();
-      final before = fixture.controller.currentCampaign!;
-      final outbox = PlayerActionOutbox(
-        fixture.repository,
-        newRequestId: () => 'npc-id-collision',
-      );
-      final action = await outbox.stage(
-        before.id,
-        'Ich frage Mira.',
-        selectedNpcId: 'mira-one',
-        selectedNpcRevision: before.revision,
-      );
-      await fixture.controller.sendAction(
-        action.text,
-        requestId: action.requestId,
-        selectedNpc: NpcStorySelection.choose(before, 'mira-two'),
-      );
-      expect(fixture.controller.error, isNull);
-      expect(fixture.transport.requests, hasLength(1));
-      await fixture.restart();
-      final current = fixture.controller.currentCampaign!;
-      final pending = (await PlayerActionOutbox(fixture.repository)
-          .pendingFor(before.id))!;
-      expect(
-        resolvePendingNpcAction(current, pending).state,
-        PendingNpcActionState.stale,
-      );
-      expect(pending.toJson(), action.toJson());
-      expect(fixture.transport.requests, hasLength(1));
-    } finally {
-      await fixture.close();
-    }
-  });
+  test(
+    'a matching text receipt for the other Mira cannot clear this choice',
+    () async {
+      final fixture = await _start();
+      try {
+        await fixture.connect();
+        final before = fixture.controller.currentCampaign!;
+        final outbox = PlayerActionOutbox(
+          fixture.repository,
+          newRequestId: () => 'npc-id-collision',
+        );
+        final action = await outbox.stage(
+          before.id,
+          'Ich frage Mira.',
+          selectedNpcId: 'mira-one',
+          selectedNpcRevision: before.revision,
+        );
+        await fixture.controller.sendAction(
+          action.text,
+          requestId: action.requestId,
+          selectedNpc: NpcStorySelection.choose(before, 'mira-two'),
+        );
+        expect(fixture.controller.error, isNull);
+        expect(fixture.transport.requests, hasLength(1));
+        await fixture.restart();
+        final current = fixture.controller.currentCampaign!;
+        final pending = (await PlayerActionOutbox(
+          fixture.repository,
+        ).pendingFor(before.id))!;
+        expect(
+          resolvePendingNpcAction(current, pending).state,
+          PendingNpcActionState.stale,
+        );
+        expect(pending.toJson(), action.toJson());
+        expect(fixture.transport.requests, hasLength(1));
+      } finally {
+        await fixture.close();
+      }
+    },
+  );
 }
