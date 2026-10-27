@@ -2509,12 +2509,18 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#m-nch_4_base_slow-fall_1",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_monk_slow_fall_rules_test.dart",
+        "app/test/srd_monk_slow_fall_sheet_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/srd_monk_slow_fall_rules.dart",
+        "app/lib/ui/fantasy_character_sheet.dart",
+        "app/lib/rules/rules_api.dart"
+      ],
+      "note": "Mönch ab Klassenstufe 4: bestätigter Sturzschaden und ausdrückliche freie Reaktion werden rein regelbasiert um bis zu 5×Mönchsstufe reduziert; Schwellenwert und Charakterbogen in Tests. Tatsächliches Reaktionsbudget/TP/Events noch nicht atomar gebucht; daher nur partial. Finale CI und Gerätetest separat prüfen."
     },
     {
       "id": "CLASS-M-NCH-5-BASE-EXTRA-ATTACK-0",

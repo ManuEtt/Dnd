@@ -299,6 +299,9 @@ class SrdClassFeatureCatalog {
     'Martial Arts',
     'Unarmored Defense',
     'Remarkable Athlete',
+    // A confirmed Reaction damage preflight exists, but HP/reaction
+    // expenditure is not yet committed atomically in an encounter.
+    'Slow Fall',
     // Speed and derived movement types work; climbing/swimming terrain
     // expenditure still requires a dedicated confirmed movement action.
     'Roving',
