@@ -103,6 +103,16 @@ class _SrdBackgroundPackageDialogState
                 value: _takeGold,
                 onChanged: (selected) => setState(() => _takeGold = selected),
               ),
+              if (widget.background == SrdBackground.acolyte ||
+                  widget.background == SrdBackground.sage)
+                const Padding(
+                  padding: EdgeInsets.only(top: 10),
+                  child: Text(
+                    'Offen: Für Magieinitiierter müssen noch zwei '
+                    'Zaubertricks, ein Zauber des 1. Grades und '
+                    'das Zauberattribut gewählt werden.',
+                  ),
+                ),
               if (choice != null) ...[
                 Text(
                   'Werkzeugübung: ${choice.toolProficiency}. '
@@ -115,15 +125,6 @@ class _SrdBackgroundPackageDialogState
                     Text(
                       '• ${item.quantity} × ${choice.itemDisplayName(item)}',
                     ),
-                if (choice.requiresFeatSpellChoices)
-                  const Padding(
-                    padding: EdgeInsets.only(top: 10),
-                    child: Text(
-                      'Offen: Für Magieinitiierter müssen noch zwei '
-                      'Zaubertricks, ein Zauber des 1. Grades und '
-                      'das Zauberattribut gewählt werden.',
-                    ),
-                  ),
               ],
             ],
           ),
