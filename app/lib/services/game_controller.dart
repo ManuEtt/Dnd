@@ -813,8 +813,7 @@ class GameController extends ChangeNotifier {
       playerConfirmed: playerConfirmed,
       immediateRunUpFeet: immediateRunUpFeet,
       jumpDistanceCentimeters: jumpDistanceCentimeters,
-      landingInDifficultTerrainConfirmed:
-          landingInDifficultTerrainConfirmed,
+      landingInDifficultTerrainConfirmed: landingInDifficultTerrainConfirmed,
       obstacleFreePathConfirmed: obstacleFreePathConfirmed,
       lowObstacleHeightCentimeters: lowObstacleHeightCentimeters,
       dmRequiresAthleticsCheck: dmRequiresAthleticsCheck,
