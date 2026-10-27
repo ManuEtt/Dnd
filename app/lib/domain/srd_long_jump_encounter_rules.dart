@@ -4,7 +4,7 @@ import 'models.dart';
 import 'srd_long_jump_rules.dart';
 
 /// The uncommitted output of a confirmed SRD-5.2.1 Long Jump.
-/// 
+///
 /// This is deliberately NOT a GameUpdate. No event, revision increment, or
 /// SQLite transaction happens until the central engine/controller commits it.
 class SrdLongJumpEncounterPlan {
@@ -71,8 +71,7 @@ class SrdLongJumpEncounterRules {
       );
     }
     final hero = campaign.hero;
-    if (!ConditionRules.canMove(hero) ||
-        hero.conditions.contains('liegend')) {
+    if (!ConditionRules.canMove(hero) || hero.conditions.contains('liegend')) {
       throw const FormatException(
         'Der aktuelle Zustand verhindert diesen Weitsprung.',
       );
@@ -105,10 +104,8 @@ class SrdLongJumpEncounterRules {
       runUpFeet: immediateRunUpFeet,
       immediateRunUpConfirmed: immediateRunUpFeet > 0,
       jumpDistanceCentimeters: jumpDistanceCentimeters,
-      movementRemainingCentimeters:
-          encounter.remainingMovementDecimeters * 10,
-      landingInDifficultTerrainConfirmed:
-          landingInDifficultTerrainConfirmed,
+      movementRemainingCentimeters: encounter.remainingMovementDecimeters * 10,
+      landingInDifficultTerrainConfirmed: landingInDifficultTerrainConfirmed,
       obstacleFreePathConfirmed: obstacleFreePathConfirmed,
       lowObstacleHeightCentimeters: lowObstacleHeightCentimeters,
       dmRequiresAthleticsCheck: dmRequiresAthleticsCheck,
