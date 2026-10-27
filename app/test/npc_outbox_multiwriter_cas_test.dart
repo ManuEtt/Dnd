@@ -32,47 +32,49 @@ void main() {
     await directory.delete(recursive: true);
   });
 
-  test('stale writer cannot clear replacement for another same-named NPC',
-      () async {
-    final first = PlayerActionOutbox(
-      firstRepository,
-      newRequestId: () => 'replayed-action-key',
-    );
-    final second = PlayerActionOutbox(secondRepository);
-    final old = await first.stage(
-      'campaign-one',
-      'Ich spreche mit Mira.',
-      selectedNpcId: 'mira-one',
-      selectedNpcRevision: 7,
-    );
-    final cached = (await second.pendingFor(old.campaignId))!;
-    expect(cached.toJson(), old.toJson());
+  test(
+    'stale writer cannot clear replacement for another same-named NPC',
+    () async {
+      final first = PlayerActionOutbox(
+        firstRepository,
+        newRequestId: () => 'replayed-action-key',
+      );
+      final second = PlayerActionOutbox(secondRepository);
+      final old = await first.stage(
+        'campaign-one',
+        'Ich spreche mit Mira.',
+        selectedNpcId: 'mira-one',
+        selectedNpcRevision: 7,
+      );
+      final cached = (await second.pendingFor(old.campaignId))!;
+      expect(cached.toJson(), old.toJson());
 
-    // The player explicitly discards the old intent and selects another NPC.
-    await first.remove(old);
-    final replacement = await first.stage(
-      'campaign-one',
-      'Ich spreche mit Mira.',
-      selectedNpcId: 'mira-two',
-      selectedNpcRevision: 8,
-    );
-    expect(replacement.requestId, old.requestId);
-    expect(replacement.text, old.text);
+      // The player explicitly discards the old intent and selects another NPC.
+      await first.remove(old);
+      final replacement = await first.stage(
+        'campaign-one',
+        'Ich spreche mit Mira.',
+        selectedNpcId: 'mira-two',
+        selectedNpcRevision: 8,
+      );
+      expect(replacement.requestId, old.requestId);
+      expect(replacement.text, old.text);
 
-    // An ACK arriving on another connection cannot delete the new choice.
-    await expectLater(second.remove(cached), throwsStateError);
-    expect(
-      (await first.pendingFor(old.campaignId))!.toJson(),
-      replacement.toJson(),
-    );
-    expect(
-      (await second.pendingFor(old.campaignId))!.toJson(),
-      replacement.toJson(),
-    );
+      // An ACK arriving on another connection cannot delete the new choice.
+      await expectLater(second.remove(cached), throwsStateError);
+      expect(
+        (await first.pendingFor(old.campaignId))!.toJson(),
+        replacement.toJson(),
+      );
+      expect(
+        (await second.pendingFor(old.campaignId))!.toJson(),
+        replacement.toJson(),
+      );
 
-    await second.remove(replacement);
-    expect(await first.pendingFor(old.campaignId), isNull);
-  });
+      await second.remove(replacement);
+      expect(await first.pendingFor(old.campaignId), isNull);
+    },
+  );
 
   test('stale writer cannot clear a newer revision of the same NPC', () async {
     final first = PlayerActionOutbox(
@@ -104,53 +106,51 @@ void main() {
     expect(await second.pendingFor(old.campaignId), isNull);
   });
 
-  test('legacy text-only ACK never clears a newer selected NPC intent',
-      () async {
-    final first = PlayerActionOutbox(
-      firstRepository,
-      newRequestId: () => 'legacy-reused-key',
-    );
-    final second = PlayerActionOutbox(secondRepository);
-    final plain = await first.stage('campaign-one', 'Ich rede mit Mira.');
-    final cached = (await second.pendingFor(plain.campaignId))!;
-    expect(cached.selectedNpcId, isNull);
+  test(
+    'legacy text-only ACK never clears a newer selected NPC intent',
+    () async {
+      final first = PlayerActionOutbox(
+        firstRepository,
+        newRequestId: () => 'legacy-reused-key',
+      );
+      final second = PlayerActionOutbox(secondRepository);
+      final plain = await first.stage('campaign-one', 'Ich rede mit Mira.');
+      final cached = (await second.pendingFor(plain.campaignId))!;
+      expect(cached.selectedNpcId, isNull);
 
-    await first.remove(plain);
-    final selected = await first.stage(
-      plain.campaignId,
-      plain.text,
-      selectedNpcId: 'mira-one',
-      selectedNpcRevision: 12,
-    );
-    await expectLater(second.remove(cached), throwsStateError);
-    expect(
-      (await second.pendingFor(plain.campaignId))!.toJson(),
-      selected.toJson(),
-    );
+      await first.remove(plain);
+      final selected = await first.stage(
+        plain.campaignId,
+        plain.text,
+        selectedNpcId: 'mira-one',
+        selectedNpcRevision: 12,
+      );
+      await expectLater(second.remove(cached), throwsStateError);
+      expect(
+        (await second.pendingFor(plain.campaignId))!.toJson(),
+        selected.toJson(),
+      );
 
-    await second.remove(selected);
-    expect(await first.pendingFor(plain.campaignId), isNull);
+      await second.remove(selected);
+      expect(await first.pendingFor(plain.campaignId), isNull);
 
-    // The reverse direction must be safe too: selected -> text-only.
-    final chosen = await first.stage(
-      plain.campaignId,
-      plain.text,
-      selectedNpcId: 'mira-two',
-      selectedNpcRevision: 13,
-    );
-    final previousSelection =
-        (await second.pendingFor(plain.campaignId))!;
-    await first.remove(chosen);
-    final currentPlain = await first.stage(plain.campaignId, plain.text);
-    await expectLater(
-      second.remove(previousSelection),
-      throwsStateError,
-    );
-    expect(
-      (await first.pendingFor(plain.campaignId))!.toJson(),
-      currentPlain.toJson(),
-    );
-  });
+      // The reverse direction must be safe too: selected -> text-only.
+      final chosen = await first.stage(
+        plain.campaignId,
+        plain.text,
+        selectedNpcId: 'mira-two',
+        selectedNpcRevision: 13,
+      );
+      final previousSelection = (await second.pendingFor(plain.campaignId))!;
+      await first.remove(chosen);
+      final currentPlain = await first.stage(plain.campaignId, plain.text);
+      await expectLater(second.remove(previousSelection), throwsStateError);
+      expect(
+        (await first.pendingFor(plain.campaignId))!.toJson(),
+        currentPlain.toJson(),
+      );
+    },
+  );
 
   test('two concurrent NPC intents cannot overwrite each other', () async {
     final first = PlayerActionOutbox(
@@ -184,14 +184,8 @@ void main() {
     expect(results.where((success) => success).length, 1);
 
     final saved = (await first.pendingFor('campaign-one'))!;
-    expect(
-      (await second.pendingFor('campaign-one'))!.toJson(),
-      saved.toJson(),
-    );
-    expect(
-      saved.selectedNpcId,
-      anyOf('mira-one', 'mira-two'),
-    );
+    expect((await second.pendingFor('campaign-one'))!.toJson(), saved.toJson());
+    expect(saved.selectedNpcId, anyOf('mira-one', 'mira-two'));
     expect(saved.selectedNpcRevision, 20);
 
     final losingId = saved.selectedNpcId == 'mira-one'
@@ -209,7 +203,10 @@ void main() {
       ),
       throwsStateError,
     );
-    expect((await first.pendingFor(saved.campaignId))!.toJson(), saved.toJson());
+    expect(
+      (await first.pendingFor(saved.campaignId))!.toJson(),
+      saved.toJson(),
+    );
     await first.remove(saved);
     expect(await second.pendingFor(saved.campaignId), isNull);
   });
