@@ -69,6 +69,9 @@ class NpcNarratorMemory {
       selectedNotes.add(normalizedNote);
     }
     for (final raw in general) {
+      // NPC notes may already fill the entire wire budget. Do not append
+      // another general memory before checking the shared limit.
+      if (result.length == limit) break;
       final value = _oneLine(raw);
       if (value.isEmpty ||
           selectedNotes.any(
