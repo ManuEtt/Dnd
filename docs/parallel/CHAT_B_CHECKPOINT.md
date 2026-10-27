@@ -1,3 +1,18 @@
+# Chat B – NPC-Auswahl in Android-UI plus persistente Outbox (27.10.2026)
+
+- **Branch:** `feat/chat-b/npc-picker-outbox-20261027`, basiert auf `feat/chat-b/controller-explicit-npc-selection-20261027` (PR #288, Basis-SHA `2ba524c307b3b48ad21a6343df700ae0a643f55d`). Kein unabhängiger Merge vor #288.
+- **Problem:** Der bestehende Controller konnte die manuell gewählte NPC-ID transportieren, die Oberfläche bot keinen Auswahlweg. Die bisherige SQLite-2-Outbox speicherte nur Text und Request-ID; bei Restart wäre eine UI-Auswahl verlorengegangen.
+- **IMPLEMENTIERT:** Neuer `npc_story_selection_dialog.dart` mit deutschen Texten, IDs neben identischen Anzeigenamen, Screenreader-Beschriftung, aktiver Auswahl oder Abbruch. Nur NPCs mit bestätigter Beziehungsnotiz sind wählbar. Im Adventure-Composer ist der neue Button bei ausgehandelter `npc-selection-v1` aktiv. Bestehender Sendeauftrag bleibt für Sprach-/Text-/Schnellaktionen maßgeblich.
+- **KONTINUITÄT:** `PendingPlayerAction` persistiert optional `selectedNpcId`/`selectedNpcRevision` mit dem Text. `_dispatch` rekonstruiert nur die identische ausgewählte ID; bei neuer Revision bleibt der Auftrag sichtbar und wird nicht automatisch auf einen gleichnamigen NPC umgelenkt. Ein exaktes bestätigtes Ereignis darf den verloren gegangenen ACK nach Restart auflösen. Alle anderen Varianten benötigen neue bewusste Auswahl.
+- **SCHEMA/MIGRATION:** SQLite `3` (vorher `2`): zusätzliche nullable `selected_npc_id`/`selected_npc_revision` im `pending_player_actions`-Datensatz, Version-2-Migration durch `ALTER TABLE`. Version 1 wird in denselben Endzustand übertragen. Alte textbasierte Aufträge bleiben unverändert; Kampagnen-JSON/Backend/SRD-Regeln unverändert.
+- **TESTS:** `npc_story_selection_dialog_test.dart` (eindeutige ID trotz gleicher Namen, Abbruch, leere bestätigte Liste); `npc_selected_action_outbox_test.dart` (SQLite-Restart, ungültige Auswahl abweisen, SQLite-2-Upgrade). Die Ausgabe des offiziellen Dart 3.9.2-Formatters wurde übernommen.
+- **BERÜHRTE DATEIEN:** `app/lib/ui/app.dart`, neuer Dialog, `player_action_outbox.dart`, `campaign_repository.dart`, `sqlite_campaign_repository.dart`, zwei neue Tests, README und beide CODEX-Checkpoints.
+- **GEPRÜFT:** Aktueller Repo-/PR-Stand, Formatter. CI auf finalem PR-HEAD nachsehen. Keine manuelle Geräte- oder Live-KI-Abnahme.
+- **BLOCKIERT:** Integration PR #288; gemeinsame UI-/README-Dokumentation durch Chat D bei Merge konsolidieren. Keine fremden Branches gelöscht.
+- **NÄCHSTER SCHRITT:** Race/Restart-Sendeauftrag-Ende-zu-Ende-Test für verlorenes ACK und gleichnamige NPCs.
+
+---
+
 # Chat B – Bewusste NPC-ID-Auswahl durch GameController (27.10.2026)
 
 - **Basis-Main-SHA:** `2421fcd18f4d980f31a71ec9d60e80a53b53e45b`.
