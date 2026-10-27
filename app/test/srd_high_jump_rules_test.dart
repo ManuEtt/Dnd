@@ -39,18 +39,11 @@ void main() {
   });
 
   test('nine feet of confirmed run-up is still a standing jump', () {
-    final standing = check(
-      runUpFeet: 9,
-      heightCm: 90,
-      remainingCm: 90,
-    );
+    final standing = check(runUpFeet: 9, heightCm: 90, remainingCm: 90);
     expect(standing.runningStart, isFalse);
     expect(standing.maximumHeightCentimeters, 90);
     expect(standing.remainingMovementCentimeters, 0);
-    expect(
-      () => check(runUpFeet: 9, heightCm: 91),
-      throwsFormatException,
-    );
+    expect(() => check(runUpFeet: 9, heightCm: 91), throwsFormatException);
 
     final withoutRunUp = check(
       runUpFeet: 0,
@@ -76,14 +69,8 @@ void main() {
   });
 
   test('negative odd Strength modifier rounds down and clamps to zero', () {
-    expect(
-      check(strength: 9, heightCm: 60).maximumHeightCentimeters,
-      60,
-    );
-    expect(
-      check(strength: 7, heightCm: 30).maximumHeightCentimeters,
-      30,
-    );
+    expect(check(strength: 9, heightCm: 60).maximumHeightCentimeters, 60);
+    expect(check(strength: 7, heightCm: 30).maximumHeightCentimeters, 30);
     expect(
       SrdHighJumpRules.maximumHeightCentimeters(
         strengthScore: 1,
@@ -103,14 +90,8 @@ void main() {
         reason: '$invalid',
       );
     }
-    expect(
-      () => check(runUpFeet: -1),
-      throwsFormatException,
-    );
-    expect(
-      () => check(runUpConfirmed: false),
-      throwsFormatException,
-    );
+    expect(() => check(runUpFeet: -1), throwsFormatException);
+    expect(() => check(runUpConfirmed: false), throwsFormatException);
     expect(
       () => check(runUpFeet: 0, runUpConfirmed: true),
       throwsFormatException,
@@ -125,22 +106,10 @@ void main() {
         reason: '$invalid',
       );
     }
-    expect(
-      () => check(heightCm: 180, remainingCm: 179),
-      throwsFormatException,
-    );
-    expect(
-      () => check(remainingCm: -1),
-      throwsFormatException,
-    );
-    expect(
-      () => check(creatureHeightCm: 0),
-      throwsFormatException,
-    );
-    expect(
-      () => check(creatureHeightCm: -1),
-      throwsFormatException,
-    );
+    expect(() => check(heightCm: 180, remainingCm: 179), throwsFormatException);
+    expect(() => check(remainingCm: -1), throwsFormatException);
+    expect(() => check(creatureHeightCm: 0), throwsFormatException);
+    expect(() => check(creatureHeightCm: -1), throwsFormatException);
   });
 
   test('preflight is deterministic and never books movement itself', () {
