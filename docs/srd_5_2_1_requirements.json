@@ -2512,15 +2512,23 @@
       "rule_implemented": "partial",
       "tests": [
         "app/test/srd_monk_slow_fall_rules_test.dart",
-        "app/test/srd_monk_slow_fall_sheet_test.dart"
+        "app/test/srd_monk_slow_fall_sheet_test.dart",
+        "app/test/srd_monk_slow_fall_commit_rules_test.dart",
+        "app/test/srd_monk_slow_fall_commit_storage_test.dart",
+        "app/test/monk_slow_fall_dialog_test.dart",
+        "app/test/monk_slow_fall_adventure_ui_test.dart"
       ],
       "code": [
         "app/lib/domain/srd_class_feature_catalog.dart",
         "app/lib/domain/srd_monk_slow_fall_rules.dart",
         "app/lib/ui/fantasy_character_sheet.dart",
-        "app/lib/rules/rules_api.dart"
+        "app/lib/rules/rules_api.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/services/game_controller.dart",
+        "app/lib/ui/app.dart",
+        "app/lib/ui/monk_slow_fall_dialog.dart"
       ],
-      "note": "Mönch ab Klassenstufe 4: bestätigter Sturzschaden und ausdrückliche freie Reaktion werden rein regelbasiert um bis zu 5×Mönchsstufe reduziert; Schwellenwert und Charakterbogen in Tests. Tatsächliches Reaktionsbudget/TP/Events noch nicht atomar gebucht; daher nur partial. Finale CI und Gerätetest separat prüfen."
+      "note": "Mönch ab Klassenstufe 4: bestätigter Sturzschaden und ausdrückliche freie Reaktion werden rein regelbasiert um bis zu 5×Mönchsstufe reduziert; Schwellenwert und Charakterbogen in Tests. Reaktion/TP/Event werden auf revisionsgeprüftem Kampagnenstand atomar gespeichert und per manueller Android-Bestätigung ausgeführt. Bleibt partial: Sturzereignis, Schadenswürfe und andere Schadensanpassungen werden nicht selbständig aus der Welt/Geschichte hergeleitet. Finale CI und Gerätetest separat prüfen."
     },
     {
       "id": "CLASS-M-NCH-5-BASE-EXTRA-ATTACK-0",

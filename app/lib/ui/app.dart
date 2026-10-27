@@ -39,6 +39,7 @@ import 'confirmed_spell_effect_dialog.dart';
 import 'sending_attempt_dialog.dart';
 import 'experience_reward_dialog.dart';
 import 'hero_shield_reaction_dialog.dart';
+import 'monk_slow_fall_dialog.dart';
 import '../domain/hero_shield_reaction_rules.dart';
 import 'magic_missile_dialog.dart';
 import 'fire_bolt_dialog.dart';
@@ -1577,6 +1578,39 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previous);
   }
 
+  Future<void> _confirmSlowFall() async {
+    final campaign = widget.controller.currentCampaign;
+    final encounter = campaign?.encounter;
+    if (campaign == null ||
+        encounter == null ||
+        !_canInteract ||
+        encounter.isFinished ||
+        encounter.reactionUsed ||
+        ClassResourceRules.level(campaign.hero, 'Mönch') < 4) {
+      return;
+    }
+    final choice = await showDialog<ConfirmedSlowFallChoice>(
+      context: context,
+      builder: (_) =>
+          MonkSlowFallDialog(hero: campaign.hero, encounter: encounter),
+    );
+    if (choice == null || !mounted) return;
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    // Use the exact revision and encounter captured BEFORE opening the
+    // dialog. The controller rejects stale choices after concurrent changes.
+    await widget.controller.applyConfirmedSlowFall(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      encounterId: encounter.id,
+      confirmedFallDamage: choice.damageAfterDefenses,
+      fallConfirmed: true,
+      playerConfirmedReaction: true,
+      damageAfterOtherDefensesConfirmed: true,
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
   Future<void> _moveOnConfirmedTerrain(
     SrdTerrainMovement kind,
     int distanceFeet,
@@ -2419,6 +2453,26 @@ class _AdventurePageState extends State<_AdventurePage> {
                     icon: Icons.pause_circle_outline,
                     style: FantasyButtonStyle.iron,
                     label: 'Gegnerbewegung bestätigen',
+                  ),
+                if (campaign.encounter != null &&
+                    !campaign.encounter!.isFinished &&
+                    ClassResourceRules.level(campaign.hero, 'Mönch') >= 4)
+                  FantasyTextButton(
+                    key: const ValueKey('adventure-monk-slow-fall'),
+                    onPressed:
+                        !_canInteract ||
+                            campaign.pendingRoll != null ||
+                            campaign.pendingDeathSave != null ||
+                            campaign.pendingEnemyShieldHit != null ||
+                            campaign.encounter!.reactionUsed ||
+                            campaign.hero.isDead ||
+                            (campaign.hero.hitPoints ?? 0) <= 0 ||
+                            !ConditionRules.canTakeActions(campaign.hero)
+                        ? null
+                        : _confirmSlowFall,
+                    icon: Icons.airline_stops_outlined,
+                    style: FantasyButtonStyle.iron,
+                    label: 'Sanfter Fall',
                   ),
                 if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished)
