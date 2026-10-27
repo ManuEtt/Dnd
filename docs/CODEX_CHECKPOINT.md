@@ -41,15 +41,24 @@ Ursprung. Später SQL-Eventfehler rollt fünf Tabellen und sichtbare Snapshots
 zurück. Manipulierte Herkunft/Versions-Typen ändern keine gespeicherten Daten.
 Log: `/workspace/validation/20261027-character-combined.log`.
 
+Zusätzlich: 164 Python- und 72 Backend-Tests; Dart-Formatierung aller 430
+Dateien ohne Änderung und Flutter-Analyse ohne Befund. Debug-APK erfolgreich
+gebaut, Paketmetadaten/ZIP/Signatur geprüft: Version 0.8.43, Build 93,
+arm64-v8a/armeabi-v7a/x86_64. **12 native Android-Tests bestanden**.
+Quellcodebasis der APK `db2aab06b6bdd3f770ea400b8e67ee712ea61dd7`;
+spätere Änderungen betreffen nur Dokumentation/Anforderungsbelege.
+[PR #297](https://github.com/ManuEtt/Dnd/pull/297) als Entwurf vorhanden.
+
+
 Die letzte beobachtete Main-CI
 [40499412855](https://github.com/ManuEtt/Dnd/actions/runs/40499412855)
 ist auf `4c2ad0a` erfolgreich. Das ist **kein** Nachweis unseres neuen Kopfes.
 
 ## NICHT GETESTET
 
-Beim frühen Checkpoint: vollständiges `scripts/check.sh`, neuer Debug-Build,
-native Android-Tests und finale Branch-CI noch ausstehend. Kein neuer APK-Download
-behauptet. Reales Android-Gerät, TalkBack-Geräteabnahme, Altgeräte-Upgrade und
+Vollständige Flutter-Suite aus `scripts/check.sh` und finale Branch-CI
+noch ausstehend. Debug-APK vorhanden, optimierte ARM64-Alpha noch nicht aus
+einem erfolgreichen aktuellen Lauf bereitgestellt. Reales Android-Gerät, TalkBack-Geräteabnahme, Altgeräte-Upgrade und
 produktive Signatur fehlen. Erfolge werden erst nach beobachtetem Abschluss
 nachgetragen.
 
@@ -87,6 +96,25 @@ keine bloße Spezies-/Hintergrundzeichenfolge als vollständige SRD-Wahl bestät
 Vor Implementierung Main und parallele PRs erneut lesen, insbesondere Klassen-
 und Hintergrundänderungen. Keine fremden Branches löschen, kein Force-Push,
 keine direkte Main-Änderung und keine automatische Fortsetzung zusagen.
+
+### In GitHub übernehmen
+
+Am einfachsten den vorhandenen PR #297 prüfen. Alternativ den vollständigen ZIP
+auf einem neuen Branch entpacken, sodass `app/`, `backend/`, `scripts/` und
+`.github/` direkt in der Repositorywurzel liegen; keine private `.env` kopieren.
+Für den Patch in einem sauberen Checkout der Basis `4c2ad0a`:
+
+```bash
+git switch -c import/character-attributes 4c2ad0ab8e00d22fac645c6f885c9f9cfcff2267
+git apply --check --binary /pfad/zum/Aenderungen.patch
+git apply --binary /pfad/zum/Aenderungen.patch
+git add .
+git commit -m "Charaktererstellung: Attributentwurf und Startwertanzeige"
+git push -u origin import/character-attributes
+```
+
+Danach PR nach Main erstellen und aktuelle CI abwarten. Ein ZIP-Import enthält
+keine Git-Historie; der Patch dokumentiert die genaue Basis im Dateimanifest.
 
 Originaldokumente sind bytegenau mit SHA256 unter
 `docs/history/character_rolls_20261027T031103Z/` erhalten.

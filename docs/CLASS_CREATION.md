@@ -1,4 +1,4 @@
-# Klassenwahl und Startpakete – Aetheria 0.3.3
+# Klassenwahl und Startpakete – Würfelraunen
 
 Quelle: SRD 5.2.1, Abschnitt „Classes“: https://www.dndbeyond.com/srd
 
@@ -24,11 +24,11 @@ Auf Stufe 2–20 ist der neue Klassenauswahlassistent **nicht** als Stufenaufsti
 
 ## Attributregeln
 
-Bei neuen Charakteren schützt der Editor die durch den Standardsatz oder den Punktekauf einschließlich Hintergrundboni ermittelten Endwerte vor stillen manuellen Änderungen. Wer direkt eigene Attributwerte eintragen will, muss **Manuelle Attribute als Hausregel zulassen** aktivieren. Für historische Charaktere gilt diese neue Einschränkung nicht. Eine dauerhafte Herkunfts-/Regelversion-Metadatenerfassung steht noch aus.
+Bei neuen Charakteren schützt der Editor die durch den Standardsatz oder den Punktekauf einschließlich Hintergrundboni ermittelten Endwerte vor stillen manuellen Änderungen. Wer direkt eigene Attributwerte eintragen will, muss **Manuelle Attribute als Hausregel zulassen** aktivieren. Für historische Charaktere gilt diese neue Einschränkung nicht. Bestätigte Stufe-1-Ausgangswerte, Methode und Rohwürfel sind optional versioniert gespeichert und im Charakterbogen lesbar; bestehende Charaktere erhalten keinen erfundenen Nachweis.
 
 ## Unterstützter Umfang und Grenzen
 
-Der Assistent setzt die Startlisten aus dem SRD 5.2.1 um: zwölf Klassen, Rettungswurf-Übungen, Klassenfertigkeiten, Trefferwürfel und optionale Ausrüstung/Startgold. Er implementiert noch **keine** Charaktermerkmale, Werkzeugauswahl, Hintergrund-Fertigkeiten, Talente, Zauberauswahl, automatische Rüstungsberechnung, Mehrklassenregeln oder automatische Stufenaufstiege.
+Der Assistent setzt die Startlisten aus dem SRD 5.2.1 um: zwölf Klassen, Rettungswurf-Übungen, Klassenfertigkeiten, Trefferwürfel und optionale Ausrüstung/Startgold. Weitere Module ergänzen Kämpferstartmerkmale, Hintergrund-Werkzeuge/-Fertigkeiten, Ausrüstung sowie Teile von Mehrklassen und Stufenaufstieg. Vollständige Klassenstartmerkmale, Talente, Zauberentscheidungen und ihre Kombination sind weiterhin **teilweise implementiert**; eine bloße Klassenwahl ist kein vollständiger SRD-Charakter.
 
 Regeltexte sind für die Benutzeroberfläche vereinfacht und in eigene deutsche Bezeichnungen übersetzt. Vorrang hat das zitierte SRD. Automatische Python-Projektprüfungen sind kein Ersatz für Flutter-Analyse und Android-Gerätetests.
 
@@ -58,11 +58,12 @@ Regelquellen: https://www.dndbeyond.com/srd, SRD v5.2.1:
 *Character Creation/Level Advancement*, *Classes/Fighter* und
 *Feats/Fighting Style Feats* (CC BY 4.0).
 
-## Ergänzung 26.10.2026 – 4W6-Attributmethode, PR #264
+## Aktueller Nachweis 27.10.2026
 
-Die neue Methode ist auf einem Draft-Branch implementiert und besitzt
-deterministische Domain- und UI-Tests. Noch nicht als vollständig
-abgenommen: CI des letzten PR-Commits, lokale Flutter-/Android-Prüfung,
-Persistenz der einzelnen Würfel und der Attribut-Provenienz,
-übrige Pflichtentscheidungen. Details:
-[Charaktererstellung](CHARACTER_CREATION_COMPLETE.md).
+Standardsatz, Punktekauf und 4W6 sind mit getrennten Basis-/Hintergrundwerten
+angebunden. `StartingAbilityOrigin` bewahrt bestätigte Startwerte dauerhaft;
+der Charakterbogen zeigt sie ohne Änderung heutiger Werte an. Wiederherstellbare
+Würfelfehler, JSON/SQLite und 320/360 dp bei 200 % werden gezielt getestet.
+Vollständige aktuelle Prüfungen und PR #297: [Checkpoint](CODEX_CHECKPOINT.md).
+Die zwölf Klassen gelten weiterhin nicht als vollständig fertig erstellt;
+[klassenweise Pflichtlücken](CHARACTER_CREATION_COMPLETE.md) sind dokumentiert.
