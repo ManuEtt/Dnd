@@ -59,9 +59,9 @@ Future<NpcStorySelection?> showNpcStorySelectionDialog(
                               'Beziehung: ${npc.relationship} · '
                               'Kennung: ${npc.id}',
                             ),
-                            onTap: () => Navigator.of(dialogContext).pop(
-                              NpcStorySelection.choose(campaign, npc.id),
-                            ),
+                            onTap: () => Navigator.of(
+                              dialogContext,
+                            ).pop(NpcStorySelection.choose(campaign, npc.id)),
                           ),
                         );
                       },
