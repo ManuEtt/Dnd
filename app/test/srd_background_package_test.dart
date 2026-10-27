@@ -227,10 +227,7 @@ void main() {
     );
     final oldJson = undecided.toJson();
     // Historic background records remain parseable, not retroactively edited.
-    expect(
-      SrdBackgroundPackageChoice.fromJson(oldJson).toJson(),
-      oldJson,
-    );
+    expect(SrdBackgroundPackageChoice.fromJson(oldJson).toJson(), oldJson);
     expect(
       () => undecided.applyTo(
         HeroCharacter(id: 'acolyte', name: 'A', background: 'Akolyth'),

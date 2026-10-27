@@ -91,9 +91,7 @@ class SrdBackgroundPackageChoice {
   };
 
   static List<EquipmentEntry> get holySymbols => List.unmodifiable(
-    SrdEquipmentCatalog.all.where(
-      (entry) => _holySymbolIds.contains(entry.id),
-    ),
+    SrdEquipmentCatalog.all.where((entry) => _holySymbolIds.contains(entry.id)),
   );
 
   String itemDisplayName(SrdStartingItem item) {
@@ -145,7 +143,8 @@ class SrdBackgroundPackageChoice {
     'background': background.name,
     'takeGold': takeGold,
     if (gamingSetCatalogId.isNotEmpty) 'gamingSetCatalogId': gamingSetCatalogId,
-    if (holySymbolCatalogId.isNotEmpty) 'holySymbolCatalogId': holySymbolCatalogId,
+    if (holySymbolCatalogId.isNotEmpty)
+      'holySymbolCatalogId': holySymbolCatalogId,
   };
 
   factory SrdBackgroundPackageChoice.fromJson(Map<String, dynamic> json) {

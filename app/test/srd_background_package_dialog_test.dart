@@ -95,7 +95,9 @@ void main() {
     expect(answer!.holySymbolCatalogId, 'item-holy-symbol-amulet');
   });
 
-  testWidgets('acolyte 50 GP option skips holy symbol selection', (tester) async {
+  testWidgets('acolyte 50 GP option skips holy symbol selection', (
+    tester,
+  ) async {
     SrdBackgroundPackageChoice? answer;
     await openDialog(tester, SrdBackground.acolyte, (value) => answer = value);
     final confirm = find.byKey(const ValueKey('confirm-background-package'));
