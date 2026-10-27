@@ -1,0 +1,43 @@
+name: Chat B Unicode-Test formatieren (temporär)
+
+on:
+  push:
+    branches:
+      - test/chat-b/npc-story-memory-unicode-20261027
+    paths:
+      - .github/workflows/chat-b-unicode-format.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Test mit dem offiziellen Dart-Formatter korrigieren
+        working-directory: app
+        run: |
+          set -euo pipefail
+          dart format test/npc_story_memory_unicode_transport_test.dart
+          dart format --output=none --set-exit-if-changed test/npc_story_memory_unicode_transport_test.dart
+      - name: Nur die eigene Testdatei committen
+        run: |
+          set -euo pipefail
+          git diff --check
+          git add app/test/npc_story_memory_unicode_transport_test.dart
+          if git diff --cached --quiet; then
+            echo "Bereits korrekt formatiert"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "style(chat-b): apply official Dart formatter to unicode regression"
+          git push origin HEAD:refs/heads/test/chat-b/npc-story-memory-unicode-20261027
