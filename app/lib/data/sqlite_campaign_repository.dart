@@ -503,7 +503,8 @@ CREATE TABLE settings (
       }
       await transaction.delete(
         'pending_player_actions',
-        where: 'campaign_id = ? AND request_id = ? AND action_text = ? '
+        where:
+            'campaign_id = ? AND request_id = ? AND action_text = ? '
             'AND selected_npc_id IS ? AND selected_npc_revision IS ?',
         whereArgs: [
           campaignId,
