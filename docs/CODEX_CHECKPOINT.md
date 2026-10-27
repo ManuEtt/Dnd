@@ -1,3 +1,17 @@
+## 27.10.2026 – Chat A: Weitsprung-Vorprüfung (CI-Auswertung offen)
+
+- **Ausgangs-main:** `e7736bfc99427bfa6a1d0fd3ff887252c75c9413`; Branch `feat/chat-a/long-jump-preflight-20261027`.
+- **IMPLEMENTIERT:** `SrdLongJumpRules` prüft Stärke-/Anlauf-Distanz (SRD 5.2.1, Druckseiten 184–185), bestätigtes Bewegungsbudget, schwieriges Landegelände/SG 10 Akrobatik und optionale niedrige Hindernisse/SG 10 Athletik ohne Spielzustandsmutation. Positiv-/Negativtests, unabhängiger Fachbericht.
+- **GETESTET:** SRD-Primärquelle und GitHub-Code/PR-Pfade eingesehen; vorige Hochsprung-PR-CI [40469553724](https://github.com/ManuEtt/Dnd/actions/runs/40469553724) erfolgreich, **aber kein Testnachweis für den neuen Weitsprung-Branch**.
+- **NICHT GETESTET:** aktuelle Weitsprung-Dartformatierung, vollständige Flutter-/Backend-/Android-CI und echte Geräteinstallation bis zu einem tatsächlich erfolgreichen neuen Lauf.
+- **BLOCKIERT:** lokale Dart-/Flutter-Installation in dieser Sitzung nicht verfügbar; GitHub Actions kann die Branch-Tests ausführen.
+- **NOCH NICHT IMPLEMENTIERT:** autorisierte Kampfaktion, einmalige Bewegungs-/Prone-/Hindernisbuchung, Stale-Revisions- und SQLite-Integration.
+- **Dateien:** `app/lib/domain/srd_long_jump_rules.dart`, `app/test/srd_long_jump_rules_test.dart`, `docs/parallel/CHAT_A_LONG_JUMP_20261027.md`, `docs/parallel/CHAT_A_CHECKPOINT.md`, additive README-/Checkpoint-Einträge.
+- **Lizenz/Konformität:** SRD 5.2.1 CC BY 4.0; `COMBAT-TERRAIN-MAP` bleibt insgesamt noch offen, kein globaler Abdeckungsgrad. SQLite 2, JSON 1, App 0.8.42+92 unverändert.
+- **Nächster Schritt:** nach CI-Abnahme das unabhängige Paket zur sicheren Bestätigung und Persistierung von Weitsprungbewegung/Prone in Abstimmung mit der Gelände-Integration spezifizieren.
+
+---
+
 ## 27.10.2026 – Integrationskandidat der Charaktererstellung #264/#272/#273/#275
 
 - **Basis:** `main` `4bd97b4d72fc747228df9bea46b61c3d4c82c382`; komplette gestapelte Quelle `ae148053feca82f5db1741b37536385f4d7d41c5`; Merge-Tree anhand der Git-Blob-SHAs konfliktarm zusammengestellt, beide Herkunfts-Commits als Eltern erhalten. Nur README und diese Checkpoint-Datei redaktionell aus dem originalen Main additiv ergänzt; fremde Chat-B-/Chat-D-Einträge bleiben erhalten.
