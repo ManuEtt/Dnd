@@ -6,6 +6,8 @@ import '../domain/character_creation_progression.dart';
 import '../domain/srd_class_level_up.dart';
 import '../domain/srd_character_creation_audit.dart';
 import '../domain/starting_ability_origin.dart';
+import '../domain/ability_generation.dart';
+import '../domain/srd_background_package.dart';
 import '../domain/srd_character_classes.dart';
 import '../domain/srd_equipment_catalog.dart';
 import '../domain/starting_equipment_import.dart';
@@ -16,6 +18,7 @@ import '../domain/rules_engine.dart';
 import '../domain/starting_hit_points.dart';
 import '../domain/spellcasting_rules.dart';
 import 'ability_assignment_dialog.dart';
+import 'srd_background_package_dialog.dart';
 import 'srd_class_selection_dialog.dart';
 import 'srd_class_level_up_dialog.dart';
 import 'fantasy_ui.dart';
@@ -426,6 +429,21 @@ class _CharacterEditorState extends State<CharacterEditor> {
             );
           }
           json['experience'] = experience;
+        }
+      }
+      if (widget.hero == null &&
+          _original['startingBackgroundPackage'] != null) {
+        final recorded = SrdBackgroundPackageChoice.fromJson(
+          Map<String, dynamic>.from(
+            _original['startingBackgroundPackage'] as Map,
+          ),
+        );
+        if (json['background'] != recorded.background.label ||
+            json['level'] != 1) {
+          throw const FormatException(
+            'Das bestätigte Hintergrundpaket darf nicht unbemerkt '
+            'einem anderen Hintergrund oder einer anderen Stufe zugeordnet werden.',
+          );
         }
       }
       json['abilities'] = {
@@ -1156,6 +1174,76 @@ class _CharacterEditorState extends State<CharacterEditor> {
       .where((value) => value.isNotEmpty)
       .toList();
 
+  Future<void> _chooseBackgroundPackage() async {
+    if (widget.hero != null ||
+        _original['startingBackgroundPackage'] != null) {
+      setState(() => _error =
+          'Hintergrund-Startpakete dürfen nicht doppelt angewendet '
+          'oder nachträglich stillschweigend vergeben werden.');
+      return;
+    }
+    if (int.tryParse(_fields['level']!.text.trim()) != 1) {
+      setState(() => _error =
+          'Das SRD-Hintergrundpaket ist nur für Stufe 1 verfügbar.');
+      return;
+    }
+    final matches = SrdBackground.values.where(
+      (item) => item.label == _fields['background']!.text.trim(),
+    );
+    if (matches.length != 1) {
+      setState(() => _error =
+          'Zuerst einen der vier SRD-Hintergründe über '
+          '„Attribute ermitteln“ auswählen.');
+      return;
+    }
+    final background = matches.single;
+    if (_confirmedStartingAbilityOrigin != null &&
+        _confirmedStartingAbilityOrigin!.background != background.label) {
+      setState(() => _error =
+          'Die Attributverteilung wurde für einen anderen '
+          'Hintergrund bestätigt.');
+      return;
+    }
+    final selected = await showDialog<SrdBackgroundPackageChoice>(
+      context: context,
+      builder: (_) => SrdBackgroundPackageDialog(background: background),
+    );
+    if (!mounted || selected == null) return;
+    try {
+      final inventory = (_original['inventory'] as List)
+          .map(
+            (value) => InventoryItem.fromJson(
+              Map<String, dynamic>.from(value as Map),
+            ),
+          )
+          .toList();
+      final preview = selected.applyTo(
+        HeroCharacter(
+          id: 'background-preview',
+          name: 'Entwurf',
+          background: background.label,
+          skills: _listFieldValues('skills'),
+          features: _listFieldValues('features'),
+          inventory: inventory,
+          gold: int.tryParse(_fields['gold']!.text.trim()),
+        ),
+        nextId: () => const Uuid().v4(),
+      );
+      setState(() {
+        _fields['skills']!.text = preview.skills.join('\n');
+        _fields['features']!.text = preview.features.join('\n');
+        _fields['gold']!.text = preview.gold.toString();
+        _original['inventory'] =
+            preview.inventory.map((item) => item.toJson()).toList();
+        _original['startingBackgroundPackage'] = selected.toJson();
+        _error = null;
+      });
+    } catch (error) {
+      setState(() => _error =
+          'Hintergrundpaket nicht übernommen: $error');
+    }
+  }
+
   Future<void> _assignAbilities() async {
     final result = await showDialog<AbilityAssignment>(
       context: context,
@@ -1167,6 +1255,18 @@ class _CharacterEditorState extends State<CharacterEditor> {
       ),
     );
     if (result == null || !mounted) return;
+    final existingPackage = _original['startingBackgroundPackage'];
+    if (existingPackage != null) {
+      final recorded = SrdBackgroundPackageChoice.fromJson(
+        Map<String, dynamic>.from(existingPackage as Map),
+      );
+      if (result.background != recorded.background.label) {
+        setState(() => _error =
+            'Die neue Attributverteilung gehört zu einem anderen '
+            'Hintergrund als das bereits bestätigte Startpaket.');
+        return;
+      }
+    }
     setState(() {
       for (final entry in result.scores.entries) {
         _scores[entry.key]!.text = entry.value.toString();
@@ -1307,6 +1407,14 @@ class _CharacterEditorState extends State<CharacterEditor> {
                   ),
                   _text('subclass', 'Unterklasse'),
                   _text('background', 'Hintergrund'),
+                  if (widget.hero == null)
+                    FantasyTextButton(
+                      key: const ValueKey('open-srd-background-package'),
+                      label: 'SRD-Hintergrund: Talent, Übungen und Startpaket',
+                      icon: Icons.backpack_outlined,
+                      style: FantasyButtonStyle.woodGold,
+                      onPressed: _chooseBackgroundPackage,
+                    ),
                   _text('backstory', 'Charaktergeschichte', lines: 3),
                   Wrap(
                     spacing: 14,
