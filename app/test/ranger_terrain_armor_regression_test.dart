@@ -23,11 +23,7 @@ HeroCharacter rangerWithArmor(String catalogId) => HeroCharacter(
     'charisma': 10,
   },
   inventory: [
-    InventoryItem(
-      id: 'equipped',
-      name: 'Testausrüstung',
-      catalogId: catalogId,
-    ),
+    InventoryItem(id: 'equipped', name: 'Testausrüstung', catalogId: catalogId),
   ],
 );
 
