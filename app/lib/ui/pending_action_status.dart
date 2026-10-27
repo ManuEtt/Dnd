@@ -31,9 +31,7 @@ class PendingActionStatus extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (submitting)
-          const SizedBox.shrink(
-            key: ValueKey('adventure-action-submitting'),
-          ),
+          const SizedBox.shrink(key: ValueKey('adventure-action-submitting')),
         if (pending != null && !submitting) ...[
           const Text(
             'Ausstehende Handlung – noch nicht sicher bestätigt',
