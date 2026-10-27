@@ -1,5 +1,6 @@
 import 'srd_equipment_catalog.dart';
 import 'starting_ability_origin.dart';
+import 'srd_background_package.dart';
 import 'inventory_item_stats.dart';
 export 'inventory_item_stats.dart';
 import 'condition_rules.dart';
@@ -164,6 +165,7 @@ class HeroCharacter {
     this.portraitPhotoBase64 = '',
     Map<String, int?>? abilities,
     this.startingAbilityOrigin,
+    this.startingBackgroundPackage,
     this.hitPoints,
     this.maxHitPoints,
     this.temporaryHitPoints = 0,
@@ -241,6 +243,8 @@ class HeroCharacter {
 
   /// Initial confirmed choice only, not a claim about later level-up scores.
   final StartingAbilityOrigin? startingAbilityOrigin;
+  /// Explicit one-time initial background gear/tool/skill choice.
+  final SrdBackgroundPackageChoice? startingBackgroundPackage;
   final int? hitPoints, maxHitPoints, armorClass, speed;
 
   static int _readSpeedRemainder(dynamic raw) {
@@ -328,6 +332,7 @@ class HeroCharacter {
     String? portraitPhotoBase64,
     Map<String, int?>? abilities,
     Object? startingAbilityOrigin = _unchanged,
+    Object? startingBackgroundPackage = _unchanged,
     Object? hitPoints = _unchanged,
     Object? maxHitPoints = _unchanged,
     int? temporaryHitPoints,
@@ -381,6 +386,9 @@ class HeroCharacter {
     startingAbilityOrigin: identical(startingAbilityOrigin, _unchanged)
         ? this.startingAbilityOrigin
         : startingAbilityOrigin as StartingAbilityOrigin?,
+    startingBackgroundPackage: identical(startingBackgroundPackage, _unchanged)
+        ? this.startingBackgroundPackage
+        : startingBackgroundPackage as SrdBackgroundPackageChoice?,
     hitPoints: identical(hitPoints, _unchanged)
         ? this.hitPoints
         : hitPoints as int?,
@@ -446,6 +454,8 @@ class HeroCharacter {
     'abilities': abilities,
     if (startingAbilityOrigin != null)
       'startingAbilityOrigin': startingAbilityOrigin!.toJson(),
+    if (startingBackgroundPackage != null)
+      'startingBackgroundPackage': startingBackgroundPackage!.toJson(),
     'hitPoints': hitPoints,
     'maxHitPoints': maxHitPoints,
     if (temporaryHitPoints > 0) 'temporaryHitPoints': temporaryHitPoints,
@@ -750,6 +760,11 @@ class HeroCharacter {
           ? null
           : StartingAbilityOrigin.fromJson(
               _map(j['startingAbilityOrigin'], 'Attribut-Herkunft'),
+            ),
+      startingBackgroundPackage: j['startingBackgroundPackage'] == null
+          ? null
+          : SrdBackgroundPackageChoice.fromJson(
+              _map(j['startingBackgroundPackage'], 'Hintergrundpaket'),
             ),
       hitPoints: hp,
       maxHitPoints: maxHp,
