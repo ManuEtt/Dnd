@@ -1,10 +1,10 @@
 # Chat A – Hochsprung-Vorprüfung (27.10.2026)
 
 - Ausgangs-`main`: `1e2bdc411930d0cb9c12c702e4cdc9b643ee29f4`.
-- Branch: `feat/chat-a/high-jump-preflight-20261027`; Pull Request und abschließende CI werden nach Veröffentlichung separat ergänzt; Commit-SHA ist anhand des Branch-HEAD zu prüfen.
+- Branch: `feat/chat-a/high-jump-preflight-20261027`; Pull Request: [#282](https://github.com/ManuEtt/Dnd/pull/282). Formatkorrigierter Code-/Test-Commit: `726d9dc2b1b0f3b753c0a073ffd50edd2417c8ab`; Diagnostik-Workflow mit `3fc6cd0cc884daba5dcb3863a8b316fbb4d62f8b` wieder entfernt. Branch-CI auf finalem HEAD abwarten.
 - IMPLEMENTIERT: Regelreine, read-only SRD-5.2.1-Hochsprung-Vorprüfung; bestätigter 10-Fuß-Anlauf, Stärke/negativer Modifikator, stehender Halb-Sprung, Budget, exakte Reichhöhe; positive/negative Regressionstests.
 - GEÄNDERT: `app/lib/domain/srd_high_jump_rules.dart`, `app/test/srd_high_jump_rules_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, dieser Checkpoint und `docs/parallel/CHAT_A_HIGH_JUMP_20261027.md`.
-- GETESTET: Code-/PR-/Main- und CI-Metadaten in GitHub geprüft. Keine neuen Testläufe fälschlich als grün ausgewiesen; historische Main-CI [40465579801](https://github.com/ManuEtt/Dnd/actions/runs/40465579801) erfolgreich auf anderer SHA.
+- GETESTET: Code-/PR-/Main- und CI-Metadaten in GitHub geprüft. Diagnostischer Formatierlauf [40468971561](https://github.com/ManuEtt/Dnd/actions/runs/40468971561) erfolgreich ausgeführt und dessen kanonische Dart-Ausgabe in die beiden neuen Dateien übernommen. Historische Main-CI [40465579801](https://github.com/ManuEtt/Dnd/actions/runs/40465579801) erfolgreich auf anderer SHA. Vor-Korrektur-Branch-CI [40468207351](https://github.com/ManuEtt/Dnd/actions/runs/40468207351) schlug bei Dart-Format fehl; vollständige neue Branch-CI läuft und ist **nicht** als grün bestätigt.
 - NICHT GETESTET: Dart-Format, Flutter-Analyse/Tests, Build, Backend, Realgerät auf dem neuen Branch; GitHub-CI nach Veröffentlichung prüfen.
 - BLOCKIERT: Kein lokales Dart-/Flutter-SDK, kein Git-Checkout wegen nicht auflösbarer GitHub-Domain in der Laufzeit.
 - NOCH NICHT IMPLEMENTIERT: Bestätigte Zug-/Persistenzbuchung, DM-Sonderregeln, vollständige Weit-/Hochsprung-Integration.
