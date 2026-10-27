@@ -1,4 +1,5 @@
 import 'srd_equipment_catalog.dart';
+import 'starting_ability_origin.dart';
 import 'inventory_item_stats.dart';
 export 'inventory_item_stats.dart';
 import 'condition_rules.dart';
@@ -162,6 +163,7 @@ class HeroCharacter {
     this.portraitPreset = -1,
     this.portraitPhotoBase64 = '',
     Map<String, int?>? abilities,
+    this.startingAbilityOrigin,
     this.hitPoints,
     this.maxHitPoints,
     this.temporaryHitPoints = 0,
@@ -236,6 +238,8 @@ class HeroCharacter {
   final int level, exhaustionLevel, deathSuccesses, deathFailures;
   final int? gold, experience;
   final Map<String, int?> abilities;
+  /// Initial confirmed choice only, not a claim about later level-up scores.
+  final StartingAbilityOrigin? startingAbilityOrigin;
   final int? hitPoints, maxHitPoints, armorClass, speed;
 
   static int _readSpeedRemainder(dynamic raw) {
@@ -322,6 +326,7 @@ class HeroCharacter {
     int? portraitPreset,
     String? portraitPhotoBase64,
     Map<String, int?>? abilities,
+    Object? startingAbilityOrigin = _unchanged,
     Object? hitPoints = _unchanged,
     Object? maxHitPoints = _unchanged,
     int? temporaryHitPoints,
@@ -372,6 +377,9 @@ class HeroCharacter {
     portraitPreset: portraitPreset ?? this.portraitPreset,
     portraitPhotoBase64: portraitPhotoBase64 ?? this.portraitPhotoBase64,
     abilities: abilities ?? this.abilities,
+    startingAbilityOrigin: identical(startingAbilityOrigin, _unchanged)
+        ? this.startingAbilityOrigin
+        : startingAbilityOrigin as StartingAbilityOrigin?,
     hitPoints: identical(hitPoints, _unchanged)
         ? this.hitPoints
         : hitPoints as int?,
@@ -435,6 +443,8 @@ class HeroCharacter {
     if (portraitPhotoBase64.isNotEmpty)
       'portraitPhotoBase64': portraitPhotoBase64,
     'abilities': abilities,
+    if (startingAbilityOrigin != null)
+      'startingAbilityOrigin': startingAbilityOrigin!.toJson(),
     'hitPoints': hitPoints,
     'maxHitPoints': maxHitPoints,
     if (temporaryHitPoints > 0) 'temporaryHitPoints': temporaryHitPoints,
@@ -735,6 +745,11 @@ class HeroCharacter {
         for (final key in abilityNames)
           key: _nullableInt(a[key], key, min: 1, max: 30),
       },
+      startingAbilityOrigin: j['startingAbilityOrigin'] == null
+          ? null
+          : StartingAbilityOrigin.fromJson(
+              _map(j['startingAbilityOrigin'], 'Attribut-Herkunft'),
+            ),
       hitPoints: hp,
       maxHitPoints: maxHp,
       temporaryHitPoints: _int(

@@ -1,3 +1,19 @@
+## 27.10.2026 – Bestätigte Ausgangswerte dauerhaft zuordnen
+
+Mit dem neuen optionalen `HeroCharacter.startingAbilityOrigin` werden die
+**sechs Ausgangswerte**, die gewählte SRD-Methode, der Hintergrund und die
+konkret bestätigten Erhöhungen zusammen mit dem Helden gespeichert.
+Würfelwerte enthalten zusätzlich ihre 24 Rohwürfel (6 × 4W6).
+Beim Lesen wird der versionsgebundene Nachweis erneut validiert.
+Der Nachweis ist historisch; spätere Stufen- und Hausregeländerungen
+dürfen ihn nicht unbemerkt als aktuelle Erzeugung ausgeben.
+
+**Keine Datenbankmigration**, alte Speicherstände ohne dieses Feld
+bleiben unverändert; der Feldwert ist nicht als zusätzlicher Regelbonus
+anzuwenden. Neue Tests für JSON/SQLite und Editor-Bestätigung liegen
+auf einem gesonderten gestapelten PR; finale CI läuft noch nicht.
+[Charaktererstellungsstatus](CHARACTER_CREATION_COMPLETE.md).
+
 # Attributverteilung bei der Charaktererstellung
 
 Die neue Attributverteilung implementiert eine ausgewählte Regelteilmenge des
@@ -5,6 +21,24 @@ SRD 5.2.1. Die Attribute werden ausdrücklich zugewiesen; Klasse, Spezies oder
 historische Erzählungen erzeugen keine Werte. Bestehende Charakterbögen und
 unbestätigte Arescan-Werte bleiben unverändert, bis der Benutzer eine neue
 Verteilung übernimmt und den Charakter speichert.
+
+## Dritte offizielle Methode: Würfeln (Entwicklungspaket #264)
+
+SRD 5.2.1, S. 21: Sechsmal vier W6 werfen, jeweils den niedrigsten
+Würfel streichen, die sechs Summen ausdrücklich auf die Attribute
+verteilen. Die neue `AbilityRollSet`-Domäne zeigt alle 24 Würfelzahlen,
+prüft 1 bis 6 pro W6 und die exakte Häufigkeit aller sechs Summen.
+Die Würfelquelle ist für reproduzierbare Tests injizierbar. Ein Moduswechsel
+erzeugt keinen zweiten Wurf. Die UI verlangt eine ausdrückliche
+Werte-Zuordnung und weiterhin eine gültige Hintergrundwahl.
+
+**Wichtige Grenze:** Die Attribut-Provenienz (Methode, Rohwürfel und
+Hintergrundverteilung) wird noch nicht dauerhaft in älteren und neuen
+Helden gespeichert. Der bisherige Editor übernimmt nur die bestätigten
+Endwerte. Somit ist die Charaktererstellung insgesamt noch unvollständig.
+Neue Tests sind geschrieben, aber ohne erfolgreiche finale CI noch
+nicht als bestanden nachgewiesen. Siehe
+[Teilabdeckung](CHARACTER_CREATION_COMPLETE.md).
 
 ## Geprüfte offizielle Quellen
 

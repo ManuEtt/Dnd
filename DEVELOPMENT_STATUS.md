@@ -1,3 +1,26 @@
+## 27.10.2026 – Attribut-Herkunft als versionierte Heldenmetadaten
+
+Neues, optionales Feld `startingAbilityOrigin` für explizit bestätigte
+Stufe-1-Attribute; historischer Ursprung mit Methode, Basiswerten,
+Hintergrundssteigerung und unveränderlichen Würfeln. Strikte
+Importvalidierung, bestehende Speicherstände ohne Zusatzfeld erhalten,
+SQLite und Hero-JSON-Schema unverändert. SQLite-/JSON- und UI-Tests
+hinzugefügt, finale CI und Gerätetest noch offen.
+[Details](docs/CHARACTER_CREATION_COMPLETE.md).
+
+---
+
+## 26.10.2026 – 4W6-Startattribute im Charakterassistenten (Draft-PR #264)
+
+Auf eigenem Branch implementiert: sechs 4W6-Würfe mit jeweils gestrichenem
+niedrigstem Würfel, nachvollziehbare Würfeldaten, strenge exakte
+Ergebniszuordnung und Spielerbestätigung. Deterministische Tests geschrieben;
+CI auf finalem Branch-Commit, Flutter/Android und Realgerät noch offen.
+Persistenz von Würfel-Provenienz und vollständiger Charakter-Wizard
+weiterhin ausstehend. [Detailmatrix](docs/CHARACTER_CREATION_COMPLETE.md).
+
+---
+
 ## 26.10.2026 – 0.8.42+92: sieben Entwicklungsbranches zusammenführen
 
 Zehn konkrete Köpfe aus acht Branch-Namen einschließlich Main vorab remote per Archivtag und lokal per geprüftem Bundle gesichert. Eldritch-Klassenprüfung, NPC-ID-Wire-Vertrag (Android-Durchreichung noch offen), barrierearme Kampf-/Würfelanzeige und no-follow Checkpoint-Manifeste gemeinsam integriert. Formatfehler der Würfeltestdatei behoben; Syntaxfehler im später hinzugekommenen Reichweitenparser behoben, 17 gezielte Tests grün;155 Python-Tests bisher grün, vollständige kombinierte Abnahme noch offen. SQLite2/JSON1 unverändert. [Checkpoint](docs/CODEX_CHECKPOINT.md). Ältere Einträge unten sind Historie.

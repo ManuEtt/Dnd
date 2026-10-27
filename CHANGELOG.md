@@ -1,3 +1,24 @@
+## 27.10.2026 – Versionierter Nachweis bestätigter Startattribute (PR-Entwurf)
+
+- Optionale, geprüfte Herkunft von sechs Ausgangswerten, SRD-Methode,
+  bestätigten Hintergrundboni und ggf. 24 Roh-W6.
+- Explizite Editor-Übernahme bei Stufe 1, keine rückwirkende
+  Bestandsdatenänderung und kein neuer Regelbonus.
+- Testfälle zu JSON, SQLite-Neustart, Import-Manipulation und UI.
+- CI-Abnahme und Realgerätetest noch offen. Die restliche
+  Charaktererstellung ist nicht vollständig.
+
+---
+
+## 26.10.2026 – Charaktererstellung: Würfelmethode (Draft-PR #264)
+
+- Neu: SRD-5.2.1-konforme sechs Würfe à 4W6, niedrigsten streichen,
+  kontrollierte Zuordnung und ausdrückliche Bestätigung.
+- Tests hinzugefügt (Ausführung/CI auf finalem Commit nicht bestätigt).
+- Keine Datenmigration; vollständige Charaktererstellung weiterhin offen.
+
+---
+
 ## 26.10.2026 – 0.8.42+92: sieben Entwicklungsbranches zusammenführen
 
 Zehn konkrete Köpfe aus acht Branch-Namen einschließlich Main vorab remote per Archivtag und lokal per geprüftem Bundle gesichert. Eldritch-Klassenprüfung, NPC-ID-Wire-Vertrag (Android-Durchreichung noch offen), barrierearme Kampf-/Würfelanzeige und no-follow Checkpoint-Manifeste gemeinsam integriert. Formatfehler der Würfeltestdatei behoben; Syntaxfehler im später hinzugekommenen Reichweitenparser behoben, 17 gezielte Tests grün;155 Python-Tests bisher grün, vollständige kombinierte Abnahme noch offen. SQLite2/JSON1 unverändert. [Checkpoint](docs/CODEX_CHECKPOINT.md). Ältere Einträge unten sind Historie.
