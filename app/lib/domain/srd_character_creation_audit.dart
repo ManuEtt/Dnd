@@ -108,6 +108,19 @@ class SrdCharacterCreationAudit {
             : CreationStepStatus.missing,
         'Eine konkrete Starterausrüstung oder ausdrücklich gewählte Gold-Option.',
       ),
+      if (hero.startingBackgroundPackage?.requiresFeatSpellChoices == true)
+        CreationStep(
+          'origin.magic-initiate-choice',
+          'Magieinitiierter: Zauberwahl und Zauberattribut',
+          hero.startingMagicInitiate == null
+              ? CreationStepStatus.missing
+              : CreationStepStatus.confirmed,
+          hero.startingMagicInitiate == null
+              ? 'Zwei verschiedene SRD-Zaubertricks, einen Zauber des '
+                    '1. Grades und das Zauberattribut bestätigen.'
+              : 'Auswahl bestätigt und gespeichert; kostenlose Nutzung, '
+                    'Zauberplatzwirken und Zauberaustausch sind nicht automatisiert.',
+        ),
       const CreationStep(
         'origin.feat',
         'Herkunftstalent',
