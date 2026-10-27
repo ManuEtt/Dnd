@@ -174,10 +174,7 @@ void main() {
       consumptionReservedConfirmed: true,
     );
     expect(() => _validate(spell, [approval]), throwsFormatException);
-    expect(
-      _validate(spell, const []).hasSpecifiedCost,
-      isTrue,
-    );
+    expect(_validate(spell, const []).hasSpecifiedCost, isTrue);
   });
 
   test('Secret Chest preflight requires both items without spending slots', () {
