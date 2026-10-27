@@ -41,21 +41,26 @@ class SrdSavageAttackerRules {
       );
     }
     if (!confirmedWeaponHit || !confirmedWeaponAttack) {
-      throw const FormatException('Nur ein bestätigter Waffentreffer ist zulässig.');
+      throw const FormatException(
+        'Nur ein bestätigter Waffentreffer ist zulässig.',
+      );
     }
     if (alreadyUsedThisTurn) {
-      throw const FormatException('Wilder Angreifer wurde in diesem Zug benutzt.');
+      throw const FormatException(
+        'Wilder Angreifer wurde in diesem Zug benutzt.',
+      );
     }
     if (critical !=
-        (originalCriticalExtra != null &&
-            alternativeCriticalExtra != null)) {
+        (originalCriticalExtra != null && alternativeCriticalExtra != null)) {
       throw const FormatException(
         'Kritische Waffenschadenswürfel sind unvollständig.',
       );
     }
     if (!critical &&
         (originalCriticalExtra != null || alternativeCriticalExtra != null)) {
-      throw const FormatException('Zusätzliche Schadenswürfel ohne kritischen Treffer.');
+      throw const FormatException(
+        'Zusätzliche Schadenswürfel ohne kritischen Treffer.',
+      );
     }
 
     final parsed = _parseWeaponExpression(weaponDamageExpression);
@@ -66,9 +71,10 @@ class SrdSavageAttackerRules {
       _verifyRoll(alternativeCriticalExtra!, parsed);
     }
 
-    final firstDice = _diceSum(original) +
-        (critical ? _diceSum(originalCriticalExtra!) : 0);
-    final secondDice = _diceSum(alternative) +
+    final firstDice =
+        _diceSum(original) + (critical ? _diceSum(originalCriticalExtra!) : 0);
+    final secondDice =
+        _diceSum(alternative) +
         (critical ? _diceSum(alternativeCriticalExtra!) : 0);
     return SavageAttackerChoice(
       original: original,
@@ -84,7 +90,7 @@ class SrdSavageAttackerRules {
   }
 
   static ({int count, int sides, int modifier, String canonical})
-      _parseWeaponExpression(String expression) {
+  _parseWeaponExpression(String expression) {
     final match = RegExp(
       r'^(\d{1,3})d(4|6|8|10|12)([+-]\d{1,4})?$',
     ).firstMatch(expression);
@@ -97,7 +103,9 @@ class SrdSavageAttackerRules {
     if (count < 1 ||
         count > DiceEngine.maxDice ||
         modifier.abs() > DiceEngine.maxModifier) {
-      throw const FormatException('Waffenschadenswürfel außerhalb der Grenzen.');
+      throw const FormatException(
+        'Waffenschadenswürfel außerhalb der Grenzen.',
+      );
     }
     final suffix = modifier == 0
         ? ''
@@ -165,5 +173,6 @@ class SavageAttackerChoice {
   int get selectedWeaponDiceTotal =>
       usedAlternative ? alternativeWeaponDiceTotal : originalWeaponDiceTotal;
 
-  int get selectedWeaponSubtotal => selectedWeaponDiceTotal + weaponFlatModifier;
+  int get selectedWeaponSubtotal =>
+      selectedWeaponDiceTotal + weaponFlatModifier;
 }

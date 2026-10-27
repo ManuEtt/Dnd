@@ -14,7 +14,8 @@ HeroCharacter soldier({bool confirmed = true, String background = 'Soldat'}) =>
           ? SrdBackgroundPackageChoice(
               background: SrdBackground.soldier,
               takeGold: true,
-              gamingSetCatalogId: SrdBackgroundPackageChoice.gamingSets.first.id,
+              gamingSetCatalogId:
+                  SrdBackgroundPackageChoice.gamingSets.first.id,
             )
           : null,
     );
@@ -170,10 +171,7 @@ void main() {
       '1W6',
       ' 1d6 ',
     ]) {
-      expect(
-        () => choose(expression: expression),
-        throwsFormatException,
-      );
+      expect(() => choose(expression: expression), throwsFormatException);
     }
   });
 
