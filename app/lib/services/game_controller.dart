@@ -433,6 +433,15 @@ class GameController extends ChangeNotifier {
         );
       }
       selectedNpc.requireCurrent(campaign);
+      // Explicit identities must come from the latest confirmed SQLite
+      // revision, not just a potentially stale in-memory screen.
+      final saved = await repository.getCampaign(campaign.id);
+      if (saved == null || saved.revision != campaign.revision) {
+        throw const CampaignConflictException(
+          'Der Spielstand wurde inzwischen geändert. Bitte neu laden.',
+        );
+      }
+      selectedNpc.requireCurrent(saved);
       final payload = NpcIdentityStoryPayload.prepare(
         campaign,
         text,
