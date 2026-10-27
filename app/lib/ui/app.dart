@@ -25,6 +25,7 @@ import '../domain/monk_self_restoration.dart';
 import '../services/backup_files.dart';
 import '../services/game_controller.dart';
 import '../services/player_action_outbox.dart';
+import '../services/npc_pending_action_recovery.dart';
 import '../story/npc_story_selection.dart';
 import '../services/voice_controller.dart';
 import 'app_build_info.dart';
@@ -1147,50 +1148,40 @@ class _AdventurePageState extends State<_AdventurePage> {
     await widget.voice.stopListening();
     await widget.voice.stopSpeaking();
     final previousMessageId = _lastMessageId;
-    NpcStorySelection? choice;
-    if (action.selectedNpcId != null) {
-      final campaign = widget.controller.currentCampaign!;
-      if (campaign.revision != action.selectedNpcRevision) {
-        // A lost ACK after a successful commit is safe to reconcile; a
-        // genuinely stale, uncommitted choice must never select a new version.
-        final alreadyConfirmed = campaign.events.any(
-          (event) =>
-              event.payload['actionRequestId'] == action.requestId &&
-              event.payload['actionRequestText'] == action.text &&
-              event.payload['actionSelectedNpcId'] == action.selectedNpcId,
-        );
-        if (!alreadyConfirmed) {
-          setState(
-            () => _outboxError =
-                'NPC-Auswahl ist nicht mehr aktuell. Bitte die ausstehende '
-                'Handlung verwerfen und erneut auswählen.',
-          );
-          return;
-        }
-        await _outbox.remove(action);
-        if (!mounted) return;
-        setState(() {
-          _pendingAction = null;
-          _outboxError = null;
-        });
-        await _afterTurn(previousMessageId);
-        return;
-      }
-      try {
-        choice = NpcStorySelection.choose(campaign, action.selectedNpcId!);
-      } on FormatException {
-        setState(
-          () => _outboxError =
-              'Der ausgewählte NPC ist nicht mehr verfügbar. '
-              'Bitte den Auftrag verwerfen.',
-        );
-        return;
-      }
+    final recovery = resolvePendingNpcAction(
+      widget.controller.currentCampaign!,
+      action,
+    );
+    if (recovery.state == PendingNpcActionState.stale) {
+      setState(
+        () => _outboxError =
+            'NPC-Auswahl ist nicht mehr aktuell. Bitte die ausstehende '
+            'Handlung verwerfen und erneut auswählen.',
+      );
+      return;
+    }
+    if (recovery.state == PendingNpcActionState.unavailable) {
+      setState(
+        () => _outboxError =
+            'Der ausgewählte NPC ist nicht mehr verfügbar. '
+            'Bitte den Auftrag verwerfen.',
+      );
+      return;
+    }
+    if (recovery.state == PendingNpcActionState.alreadyConfirmed) {
+      await _outbox.remove(action);
+      if (!mounted) return;
+      setState(() {
+        _pendingAction = null;
+        _outboxError = null;
+      });
+      await _afterTurn(previousMessageId);
+      return;
     }
     await widget.controller.sendAction(
       action.text,
       requestId: action.requestId,
-      selectedNpc: choice,
+      selectedNpc: recovery.choice,
     );
     if (!mounted || widget.controller.error != null) return;
     // Success also includes replay of an already committed request.
