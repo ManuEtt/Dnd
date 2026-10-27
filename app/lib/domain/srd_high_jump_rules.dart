@@ -111,8 +111,7 @@ class SrdHighJumpRules {
         'Das verbleibende Bewegungsbudget reicht nicht für den Hochsprung.',
       );
     }
-    if (creatureHeightCentimeters != null &&
-        creatureHeightCentimeters <= 0) {
+    if (creatureHeightCentimeters != null && creatureHeightCentimeters <= 0) {
       throw const FormatException(
         'Für die Reichhöhe ist eine bestätigte Körpergröße erforderlich.',
       );
