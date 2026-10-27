@@ -19,10 +19,12 @@ class SrdTerrainMovementRules {
 
   static bool hasSpecialSpeed(HeroCharacter hero, SrdTerrainMovement kind) {
     final speed = switch (kind) {
-      SrdTerrainMovement.climb =>
-        CharacterRuleEngine.rovingClimbSpeedMeters(hero),
-      SrdTerrainMovement.swim =>
-        CharacterRuleEngine.rovingSwimSpeedMeters(hero),
+      SrdTerrainMovement.climb => CharacterRuleEngine.rovingClimbSpeedMeters(
+        hero,
+      ),
+      SrdTerrainMovement.swim => CharacterRuleEngine.rovingSwimSpeedMeters(
+        hero,
+      ),
     };
     return speed != null && speed > 0;
   }
@@ -40,8 +42,8 @@ class SrdTerrainMovementRules {
         'Bestätigte Kletter-/Schwimmstrecke muss 1 bis 100 Fuß betragen.',
       );
     }
-    final feetPerFoot = (hasSpecialSpeed(hero, kind) ? 1 : 2) +
-        (difficultTerrain ? 1 : 0);
+    final feetPerFoot =
+        (hasSpecialSpeed(hero, kind) ? 1 : 2) + (difficultTerrain ? 1 : 0);
     return distanceFeet * 3 * feetPerFoot;
   }
 
