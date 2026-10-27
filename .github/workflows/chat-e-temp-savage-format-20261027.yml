@@ -1,0 +1,27 @@
+name: Temporary Savage Attacker Dart Formatter
+on:
+  push:
+    branches:
+      - feat/chat-e/savage-attacker-selection-dialog-20261027
+permissions:
+  contents: read
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Emit official formatter results
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd app
+          dart format lib/ui/savage_attacker_selection_dialog.dart test/savage_attacker_selection_dialog_test.dart
+          for file in lib/ui/savage_attacker_selection_dialog.dart test/savage_attacker_selection_dialog_test.dart; do
+            echo "BEGIN_FORMATTED_FILE:$file"
+            base64 -w 0 "$file"
+            echo
+            echo "END_FORMATTED_FILE:$file"
+          done
