@@ -1595,10 +1595,29 @@ class _AdventurePageState extends State<_AdventurePage> {
           MonkSlowFallDialog(hero: campaign.hero, encounter: encounter),
     );
     if (choice == null || !mounted) return;
+    // The dialog keeps its original hero/encounter snapshot while it is open.
+    // If another action changed the campaign, do not present the now-stale
+    // confirmation as if it could be applied to the current state.
+    final current = widget.controller.currentCampaign;
+    if (!_canInteract ||
+        current?.id != campaign.id ||
+        current?.revision != campaign.revision ||
+        current?.encounter?.id != encounter.id ||
+        current?.encounter?.reactionUsed != encounter.reactionUsed) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          key: ValueKey('slow-fall-stale-feedback'),
+          content: Text(
+            'Der Spielstand hat sich geändert. Sanften Fall bitte erneut öffnen.',
+          ),
+        ),
+      );
+      return;
+    }
     final previous = _lastMessageId;
     await widget.voice.stopSpeaking();
-    // Use the exact revision and encounter captured BEFORE opening the
-    // dialog. The controller rejects stale choices after concurrent changes.
+    // Still pass the original revision and encounter. The controller's
+    // authority check closes races that occur after this UI guard.
     await widget.controller.applyConfirmedSlowFall(
       campaignId: campaign.id,
       expectedRevision: campaign.revision,
