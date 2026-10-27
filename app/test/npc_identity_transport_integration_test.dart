@@ -104,46 +104,61 @@ class _CapturedTransport implements BackendTransport {
 void main() {
   sqfliteFfiInit();
 
-  test('twelve NPC notes fill the actual story transport memory budget', () async {
-    final dir = await Directory.systemTemp.createTemp('npc-memory-budget-');
-    final repository = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: paths.join(dir.path, 'npc.sqlite'),
-    );
-    final transport = _CapturedTransport(true);
-    final narrator = BackendNarrator(transport: transport, clock: () => _time);
-    final controller = GameController(repository: repository, narrator: narrator);
-    try {
-      await controller.connectNarrator(
-        url: 'https://narrator.example.test',
-        sessionToken: 'test.session',
+  test(
+    'twelve NPC notes fill the actual story transport memory budget',
+    () async {
+      final dir = await Directory.systemTemp.createTemp('npc-memory-budget-');
+      final repository = await SqliteCampaignRepository.open(
+        factory: databaseFactoryFfi,
+        path: paths.join(dir.path, 'npc.sqlite'),
       );
-      await controller.newAiCampaign(
-        HeroCharacter(id: 'aria', name: 'Aria'),
-        theme: 'Die alte Stadt',
+      final transport = _CapturedTransport(true);
+      final narrator = BackendNarrator(
+        transport: transport,
+        clock: () => _time,
       );
-      expect(controller.error, isNull);
-      for (var i = 0; i < 12; i++) {
-        await controller.recordNpcRelationship(
-          npcId: 'mira',
-          relationship: 'freundlich',
-          note: 'Bestätigter Hinweis Nummer $i.',
+      final controller = GameController(
+        repository: repository,
+        narrator: narrator,
+      );
+      try {
+        await controller.connectNarrator(
+          url: 'https://narrator.example.test',
+          sessionToken: 'test.session',
+        );
+        await controller.newAiCampaign(
+          HeroCharacter(id: 'aria', name: 'Aria'),
+          theme: 'Die alte Stadt',
         );
         expect(controller.error, isNull);
+        for (var i = 0; i < 12; i++) {
+          await controller.recordNpcRelationship(
+            npcId: 'mira',
+            relationship: 'freundlich',
+            note: 'Bestätigter Hinweis Nummer $i.',
+          );
+          expect(controller.error, isNull);
+        }
+        await controller.sendAction('Ich frage Mira nach allen Hinweisen.');
+        expect(controller.error, isNull);
+        expect(transport.sentPayloads, hasLength(1));
+        final memories = transport.sentPayloads.single['memories'] as List;
+        expect(memories.length, lessThanOrEqualTo(12));
+        expect(
+          memories.every((item) => item is String && item.length <= 400),
+          isTrue,
+        );
+        expect(
+          memories.any((item) => item.toString().contains('Hinweis Nummer')),
+          isTrue,
+        );
+      } finally {
+        controller.dispose();
+        await repository.close();
+        await dir.delete(recursive: true);
       }
-      await controller.sendAction('Ich frage Mira nach allen Hinweisen.');
-      expect(controller.error, isNull);
-      expect(transport.sentPayloads, hasLength(1));
-      final memories = transport.sentPayloads.single['memories'] as List;
-      expect(memories.length, lessThanOrEqualTo(12));
-      expect(memories.every((item) => item is String && item.length <= 400), isTrue);
-      expect(memories.any((item) => item.toString().contains('Hinweis Nummer')), isTrue);
-    } finally {
-      controller.dispose();
-      await repository.close();
-      await dir.delete(recursive: true);
-    }
-  });
+    },
+  );
 
   for (final supportsContext in [false, true]) {
     test(
