@@ -86,11 +86,6 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
-      - name: SRD-Dart-Formatierung temporär diagnostizieren
-        working-directory: app
-        run: |
-          dart format lib/domain/srd_class_automation.dart lib/domain/srd_bard_font_of_inspiration.dart test/srd_class_automation_test.dart test/srd_bard_font_of_inspiration_test.dart
-          git diff -- lib/domain/srd_class_automation.dart lib/domain/srd_bard_font_of_inspiration.dart test/srd_class_automation_test.dart test/srd_bard_font_of_inspiration_test.dart
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
