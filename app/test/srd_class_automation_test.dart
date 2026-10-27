@@ -33,7 +33,7 @@ HeroCharacter character(
 );
 
 void main() {
-  test('alle 282 SRD-Freischaltungen haben eine explizite Laufzeitbewertung', () {
+  test('alle 282 SRD-Freischaltungen besitzen einen Status', () {
     var total = 0;
     final ids = <String>{};
     for (final klass in srdCharacterClasses) {
@@ -98,7 +98,7 @@ void main() {
     expect(life.any((e) => e.feature.name == 'Disciple of Life'), isTrue);
   });
 
-  test('Mehrklassenwerte nutzen eigene Klassenstufen und richtige Gesamtstufe', () {
+  test('Mehrklassenwerte berücksichtigen eigene Klassenstufen', () {
     final mixed = character(
       'Kämpfer',
       10,
@@ -108,7 +108,10 @@ void main() {
       secondarySubclass: 'Thief',
     );
     final available = SrdClassAutomation.unlocked(mixed);
-    expect(available.any((e) => e.feature.name == 'Two Extra Attacks'), isFalse);
+    expect(
+      available.any((e) => e.feature.name == 'Two Extra Attacks'),
+      isFalse,
+    );
     expect(available.any((e) => e.feature.name == 'Sneak Attack'), isTrue);
     final values = SrdClassAutomation.derivedValues(mixed);
     expect(
