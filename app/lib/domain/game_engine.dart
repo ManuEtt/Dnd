@@ -1120,8 +1120,7 @@ class GameEngine {
       immediateRunUpFeet: immediateRunUpFeet,
       runUpAlreadySpentConfirmed: hasRunUp,
       jumpDistanceCentimeters: jumpDistanceCentimeters,
-      landingInDifficultTerrainConfirmed:
-          landingInDifficultTerrainConfirmed,
+      landingInDifficultTerrainConfirmed: landingInDifficultTerrainConfirmed,
       obstacleFreePathConfirmed: obstacleFreePathConfirmed,
       lowObstacleHeightCentimeters: lowObstacleHeightCentimeters,
       dmRequiresAthleticsCheck: dmRequiresAthleticsCheck,
