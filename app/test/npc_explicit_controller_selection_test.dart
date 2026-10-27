@@ -41,11 +41,7 @@ Map<String, dynamic> _plan() => {
     },
   ],
   'places': [
-    {
-      'id': 'markt',
-      'name': 'Marktplatz',
-      'description': 'Ein belebter Platz.',
-    },
+    {'id': 'markt', 'name': 'Marktplatz', 'description': 'Ein belebter Platz.'},
   ],
 };
 
@@ -156,46 +152,64 @@ void main() {
     await directory.delete(recursive: true);
   });
 
-  test('explicit NPC selection reaches narrator without mixing same names',
-      () async {
-    await openCampaign();
-    final before = controller.currentCampaign!;
-    final choice = NpcStorySelection.choose(before, 'mira-two');
-    await controller.sendAction('Ich frage Mira nach dem Tor.', selectedNpc: choice);
+  test(
+    'explicit NPC selection reaches narrator without mixing same names',
+    () async {
+      await openCampaign();
+      final before = controller.currentCampaign!;
+      final choice = NpcStorySelection.choose(before, 'mira-two');
+      await controller.sendAction(
+        'Ich frage Mira nach dem Tor.',
+        selectedNpc: choice,
+      );
 
-    expect(controller.error, isNull);
-    expect(transport.requests, hasLength(1));
-    final request = transport.requests.single;
-    expect(request['selectedNpcId'], 'mira-two');
-    expect(request['campaignRevision'], before.revision + 1);
-    final contexts = request['npcContexts'] as List;
-    expect(contexts, hasLength(1));
-    expect((contexts.single as Map)['npcId'], 'mira-two');
-    expect(contexts.toString(), contains('bewacht das Tor'));
-    expect(contexts.toString(), isNot(contains('verwahrt die Karte')));
-    expect(controller.currentCampaign!.revision, before.revision + 1);
-    expect(controller.currentCampaign!.hero.toJson(), before.hero.toJson());
-    expect(
-      (await repository.getCampaign(before.id))!.storyThreads.toString(),
-      controller.currentCampaign!.storyThreads.toString(),
-    );
-  });
+      expect(controller.error, isNull);
+      expect(transport.requests, hasLength(1));
+      final request = transport.requests.single;
+      expect(request['selectedNpcId'], 'mira-two');
+      expect(request['campaignRevision'], before.revision + 1);
+      final contexts = request['npcContexts'] as List;
+      expect(contexts, hasLength(1));
+      expect((contexts.single as Map)['npcId'], 'mira-two');
+      expect(contexts.toString(), contains('bewacht das Tor'));
+      expect(contexts.toString(), isNot(contains('verwahrt die Karte')));
+      expect(controller.currentCampaign!.revision, before.revision + 1);
+      expect(controller.currentCampaign!.hero.toJson(), before.hero.toJson());
+      expect(
+        (await repository.getCampaign(before.id))!.storyThreads.toString(),
+        controller.currentCampaign!.storyThreads.toString(),
+      );
+    },
+  );
 
-  test('unsupported backend rejects explicit selection without committing',
-      () async {
-    await openCampaign(supportsSelection: false);
-    final before = controller.currentCampaign!.toJson();
-    final choice = NpcStorySelection.choose(controller.currentCampaign!, 'mira-two');
-    await controller.sendAction('Ich rede mit Mira.', selectedNpc: choice);
-    expect(controller.error, contains('NPC-Auswahlunterstützung'));
-    expect(transport.requests, isEmpty);
-    expect(controller.currentCampaign!.toJson(), before);
-    expect((await repository.getCampaign(controller.currentCampaign!.id))!.toJson(), before);
-  });
+  test(
+    'unsupported backend rejects explicit selection without committing',
+    () async {
+      await openCampaign(supportsSelection: false);
+      final before = controller.currentCampaign!.toJson();
+      final choice = NpcStorySelection.choose(
+        controller.currentCampaign!,
+        'mira-two',
+      );
+      await controller.sendAction('Ich rede mit Mira.', selectedNpc: choice);
+      expect(controller.error, contains('NPC-Auswahlunterstützung'));
+      expect(transport.requests, isEmpty);
+      expect(controller.currentCampaign!.toJson(), before);
+      expect(
+        (await repository.getCampaign(
+          controller.currentCampaign!.id,
+        ))!.toJson(),
+        before,
+      );
+    },
+  );
 
   test('stale NPC selection is rejected before any provider call', () async {
     await openCampaign();
-    final choice = NpcStorySelection.choose(controller.currentCampaign!, 'mira-two');
+    final choice = NpcStorySelection.choose(
+      controller.currentCampaign!,
+      'mira-two',
+    );
     await controller.saveStoryThread(
       threadId: 'tor',
       title: 'Das Stadttor',
@@ -210,10 +224,12 @@ void main() {
     expect(controller.currentCampaign!.toJson(), before);
   });
 
-  test('a request ID cannot be replayed with a different chosen NPC',
-      () async {
+  test('a request ID cannot be replayed with a different chosen NPC', () async {
     await openCampaign();
-    final choice = NpcStorySelection.choose(controller.currentCampaign!, 'mira-two');
+    final choice = NpcStorySelection.choose(
+      controller.currentCampaign!,
+      'mira-two',
+    );
     const action = 'Ich befrage Mira nach dem Tor.';
     await controller.sendAction(
       action,
