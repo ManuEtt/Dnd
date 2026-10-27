@@ -1,3 +1,16 @@
+## 27.10.2026 – Chat C: TalkBack-Toggle-Ansage bei Fantasy-Buttons
+
+- **Ausgangs-main:** `e3e166a507bf9c88a4286473ceb97fc4b14ec35b`.
+- **Branch:** `feat/chat-c/button-semantics-20261027`; PR und End-SHA später über GitHub ermitteln.
+- **Ausgangsproblem:** `FantasyButton` meldete über `Semantics.toggled` bei normalen Aktionen `false`. TalkBack kann einen normalen Aktionsbutton irreführend als ausgeschalteten Schalter interpretieren.
+- **IMPLEMENTIERT:** `app/lib/ui/fantasy_buttons.dart`: expliziter `toggleable`-Marker (standardmäßig false); nur `FantasyToggleButton` aktiviert ihn. Normale Buttons besitzen keinen Toggle-Zustand; Schalter melden ihren echten Zustand. Klicks und grafische Hervorhebung sind unverändert.
+- **TESTS ERGÄNZT:** `app/test/fantasy_buttons_test.dart`: normaler hervorgehobener Aktionsbutton mit Callback, Schalter an/aus sowie deaktiviert.
+- **NICHT GETESTET:** Dart-/Flutter-/Android-Gates lokal wegen fehlender SDKs; GitHub-CI und reales TalkBack-Gerät offen. Es wird kein Erfolg behauptet.
+- **KOMPATIBILITÄT:** keine Regel-/Story-/Controller-/Datenbank-/JSON-Änderung; keine Migration.
+- **NÄCHSTER SCHRITT:** Auf 320 dp bei großer Schrift die Tastaturfokus-Reihenfolge der fixierten Abenteuer-Schnellaktionen durch positive und negative Widgettests absichern.
+
+---
+
 # CHAT C – Android und Fantasy-UI
 
 **Stand:** 2026-10-25 (Europe/Berlin)  
