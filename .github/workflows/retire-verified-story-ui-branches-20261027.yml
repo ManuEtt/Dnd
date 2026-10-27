@@ -1,0 +1,103 @@
+name: Archivierte Story/UI-Migrationsbranches bereinigen (2026-10-27)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/retire-verified-story-ui-branches-20261027.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  retire:
+    if: github.repository == 'ManuEtt/Dnd' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Exakte SHA- und Blob-Pruefung, Archivtags, Branch-Loeschung
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {owner, repo} = context.repo;
+            const mergedPr = await github.rest.pulls.get({owner, repo, pull_number: 295});
+            if (!mergedPr.data.merged || mergedPr.data.base.ref !== 'main' ||
+                mergedPr.data.head.sha !== '16ebdcc6a112c2dc391a5e18e684e2dc7083059d') {
+              throw new Error('Integrations-PR #295 noch nicht nachweisbar gemergt.');
+            }
+            const mainRef = async () => (await github.rest.git.getRef({owner, repo, ref:'heads/main'})).data.object.sha;
+            const mainSha = await mainRef();
+            if (mainSha !== context.sha) {
+              throw new Error('main bewegt seit Workflow-Start: keine Branch-Bereinigung.');
+            }
+            const integrated = await github.rest.repos.compareCommits({
+              owner, repo, base: mergedPr.data.merge_commit_sha, head: mainSha,
+            });
+            if (integrated.data.behind_by !== 0 ||
+                !['ahead','identical'].includes(integrated.data.status)) {
+              throw new Error('Integrationscommit ist nicht im aktuellen main enthalten.');
+            }
+            const targetFiles = {
+              deathSave: {
+                'app/lib/ui/death_save_decision_panel.dart':'c9e27640a6a8668af6433fca24bbf7fbf332664e',
+                'app/test/death_save_decision_panel_busy_test.dart':'c3b545ac65067565e36701005e2c420af2b928af',
+              },
+              controller: {
+                'app/test/ai_story_terminal_controller_resume_test.dart':'df19e6d6952b3dcbf55c62f748dba587bda36e91',
+              },
+              sqlite: {
+                'app/test/ai_story_terminal_sqlite_resume_test.dart':'6614d44a03076103b18873971224ceca8dc1af45',
+              },
+            };
+            const targets = [
+              {branch:'feat/chat-c/death-save-busy-feedback-20261026',sha:'fa613609aa12dbe36b93d007e8b83a326c1e2824',pr:255,blobs:targetFiles.deathSave},
+              {branch:'integration/death-save-ui-20261026-chatgpt',sha:'524182594c71b5639159a8628df844356b84df54',pr:269,blobs:targetFiles.deathSave},
+              {branch:'integration/story-controller-resume-20261026-chatgpt',sha:'0df96365e6ffac6f8c51387b46b90a138393206d',pr:270,blobs:targetFiles.controller},
+              {branch:'test/chat-b/controller-terminal-recovery-20261026',sha:'8bbf252ad48b8bc3c561da749b67c5cbc6a69520',pr:261,blobs:targetFiles.controller},
+              {branch:'test/chat-b/terminal-thread-sqlite-resume-20261026',sha:'2b3fb89f184480bb5a53d29d0c374d0fc71cf36f',pr:256,blobs:targetFiles.sqlite},
+            ];
+            const currentTree = await github.rest.git.getTree({owner,repo,tree_sha:mainSha,recursive:'1'});
+            if (currentTree.data.truncated) throw new Error('main-Baum unvollständig.');
+            const mainBlobs = new Map(currentTree.data.tree.filter(x=>x.type==='blob').map(x=>[x.path,x.sha]));
+            const openPrs = await github.paginate(github.rest.pulls.list,{owner,repo,state:'open',per_page:100});
+            for (const t of targets) {
+              if (t.branch === 'main') throw new Error('main darf nie gelöscht werden.');
+              const original = await github.rest.pulls.get({owner,repo,pull_number:t.pr});
+              if (original.data.state !== 'closed' || original.data.head.ref !== t.branch ||
+                  original.data.head.sha !== t.sha) {
+                core.warning('Historischer Quell-PR noch offen oder verändert: '+t.branch);
+                continue;
+              }
+              if (openPrs.some(pr=>pr.head.ref===t.branch || pr.base.ref===t.branch)) {
+                core.warning('Aktiver PR nutzt diesen Branch: '+t.branch);
+                continue;
+              }
+              if (Object.entries(t.blobs).some(([path,sha])=>mainBlobs.get(path)!==sha)) {
+                core.warning('main enthaelt nicht die erwarteten Fach-Blobs: '+t.branch);
+                continue;
+              }
+              let ref;
+              try {ref=(await github.rest.git.getRef({owner,repo,ref:'heads/'+t.branch})).data;}
+              catch(e) {if(e.status===404){core.info('Schon gelöscht: '+t.branch);continue;}throw e;}
+              if (ref.object.sha !== t.sha) {core.warning('Branch-Head verändert, bleibt: '+t.branch);continue;}
+              const info = await github.rest.repos.getBranch({owner,repo,branch:t.branch});
+              if (info.data.protected) {core.warning('Geschützter Branch: '+t.branch);continue;}
+              // The old HEAD is always archived before any destructive action.
+              const tag='tags/archive/verified-story-ui-20261027/'+t.branch.replaceAll('/','--');
+              let archived;
+              try {archived=(await github.rest.git.getRef({owner,repo,ref:tag})).data.object.sha;}
+              catch(e) {if(e.status!==404)throw e;}
+              if (archived && archived!==t.sha) throw new Error('Archive tag has wrong SHA: '+tag);
+              if (!archived) await github.rest.git.createRef({owner,repo,ref:'refs/'+tag,sha:t.sha});
+              if ((await github.rest.git.getRef({owner,repo,ref:tag})).data.object.sha!==t.sha) {
+                throw new Error('Archivtag-Pruefung fehlgeschlagen.');
+              }
+              if ((await mainRef())!==mainSha) throw new Error('main inzwischen verändert.');
+              if ((await github.rest.git.getRef({owner,repo,ref:'heads/'+t.branch})).data.object.sha!==t.sha) {
+                core.warning('Branch seit Archivierung verändert: '+t.branch);
+                continue;
+              }
+              await github.rest.git.deleteRef({owner,repo,ref:'heads/'+t.branch});
+              core.info('Sicher archiviert und entfernt: '+t.branch+' @ '+t.sha);
+            }
