@@ -74,20 +74,16 @@ class _SrdMaterialInventoryDialogState
     });
   }
 
-  Widget _check(
-    String key,
-    String label,
-    Set<String> selected,
-    String id,
-  ) => CheckboxListTile(
-    key: ValueKey('material-$key-$id'),
-    dense: true,
-    contentPadding: EdgeInsets.zero,
-    controlAffinity: ListTileControlAffinity.leading,
-    title: Text(label),
-    value: selected.contains(id),
-    onChanged: (value) => _toggle(selected, id, value ?? false),
-  );
+  Widget _check(String key, String label, Set<String> selected, String id) =>
+      CheckboxListTile(
+        key: ValueKey('material-$key-$id'),
+        dense: true,
+        contentPadding: EdgeInsets.zero,
+        controlAffinity: ListTileControlAffinity.leading,
+        title: Text(label),
+        value: selected.contains(id),
+        onChanged: (value) => _toggle(selected, id, value ?? false),
+      );
 
   void _confirm() {
     if (_setupError != null) return;
@@ -172,16 +168,15 @@ class _SrdMaterialInventoryDialogState
               'Es wird noch nichts verbraucht oder gewirkt.',
             ),
             if (_setupError != null)
-              Text(
-                _setupError!,
-                key: const ValueKey('material-setup-error'),
-              ),
+              Text(_setupError!, key: const ValueKey('material-setup-error')),
             for (final requirement in _requirements) ...[
               const SizedBox(height: 12),
               Text(requirement.label),
               DropdownButtonFormField<String>(
-                key: ValueKey('material-stack-'
-                    '${requirement.id}'),
+                key: ValueKey(
+                  'material-stack-'
+                  '${requirement.id}',
+                ),
                 isExpanded: true,
                 initialValue: _selectedStacks[requirement.id],
                 decoration: const InputDecoration(
