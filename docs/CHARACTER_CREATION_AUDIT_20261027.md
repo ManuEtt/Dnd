@@ -69,8 +69,9 @@ Ersatz des bestehenden vollständigen Arbeitsregisters.
   Revisionen/Events, Archiv, Outbox, null Controller-Benachrichtigungen;
   SQLite-Neustart, JSON-Export/-Import und unveränderte historische Metadaten.
 
-24 gezielte Fälle und Analyse zunächst bestanden; Endabnahme einschließlich
-zusätzlicher Regressionen, CI und Android im CODEX_CHECKPOINT nachlesen.
+24 gezielte Fälle und vollständige lokale Suite mit **1.949 Flutter-, 164 Python-, 72 Backend- und zwölf native Android-Tests**
+bestanden. Analyse/Format, Backend-Build und geprüfte Debug-APK grün.
+Finale CI/Alpha-Artefakte im CODEX_CHECKPOINT bzw. PR #318 nachlesen.
 Testdateiname allein ist kein bestandener Nachweis. Reales Android/TalkBack,
 installiertes Upgrade und produktive Signatur bleiben offen.
 

@@ -6,13 +6,13 @@
   "license": "CC-BY-4.0",
   "as_of": "2026-10-27",
   "baseline_main_sha": "8239f5e71ec6b229a2a0883500adaf431bb70087",
-  "pr": null,
+  "pr": 318,
   "coverage_complete": false,
   "all_required_choices_covered": false,
   "android_device_tested": false,
   "ci_final_head_verified": false,
   "existing_requirement_registers_unchanged": false,
-  "status_note": "Neues unabhängiges Auditpaket: sieben Zustände, belegte Teilentscheidungen und lesende Speicherung geprüft; aktuelle Gesamtabnahme im CODEX_CHECKPOINT.",
+  "status_note": "Vollständige lokale Prüfung: 1.949 Flutter-, 164 Python-, 72 Backend- und zwölf native Android-Tests; finale CI siehe PR318/CODEX_CHECKPOINT. Gesamte Charaktererstellung weiterhin unvollständig.",
   "requirements": [
     {
       "id": "CHAR-ABILITY-STANDARD-ARRAY",
@@ -336,5 +336,16 @@
   ],
   "scope_note": "Talentnamen und Herkunftsübungen werden vermerkt; Auswirkungen der Talente und Magic-Initiate-Zauber sind nicht automatisiert.",
   "next_task": "Klassenstartentscheidungen quellengetrennt versionieren, explizit bestätigen und per Audit nachweisen.",
-  "branch": "feat/character-creation-audit-evidence-20261027"
+  "branch": "feat/character-creation-audit-evidence-20261027",
+  "local_validation": {
+    "flutter_passed": 1949,
+    "python_passed": 164,
+    "backend_passed": 72,
+    "native_android_passed": 12,
+    "full_check_exit": 0,
+    "targeted_audit_tests": 24,
+    "debug_apk": "built_metadata_signature_verified",
+    "source_code_commit": "9cdefe84eddefac82d212b6647f4d30af2ca2512",
+    "real_device_tested": false
+  }
 }

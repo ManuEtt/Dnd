@@ -11,10 +11,12 @@ Der aktuelle Editorentwurf wird einschließlich Halbmetern und ausdrücklicher
 Hausregelwahl geprüft. Deutsche Statusanzeigen mit Screenreader-Semantik sind
 bei 320/360 dp, 200 % Schrift und Tastatur getestet.
 
-**24 gezielte Tests und Flutter-Analyse bestanden.** Gesamtsuite, Android und
-finale Branch-CI beim frühen Checkpoint noch offen. Main-Basis `8239f5e`, Branch
+**Vollständige lokale Prüfung bestanden: 1.949 Flutter-, 164 Python-, 72 Backend- und zwölf native Android-Tests.**
+Formatierung/Analyse, Backend-Build und geprüfte Debug-APK erfolgreich.
+Die 24 gezielten Audit-Tests sind enthalten. Finale exakte PR-CI und
+Alpha-Artefakte separat prüfen: [PR #318](https://github.com/ManuEtt/Dnd/pull/318). Main-Basis `8239f5e`, Branch
 `feat/character-creation-audit-evidence-20261027`; Version aus pubspec, endgültiger
-Commit und reale Testergebnisse im [Checkpoint](docs/CODEX_CHECKPOINT.md).
+Produktcode `9cdefe8`, letzter Dokumentationskopf und reale Testergebnisse im [Checkpoint](docs/CODEX_CHECKPOINT.md).
 Die gesamte Charaktererstellung bleibt unvollständig. Nächster Schritt:
 strukturierte Klassenstartentscheidungen dauerhaft nachweisen.
 [Regelgrenzen und Nachweise](docs/CHARACTER_CREATION_AUDIT_20261027.md).

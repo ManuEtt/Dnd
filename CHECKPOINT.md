@@ -6,8 +6,9 @@ Doppelübungen und widersprüchliche Stufe-1-Daten erkannt. Historische Werte
 bleiben historisch; weder Boni noch Inventar werden beim Prüfen verändert.
 Der Editor prüft den aktuellen ungespeicherten Entwurf, erhält 10,5-m-Werte
 und meldet ungültige Zahleneingaben, statt sie still als leer zu behandeln.
-**24 gezielte Tests und vollständige Flutter-Analyse bestanden**; volle
-Gesamtsuite, Android und finale PR-CI beim frühen Checkpoint noch offen.
+**Vollständige lokale Prüfung bestanden: 1.949 Flutter-, 164 Python-, 72 Backend- und zwölf native Android-Tests**;
+Format/Analyse, Backend-Build und Debug-APK grün. Finale exakte PR-CI
+beim Schreiben noch abzunehmen: [PR #318](https://github.com/ManuEtt/Dnd/pull/318).
 Basis Main `8239f5e`; eigener unabhängiger Branch
 `feat/character-creation-audit-evidence-20261027`. PR #297 bleibt separat;
 seine Würfelfehler-/Charakterbogenänderungen wurden nicht erneut implementiert.

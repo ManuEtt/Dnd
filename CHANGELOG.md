@@ -5,7 +5,8 @@
 - Deutsche scrollbar zugängliche Anzeige mit Semantik; Prüfung des aktuellen
   Entwurfs einschließlich 10,5 m und expliziter Attribut-Hausregelwahl.
 - Kein Schreiben von Auditstatus, keine Neuberechnung und keine Schemamigration.
-- 24 gezielte Domain-/SQLite-/Widgettests und Analyse grün; finale Abnahme offen.
+- Vollständige lokale Abnahme: 1.949 Flutter-, 164 Python-, 72 Backend- und zwölf native Android-Tests;
+  Format/Analyse, Backend- und Debug-Build grün. Finale PR-CI/Gerät separat offen.
 
 ---
 

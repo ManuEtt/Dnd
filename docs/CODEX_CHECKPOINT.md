@@ -3,8 +3,9 @@
 Würfelraunen **0.8.44+94**, SQLite **2**, Kampagnen-/Helden-JSON **1** unverändert.
 Branch `feat/character-creation-audit-evidence-20261027`, Worktree
 `/workspace/Dnd-character-audit-20261027`, Basis-Main `8239f5e71ec6b229a2a0883500adaf431bb70087`.
-Kopf mit `git rev-parse HEAD` bzw. Artefaktmanifest bestimmen. PR wird nach
-früher Sicherung erstellt; PR #297 / f1d2785 bleibt separat offen.
+Produktcode `9cdefe84eddefac82d212b6647f4d30af2ca2512`. Letzter Kopf im
+Artefaktmanifest und [PR #318](https://github.com/ManuEtt/Dnd/pull/318).
+PR #297 / f1d2785 bleibt separat offen; keine Abhängigkeit von dessen neuen UI-Dateien.
 
 ## IMPLEMENTIERT
 
@@ -31,6 +32,13 @@ SQLite-Neustart, Rekonstruktion, Helden-/Kampagnenimport und Export erhalten
 Teilentscheidungen und historische Werte. Vollständige Flutter-Analyse ohne Befund.
 Logs `/workspace/validation/20261027-audit-targeted.log` und `20261027-audit-analyze.log`.
 
+**Vollständiges `scripts/check.sh` erfolgreich: 1.949 Flutter-, 164 Python-, 72 Backend- und zwölf native Android-Tests.**
+Node-/Dart-Smoke aktiv; Format aller 445 Dateien ohne Änderung, Analyse und
+Backend-Build grün. Debug-APK erfolgreich, Version/ABIs/Signatur geprüft,
+12 native Tests ohne Fehler/Überspringen. Produktcode seit 9cdefe8 unverändert;
+spätere Commits dokumentieren nur Ergebnisse.
+Log `/workspace/validation/20261027-audit-full-check.log`.
+
 Letzte tatsächlich erfolgreiche Main-Android-CI
 https://github.com/ManuEtt/Dnd/actions/runs/40531665011 auf `8239f5e71ec6b229a2a0883500adaf431bb70087`.
 Vorheriges eigenes Paket PR #297 erfolgreich in #40503354461; kein Nachweis
@@ -39,8 +47,9 @@ laufende Charakter-Audit-Implementation gefunden.
 
 ## NICHT GETESTET
 
-Neue vollständige scripts/check.sh-Suite, Android-Debug/native Tests,
-ARM64-Alpha und finale neue PR-CI beim frühen Checkpoint noch offen. Echter
+Finale CI des letzten Dokumentationskopfes und neues ARM64-Paket beim Schreiben
+noch abzunehmen; [aktuelle Checks](https://github.com/ManuEtt/Dnd/pull/318/checks)
+maßgeblich. Vollständige lokale Suite und Debug/native Tests bestanden. Echter
 Android-/TalkBack-Test, installiertes Datenupgrade und produktive Signatur offen.
 
 ## BLOCKIERT / bekannte Fehler
@@ -76,3 +85,18 @@ Quelle; SQLite-Neustart, JSON, Abbruch und Stale-Revision testen. Vorher
 aktuelles Main und PR #297 erneut prüfen. Keine automatische Weiterarbeit
 außerhalb einer aktiven Sitzung. Prüfungen: `bash scripts/check.sh`, zusätzlich
 `flutter build apk --debug` und `:app:testDebugUnitTest` gemäß Workflow.
+
+## Verifizierte lokale Debug-APK
+
+`/workspace/artifacts/character-audit-20261027T193707Z/Wuerfelraunen_0.8.44+94_Debug.apk`, SHA256 `89a5bc5f5e3459827cb247a147daf8816447f2c12cfbc5618f0ee6d3a9e39c31`.
+Version 0.8.44 / Build 94, arm64-v8a/armeabi-v7a/x86_64, Mindest-API24,
+Ziel-API36, Debug-Testsignatur mit aapt/apksigner geprüft; kein Gerätetest.
+
+## GitHub-Import
+
+Vorhandenen PR #318 prüfen. Beim ZIP-Import müssen app/, backend/, scripts/
+und .github/ direkt in der Repositorywurzel liegen. Binären Patch zunächst
+mit `git apply --check --binary` in einem sauberen Checkout von Main
+`8239f5e71ec6b229a2a0883500adaf431bb70087` prüfen, danach `git apply --binary`,
+auf eigenem Branch committen/pushen und PR erstellen. Private Dateien und
+Spielstände sind nicht im Quellpaket enthalten. Genaue SHA-Basis im Manifest.
