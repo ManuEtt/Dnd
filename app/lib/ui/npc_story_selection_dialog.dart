@@ -38,9 +38,11 @@ Future<NpcStorySelection?> showNpcStorySelectionDialog(
                     'die gespeicherte Kennung die Personen.',
                   ),
                   const SizedBox(height: 12),
-                  Flexible(
+                  SizedBox(
+                    height: eligible.length * 72.0 > 320
+                        ? 320
+                        : eligible.length * 72.0,
                     child: ListView.builder(
-                      shrinkWrap: true,
                       itemCount: eligible.length,
                       itemBuilder: (context, index) {
                         final npc = eligible[index];
