@@ -1,3 +1,15 @@
+## 27.10.2026 – Versionierter Nachweis bestätigter Startattribute (PR-Entwurf)
+
+- Optionale, geprüfte Herkunft von sechs Ausgangswerten, SRD-Methode,
+  bestätigten Hintergrundboni und ggf. 24 Roh-W6.
+- Explizite Editor-Übernahme bei Stufe 1, keine rückwirkende
+  Bestandsdatenänderung und kein neuer Regelbonus.
+- Testfälle zu JSON, SQLite-Neustart, Import-Manipulation und UI.
+- CI-Abnahme und Realgerätetest noch offen. Die restliche
+  Charaktererstellung ist nicht vollständig.
+
+---
+
 ## 26.10.2026 – Charaktererstellung: Würfelmethode (Draft-PR #264)
 
 - Neu: SRD-5.2.1-konforme sechs Würfe à 4W6, niedrigsten streichen,

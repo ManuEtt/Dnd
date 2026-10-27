@@ -54,6 +54,37 @@ Generation als separate, validierte Startwertquellen angeboten.
 
 **Keine der Gruppen gilt durch diesen Eintrag als vollständig getestet.**
 
+## Implementierungspaket 2: Versionierter Attribut-Herkunftsnachweis (Stack-PR)
+
+- `app/lib/domain/starting_ability_origin.dart` speichert die **Ausgangswerte**
+  vor Hintergrundbonus, Methode, bestätigte Hintergrunderhöhungen und bei
+  4W6 alle sechs Würfe mit jeweils vier Würfelzahlen. Die Struktur ist
+  unveränderlich, versioniert (`version: 1`) und wird beim JSON-Import
+  **regelkonform validiert**.
+- `HeroCharacter.startingAbilityOrigin` ist ein **optionales Feld** im
+  bestehenden Charakter-JSON `schemaVersion: 1`. Wenn es in alten
+  Daten fehlt, entsteht kein neuer Standardwert. Es ist **keine**
+  SQLite- oder Kampagnen-Schemaänderung notwendig.
+- Der bestehende Attributdialog übergibt erst nach expliziter Bestätigung
+  die Herkunft; der Charakter-Editor überträgt sie ausschließlich
+  beim Speichern passender, bestätigter Stufe-1-Werte.
+- `app/test/starting_ability_origin_test.dart`,
+  `app/test/ability_storage_integration_test.dart`,
+  `app/test/ui_ability_assignment_test.dart`: JSON-/Editor-Nachweis,
+  ungültige Quelle und Würfelwerte, vollständiger SQLite-Neustart sowie
+  Helden-Export/-Import.
+- Ein Herkunftsnachweis ist **historisch**: spätere Stufensteigerungen
+  dürfen ihn erhalten, ohne die heutigen Werte rückwirkend auf die
+  Anfangswerte zurückzusetzen. Der Nachweis selbst gewährt keine
+  erneuten Boni. Alte Charaktere erhalten keinen fingierten Wurf.
+- Weitere separate Verbesserung nötig: unveränderliche Änderungs-
+  bzw. Stufenaufstiegshistorie für **nachträglich ersetzte** Startwerte.
+  Die aktuelle Metadatenstruktur enthält einen bestätigten Anfangsstand,
+  noch kein vollständiges revisionssicheres Änderungsjournal.
+
+**Abnahme:** Neue Tests wurden erstellt und als nächster GitHub-CI-Schritt
+vorgesehen; vor deren Erfolg kein vollständig getestetes Paket behaupten.
+
 ## Qualitäts- und Abnahmegrenze
 
 Die neuen Tests und die bestehende CI sollen auf der **letzten**
@@ -64,8 +95,6 @@ Android-SDK; echte Android-Geräteprüfung ist weiterhin offen.
 
 ## Nächster Implementierungsschritt
 
-Versionierte, rückwärtskompatible Speicherung von Attribut-Basiswerten,
-Methode und Hintergrundbonus als getrennte bestätigte Provenienz
-einführen. Dabei bestehende Helden nicht neu berechnen. Danach die
-vollständigen vier Hintergrundpakete mit Talenten, Fertigkeiten,
-Werkzeugübung und Ausrüstung als explizite Entscheidungen einbinden.
+Nach Abnahme des Attribut-Herkunftsnachweises die vier SRD-Hintergründe
+mit Herkunftstalenten, Übungs- und Ausrüstungsentscheidungen als eigene
+prüfbare Domain-/UI-Pakete einbinden. Anschließend die Speziesvarianten.

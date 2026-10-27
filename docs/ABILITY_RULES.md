@@ -1,3 +1,19 @@
+## 27.10.2026 – Bestätigte Ausgangswerte dauerhaft zuordnen
+
+Mit dem neuen optionalen `HeroCharacter.startingAbilityOrigin` werden die
+**sechs Ausgangswerte**, die gewählte SRD-Methode, der Hintergrund und die
+konkret bestätigten Erhöhungen zusammen mit dem Helden gespeichert.
+Würfelwerte enthalten zusätzlich ihre 24 Rohwürfel (6 × 4W6).
+Beim Lesen wird der versionsgebundene Nachweis erneut validiert.
+Der Nachweis ist historisch; spätere Stufen- und Hausregeländerungen
+dürfen ihn nicht unbemerkt als aktuelle Erzeugung ausgeben.
+
+**Keine Datenbankmigration**, alte Speicherstände ohne dieses Feld
+bleiben unverändert; der Feldwert ist nicht als zusätzlicher Regelbonus
+anzuwenden. Neue Tests für JSON/SQLite und Editor-Bestätigung liegen
+auf einem gesonderten gestapelten PR; finale CI läuft noch nicht.
+[Charaktererstellungsstatus](CHARACTER_CREATION_COMPLETE.md).
+
 # Attributverteilung bei der Charaktererstellung
 
 Die neue Attributverteilung implementiert eine ausgewählte Regelteilmenge des

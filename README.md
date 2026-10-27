@@ -1,3 +1,11 @@
+> **Charakterattribute (27.10.2026):** Auf dem gestapelten
+> Entwicklungsbranch werden bestätigte Basiswerte, Erzeugungsmethode,
+> Herkunftsbonus und gegebenenfalls 24 Würfelzahlen als optionale,
+> versionierte Helden-Provenienz gespeichert. Die gesamte
+> Charaktererstellung ist weiterhin unvollständig; finale CI dieses
+> Pakets und Realgerätetest ausstehend.
+> [Teilabdeckung](docs/CHARACTER_CREATION_COMPLETE.md).
+
 > **Charaktererstellung (26.10.2026):** Die offizielle 4W6-Methode
 > einschließlich expliziter Zuordnung wurde als [Draft-PR #264](https://github.com/ManuEtt/Dnd/pull/264)
 > ergänzt. Weitere Pflichtfunktionen fehlen weiterhin; Tests und Android-APK

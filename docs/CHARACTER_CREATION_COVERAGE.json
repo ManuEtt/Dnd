@@ -72,14 +72,22 @@
     },
     {
       "id": "CHAR-ABILITY-SOURCE-PERSISTENCE",
-      "title": "Provenienz von Basisscores und Boni in Speicherständen",
-      "status": "missing",
+      "title": "Versionierte Anfangsattribute, Methode, Würfel und Hintergrundbonus über JSON/SQLite",
+      "status": "implemented_ci_pending",
       "source": "SRD 5.2.1",
       "code": [
+        "app/lib/domain/starting_ability_origin.dart",
         "app/lib/domain/models.dart"
       ],
-      "ui": [],
-      "tests": []
+      "ui": [
+        "app/lib/ui/ability_assignment_dialog.dart",
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/starting_ability_origin_test.dart",
+        "app/test/ability_storage_integration_test.dart",
+        "app/test/ui_ability_assignment_test.dart"
+      ]
     },
     {
       "id": "CHAR-BACKGROUND-ALL-TRAITS",
@@ -283,5 +291,7 @@
       "variants_verified": false,
       "complete": false
     }
-  ]
+  ],
+  "scope_note": "Optionale versionierte Initial-Provenienz vorhanden, vollständiges revisionssicheres Historienjournal fehlt.",
+  "next_task": "Vollständige vier SRD-Hintergrundpakete (Übungen, Ursprungstalent, Ausrüstung) und zugehörige UI mit Tests."
 }

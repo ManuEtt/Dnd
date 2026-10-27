@@ -1,3 +1,15 @@
+## 27.10.2026 – Attribut-Herkunft als versionierte Heldenmetadaten
+
+Neues, optionales Feld `startingAbilityOrigin` für explizit bestätigte
+Stufe-1-Attribute; historischer Ursprung mit Methode, Basiswerten,
+Hintergrundssteigerung und unveränderlichen Würfeln. Strikte
+Importvalidierung, bestehende Speicherstände ohne Zusatzfeld erhalten,
+SQLite und Hero-JSON-Schema unverändert. SQLite-/JSON- und UI-Tests
+hinzugefügt, finale CI und Gerätetest noch offen.
+[Details](docs/CHARACTER_CREATION_COMPLETE.md).
+
+---
+
 ## 26.10.2026 – 4W6-Startattribute im Charakterassistenten (Draft-PR #264)
 
 Auf eigenem Branch implementiert: sechs 4W6-Würfe mit jeweils gestrichenem
