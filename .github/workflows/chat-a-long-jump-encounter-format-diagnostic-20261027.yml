@@ -1,0 +1,19 @@
+name: Chat A Long Jump Encounter Dart Format Diagnostic
+on:
+  push:
+    branches:
+      - feat/chat-a/long-jump-encounter-plan-20261027
+jobs:
+  show-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.35.7
+      - name: Show canonical Dart format for new files
+        run: |
+          dart format --output=show app/lib/domain/srd_long_jump_encounter_rules.dart
+          echo '--- NEXT FILE ---'
+          dart format --output=show app/test/srd_long_jump_encounter_rules_test.dart
