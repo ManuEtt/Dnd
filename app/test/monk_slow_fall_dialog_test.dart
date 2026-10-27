@@ -44,30 +44,33 @@ Future<void> _openDialog(
 }
 
 void main() {
-  testWidgets('Damage preview never spends Reaction without two confirmations', (
-    tester,
-  ) async {
-    await _openDialog(tester);
-    final submit = find.byKey(const ValueKey('slow-fall-commit'));
-    expect(tester.widget<FilledButton>(submit).onPressed, isNull);
-    await tester.enterText(
-      find.byKey(const ValueKey('slow-fall-damage-input')),
-      '37',
-    );
-    await tester.pumpAndSettle();
-    expect(find.textContaining('20 Schaden verhindert'), findsOneWidget);
-    expect(find.textContaining('17 Schaden verbleiben'), findsOneWidget);
-    expect(tester.widget<FilledButton>(submit).onPressed, isNull);
+  testWidgets(
+    'Damage preview never spends Reaction without two confirmations',
+    (tester) async {
+      await _openDialog(tester);
+      final submit = find.byKey(const ValueKey('slow-fall-commit'));
+      expect(tester.widget<FilledButton>(submit).onPressed, isNull);
+      await tester.enterText(
+        find.byKey(const ValueKey('slow-fall-damage-input')),
+        '37',
+      );
+      await tester.pumpAndSettle();
+      expect(find.textContaining('20 Schaden verhindert'), findsOneWidget);
+      expect(find.textContaining('17 Schaden verbleiben'), findsOneWidget);
+      expect(tester.widget<FilledButton>(submit).onPressed, isNull);
 
-    await tester.tap(find.byKey(const ValueKey('slow-fall-confirm-fall')));
-    await tester.pumpAndSettle();
-    expect(tester.widget<FilledButton>(submit).onPressed, isNull);
+      await tester.tap(find.byKey(const ValueKey('slow-fall-confirm-fall')));
+      await tester.pumpAndSettle();
+      expect(tester.widget<FilledButton>(submit).onPressed, isNull);
 
-    await tester.tap(find.byKey(const ValueKey('slow-fall-confirm-defenses')));
-    await tester.pumpAndSettle();
-    expect(tester.widget<FilledButton>(submit).onPressed, isNotNull);
-    expect(tester.takeException(), isNull);
-  });
+      await tester.tap(
+        find.byKey(const ValueKey('slow-fall-confirm-defenses')),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.widget<FilledButton>(submit).onPressed, isNotNull);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('Invalid and unconfirmed fall damage cannot be committed', (
     tester,
@@ -108,9 +111,9 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('slow-fall-confirm-defenses')));
     await tester.pumpAndSettle();
     expect(
-      tester.widget<FilledButton>(
-        find.byKey(const ValueKey('slow-fall-commit')),
-      ).onPressed,
+      tester
+          .widget<FilledButton>(find.byKey(const ValueKey('slow-fall-commit')))
+          .onPressed,
       isNull,
     );
     await tester.tap(find.text('Abbrechen'));
@@ -126,9 +129,9 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('slow-fall-confirm-defenses')));
     await tester.pumpAndSettle();
     expect(
-      tester.widget<FilledButton>(
-        find.byKey(const ValueKey('slow-fall-commit')),
-      ).onPressed,
+      tester
+          .widget<FilledButton>(find.byKey(const ValueKey('slow-fall-commit')))
+          .onPressed,
       isNull,
     );
   });
