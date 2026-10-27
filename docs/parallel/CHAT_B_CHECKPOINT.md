@@ -1,3 +1,15 @@
+# Chat B – zwei SQLite-Schreiber, NPC-Quittungen und Auftragsersetzung (27.10.2026)
+
+- **Base:** PR #305, Head `eb4f3a43864ba00843aacd7f0b47b2e2f0fad1da`; **Branch:** `test/chat-b/npc-outbox-multiwriter-cas-20261027`. Abhängigkeit: #288 → #290 → #292 → #300 → #303 → #305 → dieses Testpaket.
+- **Ausgangsproblem:** Die atomare NPC-Löschung in PR #305 war bereits mit einer SQLite-Verbindung getestet; die Absicherung über zwei getrennte Repository-Verbindungen und konkurrierende Aufträge fehlte.
+- **Implementiert:** Neue Datei `app/test/npc_outbox_multiwriter_cas_test.dart`, vier Integrationstests mit echter SQLite-Datei und zwei geöffneten `SqliteCampaignRepository`-Instanzen. Verspätete ACKs können keine bewusst neu gewählte gleichnamige Figur, keine neue Revision und keinen Auftrag beim Wechsel text-only ↔ mit NPC-Auswahl entfernen. Zwei gleichzeitige Schreibversuche führen zu exakt einem verbleibenden Auftrag. Alle Tests führen nur lokale DB-I/O aus.
+- **Getestet:** Offizielle Dart-3.9.2-Formatierung für die neue Testdatei über GitHub Actions übernommen; temporärer Diagnoseworkflow entfernt. Vollständige CI auf finalem PR-Head nach Veröffentlichung auswerten.
+- **Nicht getestet:** Realgerät, produktiver KI-Spielleiter; keine zusätzliche UI-E2E-Abdeckung. Keine neue Migration oder Produktionscodeänderung.
+- **Blockiert:** Zuerst die Vorgänger-PRs integrieren; fremde Branches und PRs nicht löschen/mergen. Chat D konsolidiert README-/Checkpoint-Kollisionen.
+- **Nächster Schritt:** CI-Ergebnisse prüfen und gegebenenfalls neue Regressionen korrigieren, danach Integrationsreihenfolge dokumentieren.
+
+---
+
 # Chat B – NPC-ID gehört zum atomaren ACK-Vergleich (27.10.2026)
 
 - **Basis und Reihenfolge:** `fix/chat-b/npc-outbox-cas-20261027` auf [PR #303](https://github.com/ManuEtt/Dnd/pull/303) (`5388d8e428e024c939bf99e609f857ec37c4a62a`), davor PRs #300, #292, #290, #288. Kein Auto-Merge und keine fremde Branchbereinigung.
