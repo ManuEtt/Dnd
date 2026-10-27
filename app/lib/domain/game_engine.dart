@@ -1045,8 +1045,10 @@ class GameEngine {
         'terrainConfirmed': true,
         'additionalCheckRequired': additionalCheckRequired,
         'additionalCheckPassedConfirmed': additionalCheckPassedConfirmed,
-        'specialSpeedApplied':
-            SrdTerrainMovementRules.hasSpecialSpeed(campaign.hero, kind),
+        'specialSpeedApplied': SrdTerrainMovementRules.hasSpecialSpeed(
+          campaign.hero,
+          kind,
+        ),
         'movementSpentDecimeters': cost,
         'movementRemainingDecimeters': updated.remainingMovementDecimeters,
       },
