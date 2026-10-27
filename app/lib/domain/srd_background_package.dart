@@ -87,8 +87,9 @@ class SrdBackgroundPackageChoice {
       : background == SrdBackground.criminal
       ? 'Diebeswerkzeug'
       : 'Kalligrafenwerkzeug';
-  List<SrdStartingItem> get kitItems =>
-      List.unmodifiable(takeGold ? const <SrdStartingItem>[] : _kit[background]!);
+  List<SrdStartingItem> get kitItems => List.unmodifiable(
+    takeGold ? const <SrdStartingItem>[] : _kit[background]!,
+  );
 
   /// Returns false for Magic Initiate; choice of cantrips, spell, ability
   /// and actual spellcasting implementation must be completed separately.
@@ -111,8 +112,7 @@ class SrdBackgroundPackageChoice {
     'version': 1,
     'background': background.name,
     'takeGold': takeGold,
-    if (gamingSetCatalogId.isNotEmpty)
-      'gamingSetCatalogId': gamingSetCatalogId,
+    if (gamingSetCatalogId.isNotEmpty) 'gamingSetCatalogId': gamingSetCatalogId,
   };
 
   factory SrdBackgroundPackageChoice.fromJson(Map<String, dynamic> json) {
@@ -162,12 +162,14 @@ class SrdBackgroundPackageChoice {
       for (final item in kitItems) {
         if (item.name == 'Spielset (nach Wahl)') {
           final selected = SrdEquipmentCatalog.byId(gamingSetCatalogId)!;
-          additions.add(InventoryItem(
-            id: nextId(),
-            name: selected.name,
-            catalogId: selected.id,
-            stats: InventoryItemStats.fromCatalog(selected),
-          ));
+          additions.add(
+            InventoryItem(
+              id: nextId(),
+              name: selected.name,
+              catalogId: selected.id,
+              stats: InventoryItemStats.fromCatalog(selected),
+            ),
+          );
         } else {
           additions.add(
             StartingEquipmentImport.fromStartingItem(item, nextId()),

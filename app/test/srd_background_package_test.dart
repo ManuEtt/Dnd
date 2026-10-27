@@ -21,11 +21,12 @@ void main() {
       final choice = SrdBackgroundPackageChoice(
         background: entry.key,
         takeGold: false,
-        gamingSetCatalogId:
-            entry.key == SrdBackground.soldier ? game : '',
+        gamingSetCatalogId: entry.key == SrdBackground.soldier ? game : '',
       );
       final hero = HeroCharacter(
-        id: 'hero', name: 'Entwurf', background: entry.key.label,
+        id: 'hero',
+        name: 'Entwurf',
+        background: entry.key.label,
         gold: 4,
       );
       final result = choice.applyTo(hero, nextId: id);
@@ -33,12 +34,22 @@ void main() {
       expect(result.gold, entry.value.$2 + 4);
       expect(result.skills, entry.value.$3);
       expect(result.startingBackgroundPackage!.toJson(), choice.toJson());
-      expect(result.features, contains('Werkzeugübung: ${choice.toolProficiency}'));
-      expect(result.features.any((feature) =>
-          feature.contains(choice.originFeat) &&
-          feature.contains('noch nicht automatisiert')), true);
-      expect(result.inventory.map((item) => item.id).toSet().length,
-          result.inventory.length);
+      expect(
+        result.features,
+        contains('Werkzeugübung: ${choice.toolProficiency}'),
+      );
+      expect(
+        result.features.any(
+          (feature) =>
+              feature.contains(choice.originFeat) &&
+              feature.contains('noch nicht automatisiert'),
+        ),
+        true,
+      );
+      expect(
+        result.inventory.map((item) => item.id).toSet().length,
+        result.inventory.length,
+      );
       expect(HeroCharacter.fromJson(result.toJson()).toJson(), result.toJson());
       expect(() => choice.applyTo(result, nextId: id), throwsFormatException);
     }
@@ -50,48 +61,69 @@ void main() {
         background: background,
         takeGold: true,
         gamingSetCatalogId: background == SrdBackground.soldier
-            ? SrdBackgroundPackageChoice.gamingSets.last.id : '',
+            ? SrdBackgroundPackageChoice.gamingSets.last.id
+            : '',
       );
       final initial = HeroCharacter(
-        id: 'hero', name: 'Köchin', background: background.label,
+        id: 'hero',
+        name: 'Köchin',
+        background: background.label,
         inventory: [const InventoryItem(id: 'kept', name: 'Alter Schlüssel')],
       );
       final result = choice.applyTo(initial, nextId: id);
       expect(result.gold, 50);
       expect(result.inventory.single.id, 'kept');
       expect(result.skills, hasLength(2));
-      expect(result.features.any((name) =>
-          name.startsWith('Werkzeugübung: ')), true);
+      expect(
+        result.features.any((name) => name.startsWith('Werkzeugübung: ')),
+        true,
+      );
       expect(choice.kitItems, isEmpty);
     }
   });
 
   test('soldier requires a real game even when taking 50 GP', () {
-    expect(() => SrdBackgroundPackageChoice(
-      background: SrdBackground.soldier, takeGold: true,
-    ), throwsFormatException);
-    expect(() => SrdBackgroundPackageChoice(
-      background: SrdBackground.soldier, takeGold: false,
-      gamingSetCatalogId: 'item-holy-symbol',
-    ), throwsFormatException);
-    expect(() => SrdBackgroundPackageChoice(
-      background: SrdBackground.acolyte, takeGold: true,
-      gamingSetCatalogId: SrdBackgroundPackageChoice.gamingSets.first.id,
-    ), throwsFormatException);
+    expect(
+      () => SrdBackgroundPackageChoice(
+        background: SrdBackground.soldier,
+        takeGold: true,
+      ),
+      throwsFormatException,
+    );
+    expect(
+      () => SrdBackgroundPackageChoice(
+        background: SrdBackground.soldier,
+        takeGold: false,
+        gamingSetCatalogId: 'item-holy-symbol',
+      ),
+      throwsFormatException,
+    );
+    expect(
+      () => SrdBackgroundPackageChoice(
+        background: SrdBackground.acolyte,
+        takeGold: true,
+        gamingSetCatalogId: SrdBackgroundPackageChoice.gamingSets.first.id,
+      ),
+      throwsFormatException,
+    );
   });
 
   test('soldier game selection is the same equipment and trained tool', () {
     final set = SrdBackgroundPackageChoice.gamingSets.last;
     final choice = SrdBackgroundPackageChoice(
       background: SrdBackground.soldier,
-      takeGold: false, gamingSetCatalogId: set.id,
+      takeGold: false,
+      gamingSetCatalogId: set.id,
     );
-    final result = choice.applyTo(HeroCharacter(
-      id: 'soldier', name: 'A', background: 'Soldat',
-    ), nextId: id);
+    final result = choice.applyTo(
+      HeroCharacter(id: 'soldier', name: 'A', background: 'Soldat'),
+      nextId: id,
+    );
     expect(choice.toolProficiency, set.name);
-    expect(result.inventory.singleWhere((i) => i.catalogId == set.id).name,
-        set.name);
+    expect(
+      result.inventory.singleWhere((i) => i.catalogId == set.id).name,
+      set.name,
+    );
     final arrows = result.inventory.singleWhere(
       (item) => item.catalogId == 'item-arrows-20',
     );
@@ -104,18 +136,26 @@ void main() {
       takeGold: false,
     );
     final repeated = HeroCharacter(
-      id: 'hero', name: 'A', background: 'Krimineller',
-      skills: ['Heimlichkeit'], gold: 3,
+      id: 'hero',
+      name: 'A',
+      background: 'Krimineller',
+      skills: ['Heimlichkeit'],
+      gold: 3,
     );
     final before = repeated.toJson();
     expect(() => choice.applyTo(repeated, nextId: id), throwsFormatException);
     expect(repeated.toJson(), before);
-    expect(() => choice.applyTo(repeated.copyWith(
-      skills: [], background: 'Weiser',
-    ), nextId: id), throwsFormatException);
-    expect(() => choice.applyTo(repeated.copyWith(
-      skills: [], level: 2,
-    ), nextId: id), throwsFormatException);
+    expect(
+      () => choice.applyTo(
+        repeated.copyWith(skills: [], background: 'Weiser'),
+        nextId: id,
+      ),
+      throwsFormatException,
+    );
+    expect(
+      () => choice.applyTo(repeated.copyWith(skills: [], level: 2), nextId: id),
+      throwsFormatException,
+    );
   });
 
   test('missing metadata does not change legacy JSON, forged options fail', () {
@@ -138,8 +178,10 @@ void main() {
       {'version': 1, 'background': 'soldier', 'takeGold': true},
     ];
     for (final bad in rejected) {
-      expect(() => SrdBackgroundPackageChoice.fromJson(bad),
-          throwsFormatException);
+      expect(
+        () => SrdBackgroundPackageChoice.fromJson(bad),
+        throwsFormatException,
+      );
     }
   });
 }

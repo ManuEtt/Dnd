@@ -243,6 +243,7 @@ class HeroCharacter {
 
   /// Initial confirmed choice only, not a claim about later level-up scores.
   final StartingAbilityOrigin? startingAbilityOrigin;
+
   /// Explicit one-time initial background gear/tool/skill choice.
   final SrdBackgroundPackageChoice? startingBackgroundPackage;
   final int? hitPoints, maxHitPoints, armorClass, speed;

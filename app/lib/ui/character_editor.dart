@@ -1175,33 +1175,40 @@ class _CharacterEditorState extends State<CharacterEditor> {
       .toList();
 
   Future<void> _chooseBackgroundPackage() async {
-    if (widget.hero != null ||
-        _original['startingBackgroundPackage'] != null) {
-      setState(() => _error =
-          'Hintergrund-Startpakete dürfen nicht doppelt angewendet '
-          'oder nachträglich stillschweigend vergeben werden.');
+    if (widget.hero != null || _original['startingBackgroundPackage'] != null) {
+      setState(
+        () => _error =
+            'Hintergrund-Startpakete dürfen nicht doppelt angewendet '
+            'oder nachträglich stillschweigend vergeben werden.',
+      );
       return;
     }
     if (int.tryParse(_fields['level']!.text.trim()) != 1) {
-      setState(() => _error =
-          'Das SRD-Hintergrundpaket ist nur für Stufe 1 verfügbar.');
+      setState(
+        () =>
+            _error = 'Das SRD-Hintergrundpaket ist nur für Stufe 1 verfügbar.',
+      );
       return;
     }
     final matches = SrdBackground.values.where(
       (item) => item.label == _fields['background']!.text.trim(),
     );
     if (matches.length != 1) {
-      setState(() => _error =
-          'Zuerst einen der vier SRD-Hintergründe über '
-          '„Attribute ermitteln“ auswählen.');
+      setState(
+        () => _error =
+            'Zuerst einen der vier SRD-Hintergründe über '
+            '„Attribute ermitteln“ auswählen.',
+      );
       return;
     }
     final background = matches.single;
     if (_confirmedStartingAbilityOrigin != null &&
         _confirmedStartingAbilityOrigin!.background != background.label) {
-      setState(() => _error =
-          'Die Attributverteilung wurde für einen anderen '
-          'Hintergrund bestätigt.');
+      setState(
+        () => _error =
+            'Die Attributverteilung wurde für einen anderen '
+            'Hintergrund bestätigt.',
+      );
       return;
     }
     final selected = await showDialog<SrdBackgroundPackageChoice>(
@@ -1212,9 +1219,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
     try {
       final inventory = (_original['inventory'] as List)
           .map(
-            (value) => InventoryItem.fromJson(
-              Map<String, dynamic>.from(value as Map),
-            ),
+            (value) =>
+                InventoryItem.fromJson(Map<String, dynamic>.from(value as Map)),
           )
           .toList();
       final preview = selected.applyTo(
@@ -1233,14 +1239,14 @@ class _CharacterEditorState extends State<CharacterEditor> {
         _fields['skills']!.text = preview.skills.join('\n');
         _fields['features']!.text = preview.features.join('\n');
         _fields['gold']!.text = preview.gold.toString();
-        _original['inventory'] =
-            preview.inventory.map((item) => item.toJson()).toList();
+        _original['inventory'] = preview.inventory
+            .map((item) => item.toJson())
+            .toList();
         _original['startingBackgroundPackage'] = selected.toJson();
         _error = null;
       });
     } catch (error) {
-      setState(() => _error =
-          'Hintergrundpaket nicht übernommen: $error');
+      setState(() => _error = 'Hintergrundpaket nicht übernommen: $error');
     }
   }
 
@@ -1261,9 +1267,11 @@ class _CharacterEditorState extends State<CharacterEditor> {
         Map<String, dynamic>.from(existingPackage as Map),
       );
       if (result.background != recorded.background.label) {
-        setState(() => _error =
-            'Die neue Attributverteilung gehört zu einem anderen '
-            'Hintergrund als das bereits bestätigte Startpaket.');
+        setState(
+          () => _error =
+              'Die neue Attributverteilung gehört zu einem anderen '
+              'Hintergrund als das bereits bestätigte Startpaket.',
+        );
         return;
       }
     }
