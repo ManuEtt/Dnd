@@ -23,7 +23,9 @@ class SrdBardFontProposal {
   /// resulting HeroCharacter via the existing confirmed-event transaction.
   HeroCharacter applyTo(HeroCharacter current) {
     if (jsonEncode(current.toJson()) != sourceSnapshot) {
-      throw const FormatException('Veralteter Vorschlag zur Bardischen Inspiration.');
+      throw const FormatException(
+        'Veralteter Vorschlag zur Bardischen Inspiration.',
+      );
     }
     // Validation is repeated: never trust a fabricated proposal.
     SrdBardFontOfInspirationRules._validate(
