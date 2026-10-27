@@ -159,18 +159,18 @@ class _Fixture {
         LivingGameApp(controller: controller, voice: voice),
       );
     });
-    await tester.pumpAndSettle();
+    await _drainUiAndSqlite(tester);
     await tester.tap(
       find.descendant(
         of: find.byType(NavigationBar),
         matching: find.text('Abenteuer'),
       ),
     );
-    await tester.pumpAndSettle();
+    await _drainUiAndSqlite(tester);
     await tester.runAsync(
       () => Future<void>.delayed(const Duration(milliseconds: 50)),
     );
-    await tester.pumpAndSettle();
+    await _drainUiAndSqlite(tester);
   }
 
   Future<void> close(WidgetTester tester) async {
@@ -234,8 +234,19 @@ Future<void> _pendingVisible(WidgetTester tester) async {
   await tester.runAsync(
     () => Future<void>.delayed(const Duration(milliseconds: 60)),
   );
-  await tester.pumpAndSettle();
+  await _drainUiAndSqlite(tester);
   expect(find.byKey(const ValueKey('adventure-retry-action')), findsOneWidget);
+}
+
+// SQLite FFI completes on the real event loop, not on FakeAsync's clock.
+// Avoid pumpAndSettle waiting forever while a real IO future is pending.
+Future<void> _drainUiAndSqlite(WidgetTester tester) async {
+  for (var attempt = 0; attempt < 10; attempt++) {
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 25)),
+    );
+    await tester.pump(const Duration(milliseconds: 50));
+  }
 }
 
 void main() {
@@ -251,11 +262,11 @@ void main() {
     final campaign = f.controller.currentCampaign!;
     final actionField = find.widgetWithText(TextField, 'Was möchtest du tun?');
     await tester.enterText(actionField, 'Ich frage Mira nach den Schlüsseln.');
-    await tester.pumpAndSettle();
+    await _drainUiAndSqlite(tester);
     final picker = find.byKey(const ValueKey('adventure-choose-npc'));
     await tester.ensureVisible(picker);
     await tester.tap(picker);
-    await tester.pumpAndSettle();
+    await _drainUiAndSqlite(tester);
     expect(find.byKey(const ValueKey('npc-picker-mira-one')), findsOneWidget);
     expect(find.byKey(const ValueKey('npc-picker-mira-two')), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('npc-picker-mira-two')));
@@ -263,7 +274,7 @@ void main() {
     await tester.runAsync(
       () => Future<void>.delayed(const Duration(milliseconds: 140)),
     );
-    await tester.pumpAndSettle();
+    await _drainUiAndSqlite(tester);
     expect(f.controller.error, isNull);
     expect(f.transport.requests, hasLength(1));
     expect(f.transport.requests.single['selectedNpcId'], 'mira-two');
@@ -322,7 +333,7 @@ void main() {
     await tester.runAsync(
       () => Future<void>.delayed(const Duration(milliseconds: 140)),
     );
-    await tester.pumpAndSettle();
+    await _drainUiAndSqlite(tester);
     expect(f.controller.error, isNull);
     expect(f.transport.requests, hasLength(1));
     expect(f.controller.currentCampaign!.revision, confirmed.revision);
@@ -379,7 +390,7 @@ void main() {
     await tester.runAsync(
       () => Future<void>.delayed(const Duration(milliseconds: 140)),
     );
-    await tester.pumpAndSettle();
+    await _drainUiAndSqlite(tester);
     expect(
       find.textContaining('NPC-Auswahl ist nicht mehr aktuell'),
       findsWidgets,
