@@ -163,3 +163,7 @@ Im Branch `feat/chat-a/audited-multi-material-components-20261027` werden für A
 ### Chat A – Inventarzuordnung für mehrteilige SRD-Materialien (27.10.2026)
 
 Aufbauend auf [PR #271](https://github.com/ManuEtt/Dnd/pull/271) prüft ein gesonderter Folgebranch eindeutige Inventar-Stapel-IDs, erforderliche Mengen, bestätigte Preise und exakte Verbrauchspositionen vor dem Slot-/Inventar-Commit. Mehrzielmaterialien von Astral Projection und die vier Elfenbeinstreifen für Legend Lore werden bewusst einzeln geprüft. Lange Zauberzeiten und eine Android-UI für diese Bindungen bleiben offen. [Chat-A-Inventarcheckpoint](docs/parallel/CHAT_A_AUDITED_INVENTORY_20261027.md).
+
+### Chat A – Dialog zur Einzelbestätigung von Zaubermaterialien (27.10.2026)
+
+Aufbauend auf PR #271 und #274 ist ein eigenständiger deutschsprachiger Dialog für die vier geprüften Mehrfachmaterialzauber hinzugefügt. Er bestätigt konkrete Inventarstapel, geforderte Mengen und den Materialverbrauch **ohne** Slot-, Inventar- oder Spielstandänderungen. Die Übergabe an den Controller/Zauberablauf und Echtgeräteprüfung sind noch offen. Details: [Chat-A-Materialdialog](docs/parallel/CHAT_A_MATERIAL_DIALOG_20261027.md).
