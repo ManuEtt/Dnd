@@ -7,6 +7,7 @@ import 'condition_effects.dart';
 import 'confirmed_spell_effects.dart';
 import 'prone_movement_rules.dart';
 import 'crawling_movement_rules.dart';
+import 'srd_terrain_movement_rules.dart';
 import 'character_rule_engine.dart';
 import 'character_effect_rules.dart';
 import 'magic_missile_rules.dart';
@@ -975,6 +976,79 @@ class GameEngine {
         'targetId': campaign.hero.id,
         'distanceFeet': distanceFeet,
         'difficultTerrain': difficultTerrain,
+        'movementSpentDecimeters': cost,
+        'movementRemainingDecimeters': updated.remainingMovementDecimeters,
+      },
+    );
+  }
+
+  /// One explicit climbing/swimming segment during a confirmed hero turn.
+  /// The terrain and distance cannot be sourced from free narrative text.
+  /// A slippery climb or rough water may require a separately resolved
+  /// Athletics check; this command never invents or rolls its outcome.
+  GameUpdate moveOnConfirmedTerrain(
+    Campaign campaign, {
+    required SrdTerrainMovement kind,
+    required int distanceFeet,
+    required bool difficultTerrain,
+    required bool terrainConfirmed,
+    bool additionalCheckRequired = false,
+    bool additionalCheckPassedConfirmed = false,
+  }) {
+    final fight = campaign.encounter;
+    if (fight == null || fight.isFinished) {
+      throw const FormatException(
+        'Klettern/Schwimmen ist nur in einem laufenden Kampf verfügbar.',
+      );
+    }
+    if (fight.activeParticipant != 'hero') {
+      throw const FormatException('Bewegung ist nur im eigenen Zug erlaubt.');
+    }
+    if (campaign.pendingRoll != null ||
+        campaign.pendingDeathSave != null ||
+        campaign.hero.isDead) {
+      throw const FormatException('Zuerst den offenen Wurf abschließen.');
+    }
+    _ensureNoOpportunity(campaign);
+    final updated = SrdTerrainMovementRules.spend(
+      fight,
+      campaign.hero,
+      kind: kind,
+      distanceFeet: distanceFeet,
+      difficultTerrain: difficultTerrain,
+      terrainConfirmed: terrainConfirmed,
+      additionalCheckRequired: additionalCheckRequired,
+      additionalCheckPassedConfirmed: additionalCheckPassedConfirmed,
+    ).copyWith(heroCover: CoverLevel.none);
+    final cost = SrdTerrainMovementRules.costDecimeters(
+      campaign.hero,
+      kind: kind,
+      distanceFeet: distanceFeet,
+      difficultTerrain: difficultTerrain,
+    );
+    final isClimbing = kind == SrdTerrainMovement.climb;
+    final label = isClimbing ? 'kletterst' : 'schwimmst';
+    return _commit(
+      campaign,
+      campaign.copyWith(encounter: updated),
+      'Du $label ${ProneMovementRules.formatDecimeters(distanceFeet * 3)}'
+      '${difficultTerrain ? ' durch schwieriges Gelände' : ''}. '
+      'Bewegungskosten: ${ProneMovementRules.formatDecimeters(cost)}. '
+      'Verbleibend: ${updated.movementRemainingLabel}. '
+      'Deine vorherige Deckungsposition ist nicht mehr bestätigt.',
+      type: isClimbing ? 'combat.climbed' : 'combat.swam',
+      payload: {
+        'targetId': campaign.hero.id,
+        'distanceFeet': distanceFeet,
+        'movementMode': kind.name,
+        'difficultTerrain': difficultTerrain,
+        'terrainConfirmed': true,
+        'additionalCheckRequired': additionalCheckRequired,
+        'additionalCheckPassedConfirmed': additionalCheckPassedConfirmed,
+        'specialSpeedApplied': SrdTerrainMovementRules.hasSpecialSpeed(
+          campaign.hero,
+          kind,
+        ),
         'movementSpentDecimeters': cost,
         'movementRemainingDecimeters': updated.remainingMovementDecimeters,
       },

@@ -18,6 +18,8 @@ import '../domain/acid_splash_rules.dart';
 import '../domain/healing_spell_rules.dart';
 import '../domain/saving_throw_class_actions.dart';
 import '../domain/class_resource_rules.dart';
+import '../domain/srd_terrain_movement_rules.dart';
+import '../domain/prone_movement_rules.dart';
 import '../domain/monk_flurry_rules.dart';
 import '../domain/monk_self_restoration.dart';
 import '../services/backup_files.dart';
@@ -1575,6 +1577,28 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previous);
   }
 
+  Future<void> _moveOnConfirmedTerrain(
+    SrdTerrainMovement kind,
+    int distanceFeet,
+    bool difficultTerrain,
+  ) async {
+    final campaign = widget.controller.currentCampaign;
+    if (campaign == null || _ruleInteractionBlocked) return;
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    await widget.controller.moveOnConfirmedTerrain(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      kind: kind,
+      distanceFeet: distanceFeet,
+      difficultTerrain: difficultTerrain,
+      terrainConfirmed: true,
+      // Popup entries explicitly cover ordinary passable terrain, not
+      // slippery walls, dangerous currents or an unresolved Athletics check.
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
   Future<void> _manageConfirmedSpellEffects() async {
     final campaign = widget.controller.currentCampaign;
     if (campaign == null || _ruleInteractionBlocked) return;
@@ -2259,6 +2283,64 @@ class _AdventurePageState extends State<_AdventurePage> {
                       ),
                     ),
                   ),
+                if (campaign.encounter != null &&
+                    !campaign.encounter!.isFinished &&
+                    !campaign.hero.conditions.contains('liegend'))
+                  for (final kind in SrdTerrainMovement.values)
+                    PopupMenuButton<int>(
+                      key: ValueKey('adventure-terrain-${kind.name}'),
+                      tooltip:
+                          'Bestätigte Strecke und passierbares Gelände wählen',
+                      enabled:
+                          !_ruleInteractionBlocked &&
+                          campaign.pendingRoll == null &&
+                          campaign.pendingDeathSave == null &&
+                          campaign.pendingEnemyShieldHit == null &&
+                          campaign.pendingOpportunityAttack == null &&
+                          !campaign.hero.isDead &&
+                          (campaign.hero.hitPoints ?? 0) > 0 &&
+                          campaign.encounter!.activeParticipant == 'hero',
+                      onSelected: (value) => _moveOnConfirmedTerrain(
+                        kind,
+                        value >= 100 ? value - 100 : value,
+                        value >= 100,
+                      ),
+                      itemBuilder: (_) => [
+                        for (final distance in [5, 10])
+                          for (final difficult in [false, true])
+                            PopupMenuItem<int>(
+                              value: distance + (difficult ? 100 : 0),
+                              child: Text(
+                                '${distance * 0.3} m ${kind == SrdTerrainMovement.climb ? 'klettern' : 'schwimmen'} '
+                                '(${difficult ? 'schwieriges' : 'normales'} Gelände, '
+                                '${ProneMovementRules.formatDecimeters(SrdTerrainMovementRules.costDecimeters(campaign.hero, kind: kind, distanceFeet: distance, difficultTerrain: difficult))} Verbrauch)',
+                              ),
+                            ),
+                      ],
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 8,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              kind == SrdTerrainMovement.climb
+                                  ? Icons.terrain_outlined
+                                  : Icons.pool_outlined,
+                              size: 17,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              kind == SrdTerrainMovement.climb
+                                  ? 'Klettern'
+                                  : 'Schwimmen',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                 FantasyTextButton(
                   key: const ValueKey('adventure-manage-spell-effects'),
                   onPressed:
