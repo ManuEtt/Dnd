@@ -86,7 +86,7 @@ void main() {
     expect(seed.sessionId, 'session-one');
   });
 
-  test('identical prior-session event remains idempotent after session change', () {
+  test('prior-session duplicate remains idempotent after session change', () {
     final seed = _seed();
     final update = engine.act(seed, 'Ich bleibe beim Brunnen.');
     final later = Campaign.fromJson({
