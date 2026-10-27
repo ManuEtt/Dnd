@@ -1,0 +1,20 @@
+name: Ranger terrain armor test format diagnostic
+on:
+  push:
+    branches:
+      - integration/ranger-roving-terrain-20261027
+permissions:
+  contents: read
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - run: |
+          dart format app/test/ranger_terrain_armor_regression_test.dart
+          git diff -- app/test/ranger_terrain_armor_regression_test.dart
