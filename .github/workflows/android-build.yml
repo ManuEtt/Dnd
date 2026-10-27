@@ -94,6 +94,8 @@ jobs:
           base64 -w0 lib/ui/character_editor.dart
           echo ""
           echo "FORMAT_END:lib/ui/character_editor.dart"
+          # TEMP: End diagnostic before Gradle to publish formatter log promptly.
+          exit 1
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
