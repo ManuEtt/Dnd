@@ -99,8 +99,7 @@ class SrdLongJumpRules {
       immediateRunUpConfirmed: immediateRunUpConfirmed,
     );
 
-    if (jumpDistanceCentimeters <= 0 ||
-        jumpDistanceCentimeters > maximum) {
+    if (jumpDistanceCentimeters <= 0 || jumpDistanceCentimeters > maximum) {
       throw const FormatException(
         'Die Weitsprungstrecke überschreitet das bestätigte SRD-Limit.',
       );
