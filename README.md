@@ -1,5 +1,12 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – SRD-Weitsprung-Vorprüfung (27.10.2026)
+
+Eine neue, **rein lesende** SRD-5.2.1-Weitsprungprüfung validiert Stärkewert, bestätigten unmittelbaren 10-Fuß-Anlauf, Distanz in exakten Zentimetern und verbleibende Bewegung. Bei Landung in schwierigem Gelände wird die bestätigte Akrobatikprobe SG 10, bei niedrigem Hindernis die optionale Spielleiterentscheidung zur Athletikprobe SG 10 separat geprüft. Fehlende Proben bleiben *ausstehend*, nicht automatisch erfolgreich; höhere Hindernisse werden nicht ungeprüft freigegeben. Die Regeln verändern noch **keinen** Kampf- oder Speicherzustand. Regressionstests sind hinzugefügt; die neue PR-CI ist gesondert auszuwerten. Keine Datenmigration und keine App-Versionserhöhung. [Fach- und Testprotokoll](docs/parallel/CHAT_A_LONG_JUMP_20261027.md).
+
+---
+
+
 ## Charaktererstellung – Integrationskandidat (27.10.2026)
 
 Die gestapelte SRD-5.2.1-Entwicklung aus [#264](https://github.com/ManuEtt/Dnd/pull/264), [#272](https://github.com/ManuEtt/Dnd/pull/272), [#273](https://github.com/ManuEtt/Dnd/pull/273) und [#275](https://github.com/ManuEtt/Dnd/pull/275) ist gemeinsam in einem **Integrationsbranch** vorbereitet: 4W6-Würfelzuordnung; explizit bestätigte, versionierte Startattribut-Herkunft; vier Hintergrundpakete mit Werkzeug-/Fertigkeitsauswahl und A-/B-Ausrüstung; Akolythenauswahl aus drei geprüften Heiligen Symbolen. Die Einzelbranch-CIs sind grün, die **gemeinsame Main-Integration und Android-Geräteabnahme** müssen separat erfolgen. Herkunftstalentwirkungen, Magic-Initiate-Zauberwahl und vollständige SRD-Charaktererstellung fehlen weiterhin. [Integrationsbeleg](docs/CHARACTER_STACK_INTEGRATION_20261027.md).
