@@ -117,8 +117,7 @@ class SrdClassAutomation {
       );
     }
     final computed = _computedEvidence[feature.name];
-    if (computed != null &&
-        feature.automation == FeatureAutomation.automatic) {
+    if (computed != null && feature.automation == FeatureAutomation.automatic) {
       return SrdFeatureRuntimeEntry(
         feature: feature,
         status: SrdFeatureRuntimeStatus.computed,
