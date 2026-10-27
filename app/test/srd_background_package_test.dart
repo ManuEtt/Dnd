@@ -22,6 +22,9 @@ void main() {
         background: entry.key,
         takeGold: false,
         gamingSetCatalogId: entry.key == SrdBackground.soldier ? game : '',
+        holySymbolCatalogId: entry.key == SrdBackground.acolyte
+            ? SrdBackgroundPackageChoice.holySymbols.first.id
+            : '',
       );
       final hero = HeroCharacter(
         id: 'hero',
@@ -184,4 +187,96 @@ void main() {
       );
     }
   });
+  test('holy symbols are explicit, priced SRD equipment without magic grants', () {
+    const cases = <(String, double?)>[
+      ('item-holy-symbol-amulet', 1.0),
+      ('item-holy-symbol-emblem', null),
+      ('item-holy-symbol-reliquary', 2.0),
+    ];
+    for (final entry in cases) {
+      final selection = SrdBackgroundPackageChoice(
+        background: SrdBackground.acolyte,
+        takeGold: false,
+        holySymbolCatalogId: entry.$1,
+      );
+      final hero = selection.applyTo(
+        HeroCharacter(id: 'akolyth', name: 'A', background: 'Akolyth'),
+        nextId: id,
+      );
+      final symbol = hero.inventory.singleWhere(
+        (item) => item.catalogId == entry.$1,
+      );
+      expect(symbol.stats!.priceCp, 500);
+      expect(symbol.stats!.weightLb, entry.$2);
+      expect(symbol.stats!.damage, isNull);
+      expect(hero.inventory, hasLength(5));
+      expect(hero.gold, 8);
+      expect(
+        SrdBackgroundPackageChoice.fromJson(selection.toJson()).toJson(),
+        selection.toJson(),
+      );
+      expect(HeroCharacter.fromJson(hero.toJson()).toJson(), hero.toJson());
+    }
+  });
+
+  test('acolyte kit must not grant an unresolved or forged holy symbol', () {
+    final undecided = SrdBackgroundPackageChoice(
+      background: SrdBackground.acolyte,
+      takeGold: false,
+    );
+    final oldJson = undecided.toJson();
+    // Historic background records remain parseable, not retroactively edited.
+    expect(
+      SrdBackgroundPackageChoice.fromJson(oldJson).toJson(),
+      oldJson,
+    );
+    expect(
+      () => undecided.applyTo(
+        HeroCharacter(id: 'acolyte', name: 'A', background: 'Akolyth'),
+        nextId: id,
+      ),
+      throwsFormatException,
+    );
+    expect(
+      () => SrdBackgroundPackageChoice(
+        background: SrdBackground.acolyte,
+        takeGold: false,
+        holySymbolCatalogId: 'item-holy-water',
+      ),
+      throwsFormatException,
+    );
+    expect(
+      () => SrdBackgroundPackageChoice(
+        background: SrdBackground.acolyte,
+        takeGold: true,
+        holySymbolCatalogId: 'item-holy-symbol-amulet',
+      ),
+      throwsFormatException,
+    );
+    expect(
+      () => SrdBackgroundPackageChoice(
+        background: SrdBackground.criminal,
+        takeGold: false,
+        holySymbolCatalogId: 'item-holy-symbol-amulet',
+      ),
+      throwsFormatException,
+    );
+    expect(
+      () => SrdBackgroundPackageChoice.fromJson({
+        ...oldJson,
+        'holySymbolCatalogId': 1,
+      }),
+      throwsFormatException,
+    );
+    // The coin option must not demand any symbol.
+    final coins = SrdBackgroundPackageChoice(
+      background: SrdBackground.acolyte,
+      takeGold: true,
+    );
+    expect(coins.applyTo(
+      HeroCharacter(id: 'coins', name: 'C', background: 'Akolyth'),
+      nextId: id,
+    ).inventory, isEmpty);
+  });
+
 }

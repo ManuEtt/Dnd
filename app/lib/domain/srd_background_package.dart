@@ -11,6 +11,7 @@ class SrdBackgroundPackageChoice {
     required this.background,
     required this.takeGold,
     this.gamingSetCatalogId = '',
+    this.holySymbolCatalogId = '',
   }) {
     _validate();
   }
@@ -18,6 +19,9 @@ class SrdBackgroundPackageChoice {
   final SrdBackground background;
   final bool takeGold;
   final String gamingSetCatalogId;
+  /// Only Acolyte equipment A may select a concrete holy-symbol catalog ID.
+  /// Omitted in pre-existing saved backgrounds for backwards compatibility.
+  final String holySymbolCatalogId;
 
   static const _skills = <SrdBackground, List<String>>{
     SrdBackground.acolyte: ['Motiv erkennen', 'Religion'],
@@ -79,6 +83,18 @@ class SrdBackgroundPackageChoice {
     ),
   );
 
+  static const _holySymbolIds = <String>{
+    'item-holy-symbol-amulet',
+    'item-holy-symbol-emblem',
+    'item-holy-symbol-reliquary',
+  };
+
+  static List<EquipmentEntry> get holySymbols => List.unmodifiable(
+    SrdEquipmentCatalog.all.where(
+      (entry) => _holySymbolIds.contains(entry.id),
+    ),
+  );
+
   List<String> get skills => List.unmodifiable(_skills[background]!);
   String get originFeat => _feat[background]!;
   int get startingGold => takeGold ? 50 : _kitGold[background]!;
@@ -106,6 +122,12 @@ class SrdBackgroundPackageChoice {
     } else if (gamingSetCatalogId.isNotEmpty) {
       throw const FormatException('Dieser Hintergrund erhält kein Spielset.');
     }
+    if (holySymbolCatalogId.isNotEmpty &&
+        (background != SrdBackground.acolyte ||
+            takeGold ||
+            !holySymbols.any((symbol) => symbol.id == holySymbolCatalogId))) {
+      throw const FormatException('Ungültige Auswahl des Heiligen Symbols.');
+    }
   }
 
   Map<String, dynamic> toJson() => {
@@ -113,6 +135,8 @@ class SrdBackgroundPackageChoice {
     'background': background.name,
     'takeGold': takeGold,
     if (gamingSetCatalogId.isNotEmpty) 'gamingSetCatalogId': gamingSetCatalogId,
+    if (holySymbolCatalogId.isNotEmpty)
+      'holySymbolCatalogId': holySymbolCatalogId,
   };
 
   factory SrdBackgroundPackageChoice.fromJson(Map<String, dynamic> json) {
@@ -120,7 +144,9 @@ class SrdBackgroundPackageChoice {
         json['background'] is! String ||
         json['takeGold'] is! bool ||
         (json['gamingSetCatalogId'] != null &&
-            json['gamingSetCatalogId'] is! String)) {
+            json['gamingSetCatalogId'] is! String) ||
+        (json['holySymbolCatalogId'] != null &&
+            json['holySymbolCatalogId'] is! String)) {
       throw const FormatException('Ungültige SRD-Hintergrundpaket-Version.');
     }
     final values = SrdBackground.values.where(
@@ -133,6 +159,7 @@ class SrdBackgroundPackageChoice {
       background: values.single,
       takeGold: json['takeGold'] as bool,
       gamingSetCatalogId: (json['gamingSetCatalogId'] as String?) ?? '',
+      holySymbolCatalogId: (json['holySymbolCatalogId'] as String?) ?? '',
     );
   }
 
@@ -148,6 +175,15 @@ class SrdBackgroundPackageChoice {
         hero.startingBackgroundPackage != null) {
       throw const FormatException(
         'Hintergrundpaket nur für einen neuen passenden Stufe-1-Helden.',
+      );
+    }
+    // Older saves without this optional choice remain loadable and unchanged,
+    // but a *new* Acolyte equipment-A grant must resolve the actual item.
+    if (background == SrdBackground.acolyte &&
+        !takeGold &&
+        holySymbolCatalogId.isEmpty) {
+      throw const FormatException(
+        'Vor dem Übernehmen ein konkretes Heiliges Symbol wählen.',
       );
     }
     final duplicates = skills.where(hero.skills.contains).toList();
@@ -167,6 +203,17 @@ class SrdBackgroundPackageChoice {
               id: nextId(),
               name: selected.name,
               catalogId: selected.id,
+              stats: InventoryItemStats.fromCatalog(selected),
+            ),
+          );
+        } else if (item.name == 'Heiliges Symbol (Auswahl offen)') {
+          final selected = SrdEquipmentCatalog.byId(holySymbolCatalogId)!;
+          additions.add(
+            InventoryItem(
+              id: nextId(),
+              name: selected.name,
+              catalogId: selected.id,
+              description: selected.note ?? '',
               stats: InventoryItemStats.fromCatalog(selected),
             ),
           );

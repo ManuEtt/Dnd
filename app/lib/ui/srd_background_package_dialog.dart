@@ -4,7 +4,7 @@ import '../domain/srd_background_package.dart';
 
 /// Confirms one SRD 5.2.1 background's fixed skill/tool proficiencies and
 /// an explicit choice between equipment A and 50 GP (option B).
-/// Origin feat mechanics, spell choices and holy symbol variant remain open.
+/// Origin feat mechanics and spell choices are not yet automated.
 class SrdBackgroundPackageDialog extends StatefulWidget {
   const SrdBackgroundPackageDialog({super.key, required this.background});
 
@@ -19,15 +19,22 @@ class _SrdBackgroundPackageDialogState
     extends State<SrdBackgroundPackageDialog> {
   bool _takeGold = false;
   String? _gamingSetId;
+  String? _holySymbolId;
 
   SrdBackgroundPackageChoice? get _choice {
     if (widget.background == SrdBackground.soldier && _gamingSetId == null) {
+      return null;
+    }
+    if (widget.background == SrdBackground.acolyte &&
+        !_takeGold &&
+        _holySymbolId == null) {
       return null;
     }
     return SrdBackgroundPackageChoice(
       background: widget.background,
       takeGold: _takeGold,
       gamingSetCatalogId: _gamingSetId ?? '',
+      holySymbolCatalogId: _takeGold ? '' : _holySymbolId ?? '',
     );
   }
 
@@ -73,6 +80,22 @@ class _SrdBackgroundPackageDialogState
                   ],
                   onChanged: (id) => setState(() => _gamingSetId = id),
                 ),
+              if (widget.background == SrdBackground.acolyte && !_takeGold)
+                DropdownButtonFormField<String>(
+                  key: const ValueKey('background-holy-symbol'),
+                  initialValue: _holySymbolId,
+                  decoration: const InputDecoration(
+                    labelText: 'Heiliges Symbol auswählen',
+                  ),
+                  items: [
+                    for (final symbol in SrdBackgroundPackageChoice.holySymbols)
+                      DropdownMenuItem(
+                        value: symbol.id,
+                        child: Text(symbol.name),
+                      ),
+                  ],
+                  onChanged: (id) => setState(() => _holySymbolId = id),
+                ),
               SwitchListTile(
                 key: const ValueKey('background-gold-option'),
                 contentPadding: EdgeInsets.zero,
@@ -90,7 +113,7 @@ class _SrdBackgroundPackageDialogState
                 if (!choice.takeGold)
                   for (final item in choice.kitItems)
                     Text(
-                      '• ${item.quantity} × ${item.name == 'Spielset (nach Wahl)' ? choice.toolProficiency : item.name}',
+                      '• ${item.quantity} × ${item.name == 'Spielset (nach Wahl)' ? choice.toolProficiency : item.name == 'Heiliges Symbol (Auswahl offen)' ? SrdBackgroundPackageChoice.holySymbols.singleWhere((symbol) => symbol.id == choice.holySymbolCatalogId).name : item.name}',
                     ),
                 if (choice.requiresFeatSpellChoices)
                   const Padding(
@@ -101,13 +124,7 @@ class _SrdBackgroundPackageDialogState
                       'das Zauberattribut gewählt werden.',
                     ),
                   ),
-                if (widget.background == SrdBackground.acolyte && !_takeGold)
-                  const Text(
-                    'Offen: Das konkrete Heilige Symbol muss noch '
-                    'ausgewählt werden. Der Platzhalter gibt keine '
-                    'Katalogwerte vor.',
-                  ),
-              ],
+               ],
             ],
           ),
         ),
