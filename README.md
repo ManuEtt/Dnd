@@ -1,5 +1,12 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – SRD-Hochsprung vorprüfen (27.10.2026)
+
+Ein neues **rein lesendes** Regelmodul `SrdHighJumpRules` berechnet die zulässige Hochsprunghöhe aus bestätigter Stärke und unmittelbarem Anlauf (10 Fuß), prüft das bereits verbleibende Bewegungsbudget und kann die Körper-/Reichhöhe ohne Rundungsverlust auswerten. Negative und unbekannte Werte werden ausdrücklich abgewehrt; der Zustand, die Aktionen und Spielstände werden **nicht** geändert. Der neue Test deckt positive und negative Grenzen sowie wiederholte Anfragen ab; die neue Branch-CI steht gesondert aus. Dieser Baustein ist **noch nicht** in den Kampf-/Android-Workflow integriert. Keine SQLite-/JSON-Migration und keine Versionserhöhung. [Details und Testplan](docs/parallel/CHAT_A_HIGH_JUMP_20261027.md).
+
+---
+
+
 ## Charaktererstellung – Integrationskandidat (27.10.2026)
 
 Die gestapelte SRD-5.2.1-Entwicklung aus [#264](https://github.com/ManuEtt/Dnd/pull/264), [#272](https://github.com/ManuEtt/Dnd/pull/272), [#273](https://github.com/ManuEtt/Dnd/pull/273) und [#275](https://github.com/ManuEtt/Dnd/pull/275) ist gemeinsam in einem **Integrationsbranch** vorbereitet: 4W6-Würfelzuordnung; explizit bestätigte, versionierte Startattribut-Herkunft; vier Hintergrundpakete mit Werkzeug-/Fertigkeitsauswahl und A-/B-Ausrüstung; Akolythenauswahl aus drei geprüften Heiligen Symbolen. Die Einzelbranch-CIs sind grün, die **gemeinsame Main-Integration und Android-Geräteabnahme** müssen separat erfolgen. Herkunftstalentwirkungen, Magic-Initiate-Zauberwahl und vollständige SRD-Charaktererstellung fehlen weiterhin. [Integrationsbeleg](docs/CHARACTER_STACK_INTEGRATION_20261027.md).
