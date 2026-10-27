@@ -282,6 +282,113 @@ void main() {
     },
   );
 
+  test('Barbar-Stufe 20: Primal Champion automatisch und TP rückwirkend', () {
+    final current = hero(className: 'Barbar', level: 19);
+    final proposal = SrdClassLevelUpRules.propose(
+      hero: current,
+      className: 'Barbar',
+      method: LevelUpMethod.milestone,
+    );
+    expect(proposal.automaticAbilityIncreases, {
+      'strength': 4,
+      'constitution': 4,
+    });
+    expect(proposal.abilityIncreases, isEmpty);
+    expect(proposal.requiredChoices, isEmpty);
+    // W12: fester Zuwachs 7 + bisheriger KON-Modifikator 2,
+    // durch KON 14 -> 18 nochmals +2 für alle 20 Charakterstufen.
+    expect(proposal.hpGain, 49);
+    final raised = proposal.applyTo(current);
+    expect(raised.abilities['strength'], 18);
+    expect(raised.abilities['constitution'], 18);
+    expect(raised.maxHitPoints, 63);
+    expect(raised.hitPoints, 57);
+    expect(raised.features, current.features);
+    expect(HeroCharacter.fromJson(raised.toJson()).toJson(), raised.toJson());
+    expect(() => proposal.applyTo(raised), throwsFormatException);
+  });
+
+  test('Mönch-Stufe 20: Body and Mind ohne unberechtigte TP-Boni', () {
+    final current = hero(className: 'Mönch', level: 19);
+    final proposal = SrdClassLevelUpRules.propose(
+      hero: current,
+      className: 'Mönch',
+      method: LevelUpMethod.milestone,
+    );
+    expect(proposal.automaticAbilityIncreases, {'dexterity': 4, 'wisdom': 4});
+    expect(proposal.hpGain, 7);
+    final raised = proposal.applyTo(current);
+    expect(raised.abilities['dexterity'], 18);
+    expect(raised.abilities['wisdom'], 18);
+    expect(raised.abilities['constitution'], 14);
+    expect(raised.maxHitPoints, 21);
+    expect(raised.hitPoints, 15);
+    expect(HeroCharacter.fromJson(raised.toJson()).toJson(), raised.toJson());
+  });
+
+  test('Klassenkapstone begrenzt auf 25; niemals Werte senken', () {
+    final current = hero(className: 'Barbar', level: 19).copyWith(
+      abilities: {...hero().abilities, 'strength': 24, 'constitution': 26},
+    );
+    final proposal = SrdClassLevelUpRules.propose(
+      hero: current,
+      className: 'Barbar',
+      method: LevelUpMethod.milestone,
+    );
+    expect(proposal.automaticAbilityIncreases, {'strength': 1});
+    final raised = proposal.applyTo(current);
+    expect(raised.abilities['strength'], 25);
+    expect(raised.abilities['constitution'], 26);
+    expect(raised.maxHitPoints, current.maxHitPoints! + 7 + 8);
+  });
+
+  test('Keine Klassenstufe 20 bei Mehrklassenstufe 20', () {
+    final current = hero(
+      className: 'Barbar',
+      secondary: 'Magier',
+      secondaryLevel: 1,
+      level: 19,
+    );
+    final proposal = SrdClassLevelUpRules.propose(
+      hero: current,
+      className: 'Barbar',
+      method: LevelUpMethod.milestone,
+    );
+    expect(proposal.classLevel, 19);
+    expect(proposal.automaticAbilityIncreases, isEmpty);
+    expect(proposal.applyTo(current).abilities, current.abilities);
+  });
+
+  test('Keine erfundenen Klassenkapstones anderer Klassen', () {
+    for (final klass in srdCharacterClasses.where(
+      (value) => value.name != 'Barbar' && value.name != 'Mönch',
+    )) {
+      final current = hero(className: klass.name, level: 19);
+      final proposal = SrdClassLevelUpRules.propose(
+        hero: current,
+        className: klass.name,
+        method: LevelUpMethod.milestone,
+      );
+      expect(proposal.automaticAbilityIncreases, isEmpty, reason: klass.name);
+      expect(proposal.applyTo(current).abilities, current.abilities);
+    }
+  });
+
+  test('Unbestätigte Kapstone-Attribute werden abgewiesen', () {
+    final current = hero(
+      className: 'Mönch',
+      level: 19,
+    ).copyWith(abilities: {...hero().abilities, 'wisdom': null});
+    expect(
+      () => SrdClassLevelUpRules.propose(
+        hero: current,
+        className: 'Mönch',
+        method: LevelUpMethod.milestone,
+      ),
+      throwsFormatException,
+    );
+  });
+
   test('Berechnete Angriffe folgen bestätigter Klassenstufe', () {
     final initial = hero(level: 4, xp: 6500);
     final result = SrdClassLevelUpRules.propose(
