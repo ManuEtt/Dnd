@@ -53,8 +53,12 @@ class _SrdBackgroundPackageDialogState
               Text(
                 'D&D SRD 5.2.1: Zwei feste Fertigkeiten, eine '
                 'Werkzeugübung und ein Herkunftstalent. '
-                'Das Talent wird zunächst nur vermerkt; '
-                'seine Regelwirkung ist noch nicht automatisiert.',
+                widget.background == SrdBackground.criminal
+                    ? 'Wachsam: Der Übungsbonus auf Initiative wird '
+                          'automatisch berechnet. Der Initiative-Tausch '
+                          'mit einem Verbündeten ist noch nicht umgesetzt.'
+                    : 'Das Talent wird zunächst nur vermerkt; '
+                          'seine Regelwirkung ist noch nicht automatisiert.',
               ),
               const SizedBox(height: 12),
               Text(
