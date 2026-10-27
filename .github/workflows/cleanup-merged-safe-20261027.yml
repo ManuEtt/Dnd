@@ -8,6 +8,7 @@ on:
   workflow_run:
     workflows: ['Android-Alpha bauen']
     types: [completed]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
