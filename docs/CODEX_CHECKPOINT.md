@@ -1,8 +1,8 @@
 ## 27.10.2026 – Chat A: Weitsprung-Vorprüfung (CI-Auswertung offen)
 
-- **Ausgangs-main:** `e7736bfc99427bfa6a1d0fd3ff887252c75c9413`; Branch `feat/chat-a/long-jump-preflight-20261027`.
+- **Ausgangs-main:** `e7736bfc99427bfa6a1d0fd3ff887252c75c9413`; Branch `feat/chat-a/long-jump-preflight-20261027`; [PR #284](https://github.com/ManuEtt/Dnd/pull/284). Vorläufiger Formatterkorrektur-Commit `b7a58c67c0028f8c792ade9534124b20b1a4bece`; temporärer Workflow danach in `75fb868b5fdeaac14b1bffc6bcbe2109048aea54` gelöscht. Endgültige CI muss auf dem letzten Dokumentations-HEAD laufen.
 - **IMPLEMENTIERT:** `SrdLongJumpRules` prüft Stärke-/Anlauf-Distanz (SRD 5.2.1, Druckseiten 184–185), bestätigtes Bewegungsbudget, schwieriges Landegelände/SG 10 Akrobatik und optionale niedrige Hindernisse/SG 10 Athletik ohne Spielzustandsmutation. Positiv-/Negativtests, unabhängiger Fachbericht.
-- **GETESTET:** SRD-Primärquelle und GitHub-Code/PR-Pfade eingesehen; vorige Hochsprung-PR-CI [40469553724](https://github.com/ManuEtt/Dnd/actions/runs/40469553724) erfolgreich, **aber kein Testnachweis für den neuen Weitsprung-Branch**.
+- **GETESTET:** SRD-Primärquelle und GitHub-Code/PR-Pfade eingesehen; erfolgreicher Diagnose-Workflow für die exakte Dart-Formatierung [40471878051](https://github.com/ManuEtt/Dnd/actions/runs/40471878051), danach beide Dateien korrigiert. Vorige Hochsprung-PR-CI [40469553724](https://github.com/ManuEtt/Dnd/actions/runs/40469553724) erfolgreich, **aber kein Testnachweis für den neuen Weitsprung-Branch**.
 - **NICHT GETESTET:** aktuelle Weitsprung-Dartformatierung, vollständige Flutter-/Backend-/Android-CI und echte Geräteinstallation bis zu einem tatsächlich erfolgreichen neuen Lauf.
 - **BLOCKIERT:** lokale Dart-/Flutter-Installation in dieser Sitzung nicht verfügbar; GitHub Actions kann die Branch-Tests ausführen.
 - **NOCH NICHT IMPLEMENTIERT:** autorisierte Kampfaktion, einmalige Bewegungs-/Prone-/Hindernisbuchung, Stale-Revisions- und SQLite-Integration.
