@@ -1,3 +1,17 @@
+# Chat B – NPC-Aktion nach SQLite-Neustart und verlorenem ACK (27.10.2026)
+
+- **Branch:** `test/chat-b/npc-ui-restart-reconciliation-20261027`; Base `feat/chat-b/npc-picker-outbox-20261027` (PR #290, Head `c45d7f7ce82e367e78d102ccc98b0046683cbd23`). Vorherige Abhängigkeit: PR #288.
+- **Ausgangsproblem:** Controller-ID-Auswahl und sichere SQLite-v3-Outbox sind fachlich geprüft, aber die echte Flutter-Abenteueroberfläche musste noch vollständig gegen Neustart, doppelte NPC-Namen und verloren gegangene ACKs getestet werden.
+- **Implementiert:** Neuer reiner End-to-End-Test `app/test/npc_ui_outbox_restart_integration_test.dart`: Flutter-App mit echter SQLite-Datei, `LivingGameApp`, `GameController`, `PlayerActionOutbox`, stillem Voice-Mock und ausschließlich lokalem `BackendTransport`-Mock.
+- **Fälle:** (1) Der Spieler tippt die zweite von zwei „Mira“-Figuren an; ausschließlich deren ID und Notiz werden transportiert. (2) Bei persistiertem Auftrag und bereits bestätigtem Event führt eine UI-Wiederholung nach Neustart **keinen** zweiten Backendaufruf aus und entfernt die Outbox. (3) Eine seit Auswahl geänderte Kampagnenrevision blockiert den Retry ohne Spielstandsänderung und ohne automatisches Umlenken auf den anderen NPC.
+- **Format:** Exakte Ausgabe des offiziellen Dart-3.9.2-Formatters auf die neue Testdatei übernommen; kurzlebigen Diagnose-Workflow vollständig entfernt.
+- **KEINE Produktioncodeänderung:** Kein Eingriff in Flutter-UI, Backend, Datenbank, Export-Schema, Kampagnenregeln, Asset-Dateien oder bestehende Testdateien; gemeinsame Docs/README hinzugefügt, historische Dokumentation beibehalten.
+- **CI-Status:** Vollständige GitHub-CI für PR #290 ist auf dem korrigierten Head `c45d7f7c` zweimal grün (#40482612142 und #40482623135). Die CI dieses Inkrements erst nach nachgewiesener Ausführung als grün melden.
+- **OFFEN:** Echte Android-/Screenreader-/TTS-Tests; PR-Integration muss #288 → #290 → diesen PR folgen. Fremde Branches und PRs bleiben unverändert.
+- **Nächster Schritt:** Fail-closed-Tests für Verwerfen und erneute bewusste Auswahl nach einer abgelaufenen NPC-Revision, ohne parallele Chat-C-Oberfläche zu berühren.
+
+---
+
 # Chat B – NPC-Auswahl in Android-UI plus persistente Outbox (27.10.2026)
 
 - **Branch:** `feat/chat-b/npc-picker-outbox-20261027`, basiert auf `feat/chat-b/controller-explicit-npc-selection-20261027` (PR #288, Basis-SHA `2ba524c307b3b48ad21a6343df700ae0a643f55d`). Kein unabhängiger Merge vor #288.
