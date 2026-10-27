@@ -140,7 +140,7 @@ class _MonkSlowFallDialogState extends State<MonkSlowFallDialog> {
               ? () => Navigator.pop(
                   context,
                   ConfirmedSlowFallChoice(
-                    damageAfterDefenses: plan!.confirmedFallDamage,
+                    damageAfterDefenses: plan.confirmedFallDamage,
                   ),
                 )
               : null,
