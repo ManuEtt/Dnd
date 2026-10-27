@@ -40,7 +40,7 @@ void main() {
       expect(pending.toJson(), staged.toJson());
       await restored.remove(pending);
       expect(await restored.pendingFor('campaign-one'), isNull);
-      final plain = await outbox.stage(
+      final plain = await restored.stage(
         'campaign-two',
         'Ich warte.',
       );
