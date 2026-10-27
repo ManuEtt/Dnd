@@ -25,6 +25,7 @@ export '../domain/srd_extra_creature_attack_rules.dart';
 export '../domain/srd_opportunity_attack_rules.dart';
 export '../domain/srd_ranger_feral_senses_rules.dart';
 export '../domain/srd_monk_slow_fall_rules.dart';
+export '../domain/srd_evasion_rules.dart';
 export '../domain/srd_cube_area_rules.dart';
 export '../domain/srd_sending_rules.dart';
 export '../domain/srd_sending_cast_preflight_rules.dart';
