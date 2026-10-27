@@ -67,22 +67,23 @@ void main() {
           body: Builder(
             builder: (context) => TextButton(
               onPressed: () async {
-                final selected = await showDialog<SavageAttackerSelectionRequest>(
-                  context: context,
-                  builder: (_) => SavageAttackerSelectionDialog(
-                    campaign: campaign,
-                    attackRollId: 'attack-17',
-                    encounterId: targetId,
-                    weaponDamageExpression: '2d6+3',
-                    original: original ?? dice([2, 3]),
-                    alternative: alternative ?? dice([5, 6]),
-                    confirmedWeaponHit: hit,
-                    confirmedWeaponAttack: weapon,
-                    critical: critical,
-                    originalCriticalExtra: firstCrit,
-                    alternativeCriticalExtra: secondCrit,
-                  ),
-                );
+                final selected =
+                    await showDialog<SavageAttackerSelectionRequest>(
+                      context: context,
+                      builder: (_) => SavageAttackerSelectionDialog(
+                        campaign: campaign,
+                        attackRollId: 'attack-17',
+                        encounterId: targetId,
+                        weaponDamageExpression: '2d6+3',
+                        original: original ?? dice([2, 3]),
+                        alternative: alternative ?? dice([5, 6]),
+                        confirmedWeaponHit: hit,
+                        confirmedWeaponAttack: weapon,
+                        critical: critical,
+                        originalCriticalExtra: firstCrit,
+                        alternativeCriticalExtra: secondCrit,
+                      ),
+                    );
                 resultSink?.value = selected;
               },
               child: const Text('Öffnen'),
@@ -95,31 +96,34 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('no automatic selection; explicit alternative returns revision only', (
-    tester,
-  ) async {
-    final before = combat();
-    final initial = before.toJson();
-    final result = ValueNotifier<SavageAttackerSelectionRequest?>(null);
-    addTearDown(result.dispose);
-    await showChoice(tester, state: before, resultSink: result);
-    final button = find.byKey(const ValueKey('savage-attacker-confirm'));
-    expect(tester.widget<FantasyTextButton>(button).onPressed, isNull);
-    expect(find.textContaining('Erster Wurf: 5'), findsOneWidget);
-    expect(find.textContaining('Zweiter Wurf: 11'), findsOneWidget);
-    expect(find.textContaining('Fester Waffenbonus: +3'), findsOneWidget);
-    await tester.tap(find.byKey(const ValueKey('savage-attacker-alternative')));
-    await tester.pumpAndSettle();
-    expect(tester.widget<FantasyTextButton>(button).onPressed, isNotNull);
-    await tester.tap(button);
-    await tester.pumpAndSettle();
-    expect(result.value?.attackRollId, 'attack-17');
-    expect(result.value?.encounterId, 'enemy-1');
-    expect(result.value?.expectedRevision, before.revision);
-    expect(result.value?.chooseAlternative, true);
-    expect(before.toJson(), initial);
-    expect(tester.takeException(), isNull);
-  });
+  testWidgets(
+    'no automatic selection; explicit alternative returns revision only',
+    (tester) async {
+      final before = combat();
+      final initial = before.toJson();
+      final result = ValueNotifier<SavageAttackerSelectionRequest?>(null);
+      addTearDown(result.dispose);
+      await showChoice(tester, state: before, resultSink: result);
+      final button = find.byKey(const ValueKey('savage-attacker-confirm'));
+      expect(tester.widget<FantasyTextButton>(button).onPressed, isNull);
+      expect(find.textContaining('Erster Wurf: 5'), findsOneWidget);
+      expect(find.textContaining('Zweiter Wurf: 11'), findsOneWidget);
+      expect(find.textContaining('Fester Waffenbonus: +3'), findsOneWidget);
+      await tester.tap(
+        find.byKey(const ValueKey('savage-attacker-alternative')),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.widget<FantasyTextButton>(button).onPressed, isNotNull);
+      await tester.tap(button);
+      await tester.pumpAndSettle();
+      expect(result.value?.attackRollId, 'attack-17');
+      expect(result.value?.encounterId, 'enemy-1');
+      expect(result.value?.expectedRevision, before.revision);
+      expect(result.value?.chooseAlternative, true);
+      expect(before.toJson(), initial);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('first lower result may be chosen without forced max', (
     tester,
@@ -143,7 +147,10 @@ void main() {
     await showChoice(tester, resultSink: result);
     await tester.tap(find.byKey(const ValueKey('savage-attacker-cancel')));
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('savage-attacker-selection-dialog')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('savage-attacker-selection-dialog')),
+      findsNothing,
+    );
     expect(result.value, isNull);
     expect(tester.takeException(), isNull);
   });
@@ -190,7 +197,10 @@ void main() {
         total: 99,
       ),
     );
-    expect(find.byKey(const ValueKey('savage-attacker-invalid')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('savage-attacker-invalid')),
+      findsOneWidget,
+    );
     await tester.tap(find.byKey(const ValueKey('savage-attacker-cancel')));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
@@ -227,7 +237,9 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     await showChoice(tester);
-    final alternative = find.byKey(const ValueKey('savage-attacker-alternative'));
+    final alternative = find.byKey(
+      const ValueKey('savage-attacker-alternative'),
+    );
     await tester.ensureVisible(alternative);
     await tester.pumpAndSettle();
     await tester.tap(alternative);

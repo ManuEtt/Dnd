@@ -63,10 +63,7 @@ class _SavageAttackerSelectionDialogState
         widget.attackRollId.isEmpty ||
         widget.attackRollId.length > 128 ||
         widget.campaign.revision < 0 ||
-        !SrdSavageAttackerRules.canOfferOnTurn(
-          widget.campaign.hero,
-          fight,
-        )) {
+        !SrdSavageAttackerRules.canOfferOnTurn(widget.campaign.hero, fight)) {
       return null;
     }
     try {
@@ -159,10 +156,7 @@ class _SavageAttackerSelectionDialogState
                     'Erster Wurf: ${verified.originalWeaponDiceTotal}',
                   ),
                   subtitle: Text(
-                    _diceFaces(
-                      widget.original,
-                      widget.originalCriticalExtra,
-                    ),
+                    _diceFaces(widget.original, widget.originalCriticalExtra),
                   ),
                   selected: _chooseAlternative == false,
                   onTap: () => setState(() => _chooseAlternative = false),
