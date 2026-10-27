@@ -1,0 +1,21 @@
+name: Chat A inventory formatter diff
+on:
+  push:
+    branches:
+      - feat/chat-a/audited-material-inventory-20261027
+    paths:
+      - .github/workflows/chat-a-inventory-diagnostic.yml
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Show exact formatter changes
+        run: |
+          dart format app/lib/domain/srd_spell_audited_inventory_rules.dart app/lib/domain/srd_spell_inventory_rules.dart app/test/srd_spell_audited_inventory_rules_test.dart
+          git diff -- app/lib/domain/srd_spell_audited_inventory_rules.dart app/lib/domain/srd_spell_inventory_rules.dart app/test/srd_spell_audited_inventory_rules_test.dart
