@@ -108,7 +108,10 @@ void main() {
       false,
     );
     expect(
-      SrdSavageAttackerRules.canOfferOnTurn(hero.copyWith(hitPoints: null), fight),
+      SrdSavageAttackerRules.canOfferOnTurn(
+        hero.copyWith(hitPoints: null),
+        fight,
+      ),
       false,
     );
     expect(
