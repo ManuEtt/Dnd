@@ -69,6 +69,7 @@ import 'fantasy_combat_chronicle.dart';
 import 'character_portrait_picker.dart';
 import 'campaign_memory_panel.dart';
 import 'npc_story_selection_dialog.dart';
+import 'pending_action_status.dart';
 
 const _gold = Color(0xffddb96c);
 const _ink = Color(0xff0d1927);
@@ -3135,59 +3136,14 @@ class _AdventurePageState extends State<_AdventurePage> {
               accent: FantasyPalette.blue,
               child: Column(
                 children: [
-                  if (_submittingAction)
-                    const SizedBox.shrink(
-                      key: ValueKey('adventure-action-submitting'),
-                    ),
-                  if (_pendingAction != null && !_submittingAction) ...[
-                    const Text(
-                      'Ausstehende Handlung – noch nicht sicher bestätigt',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      _pendingAction!.text,
-                      key: const ValueKey('adventure-pending-action-text'),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 6),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 4,
-                      children: [
-                        FantasyTextButton(
-                          key: const ValueKey('adventure-retry-action'),
-                          label: 'Erneut bestätigen',
-                          icon: Icons.refresh,
-                          style: FantasyButtonStyle.woodGold,
-                          onPressed:
-                              _submittingAction || _ruleInteractionBlocked
-                              ? null
-                              : _retryPending,
-                        ),
-                        FantasyTextButton(
-                          key: const ValueKey('adventure-discard-action'),
-                          label: 'Verwerfen',
-                          icon: Icons.close,
-                          style: FantasyButtonStyle.iron,
-                          onPressed:
-                              _submittingAction || _ruleInteractionBlocked
-                              ? null
-                              : _discardPending,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                  ],
-                  if (_outboxError != null)
-                    Text(
-                      _outboxError!,
-                      key: const ValueKey('adventure-outbox-error'),
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
-                    ),
+                  PendingActionStatus(
+                    pending: _pendingAction,
+                    submitting: _submittingAction,
+                    interactionBlocked: _ruleInteractionBlocked,
+                    error: _outboxError,
+                    onRetry: _retryPending,
+                    onDiscard: _discardPending,
+                  ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
