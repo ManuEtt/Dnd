@@ -1,0 +1,23 @@
+name: Chat B temporary pending UI formatter
+on:
+  push:
+    branches: [test/chat-b/pending-npc-status-widget-20261027]
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Display Dart formatted files
+        run: |
+          echo 'CHAT_B_BEGIN_0'
+          dart format --output=show app/lib/ui/pending_action_status.dart
+          echo 'CHAT_B_END_0'
+          echo 'CHAT_B_BEGIN_1'
+          dart format --output=show app/lib/ui/app.dart
+          echo 'CHAT_B_END_1'
+          echo 'CHAT_B_BEGIN_2'
+          dart format --output=show app/test/pending_action_status_test.dart
+          echo 'CHAT_B_END_2'
