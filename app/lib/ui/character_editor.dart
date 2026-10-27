@@ -1113,7 +1113,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
     final backgroundSkills = recordedBackground?.skills ?? const <String>[];
     if (choice.skills.any(backgroundSkills.contains)) {
       setState(
-        () => _error = 'Eine Klassenfertigkeit überschneidet sich mit '
+        () => _error =
+            'Eine Klassenfertigkeit überschneidet sich mit '
             'dem bestätigten Hintergrund. Bitte eine andere '
             'Klassenfertigkeit wählen.',
       );

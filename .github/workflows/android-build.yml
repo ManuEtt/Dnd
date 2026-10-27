@@ -86,16 +86,6 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
-      - name: TEMP Formatquelle Klassenausruestung
-        working-directory: app
-        run: |
-          dart format lib/ui/character_editor.dart
-          echo "FORMAT_BEGIN:lib/ui/character_editor.dart"
-          base64 -w0 lib/ui/character_editor.dart
-          echo ""
-          echo "FORMAT_END:lib/ui/character_editor.dart"
-          # TEMP: End diagnostic before Gradle to publish formatter log promptly.
-          exit 1
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
