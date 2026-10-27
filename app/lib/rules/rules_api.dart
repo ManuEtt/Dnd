@@ -23,6 +23,7 @@ export '../domain/srd_spell_saving_throw_rules.dart';
 export '../domain/srd_initiative_roster_rules.dart';
 export '../domain/srd_extra_creature_attack_rules.dart';
 export '../domain/srd_opportunity_attack_rules.dart';
+export '../domain/srd_ranger_feral_senses_rules.dart';
 export '../domain/srd_cube_area_rules.dart';
 export '../domain/srd_sending_rules.dart';
 export '../domain/srd_sending_cast_preflight_rules.dart';

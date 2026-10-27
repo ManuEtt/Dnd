@@ -302,6 +302,9 @@ class SrdClassFeatureCatalog {
     // Speed and derived movement types work; climbing/swimming terrain
     // expenditure still requires a dedicated confirmed movement action.
     'Roving',
+    // Range is derived automatically, but target detection is not resolved
+    // without confirmed cover, distance and concealment.
+    'Feral Senses',
   };
 
   static final Map<String, List<SrdClassFeature>> _catalog = {
