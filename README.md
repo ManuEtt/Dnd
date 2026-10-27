@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat B – Sitzungsidentität bei Story-Wiederherstellung (27.10.2026)
+
+Eine neue Schutzprüfung in `MemoryEngine.replay` weist neu eingespielte, sitzungsfremde Ereignisse und widersprüchliche `stateAfter`-Checkpoints ab. Bereits bestätigte, identische historische Ereignisse bleiben auch beim späteren Sitzungswechsel idempotent. Vier neue Regressionen prüfen Erfolg und Abweisung. **Die finale Flutter-/Android-CI für dieses Paket ist gesondert zu prüfen; keine Geräteabnahme behauptet.** Keine Änderung an Spielstandschema oder Regelzustand. [Technischer Nachweis](docs/STORY_REPLAY_SESSION_IDENTITY_20261027.md) · [Chat-B-Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md).
+
 ## Chat B – Gemeinsames Budget für NPC- und allgemeine KI-Erinnerungen (27.10.2026)
 
 Die vom KI-Spielleiter übermittelten bestätigten NPC-Notizen und allgemeinen Erinnerungseinträge teilen sich dasselbe Limit (standardmäßig 12 Einträge). Bisher wurde ein weiterer allgemeiner Eintrag angehängt, selbst wenn NPC-Notizen das Budget schon vollständig belegten. `NpcNarratorMemory.merge` prüft jetzt die gemeinsame Grenze **vor** dem Anhängen allgemeiner Einträge. Neue Regressionen decken vollständig belegte Grenzen von einem und zwei Einträgen sowie verbleibenden Platz ab. Es gibt keine Änderung an NPC-Identitäten, SRD-Regeln, SQLite, Backend-Protokoll oder Kampagnenexport.
