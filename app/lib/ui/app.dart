@@ -1099,7 +1099,10 @@ class _AdventurePageState extends State<_AdventurePage> {
 
   // Typed text, reviewed speech, combat and fixed shortcuts all stage the
   // exact intent before the shared authoritative controller can execute it.
-  Future<void> _send({String? quickAction, NpcStorySelection? selectedNpc}) async {
+  Future<void> _send({
+    String? quickAction,
+    NpcStorySelection? selectedNpc,
+  }) async {
     final text = (quickAction ?? _input.text).trim();
     final campaign = widget.controller.currentCampaign;
     if (text.isEmpty || campaign == null || !_canInteract) return;
@@ -3231,14 +3234,21 @@ class _AdventurePageState extends State<_AdventurePage> {
                         label: 'NPC auswählen',
                         icon: Icons.people_outline,
                         style: FantasyButtonStyle.iron,
-                        onPressed: _canInteract &&
+                        onPressed:
+                            _canInteract &&
                                 _outboxReady &&
-                                widget.controller.narrator.supportsExplicitNpcSelection
+                                widget
+                                    .controller
+                                    .narrator
+                                    .supportsExplicitNpcSelection
                             ? _chooseNpc
                             : null,
                       ),
                     ),
-                    if (!widget.controller.narrator.supportsExplicitNpcSelection)
+                    if (!widget
+                        .controller
+                        .narrator
+                        .supportsExplicitNpcSelection)
                       const Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
