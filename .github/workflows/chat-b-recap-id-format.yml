@@ -1,0 +1,21 @@
+name: Chat B temporary recap formatter
+on:
+  push:
+    branches:
+      - feat/chat-b/session-recap-npc-identity-20261027
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Print official Dart formatter output
+        run: |
+          echo CHAT_B_RECAP_BEGIN_0
+          dart format --output=show app/lib/story/story_memory_engine.dart
+          echo CHAT_B_RECAP_END_0
+          echo CHAT_B_RECAP_BEGIN_1
+          dart format --output=show app/test/session_recap_npc_identity_test.dart
+          echo CHAT_B_RECAP_END_1
