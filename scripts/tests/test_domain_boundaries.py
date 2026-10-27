@@ -131,5 +131,80 @@ class StoryRulesBoundaryTests(unittest.TestCase):
 
 
 
+    def test_domain_conditional_import_rejects_story_relative_alternative(self):
+        source = (
+            "import 'models.dart'\n"
+            "    if (dart.library.io) '../story/story_campaign_engine.dart';"
+        )
+        self.assertEqual(
+            [
+                "app/lib/domain/rules.dart: rule module imports story "
+                "../story/story_campaign_engine.dart"
+            ],
+            check_imports("app/lib/domain/rules.dart", source),
+        )
+
+    def test_domain_conditional_export_checks_all_package_alternatives(self):
+        source = (
+            'export "package:lebendiger_spielleiter/domain/models.dart"\n'
+            '    if (dart.library.html) "package:flutter/foundation.dart"\n'
+            '    if (dart.library.io) '
+            '"package:lebendiger_spielleiter/story/story_api.dart";'
+        )
+        messages = check_imports("app/lib/domain/rules.dart", source)
+        self.assertEqual(1, len(messages))
+        self.assertIn("package:lebendiger_spielleiter/story/story_api.dart", messages[0])
+
+    def test_facade_whitelist_does_not_allow_new_conditional_story_import(self):
+        source = (
+            "import '../story/story_campaign_engine.dart'\n"
+            "    if (dart.library.io) '../story/story_rule_port.dart';"
+        )
+        self.assertEqual(
+            [
+                "app/lib/domain/game_engine.dart: rule module imports story "
+                "../story/story_rule_port.dart"
+            ],
+            check_imports("app/lib/domain/game_engine.dart", source),
+        )
+
+    def test_story_module_rejects_conditional_framework_import(self):
+        source = (
+            "import 'story_rule_boundary.dart'\n"
+            "    if (dart.library.io) 'dart:io';"
+        )
+        self.assertEqual(
+            [
+                "app/lib/story/story_campaign_engine.dart: forbidden platform "
+                "dependency dart:io"
+            ],
+            check_imports("app/lib/story/story_campaign_engine.dart", source),
+        )
+
+    def test_conditional_uri_with_string_config_value_is_inspected(self):
+        source = (
+            "import 'models.dart' if (dart.library.io == 'true') "
+            "'../story/story_rule_port.dart';"
+        )
+        self.assertEqual(
+            1, len(check_imports("app/lib/domain/rules.dart", source))
+        )
+
+    def test_allowed_conditional_domain_and_framework_imports_remain_valid(self):
+        source = (
+            "import 'models.dart'\n"
+            "    if (dart.library.io) 'package:lebendiger_spielleiter/domain/models.dart'\n"
+            "    if (dart.library.html) 'package:flutter/foundation.dart';"
+        )
+        self.assertEqual([], check_imports("app/lib/domain/rules.dart", source))
+
+    def test_non_directive_strings_do_not_create_false_positive(self):
+        source = (
+            "// import 'models.dart' if (dart.library.io) '../story/unsafe.dart';\n"
+            "final text = \"if (dart.library.io) '../story/unsafe.dart'\";"
+        )
+        self.assertEqual([], check_imports("app/lib/domain/rules.dart", source))
+
+
 if __name__ == "__main__":
     unittest.main()
