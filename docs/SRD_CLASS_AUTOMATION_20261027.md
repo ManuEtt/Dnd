@@ -15,6 +15,26 @@ Dieses Paket ergänzt eine einheitliche **Laufzeit-Abdeckungsschicht**:
 - Freie Merkmals- und Unterklassenwahlen werden **nicht erfunden**. Bekannte Klassenaktionen verbrauchen Ressourcen weiterhin ausschließlich über die vorhandenen Bestätigungs-/Kampfaktionswege.
 - Die neue Schicht ändert **kein** `HeroCharacter`-JSON, keine SQLite-Struktur und keine Kampagnendaten. Werte werden zur Anzeige neu berechnet.
 
+## Zusätzlicher ausführbarer Klassenbaustein: Barde 5
+
+Das SRD-5.2.1-Merkmal **Font of Inspiration** hat nun einen separat geprüften
+Zwei-Phasen-Mechanismus unter `app/lib/domain/srd_bard_font_of_inspiration.dart`:
+Ein ausdrücklich ausgewählter freier Zauberplatz (regulär oder, bei
+Mehrklassencharakteren, ein ausdrücklich ausgewählter Paktplatz) wird in
+derselben unveränderlichen Zustandsänderung abgebucht, in der **eine** verbrauchte
+Bardic-Inspiration-Nutzung zurückgegeben wird. Vor dem Commit müssen
+Barden-Klassenstufe 5, Ressourcengrenzen, passende Platzstufe und der vollständige
+unveränderte Charakterzustand bestätigt sein. Dies benötigt **keine Aktion** im
+Sinne der 2024-Regeln; das Ausgeben der Inspiration an ein anderes Wesen bleibt
+eine gesonderte Handlung.
+
+`app/test/srd_bard_font_of_inspiration_test.dart` prüft normalen Platz,
+Paktplatz, Leerstand, erschöpften Vorrat, fehlende Klassenstufe, unbrauchbare
+Figur und veraltete Vorschläge. Die Regel-API wird **noch nicht automatisch
+aus dem Abenteuer-/Kampfcontroller heraus aufgerufen**: Der Funktionsstand
+bleibt deshalb **Teilautomatik** und wird nicht als vollständig im Spiel
+verfügbar angezeigt.
+
 Das Status-Label **„Bestätigte Regelaktion“** bedeutet, dass bereits eine separate Engine-Funktion existiert, **nicht**, dass das Merkmal in jeder denkbaren Spielsituation automatisch ausgeführt wird. **„Teilautomatik“** umfasst z. B. angelegte Ressourcen, Würfel oder Sicherheitsvorprüfungen, aber keine vollständig geschlossene Aktion. Komplexe Effekte wie Reliability Talent mit Werkzeugen, Slow Fall mit allen Abläufen und Feral Senses mit bestätigter Sicht bleiben daher teilweise.
 
 ## Testverpflichtung
@@ -33,7 +53,7 @@ Ausführung:
 ```bash
 cd app
 flutter analyze
-flutter test test/srd_class_automation_test.dart test/srd_class_feature_catalog_test.dart
+flutter test test/srd_class_automation_test.dart test/srd_class_feature_catalog_test.dart test/srd_bard_font_of_inspiration_test.dart
 flutter test
 ```
 
