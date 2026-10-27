@@ -62,26 +62,38 @@ void main() {
     expect(summary, isNot(contains('same-id')));
   });
 
-  test('normalized German duplicates survive a saved recap and JSON roundtrip', () {
-    final campaign = _campaign(const [
-      WorldNpc(id: 'keeper-a', name: 'Große Hüterin', relationship: 'neutral'),
-      WorldNpc(id: 'keeper-b', name: 'GROSSE HUETERIN', relationship: 'neutral'),
-    ]);
-    final beforeHero = campaign.hero.toJson();
-    final result = GameEngine(
-      clock: () => DateTime.utc(2026, 10, 27),
-    ).saveSessionRecap(campaign);
-    final recap = result.campaign.sessionRecaps.single.summary;
+  test(
+    'normalized German duplicates survive a saved recap and JSON roundtrip',
+    () {
+      final campaign = _campaign(const [
+        WorldNpc(
+          id: 'keeper-a',
+          name: 'Große Hüterin',
+          relationship: 'neutral',
+        ),
+        WorldNpc(
+          id: 'keeper-b',
+          name: 'GROSSE HUETERIN',
+          relationship: 'neutral',
+        ),
+      ]);
+      final beforeHero = campaign.hero.toJson();
+      final result = GameEngine(
+        clock: () => DateTime.utc(2026, 10, 27),
+      ).saveSessionRecap(campaign);
+      final recap = result.campaign.sessionRecaps.single.summary;
 
-    expect(recap, contains('Große Hüterin (NPC-ID: keeper-a)'));
-    expect(recap, contains('GROSSE HUETERIN (NPC-ID: keeper-b)'));
-    expect(result.events.single.type, 'memory.sessionRecapSaved');
-    expect(result.campaign.hero.toJson(), beforeHero);
-    expect(result.campaign.revision, campaign.revision + 1);
-    final restored = Campaign.fromJson(
-      jsonDecode(jsonEncode(result.campaign.toJson())) as Map<String, dynamic>,
-    );
-    expect(restored.sessionRecaps.single.summary, recap);
-    expect(restored.hero.toJson(), beforeHero);
-  });
+      expect(recap, contains('Große Hüterin (NPC-ID: keeper-a)'));
+      expect(recap, contains('GROSSE HUETERIN (NPC-ID: keeper-b)'));
+      expect(result.events.single.type, 'memory.sessionRecapSaved');
+      expect(result.campaign.hero.toJson(), beforeHero);
+      expect(result.campaign.revision, campaign.revision + 1);
+      final restored = Campaign.fromJson(
+        jsonDecode(jsonEncode(result.campaign.toJson()))
+            as Map<String, dynamic>,
+      );
+      expect(restored.sessionRecaps.single.summary, recap);
+      expect(restored.hero.toJson(), beforeHero);
+    },
+  );
 }
