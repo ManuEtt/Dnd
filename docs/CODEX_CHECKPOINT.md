@@ -1,3 +1,17 @@
+# Chat B – tatsächliches Story-Transportlimit von zwölf Erinnerungen (27.10.2026)
+
+- **Basis-PR:** [#307](https://github.com/ManuEtt/Dnd/pull/307), Head `47b4343fadd5f30b9030a702b3ccd701d701a598`; eigener abhängiger Branch `test/chat-b/story-12-memory-transport-20261027`.
+- **IMPLEMENTIERT:** `app/test/npc_memory_story_transport_limit_test.dart` mit zwei vollständigen asynchronen SQLite-/GameController-/Fake-`BackendTransport`-Tests. KI-Kampagne mit 24 bestätigten Fakten und drei bestätigten Mira-Beziehungsnotizen, tatsächlicher Spielzug via `GameController.sendAction`, anschließende Prüfung des HTTP-Request-Bodys für `/v1/story/advance`.
+- **GEPRÜFTES VERHALTEN:** Exakt zwölf Einträge, zuerst die drei bestätigten NPC-Notizen, danach neun andere bestätigte Erinnerungen; keine Dubletten, pro Eintrag maximal 400 Zeichen; optionale `npc-identity-v1`-Aushandlung übermittelt gültige gesonderte NPC-Kontexte und die neue Zugrevision, ohne Capability keinerlei optionale ID-Felder. Keine implizite `selectedNpcId`.
+- **KONTINUITÄT:** Erfolgreiche lokale Story-Fortsetzung, unveränderte Heldendaten, Fakten und Anzahl bestätigter NPC-Notizen, persistente Revision und `reconstructCampaign`. Keine echte Anbieter-/Netzwerkverbindung, keine Flutter-Widget- oder Android-Geräteinteraktion.
+- **STATUS:** Offizielle Dart-3.9.2-Formatierung angewendet; temporäre Diagnoseworkflowdatei entfernt. Neue vollständige CI auf PR-HEAD separat abnehmen.
+- **MIGRATION:** keine; keine Änderung an App-, Backend-, SQLite-/JSON- oder SRD-Produktionsdateien.
+- **INTEGRATION:** PR #307 vor diesem abhängigen Test-PR integrieren. Gemeinsame README-/Checkpoint-Änderungen von Chat D konsolidieren, fremde Branches nicht verändern.
+- **NÄCHSTER SCHRITT:** Einen Story-Transport mit Sonderzeichen/Multibyte-Zeichen innerhalb des 400-Zeichen-Limits auf gleicher Speicherbasis prüfen.
+- [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md), bisherige Historie unverändert beibehalten.
+
+---
+
 # Chat B – NPC-Erinnerungslimit nicht überschreiten (27.10.2026)
 
 - **Ausgangs-Main:** `f9b2f72a4bf8e4216bf8baac60c7f92c4a8a997f`; Branch `fix/chat-b/npc-memory-budget-20261027`.
