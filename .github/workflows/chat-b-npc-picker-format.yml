@@ -1,0 +1,36 @@
+name: Chat B temporary NPC UI formatter diagnostic
+on:
+  push:
+    branches:
+      - feat/chat-b/npc-picker-outbox-20261027
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Print official Dart formatted files
+        run: |
+          echo 'CHAT_B_BEGIN_0'
+          dart format --output=show app/lib/data/campaign_repository.dart
+          echo 'CHAT_B_END_0'
+          echo 'CHAT_B_BEGIN_1'
+          dart format --output=show app/lib/data/sqlite_campaign_repository.dart
+          echo 'CHAT_B_END_1'
+          echo 'CHAT_B_BEGIN_2'
+          dart format --output=show app/lib/services/player_action_outbox.dart
+          echo 'CHAT_B_END_2'
+          echo 'CHAT_B_BEGIN_3'
+          dart format --output=show app/lib/ui/app.dart
+          echo 'CHAT_B_END_3'
+          echo 'CHAT_B_BEGIN_4'
+          dart format --output=show app/lib/ui/npc_story_selection_dialog.dart
+          echo 'CHAT_B_END_4'
+          echo 'CHAT_B_BEGIN_5'
+          dart format --output=show app/test/npc_selected_action_outbox_test.dart
+          echo 'CHAT_B_END_5'
+          echo 'CHAT_B_BEGIN_6'
+          dart format --output=show app/test/npc_story_selection_dialog_test.dart
+          echo 'CHAT_B_END_6'
