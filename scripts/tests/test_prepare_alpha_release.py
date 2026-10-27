@@ -101,11 +101,11 @@ class AlphaReleaseTests(unittest.TestCase):
             extra.compress_size = extra.file_size
             return list(original_infolist(archive)) + [extra]
 
-        with mock.patch.object(zipfile.ZipFile, 'infolist', oversized_members), \\
-             mock.patch.object(zipfile.ZipFile, 'testzip',
-                               side_effect=AssertionError('CRC decompression attempted')):
-            with self.assertRaisesRegex(ValueError, 'übergroße'):
-                release.validate_arm64_apk(self.apk)
+        with mock.patch.object(zipfile.ZipFile, 'infolist', oversized_members):
+            with mock.patch.object(zipfile.ZipFile, 'testzip',
+                                   side_effect=AssertionError('CRC decompression attempted')):
+                with self.assertRaisesRegex(ValueError, 'übergroße'):
+                    release.validate_arm64_apk(self.apk)
 
     def test_excessive_apk_member_count_is_rejected_before_crc(self):
         original_infolist = zipfile.ZipFile.infolist
@@ -116,11 +116,11 @@ class AlphaReleaseTests(unittest.TestCase):
                 for index in range(release.MAX_ALPHA_APK_ENTRIES)
             ]
 
-        with mock.patch.object(zipfile.ZipFile, 'infolist', too_many_members), \\
-             mock.patch.object(zipfile.ZipFile, 'testzip',
-                               side_effect=AssertionError('CRC decompression attempted')):
-            with self.assertRaisesRegex(ValueError, 'übergroße'):
-                release.validate_arm64_apk(self.apk)
+        with mock.patch.object(zipfile.ZipFile, 'infolist', too_many_members):
+            with mock.patch.object(zipfile.ZipFile, 'testzip',
+                                   side_effect=AssertionError('CRC decompression attempted')):
+                with self.assertRaisesRegex(ValueError, 'übergroße'):
+                    release.validate_arm64_apk(self.apk)
 
     def test_duplicate_required_component_is_rejected(self):
         with zipfile.ZipFile(self.apk, 'a') as archive:
