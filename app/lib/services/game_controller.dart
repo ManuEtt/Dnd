@@ -413,7 +413,10 @@ class GameController extends ChangeNotifier {
         throw const FormatException('Der Spielstand wurde nicht gefunden.');
       }
       if (await _restoreConfirmedAction(
-        saved, requestId, text.trim(), selectedNpc?.npcId,
+        saved,
+        requestId,
+        text.trim(),
+        selectedNpc?.npcId,
       )) {
         return;
       }
@@ -468,17 +471,16 @@ class GameController extends ChangeNotifier {
         );
       }
     }
-    final update = await _withNarration(
-      acted,
-      text,
-      selectedNpc: selectedNpc,
-    );
+    final update = await _withNarration(acted, text, selectedNpc: selectedNpc);
     try {
       await _commit(
         requestId == null
             ? update
             : _withActionReceipt(
-                update, requestId, text.trim(), selectedNpc?.npcId,
+                update,
+                requestId,
+                text.trim(),
+                selectedNpc?.npcId,
               ),
       );
     } on CampaignConflictException {
@@ -489,7 +491,10 @@ class GameController extends ChangeNotifier {
         final latest = await repository.getCampaign(campaign.id);
         if (latest != null &&
             await _restoreConfirmedAction(
-              latest, requestId, text.trim(), selectedNpc?.npcId,
+              latest,
+              requestId,
+              text.trim(),
+              selectedNpc?.npcId,
             )) {
           return;
         }
