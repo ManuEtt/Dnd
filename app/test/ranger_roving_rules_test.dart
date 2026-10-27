@@ -51,11 +51,7 @@ HeroCharacter ranger({
       name: 'Schuppenpanzer',
       catalogId: 'armor-scale-mail',
     ),
-    InventoryItem(
-      id: 'shield',
-      name: 'Schild',
-      catalogId: 'armor-shield',
-    ),
+    InventoryItem(id: 'shield', name: 'Schild', catalogId: 'armor-shield'),
     InventoryItem(
       id: 'unknown',
       name: 'Nicht identifizierte Rüstung',
@@ -115,17 +111,10 @@ void main() {
     );
     expect(CharacterRuleEngine.speedMeters(secondary), 12);
     expect(CharacterRuleEngine.rovingSwimSpeedMeters(secondary), 12);
-    final underLevel = secondary.copyWith(
-      level: 10,
-      secondaryClassLevel: 5,
-    );
+    final underLevel = secondary.copyWith(level: 10, secondaryClassLevel: 5);
     expect(CharacterRuleEngine.speedMeters(underLevel), 9);
     expect(CharacterRuleEngine.rovingClimbSpeedMeters(underLevel), isNull);
-    final primary = ranger(
-      secondClass: 'Magier',
-      secondLevel: 5,
-      level: 11,
-    );
+    final primary = ranger(secondClass: 'Magier', secondLevel: 5, level: 11);
     expect(CharacterRuleEngine.speedMeters(primary), 12);
     final otherClass = ranger(className: 'Kämpfer');
     expect(CharacterRuleEngine.speedMeters(otherClass), 9);
@@ -165,14 +154,17 @@ void main() {
     expect(CharacterRuleEngine.rovingSwimSpeedMeters(unknown), isNull);
   });
 
-  test('Old character JSON roundtrip derives Roving without schema changes', () {
-    final original = ranger(armorId: 'medium', shieldId: 'shield');
-    final saved = original.toJson();
-    final restored = HeroCharacter.fromJson(saved);
-    expect(restored.toJson(), saved);
-    expect(CharacterRuleEngine.speedMeters(restored), 12);
-    expect(CharacterRuleEngine.rovingClimbSpeedMeters(restored), 12);
-    expect(CharacterRuleEngine.rovingSwimSpeedMeters(restored), 12);
-    expect(restored.speed, 9);
-  });
+  test(
+    'Old character JSON roundtrip derives Roving without schema changes',
+    () {
+      final original = ranger(armorId: 'medium', shieldId: 'shield');
+      final saved = original.toJson();
+      final restored = HeroCharacter.fromJson(saved);
+      expect(restored.toJson(), saved);
+      expect(CharacterRuleEngine.speedMeters(restored), 12);
+      expect(CharacterRuleEngine.rovingClimbSpeedMeters(restored), 12);
+      expect(CharacterRuleEngine.rovingSwimSpeedMeters(restored), 12);
+      expect(restored.speed, 9);
+    },
+  );
 }
