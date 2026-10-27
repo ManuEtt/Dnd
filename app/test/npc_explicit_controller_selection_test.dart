@@ -26,6 +26,11 @@ Map<String, dynamic> _plan() => {
       'title': 'Das Stadttor',
       'description': 'Wer besitzt den Schlüssel?',
     },
+    {
+      'id': 'brief',
+      'title': 'Der alte Brief',
+      'description': 'Wer schrieb den Brief?',
+    },
   ],
   'npcs': [
     {
