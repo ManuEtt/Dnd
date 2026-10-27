@@ -59,6 +59,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
   bool _manualAbilityException = false;
   bool _experienceManuallyEdited = false;
   bool _fighterSetupConfirmed = false;
+  bool _classEquipmentConfirmed = false;
   // Only wizard-confirmed intermediate levels may be advanced again before
   // the editor is saved; manually edited level numbers are still rejected.
   int? _lastWizardLevel;
@@ -1092,16 +1093,34 @@ class _CharacterEditorState extends State<CharacterEditor> {
             _fields['maxHitPoints']!.text.trim().isNotEmpty,
         allowEquipment:
             widget.hero == null &&
-            (_original['inventory'] as List).isEmpty &&
-            _fields['gold']!.text.trim().isEmpty,
+            !_classEquipmentConfirmed &&
+            (((_original['inventory'] as List).isEmpty &&
+                    _fields['gold']!.text.trim().isEmpty) ||
+                _original['startingBackgroundPackage'] != null),
       ),
     );
     if (selected == null || !mounted) return;
 
     // Explicit dialog acceptance: only change the fields it actually covers.
     final choice = selected.selection;
+    final recordedBackground = _original['startingBackgroundPackage'] == null
+        ? null
+        : SrdBackgroundPackageChoice.fromJson(
+            Map<String, dynamic>.from(
+              _original['startingBackgroundPackage'] as Map,
+            ),
+          );
+    final backgroundSkills = recordedBackground?.skills ?? const <String>[];
+    if (choice.skills.any(backgroundSkills.contains)) {
+      setState(
+        () => _error = 'Eine Klassenfertigkeit überschneidet sich mit '
+            'dem bestätigten Hintergrund. Bitte eine andere '
+            'Klassenfertigkeit wählen.',
+      );
+      return;
+    }
     final skills = selected.replaceExistingProficiencies
-        ? choice.skills
+        ? {...backgroundSkills, ...choice.skills}.toList()
         : {..._listFieldValues('skills'), ...choice.skills}.toList();
     final saves = selected.replaceExistingProficiencies
         ? choice.characterClass.savingThrows
@@ -1151,7 +1170,9 @@ class _CharacterEditorState extends State<CharacterEditor> {
         _fields['maxHitPoints']!.text = hp.maximum.toString();
       }
       if (kit != null) {
-        _fields['gold']!.text = kit.gold.toString();
+        _classEquipmentConfirmed = true;
+        final existingGold = int.tryParse(_fields['gold']!.text.trim()) ?? 0;
+        _fields['gold']!.text = (existingGold + kit.gold).toString();
         final inventory = _original['inventory'] as List;
         for (final item in kit.items) {
           inventory.add(
