@@ -456,8 +456,9 @@ class _CharacterEditorState extends State<CharacterEditor> {
         final rawPackage = _original['startingBackgroundPackage'];
         if (rawPackage == null ||
             SrdBackgroundPackageChoice.fromJson(
-              Map<String, dynamic>.from(rawPackage as Map),
-            ).background != choice.background ||
+                  Map<String, dynamic>.from(rawPackage as Map),
+                ).background !=
+                choice.background ||
             json['background'] != choice.background.label ||
             (widget.hero == null && json['level'] != 1)) {
           throw const FormatException(
@@ -1304,8 +1305,8 @@ class _CharacterEditorState extends State<CharacterEditor> {
     final level = int.tryParse(_fields['level']!.text.trim());
     if (rawPackage == null || level != 1) {
       setState(
-        () => _error =
-            'Zuerst das SRD-Hintergrundpaket auf Stufe 1 bestätigen.',
+        () =>
+            _error = 'Zuerst das SRD-Hintergrundpaket auf Stufe 1 bestätigen.',
       );
       return;
     }

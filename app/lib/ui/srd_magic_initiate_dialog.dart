@@ -7,16 +7,12 @@ import '../domain/srd_magic_initiate_choice.dart';
 /// A confirmed selection is persisted by the editor, but does not
 /// pre-authorize a slotless cast or grant spells to the combat engine.
 class SrdMagicInitiateDialog extends StatefulWidget {
-  const SrdMagicInitiateDialog({
-    super.key,
-    required this.background,
-  });
+  const SrdMagicInitiateDialog({super.key, required this.background});
 
   final SrdBackground background;
 
   @override
-  State<SrdMagicInitiateDialog> createState() =>
-      _SrdMagicInitiateDialogState();
+  State<SrdMagicInitiateDialog> createState() => _SrdMagicInitiateDialogState();
 }
 
 class _SrdMagicInitiateDialogState extends State<SrdMagicInitiateDialog> {
@@ -51,7 +47,8 @@ class _SrdMagicInitiateDialogState extends State<SrdMagicInitiateDialog> {
     final levelOne = SrdMagicInitiateChoice.availableLevelOne(
       widget.background,
     );
-    final valid = _first != null &&
+    final valid =
+        _first != null &&
         _second != null &&
         _first != _second &&
         _levelOne != null &&

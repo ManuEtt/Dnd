@@ -14,10 +14,81 @@ class SrdMagicInitiateChoice {
     _validate();
   }
 
-  static const clericCantrips = <String>["Guidance","Light","Mending","Resistance","Sacred Flame","Spare the Dying","Thaumaturgy"];
-  static const clericLevelOne = <String>["Bane","Bless","Command","Create or Destroy Water","Cure Wounds","Detect Evil and Good","Detect Magic","Detect Poison and Disease","Guiding Bolt","Healing Word","Inflict Wounds","Protection from Evil and Good","Purify Food and Drink","Sanctuary","Shield of Faith"];
-  static const wizardCantrips = <String>["Acid Splash","Chill Touch","Dancing Lights","Elementalism","Fire Bolt","Light","Mage Hand","Mending","Message","Minor Illusion","Poison Spray","Prestidigitation","Ray of Frost","Shocking Grasp","True Strike"];
-  static const wizardLevelOne = <String>["Alarm","Burning Hands","Charm Person","Chromatic Orb","Color Spray","Comprehend Languages","Detect Magic","Disguise Self","Expeditious Retreat","False Life","Feather Fall","Find Familiar","Floating Disk","Fog Cloud","Grease","Hideous Laughter","Ice Knife","Identify","Illusory Script","Jump","Longstrider","Mage Armor","Magic Missile","Protection from Evil and Good","Ray of Sickness","Shield","Silent Image","Sleep","Thunderwave","Unseen Servant"];
+  static const clericCantrips = <String>[
+    "Guidance",
+    "Light",
+    "Mending",
+    "Resistance",
+    "Sacred Flame",
+    "Spare the Dying",
+    "Thaumaturgy",
+  ];
+  static const clericLevelOne = <String>[
+    "Bane",
+    "Bless",
+    "Command",
+    "Create or Destroy Water",
+    "Cure Wounds",
+    "Detect Evil and Good",
+    "Detect Magic",
+    "Detect Poison and Disease",
+    "Guiding Bolt",
+    "Healing Word",
+    "Inflict Wounds",
+    "Protection from Evil and Good",
+    "Purify Food and Drink",
+    "Sanctuary",
+    "Shield of Faith",
+  ];
+  static const wizardCantrips = <String>[
+    "Acid Splash",
+    "Chill Touch",
+    "Dancing Lights",
+    "Elementalism",
+    "Fire Bolt",
+    "Light",
+    "Mage Hand",
+    "Mending",
+    "Message",
+    "Minor Illusion",
+    "Poison Spray",
+    "Prestidigitation",
+    "Ray of Frost",
+    "Shocking Grasp",
+    "True Strike",
+  ];
+  static const wizardLevelOne = <String>[
+    "Alarm",
+    "Burning Hands",
+    "Charm Person",
+    "Chromatic Orb",
+    "Color Spray",
+    "Comprehend Languages",
+    "Detect Magic",
+    "Disguise Self",
+    "Expeditious Retreat",
+    "False Life",
+    "Feather Fall",
+    "Find Familiar",
+    "Floating Disk",
+    "Fog Cloud",
+    "Grease",
+    "Hideous Laughter",
+    "Ice Knife",
+    "Identify",
+    "Illusory Script",
+    "Jump",
+    "Longstrider",
+    "Mage Armor",
+    "Magic Missile",
+    "Protection from Evil and Good",
+    "Ray of Sickness",
+    "Shield",
+    "Silent Image",
+    "Sleep",
+    "Thunderwave",
+    "Unseen Servant",
+  ];
 
   static List<String> availableCantrips(SrdBackground background) =>
       switch (background) {
@@ -40,9 +111,8 @@ class SrdMagicInitiateChoice {
   final String levelOneSpell;
   final String castingAbility;
 
-  String get sourceList => background == SrdBackground.acolyte
-      ? 'Cleric'
-      : 'Wizard';
+  String get sourceList =>
+      background == SrdBackground.acolyte ? 'Cleric' : 'Wizard';
 
   void _validate() {
     if (background != SrdBackground.acolyte &&

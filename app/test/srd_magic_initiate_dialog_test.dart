@@ -12,31 +12,29 @@ Future<void> showChoice(
   SrdBackground background,
   void Function(SrdMagicInitiateChoice?) done,
 ) async {
-  await tester.pumpWidget(MaterialApp(
-    home: Scaffold(
-      body: Builder(
-        builder: (context) => TextButton(
-          onPressed: () async {
-            final result = await showDialog<SrdMagicInitiateChoice>(
-              context: context,
-              builder: (_) => SrdMagicInitiateDialog(background: background),
-            );
-            done(result);
-          },
-          child: const Text('Öffnen'),
+  await tester.pumpWidget(
+    MaterialApp(
+      home: Scaffold(
+        body: Builder(
+          builder: (context) => TextButton(
+            onPressed: () async {
+              final result = await showDialog<SrdMagicInitiateChoice>(
+                context: context,
+                builder: (_) => SrdMagicInitiateDialog(background: background),
+              );
+              done(result);
+            },
+            child: const Text('Öffnen'),
+          ),
         ),
       ),
     ),
-  ));
+  );
   await tester.tap(find.text('Öffnen'));
   await tester.pumpAndSettle();
 }
 
-Future<void> selectValue(
-  WidgetTester tester,
-  String key,
-  String value,
-) async {
+Future<void> selectValue(WidgetTester tester, String key, String value) async {
   final dropdown = keyed(key);
   await tester.ensureVisible(dropdown);
   await tester.pumpAndSettle();
@@ -50,30 +48,38 @@ Future<void> selectValue(
 }
 
 void main() {
-  testWidgets('confirm requires two different cantrips, level-one and ability',
-      (tester) async {
-    SrdMagicInitiateChoice? result;
-    await showChoice(tester, SrdBackground.acolyte, (value) => result = value);
-    final button = keyed('confirm-magic-initiate-choice');
-    expect(tester.widget<FilledButton>(button).onPressed, isNull);
-    await selectValue(tester, 'magic-initiate-cantrip-one', 'Guidance');
-    await selectValue(tester, 'magic-initiate-cantrip-two', 'Guidance');
-    expect(tester.widget<FilledButton>(button).onPressed, isNull);
-    expect(find.textContaining('unterschiedliche Zaubertricks'),
-        findsWidgets);
-    await selectValue(tester, 'magic-initiate-cantrip-two', 'Light');
-    await selectValue(tester, 'magic-initiate-level-one', 'Bless');
-    expect(tester.widget<FilledButton>(button).onPressed, isNull);
-    await selectValue(tester, 'magic-initiate-ability', 'wisdom');
-    expect(tester.widget<FilledButton>(button).onPressed, isNotNull);
-    await tester.ensureVisible(button);
-    await tester.pumpAndSettle();
-    await tester.tap(button);
-    await tester.pumpAndSettle();
-    expect(result!.cantrips, ['Guidance', 'Light']);
-    expect(result!.levelOneSpell, 'Bless');
-    expect(result!.castingAbility, 'wisdom');
-  });
+  testWidgets(
+    'confirm requires two different cantrips, level-one and ability',
+    (tester) async {
+      SrdMagicInitiateChoice? result;
+      await showChoice(
+        tester,
+        SrdBackground.acolyte,
+        (value) => result = value,
+      );
+      final button = keyed('confirm-magic-initiate-choice');
+      expect(tester.widget<FilledButton>(button).onPressed, isNull);
+      await selectValue(tester, 'magic-initiate-cantrip-one', 'Guidance');
+      await selectValue(tester, 'magic-initiate-cantrip-two', 'Guidance');
+      expect(tester.widget<FilledButton>(button).onPressed, isNull);
+      expect(
+        find.textContaining('unterschiedliche Zaubertricks'),
+        findsWidgets,
+      );
+      await selectValue(tester, 'magic-initiate-cantrip-two', 'Light');
+      await selectValue(tester, 'magic-initiate-level-one', 'Bless');
+      expect(tester.widget<FilledButton>(button).onPressed, isNull);
+      await selectValue(tester, 'magic-initiate-ability', 'wisdom');
+      expect(tester.widget<FilledButton>(button).onPressed, isNotNull);
+      await tester.ensureVisible(button);
+      await tester.pumpAndSettle();
+      await tester.tap(button);
+      await tester.pumpAndSettle();
+      expect(result!.cantrips, ['Guidance', 'Light']);
+      expect(result!.levelOneSpell, 'Bless');
+      expect(result!.castingAbility, 'wisdom');
+    },
+  );
 
   testWidgets('cancellation leaves the choice unset', (tester) async {
     SrdMagicInitiateChoice? result;

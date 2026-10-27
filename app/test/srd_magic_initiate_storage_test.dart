@@ -14,64 +14,66 @@ import 'package:lebendiger_spielleiter/services/game_controller.dart';
 void main() {
   sqfliteFfiInit();
 
-  test('Magic Initiate survives SQLite restart, export and import intact',
-      () async {
-    final directory = await Directory.systemTemp.createTemp(
-      'magic-initiate-choices-',
-    );
-    final dbPath = paths.join(directory.path, 'magic-initiate.sqlite');
-    SqliteCampaignRepository? repository;
-    GameController? controller;
-
-    Future<void> connect() async {
-      repository = await SqliteCampaignRepository.open(
-        factory: databaseFactoryFfi,
-        path: dbPath,
+  test(
+    'Magic Initiate survives SQLite restart, export and import intact',
+    () async {
+      final directory = await Directory.systemTemp.createTemp(
+        'magic-initiate-choices-',
       );
-      controller = GameController(repository: repository!);
-      await controller!.initialize();
-      expect(controller!.error, isNull);
-    }
+      final dbPath = paths.join(directory.path, 'magic-initiate.sqlite');
+      SqliteCampaignRepository? repository;
+      GameController? controller;
 
-    try {
-      await connect();
-      final choice = SrdMagicInitiateChoice(
-        background: SrdBackground.acolyte,
-        cantrips: ['Guidance', 'Sacred Flame'],
-        levelOneSpell: 'Bless',
-        castingAbility: 'charisma',
-      );
-      final hero = HeroCharacter(
-        id: 'acolyte-hero',
-        name: 'Priester',
-        background: 'Akolyth',
-        startingBackgroundPackage: SrdBackgroundPackageChoice(
+      Future<void> connect() async {
+        repository = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: dbPath,
+        );
+        controller = GameController(repository: repository!);
+        await controller!.initialize();
+        expect(controller!.error, isNull);
+      }
+
+      try {
+        await connect();
+        final choice = SrdMagicInitiateChoice(
           background: SrdBackground.acolyte,
-          takeGold: true,
-        ),
-        startingMagicInitiate: choice,
-      );
+          cantrips: ['Guidance', 'Sacred Flame'],
+          levelOneSpell: 'Bless',
+          castingAbility: 'charisma',
+        );
+        final hero = HeroCharacter(
+          id: 'acolyte-hero',
+          name: 'Priester',
+          background: 'Akolyth',
+          startingBackgroundPackage: SrdBackgroundPackageChoice(
+            background: SrdBackground.acolyte,
+            takeGold: true,
+          ),
+          startingMagicInitiate: choice,
+        );
 
-      await controller!.saveStandaloneHero(hero);
-      expect(controller!.error, isNull);
-      controller!.dispose();
-      await repository!.close();
-      await connect();
-      final restored = controller!.characters.single;
-      expect(restored.toJson(), hero.toJson());
-      expect(restored.startingMagicInitiate!.toJson(), choice.toJson());
-      expect(restored.spells, isEmpty);
+        await controller!.saveStandaloneHero(hero);
+        expect(controller!.error, isNull);
+        controller!.dispose();
+        await repository!.close();
+        await connect();
+        final restored = controller!.characters.single;
+        expect(restored.toJson(), hero.toJson());
+        expect(restored.startingMagicInitiate!.toJson(), choice.toJson());
+        expect(restored.spells, isEmpty);
 
-      final exported = controller!.exportHero(restored);
-      await controller!.deleteCharacter(hero.id);
-      await controller!.importHero(exported);
-      expect(controller!.error, isNull);
-      expect(controller!.characters.single.toJson(), hero.toJson());
-      expect(controller!.characters.single.spells, isEmpty);
-    } finally {
-      controller?.dispose();
-      await repository?.close();
-      await directory.delete(recursive: true);
-    }
-  });
+        final exported = controller!.exportHero(restored);
+        await controller!.deleteCharacter(hero.id);
+        await controller!.importHero(exported);
+        expect(controller!.error, isNull);
+        expect(controller!.characters.single.toJson(), hero.toJson());
+        expect(controller!.characters.single.spells, isEmpty);
+      } finally {
+        controller?.dispose();
+        await repository?.close();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
 }
