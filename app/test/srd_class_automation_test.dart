@@ -61,7 +61,8 @@ void main() {
       character('Kämpfer', 20, subclass: 'Champion'),
     );
     expect(
-      fighter.singleWhere((e) => e.feature.name == 'Three Extra Attacks')
+      fighter
+          .singleWhere((e) => e.feature.name == 'Three Extra Attacks')
           .status,
       SrdFeatureRuntimeStatus.computed,
     );
@@ -79,7 +80,8 @@ void main() {
     );
     final warlock = SrdClassAutomation.unlocked(character('Hexenmeister', 1));
     expect(
-      warlock.singleWhere((e) => e.feature.name == 'Eldritch Invocations')
+      warlock
+          .singleWhere((e) => e.feature.name == 'Eldritch Invocations')
           .status,
       SrdFeatureRuntimeStatus.playerChoice,
     );
@@ -115,7 +117,8 @@ void main() {
     expect(available.any((e) => e.feature.name == 'Sneak Attack'), isTrue);
     final values = SrdClassAutomation.derivedValues(mixed);
     expect(
-      values.singleWhere((e) => e.name == 'Angriffe je Angriffsaktion (gesamt)')
+      values
+          .singleWhere((e) => e.name == 'Angriffe je Angriffsaktion (gesamt)')
           .value,
       '2',
     );
@@ -138,17 +141,13 @@ void main() {
       expect(values.every((value) => value.className == klass.name), isTrue);
       expect(values.every((value) => value.value.isNotEmpty), isTrue);
     }
-    final levelOne = SrdClassAutomation.derivedValues(
-      character('Zauberer', 1),
-    );
+    final levelOne = SrdClassAutomation.derivedValues(character('Zauberer', 1));
     expect(levelOne.any((e) => e.name == 'Zaubereipunkte gesamt'), isFalse);
-    final wizard = SrdClassAutomation.derivedValues(
-      character('Magier', 20),
-    );
+    final wizard = SrdClassAutomation.derivedValues(character('Magier', 20));
     expect(
-      wizard.singleWhere(
-        (e) => e.name == 'Gemeinsame verfügbare Zauberplätze',
-      ).value,
+      wizard
+          .singleWhere((e) => e.name == 'Gemeinsame verfügbare Zauberplätze')
+          .value,
       isNotEmpty,
     );
   });
