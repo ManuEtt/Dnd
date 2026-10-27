@@ -34,7 +34,8 @@ Campaign battle({
   );
 }
 
-GameUpdate climb(Campaign current, {
+GameUpdate climb(
+  Campaign current, {
   int feet = 10,
   bool difficult = false,
   bool confirmed = true,
@@ -72,10 +73,10 @@ void main() {
     final normal = battle(ranger: false);
     expect(climb(normal).campaign.encounter!.remainingMovementDecimeters, 30);
     expect(
-      climb(normal, difficult: true)
-          .campaign
-          .encounter!
-          .remainingMovementDecimeters,
+      climb(
+        normal,
+        difficult: true,
+      ).campaign.encounter!.remainingMovementDecimeters,
       0,
     );
     expect(
@@ -158,9 +159,11 @@ void main() {
     for (final movement in [
       () => climb(before, confirmed: false),
       () => climb(before, checkRequired: true),
-      () => climb(before.copyWith(
-        encounter: before.encounter!.copyWith(activeParticipant: 'enemy'),
-      )),
+      () => climb(
+        before.copyWith(
+          encounter: before.encounter!.copyWith(activeParticipant: 'enemy'),
+        ),
+      ),
       () => climb(battle(conditions: const ['liegend'])),
       () => climb(battle(conditions: const ['gepackt'])),
       () => climb(battle(speed: 0)),
