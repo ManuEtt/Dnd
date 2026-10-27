@@ -103,11 +103,11 @@ void main() {
     await _open(tester, hero, catalog.find('Secret Chest')!, (v) {
       selected = v;
     });
-    await _tapVisible(
-      tester,
-      find.byKey(const ValueKey('material-confirm')),
+    await _tapVisible(tester, find.byKey(const ValueKey('material-confirm')));
+    expect(
+      find.byKey(const ValueKey('material-validation-error')),
+      findsOneWidget,
     );
-    expect(find.byKey(const ValueKey('material-validation-error')), findsOneWidget);
     expect(selected, isNull);
     expect(hero.spentSpellSlots, isEmpty);
     expect(hero.inventory, hasLength(2));
@@ -130,16 +130,16 @@ void main() {
     await _confirmPosition(tester, 'secret-large-chest');
     await _selectStack(tester, 'secret-tiny-replica', 'Miniatur (1×) · tiny');
     await _confirmPosition(tester, 'secret-tiny-replica');
-    await _tapVisible(
-      tester,
-      find.byKey(const ValueKey('material-confirm')),
-    );
+    await _tapVisible(tester, find.byKey(const ValueKey('material-confirm')));
     expect(selected, isNotNull);
     expect(selected!.bindings.map((b) => b.inventoryId).toList(), [
       'large',
       'tiny',
     ]);
-    expect(selected!.confirmations.every((c) => c.requiredQuantityConfirmed), isTrue);
+    expect(
+      selected!.confirmations.every((c) => c.requiredQuantityConfirmed),
+      isTrue,
+    );
     expect(selected!.confirmedTargetCount, isNull);
     expect(hero.spentSpellSlots, isEmpty);
     expect(hero.inventory.map((e) => e.quantity).toList(), [1, 1]);
@@ -161,11 +161,11 @@ void main() {
     await _confirmPosition(tester, 'secret-large-chest');
     await _selectStack(tester, 'secret-tiny-replica', 'Truhe (2×) · large');
     await _confirmPosition(tester, 'secret-tiny-replica');
-    await _tapVisible(
-      tester,
-      find.byKey(const ValueKey('material-confirm')),
+    await _tapVisible(tester, find.byKey(const ValueKey('material-confirm')));
+    expect(
+      find.byKey(const ValueKey('material-validation-error')),
+      findsOneWidget,
     );
-    expect(find.byKey(const ValueKey('material-validation-error')), findsOneWidget);
     expect(selected, isNull);
   });
 
@@ -184,20 +184,17 @@ void main() {
     await _confirmPosition(tester, 'clone-diamond');
     await _selectStack(tester, 'clone-vessel', 'Gefäß (1×) · vessel');
     await _confirmPosition(tester, 'clone-vessel');
-    await _tapVisible(
-      tester,
-      find.byKey(const ValueKey('material-confirm')),
+    await _tapVisible(tester, find.byKey(const ValueKey('material-confirm')));
+    expect(
+      find.byKey(const ValueKey('material-validation-error')),
+      findsOneWidget,
     );
-    expect(find.byKey(const ValueKey('material-validation-error')), findsOneWidget);
     expect(selected, isNull);
     await _tapVisible(
       tester,
       find.byKey(const ValueKey('material-reserved-clone-diamond')),
     );
-    await _tapVisible(
-      tester,
-      find.byKey(const ValueKey('material-confirm')),
-    );
+    await _tapVisible(tester, find.byKey(const ValueKey('material-confirm')));
     expect(selected, isNotNull);
     expect(selected!.confirmations.first.consumptionReservedConfirmed, isTrue);
     expect(selected!.confirmations.last.consumptionReservedConfirmed, isFalse);
