@@ -1,3 +1,19 @@
+# Chat B – Bewusste NPC-ID-Auswahl durch GameController (27.10.2026)
+
+- **Basis-Main-SHA:** `2421fcd18f4d980f31a71ec9d60e80a53b53e45b`.
+- **Eigener Branch:** `feat/chat-b/controller-explicit-npc-selection-20261027`. Unabhängig von der noch offenen Controller-Story-Integrations-PR #270; die vier Fachdateien des letztgenannten PRs bleiben unangetastet.
+- **Problem:** Das Backend kann `selectedNpcId` nach `npc-selection-v1` bereits entgegennehmen, während `GameController.sendAction` bisher nur aus dem gesprochenen NPC-Namen eine Auswahl ableitete. Gleichnamige Figuren durften aus Prosa gerade nicht stillschweigend ausgewählt werden.
+- **Implementiert:** Optionales `NpcStorySelection selectedNpc` in `sendAction` und `_withNarration`. Die Auswahl muss zum aktuellen Kampagnenstand und zu aktuellen SQLite-Daten passen und durch die explizit ausgehandelte Server-Capability autorisiert sein; bestätigte NPC-Notizen sind erforderlich. Erst nach validierter Handlung wird der aktuelle, eindeutige ID-Kontext gebildet und `selectedNpcId` transportiert. Fehlende Unterstützung und ungültige/stale Auswahl werden **vor** einem Spielzug abgelehnt. Keine automatische Namenszuordnung bei identischen Anzeigenamen.
+- **Wiederholungs-ID:** Bei `requestId` gehört die gewählte NPC-ID zum bestätigten Quittungsinhalt (`actionSelectedNpcId`). Eine weitere Übertragung mit anderer ID unter demselben Schlüssel wird ohne Netzwerk/Mechanikänderung verweigert; identische Retries bleiben idempotent.
+- **Neue Tests:** `app/test/npc_explicit_controller_selection_test.dart`: vier SQLite-/Transport-Integrationstests für zwei gleichnamige Mira-Figuren, Capability-Ablehnung, ungültig gewordene Revision und idempotente Quittungen inklusive Auswahl-ID.
+- **Betroffene Dateien:** `app/lib/services/game_controller.dart`, neuer Fachtest, README und beide CODEX-Checkpoint-Dateien. Keine Flutter-UI/Android-Grafik-/Backend-/Regeländerung.
+- **Unverändert:** `sendAction` ohne Auswahl, bisherige SQLite-Spielstände, SRD-Mechaniken, Backend-Protokollfelder, Kampagnen-JSON; keine Migration.
+- **Bereits nachgewiesen:** PR #261 vollständige CI erfolgreich; sein Test ist in separatem Integrations-PR #270. Für dieses neue Inkrement Controller und Test direkt nach offizieller Dart-3.9.2-Formatierung eingecheckt; endgültige CI nach PR-Eröffnung bewerten.
+- **Nicht getestet:** Echte Android-Bedienung, produktive KI und eine grafische Auswahl; vollständig grüner neuer CI-/APK-Nachweis steht zunächst aus.
+- **Nächster Schritt:** Eindeutige NPC-Anzeigeliste per zugänglichem Dialog anbinden, ID über UI-Controllergrenze durchreichen; bei Auswahlwechsel oder neuem Revisionstand fail-closed.
+
+---
+
 # Chat B – NPC-ID nach SQLite-Neustart sicher fortsetzen (26.10.2026)
 
 - **Ausgangs-`main`-SHA:** `67f146e690306b13d490bd8e7fd5636bb187c77e`.
