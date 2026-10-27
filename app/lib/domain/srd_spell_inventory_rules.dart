@@ -1,4 +1,6 @@
 import 'models.dart';
+import 'srd_spell_audited_inventory_rules.dart';
+import 'srd_spell_component_rules.dart';
 import 'spellcasting_rules.dart';
 import 'srd_spell_preflight_rules.dart';
 
@@ -30,24 +32,53 @@ class SrdSpellInventoryRules {
     required bool spellEffectResolvedConfirmed,
     required bool materialIdentityAndQuantityConfirmed,
     List<SrdConsumedMaterial> consumedMaterials = const [],
+    List<SrdAuditedInventoryBinding> auditedBindings = const [],
+    int? confirmedTargetCount,
   }) {
     if (!spellEffectResolvedConfirmed) {
       throw StateError('Die Zauberwirkung ist nicht regelgeprüft.');
     }
+    final audited = SrdSpellComponentRules.auditedItems(plan.spell);
+    final List<SrdConsumedMaterial> actualConsumption;
+    if (audited.isNotEmpty) {
+      if (!materialIdentityAndQuantityConfirmed ||
+          consumedMaterials.isNotEmpty) {
+        throw const FormatException(
+          'Auditierte Materialien müssen einzeln zugeordnet werden.',
+        );
+      }
+      final quantities = SrdSpellAuditedInventoryRules.consumedQuantities(
+        hero,
+        plan.spell,
+        bindings: auditedBindings,
+        confirmedTargetCount: confirmedTargetCount,
+      );
+      actualConsumption = [
+        for (final entry in quantities.entries)
+          SrdConsumedMaterial(inventoryId: entry.key, quantity: entry.value),
+      ];
+    } else {
+      if (auditedBindings.isNotEmpty || confirmedTargetCount != null) {
+        throw const FormatException(
+          'Einzelmaterial-Bindungen sind für diesen Zauber unbekannt.',
+        );
+      }
+      actualConsumption = consumedMaterials;
+    }
     if (plan.hasConsumedMaterial) {
-      if (!materialIdentityAndQuantityConfirmed || consumedMaterials.isEmpty) {
+      if (!materialIdentityAndQuantityConfirmed || actualConsumption.isEmpty) {
         throw const FormatException(
           'Verbrauchsmaterial und benötigte Anzahl sind nicht bestätigt.',
         );
       }
-    } else if (consumedMaterials.isNotEmpty) {
+    } else if (actualConsumption.isNotEmpty) {
       throw const FormatException(
         'Für diesen Zauber ist kein Materialverbrauch dokumentiert.',
       );
     }
 
     final amounts = <String, int>{};
-    for (final entry in consumedMaterials) {
+    for (final entry in actualConsumption) {
       if (entry.inventoryId.isEmpty ||
           entry.inventoryId.trim() != entry.inventoryId ||
           entry.quantity < 1) {
