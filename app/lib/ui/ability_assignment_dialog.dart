@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'fantasy_buttons.dart';
 
 import '../domain/ability_generation.dart';
+import '../domain/starting_ability_origin.dart';
 import '../domain/models.dart';
 import '../domain/rules_engine.dart';
 
@@ -22,10 +23,12 @@ class AbilityAssignment {
   AbilityAssignment({
     required Map<String, int> scores,
     required this.background,
+    required this.origin,
   }) : scores = Map.unmodifiable(scores);
 
   final Map<String, int> scores;
   final String background;
+  final StartingAbilityOrigin origin;
 }
 
 enum _BonusPattern { split, allThree }
@@ -465,6 +468,15 @@ class _AbilityAssignmentDialogState extends State<AbilityAssignmentDialog> {
                   AbilityAssignment(
                     scores: result.finalScores,
                     background: _background!.label,
+                    origin: StartingAbilityOrigin.confirmed(
+                      method: _method.name,
+                      baseScores: result.baseScores,
+                      background: _background!.label,
+                      increases: _boost!.increases,
+                      diceRolls: _method == AbilityGenerationMethod.randomRoll
+                          ? _rollSet!.rolls.map((roll) => roll.dice).toList()
+                          : const [],
+                    ),
                   ),
                 )
               : null,
