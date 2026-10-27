@@ -164,3 +164,8 @@ Die technische Detailplanung wird nicht in dieser Einführungsseite dupliziert. 
 Die Umsetzung orientiert sich an **D&D SRD 5.2.1** von **Wizards of the Coast LLC**, lizenziert unter **Creative Commons Attribution 4.0 International (CC BY 4.0)**. Die erforderlichen Namensnennungen und weiteren Hinweise stehen in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Eigene Fantasy-Geschichten und Grafiken werden getrennt von den SRD-Regeln behandelt.
 
 Das Repository enthält Entwicklungssoftware. **Vollständige SRD-Konformität, fehlerfreien Spielbetrieb, Produktionssicherheit oder eine Veröffentlichung im Play Store werden nicht behauptet.**
+
+## Chat C – Fantasy-Buttons für Screenreader (27.10.2026)
+
+Gewöhnliche Würfel- und Aktionsbuttons unterscheiden sich semantisch von echten Ein-/Aus-Umschaltern: Nur `FantasyToggleButton` meldet einen An-/Aus-Zustand an TalkBack. Grafische Hervorhebungen, Aktionen und Spielstände bleiben unverändert. Zwei Widgettests wurden ergänzt. **CI dieses PRs und reale Android-TalkBack-Abnahme stehen aus.** Mehr unter [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md).
+
