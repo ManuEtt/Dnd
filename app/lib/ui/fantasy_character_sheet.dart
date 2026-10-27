@@ -4,6 +4,7 @@ import '../domain/character_rule_engine.dart';
 import '../domain/class_progression_rules.dart';
 import '../domain/class_feature_resources.dart';
 import '../domain/class_resource_rules.dart';
+import '../domain/srd_ranger_feral_senses_rules.dart';
 import '../domain/srd_class_feature_catalog.dart';
 import '../domain/models.dart';
 import '../domain/multiclass_rules.dart';
@@ -1119,6 +1120,12 @@ class _DefensesSection extends StatelessWidget {
             value:
                 '${_meters(CharacterRuleEngine.rovingClimbSpeedMeters(hero))} / '
                 '${_meters(CharacterRuleEngine.rovingSwimSpeedMeters(hero))}',
+          ),
+        if (SrdRangerFeralSensesRules.blindsightRangeFeet(hero) != null)
+          _DetailRow(
+            icon: Icons.visibility_outlined,
+            label: 'Blindsicht (Feral Senses)',
+            value: '9 m (30 Fuß)',
           ),
         _DetailRow(
           icon: Icons.gps_fixed,
