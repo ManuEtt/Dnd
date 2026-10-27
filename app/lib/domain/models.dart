@@ -1456,6 +1456,7 @@ class Encounter {
     this.surgeReserved = false,
     this.surgeUsedThisTurn = false,
     this.sneakAttackUsedThisTurn = false,
+    this.savageAttackerUsedThisTurn = false,
     this.rageUntilRound = 0,
     this.rageStartedRound = 0,
     this.selfRestorationChoice = '',
@@ -1516,6 +1517,10 @@ class Encounter {
   /// A Sneak Attack may be used once per turn, including extra Attack actions.
   final bool sneakAttackUsedThisTurn;
 
+  /// Confirmed Savage Attacker is expendable once per own turn.
+  /// Older schema-1 saves omit this flag and remain unspent.
+  final bool savageAttackerUsedThisTurn;
+
   /// Rage ends at the end of this hero turn unless extended by a qualifying act.
   /// Zero means no active Rage. The start round imposes the 100-round limit.
   final int rageUntilRound, rageStartedRound;
@@ -1555,6 +1560,7 @@ class Encounter {
     bool? surgeReserved,
     bool? surgeUsedThisTurn,
     bool? sneakAttackUsedThisTurn,
+    bool? savageAttackerUsedThisTurn,
     int? rageUntilRound,
     int? rageStartedRound,
     String? selfRestorationChoice,
@@ -1602,6 +1608,8 @@ class Encounter {
     surgeUsedThisTurn: surgeUsedThisTurn ?? this.surgeUsedThisTurn,
     sneakAttackUsedThisTurn:
         sneakAttackUsedThisTurn ?? this.sneakAttackUsedThisTurn,
+    savageAttackerUsedThisTurn:
+        savageAttackerUsedThisTurn ?? this.savageAttackerUsedThisTurn,
     rageUntilRound: rageUntilRound ?? this.rageUntilRound,
     rageStartedRound: rageStartedRound ?? this.rageStartedRound,
     selfRestorationChoice: selfRestorationChoice ?? this.selfRestorationChoice,
@@ -1648,6 +1656,7 @@ class Encounter {
     if (surgeReserved) 'surgeReserved': true,
     if (surgeUsedThisTurn) 'surgeUsedThisTurn': true,
     if (sneakAttackUsedThisTurn) 'sneakAttackUsedThisTurn': true,
+    if (savageAttackerUsedThisTurn) 'savageAttackerUsedThisTurn': true,
     if (rageUntilRound > 0) 'rageUntilRound': rageUntilRound,
     if (rageStartedRound > 0) 'rageStartedRound': rageStartedRound,
     if (selfRestorationChoice.isNotEmpty)
@@ -1874,6 +1883,10 @@ class Encounter {
       sneakAttackUsedThisTurn: _bool(
         j['sneakAttackUsedThisTurn'],
         'Hinterhältiger Angriff bereits genutzt',
+      ),
+      savageAttackerUsedThisTurn: _bool(
+        j['savageAttackerUsedThisTurn'],
+        'Wilder Angreifer bereits genutzt',
       ),
       rageUntilRound: rageEnd,
       rageStartedRound: rageStart,

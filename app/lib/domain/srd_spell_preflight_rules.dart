@@ -64,6 +64,7 @@ class SrdSpellPreflightRules {
     bool focusUseAuthorizedConfirmed = false,
     bool costlyComponentAvailableConfirmed = false,
     bool consumedComponentReservedConfirmed = false,
+    List<SrdMaterialItemConfirmation> confirmedMaterialItems = const [],
     bool slotTurnLimitConfirmed = false,
   }) {
     final knownName = _preparedName(hero, spell);
@@ -126,6 +127,7 @@ class SrdSpellPreflightRules {
       focusUseAuthorizedConfirmed: focusUseAuthorizedConfirmed,
       costlyComponentAvailableConfirmed: costlyComponentAvailableConfirmed,
       consumedComponentReservedConfirmed: consumedComponentReservedConfirmed,
+      confirmedMaterialItems: confirmedMaterialItems,
     );
     if (spell.level == 0) {
       if (slotLevel != 0 || pactMagic) {

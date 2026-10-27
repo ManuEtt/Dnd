@@ -66,6 +66,7 @@ class SrdRitualCastingRules {
     bool focusUseAuthorizedConfirmed = false,
     bool costlyComponentAvailableConfirmed = false,
     bool consumedComponentReservedConfirmed = false,
+    List<SrdMaterialItemConfirmation> confirmedMaterialItems = const [],
   }) {
     final ordinaryMinutes = _ordinaryMinutes(spell);
     if (spell.level < 1 || spell.level > 9) {
@@ -136,6 +137,7 @@ class SrdRitualCastingRules {
       focusUseAuthorizedConfirmed: focusUseAuthorizedConfirmed,
       costlyComponentAvailableConfirmed: costlyComponentAvailableConfirmed,
       consumedComponentReservedConfirmed: consumedComponentReservedConfirmed,
+      confirmedMaterialItems: confirmedMaterialItems,
     );
     return SrdRitualCastPlan(
       sourceSnapshot: jsonEncode(hero.toJson()),

@@ -1,16 +1,25 @@
-# Chat B – Bewusste NPC-ID-Auswahl durch GameController (27.10.2026)
+# Chat B – transportierte NPC-Erinnerungen bleiben bei zwölf Einträgen (27.10.2026)
 
-- **Basis-Main-SHA:** `2421fcd18f4d980f31a71ec9d60e80a53b53e45b`.
-- **Eigener Branch:** `feat/chat-b/controller-explicit-npc-selection-20261027`. Unabhängig von der noch offenen Controller-Story-Integrations-PR #270; die vier Fachdateien des letztgenannten PRs bleiben unangetastet.
-- **Problem:** Das Backend kann `selectedNpcId` nach `npc-selection-v1` bereits entgegennehmen, während `GameController.sendAction` bisher nur aus dem gesprochenen NPC-Namen eine Auswahl ableitete. Gleichnamige Figuren durften aus Prosa gerade nicht stillschweigend ausgewählt werden.
-- **Implementiert:** Optionales `NpcStorySelection selectedNpc` in `sendAction` und `_withNarration`. Die Auswahl muss zum aktuellen Kampagnenstand und zu aktuellen SQLite-Daten passen und durch die explizit ausgehandelte Server-Capability autorisiert sein; bestätigte NPC-Notizen sind erforderlich. Erst nach validierter Handlung wird der aktuelle, eindeutige ID-Kontext gebildet und `selectedNpcId` transportiert. Fehlende Unterstützung und ungültige/stale Auswahl werden **vor** einem Spielzug abgelehnt. Keine automatische Namenszuordnung bei identischen Anzeigenamen.
-- **Wiederholungs-ID:** Bei `requestId` gehört die gewählte NPC-ID zum bestätigten Quittungsinhalt (`actionSelectedNpcId`). Eine weitere Übertragung mit anderer ID unter demselben Schlüssel wird ohne Netzwerk/Mechanikänderung verweigert; identische Retries bleiben idempotent.
-- **Neue Tests:** `app/test/npc_explicit_controller_selection_test.dart`: vier SQLite-/Transport-Integrationstests für zwei gleichnamige Mira-Figuren, Capability-Ablehnung, ungültig gewordene Revision und idempotente Quittungen inklusive Auswahl-ID.
-- **Betroffene Dateien:** `app/lib/services/game_controller.dart`, neuer Fachtest, README und beide CODEX-Checkpoint-Dateien. Keine Flutter-UI/Android-Grafik-/Backend-/Regeländerung.
-- **Unverändert:** `sendAction` ohne Auswahl, bisherige SQLite-Spielstände, SRD-Mechaniken, Backend-Protokollfelder, Kampagnen-JSON; keine Migration.
-- **Bereits nachgewiesen:** PR #261 vollständige CI erfolgreich; sein Test ist in separatem Integrations-PR #270. Für dieses neue Inkrement Controller und Test direkt nach offizieller Dart-3.9.2-Formatierung eingecheckt; endgültige CI nach PR-Eröffnung bewerten.
-- **Nicht getestet:** Echte Android-Bedienung, produktive KI und eine grafische Auswahl; vollständig grüner neuer CI-/APK-Nachweis steht zunächst aus.
-- **Nächster Schritt:** Eindeutige NPC-Anzeigeliste per zugänglichem Dialog anbinden, ID über UI-Controllergrenze durchreichen; bei Auswahlwechsel oder neuem Revisionstand fail-closed.
+- **Branch:** `test/chat-b/npc-memory-wire-budget-20261027`; Basis `fix/chat-b/npc-memory-budget-20261027` (PR #307, Head `47b4343fadd5f30b9030a702b3ccd701d701a598`). Gestapelter reiner Test-PR, kein unabhängiger Merge vor #307.
+- **Konkret implementiert:** `app/test/npc_story_memory_wire_budget_test.dart` testet beide Backend-Fähigkeitsvarianten `npc-identity-v1` an/aus mit einer gespeicherten KI-Kampagne. Sie enthält 3 bestätigte Mira-Notizen und 18 allgemeine Fakten; `GameController.sendAction` führt über `NpcNarratorMemory.merge` zum Story-Transport, dessen `memories`-Payload erfasst wird.
+- **AKZEPTANZ:** Exakt 12 Erinnerungseinträge, maximal 400 UTF-16-Codeeinheiten je Text, 3 jüngste bestätigte Mira-Notizen vorn, ergänzende allgemeine Fakten nur auf Restplätzen. Je ausgehandelter Fähigkeit optionale `npcContexts` und passende Revision vorhanden oder vollständig abwesend. Held bleibt identisch, neue Revision und rekonstruierter SQLite-Zustand stimmen überein.
+- **KEINE PRODUKTIONSÄNDERUNG:** Nur neue Testdatei, README, zentrale und Chat-B-Checkpoints. Keine Android-Grafik/Bedienlogik, SRD, SQLite-Migration, Backend-API oder Providerkosten.
+- **GETESTET:** GitHub-Hauptbranch/PR-Abhängigkeit und Transport-/Persistenz-Verträge geprüft; offizielles Dart-Formatter-Ergebnis anwenden und CI auf finalem PR-Commit ausführen. Android-Realgerät und Live-KI ungetestet.
+- **PARALLEL:** Keine Fachdatei-Kollision mit den Chat-B-Outbox-PRs #303–#306. Dokumentationsdateien bei Integration konfliktarm konsolidieren.
+- **NÄCHSTER SCHRITT:** Nach vollständiger grüner CI den PR erst nach #307 integrieren; weitere Grenzfälle deduplizierter oder leerer Erinnerungen separat absichern.
+
+---
+
+# Chat B – geteiltes Erinnerungslimit für NPC- und allgemeine Fakten (27.10.2026)
+
+- **Basis:** `main` `f9b2f72a4bf8e4216bf8baac60c7f92c4a8a997f`; Branch `fix/chat-b/npc-memory-budget-20261027`. Unabhängig von der NPC-Auswahl-/Outbox-Kette #288 → #290 → #292 → #300 → #303 → #305 und dem parallelen UI-Status-PR #304.
+- **PROBLEM:** `NpcNarratorMemory.merge` prüfte erst *nach* dem Anhängen allgemeiner Erinnerungen, ob das gemeinsame `limit` erreicht war. Bei `npcNoteLimit == limit` und mindestens einem normalen Fakt konnte die Ausgabe das Budget überschreiten.
+- **IMPLEMENTIERT:** Vor dem Anhängen normaler Erinnerungen bei `result.length == limit` abbrechen. Priorität bestätigter NPC-Notizen und Verhalten bei freier Kapazität unverändert. Kein neues Verhalten für gleichnamige NPCs; diese werden aus Freitext weiterhin nicht geraten.
+- **TESTS:** Zwei bestätigte NPC-Notizen mit Budget zwei, eine Notiz mit Budget eins, zwei Notizen mit Budget drei (ein normaler Fakt) sowie Unveränderlichkeit von Originalkampagne und Rückgabedaten prüfen. Bestehende Tests beibehalten.
+- **DATEIEN:** `app/lib/story/npc_narrator_memory.dart`, `app/test/npc_narrator_memory_test.dart`, README, zentrale und Chat-B-Checkpoints. Alle Dart-Dateien offiziell formatiert.
+- **NICHT GETESTET:** Lokale Flutter-/Android-Läufe, Realgerät, Live-Provider; GitHub-CI auf finalem Commit noch separat abzunehmen.
+- **KEINE MIGRATION:** SQLite-Version 3, JSON-Export 1, Backend-Kontrakt und D&D-SRD unverändert.
+- **NÄCHSTER SCHRITT:** Ein Ende-zu-Ende-Test für maximal 12 Erinnerungen am Story-Transport ohne Gefahr doppelter NPC-Namen.
 
 ---
 
