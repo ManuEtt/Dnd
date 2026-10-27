@@ -178,6 +178,34 @@ void main() {
     expect(result?.maxHitPoints, 14);
     expect(result?.hitPoints, 8);
   });
+  testWidgets('Stufe 20 zeigt automatische Barbar-Attribute vor Speicherung', (
+    tester,
+  ) async {
+    HeroCharacter? result;
+    final barbarian = current(
+      xp: 355000,
+    ).copyWith(className: 'Barbar', level: 19);
+    await openEditor(tester, barbarian, (value) => result = value);
+    await tapVisible(tester, find.byKey(const ValueKey('open-class-level-up')));
+    expect(
+      find.textContaining('Automatisches Klassenmerkmal:'),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('levelup-automatic-abilities')),
+      findsOneWidget,
+    );
+    expect(result, isNull);
+    await tester.tap(find.byKey(const ValueKey('levelup-confirm')));
+    await tester.pumpAndSettle();
+    await tapVisible(tester, find.text('Charakter speichern'));
+    expect(result?.level, 20);
+    expect(result?.abilities['strength'], 18);
+    expect(result?.abilities['constitution'], 18);
+    expect(result?.maxHitPoints, 14 + 49);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Höchststufe 20 verursacht keinen UI-Fehler', (tester) async {
     await openEditor(
       tester,

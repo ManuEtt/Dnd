@@ -281,6 +281,9 @@ class SrdClassFeatureCatalog {
     'Jack of All Trades',
     'Reliable Talent',
     'Slippery Mind',
+    // Numeric level-20 capstones are applied by SrdClassLevelUpRules.
+    'Primal Champion',
+    'Body and Mind',
   };
   static const Set<String> _partialNames = {
     'Spellcasting',
