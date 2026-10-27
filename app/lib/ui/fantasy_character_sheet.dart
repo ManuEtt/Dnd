@@ -6,6 +6,7 @@ import '../domain/class_feature_resources.dart';
 import '../domain/class_resource_rules.dart';
 import '../domain/srd_ranger_feral_senses_rules.dart';
 import '../domain/srd_monk_slow_fall_rules.dart';
+import '../domain/srd_evasion_rules.dart';
 import '../domain/srd_class_feature_catalog.dart';
 import '../domain/models.dart';
 import '../domain/multiclass_rules.dart';
@@ -1106,6 +1107,12 @@ class _DefensesSection extends StatelessWidget {
             label: 'Unbeugsam (Rettungswürfe)',
             value:
                 '${ClassResourceRules.remaining(hero, 'indomitable')} / ${ClassResourceRules.maximum(hero, 'indomitable')}',
+          ),
+        if (SrdEvasionRules.unlocked(hero))
+          const _DetailRow(
+            icon: Icons.shield_outlined,
+            label: 'Entrinnen (Evasion)',
+            value: 'GE-Rettung: Erfolg 0 Schaden, Fehlschlag halber Schaden',
           ),
         if (SrdMonkSlowFallRules.maximumReduction(hero) != null)
           _DetailRow(
