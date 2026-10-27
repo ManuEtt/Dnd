@@ -3589,12 +3589,17 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#waldl-ufer_6_base_roving_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/ranger_roving_rules_test.dart",
+        "app/test/ranger_roving_sheet_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/character_rule_engine.dart",
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/ui/fantasy_character_sheet.dart"
+      ],
+      "note": "Roving bei bestätigter Waldläufer-Klassenstufe 6: +3 m bei bekannter nichtschwerer Rüstung; berechnete Kletter-/Schwimmgeschwindigkeit gleich effektiver Geschwindigkeit einschließlich Belastungen. Unbekannte Rüstung erhält keinen Bonus. Flutter-/Widget-CI auf finalem PR-Head noch offen; dedizierte Kletter-/Schwimm-Aktions- und Geländekostenprüfung fehlt, daher partial."
     },
     {
       "id": "CLASS-WALDL-UFER-8-BASE-ABILITY-SCORE-IMPROVEMENT-0",

@@ -1112,6 +1112,14 @@ class _DefensesSection extends StatelessWidget {
               ? 'Nicht erfasst'
               : '${_meters(CharacterRuleEngine.speedMeters(hero))} (Basis ${hero.speed} m)',
         ),
+        if (ClassResourceRules.level(hero, 'Waldläufer') >= 6)
+          _DetailRow(
+            icon: Icons.pool_outlined,
+            label: 'Roving: Klettern / Schwimmen',
+            value:
+                '${_meters(CharacterRuleEngine.rovingClimbSpeedMeters(hero))} / '
+                '${_meters(CharacterRuleEngine.rovingSwimSpeedMeters(hero))}',
+          ),
         _DetailRow(
           icon: Icons.gps_fixed,
           label: 'Angriffe pro Angriffsaktion',
