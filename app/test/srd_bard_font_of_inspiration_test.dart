@@ -61,19 +61,14 @@ void main() {
       bard().copyWith(hitPoints: 0),
     ]) {
       expect(
-        () => SrdBardFontOfInspirationRules.propose(
-          hero: initial,
-          slotLevel: 1,
-        ),
+        () =>
+            SrdBardFontOfInspirationRules.propose(hero: initial, slotLevel: 1),
         throwsA(anyOf(isA<StateError>(), isA<FormatException>())),
       );
       expect(initial.spentSpellSlots['1'] ?? 0, lessThanOrEqualTo(4));
     }
     expect(
-      () => SrdBardFontOfInspirationRules.propose(
-        hero: bard(),
-        slotLevel: 0,
-      ),
+      () => SrdBardFontOfInspirationRules.propose(hero: bard(), slotLevel: 0),
       throwsRangeError,
     );
   });
