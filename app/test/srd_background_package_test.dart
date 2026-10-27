@@ -187,7 +187,8 @@ void main() {
       );
     }
   });
-  test('holy symbols are explicit, priced SRD equipment without magic grants', () {
+
+  test('holy symbols preserve SRD prices and weights', () {
     const cases = <(String, double?)>[
       ('item-holy-symbol-amulet', 1.0),
       ('item-holy-symbol-emblem', null),
@@ -273,10 +274,10 @@ void main() {
       background: SrdBackground.acolyte,
       takeGold: true,
     );
-    expect(coins.applyTo(
+    final result = coins.applyTo(
       HeroCharacter(id: 'coins', name: 'C', background: 'Akolyth'),
       nextId: id,
-    ).inventory, isEmpty);
+    );
+    expect(result.inventory, isEmpty);
   });
-
 }

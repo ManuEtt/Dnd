@@ -19,6 +19,7 @@ class SrdBackgroundPackageChoice {
   final SrdBackground background;
   final bool takeGold;
   final String gamingSetCatalogId;
+
   /// Only Acolyte equipment A may select a concrete holy-symbol catalog ID.
   /// Omitted in pre-existing saved backgrounds for backwards compatibility.
   final String holySymbolCatalogId;
@@ -95,6 +96,15 @@ class SrdBackgroundPackageChoice {
     ),
   );
 
+  String itemDisplayName(SrdStartingItem item) {
+    if (item.name == 'Spielset (nach Wahl)') return toolProficiency;
+    if (item.name == 'Heiliges Symbol (Auswahl offen)' &&
+        holySymbolCatalogId.isNotEmpty) {
+      return SrdEquipmentCatalog.byId(holySymbolCatalogId)!.name;
+    }
+    return item.name;
+  }
+
   List<String> get skills => List.unmodifiable(_skills[background]!);
   String get originFeat => _feat[background]!;
   int get startingGold => takeGold ? 50 : _kitGold[background]!;
@@ -135,8 +145,7 @@ class SrdBackgroundPackageChoice {
     'background': background.name,
     'takeGold': takeGold,
     if (gamingSetCatalogId.isNotEmpty) 'gamingSetCatalogId': gamingSetCatalogId,
-    if (holySymbolCatalogId.isNotEmpty)
-      'holySymbolCatalogId': holySymbolCatalogId,
+    if (holySymbolCatalogId.isNotEmpty) 'holySymbolCatalogId': holySymbolCatalogId,
   };
 
   factory SrdBackgroundPackageChoice.fromJson(Map<String, dynamic> json) {

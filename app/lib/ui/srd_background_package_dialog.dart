@@ -113,7 +113,7 @@ class _SrdBackgroundPackageDialogState
                 if (!choice.takeGold)
                   for (final item in choice.kitItems)
                     Text(
-                      '• ${item.quantity} × ${item.name == 'Spielset (nach Wahl)' ? choice.toolProficiency : item.name == 'Heiliges Symbol (Auswahl offen)' ? SrdBackgroundPackageChoice.holySymbols.singleWhere((symbol) => symbol.id == choice.holySymbolCatalogId).name : item.name}',
+                      '• ${item.quantity} × ${choice.itemDisplayName(item)}',
                     ),
                 if (choice.requiresFeatSpellChoices)
                   const Padding(
@@ -124,7 +124,7 @@ class _SrdBackgroundPackageDialogState
                       'das Zauberattribut gewählt werden.',
                     ),
                   ),
-               ],
+              ],
             ],
           ),
         ),

@@ -79,7 +79,10 @@ void main() {
     expect(find.textContaining('Zaubertricks'), findsOneWidget);
     final confirm = find.byKey(const ValueKey('confirm-background-package'));
     expect(tester.widget<FilledButton>(confirm).onPressed, isNull);
-    expect(find.byKey(const ValueKey('background-holy-symbol')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('background-holy-symbol')),
+      findsOneWidget,
+    );
     await tester.tap(find.byKey(const ValueKey('background-holy-symbol')));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Heiliges Symbol: Amulett').last);
