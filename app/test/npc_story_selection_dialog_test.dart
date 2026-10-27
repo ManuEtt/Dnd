@@ -37,8 +37,9 @@ Campaign _campaign({bool withNotes = true}) => Campaign(
 );
 
 void main() {
-  testWidgets('same display names require explicit identity selection',
-      (tester) async {
+  testWidgets('same display names require explicit identity selection', (
+    tester,
+  ) async {
     NpcStorySelection? selected;
     final campaign = _campaign();
     await tester.pumpWidget(
@@ -79,7 +80,10 @@ void main() {
           body: Builder(
             builder: (context) => TextButton(
               onPressed: () async {
-                chosen = await showNpcStorySelectionDialog(context, _campaign());
+                chosen = await showNpcStorySelectionDialog(
+                  context,
+                  _campaign(),
+                );
               },
               child: const Text('Öffnen'),
             ),
@@ -95,8 +99,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('no confirmed notes never offers an invented identity',
-      (tester) async {
+  testWidgets('no confirmed notes never offers an invented identity', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
