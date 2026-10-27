@@ -53,18 +53,9 @@ void main() {
     expect(standing.runningStart, isFalse);
     expect(standing.maximumDistanceCentimeters, 225);
     expect(standing.movementRemainingCentimeters, 0);
-    expect(
-      check(runUp: 9, distance: 225).maximumDistanceCentimeters,
-      225,
-    );
-    expect(
-      () => check(runUp: 9, distance: 226),
-      throwsFormatException,
-    );
-    expect(
-      () => check(runUp: 0, confirmedRunUp: false),
-      throwsFormatException,
-    );
+    expect(check(runUp: 9, distance: 225).maximumDistanceCentimeters, 225);
+    expect(() => check(runUp: 9, distance: 226), throwsFormatException);
+    expect(() => check(runUp: 0, confirmedRunUp: false), throwsFormatException);
     expect(
       SrdLongJumpRules.maximumDistanceCentimeters(
         strengthScore: 13,
@@ -77,37 +68,20 @@ void main() {
 
   test('unknown strength and unconfirmed run-up fail before any action', () {
     for (final bad in <int?>[null, -1, 0, 31]) {
-      expect(
-        () => check(strength: bad),
-        throwsFormatException,
-        reason: '$bad',
-      );
+      expect(() => check(strength: bad), throwsFormatException, reason: '$bad');
     }
     expect(() => check(runUp: -1), throwsFormatException);
     expect(() => check(confirmedRunUp: false), throwsFormatException);
-    expect(
-      () => check(runUp: 0, confirmedRunUp: true),
-      throwsFormatException,
-    );
+    expect(() => check(runUp: 0, confirmedRunUp: true), throwsFormatException);
   });
 
   test('invalid jump distance and unavailable movement fail closed', () {
     for (final bad in [-1, 0, 451]) {
-      expect(
-        () => check(distance: bad),
-        throwsFormatException,
-        reason: '$bad',
-      );
+      expect(() => check(distance: bad), throwsFormatException, reason: '$bad');
     }
-    expect(
-      () => check(distance: 450, remaining: 449),
-      throwsFormatException,
-    );
+    expect(() => check(distance: 450, remaining: 449), throwsFormatException);
     expect(() => check(remaining: -5), throwsFormatException);
-    expect(
-      () => check(difficultLanding: null),
-      throwsFormatException,
-    );
+    expect(() => check(difficultLanding: null), throwsFormatException);
   });
 
   test('difficult-terrain landing asks for a confirmed DC 10 check', () {
@@ -116,25 +90,16 @@ void main() {
     expect(pending.wouldLandProne, isNull);
     expect(pending.readyForConfirmation, isFalse);
 
-    final failed = check(
-      difficultLanding: true,
-      acrobaticsTotal: 9,
-    );
+    final failed = check(difficultLanding: true, acrobaticsTotal: 9);
     expect(failed.landingAcrobatics, SrdLongJumpCheckOutcome.failure);
     expect(failed.wouldLandProne, isTrue);
     expect(failed.readyForConfirmation, isTrue);
 
-    final passed = check(
-      difficultLanding: true,
-      acrobaticsTotal: 10,
-    );
+    final passed = check(difficultLanding: true, acrobaticsTotal: 10);
     expect(passed.landingAcrobatics, SrdLongJumpCheckOutcome.success);
     expect(passed.wouldLandProne, isFalse);
     expect(passed.readyForConfirmation, isTrue);
-    expect(
-      () => check(acrobaticsTotal: 10),
-      throwsFormatException,
-    );
+    expect(() => check(acrobaticsTotal: 10), throwsFormatException);
   });
 
   test('DM-selected low-obstacle Athletics is independent of landing', () {
@@ -180,11 +145,8 @@ void main() {
       isTrue,
     );
     expect(
-      () => check(
-        clearPath: false,
-        obstacleHeight: 113,
-        dmRequestsCheck: false,
-      ),
+      () =>
+          check(clearPath: false, obstacleHeight: 113, dmRequestsCheck: false),
       throwsUnsupportedError,
     );
     expect(
@@ -198,22 +160,10 @@ void main() {
   });
 
   test('obstacle declarations cannot contradict confirmed free path', () {
-    expect(
-      () => check(obstacleHeight: 50),
-      throwsFormatException,
-    );
-    expect(
-      () => check(dmRequestsCheck: true),
-      throwsFormatException,
-    );
-    expect(
-      () => check(athleticsTotal: 10),
-      throwsFormatException,
-    );
-    expect(
-      () => check(clearPath: false),
-      throwsFormatException,
-    );
+    expect(() => check(obstacleHeight: 50), throwsFormatException);
+    expect(() => check(dmRequestsCheck: true), throwsFormatException);
+    expect(() => check(athleticsTotal: 10), throwsFormatException);
+    expect(() => check(clearPath: false), throwsFormatException);
     expect(
       () => check(clearPath: false, obstacleHeight: 0),
       throwsFormatException,
