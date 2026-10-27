@@ -206,5 +206,27 @@ class StoryRulesBoundaryTests(unittest.TestCase):
         self.assertEqual([], check_imports("app/lib/domain/rules.dart", source))
 
 
+    def test_conditional_import_with_block_comments_still_blocks_story(self):
+        source = (
+            "import /* safe comment */ 'models.dart' /* between */\n"
+            "    if /* platform */ (dart.library.io) /* before URI */\n"
+            "       '../story/story_rule_port.dart';"
+        )
+        messages = check_imports("app/lib/domain/rules.dart", source)
+        self.assertEqual(1, len(messages))
+        self.assertIn("../story/story_rule_port.dart", messages[0])
+
+    def test_conditional_export_with_line_comments_still_blocks_story(self):
+        source = (
+            "export 'models.dart' // default implementation\n"
+            "    if (dart.library.io) // platform implementation\n"
+            "       'package:lebendiger_spielleiter/story/story_api.dart';"
+        )
+        messages = check_imports("app/lib/domain/rules.dart", source)
+        self.assertEqual(1, len(messages))
+        self.assertIn("package:lebendiger_spielleiter/story/story_api.dart", messages[0])
+
+
+
 if __name__ == "__main__":
     unittest.main()
