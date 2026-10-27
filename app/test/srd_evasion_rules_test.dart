@@ -81,36 +81,33 @@ void main() {
     expect(_preview(primary, succeeded: false).damageAfterEvasion, 11);
   });
 
-  test('Success avoids all and failure halves pre-save damage rounding down', () {
-    final hero = _hero();
-    for (final damage in [0, 1, 2, 3, 23, 100000]) {
-      final success = _preview(hero, damage: damage);
-      expect(success.saveSucceeded, true);
-      expect(success.incomingDamage, damage);
-      expect(success.damageAfterEvasion, 0);
-      expect(success.preventedDamage, damage);
+  test(
+    'Success avoids all and failure halves pre-save damage rounding down',
+    () {
+      final hero = _hero();
+      for (final damage in [0, 1, 2, 3, 23, 100000]) {
+        final success = _preview(hero, damage: damage);
+        expect(success.saveSucceeded, true);
+        expect(success.incomingDamage, damage);
+        expect(success.damageAfterEvasion, 0);
+        expect(success.preventedDamage, damage);
 
-      final failed = _preview(hero, damage: damage, succeeded: false);
-      expect(failed.saveSucceeded, false);
-      expect(failed.incomingDamage, damage);
-      expect(failed.damageAfterEvasion, damage ~/ 2);
-      expect(failed.preventedDamage, damage - damage ~/ 2);
-    }
-  });
+        final failed = _preview(hero, damage: damage, succeeded: false);
+        expect(failed.saveSucceeded, false);
+        expect(failed.incomingDamage, damage);
+        expect(failed.damageAfterEvasion, damage ~/ 2);
+        expect(failed.preventedDamage, damage - damage ~/ 2);
+      }
+    },
+  );
 
   test('Unknown save outcome, source or damage fails closed', () {
     final hero = _hero();
     expect(() => _preview(hero, damage: null), throwsFormatException);
     expect(() => _preview(hero, damage: -1), throwsFormatException);
     expect(() => _preview(hero, damage: 100001), throwsFormatException);
-    expect(
-      () => _preview(hero, confirmedDamage: false),
-      throwsFormatException,
-    );
-    expect(
-      () => _preview(hero, halfOnDexSave: false),
-      throwsFormatException,
-    );
+    expect(() => _preview(hero, confirmedDamage: false), throwsFormatException);
+    expect(() => _preview(hero, halfOnDexSave: false), throwsFormatException);
     expect(() => _preview(hero, succeeded: null), throwsFormatException);
   });
 
@@ -148,18 +145,22 @@ void main() {
 
   test('Catalogue correctly identifies a partial rule, not an auto-commit', () {
     for (final name in ['Mönch', 'Schurke']) {
-      final entry = SrdClassFeatureCatalog.atClassLevel(name, 7)
-          .singleWhere((feature) => feature.name == 'Evasion');
+      final entry = SrdClassFeatureCatalog.atClassLevel(
+        name,
+        7,
+      ).singleWhere((feature) => feature.name == 'Evasion');
       expect(entry.automation, FeatureAutomation.partial);
       expect(entry.needsRuleResolution, true);
       expect(
-        SrdClassFeatureCatalog.unlocked(_hero(className: name, level: 6))
-            .where((feature) => feature.name == 'Evasion'),
+        SrdClassFeatureCatalog.unlocked(
+          _hero(className: name, level: 6),
+        ).where((feature) => feature.name == 'Evasion'),
         isEmpty,
       );
       expect(
-        SrdClassFeatureCatalog.unlocked(_hero(className: name, level: 7))
-            .where((feature) => feature.name == 'Evasion'),
+        SrdClassFeatureCatalog.unlocked(
+          _hero(className: name, level: 7),
+        ).where((feature) => feature.name == 'Evasion'),
         hasLength(1),
       );
     }
