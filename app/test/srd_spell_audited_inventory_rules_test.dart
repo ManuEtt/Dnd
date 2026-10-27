@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/data/srd_spell_catalog_loader.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
+import 'package:lebendiger_spielleiter/domain/srd_spell_catalog.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_audited_inventory_rules.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_component_rules.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_inventory_rules.dart';
