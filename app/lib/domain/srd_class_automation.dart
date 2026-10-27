@@ -92,6 +92,7 @@ class SrdClassAutomation {
     'Rage': 'ClassResourceRules',
     "Monk's Focus": 'ClassResourceRules',
     'Bardic Inspiration': 'ClassResourceRules',
+    'Font of Inspiration': 'SrdBardFontOfInspirationRules (noch ohne UI-Aktion)',
     'Font of Magic': 'ClassResourceRules',
     'Wild Shape': 'ClassResourceRules',
     'Favored Enemy': 'ClassResourceRules',
