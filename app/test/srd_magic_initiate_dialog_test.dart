@@ -40,6 +40,17 @@ Future<void> selectValue(WidgetTester tester, String key, String value) async {
   await tester.pumpAndSettle();
   await tester.tap(dropdown);
   await tester.pumpAndSettle();
+  // Long SRD lists lazily build off-screen items in a small 200% dialog.
+  // Scroll the open dropdown route before locating its target option.
+  if (find.text(value).evaluate().isEmpty) {
+    await tester.dragUntilVisible(
+      find.text(value),
+      find.byType(Scrollable).last,
+      const Offset(0, -160),
+      maxIteration: 45,
+    );
+    await tester.pumpAndSettle();
+  }
   final option = find.text(value).last;
   await tester.ensureVisible(option);
   await tester.pumpAndSettle();
