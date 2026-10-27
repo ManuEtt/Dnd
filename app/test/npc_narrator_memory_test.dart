@@ -313,59 +313,62 @@ void main() {
     ]);
   });
 
-  test('NPC notes already filling the budget block additional general facts', () {
-    final campaign = _campaign(
-      notes: [
-        _note(
-          id: 'first',
-          npcId: 'mira',
-          value: 'Mira hütet den geheimen Brief.',
-          time: DateTime.utc(2026, 10, 25),
-        ),
-        _note(
-          id: 'second',
-          npcId: 'mira',
-          value: 'Mira kennt den Hafen.',
-          time: DateTime.utc(2026, 10, 24),
-        ),
-      ],
-    );
-    final before = jsonEncode(campaign.toJson());
-    final general = ['Allgemeiner Fakt, der das Limit überschreiten würde.'];
+  test(
+    'NPC notes already filling the budget block additional general facts',
+    () {
+      final campaign = _campaign(
+        notes: [
+          _note(
+            id: 'first',
+            npcId: 'mira',
+            value: 'Mira hütet den geheimen Brief.',
+            time: DateTime.utc(2026, 10, 25),
+          ),
+          _note(
+            id: 'second',
+            npcId: 'mira',
+            value: 'Mira kennt den Hafen.',
+            time: DateTime.utc(2026, 10, 24),
+          ),
+        ],
+      );
+      final before = jsonEncode(campaign.toJson());
+      final general = ['Allgemeiner Fakt, der das Limit überschreiten würde.'];
 
-    final two = NpcNarratorMemory.merge(
-      campaign,
-      'Ich frage Mira.',
-      general,
-      limit: 2,
-      npcNoteLimit: 2,
-    );
-    expect(two, hasLength(2));
-    expect(two.first, contains('geheimen Brief'));
-    expect(two.last, contains('Hafen'));
-    expect(two.join(' '), isNot(contains('Allgemeiner Fakt')));
+      final two = NpcNarratorMemory.merge(
+        campaign,
+        'Ich frage Mira.',
+        general,
+        limit: 2,
+        npcNoteLimit: 2,
+      );
+      expect(two, hasLength(2));
+      expect(two.first, contains('geheimen Brief'));
+      expect(two.last, contains('Hafen'));
+      expect(two.join(' '), isNot(contains('Allgemeiner Fakt')));
 
-    final one = NpcNarratorMemory.merge(
-      campaign,
-      'Ich frage Mira.',
-      general,
-      limit: 1,
-      npcNoteLimit: 1,
-    );
-    expect(one, hasLength(1));
-    expect(one.single, contains('geheimen Brief'));
+      final one = NpcNarratorMemory.merge(
+        campaign,
+        'Ich frage Mira.',
+        general,
+        limit: 1,
+        npcNoteLimit: 1,
+      );
+      expect(one, hasLength(1));
+      expect(one.single, contains('geheimen Brief'));
 
-    // Spare capacity still permits ordinary confirmed campaign memories.
-    final withSpace = NpcNarratorMemory.merge(
-      campaign,
-      'Ich frage Mira.',
-      general,
-      limit: 3,
-      npcNoteLimit: 2,
-    );
-    expect(withSpace, hasLength(3));
-    expect(withSpace.last, general.single);
-    expect(jsonEncode(campaign.toJson()), before);
-    expect(() => two.add('Eine vierte Erinnerung'), throwsUnsupportedError);
-  });
+      // Spare capacity still permits ordinary confirmed campaign memories.
+      final withSpace = NpcNarratorMemory.merge(
+        campaign,
+        'Ich frage Mira.',
+        general,
+        limit: 3,
+        npcNoteLimit: 2,
+      );
+      expect(withSpace, hasLength(3));
+      expect(withSpace.last, general.single);
+      expect(jsonEncode(campaign.toJson()), before);
+      expect(() => two.add('Eine vierte Erinnerung'), throwsUnsupportedError);
+    },
+  );
 }
