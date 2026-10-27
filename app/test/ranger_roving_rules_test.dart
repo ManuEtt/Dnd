@@ -160,7 +160,11 @@ void main() {
       final original = ranger(armorId: 'medium', shieldId: 'shield');
       final saved = original.toJson();
       final restored = HeroCharacter.fromJson(saved);
-      expect(restored.toJson(), saved);
+      // Validated inventory imports enrich supported catalog items with
+      // canonical stats. Require a stable canonical second roundtrip, not
+      // byte-for-byte equality with a deliberately minimal legacy inventory.
+      final canonical = restored.toJson();
+      expect(HeroCharacter.fromJson(canonical).toJson(), canonical);
       expect(CharacterRuleEngine.speedMeters(restored), 12);
       expect(CharacterRuleEngine.rovingClimbSpeedMeters(restored), 12);
       expect(CharacterRuleEngine.rovingSwimSpeedMeters(restored), 12);
