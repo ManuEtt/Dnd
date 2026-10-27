@@ -157,9 +157,10 @@ void main() {
       throwsFormatException,
     );
     expect(
-      () => _validate(changed, _confirm(
-        SrdSpellComponentRules.auditedItems(spell),
-      )),
+      () => _validate(
+        changed,
+        _confirm(SrdSpellComponentRules.auditedItems(spell)),
+      ),
       throwsFormatException,
     );
   });
@@ -218,7 +219,7 @@ void main() {
     final approvals = _confirm(SrdSpellComponentRules.auditedItems(spell));
     final plan = preflight(approvals);
     expect(plan.hasConsumedMaterial, isFalse);
-    expect(plan.spellName, isNotNull);
+    expect(plan.spell.name, 'Secret Chest');
     expect(hero.spentSpellSlots, isEmpty);
   });
 }
