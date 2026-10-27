@@ -5,6 +5,7 @@ import '../domain/class_progression_rules.dart';
 import '../domain/class_feature_resources.dart';
 import '../domain/class_resource_rules.dart';
 import '../domain/srd_ranger_feral_senses_rules.dart';
+import '../domain/srd_monk_slow_fall_rules.dart';
 import '../domain/srd_class_feature_catalog.dart';
 import '../domain/models.dart';
 import '../domain/multiclass_rules.dart';
@@ -1105,6 +1106,13 @@ class _DefensesSection extends StatelessWidget {
             label: 'Unbeugsam (Rettungswürfe)',
             value:
                 '${ClassResourceRules.remaining(hero, 'indomitable')} / ${ClassResourceRules.maximum(hero, 'indomitable')}',
+          ),
+        if (SrdMonkSlowFallRules.maximumReduction(hero) != null)
+          _DetailRow(
+            icon: Icons.airline_stops_outlined,
+            label: 'Sanfter Fall (Reaktion)',
+            value:
+                'Bis zu ${SrdMonkSlowFallRules.maximumReduction(hero)} Schaden verhindern',
           ),
         _DetailRow(
           icon: Icons.directions_run,
