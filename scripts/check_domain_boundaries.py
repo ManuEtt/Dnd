@@ -12,13 +12,22 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 # Dart configurable imports/exports can switch the URI per platform. Guard
-# *every* selectable URI, not only the default URI before a conditional clause.
+# *every* selectable URI, including when harmless comments separate tokens.
+# Keep quoted URIs intact; only tolerate whitespace and Dart comments at the
+# grammar's token boundaries, never extract strings from arbitrary code.
+_TRIVIA = r"(?:\s|/\*[\s\S]*?\*/|//[^\n]*\n)*"
 IMPORT = re.compile(
-    r"^\s*(?:import|export)\s+['\"](?P<primary>[^'\"]+)['\"]"
-    r"(?P<conditional>(?:\s+if\s*\([^)]*\)\s*['\"][^'\"]+['\"])*)",
+    r"^[ \t]*(?:import|export)" + _TRIVIA
+    + r"['\"](?P<primary>[^'\"]+)['\"]"
+    + r"(?P<conditional>(?:" + _TRIVIA
+    + r"if" + _TRIVIA + r"\([^)]*\)" + _TRIVIA
+    + r"['\"][^'\"]+['\"]" + r")*)",
     re.M,
 )
-CONDITIONAL_URI = re.compile(r"\bif\s*\([^)]*\)\s*['\"]([^'\"]+)['\"]")
+CONDITIONAL_URI = re.compile(
+    r"\bif" + _TRIVIA + r"\([^)]*\)" + _TRIVIA
+    + r"['\"]([^'\"]+)['\"]"
+)
 
 STORY_ALLOWED = {
     "dart:convert",
