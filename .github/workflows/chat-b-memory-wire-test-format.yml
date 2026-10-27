@@ -1,0 +1,15 @@
+name: Chat B temporary memory wire test formatter
+on:
+  push:
+    branches:
+      - test/chat-b/npc-memory-wire-budget-20261027
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Show Dart formatter output
+        run: dart format --output=show app/test/npc_story_memory_wire_budget_test.dart
