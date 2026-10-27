@@ -214,7 +214,10 @@ void main() {
   testWidgets('Nur Schalter melden ihren tatsächlichen Auswahlzustand', (
     tester,
   ) async {
-    Future<void> showToggle({required bool selected, bool enabled = true}) async {
+    Future<void> showToggle({
+      required bool selected,
+      bool enabled = true,
+    }) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: buildFantasyTheme(),
