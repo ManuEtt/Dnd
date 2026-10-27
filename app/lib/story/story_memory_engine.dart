@@ -252,7 +252,7 @@ class MemoryEngine {
         // A duplicated stored ID is not proof of two independent identities.
         if (npc.id.trim().isNotEmpty && npcIdCounts[npc.id] == 1)
           '${npcNameCounts[_memoryNormalize(npc.name)] == 1 ? npc.name : '${npc.name} (NPC-ID: ${npc.id})'} '
-          '(${npc.alive ? 'lebendig' : 'tot'}, ${npc.relationship})',
+              '(${npc.alive ? 'lebendig' : 'tot'}, ${npc.relationship})',
     ];
 
     final lines = <String>[
@@ -260,8 +260,7 @@ class MemoryEngine {
       'Held: ${campaign.hero.name}.',
       if (campaign.quests.isNotEmpty)
         'Quests: ${campaign.quests.map((q) => '${q.title} (${questStatus(q.status)})').join('; ')}.',
-      if (npcSummaries.isNotEmpty)
-        'Bekannte NPCs: ${npcSummaries.join('; ')}.',
+      if (npcSummaries.isNotEmpty) 'Bekannte NPCs: ${npcSummaries.join('; ')}.',
       if (campaign.storyThreads.isNotEmpty)
         'Handlungsstränge: ${campaign.storyThreads.map((t) => '${t.title} (${threadStatus(t.status)})').join('; ')}.',
       if (campaign.facts.isNotEmpty)
