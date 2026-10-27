@@ -1,3 +1,9 @@
+## Chat D D-014 – Bedingte Import-/Exportvarianten abgesichert (27.10.2026)
+
+Basis-Main `8239f5e71ec6b229a2a0883500adaf431bb70087`, Branch `fix/chat-d/conditional-dart-boundaries-20261027`. Python-Grenzprüfer erfasst nun alle URI-Alternativen in Dart-`import`-/`export`-Direktiven mit `if (...)`, nicht nur den Default. Sieben Regressionen testen plattformabhängige Story-/Regel-/Framework-Varianten und gültige bisherige Ausnahmen. **IMPLEMENTIERT:** `scripts/check_domain_boundaries.py` und `scripts/tests/test_domain_boundaries.py`. **GETESTET:** isolierte lokale Regex-Stichprobe; die vollständige CI für diesen Branch ist noch nicht abgenommen. **BLOCKIERT/NICHT GETESTET:** finale PR-HEAD-CI, Live-Gerät; keine Auswirkungen auf Flutter-Spielcode, SQLite 2 oder JSON 1. **NÄCHSTER SCHRITT:** exakte PR-CI und Main-Konflikte prüfen, nach erfolgreichem Review integrieren. Details in `docs/parallel/CHAT_D_CHECKPOINT.md`.
+
+---
+
 ## 27.10.2026 – Integrationskandidat der Charaktererstellung #264/#272/#273/#275
 
 - **Basis:** `main` `4bd97b4d72fc747228df9bea46b61c3d4c82c382`; komplette gestapelte Quelle `ae148053feca82f5db1741b37536385f4d7d41c5`; Merge-Tree anhand der Git-Blob-SHAs konfliktarm zusammengestellt, beide Herkunfts-Commits als Eltern erhalten. Nur README und diese Checkpoint-Datei redaktionell aus dem originalen Main additiv ergänzt; fremde Chat-B-/Chat-D-Einträge bleiben erhalten.
