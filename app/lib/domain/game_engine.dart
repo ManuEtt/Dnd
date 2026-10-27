@@ -5066,6 +5066,7 @@ class GameEngine {
         surgeReserved: false,
         surgeUsedThisTurn: false,
         sneakAttackUsedThisTurn: false,
+        savageAttackerUsedThisTurn: false,
         selfRestorationChoice: '',
       );
       return _EnemyTurn(
@@ -5318,6 +5319,9 @@ class GameEngine {
           surgeUsedThisTurn: anotherAttack ? foe.surgeUsedThisTurn : false,
           sneakAttackUsedThisTurn: anotherAttack
               ? foe.sneakAttackUsedThisTurn
+              : false,
+          savageAttackerUsedThisTurn: anotherAttack
+              ? foe.savageAttackerUsedThisTurn
               : false,
           selfRestorationChoice: anotherAttack ? foe.selfRestorationChoice : '',
         ),

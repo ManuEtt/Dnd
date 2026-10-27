@@ -15,6 +15,19 @@ class SrdSavageAttackerRules {
       hero.background == SrdBackground.soldier.label &&
       hero.startingBackgroundPackage?.background == SrdBackground.soldier;
 
+  /// Read-only eligibility for a future confirmed weapon-hit choice.
+  /// This does NOT reserve, consume or grant an additional attack.
+  static bool canOfferOnTurn(HeroCharacter hero, Encounter? encounter) =>
+      hasConfirmedFeat(hero) &&
+      encounter != null &&
+      !encounter.isFinished &&
+      encounter.activeParticipant == 'hero' &&
+      !encounter.savageAttackerUsedThisTurn &&
+      !hero.isDead &&
+      hero.isComplete &&
+      hero.hitPoints != null &&
+      hero.hitPoints! > 0;
+
   /// Select either *weapon* dice result, without touching ability modifiers,
   /// Sneak Attack, Rage, fighting styles, enemy defences or hit points.
   ///
