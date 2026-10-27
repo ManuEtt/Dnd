@@ -1,3 +1,17 @@
+# Chat B – NPC-Outbox-FakeAsync-Sicherheit und überprüfbare Kontinuität (27.10.2026)
+
+- **Basisbranch/Head:** `fix/chatgpt/npc-ui-async-pump-20261027` / `92f440510bdedda51bb3acb188b49c40409b3ce7` (PR #300, seinerseits abhängig von #292, #290, #288). **Branch:** `fix/chat-b/npc-resume-deterministic-regressions-20261027`.
+- **Ausgangsfehler:** GitHub Actions #40492615824 und #40505592178: 10-Minuten-Timeout und `TestAsyncUtils.guard`-Konflikt beim UI-`pumpWidget` mit SQLite-FFI. Erst das originale unbeschränkte Warten, danach das Nesting von `tester.pumpWidget` in `tester.runAsync`, lösten die Testprobleme aus. Der Grund lag im Testharness.
+- **Implementiert:** `resolvePendingNpcAction` wertet vor dem Senden ausschließlich die ausgewählte NPC-ID, ursprüngliche Revision und bestätigte Ereignisquittung (Request-ID, Text, NPC-ID) aus. Es gibt genau fünf explizite Zustände `plain`, `ready`, `alreadyConfirmed`, `stale`, `unavailable`; nur eine exakte Quittung klärt einen verlorenen ACK. `app.dart` bindet den Helfer an den vorhandenen Sende-/Retry-Pfad an; keine automatische Providerübertragung.
+- **Tests erneuert:** Vier `test()`-basierte echte SQLite-/GameController-/BackendTransport-Regressionsfälle in `npc_ui_outbox_restart_integration_test.dart`, ohne Widget-Testharness: zweite gleichnamige Mira, verlorene Quittung nach Datenbankneustart, stale Revision mit erhaltenem Outboxauftrag und gleiche Request-ID/Text bei anderer NPC-ID. Die NPC-Auswahl-Widgettests aus PR #290 bleiben unverändert erhalten. Diese Tests beweisen **nicht** die vollständige Klickstrecke im `LivingGameApp`.
+- **Weitere Dateien:** README, zentrale und Chat-B-Checkpoints ergänzt; bestehende Angaben der früheren PRs als Verlauf belassen.
+- **Teststatus:** Formatierung exakt nach Dart 3.9.2 durchgeführt; gesamte Flutter-/Backend-/Android-CI nach Veröffentlichung prüfen. Realgerät und produktive Provider ungetestet.
+- **Keine Migration:** vorhandenes SQLite-3-Schema, Kampagnen-JSON 1, SRD-Regelzustände und Backendvertrag unverändert.
+- **Reihenfolge:** PR #288 → #290 → #292 → #300 → dieses Inkrement, ggf. durch Chat D konfliktarm integrieren. Keine fremden Branches bereinigen/mergen.
+- **NÄCHSTER SCHRITT:** Isolierte Flutter-Oberflächenmeldungen mit Fake-Repository-/Fake-Clock testen, statt reale SQLite-I/O und `pumpWidget` zu verschachteln.
+
+---
+
 # Chat B – NPC-Aktion nach SQLite-Neustart und verlorenem ACK (27.10.2026)
 
 - **Branch:** `test/chat-b/npc-ui-restart-reconciliation-20261027`; Base `feat/chat-b/npc-picker-outbox-20261027` (PR #290, Head `c45d7f7ce82e367e78d102ccc98b0046683cbd23`). Vorherige Abhängigkeit: PR #288.
