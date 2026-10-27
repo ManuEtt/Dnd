@@ -152,9 +152,13 @@ class _Fixture {
   }
 
   Future<void> adventure(WidgetTester tester) async {
-    await tester.pumpWidget(
-      LivingGameApp(controller: controller, voice: voice),
-    );
+    // The production screen restores SQLite-backed pending actions during
+    // its initial frame. Let real SQLite futures complete outside FakeAsync.
+    await tester.runAsync(() async {
+      await tester.pumpWidget(
+        LivingGameApp(controller: controller, voice: voice),
+      );
+    });
     await tester.pumpAndSettle();
     await tester.tap(
       find.descendant(
