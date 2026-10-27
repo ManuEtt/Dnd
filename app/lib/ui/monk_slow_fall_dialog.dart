@@ -66,8 +66,7 @@ class _MonkSlowFallDialogState extends State<MonkSlowFallDialog> {
   @override
   Widget build(BuildContext context) {
     final plan = _preview;
-    final canCommit =
-        plan != null && _fallConfirmed && _defensesConfirmed;
+    final canCommit = plan != null && _fallConfirmed && _defensesConfirmed;
     return AlertDialog(
       title: const Text('Sanfter Fall – Reaktion'),
       content: SingleChildScrollView(
@@ -139,11 +138,11 @@ class _MonkSlowFallDialogState extends State<MonkSlowFallDialog> {
           key: const ValueKey('slow-fall-commit'),
           onPressed: canCommit
               ? () => Navigator.pop(
-                    context,
-                    ConfirmedSlowFallChoice(
-                      damageAfterDefenses: plan!.confirmedFallDamage,
-                    ),
-                  )
+                  context,
+                  ConfirmedSlowFallChoice(
+                    damageAfterDefenses: plan!.confirmedFallDamage,
+                  ),
+                )
               : null,
           child: const Text('Reaktion einsetzen'),
         ),
