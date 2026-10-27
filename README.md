@@ -1,5 +1,28 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Aktueller Stand und autonome Fortsetzung – 27.10.2026
+
+**0.8.44+94:** Der Charakter-Audit unterscheidet jetzt bestätigte, fehlende,
+ungültige, abhängige, nicht automatisierte, Hausregel- und nicht zugeordnete
+SRD-Angaben. Ein Speziesname, irgendein Gegenstand oder Gold 0 erzeugt keine
+scheinbare Bestätigung mehr. Vorhandene Anfangswert-/Hintergrundnachweise werden
+lesend geprüft; spätere Attribute und alte Spielstände bleiben erhalten.
+Der aktuelle Editorentwurf wird einschließlich Halbmetern und ausdrücklicher
+Hausregelwahl geprüft. Deutsche Statusanzeigen mit Screenreader-Semantik sind
+bei 320/360 dp, 200 % Schrift und Tastatur getestet.
+
+**24 gezielte Tests und Flutter-Analyse bestanden.** Gesamtsuite, Android und
+finale Branch-CI beim frühen Checkpoint noch offen. Main-Basis `8239f5e`, Branch
+`feat/character-creation-audit-evidence-20261027`; Version aus pubspec, endgültiger
+Commit und reale Testergebnisse im [Checkpoint](docs/CODEX_CHECKPOINT.md).
+Die gesamte Charaktererstellung bleibt unvollständig. Nächster Schritt:
+strukturierte Klassenstartentscheidungen dauerhaft nachweisen.
+[Regelgrenzen und Nachweise](docs/CHARACTER_CREATION_AUDIT_20261027.md).
+
+Frühere Statusabschnitte darunter sind Historie; die ursprünglichen Dokumente
+liegen unverändert mit SHA256 unter `docs/history/`.
+
+
 ## Charaktererstellung – Integrationskandidat (27.10.2026)
 
 Die gestapelte SRD-5.2.1-Entwicklung aus [#264](https://github.com/ManuEtt/Dnd/pull/264), [#272](https://github.com/ManuEtt/Dnd/pull/272), [#273](https://github.com/ManuEtt/Dnd/pull/273) und [#275](https://github.com/ManuEtt/Dnd/pull/275) ist gemeinsam in einem **Integrationsbranch** vorbereitet: 4W6-Würfelzuordnung; explizit bestätigte, versionierte Startattribut-Herkunft; vier Hintergrundpakete mit Werkzeug-/Fertigkeitsauswahl und A-/B-Ausrüstung; Akolythenauswahl aus drei geprüften Heiligen Symbolen. Die Einzelbranch-CIs sind grün, die **gemeinsame Main-Integration und Android-Geräteabnahme** müssen separat erfolgen. Herkunftstalentwirkungen, Magic-Initiate-Zauberwahl und vollständige SRD-Charaktererstellung fehlen weiterhin. [Integrationsbeleg](docs/CHARACTER_STACK_INTEGRATION_20261027.md).
@@ -13,7 +36,7 @@ Ein neuer Integrationstest überprüft die bestehende explizite NPC-ID-Übertrag
 
 Die App ist eine **Alpha-Version**, kein fertiger Ersatz für einen menschlichen Spielleiter und keine vollständige D&D-5e-Regelimplementierung. **Zum lokalen Spielen ist weder ein Account noch ein KI-Server erforderlich.**
 
-> **Projektstand (26.10.2026):** Die Flutter-App deklariert Version **0.8.42+92**. Die Versionsnummer kennzeichnet den Entwicklungsstand, nicht eine abgeschlossene Geräte- oder Release-Abnahme. Aktuelle Integrationen, Testnachweise und offene Arbeiten stehen in [Entwicklungsstatus](DEVELOPMENT_STATUS.md) und [Codex-Checkpoint](docs/CODEX_CHECKPOINT.md).
+> **Projektstand (27.10.2026):** Die Flutter-App deklariert Version **0.8.44+94**. Die Versionsnummer kennzeichnet den Entwicklungsstand, nicht eine abgeschlossene Geräte- oder Release-Abnahme. Aktuelle Integrationen, Testnachweise und offene Arbeiten stehen in [Entwicklungsstatus](DEVELOPMENT_STATUS.md) und [Codex-Checkpoint](docs/CODEX_CHECKPOINT.md).
 
 ## Was kann Würfelraunen?
 

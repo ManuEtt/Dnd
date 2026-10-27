@@ -1,3 +1,24 @@
+## 27.10.2026 – 0.8.44+94: nachweisbasierte Charakterprüfung
+
+Sieben deutsche Prüfzustände ersetzen die bisherige Bestätigung nach bloßem
+Feldinhalt. Versionierte Startwerte und Hintergrundpakete werden abgeglichen,
+Doppelübungen und widersprüchliche Stufe-1-Daten erkannt. Historische Werte
+bleiben historisch; weder Boni noch Inventar werden beim Prüfen verändert.
+Der Editor prüft den aktuellen ungespeicherten Entwurf, erhält 10,5-m-Werte
+und meldet ungültige Zahleneingaben, statt sie still als leer zu behandeln.
+**24 gezielte Tests und vollständige Flutter-Analyse bestanden**; volle
+Gesamtsuite, Android und finale PR-CI beim frühen Checkpoint noch offen.
+Basis Main `8239f5e`; eigener unabhängiger Branch
+`feat/character-creation-audit-evidence-20261027`. PR #297 bleibt separat;
+seine Würfelfehler-/Charakterbogenänderungen wurden nicht erneut implementiert.
+SQLite 2 / JSON 1 unverändert. [Aktueller Checkpoint](docs/CODEX_CHECKPOINT.md).
+Nächster Schritt nach Abnahme: bestätigte Startentscheidungen der ersten Klasse
+quellengetrennt und versioniert speichern, damit der Audit sie wirklich belegen
+kann. Vollständiger Assistent/Spezies-/Talent-/Zauberumfang bleibt offen.
+Ältere Einträge darunter sind historische Momentaufnahmen.
+
+---
+
 ## 27.10.2026 – Attribut-Herkunft als versionierte Heldenmetadaten
 
 Neues, optionales Feld `startingAbilityOrigin` für explizit bestätigte
