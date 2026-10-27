@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – Sicherere Android-Alpha-Bündelung (27.10.2026)
+
+Die ARM64-Release-Prüfung weist nun vor dem Dekomprimieren manipulierte APK-ZIP-Dateien mit zu vielen Mitgliedern, zu großer entpackter Gesamtsumme oder extremen Kompressionsverhältnissen zurück. Vier neue Regressionstests sichern diese Grenzen. Kein Einfluss auf D&D-Regeln, Story, App-Daten oder bestehende Spielstände. **Neue CI/Android-Abnahme des zugehörigen Chat-D-Branches ist noch offen**; vorherige erfolgreiche Builds beweisen diese Änderung nicht. [Detailcheckpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
+
 ## Charaktererstellung – Integrationskandidat (27.10.2026)
 
 Die gestapelte SRD-5.2.1-Entwicklung aus [#264](https://github.com/ManuEtt/Dnd/pull/264), [#272](https://github.com/ManuEtt/Dnd/pull/272), [#273](https://github.com/ManuEtt/Dnd/pull/273) und [#275](https://github.com/ManuEtt/Dnd/pull/275) ist gemeinsam in einem **Integrationsbranch** vorbereitet: 4W6-Würfelzuordnung; explizit bestätigte, versionierte Startattribut-Herkunft; vier Hintergrundpakete mit Werkzeug-/Fertigkeitsauswahl und A-/B-Ausrüstung; Akolythenauswahl aus drei geprüften Heiligen Symbolen. Die Einzelbranch-CIs sind grün, die **gemeinsame Main-Integration und Android-Geräteabnahme** müssen separat erfolgen. Herkunftstalentwirkungen, Magic-Initiate-Zauberwahl und vollständige SRD-Charaktererstellung fehlen weiterhin. [Integrationsbeleg](docs/CHARACTER_STACK_INTEGRATION_20261027.md).
