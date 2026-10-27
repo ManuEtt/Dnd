@@ -3,7 +3,6 @@ import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/domain/srd_bard_font_of_inspiration.dart';
 
 HeroCharacter bard({
-  int bardLevel = 5,
   int level = 5,
   String second = '',
   int secondLevel = 0,
