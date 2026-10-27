@@ -1,3 +1,9 @@
+## 27.10.2026 – Chat C: Fantasy-Button-Semantik (CI noch offen)
+
+Branch `feat/chat-c/button-semantics-20261027`, Basis-main `e3e166a507bf9c88a4286473ceb97fc4b14ec35b`: Gewöhnliche Fantasy-Aktionsbuttons melden keinen irreführenden TalkBack-Ein-/Aus-Zustand mehr; nur `FantasyToggleButton` meldet über `Semantics.toggled` true/false. Zwei Widgettests prüfen positive und negative Fälle samt deaktiviertem Schalter und weiterhin funktionierender Aktion. Keine Änderung an Regeln, KI, SQLite, JSON oder Spielständen. **Lokale Flutter-/Android-Testausführung nicht möglich, GitHub-CI auf finalem PR-HEAD vor Integration prüfen.** Details `docs/parallel/CHAT_C_CHECKPOINT.md`.
+
+---
+
 # Chat B – NPC-Erinnerungslimit nicht überschreiten (27.10.2026)
 
 - **Ausgangs-Main:** `f9b2f72a4bf8e4216bf8baac60c7f92c4a8a997f`; Branch `fix/chat-b/npc-memory-budget-20261027`.
