@@ -238,6 +238,7 @@ class HeroCharacter {
   final int level, exhaustionLevel, deathSuccesses, deathFailures;
   final int? gold, experience;
   final Map<String, int?> abilities;
+
   /// Initial confirmed choice only, not a claim about later level-up scores.
   final StartingAbilityOrigin? startingAbilityOrigin;
   final int? hitPoints, maxHitPoints, armorClass, speed;
