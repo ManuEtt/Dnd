@@ -36,6 +36,15 @@ HeroCharacter soldier() => HeroCharacter(
   maxHitPoints: 25,
   armorClass: 18,
   speed: 9,
+  weaponDamage: '1d6',
+  abilities: const {
+    'strength': 14,
+    'dexterity': 14,
+    'constitution': 14,
+    'intelligence': 14,
+    'wisdom': 14,
+    'charisma': 14,
+  },
   startingBackgroundPackage: SrdBackgroundPackageChoice(
     background: SrdBackground.soldier,
     takeGold: true,
