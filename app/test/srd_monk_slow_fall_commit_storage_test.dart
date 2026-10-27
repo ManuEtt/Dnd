@@ -49,54 +49,57 @@ Future<void> commitSlowFall(
 void main() {
   setUpAll(sqfliteFfiInit);
 
-  test('Commit saves HP, Reaction, event and revision across restart', () async {
-    final folder = await Directory.systemTemp.createTemp('slow-fall-sqlite-');
-    final path = p.join(folder.path, 'campaign.sqlite');
-    var repo = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: path,
-    );
-    var controller = GameController(repository: repo);
-    try {
-      final before = await seedSlowFall(repo);
-      await controller.openCampaign(before.id);
-      await commitSlowFall(controller, before);
-      expect(controller.error, isNull);
-      final after = controller.currentCampaign!;
-      expect(after.encounter!.reactionUsed, isTrue);
-      expect(after.encounter!.activeParticipant, 'enemy');
-      expect(after.hero.temporaryHitPoints, 0);
-      expect(after.hero.hitPoints, 15);
-      expect(after.revision, before.revision + 1);
-      expect(after.events.last.type, 'combat.slowFallResolved');
-      expect(after.events.last.payload['incomingFallDamage'], 28);
-      expect(after.events.last.payload['damagePrevented'], 20);
-      expect(after.events.last.payload['hitPointDamage'], 5);
-
-      await commitSlowFall(controller, before, revision: before.revision);
-      expect(controller.error, contains('erneut öffnen'));
-      expect(controller.currentCampaign!.toJson(), after.toJson());
-
-      controller.dispose();
-      await repo.close();
-      repo = await SqliteCampaignRepository.open(
+  test(
+    'Commit saves HP, Reaction, event and revision across restart',
+    () async {
+      final folder = await Directory.systemTemp.createTemp('slow-fall-sqlite-');
+      final path = p.join(folder.path, 'campaign.sqlite');
+      var repo = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: path,
       );
-      controller = GameController(repository: repo);
-      await controller.openCampaign(before.id);
-      expect(controller.error, isNull);
-      expect(controller.currentCampaign!.toJson(), after.toJson());
+      var controller = GameController(repository: repo);
+      try {
+        final before = await seedSlowFall(repo);
+        await controller.openCampaign(before.id);
+        await commitSlowFall(controller, before);
+        expect(controller.error, isNull);
+        final after = controller.currentCampaign!;
+        expect(after.encounter!.reactionUsed, isTrue);
+        expect(after.encounter!.activeParticipant, 'enemy');
+        expect(after.hero.temporaryHitPoints, 0);
+        expect(after.hero.hitPoints, 15);
+        expect(after.revision, before.revision + 1);
+        expect(after.events.last.type, 'combat.slowFallResolved');
+        expect(after.events.last.payload['incomingFallDamage'], 28);
+        expect(after.events.last.payload['damagePrevented'], 20);
+        expect(after.events.last.payload['hitPointDamage'], 5);
 
-      await commitSlowFall(controller, after, revision: after.revision);
-      expect(controller.error, isNotNull);
-      expect(controller.currentCampaign!.toJson(), after.toJson());
-    } finally {
-      controller.dispose();
-      await repo.close();
-      await folder.delete(recursive: true);
-    }
-  });
+        await commitSlowFall(controller, before, revision: before.revision);
+        expect(controller.error, contains('erneut öffnen'));
+        expect(controller.currentCampaign!.toJson(), after.toJson());
+
+        controller.dispose();
+        await repo.close();
+        repo = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: path,
+        );
+        controller = GameController(repository: repo);
+        await controller.openCampaign(before.id);
+        expect(controller.error, isNull);
+        expect(controller.currentCampaign!.toJson(), after.toJson());
+
+        await commitSlowFall(controller, after, revision: after.revision);
+        expect(controller.error, isNotNull);
+        expect(controller.currentCampaign!.toJson(), after.toJson());
+      } finally {
+        controller.dispose();
+        await repo.close();
+        await folder.delete(recursive: true);
+      }
+    },
+  );
 
   test('SQLite event failure rolls back HP and Reaction together', () async {
     final folder = await Directory.systemTemp.createTemp('fall-rollback-');
@@ -122,10 +125,7 @@ END
         await commitSlowFall(controller, before);
         expect(controller.error, isNotNull);
         expect(controller.currentCampaign!.toJson(), before.toJson());
-        expect(
-          (await repo.getCampaign(before.id))!.toJson(),
-          before.toJson(),
-        );
+        expect((await repo.getCampaign(before.id))!.toJson(), before.toJson());
       } finally {
         await database.close();
       }
