@@ -50,15 +50,10 @@ void main() {
     tester,
   ) async {
     for (final name in ['Mönch', 'Schurke']) {
-      await _openDefenseTab(
-        tester,
-        _heroForSheet(className: name, level: 7),
-      );
+      await _openDefenseTab(tester, _heroForSheet(className: name, level: 7));
       expect(find.text('Entrinnen (Evasion)'), findsOneWidget);
       expect(
-        find.text(
-          'GE-Rettung: Erfolg 0 Schaden, Fehlschlag halber Schaden',
-        ),
+        find.text('GE-Rettung: Erfolg 0 Schaden, Fehlschlag halber Schaden'),
         findsOneWidget,
       );
       expect(tester.takeException(), isNull);
