@@ -1,3 +1,17 @@
+# Chat B – revisionsgebundene NPC-Auswahl in GameController (27.10.2026)
+
+- **Basis:** `main` `2421fcd18f4d980f31a71ec9d60e80a53b53e45b` zum Start; Branch `feat/chat-b/controller-explicit-npc-selection-20261027`.
+- **IMPLEMENTIERT:** `GameController.sendAction` akzeptiert optional eine bewusst erstellte `NpcStorySelection`. Vor dem Spielzug werden KI-Modus, verbundener Server, `npc-selection-v1`, Kampagnenrevision in aktuellem SQLite, eindeutige NPC-ID und bestätigte Notizen geprüft. `_withNarration` erzeugt den ID-Kontext aus dem neuen Spielzug und sendet `selectedNpcId` nur nach erfolgreicher Aushandlung. Idempotente `requestId`-Quittungen enthalten optional die NPC-ID; eine andere ID unter derselben Kennung wird abgewiesen.
+- **GETESTET:** Quellcode-/API-Verträge und parallele PRs geprüft; für Controller und Tests exakte Ausgabe des offiziellen Dart-3.9.2-Formatters übernommen und temporären Diagnoseworkflow wieder gelöscht.
+- **TESTS ERGÄNZT:** `app/test/npc_explicit_controller_selection_test.dart` mit vier echten SQLite-/Fake-Backend-Regressionen (zwei gleichnamige NPCs, alter Server, alte Revision, Quittungskollision). CI-Abnahme auf finalem Commit separat nachweisen.
+- **NICHT GETESTET:** Endgültiger gesamter CI-Lauf und Android-Realgerät; produktiver KI-Provider. **Es gibt noch keine UI zur aktiven NPC-Auswahl.**
+- **BLOCKIERT:** UI-Anbindung später mit Chat C koordinieren, parallele README-/Checkpoint-Änderungen bei Integration mit Chat D konsolidieren.
+- **MIGRATION:** Keine. Altes `sendAction(text)` und altes `sendAction(text, requestId: id)` funktionieren unverändert; keine SRD-/SQLite-/JSON-/Versionsänderung.
+- **NÄCHSTER SCHRITT:** Nach grüner CI NPC-Auswahl im Android-Dialog als explizite, zugängliche Auswahl anzeigen; nicht aus gleichnamigem Freitext ableiten.
+- [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md), bisherige Einträge bleiben erhalten.
+
+---
+
 ## 27.10.2026 – Integrationskandidat der Charaktererstellung #264/#272/#273/#275
 
 - **Basis:** `main` `4bd97b4d72fc747228df9bea46b61c3d4c82c382`; komplette gestapelte Quelle `ae148053feca82f5db1741b37536385f4d7d41c5`; Merge-Tree anhand der Git-Blob-SHAs konfliktarm zusammengestellt, beide Herkunfts-Commits als Eltern erhalten. Nur README und diese Checkpoint-Datei redaktionell aus dem originalen Main additiv ergänzt; fremde Chat-B-/Chat-D-Einträge bleiben erhalten.
