@@ -1,0 +1,18 @@
+name: Chat B temporary Story transport formatter
+on:
+  push:
+    branches:
+      - test/chat-b/npc-memory-transport-budget-20261027
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Show exact formatted test
+        run: |
+          echo 'CHAT_B_BEGIN'
+          dart format --output=show app/test/npc_identity_transport_integration_test.dart
+          echo 'CHAT_B_END'
