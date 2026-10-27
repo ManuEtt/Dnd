@@ -1591,10 +1591,8 @@ class _AdventurePageState extends State<_AdventurePage> {
     }
     final choice = await showDialog<ConfirmedSlowFallChoice>(
       context: context,
-      builder: (_) => MonkSlowFallDialog(
-        hero: campaign.hero,
-        encounter: encounter,
-      ),
+      builder: (_) =>
+          MonkSlowFallDialog(hero: campaign.hero, encounter: encounter),
     );
     if (choice == null || !mounted) return;
     final previous = _lastMessageId;
