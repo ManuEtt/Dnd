@@ -65,14 +65,8 @@ void main() {
       level: 19,
       secondaryLevel: 18,
     );
-    expect(
-      SrdRangerFeralSensesRules.blindsightRangeFeet(rangerSecondary),
-      30,
-    );
-    final below = rangerSecondary.copyWith(
-      level: 18,
-      secondaryClassLevel: 17,
-    );
+    expect(SrdRangerFeralSensesRules.blindsightRangeFeet(rangerSecondary), 30);
+    final below = rangerSecondary.copyWith(level: 18, secondaryClassLevel: 17);
     expect(SrdRangerFeralSensesRules.blindsightRangeFeet(below), isNull);
     final otherClass = rangerSight(
       className: 'Waldläufer',
@@ -148,8 +142,10 @@ void main() {
   });
 
   test('Catalog honestly marks range as partial, not complete detection', () {
-    final feature = SrdClassFeatureCatalog.atClassLevel('Waldläufer', 18)
-        .singleWhere((entry) => entry.name == 'Feral Senses');
+    final feature = SrdClassFeatureCatalog.atClassLevel(
+      'Waldläufer',
+      18,
+    ).singleWhere((entry) => entry.name == 'Feral Senses');
     expect(feature.automation, FeatureAutomation.partial);
     expect(feature.needsRuleResolution, true);
     expect(
@@ -171,10 +167,7 @@ void main() {
     final restored = HeroCharacter.fromJson(original.toJson());
     final normalized = restored.toJson();
     expect(HeroCharacter.fromJson(normalized).toJson(), normalized);
-    expect(
-      SrdRangerFeralSensesRules.blindsightRangeFeet(restored),
-      30,
-    );
+    expect(SrdRangerFeralSensesRules.blindsightRangeFeet(restored), 30);
     expect(restored.features, isEmpty);
   });
 }
