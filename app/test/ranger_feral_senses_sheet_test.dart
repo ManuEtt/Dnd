@@ -56,4 +56,31 @@ void main() {
     expect(find.text('9 m (30 Fuß)'), findsNothing);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('Secondary Ranger 18 gains Blindsight from class level', (
+    tester,
+  ) async {
+    final hero = rangerForSheet(20).copyWith(
+      className: 'Kämpfer',
+      secondaryClassName: 'Waldläufer',
+      secondaryClassLevel: 18,
+    );
+    await showDefenses(tester, hero);
+    expect(find.text('Blindsicht (Feral Senses)'), findsOneWidget);
+    expect(find.text('9 m (30 Fuß)'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Secondary Ranger 17 does not gain Blindsight at level 20', (
+    tester,
+  ) async {
+    final hero = rangerForSheet(20).copyWith(
+      className: 'Kämpfer',
+      secondaryClassName: 'Waldläufer',
+      secondaryClassLevel: 17,
+    );
+    await showDefenses(tester, hero);
+    expect(find.text('Blindsicht (Feral Senses)'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
 }
