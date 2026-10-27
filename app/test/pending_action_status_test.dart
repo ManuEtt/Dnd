@@ -63,10 +63,7 @@ void main() {
       find.byKey(const ValueKey('adventure-pending-npc-selection')),
       findsOneWidget,
     );
-    expect(
-      find.textContaining('noch nicht sicher bestätigt'),
-      findsOneWidget,
-    );
+    expect(find.textContaining('noch nicht sicher bestätigt'), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('adventure-retry-action')));
     expect(retries, 1);
     expect(discards, 0);
@@ -82,22 +79,38 @@ void main() {
         'NPC-Auswahl ist nicht mehr aktuell. Bitte die ausstehende '
         'Handlung verwerfen und erneut auswählen.';
     await tester.pumpWidget(_screen(pending: _npcAction, error: message));
-    expect(find.byKey(const ValueKey('adventure-outbox-error')), findsOneWidget);
-    expect(find.textContaining('NPC-Auswahl ist nicht mehr aktuell'), findsOneWidget);
-    expect(find.byKey(const ValueKey('adventure-retry-action')), findsOneWidget);
-    expect(find.byKey(const ValueKey('adventure-discard-action')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('adventure-outbox-error')),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('NPC-Auswahl ist nicht mehr aktuell'),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('adventure-retry-action')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('adventure-discard-action')),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
   });
 
   testWidgets('while a pending NPC action is sending controls are hidden', (
     tester,
   ) async {
-    await tester.pumpWidget(
-      _screen(pending: _npcAction, submitting: true),
+    await tester.pumpWidget(_screen(pending: _npcAction, submitting: true));
+    expect(
+      find.byKey(const ValueKey('adventure-action-submitting')),
+      findsOneWidget,
     );
-    expect(find.byKey(const ValueKey('adventure-action-submitting')), findsOneWidget);
     expect(find.byKey(const ValueKey('adventure-retry-action')), findsNothing);
-    expect(find.byKey(const ValueKey('adventure-discard-action')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('adventure-discard-action')),
+      findsNothing,
+    );
     expect(tester.takeException(), isNull);
   });
 
@@ -123,7 +136,10 @@ void main() {
   ) async {
     await tester.pumpWidget(_screen(pending: _plainAction));
     expect(find.text(_plainAction.text), findsOneWidget);
-    expect(find.byKey(const ValueKey('adventure-pending-npc-selection')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('adventure-pending-npc-selection')),
+      findsNothing,
+    );
     await tester.pumpWidget(_screen());
     expect(find.byKey(const ValueKey('adventure-retry-action')), findsNothing);
     expect(find.byKey(const ValueKey('adventure-outbox-error')), findsNothing);
