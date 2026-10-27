@@ -49,26 +49,29 @@ GameUpdate applyFall(
 );
 
 void main() {
-  test('Off-turn Slow Fall consumes Reaction and applies remaining HP loss', () {
-    final before = monkFallCampaign();
-    final update = applyFall(before);
-    final after = update.campaign;
-    expect(after.hero.hitPoints, 3);
-    expect(after.encounter!.reactionUsed, isTrue);
-    expect(after.encounter!.activeParticipant, 'enemy');
-    expect(after.revision, before.revision + 1);
-    expect(after.events.last.type, 'combat.slowFallResolved');
-    expect(after.events.last.payload['monkClassLevel'], 4);
-    expect(after.events.last.payload['incomingFallDamage'], 37);
-    expect(after.events.last.payload['damagePrevented'], 20);
-    expect(after.events.last.payload['damage'], 17);
-    expect(after.events.last.payload['hitPointDamage'], 17);
-    expect(after.events.last.payload['reactionUsed'], isTrue);
-    expect(after.events.last.payload['stateAfter'], isA<Map>());
-    expect(before.hero.hitPoints, 20);
-    expect(before.encounter!.reactionUsed, isFalse);
-    expect(before.revision + 1, after.revision);
-  });
+  test(
+    'Off-turn Slow Fall consumes Reaction and applies remaining HP loss',
+    () {
+      final before = monkFallCampaign();
+      final update = applyFall(before);
+      final after = update.campaign;
+      expect(after.hero.hitPoints, 3);
+      expect(after.encounter!.reactionUsed, isTrue);
+      expect(after.encounter!.activeParticipant, 'enemy');
+      expect(after.revision, before.revision + 1);
+      expect(after.events.last.type, 'combat.slowFallResolved');
+      expect(after.events.last.payload['monkClassLevel'], 4);
+      expect(after.events.last.payload['incomingFallDamage'], 37);
+      expect(after.events.last.payload['damagePrevented'], 20);
+      expect(after.events.last.payload['damage'], 17);
+      expect(after.events.last.payload['hitPointDamage'], 17);
+      expect(after.events.last.payload['reactionUsed'], isTrue);
+      expect(after.events.last.payload['stateAfter'], isA<Map>());
+      expect(before.hero.hitPoints, 20);
+      expect(before.encounter!.reactionUsed, isFalse);
+      expect(before.revision + 1, after.revision);
+    },
+  );
 
   test('Temporary HP absorb residual fall damage while spending Reaction', () {
     final before = monkFallCampaign(temporaryHitPoints: 5);
@@ -80,44 +83,55 @@ void main() {
     expect(after.events.last.payload['hitPointDamage'], 0);
   });
 
-  test('Below Monk 4, wrong encounter and unconfirmed fall all fail closed', () {
-    final before = monkFallCampaign();
-    final actions = <GameUpdate Function()>[
-      () => applyFall(before.copyWith(
-        hero: before.hero.copyWith(className: 'Mönch', level: 3),
-      )),
-      () => applyFall(before, encounterId: 'another-fight'),
-      () => applyFall(before, fallConfirmed: false),
-      () => applyFall(before, reactionConfirmed: false),
-      () => applyFall(before, damageAfterDefensesConfirmed: false),
-      () => applyFall(before, damage: -1),
-      () => applyFall(before, damage: 100001),
-      () => applyFall(before.copyWith(
-        encounter: before.encounter!.copyWith(reactionUsed: true),
-      )),
-      () => applyFall(before.copyWith(
-        pendingRoll: const PendingRoll(
-          id: 'fall-roll',
-          type: 'attack',
-          modifier: 0,
-          difficulty: 10,
+  test(
+    'Below Monk 4, wrong encounter and unconfirmed fall all fail closed',
+    () {
+      final before = monkFallCampaign();
+      final actions = <GameUpdate Function()>[
+        () => applyFall(
+          before.copyWith(
+            hero: before.hero.copyWith(className: 'Mönch', level: 3),
+          ),
         ),
-      )),
-      () => applyFall(before.copyWith(
-        hero: before.hero.copyWith(conditions: const ['betäubt']),
-      )),
-      () => applyFall(before.copyWith(
-        encounter: null,
-      )),
-    ];
-    for (final action in actions) {
-      expect(action, throwsFormatException);
-    }
-    expect(before.hero.hitPoints, 20);
-    expect(before.encounter!.reactionUsed, isFalse);
-    expect(before.events.where((event) =>
-      event.type == 'combat.slowFallResolved'), isEmpty);
-  });
+        () => applyFall(before, encounterId: 'another-fight'),
+        () => applyFall(before, fallConfirmed: false),
+        () => applyFall(before, reactionConfirmed: false),
+        () => applyFall(before, damageAfterDefensesConfirmed: false),
+        () => applyFall(before, damage: -1),
+        () => applyFall(before, damage: 100001),
+        () => applyFall(
+          before.copyWith(
+            encounter: before.encounter!.copyWith(reactionUsed: true),
+          ),
+        ),
+        () => applyFall(
+          before.copyWith(
+            pendingRoll: const PendingRoll(
+              id: 'fall-roll',
+              type: 'attack',
+              modifier: 0,
+              difficulty: 10,
+            ),
+          ),
+        ),
+        () => applyFall(
+          before.copyWith(
+            hero: before.hero.copyWith(conditions: const ['betäubt']),
+          ),
+        ),
+        () => applyFall(before.copyWith(encounter: null)),
+      ];
+      for (final action in actions) {
+        expect(action, throwsFormatException);
+      }
+      expect(before.hero.hitPoints, 20);
+      expect(before.encounter!.reactionUsed, isFalse);
+      expect(
+        before.events.where((event) => event.type == 'combat.slowFallResolved'),
+        isEmpty,
+      );
+    },
+  );
 
   test('A second fall cannot consume the same encounter Reaction twice', () {
     final first = applyFall(monkFallCampaign());
@@ -135,7 +149,10 @@ void main() {
   });
 
   test('Remaining fall damage at zero HP follows existing death rules', () {
-    final after = applyFall(monkFallCampaign(hitPoints: 5), damage: 28).campaign;
+    final after = applyFall(
+      monkFallCampaign(hitPoints: 5),
+      damage: 28,
+    ).campaign;
     expect(after.hero.hitPoints, 0);
     expect(after.hero.conditions, contains('bewusstlos'));
     expect(after.hero.conditions, contains('liegend'));
