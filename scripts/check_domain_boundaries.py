@@ -14,11 +14,12 @@ ROOT = Path(__file__).resolve().parents[1]
 # Dart configurable imports/exports can switch the URI per platform. Guard
 # *every* selectable URI, not only the default URI before a conditional clause.
 IMPORT = re.compile(
-    r"^\\s*(?:import|export)\\s+['\\\"](?P<primary>[^'\\\"]+)['\\\"]"
-    r"(?P<conditional>(?:\\s+if\\s*\\([^)]*\\)\\s*['\\\"][^'\\\"]+['\\\"])*)",
+    r"^\s*(?:import|export)\s+['\"](?P<primary>[^'\"]+)['\"]"
+    r"(?P<conditional>(?:\s+if\s*\([^)]*\)\s*['\"][^'\"]+['\"])*)",
     re.M,
 )
-CONDITIONAL_URI = re.compile(r"\\bif\\s*\\([^)]*\\)\\s*['\\\"]([^'\\\"]+)['\\\"]")
+CONDITIONAL_URI = re.compile(r"\bif\s*\([^)]*\)\s*['\"]([^'\"]+)['\"]")
+
 STORY_ALLOWED = {
     "dart:convert",
     "app/lib/domain/models.dart",
