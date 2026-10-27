@@ -67,14 +67,8 @@ void main() {
         throwsFormatException,
       );
     }
-    expect(
-      SrdSavageAttackerRules.canOfferOnTurn(soldier(), spent),
-      false,
-    );
-    expect(
-      SrdSavageAttackerRules.canOfferOnTurn(soldier(), fight),
-      true,
-    );
+    expect(SrdSavageAttackerRules.canOfferOnTurn(soldier(), spent), false);
+    expect(SrdSavageAttackerRules.canOfferOnTurn(soldier(), fight), true);
   });
 
   test('no feat, enemy turn, finished encounter and KO block offer', () {
@@ -101,10 +95,7 @@ void main() {
       false,
     );
     expect(
-      SrdSavageAttackerRules.canOfferOnTurn(
-        hero.copyWith(hitPoints: 0),
-        fight,
-      ),
+      SrdSavageAttackerRules.canOfferOnTurn(hero.copyWith(hitPoints: 0), fight),
       false,
     );
     expect(SrdSavageAttackerRules.canOfferOnTurn(hero, null), false);
@@ -152,10 +143,9 @@ void main() {
       true,
     );
     expect(
-      spent.copyWith(
-        bonusActionUsed: true,
-        sneakAttackUsedThisTurn: true,
-      ).savageAttackerUsedThisTurn,
+      spent
+          .copyWith(bonusActionUsed: true, sneakAttackUsedThisTurn: true)
+          .savageAttackerUsedThisTurn,
       true,
     );
   });
