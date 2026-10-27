@@ -187,10 +187,6 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(action, findsOneWidget);
-    expect(
-      tester.widget<Widget>(action),
-      isA<Widget>(),
-    );
     await tester.tap(action, warnIfMissed: false);
     await tester.pumpAndSettle();
     expect(find.text('Sanfter Fall – Reaktion'), findsNothing);
