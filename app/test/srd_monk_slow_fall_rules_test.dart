@@ -49,7 +49,10 @@ SrdMonkSlowFallResult preflight(
 
 void main() {
   test('Only Monk class level 4+ unlocks five times Monk level', () {
-    expect(SrdMonkSlowFallRules.maximumReduction(slowFallMonk(level: 3)), isNull);
+    expect(
+      SrdMonkSlowFallRules.maximumReduction(slowFallMonk(level: 3)),
+      isNull,
+    );
     for (final level in [4, 5, 10, 20]) {
       expect(
         SrdMonkSlowFallRules.maximumReduction(slowFallMonk(level: level)),
@@ -92,10 +95,7 @@ void main() {
     );
     expect(SrdMonkSlowFallRules.maximumReduction(mixed), 20);
     expect(preflight(mixed, damage: 40).remainingDamage, 20);
-    final below = mixed.copyWith(
-      level: 6,
-      secondaryClassLevel: 3,
-    );
+    final below = mixed.copyWith(level: 6, secondaryClassLevel: 3);
     expect(SrdMonkSlowFallRules.maximumReduction(below), isNull);
     expect(() => preflight(below), throwsFormatException);
 
@@ -126,10 +126,7 @@ void main() {
       reactionUsed: true,
     );
     final hero = slowFallMonk();
-    expect(
-      () => preflight(hero, encounter: encounter),
-      throwsFormatException,
-    );
+    expect(() => preflight(hero, encounter: encounter), throwsFormatException);
     expect(encounter.reactionUsed, isTrue);
     final unused = encounter.copyWith(reactionUsed: false);
     expect(preflight(hero, encounter: unused).remainingDamage, 17);
