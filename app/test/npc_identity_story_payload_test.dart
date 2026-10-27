@@ -117,4 +117,111 @@ void main() {
       isNull,
     );
   });
+
+  test('duplicate note IDs across two NPCs never reach a Story payload', () {
+    final campaign = _campaign().copyWith(
+      npcs: const [
+        WorldNpc(id: 'mira-one', name: 'Mira', relationship: 'freundlich'),
+        WorldNpc(id: 'tarek', name: 'Tarek', relationship: 'neutral'),
+      ],
+      npcRelationshipNotes: [
+        NpcRelationshipNote(
+          id: 'shared-note',
+          npcId: 'mira-one',
+          relationship: 'freundlich',
+          note: 'Mira kennt die Schatzkarte.',
+          recordedAt: DateTime.utc(2026, 10, 25),
+        ),
+        NpcRelationshipNote(
+          id: 'shared-note',
+          npcId: 'tarek',
+          relationship: 'neutral',
+          note: 'Tarek bewacht das Stadttor.',
+          recordedAt: DateTime.utc(2026, 10, 26),
+        ),
+      ],
+    );
+    final before = campaign.toJson().toString();
+
+    expect(
+      () => NpcIdentityStoryPayload.prepare(
+        campaign,
+        'Ich frage Mira und Tarek.',
+      ),
+      throwsFormatException,
+    );
+    // Unrelated NPC history is not transmitted just because its note ID
+    // collides: selecting one named NPC still yields only that identity.
+    final single = NpcIdentityStoryPayload.prepare(campaign, 'Ich frage Mira.');
+    expect(single, isNotNull);
+    expect(single!.npcContexts, hasLength(1));
+    expect(single.npcContexts.single['npcId'], 'mira-one');
+    expect(campaign.toJson().toString(), before);
+  });
+
+  test('duplicate note IDs within one NPC are rejected', () {
+    final original = _campaign();
+    final campaign = original.copyWith(
+      npcRelationshipNotes: [
+        NpcRelationshipNote(
+          id: 'repeated',
+          npcId: 'mira-one',
+          relationship: 'freundlich',
+          note: 'Erste bestätigte Notiz.',
+          recordedAt: DateTime.utc(2026, 10, 25),
+        ),
+        NpcRelationshipNote(
+          id: 'repeated',
+          npcId: 'mira-one',
+          relationship: 'freundlich',
+          note: 'Zweite bestätigte Notiz.',
+          recordedAt: DateTime.utc(2026, 10, 26),
+        ),
+      ],
+    );
+    expect(
+      () => NpcIdentityStoryPayload.prepare(campaign, 'Ich frage Mira.'),
+      throwsFormatException,
+    );
+  });
+
+  test('distinct note IDs across NPCs remain valid and revision-bound', () {
+    final campaign = _campaign().copyWith(
+      npcs: const [
+        WorldNpc(id: 'mira-one', name: 'Mira', relationship: 'freundlich'),
+        WorldNpc(id: 'tarek', name: 'Tarek', relationship: 'neutral'),
+      ],
+      npcRelationshipNotes: [
+        NpcRelationshipNote(
+          id: 'mira-note',
+          npcId: 'mira-one',
+          relationship: 'freundlich',
+          note: 'Mira kennt die Karte.',
+          recordedAt: DateTime.utc(2026, 10, 25),
+        ),
+        NpcRelationshipNote(
+          id: 'tarek-note',
+          npcId: 'tarek',
+          relationship: 'neutral',
+          note: 'Tarek kennt den Weg.',
+          recordedAt: DateTime.utc(2026, 10, 26),
+        ),
+      ],
+    );
+    final payload = NpcIdentityStoryPayload.prepare(
+      campaign,
+      'Ich frage Mira und Tarek.',
+    );
+    expect(payload, isNotNull);
+    expect(payload!.npcContexts, hasLength(2));
+    expect(
+      payload.npcContexts.map((context) => context['npcId']).toList(),
+      ['mira-one', 'tarek'],
+    );
+    payload.requireCurrent(campaign);
+    expect(
+      () => payload.requireCurrent(campaign.copyWith(revision: 8)),
+      throwsFormatException,
+    );
+  });
 }
