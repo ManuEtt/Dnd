@@ -1,3 +1,20 @@
+## 27.10.2026 – 0.8.43+93: Attributentwurf und historische Startwerte
+
+RNG-Fehler bewahren den Entwurf; lesbarer historischer Attributnachweis im echten
+Charakterbogen ohne erneute Boni. Strenge ganzzahlige Herkunftsversion;
+SQLite 2 / JSON 1 kompatibel. Fantasy-Bogen bei 200 % Schrift korrigiert.
+**92 gezielte Flutter-Tests bestanden** auf Main-Kombination `4c2ad0a` plus
+Produktänderungen. Gesamtsuite, finaler Branch-CI und neuer Android-Build beim
+frühen Checkpoint ausstehend; reales Gerät offen. Nach tatsächlicher
+Teilagent-Kontingentwarnung zuerst komplettes ZIP/Patch sichern. Branch
+`feat/character-roll-provenance-20261027`; [operativer Checkpoint](docs/CODEX_CHECKPOINT.md).
+Nächster konkreter Schritt: gemeinsame Prüfungen/PR abschließen, danach den
+bestehenden Charakter-Audit gegen bloß ausgefüllte Zeichenfolgen absichern.
+Die gesamte Charaktererstellung bleibt unvollständig. Frühere Einträge unten
+sind historische Momentaufnahmen; ursprüngliche Dokumente im Quellenarchiv.
+
+---
+
 ## 27.10.2026 – Attribut-Herkunft als versionierte Heldenmetadaten
 
 Neues, optionales Feld `startingAbilityOrigin` für explizit bestätigte

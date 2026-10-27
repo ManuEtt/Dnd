@@ -1,3 +1,20 @@
+## 27.10.2026 – 0.8.43+93: Attributentwurf und historische Startwerte
+
+RNG-Fehler bewahren den Entwurf; lesbarer historischer Attributnachweis im echten
+Charakterbogen ohne erneute Boni. Strenge ganzzahlige Herkunftsversion;
+SQLite 2 / JSON 1 kompatibel. Fantasy-Bogen bei 200 % Schrift korrigiert.
+**92 gezielte Flutter-Tests bestanden** auf Main-Kombination `4c2ad0a` plus
+Produktänderungen. Gesamtsuite, finaler Branch-CI und neuer Android-Build beim
+frühen Checkpoint ausstehend; reales Gerät offen. Nach tatsächlicher
+Teilagent-Kontingentwarnung zuerst komplettes ZIP/Patch sichern. Branch
+`feat/character-roll-provenance-20261027`; [operativer Checkpoint](docs/CODEX_CHECKPOINT.md).
+Nächster konkreter Schritt: gemeinsame Prüfungen/PR abschließen, danach den
+bestehenden Charakter-Audit gegen bloß ausgefüllte Zeichenfolgen absichern.
+Die gesamte Charaktererstellung bleibt unvollständig. Frühere Einträge unten
+sind historische Momentaufnahmen; ursprüngliche Dokumente im Quellenarchiv.
+
+---
+
 ## 26.10.2026 – 0.8.42+92: sieben Entwicklungsbranches zusammenführen
 
 Zehn konkrete Köpfe aus acht Branch-Namen einschließlich Main vorab remote per Archivtag und lokal per geprüftem Bundle gesichert. Eldritch-Klassenprüfung, NPC-ID-Wire-Vertrag (Android-Durchreichung noch offen), barrierearme Kampf-/Würfelanzeige und no-follow Checkpoint-Manifeste gemeinsam integriert. Formatfehler der Würfeltestdatei behoben; Syntaxfehler im später hinzugekommenen Reichweitenparser behoben, 17 gezielte Tests grün;155 Python-Tests bisher grün, vollständige kombinierte Abnahme noch offen. SQLite2/JSON1 unverändert. [Checkpoint](docs/CODEX_CHECKPOINT.md). Ältere Einträge unten sind Historie.

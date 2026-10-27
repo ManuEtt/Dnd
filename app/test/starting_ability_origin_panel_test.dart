@@ -91,79 +91,81 @@ Future<void> _reveal(WidgetTester tester, Finder finder) async {
 }
 
 void main() {
-  testWidgets(
-    'JSON-neugeladene Startwerte im echten Bogen: 360 dp und 200 % Schrift',
-    (tester) async {
-      tester.view.physicalSize = const Size(360, 900);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-      final hero = _restoredHero();
-      final before = jsonEncode(hero.toJson());
+  for (final width in [320.0, 360.0]) {
+    testWidgets(
+      'JSON-neugeladene Startwerte im echten Bogen: $width dp und 200 % Schrift',
+      (tester) async {
+        tester.view.physicalSize = Size(width, 900);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        final hero = _restoredHero();
+        final before = jsonEncode(hero.toJson());
 
-      await _openSheet(tester, hero);
-      expect(find.byType(CharacterSheetPage), findsOneWidget);
-      await _reveal(tester, find.text('Startwerte der Attribute'));
-      expect(find.byType(StartingAbilityOriginPanel), findsOneWidget);
-      expect(find.text('Gewürfelt (4W6)'), findsOneWidget);
-      expect(
-        find.byKey(const ValueKey('starting-ability-origin-score-strength')),
-        findsNothing,
-      );
-      await tester.tap(find.text('Startwerte der Attribute'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Hintergrund: Soldat'), findsOneWidget);
-      expect(
-        find.text(
-          'Gespeicherte Werte bei der Erstellung. Aktuelle Attribute können '
-          'inzwischen abweichen.',
-        ),
-        findsOneWidget,
-      );
-      const starts = [19, 16, 13, 9, 6, 3];
-      for (var index = 0; index < abilityNames.length; index++) {
-        final ability = abilityNames[index];
-        final text = tester.widget<Text>(
-          find.byKey(ValueKey('starting-ability-origin-score-$ability')),
-        );
+        await _openSheet(tester, hero);
+        expect(find.byType(CharacterSheetPage), findsOneWidget);
+        await _reveal(tester, find.text('Startwerte der Attribute'));
+        expect(find.byType(StartingAbilityOriginPanel), findsOneWidget);
+        expect(find.text('Gewürfelt (4W6)'), findsOneWidget);
         expect(
-          text.data,
-          '${abilityLabels[ability]}: Basis '
-          '${hero.startingAbilityOrigin!.baseScores[ability]} '
-          '+ Hintergrund ${hero.startingAbilityOrigin!.increases[ability] ?? 0} '
-          '= Startwert ${starts[index]}.',
+          find.byKey(const ValueKey('starting-ability-origin-score-strength')),
+          findsNothing,
         );
-      }
-      const rolls = [18, 15, 12, 9, 6, 3];
-      for (var index = 0; index < rolls.length; index++) {
-        final text = tester.widget<Text>(
-          find.byKey(ValueKey('starting-ability-origin-roll-$index')),
-        );
-        expect(
-          text.data,
-          '${index + 1}. Wurf: '
-          '${hero.startingAbilityOrigin!.diceRolls[index].join(' · ')} '
-          '→ ${rolls[index]}',
-        );
-      }
-      final lastRoll = find.byKey(
-        const ValueKey('starting-ability-origin-roll-5'),
-      );
-      await _reveal(tester, lastRoll);
-      expect(lastRoll.hitTestable(), findsOneWidget);
-      expect(tester.takeException(), isNull);
-      expect(hero.abilities['strength'], 20);
-      expect(jsonEncode(hero.toJson()), before);
+        await tester.tap(find.text('Startwerte der Attribute'));
+        await tester.pumpAndSettle();
 
-      await _reveal(tester, find.text('Startwerte der Attribute'));
-      await tester.tap(find.text('Startwerte der Attribute'));
-      await tester.pumpAndSettle();
-      expect(lastRoll, findsNothing);
-      expect(jsonEncode(hero.toJson()), before);
-      expect(tester.takeException(), isNull);
-    },
-  );
+        expect(find.text('Hintergrund: Soldat'), findsOneWidget);
+        expect(
+          find.text(
+            'Gespeicherte Werte bei der Erstellung. Aktuelle Attribute können '
+            'inzwischen abweichen.',
+          ),
+          findsOneWidget,
+        );
+        const starts = [19, 16, 13, 9, 6, 3];
+        for (var index = 0; index < abilityNames.length; index++) {
+          final ability = abilityNames[index];
+          final text = tester.widget<Text>(
+            find.byKey(ValueKey('starting-ability-origin-score-$ability')),
+          );
+          expect(
+            text.data,
+            '${abilityLabels[ability]}: Basis '
+            '${hero.startingAbilityOrigin!.baseScores[ability]} '
+            '+ Hintergrund ${hero.startingAbilityOrigin!.increases[ability] ?? 0} '
+            '= Startwert ${starts[index]}.',
+          );
+        }
+        const rolls = [18, 15, 12, 9, 6, 3];
+        for (var index = 0; index < rolls.length; index++) {
+          final text = tester.widget<Text>(
+            find.byKey(ValueKey('starting-ability-origin-roll-$index')),
+          );
+          expect(
+            text.data,
+            '${index + 1}. Wurf: '
+            '${hero.startingAbilityOrigin!.diceRolls[index].join(' · ')} '
+            '→ ${rolls[index]}',
+          );
+        }
+        final lastRoll = find.byKey(
+          const ValueKey('starting-ability-origin-roll-5'),
+        );
+        await _reveal(tester, lastRoll);
+        expect(lastRoll.hitTestable(), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        expect(hero.abilities['strength'], 20);
+        expect(jsonEncode(hero.toJson()), before);
+
+        await _reveal(tester, find.text('Startwerte der Attribute'));
+        await tester.tap(find.text('Startwerte der Attribute'));
+        await tester.pumpAndSettle();
+        expect(lastRoll, findsNothing);
+        expect(jsonEncode(hero.toJson()), before);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
 
   testWidgets('Historischer Charakter ohne Herkunft erhält kein neues Panel', (
     tester,

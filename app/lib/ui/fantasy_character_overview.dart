@@ -462,7 +462,9 @@ class _ParchmentAbilities extends StatelessWidget {
                       : box.maxWidth >= 270
                       ? 3
                       : 2;
-                  final rowsHeight = 93 + scaler.scale(49);
+                  // Include the fantasy theme's line height at Android's large
+                  // font sizes; fixed icon/padding remain unscaled.
+                  final rowsHeight = 93 + scaler.scale(70);
                   return GridView(
                     key: const ValueKey('sheet-preview-attributes-grid'),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -609,34 +611,54 @@ class _ReferencePanel extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              children: [
-                Icon(icon, color: accent, size: 23),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: const TextStyle(
-                      color: FantasyCharacterOverview.ivory,
-                      fontFamily: 'serif',
-                      fontSize: 19,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                TextButton(
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final stacked =
+                    constraints.maxWidth < 350 ||
+                    MediaQuery.textScalerOf(context).scale(1) > 1.3;
+                final allButton = TextButton(
                   onPressed: onAll,
                   style: TextButton.styleFrom(
                     foregroundColor: const Color(0xffa9d6ef),
-                    visualDensity: VisualDensity.compact,
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    minimumSize: const Size(48, 48),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
                   ),
                   child: const Text(
                     'Alle anzeigen',
                     style: TextStyle(fontSize: 11),
                   ),
-                ),
-              ],
+                );
+                final heading = Row(
+                  children: [
+                    Icon(icon, color: accent, size: 23),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: const TextStyle(
+                          color: FantasyCharacterOverview.ivory,
+                          fontFamily: 'serif',
+                          fontSize: 19,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    if (!stacked) allButton,
+                  ],
+                );
+                return stacked
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          heading,
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: allButton,
+                          ),
+                        ],
+                      )
+                    : heading;
+              },
             ),
             Divider(color: accent.withValues(alpha: .3), height: 10),
             child,

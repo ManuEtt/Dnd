@@ -1,3 +1,13 @@
+## 0.8.43+93 – 27.10.2026 – Attributentwurf und Startwertanzeige
+
+- Wiederherstellbarer Attributwürfelfehler statt beschädigtem Methoden-/Entwurfszustand.
+- Historische Basiswerte, Hintergrundboni und Rohwürfel im echten Charakterbogen.
+- Strenge ganzzahlige Herkunfts-Version und umfangreiche SQLite-/JSON-Regressionen.
+- Fantasy-Charakterbogen mit 200 % Schrift bei 320/360 dp ohne die gefundenen Überläufe.
+- 92 gezielte Flutter-Tests bestanden; vollständige aktuelle CI/Android-Abnahme noch offen.
+
+---
+
 ## 27.10.2026 – Charaktererstellung: vier SRD-Hintergrundpakete
 
 - Akolyth, Krimineller, Weiser, Soldat mit eigenen Fertigkeiten,
