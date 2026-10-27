@@ -1,0 +1,21 @@
+name: Terrain Movement format diagnostic
+on:
+  push:
+    branches:
+      - feat/chat-a/confirmed-climb-swim-20261027
+permissions:
+  contents: read
+jobs:
+  format-diff:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Print exact Dart formatter patches
+        run: |
+          dart format app/lib/domain/game_engine.dart app/lib/domain/srd_terrain_movement_rules.dart app/lib/ui/app.dart app/test/srd_terrain_movement_rules_test.dart app/test/srd_terrain_movement_storage_test.dart
+          git diff -- app/lib/domain/game_engine.dart app/lib/domain/srd_terrain_movement_rules.dart app/lib/ui/app.dart app/test/srd_terrain_movement_rules_test.dart app/test/srd_terrain_movement_storage_test.dart
