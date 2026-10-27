@@ -82,7 +82,8 @@ class _CapturingStoryTransport implements BackendTransport {
           'provider': 'mock',
           'stateChanges': [],
           'turn': {
-            'narration': 'Mira zeigt auf die Chronik. Was machst du als Nächstes?',
+            'narration':
+                'Mira zeigt auf die Chronik. Was machst du als Nächstes?',
             'threadUpdates': [],
             'newThreads': [],
             'npcUpdates': [],
@@ -166,17 +167,21 @@ void main() {
           // general facts, but neither kind can exceed the joint wire limit.
           expect(memories, hasLength(12));
           expect(
-            memories.take(3).every(
-              (value) => value.startsWith('Bestätigte NPC-Beziehungsnotiz'),
-            ),
+            memories
+                .take(3)
+                .every(
+                  (value) => value.startsWith('Bestätigte NPC-Beziehungsnotiz'),
+                ),
             isTrue,
           );
           expect(memories[0], contains('Hafendetail Nummer 0'));
           expect(memories[1], contains('Hafendetail Nummer 1'));
           expect(memories[2], contains('Hafendetail Nummer 2'));
           expect(memories.skip(3), hasLength(9));
-          expect(memories.skip(3).any((entry) => entry.startsWith('Fakt ')),
-              isTrue);
+          expect(
+            memories.skip(3).any((entry) => entry.startsWith('Fakt ')),
+            isTrue,
+          );
           expect(memories.every((entry) => entry.length <= 400), isTrue);
           expect(memories.toSet(), hasLength(12));
 
