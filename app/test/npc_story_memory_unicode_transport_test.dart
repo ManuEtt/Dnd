@@ -121,8 +121,8 @@ void main() {
           },
         ],
       });
-      final longNote =
-          'Der verborgene Hafen:\n' + List.filled(190, '🐉').join();
+      final dragons = List.filled(190, '🐉').join();
+      final longNote = 'Der verborgene Hafen:\n$dragons';
       final original = GameEngine(clock: () => _now).createAiCampaign(
         HeroCharacter(id: 'aria', name: 'Aria'),
         plan,
@@ -131,7 +131,7 @@ void main() {
       final campaign = original.copyWith(
         facts: {
           for (var i = 0; i < 20; i++)
-            'stadt_' + i.toString(): 'Bestätigter Ort ' + i.toString(),
+            'stadt_$i': 'Bestätigter Ort $i',
         },
         npcRelationshipNotes: [
           NpcRelationshipNote(
