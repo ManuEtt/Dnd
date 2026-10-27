@@ -92,7 +92,7 @@ class SrdClassAutomation {
     'Rage': 'ClassResourceRules',
     "Monk's Focus": 'ClassResourceRules',
     'Bardic Inspiration': 'ClassResourceRules',
-    'Font of Inspiration': 'SrdBardFontOfInspirationRules (noch ohne UI-Aktion)',
+    'Font of Inspiration': 'SrdBardFontOfInspirationRules',
     'Font of Magic': 'ClassResourceRules',
     'Wild Shape': 'ClassResourceRules',
     'Favored Enemy': 'ClassResourceRules',
@@ -166,39 +166,87 @@ class SrdClassAutomation {
 
       switch (klass.name) {
         case 'Barbar':
-          add('Kampfrausch-Schadensbonus', '+${ClassResourceRules.rageDamageBonus(level)}');
-          add('Kampfrausch-Nutzungen', ClassResourceRules.maximum(hero, 'rage'));
+          add(
+            'Kampfrausch-Schadensbonus',
+            '+${ClassResourceRules.rageDamageBonus(level)}',
+          );
+          add(
+            'Kampfrausch-Nutzungen',
+            ClassResourceRules.maximum(hero, 'rage'),
+          );
         case 'Barde':
           add('Inspirationswürfel', 'W${ClassResourceRules.bardicDie(level)}');
-          add('Inspiration gesamt', ClassResourceRules.maximum(hero, 'bardicInspiration'));
+          add(
+            'Inspiration gesamt',
+            ClassResourceRules.maximum(hero, 'bardicInspiration'),
+          );
         case 'Kleriker':
-          add('Göttlicher Kanal gesamt', ClassResourceRules.maximum(hero, 'channelDivinityCleric'));
+          add(
+            'Göttlicher Kanal gesamt',
+            ClassResourceRules.maximum(hero, 'channelDivinityCleric'),
+          );
         case 'Druide':
-          add('Tiergestalt gesamt', ClassResourceRules.maximum(hero, 'wildShape'));
+          add(
+            'Tiergestalt gesamt',
+            ClassResourceRules.maximum(hero, 'wildShape'),
+          );
         case 'Kämpfer':
-          add('Angriffe je Angriffsaktion (gesamt)', ClassProgressionRules.attacksPerAttackAction(hero));
-          add('Zweite Luft gesamt', ClassFeatureResources.secondWindMaximum(hero));
-          if (level >= 2) add('Aktionsschub gesamt', ClassFeatureResources.actionSurgeMaximum(hero));
+          add(
+            'Angriffe je Angriffsaktion (gesamt)',
+            ClassProgressionRules.attacksPerAttackAction(hero),
+          );
+          add(
+            'Zweite Luft gesamt',
+            ClassFeatureResources.secondWindMaximum(hero),
+          );
+          if (level >= 2) {
+            add('Aktionsschub gesamt', ClassFeatureResources.actionSurgeMaximum(hero));
+          }
         case 'Mönch':
-          add('Kampfkünste-Schadenswürfel', 'W${ClassResourceRules.martialArtsDie(level)}');
-          if (level >= 2) add('Fokuspunkte gesamt', ClassResourceRules.maximum(hero, 'focusPoints'));
+          add(
+            'Kampfkünste-Schadenswürfel',
+            'W${ClassResourceRules.martialArtsDie(level)}',
+          );
+          if (level >= 2) {
+            add('Fokuspunkte gesamt', ClassResourceRules.maximum(hero, 'focusPoints'));
+          }
         case 'Paladin':
-          add('Handauflegen-TP-Vorrat', ClassResourceRules.maximum(hero, 'layOnHands'));
+          add(
+            'Handauflegen-TP-Vorrat',
+            ClassResourceRules.maximum(hero, 'layOnHands'),
+          );
         case 'Waldläufer':
-          add('Erzfeind-Nutzungen', ClassResourceRules.maximum(hero, 'favoredEnemy'));
+          add(
+            'Erzfeind-Nutzungen',
+            ClassResourceRules.maximum(hero, 'favoredEnemy'),
+          );
         case 'Schurke':
-          add('Hinterhältiger Angriff', '${ClassResourceRules.sneakAttackDice(level)}W6');
+          add(
+            'Hinterhältiger Angriff',
+            '${ClassResourceRules.sneakAttackDice(level)}W6',
+          );
         case 'Zauberer':
-          if (level >= 2) add('Zaubereipunkte gesamt', ClassResourceRules.maximum(hero, 'sorceryPoints'));
+          if (level >= 2) {
+            add(
+              'Zaubereipunkte gesamt',
+              ClassResourceRules.maximum(hero, 'sorceryPoints'),
+            );
+          }
         case 'Hexenmeister':
           add('Paktplätze gesamt', SpellcastingRules.pactSlotCount(hero));
           add('Paktplatz-Grad', SpellcastingRules.pactSlotLevel(hero));
-          add('Anrufungs-Auswahlplätze (nicht gewählt)', ClassResourceRules.warlockInvocationChoices(level));
+          add(
+            'Anrufungs-Auswahlplätze (nicht gewählt)',
+            ClassResourceRules.warlockInvocationChoices(level),
+          );
         case 'Magier':
           // Wizard spell slots are shared with other non-pact spellcasting
           // classes; do not misattribute the combined pool to Wizard alone.
           final slots = SpellcastingRules.availableSlots(hero);
-          add('Gemeinsame verfügbare Zauberplätze', slots.values.fold<int>(0, (sum, count) => sum + count));
+          add(
+            'Gemeinsame verfügbare Zauberplätze',
+            slots.values.fold<int>(0, (sum, count) => sum + count),
+          );
       }
     }
     return List.unmodifiable(result);
