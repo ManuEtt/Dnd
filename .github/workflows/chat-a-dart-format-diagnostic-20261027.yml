@@ -1,0 +1,19 @@
+name: Chat A Dart Format Diagnostic
+on:
+  push:
+    branches:
+      - feat/chat-a/high-jump-preflight-20261027
+jobs:
+  format-only:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.35.7
+      - name: Show canonical Dart formatting for two files
+        run: |
+          dart format --output=show app/lib/domain/srd_high_jump_rules.dart
+          echo '--- NEXT TEST FILE ---'
+          dart format --output=show app/test/srd_high_jump_rules_test.dart
