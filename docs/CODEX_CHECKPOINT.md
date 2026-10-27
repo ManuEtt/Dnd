@@ -1,3 +1,17 @@
+## 27.10.2026 – Chat A: Weitsprung mit atomarem Ereignis- und SQLite-Commit
+
+- **Basis:** `main` `2421fcd18f4d980f31a71ec9d60e80a53b53e45b`, inklusive integrierter Gelände-PR #280. Eigener Branch `feat/chat-a/long-jump-atomic-integration-20261027`. Enthält die bis dahin separat in #284/#285 geprüften vier neuen Fach-/Testdateien erneut aus dem jeweils exakten PR-HEAD, damit die reale Integration gegen den **aktuellen main-Stand** geprüft wird.
+- **IMPLEMENTIERT:** `GameEngine.confirmLongJump` mit autoritativem unmittelbarem `combat.moved`-Anlauf-Receipt, Unterscheidung `0`/10-Fuß-Anlauf, validierter Sprint-/Sprungdistanz, SRD-SG 10 für schwierige Landung/niedriges Hindernis, `liegend`-Folge und genau einem auditierten `combat.longJumpConfirmed`-Commit. `GameController.confirmLongJump` führt dieselbe Request-ID nach Konkurrenz, ACK-Verlust oder Neustart nur bei **identischen Parametern** ohne Doppelbuchung fort und verwendet SQLite-Revisions- und Event-Transaktion.
+- **GETESTET:** die früheren Preflight- und Projektionsprüfungen besitzen vollständig erfolgreiche Basis-PR-CI #40472176859 für #284. Der neue Integrations-PR braucht noch eine **eigene vollständige CI auf finaler Commit-SHA**, deren Ergebnis getrennt ausgewiesen wird.
+- **TESTDATEIEN:** `srd_long_jump_rules_test.dart`, `srd_long_jump_encounter_rules_test.dart`, `srd_long_jump_atomic_storage_test.dart` (inklusive SQL-Trigger-Rollback, ACK-Replay, Revisionsschutz, fehlender Anlauf und Prone-Buchung).
+- **NICHT GETESTET:** neues Gesamtintegrationsergebnis, echte Android-Installation, TalkBack und Release-Signierung.
+- **BLOCKIERT/BEGRENZT:** Controller ist noch nicht in UI eingebunden, signierte Proben-Receipts fehlen, vorhandenes Bewegungsmodell kann keine 15-cm-Reste darstellen (diese werden ausdrücklich abgelehnt). Keine Behauptung vollständiger SRD-Abdeckung.
+- **MIGRATION:** keine, SQLite 2 / Kampagnen-JSON 1 / App 0.8.42+92 unverändert.
+- **Dokumentation:** `docs/parallel/CHAT_A_LONG_JUMP_ATOMIC_20261027.md`.
+- **NÄCHSTER SCHRITT:** nach grüner CI den zugänglichen Weitsprung-Dialog mit beständigem/ausstehendem Wurf und bestätigten Hindernis-/Terrainentscheidungen bauen; vorher Doppel-PR-Scope #284/#285 gegen diesen Integrations-PR abgleichen.
+
+---
+
 ## 27.10.2026 – Integrationskandidat der Charaktererstellung #264/#272/#273/#275
 
 - **Basis:** `main` `4bd97b4d72fc747228df9bea46b61c3d4c82c382`; komplette gestapelte Quelle `ae148053feca82f5db1741b37536385f4d7d41c5`; Merge-Tree anhand der Git-Blob-SHAs konfliktarm zusammengestellt, beide Herkunfts-Commits als Eltern erhalten. Nur README und diese Checkpoint-Datei redaktionell aus dem originalen Main additiv ergänzt; fremde Chat-B-/Chat-D-Einträge bleiben erhalten.
