@@ -214,10 +214,10 @@ void main() {
     );
     expect(payload, isNotNull);
     expect(payload!.npcContexts, hasLength(2));
-    expect(
-      payload.npcContexts.map((context) => context['npcId']).toList(),
-      ['mira-one', 'tarek'],
-    );
+    expect(payload.npcContexts.map((context) => context['npcId']).toList(), [
+      'mira-one',
+      'tarek',
+    ]);
     payload.requireCurrent(campaign);
     expect(
       () => payload.requireCurrent(campaign.copyWith(revision: 8)),
