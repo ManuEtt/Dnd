@@ -1,3 +1,18 @@
+# Chat D D-013 – Verlinkte Pflichtdateien in der Projektprüfung ablehnen (27.10.2026)
+
+- **Basis-main:** `ff245cc253194cd0858385d535ae7b2c9132bb06`; eigener Branch `fix/chat-d/verify-project-symlink-20261027`; technische Commits `4a81596a1bc2b729fe2c8cc739f7a201220f92f6` und `9c910244117ec4f7b3ea6149fedf5e78b279568a`; [PR #321](https://github.com/ManuEtt/Dnd/pull/321) (Draft).
+- **PROBLEM:** Die Existenzprüfung per `Path.is_file()` folgte Links auf Pflichtdateien und deren Elternverzeichnisse. Die späteren JSON-/JAR-/Launcher-Prüfungen konnten dadurch externe Dateien öffnen.
+- **IMPLEMENTIERT:** Pfadsegmentprüfung mit `is_symlink()` und Abbruch pro betroffenem Pflichtpfad; verlinkte Backend-JSON-, Gradle-JAR-, Gradle-Properties- und Launcher-Dateien werden nicht zur weiteren Inhaltsprüfung geöffnet. Keine sensitiven Linkziele in Fehlermeldungen.
+- **TESTS ERGÄNZT:** Vier Python-Regressionstests für Dateilink, Backend-Elternverzeichnis, Wrapper-JAR ohne ZIP-Lesezugriff und defekten Link. Bestehender positiver Test für reguläre Kopien bleibt.
+- **GETESTET:** GitHub-Quelländerungen und eigener Branch/PR verifiziert. Testausführung auf neuem PR-HEAD **noch nicht belegt**.
+- **NICHT GETESTET:** Vollständige Python-, Flutter-, Backend-, Android-/APK-CI des finalen Commits und Realgerät.
+- **ÜBERSCHNEIDUNG:** Offene PRs #316 (Domain-Boundaries) und #311 (Alpha-Archiv) bearbeiten andere Skripte/Tests; deren Änderungen nicht angetastet. README und Checkpoint sind bewusst additive, bei Integration zu koordinierende Dateien.
+- **KOMPATIBILITÄT:** Kein Produktcode, keine Spielstandsänderung; SQLite 2/Kampagnen-JSON 1 und Version unverändert. Keine Migration.
+- **RISIKO:** Dies ist eine strukturelle Vorprüfung, kein atomarer Dateizugriffsschutz gegen gleichzeitig vertauschte Pfade.
+- **NÄCHSTER SCHRITT:** Finale PR-CI auf PR-HEAD kontrollieren, bei Fehlern in diesem Branch korrigieren und erst danach Review/Integration erwägen.
+
+---
+
 # Chat B – Story-Transport mit randvollem Erinnerungslimit (27.10.2026)
 
 - **Basis:** [PR #307](https://github.com/ManuEtt/Dnd/pull/307) (`fix/chat-b/npc-memory-budget-20261027`, Head `47b4343fadd5f30b9030a702b3ccd701d701a598`). Gestapelter neuer Branch `test/chat-b/npc-memory-wire-budget-20261027`; erst #307 integrieren.
