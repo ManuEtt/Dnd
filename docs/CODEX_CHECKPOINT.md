@@ -1,3 +1,17 @@
+## 27.10.2026 – Chat B: Replay an bestätigte Sitzungsidentität binden
+
+- **Ausgangs-main:** `96001353f2b90f293fbdade934e78b7b8281e965`; **Branch:** `fix/chat-b/story-replay-session-identity-20261027`. Dieser Eintrag betrifft ausschließlich die Story-Replay-Funktion und ihre Regressionen.
+- **IMPLEMENTIERT:** Neue Ereignisse fremder Sitzungen und Checkpoints mit abweichender `sessionId` werden vor Replay-Übernahme zurückgewiesen. Exakt bereits gespeicherte Dubletten früherer Sitzungen bleiben idempotent; normale Wiederherstellung und Heldendaten bleiben erhalten.
+- **GETESTET:** Code-/PR-Pfadprüfung anhand der echten GitHub-Quellen; **noch keine erfolgreich ausgeführte neue Flutter-Regression behauptet**.
+- **NICHT GETESTET:** lokale Flutter-, Backend-, Python-Gesamtsuite, Android-Build und echtes Gerät. Die GitHub-CI auf finalem Branch-HEAD ist separat abzunehmen.
+- **BLOCKIERT:** kein lokal erreichbarer Git-Checkout (GitHub-DNS), kein Flutter-/Dart-SDK. GitHub-Connector besitzt Schreibrechte; PR/Actions werden gesondert geprüft.
+- **NOCH NICHT IMPLEMENTIERT:** eine allgemeine signierte Event-Provenienz oder neue persistierte Sitzungsübergangsereignisse; diese gehören nicht zu diesem Paket.
+- **Dateien:** `app/lib/story/story_memory_engine.dart`, `app/test/story_replay_session_boundary_test.dart`, `docs/STORY_REPLAY_SESSION_IDENTITY_20261027.md`, README und Checkpoints.
+- **Migration:** keine; Flutter-Version 0.8.42+92 und Kampagnen-JSON-Version 1 unverändert. Kein Eingriff in KI-Regelgrenzen.
+- **Nächster Schritt:** CI-Abnahme der vier Regressionen auf finalem PR-HEAD; nur bei grünem Format/Analyze/Flutter/Android-Gate den PR zur Integration durch Chat D freigeben. [Technische Details](STORY_REPLAY_SESSION_IDENTITY_20261027.md).
+
+---
+
 # Chat B – NPC-Erinnerungslimit nicht überschreiten (27.10.2026)
 
 - **Ausgangs-Main:** `f9b2f72a4bf8e4216bf8baac60c7f92c4a8a997f`; Branch `fix/chat-b/npc-memory-budget-20261027`.
