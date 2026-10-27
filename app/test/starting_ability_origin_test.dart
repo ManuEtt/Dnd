@@ -138,7 +138,11 @@ void main() {
         ],
       },
       {...good, 'method': 'randomRoll', 'diceRolls': []},
-      {...good, 'method': 'pointBuy', 'baseScores': {...original, 'strength': 16}},
+      {
+        ...good,
+        'method': 'pointBuy',
+        'baseScores': {...original, 'strength': 16},
+      },
     ];
     for (final entry in malformed) {
       expect(
