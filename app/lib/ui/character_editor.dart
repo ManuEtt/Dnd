@@ -5,6 +5,7 @@ import '../domain/models.dart';
 import '../domain/character_creation_progression.dart';
 import '../domain/srd_class_level_up.dart';
 import '../domain/srd_character_creation_audit.dart';
+import '../domain/starting_ability_origin.dart';
 import '../domain/srd_character_classes.dart';
 import '../domain/srd_equipment_catalog.dart';
 import '../domain/starting_equipment_import.dart';
@@ -51,6 +52,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
   late final Map<String, dynamic> _original;
   String? _error;
   Map<String, int>? _generatedStartingAbilities;
+  StartingAbilityOrigin? _confirmedStartingAbilityOrigin;
   bool _manualAbilityException = false;
   bool _experienceManuallyEdited = false;
   bool _fighterSetupConfirmed = false;
@@ -430,6 +432,19 @@ class _CharacterEditorState extends State<CharacterEditor> {
         for (final entry in _scores.entries)
           entry.key: int.tryParse(entry.value.text.trim()),
       };
+      // Only an explicitly confirmed level-1 choice receives initial
+      // provenance. Historical heroes without metadata stay unchanged.
+      final origin = _confirmedStartingAbilityOrigin;
+      if (origin != null &&
+          json['level'] == 1 &&
+          json['background'] == origin.background &&
+          abilityNames.every(
+            (key) => json['abilities'][key] == origin.startingScores[key],
+          )) {
+        json['startingAbilityOrigin'] = origin.toJson();
+      } else if (widget.hero == null) {
+        json.remove('startingAbilityOrigin');
+      }
       final hp = json['hitPoints'] as int?;
       final maxHp = json['maxHitPoints'] as int?;
       if (hp != null && maxHp != null && hp > maxHp) {
@@ -1158,6 +1173,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
       }
       _fields['background']!.text = result.background;
       _generatedStartingAbilities = result.scores;
+      _confirmedStartingAbilityOrigin = result.origin;
       _autofillCombatValues();
     });
   }
