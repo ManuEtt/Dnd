@@ -178,4 +178,77 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   }
+
+  testWidgets('Normale Aktionen melden keinen Schalterzustand an TalkBack', (
+    tester,
+  ) async {
+    var actions = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildFantasyTheme(),
+        home: Scaffold(
+          body: FantasyButton(
+            label: 'W20 würfeln',
+            selected: true,
+            onPressed: () => actions++,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final semantic = tester.widget<Semantics>(
+      find.descendant(
+        of: find.byType(FantasyButton),
+        matching: find.byWidgetPredicate(
+          (widget) => widget is Semantics && widget.properties.button == true,
+        ),
+      ).first,
+    );
+    expect(semantic.properties.button, isTrue);
+    expect(semantic.properties.toggled, isNull);
+    await tester.tap(find.text('W20 würfeln'));
+    expect(actions, 1);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Nur Schalter melden ihren tatsächlichen Auswahlzustand', (
+    tester,
+  ) async {
+    Future<void> showToggle({required bool selected, bool enabled = true}) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildFantasyTheme(),
+          home: Scaffold(
+            body: FantasyToggleButton(
+              label: 'Magie',
+              selected: selected,
+              onPressed: enabled ? () {} : null,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    Semantics toggleSemantics() => tester.widget<Semantics>(
+      find.descendant(
+        of: find.byType(FantasyButton),
+        matching: find.byWidgetPredicate(
+          (widget) => widget is Semantics && widget.properties.button == true,
+        ),
+      ).first,
+    );
+
+    await showToggle(selected: false);
+    expect(toggleSemantics().properties.toggled, isFalse);
+    expect(toggleSemantics().properties.enabled, isTrue);
+
+    await showToggle(selected: true);
+    expect(toggleSemantics().properties.toggled, isTrue);
+
+    await showToggle(selected: false, enabled: false);
+    expect(toggleSemantics().properties.toggled, isFalse);
+    expect(toggleSemantics().properties.enabled, isFalse);
+    expect(tester.takeException(), isNull);
+  });
 }
