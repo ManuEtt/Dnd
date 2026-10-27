@@ -2289,7 +2289,8 @@ class _AdventurePageState extends State<_AdventurePage> {
                   for (final kind in SrdTerrainMovement.values)
                     PopupMenuButton<int>(
                       key: ValueKey('adventure-terrain-${kind.name}'),
-                      tooltip: 'Bestätigte Strecke und passierbares Gelände wählen',
+                      tooltip:
+                          'Bestätigte Strecke und passierbares Gelände wählen',
                       enabled:
                           !_ruleInteractionBlocked &&
                           campaign.pendingRoll == null &&
@@ -2312,14 +2313,7 @@ class _AdventurePageState extends State<_AdventurePage> {
                               child: Text(
                                 '${distance * 0.3} m ${kind == SrdTerrainMovement.climb ? 'klettern' : 'schwimmen'} '
                                 '(${difficult ? 'schwieriges' : 'normales'} Gelände, '
-                                '${ProneMovementRules.formatDecimeters(
-                                  SrdTerrainMovementRules.costDecimeters(
-                                    campaign.hero,
-                                    kind: kind,
-                                    distanceFeet: distance,
-                                    difficultTerrain: difficult,
-                                  ),
-                                )} Verbrauch)',
+                                '${ProneMovementRules.formatDecimeters(SrdTerrainMovementRules.costDecimeters(campaign.hero, kind: kind, distanceFeet: distance, difficultTerrain: difficult))} Verbrauch)',
                               ),
                             ),
                       ],
