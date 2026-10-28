@@ -466,11 +466,11 @@ class GameEngine {
       'heroInitiative': heroInitiative.toJson(),
       'enemyInitiative': enemyInitiative.toJson(),
       'focusRecoveredAtInitiative': focus.focusRecovered,
-        if (focus.uncannyMetabolismUsed) ...{
-          'uncannyMetabolismUsed': true,
-          'uncannyMetabolismHealing': focus.hitPointsRecovered,
-          'uncannyMetabolismDieRoll': focus.martialArtsDieRoll,
-        },
+      if (focus.uncannyMetabolismUsed) ...{
+        'uncannyMetabolismUsed': true,
+        'uncannyMetabolismHealing': focus.hitPointsRecovered,
+        'uncannyMetabolismDieRoll': focus.martialArtsDieRoll,
+      },
     };
     if (enemyInitiative.total > heroInitiative.total) {
       final turn = _enemyTurn(next, advanceRound: false);
