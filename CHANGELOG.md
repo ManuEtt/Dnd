@@ -1,49 +1,52 @@
-# Änderungsprotokoll – 28.10.2026 / 0.8.46+96
+## 28.10.2026 – Branch-Migration abgeschlossen
 
-Produkt-Main `6576d2fc742f000bacdd1c105282bc9e3282ae7e` aus PR #351. SQLite3 / JSON1 unverändert.
+Die gemeinsame Migration aus [PR #351](https://github.com/ManuEtt/Dnd/pull/351)
+ist abgeschlossen: **28 alte Quell-/Integrationsbranches** sind regulär enthalten,
+mit exaktem Archivtag gesichert und remote gelöscht. Der geprüfte Produktstand
+`6576d2fc742f000bacdd1c105282bc9e3282ae7e` bestand die
+[Main-CI 40708407065](https://github.com/ManuEtt/Dnd/actions/runs/40708407065)
+(2.185 Flutter-, 195 Python-, 72 Backend-Tests; lokale native Abnahme: zwölf Tests).
+[Cleanup 40710914533](https://github.com/ManuEtt/Dnd/actions/runs/40710914533)
+bestand; alle 28 Archiv-/Abwesenheits-/Ancestry-Belege stehen im
+[Migrationsbericht](docs/BRANCH_MIGRATION_20261028.md) und
+[Inventar](docs/BRANCH_MIGRATION_20261028_INVENTORY.json).
 
-**Main-CI bestanden:** [Lauf 40708407065](https://github.com/ManuEtt/Dnd/actions/runs/40708407065) auf `6576d2fc742f000bacdd1c105282bc9e3282ae7e`.
+Der inzwischen live beobachtete Main `f5cb518a0c0a6aafc1b1483c833fb7907ca5e882`
+enthält weitere Änderungen anderer Chats. Die elf neu entstandenen offenen PRs
+#356–#359 und #361–#367 sind **kein Teil der alten Löschfreigabe** und bleiben
+unangetastet; #352/#353/#355/#360 sind inzwischen integriert. Ältere Meldungen
+unterhalb dieses Eintrags sind historische Schreibstände, insbesondere offene
+Migration/CI-Angaben. Dieser reine Dokumentationsabschluss übernimmt den aktuellen
+Main-Produktcode unverändert; eine neue APK oder vollständige Produkt-CI wird
+für seinen Dokumentationscommit nicht behauptet.
 
-**28 alte Quell-/Integrationsbranches archiviert und entfernt.** Alle Köpfe sind Vorfahren des geprüften Main; die exakten Archivtags stehen im Inventar. `feat/srd-warlock-magical-cunning-20261028` (Beobachtung `2026-10-28T14:59:26.197499+00:00`: `47cb207e99eeba0af3308de2b88c19f8357b0808`, PR #352) entstand danach und bleibt als aktive, separat zu prüfende Entwicklung erhalten.
+**IMPLEMENTIERT:** Migrationsnachweis, Archivinventar und bytegenaue ältere
+Dokumente erhalten. **GETESTET:** siehe den exakt gebundenen Produktnachweis oben;
+aktuelle Dokumentations-/Pythonprüfung separat im PR. **NICHT GETESTET:** echtes
+Android-Gerät, TalkBack, installiertes Altversionsupgrade und produktive Signatur.
+**BLOCKIERT:** kein angeschlossenes Testgerät. **NOCH NICHT IMPLEMENTIERT:**
+vollständige Charaktererstellung und vollständige SRD-Regelwirkungen.
 
-**IMPLEMENTIERT:** Gemeinsame Integration der vorhandenen Charakter-, Klassen-,
-Story-, Ausrüstungs-/Sprung- und Tooling-Pakete. Behoben sind der reproduzierte
-Altarchiv-CAS-Fehler, der Barden-Dialogüberlauf und Integrationskonflikte zwischen
-Barden- und Mönchsinitiative. Bestätigte Attribut-, Klassen-, Hintergrund- und Talentbelege
-bleiben getrennt; Audit und Kataloge erteilen keine erfundenen Vorteile.
+[Quell-ZIP, Binärpatch, Manifest und History-Bundle](https://github.com/ManuEtt/Dnd/actions/runs/40708407065/artifacts/12826680612) ·
+[geprüfte ARM64-Alpha mit Testsignatur](https://github.com/ManuEtt/Dnd/actions/runs/40708407065/artifacts/12826535931).
+Nächster Charakter-Schritt: ausdrücklich gewähltes Heiliges Symbol für Kleriker/
+Paladin, mit versioniertem Klassenbeleg, ohne historische Ausrüstung nachzuvergeben.
 
-**GETESTET:** 2.185 Flutter-, 195 Python- und 72 Backend-Tests in der finalen
-PR-CI; zusätzlich 20 gezielte UI-Prüfungen. Lokale Vollsuite, Formatierung von
-500 Dart-Dateien, Analyzer, Backend-Build, Android-Debug-Build und zwölf native
-Android-Tests bestanden. Genaue Commits und Main-Abnahme siehe Nachweistabelle.
+---
 
-**NICHT GETESTET:** Echtes Android-Gerät, TalkBack auf Gerät, Upgrade einer alten
-installierten APK mit vorhandener Datenbank und produktive Signierung.
+## In Entwicklung – 28.10.2026 – Zauberkraftregeneration ab Zaubererstufe 5
 
-**BLOCKIERT:** Kein angeschlossenes Android-Testgerät. Die aktive parallele
-Hexenmeister-Arbeit benötigt eine eigene fachliche und CI-Abnahme.
+- Auf ausdrückliche Auswahl beim Abschluss einer kurzen Rast bis zu `Zaubererstufe ~/ 2` ausgegebene Zaubereipunkte regenerieren, begrenzt auf einmal pro langer Rast.
+- Reine Regel, Mehrklassenprüfung, Persistenz über vorhandenes Ressourcenledger, Audit-Ereignis und Regressionstests ergänzt.
+- Aktueller Branch noch nicht vollständig von Flutter-/Android-CI abgenommen; die Mindest-Rastdauer wird weiterhin ausdrücklich bestätigt statt simuliert.
 
-**NOCH NICHT IMPLEMENTIERT:** Vollständiger Charakter-Wizard mit allen Pflichtwahlen
-und sämtliche SRD-Wirkungen. Magieinitiierter bestätigt bisher Zauberwahl und
-Zauberattribut, nicht das vollständige Wirken. Wilder Angreifer besitzt dauerhafte
-Würfelbelege und eine Entscheidungsvorprüfung, noch keinen durchgängigen
-Angriffs-/Schadensabschluss. Entrinnen-Vorprüfung ist keine TP-Buchung.
+---
 
-Neu gemeinsam integriert: Würfel-/Klassenherkunft, Start-TP/-pakete aller zwölf
-Klassen, Magieinitiierter-Auswahl, atomarer Editor-CAS, weitere bestätigte
-Klassenaktionen, Story-Sitzungsprüfung und geschützte Branchbereinigung.
-Behobene Integrationsfehler und genaue CI-/Artefaktherkunft stehen im
-[Migrationsbericht](docs/BRANCH_MIGRATION_20261028.md).
+## In Entwicklung – 28.10.2026 – Hexenmeister: Magische List und Eldritch Master
 
-**Nächster Schritt:** Heilige-Symbol-Wahl für Kleriker/Paladin im bestehenden
-Assistenten; UI/Inventar/Klassenbeleg persistieren, alte Version-1-Belege ohne
-neue Pflichtwahl weiter lesen und keine Pakete oder Gold erneut vergeben.
-[Akzeptanzkriterien und Fortsetzung](docs/CODEX_CHECKPOINT.md).
-
-Dieser Eintrag ist ein Dokumentationsabschluss ohne neue Produktversion oder APK.
-Die folgenden Einträge sind historische Momentaufnahmen; ihre damaligen offenen
-PR-/CI-Angaben beschreiben nicht den aktuellen Live-Stand. Vorherige komplette
-Datei mit SHA256/Git-Blob: [Historie](docs/history/migration_abschluss_20261028/MANIFEST.json).
+- Explizit bestätigtes einminütiges Ritual regeneriert regelgerecht ausgegebene Paktmagieplätze, einmal pro langer Rast. Hexenmeister 20 regeneriert alle statt nur der aufgerundeten Hälfte.
+- Validierte Klassenstufe/Mehrklasse, nutzungsbegrenztes Ressourcenspeichern, Audit-Ereignis und zwölf neue Tests.
+- Noch kein vollständiger Weltzeit-/Unterbrechungsnachweis und keine finale CI-/Geräteabnahme für dieses Inkrement; SRD-Status bleibt `partial`.
 
 ---
 

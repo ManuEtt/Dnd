@@ -289,6 +289,9 @@ class SrdClassFeatureCatalog {
   static const Set<String> _partialNames = {
     'Spellcasting',
     'Pact Magic',
+    // Player-confirmed one-minute rite; elapsed world time still untracked.
+    'Magical Cunning',
+    'Eldritch Master',
     'Channel Divinity',
     'Rage',
     'Action Surge',
@@ -296,6 +299,8 @@ class SrdClassFeatureCatalog {
     'Bardic Inspiration',
     'Lay On Hands',
     'Font of Magic',
+    // Optional once-per-long-rest recovery on an explicitly confirmed Short Rest.
+    'Sorcerous Restoration',
     'Wild Shape',
     'Favored Enemy',
     'Weapon Mastery',

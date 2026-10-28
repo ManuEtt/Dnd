@@ -2,6 +2,8 @@ import 'models.dart';
 import 'rules_engine.dart';
 import 'srd_character_classes.dart';
 import 'srd_ranger_tireless_rules.dart';
+import 'srd_sorcerous_restoration_rules.dart';
+import 'srd_warlock_magical_cunning_rules.dart';
 
 /// Safe, deterministic class feature resource accounting (SRD 5.2.1).
 /// Does not claim to execute a feature's narrative, combat or spell effects.
@@ -21,8 +23,10 @@ class ClassResourceRules {
     'indomitable',
     'channelDivinityPaladin',
     'favoredEnemy',
+    SrdWarlockMagicalCunningRules.resourceKey,
     SrdRangerTirelessRules.resourceKey,
     'sorceryPoints',
+    SrdSorcerousRestorationRules.resourceKey,
   };
 
   static int level(HeroCharacter hero, String className) {
@@ -104,8 +108,12 @@ class ClassResourceRules {
             : l >= 5
             ? 3
             : 2;
+      case SrdWarlockMagicalCunningRules.resourceKey:
+        return SrdWarlockMagicalCunningRules.maximumUses(hero);
       case SrdRangerTirelessRules.resourceKey:
         return SrdRangerTirelessRules.maximumTemporaryHitPointUses(hero);
+      case SrdSorcerousRestorationRules.resourceKey:
+        return SrdSorcerousRestorationRules.maximumUses(hero);
       case 'sorceryPoints':
         final l = level(hero, 'Zauberer');
         return l < 2 ? 0 : l;

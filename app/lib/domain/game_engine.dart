@@ -49,6 +49,8 @@ import 'srd_extra_creature_attack_rules.dart';
 import 'rules_engine.dart';
 import 'rest_rules.dart';
 import 'srd_ranger_tireless_rules.dart';
+import 'srd_sorcerous_restoration_rules.dart';
+import 'srd_warlock_magical_cunning_rules.dart';
 import 'spellcasting_rules.dart';
 import 'srd_bard_font_of_inspiration.dart';
 import 'srd_spell_preflight_rules.dart';
@@ -2915,7 +2917,7 @@ class GameEngine {
     // natural die value of an already pending attack/check.
     if (campaign.pendingRoll != null &&
         RegExp(
-          r'^(?:rettungswurf|handauflegen|unermüdlich|unermuedlich)\s*[: ]',
+          r'^(?:rettungswurf|handauflegen|unermüdlich|unermuedlich|magische list)\s*[: ]',
         ).hasMatch(words)) {
       return _commit(
         campaign,
@@ -3442,6 +3444,67 @@ class GameEngine {
         );
       }
     }
+    // SRD Warlock: only a player-confirmed completed one-minute rite can
+    // restore Pact Magic. Elapsed world time is not automatically inferred.
+    if (words.startsWith('magische list')) {
+      if (!RegExp(
+        r'^magische list\s*:\s*ritual abgeschlossen\s*[.!?]?$',
+      ).hasMatch(words)) {
+        return _commit(
+          campaign,
+          current,
+          'Bestätige „Magische List: Ritual abgeschlossen“ erst nach dem einminütigen Ritual.',
+          type: 'rules.blocked',
+        );
+      }
+      if (!current.hero.isComplete) {
+        return _commit(
+          campaign,
+          current,
+          'Das Ritual benötigt einen vollständigen Charakterbogen.',
+          type: 'rules.blocked',
+        );
+      }
+      if (current.encounter != null && !current.encounter!.isFinished) {
+        return _commit(
+          campaign,
+          current,
+          'Ein einminütiges Ritual kann in diesem laufenden Einzelgegnerkampf nicht bestätigt werden.',
+          type: 'rules.blocked',
+        );
+      }
+      try {
+        final rite = SrdWarlockMagicalCunningRules.restoreAfterCompletedRite(
+          current.hero,
+        );
+        return _commit(
+          campaign,
+          current.copyWith(hero: rite.hero),
+          'Magische List: ${rite.recoveredSlots} Paktmagieplätze wiederhergestellt. '
+          '${SpellcastingRules.availablePactSlots(rite.hero)} verfügbar; '
+          'Wiederholung erst nach einer langen Rast.'
+          '${rite.eldritchMaster ? ' Eldritch Master aktiviert.' : ''}',
+          type: 'class.magicalCunning',
+          payload: {
+            'oneMinuteRiteConfirmed': true,
+            'recoveredSlots': rite.recoveredSlots,
+            'pactSlotsSpentBefore': rite.spentPactSlotsBefore,
+            'pactSlotsSpentAfter': rite.spentPactSlotsAfter,
+            'usesRemaining': rite.usesRemaining,
+            'eldritchMaster': rite.eldritchMaster,
+          },
+        );
+      } on StateError catch (error) {
+        return _commit(
+          campaign,
+          current,
+          error.message.toString(),
+          type: 'rules.blocked',
+        );
+      } on FormatException catch (error) {
+        return _commit(campaign, current, error.message, type: 'rules.blocked');
+      }
+    }
     if (_isEndTurn(words)) {
       try {
         return endHeroTurn(current);
@@ -3532,6 +3595,14 @@ class GameEngine {
       }
       try {
         if (short) {
+          final restoreSorceryPoints = words.contains(
+            'mit zauberkraftregeneration',
+          );
+          if (restoreSorceryPoints) {
+            SrdSorcerousRestorationRules.restoreAfterCompletedShortRest(
+              current.hero,
+            );
+          }
           final requested = RegExp(
             r'(\d{1,2})\s*[wd](6|8|10|12)',
           ).firstMatch(words);
@@ -3546,11 +3617,16 @@ class GameEngine {
                     current.hero.spentActionSurge > 0 ||
                     current.hero.spentClassResources.values.any((n) => n > 0) ||
                     SrdRangerTirelessRules.canReduceExhaustion(current.hero))) {
-              final refreshed = ClassResourceRules.afterShortRest(
+              final baseRestored = ClassResourceRules.afterShortRest(
                 ClassFeatureResources.afterShortRest(
                   SpellcastingRules.afterShortRest(current.hero),
                 ),
               );
+              final refreshed = restoreSorceryPoints
+                  ? SrdSorcerousRestorationRules.restoreAfterCompletedShortRest(
+                      baseRestored,
+                    ).hero
+                  : baseRestored;
               return _commit(
                 campaign,
                 current.copyWith(hero: refreshed),
@@ -3566,6 +3642,13 @@ class GameEngine {
                   'pactSlotsRecovered': current.hero.spentPactSlots,
                   'exhaustionBefore': current.hero.exhaustionLevel,
                   'exhaustionAfter': refreshed.exhaustionLevel,
+                  'sorcerousRestorationUsed': restoreSorceryPoints,
+                  'sorceryPointsRecovered': restoreSorceryPoints
+                      ? (current.hero.spentClassResources['sorceryPoints'] ??
+                                0) -
+                            (refreshed.spentClassResources['sorceryPoints'] ??
+                                0)
+                      : 0,
                 },
               );
             }
@@ -3586,11 +3669,16 @@ class GameEngine {
               !RestRules.availableHitDice(
                 current.hero,
               ).values.any((n) => n > 0)) {
-            final refreshed = ClassResourceRules.afterShortRest(
+            final baseRestored = ClassResourceRules.afterShortRest(
               ClassFeatureResources.afterShortRest(
                 SpellcastingRules.afterShortRest(current.hero),
               ),
             );
+            final refreshed = restoreSorceryPoints
+                ? SrdSorcerousRestorationRules.restoreAfterCompletedShortRest(
+                    baseRestored,
+                  ).hero
+                : baseRestored;
             return _commit(
               campaign,
               current.copyWith(hero: refreshed),
@@ -3606,6 +3694,11 @@ class GameEngine {
                 'pactSlotsRecovered': current.hero.spentPactSlots,
                 'exhaustionBefore': current.hero.exhaustionLevel,
                 'exhaustionAfter': refreshed.exhaustionLevel,
+                'sorcerousRestorationUsed': restoreSorceryPoints,
+                'sorceryPointsRecovered': restoreSorceryPoints
+                    ? (current.hero.spentClassResources['sorceryPoints'] ?? 0) -
+                          (refreshed.spentClassResources['sorceryPoints'] ?? 0)
+                    : 0,
               },
             );
           }
@@ -3614,6 +3707,7 @@ class GameEngine {
             dice: dice,
             dieSides: sides,
             count: count,
+            restoreSorceryPoints: restoreSorceryPoints,
           );
           return _commit(
             campaign,
@@ -3634,6 +3728,11 @@ class GameEngine {
               'pactSlotsRecovered': current.hero.spentPactSlots,
               'exhaustionBefore': current.hero.exhaustionLevel,
               'exhaustionAfter': rest.hero.exhaustionLevel,
+              'sorcerousRestorationUsed': restoreSorceryPoints,
+              'sorceryPointsRecovered': restoreSorceryPoints
+                  ? (current.hero.spentClassResources['sorceryPoints'] ?? 0) -
+                        (rest.hero.spentClassResources['sorceryPoints'] ?? 0)
+                  : 0,
             },
           );
         }
