@@ -132,6 +132,15 @@ void main() {
       expect(HeroCharacter.fromJson(result.toJson()).exhaustionLevel, 1);
     });
 
+    test('bewusstlos ohne Trefferpunkte bekommt keinen Rastbonus', () {
+      final hero = _hero(hitPoints: 0);
+      expect(SrdRangerTirelessRules.canReduceExhaustion(hero), isFalse);
+      expect(
+        SrdRangerTirelessRules.afterShortRest(hero).exhaustionLevel,
+        2,
+      );
+    });
+
     test('Klassenressourcen-Rastpfad nutzt denselben Effekt einmal', () {
       final fresh = _hero();
       final result = ClassResourceRules.afterShortRest(fresh);
