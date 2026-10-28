@@ -13,6 +13,16 @@
 
 ---
 
+## 28.10.2026 – Chat C: scrollbarer Inventardialog (PR #355)
+
+**Basis:** main `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78`; Branch `feat/chat-c/scrollable-inventory-details-20261028`; Code-/Teststand `ae9d4dc6ee6d359b44fdde44199a71b7817a4938`; [PR #355](https://github.com/ManuEtt/Dnd/pull/355) als Entwurf.
+
+**IMPLEMENTIERT:** Inventardetails mit langen gespeicherten Notizen sind im Flutter-`AlertDialog` scrollbar, ohne Spielstandänderung. Drei neue Widgettestfälle für 320/360 dp, 2x Schrift, Abbruch und leere Beschreibung. **GETESTET:** Main-/PR-/Dateiumfang via GitHub geprüft, Schreibzugriff und PR verifiziert. Der erste [Android-CI-Lauf #40715218076](https://github.com/ManuEtt/Dnd/actions/runs/40715218076) scheiterte im Dart-Format-Gate; der [isolierte Formatter-Diagnoselauf #40716098297](https://github.com/ManuEtt/Dnd/actions/runs/40716098297) lieferte einen erfolgreichen, exakt übernommenen Diff, und der temporäre Diagnoseworkflow wurde wieder entfernt. **Keine Flutter-/APK-Abnahme aus diesem Diagnoselauf ableiten.** **NICHT GETESTET:** Python/Backend, lokale Dart-/Flutter-Formatierung/Analyse/Widgettests, APK, native Android-Tests und echtes Gerät. Die neue CI auf finalem PR-HEAD ist gesondert abzunehmen. **BLOCKIERT:** Flutter-/Dart-SDK fehlt; GitHub-Checkout wegen DNS nicht erreichbar. **NOCH NICHT IMPLEMENTIERT:** TalkBack-Geräteabnahme/fokussierte Tastaturfokusprüfung der fixierten Aktionen. Kein Schema-, JSON-, Controller-, Regel- oder Storyeingriff.
+
+Dateien: `app/lib/ui/fantasy_art.dart`, `app/test/fantasy_inventory_dialog_scroll_test.dart`, eigener Chat-C-Checkpoint und diese Dokumentation. **Nächster unabhängiger Schritt:** Fokusreihenfolge der vier Schnellaktionen mit 320 dp, IME und 2x Schrift per Widgettest prüfen, nach grüner #355-CI beginnen.
+
+---
+
 ## 28.10.2026 – Gemeinsame lokale Abnahme bestanden
 
 Quellstand `4f03b7880c36ca225325c87ec9f2c56e0a93dccd` ist lokal vollständig geprüft:

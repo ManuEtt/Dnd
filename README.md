@@ -4,6 +4,10 @@
 
 Die Python-Architekturprüfung kontrolliert neben `import` und `export` jetzt auch `part` und URI-basierte `part of`-Direktiven. Dadurch darf Domain-Code Story-Dateien nicht als Teilbibliothek einschleusen; Story-Dateien dürfen den gemeinsamen Domänencode weiterhin regulär importieren, ihn aber nicht als `part` einbinden. Fünf neue positive und negative Regressionstests sind ergänzt. **Die vollständige PR-CI muss auf dem finalen Commit noch geprüft werden.** Keine Änderung an SQLite, JSON, Spielregeln, Story oder App-Version. [Draft-PR #360](https://github.com/ManuEtt/Dnd/pull/360) · [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
 
+## 28.10.2026 – Chat C: Inventarnotizen bei großer Android-Schrift
+
+Ein Inventargegenstand kann lange importierte oder selbst verfasste Beschreibungen enthalten. Der reine Lesedialog lässt nun Titel/Text scrollen, während „Schließen“ bei kleinen Displays erreichbar bleibt. [PR #355](https://github.com/ManuEtt/Dnd/pull/355) ist ein **Entwurf** mit drei ergänzten Widgettestfällen für 320/360 dp, doppelte Schriftgröße und leere Beschreibungen. Die Flutter-/Android-CI und echte Geräteprüfung sind **noch nicht bestätigt**. Kein Einfluss auf gespeicherte Gegenstände, Kampagnen, Regelengine oder SQLite/JSON. [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md).
+
 ## 28.10.2026 – Gemeinsame lokale Abnahme bestanden
 
 Quellstand `4f03b7880c36ca225325c87ec9f2c56e0a93dccd` ist lokal vollständig geprüft:

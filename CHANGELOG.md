@@ -1,3 +1,11 @@
+## In Entwicklung – 28.10.2026 – Zauberkraftregeneration ab Zaubererstufe 5
+
+- Auf ausdrückliche Auswahl beim Abschluss einer kurzen Rast bis zu `Zaubererstufe ~/ 2` ausgegebene Zaubereipunkte regenerieren, begrenzt auf einmal pro langer Rast.
+- Reine Regel, Mehrklassenprüfung, Persistenz über vorhandenes Ressourcenledger, Audit-Ereignis und Regressionstests ergänzt.
+- Aktueller Branch noch nicht vollständig von Flutter-/Android-CI abgenommen; die Mindest-Rastdauer wird weiterhin ausdrücklich bestätigt statt simuliert.
+
+---
+
 ## In Entwicklung – 28.10.2026 – Hexenmeister: Magische List und Eldritch Master
 
 - Explizit bestätigtes einminütiges Ritual regeneriert regelgerecht ausgegebene Paktmagieplätze, einmal pro langer Rast. Hexenmeister 20 regeneriert alle statt nur der aufgerundeten Hälfte.

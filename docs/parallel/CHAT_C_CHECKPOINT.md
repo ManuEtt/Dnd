@@ -1,3 +1,21 @@
+## 28.10.2026 – Chat C: Inventardialog bei großen Beschreibungen bedienbar halten
+
+- **Ausgangs-Main:** `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78` (App `0.8.46+96`).
+- **Branch:** `feat/chat-c/scrollable-inventory-details-20261028`; **PR:** [#355](https://github.com/ManuEtt/Dnd/pull/355) (Draft); **Code-/Test-Commit:** `ae9d4dc6ee6d359b44fdde44199a71b7817a4938`. Finalen Dokumentations-HEAD und CI separat anhand des PRs prüfen.
+- **Ausgangsproblem:** Frei eingegebene bzw. importierte lange Inventarbeschreibungen belegen im bisherigen nicht scrollbaren `AlertDialog` mehr Platz als ein kleines Android-Display mit großer Schrift bietet. Die Schließen-Aktion soll unabhängig davon bedienbar bleiben.
+- **IMPLEMENTIERT:** `app/lib/ui/fantasy_art.dart` verwendet `AlertDialog(scrollable: true)` für die schreibgeschützte Inventardetailansicht; die Schließen-Aktion bleibt außerhalb des scrollbaren Inhalts. Bestehende Mengen, Namen und Beschreibungstexte werden unverändert übernommen.
+- **TESTS ERGÄNZT:** `app/test/fantasy_inventory_dialog_scroll_test.dart` enthält zwei positive lange Notizszenarien (320/360 dp, 520 dp Höhe, 2x Schrift; Schließen und Originaldaten prüfen) und den negativen Leerbeschreibungspfad mit Fallback und ohne Datenmutation.
+- **FORMATDIAGNOSE:** Der erste Android-Workflow [#40715218076](https://github.com/ManuEtt/Dnd/actions/runs/40715218076) scheiterte ausschließlich an der neuen Testdatei-Formatierung und übersprang weitere Flutter-/APK-Schritte. Der kurzzeitig auf dem eigenen Branch ausgeführte [Dart-3.9.2-Formatter-Diagnoselauf #40716098297](https://github.com/ManuEtt/Dnd/actions/runs/40716098297) war erfolgreich und zeigte zwei konkrete Zeilenumbruch-Differenzen. Beide wurden in `ae9d4dc6ee6d359b44fdde44199a71b7817a4938` übernommen; der Diagnoseworkflow wurde im Commit `76ab0cf63b251eb390fc36262b4acf0522cd105d` vollständig entfernt. **Dies ist noch kein erfolgreicher App-Test.**
+- **GETESTET:** Aktuellen main-SHA, offene PRs, PR-Dateiänderungen, Quellcode und vorhandene Inventar-Widgettests über GitHub geprüft. Eigenen Branch und PR tatsächlich erstellt.
+- **NICHT GETESTET:** Python-Skripte, Dart-Formatierung, Flutter Analyze, Widget-/Gesamttests, Backend, Debug-APK und native Android-Tests in dieser Containerumgebung; kein Flutter-/Dart-SDK und kein DNS-Checkout. GitHub-Actions-CI auf dem finalen PR-SHA und echte Geräteprüfung getrennt abnehmen.
+- **BLOCKIERT:** Lokale Flutter-/Android-Ausführung durch fehlende SDKs; Entwurfs-PR nicht mergen, bevor die CI erfolgreich ist.
+- **NOCH NICHT IMPLEMENTIERT:** Allgemeine Android-TalkBack-Abnahme und weitere Tastaturfokus-Regressionen.
+- **Geänderte Dateien:** `app/lib/ui/fantasy_art.dart`, `app/test/fantasy_inventory_dialog_scroll_test.dart`, `docs/parallel/CHAT_C_CHECKPOINT.md`, `docs/CODEX_CHECKPOINT.md`, `README.md`.
+- **Migration/Kompatibilität:** Keine Schema-/JSON-/Domain-/Story-/Regeländerung; gespeicherte Spielstände und Item-IDs bleiben unverändert.
+- **Nächster Schritt:** Isolierter Test der Tastaturfokus-Reihenfolge für die vier fixierten Abenteuer-Schnellaktionen bei 320 dp, geöffneter Tastatur und 2x Systemschrift; Akzeptanz: jede Aktion ist fokussierbar, eindeutig benannt und innerhalb des Bildschirms ohne Überlauf bedienbar.
+
+---
+
 ## 27.10.2026 – Chat C: TalkBack-Toggle-Ansage bei Fantasy-Buttons
 
 - **Ausgangs-main:** `e3e166a507bf9c88a4286473ceb97fc4b14ec35b`.
