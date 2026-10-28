@@ -2134,11 +2134,10 @@ class _AdventurePageState extends State<_AdventurePage> {
           onFontOfInspiration: _ruleInteractionBlocked
               ? null
               : (SrdBardFontProposal proposal) async {
-                  await widget.controller.confirmBardFontOfInspiration(
+                  return widget.controller.confirmBardFontOfInspiration(
                     proposal,
                     playerConfirmed: true,
                   );
-                  return widget.controller.error == null;
                 },
           onEdit: _ruleInteractionBlocked
               ? null
