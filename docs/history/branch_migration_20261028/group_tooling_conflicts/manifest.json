@@ -1,0 +1,38 @@
+[
+  {
+    "path": "README.md",
+    "stage": 1,
+    "saved": "docs/history/branch_migration_20261028/group_tooling_conflicts/1/README.md",
+    "sha256": "0c6dfd6b1e790750fdb6bc5e4cd54a6afb71a4706dd84673bd7717520eebc53f"
+  },
+  {
+    "path": "README.md",
+    "stage": 2,
+    "saved": "docs/history/branch_migration_20261028/group_tooling_conflicts/2/README.md",
+    "sha256": "cd088723a7b8d92f4fc4c257a5a1614b6594b271742c72bd88474d242d9213df"
+  },
+  {
+    "path": "README.md",
+    "stage": 3,
+    "saved": "docs/history/branch_migration_20261028/group_tooling_conflicts/3/README.md",
+    "sha256": "561ec247c772abb5013f5ca9fe7f7fac64f80f0fb16a9d6fa66eea195d2b8483"
+  },
+  {
+    "path": "docs/CODEX_CHECKPOINT.md",
+    "stage": 1,
+    "saved": "docs/history/branch_migration_20261028/group_tooling_conflicts/1/docs/CODEX_CHECKPOINT.md",
+    "sha256": "a979cc336b9973135070521aba1cc14a0640fa1d2446f9da9b8366515750ef0f"
+  },
+  {
+    "path": "docs/CODEX_CHECKPOINT.md",
+    "stage": 2,
+    "saved": "docs/history/branch_migration_20261028/group_tooling_conflicts/2/docs/CODEX_CHECKPOINT.md",
+    "sha256": "c3f2cab92f5df6d61e39164c1cb6a32656ef24af7f21ec91550c027309c28aef"
+  },
+  {
+    "path": "docs/CODEX_CHECKPOINT.md",
+    "stage": 3,
+    "saved": "docs/history/branch_migration_20261028/group_tooling_conflicts/3/docs/CODEX_CHECKPOINT.md",
+    "sha256": "557642877d56555f8d4a0d641ba3a0378bf5a8a26c221ab91eca5b3d1cbe4637"
+  }
+]

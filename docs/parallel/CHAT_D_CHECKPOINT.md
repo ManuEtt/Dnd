@@ -1,3 +1,16 @@
+# Chat D D-014 – Bedingte Dart-Imports/Exports an Architekturgrenzen (27.10.2026)
+
+- **Basis-main:** `8239f5e71ec6b229a2a0883500adaf431bb70087`, Branch `fix/chat-d/conditional-dart-boundaries-20261027`.
+- **Ausgangsproblem:** `scripts/check_domain_boundaries.py` prüfte bei `import` und `export` nur die erste URI. Dart bietet `if (dart.library.io)` / `if (dart.library.html)` bedingte Dateivarianten, die je nach Plattform die Story-/Regelgrenze unbemerkt hätten überschreiten können.
+- **IMPLEMENTIERT:** Jede bedingte Datei-URI derselben Import-/Exportanweisung durchläuft dieselbe bestehende Story-/Regel- und Package-URI-Prüfung. Mehrere `if`-Alternativen, Zeilenumbrüche, Dart-Kommentare zwischen Direktivenbestandteilen und konfigurierte String-Vergleiche werden erfasst. Die eng erlaubten Story-Fassadenimports bleiben auf genau ihre bekannten relativen Pfade beschränkt. Framework-/Dart-Bibliotheken werden nach den vorhandenen Regeln behandelt.
+- **TESTS:** Neun Python-Regressionen für Domain→Story (relative/package URI), mehrfach bedingten Export, unveränderte Whitelist, Story→Dart-Plattform, Vergleichsbedingung, erlaubte Alternativen, Kommentare/Text ohne Importwirkung sowie bedingte Imports/Exports mit echten Block-/Zeilenkommentaren. Isolierte Regex-Stichprobe lokal ausgeführt; komplette Repository-Python- und Android-CI auf dem finalen Commit noch ausstehend.
+- **VERSIONEN:** Flutter-App, Backend, SRD-Regelcode, SQLite-Schema 2, Kampagnen-JSON-Schema 1 bleiben unverändert; keine Migration.
+- **KOORDINATION:** Bei Paketbeginn offene PRs #287–#312 geprüft. #311 (anderes Chat-D-Paket) bearbeitet `scripts/prepare_alpha_release.py` und dessen Tests, nicht die zwei hier geänderten Prüfdateien. README/zentraler Checkpoint nur additiv ändern und bei späteren Merges konsolidieren. Fremde Branches und PRs nicht bearbeiten.
+- **BLOCKIERT/UNGETESTET:** endgültige GitHub Actions auf PR-HEAD, echte Android-Installation und Integration nach Main. Externer Branch-Cleanup-Lauf auf Main war unabhängig hiervon fehlgeschlagen; kein Code dieses Pakets betroffen.
+- **NÄCHSTER SCHRITT:** PR-CI auf exakter SHA prüfen; gegebenenfalls nur eigenen Branch reparieren, anschließend aktuelle Main- und PR-Änderungen vergleichen.
+
+---
+
 # Chat D D-013 – APK-ZIP-Bomb-Abwehr vor Alpha-Veröffentlichung (27.10.2026)
 
 - **Ausgangs-main:** `f9b2f72a4bf8e4216bf8baac60c7f92c4a8a997f`, Branch `fix/chat-d/alpha-apk-zipbomb-guard-20261027`. Würfelraunen `0.8.42+92`, SQLite 2, Kampagnen-JSON 1 unverändert.
@@ -574,3 +587,24 @@ Keine Änderung am SQLite-Schema, an JSON-Sicherungen, Regeln, UI oder Backend; 
 ### Nächster konkreter Schritt
 
 PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prüfen; Akzeptanz: neue Gates, reguläre Python-/Backend-/Flutter-Jobs und Android-Artefakte erfolgreich, PR ohne Überschreiben paralleler Dokumentation konfliktfrei integrierbar. Keine automatische Zusammenführung oder Branchlöschung.
+
+
+# Chat D D-015 – Schutz vor Löschen geschützter PR-Branches (28.10.2026)
+
+- **Ausgangs-main-SHA:** `bf5999e98335c1da94b1eafbf2fc8088b392b6ef`.
+- **Arbeitsbranch:** `fix/chat-d/cleanup-protected-head-20261028`.
+- **PR:** [#335](https://github.com/ManuEtt/Dnd/pull/335) (gestapelt auf PR #337, finale kombinierte CI offen).
+- **Technische Commits:** `f6a541f886e65d4cf623e6e3b961256955fbf88c`, `0ce8be9028ece58618d8c7f33e3768d0cbe4c9a7`; Dokumentation auf demselben Branch.
+- **Ausgangsproblem:** Die über GitHub gelieferte Branch-Protected-Eigenschaft wurde beim aktiven Cleanup vor dem Archivierungs-/Löschpfad nicht ausdrücklich berücksichtigt.
+- **Implementiert:** Guard `branch.protected || protectedNames.has(name)` vor der weiteren Prüfung; geschützte Referenzen können keine Löschaktion auslösen.
+- **Geänderte Dateien:** `.github/workflows/cleanup-merged-safe-20261027.yml`, `scripts/tests/test_safe_cleanup_protected_branch.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Tests:** Drei Python-Unittest-Methoden (reguläre Guard-Position, negative Fälle, unveränderte weitere Gates). Ausführung/CI auf ursprünglichem Commit erfolgreich, kombinierte CI noch ausstehend, physischer Gerätetest offen.
+- **CI-Ergebnis:** Ausstehend auf finalem Commit. Keine bereits grüne fremde CI als Nachweis verwendet.
+- **Risiken:** Snapshot der Schutzflags ist keine atomare Referenzsperre. Bei zwischenzeitlich neu gesetztem Schutz verweigert GitHub selbst die Löschung; keine endgültige Race-Freiheit behauptet.
+- **Migration:** Keine, SQLite 2/JSON 1 und App-Version unverändert.
+- **Nächster konkreter Schritt:** Finalen PR-Workflow kontrollieren und fehlerfreie Regressionstests bestätigen; bei Rot korrigieren.
+
+---
+
+- **Koordination am 28.10.2026:** Auf PR #337 `maintenance/cleanup-ancestor-branches-20261028` gestapelt; dessen geänderte Trigger und sichere Git-Ancestry-Gates bleiben erhalten. Die Prüfung in `test_safe_cleanup_protected_branch.py` wurde an `#337` angepasst, ohne dessen Testdatei zu überschreiben.
+
