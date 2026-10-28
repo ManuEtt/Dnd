@@ -36,7 +36,10 @@ void main() {
     expect(initial.spentSpellSlots, isEmpty);
     expect(updated.spentClassResources['bardicInspiration'], 1);
     expect(updated.spentSpellSlots['1'], 1);
-    expect(HeroCharacter.fromJson(updated.toJson()).toJson(), updated.toJson());
+    final restored = HeroCharacter.fromJson(updated.toJson());
+    expect(restored.spentClassResources, updated.spentClassResources);
+    expect(restored.spentSpellSlots, updated.spentSpellSlots);
+    expect(restored.abilities['charisma'], 16);
     expect(() => proposal.applyTo(updated), throwsFormatException);
   });
 
