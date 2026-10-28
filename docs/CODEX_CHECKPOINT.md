@@ -1,3 +1,17 @@
+# Chat B – Outbox-Quittungen bei mehreren SQLite-Schreibern (27.10.2026)
+
+- **Ausgangsbasis:** PR #305 `fix/chat-b/npc-outbox-cas-20261027` auf `eb4f3a43864ba00843aacd7f0b47b2e2f0fad1da`; eigener Branch `test/chat-b/npc-outbox-multiwriter-cas-20261027`.
+- **IMPLEMENTIERT:** Reines Testpaket `app/test/npc_outbox_multiwriter_cas_test.dart`, vier echte SQLite-/`PlayerActionOutbox`-Integrationen mit zwei unabhängig geöffneten Verbindungen auf dieselbe DB: stale ACK bei neuem NPC; stale ACK bei derselben ID mit neuer Revision; alte Text-only-Quittung gegen neuen NPC-Auftrag in beide Richtungen; zwei gleichzeitige NPC-Handlungen derselben Kampagne mit exakt einem erfolgreichen Sendeauftrag.
+- **AKZEPTANZ:** Ausschließlich exakt passender Request-ID/Text/NPC-ID/Revision-Datensatz darf gelöscht werden; eine verspätete Quittung bleibt wirkungslos und der neue Auftrag bleibt auf beiden SQLite-Verbindungen sichtbar; Parallel-Schreiber überschreiben nichts.
+- **GETESTET:** GitHub-Code/API von PR #305 geprüft, offizielle Dart-3.9.2-Formatterausgabe übernommen und temporären Diagnoseworkflow entfernt. Endgültige GitHub-CI/Android-Abnahme auf eigenem finalem PR-Head gesondert nachweisen.
+- **NICHT GETESTET:** Android-Realgerät und Live-KI-Provider; keine vollständige manuelle Oberflächenbedienung.
+- **MIGRATION:** keine. Keine Änderung an SQLite-Version 3, Backend, Kampagnen-JSON, Regelengine oder Produktionsdateien.
+- **BLOCKIERT:** Als gestapelter PR abhängig von #305 und dessen Vorgängern (#303, #300, #292, #290, #288). Gemeinsame Dokumentation durch Chat D beim Merge zusammenführen.
+- **NÄCHSTER SCHRITT:** Nach grüner CI eine eigene kompakte Migration-/Recovery-Matrix dokumentieren und die gestapelten PRs durch Chat D integrieren.
+- [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md). Ältere Einträge unverändert.
+
+---
+
 # Chat B – atomare NPC-Outbox-Quittung mit vollständiger Identität (27.10.2026)
 
 - **Basis:** [PR #303](https://github.com/ManuEtt/Dnd/pull/303), Head `5388d8e428e024c939bf99e609f857ec37c4a62a`; eigener Branch `fix/chat-b/npc-outbox-cas-20261027`. Nicht vor den gestapelten Vorgänger-PRs integrieren.
