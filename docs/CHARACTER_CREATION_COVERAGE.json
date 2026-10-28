@@ -17,34 +17,40 @@
     {
       "id": "CHAR-ABILITY-STANDARD-ARRAY",
       "title": "Attribut-Standardsatz",
-      "status": "existing_code_ci_unverified",
-      "source": "SRD 5.2.1",
+      "status": "implemented_local_tests_passed_ci_pending",
+      "source": "SRD 5.2.1 p. 21; backgrounds p. 83",
       "code": [
         "app/lib/domain/ability_generation.dart"
       ],
-      "ui": [],
+      "ui": [
+        "app/lib/ui/ability_assignment_dialog.dart"
+      ],
       "tests": [
         "app/test/ability_generation_test.dart"
-      ]
+      ],
+      "register_requirement_id": "RULE-CHARACTER-CREATION-ABILITY-SCORES"
     },
     {
       "id": "CHAR-ABILITY-POINT-BUY",
       "title": "Attribut-Punktekauf 27 Punkte",
-      "status": "existing_code_ci_unverified",
-      "source": "SRD 5.2.1",
+      "status": "implemented_local_tests_passed_ci_pending",
+      "source": "SRD 5.2.1 p. 21; backgrounds p. 83",
       "code": [
         "app/lib/domain/ability_generation.dart"
       ],
-      "ui": [],
+      "ui": [
+        "app/lib/ui/ability_assignment_dialog.dart"
+      ],
       "tests": [
         "app/test/ability_generation_test.dart"
-      ]
+      ],
+      "register_requirement_id": "RULE-CHARACTER-CREATION-ABILITY-SCORES"
     },
     {
       "id": "CHAR-ABILITY-RANDOM-4D6-DROP-LOWEST",
       "title": "4W6, niedrigsten streichen, sechs Werte",
-      "status": "implemented_ci_pending",
-      "source": "SRD 5.2.1",
+      "status": "implemented_local_tests_passed_ci_pending",
+      "source": "SRD 5.2.1 p. 21; backgrounds p. 83",
       "code": [
         "app/lib/domain/ability_generation.dart"
       ],
@@ -53,13 +59,14 @@
       ],
       "tests": [
         "app/test/ability_random_generation_test.dart"
-      ]
+      ],
+      "register_requirement_id": "RULE-CHARACTER-CREATION-ABILITY-SCORES"
     },
     {
       "id": "CHAR-ABILITY-RANDOM-UI-CONFIRM",
       "title": "Explizite Würfelwert-Zuordnung",
-      "status": "implemented_ci_pending",
-      "source": "SRD 5.2.1",
+      "status": "implemented_local_tests_passed_ci_pending",
+      "source": "SRD 5.2.1 p. 21; backgrounds p. 83",
       "code": [
         "app/lib/ui/ability_assignment_dialog.dart"
       ],
@@ -68,26 +75,30 @@
       ],
       "tests": [
         "app/test/ui_random_ability_assignment_test.dart"
-      ]
+      ],
+      "register_requirement_id": "RULE-CHARACTER-CREATION-ABILITY-SCORES"
     },
     {
       "id": "CHAR-ABILITY-SOURCE-PERSISTENCE",
       "title": "Versionierte Anfangsattribute, Methode, Würfel und Hintergrundbonus über JSON/SQLite",
-      "status": "implemented_ci_pending",
-      "source": "SRD 5.2.1",
+      "status": "implemented_local_tests_passed_ci_pending",
+      "source": "SRD 5.2.1 p. 21; backgrounds p. 83",
       "code": [
         "app/lib/domain/starting_ability_origin.dart",
         "app/lib/domain/models.dart"
       ],
       "ui": [
         "app/lib/ui/ability_assignment_dialog.dart",
-        "app/lib/ui/character_editor.dart"
+        "app/lib/ui/character_editor.dart",
+        "app/lib/ui/starting_ability_origin_panel.dart"
       ],
       "tests": [
         "app/test/starting_ability_origin_test.dart",
         "app/test/ability_storage_integration_test.dart",
-        "app/test/ui_ability_assignment_test.dart"
-      ]
+        "app/test/ui_ability_assignment_test.dart",
+        "app/test/starting_ability_origin_panel_test.dart"
+      ],
+      "register_requirement_id": "RULE-CHARACTER-CREATION-ABILITY-SCORES"
     },
     {
       "id": "CHAR-BACKGROUND-ALL-TRAITS",
@@ -192,6 +203,24 @@
       ],
       "mechanical_mutation": false,
       "note": "Kein Gesamt-SRD-Erfolgsflag; vollständig geführter Assistent und Quellen für sämtliche Pflichtwahlen weiterhin offen."
+    },
+    {
+      "id": "CHAR-ABILITY-SOURCE-DISPLAY",
+      "title": "Historische Startwerte und 24 Rohwürfel im echten Charakterbogen",
+      "register_requirement_id": "RULE-CHARACTER-CREATION-ABILITY-SCORES",
+      "status": "implemented_local_tests_passed_ci_pending",
+      "source": "SRD 5.2.1 p. 21; historische Darstellung ist App-Funktion",
+      "code": [
+        "app/lib/domain/starting_ability_origin.dart"
+      ],
+      "ui": [
+        "app/lib/ui/starting_ability_origin_panel.dart",
+        "app/lib/ui/fantasy_character_sheet.dart"
+      ],
+      "tests": [
+        "app/test/starting_ability_origin_panel_test.dart"
+      ],
+      "mechanical_mutation": false
     }
   ],
   "classes": [

@@ -1,0 +1,29 @@
+{
+  "commit": "4c2ad0ab8e00d22fac645c6f885c9f9cfcff2267",
+  "files": {
+    "README.md": {
+      "sha256": "1fb80fd407818efe83f18d4ee4a890940b227e7f6790a1f3b78cb8b6044eb1df",
+      "bytes": 13156
+    },
+    "docs/CODEX_CHECKPOINT.md": {
+      "sha256": "6e68cb1f1958fc7308fdf28222df28ba516c9f158731e4e75e61271357b2caf5",
+      "bytes": 12490
+    },
+    "docs/CHARACTER_CREATION_COMPLETE.md": {
+      "sha256": "2931e4a992ea1fb5703c3c85ce5552232428f0ab545d661863dba78a4349ed28",
+      "bytes": 8656
+    },
+    "docs/CHARACTER_CREATION_COVERAGE.json": {
+      "sha256": "1cee4067ec0db3409b0aa05d4a00bf6c7e2ea56f5b920f9835dbe8bb5411a89a",
+      "bytes": 8342
+    },
+    "docs/CLASS_CREATION.md": {
+      "sha256": "293b74497f6972cb163df2047213af090401ed5414afa8c4546ef3ebe2ac9fb1",
+      "bytes": 5299
+    },
+    "docs/ABILITY_RULES.md": {
+      "sha256": "8cefc2aa4301e2c0f8001a259d0b8de3b6709f2cc212b05b8b2156acd1b639ad",
+      "bytes": 7948
+    }
+  }
+}

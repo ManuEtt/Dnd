@@ -62,6 +62,8 @@ class _AbilityAssignmentDialogState extends State<AbilityAssignmentDialog> {
   AbilityRollSet? _rollSet;
   Map<String, int>? _randomScores;
   bool _confirmedRandomAssignment = false;
+  String? _rollError;
+  var _methodFieldGeneration = 0;
   SrdBackground? _background;
   var _pattern = _BonusPattern.split;
   String? _plusTwo;
@@ -118,13 +120,37 @@ class _AbilityAssignmentDialogState extends State<AbilityAssignmentDialog> {
     if (_rollSet != null) return;
     final source = widget.rollD6;
     final random = source == null ? Random.secure() : null;
-    _rollSet = AbilityRollSet.generate(
+    final rolled = AbilityRollSet.generate(
       rollD6: source ?? () => random!.nextInt(6) + 1,
     );
-    _randomScores = {
+    final assigned = {
       for (var i = 0; i < abilityNames.length; i++)
-        abilityNames[i]: _rollSet!.scores[i],
+        abilityNames[i]: rolled.scores[i],
     };
+    _rollSet = rolled;
+    _randomScores = assigned;
+  }
+
+  void _selectMethod(AbilityGenerationMethod? value) {
+    if (value == null) return;
+    try {
+      if (value == AbilityGenerationMethod.randomRoll) _rollFirstSet();
+    } catch (_) {
+      setState(() {
+        _rollError =
+            'Die Attributwürfel konnten nicht erzeugt werden. '
+            'Bisherige Werte bleiben erhalten. Bitte wähle die '
+            'Würfelmethode erneut oder eine andere Methode.';
+        // Reset the form field's tentative dropdown value to the unchanged
+        // method after a failed source, without resetting the score draft.
+        _methodFieldGeneration++;
+      });
+      return;
+    }
+    setState(() {
+      _method = value;
+      _rollError = null;
+    });
   }
 
   void _setRandom(String key, int value) {
@@ -276,36 +302,39 @@ class _AbilityAssignmentDialogState extends State<AbilityAssignmentDialog> {
               'Kampfwerte ergänze danach selbst.',
             ),
             const SizedBox(height: 18),
-            DropdownButtonFormField<AbilityGenerationMethod>(
-              key: const ValueKey('ability-generation-method'),
-              initialValue: _method,
-              isExpanded: true,
-              decoration: const InputDecoration(labelText: 'Methode'),
-              items: const [
-                DropdownMenuItem(
-                  value: AbilityGenerationMethod.standardArray,
-                  child: Text('Standardverteilung'),
-                ),
-                DropdownMenuItem(
-                  value: AbilityGenerationMethod.pointBuy,
-                  child: Text('Punkte-Kauf (27 Punkte)'),
-                ),
-                DropdownMenuItem(
-                  value: AbilityGenerationMethod.randomRoll,
-                  child: Text('Würfeln (4W6, niedrigster entfällt)'),
-                ),
-              ],
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() {
-                    _method = value;
-                    if (value == AbilityGenerationMethod.randomRoll) {
-                      _rollFirstSet();
-                    }
-                  });
-                }
-              },
+            KeyedSubtree(
+              key: ValueKey(_methodFieldGeneration),
+              child: DropdownButtonFormField<AbilityGenerationMethod>(
+                key: const ValueKey('ability-generation-method'),
+                initialValue: _method,
+                isExpanded: true,
+                decoration: const InputDecoration(labelText: 'Methode'),
+                items: const [
+                  DropdownMenuItem(
+                    value: AbilityGenerationMethod.standardArray,
+                    child: Text('Standardverteilung'),
+                  ),
+                  DropdownMenuItem(
+                    value: AbilityGenerationMethod.pointBuy,
+                    child: Text('Punkte-Kauf (27 Punkte)'),
+                  ),
+                  DropdownMenuItem(
+                    value: AbilityGenerationMethod.randomRoll,
+                    child: Text('Würfeln (4W6, niedrigster entfällt)'),
+                  ),
+                ],
+                onChanged: _selectMethod,
+              ),
             ),
+            if (_rollError != null)
+              Semantics(
+                liveRegion: true,
+                child: Text(
+                  _rollError!,
+                  key: const ValueKey('ability-roll-error'),
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+              ),
             const SizedBox(height: 14),
             if (_method == AbilityGenerationMethod.standardArray)
               const Text(

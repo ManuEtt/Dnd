@@ -53,6 +53,14 @@ class StartingAbilityOrigin {
     for (final key in _abilities) key: baseScores[key]! + (increases[key] ?? 0),
   });
 
+  /// Recorded roll totals, in their original order, without rolling again.
+  List<int> get rolledScores => List<int>.unmodifiable(
+    diceRolls.map((roll) {
+      final sorted = roll.toList()..sort();
+      return sorted.skip(1).fold<int>(0, (sum, die) => sum + die);
+    }),
+  );
+
   /// Strictly validates even imported data; never fabricates historical rolls.
   factory StartingAbilityOrigin.confirmed({
     required String method,
@@ -80,7 +88,8 @@ class StartingAbilityOrigin {
   }
 
   factory StartingAbilityOrigin.fromJson(Map<String, dynamic> json) {
-    if (json['version'] != 1 ||
+    if (json['version'] is! int ||
+        json['version'] != 1 ||
         json['method'] is! String ||
         json['background'] is! String) {
       throw const FormatException('Unbekannte Attribut-Herkunftsversion.');
@@ -152,10 +161,7 @@ class StartingAbilityOrigin {
           throw const FormatException('Es fehlen sechs gültige 4W6-Würfe.');
         }
         final actual = baseScores.values.toList()..sort();
-        final expected = diceRolls.map((roll) {
-          final sorted = roll.toList()..sort();
-          return sorted.skip(1).fold<int>(0, (sum, die) => sum + die);
-        }).toList()..sort();
+        final expected = rolledScores.toList()..sort();
         if (!_same(actual, expected)) {
           throw const FormatException(
             'Attributwerte passen nicht zu den Würfen.',

@@ -6860,10 +6860,22 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Character Creation",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/ability_generation_test.dart",
+        "app/test/ability_random_generation_test.dart",
+        "app/test/starting_ability_origin_test.dart",
+        "app/test/ability_storage_integration_test.dart",
+        "app/test/ui_random_ability_assignment_test.dart",
+        "app/test/starting_ability_origin_panel_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/ability_generation.dart",
+        "app/lib/domain/starting_ability_origin.dart",
+        "app/lib/ui/ability_assignment_dialog.dart",
+        "app/lib/ui/starting_ability_origin_panel.dart"
+      ],
+      "note": "27.10.2026, PR #297: drei Methoden, bestätigte Basis-/Hintergrundwerte und historische Rohwürfelanzeige lokal gezielt geprüft. Wiederholbare RNG-Fehler erhalten Entwurf. Gesamt-Audit, persistenter Entwurf und endgültige CI-Abnahme offen; keine vollständige Charaktererstellung behauptet. SRD 5.2.1 S. 21."
     },
     {
       "id": "RULE-CHARACTER-CREATION-CLASS-AND-ORIGIN",
