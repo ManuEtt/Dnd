@@ -26,8 +26,12 @@ HeroCharacter warlock({
   speed: 9,
   weaponDamage: '1d8',
   abilities: const {
-    'strength': 10, 'dexterity': 14, 'constitution': 14,
-    'intelligence': 12, 'wisdom': 12, 'charisma': 16,
+    'strength': 10,
+    'dexterity': 14,
+    'constitution': 14,
+    'intelligence': 12,
+    'wisdom': 12,
+    'charisma': 16,
   },
   spentPactSlots: spentSlots,
   spentClassResources: {
@@ -61,8 +65,13 @@ void main() {
 
     test('Halbe Paktplätze aufgerundet; Stufe 20 volle Erholung', () {
       for (final entry in <(int, int, int)>[
-        (2, 2, 1), (10, 2, 1), (11, 3, 2), (16, 3, 2),
-        (17, 4, 2), (19, 4, 2), (20, 4, 4),
+        (2, 2, 1),
+        (10, 2, 1),
+        (11, 3, 2),
+        (16, 3, 2),
+        (17, 4, 2),
+        (19, 4, 2),
+        (20, 4, 4),
       ]) {
         final hero = warlock(classLevel: entry.$1, spentSlots: entry.$2);
         expect(
@@ -85,9 +94,8 @@ void main() {
       expect(result.eldritchMaster, false);
       expect(SpellcastingRules.availablePactSlots(result.hero), 2);
       expect(
-        result.hero.spentClassResources[
-          SrdWarlockMagicalCunningRules.resourceKey
-        ],
+        result.hero.spentClassResources[SrdWarlockMagicalCunningRules
+            .resourceKey],
         1,
       );
       expect(hero.toJson(), before);
@@ -146,15 +154,14 @@ void main() {
         warlock(),
       );
       expect(
-        ClassResourceRules.afterShortRest(first.hero).spentClassResources[
-          SrdWarlockMagicalCunningRules.resourceKey
-        ],
+        ClassResourceRules.afterShortRest(
+          first.hero,
+        ).spentClassResources[SrdWarlockMagicalCunningRules.resourceKey],
         1,
       );
       expect(
-        () => SrdWarlockMagicalCunningRules.restoreAfterCompletedRite(
-          first.hero,
-        ),
+        () =>
+            SrdWarlockMagicalCunningRules.restoreAfterCompletedRite(first.hero),
         throwsStateError,
       );
       final rested = RestRules.longRest(first.hero);
@@ -217,9 +224,7 @@ void main() {
     test('Unbestätigter Befehl und laufender Kampf werden blockiert', () {
       final engine = GameEngine(clock: () => DateTime.utc(2026, 10, 28));
       final base = engine.createDemo();
-      final start = base.copyWith(
-        hero: warlock().copyWith(id: base.hero.id),
-      );
+      final start = base.copyWith(hero: warlock().copyWith(id: base.hero.id));
       final wrong = engine.act(start, 'Magische List: jetzt');
       expect(wrong.events.single.type, 'rules.blocked');
       expect(wrong.campaign.hero.spentPactSlots, 3);
