@@ -25,6 +25,7 @@ import 'class_progression_rules.dart';
 import 'class_feature_resources.dart';
 import 'class_resource_rules.dart';
 import 'skill_check_passives.dart';
+import 'srd_indomitable_might_rules.dart';
 import 'class_combat_features.dart';
 import 'sneak_attack_ally_rules.dart';
 import 'combat_class_actions.dart';
@@ -3018,7 +3019,17 @@ class GameEngine {
           advantage: rule.advantage,
           disadvantage: rule.disadvantage,
         );
-        final passed = rolled.total >= dc;
+        // Barbar 18: after all confirmed modifiers, a Strength save may
+        // use the verified Strength score instead of a lower total.
+        // The raw d20 roll remains unchanged in the audit event.
+        final effectiveSaveTotal = SrdIndomitableMightRules.effectiveTotal(
+          hero: current.hero,
+          ability: ability,
+          kind: SrdD20CheckKind.savingThrow,
+          rolledTotal: rolled.total,
+        );
+        final indomitableMightApplied = effectiveSaveTotal > rolled.total;
+        final passed = effectiveSaveTotal >= dc;
         final options = <String>[
           if (!passed &&
               SavingThrowClassActions.available(
@@ -3041,7 +3052,8 @@ class GameEngine {
           campaign,
           current,
           'Manueller Rettungswurf (${requestedSave.group(1)}, SG $dc): '
-          '${rolled.total} – ${passed ? 'gelungen' : 'misslungen'}. '
+          '$effectiveSaveTotal – ${passed ? 'gelungen' : 'misslungen'}. '
+          '${indomitableMightApplied ? 'Unbezwingbare Stärke angewendet. ' : ''}'
           '${fromEnemy ? 'Bestätigte Deckung gegen den Gegner: +$coverBonus. ' : ''}'
           '$suggestions'
           'Das Ergebnis wird dokumentiert; Wirkungen fremder Zauber werden nicht automatisch angenommen.',
@@ -3049,7 +3061,10 @@ class GameEngine {
           payload: {
             'ability': ability,
             'difficulty': dc,
-            'total': rolled.total,
+            'total': effectiveSaveTotal,
+            if (indomitableMightApplied) 'rawTotal': rolled.total,
+            if (indomitableMightApplied)
+              'classFeature': 'indomitableMight',
             'failed': !passed,
             'roll': rolled.toJson(),
             'manualDifficulty': true,
