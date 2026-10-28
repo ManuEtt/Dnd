@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – Exklusive Versionssperre für Alpha-Releases (28.10.2026)
+
+Die Alpha-Bündelung reserviert jetzt pro App-Version atomar ein Release-Sperrverzeichnis, **bevor** sie vorhandene Artefakte überprüft oder Dateien erzeugt. Ein zweiter gleichzeitiger Lauf derselben Version wird ohne Löschen fremder Dateien abgewiesen. Nach Erfolg und behandeltem Fehler wird die Sperre freigegeben; eine verwaiste Sperre nach Prozessabbruch verhindert bewusst weitere Veröffentlichung bis zur Prüfung. Drei Python-Regressionstests decken Nebenläufigkeit, Fehler/Rückversuch und verwaiste Sperren ab. Keine Änderung an Spielständen, SQLite, JSON, Regelwerk oder App-Version. **Neue PR-CI auf dem finalen Commit bleibt bis zum Ergebnis unbestätigt.** [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
 ## 28.10.2026 – Gemeinsame lokale Abnahme bestanden
 
 Quellstand `4f03b7880c36ca225325c87ec9f2c56e0a93dccd` ist lokal vollständig geprüft:

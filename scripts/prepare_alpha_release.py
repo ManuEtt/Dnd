@@ -117,10 +117,19 @@ def prepare_release(root: Path, output: Path, *, commit: str = 'lokal',
     # could otherwise follow those links to a path outside the release folder.
     source_checksum = source.with_suffix(source.suffix + '.sha256')
     generated = [source, target_apk, notes, sums, source_checksum]
-    # A failed second packaging attempt must not silently replace a verified release.
-    if any(path.exists() or path.is_symlink() for path in generated):
-        raise ValueError('Es sind bereits Release-Dateien mit derselben Version vorhanden.')
+    # Reserve this version before checking or publishing its files. Without
+    # this atomic directory lock, two CI jobs can both pass the collision check;
+    # one failed job could then delete the other's successfully built release.
+    # A stale lock after a crashed process deliberately fails closed.
     output.mkdir(parents=True, exist_ok=True)
+    publication_lock = output / f'.{stem}_Release.lock'
+    try:
+        publication_lock.mkdir()
+    except FileExistsError as error:
+        raise ValueError('Eine Veröffentlichung dieser Version ist bereits in Bearbeitung.') from error
+    if any(path.exists() or path.is_symlink() for path in generated):
+        publication_lock.rmdir()
+        raise ValueError('Es sind bereits Release-Dateien mit derselben Version vorhanden.')
     try:
         create_archive(root, source, layout='root')
         shutil.copy2(source_apk, target_apk)
@@ -150,6 +159,8 @@ def prepare_release(root: Path, output: Path, *, commit: str = 'lokal',
         # package_project.create_archive creates a sidecar checksum file.
         source.with_suffix(source.suffix + '.sha256').unlink(missing_ok=True)
         raise
+    finally:
+        publication_lock.rmdir()
     # Retain the existing package project's checksum sidecar as an extra check.
     return [source, target_apk, notes, sums,
             source.with_suffix(source.suffix + '.sha256')]

@@ -1,3 +1,17 @@
+# Chat D D-015 – Releaseversion vor parallelen Alpha-Bündelungen sperren (28.10.2026)
+
+- **Ausgangs-main-SHA:** `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78`; **Branch:** `fix/chat-d/alpha-release-version-lock-20261028`. Offener anderer Entwicklungs-PR beim Start: #353 (Chat A, Regelmodule; keine Überschneidung mit diesen beiden Python-Dateien).
+- **Problem:** Die bisherige Prüfung auf vorhandene Release-Dateien und die anschließende Erzeugung waren nicht atomar. Zwei Läufe derselben App-Version konnten gleichzeitig starten; der Fehlerpfad eines Laufs konnte die Dateien des anderen entfernen.
+- **IMPLEMENTIERT:** `scripts/prepare_alpha_release.py` legt vor Prüfung und Ausgabe pro Version ein exklusives `_Release.lock`-Verzeichnis über `mkdir` an. Zweitaufrufe und verwaiste Sperren werden ohne Seiteneffekte abgewiesen. Nach normaler und behandelter fehlerhafter Ausführung wird die Sperre entfernt; bestehende Artefakte werden nicht ersetzt.
+- **TESTS ERGÄNZT:** `scripts/tests/test_prepare_alpha_release.py`: Verschachtelter konkurrierender Aufruf erhält Fehler, erste Ausgabe bleibt vollständig; Fehler räumt Sperre auf und Retry gelingt; verwaiste Sperre bleibt bestehen, Veröffentlichung verweigert.
+- **GETESTET:** GitHub-Hauptstand und PR-Dateipfade abgeglichen, Quellcode und gezielte Tests als eigenes Paket bereitgestellt; kein lokaler vollständiger Testlauf behauptet.
+- **NICHT GETESTET:** neue Python-Suite und GitHub CI auf finaler SHA sowie Backend/Flutter/Android-APK, tatsächliche parallele Prozesse auf CI-Runnern und Realgerät.
+- **BLOCKIERT:** GitHub-Netzwerk/DNS aus lokaler Laufzeit nicht erreichbar, kein Flutter-/Dart-SDK. Späteres CI-Ergebnis auswerten.
+- **MIGRATION:** keine; App-Version `0.8.46+96`, SQLite 3 und JSON 1 bleiben unverändert. Alle bestehenden Spielstände sind unberührt.
+- **NÄCHSTER SCHRITT:** CI-/Python-Regressionen am finalen PR-HEAD abnehmen; falls grün, nach erneuter Überschneidungsprüfung integrieren.
+
+---
+
 # Chat D D-014 – Bedingte Dart-Imports/Exports an Architekturgrenzen (27.10.2026)
 
 - **Basis-main:** `8239f5e71ec6b229a2a0883500adaf431bb70087`, Branch `fix/chat-d/conditional-dart-boundaries-20261027`.
