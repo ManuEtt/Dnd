@@ -1,3 +1,18 @@
+## 28.10.2026 – Chat D: Prüfung von Dart-`part` und URI-`part of`
+
+- **Main-Basis:** `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78`; **Branch:** `fix/chat-d/dart-part-boundary-20261028`; **Codecommit:** `4690b591dbf3664824981bb4fec5844a48d8bfa2`; **PR:** [#360](https://github.com/ManuEtt/Dnd/pull/360) (Draft).
+- **IMPLEMENTIERT:** Der Checker erkennt auch `part` und URI-basierte `part of`-Direktiven. Regel→Story und Story→Domain sind damit auch bei Teilbibliotheken gesperrt; für die Shared-Model-/Fassaden-Whitelist sind nur übliche Imports/Exports zulässig.
+- **GETESTET:** Fünf isolierte lokale Python-Parser-Stichproben für `part`, `part of`, Kommentare, lokale Teile und bedingte Imports bestanden. Fünf neue Repository-Regressionsmethoden erstellt, deren tatsächliche Suite-Ausführung noch abzunehmen ist.
+- **NICHT GETESTET:** Komplette Python-/Backend-Suite, Flutter/Dart-Test/Analyse, Android-Debug-Build, native Android-Tests, finales PR-CI und reales Gerät.
+- **BLOCKIERT:** Lokaler GitHub-Checkout scheitert an DNS; Flutter-/Dart-SDK fehlen. GitHub Actions ist die maßgebliche Prüfung.
+- **NOCH NICHT IMPLEMENTIERT:** Keine weiteren Produktfunktionen. Bibliotheksnamen bei `part of some.library` besitzen keine lokale URI und müssen über die verweisende `part`-Direktive geprüft werden.
+- **Dateien:** `scripts/check_domain_boundaries.py`, `scripts/tests/test_domain_boundaries.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Migration:** keine. SQLite, Kampagnen-JSON, Regel- und Storyzustand und App-Versionscode unverändert.
+- **Koordination:** PRs #353, #355, #356, #357 und #358 ändern die beiden Python-Fachdateien nicht. README/Checkpoint sind jedoch gemeinsam genutzte Dateien und müssen vor dem Merge additiv konsolidiert werden.
+- **Nächster Schritt:** CI auf finalem PR-Head einschließlich der fünf neuen Regressionstests und Android-Pipeline abnehmen, rote Fehler im eigenen Branch beheben, danach erst Reviewfreigabe.
+
+---
+
 ## 28.10.2026 – Gemeinsame lokale Abnahme bestanden
 
 Quellstand `4f03b7880c36ca225325c87ec9f2c56e0a93dccd` ist lokal vollständig geprüft:
