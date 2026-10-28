@@ -1,3 +1,18 @@
+# Chat B – eindeutige NPC-Kontinuität bei identischen Namen (28.10.2026)
+
+- **Ausgangs-Main:** `f5cb518a0c0a6aafc1b1483c833fb7907ca5e882`; **Branch:** `feat/chat-b/npc-continuity-disambiguation-20261028`; **Fachcommit:** `5f4e957790d67646b94f913ed3ade54253f1c5d2`; [PR #364](https://github.com/ManuEtt/Dnd/pull/364) (Draft bis finale CI).
+- **Problem:** `NpcContinuityReader` selektiert einen NPC nach ID, gibt in `confirmedContext` aber nur den Namen aus; bei zwei Miras sind die bestätigten Einzelkontexte im Text ununterscheidbar.
+- **IMPLEMENTIERT:** Normalisierter Namensvergleich aller gespeicherten NPCs; bei Namenskollision `NPC: <Name> (NPC-ID: <ID>)`. Nur bestätigte eindeutige NPC-ID, keine aus Text geratene Kennung. Ungeeignete IDs im mehrdeutigen Fall abweisen. Einzigartige Namen behalten exakt das bisherige Format. Historische Notizen, Zeitreihenfolge und Begrenzung unverändert.
+- **Änderungen:** `app/lib/story/npc_continuity_reader.dart`; neue `app/test/npc_continuity_identity_test.dart`; additive Nachträge in README und zentralem/persönlichem Checkpoint.
+- **AKZEPTANZTESTS:** Vier neue Flutter-Regressionsfälle (gleichnamige NPCs mit getrennten Notizen nach JSON-Roundtrip; deutsche Schreib-/Umlautvarianten; ungültige und doppelte IDs; legacy Einzelnamen ohne optionale Notizen). Unveränderter Spielstand/Heldenwerte und immutable Notizliste.
+- **GETESTET:** Aktuelle offene PRs, GitHub-Main, Fachdateien, bestehende Tests, Anfangsdiff und GitHub-Schreibzugriff geprüft. **CI auf finalem HEAD noch auszuwerten.**
+- **NICHT GETESTET:** Lokaler Flutter-/Dart-/Android-Lauf (SDK fehlt), produktiver Erzähler, physisches Android-Gerät; neue vollständige Actions erst nach finalem Commit.
+- **BLOCKIERT:** Keine Fachdateikollision zu PRs #356/#362 oder den anderen offenen Entwicklungs-PRs. Gemeinsame README/Checkpoint-Ergänzungen durch Chat D beim Merge additiv konsolidieren.
+- **MIGRATION:** Keine; SQLite 3, Kampagnen-JSON 1, Regelzustand und Providervertrag unverändert. Kein Merge und keine Fremdbranchänderung.
+- **NÄCHSTER SCHRITT:** Nach Integration von PR #356 die 400-UTF-16-Grenze in `MemoryEngine.retrieve` auf vollständige NPC-Identitätsbelege untersuchen, mit positiven und negativen Grenztests.
+
+---
+
 # Chat B – Sitzungsidentität beim Ereignis-Replay (27.10.2026)
 
 - **main-Basis:** `96001353f2b90f293fbdade934e78b7b8281e965`; Branch `fix/chat-b/story-replay-session-identity-20261027`.

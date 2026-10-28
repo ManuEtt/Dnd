@@ -1,3 +1,12 @@
+## 28.10.2026 – Chat B: NPC-Kontinuität auch bei gleichnamigen Figuren eindeutig
+
+- **Basis:** main `f5cb518a0c0a6aafc1b1483c833fb7907ca5e882`; **Branch:** `feat/chat-b/npc-continuity-disambiguation-20261028`; **Fachcommit:** `5f4e957790d67646b94f913ed3ade54253f1c5d2`; [PR #364](https://github.com/ManuEtt/Dnd/pull/364) (CI-Abnahme steht aus).
+- **IMPLEMENTIERT:** Bestätigte individuelle NPC-Kontinuität ist bei gleichen normalisierten Anzeigenamen anhand der vollständigen gespeicherten ID unterscheidbar. Keine Übernahme unbestätigter Erzählinhalte und keine Veränderung von Rule-/Quest-/Heldendaten. Einzigartige Namen behalten das alte Textformat.
+- **REGRESSIONEN:** Vier neue Flutter-Tests mit Kampagnen-JSON-Roundtrip, Namensvarianten, unsicheren/duplizierten IDs, Altspielstand ohne Notizen, Unveränderlichkeit und Heldeninvarianz.
+- **GETESTET:** Main/PR-Dateiumfang/CI-Baseline über GitHub geprüft, Code auf eigenem Branch committed. **NICHT GETESTET:** Finale Actions, echte Android-Hardware, Produktions-KI. Lokales Flutter/Dart nicht verfügbar.
+- **KONFLIKTE:** Eigenständige Produktionsdatei `npc_continuity_reader.dart`, neue Testdatei. Offene PRs #356/#362 bearbeiten andere Storymodule. Gemeinsame README- und Checkpoint-Nachträge beim Merge durch Chat D additiv zusammenführen.
+- **NÄCHSTER SCHRITT:** Nach Integration von PR #356 vollständige Identitätskennungen im 400-Code-Unit-`MemoryEngine.retrieve` absichern.
+
 ## 28.10.2026 – Chat D: Prüfung von Dart-`part` und URI-`part of`
 
 - **Main-Basis:** `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78`; **Branch:** `fix/chat-d/dart-part-boundary-20261028`; **Codecommit:** `4690b591dbf3664824981bb4fec5844a48d8bfa2`; **PR:** [#360](https://github.com/ManuEtt/Dnd/pull/360) (Draft).

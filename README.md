@@ -1,5 +1,19 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## 28.10.2026 – Chat B: Kontinuitätsprotokolle gleichnamiger NPCs
+
+Im bestätigten NPC-Kontinuitätstext wird bei gleichen gespeicherten
+Anzeigenamen künftig die eindeutige NPC-ID direkt neben dem Namen angezeigt.
+Deutsche Normalisierungen wie „Große Hüterin“ und „GROSSE HUETERIN“
+werden ebenfalls als gleichnamig erkannt. Ungültige ID-Kennungen werden im
+mehrdeutigen Fall abgewiesen, statt Erinnerung falsch zuzuordnen. Einzigartige
+Namen behalten den bisherigen Text. Vier neue Flutter-Tests sichern
+Namenskollisionen, JSON-Roundtrip, unsichere IDs und ältere Spielstände ab.
+**CI auf finalem PR-Commit ist noch zu bestätigen.** Keine Änderung an
+Helden-/Regelzustand, SQLite-/JSON-Schema oder KI-Providervertrag.
+[PR #364](https://github.com/ManuEtt/Dnd/pull/364) ·
+[Chat-B-Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md).
+
 ## 28.10.2026 – Chat D: Dart-Teilbibliotheken an Modulgrenzen prüfen
 
 Die Python-Architekturprüfung kontrolliert neben `import` und `export` jetzt auch `part` und URI-basierte `part of`-Direktiven. Dadurch darf Domain-Code Story-Dateien nicht als Teilbibliothek einschleusen; Story-Dateien dürfen den gemeinsamen Domänencode weiterhin regulär importieren, ihn aber nicht als `part` einbinden. Fünf neue positive und negative Regressionstests sind ergänzt. **Die vollständige PR-CI muss auf dem finalen Commit noch geprüft werden.** Keine Änderung an SQLite, JSON, Spielregeln, Story oder App-Version. [Draft-PR #360](https://github.com/ManuEtt/Dnd/pull/360) · [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
