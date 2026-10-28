@@ -3110,6 +3110,42 @@ class _AdventurePageState extends State<_AdventurePage> {
                                               }
                                             },
                                     ),
+                                    if (campaign.adventureOffer!.archetype !=
+                                            'investigation' &&
+                                        ClassResourceRules.level(
+                                              campaign.hero,
+                                              'Mönch',
+                                            ) >=
+                                            2 &&
+                                        campaign.hero.hitPoints != null &&
+                                        campaign.hero.hitPoints! > 0 &&
+                                        ClassResourceRules.remaining(
+                                              campaign.hero,
+                                              'uncannyMetabolism',
+                                            ) >
+                                            0)
+                                      FantasyTextButton(
+                                        key: const ValueKey(
+                                          'adventure-accept-uncanny-metabolism',
+                                        ),
+                                        label:
+                                            'Annehmen + Unheimlicher Stoffwechsel',
+                                        icon: Icons.self_improvement,
+                                        style: FantasyButtonStyle.woodGold,
+                                        onPressed: _ruleInteractionBlocked
+                                            ? null
+                                            : () async {
+                                                final prior = _lastMessageId;
+                                                await widget.controller
+                                                    .acceptAdventure(
+                                                      useUncannyMetabolism:
+                                                          true,
+                                                    );
+                                                if (mounted) {
+                                                  await _afterTurn(prior);
+                                                }
+                                              },
+                                      ),
                                     FantasyTextButton(
                                       key: const ValueKey('adventure-reject'),
                                       label: 'Anderen Weg wählen',
