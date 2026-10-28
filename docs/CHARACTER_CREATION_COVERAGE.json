@@ -168,6 +168,24 @@
         "app/test/srd_background_package_test.dart",
         "app/test/srd_background_package_dialog_test.dart"
       ]
+    },
+    {
+      "id": "CHAR-EDITOR-REVISION-CAS",
+      "title": "Bestehende Charaktere gegen veraltete Editorstände sichern",
+      "source": "Projekt-Persistenzintegrität, kein zusätzlicher SRD-Regelinhalt",
+      "status": "implemented_ci_pending",
+      "code": [
+        "app/lib/data/campaign_repository.dart",
+        "app/lib/data/sqlite_campaign_repository.dart",
+        "app/lib/services/game_controller.dart"
+      ],
+      "ui": [
+        "app/lib/ui/app.dart"
+      ],
+      "tests": [
+        "app/test/character_editor_stale_save_test.dart"
+      ],
+      "note": "Kampagnenrevision und atomarer SQLite-Charakterarchivvergleich; vollständiger persistenter Charakterentwurf und Geräteabnahme fehlen."
     }
   ],
   "classes": [

@@ -1,3 +1,16 @@
+# 28.10.2026 – Versionsgebundene Charaktereditor-Speicherung (PR-Entwurf)
+
+- **Basis `main`:** `571edec9455fb32e4991432953c9a2479a6fffb2`, Branch `fix/character-editor-stale-save-20261028`.
+- **Problem:** Editor-Dialoge gaben bisher nur die abgeänderte Figur zurück; beim Speichern wurde ihre beim Öffnen geltende Kampagnenrevision nicht übergeben. Archivsave war ein unbedingtes SQLite-REPLACE.
+- **Umgesetzt:** ID-/Revisionsprüfung beim Kampagnen-Save, transaktionaler Vergleich des Original-Snapshots bei Archivfiguren, geschützter Neuanlagepfad, deutsche Fehlermeldung und UI-Übergabe der Originalversion.
+- **Tests:** `app/test/character_editor_stale_save_test.dart` mit zwei SQLite-Verbindungen und Neustart. Vollständige GitHub- und Android-CI noch zu prüfen, kein realer Gerätetest.
+- **Parallel:** PR #319 enthält bereits sichere Startpaket-Reconfirmation; PR #324 die allgemeinen Start-TP. Kein Merge, kein Main-Direktpush oder fremde Branch-Löschung.
+- **Offen:** echte Geräteabnahme; vollständiger Wizard mit eigenem persistiertem Entwurf, Klassen-/Spezies-/Talentauswahl und SRD-Vollständigkeitsprüfung.
+- **Nächster Schritt:** aktuellen PR-HEAD via GitHub Actions inklusive Format/Flutter/Android prüfen, Fehler beheben, gegen die drei parallelen PRs Integrationskonflikte prüfen, dann regulär reviewen.
+- **Detail:** [CHARACTER_EDITOR_REVISION_20261028.md](CHARACTER_EDITOR_REVISION_20261028.md).
+
+---
+
 # Chat B – Story-Transport mit randvollem Erinnerungslimit (27.10.2026)
 
 - **Basis:** [PR #307](https://github.com/ManuEtt/Dnd/pull/307) (`fix/chat-b/npc-memory-budget-20261027`, Head `47b4343fadd5f30b9030a702b3ccd701d701a598`). Gestapelter neuer Branch `test/chat-b/npc-memory-wire-budget-20261027`; erst #307 integrieren.

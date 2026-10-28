@@ -1,5 +1,15 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## 28.10.2026 – Charaktereditor gegen veraltete Speicherstände geschützt (CI ausstehend)
+
+Kampagnen- und Archivfiguren können nicht mehr aus einem älteren,
+lange geöffneten Editor über inzwischen neuere Bestätigungen gespeichert
+werden. Dafür werden Kampagnenrevision und ursprüngliche Charakter-JSON-
+Fassung beim Speichern geprüft; SQLite wendet die Archivprüfung atomar an.
+Bestehende Spielstände bleiben unverändert, Schema-Migration nicht nötig.
+[Implementierung und Grenzen](docs/CHARACTER_EDITOR_REVISION_20261028.md).
+Vollständige SRD-Charaktererstellung weiterhin offen.
+
 ## Chat B – Zwölf KI-Erinnerungen bis zur Story-API-Grenze absichern (27.10.2026)
 
 Zwei neue Integrationstests prüfen das Erinnerungslimit **an der tatsächlich gesendeten Story-Anfrage**: Eine KI-Kampagne mit bestätigten Mira-Beziehungsnotizen und mindestens 18 allgemeinen Fakten wird in einer echten SQLite-Datei gespeichert, über den `GameController` fortgesetzt und mit einem lokalen Backend-Transport abgefragt. Sowohl mit als auch ohne `npc-identity-v1` erhält das Backend genau zwölf priorisierte und begrenzte Erinnerungseinträge. Die drei bestätigten NPC-Notizen bleiben zuerst; zusätzliche allgemeine Fakten verwenden lediglich die freien Plätze. Heldenwerte, Revision und gespeicherter Spielstand bleiben überprüfbar. Dieses Testpaket baut auf [PR #307](https://github.com/ManuEtt/Dnd/pull/307) auf und verändert keine Produktionslogik, Datenbankschemata oder SRD-Regeln.

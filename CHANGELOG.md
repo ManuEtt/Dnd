@@ -1,3 +1,22 @@
+## 28.10.2026 – Charaktereditor: Versionskonflikte vor dem Speichern erkennen (CI offen)
+
+Eigenständiges Integritäts-Inkrement: Der Kampagneneditor merkt sich
+Kampagnen-ID und Revision vor dem Öffnen, die Regelengine speichert weiter
+über den vorhandenen CAS-Transaktionspfad. Eigenständige Archivfiguren
+werden mit dem ursprünglichen JSON-Snapshot in **derselben SQLite-Transaktion**
+verglichen und nur ohne konkurrierende Änderung gespeichert.
+Veraltete Bearbeitungen, inzwischen gelöschte Charaktere oder doppelte
+Neuanlagen werden ohne Mutation abgewiesen. Keine Schemaänderung;
+alte Charaktere erhalten keine erfundenen Werte. Neue SQLite-/Controller-
+Regressionen angelegt; finale CI und Realgerät noch offen.
+
+Die Bearbeitung mehrfach gewählter Klassenstartpakete wird bereits in
+PR #319 entwickelt und hier nicht dupliziert. Vollständige Charaktererstellung
+mit persistenter unbestätigter Entwurfsfassung bleibt offen.
+[Technischer Nachweis](docs/CHARACTER_EDITOR_REVISION_20261028.md).
+
+---
+
 ## 27.10.2026 – Charaktererstellung: vier SRD-Hintergrundpakete
 
 - Akolyth, Krimineller, Weiser, Soldat mit eigenen Fertigkeiten,
