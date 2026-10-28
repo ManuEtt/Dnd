@@ -1,6 +1,7 @@
 import 'models.dart';
 import 'rules_engine.dart';
 import 'srd_character_classes.dart';
+import 'srd_ranger_tireless_rules.dart';
 
 /// Safe, deterministic class feature resource accounting (SRD 5.2.1).
 /// Does not claim to execute a feature's narrative, combat or spell effects.
@@ -20,6 +21,7 @@ class ClassResourceRules {
     'indomitable',
     'channelDivinityPaladin',
     'favoredEnemy',
+    SrdRangerTirelessRules.resourceKey,
     'sorceryPoints',
   };
 
@@ -102,6 +104,8 @@ class ClassResourceRules {
             : l >= 5
             ? 3
             : 2;
+      case SrdRangerTirelessRules.resourceKey:
+        return SrdRangerTirelessRules.maximumTemporaryHitPointUses(hero);
       case 'sorceryPoints':
         final l = level(hero, 'Zauberer');
         return l < 2 ? 0 : l;
@@ -160,7 +164,9 @@ class ClassResourceRules {
     // Monk regains all Focus Points; Bard from level 5 regains Inspiration.
     used.remove('focusPoints');
     if (level(hero, 'Barde') >= 5) used.remove('bardicInspiration');
-    return hero.copyWith(spentClassResources: used);
+    return SrdRangerTirelessRules.afterShortRest(
+      hero.copyWith(spentClassResources: used),
+    );
   }
 
   static HeroCharacter afterLongRest(HeroCharacter hero) {

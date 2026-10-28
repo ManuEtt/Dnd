@@ -314,6 +314,9 @@ class SrdClassFeatureCatalog {
     // Speed and derived movement types work; climbing/swimming terrain
     // expenditure still requires a dedicated confirmed movement action.
     'Roving',
+    // The rest-driven exhaustion benefit works; the Magic action that
+    // generates temporary HP is a separate player-confirmed step.
+    'Tireless',
     // Range is derived automatically, but target detection is not resolved
     // without confirmed cover, distance and concealment.
     'Feral Senses',

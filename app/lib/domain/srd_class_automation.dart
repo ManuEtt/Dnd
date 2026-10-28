@@ -106,6 +106,7 @@ class SrdClassAutomation {
     'Indomitable Might':
         'SrdIndomitableMightRules (bestätigte Stärke-Proben/Rettungswürfe)',
     'Roving': 'SrdTerrainMovementRules',
+    'Tireless': 'SrdRangerTirelessRules (Short Rest + Magic action)',
     'Reliable Talent': 'CharacterRuleEngine.abilityCheck (nur Fertigkeiten)',
     'Slow Fall': 'SrdMonkSlowFallRules (Situations- und Ablaufprüfung)',
     'Feral Senses': 'SrdRangerFeralSensesRules (bestätigte Sinnesdaten)',

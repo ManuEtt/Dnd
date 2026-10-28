@@ -3694,12 +3694,18 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#waldl-ufer_10_base_tireless_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_ranger_tireless_rules_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/srd_ranger_tireless_rules.dart",
+        "app/lib/domain/class_resource_rules.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/domain/srd_class_automation.dart"
+      ],
+      "note": "Implementierung beider Tireless-Mechaniken: -1 Erschöpfung je bestätigter Short Rest; explizite Magic action Unermüdlich: temporäre Trefferpunkte mit 1W8+Weisheitsmodifikator (mindestens 1), Weisheitsmodifikator Nutzungen (mindestens 1), Nutzungsledger mit Save-Roundtrip/Long-Rest-Reset, kein Temp-HP-Stacking, Action-Limit im Einzelgegnerkampf. Klasse 10/Multiclass/fehlende Werte/Manipulation geblockt. Teilstatus bleibt wegen fehlender vollständiger Zeit-/Unterbrechungs-/Multiakteur-Kampfengine und ausstehender endgültiger CI-/Geräteabnahme."
     },
     {
       "id": "CLASS-WALDL-UFER-12-BASE-ABILITY-SCORE-IMPROVEMENT-0",

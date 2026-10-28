@@ -10,6 +10,16 @@
 - Alle drei vorhandenen Kampfbeginnpfade eingebunden, Ereignislog und zehn neue Testfälle ergänzt; bestehende Mönch-Initiativmechanik bleibt erhalten.
 - **Noch nicht durch finale CI und Android-/Gerätetest abgenommen.** SRD-Anforderung bewusst als Teilautomatik geführt.
 
+### Weitere Entwicklung – Unermüdlich (Magic action)
+
+- Bestätigter Befehl für temporäre Trefferpunkte (1W8 + Weisheitsmodifikator, mindestens 1), verbrauchte Nutzungen pro langer Rast im bestehenden Speicherformat, keine Stapelung temporärer Trefferpunkte und Action-Kosten im Einzelgegnerkampf.
+- Zehn weitere Tests; CI/Android-Prüfung des aktuellen Branch-HEAD ausstehend. Keine vollständige SRD-Fertigstellung behauptet.
+
+## In Entwicklung – 28.10.2026 – Ranger Tireless: Erschöpfung
+
+- SRD-5.2.1-Waldläufer ab Klassenstufe 10: bestätigte kurze Rast senkt Erschöpfung um genau 1. Mehrklasse, reine Ressourcenerholung ohne Trefferwürfel und Ereignisaudit ergänzt.
+- Elf neue Regel-/Integrationstests; CI und Android-Abnahme noch offen. Temporäre Trefferpunkte aus Tireless weiterhin nicht umgesetzt; Teilautomatik statt Vollautomatik.
+
 ---
 
 ## 0.8.44+94 – 27.10.2026 – Nachweisbasierter Charakter-Audit
