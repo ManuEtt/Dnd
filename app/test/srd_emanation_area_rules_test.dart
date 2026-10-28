@@ -46,10 +46,7 @@ void main() {
     expect(result.at(source)!.originSquareRequiresReview, isTrue);
     expect(result.at(source)!.centerWithinDistance, isTrue);
     expect(result.at(const SrdGridCell(13, 11)), isNotNull);
-    expect(
-      result.at(const SrdGridCell(13, 11))!.centerWithinDistance,
-      isFalse,
-    );
+    expect(result.at(const SrdGridCell(13, 11))!.centerWithinDistance, isFalse);
     expect(result.at(const SrdGridCell(14, 10)), isNull);
     expect(
       result.at(const SrdGridCell(10, 12))!.centerRay,
@@ -92,9 +89,7 @@ void main() {
   });
 
   test('obstacle evidence stays a cover review, never an immunity', () {
-    final result = _preview(
-      map: _map(blockers: const [SrdGridCell(11, 10)]),
-    );
+    final result = _preview(map: _map(blockers: const [SrdGridCell(11, 10)]));
     expect(result.at(const SrdGridCell(11, 10)), isNull);
     expect(
       result.at(const SrdGridCell(12, 10))!.centerRay,
@@ -183,4 +178,3 @@ void main() {
     );
   });
 }
-
