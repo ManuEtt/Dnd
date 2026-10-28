@@ -77,3 +77,17 @@ ZIP-Inhalt direkt in Repositorywurzel, app/, backend/, scripts/ und .github/.
 Binären Patch auf sauberem Checkout der im Manifest genannten Basis zunächst
 mit `git apply --check --binary` prüfen, danach `git apply --binary`; eigener
 Branch und PR. Keine privaten Spielstände/Schlüssel/SDKs im Quellencheckpoint.
+
+## Historie der Main-/Audit-Dokumentintegration – 28.10.2026
+
+Der explizite Klassenstart-Nachweis aus 30bb33e wird mit Audit 89545ab
+und anschließend dem fixierten Main 571edec zusammengeführt. Unsere aktuelle
+0.8.45+95-Statussektion bleibt oben. Die unveränderten fremden README-/Checkpoint-
+und Fachstatusdateien stehen mit SHA256 und Git-Blob-IDs in
+[Historienmanifest](history/character_class_main_20261028/manifest.json),
+[Main-Checkpoint](history/character_class_main_20261028/main571edec/docs/CODEX_CHECKPOINT.md)
+und [Audit-Checkpoint](history/character_class_main_20261028/audit89545ab/docs/CODEX_CHECKPOINT.md).
+Dort bleiben insbesondere die fremden Chat-B-/Chat-D-Einträge vollständig
+lesbar. Produktänderungen werden nur durch normale Git-Merges übernommen;
+kein fremder Fachstand wird durch eine frühere Kopie ersetzt. Die zusätzliche
+gemeinsame Produkt-/CI-Abnahme muss auf dem neuen Integrationskopf erfolgen.
