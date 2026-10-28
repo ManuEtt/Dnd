@@ -161,7 +161,7 @@ class CheckpointTests(unittest.TestCase):
     def test_prior_checksum_history_rejects_newline_in_filename(self):
         self.create()
         previous = {p.name: p.read_bytes() for p in self.output.iterdir()}
-        unsafe = self.output / 'Wuerfelraunen_bogus\\nother.zip'
+        unsafe = self.output / 'Wuerfelraunen_bogus\nother.zip'
         unsafe.write_bytes(b'unsafe checksum line')
         with self.assertRaisesRegex(ValueError, 'Unsafe previous checkpoint artifact'):
             self.create(label='second')
