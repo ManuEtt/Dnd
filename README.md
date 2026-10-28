@@ -258,3 +258,8 @@ Nächster Schritt: den bereits separat geprüften Editor-CAS-PR #330 mit
 aktuellem Main integrieren und erneut abnehmen; dessen sechs vorhandene
 SQLite-/CAS-Regressionen nutzen. #324 (Start-TP/Kit) und #317 (Magieinitiierter)
 koordiniert übernehmen, nichts doppelt entwickeln. #323 ist bereits enthalten.
+
+
+## Charaktererstellung – Klassenstartwerte für zwölf Klassen (27.10.2026, CI ausstehend)
+
+Neue Figuren benötigen im Klassenassistenten jetzt für jede der zwölf SRD-Klassen einen gültigen KO-Wert (Start-TP = maximaler Klassenwürfel + KO-Modifikator) und, wenn verfügbar, die ausdrückliche Wahl zwischen Klassenstartausrüstung und Startgold. Die bestehenden Vorschau-, Editor- und JSON/SQLite-Speicherfelder werden wiederverwendet; historische Figuren werden nicht stillschweigend neu berechnet. Die zwölf Klassen sind damit **nicht vollständig erstellt**: weitere Klassenmerkmale, Zauber, Talente, Spezies und ein vollständiger Entwurfswizard fehlen. Tests im Paket enthalten, finale CI und Android-Realgerät offen. Siehe [Charaktererstellungs-Matrix](docs/CHARACTER_CREATION_COVERAGE.json).
