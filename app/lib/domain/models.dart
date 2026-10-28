@@ -1,4 +1,5 @@
 import 'srd_equipment_catalog.dart';
+import 'srd_savage_attacker_pending_hit.dart';
 import 'starting_ability_origin.dart';
 import 'srd_background_package.dart';
 import 'inventory_item_stats.dart';
@@ -2141,6 +2142,7 @@ class Campaign {
     this.pendingDeathSave,
     this.pendingEnemyShieldHit,
     this.pendingOpportunityAttack,
+    this.pendingSavageAttackerHit,
     this.encounter,
     this.adventureOffer,
     this.revision = 0,
@@ -2177,6 +2179,7 @@ class Campaign {
   final PendingDeathSave? pendingDeathSave;
   final PendingEnemyShieldHit? pendingEnemyShieldHit;
   final PendingOpportunityAttack? pendingOpportunityAttack;
+  final PendingSavageAttackerHit? pendingSavageAttackerHit;
   final Encounter? encounter;
   final AdventureOffer? adventureOffer;
   final int revision;
@@ -2200,6 +2203,7 @@ class Campaign {
     Object? pendingDeathSave = _unchanged,
     Object? pendingEnemyShieldHit = _unchanged,
     Object? pendingOpportunityAttack = _unchanged,
+    Object? pendingSavageAttackerHit = _unchanged,
     Object? encounter = _unchanged,
     Object? adventureOffer = _unchanged,
     int? revision,
@@ -2241,6 +2245,9 @@ class Campaign {
     pendingOpportunityAttack: identical(pendingOpportunityAttack, _unchanged)
         ? this.pendingOpportunityAttack
         : pendingOpportunityAttack as PendingOpportunityAttack?,
+    pendingSavageAttackerHit: identical(pendingSavageAttackerHit, _unchanged)
+        ? this.pendingSavageAttackerHit
+        : pendingSavageAttackerHit as PendingSavageAttackerHit?,
     encounter: identical(encounter, _unchanged)
         ? this.encounter
         : encounter as Encounter?,
@@ -2281,6 +2288,8 @@ class Campaign {
       'pendingEnemyShieldHit': pendingEnemyShieldHit!.toJson(),
     if (pendingOpportunityAttack != null)
       'pendingOpportunityAttack': pendingOpportunityAttack!.toJson(),
+    if (pendingSavageAttackerHit != null)
+      'pendingSavageAttackerHit': pendingSavageAttackerHit!.toJson(),
     'encounter': encounter?.toJson(),
     'adventureOffer': adventureOffer?.toJson(),
     'revision': revision,
@@ -2310,6 +2319,23 @@ class Campaign {
     final encounter = j['encounter'] == null
         ? null
         : Encounter.fromJson(_map(j['encounter'], 'Kampf'));
+    final pendingSavageAttackerHit = j['pendingSavageAttackerHit'] == null
+        ? null
+        : PendingSavageAttackerHit.fromJson(
+            _map(j['pendingSavageAttackerHit'], 'Wilder-Angreifer-Auswahl'),
+          );
+    if (pendingSavageAttackerHit != null) {
+      if (pending != null || deathChoice != null) {
+        throw const FormatException(
+          'Offener Wilder Angreifer ist mit Würfel- oder Todesauswahl unvereinbar.',
+        );
+      }
+      pendingSavageAttackerHit.validateAgainst(
+        hero: hero,
+        encounter: encounter,
+        revision: _int(j['revision'], 'Revision', fallback: 0),
+      );
+    }
     final trackedAreaCreatures = _list(
       j['trackedAreaCreatures'],
       'Zusätzliche Kreaturen',
@@ -2712,6 +2738,7 @@ class Campaign {
       pendingDeathSave: deathChoice,
       pendingEnemyShieldHit: pendingEnemyShieldHit,
       pendingOpportunityAttack: opportunity,
+      pendingSavageAttackerHit: pendingSavageAttackerHit,
       encounter: encounter,
       adventureOffer: adventureOffer,
       revision: _int(j['revision'], 'Revision', fallback: 0),
