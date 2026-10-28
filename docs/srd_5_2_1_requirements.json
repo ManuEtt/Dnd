@@ -6826,14 +6826,19 @@
       "tests": [
         "app/test/srd_character_creation_audit_test.dart",
         "app/test/character_creation_audit_ui_test.dart",
-        "app/test/character_creation_audit_persistence_test.dart"
+        "app/test/character_creation_audit_persistence_test.dart",
+        "app/test/starting_class_choice_test.dart",
+        "app/test/character_start_class_ui_test.dart",
+        "app/test/character_start_class_storage_test.dart"
       ],
       "code": [
         "app/lib/domain/srd_character_creation_audit.dart",
         "app/lib/ui/character_editor.dart",
-        "app/lib/ui/srd_creation_audit_dialog.dart"
+        "app/lib/ui/srd_creation_audit_dialog.dart",
+        "app/lib/domain/starting_class_choice.dart",
+        "app/lib/domain/models.dart"
       ],
-      "note": "27.10.2026: lesender Audit mit sieben Zuständen, belegten Teilentscheidungen, Entwurfs-/Legacy-/SQLite-Prüfung. Keine vollständige Spezies-/Klassen-/Talent-/Zaubererstellung, kein Gesamt-SRD-Erfolgsflag. Endgültige Abnahme siehe CODEX_CHECKPOINT."
+      "note": "27.10.2026: lesender Audit mit sieben Zuständen, belegten Teilentscheidungen, Entwurfs-/Legacy-/SQLite-Prüfung. Keine vollständige Spezies-/Klassen-/Talent-/Zaubererstellung, kein Gesamt-SRD-Erfolgsflag. Endgültige Abnahme siehe CODEX_CHECKPOINT. 0.8.45+95: ausdrückliche Klassenstartwahl historisch versioniert; keine vollständigen Klassenmerkmale oder ungeklärten Kitvarianten bestätigt."
     },
     {
       "id": "RULE-CHARACTER-CREATION-DETERMINE-LEVEL",
@@ -6891,14 +6896,19 @@
       "tests": [
         "app/test/srd_character_creation_audit_test.dart",
         "app/test/character_creation_audit_ui_test.dart",
-        "app/test/character_creation_audit_persistence_test.dart"
+        "app/test/character_creation_audit_persistence_test.dart",
+        "app/test/starting_class_choice_test.dart",
+        "app/test/character_start_class_ui_test.dart",
+        "app/test/character_start_class_storage_test.dart"
       ],
       "code": [
         "app/lib/domain/srd_character_creation_audit.dart",
         "app/lib/ui/character_editor.dart",
-        "app/lib/ui/srd_creation_audit_dialog.dart"
+        "app/lib/ui/srd_creation_audit_dialog.dart",
+        "app/lib/domain/starting_class_choice.dart",
+        "app/lib/domain/models.dart"
       ],
-      "note": "27.10.2026: lesender Audit mit sieben Zuständen, belegten Teilentscheidungen, Entwurfs-/Legacy-/SQLite-Prüfung. Keine vollständige Spezies-/Klassen-/Talent-/Zaubererstellung, kein Gesamt-SRD-Erfolgsflag. Endgültige Abnahme siehe CODEX_CHECKPOINT."
+      "note": "27.10.2026: lesender Audit mit sieben Zuständen, belegten Teilentscheidungen, Entwurfs-/Legacy-/SQLite-Prüfung. Keine vollständige Spezies-/Klassen-/Talent-/Zaubererstellung, kein Gesamt-SRD-Erfolgsflag. Endgültige Abnahme siehe CODEX_CHECKPOINT. 0.8.45+95: ausdrückliche Klassenstartwahl historisch versioniert; keine vollständigen Klassenmerkmale oder ungeklärten Kitvarianten bestätigt."
     },
     {
       "id": "RULE-CHARACTER-CREATION-EQUIPMENT-CHOICES",

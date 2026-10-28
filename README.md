@@ -222,3 +222,39 @@ Die technische Detailplanung wird nicht in dieser Einführungsseite dupliziert. 
 Die Umsetzung orientiert sich an **D&D SRD 5.2.1** von **Wizards of the Coast LLC**, lizenziert unter **Creative Commons Attribution 4.0 International (CC BY 4.0)**. Die erforderlichen Namensnennungen und weiteren Hinweise stehen in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Eigene Fantasy-Geschichten und Grafiken werden getrennt von den SRD-Regeln behandelt.
 
 Das Repository enthält Entwicklungssoftware. **Vollständige SRD-Konformität, fehlerfreien Spielbetrieb, Produktionssicherheit oder eine Veröffentlichung im Play Store werden nicht behauptet.**
+
+
+---
+
+## Aktueller Charakterstatus – 28.10.2026 (0.8.45+95)
+
+Die ausdrücklich bestätigte erste Klasse, Klassenfertigkeiten, Kämpferwahlen
+und optionale Paketentscheidung werden historisch und versioniert gespeichert.
+Erneute Bestätigung ersetzt ihre frühere Übungsquelle; Gold/Ausrüstung nur
+einmal. Vollständige Paketprüfung vor Änderung des Entwurfs, Abbruch sicher.
+Alte Spielstände bleiben ohne erfundene Herkunft erhalten. Der Audit bestätigt
+belegte Teilentscheidungen und hält unaufgelöste Gegenstände sowie die
+Mönch-Werkzeugkopplung offen. Die gesamte Charaktererstellung bleibt unvollständig.
+
+**Geprüfter Zwischenkopf `019be0e`: 2.007 Flutter-, 168 Python-, 72 Backend-Tests,
+Debug/native und Alpha-Builds grün in [CI40631517151](https://github.com/ManuEtt/Dnd/actions/runs/40631517151).**
+Alle 1.021 CI-Quelldateien, Ausführungsrechte und die ARM64-APK wurden geprüft.
+Der vorherige feste lokale Gesamt-Repeat bestand 1.995, die nächste lokale
+Zwischenintegration 2.003 Flutter-Tests. Ein früherer Lauf vor den letzten
+Quellkorrekturen hatte drei Fehler; die festen Wiederholungen belegen die Behebung.
+
+**Aktuelle gemeinsame Basis: Main `bf5999e`, 57 gezielte Tests, Analyse und
+168 Pythonprüfungen bestanden.** Vollständige CI dieses letzten Integrationskopfs
+separat in [PR #319](https://github.com/ManuEtt/Dnd/pull/319/checks); frühere
+Ergebnisse gelten nur für ihren angegebenen Commit. Branch
+`feat/character-start-class-proof-20261027`, Version 0.8.45+95. Originaldokumente
+bleiben unverändert mit Hashes in `docs/history/`; der vorangehende Maintext
+ist die erhaltene Integrationsbasis. Gerät/TalkBack/Altversionsupgrade und
+Produktivsignatur sind noch nicht geprüft.
+
+[Quellen und Umfang](docs/CHARACTER_START_CLASS_CHOICE_20261027.md) ·
+[vollständiger Charakter-Checkpoint](docs/CHARACTER_START_CLASS_CHECKPOINT_20261028.md).
+Nächster Schritt: den bereits separat geprüften Editor-CAS-PR #330 mit
+aktuellem Main integrieren und erneut abnehmen; dessen sechs vorhandene
+SQLite-/CAS-Regressionen nutzen. #324 (Start-TP/Kit) und #317 (Magieinitiierter)
+koordiniert übernehmen, nichts doppelt entwickeln. #323 ist bereits enthalten.
