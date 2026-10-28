@@ -1,3 +1,15 @@
+## 28.10.2026 – Stale-Editor-Sicherung auf aktuellem Main
+
+Kampagneneditoren prüfen beim Speichern die beim Öffnen gültige Revision
+gegen den laufenden und gespeicherten Stand. Standalone-Figuren werden
+nur nach atomarem SQLite-Vergleich des ursprünglichen Snapshots geändert;
+konkurrierende Änderungen, gelöschte Figuren und ID-Kollisionen bleiben
+unverändert erhalten. Sechs Regressionstests, bestehendes Speicherformat
+und die neue SQLite-V3-Hauptbranch-Migration sind berücksichtigt.
+**Isolierte volle CI grün auf `76d5daa`; gemeinsame Integrations-CI ausstehend.**
+Vollständiger SRD-Charakter-Wizard noch nicht fertig.
+[Technik](docs/CHARACTER_EDITOR_REVISION_20261028.md).
+
 ## 0.8.44+94 – 27.10.2026 – Nachweisbasierter Charakter-Audit
 
 - Sieben Prüfzustände, echte Anfangswert-/Hintergrundbelege und Erkennung

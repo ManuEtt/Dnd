@@ -1,5 +1,17 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## 28.10.2026 – Stale-Editor-Sicherung auf aktuellem Main
+
+Kampagneneditoren prüfen beim Speichern die beim Öffnen gültige Revision
+gegen den laufenden und gespeicherten Stand. Standalone-Figuren werden
+nur nach atomarem SQLite-Vergleich des ursprünglichen Snapshots geändert;
+konkurrierende Änderungen, gelöschte Figuren und ID-Kollisionen bleiben
+unverändert erhalten. Sechs Regressionstests, bestehendes Speicherformat
+und die neue SQLite-V3-Hauptbranch-Migration sind berücksichtigt.
+**Isolierte volle CI grün auf `76d5daa`; gemeinsame Integrations-CI ausstehend.**
+Vollständiger SRD-Charakter-Wizard noch nicht fertig.
+[Technik](docs/CHARACTER_EDITOR_REVISION_20261028.md).
+
 ## Chat B – ausstehende NPC-Handlungen klar anzeigen (27.10.2026)
 
 Die Anzeige einer ausstehenden Spielhandlung ist nun als separate, zustandslose Komponente `PendingActionStatus` implementiert. Sie bewahrt die bisherigen UI-Kennungen für Wiederholen, Verwerfen, laufendes Senden und Fehlermeldungen. Bei einer ausdrücklich gewählten Figur erklärt sie, dass deren Auswahl an den gespeicherten Auftrag gebunden bleibt und bei veralteter Revision bewusst verworfen und neu getroffen werden muss. Fünf kleine Flutter-Widgettests prüfen die Darstellung und Buttons **ohne** SQLite, Netzwerk, TTS oder Widget-/FFI-Zeitsteuerungsabhängigkeiten. Der fachliche Controller-/SQLite-Schutz aus den Basis-PRs #288, #290 und #303 wird dadurch nicht verändert. Keine Datenbankmigration oder D&D-Regeländerung.

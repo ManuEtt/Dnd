@@ -192,6 +192,24 @@
       ],
       "mechanical_mutation": false,
       "note": "Kein Gesamt-SRD-Erfolgsflag; vollständig geführter Assistent und Quellen für sämtliche Pflichtwahlen weiterhin offen."
+    },
+    {
+      "id": "CHAR-EDITOR-REVISION-CAS",
+      "title": "Bestehende Charaktere beim Speichern gegen veraltete Editorstände sichern",
+      "source": "Integrität von SQLite und Kampagnenständen, kein zusätzlicher SRD-Regelinhalt",
+      "status": "implemented_integration_ci_pending",
+      "code": [
+        "app/lib/data/campaign_repository.dart",
+        "app/lib/data/sqlite_campaign_repository.dart",
+        "app/lib/services/game_controller.dart"
+      ],
+      "ui": [
+        "app/lib/ui/app.dart"
+      ],
+      "tests": [
+        "app/test/character_editor_stale_save_test.dart"
+      ],
+      "note": "Alte Bearbeitungen werden revisionsgebunden abgewiesen; eigenständige Charaktere durch transaktionalen Snapshot-CAS geschützt. Isolierte CI grün, zusammengeführte Main-Version erneut testen."
     }
   ],
   "classes": [

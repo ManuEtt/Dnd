@@ -1,3 +1,14 @@
+## 28.10.2026 – Sicherer Charaktereditor auf fortgeschriebenem Main
+
+- **Quell-PR #330:** [Revisionssichere Bearbeitung](https://github.com/ManuEtt/Dnd/pull/330); Ausgangs-HEAD `76d5daa` mit kompletter erfolgreicher [Android-/Flutter-CI](https://github.com/ManuEtt/Dnd/actions/runs/40631254745).
+- **Integration:** Merge-Commit `8450cfc36574da6a688852514ea9ace52f79d4db` übernimmt `main` `3bdc3586` mitsamt SQLite-V3-/NPC-Migrationen und weiteren parallel integrierten Änderungen. Keine veralteten ganzen Dateien kopiert.
+- **Funktion:** feste Kampagnen-ID/Revision beim Öffnen des Editors; transaktionaler Vergleich der ursprünglichen JSON-Fassung für eigenständige Archivfiguren; sichere Ablehnung einer Löschung, Doppelanlage oder Fremdbearbeitung.
+- **Neue Tests:** sechs Fälle in `app/test/character_editor_stale_save_test.dart` mit zwei unabhängigen SQLite-Verbindungen und Neustart.
+- **CI:** Ausgangs-HEAD erfolgreich; auf diesem kombinierten Commit noch ausstehend.
+- **Parallel:** PR #319 und #324 für Klassenstartwerte bleiben getrennt; ihre Änderungen nicht dupliziert.
+- **Grenzen:** keine echte Geräte-/TalkBack-Abnahme; weiterhin kein vollständiger SRD-Wizard und kein persistierter unbestätigter Charakterentwurf.
+- [Details](CHARACTER_EDITOR_REVISION_20261028.md).
+
 ## Aktueller Auditstand 27.10.2026 – Teilprüfung
 
 Sieben Prüfzustände und Abgleich tatsächlicher Herkunfts-/Hintergrundbelege
