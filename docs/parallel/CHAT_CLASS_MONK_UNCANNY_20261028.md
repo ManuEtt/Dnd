@@ -15,7 +15,7 @@ Stand: 28.10.2026. Quelle: Wizards of the Coast, [System Reference Document 5.2.
 
 `GameEngine.act(campaign, input, useUncannyMetabolism: true)` und `GameEngine.acceptAdventure(campaign, useUncannyMetabolism: true)` benötigen **vorheriges UI-/Spieler-Opt-in**; Standard ist immer `false`. Für eigenständige Regeladapter ist `MonkInitiativeFeatures.onInitiative(hero, useUncannyMetabolism: true, dice: dice)` im Regel-API-Export verfügbar.
 
-**Wichtig:** Ein Dialog zur Bestätigung **vor** Initiativ-Auslösung existiert noch nicht. Ohne explizites Opt-in ist das Merkmal in der normalen UI daher noch **nicht auswählbar**; der PR ist ein Regelengine-/Integrationsschritt, keine vollständige mechanische SRD-Automatik. Die Bestätigung darf nicht nach dem bereits ausgeführten Initiativewurf erfolgen.
+**UI:** Bei KI-Kampfangeboten erscheint bei einem berechtigten Mönch vor der Initiative eine zweite, explizite Schaltfläche **„Annehmen + Unheimlicher Stoffwechsel“**; die normale Schaltfläche bleibt ohne Verbrauch. Für kampfauslösende Freitext-/Skriptaktionen ist die vorherige UI-Bestätigung noch offen. Der PR bleibt ein einzelnes Klassenmerkmal, keine vollständige SRD-Automatik.
 
 ## Abnahme
 
@@ -26,11 +26,11 @@ flutter test test/monk_uncanny_metabolism_test.dart test/monk_perfect_focus_test
 flutter test
 ```
 
-Tests für No-op ohne Opt-in, Stufen 1/2/5/10/15, Mehrklassen, Trefferpunktgrenzen, Präzision des Würfelwurfs, Fokus/HP-Update, Rast, JSON-Roundtrip, ungültige Speicherstände, doppelte Nutzung und Kampfbeginn. Die automatische GitHub-CI ist maßgeblich; **ohne tatsächlich grüne CI keine vollständige Freigabe behaupten**.
+Tests für No-op ohne Opt-in, Stufen 1/2/5/10/15, Mehrklassen, Trefferpunktgrenzen, Würfelwurf, Fokus/HP-Update, Rast, JSON-Roundtrip, ungültige Speicherstände, doppelte Nutzung sowie Skript- und KI-Kampfbeginn. Die automatische GitHub-CI ist maßgeblich; **ohne tatsächlich grüne CI keine vollständige Freigabe behaupten**.
 
 ## Folgearbeit
 
-1. Bestätigungsdialog vor den Initiativepfaden einhängen, mit explizitem Abbruch und keinem Ressourcenverbrauch bei Ablehnung.
-2. Separaten Integrationsregressionstest für den KI-Abenteuerannahmepfad und die UI bauen.
+1. Vor Freitext-/Skript-Kampfbeginn einen separaten Bestätigungsdialog anbieten; die KI-Abenteuerannahme besitzt bereits eine explizite Auswahl.
+2. UI-Widget- und Controller-Regression für den neuen KI-Angebotsknopf einschließlich deaktivierter/verbrauchter Nutzung bauen.
 3. Nach Abgleich mit parallel laufendem PR #323 die Laufzeitabdeckung für `Uncanny Metabolism` von `manual` auf **bestätigte Regelaktion** setzen, **nicht** auf vollständig automatisch.
 4. Restliche 281+ Merkmale benötigen eigene Wirkungs-, Ziel-/Dauer-, Auswahllogik- und E2E-Tests.
