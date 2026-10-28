@@ -33,6 +33,7 @@ import 'monk_focus_actions.dart';
 import 'monk_flurry_rules.dart';
 import 'monk_self_restoration.dart';
 import 'monk_perfect_focus.dart';
+import 'srd_bard_superior_inspiration_rules.dart';
 import 'paladin_lay_on_hands.dart';
 import 'saving_throw_class_actions.dart';
 import 'ai_story.dart';
@@ -416,8 +417,11 @@ class GameEngine {
     );
     final enemyInitiative = dice.check(modifier: 0);
     final focus = MonkPerfectFocus.onInitiative(campaign.hero);
+    final inspiration = SrdBardSuperiorInspirationRules.onInitiative(
+      focus.hero,
+    );
     var next = campaign.copyWith(
-      hero: focus.hero,
+      hero: inspiration.hero,
       adventureOffer: null,
       quests: [
         ...campaign.quests,
@@ -459,6 +463,7 @@ class GameEngine {
       'heroInitiative': heroInitiative.toJson(),
       'enemyInitiative': enemyInitiative.toJson(),
       'focusRecoveredAtInitiative': focus.recovered,
+      'bardicInspirationRecoveredAtInitiative': inspiration.recovered,
     };
     if (enemyInitiative.total > heroInitiative.total) {
       final turn = _enemyTurn(next, advanceRound: false);
@@ -3572,8 +3577,11 @@ class GameEngine {
       );
       final foeRoll = dice.check(modifier: 2);
       final focus = MonkPerfectFocus.onInitiative(current.hero);
+      final inspiration = SrdBardSuperiorInspirationRules.onInitiative(
+        focus.hero,
+      );
       var started = scripted.campaign.copyWith(
-        hero: focus.hero,
+        hero: inspiration.hero,
         encounter: Encounter(
           id: _id('encounter'),
           enemyName: enemy.name,
@@ -3609,6 +3617,7 @@ class GameEngine {
           'heroInitiative': heroRoll.toJson(),
           'enemyInitiative': foeRoll.toJson(),
           'adventure': 'rabenwacht',
+          'bardicInspirationRecoveredAtInitiative': inspiration.recovered,
         },
       );
     }
@@ -3799,8 +3808,11 @@ class GameEngine {
       );
       final foeInit = dice.check(modifier: 0);
       final focus = MonkPerfectFocus.onInitiative(current.hero);
+      final inspiration = SrdBardSuperiorInspirationRules.onInitiative(
+        focus.hero,
+      );
       var next = current.copyWith(
-        hero: focus.hero,
+        hero: inspiration.hero,
         scene: 'Am alten Waldschrein erhebt sich ein Dornenwächter.',
         facts: {...current.facts, 'location': 'Waldschrein'},
         places: current.places.any((e) => e.id == 'shrine')
@@ -3832,6 +3844,7 @@ class GameEngine {
         'heroInitiative': heroInit.toJson(),
         'enemyInitiative': foeInit.toJson(),
         'focusRecoveredAtInitiative': focus.recovered,
+      'bardicInspirationRecoveredAtInitiative': inspiration.recovered,
       };
       if (foeInit.total > heroInit.total) {
         final turn = _enemyTurn(next, advanceRound: false);
