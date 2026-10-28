@@ -4,6 +4,11 @@
 
 Der aktive GitHub-Actions-Workflow zur Archivierung vollständig integrierter Pull-Request-Branches prüft nun zusätzlich das GitHub-Flag `branch.protected`. Geschützte Branches werden **vor** SHA-Vergleich und möglicher Löschung übersprungen; die vorhandenen Schutzmechanismen für offene PRs, Archive und geänderte Referenzen bleiben erhalten. Ein Python-Test prüft den positiven Guard, negative Manipulationen und die bisherigen Sicherheitsbedingungen. [PR #335](https://github.com/ManuEtt/Dnd/pull/335) ist wegen der Überschneidung mit PR #337 auf dessen Branch gestapelt; kombinierte CI noch offen. Keine Branchlöschungen in diesem Paket, keine Spielstands-, SRD- oder Versionsänderung.
 
+## Chat D – Sicherere Android-Alpha-Bündelung (27.10.2026)
+
+Die ARM64-Release-Prüfung weist nun vor dem Dekomprimieren manipulierte APK-ZIP-Dateien mit zu vielen Mitgliedern, zu großer entpackter Gesamtsumme oder extremen Kompressionsverhältnissen zurück. Vier neue Regressionstests sichern diese Grenzen. Kein Einfluss auf D&D-Regeln, Story, App-Daten oder bestehende Spielstände. **Neue CI/Android-Abnahme des zugehörigen Chat-D-Branches ist noch offen**; vorherige erfolgreiche Builds beweisen diese Änderung nicht. [Detailcheckpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
+
 ## Chat D – Doppelte automatische Branch-Bereinigung stillgelegt (28.10.2026)
 
 Die frühere Workflow-Datei `.github/workflows/retire-verified-branches-20261026.yml` konkurrierte mit der neuen SHA-/PR-gesicherten Bereinigung `cleanup-merged-safe-20261027.yml`. Am 27.10.2026 archivierte und entfernte der neue Workflow den Branch `test/chat-b/story-12-memory-transport-20261027`; der alte Workflow scheiterte anschließend beim erneuten Abruf mit HTTP 404 ([fehlgeschlagener Lauf](https://github.com/ManuEtt/Dnd/actions/runs/40589220593)). Der alte Eintrag bleibt als **manueller, schreibgeschützter Hinweis ohne Branch-Aktionen** erhalten. Drei neue Python-Tests prüfen Deaktivierung, Negativfälle und unveränderte Sicherungsprüfungen des Nachfolgers. Der neue [PR #329](https://github.com/ManuEtt/Dnd/pull/329) ist zur Review freigegeben; kombinierte CI noch ausstehend. Keine Spielstand-, Regel-, Versions- oder Datenmigration.
