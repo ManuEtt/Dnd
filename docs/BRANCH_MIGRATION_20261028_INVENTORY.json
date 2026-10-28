@@ -236,8 +236,9 @@
     }
   ],
   "verification": {
-    "full_combined": "pending corrected-source run",
-    "initial_300f7be": "partial run deliberately superseded by reproduced Legacy-CAS fix (exit143); not a full pass"
+    "full_combined": "4f03b788: 2185 Flutter, 195 Python, 72 Backend, 12 native tests passed; format/analyze/backend/debug APK passed",
+    "initial_300f7be": "partial run deliberately superseded by reproduced Legacy-CAS fix (exit143); not a full pass",
+    "final_ci": "pending CI packaging amendment"
   },
   "deletion_policy": "Exact unchanged head must be ancestor of tested Main; verify protected/open-PR use, archive then delete. Preserve newer or unmerged heads."
 }

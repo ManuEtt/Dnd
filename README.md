@@ -1,5 +1,17 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## 28.10.2026 – Gemeinsame lokale Abnahme bestanden
+
+Quellstand `4f03b7880c36ca225325c87ec9f2c56e0a93dccd` ist lokal vollständig geprüft:
+**2.185 Flutter-, 195 Python-, 72 Backend- und zwölf native Android-Tests bestanden**;
+500 Dart-Dateien unverändert formatiert, Analyzer ohne Befund, Backend-Build und
+Android-Debug-APK erfolgreich. [PR #351](https://github.com/ManuEtt/Dnd/pull/351).
+Der erste PR-CI-Lauf wird durch die abschließende CI-Artefaktverbesserung ersetzt:
+Der Quell-Checkpoint enthält nun zusätzlich einen tatsächlich angewendeten/geprüften
+Binärpatch mit expliziter Basis, Dateimanifest und vollständiges Git-Bundle.
+Die neue exakte PR- und anschließende Main-CI bleiben bis zum tatsächlichen Erfolg offen.
+Keine App-/Regel-/Speichercodeänderung nach dieser lokalen Abnahme; SQLite3/JSON1 unverändert.
+
 ## 28.10.2026 – Alle Branches gemeinsam integrieren: 0.8.46+96
 
 Alle 26 ursprünglichen Nebenbranch-Köpfe und der parallele Importgrenzen-/Button-Integrationsbranch sind über reguläre Merge-Eltern erhalten. Charakterherkunft, zwölf Klassenstartwerte, Talentwahl, atomarer Editor-Schreibschutz, Klassenressourcen, Story-Replay und Android-Bedienung werden gemeinsam geprüft. Zwei echte Integrationsfehler sind behoben: Altarchiv-Charaktere mit nachträglich ergänzten Katalogwerten bleiben bearbeitbar; der Barden-Dialog funktioniert mit großer Schrift. Der konkurrierende alte Löschworkflow ist stillgelegt. **Gemeinsame finale CI/Main-Abnahme und Branchlöschung bei diesem Schreibstand noch offen.** SQLite 3 / Kampagnen-JSON 1 unverändert; vollständiger Charakter-Wizard und vollständiges SRD bleiben offen. [Migrationsbericht](docs/BRANCH_MIGRATION_20261028.md) · [Inventar](docs/BRANCH_MIGRATION_20261028_INVENTORY.json).

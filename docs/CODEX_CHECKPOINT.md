@@ -1,3 +1,17 @@
+## 28.10.2026 – Gemeinsame lokale Abnahme bestanden
+
+Quellstand `4f03b7880c36ca225325c87ec9f2c56e0a93dccd` ist lokal vollständig geprüft:
+**2.185 Flutter-, 195 Python-, 72 Backend- und zwölf native Android-Tests bestanden**;
+500 Dart-Dateien unverändert formatiert, Analyzer ohne Befund, Backend-Build und
+Android-Debug-APK erfolgreich. [PR #351](https://github.com/ManuEtt/Dnd/pull/351).
+Der erste PR-CI-Lauf wird durch die abschließende CI-Artefaktverbesserung ersetzt:
+Der Quell-Checkpoint enthält nun zusätzlich einen tatsächlich angewendeten/geprüften
+Binärpatch mit expliziter Basis, Dateimanifest und vollständiges Git-Bundle.
+Die neue exakte PR- und anschließende Main-CI bleiben bis zum tatsächlichen Erfolg offen.
+Keine App-/Regel-/Speichercodeänderung nach dieser lokalen Abnahme; SQLite3/JSON1 unverändert.
+
+---
+
 # 28.10.2026 – Gemeinsame Branch-Migration / 0.8.46+96
 
 Arbeitsbranch `integration/all-branches-20261028`; Ausgangs-Main `dd0c2e94`, inzwischen Main `f9d68a97` enthalten. Alle 26 ursprünglichen Nebenbranch-Köpfe plus ein paralleler Integrationsbranch sind Vorfahren. Originale vorab in geprüftem Bundle gesichert. **Kein Branch wurde von diesem Durchlauf vor der gemeinsamen Abnahme gelöscht.**

@@ -84,3 +84,19 @@ Nächster konkreter fachlicher Schritt nach Migrationsabschluss: im bestehenden
 Klassenassistenten die drei katalogisierten Heiligen-Symbol-Varianten für Kleriker/Paladin
 explizit und strukturiert wählen, speichern und ohne doppelte Ausrüstung testen.
 Keine Hintergrundfortsetzung außerhalb einer aktiven Sitzung.
+
+## Ergänzte gemeinsame lokale Abnahme / CI-Artefakte
+
+Auf `4f03b788` wurden `bash scripts/check.sh`, Android-Debug-Build und native Tests
+vollständig erfolgreich ausgeführt: **2185 Flutter / 195 Python / 72 Backend / 12 native**;
+500 Dart-Dateien ohne Formatänderung, Analyzer sauber. Der frühe abgebrochene
+Versuch bleibt separat als unvollständig protokolliert.
+
+Der finale Workflow verwendet die bereits geprüfte `create_checkpoint.py` statt eines
+bloßen ZIP-Exports: ZIP-Hash-/Modusprüfung, Binärpatch, echte Anwendung gegen expliziten
+Basiscommit und Dateimanifest. Vollständig gefetchte Git-Historie ermöglicht zusätzlich
+`Wuerfelraunen_History.bundle` samt SHA256; dadurch sind vorangehende Branchstände aus
+dem CI-Artefakt anhand der dokumentierten SHAs wiederherstellbar. Bei PR-/Main-Merges
+ist der erste Elterncommit die Patchbasis; im Root-Commit-Fall der Commit selbst.
+Diese Verpackungsänderung ändert keine App-/Backend-/SQLite-Daten und erfordert eine
+neue finale CI am PR-HEAD. Die finale Downloadabnahme bleibt bis dahin offen.
