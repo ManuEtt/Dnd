@@ -1,5 +1,19 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+
+## 28.10.2026 – Chat A: geprüfter Würfel-Zauberursprung (neues Regel-Inkrement)
+
+`SrdCubeAreaRules.previewConfirmedSpell` verbindet die vorhandene rein lesende
+Würfel-Rastervorschau nun mit der bestehenden Zauberreichweiten- und
+Ursprungsprüfung. Eine aus dem Effekt ausdrücklich bestätigte Würfelform und
+Kantenlänge sind erforderlich; ein `Self`-Zauber wie *Thunderwave* darf
+nicht von einem fremden Rasterfeld ausgehen. Positive und negative
+Flutter-Domänentests ergänzt. **Noch keine erfolgreiche Flutter-CI dieses
+Branches nachgewiesen.** Die Vorschau verursacht keine Treffer, Ressourcen-
+oder Spielstandsänderungen; `RULE-SPELLS-SPELL-AREAS-OF-EFFECT` bleibt
+teilweise umgesetzt. Keine Migration. [Chat-A-Checkpoint](docs/parallel/CHAT_A_CHECKPOINT.md).
+
+
 ## 28.10.2026 – Gemeinsame lokale Abnahme bestanden
 
 Quellstand `4f03b7880c36ca225325c87ec9f2c56e0a93dccd` ist lokal vollständig geprüft:
