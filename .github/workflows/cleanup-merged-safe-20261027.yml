@@ -1,0 +1,121 @@
+name: Sicher integrierte PR-Branches archivieren und bereinigen
+
+on:
+  workflow_run:
+    workflows: ['Android-Alpha bauen']
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: dnd-safe-merged-branch-cleanup
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    if: >-
+      github.repository == 'ManuEtt/Dnd' &&
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Nur verifiziert integrierte und unbenutzte Branches archivieren und löschen
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const main = await github.rest.git.getRef({owner, repo, ref: 'heads/main'});
+            const mainSha = main.data.object.sha;
+            if (context.eventName === 'workflow_run' &&
+                context.payload.workflow_run.head_sha !== mainSha) {
+              core.info('CI gehört nicht zum aktuellen main; keine Bereinigung.');
+              return;
+            }
+            const open = await github.paginate(github.rest.pulls.list, {
+              owner, repo, state: 'open', per_page: 100
+            });
+            const branches = await github.paginate(github.rest.repos.listBranches, {
+              owner, repo, per_page: 100
+            });
+            const protectedNames = new Set(['main']);
+            for (const pr of open) {
+              protectedNames.add(pr.base.ref);
+              if (pr.head.repo?.full_name === owner + '/' + repo) {
+                protectedNames.add(pr.head.ref);
+              }
+            }
+            let deleted = 0, skipped = 0;
+            for (const branch of branches) {
+              const name = branch.name;
+              if (protectedNames.has(name)) { skipped++; continue; }
+              const sha = branch.commit.sha;
+              // An exact branch head that is an ancestor of current main
+              // is integrated, even if delivered by a descendant/stacked PR.
+              // Protect open PR heads/bases, verify ancestry and archive
+              // this SHA before deleting the unchanged ref.
+              let comparison;
+              try {
+                comparison = await github.rest.repos.compareCommits({
+                  owner, repo, base: sha, head: mainSha
+                });
+              } catch (error) {
+                core.warning('Vergleich fehlgeschlagen; bleibt erhalten: ' + name);
+                skipped++;
+                continue;
+              }
+              if (comparison.data.behind_by !== 0 ||
+                  !['ahead', 'identical'].includes(comparison.data.status)) {
+                core.warning('Head nicht vollständig in main: ' + name);
+                skipped++;
+                continue;
+              }
+              const archive = 'tags/archive/merged-20261027/' +
+                name + '-' + sha.slice(0, 12);
+              try {
+                const existing = await github.rest.git.getRef({
+                  owner, repo, ref: archive
+                });
+                if (existing.data.object.sha !== sha) {
+                  core.warning('Archivtag mit anderem SHA; keine Löschung: ' + name);
+                  skipped++;
+                  continue;
+                }
+              } catch (error) {
+                if (error.status !== 404) throw error;
+                await github.rest.git.createRef({
+                  owner, repo, ref: 'refs/' + archive, sha
+                });
+              }
+              const currentMain = await github.rest.git.getRef({
+                owner, repo, ref: 'heads/main'
+              });
+              if (currentMain.data.object.sha !== mainSha) {
+                core.warning('main wurde während der Bereinigung geändert; abbrechen.');
+                return;
+              }
+              let currentBranch;
+              try {
+                currentBranch = await github.rest.git.getRef({
+                  owner, repo, ref: 'heads/' + name
+                });
+              } catch (error) {
+                if (error.status === 404) { skipped++; continue; }
+                throw error;
+              }
+              if (currentBranch.data.object.sha !== sha) {
+                core.warning('Branch wurde aktualisiert; bleibt erhalten: ' + name);
+                skipped++;
+                continue;
+              }
+              await github.rest.git.deleteRef({
+                owner, repo, ref: 'heads/' + name
+              });
+              core.info('Archiviert und gelöscht: ' + name + ' @ ' + sha);
+              deleted++;
+            }
+            core.info('Fertig. Gelöscht: ' + deleted + '; bewusst belassen: ' + skipped);

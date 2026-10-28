@@ -15,6 +15,7 @@ class ClassResourceRules {
     'channelDivinityCleric',
     'wildShape',
     'focusPoints',
+    'uncannyMetabolism',
     'layOnHands',
     'indomitable',
     'channelDivinityPaladin',
@@ -75,6 +76,8 @@ class ClassResourceRules {
       case 'focusPoints':
         final l = level(hero, 'Mönch');
         return l < 2 ? 0 : l;
+      case 'uncannyMetabolism':
+        return level(hero, 'Mönch') >= 2 ? 1 : 0;
       case 'layOnHands':
         return 5 * level(hero, 'Paladin');
       case 'indomitable':
