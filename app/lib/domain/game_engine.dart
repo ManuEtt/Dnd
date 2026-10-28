@@ -49,6 +49,7 @@ import 'srd_extra_creature_attack_rules.dart';
 import 'rules_engine.dart';
 import 'rest_rules.dart';
 import 'srd_ranger_tireless_rules.dart';
+import 'srd_sorcerous_restoration_rules.dart';
 import 'srd_warlock_magical_cunning_rules.dart';
 import 'spellcasting_rules.dart';
 import 'srd_bard_font_of_inspiration.dart';
@@ -3594,6 +3595,12 @@ class GameEngine {
       }
       try {
         if (short) {
+          final restoreSorceryPoints = words.contains('mit zauberkraftregeneration');
+          if (restoreSorceryPoints) {
+            SrdSorcerousRestorationRules.restoreAfterCompletedShortRest(
+              current.hero,
+            );
+          }
           final requested = RegExp(
             r'(\d{1,2})\s*[wd](6|8|10|12)',
           ).firstMatch(words);
@@ -3608,11 +3615,16 @@ class GameEngine {
                     current.hero.spentActionSurge > 0 ||
                     current.hero.spentClassResources.values.any((n) => n > 0) ||
                     SrdRangerTirelessRules.canReduceExhaustion(current.hero))) {
-              final refreshed = ClassResourceRules.afterShortRest(
+              final baseRestored = ClassResourceRules.afterShortRest(
                 ClassFeatureResources.afterShortRest(
                   SpellcastingRules.afterShortRest(current.hero),
                 ),
               );
+              final refreshed = restoreSorceryPoints
+                  ? SrdSorcerousRestorationRules.restoreAfterCompletedShortRest(
+                      baseRestored,
+                    ).hero
+                  : baseRestored;
               return _commit(
                 campaign,
                 current.copyWith(hero: refreshed),
@@ -3628,6 +3640,11 @@ class GameEngine {
                   'pactSlotsRecovered': current.hero.spentPactSlots,
                   'exhaustionBefore': current.hero.exhaustionLevel,
                   'exhaustionAfter': refreshed.exhaustionLevel,
+                  'sorcerousRestorationUsed': restoreSorceryPoints,
+                  'sorceryPointsRecovered': restoreSorceryPoints
+                      ? (current.hero.spentClassResources['sorceryPoints'] ?? 0) -
+                          (refreshed.spentClassResources['sorceryPoints'] ?? 0)
+                      : 0,
                 },
               );
             }
@@ -3648,11 +3665,16 @@ class GameEngine {
               !RestRules.availableHitDice(
                 current.hero,
               ).values.any((n) => n > 0)) {
-            final refreshed = ClassResourceRules.afterShortRest(
+            final baseRestored = ClassResourceRules.afterShortRest(
               ClassFeatureResources.afterShortRest(
                 SpellcastingRules.afterShortRest(current.hero),
               ),
             );
+            final refreshed = restoreSorceryPoints
+                ? SrdSorcerousRestorationRules.restoreAfterCompletedShortRest(
+                    baseRestored,
+                  ).hero
+                : baseRestored;
             return _commit(
               campaign,
               current.copyWith(hero: refreshed),
@@ -3668,6 +3690,11 @@ class GameEngine {
                 'pactSlotsRecovered': current.hero.spentPactSlots,
                 'exhaustionBefore': current.hero.exhaustionLevel,
                 'exhaustionAfter': refreshed.exhaustionLevel,
+                'sorcerousRestorationUsed': restoreSorceryPoints,
+                'sorceryPointsRecovered': restoreSorceryPoints
+                    ? (current.hero.spentClassResources['sorceryPoints'] ?? 0) -
+                        (refreshed.spentClassResources['sorceryPoints'] ?? 0)
+                    : 0,
               },
             );
           }
@@ -3676,6 +3703,7 @@ class GameEngine {
             dice: dice,
             dieSides: sides,
             count: count,
+            restoreSorceryPoints: restoreSorceryPoints,
           );
           return _commit(
             campaign,
@@ -3696,6 +3724,11 @@ class GameEngine {
               'pactSlotsRecovered': current.hero.spentPactSlots,
               'exhaustionBefore': current.hero.exhaustionLevel,
               'exhaustionAfter': rest.hero.exhaustionLevel,
+              'sorcerousRestorationUsed': restoreSorceryPoints,
+              'sorceryPointsRecovered': restoreSorceryPoints
+                  ? (current.hero.spentClassResources['sorceryPoints'] ?? 0) -
+                      (rest.hero.spentClassResources['sorceryPoints'] ?? 0)
+                  : 0,
             },
           );
         }
