@@ -4,6 +4,10 @@
 
 Die vier bereits fixierten Schnellaktionen werden in neuen Widgettests auf **Tab-Fokus und Enter-Aktivierung** geprüft (320 dp, simuliertes Android-IME-Inset, 2x Schrift). Ein deaktivierter Angriff muss in der Fokusfolge übersprungen bleiben; die Tests ändern keine Laufzeitlogik und keine Spielstände. [PR #359](https://github.com/ManuEtt/Dnd/pull/359), Branch `feat/chat-c/shortcut-keyboard-focus-20261028`;  die aktuelle CI und echte Android-Geräteprüfung sind getrennte Freigabekriterien. [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md). Die ältere scrollbare Inventaransicht bleibt unabhängig in [PR #355](https://github.com/ManuEtt/Dnd/pull/355).
 
+## 28.10.2026 – Chat C: Inventarnotizen bei großer Android-Schrift
+
+Ein Inventargegenstand kann lange importierte oder selbst verfasste Beschreibungen enthalten. Der reine Lesedialog lässt nun Titel/Text scrollen, während „Schließen“ bei kleinen Displays erreichbar bleibt. [PR #355](https://github.com/ManuEtt/Dnd/pull/355) ist ein **Entwurf** mit drei ergänzten Widgettestfällen für 320/360 dp, doppelte Schriftgröße und leere Beschreibungen. Die Flutter-/Android-CI und echte Geräteprüfung sind **noch nicht bestätigt**. Kein Einfluss auf gespeicherte Gegenstände, Kampagnen, Regelengine oder SQLite/JSON. [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md).
+
 ## 28.10.2026 – Gemeinsame lokale Abnahme bestanden
 
 Quellstand `4f03b7880c36ca225325c87ec9f2c56e0a93dccd` ist lokal vollständig geprüft:

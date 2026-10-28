@@ -1,3 +1,9 @@
+## 28.10.2026 – SRD-Zauberer Stufe 5: Sorcerous Restoration
+
+Die ausdrückliche Auswahl `Kurze Rast mit Zauberkraftregeneration` stellt bis zur Hälfte der Zauberer-Klassenstufe (abgerundet) an verbrauchten Zaubereipunkten wieder her – höchstens einmal pro langer Rast. Voll-HP-, kein-Trefferwürfel- und Wundheilungs-Rastpfade, Ressourcenpersistenz und Tests ergänzt. **CI, Gesamt-Flutter-Tests und Android-Build des neuen Branch-HEAD stehen noch aus.** Die SRD-Matrix bleibt wegen unmodellierter Rastdauer und Unterbrechungen auf `partial`. Details in `docs/parallel/CHAT_A_SORCEROUS_RESTORATION_20261028.md`.
+
+---
+
 ## 28.10.2026 – Hexenmeister Stufe 2 / 20: Magical Cunning und Eldritch Master
 
 **IMPLEMENTIERT, aktuell NOCH NICHT CI-geprüft:** Spielerbestätigtes 1-Minuten-Ritual stellt höchstens aufgerundet die Hälfte der maximalen Hexenmeister-Paktplätze wieder her, mit Eldritch Master (Stufe 20) alle. Ein Nutzungseintrag pro langer Rast, Mehrklasse, alte JSON-Speicherstände und zwölf neue Tests. Weltzeit/Unterbrechungen und finale Android-Abnahme bleiben offen; Auditstatus `partial`. Übergabe: `docs/parallel/CHAT_A_WARLOCK_MAGICAL_CUNNING_20261028.md`.

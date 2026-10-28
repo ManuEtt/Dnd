@@ -26,6 +26,7 @@ export '../domain/srd_opportunity_attack_rules.dart';
 export '../domain/srd_ranger_feral_senses_rules.dart';
 export '../domain/srd_ranger_tireless_rules.dart';
 export '../domain/srd_warlock_magical_cunning_rules.dart';
+export '../domain/srd_sorcerous_restoration_rules.dart';
 export '../domain/srd_monk_slow_fall_rules.dart';
 export '../domain/monk_initiative_features.dart';
 export '../domain/srd_evasion_rules.dart';
