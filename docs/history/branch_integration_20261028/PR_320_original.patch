@@ -1,0 +1,181 @@
+diff --git a/README.md b/README.md
+index 657eef6e..cb0a1b50 100644
+--- a/README.md
++++ b/README.md
+@@ -1,5 +1,10 @@
+ # Würfelraunen – Der lebendige Spielleiter
+ 
++
++## Chat C – Fantasy-Buttons für Screenreader (27.10.2026)
++
++Gewöhnliche Würfel- und Aktionsbuttons unterscheiden sich semantisch von echten Ein-/Aus-Umschaltern: Nur `FantasyToggleButton` meldet einen An-/Aus-Zustand an TalkBack. Grafische Hervorhebungen, Aktionen und Spielstände bleiben unverändert. Zwei Widgettests wurden ergänzt. **CI dieses PRs und reale Android-TalkBack-Abnahme stehen aus.** Mehr unter [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md).
++
+ ## Chat D – Sicherere Android-Alpha-Bündelung (27.10.2026)
+ 
+ Die ARM64-Release-Prüfung weist nun vor dem Dekomprimieren manipulierte APK-ZIP-Dateien mit zu vielen Mitgliedern, zu großer entpackter Gesamtsumme oder extremen Kompressionsverhältnissen zurück. Vier neue Regressionstests sichern diese Grenzen. Kein Einfluss auf D&D-Regeln, Story, App-Daten oder bestehende Spielstände. **Neue CI/Android-Abnahme des zugehörigen Chat-D-Branches ist noch offen**; vorherige erfolgreiche Builds beweisen diese Änderung nicht. [Detailcheckpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+diff --git a/app/lib/ui/fantasy_buttons.dart b/app/lib/ui/fantasy_buttons.dart
+index fc61dc2f..0cfe3540 100644
+--- a/app/lib/ui/fantasy_buttons.dart
++++ b/app/lib/ui/fantasy_buttons.dart
+@@ -38,6 +38,7 @@ class FantasyButton extends StatefulWidget {
+     this.icon,
+     this.style = FantasyButtonStyle.woodGold,
+     this.selected = false,
++    this.toggleable = false,
+     this.iconOnly = false,
+     this.tooltip,
+     this.onSound,
+@@ -50,6 +51,10 @@ class FantasyButton extends StatefulWidget {
+   final IconData? icon;
+   final FantasyButtonStyle style;
+   final bool selected;
++
++  /// Only true switches expose on/off semantics to assistive technology.
++  /// Ordinary actions may be visually highlighted without being toggles.
++  final bool toggleable;
+   final bool iconOnly;
+   final String? tooltip;
+   final VoidCallback? onSound;
+@@ -129,7 +134,7 @@ class _FantasyButtonState extends State<FantasyButton> {
+       button: true,
+       enabled: enabled,
+       label: iconOnly ? widget.label : null,
+-      toggled: widget.selected,
++      toggled: widget.toggleable ? widget.selected : null,
+       child: Material(
+         type: MaterialType.transparency,
+         child: InkWell(
+@@ -436,6 +441,7 @@ class FantasyToggleButton extends StatelessWidget {
+     icon: icon,
+     compact: compact,
+     selected: selected,
++    toggleable: true,
+     style: FantasyButtonStyle.arcane,
+     onPressed: onPressed,
+   );
+diff --git a/app/test/fantasy_buttons_test.dart b/app/test/fantasy_buttons_test.dart
+index 28f5abb5..d2eff324 100644
+--- a/app/test/fantasy_buttons_test.dart
++++ b/app/test/fantasy_buttons_test.dart
+@@ -178,4 +178,86 @@ void main() {
+       expect(tester.takeException(), isNull);
+     });
+   }
++
++  testWidgets('Normale Aktionen melden keinen Schalterzustand an TalkBack', (
++    tester,
++  ) async {
++    var actions = 0;
++    await tester.pumpWidget(
++      MaterialApp(
++        theme: buildFantasyTheme(),
++        home: Scaffold(
++          body: FantasyButton(
++            label: 'W20 würfeln',
++            selected: true,
++            onPressed: () => actions++,
++          ),
++        ),
++      ),
++    );
++    await tester.pumpAndSettle();
++    final semantic = tester.widget<Semantics>(
++      find
++          .descendant(
++            of: find.byType(FantasyButton),
++            matching: find.byWidgetPredicate(
++              (widget) =>
++                  widget is Semantics && widget.properties.button == true,
++            ),
++          )
++          .first,
++    );
++    expect(semantic.properties.button, isTrue);
++    expect(semantic.properties.toggled, isNull);
++    await tester.tap(find.text('W20 würfeln'));
++    expect(actions, 1);
++    expect(tester.takeException(), isNull);
++  });
++
++  testWidgets('Nur Schalter melden ihren tatsächlichen Auswahlzustand', (
++    tester,
++  ) async {
++    Future<void> showToggle({
++      required bool selected,
++      bool enabled = true,
++    }) async {
++      await tester.pumpWidget(
++        MaterialApp(
++          theme: buildFantasyTheme(),
++          home: Scaffold(
++            body: FantasyToggleButton(
++              label: 'Magie',
++              selected: selected,
++              onPressed: enabled ? () {} : null,
++            ),
++          ),
++        ),
++      );
++      await tester.pumpAndSettle();
++    }
++
++    Semantics toggleSemantics() => tester.widget<Semantics>(
++      find
++          .descendant(
++            of: find.byType(FantasyButton),
++            matching: find.byWidgetPredicate(
++              (widget) =>
++                  widget is Semantics && widget.properties.button == true,
++            ),
++          )
++          .first,
++    );
++
++    await showToggle(selected: false);
++    expect(toggleSemantics().properties.toggled, isFalse);
++    expect(toggleSemantics().properties.enabled, isTrue);
++
++    await showToggle(selected: true);
++    expect(toggleSemantics().properties.toggled, isTrue);
++
++    await showToggle(selected: false, enabled: false);
++    expect(toggleSemantics().properties.toggled, isFalse);
++    expect(toggleSemantics().properties.enabled, isFalse);
++    expect(tester.takeException(), isNull);
++  });
+ }
+diff --git a/docs/CODEX_CHECKPOINT.md b/docs/CODEX_CHECKPOINT.md
+index 2990e1c5..2f94d53e 100644
+--- a/docs/CODEX_CHECKPOINT.md
++++ b/docs/CODEX_CHECKPOINT.md
+@@ -1,3 +1,9 @@
++## 27.10.2026 – Chat C: Fantasy-Button-Semantik (CI noch offen)
++
++Branch `feat/chat-c/button-semantics-20261027`, Basis-main `e3e166a507bf9c88a4286473ceb97fc4b14ec35b`: Gewöhnliche Fantasy-Aktionsbuttons melden keinen irreführenden TalkBack-Ein-/Aus-Zustand mehr; nur `FantasyToggleButton` meldet über `Semantics.toggled` true/false. Zwei Widgettests prüfen positive und negative Fälle samt deaktiviertem Schalter und weiterhin funktionierender Aktion. Keine Änderung an Regeln, KI, SQLite, JSON oder Spielständen. **Lokale Flutter-/Android-Testausführung nicht möglich, GitHub-CI auf finalem PR-HEAD vor Integration prüfen.** Details `docs/parallel/CHAT_C_CHECKPOINT.md`.
++
++---
++
+ ## 27.10.2026 – Chat D D-013: sichere APK-ZIP-Metadaten vor Alpha-Bündelung
+ 
+ **Basis:** `main` `f9b2f72a4bf8e4216bf8baac60c7f92c4a8a997f`; Arbeitsbranch `fix/chat-d/alpha-apk-zipbomb-guard-20261027`; Produkt Würfelraunen `0.8.42+92`, SQLite 2 / Kampagnen-JSON 1.
+diff --git a/docs/parallel/CHAT_C_CHECKPOINT.md b/docs/parallel/CHAT_C_CHECKPOINT.md
+index 54997238..ced417a5 100644
+--- a/docs/parallel/CHAT_C_CHECKPOINT.md
++++ b/docs/parallel/CHAT_C_CHECKPOINT.md
+@@ -1,3 +1,16 @@
++## 27.10.2026 – Chat C: TalkBack-Toggle-Ansage bei Fantasy-Buttons
++
++- **Ausgangs-main:** `e3e166a507bf9c88a4286473ceb97fc4b14ec35b`.
++- **Branch:** `feat/chat-c/button-semantics-20261027`; **Pull Request:** [#320](https://github.com/ManuEtt/Dnd/pull/320) (Draft). **Letzter Code-/Test-Commit:** `0f8e05ee4f0522ed5f6843a27ef6f315df4db8a8`; finaler Dokumentations-/PR-HEAD über GitHub prüfen.
++- **Ausgangsproblem:** `FantasyButton` meldete über `Semantics.toggled` bei normalen Aktionen `false`. TalkBack kann einen normalen Aktionsbutton irreführend als ausgeschalteten Schalter interpretieren.
++- **IMPLEMENTIERT:** `app/lib/ui/fantasy_buttons.dart`: expliziter `toggleable`-Marker (standardmäßig false); nur `FantasyToggleButton` aktiviert ihn. Normale Buttons besitzen keinen Toggle-Zustand; Schalter melden ihren echten Zustand. Klicks und grafische Hervorhebung sind unverändert.
++- **TESTS ERGÄNZT:** `app/test/fantasy_buttons_test.dart`: normaler hervorgehobener Aktionsbutton mit Callback, Schalter an/aus sowie deaktiviert.
++- **NICHT GETESTET:** Dart-/Flutter-/Android-Gates lokal wegen fehlender SDKs; GitHub-CI und reales TalkBack-Gerät offen. Es wird kein Erfolg behauptet.
++- **KOMPATIBILITÄT:** keine Regel-/Story-/Controller-/Datenbank-/JSON-Änderung; keine Migration.
++- **NÄCHSTER SCHRITT:** Auf 320 dp bei großer Schrift die Tastaturfokus-Reihenfolge der fixierten Abenteuer-Schnellaktionen durch positive und negative Widgettests absichern.
++
++---
++
+ # CHAT C – Android und Fantasy-UI
+ 
+ **Stand:** 2026-10-25 (Europe/Berlin)  
