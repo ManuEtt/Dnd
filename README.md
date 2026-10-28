@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat B – Sichere Bestätigung ausdrücklich ausgewählter NPC-Handlungen (27.10.2026)
+
+Beim Entfernen eines ausstehenden Spielerauftrags vergleicht die SQLite-Outbox jetzt **Handlungskennung, exakten Text, gewählte NPC-ID und ursprüngliche Kampagnenrevision**, statt nur Kennung und Text. Ein verspätetes Bestätigungssignal für die erste „Mira“ kann daher keinen später neu angelegten Auftrag für die zweite „Mira“ beseitigen. Die Prüfung und Löschung erfolgen in einer SQLite-Transaktion; auch der Fallback für ältere Repository-Implementierungen vergleicht beide NPC-Felder. Zwei neue SQLite-Regressionstests prüfen falsche IDs/Revisionen und die Wiederverwendung derselben Test-Handlungskennung nach bewusster Auftragsersetzung. Zusätzlich nennt der Fehler für zu neue Datenbanken nun die tatsächlich unterstützte SQLite-Version 3. Kein Schema-, Export- oder SRD-Regelwechsel. Dieses Paket baut auf [PR #303](https://github.com/ManuEtt/Dnd/pull/303) auf.
+
+
 ## Chat B – ausstehende NPC-Handlungen klar anzeigen (27.10.2026)
 
 Die Anzeige einer ausstehenden Spielhandlung ist nun als separate, zustandslose Komponente `PendingActionStatus` implementiert. Sie bewahrt die bisherigen UI-Kennungen für Wiederholen, Verwerfen, laufendes Senden und Fehlermeldungen. Bei einer ausdrücklich gewählten Figur erklärt sie, dass deren Auswahl an den gespeicherten Auftrag gebunden bleibt und bei veralteter Revision bewusst verworfen und neu getroffen werden muss. Fünf kleine Flutter-Widgettests prüfen die Darstellung und Buttons **ohne** SQLite, Netzwerk, TTS oder Widget-/FFI-Zeitsteuerungsabhängigkeiten. Der fachliche Controller-/SQLite-Schutz aus den Basis-PRs #288, #290 und #303 wird dadurch nicht verändert. Keine Datenbankmigration oder D&D-Regeländerung.
