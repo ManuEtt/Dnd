@@ -1,3 +1,25 @@
+## 27.10.2026 – 0.8.44+94: nachweisbasierte Charakterprüfung
+
+Sieben deutsche Prüfzustände ersetzen die bisherige Bestätigung nach bloßem
+Feldinhalt. Versionierte Startwerte und Hintergrundpakete werden abgeglichen,
+Doppelübungen und widersprüchliche Stufe-1-Daten erkannt. Historische Werte
+bleiben historisch; weder Boni noch Inventar werden beim Prüfen verändert.
+Der Editor prüft den aktuellen ungespeicherten Entwurf, erhält 10,5-m-Werte
+und meldet ungültige Zahleneingaben, statt sie still als leer zu behandeln.
+**Vollständige lokale Prüfung bestanden: 1.949 Flutter-, 164 Python-, 72 Backend- und zwölf native Android-Tests**;
+Format/Analyse, Backend-Build und Debug-APK grün. Finale exakte PR-CI
+beim Schreiben noch abzunehmen: [PR #318](https://github.com/ManuEtt/Dnd/pull/318).
+Basis Main `8239f5e`; eigener unabhängiger Branch
+`feat/character-creation-audit-evidence-20261027`. PR #297 bleibt separat;
+seine Würfelfehler-/Charakterbogenänderungen wurden nicht erneut implementiert.
+SQLite 2 / JSON 1 unverändert. [Aktueller Checkpoint](docs/CODEX_CHECKPOINT.md).
+Nächster Schritt nach Abnahme: bestätigte Startentscheidungen der ersten Klasse
+quellengetrennt und versioniert speichern, damit der Audit sie wirklich belegen
+kann. Vollständiger Assistent/Spezies-/Talent-/Zauberumfang bleibt offen.
+Ältere Einträge darunter sind historische Momentaufnahmen.
+
+---
+
 ## 26.10.2026 – 0.8.42+92: sieben Entwicklungsbranches zusammenführen
 
 Zehn konkrete Köpfe aus acht Branch-Namen einschließlich Main vorab remote per Archivtag und lokal per geprüftem Bundle gesichert. Eldritch-Klassenprüfung, NPC-ID-Wire-Vertrag (Android-Durchreichung noch offen), barrierearme Kampf-/Würfelanzeige und no-follow Checkpoint-Manifeste gemeinsam integriert. Formatfehler der Würfeltestdatei behoben; Syntaxfehler im später hinzugekommenen Reichweitenparser behoben, 17 gezielte Tests grün;155 Python-Tests bisher grün, vollständige kombinierte Abnahme noch offen. SQLite2/JSON1 unverändert. [Checkpoint](docs/CODEX_CHECKPOINT.md). Ältere Einträge unten sind Historie.

@@ -1,3 +1,15 @@
+## 0.8.44+94 – 27.10.2026 – Nachweisbasierter Charakter-Audit
+
+- Sieben Prüfzustände, echte Anfangswert-/Hintergrundbelege und Erkennung
+  widersprüchlicher Daten statt Bestätigung nach bloßen Feldinhalten.
+- Deutsche scrollbar zugängliche Anzeige mit Semantik; Prüfung des aktuellen
+  Entwurfs einschließlich 10,5 m und expliziter Attribut-Hausregelwahl.
+- Kein Schreiben von Auditstatus, keine Neuberechnung und keine Schemamigration.
+- Vollständige lokale Abnahme: 1.949 Flutter-, 164 Python-, 72 Backend- und zwölf native Android-Tests;
+  Format/Analyse, Backend- und Debug-Build grün. Finale PR-CI/Gerät separat offen.
+
+---
+
 ## 27.10.2026 – Charaktererstellung: vier SRD-Hintergrundpakete
 
 - Akolyth, Krimineller, Weiser, Soldat mit eigenen Fertigkeiten,
