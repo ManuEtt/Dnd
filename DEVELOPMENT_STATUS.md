@@ -1,3 +1,9 @@
+## 28.10.2026 – Hexenmeister Stufe 2 / 20: Magical Cunning und Eldritch Master
+
+**IMPLEMENTIERT, aktuell NOCH NICHT CI-geprüft:** Spielerbestätigtes 1-Minuten-Ritual stellt höchstens aufgerundet die Hälfte der maximalen Hexenmeister-Paktplätze wieder her, mit Eldritch Master (Stufe 20) alle. Ein Nutzungseintrag pro langer Rast, Mehrklasse, alte JSON-Speicherstände und zwölf neue Tests. Weltzeit/Unterbrechungen und finale Android-Abnahme bleiben offen; Auditstatus `partial`. Übergabe: `docs/parallel/CHAT_A_WARLOCK_MAGICAL_CUNNING_20261028.md`.
+
+---
+
 ## 28.10.2026 – Gemeinsame lokale Abnahme bestanden
 
 Quellstand `4f03b7880c36ca225325c87ec9f2c56e0a93dccd` ist lokal vollständig geprüft:

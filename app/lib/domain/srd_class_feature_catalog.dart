@@ -289,6 +289,9 @@ class SrdClassFeatureCatalog {
   static const Set<String> _partialNames = {
     'Spellcasting',
     'Pact Magic',
+    // Player-confirmed one-minute rite; elapsed world time still untracked.
+    'Magical Cunning',
+    'Eldritch Master',
     'Channel Divinity',
     'Rage',
     'Action Surge',

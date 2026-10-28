@@ -5031,12 +5031,18 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#hexenmeister_2_base_magical-cunning_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_warlock_magical_cunning_rules_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/srd_warlock_magical_cunning_rules.dart",
+        "app/lib/domain/class_resource_rules.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/domain/spellcasting_rules.dart"
+      ],
+      "note": "SRD 5.2.1 Hexenmeister 2: Magical Cunning stellt bei ausdrücklich abgeschlossenem 1-Minute-Ritual maximal ceil(halbe maximale Paktplätze) der ausgegebenen Paktplätze wieder her, höchstens einmal je Long Rest. Gegen fehlende Paktplätze, manipulierte Ressourcen, Tod, Kampf und ungültigen Befehl abgesichert; Mehrklasse und JSON-Roundtrip getestet. Ritualdauer/Unterbrechungen nicht automatisch gemessen; finaler CI/Android-Test offen, daher partial."
     },
     {
       "id": "CLASS-HEXENMEISTER-3-BASE-WARLOCK-SUBCLASS-0",
@@ -5271,12 +5277,18 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#hexenmeister_20_base_eldritch-master_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_warlock_magical_cunning_rules_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/srd_warlock_magical_cunning_rules.dart",
+        "app/lib/domain/class_resource_rules.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/domain/spellcasting_rules.dart"
+      ],
+      "note": "SRD 5.2.1 Hexenmeister 20: Eldritch Master stellt bei ausdrücklich abgeschlossenem Magical-Cunning-Ritual alle ausgegebenen Paktplätze statt der Hälfte wieder her. Klassenstufen, Ressourcenledger, Persistenz und Mehrklasse sind mit eigenen Tests belegt. 1 Minute Ritual/Unterbrechungen bleiben mangels verifizierter Weltzeit-Ereignisse vom Spieler bestätigt, daher partial; endgültige CI/Android-Abnahme offen."
     },
     {
       "id": "CLASS-HEXENMEISTER-3-SUBCLASS-DARK-ONE-S-BLESSING-0",
