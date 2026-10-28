@@ -100,7 +100,10 @@ void main() {
       result.at(const SrdGridCell(12, 10))!.centerRay,
       SrdSphereCenterRay.requiresCoverReview,
     );
-    expect(result.at(const SrdGridCell(10, 12))!.centerRay, SrdSphereCenterRay.clear);
+    expect(
+      result.at(const SrdGridCell(10, 12))!.centerRay,
+      SrdSphereCenterRay.clear,
+    );
   });
 
   test('unverified origin, map and unsupported extents fail closed', () {
