@@ -1,0 +1,23 @@
+{
+  "reason": "PR 349 product files are byte-identical to pinned main; preserve source documentation without replacing current operative documentation.",
+  "files": [
+    {
+      "path": "README.md",
+      "sourceCommit": "8bbf252ad48b8bc3c561da749b67c5cbc6a69520",
+      "sha256": "a75d3c41adf3e70dc648d33f326c9390a91a9a9d38550433e979353227c864b7",
+      "archivePath": "docs/history/branch_migration_20261028_story_349/README.md"
+    },
+    {
+      "path": "docs/CODEX_CHECKPOINT.md",
+      "sourceCommit": "8bbf252ad48b8bc3c561da749b67c5cbc6a69520",
+      "sha256": "596132c99244cf2a05a466a95ff3726e134533036f22972a7c08ebfcca229f96",
+      "archivePath": "docs/history/branch_migration_20261028_story_349/docs/CODEX_CHECKPOINT.md"
+    },
+    {
+      "path": "docs/parallel/CHAT_B_CHECKPOINT.md",
+      "sourceCommit": "8bbf252ad48b8bc3c561da749b67c5cbc6a69520",
+      "sha256": "edabfbdc9ddc64f231a9609cc84fe191898dd708773ae64e1298cbaa0d58a7f1",
+      "archivePath": "docs/history/branch_migration_20261028_story_349/docs/parallel/CHAT_B_CHECKPOINT.md"
+    }
+  ]
+}

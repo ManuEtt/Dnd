@@ -1,0 +1,106 @@
+# Chat B – Story-Controller und bestätigtes Ende über Neustart (26.10.2026)
+
+- **Abhängigkeiten:** PR #253 → PR #256 (Head `2b3fb89f184480bb5a53d29d0c374d0fc71cf36f`) → eigener Branch `test/chat-b/controller-terminal-recovery-20261026`. `main` bei Start `08bcd4dda585224c2ca8671786adecaf263d736c`. Chronologische Integration erforderlich.
+- **IMPLEMENTIERT:** Zwei echte SQLite-/GameController-/Fake-Backend-Tests in `app/test/ai_story_terminal_controller_resume_test.dart`; abgeschlossene Handlungsstränge nach Controller-Neustart, explizit neu verhandelter Mock-Session, abgelehnter unbestätigter KI-Umschreibung, festgehaltener lokaler Erzählrevision und zugelassener identischer Folgestory. Helden-/Questzustand und rekonstruierter Event-/Snapshotstand kontrolliert.
+- **GETESTET:** Parent-PR #256 hat volle GitHub-CI [40391505655](https://github.com/ManuEtt/Dnd/actions/runs/40391505655) erfolgreich abgeschlossen. Exakte offizielle Dart-Formatierung auf neuem Test übernommen und Diagnose-Workflowdatei entfernt.
+- **NICHT GETESTET:** finale GitHub-CI des eigenen PR und reale Android-Geräte, lokale SDK-Ausführung, externer KI-Provider.
+- **BLOCKIERT:** Parent-PRs #253 und #256 offen; gemeinsame Dokumentation muss bei Integration durch Chat D sorgfältig zusammengeführt werden.
+- **MIGRATION:** keine; keine Änderung an Produktioncode, SQLite, Kampagnen-JSON, Regeln oder Version.
+- **NÄCHSTER SCHRITT:** Nach grünem finalen CI-Lauf PRs #253, #256, neuen PR in dieser Reihenfolge integrieren lassen, aktuelle Main-CI erneut validieren.
+- [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md); vorhandene Abschnitte unten vollständig erhalten.
+
+---
+
+# Chat B – bestätigte Story-Enden nach SQLite-Wiederaufnahme (26.10.2026)
+
+- **Basiskette:** `main` `67f146e690306b13d490bd8e7fd5636bb187c77e` → [PR #253](https://github.com/ManuEtt/Dnd/pull/253), Head `ba33a2497852ab13237b448427057b432ec222b6` → Branch `test/chat-b/terminal-thread-sqlite-resume-20261026`.
+- **IMPLEMENTIERT:** neue Flutter-/SQLite-Ende-zu-Ende-Testdatei `app/test/ai_story_terminal_sqlite_resume_test.dart`: zwei Terminalstatus, manuelle Abschlusskorrektur im Journal, zweimal DB-Schließen/Neuöffnen, Revisionswiederherstellung, Verweigerung nachträglicher KI-Beschreibungskorrektur, idempotente Fortsetzung und unveränderte Heldendaten.
+- **GETESTET:** Fach- und SQLite-Verträge im GitHub-Code abgeglichen; Parent-PR #253 hat vollständige GitHub-CI [#40382876436](https://github.com/ManuEtt/Dnd/actions/runs/40382876436) bestanden. Neue Tests erst nach deren eigenem CI als bestanden markieren.
+- **NICHT GETESTET:** neue Tests lokal / Realgerät / produktiver KI-Provider.
+- **BLOCKIERT:** abhängiger PR setzt Schutz aus #253 voraus; vor späterem Merge zuerst #253 integrieren. Dokumentation von Chat D zusammenführen.
+- **MIGRATION:** keine; keine Produktionscode-, Datenbank-, JSON-, Regel- oder App-Version-Änderung.
+- **NÄCHSTER SCHRITT:** Controller-Wiederaufnahme mit Narrator-Mock nach grünem Test-Inkrement und parent Merge.
+- [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md). Ältere Einträge bleiben erhalten.
+
+---
+
+# Chat B – Schutz bestätigter Story-Abschlussbeschreibungen (26.10.2026)
+
+- **Ausgangs-Main:** `67f146e690306b13d490bd8e7fd5636bb187c77e`; **Branch:** `fix/chat-b/terminal-thread-description-20261026`; **PR:** nach Veröffentlichung auf GitHub ermitteln.
+- **IMPLEMENTIERT:** Der TypeScript-Backend-Parser und der Flutter-Story-Parser lehnen bei `resolved`/`abandoned` nicht nur Statuswechsel, sondern auch unbestätigte Beschreibungskorrekturen durch KI ab. Identische Ausgabe bleibt akzeptiert; explizite Tagebuchbearbeitung und bewusste Wiederöffnung bleiben erlaubt.
+- **TESTS ERGÄNZT:** Backend-Unit, HTTP-502-Negativtest ohne geheimen KI-Text im Response, Flutter-Unit und manuelle Story-Editorregression.
+- **GETESTET:** Aktuelle Quellcode-/PR-/CI-Bestandsaufnahme; PR #251 hat vollständige GitHub-CI erfolgreich abgeschlossen. Eigener finaler CI-Nachweis für dieses Paket steht separat aus.
+- **NICHT GETESTET:** Lokale vollständige Flutter-/Backend-/Python- und Android-Builds; Gerät und echter Provider nicht getestet.
+- **BLOCKIERT:** Lokales Flutter-/Android-SDK und Repository-Checkout; parallele gemeinsame Dokumentation wird über Chat D konsolidiert.
+- **KEINE MIGRATION:** Keine Datenbank, Export-JSON-, Regel- oder Schnittstellenänderung.
+- **NÄCHSTER SCHRITT:** SQLite-Wiederaufnahmetest für manuell korrigierten abgeschlossenen Handlungsstrang nach der CI.
+- [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md), ältere Einträge unten unverändert.
+
+---
+
+# CODEX-CHECKPOINT – vollständige Branch-Migration
+
+Stand **2026-10-26T17:38:53+00:00**, Würfelraunen **0.8.42+92**, SQLite **2**, Kampagnen-JSON **1**.
+
+## Git und Sicherungen
+
+Basis-Main **`5e3116f9e3f8de0af6e8125a97b3962cb8910cdf`**, Arbeitsbranch **`integration/all-branches-20261026b`**, Worktree `/workspace/Dnd-all-branches-20261026`. Funktionsmerges bis `a64ffe7`; anschließender Formatter-/Versions-/Dokumentationscommit ist im aktuellen `git log` nachzusehen. Main bisher unverändert.
+
+Die folgenden ursprünglichen sieben Köpfe und die drei ergänzten Fortschreibungsköpfe als Remote-Archivtags und lokalem geprüften Bundle gesichert, alle Vorfahren des Integrationsstands. Die sieben Nicht-Main-Branches werden erst nach gemeinsam grünen Checks, PR-Merge und grüner Main-Abnahme mit exakter SHA-Lease gelöscht. Neue/weitergeschriebene Köpfe vor Löschung erneut sichern und integrieren; Main und Archivtags niemals löschen.
+
+| Branch | gesicherte SHA | Remote-Archivtag |
+| --- | --- | --- |
+| `feat/chat-b/explicit-npc-wire-20261026` | `40ea6cb9b62daf70dcee3a5d8f993bf7e9a1b5cf` | `archive/branch-migration-20261026T173427Z/feat/chat-b/explicit-npc-wire-20261026` |
+| `feat/chat-c/action-economy-large-text-20261026` | `92fb423d19c84d3b9710fc3237d10206b9ef4712` | `archive/branch-migration-20261026T173427Z/feat/chat-c/action-economy-large-text-20261026` |
+| `feat/chat-c/dice-plaque-large-text-20261026` | `771405675381687200900cfd17c900ad7d049e5e` | `archive/branch-migration-20261026T173427Z/feat/chat-c/dice-plaque-large-text-20261026` |
+| `fix/chat-a/eldritch-primary-class-validation-20261026` | `1be828a91b124dd95443b7212d5220ab82710fb2` | `archive/branch-migration-20261026T173427Z/fix/chat-a/eldritch-primary-class-validation-20261026` |
+| `fix/chat-d/checkpoint-manifest-nofollow-20261026` | `15ff60b251fb64d76b5c65bf93e93fe47545024c` | `archive/branch-migration-20261026T173427Z/fix/chat-d/checkpoint-manifest-nofollow-20261026` |
+| `fix/chat-d/source-zip-symlink-swap-20261026` | `2904fabdfbd28ec5d0ae74c568fb709c87d493f7` | `archive/branch-migration-20261026T173427Z/fix/chat-d/source-zip-symlink-swap-20261026` |
+| `main` | `5e3116f9e3f8de0af6e8125a97b3962cb8910cdf` | `archive/branch-migration-20261026T173427Z/main` |
+
+Bundle **`/workspace/artifacts/branch-migration-20261026T173427Z/Alle_Branchstaende.bundle`**, SHA256 `1ee5f7814ffd02c6e88775c54b46064d52f23bf03d48b51f01b3d635e6e8bc0e`. Originale README-/Checkpoint-Fassungen bytegenau unter `docs/history/branch_migration_20261026T173427Z/`, Commit-/SHA256-Manifest dort. Inventar `docs/BRANCH_MIGRATION_20261026_INVENTORY.json`.
+
+### Während der Migration neu gesichert
+
+| Branch | zusätzliche SHA | Archivtag |
+| --- | --- | --- |
+| `fix/chat-a/spell-range-unit-validation-20261026` | `95057282286f93f3f46ee39196c047166d3cddf2` | `archive/branch-migration-20261026T173427Z/round2/fix/chat-a/spell-range-unit-validation-20261026` |
+| `fix/chat-d/checkpoint-manifest-nofollow-20261026` | `3746c5769f5ddb01842762184b0f477845d11740` | `archive/branch-migration-20261026T173427Z/round2/fix/chat-d/checkpoint-manifest-nofollow-20261026` |
+
+Zweites geprüftes Bundle `/workspace/artifacts/branch-migration-20261026T173427Z/Alle_Branchstaende_Runde2.bundle`, SHA256 `e26e0d3cd17149beb9f780801d620736cf3911de731ed7aeac003be0eb41c44b`. Die erste kombinierte Suite aufc246 wurde nach 155 Python-/70 Backend-Tests und grüner Analyse für den zusätzlichen Branch mit SIGTERM/143 beendet; **kein vollständiger Erfolg** behauptet. Früher Debug-APK-Stand separat unter `code-c2467c9/`; kein finales Paket daraus ableiten.
+
+### Letzter archivierter Autor-Nachtrag
+
+Zusätzlich `10f14cccd4f487bbbca5fee0938464d744d10e9d` / `archive/branch-migration-20261026T173427Z/round3/fix/chat-a/spell-range-unit-validation-20261026` regulär integriert. Produktionsparser identisch zu unserer Syntaxreparatur; eigene exakte Integer-Grenztests erhalten und kanonisch formatiert. Temporären reinen Formatter-Diagnoseworkflow nach Übernahme entfernt; reguläre CI bleibt vollständig. Runde3-Bundle `/workspace/artifacts/branch-migration-20261026T173427Z/Alle_Branchstaende_Runde3.bundle`, SHA256 `7d371f35dea17f98cd7abe0f9868bafc9e5e6ff2c228345b0bee55bcb38ade0a`. Insgesamt zehn gesicherte Ursprung-/Fortschreibungsköpfe aus acht Namen.
+
+## IMPLEMENTIERT
+
+Eldritch-Hauptklassenprüfung; optionaler revisions-/capabilitygeprüfter NPC-ID-Wire-Vertrag; große Schrift/semantische Trennung für Kampfmöglichkeiten und Würfelanzeige; O_NOFOLLOW-Leseweg auch für Checkpoint-Manifeste. **NPC-Auswahl ist noch nicht durch Android/GameController bis zum Wire-Aufruf verbunden.** Keine neue Speicher-/Event-/JSON-Struktur, keine Regeländerung durch Erzählung, keine realen Anbieteraufrufe. Quelle und Fachumfang in den erhaltenen `docs/parallel/`-Berichten; SRD-Anforderungen weiter nur teilweise umgesetzt.
+
+## GETESTET
+
+155 Python- und 70 Backend-Tests lokal vor dem letzten Source-Zuwachs erfolgreich; neue vollständige gemeinsame Abnahme erforderlich. Einzelkopf-CIs A236 #40339812512, B237 #40343591766, C239 #40360058998, Symlink2904 #40359044253 erfolgreich; diese Einzelbelege ersetzen keine neue kombinierte Abnahme. Letzte beim Start vollständig beobachtete Main-CI #40329543416 auf `42d14ad36cc947691f7e5a1e8647a43f5421b86e` grün; neue Main-CI #40369467941 auf5e3116f noch laufend. Alle sieben Ancestry-/Remote-Archivtag-/Bundle-Nachweise geprüft.
+
+## FEHLER UND KORREKTUR
+
+Neu eingetroffener PR242-Kopf9505728 enthält einen Syntaxfehler (duplizierte Methode mitten im Reichweiten-RegExp) und unformatierte Tests. Reparatur im Integrationsbranch samt exakter Integer-Grenzfälle,17 gezielte Tests und Analyse grün; volle Abnahme folgt; ursprüngliche Source-Fassung bleibt archiviert.
+
+Dice-PR240 / Kopf7714056 scheiterte in #40369637672 bei Dart-Formatierung von `app/test/fantasy_dice_breakdown_test.dart`. Testdatei mit gepinntem Dart3.9.2 formatiert; alle Assertions erhalten. Andere Fachprüfungen fanden keine Blocker. Gemeinsame Suite prüft erst den korrigierten Integrationsstand.
+
+## NICHT GETESTET
+
+Neue komplette Flutter-/Backend-/Android-/CI-Kombination bis zum tatsächlichen Abschluss offen. Echtgerät, TalkBack-Geräteabnahme, historisches installiertes Daten-Upgrade und produktive Signierung offen. Keine alten Erfolge als neue CI ausgeben.
+
+## BLOCKIERT
+
+Kein reales Gerät/Produktivschlüssel. Lokale Toolchain vorhanden; keine SDK-Ausrede. Während Inventur entstanden Dice-PR240 und der Manifest-Branch; neu erfasste SHA7714056/15ff60b sind mitgesichert. Bei späterem Drift keine ungeprüfte Löschung.
+
+## Abschluss, Artefakte und Fortsetzung
+
+Frühzeitigen kompletten Quell-ZIP-/Patch-Checkpoint unter `/workspace/artifacts/branch-migration-20261026T173427Z/` erstellen, anschließend Gesamtprüfungen/Builds ausführen, Kopf auf GitHub sichern, Integrations-PR erstellen. Nach grüner exakter PR-CI per regulärem Merge integrieren, Main-CI tatsächlich abwarten, dann nur gesicherte enthaltene unveränderte Branches per SHA-Lease löschen. Vorhandene uncommittete Worktrees und frühere Artefakte erhalten.
+
+Test-/Buildlogs `/workspace/validation/20261026-migration-*`. Prüfung `bash scripts/check.sh`; Android `flutter build apk --debug`, `bash app/android/gradlew :app:testDebugUnitTest --no-daemon` aus dem passenden Android-Verzeichnis; Alpha separat nach CI. Quell-ZIP ohne APKs, private Daten oder Toolchains, Patchbasis und SHA256 im Manifest.
+
+## NOCH NICHT IMPLEMENTIERT / genau ein nächster Schritt
+
+Explizite NPC-ID-Auswahl von Android über GameController an den bereits vorhandenen Wire-Vertrag durchreichen. Definition of Done: gleichnamige Figuren ausdrücklich per ID auswählen, fehlende Capability und Stale Revision vor Netzwerk/Kosten ablehnen, Abbruch/Neustart/SQLite testen, Regel-/Story-Grenze erhalten. Erst nach vollständigem Migrationsabschluss beginnen; aktuelle Main-/Branch-/CI-Stände erneut lesen. Keine automatische Wiederaufnahme außerhalb einer aktiven Sitzung.
