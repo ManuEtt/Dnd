@@ -81,6 +81,7 @@ class SrdClassAutomation {
     'Second Wind': 'ClassFeatureResources.useSecondWind',
     'Action Surge': 'ClassFeatureResources.spendActionSurge',
     'Lay On Hands': 'PaladinLayOnHands',
+    'Superior Inspiration': 'SrdBardSuperiorInspirationRules.onInitiative',
   };
 
   // Rule fragments exist (e.g. counters, dice, prerequisite checks), but
