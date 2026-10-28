@@ -222,3 +222,8 @@ Die technische Detailplanung wird nicht in dieser Einführungsseite dupliziert. 
 Die Umsetzung orientiert sich an **D&D SRD 5.2.1** von **Wizards of the Coast LLC**, lizenziert unter **Creative Commons Attribution 4.0 International (CC BY 4.0)**. Die erforderlichen Namensnennungen und weiteren Hinweise stehen in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Eigene Fantasy-Geschichten und Grafiken werden getrennt von den SRD-Regeln behandelt.
 
 Das Repository enthält Entwicklungssoftware. **Vollständige SRD-Konformität, fehlerfreien Spielbetrieb, Produktionssicherheit oder eine Veröffentlichung im Play Store werden nicht behauptet.**
+
+
+### Chat D D-014: Bedingte Dart-Modulimporte ebenfalls prüfen
+
+Die Modulgrenzenprüfung schützt jetzt auch alternative URIs in `import`- und `export`-Direktiven einschließlich Kommentare zwischen den Direktivenbestandteilen, z. B. `if (dart.library.io)`: Damit können bedingte Imports nicht unbemerkt von der Regel- in die Storyschicht wechseln. Neun Python-Regressionen decken unerlaubte und erlaubte Varianten ab. Änderungen betreffen nur Entwicklungstests und statische Projektprüfungen, nicht die App-Speicherung. **Vollständige GitHub-CI für dieses Paket steht noch aus.**

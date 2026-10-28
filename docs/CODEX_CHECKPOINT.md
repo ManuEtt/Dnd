@@ -272,3 +272,9 @@ Test-/Buildlogs `/workspace/validation/20261026-migration-*`. Prüfung `bash scr
 ## NOCH NICHT IMPLEMENTIERT / genau ein nächster Schritt
 
 Explizite NPC-ID-Auswahl von Android über GameController an den bereits vorhandenen Wire-Vertrag durchreichen. Definition of Done: gleichnamige Figuren ausdrücklich per ID auswählen, fehlende Capability und Stale Revision vor Netzwerk/Kosten ablehnen, Abbruch/Neustart/SQLite testen, Regel-/Story-Grenze erhalten. Erst nach vollständigem Migrationsabschluss beginnen; aktuelle Main-/Branch-/CI-Stände erneut lesen. Keine automatische Wiederaufnahme außerhalb einer aktiven Sitzung.
+
+
+## Chat D D-014 – Bedingte Import-/Exportvarianten abgesichert (27.10.2026)
+
+Basis-Main `8239f5e71ec6b229a2a0883500adaf431bb70087`, Branch `fix/chat-d/conditional-dart-boundaries-20261027`. Python-Grenzprüfer erfasst nun alle URI-Alternativen in Dart-`import`-/`export`-Direktiven mit `if (...)`, nicht nur den Default. Neun Regressionen testen plattformabhängige Story-/Regel-/Framework-Varianten und gültige bisherige Ausnahmen und Kommentare zwischen Direktivenbestandteilen. **IMPLEMENTIERT:** `scripts/check_domain_boundaries.py` und `scripts/tests/test_domain_boundaries.py`. **GETESTET:** isolierte lokale Regex-Stichprobe; die vollständige CI für diesen Branch ist noch nicht abgenommen. **BLOCKIERT/NICHT GETESTET:** finale PR-HEAD-CI, Live-Gerät; keine Auswirkungen auf Flutter-Spielcode, SQLite 2 oder JSON 1. **NÄCHSTER SCHRITT:** exakte PR-CI und Main-Konflikte prüfen, nach erfolgreichem Review integrieren. Details in `docs/parallel/CHAT_D_CHECKPOINT.md`.
+
