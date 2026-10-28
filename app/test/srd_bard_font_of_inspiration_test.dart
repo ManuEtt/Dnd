@@ -41,7 +41,10 @@ void main() {
     expect(restored.spentSpellSlots, updated.spentSpellSlots);
     // Legacy sparse ability maps are normalized by the importer. A second
     // round-trip, rather than the sparse input, must be stable.
-    expect(HeroCharacter.fromJson(restored.toJson()).toJson(), restored.toJson());
+    expect(
+      HeroCharacter.fromJson(restored.toJson()).toJson(),
+      restored.toJson(),
+    );
     expect(() => proposal.applyTo(updated), throwsFormatException);
   });
 
