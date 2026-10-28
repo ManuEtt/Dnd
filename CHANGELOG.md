@@ -1,3 +1,10 @@
+## In Entwicklung – 28.10.2026 – Ranger Tireless: Erschöpfung
+
+- SRD-5.2.1-Waldläufer ab Klassenstufe 10: bestätigte kurze Rast senkt Erschöpfung um genau 1. Mehrklasse, reine Ressourcenerholung ohne Trefferwürfel und Ereignisaudit ergänzt.
+- Zehn neue Regel-/Integrationstests; CI und Android-Abnahme noch offen. Temporäre Trefferpunkte aus Tireless weiterhin nicht umgesetzt; Teilautomatik statt Vollautomatik.
+
+---
+
 ## 0.8.44+94 – 27.10.2026 – Nachweisbasierter Charakter-Audit
 
 - Sieben Prüfzustände, echte Anfangswert-/Hintergrundbelege und Erkennung
