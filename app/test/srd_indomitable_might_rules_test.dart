@@ -74,7 +74,9 @@ void main() {
       expect(_resolve(after, 'strength', SrdD20CheckKind.abilityCheck, 18), 18);
     });
 
-    test('keine Wirkung auf Angriffe, Initiative, Todesrettung, GE oder KO', () {
+    test(
+      'keine Wirkung auf Angriffe, Initiative, Todesrettung, GE oder KO',
+      () {
       final hero = _barbarian(18);
       for (final kind in [
         SrdD20CheckKind.attack,
@@ -84,7 +86,10 @@ void main() {
         expect(_resolve(hero, 'strength', kind, 2), 2);
       }
       expect(_resolve(hero, 'dexterity', SrdD20CheckKind.abilityCheck, 2), 2);
-      expect(_resolve(hero, 'constitution', SrdD20CheckKind.savingThrow, 2), 2);
+      expect(
+        _resolve(hero, 'constitution', SrdD20CheckKind.savingThrow, 2),
+        2,
+      );
     });
 
     test('Zweitklasse benötigt 18 Barbarenstufen, nicht Gesamtstufe', () {
@@ -106,13 +111,19 @@ void main() {
       );
       expect(_resolve(hero, 'wisdom', SrdD20CheckKind.abilityCheck, 2), 2);
       expect(
-        _resolve(_barbarian(17, strength: null),
-            'strength', SrdD20CheckKind.savingThrow, 2),
+        _resolve(
+          _barbarian(17, strength: null),
+          'strength',
+          SrdD20CheckKind.savingThrow,
+          2,
+        ),
         2,
       );
     });
 
-    test('Anwendung ist rein und verändert keinen gespeicherten Charakter', () {
+    test(
+      'Anwendung ist rein und verändert keinen gespeicherten Charakter',
+      () {
       final hero = _barbarian(18);
       final original = hero.toJson();
       expect(_resolve(hero, 'strength', SrdD20CheckKind.savingThrow, 1), 18);
@@ -120,7 +131,9 @@ void main() {
       expect(HeroCharacter.fromJson(original).toJson(), original);
     });
 
-    test('manueller Stärke-Rettungswurf nutzt nur den effektiven Gesamtwert', () {
+    test(
+      'manueller Stärke-Rettungswurf nutzt nur den effektiven Gesamtwert',
+      () {
       final engine = GameEngine(
         dice: DiceEngine(random: _FixedRandom(1)),
         clock: () => DateTime.utc(2026, 10, 28),
@@ -133,7 +146,10 @@ void main() {
       expect(result.events.single.type, 'saving.roll');
       expect(result.events.single.payload['total'], 18);
       expect(result.events.single.payload['rawTotal'], 11);
-      expect(result.events.single.payload['classFeature'], 'indomitableMight');
+      expect(
+        result.events.single.payload['classFeature'],
+        'indomitableMight',
+      );
       expect(result.events.single.payload['failed'], isFalse);
       expect(
         Campaign.fromJson(result.campaign.toJson()).hero.toJson(),
@@ -144,7 +160,10 @@ void main() {
         'Rettungswurf: Stärke SG 17',
       );
       expect(noFeature.events.single.payload['failed'], isTrue);
-      expect(noFeature.events.single.payload.containsKey('classFeature'), isFalse);
+      expect(
+        noFeature.events.single.payload.containsKey('classFeature'),
+        isFalse,
+      );
     });
 
     test('Rettungswürfe anderer Attribute erhalten keine Mindestwerte', () {
@@ -155,12 +174,21 @@ void main() {
       final campaign = demo.copyWith(
         hero: _barbarian(18).copyWith(id: demo.hero.id),
       );
-      final result = engine.act(campaign, 'Rettungswurf: Geschicklichkeit SG 17');
+      final result = engine.act(
+        campaign,
+        'Rettungswurf: Geschicklichkeit SG 17',
+      );
       expect(result.events.single.type, 'saving.roll');
-      expect(result.events.single.payload.containsKey('classFeature'), isFalse);
+      expect(
+        result.events.single.payload.containsKey('classFeature'),
+        isFalse,
+      );
       expect(result.events.single.payload['failed'], isTrue);
     });
-    test('Athletik in Rabenwacht nutzt den bestätigten Stärke-Mindestwert', () {
+
+    test(
+      'Athletik in Rabenwacht nutzt den bestätigten Stärke-Mindestwert',
+      () {
       final engine = GameEngine(
         dice: DiceEngine(random: _FixedRandom(1)),
       );
@@ -177,7 +205,10 @@ void main() {
       final saved = Campaign.fromJson(requested.toJson());
       final resolved = engine.resolveRoll(saved, natural: 1);
       expect(resolved.events.single.type, 'roll.resolved');
-      expect(resolved.events.single.payload['classFeature'], 'indomitableMight');
+      expect(
+        resolved.events.single.payload['classFeature'],
+        'indomitableMight',
+      );
       expect(resolved.events.single.payload['effectiveTotal'], 18);
       expect(resolved.events.single.payload['roll']['natural'], 1);
       expect(resolved.events.single.payload['passed'], isTrue);
@@ -186,6 +217,5 @@ void main() {
         resolved.campaign.toJson(),
       );
     });
-
   });
 }
