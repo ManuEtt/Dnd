@@ -49,7 +49,9 @@ class SrdWarlockMagicalCunningRules {
       throw const FormatException('Ungültiger Verbrauch der Magischen List.');
     }
     if (spentUse != 0) {
-      throw StateError('Magische List wurde seit der letzten langen Rast benutzt.');
+      throw StateError(
+        'Magische List wurde seit der letzten langen Rast benutzt.',
+      );
     }
     if (expended == 0) {
       throw StateError('Es sind keine Paktmagieplätze verbraucht.');
@@ -58,10 +60,7 @@ class SrdWarlockMagicalCunningRules {
     final recovered = expended < maximum ? expended : maximum;
     final updated = hero.copyWith(
       spentPactSlots: expended - recovered,
-      spentClassResources: {
-        ...hero.spentClassResources,
-        resourceKey: 1,
-      },
+      spentClassResources: {...hero.spentClassResources, resourceKey: 1},
     );
     return SrdWarlockMagicalCunningResult(
       hero: updated,
