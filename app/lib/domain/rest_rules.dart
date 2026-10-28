@@ -6,6 +6,7 @@ import 'srd_character_classes.dart';
 import 'spellcasting_rules.dart';
 import 'class_feature_resources.dart';
 import 'class_resource_rules.dart';
+import 'srd_sorcerous_restoration_rules.dart';
 
 /// Mechanically confirmed portion of the SRD 5.2.1 rest rules.
 /// Tracks spent Hit Dice without changing the existing save schema version.
@@ -53,8 +54,13 @@ class RestRules {
     required DiceEngine dice,
     int? dieSides,
     int count = 1,
+    bool restoreSorceryPoints = false,
   }) {
     _ensureRestPossible(hero);
+    if (restoreSorceryPoints) {
+      // Validate before consuming any Hit Dice or deterministic RNG.
+      SrdSorcerousRestorationRules.restoreAfterCompletedShortRest(hero);
+    }
     if (count < 1 || count > 20) {
       throw RangeError.range(count, 1, 20, 'count');
     }
@@ -95,6 +101,11 @@ class RestRules {
             requested: (hero.spentHitDice[requested] ?? 0) + count,
           },
         );
+    if (restoreSorceryPoints) {
+      healed = SrdSorcerousRestorationRules.restoreAfterCompletedShortRest(
+        healed,
+      ).hero;
+    }
     return ShortRestResult(
       hero: healed,
       dice: List.unmodifiable(rolls),
