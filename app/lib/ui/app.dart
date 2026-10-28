@@ -820,10 +820,8 @@ class _CharactersPage extends StatelessWidget {
     final openedCampaign = controller.currentCampaign;
     final belongsToCampaign =
         hero != null && openedCampaign?.hero.id == hero.id;
-    final openedCampaignId =
-        belongsToCampaign ? openedCampaign!.id : null;
-    final openedRevision =
-        belongsToCampaign ? openedCampaign!.revision : null;
+    final openedCampaignId = belongsToCampaign ? openedCampaign!.id : null;
+    final openedRevision = belongsToCampaign ? openedCampaign!.revision : null;
     final result = await Navigator.of(context).push<HeroCharacter>(
       MaterialPageRoute(
         builder: (context) =>
@@ -839,9 +837,9 @@ class _CharactersPage extends StatelessWidget {
       expectedRevision: openedRevision,
     );
     if (context.mounted && controller.error != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(controller.error!)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(controller.error!)));
     }
   }
 
@@ -2143,9 +2141,9 @@ class _AdventurePageState extends State<_AdventurePage> {
       expectedRevision: openedCampaign.revision,
     );
     if (mounted && widget.controller.error != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(widget.controller.error!)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(widget.controller.error!)));
     }
   }
 

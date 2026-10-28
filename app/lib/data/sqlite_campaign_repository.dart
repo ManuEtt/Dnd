@@ -428,7 +428,9 @@ CREATE TABLE settings (
     }
     final expected = expectedOriginal == null
         ? null
-        : _canonical(HeroCharacter.fromJson(expectedOriginal.toJson()).toJson());
+        : _canonical(
+            HeroCharacter.fromJson(expectedOriginal.toJson()).toJson(),
+          );
     await _database.transaction((transaction) async {
       final rows = await transaction.query(
         'characters',
