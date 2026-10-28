@@ -1,3 +1,18 @@
+# Chat A – 28.10.2026: SRD-Zylinder-Vorschau (PR #361)
+
+- **Ausgangs-main:** `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78`.
+- **Eigener Branch:** `feat/chat-a/cylinder-area-preview-20261028`, PR [#361](https://github.com/ManuEtt/Dnd/pull/361) (Entwurf; nicht gemergt). Code-/Testcommit `d17137ea483de4bb544d6836189211e493350529`.
+- **IMPLEMENTIERT:** `SrdCylinderAreaRules` gibt ausschließlich lesende Kandidaten für eine bestätigte zylinderförmige Zauberwirkung auf einem 5-Fuß-Raster aus. Radius (5–120 Fuß), Höhe (5–300 Fuß), Ursprung an Ober-/Unterseite und vertikale Relativ-Offsets sind voneinander getrennt. Wiederverwendung der geometrischen Kreisvorschau; blockierte Mittelpunktstrahlen bleiben ein Deckungs-Prüfbedarf. `previewConfirmedSpell` prüft deklarierte Effektform sowie Zauberursprungsreichweite. Keine tatsächlichen Treffer/Saves/HP/Ressourcen werden ausgelöst.
+- **GEÄNDERTE DATEIEN:** `app/lib/domain/srd_cylinder_area_rules.dart`, `app/test/srd_cylinder_area_rules_test.dart`, `docs/parallel/CHAT_A_CHECKPOINT.md`, `docs/CODEX_CHECKPOINT.md`, `README.md`.
+- **TESTS:** 5 neue Flutter-Tests für Kreisradius/Randfelder, Top-/Bottom-Höhen, Blocker, unbestätigte/ungültige Eingaben und Flame Strike (60 Fuß Ursprung). Neue PR-CI auf finalem Branch **noch nicht bestätigt**; lokal ist kein Flutter-/Dart-SDK installiert. Älterer unabhängiger Cube-PR #357 hatte CI [#40717093590](https://github.com/ManuEtt/Dnd/actions/runs/40717093590) erfolgreich; kein Nachweis für PR #361.
+- **SRD-Provenienz:** SRD 5.2.1 *Rules Glossary / Cylinder* und *Flame Strike*, Wizards of the Coast LLC, CC BY 4.0, https://www.dndbeyond.com/srd. Arbeits-ID `RULE-SPELLS-SPELL-AREAS-OF-EFFECT` bleibt `partial`, kein globaler Abdeckungsanspruch.
+- **NICHT GETESTET:** echte Android-Geräte, absolute 3D-Höhen, vertikale Deckung; vollständige Flutter/Android-CI für den finalen Commit steht aus.
+- **BLOCKIERT:** fehlendes lokales Flutter-/Dart-SDK; Konfliktgefahr ausschließlich in `README.md` und `docs/CODEX_CHECKPOINT.md` bei zeitgleichen PRs #355–#358 (Chat D konsolidiert).
+- **KOMPATIBILITÄT:** keine Migration, kein Modell-, Backend-, JSON- oder SQLite-Update; ältere Spielstände unverändert.
+- **NÄCHSTER KONKRETER SCHRITT:** Nach Integration von PR #357 die Cube-Fußabdrücke um vier ausdrücklich wählbare horizontale Richtungen ergänzen; Spiegelungs-, Kartenrand- und Hindernistests, keine automatische Trefferentscheidung.
+
+---
+
 # Chat A – Checkpoint (26.10.2026): Eldritch-Blast-Klassenprüfung
 
 - Ausgangs-Main: `42d14ad36cc947691f7e5a1e8647a43f5421b86e`; Branch: `fix/chat-a/eldritch-primary-class-validation-20261026`.
