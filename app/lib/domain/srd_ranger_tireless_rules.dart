@@ -26,6 +26,10 @@ class SrdRangerTirelessRules {
   /// Eligibility is tied to class levels, never total multiclass levels.
   static bool canReduceExhaustion(HeroCharacter hero) =>
       !hero.isDead &&
+      hero.hitPoints != null &&
+      hero.hitPoints! > 0 &&
+      hero.maxHitPoints != null &&
+      hero.maxHitPoints! >= hero.hitPoints! &&
       _rangerClassLevel(hero) >= 10 &&
       hero.exhaustionLevel > 0;
 
