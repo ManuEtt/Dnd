@@ -1,6 +1,6 @@
 ## 28.10.2026 – SRD Waldläufer 10: Unermüdlich, Erschöpfung nach kurzer Rast
 
-**Quellcode und zehn neue Tests auf Feature-Branch committed; CI/Android noch offen.** Der bestätigte Short-Rest-Pfad reduziert ab Waldläufer-Klassenstufe 10 genau eine Erschöpfungsstufe. Auch ein Ressourcen-/Trefferwürfel-freier Rastabschluss bei ansonsten vollen HP kann die Regeneration auslösen. Nicht in dieser Änderung: temporäre HP als separate Magic Action, vollständige Weltzeiterfassung. Matrixstatus ausdrücklich **partial**. Details: docs/parallel/CHAT_A_RANGER_TIRELESS_20261028.md.
+**Quellcode und elf neue Tests auf Feature-Branch committed; CI/Android noch offen.** Der bestätigte Short-Rest-Pfad reduziert ab Waldläufer-Klassenstufe 10 genau eine Erschöpfungsstufe. Auch ein Ressourcen-/Trefferwürfel-freier Rastabschluss bei ansonsten vollen HP kann die Regeneration auslösen. Nicht in dieser Änderung: temporäre HP als separate Magic Action, vollständige Weltzeiterfassung. Matrixstatus ausdrücklich **partial**. Details: docs/parallel/CHAT_A_RANGER_TIRELESS_20261028.md.
 
 ---
 
