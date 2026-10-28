@@ -1,3 +1,15 @@
+## 28.10.2026 – Chat A: Würfel-Zauberursprung vor Vorschau validieren
+
+- **Ausgangs-Main:** `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78`; eigener Branch `feat/chat-a/cube-spell-origin-20261028`.
+- **IMPLEMENTIERT:** `SrdCubeAreaRules.previewConfirmedSpell` übernimmt bestätigte Würfelform und -größe und validiert den Zauberursprung über `SrdSpellGridTargetRules.validateOrigin` vor dem bestehenden read-only Raster-Preview; alte öffentliche `preview`-API unverändert.
+- **TESTS ERGÄNZT:** `app/test/srd_cube_area_rules_test.dart`: bestätigter Thunderwave-Self-Ursprung, Falschursprung, ungeprüfte Form/Ausrichtung, ungültige Dimension, unvollständige Karte, blockierter und außerhalb liegender Ursprung, unveränderbare Kandidaten.
+- **GETESTET:** aktuelle Code- und offene PR-Dateipfade geprüft; noch keine neue erfolgreich ausgeführte Flutter-/CI-Suite. **NICHT GETESTET:** Dart-Format, Analyse, Flutter-Tests/Android, Gerät, Python- und Backend-Gesamtsuite. **BLOCKIERT:** kein lokales Flutter-/Dart-SDK; GitHub-Actions-Prüfung ausstehend.
+- **Regelstatus:** `RULE-SPELLS-SPELL-AREAS-OF-EFFECT=partial` bleibt wahr. SRD 5.2.1, *Rules Glossary / Cube*, *Thunderwave* S.169, CC BY 4.0. Keine Würfel-/Schaden-/Zielautomatiken durch diesen Read-only-Schritt.
+- **Persistenz:** SQLite/JSON unverändert, keine Migration, keine KI- oder Storyänderung. Offener PR #353 betrifft andere Laufzeit- und Testdateien; maschinenlesbares Requirements-Register deshalb bewusst nicht parallel geändert.
+- **Nächster Schritt:** getrennte Bestätigung des Würfel-Footprints für alle vier horizontalen Quadranten mit Rand-/Blocker-Tests. [Eigener Checkpoint](parallel/CHAT_A_CHECKPOINT.md).
+
+---
+
 ## 28.10.2026 – Gemeinsame lokale Abnahme bestanden
 
 Quellstand `4f03b7880c36ca225325c87ec9f2c56e0a93dccd` ist lokal vollständig geprüft:
