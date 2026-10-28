@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – Doppelte automatische Branch-Bereinigung stillgelegt (28.10.2026)
+
+Die frühere Workflow-Datei `.github/workflows/retire-verified-branches-20261026.yml` konkurrierte mit der neuen SHA-/PR-gesicherten Bereinigung `cleanup-merged-safe-20261027.yml`. Am 27.10.2026 archivierte und entfernte der neue Workflow den Branch `test/chat-b/story-12-memory-transport-20261027`; der alte Workflow scheiterte anschließend beim erneuten Abruf mit HTTP 404 ([fehlgeschlagener Lauf](https://github.com/ManuEtt/Dnd/actions/runs/40589220593)). Der alte Eintrag bleibt als **manueller, schreibgeschützter Hinweis ohne Branch-Aktionen** erhalten. Drei neue Python-Tests prüfen Deaktivierung, Negativfälle und unveränderte Sicherungsprüfungen des Nachfolgers. Der neue [PR #329](https://github.com/ManuEtt/Dnd/pull/329) befindet sich bis zur finalen CI-Abnahme im Draft. Keine Spielstand-, Regel-, Versions- oder Datenmigration.
+
+
 ## Chat B – Zwölf KI-Erinnerungen bis zur Story-API-Grenze absichern (27.10.2026)
 
 Zwei neue Integrationstests prüfen das Erinnerungslimit **an der tatsächlich gesendeten Story-Anfrage**: Eine KI-Kampagne mit bestätigten Mira-Beziehungsnotizen und mindestens 18 allgemeinen Fakten wird in einer echten SQLite-Datei gespeichert, über den `GameController` fortgesetzt und mit einem lokalen Backend-Transport abgefragt. Sowohl mit als auch ohne `npc-identity-v1` erhält das Backend genau zwölf priorisierte und begrenzte Erinnerungseinträge. Die drei bestätigten NPC-Notizen bleiben zuerst; zusätzliche allgemeine Fakten verwenden lediglich die freien Plätze. Heldenwerte, Revision und gespeicherter Spielstand bleiben überprüfbar. Dieses Testpaket baut auf [PR #307](https://github.com/ManuEtt/Dnd/pull/307) auf und verändert keine Produktionslogik, Datenbankschemata oder SRD-Regeln.
