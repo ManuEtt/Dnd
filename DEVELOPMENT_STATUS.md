@@ -1,3 +1,9 @@
+## 28.10.2026 – SRD-Barde 18: Überlegene Inspiration (Feature-Branch)
+
+**IMPLEMENTIERT / noch NICHT CI-abgenommen:** Eine deterministische Auffüllung verbrauchter Barden-Inspiration beim bestätigten Initiativewurf (Bardenstufe 18, max. 2 verfügbare Nutzungen) in drei vorhandenen Kampfstart-Pfaden, einschließlich Mehrklasse. Zehn Regel- und Integrationstestfälle wurden ergänzt, ohne bestehendes JSON-Schema zu ändern. **Nicht lokal getestet** (Flutter-SDK fehlt); CI-/APK-/Geräteabnahme offen. Dokumentation: docs/parallel/CHAT_A_BARD_SUPERIOR_INSPIRATION_20261028.md. Der Matrixstatus bleibt **partial**.
+
+---
+
 ## 27.10.2026 – 0.8.44+94: nachweisbasierte Charakterprüfung
 
 Sieben deutsche Prüfzustände ersetzen die bisherige Bestätigung nach bloßem
