@@ -1,85 +1,87 @@
-## Aktueller Charakterstand – 28.10.2026, Alpha 0.8.47+97
+# Codex-Checkpoint – Würfelraunen
 
-**IMPLEMENTIERT:** Im Klassenpaket A wählen Kleriker und Paladin ausdrücklich
-Amulett, Emblem oder Reliquiar. Typisiertes Inventar und lesender Audit verwenden
-die bestätigte Variante. Neue Klassenbelege sind Version 2; historische Version 1
-bleibt lesbar, unverändert und ohne Nachvergabe. Goldalternativen enthalten kein
-Symbol. Erneute Bestätigung verdoppelt keine Gegenstände oder Gold; die erneute
-Auswahl desselben Pakets verliert keine bereits getroffene Symbolentscheidung.
-[Regelquelle und Fachnachweis](docs/CHARACTER_HOLY_SYMBOL_CHOICE_20261028.md).
+## Abnahme 28.10.2026 – Charakter-Symbolwahl / Alpha 0.8.47+97
 
-**GETESTET:** Vollständiges `bash scripts/check.sh` auf Produktcode
-`7ac32b1cb9e63ce35eb458d87e4b84d86526706a`: **2.265 Flutter-, 200 Python- und
-72 Backend-Tests**, 507 Dart-Dateien unverändert formatiert, Analyzer und
-Backend-Build erfolgreich. Android-Debug-APK gebaut, Metadaten und v2-Testsignatur
-geprüft; **zwölf native App-Tests** gemäß CI bestanden. Gezielt zudem 16
-Symbol-Dialog-, 13 Editor- und 16 SQLite-Speicherfälle bestanden, einschließlich
-beider Klassen, aller Varianten, alter Belege aller zwölf Klassen, Neustart,
-JSON-Import, ungültiger IDs, Retry und veralteter Revision. Widgetabnahme bei
-320/360 dp, 200 % Schrift, simulierter Tastatur und Semantik; kein Gerätetest.
-Die abschließende Dokumentation ändert gegenüber diesem Code keine Produktdateien.
+**IMPLEMENTIERT:** Kleriker/Paladin wählen im Klassenpaket A ausdrücklich Amulett,
+Emblem oder Reliquiar. Typisierte Gegenstände und Gold werden nach Bestätigung
+nur einmal übernommen. Neue Klassenbelege verwenden Version 2; historische
+Version 1 bleibt unverändert lesbar, ungeklärt und ohne Nachvergabe. Wiederwahl
+desselben Pakets erhält die Auswahl. Abbruch, Fremd-IDs und echte Paketwechsel
+sind geprüft. SQLite **3** / äußeres JSON **1** bleiben unverändert, keine Migration.
+
+**GETESTET:** [PR #369](https://github.com/ManuEtt/Dnd/pull/369) regulär integriert;
+Produkt-Main `49b98d8aef7ae0e521320628b053c149c849dea0`.
+[Finale PR-CI 40756846048](https://github.com/ManuEtt/Dnd/actions/runs/40756846048)
+und [Main-CI 40758951956](https://github.com/ManuEtt/Dnd/actions/runs/40758951956)
+sind vollständig **erfolgreich**: 2.265 Flutter-, 200 Python- und 72 Backend-Tests,
+zusätzlich gezielter 20-Fälle-UI-Lauf; 507 Dart-Dateien unverändert formatiert,
+Analyzer/Backend-/Debug-/native-/drei optimierte ABI-/Alpha-/Checkpoint-Schritte
+bestanden. Lokal zusätzlich zwölf native App-Tests und die vollständige Suite
+auf Produktcode `7ac32b1c` bestanden; finaler PR-Kopf `bfe4e5ab` ändert daran nur
+Dokumentation. Main, PR-Kopf und tatsächlicher PR-Checkout `9bf0c017` besitzen
+denselben vollständigen Git-Baum `f40b9dcf11093fef2e7331fdfd712537d391cd2b`.
+
+Alle 1.248 heruntergeladenen Quelldateien mit Hash/Modus, Alpha-Quellpaket,
+echte Binärpatch-Anwendung auf Basis `37a6142e`, isoliertes Git-Bundle/fsck und
+32 historische Köpfe sind unabhängig geprüft. APK-Version/ABI/v2-Testsignatur
+geprüft. [Source-ZIP/Patch/Manifest/History-Bundle](https://github.com/ManuEtt/Dnd/actions/runs/40758951956/artifacts/12847443480) ·
+[ARM64-Alpha](https://github.com/ManuEtt/Dnd/actions/runs/40758951956/artifacts/12846529536).
 
 **NICHT GETESTET:** echtes Android-Gerät/TalkBack, Upgrade einer installierten
-Altversion und produktive Signatur. **BLOCKIERT:** kein angeschlossenes Testgerät.
-Ein zusätzlicher Aufruf sämtlicher Fremdplugin-Unterprojekttests scheiterte an
-ByteBuddy/Jetifier (Java-Klassenmajor 68); das im CI vorgeschriebene
-`:app:testDebugUnitTest --no-daemon` besteht mit zwölf Tests. Dieser zusätzliche
-Fehllauf wird nicht als bestanden ausgegeben. **NOCH NICHT IMPLEMENTIERT:**
-vollständiger Wizard und alle übrigen Pflichtwahlen; Symbolbesitz bestätigt
-keine vollständige Fokus-/Zauberwirkungsautomatik. SQLite 3 / äußeres JSON 1
-unverändert, keine Migration. `EQUIP-CHOICES` bleibt ausdrücklich `partial`.
+Altversion und produktive Signatur. Ein zusätzlicher freiwilliger Test aller
+Fremdplugin-Unterprojekte scheiterte an ByteBuddy/Jetifier (Klassenmajor 68);
+die im CI vorgeschriebenen `:app:testDebugUnitTest --no-daemon` bestehen.
+**BLOCKIERT:** kein angeschlossenes Android-Testgerät.
+**NOCH NICHT IMPLEMENTIERT:** vollständiger Wizard mit allen Spezies-, Klassen-,
+Talent- und Zauberpflichtwahlen; Symbolbesitz bestätigt keine komplette
+Fokus-/Zauberwirkung. `EQUIP-CHOICES` bleibt `partial`, SRD-Inventur 1.419/9 offen.
 
-Arbeitsbranch `feat/character-holy-symbol-choice-20261028`, Main-Basis
-`37a6142ea791a607c78065b50aa66fda90acda5c`, [PR #369](https://github.com/ManuEtt/Dnd/pull/369).
-Die zusätzliche vollständige GitHub-Abnahme und tatsächlichen Artefakte sind
-anhand des **aktuellen** [PR-Checklaufs](https://github.com/ManuEtt/Dnd/pull/369/checks)
-zu beurteilen; der PR-Abnahmebericht hält die konkrete Run-ID und SHA fest.
-Der initiale doppelte Pushlauf 40756156487 wurde bewusst beendet; ältere
-Zwischenläufe sind keine Abnahme des abschließenden PR-Kopfs.
+Arbeitsbranch `feat/character-holy-symbol-choice-20261028` ist nach grüner
+Main-CI exakt als `archive/merged-20261027/feat/character-holy-symbol-choice-20261028-bfe4e5ab7fba`
+archiviert und remote gelöscht; [Cleanup 40761280014](https://github.com/ManuEtt/Dnd/actions/runs/40761280014)
+bestand. Elf neue aktive PR-Branches #356–#359/#361–#367 blieben erhalten;
+vor jeder Folgeänderung Main/PRs/CI erneut live prüfen.
 
-Nächster kleiner Charakter-Schritt: Mönch-Werkzeugübung ausdrücklich mit der
-Paketwahl koppeln, nach SRD S.49. Versionierte Entscheidung, bestehende Belege
-v1/v2 bewahren, keine Nachvergabe; Domain-/UI-/SQLite-/Import-/Doppelübungsfälle
-und vollständige Prüfkette nachweisen. Gesamte Charaktererstellung bleibt offen.
-Ältere Berichte unten sind historische Schreibstände.
+Dieser anschließende reine Dokumentationsabschluss auf Produkt-Main `49b98d8a`
+ändert **keine** App-, Backend-, Skript- oder Workflowdatei und erhöht keine
+Version. Seine statischen/Pythonprüfungen werden separat im Dokumentations-PR
+geführt. Eine weitere APK oder Produkt-CI für dessen Dokumentationskopf wird
+nicht behauptet. Ältere Berichte darunter sind historische Schreibstände.
 
----
+## Quellen, Speicherung und Wiederherstellung
 
-# Würfelraunen – Checkpoint 28.10.2026
+Regelquelle: SRD 5.2.1 S.36/53/97, CC BY 4.0; THIRD_PARTY_NOTICES.md unverändert.
+Fachnachweis: [CHARACTER_HOLY_SYMBOL_CHOICE_20261028.md](docs/CHARACTER_HOLY_SYMBOL_CHOICE_20261028.md).
+Code: starting_equipment_import.dart, starting_class_choice.dart, lesender
+srd_character_creation_audit.dart, bestehender Klassen-/Charaktereditor.
+Keine Regel-/Story-Grenzänderung, keine KI-Kosten, keine Spielstand-Neuberechnung.
 
-**0.8.46+96**, Main `6576d2fc742f000bacdd1c105282bc9e3282ae7e`, SQLite3 / JSON1.
-[Operative Fortsetzung](docs/CODEX_CHECKPOINT.md) ·
-[Abnahmen und Branchinventar](docs/BRANCH_MIGRATION_20261028.md).
+| Main-Datei | SHA256 |
+| --- | --- |
+| Vollprojekt-ZIP | `5c8a2b6e66f156104231ce60d91a3faafa8f3665165dd9b2e3adbfe397fe28ab` |
+| Binärpatch | `1bd26a2a785257d8132e51449ed44ef17286309b1a2f2a4e8f163433efeaaa36` |
+| ARM64-APK | `63ebe346fd2ea6ed2f631eb63910efc27e78208ecd269dbb6575c8aa6974ae89` |
 
-**Main-CI bestanden:** [Lauf 40708407065](https://github.com/ManuEtt/Dnd/actions/runs/40708407065) auf `6576d2fc742f000bacdd1c105282bc9e3282ae7e`.
+Lokale Sicherungen: `/workspace/artifacts/character-holy-symbol-20261028/`,
+Index `ARTEFAKTE_UND_IMPORT.md`; Logs/Prüfberichte `/workspace/validation/20261028-*`.
+ZIP in leeren Ordner entpacken; Patch nur auf seine explizite Basis anwenden.
+Das Paket ist bereits in Main enthalten: keinen identischen Patch nochmals
+auf Main anwenden. Bundle für eine separate lokale Wiederherstellung verwenden;
+vor neuen GitHub-Änderungen aktuellen Main/PR-Zustand und Prüfungen beachten.
 
-**28 alte Quell-/Integrationsbranches archiviert und entfernt.** Alle Köpfe sind Vorfahren des geprüften Main; die exakten Archivtags stehen im Inventar. `feat/srd-warlock-magical-cunning-20261028` (Beobachtung `2026-10-28T14:59:26.197499+00:00`: `47cb207e99eeba0af3308de2b88c19f8357b0808`, PR #352) entstand danach und bleibt als aktive, separat zu prüfende Entwicklung erhalten.
+## Genau nächster Schritt
 
-**IMPLEMENTIERT:** Gemeinsame Integration der vorhandenen Charakter-, Klassen-,
-Story-, Ausrüstungs-/Sprung- und Tooling-Pakete. Behoben sind der reproduzierte
-Altarchiv-CAS-Fehler, der Barden-Dialogüberlauf und Integrationskonflikte zwischen
-Barden- und Mönchsinitiative. Bestätigte Attribut-, Klassen-, Hintergrund- und Talentbelege
-bleiben getrennt; Audit und Kataloge erteilen keine erfundenen Vorteile.
+Die im Mönch-Paket A ausdrücklich gewählte Werkzeug-/Instrumentausrüstung mit
+der erforderlichen Werkzeugübung koppeln. Zuerst amtliches SRD 5.2.1 S.49 prüfen;
+vorhandene Auswahl-/Persistenzfunktionen erweitern. Neue versionierte Entscheidung,
+bestehende Klassenbelege v1/v2 ohne Pflichtfeldverschärfung bewahren, keine
+Nachvergabe. Gültige/ungültige IDs, doppelte Übungen, Abbruch, Retry, stale Revision,
+SQLite-Neustart und JSON, 320/360 dp bei 200 %/IME/Semantik testen; anschließend
+`bash scripts/check.sh`, Debug/native und finale PR-CI. Kein Hintergrund-Codexjob.
 
-**GETESTET:** 2.185 Flutter-, 195 Python- und 72 Backend-Tests in der finalen
-PR-CI; zusätzlich 20 gezielte UI-Prüfungen. Lokale Vollsuite, Formatierung von
-500 Dart-Dateien, Analyzer, Backend-Build, Android-Debug-Build und zwölf native
-Android-Tests bestanden. Genaue Commits und Main-Abnahme siehe Nachweistabelle.
+## Dokumentationshistorie
 
-**NICHT GETESTET:** Echtes Android-Gerät, TalkBack auf Gerät, Upgrade einer alten
-installierten APK mit vorhandener Datenbank und produktive Signierung.
-
-**BLOCKIERT:** Kein angeschlossenes Android-Testgerät. Die aktive parallele
-Hexenmeister-Arbeit benötigt eine eigene fachliche und CI-Abnahme.
-
-**NOCH NICHT IMPLEMENTIERT:** Vollständiger Charakter-Wizard mit allen Pflichtwahlen
-und sämtliche SRD-Wirkungen. Magieinitiierter bestätigt bisher Zauberwahl und
-Zauberattribut, nicht das vollständige Wirken. Wilder Angreifer besitzt dauerhafte
-Würfelbelege und eine Entscheidungsvorprüfung, noch keinen durchgängigen
-Angriffs-/Schadensabschluss. Entrinnen-Vorprüfung ist keine TP-Buchung.
-
-**Nächster Schritt:** Drei Heilige-Symbol-Katalogvarianten für Kleriker/Paladin
-explizit wählen und mit UI, Inventar und Klassenbeleg dauerhaft speichern;
-Version-1-Altnachweise lesbar halten, keine erneute Gold-/Paketvergabe.
-Akzeptanz und konkrete Tests stehen im operativen Checkpoint.
-Original dieses Dokuments: [Historienmanifest](docs/history/migration_abschluss_20261028/MANIFEST.json).
+Vorige README und beide Checkpoints bleiben bytegenau mit Git-Blob/SHA256 in
+[history/character_symbol_abnahme_20261028/MANIFEST.json](docs/history/character_symbol_abnahme_20261028/MANIFEST.json).
+Die frühere Migration aller 28 Altbranches ist abgeschlossen; Bericht/Inventar
+[BRANCH_MIGRATION_20261028.md](docs/BRANCH_MIGRATION_20261028.md). Nicht wiederholen.
