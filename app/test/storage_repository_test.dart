@@ -297,7 +297,9 @@ void main() {
       );
       final unchanged = await databaseFactoryFfi.openDatabase(databasePath);
       expect(await unchanged.getVersion(), 99);
-      await unchanged.setVersion(2);
+      // The current SQLite schema is 3; reverting to 2 would rerun its
+      // migration against columns that already exist.
+      await unchanged.setVersion(3);
       await unchanged.close();
       repository = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
