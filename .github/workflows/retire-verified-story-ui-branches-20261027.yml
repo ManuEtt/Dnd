@@ -1,165 +1,21 @@
-name: Archivierte Story/UI-Migrationsbranches bereinigen (2026-10-27)
+# Historical PR301 is preserved for ancestry, not as a second cleanup writer.
+# Full original source is retained in docs/history/branch_migration_tooling_20261028/.
+# The only maintained cleanup is cleanup-merged-safe-20261027.yml, which waits
+# for successful Android CI of the exact current main commit.
+name: Alte Story/UI-Branchbereinigung (deaktiviert)
+
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/retire-verified-story-ui-branches-20261027.yml'
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: read
+  contents: read
 
 jobs:
-  retire:
-    if: github.repository == 'ManuEtt/Dnd' && github.ref == 'refs/heads/main'
+  deprecated:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     steps:
-      - name: Exakte SHA- und Blob-Pruefung, Archivtags, Branch-Loeschung
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const {owner, repo} = context.repo;
-            const integrations = [
-              [295,'16ebdcc6a112c2dc391a5e18e684e2dc7083059d'],
-              [296,'5af334a081d3df6c5c0def9c6fb3deeab6e1462c'],
-              [298,'183c95440af2f7a23a8af36895869ee22815d3ea'],
-              [299,'f973a08d36d96fe52cde628793c0ab80bab2ae9d'],
-            ];
-            const completed = [];
-            for (const [number, expected] of integrations) {
-              const pr = (await github.rest.pulls.get({owner,repo,pull_number:number})).data;
-              if (!pr.merged || pr.base.ref!=='main' || pr.head.sha!==expected || !pr.merge_commit_sha) {
-                throw new Error('Integrations-PR '+number+' noch nicht exakt gemergt.');
-              }
-              completed.push({number,sha:pr.merge_commit_sha});
-            }
-            const mainRef = async () => (await github.rest.git.getRef({owner, repo, ref:'heads/main'})).data.object.sha;
-            const mainSha = await mainRef();
-            if (mainSha !== context.sha) {
-              throw new Error('main bewegt seit Workflow-Start: keine Branch-Bereinigung.');
-            }
-            for (const pr of completed) {
-              const integrated = await github.rest.repos.compareCommits({
-                owner, repo, base: pr.sha, head: mainSha,
-              });
-              if (integrated.data.behind_by!==0 || !['ahead','identical'].includes(integrated.data.status)) {
-                throw new Error('Integration #'+pr.number+' fehlt in main.');
-              }
-            }
-            const targetFiles = {
-              deathSave: {
-                'app/lib/ui/death_save_decision_panel.dart':'c9e27640a6a8668af6433fca24bbf7fbf332664e',
-                'app/test/death_save_decision_panel_busy_test.dart':'c3b545ac65067565e36701005e2c420af2b928af',
-              },
-              controller: {
-                'app/test/ai_story_terminal_controller_resume_test.dart':'df19e6d6952b3dcbf55c62f748dba587bda36e91',
-              },
-              sqlite: {
-                'app/test/ai_story_terminal_sqlite_resume_test.dart':'6614d44a03076103b18873971224ceca8dc1af45',
-              },
-              capstone: {
-                'app/lib/domain/srd_class_level_up.dart':'5551991e8686e61226c2266d4932bc6bd9ed6086',
-                'app/lib/ui/srd_class_level_up_dialog.dart':'c6bffa9f61b8d424744fb9b3126306d5b9ce6fd7',
-                'app/test/srd_class_level_up_test.dart':'80b37b8f7450d459d0ba306f18621dc27c45a937',
-                'app/test/ui_srd_class_level_up_test.dart':'cf9ba7e7a434c273b7a65f9b5cf8c309051ce851',
-                'docs/parallel/CHAT_A_CLASS_CAPSTONES_20261026.md':'638594b7f5c8d0613694cefb24be9860e5a201b6',
-              },
-              highJump: {
-                'app/lib/domain/srd_high_jump_rules.dart':'f3864abc7314b2a45ae3d066278193c7b55cf03d',
-                'app/test/srd_high_jump_rules_test.dart':'77d757f00edf6d98680ae01483f4e72a4592819c',
-              },
-              longJump: {
-                'app/lib/domain/srd_long_jump_rules.dart':'0bbefab93ff13e3f8be969cbcea0b723133f5584',
-                'app/test/srd_long_jump_rules_test.dart':'a1e0da89fa2fe7ea8b14420e945708e53c8139c9',
-              },
-              jumpEncounter: {
-                'app/lib/domain/srd_long_jump_encounter_rules.dart':'c19afb5d058c10526293da43079c11f8196fc613',
-                'app/test/srd_long_jump_encounter_rules_test.dart':'7101c0f9917c864e57e88031654e2d74af56f600',
-              },
-              materials: {
-                'app/lib/domain/srd_ritual_casting_rules.dart':'8836c4f3d85ba3dafbf5d7b272a4be1de2ae440f',
-                'app/lib/domain/srd_spell_component_rules.dart':'e395ca1fe4299939150d96702a9d088862c6a033',
-                'app/lib/domain/srd_spell_inventory_rules.dart':'c408754bb6c0db1ec8bcbf9a484faee733326321',
-                'app/lib/domain/srd_spell_preflight_rules.dart':'acb2d522f8fd463a7f15fdcd4f62f8650687a6b1',
-                'app/lib/domain/srd_spell_audited_inventory_rules.dart':'6d83fcd74c78b61db00757b2a20604aa821921a7',
-                'app/lib/ui/srd_material_inventory_dialog.dart':'59cdb6ec218da8c91562cf1f8512c6e42e337da6',
-                'app/test/srd_material_inventory_dialog_test.dart':'03479094235721c36859c87f4b844fc649f2e236',
-                'app/test/srd_multi_material_audit_test.dart':'70e3471f522c777ebedd89c9164bc712465df7fa',
-                'app/test/srd_spell_audited_inventory_rules_test.dart':'0201ca4cafcd8ce1930f196bd52c1a252d44126e',
-              },
-            };
-            const targets = [
-              {branch:'feat/chat-c/death-save-busy-feedback-20261026',sha:'fa613609aa12dbe36b93d007e8b83a326c1e2824',pr:255,blobs:targetFiles.deathSave},
-              {branch:'integration/death-save-ui-20261026-chatgpt',sha:'524182594c71b5639159a8628df844356b84df54',pr:269,blobs:targetFiles.deathSave},
-              {branch:'integration/story-controller-resume-20261026-chatgpt',sha:'0df96365e6ffac6f8c51387b46b90a138393206d',pr:270,blobs:targetFiles.controller},
-              {branch:'test/chat-b/controller-terminal-recovery-20261026',sha:'8bbf252ad48b8bc3c561da749b67c5cbc6a69520',pr:261,blobs:targetFiles.controller},
-              {branch:'test/chat-b/terminal-thread-sqlite-resume-20261026',sha:'2b3fb89f184480bb5a53d29d0c374d0fc71cf36f',pr:256,blobs:targetFiles.sqlite},
-              {branch:'integration/death-save-story-recovery-20261027-chatgpt',sha:'16ebdcc6a112c2dc391a5e18e684e2dc7083059d',pr:295,blobs:{...targetFiles.deathSave,...targetFiles.controller}},
-              {branch:'feat/chat-a/srd-capstone-level20-20261026',sha:'5a44dc4b9ab4e5b8648f72439b414a2915cc42bb',pr:259,blobs:targetFiles.capstone},
-              {branch:'integration/srd-capstones-20261026-chatgpt',sha:'7a8324b875e32485de1ac1234f228a2510959f31',pr:266,blobs:targetFiles.capstone},
-              {branch:'integration/srd-capstones-rebased-20261027-chatgpt',sha:'5af334a081d3df6c5c0def9c6fb3deeab6e1462c',pr:296,blobs:targetFiles.capstone},
-              {branch:'feat/chat-a/high-jump-preflight-20261027',sha:'0441729ada038aaa61a1bcab5da222849ef90824',pr:282,blobs:targetFiles.highJump},
-              {branch:'feat/chat-a/long-jump-preflight-20261027',sha:'4e15ba643a22b94e9ec3ba7da72e8330a0b0e56c',pr:284,blobs:targetFiles.longJump},
-              {branch:'feat/chat-a/long-jump-encounter-plan-20261027',sha:'461e36f4f5a768aa2900830fd38be65149c569d6',pr:285,blobs:targetFiles.jumpEncounter},
-              {branch:'integration/srd-jump-preflight-20261027-chatgpt',sha:'183c95440af2f7a23a8af36895869ee22815d3ea',pr:298,blobs:{...targetFiles.highJump,...targetFiles.longJump,...targetFiles.jumpEncounter}},
-              {branch:'feat/chat-a/audited-multi-material-components-20261027',sha:'779137bbfeaf86242bd246918c53bdc757febd9f',pr:271,blobs:targetFiles.materials,descendant:'7595484f6bd06b10c73aa7cf34f3d7ec3c49dbc9'},
-              {branch:'feat/chat-a/audited-material-inventory-20261027',sha:'4d7b8c0107022d531d0c5950c09dcaff9b60e6cd',pr:274,blobs:targetFiles.materials,descendant:'7595484f6bd06b10c73aa7cf34f3d7ec3c49dbc9'},
-              {branch:'feat/chat-a/material-inventory-dialog-20261027',sha:'7595484f6bd06b10c73aa7cf34f3d7ec3c49dbc9',pr:277,blobs:targetFiles.materials},
-              {branch:'integration/srd-material-stack-20261027-chatgpt',sha:'f973a08d36d96fe52cde628793c0ab80bab2ae9d',pr:299,blobs:targetFiles.materials},
-            ];
-            const currentTree = await github.rest.git.getTree({owner,repo,tree_sha:mainSha,recursive:'1'});
-            if (currentTree.data.truncated) throw new Error('main-Baum unvollständig.');
-            const mainBlobs = new Map(currentTree.data.tree.filter(x=>x.type==='blob').map(x=>[x.path,x.sha]));
-            const openPrs = await github.paginate(github.rest.pulls.list,{owner,repo,state:'open',per_page:100});
-            for (const t of targets) {
-              if (t.branch === 'main') throw new Error('main darf nie gelöscht werden.');
-              const original = await github.rest.pulls.get({owner,repo,pull_number:t.pr});
-              if (original.data.state !== 'closed' || original.data.head.ref !== t.branch ||
-                  original.data.head.sha !== t.sha) {
-                core.warning('Historischer Quell-PR noch offen oder verändert: '+t.branch);
-                continue;
-              }
-              if (openPrs.some(pr=>pr.head.ref===t.branch || pr.base.ref===t.branch)) {
-                core.warning('Aktiver PR nutzt diesen Branch: '+t.branch);
-                continue;
-              }
-              if (t.descendant) {
-                const relation = await github.rest.repos.compareCommits({
-                  owner, repo, base:t.sha, head:t.descendant,
-                });
-                if (relation.data.behind_by!==0 ||
-                    !['ahead','identical'].includes(relation.data.status)) {
-                  core.warning('Gestapelter Quellbranch nicht im finalen Head: '+t.branch);
-                  continue;
-                }
-              }
-              if (Object.entries(t.blobs).some(([path,sha])=>mainBlobs.get(path)!==sha)) {
-                core.warning('main enthaelt nicht die erwarteten Fach-Blobs: '+t.branch);
-                continue;
-              }
-              let ref;
-              try {ref=(await github.rest.git.getRef({owner,repo,ref:'heads/'+t.branch})).data;}
-              catch(e) {if(e.status===404){core.info('Schon gelöscht: '+t.branch);continue;}throw e;}
-              if (ref.object.sha !== t.sha) {core.warning('Branch-Head verändert, bleibt: '+t.branch);continue;}
-              const info = await github.rest.repos.getBranch({owner,repo,branch:t.branch});
-              if (info.data.protected) {core.warning('Geschützter Branch: '+t.branch);continue;}
-              // The old HEAD is always archived before any destructive action.
-              const tag='tags/archive/verified-story-ui-20261027/'+t.branch.replaceAll('/','--');
-              let archived;
-              try {archived=(await github.rest.git.getRef({owner,repo,ref:tag})).data.object.sha;}
-              catch(e) {if(e.status!==404)throw e;}
-              if (archived && archived!==t.sha) throw new Error('Archive tag has wrong SHA: '+tag);
-              if (!archived) await github.rest.git.createRef({owner,repo,ref:'refs/'+tag,sha:t.sha});
-              if ((await github.rest.git.getRef({owner,repo,ref:tag})).data.object.sha!==t.sha) {
-                throw new Error('Archivtag-Pruefung fehlgeschlagen.');
-              }
-              if ((await mainRef())!==mainSha) throw new Error('main inzwischen verändert.');
-              if ((await github.rest.git.getRef({owner,repo,ref:'heads/'+t.branch})).data.object.sha!==t.sha) {
-                core.warning('Branch seit Archivierung verändert: '+t.branch);
-                continue;
-              }
-              await github.rest.git.deleteRef({owner,repo,ref:'heads/'+t.branch});
-              core.info('Sicher archiviert und entfernt: '+t.branch+' @ '+t.sha);
-            }
+      - name: Nachfolger anzeigen – keine Referenzen verändern
+        run: |
+          echo "Dieser historische PR301-Workflow ist deaktiviert."
+          echo "Aktiv: .github/workflows/cleanup-merged-safe-20261027.yml"
+          echo "Es werden keine Branches, Tags oder Dateien verändert."

@@ -231,3 +231,23 @@ Das Repository enthält Entwicklungssoftware. **Vollständige SRD-Konformität, 
 ### Chat D D-014: Bedingte Dart-Modulimporte ebenfalls prüfen
 
 Die Modulgrenzenprüfung schützt jetzt auch alternative URIs in `import`- und `export`-Direktiven einschließlich Kommentare zwischen den Direktivenbestandteilen, z. B. `if (dart.library.io)`: Damit können bedingte Imports nicht unbemerkt von der Regel- in die Storyschicht wechseln. Neun Python-Regressionen decken unerlaubte und erlaubte Varianten ab. Änderungen betreffen nur Entwicklungstests und statische Projektprüfungen, nicht die App-Speicherung. **Vollständige GitHub-CI für dieses Paket steht noch aus.**
+
+
+## Branchmigration 28.10.2026 – Werkzeugprüfungen und ein aktiver Cleanup
+
+PR #316 (bedingte Dart-Imports/-Exports), #335 (geschützte Branches erhalten)
+und #301 (historische Story/UI-Bereinigung) sind auf Basis `dd0c2e94` durch
+reguläre Merge-Commits zusammengeführt. Die ursprüngliche automatische
+PR-301-Löschroutine bleibt bytegetreu mit SHA256 in der Historie, ihr ausführbarer
+Workflow ist nur noch ein manuell startbarer, lesender Hinweis. Dadurch läuft
+kein zweiter automatischer Referenzschreiber neben der gepflegten Bereinigung.
+Der aktive Cleanup verlangt weiter erfolgreiche Android-CI des exakt aktuellen
+Main, Ancestry, Archivtag und unveränderte Köpfe und schützt aktive PRs sowie
+`branch.protected`.
+
+**Lokal geprüft:** Projektstruktur, Story/Regelgrenzen und SRD-Register gültig;
+195 Python-Tests bestanden. Zusätzlich 28 gezielte Grenz-/Cleanup-Tests nach
+letzter Testverschärfung bestanden. **Noch offen:** kombinierte Flutter-/Backend-/
+Android-/GitHub-CI des Gesamtmigrationsstands, Main-Integration und tatsächliche
+Archivierung/Löschung. Keine Referenz wurde durch diesen Teilbranch entfernt.
+App-/Speicherversionen unverändert. [Fachcheckpoint](docs/BRANCH_MIGRATION_TOOLING_20261028.md).

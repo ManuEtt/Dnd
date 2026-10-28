@@ -295,3 +295,23 @@ Explizite NPC-ID-Auswahl von Android über GameController an den bereits vorhand
 
 Basis-Main `8239f5e71ec6b229a2a0883500adaf431bb70087`, Branch `fix/chat-d/conditional-dart-boundaries-20261027`. Python-Grenzprüfer erfasst nun alle URI-Alternativen in Dart-`import`-/`export`-Direktiven mit `if (...)`, nicht nur den Default. Neun Regressionen testen plattformabhängige Story-/Regel-/Framework-Varianten und gültige bisherige Ausnahmen und Kommentare zwischen Direktivenbestandteilen. **IMPLEMENTIERT:** `scripts/check_domain_boundaries.py` und `scripts/tests/test_domain_boundaries.py`. **GETESTET:** isolierte lokale Regex-Stichprobe; die vollständige CI für diesen Branch ist noch nicht abgenommen. **BLOCKIERT/NICHT GETESTET:** finale PR-HEAD-CI, Live-Gerät; keine Auswirkungen auf Flutter-Spielcode, SQLite 2 oder JSON 1. **NÄCHSTER SCHRITT:** exakte PR-CI und Main-Konflikte prüfen, nach erfolgreichem Review integrieren. Details in `docs/parallel/CHAT_D_CHECKPOINT.md`.
 
+
+
+## Branchmigration 28.10.2026 – Werkzeugprüfungen und ein aktiver Cleanup
+
+PR #316 (bedingte Dart-Imports/-Exports), #335 (geschützte Branches erhalten)
+und #301 (historische Story/UI-Bereinigung) sind auf Basis `dd0c2e94` durch
+reguläre Merge-Commits zusammengeführt. Die ursprüngliche automatische
+PR-301-Löschroutine bleibt bytegetreu mit SHA256 in der Historie, ihr ausführbarer
+Workflow ist nur noch ein manuell startbarer, lesender Hinweis. Dadurch läuft
+kein zweiter automatischer Referenzschreiber neben der gepflegten Bereinigung.
+Der aktive Cleanup verlangt weiter erfolgreiche Android-CI des exakt aktuellen
+Main, Ancestry, Archivtag und unveränderte Köpfe und schützt aktive PRs sowie
+`branch.protected`.
+
+**Lokal geprüft:** Projektstruktur, Story/Regelgrenzen und SRD-Register gültig;
+195 Python-Tests bestanden. Zusätzlich 28 gezielte Grenz-/Cleanup-Tests nach
+letzter Testverschärfung bestanden. **Noch offen:** kombinierte Flutter-/Backend-/
+Android-/GitHub-CI des Gesamtmigrationsstands, Main-Integration und tatsächliche
+Archivierung/Löschung. Keine Referenz wurde durch diesen Teilbranch entfernt.
+App-/Speicherversionen unverändert. [Fachcheckpoint](docs/BRANCH_MIGRATION_TOOLING_20261028.md).
