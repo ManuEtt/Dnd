@@ -5,17 +5,18 @@ import 'package:lebendiger_spielleiter/domain/game_engine.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/story/story_memory_engine.dart' as story;
 
-Campaign _campaign(List<WorldNpc> npcs, {String name = 'Zwei Hüterinnen'}) =>
-    Campaign(
-      id: 'recap-identity',
-      name: name,
-      world: 'Valdorn',
-      sessionId: 'recap-session',
-      hero: HeroCharacter(id: 'aria', name: 'Aria', hitPoints: 13),
-      scene: 'Unbestätigt: Die beiden Miras sind dieselbe Person.',
-      revision: 7,
-      npcs: npcs,
-    );
+Campaign _campaign(List<WorldNpc> npcs, {String name = 'Zwei Hüterinnen'}) {
+  return Campaign(
+    id: 'recap-identity',
+    name: name,
+    world: 'Valdorn',
+    sessionId: 'recap-session',
+    hero: HeroCharacter(id: 'aria', name: 'Aria', hitPoints: 13),
+    scene: 'Unbestätigt: Die beiden Miras sind dieselbe Person.',
+    revision: 7,
+    npcs: npcs,
+  );
+}
 
 String _longRecapNameFor(List<WorldNpc> npcs, {int extra = 0}) {
   final baseline = story.MemoryEngine.buildSessionSummary(_campaign(npcs));
