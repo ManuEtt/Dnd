@@ -38,6 +38,7 @@ class FantasyButton extends StatefulWidget {
     this.icon,
     this.style = FantasyButtonStyle.woodGold,
     this.selected = false,
+    this.toggleable = false,
     this.iconOnly = false,
     this.tooltip,
     this.onSound,
@@ -50,6 +51,10 @@ class FantasyButton extends StatefulWidget {
   final IconData? icon;
   final FantasyButtonStyle style;
   final bool selected;
+
+  /// Only true switches expose on/off semantics to assistive technology.
+  /// Ordinary actions may be visually highlighted without being toggles.
+  final bool toggleable;
   final bool iconOnly;
   final String? tooltip;
   final VoidCallback? onSound;
@@ -129,7 +134,7 @@ class _FantasyButtonState extends State<FantasyButton> {
       button: true,
       enabled: enabled,
       label: iconOnly ? widget.label : null,
-      toggled: widget.selected,
+      toggled: widget.toggleable ? widget.selected : null,
       child: Material(
         type: MaterialType.transparency,
         child: InkWell(
@@ -436,6 +441,7 @@ class FantasyToggleButton extends StatelessWidget {
     icon: icon,
     compact: compact,
     selected: selected,
+    toggleable: true,
     style: FantasyButtonStyle.arcane,
     onPressed: onPressed,
   );
