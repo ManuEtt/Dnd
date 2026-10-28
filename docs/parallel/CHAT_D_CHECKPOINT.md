@@ -1,3 +1,20 @@
+# Chat D D-013 – Symlink-Sperre bei der Projektübertragungsprüfung (27.10.2026)
+
+- **Ausgangs-main-SHA:** `ff245cc253194cd0858385d535ae7b2c9132bb06`.
+- **Branch:** `fix/chat-d/verify-project-symlink-20261027`.
+- **Technische Commits:** `4a81596a1bc2b729fe2c8cc739f7a201220f92f6`, `9c910244117ec4f7b3ea6149fedf5e78b279568a`; Dokumentationsstand folgt auf demselben PR-Branch.
+- **Pull Request:** [#321](https://github.com/ManuEtt/Dnd/pull/321) (Draft, nicht mergen vor Prüfung).
+- **Ausgangsproblem:** `scripts/verify_project.py` akzeptierte vorhandene, nichtleere Pflichtdateien trotz Symlink und konnte bei Backend-JSON/Wrapper-Inhalt auf Dateien außerhalb des hochgeladenen Baums folgen.
+- **Implementiert:** Linkprüfung sämtlicher Dateipfad-Komponenten und Skip nachgelagerter Inhaltsprüfungen für Links, ohne Ausgabe von Zielpfaden.
+- **Geänderte Dateien:** `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Tests:** Vier neue Regressionstests einschließlich positiver Bestandstest; Ausführung und finale CI **noch nicht nachgewiesen**. Kein lokaler vollständiger Checkout und kein Flutter-/Dart-SDK.
+- **CI-Ergebnis:** Neu ausgelöste GitHub-Actions-Läufe auf finale PR-SHA prüfen, Status zum Dokumentationszeitpunkt ausstehend.
+- **Bekannte Grenze:** Vorprüfung nicht race-/TOCTOU-sicher bei konkurrierendem Umtausch einer regulären Datei in einen Link.
+- **Migration:** Keine. SQLite 2, JSON 1, Produktcode und App-Version unverändert.
+- **Nächster konkreter Schritt:** Den Python-Test-Gate und Android-Workflow auf finalem PR-Commit nachweisen, Fehler im selben Branch beheben.
+
+---
+
 # Chat D D-012 – ZIP-Bomb-Schutz bei Gradle-Wrapper-Vorprüfung (26.10.2026)
 
 - **Ausgangs-main:** `67f146e690306b13d490bd8e7fd5636bb187c77e`. **Arbeitsbranch:** `fix/chat-d/gradle-jar-zip-bomb-guard-20261026`. Implementierung `77a431955351e30a1dcf54e0dea7f8ba7b7b497a`, Regressionstests `86634965c6784994ecb731c4bacab476a9f50ffa`.

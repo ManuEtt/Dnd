@@ -27,6 +27,31 @@ Nächster Schritt: vorhandenen Editor-CAS-Branch prüfen und mit Tests ergänzen
 Die gesamte Charaktererstellung bleibt unvollständig. Ältere Abschnitte sind
 Historie; Originale unter `docs/history/`.
 
+## Historie der zusätzlich integrierten Main-Pakete – 28.10.2026
+
+Die nachfolgenden ursprünglichen Main-Einträge gehören zum fixierten Stand
+`a915717`; ihre damaligen Angaben wie „Draft“ oder „CI ausstehend“ sind
+historische Aussagen. Der aktuelle gemeinsame Prüfstand steht oben und im
+Charakter-Checkpoint. Sämtliche ursprünglichen Dokumente einschließlich des
+Main-Checkpoints bleiben [bytegenau archiviert](docs/history/character_class_main_20261028/maina915717/README.md),
+mit [SHA256-/Git-Blob-Nachweis](docs/history/character_class_main_20261028/manifest.json).
+
+### Chat D – Pflichtdateien ohne symbolische Links prüfen (27.10.2026)
+
+Die Python-Projektprüfung lehnt jetzt Pflichtdateien und deren übergeordnete Verzeichnisse ab, wenn sie symbolische Links sind. Dadurch werden keine verlinkten externen Backend-JSON-Dateien oder Gradle-Wrapper-Dateien mehr als reguläre Upload-Dateien geöffnet. Vier Regressionstests untersuchen Dateilinks, Verzeichnislinks, Wrapper-Nichtöffnung und defekte Links. Bestehende reguläre Projektkopien bleiben zugelassen. [PR #321](https://github.com/ManuEtt/Dnd/pull/321) ist ein **Draft**; die abschließende GitHub-CI ist auf dem finalen PR-Commit separat abzunehmen. Keine Migration oder App-Änderung.
+
+
+### Chat B – Zwölf KI-Erinnerungen bis zur Story-API-Grenze absichern (27.10.2026)
+
+Zwei neue Integrationstests prüfen das Erinnerungslimit **an der tatsächlich gesendeten Story-Anfrage**: Eine KI-Kampagne mit bestätigten Mira-Beziehungsnotizen und mindestens 18 allgemeinen Fakten wird in einer echten SQLite-Datei gespeichert, über den `GameController` fortgesetzt und mit einem lokalen Backend-Transport abgefragt. Sowohl mit als auch ohne `npc-identity-v1` erhält das Backend genau zwölf priorisierte und begrenzte Erinnerungseinträge. Die drei bestätigten NPC-Notizen bleiben zuerst; zusätzliche allgemeine Fakten verwenden lediglich die freien Plätze. Heldenwerte, Revision und gespeicherter Spielstand bleiben überprüfbar. Dieses Testpaket baut auf [PR #307](https://github.com/ManuEtt/Dnd/pull/307) auf und verändert keine Produktionslogik, Datenbankschemata oder SRD-Regeln.
+
+
+### Chat B – Gemeinsames Budget für NPC- und allgemeine KI-Erinnerungen (27.10.2026)
+
+Die vom KI-Spielleiter übermittelten bestätigten NPC-Notizen und allgemeinen Erinnerungseinträge teilen sich dasselbe Limit (standardmäßig 12 Einträge). Bisher wurde ein weiterer allgemeiner Eintrag angehängt, selbst wenn NPC-Notizen das Budget schon vollständig belegten. `NpcNarratorMemory.merge` prüft jetzt die gemeinsame Grenze **vor** dem Anhängen allgemeiner Einträge. Neue Regressionen decken vollständig belegte Grenzen von einem und zwei Einträgen sowie verbleibenden Platz ab. Es gibt keine Änderung an NPC-Identitäten, SRD-Regeln, SQLite, Backend-Protokoll oder Kampagnenexport.
+
+
+
 ## Charaktererstellung – Integrationskandidat (27.10.2026)
 
 Die gestapelte SRD-5.2.1-Entwicklung aus [#264](https://github.com/ManuEtt/Dnd/pull/264), [#272](https://github.com/ManuEtt/Dnd/pull/272), [#273](https://github.com/ManuEtt/Dnd/pull/273) und [#275](https://github.com/ManuEtt/Dnd/pull/275) ist gemeinsam in einem **Integrationsbranch** vorbereitet: 4W6-Würfelzuordnung; explizit bestätigte, versionierte Startattribut-Herkunft; vier Hintergrundpakete mit Werkzeug-/Fertigkeitsauswahl und A-/B-Ausrüstung; Akolythenauswahl aus drei geprüften Heiligen Symbolen. Die Einzelbranch-CIs sind grün, die **gemeinsame Main-Integration und Android-Geräteabnahme** müssen separat erfolgen. Herkunftstalentwirkungen, Magic-Initiate-Zauberwahl und vollständige SRD-Charaktererstellung fehlen weiterhin. [Integrationsbeleg](docs/CHARACTER_STACK_INTEGRATION_20261027.md).

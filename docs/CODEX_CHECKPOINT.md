@@ -130,3 +130,19 @@ sauberem Checkout der im Manifest genannten Basis mit
 Commit/Push und PR. Für bereits integrierte Teile zuerst Git-Ancestry prüfen,
 nicht denselben Patch zweimal anwenden. Aktueller Branch/PR ist der bevorzugte
 Weg; APK ist getrennt vom Quell-ZIP und kein realer Gerätetest.
+
+## Zusätzliche Main-Integration a915717 – 28.10.2026
+
+Nach dem vorherigen Integrationskopf wurde Main
+`a915717ba0f57c74acf03c9b1a066ced531c7c6a` mit den regulären Integrationen
+von PR #318 (Audit), #288 (explizite NPC-Auswahl im Controller) und #321
+(Python-Pflichtdateiprüfung) als weiterer fest fixierter Stand übernommen.
+Dabei wurden ausschließlich README-/Checkpoint-Konflikte redaktionell gelöst;
+aktuelle 0.8.45+95-Statusangaben bleiben oben. Fremde ursprüngliche Einträge
+sind im [Main-Originalcheckpoint](history/character_class_main_20261028/maina915717/docs/CODEX_CHECKPOINT.md)
+und die acht unveränderten Originaldokumente im erweiterten
+[Historienmanifest](history/character_class_main_20261028/manifest.json) mit
+SHA256/Git-Blob-IDs erhalten. Kein CAS-, Magic-Initiate-, Start-TP- oder anderes
+noch separates Fachpaket wurde unabhängig neu übernommen. Die auf dem neuen
+Mergekopf erforderlichen Tests und die exakte CI müssen gesondert abgenommen
+werden; frühere grüne Läufe sind kein Nachweis dieses zusätzlichen Merges.
