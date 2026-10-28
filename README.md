@@ -1,5 +1,11 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## 28.10.2026 – Chat A: Zylinder-Zauberbereich (PR #361, nicht gemergt)
+
+Auf Branch `feat/chat-a/cylinder-area-preview-20261028` wurde eine isolierte SRD-5.2.1-Domain-Vorschau für **Cylinder** ergänzt: horizontale Kreis-Kandidaten, bestätigte Radius-/Höhenwerte, Ursprung an Ober- oder Unterseite sowie getrennte Zauberreichweitenprüfung. Unbestätigte Geometrie, unbekannte Hindernisse und ungültige Ursprünge werden abgelehnt; die App berechnet daraus **keine** bestätigten Treffer, Schäden oder 3D-Deckung. Fünf neue Flutter-Tests sind eingecheckt. **CI auf dem finalen Branch noch ausstehend.** [PR #361](https://github.com/ManuEtt/Dnd/pull/361) ist ein Entwurf und darf andere Chat-Arbeiten nicht überschreiben; gemeinsame Dokumentation ist bei der Integration zu konsolidieren. Quelle: Wizards of the Coast LLC, SRD 5.2.1, *Rules Glossary / Cylinder*, CC BY 4.0.
+
+
+
 ## 28.10.2026 – Gemeinsame lokale Abnahme bestanden
 
 Quellstand `4f03b7880c36ca225325c87ec9f2c56e0a93dccd` ist lokal vollständig geprüft:
