@@ -63,66 +63,13 @@ class NpcNarratorMemory {
       final relationship = _oneLine(note.relationship);
       final prefix = 'Bestätigte NPC-Beziehungsnotiz zu ';
       var heading = '$prefix${_oneLine(entry.npc.name)} ($relationship): ';
-      // A long imported name must not be cut into an indistinguishable
-      // prefix. Use only the confirmed, uniquely stored ID as a fallback.
+      // Never truncate an identity inside a very long stored NPC name.
+      // Use the uniquely saved ID only when it is safe for wire transport.
       if (heading.length + 2 > 400) {
-        if (!RegExp(r'^[a-zA-Z0-9_-]{1,64}
-    for (final raw in general) {
-      // NPC notes may already fill the entire wire budget. Do not append
-      // another general memory before checking the shared limit.
-      if (result.length == limit) break;
-      final value = _oneLine(raw);
-      if (value.isEmpty ||
-          selectedNotes.any(
-            (note) => note.isNotEmpty && value.contains(note),
-          )) {
-        continue;
-      }
-      final text = _truncate(value, 400);
-      if (!result.contains(text)) result.add(text);
-      if (result.length == limit) break;
-    }
-    return List.unmodifiable(result);
-  }
-
-  static bool _mentions(String action, String npcName) {
-    final normalized = _normalize(npcName);
-    if (normalized.isEmpty) return false;
-    final playerText = _normalize(action);
-    return RegExp(
-      '(^|[^a-z0-9])${RegExp.escape(normalized)}(?=[^a-z0-9]|'
-      r'$)',
-    ).hasMatch(playerText);
-  }
-
-  static String _normalize(String text) => _oneLine(text)
-      .toLowerCase()
-      .replaceAll('ä', 'ae')
-      .replaceAll('ö', 'oe')
-      .replaceAll('ü', 'ue')
-      .replaceAll('ß', 'ss');
-
-  static String _oneLine(String text) => text
-      .replaceAll(RegExp(r'[\x00-\x1f\x7f-\x9f\u2028\u2029]'), ' ')
-      .replaceAll(RegExp(r'\s+'), ' ')
-      .trim();
-
-  static String _truncate(String text, int length) {
-    if (text.length <= length) return text;
-    var end = length - 1;
-    if (end > 0) {
-      final unit = text.codeUnitAt(end - 1);
-      if (unit >= 0xd800 && unit <= 0xdbff) end--;
-    }
-    return '${text.substring(0, end).trimRight()}…';
-  }
-}
-).hasMatch(entry.npc.id)) {
+        if (!RegExp(r'^[a-zA-Z0-9_-]{1,64}$').hasMatch(entry.npc.id)) {
           continue;
         }
         heading = '$prefix(NPC-ID: ${entry.npc.id}) ($relationship): ';
-        // Also fail closed if an abnormally long saved relationship leaves
-        // no room for even one note character and the truncation marker.
         if (heading.length + 2 > 400) continue;
       }
       final text = _truncate('$heading$normalizedNote', 400);
