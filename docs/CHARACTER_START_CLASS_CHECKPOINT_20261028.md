@@ -1,5 +1,18 @@
 # Codex-Checkpoint – Klassenstartwahl 0.8.45+95
 
+
+> **Neueste Koordination – 28.10.2026:** Der Editor-CAS-Fix wird bereits von
+> einem anderen Verantwortlichen in [PR #330](https://github.com/ManuEtt/Dnd/pull/330)
+> bearbeitet, zuletzt gemeldeter Kopf `76d5daa30e55e644acc1aece0ac63ecc01d1e9b6`.
+> Diesen PR zuerst live auf Code, vorhandene Regressionstests und finale CI
+> prüfen und abnehmen; keine zweite Implementierung oder doppelte Tests starten.
+> PR #323 ist bereits in der jetzt integrierten Main-Basis `bf5999e` enthalten.
+> Frühere nächste Schritte weiter unten sind mit dieser Koordination zu lesen.
+> Der geprüfte Zwischenkopf `019be0e` besitzt Alpha-Artefakt
+> [12791887302](https://github.com/ManuEtt/Dnd/actions/runs/40631517151/artifacts/12791887302);
+> 1.021 CI-Quelldateien wurden laut Hauptabnahme mit Inhalt und Dateimodus
+> verifiziert. Die neue gemeinsame Abnahme nach `bf5999e` bleibt separat.
+
 Stand 2026-10-28T04:12:49.192781+00:00 (UTC). Arbeitsbranch `feat/character-start-class-proof-20261027`,
 [PR #319](https://github.com/ManuEtt/Dnd/pull/319) jetzt gegen **main**.
 Main `a915717ba0f57c74acf03c9b1a066ced531c7c6a` und Audit-PR #318 (`89545ab`) über reguläre

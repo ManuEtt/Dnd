@@ -209,7 +209,8 @@ Main konfliktfrei übernommen, fremde Originaldokumente mit Hashes archiviert.
 [vollständiger Charakter-Checkpoint](docs/CHARACTER_START_CLASS_CHECKPOINT_20261028.md).
 Die zusätzliche Main-Übernahme (#288/#321/#318) wird im finalen PR-Kopf erneut
 geprüft; frühere Zwischenergebnisse gelten jeweils für ihren genannten Commit.
-Nächster Schritt: vorhandenen Editor-CAS-Branch prüfen und mit Tests ergänzen;
+Nächster Schritt: den bereits von anderem Owner bearbeiteten Editor-CAS-PR #330
+live prüfen und abnehmen; vorhandene Tests berücksichtigen, nichts duplizieren;
 #324 (Start-TP/Kit), #317 (Magieinitiierter) und #323 nicht doppelt entwickeln.
 Die gesamte Charaktererstellung bleibt unvollständig. Ältere Abschnitte sind
 Historie; Originale unter `docs/history/`.

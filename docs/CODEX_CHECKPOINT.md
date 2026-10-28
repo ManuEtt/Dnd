@@ -179,7 +179,8 @@ Vollständiger Stand, Artefakte, bekannte Grenzen und konkrete Wiederaufnahme:
 [CHARACTER_START_CLASS_CHECKPOINT_20261028.md](CHARACTER_START_CLASS_CHECKPOINT_20261028.md).
 PR #319, Branch `feat/character-start-class-proof-20261027`; keine Force-Pushes,
 keine direkte Main-Änderung und keine fremde Branchlöschung. Nächster Schritt:
-finale gemeinsame CI/Artefakte abnehmen, danach vorhandenen Editor-CAS-Branch
-prüfen und mit Tests absichern; bereits entwickelte Parallelpakete nicht
-doppelt implementieren. Originale von Main `bf5999e` und unserem vorherigen
+finale gemeinsame CI/Artefakte abnehmen, danach den bereits von anderem Owner
+bearbeiteten [Editor-CAS-PR #330](https://github.com/ManuEtt/Dnd/pull/330) live auf
+Code, vorhandene Tests und aktuelle CI prüfen und abnehmen; nichts doppelt
+implementieren. #323 ist bereits in Main `bf5999e` enthalten. Originale von Main `bf5999e` und unserem vorherigen
 Status bleiben bytegenau im [Historienmanifest](history/character_class_main_20261028/manifest.json).
