@@ -299,6 +299,8 @@ class SrdClassFeatureCatalog {
     'Bardic Inspiration',
     'Lay On Hands',
     'Font of Magic',
+    // Optional once-per-long-rest recovery on an explicitly confirmed Short Rest.
+    'Sorcerous Restoration',
     'Wild Shape',
     'Favored Enemy',
     'Weapon Mastery',

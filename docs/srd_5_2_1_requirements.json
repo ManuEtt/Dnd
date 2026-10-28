@@ -4691,12 +4691,19 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#zauberer_5_base_sorcerous-restoration_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_sorcerous_restoration_rules_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/srd_sorcerous_restoration_rules.dart",
+        "app/lib/domain/class_resource_rules.dart",
+        "app/lib/domain/rest_rules.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/domain/srd_class_automation.dart"
+      ],
+      "note": "SRD 5.2.1 Zauberer 5: optionale Zauberkraftregeneration bei ausdrücklich bestätigter kurzer Rast, maximal Zauberer-Klassenstufe/2 abgerundet an tatsächlich verbrauchten Zaubereipunkten. Einmal je Long Rest persistiert im vorhandenen Klassenressourcenledger. Alle drei Kurzrast-Pfade einschließlich voller HP und ausgegebener Trefferwürfel unterstützt. Spieler muss mit Zauberkraftregeneration ausdrücklich wählen. Tests und CI des aktuellen Branch-HEAD noch nicht final bestätigt; tatsächliche Rastdauer/Unterbrechungen bleiben außerhalb dieser Teilautomatik (partial)."
     },
     {
       "id": "CLASS-ZAUBERER-7-BASE-SORCERY-INCARNATE-0",

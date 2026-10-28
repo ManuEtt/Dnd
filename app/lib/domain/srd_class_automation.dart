@@ -98,6 +98,7 @@ class SrdClassAutomation {
     "Monk's Focus": 'ClassResourceRules',
     'Bardic Inspiration': 'ClassResourceRules',
     'Font of Magic': 'ClassResourceRules',
+    'Sorcerous Restoration': 'SrdSorcerousRestorationRules',
     'Wild Shape': 'ClassResourceRules',
     'Favored Enemy': 'ClassResourceRules',
     'Weapon Mastery': 'SrdEquipmentCatalog',

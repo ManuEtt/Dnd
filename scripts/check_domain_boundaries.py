@@ -13,11 +13,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 # Dart configurable imports/exports can switch the URI per platform. Guard
 # *every* selectable URI, including when harmless comments separate tokens.
+# Also guard part and URI-based part of: these directives share a Dart library
+# and therefore must not cross the Story/Rules ownership boundary.
 # Keep quoted URIs intact; only tolerate whitespace and Dart comments at the
 # grammar's token boundaries, never extract strings from arbitrary code.
 _TRIVIA = r"(?:\s|/\*[\s\S]*?\*/|//[^\n]*\n)*"
 IMPORT = re.compile(
-    r"^[ \t]*(?:import|export)" + _TRIVIA
+    r"^[ \t]*(?P<kind>import|export|part(?:" + _TRIVIA + r"of)?)" + _TRIVIA
     + r"['\"](?P<primary>[^'\"]+)['\"]"
     + r"(?P<conditional>(?:" + _TRIVIA
     + r"if" + _TRIVIA + r"\([^)]*\)" + _TRIVIA
@@ -67,12 +69,16 @@ def _package_target(uri: str) -> str | None:
 
 def check_imports(relative_path: str, content: str) -> list[str]:
     violations: list[str] = []
-    sources: list[str] = []
+    sources: list[tuple[str, str]] = []
     for directive in IMPORT.finditer(content):
-        sources.append(directive.group("primary"))
-        sources.extend(CONDITIONAL_URI.findall(directive.group("conditional")))
+        kind = directive.group("kind")
+        sources.append((kind, directive.group("primary")))
+        sources.extend(
+            (kind, uri)
+            for uri in CONDITIONAL_URI.findall(directive.group("conditional"))
+        )
     if relative_path.startswith("app/lib/story/"):
-        for uri in sources:
+        for kind, uri in sources:
             if uri.startswith("dart:"):
                 if uri not in STORY_ALLOWED:
                     violations.append(f"{relative_path}: forbidden platform dependency {uri}")
@@ -80,24 +86,28 @@ def check_imports(relative_path: str, content: str) -> list[str]:
                 violations.append(f"{relative_path}: forbidden provider/framework dependency {uri}")
             else:
                 target = _target(relative_path, uri)
-                if target.startswith("app/lib/story/") or target in STORY_ALLOWED:
+                if (target.startswith("app/lib/story/")
+                        or (target in STORY_ALLOWED and not kind.startswith("part"))):
                     continue
                 if target.startswith("app/lib/domain/"):
-                    violations.append(f"{relative_path}: story must not import {uri}")
+                    verb = "include" if kind.startswith("part") else "import"
+                    violations.append(f"{relative_path}: story must not {verb} {uri}")
                 else:
                     violations.append(f"{relative_path}: unexpected cross-module import {uri}")
     elif relative_path.startswith("app/lib/domain/"):
         allowed = DOMAIN_STORY_IMPORT_ALLOWED.get(relative_path, set())
-        for uri in sources:
+        for kind, uri in sources:
+            verb = "includes" if kind.startswith("part") else "imports"
             if uri.startswith("package:"):
                 target = _package_target(uri)
                 if target is not None and target.startswith("app/lib/story/"):
-                    violations.append(f"{relative_path}: rule module imports story {uri}")
+                    violations.append(f"{relative_path}: rule module {verb} story {uri}")
                 continue
             if ":" in uri:
                 continue
-            if _target(relative_path, uri).startswith("app/lib/story/") and uri not in allowed:
-                violations.append(f"{relative_path}: rule module imports story {uri}")
+            if (_target(relative_path, uri).startswith("app/lib/story/")
+                    and (kind.startswith("part") or uri not in allowed)):
+                violations.append(f"{relative_path}: rule module {verb} story {uri}")
     return violations
 
 
