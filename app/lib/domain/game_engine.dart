@@ -2855,7 +2855,9 @@ class GameEngine {
     // A new class action or save request must never be mistaken for the
     // natural die value of an already pending attack/check.
     if (campaign.pendingRoll != null &&
-        RegExp(r'^(?:rettungswurf|handauflegen|unermüdlich|unermuedlich)\s*[: ]').hasMatch(words)) {
+        RegExp(
+          r'^(?:rettungswurf|handauflegen|unermüdlich|unermuedlich)\s*[: ]',
+        ).hasMatch(words)) {
       return _commit(
         campaign,
         campaign,
@@ -3283,8 +3285,7 @@ class GameEngine {
       );
     }
     // A confirmed player command, never automatically inferred from prose.
-    if (words.startsWith('unermüdlich') ||
-        words.startsWith('unermuedlich')) {
+    if (words.startsWith('unermüdlich') || words.startsWith('unermuedlich')) {
       final command = RegExp(
         r'^unerm(?:üd|ued)lich\s*:\s*tempor(?:äre|aere)\s+trefferpunkte'
         r'(\s+ersetzen)?\s*[.!?]?$',
