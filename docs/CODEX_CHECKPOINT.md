@@ -1,3 +1,16 @@
+# Chat D D-014 – Doppelte Branch-Bereinigung und 404-Rennen beseitigen (28.10.2026)
+
+- **Ausgangs-main:** `571edec9455fb32e4991432953c9a2479a6fffb2`; **Branch:** `fix/chat-d/disable-legacy-cleanup-20261028`; [PR #329](https://github.com/ManuEtt/Dnd/pull/329) (Draft).
+- **Nachgewiesenes Problem:** Alte GitHub Action [40589220593](https://github.com/ManuEtt/Dnd/actions/runs/40589220593) scheiterte mit 404 beim Lesen des Branches `test/chat-b/story-12-memory-transport-20261027`. Die neuere Action [40589220368](https://github.com/ManuEtt/Dnd/actions/runs/40589220368) archivierte und entfernte diesen Branch zuvor.
+- **IMPLEMENTIERT:** Alter Bereinigungsworkflow bleibt als nicht-automatischer, read-only Hinweis erhalten, ohne Lösch-/Tag-API. Der verifizierte Nachfolger `cleanup-merged-safe-20261027.yml` bleibt unverändert; kein Branch wird durch diesen PR gelöscht.
+- **TESTS ERGÄNZT:** `scripts/tests/test_retired_cleanup_workflow.py` prüft erlaubten manuellen Read-only-Altworkflow, Manipulation negativer Trigger/Berechtigung/Mutationsaufrufe und Sicherheitsgrundlagen des Nachfolgers.
+- **Technische Commits:** `45236f1b4d595303c19c1cf9e992ba36003026fc`, `c5b223389d75a9949a2bee13386d305bc586102e`. **Teststatus:** neue vollständige CI auf finalem Dokumentations-Commit noch offen. Keine grüne CI behauptet.
+- **KOMPATIBILITÄT:** Flutter/Backend, SQLite 2, JSON 1, SRD/Story und App-Version unverändert. Keine Migration.
+- **ÜBERSCHNEIDUNG:** PR #301 bearbeitet einen anderen älteren Workflow; #311, #316 und #321 keine dieser Fachdateien. README/Checkpoint additiv und bei Integration zu konsolidieren.
+- **NÄCHSTER SCHRITT:** Gesamte GitHub-CI auf finalem PR-Commit abwarten, PR bei Erfolg reviewbereit stellen; keine direkte Main-Änderung, keine fremden PRs/Branches löschen.
+
+---
+
 # Chat B – Story-Transport mit randvollem Erinnerungslimit (27.10.2026)
 
 - **Basis:** [PR #307](https://github.com/ManuEtt/Dnd/pull/307) (`fix/chat-b/npc-memory-budget-20261027`, Head `47b4343fadd5f30b9030a702b3ccd701d701a598`). Gestapelter neuer Branch `test/chat-b/npc-memory-wire-budget-20261027`; erst #307 integrieren.
