@@ -786,6 +786,9 @@ class FantasyInventoryCards extends StatelessWidget {
                 onTap: () => showDialog<void>(
                   context: context,
                   builder: (dialogContext) => AlertDialog(
+                    // Imported or user-written notes may span many screens.
+                    // Keep the dismissal action reachable on narrow devices.
+                    scrollable: true,
                     title: Text(item.name),
                     content: Text(
                       'Anzahl: ${item.quantity}\n${item.description.isEmpty ? 'Keine weitere Beschreibung gespeichert.' : item.description}',
