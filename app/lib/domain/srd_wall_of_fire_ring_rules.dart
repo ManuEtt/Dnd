@@ -143,10 +143,8 @@ class SrdWallOfFireRingRules {
         final farthestX = (dx + 0.5) * 5;
         final farthestY = (dy + 0.5) * 5;
         final closestSquared = nearestX * nearestX + nearestY * nearestY;
-        final farthestSquared =
-            farthestX * farthestX + farthestY * farthestY;
-        if (closestSquared > outerSquared ||
-            farthestSquared < innerSquared) {
+        final farthestSquared = farthestX * farthestX + farthestY * farthestY;
+        if (closestSquared > outerSquared || farthestSquared < innerSquared) {
           continue;
         }
 
@@ -160,8 +158,7 @@ class SrdWallOfFireRingRules {
           SrdWallOfFireRingCellCandidate(
             cell: cell,
             centerWithinWall:
-                centerSquared >= innerSquared &&
-                centerSquared <= outerSquared,
+                centerSquared >= innerSquared && centerSquared <= outerSquared,
             fullBlockerRequiresReview: blocked,
             centerRay: rayClear
                 ? SrdSphereCenterRay.clear
