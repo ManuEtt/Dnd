@@ -180,7 +180,8 @@ Vollständiger Stand, Artefakte, bekannte Grenzen und konkrete Wiederaufnahme:
 PR #319, Branch `feat/character-start-class-proof-20261027`; keine Force-Pushes,
 keine direkte Main-Änderung und keine fremde Branchlöschung. Nächster Schritt:
 finale gemeinsame CI/Artefakte abnehmen, danach den bereits von anderem Owner
-bearbeiteten [Editor-CAS-PR #330](https://github.com/ManuEtt/Dnd/pull/330) live auf
-Code, vorhandene Tests und aktuelle CI prüfen und abnehmen; nichts doppelt
-implementieren. #323 ist bereits in Main `bf5999e` enthalten. Originale von Main `bf5999e` und unserem vorherigen
+bearbeiteten [Editor-CAS-PR #330](https://github.com/ManuEtt/Dnd/pull/330)
+koordiniert mit aktuellem Main integrieren und erneut abnehmen. Dessen
+CI 40631254745 ist bereits grün, einschließlich sechs SQLite-/CAS-Regressionen;
+aktuelle Mergekonflikte auflösen, nichts doppelt implementieren. #323 ist bereits in Main `bf5999e` enthalten. Originale von Main `bf5999e` und unserem vorherigen
 Status bleiben bytegenau im [Historienmanifest](history/character_class_main_20261028/manifest.json).

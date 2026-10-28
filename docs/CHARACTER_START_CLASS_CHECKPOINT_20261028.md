@@ -7,6 +7,13 @@
 > Diesen PR zuerst live auf Code, vorhandene Regressionstests und finale CI
 > prüfen und abnehmen; keine zweite Implementierung oder doppelte Tests starten.
 > PR #323 ist bereits in der jetzt integrierten Main-Basis `bf5999e` enthalten.
+> PR #330 ist auf `76d5daa` bereits vollständig in
+> [CI 40631254745](https://github.com/ManuEtt/Dnd/actions/runs/40631254745) geprüft,
+> einschließlich sechs neuer SQLite-/CAS-Regressionen. Gegen das inzwischen
+> fortgeschrittene Main bestehen Integrationskonflikte. Nächster Schritt ist
+> ausschließlich die koordinierte Konfliktauflösung und erneute gemeinsame
+> Abnahme von #330; keine zweite Implementierung und keine doppelten Tests.
+> PR #324 wurde auf `d83d79a` aktualisiert; CI 40632775104 läuft noch.
 > Frühere nächste Schritte weiter unten sind mit dieser Koordination zu lesen.
 > Der geprüfte Zwischenkopf `019be0e` besitzt Alpha-Artefakt
 > [12791887302](https://github.com/ManuEtt/Dnd/actions/runs/40631517151/artifacts/12791887302);
