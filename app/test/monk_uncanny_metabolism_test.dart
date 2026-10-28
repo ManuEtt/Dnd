@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lebendiger_spielleiter/domain/ai_story.dart';
 import 'package:lebendiger_spielleiter/domain/class_resource_rules.dart';
 import 'package:lebendiger_spielleiter/domain/dice_engine.dart';
 import 'package:lebendiger_spielleiter/domain/game_engine.dart';
@@ -224,5 +225,59 @@ void main() {
         'uncannyMetabolism': 1,
       });
     });
+    test('KI-Angebot führt Initiative samt ausdrücklich gewählter Nutzung aus', () {
+      final game = GameEngine(
+        dice: minimumDice(),
+        clock: () => DateTime.utc(2026, 10, 28),
+      );
+      final ai = game.createAiCampaign(
+        monk(),
+        AiStoryPlan.fromJson({
+          'title': 'Nebel',
+          'world': 'Veyr',
+          'opening': 'Ein dunkler Pfad.',
+          'premise': 'Die Straße ist versperrt.',
+          'secret': 'Eine alte Schuld.',
+          'goal': 'Finde den Pfad.',
+          'threads': [
+            {'id': 'weg', 'title': 'Weg', 'description': 'Finde den Weg.'},
+            {'id': 'bund', 'title': 'Bund', 'description': 'Finde Verbündete.'},
+          ],
+          'npcs': [
+            {
+              'id': 'mara',
+              'name': 'Mara',
+              'description': 'Pfadfinderin',
+              'relationship': 'neutral',
+            },
+          ],
+          'places': [
+            {'id': 'wald', 'name': 'Wald', 'description': 'Neblig.'},
+          ],
+        }),
+        provider: 'mock',
+      );
+      final offered = ai.copyWith(
+        adventureOffer: AdventureOffer.fromJson({
+          'id': 'weg1',
+          'title': 'Die Brücke',
+          'description': 'Ein Wegelagerer wartet.',
+          'archetype': 'bandit',
+          'questTitle': 'Der Pfad',
+          'questDescription': 'Überwinde die Brücke.',
+        }),
+      );
+      final without = game.acceptAdventure(offered);
+      expect(without.events.single.payload['uncannyMetabolismUsed'], isNull);
+      expect(without.campaign.hero.spentClassResources['focusPoints'], 2);
+      final chosen = game.acceptAdventure(
+        offered,
+        useUncannyMetabolism: true,
+      );
+      expect(chosen.events.single.payload['uncannyMetabolismUsed'], true);
+      expect(chosen.events.single.payload['uncannyMetabolismHealing'], 3);
+      expect(chosen.campaign.hero.spentClassResources, {'uncannyMetabolism': 1});
+    });
+
   });
 }
