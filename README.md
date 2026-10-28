@@ -1,5 +1,11 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## 28.10.2026 – Chat A: Ringvariante von Wall of Fire (PR #367)
+
+Neue unabhängige Vorschau für die SRD-5.2.1-Ringvariante von **Wall of Fire**: ein ausdrücklich bestätigter äußerer Durchmesser (max. 20 Fuß), Höhe (max. 20 Fuß), 1 Fuß Wandstärke, geprüfte Zauberursprungsreichweite und konservative Kandidatenfelder einschließlich unklarer Hindernisse. Das **leere Zentrum** ist von möglicherweise von der Wand berührten Feldern unterscheidbar. **Keine** automatischen Treffer, Rettungswürfe, Feuerseiten, Schadens- oder Spielstandänderungen. Fünf deterministische Flutter-Tests ergänzt; **vollständige CI-/Android-Abnahme des PRs noch offen**. [Entwicklungs-PR #367](https://github.com/ManuEtt/Dnd/pull/367); Quelle: Wizards of the Coast LLC, SRD 5.2.1, CC BY 4.0, *Wall of Fire*.
+
+
+
 ## 28.10.2026 – Chat D: Dart-Teilbibliotheken an Modulgrenzen prüfen
 
 Die Python-Architekturprüfung kontrolliert neben `import` und `export` jetzt auch `part` und URI-basierte `part of`-Direktiven. Dadurch darf Domain-Code Story-Dateien nicht als Teilbibliothek einschleusen; Story-Dateien dürfen den gemeinsamen Domänencode weiterhin regulär importieren, ihn aber nicht als `part` einbinden. Fünf neue positive und negative Regressionstests sind ergänzt. **Die vollständige PR-CI muss auf dem finalen Commit noch geprüft werden.** Keine Änderung an SQLite, JSON, Spielregeln, Story oder App-Version. [Draft-PR #360](https://github.com/ManuEtt/Dnd/pull/360) · [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
