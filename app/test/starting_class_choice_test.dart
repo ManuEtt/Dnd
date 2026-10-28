@@ -87,7 +87,11 @@ void main() {
         expect(restored.toJson(), initial.toJson());
         expect(
           statuses(restored)['class.equipment'],
-          initial.inventory.any((i) => i.catalogId.isEmpty || i.stats == null)
+          (initial.inventory.any(
+                    (i) => i.catalogId.isEmpty || i.stats == null,
+                  ) ||
+                  (klass.name == 'Mönch' &&
+                      initial.startingClassChoice!.equipmentChoices.isNotEmpty))
               ? CreationStepStatus.notAutomated
               : CreationStepStatus.confirmed,
         );
@@ -218,6 +222,26 @@ void main() {
       expect(options.where((e) => e.category.name == 'tool'), hasLength(17));
       expect(options.any((e) => e.id == 'item-smith-s-tools'), isTrue);
       expect(options.any((e) => e.category.name == 'instrument'), isTrue);
+    },
+  );
+
+  test(
+    'Mönch-Paket verlangt noch den strukturierten Nachweis derselben Werkzeugübung',
+    () {
+      final hero = heroFor(choiceFor(findSrdClass('Mönch')!, kitIndex: 0));
+      expect(
+        hero.inventory.every((i) => i.catalogId.isNotEmpty && i.stats != null),
+        isTrue,
+      );
+      expect(
+        statuses(hero)['class.equipment'],
+        CreationStepStatus.notAutomated,
+      );
+      expect(statuses(hero)['class.selection'], CreationStepStatus.confirmed);
+      final report = SrdCharacterCreationAudit.inspect(
+        hero,
+      ).singleWhere((step) => step.id == 'class.equipment');
+      expect(report.detail, contains('Werkzeugübung'));
     },
   );
 

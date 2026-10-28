@@ -605,6 +605,17 @@ class SrdCharacterCreationAudit {
             'Die Paketwahl ist belegt; mindestens ein Startgegenstand oder eine notwendige Variante ist noch nicht strukturiert aufgelöst. Freitext bestätigt keine vollständige Ausrüstung.',
           );
         }
+        // Monk equipment must be the same tool/instrument chosen for tool
+        // proficiency (SRD p.49). That source decision is not typed yet.
+        if (classChoice.className == 'Mönch' &&
+            classChoice.equipmentChoices.isNotEmpty) {
+          return choice(
+            id,
+            title,
+            CreationStepStatus.notAutomated,
+            'Die zulässige Werkzeug-/Instrumentausrüstung ist gewählt. Ihre Übereinstimmung mit der erforderlichen Werkzeugübung ist noch nicht strukturiert nachgewiesen.',
+          );
+        }
         // Names alone never substitute for catalog IDs and typed stats.
         String signature(InventoryItem item) =>
             jsonEncode([item.catalogId, item.name, item.stats?.toJson()]);

@@ -1,3 +1,13 @@
+## 28.10.2026 – Abnahme und aktuelle Main-Integration
+
+Klassenstartpaket 0.8.45+95 in PR #319 gegenMain `571edec` vorbereitet. Produkt `30bb33e`:
+CI 40584924719 und lokaler fester Flutter-Repeat grün (1.995 Flutter,164 Python,
+72 Backend,12 lokale native Tests). Neuester Integrationsstand:57 gezielte Tests,
+finale Gesamt-CI separat imPR. Mönch-PaketA bleibt ohne gekoppelte
+Werkzeugübungsquelle ausdrücklich nicht automatisiert. AktuellerCheckpoint
+nennt bestehende parallele PRs und den bereits angefangenen Editor-CAS-Branch;
+keine Duplikation, keine vollständige Charaktererstellung behauptet.
+
 ## 27.10.2026 – 0.8.45+95: bestätigte erste Klassenwahl
 
 Versionierter historischer `startingClassChoice`-Nachweis aus tatsächlicher

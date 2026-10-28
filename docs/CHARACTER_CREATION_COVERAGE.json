@@ -4,15 +4,15 @@
   "source_url": "https://www.dndbeyond.com/srd",
   "source_section": "Character Creation, p. 21; Classes; Character Origins",
   "license": "CC-BY-4.0",
-  "as_of": "2026-10-27",
-  "baseline_main_sha": "b7e3aa2db5eb551ff70e2fe49872b8b3de0d198c",
-  "pr": null,
+  "as_of": "2026-10-28",
+  "baseline_main_sha": "571edec9455fb32e4991432953c9a2479a6fffb2",
+  "pr": 319,
   "coverage_complete": false,
   "all_required_choices_covered": false,
   "android_device_tested": false,
   "ci_final_head_verified": false,
   "existing_requirement_registers_unchanged": false,
-  "status_note": "Explizite Klassenstartwahl implementiert; aktuelle Gesamtprüfung läuft. Gesamtumfang weiterhin unvollständig.",
+  "status_note": "Main571edec und Audit895 integriert; 57 gezielte Tests grün. Produkt30bb33e: CI40584924719 und lokaler fester Repeat mit1995Flutter,164Python,72Backend bestanden. Vollständige finale Integrations-CI siehePR319.",
   "requirements": [
     {
       "id": "CHAR-ABILITY-STANDARD-ARRAY",
@@ -213,7 +213,7 @@
         "app/test/character_start_class_ui_test.dart",
         "app/test/character_start_class_storage_test.dart"
       ],
-      "note": "Kein Nachweis vollständiger Klassenmerkmale. Offene Kitvarianten explizit notAutomated; kein Grant beim Lesen."
+      "note": "Kein Nachweis vollständiger Klassenmerkmale. Offene Kitvarianten explizit notAutomated; kein Grant beim Lesen. Mönch-PaketA bleibt ohne strukturierte Kopplung an dieselbe Werkzeugübung notAutomated."
     }
   ],
   "classes": [
@@ -381,17 +381,16 @@
     }
   ],
   "scope_note": "Talentnamen und Herkunftsübungen werden vermerkt; Auswirkungen der Talente und Magic-Initiate-Zauber sind nicht automatisiert.",
-  "next_task": "Zuerst Charaktereditor mit ursprünglicher Revision atomar speichern; danach Kleriker-/Paladin-Symbolwahl.",
+  "next_task": "Vorhandenen Editor-CAS-Branch2173f57 prüfen und mit Regressionstests ergänzen; nicht doppelt implementieren.",
   "branch": "feat/character-start-class-proof-20261027",
   "local_validation": {
-    "flutter_passed": 1949,
-    "python_passed": 164,
-    "backend_passed": 72,
-    "native_android_passed": 12,
-    "full_check_exit": 0,
-    "targeted_audit_tests": 24,
-    "debug_apk": "built_metadata_signature_verified",
-    "source_code_commit": "9cdefe84eddefac82d212b6647f4d30af2ca2512",
-    "real_device_tested": false
+    "product_commit": "30bb33ec9eec5e6dbb75d8e30cd9268386120477",
+    "product_flutter": 1995,
+    "python": 164,
+    "backend": 72,
+    "native": 12,
+    "integrated_targeted": 57,
+    "new_tests": 35,
+    "full_integrated_ci": "pending_at_document_write"
   }
 }

@@ -51,6 +51,10 @@ dadurch nicht vollständig nachgewiesen.
 | Hexenmeister | 70 | 2 aus der Klassenliste | Weisheit, Charisma | A-Ausrüstung oder B-Gold; Paktmagie und weitere Pflichtentscheidungen sind dadurch nicht vollständig belegt |
 | Magier | 77 | 2 aus der Klassenliste | Intelligenz, Weisheit | A oder B-Gold; „Zauberbuch“ im Klassenpaket bleibt strukturell unaufgelöst; Buchinhalt, Zauberauswahl und Vorbereitung bleiben separate Entscheidungen |
 
+Auch bei vollständig typisiertem Mönch-Paket A bleibt der Ausrüstungsstatus
+**nicht automatisiert**: Das Werkzeug/Instrument muss dasselbe wie bei der
+Werkzeugübung sein (S. 49); diese Quellenkopplung ist noch nicht strukturiert.
+
 Die Domainfälle durchlaufen alle zwölf Klassen und deren vorhandene
 Startpakete. Die Mönch-Paketwahl ist auf die 17 SRD-Handwerkszeuge und zehn
 Musikinstrumente begrenzt (Werkzeug-/Instrumentenregeln S. 93–94); Diebes-, Kräuterkunde- und Navigationswerkzeug
@@ -147,7 +151,7 @@ Revisionssnapshot und Ereignisse nutzen die bestehende Transaktion.
 
 | Testdatei | Konkret abgedeckter Umfang | Nachweis beim Schreiben dieses Fachstands |
 | --- | --- | --- |
-| `app/test/starting_class_choice_test.dart` | zwölf Klassenfälle mit allen vorhandenen Paketen und JSON; unveränderlicher Beleg ohne Vergabe; strenge Version/Wahlprüfung; konkrete Instrumentwahl, unzulässige Mönchwerkzeuge; Widersprüche, Hintergrundüberschneidungen und Freitextgegenstände | 17 Fälle lokal erfolgreich; finale CI separat |
+| `app/test/starting_class_choice_test.dart` | zwölf Klassenfälle mit allen vorhandenen Paketen und JSON; unveränderlicher Beleg ohne Vergabe; strenge Version/Wahlprüfung; konkrete Instrumentwahl, unzulässige Mönchwerkzeuge; Widersprüche, Hintergrundüberschneidungen und Freitextgegenstände | 18 Fälle; finale integrierte Ausführung siehe Checkpoint |
 | `app/test/character_start_class_storage_test.dart` | Archiv/Kampagne/Revision/SQLite-Neustart und beide JSON-Roundtrips; spätere historische Änderungen; Alt-JSON; sechs Manipulationen jeweils als Helden- und Kampagnenimport; identischer Snapshot-Retry und veraltete Repositoryrevision; tatsächlicher später SQLite-Archivfehler mit vollständigem Rollback | sechs Fälle lokal erfolgreich ausgeführt; scoped Dart-Analyse ohne Befund |
 | `app/test/character_start_class_ui_test.dart` | echte Editorbestätigung, Gold-/Ausrüstungspaket ohne Doppelvergabe, Klassenwechselkonflikt, manueller Widerspruch, Abbruch, Legacy und 320/360 dp mit 200 % Schrift, Tastatur und Semantik; Gegenfälle zur Übungsansammlung bei neuer Fertigkeitswahl und beim Klassenwechsel vor der Paketwahl | elf Fälle lokal erfolgreich; finale CI separat |
 

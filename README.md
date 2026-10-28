@@ -1,46 +1,31 @@
 # Würfelraunen – Der lebendige Spielleiter
 
-## Aktueller Stand und autonome Fortsetzung – 27.10.2026
+## Aktueller Stand und autonome Fortsetzung – 28.10.2026
 
-**0.8.45+95:** Der Klassenassistent speichert die ausdrücklich bestätigte
-Startklasse, Klassenfertigkeiten, Kämpferwahlen und optionale Ausrüstungsauswahl
-als historischen, versionierten Nachweis. Erneutes Bestätigen vergibt kein
-zweites Paket; fehlerhafte Pakete ändern den Entwurf nicht teilweise. Alte
-Charaktere erhalten keine erfundene Herkunft und werden nicht neu berechnet.
-Der Audit bestätigt nur belegte Teilentscheidungen. Unaufgelöste Gegenstände
-und weitere Pflichtmerkmale bleiben sichtbar offen. Mönche dürfen bei der
-Startausrüstung ausschließlich Handwerkszeug oder ein Musikinstrument wählen.
+**0.8.45+95:** Die tatsächliche erste Klassenwahl samt Klassenfertigkeiten,
+Kämpferwahlen und optionaler Paketentscheidung wird historisch und versioniert
+gespeichert. Wiederholungen vergeben weder Gold/Ausrüstung noch zusätzliche
+Klassenübungen. Alte Spielstände bleiben ohne erfundene Herkunft erhalten.
+Der Audit bestätigt belegte Teilentscheidungen; unaufgelöste Gegenstände und
+die Mönch-Werkzeugkopplung bleiben sichtbar offen. Kein vollständiger Wizard.
 
-**56 gezielte Tests bestanden, Analyse ohne Befund; vollständige Prüfung läuft.**
-Ergebnisse im [Checkpoint](docs/CODEX_CHECKPOINT.md).
-Branch `feat/character-start-class-proof-20261027`, Main-Basis `b7e3aa2`,
-Vorgänger-Audit [PR #318](https://github.com/ManuEtt/Dnd/pull/318) ist enthalten.
-Die gesamte Charaktererstellung ist weiterhin unvollständig. Nächster Schritt:
-veraltete Editor-Speicherstände ohne Datenverlust abweisen; danach konkrete
-Heiliges-Symbol-Klassenstartwahl für Kleriker/Paladin.
-[Fachlicher Umfang und Testnachweise](docs/CHARACTER_START_CLASS_CHOICE_20261027.md).
-Ältere Statusabschnitte darunter sind Historie; Originale mit SHA256 unter
-`docs/history/`.
+**Produktcommit `30bb33e`: 1.995 Flutter-, 164 Python-, 72 Backend- und zwölf
+lokale native Android-Tests bestanden**, CI [40584924719](https://github.com/ManuEtt/Dnd/actions/runs/40584924719)
+grün, Debug-/ARM64-APK und alle 991 CI-Quelldateien geprüft. Lokaler fester
+Flutter-Gesamt-Repeat ebenfalls grün. **Neuester Integrationsstand mit Main
+`571edec`: 57 gezielte Tests bestanden; vollständige finale CI separat in
+[PR #319](https://github.com/ManuEtt/Dnd/pull/319/checks).** Ein früherer lokaler
+Lauf vor den letzten Korrekturen hatte drei Fehler; die feste Wiederholung
+bestätigt deren Behebung. Gerät/TalkBack/Altversionsupgrade bleiben ungeprüft.
 
-## Historie paralleler Main-Änderungen – 27.10.2026
-
-Die folgenden Story-Einträge dokumentieren unabhängig entwickelte Main-Pakete.
-Ihre vollständigen ursprünglichen README-/Checkpoint-Dateien sind unter
-[Main 571edec](docs/history/character_class_main_20261028/main571edec/README.md)
-und [Audit 89545ab](docs/history/character_class_main_20261028/audit89545ab/README.md)
-mit SHA256 und Git-Blob-IDs erhalten. Diese Historie ersetzt keine aktuelle
-Abnahme des gemeinsamen Charakter-Integrationsstands.
-
-### Chat B – Zwölf KI-Erinnerungen bis zur Story-API-Grenze absichern (27.10.2026)
-
-Zwei neue Integrationstests prüfen das Erinnerungslimit **an der tatsächlich gesendeten Story-Anfrage**: Eine KI-Kampagne mit bestätigten Mira-Beziehungsnotizen und mindestens 18 allgemeinen Fakten wird in einer echten SQLite-Datei gespeichert, über den `GameController` fortgesetzt und mit einem lokalen Backend-Transport abgefragt. Sowohl mit als auch ohne `npc-identity-v1` erhält das Backend genau zwölf priorisierte und begrenzte Erinnerungseinträge. Die drei bestätigten NPC-Notizen bleiben zuerst; zusätzliche allgemeine Fakten verwenden lediglich die freien Plätze. Heldenwerte, Revision und gespeicherter Spielstand bleiben überprüfbar. Dieses Testpaket baut auf [PR #307](https://github.com/ManuEtt/Dnd/pull/307) auf und verändert keine Produktionslogik, Datenbankschemata oder SRD-Regeln.
-
-
-### Chat B – Gemeinsames Budget für NPC- und allgemeine KI-Erinnerungen (27.10.2026)
-
-Die vom KI-Spielleiter übermittelten bestätigten NPC-Notizen und allgemeinen Erinnerungseinträge teilen sich dasselbe Limit (standardmäßig 12 Einträge). Bisher wurde ein weiterer allgemeiner Eintrag angehängt, selbst wenn NPC-Notizen das Budget schon vollständig belegten. `NpcNarratorMemory.merge` prüft jetzt die gemeinsame Grenze **vor** dem Anhängen allgemeiner Einträge. Neue Regressionen decken vollständig belegte Grenzen von einem und zwei Einträgen sowie verbleibenden Platz ab. Es gibt keine Änderung an NPC-Identitäten, SRD-Regeln, SQLite, Backend-Protokoll oder Kampagnenexport.
-
-
+Branch `feat/character-start-class-proof-20261027`; Audit #318 und neueres
+Main konfliktfrei übernommen, fremde Originaldokumente mit Hashes archiviert.
+[Umfang und Quellen](docs/CHARACTER_START_CLASS_CHOICE_20261027.md) ·
+[Checkpoint und Fortsetzung](docs/CODEX_CHECKPOINT.md).
+Nächster Schritt: vorhandenen Editor-CAS-Branch prüfen und mit Tests ergänzen;
+#324 (Start-TP/Kit), #317 (Magieinitiierter) und #323 nicht doppelt entwickeln.
+Die gesamte Charaktererstellung bleibt unvollständig. Ältere Abschnitte sind
+Historie; Originale unter `docs/history/`.
 
 ## Charaktererstellung – Integrationskandidat (27.10.2026)
 
