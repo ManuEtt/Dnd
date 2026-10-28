@@ -227,6 +227,76 @@ class StoryRulesBoundaryTests(unittest.TestCase):
         self.assertIn("package:lebendiger_spielleiter/story/story_api.dart", messages[0])
 
 
+    def test_domain_part_and_part_of_reject_relative_story_sources(self):
+        for directive in ('part', 'part of'):
+            with self.subTest(directive=directive):
+                self.assertEqual(
+                    ['app/lib/domain/rules.dart: rule module includes story '
+                     '../story/story_memory_engine.dart'],
+                    check_imports(
+                        'app/lib/domain/rules.dart',
+                        f"{directive} '../story/story_memory_engine.dart';",
+                    ),
+                )
+
+    def test_domain_part_cannot_bypass_whitelist_or_package_alias(self):
+        sources = (
+            "part '../story/story_campaign_engine.dart';",
+            "part of 'package:lebendiger_spielleiter/story/../story/story_api.dart';",
+        )
+        for source in sources:
+            with self.subTest(source=source):
+                messages = check_imports('app/lib/domain/game_engine.dart', source)
+                self.assertEqual(1, len(messages), messages)
+                self.assertIn('rule module includes story', messages[0])
+
+    def test_story_parts_cannot_include_shared_domain_models(self):
+        for directive in ('part', 'part of'):
+            with self.subTest(directive=directive):
+                self.assertEqual(
+                    ['app/lib/story/chapter.dart: story must not include '
+                     '../domain/models.dart'],
+                    check_imports(
+                        'app/lib/story/chapter.dart',
+                        f"{directive} '../domain/models.dart';",
+                    ),
+                )
+        self.assertEqual(
+            [],
+            check_imports(
+                'app/lib/story/chapter.dart',
+                "import '../domain/models.dart';",
+            ),
+        )
+
+    def test_local_parts_and_commented_part_of_remain_valid(self):
+        self.assertEqual(
+            [],
+            check_imports(
+                'app/lib/story/chapter.dart',
+                "part 'chapter_scene.dart';\n"
+                "part /* comment */ of /* comment */ 'story_api.dart';",
+            ),
+        )
+        self.assertEqual(
+            [],
+            check_imports(
+                'app/lib/domain/rules.dart',
+                "part 'rules_generated.g.dart';\n"
+                "part of 'rules.dart';",
+            ),
+        )
+
+    def test_commented_part_of_cannot_escape_story_boundary(self):
+        source = (
+            "part /* marker */ of // URI follows\n"
+            "  '../domain/ai_story.dart';"
+        )
+        self.assertEqual(
+            ['app/lib/story/chapter.dart: story must not include '
+             '../domain/ai_story.dart'],
+            check_imports('app/lib/story/chapter.dart', source),
+        )
 
 if __name__ == "__main__":
     unittest.main()
