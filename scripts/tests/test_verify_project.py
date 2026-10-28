@@ -31,6 +31,55 @@ class VerifyProjectTests(unittest.TestCase):
         (self.root / 'other-existing-project.txt').write_text('retain me')
         self.assertEqual(verify_project(self.root), [])
 
+    @unittest.skipIf(sys.platform == 'win32', 'POSIX symlinks required')
+    def test_required_file_symlink_is_rejected_without_leaking_target(self):
+        private = self.root.parent / 'private-readme.txt'
+        private.write_text('private-do-not-log', encoding='utf-8')
+        readme = self.root / 'README.md'
+        readme.unlink()
+        readme.symlink_to(private)
+        errors = verify_project(self.root)
+        self.assertEqual(len(errors), 1)
+        self.assertIn('symbolischer Link: README.md', errors[0])
+        self.assertNotIn(str(private), '\\n'.join(errors))
+        self.assertNotIn('private-do-not-log', '\\n'.join(errors))
+
+    @unittest.skipIf(sys.platform == 'win32', 'POSIX symlinks required')
+    def test_required_directory_symlink_is_rejected_for_all_descendants(self):
+        backend = self.root / 'backend'
+        private_backend = self.root.parent / 'external-backend'
+        backend.rename(private_backend)
+        backend.symlink_to(private_backend, target_is_directory=True)
+        errors = verify_project(self.root)
+        self.assertEqual(len(errors), 3)
+        for name in ('backend/package.json', 'backend/package-lock.json',
+                     'backend/src/server.ts'):
+            self.assertTrue(any('symbolischer Link: ' + name in msg for msg in errors))
+        self.assertFalse(any('Ungültige JSON-Datei' in msg for msg in errors))
+
+    @unittest.skipIf(sys.platform == 'win32', 'POSIX symlinks required')
+    def test_symlinked_wrapper_is_rejected_before_any_zip_read(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        external = self.root.parent / 'external-wrapper.jar'
+        shutil.copyfile(jar, external)
+        jar.unlink()
+        jar.symlink_to(external)
+        with mock.patch.object(zipfile, 'ZipFile',
+                               side_effect=AssertionError('unsafe ZIP read')):
+            errors = verify_project(self.root)
+        self.assertEqual(len(errors), 1)
+        self.assertIn('symbolischer Link: app/android/gradle/wrapper/gradle-wrapper.jar',
+                      errors[0])
+
+    @unittest.skipIf(sys.platform == 'win32', 'POSIX symlinks required')
+    def test_broken_symlink_is_reported_as_link_not_missing(self):
+        lockfile = self.root / 'app/pubspec.lock'
+        lockfile.unlink()
+        lockfile.symlink_to(self.root.parent / 'missing-lock')
+        errors = verify_project(self.root)
+        self.assertEqual(len(errors), 1)
+        self.assertIn('symbolischer Link: app/pubspec.lock', errors[0])
+
     def test_outer_zip_directory_has_specific_actionable_error(self):
         nested = self.root.parent / 'nested'
         nested.mkdir()
