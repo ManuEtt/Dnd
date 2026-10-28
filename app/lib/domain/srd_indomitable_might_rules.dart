@@ -7,7 +7,13 @@ import 'models.dart';
 /// The player may replace a lower Strength check or Strength saving throw
 /// total with their confirmed Strength score. No dice, HP or saves are mutated.
 /// An attack, initiative, a death save or a different ability is never eligible.
-enum SrdD20CheckKind { abilityCheck, savingThrow, attack, initiative, deathSave }
+enum SrdD20CheckKind {
+  abilityCheck,
+  savingThrow,
+  attack,
+  initiative,
+  deathSave,
+}
 
 class SrdIndomitableMightRules {
   const SrdIndomitableMightRules._();
