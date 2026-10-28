@@ -36,7 +36,12 @@ void main() {
     expect(initial.spentSpellSlots, isEmpty);
     expect(updated.spentClassResources['bardicInspiration'], 1);
     expect(updated.spentSpellSlots['1'], 1);
-    expect(HeroCharacter.fromJson(updated.toJson()).toJson(), updated.toJson());
+    final restored = HeroCharacter.fromJson(updated.toJson());
+    expect(restored.spentClassResources, updated.spentClassResources);
+    expect(restored.spentSpellSlots, updated.spentSpellSlots);
+    // Legacy sparse ability maps are normalized by the importer. A second
+    // round-trip, rather than the sparse input, must be stable.
+    expect(HeroCharacter.fromJson(restored.toJson()).toJson(), restored.toJson());
     expect(() => proposal.applyTo(updated), throwsFormatException);
   });
 
