@@ -250,85 +250,84 @@ void main() {
     },
   );
 
-  testWidgets(
-    'Deaktivierter Angriff wird im Tastaturfokus übersprungen',
-    (tester) async {
-      tester.view.physicalSize = const Size(320, 800);
-      tester.view.devicePixelRatio = 1;
-      tester.view.viewInsets = const FakeViewPadding(bottom: 270);
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-      addTearDown(tester.view.resetViewInsets);
+  testWidgets('Deaktivierter Angriff wird im Tastaturfokus übersprungen', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 800);
+    tester.view.devicePixelRatio = 1;
+    tester.view.viewInsets = const FakeViewPadding(bottom: 270);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetViewInsets);
 
-      final invoked = <String>[];
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: buildFantasyTheme(),
-          builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(
-              context,
-            ).copyWith(textScaler: const TextScaler.linear(2)),
-            child: child!,
-          ),
-          home: Scaffold(
-            body: Column(
-              children: [
-                const Expanded(child: TextField()),
-                FantasyPinnedActionBar(
-                  busy: false,
-                  listening: false,
-                  attackEnabled: false,
-                  attackUnavailableReason: 'Kein bestätigtes Ziel.',
-                  onSpeech: () => invoked.add('speech'),
-                  onInspect: () => invoked.add('inspect'),
-                  onAttack: () => invoked.add('attack'),
-                  onRoll: () => invoked.add('roll'),
-                ),
-              ],
-            ),
+    final invoked = <String>[];
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildFantasyTheme(),
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: const TextScaler.linear(2)),
+          child: child!,
+        ),
+        home: Scaffold(
+          body: Column(
+            children: [
+              const Expanded(child: TextField()),
+              FantasyPinnedActionBar(
+                busy: false,
+                listening: false,
+                attackEnabled: false,
+                attackUnavailableReason: 'Kein bestätigtes Ziel.',
+                onSpeech: () => invoked.add('speech'),
+                onInspect: () => invoked.add('inspect'),
+                onAttack: () => invoked.add('attack'),
+                onRoll: () => invoked.add('roll'),
+              ),
+            ],
           ),
         ),
-      );
-      await tester.pumpAndSettle();
-      await tester.showKeyboard(find.byType(TextField));
-      await tester.pump();
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.showKeyboard(find.byType(TextField));
+    await tester.pump();
 
-      final attack = find.byKey(const ValueKey('adventure-shortcut-attack'));
-      final semantics = tester.widget<Semantics>(
+    final attack = find.byKey(const ValueKey('adventure-shortcut-attack'));
+    final semantics = tester.widget<Semantics>(
+      find
+          .descendant(
+            of: attack,
+            matching: find.byWidgetPredicate(
+              (widget) =>
+                  widget is Semantics && widget.properties.button == true,
+            ),
+          )
+          .first,
+    );
+    expect(semantics.properties.enabled, isFalse);
+    expect(semantics.properties.label, 'Angriff');
+
+    for (final name in ['speech', 'inspect', 'roll']) {
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+      final focusContext = FocusManager.instance.primaryFocus?.context;
+      expect(
         find
             .descendant(
-              of: attack,
-              matching: find.byWidgetPredicate(
-                (widget) =>
-                    widget is Semantics && widget.properties.button == true,
+              of: find.byKey(ValueKey('adventure-shortcut-$name')),
+              matching: find.byElementPredicate(
+                (element) => identical(element, focusContext),
               ),
             )
-            .first,
+            .evaluate(),
+        isNotEmpty,
+        reason: 'Deaktivierter Angriff muss übersprungen werden: $name',
       );
-      expect(semantics.properties.enabled, isFalse);
-      expect(semantics.properties.label, 'Angriff');
-
-      for (final name in ['speech', 'inspect', 'roll']) {
-        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
-        await tester.pump();
-        final focusContext = FocusManager.instance.primaryFocus?.context;
-        expect(
-          find
-              .descendant(
-                of: find.byKey(ValueKey('adventure-shortcut-$name')),
-                matching: find.byElementPredicate(
-                  (element) => identical(element, focusContext),
-                ),
-              )
-              .evaluate(),
-          isNotEmpty,
-          reason: 'Deaktivierter Angriff muss übersprungen werden: $name',
-        );
-        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-        await tester.pump();
-      }
-      expect(invoked, ['speech', 'inspect', 'roll']);
-      expect(tester.takeException(), isNull);
-    },
-  );
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pump();
+    }
+    expect(invoked, ['speech', 'inspect', 'roll']);
+    expect(tester.takeException(), isNull);
+  });
 }

@@ -2,7 +2,7 @@
 
 ## 28.10.2026 – Chat C: Android-Schnellaktionen mit Hardwaretastatur
 
-Die vier bereits fixierten Schnellaktionen werden in neuen Widgettests auf **Tab-Fokus und Enter-Aktivierung** geprüft (320 dp, simuliertes Android-IME-Inset, 2x Schrift). Ein deaktivierter Angriff muss in der Fokusfolge übersprungen bleiben; die Tests ändern keine Laufzeitlogik und keine Spielstände. Zweiter Chat-C-Branch `feat/chat-c/shortcut-keyboard-focus-20261028`; die aktuelle CI und echte Android-Geräteprüfung sind getrennte Freigabekriterien. [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md). Die ältere scrollbare Inventaransicht bleibt unabhängig in [PR #355](https://github.com/ManuEtt/Dnd/pull/355).
+Die vier bereits fixierten Schnellaktionen werden in neuen Widgettests auf **Tab-Fokus und Enter-Aktivierung** geprüft (320 dp, simuliertes Android-IME-Inset, 2x Schrift). Ein deaktivierter Angriff muss in der Fokusfolge übersprungen bleiben; die Tests ändern keine Laufzeitlogik und keine Spielstände. [PR #359](https://github.com/ManuEtt/Dnd/pull/359), Branch `feat/chat-c/shortcut-keyboard-focus-20261028`;  die aktuelle CI und echte Android-Geräteprüfung sind getrennte Freigabekriterien. [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md). Die ältere scrollbare Inventaransicht bleibt unabhängig in [PR #355](https://github.com/ManuEtt/Dnd/pull/355).
 
 ## 28.10.2026 – Gemeinsame lokale Abnahme bestanden
 
