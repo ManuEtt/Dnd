@@ -2,9 +2,10 @@
 
 Stand 2026-10-28T04:12:49.192781+00:00 (UTC). Arbeitsbranch `feat/character-start-class-proof-20261027`,
 [PR #319](https://github.com/ManuEtt/Dnd/pull/319) jetzt gegen **main**.
-Main `571edec9455fb32e4991432953c9a2479a6fffb2` und Audit-PR #318 (`89545ab`) über reguläre
-Merges integriert, gemeinsamer Mergekopf `6812a97` vor der abschließenden
-Mönch-Quellenprüfung. Produktbasis `30bb33ec9eec5e6dbb75d8e30cd9268386120477`.
+Main `a915717ba0f57c74acf03c9b1a066ced531c7c6a` und Audit-PR #318 (`89545ab`) über reguläre
+Merges integriert. Letzter Synchronisationskopf `6d87c88` enthält auch die
+neuen Main-Controller-/NPC- und Symlink-Projektprüfungen; Mönch-Quellenprüfung
+aus `2717f1f` bleibt erhalten. Produktbasis `30bb33ec9eec5e6dbb75d8e30cd9268386120477`.
 Endgültiger Commit im PR; keine Force-Pushes, kein direkter Main-Commit,
 keine fremden Branches gelöscht.
 
@@ -33,6 +34,12 @@ Requirement `CHAR-CLASS-START-CHOICE-EVIDENCE`; breite SRD-Anforderungen bleiben
 partial. [Code-/UI-/Testmatrix](docs/CHARACTER_START_CLASS_CHOICE_20261027.md).
 SQLite **2** und JSON-`schemaVersion:1` bleiben unverändert; optionales Feld,
 keine Datenbankmigration. Keine Story-/KI-Autorität und keine bezahlten Aufrufe.
+
+Am 28.10. zusätzlich Main-Synchronisation nach Aufnahme von #288/#321/#318.
+Die letzten vier Main-Dateien wurden unverändert übernommen, neue
+Dokumentationskonflikte additiv gelöst und Originale als `maina915717` archiviert.
+Der laufende lokale Zwischenstand-Repeat auf `2717f1f` bleibt getrennt von
+der abschließenden CI dieses jüngeren Integrationskopfs.
 
 ## GETESTET
 
@@ -106,7 +113,7 @@ dem heruntergeladenen CI-Quellpaket. ARM64-APK `ci-product-PR #319/`, SHA256
 `93057a53b1423b32c89f46b33d0d78235b120cd182046b4233253e742793a599`.
 Download [Produkt-Alpha](https://github.com/ManuEtt/Dnd/actions/runs/40584924719/artifacts/12772642192).
 Finaler integrierter ZIP-/Patch-Checkpoint wird nach Prüfung neu erzeugt;
-Basis für dessen Patch ist Main `571edec9455fb32e4991432953c9a2479a6fffb2`.
+Basis für dessen Patch ist Main `a915717ba0f57c74acf03c9b1a066ced531c7c6a`.
 Originaldokumente von Main und Audit liegen bytegenau mit Manifest unter
 `docs/history/character_class_main_20261028/`; frühere Paketbasis unter
 `docs/history/character_class_choice_20261027T211114Z`. Keine privaten Daten/Schlüssel/SDKs/APKs im Quellen-ZIP.
@@ -130,3 +137,19 @@ sauberem Checkout der im Manifest genannten Basis mit
 Commit/Push und PR. Für bereits integrierte Teile zuerst Git-Ancestry prüfen,
 nicht denselben Patch zweimal anwenden. Aktueller Branch/PR ist der bevorzugte
 Weg; APK ist getrennt vom Quell-ZIP und kein realer Gerätetest.
+
+## Zusätzliche Main-Integration a915717 – 28.10.2026
+
+Nach dem vorherigen Integrationskopf wurde Main
+`a915717ba0f57c74acf03c9b1a066ced531c7c6a` mit den regulären Integrationen
+von PR #318 (Audit), #288 (explizite NPC-Auswahl im Controller) und #321
+(Python-Pflichtdateiprüfung) als weiterer fest fixierter Stand übernommen.
+Dabei wurden ausschließlich README-/Checkpoint-Konflikte redaktionell gelöst;
+aktuelle 0.8.45+95-Statusangaben bleiben oben. Fremde ursprüngliche Einträge
+sind im [Main-Originalcheckpoint](history/character_class_main_20261028/maina915717/docs/CODEX_CHECKPOINT.md)
+und die acht unveränderten Originaldokumente im erweiterten
+[Historienmanifest](history/character_class_main_20261028/manifest.json) mit
+SHA256/Git-Blob-IDs erhalten. Kein CAS-, Magic-Initiate-, Start-TP- oder anderes
+noch separates Fachpaket wurde unabhängig neu übernommen. Die auf dem neuen
+Mergekopf erforderlichen Tests und die exakte CI müssen gesondert abgenommen
+werden; frühere grüne Läufe sind kein Nachweis dieses zusätzlichen Merges.

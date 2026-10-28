@@ -5,14 +5,14 @@
   "source_section": "Character Creation, p. 21; Classes; Character Origins",
   "license": "CC-BY-4.0",
   "as_of": "2026-10-28",
-  "baseline_main_sha": "571edec9455fb32e4991432953c9a2479a6fffb2",
+  "baseline_main_sha": "a915717ba0f57c74acf03c9b1a066ced531c7c6a",
   "pr": 319,
   "coverage_complete": false,
   "all_required_choices_covered": false,
   "android_device_tested": false,
   "ci_final_head_verified": false,
   "existing_requirement_registers_unchanged": false,
-  "status_note": "Main571edec und Audit895 integriert; 57 gezielte Tests grün. Produkt30bb33e: CI40584924719 und lokaler fester Repeat mit1995Flutter,164Python,72Backend bestanden. Vollständige finale Integrations-CI siehePR319.",
+  "status_note": "Main a915717 und Audit895 integriert; 57 gezielte Tests auf2717f1f grün, neue Main-Zusätze separat in finaler CI. Produkt30bb33e: CI40584924719 und fester Repeat1995Flutter,164Python,72Backend. Gesamtcharaktererstellung unvollständig.",
   "requirements": [
     {
       "id": "CHAR-ABILITY-STANDARD-ARRAY",

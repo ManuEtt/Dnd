@@ -2,9 +2,10 @@
 
 Stand 2026-10-28T04:12:49.192781+00:00 (UTC). Arbeitsbranch `feat/character-start-class-proof-20261027`,
 [PR #319](https://github.com/ManuEtt/Dnd/pull/319) jetzt gegen **main**.
-Main `571edec9455fb32e4991432953c9a2479a6fffb2` und Audit-PR #318 (`89545ab`) über reguläre
-Merges integriert, gemeinsamer Mergekopf `6812a97` vor der abschließenden
-Mönch-Quellenprüfung. Produktbasis `30bb33ec9eec5e6dbb75d8e30cd9268386120477`.
+Main `a915717ba0f57c74acf03c9b1a066ced531c7c6a` und Audit-PR #318 (`89545ab`) über reguläre
+Merges integriert. Letzter Synchronisationskopf `6d87c88` enthält auch die
+neuen Main-Controller-/NPC- und Symlink-Projektprüfungen; Mönch-Quellenprüfung
+aus `2717f1f` bleibt erhalten. Produktbasis `30bb33ec9eec5e6dbb75d8e30cd9268386120477`.
 Endgültiger Commit im PR; keine Force-Pushes, kein direkter Main-Commit,
 keine fremden Branches gelöscht.
 
@@ -33,6 +34,12 @@ Requirement `CHAR-CLASS-START-CHOICE-EVIDENCE`; breite SRD-Anforderungen bleiben
 partial. [Code-/UI-/Testmatrix](CHARACTER_START_CLASS_CHOICE_20261027.md).
 SQLite **2** und JSON-`schemaVersion:1` bleiben unverändert; optionales Feld,
 keine Datenbankmigration. Keine Story-/KI-Autorität und keine bezahlten Aufrufe.
+
+Am 28.10. zusätzlich Main-Synchronisation nach Aufnahme von #288/#321/#318.
+Die letzten vier Main-Dateien wurden unverändert übernommen, neue
+Dokumentationskonflikte additiv gelöst und Originale als `maina915717` archiviert.
+Der laufende lokale Zwischenstand-Repeat auf `2717f1f` bleibt getrennt von
+der abschließenden CI dieses jüngeren Integrationskopfs.
 
 ## GETESTET
 
@@ -106,7 +113,7 @@ dem heruntergeladenen CI-Quellpaket. ARM64-APK `ci-product-PR #319/`, SHA256
 `93057a53b1423b32c89f46b33d0d78235b120cd182046b4233253e742793a599`.
 Download [Produkt-Alpha](https://github.com/ManuEtt/Dnd/actions/runs/40584924719/artifacts/12772642192).
 Finaler integrierter ZIP-/Patch-Checkpoint wird nach Prüfung neu erzeugt;
-Basis für dessen Patch ist Main `571edec9455fb32e4991432953c9a2479a6fffb2`.
+Basis für dessen Patch ist Main `a915717ba0f57c74acf03c9b1a066ced531c7c6a`.
 Originaldokumente von Main und Audit liegen bytegenau mit Manifest unter
 `docs/history/character_class_main_20261028/`; frühere Paketbasis unter
 `docs/history/character_class_choice_20261027T211114Z`. Keine privaten Daten/Schlüssel/SDKs/APKs im Quellen-ZIP.

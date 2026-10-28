@@ -13,7 +13,7 @@ die Mönch-Werkzeugkopplung bleiben sichtbar offen. Kein vollständiger Wizard.
 lokale native Android-Tests bestanden**, CI [40584924719](https://github.com/ManuEtt/Dnd/actions/runs/40584924719)
 grün, Debug-/ARM64-APK und alle 991 CI-Quelldateien geprüft. Lokaler fester
 Flutter-Gesamt-Repeat ebenfalls grün. **Neuester Integrationsstand mit Main
-`571edec`: 57 gezielte Tests bestanden; vollständige finale CI separat in
+`a915717`: 57 gezielte Tests bestanden; vollständige finale CI separat in
 [PR #319](https://github.com/ManuEtt/Dnd/pull/319/checks).** Ein früherer lokaler
 Lauf vor den letzten Korrekturen hatte drei Fehler; die feste Wiederholung
 bestätigt deren Behebung. Gerät/TalkBack/Altversionsupgrade bleiben ungeprüft.
@@ -22,6 +22,8 @@ Branch `feat/character-start-class-proof-20261027`; Audit #318 und neueres
 Main konfliktfrei übernommen, fremde Originaldokumente mit Hashes archiviert.
 [Umfang und Quellen](docs/CHARACTER_START_CLASS_CHOICE_20261027.md) ·
 [Checkpoint und Fortsetzung](docs/CODEX_CHECKPOINT.md).
+Die zusätzliche Main-Übernahme (#288/#321/#318) wird im finalen PR-Kopf erneut
+geprüft; frühere Zwischenergebnisse gelten jeweils für ihren genannten Commit.
 Nächster Schritt: vorhandenen Editor-CAS-Branch prüfen und mit Tests ergänzen;
 #324 (Start-TP/Kit), #317 (Magieinitiierter) und #323 nicht doppelt entwickeln.
 Die gesamte Charaktererstellung bleibt unvollständig. Ältere Abschnitte sind

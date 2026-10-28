@@ -1,6 +1,6 @@
 ## 28.10.2026 – Abnahme und aktuelle Main-Integration
 
-Klassenstartpaket 0.8.45+95 in PR #319 gegenMain `571edec` vorbereitet. Produkt `30bb33e`:
+Klassenstartpaket 0.8.45+95 in PR #319 gegenMain `a915717` vorbereitet. Produkt `30bb33e`:
 CI 40584924719 und lokaler fester Flutter-Repeat grün (1.995 Flutter,164 Python,
 72 Backend,12 lokale native Tests). Neuester Integrationsstand:57 gezielte Tests,
 finale Gesamt-CI separat imPR. Mönch-PaketA bleibt ohne gekoppelte
