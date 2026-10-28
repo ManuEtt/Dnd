@@ -68,7 +68,8 @@ class RetiredCleanupWorkflowTests(unittest.TestCase):
         for fragment in (
             "workflow_run:",
             "branches: [main]",
-            "merged_at",
+            "comparison.data.behind_by !== 0",
+            "['ahead', 'identical']",
             "protectedNames",
             "mainSha",
             "compareCommits",
