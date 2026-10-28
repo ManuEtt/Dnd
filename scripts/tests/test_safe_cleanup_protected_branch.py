@@ -61,7 +61,7 @@ class SafeCleanupProtectedBranchTests(unittest.TestCase):
     def test_archival_and_merge_safety_gates_remain(self):
         content = WORKFLOW.read_text(encoding="utf-8")
         required = (
-            "merged_at",
+            "['ahead', 'identical']",
             "protectedNames.add(pr.base.ref)",
             "protectedNames.add(pr.head.ref)",
             "compareCommits",

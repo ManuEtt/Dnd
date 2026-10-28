@@ -25,6 +25,7 @@ import '../domain/monk_self_restoration.dart';
 import '../services/backup_files.dart';
 import '../services/game_controller.dart';
 import '../services/player_action_outbox.dart';
+import '../services/npc_pending_action_recovery.dart';
 import '../story/npc_story_selection.dart';
 import '../services/voice_controller.dart';
 import 'app_build_info.dart';
@@ -69,6 +70,7 @@ import 'fantasy_combat_chronicle.dart';
 import 'character_portrait_picker.dart';
 import 'campaign_memory_panel.dart';
 import 'npc_story_selection_dialog.dart';
+import 'pending_action_status.dart';
 
 const _gold = Color(0xffddb96c);
 const _ink = Color(0xff0d1927);
@@ -1148,50 +1150,40 @@ class _AdventurePageState extends State<_AdventurePage> {
     await widget.voice.stopListening();
     await widget.voice.stopSpeaking();
     final previousMessageId = _lastMessageId;
-    NpcStorySelection? choice;
-    if (action.selectedNpcId != null) {
-      final campaign = widget.controller.currentCampaign!;
-      if (campaign.revision != action.selectedNpcRevision) {
-        // A lost ACK after a successful commit is safe to reconcile; a
-        // genuinely stale, uncommitted choice must never select a new version.
-        final alreadyConfirmed = campaign.events.any(
-          (event) =>
-              event.payload['actionRequestId'] == action.requestId &&
-              event.payload['actionRequestText'] == action.text &&
-              event.payload['actionSelectedNpcId'] == action.selectedNpcId,
-        );
-        if (!alreadyConfirmed) {
-          setState(
-            () => _outboxError =
-                'NPC-Auswahl ist nicht mehr aktuell. Bitte die ausstehende '
-                'Handlung verwerfen und erneut auswählen.',
-          );
-          return;
-        }
-        await _outbox.remove(action);
-        if (!mounted) return;
-        setState(() {
-          _pendingAction = null;
-          _outboxError = null;
-        });
-        await _afterTurn(previousMessageId);
-        return;
-      }
-      try {
-        choice = NpcStorySelection.choose(campaign, action.selectedNpcId!);
-      } on FormatException {
-        setState(
-          () => _outboxError =
-              'Der ausgewählte NPC ist nicht mehr verfügbar. '
-              'Bitte den Auftrag verwerfen.',
-        );
-        return;
-      }
+    final recovery = resolvePendingNpcAction(
+      widget.controller.currentCampaign!,
+      action,
+    );
+    if (recovery.state == PendingNpcActionState.stale) {
+      setState(
+        () => _outboxError =
+            'NPC-Auswahl ist nicht mehr aktuell. Bitte die ausstehende '
+            'Handlung verwerfen und erneut auswählen.',
+      );
+      return;
+    }
+    if (recovery.state == PendingNpcActionState.unavailable) {
+      setState(
+        () => _outboxError =
+            'Der ausgewählte NPC ist nicht mehr verfügbar. '
+            'Bitte den Auftrag verwerfen.',
+      );
+      return;
+    }
+    if (recovery.state == PendingNpcActionState.alreadyConfirmed) {
+      await _outbox.remove(action);
+      if (!mounted) return;
+      setState(() {
+        _pendingAction = null;
+        _outboxError = null;
+      });
+      await _afterTurn(previousMessageId);
+      return;
     }
     await widget.controller.sendAction(
       action.text,
       requestId: action.requestId,
-      selectedNpc: choice,
+      selectedNpc: recovery.choice,
     );
     if (!mounted || widget.controller.error != null) return;
     // Success also includes replay of an already committed request.
@@ -3217,59 +3209,14 @@ class _AdventurePageState extends State<_AdventurePage> {
               accent: FantasyPalette.blue,
               child: Column(
                 children: [
-                  if (_submittingAction)
-                    const SizedBox.shrink(
-                      key: ValueKey('adventure-action-submitting'),
-                    ),
-                  if (_pendingAction != null && !_submittingAction) ...[
-                    const Text(
-                      'Ausstehende Handlung – noch nicht sicher bestätigt',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      _pendingAction!.text,
-                      key: const ValueKey('adventure-pending-action-text'),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 6),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 4,
-                      children: [
-                        FantasyTextButton(
-                          key: const ValueKey('adventure-retry-action'),
-                          label: 'Erneut bestätigen',
-                          icon: Icons.refresh,
-                          style: FantasyButtonStyle.woodGold,
-                          onPressed:
-                              _submittingAction || _ruleInteractionBlocked
-                              ? null
-                              : _retryPending,
-                        ),
-                        FantasyTextButton(
-                          key: const ValueKey('adventure-discard-action'),
-                          label: 'Verwerfen',
-                          icon: Icons.close,
-                          style: FantasyButtonStyle.iron,
-                          onPressed:
-                              _submittingAction || _ruleInteractionBlocked
-                              ? null
-                              : _discardPending,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                  ],
-                  if (_outboxError != null)
-                    Text(
-                      _outboxError!,
-                      key: const ValueKey('adventure-outbox-error'),
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
-                    ),
+                  PendingActionStatus(
+                    pending: _pendingAction,
+                    submitting: _submittingAction,
+                    interactionBlocked: _ruleInteractionBlocked,
+                    error: _outboxError,
+                    onRetry: _retryPending,
+                    onDiscard: _discardPending,
+                  ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [

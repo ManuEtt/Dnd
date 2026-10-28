@@ -1,15 +1,10 @@
 name: Sicher integrierte PR-Branches archivieren und bereinigen
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/cleanup-merged-safe-20261027.yml'
   workflow_run:
     workflows: ['Android-Alpha bauen']
     types: [completed]
     branches: [main]
-  workflow_dispatch:
 
 permissions:
   contents: write
@@ -23,12 +18,10 @@ jobs:
   cleanup:
     if: >-
       github.repository == 'ManuEtt/Dnd' &&
-      (github.event_name == 'workflow_dispatch' ||
-       (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-       (github.event_name == 'workflow_run' &&
-        github.event.workflow_run.head_branch == 'main' &&
-        github.event.workflow_run.event == 'push' &&
-        github.event.workflow_run.conclusion == 'success'))
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Nur verifiziert integrierte und unbenutzte Branches archivieren und löschen
@@ -38,10 +31,6 @@ jobs:
             const { owner, repo } = context.repo;
             const main = await github.rest.git.getRef({owner, repo, ref: 'heads/main'});
             const mainSha = main.data.object.sha;
-            if (context.eventName === 'push' && context.sha !== mainSha) {
-              core.info('main wurde fortgeschrieben; spätere Bereinigung abwarten.');
-              return;
-            }
             if (context.eventName === 'workflow_run' &&
                 context.payload.workflow_run.head_sha !== mainSha) {
               core.info('CI gehört nicht zum aktuellen main; keine Bereinigung.');
@@ -49,9 +38,6 @@ jobs:
             }
             const open = await github.paginate(github.rest.pulls.list, {
               owner, repo, state: 'open', per_page: 100
-            });
-            const closed = await github.paginate(github.rest.pulls.list, {
-              owner, repo, state: 'closed', per_page: 100
             });
             const branches = await github.paginate(github.rest.repos.listBranches, {
               owner, repo, per_page: 100
@@ -66,21 +52,16 @@ jobs:
             let deleted = 0, skipped = 0;
             for (const branch of branches) {
               const name = branch.name;
-              // GitHub marks protected branches independently of open PRs.
-              // Never attempt to retire a protected ref, even if its merged
-              // historical PR head is byte-identical to main.
+              // Protected branches remain untouched even when ancestry proves integration.
               if (branch.protected || protectedNames.has(name)) {
                 skipped++;
                 continue;
               }
               const sha = branch.commit.sha;
-              const mergedPr = closed.find(pr =>
-                pr.merged_at &&
-                pr.head.repo?.full_name === owner + '/' + repo &&
-                pr.head.ref === name &&
-                pr.head.sha === sha
-              );
-              if (!mergedPr) { skipped++; continue; }
+              // An exact branch head that is an ancestor of current main
+              // is integrated, even if delivered by a descendant/stacked PR.
+              // Protect open PR heads/bases, verify ancestry and archive
+              // this SHA before deleting the unchanged ref.
               let comparison;
               try {
                 comparison = await github.rest.repos.compareCommits({

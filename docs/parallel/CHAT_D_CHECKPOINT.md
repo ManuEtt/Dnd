@@ -2,18 +2,20 @@
 
 - **Ausgangs-main-SHA:** `bf5999e98335c1da94b1eafbf2fc8088b392b6ef`.
 - **Arbeitsbranch:** `fix/chat-d/cleanup-protected-head-20261028`.
-- **PR:** [#335](https://github.com/ManuEtt/Dnd/pull/335) (Draft).
+- **PR:** [#335](https://github.com/ManuEtt/Dnd/pull/335) (gestapelt auf PR #337, finale kombinierte CI offen).
 - **Technische Commits:** `f6a541f886e65d4cf623e6e3b961256955fbf88c`, `0ce8be9028ece58618d8c7f33e3768d0cbe4c9a7`; Dokumentation auf demselben Branch.
 - **Ausgangsproblem:** Die über GitHub gelieferte Branch-Protected-Eigenschaft wurde beim aktiven Cleanup vor dem Archivierungs-/Löschpfad nicht ausdrücklich berücksichtigt.
 - **Implementiert:** Guard `branch.protected || protectedNames.has(name)` vor der weiteren Prüfung; geschützte Referenzen können keine Löschaktion auslösen.
 - **Geänderte Dateien:** `.github/workflows/cleanup-merged-safe-20261027.yml`, `scripts/tests/test_safe_cleanup_protected_branch.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
-- **Tests:** Drei Python-Unittest-Methoden (reguläre Guard-Position, negative Fälle, unveränderte weitere Gates). Ausführung/CI noch nicht nachgewiesen, physischer Gerätetest offen.
+- **Tests:** Drei Python-Unittest-Methoden (reguläre Guard-Position, negative Fälle, unveränderte weitere Gates). Ausführung/CI auf ursprünglichem Commit erfolgreich, kombinierte CI noch ausstehend, physischer Gerätetest offen.
 - **CI-Ergebnis:** Ausstehend auf finalem Commit. Keine bereits grüne fremde CI als Nachweis verwendet.
 - **Risiken:** Snapshot der Schutzflags ist keine atomare Referenzsperre. Bei zwischenzeitlich neu gesetztem Schutz verweigert GitHub selbst die Löschung; keine endgültige Race-Freiheit behauptet.
 - **Migration:** Keine, SQLite 2/JSON 1 und App-Version unverändert.
 - **Nächster konkreter Schritt:** Finalen PR-Workflow kontrollieren und fehlerfreie Regressionstests bestätigen; bei Rot korrigieren.
 
 ---
+
+- **Koordination am 28.10.2026:** Auf PR #337 `maintenance/cleanup-ancestor-branches-20261028` gestapelt; dessen geänderte Trigger und sichere Git-Ancestry-Gates bleiben erhalten. Die Prüfung in `test_safe_cleanup_protected_branch.py` wurde an `#337` angepasst, ohne dessen Testdatei zu überschreiben.
 
 # Chat D D-013 – Symlink-Sperre bei der Projektübertragungsprüfung (27.10.2026)
 
