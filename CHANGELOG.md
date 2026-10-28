@@ -1,3 +1,11 @@
+## In Entwicklung – 28.10.2026 – Hexenmeister: Magische List und Eldritch Master
+
+- Explizit bestätigtes einminütiges Ritual regeneriert regelgerecht ausgegebene Paktmagieplätze, einmal pro langer Rast. Hexenmeister 20 regeneriert alle statt nur der aufgerundeten Hälfte.
+- Validierte Klassenstufe/Mehrklasse, nutzungsbegrenztes Ressourcenspeichern, Audit-Ereignis und zwölf neue Tests.
+- Noch kein vollständiger Weltzeit-/Unterbrechungsnachweis und keine finale CI-/Geräteabnahme für dieses Inkrement; SRD-Status bleibt `partial`.
+
+---
+
 ## 28.10.2026 – Gemeinsame lokale Abnahme bestanden
 
 Quellstand `4f03b7880c36ca225325c87ec9f2c56e0a93dccd` ist lokal vollständig geprüft:
