@@ -89,12 +89,6 @@ jobs:
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
-      - name: Dart-Formatter-Diff zur Fehlersuche
-        if: failure()
-        working-directory: app
-        run: |
-          dart format lib test
-          git diff -- lib/domain/game_engine.dart lib/ui/fantasy_character_sheet.dart lib/ui/srd_bard_font_of_inspiration_dialog.dart test/srd_bard_font_of_inspiration_test.dart test/srd_bard_font_confirmed_action_test.dart
       - name: Flutter-Code analysieren
         working-directory: app
         run: flutter analyze
