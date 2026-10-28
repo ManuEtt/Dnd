@@ -41,8 +41,8 @@ jobs:
       - name: Chat-A-Regeldateien formatieren pruefen
         working-directory: app
         run: |
-          dart format lib/domain/srd_eldritch_blast_rules.dart lib/domain/game_engine.dart test/srd_eldritch_blast_rules_test.dart test/srd_eldritch_blast_encounter_test.dart
-          git --no-pager diff --exit-code -- lib/domain/srd_eldritch_blast_rules.dart lib/domain/game_engine.dart test/srd_eldritch_blast_rules_test.dart test/srd_eldritch_blast_encounter_test.dart
+          dart format lib/domain/srd_eldritch_blast_rules.dart lib/domain/game_engine.dart test/srd_eldritch_blast_rules_test.dart test/srd_eldritch_blast_encounter_test.dart test/srd_bard_superior_inspiration_rules_test.dart lib/domain/srd_bard_superior_inspiration_rules.dart
+          git --no-pager diff --exit-code -- lib/domain/srd_eldritch_blast_rules.dart lib/domain/game_engine.dart test/srd_eldritch_blast_rules_test.dart test/srd_eldritch_blast_encounter_test.dart test/srd_bard_superior_inspiration_rules_test.dart lib/domain/srd_bard_superior_inspiration_rules.dart
       - name: Geaenderte Regeldateien und Tests analysieren
         working-directory: app
         run: |
