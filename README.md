@@ -1,5 +1,11 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## 28.10.2026 – Chat A: SRD-Emanation (noch nicht gemergt)
+
+Neue SRD-5.2.1-Domänenvorschau für Emanationen von **Kreaturen oder Gegenständen**: bestätigte Quelle in einer Rasterzelle, mögliche Rand-/Mittelpunkte, bewusste Einbeziehung der Quelle, Bewegungs-/Stationär-/Sofortcharakter und getrennte Zauberursprungskontrolle. `Spirit Guardians` dient als Reichweiten-Regressionstest. Blockierte Mittelpunktstrahlen sind nur ein Deckungs-Prüfhinweis; weder betroffene Kreaturen noch Wirkungen, Ressourcen oder Kampagnendaten werden verändert. Sechs Flutter-Tests sind eingecheckt, die finale CI noch nicht bestätigt. Quelle: Wizards of the Coast LLC, SRD 5.2.1, *Rules Glossary / Emanation*, CC BY 4.0. Branch `feat/chat-a/emanation-area-preview-20261028`; Integration gemeinsamer README-/Checkpoint-Änderungen durch Chat D koordinieren.
+
+
+
 ## 28.10.2026 – Chat D: Dart-Teilbibliotheken an Modulgrenzen prüfen
 
 Die Python-Architekturprüfung kontrolliert neben `import` und `export` jetzt auch `part` und URI-basierte `part of`-Direktiven. Dadurch darf Domain-Code Story-Dateien nicht als Teilbibliothek einschleusen; Story-Dateien dürfen den gemeinsamen Domänencode weiterhin regulär importieren, ihn aber nicht als `part` einbinden. Fünf neue positive und negative Regressionstests sind ergänzt. **Die vollständige PR-CI muss auf dem finalen Commit noch geprüft werden.** Keine Änderung an SQLite, JSON, Spielregeln, Story oder App-Version. [Draft-PR #360](https://github.com/ManuEtt/Dnd/pull/360) · [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
