@@ -5,14 +5,14 @@
   "source_section": "Character Creation, p. 21; Classes; Character Origins",
   "license": "CC-BY-4.0",
   "as_of": "2026-10-28",
-  "baseline_main_sha": "a915717ba0f57c74acf03c9b1a066ced531c7c6a",
+  "baseline_main_sha": "bf5999e98335c1da94b1eafbf2fc8088b392b6ef",
   "pr": 319,
   "coverage_complete": false,
   "all_required_choices_covered": false,
   "android_device_tested": false,
   "ci_final_head_verified": false,
   "existing_requirement_registers_unchanged": false,
-  "status_note": "Main a915717 und Audit895 integriert; 57 gezielte Tests auf2717f1f grün, neue Main-Zusätze separat in finaler CI. Produkt30bb33e: CI40584924719 und fester Repeat1995Flutter,164Python,72Backend. Gesamtcharaktererstellung unvollständig.",
+  "status_note": "Main bf5999e regulär integriert. 57 gezielte Tests, Analyse/Format und168Python bestanden. Vollständige letzte gemeinsame CI siehePR319; 019be0e davor nachweislich2007Flutter/168Python/72Backend. GesamteCharaktererstellung unvollständig.",
   "requirements": [
     {
       "id": "CHAR-ABILITY-STANDARD-ARRAY",
@@ -391,6 +391,15 @@
     "native": 12,
     "integrated_targeted": 57,
     "new_tests": 35,
-    "full_integrated_ci": "pending_at_document_write"
+    "full_integrated_ci": "pending_at_document_write",
+    "current_main": "bf5999e98335c1da94b1eafbf2fc8088b392b6ef",
+    "current_python": 168,
+    "current_targeted": 57,
+    "verified_019_ci": {
+      "run": 40631517151,
+      "flutter": 2007,
+      "python": 168,
+      "backend": 72
+    }
   }
 }

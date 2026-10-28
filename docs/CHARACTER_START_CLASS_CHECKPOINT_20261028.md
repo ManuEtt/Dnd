@@ -1,5 +1,17 @@
 # Codex-Checkpoint – Klassenstartwahl 0.8.45+95
 
+> **Letzte gemeinsame Abnahme vorbereitet – 2026-10-28T04:35:44.592299+00:00**
+> Main `bf5999e98335c1da94b1eafbf2fc8088b392b6ef` regulär übernommen,
+> kein Fachkonflikt. Auf diesem Stand 57 gezielte Fluttertests, Analyse,
+> Format aller 465 Dartdateien und 168 Pythonprüfungen bestanden.
+> Vollständige neue CI wird am endgültigen PR-Commit abgenommen.
+> Zwischenkopf `019be0e` ist separat in CI 40631517151 vollständig grün mit
+> 2.007 Flutter / 168 Python / 72 Backend und geprüftem 1.021-Dateien-Quellpaket.
+> Der neue Main-Stand wird nicht mit diesem älteren Erfolg gleichgesetzt.
+> Abnahme/Artefakte nach Abschluss im PR #319 und externen Artefaktindex,
+> ohne geprüfte Quellen für nachträgliche Erfolgszeilen erneut zu ändern.
+
+
 
 > **Neueste Koordination – 28.10.2026:** Der Editor-CAS-Fix wird bereits von
 > einem anderen Verantwortlichen in [PR #330](https://github.com/ManuEtt/Dnd/pull/330)

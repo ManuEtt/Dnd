@@ -169,6 +169,8 @@ und konservativer Audit einschließlich offener Mönch-Werkzeugkopplung.
 **GETESTET:** Zwischenkopf `019be0e` in
 [CI 40631517151](https://github.com/ManuEtt/Dnd/actions/runs/40631517151)
 komplett grün: 2.007 Flutter-, 168 Python- und 72 Backend-Tests plus Android.
+**Aktuell lokal zusätzlich bestanden:** 57 gezielte Tests, Analyse, 465 Dateien
+formatiert ohne Änderung und 168 Pythonprüfungen auf Main-Basis bf5999e.
 **NICHT GETESTET:** abschließende gemeinsame CI nach zusätzlichem Main-Merge
 `bf5999e`, echtes Android-Gerät/TalkBack und installiertes Altversionsupgrade.
 **BLOCKIERT:** kein neuer Quellkonflikt; aktueller Integrationskopf muss geprüft

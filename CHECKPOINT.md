@@ -1,5 +1,37 @@
 # Codex-Checkpoint – Klassenstartwahl 0.8.45+95
 
+> **Letzte gemeinsame Abnahme vorbereitet – 2026-10-28T04:35:44.592299+00:00**
+> Main `bf5999e98335c1da94b1eafbf2fc8088b392b6ef` regulär übernommen,
+> kein Fachkonflikt. Auf diesem Stand 57 gezielte Fluttertests, Analyse,
+> Format aller 465 Dartdateien und 168 Pythonprüfungen bestanden.
+> Vollständige neue CI wird am endgültigen PR-Commit abgenommen.
+> Zwischenkopf `019be0e` ist separat in CI 40631517151 vollständig grün mit
+> 2.007 Flutter / 168 Python / 72 Backend und geprüftem 1.021-Dateien-Quellpaket.
+> Der neue Main-Stand wird nicht mit diesem älteren Erfolg gleichgesetzt.
+> Abnahme/Artefakte nach Abschluss im PR #319 und externen Artefaktindex,
+> ohne geprüfte Quellen für nachträgliche Erfolgszeilen erneut zu ändern.
+
+
+
+> **Neueste Koordination – 28.10.2026:** Der Editor-CAS-Fix wird bereits von
+> einem anderen Verantwortlichen in [PR #330](https://github.com/ManuEtt/Dnd/pull/330)
+> bearbeitet, zuletzt gemeldeter Kopf `76d5daa30e55e644acc1aece0ac63ecc01d1e9b6`.
+> Diesen PR zuerst live auf Code, vorhandene Regressionstests und finale CI
+> prüfen und abnehmen; keine zweite Implementierung oder doppelte Tests starten.
+> PR #323 ist bereits in der jetzt integrierten Main-Basis `bf5999e` enthalten.
+> PR #330 ist auf `76d5daa` bereits vollständig in
+> [CI 40631254745](https://github.com/ManuEtt/Dnd/actions/runs/40631254745) geprüft,
+> einschließlich sechs neuer SQLite-/CAS-Regressionen. Gegen das inzwischen
+> fortgeschrittene Main bestehen Integrationskonflikte. Nächster Schritt ist
+> ausschließlich die koordinierte Konfliktauflösung und erneute gemeinsame
+> Abnahme von #330; keine zweite Implementierung und keine doppelten Tests.
+> PR #324 wurde auf `d83d79a` aktualisiert; CI 40632775104 läuft noch.
+> Frühere nächste Schritte weiter unten sind mit dieser Koordination zu lesen.
+> Der geprüfte Zwischenkopf `019be0e` besitzt Alpha-Artefakt
+> [12791887302](https://github.com/ManuEtt/Dnd/actions/runs/40631517151/artifacts/12791887302);
+> 1.021 CI-Quelldateien wurden laut Hauptabnahme mit Inhalt und Dateimodus
+> verifiziert. Die neue gemeinsame Abnahme nach `bf5999e` bleibt separat.
+
 Stand 2026-10-28T04:12:49.192781+00:00 (UTC). Arbeitsbranch `feat/character-start-class-proof-20261027`,
 [PR #319](https://github.com/ManuEtt/Dnd/pull/319) jetzt gegen **main**.
 Main `a915717ba0f57c74acf03c9b1a066ced531c7c6a` und Audit-PR #318 (`89545ab`) über reguläre
@@ -153,3 +185,31 @@ SHA256/Git-Blob-IDs erhalten. Kein CAS-, Magic-Initiate-, Start-TP- oder anderes
 noch separates Fachpaket wurde unabhängig neu übernommen. Die auf dem neuen
 Mergekopf erforderlichen Tests und die exakte CI müssen gesondert abgenommen
 werden; frühere grüne Läufe sind kein Nachweis dieses zusätzlichen Merges.
+
+
+## Aktuelle Integrationsbasis – 28.10.2026
+
+Die bisherige vollständige Charakter-Übergabe oben ist aus dem geprüften
+Commit `019be0e9c208d1fc5e2eeab8230b4a8ba703c647` erhalten. Dessen vollständige
+CI [40631517151](https://github.com/ManuEtt/Dnd/actions/runs/40631517151) war
+**erfolgreich: 2.007 Flutter-, 168 Python- und 72 Backend-Tests**, zusätzlich
+Android-/Alpha-Builds. Diese Abnahme gilt für den genannten Commit.
+
+Anschließend wird der fixierte Main-Stand
+`bf5999e98335c1da94b1eafbf2fc8088b392b6ef` regulär integriert. Er enthält
+weitere parallel entwickelte Pakete, darunter #323, #290, #334 und #328.
+Deren Quellcode wurde ausschließlich durch den normalen Git-Merge übernommen.
+Die abschließende gemeinsame Prüfung des neuen Integrationskopfs steht noch
+aus; ältere grüne Läufe dürfen sie nicht ersetzen. SQLite-Versionsangaben
+in früheren Abschnitten beziehen sich auf ihren damaligen Stand; Main #290
+bringt die getestete Migration 2 → 3 mit, unser Klassenmetadatenfeld selbst
+benötigt weiterhin keine eigene Migration.
+
+Um wiederholte Statuskonflikte zu vermeiden, bleiben README und gemeinsamer
+CODEX_CHECKPOINT mit dem exakten Maintext als Präfix erhalten. Der aktuelle
+Charakterstatus und der Verweis auf diese vollständige Übergabe werden jeweils
+am Dateiende ergänzt. Beide Main-Originale und die eigene vorherige Übergabe
+sind mit SHA256 und Git-Blob-ID im [Historienmanifest](history/character_class_main_20261028/manifest.json)
+erhalten. Kein Datenverlust, keine eigenmächtige Neuimplementation der bereits
+separat bearbeiteten Klassen-/Zauber-/CAS-Pakete. Vor einem weiteren Schritt
+die aktuelle PR-/Main-Lage prüfen; keine Hintergrundausführung zugesagt.

@@ -187,44 +187,33 @@ Das Repository enthält Entwicklungssoftware. **Vollständige SRD-Konformität, 
 
 ## Aktueller Charakterstatus – 28.10.2026 (0.8.45+95)
 
-**0.8.45+95:** Die tatsächliche erste Klassenwahl samt Klassenfertigkeiten,
-Kämpferwahlen und optionaler Paketentscheidung wird historisch und versioniert
-gespeichert. Wiederholungen vergeben weder Gold/Ausrüstung noch zusätzliche
-Klassenübungen. Alte Spielstände bleiben ohne erfundene Herkunft erhalten.
-Der Audit bestätigt belegte Teilentscheidungen; unaufgelöste Gegenstände und
-die Mönch-Werkzeugkopplung bleiben sichtbar offen. Kein vollständiger Wizard.
+Die ausdrücklich bestätigte erste Klasse, Klassenfertigkeiten, Kämpferwahlen
+und optionale Paketentscheidung werden historisch und versioniert gespeichert.
+Erneute Bestätigung ersetzt ihre frühere Übungsquelle; Gold/Ausrüstung nur
+einmal. Vollständige Paketprüfung vor Änderung des Entwurfs, Abbruch sicher.
+Alte Spielstände bleiben ohne erfundene Herkunft erhalten. Der Audit bestätigt
+belegte Teilentscheidungen und hält unaufgelöste Gegenstände sowie die
+Mönch-Werkzeugkopplung offen. Die gesamte Charaktererstellung bleibt unvollständig.
 
-**Produktcommit `30bb33e`: 1.995 Flutter-, 164 Python-, 72 Backend- und zwölf
-lokale native Android-Tests bestanden**, CI [40584924719](https://github.com/ManuEtt/Dnd/actions/runs/40584924719)
-grün, Debug-/ARM64-APK und alle 991 CI-Quelldateien geprüft. Lokaler fester
-Flutter-Gesamt-Repeat ebenfalls grün. **Neuester Integrationsstand mit Main
-`a915717`: 57 gezielte Tests bestanden; vollständige finale CI separat in
-[PR #319](https://github.com/ManuEtt/Dnd/pull/319/checks).** Ein früherer lokaler
-Lauf vor den letzten Korrekturen hatte drei Fehler; die feste Wiederholung
-bestätigt deren Behebung. Gerät/TalkBack/Altversionsupgrade bleiben ungeprüft.
+**Geprüfter Zwischenkopf `019be0e`: 2.007 Flutter-, 168 Python-, 72 Backend-Tests,
+Debug/native und Alpha-Builds grün in [CI40631517151](https://github.com/ManuEtt/Dnd/actions/runs/40631517151).**
+Alle 1.021 CI-Quelldateien, Ausführungsrechte und die ARM64-APK wurden geprüft.
+Der vorherige feste lokale Gesamt-Repeat bestand 1.995, die nächste lokale
+Zwischenintegration 2.003 Flutter-Tests. Ein früherer Lauf vor den letzten
+Quellkorrekturen hatte drei Fehler; die festen Wiederholungen belegen die Behebung.
 
-Branch `feat/character-start-class-proof-20261027`; Audit #318 und neueres
-Main konfliktfrei übernommen, fremde Originaldokumente mit Hashes archiviert.
-[Umfang und Quellen](docs/CHARACTER_START_CLASS_CHOICE_20261027.md) ·
+**Aktuelle gemeinsame Basis: Main `bf5999e`, 57 gezielte Tests, Analyse und
+168 Pythonprüfungen bestanden.** Vollständige CI dieses letzten Integrationskopfs
+separat in [PR #319](https://github.com/ManuEtt/Dnd/pull/319/checks); frühere
+Ergebnisse gelten nur für ihren angegebenen Commit. Branch
+`feat/character-start-class-proof-20261027`, Version 0.8.45+95. Originaldokumente
+bleiben unverändert mit Hashes in `docs/history/`; der vorangehende Maintext
+ist die erhaltene Integrationsbasis. Gerät/TalkBack/Altversionsupgrade und
+Produktivsignatur sind noch nicht geprüft.
+
+[Quellen und Umfang](docs/CHARACTER_START_CLASS_CHOICE_20261027.md) ·
 [vollständiger Charakter-Checkpoint](docs/CHARACTER_START_CLASS_CHECKPOINT_20261028.md).
-Die zusätzliche Main-Übernahme (#288/#321/#318) wird im finalen PR-Kopf erneut
-geprüft; frühere Zwischenergebnisse gelten jeweils für ihren genannten Commit.
-Nächster Schritt: den bereits in CI 40631254745 vollständig geprüften
-Editor-CAS-PR #330 koordiniert mit aktuellem Main integrieren und erneut
-abnehmen; vorhandene sechs SQLite-/CAS-Regressionen nutzen, nichts duplizieren;
-#324 (Start-TP/Kit), #317 (Magieinitiierter) und #323 nicht doppelt entwickeln.
-Die gesamte Charaktererstellung bleibt unvollständig. Ältere Abschnitte sind
-Historie; Originale unter `docs/history/`.
-
-
-Der inzwischen ebenfalls vollständig geprüfte Zwischenkopf `019be0e` bestand
-CI [40631517151](https://github.com/ManuEtt/Dnd/actions/runs/40631517151):
-**2.007 Flutter-, 168 Python- und 72 Backend-Tests** plus Android-/Alpha-Builds.
-Die jetzt zusätzlich übernommene feste Main-Basis `bf5999e` benötigt eine neue
-gemeinsame CI-Abnahme. Die früheren Angaben in diesem Status beziehen sich
-jeweils auf ihren ausdrücklich genannten Commit. Der vollständige aktuelle
-Arbeitsauftrag und verbleibende Grenzen stehen im
-[Charakter-Checkpoint](docs/CHARACTER_START_CLASS_CHECKPOINT_20261028.md).
-Vorangehender Maintext bleibt als Integrationsbasis unverändert; Originale
-beider Dokumentstände sind mit SHA256 im
-[Historienmanifest](docs/history/character_class_main_20261028/manifest.json) gesichert.
+Nächster Schritt: den bereits separat geprüften Editor-CAS-PR #330 mit
+aktuellem Main integrieren und erneut abnehmen; dessen sechs vorhandene
+SQLite-/CAS-Regressionen nutzen. #324 (Start-TP/Kit) und #317 (Magieinitiierter)
+koordiniert übernehmen, nichts doppelt entwickeln. #323 ist bereits enthalten.
