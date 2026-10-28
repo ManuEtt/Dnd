@@ -7,9 +7,19 @@ In generativen KI-Kampagnen erscheint am Texteingabefeld die Aktion **„NPC aus
 Die SQLite-Outbox wurde **transaktional von Version 2 auf 3** erweitert: ein optionales Paar aus NPC-ID und ursprünglicher Kampagnenrevision bleibt mit Text und Request-ID nach einem Neustart erhalten. Alte Sendeaufträge werden ohne NPC-Auswahl übernommen; eine veraltete Auswahl wird nicht unbemerkt neu gebunden. Bereits bestätigte Request-IDs können nach verlorenem Bestätigungssignal abgeglichen werden. Neue SQLite- und Flutter-Widget-Tests prüfen diese Grenzen. Kampagnen-JSON, Heldendaten und SRD-Mechaniken bleiben unverändert. Die volle CI-Abnahme auf dem PR-HEAD ist separat nachzuweisen.
 
 
-## Chat B – Ausdrückliche NPC-ID bei KI-Handlungen (27.10.2026)
+## Chat D – Pflichtdateien ohne symbolische Links prüfen (27.10.2026)
 
-Die Controller-Schnittstelle `sendAction(text, selectedNpc: NpcStorySelection.choose(campaign, npcId))` kann eine **vom Spieler ausdrücklich ausgewählte, revisionsgebundene NPC-ID** an einen geeigneten KI-Erzähler übergeben. Dazu muss dessen Sitzung sowohl `npc-identity-v1` als auch `npc-selection-v1` unterstützen und zum ausgewählten NPC mindestens eine bestätigte Beziehungsnotiz existieren. Ohne solche Auswahl bleibt die bisherige Namensauflösung unverändert. Die Prüfung erfolgt vor dem lokalen Spielzug, gegen die aktuelle SQLite-Revision und erneut beim Transport. Wiederholte Handlungskennungen sind auch an die gewählte NPC-ID gebunden. Vier neue SQLite-/Mock-Integrationstests prüfen die sichere Übertragung, fehlende Capability, veraltete Auswahl und Wiederholungs-ID-Kollision. **Die grafische NPC-Auswahl ist noch nicht angebunden** und die CI-Abnahme muss anhand des PR-Laufs erfolgen. Keine Regel-, Datenbank- oder Kampagnen-JSON-Migration.
+Die Python-Projektprüfung lehnt jetzt Pflichtdateien und deren übergeordnete Verzeichnisse ab, wenn sie symbolische Links sind. Dadurch werden keine verlinkten externen Backend-JSON-Dateien oder Gradle-Wrapper-Dateien mehr als reguläre Upload-Dateien geöffnet. Vier Regressionstests untersuchen Dateilinks, Verzeichnislinks, Wrapper-Nichtöffnung und defekte Links. Bestehende reguläre Projektkopien bleiben zugelassen. [PR #321](https://github.com/ManuEtt/Dnd/pull/321) ist ein **Draft**; die abschließende GitHub-CI ist auf dem finalen PR-Commit separat abzunehmen. Keine Migration oder App-Änderung.
+
+
+## Chat B – Zwölf KI-Erinnerungen bis zur Story-API-Grenze absichern (27.10.2026)
+
+Zwei neue Integrationstests prüfen das Erinnerungslimit **an der tatsächlich gesendeten Story-Anfrage**: Eine KI-Kampagne mit bestätigten Mira-Beziehungsnotizen und mindestens 18 allgemeinen Fakten wird in einer echten SQLite-Datei gespeichert, über den `GameController` fortgesetzt und mit einem lokalen Backend-Transport abgefragt. Sowohl mit als auch ohne `npc-identity-v1` erhält das Backend genau zwölf priorisierte und begrenzte Erinnerungseinträge. Die drei bestätigten NPC-Notizen bleiben zuerst; zusätzliche allgemeine Fakten verwenden lediglich die freien Plätze. Heldenwerte, Revision und gespeicherter Spielstand bleiben überprüfbar. Dieses Testpaket baut auf [PR #307](https://github.com/ManuEtt/Dnd/pull/307) auf und verändert keine Produktionslogik, Datenbankschemata oder SRD-Regeln.
+
+
+## Chat B – Gemeinsames Budget für NPC- und allgemeine KI-Erinnerungen (27.10.2026)
+
+Die vom KI-Spielleiter übermittelten bestätigten NPC-Notizen und allgemeinen Erinnerungseinträge teilen sich dasselbe Limit (standardmäßig 12 Einträge). Bisher wurde ein weiterer allgemeiner Eintrag angehängt, selbst wenn NPC-Notizen das Budget schon vollständig belegten. `NpcNarratorMemory.merge` prüft jetzt die gemeinsame Grenze **vor** dem Anhängen allgemeiner Einträge. Neue Regressionen decken vollständig belegte Grenzen von einem und zwei Einträgen sowie verbleibenden Platz ab. Es gibt keine Änderung an NPC-Identitäten, SRD-Regeln, SQLite, Backend-Protokoll oder Kampagnenexport.
 
 
 ## Charaktererstellung – Integrationskandidat (27.10.2026)

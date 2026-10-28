@@ -469,12 +469,17 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#barbar_20_base_primal-champion_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_class_level_up_test.dart",
+        "app/test/ui_srd_class_level_up_test.dart"
+      ],
       "code": [
+        "app/lib/domain/srd_class_level_up.dart",
+        "app/lib/ui/srd_class_level_up_dialog.dart",
         "app/lib/domain/srd_class_feature_catalog.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "note": "SRD-5.2.1-Stufe-20-Kapstone: automatische Attributssteigerung (+4 bis 25), bei Barbar inklusive rückwirkendem KON-TP-Modifikator, nur auf bestätigter Klassenstufe 20; UI-Vorschau und Domain-/Widget-Regression ergänzt. finaler CI-Test/Android-Abnahme noch offen, deswegen partial statt tested. Keine implizite Rückmigration bestehender Stufe-20-Importe."
     },
     {
       "id": "CLASS-BARBAR-3-SUBCLASS-FRENZY-0",
@@ -2509,12 +2514,26 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#m-nch_4_base_slow-fall_1",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_monk_slow_fall_rules_test.dart",
+        "app/test/srd_monk_slow_fall_sheet_test.dart",
+        "app/test/srd_monk_slow_fall_commit_rules_test.dart",
+        "app/test/srd_monk_slow_fall_commit_storage_test.dart",
+        "app/test/monk_slow_fall_dialog_test.dart",
+        "app/test/monk_slow_fall_adventure_ui_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/srd_monk_slow_fall_rules.dart",
+        "app/lib/ui/fantasy_character_sheet.dart",
+        "app/lib/rules/rules_api.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/services/game_controller.dart",
+        "app/lib/ui/app.dart",
+        "app/lib/ui/monk_slow_fall_dialog.dart"
+      ],
+      "note": "Mönch ab Klassenstufe 4: bestätigter Sturzschaden und ausdrückliche freie Reaktion werden rein regelbasiert um bis zu 5×Mönchsstufe reduziert; Schwellenwert und Charakterbogen in Tests. Reaktion/TP/Event werden auf revisionsgeprüftem Kampagnenstand atomar gespeichert und per manueller Android-Bestätigung ausgeführt. Bleibt partial: Sturzereignis, Schadenswürfe und andere Schadensanpassungen werden nicht selbständig aus der Welt/Geschichte hergeleitet. Finale CI und Gerätetest separat prüfen."
     },
     {
       "id": "CLASS-M-NCH-5-BASE-EXTRA-ATTACK-0",
@@ -2829,12 +2848,17 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#m-nch_20_base_body-and-mind_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_class_level_up_test.dart",
+        "app/test/ui_srd_class_level_up_test.dart"
+      ],
       "code": [
+        "app/lib/domain/srd_class_level_up.dart",
+        "app/lib/ui/srd_class_level_up_dialog.dart",
         "app/lib/domain/srd_class_feature_catalog.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "note": "SRD-5.2.1-Stufe-20-Kapstone: automatische Attributssteigerung (+4 bis 25), bei Barbar inklusive rückwirkendem KON-TP-Modifikator, nur auf bestätigter Klassenstufe 20; UI-Vorschau und Domain-/Widget-Regression ergänzt. finaler CI-Test/Android-Abnahme noch offen, deswegen partial statt tested. Keine implizite Rückmigration bestehender Stufe-20-Importe."
     },
     {
       "id": "CLASS-M-NCH-3-SUBCLASS-OPEN-HAND-TECHNIQUE-0",
@@ -3774,12 +3798,17 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#waldl-ufer_18_base_feral-senses_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/ranger_feral_senses_rules_test.dart",
+        "app/test/ranger_feral_senses_sheet_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/srd_ranger_feral_senses_rules.dart",
+        "app/lib/ui/fantasy_character_sheet.dart"
+      ],
+      "note": "Waldläufer-Klassenstufe 18 verleiht regelbasiert 30 Fuß (9 m) Blindsicht, auch bei legalem Multiclassing. Charakterbogen und reine bestätigte Distanzgrenze vorhanden. Verdeckte Ziele, Hindernisse und Wahrnehmung nicht ohne gesonderte Bestätigung automatisch erkannt; daher nur partial. Tests erst mit grünem PR-CI als bestanden betrachten."
     },
     {
       "id": "CLASS-WALDL-UFER-19-BASE-EPIC-BOON-0",
@@ -6793,10 +6822,18 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Character Creation",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_character_creation_audit_test.dart",
+        "app/test/character_creation_audit_ui_test.dart",
+        "app/test/character_creation_audit_persistence_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/srd_character_creation_audit.dart",
+        "app/lib/ui/character_editor.dart",
+        "app/lib/ui/srd_creation_audit_dialog.dart"
+      ],
+      "note": "27.10.2026: lesender Audit mit sieben Zuständen, belegten Teilentscheidungen, Entwurfs-/Legacy-/SQLite-Prüfung. Keine vollständige Spezies-/Klassen-/Talent-/Zaubererstellung, kein Gesamt-SRD-Erfolgsflag. Endgültige Abnahme siehe CODEX_CHECKPOINT."
     },
     {
       "id": "RULE-CHARACTER-CREATION-DETERMINE-LEVEL",
@@ -6838,10 +6875,18 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Character Creation",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_character_creation_audit_test.dart",
+        "app/test/character_creation_audit_ui_test.dart",
+        "app/test/character_creation_audit_persistence_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/srd_character_creation_audit.dart",
+        "app/lib/ui/character_editor.dart",
+        "app/lib/ui/srd_creation_audit_dialog.dart"
+      ],
+      "note": "27.10.2026: lesender Audit mit sieben Zuständen, belegten Teilentscheidungen, Entwurfs-/Legacy-/SQLite-Prüfung. Keine vollständige Spezies-/Klassen-/Talent-/Zaubererstellung, kein Gesamt-SRD-Erfolgsflag. Endgültige Abnahme siehe CODEX_CHECKPOINT."
     },
     {
       "id": "RULE-CHARACTER-CREATION-EQUIPMENT-CHOICES",

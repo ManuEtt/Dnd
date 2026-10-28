@@ -29,6 +29,7 @@ import 'multiclass_selection_dialog.dart';
 import 'equipment_catalog_dialog.dart';
 import 'equipment_loadout_dialog.dart';
 import 'spellcasting_dialog.dart';
+import 'srd_creation_audit_dialog.dart';
 
 /// Edits nullable values explicitly: an imported unknown score stays unknown.
 class CharacterEditor extends StatefulWidget {
@@ -866,73 +867,80 @@ class _CharacterEditorState extends State<CharacterEditor> {
   Future<void> _inspectSrdCreation() async {
     try {
       final json = Map<String, dynamic>.from(_original);
+      int? enteredInteger(String field) {
+        final text = _fields[field]!.text.trim();
+        if (text.isEmpty) return null;
+        final value = int.tryParse(text);
+        if (value == null) {
+          throw const FormatException(
+            'Zahlenfelder müssen ganze Zahlen enthalten. '
+            'Bitte die ungültige Eingabe korrigieren.',
+          );
+        }
+        return value;
+      }
+
       for (final field in ['name', 'species', 'className', 'background']) {
         json[field] = _fields[field]!.text.trim();
       }
-      for (final field in [
-        'level',
-        'hitPoints',
-        'maxHitPoints',
-        'armorClass',
-        'speed',
-        'gold',
-      ]) {
-        json[field] = int.tryParse(_fields[field]!.text.trim());
+      final level = enteredInteger('level');
+      if (level == null) {
+        throw const FormatException(
+          'Für die SRD-Prüfung zuerst die Stufe eintragen (1 bis 20).',
+        );
       }
-      for (final field in ['skills', 'savingThrowProficiencies']) {
+      json['level'] = level;
+      for (final field in ['hitPoints', 'maxHitPoints', 'armorClass', 'gold']) {
+        json[field] = enteredInteger(field);
+      }
+      final speedText = _fields['speed']!.text.trim();
+      if (speedText.isEmpty) {
+        json['speed'] = null;
+        json.remove('speedRemainderDecimeters');
+      } else {
+        final speed = SrdStartingCombatValues.parseSpeedDecimeters(speedText);
+        json['speed'] = speed ~/ 10;
+        json['speedRemainderDecimeters'] = speed % 10;
+      }
+      for (final field in [
+        'skills',
+        'savingThrowProficiencies',
+        'features',
+        'spells',
+      ]) {
         json[field] = _listFieldValues(field);
       }
       json['abilities'] = {
         for (final entry in _scores.entries)
-          entry.key: int.tryParse(entry.value.text.trim()),
+          entry.key: () {
+            final text = entry.value.text.trim();
+            if (text.isEmpty) return null;
+            final value = int.tryParse(text);
+            if (value == null) {
+              throw FormatException(
+                '${abilityLabels[entry.key]} muss eine ganze Zahl sein.',
+              );
+            }
+            return value;
+          }(),
       };
+      // Keep the explicitly confirmed origin visible to the audit, including
+      // contradictions introduced by later unsaved edits. This snapshot is
+      // never stored; existing historical origins are preserved otherwise.
+      if (_confirmedStartingAbilityOrigin != null) {
+        json['startingAbilityOrigin'] = _confirmedStartingAbilityOrigin!
+            .toJson();
+      }
       final draft = HeroCharacter.fromJson(json);
-      final steps = SrdCharacterCreationAudit.inspect(draft);
+      final steps = SrdCharacterCreationAudit.inspect(
+        draft,
+        manualAbilityHouseRule: _manualAbilityException,
+      );
       if (!mounted) return;
+      setState(() => _error = null);
       await showDialog<void>(
         context: context,
-        builder: (dialogContext) => AlertDialog(
-          title: const Text('SRD-Charaktererstellung prüfen'),
-          content: SizedBox(
-            width: 430,
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                const Text(
-                  'Die Übersicht unterscheidet bestätigte Daten, '
-                  'fehlende Angaben und noch nicht automatisierte Regeln. '
-                  'Sie bescheinigt noch keine vollständige SRD-Regeltreue.',
-                ),
-                for (final step in steps)
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: Icon(
-                      step.status == CreationStepStatus.confirmed
-                          ? Icons.check_circle_outline
-                          : step.status == CreationStepStatus.missing
-                          ? Icons.error_outline
-                          : Icons.info_outline,
-                    ),
-                    title: Text(step.title),
-                    subtitle: Text(step.detail),
-                    trailing: Text(
-                      step.status == CreationStepStatus.confirmed
-                          ? 'Erfasst'
-                          : step.status == CreationStepStatus.missing
-                          ? 'Fehlt'
-                          : 'Offen',
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('Schließen'),
-            ),
-          ],
-        ),
+        builder: (_) => SrdCreationAuditDialog(steps: steps),
       );
     } catch (error) {
       if (mounted) setState(() => _error = 'SRD-Prüfung: $error');
