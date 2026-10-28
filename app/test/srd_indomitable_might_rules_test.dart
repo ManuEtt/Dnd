@@ -77,20 +77,21 @@ void main() {
     test(
       'keine Wirkung auf Angriffe, Initiative, Todesrettung, GE oder KO',
       () {
-      final hero = _barbarian(18);
-      for (final kind in [
-        SrdD20CheckKind.attack,
-        SrdD20CheckKind.initiative,
-        SrdD20CheckKind.deathSave,
-      ]) {
-        expect(_resolve(hero, 'strength', kind, 2), 2);
-      }
-      expect(_resolve(hero, 'dexterity', SrdD20CheckKind.abilityCheck, 2), 2);
-      expect(
-        _resolve(hero, 'constitution', SrdD20CheckKind.savingThrow, 2),
-        2,
-      );
-    });
+        final hero = _barbarian(18);
+        for (final kind in [
+          SrdD20CheckKind.attack,
+          SrdD20CheckKind.initiative,
+          SrdD20CheckKind.deathSave,
+        ]) {
+          expect(_resolve(hero, 'strength', kind, 2), 2);
+        }
+        expect(_resolve(hero, 'dexterity', SrdD20CheckKind.abilityCheck, 2), 2);
+        expect(
+          _resolve(hero, 'constitution', SrdD20CheckKind.savingThrow, 2),
+          2,
+        );
+      },
+    );
 
     test('Zweitklasse benötigt 18 Barbarenstufen, nicht Gesamtstufe', () {
       final valid = _barbarian(18, secondClass: true);
@@ -124,47 +125,49 @@ void main() {
     test(
       'Anwendung ist rein und verändert keinen gespeicherten Charakter',
       () {
-      final hero = _barbarian(18);
-      final original = hero.toJson();
-      expect(_resolve(hero, 'strength', SrdD20CheckKind.savingThrow, 1), 18);
-      expect(hero.toJson(), original);
-      expect(HeroCharacter.fromJson(original).toJson(), original);
-    });
+        final hero = _barbarian(18);
+        final original = hero.toJson();
+        expect(_resolve(hero, 'strength', SrdD20CheckKind.savingThrow, 1), 18);
+        expect(hero.toJson(), original);
+        expect(HeroCharacter.fromJson(original).toJson(), original);
+      },
+    );
 
     test(
       'manueller Stärke-Rettungswurf nutzt nur den effektiven Gesamtwert',
       () {
-      final engine = GameEngine(
-        dice: DiceEngine(random: _FixedRandom(1)),
-        clock: () => DateTime.utc(2026, 10, 28),
-      );
-      final demo = engine.createDemo();
-      final campaign = demo.copyWith(
-        hero: _barbarian(18).copyWith(id: demo.hero.id),
-      );
-      final result = engine.act(campaign, 'Rettungswurf: Stärke SG 17');
-      expect(result.events.single.type, 'saving.roll');
-      expect(result.events.single.payload['total'], 18);
-      expect(result.events.single.payload['rawTotal'], 11);
-      expect(
-        result.events.single.payload['classFeature'],
-        'indomitableMight',
-      );
-      expect(result.events.single.payload['failed'], isFalse);
-      expect(
-        Campaign.fromJson(result.campaign.toJson()).hero.toJson(),
-        campaign.hero.toJson(),
-      );
-      final noFeature = engine.act(
-        demo.copyWith(hero: _barbarian(17).copyWith(id: demo.hero.id)),
-        'Rettungswurf: Stärke SG 17',
-      );
-      expect(noFeature.events.single.payload['failed'], isTrue);
-      expect(
-        noFeature.events.single.payload.containsKey('classFeature'),
-        isFalse,
-      );
-    });
+        final engine = GameEngine(
+          dice: DiceEngine(random: _FixedRandom(1)),
+          clock: () => DateTime.utc(2026, 10, 28),
+        );
+        final demo = engine.createDemo();
+        final campaign = demo.copyWith(
+          hero: _barbarian(18).copyWith(id: demo.hero.id),
+        );
+        final result = engine.act(campaign, 'Rettungswurf: Stärke SG 17');
+        expect(result.events.single.type, 'saving.roll');
+        expect(result.events.single.payload['total'], 18);
+        expect(result.events.single.payload['rawTotal'], 11);
+        expect(
+          result.events.single.payload['classFeature'],
+          'indomitableMight',
+        );
+        expect(result.events.single.payload['failed'], isFalse);
+        expect(
+          Campaign.fromJson(result.campaign.toJson()).hero.toJson(),
+          campaign.hero.toJson(),
+        );
+        final noFeature = engine.act(
+          demo.copyWith(hero: _barbarian(17).copyWith(id: demo.hero.id)),
+          'Rettungswurf: Stärke SG 17',
+        );
+        expect(noFeature.events.single.payload['failed'], isTrue);
+        expect(
+          noFeature.events.single.payload.containsKey('classFeature'),
+          isFalse,
+        );
+      },
+    );
 
     test('Rettungswürfe anderer Attribute erhalten keine Mindestwerte', () {
       final engine = GameEngine(
@@ -189,33 +192,34 @@ void main() {
     test(
       'Athletik in Rabenwacht nutzt den bestätigten Stärke-Mindestwert',
       () {
-      final engine = GameEngine(
-        dice: DiceEngine(random: _FixedRandom(1)),
-      );
-      final hero = _barbarian(18);
-      final base = engine.createRabenwacht(hero);
-      final campaign = base.copyWith(
-        storyBible: {...base.storyBible, 'stage': 'stairs'},
-      );
-      final requested = engine
-          .act(campaign, 'Ich klettere über den Abgrund.')
-          .campaign;
-      expect(requested.pendingRoll?.type, 'preparedCheck');
-      expect(requested.pendingRoll?.targetName, 'strength|Athletik');
-      final saved = Campaign.fromJson(requested.toJson());
-      final resolved = engine.resolveRoll(saved, natural: 1);
-      expect(resolved.events.single.type, 'roll.resolved');
-      expect(
-        resolved.events.single.payload['classFeature'],
-        'indomitableMight',
-      );
-      expect(resolved.events.single.payload['effectiveTotal'], 18);
-      expect(resolved.events.single.payload['roll']['natural'], 1);
-      expect(resolved.events.single.payload['passed'], isTrue);
-      expect(
-        Campaign.fromJson(resolved.campaign.toJson()).toJson(),
-        resolved.campaign.toJson(),
-      );
-    });
+        final engine = GameEngine(
+          dice: DiceEngine(random: _FixedRandom(1)),
+        );
+        final hero = _barbarian(18);
+        final base = engine.createRabenwacht(hero);
+        final campaign = base.copyWith(
+          storyBible: {...base.storyBible, 'stage': 'stairs'},
+        );
+        final requested = engine
+            .act(campaign, 'Ich klettere über den Abgrund.')
+            .campaign;
+        expect(requested.pendingRoll?.type, 'preparedCheck');
+        expect(requested.pendingRoll?.targetName, 'strength|Athletik');
+        final saved = Campaign.fromJson(requested.toJson());
+        final resolved = engine.resolveRoll(saved, natural: 1);
+        expect(resolved.events.single.type, 'roll.resolved');
+        expect(
+          resolved.events.single.payload['classFeature'],
+          'indomitableMight',
+        );
+        expect(resolved.events.single.payload['effectiveTotal'], 18);
+        expect(resolved.events.single.payload['roll']['natural'], 1);
+        expect(resolved.events.single.payload['passed'], isTrue);
+        expect(
+          Campaign.fromJson(resolved.campaign.toJson()).toJson(),
+          resolved.campaign.toJson(),
+        );
+      },
+    );
   });
 }
