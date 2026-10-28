@@ -14,7 +14,7 @@ https://www.dndbeyond.com/srd
 - ClassResourceRules.afterShortRest verbindet die Regel mit der bestehenden generischen Ressourcenregeneration.
 - GameEngine erlaubt ausdrücklich bestätigte kurze Rast **ohne Trefferwürfelverbrauch**, wenn nur dieser Ranger-Effekt ansteht, auch bei vollständigen HP und ohne übrige Trefferwürfel. Dokumentation im Ereignis (exhaustionBefore/After).
 - RestRules.shortRest (mit tatsächlichem Hit-Dice-Verbrauch) verwendet bereits ClassResourceRules.afterShortRest und erhält den Effekt ohne zusätzliche Doppelbuchung.
-- Exportierter Regelbaustein, Runtime-Teilstatus und Testpaket mit zehn Tests.
+- Exportierter Regelbaustein, Runtime-Teilstatus und Testpaket mit elf Tests.
 
 ## Grenzen
 
