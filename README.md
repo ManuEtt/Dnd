@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – Geschützte Branches bleiben bei der automatischen Bereinigung erhalten (28.10.2026)
+
+Der aktive GitHub-Actions-Workflow zur Archivierung vollständig integrierter Pull-Request-Branches prüft nun zusätzlich das GitHub-Flag `branch.protected`. Geschützte Branches werden **vor** SHA-Vergleich und möglicher Löschung übersprungen; die vorhandenen Schutzmechanismen für offene PRs, Archive und geänderte Referenzen bleiben erhalten. Ein Python-Test prüft den positiven Guard, negative Manipulationen und die bisherigen Sicherheitsbedingungen. [PR #335](https://github.com/ManuEtt/Dnd/pull/335) ist ein Draft bis zur neuen CI-Abnahme. Keine Branchlöschungen in diesem Paket, keine Spielstands-, SRD- oder Versionsänderung.
+
+
 ## Chat B – NPC-Auswahl mit absturzsicherem Sendeauftrag (27.10.2026)
 
 In generativen KI-Kampagnen erscheint am Texteingabefeld die Aktion **„NPC auswählen“**, wenn die bestehende Erzählsitzung `npc-selection-v1` unterstützt. Ein deutscher, scrollbarer und für Screenreader beschrifteter Dialog zeigt bestätigte NPCs samt Beziehung und eindeutiger Kennung – auch wenn mehrere den gleichen Namen haben. Nur ein ausdrücklicher Tipp auf eine Figur bindet ihre ID an den ausstehenden Spielzug. Ohne NPC-Auswahl funktioniert die Texteingabe unverändert. Das Gegenstück ist die revisionsgeprüfte Controller-Anbindung aus [PR #288](https://github.com/ManuEtt/Dnd/pull/288).
