@@ -1,5 +1,20 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## 28.10.2026 – Chat B: lange NPC-Namen im Erzähler-Gedächtnis
+
+[PR #362](https://github.com/ManuEtt/Dnd/pull/362) (Entwurf):
+Eine bestätigte NPC-Beziehungsnotiz wird am 400-UTF-16-Limit nicht länger
+mitten im Namen abgeschnitten. Bei ungewöhnlich langen Anzeigenamen
+erscheint nur eine gültige, gespeicherte NPC-ID als eindeutige Kennung.
+Ohne sichere Kennung wird die betreffende Notiz übersprungen; andere
+gültige Notizen behalten ihre Priorität. Normale kurze Namen bleiben
+unverändert; zwei gleichnamige Figuren werden aus Freitext weiterhin
+nicht erraten. Vier zusätzliche Flutter-Tests prüfen ID-Unterscheidung,
+JSON-Wiederherstellung, unsichere IDs und Rückwärtskompatibilität.
+**Finale CI noch abzunehmen; lokal kein Flutter-/Dart-SDK.**
+Weder Regel-/Heldenzustand noch SQLite3/Kampagnen-JSON1 werden geändert.
+[Chat-B-Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md).
+
 ## 28.10.2026 – Chat C: Inventarnotizen bei großer Android-Schrift
 
 Ein Inventargegenstand kann lange importierte oder selbst verfasste Beschreibungen enthalten. Der reine Lesedialog lässt nun Titel/Text scrollen, während „Schließen“ bei kleinen Displays erreichbar bleibt. [PR #355](https://github.com/ManuEtt/Dnd/pull/355) ist ein **Entwurf** mit drei ergänzten Widgettestfällen für 320/360 dp, doppelte Schriftgröße und leere Beschreibungen. Die Flutter-/Android-CI und echte Geräteprüfung sind **noch nicht bestätigt**. Kein Einfluss auf gespeicherte Gegenstände, Kampagnen, Regelengine oder SQLite/JSON. [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md).

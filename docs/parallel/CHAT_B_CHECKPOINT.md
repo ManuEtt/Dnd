@@ -1,3 +1,18 @@
+# Chat B – Lange NPC-Anzeigenamen im Erzähler-Transport (28.10.2026)
+
+- **Ausgangs-Main:** `854ca85c0234c508f34f00cdbfbef2e10554ca13`; **Branch:** `feat/chat-b/npc-narrator-long-name-id-20261028`; **Fachcommit:** `a6415893a9fc84c6df1bb0872fc2eebd2ee72204`; **PR:** [#362](https://github.com/ManuEtt/Dnd/pull/362) (Draft bis finaler CI).
+- **Problem:** `NpcNarratorMemory.merge` konnte einen überlangen, bestätigten NPC-Anzeigenamen im 400-UTF-16-Limit mitten in der Identität abschneiden. Zwei verschiedene gespeicherte Namen mit gleichem langem Präfix wären dann nicht zu unterscheiden.
+- **IMPLEMENTIERT:** Ist die vollständige Kopfzeile zu lang, verwendet die Erzählerprojektion nur eine eindeutig bestätigte, syntaktisch sichere NPC-ID als Identitätskennung. Ohne sichere Kennung wird der Notizeintrag ausgelassen. Ungültige Übersprungeinträge verbrauchen das `npcNoteLimit` nicht. Normale Kurzbezeichnungen und das bisherige Wire-Limit bleiben kompatibel.
+- **GEÄNDERTE DATEIEN:** `app/lib/story/npc_narrator_memory.dart`; neu `app/test/npc_narrator_memory_long_name_test.dart`; README; `docs/CODEX_CHECKPOINT.md`; persönlicher Checkpoint.
+- **AKZEPTANZ:** Zwei eindeutige lange NPCs aus JSON mit verschiedenen IDs bleiben getrennt, ungültige ID wird nicht gesendet und verdrängt keine gültige Notiz, normalisierte doppelte Langnamen werden nicht aus Freitext geraten, kurze Namen und Null-Notizlimit unverändert. Keine Änderungen am Helden-/Regelzustand.
+- **TESTS:** Vier Flutter-Regressionen hinzugefügt; GitHub-Basis, offene PR-Dateien und Branch-Diff geprüft. **NICHT TESTBAR LOKAL:** Flutter/Dart/Android fehlen, `git ls-remote` scheitert durch DNS; GitHub-CI auf endgültigem PR-HEAD separat auswerten. Keine Testresultate erfunden.
+- **KONFLIKTE:** PR #356 betrifft `story_memory_engine.dart`, nicht die beiden neuen Fachdateien. Andere offene PRs #357–#361 haben andere Fachdateien. README und zentralen Checkpoint vor Merge mit Chat D additiv konsolidieren. Keine Änderung an fremden Branches.
+- **MIGRATION:** Keine; SQLite-Schema 3, Kampagnen-JSON-Schema 1, SRD- und Providerverträge, App-Version unverändert.
+- **BLOCKIERT:** Bis zum Nachweis einer vollständigen grünen finalen CI nicht reviewbereit; echtes Android-Gerät und Produktiv-KI nicht geprüft.
+- **NÄCHSTER SCHRITT:** Nach Integration des unabhängigen PR #356 gezielten `MemoryEngine.retrieve`-Abruf mit maximal 400 Codeeinheiten gegen unvollständige NPC-IDs absichern, mit positiven und negativen Grenztests.
+
+---
+
 # Chat B – Sitzungsidentität beim Ereignis-Replay (27.10.2026)
 
 - **main-Basis:** `96001353f2b90f293fbdade934e78b7b8281e965`; Branch `fix/chat-b/story-replay-session-identity-20261027`.

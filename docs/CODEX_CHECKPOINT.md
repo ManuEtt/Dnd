@@ -1,3 +1,12 @@
+## 28.10.2026 – Chat B: lange NPC-Namen im KI-Erzählerspeicher
+
+- **Main-Basis:** `854ca85c0234c508f34f00cdbfbef2e10554ca13`; **Branch:** `feat/chat-b/npc-narrator-long-name-id-20261028`; **Fachcommit:** `a6415893a9fc84c6df1bb0872fc2eebd2ee72204`; [PR #362](https://github.com/ManuEtt/Dnd/pull/362) (Entwurf bis CI-Abnahme).
+- **IMPLEMENTIERT:** Das 400-Code-Unit-Gedächtnisbudget schneidet überlange NPC-Namen nicht mehr mitten in der Identität ab; stattdessen wird nur eine bestätigte gültige NPC-ID ausgegeben oder der Eintrag verworfen. Dadurch bleiben Name/ID-Verwechslungen und durch ungültige Einträge verdrängte gültige Notizen aus. Kurznamen, allgemeine Erinnerungen und Regelgrenzen bleiben unverändert.
+- **REGRESSIONEN:** Vier neue Flutter-Tests für lange ähnliche Namen/JSON-Roundtrip, ungültige ID/Quotennachfüllung, gleichnamige Langnamen und bisheriges Kurzformat.
+- **GETESTET:** Repository, Branch- und offene PR-Dateibereiche über GitHub geprüft. **NICHT GETESTET:** Flutter-/Android- und vollständige CI auf finalem PR-HEAD, Realgerät, Produktiv-KI. Fehlendes lokales Flutter-/Dart-SDK als Blocker dokumentiert. Keine Migration von SQLite3/JSON1.
+- **KOLLISION:** Kein Fachdatei-Konflikt mit weiterhin offenem PR #356 oder #357–#361. Gemeinsame Dokumentationsnachträge durch Chat D bei Integration zusammenführen. [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md).
+- **NÄCHSTER SCHRITT:** Nach Merge von PR #356 den davon bisher blockierten 400-Code-Unit-Abruf in `story_memory_engine.dart` unabhängig testen und absichern.
+
 ## 28.10.2026 – Chat C: scrollbarer Inventardialog (PR #355)
 
 **Basis:** main `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78`; Branch `feat/chat-c/scrollable-inventory-details-20261028`; Code-/Teststand `ae9d4dc6ee6d359b44fdde44199a71b7817a4938`; [PR #355](https://github.com/ManuEtt/Dnd/pull/355) als Entwurf.
