@@ -1,6 +1,5 @@
 import 'models.dart';
 import 'srd_savage_attacker_damage_comparison.dart';
-import 'srd_savage_attacker_pending_hit.dart';
 
 /// A validated *preview* of one explicit Savage Attacker decision.
 ///
