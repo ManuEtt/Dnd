@@ -4,7 +4,10 @@ import '../domain/character_rule_engine.dart';
 import '../domain/class_progression_rules.dart';
 import '../domain/class_feature_resources.dart';
 import '../domain/class_resource_rules.dart';
+import '../domain/srd_ranger_feral_senses_rules.dart';
+import '../domain/srd_monk_slow_fall_rules.dart';
 import '../domain/srd_class_feature_catalog.dart';
+import '../domain/srd_class_automation.dart';
 import '../domain/models.dart';
 import '../domain/multiclass_rules.dart';
 import '../domain/rest_rules.dart';
@@ -759,25 +762,37 @@ class _AbilitiesSection extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                for (final feature in SrdClassFeatureCatalog.unlocked(hero))
+                for (final entry in SrdClassAutomation.unlocked(hero))
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 2),
                     child: Text(
-                      '${feature.className} ${feature.classLevel} · '
-                      '${feature.name}${feature.isSubclass ? ' (Unterklasse)' : ''} '
-                      '· ${feature.automation == FeatureAutomation.automatic ? 'Berechnet' : 'Regelprüfung erforderlich'}',
+                      '${entry.feature.className} ${entry.feature.classLevel} · '
+                      '${entry.feature.name}${entry.feature.isSubclass ? ' (Unterklasse)' : ''} '
+                      '· ${entry.statusLabel}',
                       style: TextStyle(
-                        color: feature.automation == FeatureAutomation.automatic
-                            ? _ivory
-                            : _muted,
+                        color: entry.hasSupportedMechanics ? _ivory : _muted,
                         fontSize: 12,
                       ),
                     ),
                   ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Automatisch abgeleitete Klassenwerte',
+                  style: TextStyle(color: _gold, fontSize: 12),
+                ),
+                for (final value in SrdClassAutomation.derivedValues(hero))
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2),
+                    child: Text(
+                      '${value.className} · ${value.name}: ${value.value}',
+                      style: const TextStyle(color: _ivory, fontSize: 12),
+                    ),
+                  ),
                 const SizedBox(height: 6),
                 const Text(
-                  'Die Auflistung ist kein Nachweis, dass sämtliche '
-                  'Merkmalswirkungen automatisch simuliert werden.',
+                  'Berechnete Werte sind keine automatisch gewählten Zauber, '
+                  'Talente oder Unterklasseneffekte. Teilautomatik und '
+                  'offene Entscheidungen benötigen eine eigene Regelprüfung.',
                   style: TextStyle(color: _muted, fontSize: 11),
                 ),
               ],
@@ -1105,6 +1120,13 @@ class _DefensesSection extends StatelessWidget {
             value:
                 '${ClassResourceRules.remaining(hero, 'indomitable')} / ${ClassResourceRules.maximum(hero, 'indomitable')}',
           ),
+        if (SrdMonkSlowFallRules.maximumReduction(hero) != null)
+          _DetailRow(
+            icon: Icons.airline_stops_outlined,
+            label: 'Sanfter Fall (Reaktion)',
+            value:
+                'Bis zu ${SrdMonkSlowFallRules.maximumReduction(hero)} Schaden verhindern',
+          ),
         _DetailRow(
           icon: Icons.directions_run,
           label: 'Bewegung (effektiv)',
@@ -1119,6 +1141,12 @@ class _DefensesSection extends StatelessWidget {
             value:
                 '${_meters(CharacterRuleEngine.rovingClimbSpeedMeters(hero))} / '
                 '${_meters(CharacterRuleEngine.rovingSwimSpeedMeters(hero))}',
+          ),
+        if (SrdRangerFeralSensesRules.blindsightRangeFeet(hero) != null)
+          _DetailRow(
+            icon: Icons.visibility_outlined,
+            label: 'Blindsicht (Feral Senses)',
+            value: '9 m (30 Fuß)',
           ),
         _DetailRow(
           icon: Icons.gps_fixed,

@@ -281,6 +281,9 @@ class SrdClassFeatureCatalog {
     'Jack of All Trades',
     'Reliable Talent',
     'Slippery Mind',
+    // Numeric level-20 capstones are applied by SrdClassLevelUpRules.
+    'Primal Champion',
+    'Body and Mind',
   };
   static const Set<String> _partialNames = {
     'Spellcasting',
@@ -299,9 +302,15 @@ class SrdClassFeatureCatalog {
     'Martial Arts',
     'Unarmored Defense',
     'Remarkable Athlete',
+    // A confirmed Reaction damage preflight exists, but HP/reaction
+    // expenditure is not yet committed atomically in an encounter.
+    'Slow Fall',
     // Speed and derived movement types work; climbing/swimming terrain
     // expenditure still requires a dedicated confirmed movement action.
     'Roving',
+    // Range is derived automatically, but target detection is not resolved
+    // without confirmed cover, distance and concealment.
+    'Feral Senses',
   };
 
   static final Map<String, List<SrdClassFeature>> _catalog = {

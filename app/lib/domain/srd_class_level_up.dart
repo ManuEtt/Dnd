@@ -28,6 +28,7 @@ class SrdClassLevelUpProposal {
     required this.chosenSubclass,
     required this.isSecondary,
     required this.abilityIncreases,
+    required this.automaticAbilityIncreases,
   });
 
   final String sourceSnapshot;
@@ -39,6 +40,9 @@ class SrdClassLevelUpProposal {
   final String chosenSubclass;
   final bool isSecondary;
   final Map<String, int> abilityIncreases;
+
+  /// Confirmed, choice-free SRD features; never folded into a voluntary feat.
+  final Map<String, int> automaticAbilityIncreases;
 
   HeroCharacter applyTo(HeroCharacter hero) {
     if (jsonEncode(hero.toJson()) != sourceSnapshot) {
@@ -77,6 +81,11 @@ class SrdClassLevelUpProposal {
         ...hero.abilities,
         for (final change in abilityIncreases.entries)
           change.key: hero.abilities[change.key]! + change.value,
+        for (final change in automaticAbilityIncreases.entries)
+          change.key:
+              hero.abilities[change.key]! +
+              (abilityIncreases[change.key] ?? 0) +
+              change.value,
       },
       maxHitPoints: hero.maxHitPoints! + hpGain,
       hitPoints: hero.hitPoints! + hpGain,
@@ -210,9 +219,19 @@ class SrdClassLevelUpRules {
             feature.name != 'Epic Boon')
           'Klassenwahl: ${feature.name}',
     };
+    // SRD 5.2.1: the level-20 Barbarian/Monk capstones increase confirmed
+    // ability scores without a player choice (both cap at 25). These are
+    // granted for the *class* reaching 20, not total multiclass level 20.
+    final automaticIncreases = _level20CapstoneIncreases(
+      hero,
+      selected.name,
+      classLevel,
+    );
     final oldConModifier = RulesEngine.abilityModifier(con);
     final newConModifier = RulesEngine.abilityModifier(
-      con + (abilityIncreases['constitution'] ?? 0),
+      con +
+          (abilityIncreases['constitution'] ?? 0) +
+          (automaticIncreases['constitution'] ?? 0),
     );
     final fixedHpGain = math.max(1, selected.hitDie ~/ 2 + 1 + oldConModifier);
     // A Constitution modifier change affects HP for every total level,
@@ -235,6 +254,35 @@ class SrdClassLevelUpRules {
       chosenSubclass: chosenSubclass,
       isSecondary: isSecondary,
       abilityIncreases: Map.unmodifiable(abilityIncreases),
+      automaticAbilityIncreases: Map.unmodifiable(automaticIncreases),
     );
+  }
+
+  /// Only self-contained numerical SRD capstones may be applied here.
+  /// Choice-based boons, subclasses, and contextual combat effects stay
+  /// outside this path until their own rule engines can validate them.
+  static Map<String, int> _level20CapstoneIncreases(
+    HeroCharacter hero,
+    String className,
+    int nextClassLevel,
+  ) {
+    if (nextClassLevel != 20) return const {};
+    final keys = switch (className) {
+      'Barbar' => const ['strength', 'constitution'], // Primal Champion
+      'Mönch' => const ['dexterity', 'wisdom'], // Body and Mind
+      _ => const <String>[],
+    };
+    final increases = <String, int>{};
+    for (final key in keys) {
+      final current = hero.abilities[key];
+      if (current == null) {
+        throw FormatException('Für das Klassenmerkmal $key bestätigen.');
+      }
+      // Scores from other confirmed effects may already exceed 25. A
+      // capstone must never reduce such a score or silently replace it.
+      final gain = math.max(0, math.min(25, current + 4) - current);
+      if (gain > 0) increases[key] = gain;
+    }
+    return increases;
   }
 }

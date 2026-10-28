@@ -111,6 +111,19 @@ def unique_gradle_property(text: str, key: str) -> str | None:
     return candidates[0] if len(candidates) == 1 else None
 
 
+def _has_symlink_component(root: Path, relative_path: str) -> bool:
+    """Reject links in a required file or any of its parent directories.
+
+    Checking only Path.is_file() follows symlinks and can mistake external
+    files for uploaded project contents.
+    """
+    current = root
+    for part in Path(relative_path).parts:
+        current = current / part
+        if current.is_symlink():
+            return True
+    return False
+
 
 def verify_project(root: Path) -> list[str]:
     """Return safe, actionable errors; allow arbitrary additional project files."""
@@ -125,6 +138,12 @@ def verify_project(root: Path) -> list[str]:
     errors = []
     for name in REQUIRED_FILES:
         path = root / name
+        if _has_symlink_component(root, name):
+            errors.append(
+                f'Pflichtdatei oder Elternverzeichnis ist ein symbolischer Link: {name}. '
+                'Originaldatei aus dem Quell-ZIP übernehmen.'
+            )
+            continue
         if not path.is_file():
             hint = ' Versteckte Dateien beim Entpacken und Upload einblenden.' if name.startswith('.') else ''
             errors.append(f'Pflichtdatei fehlt: {name}.{hint}')
@@ -133,7 +152,8 @@ def verify_project(root: Path) -> list[str]:
 
     for name in ('backend/package.json', 'backend/package-lock.json'):
         path = root / name
-        if path.is_file() and path.stat().st_size:
+        if (not _has_symlink_component(root, name)
+                and path.is_file() and path.stat().st_size):
             try:
                 if not isinstance(json.loads(path.read_text(encoding='utf-8')), dict):
                     raise ValueError('object expected')
@@ -141,7 +161,8 @@ def verify_project(root: Path) -> list[str]:
                 errors.append(f'Ungültige JSON-Datei: {name}. Originaldatei aus dem Quell-ZIP übernehmen.')
 
     wrapper = root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
-    if wrapper.is_file() and wrapper.stat().st_size:
+    if (not _has_symlink_component(root, 'app/android/gradle/wrapper/gradle-wrapper.jar')
+            and wrapper.is_file() and wrapper.stat().st_size):
         try:
             if wrapper.stat().st_size > MAX_WRAPPER_JAR_BYTES:
                 raise ValueError('wrapper JAR is too large')
@@ -180,7 +201,8 @@ def verify_project(root: Path) -> list[str]:
 
 
     properties = root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
-    if properties.is_file() and properties.stat().st_size:
+    if (not _has_symlink_component(root, 'app/android/gradle/wrapper/gradle-wrapper.properties')
+            and properties.is_file() and properties.stat().st_size):
         try:
             text = properties.read_text(encoding='utf-8')
         except (OSError, UnicodeError):
@@ -195,7 +217,8 @@ def verify_project(root: Path) -> list[str]:
             errors.append('Gradle benötigt genau eine gültige festgelegte HTTPS-Distribution in gradle-wrapper.properties.')
 
     launcher = root / 'app/android/gradlew'
-    if launcher.is_file() and launcher.stat().st_size:
+    if (not _has_symlink_component(root, 'app/android/gradlew')
+            and launcher.is_file() and launcher.stat().st_size):
         try:
             first_line = launcher.read_bytes().split(b'\n', 1)[0]
             if not first_line.startswith(b'#!') or first_line.endswith(b'\r'):

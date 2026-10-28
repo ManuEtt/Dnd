@@ -41,6 +41,7 @@ import 'confirmed_spell_effect_dialog.dart';
 import 'sending_attempt_dialog.dart';
 import 'experience_reward_dialog.dart';
 import 'hero_shield_reaction_dialog.dart';
+import 'monk_slow_fall_dialog.dart';
 import '../domain/hero_shield_reaction_rules.dart';
 import 'magic_missile_dialog.dart';
 import 'fire_bolt_dialog.dart';
@@ -69,6 +70,7 @@ import 'fantasy_combat_chronicle.dart';
 import 'character_portrait_picker.dart';
 import 'campaign_memory_panel.dart';
 import 'npc_story_selection_dialog.dart';
+import 'pending_action_status.dart';
 
 const _gold = Color(0xffddb96c);
 const _ink = Color(0xff0d1927);
@@ -1636,6 +1638,58 @@ class _AdventurePageState extends State<_AdventurePage> {
     if (mounted) await _afterTurn(previous);
   }
 
+  Future<void> _confirmSlowFall() async {
+    final campaign = widget.controller.currentCampaign;
+    final encounter = campaign?.encounter;
+    if (campaign == null ||
+        encounter == null ||
+        !_canInteract ||
+        encounter.isFinished ||
+        encounter.reactionUsed ||
+        ClassResourceRules.level(campaign.hero, 'Mönch') < 4) {
+      return;
+    }
+    final choice = await showDialog<ConfirmedSlowFallChoice>(
+      context: context,
+      builder: (_) =>
+          MonkSlowFallDialog(hero: campaign.hero, encounter: encounter),
+    );
+    if (choice == null || !mounted) return;
+    // The dialog keeps its original hero/encounter snapshot while it is open.
+    // If another action changed the campaign, do not present the now-stale
+    // confirmation as if it could be applied to the current state.
+    final current = widget.controller.currentCampaign;
+    if (!_canInteract ||
+        current?.id != campaign.id ||
+        current?.revision != campaign.revision ||
+        current?.encounter?.id != encounter.id ||
+        current?.encounter?.reactionUsed != encounter.reactionUsed) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          key: ValueKey('slow-fall-stale-feedback'),
+          content: Text(
+            'Der Spielstand hat sich geändert. Sanften Fall bitte erneut öffnen.',
+          ),
+        ),
+      );
+      return;
+    }
+    final previous = _lastMessageId;
+    await widget.voice.stopSpeaking();
+    // Still pass the original revision and encounter. The controller's
+    // authority check closes races that occur after this UI guard.
+    await widget.controller.applyConfirmedSlowFall(
+      campaignId: campaign.id,
+      expectedRevision: campaign.revision,
+      encounterId: encounter.id,
+      confirmedFallDamage: choice.damageAfterDefenses,
+      fallConfirmed: true,
+      playerConfirmedReaction: true,
+      damageAfterOtherDefensesConfirmed: true,
+    );
+    if (mounted) await _afterTurn(previous);
+  }
+
   Future<void> _moveOnConfirmedTerrain(
     SrdTerrainMovement kind,
     int distanceFeet,
@@ -2480,6 +2534,26 @@ class _AdventurePageState extends State<_AdventurePage> {
                     label: 'Gegnerbewegung bestätigen',
                   ),
                 if (campaign.encounter != null &&
+                    !campaign.encounter!.isFinished &&
+                    ClassResourceRules.level(campaign.hero, 'Mönch') >= 4)
+                  FantasyTextButton(
+                    key: const ValueKey('adventure-monk-slow-fall'),
+                    onPressed:
+                        !_canInteract ||
+                            campaign.pendingRoll != null ||
+                            campaign.pendingDeathSave != null ||
+                            campaign.pendingEnemyShieldHit != null ||
+                            campaign.encounter!.reactionUsed ||
+                            campaign.hero.isDead ||
+                            (campaign.hero.hitPoints ?? 0) <= 0 ||
+                            !ConditionRules.canTakeActions(campaign.hero)
+                        ? null
+                        : _confirmSlowFall,
+                    icon: Icons.airline_stops_outlined,
+                    style: FantasyButtonStyle.iron,
+                    label: 'Sanfter Fall',
+                  ),
+                if (campaign.encounter != null &&
                     !campaign.encounter!.isFinished)
                   FantasyTextButton(
                     key: const ValueKey('adventure-register-area-creature'),
@@ -3135,59 +3209,14 @@ class _AdventurePageState extends State<_AdventurePage> {
               accent: FantasyPalette.blue,
               child: Column(
                 children: [
-                  if (_submittingAction)
-                    const SizedBox.shrink(
-                      key: ValueKey('adventure-action-submitting'),
-                    ),
-                  if (_pendingAction != null && !_submittingAction) ...[
-                    const Text(
-                      'Ausstehende Handlung – noch nicht sicher bestätigt',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      _pendingAction!.text,
-                      key: const ValueKey('adventure-pending-action-text'),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 6),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 4,
-                      children: [
-                        FantasyTextButton(
-                          key: const ValueKey('adventure-retry-action'),
-                          label: 'Erneut bestätigen',
-                          icon: Icons.refresh,
-                          style: FantasyButtonStyle.woodGold,
-                          onPressed:
-                              _submittingAction || _ruleInteractionBlocked
-                              ? null
-                              : _retryPending,
-                        ),
-                        FantasyTextButton(
-                          key: const ValueKey('adventure-discard-action'),
-                          label: 'Verwerfen',
-                          icon: Icons.close,
-                          style: FantasyButtonStyle.iron,
-                          onPressed:
-                              _submittingAction || _ruleInteractionBlocked
-                              ? null
-                              : _discardPending,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                  ],
-                  if (_outboxError != null)
-                    Text(
-                      _outboxError!,
-                      key: const ValueKey('adventure-outbox-error'),
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
-                    ),
+                  PendingActionStatus(
+                    pending: _pendingAction,
+                    submitting: _submittingAction,
+                    interactionBlocked: _ruleInteractionBlocked,
+                    error: _outboxError,
+                    onRetry: _retryPending,
+                    onDiscard: _discardPending,
+                  ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
