@@ -102,6 +102,7 @@ class SrdClassAutomation {
     'Unarmored Defense': 'SrdStartingCombatValues',
     'Remarkable Athlete': 'CharacterRuleEngine.initiative',
     'Roving': 'SrdTerrainMovementRules',
+    'Tireless': 'SrdRangerTirelessRules.afterShortRest (Erschöpfung)',
     'Reliable Talent': 'CharacterRuleEngine.abilityCheck (nur Fertigkeiten)',
     'Slow Fall': 'SrdMonkSlowFallRules (Situations- und Ablaufprüfung)',
     'Feral Senses': 'SrdRangerFeralSensesRules (bestätigte Sinnesdaten)',
