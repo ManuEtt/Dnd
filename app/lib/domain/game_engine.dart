@@ -8,6 +8,7 @@ import 'confirmed_spell_effects.dart';
 import 'prone_movement_rules.dart';
 import 'crawling_movement_rules.dart';
 import 'srd_terrain_movement_rules.dart';
+import 'srd_long_jump_encounter_rules.dart';
 import 'srd_monk_slow_fall_rules.dart';
 import 'character_rule_engine.dart';
 import 'character_effect_rules.dart';
@@ -31,7 +32,7 @@ import 'two_weapon_fighting_rules.dart';
 import 'monk_focus_actions.dart';
 import 'monk_flurry_rules.dart';
 import 'monk_self_restoration.dart';
-import 'monk_perfect_focus.dart';
+import 'monk_initiative_features.dart';
 import 'paladin_lay_on_hands.dart';
 import 'saving_throw_class_actions.dart';
 import 'ai_story.dart';
@@ -339,7 +340,10 @@ class GameEngine {
 
   /// Player opt-in converts the untrusted AI proposal into exactly one local
   /// quest + one vetted enemy encounter. Initiatives are rolled locally.
-  GameUpdate acceptAdventure(Campaign campaign) {
+  GameUpdate acceptAdventure(
+    Campaign campaign, {
+    bool useUncannyMetabolism = false,
+  }) {
     final offer = campaign.adventureOffer;
     if (offer == null ||
         campaign.storyBible['mode'] != 'ai' ||
@@ -414,7 +418,11 @@ class GameEngine {
       disadvantage: initiative.disadvantage,
     );
     final enemyInitiative = dice.check(modifier: 0);
-    final focus = MonkPerfectFocus.onInitiative(campaign.hero);
+    final focus = MonkInitiativeFeatures.onInitiative(
+      campaign.hero,
+      useUncannyMetabolism: useUncannyMetabolism,
+      dice: dice,
+    );
     var next = campaign.copyWith(
       hero: focus.hero,
       adventureOffer: null,
@@ -457,7 +465,12 @@ class GameEngine {
       'template': valid.archetype,
       'heroInitiative': heroInitiative.toJson(),
       'enemyInitiative': enemyInitiative.toJson(),
-      'focusRecoveredAtInitiative': focus.recovered,
+      'focusRecoveredAtInitiative': focus.focusRecovered,
+      if (focus.uncannyMetabolismUsed) ...{
+        'uncannyMetabolismUsed': true,
+        'uncannyMetabolismHealing': focus.hitPointsRecovered,
+        'uncannyMetabolismDieRoll': focus.martialArtsDieRoll,
+      },
     };
     if (enemyInitiative.total > heroInitiative.total) {
       final turn = _enemyTurn(next, advanceRound: false);
@@ -1131,6 +1144,106 @@ class GameEngine {
         ),
         'movementSpentDecimeters': cost,
         'movementRemainingDecimeters': updated.remainingMovementDecimeters,
+      },
+    );
+  }
+
+  /// Persistable Long Jump transition. The movement receipt must be the
+  /// immediately preceding confirmed foot movement in this very encounter.
+  ///
+  /// Controller/SQLite additionally guard request uniqueness and revisions.
+  GameUpdate confirmLongJump(
+    Campaign campaign, {
+    required String expectedEncounterId,
+    required int expectedRevision,
+    required String requestId,
+    required bool playerConfirmed,
+    required int immediateRunUpFeet,
+    required int jumpDistanceCentimeters,
+    required bool? landingInDifficultTerrainConfirmed,
+    required bool obstacleFreePathConfirmed,
+    int? lowObstacleHeightCentimeters,
+    bool? dmRequiresAthleticsCheck,
+    int? confirmedLandingAcrobaticsTotal,
+    int? confirmedObstacleAthleticsTotal,
+  }) {
+    if (!playerConfirmed) {
+      throw const FormatException(
+        'Der Weitsprung muss ausdrücklich bestätigt werden.',
+      );
+    }
+    if (!RegExp(r'^[A-Za-z0-9_-]{1,128}$').hasMatch(requestId)) {
+      throw const FormatException('Ungültige Weitsprung-Handlungskennung.');
+    }
+    _ensureNoOpportunity(campaign);
+    final hasRunUp = immediateRunUpFeet > 0;
+    if (hasRunUp) {
+      // Only full running-start distance is supported by the current
+      // whole-meter ordinary movement action. A partial receipt must not
+      // pretend to prove 9 feet, and a request flag alone proves nothing.
+      if (immediateRunUpFeet != 10 || campaign.events.isEmpty) {
+        throw const FormatException(
+          'Zum Anlauf ist ein unmittelbar verbuchter Fußweg nötig.',
+        );
+      }
+      final movement = campaign.events.last;
+      final snapshot = movement.payload['stateAfter'];
+      if (movement.type != 'combat.moved' ||
+          movement.payload['revision'] != campaign.revision ||
+          movement.payload['meters'] is! int ||
+          (movement.payload['meters'] as int) < 3 ||
+          !movement.entities.contains(campaign.hero.id) ||
+          snapshot is! Map ||
+          snapshot['encounter'] is! Map ||
+          (snapshot['encounter'] as Map)['id'] != expectedEncounterId) {
+        throw const FormatException(
+          'Der bestätigte 10-Fuß-Anlauf fehlt unmittelbar vor dem Sprung.',
+        );
+      }
+    } else if (immediateRunUpFeet != 0) {
+      throw const FormatException('Unzulässiger Weitsprung-Anlauf.');
+    }
+
+    final plan = SrdLongJumpEncounterRules.prepare(
+      campaign: campaign,
+      expectedCampaignId: campaign.id,
+      expectedEncounterId: expectedEncounterId,
+      expectedRevision: expectedRevision,
+      immediateRunUpFeet: immediateRunUpFeet,
+      runUpAlreadySpentConfirmed: hasRunUp,
+      jumpDistanceCentimeters: jumpDistanceCentimeters,
+      landingInDifficultTerrainConfirmed: landingInDifficultTerrainConfirmed,
+      obstacleFreePathConfirmed: obstacleFreePathConfirmed,
+      lowObstacleHeightCentimeters: lowObstacleHeightCentimeters,
+      dmRequiresAthleticsCheck: dmRequiresAthleticsCheck,
+      confirmedLandingAcrobaticsTotal: confirmedLandingAcrobaticsTotal,
+      confirmedObstacleAthleticsTotal: confirmedObstacleAthleticsTotal,
+    );
+    final rest = plan.projectedCampaign.encounter!;
+    return _commit(
+      campaign,
+      plan.projectedCampaign,
+      'Du springst ${ProneMovementRules.formatDecimeters(plan.movementSpentDecimeters)} '
+      'weit. Restbewegung: ${rest.movementRemainingLabel}. '
+      '${plan.addsProne ? 'Die Landung lässt dich liegend zurück.' : 'Der Sprung ist abgeschlossen.'}',
+      type: 'combat.longJumpConfirmed',
+      payload: {
+        'actionRequestId': requestId,
+        'playerConfirmed': true,
+        'encounterId': expectedEncounterId,
+        'expectedRevision': expectedRevision,
+        'immediateRunUpFeet': immediateRunUpFeet,
+        'jumpDistanceCentimeters': jumpDistanceCentimeters,
+        'landingInDifficultTerrainConfirmed':
+            landingInDifficultTerrainConfirmed,
+        'obstacleFreePathConfirmed': obstacleFreePathConfirmed,
+        'lowObstacleHeightCentimeters': lowObstacleHeightCentimeters,
+        'dmRequiresAthleticsCheck': dmRequiresAthleticsCheck,
+        'confirmedLandingAcrobaticsTotal': confirmedLandingAcrobaticsTotal,
+        'confirmedObstacleAthleticsTotal': confirmedObstacleAthleticsTotal,
+        'movementSpentDecimeters': plan.movementSpentDecimeters,
+        'movementRemainingDecimeters': rest.remainingMovementDecimeters,
+        'addsProne': plan.addsProne,
       },
     );
   }
@@ -2689,7 +2802,11 @@ class GameEngine {
     );
   }
 
-  GameUpdate act(Campaign campaign, String input) {
+  GameUpdate act(
+    Campaign campaign,
+    String input, {
+    bool useUncannyMetabolism = false,
+  }) {
     _ensureNoOpportunity(campaign);
     final text = input.trim();
     if (text.isEmpty || text.length > 4000) {
@@ -3470,7 +3587,11 @@ class GameEngine {
         disadvantage: initiative.disadvantage,
       );
       final foeRoll = dice.check(modifier: 2);
-      final focus = MonkPerfectFocus.onInitiative(current.hero);
+      final focus = MonkInitiativeFeatures.onInitiative(
+        current.hero,
+        useUncannyMetabolism: useUncannyMetabolism,
+        dice: dice,
+      );
       var started = scripted.campaign.copyWith(
         hero: focus.hero,
         encounter: Encounter(
@@ -3508,6 +3629,12 @@ class GameEngine {
           'heroInitiative': heroRoll.toJson(),
           'enemyInitiative': foeRoll.toJson(),
           'adventure': 'rabenwacht',
+          'focusRecoveredAtInitiative': focus.focusRecovered,
+          if (focus.uncannyMetabolismUsed) ...{
+            'uncannyMetabolismUsed': true,
+            'uncannyMetabolismHealing': focus.hitPointsRecovered,
+            'uncannyMetabolismDieRoll': focus.martialArtsDieRoll,
+          },
         },
       );
     }
@@ -3697,7 +3824,11 @@ class GameEngine {
         disadvantage: initiative.disadvantage,
       );
       final foeInit = dice.check(modifier: 0);
-      final focus = MonkPerfectFocus.onInitiative(current.hero);
+      final focus = MonkInitiativeFeatures.onInitiative(
+        current.hero,
+        useUncannyMetabolism: useUncannyMetabolism,
+        dice: dice,
+      );
       var next = current.copyWith(
         hero: focus.hero,
         scene: 'Am alten Waldschrein erhebt sich ein Dornenwächter.',
@@ -3730,7 +3861,12 @@ class GameEngine {
       final details = <String, dynamic>{
         'heroInitiative': heroInit.toJson(),
         'enemyInitiative': foeInit.toJson(),
-        'focusRecoveredAtInitiative': focus.recovered,
+        'focusRecoveredAtInitiative': focus.focusRecovered,
+        if (focus.uncannyMetabolismUsed) ...{
+          'uncannyMetabolismUsed': true,
+          'uncannyMetabolismHealing': focus.hitPointsRecovered,
+          'uncannyMetabolismDieRoll': focus.martialArtsDieRoll,
+        },
       };
       if (foeInit.total > heroInit.total) {
         final turn = _enemyTurn(next, advanceRound: false);

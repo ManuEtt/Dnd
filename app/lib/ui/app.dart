@@ -25,6 +25,8 @@ import '../domain/monk_self_restoration.dart';
 import '../services/backup_files.dart';
 import '../services/game_controller.dart';
 import '../services/player_action_outbox.dart';
+import '../services/npc_pending_action_recovery.dart';
+import '../story/npc_story_selection.dart';
 import '../services/voice_controller.dart';
 import 'app_build_info.dart';
 import 'backend_settings_panel.dart';
@@ -67,6 +69,8 @@ import 'fantasy_combat_threat_status.dart';
 import 'fantasy_combat_chronicle.dart';
 import 'character_portrait_picker.dart';
 import 'campaign_memory_panel.dart';
+import 'npc_story_selection_dialog.dart';
+import 'pending_action_status.dart';
 
 const _gold = Color(0xffddb96c);
 const _ink = Color(0xff0d1927);
@@ -1098,7 +1102,10 @@ class _AdventurePageState extends State<_AdventurePage> {
 
   // Typed text, reviewed speech, combat and fixed shortcuts all stage the
   // exact intent before the shared authoritative controller can execute it.
-  Future<void> _send({String? quickAction}) async {
+  Future<void> _send({
+    String? quickAction,
+    NpcStorySelection? selectedNpc,
+  }) async {
     final text = (quickAction ?? _input.text).trim();
     final campaign = widget.controller.currentCampaign;
     if (text.isEmpty || campaign == null || !_canInteract) return;
@@ -1114,7 +1121,12 @@ class _AdventurePageState extends State<_AdventurePage> {
           widget.controller.currentCampaign?.id != campaign.id) {
         return;
       }
-      final action = await _outbox.stage(campaign.id, text);
+      final action = await _outbox.stage(
+        campaign.id,
+        text,
+        selectedNpcId: selectedNpc?.npcId,
+        selectedNpcRevision: selectedNpc?.revision,
+      );
       if (!mounted) return; // Durable action survives disposed page.
       setState(() => _pendingAction = action);
       await _dispatch(action, clearDraft: quickAction == null);
@@ -1138,9 +1150,40 @@ class _AdventurePageState extends State<_AdventurePage> {
     await widget.voice.stopListening();
     await widget.voice.stopSpeaking();
     final previousMessageId = _lastMessageId;
+    final recovery = resolvePendingNpcAction(
+      widget.controller.currentCampaign!,
+      action,
+    );
+    if (recovery.state == PendingNpcActionState.stale) {
+      setState(
+        () => _outboxError =
+            'NPC-Auswahl ist nicht mehr aktuell. Bitte die ausstehende '
+            'Handlung verwerfen und erneut auswählen.',
+      );
+      return;
+    }
+    if (recovery.state == PendingNpcActionState.unavailable) {
+      setState(
+        () => _outboxError =
+            'Der ausgewählte NPC ist nicht mehr verfügbar. '
+            'Bitte den Auftrag verwerfen.',
+      );
+      return;
+    }
+    if (recovery.state == PendingNpcActionState.alreadyConfirmed) {
+      await _outbox.remove(action);
+      if (!mounted) return;
+      setState(() {
+        _pendingAction = null;
+        _outboxError = null;
+      });
+      await _afterTurn(previousMessageId);
+      return;
+    }
     await widget.controller.sendAction(
       action.text,
       requestId: action.requestId,
+      selectedNpc: recovery.choice,
     );
     if (!mounted || widget.controller.error != null) return;
     // Success also includes replay of an already committed request.
@@ -1224,6 +1267,23 @@ class _AdventurePageState extends State<_AdventurePage> {
     } finally {
       if (mounted) setState(() => _submittingAction = false);
     }
+  }
+
+  Future<void> _chooseNpc() async {
+    final campaign = widget.controller.currentCampaign;
+    if (campaign == null || !_canInteract || !_outboxReady) return;
+    if (_input.text.trim().isEmpty) {
+      setState(() => _outboxError = 'Beschreibe zuerst deine Handlung.');
+      return;
+    }
+    final selection = await showNpcStorySelectionDialog(context, campaign);
+    if (!mounted || selection == null || !_canInteract) return;
+    if (widget.controller.currentCampaign?.id != selection.campaignId ||
+        widget.controller.currentCampaign?.revision != selection.revision) {
+      setState(() => _outboxError = 'NPC-Auswahl ist nicht mehr aktuell.');
+      return;
+    }
+    await _send(selectedNpc: selection);
   }
 
   Future<void> _recap() =>
@@ -1595,10 +1655,29 @@ class _AdventurePageState extends State<_AdventurePage> {
           MonkSlowFallDialog(hero: campaign.hero, encounter: encounter),
     );
     if (choice == null || !mounted) return;
+    // The dialog keeps its original hero/encounter snapshot while it is open.
+    // If another action changed the campaign, do not present the now-stale
+    // confirmation as if it could be applied to the current state.
+    final current = widget.controller.currentCampaign;
+    if (!_canInteract ||
+        current?.id != campaign.id ||
+        current?.revision != campaign.revision ||
+        current?.encounter?.id != encounter.id ||
+        current?.encounter?.reactionUsed != encounter.reactionUsed) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          key: ValueKey('slow-fall-stale-feedback'),
+          content: Text(
+            'Der Spielstand hat sich geändert. Sanften Fall bitte erneut öffnen.',
+          ),
+        ),
+      );
+      return;
+    }
     final previous = _lastMessageId;
     await widget.voice.stopSpeaking();
-    // Use the exact revision and encounter captured BEFORE opening the
-    // dialog. The controller rejects stale choices after concurrent changes.
+    // Still pass the original revision and encounter. The controller's
+    // authority check closes races that occur after this UI guard.
     await widget.controller.applyConfirmedSlowFall(
       campaignId: campaign.id,
       expectedRevision: campaign.revision,
@@ -3003,6 +3082,42 @@ class _AdventurePageState extends State<_AdventurePage> {
                                               }
                                             },
                                     ),
+                                    if (campaign.adventureOffer!.archetype !=
+                                            'investigation' &&
+                                        ClassResourceRules.level(
+                                              campaign.hero,
+                                              'Mönch',
+                                            ) >=
+                                            2 &&
+                                        campaign.hero.hitPoints != null &&
+                                        campaign.hero.hitPoints! > 0 &&
+                                        ClassResourceRules.remaining(
+                                              campaign.hero,
+                                              'uncannyMetabolism',
+                                            ) >
+                                            0)
+                                      FantasyTextButton(
+                                        key: const ValueKey(
+                                          'adventure-accept-uncanny-metabolism',
+                                        ),
+                                        label:
+                                            'Annehmen + Unheimlicher Stoffwechsel',
+                                        icon: Icons.self_improvement,
+                                        style: FantasyButtonStyle.woodGold,
+                                        onPressed: _ruleInteractionBlocked
+                                            ? null
+                                            : () async {
+                                                final prior = _lastMessageId;
+                                                await widget.controller
+                                                    .acceptAdventure(
+                                                      useUncannyMetabolism:
+                                                          true,
+                                                    );
+                                                if (mounted) {
+                                                  await _afterTurn(prior);
+                                                }
+                                              },
+                                      ),
                                     FantasyTextButton(
                                       key: const ValueKey('adventure-reject'),
                                       label: 'Anderen Weg wählen',
@@ -3130,59 +3245,14 @@ class _AdventurePageState extends State<_AdventurePage> {
               accent: FantasyPalette.blue,
               child: Column(
                 children: [
-                  if (_submittingAction)
-                    const SizedBox.shrink(
-                      key: ValueKey('adventure-action-submitting'),
-                    ),
-                  if (_pendingAction != null && !_submittingAction) ...[
-                    const Text(
-                      'Ausstehende Handlung – noch nicht sicher bestätigt',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      _pendingAction!.text,
-                      key: const ValueKey('adventure-pending-action-text'),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 6),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 4,
-                      children: [
-                        FantasyTextButton(
-                          key: const ValueKey('adventure-retry-action'),
-                          label: 'Erneut bestätigen',
-                          icon: Icons.refresh,
-                          style: FantasyButtonStyle.woodGold,
-                          onPressed:
-                              _submittingAction || _ruleInteractionBlocked
-                              ? null
-                              : _retryPending,
-                        ),
-                        FantasyTextButton(
-                          key: const ValueKey('adventure-discard-action'),
-                          label: 'Verwerfen',
-                          icon: Icons.close,
-                          style: FantasyButtonStyle.iron,
-                          onPressed:
-                              _submittingAction || _ruleInteractionBlocked
-                              ? null
-                              : _discardPending,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                  ],
-                  if (_outboxError != null)
-                    Text(
-                      _outboxError!,
-                      key: const ValueKey('adventure-outbox-error'),
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
-                    ),
+                  PendingActionStatus(
+                    pending: _pendingAction,
+                    submitting: _submittingAction,
+                    interactionBlocked: _ruleInteractionBlocked,
+                    error: _outboxError,
+                    onRetry: _retryPending,
+                    onDiscard: _discardPending,
+                  ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -3211,6 +3281,38 @@ class _AdventurePageState extends State<_AdventurePage> {
                       ),
                     ],
                   ),
+                  if (campaign.storyBible['mode'] == 'ai') ...[
+                    const SizedBox(height: 8),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: FantasyTextButton(
+                        key: const ValueKey('adventure-choose-npc'),
+                        label: 'NPC auswählen',
+                        icon: Icons.people_outline,
+                        style: FantasyButtonStyle.iron,
+                        onPressed:
+                            _canInteract &&
+                                _outboxReady &&
+                                widget
+                                    .controller
+                                    .narrator
+                                    .supportsExplicitNpcSelection
+                            ? _chooseNpc
+                            : null,
+                      ),
+                    ),
+                    if (!widget
+                        .controller
+                        .narrator
+                        .supportsExplicitNpcSelection)
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'NPC-Auswahl nur mit verbundenem '
+                          'KI-Spielleiter und NPC-Auswahlunterstützung verfügbar.',
+                        ),
+                      ),
+                  ],
                   // Secondary action stays by the text composer. Speech and
                   // dice are available exactly once in the fixed bottom dock.
                   if (MediaQuery.viewInsetsOf(context).bottom == 0) ...[

@@ -101,6 +101,7 @@ class NpcIdentityStoryPayload {
     }
 
     final selected = <Map<String, Object>>[];
+    final includedNoteIds = <String>{};
     for (final npc in campaign.npcs) {
       final name = _fold(npc.name);
       if (name.isEmpty ||
@@ -129,6 +130,16 @@ class NpcIdentityStoryPayload {
         continue;
       }
       NpcIdentityMemory.requireCurrent(campaign, snapshot);
+      // The Story API requires every supplied note ID to be unique across
+      // all selected NPC contexts, not merely within an individual NPC.
+      // Reject inconsistent local history before making a provider request.
+      for (final note in snapshot.notes) {
+        if (!includedNoteIds.add(note.id)) {
+          throw const FormatException(
+            'Mehrdeutige bestätigte NPC-Notiz-ID im Story-Kontext.',
+          );
+        }
+      }
       selected.add(snapshot.toContextMap());
       if (selected.length == maxNpcs) break;
     }
