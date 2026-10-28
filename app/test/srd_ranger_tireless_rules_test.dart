@@ -189,7 +189,6 @@ void main() {
     });
   });
 
-
   group('SRD 5.2.1 Waldläufer 10: Unermüdlich, temporäre TP', () {
     test('Stufe, Mehrklasse und bestätigte Weisheit begrenzen Nutzungen', () {
       expect(SrdRangerTirelessRules.maximumTemporaryHitPointUses(_hero()), 3);
@@ -211,14 +210,10 @@ void main() {
         ),
         3,
       );
-      final missing = _hero().copyWith(abilities: {
-        ..._hero().abilities,
-        'wisdom': null,
-      });
-      expect(
-        SrdRangerTirelessRules.maximumTemporaryHitPointUses(missing),
-        0,
+      final missing = _hero().copyWith(
+        abilities: {..._hero().abilities, 'wisdom': null},
       );
+      expect(SrdRangerTirelessRules.maximumTemporaryHitPointUses(missing), 0);
       expect(
         () => SrdRangerTirelessRules.useTemporaryHitPoints(
           missing,
@@ -242,16 +237,13 @@ void main() {
       expect(result.hero.temporaryHitPoints, 4);
       expect(result.usesRemaining, 2);
       expect(
-        result.hero.spentClassResources[
-          SrdRangerTirelessRules.resourceKey
-        ],
+        result.hero.spentClassResources[SrdRangerTirelessRules.resourceKey],
         1,
       );
       expect(hero.toJson(), previous);
-      final veryLowWisdom = hero.copyWith(abilities: {
-        ...hero.abilities,
-        'wisdom': 1,
-      });
+      final veryLowWisdom = hero.copyWith(
+        abilities: {...hero.abilities, 'wisdom': 1},
+      );
       final low = SrdRangerTirelessRules.useTemporaryHitPoints(
         veryLowWisdom,
         DiceEngine(random: _MinimumRandom()),
@@ -262,24 +254,27 @@ void main() {
       expect(low.usesRemaining, 0);
     });
 
-    test('temporäre Trefferpunkte werden nicht addiert oder implizit ersetzt', () {
-      final hero = _hero().copyWith(temporaryHitPoints: 12);
-      final rolled = SrdRangerTirelessRules.useTemporaryHitPoints(
-        hero,
-        DiceEngine(random: _MinimumRandom()),
-      );
-      expect(rolled.rolledTemporaryHitPoints, 4);
-      expect(rolled.previousTemporaryHitPoints, 12);
-      expect(rolled.hero.temporaryHitPoints, 12);
-      expect(rolled.usesRemaining, 2);
-      final replaced = SrdRangerTirelessRules.useTemporaryHitPoints(
-        hero,
-        DiceEngine(random: _MinimumRandom()),
-        replaceExisting: true,
-      );
-      expect(replaced.hero.temporaryHitPoints, 4);
-      expect(replaced.usesRemaining, 2);
-    });
+    test(
+      'temporäre Trefferpunkte werden nicht addiert oder implizit ersetzt',
+      () {
+        final hero = _hero().copyWith(temporaryHitPoints: 12);
+        final rolled = SrdRangerTirelessRules.useTemporaryHitPoints(
+          hero,
+          DiceEngine(random: _MinimumRandom()),
+        );
+        expect(rolled.rolledTemporaryHitPoints, 4);
+        expect(rolled.previousTemporaryHitPoints, 12);
+        expect(rolled.hero.temporaryHitPoints, 12);
+        expect(rolled.usesRemaining, 2);
+        final replaced = SrdRangerTirelessRules.useTemporaryHitPoints(
+          hero,
+          DiceEngine(random: _MinimumRandom()),
+          replaceExisting: true,
+        );
+        expect(replaced.hero.temporaryHitPoints, 4);
+        expect(replaced.usesRemaining, 2);
+      },
+    );
 
     test('Nutzungen werden begrenzt und bei langer Rast regeneriert', () {
       final dice = DiceEngine(random: _MinimumRandom());
@@ -301,16 +296,13 @@ void main() {
         throwsStateError,
       );
       expect(
-        ClassResourceRules.afterShortRest(hero).spentClassResources[
-          SrdRangerTirelessRules.resourceKey
-        ],
+        ClassResourceRules.afterShortRest(
+          hero,
+        ).spentClassResources[SrdRangerTirelessRules.resourceKey],
         3,
       );
       final rested = RestRules.longRest(hero);
-      expect(
-        SrdRangerTirelessRules.remainingTemporaryHitPointUses(rested),
-        3,
-      );
+      expect(SrdRangerTirelessRules.remainingTemporaryHitPointUses(rested), 3);
       expect(rested.temporaryHitPoints, 0);
     });
 
@@ -355,12 +347,12 @@ void main() {
       final engine = _engine();
       final start = engine.createDemo();
       final original = start.copyWith(
-        hero: _hero().copyWith(
-          id: start.hero.id,
-          temporaryHitPoints: 0,
-        ),
+        hero: _hero().copyWith(id: start.hero.id, temporaryHitPoints: 0),
       );
-      final result = engine.act(original, 'Unermüdlich: temporäre Trefferpunkte');
+      final result = engine.act(
+        original,
+        'Unermüdlich: temporäre Trefferpunkte',
+      );
       expect(result.events.single.type, 'class.tirelessTemporaryHitPoints');
       expect(result.campaign.hero.temporaryHitPoints, 4);
       expect(result.events.single.payload['rolledTemporaryHitPoints'], 4);
@@ -383,7 +375,10 @@ void main() {
       );
       final malformed = engine.act(original, 'Unermüdlich: irgendetwas');
       expect(malformed.events.single.type, 'rules.blocked');
-      final blocked = engine.act(original, 'Unermüdlich: temporäre Trefferpunkte');
+      final blocked = engine.act(
+        original,
+        'Unermüdlich: temporäre Trefferpunkte',
+      );
       expect(blocked.events.single.type, 'rules.blocked');
       expect(blocked.campaign.hero.toJson(), original.hero.toJson());
     });
@@ -392,10 +387,7 @@ void main() {
       final engine = _engine();
       final start = engine.createDemo();
       final campaign = start.copyWith(
-        hero: _hero().copyWith(
-          id: start.hero.id,
-          temporaryHitPoints: 0,
-        ),
+        hero: _hero().copyWith(id: start.hero.id, temporaryHitPoints: 0),
       );
       final fight = engine.act(campaign, 'Ich gehe zum Waldschrein.').campaign;
       expect(fight.encounter, isNotNull);
