@@ -1398,27 +1398,32 @@ class GameController extends ChangeNotifier {
 
   /// Applies only to the active campaign, under its persisted revision CAS.
   /// An archive character without an active campaign remains read-only.
-  Future<void> confirmBardFontOfInspiration(
+  Future<bool> confirmBardFontOfInspiration(
     SrdBardFontProposal proposal, {
     required bool playerConfirmed,
-  }) => _run(() async {
-    final campaign = currentCampaign;
-    if (campaign == null) {
-      throw const FormatException('Keine aktive Kampagne.');
-    }
-    final saved = await repository.getCampaign(campaign.id);
-    if (saved == null || saved.revision != campaign.revision) {
-      throw const CampaignConflictException(
-        'Der Spielstand wurde geändert. Bitte erneut öffnen.',
+  }) async {
+    var committed = false;
+    await _run(() async {
+      final campaign = currentCampaign;
+      if (campaign == null) {
+        throw const FormatException('Keine aktive Kampagne.');
+      }
+      final saved = await repository.getCampaign(campaign.id);
+      if (saved == null || saved.revision != campaign.revision) {
+        throw const CampaignConflictException(
+          'Der Spielstand wurde geändert. Bitte erneut öffnen.',
+        );
+      }
+      final update = engine.confirmBardFontOfInspiration(
+        campaign,
+        proposal,
+        playerConfirmed: playerConfirmed,
       );
-    }
-    final update = engine.confirmBardFontOfInspiration(
-      campaign,
-      proposal,
-      playerConfirmed: playerConfirmed,
-    );
-    await _commit(update);
-  });
+      await _commit(update);
+      committed = true;
+    });
+    return committed && error == null;
+  }
 
   Future<void> saveHero(HeroCharacter hero) => _run(() async {
     final campaign = currentCampaign;
