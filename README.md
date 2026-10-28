@@ -1,5 +1,17 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat B – deterministische Wiederaufnahme von NPC-Sendeaufträgen (27.10.2026)
+
+Die sichere Wiederaufnahme einer ausdrücklich gewählten NPC-ID nach SQLite-Neustart wird jetzt durch die gemeinsame Funktion `resolvePendingNpcAction(campaign, action)` bestimmt. Sie unterscheidet normale, gültige, bereits bestätigte, veraltete und nicht mehr verfügbare Auswahlen, ohne selbst Netzwerkzugriffe oder Speicheränderungen auszuführen. Die Abenteueroberfläche nutzt dieselbe Funktion; eine verlorene Bestätigung wird nur anhand eines **exakt zu Text, Request-ID und NPC-ID passenden gespeicherten Ereignisses** abgeglichen. Andernfalls ist eine erneute bewusste NPC-Auswahl erforderlich.
+
+Der vorherige Flutter-Komplettwidgettest in `npc_ui_outbox_restart_integration_test.dart` wurde nach reproduzierbaren `WidgetTester`-/FakeAsync-Deadlocks in **vier echte asynchrone SQLite-/Controller-/Transportintegrationstests** umgestellt. Die eigentliche Dialogbedienung bleibt separat in `npc_story_selection_dialog_test.dart` geprüft; eine vollständig durchgeklickte App-Ende-zu-Ende-Abnahme wird damit **nicht** behauptet. Dies ist ein abhängiges Test- und Sicherheitsinkrement auf PR #300, der wiederum auf #292 → #290 → #288 beruht. Keine SQLite-, Export- oder Regelmigration.
+
+
+## Chat B – NPC-Auswahl und sichere Wiederaufnahme bis in die Oberfläche (27.10.2026)
+
+Neue Flutter-/SQLite-Ende-zu-Ende-Regressionstests in `app/test/npc_ui_outbox_restart_integration_test.dart` prüfen die bestehende explizite NPC-Auswahl durch das Abenteuer-Eingabefeld und die dauerhafte Outbox. Zwei gleichnamige Figuren dürfen nicht vermischt werden; die ausgewählte NPC-ID wird an den Mock-Spielleiter weitergeleitet. Ein nach bestätigtem Spielzug verlorenes Bestätigungssignal wird nach Neustart ohne erneute Provider-Anfrage abgeglichen. Eine ausstehende NPC-Auswahl aus einer älteren Kampagnenrevision bleibt dagegen sichtbar und wird nicht selbsttätig erneut gesendet. Dieses Testpaket baut auf dem Controller-PR #288 und dem UI-/SQLite-PR #290 auf; es verändert **keine** Produktionslogik oder Schema-Version.
+
+
 ## Chat B – NPC-Auswahl mit absturzsicherem Sendeauftrag (27.10.2026)
 
 In generativen KI-Kampagnen erscheint am Texteingabefeld die Aktion **„NPC auswählen“**, wenn die bestehende Erzählsitzung `npc-selection-v1` unterstützt. Ein deutscher, scrollbarer und für Screenreader beschrifteter Dialog zeigt bestätigte NPCs samt Beziehung und eindeutiger Kennung – auch wenn mehrere den gleichen Namen haben. Nur ein ausdrücklicher Tipp auf eine Figur bindet ihre ID an den ausstehenden Spielzug. Ohne NPC-Auswahl funktioniert die Texteingabe unverändert. Das Gegenstück ist die revisionsgeprüfte Controller-Anbindung aus [PR #288](https://github.com/ManuEtt/Dnd/pull/288).

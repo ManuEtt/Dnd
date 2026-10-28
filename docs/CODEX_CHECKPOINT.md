@@ -1,3 +1,32 @@
+# Chat B – FakeAsync-Deadlock bei NPC-Wiederaufnahmetests beheben (27.10.2026)
+
+- **Basis:** PR #288 → #290 → #292 → [#300](https://github.com/ManuEtt/Dnd/pull/300) Head `92f440510bdedda51bb3acb188b49c40409b3ce7`; eigener Branch `fix/chat-b/npc-resume-deterministic-regressions-20261027` (abhängig und **nicht** vor den Basis-PRs eigenständig integrieren).
+- **Problem:** Der erste PR #292 scheiterte nach zehn Minuten an einem hängenden `pumpWidget`; der nachgeschaltete PR #300 verursachte mit `pumpWidget` innerhalb `tester.runAsync` einen Guard-Konflikt. Quell-CI #40505592178/#40505602173 rot. Es sind Testinfrastruktur-Probleme, kein bestätigter NPC-Produktionsdefekt.
+- **IMPLEMENTIERT:** Reine, zustandsfreie `resolvePendingNpcAction`-Entscheidungsfunktion in `app/lib/services/npc_pending_action_recovery.dart`; dieselbe Funktion wird von `app/lib/ui/app.dart` für bestätigte, veraltete, nicht verfügbare und gültige NPC-Aufträge verwendet. Der UI-Vertrag, fehlendes automatisches Retry und gespeicherte ID-/Revisionsbelege bleiben erhalten.
+- **TESTS:** Die bisher blockierende Datei `app/test/npc_ui_outbox_restart_integration_test.dart` testet nun vier SQLite-/GameController-/Fake-Narrator-Szenarien ohne WidgetTester oder FakeAsync: explizite Mira-ID mit exklusiver Notiz; verlorene Quittung nach echtem DB-/Controller-Neustart; veraltete Revision; identische Request-ID/Text, aber anderer gewählter NPC. Der visuelle Dialog wird bereits separat in `npc_story_selection_dialog_test.dart` geprüft. **Keine Behauptung einer vollständigen App-Tap-Integration.**
+- **GETESTET:** Ursächliche CI-Stacktraces des alten PRs ausgewertet; die drei neu berührten Dart-Dateien mit offiziellem Dart-3.9.2-Formatter abgeglichen und temporären Diagnoseworkflow entfernt. Komplette CI auf finalem PR-Head getrennt bewerten.
+- **NICHT GETESTET:** Realgerät, Live-KI, neues vollständig durchgeklicktes Widget-E2E; lokales Flutter-SDK nicht vorhanden.
+- **MIGRATION:** keine. Die SQLite-v3-Migration gehört unverändert zum Basis-PR #290; keine SRD-, Backend- oder Exportänderung.
+- **BLOCKIERT:** Basis-PRs #288, #290, #292 und #300. Gemeinsame Checkpoints durch Chat D konsolidieren.
+- **NÄCHSTER SCHRITT:** Nach grüner CI gezielt einen kleinen separaten Widgettest für die Outbox-Meldungen ohne reale FFI-Pump-Abhängigkeit entwickeln.
+- [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md); historische Einträge bleiben erhalten.
+
+---
+
+# Chat B – End-to-End-NPC-Auswahl, Neustart und verlorene Bestätigung (27.10.2026)
+
+- **BASIS:** [PR #288](https://github.com/ManuEtt/Dnd/pull/288) → [PR #290](https://github.com/ManuEtt/Dnd/pull/290), Head `c45d7f7ce82e367e78d102ccc98b0046683cbd23`. Eigener gestapelter Branch `test/chat-b/npc-ui-restart-reconciliation-20261027`.
+- **IMPLEMENTIERT:** `app/test/npc_ui_outbox_restart_integration_test.dart` mit drei echten Flutter-UI/SQLite/Controller/Backend-Mock-Regressionstests: bewusste zweite Mira direkt über Adventure-Dialog wählen; einen bereits bestätigten Auftrag nach SQLite- und Controller-Neustart ohne erneuten Provideraufruf quittieren; eine veraltete NPC-Auswahl nach neuer Revision beim Wiederholungsversuch fail-closed mit unberührtem Spielstand und weiterhin sichtbarer Outbox belassen.
+- **TESTUMFANG:** Mehrdeutige NPC-Anzeigenamen, bestätigte NPC-Beziehungsnotizen, `selectedNpcId`, Status/Revision, kein automatisches Senden beim Start, verlorener ACK, Session-Token-Neuverbindung erforderlich, korrekte dauerhafte Request-ID.
+- **GETESTET:** GitHub-Dateien und alle offenen relevanten PRs geprüft; exakte Dart-3.9.2-Formatter-Ausgabe auf den neuen Test angewendet, temporären Formatter-Workflow entfernt. Die vollständige neue CI-/APK-Abnahme ist auf dem finalen PR-HEAD separat zu prüfen.
+- **NICHT GETESTET:** Android-Realgerät und kostenpflichtiger Live-KI-Provider; lokales Flutter-SDK nicht vorhanden.
+- **MIGRATION:** Keine neue Migration durch dieses Testpaket (die abhängige v3-Outbox-Migration gehört zu PR #290), keine Änderungen an SRD-Regeln oder Produktionsdateien.
+- **BLOCKIERT:** Gestapelte Integration in Reihenfolge #288 → #290 → dieser Test-PR. Gemeinsame README-/Checkpoint-Änderungen von Chat D konsolidieren.
+- **NÄCHSTER SCHRITT:** Nach erfolgreicher CI gezielten Bildschirmleser-/Großschrift-Test und Fehleranalyse der Wiederholung bei Netzwerkunterbrechung ergänzen.
+- [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md), historische Einträge bleiben erhalten.
+
+---
+
 # Chat B – zugängliche NPC-Auswahl und revisionsgebundene SQLite-Outbox (27.10.2026)
 
 - **BASIS:** [PR #288](https://github.com/ManuEtt/Dnd/pull/288) `feat/chat-b/controller-explicit-npc-selection-20261027` bei `2ba524c307b3b48ad21a6343df700ae0a643f55d` (dessen gesamte CI erfolgreich); eigener Branch `feat/chat-b/npc-picker-outbox-20261027`, gestapelter PR.
