@@ -23,6 +23,13 @@ REQUIRED_ARM64 = {
     'lib/arm64-v8a/libapp.so',
     'lib/arm64-v8a/libflutter.so',
 }
+# A normal Android alpha is far smaller. Validate ZIP metadata before CRC
+# decompression to reject accidental or hostile APK expansion bombs.
+MAX_ALPHA_APK_BYTES = 512 * 1024 * 1024
+MAX_ALPHA_APK_ENTRIES = 20000
+MAX_ALPHA_APK_UNCOMPRESSED_BYTES = 1024 * 1024 * 1024
+MAX_ALPHA_APK_EXPANSION_RATIO = 1000
+MIN_ALPHA_APK_RATIO_BYTES = 1024 * 1024
 
 
 def read_version(root: Path) -> tuple[str, str]:
@@ -39,12 +46,26 @@ def read_version(root: Path) -> tuple[str, str]:
 def validate_arm64_apk(apk: Path) -> None:
     if not apk.is_file() or apk.stat().st_size == 0:
         raise ValueError('Keine gebaute ARM64-APK vorhanden: ' + str(apk))
+    if apk.stat().st_size > MAX_ALPHA_APK_BYTES:
+        raise ValueError('Die ARM64-APK überschreitet die zulässige Dateigröße.')
     if not zipfile.is_zipfile(apk):
         raise ValueError('Die Android-APK ist kein gültiges ZIP-Containerformat.')
     with zipfile.ZipFile(apk) as archive:
+        # Check central-directory metadata before testzip() decompresses
+        # every member. This also prevents hugely compressible single entries.
+        entries = archive.infolist()
+        if (len(entries) > MAX_ALPHA_APK_ENTRIES
+                or sum(entry.file_size for entry in entries)
+                > MAX_ALPHA_APK_UNCOMPRESSED_BYTES
+                or any(
+                    entry.file_size >= MIN_ALPHA_APK_RATIO_BYTES
+                    and entry.file_size
+                    > MAX_ALPHA_APK_EXPANSION_RATIO * max(1, entry.compress_size)
+                    for entry in entries
+                )):
+            raise ValueError('Die ARM64-APK hat übergroße oder stark komprimierte ZIP-Inhalte.')
         # CRC-valid ZIPs can still contain ambiguous members, traversal paths
         # or symbolic links. Reject these before checking required resources.
-        entries = archive.infolist()
         names = [entry.filename for entry in entries]
         if len(names) != len(set(names)):
             raise ValueError('Die ARM64-APK enthält doppelte ZIP-Einträge.')

@@ -13,6 +13,22 @@
 
 ---
 
+## 27.10.2026 – Chat D D-013: sichere APK-ZIP-Metadaten vor Alpha-Bündelung
+
+**Basis:** `main` `f9b2f72a4bf8e4216bf8baac60c7f92c4a8a997f`; Arbeitsbranch `fix/chat-d/alpha-apk-zipbomb-guard-20261027`; Produkt Würfelraunen `0.8.42+92`, SQLite 2 / Kampagnen-JSON 1.
+
+- **IMPLEMENTIERT:** `scripts/prepare_alpha_release.py` begrenzt ARM64-APK auf 512 MiB Datei-/1 GiB deklarierte entpackte Größe, 20.000 Mitglieder und 1000:1 Expansion einzelner großer ZIP-Mitglieder **vor** CRC-/Pflichtbibliotheksprüfung. Vorhandene Dateipfad-, Link-, Duplikat- und Integritätschecks bleiben erhalten.
+- **REGRESSIONEN:** Vier negative Checks in `scripts/tests/test_prepare_alpha_release.py` für Größen-, Expansions- und Mitgliederlimits; unveränderte normale Alpha-Release-Fälle.
+- **GETESTET:** Vorgänger D-012 PR #258 erfolgreich 36/36 auf SHA `45bfe793ab88db689d23355c832d7343753ddc18`, [Workflow](https://github.com/ManuEtt/Dnd/actions/runs/40391878647); seitdem nach Main gemergt. **Das ist kein Testbeleg für D-013.**
+- **NICHT GETESTET:** Neue vollständige CI/Android-APK auf dem finalen D-013-PR-HEAD, reale Android-Hardware, Signierung und Speicher-Upgradepfade.
+- **BLOCKIERT:** Lokaler Checkout über GitHub-DNS nicht möglich; gemeinsame README-/Checkpoint-Nachträge bei späterer paralleler Integration sorgfältig erhalten.
+- **NOCH NICHT IMPLEMENTIERT:** Kein neuer Produktumfang – Qualitätskorrektur. Nächster konkreter Schritt: vollständige GitHub-CI, neue Main-/PR-Kollisionen, reviewfähiger PR nach Nachweis.
+- **Kein Migrationsbedarf:** App- und Persistenzformate unverändert; kein Regel-/Story-/KI-Eingriff.
+
+Details unter [Chat-D-Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
+
+---
+
 # Chat D D-014 – Doppelte Branch-Bereinigung und 404-Rennen beseitigen (28.10.2026)
 
 - **Ausgangs-main:** `571edec9455fb32e4991432953c9a2479a6fffb2`; **Branch:** `fix/chat-d/disable-legacy-cleanup-20261028`; [PR #329](https://github.com/ManuEtt/Dnd/pull/329) (reviewbereit).
