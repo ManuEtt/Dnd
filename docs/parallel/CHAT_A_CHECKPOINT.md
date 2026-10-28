@@ -1,3 +1,21 @@
+# Chat A – Würfel-Zauberbereich: validierter Ursprung (28.10.2026)
+
+- **Ausgangs-main:** `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78` (unverändert bei Vor-PR-Prüfung).
+- **Arbeitsbranch:** `feat/chat-a/cube-spell-origin-20261028`; **PR:** wird nach Dokumentationscommit erstellt (Link im PR/Checkpoint-Nachtrag).
+- **Anforderung:** `RULE-SPELLS-SPELL-AREAS-OF-EFFECT` bleibt `partial`. SRD 5.2.1, *Rules Glossary / Cube*, und *Spells / Thunderwave*, S. 169; Wizards of the Coast LLC, CC BY 4.0, https://www.dndbeyond.com/srd.
+- **Ausgangsproblem:** `SrdCubeAreaRules.preview` nahm ein beliebiges Rasterfeld als Ursprung an, ohne den vom Zauberkatalog beschriebenen Wirker-Ursprung, die Reichweite oder die Kartenblocker durch das vorhandene Spell-Target-Preflight zu validieren. Andere Bereichsformen besitzen einen solchen Einstieg.
+- **IMPLEMENTIERT:** `SrdCubeAreaRules.previewConfirmedSpell` prüft zuerst die separat bestätigte Würfelform und anschließend `SrdSpellGridTargetRules.validateOrigin`. Erst dann erfolgt die unveränderte, rein lesende 2D-Kandidatenberechnung. Keine Zauberwirkung, kein Wurf, keine Slotbuchung und keine KI-Interpretation.
+- **Dateien:** `app/lib/domain/srd_cube_area_rules.dart`, `app/test/srd_cube_area_rules_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, dieser Checkpoint.
+- **Akzeptanzkriterien:** Gültiger Self-Ursprung für Thunderwave erzeugt die bestätigte 15-Fuß-Würfel-Kandidatenfläche; unbestätigte Form/Ausrichtung, ungültige Größe, entfernter Self-Ursprung, unsichere/vollständig blockierte oder außerhalb der Karte liegende Felder werden vor der Vorschau abgelehnt; Kandidatenliste unveränderbar.
+- **Tests hinzugefügt:** positive und negative Flutter-Domänentests in `srd_cube_area_rules_test.dart`. **GETESTET:** tatsächliche GitHub-Dateiversionen und PR-Dateipfade geprüft; noch kein bestandener neuer Dart-/Flutter-/CI-Test auf dem Branch dokumentierbar.
+- **NICHT GETESTET:** `dart format`, `flutter analyze`, `flutter test`, Android-Build, Gerätetest sowie Python-/Backend-Gesamtsuite auf diesem neuen Branch; lokale Flutter-/Dart-SDKs fehlen. GitHub Actions nach PR-Erstellung prüfen.
+- **BLOCKIERT:** lokale ausführbare Flutter-Prüfung mangels SDK; formale Freigabe erst bei grünen GitHub-Gates.
+- **Kompatibilität:** keine Änderung an bestehendem `preview`, SQLite, JSON, Spielständen, Ereignissen, Ressourcen oder Storyschnittstellen. Keine Migration. Kein Konflikt mit offenem PR #353 (dessen geänderte Dateien liegen außerhalb dieses Regelpakets; zentrale Registerdatei bewusst unverändert).
+- **NOCH NICHT IMPLEMENTIERT:** automatische 3D-Wirkfläche, tatsächliche Zielerfassung, Konstitutionsrettung, Donner-Schaden/Schub von Thunderwave oder andere vollständige Zauberwirkungen.
+- **NÄCHSTER SCHRITT:** unabhängige, regelgeprüfte Würfel-Footprint-Richtungswahl statt nur positiver Rasterachsen; Akzeptanz: alle vier bestätigten horizontalen Quadranten ohne erfundene 3D-Treffer, deterministische Rand-/Blocker-Regressionen.
+
+---
+
 # Chat A – Checkpoint (26.10.2026): Eldritch-Blast-Klassenprüfung
 
 - Ausgangs-Main: `42d14ad36cc947691f7e5a1e8647a43f5421b86e`; Branch: `fix/chat-a/eldritch-primary-class-validation-20261026`.
