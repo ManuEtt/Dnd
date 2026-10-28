@@ -8,6 +8,22 @@ import 'starting_equipment_import.dart';
 /// it does not certify spells, all class features or complete SRD creation.
 class StartingClassChoice {
   StartingClassChoice.confirmed({
+    required String className,
+    required Iterable<String> skills,
+    int? kitIndex,
+    Map<String, String> equipmentChoices = const {},
+    FighterStartingChoices? fighterChoices,
+  }) : this._validated(
+         version: 2,
+         className: className,
+         skills: skills,
+         kitIndex: kitIndex,
+         equipmentChoices: equipmentChoices,
+         fighterChoices: fighterChoices,
+       );
+
+  StartingClassChoice._validated({
+    required this.version,
     required this.className,
     required Iterable<String> skills,
     this.kitIndex,
@@ -21,7 +37,11 @@ class StartingClassChoice {
     }
     final selected = selection;
     if (selected.startingKit case final kit?) {
-      StartingEquipmentImport.validateKitChoices(kit, this.equipmentChoices);
+      StartingEquipmentImport.validateKitChoices(
+        kit,
+        this.equipmentChoices,
+        choiceVersion: version,
+      );
     } else if (this.equipmentChoices.isNotEmpty) {
       throw const FormatException('Ausrüstungswahl benötigt ein Startpaket.');
     }
@@ -32,11 +52,29 @@ class StartingClassChoice {
     }
   }
 
+  final int version;
   final String className;
   final List<String> skills;
   final int? kitIndex;
   final Map<String, String> equipmentChoices;
   final FighterStartingChoices? fighterChoices;
+
+  /// Changing skills does not reselect, upgrade or grant historical equipment.
+  StartingClassChoice withUpdatedClassDecisions(StartingClassChoice updated) {
+    if (updated.className != className) {
+      throw const FormatException(
+        'Ein übernommenes Startpaket darf nicht die Klasse wechseln.',
+      );
+    }
+    return StartingClassChoice._validated(
+      version: version,
+      className: className,
+      skills: updated.skills,
+      kitIndex: kitIndex,
+      equipmentChoices: equipmentChoices,
+      fighterChoices: updated.fighterChoices,
+    );
+  }
 
   SrdClassSelection get selection => SrdClassSelection(
     characterClass: findSrdClass(className)!,
@@ -45,7 +83,7 @@ class StartingClassChoice {
   );
 
   Map<String, dynamic> toJson() => {
-    'version': 1,
+    'version': version,
     'className': className,
     'skills': skills,
     'kitIndex': kitIndex,
@@ -64,7 +102,7 @@ class StartingClassChoice {
     final kit = json['kitIndex'];
     final equipment = json['equipmentChoices'];
     if (version is! int ||
-        version != 1 ||
+        (version != 1 && version != 2) ||
         className is! String ||
         skills is! List ||
         skills.length > 4 ||
@@ -98,7 +136,8 @@ class StartingClassChoice {
         ),
       );
     }
-    return StartingClassChoice.confirmed(
+    return StartingClassChoice._validated(
+      version: version,
       className: className,
       skills: List<String>.from(skills),
       kitIndex: kit as int?,

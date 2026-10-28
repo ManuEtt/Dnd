@@ -1,3 +1,28 @@
+## 28.10.2026 – Charaktererstellung: Heiliges Symbol (0.8.47+97)
+
+**IMPLEMENTIERT:** Kleriker/Paladin wählen im Klassenpaket A ausdrücklich
+Amulett, Emblem oder Reliquiar. Neue Klassenbelege verwenden Version2;
+historische Version1 bleibt lesbar und gewährt keine Nachträge. Startgold,
+typisiertes Inventar, erneute Bestätigung und lesender Audit bleiben konsistent.
+Ein reproduzierter Verlust der Symbolwahl beim erneuten Wählen desselben Pakets
+ist behoben. [Fachnachweis](docs/CHARACTER_HOLY_SYMBOL_CHOICE_20261028.md).
+
+**GETESTET:** Gezielte Domain-/Widget-/SQLite-Prüfungen einschließlich alter
+Belege aller zwölf Klassen und16 Symbol-Dialogfällen bestanden. Die vollständige
+aktuelle Prüfkette und finale PR-CI werden anschließend separat belegt.
+**NICHT GETESTET:** echtes Android-Gerät/TalkBack, installiertes Altversionsupgrade,
+produktive Signatur. **BLOCKIERT:** kein Testgerät. **NOCH NICHT IMPLEMENTIERT:**
+vollständiger Wizard und alle übrigen Pflichtwahlen; Symbolbesitz zertifiziert
+keine komplette Zauberwirkung. SQLite3/JSON1 unverändert, keine Migration.
+
+Arbeitsbranch `feat/character-holy-symbol-choice-20261028`, Basis Main
+`37a6142ea791a607c78065b50aa66fda90acda5c`. Nächster kleiner Schritt:
+Mönch-Werkzeugübung ausdrücklich mit der Paketwahl koppeln, mit kompatiblem
+historischem Nachweis und ohne Nachvergabe. Ältere Berichte darunter sind
+historische Schreibstände; offene Migration/CI-Meldungen sind inzwischen überholt.
+
+---
+
 ## 28.10.2026 – Branch-Migration abgeschlossen
 
 Die gemeinsame Migration aus [PR #351](https://github.com/ManuEtt/Dnd/pull/351)
