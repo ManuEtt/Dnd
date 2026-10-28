@@ -5,6 +5,7 @@ import 'package:lebendiger_spielleiter/domain/srd_spell_grid_target_rules.dart';
 import 'package:lebendiger_spielleiter/domain/srd_sphere_area_rules.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   test('confirmed 10-foot square previews four candidate tiles', () {
     final map = SrdSpellGridMap(
       width: 5,
