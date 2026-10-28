@@ -3384,12 +3384,8 @@ class GameEngine {
                 (current.hero.spentPactSlots > 0 ||
                     current.hero.spentSecondWind > 0 ||
                     current.hero.spentActionSurge > 0 ||
-                    current.hero.spentClassResources.values.any(
-                      (n) => n > 0,
-                    ) ||
-                    SrdRangerTirelessRules.canReduceExhaustion(
-                      current.hero,
-                    ))) {
+                    current.hero.spentClassResources.values.any((n) => n > 0) ||
+                    SrdRangerTirelessRules.canReduceExhaustion(current.hero))) {
               final refreshed = ClassResourceRules.afterShortRest(
                 ClassFeatureResources.afterShortRest(
                   SpellcastingRules.afterShortRest(current.hero),
@@ -3426,9 +3422,7 @@ class GameEngine {
                   current.hero.spentSecondWind > 0 ||
                   current.hero.spentActionSurge > 0 ||
                   current.hero.spentClassResources.values.any((n) => n > 0) ||
-                  SrdRangerTirelessRules.canReduceExhaustion(
-                    current.hero,
-                  )) &&
+                  SrdRangerTirelessRules.canReduceExhaustion(current.hero)) &&
               !RestRules.availableHitDice(
                 current.hero,
               ).values.any((n) => n > 0)) {
