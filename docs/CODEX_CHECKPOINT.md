@@ -1,3 +1,9 @@
+## 28.10.2026 – Chat A: SRD-5.2.1-Ring von Wall of Fire (PR #367)
+
+**Ausgangs-`main`:** `f5cb518a0c0a6aafc1b1483c833fb7907ca5e882`. Auf `feat/chat-a/wall-of-fire-ring-preview-20261028` liegt der [Draft-PR #367](https://github.com/ManuEtt/Dnd/pull/367). **IMPLEMENTIERT:** reine 2D-Ringvorschau mit bestätigter Form, Wandaußendurchmesser (5–20 Fuß), Höhe (5–20 Fuß), fester Oberfläche, bestätigter Zauberreichweite (120 Fuß) und prüfpflichtigen Hindernis-/Grenzfeldern. **TESTS ERGÄNZT:** fünf Flutter-Regressionsfälle; **NICHT GETESTET:** komplette PR-/Android-CI zum finalen Commit, reales Gerät. **BLOCKIERT:** lokal kein Dart-/Flutter-SDK. **NOCH NICHT IMPLEMENTIERT:** tatsächliche Wall-of-Fire-Wirkung, Schaden, heiße Seite, Rettungswürfe, 3D-Deckung und Zielpersistenz. Keine App-Version, SQLite-/JSON-Migration, Story-/Controller-Änderung. Quelle: Wizards of the Coast LLC, SRD 5.2.1, CC BY 4.0, *Wall of Fire*. Gemeinsame README-/Checkpoint-Edits müssen bei zeitgleichen Chat-PRs additiv konsolidiert werden.
+
+---
+
 ## 28.10.2026 – Chat D: Prüfung von Dart-`part` und URI-`part of`
 
 - **Main-Basis:** `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78`; **Branch:** `fix/chat-d/dart-part-boundary-20261028`; **Codecommit:** `4690b591dbf3664824981bb4fec5844a48d8bfa2`; **PR:** [#360](https://github.com/ManuEtt/Dnd/pull/360) (Draft).
