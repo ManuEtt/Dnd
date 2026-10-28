@@ -76,12 +76,14 @@ void main() {
     final north = NpcContinuityReader.read(campaign, npcId: 'north');
     final south = NpcContinuityReader.read(campaign, npcId: 'south');
 
-    expect(north.confirmedContext, startsWith(
-      'NPC: Große Hüterin (NPC-ID: north)',
-    ));
-    expect(south.confirmedContext, startsWith(
-      'NPC: GROSSE HUETERIN (NPC-ID: south)',
-    ));
+    expect(
+      north.confirmedContext,
+      startsWith('NPC: Große Hüterin (NPC-ID: north)'),
+    );
+    expect(
+      south.confirmedContext,
+      startsWith('NPC: GROSSE HUETERIN (NPC-ID: south)'),
+    );
     expect(north.confirmedContext, contains('Keine bestätigten'));
   });
 
@@ -113,27 +115,34 @@ void main() {
     );
   });
 
-  test('unique legacy name retains exact old context text and read-only data', () {
-    final legacy = _campaign(
-      npcs: const [
-        WorldNpc(id: 'mira', name: 'Mira', relationship: 'freundlich'),
-      ],
-    ).toJson()..remove('npcRelationshipNotes');
-    final recovered = Campaign.fromJson(legacy);
-    final before = jsonEncode(recovered.toJson());
+  test(
+    'unique legacy name retains exact old context text and read-only data',
+    () {
+      final legacy = _campaign(
+        npcs: const [
+          WorldNpc(id: 'mira', name: 'Mira', relationship: 'freundlich'),
+        ],
+      ).toJson()..remove('npcRelationshipNotes');
+      final recovered = Campaign.fromJson(legacy);
+      final before = jsonEncode(recovered.toJson());
 
-    final snapshot = NpcContinuityReader.read(recovered, npcId: 'mira');
-    expect(snapshot.disambiguateName, isFalse);
-    expect(snapshot.confirmedContext,
-      'NPC: Mira\n'
-      'Status: lebendig\n'
-      'Aktuelle Beziehung: freundlich\n'
-      'Keine bestätigten Beziehungsnotizen.',
-    );
-    expect(snapshot.recentNotes, isEmpty);
-    expect(jsonEncode(recovered.toJson()), before);
-    expect(() => snapshot.recentNotes.add(
-      _note('invented', 'mira', 'Unbestätigtes Gerücht'),
-    ), throwsUnsupportedError);
-  });
+      final snapshot = NpcContinuityReader.read(recovered, npcId: 'mira');
+      expect(snapshot.disambiguateName, isFalse);
+      expect(
+        snapshot.confirmedContext,
+        'NPC: Mira\n'
+        'Status: lebendig\n'
+        'Aktuelle Beziehung: freundlich\n'
+        'Keine bestätigten Beziehungsnotizen.',
+      );
+      expect(snapshot.recentNotes, isEmpty);
+      expect(jsonEncode(recovered.toJson()), before);
+      expect(
+        () => snapshot.recentNotes.add(
+          _note('invented', 'mira', 'Unbestätigtes Gerücht'),
+        ),
+        throwsUnsupportedError,
+      );
+    },
+  );
 }

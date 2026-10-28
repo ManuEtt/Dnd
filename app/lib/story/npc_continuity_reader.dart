@@ -70,9 +70,10 @@ class NpcContinuityReader {
     final disambiguate = campaign.npcs.any(
       (other) => other.id != npc.id && _npcNameKey(other.name) == nameKey,
     );
-    if (disambiguate &&
-        !RegExp(r'^[a-zA-Z0-9_-]{1,64}$').hasMatch(npc.id)) {
-      throw const FormatException('NPC-ID kann nicht sicher dargestellt werden.');
+    if (disambiguate && !RegExp(r'^[a-zA-Z0-9_-]{1,64}$').hasMatch(npc.id)) {
+      throw const FormatException(
+        'NPC-ID kann nicht sicher dargestellt werden.',
+      );
     }
 
     final notes = <({int position, NpcRelationshipNote value})>[
