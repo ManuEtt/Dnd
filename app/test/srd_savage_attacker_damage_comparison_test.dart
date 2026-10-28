@@ -102,17 +102,20 @@ void main() {
     expect(low.choice.usedAlternative, false);
   });
 
-  test('critical dice add two different pools without repeating flat bonus', () {
-    final compared = preview(
-      critical: true,
-      originalCriticalExtra: rolled('2d6+3', [6, 2], modifier: 3),
-      alternativeCriticalExtra: rolled('2d6+3', [3, 1], modifier: 3),
-    );
-    expect(compared.originalWeaponSubtotal, 17);
-    expect(compared.alternativeWeaponSubtotal, 21);
-    expect(compared.selectedWeaponSubtotal, 21);
-    expect(compared.selectedDifference, 4);
-  });
+  test(
+    'critical dice add two different pools without repeating flat bonus',
+    () {
+      final compared = preview(
+        critical: true,
+        originalCriticalExtra: rolled('2d6+3', [6, 2], modifier: 3),
+        alternativeCriticalExtra: rolled('2d6+3', [3, 1], modifier: 3),
+      );
+      expect(compared.originalWeaponSubtotal, 17);
+      expect(compared.alternativeWeaponSubtotal, 21);
+      expect(compared.selectedWeaponSubtotal, 21);
+      expect(compared.selectedDifference, 4);
+    },
+  );
 
   test('great weapon fighting changes each candidate independently', () {
     final hero = soldier(
@@ -134,8 +137,11 @@ void main() {
     expect(compared.alternativeWeaponSubtotal, 12);
     expect(compared.selectedDifference, 3);
     // Dice totals differ by 6, not 3: the Fighting Style must be reapplied.
-    expect(compared.choice.alternativeWeaponDiceTotal -
-        compared.choice.originalWeaponDiceTotal, 6);
+    expect(
+      compared.choice.alternativeWeaponDiceTotal -
+          compared.choice.originalWeaponDiceTotal,
+      6,
+    );
   });
 
   test('critical great weapon fighting is applied to each critical set', () {
@@ -172,21 +178,16 @@ void main() {
   test('missing feat, spent turn, enemy turn and KO fail closed', () {
     final hero = soldier();
     expect(
-      () => preview(
-        hero: hero.copyWith(startingBackgroundPackage: null),
-      ),
+      () => preview(hero: hero.copyWith(startingBackgroundPackage: null)),
       throwsFormatException,
     );
     expect(
-      () => preview(
-        encounter: fight.copyWith(savageAttackerUsedThisTurn: true),
-      ),
+      () =>
+          preview(encounter: fight.copyWith(savageAttackerUsedThisTurn: true)),
       throwsFormatException,
     );
     expect(
-      () => preview(
-        encounter: fight.copyWith(activeParticipant: 'enemy'),
-      ),
+      () => preview(encounter: fight.copyWith(activeParticipant: 'enemy')),
       throwsFormatException,
     );
     expect(
@@ -200,14 +201,9 @@ void main() {
     expect(() => preview(hit: false), throwsFormatException);
     expect(() => preview(weapon: false), throwsFormatException);
     expect(
-      () => preview(
-        alternative: rolled('2d6+3', [7, 1], modifier: 3),
-      ),
+      () => preview(alternative: rolled('2d6+3', [7, 1], modifier: 3)),
       throwsFormatException,
     );
-    expect(
-      () => preview(critical: true),
-      throwsFormatException,
-    );
+    expect(() => preview(critical: true), throwsFormatException);
   });
 }
