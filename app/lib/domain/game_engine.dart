@@ -3595,7 +3595,9 @@ class GameEngine {
       }
       try {
         if (short) {
-          final restoreSorceryPoints = words.contains('mit zauberkraftregeneration');
+          final restoreSorceryPoints = words.contains(
+            'mit zauberkraftregeneration',
+          );
           if (restoreSorceryPoints) {
             SrdSorcerousRestorationRules.restoreAfterCompletedShortRest(
               current.hero,
@@ -3642,8 +3644,10 @@ class GameEngine {
                   'exhaustionAfter': refreshed.exhaustionLevel,
                   'sorcerousRestorationUsed': restoreSorceryPoints,
                   'sorceryPointsRecovered': restoreSorceryPoints
-                      ? (current.hero.spentClassResources['sorceryPoints'] ?? 0) -
-                          (refreshed.spentClassResources['sorceryPoints'] ?? 0)
+                      ? (current.hero.spentClassResources['sorceryPoints'] ??
+                                0) -
+                            (refreshed.spentClassResources['sorceryPoints'] ??
+                                0)
                       : 0,
                 },
               );
@@ -3693,7 +3697,7 @@ class GameEngine {
                 'sorcerousRestorationUsed': restoreSorceryPoints,
                 'sorceryPointsRecovered': restoreSorceryPoints
                     ? (current.hero.spentClassResources['sorceryPoints'] ?? 0) -
-                        (refreshed.spentClassResources['sorceryPoints'] ?? 0)
+                          (refreshed.spentClassResources['sorceryPoints'] ?? 0)
                     : 0,
               },
             );
@@ -3727,7 +3731,7 @@ class GameEngine {
               'sorcerousRestorationUsed': restoreSorceryPoints,
               'sorceryPointsRecovered': restoreSorceryPoints
                   ? (current.hero.spentClassResources['sorceryPoints'] ?? 0) -
-                      (rest.hero.spentClassResources['sorceryPoints'] ?? 0)
+                        (rest.hero.spentClassResources['sorceryPoints'] ?? 0)
                   : 0,
             },
           );
