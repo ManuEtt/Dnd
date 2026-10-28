@@ -1,3 +1,17 @@
+# Chat B – isolierte NPC-Outbox-Statusanzeige (27.10.2026)
+
+- **Basis:** [PR #303](https://github.com/ManuEtt/Dnd/pull/303) Head `5388d8e428e024c939bf99e609f857ec37c4a62a`, eigene Branch `test/chat-b/pending-npc-status-widget-20261027`, gestapelter PR.
+- **IMPLEMENTIERT:** Auslagerung der bisherigen Adventure-Komponenten für ausstehenden Auftrag, „Erneut bestätigen“, „Verwerfen“ und Fehlermeldung nach `app/lib/ui/pending_action_status.dart`. Die Komponente führt keine SQLite-, Netzwerk- oder asynchronen Aufgaben aus. NPC-Auswahl wird als bindend und revisionsabhängig erläutert. Bestehende Widget-Keys und Aufrufer-Callbacks bleiben erhalten.
+- **TESTS:** `app/test/pending_action_status_test.dart` enthält fünf reine Flutter-Widgettests: Anzeige mit NPC-Bindung, stale Meldung, unterdrückte Buttons während Sendung, blockierte Interaktion und normale Handlungen ohne NPC-Auswahl. Keine FakeAsync/SQLite-Verschachtelung.
+- **GETESTET:** Bestandstest-/UI-Verträge gegen Basis-PR geprüft; offizieller Dart-3.9.2-Formatter angewandt, temporären Diagnoseworkflow wieder entfernt. Neue CI nach finaler PR-Veröffentlichung abnehmen.
+- **NICHT GETESTET:** Realgerät und Voice-/Live-Provider. Die Widgettests belegen die Darstellung, nicht den gesamten Navigations-/Providerfluss.
+- **MIGRATION:** Keine. Beibehaltung bestehender SQLite v3 aus PR #290, SRD-Regeln, Kampagnen-/Export-JSON und Backend unverändert.
+- **BLOCKIERT:** Integration der gestapelten Basis-PRs #288 → #290 → #292 → #300 → #303. Gemeinsame Checkpoints durch Chat D beim Merge konsolidieren.
+- **NÄCHSTER SCHRITT:** Nach grüner CI gezielte manuelle Prüfung in Android bei großem Text und TalkBack; Statusmeldungen unter Konflikt und Neustart durch tatsächliche UI-Aufrufe nachziehen.
+- [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md); ältere Einträge bleiben erhalten.
+
+---
+
 # Chat B – FakeAsync-Deadlock bei NPC-Wiederaufnahmetests beheben (27.10.2026)
 
 - **Basis:** PR #288 → #290 → #292 → [#300](https://github.com/ManuEtt/Dnd/pull/300) Head `92f440510bdedda51bb3acb188b49c40409b3ce7`; eigener Branch `fix/chat-b/npc-resume-deterministic-regressions-20261027` (abhängig und **nicht** vor den Basis-PRs eigenständig integrieren).
