@@ -1,3 +1,19 @@
+## 28.10.2026 – Chat C: Tastaturfokus der fixierten Schnellaktionen (zweiter Zyklus)
+
+- **Ausgangs-main:** `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78`; App `0.8.46+96`.
+- **Branch:** `feat/chat-c/shortcut-keyboard-focus-20261028`; **Code-/Test-Commit:** `8f892d7df902ec8805ec6d535ecdd49e22670a58`; Pull Request gegen main (Nummer nach Erstellung eintragen); finalen PR-/Actions-HEAD gesondert prüfen.
+- **Ausgangsproblem:** Die vorhandenen Tests für die vier unteren Abenteuer-Schnellaktionen prüfen Touch-Eingaben bei 320–400 dp, IME und 1,8-facher Schrift, jedoch keine Tastatur-Tab-Reihenfolge oder Enter-Aktivierung mit gleichzeitig geöffneter Tastatur und 2-facher Schrift.
+- **Akzeptanzkriterien:** Bei 320 dp und simuliertem Android-IME-Inset erreichen Tab und Enter nacheinander Sprache, Untersuchen, Angriff und W20; die vier Aktionen sind hit-testbar; ein deaktivierter Angriff wird beim Tab-Wechsel übersprungen und niemals ausgelöst; die zugängliche Semantik bleibt deaktiviert. Keine Spielstandsänderung.
+- **IMPLEMENTIERT:** Zwei eigenständige positive/negative Flutter-Widget-Regressionen in `app/test/fantasy_pinned_actions_test.dart`. Die tatsächliche Fokusreihenfolge und Enter-Aktionen werden mit simulierten Tastaturereignissen geprüft.
+- **GETESTET:** Aktueller main-HEAD und offene PR-Dateipfade via GitHub abgeglichen. Die andere Chat-C-Änderung aus PR #355 betrifft `app/lib/ui/fantasy_art.dart` und einen anderen Test. Gemeinsame Projektdateien nur ergänzend dokumentiert.
+- **NICHT GETESTET:** Neue Tests, Flutter-Analyse, Dart-Formatprüfung, gesamte Flutter-/Backend-/Python-/Android-CI und echtes Gerät bis zum nachweislich abgeschlossenen Lauf. Lokaler Checkout über GitHub-DNS und Flutter-SDK hier nicht verfügbar.
+- **BLOCKIERT:** Gesamtabnahme/PR-Freigabe erst nach grünem Workflow. Noch kein Merge. PR #355 bleibt eigener Entwurf; nicht darüber committen.
+- **NOCH NICHT IMPLEMENTIERT:** Eine feste Fokus-Traversal-Policy ist nicht eingeführt; diese Teständerung dokumentiert und bewacht das aktuelle Verhalten, sie ändert keine Laufzeitlogik.
+- **Migration:** Keine Änderungen an UI-Produktionscode, Domain, Controller, SQLite, JSON, Backend oder SRD.
+- **Nächster Schritt:** Nach vollständig grünem CI die tatsächliche Fokusreihenfolge und Bildschirmvorleser-Ansagen auf einem realen Android-Gerät mit Hardware-Tastatur und großer Schrift separat prüfen; bei einer Abweichung ein eigenständiges UI-Fixpaket ohne Konflikt zu #355 planen.
+
+---
+
 ## 27.10.2026 – Chat C: TalkBack-Toggle-Ansage bei Fantasy-Buttons
 
 - **Ausgangs-main:** `e3e166a507bf9c88a4286473ceb97fc4b14ec35b`.
