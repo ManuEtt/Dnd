@@ -1,3 +1,9 @@
+## 28.10.2026 – Chat A: Emanation-Quellpunkt / bewegliche Wirkungsbereiche
+
+**IMPLEMENTIERT auf eigenem Branch:** `feat/chat-a/emanation-area-preview-20261028` von main `f5cb518a0c0a6aafc1b1483c833fb7907ca5e882`. SRD 5.2.1 *Rules Glossary / Emanation*, Wizards of the Coast LLC, CC BY 4.0: rein lesende horizontale Rasterkandidaten, explizite Kreatur-/Objektquelle, Ursprung standardmäßig ausgeschlossen (nur die Quelle, nicht das ganze Feld), Bewegungs-/Stationär-/Sofort-Semantik, geprüfte Self-Spell-Origin mit `Spirit Guardians`. Sechs negative/positive Flutter-Tests hinzugefügt. **CI des neuen PR-HEAD noch nicht geprüft**; keine vollständige Regelwirkung, keine Migration/SQLite/JSON-/UI-/Storyänderung. Mit anderen PRs gemeinsame Checkpoint-/README-Blöcke vor Merge durch Chat D vereinigen.
+
+---
+
 ## 28.10.2026 – Chat D: Prüfung von Dart-`part` und URI-`part of`
 
 - **Main-Basis:** `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78`; **Branch:** `fix/chat-d/dart-part-boundary-20261028`; **Codecommit:** `4690b591dbf3664824981bb4fec5844a48d8bfa2`; **PR:** [#360](https://github.com/ManuEtt/Dnd/pull/360) (Draft).
