@@ -1,3 +1,19 @@
+## 28.10.2026 – Chat C: abgeschnittene erledigte Aufträge im Abenteuer-HUD kennzeichnen
+
+- **Ausgangs-main:** `f5cb518a0c0a6aafc1b1483c833fb7907ca5e882`.
+- **Branch:** `feat/chat-c/quest-board-overflow-hint-20261028`; **PR:** nach Erstellung ergänzen.
+- **Ausgangsproblem:** Die `FantasyAdventureQuestBoard` zeigt in der kompakt aufgeklappten Auftragsübersicht nur die ersten drei erledigten/gescheiterten Quests, obwohl der Zähler alle Einträge meldet. Ohne Hinweis fehlen für Benutzer die restlichen Aufträge scheinbar.
+- **IMPLEMENTIERT:** Rein lesender Hinweis für 1 oder mehrere zusätzliche Einträge (z. B. »Ein weiterer Auftrag im Tagebuch«), sichtbar nur bei mehr als drei erledigten Aufträgen. Die ersten drei Einträge und der bestehende Tagebuch-Knopf bleiben unverändert.
+- **TESTS ERGÄNZT:** `app/test/fantasy_quest_board_hidden_test.dart`, Grenzfälle 3/4/5 erledigte Aufträge, 320 dp, 200 % Android-Schrift, Aufklappen, Anzeige, Tagebuch-Callback, intakte Quest-IDs und Statuswerte.
+- **GETESTET:** Masterprompt, aktueller main und offene PR-Dateilisten geprüft: kein Parallel-PR ändert `app/lib/ui/fantasy_adventure_hud.dart` oder den neuen Widgettest.
+- **NICHT GETESTET:** CI des neuen Branches, reales Android-Gerät/TalkBack und vollständige Flutter-Tests bis zum nachweislich erfolgreichen GitHub-Workflow.
+- **BLOCKIERT:** Lokales Dart-/Flutter-SDK nicht verfügbar; CLI-Testabnahme erfolgt über GitHub Actions.
+- **NOCH NICHT IMPLEMENTIERT:** Vollständige Questliste innerhalb der HUD-Übersicht, sie bleibt bewusst auf drei begrenzt und übergibt weitere Aufträge ans Tagebuch.
+- **KOMPATIBILITÄT:** Keine Spielregel-, Quest-, Story-, Controller-, SQLite-, JSON- oder Versionsänderung.
+- **NÄCHSTER SCHRITT:** CI auf finalem Branch-HEAD abnehmen, eventuelle Format-/Widgetfehler beheben, danach Gerätetest mit schmaler Ansicht und großer Systemschrift.
+
+---
+
 ## 28.10.2026 – Chat C: Inventardialog bei großen Beschreibungen bedienbar halten
 
 - **Ausgangs-Main:** `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78` (App `0.8.46+96`).

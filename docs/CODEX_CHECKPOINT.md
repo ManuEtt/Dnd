@@ -1,3 +1,9 @@
+## 28.10.2026 – Chat C: HUD zeigt Hinweis auf weitere erledigte Quests
+
+**IMPLEMENTIERT:** `FantasyAdventureQuestBoard` zeigt nach den maximal drei erledigten/gescheiterten Aufträgen einen verständlichen Hinweis auf zusätzliche Einträge im Tagebuch (korrekte Einzahl/Mehrzahl). **TESTS ERGÄNZT:** Flutter-Widgettests für 3/4/5 erledigte Aufträge bei 320 dp, doppelter Systemschrift, unveränderte IDs/Status und vorhandene Tagebuch-Aktion. **GETESTET:** Ausgangs-main `f5cb518a0c0a6aafc1b1483c833fb7907ca5e882`, offene PRs und Codepfade; keine Fachdateikollision. **NICHT GETESTET:** Neuer CI-Lauf / reales Android-TalkBack-Gerät. **BLOCKIERT:** fehlendes lokales Flutter-SDK; Review erst nach grüner CI. **NOCH NICHT IMPLEMENTIERT:** Mehr als drei erledigte Questzeilen direkt im HUD. **Nächster Schritt:** CI inklusive vollständiger Flutter-/Backend-/Android-Gates und auf Android visuell abnehmen.
+
+---
+
 ## 28.10.2026 – Chat D: Prüfung von Dart-`part` und URI-`part of`
 
 - **Main-Basis:** `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78`; **Branch:** `fix/chat-d/dart-part-boundary-20261028`; **Codecommit:** `4690b591dbf3664824981bb4fec5844a48d8bfa2`; **PR:** [#360](https://github.com/ManuEtt/Dnd/pull/360) (Draft).

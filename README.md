@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## 28.10.2026 – Chat C: weitere abgeschlossene Aufträge sichtbar machen
+
+Die aufgeklappte Auftragsübersicht zeigt weiterhin maximal drei erledigte/gescheiterte Aufträge. Falls weitere dokumentiert sind, erscheint ein deutlicher Hinweis auf das **Tagebuch**; die Aktion »Tagebuch öffnen« bleibt bedienbar. Neue Widgettests prüfen 320 dp bei 200 % Schrift sowie unveränderte Quest-IDs und Status. **Keine Spielregel-/Speicherstandsänderung.** Details im [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md).
+
 ## 28.10.2026 – Chat D: Dart-Teilbibliotheken an Modulgrenzen prüfen
 
 Die Python-Architekturprüfung kontrolliert neben `import` und `export` jetzt auch `part` und URI-basierte `part of`-Direktiven. Dadurch darf Domain-Code Story-Dateien nicht als Teilbibliothek einschleusen; Story-Dateien dürfen den gemeinsamen Domänencode weiterhin regulär importieren, ihn aber nicht als `part` einbinden. Fünf neue positive und negative Regressionstests sind ergänzt. **Die vollständige PR-CI muss auf dem finalen Commit noch geprüft werden.** Keine Änderung an SQLite, JSON, Spielregeln, Story oder App-Version. [Draft-PR #360](https://github.com/ManuEtt/Dnd/pull/360) · [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
