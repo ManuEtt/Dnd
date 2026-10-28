@@ -206,7 +206,7 @@ class AlphaReleaseTests(unittest.TestCase):
         self.assertEqual([sidecar], list(self.out.iterdir()))
 
     def test_concurrent_same_version_attempt_cannot_delete_owner_release(self):
-        lock = self.out / 'Wuerfelraunen_v0.5.4_24_Release.lock'
+        lock = self.out / '.Wuerfelraunen_v0.5.4_24_Release.lock'
 
         def competing_attempt(root, archive, *, layout):
             with self.assertRaisesRegex(ValueError, 'bereits in Bearbeitung'):
@@ -220,7 +220,7 @@ class AlphaReleaseTests(unittest.TestCase):
         self.assertFalse(lock.exists())
 
     def test_failed_release_releases_lock_and_allows_retry(self):
-        lock = self.out / 'Wuerfelraunen_v0.5.4_24_Release.lock'
+        lock = self.out / '.Wuerfelraunen_v0.5.4_24_Release.lock'
         with mock.patch.object(release, 'create_archive',
                                side_effect=RuntimeError('interrupted')):
             with self.assertRaisesRegex(RuntimeError, 'interrupted'):
@@ -232,7 +232,7 @@ class AlphaReleaseTests(unittest.TestCase):
 
     def test_stale_release_lock_fails_closed_without_deleting_it(self):
         self.out.mkdir()
-        lock = self.out / 'Wuerfelraunen_v0.5.4_24_Release.lock'
+        lock = self.out / '.Wuerfelraunen_v0.5.4_24_Release.lock'
         lock.mkdir()
         with self.assertRaisesRegex(ValueError, 'bereits in Bearbeitung'):
             release.prepare_release(self.root, self.out)

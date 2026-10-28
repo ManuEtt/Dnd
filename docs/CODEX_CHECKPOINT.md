@@ -3,13 +3,13 @@
 - **Basis-main:** `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78`; **Branch:** `fix/chat-d/alpha-release-version-lock-20261028`.
 - **IMPLEMENTIERT:** `scripts/prepare_alpha_release.py` reserviert die Release-Version vor der Prüfung auf vorhandene Dateien über atomare `mkdir`-Sperre. Keine parallele gleichnamige Veröffentlichung; kein fremdes Aufräumen nach Fehlstart. Erfolgreiche und behandelte fehlgeschlagene Bündelungen lösen die Sperre.
 - **REGRESSIONEN HINZUGEFÜGT:** Drei Tests für konkurrierenden Aufruf mit intakten Artefakten, Fehler und Wiederholung, verwaiste Sperre (Fail-Closed).
-- **GETESTET:** Quellcode und isolierte PR-Dateipfade am GitHub-main `ab8bef62039a` geprüft. Neue Tests wurden vor Veröffentlichung noch nicht ausgeführt.
+- **GETESTET:** GitHub-CI [40715454176](https://github.com/ManuEtt/Dnd/actions/runs/40715454176) führte 198 Python-Tests aus, 196 bestanden, zwei NEUE Tests schlugen ausschließlich wegen falsch erwarteter Sperrpfade ohne führenden Punkt fehl. Test-Fixtures im Folgecommit korrigiert; **noch kein erfolgreicher finaler Lauf**.
 - **NICHT GETESTET:** Python-Gesamtsuite, Backend, Flutter, Android-APK und reale Geräteabnahme für diesen Branch; neue GitHub-CI ist gesondert abzunehmen.
 - **BLOCKIERT:** Lokaler Git-Checkout von GitHub wegen DNS nicht möglich; Flutter-/Dart-SDK nicht vorhanden. Keine vorhandenen Spielstände angefasst.
 - **NOCH NICHT IMPLEMENTIERT:** Behandlung eines harten Prozessabbruchs durch automatische, autorisierte Sperrbereinigung; verwaiste Sperren müssen vor erneutem Release geprüft werden.
 - **VERSIONEN/MIGRATION:** `0.8.46+96`; SQLite 3 und Kampagnen-JSON 1 unverändert. Keine Migration.
 - **Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, README, zentraler und Chat-D-Checkpoint.
-- **NÄCHSTER SCHRITT:** Neue CI für den finalen PR-Kopf prüfen; nur nach vollständig grünen Prüfungen das Paket zur Integration freigeben.
+- **PR:** [#358](https://github.com/ManuEtt/Dnd/pull/358), Codecommit `92014cccaa21ccef9c709754ede591cdd2cf7e4a` (Test-Fix danach). **NÄCHSTER SCHRITT:** Neue CI für den finalen PR-Kopf prüfen; nur nach vollständig grünen Prüfungen das Paket zur Integration freigeben.
 
 ---
 
