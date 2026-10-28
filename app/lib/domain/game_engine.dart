@@ -4608,11 +4608,24 @@ class GameEngine {
     }
     // Preserve the natural die in the event history; only the adjudicated
     // result may be raised by a confirmed class-based minimum.
-    final effectiveTotal = SkillCheckPassives.effectiveTotal(
+    final skillTotal = SkillCheckPassives.effectiveTotal(
       total: result.total,
       natural: result.natural,
       minimumNatural: pending.minimumNatural,
     );
+    // Prepared checks carry a deterministic ability|skill target produced by
+    // the local story rule port. Attacks, escape and death saves never qualify.
+    final effectiveTotal =
+        pending.type == 'preparedCheck' &&
+            pending.targetName.startsWith('strength|')
+        ? SrdIndomitableMightRules.effectiveTotal(
+            hero: next.hero,
+            ability: 'strength',
+            kind: SrdD20CheckKind.abilityCheck,
+            rolledTotal: skillTotal,
+          )
+        : skillTotal;
+    final indomitableMightApplied = effectiveTotal > skillTotal;
     final reliableTalentApplied =
         result.natural != null &&
         pending.minimumNatural == 10 &&
@@ -4621,12 +4634,15 @@ class GameEngine {
       'request': pending.toJson(),
       'roll': result.toJson(),
       if (reliableTalentApplied) 'skillFeature': 'reliableTalent',
-      if (reliableTalentApplied) 'effectiveTotal': effectiveTotal,
+      if (indomitableMightApplied) 'classFeature': 'indomitableMight',
+      if (effectiveTotal != result.total) 'effectiveTotal': effectiveTotal,
     };
     final label = result.natural == null
         ? 'Gesamtergebnis ${result.total} (Bonus bereits enthalten)'
         : 'Naturwurf ${result.natural} ${_signed(result.modifier)} = ${result.total}'
-              '${reliableTalentApplied ? '; Verlässliches Talent: Würfelwert 10, Ergebnis $effectiveTotal' : ''}';
+              '${reliableTalentApplied ? '; Verlässliches Talent: Würfelwert 10' : ''}'
+              '${indomitableMightApplied ? '; Unbezwingbare Stärke' : ''}'
+              '${effectiveTotal != result.total ? ', Ergebnis $effectiveTotal' : ''}';
     var narration = '$label. ';
     if (pending.type == 'preparedCheck') {
       final passed = effectiveTotal >= pending.difficulty;
