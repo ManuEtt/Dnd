@@ -77,6 +77,8 @@ abstract interface class PendingActionStore {
     required String campaignId,
     required String requestId,
     required String text,
+    String? selectedNpcId,
+    int? selectedNpcRevision,
   });
   Future<void> removePendingAction({
     required String campaignId,

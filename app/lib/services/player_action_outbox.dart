@@ -10,16 +10,24 @@ class PendingPlayerAction {
     required this.campaignId,
     required this.requestId,
     required this.text,
+    this.selectedNpcId,
+    this.selectedNpcRevision,
   });
 
   final String campaignId;
   final String requestId;
   final String text;
+  final String? selectedNpcId;
+  final int? selectedNpcRevision;
 
   Map<String, dynamic> toJson() => {
     'campaignId': campaignId,
     'requestId': requestId,
     'text': text,
+    if (selectedNpcId != null) ...{
+      'selectedNpcId': selectedNpcId,
+      'selectedNpcRevision': selectedNpcRevision,
+    },
   };
 
   factory PendingPlayerAction.fromJson(Object? value) {
@@ -29,6 +37,17 @@ class PendingPlayerAction {
     final campaignId = value['campaignId'];
     final requestId = value['requestId'];
     final text = value['text'];
+    final npcId = value['selectedNpcId'];
+    final npcRevision = value['selectedNpcRevision'];
+    if ((npcId == null) != (npcRevision == null) ||
+        (npcId != null &&
+            (npcId is! String ||
+                !RegExp(r'^[A-Za-z0-9_-]{1,64}$').hasMatch(npcId) ||
+                npcRevision is! int ||
+                npcRevision < 0 ||
+                npcRevision > 2147483647))) {
+      throw const FormatException('Ungültige gespeicherte NPC-Auswahl.');
+    }
     if (campaignId is! String ||
         campaignId.isEmpty ||
         campaignId.length > 128 ||
@@ -45,6 +64,8 @@ class PendingPlayerAction {
       campaignId: campaignId,
       requestId: requestId,
       text: text,
+      selectedNpcId: npcId as String?,
+      selectedNpcRevision: npcRevision as int?,
     );
   }
 }
@@ -103,7 +124,12 @@ class PlayerActionOutbox {
   }
 
   /// Returns only after durable storage confirms the pending command.
-  Future<PendingPlayerAction> stage(String campaignId, String text) async {
+  Future<PendingPlayerAction> stage(
+    String campaignId,
+    String text, {
+    String? selectedNpcId,
+    int? selectedNpcRevision,
+  }) async {
     final cleaned = text.trim();
     if (cleaned.isEmpty || cleaned.length > 4000) {
       throw const FormatException(
@@ -115,12 +141,18 @@ class PlayerActionOutbox {
       'campaignId': campaignId,
       'requestId': requestId,
       'text': cleaned,
+      if (selectedNpcId != null || selectedNpcRevision != null) ...{
+        'selectedNpcId': selectedNpcId,
+        'selectedNpcRevision': selectedNpcRevision,
+      },
     });
     if (repository case PendingActionStore store) {
       await store.stagePendingAction(
         campaignId: action.campaignId,
         requestId: action.requestId,
         text: action.text,
+        selectedNpcId: action.selectedNpcId,
+        selectedNpcRevision: action.selectedNpcRevision,
       );
       return action;
     }

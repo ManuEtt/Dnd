@@ -1,57 +1,25 @@
 # Würfelraunen – Der lebendige Spielleiter
 
-## Aktueller Stand und autonome Fortsetzung – 28.10.2026
+## Chat B – NPC-Auswahl mit absturzsicherem Sendeauftrag (27.10.2026)
 
-**0.8.45+95:** Die tatsächliche erste Klassenwahl samt Klassenfertigkeiten,
-Kämpferwahlen und optionaler Paketentscheidung wird historisch und versioniert
-gespeichert. Wiederholungen vergeben weder Gold/Ausrüstung noch zusätzliche
-Klassenübungen. Alte Spielstände bleiben ohne erfundene Herkunft erhalten.
-Der Audit bestätigt belegte Teilentscheidungen; unaufgelöste Gegenstände und
-die Mönch-Werkzeugkopplung bleiben sichtbar offen. Kein vollständiger Wizard.
+In generativen KI-Kampagnen erscheint am Texteingabefeld die Aktion **„NPC auswählen“**, wenn die bestehende Erzählsitzung `npc-selection-v1` unterstützt. Ein deutscher, scrollbarer und für Screenreader beschrifteter Dialog zeigt bestätigte NPCs samt Beziehung und eindeutiger Kennung – auch wenn mehrere den gleichen Namen haben. Nur ein ausdrücklicher Tipp auf eine Figur bindet ihre ID an den ausstehenden Spielzug. Ohne NPC-Auswahl funktioniert die Texteingabe unverändert. Das Gegenstück ist die revisionsgeprüfte Controller-Anbindung aus [PR #288](https://github.com/ManuEtt/Dnd/pull/288).
 
-**Produktcommit `30bb33e`: 1.995 Flutter-, 164 Python-, 72 Backend- und zwölf
-lokale native Android-Tests bestanden**, CI [40584924719](https://github.com/ManuEtt/Dnd/actions/runs/40584924719)
-grün, Debug-/ARM64-APK und alle 991 CI-Quelldateien geprüft. Lokaler fester
-Flutter-Gesamt-Repeat ebenfalls grün. **Neuester Integrationsstand mit Main
-`a915717`: 57 gezielte Tests bestanden; vollständige finale CI separat in
-[PR #319](https://github.com/ManuEtt/Dnd/pull/319/checks).** Ein früherer lokaler
-Lauf vor den letzten Korrekturen hatte drei Fehler; die feste Wiederholung
-bestätigt deren Behebung. Gerät/TalkBack/Altversionsupgrade bleiben ungeprüft.
+Die SQLite-Outbox wurde **transaktional von Version 2 auf 3** erweitert: ein optionales Paar aus NPC-ID und ursprünglicher Kampagnenrevision bleibt mit Text und Request-ID nach einem Neustart erhalten. Alte Sendeaufträge werden ohne NPC-Auswahl übernommen; eine veraltete Auswahl wird nicht unbemerkt neu gebunden. Bereits bestätigte Request-IDs können nach verlorenem Bestätigungssignal abgeglichen werden. Neue SQLite- und Flutter-Widget-Tests prüfen diese Grenzen. Kampagnen-JSON, Heldendaten und SRD-Mechaniken bleiben unverändert. Die volle CI-Abnahme auf dem PR-HEAD ist separat nachzuweisen.
 
-Branch `feat/character-start-class-proof-20261027`; Audit #318 und neueres
-Main konfliktfrei übernommen, fremde Originaldokumente mit Hashes archiviert.
-[Umfang und Quellen](docs/CHARACTER_START_CLASS_CHOICE_20261027.md) ·
-[Checkpoint und Fortsetzung](docs/CODEX_CHECKPOINT.md).
-Die zusätzliche Main-Übernahme (#288/#321/#318) wird im finalen PR-Kopf erneut
-geprüft; frühere Zwischenergebnisse gelten jeweils für ihren genannten Commit.
-Nächster Schritt: vorhandenen Editor-CAS-Branch prüfen und mit Tests ergänzen;
-#324 (Start-TP/Kit), #317 (Magieinitiierter) und #323 nicht doppelt entwickeln.
-Die gesamte Charaktererstellung bleibt unvollständig. Ältere Abschnitte sind
-Historie; Originale unter `docs/history/`.
 
-## Historie der zusätzlich integrierten Main-Pakete – 28.10.2026
-
-Die nachfolgenden ursprünglichen Main-Einträge gehören zum fixierten Stand
-`a915717`; ihre damaligen Angaben wie „Draft“ oder „CI ausstehend“ sind
-historische Aussagen. Der aktuelle gemeinsame Prüfstand steht oben und im
-Charakter-Checkpoint. Sämtliche ursprünglichen Dokumente einschließlich des
-Main-Checkpoints bleiben [bytegenau archiviert](docs/history/character_class_main_20261028/maina915717/README.md),
-mit [SHA256-/Git-Blob-Nachweis](docs/history/character_class_main_20261028/manifest.json).
-
-### Chat D – Pflichtdateien ohne symbolische Links prüfen (27.10.2026)
+## Chat D – Pflichtdateien ohne symbolische Links prüfen (27.10.2026)
 
 Die Python-Projektprüfung lehnt jetzt Pflichtdateien und deren übergeordnete Verzeichnisse ab, wenn sie symbolische Links sind. Dadurch werden keine verlinkten externen Backend-JSON-Dateien oder Gradle-Wrapper-Dateien mehr als reguläre Upload-Dateien geöffnet. Vier Regressionstests untersuchen Dateilinks, Verzeichnislinks, Wrapper-Nichtöffnung und defekte Links. Bestehende reguläre Projektkopien bleiben zugelassen. [PR #321](https://github.com/ManuEtt/Dnd/pull/321) ist ein **Draft**; die abschließende GitHub-CI ist auf dem finalen PR-Commit separat abzunehmen. Keine Migration oder App-Änderung.
 
 
-### Chat B – Zwölf KI-Erinnerungen bis zur Story-API-Grenze absichern (27.10.2026)
+## Chat B – Zwölf KI-Erinnerungen bis zur Story-API-Grenze absichern (27.10.2026)
 
 Zwei neue Integrationstests prüfen das Erinnerungslimit **an der tatsächlich gesendeten Story-Anfrage**: Eine KI-Kampagne mit bestätigten Mira-Beziehungsnotizen und mindestens 18 allgemeinen Fakten wird in einer echten SQLite-Datei gespeichert, über den `GameController` fortgesetzt und mit einem lokalen Backend-Transport abgefragt. Sowohl mit als auch ohne `npc-identity-v1` erhält das Backend genau zwölf priorisierte und begrenzte Erinnerungseinträge. Die drei bestätigten NPC-Notizen bleiben zuerst; zusätzliche allgemeine Fakten verwenden lediglich die freien Plätze. Heldenwerte, Revision und gespeicherter Spielstand bleiben überprüfbar. Dieses Testpaket baut auf [PR #307](https://github.com/ManuEtt/Dnd/pull/307) auf und verändert keine Produktionslogik, Datenbankschemata oder SRD-Regeln.
 
 
-### Chat B – Gemeinsames Budget für NPC- und allgemeine KI-Erinnerungen (27.10.2026)
+## Chat B – Gemeinsames Budget für NPC- und allgemeine KI-Erinnerungen (27.10.2026)
 
 Die vom KI-Spielleiter übermittelten bestätigten NPC-Notizen und allgemeinen Erinnerungseinträge teilen sich dasselbe Limit (standardmäßig 12 Einträge). Bisher wurde ein weiterer allgemeiner Eintrag angehängt, selbst wenn NPC-Notizen das Budget schon vollständig belegten. `NpcNarratorMemory.merge` prüft jetzt die gemeinsame Grenze **vor** dem Anhängen allgemeiner Einträge. Neue Regressionen decken vollständig belegte Grenzen von einem und zwei Einträgen sowie verbleibenden Platz ab. Es gibt keine Änderung an NPC-Identitäten, SRD-Regeln, SQLite, Backend-Protokoll oder Kampagnenexport.
-
 
 
 ## Charaktererstellung – Integrationskandidat (27.10.2026)
@@ -67,7 +35,7 @@ Ein neuer Integrationstest überprüft die bestehende explizite NPC-ID-Übertrag
 
 Die App ist eine **Alpha-Version**, kein fertiger Ersatz für einen menschlichen Spielleiter und keine vollständige D&D-5e-Regelimplementierung. **Zum lokalen Spielen ist weder ein Account noch ein KI-Server erforderlich.**
 
-> **Projektstand (27.10.2026):** Die Flutter-App deklariert Version **0.8.45+95**. Die Versionsnummer kennzeichnet den Entwicklungsstand, nicht eine abgeschlossene Geräte- oder Release-Abnahme. Aktuelle Integrationen, Testnachweise und offene Arbeiten stehen in [Entwicklungsstatus](DEVELOPMENT_STATUS.md) und [Codex-Checkpoint](docs/CODEX_CHECKPOINT.md).
+> **Projektstand (26.10.2026):** Die Flutter-App deklariert Version **0.8.42+92**. Die Versionsnummer kennzeichnet den Entwicklungsstand, nicht eine abgeschlossene Geräte- oder Release-Abnahme. Aktuelle Integrationen, Testnachweise und offene Arbeiten stehen in [Entwicklungsstatus](DEVELOPMENT_STATUS.md) und [Codex-Checkpoint](docs/CODEX_CHECKPOINT.md).
 
 ## Was kann Würfelraunen?
 
@@ -213,3 +181,48 @@ Die technische Detailplanung wird nicht in dieser Einführungsseite dupliziert. 
 Die Umsetzung orientiert sich an **D&D SRD 5.2.1** von **Wizards of the Coast LLC**, lizenziert unter **Creative Commons Attribution 4.0 International (CC BY 4.0)**. Die erforderlichen Namensnennungen und weiteren Hinweise stehen in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Eigene Fantasy-Geschichten und Grafiken werden getrennt von den SRD-Regeln behandelt.
 
 Das Repository enthält Entwicklungssoftware. **Vollständige SRD-Konformität, fehlerfreien Spielbetrieb, Produktionssicherheit oder eine Veröffentlichung im Play Store werden nicht behauptet.**
+
+
+---
+
+## Aktueller Charakterstatus – 28.10.2026 (0.8.45+95)
+
+**0.8.45+95:** Die tatsächliche erste Klassenwahl samt Klassenfertigkeiten,
+Kämpferwahlen und optionaler Paketentscheidung wird historisch und versioniert
+gespeichert. Wiederholungen vergeben weder Gold/Ausrüstung noch zusätzliche
+Klassenübungen. Alte Spielstände bleiben ohne erfundene Herkunft erhalten.
+Der Audit bestätigt belegte Teilentscheidungen; unaufgelöste Gegenstände und
+die Mönch-Werkzeugkopplung bleiben sichtbar offen. Kein vollständiger Wizard.
+
+**Produktcommit `30bb33e`: 1.995 Flutter-, 164 Python-, 72 Backend- und zwölf
+lokale native Android-Tests bestanden**, CI [40584924719](https://github.com/ManuEtt/Dnd/actions/runs/40584924719)
+grün, Debug-/ARM64-APK und alle 991 CI-Quelldateien geprüft. Lokaler fester
+Flutter-Gesamt-Repeat ebenfalls grün. **Neuester Integrationsstand mit Main
+`a915717`: 57 gezielte Tests bestanden; vollständige finale CI separat in
+[PR #319](https://github.com/ManuEtt/Dnd/pull/319/checks).** Ein früherer lokaler
+Lauf vor den letzten Korrekturen hatte drei Fehler; die feste Wiederholung
+bestätigt deren Behebung. Gerät/TalkBack/Altversionsupgrade bleiben ungeprüft.
+
+Branch `feat/character-start-class-proof-20261027`; Audit #318 und neueres
+Main konfliktfrei übernommen, fremde Originaldokumente mit Hashes archiviert.
+[Umfang und Quellen](docs/CHARACTER_START_CLASS_CHOICE_20261027.md) ·
+[vollständiger Charakter-Checkpoint](docs/CHARACTER_START_CLASS_CHECKPOINT_20261028.md).
+Die zusätzliche Main-Übernahme (#288/#321/#318) wird im finalen PR-Kopf erneut
+geprüft; frühere Zwischenergebnisse gelten jeweils für ihren genannten Commit.
+Nächster Schritt: vorhandenen Editor-CAS-Branch prüfen und mit Tests ergänzen;
+#324 (Start-TP/Kit), #317 (Magieinitiierter) und #323 nicht doppelt entwickeln.
+Die gesamte Charaktererstellung bleibt unvollständig. Ältere Abschnitte sind
+Historie; Originale unter `docs/history/`.
+
+
+Der inzwischen ebenfalls vollständig geprüfte Zwischenkopf `019be0e` bestand
+CI [40631517151](https://github.com/ManuEtt/Dnd/actions/runs/40631517151):
+**2.007 Flutter-, 168 Python- und 72 Backend-Tests** plus Android-/Alpha-Builds.
+Die jetzt zusätzlich übernommene feste Main-Basis `bf5999e` benötigt eine neue
+gemeinsame CI-Abnahme. Die früheren Angaben in diesem Status beziehen sich
+jeweils auf ihren ausdrücklich genannten Commit. Der vollständige aktuelle
+Arbeitsauftrag und verbleibende Grenzen stehen im
+[Charakter-Checkpoint](docs/CHARACTER_START_CLASS_CHECKPOINT_20261028.md).
+Vorangehender Maintext bleibt als Integrationsbasis unverändert; Originale
+beider Dokumentstände sind mit SHA256 im
+[Historienmanifest](docs/history/character_class_main_20261028/manifest.json) gesichert.
