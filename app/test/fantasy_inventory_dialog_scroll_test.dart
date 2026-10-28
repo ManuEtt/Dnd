@@ -46,9 +46,7 @@ void main() {
         await tester.tap(find.text('Expeditionsbericht'));
         await tester.pumpAndSettle();
 
-        final dialog = tester.widget<AlertDialog>(
-          find.byType(AlertDialog),
-        );
+        final dialog = tester.widget<AlertDialog>(find.byType(AlertDialog));
         expect(dialog.scrollable, isTrue);
         expect(find.textContaining('Der Fund ist nur ein'), findsOneWidget);
         expect(find.text('Schließen').hitTestable(), findsOneWidget);
@@ -74,9 +72,7 @@ void main() {
     final original = item.toJson();
     await tester.pumpWidget(
       const MaterialApp(
-        home: Scaffold(
-          body: FantasyInventoryCards(items: [item]),
-        ),
+        home: Scaffold(body: FantasyInventoryCards(items: [item])),
       ),
     );
     await tester.pumpAndSettle();
