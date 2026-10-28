@@ -25,6 +25,7 @@ import 'class_progression_rules.dart';
 import 'class_feature_resources.dart';
 import 'class_resource_rules.dart';
 import 'skill_check_passives.dart';
+import 'srd_indomitable_might_rules.dart';
 import 'class_combat_features.dart';
 import 'sneak_attack_ally_rules.dart';
 import 'combat_class_actions.dart';
@@ -33,6 +34,7 @@ import 'monk_focus_actions.dart';
 import 'monk_flurry_rules.dart';
 import 'monk_self_restoration.dart';
 import 'monk_initiative_features.dart';
+import 'srd_bard_superior_inspiration_rules.dart';
 import 'paladin_lay_on_hands.dart';
 import 'saving_throw_class_actions.dart';
 import 'ai_story.dart';
@@ -46,7 +48,9 @@ import 'srd_initiative_roster_rules.dart';
 import 'srd_extra_creature_attack_rules.dart';
 import 'rules_engine.dart';
 import 'rest_rules.dart';
+import 'srd_ranger_tireless_rules.dart';
 import 'spellcasting_rules.dart';
+import 'srd_bard_font_of_inspiration.dart';
 import 'srd_spell_preflight_rules.dart';
 import 'srd_spell_inventory_rules.dart';
 import 'srd_sending_cast_preflight_rules.dart';
@@ -423,8 +427,11 @@ class GameEngine {
       useUncannyMetabolism: useUncannyMetabolism,
       dice: dice,
     );
+    final inspiration = SrdBardSuperiorInspirationRules.onInitiative(
+      focus.hero,
+    );
     var next = campaign.copyWith(
-      hero: focus.hero,
+      hero: inspiration.hero,
       adventureOffer: null,
       quests: [
         ...campaign.quests,
@@ -471,6 +478,7 @@ class GameEngine {
         'uncannyMetabolismHealing': focus.hitPointsRecovered,
         'uncannyMetabolismDieRoll': focus.martialArtsDieRoll,
       },
+      'bardicInspirationRecoveredAtInitiative': inspiration.recovered,
     };
     if (enemyInitiative.total > heroInitiative.total) {
       final turn = _enemyTurn(next, advanceRound: false);
@@ -692,6 +700,42 @@ class GameEngine {
       rageStartedRound: 0,
       rageUntilRound: 0,
       dodgeActive: false,
+    );
+  }
+
+  /// Confirmed, action-free Bard 5 slot-to-inspiration exchange. Both
+  /// resources, narrative and audit event share one campaign revision.
+  GameUpdate confirmBardFontOfInspiration(
+    Campaign campaign,
+    SrdBardFontProposal proposal, {
+    required bool playerConfirmed,
+  }) {
+    if (!playerConfirmed) {
+      throw const FormatException('Die Umwandlung muss bestätigt werden.');
+    }
+    _ensureNoOpportunity(campaign);
+    if (campaign.pendingRoll != null || campaign.pendingDeathSave != null) {
+      throw const FormatException(
+        'Zuerst die offene Würfel- oder Todesrettungsprobe abschließen.',
+      );
+    }
+    Campaign.fromJson(campaign.toJson());
+    final hero = proposal.applyTo(campaign.hero);
+    final source = proposal.usePactSlot ? 'Paktplatz' : 'Zauberplatz';
+    return _commit(
+      campaign,
+      campaign.copyWith(hero: hero),
+      'Quelle der Inspiration: Ein $source des '
+      '${proposal.slotLevel}. Grades wurde gegen eine verbrauchte '
+      'Bardische Inspiration eingetauscht (keine Aktion).',
+      type: 'class.bardFontOfInspiration',
+      payload: {
+        'characterId': hero.id,
+        'slotLevel': proposal.slotLevel,
+        'pactSlot': proposal.usePactSlot,
+        'inspirationRecovered': 1,
+        'playerConfirmed': true,
+      },
     );
   }
 
@@ -2870,7 +2914,9 @@ class GameEngine {
     // A new class action or save request must never be mistaken for the
     // natural die value of an already pending attack/check.
     if (campaign.pendingRoll != null &&
-        RegExp(r'^(?:rettungswurf|handauflegen)\s*[: ]').hasMatch(words)) {
+        RegExp(
+          r'^(?:rettungswurf|handauflegen|unermüdlich|unermuedlich)\s*[: ]',
+        ).hasMatch(words)) {
       return _commit(
         campaign,
         campaign,
@@ -3034,7 +3080,17 @@ class GameEngine {
           advantage: rule.advantage,
           disadvantage: rule.disadvantage,
         );
-        final passed = rolled.total >= dc;
+        // Barbar 18: after all confirmed modifiers, a Strength save may
+        // use the verified Strength score instead of a lower total.
+        // The raw d20 roll remains unchanged in the audit event.
+        final effectiveSaveTotal = SrdIndomitableMightRules.effectiveTotal(
+          hero: current.hero,
+          ability: ability,
+          kind: SrdD20CheckKind.savingThrow,
+          rolledTotal: rolled.total,
+        );
+        final indomitableMightApplied = effectiveSaveTotal > rolled.total;
+        final passed = effectiveSaveTotal >= dc;
         final options = <String>[
           if (!passed &&
               SavingThrowClassActions.available(
@@ -3057,7 +3113,8 @@ class GameEngine {
           campaign,
           current,
           'Manueller Rettungswurf (${requestedSave.group(1)}, SG $dc): '
-          '${rolled.total} – ${passed ? 'gelungen' : 'misslungen'}. '
+          '$effectiveSaveTotal – ${passed ? 'gelungen' : 'misslungen'}. '
+          '${indomitableMightApplied ? 'Unbezwingbare Stärke angewendet. ' : ''}'
           '${fromEnemy ? 'Bestätigte Deckung gegen den Gegner: +$coverBonus. ' : ''}'
           '$suggestions'
           'Das Ergebnis wird dokumentiert; Wirkungen fremder Zauber werden nicht automatisch angenommen.',
@@ -3065,7 +3122,9 @@ class GameEngine {
           payload: {
             'ability': ability,
             'difficulty': dc,
-            'total': rolled.total,
+            'total': effectiveSaveTotal,
+            if (indomitableMightApplied) 'rawTotal': rolled.total,
+            if (indomitableMightApplied) 'classFeature': 'indomitableMight',
             'failed': !passed,
             'roll': rolled.toJson(),
             'manualDifficulty': true,
@@ -3297,6 +3356,92 @@ class GameEngine {
         type: 'rules.blocked',
       );
     }
+    // A confirmed player command, never automatically inferred from prose.
+    if (words.startsWith('unermüdlich') || words.startsWith('unermuedlich')) {
+      final command = RegExp(
+        r'^unerm(?:üd|ued)lich\s*:\s*tempor(?:äre|aere)\s+trefferpunkte'
+        r'(\s+ersetzen)?\s*[.!?]?$',
+      ).firstMatch(words);
+      if (command == null) {
+        return _commit(
+          campaign,
+          current,
+          'Bestätige „Unermüdlich: temporäre Trefferpunkte“ '
+          'oder „Unermüdlich: temporäre Trefferpunkte ersetzen“.',
+          type: 'rules.blocked',
+        );
+      }
+      if (!current.hero.isComplete) {
+        return _commit(
+          campaign,
+          current,
+          'Die Magieaktion erfordert einen vollständigen Charakterbogen.',
+          type: 'rules.blocked',
+        );
+      }
+      final encounter = current.encounter;
+      final inCombat = encounter != null && !encounter.isFinished;
+      if (inCombat &&
+          (encounter.activeParticipant != 'hero' ||
+              encounter.actionUsed ||
+              encounter.surgeReserved)) {
+        return _commit(
+          campaign,
+          current,
+          'Unermüdlich benötigt eine freie Magieaktion im eigenen Zug.',
+          type: 'rules.blocked',
+        );
+      }
+      try {
+        final replaceExisting = command.group(1) != null;
+        final result = SrdRangerTirelessRules.useTemporaryHitPoints(
+          current.hero,
+          dice,
+          replaceExisting: replaceExisting,
+        );
+        final nextEncounter = inCombat
+            ? encounter.copyWith(actionUsed: true, attacksRemaining: 0)
+            : encounter;
+        return _commit(
+          campaign,
+          current.copyWith(hero: result.hero, encounter: nextEncounter),
+          'Unermüdlich: 1W8 (${result.roll.rolls.single}) '
+          '${result.wisdomModifier < 0 ? "-" : "+"}'
+          '${result.wisdomModifier.abs()} Weisheit ergibt '
+          '${result.rolledTemporaryHitPoints} temporäre Trefferpunkte. '
+          'Aktuell: ${result.hero.temporaryHitPoints}; '
+          'verbleibende Nutzungen: ${result.usesRemaining}.',
+          type: 'class.tirelessTemporaryHitPoints',
+          payload: {
+            'roll': result.roll.toJson(),
+            'wisdomModifier': result.wisdomModifier,
+            'rolledTemporaryHitPoints': result.rolledTemporaryHitPoints,
+            'temporaryHitPointsBefore': result.previousTemporaryHitPoints,
+            'temporaryHitPointsAfter': result.hero.temporaryHitPoints,
+            'usesRemaining': result.usesRemaining,
+            'resourceSpent': SrdRangerTirelessRules.resourceKey,
+            'replaceExisting': replaceExisting,
+            'actionConsumed': inCombat,
+          },
+        );
+      } on StateError catch (error) {
+        return _commit(
+          campaign,
+          current,
+          error.message.toString(),
+          type: 'rules.blocked',
+        );
+      } on FormatException catch (error) {
+        return _commit(campaign, current, error.message, type: 'rules.blocked');
+      } on RangeError catch (error) {
+        return _commit(
+          campaign,
+          current,
+          'Unbestätigter Weisheitswert: $error',
+          type: 'rules.blocked',
+        );
+      }
+    }
     if (_isEndTurn(words)) {
       try {
         return endHeroTurn(current);
@@ -3399,9 +3544,8 @@ class GameEngine {
                 (current.hero.spentPactSlots > 0 ||
                     current.hero.spentSecondWind > 0 ||
                     current.hero.spentActionSurge > 0 ||
-                    current.hero.spentClassResources.values.any(
-                      (n) => n > 0,
-                    ))) {
+                    current.hero.spentClassResources.values.any((n) => n > 0) ||
+                    SrdRangerTirelessRules.canReduceExhaustion(current.hero))) {
               final refreshed = ClassResourceRules.afterShortRest(
                 ClassFeatureResources.afterShortRest(
                   SpellcastingRules.afterShortRest(current.hero),
@@ -3411,13 +3555,17 @@ class GameEngine {
                 campaign,
                 current.copyWith(hero: refreshed),
                 'Nach der kurzen Rast wurden deine verfügbaren Klassen- und '
-                'Paktressourcen regeneriert. Es wurden keine Trefferwürfel verbraucht.',
+                'Paktressourcen regeneriert. Erschöpfung: '
+                '${current.hero.exhaustionLevel} → ${refreshed.exhaustionLevel}. '
+                'Es wurden keine Trefferwürfel verbraucht.',
                 type: 'character.shortRest',
                 payload: {
                   'hitDice': null,
                   'count': 0,
                   'rolls': <dynamic>[],
                   'pactSlotsRecovered': current.hero.spentPactSlots,
+                  'exhaustionBefore': current.hero.exhaustionLevel,
+                  'exhaustionAfter': refreshed.exhaustionLevel,
                 },
               );
             }
@@ -3433,7 +3581,8 @@ class GameEngine {
               (current.hero.spentPactSlots > 0 ||
                   current.hero.spentSecondWind > 0 ||
                   current.hero.spentActionSurge > 0 ||
-                  current.hero.spentClassResources.values.any((n) => n > 0)) &&
+                  current.hero.spentClassResources.values.any((n) => n > 0) ||
+                  SrdRangerTirelessRules.canReduceExhaustion(current.hero)) &&
               !RestRules.availableHitDice(
                 current.hero,
               ).values.any((n) => n > 0)) {
@@ -3446,13 +3595,17 @@ class GameEngine {
               campaign,
               current.copyWith(hero: refreshed),
               'Nach der kurzen Rast wurden Klassen- und Paktressourcen regeneriert. '
-              'Die Trefferwürfel sind bereits verbraucht.',
+              'Die Trefferwürfel sind bereits verbraucht. '
+              'Erschöpfung: ${current.hero.exhaustionLevel} → '
+              '${refreshed.exhaustionLevel}.',
               type: 'character.shortRest',
               payload: {
                 'hitDice': null,
                 'count': 0,
                 'rolls': <dynamic>[],
                 'pactSlotsRecovered': current.hero.spentPactSlots,
+                'exhaustionBefore': current.hero.exhaustionLevel,
+                'exhaustionAfter': refreshed.exhaustionLevel,
               },
             );
           }
@@ -3468,7 +3621,9 @@ class GameEngine {
             'Nach einer kurzen Rast (mindestens 1 Stunde) verbrauchst du '
             '$count Trefferwürfel ${rest.dieType.toUpperCase()}. '
             'Du erhältst ${rest.recovered} Trefferpunkte zurück '
-            '(jetzt ${rest.hero.hitPoints}/${rest.hero.maxHitPoints}).',
+            '(jetzt ${rest.hero.hitPoints}/${rest.hero.maxHitPoints}). '
+            'Erschöpfung: ${current.hero.exhaustionLevel} → '
+            '${rest.hero.exhaustionLevel}.',
             type: 'character.shortRest',
             payload: {
               'hitDice': rest.dieType,
@@ -3477,6 +3632,8 @@ class GameEngine {
               'constitutionBonus': rest.constitutionBonus,
               'healed': rest.recovered,
               'pactSlotsRecovered': current.hero.spentPactSlots,
+              'exhaustionBefore': current.hero.exhaustionLevel,
+              'exhaustionAfter': rest.hero.exhaustionLevel,
             },
           );
         }
@@ -3592,8 +3749,11 @@ class GameEngine {
         useUncannyMetabolism: useUncannyMetabolism,
         dice: dice,
       );
+      final inspiration = SrdBardSuperiorInspirationRules.onInitiative(
+        focus.hero,
+      );
       var started = scripted.campaign.copyWith(
-        hero: focus.hero,
+        hero: inspiration.hero,
         encounter: Encounter(
           id: _id('encounter'),
           enemyName: enemy.name,
@@ -3635,6 +3795,7 @@ class GameEngine {
             'uncannyMetabolismHealing': focus.hitPointsRecovered,
             'uncannyMetabolismDieRoll': focus.martialArtsDieRoll,
           },
+          'bardicInspirationRecoveredAtInitiative': inspiration.recovered,
         },
       );
     }
@@ -3829,8 +3990,11 @@ class GameEngine {
         useUncannyMetabolism: useUncannyMetabolism,
         dice: dice,
       );
+      final inspiration = SrdBardSuperiorInspirationRules.onInitiative(
+        focus.hero,
+      );
       var next = current.copyWith(
-        hero: focus.hero,
+        hero: inspiration.hero,
         scene: 'Am alten Waldschrein erhebt sich ein Dornenwächter.',
         facts: {...current.facts, 'location': 'Waldschrein'},
         places: current.places.any((e) => e.id == 'shrine')
@@ -3867,6 +4031,7 @@ class GameEngine {
           'uncannyMetabolismHealing': focus.hitPointsRecovered,
           'uncannyMetabolismDieRoll': focus.martialArtsDieRoll,
         },
+        'bardicInspirationRecoveredAtInitiative': inspiration.recovered,
       };
       if (foeInit.total > heroInit.total) {
         final turn = _enemyTurn(next, advanceRound: false);
@@ -4628,11 +4793,24 @@ class GameEngine {
     }
     // Preserve the natural die in the event history; only the adjudicated
     // result may be raised by a confirmed class-based minimum.
-    final effectiveTotal = SkillCheckPassives.effectiveTotal(
+    final skillTotal = SkillCheckPassives.effectiveTotal(
       total: result.total,
       natural: result.natural,
       minimumNatural: pending.minimumNatural,
     );
+    // Prepared checks carry a deterministic ability|skill target produced by
+    // the local story rule port. Attacks, escape and death saves never qualify.
+    final effectiveTotal =
+        pending.type == 'preparedCheck' &&
+            pending.targetName.startsWith('strength|')
+        ? SrdIndomitableMightRules.effectiveTotal(
+            hero: next.hero,
+            ability: 'strength',
+            kind: SrdD20CheckKind.abilityCheck,
+            rolledTotal: skillTotal,
+          )
+        : skillTotal;
+    final indomitableMightApplied = effectiveTotal > skillTotal;
     final reliableTalentApplied =
         result.natural != null &&
         pending.minimumNatural == 10 &&
@@ -4641,12 +4819,15 @@ class GameEngine {
       'request': pending.toJson(),
       'roll': result.toJson(),
       if (reliableTalentApplied) 'skillFeature': 'reliableTalent',
-      if (reliableTalentApplied) 'effectiveTotal': effectiveTotal,
+      if (indomitableMightApplied) 'classFeature': 'indomitableMight',
+      if (effectiveTotal != result.total) 'effectiveTotal': effectiveTotal,
     };
     final label = result.natural == null
         ? 'Gesamtergebnis ${result.total} (Bonus bereits enthalten)'
         : 'Naturwurf ${result.natural} ${_signed(result.modifier)} = ${result.total}'
-              '${reliableTalentApplied ? '; Verlässliches Talent: Würfelwert 10, Ergebnis $effectiveTotal' : ''}';
+              '${reliableTalentApplied ? '; Verlässliches Talent: Würfelwert 10' : ''}'
+              '${indomitableMightApplied ? '; Unbezwingbare Stärke' : ''}'
+              '${effectiveTotal != result.total ? ', Ergebnis $effectiveTotal' : ''}';
     var narration = '$label. ';
     if (pending.type == 'preparedCheck') {
       final passed = effectiveTotal >= pending.difficulty;

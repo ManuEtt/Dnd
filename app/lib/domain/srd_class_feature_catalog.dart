@@ -272,6 +272,7 @@ class SrdClassFeatureCatalog {
     'Two Extra Attacks',
     'Three Extra Attacks',
     'Second Wind',
+    'Superior Inspiration',
     'Unarmored Movement',
     'Fast Movement',
     'Feral Instinct',
@@ -301,13 +302,21 @@ class SrdClassFeatureCatalog {
     'Sneak Attack',
     'Martial Arts',
     'Unarmored Defense',
+    // Strength checks and saves have a confirmed floor, but full action
+    // coverage and final CI are tracked separately.
+    'Indomitable Might',
     'Remarkable Athlete',
     // A confirmed Reaction damage preflight exists, but HP/reaction
     // expenditure is not yet committed atomically in an encounter.
     'Slow Fall',
+    // Confirmed Dexterity-save-for-half preflight; no automatic HP commit.
+    'Evasion',
     // Speed and derived movement types work; climbing/swimming terrain
     // expenditure still requires a dedicated confirmed movement action.
     'Roving',
+    // The rest-driven exhaustion benefit works; the Magic action that
+    // generates temporary HP is a separate player-confirmed step.
+    'Tireless',
     // Range is derived automatically, but target detection is not resolved
     // without confirmed cover, distance and concealment.
     'Feral Senses',

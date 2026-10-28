@@ -429,12 +429,17 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#barbar_18_base_indomitable-might_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_indomitable_might_rules_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/srd_indomitable_might_rules.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/domain/srd_class_automation.dart"
+      ],
+      "note": "Indomitable Might: bestätigte Stärke-Proben (vorbereitete Story-Proben) und manuelle Stärke-Rettungswürfe verwenden ab Barbar-Klassenstufe 18 den bestätigten ST-Wert als optionalen höheren Gesamtwert. Rohwurf und effektives Ergebnis bleiben getrennt im Event; andere Wurfarten bleiben unverändert. Neue Tests vorhanden, aber Flutter-CI, weitere Rettungswurf-Quellen und End-to-End-Geräteabnahme noch nicht nachgewiesen; deshalb partial."
     },
     {
       "id": "CLASS-BARBAR-19-BASE-EPIC-BOON-0",
@@ -694,12 +699,20 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#barde_5_base_font-of-inspiration_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_bard_font_of_inspiration_test.dart",
+        "app/test/srd_bard_font_confirmed_action_test.dart",
+        "app/test/srd_bard_font_dialog_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/srd_bard_font_of_inspiration.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/services/game_controller.dart",
+        "app/lib/ui/srd_bard_font_of_inspiration_dialog.dart"
+      ],
+      "note": "Bestätigte Umwandlung eines Zauber-/Paktplatzes in eine verbrauchte Bardische Inspiration über Vorschlag, Controller-Revision, atomaren Ereignisspeicher und Charakterbogen; veraltete/abgebrochene Auswahl ohne Ressourcenkosten getestet. Dialog 320/360 dp bei 200 % Schrift und Tastatur geprüft. Dies ist kein Nachweis sämtlicher Barden- oder Inspirationszielwirkungen; reale Android-Abnahme offen."
     },
     {
       "id": "CLASS-BARDE-7-BASE-COUNTERCHARM-0",
@@ -834,12 +847,17 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#barde_18_base_superior-inspiration_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_bard_superior_inspiration_rules_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/srd_bard_superior_inspiration_rules.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/domain/srd_class_automation.dart"
+      ],
+      "note": "SRD-Barde-18: Wiederherstellung zuvor verbrauchter Inspirationsnutzungen auf bis zu zwei verfügbare Nutzungen bei bestätigter Initiative. Deckt die drei bestehenden Kampfstartpfade ab und nutzt Barden-Klassenstufe statt Gesamtstufe. Unbekanntes Charisma/überzogene Ressourcen fail-closed; Quelle SRD 5.2.1 CC BY 4.0. Tests und GitHub CI noch nicht vollständig abgenommen; deshalb partial."
     },
     {
       "id": "CLASS-BARDE-19-BASE-EPIC-BOON-0",
@@ -2608,12 +2626,18 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#m-nch_7_base_evasion_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_evasion_rules_test.dart",
+        "app/test/srd_evasion_sheet_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/srd_evasion_rules.dart",
+        "app/lib/rules/rules_api.dart",
+        "app/lib/ui/fantasy_character_sheet.dart"
+      ],
+      "note": "Mönch oder Schurke ab Klassenstufe 7: deterministische, bestätigte Geschicklichkeitsrettung gegen einen nachweislich halbierenden Effekt (Erfolg 0, Fehlschlag halber Schaden). Handlungsunfähige und unbestätigte Werte werden abgewiesen. Klassenbogen vorhanden; kein automatischer Schadens-Commit/Trigger, daher partial. Tests erst nach grüner CI als bestanden werten."
     },
     {
       "id": "CLASS-M-NCH-8-BASE-ABILITY-SCORE-IMPROVEMENT-0",
@@ -3678,12 +3702,18 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#waldl-ufer_10_base_tireless_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_ranger_tireless_rules_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/srd_ranger_tireless_rules.dart",
+        "app/lib/domain/class_resource_rules.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/domain/srd_class_automation.dart"
+      ],
+      "note": "Implementierung beider Tireless-Mechaniken: -1 Erschöpfung je bestätigter Short Rest; explizite Magic action Unermüdlich: temporäre Trefferpunkte mit 1W8+Weisheitsmodifikator (mindestens 1), Weisheitsmodifikator Nutzungen (mindestens 1), Nutzungsledger mit Save-Roundtrip/Long-Rest-Reset, kein Temp-HP-Stacking, Action-Limit im Einzelgegnerkampf. Klasse 10/Multiclass/fehlende Werte/Manipulation geblockt. Teilstatus bleibt wegen fehlender vollständiger Zeit-/Unterbrechungs-/Multiakteur-Kampfengine und ausstehender endgültiger CI-/Geräteabnahme."
     },
     {
       "id": "CLASS-WALDL-UFER-12-BASE-ABILITY-SCORE-IMPROVEMENT-0",
@@ -4195,12 +4225,18 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#schurke_7_base_evasion_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_evasion_rules_test.dart",
+        "app/test/srd_evasion_sheet_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/srd_evasion_rules.dart",
+        "app/lib/rules/rules_api.dart",
+        "app/lib/ui/fantasy_character_sheet.dart"
+      ],
+      "note": "Mönch oder Schurke ab Klassenstufe 7: deterministische, bestätigte Geschicklichkeitsrettung gegen einen nachweislich halbierenden Effekt (Erfolg 0, Fehlschlag halber Schaden). Handlungsunfähige und unbestätigte Werte werden abgewiesen. Klassenbogen vorhanden; kein automatischer Schadens-Commit/Trigger, daher partial. Tests erst nach grüner CI als bestanden werten."
     },
     {
       "id": "CLASS-SCHURKE-7-BASE-RELIABLE-TALENT-1",

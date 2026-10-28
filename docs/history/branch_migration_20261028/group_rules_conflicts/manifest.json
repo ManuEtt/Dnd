@@ -1,0 +1,74 @@
+[
+  {
+    "path": "CHANGELOG.md",
+    "stage": 1,
+    "saved": "docs/history/branch_migration_20261028/group_rules_conflicts/1/CHANGELOG.md",
+    "sha256": "0f7297b389f53b8ba83dda663a338a0aea9856dc9ef48213069586f3aafac2be"
+  },
+  {
+    "path": "CHANGELOG.md",
+    "stage": 2,
+    "saved": "docs/history/branch_migration_20261028/group_rules_conflicts/2/CHANGELOG.md",
+    "sha256": "8a61fa1afa22262aee4c5545ef56278668e3c32df338d7724a646233c4b1035d"
+  },
+  {
+    "path": "CHANGELOG.md",
+    "stage": 3,
+    "saved": "docs/history/branch_migration_20261028/group_rules_conflicts/3/CHANGELOG.md",
+    "sha256": "db4000c7e3f1bb0e610a48910f820ddc9a1b32b96ab6ac3be07add7095cdfaf0"
+  },
+  {
+    "path": "DEVELOPMENT_STATUS.md",
+    "stage": 1,
+    "saved": "docs/history/branch_migration_20261028/group_rules_conflicts/1/DEVELOPMENT_STATUS.md",
+    "sha256": "789707020d5b1cd8e9c1e6031c1e45f66701cc094a58cd8b00c7caddbd0aa9f6"
+  },
+  {
+    "path": "DEVELOPMENT_STATUS.md",
+    "stage": 2,
+    "saved": "docs/history/branch_migration_20261028/group_rules_conflicts/2/DEVELOPMENT_STATUS.md",
+    "sha256": "bba9afc645b24d6f8095d1b20d2dde682a5bfefabb3a453225e57802572d329e"
+  },
+  {
+    "path": "DEVELOPMENT_STATUS.md",
+    "stage": 3,
+    "saved": "docs/history/branch_migration_20261028/group_rules_conflicts/3/DEVELOPMENT_STATUS.md",
+    "sha256": "ab8199ab33575f977351d56d81f5090914f257f0c26a6b9e3e1630f2a07970df"
+  },
+  {
+    "path": "README.md",
+    "stage": 1,
+    "saved": "docs/history/branch_migration_20261028/group_rules_conflicts/1/README.md",
+    "sha256": "0c6dfd6b1e790750fdb6bc5e4cd54a6afb71a4706dd84673bd7717520eebc53f"
+  },
+  {
+    "path": "README.md",
+    "stage": 2,
+    "saved": "docs/history/branch_migration_20261028/group_rules_conflicts/2/README.md",
+    "sha256": "cd088723a7b8d92f4fc4c257a5a1614b6594b271742c72bd88474d242d9213df"
+  },
+  {
+    "path": "README.md",
+    "stage": 3,
+    "saved": "docs/history/branch_migration_20261028/group_rules_conflicts/3/README.md",
+    "sha256": "46fa54d27852ed662b33795e0fbc1403150314f9cf6a3aca8be9d8f4d2b04da0"
+  },
+  {
+    "path": "docs/CODEX_CHECKPOINT.md",
+    "stage": 1,
+    "saved": "docs/history/branch_migration_20261028/group_rules_conflicts/1/docs/CODEX_CHECKPOINT.md",
+    "sha256": "a979cc336b9973135070521aba1cc14a0640fa1d2446f9da9b8366515750ef0f"
+  },
+  {
+    "path": "docs/CODEX_CHECKPOINT.md",
+    "stage": 2,
+    "saved": "docs/history/branch_migration_20261028/group_rules_conflicts/2/docs/CODEX_CHECKPOINT.md",
+    "sha256": "c3f2cab92f5df6d61e39164c1cb6a32656ef24af7f21ec91550c027309c28aef"
+  },
+  {
+    "path": "docs/CODEX_CHECKPOINT.md",
+    "stage": 3,
+    "saved": "docs/history/branch_migration_20261028/group_rules_conflicts/3/docs/CODEX_CHECKPOINT.md",
+    "sha256": "a344061f6c185825bae3296ef86d75f4bd549bb495d33fc8e5e14125bea1dd34"
+  }
+]

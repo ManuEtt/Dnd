@@ -81,6 +81,8 @@ class SrdClassAutomation {
     'Second Wind': 'ClassFeatureResources.useSecondWind',
     'Action Surge': 'ClassFeatureResources.spendActionSurge',
     'Lay On Hands': 'PaladinLayOnHands',
+    'Font of Inspiration': 'GameEngine.confirmBardFontOfInspiration',
+    'Superior Inspiration': 'SrdBardSuperiorInspirationRules.onInitiative',
   };
 
   // Rule fragments exist (e.g. counters, dice, prerequisite checks), but
@@ -92,7 +94,6 @@ class SrdClassAutomation {
     'Rage': 'ClassResourceRules',
     "Monk's Focus": 'ClassResourceRules',
     'Bardic Inspiration': 'ClassResourceRules',
-    'Font of Inspiration': 'SrdBardFontOfInspirationRules',
     'Font of Magic': 'ClassResourceRules',
     'Wild Shape': 'ClassResourceRules',
     'Favored Enemy': 'ClassResourceRules',
@@ -101,7 +102,10 @@ class SrdClassAutomation {
     'Martial Arts': 'ClassResourceRules.martialArtsDie',
     'Unarmored Defense': 'SrdStartingCombatValues',
     'Remarkable Athlete': 'CharacterRuleEngine.initiative',
+    'Indomitable Might':
+        'SrdIndomitableMightRules (bestätigte Stärke-Proben/Rettungswürfe)',
     'Roving': 'SrdTerrainMovementRules',
+    'Tireless': 'SrdRangerTirelessRules (Short Rest + Magic action)',
     'Reliable Talent': 'CharacterRuleEngine.abilityCheck (nur Fertigkeiten)',
     'Slow Fall': 'SrdMonkSlowFallRules (Situations- und Ablaufprüfung)',
     'Feral Senses': 'SrdRangerFeralSensesRules (bestätigte Sinnesdaten)',
