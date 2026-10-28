@@ -1,3 +1,18 @@
+# Chat A – 28.10.2026: Wall-of-Fire-Ringvorschau (PR #367)
+
+- **Ausgangs-main:** `f5cb518a0c0a6aafc1b1483c833fb7907ca5e882`.
+- **Branch:** `feat/chat-a/wall-of-fire-ring-preview-20261028`; **PR:** [#367](https://github.com/ManuEtt/Dnd/pull/367), Entwurf, kein Merge.
+- **IMPLEMENTIERT:** Neue lesende `SrdWallOfFireRingRules` für die ausdrücklich bestätigte Ringvariante von *Wall of Fire*. 5–20 Fuß bestätigter äußerer Durchmesser, 5–20 Fuß Höhe, ein Fuß Wandstärke. Kandidatenfelder auf dem Raster schließen geometrische Teilflächen und Grenzberührungen ein; feste Blocker und verdeckte Mittelpunktstrahlen erhalten ausdrücklichen Prüfstatus. Die über `SrdSpellGridTargetRules` bestätigte Reichweite (120 Fuß) ist unabhängig von der Fläche. Unbestätigte Form/Außenmaßannahme/feste Oberfläche oder ungeeignete Zaubermetadaten werden verweigert.
+- **Dateien:** `app/lib/domain/srd_wall_of_fire_ring_rules.dart`, `app/test/srd_wall_of_fire_ring_rules_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, dieser Checkpoint. Keine gemeinsam genutzten App-Domänenmodelle, Speicher-, Story- oder UI-Dateien geändert.
+- **TESTS:** fünf neue deterministische Flutter-Tests für geometrische positive/negative Beispiele, dünne Wand vs. leeres Zentrum, Kartenränder, Blocker, ungültige/unbestätigte Karten/Dimensionen, konkrete Wall-of-Fire-Reichweite, fehlerhafte Pfade und anderen Zauber. Neue CI auf finalem Commit **noch offen**. Flutter/Dart SDK lokal nicht verfügbar.
+- **PROVENIENZ:** Wizards of the Coast LLC, SRD 5.2.1, *Spell Descriptions / Wall of Fire*, CC BY 4.0, https://www.dndbeyond.com/srd. `SPELL-ENTRY-WALL-OF-FIRE` bleibt unvollständig; weder vollständige Schadenswirkung noch Konzentrations-/Rettungswurf-/Feuerseite-Regel umgesetzt.
+- **NICHT GETESTET:** neue CI/Android-APK bis zu bestätigtem erfolgreichen Lauf; echte Android-Geräte; vollständige 3D-Wand und Fire-Rules.
+- **BLOCKIERT:** Flutter/Dart lokal fehlt. Additive README/Checkpoint-Einträge kollidieren potentiell bei zeitgleichen PRs; Chat D konsolidiert vor Integration.
+- **KOMPATIBILITÄT:** keine Spielstandmutation, DB-/JSON-/Schema- oder Versionsänderung, keine Migration.
+- **NÄCHSTER SCHRITT:** Diese isolierte Regelvorschau nach erfolgreicher CI prüfen; danach in eigenem Paket für `Wall of Fire` die ausdrücklich gewählte heiße Wandseite und 10-Fuß-Nähe ohne Schadensbuchung als Vorprüfung implementieren, mit Grenz-/Runden- und Mehrziel-Tests.
+
+---
+
 # Chat A – Checkpoint (26.10.2026): Eldritch-Blast-Klassenprüfung
 
 - Ausgangs-Main: `42d14ad36cc947691f7e5a1e8647a43f5421b86e`; Branch: `fix/chat-a/eldritch-primary-class-validation-20261026`.
