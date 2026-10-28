@@ -1,3 +1,23 @@
+## 28.10.2026 – Abnahme und aktuelle Main-Integration
+
+Klassenstartpaket 0.8.45+95 in PR #319 gegenMain `a915717` vorbereitet. Produkt `30bb33e`:
+CI 40584924719 und lokaler fester Flutter-Repeat grün (1.995 Flutter,164 Python,
+72 Backend,12 lokale native Tests). Neuester Integrationsstand:57 gezielte Tests,
+finale Gesamt-CI separat imPR. Mönch-PaketA bleibt ohne gekoppelte
+Werkzeugübungsquelle ausdrücklich nicht automatisiert. AktuellerCheckpoint
+nennt bestehende parallele PRs und den bereits angefangenen Editor-CAS-Branch;
+keine Duplikation, keine vollständige Charaktererstellung behauptet.
+
+## 27.10.2026 – 0.8.45+95: bestätigte erste Klassenwahl
+
+Versionierter historischer `startingClassChoice`-Nachweis aus tatsächlicher
+Klassenassistent-Bestätigung; typisierte Paket-/Fertigkeits-/Kämpferwahlen,
+keine Doppelvergabe und keine Legacy-Neuberechnung. Strenge Importvalidierung,
+lesender Quellenabgleich und Korrektur der Mönch-Werkzeugauswahl.
+Gesamte Charaktererstellung bleibt unvollständig. Aktuelle Tests, PR und
+konkrete Fortsetzung im CODEX_CHECKPOINT und Fachnachweis
+`docs/CHARACTER_START_CLASS_CHOICE_20261027.md`; bisherige Abschnitte sind Historie.
+
 ## 27.10.2026 – Lesender Entscheidungs-Audit
 
 Der bestehende Klassen-/Charaktereditor zeigt sieben deutsche Prüfzustände.

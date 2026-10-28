@@ -1,6 +1,7 @@
 import 'srd_equipment_catalog.dart';
 import 'srd_savage_attacker_pending_hit.dart';
 import 'starting_ability_origin.dart';
+import 'starting_class_choice.dart';
 import 'srd_background_package.dart';
 import 'inventory_item_stats.dart';
 export 'inventory_item_stats.dart';
@@ -166,6 +167,7 @@ class HeroCharacter {
     this.portraitPhotoBase64 = '',
     Map<String, int?>? abilities,
     this.startingAbilityOrigin,
+    this.startingClassChoice,
     this.startingBackgroundPackage,
     this.hitPoints,
     this.maxHitPoints,
@@ -244,6 +246,9 @@ class HeroCharacter {
 
   /// Initial confirmed choice only, not a claim about later level-up scores.
   final StartingAbilityOrigin? startingAbilityOrigin;
+
+  /// Historical explicit first-class choices; never reapplied on load.
+  final StartingClassChoice? startingClassChoice;
 
   /// Explicit one-time initial background gear/tool/skill choice.
   final SrdBackgroundPackageChoice? startingBackgroundPackage;
@@ -334,6 +339,7 @@ class HeroCharacter {
     String? portraitPhotoBase64,
     Map<String, int?>? abilities,
     Object? startingAbilityOrigin = _unchanged,
+    Object? startingClassChoice = _unchanged,
     Object? startingBackgroundPackage = _unchanged,
     Object? hitPoints = _unchanged,
     Object? maxHitPoints = _unchanged,
@@ -388,6 +394,9 @@ class HeroCharacter {
     startingAbilityOrigin: identical(startingAbilityOrigin, _unchanged)
         ? this.startingAbilityOrigin
         : startingAbilityOrigin as StartingAbilityOrigin?,
+    startingClassChoice: identical(startingClassChoice, _unchanged)
+        ? this.startingClassChoice
+        : startingClassChoice as StartingClassChoice?,
     startingBackgroundPackage: identical(startingBackgroundPackage, _unchanged)
         ? this.startingBackgroundPackage
         : startingBackgroundPackage as SrdBackgroundPackageChoice?,
@@ -456,6 +465,8 @@ class HeroCharacter {
     'abilities': abilities,
     if (startingAbilityOrigin != null)
       'startingAbilityOrigin': startingAbilityOrigin!.toJson(),
+    if (startingClassChoice != null)
+      'startingClassChoice': startingClassChoice!.toJson(),
     if (startingBackgroundPackage != null)
       'startingBackgroundPackage': startingBackgroundPackage!.toJson(),
     'hitPoints': hitPoints,
@@ -762,6 +773,11 @@ class HeroCharacter {
           ? null
           : StartingAbilityOrigin.fromJson(
               _map(j['startingAbilityOrigin'], 'Attribut-Herkunft'),
+            ),
+      startingClassChoice: j['startingClassChoice'] == null
+          ? null
+          : StartingClassChoice.fromJson(
+              _map(j['startingClassChoice'], 'Klassenstartnachweis'),
             ),
       startingBackgroundPackage: j['startingBackgroundPackage'] == null
           ? null

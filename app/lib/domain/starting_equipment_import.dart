@@ -31,6 +31,28 @@ class StartingEquipmentImport {
     return matches.length == 1 ? matches.single : null;
   }
 
+  // SRD 5.2.1 Equipment / Artisan's Tools, pp. 93–94. Other tools (for
+  // example Thieves' Tools) are not interchangeable with artisan's tools.
+  static const _artisanToolIds = {
+    'item-alchemist-s-supplies',
+    'item-brewer-s-supplies',
+    'item-calligrapher-s-supplies',
+    'item-carpenter-s-tools',
+    'item-cartographer-s-tools',
+    'item-cobbler-s-tools',
+    'item-cook-s-utensils',
+    'item-glassblower-s-tools',
+    'item-jeweler-s-tools',
+    'item-leatherworker-s-tools',
+    'item-mason-s-tools',
+    'item-painter-s-supplies',
+    'item-potter-s-tools',
+    'item-smith-s-tools',
+    'item-tinker-s-tools',
+    'item-weaver-s-tools',
+    'item-woodcarver-s-tools',
+  };
+
   /// The three known class starter labels with an unresolved player choice.
   /// Only SRD catalog entries from the matching mundane item categories
   /// can be chosen. A holy symbol has no matching catalog entries yet;
@@ -46,7 +68,13 @@ class StartingEquipmentImport {
     };
     if (categories.isEmpty) return const [];
     return SrdEquipmentCatalog.all
-        .where((entry) => categories.contains(entry.category))
+        .where(
+          (entry) =>
+              categories.contains(entry.category) &&
+              (item.name != 'Handwerkszeug oder Musikinstrument (nach Wahl)' ||
+                  entry.category == EquipmentCategory.instrument ||
+                  _artisanToolIds.contains(entry.id)),
+        )
         .toList(growable: false);
   }
 
