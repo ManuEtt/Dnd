@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -8,6 +9,28 @@ import 'package:lebendiger_spielleiter/data/campaign_repository.dart';
 import 'package:lebendiger_spielleiter/data/sqlite_campaign_repository.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/services/game_controller.dart';
+
+// Actual legacy item shape: catalog identity existed before typed stats.
+// Canonical ordering mirrors the old repository writer.
+Map<String, dynamic> legacyArchiveJson({int gold = 12}) => {
+  'abilities': <String, int>{},
+  'className': 'Waldläufer',
+  'gold': gold,
+  'id': 'legacy-raw',
+  'inventory': [
+    {
+      'catalogId': 'weapon-longsword',
+      'description': '',
+      'id': 'legacy-sword',
+      'name': 'Langschwert',
+      'quantity': 1,
+    },
+  ],
+  'level': 1,
+  'name': 'Altbestand',
+  'schemaVersion': 1,
+  'species': 'Mensch',
+};
 
 void main() {
   sqfliteFfiInit();
@@ -39,6 +62,121 @@ void main() {
     await first.close();
     await directory.delete(recursive: true);
   });
+
+  test(
+    'unchanged legacy raw archive row remains editable without eager rewrite',
+    () async {
+      // A valid older writer stored only these fields; current readers supply
+      // further defaults in memory. Keep canonical key ordering so this test
+      // exercises absent legacy fields rather than JSON whitespace alone.
+      final raw = jsonEncode(legacyArchiveJson());
+      final database = await databaseFactoryFfi.openDatabase(
+        paths.join(directory.path, 'save.sqlite'),
+        options: OpenDatabaseOptions(singleInstance: false),
+      );
+      try {
+        await database.insert('characters', {
+          'id': 'legacy-raw',
+          'snapshot': raw,
+          'updated_at': '2026-01-01T00:00:00.000Z',
+        });
+        final original = (await first.loadCharacters()).single;
+        expect(original.name, 'Altbestand');
+        expect(original.gold, 12);
+        expect(original.inventory.single.stats, isNotNull);
+        expect(
+          (jsonDecode(raw) as Map)['inventory'].single.containsKey('stats'),
+          isFalse,
+        );
+        expect(original.startingClassChoice, isNull);
+        expect(
+          original.toJson().length,
+          greaterThan((jsonDecode(raw) as Map).length),
+        );
+        expect(
+          (await database.query('characters')).single['snapshot'],
+          raw,
+          reason: 'Loading must not silently rewrite an older save.',
+        );
+        await controller.saveStandaloneHero(
+          original,
+          requireOriginalMatch: true,
+          originalHero: original,
+        );
+        expect(controller.error, isNull);
+        expect(
+          (await second.loadCharacters()).single.toJson(),
+          original.toJson(),
+        );
+        await controller.saveStandaloneHero(
+          original.copyWith(backstory: 'Bewusst bearbeitet'),
+          requireOriginalMatch: true,
+          originalHero: original,
+        );
+        expect(controller.error, isNull);
+        final stored = (await second.loadCharacters()).single;
+        expect(stored.backstory, 'Bewusst bearbeitet');
+        expect(stored.id, original.id);
+        expect(stored.gold, 12);
+        expect(
+          stored.inventory.single.toJson(),
+          original.inventory.single.toJson(),
+        );
+        expect(stored.startingClassChoice, isNull);
+      } finally {
+        await database.close();
+      }
+    },
+  );
+
+  test(
+    'legacy normalization still rejects a concurrent real archive change',
+    () async {
+      final database = await databaseFactoryFfi.openDatabase(
+        paths.join(directory.path, 'save.sqlite'),
+        options: OpenDatabaseOptions(singleInstance: false),
+      );
+      try {
+        await database.insert('characters', {
+          'id': 'legacy-raw',
+          'snapshot': jsonEncode(legacyArchiveJson()),
+          'updated_at': '2026-01-01T00:00:00.000Z',
+        });
+        final original = (await first.loadCharacters()).single;
+        expect(original.gold, 12);
+        // Independent connection keeps the historical JSON shape but changes
+        // a real value after this editor opened. Normalization cannot hide it.
+        final winningRaw = jsonEncode(legacyArchiveJson(gold: 3));
+        await database.update(
+          'characters',
+          {'snapshot': winningRaw, 'updated_at': '2026-01-02T00:00:00.000Z'},
+          where: 'id = ?',
+          whereArgs: ['legacy-raw'],
+        );
+        final before = await database.query('characters');
+        await controller.saveStandaloneHero(
+          original.copyWith(backstory: 'Veralteter Entwurf'),
+          requireOriginalMatch: true,
+          originalHero: original,
+        );
+        expect(controller.error, contains('geändert'));
+        expect(await database.query('characters'), before);
+        final winner = (await second.loadCharacters()).single;
+        expect(winner.gold, 3);
+        expect(winner.backstory, isEmpty);
+        expect(
+          winner.inventory.single.toJson(),
+          original.inventory.single.toJson(),
+        );
+        expect(
+          (await database.query('characters')).single['snapshot'],
+          winningRaw,
+        );
+      } finally {
+        await database.close();
+      }
+    },
+  );
 
   test(
     'another connection advancing a campaign rejects an old open hero editor',

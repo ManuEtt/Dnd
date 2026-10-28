@@ -416,7 +416,7 @@ CREATE TABLE settings (
     }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  /// Compare-and-swap on the exact canonical archive snapshot in one SQLite
+  /// Compare-and-swap on the canonical model snapshot in one SQLite
   /// transaction. Checking before the transaction would lose a two-editor race.
   /// The normal saveCharacter API remains available for explicit imports.
   @override
@@ -446,7 +446,18 @@ CREATE TABLE settings (
         whereArgs: [character.id],
         limit: 1,
       );
-      final stored = rows.isEmpty ? null : rows.single['snapshot'] as String;
+      // Older valid archive JSON may omit fields that the current model
+      // supplies on read (including typed catalog item stats). Compare both
+      // sides through the same decoder; loading alone must never rewrite it.
+      final stored = rows.isEmpty
+          ? null
+          : _canonical(
+              HeroCharacter.fromJson(
+                Map<String, dynamic>.from(
+                  jsonDecode(rows.single['snapshot'] as String) as Map,
+                ),
+              ).toJson(),
+            );
       if (stored != expected) {
         throw const CampaignConflictException(
           'Der Charakter wurde inzwischen geändert oder gelöscht. '
