@@ -64,8 +64,9 @@ class PendingSavageAttackerHit {
     final expression = json['weaponDamageExpression'];
     if (expression is! String ||
         expression.length > 30 ||
-        !RegExp(r'^[1-9][0-9]{0,2}d(4|6|8|10|12)([+-][1-9][0-9]{0,3})?$')
-            .hasMatch(expression)) {
+        !RegExp(
+          r'^[1-9][0-9]{0,2}d(4|6|8|10|12)([+-][1-9][0-9]{0,3})?$',
+        ).hasMatch(expression)) {
       throw const FormatException('Ungültige Waffenschadensnotation.');
     }
     final critical = json['critical'];
@@ -82,8 +83,9 @@ class PendingSavageAttackerHit {
           raw['total'] is! int) {
         throw FormatException('Ungültiger Waffenschadensnachweis: $key.');
       }
-      final match = RegExp(r'^(\d+)d(4|6|8|10|12)([+-]\d+)?$')
-          .firstMatch(expression)!;
+      final match = RegExp(
+        r'^(\d+)d(4|6|8|10|12)([+-]\d+)?$',
+      ).firstMatch(expression)!;
       final count = int.parse(match.group(1)!);
       final sides = int.parse(match.group(2)!);
       final modifier = int.parse(match.group(3) ?? '0');
