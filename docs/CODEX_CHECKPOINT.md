@@ -1,3 +1,9 @@
+## 28.10.2026 – Chat A / SRD-Zylinder-Geometrie, PR #361
+
+**Branch** `feat/chat-a/cylinder-area-preview-20261028` von main `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78`; [PR #361](https://github.com/ManuEtt/Dnd/pull/361) ist ein unabhängiger Entwurf. Zylinderbereich: überprüfte 2D-Basis-Kandidaten, explizite Ober-/Unterfläche und Höhen-Offsets sowie geprüfte Zauberursprungsreichweite; gesonderte Domain-/Flutter-Tests. Keine Persistenz-/UI-/Storyänderung, keine Migration oder Schadensanwendung. **Neue PR-CI steht noch aus; keine bestandenen Tests für diesen Commit behauptet.** Offizielle Quelle SRD 5.2.1, *Cylinder*, Wizards of the Coast LLC, CC BY 4.0; Regelabdeckung weiterhin teilweise. Gemeinsame Dokumentationsdateien werden vor Merge mit anderen PRs durch Chat D zusammengeführt.
+
+---
+
 ## 28.10.2026 – Gemeinsame lokale Abnahme bestanden
 
 Quellstand `4f03b7880c36ca225325c87ec9f2c56e0a93dccd` ist lokal vollständig geprüft:
