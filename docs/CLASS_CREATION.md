@@ -1,3 +1,12 @@
+## 27.10.2026 – Lesender Entscheidungs-Audit
+
+Der bestehende Klassen-/Charaktereditor zeigt sieben deutsche Prüfzustände.
+Bekannte Namen bestätigen nur die benannte Teilzuordnung; Klassenmerkmale,
+Fertigkeiten und Ausrüstung benötigen eigene Entscheidungsbelege. Insbesondere
+belegen Gold 0 und Hintergrundpakete kein Klassenstartpaket. Bestehende
+Spielstände werden nicht neu berechnet. [Aktueller Fachstand](CHARACTER_CREATION_AUDIT_20261027.md).
+Die älteren Abschnitte unten beschreiben die schrittweise Entwicklung.
+
 # Klassenwahl und Startpakete – Aetheria 0.3.3
 
 Quelle: SRD 5.2.1, Abschnitt „Classes“: https://www.dndbeyond.com/srd
