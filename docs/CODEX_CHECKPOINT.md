@@ -1,3 +1,20 @@
+# Chat D D-015 – GitHub-geschützte Branches beim Cleanup überspringen (28.10.2026)
+
+- **Ausgangs-main:** `bf5999e98335c1da94b1eafbf2fc8088b392b6ef`; **Branch:** `fix/chat-d/cleanup-protected-head-20261028`; [PR #335](https://github.com/ManuEtt/Dnd/pull/335) (gestapelt auf PR #337, finale kombinierte CI offen).
+- **Problem:** `.github/workflows/cleanup-merged-safe-20261027.yml` nutzte nur `protectedNames` aus offenen Pull Requests, aber nicht `branch.protected` aus GitHubs Branch-Liste. Historische geschützte Branches konnten dadurch bis zum Löschversuch gelangen und eine 422-Fehlermeldung auslösen.
+- **IMPLEMENTIERT:** Geschützte Branches und weiterhin alle Branches mit offenen PR-Abhängigkeiten werden direkt am Schleifenbeginn übersprungen. Bestehende SHA-/Ancestry-/Archiv-Gates bleiben unverändert.
+- **TESTS ERGÄNZT:** `scripts/tests/test_safe_cleanup_protected_branch.py` mit positivem Guard, negativen Guards/Umgehungen und weiteren aktiven Sicherungsprüfungen. Die Umsetzung verändert keine Branches.
+- **Technische Commits:** `f6a541f886e65d4cf623e6e3b961256955fbf88c`, `0ce8be9028ece58618d8c7f33e3768d0cbe4c9a7`.
+- **GETESTET:** Bisher nur Code- und Repository-Überprüfung; ursprünglicher PR-Commit 9ed9a9a vollständig grün; neue Integrations-CI offen.
+- **NICHT GETESTET:** Neue vollständige Python-, Backend-, Flutter- und Android-CI sowie physischer Android-Gerätetest.
+- **KOMPATIBILITÄT:** SQLite 2/JSON 1, Anwendung, Klassen/Story und App-Version unverändert, keine Migration.
+- **PARALLEL:** PR #329 bearbeitet nur den veralteten Bereinigungsworkflow; dessen Dateien bleiben unangetastet. Andere offene PRs verändern nach geprüftem Stand nicht den aktiven Workflow oder den neuen Test.
+- **NÄCHSTER SCHRITT:** Finale CI auf PR #335 prüfen; bei Fehlern ausschließlich den eigenen Branch korrigieren. Merge und Branchlöschung erst nach separater Freigabe.
+
+---
+
+- **Koordination am 28.10.2026:** Auf PR #337 `maintenance/cleanup-ancestor-branches-20261028` gestapelt; dessen geänderte Trigger und sichere Git-Ancestry-Gates bleiben erhalten. Die Prüfung in `test_safe_cleanup_protected_branch.py` wurde an `#337` angepasst, ohne dessen Testdatei zu überschreiben.
+
 # Chat B – NPC-Identitäten in Sitzungsrückblicken trennen (27.10.2026)
 
 - **Ausgangs-Main:** `ff245cc253194cd0858385d535ae7b2c9132bb06`; **Arbeitsbranch:** `feat/chat-b/session-recap-npc-identity-20261027`.

@@ -52,7 +52,11 @@ jobs:
             let deleted = 0, skipped = 0;
             for (const branch of branches) {
               const name = branch.name;
-              if (protectedNames.has(name)) { skipped++; continue; }
+              // Protected branches remain untouched even when ancestry proves integration.
+              if (branch.protected || protectedNames.has(name)) {
+                skipped++;
+                continue;
+              }
               const sha = branch.commit.sha;
               // An exact branch head that is an ancestor of current main
               // is integrated, even if delivered by a descendant/stacked PR.
