@@ -20,6 +20,7 @@ class ClassResourceRules {
     'indomitable',
     'channelDivinityPaladin',
     'favoredEnemy',
+    SrdRangerTirelessRules.resourceKey,
     'sorceryPoints',
   };
 
@@ -100,6 +101,8 @@ class ClassResourceRules {
             : l >= 5
             ? 3
             : 2;
+      case SrdRangerTirelessRules.resourceKey:
+        return SrdRangerTirelessRules.maximumTemporaryHitPointUses(hero);
       case 'sorceryPoints':
         final l = level(hero, 'Zauberer');
         return l < 2 ? 0 : l;
