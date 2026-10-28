@@ -35,20 +35,23 @@ SrdCylinderAreaPreview _preview({
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('confirmed circular base includes partial border, not automatic hits', () {
-    final result = _preview();
-    expect(result.radiusFeet, 10);
-    expect(result.heightFeet, 40);
-    expect(result.candidates, hasLength(21));
-    expect(result.at(origin)!.centerWithinBase, isTrue);
-    expect(result.at(const SrdGridCell(12, 11))!.centerWithinBase, isFalse);
-    expect(result.at(const SrdGridCell(12, 12)), isNull);
-    expect(
-      result.at(const SrdGridCell(11, 10))!.centerRay,
-      SrdSphereCenterRay.clear,
-    );
-    expect(() => result.candidates.clear(), throwsUnsupportedError);
-  });
+  test(
+    'confirmed circular base includes partial border, not automatic hits',
+    () {
+      final result = _preview();
+      expect(result.radiusFeet, 10);
+      expect(result.heightFeet, 40);
+      expect(result.candidates, hasLength(21));
+      expect(result.at(origin)!.centerWithinBase, isTrue);
+      expect(result.at(const SrdGridCell(12, 11))!.centerWithinBase, isFalse);
+      expect(result.at(const SrdGridCell(12, 12)), isNull);
+      expect(
+        result.at(const SrdGridCell(11, 10))!.centerRay,
+        SrdSphereCenterRay.clear,
+      );
+      expect(() => result.candidates.clear(), throwsUnsupportedError);
+    },
+  );
 
   test('top and bottom originate opposite vertical spans without altitude', () {
     final bottom = _preview();
