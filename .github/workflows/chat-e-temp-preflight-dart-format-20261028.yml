@@ -1,0 +1,28 @@
+name: Temporary Chat E preflight formatter
+on:
+  push:
+    branches:
+      - feat/chat-e/savage-attacker-decision-preflight-20261028
+permissions:
+  contents: read
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Format and emit canonical new files
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd app
+          files=(lib/domain/srd_savage_attacker_decision_preflight.dart test/srd_savage_attacker_decision_preflight_test.dart)
+          dart format "${files[@]}"
+          for file in "${files[@]}"; do
+            echo "BEGIN_FORMATTED_FILE:$file"
+            base64 -w 0 "$file"
+            echo
+            echo "END_FORMATTED_FILE:$file"
+          done
