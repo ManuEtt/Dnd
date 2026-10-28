@@ -301,6 +301,9 @@ class SrdClassFeatureCatalog {
     'Sneak Attack',
     'Martial Arts',
     'Unarmored Defense',
+    // Strength checks and saves have a confirmed floor, but full action
+    // coverage and final CI are tracked separately.
+    'Indomitable Might',
     'Remarkable Athlete',
     // A confirmed Reaction damage preflight exists, but HP/reaction
     // expenditure is not yet committed atomically in an encounter.
