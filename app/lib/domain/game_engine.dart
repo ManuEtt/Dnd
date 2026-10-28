@@ -47,6 +47,7 @@ import 'srd_extra_creature_attack_rules.dart';
 import 'rules_engine.dart';
 import 'rest_rules.dart';
 import 'spellcasting_rules.dart';
+import 'srd_bard_font_of_inspiration.dart';
 import 'srd_spell_preflight_rules.dart';
 import 'srd_spell_inventory_rules.dart';
 import 'srd_sending_cast_preflight_rules.dart';
@@ -692,6 +693,42 @@ class GameEngine {
       rageStartedRound: 0,
       rageUntilRound: 0,
       dodgeActive: false,
+    );
+  }
+
+  /// Confirmed, action-free Bard 5 slot-to-inspiration exchange. Both
+  /// resources, narrative and audit event share one campaign revision.
+  GameUpdate confirmBardFontOfInspiration(
+    Campaign campaign,
+    SrdBardFontProposal proposal, {
+    required bool playerConfirmed,
+  }) {
+    if (!playerConfirmed) {
+      throw const FormatException('Die Umwandlung muss bestätigt werden.');
+    }
+    _ensureNoOpportunity(campaign);
+    if (campaign.pendingRoll != null || campaign.pendingDeathSave != null) {
+      throw const FormatException(
+        'Zuerst die offene Würfel- oder Todesrettungsprobe abschließen.',
+      );
+    }
+    Campaign.fromJson(campaign.toJson());
+    final hero = proposal.applyTo(campaign.hero);
+    final source = proposal.usePactSlot ? 'Paktplatz' : 'Zauberplatz';
+    return _commit(
+      campaign,
+      campaign.copyWith(hero: hero),
+      'Quelle der Inspiration: Ein $source des '
+      '${proposal.slotLevel}. Grades wurde gegen eine verbrauchte '
+      'Bardische Inspiration eingetauscht (keine Aktion).',
+      type: 'class.bardFontOfInspiration',
+      payload: {
+        'characterId': hero.id,
+        'slotLevel': proposal.slotLevel,
+        'pactSlot': proposal.usePactSlot,
+        'inspirationRecovered': 1,
+        'playerConfirmed': true,
+      },
     );
   }
 

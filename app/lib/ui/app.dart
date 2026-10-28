@@ -18,6 +18,7 @@ import '../domain/acid_splash_rules.dart';
 import '../domain/healing_spell_rules.dart';
 import '../domain/saving_throw_class_actions.dart';
 import '../domain/class_resource_rules.dart';
+import '../domain/srd_bard_font_of_inspiration.dart';
 import '../domain/srd_terrain_movement_rules.dart';
 import '../domain/prone_movement_rules.dart';
 import '../domain/monk_flurry_rules.dart';
@@ -2190,6 +2191,14 @@ class _AdventurePageState extends State<_AdventurePage> {
             Navigator.of(sheetContext).pop();
             if (mounted) _roll();
           },
+          onFontOfInspiration: _ruleInteractionBlocked
+              ? null
+              : (SrdBardFontProposal proposal) async {
+                  return widget.controller.confirmBardFontOfInspiration(
+                    proposal,
+                    playerConfirmed: true,
+                  );
+                },
           onEdit: _ruleInteractionBlocked
               ? null
               : () {
