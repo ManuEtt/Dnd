@@ -4,15 +4,15 @@
   "source_url": "https://www.dndbeyond.com/srd",
   "source_section": "Character Creation, p. 21; Classes; Character Origins",
   "license": "CC-BY-4.0",
-  "as_of": "2026-10-27",
-  "baseline_main_sha": "8239f5e71ec6b229a2a0883500adaf431bb70087",
-  "pr": 318,
+  "as_of": "2026-10-28",
+  "baseline_main_sha": "bf5999e98335c1da94b1eafbf2fc8088b392b6ef",
+  "pr": 319,
   "coverage_complete": false,
   "all_required_choices_covered": false,
   "android_device_tested": false,
   "ci_final_head_verified": false,
   "existing_requirement_registers_unchanged": false,
-  "status_note": "Vollständige lokale Prüfung: 1.949 Flutter-, 164 Python-, 72 Backend- und zwölf native Android-Tests; finale CI siehe PR318/CODEX_CHECKPOINT. Gesamte Charaktererstellung weiterhin unvollständig.",
+  "status_note": "Main bf5999e regulär integriert. 57 gezielte Tests, Analyse/Format und168Python bestanden. Vollständige letzte gemeinsame CI siehePR319; 019be0e davor nachweislich2007Flutter/168Python/72Backend. GesamteCharaktererstellung unvollständig.",
   "requirements": [
     {
       "id": "CHAR-ABILITY-STANDARD-ARRAY",
@@ -192,68 +192,114 @@
       ],
       "mechanical_mutation": false,
       "note": "Kein Gesamt-SRD-Erfolgsflag; vollständig geführter Assistent und Quellen für sämtliche Pflichtwahlen weiterhin offen."
+    },
+    {
+      "id": "CHAR-CLASS-START-CHOICE-EVIDENCE",
+      "title": "Expliziter historischer erster Klassen-/Fertigkeits-/Paketnachweis",
+      "status": "partial",
+      "source": "SRD 5.2.1, Choose Class p.19; Classes/Core Traits pp.28–77; Equipment/Tools pp.93–94",
+      "code": [
+        "app/lib/domain/starting_class_choice.dart",
+        "app/lib/domain/models.dart",
+        "app/lib/domain/srd_character_creation_audit.dart",
+        "app/lib/domain/starting_equipment_import.dart"
+      ],
+      "ui": [
+        "app/lib/ui/srd_class_selection_dialog.dart",
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/starting_class_choice_test.dart",
+        "app/test/character_start_class_ui_test.dart",
+        "app/test/character_start_class_storage_test.dart"
+      ],
+      "note": "Kein Nachweis vollständiger Klassenmerkmale. Offene Kitvarianten explizit notAutomated; kein Grant beim Lesen. Mönch-PaketA bleibt ohne strukturierte Kopplung an dieselbe Werkzeugübung notAutomated."
     }
   ],
   "classes": [
     {
       "name": "Barbar",
       "status": "partial_or_unverified",
-      "complete": false
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
     },
     {
       "name": "Barde",
       "status": "partial_or_unverified",
-      "complete": false
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
     },
     {
       "name": "Kleriker",
       "status": "partial_or_unverified",
-      "complete": false
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
     },
     {
       "name": "Druide",
       "status": "partial_or_unverified",
-      "complete": false
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
     },
     {
       "name": "Kämpfer",
       "status": "partial_or_unverified",
-      "complete": false
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
     },
     {
       "name": "Mönch",
       "status": "partial_or_unverified",
-      "complete": false
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
     },
     {
       "name": "Paladin",
       "status": "partial_or_unverified",
-      "complete": false
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
     },
     {
       "name": "Waldläufer",
       "status": "partial_or_unverified",
-      "complete": false
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
     },
     {
       "name": "Schurke",
       "status": "partial_or_unverified",
-      "complete": false
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
     },
     {
       "name": "Zauberer",
       "status": "partial_or_unverified",
-      "complete": false
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
     },
     {
       "name": "Hexenmeister",
       "status": "partial_or_unverified",
-      "complete": false
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
     },
     {
       "name": "Magier",
       "status": "partial_or_unverified",
-      "complete": false
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
     }
   ],
   "backgrounds": [
@@ -335,17 +381,25 @@
     }
   ],
   "scope_note": "Talentnamen und Herkunftsübungen werden vermerkt; Auswirkungen der Talente und Magic-Initiate-Zauber sind nicht automatisiert.",
-  "next_task": "Klassenstartentscheidungen quellengetrennt versionieren, explizit bestätigen und per Audit nachweisen.",
-  "branch": "feat/character-creation-audit-evidence-20261027",
+  "next_task": "Vorhandenen Editor-CAS-Branch2173f57 prüfen und mit Regressionstests ergänzen; nicht doppelt implementieren.",
+  "branch": "feat/character-start-class-proof-20261027",
   "local_validation": {
-    "flutter_passed": 1949,
-    "python_passed": 164,
-    "backend_passed": 72,
-    "native_android_passed": 12,
-    "full_check_exit": 0,
-    "targeted_audit_tests": 24,
-    "debug_apk": "built_metadata_signature_verified",
-    "source_code_commit": "9cdefe84eddefac82d212b6647f4d30af2ca2512",
-    "real_device_tested": false
+    "product_commit": "30bb33ec9eec5e6dbb75d8e30cd9268386120477",
+    "product_flutter": 1995,
+    "python": 164,
+    "backend": 72,
+    "native": 12,
+    "integrated_targeted": 57,
+    "new_tests": 35,
+    "full_integrated_ci": "pending_at_document_write",
+    "current_main": "bf5999e98335c1da94b1eafbf2fc8088b392b6ef",
+    "current_python": 168,
+    "current_targeted": 57,
+    "verified_019_ci": {
+      "run": 40631517151,
+      "flutter": 2007,
+      "python": 168,
+      "backend": 72
+    }
   }
 }

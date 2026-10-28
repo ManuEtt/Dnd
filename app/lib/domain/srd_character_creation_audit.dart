@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'ability_generation.dart';
 import 'models.dart';
 import 'srd_character_classes.dart';
 import 'srd_skill_ability_catalog.dart';
+import 'starting_equipment_import.dart';
 
 /// Read-only assessment of recorded choices, not authority to grant benefits.
 /// SRD 5.2.1 Character Creation p. 21, Backgrounds p. 83, Species pp. 84–86.
@@ -82,6 +85,9 @@ class SrdCharacterCreationAudit {
   }) {
     final definition = findSrdClass(hero.className);
     final origin = hero.startingAbilityOrigin;
+    final classChoice = hero.startingClassChoice;
+    final classChoiceMatches =
+        classChoice != null && classChoice.className == definition?.name;
     final package = hero.startingBackgroundPackage;
     final backgroundName = _normalized(hero.background);
     final backgrounds = SrdBackground.values.where(
@@ -335,6 +341,18 @@ class SrdCharacterCreationAudit {
           'Gültige Klassenbezeichnungen und Stufenaufteilung; ursprüngliche Mehrklassen-Voraussetzungen und alle Stufenentscheidungen sind damit noch nicht nachgewiesen.',
         );
       }
+      if (atStart && classChoice != null) {
+        return choice(
+          id,
+          title,
+          classChoiceMatches
+              ? CreationStepStatus.confirmed
+              : CreationStepStatus.invalid,
+          classChoiceMatches
+              ? 'Die erste Klasse wurde ausdrücklich bestätigt und versioniert gespeichert. Dies bestätigt noch nicht alle Klassenmerkmale oder Zauber.'
+              : 'Die aktuelle Startklasse widerspricht der ausdrücklich bestätigten Klassenwahl.',
+        );
+      }
       return choice(
         id,
         title,
@@ -372,6 +390,28 @@ class SrdCharacterCreationAudit {
       }
       final backgroundSkills =
           package?.skills.map(_skill).toSet() ?? <String>{};
+      if (atStart && classChoice != null) {
+        final selected = classChoice.skills.map(_skill);
+        if (!classChoiceMatches ||
+            selected.any(
+              (skill) =>
+                  !skills.contains(skill) || backgroundSkills.contains(skill),
+            )) {
+          return choice(
+            id,
+            title,
+            CreationStepStatus.invalid,
+            'Die gespeicherte Klassenfertigkeitswahl fehlt im Entwurf oder überschneidet sich mit der bestätigten Hintergrundwahl.',
+          );
+        }
+        return choice(
+          id,
+          title,
+          CreationStepStatus.confirmed,
+          'Die erforderlichen Klassenfertigkeiten sind ausdrücklich gewählt, getrennt vom Hintergrund belegt und im Charakter vorhanden. Weitere Übungen sind damit nicht vollständig geprüft.',
+        );
+      }
+
       final eligible = skills
           .where(
             (s) =>
@@ -428,6 +468,18 @@ class SrdCharacterCreationAudit {
           title,
           CreationStepStatus.missing,
           'Die Rettungswurfübungen der ersten Klasse sind nicht vollständig vorhanden.',
+        );
+      }
+      if (atStart && classChoice != null) {
+        return choice(
+          id,
+          title,
+          classChoiceMatches
+              ? CreationStepStatus.confirmed
+              : CreationStepStatus.invalid,
+          classChoiceMatches
+              ? 'Die Rettungswurfübungen der ausdrücklich bestätigten ersten Klasse sind vorhanden. Weitere Übungsquellen bleiben getrennt zu prüfen.'
+              : 'Die Startklasse passt nicht zum gespeicherten Vergabenachweis.',
         );
       }
       return choice(
@@ -523,6 +575,78 @@ class SrdCharacterCreationAudit {
           title,
           CreationStepStatus.invalid,
           'Gold oder eindeutige Inventar-IDs sind ungültig.',
+        );
+      }
+      if (atStart && classChoice != null && !classChoiceMatches) {
+        return choice(
+          id,
+          title,
+          CreationStepStatus.invalid,
+          'Die aktuelle Startklasse stimmt nicht mit dem Paketnachweis überein.',
+        );
+      }
+      if (atStart && classChoiceMatches && classChoice.kitIndex != null) {
+        final kit = classChoice.selection.startingKit!;
+        final expected = [
+          for (final item in kit.items)
+            StartingEquipmentImport.fromSelectedStartingItem(
+              item,
+              'audit-only',
+              selectedCatalogId: classChoice.equipmentChoices[item.name],
+            ),
+        ];
+        if (expected.any(
+          (item) => item.catalogId.isEmpty || item.stats == null,
+        )) {
+          return choice(
+            id,
+            title,
+            CreationStepStatus.notAutomated,
+            'Die Paketwahl ist belegt; mindestens ein Startgegenstand oder eine notwendige Variante ist noch nicht strukturiert aufgelöst. Freitext bestätigt keine vollständige Ausrüstung.',
+          );
+        }
+        // Monk equipment must be the same tool/instrument chosen for tool
+        // proficiency (SRD p.49). That source decision is not typed yet.
+        if (classChoice.className == 'Mönch' &&
+            classChoice.equipmentChoices.isNotEmpty) {
+          return choice(
+            id,
+            title,
+            CreationStepStatus.notAutomated,
+            'Die zulässige Werkzeug-/Instrumentausrüstung ist gewählt. Ihre Übereinstimmung mit der erforderlichen Werkzeugübung ist noch nicht strukturiert nachgewiesen.',
+          );
+        }
+        // Names alone never substitute for catalog IDs and typed stats.
+        String signature(InventoryItem item) =>
+            jsonEncode([item.catalogId, item.name, item.stats?.toJson()]);
+        final quantities = <String, int>{};
+        for (final item in hero.inventory) {
+          quantities.update(
+            signature(item),
+            (n) => n + item.quantity,
+            ifAbsent: () => item.quantity,
+          );
+        }
+        for (final item in expected) {
+          quantities.update(
+            signature(item),
+            (n) => n - item.quantity,
+            ifAbsent: () => -item.quantity,
+          );
+        }
+        final present =
+            quantities.values.every((n) => n >= 0) &&
+            hero.gold != null &&
+            hero.gold! >= kit.gold;
+        return choice(
+          id,
+          title,
+          present
+              ? CreationStepStatus.confirmed
+              : CreationStepStatus.notAutomated,
+          present
+              ? 'Die ausdrückliche Klassenpaketwahl ist gespeichert; die typisierten Startgegenstände und das Paketgold sind vorhanden. Anlegen, spätere Käufe und weitere Quellen sind damit nicht vollständig geprüft.'
+              : 'Die historische Paketwahl ist erhalten; heutige Gegenstände oder Gold weichen ab. Verbrauch, Verkauf oder spätere Käufe werden nicht rückgängig gemacht oder erfunden.',
         );
       }
       if (hero.inventory.isEmpty && hero.gold == null) {

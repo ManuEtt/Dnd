@@ -6,6 +6,7 @@ import '../domain/character_creation_progression.dart';
 import '../domain/srd_class_level_up.dart';
 import '../domain/srd_character_creation_audit.dart';
 import '../domain/starting_ability_origin.dart';
+import '../domain/starting_class_choice.dart';
 import '../domain/ability_generation.dart';
 import '../domain/srd_background_package.dart';
 import '../domain/srd_character_classes.dart';
@@ -388,6 +389,42 @@ class _CharacterEditorState extends State<CharacterEditor> {
           'bestätigen (Attribute, Kampfstil, drei Waffenmeisterschaften, '
           'Fertigkeiten und Startausrüstung).',
         );
+      }
+      if (widget.hero == null && json['startingClassChoice'] != null) {
+        final recorded = StartingClassChoice.fromJson(
+          Map<String, dynamic>.from(json['startingClassChoice'] as Map),
+        );
+        final currentSkills = (json['skills'] as List).cast<String>();
+        final currentSaves = (json['savingThrowProficiencies'] as List)
+            .cast<String>();
+        final backgroundChoice = json['startingBackgroundPackage'] == null
+            ? null
+            : SrdBackgroundPackageChoice.fromJson(
+                Map<String, dynamic>.from(
+                  json['startingBackgroundPackage'] as Map,
+                ),
+              );
+        if (backgroundChoice != null &&
+            recorded.skills.any(backgroundChoice.skills.contains)) {
+          throw const FormatException(
+            'Bestätigte Klassen- und Hintergrundfertigkeiten überschneiden '
+            'sich. Bitte andere Klassenfertigkeiten wählen.',
+          );
+        }
+        if (json['level'] != 1 ||
+            findSrdClass(json['className'] as String)?.name !=
+                recorded.className ||
+            !recorded.skills.every(currentSkills.contains) ||
+            !recorded.selection.characterClass.savingThrows.every(
+              currentSaves.contains,
+            )) {
+          throw const FormatException(
+            'Die bestätigte Startklassenwahl passt nicht mehr zu Klasse, '
+            'Stufe oder Übungen. Bitte die Klassenwahl erneut bestätigen. '
+            'Ein bereits übernommenes Startpaket darf keiner anderen '
+            'Klasse zugeordnet werden.',
+          );
+        }
       }
       // Level-1 SRD generation and freehand entries must not be conflated.
       // Historical/imported characters intentionally remain editable.
@@ -1109,93 +1146,156 @@ class _CharacterEditorState extends State<CharacterEditor> {
     );
     if (selected == null || !mounted) return;
 
-    // Explicit dialog acceptance: only change the fields it actually covers.
-    final choice = selected.selection;
-    final recordedBackground = _original['startingBackgroundPackage'] == null
-        ? null
-        : SrdBackgroundPackageChoice.fromJson(
-            Map<String, dynamic>.from(
-              _original['startingBackgroundPackage'] as Map,
+    try {
+      // Prepare the complete proposal before mutating any editor field.
+      final choice = selected.selection;
+      final oldClassChoice = _original['startingClassChoice'] == null
+          ? null
+          : StartingClassChoice.fromJson(
+              Map<String, dynamic>.from(
+                _original['startingClassChoice'] as Map,
+              ),
+            );
+      if (widget.hero == null &&
+          oldClassChoice?.kitIndex != null &&
+          oldClassChoice!.className != choice.characterClass.name) {
+        throw const FormatException(
+          'Für die bisherige Klasse wurde bereits ein Startpaket übernommen. '
+          'Es darf nicht einer anderen Klasse zugeordnet oder ein zweites '
+          'Mal vergeben werden. Den Entwurf für eine andere Startklasse '
+          'bitte neu beginnen.',
+        );
+      }
+      final recordedBackground = _original['startingBackgroundPackage'] == null
+          ? null
+          : SrdBackgroundPackageChoice.fromJson(
+              Map<String, dynamic>.from(
+                _original['startingBackgroundPackage'] as Map,
+              ),
+            );
+      final backgroundSkills = recordedBackground?.skills ?? const <String>[];
+      if (choice.skills.any(backgroundSkills.contains)) {
+        throw const FormatException(
+          'Eine Klassenfertigkeit überschneidet sich mit '
+          'dem bestätigten Hintergrund. Bitte eine andere '
+          'Klassenfertigkeit wählen.',
+        );
+      }
+      // Replacing an explicit choice on a new draft replaces that source,
+      // rather than accumulating benefits from every previously chosen class.
+      // Background and unrelated values retain their separate provenance.
+      final replaceDraftSource = widget.hero == null && oldClassChoice != null;
+      final previousSkills = _listFieldValues('skills').where(
+        (skill) =>
+            !replaceDraftSource ||
+            !oldClassChoice.skills.contains(skill) ||
+            backgroundSkills.contains(skill),
+      );
+      final previousSaves = _listFieldValues('savingThrowProficiencies').where(
+        (save) =>
+            !replaceDraftSource ||
+            !oldClassChoice.selection.characterClass.savingThrows.contains(
+              save,
             ),
-          );
-    final backgroundSkills = recordedBackground?.skills ?? const <String>[];
-    if (choice.skills.any(backgroundSkills.contains)) {
-      setState(
-        () => _error =
-            'Eine Klassenfertigkeit überschneidet sich mit '
-            'dem bestätigten Hintergrund. Bitte eine andere '
-            'Klassenfertigkeit wählen.',
       );
-      return;
-    }
-    final skills = selected.replaceExistingProficiencies
-        ? {...backgroundSkills, ...choice.skills}.toList()
-        : {..._listFieldValues('skills'), ...choice.skills}.toList();
-    final saves = selected.replaceExistingProficiencies
-        ? choice.characterClass.savingThrows
-        : {
-            ..._listFieldValues('savingThrowProficiencies'),
-            ...choice.characterClass.savingThrows,
-          }.toList();
-    StartingHitPoints? hp;
-    if (selected.useSuggestedHitPoints) {
-      hp = StartingHitPoints.propose(
-        className: choice.characterClass.name,
-        constitutionScore: int.tryParse(_scores['constitution']!.text.trim()),
-        characterLevel: int.tryParse(_fields['level']!.text.trim()),
-      );
-    }
-    final kit = choice.startingKit;
-    final fighterChoices = selected.fighterChoices;
-    final selectedFeatures = _listFieldValues('features')
-        .where(
-          (name) =>
-              !name.startsWith('Kampfstil: ') &&
-              !name.startsWith('Zweite Luft (') &&
-              !name.startsWith('Waffenmeisterschaft: '),
-        )
-        .toList();
-    if (fighterChoices != null) {
-      selectedFeatures.addAll(fighterChoices.featureLabels);
-    }
-    setState(() {
-      if (widget.hero == null) {
-        _fighterSetupConfirmed = fighterChoices != null;
-        _fields['features']!.text = selectedFeatures.join('\n');
-      } else if (fighterChoices != null) {
-        _fields['features']!.text = [
-          ..._listFieldValues('features'),
-          ...fighterChoices.featureLabels.where(
-            (f) => !_listFieldValues('features').contains(f),
-          ),
-        ].join('\n');
+      final skills = selected.replaceExistingProficiencies
+          ? {...backgroundSkills, ...choice.skills}.toList()
+          : {...previousSkills, ...choice.skills}.toList();
+      final saves = selected.replaceExistingProficiencies
+          ? choice.characterClass.savingThrows
+          : {...previousSaves, ...choice.characterClass.savingThrows}.toList();
+      final hp = selected.useSuggestedHitPoints
+          ? StartingHitPoints.propose(
+              className: choice.characterClass.name,
+              constitutionScore: int.tryParse(
+                _scores['constitution']!.text.trim(),
+              ),
+              characterLevel: int.tryParse(_fields['level']!.text.trim()),
+            )
+          : null;
+      final kit = choice.startingKit;
+      if (kit != null && _classEquipmentConfirmed) {
+        throw const FormatException(
+          'Das Klassenstartpaket wurde bereits übernommen.',
+        );
       }
-
-      _fields['className']!.text = choice.characterClass.name;
-      _fields['skills']!.text = skills.join('\n');
-      _fields['savingThrowProficiencies']!.text = saves.join('\n');
-      if (hp != null) {
-        _fields['hitPoints']!.text = hp.maximum.toString();
-        _fields['maxHitPoints']!.text = hp.maximum.toString();
-      }
-      if (kit != null) {
-        _classEquipmentConfirmed = true;
-        final existingGold = int.tryParse(_fields['gold']!.text.trim()) ?? 0;
-        _fields['gold']!.text = (existingGold + kit.gold).toString();
-        final inventory = _original['inventory'] as List;
-        for (final item in kit.items) {
-          inventory.add(
+      final newInventory = <Map<String, dynamic>>[
+        if (kit != null)
+          for (final item in kit.items)
             StartingEquipmentImport.fromSelectedStartingItem(
               item,
               const Uuid().v4(),
               selectedCatalogId: selected.equipmentChoices[item.name],
             ).toJson(),
-          );
-        }
+      ];
+      final goldText = _fields['gold']!.text.trim();
+      final oldGold = goldText.isEmpty ? 0 : int.tryParse(goldText);
+      if (kit != null && (oldGold == null || oldGold < 0)) {
+        throw const FormatException(
+          'Vorhandenes Gold muss eine nicht negative ganze Zahl sein.',
+        );
       }
-      _autofillCombatValues();
-      _error = null;
-    });
+      final fighterChoices = selected.fighterChoices;
+      final selectedFeatures = _listFieldValues('features')
+          .where(
+            (name) =>
+                !name.startsWith('Kampfstil: ') &&
+                !name.startsWith('Zweite Luft (') &&
+                !name.startsWith('Waffenmeisterschaft: '),
+          )
+          .toList();
+      if (fighterChoices != null) {
+        selectedFeatures.addAll(fighterChoices.featureLabels);
+      }
+      StartingClassChoice? proof = selected.startingClassChoice;
+      if (proof != null && oldClassChoice?.kitIndex != null) {
+        proof = StartingClassChoice.confirmed(
+          className: proof.className,
+          skills: proof.skills,
+          kitIndex: oldClassChoice!.kitIndex,
+          equipmentChoices: oldClassChoice.equipmentChoices,
+          fighterChoices: proof.fighterChoices,
+        );
+      }
+      final confirmedProof = proof;
+      setState(() {
+        if (widget.hero == null) {
+          _fighterSetupConfirmed = fighterChoices != null;
+          _fields['features']!.text = selectedFeatures.join('\n');
+          if (confirmedProof != null) {
+            _original['startingClassChoice'] = confirmedProof.toJson();
+          }
+        } else if (fighterChoices != null) {
+          _fields['features']!.text = [
+            ..._listFieldValues('features'),
+            ...fighterChoices.featureLabels.where(
+              (f) => !_listFieldValues('features').contains(f),
+            ),
+          ].join('\n');
+        }
+        _fields['className']!.text = choice.characterClass.name;
+        _fields['skills']!.text = skills.join('\n');
+        _fields['savingThrowProficiencies']!.text = saves.join('\n');
+        if (hp != null) {
+          _fields['hitPoints']!.text = hp.maximum.toString();
+          _fields['maxHitPoints']!.text = hp.maximum.toString();
+        }
+        if (kit != null) {
+          _classEquipmentConfirmed = true;
+          _fields['gold']!.text = (oldGold! + kit.gold).toString();
+          _original['inventory'] = [
+            ..._original['inventory'] as List,
+            ...newInventory,
+          ];
+        }
+        _autofillCombatValues();
+        _error = null;
+      });
+    } catch (error) {
+      if (mounted) {
+        setState(() => _error = 'Klassenwahl nicht übernommen: $error');
+      }
+    }
   }
 
   List<String> _listFieldValues(String name) => _fields[name]!.text
