@@ -90,8 +90,9 @@ void main() {
     );
   });
 
-  test('Thunderwave cube validates Self origin before previewing candidates',
-      () async {
+  test(
+    'Thunderwave cube validates Self origin before previewing candidates',
+    () async {
     final catalog = await SrdSpellCatalogLoader.load();
     final thunderwave = catalog.find('Thunderwave')!;
     expect(thunderwave.range, 'Self');
@@ -124,10 +125,12 @@ void main() {
       isTrue,
     );
     expect(() => preview.candidates.removeLast(), throwsUnsupportedError);
-  });
+    },
+  );
 
-  test('cube spell preflight rejects unverified shape, footprint and origin',
-      () async {
+  test(
+    'cube spell preflight rejects unverified shape, footprint and origin',
+    () async {
     final catalog = await SrdSpellCatalogLoader.load();
     final thunderwave = catalog.find('Thunderwave')!;
     const caster = SrdGridCell(2, 2);
@@ -137,26 +140,30 @@ void main() {
       fullBlockers: const [],
       fullBlockersSurveyedConfirmed: true,
     );
-    SrdSpellGridTargetRequest target(SrdSpellGridMap map,
-            {SrdGridCell origin = caster}) =>
-        SrdSpellGridTargetRequest(
-          map: map,
-          caster: caster,
-          origin: origin,
-        );
+    SrdSpellGridTargetRequest target(
+      SrdSpellGridMap map, {
+      SrdGridCell origin = caster,
+    }) {
+      return SrdSpellGridTargetRequest(
+        map: map,
+        caster: caster,
+        origin: origin,
+      );
+    }
     SrdCubeAreaPreview preview(
       SrdSpellGridTargetRequest request, {
       bool shape = true,
       bool footprint = true,
       int side = 15,
-    }) =>
-        SrdCubeAreaRules.previewConfirmedSpell(
-          spell: thunderwave,
-          gridTarget: request,
-          cubeShapeVerifiedFromEffect: shape,
-          verifiedEffectSideFeet: side,
-          axisAlignedFootprintConfirmed: footprint,
-        );
+    }) {
+      return SrdCubeAreaRules.previewConfirmedSpell(
+        spell: thunderwave,
+        gridTarget: request,
+        cubeShapeVerifiedFromEffect: shape,
+        verifiedEffectSideFeet: side,
+        axisAlignedFootprintConfirmed: footprint,
+      );
+    }
 
     expect(() => preview(target(grid), shape: false), throwsFormatException);
     expect(() => preview(target(grid), footprint: false), throwsFormatException);
@@ -168,24 +175,28 @@ void main() {
     );
     expect(
       () => preview(
-        target(SrdSpellGridMap(
-          width: 8,
-          height: 8,
-          fullBlockers: const [],
-          fullBlockersSurveyedConfirmed: false,
-        )),
+        target(
+          SrdSpellGridMap(
+            width: 8,
+            height: 8,
+            fullBlockers: const [],
+            fullBlockersSurveyedConfirmed: false,
+          ),
+        ),
       ),
       throwsFormatException,
       reason: 'Unsurveyed terrain must not be assumed clear',
     );
     expect(
       () => preview(
-        target(SrdSpellGridMap(
-          width: 8,
-          height: 8,
-          fullBlockers: const [caster],
-          fullBlockersSurveyedConfirmed: true,
-        )),
+        target(
+          SrdSpellGridMap(
+            width: 8,
+            height: 8,
+            fullBlockers: const [caster],
+            fullBlockersSurveyedConfirmed: true,
+          ),
+        ),
       ),
       throwsFormatException,
       reason: 'The caster may not occupy a confirmed full blocker',
@@ -195,6 +206,6 @@ void main() {
       throwsFormatException,
       reason: 'Off-grid spell origins fail closed',
     );
-  });
-
+    },
+  );
 }
