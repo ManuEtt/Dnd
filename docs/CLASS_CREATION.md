@@ -1,3 +1,12 @@
+## 27.10.2026 – Lesender Entscheidungs-Audit
+
+Der bestehende Klassen-/Charaktereditor zeigt sieben deutsche Prüfzustände.
+Bekannte Namen bestätigen nur die benannte Teilzuordnung; Klassenmerkmale,
+Fertigkeiten und Ausrüstung benötigen eigene Entscheidungsbelege. Insbesondere
+belegen Gold 0 und Hintergrundpakete kein Klassenstartpaket. Bestehende
+Spielstände werden nicht neu berechnet. [Aktueller Fachstand](CHARACTER_CREATION_AUDIT_20261027.md).
+Die älteren Abschnitte unten beschreiben die schrittweise Entwicklung.
+
 # Klassenwahl und Startpakete – Aetheria 0.3.3
 
 > **Neuer Teilstand (27.10.2026):** Für jede der zwölf SRD-Klassen ist bei der **neuen** Stufe-1-Klassenbestätigung jetzt ein gültiger Konstitutionswert für die Start-TP und, sofern die Klassen-Starterausrüstung noch auswählbar ist, eine ausdrückliche Ausrüstungs-/Goldwahl erforderlich. Die spätere Editor-Speicherung übernimmt die berechneten TP. Bereits gespeicherte Charaktere werden nicht zwangsweise umgerechnet. Die unten dokumentierten optionalen Kämpfer-/TP-Angaben stammen aus älteren Zwischenständen. Vollständige Klassenmerkmale, Zauber, Spezies- und Talentauswahl bleiben offen; nicht als abgeschlossene SRD-Erstellung verstehen. Nachweis: `docs/CHARACTER_CREATION_COVERAGE.json`.

@@ -1,0 +1,21 @@
+name: Chat B temporary NPC note ID formatter
+on:
+  push:
+    branches:
+      - fix/chat-b/npc-note-id-uniqueness-20261027
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Output official formatted Dart
+        run: |
+          echo 'CHAT_B_START_0'
+          dart format --output=show app/lib/story/npc_identity_story_payload.dart
+          echo 'CHAT_B_END_0'
+          echo 'CHAT_B_START_1'
+          dart format --output=show app/test/npc_identity_story_payload_test.dart
+          echo 'CHAT_B_END_1'
