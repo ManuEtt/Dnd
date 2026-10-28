@@ -21,6 +21,16 @@ abstract interface class CampaignRepository {
   Future<void> close();
 }
 
+/// Atomically compare a hero archive snapshot with the version the editor
+/// originally displayed. A null original means a new ID must not yet exist.
+/// This is a separate optional capability so older repository mocks compile.
+abstract interface class AtomicCharacterSnapshotStore {
+  Future<void> saveCharacterIfUnchanged(
+    HeroCharacter character, {
+    required HeroCharacter? expectedOriginal,
+  });
+}
+
 /// Selective campaign deletion including the persisted selected-campaign
 /// preference. Implementations commit both changes atomically, without
 /// overwriting a newer selection made by another repository connection.

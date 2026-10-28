@@ -1,5 +1,17 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## 28.10.2026 – Stale-Editor-Sicherung auf aktuellem Main
+
+Kampagneneditoren prüfen beim Speichern die beim Öffnen gültige Revision
+gegen den laufenden und gespeicherten Stand. Standalone-Figuren werden
+nur nach atomarem SQLite-Vergleich des ursprünglichen Snapshots geändert;
+konkurrierende Änderungen, gelöschte Figuren und ID-Kollisionen bleiben
+unverändert erhalten. Sechs Regressionstests, bestehendes Speicherformat
+und die neue SQLite-V3-Hauptbranch-Migration sind berücksichtigt.
+**Isolierte volle CI grün auf `76d5daa`; gemeinsame Integrations-CI ausstehend.**
+Vollständiger SRD-Charakter-Wizard noch nicht fertig.
+[Technik](docs/CHARACTER_EDITOR_REVISION_20261028.md).
+
 ## Chat B – Gleichnamige NPCs im bestätigten Sitzungsrückblick (27.10.2026)
 
 Der automatische Sitzungsrückblick unterscheidet jetzt gleichnamige NPCs anhand ihrer **bestätigten gespeicherten NPC-ID**, genau wie der gezielte Gedächtnisabruf. Zwei Figuren namens Mira mit derselben Beziehung erscheinen nicht mehr als undifferenzierte Namenseinträge. Eindeutige Namen behalten die bisherigen menschenlesbaren Texte; beschädigte mehrfach verwendete NPC-IDs werden nicht als bestätigte Identitäten ausgegeben. Die vorhandene 2.400-Zeichen-Grenze bleibt erhalten. Vier neue Flutter-Regressionstests prüfen gleiche Namen, ältere JSON-Spielstände ohne optionale Notizen, ungültige doppelte IDs und einen tatsächlich gespeicherten Sitzungsrückblick samt JSON-Roundtrip. Reine Storyprojektion: keine Änderungen an Regeln, Questbelohnungen, SQLite-Schema oder Backend.

@@ -495,6 +495,24 @@
         "app/test/ui_srd_class_selection_test.dart"
       ],
       "note": "Erfordert Stufe 1, gültige Konstitution, Start-TP-Übernahme und auswählbare Klassen-Ausrüstung/Gold. Frühere Charaktere werden nicht umgerechnet; Klassenmerkmale/Zauber sind NICHT damit abgedeckt."
+    },
+    {
+      "id": "CHAR-EDITOR-REVISION-CAS",
+      "title": "Bestehende Charaktere beim Speichern gegen veraltete Editorstände sichern",
+      "source": "Integrität von SQLite und Kampagnenständen, kein zusätzlicher SRD-Regelinhalt",
+      "status": "implemented_integration_ci_pending",
+      "code": [
+        "app/lib/data/campaign_repository.dart",
+        "app/lib/data/sqlite_campaign_repository.dart",
+        "app/lib/services/game_controller.dart"
+      ],
+      "ui": [
+        "app/lib/ui/app.dart"
+      ],
+      "tests": [
+        "app/test/character_editor_stale_save_test.dart"
+      ],
+      "note": "Alte Bearbeitungen werden revisionsgebunden abgewiesen; eigenständige Charaktere durch transaktionalen Snapshot-CAS geschützt. Isolierte CI grün, zusammengeführte Main-Version erneut testen."
     }
   ],
   "classes": [
