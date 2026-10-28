@@ -32,7 +32,7 @@ class SqliteCampaignRepository
     final database = await selectedFactory.openDatabase(
       databasePath,
       options: OpenDatabaseOptions(
-        version: 2,
+        version: 3,
         onConfigure: (database) async {
           await database.execute('PRAGMA foreign_keys = ON');
         },
@@ -43,6 +43,9 @@ class SqliteCampaignRepository
           if (oldVersion < 2) {
             await _createPendingActionsTable(database);
             await _migrateLegacyPendingActions(database);
+          }
+          if (oldVersion < 3 && oldVersion >= 2) {
+            await _addNpcSelectionToPendingActions(database);
           }
         },
         onCreate: (database, version) async {
@@ -428,6 +431,10 @@ CREATE TABLE settings (
       'campaignId': rows.single['campaign_id'],
       'requestId': rows.single['request_id'],
       'text': rows.single['action_text'],
+      if (rows.single['selected_npc_id'] != null) ...{
+        'selectedNpcId': rows.single['selected_npc_id'],
+        'selectedNpcRevision': rows.single['selected_npc_revision'],
+      },
     };
   }
 
@@ -436,7 +443,16 @@ CREATE TABLE settings (
     required String campaignId,
     required String requestId,
     required String text,
+    String? selectedNpcId,
+    int? selectedNpcRevision,
   }) async {
+    if ((selectedNpcId == null) != (selectedNpcRevision == null) ||
+        (selectedNpcId != null &&
+            (!RegExp(r'^[A-Za-z0-9_-]{1,64}$').hasMatch(selectedNpcId) ||
+                selectedNpcRevision! < 0 ||
+                selectedNpcRevision > 2147483647))) {
+      throw const FormatException('Ungültige gespeicherte NPC-Auswahl.');
+    }
     await _database.transaction((transaction) async {
       final existing = await transaction.query(
         'pending_player_actions',
@@ -455,6 +471,8 @@ CREATE TABLE settings (
         'campaign_id': campaignId,
         'request_id': requestId,
         'action_text': text,
+        'selected_npc_id': selectedNpcId,
+        'selected_npc_revision': selectedNpcRevision,
       });
     });
   }
@@ -464,6 +482,8 @@ CREATE TABLE settings (
     required String campaignId,
     required String requestId,
     required String text,
+    String? selectedNpcId,
+    int? selectedNpcRevision,
   }) async {
     await _database.transaction((transaction) async {
       final rows = await transaction.query(
@@ -473,14 +493,26 @@ CREATE TABLE settings (
         limit: 1,
       );
       if (rows.isEmpty) return;
+      // A stale ACK must not remove an action with the same request ID and
+      // text but a different deliberately selected NPC or saved revision.
       if (rows.single['request_id'] != requestId ||
-          rows.single['action_text'] != text) {
+          rows.single['action_text'] != text ||
+          rows.single['selected_npc_id'] != selectedNpcId ||
+          rows.single['selected_npc_revision'] != selectedNpcRevision) {
         throw StateError('Die ausstehende Handlung hat sich geändert.');
       }
       await transaction.delete(
         'pending_player_actions',
-        where: 'campaign_id = ? AND request_id = ? AND action_text = ?',
-        whereArgs: [campaignId, requestId, text],
+        where:
+            'campaign_id = ? AND request_id = ? AND action_text = ? '
+            'AND selected_npc_id IS ? AND selected_npc_revision IS ?',
+        whereArgs: [
+          campaignId,
+          requestId,
+          text,
+          selectedNpcId,
+          selectedNpcRevision,
+        ],
       );
     });
   }
@@ -609,15 +641,29 @@ CREATE TABLE settings (
   Future<void> close() => _database.close();
 }
 
-/// SQLite schema 2 adds an independent, uniqueness-constrained outbox.
+/// SQLite 3 creates the independent outbox with optional selected NPC identity.
 /// Import/export schemaVersion=1 for campaign JSON is unchanged.
 Future<void> _createPendingActionsTable(DatabaseExecutor database) async {
   await database.execute('''
 CREATE TABLE pending_player_actions (
   campaign_id TEXT PRIMARY KEY NOT NULL,
   request_id TEXT NOT NULL UNIQUE,
-  action_text TEXT NOT NULL
+  action_text TEXT NOT NULL,
+  selected_npc_id TEXT,
+  selected_npc_revision INTEGER,
+  CHECK ((selected_npc_id IS NULL) = (selected_npc_revision IS NULL))
 )''');
+}
+
+/// SQLite 3 adds optional NPC identity to the durable action intent. Existing
+/// rows remain ordinary text-only actions; no confirmed history is rewritten.
+Future<void> _addNpcSelectionToPendingActions(DatabaseExecutor database) async {
+  await database.execute(
+    'ALTER TABLE pending_player_actions ADD COLUMN selected_npc_id TEXT',
+  );
+  await database.execute(
+    'ALTER TABLE pending_player_actions ADD COLUMN selected_npc_revision INTEGER',
+  );
 }
 
 /// Upgrade is one SQLite migration transaction. Never silently discard a
