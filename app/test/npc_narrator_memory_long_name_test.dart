@@ -19,20 +19,18 @@ NpcRelationshipNote _note({
   recordedAt: DateTime.utc(2026, 10, day),
 );
 
-Campaign _campaign(
-  List<WorldNpc> npcs,
-  List<NpcRelationshipNote> notes,
-) => Campaign(
-  id: 'npc-long-wire',
-  name: 'Zwei Hüterinnen',
-  world: 'Valdorn',
-  sessionId: 'memory-session',
-  hero: HeroCharacter(id: 'hero', name: 'Aria', hitPoints: 12),
-  scene: 'Nur unbestätigte Erzählung.',
-  revision: 4,
-  npcs: npcs,
-  npcRelationshipNotes: notes,
-);
+Campaign _campaign(List<WorldNpc> npcs, List<NpcRelationshipNote> notes) =>
+    Campaign(
+      id: 'npc-long-wire',
+      name: 'Zwei Hüterinnen',
+      world: 'Valdorn',
+      sessionId: 'memory-session',
+      hero: HeroCharacter(id: 'hero', name: 'Aria', hitPoints: 12),
+      scene: 'Nur unbestätigte Erzählung.',
+      revision: 4,
+      npcs: npcs,
+      npcRelationshipNotes: notes,
+    );
 
 void main() {
   test('long distinct NPC names use saved IDs and survive JSON restore', () {
