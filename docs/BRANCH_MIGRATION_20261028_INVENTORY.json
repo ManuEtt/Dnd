@@ -1,0 +1,243 @@
+{
+  "generated_at": "2026-10-28T14:10:34.555860+00:00",
+  "base_main": "dd0c2e94ccf0995c6070010b6af1df315205b36a",
+  "integrated_main": "f9d68a97f35799e50881e9c6992efaed807e6301",
+  "working_branch": "integration/all-branches-20261028",
+  "source_before_documentation": "aafd7654b3a97a092ae180410c579afe9c4e6b6e",
+  "version": "0.8.46+96",
+  "sqlite_schema": 3,
+  "campaign_json_schema": 1,
+  "original_remote_branches": 27,
+  "additional_remote_branches": 1,
+  "branches": [
+    {
+      "branch": "feat/character-magic-initiate-choices-20261027",
+      "sha": "35d6403c1d03aff603be31fb1e85e0c03d416f52",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "feat/character-roll-provenance-20261027",
+      "sha": "f1d2785c0d7ec3fa84b291a4bb541911ab9b44d4",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "feat/character-start-class-proof-20261027",
+      "sha": "b4db131e490801efbe95cfdcf7bf6bb938c3d3e8",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "feat/character-start-values-all-classes-20261027",
+      "sha": "0ca0f91d0ae4a74299ad1f23fed445fc1ef42bf4",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "feat/chat-a/audited-material-inventory-20261027",
+      "sha": "4d7b8c0107022d531d0c5950c09dcaff9b60e6cd",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "feat/chat-a/audited-multi-material-components-20261027",
+      "sha": "779137bbfeaf86242bd246918c53bdc757febd9f",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "feat/chat-a/evasion-confirmed-saves-20261027",
+      "sha": "f5fe63bf2d314f0066b834819e01d3ff344a8926",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "feat/chat-a/high-jump-preflight-20261027",
+      "sha": "0441729ada038aaa61a1bcab5da222849ef90824",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "feat/chat-a/long-jump-atomic-integration-20261027",
+      "sha": "ee1b33d00536049dfec9f1447306b48773f33c81",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "feat/chat-a/long-jump-encounter-plan-20261027",
+      "sha": "461e36f4f5a768aa2900830fd38be65149c569d6",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "feat/chat-a/long-jump-preflight-20261027",
+      "sha": "4e15ba643a22b94e9ec3ba7da72e8330a0b0e56c",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "feat/chat-a/material-inventory-dialog-20261027",
+      "sha": "7595484f6bd06b10c73aa7cf34f3d7ec3c49dbc9",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "feat/chat-a/srd-capstone-level20-20261026",
+      "sha": "5a44dc4b9ab4e5b8648f72439b414a2915cc42bb",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "feat/chat-c/button-semantics-20261027",
+      "sha": "8b32e1d5cca1f84c16b391b78fd8829be0d721e0",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "feat/chat-e/savage-attacker-decision-preflight-20261028",
+      "sha": "4380c509a125a2141a496e5f6876e46e3d17261b",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "feat/chat-e/savage-attacker-pending-evidence-20261028",
+      "sha": "e937bf9ac65cd77642f45c3e147dae94081ddca2",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "feat/srd-barbarian-indomitable-might-20261028",
+      "sha": "3a565a21bdfdf2c2b381f49c4d8c446ae145ca57",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "feat/srd-bard-font-confirmed-action-20261028",
+      "sha": "7a2c0098228611037543047120b8807a4e3bf15f",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "feat/srd-bard-superior-inspiration-20261028",
+      "sha": "2eac8f2b21281a6d98257e1a3ee2a37b1c509703",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "feat/srd-ranger-tireless-short-rest-20261028",
+      "sha": "0a551fa8b531318b97c85ab2313dac2c2fbce7b4",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "fix/character-editor-stale-save-20261028",
+      "sha": "1280db9155b0d8cf38f227440856c76e8e78eda6",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "fix/chat-b/story-replay-session-identity-20261027",
+      "sha": "98e1cc2ebbeab53b92cbfc899f3519894439d644",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "fix/chat-d/cleanup-protected-head-20261028",
+      "sha": "20a8c130d0ab860846b7c0afbf30c994e2f47502",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "fix/chat-d/conditional-dart-boundaries-20261027",
+      "sha": "843fe4208dbc101f1a46553d97edf0e7c283eb16",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "main",
+      "sha": "dd0c2e94ccf0995c6070010b6af1df315205b36a",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "maintenance/retire-verified-story-ui-branches-20261027",
+      "sha": "c190227882e0b96d31c036fe436640a36d4d0b47",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "test/chat-b/controller-terminal-recovery-20261026",
+      "sha": "8bbf252ad48b8bc3c561da749b67c5cbc6a69520",
+      "origin_snapshot": "initial",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    },
+    {
+      "branch": "integration/conditional-imports-buttons-20261028",
+      "sha": "b49f4eb5d00ef7004beccce13a2ff6564d317fbc",
+      "origin_snapshot": "concurrent-integration",
+      "included_as_ancestor": true,
+      "remote_deletion": "pending final PR + Main verification",
+      "archive_tag": "pending"
+    }
+  ],
+  "verification": {
+    "full_combined": "pending corrected-source run",
+    "initial_300f7be": "partial run deliberately superseded by reproduced Legacy-CAS fix (exit143); not a full pass"
+  },
+  "deletion_policy": "Exact unchanged head must be ancestor of tested Main; verify protected/open-PR use, archive then delete. Preserve newer or unmerged heads."
+}

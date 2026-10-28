@@ -1,3 +1,15 @@
+# 28.10.2026 – Gemeinsame Branch-Migration / 0.8.46+96
+
+Arbeitsbranch `integration/all-branches-20261028`; Ausgangs-Main `dd0c2e94`, inzwischen Main `f9d68a97` enthalten. Alle 26 ursprünglichen Nebenbranch-Köpfe plus ein paralleler Integrationsbranch sind Vorfahren. Originale vorab in geprüftem Bundle gesichert. **Kein Branch wurde von diesem Durchlauf vor der gemeinsamen Abnahme gelöscht.**
+
+**IMPLEMENTIERT:** Charakterpakete #297/#317/#319/#324/#330, Klassenmechaniken #313/#332/#336/#339/#340, Story-/Material-/Sprunghistorien, geschützte Bereinigung und Importgrenzen/Buttonsemantik gemeinsam integriert. Altarchiv-CAS tatsächlich reproduziert und korrigiert; Barden-Dialog bei großer Schrift repariert. **GETESTET:** Teilpakete und Legacy-SQLite-Regressionen; gemeinsame Vollsuite auf korrigiertem Stand läuft anschließend. Früher Vollversuch `300f7be` mit143 bewusst ersetzt, kein voller Erfolg. **NICHT GETESTET:** finale Gesamt-PR-/Main-CI und Android-Build bis zum tatsächlichen Nachweis; reale Geräteabnahme/Produktivsignierung offen. **BLOCKIERT:** kein reales Gerät. **NOCH NICHT IMPLEMENTIERT:** vollständiger Wizard/SRD; Talent- und Würfelbelege werden nicht als vollständige Wirkungsautomatik ausgegeben.
+
+SQLite3 / Kampagnen-JSON1 unverändert. Hauptbericht und konkrete Wiederaufnahme: [BRANCH_MIGRATION_20261028.md](BRANCH_MIGRATION_20261028.md). Logs/Quell-ZIPs/Patches/Bundle: `/workspace/artifacts/branch-migration-20261028/` und `/workspace/validation/20261028-migration-*`. Finalen Commit und CI-Status am tatsächlichen PR prüfen; ältere Einträge darunter sind historische Momentaufnahmen.
+
+**Genau nächster Schritt:** korrigierte gemeinsame Suite und Android/native Prüfungen abschließen, finalen eigenen PR prüfen und regulär nach Main mergen, Main-CI abwarten, dann nur archivierte unveränderte enthaltene Nebenbranches löschen. Danach explizite Kleriker-/Paladin-Symbolwahl im vorhandenen Assistenten ergänzen.
+
+---
+
 ## 27.10.2026 – Chat B: Replay an bestätigte Sitzungsidentität binden
 
 - **Ausgangs-main:** `96001353f2b90f293fbdade934e78b7b8281e965`; **Branch:** `fix/chat-b/story-replay-session-identity-20261027`. Dieser Eintrag betrifft ausschließlich die Story-Replay-Funktion und ihre Regressionen.

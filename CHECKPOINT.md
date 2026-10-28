@@ -1,3 +1,10 @@
+## 28.10.2026 – 0.8.46+96: gemeinsame Branch-Migration
+
+Alle 26 ursprünglichen Nebenbranch-Köpfe und der parallele Importgrenzen-/Button-Integrationsbranch sind über reguläre Merge-Eltern erhalten. Charakterherkunft, zwölf Klassenstartwerte, Talentwahl, atomarer Editor-Schreibschutz, Klassenressourcen, Story-Replay und Android-Bedienung werden gemeinsam geprüft. Zwei echte Integrationsfehler sind behoben: Altarchiv-Charaktere mit nachträglich ergänzten Katalogwerten bleiben bearbeitbar; der Barden-Dialog funktioniert mit großer Schrift. Der konkurrierende alte Löschworkflow ist stillgelegt. **Gemeinsame finale CI/Main-Abnahme und Branchlöschung bei diesem Schreibstand noch offen.** SQLite 3 / Kampagnen-JSON 1 unverändert; vollständiger Charakter-Wizard und vollständiges SRD bleiben offen. [Migrationsbericht](docs/BRANCH_MIGRATION_20261028.md) · [Inventar](docs/BRANCH_MIGRATION_20261028_INVENTORY.json).
+
+
+---
+
 # Codex-Checkpoint – Klassenstartwahl 0.8.45+95
 
 > **Letzte gemeinsame Abnahme vorbereitet – 2026-10-28T04:35:44.592299+00:00**

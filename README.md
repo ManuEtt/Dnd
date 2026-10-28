@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## 28.10.2026 – Alle Branches gemeinsam integrieren: 0.8.46+96
+
+Alle 26 ursprünglichen Nebenbranch-Köpfe und der parallele Importgrenzen-/Button-Integrationsbranch sind über reguläre Merge-Eltern erhalten. Charakterherkunft, zwölf Klassenstartwerte, Talentwahl, atomarer Editor-Schreibschutz, Klassenressourcen, Story-Replay und Android-Bedienung werden gemeinsam geprüft. Zwei echte Integrationsfehler sind behoben: Altarchiv-Charaktere mit nachträglich ergänzten Katalogwerten bleiben bearbeitbar; der Barden-Dialog funktioniert mit großer Schrift. Der konkurrierende alte Löschworkflow ist stillgelegt. **Gemeinsame finale CI/Main-Abnahme und Branchlöschung bei diesem Schreibstand noch offen.** SQLite 3 / Kampagnen-JSON 1 unverändert; vollständiger Charakter-Wizard und vollständiges SRD bleiben offen. [Migrationsbericht](docs/BRANCH_MIGRATION_20261028.md) · [Inventar](docs/BRANCH_MIGRATION_20261028_INVENTORY.json).
+
 ## Chat B – Sitzungsidentität bei Story-Wiederherstellung (27.10.2026)
 
 Eine neue Schutzprüfung in `MemoryEngine.replay` weist neu eingespielte, sitzungsfremde Ereignisse und widersprüchliche `stateAfter`-Checkpoints ab. Bereits bestätigte, identische historische Ereignisse bleiben auch beim späteren Sitzungswechsel idempotent. Vier neue Regressionen prüfen Erfolg und Abweisung. **Die finale Flutter-/Android-CI für dieses Paket ist gesondert zu prüfen; keine Geräteabnahme behauptet.** Keine Änderung an Spielstandschema oder Regelzustand. [Technischer Nachweis](docs/STORY_REPLAY_SESSION_IDENTITY_20261027.md) · [Chat-B-Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md).
