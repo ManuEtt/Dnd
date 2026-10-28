@@ -81,6 +81,7 @@ class SrdClassAutomation {
     'Second Wind': 'ClassFeatureResources.useSecondWind',
     'Action Surge': 'ClassFeatureResources.spendActionSurge',
     'Lay On Hands': 'PaladinLayOnHands',
+    'Font of Inspiration': 'GameEngine.confirmBardFontOfInspiration',
   };
 
   // Rule fragments exist (e.g. counters, dice, prerequisite checks), but
@@ -92,7 +93,7 @@ class SrdClassAutomation {
     'Rage': 'ClassResourceRules',
     "Monk's Focus": 'ClassResourceRules',
     'Bardic Inspiration': 'ClassResourceRules',
-    'Font of Inspiration': 'SrdBardFontOfInspirationRules',
+
     'Font of Magic': 'ClassResourceRules',
     'Wild Shape': 'ClassResourceRules',
     'Favored Enemy': 'ClassResourceRules',
