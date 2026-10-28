@@ -1,6 +1,11 @@
 name: Chat C Focus Format Diagnostic
 
 on:
+  push:
+    branches: ['feat/chat-c/shortcut-keyboard-focus-20261028']
+    paths:
+      - 'app/test/fantasy_pinned_actions_test.dart'
+      - '.github/workflows/chat-c-focus-format-diagnostic.yml'
   pull_request:
     branches: [main]
     paths:
