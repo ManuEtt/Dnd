@@ -11,6 +11,36 @@
 
 ---
 
+# Chat B – Outbox-Quittungen bei mehreren SQLite-Schreibern (27.10.2026)
+
+- **Ausgangsbasis:** PR #305 `fix/chat-b/npc-outbox-cas-20261027` auf `eb4f3a43864ba00843aacd7f0b47b2e2f0fad1da`; eigener Branch `test/chat-b/npc-outbox-multiwriter-cas-20261027`.
+- **IMPLEMENTIERT:** Reines Testpaket `app/test/npc_outbox_multiwriter_cas_test.dart`, vier echte SQLite-/`PlayerActionOutbox`-Integrationen mit zwei unabhängig geöffneten Verbindungen auf dieselbe DB: stale ACK bei neuem NPC; stale ACK bei derselben ID mit neuer Revision; alte Text-only-Quittung gegen neuen NPC-Auftrag in beide Richtungen; zwei gleichzeitige NPC-Handlungen derselben Kampagne mit exakt einem erfolgreichen Sendeauftrag.
+- **AKZEPTANZ:** Ausschließlich exakt passender Request-ID/Text/NPC-ID/Revision-Datensatz darf gelöscht werden; eine verspätete Quittung bleibt wirkungslos und der neue Auftrag bleibt auf beiden SQLite-Verbindungen sichtbar; Parallel-Schreiber überschreiben nichts.
+- **GETESTET:** GitHub-Code/API von PR #305 geprüft, offizielle Dart-3.9.2-Formatterausgabe übernommen und temporären Diagnoseworkflow entfernt. Endgültige GitHub-CI/Android-Abnahme auf eigenem finalem PR-Head gesondert nachweisen.
+- **NICHT GETESTET:** Android-Realgerät und Live-KI-Provider; keine vollständige manuelle Oberflächenbedienung.
+- **MIGRATION:** keine. Keine Änderung an SQLite-Version 3, Backend, Kampagnen-JSON, Regelengine oder Produktionsdateien.
+- **BLOCKIERT:** Als gestapelter PR abhängig von #305 und dessen Vorgängern (#303, #300, #292, #290, #288). Gemeinsame Dokumentation durch Chat D beim Merge zusammenführen.
+- **NÄCHSTER SCHRITT:** Nach grüner CI eine eigene kompakte Migration-/Recovery-Matrix dokumentieren und die gestapelten PRs durch Chat D integrieren.
+- [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md). Ältere Einträge unverändert.
+
+---
+
+# Chat B – atomare NPC-Outbox-Quittung mit vollständiger Identität (27.10.2026)
+
+- **Basis:** [PR #303](https://github.com/ManuEtt/Dnd/pull/303), Head `5388d8e428e024c939bf99e609f857ec37c4a62a`; eigener Branch `fix/chat-b/npc-outbox-cas-20261027`. Nicht vor den gestapelten Vorgänger-PRs integrieren.
+- **AUSGANGSPROBLEM:** `removePendingAction` verglich bisher nur Kampagne, Request-ID und Text. Bei einem ersetzten Auftrag mit derselben Kennung und demselben Text, aber anderer bestätigter NPC-ID/Revision, konnte eine verspätete ACK-Löschung den neuen Auftrag entfernen.
+- **IMPLEMENTIERT:** `PendingActionStore.removePendingAction` akzeptiert optional `selectedNpcId` und `selectedNpcRevision`. SQLite prüft die komplette Identität in derselben Transaktion vor dem Löschen und bindet beide optionalen Spalten an die `DELETE`-Bedingung. `PlayerActionOutbox.remove` übergibt und vergleicht beide Felder auch im Legacy-Fallback. Alte Aufträge ohne Auswahl sind kompatibel; keine automatische Wiederholung bei Neustart.
+- **TESTS:** Zwei zusätzliche echte SQLite-Regressionen in `app/test/npc_selected_action_outbox_test.dart`: falscher NPC, falsche Revision und fehlende Auswahl dürfen einen bestehenden Auftrag nicht entfernen; ein späterer Auftrag mit wiederverwendeter Test-Request-ID und gleichem Text bleibt vor verspätetem ACK geschützt. Exakter Auftrag kann weiterhin gelöscht werden, auch nach SQLite-Neustart.
+- **WEITERE KORREKTUR:** `UnsupportedDatabaseVersion.toString` zeigt unterstützte SQLite-Version 3 statt der historischen 2; Neuanlagenkommentar auf v3 berichtigt.
+- **GETESTET:** Repository- und API-Quellcode des gestapelten PRs geprüft; offizielle Dart-3.9.2-Formatterausgabe angewendet und temporären Format-Workflow wieder entfernt. Der finale CI-Nachweis dieses PRs ist separat zu prüfen.
+- **NICHT GETESTET:** Realgerät und produktiver KI-Provider, neue CI noch nicht als erfolgreich bestätigen.
+- **MIGRATION:** keine. Die SQLite-v3-Erweiterung stammt aus PR #290, keine neue Spalte; Kampagnen-JSON, Backend und SRD unverändert.
+- **BLOCKIERT:** Abhängige Integration #288 → #290 → #292 → #300 → #303 → dieser PR; Dokumentationsänderungen durch Chat D konsolidieren.
+- **NÄCHSTER SCHRITT:** Eine fokussierte UI-Regression für veraltete Auftragsmeldungen mit Fake-Repository ohne den früheren FakeAsync-/SQLite-Deadlock.
+- [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md), ältere Einträge bleiben erhalten.
+
+---
+
 # Chat B – isolierte NPC-Outbox-Statusanzeige (27.10.2026)
 
 - **Basis:** [PR #303](https://github.com/ManuEtt/Dnd/pull/303) Head `5388d8e428e024c939bf99e609f857ec37c4a62a`, eigene Branch `test/chat-b/pending-npc-status-widget-20261027`, gestapelter PR.
