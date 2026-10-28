@@ -102,6 +102,8 @@ class SrdClassAutomation {
     'Martial Arts': 'ClassResourceRules.martialArtsDie',
     'Unarmored Defense': 'SrdStartingCombatValues',
     'Remarkable Athlete': 'CharacterRuleEngine.initiative',
+    'Indomitable Might':
+        'SrdIndomitableMightRules (bestätigte Stärke-Proben/Rettungswürfe)',
     'Roving': 'SrdTerrainMovementRules',
     'Reliable Talent': 'CharacterRuleEngine.abilityCheck (nur Fertigkeiten)',
     'Slow Fall': 'SrdMonkSlowFallRules (Situations- und Ablaufprüfung)',

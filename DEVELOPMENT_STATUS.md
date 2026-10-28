@@ -1,3 +1,9 @@
+## 28.10.2026 – SRD-Klassenautomatik: Barbar 18, Unbezwingbare Stärke (Branch)
+
+**IMPLEMENTIERT, noch NICHT durch Flutter-CI getestet:** Klasse-18-Stärke-Mindestwert auf vorbereiteten Stärke-Proben und manuellen Stärke-Rettungswürfen, einschließlich Mehrklasse und getrenntem Roh-/Effektivergebnis. Acht neue Tests angelegt, aber nicht lokal ausführbar (Flutter/Dart fehlt). Matrixeintrag CLASS-BARBAR-18-BASE-INDOMITABLE-MIGHT-0 bewusst **partial**. Andere Rettungswurf-Pfade, Gesamtsuite, Android-APK und Gerät offen. Details: docs/parallel/CHAT_A_BARBAR_INDOMITABLE_MIGHT_20261028.md. Keine Main-Mutation; Branch feat/srd-barbarian-indomitable-might-20261028.
+
+---
+
 ## 27.10.2026 – 0.8.44+94: nachweisbasierte Charakterprüfung
 
 Sieben deutsche Prüfzustände ersetzen die bisherige Bestätigung nach bloßem

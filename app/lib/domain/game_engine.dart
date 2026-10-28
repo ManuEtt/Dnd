@@ -25,6 +25,7 @@ import 'class_progression_rules.dart';
 import 'class_feature_resources.dart';
 import 'class_resource_rules.dart';
 import 'skill_check_passives.dart';
+import 'srd_indomitable_might_rules.dart';
 import 'class_combat_features.dart';
 import 'sneak_attack_ally_rules.dart';
 import 'combat_class_actions.dart';
@@ -3071,7 +3072,17 @@ class GameEngine {
           advantage: rule.advantage,
           disadvantage: rule.disadvantage,
         );
-        final passed = rolled.total >= dc;
+        // Barbar 18: after all confirmed modifiers, a Strength save may
+        // use the verified Strength score instead of a lower total.
+        // The raw d20 roll remains unchanged in the audit event.
+        final effectiveSaveTotal = SrdIndomitableMightRules.effectiveTotal(
+          hero: current.hero,
+          ability: ability,
+          kind: SrdD20CheckKind.savingThrow,
+          rolledTotal: rolled.total,
+        );
+        final indomitableMightApplied = effectiveSaveTotal > rolled.total;
+        final passed = effectiveSaveTotal >= dc;
         final options = <String>[
           if (!passed &&
               SavingThrowClassActions.available(
@@ -3094,7 +3105,8 @@ class GameEngine {
           campaign,
           current,
           'Manueller Rettungswurf (${requestedSave.group(1)}, SG $dc): '
-          '${rolled.total} – ${passed ? 'gelungen' : 'misslungen'}. '
+          '$effectiveSaveTotal – ${passed ? 'gelungen' : 'misslungen'}. '
+          '${indomitableMightApplied ? 'Unbezwingbare Stärke angewendet. ' : ''}'
           '${fromEnemy ? 'Bestätigte Deckung gegen den Gegner: +$coverBonus. ' : ''}'
           '$suggestions'
           'Das Ergebnis wird dokumentiert; Wirkungen fremder Zauber werden nicht automatisch angenommen.',
@@ -3102,7 +3114,9 @@ class GameEngine {
           payload: {
             'ability': ability,
             'difficulty': dc,
-            'total': rolled.total,
+            'total': effectiveSaveTotal,
+            if (indomitableMightApplied) 'rawTotal': rolled.total,
+            if (indomitableMightApplied) 'classFeature': 'indomitableMight',
             'failed': !passed,
             'roll': rolled.toJson(),
             'manualDifficulty': true,
@@ -4665,11 +4679,24 @@ class GameEngine {
     }
     // Preserve the natural die in the event history; only the adjudicated
     // result may be raised by a confirmed class-based minimum.
-    final effectiveTotal = SkillCheckPassives.effectiveTotal(
+    final skillTotal = SkillCheckPassives.effectiveTotal(
       total: result.total,
       natural: result.natural,
       minimumNatural: pending.minimumNatural,
     );
+    // Prepared checks carry a deterministic ability|skill target produced by
+    // the local story rule port. Attacks, escape and death saves never qualify.
+    final effectiveTotal =
+        pending.type == 'preparedCheck' &&
+            pending.targetName.startsWith('strength|')
+        ? SrdIndomitableMightRules.effectiveTotal(
+            hero: next.hero,
+            ability: 'strength',
+            kind: SrdD20CheckKind.abilityCheck,
+            rolledTotal: skillTotal,
+          )
+        : skillTotal;
+    final indomitableMightApplied = effectiveTotal > skillTotal;
     final reliableTalentApplied =
         result.natural != null &&
         pending.minimumNatural == 10 &&
@@ -4678,12 +4705,15 @@ class GameEngine {
       'request': pending.toJson(),
       'roll': result.toJson(),
       if (reliableTalentApplied) 'skillFeature': 'reliableTalent',
-      if (reliableTalentApplied) 'effectiveTotal': effectiveTotal,
+      if (indomitableMightApplied) 'classFeature': 'indomitableMight',
+      if (effectiveTotal != result.total) 'effectiveTotal': effectiveTotal,
     };
     final label = result.natural == null
         ? 'Gesamtergebnis ${result.total} (Bonus bereits enthalten)'
         : 'Naturwurf ${result.natural} ${_signed(result.modifier)} = ${result.total}'
-              '${reliableTalentApplied ? '; Verlässliches Talent: Würfelwert 10, Ergebnis $effectiveTotal' : ''}';
+              '${reliableTalentApplied ? '; Verlässliches Talent: Würfelwert 10' : ''}'
+              '${indomitableMightApplied ? '; Unbezwingbare Stärke' : ''}'
+              '${effectiveTotal != result.total ? ', Ergebnis $effectiveTotal' : ''}';
     var narration = '$label. ';
     if (pending.type == 'preparedCheck') {
       final passed = effectiveTotal >= pending.difficulty;
