@@ -1,3 +1,62 @@
+## 27.10.2026 – Chat D D-013: sichere APK-ZIP-Metadaten vor Alpha-Bündelung
+
+**Basis:** `main` `f9b2f72a4bf8e4216bf8baac60c7f92c4a8a997f`; Arbeitsbranch `fix/chat-d/alpha-apk-zipbomb-guard-20261027`; Produkt Würfelraunen `0.8.42+92`, SQLite 2 / Kampagnen-JSON 1.
+
+- **IMPLEMENTIERT:** `scripts/prepare_alpha_release.py` begrenzt ARM64-APK auf 512 MiB Datei-/1 GiB deklarierte entpackte Größe, 20.000 Mitglieder und 1000:1 Expansion einzelner großer ZIP-Mitglieder **vor** CRC-/Pflichtbibliotheksprüfung. Vorhandene Dateipfad-, Link-, Duplikat- und Integritätschecks bleiben erhalten.
+- **REGRESSIONEN:** Vier negative Checks in `scripts/tests/test_prepare_alpha_release.py` für Größen-, Expansions- und Mitgliederlimits; unveränderte normale Alpha-Release-Fälle.
+- **GETESTET:** Vorgänger D-012 PR #258 erfolgreich 36/36 auf SHA `45bfe793ab88db689d23355c832d7343753ddc18`, [Workflow](https://github.com/ManuEtt/Dnd/actions/runs/40391878647); seitdem nach Main gemergt. **Das ist kein Testbeleg für D-013.**
+- **NICHT GETESTET:** Neue vollständige CI/Android-APK auf dem finalen D-013-PR-HEAD, reale Android-Hardware, Signierung und Speicher-Upgradepfade.
+- **BLOCKIERT:** Lokaler Checkout über GitHub-DNS nicht möglich; gemeinsame README-/Checkpoint-Nachträge bei späterer paralleler Integration sorgfältig erhalten.
+- **NOCH NICHT IMPLEMENTIERT:** Kein neuer Produktumfang – Qualitätskorrektur. Nächster konkreter Schritt: vollständige GitHub-CI, neue Main-/PR-Kollisionen, reviewfähiger PR nach Nachweis.
+- **Kein Migrationsbedarf:** App- und Persistenzformate unverändert; kein Regel-/Story-/KI-Eingriff.
+
+Details unter [Chat-D-Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
+
+---
+
+# Chat D D-014 – Doppelte Branch-Bereinigung und 404-Rennen beseitigen (28.10.2026)
+
+- **Ausgangs-main:** `571edec9455fb32e4991432953c9a2479a6fffb2`; **Branch:** `fix/chat-d/disable-legacy-cleanup-20261028`; [PR #329](https://github.com/ManuEtt/Dnd/pull/329) (reviewbereit).
+- **Nachgewiesenes Problem:** Alte GitHub Action [40589220593](https://github.com/ManuEtt/Dnd/actions/runs/40589220593) scheiterte mit 404 beim Lesen des Branches `test/chat-b/story-12-memory-transport-20261027`. Die neuere Action [40589220368](https://github.com/ManuEtt/Dnd/actions/runs/40589220368) archivierte und entfernte diesen Branch zuvor.
+- **IMPLEMENTIERT:** Alter Bereinigungsworkflow bleibt als nicht-automatischer, read-only Hinweis erhalten, ohne Lösch-/Tag-API. Der verifizierte Nachfolger `cleanup-merged-safe-20261027.yml` bleibt unverändert; kein Branch wird durch diesen PR gelöscht.
+- **TESTS ERGÄNZT:** `scripts/tests/test_retired_cleanup_workflow.py` prüft erlaubten manuellen Read-only-Altworkflow, Manipulation negativer Trigger/Berechtigung/Mutationsaufrufe und Sicherheitsgrundlagen des Nachfolgers.
+- **Technische Commits:** `45236f1b4d595303c19c1cf9e992ba36003026fc`, `c5b223389d75a9949a2bee13386d305bc586102e`. **Teststatus:** neue vollständige CI auf finalem Dokumentations-Commit vorher grün, neue CI läuft. Keine grüne CI behauptet.
+- **KOMPATIBILITÄT:** Flutter/Backend, SQLite 2, JSON 1, SRD/Story und App-Version unverändert. Keine Migration.
+- **ÜBERSCHNEIDUNG:** PR #301 bearbeitet einen anderen älteren Workflow; #311, #316 und #321 keine dieser Fachdateien. README/Checkpoint additiv und bei Integration zu konsolidieren.
+- **NÄCHSTER SCHRITT:** Gesamte GitHub-CI auf finalem PR-Commit abwarten, PR bei Erfolg reviewbereit stellen; keine direkte Main-Änderung, keine fremden PRs/Branches löschen.
+
+---
+
+# Chat B – Outbox-Quittungen bei mehreren SQLite-Schreibern (27.10.2026)
+
+- **Ausgangsbasis:** PR #305 `fix/chat-b/npc-outbox-cas-20261027` auf `eb4f3a43864ba00843aacd7f0b47b2e2f0fad1da`; eigener Branch `test/chat-b/npc-outbox-multiwriter-cas-20261027`.
+- **IMPLEMENTIERT:** Reines Testpaket `app/test/npc_outbox_multiwriter_cas_test.dart`, vier echte SQLite-/`PlayerActionOutbox`-Integrationen mit zwei unabhängig geöffneten Verbindungen auf dieselbe DB: stale ACK bei neuem NPC; stale ACK bei derselben ID mit neuer Revision; alte Text-only-Quittung gegen neuen NPC-Auftrag in beide Richtungen; zwei gleichzeitige NPC-Handlungen derselben Kampagne mit exakt einem erfolgreichen Sendeauftrag.
+- **AKZEPTANZ:** Ausschließlich exakt passender Request-ID/Text/NPC-ID/Revision-Datensatz darf gelöscht werden; eine verspätete Quittung bleibt wirkungslos und der neue Auftrag bleibt auf beiden SQLite-Verbindungen sichtbar; Parallel-Schreiber überschreiben nichts.
+- **GETESTET:** GitHub-Code/API von PR #305 geprüft, offizielle Dart-3.9.2-Formatterausgabe übernommen und temporären Diagnoseworkflow entfernt. Endgültige GitHub-CI/Android-Abnahme auf eigenem finalem PR-Head gesondert nachweisen.
+- **NICHT GETESTET:** Android-Realgerät und Live-KI-Provider; keine vollständige manuelle Oberflächenbedienung.
+- **MIGRATION:** keine. Keine Änderung an SQLite-Version 3, Backend, Kampagnen-JSON, Regelengine oder Produktionsdateien.
+- **BLOCKIERT:** Als gestapelter PR abhängig von #305 und dessen Vorgängern (#303, #300, #292, #290, #288). Gemeinsame Dokumentation durch Chat D beim Merge zusammenführen.
+- **NÄCHSTER SCHRITT:** Nach grüner CI eine eigene kompakte Migration-/Recovery-Matrix dokumentieren und die gestapelten PRs durch Chat D integrieren.
+- [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md). Ältere Einträge unverändert.
+
+---
+
+# Chat B – atomare NPC-Outbox-Quittung mit vollständiger Identität (27.10.2026)
+
+- **Basis:** [PR #303](https://github.com/ManuEtt/Dnd/pull/303), Head `5388d8e428e024c939bf99e609f857ec37c4a62a`; eigener Branch `fix/chat-b/npc-outbox-cas-20261027`. Nicht vor den gestapelten Vorgänger-PRs integrieren.
+- **AUSGANGSPROBLEM:** `removePendingAction` verglich bisher nur Kampagne, Request-ID und Text. Bei einem ersetzten Auftrag mit derselben Kennung und demselben Text, aber anderer bestätigter NPC-ID/Revision, konnte eine verspätete ACK-Löschung den neuen Auftrag entfernen.
+- **IMPLEMENTIERT:** `PendingActionStore.removePendingAction` akzeptiert optional `selectedNpcId` und `selectedNpcRevision`. SQLite prüft die komplette Identität in derselben Transaktion vor dem Löschen und bindet beide optionalen Spalten an die `DELETE`-Bedingung. `PlayerActionOutbox.remove` übergibt und vergleicht beide Felder auch im Legacy-Fallback. Alte Aufträge ohne Auswahl sind kompatibel; keine automatische Wiederholung bei Neustart.
+- **TESTS:** Zwei zusätzliche echte SQLite-Regressionen in `app/test/npc_selected_action_outbox_test.dart`: falscher NPC, falsche Revision und fehlende Auswahl dürfen einen bestehenden Auftrag nicht entfernen; ein späterer Auftrag mit wiederverwendeter Test-Request-ID und gleichem Text bleibt vor verspätetem ACK geschützt. Exakter Auftrag kann weiterhin gelöscht werden, auch nach SQLite-Neustart.
+- **WEITERE KORREKTUR:** `UnsupportedDatabaseVersion.toString` zeigt unterstützte SQLite-Version 3 statt der historischen 2; Neuanlagenkommentar auf v3 berichtigt.
+- **GETESTET:** Repository- und API-Quellcode des gestapelten PRs geprüft; offizielle Dart-3.9.2-Formatterausgabe angewendet und temporären Format-Workflow wieder entfernt. Der finale CI-Nachweis dieses PRs ist separat zu prüfen.
+- **NICHT GETESTET:** Realgerät und produktiver KI-Provider, neue CI noch nicht als erfolgreich bestätigen.
+- **MIGRATION:** keine. Die SQLite-v3-Erweiterung stammt aus PR #290, keine neue Spalte; Kampagnen-JSON, Backend und SRD unverändert.
+- **BLOCKIERT:** Abhängige Integration #288 → #290 → #292 → #300 → #303 → dieser PR; Dokumentationsänderungen durch Chat D konsolidieren.
+- **NÄCHSTER SCHRITT:** Eine fokussierte UI-Regression für veraltete Auftragsmeldungen mit Fake-Repository ohne den früheren FakeAsync-/SQLite-Deadlock.
+- [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md), ältere Einträge bleiben erhalten.
+
+---
+
 # Chat B – isolierte NPC-Outbox-Statusanzeige (27.10.2026)
 
 - **Basis:** [PR #303](https://github.com/ManuEtt/Dnd/pull/303) Head `5388d8e428e024c939bf99e609f857ec37c4a62a`, eigene Branch `test/chat-b/pending-npc-status-widget-20261027`, gestapelter PR.
