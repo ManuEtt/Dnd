@@ -68,9 +68,7 @@ void main() {
         expect(quest, i < 3 ? findsOneWidget : findsNothing);
       }
 
-      final hint = find.byKey(
-        const ValueKey('adventure-quest-hidden-count'),
-      );
+      final hint = find.byKey(const ValueKey('adventure-quest-hidden-count'));
       if (resolvedCount == 3) {
         expect(hint, findsNothing);
       } else {
