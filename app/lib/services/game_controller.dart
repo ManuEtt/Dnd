@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import '../data/campaign_repository.dart';
 import '../domain/game_engine.dart';
+import '../domain/srd_bard_font_of_inspiration.dart';
 import '../domain/srd_terrain_movement_rules.dart';
 import '../domain/ai_story.dart';
 import '../domain/models.dart';
@@ -1393,6 +1394,30 @@ class GameController extends ChangeNotifier {
     final campaign = currentCampaign;
     if (campaign == null) throw const FormatException('Keine aktive Kampagne.');
     await _commit(engine.rollDice(campaign, expression));
+  });
+
+  /// Applies only to the active campaign, under its persisted revision CAS.
+  /// An archive character without an active campaign remains read-only.
+  Future<void> confirmBardFontOfInspiration(
+    SrdBardFontProposal proposal, {
+    required bool playerConfirmed,
+  }) => _run(() async {
+    final campaign = currentCampaign;
+    if (campaign == null) {
+      throw const FormatException('Keine aktive Kampagne.');
+    }
+    final saved = await repository.getCampaign(campaign.id);
+    if (saved == null || saved.revision != campaign.revision) {
+      throw const CampaignConflictException(
+        'Der Spielstand wurde geändert. Bitte erneut öffnen.',
+      );
+    }
+    final update = engine.confirmBardFontOfInspiration(
+      campaign,
+      proposal,
+      playerConfirmed: playerConfirmed,
+    );
+    await _commit(update);
   });
 
   Future<void> saveHero(HeroCharacter hero) => _run(() async {
