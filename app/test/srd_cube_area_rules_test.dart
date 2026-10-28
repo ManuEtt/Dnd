@@ -142,14 +142,15 @@ void main() {
       );
       SrdSpellGridTargetRequest target(
         SrdSpellGridMap map, {
-        SrdGridCell origin = caster,
+        SrdGridCell? origin,
       }) {
         return SrdSpellGridTargetRequest(
           map: map,
           caster: caster,
-          origin: origin,
+          origin: origin ?? caster,
         );
       }
+
       SrdCubeAreaPreview preview(
         SrdSpellGridTargetRequest request, {
         bool shape = true,
@@ -164,7 +165,7 @@ void main() {
           axisAlignedFootprintConfirmed: footprint,
         );
       }
-  
+
       expect(() => preview(target(grid), shape: false), throwsFormatException);
       expect(
         () => preview(target(grid), footprint: false),
