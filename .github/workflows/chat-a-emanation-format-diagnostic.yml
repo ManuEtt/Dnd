@@ -1,0 +1,19 @@
+name: Chat A Emanation formatter diagnostic (temporary)
+on:
+  push:
+    branches:
+      - feat/chat-a/emanation-area-preview-20261028
+jobs:
+  formatter-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Show exact Dart formatter patch
+        run: |
+          cd app
+          dart format test/srd_emanation_area_rules_test.dart
+          git diff -- test/srd_emanation_area_rules_test.dart
