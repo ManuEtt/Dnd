@@ -5,14 +5,14 @@
   "source_section": "Character Creation, p. 21; Classes; Character Origins",
   "license": "CC-BY-4.0",
   "as_of": "2026-10-28",
-  "baseline_main_sha": "dd0c2e94ccf0995c6070010b6af1df315205b36a",
-  "pr": 319,
+  "baseline_main_sha": "37a6142ea791a607c78065b50aa66fda90acda5c",
+  "pr": 369,
   "coverage_complete": false,
   "all_required_choices_covered": false,
   "android_device_tested": false,
   "ci_final_head_verified": false,
   "existing_requirement_registers_unchanged": false,
-  "status_note": "Integrationskandidat 28.10.2026: PR297/317/319/324/330 regulär zusammengeführt. Gemeinsame vollständige CI noch separat nachzuweisen; einzelne frühere CI-Zähler sind historische Belege. Gesamte Charaktererstellung weiterhin unvollständig.",
+  "status_note": "Heilige-Symbol-Paket lokal vollständig geprüft: 2265 Flutter/200 Python/72 Backend/12 native App-Tests, Debug-APK. Produktcode7ac32b1c; finale GitHub-Abnahme separat im PR369. Gesamte Charaktererstellung unvollständig.",
   "requirements": [
     {
       "id": "CHAR-ABILITY-STANDARD-ARRAY",
@@ -534,6 +534,31 @@
         "app/test/srd_magic_initiate_storage_test.dart"
       ],
       "note": "Nur versionierte Wahl zweier verschiedener Zaubertricks, eines Grad-1-Zaubers und INT/WEI/CHA von passender Herkunftsliste. Kein Freizauber, Slotwirken, Austausch oder vollständiger Talenteffekt freigeschaltet. Hintergrundübereinstimmung wird vor Import/Save geprüft."
+    },
+    {
+      "id": "CHAR-CLASS-HOLY-SYMBOL-CHOICE",
+      "title": "Kleriker/Paladin: ausdrückliche Heilige-Symbol-Variante im Klassenpaket A",
+      "status": "implemented_local_tests_passed_ci_pending",
+      "source": "SRD 5.2.1 pp.36,53,97; CC-BY-4.0",
+      "register_requirement_id": "EQUIP-CHOICES",
+      "code": [
+        "app/lib/domain/starting_equipment_import.dart",
+        "app/lib/domain/starting_class_choice.dart",
+        "app/lib/ui/srd_class_selection_dialog.dart",
+        "app/lib/ui/character_editor.dart",
+        "app/lib/domain/srd_character_creation_audit.dart"
+      ],
+      "ui": [
+        "app/lib/ui/srd_class_selection_dialog.dart",
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/class_holy_symbol_choice_test.dart",
+        "app/test/srd_class_holy_symbol_dialog_test.dart",
+        "app/test/character_start_class_storage_test.dart",
+        "app/test/character_start_class_ui_test.dart"
+      ],
+      "note": "Version2 für neue Klassenbestätigungen; v1 unverändert und ohne Nachvergabe lesbar. Bestätigt Ausrüstungswahl/typisierte Gegenstände, nicht sämtliche Klassen-, Zauber- oder Fokusmechaniken."
     }
   ],
   "classes": [
@@ -721,5 +746,18 @@
       "python": 168,
       "backend": 72
     }
+  },
+  "work_branch": "feat/character-holy-symbol-choice-20261028",
+  "local_acceptance": {
+    "source_commit": "7ac32b1cb9e63ce35eb458d87e4b84d86526706a",
+    "flutter_tests": 2265,
+    "python_tests": 200,
+    "backend_tests": 72,
+    "native_app_tests": 12,
+    "dart_format_files": 507,
+    "analyze": "passed",
+    "debug_apk": "built",
+    "device_tested": false,
+    "ci_reference": "https://github.com/ManuEtt/Dnd/pull/369/checks"
   }
 }

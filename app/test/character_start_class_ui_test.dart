@@ -414,4 +414,70 @@ void main() {
       semantics.dispose();
     });
   }
+  for (final className in ['Kleriker', 'Paladin']) {
+    testWidgets(
+      '$className: Symbolwahl wird erst mit gespeichertem Editor übernommen',
+      (tester) async {
+        HeroCharacter? saved;
+        await _open(tester, null, (hero) => saved = hero);
+        await _tap(tester, _key('open-srd-class-selection'));
+        await _chooseDropdown(tester, _key('srd-class-Waldläufer'), className);
+        for (final skill in ['Heilkunde', 'Religion']) {
+          await _tap(tester, _key('srd-skill-$skill'));
+        }
+        await _chooseDropdown(
+          tester,
+          _key('srd-equipment--1'),
+          'A – Ausrüstung',
+        );
+        await _chooseDropdown(
+          tester,
+          _key('srd-starter-choice-Heiliges Symbol'),
+          'Heiliges Symbol: Reliquiar',
+        );
+        await _tap(tester, _key('srd-confirm-class'));
+        expect(saved, isNull);
+        await _tap(tester, _key('open-srd-creation-audit'));
+        final audit = tester.widget<SrdCreationAuditDialog>(
+          find.byType(SrdCreationAuditDialog),
+        );
+        expect(
+          audit.steps
+              .singleWhere((step) => step.id == 'class.equipment')
+              .status,
+          CreationStepStatus.confirmed,
+        );
+        await tester.tap(_key('close-srd-creation-audit'));
+        await tester.pumpAndSettle();
+        // A second class confirmation must retain the kit and the chosen symbol.
+        await _tap(tester, _key('open-srd-class-selection'), delta: -300);
+        expect(
+          tester
+              .widget<SrdClassSelectionDialog>(
+                find.byType(SrdClassSelectionDialog),
+              )
+              .allowEquipment,
+          isFalse,
+        );
+        await _tap(tester, _key('srd-confirm-class'));
+        await _save(tester);
+        expect(saved!.className, className);
+        expect(saved!.gold, className == 'Kleriker' ? 7 : 9);
+        expect(saved!.hitPoints, className == 'Kleriker' ? 10 : 12);
+        expect(saved!.startingClassChoice!.version, 2);
+        expect(saved!.startingClassChoice!.kitIndex, 0);
+        expect(saved!.startingClassChoice!.equipmentChoices, {
+          'Heiliges Symbol': 'item-holy-symbol-reliquary',
+        });
+        expect(
+          saved!.inventory.where(
+            (item) => item.catalogId == 'item-holy-symbol-reliquary',
+          ),
+          hasLength(1),
+        );
+        expect(saved!.inventory.every((item) => item.stats != null), isTrue);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
 }

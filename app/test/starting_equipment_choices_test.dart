@@ -61,33 +61,25 @@ void main() {
     expect(result.stats, isNotNull);
   });
 
-  test(
-    'Waffen, Rüstung und ungelöste heilige Symbole erhalten keine Scheinwahl',
-    () {
-      for (final name in ['Kettenpanzer', 'Heiliges Symbol', 'Langschwert']) {
-        final item = SrdStartingItem(name);
-        expect(StartingEquipmentImport.optionsFor(item), isEmpty);
-        expect(
-          () => StartingEquipmentImport.fromSelectedStartingItem(
-            item,
-            'invalid',
-            selectedCatalogId: 'item-lute',
-          ),
-          throwsFormatException,
-        );
-        final normal = StartingEquipmentImport.fromSelectedStartingItem(
+  test('Waffen und Rüstung erhalten keine Scheinwahl', () {
+    for (final name in ['Kettenpanzer', 'Langschwert']) {
+      final item = SrdStartingItem(name);
+      expect(StartingEquipmentImport.optionsFor(item), isEmpty);
+      expect(
+        () => StartingEquipmentImport.fromSelectedStartingItem(
           item,
-          'normal',
-        );
-        if (name == 'Heiliges Symbol') {
-          expect(normal.catalogId, isEmpty);
-          expect(normal.stats, isNull);
-        } else {
-          expect(normal.catalogId, isNotEmpty);
-        }
-      }
-    },
-  );
+          'invalid',
+          selectedCatalogId: 'item-lute',
+        ),
+        throwsFormatException,
+      );
+      final normal = StartingEquipmentImport.fromSelectedStartingItem(
+        item,
+        'normal',
+      );
+      expect(normal.catalogId, isNotEmpty);
+    }
+  });
 
   test('Ungültige IDs und veraltete Klassenwahlen werden abgewiesen', () {
     final bard = findSrdClass('Barde')!.kits.first;
@@ -151,7 +143,10 @@ void main() {
           }
         }
       }
-      expect(withChoices, containsAll(['Barde', 'Mönch']));
+      expect(
+        withChoices,
+        containsAll(['Barde', 'Mönch', 'Kleriker', 'Paladin']),
+      );
     },
   );
 }

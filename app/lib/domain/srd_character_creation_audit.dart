@@ -593,6 +593,7 @@ class SrdCharacterCreationAudit {
               item,
               'audit-only',
               selectedCatalogId: classChoice.equipmentChoices[item.name],
+              choiceVersion: classChoice.version,
             ),
         ];
         if (expected.any(
