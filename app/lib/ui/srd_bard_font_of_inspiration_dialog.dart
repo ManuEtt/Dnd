@@ -32,7 +32,8 @@ Future<SrdBardFontProposal?> showBardFontOfInspirationDialog(
     options.add((
       grade: SpellcastingRules.pactSlotLevel(hero),
       pact: true,
-      label: 'Paktplatz Grad ${SpellcastingRules.pactSlotLevel(hero)} '
+      label:
+          'Paktplatz Grad ${SpellcastingRules.pactSlotLevel(hero)} '
           '(${SpellcastingRules.availablePactSlots(hero)} frei)',
     ));
   }
