@@ -2608,12 +2608,18 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#m-nch_7_base_evasion_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_evasion_rules_test.dart",
+        "app/test/srd_evasion_sheet_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/srd_evasion_rules.dart",
+        "app/lib/rules/rules_api.dart",
+        "app/lib/ui/fantasy_character_sheet.dart"
+      ],
+      "note": "Mönch oder Schurke ab Klassenstufe 7: deterministische, bestätigte Geschicklichkeitsrettung gegen einen nachweislich halbierenden Effekt (Erfolg 0, Fehlschlag halber Schaden). Handlungsunfähige und unbestätigte Werte werden abgewiesen. Klassenbogen vorhanden; kein automatischer Schadens-Commit/Trigger, daher partial. Tests erst nach grüner CI als bestanden werten."
     },
     {
       "id": "CLASS-M-NCH-8-BASE-ABILITY-SCORE-IMPROVEMENT-0",
@@ -4195,12 +4201,18 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#schurke_7_base_evasion_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_evasion_rules_test.dart",
+        "app/test/srd_evasion_sheet_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/srd_evasion_rules.dart",
+        "app/lib/rules/rules_api.dart",
+        "app/lib/ui/fantasy_character_sheet.dart"
+      ],
+      "note": "Mönch oder Schurke ab Klassenstufe 7: deterministische, bestätigte Geschicklichkeitsrettung gegen einen nachweislich halbierenden Effekt (Erfolg 0, Fehlschlag halber Schaden). Handlungsunfähige und unbestätigte Werte werden abgewiesen. Klassenbogen vorhanden; kein automatischer Schadens-Commit/Trigger, daher partial. Tests erst nach grüner CI als bestanden werten."
     },
     {
       "id": "CLASS-SCHURKE-7-BASE-RELIABLE-TALENT-1",

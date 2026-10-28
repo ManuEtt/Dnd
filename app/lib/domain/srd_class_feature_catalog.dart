@@ -305,6 +305,8 @@ class SrdClassFeatureCatalog {
     // A confirmed Reaction damage preflight exists, but HP/reaction
     // expenditure is not yet committed atomically in an encounter.
     'Slow Fall',
+    // Confirmed Dexterity-save-for-half preflight; no automatic HP commit.
+    'Evasion',
     // Speed and derived movement types work; climbing/swimming terrain
     // expenditure still requires a dedicated confirmed movement action.
     'Roving',
