@@ -66,7 +66,13 @@ jobs:
             let deleted = 0, skipped = 0;
             for (const branch of branches) {
               const name = branch.name;
-              if (protectedNames.has(name)) { skipped++; continue; }
+              // GitHub marks protected branches independently of open PRs.
+              // Never attempt to retire a protected ref, even if its merged
+              // historical PR head is byte-identical to main.
+              if (branch.protected || protectedNames.has(name)) {
+                skipped++;
+                continue;
+              }
               const sha = branch.commit.sha;
               const mergedPr = closed.find(pr =>
                 pr.merged_at &&
