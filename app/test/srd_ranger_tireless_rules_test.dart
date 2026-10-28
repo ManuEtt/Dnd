@@ -48,9 +48,7 @@ HeroCharacter _hero({
   speed: 9,
   armorClass: 14,
   weaponDamage: '1d8',
-  spentHitDice: {
-    if (spentDice > 0) 'd10': spentDice,
-  },
+  spentHitDice: {if (spentDice > 0) 'd10': spentDice},
 );
 
 GameEngine _engine() => GameEngine(
@@ -62,25 +60,17 @@ void main() {
   group('SRD 5.2.1 Waldläufer 10: Unermüdlich, Erschöpfung', () {
     test('nur ab Waldläufer-Klassenstufe 10', () {
       expect(
-        SrdRangerTirelessRules.canReduceExhaustion(
-          _hero(rangerLevel: 9),
-        ),
+        SrdRangerTirelessRules.canReduceExhaustion(_hero(rangerLevel: 9)),
         isFalse,
       );
-      expect(
-        SrdRangerTirelessRules.canReduceExhaustion(_hero()),
-        isTrue,
-      );
+      expect(SrdRangerTirelessRules.canReduceExhaustion(_hero()), isTrue);
       expect(
         SrdRangerTirelessRules.afterShortRest(
           _hero(rangerLevel: 9),
         ).exhaustionLevel,
         2,
       );
-      expect(
-        SrdRangerTirelessRules.afterShortRest(_hero()).exhaustionLevel,
-        1,
-      );
+      expect(SrdRangerTirelessRules.afterShortRest(_hero()).exhaustionLevel, 1);
     });
 
     test('Mehrklasse erfordert zehn Waldläufer-, nicht Gesamtstufen', () {
@@ -88,14 +78,8 @@ void main() {
       final after = _hero(rangerLevel: 10, multiclass: true);
       expect(before.level, 11);
       expect(after.level, 12);
-      expect(
-        SrdRangerTirelessRules.afterShortRest(before).exhaustionLevel,
-        2,
-      );
-      expect(
-        SrdRangerTirelessRules.afterShortRest(after).exhaustionLevel,
-        1,
-      );
+      expect(SrdRangerTirelessRules.afterShortRest(before).exhaustionLevel, 2);
+      expect(SrdRangerTirelessRules.afterShortRest(after).exhaustionLevel, 1);
       expect(
         SrdRangerTirelessRules.afterShortRest(
           _hero(ranger: false),
@@ -105,14 +89,9 @@ void main() {
     });
 
     test('genau ein Level pro Rast, niemals unter null', () {
-      final once = SrdRangerTirelessRules.afterShortRest(
-        _hero(exhaustion: 3),
-      );
+      final once = SrdRangerTirelessRules.afterShortRest(_hero(exhaustion: 3));
       expect(once.exhaustionLevel, 2);
-      expect(
-        SrdRangerTirelessRules.afterShortRest(once).exhaustionLevel,
-        1,
-      );
+      expect(SrdRangerTirelessRules.afterShortRest(once).exhaustionLevel, 1);
       final rested = _hero(exhaustion: 0);
       expect(
         SrdRangerTirelessRules.afterShortRest(rested).toJson(),
@@ -135,10 +114,7 @@ void main() {
     test('bewusstlos ohne Trefferpunkte bekommt keinen Rastbonus', () {
       final hero = _hero(hitPoints: 0);
       expect(SrdRangerTirelessRules.canReduceExhaustion(hero), isFalse);
-      expect(
-        SrdRangerTirelessRules.afterShortRest(hero).exhaustionLevel,
-        2,
-      );
+      expect(SrdRangerTirelessRules.afterShortRest(hero).exhaustionLevel, 2);
     });
 
     test('Klassenressourcen-Rastpfad nutzt denselben Effekt einmal', () {
@@ -172,10 +148,7 @@ void main() {
       expect(done.events.single.payload['count'], 0);
       expect(done.events.single.payload['exhaustionBefore'], 2);
       expect(done.events.single.payload['exhaustionAfter'], 1);
-      expect(
-        Campaign.fromJson(done.campaign.toJson()).hero.exhaustionLevel,
-        1,
-      );
+      expect(Campaign.fromJson(done.campaign.toJson()).hero.exhaustionLevel, 1);
     });
 
     test('verwundet ohne verbleibende Trefferwürfel: reine Rast', () {
