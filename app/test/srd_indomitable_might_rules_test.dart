@@ -66,10 +66,7 @@ void main() {
       expect(SrdIndomitableMightRules.isEligible(after), isTrue);
       expect(_resolve(before, 'strength', SrdD20CheckKind.abilityCheck, 5), 5);
       expect(_resolve(after, 'strength', SrdD20CheckKind.abilityCheck, 5), 18);
-      expect(
-        _resolve(after, 'strength', SrdD20CheckKind.savingThrow, 10),
-        18,
-      );
+      expect(_resolve(after, 'strength', SrdD20CheckKind.savingThrow, 10), 18);
       expect(_resolve(after, 'strength', SrdD20CheckKind.abilityCheck, 22), 22);
       expect(_resolve(after, 'strength', SrdD20CheckKind.abilityCheck, 18), 18);
     });
@@ -98,10 +95,7 @@ void main() {
       final tooEarly = _barbarian(17, secondClass: true);
       expect(valid.level, 20);
       expect(_resolve(valid, 'strength', SrdD20CheckKind.savingThrow, 7), 18);
-      expect(
-        _resolve(tooEarly, 'strength', SrdD20CheckKind.savingThrow, 7),
-        7,
-      );
+      expect(_resolve(tooEarly, 'strength', SrdD20CheckKind.savingThrow, 7), 7);
     });
 
     test('unbestätigte Stärke erzeugt keine erfundene Zahl', () {
@@ -122,16 +116,13 @@ void main() {
       );
     });
 
-    test(
-      'Anwendung ist rein und verändert keinen gespeicherten Charakter',
-      () {
-        final hero = _barbarian(18);
-        final original = hero.toJson();
-        expect(_resolve(hero, 'strength', SrdD20CheckKind.savingThrow, 1), 18);
-        expect(hero.toJson(), original);
-        expect(HeroCharacter.fromJson(original).toJson(), original);
-      },
-    );
+    test('Anwendung ist rein und verändert keinen gespeicherten Charakter', () {
+      final hero = _barbarian(18);
+      final original = hero.toJson();
+      expect(_resolve(hero, 'strength', SrdD20CheckKind.savingThrow, 1), 18);
+      expect(hero.toJson(), original);
+      expect(HeroCharacter.fromJson(original).toJson(), original);
+    });
 
     test(
       'manueller Stärke-Rettungswurf nutzt nur den effektiven Gesamtwert',
@@ -170,9 +161,7 @@ void main() {
     );
 
     test('Rettungswürfe anderer Attribute erhalten keine Mindestwerte', () {
-      final engine = GameEngine(
-        dice: DiceEngine(random: _FixedRandom(1)),
-      );
+      final engine = GameEngine(dice: DiceEngine(random: _FixedRandom(1)));
       final demo = engine.createDemo();
       final campaign = demo.copyWith(
         hero: _barbarian(18).copyWith(id: demo.hero.id),
@@ -182,44 +171,36 @@ void main() {
         'Rettungswurf: Geschicklichkeit SG 17',
       );
       expect(result.events.single.type, 'saving.roll');
-      expect(
-        result.events.single.payload.containsKey('classFeature'),
-        isFalse,
-      );
+      expect(result.events.single.payload.containsKey('classFeature'), isFalse);
       expect(result.events.single.payload['failed'], isTrue);
     });
 
-    test(
-      'Athletik in Rabenwacht nutzt den bestätigten Stärke-Mindestwert',
-      () {
-        final engine = GameEngine(
-          dice: DiceEngine(random: _FixedRandom(1)),
-        );
-        final hero = _barbarian(18);
-        final base = engine.createRabenwacht(hero);
-        final campaign = base.copyWith(
-          storyBible: {...base.storyBible, 'stage': 'stairs'},
-        );
-        final requested = engine
-            .act(campaign, 'Ich klettere über den Abgrund.')
-            .campaign;
-        expect(requested.pendingRoll?.type, 'preparedCheck');
-        expect(requested.pendingRoll?.targetName, 'strength|Athletik');
-        final saved = Campaign.fromJson(requested.toJson());
-        final resolved = engine.resolveRoll(saved, natural: 1);
-        expect(resolved.events.single.type, 'roll.resolved');
-        expect(
-          resolved.events.single.payload['classFeature'],
-          'indomitableMight',
-        );
-        expect(resolved.events.single.payload['effectiveTotal'], 18);
-        expect(resolved.events.single.payload['roll']['natural'], 1);
-        expect(resolved.events.single.payload['passed'], isTrue);
-        expect(
-          Campaign.fromJson(resolved.campaign.toJson()).toJson(),
-          resolved.campaign.toJson(),
-        );
-      },
-    );
+    test('Athletik in Rabenwacht nutzt den bestätigten Stärke-Mindestwert', () {
+      final engine = GameEngine(dice: DiceEngine(random: _FixedRandom(1)));
+      final hero = _barbarian(18);
+      final base = engine.createRabenwacht(hero);
+      final campaign = base.copyWith(
+        storyBible: {...base.storyBible, 'stage': 'stairs'},
+      );
+      final requested = engine
+          .act(campaign, 'Ich klettere über den Abgrund.')
+          .campaign;
+      expect(requested.pendingRoll?.type, 'preparedCheck');
+      expect(requested.pendingRoll?.targetName, 'strength|Athletik');
+      final saved = Campaign.fromJson(requested.toJson());
+      final resolved = engine.resolveRoll(saved, natural: 1);
+      expect(resolved.events.single.type, 'roll.resolved');
+      expect(
+        resolved.events.single.payload['classFeature'],
+        'indomitableMight',
+      );
+      expect(resolved.events.single.payload['effectiveTotal'], 18);
+      expect(resolved.events.single.payload['roll']['natural'], 1);
+      expect(resolved.events.single.payload['passed'], isTrue);
+      expect(
+        Campaign.fromJson(resolved.campaign.toJson()).toJson(),
+        resolved.campaign.toJson(),
+      );
+    });
   });
 }
