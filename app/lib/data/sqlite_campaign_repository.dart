@@ -482,6 +482,8 @@ CREATE TABLE settings (
     required String campaignId,
     required String requestId,
     required String text,
+    String? selectedNpcId,
+    int? selectedNpcRevision,
   }) async {
     await _database.transaction((transaction) async {
       final rows = await transaction.query(
@@ -491,14 +493,26 @@ CREATE TABLE settings (
         limit: 1,
       );
       if (rows.isEmpty) return;
+      // A stale ACK must not remove an action with the same request ID and
+      // text but a different deliberately selected NPC or saved revision.
       if (rows.single['request_id'] != requestId ||
-          rows.single['action_text'] != text) {
+          rows.single['action_text'] != text ||
+          rows.single['selected_npc_id'] != selectedNpcId ||
+          rows.single['selected_npc_revision'] != selectedNpcRevision) {
         throw StateError('Die ausstehende Handlung hat sich geändert.');
       }
       await transaction.delete(
         'pending_player_actions',
-        where: 'campaign_id = ? AND request_id = ? AND action_text = ?',
-        whereArgs: [campaignId, requestId, text],
+        where:
+            'campaign_id = ? AND request_id = ? AND action_text = ? '
+            'AND selected_npc_id IS ? AND selected_npc_revision IS ?',
+        whereArgs: [
+          campaignId,
+          requestId,
+          text,
+          selectedNpcId,
+          selectedNpcRevision,
+        ],
       );
     });
   }
@@ -627,7 +641,7 @@ CREATE TABLE settings (
   Future<void> close() => _database.close();
 }
 
-/// SQLite schema 2 adds an independent, uniqueness-constrained outbox.
+/// SQLite 3 creates the independent outbox with optional selected NPC identity.
 /// Import/export schemaVersion=1 for campaign JSON is unchanged.
 Future<void> _createPendingActionsTable(DatabaseExecutor database) async {
   await database.execute('''
