@@ -46,6 +46,7 @@ import 'srd_initiative_roster_rules.dart';
 import 'srd_extra_creature_attack_rules.dart';
 import 'rules_engine.dart';
 import 'rest_rules.dart';
+import 'srd_ranger_tireless_rules.dart';
 import 'spellcasting_rules.dart';
 import 'srd_spell_preflight_rules.dart';
 import 'srd_spell_inventory_rules.dart';
@@ -3385,6 +3386,9 @@ class GameEngine {
                     current.hero.spentActionSurge > 0 ||
                     current.hero.spentClassResources.values.any(
                       (n) => n > 0,
+                    ) ||
+                    SrdRangerTirelessRules.canReduceExhaustion(
+                      current.hero,
                     ))) {
               final refreshed = ClassResourceRules.afterShortRest(
                 ClassFeatureResources.afterShortRest(
@@ -3395,13 +3399,17 @@ class GameEngine {
                 campaign,
                 current.copyWith(hero: refreshed),
                 'Nach der kurzen Rast wurden deine verfügbaren Klassen- und '
-                'Paktressourcen regeneriert. Es wurden keine Trefferwürfel verbraucht.',
+                'Paktressourcen regeneriert. Erschöpfung: '
+                '${current.hero.exhaustionLevel} → ${refreshed.exhaustionLevel}. '
+                'Es wurden keine Trefferwürfel verbraucht.',
                 type: 'character.shortRest',
                 payload: {
                   'hitDice': null,
                   'count': 0,
                   'rolls': <dynamic>[],
                   'pactSlotsRecovered': current.hero.spentPactSlots,
+                  'exhaustionBefore': current.hero.exhaustionLevel,
+                  'exhaustionAfter': refreshed.exhaustionLevel,
                 },
               );
             }
@@ -3417,7 +3425,10 @@ class GameEngine {
               (current.hero.spentPactSlots > 0 ||
                   current.hero.spentSecondWind > 0 ||
                   current.hero.spentActionSurge > 0 ||
-                  current.hero.spentClassResources.values.any((n) => n > 0)) &&
+                  current.hero.spentClassResources.values.any((n) => n > 0) ||
+                  SrdRangerTirelessRules.canReduceExhaustion(
+                    current.hero,
+                  )) &&
               !RestRules.availableHitDice(
                 current.hero,
               ).values.any((n) => n > 0)) {
@@ -3430,13 +3441,17 @@ class GameEngine {
               campaign,
               current.copyWith(hero: refreshed),
               'Nach der kurzen Rast wurden Klassen- und Paktressourcen regeneriert. '
-              'Die Trefferwürfel sind bereits verbraucht.',
+              'Die Trefferwürfel sind bereits verbraucht. '
+              'Erschöpfung: ${current.hero.exhaustionLevel} → '
+              '${refreshed.exhaustionLevel}.',
               type: 'character.shortRest',
               payload: {
                 'hitDice': null,
                 'count': 0,
                 'rolls': <dynamic>[],
                 'pactSlotsRecovered': current.hero.spentPactSlots,
+                'exhaustionBefore': current.hero.exhaustionLevel,
+                'exhaustionAfter': refreshed.exhaustionLevel,
               },
             );
           }
@@ -3452,7 +3467,9 @@ class GameEngine {
             'Nach einer kurzen Rast (mindestens 1 Stunde) verbrauchst du '
             '$count Trefferwürfel ${rest.dieType.toUpperCase()}. '
             'Du erhältst ${rest.recovered} Trefferpunkte zurück '
-            '(jetzt ${rest.hero.hitPoints}/${rest.hero.maxHitPoints}).',
+            '(jetzt ${rest.hero.hitPoints}/${rest.hero.maxHitPoints}). '
+            'Erschöpfung: ${current.hero.exhaustionLevel} → '
+            '${rest.hero.exhaustionLevel}.',
             type: 'character.shortRest',
             payload: {
               'hitDice': rest.dieType,
@@ -3461,6 +3478,8 @@ class GameEngine {
               'constitutionBonus': rest.constitutionBonus,
               'healed': rest.recovered,
               'pactSlotsRecovered': current.hero.spentPactSlots,
+              'exhaustionBefore': current.hero.exhaustionLevel,
+              'exhaustionAfter': rest.hero.exhaustionLevel,
             },
           );
         }
