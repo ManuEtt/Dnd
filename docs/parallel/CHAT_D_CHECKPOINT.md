@@ -1,3 +1,19 @@
+# Chat D D-014 – Störenden Alt-Workflow deaktivieren (28.10.2026)
+
+- **Ausgangs-main-SHA:** `571edec9455fb32e4991432953c9a2479a6fffb2`.
+- **Eigener Branch:** `fix/chat-d/disable-legacy-cleanup-20261028`.
+- **PR:** [#329](https://github.com/ManuEtt/Dnd/pull/329) (Draft).
+- **Technische Commit-SHAs:** `45236f1b4d595303c19c1cf9e992ba36003026fc`, `c5b223389d75a9949a2bee13386d305bc586102e`; Dokumentation auf demselben Branch ergänzt.
+- **Reproduzierter Befund:** Der alte Workflow [40589220593](https://github.com/ManuEtt/Dnd/actions/runs/40589220593) brach mit 404 bei `test/chat-b/story-12-memory-transport-20261027` ab. Der neue SHA-geprüfte Workflow [40589220368](https://github.com/ManuEtt/Dnd/actions/runs/40589220368) hatte diesen Branch nach Archivierung vorher gelöscht.
+- **Implementiert:** Alter Workflow nur manuell und schreibgeschützt, ausschließlich informative Ausgabe, keine Branch-/Tag-Schreibzugriffe. Der aktive Nachfolger bleibt unverändert.
+- **Geänderte Dateien:** `.github/workflows/retire-verified-branches-20261026.yml`, `scripts/tests/test_retired_cleanup_workflow.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **TESTS:** Drei neue Python-Tests (positiv, adversarial/negativ, Nachfolger); CI auf finalem SHA **noch nicht ausgeführt/bestätigt**, kein lokales Flutter-/Android-SDK.
+- **Bekannte Einschränkungen:** Die aktuelle automatische Bereinigung im neueren Workflow ist ein eigenständiger Arbeitsbereich; keine Änderung oder Abnahme ihrer vollständigen Nebenläufigkeitsgarantien. Realgerät/Produktionssignierung nicht getestet.
+- **Migration:** Keine, SQLite 2/JSON 1 unverändert.
+- **Nächster Schritt:** Finale Python/Backend/Flutter/Android-CI für PR #329 nachweisen, bei Fehlern den eigenen Branch korrigieren und Review erst nach Erfolg anbieten.
+
+---
+
 # Chat D D-012 – ZIP-Bomb-Schutz bei Gradle-Wrapper-Vorprüfung (26.10.2026)
 
 - **Ausgangs-main:** `67f146e690306b13d490bd8e7fd5636bb187c77e`. **Arbeitsbranch:** `fix/chat-d/gradle-jar-zip-bomb-guard-20261026`. Implementierung `77a431955351e30a1dcf54e0dea7f8ba7b7b497a`, Regressionstests `86634965c6784994ecb731c4bacab476a9f50ffa`.
