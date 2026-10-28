@@ -40,6 +40,20 @@ kann. Vollständiger Assistent/Spezies-/Talent-/Zauberumfang bleibt offen.
 
 ---
 
+## 27.10.2026 – Neucharakter: Start-TP und Starterpaket über alle zwölf Klassen (CI offen)
+
+Im eigenen Klassenstart-Branch implementiert: gemeinsame Domain-Validierung
+für Stufe 1, gültigen KO-Wert, daraus abgeleitete Start-TP und verpflichtende
+Starterausrüstung oder Startgold (soweit noch auswählbar) bei allen zwölf Klassen.
+Die UI verlangt die Wahl vor der Klassenübernahme; der bestehende Editor speichert
+bestätigte TP und Startpakete in vorhandenen Feldern. Alte Charaktere behalten
+ihre Werte. Zwölf Domain-Klassenfälle und Waldläufer-Editor-Regression angelegt,
+aber noch keine abgeschlossene CI-/Android-Abnahme. **Die Charaktererstellung
+ist weiterhin unvollständig.**
+[Matrix](docs/CHARACTER_CREATION_COVERAGE.json).
+
+---
+
 ## 27.10.2026 – Attribut-Herkunft als versionierte Heldenmetadaten
 
 Neues, optionales Feld `startingAbilityOrigin` für explizit bestätigte

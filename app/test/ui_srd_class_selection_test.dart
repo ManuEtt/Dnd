@@ -60,9 +60,23 @@ void main() {
         find.widgetWithText(TextFormField, 'Charaktername'),
         'Elowen',
       );
+      final constitution = find.widgetWithText(TextFormField, 'Konstitution');
+      await tester.scrollUntilVisible(
+        constitution,
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.enterText(constitution, '14');
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pumpAndSettle();
+      await tapInEditor(
+        tester,
+        find.byKey(const ValueKey('allow-manual-abilities')),
+      );
       await tapInEditor(
         tester,
         find.byKey(const ValueKey('open-srd-class-selection')),
+        scrollDelta: -320,
       );
       expect(find.text('D&D-Klasse und Startwerte'), findsOneWidget);
       expect(find.textContaining('0 / 3'), findsOneWidget);
@@ -75,6 +89,13 @@ void main() {
       }
       expect(find.textContaining('3 / 3'), findsOneWidget);
       await tester.ensureVisible(
+        find.byKey(const ValueKey('srd-equipment--1')),
+      );
+      await tester.tap(find.byKey(const ValueKey('srd-equipment--1')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('B – Startgold').last);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(
         find.byKey(const ValueKey('srd-confirm-class')),
       );
       await tester.tap(find.byKey(const ValueKey('srd-confirm-class')));
@@ -86,7 +107,9 @@ void main() {
         containsAll(['Wahrnehmung', 'Heimlichkeit', 'Überlebenskunst']),
       );
       expect(saved?.savingThrowProficiencies, ['strength', 'dexterity']);
-      expect(saved?.hitPoints, isNull);
+      expect(saved?.hitPoints, 12);
+      expect(saved?.maxHitPoints, 12);
+      expect(saved?.gold, 150);
       expect(saved?.inventory, isEmpty);
     },
   );

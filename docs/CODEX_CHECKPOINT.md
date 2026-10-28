@@ -43,6 +43,19 @@ Details unter [Chat-D-Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
 
 ---
 
+# Charaktererstellung – gemeinsamer Stufe-1-Startprüfer (27.10.2026)
+
+- **Repository-Basis:** `main` `ff245cc253194cd0858385d535ae7b2c9132bb06`; Branch `feat/character-start-values-all-classes-20261027`.
+- **Beobachtete Lücke:** `SrdClassSelectionDialog` erzwang valide Start-TP/Starterkit bisher nur beim Kämpfer. Elf andere Klassen konnten die Klassenwahl ohne den betreffenden Startzustand übernehmen.
+- **Implementiert:** eigene regelnahe `SrdFirstClassStartValidation`, UI-Sperre für sämtliche zwölf Neucharakterklassen, erzwungene bestätigte Start-TP-Übernahme und ausdrückliche Ausrüstung/Goldwahl. Bestehende Charaktere unverändert; Fighter-Sonderwahlen weiterhin verpflichtend.
+- **Tests:** `app/test/srd_first_class_start_validation_test.dart` (alle Klassen, ungültige Werte, Mehrfachvergabe und Altcharakter) und ergänzter Waldläufer-End-to-End-Editor-Test. Neu eingefügt; vollständige CI auf finalem PR-HEAD und Realgerät noch offen.
+- **Parallelität:** Kein Eingriff in die neuen Zauberauswahl- und Audit-Branches #317 und #318; vor dem Merge deren aktuelle Zustände sowie aktualisiertes `main` prüfen.
+- **Nicht abgeschlossen:** sämtliche weiteren Pflichtentscheidungen der Klassen, SRD-Herkunftstalente, Speziesvarianten, Zauberlisten, vollwertiger Wizard und persistenter Entwurf; Starterkit-Wechsel innerhalb eines noch nicht bestätigten Editors weiter absichern.
+- **Nächster Schritt:** auf exaktem PR-HEAD Format/Flutter/Android-GitHub-CI prüfen und ggf. reparieren; danach Klassenwahl-/Kitänderung im ungespeicherten Entwurf transaktional austauschen, damit keine Startgegenstände einer früheren Klassenauswahl verbleiben.
+- **Quelle:** [SRD 5.2.1](https://www.dndbeyond.com/srd), CC BY 4.0. Keine kostenpflichtigen APIs, kein Force-Push, kein Main-Direktcommit.
+
+---
+
 # Chat D D-014 – Doppelte Branch-Bereinigung und 404-Rennen beseitigen (28.10.2026)
 
 - **Ausgangs-main:** `571edec9455fb32e4991432953c9a2479a6fffb2`; **Branch:** `fix/chat-d/disable-legacy-cleanup-20261028`; [PR #329](https://github.com/ManuEtt/Dnd/pull/329) (reviewbereit).
@@ -85,6 +98,17 @@ Details unter [Chat-D-Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
 - [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md), ältere Einträge bleiben erhalten.
 
 ---
+
+## 28.10.2026 – Sicherer Charaktereditor auf fortgeschriebenem Main
+
+- **Quell-PR #330:** [Revisionssichere Bearbeitung](https://github.com/ManuEtt/Dnd/pull/330); Ausgangs-HEAD `76d5daa` mit kompletter erfolgreicher [Android-/Flutter-CI](https://github.com/ManuEtt/Dnd/actions/runs/40631254745).
+- **Integration:** Merge-Commit `8450cfc36574da6a688852514ea9ace52f79d4db` übernimmt `main` `3bdc3586` mitsamt SQLite-V3-/NPC-Migrationen und weiteren parallel integrierten Änderungen. Keine veralteten ganzen Dateien kopiert.
+- **Funktion:** feste Kampagnen-ID/Revision beim Öffnen des Editors; transaktionaler Vergleich der ursprünglichen JSON-Fassung für eigenständige Archivfiguren; sichere Ablehnung einer Löschung, Doppelanlage oder Fremdbearbeitung.
+- **Neue Tests:** sechs Fälle in `app/test/character_editor_stale_save_test.dart` mit zwei unabhängigen SQLite-Verbindungen und Neustart.
+- **CI:** Ausgangs-HEAD erfolgreich; auf diesem kombinierten Commit noch ausstehend.
+- **Parallel:** PR #319 und #324 für Klassenstartwerte bleiben getrennt; ihre Änderungen nicht dupliziert.
+- **Grenzen:** keine echte Geräte-/TalkBack-Abnahme; weiterhin kein vollständiger SRD-Wizard und kein persistierter unbestätigter Charakterentwurf.
+- [Details](CHARACTER_EDITOR_REVISION_20261028.md).
 
 # Chat B – isolierte NPC-Outbox-Statusanzeige (27.10.2026)
 

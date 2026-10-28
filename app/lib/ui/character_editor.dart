@@ -9,6 +9,7 @@ import '../domain/starting_ability_origin.dart';
 import '../domain/starting_class_choice.dart';
 import '../domain/ability_generation.dart';
 import '../domain/srd_background_package.dart';
+import '../domain/srd_magic_initiate_choice.dart';
 import '../domain/srd_character_classes.dart';
 import '../domain/srd_equipment_catalog.dart';
 import '../domain/starting_equipment_import.dart';
@@ -20,6 +21,7 @@ import '../domain/starting_hit_points.dart';
 import '../domain/spellcasting_rules.dart';
 import 'ability_assignment_dialog.dart';
 import 'srd_background_package_dialog.dart';
+import 'srd_magic_initiate_dialog.dart';
 import 'srd_class_selection_dialog.dart';
 import 'srd_class_level_up_dialog.dart';
 import 'fantasy_ui.dart';
@@ -482,6 +484,24 @@ class _CharacterEditorState extends State<CharacterEditor> {
           throw const FormatException(
             'Das bestätigte Hintergrundpaket darf nicht unbemerkt '
             'einem anderen Hintergrund oder einer anderen Stufe zugeordnet werden.',
+          );
+        }
+      }
+      if (_original['startingMagicInitiate'] != null) {
+        final choice = SrdMagicInitiateChoice.fromJson(
+          Map<String, dynamic>.from(_original['startingMagicInitiate'] as Map),
+        );
+        final rawPackage = _original['startingBackgroundPackage'];
+        if (rawPackage == null ||
+            SrdBackgroundPackageChoice.fromJson(
+                  Map<String, dynamic>.from(rawPackage as Map),
+                ).background !=
+                choice.background ||
+            json['background'] != choice.background.label ||
+            (widget.hero == null && json['level'] != 1)) {
+          throw const FormatException(
+            'Die bestätigte Magieinitiierter-Zauberwahl passt nicht '
+            'zum unveränderten Stufe-1-Hintergrundpaket.',
           );
         }
       }
@@ -1380,6 +1400,49 @@ class _CharacterEditorState extends State<CharacterEditor> {
     }
   }
 
+  Future<void> _chooseMagicInitiate() async {
+    if (_original['startingMagicInitiate'] != null) {
+      setState(
+        () => _error =
+            'Magieinitiierter wurde bereits bestätigt. Ein späterer '
+            'Zauberaustausch benötigt den Stufenaufstiegsassistenten.',
+      );
+      return;
+    }
+    final rawPackage = _original['startingBackgroundPackage'];
+    final level = int.tryParse(_fields['level']!.text.trim());
+    if (rawPackage == null || level != 1) {
+      setState(
+        () =>
+            _error = 'Zuerst das SRD-Hintergrundpaket auf Stufe 1 bestätigen.',
+      );
+      return;
+    }
+    final package = SrdBackgroundPackageChoice.fromJson(
+      Map<String, dynamic>.from(rawPackage as Map),
+    );
+    if (!package.requiresFeatSpellChoices ||
+        _fields['background']!.text.trim() != package.background.label) {
+      setState(
+        () => _error =
+            'Magieinitiierter erfordert den bestätigten Hintergrund '
+            'Akolyth oder Weiser.',
+      );
+      return;
+    }
+    final result = await showDialog<SrdMagicInitiateChoice>(
+      context: context,
+      builder: (_) => SrdMagicInitiateDialog(background: package.background),
+    );
+    if (result == null || !mounted) return;
+    setState(() {
+      _original['startingMagicInitiate'] = result.toJson();
+      // Do NOT append to 'spells': the casting engine does not yet track
+      // this feat's long-rest-free cast, class list or casting ability.
+      _error = null;
+    });
+  }
+
   Future<void> _assignAbilities() async {
     final result = await showDialog<AbilityAssignment>(
       context: context,
@@ -1553,6 +1616,33 @@ class _CharacterEditorState extends State<CharacterEditor> {
                       style: FantasyButtonStyle.woodGold,
                       onPressed: _chooseBackgroundPackage,
                     ),
+                  if (_original['startingBackgroundPackage'] != null &&
+                      SrdBackgroundPackageChoice.fromJson(
+                        Map<String, dynamic>.from(
+                          _original['startingBackgroundPackage'] as Map,
+                        ),
+                      ).requiresFeatSpellChoices) ...[
+                    FantasyTextButton(
+                      key: const ValueKey('open-magic-initiate-choice'),
+                      label: _original['startingMagicInitiate'] == null
+                          ? 'Magieinitiierter: Zauber und Attribut wählen'
+                          : 'Magieinitiierter: Zauberwahl bestätigt',
+                      icon: Icons.auto_awesome,
+                      style: FantasyButtonStyle.arcane,
+                      onPressed: _original['startingMagicInitiate'] == null
+                          ? _chooseMagicInitiate
+                          : null,
+                    ),
+                    if (_original['startingMagicInitiate'] != null)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Text(
+                          'Zauberwahl gesichert; kostenlose Verwendung '
+                          'und Wirken mit Zauberplätzen bleiben gesperrt, '
+                          'bis die Talentmechanik implementiert ist.',
+                        ),
+                      ),
+                  ],
                   _text('backstory', 'Charaktergeschichte', lines: 3),
                   Wrap(
                     spacing: 14,

@@ -41,13 +41,17 @@ Die Würfelquelle ist für reproduzierbare Tests injizierbar. Ein Moduswechsel
 erzeugt keinen zweiten Wurf. Die UI verlangt eine ausdrückliche
 Werte-Zuordnung und weiterhin eine gültige Hintergrundwahl.
 
-**Wichtige Grenze:** Die Attribut-Provenienz (Methode, Rohwürfel und
-Hintergrundverteilung) wird noch nicht dauerhaft in älteren und neuen
-Helden gespeichert. Der bisherige Editor übernimmt nur die bestätigten
-Endwerte. Somit ist die Charaktererstellung insgesamt noch unvollständig.
-Neue Tests sind geschrieben, aber ohne erfolgreiche finale CI noch
-nicht als bestanden nachgewiesen. Siehe
-[Teilabdeckung](CHARACTER_CREATION_COMPLETE.md).
+Die bestätigten Basiswerte, Methode, Hintergrundboni und Rohwürfel werden
+optional in `HeroCharacter.startingAbilityOrigin` gespeichert und streng
+validiert. Altcharaktere bleiben ohne dieses Feld erhalten. Historische Werte
+gewähren keinen weiteren Bonus. Der echte Charakterbogen stellt sie getrennt
+von aktuellen Werten dar. Fehlerhafte Würfelquellen bewahren den vorherigen
+Entwurf; Wiederholung ist ausdrücklich möglich. Ein erfolgreicher Satz bleibt
+nur innerhalb desselben geöffneten Dialogs erhalten.
+
+Stand 27.10.2026: gezielte gemeinsame Tests bestanden; endgültige CI-/APK-
+Nachweise stehen im [Checkpoint](CODEX_CHECKPOINT.md). Die gesamte
+Charaktererstellung bleibt unvollständig.
 
 ## Geprüfte offizielle Quellen
 
@@ -98,16 +102,16 @@ Eine Überschreitung wird abgelehnt und nicht still auf 20 gekürzt.
 | Weiser | Konstitution, Intelligenz, Weisheit |
 | Soldat | Stärke, Geschicklichkeit, Konstitution |
 
-Die Auswahl bildet ausschließlich diese Attributsregeln ab. Herkunftstalente,
-Fertigkeiten, Werkzeugübung, Ausrüstung und sonstige Charaktermerkmale eines
-Hintergrunds werden dadurch nicht automatisch vergeben. Ebenso ist ein
+Die Auswahl bildet ausschließlich diese Attributsregeln ab. Weitere Hintergrundmerkmale werden gesondert im vorhandenen
+Hintergrundpaketdialog bestätigt; die Attributverteilung selbst vergibt keine
+Fertigkeiten, Ausrüstung oder Herkunftstalentwirkung. Ebenso ist ein
 Attributvorschlag noch kein vollständiger Charakterbogen. Die Oberfläche
 verlangt vor der Übernahme eine ausdrückliche Hintergrund- und Bonuswahl.
 
 ## Domänenschnittstelle und Zustandsgrenzen
 
-`app/lib/domain/ability_generation.dart` enthält keine UI, Datenbankzugriffe,
-Zufallsquelle oder KI-Aufrufe:
+`app/lib/domain/ability_generation.dart` enthält keine UI, Datenbankzugriffe
+oder KI-Aufrufe; die Würfelquelle wird ausdrücklich injiziert:
 
 - `AbilityAllocation` hält eine unveränderliche Basiszuweisung und eine Methode.
   `errors` und `isValid` prüfen genau die sechs vorhandenen Attribut-IDs,

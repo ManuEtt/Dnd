@@ -1,0 +1,38 @@
+[
+  {
+    "path": "README.md",
+    "stage": 1,
+    "saved": "docs/history/branch_migration_20261028/group_character_conflicts/1/README.md",
+    "sha256": "62978e665c7f95919f860b2a77b860bd02a862481093d48120d2261887cfb852"
+  },
+  {
+    "path": "README.md",
+    "stage": 2,
+    "saved": "docs/history/branch_migration_20261028/group_character_conflicts/2/README.md",
+    "sha256": "cd088723a7b8d92f4fc4c257a5a1614b6594b271742c72bd88474d242d9213df"
+  },
+  {
+    "path": "README.md",
+    "stage": 3,
+    "saved": "docs/history/branch_migration_20261028/group_character_conflicts/3/README.md",
+    "sha256": "b26a5c507bc3dca5b9618b1adb06b8e89196aa6f92b7e6d98feeb13ba216a339"
+  },
+  {
+    "path": "app/lib/services/game_controller.dart",
+    "stage": 1,
+    "saved": "docs/history/branch_migration_20261028/group_character_conflicts/1/app/lib/services/game_controller.dart",
+    "sha256": "cb204dd121c9170f3b821801a1255e601dbb6ac421db76aa377b5fe87c7a965e"
+  },
+  {
+    "path": "app/lib/services/game_controller.dart",
+    "stage": 2,
+    "saved": "docs/history/branch_migration_20261028/group_character_conflicts/2/app/lib/services/game_controller.dart",
+    "sha256": "2a1157ed71675594764c0194c23de43cfda52292f987924372cc591c1bd12b74"
+  },
+  {
+    "path": "app/lib/services/game_controller.dart",
+    "stage": 3,
+    "saved": "docs/history/branch_migration_20261028/group_character_conflicts/3/app/lib/services/game_controller.dart",
+    "sha256": "01acb95424860284a1e2bcab2e5d98e18b1985fa4f8816feb792aa1a61d3dbe5"
+  }
+]

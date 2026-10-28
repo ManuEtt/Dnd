@@ -4,6 +4,7 @@ import 'fantasy_buttons.dart';
 
 import '../domain/srd_character_classes.dart';
 import '../domain/starting_hit_points.dart';
+import '../domain/srd_first_class_start_validation.dart';
 import '../domain/fighter_creation_rules.dart';
 import '../domain/character_creation_progression.dart';
 import '../domain/starting_equipment_import.dart';
@@ -106,6 +107,8 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
       );
     } on FormatException {
       return null;
+    } on RangeError {
+      return null;
     }
   }
 
@@ -117,17 +120,6 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
           styleId: _fighterStyle ?? '',
           masteryWeaponIds: _fighterMasteries,
         );
-        if (widget.isNewCharacter && widget.allowEquipment && _kitIndex < 0) {
-          throw const FormatException(
-            'Wähle eines der drei SRD-Startpakete für deinen Kämpfer.',
-          );
-        }
-        if (widget.isNewCharacter && _startingHitPoints == null) {
-          throw const FormatException(
-            'Für einen neuen Kämpfer zuerst Konstitution bestätigen, '
-            'damit W10 plus KO-Modifikator als Start-TP gesetzt werden kann.',
-          );
-        }
       }
       if (widget.allowEquipment && _kitIndex >= 0) {
         StartingEquipmentImport.validateKitChoices(
@@ -140,13 +132,19 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
         skills: _skills,
         kitIndex: _kitIndex == -1 ? null : _kitIndex,
       );
+      final startingHitPoints = SrdFirstClassStartValidation.validate(
+        selection: selection,
+        isNewCharacter: widget.isNewCharacter,
+        characterLevel: widget.characterLevel,
+        constitutionScore: widget.constitutionScore,
+        allowEquipment: widget.allowEquipment,
+      );
       Navigator.of(context).pop(
         SrdClassSetupResult(
           selection: selection,
           replaceExistingProficiencies: _replace,
-          useSuggestedHitPoints:
-              _selectedClass.name == 'Kämpfer' && widget.isNewCharacter
-              ? _startingHitPoints != null
+          useSuggestedHitPoints: widget.isNewCharacter
+              ? startingHitPoints != null
               : _useHp && _startingHitPoints != null,
           fighterChoices: fighterChoices,
           equipmentChoices: Map.unmodifiable(_equipmentChoices),
@@ -329,12 +327,15 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
               CheckboxListTile(
                 key: const ValueKey('srd-confirm-start-hp'),
                 contentPadding: EdgeInsets.zero,
-                value: _useHp,
-                onChanged:
-                    widget.isNewCharacter && _selectedClass.name == 'Kämpfer'
+                value: widget.isNewCharacter ? true : _useHp,
+                onChanged: widget.isNewCharacter
                     ? null
                     : (value) => setState(() => _useHp = value ?? false),
-                title: Text('Start-TP vorschlagen: ${hp.maximum} TP'),
+                title: Text(
+                  widget.isNewCharacter
+                      ? 'Start-TP übernehmen: ${hp.maximum} TP'
+                      : 'Start-TP vorschlagen: ${hp.maximum} TP',
+                ),
                 subtitle: Text(
                   widget.hasExistingHitPoints
                       ? 'Achtung: Dies ersetzt nur nach deiner Bestätigung '
@@ -358,9 +359,8 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
                 initialValue: _kitIndex,
                 isExpanded: true,
                 decoration: InputDecoration(
-                  labelText:
-                      widget.isNewCharacter && _selectedClass.name == 'Kämpfer'
-                      ? 'Kämpfer-Startausrüstung wählen'
+                  labelText: widget.isNewCharacter
+                      ? 'Startausrüstung oder Startgold wählen'
                       : 'Optionale Startausrüstung',
                 ),
                 items: [
@@ -447,12 +447,11 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
           label: 'Klasse und Fertigkeiten übernehmen',
           onPressed:
               _skills.length == _selectedClass.skillCount &&
+                  (!widget.isNewCharacter ||
+                      (_startingHitPoints != null &&
+                          (!widget.allowEquipment || _kitIndex >= 0))) &&
                   (_selectedClass.name != 'Kämpfer' ||
-                      (_fighterStyle != null &&
-                          _fighterMasteries.length == 3 &&
-                          (!widget.isNewCharacter ||
-                              (_startingHitPoints != null &&
-                                  (!widget.allowEquipment || _kitIndex >= 0)))))
+                      (_fighterStyle != null && _fighterMasteries.length == 3))
               ? _accept
               : null,
         ),

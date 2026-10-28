@@ -822,13 +822,30 @@ class _CharactersPage extends StatelessWidget {
   final BackupFiles backupFiles;
 
   Future<void> _edit(BuildContext context, HeroCharacter? hero) async {
+    final openedCampaign = controller.currentCampaign;
+    final belongsToCampaign =
+        hero != null && openedCampaign?.hero.id == hero.id;
+    final openedCampaignId = belongsToCampaign ? openedCampaign!.id : null;
+    final openedRevision = belongsToCampaign ? openedCampaign!.revision : null;
     final result = await Navigator.of(context).push<HeroCharacter>(
       MaterialPageRoute(
         builder: (context) =>
             CharacterEditor(hero: hero, autoFillExistingCombatValues: true),
       ),
     );
-    if (result != null) await controller.saveStandaloneHero(result);
+    if (result == null) return;
+    await controller.saveStandaloneHero(
+      result,
+      requireOriginalMatch: true,
+      originalHero: hero,
+      expectedCampaignId: openedCampaignId,
+      expectedRevision: openedRevision,
+    );
+    if (context.mounted && controller.error != null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(controller.error!)));
+    }
   }
 
   Future<void> _showSheet(BuildContext context, HeroCharacter hero) async {
@@ -2169,7 +2186,8 @@ class _AdventurePageState extends State<_AdventurePage> {
 
   Future<void> _editHero() async {
     if (_ruleInteractionBlocked) return;
-    final hero = widget.controller.currentCampaign?.hero;
+    final openedCampaign = widget.controller.currentCampaign;
+    final hero = openedCampaign?.hero;
     if (hero == null) return;
     final result = await Navigator.of(context).push<HeroCharacter>(
       MaterialPageRoute(
@@ -2177,7 +2195,17 @@ class _AdventurePageState extends State<_AdventurePage> {
             CharacterEditor(hero: hero, autoFillExistingCombatValues: true),
       ),
     );
-    if (result != null) await widget.controller.saveHero(result);
+    if (result == null) return;
+    await widget.controller.saveHero(
+      result,
+      expectedCampaignId: openedCampaign!.id,
+      expectedRevision: openedCampaign.revision,
+    );
+    if (mounted && widget.controller.error != null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(widget.controller.error!)));
+    }
   }
 
   Future<void> _showHeroSheet() async {

@@ -14,13 +14,15 @@ class SqliteCampaignRepository
         PendingActionStore,
         AtomicSettingsStore,
         AtomicUserDataReset,
-        AtomicCampaignDeletion {
+        AtomicCampaignDeletion,
+        AtomicCharacterSnapshotStore {
   SqliteCampaignRepository._(this._database);
   final Database _database;
 
   static Future<SqliteCampaignRepository> open({
     DatabaseFactory? factory,
     String? path,
+    bool singleInstance = true,
   }) async {
     final selectedFactory = factory ?? databaseFactory;
     final databasePath =
@@ -33,6 +35,9 @@ class SqliteCampaignRepository
       databasePath,
       options: OpenDatabaseOptions(
         version: 3,
+        // Production remains single-instance. Independent FFI test connections
+        // opt out to exercise real simultaneous archive writers.
+        singleInstance: singleInstance,
         onConfigure: (database) async {
           await database.execute('PRAGMA foreign_keys = ON');
         },
@@ -409,6 +414,51 @@ CREATE TABLE settings (
       'snapshot': _canonical(character.toJson()),
       'updated_at': DateTime.now().toUtc().toIso8601String(),
     }, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  /// Compare-and-swap on the exact canonical archive snapshot in one SQLite
+  /// transaction. Checking before the transaction would lose a two-editor race.
+  /// The normal saveCharacter API remains available for explicit imports.
+  @override
+  Future<void> saveCharacterIfUnchanged(
+    HeroCharacter character, {
+    required HeroCharacter? expectedOriginal,
+  }) async {
+    _validateId(character.id);
+    final confirmed = _canonical(
+      HeroCharacter.fromJson(character.toJson()).toJson(),
+    );
+    if (expectedOriginal != null && expectedOriginal.id != character.id) {
+      throw const CampaignConflictException(
+        'Die bearbeitete Charakterkennung stimmt nicht mehr überein.',
+      );
+    }
+    final expected = expectedOriginal == null
+        ? null
+        : _canonical(
+            HeroCharacter.fromJson(expectedOriginal.toJson()).toJson(),
+          );
+    await _database.transaction((transaction) async {
+      final rows = await transaction.query(
+        'characters',
+        columns: ['snapshot'],
+        where: 'id = ?',
+        whereArgs: [character.id],
+        limit: 1,
+      );
+      final stored = rows.isEmpty ? null : rows.single['snapshot'] as String;
+      if (stored != expected) {
+        throw const CampaignConflictException(
+          'Der Charakter wurde inzwischen geändert oder gelöscht. '
+          'Bitte den neuesten Stand öffnen.',
+        );
+      }
+      await transaction.insert('characters', {
+        'id': character.id,
+        'snapshot': confirmed,
+        'updated_at': DateTime.now().toUtc().toIso8601String(),
+      }, conflictAlgorithm: ConflictAlgorithm.replace);
+    });
   }
 
   @override

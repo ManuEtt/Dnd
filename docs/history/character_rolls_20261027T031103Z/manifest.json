@@ -1,0 +1,44 @@
+[
+  {
+    "source": "main4bd97b4",
+    "commit": "4bd97b4d72fc747228df9bea46b61c3d4c82c382",
+    "tag": "archive/character-rolls-20261027T031103Z/main4bd97b4",
+    "path": "README.md",
+    "sha256": "d74cb9eaa5bfa0b37783992e40cd6e338fb19640b40fb51d132917b238c604d0"
+  },
+  {
+    "source": "main4bd97b4",
+    "commit": "4bd97b4d72fc747228df9bea46b61c3d4c82c382",
+    "tag": "archive/character-rolls-20261027T031103Z/main4bd97b4",
+    "path": "docs/CODEX_CHECKPOINT.md",
+    "sha256": "c53a23cb05838695fdca4ea5d34e6805e660cb8a951f5d1557d3abd098381a87"
+  },
+  {
+    "source": "rolls7305c16",
+    "commit": "7305c16eb70f74a36e94421b9be88599967121a8",
+    "tag": "archive/character-rolls-20261027T031103Z/rolls7305c16",
+    "path": "README.md",
+    "sha256": "e0bf16f29d121764e2fd1984a84fcc571e91525e0053cbf176cc46a581cce04d"
+  },
+  {
+    "source": "rolls7305c16",
+    "commit": "7305c16eb70f74a36e94421b9be88599967121a8",
+    "tag": "archive/character-rolls-20261027T031103Z/rolls7305c16",
+    "path": "docs/CODEX_CHECKPOINT.md",
+    "sha256": "a2e89ea4a0d52821eb16655c3ac977069c66582531c2fbad54742ebe251fdeef"
+  },
+  {
+    "source": "origina8e135f",
+    "commit": "a8e135fb7714985b1096be9898014506e91c61be",
+    "tag": "archive/character-rolls-20261027T031103Z/origina8e135f",
+    "path": "README.md",
+    "sha256": "ee3a3f9ef3558b0c17213d6bafc05edca43c1abcce07c808cc91bada36b1baed"
+  },
+  {
+    "source": "origina8e135f",
+    "commit": "a8e135fb7714985b1096be9898014506e91c61be",
+    "tag": "archive/character-rolls-20261027T031103Z/origina8e135f",
+    "path": "docs/CODEX_CHECKPOINT.md",
+    "sha256": "6a1c6b5b0a07bcb8fc936d51615795221ddb34cec58a3e30f65c4d1eac92476d"
+  }
+]
