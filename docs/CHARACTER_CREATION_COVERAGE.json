@@ -5,14 +5,14 @@
   "source_section": "Character Creation, p. 21; Classes; Character Origins",
   "license": "CC-BY-4.0",
   "as_of": "2026-10-27",
-  "baseline_main_sha": "08bcd4dda585224c2ca8671786adecaf263d736c",
-  "pr": 273,
+  "baseline_main_sha": "8239f5e71ec6b229a2a0883500adaf431bb70087",
+  "pr": 318,
   "coverage_complete": false,
   "all_required_choices_covered": false,
   "android_device_tested": false,
   "ci_final_head_verified": false,
-  "existing_requirement_registers_unchanged": true,
-  "status_note": "Entwicklungspaket 3 im gestapelten PR #273: Hintergründe/Ausrüstung/Übungen und verbuchte Talente; Talent-Regelwirkung offen. CI für #273 bis zur finalen Abnahme ausstehend.",
+  "existing_requirement_registers_unchanged": false,
+  "status_note": "Vollständige lokale Prüfung: 1.949 Flutter-, 164 Python-, 72 Backend- und zwölf native Android-Tests; finale CI siehe PR318/CODEX_CHECKPOINT. Gesamte Charaktererstellung weiterhin unvollständig.",
   "requirements": [
     {
       "id": "CHAR-ABILITY-STANDARD-ARRAY",
@@ -168,6 +168,30 @@
         "app/test/srd_background_package_test.dart",
         "app/test/srd_background_package_dialog_test.dart"
       ]
+    },
+    {
+      "id": "CHAR-AUDIT-EVIDENCE-STATUSES",
+      "title": "Sieben Prüfzustände und tatsächliche Teilentscheidungen",
+      "status": "partial",
+      "register_requirement_ids": [
+        "RULE-CHARACTER-CREATION-CHARACTER-SHEET",
+        "RULE-CHARACTER-CREATION-CLASS-AND-ORIGIN"
+      ],
+      "source": "SRD 5.2.1 Character Creation p.21, Backgrounds p.83, Species pp.84-86; Auditstatus ist App-Funktion",
+      "code": [
+        "app/lib/domain/srd_character_creation_audit.dart"
+      ],
+      "ui": [
+        "app/lib/ui/character_editor.dart",
+        "app/lib/ui/srd_creation_audit_dialog.dart"
+      ],
+      "tests": [
+        "app/test/srd_character_creation_audit_test.dart",
+        "app/test/character_creation_audit_ui_test.dart",
+        "app/test/character_creation_audit_persistence_test.dart"
+      ],
+      "mechanical_mutation": false,
+      "note": "Kein Gesamt-SRD-Erfolgsflag; vollständig geführter Assistent und Quellen für sämtliche Pflichtwahlen weiterhin offen."
     }
   ],
   "classes": [
@@ -311,5 +335,17 @@
     }
   ],
   "scope_note": "Talentnamen und Herkunftsübungen werden vermerkt; Auswirkungen der Talente und Magic-Initiate-Zauber sind nicht automatisiert.",
-  "next_task": "Herkunftstalente Alert/Savage Attacker und Magic Initiate mit Spell-Choices mechanisch und persistiert absichern."
+  "next_task": "Klassenstartentscheidungen quellengetrennt versionieren, explizit bestätigen und per Audit nachweisen.",
+  "branch": "feat/character-creation-audit-evidence-20261027",
+  "local_validation": {
+    "flutter_passed": 1949,
+    "python_passed": 164,
+    "backend_passed": 72,
+    "native_android_passed": 12,
+    "full_check_exit": 0,
+    "targeted_audit_tests": 24,
+    "debug_apk": "built_metadata_signature_verified",
+    "source_code_commit": "9cdefe84eddefac82d212b6647f4d30af2ca2512",
+    "real_device_tested": false
+  }
 }
