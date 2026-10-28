@@ -82,7 +82,6 @@ class SrdRangerTirelessRules {
     );
   }
 
-
   static int _rangerClassLevel(HeroCharacter hero) {
     final primary = findSrdClass(hero.className)?.name == 'Waldläufer'
         ? hero.primaryClassLevel
