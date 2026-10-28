@@ -71,16 +71,12 @@ void main() {
   });
 
   test('blockers remain candidates flagged for separate review', () {
-    final blocked = _preview(
-      map: _map(blockers: const [SrdGridCell(12, 10)]),
-    );
+    final blocked = _preview(map: _map(blockers: const [SrdGridCell(12, 10)]));
     final wallTile = blocked.at(const SrdGridCell(12, 10))!;
     expect(wallTile.fullBlockerRequiresReview, isTrue);
     expect(wallTile.centerRay, SrdSphereCenterRay.requiresCoverReview);
 
-    final behind = _preview(
-      map: _map(blockers: const [SrdGridCell(11, 10)]),
-    );
+    final behind = _preview(map: _map(blockers: const [SrdGridCell(11, 10)]));
     final remoteTile = behind.at(const SrdGridCell(12, 10))!;
     expect(remoteTile.fullBlockerRequiresReview, isFalse);
     expect(remoteTile.centerRay, SrdSphereCenterRay.requiresCoverReview);
