@@ -14,6 +14,23 @@
 
 ---
 
+# Chat D D-016 – Dart-Teilbibliotheken und Story-/Regelgrenzen (28.10.2026)
+
+- **Basis-`main`:** `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78`; **Branch:** `fix/chat-d/dart-part-boundary-20261028`; **Codecommit:** `4690b591dbf3664824981bb4fec5844a48d8bfa2`; **Pull Request:** [#360](https://github.com/ManuEtt/Dnd/pull/360) (Draft).
+- **Ausgangsproblem:** `check_domain_boundaries.py` erkannte `import`/`export`, aber nicht `part`/`part of`. So konnten Regel-/Storydateien unbemerkt als Bibliotheksteile referenziert werden.
+- **IMPLEMENTIERT:** Der Prüfer liest beide URI-basierten Direktiven einschließlich Kommentare und verbietet grenzüberschreitende Teilbibliotheken auch für bisher zulässige Shared-Model-/Fassaden-Imports. Zulässige lokale Parts bleiben erlaubt.
+- **Akzeptanzkriterien:** Domain→Story und Story→Domain per `part` und `part of` verboten; Package-Aliase/Whitelist umgehen die Sperre nicht; lokale Parts und erlaubter Model-Import funktionieren.
+- **Regressionen:** Fünf neue Testmethoden in `scripts/tests/test_domain_boundaries.py` (positive und negative Fälle).
+- **GETESTET:** Fünf Parser-Stichproben mit lokalem Python erfolgreich. Keine vollumfänglichen Repo-Testresultate behauptet.
+- **NICHT GETESTET:** komplette Python-/Backend-Suite, Flutter-/Dart-Analyse und Tests, Android-Build/native Tests, vollständige CI auf finalem PR-HEAD, Realgerät.
+- **BLOCKIERT:** kein GitHub-Checkout via lokalen DNS und kein Flutter-/Dart-SDK. GitHub Actions separat prüfen.
+- **Kompatibilität und Migration:** App-/Story-/Domaincode, SQLite, Kampagnen-JSON und Versionsdaten unverändert; keine Migration.
+- **Technische Dateien:** `scripts/check_domain_boundaries.py`, `scripts/tests/test_domain_boundaries.py`. Zusätzliche additive Dokumentation in README und zentralem/persönlichem Checkpoint.
+- **Koordination:** offene PRs #353/#355/#356/#357/#358 technisch überschneidungsfrei. Gemeinsame README-/Checkpoint-Änderungen vor Merge verlustfrei abgleichen; keine fremden PRs automatisch mergen.
+- **Nächster Schritt:** Finale PR-CI des aktuellen HEAD samt allen neuen Regressionen und Android-Build verifizieren und nur bei Erfolg zur Review freigeben.
+
+---
+
 # Chat D D-014 – Bedingte Dart-Imports/Exports an Architekturgrenzen (27.10.2026)
 
 - **Basis-main:** `8239f5e71ec6b229a2a0883500adaf431bb70087`, Branch `fix/chat-d/conditional-dart-boundaries-20261027`.
