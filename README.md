@@ -4,6 +4,11 @@
 
 Neue Figuren benötigen im Klassenassistenten jetzt für jede der zwölf SRD-Klassen einen gültigen KO-Wert (Start-TP = maximaler Klassenwürfel + KO-Modifikator) und, wenn verfügbar, die ausdrückliche Wahl zwischen Klassenstartausrüstung und Startgold. Die bestehenden Vorschau-, Editor- und JSON/SQLite-Speicherfelder werden wiederverwendet; historische Figuren werden nicht stillschweigend neu berechnet. Die zwölf Klassen sind damit **nicht vollständig erstellt**: weitere Klassenmerkmale, Zauber, Talente, Spezies und ein vollständiger Entwurfswizard fehlen. Tests im Paket enthalten, finale CI und Android-Realgerät offen. Siehe [Charaktererstellungs-Matrix](docs/CHARACTER_CREATION_COVERAGE.json).
 
+## Chat D – Sicherere Android-Alpha-Bündelung (27.10.2026)
+
+Die ARM64-Release-Prüfung weist nun vor dem Dekomprimieren manipulierte APK-ZIP-Dateien mit zu vielen Mitgliedern, zu großer entpackter Gesamtsumme oder extremen Kompressionsverhältnissen zurück. Vier neue Regressionstests sichern diese Grenzen. Kein Einfluss auf D&D-Regeln, Story, App-Daten oder bestehende Spielstände. **Neue CI/Android-Abnahme des zugehörigen Chat-D-Branches ist noch offen**; vorherige erfolgreiche Builds beweisen diese Änderung nicht. [Detailcheckpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
+
 ## Chat D – Doppelte automatische Branch-Bereinigung stillgelegt (28.10.2026)
 
 Die frühere Workflow-Datei `.github/workflows/retire-verified-branches-20261026.yml` konkurrierte mit der neuen SHA-/PR-gesicherten Bereinigung `cleanup-merged-safe-20261027.yml`. Am 27.10.2026 archivierte und entfernte der neue Workflow den Branch `test/chat-b/story-12-memory-transport-20261027`; der alte Workflow scheiterte anschließend beim erneuten Abruf mit HTTP 404 ([fehlgeschlagener Lauf](https://github.com/ManuEtt/Dnd/actions/runs/40589220593)). Der alte Eintrag bleibt als **manueller, schreibgeschützter Hinweis ohne Branch-Aktionen** erhalten. Drei neue Python-Tests prüfen Deaktivierung, Negativfälle und unveränderte Sicherungsprüfungen des Nachfolgers. Der neue [PR #329](https://github.com/ManuEtt/Dnd/pull/329) ist zur Review freigegeben; kombinierte CI noch ausstehend. Keine Spielstand-, Regel-, Versions- oder Datenmigration.
