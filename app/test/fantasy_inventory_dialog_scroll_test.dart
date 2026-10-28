@@ -46,7 +46,9 @@ void main() {
         await tester.tap(find.text('Expeditionsbericht'));
         await tester.pumpAndSettle();
 
-        final dialog = tester.widget<AlertDialog>(find.byType(AlertDialog));
+        final dialog = tester.widget<AlertDialog>(
+          find.byType(AlertDialog),
+        );
         expect(dialog.scrollable, isTrue);
         expect(find.textContaining('Der Fund ist nur ein'), findsOneWidget);
         expect(find.text('Schließen').hitTestable(), findsOneWidget);
