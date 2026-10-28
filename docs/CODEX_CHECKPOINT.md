@@ -272,3 +272,11 @@ Test-/Buildlogs `/workspace/validation/20261026-migration-*`. Prüfung `bash scr
 ## NOCH NICHT IMPLEMENTIERT / genau ein nächster Schritt
 
 Explizite NPC-ID-Auswahl von Android über GameController an den bereits vorhandenen Wire-Vertrag durchreichen. Definition of Done: gleichnamige Figuren ausdrücklich per ID auswählen, fehlende Capability und Stale Revision vor Netzwerk/Kosten ablehnen, Abbruch/Neustart/SQLite testen, Regel-/Story-Grenze erhalten. Erst nach vollständigem Migrationsabschluss beginnen; aktuelle Main-/Branch-/CI-Stände erneut lesen. Keine automatische Wiederaufnahme außerhalb einer aktiven Sitzung.
+
+## Branch-Migration 28.10.2026 – bereits integrierte Klassenkapstones
+
+Der Ursprungsbranch `feat/chat-a/srd-capstone-level20-20261026`
+(`5a44dc4b9ab4e5b8648f72439b414a2915cc42bb`) wird historisch verbunden.
+Seine fünf Produkt-/Testdateien entsprechen bereits dem Ausgangs-Main;
+keine zweite Attributs- oder Trefferpunktvergabe. Der alte Branch-Hinweis
+„noch nicht in main“ wird daher nicht erneut als aktueller Stand eingefügt.
