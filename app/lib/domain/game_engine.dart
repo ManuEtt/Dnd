@@ -3447,7 +3447,7 @@ class GameEngine {
     // restore Pact Magic. Elapsed world time is not automatically inferred.
     if (words.startsWith('magische list')) {
       if (!RegExp(
-        r'^magische list\s*:\s*ritual abgeschlossen\s*[.!?]?$'
+        r'^magische list\s*:\s*ritual abgeschlossen\s*[.!?]?$',
       ).hasMatch(words)) {
         return _commit(
           campaign,
