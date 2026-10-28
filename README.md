@@ -1,5 +1,19 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## 28.10.2026 – Chat B: NPC-Identität bei überlangen Rückblicken bewahren
+
+[PR #356](https://github.com/ManuEtt/Dnd/pull/356) (Entwurf): Der bestätigte
+Sitzungsrückblick kürzt gleichnamige NPCs an der 2.400-UTF-16-Grenze nicht
+mehr mitten in der `NPC-ID`. Passen nur einige vollständige Einträge, werden
+ausschließlich diese übernommen; reicht der Platz nicht für einen einzigen,
+entfällt die gesamte NPC-Zeile statt eine falsche Zuordnung zu riskieren.
+Zwei neue Grenztests decken vollständige ID, Auslassung bei Platzmangel,
+gespeicherten Rückblick, JSON-Roundtrip und unveränderten Heldenzustand ab.
+**CI auf dem finalen PR-HEAD ist noch separat zu bestätigen**; Dart-/Flutter-
+und Android-Tests konnten in dieser Sitzung lokal nicht ausgeführt werden.
+SQLite3, Kampagnen-JSON1, Regelengine und bestehende Spielstände bleiben
+unverändert. [Persönlicher Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md).
+
 ## 28.10.2026 – Gemeinsame lokale Abnahme bestanden
 
 Quellstand `4f03b7880c36ca225325c87ec9f2c56e0a93dccd` ist lokal vollständig geprüft:

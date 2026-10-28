@@ -1,3 +1,11 @@
+## 28.10.2026 – Chat B: NPC-ID im Sitzungsrückblick nicht abschneiden
+
+- **Basis main:** `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78`; **Branch:** `feat/chat-b/recap-npc-id-boundary-20261028`; **Fachcommit:** `2e395b0dcfdbcb287b3fafb1dfb56b601fee822f`; [PR #356](https://github.com/ManuEtt/Dnd/pull/356) (Draft).
+- **IMPLEMENTIERT:** `MemoryEngine.buildSessionSummary` übernimmt bei knappem 2.400-UTF-16-Budget ausschließlich vollständige NPC-Einträge; keine unvollständige `(NPC-ID: ...)`-Kennung gelangt in bestätigte Rückblicke. Keine Änderung an Regelengine, Speicherformat oder KI-Befugnissen.
+- **TESTS HINZUGEFÜGT:** Zwei positive/negative Grenzfälle, darunter `GameEngine.saveSessionRecap` und Kampagnen-JSON-Roundtrip. **GETESTET:** GitHub-Pfad-/Diff-Prüfung und fehlende lokale SDK-Verfügbarkeit. **NICHT GETESTET:** Dart-/Flutter-/Android-/Python-/Backend-Vollsuite auf finalem Commit und Gerätetest; aktuellen Actions-Status separat lesen.
+- **KEINE MIGRATION:** SQLite3 / Kampagnen-JSON1 unverändert. **PARALLEL:** PR #353 (Regeln), #355 (Android-UI) überschneiden die Fachdateien nicht. Zentraldokumente vor Merge konsolidieren.
+- **NÄCHSTER SCHRITT:** Aktuelle PR-#356-CI prüfen, eventuelle Fehler auf demselben Branch korrigieren und erst danach zur Integration durch Chat D freigeben. [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md).
+
 ## 28.10.2026 – Gemeinsame lokale Abnahme bestanden
 
 Quellstand `4f03b7880c36ca225325c87ec9f2c56e0a93dccd` ist lokal vollständig geprüft:

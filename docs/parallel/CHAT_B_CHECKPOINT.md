@@ -1,3 +1,21 @@
+# Chat B – Vollständige NPC-IDs im 2.400-Code-Unit-Sitzungsrückblick (28.10.2026)
+
+- **Ausgangs-main:** `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78`
+- **Arbeitsbranch:** `feat/chat-b/recap-npc-id-boundary-20261028`
+- **Fachcommit:** `2e395b0dcfdbcb287b3fafb1dfb56b601fee822f`; **Pull Request:** [#356](https://github.com/ManuEtt/Dnd/pull/356) (Entwurf; finalen Dokumentations-/PR-HEAD separat überprüfen).
+- **Ausgangsproblem:** Der pauschale UTF-16-Rückblickschnitt konnte mitten in `Mira (NPC-ID: ...)` liegen; zwei gleichnamige Figuren waren dann im gespeicherten Rückblick nicht mehr eindeutig zu unterscheiden.
+- **IMPLEMENTIERT:** Bei Platzmangel im NPC-Abschnitt wird nur eine Liste vollständig enthaltener NPC-Identitäten geschrieben. Reicht das Budget für keine vollständige Figur, entfällt die gesamte NPC-Zeile. Normale, kürzere Rückblicke und der übrige Unicode-sichere Textschnitt bleiben unverändert. Kein Erzähltext ist autoritativ für Regeln.
+- **AKZEPTANZKRITERIEN:** Exakt ein vollständiger erster NPC mit ID passt; zweiter wird nicht teilweise geschrieben. Bei einem UTF-16-Code-Unit weniger passt kein NPC und kein Kopfrest wird ausgegeben. Gesicherter Rückblick und JSON-Roundtrip bewahren die Ausgabe ohne Heldenmutation; bestehende Tests für einzigartige Namen, kaputte IDs, Alt-JSON bleiben erhalten.
+- **Geänderte Dateien:** `app/lib/story/story_memory_engine.dart`, `app/test/session_recap_npc_identity_test.dart`, `docs/parallel/CHAT_B_CHECKPOINT.md`, `docs/CODEX_CHECKPOINT.md` und `README.md`.
+- **TESTS:** Zwei neue Flutter-Regressionen geschrieben; Code-/PR-Pfadprüfung über GitHub durchgeführt. **Nicht ausgeführt:** lokale Flutter-Tests, Dart-Formatter, Analyzer, Android-APK, Python-/Backend-Vollsuite (SDKs/Repository-Checkout hier nicht verfügbar). Finale GitHub Actions auf tatsächlichem PR-HEAD prüfen; kein vorheriger Erfolg auf diesen Commit übertragen.
+- **Parallelität:** Vor Branch und PR offene PRs geprüft: #353 (Regelmodul) und #355 (UI) ohne Fachdatei-Überlappung. README und zentralen Checkpoint vor dem Merge additiv durch Chat D konsolidieren.
+- **MIGRATION:** Keine; SQLite3/Kampagnen-JSON1, Version und bestätigte Regelzustände unverändert. Keine produktiven KI-Anbieteraufrufe.
+- **BLOCKIERT:** Lokale Dart-/Flutter-Toolchain fehlt, `git clone` scheitert am DNS. CI- und Realgeräteabnahme separat erforderlich.
+- **NOCH NICHT IMPLEMENTIERT:** Keine Änderung am allgemeinen Fakten-/Quest-Langtext-Trunkierungsvertrag.
+- **NÄCHSTER UNABHÄNGIGER SCHRITT:** Für gezielte NPC-Gedächtnisabrufe mit 400-Code-Unit-Limit die Behandlung überlanger eindeutiger und doppelter Anzeigenamen auf vollständige Identitätskennungen prüfen und positiv/negativ testen.
+
+---
+
 # Chat B – Sitzungsidentität beim Ereignis-Replay (27.10.2026)
 
 - **main-Basis:** `96001353f2b90f293fbdade934e78b7b8281e965`; Branch `fix/chat-b/story-replay-session-identity-20261027`.
