@@ -188,4 +188,251 @@ void main() {
       expect(restored.hitPoints, 20);
     });
   });
+
+
+  group('SRD 5.2.1 Waldläufer 10: Unermüdlich, temporäre TP', () {
+    test('Stufe, Mehrklasse und bestätigte Weisheit begrenzen Nutzungen', () {
+      expect(SrdRangerTirelessRules.maximumTemporaryHitPointUses(_hero()), 3);
+      expect(
+        SrdRangerTirelessRules.maximumTemporaryHitPointUses(
+          _hero(rangerLevel: 9),
+        ),
+        0,
+      );
+      expect(
+        SrdRangerTirelessRules.maximumTemporaryHitPointUses(
+          _hero(rangerLevel: 9, multiclass: true),
+        ),
+        0,
+      );
+      expect(
+        SrdRangerTirelessRules.maximumTemporaryHitPointUses(
+          _hero(multiclass: true),
+        ),
+        3,
+      );
+      final missing = _hero().copyWith(abilities: {
+        ..._hero().abilities,
+        'wisdom': null,
+      });
+      expect(
+        SrdRangerTirelessRules.maximumTemporaryHitPointUses(missing),
+        0,
+      );
+      expect(
+        () => SrdRangerTirelessRules.useTemporaryHitPoints(
+          missing,
+          DiceEngine(random: _MinimumRandom()),
+        ),
+        throwsStateError,
+      );
+    });
+
+    test('1W8 + Weisheit, Minimum 1, gespeicherter Rohwurf', () {
+      final hero = _hero().copyWith(temporaryHitPoints: 0);
+      final previous = hero.toJson();
+      final result = SrdRangerTirelessRules.useTemporaryHitPoints(
+        hero,
+        DiceEngine(random: _MinimumRandom()),
+      );
+      expect(result.roll.rolls, [1]);
+      expect(result.roll.total, 1);
+      expect(result.wisdomModifier, 3);
+      expect(result.rolledTemporaryHitPoints, 4);
+      expect(result.hero.temporaryHitPoints, 4);
+      expect(result.usesRemaining, 2);
+      expect(
+        result.hero.spentClassResources[
+          SrdRangerTirelessRules.resourceKey
+        ],
+        1,
+      );
+      expect(hero.toJson(), previous);
+      final veryLowWisdom = hero.copyWith(abilities: {
+        ...hero.abilities,
+        'wisdom': 1,
+      });
+      final low = SrdRangerTirelessRules.useTemporaryHitPoints(
+        veryLowWisdom,
+        DiceEngine(random: _MinimumRandom()),
+      );
+      expect(low.wisdomModifier, -5);
+      expect(low.rolledTemporaryHitPoints, 1);
+      expect(low.hero.temporaryHitPoints, 1);
+      expect(low.usesRemaining, 0);
+    });
+
+    test('temporäre Trefferpunkte werden nicht addiert oder implizit ersetzt', () {
+      final hero = _hero().copyWith(temporaryHitPoints: 12);
+      final rolled = SrdRangerTirelessRules.useTemporaryHitPoints(
+        hero,
+        DiceEngine(random: _MinimumRandom()),
+      );
+      expect(rolled.rolledTemporaryHitPoints, 4);
+      expect(rolled.previousTemporaryHitPoints, 12);
+      expect(rolled.hero.temporaryHitPoints, 12);
+      expect(rolled.usesRemaining, 2);
+      final replaced = SrdRangerTirelessRules.useTemporaryHitPoints(
+        hero,
+        DiceEngine(random: _MinimumRandom()),
+        replaceExisting: true,
+      );
+      expect(replaced.hero.temporaryHitPoints, 4);
+      expect(replaced.usesRemaining, 2);
+    });
+
+    test('Nutzungen werden begrenzt und bei langer Rast regeneriert', () {
+      final dice = DiceEngine(random: _MinimumRandom());
+      var hero = _hero().copyWith(temporaryHitPoints: 0);
+      for (final left in [2, 1, 0]) {
+        final result = SrdRangerTirelessRules.useTemporaryHitPoints(hero, dice);
+        hero = HeroCharacter.fromJson(result.hero.toJson());
+        expect(result.usesRemaining, left);
+        expect(
+          ClassResourceRules.remaining(
+            hero,
+            SrdRangerTirelessRules.resourceKey,
+          ),
+          left,
+        );
+      }
+      expect(
+        () => SrdRangerTirelessRules.useTemporaryHitPoints(hero, dice),
+        throwsStateError,
+      );
+      expect(
+        ClassResourceRules.afterShortRest(hero).spentClassResources[
+          SrdRangerTirelessRules.resourceKey
+        ],
+        3,
+      );
+      final rested = RestRules.longRest(hero);
+      expect(
+        SrdRangerTirelessRules.remainingTemporaryHitPointUses(rested),
+        3,
+      );
+      expect(rested.temporaryHitPoints, 0);
+    });
+
+    test('Manipulierte Einträge werden beim Laden abgefangen', () {
+      final original = _hero().toJson();
+      final key = SrdRangerTirelessRules.resourceKey;
+      expect(
+        () => HeroCharacter.fromJson({
+          ...original,
+          'spentClassResources': {key: 4},
+        }),
+        throwsFormatException,
+      );
+      expect(
+        () => SrdRangerTirelessRules.remainingTemporaryHitPointUses(
+          _hero().copyWith(spentClassResources: {key: -1}),
+        ),
+        throwsFormatException,
+      );
+    });
+
+    test('Bewusstlosigkeit verhindert Ressourcenausgabe und Würfelwurf', () {
+      final character = _hero(hitPoints: 0);
+      expect(
+        () => SrdRangerTirelessRules.useTemporaryHitPoints(
+          character,
+          DiceEngine(random: _MinimumRandom()),
+        ),
+        throwsStateError,
+      );
+      final dead = _hero(exhaustion: 6);
+      expect(
+        () => SrdRangerTirelessRules.useTemporaryHitPoints(
+          dead,
+          DiceEngine(random: _MinimumRandom()),
+        ),
+        throwsStateError,
+      );
+    });
+
+    test('expliziter Befehl außerhalb des Kampfes ändert nur Regelzustand', () {
+      final engine = _engine();
+      final start = engine.createDemo();
+      final original = start.copyWith(
+        hero: _hero().copyWith(
+          id: start.hero.id,
+          temporaryHitPoints: 0,
+        ),
+      );
+      final result = engine.act(original, 'Unermüdlich: temporäre Trefferpunkte');
+      expect(result.events.single.type, 'class.tirelessTemporaryHitPoints');
+      expect(result.campaign.hero.temporaryHitPoints, 4);
+      expect(result.events.single.payload['rolledTemporaryHitPoints'], 4);
+      expect(result.events.single.payload['wisdomModifier'], 3);
+      expect(result.events.single.payload['actionConsumed'], isFalse);
+      expect(
+        SrdRangerTirelessRules.remainingTemporaryHitPointUses(
+          Campaign.fromJson(result.campaign.toJson()).hero,
+        ),
+        2,
+      );
+      expect(original.hero.temporaryHitPoints, 0);
+    });
+
+    test('ungültiger Befehl und fehlende Stufe kosten nichts', () {
+      final engine = _engine();
+      final start = engine.createDemo();
+      final original = start.copyWith(
+        hero: _hero(rangerLevel: 9).copyWith(id: start.hero.id),
+      );
+      final malformed = engine.act(original, 'Unermüdlich: irgendetwas');
+      expect(malformed.events.single.type, 'rules.blocked');
+      final blocked = engine.act(original, 'Unermüdlich: temporäre Trefferpunkte');
+      expect(blocked.events.single.type, 'rules.blocked');
+      expect(blocked.campaign.hero.toJson(), original.hero.toJson());
+    });
+
+    test('Kampf verbraucht eine Aktion und verhindert doppelten Einsatz', () {
+      final engine = _engine();
+      final start = engine.createDemo();
+      final campaign = start.copyWith(
+        hero: _hero().copyWith(
+          id: start.hero.id,
+          temporaryHitPoints: 0,
+        ),
+      );
+      final fight = engine.act(campaign, 'Ich gehe zum Waldschrein.').campaign;
+      expect(fight.encounter, isNotNull);
+      final action = engine.act(fight, 'Unermüdlich: temporäre Trefferpunkte');
+      expect(action.events.single.type, 'class.tirelessTemporaryHitPoints');
+      expect(action.events.single.payload['actionConsumed'], isTrue);
+      expect(action.campaign.encounter!.actionUsed, isTrue);
+      expect(action.campaign.hero.temporaryHitPoints, 4);
+      final denied = engine.act(
+        action.campaign,
+        'Unermüdlich: temporäre Trefferpunkte',
+      );
+      expect(denied.events.single.type, 'rules.blocked');
+      expect(
+        denied.campaign.hero.spentClassResources,
+        action.campaign.hero.spentClassResources,
+      );
+    });
+
+    test('offener Würfelwurf sperrt neue Magieaktion', () {
+      final engine = _engine();
+      final start = engine.createDemo();
+      final campaign = start.copyWith(
+        hero: _hero().copyWith(id: start.hero.id),
+      );
+      final fight = engine.act(campaign, 'Ich gehe zum Waldschrein.').campaign;
+      final attack = engine.act(fight, 'Ich greife den Wächter an.');
+      expect(attack.campaign.pendingRoll, isNotNull);
+      final denied = engine.act(
+        attack.campaign,
+        'Unermüdlich: temporäre Trefferpunkte',
+      );
+      expect(denied.events.single.type, 'rules.blocked');
+      expect(
+        denied.campaign.hero.spentClassResources,
+        attack.campaign.hero.spentClassResources,
+      );
+    });
+  });
 }
