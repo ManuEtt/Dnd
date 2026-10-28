@@ -702,9 +702,7 @@ class GameEngine {
     }
     Campaign.fromJson(campaign.toJson());
     final hero = proposal.applyTo(campaign.hero);
-    final source = proposal.usePactSlot
-        ? 'Paktplatz'
-        : 'Zauberplatz';
+    final source = proposal.usePactSlot ? 'Paktplatz' : 'Zauberplatz';
     return _commit(
       campaign,
       campaign.copyWith(hero: hero),
