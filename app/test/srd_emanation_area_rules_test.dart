@@ -51,7 +51,10 @@ void main() {
       isFalse,
     );
     expect(result.at(const SrdGridCell(14, 10)), isNull);
-    expect(result.at(const SrdGridCell(10, 12))!.centerRay, SrdSphereCenterRay.clear);
+    expect(
+      result.at(const SrdGridCell(10, 12))!.centerRay,
+      SrdSphereCenterRay.clear,
+    );
     expect(() => result.candidates.clear(), throwsUnsupportedError);
   });
 
@@ -80,9 +83,12 @@ void main() {
     expect(instant.needsRepreviewAfterMovement, isFalse);
 
     final shifted = _preview(origin: const SrdGridCell(11, 10));
-    expect(shifted.at(const SrdGridCell(11, 10))!.originSquareRequiresReview, isTrue);
+    expect(
+      shifted.at(const SrdGridCell(11, 10))!.originSquareRequiresReview,
+      isTrue,
+    );
     expect(shifted.origin, const SrdGridCell(11, 10));
-    expect(defaultEmanation().origin, source);
+    expect(_preview().origin, source);
   });
 
   test('obstacle evidence stays a cover review, never an immunity', () {
@@ -104,8 +110,14 @@ void main() {
       () => _preview(map: _map(blockers: const [source])),
       throwsFormatException,
     );
-    expect(() => _preview(origin: const SrdGridCell(-1, 0)), throwsFormatException);
-    expect(() => _preview(origin: const SrdGridCell(40, 10)), throwsFormatException);
+    expect(
+      () => _preview(origin: const SrdGridCell(-1, 0)),
+      throwsFormatException,
+    );
+    expect(
+      () => _preview(origin: const SrdGridCell(40, 10)),
+      throwsFormatException,
+    );
     for (final invalid in [-5, 0, 4, 7, 125]) {
       expect(() => _preview(distance: invalid), throwsFormatException);
     }
@@ -117,7 +129,7 @@ void main() {
     expect(edge.candidates, hasLength(4));
   });
 
-  test('Spirit Guardians requires Self origin and effect confirmation', () async {
+  test('Spirit Guardians enforces Self origin and shape', () async {
     final catalog = await SrdSpellCatalogLoader.load();
     final spell = catalog.find('Spirit Guardians')!;
     expect(spell.range, 'Self');
@@ -169,4 +181,3 @@ void main() {
   });
 }
 
-SrdEmanationAreaPreview defaultEmanation() => _preview();
