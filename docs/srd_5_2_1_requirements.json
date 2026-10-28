@@ -429,12 +429,17 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#barbar_18_base_indomitable-might_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_indomitable_might_rules_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/srd_indomitable_might_rules.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/domain/srd_class_automation.dart"
+      ],
+      "note": "Indomitable Might: bestätigte Stärke-Proben (vorbereitete Story-Proben) und manuelle Stärke-Rettungswürfe verwenden ab Barbar-Klassenstufe 18 den bestätigten ST-Wert als optionalen höheren Gesamtwert. Rohwurf und effektives Ergebnis bleiben getrennt im Event; andere Wurfarten bleiben unverändert. Neue Tests vorhanden, aber Flutter-CI, weitere Rettungswurf-Quellen und End-to-End-Geräteabnahme noch nicht nachgewiesen; deshalb partial."
     },
     {
       "id": "CLASS-BARBAR-19-BASE-EPIC-BOON-0",
