@@ -34,6 +34,7 @@ import 'monk_focus_actions.dart';
 import 'monk_flurry_rules.dart';
 import 'monk_self_restoration.dart';
 import 'monk_initiative_features.dart';
+import 'srd_bard_superior_inspiration_rules.dart';
 import 'paladin_lay_on_hands.dart';
 import 'saving_throw_class_actions.dart';
 import 'ai_story.dart';
@@ -425,8 +426,11 @@ class GameEngine {
       useUncannyMetabolism: useUncannyMetabolism,
       dice: dice,
     );
+    final inspiration = SrdBardSuperiorInspirationRules.onInitiative(
+      focus.hero,
+    );
     var next = campaign.copyWith(
-      hero: focus.hero,
+      hero: inspiration.hero,
       adventureOffer: null,
       quests: [
         ...campaign.quests,
@@ -473,6 +477,7 @@ class GameEngine {
         'uncannyMetabolismHealing': focus.hitPointsRecovered,
         'uncannyMetabolismDieRoll': focus.martialArtsDieRoll,
       },
+      'bardicInspirationRecoveredAtInitiative': inspiration.recovered,
     };
     if (enemyInitiative.total > heroInitiative.total) {
       final turn = _enemyTurn(next, advanceRound: false);
@@ -3643,8 +3648,11 @@ class GameEngine {
         useUncannyMetabolism: useUncannyMetabolism,
         dice: dice,
       );
+      final inspiration = SrdBardSuperiorInspirationRules.onInitiative(
+        focus.hero,
+      );
       var started = scripted.campaign.copyWith(
-        hero: focus.hero,
+        hero: inspiration.hero,
         encounter: Encounter(
           id: _id('encounter'),
           enemyName: enemy.name,
@@ -3686,6 +3694,7 @@ class GameEngine {
             'uncannyMetabolismHealing': focus.hitPointsRecovered,
             'uncannyMetabolismDieRoll': focus.martialArtsDieRoll,
           },
+          'bardicInspirationRecoveredAtInitiative': inspiration.recovered,
         },
       );
     }
@@ -3880,8 +3889,11 @@ class GameEngine {
         useUncannyMetabolism: useUncannyMetabolism,
         dice: dice,
       );
+      final inspiration = SrdBardSuperiorInspirationRules.onInitiative(
+        focus.hero,
+      );
       var next = current.copyWith(
-        hero: focus.hero,
+        hero: inspiration.hero,
         scene: 'Am alten Waldschrein erhebt sich ein Dornenwächter.',
         facts: {...current.facts, 'location': 'Waldschrein'},
         places: current.places.any((e) => e.id == 'shrine')
@@ -3918,6 +3930,7 @@ class GameEngine {
           'uncannyMetabolismHealing': focus.hitPointsRecovered,
           'uncannyMetabolismDieRoll': focus.martialArtsDieRoll,
         },
+        'bardicInspirationRecoveredAtInitiative': inspiration.recovered,
       };
       if (foeInit.total > heroInit.total) {
         final turn = _enemyTurn(next, advanceRound: false);

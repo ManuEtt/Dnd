@@ -82,6 +82,7 @@ class SrdClassAutomation {
     'Action Surge': 'ClassFeatureResources.spendActionSurge',
     'Lay On Hands': 'PaladinLayOnHands',
     'Font of Inspiration': 'GameEngine.confirmBardFontOfInspiration',
+    'Superior Inspiration': 'SrdBardSuperiorInspirationRules.onInitiative',
   };
 
   // Rule fragments exist (e.g. counters, dice, prerequisite checks), but

@@ -839,12 +839,17 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#barde_18_base_superior-inspiration_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_bard_superior_inspiration_rules_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/srd_bard_superior_inspiration_rules.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/domain/srd_class_automation.dart"
+      ],
+      "note": "SRD-Barde-18: Wiederherstellung zuvor verbrauchter Inspirationsnutzungen auf bis zu zwei verfügbare Nutzungen bei bestätigter Initiative. Deckt die drei bestehenden Kampfstartpfade ab und nutzt Barden-Klassenstufe statt Gesamtstufe. Unbekanntes Charisma/überzogene Ressourcen fail-closed; Quelle SRD 5.2.1 CC BY 4.0. Tests und GitHub CI noch nicht vollständig abgenommen; deshalb partial."
     },
     {
       "id": "CLASS-BARDE-19-BASE-EPIC-BOON-0",

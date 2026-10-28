@@ -272,6 +272,7 @@ class SrdClassFeatureCatalog {
     'Two Extra Attacks',
     'Three Extra Attacks',
     'Second Wind',
+    'Superior Inspiration',
     'Unarmored Movement',
     'Fast Movement',
     'Feral Instinct',

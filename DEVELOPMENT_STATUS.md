@@ -2,6 +2,10 @@
 
 **IMPLEMENTIERT, noch NICHT durch Flutter-CI getestet:** Klasse-18-Stärke-Mindestwert auf vorbereiteten Stärke-Proben und manuellen Stärke-Rettungswürfen, einschließlich Mehrklasse und getrenntem Roh-/Effektivergebnis. Acht neue Tests angelegt, aber nicht lokal ausführbar (Flutter/Dart fehlt). Matrixeintrag CLASS-BARBAR-18-BASE-INDOMITABLE-MIGHT-0 bewusst **partial**. Andere Rettungswurf-Pfade, Gesamtsuite, Android-APK und Gerät offen. Details: docs/parallel/CHAT_A_BARBAR_INDOMITABLE_MIGHT_20261028.md. Keine Main-Mutation; Branch feat/srd-barbarian-indomitable-might-20261028.
 
+## 28.10.2026 – SRD-Barde 18: Überlegene Inspiration (Feature-Branch)
+
+**IMPLEMENTIERT / noch NICHT CI-abgenommen:** Eine deterministische Auffüllung verbrauchter Barden-Inspiration beim bestätigten Initiativewurf (Bardenstufe 18, max. 2 verfügbare Nutzungen) in drei vorhandenen Kampfstart-Pfaden, einschließlich Mehrklasse. Zehn Regel- und Integrationstestfälle wurden ergänzt, ohne bestehendes JSON-Schema zu ändern. **Nicht lokal getestet** (Flutter-SDK fehlt); CI-/APK-/Geräteabnahme offen. Dokumentation: docs/parallel/CHAT_A_BARD_SUPERIOR_INSPIRATION_20261028.md. Der Matrixstatus bleibt **partial**.
+
 ---
 
 ## 27.10.2026 – 0.8.44+94: nachweisbasierte Charakterprüfung

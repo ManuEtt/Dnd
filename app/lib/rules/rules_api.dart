@@ -28,6 +28,7 @@ export '../domain/srd_monk_slow_fall_rules.dart';
 export '../domain/monk_initiative_features.dart';
 export '../domain/srd_evasion_rules.dart';
 export '../domain/srd_indomitable_might_rules.dart';
+export '../domain/srd_bard_superior_inspiration_rules.dart';
 export '../domain/srd_cube_area_rules.dart';
 export '../domain/srd_sending_rules.dart';
 export '../domain/srd_sending_cast_preflight_rules.dart';

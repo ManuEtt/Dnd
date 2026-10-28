@@ -4,6 +4,12 @@
 - Ereignisse behalten den ursprünglichen Wurf und dokumentieren ein erhöhtes Ergebnis getrennt. Keine Wirkung auf andere Attribute, Angriffe oder Initiative.
 - Acht neue Tests angelegt. Lokaler Flutter-Test/Analyse/Android-Build **nicht ausgeführt**; Gesamtmerkmalstatus bleibt **partial**.
 
+## In Entwicklung – 28.10.2026 – Barde 18: Überlegene Inspiration
+
+- Bei einem regelkonformen Initiativewurf regeneriert ein Barde ab Klassenstufe 18 verbrauchte Barden-Inspiration bis zu zwei verfügbare Nutzungen, ohne das Ressourcenmaximum zu überschreiten.
+- Alle drei vorhandenen Kampfbeginnpfade eingebunden, Ereignislog und zehn neue Testfälle ergänzt; bestehende Mönch-Initiativmechanik bleibt erhalten.
+- **Noch nicht durch finale CI und Android-/Gerätetest abgenommen.** SRD-Anforderung bewusst als Teilautomatik geführt.
+
 ---
 
 ## 0.8.44+94 – 27.10.2026 – Nachweisbasierter Charakter-Audit
