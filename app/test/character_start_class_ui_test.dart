@@ -4,6 +4,7 @@ import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/domain/srd_character_creation_audit.dart';
 import 'package:lebendiger_spielleiter/ui/character_editor.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_ui.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 import 'package:lebendiger_spielleiter/ui/srd_class_selection_dialog.dart';
 import 'package:lebendiger_spielleiter/ui/srd_creation_audit_dialog.dart';
 
@@ -57,6 +58,24 @@ Future<void> _open(
       find.widgetWithText(TextFormField, 'Charaktername'),
       'Liora',
     );
+    // The combined class-start gate requires an explicitly confirmed KO score.
+    // These focused editor tests deliberately use the labelled house-rule path;
+    // full SRD generation has independent ability-assignment regressions.
+    final constitution = find.widgetWithText(TextFormField, 'Konstitution');
+    await tester.scrollUntilVisible(
+      constitution,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.enterText(constitution, '14');
+    FocusManager.instance.primaryFocus?.unfocus();
+    await tester.pumpAndSettle();
+    await _tap(tester, _key('allow-manual-abilities'));
+    await tester.scrollUntilVisible(
+      _key('open-srd-class-selection'),
+      -300,
+      scrollable: find.byType(Scrollable).first,
+    );
   }
 }
 
@@ -98,11 +117,14 @@ Future<void> _ranger(
       await tester.pumpAndSettle();
     }
   }
-  if (gold || equipment) {
+  final dialog = tester.widget<SrdClassSelectionDialog>(
+    find.byType(SrdClassSelectionDialog),
+  );
+  if (gold || equipment || (dialog.isNewCharacter && dialog.allowEquipment)) {
     await _chooseDropdown(
       tester,
       _key('srd-equipment--1'),
-      gold ? 'B – Startgold' : 'A – Ausrüstung',
+      equipment ? 'A – Ausrüstung' : 'B – Startgold',
     );
   }
   await tester.ensureVisible(_key('srd-confirm-class'));
@@ -139,11 +161,13 @@ void main() {
       await _save(tester);
       expect(saved!.startingClassChoice!.className, 'Waldläufer');
       expect(saved!.startingClassChoice!.skills, _rangerSkills);
-      expect(saved!.startingClassChoice!.kitIndex, isNull);
+      expect(saved!.startingClassChoice!.kitIndex, 1);
       expect(saved!.startingClassChoice!.equipmentChoices, isEmpty);
       expect(saved!.savingThrowProficiencies, ['strength', 'dexterity']);
       expect(saved!.inventory, isEmpty);
-      expect(saved!.gold, isNull);
+      expect(saved!.gold, 150);
+      expect(saved!.hitPoints, 12);
+      expect(saved!.maxHitPoints, 12);
     },
   );
 
@@ -205,13 +229,22 @@ void main() {
     expect(saved!.savingThrowProficiencies, ['strength', 'dexterity']);
   });
 
-  testWidgets('Klassenwechsel vor Paketwahl sammelt keine alten Übungen', (
+  testWidgets('Klassenwechsel im unbestätigten Dialog sammelt keine Übungen', (
     tester,
   ) async {
     HeroCharacter? saved;
     await _open(tester, null, (hero) => saved = hero);
-    await _ranger(tester);
     await _tap(tester, _key('open-srd-class-selection'));
+    for (final skill in _rangerSkills) {
+      await tester.ensureVisible(_key('srd-skill-$skill'));
+      await tester.tap(_key('srd-skill-$skill'));
+      await tester.pumpAndSettle();
+    }
+    // No source is committed while kit choice is missing.
+    expect(
+      tester.widget<FantasyButton>(_key('srd-confirm-class')).onPressed,
+      isNull,
+    );
     await _chooseDropdown(tester, _key('srd-class-Waldläufer'), 'Barbar');
     for (final skill in ['Athletik', 'Überlebenskunst']) {
       final target = _key('srd-skill-$skill');
@@ -220,6 +253,7 @@ void main() {
       await tester.tap(target);
       await tester.pumpAndSettle();
     }
+    await _chooseDropdown(tester, _key('srd-equipment--1'), 'B – Startgold');
     await tester.ensureVisible(_key('srd-confirm-class'));
     await tester.tap(_key('srd-confirm-class'));
     await tester.pumpAndSettle();
@@ -228,8 +262,10 @@ void main() {
     expect(saved!.skills, ['Athletik', 'Überlebenskunst']);
     expect(saved!.savingThrowProficiencies, ['strength', 'constitution']);
     expect(saved!.startingClassChoice!.className, 'Barbar');
-    expect(saved!.startingClassChoice!.kitIndex, isNull);
-    expect(saved!.gold, isNull);
+    expect(saved!.startingClassChoice!.kitIndex, 1);
+    expect(saved!.gold, 75);
+    expect(saved!.hitPoints, 14);
+    expect(saved!.maxHitPoints, 14);
     expect(saved!.inventory, isEmpty);
   });
 
@@ -350,7 +386,7 @@ void main() {
                         existingSkills: _rangerSkills,
                         existingSavingThrows: [],
                         characterLevel: 1,
-                        constitutionScore: null,
+                        constitutionScore: 14,
                         hasExistingHitPoints: false,
                         allowEquipment: false,
                       ),

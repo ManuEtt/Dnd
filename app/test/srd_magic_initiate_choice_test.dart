@@ -132,6 +132,16 @@ void main() {
         );
       }
       final hero = makeHero(SrdBackground.sage);
+      for (final mismatched in [
+        hero.copyWith(background: 'Akolyth'),
+        hero.copyWith(startingMagicInitiate: choose(SrdBackground.acolyte)),
+      ]) {
+        final auditChoice = SrdCharacterCreationAudit.inspect(
+          mismatched,
+        ).singleWhere((item) => item.id == 'origin.magic-initiate-choice');
+        expect(auditChoice.status, CreationStepStatus.invalid);
+        expect(mismatched.spells, isEmpty);
+      }
       final wrong = hero.toJson();
       wrong['background'] = 'Akolyth';
       expect(() => HeroCharacter.fromJson(wrong), throwsFormatException);

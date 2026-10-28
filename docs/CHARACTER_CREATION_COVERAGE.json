@@ -5,14 +5,14 @@
   "source_section": "Character Creation, p. 21; Classes; Character Origins",
   "license": "CC-BY-4.0",
   "as_of": "2026-10-28",
-  "baseline_main_sha": "bf5999e98335c1da94b1eafbf2fc8088b392b6ef",
+  "baseline_main_sha": "dd0c2e94ccf0995c6070010b6af1df315205b36a",
   "pr": 319,
   "coverage_complete": false,
   "all_required_choices_covered": false,
   "android_device_tested": false,
   "ci_final_head_verified": false,
   "existing_requirement_registers_unchanged": false,
-  "status_note": "Main bf5999e regulär integriert. 57 gezielte Tests, Analyse/Format und168Python bestanden. Vollständige letzte gemeinsame CI siehePR319; 019be0e davor nachweislich2007Flutter/168Python/72Backend. GesamteCharaktererstellung unvollständig.",
+  "status_note": "Integrationskandidat 28.10.2026: PR297/317/319/324/330 regulär zusammengeführt. Gemeinsame vollständige CI noch separat nachzuweisen; einzelne frühere CI-Zähler sind historische Belege. Gesamte Charaktererstellung weiterhin unvollständig.",
   "requirements": [
     {
       "id": "CHAR-ABILITY-STANDARD-ARRAY",
@@ -513,6 +513,27 @@
         "app/test/character_editor_stale_save_test.dart"
       ],
       "note": "Alte Bearbeitungen werden revisionsgebunden abgewiesen; eigenständige Charaktere durch transaktionalen Snapshot-CAS geschützt. Isolierte CI grün, zusammengeführte Main-Version erneut testen."
+    },
+    {
+      "id": "CHAR-ORIGIN-MAGIC-INITIATE-CHOICES",
+      "title": "Akolyth/Weiser: ausdrücklich bestätigte Magieinitiierter-Zauberwahl",
+      "status": "partial",
+      "source": "SRD 5.2.1 – Character Origins, Acolyte/Sage; Feats, Magic Initiate",
+      "code": [
+        "app/lib/domain/srd_magic_initiate_choice.dart",
+        "app/lib/domain/models.dart",
+        "app/lib/domain/srd_character_creation_audit.dart"
+      ],
+      "ui": [
+        "app/lib/ui/srd_magic_initiate_dialog.dart",
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_magic_initiate_choice_test.dart",
+        "app/test/srd_magic_initiate_dialog_test.dart",
+        "app/test/srd_magic_initiate_storage_test.dart"
+      ],
+      "note": "Nur versionierte Wahl zweier verschiedener Zaubertricks, eines Grad-1-Zaubers und INT/WEI/CHA von passender Herkunftsliste. Kein Freizauber, Slotwirken, Austausch oder vollständiger Talenteffekt freigeschaltet. Hintergrundübereinstimmung wird vor Import/Save geprüft."
     }
   ],
   "classes": [

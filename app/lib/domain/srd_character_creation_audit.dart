@@ -683,14 +683,16 @@ class SrdCharacterCreationAudit {
           hero.startingMagicInitiate == null
               ? CreationStepStatus.missing
               : package?.background != hero.startingMagicInitiate!.background ||
-                    backgroundDefinition != hero.startingMagicInitiate!.background
+                    backgroundDefinition !=
+                        hero.startingMagicInitiate!.background
               ? CreationStepStatus.invalid
               : CreationStepStatus.confirmed,
           hero.startingMagicInitiate == null
               ? 'Zwei verschiedene SRD-Zaubertricks, einen Zauber des '
                     '1. Grades und das Zauberattribut bestätigen.'
               : package?.background != hero.startingMagicInitiate!.background ||
-                    backgroundDefinition != hero.startingMagicInitiate!.background
+                    backgroundDefinition !=
+                        hero.startingMagicInitiate!.background
               ? 'Die gespeicherte Zauberwahl widerspricht dem bestätigten Hintergrund.'
               : 'Die versionierte Herkunfts-Zauberwahl ist bestätigt und gespeichert. '
                     'Kostenlose Nutzung, Zauberplatzwirken und Zauberaustausch '
