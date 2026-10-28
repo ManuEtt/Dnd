@@ -198,3 +198,35 @@ Test-/Buildlogs `/workspace/validation/20261026-migration-*`. Prüfung `bash scr
 ## NOCH NICHT IMPLEMENTIERT / genau ein nächster Schritt
 
 Explizite NPC-ID-Auswahl von Android über GameController an den bereits vorhandenen Wire-Vertrag durchreichen. Definition of Done: gleichnamige Figuren ausdrücklich per ID auswählen, fehlende Capability und Stale Revision vor Netzwerk/Kosten ablehnen, Abbruch/Neustart/SQLite testen, Regel-/Story-Grenze erhalten. Erst nach vollständigem Migrationsabschluss beginnen; aktuelle Main-/Branch-/CI-Stände erneut lesen. Keine automatische Wiederaufnahme außerhalb einer aktiven Sitzung.
+
+
+---
+
+## Aktueller Charakter-Checkpoint – 28.10.2026, 0.8.45+95
+
+Der neueste Status dieses Charakterpakets steht am Dateiende; die zuvor
+stehenden Main-Übergaben bleiben als Integrationsbasis unverändert.
+**IMPLEMENTIERT:** ausdrückliche versionierte Startklassen-/Fertigkeits-/
+Paketnachweise, sichere Wiederholung ohne zusätzliche Vergabe, Legacy-Erhalt
+und konservativer Audit einschließlich offener Mönch-Werkzeugkopplung.
+**GETESTET:** Zwischenkopf `019be0e` in
+[CI 40631517151](https://github.com/ManuEtt/Dnd/actions/runs/40631517151)
+komplett grün: 2.007 Flutter-, 168 Python- und 72 Backend-Tests plus Android.
+**Aktuell lokal zusätzlich bestanden:** 57 gezielte Tests, Analyse, 465 Dateien
+formatiert ohne Änderung und 168 Pythonprüfungen auf Main-Basis bf5999e.
+**NICHT GETESTET:** abschließende gemeinsame CI nach zusätzlichem Main-Merge
+`bf5999e`, echtes Android-Gerät/TalkBack und installiertes Altversionsupgrade.
+**BLOCKIERT:** kein neuer Quellkonflikt; aktueller Integrationskopf muss geprüft
+werden. **NOCH NICHT IMPLEMENTIERT:** vollständiger Charakterassistent und
+sämtliche verpflichtenden Spezies-/Klassen-/Zauberwahlen.
+
+Vollständiger Stand, Artefakte, bekannte Grenzen und konkrete Wiederaufnahme:
+[CHARACTER_START_CLASS_CHECKPOINT_20261028.md](CHARACTER_START_CLASS_CHECKPOINT_20261028.md).
+PR #319, Branch `feat/character-start-class-proof-20261027`; keine Force-Pushes,
+keine direkte Main-Änderung und keine fremde Branchlöschung. Nächster Schritt:
+finale gemeinsame CI/Artefakte abnehmen, danach den bereits von anderem Owner
+bearbeiteten [Editor-CAS-PR #330](https://github.com/ManuEtt/Dnd/pull/330)
+koordiniert mit aktuellem Main integrieren und erneut abnehmen. Dessen
+CI 40631254745 ist bereits grün, einschließlich sechs SQLite-/CAS-Regressionen;
+aktuelle Mergekonflikte auflösen, nichts doppelt implementieren. #323 ist bereits in Main `bf5999e` enthalten. Originale von Main `bf5999e` und unserem vorherigen
+Status bleiben bytegenau im [Historienmanifest](history/character_class_main_20261028/manifest.json).
