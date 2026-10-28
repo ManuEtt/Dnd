@@ -1,19 +1,12 @@
-## 28.10.2026 – Charaktereditor: Versionskonflikte vor dem Speichern erkennen (CI offen)
+## 0.8.44+94 – 27.10.2026 – Nachweisbasierter Charakter-Audit
 
-Eigenständiges Integritäts-Inkrement: Der Kampagneneditor merkt sich
-Kampagnen-ID und Revision vor dem Öffnen, die Regelengine speichert weiter
-über den vorhandenen CAS-Transaktionspfad. Eigenständige Archivfiguren
-werden mit dem ursprünglichen JSON-Snapshot in **derselben SQLite-Transaktion**
-verglichen und nur ohne konkurrierende Änderung gespeichert.
-Veraltete Bearbeitungen, inzwischen gelöschte Charaktere oder doppelte
-Neuanlagen werden ohne Mutation abgewiesen. Keine Schemaänderung;
-alte Charaktere erhalten keine erfundenen Werte. Neue SQLite-/Controller-
-Regressionen angelegt; finale CI und Realgerät noch offen.
-
-Die Bearbeitung mehrfach gewählter Klassenstartpakete wird bereits in
-PR #319 entwickelt und hier nicht dupliziert. Vollständige Charaktererstellung
-mit persistenter unbestätigter Entwurfsfassung bleibt offen.
-[Technischer Nachweis](docs/CHARACTER_EDITOR_REVISION_20261028.md).
+- Sieben Prüfzustände, echte Anfangswert-/Hintergrundbelege und Erkennung
+  widersprüchlicher Daten statt Bestätigung nach bloßen Feldinhalten.
+- Deutsche scrollbar zugängliche Anzeige mit Semantik; Prüfung des aktuellen
+  Entwurfs einschließlich 10,5 m und expliziter Attribut-Hausregelwahl.
+- Kein Schreiben von Auditstatus, keine Neuberechnung und keine Schemamigration.
+- Vollständige lokale Abnahme: 1.949 Flutter-, 164 Python-, 72 Backend- und zwölf native Android-Tests;
+  Format/Analyse, Backend- und Debug-Build grün. Finale PR-CI/Gerät separat offen.
 
 ---
 

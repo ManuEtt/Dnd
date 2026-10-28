@@ -1,12 +1,15 @@
+## Aktueller Auditstand 27.10.2026 – Teilprüfung
+
+Sieben Prüfzustände und Abgleich tatsächlicher Herkunfts-/Hintergrundbelege
+sind im unabhängigen Auditpaket implementiert. Ausgefüllte Felder allein
+bestätigen keine SRD-Erstellung. Aktueller Editorentwurf, historische Werte
+und read-only SQLite-/JSON-Invarianz sind gezielt getestet; finale Prüfergebnisse
+im CODEX_CHECKPOINT. [Fachbeleg](CHARACTER_CREATION_AUDIT_20261027.md).
+Alle zwölf Klassen, sämtliche Spezies-/Talent-/Zauberentscheidungen und der
+komplette geführte Assistent bleiben insgesamt unvollständig. Frühere Aussagen
+unterhalb sind historische Entwicklungsstände, nicht neue Abnahmen.
+
 # Charaktererstellung – Arbeits- und Abnahmenachweis (NICHT vollständig)
-
-## 28.10.2026 – Gesicherte spätere Charakterbearbeitung
-
-Bereits bestehende Charaktere werden beim Editieren gegen den beim Öffnen
-gültigen Kampagnenstand oder die archivierte Originalfassung geprüft.
-Ein inzwischen veränderter oder gelöschter Stand kann nicht überschrieben
-werden. Dies ist eine Persistenzsicherung, **keine** zusätzliche
-Charakterregel-Automatik. Siehe [Revisionssicherung](CHARACTER_EDITOR_REVISION_20261028.md).
 
 ## 27.10.2026 – Zusammengeführtes Charakterpaket (Integrationsprüfung)
 

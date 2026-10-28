@@ -1,19 +1,22 @@
-## 28.10.2026 – Charaktereditor: Versionskonflikte vor dem Speichern erkennen (CI offen)
+## 27.10.2026 – 0.8.44+94: nachweisbasierte Charakterprüfung
 
-Eigenständiges Integritäts-Inkrement: Der Kampagneneditor merkt sich
-Kampagnen-ID und Revision vor dem Öffnen, die Regelengine speichert weiter
-über den vorhandenen CAS-Transaktionspfad. Eigenständige Archivfiguren
-werden mit dem ursprünglichen JSON-Snapshot in **derselben SQLite-Transaktion**
-verglichen und nur ohne konkurrierende Änderung gespeichert.
-Veraltete Bearbeitungen, inzwischen gelöschte Charaktere oder doppelte
-Neuanlagen werden ohne Mutation abgewiesen. Keine Schemaänderung;
-alte Charaktere erhalten keine erfundenen Werte. Neue SQLite-/Controller-
-Regressionen angelegt; finale CI und Realgerät noch offen.
-
-Die Bearbeitung mehrfach gewählter Klassenstartpakete wird bereits in
-PR #319 entwickelt und hier nicht dupliziert. Vollständige Charaktererstellung
-mit persistenter unbestätigter Entwurfsfassung bleibt offen.
-[Technischer Nachweis](docs/CHARACTER_EDITOR_REVISION_20261028.md).
+Sieben deutsche Prüfzustände ersetzen die bisherige Bestätigung nach bloßem
+Feldinhalt. Versionierte Startwerte und Hintergrundpakete werden abgeglichen,
+Doppelübungen und widersprüchliche Stufe-1-Daten erkannt. Historische Werte
+bleiben historisch; weder Boni noch Inventar werden beim Prüfen verändert.
+Der Editor prüft den aktuellen ungespeicherten Entwurf, erhält 10,5-m-Werte
+und meldet ungültige Zahleneingaben, statt sie still als leer zu behandeln.
+**Vollständige lokale Prüfung bestanden: 1.949 Flutter-, 164 Python-, 72 Backend- und zwölf native Android-Tests**;
+Format/Analyse, Backend-Build und Debug-APK grün. Finale exakte PR-CI
+beim Schreiben noch abzunehmen: [PR #318](https://github.com/ManuEtt/Dnd/pull/318).
+Basis Main `8239f5e`; eigener unabhängiger Branch
+`feat/character-creation-audit-evidence-20261027`. PR #297 bleibt separat;
+seine Würfelfehler-/Charakterbogenänderungen wurden nicht erneut implementiert.
+SQLite 2 / JSON 1 unverändert. [Aktueller Checkpoint](docs/CODEX_CHECKPOINT.md).
+Nächster Schritt nach Abnahme: bestätigte Startentscheidungen der ersten Klasse
+quellengetrennt und versioniert speichern, damit der Audit sie wirklich belegen
+kann. Vollständiger Assistent/Spezies-/Talent-/Zauberumfang bleibt offen.
+Ältere Einträge darunter sind historische Momentaufnahmen.
 
 ---
 
