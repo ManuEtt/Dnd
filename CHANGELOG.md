@@ -1,3 +1,11 @@
+## In Entwicklung – 28.10.2026 – Barbar 18: Unbezwingbare Stärke
+
+- Reiner SRD-5.2.1-Regelbaustein für den Stärke-Mindestgesamtwert ab Barbaren-Klassenstufe 18 (auch Mehrklasse), integriert in vorbereitete Stärke-Proben und manuelle Stärke-Rettungswürfe.
+- Ereignisse behalten den ursprünglichen Wurf und dokumentieren ein erhöhtes Ergebnis getrennt. Keine Wirkung auf andere Attribute, Angriffe oder Initiative.
+- Acht neue Tests angelegt. Lokaler Flutter-Test/Analyse/Android-Build **nicht ausgeführt**; Gesamtmerkmalstatus bleibt **partial**.
+
+---
+
 ## 0.8.44+94 – 27.10.2026 – Nachweisbasierter Charakter-Audit
 
 - Sieben Prüfzustände, echte Anfangswert-/Hintergrundbelege und Erkennung
