@@ -53,27 +53,27 @@ GameEngine _engine() => GameEngine(
 
 void main() {
   group('SRD 5.2.1: Barde 18 Überlegene Inspiration', () {
-    test('Bei Initiative werden höchstens zwei verbrauchte Nutzungen erneuert', () {
-      final hero = _bard();
-      final result = SrdBardSuperiorInspirationRules.onInitiative(hero);
-      expect(result.recovered, 2);
-      expect(
-        ClassResourceRules.remaining(result.hero, 'bardicInspiration'),
-        2,
-      );
-      expect(result.hero.spentClassResources['bardicInspiration'], 1);
-      expect(hero.spentClassResources['bardicInspiration'], 3);
-    });
+    test(
+      'Bei Initiative werden höchstens zwei verbrauchte Nutzungen erneuert',
+      () {
+        final hero = _bard();
+        final result = SrdBardSuperiorInspirationRules.onInitiative(hero);
+        expect(result.recovered, 2);
+        expect(
+          ClassResourceRules.remaining(result.hero, 'bardicInspiration'),
+          2,
+        );
+        expect(result.hero.spentClassResources['bardicInspiration'], 1);
+        expect(hero.spentClassResources['bardicInspiration'], 3);
+      },
+    );
 
     test('Mit einer vorhandenen Nutzung genau eine weitere zurückholen', () {
       final result = SrdBardSuperiorInspirationRules.onInitiative(
         _bard(spent: 2),
       );
       expect(result.recovered, 1);
-      expect(
-        ClassResourceRules.remaining(result.hero, 'bardicInspiration'),
-        2,
-      );
+      expect(ClassResourceRules.remaining(result.hero, 'bardicInspiration'), 2);
     });
 
     test('Ab zwei Nutzungen keinerlei Wiederherstellung', () {
@@ -98,15 +98,9 @@ void main() {
       final result = SrdBardSuperiorInspirationRules.onInitiative(hero);
       expect(result.recovered, 2);
       final restored = HeroCharacter.fromJson(result.hero.toJson());
-      expect(
-        ClassResourceRules.remaining(restored, 'bardicInspiration'),
-        2,
-      );
+      expect(ClassResourceRules.remaining(restored, 'bardicInspiration'), 2);
       final early = _bard(multiclass: true, bardLevel: 17);
-      expect(
-        SrdBardSuperiorInspirationRules.onInitiative(early).recovered,
-        0,
-      );
+      expect(SrdBardSuperiorInspirationRules.onInitiative(early).recovered, 0);
     });
 
     test('Kleine bestätigte Ressource kann nicht über Maximum steigen', () {
@@ -114,10 +108,7 @@ void main() {
       expect(ClassResourceRules.maximum(hero, 'bardicInspiration'), 1);
       final result = SrdBardSuperiorInspirationRules.onInitiative(hero);
       expect(result.recovered, 1);
-      expect(
-        ClassResourceRules.remaining(result.hero, 'bardicInspiration'),
-        1,
-      );
+      expect(ClassResourceRules.remaining(result.hero, 'bardicInspiration'), 1);
       expect(
         result.hero.spentClassResources.containsKey('bardicInspiration'),
         isFalse,
@@ -213,11 +204,7 @@ void main() {
           {'id': 'wald', 'name': 'Wald', 'description': 'Nebliger Pfad'},
         ],
       });
-      final campaign = engine.createAiCampaign(
-        _bard(),
-        plan,
-        provider: 'mock',
-      );
+      final campaign = engine.createAiCampaign(_bard(), plan, provider: 'mock');
       final offer = AdventureOffer.fromJson({
         'id': 'offer',
         'title': 'Die Brücke',
@@ -231,7 +218,10 @@ void main() {
       );
       expect(accepted.events.single.type, 'adventure.accepted');
       expect(
-        accepted.events.single.payload['bardicInspirationRecoveredAtInitiative'],
+        accepted
+            .events
+            .single
+            .payload['bardicInspirationRecoveredAtInitiative'],
         2,
       );
       expect(
