@@ -13,6 +13,20 @@
 
 ---
 
+# Chat B – zugängliche NPC-Auswahl und revisionsgebundene SQLite-Outbox (27.10.2026)
+
+- **BASIS:** [PR #288](https://github.com/ManuEtt/Dnd/pull/288) `feat/chat-b/controller-explicit-npc-selection-20261027` bei `2ba524c307b3b48ad21a6343df700ae0a643f55d` (dessen gesamte CI erfolgreich); eigener Branch `feat/chat-b/npc-picker-outbox-20261027`, gestapelter PR.
+- **IMPLEMENTIERT:** `app/lib/ui/npc_story_selection_dialog.dart`: Dialog mit eindeutig bestätigten NPC-IDs, Beziehungsanzeige und Screenreader-Semantik; Auswahl erfordert tatsächlichen Tipp. `app/lib/ui/app.dart` verdrahtet den Button, bereitet den Text über die **bestehende** Outbox vor und leitet die bestätigte ID an `GameController.sendAction(selectedNpc:...)` weiter. Ausstehende NPC-Auswahl wird bei Restart anhand der ursprünglichen Revision geprüft. Ein bereits bestätigter identischer Beleg kann nach verlorener Quittung abgeglichen werden; keine automatische Namenswahl.
+- **MIGRATION:** SQLite **2 → 3**: optionale `selected_npc_id`/`selected_npc_revision` im Sendeauftrags-Speicher; Upgrade erhält Text-/Request-ID-Altbestand, bisherige Kampagnen-/Export-JSON-Version unverändert. `PendingActionStore` und `PlayerActionOutbox` bieten optionale Werte; alte Aufrufer bleiben kompatibel.
+- **TESTS ERGÄNZT:** `app/test/npc_selected_action_outbox_test.dart` (Restart, atomare Validierung, Upgrade von SQLite 2) und `app/test/npc_story_selection_dialog_test.dart` (gleichnamige NPCs, Cancel, keine erfundenen Erinnerungen).
+- **GETESTET:** GitHub-Quellcode und aktuelle PRs geprüft, offiziellen Dart-3.9.2-Formatter auf alle sieben geänderten Dart-Dateien angewendet; temporären Diagnoseworkflow entfernt. Vollständige neue CI auf finalem PR-HEAD nachsehen.
+- **NICHT GETESTET:** reales Android-Gerät, produktiver KI-Provider und manueller Voice-Dialog; Integration setzt PR #288 voraus.
+- **BLOCKIERT:** Zusammenführung nach Basis-PR #288 und CI; Dokumentationskonflikte durch Chat D abgleichen.
+- **NÄCHSTER SCHRITT:** Test der Outbox-Neustart-Wiederaufnahme durch komplette UI-Controller-Kette mit simuliert verlorenem ACK und konkurrierenden Revisionen.
+- [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md). Vorherige Einträge bleiben erhalten.
+
+---
+
 # Chat D D-013 – Verlinkte Pflichtdateien in der Projektprüfung ablehnen (27.10.2026)
 
 - **Basis-main:** `ff245cc253194cd0858385d535ae7b2c9132bb06`; eigener Branch `fix/chat-d/verify-project-symlink-20261027`; technische Commits `4a81596a1bc2b729fe2c8cc739f7a201220f92f6` und `9c910244117ec4f7b3ea6149fedf5e78b279568a`; [PR #321](https://github.com/ManuEtt/Dnd/pull/321) (Draft).

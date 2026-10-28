@@ -5,6 +5,13 @@
 Der automatische Sitzungsrückblick unterscheidet jetzt gleichnamige NPCs anhand ihrer **bestätigten gespeicherten NPC-ID**, genau wie der gezielte Gedächtnisabruf. Zwei Figuren namens Mira mit derselben Beziehung erscheinen nicht mehr als undifferenzierte Namenseinträge. Eindeutige Namen behalten die bisherigen menschenlesbaren Texte; beschädigte mehrfach verwendete NPC-IDs werden nicht als bestätigte Identitäten ausgegeben. Die vorhandene 2.400-Zeichen-Grenze bleibt erhalten. Vier neue Flutter-Regressionstests prüfen gleiche Namen, ältere JSON-Spielstände ohne optionale Notizen, ungültige doppelte IDs und einen tatsächlich gespeicherten Sitzungsrückblick samt JSON-Roundtrip. Reine Storyprojektion: keine Änderungen an Regeln, Questbelohnungen, SQLite-Schema oder Backend.
 
 
+## Chat B – NPC-Auswahl mit absturzsicherem Sendeauftrag (27.10.2026)
+
+In generativen KI-Kampagnen erscheint am Texteingabefeld die Aktion **„NPC auswählen“**, wenn die bestehende Erzählsitzung `npc-selection-v1` unterstützt. Ein deutscher, scrollbarer und für Screenreader beschrifteter Dialog zeigt bestätigte NPCs samt Beziehung und eindeutiger Kennung – auch wenn mehrere den gleichen Namen haben. Nur ein ausdrücklicher Tipp auf eine Figur bindet ihre ID an den ausstehenden Spielzug. Ohne NPC-Auswahl funktioniert die Texteingabe unverändert. Das Gegenstück ist die revisionsgeprüfte Controller-Anbindung aus [PR #288](https://github.com/ManuEtt/Dnd/pull/288).
+
+Die SQLite-Outbox wurde **transaktional von Version 2 auf 3** erweitert: ein optionales Paar aus NPC-ID und ursprünglicher Kampagnenrevision bleibt mit Text und Request-ID nach einem Neustart erhalten. Alte Sendeaufträge werden ohne NPC-Auswahl übernommen; eine veraltete Auswahl wird nicht unbemerkt neu gebunden. Bereits bestätigte Request-IDs können nach verlorenem Bestätigungssignal abgeglichen werden. Neue SQLite- und Flutter-Widget-Tests prüfen diese Grenzen. Kampagnen-JSON, Heldendaten und SRD-Mechaniken bleiben unverändert. Die volle CI-Abnahme auf dem PR-HEAD ist separat nachzuweisen.
+
+
 ## Chat D – Pflichtdateien ohne symbolische Links prüfen (27.10.2026)
 
 Die Python-Projektprüfung lehnt jetzt Pflichtdateien und deren übergeordnete Verzeichnisse ab, wenn sie symbolische Links sind. Dadurch werden keine verlinkten externen Backend-JSON-Dateien oder Gradle-Wrapper-Dateien mehr als reguläre Upload-Dateien geöffnet. Vier Regressionstests untersuchen Dateilinks, Verzeichnislinks, Wrapper-Nichtöffnung und defekte Links. Bestehende reguläre Projektkopien bleiben zugelassen. [PR #321](https://github.com/ManuEtt/Dnd/pull/321) ist ein **Draft**; die abschließende GitHub-CI ist auf dem finalen PR-Commit separat abzunehmen. Keine Migration oder App-Änderung.
