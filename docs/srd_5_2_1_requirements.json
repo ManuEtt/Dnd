@@ -699,12 +699,20 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#barde_5_base_font-of-inspiration_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_bard_font_of_inspiration_test.dart",
+        "app/test/srd_bard_font_confirmed_action_test.dart",
+        "app/test/srd_bard_font_dialog_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/srd_bard_font_of_inspiration.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/services/game_controller.dart",
+        "app/lib/ui/srd_bard_font_of_inspiration_dialog.dart"
+      ],
+      "note": "Bestätigte Umwandlung eines Zauber-/Paktplatzes in eine verbrauchte Bardische Inspiration über Vorschlag, Controller-Revision, atomaren Ereignisspeicher und Charakterbogen; veraltete/abgebrochene Auswahl ohne Ressourcenkosten getestet. Dialog 320/360 dp bei 200 % Schrift und Tastatur geprüft. Dies ist kein Nachweis sämtlicher Barden- oder Inspirationszielwirkungen; reale Android-Abnahme offen."
     },
     {
       "id": "CLASS-BARDE-7-BASE-COUNTERCHARM-0",

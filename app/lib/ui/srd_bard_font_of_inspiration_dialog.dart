@@ -44,6 +44,7 @@ Future<SrdBardFontProposal?> showBardFontOfInspirationDialog(
     context: context,
     builder: (dialogContext) => StatefulBuilder(
       builder: (context, setDialogState) => AlertDialog(
+        scrollable: true,
         title: const Text('Quelle der Inspiration'),
         content: Column(
           mainAxisSize: MainAxisSize.min,

@@ -222,3 +222,11 @@ Die technische Detailplanung wird nicht in dieser Einführungsseite dupliziert. 
 Die Umsetzung orientiert sich an **D&D SRD 5.2.1** von **Wizards of the Coast LLC**, lizenziert unter **Creative Commons Attribution 4.0 International (CC BY 4.0)**. Die erforderlichen Namensnennungen und weiteren Hinweise stehen in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Eigene Fantasy-Geschichten und Grafiken werden getrennt von den SRD-Regeln behandelt.
 
 Das Repository enthält Entwicklungssoftware. **Vollständige SRD-Konformität, fehlerfreien Spielbetrieb, Produktionssicherheit oder eine Veröffentlichung im Play Store werden nicht behauptet.**
+
+## Klassenregeln – gemeinsamer Migrationskandidat 28.10.2026
+
+Die sechs Klassenregel-Branches #313/#332/#336/#339/#340/#348 sind auf dem
+aktuellen Main-Ausgangspunkt vereinigt. 95 gezielte bestehende Tests und vier
+neue kleine Android-Dialog-Widgetfälle bestanden; gemeinsame Gesamt-CI und
+Geräteabnahme bleiben getrennte Nachweise.
+[Konfliktentscheidungen, Fehlerkorrektur und Grenzen](docs/BRANCH_MIGRATION_RULES_20261028.md).
