@@ -3678,12 +3678,18 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#waldl-ufer_10_base_tireless_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_ranger_tireless_rules_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/srd_ranger_tireless_rules.dart",
+        "app/lib/domain/class_resource_rules.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/domain/srd_class_automation.dart"
+      ],
+      "note": "Teilimplementierung SRD 5.2.1 Ranger 10 Tireless: nach bestätigter kurzer Rast genau eine Erschöpfungsstufe weniger, auch ohne Trefferwürfel (volle HP oder verbrauchter Würfelpool). Klassenstufen und Multiclass werden geprüft; ursprünglicher Charakter wird nicht mutiert. Temporäre Trefferpunkte als Magic Action und vollständige Rast-Interruption/Zeiterfassung bleiben offen. GitHub-CI und Android-Gerät nicht abschließend verifiziert."
     },
     {
       "id": "CLASS-WALDL-UFER-12-BASE-ABILITY-SCORE-IMPROVEMENT-0",
