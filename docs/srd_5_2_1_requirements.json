@@ -6260,7 +6260,7 @@
         "app/lib/ui/character_editor.dart",
         "app/lib/domain/srd_character_creation_audit.dart"
       ],
-      "note": "Explizite Klassenpaket-A-Symbolwahl für Kleriker/Paladin unter den drei amtlichen Varianten; neue Bestätigungen v2, historische v1 bleiben unverändert lesbar und im Audit ungeklärt. Goldalternative ohne Symbol. Zielgerichtete Domain/Widget/SQLite-Tests bestanden; gemeinsame aktuelle Vollsuite und finale CI gesondert abnehmen. Keine vollständige Automatik aller Startentscheidungen oder Fokus-/Zauberwirkungen."
+      "note": "Explizite Klassenpaket-A-Symbolwahl für Kleriker/Paladin unter den drei amtlichen Varianten; neue Bestätigungen v2, historische v1 bleiben unverändert lesbar und im Audit ungeklärt. Goldalternative ohne Symbol. Domain/Widget/SQLite-Tests und vollständige lokale Suite (2265 Flutter/200 Python/72 Backend/12 native App-Tests), Analyse/Debug-APK bestanden auf7ac32b1c. Finale GitHub-Abnahme gesondert in PR369/checks. Keine vollständige Automatik aller Startentscheidungen oder Fokus-/Zauberwirkungen."
     },
     {
       "id": "CHAR-START-AUDIT",

@@ -6,13 +6,13 @@
   "license": "CC-BY-4.0",
   "as_of": "2026-10-28",
   "baseline_main_sha": "37a6142ea791a607c78065b50aa66fda90acda5c",
-  "pr": 319,
+  "pr": 369,
   "coverage_complete": false,
   "all_required_choices_covered": false,
   "android_device_tested": false,
   "ci_final_head_verified": false,
   "existing_requirement_registers_unchanged": false,
-  "status_note": "Charakterpaket Heilige-Symbol-Wahl 0.8.47+97: gezielte Domain-/Widget-/SQLite-Tests; vollständige aktuelle Abnahme separat im CODEX_CHECKPOINT. Gesamte Charaktererstellung bleibt unvollständig.",
+  "status_note": "Heilige-Symbol-Paket lokal vollständig geprüft: 2265 Flutter/200 Python/72 Backend/12 native App-Tests, Debug-APK. Produktcode7ac32b1c; finale GitHub-Abnahme separat im PR369. Gesamte Charaktererstellung unvollständig.",
   "requirements": [
     {
       "id": "CHAR-ABILITY-STANDARD-ARRAY",
@@ -746,5 +746,18 @@
       "python": 168,
       "backend": 72
     }
+  },
+  "work_branch": "feat/character-holy-symbol-choice-20261028",
+  "local_acceptance": {
+    "source_commit": "7ac32b1cb9e63ce35eb458d87e4b84d86526706a",
+    "flutter_tests": 2265,
+    "python_tests": 200,
+    "backend_tests": 72,
+    "native_app_tests": 12,
+    "dart_format_files": 507,
+    "analyze": "passed",
+    "debug_apk": "built",
+    "device_tested": false,
+    "ci_reference": "https://github.com/ManuEtt/Dnd/pull/369/checks"
   }
 }

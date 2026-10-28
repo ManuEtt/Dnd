@@ -19,10 +19,10 @@ Foki, Werkzeuge und unbekannte IDs werden vor Änderung des Entwurfs abgewiesen.
 Die vorhandene deutsche Klassendialog-UI zeigt die zusätzliche Pflichtauswahl.
 Vor der abschließenden Editor-Speicherung gibt es keine Persistenzänderung.
 
-Typisiertes Inventar speichert den konkreten Katalogeintrag, Menge1, Preis500KM,
-Gewicht1lb/ungeklärt/2lb und vorhandene Beschreibung. Der Preis wird nicht vom
-Startgold abgezogen: das Symbol gehört zum Paket. Paket A enthält7GM beim
-Kleriker und9GM beim Paladin. Paket B enthält110/150GM und keine Gegenstände.
+Typisiertes Inventar speichert den konkreten Katalogeintrag, Menge 1, Preis 500 KM,
+Gewicht 1 lb/ungeklärt/2 lb und vorhandene Beschreibung. Der Preis wird nicht vom
+Startgold abgezogen: das Symbol gehört zum Paket. Paket A enthält 7 GM beim
+Kleriker und 9 GM beim Paladin. Paket B enthält 110/150 GM und keine Gegenstände.
 Hintergrundausrüstung bleibt eine eigene Quelle, insbesondere das bestehende
 Akolythensymbol. Beide erlaubten Quellen dürfen je ihr Symbol vergeben.
 
@@ -32,7 +32,7 @@ Erneute Klassenbestätigung nach Paketübernahme gewährt kein zweites Paket.
 
 ## Versionierung und Bestandsschutz
 
-`StartingClassChoice.confirmed` erzeugt jetzt Version2. JSON-Version1 wird mit
+`StartingClassChoice.confirmed` erzeugt jetzt Version 2. JSON-Version 1 wird mit
 ihrem ursprünglichen Vertrag eingelesen und unverändert ausgegeben. Alte
 Symbole bleiben unbestimmte historische Gegenstände; sie werden weder geraten
 noch nachträglich hinzugefügt. Der Audit berücksichtigt die Belegversion und
@@ -42,7 +42,7 @@ und zusätzliche Fremdwahlen werden abgewiesen.
 
 Die gekapselte Aktualisierung der Klassenentscheidungen erhält historische
 Paketwahl und Version. Spätere Ausrüstungsausgaben/-verkäufe werden im Audit als
-abweichend ausgewiesen, niemals zurückgesetzt. SQLite bleibt3, äußeres JSON1;
+abweichend ausgewiesen, niemals zurückgesetzt. SQLite bleibt 3, äußeres JSON 1;
 keine Datenbankmigration, kein Schreibzugriff beim Lesen.
 
 ## Nachweismatrix
@@ -52,7 +52,7 @@ keine Datenbankmigration, kein Schreibzugriff beim Lesen.
 | Beide Klassen, drei Symbolformen | EQUIP-CHOICES / CHAR-CLASS-HOLY-SYMBOL-CHOICE | starting_equipment_import.dart, srd_class_selection_dialog.dart, character_editor.dart | class_holy_symbol_choice_test.dart, srd_class_holy_symbol_dialog_test.dart, character_start_class_ui_test.dart | lokal gezielt geprüft; finale CI separat |
 | Strenge v2-/kompatible v1-Belege | EQUIP-CHOICES | starting_class_choice.dart, srd_character_creation_audit.dart | alle zwölf historischen Klassen/Kits, falsche/fehlende IDs, Audit/Invarianz | lokal gezielt geprüft |
 | SQLite/JSON/Revision/Retry/Bestand | EQUIP-CHOICES | vorhandener Controller/Repositoryvertrag | character_start_class_storage_test.dart | lokal gezielt geprüft |
-| Android 320/360dp,200%+IME/Semantik | EQUIP-CHOICES | bestehender scrollbarer Klassendialog | srd_class_holy_symbol_dialog_test.dart | Widgetprüfung; Realgerät offen |
+| Android 320/360 dp, 200 % + IME/Semantik | EQUIP-CHOICES | bestehender scrollbarer Klassendialog | srd_class_holy_symbol_dialog_test.dart | Widgetprüfung; Realgerät offen |
 | Vollständige Charaktererstellung/Zauberfokuswirkung | bestehende getrennte Anforderungen | Wizard/Klassen-/Zauberengine | zusätzliche Pakete nötig | teilweise/offen |
 
 ## Abnahme und Fortsetzung
@@ -65,4 +65,6 @@ Nächster begrenzter Charakter-Schritt: die im Mönch-Paket A gewählte
 Werkzeug-/Instrumentausrüstung an die ausdrückliche Werkzeugübung koppeln.
 Zuerst SRD S.49 prüfen; eigene versionierte Entscheidung, Bestandsverträglichkeit,
 keine Nachvergabe, doppelte Übungen und SQLite-/UI-Gegenfälle nachweisen.
-Vollständiger Wizard, Spezies-/Klassen-/Talent-/Zauberpflichtwahlen bleiben offen.
+Bestehende Klassenbelege der Versionen 1 und 2 dürfen dabei nicht nachträglich
+um neue Pflichtfelder verschärft werden. Vollständiger Wizard, Spezies-/Klassen-/
+Talent-/Zauberpflichtwahlen bleiben offen.
