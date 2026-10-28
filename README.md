@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## 28.10.2026 – Chat D: Prüfsummen-Historie der Quell-Checkpoints absichern
+
+Die Quelle der historischen Einträge in `SHA256SUMS.txt` akzeptiert nur reguläre Dateien mit sicheren Namen. Symbolische Links, Dateien mit Zeilenumbrüchen im Namen und als ZIP getarnte Verzeichnisse werden vor der Veröffentlichung abgelehnt, statt fremde Daten zu hashen oder mehrdeutige Prüfsummenzeilen zu erzeugen. Drei neue negative Python-Regressionen und die bestehende positive Verlaufsprüfung sichern das Verhalten ab. **CI für dieses neue Paket noch nicht vollständig bestätigt**; ältere gültige Checkpoint-Dateien und Spielstände bleiben unverändert. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
 ## 28.10.2026 – Chat C: Inventarnotizen bei großer Android-Schrift
 
 Ein Inventargegenstand kann lange importierte oder selbst verfasste Beschreibungen enthalten. Der reine Lesedialog lässt nun Titel/Text scrollen, während „Schließen“ bei kleinen Displays erreichbar bleibt. [PR #355](https://github.com/ManuEtt/Dnd/pull/355) ist ein **Entwurf** mit drei ergänzten Widgettestfällen für 320/360 dp, doppelte Schriftgröße und leere Beschreibungen. Die Flutter-/Android-CI und echte Geräteprüfung sind **noch nicht bestätigt**. Kein Einfluss auf gespeicherte Gegenstände, Kampagnen, Regelengine oder SQLite/JSON. [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md).

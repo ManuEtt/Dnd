@@ -1,3 +1,17 @@
+## 28.10.2026 – Chat D: Historische Checkpoint-Prüfsummen ohne unsichere Quellen
+
+- **Ausgangs-main:** `854ca85c0234c508f34f00cdbfbef2e10554ca13`; **Branch:** `fix/chat-d/checkpoint-history-safe-names-20261028`; **PR/Codecommit:** auf GitHub nach Veröffentlichung kontrollieren.
+- **IMPLEMENTIERT:** `scripts/create_checkpoint.py` prüft historische Artefakte vor dem Neuaufbau von `SHA256SUMS.txt` mit `safe_name` und `lstat` auf sichere Namen und reguläre Dateien. Nichtreguläre Dateien, Symlinks und Zeilenumbrüche werden vor Veröffentlichung zurückgewiesen.
+- **GETESTET:** Quellcode und drei neue negative Python-Testfälle geschrieben; positive Verlaufsprüfung bleibt erhalten. Vollständige Tests auf dem finalen Commit noch nicht bestätigt.
+- **NICHT GETESTET:** Vollständige Python-, Backend-, Flutter- und Android-Gesamt-CI und Realgerät.
+- **BLOCKIERT:** Lokaler Checkout via GitHub-DNS nicht möglich, Flutter-/Dart-SDK fehlt. GitHub Actions dient als Testlauf.
+- **NOCH NICHT IMPLEMENTIERT:** Harte Schutzgarantie für Dateiaustausch *nach* `lstat` ist nicht Bestandteil dieses Pakets; paralleler Dateiaustausch in einem untrusted Artefaktordner muss für gesonderte Hardening-Arbeit behandelt werden.
+- **Migration:** Keine. SQLite, Kampagnen-JSON und Spielzustand unverändert. Bestehende sichere historische ZIPs werden weiter aufgeführt; unsichere werden nicht überschrieben.
+- **Koordination:** Keine offenen PRs ändern die beiden Python-Technikdateien; gemeinsame Dokumentation vor späterer Integration additiv abgleichen.
+- **Nächster Schritt:** neue Python-Regressionen und vollständige GitHub Actions auf finaler PR-SHA abnehmen und nur bei vollständigem Erfolg für Review freigeben.
+
+---
+
 ## 28.10.2026 – Chat C: scrollbarer Inventardialog (PR #355)
 
 **Basis:** main `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78`; Branch `feat/chat-c/scrollable-inventory-details-20261028`; Code-/Teststand `ae9d4dc6ee6d359b44fdde44199a71b7817a4938`; [PR #355](https://github.com/ManuEtt/Dnd/pull/355) als Entwurf.

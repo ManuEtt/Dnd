@@ -138,6 +138,50 @@ class CheckpointTests(unittest.TestCase):
         self.assertIn(Path(first['archive']).name, sums)
         self.assertIn(Path(second['archive']).name, sums)
 
+    def test_prior_checksum_history_rejects_symlink_without_touching_aliases(self):
+        self.create()
+        before = {p.name: p.read_bytes() for p in self.output.iterdir()}
+        external = self.directory / 'outside-private.zip'
+        external.write_bytes(b'DO_NOT_HASH_EXTERNAL')
+        link = self.output / 'Wuerfelraunen_old_Vollprojekt.zip'
+        link.symlink_to(external)
+        with mock.patch.object(checkpoint, 'sha256', wraps=checkpoint.sha256) as digest:
+            with self.assertRaisesRegex(ValueError, 'Unsafe previous checkpoint artifact'):
+                self.create(label='second')
+            self.assertFalse(any(
+                call.args and call.args[0] == link
+                for call in digest.call_args_list
+            ))
+        self.assertEqual(
+            before,
+            {name: (self.output / name).read_bytes() for name in before},
+        )
+        self.assertTrue(link.is_symlink())
+
+    def test_prior_checksum_history_rejects_newline_in_filename(self):
+        self.create()
+        previous = {p.name: p.read_bytes() for p in self.output.iterdir()}
+        unsafe = self.output / 'Wuerfelraunen_bogus\\nother.zip'
+        unsafe.write_bytes(b'unsafe checksum line')
+        with self.assertRaisesRegex(ValueError, 'Unsafe previous checkpoint artifact'):
+            self.create(label='second')
+        self.assertEqual(
+            previous,
+            {name: (self.output / name).read_bytes() for name in previous},
+        )
+        self.assertTrue(unsafe.is_file())
+
+    def test_prior_checksum_history_rejects_directory_disguised_as_zip(self):
+        self.create()
+        previous = {p.name: p.read_bytes() for p in self.output.iterdir()}
+        (self.output / 'Wuerfelraunen_old_Vollprojekt.zip').mkdir()
+        with self.assertRaisesRegex(ValueError, 'Unsafe previous checkpoint artifact'):
+            self.create(label='second')
+        self.assertEqual(
+            previous,
+            {name: (self.output / name).read_bytes() for name in previous},
+        )
+
     def test_previously_tracked_secret_is_not_disclosed_by_patch_or_manifest(self):
         self.write('private.pem', 'ORIGINAL_PRIVATE_FIXTURE')
         self.run_git('add', '--force', 'private.pem')
