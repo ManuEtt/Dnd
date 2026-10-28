@@ -180,6 +180,7 @@ void main() {
     },
   );
 
+  // Regression: an open Android keyboard must not steal Tab/Enter actions.
   testWidgets(
     'Tastaturfokus aktiviert vier Schnellaktionen bei 320 dp, IME und 2x Text',
     (tester) async {
