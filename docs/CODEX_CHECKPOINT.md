@@ -15,6 +15,21 @@
 
 - **Koordination am 28.10.2026:** Auf PR #337 `maintenance/cleanup-ancestor-branches-20261028` gestapelt; dessen geänderte Trigger und sichere Git-Ancestry-Gates bleiben erhalten. Die Prüfung in `test_safe_cleanup_protected_branch.py` wurde an `#337` angepasst, ohne dessen Testdatei zu überschreiben.
 
+# Chat B – NPC-Identitäten in Sitzungsrückblicken trennen (27.10.2026)
+
+- **Ausgangs-Main:** `ff245cc253194cd0858385d535ae7b2c9132bb06`; **Arbeitsbranch:** `feat/chat-b/session-recap-npc-identity-20261027`.
+- **AUSGANGSPROBLEM:** `MemoryEngine.retrieve` kennt die Unterscheidung über gespeicherte NPC-IDs schon, `buildSessionSummary` speicherte dagegen zwei gleichnamige Figuren ohne identifizierenden Verweis. Ihr Beziehungsstand konnte beim späteren Rückblick verwechselt werden.
+- **IMPLEMENTIERT:** `app/lib/story/story_memory_engine.dart`: beim Aufbau der bestätigten Sitzungszusammenfassung Anzeigenamen normalisiert zählen; bei Namensgleichheit die tatsächliche NPC-ID ergänzen, bei eindeutigem Namen das historische Format bewahren. Mehrdeutige doppelte gespeicherte IDs werden in diesem Rückblick nicht als bestätigt ausgegeben. Der 2.400-Code-Unit-Rückblickgrenzwert bleibt gleich.
+- **TESTS HINZUGEFÜGT:** `app/test/session_recap_npc_identity_test.dart`: identische Namen und Beziehungen; eindeutige Namen und altes JSON ohne optionale Notizen; duplizierte historische IDs; echte `GameEngine.saveSessionRecap`-Aufzeichnung und Kampagnen-JSON-Roundtrip ohne Heldenmutation.
+- **BEREITS GETESTET:** Quellcode und offene PR-Dateipfade abgeglichen; beide geänderten Dart-Dateien exakt nach offiziellem Dart-3.9.2-Formatter formatiert; temporärer Diagnoseworkflow wieder entfernt. **Vollständige CI auf finalem PR-HEAD erst nach tatsächlichem Abschluss als bestanden ausweisen.**
+- **NICHT GETESTET:** lokale Flutter-/Android-Ausführung (kein Flutter-/Dart-/Android-SDK in dieser Sitzung), Realgerät, Produktiv-KI und alte installierte Datenbank; GitHub-CI zu diesem Commit muss noch bestätigt werden.
+- **BLOCKIERT:** Fachliche Freigabe erst nach grüner CI; gemeinsame Dokumentation mit weiteren offenen PRs durch Chat D zusammenführen. Nach Analyse wurde parallel ein Branch zur Eindeutigkeit der NPC-Notiz-IDs entdeckt; dieses Paket ändert bewusst weder dessen Modul noch seine Testdateien.
+- **KEINE MIGRATION:** unverändertes Kampagnen-JSON und SQLite, keine SRD-/Backend-/Provideränderung, keine Änderung an bestätigten Regelzuständen.
+- **NOCH NICHT IMPLEMENTIERT:** Allgemeine NPC-Synonymauflösung und semantisches Sprachverständnis; für dieses kleine Paket ausdrücklich außerhalb des Umfangs.
+- **NÄCHSTER SCHRITT:** Prüfen, dass ein gespeicherter Sitzungsrückblick bei extrem langen NPC-Namen seine unterscheidende ID nicht abschneidet; positives und negatives Grenztestszenario auf eigenem Branch.
+
+---
+
 ## 27.10.2026 – Chat D D-013: sichere APK-ZIP-Metadaten vor Alpha-Bündelung
 
 **Basis:** `main` `f9b2f72a4bf8e4216bf8baac60c7f92c4a8a997f`; Arbeitsbranch `fix/chat-d/alpha-apk-zipbomb-guard-20261027`; Produkt Würfelraunen `0.8.42+92`, SQLite 2 / Kampagnen-JSON 1.

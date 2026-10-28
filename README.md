@@ -4,6 +4,11 @@
 
 Der aktive GitHub-Actions-Workflow zur Archivierung vollständig integrierter Pull-Request-Branches prüft nun zusätzlich das GitHub-Flag `branch.protected`. Geschützte Branches werden **vor** SHA-Vergleich und möglicher Löschung übersprungen; die vorhandenen Schutzmechanismen für offene PRs, Archive und geänderte Referenzen bleiben erhalten. Ein Python-Test prüft den positiven Guard, negative Manipulationen und die bisherigen Sicherheitsbedingungen. [PR #335](https://github.com/ManuEtt/Dnd/pull/335) ist wegen der Überschneidung mit PR #337 auf dessen Branch gestapelt; kombinierte CI noch offen. Keine Branchlöschungen in diesem Paket, keine Spielstands-, SRD- oder Versionsänderung.
 
+## Chat B – Gleichnamige NPCs im bestätigten Sitzungsrückblick (27.10.2026)
+
+Der automatische Sitzungsrückblick unterscheidet jetzt gleichnamige NPCs anhand ihrer **bestätigten gespeicherten NPC-ID**, genau wie der gezielte Gedächtnisabruf. Zwei Figuren namens Mira mit derselben Beziehung erscheinen nicht mehr als undifferenzierte Namenseinträge. Eindeutige Namen behalten die bisherigen menschenlesbaren Texte; beschädigte mehrfach verwendete NPC-IDs werden nicht als bestätigte Identitäten ausgegeben. Die vorhandene 2.400-Zeichen-Grenze bleibt erhalten. Vier neue Flutter-Regressionstests prüfen gleiche Namen, ältere JSON-Spielstände ohne optionale Notizen, ungültige doppelte IDs und einen tatsächlich gespeicherten Sitzungsrückblick samt JSON-Roundtrip. Reine Storyprojektion: keine Änderungen an Regeln, Questbelohnungen, SQLite-Schema oder Backend.
+
+
 ## Chat D – Sicherere Android-Alpha-Bündelung (27.10.2026)
 
 Die ARM64-Release-Prüfung weist nun vor dem Dekomprimieren manipulierte APK-ZIP-Dateien mit zu vielen Mitgliedern, zu großer entpackter Gesamtsumme oder extremen Kompressionsverhältnissen zurück. Vier neue Regressionstests sichern diese Grenzen. Kein Einfluss auf D&D-Regeln, Story, App-Daten oder bestehende Spielstände. **Neue CI/Android-Abnahme des zugehörigen Chat-D-Branches ist noch offen**; vorherige erfolgreiche Builds beweisen diese Änderung nicht. [Detailcheckpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
