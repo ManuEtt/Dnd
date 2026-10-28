@@ -1,3 +1,19 @@
+# Chat B – Sitzungsidentität beim Ereignis-Replay (27.10.2026)
+
+- **main-Basis:** `96001353f2b90f293fbdade934e78b7b8281e965`; Branch `fix/chat-b/story-replay-session-identity-20261027`.
+- **Problem:** `MemoryEngine.replay` konnte ein neues, gültig geformtes Ereignis derselben Kampagne aus einer fremden Sitzung akzeptieren. Auch ein Checkpoint mit abweichender Sitzungs-ID war möglich.
+- **IMPLEMENTIERT:** Session-Guard für neue Ereignisse und `stateAfter`-Checkpoints, bestehende Kampagnen-/Revisionsprüfung unverändert. Bereits bekannte identische Ereignisse früherer Sitzungen weiterhin idempotent.
+- **Geänderte Pfade:** `app/lib/story/story_memory_engine.dart`; `app/test/story_replay_session_boundary_test.dart`; `docs/STORY_REPLAY_SESSION_IDENTITY_20261027.md`; README, zentrale und persönliche Checkpoints.
+- **Akzeptanz:** Erfolgreicher identischer Replay-Roundtrip; fremde Events mit/ohne Checkpoint und fremde Checkpoint-Sitzungen abweisen; vorher bekannte Sitzungsereignisse deduplizieren; Seed/Regelzustand unverändert.
+- **Tests:** vier neue Flutter-Regressionen erstellt; finale CI-/APK-Ergebnisse noch nicht belegt. Kein lokales Flutter-/Dart-SDK; keine kostenpflichtigen Anbieteraufrufe.
+- **Parallelentwicklung:** Fachdatei bei Aufgabenwahl in keinem offenen PR geändert; PR #175 bereits gemergt. Parallele Chat-B-NPC-/Outbox-Branches #288–#314 nicht verändert. Gemeinsame README und `docs/CODEX_CHECKPOINT.md` bei Integration durch Chat D additiv konsolidieren.
+- **Migration:** keine (App 0.8.42+92, SQLite/JSON unverändert); keine Regeländerung und keine automatischen KI-Aktionen.
+- **BLOCKIERT:** Offline-Git-Checkout wegen DNS nicht verfügbar; Flutter-/Android-Tests lokal nicht ausführbar. Actions finalem Commit zuordnen.
+- **NÄCHSTER SCHRITT:** Finale PR-CI der Story-Replay-Regression abnehmen, rote Gates auf eigenem Branch reparieren und danach Review an Chat D geben.
+- **Beleg:** [Ausführliche Beschreibung](../STORY_REPLAY_SESSION_IDENTITY_20261027.md).
+
+---
+
 # Chat B – Gleiche NPC-Anzeigenamen in bestätigten Recaps unterscheiden (27.10.2026)
 
 - **Main bei Branchstart:** `ff245cc253194cd0858385d535ae7b2c9132bb06`
