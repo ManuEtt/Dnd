@@ -1,0 +1,24 @@
+name: Chat B NPC long-name format diagnostic (temporary)
+
+on:
+  push:
+    branches:
+      - feat/chat-b/npc-narrator-long-name-id-20261028
+
+permissions:
+  contents: read
+
+jobs:
+  show-dart-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Format and print exact diff
+        shell: bash
+        run: |
+          dart format app/lib/story/npc_narrator_memory.dart app/test/npc_narrator_memory_long_name_test.dart
+          git diff -- app/lib/story/npc_narrator_memory.dart app/test/npc_narrator_memory_long_name_test.dart
