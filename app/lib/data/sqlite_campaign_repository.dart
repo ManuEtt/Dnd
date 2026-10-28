@@ -22,6 +22,7 @@ class SqliteCampaignRepository
   static Future<SqliteCampaignRepository> open({
     DatabaseFactory? factory,
     String? path,
+    bool singleInstance = true,
   }) async {
     final selectedFactory = factory ?? databaseFactory;
     final databasePath =
@@ -34,6 +35,9 @@ class SqliteCampaignRepository
       databasePath,
       options: OpenDatabaseOptions(
         version: 2,
+        // Production remains single-instance. Independent FFI test connections
+        // opt out to exercise real simultaneous archive writers.
+        singleInstance: singleInstance,
         onConfigure: (database) async {
           await database.execute('PRAGMA foreign_keys = ON');
         },

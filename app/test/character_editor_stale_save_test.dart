@@ -22,10 +22,12 @@ void main() {
     first = await SqliteCampaignRepository.open(
       factory: databaseFactoryFfi,
       path: path,
+      singleInstance: false,
     );
     second = await SqliteCampaignRepository.open(
       factory: databaseFactoryFfi,
       path: path,
+      singleInstance: false,
     );
     controller = GameController(repository: first);
     await controller.initialize();
@@ -112,6 +114,7 @@ void main() {
       second = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: path,
+        singleInstance: false,
       );
       expect((await second.loadCharacters()).single.name, 'Zweite Fassung');
 
