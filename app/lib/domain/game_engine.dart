@@ -3063,8 +3063,7 @@ class GameEngine {
             'difficulty': dc,
             'total': effectiveSaveTotal,
             if (indomitableMightApplied) 'rawTotal': rolled.total,
-            if (indomitableMightApplied)
-              'classFeature': 'indomitableMight',
+            if (indomitableMightApplied) 'classFeature': 'indomitableMight',
             'failed': !passed,
             'roll': rolled.toJson(),
             'manualDifficulty': true,
