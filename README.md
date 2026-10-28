@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – Doppelte automatische Branch-Bereinigung stillgelegt (28.10.2026)
+
+Die frühere Workflow-Datei `.github/workflows/retire-verified-branches-20261026.yml` konkurrierte mit der neuen SHA-/PR-gesicherten Bereinigung `cleanup-merged-safe-20261027.yml`. Am 27.10.2026 archivierte und entfernte der neue Workflow den Branch `test/chat-b/story-12-memory-transport-20261027`; der alte Workflow scheiterte anschließend beim erneuten Abruf mit HTTP 404 ([fehlgeschlagener Lauf](https://github.com/ManuEtt/Dnd/actions/runs/40589220593)). Der alte Eintrag bleibt als **manueller, schreibgeschützter Hinweis ohne Branch-Aktionen** erhalten. Drei neue Python-Tests prüfen Deaktivierung, Negativfälle und unveränderte Sicherungsprüfungen des Nachfolgers. Der neue [PR #329](https://github.com/ManuEtt/Dnd/pull/329) ist zur Review freigegeben; kombinierte CI noch ausstehend. Keine Spielstand-, Regel-, Versions- oder Datenmigration.
+
 ## Chat B – NPC-Aufträge bei zwei SQLite-Verbindungen sicher quittieren (27.10.2026)
 
 Vier zusätzliche Integrationstests in `app/test/npc_outbox_multiwriter_cas_test.dart` prüfen die bereits in [PR #305](https://github.com/ManuEtt/Dnd/pull/305) ergänzte **atomare Vergleichs- und Löschlogik** der ausstehenden NPC-Handlungen über zwei gleichzeitig geöffnete SQLite-Verbindungen. Verspätete Bestätigungen dürfen weder einen bewusst ersetzten gleichnamigen NPC noch eine neue Kampagnenrevision löschen. Auch der Wechsel zwischen früheren reinen Textaufträgen und einer ausdrücklich ausgewählten NPC-ID ist abgesichert. Gleichzeitige Sendeversuche derselben Kampagne dürfen nur einen einzigen Auftrag erzeugen. Alle Tests verwenden echte lokale SQLite-Dateien, keine externen KI-Aufrufe. **Keine neue Produktionscode- oder Datenbankänderung**; die Tests benötigen PR #305.
