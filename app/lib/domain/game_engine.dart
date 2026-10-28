@@ -32,7 +32,7 @@ import 'two_weapon_fighting_rules.dart';
 import 'monk_focus_actions.dart';
 import 'monk_flurry_rules.dart';
 import 'monk_self_restoration.dart';
-import 'monk_perfect_focus.dart';
+import 'monk_initiative_features.dart';
 import 'paladin_lay_on_hands.dart';
 import 'saving_throw_class_actions.dart';
 import 'ai_story.dart';
@@ -340,7 +340,10 @@ class GameEngine {
 
   /// Player opt-in converts the untrusted AI proposal into exactly one local
   /// quest + one vetted enemy encounter. Initiatives are rolled locally.
-  GameUpdate acceptAdventure(Campaign campaign) {
+  GameUpdate acceptAdventure(
+    Campaign campaign, {
+    bool useUncannyMetabolism = false,
+  }) {
     final offer = campaign.adventureOffer;
     if (offer == null ||
         campaign.storyBible['mode'] != 'ai' ||
@@ -415,7 +418,11 @@ class GameEngine {
       disadvantage: initiative.disadvantage,
     );
     final enemyInitiative = dice.check(modifier: 0);
-    final focus = MonkPerfectFocus.onInitiative(campaign.hero);
+    final focus = MonkInitiativeFeatures.onInitiative(
+      campaign.hero,
+      useUncannyMetabolism: useUncannyMetabolism,
+      dice: dice,
+    );
     var next = campaign.copyWith(
       hero: focus.hero,
       adventureOffer: null,
@@ -458,7 +465,12 @@ class GameEngine {
       'template': valid.archetype,
       'heroInitiative': heroInitiative.toJson(),
       'enemyInitiative': enemyInitiative.toJson(),
-      'focusRecoveredAtInitiative': focus.recovered,
+      'focusRecoveredAtInitiative': focus.focusRecovered,
+        if (focus.uncannyMetabolismUsed) ...{
+          'uncannyMetabolismUsed': true,
+          'uncannyMetabolismHealing': focus.hitPointsRecovered,
+          'uncannyMetabolismDieRoll': focus.martialArtsDieRoll,
+        },
     };
     if (enemyInitiative.total > heroInitiative.total) {
       final turn = _enemyTurn(next, advanceRound: false);
@@ -2790,7 +2802,11 @@ class GameEngine {
     );
   }
 
-  GameUpdate act(Campaign campaign, String input) {
+  GameUpdate act(
+    Campaign campaign,
+    String input, {
+    bool useUncannyMetabolism = false,
+  }) {
     _ensureNoOpportunity(campaign);
     final text = input.trim();
     if (text.isEmpty || text.length > 4000) {
@@ -3571,7 +3587,11 @@ class GameEngine {
         disadvantage: initiative.disadvantage,
       );
       final foeRoll = dice.check(modifier: 2);
-      final focus = MonkPerfectFocus.onInitiative(current.hero);
+      final focus = MonkInitiativeFeatures.onInitiative(
+        current.hero,
+        useUncannyMetabolism: useUncannyMetabolism,
+        dice: dice,
+      );
       var started = scripted.campaign.copyWith(
         hero: focus.hero,
         encounter: Encounter(
@@ -3609,6 +3629,12 @@ class GameEngine {
           'heroInitiative': heroRoll.toJson(),
           'enemyInitiative': foeRoll.toJson(),
           'adventure': 'rabenwacht',
+          'focusRecoveredAtInitiative': focus.focusRecovered,
+          if (focus.uncannyMetabolismUsed) ...{
+            'uncannyMetabolismUsed': true,
+            'uncannyMetabolismHealing': focus.hitPointsRecovered,
+            'uncannyMetabolismDieRoll': focus.martialArtsDieRoll,
+          },
         },
       );
     }
@@ -3798,7 +3824,11 @@ class GameEngine {
         disadvantage: initiative.disadvantage,
       );
       final foeInit = dice.check(modifier: 0);
-      final focus = MonkPerfectFocus.onInitiative(current.hero);
+      final focus = MonkInitiativeFeatures.onInitiative(
+        current.hero,
+        useUncannyMetabolism: useUncannyMetabolism,
+        dice: dice,
+      );
       var next = current.copyWith(
         hero: focus.hero,
         scene: 'Am alten Waldschrein erhebt sich ein Dornenwächter.',
@@ -3831,7 +3861,12 @@ class GameEngine {
       final details = <String, dynamic>{
         'heroInitiative': heroInit.toJson(),
         'enemyInitiative': foeInit.toJson(),
-        'focusRecoveredAtInitiative': focus.recovered,
+        'focusRecoveredAtInitiative': focus.focusRecovered,
+        if (focus.uncannyMetabolismUsed) ...{
+          'uncannyMetabolismUsed': true,
+          'uncannyMetabolismHealing': focus.hitPointsRecovered,
+          'uncannyMetabolismDieRoll': focus.martialArtsDieRoll,
+        },
       };
       if (foeInit.total > heroInit.total) {
         final turn = _enemyTurn(next, advanceRound: false);
