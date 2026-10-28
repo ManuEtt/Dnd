@@ -1,3 +1,30 @@
+# Chat B – Story-Transport mit randvollem Erinnerungslimit (27.10.2026)
+
+- **Basis:** [PR #307](https://github.com/ManuEtt/Dnd/pull/307) (`fix/chat-b/npc-memory-budget-20261027`, Head `47b4343fadd5f30b9030a702b3ccd701d701a598`). Gestapelter neuer Branch `test/chat-b/npc-memory-wire-budget-20261027`; erst #307 integrieren.
+- **IMPLEMENTIERT:** `app/test/npc_story_memory_wire_budget_test.dart`, zwei End-to-End-Regressionen mit echter SQLite-Kampagne, `GameController`, drei bestätigten NPC-Beziehungsnotizen und 18 voneinander unterscheidbaren allgemeinen Fakten. `sendAction` führt zur abgefangenen Story-Backend-Anfrage mit **exakt zwölf** Erinnerungen; die drei NPC-Notizen bleiben priorisiert, allgemeine Fakten nutzen freie Plätze. Testet `npc-identity-v1` sowohl ein- als auch ausgeschaltet.
+- **WEITERE PRÜFUNGEN:** Transport enthält keine überzähligen NPC-/allgemeinen Erinnerungen; Textlänge pro Eintrag höchstens 400 Zeichen; keine Duplikate; optionaler strukturierter NPC-Kontext enthält nur Mira; Helden-JSON bleibt unverändert, lokale Revision erhöht sich um eins, SQLite-Rekonstruktion entspricht gespeichertem Snapshot.
+- **GETESTET:** Testvertragsprüfung gegen GitHub-Quellcode; offizielle Dart-3.9.2-Formatierung wird vor PR-Abgabe durchgeführt. Die vollständige GitHub-CI auf dem **finalen PR-Head** ist erst bei nachgewiesener Ausführung als bestanden zu kennzeichnen.
+- **NICHT GETESTET:** echtes Android-Gerät oder produktiver KI-Provider. Kein lokales Flutter-SDK. Ein lokaler, nicht kostenpflichtiger Backend-Transport wird simuliert.
+- **MIGRATION:** keine – Test und Dokumentation allein; SRD-, SQLite-, Kampagnenexport- und Backend-Protokolle unverändert.
+- **BLOCKIERT:** Integration der Basisfunktion aus #307, gemeinsame Docs von Chat D konsolidieren.
+- **NÄCHSTER SCHRITT:** Nach CI-Erfolg weitere adversariale Tests für gesättigte Erinnerungslisten mit bereits vorhandenen Wiederholungen und leerem Kontext.
+- [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md), alte Historie bleibt erhalten.
+
+---
+
+# Chat B – NPC-Erinnerungslimit nicht überschreiten (27.10.2026)
+
+- **Ausgangs-Main:** `f9b2f72a4bf8e4216bf8baac60c7f92c4a8a997f`; Branch `fix/chat-b/npc-memory-budget-20261027`.
+- **BEFUND:** `NpcNarratorMemory.merge` fügte allgemeine Erinnerungen hinzu und prüfte `result.length == limit` erst danach. Wenn bestätigte NPC-Beziehungsnotizen das Limit bereits erreichten, entstanden `limit + 1` Einträge. Bei vollen Transportbudgets konnte die anschließende Backend-Validierung scheitern.
+- **IMPLEMENTIERT:** Vor jedem allgemeinen Eintrag auf bereits ausgeschöpftes Gesamtkontingent prüfen. Bereits bestätigte NPC-Notizen behalten ihre Priorität; bei freier Kapazität bleiben allgemeine Erinnerungen erhalten. Keine Daten-, Regel- oder API-Migration.
+- **TESTS:** `app/test/npc_narrator_memory_test.dart`: Limit 1 und Limit 2 vollständig mit bestätigten Notizen belegen, prüfen, dass kein weiterer allgemeiner Eintrag aufgenommen wird; Limit 3 lässt bewusst genau einen allgemeinen Fakt zu; Kampagnenstand bleibt identisch und Rückgabeliste unveränderlich.
+- **GETESTET:** Live-`main` und offene PR-Dateien vor Aufgabenwahl geprüft; offizielle Dart-3.9.2-Formatterausgabe angewendet und temporären Workflow entfernt. Vollständige CI auf finalem PR-HEAD gesondert prüfen; lokales Flutter-SDK und Realgerät nicht vorhanden.
+- **PARALLEL:** PR #304 bearbeitet die Widgetmeldungen des Outbox-Status bereits, PR #305 die atomare NPC-Löschung; dieser eigenständige Branch ändert **keine** von deren Fachdateien.
+- **NÄCHSTER SCHRITT:** Nach grünem CI Ergebnis und anderem Branch-Merge den Narrator-Endpunkt mit einer randvollen (12 Einträge) Kontextliste auf Anwendungsebene testen.
+- [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md), ältere Einträge bleiben erhalten.
+
+---
+
 ## 27.10.2026 – Integrationskandidat der Charaktererstellung #264/#272/#273/#275
 
 - **Basis:** `main` `4bd97b4d72fc747228df9bea46b61c3d4c82c382`; komplette gestapelte Quelle `ae148053feca82f5db1741b37536385f4d7d41c5`; Merge-Tree anhand der Git-Blob-SHAs konfliktarm zusammengestellt, beide Herkunfts-Commits als Eltern erhalten. Nur README und diese Checkpoint-Datei redaktionell aus dem originalen Main additiv ergänzt; fremde Chat-B-/Chat-D-Einträge bleiben erhalten.
