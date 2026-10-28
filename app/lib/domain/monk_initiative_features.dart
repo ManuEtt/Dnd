@@ -37,7 +37,9 @@ class MonkInitiativeFeatures {
         hero.maxHitPoints == null ||
         hero.hitPoints! <= 0 ||
         hero.maxHitPoints! < hero.hitPoints!) {
-      throw StateError('Unheimlicher Stoffwechsel erfordert einen kampffähigen Helden.');
+      throw StateError(
+        'Unheimlicher Stoffwechsel erfordert einen kampffähigen Helden.',
+      );
     }
     if (ClassResourceRules.remaining(hero, 'uncannyMetabolism') == 0) {
       throw StateError(
