@@ -41,10 +41,7 @@ void main() {
     expect(result.heightFeet, 40);
     expect(result.candidates, hasLength(21));
     expect(result.at(origin)!.centerWithinBase, isTrue);
-    expect(
-      result.at(const SrdGridCell(12, 11))!.centerWithinBase,
-      isFalse,
-    );
+    expect(result.at(const SrdGridCell(12, 11))!.centerWithinBase, isFalse);
     expect(result.at(const SrdGridCell(12, 12)), isNull);
     expect(
       result.at(const SrdGridCell(11, 10))!.centerRay,
@@ -64,10 +61,7 @@ void main() {
       top.candidates.map((item) => item.cell).toSet(),
       bottom.candidates.map((item) => item.cell).toSet(),
     );
-    expect(
-      _preview(radius: 5, height: 5).candidates,
-      hasLength(9),
-    );
+    expect(_preview(radius: 5, height: 5).candidates, hasLength(9));
   });
 
   test('full blockers cause review, not fabricated total-cover immunity', () {
@@ -93,10 +87,7 @@ void main() {
     for (final radius in [-5, 0, 4, 7, 125]) {
       expect(() => _preview(radius: radius), throwsFormatException);
     }
-    expect(
-      () => _preview(grid: _map(surveyed: false)),
-      throwsFormatException,
-    );
+    expect(() => _preview(grid: _map(surveyed: false)), throwsFormatException);
     expect(
       () => _preview(grid: _map(blockers: const [origin])),
       throwsFormatException,
