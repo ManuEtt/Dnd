@@ -90,6 +90,8 @@ class SrdClassAutomation {
   static const Map<String, String> _partialEvidence = {
     'Spellcasting': 'SpellcastingRules',
     'Pact Magic': 'SpellcastingRules',
+    'Magical Cunning': 'SrdWarlockMagicalCunningRules.restoreAfterCompletedRite',
+    'Eldritch Master': 'SrdWarlockMagicalCunningRules.maximumRecoveredSlots',
     'Channel Divinity': 'ClassResourceRules',
     'Rage': 'ClassResourceRules',
     "Monk's Focus": 'ClassResourceRules',
