@@ -141,9 +141,7 @@ void main() {
     );
     expect(
       () => request(
-        state.copyWith(
-          encounter: state.encounter!.copyWith(round: 4),
-        ),
+        state.copyWith(encounter: state.encounter!.copyWith(round: 4)),
       ),
       throwsFormatException,
     );
@@ -160,24 +158,28 @@ void main() {
   test('unrelated pending choices cannot authorize a second action', () {
     final state = campaign();
     expect(
-      () => request(state.copyWith(
-        pendingRoll: const PendingRoll(
-          id: 'another',
-          type: 'attack',
-          modifier: 2,
-          difficulty: 10,
-          targetId: 'enemy-1',
+      () => request(
+        state.copyWith(
+          pendingRoll: const PendingRoll(
+            id: 'another',
+            type: 'attack',
+            modifier: 2,
+            difficulty: 10,
+            targetId: 'enemy-1',
+          ),
         ),
-      )),
+      ),
       throwsFormatException,
     );
     expect(
-      () => request(state.copyWith(
-        pendingDeathSave: const PendingDeathSave(
-          originalNatural: 1,
-          modifier: 0,
+      () => request(
+        state.copyWith(
+          pendingDeathSave: const PendingDeathSave(
+            originalNatural: 1,
+            modifier: 0,
+          ),
         ),
-      )),
+      ),
       throwsFormatException,
     );
   });
@@ -192,17 +194,14 @@ void main() {
       ...json,
       'pendingSavageAttackerHit': {
         ...raw,
-        'alternative': {
-          ...raw['alternative'] as Map,
-          'total': 999,
-        },
+        'alternative': {...raw['alternative'] as Map, 'total': 999},
       },
     };
     expect(() => Campaign.fromJson(tampered), throwsFormatException);
     expect(
-      () => request(state.copyWith(
-        hero: state.hero.copyWith(weaponDamage: '1d6'),
-      )),
+      () => request(
+        state.copyWith(hero: state.hero.copyWith(weaponDamage: '1d6')),
+      ),
       throwsFormatException,
     );
   });
