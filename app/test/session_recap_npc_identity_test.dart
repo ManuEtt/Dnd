@@ -132,8 +132,7 @@ void main() {
     ).saveSessionRecap(campaign);
     expect(saved.campaign.sessionRecaps.single.summary, summary);
     final restored = Campaign.fromJson(
-      jsonDecode(jsonEncode(saved.campaign.toJson()))
-          as Map<String, dynamic>,
+      jsonDecode(jsonEncode(saved.campaign.toJson())) as Map<String, dynamic>,
     );
     expect(restored.sessionRecaps.single.summary, summary);
     expect(restored.hero.toJson(), campaign.hero.toJson());
