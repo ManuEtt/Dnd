@@ -1,3 +1,34 @@
+# Chat D D-013 – APK-ZIP-Bomb-Abwehr vor Alpha-Veröffentlichung (27.10.2026)
+
+- **Ausgangs-main:** `f9b2f72a4bf8e4216bf8baac60c7f92c4a8a997f`, Branch `fix/chat-d/alpha-apk-zipbomb-guard-20261027`. Würfelraunen `0.8.42+92`, SQLite 2, Kampagnen-JSON 1 unverändert.
+- **Problem:** `scripts/prepare_alpha_release.py:validate_arm64_apk` durchlief `ZipFile.testzip()` ohne vorgelagerte Größen-/Kompressionsbegrenzung. Dadurch hätte eine manipulierte APK mit vielen oder hochkomprimierten ZIP-Einträgen bei der Verifikation sehr viel Zeit/Ressourcen beanspruchen können.
+- **IMPLEMENTIERT:** Fail-Closed-Limits: APK-Datei höchstens **512 MiB**, ZIP höchstens **20.000 Einträge**, Summe der angegebenen entpackten Größen höchstens **1 GiB**; Einträge ab **1 MiB** dürfen nicht mehr als **1000-fach** expandieren (laut ZIP-Zentralverzeichnis). Die Limits werden vor `testzip()` geprüft. Bisherige Erkennung von duplizierten/unsicheren Pfaden, Symlinks, CRC-Schäden und fehlenden oder leeren Android-ARM64-Pflichtbibliotheken bleibt bestehen.
+- **REGRESSIONEN:** Vier negative Python-Fälle: auf Datenträger zu große APK (ZIP-Prüfer darf nicht geöffnet werden), hochkomprimierter Deflate-Eintrag, fiktive zu große entpackte Gesamtsumme, ZIP mit überzähliger Eintragsliste. Die drei letzten Tests verlangen Ablehnung vor `testzip()`. Normale bestehende positive Release-Tests bleiben unverändert.
+- **Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, `docs/parallel/CHAT_D_CHECKPOINT.md`, `docs/CODEX_CHECKPOINT.md`, `README.md`. Codecommit `daea8b78d441b30c93fa8e825a5c2708ff104302`; Regressionen `912a662ed54dc8fa520a59d366bb4654a93c80ae`.
+- **GETESTET:** Vorgänger-PR #258 vollständig erfolgreich [GitHub-CI #40391878647](https://github.com/ManuEtt/Dnd/actions/runs/40391878647), 36/36 Schritte; PR #258 wurde in Main gemergt. Das belegt **nicht** D-013.
+- **NICHT GETESTET:** Neue Python-/Flutter-/Backend-/Android-/Alpha-CI auf finaler D-013-SHA, reale Android-Geräte, produktive APK-Signatur, alte Installationen. Kein lokaler vollständiger Checkout wegen GitHub-DNS-Ausfall.
+- **BLOCKIERT:** CI des neuen PR-HEADs und Abgleich gegen inzwischen verändertes Main. Keine fremden PRs/Branches berührt oder automatisch gemergt.
+- **KEINE MIGRATION:** Reine Alpha-Release-Prüfung, weder Spielregeln noch Story-/KI- oder SQLite-Code verändert; Schema 2 und Kampagnenformat 1 bleiben erhalten.
+- **NÄCHSTER SCHRITT:** PR-CI auf exaktem Dokumentations-HEAD abnehmen, Fehler ggf. im eigenen Branch korrigieren, vor Freigabe neuen Main-HEAD und offene PRs erneut prüfen. Ein echter APK-Release ersetzt keine Geräteprüfung.
+
+---
+
+# Chat D D-014 – Störenden Alt-Workflow deaktivieren (28.10.2026)
+
+- **Ausgangs-main-SHA:** `571edec9455fb32e4991432953c9a2479a6fffb2`.
+- **Eigener Branch:** `fix/chat-d/disable-legacy-cleanup-20261028`.
+- **PR:** [#329](https://github.com/ManuEtt/Dnd/pull/329) (reviewbereit).
+- **Technische Commit-SHAs:** `45236f1b4d595303c19c1cf9e992ba36003026fc`, `c5b223389d75a9949a2bee13386d305bc586102e`; Dokumentation auf demselben Branch ergänzt.
+- **Reproduzierter Befund:** Der alte Workflow [40589220593](https://github.com/ManuEtt/Dnd/actions/runs/40589220593) brach mit 404 bei `test/chat-b/story-12-memory-transport-20261027` ab. Der neue SHA-geprüfte Workflow [40589220368](https://github.com/ManuEtt/Dnd/actions/runs/40589220368) hatte diesen Branch nach Archivierung vorher gelöscht.
+- **Implementiert:** Alter Workflow nur manuell und schreibgeschützt, ausschließlich informative Ausgabe, keine Branch-/Tag-Schreibzugriffe. Der aktive Nachfolger bleibt unverändert.
+- **Geänderte Dateien:** `.github/workflows/retire-verified-branches-20261026.yml`, `scripts/tests/test_retired_cleanup_workflow.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **TESTS:** Drei neue Python-Tests (positiv, adversarial/negativ, Nachfolger); CI auf finalem SHA auf ursprünglichem CI-Commit grün, kombinierte CI neu gestartet, kein lokales Flutter-/Android-SDK.
+- **Bekannte Einschränkungen:** Die aktuelle automatische Bereinigung im neueren Workflow ist ein eigenständiger Arbeitsbereich; keine Änderung oder Abnahme ihrer vollständigen Nebenläufigkeitsgarantien. Realgerät/Produktionssignierung nicht getestet.
+- **Migration:** Keine, SQLite 2/JSON 1 unverändert.
+- **Nächster Schritt:** Finale Python/Backend/Flutter/Android-CI für PR #329 nachweisen, bei Fehlern den eigenen Branch korrigieren und Review erst nach Erfolg anbieten.
+
+---
+
 # Chat D D-013 – Symlink-Sperre bei der Projektübertragungsprüfung (27.10.2026)
 
 - **Ausgangs-main-SHA:** `ff245cc253194cd0858385d535ae7b2c9132bb06`.

@@ -182,6 +182,8 @@ class PlayerActionOutbox {
         campaignId: action.campaignId,
         requestId: action.requestId,
         text: action.text,
+        selectedNpcId: action.selectedNpcId,
+        selectedNpcRevision: action.selectedNpcRevision,
       );
       return;
     }
@@ -190,7 +192,10 @@ class PlayerActionOutbox {
     final raw = entries[action.campaignId];
     if (raw == null) return;
     final stored = PendingPlayerAction.fromJson(raw);
-    if (stored.requestId != action.requestId || stored.text != action.text) {
+    if (stored.requestId != action.requestId ||
+        stored.text != action.text ||
+        stored.selectedNpcId != action.selectedNpcId ||
+        stored.selectedNpcRevision != action.selectedNpcRevision) {
       throw StateError('Die ausstehende Handlung hat sich geändert.');
     }
     entries.remove(action.campaignId);

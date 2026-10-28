@@ -84,6 +84,8 @@ abstract interface class PendingActionStore {
     required String campaignId,
     required String requestId,
     required String text,
+    String? selectedNpcId,
+    int? selectedNpcRevision,
   });
 
   /// Explicitly clear all pending commands during a user-requested data reset.
@@ -109,5 +111,5 @@ class UnsupportedDatabaseVersion implements Exception {
   final int version;
   @override
   String toString() =>
-      'Datenbankversion $version ist neuer als die unterstützte Version 2.';
+      'Datenbankversion $version ist neuer als die unterstützte Version 3.';
 }
