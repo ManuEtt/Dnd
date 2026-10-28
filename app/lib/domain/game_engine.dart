@@ -3844,7 +3844,7 @@ class GameEngine {
         'heroInitiative': heroInit.toJson(),
         'enemyInitiative': foeInit.toJson(),
         'focusRecoveredAtInitiative': focus.recovered,
-      'bardicInspirationRecoveredAtInitiative': inspiration.recovered,
+        'bardicInspirationRecoveredAtInitiative': inspiration.recovered,
       };
       if (foeInit.total > heroInit.total) {
         final turn = _enemyTurn(next, advanceRound: false);
