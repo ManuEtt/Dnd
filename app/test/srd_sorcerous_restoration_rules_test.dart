@@ -67,10 +67,7 @@ void main() {
         ),
         0,
       );
-      expect(
-        SrdSorcerousRestorationRules.maximumUses(_sorcerer()),
-        1,
-      );
+      expect(SrdSorcerousRestorationRules.maximumUses(_sorcerer()), 1);
       expect(
         SrdSorcerousRestorationRules.maximumUses(
           _sorcerer(classLevel: 4, pointsSpent: 2, multiclass: true),
@@ -78,9 +75,7 @@ void main() {
         0,
       );
       expect(
-        SrdSorcerousRestorationRules.maximumUses(
-          _sorcerer(multiclass: true),
-        ),
+        SrdSorcerousRestorationRules.maximumUses(_sorcerer(multiclass: true)),
         1,
       );
       expect(
@@ -122,9 +117,7 @@ void main() {
       expect(used.usesRemaining, 0);
       expect(used.hero.spentClassResources['sorceryPoints'], 2);
       expect(
-        used.hero.spentClassResources[
-          SrdSorcerousRestorationRules.resourceKey
-        ],
+        used.hero.spentClassResources[SrdSorcerousRestorationRules.resourceKey],
         1,
       );
       expect(before.toJson(), snapshot);
@@ -142,15 +135,17 @@ void main() {
       expect(used.spentAfter, 0);
     });
 
-    test('Mehrklasse wiederhergestellt aus Sorcerer-, nicht Charakterlevel', () {
-      final hero = _sorcerer(multiclass: true);
-      expect(hero.level, 7);
-      final used = SrdSorcerousRestorationRules.restoreAfterCompletedShortRest(
-        hero,
-      );
-      expect(used.recoveredPoints, 2);
-      expect(used.hero.secondaryClassName, 'Zauberer');
-    });
+    test(
+      'Mehrklasse wiederhergestellt aus Sorcerer-, nicht Charakterlevel',
+      () {
+        final hero = _sorcerer(multiclass: true);
+        expect(hero.level, 7);
+        final used =
+            SrdSorcerousRestorationRules.restoreAfterCompletedShortRest(hero);
+        expect(used.recoveredPoints, 2);
+        expect(used.hero.secondaryClassName, 'Zauberer');
+      },
+    );
 
     test('Stufe vier, voller Pool und zweimalige Nutzung abgelehnt', () {
       expect(
@@ -200,9 +195,7 @@ void main() {
       final rest = RestRules.shortRest(hero, dice: dice);
       expect(rest.hero.spentClassResources['sorceryPoints'], 4);
       expect(
-        rest.hero.spentClassResources[
-          SrdSorcerousRestorationRules.resourceKey
-        ],
+        rest.hero.spentClassResources[SrdSorcerousRestorationRules.resourceKey],
         isNull,
       );
       expect(rest.hero.spentHitDice['d6'], 1);
@@ -218,9 +211,7 @@ void main() {
       );
       expect(rest.hero.spentClassResources['sorceryPoints'], 2);
       expect(
-        rest.hero.spentClassResources[
-          SrdSorcerousRestorationRules.resourceKey
-        ],
+        rest.hero.spentClassResources[SrdSorcerousRestorationRules.resourceKey],
         1,
       );
       expect(rest.hero.spentHitDice['d6'], 1);
