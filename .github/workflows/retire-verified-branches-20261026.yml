@@ -1,178 +1,22 @@
-name: Bereinigte Branches revisionssicher archivieren und entfernen
+# Retained for auditability; this legacy cleanup must not run automatically.
+# The maintained replacement is cleanup-merged-safe-20261027.yml.
+# The previous workflow raced with its replacement and failed with
+# "Branch not found" (GitHub Actions run 40589220593, 2026-10-27).
+# This entrypoint performs no writes or branch operations, including on manual dispatch.
+name: Alte Branch-Bereinigung (deaktiviert)
 
 on:
-  workflow_run:
-    workflows: ["Android-Alpha bauen"]
-    types: [completed]
-    branches: [main]
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: read
-
-concurrency:
-  group: audited-branch-retirement-main
-  cancel-in-progress: false
+  contents: read
 
 jobs:
-  cleanup:
-    if: github.repository == 'ManuEtt/Dnd' && (github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success')
+  deprecated:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
     steps:
-      - name: Archive exact heads, skip ongoing work, delete verified redundant branches
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const repo = { owner: 'ManuEtt', repo: 'Dnd' };
-            const headRef = async name =>
-              (await github.rest.repos.getBranch({ ...repo, branch: name })).data;
-            const main = await headRef('main');
-            const mainSha = main.commit.sha;
-            const run = context.payload.workflow_run;
-            if (context.eventName === 'workflow_run') {
-              if (!run || run.conclusion !== 'success' || run.head_branch !== 'main'
-                  || run.head_sha !== mainSha) {
-                core.info('CI does not certify the current main: no deletion.');
-                return;
-              }
-            } else {
-              throw new Error('Manual cleanup requires a fresh green main CI; dispatch is disabled for safety.');
-            }
-
-            const branches = await github.paginate(
-              github.rest.repos.listBranches, { ...repo, per_page: 100 }
-            );
-            const open = await github.paginate(
-              github.rest.pulls.list, { ...repo, state: 'open', per_page: 100 }
-            );
-            const closed = await github.paginate(
-              github.rest.pulls.list, { ...repo, state: 'closed', per_page: 100 }
-            );
-            const active = new Set([
-              ...open.filter(p => p.head.repo?.full_name === 'ManuEtt/Dnd')
-                .map(p => p.head.ref),
-              // An open dependent PR can use another branch as its base.
-              // Never remove either side of a still-active PR.
-              ...open.map(p => p.base.ref)
-            ]);
-
-            const ported = new Map([
-              [244, ['backend/src/story_secret_guard.ts', 'backend/test/story_secret_guard.test.ts']],
-              [245, ['app/lib/ui/fantasy_combatant_card.dart', 'app/test/fantasy_combatant_card_test.dart']],
-              [246, ['scripts/check_domain_boundaries.py', 'scripts/tests/test_domain_boundaries.py']],
-              [247, ['app/lib/domain/srd_spell_catalog.dart', 'app/test/srd_spell_component_metadata_test.dart']],
-              [248, ['app/lib/story/npc_narrator_memory.dart', 'app/test/npc_narrator_memory_test.dart']],
-              [252, ['app/lib/ui/fantasy_effect_ward.dart', 'app/test/confirmed_spell_effect_widget_test.dart']],
-              [253, ['app/lib/story/ai_story.dart', 'app/test/ai_story_test.dart', 'backend/src/story.ts', 'backend/test/story.test.ts']],
-              [254, ['app/lib/ui/fantasy_combat_status.dart', 'app/test/fantasy_combat_status_test.dart']],
-              [256, ['app/lib/story/ai_story.dart', 'app/test/ai_story_test.dart', 'backend/src/story.ts', 'backend/test/story.test.ts', 'app/test/ai_story_terminal_sqlite_resume_test.dart']],
-              [257, ['app/lib/domain/srd_spell_duration_rules.dart', 'app/test/srd_spell_duration_integrity_test.dart']],
-              [259, ['app/lib/domain/srd_class_feature_catalog.dart', 'app/lib/domain/srd_class_level_up.dart', 'app/lib/ui/srd_class_level_up_dialog.dart', 'app/test/srd_class_level_up_test.dart', 'app/test/ui_srd_class_level_up_test.dart', 'docs/srd_5_2_1_requirements.json', 'docs/parallel/CHAT_A_CLASS_CAPSTONES_20261026.md']],
-              [255, ['app/lib/ui/death_save_decision_panel.dart', 'app/test/death_save_decision_panel_busy_test.dart']]
-            ]);
-
-            const blob = async (path, ref) => {
-              const r = await github.rest.repos.getContent({ ...repo, path, ref });
-              if (Array.isArray(r.data) || r.data.type !== 'file') throw new Error('Not a file: ' + path);
-              return r.data.sha;
-            };
-            const archive = async (name, sha) => {
-              const tag = 'tags/archive/retirement-20261026/' + name.replaceAll('/', '--');
-              let previous;
-              try {
-                previous = (await github.rest.git.getRef({ ...repo, ref: tag })).data.object.sha;
-              } catch (e) {
-                if (e.status !== 404) throw e;
-              }
-              if (previous && previous !== sha) {
-                core.warning('Tag points elsewhere, skipping ' + name);
-                return false;
-              }
-              if (!previous) {
-                await github.rest.git.createRef({ ...repo, ref: 'refs/' + tag, sha });
-              }
-              return (await github.rest.git.getRef({ ...repo, ref: tag })).data.object.sha === sha;
-            };
-            for (const b of branches) {
-              const name = b.name;
-              if (name === 'main' || b.protected || active.has(name)) continue;
-              const sha = b.commit.sha;
-              let approved = false;
-              const ancestry = await github.rest.repos.compareCommits({
-                ...repo, base: sha, head: mainSha
-              });
-              if (ancestry.data.behind_by === 0 &&
-                  ['ahead', 'identical'].includes(ancestry.data.status)) {
-                approved = true;
-              }
-              if (!approved) {
-                const previouslyMerged = closed.some(p => p.merged_at &&
-                  p.base.ref === 'main' && p.head.repo?.full_name === 'ManuEtt/Dnd' &&
-                  p.head.ref === name && p.head.sha === sha);
-                if (previouslyMerged) approved = true;
-              }
-              if (!approved) {
-                const found = [...ported].find(([n]) => closed.some(p =>
-                  p.number === n && p.head.repo?.full_name === 'ManuEtt/Dnd' &&
-                  p.head.ref === name && p.head.sha === sha
-                ));
-                if (found) {
-                  const expected = found[1];
-                  const compare = await github.rest.repos.compareCommits({
-                    ...repo, base: mainSha, head: sha
-                  });
-                  const nonDocs = (compare.data.files || []).map(f => f.filename)
-                    .filter(p => p !== 'README.md' && !p.startsWith('docs/'));
-                  if (nonDocs.every(p => expected.includes(p))) {
-                    approved = true;
-                    for (const path of expected) {
-                      if (await blob(path, sha) !== await blob(path, mainSha)) {
-                        approved = false;
-                        break;
-                      }
-                    }
-                  }
-                }
-              }
-              if (!approved &&
-                  name === 'fix/chat-a/spell-range-unit-validation-20261026' &&
-                  sha === '5fc1b5b599f905160f3483db5e1733a6b2761d53') {
-                const old = closed.find(p => p.number === 242 && !p.merged_at &&
-                  p.head.ref === name && p.head.sha === sha);
-                if (old) {
-                  const dif = await github.rest.repos.compareCommits({
-                    ...repo, base: mainSha, head: sha
-                  });
-                  const allowed = new Set([
-                    '.github/workflows/chat-a-spell-range-format.yml',
-                    'app/test/srd_spell_target_rules_test.dart'
-                  ]);
-                  const noDocs = (dif.data.files || []).map(f => f.filename)
-                    .filter(p => p !== 'README.md' && !p.startsWith('docs/'));
-                  if (noDocs.length > 0 && noDocs.every(p => allowed.has(p)) &&
-                      await blob('app/lib/domain/srd_spell_target_rules.dart', sha) ===
-                        await blob('app/lib/domain/srd_spell_target_rules.dart', mainSha) &&
-                      await blob('app/test/srd_spell_target_rules_test.dart', sha) ===
-                        'e9b10d53c57e39b3758fc07e3f272960ce161946' &&
-                      await blob('app/test/srd_spell_target_rules_test.dart', mainSha) ===
-                        '0a66cc516550a6e54df601a2b9978f063fe31468') {
-                    approved = true;
-                  }
-                }
-              }
-              if (!approved) {
-                core.info('Not proven integrated, keep: ' + name);
-                continue;
-              }
-              if (!await archive(name, sha)) continue;
-              const checkMain = await headRef('main');
-              const checkBranch = await headRef(name);
-              if (checkMain.commit.sha !== mainSha || checkBranch.commit.sha !== sha) {
-                core.warning('Ref moved, keep: ' + name);
-                continue;
-              }
-              await github.rest.git.deleteRef({ ...repo, ref: 'heads/' + name });
-              core.info('Archived and retired: ' + name + ' @' + sha);
-            }
+      - name: Nachfolger anzeigen – keine Branches verändern
+        run: |
+          echo "Dieser veraltete Workflow ist deaktiviert."
+          echo "Aktiv: .github/workflows/cleanup-merged-safe-20261027.yml"
+          echo "Es werden keine Branches, Tags oder Dateien verändert."

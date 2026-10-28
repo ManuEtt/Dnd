@@ -17,6 +17,22 @@
 
 - **Koordination am 28.10.2026:** Auf PR #337 `maintenance/cleanup-ancestor-branches-20261028` gestapelt; dessen geänderte Trigger und sichere Git-Ancestry-Gates bleiben erhalten. Die Prüfung in `test_safe_cleanup_protected_branch.py` wurde an `#337` angepasst, ohne dessen Testdatei zu überschreiben.
 
+# Chat D D-014 – Störenden Alt-Workflow deaktivieren (28.10.2026)
+
+- **Ausgangs-main-SHA:** `571edec9455fb32e4991432953c9a2479a6fffb2`.
+- **Eigener Branch:** `fix/chat-d/disable-legacy-cleanup-20261028`.
+- **PR:** [#329](https://github.com/ManuEtt/Dnd/pull/329) (reviewbereit).
+- **Technische Commit-SHAs:** `45236f1b4d595303c19c1cf9e992ba36003026fc`, `c5b223389d75a9949a2bee13386d305bc586102e`; Dokumentation auf demselben Branch ergänzt.
+- **Reproduzierter Befund:** Der alte Workflow [40589220593](https://github.com/ManuEtt/Dnd/actions/runs/40589220593) brach mit 404 bei `test/chat-b/story-12-memory-transport-20261027` ab. Der neue SHA-geprüfte Workflow [40589220368](https://github.com/ManuEtt/Dnd/actions/runs/40589220368) hatte diesen Branch nach Archivierung vorher gelöscht.
+- **Implementiert:** Alter Workflow nur manuell und schreibgeschützt, ausschließlich informative Ausgabe, keine Branch-/Tag-Schreibzugriffe. Der aktive Nachfolger bleibt unverändert.
+- **Geänderte Dateien:** `.github/workflows/retire-verified-branches-20261026.yml`, `scripts/tests/test_retired_cleanup_workflow.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **TESTS:** Drei neue Python-Tests (positiv, adversarial/negativ, Nachfolger); CI auf finalem SHA auf ursprünglichem CI-Commit grün, kombinierte CI neu gestartet, kein lokales Flutter-/Android-SDK.
+- **Bekannte Einschränkungen:** Die aktuelle automatische Bereinigung im neueren Workflow ist ein eigenständiger Arbeitsbereich; keine Änderung oder Abnahme ihrer vollständigen Nebenläufigkeitsgarantien. Realgerät/Produktionssignierung nicht getestet.
+- **Migration:** Keine, SQLite 2/JSON 1 unverändert.
+- **Nächster Schritt:** Finale Python/Backend/Flutter/Android-CI für PR #329 nachweisen, bei Fehlern den eigenen Branch korrigieren und Review erst nach Erfolg anbieten.
+
+---
+
 # Chat D D-013 – Symlink-Sperre bei der Projektübertragungsprüfung (27.10.2026)
 
 - **Ausgangs-main-SHA:** `ff245cc253194cd0858385d535ae7b2c9132bb06`.

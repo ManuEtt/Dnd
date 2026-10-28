@@ -15,6 +15,19 @@
 
 - **Koordination am 28.10.2026:** Auf PR #337 `maintenance/cleanup-ancestor-branches-20261028` gestapelt; dessen geänderte Trigger und sichere Git-Ancestry-Gates bleiben erhalten. Die Prüfung in `test_safe_cleanup_protected_branch.py` wurde an `#337` angepasst, ohne dessen Testdatei zu überschreiben.
 
+# Chat D D-014 – Doppelte Branch-Bereinigung und 404-Rennen beseitigen (28.10.2026)
+
+- **Ausgangs-main:** `571edec9455fb32e4991432953c9a2479a6fffb2`; **Branch:** `fix/chat-d/disable-legacy-cleanup-20261028`; [PR #329](https://github.com/ManuEtt/Dnd/pull/329) (reviewbereit).
+- **Nachgewiesenes Problem:** Alte GitHub Action [40589220593](https://github.com/ManuEtt/Dnd/actions/runs/40589220593) scheiterte mit 404 beim Lesen des Branches `test/chat-b/story-12-memory-transport-20261027`. Die neuere Action [40589220368](https://github.com/ManuEtt/Dnd/actions/runs/40589220368) archivierte und entfernte diesen Branch zuvor.
+- **IMPLEMENTIERT:** Alter Bereinigungsworkflow bleibt als nicht-automatischer, read-only Hinweis erhalten, ohne Lösch-/Tag-API. Der verifizierte Nachfolger `cleanup-merged-safe-20261027.yml` bleibt unverändert; kein Branch wird durch diesen PR gelöscht.
+- **TESTS ERGÄNZT:** `scripts/tests/test_retired_cleanup_workflow.py` prüft erlaubten manuellen Read-only-Altworkflow, Manipulation negativer Trigger/Berechtigung/Mutationsaufrufe und Sicherheitsgrundlagen des Nachfolgers.
+- **Technische Commits:** `45236f1b4d595303c19c1cf9e992ba36003026fc`, `c5b223389d75a9949a2bee13386d305bc586102e`. **Teststatus:** neue vollständige CI auf finalem Dokumentations-Commit vorher grün, neue CI läuft. Keine grüne CI behauptet.
+- **KOMPATIBILITÄT:** Flutter/Backend, SQLite 2, JSON 1, SRD/Story und App-Version unverändert. Keine Migration.
+- **ÜBERSCHNEIDUNG:** PR #301 bearbeitet einen anderen älteren Workflow; #311, #316 und #321 keine dieser Fachdateien. README/Checkpoint additiv und bei Integration zu konsolidieren.
+- **NÄCHSTER SCHRITT:** Gesamte GitHub-CI auf finalem PR-Commit abwarten, PR bei Erfolg reviewbereit stellen; keine direkte Main-Änderung, keine fremden PRs/Branches löschen.
+
+---
+
 # Chat B – Outbox-Quittungen bei mehreren SQLite-Schreibern (27.10.2026)
 
 - **Ausgangsbasis:** PR #305 `fix/chat-b/npc-outbox-cas-20261027` auf `eb4f3a43864ba00843aacd7f0b47b2e2f0fad1da`; eigener Branch `test/chat-b/npc-outbox-multiwriter-cas-20261027`.
