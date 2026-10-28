@@ -1,0 +1,27 @@
+name: Chat C Dart Format Diagnostic
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'app/test/fantasy_inventory_dialog_scroll_test.dart'
+      - '.github/workflows/chat-c-format-debug.yml'
+
+jobs:
+  formatter-diff:
+    name: Show official Dart formatter diff
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+      - name: Install pinned Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Format test and display exact diff
+        shell: bash
+        run: |
+          dart format app/test/fantasy_inventory_dialog_scroll_test.dart
+          git diff -- app/test/fantasy_inventory_dialog_scroll_test.dart
