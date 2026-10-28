@@ -1,5 +1,41 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## 28.10.2026 – Branch-Migration abgeschlossen
+
+Die gemeinsame Migration aus [PR #351](https://github.com/ManuEtt/Dnd/pull/351)
+ist abgeschlossen: **28 alte Quell-/Integrationsbranches** sind regulär enthalten,
+mit exaktem Archivtag gesichert und remote gelöscht. Der geprüfte Produktstand
+`6576d2fc742f000bacdd1c105282bc9e3282ae7e` bestand die
+[Main-CI 40708407065](https://github.com/ManuEtt/Dnd/actions/runs/40708407065)
+(2.185 Flutter-, 195 Python-, 72 Backend-Tests; lokale native Abnahme: zwölf Tests).
+[Cleanup 40710914533](https://github.com/ManuEtt/Dnd/actions/runs/40710914533)
+bestand; alle 28 Archiv-/Abwesenheits-/Ancestry-Belege stehen im
+[Migrationsbericht](docs/BRANCH_MIGRATION_20261028.md) und
+[Inventar](docs/BRANCH_MIGRATION_20261028_INVENTORY.json).
+
+Der inzwischen live beobachtete Main `f5cb518a0c0a6aafc1b1483c833fb7907ca5e882`
+enthält weitere Änderungen anderer Chats. Die elf neu entstandenen offenen PRs
+#356–#359 und #361–#367 sind **kein Teil der alten Löschfreigabe** und bleiben
+unangetastet; #352/#353/#355/#360 sind inzwischen integriert. Ältere Meldungen
+unterhalb dieses Eintrags sind historische Schreibstände, insbesondere offene
+Migration/CI-Angaben. Dieser reine Dokumentationsabschluss übernimmt den aktuellen
+Main-Produktcode unverändert; eine neue APK oder vollständige Produkt-CI wird
+für seinen Dokumentationscommit nicht behauptet.
+
+**IMPLEMENTIERT:** Migrationsnachweis, Archivinventar und bytegenaue ältere
+Dokumente erhalten. **GETESTET:** siehe den exakt gebundenen Produktnachweis oben;
+aktuelle Dokumentations-/Pythonprüfung separat im PR. **NICHT GETESTET:** echtes
+Android-Gerät, TalkBack, installiertes Altversionsupgrade und produktive Signatur.
+**BLOCKIERT:** kein angeschlossenes Testgerät. **NOCH NICHT IMPLEMENTIERT:**
+vollständige Charaktererstellung und vollständige SRD-Regelwirkungen.
+
+[Quell-ZIP, Binärpatch, Manifest und History-Bundle](https://github.com/ManuEtt/Dnd/actions/runs/40708407065/artifacts/12826680612) ·
+[geprüfte ARM64-Alpha mit Testsignatur](https://github.com/ManuEtt/Dnd/actions/runs/40708407065/artifacts/12826535931).
+Nächster Charakter-Schritt: ausdrücklich gewähltes Heiliges Symbol für Kleriker/
+Paladin, mit versioniertem Klassenbeleg, ohne historische Ausrüstung nachzuvergeben.
+
+---
+
 ## 28.10.2026 – Chat D: Dart-Teilbibliotheken an Modulgrenzen prüfen
 
 Die Python-Architekturprüfung kontrolliert neben `import` und `export` jetzt auch `part` und URI-basierte `part of`-Direktiven. Dadurch darf Domain-Code Story-Dateien nicht als Teilbibliothek einschleusen; Story-Dateien dürfen den gemeinsamen Domänencode weiterhin regulär importieren, ihn aber nicht als `part` einbinden. Fünf neue positive und negative Regressionstests sind ergänzt. **Die vollständige PR-CI muss auf dem finalen Commit noch geprüft werden.** Keine Änderung an SQLite, JSON, Spielregeln, Story oder App-Version. [Draft-PR #360](https://github.com/ManuEtt/Dnd/pull/360) · [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).

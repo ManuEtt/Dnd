@@ -1,3 +1,39 @@
+# Abschlussstand der Branch-Migration – 28.10.2026
+
+**0.8.46+96**, Produkt-Main `6576d2fc742f000bacdd1c105282bc9e3282ae7e` aus regulärem PR #351.
+Produktbaum `ec6bd6207681a59b55599a3f2ef8f7ae51487af4` identisch mit dem abschließend geprüften
+PR-Kopf `c06b549` und CI-Checkout `9cf5ead`.
+
+**Main-CI bestanden:** [Lauf 40708407065](https://github.com/ManuEtt/Dnd/actions/runs/40708407065) auf `6576d2fc742f000bacdd1c105282bc9e3282ae7e`.
+
+**28 alte Quell-/Integrationsbranches archiviert und entfernt.** Alle Köpfe sind Vorfahren des geprüften Main; die exakten Archivtags stehen im Inventar. `feat/srd-warlock-magical-cunning-20261028` (Beobachtung `2026-10-28T14:59:26.197499+00:00`: `47cb207e99eeba0af3308de2b88c19f8357b0808`, PR #352) entstand danach und bleibt als aktive, separat zu prüfende Entwicklung erhalten.
+
+Die finale PR-CI [40706203860](https://github.com/ManuEtt/Dnd/actions/runs/40706203860) ist vollständig erfolgreich:
+2.185 Flutter / 195 Python / 72 Backend, 20 gezielte UI-Prüfungen sowie
+Android-/Alpha-/Quellcheckpoint-Schritte. Lokal zusätzlich zwölf native Tests,
+Format von 500 Dateien, Analyse, Backend- und Debug-Build erfolgreich.
+Keine echte Geräteabnahme oder produktive Signierung; vollständiger Charakter-Wizard
+und vollständige SRD-Engine bleiben offen. SQLite3 und JSON1 unverändert.
+
+- [Main-Quellcheckpoint: Vollprojekt-ZIP, Binärpatch, Manifest und History-Bundle](https://github.com/ManuEtt/Dnd/actions/runs/40708407065/artifacts/12826680612)
+- [Main-Android-ARM64-Alpha (Debug-Testsignatur)](https://github.com/ManuEtt/Dnd/actions/runs/40708407065/artifacts/12826535931)
+
+Das [Inventar](BRANCH_MIGRATION_20261028_INVENTORY.json) führt die einzelnen
+Ausgangsköpfe, Ancestry und Archiv-/Löschbelege. Alle 27 Ursprungsrefs des
+Ausgangsbundles wurden unabhängig wiederhergestellt und mit Manifest verglichen;
+`git fsck --full --strict` ist erfolgreich. Dokumente vor dieser Konsolidierung
+bleiben bytegetreu mit SHA256/Git-Blob-Manifest erhalten.
+
+**Fortsetzung:** Heilige-Symbol-Katalogwahl für Kleriker/Paladin mit typisiertem
+Inventar und Klassenbeleg; alte `startingClassChoice`-Version1 ohne neue Wahl
+muss lesbar und historisch unbestätigt bleiben. Keine erneute Gold-/Paketvergabe.
+[Konkrete Akzeptanzkriterien](CODEX_CHECKPOINT.md).
+
+Die nachstehende Integrationschronik ist historisch und dokumentiert auch die
+zwischenzeitlich laufenden/abgebrochenen Prüfungen. Aktuell gilt dieser Abschlussstand.
+
+---
+
 # Branch-Migration am 28.10.2026
 
 Würfelraunen **0.8.46+96**, Arbeitsbranch `integration/all-branches-20261028`.
@@ -100,3 +136,33 @@ dem CI-Artefakt anhand der dokumentierten SHAs wiederherstellbar. Bei PR-/Main-M
 ist der erste Elterncommit die Patchbasis; im Root-Commit-Fall der Commit selbst.
 Diese Verpackungsänderung ändert keine App-/Backend-/SQLite-Daten und erfordert eine
 neue finale CI am PR-HEAD. Die finale Downloadabnahme bleibt bis dahin offen.
+
+## Verifizierte Main-Artefakte und Bereinigung
+
+Der tatsächlich heruntergeladene Main-Quellcheckpoint enthält **1.228 Dateien**;
+alle SHA256-Werte und Dateimodi stimmen mit dem Manifest und dem Alpha-Quellpaket
+überein. Der Binärpatch wurde tatsächlich gegen
+`f9d68a97f35799e50881e9c6992efaed807e6301` angewendet und das Ergebnis vollständig verglichen.
+Das History-Bundle wurde isoliert wiederhergestellt; `git fsck --full --strict`
+und die Ancestry-Prüfung von **30 Ursprungs-/Integrations-/Main-Köpfen** sind erfolgreich.
+
+| Datei | SHA256 |
+| --- | --- |
+| Main-Vollprojekt-ZIP | `912ca182f3bb24d77e599881288ca79ad5130bbe20682baa7b175a29f5b13196` |
+| Main-Binärpatch | `5b83bb0d8f20d443bba56ae496f7530d966a80431b78d3a9bf46a95b37ca9099` |
+| ARM64-Alpha-APK | `3f77e31663a154df9b5ff6e0549b7f4b050316101d44e93654c17457637c7c44` |
+
+Die APK enthält ausschließlich `arm64-v8a`; die v2-Signatur mit Debug-Testschlüssel
+ist geprüft. Dies ist keine produktive Signierung und kein realer Gerätetest.
+[Cleanup-Lauf 40710914533](https://github.com/ManuEtt/Dnd/actions/runs/40710914533)
+ist erfolgreich. Der Abschlussbeleg von `2026-10-28T14:59:26.197499+00:00` bestätigt
+alle 28 alten Branches: Remote-Ref fehlt, Archivtag zeigt exakt auf den ursprünglichen
+Kopf, Kopf ist Vorfahr des geprüften Main. Main und der neue aktive Hexenmeister-Branch
+blieben erhalten. Dessen separat beobachteter Kopf ist `47cb207e99eeba0af3308de2b88c19f8357b0808`
+([PR #352](https://github.com/ManuEtt/Dnd/pull/352)); vor weiterer Arbeit erneut live prüfen.
+
+Dieser anschließende Dokumentationsabschluss hat die Projekt-/Importgrenzenprüfung,
+195 Python-Tests und die unveränderte 1.419-/9-SRD-Inventur bestanden. Alle getrackten
+Dateien unter `app/`, `backend/`, `scripts/` und `.github/` sind bytegleich mit
+`6576d2fc742f000bacdd1c105282bc9e3282ae7e`. Es wurde keine neue APK für den Dokumentations-Commit erzeugt und keine
+zusätzliche Produkt-CI daraus behauptet.
