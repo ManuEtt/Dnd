@@ -850,13 +850,15 @@ class _AbilitiesSection extends StatelessWidget {
                     ),
                 if (onFontOfInspiration != null &&
                     ClassResourceRules.level(hero, 'Barde') >= 5 &&
-                    (hero.spentClassResources['bardicInspiration'] ?? 0) > 0) ...[
+                    (hero.spentClassResources['bardicInspiration'] ?? 0) >
+                        0) ...[
                   const SizedBox(height: 9),
                   OutlinedButton.icon(
                     key: const ValueKey('bard-font-action'),
-                    onPressed: SpellcastingRules.availableSlots(
-                                  hero,
-                                ).values.any((available) => available > 0) ||
+                    onPressed:
+                        SpellcastingRules.availableSlots(
+                              hero,
+                            ).values.any((available) => available > 0) ||
                             SpellcastingRules.availablePactSlots(hero) > 0
                         ? onFontOfInspiration
                         : null,
