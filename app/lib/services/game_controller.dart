@@ -162,13 +162,19 @@ class GameController extends ChangeNotifier {
     await _create(campaign);
   });
 
-  Future<void> acceptAdventure() => _run(() async {
-    final current = currentCampaign;
-    if (current == null) {
-      throw const FormatException('Keine Kampagne geöffnet.');
-    }
-    await _commit(engine.acceptAdventure(current));
-  });
+  Future<void> acceptAdventure({bool useUncannyMetabolism = false}) =>
+      _run(() async {
+        final current = currentCampaign;
+        if (current == null) {
+          throw const FormatException('Keine Kampagne geöffnet.');
+        }
+        await _commit(
+          engine.acceptAdventure(
+            current,
+            useUncannyMetabolism: useUncannyMetabolism,
+          ),
+        );
+      });
 
   Future<void> rejectAdventure() => _run(() async {
     final current = currentCampaign;
