@@ -8,6 +8,10 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:lebendiger_spielleiter/data/campaign_repository.dart';
 import 'package:lebendiger_spielleiter/data/sqlite_campaign_repository.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
+import 'package:lebendiger_spielleiter/domain/ability_generation.dart';
+import 'package:lebendiger_spielleiter/domain/starting_ability_origin.dart';
+import 'package:lebendiger_spielleiter/domain/srd_background_package.dart';
+import 'package:lebendiger_spielleiter/domain/srd_magic_initiate_choice.dart';
 import 'package:lebendiger_spielleiter/domain/starting_class_choice.dart';
 import 'package:lebendiger_spielleiter/domain/starting_equipment_import.dart';
 import 'package:lebendiger_spielleiter/services/game_controller.dart';
@@ -107,6 +111,133 @@ void main() {
     await repository.close();
     await directory.delete(recursive: true);
   });
+
+  test(
+    'Editor-CAS bewahrt Klassen-, Attribut- und Talentbelege ohne erneute Startgaben',
+    () async {
+      final abilityOrigin = StartingAbilityOrigin.confirmed(
+        method: 'standardArray',
+        baseScores: const {
+          'strength': 15,
+          'dexterity': 14,
+          'constitution': 13,
+          'intelligence': 12,
+          'wisdom': 10,
+          'charisma': 8,
+        },
+        background: 'Weiser',
+        increases: const {'intelligence': 2, 'constitution': 1},
+      );
+      final featChoice = SrdMagicInitiateChoice(
+        background: SrdBackground.sage,
+        cantrips: const ['Fire Bolt', 'Light'],
+        levelOneSpell: 'Magic Missile',
+        castingAbility: 'intelligence',
+      );
+      final backgroundChoice = SrdBackgroundPackageChoice(
+        background: SrdBackground.sage,
+        takeGold: true,
+      );
+      final hero = backgroundChoice
+          .applyTo(
+            _confirmedHero(takeGold: false).copyWith(
+              background: 'Weiser',
+              abilities: abilityOrigin.startingScores,
+              startingAbilityOrigin: abilityOrigin,
+              hitPoints: 14,
+              maxHitPoints: 14,
+            ),
+            nextId: () =>
+                throw StateError('The selected gold option has no items.'),
+          )
+          .copyWith(startingMagicInitiate: featChoice);
+      expect(hero.gold, 65);
+      expect(hero.inventory, hasLength(3));
+      expect(hero.spells, isEmpty);
+      await controller.newCampaign(hero);
+      expect(controller.error, isNull);
+      await restart();
+      final opened = controller.currentCampaign!;
+      expect(opened.hero.toJson(), hero.toJson());
+      expect(
+        opened.hero.startingAbilityOrigin!.toJson(),
+        abilityOrigin.toJson(),
+      );
+      expect(opened.hero.startingMagicInitiate!.toJson(), featChoice.toJson());
+      final other = await SqliteCampaignRepository.open(
+        factory: databaseFactoryFfi,
+        path: databasePath,
+        singleInstance: false,
+      );
+      try {
+        // Another writer confirms a purchase/sale after this editor opened.
+        final winner = opened.copyWith(
+          revision: opened.revision + 1,
+          hero: opened.hero.copyWith(
+            gold: 4,
+            inventory: opened.hero.inventory.skip(1).toList(),
+          ),
+        );
+        await other.saveCampaign(winner, expectedRevision: opened.revision);
+        final beforeRejectedSave = await tables();
+        await controller.saveHero(
+          opened.hero.copyWith(backstory: 'Veralteter Entwurf'),
+          expectedCampaignId: opened.id,
+          expectedRevision: opened.revision,
+        );
+        expect(controller.error, contains('geändert'));
+        expect(await tables(), beforeRejectedSave);
+        expect((await other.getCampaign(opened.id))!.toJson(), winner.toJson());
+      } finally {
+        await other.close();
+      }
+      await restart();
+      final current = controller.currentCampaign!;
+      expect(
+        current.hero.startingAbilityOrigin!.toJson(),
+        abilityOrigin.toJson(),
+      );
+      expect(current.hero.startingMagicInitiate!.toJson(), featChoice.toJson());
+      expect(current.hero.abilities, abilityOrigin.startingScores);
+      expect(current.hero.spells, isEmpty);
+      expect(current.hero.gold, 4);
+      expect(current.hero.inventory, hasLength(2));
+      expect(
+        current.hero.startingClassChoice!.toJson(),
+        hero.startingClassChoice!.toJson(),
+      );
+      await controller.saveHero(
+        current.hero.copyWith(backstory: 'Frisch bestätigte Vorgeschichte'),
+        expectedCampaignId: current.id,
+        expectedRevision: current.revision,
+      );
+      expect(controller.error, isNull);
+      expect(controller.currentCampaign!.hero.gold, 4);
+      expect(
+        controller.currentCampaign!.hero.startingAbilityOrigin!.toJson(),
+        abilityOrigin.toJson(),
+      );
+      expect(
+        controller.currentCampaign!.hero.startingMagicInitiate!.toJson(),
+        featChoice.toJson(),
+      );
+      expect(
+        controller.currentCampaign!.hero.abilities,
+        abilityOrigin.startingScores,
+      );
+      expect(controller.currentCampaign!.hero.spells, isEmpty);
+      expect(
+        controller.currentCampaign!.hero.inventory
+            .map((item) => item.toJson())
+            .toList(),
+        current.hero.inventory.map((item) => item.toJson()).toList(),
+      );
+      expect(
+        controller.currentCampaign!.hero.startingClassChoice!.toJson(),
+        hero.startingClassChoice!.toJson(),
+      );
+    },
+  );
 
   test(
     'Klassenstartnachweis überlebt Archiv, Revision, Neustart und beide JSON-Importe',

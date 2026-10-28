@@ -1,3 +1,29 @@
+## 28.10.2026 – Gemeinsame lokale Abnahme bestanden
+
+Quellstand `4f03b7880c36ca225325c87ec9f2c56e0a93dccd` ist lokal vollständig geprüft:
+**2.185 Flutter-, 195 Python-, 72 Backend- und zwölf native Android-Tests bestanden**;
+500 Dart-Dateien unverändert formatiert, Analyzer ohne Befund, Backend-Build und
+Android-Debug-APK erfolgreich. [PR #351](https://github.com/ManuEtt/Dnd/pull/351).
+Der erste PR-CI-Lauf wird durch die abschließende CI-Artefaktverbesserung ersetzt:
+Der Quell-Checkpoint enthält nun zusätzlich einen tatsächlich angewendeten/geprüften
+Binärpatch mit expliziter Basis, Dateimanifest und vollständiges Git-Bundle.
+Die neue exakte PR- und anschließende Main-CI bleiben bis zum tatsächlichen Erfolg offen.
+Keine App-/Regel-/Speichercodeänderung nach dieser lokalen Abnahme; SQLite3/JSON1 unverändert.
+
+---
+
+# 28.10.2026 – Gemeinsame Branch-Migration / 0.8.46+96
+
+Arbeitsbranch `integration/all-branches-20261028`; Ausgangs-Main `dd0c2e94`, inzwischen Main `f9d68a97` enthalten. Alle 26 ursprünglichen Nebenbranch-Köpfe plus ein paralleler Integrationsbranch sind Vorfahren. Originale vorab in geprüftem Bundle gesichert. **Kein Branch wurde von diesem Durchlauf vor der gemeinsamen Abnahme gelöscht.**
+
+**IMPLEMENTIERT:** Charakterpakete #297/#317/#319/#324/#330, Klassenmechaniken #313/#332/#336/#339/#340, Story-/Material-/Sprunghistorien, geschützte Bereinigung und Importgrenzen/Buttonsemantik gemeinsam integriert. Altarchiv-CAS tatsächlich reproduziert und korrigiert; Barden-Dialog bei großer Schrift repariert. **GETESTET:** Teilpakete und Legacy-SQLite-Regressionen; gemeinsame Vollsuite auf korrigiertem Stand läuft anschließend. Früher Vollversuch `300f7be` mit143 bewusst ersetzt, kein voller Erfolg. **NICHT GETESTET:** finale Gesamt-PR-/Main-CI und Android-Build bis zum tatsächlichen Nachweis; reale Geräteabnahme/Produktivsignierung offen. **BLOCKIERT:** kein reales Gerät. **NOCH NICHT IMPLEMENTIERT:** vollständiger Wizard/SRD; Talent- und Würfelbelege werden nicht als vollständige Wirkungsautomatik ausgegeben.
+
+SQLite3 / Kampagnen-JSON1 unverändert. Hauptbericht und konkrete Wiederaufnahme: [BRANCH_MIGRATION_20261028.md](BRANCH_MIGRATION_20261028.md). Logs/Quell-ZIPs/Patches/Bundle: `/workspace/artifacts/branch-migration-20261028/` und `/workspace/validation/20261028-migration-*`. Finalen Commit und CI-Status am tatsächlichen PR prüfen; ältere Einträge darunter sind historische Momentaufnahmen.
+
+**Genau nächster Schritt:** korrigierte gemeinsame Suite und Android/native Prüfungen abschließen, finalen eigenen PR prüfen und regulär nach Main mergen, Main-CI abwarten, dann nur archivierte unveränderte enthaltene Nebenbranches löschen. Danach explizite Kleriker-/Paladin-Symbolwahl im vorhandenen Assistenten ergänzen.
+
+---
+
 ## 27.10.2026 – Chat B: Replay an bestätigte Sitzungsidentität binden
 
 - **Ausgangs-main:** `96001353f2b90f293fbdade934e78b7b8281e965`; **Branch:** `fix/chat-b/story-replay-session-identity-20261027`. Dieser Eintrag betrifft ausschließlich die Story-Replay-Funktion und ihre Regressionen.
@@ -43,6 +69,19 @@ Details unter [Chat-D-Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
 
 ---
 
+# Charaktererstellung – gemeinsamer Stufe-1-Startprüfer (27.10.2026)
+
+- **Repository-Basis:** `main` `ff245cc253194cd0858385d535ae7b2c9132bb06`; Branch `feat/character-start-values-all-classes-20261027`.
+- **Beobachtete Lücke:** `SrdClassSelectionDialog` erzwang valide Start-TP/Starterkit bisher nur beim Kämpfer. Elf andere Klassen konnten die Klassenwahl ohne den betreffenden Startzustand übernehmen.
+- **Implementiert:** eigene regelnahe `SrdFirstClassStartValidation`, UI-Sperre für sämtliche zwölf Neucharakterklassen, erzwungene bestätigte Start-TP-Übernahme und ausdrückliche Ausrüstung/Goldwahl. Bestehende Charaktere unverändert; Fighter-Sonderwahlen weiterhin verpflichtend.
+- **Tests:** `app/test/srd_first_class_start_validation_test.dart` (alle Klassen, ungültige Werte, Mehrfachvergabe und Altcharakter) und ergänzter Waldläufer-End-to-End-Editor-Test. Neu eingefügt; vollständige CI auf finalem PR-HEAD und Realgerät noch offen.
+- **Parallelität:** Kein Eingriff in die neuen Zauberauswahl- und Audit-Branches #317 und #318; vor dem Merge deren aktuelle Zustände sowie aktualisiertes `main` prüfen.
+- **Nicht abgeschlossen:** sämtliche weiteren Pflichtentscheidungen der Klassen, SRD-Herkunftstalente, Speziesvarianten, Zauberlisten, vollwertiger Wizard und persistenter Entwurf; Starterkit-Wechsel innerhalb eines noch nicht bestätigten Editors weiter absichern.
+- **Nächster Schritt:** auf exaktem PR-HEAD Format/Flutter/Android-GitHub-CI prüfen und ggf. reparieren; danach Klassenwahl-/Kitänderung im ungespeicherten Entwurf transaktional austauschen, damit keine Startgegenstände einer früheren Klassenauswahl verbleiben.
+- **Quelle:** [SRD 5.2.1](https://www.dndbeyond.com/srd), CC BY 4.0. Keine kostenpflichtigen APIs, kein Force-Push, kein Main-Direktcommit.
+
+---
+
 # Chat D D-014 – Doppelte Branch-Bereinigung und 404-Rennen beseitigen (28.10.2026)
 
 - **Ausgangs-main:** `571edec9455fb32e4991432953c9a2479a6fffb2`; **Branch:** `fix/chat-d/disable-legacy-cleanup-20261028`; [PR #329](https://github.com/ManuEtt/Dnd/pull/329) (reviewbereit).
@@ -85,6 +124,17 @@ Details unter [Chat-D-Checkpoint](parallel/CHAT_D_CHECKPOINT.md).
 - [Chat-B-Checkpoint](parallel/CHAT_B_CHECKPOINT.md), ältere Einträge bleiben erhalten.
 
 ---
+
+## 28.10.2026 – Sicherer Charaktereditor auf fortgeschriebenem Main
+
+- **Quell-PR #330:** [Revisionssichere Bearbeitung](https://github.com/ManuEtt/Dnd/pull/330); Ausgangs-HEAD `76d5daa` mit kompletter erfolgreicher [Android-/Flutter-CI](https://github.com/ManuEtt/Dnd/actions/runs/40631254745).
+- **Integration:** Merge-Commit `8450cfc36574da6a688852514ea9ace52f79d4db` übernimmt `main` `3bdc3586` mitsamt SQLite-V3-/NPC-Migrationen und weiteren parallel integrierten Änderungen. Keine veralteten ganzen Dateien kopiert.
+- **Funktion:** feste Kampagnen-ID/Revision beim Öffnen des Editors; transaktionaler Vergleich der ursprünglichen JSON-Fassung für eigenständige Archivfiguren; sichere Ablehnung einer Löschung, Doppelanlage oder Fremdbearbeitung.
+- **Neue Tests:** sechs Fälle in `app/test/character_editor_stale_save_test.dart` mit zwei unabhängigen SQLite-Verbindungen und Neustart.
+- **CI:** Ausgangs-HEAD erfolgreich; auf diesem kombinierten Commit noch ausstehend.
+- **Parallel:** PR #319 und #324 für Klassenstartwerte bleiben getrennt; ihre Änderungen nicht dupliziert.
+- **Grenzen:** keine echte Geräte-/TalkBack-Abnahme; weiterhin kein vollständiger SRD-Wizard und kein persistierter unbestätigter Charakterentwurf.
+- [Details](CHARACTER_EDITOR_REVISION_20261028.md).
 
 # Chat B – isolierte NPC-Outbox-Statusanzeige (27.10.2026)
 

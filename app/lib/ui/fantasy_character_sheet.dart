@@ -6,8 +6,11 @@ import '../domain/class_feature_resources.dart';
 import '../domain/class_resource_rules.dart';
 import '../domain/srd_ranger_feral_senses_rules.dart';
 import '../domain/srd_monk_slow_fall_rules.dart';
+import '../domain/srd_evasion_rules.dart';
 import '../domain/srd_class_feature_catalog.dart';
 import '../domain/srd_class_automation.dart';
+import '../domain/srd_bard_font_of_inspiration.dart';
+import 'srd_bard_font_of_inspiration_dialog.dart';
 import '../domain/models.dart';
 import '../domain/multiclass_rules.dart';
 import '../domain/rest_rules.dart';
@@ -21,6 +24,7 @@ import 'fantasy_buttons.dart';
 import 'fantasy_character_overview.dart';
 import 'fantasy_character_ornaments.dart';
 import 'character_portrait_picker.dart';
+import 'starting_ability_origin_panel.dart';
 
 // A read-only presentation of the actual, confirmed character data. No state,
 // rule changes, generated portrait, or assumed missing character values.
@@ -36,11 +40,13 @@ class CharacterSheetPage extends StatefulWidget {
     required this.hero,
     this.onEdit,
     this.onRoll,
+    this.onFontOfInspiration,
   });
 
   final HeroCharacter hero;
   final VoidCallback? onEdit;
   final VoidCallback? onRoll;
+  final Future<bool> Function(SrdBardFontProposal)? onFontOfInspiration;
 
   @override
   State<CharacterSheetPage> createState() => _CharacterSheetPageState();
@@ -101,6 +107,27 @@ class _CharacterSheetPageState extends State<CharacterSheetPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _convertBardInspiration() async {
+    final callback = widget.onFontOfInspiration;
+    if (callback == null) return;
+    final proposal = await showBardFontOfInspirationDialog(
+      context,
+      widget.hero,
+    );
+    if (!mounted || proposal == null) return;
+    final accepted = await callback(proposal);
+    if (!mounted) return;
+    if (accepted) {
+      Navigator.of(context).pop(); // Reload the saved character on next open.
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Umwandlung nicht gespeichert. Spielstand prüfen.'),
+        ),
+      );
+    }
   }
 
   void _rollFromSheet() {
@@ -211,13 +238,23 @@ class _CharacterSheetPageState extends State<CharacterSheetPage> {
                 _PassivePerceptionStrip(hero: hero),
                 const SizedBox(height: 16),
                 FantasyCharacterOverview(hero: hero),
+                if (hero.startingAbilityOrigin != null) ...[
+                  const SizedBox(height: 12),
+                  StartingAbilityOriginPanel(hero: hero),
+                ],
                 const SizedBox(height: 20),
                 _SectionNavigation(
                   selected: _section,
                   onSelected: (index) => setState(() => _section = index),
                 ),
                 const SizedBox(height: 24),
-                if (_section == 0) _AbilitiesSection(hero: hero),
+                if (_section == 0)
+                  _AbilitiesSection(
+                    hero: hero,
+                    onFontOfInspiration: widget.onFontOfInspiration == null
+                        ? null
+                        : _convertBardInspiration,
+                  ),
                 if (_section == 1) _ConditionsSection(hero: hero),
                 if (_section == 2) _DefensesSection(hero: hero),
               ],
@@ -733,8 +770,9 @@ String _meters(double? speed, {String unknown = '–'}) {
 }
 
 class _AbilitiesSection extends StatelessWidget {
-  const _AbilitiesSection({required this.hero});
+  const _AbilitiesSection({required this.hero, this.onFontOfInspiration});
   final HeroCharacter hero;
+  final VoidCallback? onFontOfInspiration;
 
   @override
   Widget build(BuildContext context) {
@@ -816,6 +854,24 @@ class _AbilitiesSection extends StatelessWidget {
                       '${ClassResourceRules.maximum(hero, id)}',
                       style: const TextStyle(color: _ivory),
                     ),
+                if (onFontOfInspiration != null &&
+                    ClassResourceRules.level(hero, 'Barde') >= 5 &&
+                    (hero.spentClassResources['bardicInspiration'] ?? 0) >
+                        0) ...[
+                  const SizedBox(height: 9),
+                  OutlinedButton.icon(
+                    key: const ValueKey('bard-font-action'),
+                    onPressed:
+                        SpellcastingRules.availableSlots(
+                              hero,
+                            ).values.any((available) => available > 0) ||
+                            SpellcastingRules.availablePactSlots(hero) > 0
+                        ? onFontOfInspiration
+                        : null,
+                    icon: const Icon(Icons.autorenew_outlined),
+                    label: const Text('Inspiration durch Zauberplatz erneuern'),
+                  ),
+                ],
                 const Text(
                   'Verbrauch wird nur über bestätigte Regelaktionen '
                   'gespeichert; besondere Effekte brauchen eine eigene Prüfung.',
@@ -1119,6 +1175,12 @@ class _DefensesSection extends StatelessWidget {
             label: 'Unbeugsam (Rettungswürfe)',
             value:
                 '${ClassResourceRules.remaining(hero, 'indomitable')} / ${ClassResourceRules.maximum(hero, 'indomitable')}',
+          ),
+        if (SrdEvasionRules.unlocked(hero))
+          const _DetailRow(
+            icon: Icons.shield_outlined,
+            label: 'Entrinnen (Evasion)',
+            value: 'GE-Rettung: Erfolg 0 Schaden, Fehlschlag halber Schaden',
           ),
         if (SrdMonkSlowFallRules.maximumReduction(hero) != null)
           _DetailRow(

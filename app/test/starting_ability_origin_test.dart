@@ -80,6 +80,18 @@ void main() {
       increases: {'dexterity': 1, 'constitution': 1, 'intelligence': 1},
     );
     expect(point.startingScores['dexterity'], 16);
+    expect(point.rolledScores, isEmpty);
+    // The standard-array numbers also form a valid 27-point purchase.
+    // Their method cannot be inferred from the resulting values alone.
+    expect(
+      StartingAbilityOrigin.confirmed(
+        method: 'pointBuy',
+        baseScores: original,
+        background: 'Soldat',
+        increases: {'strength': 2, 'constitution': 1},
+      ).startingScores,
+      soldier().startingScores,
+    );
     expect(
       StartingAbilityOrigin.fromJson(point.toJson()).toJson(),
       point.toJson(),
@@ -106,6 +118,8 @@ void main() {
       ],
     );
     expect(random.startingScores['strength'], 19);
+    expect(random.rolledScores, [18, 15, 12, 9, 6, 3]);
+    expect(() => random.rolledScores[0] = 1, throwsUnsupportedError);
     expect(
       StartingAbilityOrigin.fromJson(random.toJson()).toJson(),
       random.toJson(),
@@ -117,6 +131,8 @@ void main() {
     final good = soldier().toJson();
     final malformed = <Map<String, dynamic>>[
       {...good, 'version': 2},
+      {...good, 'version': 1.0},
+      {...good, 'version': '1'},
       {...good, 'method': 'dice-cheat'},
       {
         ...good,
@@ -141,7 +157,7 @@ void main() {
       {
         ...good,
         'method': 'pointBuy',
-        'baseScores': {...original, 'strength': 16},
+        'baseScores': {for (final key in original.keys) key: 15},
       },
     ];
     for (final entry in malformed) {

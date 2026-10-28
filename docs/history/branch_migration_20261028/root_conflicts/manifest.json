@@ -1,0 +1,44 @@
+[
+  {
+    "commit": "8b32e1d5cca1f84c16b391b78fd8829be0d721e0",
+    "path": "README.md",
+    "stage": 1,
+    "saved": "docs/history/branch_migration_20261028/root_conflicts/8b32e1d5cca1/1/README.md",
+    "sha256": "2b8f3343acb98b7e5c8facd207494ff240c5c19ff9ac40cda9e577038f2ba17d"
+  },
+  {
+    "commit": "8b32e1d5cca1f84c16b391b78fd8829be0d721e0",
+    "path": "README.md",
+    "stage": 2,
+    "saved": "docs/history/branch_migration_20261028/root_conflicts/8b32e1d5cca1/2/README.md",
+    "sha256": "0c6dfd6b1e790750fdb6bc5e4cd54a6afb71a4706dd84673bd7717520eebc53f"
+  },
+  {
+    "commit": "8b32e1d5cca1f84c16b391b78fd8829be0d721e0",
+    "path": "README.md",
+    "stage": 3,
+    "saved": "docs/history/branch_migration_20261028/root_conflicts/8b32e1d5cca1/3/README.md",
+    "sha256": "1fc4fc727697736437c395c7f5280fcf29d19f86866ecef024d515f38ebe4cd3"
+  },
+  {
+    "commit": "8b32e1d5cca1f84c16b391b78fd8829be0d721e0",
+    "path": "docs/CODEX_CHECKPOINT.md",
+    "stage": 1,
+    "saved": "docs/history/branch_migration_20261028/root_conflicts/8b32e1d5cca1/1/docs/CODEX_CHECKPOINT.md",
+    "sha256": "8a2f1eaa26bcb32bdc4851898b99f0fd5387bb8b4f2d4a6e33bb2941cc950170"
+  },
+  {
+    "commit": "8b32e1d5cca1f84c16b391b78fd8829be0d721e0",
+    "path": "docs/CODEX_CHECKPOINT.md",
+    "stage": 2,
+    "saved": "docs/history/branch_migration_20261028/root_conflicts/8b32e1d5cca1/2/docs/CODEX_CHECKPOINT.md",
+    "sha256": "a979cc336b9973135070521aba1cc14a0640fa1d2446f9da9b8366515750ef0f"
+  },
+  {
+    "commit": "8b32e1d5cca1f84c16b391b78fd8829be0d721e0",
+    "path": "docs/CODEX_CHECKPOINT.md",
+    "stage": 3,
+    "saved": "docs/history/branch_migration_20261028/root_conflicts/8b32e1d5cca1/3/docs/CODEX_CHECKPOINT.md",
+    "sha256": "25d7c87f9fd4c78c0e5b8a184d30891116da2e6ace75021348f63db7175e4950"
+  }
+]

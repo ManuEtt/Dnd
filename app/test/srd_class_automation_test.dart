@@ -78,6 +78,11 @@ void main() {
       fighter.singleWhere((e) => e.feature.name == 'Improved Critical').status,
       SrdFeatureRuntimeStatus.computed,
     );
+    final bard = SrdClassAutomation.unlocked(character('Barde', 5));
+    expect(
+      bard.singleWhere((e) => e.feature.name == 'Font of Inspiration').status,
+      SrdFeatureRuntimeStatus.confirmedAction,
+    );
     final warlock = SrdClassAutomation.unlocked(character('Hexenmeister', 1));
     expect(
       warlock

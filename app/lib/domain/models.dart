@@ -2,6 +2,7 @@ import 'srd_equipment_catalog.dart';
 import 'srd_savage_attacker_pending_hit.dart';
 import 'starting_ability_origin.dart';
 import 'starting_class_choice.dart';
+import 'srd_magic_initiate_choice.dart';
 import 'srd_background_package.dart';
 import 'inventory_item_stats.dart';
 export 'inventory_item_stats.dart';
@@ -169,6 +170,7 @@ class HeroCharacter {
     this.startingAbilityOrigin,
     this.startingClassChoice,
     this.startingBackgroundPackage,
+    this.startingMagicInitiate,
     this.hitPoints,
     this.maxHitPoints,
     this.temporaryHitPoints = 0,
@@ -252,6 +254,9 @@ class HeroCharacter {
 
   /// Explicit one-time initial background gear/tool/skill choice.
   final SrdBackgroundPackageChoice? startingBackgroundPackage;
+
+  /// Confirmed origin-feat choices only; no casting rights are inferred.
+  final SrdMagicInitiateChoice? startingMagicInitiate;
   final int? hitPoints, maxHitPoints, armorClass, speed;
 
   static int _readSpeedRemainder(dynamic raw) {
@@ -341,6 +346,7 @@ class HeroCharacter {
     Object? startingAbilityOrigin = _unchanged,
     Object? startingClassChoice = _unchanged,
     Object? startingBackgroundPackage = _unchanged,
+    Object? startingMagicInitiate = _unchanged,
     Object? hitPoints = _unchanged,
     Object? maxHitPoints = _unchanged,
     int? temporaryHitPoints,
@@ -400,6 +406,9 @@ class HeroCharacter {
     startingBackgroundPackage: identical(startingBackgroundPackage, _unchanged)
         ? this.startingBackgroundPackage
         : startingBackgroundPackage as SrdBackgroundPackageChoice?,
+    startingMagicInitiate: identical(startingMagicInitiate, _unchanged)
+        ? this.startingMagicInitiate
+        : startingMagicInitiate as SrdMagicInitiateChoice?,
     hitPoints: identical(hitPoints, _unchanged)
         ? this.hitPoints
         : hitPoints as int?,
@@ -469,6 +478,8 @@ class HeroCharacter {
       'startingClassChoice': startingClassChoice!.toJson(),
     if (startingBackgroundPackage != null)
       'startingBackgroundPackage': startingBackgroundPackage!.toJson(),
+    if (startingMagicInitiate != null)
+      'startingMagicInitiate': startingMagicInitiate!.toJson(),
     'hitPoints': hitPoints,
     'maxHitPoints': maxHitPoints,
     if (temporaryHitPoints > 0) 'temporaryHitPoints': temporaryHitPoints,
@@ -784,6 +795,11 @@ class HeroCharacter {
           : SrdBackgroundPackageChoice.fromJson(
               _map(j['startingBackgroundPackage'], 'Hintergrundpaket'),
             ),
+      startingMagicInitiate: j['startingMagicInitiate'] == null
+          ? null
+          : SrdMagicInitiateChoice.fromJson(
+              _map(j['startingMagicInitiate'], 'Magieinitiierter'),
+            ),
       hitPoints: hp,
       maxHitPoints: maxHp,
       temporaryHitPoints: _int(
@@ -869,6 +885,16 @@ class HeroCharacter {
       ),
       unverifiedNotes: _strings(j['unverifiedNotes'], 'Ungeprüfte Angaben'),
     );
+    final feat = parsed.startingMagicInitiate;
+    final backgroundChoice = parsed.startingBackgroundPackage;
+    if (feat != null &&
+        (backgroundChoice == null ||
+            backgroundChoice.background != feat.background ||
+            parsed.background != feat.background.label)) {
+      throw const FormatException(
+        'Magieinitiierter ist nicht dem bestätigten Hintergrund zugeordnet.',
+      );
+    }
     // Reject forged/unavailable slots during import, before persisting any
     // partial campaign state. Existing saves without these fields stay valid.
     SpellcastingRules.availableSlots(parsed);

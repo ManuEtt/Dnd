@@ -31,6 +31,17 @@ unterhalb sind historische Entwicklungsstände, nicht neue Abnahmen.
 
 # Charaktererstellung – Arbeits- und Abnahmenachweis (NICHT vollständig)
 
+## 27.10.2026 – Gemeinsame Start-TP-/Ausrüstungsprüfung für alle zwölf Klassen (PR in Vorbereitung)
+
+**Regelquelle:** D&D SRD 5.2.1, *Character Creation* und *Classes*, CC BY 4.0, https://www.dndbeyond.com/srd.
+
+- Neue Stufe-1-Charaktere können die Klassenentscheidung nur nach einem gültigen KO-Wert und, wenn eine Klassen-Starterwahl offen ist, nach ausdrücklicher Wahl von Klassen-Ausrüstung oder Startgold übernehmen. Für alle zwölf Klassen wird W6/W8/W10/W12 + KO-Modifikator berechnet und nach Bestätigung vom vorhandenen Editor in die gespeicherten Start-TP-Felder übernommen.
+- Der Kämpfer behält seine zusätzlichen Pflichtentscheidungen (Kampfstil und drei Waffenmeisterschaften); die übrigen elf Klassen erhalten dadurch **noch keine** vollständige Klassenmerkmals-/Zauberauswahl.
+- Bereits bestehende Charaktere behalten die optionale, ausdrücklich bestätigte TP-Änderung; kein Backfill und keine SQLite-/JSON-Schemaänderung.
+- **Code:** `app/lib/domain/srd_first_class_start_validation.dart`, `app/lib/ui/srd_class_selection_dialog.dart`, vorhandene `starting_hit_points.dart` und `character_editor.dart`.
+- **Tests angelegt, noch nicht durch CI belegt:** zwölf parametrische Klassenfälle mit Pflichtkit und TP, unzulässige KO-Werte, Stufe > 1, bestehende Charaktere, doppelte Starterauswahl; Editor-Regression mit Waldläufer + 150-GM-Alternative.
+- **Offen:** vollständige spezies-/hintergrund-/klassen-/talent-/zauberabhängige Pflichtentscheidungen, bearbeitbarer persistenter Entwurf, Altspielstand-/Import-E2E, reale Android-/TalkBack-Abnahme, vollständige Integrations-CI. Siehe `CHARACTER_CREATION_COVERAGE.json`.
+
 ## 27.10.2026 – Zusammengeführtes Charakterpaket (Integrationsprüfung)
 
 Die Pakete #264/#272/#273/#275 stehen gemeinsam im Integrationskandidaten. Insbesondere ersetzt PR #275 im Akolythenpaket A den zuvor unbestimmten Symbol-Platzhalter durch eine explizite Wahl zwischen Amulett, Emblem und Reliquiar; Option B erteilt nur 50 GM. Die in den nachfolgenden historischen Einzelpaket-Abschnitten genannten **offenen Symbole und Provenienz** sind damit überholt. Vollständige Klassen-/Spezies-/Talentauswahl und echte Geräteabnahme sind weiterhin nicht belegt. [Integrationsbeleg](CHARACTER_STACK_INTEGRATION_20261027.md).

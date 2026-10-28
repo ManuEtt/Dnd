@@ -1,0 +1,199 @@
+diff --git a/README.md b/README.md
+index 657eef6e..ae609993 100644
+--- a/README.md
++++ b/README.md
+@@ -1,5 +1,10 @@
+ # Würfelraunen – Der lebendige Spielleiter
+ 
++### Chat D D-014: Bedingte Dart-Modulimporte ebenfalls prüfen
++
++Die Modulgrenzenprüfung schützt jetzt auch alternative URIs in `import`- und `export`-Direktiven einschließlich Kommentare zwischen den Direktivenbestandteilen, z. B. `if (dart.library.io)`: Damit können bedingte Imports nicht unbemerkt von der Regel- in die Storyschicht wechseln. Neun Python-Regressionen decken unerlaubte und erlaubte Varianten ab. Änderungen betreffen nur Entwicklungstests und statische Projektprüfungen, nicht die App-Speicherung. **Vollständige GitHub-CI für dieses Paket steht noch aus.**
++
++
+ ## Chat D – Sicherere Android-Alpha-Bündelung (27.10.2026)
+ 
+ Die ARM64-Release-Prüfung weist nun vor dem Dekomprimieren manipulierte APK-ZIP-Dateien mit zu vielen Mitgliedern, zu großer entpackter Gesamtsumme oder extremen Kompressionsverhältnissen zurück. Vier neue Regressionstests sichern diese Grenzen. Kein Einfluss auf D&D-Regeln, Story, App-Daten oder bestehende Spielstände. **Neue CI/Android-Abnahme des zugehörigen Chat-D-Branches ist noch offen**; vorherige erfolgreiche Builds beweisen diese Änderung nicht. [Detailcheckpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+diff --git a/docs/CODEX_CHECKPOINT.md b/docs/CODEX_CHECKPOINT.md
+index 2990e1c5..c7210d23 100644
+--- a/docs/CODEX_CHECKPOINT.md
++++ b/docs/CODEX_CHECKPOINT.md
+@@ -1,3 +1,9 @@
++## Chat D D-014 – Bedingte Import-/Exportvarianten abgesichert (27.10.2026)
++
++Basis-Main `8239f5e71ec6b229a2a0883500adaf431bb70087`, Branch `fix/chat-d/conditional-dart-boundaries-20261027`. Python-Grenzprüfer erfasst nun alle URI-Alternativen in Dart-`import`-/`export`-Direktiven mit `if (...)`, nicht nur den Default. Neun Regressionen testen plattformabhängige Story-/Regel-/Framework-Varianten und gültige bisherige Ausnahmen und Kommentare zwischen Direktivenbestandteilen. **IMPLEMENTIERT:** `scripts/check_domain_boundaries.py` und `scripts/tests/test_domain_boundaries.py`. **GETESTET:** isolierte lokale Regex-Stichprobe; die vollständige CI für diesen Branch ist noch nicht abgenommen. **BLOCKIERT/NICHT GETESTET:** finale PR-HEAD-CI, Live-Gerät; keine Auswirkungen auf Flutter-Spielcode, SQLite 2 oder JSON 1. **NÄCHSTER SCHRITT:** exakte PR-CI und Main-Konflikte prüfen, nach erfolgreichem Review integrieren. Details in `docs/parallel/CHAT_D_CHECKPOINT.md`.
++
++---
++
+ ## 27.10.2026 – Chat D D-013: sichere APK-ZIP-Metadaten vor Alpha-Bündelung
+ 
+ **Basis:** `main` `f9b2f72a4bf8e4216bf8baac60c7f92c4a8a997f`; Arbeitsbranch `fix/chat-d/alpha-apk-zipbomb-guard-20261027`; Produkt Würfelraunen `0.8.42+92`, SQLite 2 / Kampagnen-JSON 1.
+diff --git a/docs/parallel/CHAT_D_CHECKPOINT.md b/docs/parallel/CHAT_D_CHECKPOINT.md
+index 44e06f70..230625b1 100644
+--- a/docs/parallel/CHAT_D_CHECKPOINT.md
++++ b/docs/parallel/CHAT_D_CHECKPOINT.md
+@@ -1,3 +1,16 @@
++# Chat D D-014 – Bedingte Dart-Imports/Exports an Architekturgrenzen (27.10.2026)
++
++- **Basis-main:** `8239f5e71ec6b229a2a0883500adaf431bb70087`, Branch `fix/chat-d/conditional-dart-boundaries-20261027`.
++- **Ausgangsproblem:** `scripts/check_domain_boundaries.py` prüfte bei `import` und `export` nur die erste URI. Dart bietet `if (dart.library.io)` / `if (dart.library.html)` bedingte Dateivarianten, die je nach Plattform die Story-/Regelgrenze unbemerkt hätten überschreiten können.
++- **IMPLEMENTIERT:** Jede bedingte Datei-URI derselben Import-/Exportanweisung durchläuft dieselbe bestehende Story-/Regel- und Package-URI-Prüfung. Mehrere `if`-Alternativen, Zeilenumbrüche, Dart-Kommentare zwischen Direktivenbestandteilen und konfigurierte String-Vergleiche werden erfasst. Die eng erlaubten Story-Fassadenimports bleiben auf genau ihre bekannten relativen Pfade beschränkt. Framework-/Dart-Bibliotheken werden nach den vorhandenen Regeln behandelt.
++- **TESTS:** Neun Python-Regressionen für Domain→Story (relative/package URI), mehrfach bedingten Export, unveränderte Whitelist, Story→Dart-Plattform, Vergleichsbedingung, erlaubte Alternativen, Kommentare/Text ohne Importwirkung sowie bedingte Imports/Exports mit echten Block-/Zeilenkommentaren. Isolierte Regex-Stichprobe lokal ausgeführt; komplette Repository-Python- und Android-CI auf dem finalen Commit noch ausstehend.
++- **VERSIONEN:** Flutter-App, Backend, SRD-Regelcode, SQLite-Schema 2, Kampagnen-JSON-Schema 1 bleiben unverändert; keine Migration.
++- **KOORDINATION:** Bei Paketbeginn offene PRs #287–#312 geprüft. #311 (anderes Chat-D-Paket) bearbeitet `scripts/prepare_alpha_release.py` und dessen Tests, nicht die zwei hier geänderten Prüfdateien. README/zentraler Checkpoint nur additiv ändern und bei späteren Merges konsolidieren. Fremde Branches und PRs nicht bearbeiten.
++- **BLOCKIERT/UNGETESTET:** endgültige GitHub Actions auf PR-HEAD, echte Android-Installation und Integration nach Main. Externer Branch-Cleanup-Lauf auf Main war unabhängig hiervon fehlgeschlagen; kein Code dieses Pakets betroffen.
++- **NÄCHSTER SCHRITT:** PR-CI auf exakter SHA prüfen; gegebenenfalls nur eigenen Branch reparieren, anschließend aktuelle Main- und PR-Änderungen vergleichen.
++
++---
++
+ # Chat D D-013 – APK-ZIP-Bomb-Abwehr vor Alpha-Veröffentlichung (27.10.2026)
+ 
+ - **Ausgangs-main:** `f9b2f72a4bf8e4216bf8baac60c7f92c4a8a997f`, Branch `fix/chat-d/alpha-apk-zipbomb-guard-20261027`. Würfelraunen `0.8.42+92`, SQLite 2, Kampagnen-JSON 1 unverändert.
+diff --git a/scripts/check_domain_boundaries.py b/scripts/check_domain_boundaries.py
+index 918f7a0a..14853dd3 100644
+--- a/scripts/check_domain_boundaries.py
++++ b/scripts/check_domain_boundaries.py
+@@ -11,7 +11,24 @@
+ from pathlib import Path
+ 
+ ROOT = Path(__file__).resolve().parents[1]
+-IMPORT = re.compile(r"^\s*(?:import|export)\s+['\"]([^'\"]+)['\"]", re.M)
++# Dart configurable imports/exports can switch the URI per platform. Guard
++# *every* selectable URI, including when harmless comments separate tokens.
++# Keep quoted URIs intact; only tolerate whitespace and Dart comments at the
++# grammar's token boundaries, never extract strings from arbitrary code.
++_TRIVIA = r"(?:\s|/\*[\s\S]*?\*/|//[^\n]*\n)*"
++IMPORT = re.compile(
++    r"^[ \t]*(?:import|export)" + _TRIVIA
++    + r"['\"](?P<primary>[^'\"]+)['\"]"
++    + r"(?P<conditional>(?:" + _TRIVIA
++    + r"if" + _TRIVIA + r"\([^)]*\)" + _TRIVIA
++    + r"['\"][^'\"]+['\"]" + r")*)",
++    re.M,
++)
++CONDITIONAL_URI = re.compile(
++    r"\bif" + _TRIVIA + r"\([^)]*\)" + _TRIVIA
++    + r"['\"]([^'\"]+)['\"]"
++)
++
+ STORY_ALLOWED = {
+     "dart:convert",
+     "app/lib/domain/models.dart",
+@@ -50,7 +67,10 @@ def _package_target(uri: str) -> str | None:
+ 
+ def check_imports(relative_path: str, content: str) -> list[str]:
+     violations: list[str] = []
+-    sources = IMPORT.findall(content)
++    sources: list[str] = []
++    for directive in IMPORT.finditer(content):
++        sources.append(directive.group("primary"))
++        sources.extend(CONDITIONAL_URI.findall(directive.group("conditional")))
+     if relative_path.startswith("app/lib/story/"):
+         for uri in sources:
+             if uri.startswith("dart:"):
+diff --git a/scripts/tests/test_domain_boundaries.py b/scripts/tests/test_domain_boundaries.py
+index a8264bc2..a51292ba 100644
+--- a/scripts/tests/test_domain_boundaries.py
++++ b/scripts/tests/test_domain_boundaries.py
+@@ -131,5 +131,102 @@ def test_story_package_import_restriction_stays_strict(self):
+ 
+ 
+ 
++    def test_domain_conditional_import_rejects_story_relative_alternative(self):
++        source = (
++            "import 'models.dart'\n"
++            "    if (dart.library.io) '../story/story_campaign_engine.dart';"
++        )
++        self.assertEqual(
++            [
++                "app/lib/domain/rules.dart: rule module imports story "
++                "../story/story_campaign_engine.dart"
++            ],
++            check_imports("app/lib/domain/rules.dart", source),
++        )
++
++    def test_domain_conditional_export_checks_all_package_alternatives(self):
++        source = (
++            'export "package:lebendiger_spielleiter/domain/models.dart"\n'
++            '    if (dart.library.html) "package:flutter/foundation.dart"\n'
++            '    if (dart.library.io) '
++            '"package:lebendiger_spielleiter/story/story_api.dart";'
++        )
++        messages = check_imports("app/lib/domain/rules.dart", source)
++        self.assertEqual(1, len(messages))
++        self.assertIn("package:lebendiger_spielleiter/story/story_api.dart", messages[0])
++
++    def test_facade_whitelist_does_not_allow_new_conditional_story_import(self):
++        source = (
++            "import '../story/story_campaign_engine.dart'\n"
++            "    if (dart.library.io) '../story/story_rule_port.dart';"
++        )
++        self.assertEqual(
++            [
++                "app/lib/domain/game_engine.dart: rule module imports story "
++                "../story/story_rule_port.dart"
++            ],
++            check_imports("app/lib/domain/game_engine.dart", source),
++        )
++
++    def test_story_module_rejects_conditional_framework_import(self):
++        source = (
++            "import 'story_rule_boundary.dart'\n"
++            "    if (dart.library.io) 'dart:io';"
++        )
++        self.assertEqual(
++            [
++                "app/lib/story/story_campaign_engine.dart: forbidden platform "
++                "dependency dart:io"
++            ],
++            check_imports("app/lib/story/story_campaign_engine.dart", source),
++        )
++
++    def test_conditional_uri_with_string_config_value_is_inspected(self):
++        source = (
++            "import 'models.dart' if (dart.library.io == 'true') "
++            "'../story/story_rule_port.dart';"
++        )
++        self.assertEqual(
++            1, len(check_imports("app/lib/domain/rules.dart", source))
++        )
++
++    def test_allowed_conditional_domain_and_framework_imports_remain_valid(self):
++        source = (
++            "import 'models.dart'\n"
++            "    if (dart.library.io) 'package:lebendiger_spielleiter/domain/models.dart'\n"
++            "    if (dart.library.html) 'package:flutter/foundation.dart';"
++        )
++        self.assertEqual([], check_imports("app/lib/domain/rules.dart", source))
++
++    def test_non_directive_strings_do_not_create_false_positive(self):
++        source = (
++            "// import 'models.dart' if (dart.library.io) '../story/unsafe.dart';\n"
++            "final text = \"if (dart.library.io) '../story/unsafe.dart'\";"
++        )
++        self.assertEqual([], check_imports("app/lib/domain/rules.dart", source))
++
++
++    def test_conditional_import_with_block_comments_still_blocks_story(self):
++        source = (
++            "import /* safe comment */ 'models.dart' /* between */\n"
++            "    if /* platform */ (dart.library.io) /* before URI */\n"
++            "       '../story/story_rule_port.dart';"
++        )
++        messages = check_imports("app/lib/domain/rules.dart", source)
++        self.assertEqual(1, len(messages))
++        self.assertIn("../story/story_rule_port.dart", messages[0])
++
++    def test_conditional_export_with_line_comments_still_blocks_story(self):
++        source = (
++            "export 'models.dart' // default implementation\n"
++            "    if (dart.library.io) // platform implementation\n"
++            "       'package:lebendiger_spielleiter/story/story_api.dart';"
++        )
++        messages = check_imports("app/lib/domain/rules.dart", source)
++        self.assertEqual(1, len(messages))
++        self.assertIn("package:lebendiger_spielleiter/story/story_api.dart", messages[0])
++
++
++
+ if __name__ == "__main__":
+     unittest.main()

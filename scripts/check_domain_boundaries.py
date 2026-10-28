@@ -11,7 +11,24 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-IMPORT = re.compile(r"^\s*(?:import|export)\s+['\"]([^'\"]+)['\"]", re.M)
+# Dart configurable imports/exports can switch the URI per platform. Guard
+# *every* selectable URI, including when harmless comments separate tokens.
+# Keep quoted URIs intact; only tolerate whitespace and Dart comments at the
+# grammar's token boundaries, never extract strings from arbitrary code.
+_TRIVIA = r"(?:\s|/\*[\s\S]*?\*/|//[^\n]*\n)*"
+IMPORT = re.compile(
+    r"^[ \t]*(?:import|export)" + _TRIVIA
+    + r"['\"](?P<primary>[^'\"]+)['\"]"
+    + r"(?P<conditional>(?:" + _TRIVIA
+    + r"if" + _TRIVIA + r"\([^)]*\)" + _TRIVIA
+    + r"['\"][^'\"]+['\"]" + r")*)",
+    re.M,
+)
+CONDITIONAL_URI = re.compile(
+    r"\bif" + _TRIVIA + r"\([^)]*\)" + _TRIVIA
+    + r"['\"]([^'\"]+)['\"]"
+)
+
 STORY_ALLOWED = {
     "dart:convert",
     "app/lib/domain/models.dart",
@@ -50,7 +67,10 @@ def _package_target(uri: str) -> str | None:
 
 def check_imports(relative_path: str, content: str) -> list[str]:
     violations: list[str] = []
-    sources = IMPORT.findall(content)
+    sources: list[str] = []
+    for directive in IMPORT.finditer(content):
+        sources.append(directive.group("primary"))
+        sources.extend(CONDITIONAL_URI.findall(directive.group("conditional")))
     if relative_path.startswith("app/lib/story/"):
         for uri in sources:
             if uri.startswith("dart:"):

@@ -1,0 +1,434 @@
+{
+  "schema_version": 1,
+  "title": "Charaktererstellung SRD 5.2.1 – konservative Teilabdeckung",
+  "source_url": "https://www.dndbeyond.com/srd",
+  "source_section": "Character Creation, p. 21; Classes; Character Origins",
+  "license": "CC-BY-4.0",
+  "as_of": "2026-10-28",
+  "baseline_main_sha": "bf5999e98335c1da94b1eafbf2fc8088b392b6ef",
+  "pr": 319,
+  "coverage_complete": false,
+  "all_required_choices_covered": false,
+  "android_device_tested": false,
+  "ci_final_head_verified": false,
+  "existing_requirement_registers_unchanged": false,
+  "status_note": "Main bf5999e regulär integriert. 57 gezielte Tests, Analyse/Format und168Python bestanden. Vollständige letzte gemeinsame CI siehePR319; 019be0e davor nachweislich2007Flutter/168Python/72Backend. GesamteCharaktererstellung unvollständig.",
+  "requirements": [
+    {
+      "id": "CHAR-ABILITY-STANDARD-ARRAY",
+      "title": "Attribut-Standardsatz",
+      "status": "implemented_local_tests_passed_ci_pending",
+      "source": "SRD 5.2.1 p. 21; backgrounds p. 83",
+      "code": [
+        "app/lib/domain/ability_generation.dart"
+      ],
+      "ui": [
+        "app/lib/ui/ability_assignment_dialog.dart"
+      ],
+      "tests": [
+        "app/test/ability_generation_test.dart"
+      ],
+      "register_requirement_id": "RULE-CHARACTER-CREATION-ABILITY-SCORES"
+    },
+    {
+      "id": "CHAR-ABILITY-POINT-BUY",
+      "title": "Attribut-Punktekauf 27 Punkte",
+      "status": "implemented_local_tests_passed_ci_pending",
+      "source": "SRD 5.2.1 p. 21; backgrounds p. 83",
+      "code": [
+        "app/lib/domain/ability_generation.dart"
+      ],
+      "ui": [
+        "app/lib/ui/ability_assignment_dialog.dart"
+      ],
+      "tests": [
+        "app/test/ability_generation_test.dart"
+      ],
+      "register_requirement_id": "RULE-CHARACTER-CREATION-ABILITY-SCORES"
+    },
+    {
+      "id": "CHAR-ABILITY-RANDOM-4D6-DROP-LOWEST",
+      "title": "4W6, niedrigsten streichen, sechs Werte",
+      "status": "implemented_local_tests_passed_ci_pending",
+      "source": "SRD 5.2.1 p. 21; backgrounds p. 83",
+      "code": [
+        "app/lib/domain/ability_generation.dart"
+      ],
+      "ui": [
+        "app/lib/ui/ability_assignment_dialog.dart"
+      ],
+      "tests": [
+        "app/test/ability_random_generation_test.dart"
+      ],
+      "register_requirement_id": "RULE-CHARACTER-CREATION-ABILITY-SCORES"
+    },
+    {
+      "id": "CHAR-ABILITY-RANDOM-UI-CONFIRM",
+      "title": "Explizite Würfelwert-Zuordnung",
+      "status": "implemented_local_tests_passed_ci_pending",
+      "source": "SRD 5.2.1 p. 21; backgrounds p. 83",
+      "code": [
+        "app/lib/ui/ability_assignment_dialog.dart"
+      ],
+      "ui": [
+        "app/lib/ui/ability_assignment_dialog.dart"
+      ],
+      "tests": [
+        "app/test/ui_random_ability_assignment_test.dart"
+      ],
+      "register_requirement_id": "RULE-CHARACTER-CREATION-ABILITY-SCORES"
+    },
+    {
+      "id": "CHAR-ABILITY-SOURCE-PERSISTENCE",
+      "title": "Versionierte Anfangsattribute, Methode, Würfel und Hintergrundbonus über JSON/SQLite",
+      "status": "implemented_local_tests_passed_ci_pending",
+      "source": "SRD 5.2.1 p. 21; backgrounds p. 83",
+      "code": [
+        "app/lib/domain/starting_ability_origin.dart",
+        "app/lib/domain/models.dart"
+      ],
+      "ui": [
+        "app/lib/ui/ability_assignment_dialog.dart",
+        "app/lib/ui/character_editor.dart",
+        "app/lib/ui/starting_ability_origin_panel.dart"
+      ],
+      "tests": [
+        "app/test/starting_ability_origin_test.dart",
+        "app/test/ability_storage_integration_test.dart",
+        "app/test/ui_ability_assignment_test.dart",
+        "app/test/starting_ability_origin_panel_test.dart"
+      ],
+      "register_requirement_id": "RULE-CHARACTER-CREATION-ABILITY-SCORES"
+    },
+    {
+      "id": "CHAR-BACKGROUND-ALL-TRAITS",
+      "title": "Vier Hintergründe inklusive Übungen, Talent, Ausrüstung",
+      "status": "partial",
+      "source": "SRD 5.2.1",
+      "code": [
+        "app/lib/domain/ability_generation.dart"
+      ],
+      "ui": [],
+      "tests": []
+    },
+    {
+      "id": "CHAR-SPECIES-ALL-TRAITS",
+      "title": "Neun SRD-Spezies und rechtmäßig enthaltene Varianten",
+      "status": "unverified",
+      "source": "SRD 5.2.1",
+      "code": [
+        "app/lib/domain/srd_starting_combat_values.dart"
+      ],
+      "ui": [],
+      "tests": []
+    },
+    {
+      "id": "CHAR-CLASSES-ALL-START",
+      "title": "Zwölf Startklassen mit allen Entscheidungen",
+      "status": "partial",
+      "source": "SRD 5.2.1",
+      "code": [
+        "app/lib/domain/srd_character_classes.dart"
+      ],
+      "ui": [],
+      "tests": []
+    },
+    {
+      "id": "CHAR-ORIGIN-FEATS",
+      "title": "Herkunftstalente und Entscheidungen",
+      "status": "missing",
+      "source": "SRD 5.2.1",
+      "code": [],
+      "ui": [],
+      "tests": []
+    },
+    {
+      "id": "CHAR-CLASS-SPELL-CHOICES",
+      "title": "Vollständige gültige Startzauberentscheidungen",
+      "status": "partial",
+      "source": "SRD 5.2.1",
+      "code": [],
+      "ui": [],
+      "tests": []
+    },
+    {
+      "id": "CHAR-WIZARD-E2E",
+      "title": "Vollständig geführter Charakterassistent",
+      "status": "missing",
+      "source": "SRD 5.2.1",
+      "code": [
+        "app/lib/ui/character_editor.dart"
+      ],
+      "ui": [],
+      "tests": []
+    },
+    {
+      "id": "CHAR-BACKGROUND-PACKAGE-CHOICES",
+      "title": "Vier Herkunfts-Startpakete mit A/B-Ausrüstung, zwei Fertigkeiten und Werkzeugübungen",
+      "status": "implemented_ci_pending",
+      "source": "SRD 5.2.1 Character Origins / Character Backgrounds",
+      "code": [
+        "app/lib/domain/srd_background_package.dart",
+        "app/lib/domain/models.dart"
+      ],
+      "ui": [
+        "app/lib/ui/srd_background_package_dialog.dart",
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/srd_background_package_test.dart",
+        "app/test/srd_background_package_dialog_test.dart"
+      ]
+    },
+    {
+      "id": "CHAR-AUDIT-EVIDENCE-STATUSES",
+      "title": "Sieben Prüfzustände und tatsächliche Teilentscheidungen",
+      "status": "partial",
+      "register_requirement_ids": [
+        "RULE-CHARACTER-CREATION-CHARACTER-SHEET",
+        "RULE-CHARACTER-CREATION-CLASS-AND-ORIGIN"
+      ],
+      "source": "SRD 5.2.1 Character Creation p.21, Backgrounds p.83, Species pp.84-86; Auditstatus ist App-Funktion",
+      "code": [
+        "app/lib/domain/srd_character_creation_audit.dart"
+      ],
+      "ui": [
+        "app/lib/ui/character_editor.dart",
+        "app/lib/ui/srd_creation_audit_dialog.dart"
+      ],
+      "tests": [
+        "app/test/srd_character_creation_audit_test.dart",
+        "app/test/character_creation_audit_ui_test.dart",
+        "app/test/character_creation_audit_persistence_test.dart"
+      ],
+      "mechanical_mutation": false,
+      "note": "Kein Gesamt-SRD-Erfolgsflag; vollständig geführter Assistent und Quellen für sämtliche Pflichtwahlen weiterhin offen."
+    },
+    {
+      "id": "CHAR-CLASS-START-CHOICE-EVIDENCE",
+      "title": "Expliziter historischer erster Klassen-/Fertigkeits-/Paketnachweis",
+      "status": "partial",
+      "source": "SRD 5.2.1, Choose Class p.19; Classes/Core Traits pp.28–77; Equipment/Tools pp.93–94",
+      "code": [
+        "app/lib/domain/starting_class_choice.dart",
+        "app/lib/domain/models.dart",
+        "app/lib/domain/srd_character_creation_audit.dart",
+        "app/lib/domain/starting_equipment_import.dart"
+      ],
+      "ui": [
+        "app/lib/ui/srd_class_selection_dialog.dart",
+        "app/lib/ui/character_editor.dart"
+      ],
+      "tests": [
+        "app/test/starting_class_choice_test.dart",
+        "app/test/character_start_class_ui_test.dart",
+        "app/test/character_start_class_storage_test.dart"
+      ],
+      "note": "Kein Nachweis vollständiger Klassenmerkmale. Offene Kitvarianten explizit notAutomated; kein Grant beim Lesen. Mönch-PaketA bleibt ohne strukturierte Kopplung an dieselbe Werkzeugübung notAutomated."
+    },
+    {
+      "id": "CHAR-ABILITY-SOURCE-DISPLAY",
+      "title": "Historische Startwerte und 24 Rohwürfel im echten Charakterbogen",
+      "register_requirement_id": "RULE-CHARACTER-CREATION-ABILITY-SCORES",
+      "status": "implemented_local_tests_passed_ci_pending",
+      "source": "SRD 5.2.1 p. 21; historische Darstellung ist App-Funktion",
+      "code": [
+        "app/lib/domain/starting_ability_origin.dart"
+      ],
+      "ui": [
+        "app/lib/ui/starting_ability_origin_panel.dart",
+        "app/lib/ui/fantasy_character_sheet.dart"
+      ],
+      "tests": [
+        "app/test/starting_ability_origin_panel_test.dart"
+      ],
+      "mechanical_mutation": false
+    }
+  ],
+  "classes": [
+    {
+      "name": "Barbar",
+      "status": "partial_or_unverified",
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
+    },
+    {
+      "name": "Barde",
+      "status": "partial_or_unverified",
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
+    },
+    {
+      "name": "Kleriker",
+      "status": "partial_or_unverified",
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
+    },
+    {
+      "name": "Druide",
+      "status": "partial_or_unverified",
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
+    },
+    {
+      "name": "Kämpfer",
+      "status": "partial_or_unverified",
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
+    },
+    {
+      "name": "Mönch",
+      "status": "partial_or_unverified",
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
+    },
+    {
+      "name": "Paladin",
+      "status": "partial_or_unverified",
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
+    },
+    {
+      "name": "Waldläufer",
+      "status": "partial_or_unverified",
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
+    },
+    {
+      "name": "Schurke",
+      "status": "partial_or_unverified",
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
+    },
+    {
+      "name": "Zauberer",
+      "status": "partial_or_unverified",
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
+    },
+    {
+      "name": "Hexenmeister",
+      "status": "partial_or_unverified",
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
+    },
+    {
+      "name": "Magier",
+      "status": "partial_or_unverified",
+      "complete": false,
+      "starting_choice_evidence": "versioned_partial",
+      "evidence_test": "app/test/starting_class_choice_test.dart"
+    }
+  ],
+  "backgrounds": [
+    {
+      "name": "Akolyth",
+      "status": "partial",
+      "complete": false
+    },
+    {
+      "name": "Krimineller",
+      "status": "partial",
+      "complete": false
+    },
+    {
+      "name": "Weiser",
+      "status": "partial",
+      "complete": false
+    },
+    {
+      "name": "Soldat",
+      "status": "partial",
+      "complete": false
+    }
+  ],
+  "species": [
+    {
+      "name": "Drachenblütiger",
+      "status": "partial_or_unverified",
+      "variants_verified": false,
+      "complete": false
+    },
+    {
+      "name": "Zwerg",
+      "status": "partial_or_unverified",
+      "variants_verified": false,
+      "complete": false
+    },
+    {
+      "name": "Elf",
+      "status": "partial_or_unverified",
+      "variants_verified": false,
+      "complete": false
+    },
+    {
+      "name": "Gnom",
+      "status": "partial_or_unverified",
+      "variants_verified": false,
+      "complete": false
+    },
+    {
+      "name": "Goliath",
+      "status": "partial_or_unverified",
+      "variants_verified": false,
+      "complete": false
+    },
+    {
+      "name": "Halbling",
+      "status": "partial_or_unverified",
+      "variants_verified": false,
+      "complete": false
+    },
+    {
+      "name": "Mensch",
+      "status": "partial_or_unverified",
+      "variants_verified": false,
+      "complete": false
+    },
+    {
+      "name": "Ork",
+      "status": "partial_or_unverified",
+      "variants_verified": false,
+      "complete": false
+    },
+    {
+      "name": "Tiefling",
+      "status": "partial_or_unverified",
+      "variants_verified": false,
+      "complete": false
+    }
+  ],
+  "scope_note": "Talentnamen und Herkunftsübungen werden vermerkt; Auswirkungen der Talente und Magic-Initiate-Zauber sind nicht automatisiert.",
+  "next_task": "Vorhandenen Editor-CAS-Branch2173f57 prüfen und mit Regressionstests ergänzen; nicht doppelt implementieren.",
+  "branch": "feat/character-start-class-proof-20261027",
+  "local_validation": {
+    "product_commit": "30bb33ec9eec5e6dbb75d8e30cd9268386120477",
+    "product_flutter": 1995,
+    "python": 164,
+    "backend": 72,
+    "native": 12,
+    "integrated_targeted": 57,
+    "new_tests": 35,
+    "full_integrated_ci": "pending_at_document_write",
+    "current_main": "bf5999e98335c1da94b1eafbf2fc8088b392b6ef",
+    "current_python": 168,
+    "current_targeted": 57,
+    "verified_019_ci": {
+      "run": 40631517151,
+      "flutter": 2007,
+      "python": 168,
+      "backend": 72
+    }
+  }
+}

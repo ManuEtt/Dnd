@@ -1,0 +1,21 @@
+# Historical PR301 is preserved for ancestry, not as a second cleanup writer.
+# Full original source is retained in docs/history/branch_migration_tooling_20261028/.
+# The only maintained cleanup is cleanup-merged-safe-20261027.yml, which waits
+# for successful Android CI of the exact current main commit.
+name: Alte Story/UI-Branchbereinigung (deaktiviert)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deprecated:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Nachfolger anzeigen – keine Referenzen verändern
+        run: |
+          echo "Dieser historische PR301-Workflow ist deaktiviert."
+          echo "Aktiv: .github/workflows/cleanup-merged-safe-20261027.yml"
+          echo "Es werden keine Branches, Tags oder Dateien verändert."

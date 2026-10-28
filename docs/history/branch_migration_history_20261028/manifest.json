@@ -1,0 +1,203 @@
+{
+  "base_main": "dd0c2e94ccf0995c6070010b6af1df315205b36a",
+  "purpose": "Originaldokumente vor History-Integration; Produktänderungen bereits in Main enthalten.",
+  "branches": [
+    {
+      "name": "feat/chat-a/audited-material-inventory-20261027",
+      "sha": "4d7b8c0107022d531d0c5950c09dcaff9b60e6cd",
+      "documents": [
+        {
+          "original_path": "README.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/4d7b8c010702/README.md",
+          "sha256": "c460a91a104a2881040692ac3795dbf4f109f10b9df1461b9e8e3d586ec2b031"
+        },
+        {
+          "original_path": "docs/CODEX_CHECKPOINT.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/4d7b8c010702/docs/CODEX_CHECKPOINT.md",
+          "sha256": "a19d28c015833a0c60fcecfa7d0139acf6b73816af0b07cd9b26ce8f07539673"
+        },
+        {
+          "original_path": "docs/parallel/CHAT_A_AUDITED_INVENTORY_20261027.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/4d7b8c010702/docs/parallel/CHAT_A_AUDITED_INVENTORY_20261027.md",
+          "sha256": "b60b0239bd305d28363f9554c549ea40ba710eb8083f07307a3302eecf08ecff"
+        },
+        {
+          "original_path": "docs/parallel/CHAT_A_CHECKPOINT.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/4d7b8c010702/docs/parallel/CHAT_A_CHECKPOINT.md",
+          "sha256": "8f84c1a5deebb334d40b19802845f20428fecd2d4f4f8943141711f8cb304aef"
+        },
+        {
+          "original_path": "docs/parallel/CHAT_A_MULTI_MATERIAL_20261027.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/4d7b8c010702/docs/parallel/CHAT_A_MULTI_MATERIAL_20261027.md",
+          "sha256": "4acfd12b300390c8e2634eaa25da247af90861dd7e4183082749ce8b3f937886"
+        }
+      ]
+    },
+    {
+      "name": "feat/chat-a/audited-multi-material-components-20261027",
+      "sha": "779137bbfeaf86242bd246918c53bdc757febd9f",
+      "documents": [
+        {
+          "original_path": "README.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/779137bbfeaf/README.md",
+          "sha256": "f3df40f3044b0870d199451eb0121ca75c5e19ce69e81e7abaa7f145739aab03"
+        },
+        {
+          "original_path": "docs/CODEX_CHECKPOINT.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/779137bbfeaf/docs/CODEX_CHECKPOINT.md",
+          "sha256": "262066fb9bc6a6011a548494d11c3d3ea6aad60e4d685bd1f2284d62acf18bda"
+        },
+        {
+          "original_path": "docs/parallel/CHAT_A_CHECKPOINT.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/779137bbfeaf/docs/parallel/CHAT_A_CHECKPOINT.md",
+          "sha256": "1d5c498eb59732e75f65739fb2085c12b133eb5f6f278b218cee932b3ff71a07"
+        },
+        {
+          "original_path": "docs/parallel/CHAT_A_MULTI_MATERIAL_20261027.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/779137bbfeaf/docs/parallel/CHAT_A_MULTI_MATERIAL_20261027.md",
+          "sha256": "4acfd12b300390c8e2634eaa25da247af90861dd7e4183082749ce8b3f937886"
+        }
+      ]
+    },
+    {
+      "name": "feat/chat-a/high-jump-preflight-20261027",
+      "sha": "0441729ada038aaa61a1bcab5da222849ef90824",
+      "documents": [
+        {
+          "original_path": "README.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/0441729ada03/README.md",
+          "sha256": "fe1bb11a47eb03626f16f45087b9b6d28d932d474f738d0f3c51b435a71fdd44"
+        },
+        {
+          "original_path": "docs/CODEX_CHECKPOINT.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/0441729ada03/docs/CODEX_CHECKPOINT.md",
+          "sha256": "ac89e83535b895716d823b5bc8228423218229cb7d6e657bc6b5080f60d2356c"
+        },
+        {
+          "original_path": "docs/parallel/CHAT_A_CHECKPOINT.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/0441729ada03/docs/parallel/CHAT_A_CHECKPOINT.md",
+          "sha256": "95fff4dfe17745b64c5142300dabf0eb625e81a342ec1410081622f667993e0a"
+        },
+        {
+          "original_path": "docs/parallel/CHAT_A_HIGH_JUMP_20261027.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/0441729ada03/docs/parallel/CHAT_A_HIGH_JUMP_20261027.md",
+          "sha256": "97dfd0c35617c48ded3984287fc4c78ebfa2033099aba5be79cf1c481fc72c01"
+        }
+      ]
+    },
+    {
+      "name": "feat/chat-a/long-jump-atomic-integration-20261027",
+      "sha": "ee1b33d00536049dfec9f1447306b48773f33c81",
+      "documents": [
+        {
+          "original_path": "docs/CODEX_CHECKPOINT.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/ee1b33d00536/docs/CODEX_CHECKPOINT.md",
+          "sha256": "b76321818e7cd7a2326b937b423f8be40b6dd7481914d8c35286c6b269dcbba2"
+        },
+        {
+          "original_path": "docs/parallel/CHAT_A_CHECKPOINT.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/ee1b33d00536/docs/parallel/CHAT_A_CHECKPOINT.md",
+          "sha256": "49718baaa59aaa4ea515135c37265b28eb9da81ebe1dd5c2e19a27b1a52d1aba"
+        },
+        {
+          "original_path": "docs/parallel/CHAT_A_LONG_JUMP_ATOMIC_20261027.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/ee1b33d00536/docs/parallel/CHAT_A_LONG_JUMP_ATOMIC_20261027.md",
+          "sha256": "9f778caf81833960a649a341fdf9c2cbc27ad05cd6118d123b25cfdce897b3f3"
+        }
+      ]
+    },
+    {
+      "name": "feat/chat-a/long-jump-encounter-plan-20261027",
+      "sha": "461e36f4f5a768aa2900830fd38be65149c569d6",
+      "documents": [
+        {
+          "original_path": "README.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/461e36f4f5a7/README.md",
+          "sha256": "2dff4902a26faeb7c0c7fe26a509d7b0c09999fa8ac466dda96040c80d2e7392"
+        },
+        {
+          "original_path": "docs/CODEX_CHECKPOINT.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/461e36f4f5a7/docs/CODEX_CHECKPOINT.md",
+          "sha256": "abe8889fe939f8bc4d2bd2b552325f82a15b4ce3dcb545000bf44383022aa115"
+        },
+        {
+          "original_path": "docs/parallel/CHAT_A_CHECKPOINT.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/461e36f4f5a7/docs/parallel/CHAT_A_CHECKPOINT.md",
+          "sha256": "a85dca0806a9250ec4ef75be56a7fcc62466a166b5da256d9f45e96adebfefeb"
+        },
+        {
+          "original_path": "docs/parallel/CHAT_A_LONG_JUMP_20261027.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/461e36f4f5a7/docs/parallel/CHAT_A_LONG_JUMP_20261027.md",
+          "sha256": "394e1f0b57207b5f09a39ac94cf932621cdeb554d0cf6f4124e8aaff24a1aba0"
+        },
+        {
+          "original_path": "docs/parallel/CHAT_A_LONG_JUMP_COMBAT_PLAN_20261027.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/461e36f4f5a7/docs/parallel/CHAT_A_LONG_JUMP_COMBAT_PLAN_20261027.md",
+          "sha256": "91b8522ebb6bc7f3b85a30960390e038c439419179465de0d9d8f6b7ec23843a"
+        }
+      ]
+    },
+    {
+      "name": "feat/chat-a/long-jump-preflight-20261027",
+      "sha": "4e15ba643a22b94e9ec3ba7da72e8330a0b0e56c",
+      "documents": [
+        {
+          "original_path": "README.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/4e15ba643a22/README.md",
+          "sha256": "2dff4902a26faeb7c0c7fe26a509d7b0c09999fa8ac466dda96040c80d2e7392"
+        },
+        {
+          "original_path": "docs/CODEX_CHECKPOINT.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/4e15ba643a22/docs/CODEX_CHECKPOINT.md",
+          "sha256": "647e224771cd1dc3d8a63535cb8d4207ec5bf09140dab9835c97b79de833182c"
+        },
+        {
+          "original_path": "docs/parallel/CHAT_A_CHECKPOINT.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/4e15ba643a22/docs/parallel/CHAT_A_CHECKPOINT.md",
+          "sha256": "955ab190cef6bc18df889a728ad4dafa7847830650919dd621a891b5853faad9"
+        },
+        {
+          "original_path": "docs/parallel/CHAT_A_LONG_JUMP_20261027.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/4e15ba643a22/docs/parallel/CHAT_A_LONG_JUMP_20261027.md",
+          "sha256": "394e1f0b57207b5f09a39ac94cf932621cdeb554d0cf6f4124e8aaff24a1aba0"
+        }
+      ]
+    },
+    {
+      "name": "feat/chat-a/material-inventory-dialog-20261027",
+      "sha": "7595484f6bd06b10c73aa7cf34f3d7ec3c49dbc9",
+      "documents": [
+        {
+          "original_path": "README.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/7595484f6bd0/README.md",
+          "sha256": "969de92643e81ff3818e3c907556f040e9cde0ff5dc1919b8f412417e5d6ee42"
+        },
+        {
+          "original_path": "docs/CODEX_CHECKPOINT.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/7595484f6bd0/docs/CODEX_CHECKPOINT.md",
+          "sha256": "c4366adf410845fe39534004327ee1f54d44412d1efb48fc8712817825d5ce5f"
+        },
+        {
+          "original_path": "docs/parallel/CHAT_A_AUDITED_INVENTORY_20261027.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/7595484f6bd0/docs/parallel/CHAT_A_AUDITED_INVENTORY_20261027.md",
+          "sha256": "b60b0239bd305d28363f9554c549ea40ba710eb8083f07307a3302eecf08ecff"
+        },
+        {
+          "original_path": "docs/parallel/CHAT_A_CHECKPOINT.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/7595484f6bd0/docs/parallel/CHAT_A_CHECKPOINT.md",
+          "sha256": "ca4f94876dcb6ec919526d56e72f9643c70291c570652c56c891a6114111161b"
+        },
+        {
+          "original_path": "docs/parallel/CHAT_A_MATERIAL_DIALOG_20261027.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/7595484f6bd0/docs/parallel/CHAT_A_MATERIAL_DIALOG_20261027.md",
+          "sha256": "ad15bfc64357c98afd6dbfe70e0981f6ae7cf9e18e37bfc1d76e9921adcb0763"
+        },
+        {
+          "original_path": "docs/parallel/CHAT_A_MULTI_MATERIAL_20261027.md",
+          "archive_path": "docs/history/branch_migration_history_20261028/7595484f6bd0/docs/parallel/CHAT_A_MULTI_MATERIAL_20261027.md",
+          "sha256": "4acfd12b300390c8e2634eaa25da247af90861dd7e4183082749ce8b3f937886"
+        }
+      ]
+    }
+  ]
+}

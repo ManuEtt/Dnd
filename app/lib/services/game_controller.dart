@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import '../data/campaign_repository.dart';
 import '../domain/game_engine.dart';
+import '../domain/srd_bard_font_of_inspiration.dart';
 import '../domain/srd_terrain_movement_rules.dart';
 import '../domain/ai_story.dart';
 import '../domain/models.dart';
@@ -1482,7 +1483,63 @@ class GameController extends ChangeNotifier {
     await _commit(engine.rollDice(campaign, expression));
   });
 
-  Future<void> saveHero(HeroCharacter hero) => _run(() async {
+  /// Applies only to the active campaign, under its persisted revision CAS.
+  /// An archive character without an active campaign remains read-only.
+  Future<bool> confirmBardFontOfInspiration(
+    SrdBardFontProposal proposal, {
+    required bool playerConfirmed,
+  }) async {
+    var committed = false;
+    await _run(() async {
+      final campaign = currentCampaign;
+      if (campaign == null) {
+        throw const FormatException('Keine aktive Kampagne.');
+      }
+      final saved = await repository.getCampaign(campaign.id);
+      if (saved == null || saved.revision != campaign.revision) {
+        throw const CampaignConflictException(
+          'Der Spielstand wurde geändert. Bitte erneut öffnen.',
+        );
+      }
+      final update = engine.confirmBardFontOfInspiration(
+        campaign,
+        proposal,
+        playerConfirmed: playerConfirmed,
+      );
+      await _commit(update);
+      committed = true;
+    });
+    return committed && error == null;
+  }
+
+  /// Reject a character editor opened on an older campaign revision before
+  /// applying any game rules. The repository CAS closes the later race.
+  Future<void> _requireEditorCampaignVersion(
+    Campaign campaign, {
+    required String expectedCampaignId,
+    required int expectedRevision,
+  }) async {
+    if (campaign.id != expectedCampaignId ||
+        campaign.revision != expectedRevision) {
+      throw const CampaignConflictException(
+        'Der Spielstand wurde seit dem Öffnen des Charaktereditors geändert. '
+        'Bitte den neuesten Stand öffnen.',
+      );
+    }
+    final saved = await repository.getCampaign(expectedCampaignId);
+    if (saved == null || saved.revision != expectedRevision) {
+      throw const CampaignConflictException(
+        'Der gespeicherte Spielstand hat sich geändert. '
+        'Bitte den Charaktereditor neu öffnen.',
+      );
+    }
+  }
+
+  Future<void> saveHero(
+    HeroCharacter hero, {
+    String? expectedCampaignId,
+    int? expectedRevision,
+  }) => _run(() async {
     final campaign = currentCampaign;
     if (campaign == null) throw const FormatException('Keine aktive Kampagne.');
     final valid = HeroCharacter.fromJson(hero.toJson());
@@ -1491,19 +1548,75 @@ class GameController extends ChangeNotifier {
         'Dieser Charakter gehört nicht zum Abenteuer.',
       );
     }
+    if (expectedCampaignId != null || expectedRevision != null) {
+      if (expectedCampaignId == null || expectedRevision == null) {
+        throw const FormatException(
+          'Für die geschützte Bearbeitung fehlen Kampagne oder Revision.',
+        );
+      }
+      await _requireEditorCampaignVersion(
+        campaign,
+        expectedCampaignId: expectedCampaignId,
+        expectedRevision: expectedRevision,
+      );
+    }
     await _commit(engine.updateHero(campaign, valid));
   });
 
-  Future<void> saveStandaloneHero(HeroCharacter hero) => _run(() async {
+  Future<void> saveStandaloneHero(
+    HeroCharacter hero, {
+    bool requireOriginalMatch = false,
+    HeroCharacter? originalHero,
+    String? expectedCampaignId,
+    int? expectedRevision,
+  }) => _run(() async {
     final valid = HeroCharacter.fromJson(hero.toJson());
     final campaign = currentCampaign;
+    if (requireOriginalMatch &&
+        expectedCampaignId != null &&
+        (campaign?.id != expectedCampaignId || campaign?.hero.id != valid.id)) {
+      throw const CampaignConflictException(
+        'Die zugehörige Kampagne wurde gewechselt. '
+        'Bitte den Charaktereditor neu öffnen.',
+      );
+    }
     if (campaign != null && campaign.hero.id == valid.id) {
+      if (requireOriginalMatch) {
+        if (expectedCampaignId == null || expectedRevision == null) {
+          throw const CampaignConflictException(
+            'Die Kampagne wurde nach dem Öffnen des Editors gewechselt.',
+          );
+        }
+        await _requireEditorCampaignVersion(
+          campaign,
+          expectedCampaignId: expectedCampaignId,
+          expectedRevision: expectedRevision,
+        );
+      }
       // The hero archive and the active campaign share one character identity.
       // Commit through the rule engine so pending rolls and game-state
       // constraints stay valid; SQLite updates both snapshots atomically.
       await _commit(engine.updateHero(campaign, valid));
     } else {
-      await repository.saveCharacter(valid);
+      if (requireOriginalMatch) {
+        if (originalHero != null && originalHero.id != valid.id) {
+          throw const CampaignConflictException(
+            'Die ursprüngliche Charakterkennung wurde verändert.',
+          );
+        }
+        if (repository case AtomicCharacterSnapshotStore store) {
+          await store.saveCharacterIfUnchanged(
+            valid,
+            expectedOriginal: originalHero,
+          );
+        } else {
+          throw const InvalidSaveException(
+            'Dieser Speicher unterstützt keinen sicheren Charakterabgleich.',
+          );
+        }
+      } else {
+        await repository.saveCharacter(valid);
+      }
       await _reload();
     }
   });
