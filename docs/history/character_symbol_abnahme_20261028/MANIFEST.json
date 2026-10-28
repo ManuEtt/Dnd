@@ -1,0 +1,23 @@
+{
+  "source_commit": "49b98d8aef7ae0e521320628b053c149c849dea0",
+  "files": [
+    {
+      "path": "README.md",
+      "source_commit": "49b98d8aef7ae0e521320628b053c149c849dea0",
+      "git_blob": "c0d340b4067c604f2b2f66d1e3c49d05e7e14039",
+      "sha256": "2c9c094594f7b2666ea83a3f10fa2ccf286450e6a8cf4b156ee2287760b9c7a7"
+    },
+    {
+      "path": "CHECKPOINT.md",
+      "source_commit": "49b98d8aef7ae0e521320628b053c149c849dea0",
+      "git_blob": "c5e51cf677ca157fa0010cc4f55dbc454f272862",
+      "sha256": "733ddbe719b63261b9ed14c403a85c06b3b80ccb2132edf2f759ffa719026871"
+    },
+    {
+      "path": "docs/CODEX_CHECKPOINT.md",
+      "source_commit": "49b98d8aef7ae0e521320628b053c149c849dea0",
+      "git_blob": "597fc4c05b190b37b248e60e1a9f448d784c60f7",
+      "sha256": "7337c2cef645f4e1b4b2980945fabf7f4d02d698fc87cea6bd31df769d4896f6"
+    }
+  ]
+}

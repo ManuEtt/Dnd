@@ -12,7 +12,7 @@
   "android_device_tested": false,
   "ci_final_head_verified": false,
   "existing_requirement_registers_unchanged": false,
-  "status_note": "Heilige-Symbol-Paket lokal vollständig geprüft: 2265 Flutter/200 Python/72 Backend/12 native App-Tests, Debug-APK. Produktcode7ac32b1c; finale GitHub-Abnahme separat im PR369. Gesamte Charaktererstellung unvollständig.",
+  "status_note": "Symbolwahl lokal und final in PR-/Produkt-Main-CI bestanden. Gesamte Charaktererstellung bleibt unvollständig; Details im CODEX_CHECKPOINT. Nachfolgende Dokumentationsänderungen sind separat statisch geprüft und kein neuer APK-Produktstand.",
   "requirements": [
     {
       "id": "CHAR-ABILITY-STANDARD-ARRAY",
@@ -538,7 +538,7 @@
     {
       "id": "CHAR-CLASS-HOLY-SYMBOL-CHOICE",
       "title": "Kleriker/Paladin: ausdrückliche Heilige-Symbol-Variante im Klassenpaket A",
-      "status": "implemented_local_tests_passed_ci_pending",
+      "status": "tested",
       "source": "SRD 5.2.1 pp.36,53,97; CC-BY-4.0",
       "register_requirement_id": "EQUIP-CHOICES",
       "code": [
@@ -558,7 +558,9 @@
         "app/test/character_start_class_storage_test.dart",
         "app/test/character_start_class_ui_test.dart"
       ],
-      "note": "Version2 für neue Klassenbestätigungen; v1 unverändert und ohne Nachvergabe lesbar. Bestätigt Ausrüstungswahl/typisierte Gegenstände, nicht sämtliche Klassen-, Zauber- oder Fokusmechaniken."
+      "note": "Version2 für neue Klassenbestätigungen; v1 unverändert und ohne Nachvergabe lesbar. Bestätigt Ausrüstungswahl/typisierte Gegenstände, nicht sämtliche Klassen-, Zauber- oder Fokusmechaniken.",
+      "ci_run": 40758951956,
+      "tested_product_commit": "49b98d8aef7ae0e521320628b053c149c849dea0"
     }
   ],
   "classes": [
@@ -759,5 +761,19 @@
     "debug_apk": "built",
     "device_tested": false,
     "ci_reference": "https://github.com/ManuEtt/Dnd/pull/369/checks"
+  },
+  "verified_product_ci": {
+    "main_commit": "49b98d8aef7ae0e521320628b053c149c849dea0",
+    "run": 40758951956,
+    "conclusion": "success",
+    "pr": 369,
+    "pr_head": "bfe4e5ab7fba358c780b731251703d2e296bb13e",
+    "pr_run": 40756846048,
+    "pr_conclusion": "success",
+    "flutter_tests": 2265,
+    "python_tests": 200,
+    "backend_tests": 72,
+    "focused_ui_tests": 20,
+    "device_tested": false
   }
 }
