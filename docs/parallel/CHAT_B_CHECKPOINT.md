@@ -14,6 +14,73 @@
 
 ---
 
+# Chat B – zwei SQLite-Schreiber, NPC-Quittungen und Auftragsersetzung (27.10.2026)
+
+- **Base:** PR #305, Head `eb4f3a43864ba00843aacd7f0b47b2e2f0fad1da`; **Branch:** `test/chat-b/npc-outbox-multiwriter-cas-20261027`. Abhängigkeit: #288 → #290 → #292 → #300 → #303 → #305 → dieses Testpaket.
+- **Ausgangsproblem:** Die atomare NPC-Löschung in PR #305 war bereits mit einer SQLite-Verbindung getestet; die Absicherung über zwei getrennte Repository-Verbindungen und konkurrierende Aufträge fehlte.
+- **Implementiert:** Neue Datei `app/test/npc_outbox_multiwriter_cas_test.dart`, vier Integrationstests mit echter SQLite-Datei und zwei geöffneten `SqliteCampaignRepository`-Instanzen. Verspätete ACKs können keine bewusst neu gewählte gleichnamige Figur, keine neue Revision und keinen Auftrag beim Wechsel text-only ↔ mit NPC-Auswahl entfernen. Zwei gleichzeitige Schreibversuche führen zu exakt einem verbleibenden Auftrag. Alle Tests führen nur lokale DB-I/O aus.
+- **Getestet:** Offizielle Dart-3.9.2-Formatierung für die neue Testdatei über GitHub Actions übernommen; temporärer Diagnoseworkflow entfernt. Vollständige CI auf finalem PR-Head nach Veröffentlichung auswerten.
+- **Nicht getestet:** Realgerät, produktiver KI-Spielleiter; keine zusätzliche UI-E2E-Abdeckung. Keine neue Migration oder Produktionscodeänderung.
+- **Blockiert:** Zuerst die Vorgänger-PRs integrieren; fremde Branches und PRs nicht löschen/mergen. Chat D konsolidiert README-/Checkpoint-Kollisionen.
+- **Nächster Schritt:** CI-Ergebnisse prüfen und gegebenenfalls neue Regressionen korrigieren, danach Integrationsreihenfolge dokumentieren.
+
+---
+
+# Chat B – NPC-ID gehört zum atomaren ACK-Vergleich (27.10.2026)
+
+- **Basis und Reihenfolge:** `fix/chat-b/npc-outbox-cas-20261027` auf [PR #303](https://github.com/ManuEtt/Dnd/pull/303) (`5388d8e428e024c939bf99e609f857ec37c4a62a`), davor PRs #300, #292, #290, #288. Kein Auto-Merge und keine fremde Branchbereinigung.
+- **FEHLER:** Vorher prüften `PlayerActionOutbox.remove` und `SqliteCampaignRepository.removePendingAction` bei einer Quittung nur `campaignId`, `requestId` und `text`. Eine neu gebundene NPC-Auswahl mit denselben Werten konnte so versehentlich aus der Outbox entfernt werden.
+- **IMPLEMENTIERT:** `selectedNpcId` und `selectedNpcRevision` sind jetzt fester Bestandteil der Löschbedingung. SQLite validiert alle Werte transaktional und löscht ausschließlich mit übereinstimmenden nullable Spalten; der ältere Settings-Fallback lehnt ebenfalls jede NPC-ID-/Revisionsabweichung ab. Text-only-Aufträge funktionieren weiterhin unverändert.
+- **TESTS:** Zwei neue echte SQLite-Tests mit drei falschen NPC-Varianten, Neustart und spätem ACK für bewusst ersetzten Auftrag. Bei Mismatch bleibt der Datensatz vollständig unverändert. Exaktes ACK löscht wie zuvor. Offizieller Dart-3.9.2-Formatter angewendet.
+- **DOKUMENTATION:** Meldung `UnsupportedDatabaseVersion` auf die bereits bestehende Schema-Version 3 gebracht; Kommentar zur Outbox-Neuanlage angepasst. **Keine** Migration oder Änderung des JSON-/SRD-/Backendvertrags.
+- **CI:** Basispaket #303 hat vollständige Flutter-Tests bestanden und die Android-Buildschritte durchlaufen; sein abschließender Workflowstatus separat prüfen. CI für das eigene Paket erst nach Veröffentlichung und Final-HEAD-Nachweis als bestanden melden.
+- **NICHT GETESTET:** Android-Realgerät, produktive KI, vollständig durchgeklickter neuer Widget-E2E.
+- **NÄCHSTER SCHRITT:** UI-Meldungen für alten NPC-Auftrag mit minimalem Fake-Test prüfen, ohne SQLite-FFI und `pumpWidget` zu verschachteln.
+
+---
+
+# Chat B – reine Flutter-Statusanzeige für ausstehende NPC-Handlungen (27.10.2026)
+
+- **Branch:** `test/chat-b/pending-npc-status-widget-20261027`, Basis `fix/chat-b/npc-resume-deterministic-regressions-20261027` (PR #303, Head `5388d8e428e024c939bf99e609f857ec37c4a62a`).
+- **Umsetzung:** `app/lib/ui/pending_action_status.dart` enthält die bisher in `app.dart` fest verdrahtete Anzeige des ausstehenden Auftrags, Fehlertext und Retry-/Discard-Buttons. Fünf reine Widgettests in `app/test/pending_action_status_test.dart` prüfen den Zustand ohne Datenbank und Providerschnittstelle. `app/lib/ui/app.dart` nutzt dieselben Aufrufer/Keys wie zuvor.
+- **UX:** Bei explizit ausgewähltem NPC erscheint ein kurzer Hinweis auf die gebundene Figur und die erforderliche erneute Auswahl nach Spielstandsänderung. Bei normalen Handlungen wird keine NPC-Identität erfunden. Fehler sind als eigene Textkomponente weiterhin sichtbar; während des Sendens sind die Retry-/Discard-Schaltflächen ausgeblendet, bei Regelblockade deaktiviert.
+- **VERTRAG:** Alle bisherigen Keys `adventure-action-submitting`, `adventure-pending-action-text`, `adventure-retry-action`, `adventure-discard-action`, `adventure-outbox-error` bestehen fort.
+- **FORMAT:** Offizieller Dart-3.9.2-Formatter auf Widget, `app.dart` und Widgettests angewandt; temporären Workflow wieder entfernt.
+- **NICHT GETESTET:** Android-Hardware, echte TTS, vollständige App-UI-Navigation, neue CI noch abzunehmen.
+- **MIGRATION:** Keine; PR #290 enthält bereits SQLite-3-Änderung. Kein Eingriff in Helden, D&D-Regeln oder gespeicherte Kampagnen.
+- **INTEGRATION:** PR #288 → #290 → #292 → #300 → #303 → dieser PR, nur bei grüner CI und durch Integrationschat. Keine fremden Branches verändert oder gelöscht.
+- **NÄCHSTER SCHRITT:** Große Schrift/Screenreader in der realen Android-Oberfläche prüfen; weitere Fehlerintegration nur nach stabiler Testinfrastruktur.
+
+---
+
+# Chat B – NPC-Outbox-FakeAsync-Sicherheit und überprüfbare Kontinuität (27.10.2026)
+
+- **Basisbranch/Head:** `fix/chatgpt/npc-ui-async-pump-20261027` / `92f440510bdedda51bb3acb188b49c40409b3ce7` (PR #300, seinerseits abhängig von #292, #290, #288). **Branch:** `fix/chat-b/npc-resume-deterministic-regressions-20261027`.
+- **Ausgangsfehler:** GitHub Actions #40492615824 und #40505592178: 10-Minuten-Timeout und `TestAsyncUtils.guard`-Konflikt beim UI-`pumpWidget` mit SQLite-FFI. Erst das originale unbeschränkte Warten, danach das Nesting von `tester.pumpWidget` in `tester.runAsync`, lösten die Testprobleme aus. Der Grund lag im Testharness.
+- **Implementiert:** `resolvePendingNpcAction` wertet vor dem Senden ausschließlich die ausgewählte NPC-ID, ursprüngliche Revision und bestätigte Ereignisquittung (Request-ID, Text, NPC-ID) aus. Es gibt genau fünf explizite Zustände `plain`, `ready`, `alreadyConfirmed`, `stale`, `unavailable`; nur eine exakte Quittung klärt einen verlorenen ACK. `app.dart` bindet den Helfer an den vorhandenen Sende-/Retry-Pfad an; keine automatische Providerübertragung.
+- **Tests erneuert:** Vier `test()`-basierte echte SQLite-/GameController-/BackendTransport-Regressionsfälle in `npc_ui_outbox_restart_integration_test.dart`, ohne Widget-Testharness: zweite gleichnamige Mira, verlorene Quittung nach Datenbankneustart, stale Revision mit erhaltenem Outboxauftrag und gleiche Request-ID/Text bei anderer NPC-ID. Die NPC-Auswahl-Widgettests aus PR #290 bleiben unverändert erhalten. Diese Tests beweisen **nicht** die vollständige Klickstrecke im `LivingGameApp`.
+- **Weitere Dateien:** README, zentrale und Chat-B-Checkpoints ergänzt; bestehende Angaben der früheren PRs als Verlauf belassen.
+- **Teststatus:** Formatierung exakt nach Dart 3.9.2 durchgeführt; gesamte Flutter-/Backend-/Android-CI nach Veröffentlichung prüfen. Realgerät und produktive Provider ungetestet.
+- **Keine Migration:** vorhandenes SQLite-3-Schema, Kampagnen-JSON 1, SRD-Regelzustände und Backendvertrag unverändert.
+- **Reihenfolge:** PR #288 → #290 → #292 → #300 → dieses Inkrement, ggf. durch Chat D konfliktarm integrieren. Keine fremden Branches bereinigen/mergen.
+- **NÄCHSTER SCHRITT:** Isolierte Flutter-Oberflächenmeldungen mit Fake-Repository-/Fake-Clock testen, statt reale SQLite-I/O und `pumpWidget` zu verschachteln.
+
+---
+
+# Chat B – NPC-Aktion nach SQLite-Neustart und verlorenem ACK (27.10.2026)
+
+- **Branch:** `test/chat-b/npc-ui-restart-reconciliation-20261027`; Base `feat/chat-b/npc-picker-outbox-20261027` (PR #290, Head `c45d7f7ce82e367e78d102ccc98b0046683cbd23`). Vorherige Abhängigkeit: PR #288.
+- **Ausgangsproblem:** Controller-ID-Auswahl und sichere SQLite-v3-Outbox sind fachlich geprüft, aber die echte Flutter-Abenteueroberfläche musste noch vollständig gegen Neustart, doppelte NPC-Namen und verloren gegangene ACKs getestet werden.
+- **Implementiert:** Neuer reiner End-to-End-Test `app/test/npc_ui_outbox_restart_integration_test.dart`: Flutter-App mit echter SQLite-Datei, `LivingGameApp`, `GameController`, `PlayerActionOutbox`, stillem Voice-Mock und ausschließlich lokalem `BackendTransport`-Mock.
+- **Fälle:** (1) Der Spieler tippt die zweite von zwei „Mira“-Figuren an; ausschließlich deren ID und Notiz werden transportiert. (2) Bei persistiertem Auftrag und bereits bestätigtem Event führt eine UI-Wiederholung nach Neustart **keinen** zweiten Backendaufruf aus und entfernt die Outbox. (3) Eine seit Auswahl geänderte Kampagnenrevision blockiert den Retry ohne Spielstandsänderung und ohne automatisches Umlenken auf den anderen NPC.
+- **Format:** Exakte Ausgabe des offiziellen Dart-3.9.2-Formatters auf die neue Testdatei übernommen; kurzlebigen Diagnose-Workflow vollständig entfernt.
+- **KEINE Produktioncodeänderung:** Kein Eingriff in Flutter-UI, Backend, Datenbank, Export-Schema, Kampagnenregeln, Asset-Dateien oder bestehende Testdateien; gemeinsame Docs/README hinzugefügt, historische Dokumentation beibehalten.
+- **CI-Status:** Vollständige GitHub-CI für PR #290 ist auf dem korrigierten Head `c45d7f7c` zweimal grün (#40482612142 und #40482623135). Die CI dieses Inkrements erst nach nachgewiesener Ausführung als grün melden.
+- **OFFEN:** Echte Android-/Screenreader-/TTS-Tests; PR-Integration muss #288 → #290 → diesen PR folgen. Fremde Branches und PRs bleiben unverändert.
+- **Nächster Schritt:** Fail-closed-Tests für Verwerfen und erneute bewusste Auswahl nach einer abgelaufenen NPC-Revision, ohne parallele Chat-C-Oberfläche zu berühren.
+
+---
+
 # Chat B – NPC-Auswahl in Android-UI plus persistente Outbox (27.10.2026)
 
 - **Branch:** `feat/chat-b/npc-picker-outbox-20261027`, basiert auf `feat/chat-b/controller-explicit-npc-selection-20261027` (PR #288, Basis-SHA `2ba524c307b3b48ad21a6343df700ae0a643f55d`). Kein unabhängiger Merge vor #288.
