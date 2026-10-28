@@ -1,3 +1,18 @@
+# Chat A – 28.10.2026: SRD Emanation-Vorschau (neues Arbeitspaket)
+
+- **Ausgangs-main:** `f5cb518a0c0a6aafc1b1483c833fb7907ca5e882`; Branch: `feat/chat-a/emanation-area-preview-20261028`.
+- **IMPLEMENTIERT:** `SrdEmanationAreaRules` stellt eine rein lesende, konservative 2D-Kandidatenliste für eine ausdrücklich bestätigte Emanation von einer Kreatur oder einem Gegenstand bereit. Das Quelldeckungsfeld wird *nicht* automatisch herausgefiltert (weitere dort befindliche Ziele sind möglich); ob die Quelle selbst eingeschlossen wird, ist ein separates Opt-in. Bewegung `followsSource`, `instantaneous` oder `stationary` wird bewusst bestätigt und nie aus der Zauberreichweite geraten. Bei beweglichem Ursprung ist nach jeder bestätigten Bewegung eine neue Vorschau nötig.
+- **Validierung:** Kartenblocker müssen vollständig bestätigt, Ursprung frei und innerhalb der Karte, der Ursprung als Mittelpunkt eines Einzelfelds bestätigt sowie Wirkungsform und Distanz separat belegt sein. `SrdSpellGridTargetRules.validateOrigin` prüft zusätzlich die Reichweite zum Zauberursprung.
+- **QUELLEN:** Wizards of the Coast LLC, *System Reference Document 5.2.1*, *Rules Glossary / Emanation* und *Spirit Guardians*, CC BY 4.0, https://www.dndbeyond.com/srd. Requirement `RULE-SPELLS-SPELL-AREAS-OF-EFFECT` bleibt `partial`.
+- **DATEIEN:** `app/lib/domain/srd_emanation_area_rules.dart`, `app/test/srd_emanation_area_rules_test.dart`, diese Chat-A-Dokumentation, `docs/CODEX_CHECKPOINT.md`, `README.md`.
+- **TESTS:** Sechs neue Flutter-Tests eingecheckt: Geometrie/Randfelder, Quellenopt-in, Bewegungssemantik, Blocker/Deckungsprüfung, ungültige Eingaben/Kartenrand, `Spirit Guardians` Self-Range und Shape-Preflight. **CI des neuen Branches vorläufig nicht bestätigt**; lokal kein Dart-/Flutter-SDK. Separat: letzter nachgewiesen vollständiger grüner Chat-A-Cylinder-CI-Lauf [#40720953868](https://github.com/ManuEtt/Dnd/actions/runs/40720953868) betrifft PR #361, nicht dieses Paket.
+- **KOMPATIBILITÄT:** Kein UI, keine KI-Story, keine Persistenz, kein Schema-/JSON-/SQLite-Update, keine Migration, keine Würfel/Verbrauch/Schadensänderung.
+- **BEKANNTE GRENZEN:** Nur Zentrum einer ausdrücklich bestätigten einzelnen Rasterzelle; mehrzellige Große Kreaturen, beliebige Objektformen, 3D-Höhe, wirkliche Deckung, Zielauswahl und Schadens-/Rettungswurfregeln weiterhin nicht automatisch modelliert. Kein physischer Gerätetest.
+- **KOORDINATION:** Code/Testdateien unabhängig von offenen PRs #356/#357/#358/#359/#361/#362/#363; zentrale README-/Checkpoint-Einträge kollidieren dokumentarisch und müssen bei der Integration von Chat D erhalten und konsolidiert werden.
+- **NÄCHSTER SCHRITT:** Emanation aus tatsächlichen, bestätigten Quellenpositionen und Kreatur-Größen mit einer geprüften Multi-Square-Footprint-Schnittstelle verbinden, ohne implizite Treffer.
+
+---
+
 # Chat A – Checkpoint (26.10.2026): Eldritch-Blast-Klassenprüfung
 
 - Ausgangs-Main: `42d14ad36cc947691f7e5a1e8647a43f5421b86e`; Branch: `fix/chat-a/eldritch-primary-class-validation-20261026`.
