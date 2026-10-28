@@ -1,0 +1,25 @@
+name: Temporary Savage Attacker Dart formatter
+on:
+  push:
+    branches:
+      - feat/chat-e/savage-attacker-weapon-subtotal-20261027
+permissions:
+  contents: read
+jobs:
+  dart-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Capture canonical formatted test
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd app
+          dart format test/srd_savage_attacker_damage_comparison_test.dart
+          echo BEGIN_FORMATTED_FILE:test/srd_savage_attacker_damage_comparison_test.dart
+          base64 -w 0 test/srd_savage_attacker_damage_comparison_test.dart
+          echo
+          echo END_FORMATTED_FILE:test/srd_savage_attacker_damage_comparison_test.dart
