@@ -1,5 +1,13 @@
 # Codex-Checkpoint – Würfelraunen
 
+## 29.10.2026 – Chat C: Vollständige Helden- und Kampagnennamen bei 200 % Systemschrift
+
+**Basis-main:** `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`; **Branch:** `fix/chat-c/active-hero-identity-large-text-20261029`. **IMPLEMENTIERT:** `app/lib/ui/fantasy_campaign_dashboard.dart`: Bei mindestens 180 % Schrift und maximal 499 dp Karteninnenbreite stellt `FantasyActiveHeroCard` das Porträt oberhalb der Identität dar. Name, Klasse/Spezies/Stufe und Kampagnenname sind ohne `maxLines`-Kappung und ohne Ellipsen lesbar; normale Ansicht bleibt einreihig und gekürzt. **TESTS ERGÄNZT:** `app/test/fantasy_active_hero_identity_large_text_test.dart` prüft 320/360 dp mit 200 %, Originalwerte, Navigation und unverändertes `HeroCharacter.toJson()`; 360 dp Standardtext prüft die frühere Anordnung und Begrenzungen. **KOORDINATION:** Die offenen Chat-C-PRs #359, #365, #374 und #376 ändern andere Produkt-/Testdateien. **GETESTET:** aktuellen GitHub-main, offenen PR-Bestand und vorhandene Heldenkarten-Widgettests vor Änderungen geprüft. **NICHT GETESTET:** neuer vollständiger CI-Lauf auf finalem SHA und Android-Realgerät/TalkBack. Kein Merge. **KOMPATIBILITÄT:** ausschließlich Flutter-UI und Tests, keine Regeln, Story, Schema/SQLite/JSON oder Migration.
+
+**Nächster Schritt:** Dart-Format, Flutter-Analyse, gezielte und gesamte Widgettests, Android-Debug/Alpha und native Prüfungen aus GitHub-CI abnehmen; Realgerät bei 200 % Schrift separat.
+
+---
+
 ## Chat D – PR #358: Alpha-Release atomar pro Version sperren
 
 **IMPLEMENTIERT:** `scripts/prepare_alpha_release.py` reserviert vor Publikationsbeginn ein atomar erzeugtes Lock-Verzeichnis pro Release-Version. Zweitaufrufe können keine fremden Dateien löschen. Drei positive/negative Regressionen (gleichzeitiger Aufruf, Fehler-Retry, verwaiste Sperre). **GETESTET:** vollständige CI auf dem vorherigen Stand `1d7b1723` bestanden ([Actions 40730971955](https://github.com/ManuEtt/Dnd/actions/runs/40730971955)). **NOCH NICHT GETESTET:** neuer kombinierter Head einschließlich PR #363, parallele Runner-Prozesse und reales Gerät. **BLOCKIERT:** kombinierte CI-Abnahme. **Migration:** keine. **Nächster Schritt:** kombinierte CI prüfen, danach Review/Merge nur bei Erfolg.

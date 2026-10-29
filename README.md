@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## 29.10.2026 – Chat C: Heldenidentität bei großer Android-Schrift
+
+Die aktive Heldenkarte zeigt bei schmalen Android-Displays (unter 500 dp) und mindestens 180 % Textskalierung Porträt und vollständige Identitätsdaten untereinander statt lange Helden- oder Kampagnennamen abzuschneiden. Standardtext behält die kompakte Darstellung. Neue Widgettests prüfen 320/360 dp bei 200 %, lesbare Namen, echte Navigation und unveränderte Heldendaten. Keine Änderungen an SRD-Regeln, Kampagnendaten oder Speicherformat. Details: [Chat C](docs/parallel/CHAT_C_CHECKPOINT.md).
+
 ## Qualitätsabsicherung – Alpha-Release-Sperre (Chat D, PR #358)
 
 Parallele Alpha-Packaging-Läufe mit derselben App-Version werden vor der Dateiprüfung durch ein exklusives `_Release.lock`-Verzeichnis serialisiert. Bei einem Fehler werden fremde Releases nicht gelöscht; nach normalem Abschluss oder behandelter Ausnahme wird die Sperre freigegeben. Eine verwaiste Sperre blockiert sicherheitshalber die Veröffentlichung. Drei Regressionen; keine Änderung an SQLite, JSON oder Regeln. [Erfolgreiche Vor-Integrations-CI](https://github.com/ManuEtt/Dnd/actions/runs/40730971955); der kombinierte Stand mit PR #363 erhält eine eigene Prüfung.
