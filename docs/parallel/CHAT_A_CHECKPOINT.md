@@ -1,3 +1,19 @@
+# Chat A – Magic-Missile-Mehrziel-Vorprüfung (29.10.2026, Europe/Berlin)
+
+- **Ausgangs-main:** `1dc8d076786dbfb6a6792b6653bd1457bd7992d9`; **eigener Branch:** `feat/chat-a/magic-missile-multitarget-plan-20261029`; **Code-Commit:** `af072f25515ba04175e60ed6c3100af5100082b4`; **Test-Commit:** `1efe27a8421a70d2819a14746e3af5e99b364589`; **Pull Request:** [#375](https://github.com/ManuEtt/Dnd/pull/375) (Draft).
+- **Ausgangsproblem:** `SPELL-MISSILE-MULTITARGET` war als `missing` ausgewiesen. Der produktive Kampfpfad kann nur einen Gegner treffen, obwohl der SRD-Zauber die gleichzeitige Zuordnung zu einer oder mehreren Kreaturen erlaubt.
+- **IMPLEMENTIERT:** reine `SrdMagicMissileMultiTargetRules.prepare`-Vorprüfung mit 3 bis 11 Geschossen (Slot 1–9), eindeutigen bestätigten Ziel-IDs, Sicht, Reichweite, fehlender Vollabdeckung und bindender, unveränderlicher Zuordnung jeder Geschossposition. Keine Spielzustandsänderung.
+- **Geänderte Fachdateien:** `app/lib/domain/srd_magic_missile_multi_target_rules.dart`, `app/test/srd_magic_missile_multi_target_rules_test.dart`. Weitere Änderungen: `docs/parallel/CHAT_A_CHECKPOINT.md`, `docs/CODEX_CHECKPOINT.md`, `README.md`.
+- **GETESTET:** vollständige offizielle SRD-5.2.1-Seite 146 gegengeprüft (Wizards of the Coast LLC, CC BY 4.0, https://www.dndbeyond.com/srd); live Katalog-Metadaten, main-HEAD und offene PR-Dateipfade kontrolliert. Automatisierte Testausführung auf dem neuen Branch **noch nicht nachgewiesen**.
+- **NICHT GETESTET:** Flutter/Dart-Format, Analyzer, neue Widget-/Unit-Tests, gesamter Flutter-Testlauf, Android-APK und echte Geräte-/TalkBack-Tests auf finalem Branch-HEAD. Lokal fehlen Dart und Flutter.
+- **BLOCKIERT:** lokales Flutter-SDK und echtes Testgerät fehlen; GitHub-CI muss finalen Head abnehmen. Docs-Überlappungen bei README und zentralem Checkpoint mit anderen Chats sind durch Chat D additiv zu konsolidieren.
+- **NOCH NICHT IMPLEMENTIERT:** tatsächliche Mehrziel-Kampfaktion mit pro-Ziel-Schaden, Shield/Widerstand, Controller/SQLite-Revisionen und Dialog. `SPELL-MISSILE-MULTITARGET` ist nur **partial**, nicht `tested`.
+- **Migration:** keine; SQLite-Schema 3, Kampagnen-JSON 1 und SRD-Register bleiben unverändert; keine KI-/Story-Autorität oder zusätzliche API-Kosten.
+- **Konfliktprüfung:** Zum PR-Start waren #357/#361/#366/#367/#372 die offenen Chat-A-PRs; kein identischer Fachpfad. Main `1dc8d076` beim finalen Vergleich unverändert.
+- **Nächster Schritt:** Den Mehrziel-Plan mit einem atomaren, revisonsgeprüften Kampfbefehl verbinden; jeden einzelnen Schaden, Shield-Abwehr und vollständigen Rollback bei ungültiger Zuordnung mit deterministischen Tests abnehmen.
+
+---
+
 # Chat A – Checkpoint (26.10.2026): Eldritch-Blast-Klassenprüfung
 
 - Ausgangs-Main: `42d14ad36cc947691f7e5a1e8647a43f5421b86e`; Branch: `fix/chat-a/eldritch-primary-class-validation-20261026`.
