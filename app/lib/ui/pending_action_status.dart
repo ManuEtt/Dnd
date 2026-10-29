@@ -31,6 +31,15 @@ class PendingActionStatus extends StatefulWidget {
 
 class _PendingActionStatusState extends State<PendingActionStatus> {
   bool _showFullText = false;
+  final ScrollController _textScrollController = ScrollController(
+    keepScrollOffset: false,
+  );
+
+  @override
+  void dispose() {
+    _textScrollController.dispose();
+    super.dispose();
+  }
 
   @override
   void didUpdateWidget(covariant PendingActionStatus oldWidget) {
@@ -70,7 +79,10 @@ class _PendingActionStatusState extends State<PendingActionStatus> {
               // must scroll here rather than pushing the action bar away.
               constraints: const BoxConstraints(maxHeight: 160),
               child: Scrollbar(
+                controller: _textScrollController,
                 child: SingleChildScrollView(
+                  controller: _textScrollController,
+                  primary: false,
                   key: const ValueKey('adventure-pending-action-scroll'),
                   child: Text(
                     pending.text,
