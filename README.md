@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## 29.10.2026 – Chat D: Historische Checkpoint-Dateien ohne Symlink-Rennen hashen
+
+`SHA256SUMS.txt` wird für ältere ZIP-/Patch-/Manifestdateien auf POSIX über einen geöffneten Verzeichnisdeskriptor, `O_NOFOLLOW` und einen blockweisen SHA-256-Leser erstellt. Symlinks und umgeschriebene Dateien nach der Auflistung werden vor Veröffentlichung abgewiesen. Zwei neue Regressionstests sichern den Erhalt der bisherigen stabilen Aliases; das Speicherformat und die Appversion bleiben unverändert. **Vollständige CI für den neuen Branch steht aus.** [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
 ## Qualitätsabsicherung – Alpha-Release-Sperre (Chat D, PR #358)
 
 Parallele Alpha-Packaging-Läufe mit derselben App-Version werden vor der Dateiprüfung durch ein exklusives `_Release.lock`-Verzeichnis serialisiert. Bei einem Fehler werden fremde Releases nicht gelöscht; nach normalem Abschluss oder behandelter Ausnahme wird die Sperre freigegeben. Eine verwaiste Sperre blockiert sicherheitshalber die Veröffentlichung. Drei Regressionen; keine Änderung an SQLite, JSON oder Regeln. [Erfolgreiche Vor-Integrations-CI](https://github.com/ManuEtt/Dnd/actions/runs/40730971955); der kombinierte Stand mit PR #363 erhält eine eigene Prüfung.

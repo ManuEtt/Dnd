@@ -1,3 +1,18 @@
+# Chat D D-018 – Sicherer SHA256-Stream historischer Checkpoints (29.10.2026)
+
+- **Ausgangs-main:** `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`; **Branch:** `fix/chat-d/checkpoint-history-nofollow-hash-20261029`.
+- **Problem:** Die vorangehende Dateiliste verwendete `lstat`, der spätere Hash auf dem Pfad konnte einen nachträglich eingeschleusten Symlink verfolgen.
+- **IMPLEMENTIERT:** `previous_checkpoint_files` liefert Dateipfad und ursprünglich geprüften `stat_result`. Der neue Stream-Leser verwendet auf POSIX einen Verzeichnis-FD und `O_NOFOLLOW` für die historische Datei; Hash und Inode/Dateigröße/Zeitstempel werden vor und nach dem Lesen abgeglichen. Neue Staging-Dateien benutzen den unveränderten SHA256-Pfad.
+- **TESTS:** Austausch durch externen Symlink nach Dateiauflistung, reguläre Datei nach Auflistung geändert, alte LATEST- und SHA256SUMS-Aliases unverändert, alte Positivtests weiterhin vorhanden.
+- **GETESTET:** Quell- und Testcode auf eigenem Branch vorbereitet; CI-Ergebnis noch offen.
+- **NICHT GETESTET:** Python-/Backend-/Flutter-/Android-Vollsuite sowie Gerätetest. Nicht-POSIX-Fallback ist nicht vollständig racefrei.
+- **BLOCKIERT:** GitHub-DNS und Flutter-/Dart-SDK lokal nicht verfügbar; CI erforderlich.
+- **Migration:** Keine; SQLite 3, Kampagnen-JSON 1, Appversion, bestehende Checkpoints unverändert.
+- **Koordination:** Andere offene PRs ändern diese beiden Python-Technikdateien nicht.
+- **Nächster Schritt:** CI für den endgültigen Pull-Request-Commit abnehmen und erst danach integrieren.
+
+---
+
 # Chat D – Integration von PR #358 nach Checkpoint-Fix #363 (29.10.2026)
 
 - **Stand:** Alpha-Release-Lock in `scripts/prepare_alpha_release.py` (3 neue Tests), vorherige vollständige CI `40730971955` auf `1d7b1723` erfolgreich; kombinierter Head benötigt erneute CI.

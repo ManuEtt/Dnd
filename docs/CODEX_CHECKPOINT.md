@@ -1,5 +1,18 @@
 # Codex-Checkpoint – Würfelraunen
 
+## 29.10.2026 – Chat D: Checkpoint-SHA256 aus sicheren Dateideskriptoren
+
+- **Basis-main:** `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`; **Branch:** `fix/chat-d/checkpoint-history-nofollow-hash-20261029`.
+- **IMPLEMENTIERT:** `sha256_previous_checkpoint` hasht historische Artefakte blockweise. Unter POSIX verweigern `O_DIRECTORY`/`O_NOFOLLOW` verfolgte Links, `fstat` und `lstat` vergleichen Metadaten mit der ursprünglichen Auflistung.
+- **REGRESSIONEN:** Nach der Auflistung ausgetauschter Symlink und umgeschriebene ZIP werden zurückgewiesen; bisheriges LATEST-ZIP und stabile `SHA256SUMS.txt` bleiben erhalten.
+- **GETESTET:** Quellcode und Tests vorbereitet, vollständiger CI-Lauf noch ausstehend.
+- **NICHT GETESTET:** Python-Gesamtsuite, Backend-/Flutter-/Android-CI, echtes Gerät. Auf Nicht-POSIX-Hosts ist der Fallback bestmöglich, jedoch nicht garantiert racefrei.
+- **BLOCKIERT:** Lokaler GitHub-Checkout via DNS nicht möglich und Flutter-/Dart-SDK fehlt. CI ist das Abnahmesystem.
+- **Migration:** Keine Änderung an SQLite, JSON, Appversion oder vorhandenen Checkpoints.
+- **Nächster Schritt:** vollständige GitHub Actions auf dem finalen PR-Commit prüfen und gegebenenfalls Fehler korrigieren.
+
+---
+
 ## Chat D – PR #358: Alpha-Release atomar pro Version sperren
 
 **IMPLEMENTIERT:** `scripts/prepare_alpha_release.py` reserviert vor Publikationsbeginn ein atomar erzeugtes Lock-Verzeichnis pro Release-Version. Zweitaufrufe können keine fremden Dateien löschen. Drei positive/negative Regressionen (gleichzeitiger Aufruf, Fehler-Retry, verwaiste Sperre). **GETESTET:** vollständige CI auf dem vorherigen Stand `1d7b1723` bestanden ([Actions 40730971955](https://github.com/ManuEtt/Dnd/actions/runs/40730971955)). **NOCH NICHT GETESTET:** neuer kombinierter Head einschließlich PR #363, parallele Runner-Prozesse und reales Gerät. **BLOCKIERT:** kombinierte CI-Abnahme. **Migration:** keine. **Nächster Schritt:** kombinierte CI prüfen, danach Review/Merge nur bei Erfolg.
