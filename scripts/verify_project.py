@@ -29,6 +29,20 @@ WRAPPER_MAIN = 'org/gradle/wrapper/GradleWrapperMain.class'
 MAX_WRAPPER_JAR_BYTES = 16 * 1024 * 1024
 MAX_WRAPPER_UNCOMPRESSED_BYTES = 16 * 1024 * 1024
 MAX_WRAPPER_ENTRIES = 512
+# Malformed or accidentally huge uploads must be rejected before loading
+# their whole contents into memory. Normal dependency locks are far smaller.
+MAX_METADATA_JSON_BYTES = 16 * 1024 * 1024
+MAX_GRADLE_PROPERTIES_BYTES = 64 * 1024
+MAX_GRADLE_SHEBANG_BYTES = 4096
+
+
+def _read_bounded_utf8(path: Path, maximum_bytes: int) -> str:
+    """Decode a bounded upload; check the actual read, not just stat size."""
+    with path.open('rb') as source:
+        data = source.read(maximum_bytes + 1)
+    if len(data) > maximum_bytes:
+        raise ValueError('oversized upload')
+    return data.decode('utf-8')
 
 
 def _gradle_logical_lines(text: str):
@@ -155,7 +169,7 @@ def verify_project(root: Path) -> list[str]:
         if (not _has_symlink_component(root, name)
                 and path.is_file() and path.stat().st_size):
             try:
-                if not isinstance(json.loads(path.read_text(encoding='utf-8')), dict):
+                if not isinstance(json.loads(_read_bounded_utf8(path, MAX_METADATA_JSON_BYTES)), dict):
                     raise ValueError('object expected')
             except (OSError, UnicodeError, ValueError):
                 errors.append(f'Ungültige JSON-Datei: {name}. Originaldatei aus dem Quell-ZIP übernehmen.')
@@ -204,8 +218,8 @@ def verify_project(root: Path) -> list[str]:
     if (not _has_symlink_component(root, 'app/android/gradle/wrapper/gradle-wrapper.properties')
             and properties.is_file() and properties.stat().st_size):
         try:
-            text = properties.read_text(encoding='utf-8')
-        except (OSError, UnicodeError):
+            text = _read_bounded_utf8(properties, MAX_GRADLE_PROPERTIES_BYTES)
+        except (OSError, UnicodeError, ValueError):
             text = ''
         checksum = unique_gradle_property(text, 'distributionSha256Sum')
         if checksum is None or re.fullmatch(r'[a-fA-F0-9]{64}', checksum) is None:
@@ -220,9 +234,13 @@ def verify_project(root: Path) -> list[str]:
     if (not _has_symlink_component(root, 'app/android/gradlew')
             and launcher.is_file() and launcher.stat().st_size):
         try:
-            first_line = launcher.read_bytes().split(b'\n', 1)[0]
-            if not first_line.startswith(b'#!') or first_line.endswith(b'\r'):
-                errors.append('app/android/gradlew benötigt einen Unix-Shebang mit LF-Zeilenende; Originaldatei übernehmen.')
+            with launcher.open('rb') as source:
+                first_line = source.readline(MAX_GRADLE_SHEBANG_BYTES + 1)
+            if (not first_line.startswith(b'#!')
+                    or not first_line.endswith(b'\n')
+                    or first_line.endswith(b'\r\n')
+                    or len(first_line) > MAX_GRADLE_SHEBANG_BYTES):
+                errors.append('app/android/gradlew benötigt einen kurzen Unix-Shebang mit LF-Zeilenende; Originaldatei übernehmen.')
         except OSError:
             errors.append('app/android/gradlew kann nicht gelesen werden.')
     return errors
