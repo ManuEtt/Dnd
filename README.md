@@ -4,6 +4,14 @@
 
 Die Dialoge für Handlungsstränge und NPC-Beziehungen verwenden jetzt scrollbar gestaltete `AlertDialog`-Inhalte, damit die Aktionen bei kleinen Android-Displays, hoher Textskalierung und geöffneter Tastatur erreichbar bleiben. Zwei neue Widgettests (320 dp, 200 % Schrift, simuliertes IME-Inset) prüfen Speichern/Bestätigen und Abbrechen auf Sicht- und Tippbarkeit und bestätigen, dass Abbrechen den Spielstand unverändert lässt. Ausschließlich UI und Widgettests; keine Datenformat-, Regeln- oder Persistenzänderung. [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md).
 
+## Qualitätsabsicherung – Alpha-Release-Sperre (Chat D, PR #358)
+
+Parallele Alpha-Packaging-Läufe mit derselben App-Version werden vor der Dateiprüfung durch ein exklusives `_Release.lock`-Verzeichnis serialisiert. Bei einem Fehler werden fremde Releases nicht gelöscht; nach normalem Abschluss oder behandelter Ausnahme wird die Sperre freigegeben. Eine verwaiste Sperre blockiert sicherheitshalber die Veröffentlichung. Drei Regressionen; keine Änderung an SQLite, JSON oder Regeln. [Erfolgreiche Vor-Integrations-CI](https://github.com/ManuEtt/Dnd/actions/runs/40730971955); der kombinierte Stand mit PR #363 erhält eine eigene Prüfung.
+
+## Qualitätsabsicherung – Checkpoint-Historie (Chat D, PR #363)
+
+Historische Dateien im Quell-Checkpoint werden vor Aufnahme in `SHA256SUMS.txt` auf sichere Namen und regulären Dateityp geprüft. Vorhandene Symlinks, Zeilenumbrüche oder ZIP-Verzeichnisse werden vor einer Veröffentlichung abgelehnt; drei neue negative Python-Regressionen sichern alte stabile Aliases. [Erfolgreicher CI-Stand auf dem vorigen Commit](https://github.com/ManuEtt/Dnd/actions/runs/40730867003); der jetzt kombinierte `main`-Stand wird separat geprüft. Keine Speicherformatmigration. Die Prüfung ist keine vollständige TOCTOU-Abwehr.
+
 Deutschsprachige Fantasy-Solo-App für Android mit lokalen Charakteren,
 Kampagnen, ausgewählten D&D-SRD-5.2.1-Regeln und optionalem KI-Erzähler.
 **Alpha 0.8.47+97**; lokales Spielen benötigt keinen Account oder KI-Server.

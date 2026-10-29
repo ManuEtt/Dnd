@@ -56,6 +56,26 @@ def safe_name(name: str) -> bool:
             and not re.match(r'^[A-Za-z]:', name))
 
 
+def previous_checkpoint_files(output_dir: Path) -> dict[str, Path]:
+    """Select only safe, regular historical artifacts for the checksum ledger.
+
+    Checking lstat rather than is_file rejects links to files outside the
+    artifact directory. Reject malformed names instead of writing ambiguous
+    SHA256SUMS.txt lines or silently trusting an unsafe old snapshot.
+    """
+    result = {}
+    for path in output_dir.iterdir():
+        name = path.name
+        if (not name.startswith('Wuerfelraunen_') or name == LATEST
+                or not (path.suffix in {'.zip', '.patch'}
+                        or name.endswith('_Dateimanifest.json'))):
+            continue
+        if not safe_name(name) or not stat.S_ISREG(path.lstat().st_mode):
+            raise ValueError('Unsafe previous checkpoint artifact in output directory.')
+        result[name] = path
+    return result
+
+
 def file_manifest(root: Path) -> dict[str, dict]:
     entries = {}
     for path in source_paths(root):
@@ -183,12 +203,7 @@ def create_checkpoint(root: Path, output_dir: Path, *, base: str, label: str,
         manifest.write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + '\n',
                             encoding='utf-8')
         # Include older versioned artifacts too, so the stable list remains useful.
-        checksum_files = {
-            path.name: path for path in output_dir.iterdir()
-            if path.is_file() and path.name.startswith('Wuerfelraunen_')
-            and (path.suffix in {'.zip', '.patch'} or path.name.endswith('_Dateimanifest.json'))
-            and path.name != LATEST
-        }
+        checksum_files = previous_checkpoint_files(output_dir)
         checksum_files.update({path.name: path for path in (archive, patch, manifest)})
         latest = staging / LATEST
         shutil.copyfile(archive, latest)

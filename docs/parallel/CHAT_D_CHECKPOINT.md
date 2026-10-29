@@ -1,3 +1,28 @@
+# Chat D – Integration von PR #358 nach Checkpoint-Fix #363 (29.10.2026)
+
+- **Stand:** Alpha-Release-Lock in `scripts/prepare_alpha_release.py` (3 neue Tests), vorherige vollständige CI `40730971955` auf `1d7b1723` erfolgreich; kombinierter Head benötigt erneute CI.
+- **Ausgangsbranch:** `fix/chat-d/alpha-release-version-lock-20261028`; **Integrationsbasis:** `b5f469f2163c1d60a63761e0a63434f4359e5e2a` enthält aktuelle Hauptbranch-Arbeit und PR #363. PR #358 bleibt bis gemeinsamer CI im Draft.
+- **Risiko:** Lock-Verzeichnis bleibt nach hartem Crash fail-closed; gleichzeitige externe Runner und Geräteinstallation nicht geprüft. Keine SQLite-/JSON-Migration, bestehende Alpha-Artefakte unverändert.
+- **Nächster Schritt:** vollständige GitHub Actions auf finalem Head, erst dann integrieren.
+
+---
+
+# Chat D D-017 – Sichere Checkpoint-Prüfsummenhistorie (28.10.2026)
+
+- **Main-Basis:** `854ca85c0234c508f34f00cdbfbef2e10554ca13`; **Branch:** `fix/chat-d/checkpoint-history-safe-names-20261028`.
+- **Problem:** Historische Checkpoint-Einträge wurden über `Path.is_file()` gesammelt (folgt Symlinks) und ihre Namen ohne Prüfungsnormalisierung in `SHA256SUMS.txt` geschrieben. Ein fremdes Ziel oder Zeilenumbruch kann so die Prüfsummenliste verfälschen bzw. einen externen Dateizugriff verursachen.
+- **IMPLEMENTIERT:** `previous_checkpoint_files()` lässt ausschließlich sichere, reguläre historische Artefakte zu; invalides Inventar bricht vor dem Ersetzen der Version/Stable-Aliases ab.
+- **Tests:** Drei neue negative Fälle (Symlink auf externe Datei, Zeilenumbruch, Verzeichnis mit ZIP-Endung) prüfen Ablehnung und unveränderte zuvor veröffentlichte Aliases. Alte positive Historienprüfung bleibt.
+- **GETESTET:** Code-/Teständerungen über GitHub-Connector gesichert; tatsächliche Testausführung folgt über CI.
+- **NICHT GETESTET:** Python-/Backend-/Flutter-/Android-Gesamtsuite und Realgerät.
+- **BLOCKIERT:** Lokaler GitHub-DNS-Checkout und Flutter-/Dart-SDKs nicht vorhanden.
+- **NOCH NICHT IMPLEMENTIERT:** Atomare Lock-/Race-Protektion für alle extern manipulierbaren Artefaktordner; diese Patch prüft Dateityp zum Auflistungszeitpunkt, keine No-Follow-Dateideskriptoren beim späteren Hashing.
+- **Keine Migration:** Spielstands-/SQLite-/JSON-/Appversion unverändert.
+- **Geänderte Dateien:** `scripts/create_checkpoint.py`, `scripts/tests/test_create_checkpoint.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Nächster Schritt:** finale CI/PR-Abnahme der drei Regressionen sowie normaler Android-Gates, bevor über einen Merge entschieden wird.
+
+---
+
 # Chat D D-016 – Dart-Teilbibliotheken und Story-/Regelgrenzen (28.10.2026)
 
 - **Basis-`main`:** `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78`; **Branch:** `fix/chat-d/dart-part-boundary-20261028`; **Codecommit:** `4690b591dbf3664824981bb4fec5844a48d8bfa2`; **Pull Request:** [#360](https://github.com/ManuEtt/Dnd/pull/360) (Draft).
