@@ -1,5 +1,12 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Aktualisierte Main-Basis und Chat-C-UI-Arbeit (29.10.2026)
+
+Die vorherigen 24 parallelen PR-Pakete wurden inzwischen in `main` integriert und ihre Branches bereinigt. Main `fde0ef6ed8b419d6a31c701a03aa05d61994c352` / Android-Alpha-CI [40867945743](https://github.com/ManuEtt/Dnd/actions/runs/40867945743) sind erfolgreich. Darunterstehende „Integrationskandidat“-Abschnitte beschreiben einen **historischen Vor-Merge-Zustand** und dürfen nicht als aktuelle offene PR-Liste gelesen werden.
+
+**Aktueller UI-Entwurf:** [Chat C PR #388](https://github.com/ManuEtt/Dnd/pull/388) erweitert den Charakterbogen-Header bei 180–200 % Android-Schrift und weniger als 500 dp Breite: Porträt über vollständigem Namen, Klasse/Stufe, Unterklassen und Hintergrund. Normale Schrift bleibt kompakt. Vier neue Widgettests (320/360 dp, Standardaktion, historisch leerer Name) sind hinzugefügt; **CI für diesen Feature-Head noch separat abnehmen**. Keine Änderung an Version, Regeln, Story, SQLite oder JSON.
+
+
 ## Konsolidierter Arbeitsstand – Integrationskandidat vom 29.10.2026
 
 **Noch nicht in `main` integriert.** Die 24 offenen PRs von Chat A/B/C/D sind auf einem separaten technischen Integrationsbaum zusammengetragen; der gemeinsame Flutter-/Python-/Backend-/Android-CI-Lauf steht aus. Einzelne Pull Requests sind Entwürfe und bedürfen einer eigenen fachlichen Freigabe. Aktive Branches vor grüner gemeinsamer Abnahme und SHA-gesicherter Archivierung nicht löschen. [Herkunft, Originalbeschreibungen, HEADs und offene Risiken](docs/parallel/INTEGRATION_20261029.md).
