@@ -93,9 +93,7 @@ class _PendingActionStatusState extends State<PendingActionStatus> {
               key: const ValueKey('adventure-pending-action-toggle'),
               onPressed: () => setState(() => _showFullText = !_showFullText),
               child: Text(
-                _showFullText
-                    ? 'Weniger anzeigen'
-                    : 'Ganzen Text anzeigen',
+                _showFullText ? 'Weniger anzeigen' : 'Ganzen Text anzeigen',
                 textAlign: TextAlign.center,
               ),
             ),
@@ -118,14 +116,18 @@ class _PendingActionStatusState extends State<PendingActionStatus> {
                 label: 'Erneut bestätigen',
                 icon: Icons.refresh,
                 style: FantasyButtonStyle.woodGold,
-                onPressed: interactionBlocked || submitting ? null : widget.onRetry,
+                onPressed: interactionBlocked || submitting
+                    ? null
+                    : widget.onRetry,
               ),
               FantasyTextButton(
                 key: const ValueKey('adventure-discard-action'),
                 label: 'Verwerfen',
                 icon: Icons.close,
                 style: FantasyButtonStyle.iron,
-                onPressed: interactionBlocked || submitting ? null : widget.onDiscard,
+                onPressed: interactionBlocked || submitting
+                    ? null
+                    : widget.onDiscard,
               ),
             ],
           ),
