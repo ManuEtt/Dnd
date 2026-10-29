@@ -1,5 +1,24 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat D – PR #381: Quell-ZIP-Ausgabe ohne Symlink-Umleitung
+
+**IMPLEMENTIERT:** `scripts/package_project.py` behält den absoluten Ausgabe-Namen
+statt eines aufgelösten Symlinkziels bei und verweigert Symlinks für ZIP und
+Prüfsummendatei vor dem Erzeugen. Ein bestehendes ZIP wird unter POSIX
+per `O_NOFOLLOW` / `fstat` als reguläre Datei gelesen; Non-POSIX nur best effort.
+Vier neue positive/negative Regressionen in `scripts/tests/test_package_project.py`;
+bestehender erfolgreicher ZIP-Roundtrip/Overwrite/Rollback unverändert.
+**CODECOMMIT:** `5fc1b4a2d1e950c89432575d812d26fd90939144`.
+**PR:** [#381](https://github.com/ManuEtt/Dnd/pull/381) (Draft).
+**GETESTET:** Quellstand und Commit über GitHub verifiziert; keine ausführbare
+Testausführung für diesen neuen Stand bislang bestätigt.
+**NICHT GETESTET:** vollständige Python-/Backend-/Flutter-/Android-CI,
+POSIX-Rennbedingungen jenseits des getesteten Zeitpunkts, Windows, Realgerät.
+**BLOCKIERT:** lokale GitHub-DNS-Verbindung, Flutter-/Dart-SDK; CI auf PR-Head prüfen.
+**MIGRATION:** keine Spielstand-, SQLite-, JSON- oder Versionsänderung.
+**NÄCHSTER SCHRITT:** PR-Head-CI einschließlich neuer Python-Regressionsfälle
+abnehmen und vor Merge Main/PR-Dateien erneut vergleichen.
+
 ## Chat D – PR #358: Alpha-Release atomar pro Version sperren
 
 **IMPLEMENTIERT:** `scripts/prepare_alpha_release.py` reserviert vor Publikationsbeginn ein atomar erzeugtes Lock-Verzeichnis pro Release-Version. Zweitaufrufe können keine fremden Dateien löschen. Drei positive/negative Regressionen (gleichzeitiger Aufruf, Fehler-Retry, verwaiste Sperre). **GETESTET:** vollständige CI auf dem vorherigen Stand `1d7b1723` bestanden ([Actions 40730971955](https://github.com/ManuEtt/Dnd/actions/runs/40730971955)). **NOCH NICHT GETESTET:** neuer kombinierter Head einschließlich PR #363, parallele Runner-Prozesse und reales Gerät. **BLOCKIERT:** kombinierte CI-Abnahme. **Migration:** keine. **Nächster Schritt:** kombinierte CI prüfen, danach Review/Merge nur bei Erfolg.

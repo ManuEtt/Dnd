@@ -1,5 +1,18 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Quell-ZIP-Ausgabe gegen Symlinks geschützt (Chat D, PR #381)
+
+Der Quell-ZIP-Exporter lehnt vorhandene und defekte symbolische Links am
+Ausgabepfad sowie an der zugehörigen SHA256-Datei ab; er verwendet nicht mehr
+den aufgelösten Symlink-Zielnamen zur Veröffentlichung. Bestehende Archive
+werden unter POSIX mit `O_NOFOLLOW` gelesen, um nach der Vorprüfung
+ausgetauschte Ausgabelinks nicht zu verfolgen. Vier neue Regressionen decken
+Links und den Austauschzeitpunkt ab. Keine Änderung an App-/Backend-Code,
+SQLite, Kampagnen-JSON, Versionsnummer oder Release-Signatur. Implementiert
+in [PR #381](https://github.com/ManuEtt/Dnd/pull/381);
+vollständige CI auf dem finalen PR-Commit und Android-Gerätetest sind noch
+gesondert abzunehmen.
+
 ## Qualitätsabsicherung – Alpha-Release-Sperre (Chat D, PR #358)
 
 Parallele Alpha-Packaging-Läufe mit derselben App-Version werden vor der Dateiprüfung durch ein exklusives `_Release.lock`-Verzeichnis serialisiert. Bei einem Fehler werden fremde Releases nicht gelöscht; nach normalem Abschluss oder behandelter Ausnahme wird die Sperre freigegeben. Eine verwaiste Sperre blockiert sicherheitshalber die Veröffentlichung. Drei Regressionen; keine Änderung an SQLite, JSON oder Regeln. [Erfolgreiche Vor-Integrations-CI](https://github.com/ManuEtt/Dnd/actions/runs/40730971955); der kombinierte Stand mit PR #363 erhält eine eigene Prüfung.

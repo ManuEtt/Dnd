@@ -1,3 +1,23 @@
+# Chat D D-018 – Symlinkfeste Quell-ZIP-Ausgabe (29.10.2026)
+
+- **Ausgangs-Main-SHA:** `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`.
+- **Branch:** `fix/chat-d/source-archive-output-symlink-20261029`.
+- **Codecommit:** `5fc1b4a2d1e950c89432575d812d26fd90939144`; additive Dokumentation folgt auf demselben Branch.
+- **Pull Request:** [#381](https://github.com/ManuEtt/Dnd/pull/381) (**Draft**).
+- **Ausgangsproblem:** `Path.resolve()` auf dem benannten Ausgabepfad konnte einen bestehenden ZIP-Symlink auf eine fremde Datei umleiten und beim Publizieren das Linkziel überschreiben. Die Prüfsummendatei konnte ebenfalls ein Symlink sein. Die bisherige Sicherung eines alten ZIPs verwendete ein symlinkfolgendes `shutil.copy2`.
+- **IMPLEMENTIERT:** Original-Ausgabenamen mit `Path.absolute()` bewahren; ZIP-/SHA-Symlinks einschließlich dangling Links ablehnen; aufgelöste Projekt-Innenpfade und nichtreguläre Ausgaben abweisen; altes ZIP unter POSIX mit `O_NOFOLLOW|O_NONBLOCK` sowie `fstat` sichern. Die bestehende Staging-/SHA256-/Rollback-Funktion bleibt erhalten. Nicht-POSIX bleibt best effort.
+- **BETROFFENE DATEIEN:** `scripts/package_project.py`, `scripts/tests/test_package_project.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **REGRESSIONEN:** vier neue Testfälle gegen vorhandenen Ausgabe-Symlink auf Fremddatei, dangling Ausgabe-Symlink, Prüfsummendatei-Symlink mit bisherigem ZIP und Symlink-Austausch nach der Vorprüfung. Vorhandene Tests prüfen weiterhin normalen Export, erneutes Überschreiben, Rollback und Bytekonsistenz.
+- **AKZEPTANZ:** kein Fremdziel wird erstellt/überschrieben/gelesen; Links bleiben nach Ablehnung intakt; gültiger normaler ZIP-/SHA-Export weiterhin erfolgreich.
+- **GETESTET:** Unabhängigkeit der technischen Dateien gegen 19 offene PRs über GitHub-Dateilisten geprüft; Branch/Codecommit per GitHub-API gesichert. Lokale Toolverfügbarkeit: Python/Node vorhanden, Flutter/Dart nicht vorhanden, direkter Checkout scheitert an DNS. **Keine Python-/Flutter-/Backend-/Android-Testausführung für diesen Commit als bestanden behauptet.**
+- **CI:** auf dem finalen Dokumentations-Head explizit kontrollieren; zuvor erfolgreiche andere PR-CI ist kein Nachweis.
+- **SPIELSTAND/MIGRATION:** keine Änderungen an App, SQLite, JSON-Import/Export, SRD, UI, Versionscode oder Alpha-Signatur; alte Spielstände unbeeinflusst.
+- **BEKANNTE GRENZEN:** Non-POSIX-Sicherung ist nicht racefrei; gleichzeitige konkurrierende ZIP-Publisher werden durch dieses Paket nicht serialisiert.
+- **KOORDINATION:** 19 offene PRs; keine überschneidenden technischen Dateien. README/zentraler Checkpoint werden von anderen PRs ebenfalls geändert: vor Integration additiv konsolidieren, nichts fremd überschreiben.
+- **NÄCHSTER KONKRETER SCHRITT:** finalen CI-/Python-/Android-Status von #381 abnehmen, fehlgeschlagene Tests auf demselben Branch beheben, erst dann Integration zur Review anbieten.
+
+---
+
 # Chat D – Integration von PR #358 nach Checkpoint-Fix #363 (29.10.2026)
 
 - **Stand:** Alpha-Release-Lock in `scripts/prepare_alpha_release.py` (3 neue Tests), vorherige vollständige CI `40730971955` auf `1d7b1723` erfolgreich; kombinierter Head benötigt erneute CI.
