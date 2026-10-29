@@ -1,3 +1,16 @@
+# Chat B – KI-Story-Event/Checkpoint-Bindung (29.10.2026)
+
+- **Main-Basis:** `1dc8d076786dbfb6a6792b6653bd1457bd7992d9`; **Branch:** `feat/chat-b/ai-step-checkpoint-binding-20261029`.
+- **PROBLEM:** Eine bereits geprüfte KI-Antwort konnte auf ein nicht zum aktuellen Journal gehörendes oder manipuliertes `narrative.turn` angewendet werden.
+- **IMPLEMENTIERT:** `StoryCampaignEngine.applyAiStoryStep` prüft vor Story-Änderung Event-/Journal-Gleichheit, Kampagnen-/Sitzungs-ID und `stateAfter`-Checkpoint. Kein Umschreiben fremder oder älterer Ereignisse.
+- **DATEIEN:** `app/lib/story/story_campaign_engine.dart`, `app/test/ai_story_event_checkpoint_test.dart`, README und beide Checkpoints.
+- **TESTS:** Drei neue Flutter-Regressionen: gültiger Turn mit JSON-Roundtrip, sieben manipulierte Fälle und veralteter Event-Replay. CI am finalen HEAD noch abzunehmen.
+- **KONFLIKTE:** Keine Story-Fachdatei der offenen Chat-B-PRs #356, #362, #364, #371; nur gemeinsame Dokumentation, bei Integration additiv konsolidieren.
+- **MIGRATION:** keine. Keine Änderung an SRD-Regeln, Heldenwerten oder gespeicherten Daten.
+- **NÄCHSTER SCHRITT:** CI abnehmen, Fehler im eigenen Branch korrigieren, PR zur Review freigeben.
+
+---
+
 # Chat B – Sitzungsidentität beim Ereignis-Replay (27.10.2026)
 
 - **main-Basis:** `96001353f2b90f293fbdade934e78b7b8281e965`; Branch `fix/chat-b/story-replay-session-identity-20261027`.

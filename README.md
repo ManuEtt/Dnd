@@ -1,5 +1,17 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## 29.10.2026 – Chat B: KI-Story-Antwort an aktuellen Ereignis-Checkpoint binden
+
+`StoryCampaignEngine.applyAiStoryStep` akzeptiert nur noch exakt das
+aktuellste, zur Kampagne und Sitzung gehörende und durch den bestätigten
+`stateAfter`-Checkpoint belegte `narrative.turn`-Ereignis. Manipulierte,
+veraltete oder zu anderen Sitzungen gehörende Ereignisse werden ohne
+Zustandsänderung abgewiesen. Drei neue Flutter-Tests decken reguläre
+Fortschreibung, manipulierte Ereignisse und Wiederholung alter Ereignisse ab.
+Keine Änderung an Spielregeln, JSON-Schema oder Datenbank.
+Branch: `feat/chat-b/ai-step-checkpoint-binding-20261029`. CI finalem Commit zuordnen.
+
+
 Deutschsprachige Fantasy-Solo-App für Android mit lokalen Charakteren,
 Kampagnen, ausgewählten D&D-SRD-5.2.1-Regeln und optionalem KI-Erzähler.
 **Alpha 0.8.47+97**; lokales Spielen benötigt keinen Account oder KI-Server.

@@ -1,3 +1,11 @@
+## 29.10.2026 – Chat B: Story-Event-Checkpoint vor KI-Fortschreibung verifizieren
+
+- **Basis:** `1dc8d076786dbfb6a6792b6653bd1457bd7992d9`; **Branch:** `feat/chat-b/ai-step-checkpoint-binding-20261029`.
+- **FEHLER:** `applyAiStoryStep` überprüfte zwar den Ereignistyp und die AnzahI der Update-Events, aber nicht, ob das Ereignis wirklich dem neuesten gespeicherten Journalereignis und dem aktuellen `stateAfter`-Checkpoint entsprach.
+- **LÖSUNG:** Vor dem Anwenden des Provider-Schritts aktuelle Event-ID, kanonische Event-Daten, Kampagnen-/Sitzungs-ID und bestätigten Zustandscheckpoint prüfen. Veraltete/fingierte KI-Antworten werden abgewiesen.
+- **TESTS:** Drei neue Regressionen mit Positivfall/JSON-Roundtrip, sieben manipulierten Varianten und Replay aus älterer Runde. Vollständige GitHub-CI folgt.
+- **KEINE MIGRATION:** Keine Regel-, Helden-, Datenbank- oder JSON-Formatänderung. README/zentralen Checkpoint bei Integration mit anderen PRs additiv zusammenführen.
+
 # Codex-Checkpoint – Würfelraunen
 
 ## Abnahme 28.10.2026 – Charakter-Symbolwahl / Alpha 0.8.47+97

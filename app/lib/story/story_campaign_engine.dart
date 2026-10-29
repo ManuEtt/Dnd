@@ -194,6 +194,28 @@ class StoryCampaignEngine {
         'Dieser Spielzug ist nicht KI-fortschreibbar.',
       );
     }
+    // Only the exact, most recent uncommitted free turn may be rewritten.
+    // Otherwise a stale provider response could silently replace a newer
+    // journal event or turn a forged checkpoint into confirmed story state.
+    final original = update.events.single;
+    if (current.events.isEmpty ||
+        original.campaignId != current.id ||
+        original.sessionId != current.sessionId ||
+        current.events.last.id != original.id ||
+        _canonicalJson(current.events.last.toJson()) !=
+            _canonicalJson(original.toJson())) {
+      throw const FormatException(
+        'Die KI-Antwort gehört nicht zum aktuellen Erzählereignis.',
+      );
+    }
+    final checkpoint = original.payload['stateAfter'];
+    if (checkpoint is! Map<String, dynamic> ||
+        _canonicalJson(checkpoint) !=
+            _canonicalJson(current.copyWith(events: const []).toJson())) {
+      throw const FormatException(
+        'Die KI-Antwort gehört nicht zum aktuellen Spielzustand.',
+      );
+    }
     // Do not trust callers to have parsed and bounded external response fields.
     final replay = AiStoryStep.fromJson({
       'narration': step.narration,
