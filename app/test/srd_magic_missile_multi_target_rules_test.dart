@@ -55,12 +55,7 @@ void main() {
       allocation: const ['enemy-2', 'enemy-1', 'enemy-2', 'enemy-1'],
     );
     expect(result.dartCount, 4);
-    expect(result.dartTargetIds, [
-      'enemy-2',
-      'enemy-1',
-      'enemy-2',
-      'enemy-1',
-    ]);
+    expect(result.dartTargetIds, ['enemy-2', 'enemy-1', 'enemy-2', 'enemy-1']);
     expect(result.dartsPerTarget, {'enemy-2': 2, 'enemy-1': 2});
   });
 
@@ -88,10 +83,7 @@ void main() {
       throwsFormatException,
     );
     expect(() => plan(targets: const []), throwsFormatException);
-    expect(
-      () => plan(targets: const [_first, _first]),
-      throwsFormatException,
-    );
+    expect(() => plan(targets: const [_first, _first]), throwsFormatException);
   });
 
   test('unconfirmed target evidence fails closed for every dart', () {
@@ -152,10 +144,7 @@ void main() {
     for (final slot in [-1, 0, 10]) {
       expect(() => plan(slotLevel: slot), throwsFormatException);
     }
-    expect(
-      () => plan(spell: catalog.find('Shield')!),
-      throwsUnsupportedError,
-    );
+    expect(() => plan(spell: catalog.find('Shield')!), throwsUnsupportedError);
     expect(
       () => plan(spell: catalog.find('Fireball')!),
       throwsUnsupportedError,
@@ -171,9 +160,6 @@ void main() {
     expect(result.dartTargetIds, ['enemy-1', 'enemy-1', 'enemy-1']);
     expect(result.dartsPerTarget, {'enemy-1': 3});
     expect(() => result.dartTargetIds.clear(), throwsUnsupportedError);
-    expect(
-      () => result.dartsPerTarget['enemy-2'] = 1,
-      throwsUnsupportedError,
-    );
+    expect(() => result.dartsPerTarget['enemy-2'] = 1, throwsUnsupportedError);
   });
 }
