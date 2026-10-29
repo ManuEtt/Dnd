@@ -1,0 +1,21 @@
+name: Chat C Pending Text Format Diagnostic
+on:
+  push:
+    branches:
+      - feat/chat-c/pending-action-full-text-20261029
+  workflow_dispatch:
+
+jobs:
+  format-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Print canonical Dart format diff
+        run: |
+          cd app
+          dart format lib/ui/pending_action_status.dart test/pending_action_status_test.dart
+          git diff -- lib/ui/pending_action_status.dart test/pending_action_status_test.dart
