@@ -1,3 +1,16 @@
+# Chat B – NPC-Auswahl an Sitzung und Profil gebunden (29.10.2026)
+
+- **Main-Basis:** `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`; **Branch:** `feat/chat-b/npc-selection-session-description-20261029`; **PR:** siehe Branch-PR; **Fachcommit:** nach Veröffentlichung im PR-HEAD.
+- **Ausgangsproblem:** Explizite NPC-Auswahl konnte trotz anderer Sitzung oder geänderter Beschreibung bei gleicher Kampagnen-ID/Revision und unverändertem NPC-Namen/Status als aktuell gelten.
+- **IMPLEMENTIERT:** `NpcStorySelection.choose` merkt sich die Sitzungs-ID und den Text des gewählten NPC-Profils; `requireCurrent` lehnt Änderungen daran zusätzlich zu den vorhandenen Identitäts-/Statuschecks ab. Unabhängige NPC-Profile bleiben frei änderbar.
+- **DATEIEN:** `app/lib/story/npc_story_selection.dart`, `app/test/npc_story_selection_session_profile_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md` und dieser Chat-B-Checkpoint.
+- **TESTS:** Vier neue Flutter-Regressionen positiv/negativ, JSON-Roundtrip, gleiche Revision, unveränderte Regeln/Helden; CI auf finalem HEAD noch ausstehend.
+- **MIGRATION:** Keine, Auswahlobjekt bleibt flüchtig, keine neuen persistierten Datenfelder, kein SRD-Eingriff.
+- **Konflikte:** Fachdateien der offenen Chat-B-PRs #356/#362/#364/#371/#373 werden nicht berührt. Dokumentations-Additionen bei Merge durch Chat D koordinieren.
+- **NÄCHSTER SCHRITT:** CI-Dart-Format/Flutter/Android prüfen; bei Erfolg PR reviewbereit stellen. Danach unabhängige Auswahl-/Kontext-Sicherheitsgrenze evaluieren.
+
+---
+
 # Chat B – Sitzungsidentität beim Ereignis-Replay (27.10.2026)
 
 - **main-Basis:** `96001353f2b90f293fbdade934e78b7b8281e965`; Branch `fix/chat-b/story-replay-session-identity-20261027`.

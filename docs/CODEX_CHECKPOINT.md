@@ -1,3 +1,12 @@
+## Chat B – NPC-Auswahl und Sitzungs-/Profilgrenzen (29.10.2026)
+
+- **Ausgangs-main:** `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`; **Branch:** `feat/chat-b/npc-selection-session-description-20261029`.
+- **Problem:** Explizite NPC-Auswahl war an Kampagnen-ID, Revision, NPC-Namen, Beziehung und Leben gebunden, nicht an Sitzungs-ID und bestätigte NPC-Beschreibung. Importierte oder ohne Revisionssprung geänderte Spielstände konnten die alte Auswahl weiterverwenden.
+- **Implementiert:** `NpcStorySelection` speichert beim Auswählen den Sitzungsbezug und NPC-Beschreibung ausschließlich im flüchtigen Auswahlobjekt und validiert beides vor der KI-Story-Kontextübertragung. NPC-ID bleibt die einzige Identität; keine Änderung an Provider- oder SRD-Regeln.
+- **Tests:** Vier neue Flutter-Regressionen: unveränderte Auswahl nach JSON-Roundtrip, Sessionwechsel gleicher Revision, NPC-Profilwechsel gleicher Revision und unabhängige Änderung eines anderen NPCs. Finale CI noch abzunehmen.
+- **Migration:** Keine. SQLite/JSON unverändert; keine Regel-/Heldenmutation. Bestehende Auswahl wird bei neuen Änderungen vorsichtig verworfen.
+- **Koordination:** Keine Story-Fachdatei in den offenen Chat-B-PRs #356, #362, #364, #371, #373 überschrieben; README und zentraler Checkpoint bei Integration durch Chat D additiv konsolidieren.
+
 # Codex-Checkpoint – Würfelraunen
 
 ## Chat D – PR #358: Alpha-Release atomar pro Version sperren

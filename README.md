@@ -128,3 +128,14 @@ Nur lizenzierte Inhalte und eigene Texte verwenden.
 Ältere README-/Checkpoint-Stände sind bytegenau unter
 [docs/history/character_symbol_abnahme_20261028/](docs/history/character_symbol_abnahme_20261028/MANIFEST.json)
 mit Git-Blob-/SHA256-Nachweisen erhalten.
+
+## Chat B – Ausgewählte NPC-Identität bleibt sitzungsgebunden (29.10.2026)
+
+Eine explizite NPC-Auswahl wird nur für dieselbe gespeicherte Kampagne,
+Sitzung, Revision und unveränderte NPC-Beschreibung wiederverwendet.
+Beim Wechsel der Sitzung oder bei einer Profiländerung mit unveränderter
+Revision wird eine erneute Auswahl nötig; unbeteiligte NPC-Änderungen bleiben
+unproblematisch. Vier Regressionstests prüfen diese Grenzen und einen
+JSON-Neustart ohne Neu-Auswahl. Keine Regeländerung oder Datenmigration.
+[Review-PR](https://github.com/ManuEtt/Dnd/pulls?q=is%3Apr+is%3Aopen+head%3Afeat%2Fchat-b%2Fnpc-selection-session-description-20261029)
+
