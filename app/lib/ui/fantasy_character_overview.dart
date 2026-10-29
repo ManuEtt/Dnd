@@ -841,88 +841,87 @@ class FantasyCharacterQuickNavigation extends StatelessWidget {
     ),
   );
 
-  Widget _rollAction() =>
-    Expanded(
-              flex: 2,
-              child: Semantics(
-                label: 'W20 würfeln',
-                button: true,
-                child: Tooltip(
-                  message: 'Würfeln',
-                  child: InkWell(
-                    key: const ValueKey('sheet-quick-roll'),
-                    onTap: onRoll,
-                    borderRadius: BorderRadius.circular(38),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(minHeight: 72),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            key: const ValueKey('sheet-d20-medallion'),
-                            width: 58,
-                            height: 58,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              gradient: const RadialGradient(
-                                colors: [
-                                  Color(0xff329ad8),
-                                  Color(0xff164580),
-                                  Color(0xff081a32),
-                                ],
-                              ),
-                              border: Border.all(
-                                color: FantasyCharacterOverview.gold,
-                                width: 2,
-                              ),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Color(0xaa237fc5),
-                                  blurRadius: 10,
-                                ),
-                              ],
-                            ),
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                const CustomPaint(
-                                  size: Size(40, 40),
-                                  painter: _ReferenceD20Painter(),
-                                ),
-                                Text(
-                                  '20',
-                                  style: const TextStyle(
-                                    fontFamily: 'serif',
-                                    fontWeight: FontWeight.bold,
-                                    color: FantasyCharacterOverview.ivory,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          const FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              'Würfeln',
-                              maxLines: 1,
-                              style: TextStyle(
-                                color: FantasyCharacterOverview.ivory,
-                                fontSize: 11,
-                                fontFamily: 'serif',
-                              ),
-                            ),
-                          ),
-                        ],
+  Widget _rollAction() => Expanded(
+    flex: 2,
+    child: Semantics(
+      label: 'W20 würfeln',
+      button: true,
+      child: Tooltip(
+        message: 'Würfeln',
+        child: InkWell(
+          key: const ValueKey('sheet-quick-roll'),
+          onTap: onRoll,
+          borderRadius: BorderRadius.circular(38),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 72),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  key: const ValueKey('sheet-d20-medallion'),
+                  width: 58,
+                  height: 58,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: const RadialGradient(
+                      colors: [
+                        Color(0xff329ad8),
+                        Color(0xff164580),
+                        Color(0xff081a32),
+                      ],
+                    ),
+                    border: Border.all(
+                      color: FantasyCharacterOverview.gold,
+                      width: 2,
+                    ),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0xaa237fc5),
+                        blurRadius: 10,
                       ),
+                    ],
+                  ),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      const CustomPaint(
+                        size: Size(40, 40),
+                        painter: _ReferenceD20Painter(),
+                      ),
+                      Text(
+                        '20',
+                        style: const TextStyle(
+                          fontFamily: 'serif',
+                          fontWeight: FontWeight.bold,
+                          color: FantasyCharacterOverview.ivory,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 2),
+                const FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    'Würfeln',
+                    maxLines: 1,
+                    style: TextStyle(
+                      color: FantasyCharacterOverview.ivory,
+                      fontSize: 11,
+                      fontFamily: 'serif',
                     ),
                   ),
                 ),
-              ),
-            );
+              ],
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 
   Widget _action(
     String label,
