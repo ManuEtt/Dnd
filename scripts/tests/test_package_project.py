@@ -67,6 +67,70 @@ class ProjectArchiveTests(unittest.TestCase):
             self.assertEqual(set(archive.namelist()),
                              packaging.REQUIRED_FILES | {'backend/.env.example'})
 
+    @unittest.skipUnless(os.name == 'posix', 'POSIX symlinks required')
+    def test_existing_output_symlink_never_overwrites_external_target(self):
+        external = self.base / 'private-existing.txt'
+        external.write_bytes(b'personal original content')
+        output = self.base / 'export.zip'
+        output.symlink_to(external)
+        with self.assertRaisesRegex(ValueError, 'symlinks'):
+            packaging.create_archive(self.root, output, layout='root')
+        self.assertTrue(output.is_symlink())
+        self.assertEqual(external.read_bytes(), b'personal original content')
+        self.assertFalse(output.with_suffix('.zip.sha256').exists())
+
+    @unittest.skipUnless(os.name == 'posix', 'POSIX symlinks required')
+    def test_dangling_output_symlink_does_not_create_target(self):
+        missing = self.base / 'not-created.zip'
+        output = self.base / 'export.zip'
+        output.symlink_to(missing)
+        with self.assertRaisesRegex(ValueError, 'symlinks'):
+            packaging.create_archive(self.root, output)
+        self.assertTrue(output.is_symlink())
+        self.assertFalse(missing.exists())
+
+    @unittest.skipUnless(os.name == 'posix', 'POSIX symlinks required')
+    def test_checksum_symlink_keeps_previous_zip_and_external_content(self):
+        output = self.base / 'export.zip'
+        output.write_bytes(b'previous archive')
+        external = self.base / 'private-checksum.txt'
+        external.write_bytes(b'leave untouched')
+        checksum = output.with_suffix('.zip.sha256')
+        checksum.symlink_to(external)
+        with self.assertRaisesRegex(ValueError, 'symlinks'):
+            packaging.create_archive(self.root, output)
+        self.assertEqual(output.read_bytes(), b'previous archive')
+        self.assertTrue(checksum.is_symlink())
+        self.assertEqual(external.read_bytes(), b'leave untouched')
+
+    @unittest.skipUnless(
+        os.name == 'posix' and hasattr(os, 'O_NOFOLLOW'),
+        'POSIX no-follow descriptors required',
+    )
+    def test_swapped_output_symlink_is_rejected_during_previous_backup(self):
+        output = self.base / 'export.zip'
+        output.write_bytes(b'old regular output')
+        external = self.base / 'private.zip'
+        external.write_bytes(b'confidential external contents')
+        source_paths = packaging.source_paths
+
+        def swap_after_output_check(root):
+            paths = source_paths(root)
+            output.rename(self.base / 'original-export.zip')
+            output.symlink_to(external)
+            return paths
+
+        with mock.patch.object(
+            packaging, 'source_paths', side_effect=swap_after_output_check
+        ):
+            with self.assertRaisesRegex(ValueError, 'symlink'):
+                packaging.create_archive(self.root, output, layout='root')
+        self.assertTrue(output.is_symlink())
+        self.assertEqual(external.read_bytes(), b'confidential external contents')
+        self.assertEqual((self.base / 'original-export.zip').read_bytes(),
+                         b'old regular output')
+        self.assertFalse(output.with_suffix('.zip.sha256').exists())
+
     def test_missing_workflow_rejects_export_before_replacing_existing_file(self):
         (self.root / '.github/workflows/android-build.yml').unlink()
         output = self.base / 'existing.zip'
