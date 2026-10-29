@@ -50,7 +50,9 @@ class SrdMagicMissileAllocation {
 class SrdMagicMissileMultiTargetRules {
   const SrdMagicMissileMultiTargetRules._();
 
-  static final RegExp _stableId = RegExp(r'^[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}$');
+  static final RegExp _stableId = RegExp(
+    r'^[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}$',
+  );
 
   static SrdMagicMissileAllocation prepare({
     required SrdSpellDefinition spell,
