@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Neuer Regelengine-Baustein – Mehrziel-Magisches-Geschoss (Chat A, PR #387)
+
+Die integrierte Aufteilung von *Magisches Geschoss* auf mehrere bestätigte Kreaturen und die getrennte Geschoss-Schadensberechnung erhalten einen verbindenden, deterministisch testbaren **Domänen-Cast**: Magier-/Zauberer-Klasse, gelernter Zauber, V/S, freier regulärer oder Pakt-Zauberplatz und jeder individuelle Schild-/Energieschadenstatus werden vor dem Würfeln geprüft. Ein Platz wird in einer neuen Heldensnapshot verbraucht, Schild blockiert seine Geschosse ohne W4 und andere Geschosse erhalten getrennte Schadenswerte. [PR #387](https://github.com/ManuEtt/Dnd/pull/387) ist noch nicht automatisch integriert. **Wichtig:** Noch kein spielbarer Mehrziel-Kampfdialog, kein Kampagnen-HP-/Event-Commit oder persistente Exactly-once-Garantie; bestehende Einziel-Aktion unverändert. SRD 5.2.1 S. 146/161, CC BY 4.0; SQLite 3 und JSON 1 unverändert. Finale CI wird im PR nachgewiesen.
+
 ## Konsolidierter Arbeitsstand – Integrationskandidat vom 29.10.2026
 
 **Noch nicht in `main` integriert.** Die 24 offenen PRs von Chat A/B/C/D sind auf einem separaten technischen Integrationsbaum zusammengetragen; der gemeinsame Flutter-/Python-/Backend-/Android-CI-Lauf steht aus. Einzelne Pull Requests sind Entwürfe und bedürfen einer eigenen fachlichen Freigabe. Aktive Branches vor grüner gemeinsamer Abnahme und SHA-gesicherter Archivierung nicht löschen. [Herkunft, Originalbeschreibungen, HEADs und offene Risiken](docs/parallel/INTEGRATION_20261029.md).
