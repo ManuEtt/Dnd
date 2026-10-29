@@ -99,17 +99,6 @@ class _PendingActionStatusState extends State<PendingActionStatus> {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: TextButton(
-              key: const ValueKey('adventure-pending-action-toggle'),
-              onPressed: () => setState(() => _showFullText = !_showFullText),
-              child: Text(
-                _showFullText ? 'Weniger anzeigen' : 'Ganzen Text anzeigen',
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
           if (pending.selectedNpcId != null) ...[
             const SizedBox(height: 4),
             const Text(
@@ -123,6 +112,14 @@ class _PendingActionStatusState extends State<PendingActionStatus> {
             spacing: 8,
             runSpacing: 4,
             children: [
+              TextButton(
+                key: const ValueKey('adventure-pending-action-toggle'),
+                onPressed: () => setState(() => _showFullText = !_showFullText),
+                child: Text(
+                  _showFullText ? 'Weniger anzeigen' : 'Ganzen Text anzeigen',
+                  textAlign: TextAlign.center,
+                ),
+              ),
               FantasyTextButton(
                 key: const ValueKey('adventure-retry-action'),
                 label: 'Erneut bestätigen',
