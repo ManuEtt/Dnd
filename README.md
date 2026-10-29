@@ -1,5 +1,19 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – Ausstehende Spielerhandlung vollständig prüfen (PR #382, Draft)
+
+Die dauerhaft gespeicherte, nach einem Fehler noch unbestätigte Spielerhandlung
+kann vor manuellem **Erneut bestätigen** oder **Verwerfen** über
+**Ganzen Text anzeigen** ohne Kürzung gelesen werden. Das kompakte
+Zwei-Zeilen-Layout bleibt beim Öffnen erhalten; ein Auftrag-/NPC-Wechsel
+setzt die aufgeklappte Ansicht zurück. Auch bei gesperrten Regelaktionen
+bleibt die Textkontrolle möglich, nicht aber der Retry.
+Keine Änderung an gespeicherten Spielständen, Outbox, JSON oder Regeln.
+Vier neue Widgetfälle einschließlich 320/360 dp, 200 % Schrift und
+Screenreader-Beschriftung in `app/test/pending_action_status_test.dart`.
+[PR #382](https://github.com/ManuEtt/Dnd/pull/382) bleibt bis zur
+vollständigen CI auf dem finalen Commit als **Draft**.
+
 ## Qualitätsabsicherung – Alpha-Release-Sperre (Chat D, PR #358)
 
 Parallele Alpha-Packaging-Läufe mit derselben App-Version werden vor der Dateiprüfung durch ein exklusives `_Release.lock`-Verzeichnis serialisiert. Bei einem Fehler werden fremde Releases nicht gelöscht; nach normalem Abschluss oder behandelter Ausnahme wird die Sperre freigegeben. Eine verwaiste Sperre blockiert sicherheitshalber die Veröffentlichung. Drei Regressionen; keine Änderung an SQLite, JSON oder Regeln. [Erfolgreiche Vor-Integrations-CI](https://github.com/ManuEtt/Dnd/actions/runs/40730971955); der kombinierte Stand mit PR #363 erhält eine eigene Prüfung.
