@@ -1,5 +1,18 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat C – 29.10.2026 – Charakterbogen-Identität bei großer Schrift (PR #388)
+
+**Basis-main:** `fde0ef6ed8b419d6a31c701a03aa05d61994c352` (App 0.8.47+97), **Arbeitsbranch:** `feat/chat-c/sheet-header-large-text-20261029`, **PR:** [#388](https://github.com/ManuEtt/Dnd/pull/388), Draft. Code-/Test-Commit vor Dokumentation: `1e4fdbe970c8f526a1d408e9085b89f9076237d6`. Finaler PR-HEAD und CI nach Dokumentationscommits erneut prüfen.
+
+- **IMPLEMENTIERT:** Bei 320/360 dp und ab 180 % Textskalierung steht der Charaktertext vollständig unter dem Porträt statt mit Ellipse daneben. Standardlayout bleibt erhalten. Keine Änderung an SQLite 3, JSON 1, Appversion, Regeln, Story oder Controller; keine Migration.
+- **GETESTET:** Codebestand, Testfixtures, Main-/PR-Überschneidungen und aktuelle GitHub-CI geprüft. Vorherige Main-CI [40867945743](https://github.com/ManuEtt/Dnd/actions/runs/40867945743) vollständig erfolgreich auf `fde0ef6ed8b419d6a31c701a03aa05d61994c352`, **nicht** auf dieser Änderung.
+- **NICHT GETESTET:** Neuer Widgettest `app/test/fantasy_character_header_large_text_test.dart`, Flutter-/Backend-/Python-/Android-Prüfungen und reale TalkBack-/Geräteabnahme auf finalem PR-SHA stehen noch aus.
+- **BLOCKIERT:** Lokaler Container ohne Flutter/Dart und DNS-Git-Checkout; neue PR-CI entscheidet. Kein Merge vor Abnahme.
+- **NOCH NICHT IMPLEMENTIERT:** Manuelle Abnahme von langen realen Charakternamen/Unterklassen am Android-Gerät.
+- **Dateien:** Charakterbogen-UI, neuer Test, `docs/parallel/CHAT_C_CHECKPOINT.md`, dieser Checkpoint, README.
+- **Nächster Schritt:** Unabhängige Überprüfung der Klassenmerkmal-/Passivwahrnehmungstexte bei 320 dp mit 200 % Schrift; Erfolg bei vollständigen Werten, erreichbaren Aktionen, positiver/negativer Widgetregression.
+
+
 ## Integration 29.10.2026 – Regression bei großer Schrift nachvollziehbar scrollen
 
 Im zusammengeführten Kandidaten wird die zuvor auf PR #379 nachweislich fehlgeschlagene Heldenkarten-Interaktion bei 200 % Schrift korrigiert: Die Tests scrollen ein tatsächlich über den Bildschirm hinausragendes `ListView` mit einer Nutzer-Geste und verlangen anschließend hit-testbare Buttons. Keine Beschriftung verkürzt, kein Test deaktiviert, kein Produkt-/Speicherverhalten geändert. Neue kombinierte CI auf dem Folge-Commit erforderlich.
