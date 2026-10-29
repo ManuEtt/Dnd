@@ -1,5 +1,11 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – 29.10.2026: heiße Seite von Wall of Fire (PR #372)
+
+Unabhängige, rein lesende SRD-5.2.1-Vorprüfung für die beim Zaubern bestätigte **heiße Wandseite**: 10-Fuß-Grenze beim Zugende einschließlich Wandinnenraum und ausdrücklich erstes Betreten der Wand in einem Zug. Gerade Wand und Ring sind getrennt validiert; unbekannte Positionen, unbestätigte Ereignisse oder falsche Wandform werden abgelehnt. **Noch keine** Treffer-/Schadensentscheidungen, Konzentrations-, 3D-Deckungs- oder Spielstandmutation. Sechs neue deterministische Flutter-Tests liegen auf [Draft-PR #372](https://github.com/ManuEtt/Dnd/pull/372); neue vollständige CI/Android-Abnahme bislang offen. Quelle: Wizards of the Coast LLC, SRD 5.2.1, CC BY 4.0.
+
+
+
 Deutschsprachige Fantasy-Solo-App für Android mit lokalen Charakteren,
 Kampagnen, ausgewählten D&D-SRD-5.2.1-Regeln und optionalem KI-Erzähler.
 **Alpha 0.8.47+97**; lokales Spielen benötigt keinen Account oder KI-Server.
