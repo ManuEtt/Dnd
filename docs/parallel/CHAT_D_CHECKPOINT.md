@@ -1,3 +1,47 @@
+# Chat D D-020 – Exklusive Quell-ZIP-Veröffentlichung (29.10.2026)
+
+- **Ausgangs-Main-SHA:** `fde0ef6ed8b419d6a31c701a03aa05d61994c352`.
+- **Branch:** `fix/chat-d/source-archive-publish-lock-20261029`.
+- **Technischer Commit:** `93f0f6bbb6fd313bd63bed0ea81534419c309148`.
+- **PR:** [#391](https://github.com/ManuEtt/Dnd/pull/391) (Draft).
+- **Problem:** Gleichzeitige Quell-ZIP-Exporte auf denselben Pfad
+  können sich beim `os.replace` von Archiv und Prüfsumme sowie beim
+  Fehler-Rollback überholen und ein inkonsistentes Artefaktpaar erzeugen.
+- **IMPLEMENTIERT:** Atomar erzeugtes Sperrverzeichnis
+  `.<ausgabename>.lock` vor Quellaufzählung und über das gesamte
+  Staging, Prüfen, Veröffentlichen und Rollback hinweg. Zweiter Aufruf
+  für dasselbe Ziel lehnt fail-closed ab, ohne fremden Lock zu entfernen.
+  Eigene Sperre in `finally` freigeben (auch `KeyboardInterrupt`).
+  Harte Abbrüche lassen die Sperre stehen.
+- **Dateien:** `scripts/package_project.py`,
+  `scripts/tests/test_package_project.py`, `README.md`,
+  `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Akzeptanzkriterien:** vorhandene ZIP-/SHA256-Artefakte beim
+  Zweitaufruf bytegleich bewahren, gleichzeitig gestarteten Aufruf
+  vor Veröffentlichung abweisen, gültige SHA256 nach erfolgreichem
+  Erstaufruf, eigene Sperre nach Exception/Interrupt entfernen,
+  Folgeaufruf erfolgreich, bestehende Tests grün.
+- **Regressionen:** drei neue POSIX-unabhängige Tests (bestehendes Lock,
+  verschachtelter konkurrierender Aufruf, `KeyboardInterrupt`-Retry).
+- **GETESTET:** Vorbestehende Main-CI
+  [#40867945743](https://github.com/ManuEtt/Dnd/actions/runs/40867945743)
+  erfolgreich, aber nicht für neues Paket. Github-Branch/Commit gesichert.
+- **NICHT GETESTET:** finale Python-/Backend-/Flutter-/APK-/native-CI
+  dieses Branches, externe Mehrprozess-Situation, Realgerät, Windows,
+  erneute Prüfung bei geänderten PR-Köpfen.
+- **BLOCKIERT:** direkter GitHub-Checkout per DNS in lokaler Umgebung
+  nicht verfügbar; Ausführung über PR-CI erforderlich.
+- **SPIELSTÄNDE:** keinerlei SQLite-/JSON-/Version-/Story-/Regeländerung,
+  daher keine Migration.
+- **KOORDINATION:** Beim Paketbeginn PRs #387–#390 ohne
+  technische Dateiüberschneidung; geteilte README/zentraler Checkpoint
+  vor späterem Merge additiv bewahren.
+- **NÄCHSTER KONKRETER SCHRITT:** GitHub-CI des finalen Dokumentations-
+  Heads prüfen; Fehler im eigenen Branch beheben, anschließend
+  erneuter Main-/PR-Abgleich und Review-Freigabe.
+
+---
+
 # Chat D – Integration von PR #358 nach Checkpoint-Fix #363 (29.10.2026)
 
 ## Integrationskandidat 29.10.2026 – Chat D

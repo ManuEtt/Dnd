@@ -1,5 +1,33 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat D – PR #391: Exklusive Veröffentlichung von Quell-ZIP und SHA256
+
+**Ausgangs-Main:** `fde0ef6ed8b419d6a31c701a03aa05d61994c352`.
+**Arbeitsbranch:** `fix/chat-d/source-archive-publish-lock-20261029`.
+**Codecommit:** `93f0f6bbb6fd313bd63bed0ea81534419c309148`.
+**Pull Request:** [#391](https://github.com/ManuEtt/Dnd/pull/391) (Draft).
+**IMPLEMENTIERT:** `scripts/package_project.py` sperrt jeden benannten
+ZIP-/SHA256-Veröffentlichungslauf mit einem exklusiven, atomar
+angelegten `.<zip>.lock`-Verzeichnis. Konkurrierende Prozesse mit
+demselben Ziel werden fail-closed abgewiesen; die eigene Sperre wird
+bei regulären und unterbrochenen Ausführungen per `finally` gelöst.
+Harte Prozess-/Systemabbrüche können ein Lock hinterlassen; keine
+automatische stale-lock-Übernahme.
+**REGRESSIONEN:** Drei neue Tests in
+`scripts/tests/test_package_project.py` gegen bestehende Sperren,
+zweiten Export während laufender ZIP-Erzeugung und Retry nach
+`KeyboardInterrupt`; bestehende positive ZIP-, SHA256-, Symlink-
+und Rollback-Tests bleiben erhalten.
+**GETESTET:** Vorherige Main-CI [#40867945743](https://github.com/ManuEtt/Dnd/actions/runs/40867945743) vollständig erfolgreich; das ist kein
+Testnachweis für diese Änderung. Neuer CI-Status separat zu prüfen.
+**NICHT GETESTET:** vollständige Python-/Backend-/Flutter-/Android-/native-
+CI auf finalem Commit, parallele externe Runner/Windows, Realgerät.
+**BLOCKIERT:** lokaler GitHub-DNS-Zugriff fehlt; kein lokales Flutter-SDK.
+**KEINE MIGRATION:** SQLite, gespeicherte JSON-Dateien, Story, Regeln,
+App- und Backendversion unverändert.
+**NÄCHSTER SCHRITT:** finale PR-CI sowie den aktuellen Main/PR-Dateiabgleich
+verifizieren und nur dann PR reviewbereit markieren.
+
 ## Integration 29.10.2026 – Regression bei großer Schrift nachvollziehbar scrollen
 
 Im zusammengeführten Kandidaten wird die zuvor auf PR #379 nachweislich fehlgeschlagene Heldenkarten-Interaktion bei 200 % Schrift korrigiert: Die Tests scrollen ein tatsächlich über den Bildschirm hinausragendes `ListView` mit einer Nutzer-Geste und verlangen anschließend hit-testbare Buttons. Keine Beschriftung verkürzt, kein Test deaktiviert, kein Produkt-/Speicherverhalten geändert. Neue kombinierte CI auf dem Folge-Commit erforderlich.

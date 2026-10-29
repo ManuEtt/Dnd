@@ -1,5 +1,19 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – Parallele Quell-ZIP-Veröffentlichung absichern (PR #391, 29.10.2026)
+
+Die Quell-ZIP-/SHA256-Veröffentlichung wird pro Ausgabepfad mit einem atomar
+angelegten Sperrverzeichnis serialisiert. Ein zweiter Export auf dasselbe Ziel
+wird ohne Veränderung der bisherigen Archive abgewiesen; nach behandelbaren
+Fehlern oder `KeyboardInterrupt` räumt der eigene Lauf auf. Eine nach
+hartem Prozessabbruch verbleibende Sperre bleibt absichtlich bestehen,
+statt unsichere Wiederholungen zu erzwingen. Drei neue Regressionstests
+prüfen Exklusivität, Integrität und Retry; bisherige ZIP-/Symlink- und
+Rollback-Prüfungen bleiben aktiv. Keine Migration oder Änderung an
+SQLite, Kampagnen-JSON, Flutter, Backend oder App-Version.
+[PR #391](https://github.com/ManuEtt/Dnd/pull/391) bleibt bis zur
+vollständigen CI auf dem finalen Head und Integrationsprüfung im Draft.
+
 ## Konsolidierter Arbeitsstand – Integrationskandidat vom 29.10.2026
 
 **Noch nicht in `main` integriert.** Die 24 offenen PRs von Chat A/B/C/D sind auf einem separaten technischen Integrationsbaum zusammengetragen; der gemeinsame Flutter-/Python-/Backend-/Android-CI-Lauf steht aus. Einzelne Pull Requests sind Entwürfe und bedürfen einer eigenen fachlichen Freigabe. Aktive Branches vor grüner gemeinsamer Abnahme und SHA-gesicherter Archivierung nicht löschen. [Herkunft, Originalbeschreibungen, HEADs und offene Risiken](docs/parallel/INTEGRATION_20261029.md).
