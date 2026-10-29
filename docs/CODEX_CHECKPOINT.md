@@ -1,6 +1,6 @@
 ## Chat B – NPC-Auswahl und Sitzungs-/Profilgrenzen (29.10.2026)
 
-- **Ausgangs-main:** `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`; **Branch:** `feat/chat-b/npc-selection-session-description-20261029`.
+- **Ausgangs-main:** `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`; **Branch:** `feat/chat-b/npc-selection-session-description-20261029`; **PR:** #377; **Fachcommit:** `4f570fc9bb4c345a9850860b77ffa03a6c7a3930`.
 - **Problem:** Explizite NPC-Auswahl war an Kampagnen-ID, Revision, NPC-Namen, Beziehung und Leben gebunden, nicht an Sitzungs-ID und bestätigte NPC-Beschreibung. Importierte oder ohne Revisionssprung geänderte Spielstände konnten die alte Auswahl weiterverwenden.
 - **Implementiert:** `NpcStorySelection` speichert beim Auswählen den Sitzungsbezug und NPC-Beschreibung ausschließlich im flüchtigen Auswahlobjekt und validiert beides vor der KI-Story-Kontextübertragung. NPC-ID bleibt die einzige Identität; keine Änderung an Provider- oder SRD-Regeln.
 - **Tests:** Vier neue Flutter-Regressionen: unveränderte Auswahl nach JSON-Roundtrip, Sessionwechsel gleicher Revision, NPC-Profilwechsel gleicher Revision und unabhängige Änderung eines anderen NPCs. Finale CI noch abzunehmen.

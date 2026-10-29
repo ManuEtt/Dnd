@@ -137,5 +137,5 @@ Beim Wechsel der Sitzung oder bei einer Profiländerung mit unveränderter
 Revision wird eine erneute Auswahl nötig; unbeteiligte NPC-Änderungen bleiben
 unproblematisch. Vier Regressionstests prüfen diese Grenzen und einen
 JSON-Neustart ohne Neu-Auswahl. Keine Regeländerung oder Datenmigration.
-[Review-PR](https://github.com/ManuEtt/Dnd/pulls?q=is%3Apr+is%3Aopen+head%3Afeat%2Fchat-b%2Fnpc-selection-session-description-20261029)
+[Review-PR #377](https://github.com/ManuEtt/Dnd/pull/377)
 

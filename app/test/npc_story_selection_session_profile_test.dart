@@ -89,10 +89,7 @@ void main() {
 
   test('session switch cannot reuse NPC choice with identical revision', () {
     final original = _campaign();
-    final alteredJson = {
-      ...original.toJson(),
-      'sessionId': 'session-two',
-    };
+    final alteredJson = {...original.toJson(), 'sessionId': 'session-two'};
     final changed = Campaign.fromJson(alteredJson);
     expect(changed.id, original.id);
     expect(changed.revision, original.revision);

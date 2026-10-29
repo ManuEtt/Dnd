@@ -1,6 +1,6 @@
 # Chat B – NPC-Auswahl an Sitzung und Profil gebunden (29.10.2026)
 
-- **Main-Basis:** `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`; **Branch:** `feat/chat-b/npc-selection-session-description-20261029`; **PR:** siehe Branch-PR; **Fachcommit:** nach Veröffentlichung im PR-HEAD.
+- **Main-Basis:** `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`; **Branch:** `feat/chat-b/npc-selection-session-description-20261029`; **PR:** #377; **Fachcommit:** `4f570fc9bb4c345a9850860b77ffa03a6c7a3930`.
 - **Ausgangsproblem:** Explizite NPC-Auswahl konnte trotz anderer Sitzung oder geänderter Beschreibung bei gleicher Kampagnen-ID/Revision und unverändertem NPC-Namen/Status als aktuell gelten.
 - **IMPLEMENTIERT:** `NpcStorySelection.choose` merkt sich die Sitzungs-ID und den Text des gewählten NPC-Profils; `requireCurrent` lehnt Änderungen daran zusätzlich zu den vorhandenen Identitäts-/Statuschecks ab. Unabhängige NPC-Profile bleiben frei änderbar.
 - **DATEIEN:** `app/lib/story/npc_story_selection.dart`, `app/test/npc_story_selection_session_profile_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md` und dieser Chat-B-Checkpoint.
