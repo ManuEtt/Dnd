@@ -189,6 +189,19 @@ void main() {
     expect(tester.widget<Text>(intent).maxLines, isNull);
     expect(tester.widget<Text>(intent).overflow, TextOverflow.visible);
     expect(find.text('Weniger anzeigen'), findsOneWidget);
+    final scrollArea = find.byKey(
+      const ValueKey('adventure-pending-action-scroll'),
+    );
+    final scrollable = tester.state<ScrollableState>(
+      find.descendant(of: scrollArea, matching: find.byType(Scrollable)),
+    );
+    expect(scrollable.position.maxScrollExtent, greaterThan(0));
+    scrollable.position.jumpTo(scrollable.position.maxScrollExtent);
+    await tester.pump();
+    expect(
+      scrollable.position.pixels,
+      scrollable.position.maxScrollExtent,
+    );
     expect(action.toJson(), saved);
     expect(retries, 0);
     expect(discards, 0);
@@ -292,5 +305,4 @@ void main() {
       semantics.dispose();
     });
   }
-
 }
