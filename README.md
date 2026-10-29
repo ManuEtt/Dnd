@@ -1,5 +1,17 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Dart-Importgrenzen mit Kommentar-/String-Abschirmung (Chat D, PR #384)
+
+Der Python-Prüfer für Story-/Regelmodulgrenzen ignoriert künftig
+auskommentierte Dart-Direktiven und scheinbaren Importcode in mehrzeiligen
+Strings. Vor echte Imports, Exports und `part of` gesetzte Blockkommentare
+dürfen eine verbotene Modulabhängigkeit nicht verstecken. Sieben neue
+Regressionstests schützen die Erkennung einschließlich verschachtelter
+Kommentare, roher Strings und bedingter Imports. Nur CI-Prüfcode betroffen;
+App, Spielstandformate, SQLite, Regeln und Versionscode bleiben unverändert.
+[PR #384](https://github.com/ManuEtt/Dnd/pull/384) bleibt bis zur
+vollständigen CI-Abnahme auf seinem finalen Commit im Draft.
+
 ## Qualitätsabsicherung – Alpha-Release-Sperre (Chat D, PR #358)
 
 Parallele Alpha-Packaging-Läufe mit derselben App-Version werden vor der Dateiprüfung durch ein exklusives `_Release.lock`-Verzeichnis serialisiert. Bei einem Fehler werden fremde Releases nicht gelöscht; nach normalem Abschluss oder behandelter Ausnahme wird die Sperre freigegeben. Eine verwaiste Sperre blockiert sicherheitshalber die Veröffentlichung. Drei Regressionen; keine Änderung an SQLite, JSON oder Regeln. [Erfolgreiche Vor-Integrations-CI](https://github.com/ManuEtt/Dnd/actions/runs/40730971955); der kombinierte Stand mit PR #363 erhält eine eigene Prüfung.

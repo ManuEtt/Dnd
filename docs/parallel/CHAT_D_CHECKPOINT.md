@@ -1,3 +1,23 @@
+# Chat D D-019 – Dart-Kommentar-/String-Prüfung (29.10.2026)
+
+- **Basis-main:** `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`.
+- **Eigener Branch:** `fix/chat-d/dart-boundary-comment-safe-20261029`.
+- **Technische Commits:** `d57f6c0637e0ac34ab24d246655fa290b416cc91`, Escape-Reparatur `450699851401a6074de6e69b121572c28df1f6ed`.
+- **Pull Request:** [#384](https://github.com/ManuEtt/Dnd/pull/384), Draft.
+- **Problem:** Direkt vorangestellte Dart-Blockkommentare verdeckten Import-/Export-/Part-Direktiven; Import-ähnlicher Text in mehrzeiligen Dart-Strings oder Blockkommentaren führte zu falschen Importverboten.
+- **IMPLEMENTIERT:** Vorbehandlung ersetzt Kommentare positionsgleich durch Leerzeichen, bewahrt Newlines/URI-Strings, zählt verschachtelte Blockkommentare und markiert gewöhnliche/rohe Stringbereiche; nur wirklicher Direktiven-Code wird klassifiziert.
+- **AKZEPTANZ:** unzulässige Imports nach Kommentar und bedingte Imports werden gefunden; gültige lokale Imports bleiben erlaubt; Kommentare/Stringbeispiele werden nicht als Code fehlklassifiziert.
+- **REGRESSIONEN:** sieben positive/negative Fälle für vorangestellte und verschachtelte Kommentare, Part-of, mehrzeilige rohe/normale Strings, `//` im URI, bedingte Imports und legale lokale Direktiven.
+- **DATEIEN:** `scripts/check_domain_boundaries.py`, `scripts/tests/test_domain_boundaries.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **GETESTET:** GitHub-Ausgangsstand, Branch/PR und Dateiüberschneidungen kontrolliert; erster Lauf auf fehlerhaft escaptem Commit fiel aus, konkrete Escape-Stellen im eigenen Branch behoben. CI auf finalem SHA gesondert abzunehmen.
+- **NICHT GETESTET:** Lokale Gesamtsuite, SDK-/Android-/Gerätetests und vollständige finale GitHub-CI.
+- **KOMPATIBILITÄT:** keine Anwendungscode- oder Spielstandsänderung, keine SQLite-/JSON-Migration, keine App-Version.
+- **KOORDINATION:** keine offene PR ändert technische Prüfdateien; README/zentraler Checkpoint von anderen Chats parallel angefasst, beim Merge additiv konsolidieren.
+- **BEKANNTE GRENZEN:** kein vollständiger Dart-Grammatikparser; die Sicherheitsprüfung deckt kommentierte/stringbasierte Direktiven, nicht alle künftigen Dart-Syntaxvarianten.
+- **NÄCHSTER KONKRETER SCHRITT:** GitHub Actions auf der finalen #384-SHA prüfen und bei Erfolg mit neuem Main-/PR-Abgleich Review ermöglichen.
+
+---
+
 # Chat D – Integration von PR #358 nach Checkpoint-Fix #363 (29.10.2026)
 
 - **Stand:** Alpha-Release-Lock in `scripts/prepare_alpha_release.py` (3 neue Tests), vorherige vollständige CI `40730971955` auf `1d7b1723` erfolgreich; kombinierter Head benötigt erneute CI.

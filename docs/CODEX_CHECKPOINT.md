@@ -1,5 +1,27 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat D – PR #384: Kommentar- und Stringsicherheit des Dart-Modulgrenzprüfers
+
+**IMPLEMENTIERT:** Der Prüfer `scripts/check_domain_boundaries.py` maskiert Dart-
+Kommentare positionsgleich und ignoriert scheinbare Direktiven in normalen/rohen
+mehrzeiligen Strings. Vor echten Direktiven stehende Kommentare verdecken
+verbote­ne Story-/Regelimporte nicht mehr; sieben neue positive/negative
+Regressionen in `scripts/tests/test_domain_boundaries.py`.
+**AUSGANGS-main:** `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`.
+**BRANCH:** `fix/chat-d/dart-boundary-comment-safe-20261029`.
+**CODE-COMMITS:** `d57f6c0637e0ac34ab24d246655fa290b416cc91`
+(anfangs fehlerhafte Escape-Literale), `450699851401a6074de6e69b121572c28df1f6ed`
+(Korrektur). **PR:** [#384](https://github.com/ManuEtt/Dnd/pull/384)
+(Draft bis finale CI).
+**GETESTET:** Baseline/main und GitHub-PR-Dateipfade geprüft, Branch/Code über
+GitHub gesichert; die ursprüngliche fehlerhafte CI wurde korrekt als fehlgeschlagen erkannt.
+**NICHT GETESTET:** vollständige neue CI auf Dokumentations-HEAD,
+lokale Flutter-/Android-SDK-Tests und echtes Gerät.
+**BLOCKIERT:** finaler CI-Nachweis / Integrationsprüfung.
+**MIGRATION:** keine, SQLite-/JSON-/Appversion unverändert.
+**NÄCHSTER SCHRITT:** endgültige CI/Android-Build auf #384 prüfen,
+Fehler nur im eigenen Branch reparieren und nach Abnahme Review ermöglichen.
+
 ## Chat D – PR #358: Alpha-Release atomar pro Version sperren
 
 **IMPLEMENTIERT:** `scripts/prepare_alpha_release.py` reserviert vor Publikationsbeginn ein atomar erzeugtes Lock-Verzeichnis pro Release-Version. Zweitaufrufe können keine fremden Dateien löschen. Drei positive/negative Regressionen (gleichzeitiger Aufruf, Fehler-Retry, verwaiste Sperre). **GETESTET:** vollständige CI auf dem vorherigen Stand `1d7b1723` bestanden ([Actions 40730971955](https://github.com/ManuEtt/Dnd/actions/runs/40730971955)). **NOCH NICHT GETESTET:** neuer kombinierter Head einschließlich PR #363, parallele Runner-Prozesse und reales Gerät. **BLOCKIERT:** kombinierte CI-Abnahme. **Migration:** keine. **Nächster Schritt:** kombinierte CI prüfen, danach Review/Merge nur bei Erfolg.
