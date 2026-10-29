@@ -1,5 +1,13 @@
 # Codex-Checkpoint – Würfelraunen
 
+## 29.10.2026 – Chat C: Dialogaktionen im Kampagnen-Gedächtnis trotz Android-Tastatur erreichbar
+
+**Basis-main:** `1dc8d076786dbfb6a6792b6653bd1457bd7992d9`. **Branch:** `fix/chat-c/scrollable-memory-edit-dialogs-20261029`; **Code-/Test-Commits:** `039f9d86aac1cc0f49543aa3bab263dc5e5041eb`, `a7e5c27bb070e524d122ed9fc045f9c30ef5f147`. **IMPLEMENTIERT:** Zwei `AlertDialog(scrollable: true)` für die Handlungsstrang- und NPC-Beziehung-Bearbeitung in `app/lib/ui/campaign_memory_panel.dart`. Speichern/Bestätigen, Abbrechen, Feld-/Auswahlwerte und Controller-Aufrufe unverändert. **TESTS ERGÄNZT:** `app/test/campaign_memory_dialog_large_text_test.dart` prüft beide Dialoge bei 320×800 dp, 2x Textskalierung und 270 dp Android-IME-Inset einschließlich hit-testbarer Aktionen, Abbruch und unverändertem `Campaign.toJson()`. **GETESTET:** Masterprompt-Zuständigkeit, main/PR-Dateikonflikte und vorhandene Tests vor Implementierung geprüft. **NICHT GETESTET:** neuer Flutter-/Android-CI-Lauf, bis GitHub Actions auf finalem HEAD abgeschlossen. **BLOCKIERT:** lokal kein Flutter-SDK/Android-Emulator; Gerät/TalkBack separat. **KEINE MIGRATION:** Domain, Story, SRD, Backend, SQLite und JSON bleiben unverändert. **KOORDINATION:** PRs #359, #365 und #374 belegen andere UI-/Testdateien; gemeinsame README und zentralen Checkpoint bei Integration erhalten.
+
+**Nächster Schritt:** Dart format, Flutter analyze/Widgettests und Android-/Alpha-Gates auswerten, bei Fehlermeldungen auf dem eigenen Branch korrigieren; echte Android-Geräteprüfung bei 2x Systemschrift und geöffneter Tastatur nachholen.
+
+---
+
 ## Abnahme 28.10.2026 – Charakter-Symbolwahl / Alpha 0.8.47+97
 
 **IMPLEMENTIERT:** Kleriker/Paladin wählen im Klassenpaket A ausdrücklich Amulett,

@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## 29.10.2026 – Chat C: Kampagnen-Gedächtnis-Dialoge bei großer Schrift
+
+Die Dialoge für Handlungsstränge und NPC-Beziehungen verwenden jetzt scrollbar gestaltete `AlertDialog`-Inhalte, damit die Aktionen bei kleinen Android-Displays, hoher Textskalierung und geöffneter Tastatur erreichbar bleiben. Zwei neue Widgettests (320 dp, 200 % Schrift, simuliertes IME-Inset) prüfen Speichern/Bestätigen und Abbrechen auf Sicht- und Tippbarkeit und bestätigen, dass Abbrechen den Spielstand unverändert lässt. Ausschließlich UI und Widgettests; keine Datenformat-, Regeln- oder Persistenzänderung. [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md).
+
 Deutschsprachige Fantasy-Solo-App für Android mit lokalen Charakteren,
 Kampagnen, ausgewählten D&D-SRD-5.2.1-Regeln und optionalem KI-Erzähler.
 **Alpha 0.8.47+97**; lokales Spielen benötigt keinen Account oder KI-Server.
