@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – weitere Regelengine-Vorprüfung zu Magischem Geschoss (PR #387)
+
+Neben der Domänen-Cast-Regel bildet `SrdMagicMissileEncounterHpRules.preview` die durch getrennte Schild-/Resistenzentscheidungen geprüften Geschosse nun **lesend** auf reale, eindeutig gespeicherte Encounter- und Zusatzkreatur-IDs ab. Es vergleicht den erwarteten Revisionsstand, verweigert fremde/alte/tote Ziele und liefert pro Kreatur gekappte Trefferpunkte sowie eine Warnung, falls der Hauptgegner besiegt ist und weitere Gegner noch leben. **Noch kein ausführbarer, gespeicherter Mehrziel-Kampfzug:** Aktionen, Reaktionen, Ressourcen-/HP-/Event-Commit, Abschluss mehrerer Gegner und Controller-/UI-Anbindung benötigen einen koordinierten Folge-PR. Kein JSON-/SQLite-Schemawechsel und keine Änderung der bisherigen Einziel-Aktion. SRD 5.2.1 *Magic Missile* S. 146, CC BY 4.0. [Chat-A-PR #387](https://github.com/ManuEtt/Dnd/pull/387).
+
 ## Neuer Regelengine-Baustein – Mehrziel-Magisches-Geschoss (Chat A, PR #387)
 
 Die integrierte Aufteilung von *Magisches Geschoss* auf mehrere bestätigte Kreaturen und die getrennte Geschoss-Schadensberechnung erhalten einen verbindenden, deterministisch testbaren **Domänen-Cast**: Magier-/Zauberer-Klasse, gelernter Zauber, V/S, freier regulärer oder Pakt-Zauberplatz und jeder individuelle Schild-/Energieschadenstatus werden vor dem Würfeln geprüft. Ein Platz wird in einer neuen Heldensnapshot verbraucht, Schild blockiert seine Geschosse ohne W4 und andere Geschosse erhalten getrennte Schadenswerte. [PR #387](https://github.com/ManuEtt/Dnd/pull/387) ist noch nicht automatisch integriert. **Wichtig:** Noch kein spielbarer Mehrziel-Kampfdialog, kein Kampagnen-HP-/Event-Commit oder persistente Exactly-once-Garantie; bestehende Einziel-Aktion unverändert. SRD 5.2.1 S. 146/161, CC BY 4.0; SQLite 3 und JSON 1 unverändert. Finale CI wird im PR nachgewiesen.
