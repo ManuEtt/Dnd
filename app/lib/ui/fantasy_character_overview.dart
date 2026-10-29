@@ -877,10 +877,7 @@ class FantasyCharacterQuickNavigation extends StatelessWidget {
                       width: 2,
                     ),
                     boxShadow: const [
-                      BoxShadow(
-                        color: Color(0xaa237fc5),
-                        blurRadius: 10,
-                      ),
+                      BoxShadow(color: Color(0xaa237fc5), blurRadius: 10),
                     ],
                   ),
                   child: Stack(

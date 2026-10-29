@@ -42,10 +42,7 @@ void main() {
         tester.getTopLeft(spells).dy,
         greaterThan(tester.getTopLeft(roll).dy),
       );
-      expect(
-        tester.getCenter(roll).dy,
-        closeTo(tester.getCenter(first).dy, 1),
-      );
+      expect(tester.getCenter(roll).dy, closeTo(tester.getCenter(first).dy, 1));
       expect(
         find.descendant(of: first, matching: find.byType(FittedBox)),
         findsNothing,
@@ -86,10 +83,7 @@ void main() {
     await tester.pumpAndSettle();
     final roll = find.byKey(const ValueKey('sheet-quick-roll'));
     final spells = find.byKey(const ValueKey('sheet-quick-zauber'));
-    expect(
-      tester.getCenter(spells).dy,
-      closeTo(tester.getCenter(roll).dy, 1),
-    );
+    expect(tester.getCenter(spells).dy, closeTo(tester.getCenter(roll).dy, 1));
     await tester.tap(roll);
     expect(rolls, 1);
     expect(tester.takeException(), isNull);
