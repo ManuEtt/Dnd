@@ -115,47 +115,68 @@ class FantasyActiveHeroCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 12),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FantasyCharacterPortrait(
-                      preset: hero.portraitPreset,
-                      photoBase64: hero.portraitPhotoBase64,
-                      name: hero.name,
-                      size: 79,
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            hero.name.isEmpty ? 'Unbenannter Held' : hero.name,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.titleLarge,
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    // Keep the complete saved identity readable at Android's
+                    // largest text settings instead of ellipsizing names.
+                    final largeText =
+                        MediaQuery.textScalerOf(context).scale(1) >= 1.8 &&
+                        constraints.maxWidth < 500;
+                    final identity = Column(
+                      key: const ValueKey('active-hero-identity'),
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          hero.name.isEmpty ? 'Unbenannter Held' : hero.name,
+                          maxLines: largeText ? null : 2,
+                          overflow: largeText
+                              ? TextOverflow.visible
+                              : TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          '${hero.species} · ${hero.classSummary} · Stufe ${hero.level}',
+                          maxLines: largeText ? null : 3,
+                          overflow: largeText
+                              ? TextOverflow.visible
+                              : TextOverflow.ellipsis,
+                          style: const TextStyle(color: FantasyPalette.ivory),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          campaignName,
+                          maxLines: largeText ? null : 1,
+                          overflow: largeText
+                              ? TextOverflow.visible
+                              : TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: FantasyPalette.muted,
+                            fontSize: 12,
                           ),
-                          const SizedBox(height: 5),
-                          Text(
-                            '${hero.species} · ${hero.classSummary} · Stufe ${hero.level}',
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(color: FantasyPalette.ivory),
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            campaignName,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: FantasyPalette.muted,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                        ),
+                      ],
+                    );
+                    return Flex(
+                      direction: largeText ? Axis.vertical : Axis.horizontal,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        FantasyCharacterPortrait(
+                          key: const ValueKey('active-hero-portrait'),
+                          preset: hero.portraitPreset,
+                          photoBase64: hero.portraitPhotoBase64,
+                          name: hero.name,
+                          size: 79,
+                        ),
+                        SizedBox(
+                          width: largeText ? 0 : 14,
+                          height: largeText ? 10 : 0,
+                        ),
+                        if (largeText) identity else Expanded(child: identity),
+                      ],
+                    );
+                  },
                 ),
                 const SizedBox(height: 13),
                 LayoutBuilder(

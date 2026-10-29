@@ -67,10 +67,76 @@ def _package_target(uri: str) -> str | None:
     return posixpath.normpath("app/lib/" + uri[len(prefix):].lstrip("/"))
 
 
+def _strip_comments_and_mark_strings(content: str) -> tuple[str, bytearray]:
+    """Mask Dart comments without changing offsets; identify string literals.
+
+    Dart block comments may nest. Only actual code can start directives:
+    otherwise an import inside a block comment or multiline string can be
+    mistaken for code, while a legitimate directive after a comment is missed.
+    """
+    visible = list(content)
+    strings = bytearray(len(content))
+    length = len(content)
+    index = 0
+    while index < length:
+        if content.startswith('//', index):
+            end = content.find('\n', index)
+            if end < 0:
+                end = length
+            visible[index:end] = ' ' * (end - index)
+            index = end
+            continue
+        if content.startswith('/*', index):
+            start = index
+            depth = 1
+            index += 2
+            while index < length and depth:
+                if content.startswith('/*', index):
+                    depth += 1
+                    index += 2
+                elif content.startswith('*/', index):
+                    depth -= 1
+                    index += 2
+                else:
+                    index += 1
+            for position in range(start, index):
+                if content[position] != '\n':
+                    visible[position] = ' '
+            continue
+        if content[index] in ("'", '"'):
+            start = index
+            delimiter = content[index] * (
+                3 if content.startswith(content[index] * 3, index) else 1
+            )
+            raw = (
+                start > 0 and content[start - 1] in ('r', 'R')
+                and (start == 1 or not (
+                    content[start - 2].isalnum() or content[start - 2] == '_'
+                ))
+            )
+            index += len(delimiter)
+            while index < length:
+                if content.startswith(delimiter, index):
+                    index += len(delimiter)
+                    break
+                if content[index] == '\\' and not raw:
+                    index += 2
+                else:
+                    index += 1
+            for position in range(start, min(index, length)):
+                strings[position] = 1
+            continue
+        index += 1
+    return ''.join(visible), strings
+
+
 def check_imports(relative_path: str, content: str) -> list[str]:
     violations: list[str] = []
     sources: list[tuple[str, str]] = []
-    for directive in IMPORT.finditer(content):
+    visible, strings = _strip_comments_and_mark_strings(content)
+    for directive in IMPORT.finditer(visible):
+        if strings[directive.start("kind")]:
+            continue
         kind = directive.group("kind")
         sources.append((kind, directive.group("primary")))
         sources.extend(

@@ -56,14 +56,23 @@ class NpcNarratorMemory {
 
     final result = <String>[];
     final selectedNotes = <String>[];
-    for (final entry in relevant.take(npcNoteLimit)) {
+    for (final entry in relevant) {
+      if (selectedNotes.length == npcNoteLimit) break;
       final note = entry.note;
       final normalizedNote = _oneLine(note.note);
-      final text = _truncate(
-        'Bestätigte NPC-Beziehungsnotiz zu ${_oneLine(entry.npc.name)} '
-        '(${_oneLine(note.relationship)}): $normalizedNote',
-        400,
-      );
+      final relationship = _oneLine(note.relationship);
+      final prefix = 'Bestätigte NPC-Beziehungsnotiz zu ';
+      var heading = '$prefix${_oneLine(entry.npc.name)} ($relationship): ';
+      // Never truncate an identity inside a very long stored NPC name.
+      // Use the uniquely saved ID only when it is safe for wire transport.
+      if (heading.length + 2 > 400) {
+        if (!RegExp(r'^[a-zA-Z0-9_-]{1,64}$').hasMatch(entry.npc.id)) {
+          continue;
+        }
+        heading = '$prefix(NPC-ID: ${entry.npc.id}) ($relationship): ';
+        if (heading.length + 2 > 400) continue;
+      }
+      final text = _truncate('$heading$normalizedNote', 400);
       if (result.contains(text)) continue;
       result.add(text);
       selectedNotes.add(normalizedNote);

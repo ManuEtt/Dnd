@@ -9,6 +9,7 @@ class NpcContinuitySnapshot {
     required this.name,
     required this.alive,
     required this.currentRelationship,
+    this.disambiguateName = false,
     required List<NpcRelationshipNote> recentNotes,
   }) : recentNotes = List.unmodifiable(recentNotes);
 
@@ -17,6 +18,9 @@ class NpcContinuitySnapshot {
   final bool alive;
   final String currentRelationship;
 
+  /// Only add the stored NPC ID when another NPC shares the displayed name.
+  final bool disambiguateName;
+
   /// Most recent confirmed notes first, with deterministic timestamp ties.
   final List<NpcRelationshipNote> recentNotes;
 
@@ -24,8 +28,11 @@ class NpcContinuitySnapshot {
   ///
   /// Free narration, session summaries and model output are not consulted.
   String get confirmedContext {
+    final heading = disambiguateName
+        ? 'NPC: ${_singleLine(name)} (NPC-ID: $npcId)'
+        : 'NPC: ${_singleLine(name)}';
     final lines = <String>[
-      'NPC: ${_singleLine(name)}',
+      heading,
       'Status: ${alive ? 'lebendig' : 'tot'}',
       'Aktuelle Beziehung: ${_singleLine(currentRelationship)}',
       if (recentNotes.isEmpty) 'Keine bestätigten Beziehungsnotizen.',
@@ -57,6 +64,17 @@ class NpcContinuityReader {
       throw const FormatException('NPC nicht eindeutig bestätigt.');
     }
     final npc = matches.single;
+    // A saved NPC ID is the identity; a display name is not. Any other NPC
+    // with the same normalized name makes text-only continuity ambiguous.
+    final nameKey = _npcNameKey(npc.name);
+    final disambiguate = campaign.npcs.any(
+      (other) => other.id != npc.id && _npcNameKey(other.name) == nameKey,
+    );
+    if (disambiguate && !RegExp(r'^[a-zA-Z0-9_-]{1,64}$').hasMatch(npc.id)) {
+      throw const FormatException(
+        'NPC-ID kann nicht sicher dargestellt werden.',
+      );
+    }
 
     final notes = <({int position, NpcRelationshipNote value})>[
       for (var i = 0; i < campaign.npcRelationshipNotes.length; i++)
@@ -73,6 +91,7 @@ class NpcContinuityReader {
       name: npc.name,
       alive: npc.alive,
       currentRelationship: npc.relationship,
+      disambiguateName: disambiguate,
       recentNotes: notes.take(limit).map((entry) => entry.value).toList(),
     );
   }
@@ -80,3 +99,10 @@ class NpcContinuityReader {
 
 String _singleLine(String value) =>
     value.replaceAll(RegExp(r'\s+'), ' ').trim();
+
+String _npcNameKey(String value) => _singleLine(value)
+    .toLowerCase()
+    .replaceAll('ä', 'ae')
+    .replaceAll('ö', 'oe')
+    .replaceAll('ü', 'ue')
+    .replaceAll('ß', 'ss');

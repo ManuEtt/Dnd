@@ -1,5 +1,10 @@
 # Chat B – Sitzungsidentität beim Ereignis-Replay (27.10.2026)
 
+## Integrationskandidat 29.10.2026 – Chat B
+
+Zusammengeführte Fachpakete: [#356](https://github.com/ManuEtt/Dnd/pull/356), [#362](https://github.com/ManuEtt/Dnd/pull/362), [#364](https://github.com/ManuEtt/Dnd/pull/364), [#371](https://github.com/ManuEtt/Dnd/pull/371), [#373](https://github.com/ManuEtt/Dnd/pull/373), [#377](https://github.com/ManuEtt/Dnd/pull/377), [#383](https://github.com/ManuEtt/Dnd/pull/383). Die ursprünglichen Branch-HEADs, PR-Beschreibungen, Tests, bekannte Grenzen und Statusmeldungen sind im [Integrationsjournal](INTEGRATION_20261029.md) mit Git-Historie dokumentiert. **Dieser Stand ist weder auf main integriert noch gemeinsam CI-abgenommen; Drafts sind nicht freigegeben.** Bisherige Checkpoint-Einträge bleiben erhalten.
+
+
 - **main-Basis:** `96001353f2b90f293fbdade934e78b7b8281e965`; Branch `fix/chat-b/story-replay-session-identity-20261027`.
 - **Problem:** `MemoryEngine.replay` konnte ein neues, gültig geformtes Ereignis derselben Kampagne aus einer fremden Sitzung akzeptieren. Auch ein Checkpoint mit abweichender Sitzungs-ID war möglich.
 - **IMPLEMENTIERT:** Session-Guard für neue Ereignisse und `stateAfter`-Checkpoints, bestehende Kampagnen-/Revisionsprüfung unverändert. Bereits bekannte identische Ereignisse früherer Sitzungen weiterhin idempotent.

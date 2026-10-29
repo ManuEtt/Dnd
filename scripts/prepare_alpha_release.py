@@ -153,7 +153,9 @@ def prepare_release(root: Path, output: Path, *, commit: str = 'lokal',
         with zipfile.ZipFile(source) as archive:
             if archive.testzip() is not None:
                 raise ValueError('Das Quellarchiv ist beschädigt.')
-    except Exception:
+    except BaseException:
+        # KeyboardInterrupt and SystemExit must not leave a partial release
+        # behind after the finally block releases the exclusive version lock.
         for path in generated:
             path.unlink(missing_ok=True)
         # package_project.create_archive creates a sidecar checksum file.

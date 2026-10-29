@@ -178,13 +178,54 @@ def read_verified_source(root: Path, path: Path) -> tuple[bytes, os.stat_result]
     return data, before
 
 
+def copy_previous_archive(output: Path, backup: Path) -> None:
+    """Preserve an existing ZIP without following a swapped output symlink.
+
+    POSIX uses O_NOFOLLOW for the last path component. os.replace() below
+    always replaces the directory entry, not the destination of a symlink.
+    """
+    if os.name == 'posix' and hasattr(os, 'O_NOFOLLOW'):
+        try:
+            fd = os.open(
+                output, os.O_RDONLY | os.O_NOFOLLOW | getattr(os, 'O_NONBLOCK', 0)
+            )
+        except FileNotFoundError:
+            return
+        except OSError as error:
+            if error.errno in (errno.ELOOP, errno.ENOTDIR):
+                raise ValueError('Output archive must not be a symlink.') from error
+            raise
+        with os.fdopen(fd, 'rb') as previous:
+            before = os.fstat(previous.fileno())
+            if not stat.S_ISREG(before.st_mode):
+                raise ValueError('Previous archive must be a regular file.')
+            with backup.open('wb') as staged:
+                shutil.copyfileobj(previous, staged)
+            backup.chmod(stat.S_IMODE(before.st_mode))
+            os.utime(backup, ns=(before.st_atime_ns, before.st_mtime_ns))
+    else:
+        # Best-effort fallback; descriptor-relative no-follow is POSIX-only.
+        if output.is_symlink():
+            raise ValueError('Output archive must not be a symlink.')
+        if output.is_file():
+            shutil.copy2(output, backup)
+
+
 def create_archive(root: Path, output: Path, *, layout: str = 'folder') -> tuple[int, str]:
     """A root layout can be copied straight into a GitHub repository."""
     if layout not in {'folder', 'root'}:
         raise ValueError('Unknown archive layout.')
-    root, output = root.resolve(), output.resolve()
-    if output.is_relative_to(root):
+    root, output = root.resolve(), output.absolute()
+    checksum = output.with_suffix(output.suffix + '.sha256')
+    # Keep the named output path: Path.resolve() would redirect an existing
+    # output symlink and let publication overwrite its external target.
+    if output.is_symlink() or checksum.is_symlink():
+        raise ValueError('Output archive and checksum must not be symlinks.')
+    if (output.resolve().is_relative_to(root)
+            or checksum.resolve().is_relative_to(root)):
         raise ValueError('Write the archive outside the project directory.')
+    if any(path.exists() and not path.is_file() for path in (output, checksum)):
+        raise ValueError('Output archive and checksum must be regular files.')
     paths = source_paths(root)
     relative_names = {p.relative_to(root).as_posix() for p in paths}
     missing = REQUIRED_FILES - relative_names
@@ -193,8 +234,7 @@ def create_archive(root: Path, output: Path, *, layout: str = 'folder') -> tuple
     validate_portable_source_paths(root, paths)
     output.parent.mkdir(parents=True, exist_ok=True)
     prefix = Path('Dnd') if layout == 'folder' else Path()
-    checksum = output.with_suffix(output.suffix + '.sha256')
-
+    
     # Build and validate outside the published archive. A partial write must
     # never truncate a previously usable ZIP or its checksum.
     with tempfile.TemporaryDirectory(prefix=f'.{output.name}.', dir=output.parent) as tmp:
@@ -224,8 +264,7 @@ def create_archive(root: Path, output: Path, *, layout: str = 'folder') -> tuple
         # Preserve both previous files until the staged pair is ready. If the
         # second replacement fails, restore the previous ZIP as well.
         previous_zip = temporary / 'previous.zip'
-        if output.is_file():
-            shutil.copy2(output, previous_zip)
+        copy_previous_archive(output, previous_zip)
         published_zip = False
         try:
             os.replace(staged_zip, output)

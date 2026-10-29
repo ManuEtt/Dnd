@@ -158,6 +158,48 @@ class CheckpointTests(unittest.TestCase):
         )
         self.assertTrue(link.is_symlink())
 
+    def test_swapped_historical_zip_symlink_during_hash_is_never_followed(self):
+        first = self.create()
+        latest = Path(first['latest_archive']).read_bytes()
+        checksums = Path(first['latest_checksums']).read_bytes()
+        old_archive = Path(first['archive'])
+        outside = self.directory / 'external-private.zip'
+        outside.write_bytes(b'DO_NOT_HASH_EXTERNAL_CHECKPOINT')
+        original_scan = checkpoint.previous_checkpoint_files
+
+        def swap_after_listing(directory):
+            entries = original_scan(directory)
+            old_archive.unlink()
+            old_archive.symlink_to(outside)
+            return entries
+
+        with mock.patch.object(
+                checkpoint, 'previous_checkpoint_files', side_effect=swap_after_listing):
+            with self.assertRaisesRegex(ValueError, 'Unsafe previous checkpoint artifact'):
+                self.create(label='swapped')
+        self.assertTrue(old_archive.is_symlink())
+        self.assertEqual(Path(first['latest_archive']).read_bytes(), latest)
+        self.assertEqual(Path(first['latest_checksums']).read_bytes(), checksums)
+
+    def test_historical_zip_rewritten_after_listing_preserves_old_aliases(self):
+        first = self.create()
+        latest = Path(first['latest_archive']).read_bytes()
+        checksums = Path(first['latest_checksums']).read_bytes()
+        old_archive = Path(first['archive'])
+        original_scan = checkpoint.previous_checkpoint_files
+
+        def rewrite_after_listing(directory):
+            entries = original_scan(directory)
+            old_archive.write_bytes(b'ALTERED_DURING_CHECKPOINT')
+            return entries
+
+        with mock.patch.object(
+                checkpoint, 'previous_checkpoint_files', side_effect=rewrite_after_listing):
+            with self.assertRaisesRegex(ValueError, 'Historical checkpoint changed'):
+                self.create(label='changed')
+        self.assertEqual(Path(first['latest_archive']).read_bytes(), latest)
+        self.assertEqual(Path(first['latest_checksums']).read_bytes(), checksums)
+
     def test_prior_checksum_history_rejects_newline_in_filename(self):
         self.create()
         previous = {p.name: p.read_bytes() for p in self.output.iterdir()}

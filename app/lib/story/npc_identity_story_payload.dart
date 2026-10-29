@@ -100,6 +100,13 @@ class NpcIdentityStoryPayload {
       if (name.isNotEmpty) counts[name] = (counts[name] ?? 0) + 1;
     }
 
+    // Imported saves may contain two NPC rows with the same stored ID.
+    // A unique displayed name is not enough to make that ID authoritative.
+    final idCounts = <String, int>{};
+    for (final npc in campaign.npcs) {
+      idCounts[npc.id] = (idCounts[npc.id] ?? 0) + 1;
+    }
+
     final selected = <Map<String, Object>>[];
     final includedNoteIds = <String>{};
     for (final npc in campaign.npcs) {
@@ -109,6 +116,7 @@ class NpcIdentityStoryPayload {
               ? npc.id != selectedNpc.npcId
               : counts[name] != 1 || !_mentions(playerAction, name)) ||
           !_validId(npc.id) ||
+          idCounts[npc.id] != 1 ||
           !_validText(npc.name, 80) ||
           !_validText(npc.relationship, 80)) {
         continue;

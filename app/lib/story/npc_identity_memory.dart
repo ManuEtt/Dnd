@@ -1,12 +1,14 @@
 import '../domain/models.dart';
 
-/// Confirmed, locally derived NPC history tied to one campaign revision.
+/// Confirmed, locally derived NPC history tied to one campaign session
+/// and revision.
 ///
 /// This is a read-only projection, not an instruction to change D&D rules or
 /// evidence that untrusted text from an AI provider is a confirmed fact.
 class NpcIdentityContext {
   NpcIdentityContext._({
     required this.campaignId,
+    required this.sessionId,
     required this.revision,
     required this.npcId,
     required this.npcName,
@@ -16,6 +18,8 @@ class NpcIdentityContext {
   }) : notes = List.unmodifiable(notes);
 
   final String campaignId;
+  // Local snapshot boundary only; the existing Story API map is unchanged.
+  final String sessionId;
   final int revision;
   final String npcId;
   final String npcName;
@@ -88,6 +92,7 @@ class NpcIdentityMemory {
 
     return NpcIdentityContext._(
       campaignId: campaign.id,
+      sessionId: campaign.sessionId,
       revision: campaign.revision,
       npcId: npc.id,
       npcName: npc.name,
@@ -97,11 +102,12 @@ class NpcIdentityMemory {
     );
   }
 
-  /// Rejects a revision change, another campaign, or amended snapshot values.
+  /// Rejects a revision/session change, another campaign, or amended values.
   ///
   /// No implicit refresh: the caller must explicitly re-read current state.
   static void requireCurrent(Campaign campaign, NpcIdentityContext context) {
     if (campaign.id != context.campaignId ||
+        campaign.sessionId != context.sessionId ||
         campaign.revision != context.revision) {
       throw const FormatException('NPC-Kontext ist nicht mehr aktuell.');
     }

@@ -230,6 +230,34 @@ class AlphaReleaseTests(unittest.TestCase):
         result = release.prepare_release(self.root, self.out)
         self.assertTrue(all(path.is_file() for path in result))
 
+    def test_keyboard_interrupt_after_partial_apk_copy_removes_own_release(self):
+        stem = 'Wuerfelraunen_v0.5.4_24'
+        lock = self.out / f'.{stem}_Release.lock'
+
+        def interrupt_during_copy(_source, target):
+            Path(target).write_bytes(b'PARTIAL_APK')
+            raise KeyboardInterrupt()
+
+        with mock.patch.object(release.shutil, 'copy2', side_effect=interrupt_during_copy):
+            with self.assertRaises(KeyboardInterrupt):
+                release.prepare_release(self.root, self.out)
+        self.assertFalse(lock.exists())
+        self.assertEqual(list(self.out.iterdir()), [])
+        result = release.prepare_release(self.root, self.out)
+        self.assertTrue(all(path.is_file() for path in result))
+
+    def test_system_exit_during_checksums_removes_own_release(self):
+        stem = 'Wuerfelraunen_v0.5.4_24'
+        lock = self.out / f'.{stem}_Release.lock'
+        with mock.patch.object(release, 'sha256', side_effect=SystemExit(15)):
+            with self.assertRaises(SystemExit) as error:
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(error.exception.code, 15)
+        self.assertFalse(lock.exists())
+        self.assertEqual(list(self.out.iterdir()), [])
+        result = release.prepare_release(self.root, self.out)
+        self.assertTrue(all(path.is_file() for path in result))
+
     def test_stale_release_lock_fails_closed_without_deleting_it(self):
         self.out.mkdir()
         lock = self.out / '.Wuerfelraunen_v0.5.4_24_Release.lock'

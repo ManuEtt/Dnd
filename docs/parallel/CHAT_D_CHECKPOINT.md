@@ -1,5 +1,10 @@
 # Chat D – Integration von PR #358 nach Checkpoint-Fix #363 (29.10.2026)
 
+## Integrationskandidat 29.10.2026 – Chat D
+
+Zusammengeführte Fachpakete: [#378](https://github.com/ManuEtt/Dnd/pull/378), [#380](https://github.com/ManuEtt/Dnd/pull/380), [#381](https://github.com/ManuEtt/Dnd/pull/381), [#384](https://github.com/ManuEtt/Dnd/pull/384). Die ursprünglichen Branch-HEADs, PR-Beschreibungen, Tests, bekannte Grenzen und Statusmeldungen sind im [Integrationsjournal](INTEGRATION_20261029.md) mit Git-Historie dokumentiert. **Dieser Stand ist weder auf main integriert noch gemeinsam CI-abgenommen; Drafts sind nicht freigegeben.** Bisherige Checkpoint-Einträge bleiben erhalten.
+
+
 - **Stand:** Alpha-Release-Lock in `scripts/prepare_alpha_release.py` (3 neue Tests), vorherige vollständige CI `40730971955` auf `1d7b1723` erfolgreich; kombinierter Head benötigt erneute CI.
 - **Ausgangsbranch:** `fix/chat-d/alpha-release-version-lock-20261028`; **Integrationsbasis:** `b5f469f2163c1d60a63761e0a63434f4359e5e2a` enthält aktuelle Hauptbranch-Arbeit und PR #363. PR #358 bleibt bis gemeinsamer CI im Draft.
 - **Risiko:** Lock-Verzeichnis bleibt nach hartem Crash fail-closed; gleichzeitige externe Runner und Geräteinstallation nicht geprüft. Keine SQLite-/JSON-Migration, bestehende Alpha-Artefakte unverändert.
