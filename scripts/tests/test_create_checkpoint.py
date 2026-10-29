@@ -310,6 +310,67 @@ class CheckpointTests(unittest.TestCase):
         self.assertEqual(before, after)
         self.assertTrue(Path(first['latest_archive']).is_file())
 
+    def test_existing_checkpoint_lock_preserves_prior_aliases(self):
+        first = self.create()
+        previous = {
+            path.name: path.read_bytes() for path in self.output.iterdir()
+        }
+        lock = self.output / '.checkpoint.lock'
+        lock.mkdir()
+        try:
+            with self.assertRaisesRegex(ValueError, 'already in progress'):
+                self.create(label='competing')
+            self.assertTrue(lock.is_dir())
+            self.assertEqual(previous, {
+                name: (self.output / name).read_bytes() for name in previous
+            })
+            self.assertEqual(Path(first['latest_archive']).read_bytes(),
+                             previous[checkpoint.LATEST])
+        finally:
+            lock.rmdir()
+
+    def test_second_checkpoint_during_first_publication_is_rejected(self):
+        original = checkpoint.create_archive
+        competed = False
+
+        def trigger_second(*args, **kwargs):
+            nonlocal competed
+            if not competed:
+                competed = True
+                with self.assertRaisesRegex(ValueError, 'already in progress'):
+                    self.create(label='competing')
+            return original(*args, **kwargs)
+
+        with mock.patch.object(checkpoint, 'create_archive',
+                               side_effect=trigger_second):
+            result = self.create()
+        self.assertTrue(competed)
+        self.assertTrue(Path(result['latest_archive']).is_file())
+        self.assertFalse((self.output / '.checkpoint.lock').exists())
+        for line in Path(result['latest_checksums']).read_text().splitlines():
+            digest, name = line.split('  ', 1)
+            self.assertEqual(
+                hashlib.sha256((self.output / name).read_bytes()).hexdigest(),
+                digest,
+            )
+
+    def test_interrupted_checkpoint_releases_lock_and_retry_succeeds(self):
+        first = self.create()
+        old_latest = Path(first['latest_archive']).read_bytes()
+        old_sums = Path(first['latest_checksums']).read_bytes()
+        self.write('app/lib/main.dart', 'New checkpoint content.\n')
+        with mock.patch.object(checkpoint, 'validate_patch',
+                               side_effect=KeyboardInterrupt):
+            with self.assertRaises(KeyboardInterrupt):
+                self.create(label='retry')
+        self.assertFalse((self.output / '.checkpoint.lock').exists())
+        self.assertEqual(Path(first['latest_archive']).read_bytes(), old_latest)
+        self.assertEqual(Path(first['latest_checksums']).read_bytes(), old_sums)
+        second = self.create(label='retry')
+        self.assertNotEqual(Path(second['latest_archive']).read_bytes(),
+                            old_latest)
+        self.assertFalse((self.output / '.checkpoint.lock').exists())
+
     def test_duplicate_checkpoint_does_not_overwrite_artifacts(self):
         self.create()
         with self.assertRaisesRegex(ValueError, 'already exists'):
