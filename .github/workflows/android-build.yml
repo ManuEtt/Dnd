@@ -91,7 +91,12 @@ jobs:
         run: flutter pub get
       - name: Dart-Formatierung prüfen
         working-directory: app
-        run: dart format --output=none --set-exit-if-changed lib test
+        run: |
+          dart format lib/domain/srd_magic_missile_encounter_hp_rules.dart test/srd_magic_missile_encounter_hp_rules_test.dart
+          echo '=== CHAT-A-HP-FORMAT-BEGIN ==='
+          git diff -- lib/domain/srd_magic_missile_encounter_hp_rules.dart test/srd_magic_missile_encounter_hp_rules_test.dart
+          echo '=== CHAT-A-HP-FORMAT-END ==='
+          exit 1
       - name: Flutter-Code analysieren
         working-directory: app
         run: flutter analyze
