@@ -7,6 +7,11 @@ Charaktererstellung und Regelengine sind noch nicht vollständig.
 
 ## Aktueller Stand und autonome Fortsetzung
 
+### Chat A – Magic Missile auf mehrere bestätigte Kreaturen (Draft-PR #375)
+
+[PR #375](https://github.com/ManuEtt/Dnd/pull/375) ergänzt **nur auf eigenem Branch** eine SRD-5.2.1-Vorprüfung für die gleichzeitige Aufteilung von 3–11 magischen Geschossen auf bestätigte Kreaturen. Sicht, Reichweite, eindeutige IDs, Zuordnungsanzahl und unveränderliche Prüfergebnisse werden kontrolliert. Die bestehende Kampfaktion trifft weiterhin nur einen Gegner; Mehrziel-Schaden, Reaktion `Shield`, Ressourcenbuchung, UI und Speicherung bleiben offen. Acht positive und negative Dart-Tests sind hinzugefügt, aber noch nicht durch finalen GitHub-CI-Lauf bestätigt. Kein Geräte- oder APK-Test, keine Migration, keine Behauptung vollständiger SRD-Automatik. [Entwicklungsnachweis](docs/parallel/CHAT_A_CHECKPOINT.md).
+
+
 **IMPLEMENTIERT:** Kleriker/Paladin wählen im Klassenpaket A ausdrücklich Amulett,
 Emblem oder Reliquiar. Typisierte Gegenstände und Gold werden nach Bestätigung
 nur einmal übernommen. Neue Klassenbelege verwenden Version 2; historische
