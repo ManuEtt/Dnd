@@ -102,3 +102,8 @@ Keine automatische Fortsetzung nach Sitzungsende.
    separatem Branch/Clone `git apply --check <patch>` ausführen, bestehendes Main
    nicht mit ZIP-Dateien überschreiben. Auf integriertem Main keinen Patch erneut
    anwenden. Git-Bundle ermöglicht vollständige Wiederherstellung mit Historie.
+
+Dokumentationsprüfung: 221 Pythonfälle, Projekt-/Grenz-/Registerprüfung erfolgreich.
+`git diff --check` außerhalb des bytegenauen historischen Archivs sauber. Die
+archivierte Original-CHANGELOG-Zeile 1061 enthält bereits im Quellstand ein
+Leerzeichen am Zeilenende; es bleibt für die nachprüfbare Originaltreue erhalten.
