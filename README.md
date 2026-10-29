@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Qualitätsabsicherung – Checkpoint-Historie (Chat D, PR #363)
+
+Historische Dateien im Quell-Checkpoint werden vor Aufnahme in `SHA256SUMS.txt` auf sichere Namen und regulären Dateityp geprüft. Vorhandene Symlinks, Zeilenumbrüche oder ZIP-Verzeichnisse werden vor einer Veröffentlichung abgelehnt; drei neue negative Python-Regressionen sichern alte stabile Aliases. [Erfolgreicher CI-Stand auf dem vorigen Commit](https://github.com/ManuEtt/Dnd/actions/runs/40730867003); der jetzt kombinierte `main`-Stand wird separat geprüft. Keine Speicherformatmigration. Die Prüfung ist keine vollständige TOCTOU-Abwehr.
+
 Deutschsprachige Fantasy-Solo-App für Android mit lokalen Charakteren,
 Kampagnen, ausgewählten D&D-SRD-5.2.1-Regeln und optionalem KI-Erzähler.
 **Alpha 0.8.47+97**; lokales Spielen benötigt keinen Account oder KI-Server.

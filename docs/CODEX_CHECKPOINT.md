@@ -1,5 +1,9 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat D – PR #363: Historische Checkpoint-Dateien nur aus sicheren Quellen
+
+**IMPLEMENTIERT:** `scripts/create_checkpoint.py` lehnt unsichere Namen, Symlinks und nichtreguläre historische Artefakte vor Erzeugung des Prüfsummenindex ab. Neue Regressionen für Symlink, Zeilenumbruch und falschen ZIP-Typ. Keine Schema-/Versionsmigration. **GETESTET:** vollständige Python-, Backend-, Flutter- und Android-CI auf Vor-Integrations-HEAD `a02e2b9f` vollständig erfolgreich ([GitHub Actions 40730867003](https://github.com/ManuEtt/Dnd/actions/runs/40730867003)). **NOCH NICHT GETESTET:** kombinierter HEAD mit `main` `1dc8d076786d`, Gerätetest; diese Abnahme erfolgt auf dem neuen PR-HEAD. **BEKANNTE GRENZE:** kein racefreier Dateideskriptor beim Hashing. **Nächster Schritt:** kombinierte CI abwarten, erst danach integrieren.
+
 ## Abnahme 28.10.2026 – Charakter-Symbolwahl / Alpha 0.8.47+97
 
 **IMPLEMENTIERT:** Kleriker/Paladin wählen im Klassenpaket A ausdrücklich Amulett,
