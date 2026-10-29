@@ -92,74 +92,78 @@ class _PendingActionStatusState extends State<PendingActionStatus> {
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-              if (_showFullText)
-                ConstrainedBox(
-                  // The composer is fixed below the scene: long saved intents
-                  // must scroll here rather than pushing the action bar away.
-                  constraints: const BoxConstraints(maxHeight: 160),
-                  child: Scrollbar(
-                    controller: _textScrollController,
-                    child: SingleChildScrollView(
-                      controller: _textScrollController,
-                      primary: false,
-                      key: const ValueKey('adventure-pending-action-scroll'),
-                      child: Text(
-                        pending.text,
-                        key: const ValueKey('adventure-pending-action-text'),
-                        overflow: TextOverflow.visible,
+                  if (_showFullText)
+                    ConstrainedBox(
+                      // The composer is fixed below the scene: long saved intents
+                      // must scroll here rather than pushing the action bar away.
+                      constraints: const BoxConstraints(maxHeight: 160),
+                      child: Scrollbar(
+                        controller: _textScrollController,
+                        child: SingleChildScrollView(
+                          controller: _textScrollController,
+                          primary: false,
+                          key: const ValueKey('adventure-pending-action-scroll'),
+                          child: Text(
+                            pending.text,
+                            key: const ValueKey('adventure-pending-action-text'),
+                            overflow: TextOverflow.visible,
+                          ),
+                        ),
                       ),
+                    )
+                  else
+                    Text(
+                      pending.text,
+                      key: const ValueKey('adventure-pending-action-text'),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                )
-              else
-                Text(
-                  pending.text,
-                  key: const ValueKey('adventure-pending-action-text'),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              if (pending.selectedNpcId != null) ...[
-                const SizedBox(height: 4),
-                const Text(
-                  'Die ausgewählte Figur ist an diesen Auftrag gebunden. '
-                  'Bei Änderungen am Spielstand bitte verwerfen und neu auswählen.',
-                  key: ValueKey('adventure-pending-npc-selection'),
-                ),
-              ],
-              const SizedBox(height: 6),
-              Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: [
-                  if (needsExpansion || _showFullText)
-                    TextButton(
-                    key: const ValueKey('adventure-pending-action-toggle'),
-                    onPressed: () => setState(() => _showFullText = !_showFullText),
-                    child: Text(
-                      _showFullText ? 'Weniger anzeigen' : 'Ganzen Text anzeigen',
-                      textAlign: TextAlign.center,
+                  if (pending.selectedNpcId != null) ...[
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Die ausgewählte Figur ist an diesen Auftrag gebunden. '
+                      'Bei Änderungen am Spielstand bitte verwerfen und neu auswählen.',
+                      key: ValueKey('adventure-pending-npc-selection'),
                     ),
+                  ],
+                  const SizedBox(height: 6),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 4,
+                    children: [
+                      if (needsExpansion || _showFullText)
+                        TextButton(
+                          key: const ValueKey('adventure-pending-action-toggle'),
+                          onPressed: () => setState(
+                            () => _showFullText = !_showFullText,
+                          ),
+                          child: Text(
+                            _showFullText
+                                ? 'Weniger anzeigen'
+                                : 'Ganzen Text anzeigen',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      FantasyTextButton(
+                        key: const ValueKey('adventure-retry-action'),
+                        label: 'Erneut bestätigen',
+                        icon: Icons.refresh,
+                        style: FantasyButtonStyle.woodGold,
+                        onPressed: interactionBlocked || submitting
+                            ? null
+                            : widget.onRetry,
+                      ),
+                      FantasyTextButton(
+                        key: const ValueKey('adventure-discard-action'),
+                        label: 'Verwerfen',
+                        icon: Icons.close,
+                        style: FantasyButtonStyle.iron,
+                        onPressed: interactionBlocked || submitting
+                            ? null
+                            : widget.onDiscard,
+                      ),
+                    ],
                   ),
-                  FantasyTextButton(
-                    key: const ValueKey('adventure-retry-action'),
-                    label: 'Erneut bestätigen',
-                    icon: Icons.refresh,
-                    style: FantasyButtonStyle.woodGold,
-                    onPressed: interactionBlocked || submitting
-                        ? null
-                        : widget.onRetry,
-                  ),
-                  FantasyTextButton(
-                    key: const ValueKey('adventure-discard-action'),
-                    label: 'Verwerfen',
-                    icon: Icons.close,
-                    style: FantasyButtonStyle.iron,
-                    onPressed: interactionBlocked || submitting
-                        ? null
-                        : widget.onDiscard,
-                  ),
-                ],
-              ),
                 ],
               );
             },
