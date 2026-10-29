@@ -102,10 +102,14 @@ class _PendingActionStatusState extends State<PendingActionStatus> {
                         child: SingleChildScrollView(
                           controller: _textScrollController,
                           primary: false,
-                          key: const ValueKey('adventure-pending-action-scroll'),
+                          key: const ValueKey(
+                            'adventure-pending-action-scroll',
+                          ),
                           child: Text(
                             pending.text,
-                            key: const ValueKey('adventure-pending-action-text'),
+                            key: const ValueKey(
+                              'adventure-pending-action-text',
+                            ),
                             overflow: TextOverflow.visible,
                           ),
                         ),
@@ -133,10 +137,11 @@ class _PendingActionStatusState extends State<PendingActionStatus> {
                     children: [
                       if (needsExpansion || _showFullText)
                         TextButton(
-                          key: const ValueKey('adventure-pending-action-toggle'),
-                          onPressed: () => setState(
-                            () => _showFullText = !_showFullText,
+                          key: const ValueKey(
+                            'adventure-pending-action-toggle',
                           ),
+                          onPressed: () =>
+                              setState(() => _showFullText = !_showFullText),
                           child: Text(
                             _showFullText
                                 ? 'Weniger anzeigen'
