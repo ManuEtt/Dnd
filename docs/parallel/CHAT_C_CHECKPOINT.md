@@ -1,3 +1,18 @@
+## 29.10.2026 – Chat C: vollständige Namen in der Charakter-Referenzübersicht (PR #392)
+
+- **Ausgangs-Main:** `fde0ef6ed8b419d6a31c701a03aa05d61994c352`, App `0.8.47+97`. **Branch:** `feat/chat-c/reference-rows-large-text-20261029`. **Pull Request:** [#392](https://github.com/ManuEtt/Dnd/pull/392), Draft bis vollständiger CI. **Code-/Teststand vor Dokumentation:** `44d4d8232ba11575a730978c722ac8f4187fb759`; finaler SHA nach Dokumentationscommits separat im PR prüfen.
+- **Ausgangsproblem:** `_ReferenceRow` in `app/lib/ui/fantasy_character_overview.dart` kürzte alle Referenznamen auch bei 320/360 dp und 200 % Schrift auf eine Zeile. Neben Boni, Status und Inventarmengen war der volle Name nicht lesbar.
+- **IMPLEMENTIERT:** Ab Textskalierung 1,8 und unter 500 dp Breite stehen vollständige Zeilen ohne Ellipse über bestätigten Werten. Standardansicht bleibt kompakt, Icons und Daten unverändert.
+- **GETESTET:** Prüfpaket aus tatsächlichen GitHub-Dateien abgeleitet. Vorheriger Chat-C-PR [#388](https://github.com/ManuEtt/Dnd/pull/388) hat auf `97262ab3900f21f5951afd45bd35da197c3b57ae` die [vollständig erfolgreiche Android-Alpha-CI #40914859785](https://github.com/ManuEtt/Dnd/actions/runs/40914859785), 36/36 Schritte, wurde reviewbereit gemacht; **dies beweist nicht die Tests von PR #392**.
+- **TESTS ERGÄNZT, NOCH NICHT AUSGEFÜHRT:** `app/test/fantasy_reference_rows_large_text_test.dart` mit 320/360 dp, 200 %, langen Zauber-/Inventarnamen und darunter liegenden Konzentrations-/Mengenwerten, Standardansicht, unbekanntem Fertigkeitsbonus und unverändertem `toJson()`. Vollständige Flutter-/Python-/Backend-/Android-CI für finalen PR-Head prüfen; reales TalkBack und echtes Gerät offen.
+- **BLOCKIERT:** Flutter-/Dart-SDK im lokalen Toolcontainer nicht installiert; CI-Abnahme für dieses neue Paket notwendig.
+- **NOCH NICHT IMPLEMENTIERT:** Realgeräte- und Screenreader-Prüfung der Referenzübersicht.
+- **Geänderte Dateien:** `app/lib/ui/fantasy_character_overview.dart`, `app/test/fantasy_reference_rows_large_text_test.dart`, dieser Checkpoint, `docs/CODEX_CHECKPOINT.md`, `README.md`. Keine Schema-/JSON-/Regel-/Story-/Controlleränderung und keine Migration.
+- **Koordination:** PR #390 und #388 berühren die separate `fantasy_character_sheet.dart`; Chat-C-PR #392 berührt sie nicht. Offene PRs #387/#389/#390/#391 überschneiden sich in README und zentralem Checkpoint, die Chat D bei Integration additiv konsolidieren muss. Kein fremder Branch überschrieben.
+- **Nächster unabhängiger Schritt:** Sprach-/TalkBack-Semantik der Charakter-Referenzzeilen am echten Android-Gerät prüfen; Akzeptanz: voller Name und unveränderter Wert getrennt vorgelesen, bei 320 dp/200 % ohne abgeschnittene Zeichen, ohne Zustandsmutation.
+
+---
+
 ## Integrationskandidat 29.10.2026 – Chat C
 
 Zusammengeführte Fachpakete: [#359](https://github.com/ManuEtt/Dnd/pull/359), [#365](https://github.com/ManuEtt/Dnd/pull/365), [#374](https://github.com/ManuEtt/Dnd/pull/374), [#376](https://github.com/ManuEtt/Dnd/pull/376), [#379](https://github.com/ManuEtt/Dnd/pull/379), [#382](https://github.com/ManuEtt/Dnd/pull/382). Die ursprünglichen Branch-HEADs, PR-Beschreibungen, Tests, bekannte Grenzen und Statusmeldungen sind im [Integrationsjournal](INTEGRATION_20261029.md) mit Git-Historie dokumentiert. **Dieser Stand ist weder auf main integriert noch gemeinsam CI-abgenommen; Drafts sind nicht freigegeben.** Bisherige Checkpoint-Einträge bleiben erhalten.
