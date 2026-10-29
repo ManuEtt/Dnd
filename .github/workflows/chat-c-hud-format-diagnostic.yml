@@ -1,0 +1,27 @@
+name: Chat C HUD formatter diagnostic (temporary)
+
+on:
+  push:
+    branches:
+      - feat/chat-c/adventure-status-details-large-text-20261029
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  format-diff:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Official Dart formatter diff (diagnostic)
+        run: |
+          cp app/lib/ui/fantasy_adventure_hud.dart /tmp/hud.before.dart
+          cp app/test/fantasy_adventure_status_details_large_text_test.dart /tmp/hudtest.before.dart
+          dart format app/lib/ui/fantasy_adventure_hud.dart app/test/fantasy_adventure_status_details_large_text_test.dart
+          diff -u /tmp/hud.before.dart app/lib/ui/fantasy_adventure_hud.dart || true
+          diff -u /tmp/hudtest.before.dart app/test/fantasy_adventure_status_details_large_text_test.dart || true
