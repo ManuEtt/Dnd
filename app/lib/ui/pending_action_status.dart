@@ -64,14 +64,29 @@ class _PendingActionStatusState extends State<PendingActionStatus> {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 4),
-          Text(
-            pending!.text,
-            key: const ValueKey('adventure-pending-action-text'),
-            maxLines: _showFullText ? null : 2,
-            overflow: _showFullText
-                ? TextOverflow.visible
-                : TextOverflow.ellipsis,
-          ),
+          if (_showFullText)
+            ConstrainedBox(
+              // The composer is fixed below the scene: long saved intents
+              // must scroll here rather than pushing the action bar away.
+              constraints: const BoxConstraints(maxHeight: 160),
+              child: Scrollbar(
+                child: SingleChildScrollView(
+                  key: const ValueKey('adventure-pending-action-scroll'),
+                  child: Text(
+                    pending!.text,
+                    key: const ValueKey('adventure-pending-action-text'),
+                    overflow: TextOverflow.visible,
+                  ),
+                ),
+              ),
+            )
+          else
+            Text(
+              pending!.text,
+              key: const ValueKey('adventure-pending-action-text'),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           Align(
             alignment: Alignment.centerLeft,
             child: TextButton(
