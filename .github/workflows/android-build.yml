@@ -91,7 +91,14 @@ jobs:
         run: flutter pub get
       - name: Dart-Formatierung prüfen
         working-directory: app
-        run: dart format --output=none --set-exit-if-changed lib test
+        run: |
+          echo 'CHAT_A_VOLLEY_SOURCE_BEGIN'
+          dart format --output=show lib/domain/srd_magic_missile_volley_damage_rules.dart
+          echo 'CHAT_A_VOLLEY_SOURCE_END'
+          echo 'CHAT_A_VOLLEY_TEST_BEGIN'
+          dart format --output=show test/srd_magic_missile_volley_damage_rules_test.dart
+          echo 'CHAT_A_VOLLEY_TEST_END'
+          dart format --output=none --set-exit-if-changed lib test
       - name: Flutter-Code analysieren
         working-directory: app
         run: flutter analyze
