@@ -192,11 +192,7 @@ void main() {
 
   test('all Shielded darts skip RNG but still consume the spell slot', () {
     final random = _MinimumDie();
-    final result = cast(
-      allocation(),
-      random,
-      defenses: const [_shieldA],
-    );
+    final result = cast(allocation(), random, defenses: const [_shieldA]);
     expect(random.calls, 0);
     expect(result.damage.shieldBlockedCount, 3);
     expect(result.damage.appliedTotal, 0);
@@ -240,11 +236,8 @@ void main() {
       throwsFormatException,
     );
     expect(
-      () => cast(
-        plan,
-        random,
-        hero: _mage().copyWith(spentSpellSlots: {'1': 4}),
-      ),
+      () =>
+          cast(plan, random, hero: _mage().copyWith(spentSpellSlots: {'1': 4})),
       throwsFormatException,
     );
     expect(random.calls, 0);
@@ -298,12 +291,7 @@ void main() {
     final hero = _mage(
       level: 4,
     ).copyWith(secondaryClassName: 'Hexenmeister', secondaryClassLevel: 2);
-    final result = cast(
-      allocation(),
-      random,
-      hero: hero,
-      pactMagic: true,
-    );
+    final result = cast(allocation(), random, hero: hero, pactMagic: true);
     expect(random.calls, 3);
     expect(result.pactMagic, isTrue);
     expect(result.hero.spentPactSlots, 1);
