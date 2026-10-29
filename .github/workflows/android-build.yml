@@ -91,12 +91,7 @@ jobs:
         run: flutter pub get
       - name: Dart-Formatierung prüfen
         working-directory: app
-        run: |
-          dart format lib/domain/srd_magic_missile_multi_target_cast_rules.dart test/srd_magic_missile_multi_target_cast_rules_test.dart
-          echo '=== CHAT-A-DART-FORMAT-BEGIN ==='
-          git diff -- lib/domain/srd_magic_missile_multi_target_cast_rules.dart test/srd_magic_missile_multi_target_cast_rules_test.dart
-          echo '=== CHAT-A-DART-FORMAT-END ==='
-          exit 1
+        run: dart format --output=none --set-exit-if-changed lib test
       - name: Flutter-Code analysieren
         working-directory: app
         run: flutter analyze
