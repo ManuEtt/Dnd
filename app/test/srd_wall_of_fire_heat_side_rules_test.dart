@@ -7,8 +7,7 @@ SrdWallOfFireHeatSideRequest _facts(
   SrdSpellDefinition spell, {
   SrdWallOfFireTopology topology = SrdWallOfFireTopology.straight,
   SrdWallOfFireHotSide hotSide = SrdWallOfFireHotSide.straightLeft,
-  SrdWallOfFireTargetRegion region =
-      SrdWallOfFireTargetRegion.straightLeft,
+  SrdWallOfFireTargetRegion region = SrdWallOfFireTargetRegion.straightLeft,
   SrdWallOfFireHeatTrigger trigger = SrdWallOfFireHeatTrigger.endTurn,
   double distance = 10,
   bool hotSideConfirmed = true,
@@ -154,11 +153,7 @@ void main() {
     }
     expect(
       () => SrdWallOfFireHeatSideRules.previewConfirmedTrigger(
-        _facts(
-          fire,
-          region: SrdWallOfFireTargetRegion.onWall,
-          distance: 1,
-        ),
+        _facts(fire, region: SrdWallOfFireTargetRegion.onWall, distance: 1),
       ),
       throwsFormatException,
     );
@@ -177,19 +172,13 @@ void main() {
 
   test('wall shape and spell identity cannot be exchanged', () {
     for (final request in [
-      _facts(
-        fire,
-        topology: SrdWallOfFireTopology.ring,
-      ),
+      _facts(fire, topology: SrdWallOfFireTopology.ring),
       _facts(
         fire,
         topology: SrdWallOfFireTopology.ring,
         hotSide: SrdWallOfFireHotSide.ringInside,
       ),
-      _facts(
-        fire,
-        hotSide: SrdWallOfFireHotSide.ringOutside,
-      ),
+      _facts(fire, hotSide: SrdWallOfFireHotSide.ringOutside),
       _facts(catalog.find('Fireball')!),
     ]) {
       expect(
