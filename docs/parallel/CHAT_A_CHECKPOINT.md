@@ -1,5 +1,16 @@
 # Chat A – Checkpoint (26.10.2026): Eldritch-Blast-Klassenprüfung
 
+## 29.10.2026 – Chat A, PR #387: Mehrziel-Magisches-Geschoss als Domänen-Cast
+
+- **Ausgangs-main:** `fde0ef6ed8b419d6a31c701a03aa05d61994c352` (24-PR-Integration, grüne Main-Actions #40867945743/#40869408110). Beim Start keine offenen PRs.
+- **Branch:** `feat/chat-a/magic-missile-cast-resolution-20261029`; **PR:** https://github.com/ManuEtt/Dnd/pull/387 (Draft bis zur fachlichen und CI-Abnahme).
+- **Implementiert:** `app/lib/domain/srd_magic_missile_multi_target_cast_rules.dart` bindet die validierte unveränderliche Zielverteilung an einen einzigen regulären oder Pakt-Zauberplatzverbrauch, an V/S-/Klassenvoraussetzungen, explizit abgeschlossene Schildreaktionen und getrennte Energieschaden-Abwehr pro Ziel. Die Geschosse werden erst nach vollständiger Validierung gewürfelt; vom Schild abgewehrte Geschosse würfeln nicht. Keine Veränderung des Eingangsspielstands.
+- **Tests:** `app/test/srd_magic_missile_multi_target_cast_rules_test.dart`, zehn deterministische Fälle: Einziel, Split, Immunität/Resistenz/Verwundbarkeit, Schild, fehlende Bestätigungen, unbekannte/doppelte Ziele, vorbereitete Klassen, freie Zauberplätze, Multiklassen-Paktplatz, Grad-9-Grenze und Unveränderlichkeit. GitHub-CI wird auf dem finalen Branch-HEAD geprüft und im PR mit tatsächlichen Ergebnissen dokumentiert; ein früherer Lauf auf anderem HEAD gilt nicht als Schlussabnahme.
+- **Quelle:** SRD 5.2.1 `Magic Missile`, S. 146, `Shield`, S. 161, Wizards of the Coast LLC, CC BY 4.0, https://www.dndbeyond.com/srd. Requirement `SPELL-MISSILE-MULTITARGET` bleibt `partial`.
+- **Nicht implementiert:** Kampfbefehl in GameEngine, Controller, UI, bestätigte gegnerische Reaktion im Zugkontext, HP-/Ereignis-Update, atomare Revisions-/Exactly-once-Persistenz. Diese reine Domänenberechnung darf niemals unmittelbar als abgeschlossene Spieleraktion verbucht werden.
+- **Migration:** Keine, SQLite 3 / Kampagnen-JSON 1 unverändert. Keine fremden Branches verändert.
+- **Nächster Schritt:** Eigenständig bestätigte Mehrziel-Aktion in `GameEngine` und Controller integrieren, mit atomarem Zug-/Ressourcenverbrauch, realer Zielzuordnung zu Encounter/zusätzlichen Kreaturen, Revisionskonflikt- und Rollbacktests. Gemeinsame Dateien erst nach konfliktfreier Abstimmung mit Chat D ändern.
+
 ## Integrationskandidat 29.10.2026 – Chat A
 
 Zusammengeführte Fachpakete: [#357](https://github.com/ManuEtt/Dnd/pull/357), [#361](https://github.com/ManuEtt/Dnd/pull/361), [#366](https://github.com/ManuEtt/Dnd/pull/366), [#367](https://github.com/ManuEtt/Dnd/pull/367), [#372](https://github.com/ManuEtt/Dnd/pull/372), [#375](https://github.com/ManuEtt/Dnd/pull/375), [#385](https://github.com/ManuEtt/Dnd/pull/385). Die ursprünglichen Branch-HEADs, PR-Beschreibungen, Tests, bekannte Grenzen und Statusmeldungen sind im [Integrationsjournal](INTEGRATION_20261029.md) mit Git-Historie dokumentiert. **Dieser Stand ist weder auf main integriert noch gemeinsam CI-abgenommen; Drafts sind nicht freigegeben.** Bisherige Checkpoint-Einträge bleiben erhalten.
