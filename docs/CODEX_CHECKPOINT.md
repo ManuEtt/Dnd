@@ -1,5 +1,9 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat A – 29.10.2026: Magisches Geschoss, Mehrziel-Cast (PR #387)
+
+Nach der erfolgreichen Integration der bisherigen 24 PRs auf `main` `fde0ef6ed8b419d6a31c701a03aa05d61994c352` wurde ein separater Chat-A-Branch `feat/chat-a/magic-missile-cast-resolution-20261029` eröffnet. Neue reine Domänen-Cast-Regel validiert bestätigte Zielverteilung, V/S, Klasse, verfügbare reguläre/Pakt-Zauberplätze sowie gesonderte Shield- und Force-Abwehr je Kreatur vor dem ersten Wurf, bucht genau einen Platz in einer neuen Heldensnapshot und wertet ungeschützte W4 getrennt aus. Zehn neue deterministische Tests. Quellen: SRD 5.2.1 S. 146/161 (Wizards of the Coast LLC, CC BY 4.0). **PR #387 ist ein Integrationskandidat; die endgültige CI-Abnahme folgt über seinen finalen HEAD und ist vor deren Abschluss nicht als bestanden behauptet.** `SPELL-MISSILE-MULTITARGET` bleibt partial: kein GameEngine-/Controller-/UI-Aufruf und kein atomarer Encounter-/Event-/Spielstand-Commit. SQLite 3/äußeres JSON 1 unverändert. Chat D konsolidiert bei Review additive Dokumentation.
+
 ## Integration 29.10.2026 – Regression bei großer Schrift nachvollziehbar scrollen
 
 Im zusammengeführten Kandidaten wird die zuvor auf PR #379 nachweislich fehlgeschlagene Heldenkarten-Interaktion bei 200 % Schrift korrigiert: Die Tests scrollen ein tatsächlich über den Bildschirm hinausragendes `ListView` mit einer Nutzer-Geste und verlangen anschließend hit-testbare Buttons. Keine Beschriftung verkürzt, kein Test deaktiviert, kein Produkt-/Speicherverhalten geändert. Neue kombinierte CI auf dem Folge-Commit erforderlich.
