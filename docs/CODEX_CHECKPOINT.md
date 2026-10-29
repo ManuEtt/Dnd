@@ -1,5 +1,18 @@
 # Codex-Checkpoint – Würfelraunen
 
+## 29.10.2026 – Chat D: Alpha-Release-Aufräumen bei Python-Abbruch
+
+- **Basis-main:** `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`; **Branch:** `fix/chat-d/alpha-release-interrupt-cleanup-20261029`.
+- **IMPLEMENTIERT:** Die Cleanup-Klausel in `scripts/prepare_alpha_release.py` fängt auch `KeyboardInterrupt` und `SystemExit` ab, entfernt nur die eigenen erzeugten Version-Dateien und gibt über `finally` die Version-Lockdatei frei; die ursprüngliche Ausnahme wird erneut ausgelöst.
+- **REGRESSIONEN:** Unterbrechung bei partieller APK-Kopie, SystemExit während Prüfsummenberechnung, bestehende Dateien/Locks erhalten, anschließend erfolgreiche identische Veröffentlichung.
+- **GETESTET:** Code/Testfälle vorbereitet, neue GitHub-CI folgt.
+- **NICHT GETESTET:** volle Python-/Backend-/Flutter-/Android-CI und Gerätetest. Harte nicht abfangbare Prozessabbrüche (SIGKILL/Crash) bleiben Fail-Closed.
+- **MIGRATION:** Keine; SQLite 3, Kampagnen-JSON 1 und Appversion unverändert.
+- **KOORDINATION:** Andere offene PRs bearbeiten diese beiden Python-Dateien nicht; die unabhängige Checkpoint-Hash-Prüfung #378 ändert `scripts/create_checkpoint.py`, nicht das Alpha-Release-Skript.
+- **Nächster Schritt:** CI auf finaler SHA durchführen, bei roten Tests korrigieren und erst nach erneuter Main-/PR-Abnahme integrieren.
+
+---
+
 ## Chat D – PR #358: Alpha-Release atomar pro Version sperren
 
 **IMPLEMENTIERT:** `scripts/prepare_alpha_release.py` reserviert vor Publikationsbeginn ein atomar erzeugtes Lock-Verzeichnis pro Release-Version. Zweitaufrufe können keine fremden Dateien löschen. Drei positive/negative Regressionen (gleichzeitiger Aufruf, Fehler-Retry, verwaiste Sperre). **GETESTET:** vollständige CI auf dem vorherigen Stand `1d7b1723` bestanden ([Actions 40730971955](https://github.com/ManuEtt/Dnd/actions/runs/40730971955)). **NOCH NICHT GETESTET:** neuer kombinierter Head einschließlich PR #363, parallele Runner-Prozesse und reales Gerät. **BLOCKIERT:** kombinierte CI-Abnahme. **Migration:** keine. **Nächster Schritt:** kombinierte CI prüfen, danach Review/Merge nur bei Erfolg.

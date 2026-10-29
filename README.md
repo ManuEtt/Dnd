@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## 29.10.2026 – Chat D: Unvollständige Alpha-Releases nach Python-Abbruch bereinigen
+
+Das versionsgesperrte Alpha-Packaging entfernt seine eigenen noch unfertigen Dateien auch bei `KeyboardInterrupt` und `SystemExit`, bevor die Sperre im `finally` freigegeben wird. Zwei neue Regressionen prüfen die Unterbrechung mitten in der APK-Kopie und während der Prüfsummenberechnung, das Freigeben der Sperre und einen erfolgreichen Wiederholungsversuch. Harte Prozessabbrüche durch SIGKILL bleiben Fail-Closed; keine Änderung an Appversion, SQLite oder Kampagnenformat. **Neue CI ist noch ausstehend.** [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+
 ## Qualitätsabsicherung – Alpha-Release-Sperre (Chat D, PR #358)
 
 Parallele Alpha-Packaging-Läufe mit derselben App-Version werden vor der Dateiprüfung durch ein exklusives `_Release.lock`-Verzeichnis serialisiert. Bei einem Fehler werden fremde Releases nicht gelöscht; nach normalem Abschluss oder behandelter Ausnahme wird die Sperre freigegeben. Eine verwaiste Sperre blockiert sicherheitshalber die Veröffentlichung. Drei Regressionen; keine Änderung an SQLite, JSON oder Regeln. [Erfolgreiche Vor-Integrations-CI](https://github.com/ManuEtt/Dnd/actions/runs/40730971955); der kombinierte Stand mit PR #363 erhält eine eigene Prüfung.

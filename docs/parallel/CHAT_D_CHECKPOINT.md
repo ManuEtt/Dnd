@@ -1,3 +1,18 @@
+# Chat D D-019 – Alpha-Release-Abbrüche vollständig aufräumen (29.10.2026)
+
+- **Basis-main:** `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`; **Branch:** `fix/chat-d/alpha-release-interrupt-cleanup-20261029`.
+- **Problem:** Der bisherige `except Exception`-Block entfernte keine eigenen Release-Artefakte bei `KeyboardInterrupt` oder `SystemExit`. `finally` entfernte aber die exklusive Sperre, sodass eine unvollständige Version ohne Sperre zurückblieb.
+- **IMPLEMENTIERT:** `except BaseException` führt den vorhandenen, auf die erzeugten Versiondateien beschränkten Cleanup auch für diese Abbrüche aus; der originale Abbruch wird unverändert weitergegeben.
+- **TESTS:** Ein unterbrochener APK-Copy schreibt eine partielle Datei und wirft KeyboardInterrupt; ein unterbrochener Hash SystemExit. Beide müssen alle eigenen Artefakte entfernen, die Version-Lockdatei freigeben und anschließend erneutes Publishing erlauben.
+- **GETESTET:** Umsetzung über GitHub-Connector auf eigenem Branch gespeichert, vollständige CI noch nicht abgeschlossen.
+- **NICHT GETESTET:** Gesamte Python-, Backend-, Flutter-/Android-CI, echtes Gerät, SIGKILL-Abbruch.
+- **BLOCKIERT:** Flutter-/Dart-SDK sowie lokaler GitHub-Checkout weiterhin nicht verfügbar. GitHub CI dient als Abnahme.
+- **MIGRATION:** Keine. SQLite, Kampagnen-JSON, Appversion und Spielstände bleiben unverändert.
+- **Koordination:** PR #378 unabhängige Python-Technikdateien; A/B/C-PRs keine Überschneidung. Dokumentation beim Merge additiv konsolidieren.
+- **Nächster Schritt:** CI finalen Commits abwarten, dann nach aktuellem main konfliktfrei integrieren.
+
+---
+
 # Chat D – Integration von PR #358 nach Checkpoint-Fix #363 (29.10.2026)
 
 - **Stand:** Alpha-Release-Lock in `scripts/prepare_alpha_release.py` (3 neue Tests), vorherige vollständige CI `40730971955` auf `1d7b1723` erfolgreich; kombinierter Head benötigt erneute CI.
