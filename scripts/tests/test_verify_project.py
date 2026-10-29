@@ -143,7 +143,7 @@ class VerifyProjectTests(unittest.TestCase):
     def test_gradle_launcher_reads_only_bounded_first_line(self):
         launcher = self.root / 'app/android/gradlew'
         with launcher.open('wb') as stream:
-            stream.write(b'#!/usr/bin/env sh\\n')
+            stream.write(b'#!/usr/bin/env sh\n')
             stream.truncate(64 * 1024 * 1024)
         # Old implementation read the whole script. This one reads only
         # the first line, even when the remainder is a sparse huge file.
@@ -154,7 +154,7 @@ class VerifyProjectTests(unittest.TestCase):
 
     def test_excessive_gradle_launcher_shebang_is_rejected(self):
         launcher = self.root / 'app/android/gradlew'
-        launcher.write_bytes(b'#!' + b'x' * MAX_GRADLE_SHEBANG_BYTES + b'\\n')
+        launcher.write_bytes(b'#!' + b'x' * MAX_GRADLE_SHEBANG_BYTES + b'\n')
         errors = verify_project(self.root)
         self.assertTrue(any(
             'app/android/gradlew benötigt einen kurzen Unix-Shebang' in error
