@@ -1,5 +1,16 @@
 # Chat A – Checkpoint (26.10.2026): Eldritch-Blast-Klassenprüfung
 
+## 29.10.2026 – Chat A, Fortsetzung PR #387: sichere HP-Zuordnung für Mehrzielgeschosse
+
+- **Basis:** main `fde0ef6ed8b419d6a31c701a03aa05d61994c352`. PR #387 lag vor der Fortsetzung vollständig grün vor (Actions #40914915185/#40914925223); PRs #388/#389/#390 bearbeiten andere Produktionsdateien. Bestehender Chat-A-Branch bleibt derselbe, kein Merge nach main.
+- **Neue Fachdateien:** `app/lib/domain/srd_magic_missile_encounter_hp_rules.dart`, `app/test/srd_magic_missile_encounter_hp_rules_test.dart`.
+- **Implementiert:** unveränderliche Zuordnung bestätigter, gleichzeitig wirkender Magic-Missile-Geschosse zu Encounter-Hauptgegner und gespeicherten `trackedAreaCreatures`. Explizite unveränderte Ziel-IDs, passender Dart-Reihenfolge/Slot, identischer Encounter, exakte erwartete Revision und bestätigte lebende Kreaturen werden vorausgesetzt. Die TP nach Schaden werden bis Null gekappt, aber niemals gespeichert. Wenn der Primärgegner stirbt, jedoch Zusatzkreaturen leben, kennzeichnet `requiresMultiActorVictoryResolution` eine noch fehlende Mehrgegner-Kampfabwicklung. Fremd-IDs, Duplikate, bereits besiegte Kreaturen, offene Rolls/Reaktionen und veraltete Revisionen werden abgewiesen.
+- **Tests:** neun neue deterministische Fachtests für Primär-/Zusatzkreaturen, nur Zusatzkreaturen, Shield/Immunität, Überkill, Konflikt/gespeicherte Identität, Ungültigkeit, JSON-Roundtrip, Preview-Immutability. Abschließende Flutter-/Android-CI auf neuem HEAD nach Dokumentationscommit prüfen; frühere grüne Tests betreffen nur den vorherigen PR-HEAD.
+- **Provenienz:** SRD 5.2.1 `Magic Missile` S. 146, CC BY 4.0, https://www.dndbeyond.com/srd. `SPELL-MISSILE-MULTITARGET` bleibt `partial`.
+- **Nicht implementiert / Sicherheitsgrenze:** keine echte Kampfbefehl- oder Controller-Integration, keine HP-Buchung, keine Monsterreaktion oder Questbelohnung, kein atomarer Event-/SQLite-Commit, kein automatischer Kampfabschluss nach Sieg über nur einen Gegner. Die vorhandene Einziel-Kampfaktion bleibt unverändert.
+- **Migration:** keine; SQLite 3, Kampagnen-JSON 1 bleiben identisch.
+- **Nächster Schritt:** nach Merge von PR #387 eine konfliktfreie Integration von Domain-Cast und HP-Vorprüfung in eine atomare, idempotent quittierte Mehrziel-Kampfaktion mit vollständig bestätigter Mehrgegner-Zug-/Sieglogik und Repository-CAS.
+
 ## 29.10.2026 – Chat A, PR #387: Mehrziel-Magisches-Geschoss als Domänen-Cast
 
 - **Ausgangs-main:** `fde0ef6ed8b419d6a31c701a03aa05d61994c352` (24-PR-Integration, grüne Main-Actions #40867945743/#40869408110). Beim Start keine offenen PRs.
