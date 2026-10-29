@@ -73,7 +73,7 @@ class _PendingActionStatusState extends State<PendingActionStatus> {
                 child: SingleChildScrollView(
                   key: const ValueKey('adventure-pending-action-scroll'),
                   child: Text(
-                    pending!.text,
+                    pending.text,
                     key: const ValueKey('adventure-pending-action-text'),
                     overflow: TextOverflow.visible,
                   ),
@@ -82,7 +82,7 @@ class _PendingActionStatusState extends State<PendingActionStatus> {
             )
           else
             Text(
-              pending!.text,
+              pending.text,
               key: const ValueKey('adventure-pending-action-text'),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -98,7 +98,7 @@ class _PendingActionStatusState extends State<PendingActionStatus> {
               ),
             ),
           ),
-          if (pending!.selectedNpcId != null) ...[
+          if (pending.selectedNpcId != null) ...[
             const SizedBox(height: 4),
             const Text(
               'Die ausgewählte Figur ist an diesen Auftrag gebunden. '
@@ -135,7 +135,7 @@ class _PendingActionStatusState extends State<PendingActionStatus> {
         ],
         if (error != null)
           Text(
-            error!,
+            error,
             key: const ValueKey('adventure-outbox-error'),
             style: TextStyle(color: Theme.of(context).colorScheme.error),
           ),
