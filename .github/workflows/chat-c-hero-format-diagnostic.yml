@@ -1,0 +1,24 @@
+name: Chat C Hero Identity Format Diagnostic
+
+on:
+  push:
+    branches: ['fix/chat-c/active-hero-identity-large-text-20261029']
+    paths:
+      - '.github/workflows/chat-c-hero-format-diagnostic.yml'
+      - 'app/lib/ui/fantasy_campaign_dashboard.dart'
+      - 'app/test/fantasy_active_hero_identity_large_text_test.dart'
+
+jobs:
+  format-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Show exact Dart formatter changes
+        run: |
+          dart format app/lib/ui/fantasy_campaign_dashboard.dart app/test/fantasy_active_hero_identity_large_text_test.dart
+          git diff -- app/lib/ui/fantasy_campaign_dashboard.dart app/test/fantasy_active_hero_identity_large_text_test.dart
