@@ -18,10 +18,7 @@ Campaign _campaign() => Campaign(
   hero: HeroCharacter(id: 'hero', name: 'Elowen'),
   scene: 'Am alten Brunnen',
   npcs: const [
-    WorldNpc(
-      id: 'mira',
-      name: 'Mira vom weit entfernten Mondlichtturm',
-    ),
+    WorldNpc(id: 'mira', name: 'Mira vom weit entfernten Mondlichtturm'),
   ],
 );
 
@@ -61,9 +58,7 @@ void main() {
 
       final open = find.byKey(
         ValueKey(
-          dialog == 'thread'
-              ? 'create-story-thread'
-              : 'edit-npc-relationship',
+          dialog == 'thread' ? 'create-story-thread' : 'edit-npc-relationship',
         ),
       );
       await tester.ensureVisible(open);
@@ -74,9 +69,7 @@ void main() {
       expect(alert.scrollable, isTrue);
       final save = find.byKey(
         ValueKey(
-          dialog == 'thread'
-              ? 'save-story-thread'
-              : 'save-npc-relationship',
+          dialog == 'thread' ? 'save-story-thread' : 'save-npc-relationship',
         ),
       );
       expect(save.hitTestable(), findsOneWidget);

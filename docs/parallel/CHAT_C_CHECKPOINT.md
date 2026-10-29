@@ -1,10 +1,11 @@
 ## 29.10.2026 – Chat C: Kampagnen-Gedächtnis bei 200 % Text und IME
 
 - **Basis-main:** `1dc8d076786dbfb6a6792b6653bd1457bd7992d9` (Alpha `0.8.47+97`).
-- **Branch:** `fix/chat-c/scrollable-memory-edit-dialogs-20261029` (eigener Branch); **Code-/Test-Commits:** `039f9d86aac1cc0f49543aa3bab263dc5e5041eb`, `a7e5c27bb070e524d122ed9fc045f9c30ef5f147`.
+- **Branch:** `fix/chat-c/scrollable-memory-edit-dialogs-20261029`; **PR:** [#376](https://github.com/ManuEtt/Dnd/pull/376) (Draft); **Code-/Test-Commits:** `039f9d86aac1cc0f49543aa3bab263dc5e5041eb`, `a7e5c27bb070e524d122ed9fc045f9c30ef5f147`.
 - **Ausgangsproblem:** Bei hochskalierter Schrift plus Android-IME können lange Formulare die Aktionsleiste in den Handlungsstrang-/NPC-Dialogen verdecken. Der Inhalt war bereits einzeln scrollbar; die Dialoghülle bislang nicht.
 - **IMPLEMENTIERT:** `app/lib/ui/campaign_memory_panel.dart`: beide `AlertDialog` mit `scrollable: true`, damit Titel/Inhalt flexibel bleiben und die Aktionsknöpfe erreichbar sind.
 - **TESTS:** `app/test/campaign_memory_dialog_large_text_test.dart`: bei 320 dp/2x Schrift/270 dp IME-Inset beide Dialoge öffnen, `AlertDialog.scrollable`, hit-testbaren Speichern-/Bestätigen-/Abbrechen-Knopf, Abbruch ohne Spielstandsänderung und keine Flutter-Ausnahme prüfen.
+- **FORMATDIAGNOSE:** Frühere CI [#40831924808](https://github.com/ManuEtt/Dnd/actions/runs/40831924808) scheiterte ausschließlich am Dart-Formatgate. Der offizielle [Flutter-3.35.7-Diagnoselauf #40832186273](https://github.com/ManuEtt/Dnd/actions/runs/40832186273) zeigte drei gezielte Zeilenumbruchkorrekturen, exakt übernommen; temporärer Workflow in diesem Commit entfernt. Finale CI erneut prüfen.
 - **GETESTET:** GitHub-Masterprompt, main-Stand und offene PR-Dateilisten, bestehende Controller/Widgettests. Keine Konflikte in Produkt-/Testdateien mit Chat C #359/#365/#374 oder anderen Chats.
 - **NICHT GETESTET:** Flutter-Analyzer, neue und gesamte Fluttertests sowie Android-Build/native/Alpha, bis CI auf finalem HEAD erfolgreich ist. Kein Realgerät-Test durchgeführt.
 - **BLOCKIERT:** Lokale SDK-Ausführung nicht verfügbar; PR bleibt Entwurf bis CI.
