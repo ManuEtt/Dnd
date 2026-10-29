@@ -5,8 +5,7 @@ import 'package:lebendiger_spielleiter/ui/fantasy_character_sheet.dart';
 
 const longName =
     'Aramith die Hüterin des Silbermondes und der verlorenen Ruinen';
-const longSubclass =
-    'Hüterin der uralten und beinahe vergessenen Pfade';
+const longSubclass = 'Hüterin der uralten und beinahe vergessenen Pfade';
 const longBackground =
     'Eine Chronik der langen Reise über die Nebelberge und durch die '
     'verlassenen Königreiche bis zur letzten Festung';
