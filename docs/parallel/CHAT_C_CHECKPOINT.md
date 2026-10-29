@@ -1,3 +1,16 @@
+## 29.10.2026 – Chat C: Ganzen ausstehenden Handlungsauftrag prüfen
+
+- **Ausgangs-Main:** `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`. **Branch:** `feat/chat-c/pending-action-full-text-20261029`. **PR:** [#382](https://github.com/ManuEtt/Dnd/pull/382), Draft. **Code-/Test-SHA:** `c15c0a1b65ddbde1f4d5d0c944e6bad88f4c6441`.
+- **Ausgangsproblem:** `PendingActionStatus` kürzte einen gespeicherten, noch unbestätigten Auftrag nach zwei Zeilen, obwohl „Erneut bestätigen“ unter Umständen erneut eine kostenpflichtige Anfrage auslöst.
+- **IMPLEMENTIERT:** Standard-Zwei-Zeilen-Vorschau plus explizites „Ganzen Text anzeigen“/„Weniger anzeigen“. Inhalt bleibt original; beim Wechsel von Kampagne, Request, Text oder NPC-Auswahl ist der neue Auftrag wieder zugeklappt. Der Aufklappschalter bleibt trotz gesperrter Retry-/Verwerfen-Aktionen nutzbar.
+- **Fachdateien:** `app/lib/ui/pending_action_status.dart` und `app/test/pending_action_status_test.dart`. Zentraldateien: `README.md`, `docs/CODEX_CHECKPOINT.md`, dieses Checkpoint.
+- **Akzeptanz:** Der vollständige bis 4000 Zeichen zulässige Auftrag ist auf Wunsch sichtbar; die ausstehende Aktion sowie ihre `toJson()`-Repräsentation bleiben unverändert; neue Requests setzen die Ansicht zurück; bei 320/360 dp und 200 % Text bleibt die Bedienung erreichbar; blockierter Retry bleibt blockiert.
+- **GETESTET:** Quelltext-/PR-Pfadabgleich gegen alle offenen Chat-A/B/C/D-Arbeitspakete. **Widgettests vorhanden, jedoch nicht lokal ausgeführt.**
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse, gezielte/gesamte Flutter-Tests, Android-/Python-/Backend-CI, Gerät mit TalkBack und Tastatur. GitHub-Actions-Lauf für finalen Head abzunehmen.
+- **BLOCKIERT:** Im lokalen Container fehlen Flutter/Dart und öffentlicher git-Klonzugang (DNS). Andere Chats bearbeiten README und zentralen Checkpoint; Chat D muss die Historie bei Integration additiv zusammenführen.
+- **NOCH NICHT IMPLEMENTIERT:** Keine Story-, Regel-, Controller-, Datenbank-, JSON- oder Versionsänderung, keine Migration, kein Merge.
+- **NÄCHSTER SCHRITT:** Finalen CI-Lauf von PR #382 überprüfen und nur tatsächlich fehlgeschlagene Format-/Widgettests beheben; Gerätetest separat.
+
 ## 28.10.2026 – Chat C: Inventardialog bei großen Beschreibungen bedienbar halten
 
 - **Ausgangs-Main:** `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78` (App `0.8.46+96`).
