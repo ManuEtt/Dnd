@@ -981,20 +981,20 @@ class FantasyCharacterQuickNavigation extends StatelessWidget {
                         ),
                       )
                     else
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        label,
-                        maxLines: 1,
-                        style: TextStyle(
-                          color: selected
-                              ? FantasyCharacterOverview.ivory
-                              : FantasyCharacterOverview.dim,
-                          fontFamily: 'serif',
-                          fontSize: 11,
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          label,
+                          maxLines: 1,
+                          style: TextStyle(
+                            color: selected
+                                ? FantasyCharacterOverview.ivory
+                                : FantasyCharacterOverview.dim,
+                            fontFamily: 'serif',
+                            fontSize: 11,
+                          ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),
