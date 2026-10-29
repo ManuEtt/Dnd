@@ -70,7 +70,10 @@ Campaign _campaign({
   List<TrackedAreaCreature> extras = const [_creatureA, _creatureB],
 }) {
   final seed = GameEngine(dice: DiceEngine()).createDemo();
-  return seed.copyWith(encounter: fight ?? _fight, trackedAreaCreatures: extras);
+  return seed.copyWith(
+    encounter: fight ?? _fight,
+    trackedAreaCreatures: extras,
+  );
 }
 
 void main() {
@@ -93,10 +96,7 @@ void main() {
 
   SrdMagicMissileVolleyDamage volley({
     List<String> ids = const ['primary', 'extra-a', 'primary'],
-    List<SrdMissileTargetDefense> defenses = const [
-      _defensePrimary,
-      _defenseA,
-    ],
+    List<SrdMissileTargetDefense> defenses = const [_defensePrimary, _defenseA],
   }) => SrdMagicMissileVolleyDamageRules.resolve(
     slotLevel: 1,
     allocationAndReactionsConfirmed: true,
@@ -104,10 +104,11 @@ void main() {
       for (final id in ids)
         SrdMissileDartEvidence(
           targetId: id,
-          naturalD4: defenses
-                  .firstWhere((target) => target.targetId == id)
-                  .shieldState ==
-              SrdMissileShieldState.activeConfirmed
+          naturalD4:
+              defenses
+                      .firstWhere((target) => target.targetId == id)
+                      .shieldState ==
+                  SrdMissileShieldState.activeConfirmed
               ? null
               : 1,
         ),
@@ -222,24 +223,35 @@ void main() {
 
   test('wrong revision, encounter, confirmation and actor fail closed', () {
     final before = _campaign();
-    expect(() => preview(before, revision: before.revision + 1), throwsFormatException);
+    expect(
+      () => preview(before, revision: before.revision + 1),
+      throwsFormatException,
+    );
     expect(() => preview(before, encounterId: 'other'), throwsFormatException);
     expect(() => preview(before, evidence: false), throwsFormatException);
     expect(
-      () => preview(before.copyWith(encounter: _fight.copyWith(activeParticipant: 'enemy'))),
+      () => preview(
+        before.copyWith(encounter: _fight.copyWith(activeParticipant: 'enemy')),
+      ),
       throwsFormatException,
     );
     expect(
-      () => preview(before.copyWith(encounter: _fight.copyWith(enemyHitPoints: 0))),
+      () => preview(
+        before.copyWith(encounter: _fight.copyWith(enemyHitPoints: 0)),
+      ),
       throwsFormatException,
     );
     expect(
-      () => preview(before.copyWith(pendingRoll: const PendingRoll(
-        id: 'pending',
-        type: 'attack',
-        modifier: 0,
-        difficulty: 12,
-      ))),
+      () => preview(
+        before.copyWith(
+          pendingRoll: const PendingRoll(
+            id: 'pending',
+            type: 'attack',
+            modifier: 0,
+            difficulty: 12,
+          ),
+        ),
+      ),
       throwsFormatException,
     );
   });
@@ -273,28 +285,32 @@ void main() {
       throwsFormatException,
     );
     expect(
-      () => preview(before.copyWith(trackedAreaCreatures: [
-        _creatureA.copyWith(hitPoints: 0),
-        _creatureB,
-      ])),
-      throwsFormatException,
-    );
-    expect(
-      () => preview(before.copyWith(trackedAreaCreatures: [
-        _creatureA,
-        _creatureA,
-      ])),
-      throwsFormatException,
-    );
-    expect(
-      () => preview(before.copyWith(trackedAreaCreatures: [
-        const TrackedAreaCreature(
-          id: 'primary',
-          name: 'Gefälschte ID',
-          hitPoints: 5,
-          maxHitPoints: 5,
+      () => preview(
+        before.copyWith(
+          trackedAreaCreatures: [_creatureA.copyWith(hitPoints: 0), _creatureB],
         ),
-      ])),
+      ),
+      throwsFormatException,
+    );
+    expect(
+      () => preview(
+        before.copyWith(trackedAreaCreatures: [_creatureA, _creatureA]),
+      ),
+      throwsFormatException,
+    );
+    expect(
+      () => preview(
+        before.copyWith(
+          trackedAreaCreatures: [
+            const TrackedAreaCreature(
+              id: 'primary',
+              name: 'Gefälschte ID',
+              hitPoints: 5,
+              maxHitPoints: 5,
+            ),
+          ],
+        ),
+      ),
       throwsFormatException,
     );
   });
@@ -309,19 +325,22 @@ void main() {
     );
   });
 
-  test('no caller data or serialized campaign is mutated; preview is frozen', () {
-    final before = _campaign();
-    final initial = before.toJson();
-    final result = preview(before);
-    expect(before.toJson(), initial);
-    expect(before.trackedAreaCreatures.first.hitPoints, 6);
-    expect(before.encounter!.enemyHitPoints, 12);
-    expect(before.revision, 0);
-    expect(before.events, isEmpty);
-    expect(() => result.targets.clear(), throwsUnsupportedError);
-    final restored = Campaign.fromJson(before.toJson());
-    final restoredResult = preview(restored);
-    expect(restoredResult.remainingHitPoints('primary'), 8);
-    expect(restoredResult.remainingHitPoints('extra-a'), 4);
-  });
+  test(
+    'no caller data or serialized campaign is mutated; preview is frozen',
+    () {
+      final before = _campaign();
+      final initial = before.toJson();
+      final result = preview(before);
+      expect(before.toJson(), initial);
+      expect(before.trackedAreaCreatures.first.hitPoints, 6);
+      expect(before.encounter!.enemyHitPoints, 12);
+      expect(before.revision, 0);
+      expect(before.events, isEmpty);
+      expect(() => result.targets.clear(), throwsUnsupportedError);
+      final restored = Campaign.fromJson(before.toJson());
+      final restoredResult = preview(restored);
+      expect(restoredResult.remainingHitPoints('primary'), 8);
+      expect(restoredResult.remainingHitPoints('extra-a'), 4);
+    },
+  );
 }
