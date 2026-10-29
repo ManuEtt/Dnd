@@ -1,5 +1,32 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat D – Voll-Checkpoint-Veröffentlichung serialisieren (29.10.2026)
+
+- **Basis:** `55fe44475a113943c6310ec16a8ffb481185f4e9`,
+  Branch `fix/chat-d/checkpoint-publish-lock-20261029`,
+  Code-Commit `cc2c557ea6f3eedb1e2aacf0fa761f70574528a2`.
+- **IMPLEMENTIERT:** `exclusive_checkpoint_output` in
+  `scripts/create_checkpoint.py` reserviert ein atomar erzeugtes
+  `.checkpoint.lock` im gemeinsamen Ausgabeverzeichnis. Die Sperre
+  umfasst versionierte Dateien, Historien-Hashing, `LATEST`- und
+  `SHA256SUMS.txt`-Veröffentlichung; fremde Sperren werden nicht
+  entfernt oder übernommen.
+- **REGRESSIONEN:** drei neue Tests in
+  `scripts/tests/test_create_checkpoint.py`: bestehende Sperre
+  belässt frühere Backups bytegleich, zweiter Aufruf während eines
+  laufenden Checkpoints scheitert, `KeyboardInterrupt` gibt die
+  eigene Sperre frei und lässt eine saubere Wiederholung zu.
+- **GETESTET:** Vorherige [Main-CI #40922492508](https://github.com/ManuEtt/Dnd/actions/runs/40922492508)
+  grün. Dies ist **kein Testnachweis für das neue Paket**.
+- **NICHT GETESTET:** finale Python-/Backend-/Flutter-/Android-CI
+  auf dem neuen PR-Head, Windows, reale Mehrprozess-Runner und
+  Android-Gerät.
+- **BLOCKIERT:** fehlender direkter lokaler GitHub-Checkout/Flutter-SDK;
+  neue CI erfolgt über GitHub Actions.
+- **DATENFORMAT:** keine SQLite-/JSON-/Schema-/Versionsmigration.
+- **NÄCHSTER SCHRITT:** finalen PR-Head durch CI prüfen,
+  Konfliktcheck aktualisieren und erst danach zur Review freigeben.
+
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
 Stand: 29.10.2026, UTC. [PR #390](https://github.com/ManuEtt/Dnd/pull/390)

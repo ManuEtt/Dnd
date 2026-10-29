@@ -1,5 +1,20 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – Parallele Voll-Checkpoints absichern (29.10.2026)
+
+Die Erstellung vollständiger Quell-Checkpoints serialisiert die
+Veröffentlichung der versionierten Archive, Patches, Dateimanifeste,
+Prüfsummen und stabilen `LATEST`-Aliase mit einer exklusiven
+`.checkpoint.lock`-Verzeichnissperre im Ausgabeordner.
+Ein zweiter Aufruf auf denselben Ausgabeordner wird ohne Veränderung
+der bisherigen Datensicherungen abgewiesen; nach behandelbaren
+Fehlern oder `KeyboardInterrupt` wird die eigene Sperre freigegeben.
+Nach hartem Prozessabbruch bleibt sie bewusst bestehen, statt
+unkontrolliert einen neuen Export zuzulassen. Drei neue Python-
+Regressionen. Keine Änderung an Flutter, SQLite, Spielstand-JSON,
+Backend oder App-Version. Die neue vollständige CI auf dem PR-Head
+ist noch abzunehmen.
+
 Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;
 vollständige Charaktererstellung und SRD-Regelengine bleiben in Entwicklung.
 
