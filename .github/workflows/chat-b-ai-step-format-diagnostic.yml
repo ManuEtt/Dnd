@@ -1,0 +1,24 @@
+name: Chat B AI step formatter diagnostic
+on:
+  push:
+    branches:
+      - feat/chat-b/ai-step-checkpoint-binding-20261029
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Show officially formatted test file
+        run: |
+          echo 'CHAT_B_FORMAT_START'
+          dart format --output=show app/test/ai_story_event_checkpoint_test.dart
+          echo 'CHAT_B_FORMAT_END'
+          echo 'CHAT_B_DIFF_START'
+          dart format app/test/ai_story_event_checkpoint_test.dart
+          git diff -- app/test/ai_story_event_checkpoint_test.dart
+          echo 'CHAT_B_DIFF_END'
