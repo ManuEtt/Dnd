@@ -1,3 +1,18 @@
+# Chat A – 29.10.2026: Wall of Fire – heiße Seite / Trigger (PR #372)
+
+- **Ausgangs-main:** `1dc8d076786dbfb6a6792b6653bd1457bd7992d9`.
+- **Eigener Branch:** `feat/chat-a/wall-fire-heat-side-preflight-20261029`; [PR #372](https://github.com/ManuEtt/Dnd/pull/372) als Entwurf, noch nicht gemergt.
+- **IMPLEMENTIERT:** Isolierte, rein lesende `SrdWallOfFireHeatSideRules`: überprüft Wall-of-Fire-Identität, aktive Wand, bei Zauberbeginn ausdrücklich bestätigte heiße Seite, Wandform (gerade: links/rechts; Ring: innen/außen), bestätigte Zielseite und Entfernung zur betreffenden Wandfläche. Rundenende bis inklusive 10 Fuß auf der heißen Seite sowie innerhalb der Wand ist möglicher Prüftrigger; erstmaliges Betreten benötigt separate Bestätigung des ersten Betretens in diesem Zug. Unbekannte Fakten, negative/NaN-/unendliche Distanzen, falsche Wand-/Zielseite und fremde Zauber werden abgelehnt. Nur Kandidat zur anschließenden Schadens-/Deckungsprüfung, keinerlei bestätigter Treffer.
+- **DATEIEN:** `app/lib/domain/srd_wall_of_fire_heat_side_rules.dart`, `app/test/srd_wall_of_fire_heat_side_rules_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_A_CHECKPOINT.md`.
+- **TESTS ERGÄNZT:** sechs deterministische Tests für 10-Fuß-Grenze, kalte Seite, Ring-Innen-/Außenseite, Wandkontakt/Betreten/Rundenende, unbestätigte Daten und fremden Zauber. Neue PR-CI auf finalem Commit noch **nicht** vollständig geprüft; Dart/Flutter lokal nicht installiert.
+- **NICHT IMPLEMENTIERT:** exakte Position, 3D-Höhe/Deckung, Konzentration, Rundenereignis-Persistenz und Idempotenz, Schadenswürfe, Rettungswürfe, HP-/Event-Buchung. Kein vollständiger automatisierter *Wall of Fire*; SRD-ID `SPELL-ENTRY-WALL-OF-FIRE` bleibt `unverified`.
+- **SRD:** Wizards of the Coast LLC, SRD 5.2.1, *Wall of Fire*, CC BY 4.0 (https://www.dndbeyond.com/srd).
+- **KOMPATIBILITÄT:** SQLite3/JSON1 und App-Version unverändert, keine Migration, keine Änderungen an Story, UI, Backend oder gemeinsam verwendeten App-Modellen.
+- **KOORDINATION:** Code-/Testpfade kollisionsfrei zu #357/#361/#366/#367 und B/C/D. Additive README-/Checkpoint-Merges durch Chat D vor Integration.
+- **NÄCHSTER SCHRITT:** bestätigte tatsächliche Karte-/Kreaturposition und 3D-/Deckungs- sowie Event-Idempotenz-Prüfung mit Autorität im Controller/Persistenzpfad; erst danach Schaden anwenden.
+
+---
+
 # Chat A – Checkpoint (26.10.2026): Eldritch-Blast-Klassenprüfung
 
 - Ausgangs-Main: `42d14ad36cc947691f7e5a1e8647a43f5421b86e`; Branch: `fix/chat-a/eldritch-primary-class-validation-20261026`.
