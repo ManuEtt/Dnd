@@ -27,12 +27,12 @@ Eine tatsächlich reproduzierte UI-Sperre beim Mönch→Barbar→Mönch-Rückwec
 bereits übernommenem Paket ist behoben; gleiche Klasse/gleiches Paket erhalten
 bereits bestätigte Entscheidungen. Keine doppelte Gold-/Ausrüstungsvergabe.
 
-**GETESTET:** 65 gezielte Domain-/SQLite-Fälle, 17 Dialog-, zehn Vorschau- und
+**GETESTET:** 65 gezielte Domain-/SQLite-Fälle, 17 Dialog-, 14 Vorschau- und
 15 Editor-Widgetfälle bestanden. Darunter alle 27 Varianten mit A/B, alle zwölf
 historischen Klassen/Kits in v1/v2, falsche/fehlende Quellen, doppelte Übungen,
 JSON/SQLite-Neustart, stale Editor ohne Änderungen aller sechs Tabellen sowie
 320/360 dp bei 200 % Schrift/IME/Semantik. 535 Dart-Dateien unverändert formatiert,
-Analyse ohne Befund. Vollständige gemeinsame Prüfkette und aktuelle CI folgen;
+Analyse ohne Befund. Der erste Vollversuch wurde für die zusätzliche explizite Fertigkeitswahl nach Beginn der Flutter-Tests bewusst beendet; er gilt nicht als voller Erfolg. Vollständige gemeinsame Prüfkette und aktuelle CI folgen;
 frühere Baseline-CI wird nicht als neue Abnahme ausgegeben.
 
 **NICHT GETESTET:** komplette neue Flutter-/Python-/Backend-Suite und Android-
@@ -47,6 +47,8 @@ keine Datenbankmigration. Regel-/Story-Grenze und KI-Autorität unverändert.
 Quellen: offizielles SRD 5.2.1, S.8–9/49/63/83/93–95, CC BY 4.0;
 THIRD_PARTY_NOTICES.md unverändert. [Fachnachweis](CHARACTER_MONK_TOOL_PROFICIENCY_20261029.md).
 `RULE-EQUIPMENT-TOOLS` / `EQUIP-CHOICES` bleiben konservativ `partial`.
+
+Arbeits-PR: [#390](https://github.com/ManuEtt/Dnd/pull/390); maßgeblich sind dessen aktuelle Checks, nicht die bewusst beendeten Zwischenläufe.
 
 Nächster begrenzter Charakter-Schritt: die drei Barden-Instrumentübungen und die
 Bindung des Paket-A-Instruments an eine davon ausdrücklich wählen und dauerhaft

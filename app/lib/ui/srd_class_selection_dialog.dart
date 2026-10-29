@@ -254,13 +254,14 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
                 key: const ValueKey('srd-monk-tool-proficiency'),
                 initialValue: _monkToolId,
                 isExpanded: true,
+                isDense: false,
                 itemHeight: null,
                 decoration: InputDecoration(
-                  labelText: 'Werkzeug- oder Instrumentübung',
+                  labelText: 'Werkzeugübung',
                   helperText: _monkToolLocked
                       ? 'Mit dem bereits übernommenen Paket verbunden.'
                       : 'Auch bei Startgold erforderlich. Paket A enthält genau dieses Werkzeug.',
-                  helperMaxLines: 4,
+                  helperMaxLines: 8,
                 ),
                 items: [
                   for (final entry in StartingEquipmentImport.monkTools)

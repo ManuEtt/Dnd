@@ -4,6 +4,7 @@ import '../domain/character_rule_engine.dart';
 import '../domain/models.dart';
 import '../domain/rules_engine.dart';
 import '../domain/srd_equipment_catalog.dart';
+import '../domain/srd_skill_ability_catalog.dart';
 import '../domain/tool_proficiency_rules.dart';
 import 'ability_assignment_dialog.dart' show abilityLabels;
 import 'fantasy_ui.dart';
@@ -21,11 +22,37 @@ class ToolProficiencyPanel extends StatefulWidget {
 
 class _ToolProficiencyPanelState extends State<ToolProficiencyPanel> {
   String? _ability;
+  String? _relevantSkill;
+  int _skillFieldGeneration = 0;
+
+  List<String> _trainedSkills(HeroCharacter hero) => [
+    for (final skill in srdSkillAbilities)
+      if (hero.skills.contains(skill.name) ||
+          (srdLegacySkillAliases[skill.name] != null &&
+              hero.skills.contains(srdLegacySkillAliases[skill.name])))
+        skill.name,
+  ];
 
   @override
   void didUpdateWidget(covariant ToolProficiencyPanel oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.hero.id != widget.hero.id) _ability = null;
+    final differentHero = oldWidget.hero.id != widget.hero.id;
+    if (differentHero) _ability = null;
+    final oldTools = ToolProficiencyRules.entries(
+      oldWidget.hero,
+    ).map((entry) => entry.id).join('|');
+    final newTools = ToolProficiencyRules.entries(
+      widget.hero,
+    ).map((entry) => entry.id).join('|');
+    if (differentHero ||
+        _trainedSkills(oldWidget.hero).join('|') !=
+            _trainedSkills(widget.hero).join('|') ||
+        oldTools != newTools) {
+      _relevantSkill = null;
+      // FormField does not reset its internal value when initialValue changes.
+      // Recreate it with the safe None value when its trained source changes.
+      _skillFieldGeneration++;
+    }
   }
 
   Widget _preview(EquipmentEntry entry) {
@@ -37,6 +64,7 @@ class _ToolProficiencyPanelState extends State<ToolProficiencyPanel> {
         widget.hero,
         ability,
         toolCatalogId: entry.id,
+        relevantSkill: _relevantSkill,
       );
       final bonus = rule.modifier < 0
           ? '${rule.modifier}'
@@ -59,6 +87,7 @@ class _ToolProficiencyPanelState extends State<ToolProficiencyPanel> {
   @override
   Widget build(BuildContext context) {
     final entries = ToolProficiencyRules.entries(widget.hero);
+    final trainedSkills = _trainedSkills(widget.hero);
     return ExpansionTile(
       key: ValueKey('tool-proficiency-panel-${widget.hero.id}'),
       title: const Text(
@@ -113,6 +142,38 @@ class _ToolProficiencyPanelState extends State<ToolProficiencyPanel> {
                     ),
                 ],
                 onChanged: (value) => setState(() => _ability = value),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'Passende geübte Fertigkeit optional bestätigen. '
+                'Nur wenn sie für dieselbe Probe relevant ist, gibt die '
+                'Kombination Vorteil, keinen zweiten Übungsbonus.',
+                style: TextStyle(color: FantasyPalette.muted),
+              ),
+              const SizedBox(height: 8),
+              KeyedSubtree(
+                key: ValueKey('tool-proficiency-skill-$_skillFieldGeneration'),
+                child: DropdownButtonFormField<String>(
+                  key: const ValueKey('tool-proficiency-relevant-skill'),
+                  initialValue: _relevantSkill ?? '',
+                  isExpanded: true,
+                  isDense: false,
+                  itemHeight: null,
+                  decoration: const InputDecoration(labelText: 'Fertigkeit'),
+                  items: [
+                    const DropdownMenuItem(
+                      value: '',
+                      child: Text('Keine Fertigkeit bestätigen'),
+                    ),
+                    for (final skill in trainedSkills)
+                      DropdownMenuItem(value: skill, child: Text(skill)),
+                  ],
+                  onChanged: (value) => setState(() {
+                    _relevantSkill = value == null || value.isEmpty
+                        ? null
+                        : value;
+                  }),
+                ),
               ),
               const SizedBox(height: 12),
               for (final entry in entries)

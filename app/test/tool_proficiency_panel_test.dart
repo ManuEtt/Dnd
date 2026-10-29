@@ -78,6 +78,30 @@ Future<void> _chooseAbility(WidgetTester tester, String label) async {
   await tester.pumpAndSettle();
 }
 
+Future<void> _chooseSkill(WidgetTester tester, String label) async {
+  final selector = _key('tool-proficiency-relevant-skill');
+  await tester.ensureVisible(selector);
+  await tester.pumpAndSettle();
+  await tester.tap(selector);
+  await tester.pumpAndSettle();
+  await tester.ensureVisible(find.text(label).last);
+  await tester.tap(find.text(label).last);
+  await tester.pumpAndSettle();
+}
+
+List<String?> _skillOptions(WidgetTester tester) => tester
+    .widget<DropdownButton<String>>(
+      find.descendant(
+        of: _key('tool-proficiency-relevant-skill'),
+        matching: find.byWidgetPredicate(
+          (widget) => widget is DropdownButton<String>,
+        ),
+      ),
+    )
+    .items!
+    .map((item) => item.value)
+    .toList();
+
 void main() {
   testWidgets(
     'Goldpaket zeigt erlernte Übung ohne Besitz oder Attribut-Vorauswahl',
@@ -124,6 +148,97 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Charisma: +3 · Normalwurf'), findsNothing);
+    expect(jsonEncode(hero.toJson()), before);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Nur ausdrücklich gewählte geübte SRD-Fertigkeit gibt Vorteil', (
+    tester,
+  ) async {
+    final initial = _monk();
+    final hero = initial.copyWith(
+      skills: [...initial.skills, 'Auftreten', 'Erfundene Kunst'],
+    );
+    final before = jsonEncode(hero.toJson());
+    await _open(tester, hero);
+    final field = _key('tool-proficiency-relevant-skill');
+    expect(tester.state<FormFieldState<String>>(field).value, '');
+    expect(_skillOptions(tester), [
+      '',
+      'Athletik',
+      'Auftreten',
+      'Heimlichkeit',
+    ]);
+    await _chooseAbility(tester, 'Charisma');
+    expect(find.text('Charisma: +5 · Normalwurf'), findsOneWidget);
+    await _chooseSkill(tester, 'Auftreten');
+    expect(find.text('Charisma: +5 · Vorteil'), findsOneWidget);
+    await _chooseSkill(tester, 'Keine Fertigkeit bestätigen');
+    expect(find.text('Charisma: +5 · Normalwurf'), findsOneWidget);
+    expect(jsonEncode(hero.toJson()), before);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'Bestätigte Fertigkeit hebt Gift-Nachteil auf, nicht den Bonus an',
+    (tester) async {
+      final initial = _monk();
+      final hero = initial.copyWith(
+        skills: [...initial.skills, 'Auftreten'],
+        conditions: const ['vergiftet'],
+      );
+      final before = jsonEncode(hero.toJson());
+      await _open(tester, hero);
+      await _chooseAbility(tester, 'Charisma');
+      expect(find.text('Charisma: +5 · Nachteil'), findsOneWidget);
+      await _chooseSkill(tester, 'Auftreten');
+      expect(find.text('Charisma: +5 · Normalwurf'), findsOneWidget);
+      await _chooseSkill(tester, 'Keine Fertigkeit bestätigen');
+      expect(find.text('Charisma: +5 · Nachteil'), findsOneWidget);
+      expect(jsonEncode(hero.toJson()), before);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('Entfernte Fertigkeit setzt Feld und Vorschauvorteil zurück', (
+    tester,
+  ) async {
+    final initial = _monk();
+    final hero = initial.copyWith(skills: [...initial.skills, 'Auftreten']);
+    await _open(tester, hero);
+    await _chooseAbility(tester, 'Charisma');
+    await _chooseSkill(tester, 'Auftreten');
+    final oldField = tester.state<FormFieldState<String>>(
+      _key('tool-proficiency-relevant-skill'),
+    );
+    expect(find.text('Charisma: +5 · Vorteil'), findsOneWidget);
+    await _open(tester, initial);
+    final field = _key('tool-proficiency-relevant-skill');
+    expect(tester.state<FormFieldState<String>>(field), isNot(same(oldField)));
+    expect(tester.state<FormFieldState<String>>(field).value, '');
+    expect(_skillOptions(tester), isNot(contains('Auftreten')));
+    expect(find.text('Charisma: +5 · Normalwurf'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Historisches Medizin wird nur als geübtes Heilkunde angeboten', (
+    tester,
+  ) async {
+    final initial = _monk();
+    final hero = initial.copyWith(skills: [...initial.skills, 'Medizin']);
+    final before = jsonEncode(hero.toJson());
+    await _open(tester, hero);
+    expect(_skillOptions(tester), [
+      '',
+      'Athletik',
+      'Heilkunde',
+      'Heimlichkeit',
+    ]);
+    await _chooseAbility(tester, 'Weisheit');
+    await _chooseSkill(tester, 'Heilkunde');
+    expect(find.text('Weisheit: +4 · Vorteil'), findsOneWidget);
+    expect(hero.skills, contains('Medizin'));
+    expect(hero.skills, isNot(contains('Heilkunde')));
     expect(jsonEncode(hero.toJson()), before);
     expect(tester.takeException(), isNull);
   });
@@ -216,17 +331,26 @@ void main() {
       final hero = _monk();
       await _open(tester, hero);
       await _chooseAbility(tester, 'Charisma');
+      await _chooseSkill(tester, 'Athletik');
       await _open(
         tester,
         hero.copyWith(abilities: {...hero.abilities, 'charisma': 18}),
       );
-      expect(find.text('Charisma: +7 · Normalwurf'), findsOneWidget);
+      expect(find.text('Charisma: +7 · Vorteil'), findsOneWidget);
       await _open(tester, hero.copyWith(id: 'another-hero'));
       expect(
         tester
             .state<FormFieldState<String>>(_key('tool-proficiency-ability'))
             .value,
         isNull,
+      );
+      expect(
+        tester
+            .state<FormFieldState<String>>(
+              _key('tool-proficiency-relevant-skill'),
+            )
+            .value,
+        '',
       );
       expect(_key('tool-proficiency-preview-item-lute'), findsNothing);
     },
@@ -251,16 +375,19 @@ void main() {
           expect(selector.hitTestable(), findsOneWidget);
           expect(tester.getSize(selector).height, greaterThanOrEqualTo(48));
           await _chooseAbility(tester, 'Geschicklichkeit');
+          final skill = _key('tool-proficiency-relevant-skill');
+          await tester.ensureVisible(skill);
+          await tester.pumpAndSettle();
+          expect(skill.hitTestable(), findsOneWidget);
+          expect(tester.getSize(skill).height, greaterThanOrEqualTo(48));
+          await _chooseSkill(tester, 'Heimlichkeit');
           final preview = _key(
             'tool-proficiency-preview-item-calligrapher-s-supplies',
           );
           await tester.ensureVisible(preview);
           await tester.pumpAndSettle();
           expect(preview.hitTestable(), findsOneWidget);
-          expect(
-            find.text('Geschicklichkeit: +6 · Normalwurf'),
-            findsOneWidget,
-          );
+          expect(find.text('Geschicklichkeit: +6 · Vorteil'), findsOneWidget);
           expect(
             tester.getSemantics(preview).label,
             contains('Geschicklichkeit'),
