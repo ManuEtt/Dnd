@@ -94,15 +94,21 @@ void main() {
     final invalid = <GameUpdate>[
       GameUpdate(
         campaign: local.campaign,
-        events: [_eventWith(event, {'id': 'wrong-event'})],
+        events: [
+          _eventWith(event, {'id': 'wrong-event'}),
+        ],
       ),
       GameUpdate(
         campaign: local.campaign,
-        events: [_eventWith(event, {'campaignId': 'another-campaign'})],
+        events: [
+          _eventWith(event, {'campaignId': 'another-campaign'}),
+        ],
       ),
       GameUpdate(
         campaign: local.campaign,
-        events: [_eventWith(event, {'sessionId': 'another-session'})],
+        events: [
+          _eventWith(event, {'sessionId': 'another-session'}),
+        ],
       ),
       GameUpdate(
         campaign: local.campaign,
@@ -122,7 +128,9 @@ void main() {
       ),
       GameUpdate(
         campaign: local.campaign.copyWith(
-          events: [_eventWith(event, {'id': 'different-journal-event'})],
+          events: [
+            _eventWith(event, {'id': 'different-journal-event'}),
+          ],
         ),
         events: local.events,
       ),
@@ -152,10 +160,7 @@ void main() {
     );
     final first = engine.act(created, 'Ich schaue zum Schiff.');
     final second = engine.act(first.campaign, 'Ich folge der Spur.');
-    final stale = GameUpdate(
-      campaign: second.campaign,
-      events: first.events,
-    );
+    final stale = GameUpdate(campaign: second.campaign, events: first.events);
     final before = jsonEncode(second.campaign.toJson());
     expect(
       () => engine.applyAiStoryStep(

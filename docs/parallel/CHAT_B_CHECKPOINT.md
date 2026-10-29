@@ -1,6 +1,6 @@
 # Chat B – KI-Story-Event/Checkpoint-Bindung (29.10.2026)
 
-- **Main-Basis:** `1dc8d076786dbfb6a6792b6653bd1457bd7992d9`; **Branch:** `feat/chat-b/ai-step-checkpoint-binding-20261029`.
+- **Main-Basis:** `1dc8d076786dbfb6a6792b6653bd1457bd7992d9`; **Branch:** `feat/chat-b/ai-step-checkpoint-binding-20261029`; **PR:** #373; **Ausgangscommit:** `b57797b30723525aeec76e49178caa0294cdf1be`.
 - **PROBLEM:** Eine bereits geprüfte KI-Antwort konnte auf ein nicht zum aktuellen Journal gehörendes oder manipuliertes `narrative.turn` angewendet werden.
 - **IMPLEMENTIERT:** `StoryCampaignEngine.applyAiStoryStep` prüft vor Story-Änderung Event-/Journal-Gleichheit, Kampagnen-/Sitzungs-ID und `stateAfter`-Checkpoint. Kein Umschreiben fremder oder älterer Ereignisse.
 - **DATEIEN:** `app/lib/story/story_campaign_engine.dart`, `app/test/ai_story_event_checkpoint_test.dart`, README und beide Checkpoints.

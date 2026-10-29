@@ -9,7 +9,7 @@ veraltete oder zu anderen Sitzungen gehörende Ereignisse werden ohne
 Zustandsänderung abgewiesen. Drei neue Flutter-Tests decken reguläre
 Fortschreibung, manipulierte Ereignisse und Wiederholung alter Ereignisse ab.
 Keine Änderung an Spielregeln, JSON-Schema oder Datenbank.
-Branch: `feat/chat-b/ai-step-checkpoint-binding-20261029`. CI finalem Commit zuordnen.
+Branch: `feat/chat-b/ai-step-checkpoint-binding-20261029`, PR #373. CI finalem Commit zuordnen.
 
 
 Deutschsprachige Fantasy-Solo-App für Android mit lokalen Charakteren,
