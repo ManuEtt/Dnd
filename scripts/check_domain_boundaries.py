@@ -80,7 +80,7 @@ def _strip_comments_and_mark_strings(content: str) -> tuple[str, bytearray]:
     index = 0
     while index < length:
         if content.startswith('//', index):
-            end = content.find('\\n', index)
+            end = content.find('\n', index)
             if end < 0:
                 end = length
             visible[index:end] = ' ' * (end - index)
@@ -100,7 +100,7 @@ def _strip_comments_and_mark_strings(content: str) -> tuple[str, bytearray]:
                 else:
                     index += 1
             for position in range(start, index):
-                if content[position] != '\\n':
+                if content[position] != '\n':
                     visible[position] = ' '
             continue
         if content[index] in ("'", '"'):
@@ -119,7 +119,7 @@ def _strip_comments_and_mark_strings(content: str) -> tuple[str, bytearray]:
                 if content.startswith(delimiter, index):
                     index += len(delimiter)
                     break
-                if content[index] == '\\\\' and not raw:
+                if content[index] == '\\' and not raw:
                     index += 2
                 else:
                     index += 1
