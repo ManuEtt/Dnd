@@ -1,3 +1,12 @@
+# Chat D – Integration von PR #358 nach Checkpoint-Fix #363 (29.10.2026)
+
+- **Stand:** Alpha-Release-Lock in `scripts/prepare_alpha_release.py` (3 neue Tests), vorherige vollständige CI `40730971955` auf `1d7b1723` erfolgreich; kombinierter Head benötigt erneute CI.
+- **Ausgangsbranch:** `fix/chat-d/alpha-release-version-lock-20261028`; **Integrationsbasis:** `b5f469f2163c1d60a63761e0a63434f4359e5e2a` enthält aktuelle Hauptbranch-Arbeit und PR #363. PR #358 bleibt bis gemeinsamer CI im Draft.
+- **Risiko:** Lock-Verzeichnis bleibt nach hartem Crash fail-closed; gleichzeitige externe Runner und Geräteinstallation nicht geprüft. Keine SQLite-/JSON-Migration, bestehende Alpha-Artefakte unverändert.
+- **Nächster Schritt:** vollständige GitHub Actions auf finalem Head, erst dann integrieren.
+
+---
+
 # Chat D D-017 – Sichere Checkpoint-Prüfsummenhistorie (28.10.2026)
 
 - **Main-Basis:** `854ca85c0234c508f34f00cdbfbef2e10554ca13`; **Branch:** `fix/chat-d/checkpoint-history-safe-names-20261028`.
