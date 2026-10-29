@@ -138,5 +138,5 @@ gleicher NPC-ID, gleichen Notizen und gleicher Revision verworfen. Die
 bestehende Story-API-Nutzlast (`toContextMap`) bleibt unverändert.
 Vier neue Flutter-Regressionen: JSON-Neuladen, Sitzungswechsel mit
 identischem Inhalt, leere Legacy-Notizen und unabhängige NPC-Änderungen.
-Keine Schema- oder Regeländerung. Review: PR wird auf eigenem Branch erstellt.
+Keine Schema- oder Regeländerung. Review: [PR #383](https://github.com/ManuEtt/Dnd/pull/383).
 

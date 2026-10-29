@@ -4,38 +4,40 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/story/npc_identity_memory.dart';
 
-Campaign _campaign({String sessionId = 'first-session', bool withNotes = true}) =>
-    Campaign(
-      id: 'campaign-identity',
-      name: 'Die zwei Miras',
-      world: 'Valdorn',
-      sessionId: sessionId,
-      hero: HeroCharacter(id: 'aria', name: 'Aria', hitPoints: 12),
-      scene: 'Zwei Figuren warten am Stadttor.',
-      revision: 9,
-      npcs: const [
-        WorldNpc(id: 'mira-one', name: 'Mira', relationship: 'freundlich'),
-        WorldNpc(id: 'mira-two', name: 'MIRA', relationship: 'misstrauisch'),
-      ],
-      npcRelationshipNotes: withNotes
-          ? [
-              NpcRelationshipNote(
-                id: 'note-one',
-                npcId: 'mira-one',
-                relationship: 'freundlich',
-                note: 'Die erste Mira besitzt die Seekarte.',
-                recordedAt: DateTime.utc(2026, 10, 28),
-              ),
-              NpcRelationshipNote(
-                id: 'note-two',
-                npcId: 'mira-two',
-                relationship: 'misstrauisch',
-                note: 'Die zweite Mira bewacht das Tor.',
-                recordedAt: DateTime.utc(2026, 10, 29),
-              ),
-            ]
-          : const [],
-    );
+Campaign _campaign({
+  String sessionId = 'first-session',
+  bool withNotes = true,
+}) => Campaign(
+  id: 'campaign-identity',
+  name: 'Die zwei Miras',
+  world: 'Valdorn',
+  sessionId: sessionId,
+  hero: HeroCharacter(id: 'aria', name: 'Aria', hitPoints: 12),
+  scene: 'Zwei Figuren warten am Stadttor.',
+  revision: 9,
+  npcs: const [
+    WorldNpc(id: 'mira-one', name: 'Mira', relationship: 'freundlich'),
+    WorldNpc(id: 'mira-two', name: 'MIRA', relationship: 'misstrauisch'),
+  ],
+  npcRelationshipNotes: withNotes
+      ? [
+          NpcRelationshipNote(
+            id: 'note-one',
+            npcId: 'mira-one',
+            relationship: 'freundlich',
+            note: 'Die erste Mira besitzt die Seekarte.',
+            recordedAt: DateTime.utc(2026, 10, 28),
+          ),
+          NpcRelationshipNote(
+            id: 'note-two',
+            npcId: 'mira-two',
+            relationship: 'misstrauisch',
+            note: 'Die zweite Mira bewacht das Tor.',
+            recordedAt: DateTime.utc(2026, 10, 29),
+          ),
+        ]
+      : const [],
+);
 
 NpcIdentityContext _snapshot(Campaign campaign) => NpcIdentityMemory.read(
   campaign,
@@ -57,7 +59,10 @@ void main() {
     expect(current.sessionId, 'first-session');
     expect(current.npcId, 'mira-one');
     expect(current.notes.single.note, contains('Seekarte'));
-    expect(current.toContextMap().toString(), isNot(contains('bewacht das Tor')));
+    expect(
+      current.toContextMap().toString(),
+      isNot(contains('bewacht das Tor')),
+    );
     expect(current.toContextMap(), snapshot.toContextMap());
     expect(current.toContextMap().containsKey('sessionId'), isFalse);
     expect(jsonEncode(recovered.toJson()), before);

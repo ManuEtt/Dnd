@@ -1,6 +1,6 @@
 # Chat B – Snapshot einer NPC-Erinnerung nur für dieselbe Sitzung (29.10.2026)
 
-- **Main-Basis:** `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`; **Branch:** `feat/chat-b/npc-identity-session-guard-20261029`.
+- **Main-Basis:** `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`; **Branch:** `feat/chat-b/npc-identity-session-guard-20261029`; **PR:** #383; **Ausgangscommit:** `ec0759fe257caba8779caf4803e45831f2713728`.
 - **Ausgangsproblem:** `NpcIdentityMemory.read`/ `requireCurrent` banden eine bestätigte Momentaufnahme zwar an Kampagnen-ID und Revision, aber nicht an die Sitzung.
 - **IMPLEMENTIERT:** `NpcIdentityContext` speichert `sessionId` ausschließlich als lokale Prüfmetadaten; `requireCurrent` verwirft andere Sitzungen. Die API-Projektion `toContextMap` behält alle bisherigen Schlüssel, insbesondere ohne zusätzliche `sessionId`.
 - **DATEIEN:** `app/lib/story/npc_identity_memory.dart`, `app/test/npc_identity_memory_session_guard_test.dart`, README, zentraler und Chat-B-Checkpoint.
