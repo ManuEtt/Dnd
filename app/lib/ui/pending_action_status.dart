@@ -7,7 +7,7 @@ import 'fantasy_buttons.dart';
 ///
 /// There are no database reads, timers or narrator calls in this widget, so
 /// retry/discard feedback can be tested without a FakeAsync/SQLite deadlock.
-class PendingActionStatus extends StatelessWidget {
+class PendingActionStatus extends StatefulWidget {
   const PendingActionStatus({
     super.key,
     required this.pending,
@@ -26,7 +26,33 @@ class PendingActionStatus extends StatelessWidget {
   final VoidCallback onDiscard;
 
   @override
+  State<PendingActionStatus> createState() => _PendingActionStatusState();
+}
+
+class _PendingActionStatusState extends State<PendingActionStatus> {
+  bool _showFullText = false;
+
+  @override
+  void didUpdateWidget(covariant PendingActionStatus oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final before = oldWidget.pending;
+    final after = widget.pending;
+    // An expanded, recovered intent must never carry over to another request.
+    if (before?.campaignId != after?.campaignId ||
+        before?.requestId != after?.requestId ||
+        before?.text != after?.text ||
+        before?.selectedNpcId != after?.selectedNpcId ||
+        before?.selectedNpcRevision != after?.selectedNpcRevision) {
+      _showFullText = false;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final pending = widget.pending;
+    final submitting = widget.submitting;
+    final interactionBlocked = widget.interactionBlocked;
+    final error = widget.error;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -41,8 +67,23 @@ class PendingActionStatus extends StatelessWidget {
           Text(
             pending!.text,
             key: const ValueKey('adventure-pending-action-text'),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
+            maxLines: _showFullText ? null : 2,
+            overflow: _showFullText
+                ? TextOverflow.visible
+                : TextOverflow.ellipsis,
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+              key: const ValueKey('adventure-pending-action-toggle'),
+              onPressed: () => setState(() => _showFullText = !_showFullText),
+              child: Text(
+                _showFullText
+                    ? 'Weniger anzeigen'
+                    : 'Ganzen Text anzeigen',
+                textAlign: TextAlign.center,
+              ),
+            ),
           ),
           if (pending!.selectedNpcId != null) ...[
             const SizedBox(height: 4),
@@ -62,14 +103,14 @@ class PendingActionStatus extends StatelessWidget {
                 label: 'Erneut bestätigen',
                 icon: Icons.refresh,
                 style: FantasyButtonStyle.woodGold,
-                onPressed: interactionBlocked || submitting ? null : onRetry,
+                onPressed: interactionBlocked || submitting ? null : widget.onRetry,
               ),
               FantasyTextButton(
                 key: const ValueKey('adventure-discard-action'),
                 label: 'Verwerfen',
                 icon: Icons.close,
                 style: FantasyButtonStyle.iron,
-                onPressed: interactionBlocked || submitting ? null : onDiscard,
+                onPressed: interactionBlocked || submitting ? null : widget.onDiscard,
               ),
             ],
           ),
