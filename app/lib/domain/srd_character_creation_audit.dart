@@ -609,6 +609,7 @@ class SrdCharacterCreationAudit {
         // Monk equipment must be the same tool/instrument chosen for tool
         // proficiency (SRD p.49). That source decision is not typed yet.
         if (classChoice.className == 'Mönch' &&
+            classChoice.version < 3 &&
             classChoice.equipmentChoices.isNotEmpty) {
           return choice(
             id,
@@ -676,6 +677,25 @@ class SrdCharacterCreationAudit {
       hitPoints(),
       combatValues(),
       equipment(),
+      if (definition?.name == 'Mönch')
+        choice(
+          'class.tools',
+          'Mönch: Werkzeug- oder Instrumentübung',
+          classChoice == null
+              ? CreationStepStatus.missing
+              : !classChoiceMatches
+              ? CreationStepStatus.invalid
+              : classChoice.version < 3
+              ? CreationStepStatus.notAutomated
+              : CreationStepStatus.confirmed,
+          classChoice == null
+              ? 'Eine Werkzeug- oder Instrumentübung ausdrücklich wählen, auch bei Startgold.'
+              : !classChoiceMatches
+              ? 'Die erste Klasse passt nicht zum gespeicherten Übungsnachweis.'
+              : classChoice.version < 3
+              ? 'Historischer Klassenbeleg ohne bestätigte Werkzeugübung; aus Ausrüstung oder Freitext wird keine Übung abgeleitet.'
+              : 'Die Übung ist strukturiert bestätigt. Paket A verwendet genau dieses Werkzeug; Besitz und spätere Verwendung bleiben getrennt.',
+        ),
       if (package?.requiresFeatSpellChoices == true ||
           hero.startingMagicInitiate != null)
         choice(

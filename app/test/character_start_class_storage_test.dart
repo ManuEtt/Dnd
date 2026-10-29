@@ -357,7 +357,7 @@ void main() {
       final original = controller.currentCampaign!;
       final before = await tables();
       final mutations = <void Function(Map<String, dynamic>)>[
-        (choice) => choice['version'] = 3,
+        (choice) => choice['version'] = 4,
         (choice) => choice['version'] = 1.0,
         (choice) => choice['skills'] = ['Athletik', 'Athletik'],
         (choice) => choice['skills'] = ['Arkane Kunde', 'Geschichte'],

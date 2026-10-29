@@ -79,7 +79,7 @@ void main() {
           kitIndex: 0,
           equipmentChoices: {'Heiliges Symbol': symbolId},
         );
-        expect(proof.version, 2);
+        expect(proof.version, 3);
         final hero = _hero(proof);
         final symbol = hero.inventory.singleWhere(
           (item) => item.catalogId == symbolId,

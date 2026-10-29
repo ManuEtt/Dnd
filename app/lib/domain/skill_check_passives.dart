@@ -2,7 +2,9 @@
 ///
 /// These helpers are intentionally independent of the game and save models.
 /// Initiative, saving throws, attacks and checks without a named skill must
-/// never receive a 2024 Bard Jack of All Trades bonus or Rogue Reliable Talent.
+/// never receive a 2024 Bard Jack of All Trades bonus or Rogue Reliable Talent
+/// through this skill helper. Explicit typed tool checks handle Rogue's
+/// tool-proficiency exception separately (SRD 5.2.1 p.63).
 class SkillCheckPassives {
   const SkillCheckPassives._();
 

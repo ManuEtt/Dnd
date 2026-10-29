@@ -5,6 +5,8 @@ import 'skill_check_passives.dart';
 import 'srd_class_feature_catalog.dart';
 import 'rules_engine.dart';
 import 'srd_equipment_catalog.dart';
+import 'tool_proficiency_rules.dart';
+import 'srd_skill_ability_catalog.dart';
 
 /// Shared, read-only SRD 5.2.1 view of confirmed character mechanics.
 /// No narration, UI, or remote service may directly change these values.
@@ -39,6 +41,55 @@ class D20Rule {
 
 class CharacterRuleEngine {
   const CharacterRuleEngine._();
+
+  /// A preview for an explicitly chosen ability and relevant trained skill.
+  /// Learned proficiency survives sale of the item. This does not confirm
+  /// possession, the tool's use, a target, difficulty or a completed roll.
+  static D20Rule toolCheck(
+    HeroCharacter hero,
+    String ability, {
+    required String toolCatalogId,
+    String? relevantSkill,
+  }) {
+    if (!ToolProficiencyRules.catalogIds(hero).contains(toolCatalogId)) {
+      throw const FormatException(
+        'Keine bestätigte Übung für dieses Werkzeug.',
+      );
+    }
+    String? recordedSkill;
+    if (relevantSkill != null) {
+      var canonical = relevantSkill;
+      for (final alias in srdLegacySkillAliases.entries) {
+        if (alias.value == canonical) canonical = alias.key;
+      }
+      if (!srdSkillAbilities.any((skill) => skill.name == canonical)) {
+        throw const FormatException('Unbekannte relevante SRD-Fertigkeit.');
+      }
+      recordedSkill = hero.skills.contains(canonical)
+          ? canonical
+          : srdLegacySkillAliases[canonical] ?? canonical;
+    }
+    final base = abilityCheck(
+      hero,
+      ability,
+      proficient: true,
+      skill: recordedSkill,
+      stealth: ability == 'dexterity' && recordedSkill == 'Heimlichkeit',
+    );
+    return D20Rule(
+      base.modifier,
+      // SRD p.63: Reliable Talent also covers confirmed tool proficiency,
+      // even without a relevant trained skill. Generic free checks do not.
+      minimumNatural: ClassResourceRules.level(hero, 'Schurke') >= 7
+          ? 10
+          : base.minimumNatural,
+      advantage:
+          base.advantage ||
+          (recordedSkill != null && hero.skills.contains(recordedSkill)),
+      disadvantage: base.disadvantage,
+      automaticallyFails: base.automaticallyFails,
+    );
+  }
 
   static int? attributeModifier(HeroCharacter hero, String ability) {
     final value = hero.abilities[ability];

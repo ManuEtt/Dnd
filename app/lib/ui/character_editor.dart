@@ -1148,6 +1148,13 @@ class _CharacterEditorState extends State<CharacterEditor> {
       context: context,
       builder: (_) => SrdClassSelectionDialog(
         currentClass: _fields['className']!.text,
+        currentStartingClassChoice: _original['startingClassChoice'] == null
+            ? null
+            : StartingClassChoice.fromJson(
+                Map<String, dynamic>.from(
+                  _original['startingClassChoice'] as Map,
+                ),
+              ),
         isNewCharacter: widget.hero == null,
         existingSkills: _listFieldValues('skills'),
         existingSavingThrows: _listFieldValues('savingThrowProficiencies'),

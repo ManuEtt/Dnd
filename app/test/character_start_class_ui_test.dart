@@ -84,18 +84,30 @@ Future<void> _chooseDropdown(
   Finder dropdown,
   String option,
 ) async {
+  final button = tester.widget<DropdownButton>(
+    find.descendant(
+      of: dropdown,
+      matching: find.byWidgetPredicate((widget) => widget is DropdownButton),
+    ),
+  );
+  final targetIndex = button.items!.indexWhere(
+    (entry) => entry.child is Text && (entry.child as Text).data == option,
+  );
+  final currentIndex = button.items!.indexWhere(
+    (entry) => entry.value == button.value,
+  );
   await tester.ensureVisible(dropdown);
   await tester.pumpAndSettle();
   await tester.tap(dropdown);
   await tester.pumpAndSettle();
-  final choice = find.text(option).last;
   if (find.text(option).evaluate().isEmpty) {
     await tester.scrollUntilVisible(
       find.text(option),
-      -120,
+      targetIndex < currentIndex ? -120 : 120,
       scrollable: find.byType(Scrollable).last,
     );
   }
+  final choice = find.text(option).last;
   await tester.ensureVisible(choice);
   await tester.tap(choice);
   await tester.pumpAndSettle();
@@ -464,7 +476,7 @@ void main() {
         expect(saved!.className, className);
         expect(saved!.gold, className == 'Kleriker' ? 7 : 9);
         expect(saved!.hitPoints, className == 'Kleriker' ? 10 : 12);
-        expect(saved!.startingClassChoice!.version, 2);
+        expect(saved!.startingClassChoice!.version, 3);
         expect(saved!.startingClassChoice!.kitIndex, 0);
         expect(saved!.startingClassChoice!.equipmentChoices, {
           'Heiliges Symbol': 'item-holy-symbol-reliquary',
@@ -476,6 +488,80 @@ void main() {
           hasLength(1),
         );
         expect(saved!.inventory.every((item) => item.stats != null), isTrue);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+  for (final gold in [false, true]) {
+    testWidgets(
+      'Mönch: Werkzeugquelle und ${gold ? 'Gold' : 'Paket'} erst nach Editor-Speicherung',
+      (tester) async {
+        HeroCharacter? saved;
+        await _open(tester, null, (hero) => saved = hero);
+        await _tap(tester, _key('open-srd-class-selection'));
+        await _chooseDropdown(tester, _key('srd-class-Waldläufer'), 'Mönch');
+        await _chooseDropdown(
+          tester,
+          _key('srd-monk-tool-proficiency'),
+          'Laute',
+        );
+        for (final skill in ['Akrobatik', 'Athletik']) {
+          await _tap(tester, _key('srd-skill-$skill'));
+        }
+        await _chooseDropdown(
+          tester,
+          _key('srd-equipment--1'),
+          gold ? 'B – Startgold' : 'A – Ausrüstung',
+        );
+        await _tap(tester, _key('srd-confirm-class'));
+        expect(saved, isNull);
+        // A second explicit confirmation retains the source, not a second kit.
+        await _tap(tester, _key('open-srd-class-selection'));
+        expect(
+          tester
+              .widget<SrdClassSelectionDialog>(
+                find.byType(SrdClassSelectionDialog),
+              )
+              .allowEquipment,
+          isFalse,
+        );
+        expect(
+          tester
+              .state<FormFieldState<String>>(_key('srd-monk-tool-proficiency'))
+              .value,
+          'item-lute',
+        );
+        await _tap(tester, _key('srd-confirm-class'));
+        await _tap(tester, _key('open-srd-creation-audit'));
+        final audit = tester.widget<SrdCreationAuditDialog>(
+          find.byType(SrdCreationAuditDialog),
+        );
+        expect(
+          audit.steps.singleWhere((step) => step.id == 'class.tools').status,
+          CreationStepStatus.confirmed,
+        );
+        expect(
+          audit.steps
+              .singleWhere((step) => step.id == 'class.equipment')
+              .status,
+          CreationStepStatus.confirmed,
+        );
+        await tester.tap(_key('close-srd-creation-audit'));
+        await tester.pumpAndSettle();
+        await _save(tester);
+        expect(saved!.className, 'Mönch');
+        expect(saved!.hitPoints, 10);
+        expect(saved!.gold, gold ? 50 : 11);
+        expect(saved!.startingClassChoice!.version, 3);
+        expect(
+          saved!.startingClassChoice!.toolProficiencyCatalogId,
+          'item-lute',
+        );
+        expect(saved!.startingClassChoice!.kitIndex, gold ? 1 : 0);
+        expect(
+          saved!.inventory.where((item) => item.catalogId == 'item-lute'),
+          hasLength(gold ? 0 : 1),
+        );
         expect(tester.takeException(), isNull);
       },
     );

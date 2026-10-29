@@ -4,7 +4,7 @@ import 'starting_equipment_import.dart';
 
 /// Historical evidence of an explicit first-class choice, never a grant.
 /// SRD 5.2.1, Character Creation / Choose Class and Classes / Core Traits.
-/// It covers only the existing skill, saving-throw and starter-kit decisions;
+/// It covers skills, saving throws, starter kits and the Monk tool choice;
 /// it does not certify spells, all class features or complete SRD creation.
 class StartingClassChoice {
   StartingClassChoice.confirmed({
@@ -13,13 +13,15 @@ class StartingClassChoice {
     int? kitIndex,
     Map<String, String> equipmentChoices = const {},
     FighterStartingChoices? fighterChoices,
+    String? toolProficiencyCatalogId,
   }) : this._validated(
-         version: 2,
+         version: 3,
          className: className,
          skills: skills,
          kitIndex: kitIndex,
          equipmentChoices: equipmentChoices,
          fighterChoices: fighterChoices,
+         toolProficiencyCatalogId: toolProficiencyCatalogId,
        );
 
   StartingClassChoice._validated({
@@ -29,6 +31,7 @@ class StartingClassChoice {
     this.kitIndex,
     Map<String, String> equipmentChoices = const {},
     this.fighterChoices,
+    this.toolProficiencyCatalogId,
   }) : skills = List.unmodifiable(skills),
        equipmentChoices = Map.unmodifiable(equipmentChoices) {
     final definition = findSrdClass(className);
@@ -50,6 +53,26 @@ class StartingClassChoice {
         'Kämpferstart benötigt die passenden Klassenwahlen.',
       );
     }
+    if (version >= 3 && className == 'Mönch') {
+      if (!StartingEquipmentImport.monkTools.any(
+        (item) => item.id == toolProficiencyCatalogId,
+      )) {
+        throw const FormatException(
+          'Für den Mönch eine Handwerkszeug- oder Instrumentübung wählen.',
+        );
+      }
+      if (kitIndex == 0 &&
+          this.equipmentChoices[StartingEquipmentImport.monkToolLabel] !=
+              toolProficiencyCatalogId) {
+        throw const FormatException(
+          'Das Mönch-Startpaket muss das für die Übung gewählte Werkzeug enthalten.',
+        );
+      }
+    } else if (toolProficiencyCatalogId != null) {
+      throw const FormatException(
+        'Diese Klassenstartversion belegt keine Werkzeugwahl.',
+      );
+    }
   }
 
   final int version;
@@ -58,12 +81,22 @@ class StartingClassChoice {
   final int? kitIndex;
   final Map<String, String> equipmentChoices;
   final FighterStartingChoices? fighterChoices;
+  final String? toolProficiencyCatalogId;
 
   /// Changing skills does not reselect, upgrade or grant historical equipment.
   StartingClassChoice withUpdatedClassDecisions(StartingClassChoice updated) {
     if (updated.className != className) {
       throw const FormatException(
         'Ein übernommenes Startpaket darf nicht die Klasse wechseln.',
+      );
+    }
+    if (version >= 3 &&
+        className == 'Mönch' &&
+        kitIndex == 0 &&
+        updated.toolProficiencyCatalogId != toolProficiencyCatalogId) {
+      throw const FormatException(
+        'Die Werkzeugübung gehört zum bereits übernommenen Mönch-Paket. '
+        'Ein Wechsel würde die historische Ausrüstungswahl verändern.',
       );
     }
     return StartingClassChoice._validated(
@@ -73,6 +106,9 @@ class StartingClassChoice {
       kitIndex: kitIndex,
       equipmentChoices: equipmentChoices,
       fighterChoices: updated.fighterChoices,
+      toolProficiencyCatalogId: version >= 3
+          ? updated.toolProficiencyCatalogId
+          : null,
     );
   }
 
@@ -88,6 +124,8 @@ class StartingClassChoice {
     'skills': skills,
     'kitIndex': kitIndex,
     'equipmentChoices': equipmentChoices,
+    if (toolProficiencyCatalogId != null)
+      'toolProficiencyCatalogId': toolProficiencyCatalogId,
     if (fighterChoices case final fighter?)
       'fighterChoices': {
         'styleId': fighter.styleId,
@@ -101,8 +139,11 @@ class StartingClassChoice {
     final skills = json['skills'];
     final kit = json['kitIndex'];
     final equipment = json['equipmentChoices'];
+    final tool = json['toolProficiencyCatalogId'];
     if (version is! int ||
-        (version != 1 && version != 2) ||
+        (version < 1 || version > 3) ||
+        (tool != null && tool is! String) ||
+        (version < 3 && json.containsKey('toolProficiencyCatalogId')) ||
         className is! String ||
         skills is! List ||
         skills.length > 4 ||
@@ -143,6 +184,7 @@ class StartingClassChoice {
       kitIndex: kit as int?,
       equipmentChoices: Map<String, String>.from(equipment),
       fighterChoices: fighter,
+      toolProficiencyCatalogId: tool as String?,
     );
   }
 }
