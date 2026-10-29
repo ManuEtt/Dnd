@@ -1269,13 +1269,7 @@ class _CharacterEditorState extends State<CharacterEditor> {
       }
       StartingClassChoice? proof = selected.startingClassChoice;
       if (proof != null && oldClassChoice?.kitIndex != null) {
-        proof = StartingClassChoice.confirmed(
-          className: proof.className,
-          skills: proof.skills,
-          kitIndex: oldClassChoice!.kitIndex,
-          equipmentChoices: oldClassChoice.equipmentChoices,
-          fighterChoices: proof.fighterChoices,
-        );
+        proof = oldClassChoice!.withUpdatedClassDecisions(proof);
       }
       final confirmedProof = proof;
       setState(() {

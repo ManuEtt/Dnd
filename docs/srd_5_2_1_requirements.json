@@ -6241,15 +6241,26 @@
       "area": "equipment",
       "kind": "legacy_rule_claim",
       "name": "Classes: Starting Equipment",
-      "source": "See historical matrix entry; reconcile with SRD and latest code",
+      "source": "SRD 5.2.1, Core Cleric Traits p.36; Core Paladin Traits p.53; Equipment / Holy Symbol p.97",
       "source_url": "https://www.dndbeyond.com/srd",
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/SRD_5_2_1_REQUIREMENTS_MATRIX.md",
       "unlocks_catalogued": false,
-      "rule_implemented": "missing",
-      "tests": [],
-      "code": [],
-      "note": "Historische Fortschrittszeile; Status nur aus jüngstem Eintrag übernommen. Kein Beleg für Voll-SRD-Abdeckung. FEHLT"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/class_holy_symbol_choice_test.dart",
+        "app/test/srd_class_holy_symbol_dialog_test.dart",
+        "app/test/character_start_class_storage_test.dart",
+        "app/test/character_start_class_ui_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/starting_equipment_import.dart",
+        "app/lib/domain/starting_class_choice.dart",
+        "app/lib/ui/srd_class_selection_dialog.dart",
+        "app/lib/ui/character_editor.dart",
+        "app/lib/domain/srd_character_creation_audit.dart"
+      ],
+      "note": "Explizite Klassenpaket-A-Symbolwahl für Kleriker/Paladin unter den drei amtlichen Varianten; neue Bestätigungen v2, historische v1 bleiben unverändert lesbar und im Audit ungeklärt. Goldalternative ohne Symbol. Domain/Widget/SQLite-Tests und vollständige lokale Suite (2265 Flutter/200 Python/72 Backend/12 native App-Tests), Analyse/Debug-APK bestanden auf7ac32b1c. Finale GitHub-Abnahme gesondert in PR369/checks. Keine vollständige Automatik aller Startentscheidungen oder Fokus-/Zauberwirkungen."
     },
     {
       "id": "CHAR-START-AUDIT",

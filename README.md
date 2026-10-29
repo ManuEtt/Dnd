@@ -1,296 +1,126 @@
 # Würfelraunen – Der lebendige Spielleiter
 
-## 28.10.2026 – Chat D: Prüfsummen-Historie der Quell-Checkpoints absichern
+## Qualitätsabsicherung – Checkpoint-Historie (Chat D, PR #363)
 
-Die Quelle der historischen Einträge in `SHA256SUMS.txt` akzeptiert nur reguläre Dateien mit sicheren Namen. Symbolische Links, Dateien mit Zeilenumbrüchen im Namen und als ZIP getarnte Verzeichnisse werden vor der Veröffentlichung abgelehnt, statt fremde Daten zu hashen oder mehrdeutige Prüfsummenzeilen zu erzeugen. Drei neue negative Python-Regressionen und die bestehende positive Verlaufsprüfung sichern das Verhalten ab. **CI für dieses neue Paket noch nicht vollständig bestätigt**; ältere gültige Checkpoint-Dateien und Spielstände bleiben unverändert. [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+Historische Dateien im Quell-Checkpoint werden vor Aufnahme in `SHA256SUMS.txt` auf sichere Namen und regulären Dateityp geprüft. Vorhandene Symlinks, Zeilenumbrüche oder ZIP-Verzeichnisse werden vor einer Veröffentlichung abgelehnt; drei neue negative Python-Regressionen sichern alte stabile Aliases. [Erfolgreicher CI-Stand auf dem vorigen Commit](https://github.com/ManuEtt/Dnd/actions/runs/40730867003); der jetzt kombinierte `main`-Stand wird separat geprüft. Keine Speicherformatmigration. Die Prüfung ist keine vollständige TOCTOU-Abwehr.
 
-## 28.10.2026 – Chat C: Inventarnotizen bei großer Android-Schrift
+Deutschsprachige Fantasy-Solo-App für Android mit lokalen Charakteren,
+Kampagnen, ausgewählten D&D-SRD-5.2.1-Regeln und optionalem KI-Erzähler.
+**Alpha 0.8.47+97**; lokales Spielen benötigt keinen Account oder KI-Server.
+Charaktererstellung und Regelengine sind noch nicht vollständig.
 
-Ein Inventargegenstand kann lange importierte oder selbst verfasste Beschreibungen enthalten. Der reine Lesedialog lässt nun Titel/Text scrollen, während „Schließen“ bei kleinen Displays erreichbar bleibt. [PR #355](https://github.com/ManuEtt/Dnd/pull/355) ist ein **Entwurf** mit drei ergänzten Widgettestfällen für 320/360 dp, doppelte Schriftgröße und leere Beschreibungen. Die Flutter-/Android-CI und echte Geräteprüfung sind **noch nicht bestätigt**. Kein Einfluss auf gespeicherte Gegenstände, Kampagnen, Regelengine oder SQLite/JSON. [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md).
+## Aktueller Stand und autonome Fortsetzung
 
-## 28.10.2026 – Chat D: Dart-Teilbibliotheken an Modulgrenzen prüfen
+**IMPLEMENTIERT:** Kleriker/Paladin wählen im Klassenpaket A ausdrücklich Amulett,
+Emblem oder Reliquiar. Typisierte Gegenstände und Gold werden nach Bestätigung
+nur einmal übernommen. Neue Klassenbelege verwenden Version 2; historische
+Version 1 bleibt unverändert lesbar, ungeklärt und ohne Nachvergabe. Wiederwahl
+desselben Pakets erhält die Auswahl. Abbruch, Fremd-IDs und echte Paketwechsel
+sind geprüft. SQLite **3** / äußeres JSON **1** bleiben unverändert, keine Migration.
 
-Die Python-Architekturprüfung kontrolliert neben `import` und `export` jetzt auch `part` und URI-basierte `part of`-Direktiven. Dadurch darf Domain-Code Story-Dateien nicht als Teilbibliothek einschleusen; Story-Dateien dürfen den gemeinsamen Domänencode weiterhin regulär importieren, ihn aber nicht als `part` einbinden. Fünf neue positive und negative Regressionstests sind ergänzt. **Die vollständige PR-CI muss auf dem finalen Commit noch geprüft werden.** Keine Änderung an SQLite, JSON, Spielregeln, Story oder App-Version. [Draft-PR #360](https://github.com/ManuEtt/Dnd/pull/360) · [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
+**GETESTET:** [PR #369](https://github.com/ManuEtt/Dnd/pull/369) regulär integriert;
+Produkt-Main `49b98d8aef7ae0e521320628b053c149c849dea0`.
+[Finale PR-CI 40756846048](https://github.com/ManuEtt/Dnd/actions/runs/40756846048)
+und [Main-CI 40758951956](https://github.com/ManuEtt/Dnd/actions/runs/40758951956)
+sind vollständig **erfolgreich**: 2.265 Flutter-, 200 Python- und 72 Backend-Tests,
+zusätzlich gezielter 20-Fälle-UI-Lauf; 507 Dart-Dateien unverändert formatiert,
+Analyzer/Backend-/Debug-/native-/drei optimierte ABI-/Alpha-/Checkpoint-Schritte
+bestanden. Lokal zusätzlich zwölf native App-Tests und die vollständige Suite
+auf Produktcode `7ac32b1c` bestanden; finaler PR-Kopf `bfe4e5ab` ändert daran nur
+Dokumentation. Main, PR-Kopf und tatsächlicher PR-Checkout `9bf0c017` besitzen
+denselben vollständigen Git-Baum `f40b9dcf11093fef2e7331fdfd712537d391cd2b`.
 
-## 28.10.2026 – Chat C: Inventarnotizen bei großer Android-Schrift
+Alle 1.248 heruntergeladenen Quelldateien mit Hash/Modus, Alpha-Quellpaket,
+echte Binärpatch-Anwendung auf Basis `37a6142e`, isoliertes Git-Bundle/fsck und
+32 historische Köpfe sind unabhängig geprüft. APK-Version/ABI/v2-Testsignatur
+geprüft. [Source-ZIP/Patch/Manifest/History-Bundle](https://github.com/ManuEtt/Dnd/actions/runs/40758951956/artifacts/12847443480) ·
+[ARM64-Alpha](https://github.com/ManuEtt/Dnd/actions/runs/40758951956/artifacts/12846529536).
 
-Ein Inventargegenstand kann lange importierte oder selbst verfasste Beschreibungen enthalten. Der reine Lesedialog lässt nun Titel/Text scrollen, während „Schließen“ bei kleinen Displays erreichbar bleibt. [PR #355](https://github.com/ManuEtt/Dnd/pull/355) ist ein **Entwurf** mit drei ergänzten Widgettestfällen für 320/360 dp, doppelte Schriftgröße und leere Beschreibungen. Die Flutter-/Android-CI und echte Geräteprüfung sind **noch nicht bestätigt**. Kein Einfluss auf gespeicherte Gegenstände, Kampagnen, Regelengine oder SQLite/JSON. [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md).
+**NICHT GETESTET:** echtes Android-Gerät/TalkBack, Upgrade einer installierten
+Altversion und produktive Signatur. Ein zusätzlicher freiwilliger Test aller
+Fremdplugin-Unterprojekte scheiterte an ByteBuddy/Jetifier (Klassenmajor 68);
+die im CI vorgeschriebenen `:app:testDebugUnitTest --no-daemon` bestehen.
+**BLOCKIERT:** kein angeschlossenes Android-Testgerät.
+**NOCH NICHT IMPLEMENTIERT:** vollständiger Wizard mit allen Spezies-, Klassen-,
+Talent- und Zauberpflichtwahlen; Symbolbesitz bestätigt keine komplette
+Fokus-/Zauberwirkung. `EQUIP-CHOICES` bleibt `partial`, SRD-Inventur 1.419/9 offen.
 
-## 28.10.2026 – Gemeinsame lokale Abnahme bestanden
+Arbeitsbranch `feat/character-holy-symbol-choice-20261028` ist nach grüner
+Main-CI exakt als `archive/merged-20261027/feat/character-holy-symbol-choice-20261028-bfe4e5ab7fba`
+archiviert und remote gelöscht; [Cleanup 40761280014](https://github.com/ManuEtt/Dnd/actions/runs/40761280014)
+bestand. Elf neue aktive PR-Branches #356–#359/#361–#367 blieben erhalten;
+vor jeder Folgeänderung Main/PRs/CI erneut live prüfen.
 
-Quellstand `4f03b7880c36ca225325c87ec9f2c56e0a93dccd` ist lokal vollständig geprüft:
-**2.185 Flutter-, 195 Python-, 72 Backend- und zwölf native Android-Tests bestanden**;
-500 Dart-Dateien unverändert formatiert, Analyzer ohne Befund, Backend-Build und
-Android-Debug-APK erfolgreich. [PR #351](https://github.com/ManuEtt/Dnd/pull/351).
-Der erste PR-CI-Lauf wird durch die abschließende CI-Artefaktverbesserung ersetzt:
-Der Quell-Checkpoint enthält nun zusätzlich einen tatsächlich angewendeten/geprüften
-Binärpatch mit expliziter Basis, Dateimanifest und vollständiges Git-Bundle.
-Die neue exakte PR- und anschließende Main-CI bleiben bis zum tatsächlichen Erfolg offen.
-Keine App-/Regel-/Speichercodeänderung nach dieser lokalen Abnahme; SQLite3/JSON1 unverändert.
+Dieser anschließende reine Dokumentationsabschluss auf Produkt-Main `49b98d8a`
+ändert **keine** App-, Backend-, Skript- oder Workflowdatei und erhöht keine
+Version. Seine statischen/Pythonprüfungen werden separat im Dokumentations-PR
+geführt. Eine weitere APK oder Produkt-CI für dessen Dokumentationskopf wird
+nicht behauptet. Ältere Berichte darunter sind historische Schreibstände.
 
-## 28.10.2026 – Alle Branches gemeinsam integrieren: 0.8.46+96
+## Funktionen und Grenzen
 
-Alle 26 ursprünglichen Nebenbranch-Köpfe und der parallele Importgrenzen-/Button-Integrationsbranch sind über reguläre Merge-Eltern erhalten. Charakterherkunft, zwölf Klassenstartwerte, Talentwahl, atomarer Editor-Schreibschutz, Klassenressourcen, Story-Replay und Android-Bedienung werden gemeinsam geprüft. Zwei echte Integrationsfehler sind behoben: Altarchiv-Charaktere mit nachträglich ergänzten Katalogwerten bleiben bearbeitbar; der Barden-Dialog funktioniert mit großer Schrift. Der konkurrierende alte Löschworkflow ist stillgelegt. **Gemeinsame finale CI/Main-Abnahme und Branchlöschung bei diesem Schreibstand noch offen.** SQLite 3 / Kampagnen-JSON 1 unverändert; vollständiger Charakter-Wizard und vollständiges SRD bleiben offen. [Migrationsbericht](docs/BRANCH_MIGRATION_20261028.md) · [Inventar](docs/BRANCH_MIGRATION_20261028_INVENTORY.json).
-
-## Chat B – Sitzungsidentität bei Story-Wiederherstellung (27.10.2026)
-
-Eine neue Schutzprüfung in `MemoryEngine.replay` weist neu eingespielte, sitzungsfremde Ereignisse und widersprüchliche `stateAfter`-Checkpoints ab. Bereits bestätigte, identische historische Ereignisse bleiben auch beim späteren Sitzungswechsel idempotent. Vier neue Regressionen prüfen Erfolg und Abweisung. **Die finale Flutter-/Android-CI für dieses Paket ist gesondert zu prüfen; keine Geräteabnahme behauptet.** Keine Änderung an Spielstandschema oder Regelzustand. [Technischer Nachweis](docs/STORY_REPLAY_SESSION_IDENTITY_20261027.md) · [Chat-B-Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md).
-
-## Chat B – Gleichnamige NPCs im bestätigten Sitzungsrückblick (27.10.2026)
-
-Der automatische Sitzungsrückblick unterscheidet jetzt gleichnamige NPCs anhand ihrer **bestätigten gespeicherten NPC-ID**, genau wie der gezielte Gedächtnisabruf. Zwei Figuren namens Mira mit derselben Beziehung erscheinen nicht mehr als undifferenzierte Namenseinträge. Eindeutige Namen behalten die bisherigen menschenlesbaren Texte; beschädigte mehrfach verwendete NPC-IDs werden nicht als bestätigte Identitäten ausgegeben. Die vorhandene 2.400-Zeichen-Grenze bleibt erhalten. Vier neue Flutter-Regressionstests prüfen gleiche Namen, ältere JSON-Spielstände ohne optionale Notizen, ungültige doppelte IDs und einen tatsächlich gespeicherten Sitzungsrückblick samt JSON-Roundtrip. Reine Storyprojektion: keine Änderungen an Regeln, Questbelohnungen, SQLite-Schema oder Backend.
-
-
-## Chat D – Sicherere Android-Alpha-Bündelung (27.10.2026)
-
-Die ARM64-Release-Prüfung weist nun vor dem Dekomprimieren manipulierte APK-ZIP-Dateien mit zu vielen Mitgliedern, zu großer entpackter Gesamtsumme oder extremen Kompressionsverhältnissen zurück. Vier neue Regressionstests sichern diese Grenzen. Kein Einfluss auf D&D-Regeln, Story, App-Daten oder bestehende Spielstände. **Neue CI/Android-Abnahme des zugehörigen Chat-D-Branches ist noch offen**; vorherige erfolgreiche Builds beweisen diese Änderung nicht. [Detailcheckpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
-
-
-## Chat D – Doppelte automatische Branch-Bereinigung stillgelegt (28.10.2026)
-
-Die frühere Workflow-Datei `.github/workflows/retire-verified-branches-20261026.yml` konkurrierte mit der neuen SHA-/PR-gesicherten Bereinigung `cleanup-merged-safe-20261027.yml`. Am 27.10.2026 archivierte und entfernte der neue Workflow den Branch `test/chat-b/story-12-memory-transport-20261027`; der alte Workflow scheiterte anschließend beim erneuten Abruf mit HTTP 404 ([fehlgeschlagener Lauf](https://github.com/ManuEtt/Dnd/actions/runs/40589220593)). Der alte Eintrag bleibt als **manueller, schreibgeschützter Hinweis ohne Branch-Aktionen** erhalten. Drei neue Python-Tests prüfen Deaktivierung, Negativfälle und unveränderte Sicherungsprüfungen des Nachfolgers. Der neue [PR #329](https://github.com/ManuEtt/Dnd/pull/329) ist zur Review freigegeben; kombinierte CI noch ausstehend. Keine Spielstand-, Regel-, Versions- oder Datenmigration.
-
-## Chat B – NPC-Aufträge bei zwei SQLite-Verbindungen sicher quittieren (27.10.2026)
-
-Vier zusätzliche Integrationstests in `app/test/npc_outbox_multiwriter_cas_test.dart` prüfen die bereits in [PR #305](https://github.com/ManuEtt/Dnd/pull/305) ergänzte **atomare Vergleichs- und Löschlogik** der ausstehenden NPC-Handlungen über zwei gleichzeitig geöffnete SQLite-Verbindungen. Verspätete Bestätigungen dürfen weder einen bewusst ersetzten gleichnamigen NPC noch eine neue Kampagnenrevision löschen. Auch der Wechsel zwischen früheren reinen Textaufträgen und einer ausdrücklich ausgewählten NPC-ID ist abgesichert. Gleichzeitige Sendeversuche derselben Kampagne dürfen nur einen einzigen Auftrag erzeugen. Alle Tests verwenden echte lokale SQLite-Dateien, keine externen KI-Aufrufe. **Keine neue Produktionscode- oder Datenbankänderung**; die Tests benötigen PR #305.
-
-
-## Chat B – Sichere Bestätigung ausdrücklich ausgewählter NPC-Handlungen (27.10.2026)
-
-Beim Entfernen eines ausstehenden Spielerauftrags vergleicht die SQLite-Outbox jetzt **Handlungskennung, exakten Text, gewählte NPC-ID und ursprüngliche Kampagnenrevision**, statt nur Kennung und Text. Ein verspätetes Bestätigungssignal für die erste „Mira“ kann daher keinen später neu angelegten Auftrag für die zweite „Mira“ beseitigen. Die Prüfung und Löschung erfolgen in einer SQLite-Transaktion; auch der Fallback für ältere Repository-Implementierungen vergleicht beide NPC-Felder. Zwei neue SQLite-Regressionstests prüfen falsche IDs/Revisionen und die Wiederverwendung derselben Test-Handlungskennung nach bewusster Auftragsersetzung. Zusätzlich nennt der Fehler für zu neue Datenbanken nun die tatsächlich unterstützte SQLite-Version 3. Kein Schema-, Export- oder SRD-Regelwechsel. Dieses Paket baut auf [PR #303](https://github.com/ManuEtt/Dnd/pull/303) auf.
-
-
-## Chat B – ausstehende NPC-Handlungen klar anzeigen (27.10.2026)
-
-Die Anzeige einer ausstehenden Spielhandlung ist nun als separate, zustandslose Komponente `PendingActionStatus` implementiert. Sie bewahrt die bisherigen UI-Kennungen für Wiederholen, Verwerfen, laufendes Senden und Fehlermeldungen. Bei einer ausdrücklich gewählten Figur erklärt sie, dass deren Auswahl an den gespeicherten Auftrag gebunden bleibt und bei veralteter Revision bewusst verworfen und neu getroffen werden muss. Fünf kleine Flutter-Widgettests prüfen die Darstellung und Buttons **ohne** SQLite, Netzwerk, TTS oder Widget-/FFI-Zeitsteuerungsabhängigkeiten. Der fachliche Controller-/SQLite-Schutz aus den Basis-PRs #288, #290 und #303 wird dadurch nicht verändert. Keine Datenbankmigration oder D&D-Regeländerung.
-
-
-## Chat B – deterministische Wiederaufnahme von NPC-Sendeaufträgen (27.10.2026)
-
-Die sichere Wiederaufnahme einer ausdrücklich gewählten NPC-ID nach SQLite-Neustart wird jetzt durch die gemeinsame Funktion `resolvePendingNpcAction(campaign, action)` bestimmt. Sie unterscheidet normale, gültige, bereits bestätigte, veraltete und nicht mehr verfügbare Auswahlen, ohne selbst Netzwerkzugriffe oder Speicheränderungen auszuführen. Die Abenteueroberfläche nutzt dieselbe Funktion; eine verlorene Bestätigung wird nur anhand eines **exakt zu Text, Request-ID und NPC-ID passenden gespeicherten Ereignisses** abgeglichen. Andernfalls ist eine erneute bewusste NPC-Auswahl erforderlich.
-
-Der vorherige Flutter-Komplettwidgettest in `npc_ui_outbox_restart_integration_test.dart` wurde nach reproduzierbaren `WidgetTester`-/FakeAsync-Deadlocks in **vier echte asynchrone SQLite-/Controller-/Transportintegrationstests** umgestellt. Die eigentliche Dialogbedienung bleibt separat in `npc_story_selection_dialog_test.dart` geprüft; eine vollständig durchgeklickte App-Ende-zu-Ende-Abnahme wird damit **nicht** behauptet. Dies ist ein abhängiges Test- und Sicherheitsinkrement auf PR #300, der wiederum auf #292 → #290 → #288 beruht. Keine SQLite-, Export- oder Regelmigration.
-
-
-## Chat B – NPC-Auswahl und sichere Wiederaufnahme bis in die Oberfläche (27.10.2026)
-
-Neue Flutter-/SQLite-Ende-zu-Ende-Regressionstests in `app/test/npc_ui_outbox_restart_integration_test.dart` prüfen die bestehende explizite NPC-Auswahl durch das Abenteuer-Eingabefeld und die dauerhafte Outbox. Zwei gleichnamige Figuren dürfen nicht vermischt werden; die ausgewählte NPC-ID wird an den Mock-Spielleiter weitergeleitet. Ein nach bestätigtem Spielzug verlorenes Bestätigungssignal wird nach Neustart ohne erneute Provider-Anfrage abgeglichen. Eine ausstehende NPC-Auswahl aus einer älteren Kampagnenrevision bleibt dagegen sichtbar und wird nicht selbsttätig erneut gesendet. Dieses Testpaket baut auf dem Controller-PR #288 und dem UI-/SQLite-PR #290 auf; es verändert **keine** Produktionslogik oder Schema-Version.
-
-
-## Chat B – NPC-Auswahl mit absturzsicherem Sendeauftrag (27.10.2026)
-
-In generativen KI-Kampagnen erscheint am Texteingabefeld die Aktion **„NPC auswählen“**, wenn die bestehende Erzählsitzung `npc-selection-v1` unterstützt. Ein deutscher, scrollbarer und für Screenreader beschrifteter Dialog zeigt bestätigte NPCs samt Beziehung und eindeutiger Kennung – auch wenn mehrere den gleichen Namen haben. Nur ein ausdrücklicher Tipp auf eine Figur bindet ihre ID an den ausstehenden Spielzug. Ohne NPC-Auswahl funktioniert die Texteingabe unverändert. Das Gegenstück ist die revisionsgeprüfte Controller-Anbindung aus [PR #288](https://github.com/ManuEtt/Dnd/pull/288).
-
-Die SQLite-Outbox wurde **transaktional von Version 2 auf 3** erweitert: ein optionales Paar aus NPC-ID und ursprünglicher Kampagnenrevision bleibt mit Text und Request-ID nach einem Neustart erhalten. Alte Sendeaufträge werden ohne NPC-Auswahl übernommen; eine veraltete Auswahl wird nicht unbemerkt neu gebunden. Bereits bestätigte Request-IDs können nach verlorenem Bestätigungssignal abgeglichen werden. Neue SQLite- und Flutter-Widget-Tests prüfen diese Grenzen. Kampagnen-JSON, Heldendaten und SRD-Mechaniken bleiben unverändert. Die volle CI-Abnahme auf dem PR-HEAD ist separat nachzuweisen.
-
-
-## Chat D – Pflichtdateien ohne symbolische Links prüfen (27.10.2026)
-
-Die Python-Projektprüfung lehnt jetzt Pflichtdateien und deren übergeordnete Verzeichnisse ab, wenn sie symbolische Links sind. Dadurch werden keine verlinkten externen Backend-JSON-Dateien oder Gradle-Wrapper-Dateien mehr als reguläre Upload-Dateien geöffnet. Vier Regressionstests untersuchen Dateilinks, Verzeichnislinks, Wrapper-Nichtöffnung und defekte Links. Bestehende reguläre Projektkopien bleiben zugelassen. [PR #321](https://github.com/ManuEtt/Dnd/pull/321) ist ein **Draft**; die abschließende GitHub-CI ist auf dem finalen PR-Commit separat abzunehmen. Keine Migration oder App-Änderung.
-
-
-## Chat B – Zwölf KI-Erinnerungen bis zur Story-API-Grenze absichern (27.10.2026)
-
-Zwei neue Integrationstests prüfen das Erinnerungslimit **an der tatsächlich gesendeten Story-Anfrage**: Eine KI-Kampagne mit bestätigten Mira-Beziehungsnotizen und mindestens 18 allgemeinen Fakten wird in einer echten SQLite-Datei gespeichert, über den `GameController` fortgesetzt und mit einem lokalen Backend-Transport abgefragt. Sowohl mit als auch ohne `npc-identity-v1` erhält das Backend genau zwölf priorisierte und begrenzte Erinnerungseinträge. Die drei bestätigten NPC-Notizen bleiben zuerst; zusätzliche allgemeine Fakten verwenden lediglich die freien Plätze. Heldenwerte, Revision und gespeicherter Spielstand bleiben überprüfbar. Dieses Testpaket baut auf [PR #307](https://github.com/ManuEtt/Dnd/pull/307) auf und verändert keine Produktionslogik, Datenbankschemata oder SRD-Regeln.
-
-
-## Chat B – Gemeinsames Budget für NPC- und allgemeine KI-Erinnerungen (27.10.2026)
-
-Die vom KI-Spielleiter übermittelten bestätigten NPC-Notizen und allgemeinen Erinnerungseinträge teilen sich dasselbe Limit (standardmäßig 12 Einträge). Bisher wurde ein weiterer allgemeiner Eintrag angehängt, selbst wenn NPC-Notizen das Budget schon vollständig belegten. `NpcNarratorMemory.merge` prüft jetzt die gemeinsame Grenze **vor** dem Anhängen allgemeiner Einträge. Neue Regressionen decken vollständig belegte Grenzen von einem und zwei Einträgen sowie verbleibenden Platz ab. Es gibt keine Änderung an NPC-Identitäten, SRD-Regeln, SQLite, Backend-Protokoll oder Kampagnenexport.
-
-
-## Charaktererstellung – Integrationskandidat (27.10.2026)
-
-Die gestapelte SRD-5.2.1-Entwicklung aus [#264](https://github.com/ManuEtt/Dnd/pull/264), [#272](https://github.com/ManuEtt/Dnd/pull/272), [#273](https://github.com/ManuEtt/Dnd/pull/273) und [#275](https://github.com/ManuEtt/Dnd/pull/275) ist gemeinsam in einem **Integrationsbranch** vorbereitet: 4W6-Würfelzuordnung; explizit bestätigte, versionierte Startattribut-Herkunft; vier Hintergrundpakete mit Werkzeug-/Fertigkeitsauswahl und A-/B-Ausrüstung; Akolythenauswahl aus drei geprüften Heiligen Symbolen. Die Einzelbranch-CIs sind grün, die **gemeinsame Main-Integration und Android-Geräteabnahme** müssen separat erfolgen. Herkunftstalentwirkungen, Magic-Initiate-Zauberwahl und vollständige SRD-Charaktererstellung fehlen weiterhin. [Integrationsbeleg](docs/CHARACTER_STACK_INTEGRATION_20261027.md).
-
-## Chat B – Fortsetzung einer expliziten NPC-Auswahl nach Neustart (26.10.2026)
-
-Ein neuer Integrationstest überprüft die bestehende explizite NPC-ID-Übertragung über eine tatsächlich gespeicherte SQLite-Kampagne hinweg: zwei gleichnamige Figuren, Auswahl nur per ID, Erzählkontext nur aus der passenden bestätigten NPC-Chronik, Neustart, Revisionswechsel und Ablehnung einer veralteten Auswahl. Fehlende optionale Notizen in Alt-JSONs dürfen keine Erinnerung erfinden. Der Test verwendet einen lokalen Fake-Backendtransport ohne kostenpflichtige KI-Aufrufe. **Der endgültige CI-/APK-Nachweis auf dem finalen Branch-Commit steht gesondert aus.** Keine Änderung an App-/Regelcode, Spielständen, SQLite- oder JSON-Schema. [Chat-B-Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md).
-
-
-**Würfelraunen** ist eine deutschsprachige, in Entwicklung befindliche **Fantasy-Rollenspiel-App für Android**. Sie verbindet lokale Soloabenteuer, Charakter- und Kampagnenverwaltung, ausgewählte Regeln aus dem **D&D System Reference Document (SRD) 5.2.1** und eine optionale KI-gestützte Erzählung.
-
-Die App ist eine **Alpha-Version**, kein fertiger Ersatz für einen menschlichen Spielleiter und keine vollständige D&D-5e-Regelimplementierung. **Zum lokalen Spielen ist weder ein Account noch ein KI-Server erforderlich.**
-
-> **Projektstand (26.10.2026):** Die Flutter-App deklariert Version **0.8.42+92**. Die Versionsnummer kennzeichnet den Entwicklungsstand, nicht eine abgeschlossene Geräte- oder Release-Abnahme. Aktuelle Integrationen, Testnachweise und offene Arbeiten stehen in [Entwicklungsstatus](DEVELOPMENT_STATUS.md) und [Codex-Checkpoint](docs/CODEX_CHECKPOINT.md).
-
-## Was kann Würfelraunen?
-
-Du erstellst einen Charakter, wählst ein Abenteuer und bestimmst mit eigenen Aktionen, wie sich die Geschichte entwickelt. Die App verwaltet die bestätigten Spielinformationen und trennt dabei **Spielregeln**, **Erzählung** und **gespeicherte Entscheidungen**.
-
-- **Charaktere erstellen und verwalten:** Attribute, Fertigkeiten, Klassen, Ausrüstung, Ressourcen, Trefferpunkte und Charakterporträts bearbeiten. Die zwölf SRD-Klassen sind als Grundlage vorhanden; Klassenmerkmale und Stufenentwicklung sind noch nicht vollständig automatisiert.
-- **Soloabenteuer spielen:** Lokale Demo und die eigene **Rabenwacht**-Kampagnenwelt mit Szenen, Entscheidungen, Quests, Figuren und Journal.
-- **Würfeln und Kämpfen:** W20-Proben, Angriffe, Schaden, Initiative sowie ausgewählte Zustände, Aktionen, Reaktionen und Zauber regelgestützt behandeln. Komplexe Mehrfigurenkämpfe und das gesamte Zaubersystem sind noch nicht vollständig abgebildet.
-- **Eine fortlaufende Geschichte behalten:** Kampagnen, Ereignisse, Entscheidungen, NPCs und bestätigte Weltinformationen lokal speichern und nach einem App-Neustart fortführen.
-- **Deutschsprachige Fantasy-Oberfläche nutzen:** Charakterbogen, Abenteueransicht, Würfelanzeige, Kampf- und Zauberdialoge sowie Schnellaktionen in einer Fantasy-Gestaltung.
-- **Sprache einsetzen:** Erzähltexte über Text-to-Speech vorlesen lassen und Spieleraktionen per Spracheingabe vorbereiten. Sprachdienste und ihre Offline-Fähigkeit hängen vom Android-Gerät und den installierten Anbietern ab.
-- **Optional einen KI-Erzähler anbinden:** Ein eigener HTTPS-Backenddienst kann Erzähltexte ausgestalten und begrenzte Abenteuerideen vorschlagen. Im Standardmodus übernimmt ein kostenloser lokaler Demo-Erzähler diese Aufgabe.
-
-### Funktionsstand im Überblick
-
-| Bereich | Heute vorhanden | Wichtige Grenzen |
+| Bereich | Vorhanden | Weiter offen |
 | --- | --- | --- |
-| Charakterbogen | Charakterdaten, Attribute, Ausrüstung, Klassen-/Stufengrundlagen und ausgewählte Klassenaktionen | Keine vollständige Automatik sämtlicher SRD-Klassenmerkmale |
-| Regeln und Kampf | Getestete Einzelmechaniken für Würfel, Angriffe, Ressourcen, Schaden, Zustände und einzelne Zauber | Nicht alle Kampf-, Ziel-, Monster- und Zauberregeln integriert |
-| Kampagnen und Gedächtnis | Lokale Solo-Kampagnen, Rabenwacht, Journal, Quests und strukturierte NPC-/Weltdaten | Keine universell autonome Spielleitung |
-| Spielstände | Lokales SQLite, bestätigte Ereignisse/Revisionen und JSON-Import/-Export | Keine Cloud-Synchronisierung und keine Verschlüsselung der lokalen Datenbank |
-| Erzähler-Backend | Optionaler Fastify-Dienst mit Demo-Provider, Sitzungen, Validierung und Nutzungslimits | Kein fertig betriebener öffentlicher Dienst; externe KI nur nach eigener Einrichtung |
-| Android | Flutter-App, Fantasy-UI, Sprache, Datei-Backup und automatisierte Tests | Produktive Signierung, vollständige Echtgeräte-/TalkBack-Abnahme und Store-Veröffentlichung offen |
+| Charaktere | Attribute/Herkunft, vier Hintergrundpakete, zwölf Klassenstartgrundlagen, Klassenbelege, Talent-Zauberwahl, sichere Speicherung und Symbolwahl | Geführter Gesamtwizard, alle Spezies-/Klassen-/Talent-/Zauberpflichtwahlen |
+| Regeln | Getestete Einzelmechaniken für Kampf, Ressourcen, Rasten, Ausrüstung, Klassenaufstieg und Zauber | Gesamte SRD-Automatik, alle Monster-/Zauberwirkungen und Ausnahmen |
+| Kampagnen | Solo/Rabenwacht, Journal, Quests, bestätigtes NPC-Gedächtnis, Replay und dauerhafte Sendeaufträge | Keine universell autonome oder öffentliche Mehrspielerspielleitung |
+| Android | Fantasy-UI, Schriftanpassung, Backups, geräteabhängige Sprache | Geräte-/TalkBack-Abnahme, produktive Signierung und Store-Veröffentlichung |
 
-**Wichtig:** Ein vorhandener Zauber-, Gegenstands- oder Klassenkatalog bedeutet nicht automatisch, dass jede darin genannte Wirkung bereits spielbar ist. Die technische Regelabdeckung wird gesondert erfasst: [Regelabdeckung](docs/RULE_COVERAGE.md) · [SRD-5.2.1-Audit](docs/SRD_5_2_1_COVERAGE_AUDIT.md).
+Die SRD-Matrix zählt 1.419 Prüfaufträge und neun Inventurlücken; das ist kein
+vollständiger SRD-Nenner und kein Fertigstellungsprozentsatz.
+[Audit](docs/SRD_5_2_1_COVERAGE_AUDIT.md) · [Charakterstatus](docs/CHARACTER_CREATION_COMPLETE.md).
 
-## Technischer Aufbau
+## Genau nächster Schritt
 
-| Verzeichnis | Aufgabe |
-| --- | --- |
-| `app/` | Flutter-/Dart-App für Android mit Oberfläche, Charakteren, lokaler Regel- und Spielsteuerung |
-| `app/lib/domain/` | Modelle, Würfel-, Klassen-, Kampf-, Ausrüstungs- und Zauberlogik |
-| `app/lib/story/` | Kampagnen, Handlung, Story-Gedächtnis und Grenzen zwischen Erzählen und Regeln |
-| `app/lib/data/` | SQLite-Kampagnenspeicherung und Datenzugriff |
-| `app/lib/services/` | GameController, Sprachdienste, Backend-Verbindung und Sicherungen |
-| `app/lib/ui/` | Fantasy-Oberfläche, Charakterbogen und Spiel-/Regeldialoge |
-| `backend/` | Optionaler Node.js-/TypeScript-/Fastify-Erzähler mit Mock- oder konfiguriertem Anbieter |
-| `scripts/` | Projektprüfung, Regelabdeckungsprüfung, Grafikerzeugung und Paketierung |
-| `.github/workflows/` | Automatisierte Tests und Android-Alpha-Builds |
-| `docs/` | Detaillierte Architektur-, Regel-, Entwicklungs- und Testdokumentation |
+Die im Mönch-Paket A ausdrücklich gewählte Werkzeug-/Instrumentausrüstung mit
+der erforderlichen Werkzeugübung koppeln. Zuerst amtliches SRD 5.2.1 S.49 prüfen;
+vorhandene Auswahl-/Persistenzfunktionen erweitern. Neue versionierte Entscheidung,
+bestehende Klassenbelege v1/v2 ohne Pflichtfeldverschärfung bewahren, keine
+Nachvergabe. Gültige/ungültige IDs, doppelte Übungen, Abbruch, Retry, stale Revision,
+SQLite-Neustart und JSON, 320/360 dp bei 200 %/IME/Semantik testen; anschließend
+`bash scripts/check.sh`, Debug/native und finale PR-CI. Kein Hintergrund-Codexjob.
 
-**Architekturprinzip:** Die lokale Regelengine bestätigt regelrelevante Aktionen und speichert sie zusammen mit dem Ereignisverlauf. Der KI-Erzähler darf Texte und validierte Vorschläge liefern, aber **nicht eigenmächtig Trefferpunkte, Würfe, Inventar oder andere Regelzustände ändern**. Mehr dazu in [ARCHITECTURE.md](ARCHITECTURE.md).
+## Lokal starten und prüfen
 
-## Android-App lokal starten
+Toolchain: Flutter 3.35.7, Dart 3.9.2, Java 17, Node.js 22.14.0, Android SDK.
 
-Benötigt werden **Flutter 3.35.7**, **Dart 3.9.2**, **Java 17**, eine funktionierende **Android-SDK-Toolchain** sowie ein Android-Gerät oder Emulator. Das sind die im CI-Workflow verwendeten Toolchain-Versionen.
-
-~~~bash
-git clone https://github.com/ManuEtt/Dnd.git
-cd Dnd
-
-# Fantasy-Button-Grafiken vor Analyse/Build reproduzierbar erzeugen
+```bash
 python3 scripts/generate_fantasy_buttons.py
-
 cd app
 flutter pub get
 flutter run
-~~~
+```
 
-Eine lokale Debug-APK erstellen:
-
-~~~bash
-cd app
-flutter build apk --debug
-~~~
-
-Der Build-Befehl wird **aus dem Projektwurzelverzeichnis** mit `cd app` aufgerufen; wer bereits im Verzeichnis `app/` steht, lässt diesen Schritt weg. Die lokale Demo benötigt **keinen laufenden Backendserver**.
-
-### Optionale KI-Erzählung einrichten
-
-Das Backend ist **optional**. Zum lokalen Entwickeln zunächst den kostenlosen Mock-Provider nutzen:
-
-~~~bash
-cd backend
-cp .env.example .env
-# In .env einen eigenen, ausreichend langen LOCAL_ACCESS_TOKEN setzen.
-# AI_PROVIDER=mock und ALLOW_PAID_AI=false beibehalten.
-npm ci
-npm run dev
-~~~
-
-Für die **Android-App** wird ein eigener, gültig TLS-gesicherter **HTTPS-Endpunkt** benötigt; reines Loopback-HTTP ist nur für lokale Backend-/Entwicklungstests gedacht. In der App erfolgt die Verbindung unter **Einstellungen → KI & Kosten → Backend verbinden**, mit einem kurzlebigen Sitzungstoken.
-
-Ein kostenpflichtiger KI-Anbieter wird **nicht automatisch aktiviert**: Anbieter, serverseitiger API-Schlüssel, Modell und ausdrückliche Kostenfreigabe müssen separat konfiguriert werden. Der Server speichert keine lokalen Kampagnendaten. Details und Token-Erstellung: [Backend verbinden](docs/BACKEND_CONNECTION.md) · [Backend-Dokumentation](backend/README.md).
-
-## Tests und Qualitätssicherung
-
-Die zentrale lokale Prüfroutine führt Python-/Projektprüfungen, Backend-Checks sowie Flutter-Analyse und Tests aus:
-
-~~~bash
-# In der Repositorywurzel
+```bash
 bash scripts/check.sh
-~~~
+(cd app && flutter build apk --debug)
+(cd app/android && bash gradlew :app:testDebugUnitTest --no-daemon)
+```
 
-Einzelne Prüfungen sind auch möglich:
+SQLite-Tests benötigen die native SQLite-Bibliothek. Die Prüfkette enthält
+Projekt-/Importgrenzen-/SRD-/Pythonprüfungen, Backend-Typecheck/Tests/Build,
+Dart-Formatierung, Analyse und Fluttertests mit lokalem Backend-Protokolltest.
+Ein optionaler eigener HTTPS-Erzähler wird in
+[BACKEND_CONNECTION.md](docs/BACKEND_CONNECTION.md) erklärt. Externe KI benötigt
+eine ausdrückliche Sitzungseinrichtung; keine automatischen Kostenfreigaben.
 
-~~~bash
-python3 scripts/verify_project.py
-python3 scripts/check_domain_boundaries.py
-python3 scripts/srd_coverage.py --json
-python3 -m unittest discover -s scripts/tests -v
+## Architektur, Sicherungen und Lizenz
 
-cd backend
-npm ci
-npm run typecheck
-npm test
-npm run build
+`app/lib/domain/` enthält Regeln/Modelle, `story/` Kampagne/Gedächtnis, `data/`
+SQLite, `services/` bestätigende Steuerung und `ui/` Flutter. `backend/` ist der
+optionale Fastify-/TypeScript-Erzähler. KI-Texte sind keine bestätigten Würfe,
+Charakterwerte oder Gegenstände; mechanische Änderungen prüft die Regelengine.
 
-cd ../app
-flutter pub get
-flutter analyze
-flutter test
-~~~
+Vor Alpha-Updates Spielstände exportieren; eine Testsignatur und ein APK-Build
+belegen kein Geräteupgrade. [Backups](docs/SAVE_BACKUPS.md) ·
+[Android-Artefakte](docs/ALPHA_RELEASES.md) · [Tests](TESTING.md).
 
-Unter Linux benötigen SQLite-Tests `libsqlite3-dev`. Die CI-Definition steht in [android-build.yml](.github/workflows/android-build.yml); Einzelheiten in [TESTING.md](TESTING.md). **Eine reine README-Änderung löst wegen der Workflow-Pfadfilter keinen automatischen Android-Testlauf aus.** Ein vorhandenes oder grünes CI-Ergebnis gilt nur für den tatsächlich geprüften Commit.
+Regelquelle: [SRD 5.2.1](https://www.dndbeyond.com/srd), Wizards of the Coast LLC,
+CC BY 4.0; [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) erhält die Namensnennung.
+Nur lizenzierte Inhalte und eigene Texte verwenden.
 
-## Spielstände und Alpha-APKs
-
-- **Lokal gespeichert:** Charaktere, Kampagnen, bestätigte Aktionen und Erinnerungen liegen in der App-Datenbank. Ereignisse und Spielzustand werden konsistent gespeichert.
-- **Import/Export:** JSON-Sicherungen sind über die App nutzbar; Android-Dateidialoge verwenden das Storage Access Framework. Ein Import wird vor der tatsächlichen Übernahme geprüft und bestätigt.
-- **Vor Updates sichern:** Alpha-APKs verwenden derzeit eine Testsignatur. Ein Upgrade oder Wechsel zwischen Buildvarianten ist daher nicht in allen Fällen garantiert.
-- **Buildartefakte:** Erfolgreiche GitHub-Actions-Läufe können Debug-APKs, Android-ARM64-Alpha und ein dazugehöriges Quellpaket bereitstellen. Ein Quellcode-Checkpoint allein ist **keine installierbare APK**.
-
-Anleitungen: [Sicherungen](docs/SAVE_BACKUPS.md) · [Alpha-Artefakte](docs/ALPHA_RELEASES.md) · [APK-Download](docs/APK_DOWNLOAD.md).
-
-### Chat D D-012: Sichere Gradle-Wrapper-Vorprüfung (26.10.2026)
-
-Die Upload-/Projektprüfung weist nun manipulierte Gradle-Wrapper-ZIP-Dateien mit mehr als 512 Einträgen oder mehr als 16 MiB entpackten Daten zurück, bevor sie mit CRC-Prüfung entpackt werden; auch die JAR-Datei selbst ist auf 16 MiB begrenzt. Neue Python-Regressionstests prüfen zu große JAR-Dateien, komprimierte ZIP-Bombs, übergroße Eintragslisten und das weiterhin gültige originale Wrapper-JAR. Die bestehende Android-/Flutter-App und Spielstände ändern sich nicht; **vollständige CI dieses Arbeitsbranches noch abzunehmen**. Details: [Chat-D-Checkpoint](docs/parallel/CHAT_D_CHECKPOINT.md).
-
-## Entwicklungsstand und nächste Schritte
-
-Das Projekt wird in kleinen, überprüfbaren Inkrementen entwickelt. Vorrangig sind:
-
-1. Laufende Branch-/PR-Integrationen mit nachvollziehbaren Tests abschließen; keine historischen Ergebnisse als neue Abnahme ausgeben.
-2. Vorhandene NPC-Auswahl durchgehend von der Android-Oberfläche bis zum validierten optionalen Erzählvertrag anbinden.
-3. **SRD 5.2.1 schrittweise vervollständigen**: Klassen-, Kampf-, Zauber-, Monster- und Ausrüstungswirkungen jeweils mit Tests und belegter Regelquelle ergänzen.
-4. Fantasy-Oberfläche, Barrierefreiheit, Android-Echtgeräteprüfung, belastbare Release-Signierung und Updateabläufe weiter absichern.
-
-Die technische Detailplanung wird nicht in dieser Einführungsseite dupliziert. Maßgeblich sind die **aktuellen** Dateien [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md), [ROADMAP.md](ROADMAP.md) und [docs/CODEX_CHECKPOINT.md](docs/CODEX_CHECKPOINT.md). Historische Checkpoints und Branch-Migrationen sind dort bzw. unter `docs/history/` dokumentiert.
-
-## Regeln, Inhalte und Hinweise
-
-Die Umsetzung orientiert sich an **D&D SRD 5.2.1** von **Wizards of the Coast LLC**, lizenziert unter **Creative Commons Attribution 4.0 International (CC BY 4.0)**. Die erforderlichen Namensnennungen und weiteren Hinweise stehen in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Eigene Fantasy-Geschichten und Grafiken werden getrennt von den SRD-Regeln behandelt.
-
-Das Repository enthält Entwicklungssoftware. **Vollständige SRD-Konformität, fehlerfreien Spielbetrieb, Produktionssicherheit oder eine Veröffentlichung im Play Store werden nicht behauptet.**
-
-
----
-
-## Aktueller Charakterstatus – 28.10.2026 (0.8.45+95)
-
-Die ausdrücklich bestätigte erste Klasse, Klassenfertigkeiten, Kämpferwahlen
-und optionale Paketentscheidung werden historisch und versioniert gespeichert.
-Erneute Bestätigung ersetzt ihre frühere Übungsquelle; Gold/Ausrüstung nur
-einmal. Vollständige Paketprüfung vor Änderung des Entwurfs, Abbruch sicher.
-Alte Spielstände bleiben ohne erfundene Herkunft erhalten. Der Audit bestätigt
-belegte Teilentscheidungen und hält unaufgelöste Gegenstände sowie die
-Mönch-Werkzeugkopplung offen. Die gesamte Charaktererstellung bleibt unvollständig.
-
-**Geprüfter Zwischenkopf `019be0e`: 2.007 Flutter-, 168 Python-, 72 Backend-Tests,
-Debug/native und Alpha-Builds grün in [CI40631517151](https://github.com/ManuEtt/Dnd/actions/runs/40631517151).**
-Alle 1.021 CI-Quelldateien, Ausführungsrechte und die ARM64-APK wurden geprüft.
-Der vorherige feste lokale Gesamt-Repeat bestand 1.995, die nächste lokale
-Zwischenintegration 2.003 Flutter-Tests. Ein früherer Lauf vor den letzten
-Quellkorrekturen hatte drei Fehler; die festen Wiederholungen belegen die Behebung.
-
-**Aktuelle gemeinsame Basis: Main `bf5999e`, 57 gezielte Tests, Analyse und
-168 Pythonprüfungen bestanden.** Vollständige CI dieses letzten Integrationskopfs
-separat in [PR #319](https://github.com/ManuEtt/Dnd/pull/319/checks); frühere
-Ergebnisse gelten nur für ihren angegebenen Commit. Branch
-`feat/character-start-class-proof-20261027`, Version 0.8.45+95. Originaldokumente
-bleiben unverändert mit Hashes in `docs/history/`; der vorangehende Maintext
-ist die erhaltene Integrationsbasis. Gerät/TalkBack/Altversionsupgrade und
-Produktivsignatur sind noch nicht geprüft.
-
-[Quellen und Umfang](docs/CHARACTER_START_CLASS_CHOICE_20261027.md) ·
-[vollständiger Charakter-Checkpoint](docs/CHARACTER_START_CLASS_CHECKPOINT_20261028.md).
-Nächster Schritt: den bereits separat geprüften Editor-CAS-PR #330 mit
-aktuellem Main integrieren und erneut abnehmen; dessen sechs vorhandene
-SQLite-/CAS-Regressionen nutzen. #324 (Start-TP/Kit) und #317 (Magieinitiierter)
-koordiniert übernehmen, nichts doppelt entwickeln. #323 ist bereits enthalten.
+[Checkpoint](docs/CODEX_CHECKPOINT.md) · [Entwicklungsstatus](DEVELOPMENT_STATUS.md) ·
+[Architektur](ARCHITECTURE.md) · [Änderungen](CHANGELOG.md).
+Ältere README-/Checkpoint-Stände sind bytegenau unter
+[docs/history/character_symbol_abnahme_20261028/](docs/history/character_symbol_abnahme_20261028/MANIFEST.json)
+mit Git-Blob-/SHA256-Nachweisen erhalten.
