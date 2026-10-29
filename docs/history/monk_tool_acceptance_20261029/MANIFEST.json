@@ -1,0 +1,34 @@
+{
+  "source_commit": "4193000fd28154eeb8b0be3497acc722f674c5ab",
+  "purpose": "Bytegenaue Schreibstände vor der belegten Mönch-Abnahme; historische pending-Aussagen gelten nicht für den späteren Prüfstand.",
+  "files": {
+    "README.md": {
+      "sha256": "ceb55d69d4595c94dec10ad15dd08b65870e524e0735a719be3887ba6c5c6f09",
+      "git_blob": "291c9785369f93757efbe7027d2cc3c4f41bc404"
+    },
+    "CHECKPOINT.md": {
+      "sha256": "ae066e0f15bce27fd2cbc2a453b4921be22a642ee72d18236f8d9422af934ead",
+      "git_blob": "5790d70cf9e43685ebb3c9649ac5cc2f45686197"
+    },
+    "docs/CODEX_CHECKPOINT.md": {
+      "sha256": "85359c58e870e3d042e405af83f5afb1ac9446f29e686be9cbea6e939a95173e",
+      "git_blob": "ed8e985a0c0897a17bb1c8f0420f445196729df3"
+    },
+    "DEVELOPMENT_STATUS.md": {
+      "sha256": "a79ef8f0654e60ad0c6a3ba4c509cadce995022d93c737f874731b97f97407a4",
+      "git_blob": "41674041ef9fd617090e712cf9abe1b3f483cee1"
+    },
+    "CHANGELOG.md": {
+      "sha256": "f8a226662deb93debbc9c09bab97220a9e1dd96d102855f99d98ede741c9fd67",
+      "git_blob": "111144c1b0ff5e9bbc645903f9e5572d15113a12"
+    },
+    "docs/CLASS_CREATION.md": {
+      "sha256": "f85ffea2a9ddbc098a88f9eb8276fce86e4dd82251e5b9800d40449bdda92203",
+      "git_blob": "9ef203824c852328b76c459ad14b424d39493401"
+    },
+    "docs/CHARACTER_CREATION_COMPLETE.md": {
+      "sha256": "3c47fd00fc96ad8f54849ff756c668977b4650a6db261bef8477ea822a7b6423",
+      "git_blob": "f48912c166a25b10038723ca7da45a1e80890839"
+    }
+  }
+}

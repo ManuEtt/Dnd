@@ -1,62 +1,89 @@
-## Aktueller Stand – Mönch-Werkzeugwahl, 0.8.48+98
+## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
-Stand: 2026-10-29T17:00:04.686609+00:00. Arbeitsbranch
-`feat/character-monk-tool-proficiency-20261029`, Basis-Main `fde0ef6ed8b419d6a31c701a03aa05d61994c352`.
-Die vorherigen 24 PRs sind über [#386](https://github.com/ManuEtt/Dnd/pull/386)
-integriert, [Main-CI 40867945743](https://github.com/ManuEtt/Dnd/actions/runs/40867945743)
-auf `fde0ef6e` erfolgreich; live keine offenen PRs beim Start. Ältere Aussagen
-„noch nicht integriert“ sind historische Schreibstände, kein aktueller Blocker.
+Stand: 29.10.2026, UTC. [PR #390](https://github.com/ManuEtt/Dnd/pull/390)
+ist regulär integriert. Geprüfter Produkt-Main:
+`4193000fd28154eeb8b0be3497acc722f674c5ab`; getesteter Arbeitskopf
+`53e8e72a58dc07bda07cc50a984142465a8cef79`, Branch
+`feat/character-monk-tool-proficiency-20261029`, Basis `fde0ef6e`.
+Der PR-Checkout `2b211456` und Produkt-Main haben denselben vollständigen
+Git-Baum `1f976980975d5a29ac0277c44e1bc7b79d062ab3`.
 
-**IMPLEMENTIERT:** Neue Mönche wählen ausdrücklich eine von 27 zulässigen
-Handwerkszeug-/Instrumentübungen, auch bei Startgold. Paket A enthält genau
-diesen Gegenstand und 11 GM; B enthält 50 GM ohne Gegenstand. Bestätigte
-Klassenbelege v3 speichern die Auswahl, v1/v2 bleiben unverändert lesbar und
-gewähren keine aus Inventar/Freitext erfundene Übung. Bereits erlernte typisierte
-Klassen-/Hintergrundübungen bleiben bei späteren Namens-/Inventaränderungen erhalten.
-Eine neue Zweitklasse allein erteilt keine erste Mönch-Werkzeugwahl.
+**IMPLEMENTIERT:** Neue Erstklassen-Mönche wählen ausdrücklich eine von 27
+Handwerkszeug-/Instrumentübungen. Paket A liefert dasselbe Werkzeug und 11 GM;
+B liefert 50 GM ohne Werkzeug, die Übung bleibt bestehen. Klassenbeleg v3
+prüft Quelle und Paketbindung; v1/v2 bleiben unverändert lesbar und ungeklärt.
+Keine automatische Nachvergabe, kein zweiter Gold-/Inventargewinn bei Wiederwahl.
+Historisch bestätigte Übungen überleben spätere Anzeigenamens-/Inventaränderungen;
+Mönch als neue Zweitklasse erteilt keine Erstklassen-Werkzeugübung.
 
-Der Charakterbogen zeigt quellenbasierte Werkzeugübungen und eine ausdrücklich
-gewählte Attributsvorschau. Die Regelengine berechnet Übungsbonus nur einmal,
-Zustände/Erschöpfung, Vorteil bei ausdrücklich passender trainierter Fertigkeit
-und Werkzeug-Verlässliches-Talent ab Schurke 7. Die Vorschau ist kein ausgeführter
-Wurf und bestätigt weder Werkzeugbesitz, konkrete Verwendung, SG noch Herstellung.
-Der lesende Erstellungs-Audit prüft die neue Pflichtwahl und Paketbindung getrennt.
-Eine tatsächlich reproduzierte UI-Sperre beim Mönch→Barbar→Mönch-Rückwechsel mit
-bereits übernommenem Paket ist behoben; gleiche Klasse/gleiches Paket erhalten
-bereits bestätigte Entscheidungen. Keine doppelte Gold-/Ausrüstungsvergabe.
+Der Charakterbogen zeigt belegte Übungen und eine explizite Attributs-/Fertigkeits-
+Probenvorschau. Einmaliger Übungsbonus, Vorteil bei passender trainierter Fertigkeit,
+Zustände/Erschöpfung, Rüstungsnachteil für Geschicklichkeit (Heimlichkeit) und
+Werkzeug-Verlässliches-Talent ab Schurke 7 sind berücksichtigt. Die Vorschau führt
+keinen Wurf oder Werkzeugvorgang aus. Audit prüft Pflichtwahl/Paketbindung separat.
+Die reproduzierte Sperre Mönch→Barbar→Mönch bei bereits übernommenem Paket ist
+behoben. SQLite **3** / äußeres JSON **1** unverändert; keine DB-Migration.
 
-**KORRIGIERTE REGRESSIONEN:** Der komplette Vorlauf auf `be758357` hatte genau einen Fehler: die bisher feste Audit-Anzahl 11 ignorierte den neuen zwölften Mönch-Pflichtschritt. Erwartung und explizite Prüfung „Werkzeugwahl fehlt“ wurden ergänzt; kein Test deaktiviert. [CI 40918212562](https://github.com/ManuEtt/Dnd/actions/runs/40918212562) ist deshalb rot und keine Abnahme. Eine zusätzliche neue Gegenprobe reproduzierte fehlenden Rüstungsnachteil für ausdrücklich gewählte Geschicklichkeit (Heimlichkeit); die Vorschau berücksichtigt ihn jetzt, ohne ihn auf andere Attribute zu übertragen. 92 betroffene Domain-/SQLite-/Audit-/Panel-Fälle bestanden anschließend. Vollständige Wiederholung und neue finale CI sind erforderlich.
+**GETESTET:** Lokal `bash scripts/check.sh` auf `53e8e72a` vollständig bestanden:
+**2.450 Flutter-, 221 Python-, 72 Backend-Tests**, Format 535 Dateien unverändert,
+Analyzer/Backend-Typen/Build/Protokollsmoke erfolgreich. Zusätzlich ARM64-Debug-APK
+und zwölf native `:app:testDebugUnitTest`-Fälle ohne Fehler/Skip. Finale
+[PR-CI 40920118585](https://github.com/ManuEtt/Dnd/actions/runs/40920118585)
+**erfolgreich**: dieselben 2.450/221/72 sowie 20 gezielte UI-Fälle,
+Debug-APK/native Tests und alle drei optimierten ABI-APKs/Alpha-/Quellpakete.
+Die zusätzliche [Main-CI 40922492508](https://github.com/ManuEtt/Dnd/actions/runs/40922492508)
+ist ebenfalls vollständig **erfolgreich** auf `4193000f`; tatsächliche Logs
+bestätigen dieselben Zähler und sämtliche Build-/Paket-Schritte.
 
-**GETESTET:** 66 gezielte Domain-/SQLite-Fälle, 17 Dialog-, 14 Vorschau- und
-15 Editor-Widgetfälle bestanden. Darunter alle 27 Varianten mit A/B, alle zwölf
-historischen Klassen/Kits in v1/v2, falsche/fehlende Quellen, doppelte Übungen,
-JSON/SQLite-Neustart, stale Editor ohne Änderungen aller sechs Tabellen sowie
-320/360 dp bei 200 % Schrift/IME/Semantik. 535 Dart-Dateien unverändert formatiert,
-Analyse ohne Befund. Der erste Vollversuch wurde für die zusätzliche explizite Fertigkeitswahl nach Beginn der Flutter-Tests bewusst beendet; er gilt nicht als voller Erfolg. Vollständige gemeinsame Prüfkette und aktuelle CI folgen;
-frühere Baseline-CI wird nicht als neue Abnahme ausgegeben.
+Gezielte Gegenfälle: alle 27 Werkzeuge mit A/B, alle zwölf historischen Klassen
+mit v1/v2, ungültige Quellen/IDs/Paketkonflikte, Doppelübungen, Abbruch/Retry,
+JSON/SQLite-Neustart, stale Editor ohne Änderungen aller sechs Tabellen und
+320/360 dp bei 200 % Schrift mit Tastatur/Semantik. Der alte rote Vorlauf
+[40918212562](https://github.com/ManuEtt/Dnd/actions/runs/40918212562) scheiterte
+am erwarteten Audit-Zähler 11 statt jetzt 12 beim Mönch. Er ist repariert und
+durch die vollständige grüne Wiederholung ersetzt; kein Test deaktiviert.
+Ein früher bewusst beendeter Lauf gilt nicht als bestandene Vollsuite.
 
-**NICHT GETESTET:** komplette neue Flutter-/Python-/Backend-Suite und Android-
-Builds bis zu ihrem tatsächlichen Abschluss; echtes Android-Gerät/TalkBack,
-installiertes Altversionsupgrade und produktive Signatur.
-**BLOCKIERT:** kein angeschlossenes Testgerät; kein Code-/GitHub-Zugriffsblocker.
-**NOCH NICHT IMPLEMENTIERT:** vollständiger Charakter-Wizard, übrige verpflichtende
-Klassen-/Spezies-/Zauberentscheidungen; tatsächliche Werkzeugaktionen und deren
-Würfel-/Zeit-/Materialtransaktionen. SQLite 3 / äußeres JSON 1 unverändert,
-keine Datenbankmigration. Regel-/Story-Grenze und KI-Autorität unverändert.
+Alle **1.286** heruntergeladenen Main- und PR-Quelldateien mit Hash/Modus, Alpha-Quellpaket,
+echte Binärpatch-Anwendung auf `fde0ef6e` und isoliertes Bundle/fsck sind geprüft.
+ARM64-APK: Version **0.8.48+98**, minSDK24/targetSDK36, v2-Debug-Testsignatur.
+[Source-ZIP/Patch/Manifest/History-Bundle](https://github.com/ManuEtt/Dnd/actions/runs/40922492508/artifacts/12918224840) ·
+[ARM64-Alpha](https://github.com/ManuEtt/Dnd/actions/runs/40922492508/artifacts/12918823598).
+Quell-ZIP-SHA256: `9070e1754b5d2838121f320a54c8d1fa5d93120b51f4f7bea6f47db51844116a`;
+APK-SHA256: `4fdf28d6581dd94d7cbcdc7f00f470b313c249cd52d45c3d1ae454b20ae69c79`.
 
-Quellen: offizielles SRD 5.2.1, S.8–9/49/63/83/93–95, CC BY 4.0;
-THIRD_PARTY_NOTICES.md unverändert. [Fachnachweis](docs/CHARACTER_MONK_TOOL_PROFICIENCY_20261029.md).
-`RULE-EQUIPMENT-TOOLS` / `EQUIP-CHOICES` bleiben konservativ `partial`.
+**NICHT GETESTET:** echtes Android-Gerät/TalkBack, installiertes Altversionsupgrade,
+produktive Release-Signatur. **BLOCKIERT:** kein angeschlossenes Testgerät;
+kein Code-/GitHub-Zugriffsblocker. **NOCH NICHT IMPLEMENTIERT:** vollständiger
+Charakter-Wizard und übrige Spezies-/Klassen-/Talent-/Zauberpflichtwahlen;
+ausgeführte Werkzeugaktionen samt Würfel-/Zeit-/Materialtransaktion.
+`RULE-EQUIPMENT-TOOLS` / `EQUIP-CHOICES` bleiben `partial`; 1.419 Prüfaufträge
+und neun Inventurlücken sind kein globaler SRD-Fertigstellungsprozentsatz.
 
-Arbeits-PR: [#390](https://github.com/ManuEtt/Dnd/pull/390); maßgeblich sind dessen aktuelle Checks, nicht die bewusst beendeten Zwischenläufe.
+Der eigene Produktbranch wurde nach grüner Main-CI durch
+[Cleanup 40924681196](https://github.com/ManuEtt/Dnd/actions/runs/40924681196)
+remote entfernt, exakt als
+`archive/merged-20261027/feat/character-monk-tool-proficiency-20261029-53e8e72a58dc`
+erhalten; fünf aktive fremde PR-Branches bleiben bestehen.
 
-Nächster begrenzter Charakter-Schritt: die drei Barden-Instrumentübungen und die
-Bindung des Paket-A-Instruments an eine davon ausdrücklich wählen und dauerhaft
-belegen. Zuerst amtlichen SRD-Kerntrait prüfen; bestehende v1/v2/v3-Belege nicht
-rückwirkend verschärfen. Keine automatische Nachvergabe, Gegenfälle/SQLite/UI/CI
-wie im aktuellen Paket. Keine automatische Arbeit nach Sitzungsende.
+Amtliches SRD 5.2.1 S.8–9/49/63/83/93–95, CC BY 4.0;
+THIRD_PARTY_NOTICES.md erhalten. Regel-/Story-Grenze und KI-Autorität unverändert.
+Dieser anschließende Dokumentationsabschluss auf Branch
+`docs/monk-tool-abnahme-20261029` ändert keine App-, Backend-, Skript- oder
+Workflowdatei und erhöht keine Version. Seine statischen/Python-Prüfungen sind
+separat; keine neue APK/Produkt-CI für den reinen Dokumentationskopf behaupten.
+
+**Nächster Schritt:** drei Barden-Instrumentübungen und Paket-A-Instrumentbindung
+nach amtlicher SRD-Quellenprüfung ausdrücklich auswählen und persistent belegen.
+Neue Entscheidung kompatibel versionieren; v1/v2/v3 weder verschärfen noch mit
+vermuteten Übungen anreichern. DoD: gültige/ungültige Instrument-IDs, drei eindeutige
+Übungen, Paket A/B, Abbruch/Retry/stale Revision, Alt-JSON/SQLite-Neustart und
+320/360 dp bei 200 %/IME/Semantik, danach komplette Prüfkette und finale PR-CI.
+Keine automatische Fortsetzung nach Sitzungsende.
 
 ---
+
+## Historischer Verlauf – frühere Aussagen gelten für ihren jeweiligen Stand
 
 ## Abnahme 28.10.2026 – Charakter-Symbolwahl / Alpha 0.8.47+97
 
