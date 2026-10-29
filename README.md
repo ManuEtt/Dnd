@@ -30,7 +30,9 @@ Eine tatsächlich reproduzierte UI-Sperre beim Mönch→Barbar→Mönch-Rückwec
 bereits übernommenem Paket ist behoben; gleiche Klasse/gleiches Paket erhalten
 bereits bestätigte Entscheidungen. Keine doppelte Gold-/Ausrüstungsvergabe.
 
-**GETESTET:** 65 gezielte Domain-/SQLite-Fälle, 17 Dialog-, 14 Vorschau- und
+**KORRIGIERTE REGRESSIONEN:** Der komplette Vorlauf auf `be758357` hatte genau einen Fehler: die bisher feste Audit-Anzahl 11 ignorierte den neuen zwölften Mönch-Pflichtschritt. Erwartung und explizite Prüfung „Werkzeugwahl fehlt“ wurden ergänzt; kein Test deaktiviert. [CI 40918212562](https://github.com/ManuEtt/Dnd/actions/runs/40918212562) ist deshalb rot und keine Abnahme. Eine zusätzliche neue Gegenprobe reproduzierte fehlenden Rüstungsnachteil für ausdrücklich gewählte Geschicklichkeit (Heimlichkeit); die Vorschau berücksichtigt ihn jetzt, ohne ihn auf andere Attribute zu übertragen. 92 betroffene Domain-/SQLite-/Audit-/Panel-Fälle bestanden anschließend. Vollständige Wiederholung und neue finale CI sind erforderlich.
+
+**GETESTET:** 66 gezielte Domain-/SQLite-Fälle, 17 Dialog-, 14 Vorschau- und
 15 Editor-Widgetfälle bestanden. Darunter alle 27 Varianten mit A/B, alle zwölf
 historischen Klassen/Kits in v1/v2, falsche/fehlende Quellen, doppelte Übungen,
 JSON/SQLite-Neustart, stale Editor ohne Änderungen aller sechs Tabellen sowie

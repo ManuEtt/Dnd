@@ -74,6 +74,7 @@ class CharacterRuleEngine {
       ability,
       proficient: true,
       skill: recordedSkill,
+      stealth: ability == 'dexterity' && recordedSkill == 'Heimlichkeit',
     );
     return D20Rule(
       base.modifier,

@@ -5,6 +5,7 @@ import 'package:lebendiger_spielleiter/domain/ability_generation.dart';
 import 'package:lebendiger_spielleiter/domain/character_rule_engine.dart';
 import 'package:lebendiger_spielleiter/domain/fighter_creation_rules.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
+import 'package:lebendiger_spielleiter/domain/srd_equipment_catalog.dart';
 import 'package:lebendiger_spielleiter/domain/srd_background_package.dart';
 import 'package:lebendiger_spielleiter/domain/srd_character_classes.dart';
 import 'package:lebendiger_spielleiter/domain/srd_character_creation_audit.dart';
@@ -456,6 +457,45 @@ void main() {
         ).minimumNatural,
         0,
       );
+    },
+  );
+  test(
+    'Bestätigte Geschicklichkeit-Heimlichkeit berücksichtigt laute trainierte Rüstung',
+    () {
+      final armor = SrdEquipmentCatalog.byId('armor-scale-mail')!;
+      final hero = _hero(_choice('item-lute', kit: 1)).copyWith(
+        skills: const ['Heimlichkeit'],
+        equippedArmorId: 'scale',
+        equippedArmorTrained: true,
+        inventory: [
+          InventoryItem(
+            id: 'scale',
+            name: armor.name,
+            catalogId: armor.id,
+            stats: InventoryItemStats.fromCatalog(armor),
+          ),
+        ],
+      );
+      final dex = CharacterRuleEngine.toolCheck(
+        hero,
+        'dexterity',
+        toolCatalogId: 'item-lute',
+        relevantSkill: 'Heimlichkeit',
+      );
+      expect(dex.modifier, 4);
+      expect(dex.advantage, isTrue);
+      expect(dex.disadvantage, isTrue);
+      expect(dex.normalRoll, isTrue);
+      // Armor's published penalty specifies Dexterity (Stealth), not any
+      // alternative ability the GM may explicitly call for.
+      final alternative = CharacterRuleEngine.toolCheck(
+        hero,
+        'charisma',
+        toolCatalogId: 'item-lute',
+        relevantSkill: 'Heimlichkeit',
+      );
+      expect(alternative.advantage, isTrue);
+      expect(alternative.disadvantage, isFalse);
     },
   );
 }
