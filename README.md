@@ -1,5 +1,9 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## 29.10.2026 – Chat C: Charakter-Navigation bei 200 % Systemschrift
+
+Auf schmalen Android-Geräten (320/360 dp) teilt sich die fest angeheftete Charakter-Navigation bei mindestens 180 % Textskalierung auf **zwei statt einer Reihe** auf. Alle fünf echten Aktionen (Charakter, Inventar, W20, Zauber, Mehr) bleiben mit mehrzeiligen, nicht künstlich verkleinerten Beschriftungen und unveränderten Callbacks erreichbar. Bei normaler Schrift bleibt das bekannte einreihige Dock erhalten. Neue Widgettests decken Schriftgröße, Touch, ursprüngliches Layout und geöffnete Tastatur ab. Kein Regel- oder Spielstandsformat wurde verändert. [Fortschritt](docs/parallel/CHAT_C_CHECKPOINT.md).
+
 Deutschsprachige Fantasy-Solo-App für Android mit lokalen Charakteren,
 Kampagnen, ausgewählten D&D-SRD-5.2.1-Regeln und optionalem KI-Erzähler.
 **Alpha 0.8.47+97**; lokales Spielen benötigt keinen Account oder KI-Server.

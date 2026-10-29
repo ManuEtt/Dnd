@@ -1,3 +1,18 @@
+## 29.10.2026 – Chat C: Zugängliche feste Navigation im Charakterbogen
+
+- **Basis-main:** `1dc8d076786dbfb6a6792b6653bd1457bd7992d9`.
+- **Branch:** `feat/chat-c/character-nav-large-text-20261029` (separat von PR #359 und #365); **Code-/Test-Commits:** `cf973d8a6da7a26ed243db095738706b1727c42d`, `0c003f1bd8891f73f9645c0d983faf636ce653bd`, `9504955b2077e92b7f15b7e6510573157a23b82f`; finalen PR-HEAD prüfen.
+- **Ausgangsproblem:** Das untere Charakter-Dock stellt fünf Buttons selbst bei 200 % Android-Textgröße in einer schmalen Zeile dar und schrumpft Beschriftungen via `FittedBox(scaleDown)`, wodurch die barrierefreie Schriftgröße verloren gehen kann.
+- **Akzeptanz:** Bei 320/360 dp und 200 % Systemschrift zweireihige feste Navigation mit allen fünf echten Aktionen; Charakter-/Inventar-/Zauber-/Mehr-Labels ohne Schrumpfung und maximal zwei Zeilen. Standardtext behält eine Zeile, alle Callbacks funktionieren unverändert, geöffnete Tastatur verdeckt keine Aktion.
+- **IMPLEMENTIERT:** `app/lib/ui/fantasy_character_overview.dart`: `LayoutBuilder` wählt bei mindestens 1,8-facher Textskala und weniger als 500 dp zwei Reihen. Zentraler W20-Button in extrahierter `_rollAction` bleibt unverändert. `_action` zeigt bei großer Schrift mehrzeilige Textlabels ohne `FittedBox`.
+- **TESTS ERGÄNZT:** `app/test/fantasy_character_quick_navigation_large_text_test.dart`: positive Fälle 320/360 dp/200 % mit Layoutgeometrie und fünf echten Taps; Negativfall 320 dp Standardtext/einreihig; Android-IME-Inset bei 320 dp/200 %.
+- **GETESTET:** Main/PR-Konfliktanalyse, vorhandene Referenz-/Navigations-Widgettests, Masterprompt und Quellcode. Kein paralleler Eingriff in Quest-HUD aus Chat C PR #365 oder Tastaturtest aus #359.
+- **NICHT GETESTET:** Flutter-/Dart-/Android-CI und reales Gerät bis erfolgreichem finalen GitHub-Workflow; lokal kein Flutter-SDK. Kein Merge.
+- **NICHT IMPLEMENTIERT:** Keine Domain, Story, Savegame, SQL, Regel-, Controller- oder Backend-Mutation. Keine Migration.
+- **Nächster Schritt:** PR erstellen, gesamten GitHub-Lauf inklusive Format/Analyze/Widgettests und APK prüfen, etwaige Fehlschläge auf diesem Branch beheben. Realgerät-Test bleibt separat.
+
+---
+
 ## 28.10.2026 – Chat C: Inventardialog bei großen Beschreibungen bedienbar halten
 
 - **Ausgangs-Main:** `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78` (App `0.8.46+96`).

@@ -1,5 +1,13 @@
 # Codex-Checkpoint – Würfelraunen
 
+## 29.10.2026 – Chat C: Zweireihige Charakter-Schnellnavigation bei 200 % Schrift
+
+**Basis-main:** `1dc8d076786dbfb6a6792b6653bd1457bd7992d9`. **Branch:** `feat/chat-c/character-nav-large-text-20261029`. **IMPLEMENTIERT:** `app/lib/ui/fantasy_character_overview.dart`: fünf feste Aktionen ab mindestens 180 % Textskalierung und weniger als 500 dp Breite auf zwei Reihen verteilt; Aktionsbeschriftungen ohne `FittedBox`-Schrumpfung und mit zweizeiligem Text. Die normale einreihige Navigation und alle Spiel-Callbacks bleiben erhalten. **TESTS ERGÄNZT:** `app/test/fantasy_character_quick_navigation_large_text_test.dart` für 320/360 dp mit 200 % Schrift, Originalbelegung bei Normaltext und IME-Inset. **GETESTET:** neueste main-Basis, vollständige Masterprompt-Zuständigkeit, konkurrierende PR-Dateien und vorhandene Widgettests via GitHub überprüft. **NICHT GETESTET:** Dart-Format, Analyzer, Widget- und Gesamttests, APK/native und reales TalkBack-Gerät vor Abschluss der GitHub-CI auf finalem PR-HEAD. **BLOCKIERT:** Lokale SDK-Ausführung nicht verfügbar. **NICHT IMPLEMENTIERT:** Domain-/Story-/Regel-/Schemaänderungen, Geräteabnahme. **KOORDINATION:** PR #359 betrifft nur andere Tests, PR #365 Quest-HUD; gemeinsame README-/Checkpoint-Änderungen bei Integration konsolidieren.
+
+**Nächster Schritt:** Formatter und Flutter-CI auf eigenem Branch vollständig auswerten, Abweichungen beheben, dann reale 320-dp-Android-Prüfung bei 200 % Systemschrift und aufgeklappter Tastatur.
+
+---
+
 ## Abnahme 28.10.2026 – Charakter-Symbolwahl / Alpha 0.8.47+97
 
 **IMPLEMENTIERT:** Kleriker/Paladin wählen im Klassenpaket A ausdrücklich Amulett,
