@@ -1,12 +1,13 @@
 ## 29.10.2026 – Chat C: Heldenidentität auf schmalen Displays vollständig darstellen
 
-- **Basis-main:** `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`; **Branch:** `fix/chat-c/active-hero-identity-large-text-20261029`.
+- **Basis-main:** `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`; **Branch:** `fix/chat-c/active-hero-identity-large-text-20261029`; **PR:** [#379](https://github.com/ManuEtt/Dnd/pull/379) (Draft).
 - **Code-/Test-Commits:** `e5b7c5cf87591fbafd73ed8c81b0dfe2b4196e33`, `f01428693ee9d227cee01277d2fa5b19ffeadf88`; finaler PR-HEAD nach Dokumentation gesondert ermitteln.
 - **Ausgangsproblem:** `FantasyActiveHeroCard` kürzte Hero-Name auf 2, Spezies/Klasse auf 3 und Kampagnentitel auf 1 Zeile. Bei Android-Systemschrift 200 % und 320/360 dp wird wichtige Identität nicht mehr sichtbar.
 - **Akzeptanz:** Alle bestätigten Namen bei 200 % auf 320/360 dp vollständig sichtbar; Porträt oberhalb der Identität; keine Textskalierungsverkleinerung; Standardansicht unverändert kompakt. Echte Buttons nutzbar, keine Datennachbearbeitung.
 - **IMPLEMENTIERT:** `app/lib/ui/fantasy_campaign_dashboard.dart`: responsiver `Flex` und `LayoutBuilder`, Umbruch unter 500 dp ab Faktor 1.8, dann `maxLines: null`, `TextOverflow.visible`. Standardfall behält Row, Porträt links und originale `maxLines`-Grenzen.
 - **TESTS ERGÄNZT:** `app/test/fantasy_active_hero_identity_large_text_test.dart`: 320/360 dp mit 200 %, Textproperties, Porträt-/Text-Geometrie, Trefferpunkte/RK/Tempo, Callback- und Speicherzustands-Regression; 360 dp Standardansicht als Negativfall.
 - **KONFLIKTE:** Kein geänderter Produktions- oder Testpfad anderer offener Chat-A/B/D- oder Chat-C-PRs; README/Checkpoints als gemeinsame Dokumentation beim Merge erhalten.
+- **FORMATDIAGNOSE:** Frühere CI auf Codecommit [#40833375198](https://github.com/ManuEtt/Dnd/actions/runs/40833375198) scheiterte am Dart-Formatgate. Isolierter offizieller [Flutter-Formatter #40833543711](https://github.com/ManuEtt/Dnd/actions/runs/40833543711) erfolgreich; drei genaue Testformatierungen übernommen und temporären Diagnoseworkflow entfernt. Finale CI gesondert prüfen.
 - **GETESTET:** aktuellen GitHub-main, offene PRs, Masterprompt und vorhandene Dashboardtests geprüft. Noch keine bestätigte GitHub-Actions-CI und keine physische Android-/TalkBack-Abnahme.
 - **NICHT IMPLEMENTIERT:** Keine Domain-, Controller-, Regel-, Story-, JSON-/SQLite-Änderungen, kein Merge.
 - **NÄCHSTER SCHRITT:** vollständige CI auswerten, Fehler im eigenen Branch beheben und 320-dp-Android-Gerät mit 200 % Schrift prüfen.

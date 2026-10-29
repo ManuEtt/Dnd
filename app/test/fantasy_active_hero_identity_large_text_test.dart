@@ -67,13 +67,18 @@ void main() {
       expect(campaign.overflow, TextOverflow.visible);
       final portrait = find.byKey(const ValueKey('active-hero-portrait'));
       final identity = find.byKey(const ValueKey('active-hero-identity'));
-      expect(tester.getTopLeft(identity).dy, greaterThan(tester.getBottomLeft(portrait).dy));
+      expect(
+        tester.getTopLeft(identity).dy,
+        greaterThan(tester.getBottomLeft(portrait).dy),
+      );
       expect(find.text('24 / 30'), findsOneWidget);
       expect(find.text('16'), findsOneWidget);
       expect(find.text('9 m'), findsOneWidget);
       expect(tester.takeException(), isNull);
 
-      final continueButton = find.byKey(const ValueKey('fantasy-hero-continue'));
+      final continueButton = find.byKey(
+        const ValueKey('fantasy-hero-continue'),
+      );
       await tester.ensureVisible(continueButton);
       await tester.tap(continueButton);
       final archiveButton = find.byKey(const ValueKey('fantasy-hero-archive'));
@@ -113,7 +118,10 @@ void main() {
     await tester.pumpAndSettle();
     final portrait = find.byKey(const ValueKey('active-hero-portrait'));
     final identity = find.byKey(const ValueKey('active-hero-identity'));
-    expect(tester.getTopLeft(identity).dx, greaterThan(tester.getTopRight(portrait).dx));
+    expect(
+      tester.getTopLeft(identity).dx,
+      greaterThan(tester.getTopRight(portrait).dx),
+    );
     expect(tester.widget<Text>(find.text(longName)).maxLines, 2);
     expect(tester.widget<Text>(find.text(longCampaign)).maxLines, 1);
     expect(tester.takeException(), isNull);
