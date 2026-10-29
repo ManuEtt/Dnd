@@ -91,9 +91,10 @@ class SrdMagicMissileEncounterHpRules {
         allocation.dartCount != damage.dartCount ||
         allocation.dartTargetIds.length != damage.darts.length ||
         allocation.dartsPerTarget.length != damage.appliedPerTarget.length ||
-        allocation.dartsPerTarget.keys.toSet().difference(
-          damage.appliedPerTarget.keys.toSet(),
-        ).isNotEmpty) {
+        allocation.dartsPerTarget.keys
+            .toSet()
+            .difference(damage.appliedPerTarget.keys.toSet())
+            .isNotEmpty) {
       throw const FormatException(
         'Zauberplatz, Geschossverteilung und Schadensziele widersprechen sich.',
       );
