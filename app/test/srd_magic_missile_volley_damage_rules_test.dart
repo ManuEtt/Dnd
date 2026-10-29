@@ -160,10 +160,7 @@ void main() {
 
   test('shielded targets reject rolls; unshielded require valid d4', () {
     final withRolls = _resolve;
-    expect(
-      () => withRolls(targets: const [_shielded]),
-      throwsFormatException,
-    );
+    expect(() => withRolls(targets: const [_shielded]), throwsFormatException);
     for (final roll in [null, 0, -1, 5]) {
       expect(
         () => _resolve(
@@ -226,10 +223,7 @@ void main() {
     expect(result.appliedTotal, 9);
     expect(result.darts.length, 3);
     expect(() => result.darts.clear(), throwsUnsupportedError);
-    expect(
-      () => result.appliedPerTarget['a'] = 999,
-      throwsUnsupportedError,
-    );
+    expect(() => result.appliedPerTarget['a'] = 999, throwsUnsupportedError);
     expect(() => result.rawPerTarget.clear(), throwsUnsupportedError);
   });
 }
