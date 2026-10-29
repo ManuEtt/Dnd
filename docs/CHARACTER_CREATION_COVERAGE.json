@@ -5,14 +5,14 @@
   "source_section": "Character Creation, p. 21; Classes; Character Origins",
   "license": "CC-BY-4.0",
   "as_of": "2026-10-28",
-  "baseline_main_sha": "37a6142ea791a607c78065b50aa66fda90acda5c",
-  "pr": 369,
+  "baseline_main_sha": "fde0ef6ed8b419d6a31c701a03aa05d61994c352",
+  "pr": null,
   "coverage_complete": false,
   "all_required_choices_covered": false,
   "android_device_tested": false,
   "ci_final_head_verified": false,
   "existing_requirement_registers_unchanged": false,
-  "status_note": "Symbolwahl lokal und final in PR-/Produkt-Main-CI bestanden. Gesamte Charaktererstellung bleibt unvollständig; Details im CODEX_CHECKPOINT. Nachfolgende Dokumentationsänderungen sind separat statisch geprüft und kein neuer APK-Produktstand.",
+  "status_note": "Mönch-Werkzeugquelle/Paketbindung und Probenvorschau lokal gezielt geprüft; aktuelle Vollsuite/CI separat. Vollständige Charaktererstellung bleibt offen.",
   "requirements": [
     {
       "id": "CHAR-ABILITY-STANDARD-ARRAY",
@@ -561,6 +561,31 @@
       "note": "Version2 für neue Klassenbestätigungen; v1 unverändert und ohne Nachvergabe lesbar. Bestätigt Ausrüstungswahl/typisierte Gegenstände, nicht sämtliche Klassen-, Zauber- oder Fokusmechaniken.",
       "ci_run": 40758951956,
       "tested_product_commit": "49b98d8aef7ae0e521320628b053c149c849dea0"
+    },
+    {
+      "id": "CHAR-MONK-TOOL-PROFICIENCY",
+      "title": "Mönch-Erstklasse: ausdrückliche Werkzeugübung und identischer A-Paketgegenstand",
+      "status": "partial",
+      "source": "SRD 5.2.1 pp.49,8–9,63,83,93–95",
+      "register_requirement_id": "RULE-EQUIPMENT-TOOLS",
+      "code": [
+        "app/lib/domain/starting_class_choice.dart",
+        "app/lib/domain/tool_proficiency_rules.dart",
+        "app/lib/domain/character_rule_engine.dart"
+      ],
+      "ui": [
+        "app/lib/ui/srd_class_selection_dialog.dart",
+        "app/lib/ui/character_editor.dart",
+        "app/lib/ui/tool_proficiency_panel.dart"
+      ],
+      "tests": [
+        "app/test/monk_tool_proficiency_rules_test.dart",
+        "app/test/monk_tool_storage_test.dart",
+        "app/test/srd_monk_tool_creation_dialog_test.dart",
+        "app/test/tool_proficiency_panel_test.dart",
+        "app/test/character_start_class_ui_test.dart"
+      ],
+      "note": "V3; v1/v2 kompatibel. Keine ungeprüften Werkzeugaktionen oder vollständiger Wizard behauptet."
     }
   ],
   "classes": [
@@ -749,7 +774,7 @@
       "backend": 72
     }
   },
-  "work_branch": "feat/character-holy-symbol-choice-20261028",
+  "work_branch": "feat/character-monk-tool-proficiency-20261029",
   "local_acceptance": {
     "source_commit": "7ac32b1cb9e63ce35eb458d87e4b84d86526706a",
     "flutter_tests": 2265,

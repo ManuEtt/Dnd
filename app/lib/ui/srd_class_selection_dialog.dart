@@ -53,6 +53,7 @@ class SrdClassSelectionDialog extends StatefulWidget {
     required this.constitutionScore,
     required this.hasExistingHitPoints,
     required this.allowEquipment,
+    this.currentStartingClassChoice,
   });
 
   final String currentClass;
@@ -63,6 +64,7 @@ class SrdClassSelectionDialog extends StatefulWidget {
   final int? constitutionScore;
   final bool hasExistingHitPoints;
   final bool allowEquipment;
+  final StartingClassChoice? currentStartingClassChoice;
 
   @override
   State<SrdClassSelectionDialog> createState() =>
@@ -79,6 +81,16 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
   String? _error;
   String? _fighterStyle;
   final Set<String> _fighterMasteries = {};
+  String? _monkToolId;
+
+  bool get _needsMonkTool =>
+      widget.isNewCharacter && _selectedClass.name == 'Mönch';
+
+  bool get _monkToolLocked =>
+      !widget.allowEquipment &&
+      widget.currentStartingClassChoice?.className == 'Mönch' &&
+      widget.currentStartingClassChoice!.version >= 3 &&
+      widget.currentStartingClassChoice!.kitIndex == 0;
 
   @override
   void initState() {
@@ -93,6 +105,9 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
         !widget.hasExistingHitPoints &&
         widget.characterLevel == 1 &&
         widget.constitutionScore != null;
+    if (widget.currentStartingClassChoice?.className == _selectedClass.name) {
+      _monkToolId = widget.currentStartingClassChoice?.toolProficiencyCatalogId;
+    }
   }
 
   StartingHitPoints? get _startingHitPoints {
@@ -114,6 +129,20 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
 
   void _accept() {
     try {
+      final equipmentChoices = Map<String, String>.of(_equipmentChoices);
+      if (_needsMonkTool) {
+        if (!StartingEquipmentImport.monkTools.any(
+          (e) => e.id == _monkToolId,
+        )) {
+          throw const FormatException(
+            'Eine Handwerkszeug- oder Instrumentübung für den Mönch wählen.',
+          );
+        }
+        if (widget.allowEquipment && _kitIndex == 0) {
+          equipmentChoices[StartingEquipmentImport.monkToolLabel] =
+              _monkToolId!;
+        }
+      }
       FighterStartingChoices? fighterChoices;
       if (_selectedClass.name == 'Kämpfer') {
         fighterChoices = FighterStartingChoices(
@@ -124,7 +153,7 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
       if (widget.allowEquipment && _kitIndex >= 0) {
         StartingEquipmentImport.validateKitChoices(
           _selectedClass.kits[_kitIndex],
-          _equipmentChoices,
+          equipmentChoices,
         );
       }
       final selection = SrdClassSelection(
@@ -147,15 +176,16 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
               ? startingHitPoints != null
               : _useHp && _startingHitPoints != null,
           fighterChoices: fighterChoices,
-          equipmentChoices: Map.unmodifiable(_equipmentChoices),
+          equipmentChoices: Map.unmodifiable(equipmentChoices),
           startingClassChoice:
               widget.isNewCharacter && widget.characterLevel == 1
               ? StartingClassChoice.confirmed(
                   className: selection.characterClass.name,
                   skills: selection.skills,
                   kitIndex: selection.kitIndex,
-                  equipmentChoices: _equipmentChoices,
+                  equipmentChoices: equipmentChoices,
                   fighterChoices: fighterChoices,
+                  toolProficiencyCatalogId: _needsMonkTool ? _monkToolId : null,
                 )
               : null,
         ),
@@ -200,7 +230,7 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
                   DropdownMenuItem(value: value, child: Text(value.name)),
               ],
               onChanged: (value) {
-                if (value == null) return;
+                if (value == null || value.name == _selectedClass.name) return;
                 setState(() {
                   _selectedClass = value;
                   _skills.clear();
@@ -208,11 +238,43 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
                   _equipmentChoices.clear();
                   _fighterStyle = null;
                   _fighterMasteries.clear();
+                  _monkToolId =
+                      widget.currentStartingClassChoice?.className == value.name
+                      ? widget
+                            .currentStartingClassChoice
+                            ?.toolProficiencyCatalogId
+                      : null;
                   _error = null;
                 });
               },
             ),
             const SizedBox(height: 12),
+            if (_needsMonkTool) ...[
+              DropdownButtonFormField<String>(
+                key: const ValueKey('srd-monk-tool-proficiency'),
+                initialValue: _monkToolId,
+                isExpanded: true,
+                itemHeight: null,
+                decoration: InputDecoration(
+                  labelText: 'Werkzeug- oder Instrumentübung',
+                  helperText: _monkToolLocked
+                      ? 'Mit dem bereits übernommenen Paket verbunden.'
+                      : 'Auch bei Startgold erforderlich. Paket A enthält genau dieses Werkzeug.',
+                  helperMaxLines: 4,
+                ),
+                items: [
+                  for (final entry in StartingEquipmentImport.monkTools)
+                    DropdownMenuItem(value: entry.id, child: Text(entry.name)),
+                ],
+                onChanged: _monkToolLocked
+                    ? null
+                    : (id) => setState(() {
+                        _monkToolId = id;
+                        _error = null;
+                      }),
+              ),
+              const SizedBox(height: 12),
+            ],
             Text('Trefferwürfel: W${_selectedClass.hitDie}'),
             if (widget.characterLevel == 1)
               Text(
@@ -388,7 +450,9 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
                 Text('Startgold: ${_selectedClass.kits[_kitIndex].gold} GM'),
                 for (final item in _selectedClass.kits[_kitIndex].items) ...[
                   Text('• ${item.quantity} × ${item.name}'),
-                  if (StartingEquipmentImport.optionsFor(item).isNotEmpty)
+                  if (StartingEquipmentImport.optionsFor(item).isNotEmpty &&
+                      (!_needsMonkTool ||
+                          item.name != StartingEquipmentImport.monkToolLabel))
                     Padding(
                       padding: const EdgeInsets.only(top: 8, bottom: 8),
                       child: DropdownButtonFormField<String>(

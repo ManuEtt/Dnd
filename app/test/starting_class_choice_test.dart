@@ -22,6 +22,9 @@ StartingClassChoice choiceFor(SrdCharacterClass klass, {int? kitIndex}) {
           if (StartingEquipmentImport.optionsFor(item).isNotEmpty)
             item.name: StartingEquipmentImport.optionsFor(item).last.id,
     },
+    toolProficiencyCatalogId: klass.name == 'Mönch'
+        ? StartingEquipmentImport.monkTools.last.id
+        : null,
     fighterChoices: klass.name == 'Kämpfer'
         ? FighterStartingChoices(
             styleId: 'defense',
@@ -91,6 +94,7 @@ void main() {
                     (i) => i.catalogId.isEmpty || i.stats == null,
                   ) ||
                   (klass.name == 'Mönch' &&
+                      initial.startingClassChoice!.version < 3 &&
                       initial.startingClassChoice!.equipmentChoices.isNotEmpty))
               ? CreationStepStatus.notAutomated
               : CreationStepStatus.confirmed,
@@ -143,7 +147,7 @@ void main() {
     final valid = choiceFor(srdCharacterClasses.first).toJson();
     for (final patch in <Map<String, dynamic>>[
       {'version': 1.0},
-      {'version': 3},
+      {'version': 4},
       {'className': 'fighter'},
       {'className': 'Erfundene Klasse'},
       {
@@ -225,25 +229,16 @@ void main() {
     },
   );
 
-  test(
-    'Mönch-Paket verlangt noch den strukturierten Nachweis derselben Werkzeugübung',
-    () {
-      final hero = heroFor(choiceFor(findSrdClass('Mönch')!, kitIndex: 0));
-      expect(
-        hero.inventory.every((i) => i.catalogId.isNotEmpty && i.stats != null),
-        isTrue,
-      );
-      expect(
-        statuses(hero)['class.equipment'],
-        CreationStepStatus.notAutomated,
-      );
-      expect(statuses(hero)['class.selection'], CreationStepStatus.confirmed);
-      final report = SrdCharacterCreationAudit.inspect(
-        hero,
-      ).singleWhere((step) => step.id == 'class.equipment');
-      expect(report.detail, contains('Werkzeugübung'));
-    },
-  );
+  test('Mönch-v3 belegt dieselbe Werkzeugübung und Ausrüstung', () {
+    final hero = heroFor(choiceFor(findSrdClass('Mönch')!, kitIndex: 0));
+    expect(
+      hero.inventory.every((i) => i.catalogId.isNotEmpty && i.stats != null),
+      isTrue,
+    );
+    expect(statuses(hero)['class.equipment'], CreationStepStatus.confirmed);
+    expect(statuses(hero)['class.tools'], CreationStepStatus.confirmed);
+    expect(statuses(hero)['class.selection'], CreationStepStatus.confirmed);
+  });
 
   test(
     'Widersprüche werden geprüft, historische Ausrüstung nie neu vergeben',
