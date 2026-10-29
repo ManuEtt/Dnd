@@ -1,3 +1,19 @@
+## 29.10.2026 – Chat C: vollständige Charakteridentität bei großer Schrift
+
+- **Ausgangs-main:** `fde0ef6ed8b419d6a31c701a03aa05d61994c352` (App `0.8.47+97`). Bei Beginn keine offenen PRs; vorherige 24er-Integration ist in main und Main-Android-CI [40867945743](https://github.com/ManuEtt/Dnd/actions/runs/40867945743) erfolgreich.
+- **Branch:** `feat/chat-c/sheet-header-large-text-20261029`; **PR:** [#388](https://github.com/ManuEtt/Dnd/pull/388) (Draft); **Code-/Test-HEAD vor Dokumentation:** `1e4fdbe970c8f526a1d408e9085b89f9076237d6`. Finalen Dokumentations-HEAD separat über GitHub prüfen.
+- **Ausgangsproblem:** Charakterbogen-Header zeigt Namen, Klasse, Unterklasse und Hintergrund bei 320/360 dp und 200 % Schrift neben dem Porträt mit höchstens zwei Zeilen und Ellipse.
+- **IMPLEMENTIERT:** Ab Textskalierung 1,8 und bei unter 500 dp Inhaltsbreite stapelt der Charakterbogen Porträt und Identität; alle vier Identitätsfelder behalten den vollständigen Text. Normale Textskalierung behält Querlayout und kompakte Zeilen.
+- **TESTS ERGÄNZT:** `app/test/fantasy_character_header_large_text_test.dart`: zwei 200-%-Breiten (320/360 dp), Standardlayout mit Bearbeiten-Callback, Altcharakter ohne Namen. Tests prüfen Geometrie, Zeilenlimit/Overflow, unverändertes JSON und Flutter-Ausnahmen.
+- **GETESTET:** Aktuelle Main-/PR-/Action-Informationen, tatsächlichen Headerquellcode, bestehende Flutter-Widgettests und Test-Fixturnutzung über GitHub geprüft. Eigener Branch, zwei Commits und PR tatsächlich erstellt. **Main-CI** [40867945743](https://github.com/ManuEtt/Dnd/actions/runs/40867945743) erfolgreich, aber nicht für diese Änderung.
+- **NICHT GETESTET:** Neuer Flutter-Code/Test auf finalem Commit durch `dart format`, `flutter analyze`, `flutter test`, Debug-/Alpha-APK, Python-/Backend- und native Android-Gates noch nicht abgenommen; GitHub CI auf finalem Head prüfen. Kein echter Android-Geräte-/TalkBack-Test.
+- **BLOCKIERT:** Im lokalen Container kein Dart-/Flutter-SDK und kein DNS-Git-Checkout; CI erforderlich. Bis grün und Review keine Integration.
+- **NOCH NICHT IMPLEMENTIERT:** Vollständige Geräte- und Screenreader-Abnahme.
+- **Dateien:** `app/lib/ui/fantasy_character_sheet.dart`, `app/test/fantasy_character_header_large_text_test.dart`, dieser Checkpoint, `docs/CODEX_CHECKPOINT.md`, `README.md`. Keine Schema-, JSON-, API-, Regel- oder Storyänderung; keine Migration.
+- **Nächster eigenständiger Schritt:** Passivwahrnehmungs- und Klassenmerkmalbereiche des Charakterbogens bei 320 dp / 200 % Text auf sichtbare Werte und Touch-Bedienbarkeit prüfen, mit positiver/negativer Widgetregression, ohne Regelmutation.
+
+---
+
 ## Integrationskandidat 29.10.2026 – Chat C
 
 Zusammengeführte Fachpakete: [#359](https://github.com/ManuEtt/Dnd/pull/359), [#365](https://github.com/ManuEtt/Dnd/pull/365), [#374](https://github.com/ManuEtt/Dnd/pull/374), [#376](https://github.com/ManuEtt/Dnd/pull/376), [#379](https://github.com/ManuEtt/Dnd/pull/379), [#382](https://github.com/ManuEtt/Dnd/pull/382). Die ursprünglichen Branch-HEADs, PR-Beschreibungen, Tests, bekannte Grenzen und Statusmeldungen sind im [Integrationsjournal](INTEGRATION_20261029.md) mit Git-Historie dokumentiert. **Dieser Stand ist weder auf main integriert noch gemeinsam CI-abgenommen; Drafts sind nicht freigegeben.** Bisherige Checkpoint-Einträge bleiben erhalten.
