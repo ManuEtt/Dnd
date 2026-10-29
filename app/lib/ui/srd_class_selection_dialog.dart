@@ -374,11 +374,14 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
                       child: Text(_selectedClass.kits[i].label),
                     ),
                 ],
-                onChanged: (value) => setState(() {
-                  _kitIndex = value ?? -1;
-                  _equipmentChoices.clear();
-                  _error = null;
-                }),
+                onChanged: (value) {
+                  if ((value ?? -1) == _kitIndex) return;
+                  setState(() {
+                    _kitIndex = value ?? -1;
+                    _equipmentChoices.clear();
+                    _error = null;
+                  });
+                },
               ),
               if (_kitIndex >= 0) ...[
                 const SizedBox(height: 8),
@@ -395,6 +398,7 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
                         decoration: InputDecoration(
                           labelText: '${item.name} konkret auswählen',
                           helperText: 'Nur Gegenstände aus dem SRD-Katalog',
+                          helperMaxLines: 3,
                         ),
                         items: [
                           for (final entry

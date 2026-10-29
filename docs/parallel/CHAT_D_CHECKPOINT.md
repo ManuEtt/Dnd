@@ -1,14 +1,25 @@
-# Chat D D-015 – Releaseversion vor parallelen Alpha-Bündelungen sperren (28.10.2026)
+# Chat D – Integration von PR #358 nach Checkpoint-Fix #363 (29.10.2026)
 
-- **Ausgangs-main-SHA:** `ab8bef62039a2c4df04ee0cbecf0baebfefc8d78`; **Branch:** `fix/chat-d/alpha-release-version-lock-20261028`; **PR:** [#358](https://github.com/ManuEtt/Dnd/pull/358); **Codecommit:** `92014cccaa21ccef9c709754ede591cdd2cf7e4a`. Offener anderer Entwicklungs-PR beim Start: #353 (Chat A, Regelmodule; keine Überschneidung mit diesen beiden Python-Dateien).
-- **Problem:** Die bisherige Prüfung auf vorhandene Release-Dateien und die anschließende Erzeugung waren nicht atomar. Zwei Läufe derselben App-Version konnten gleichzeitig starten; der Fehlerpfad eines Laufs konnte die Dateien des anderen entfernen.
-- **IMPLEMENTIERT:** `scripts/prepare_alpha_release.py` legt vor Prüfung und Ausgabe pro Version ein exklusives `_Release.lock`-Verzeichnis über `mkdir` an. Zweitaufrufe und verwaiste Sperren werden ohne Seiteneffekte abgewiesen. Nach normaler und behandelter fehlerhafter Ausführung wird die Sperre entfernt; bestehende Artefakte werden nicht ersetzt.
-- **TESTS ERGÄNZT:** `scripts/tests/test_prepare_alpha_release.py`: Verschachtelter konkurrierender Aufruf erhält Fehler, erste Ausgabe bleibt vollständig; Fehler räumt Sperre auf und Retry gelingt; verwaiste Sperre bleibt bestehen, Veröffentlichung verweigert.
-- **GETESTET:** GitHub-Hauptstand und PR-Dateipfade abgeglichen. [CI #40715454176](https://github.com/ManuEtt/Dnd/actions/runs/40715454176): 198 Python-Tests tatsächlich ausgeführt, 196 bestanden, zwei neue Tests mit falschem Fixture-Sperrpfad fehlgeschlagen. Der reale Verzeichnisname beginnt mit einem Punkt; die drei Testreferenzen wurden im Folgecommit korrigiert. Kein grüner finaler Lauf behauptet.
-- **NICHT GETESTET:** neue Python-Suite und GitHub CI auf finaler SHA sowie Backend/Flutter/Android-APK, tatsächliche parallele Prozesse auf CI-Runnern und Realgerät.
-- **BLOCKIERT:** GitHub-Netzwerk/DNS aus lokaler Laufzeit nicht erreichbar, kein Flutter-/Dart-SDK. Späteres CI-Ergebnis auswerten.
-- **MIGRATION:** keine; App-Version `0.8.46+96`, SQLite 3 und JSON 1 bleiben unverändert. Alle bestehenden Spielstände sind unberührt.
-- **NÄCHSTER SCHRITT:** CI-/Python-Regressionen am finalen PR-HEAD abnehmen; falls grün, nach erneuter Überschneidungsprüfung integrieren.
+- **Stand:** Alpha-Release-Lock in `scripts/prepare_alpha_release.py` (3 neue Tests), vorherige vollständige CI `40730971955` auf `1d7b1723` erfolgreich; kombinierter Head benötigt erneute CI.
+- **Ausgangsbranch:** `fix/chat-d/alpha-release-version-lock-20261028`; **Integrationsbasis:** `b5f469f2163c1d60a63761e0a63434f4359e5e2a` enthält aktuelle Hauptbranch-Arbeit und PR #363. PR #358 bleibt bis gemeinsamer CI im Draft.
+- **Risiko:** Lock-Verzeichnis bleibt nach hartem Crash fail-closed; gleichzeitige externe Runner und Geräteinstallation nicht geprüft. Keine SQLite-/JSON-Migration, bestehende Alpha-Artefakte unverändert.
+- **Nächster Schritt:** vollständige GitHub Actions auf finalem Head, erst dann integrieren.
+
+---
+
+# Chat D D-017 – Sichere Checkpoint-Prüfsummenhistorie (28.10.2026)
+
+- **Main-Basis:** `854ca85c0234c508f34f00cdbfbef2e10554ca13`; **Branch:** `fix/chat-d/checkpoint-history-safe-names-20261028`.
+- **Problem:** Historische Checkpoint-Einträge wurden über `Path.is_file()` gesammelt (folgt Symlinks) und ihre Namen ohne Prüfungsnormalisierung in `SHA256SUMS.txt` geschrieben. Ein fremdes Ziel oder Zeilenumbruch kann so die Prüfsummenliste verfälschen bzw. einen externen Dateizugriff verursachen.
+- **IMPLEMENTIERT:** `previous_checkpoint_files()` lässt ausschließlich sichere, reguläre historische Artefakte zu; invalides Inventar bricht vor dem Ersetzen der Version/Stable-Aliases ab.
+- **Tests:** Drei neue negative Fälle (Symlink auf externe Datei, Zeilenumbruch, Verzeichnis mit ZIP-Endung) prüfen Ablehnung und unveränderte zuvor veröffentlichte Aliases. Alte positive Historienprüfung bleibt.
+- **GETESTET:** Code-/Teständerungen über GitHub-Connector gesichert; tatsächliche Testausführung folgt über CI.
+- **NICHT GETESTET:** Python-/Backend-/Flutter-/Android-Gesamtsuite und Realgerät.
+- **BLOCKIERT:** Lokaler GitHub-DNS-Checkout und Flutter-/Dart-SDKs nicht vorhanden.
+- **NOCH NICHT IMPLEMENTIERT:** Atomare Lock-/Race-Protektion für alle extern manipulierbaren Artefaktordner; diese Patch prüft Dateityp zum Auflistungszeitpunkt, keine No-Follow-Dateideskriptoren beim späteren Hashing.
+- **Keine Migration:** Spielstands-/SQLite-/JSON-/Appversion unverändert.
+- **Geänderte Dateien:** `scripts/create_checkpoint.py`, `scripts/tests/test_create_checkpoint.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Nächster Schritt:** finale CI/PR-Abnahme der drei Regressionen sowie normaler Android-Gates, bevor über einen Merge entschieden wird.
 
 ---
 

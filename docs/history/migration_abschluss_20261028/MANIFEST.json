@@ -1,0 +1,63 @@
+{
+  "archived_at_utc": "2026-10-28T14:55:40.306750+00:00",
+  "source_commit": "6576d2fc742f000bacdd1c105282bc9e3282ae7e",
+  "purpose": "Byte-exact pre-consolidation documentation. Historical pending/old status statements are retained as history, not current claims.",
+  "files": [
+    {
+      "original_path": "README.md",
+      "archived_path": "docs/history/migration_abschluss_20261028/README.md",
+      "source_commit": "6576d2fc742f000bacdd1c105282bc9e3282ae7e",
+      "git_blob": "3cab0c8083fac3f9d5ddec5d83a5c744b0ed9c35",
+      "sha256": "a71d6718ba6aa9e88f882370911d10dc352e41679a52c3bb22f9c8c4af70a438",
+      "bytes": 28605
+    },
+    {
+      "original_path": "docs/CODEX_CHECKPOINT.md",
+      "archived_path": "docs/history/migration_abschluss_20261028/docs/CODEX_CHECKPOINT.md",
+      "source_commit": "6576d2fc742f000bacdd1c105282bc9e3282ae7e",
+      "git_blob": "4838ffc86f532af1fba43f645eef1de3662b69e4",
+      "sha256": "72ee0e5ef712e63e9423cd02738e5ac6985eb4a6a9df960d09a80b4c8ad398e5",
+      "bytes": 47219
+    },
+    {
+      "original_path": "CHECKPOINT.md",
+      "archived_path": "docs/history/migration_abschluss_20261028/CHECKPOINT.md",
+      "source_commit": "6576d2fc742f000bacdd1c105282bc9e3282ae7e",
+      "git_blob": "32f4b111bddae8c1203d908923fb48c8705a45a3",
+      "sha256": "03500b04a33e9baa63ed03f9645141b063f0ebf3145681089d450316e030f764",
+      "bytes": 15465
+    },
+    {
+      "original_path": "DEVELOPMENT_STATUS.md",
+      "archived_path": "docs/history/migration_abschluss_20261028/DEVELOPMENT_STATUS.md",
+      "source_commit": "6576d2fc742f000bacdd1c105282bc9e3282ae7e",
+      "git_blob": "8ff1d1e7de9809b4497391a3b8259e54a988c6da",
+      "sha256": "502061c696f5150f88c153e85342aef8aaa649c65345df1b77f60d5d95be0201",
+      "bytes": 185650
+    },
+    {
+      "original_path": "CHANGELOG.md",
+      "archived_path": "docs/history/migration_abschluss_20261028/CHANGELOG.md",
+      "source_commit": "6576d2fc742f000bacdd1c105282bc9e3282ae7e",
+      "git_blob": "0bc36ebd7072b26087908d42c5d0249172407e6a",
+      "sha256": "f0ca74d3dd06fbf3f9c6a8cf774f3b7ecf14e2c5db32b00b63493cfc56321d5b",
+      "bytes": 151577
+    },
+    {
+      "original_path": "docs/BRANCH_MIGRATION_20261028.md",
+      "archived_path": "docs/history/migration_abschluss_20261028/docs/BRANCH_MIGRATION_20261028.md",
+      "source_commit": "6576d2fc742f000bacdd1c105282bc9e3282ae7e",
+      "git_blob": "4104f210421c37f2c59faf547a1b217569a1d83c",
+      "sha256": "dfebae752d648f809e8cc0ee6d59d67921bbd92946e48088b0aab1368da30d2f",
+      "bytes": 7387
+    },
+    {
+      "original_path": "docs/BRANCH_MIGRATION_20261028_INVENTORY.json",
+      "archived_path": "docs/history/migration_abschluss_20261028/docs/BRANCH_MIGRATION_20261028_INVENTORY.json",
+      "source_commit": "6576d2fc742f000bacdd1c105282bc9e3282ae7e",
+      "git_blob": "0b0c231116a0f9887c55e3999d6f620805960cd8",
+      "sha256": "aa0ef38e81b55bdb3a73acb271fe41422a6d278e16c5c878ed69138039b58414",
+      "bytes": 9445
+    }
+  ]
+}

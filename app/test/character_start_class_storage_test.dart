@@ -13,6 +13,7 @@ import 'package:lebendiger_spielleiter/domain/starting_ability_origin.dart';
 import 'package:lebendiger_spielleiter/domain/srd_background_package.dart';
 import 'package:lebendiger_spielleiter/domain/srd_magic_initiate_choice.dart';
 import 'package:lebendiger_spielleiter/domain/starting_class_choice.dart';
+import 'package:lebendiger_spielleiter/domain/srd_character_classes.dart';
 import 'package:lebendiger_spielleiter/domain/starting_equipment_import.dart';
 import 'package:lebendiger_spielleiter/services/game_controller.dart';
 
@@ -356,7 +357,7 @@ void main() {
       final original = controller.currentCampaign!;
       final before = await tables();
       final mutations = <void Function(Map<String, dynamic>)>[
-        (choice) => choice['version'] = 2,
+        (choice) => choice['version'] = 3,
         (choice) => choice['version'] = 1.0,
         (choice) => choice['skills'] = ['Athletik', 'Athletik'],
         (choice) => choice['skills'] = ['Arkane Kunde', 'Geschichte'],
@@ -481,6 +482,219 @@ BEGIN SELECT RAISE(ABORT, 'class archive write rejected'); END
       await restart();
       expect(controller.currentCampaign!.toJson(), original.toJson());
       expect(controller.characters.single.toJson(), original.hero.toJson());
+    },
+  );
+
+  HeroCharacter symbolHero(
+    String className,
+    String symbolId, {
+    bool legacy = false,
+  }) {
+    final klass = findSrdClass(className)!;
+    final proof = legacy
+        ? StartingClassChoice.fromJson({
+            'version': 1,
+            'className': className,
+            'skills': klass.skillChoices.take(klass.skillCount).toList(),
+            'kitIndex': 0,
+            'equipmentChoices': <String, String>{},
+          })
+        : StartingClassChoice.confirmed(
+            className: className,
+            skills: klass.skillChoices.take(klass.skillCount),
+            kitIndex: 0,
+            equipmentChoices: {'Heiliges Symbol': symbolId},
+          );
+    var next = 0;
+    return proof.selection
+        .applyTo(
+          HeroCharacter(
+            id: 'symbol-hero',
+            name: 'Liora',
+            abilities: {for (final ability in abilityNames) ability: 12},
+            hitPoints: className == 'Kleriker' ? 9 : 11,
+            maxHitPoints: className == 'Kleriker' ? 9 : 11,
+            armorClass: 10,
+            speed: 9,
+            experience: 0,
+          ),
+        )
+        .copyWith(
+          startingClassChoice: proof,
+          gold: proof.selection.startingKit!.gold,
+          inventory: [
+            for (final item in proof.selection.startingKit!.items)
+              StartingEquipmentImport.fromSelectedStartingItem(
+                item,
+                'symbol-item-${next++}',
+                selectedCatalogId: proof.equipmentChoices[item.name],
+                choiceVersion: proof.version,
+              ),
+          ],
+        );
+  }
+
+  for (final className in ['Kleriker', 'Paladin']) {
+    for (final suffix in ['amulet', 'emblem', 'reliquary']) {
+      test(
+        '$className $suffix: SQLite-Neustart, Archiv und beide JSON-Importe',
+        () async {
+          final symbolId = 'item-holy-symbol-$suffix';
+          final hero = symbolHero(className, symbolId);
+          await controller.saveStandaloneHero(hero);
+          expect(controller.error, isNull);
+          await controller.newCampaign(controller.characters.single);
+          expect(controller.error, isNull);
+          final saved = controller.currentCampaign!;
+          final before = await tables();
+          await restart();
+          expect(await tables(), before);
+          expect(controller.currentCampaign!.toJson(), saved.toJson());
+          expect(controller.characters.single.toJson(), hero.toJson());
+          final exportHero = controller.exportHero(
+            controller.characters.single,
+          );
+          final exportCampaign = controller.exportCampaign();
+          await controller.deleteCampaign(saved.id);
+          await controller.deleteCharacter(hero.id);
+          await controller.importHero(exportHero);
+          expect(controller.error, isNull);
+          expect(controller.characters.single.toJson(), hero.toJson());
+          await controller.importCampaign(exportCampaign);
+          expect(controller.error, isNull);
+          expect(controller.currentCampaign!.toJson(), saved.toJson());
+          expect(
+            controller.currentCampaign!.hero.inventory.where(
+              (item) => item.catalogId == symbolId,
+            ),
+            hasLength(1),
+          );
+          // A normal revision and an exact repository retry cannot grant the kit twice.
+          final update = controller.engine.updateHero(
+            saved,
+            saved.hero.copyWith(backstory: 'Bestätigt.'),
+          );
+          await repository.saveCampaign(
+            update.campaign,
+            events: update.events,
+            expectedRevision: saved.revision,
+          );
+          final committed = await tables();
+          await repository.saveCampaign(
+            update.campaign,
+            events: update.events,
+            expectedRevision: saved.revision,
+          );
+          expect(await tables(), committed);
+          final stale = controller.engine.updateHero(
+            saved,
+            saved.hero.copyWith(gold: 999),
+          );
+          await expectLater(
+            repository.saveCampaign(
+              stale.campaign,
+              events: stale.events,
+              expectedRevision: saved.revision,
+            ),
+            throwsA(isA<CampaignConflictException>()),
+          );
+          expect(await tables(), committed);
+          await restart();
+          expect(controller.currentCampaign!.hero.gold, hero.gold);
+          expect(
+            controller.currentCampaign!.hero.inventory
+                .map((i) => i.toJson())
+                .toList(),
+            hero.inventory.map((i) => i.toJson()).toList(),
+          );
+          expect(
+            controller.currentCampaign!.hero.startingClassChoice!.toJson(),
+            hero.startingClassChoice!.toJson(),
+          );
+        },
+      );
+    }
+    test(
+      '$className v1: historischer Symbolplatzhalter bleibt beim Neustart und Editieren erhalten',
+      () async {
+        final hero = symbolHero(className, '', legacy: true);
+        await controller.newCampaign(hero);
+        expect(controller.error, isNull);
+        final initial = controller.currentCampaign!;
+        final before = await tables();
+        await restart();
+        expect(await tables(), before);
+        expect(controller.currentCampaign!.toJson(), initial.toJson());
+        await controller.saveHero(
+          controller.currentCampaign!.hero.copyWith(
+            backstory: 'Historisch bearbeitet.',
+          ),
+        );
+        expect(controller.error, isNull);
+        await restart();
+        final restored = controller.currentCampaign!.hero;
+        expect(restored.startingClassChoice!.version, 1);
+        expect(restored.startingClassChoice!.equipmentChoices, isEmpty);
+        expect(
+          restored.inventory.map((i) => i.toJson()).toList(),
+          hero.inventory.map((i) => i.toJson()).toList(),
+        );
+        expect(
+          restored.inventory
+              .singleWhere((i) => i.name == 'Heiliges Symbol')
+              .stats,
+          isNull,
+        );
+        expect(restored.gold, hero.gold);
+        final exported = controller.exportHero(restored);
+        await controller.importHero(exported);
+        expect(controller.error, isNull);
+        expect(
+          controller.characters.single.startingClassChoice!.toJson(),
+          hero.startingClassChoice!.toJson(),
+        );
+        expect(
+          controller.characters.single.inventory
+              .map((i) => i.toJson())
+              .toList(),
+          hero.inventory.map((i) => i.toJson()).toList(),
+        );
+      },
+    );
+  }
+
+  test(
+    'Ungültige v2-Symbolimporte ändern keine der sechs SQLite-Tabellen',
+    () async {
+      await controller.newCampaign(
+        symbolHero('Kleriker', 'item-holy-symbol-amulet'),
+      );
+      expect(controller.error, isNull);
+      final campaign = controller.currentCampaign!;
+      final before = await tables();
+      for (final choices in <Map<String, String>>[
+        {},
+        {'Heiliges Symbol': 'item-arcane-focus-crystal'},
+        {'Heiliges Symbol': 'item-nonexistent'},
+      ]) {
+        final heroJson =
+            jsonDecode(controller.exportHero(campaign.hero))
+                as Map<String, dynamic>;
+        (heroJson['startingClassChoice']
+                as Map<String, dynamic>)['equipmentChoices'] =
+            choices;
+        await controller.importHero(jsonEncode(heroJson));
+        expect(controller.error, isNotNull);
+        expect(await tables(), before);
+        final campaignJson =
+            jsonDecode(controller.exportCampaign()) as Map<String, dynamic>;
+        (campaignJson['hero'] as Map<String, dynamic>)['startingClassChoice'] =
+            heroJson['startingClassChoice'];
+        await controller.importCampaign(jsonEncode(campaignJson));
+        expect(controller.error, isNotNull);
+        expect(await tables(), before);
+        expect(controller.currentCampaign!.toJson(), campaign.toJson());
+      }
     },
   );
 }

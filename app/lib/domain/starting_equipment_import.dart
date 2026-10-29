@@ -53,11 +53,28 @@ class StartingEquipmentImport {
     'item-woodcarver-s-tools',
   };
 
-  /// The three known class starter labels with an unresolved player choice.
-  /// Only SRD catalog entries from the matching mundane item categories
-  /// can be chosen. A holy symbol has no matching catalog entries yet;
-  /// it stays explicitly unresolved rather than creating invented stats.
-  static List<EquipmentEntry> optionsFor(SrdStartingItem item) {
+  /// Explicit class-kit choices. Version 1 predates holy-symbol selection;
+  /// keep its historical unresolved item readable without inventing a grant.
+  /// New confirmations always use version 2.
+  static List<EquipmentEntry> optionsFor(
+    SrdStartingItem item, {
+    int choiceVersion = 2,
+  }) {
+    if (choiceVersion != 1 && choiceVersion != 2) {
+      throw const FormatException('Unbekannte Startausrüstungsregelversion.');
+    }
+    // SRD 5.2.1, Equipment / Holy Symbol, p.97. Arcane and druidic
+    // foci are not substitutes, even though all use the focus category.
+    if (item.name == 'Heiliges Symbol' && choiceVersion >= 2) {
+      return [
+        for (final id in const [
+          'item-holy-symbol-amulet',
+          'item-holy-symbol-emblem',
+          'item-holy-symbol-reliquary',
+        ])
+          SrdEquipmentCatalog.byId(id)!,
+      ];
+    }
     final categories = switch (item.name) {
       'Musikinstrument (nach Wahl)' => const {EquipmentCategory.instrument},
       'Handwerkszeug oder Musikinstrument (nach Wahl)' => const {
@@ -82,11 +99,16 @@ class StartingEquipmentImport {
   /// mutated. Unknown IDs and a selection for another kit fail closed.
   static void validateKitChoices(
     SrdStartingKit kit,
-    Map<String, String> selected,
-  ) {
+    Map<String, String> selected, {
+    int choiceVersion = 2,
+  }) {
+    if (choiceVersion != 1 && choiceVersion != 2) {
+      throw const FormatException('Unbekannte Startausrüstungsregelversion.');
+    }
     final expected = <String, List<EquipmentEntry>>{
       for (final item in kit.items)
-        if (optionsFor(item).isNotEmpty) item.name: optionsFor(item),
+        if (optionsFor(item, choiceVersion: choiceVersion).isNotEmpty)
+          item.name: optionsFor(item, choiceVersion: choiceVersion),
     };
     for (final entry in selected.entries) {
       final options = expected[entry.key];
@@ -111,8 +133,9 @@ class StartingEquipmentImport {
     SrdStartingItem item,
     String id, {
     String? selectedCatalogId,
+    int choiceVersion = 2,
   }) {
-    final options = optionsFor(item);
+    final options = optionsFor(item, choiceVersion: choiceVersion);
     if (options.isEmpty) {
       if (selectedCatalogId != null) {
         throw const FormatException(

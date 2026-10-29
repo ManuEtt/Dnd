@@ -143,7 +143,7 @@ void main() {
     final valid = choiceFor(srdCharacterClasses.first).toJson();
     for (final patch in <Map<String, dynamic>>[
       {'version': 1.0},
-      {'version': 2},
+      {'version': 3},
       {'className': 'fighter'},
       {'className': 'Erfundene Klasse'},
       {
