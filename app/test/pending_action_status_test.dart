@@ -11,6 +11,18 @@ const _npcAction = PendingPlayerAction(
   selectedNpcId: 'mira-two',
   selectedNpcRevision: 5,
 );
+const _longNpcAction = PendingPlayerAction(
+  campaignId: 'camp',
+  requestId: 'request-long-npc',
+  text: 'Ich frage die zweite Mira nach dem Tor, prüfe zuerst den Brunnen '
+      'und höre dann alle Aussagen der Begleiter an. '
+      'Ich frage die zweite Mira nach dem Tor, prüfe zuerst den Brunnen '
+      'und höre dann alle Aussagen der Begleiter an. '
+      'Ich frage die zweite Mira nach dem Tor, prüfe zuerst den Brunnen '
+      'und höre dann alle Aussagen der Begleiter an.',
+  selectedNpcId: 'mira-two',
+  selectedNpcRevision: 5,
+);
 const _plainAction = PendingPlayerAction(
   campaignId: 'camp',
   requestId: 'request-two',
@@ -227,7 +239,7 @@ void main() {
   testWidgets(
     'wechselnder gespeicherter Auftrag setzt aufgeklappten Text zurück',
     (tester) async {
-      await tester.pumpWidget(_screen(pending: _npcAction));
+      await tester.pumpWidget(_screen(pending: _longNpcAction));
       await tester.tap(
         find.byKey(const ValueKey('adventure-pending-action-toggle')),
       );
@@ -242,7 +254,7 @@ void main() {
       );
       await tester.pumpWidget(_screen(pending: _plainAction));
       expect(find.text(_plainAction.text), findsOneWidget);
-      expect(find.text('Ganzen Text anzeigen'), findsOneWidget);
+      expect(find.text('Ganzen Text anzeigen'), findsNothing);
       expect(
         tester
             .widget<Text>(
@@ -259,6 +271,27 @@ void main() {
     },
   );
 
+  testWidgets('kurze gespeicherte Handlung braucht keinen Volltextschalter', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 320);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(_screen(pending: _plainAction));
+    expect(find.text(_plainAction.text), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('adventure-pending-action-toggle')),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const ValueKey('adventure-retry-action')),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   for (final width in [320.0, 360.0]) {
     testWidgets('200 % Schrift bei $width dp: Auftrag trotz Sperre lesbar', (
       tester,
@@ -272,7 +305,7 @@ void main() {
 
       await tester.pumpWidget(
         _screen(
-          pending: _npcAction,
+          pending: _longNpcAction,
           interactionBlocked: true,
           textScale: 2,
           onRetry: () => retries++,
@@ -296,7 +329,7 @@ void main() {
             .maxLines,
         isNull,
       );
-      expect(find.text(_npcAction.text), findsOneWidget);
+      expect(find.text(_longNpcAction.text), findsOneWidget);
       final retry = tester.widget<FantasyTextButton>(
         find.byKey(const ValueKey('adventure-retry-action')),
       );
