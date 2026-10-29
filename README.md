@@ -128,3 +128,15 @@ Nur lizenzierte Inhalte und eigene Texte verwenden.
 Ältere README-/Checkpoint-Stände sind bytegenau unter
 [docs/history/character_symbol_abnahme_20261028/](docs/history/character_symbol_abnahme_20261028/MANIFEST.json)
 mit Git-Blob-/SHA256-Nachweisen erhalten.
+
+## Chat B – NPC-Erinnerungssnapshots sitzungsgebunden (29.10.2026)
+
+Bestätigte NPC-Erinnerungssnapshots in `NpcIdentityMemory` merken sich die
+gespeicherte Sitzungs-ID zusätzlich zur Kampagnen-ID und Revision. Eine
+wiederverwendete Momentaufnahme aus einer anderen Sitzung wird auch bei
+gleicher NPC-ID, gleichen Notizen und gleicher Revision verworfen. Die
+bestehende Story-API-Nutzlast (`toContextMap`) bleibt unverändert.
+Vier neue Flutter-Regressionen: JSON-Neuladen, Sitzungswechsel mit
+identischem Inhalt, leere Legacy-Notizen und unabhängige NPC-Änderungen.
+Keine Schema- oder Regeländerung. Review: PR wird auf eigenem Branch erstellt.
+

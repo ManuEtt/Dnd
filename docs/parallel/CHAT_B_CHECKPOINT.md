@@ -1,3 +1,16 @@
+# Chat B – Snapshot einer NPC-Erinnerung nur für dieselbe Sitzung (29.10.2026)
+
+- **Main-Basis:** `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`; **Branch:** `feat/chat-b/npc-identity-session-guard-20261029`.
+- **Ausgangsproblem:** `NpcIdentityMemory.read`/ `requireCurrent` banden eine bestätigte Momentaufnahme zwar an Kampagnen-ID und Revision, aber nicht an die Sitzung.
+- **IMPLEMENTIERT:** `NpcIdentityContext` speichert `sessionId` ausschließlich als lokale Prüfmetadaten; `requireCurrent` verwirft andere Sitzungen. Die API-Projektion `toContextMap` behält alle bisherigen Schlüssel, insbesondere ohne zusätzliche `sessionId`.
+- **DATEIEN:** `app/lib/story/npc_identity_memory.dart`, `app/test/npc_identity_memory_session_guard_test.dart`, README, zentraler und Chat-B-Checkpoint.
+- **TESTS:** Vier neue Flutter-Regressionen vorbereitet, darunter gleicher Revision/Identitätstext in fremder Sitzung und Legacy-Spielstand ohne Notizen; CI am finalen Commit prüfen.
+- **NICHT GETESTET:** echtes Android-Gerät und produktiver KI-Provider. **MIGRATION:** keine; Helden-/Questregeln unberührt.
+- **Koordination:** kein Eingriff in Story-Fachdateien der offenen B-PRs #356/#362/#364/#371/#373/#377; gemeinsame Dokumentation später additiv konsolidieren.
+- **NÄCHSTER SCHRITT:** GitHub-Actions vollständig abnehmen, ggf. CI-Fehler beheben und PR reviewbereit stellen. Danach unabhängig abgesicherte Session-Bindung für vorbereiteten Story-Payload evaluieren.
+
+---
+
 # Chat B – Sitzungsidentität beim Ereignis-Replay (27.10.2026)
 
 - **main-Basis:** `96001353f2b90f293fbdade934e78b7b8281e965`; Branch `fix/chat-b/story-replay-session-identity-20261027`.

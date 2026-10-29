@@ -1,3 +1,12 @@
+## Chat B – NPC-Erinnerungssnapshot an Sitzung binden (29.10.2026)
+
+- **Ausgangs-main:** `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`; **Branch:** `feat/chat-b/npc-identity-session-guard-20261029`.
+- **Problem:** `NpcIdentityMemory.requireCurrent` prüfte lediglich Kampagnen-ID, Revision und NPC-Inhalt. Bei einem Sitzungswechsel mit identischer Revision konnte ein alter NPC-Snapshot weiterverwendet werden.
+- **Implementiert:** Die private `NpcIdentityContext`-Momentaufnahme enthält nun `sessionId` und lehnt bei `requireCurrent` abweichende Sitzungen vor dem Lesen des Zustands ab. Der vorhandene Story-API-/JSON-Wire-Vertrag aus `toContextMap` bleibt exakt unverändert.
+- **Regressionen:** vier neue Tests für gültigen JSON-Roundtrip, verbotenen Sitzungswechsel mit identischem NPC-Inhalt, leere Legacy-Notizen und Änderungen an anderen NPCs. Alle Eingriffe bleiben rein lesend, Heldenwerte und Quests unberührt.
+- **Konfliktabgrenzung:** keine Fachdatei der offenen B-PRs #356/#362/#364/#371/#373/#377 betroffen. Gemeinsame Dokumentation bei Integration durch Chat D additiv zusammenführen.
+- **Keine Migration:** SQLite/JSON unverändert. **Finale CI:** noch abzunehmen.
+
 # Codex-Checkpoint – Würfelraunen
 
 ## Chat D – PR #358: Alpha-Release atomar pro Version sperren
