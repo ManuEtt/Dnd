@@ -14,7 +14,8 @@ const _npcAction = PendingPlayerAction(
 const _longNpcAction = PendingPlayerAction(
   campaignId: 'camp',
   requestId: 'request-long-npc',
-  text: 'Ich frage die zweite Mira nach dem Tor, prüfe zuerst den Brunnen '
+  text:
+      'Ich frage die zweite Mira nach dem Tor, prüfe zuerst den Brunnen '
       'und höre dann alle Aussagen der Begleiter an. '
       'Ich frage die zweite Mira nach dem Tor, prüfe zuerst den Brunnen '
       'und höre dann alle Aussagen der Begleiter an. '
