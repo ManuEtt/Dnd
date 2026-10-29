@@ -255,27 +255,51 @@ class MemoryEngine {
               '(${npc.alive ? 'lebendig' : 'tot'}, ${npc.relationship})',
     ];
 
+    final npcLine = npcSummaries.isEmpty
+        ? null
+        : 'Bekannte NPCs: ${npcSummaries.join('; ')}.';
     final lines = <String>[
       'Kampagne: ${campaign.name}.',
       'Held: ${campaign.hero.name}.',
       if (campaign.quests.isNotEmpty)
         'Quests: ${campaign.quests.map((q) => '${q.title} (${questStatus(q.status)})').join('; ')}.',
-      if (npcSummaries.isNotEmpty) 'Bekannte NPCs: ${npcSummaries.join('; ')}.',
+      if (npcLine != null) npcLine,
       if (campaign.storyThreads.isNotEmpty)
         'Handlungsstränge: ${campaign.storyThreads.map((t) => '${t.title} (${threadStatus(t.status)})').join('; ')}.',
       if (campaign.facts.isNotEmpty)
         'Bestätigte Fakten: ${campaign.facts.entries.map((f) => '${f.key}: ${f.value}').join('; ')}.',
     ];
-    final whole = lines.join('\n');
-    // Both import validation and JSON limits use UTF-16 code units. Avoid
-    // splitting surrogate pairs when truncating an unusually long recap.
+    // Recaps are capped at 2,400 UTF-16 code units. If the limit falls
+    // inside an NPC list, keep only complete entries: a partial "(NPC-ID:"
+    // could wrongly make two same-name characters seem identical again.
+    const maxUnits = 2400;
     final result = StringBuffer();
     var units = 0;
-    for (final rune in whole.runes) {
-      final size = rune > 0xffff ? 2 : 1;
-      if (units + size > 2400) break;
-      result.writeCharCode(rune);
-      units += size;
+    for (final line in lines) {
+      final separator = units == 0 ? '' : '\n';
+      final available = maxUnits - units - separator.length;
+      if (line == npcLine && line.length > available) {
+        var safeLine = 'Bekannte NPCs: ';
+        var count = 0;
+        for (final npc in npcSummaries) {
+          final entry = '${count == 0 ? '' : '; '}$npc';
+          if (safeLine.length + entry.length + 1 > available) break;
+          safeLine += entry;
+          count++;
+        }
+        if (count > 0) {
+          result.write(separator);
+          result.write('$safeLine.');
+        }
+        break;
+      }
+      // Non-NPC text keeps the existing Unicode-safe truncation behavior.
+      for (final rune in '$separator$line'.runes) {
+        final size = rune > 0xffff ? 2 : 1;
+        if (units + size > maxUnits) return result.toString();
+        result.writeCharCode(rune);
+        units += size;
+      }
     }
     return result.toString();
   }

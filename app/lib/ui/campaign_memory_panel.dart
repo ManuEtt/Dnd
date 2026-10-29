@@ -19,6 +19,8 @@ class CampaignMemoryPanel extends StatelessWidget {
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
+          // Keep dialog actions reachable with Android IME and large text.
+          scrollable: true,
           title: Text(
             existing == null
                 ? 'Handlungsstrang anlegen'
@@ -103,6 +105,8 @@ class CampaignMemoryPanel extends StatelessWidget {
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
+          // Keep dialog actions reachable with Android IME and large text.
+          scrollable: true,
           title: const Text('NPC-Beziehung festhalten'),
           content: SingleChildScrollView(
             child: Column(

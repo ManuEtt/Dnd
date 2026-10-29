@@ -14,6 +14,8 @@ only the LATEST ZIP and SHA256SUMS.txt aliases are replaced after validation.
 """
 
 import argparse
+import contextlib
+import errno
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -56,7 +58,7 @@ def safe_name(name: str) -> bool:
             and not re.match(r'^[A-Za-z]:', name))
 
 
-def previous_checkpoint_files(output_dir: Path) -> dict[str, Path]:
+def previous_checkpoint_files(output_dir: Path) -> dict[str, tuple[Path, os.stat_result]]:
     """Select only safe, regular historical artifacts for the checksum ledger.
 
     Checking lstat rather than is_file rejects links to files outside the
@@ -70,10 +72,71 @@ def previous_checkpoint_files(output_dir: Path) -> dict[str, Path]:
                 or not (path.suffix in {'.zip', '.patch'}
                         or name.endswith('_Dateimanifest.json'))):
             continue
-        if not safe_name(name) or not stat.S_ISREG(path.lstat().st_mode):
+        details = path.lstat()
+        if not safe_name(name) or not stat.S_ISREG(details.st_mode):
             raise ValueError('Unsafe previous checkpoint artifact in output directory.')
-        result[name] = path
+        result[name] = (path, details)
     return result
+
+
+def sha256_previous_checkpoint(
+        output_dir: Path, name: str, expected: os.stat_result) -> str:
+    """Stream one earlier checkpoint without following a swapped symlink.
+
+    POSIX pins the output directory with O_DIRECTORY and opens the leaf
+    relative to it using O_NOFOLLOW. Stat identity checks also reject
+    regular files rewritten after the historical artifact scan.
+    """
+    if not safe_name(name) or '/' in name:
+        raise ValueError('Unsafe previous checkpoint artifact name.')
+    path = output_dir / name
+    identity = lambda item: (
+        item.st_dev, item.st_ino, item.st_size, item.st_mtime_ns, item.st_ctime_ns,
+    )
+    before = path.lstat()
+    if not stat.S_ISREG(before.st_mode):
+        raise ValueError('Unsafe previous checkpoint artifact in output directory.')
+    if identity(before) != identity(expected):
+        raise ValueError('Historical checkpoint changed before hashing.')
+    digest = hashlib.sha256()
+    total = 0
+    with contextlib.ExitStack() as stack:
+        if (os.name == 'posix' and hasattr(os, 'O_NOFOLLOW')
+                and hasattr(os, 'O_DIRECTORY')):
+            directory_fd = os.open(
+                output_dir, os.O_RDONLY | os.O_NOFOLLOW | os.O_DIRECTORY,
+            )
+            stack.callback(os.close, directory_fd)
+            try:
+                file_fd = os.open(
+                    name, os.O_RDONLY | os.O_NOFOLLOW
+                    | getattr(os, 'O_NONBLOCK', 0), dir_fd=directory_fd,
+                )
+            except OSError as error:
+                if error.errno in (errno.ELOOP, errno.ENOTDIR):
+                    raise ValueError(
+                        'Unsafe previous checkpoint artifact in output directory.'
+                    ) from error
+                raise
+        else:
+            # Best effort when descriptor-relative, no-follow opens are absent.
+            if path.is_symlink():
+                raise ValueError('Unsafe previous checkpoint artifact in output directory.')
+            file_fd = os.open(path, os.O_RDONLY)
+        stream = stack.enter_context(os.fdopen(file_fd, 'rb'))
+        opened = os.fstat(stream.fileno())
+        if not stat.S_ISREG(opened.st_mode) or identity(opened) != identity(expected):
+            raise ValueError('Historical checkpoint changed before hashing.')
+        for block in iter(lambda: stream.read(1024 * 1024), b''):
+            digest.update(block)
+            total += len(block)
+        after = os.fstat(stream.fileno())
+        final = path.lstat()
+        if (identity(after) != identity(expected)
+                or identity(final) != identity(expected)
+                or total != expected.st_size):
+            raise ValueError('Historical checkpoint changed while hashing.')
+    return digest.hexdigest()
 
 
 def file_manifest(root: Path) -> dict[str, dict]:
@@ -203,14 +266,16 @@ def create_checkpoint(root: Path, output_dir: Path, *, base: str, label: str,
         manifest.write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + '\n',
                             encoding='utf-8')
         # Include older versioned artifacts too, so the stable list remains useful.
-        checksum_files = previous_checkpoint_files(output_dir)
+        historical_files = previous_checkpoint_files(output_dir)
+        checksum_files = {name: path for name, (path, _) in historical_files.items()}
         checksum_files.update({path.name: path for path in (archive, patch, manifest)})
         latest = staging / LATEST
         shutil.copyfile(archive, latest)
         checksum_files[LATEST] = latest
-        sums.write_text(''.join(f'{sha256(path)}  {name}\n'
-                                for name, path in sorted(checksum_files.items())),
-                        encoding='utf-8')
+        sums.write_text(''.join(
+            f'{sha256_previous_checkpoint(output_dir, name, historical_files[name][1]) if name in historical_files else sha256(path)}  {name}\n'
+            for name, path in sorted(checksum_files.items())
+        ), encoding='utf-8')
         # All verification finishes before replacing either stable alias.
         for key in ('archive', 'patch', 'manifest', 'checksums'):
             os.replace(staging / names[key], output_dir / names[key])

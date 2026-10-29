@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_art.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_ui.dart';
@@ -178,4 +179,155 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  // Regression: an open Android keyboard must not steal Tab/Enter actions.
+  testWidgets(
+    'Tastaturfokus aktiviert vier Schnellaktionen bei 320 dp, IME und 2x Text',
+    (tester) async {
+      tester.view.physicalSize = const Size(320, 800);
+      tester.view.devicePixelRatio = 1;
+      tester.view.viewInsets = const FakeViewPadding(bottom: 270);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetViewInsets);
+
+      final invoked = <String>[];
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildFantasyTheme(),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: const TextScaler.linear(2)),
+            child: child!,
+          ),
+          home: Scaffold(
+            body: Column(
+              children: [
+                const Expanded(child: TextField()),
+                FantasyPinnedActionBar(
+                  busy: false,
+                  listening: false,
+                  onSpeech: () => invoked.add('speech'),
+                  onInspect: () => invoked.add('inspect'),
+                  onAttack: () => invoked.add('attack'),
+                  onRoll: () => invoked.add('roll'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.showKeyboard(find.byType(TextField));
+      await tester.pump();
+
+      bool focusedWithin(String name) {
+        final focusContext = FocusManager.instance.primaryFocus?.context;
+        if (focusContext == null) return false;
+        return find
+            .descendant(
+              of: find.byKey(ValueKey('adventure-shortcut-$name')),
+              matching: find.byElementPredicate(
+                (element) => identical(element, focusContext),
+              ),
+            )
+            .evaluate()
+            .isNotEmpty;
+      }
+
+      for (final name in ['speech', 'inspect', 'attack', 'roll']) {
+        final tile = find.byKey(ValueKey('adventure-shortcut-$name'));
+        expect(tile.hitTestable(), findsOneWidget);
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        expect(focusedWithin(name), isTrue, reason: 'Fokus bei $name');
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+        await tester.pump();
+      }
+      expect(invoked, ['speech', 'inspect', 'attack', 'roll']);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('Deaktivierter Angriff wird im Tastaturfokus übersprungen', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 800);
+    tester.view.devicePixelRatio = 1;
+    tester.view.viewInsets = const FakeViewPadding(bottom: 270);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetViewInsets);
+
+    final invoked = <String>[];
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildFantasyTheme(),
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: const TextScaler.linear(2)),
+          child: child!,
+        ),
+        home: Scaffold(
+          body: Column(
+            children: [
+              const Expanded(child: TextField()),
+              FantasyPinnedActionBar(
+                busy: false,
+                listening: false,
+                attackEnabled: false,
+                attackUnavailableReason: 'Kein bestätigtes Ziel.',
+                onSpeech: () => invoked.add('speech'),
+                onInspect: () => invoked.add('inspect'),
+                onAttack: () => invoked.add('attack'),
+                onRoll: () => invoked.add('roll'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.showKeyboard(find.byType(TextField));
+    await tester.pump();
+
+    final attack = find.byKey(const ValueKey('adventure-shortcut-attack'));
+    final semantics = tester.widget<Semantics>(
+      find
+          .descendant(
+            of: attack,
+            matching: find.byWidgetPredicate(
+              (widget) =>
+                  widget is Semantics && widget.properties.button == true,
+            ),
+          )
+          .first,
+    );
+    expect(semantics.properties.enabled, isFalse);
+    expect(semantics.properties.label, 'Angriff');
+
+    for (final name in ['speech', 'inspect', 'roll']) {
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+      final focusContext = FocusManager.instance.primaryFocus?.context;
+      expect(
+        find
+            .descendant(
+              of: find.byKey(ValueKey('adventure-shortcut-$name')),
+              matching: find.byElementPredicate(
+                (element) => identical(element, focusContext),
+              ),
+            )
+            .evaluate(),
+        isNotEmpty,
+        reason: 'Deaktivierter Angriff muss übersprungen werden: $name',
+      );
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pump();
+    }
+    expect(invoked, ['speech', 'inspect', 'roll']);
+    expect(tester.takeException(), isNull);
+  });
 }

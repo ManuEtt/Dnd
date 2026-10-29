@@ -5,16 +5,29 @@ import 'package:lebendiger_spielleiter/domain/game_engine.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/story/story_memory_engine.dart' as story;
 
-Campaign _campaign(List<WorldNpc> npcs) => Campaign(
-  id: 'recap-identity',
-  name: 'Zwei Hüterinnen',
-  world: 'Valdorn',
-  sessionId: 'recap-session',
-  hero: HeroCharacter(id: 'aria', name: 'Aria', hitPoints: 13),
-  scene: 'Unbestätigt: Die beiden Miras sind dieselbe Person.',
-  revision: 7,
-  npcs: npcs,
-);
+Campaign _campaign(List<WorldNpc> npcs, {String name = 'Zwei Hüterinnen'}) {
+  return Campaign(
+    id: 'recap-identity',
+    name: name,
+    world: 'Valdorn',
+    sessionId: 'recap-session',
+    hero: HeroCharacter(id: 'aria', name: 'Aria', hitPoints: 13),
+    scene: 'Unbestätigt: Die beiden Miras sind dieselbe Person.',
+    revision: 7,
+    npcs: npcs,
+  );
+}
+
+String _longRecapNameFor(List<WorldNpc> npcs, {int extra = 0}) {
+  final baseline = story.MemoryEngine.buildSessionSummary(_campaign(npcs));
+  final npcStart = baseline.indexOf('Bekannte NPCs: ');
+  if (npcStart < 0) throw StateError('NPC-Bereich fehlt im Testaufbau.');
+  const firstEntry =
+      'Bekannte NPCs: Mira (NPC-ID: mira-a) (lebendig, freundlich).';
+  final padding = 2400 - npcStart - firstEntry.length + extra;
+  if (padding < 0) throw StateError('Ungültiger Testgrenzwert.');
+  return 'Zwei Hüterinnen${List.filled(padding, 'X').join()}';
+}
 
 void main() {
   test('same-name NPCs with equal relationships remain distinct in recap', () {
@@ -96,4 +109,47 @@ void main() {
       expect(restored.hero.toJson(), beforeHero);
     },
   );
+
+  test('long recap preserves a complete first same-name NPC identity', () {
+    const npcs = [
+      WorldNpc(id: 'mira-a', name: 'Mira', relationship: 'freundlich'),
+      WorldNpc(id: 'mira-b', name: 'MIRA', relationship: 'feindlich'),
+    ];
+    final campaign = _campaign(npcs, name: _longRecapNameFor(npcs));
+    final before = jsonEncode(campaign.toJson());
+    final summary = story.MemoryEngine.buildSessionSummary(campaign);
+
+    expect(summary.length, 2400);
+    expect(
+      summary,
+      endsWith('Bekannte NPCs: Mira (NPC-ID: mira-a) (lebendig, freundlich).'),
+    );
+    expect(summary, isNot(contains('mira-b')));
+    expect(jsonEncode(campaign.toJson()), before);
+
+    final saved = GameEngine(
+      clock: () => DateTime.utc(2026, 10, 28),
+    ).saveSessionRecap(campaign);
+    expect(saved.campaign.sessionRecaps.single.summary, summary);
+    final restored = Campaign.fromJson(
+      jsonDecode(jsonEncode(saved.campaign.toJson())) as Map<String, dynamic>,
+    );
+    expect(restored.sessionRecaps.single.summary, summary);
+    expect(restored.hero.toJson(), campaign.hero.toJson());
+  });
+
+  test('long recap drops NPC header when no complete identity fits', () {
+    const npcs = [
+      WorldNpc(id: 'mira-a', name: 'Mira', relationship: 'freundlich'),
+      WorldNpc(id: 'mira-b', name: 'MIRA', relationship: 'feindlich'),
+    ];
+    final campaign = _campaign(npcs, name: _longRecapNameFor(npcs, extra: 1));
+    final summary = story.MemoryEngine.buildSessionSummary(campaign);
+
+    expect(summary.length, lessThanOrEqualTo(2400));
+    expect(summary, endsWith('Held: Aria.'));
+    expect(summary, isNot(contains('Bekannte NPCs:')));
+    expect(summary, isNot(contains('NPC-ID:')));
+    expect(campaign.npcs, hasLength(2));
+  });
 }

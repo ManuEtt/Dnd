@@ -1,3 +1,4 @@
+import 'srd_spell_catalog.dart';
 import 'srd_spell_grid_target_rules.dart';
 import 'srd_sphere_area_rules.dart';
 
@@ -32,6 +33,33 @@ class SrdCubeCellCandidate {
 /// footprint independently before any spell effect is committed.
 class SrdCubeAreaRules {
   const SrdCubeAreaRules._();
+
+  /// Connects an explicitly verified Cube effect and its 2D footprint to
+  /// the existing caster-to-origin spell range and blocker checks.
+  ///
+  /// The catalogue specifies the spell's casting range, NOT its cube size.
+  /// Neither the caller's effect confirmation nor this geometrical preview
+  /// verifies spell-specific damage, targets, 3D cover, or square occupancy.
+  static SrdCubeAreaPreview previewConfirmedSpell({
+    required SrdSpellDefinition spell,
+    required SrdSpellGridTargetRequest gridTarget,
+    required bool cubeShapeVerifiedFromEffect,
+    required int verifiedEffectSideFeet,
+    required bool axisAlignedFootprintConfirmed,
+  }) {
+    if (!cubeShapeVerifiedFromEffect) {
+      throw const FormatException(
+        'Würfelform und Kantenlänge müssen aus dem Zaubereffekt bestätigt sein.',
+      );
+    }
+    SrdSpellGridTargetRules.validateOrigin(spell, gridTarget);
+    return preview(
+      map: gridTarget.map,
+      origin: gridTarget.origin,
+      sideFeet: verifiedEffectSideFeet,
+      axisAlignedFootprintConfirmed: axisAlignedFootprintConfirmed,
+    );
+  }
 
   static SrdCubeAreaPreview preview({
     required SrdSpellGridMap map,

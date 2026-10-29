@@ -335,6 +335,7 @@ class FantasyAdventureQuestBoard extends StatelessWidget {
     final resolved = campaign.quests
         .where((quest) => quest.status != 'active')
         .toList();
+    final hiddenResolvedCount = resolved.length > 3 ? resolved.length - 3 : 0;
 
     return Container(
       key: const ValueKey('adventure-quest-board'),
@@ -401,6 +402,23 @@ class FantasyAdventureQuestBoard extends StatelessWidget {
               _QuestLine(
                 key: ValueKey('adventure-quest-${quest.id}'),
                 quest: quest,
+              ),
+            if (hiddenResolvedCount > 0)
+              Padding(
+                key: const ValueKey('adventure-quest-hidden-count'),
+                padding: const EdgeInsets.fromLTRB(12, 6, 12, 10),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    hiddenResolvedCount == 1
+                        ? 'Ein weiterer Auftrag im Tagebuch'
+                        : '$hiddenResolvedCount weitere Aufträge im Tagebuch',
+                    style: const TextStyle(
+                      color: FantasyPalette.muted,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
               ),
           ],
           Align(
