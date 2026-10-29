@@ -1,5 +1,16 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat C – 29.10.2026 (MEZ): Wiederholungsauftrag lesbar (PR #382)
+
+- **Basis-Main:** `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`; **Branch:** `feat/chat-c/pending-action-full-text-20261029`; **PR:** [#382](https://github.com/ManuEtt/Dnd/pull/382) (Draft); Code-/Test-Commit `c15c0a1b65ddbde1f4d5d0c944e6bad88f4c6441` (endgültigen Doku-HEAD/Actions separat prüfen).
+- **IMPLEMENTIERT:** `PendingActionStatus` bietet einen Ein-/Ausklapp-Schalter für den vollständigen bestätigungspflichtigen Auftrag. Rücksetzen bei anderem Request/Campaign/Text/NPC; Retry/Verwerfen bleiben unverändert vom Controller gesperrt oder freigeschaltet.
+- **GETESTET:** Bisher nur Quelltext-/PR-Diff- und Nichtüberschneidungsprüfung. Vier neue Widgetregressionen vorbereitet, **noch nicht ausgeführt**.
+- **NICHT GETESTET:** Dart-Format/Flutter-Analyse, gezielte und vollständige Flutter-Tests, Python-, Backend- und native Android-Tests, Debug-/Alpha-APK sowie reales Android-Gerät/TalkBack. Finalen Actions-Commitstatus abwarten.
+- **BLOCKIERT:** Lokales Flutter/Dart-SDK und direkter öffentlicher Git-Checkout fehlen; Remote-CI erforderlich. Gemeinsame README/Checkpoint-Änderungen aus parallelen PRs müssen beim Merge additiv integriert werden.
+- **NOCH NICHT IMPLEMENTIERT:** Keine Änderung an Outbox, Persistenz, KI-/Regelmechanik, JSON oder SQLite. Keine Migration und keine App-Versionserhöhung.
+- **Fachdateien:** `app/lib/ui/pending_action_status.dart`, `app/test/pending_action_status_test.dart`; zusätzlich README, dieser Checkpoint und `docs/parallel/CHAT_C_CHECKPOINT.md`.
+- **NÄCHSTER SCHRITT:** CI auf finalem PR #382 HEAD prüfen und bei Dart-Format-/Flutter-Testfehlern gezielt reparieren. Danach auf echtem Android-Gerät bei großer Schrift und TalkBack vollständiges Auftragslesen und unveränderte Retry-Sperre verifizieren.
+
 ## Chat D – PR #358: Alpha-Release atomar pro Version sperren
 
 **IMPLEMENTIERT:** `scripts/prepare_alpha_release.py` reserviert vor Publikationsbeginn ein atomar erzeugtes Lock-Verzeichnis pro Release-Version. Zweitaufrufe können keine fremden Dateien löschen. Drei positive/negative Regressionen (gleichzeitiger Aufruf, Fehler-Retry, verwaiste Sperre). **GETESTET:** vollständige CI auf dem vorherigen Stand `1d7b1723` bestanden ([Actions 40730971955](https://github.com/ManuEtt/Dnd/actions/runs/40730971955)). **NOCH NICHT GETESTET:** neuer kombinierter Head einschließlich PR #363, parallele Runner-Prozesse und reales Gerät. **BLOCKIERT:** kombinierte CI-Abnahme. **Migration:** keine. **Nächster Schritt:** kombinierte CI prüfen, danach Review/Merge nur bei Erfolg.
