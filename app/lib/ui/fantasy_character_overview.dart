@@ -732,17 +732,11 @@ class _ReferenceRow extends StatelessWidget {
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
-                      children: [
-                        labelText,
-                        if (value.isNotEmpty) valueText,
-                      ],
+                      children: [labelText, if (value.isNotEmpty) valueText],
                     )
                   : labelText,
             ),
-            if (!stacked) ...[
-              const SizedBox(width: 6),
-              valueText,
-            ],
+            if (!stacked) ...[const SizedBox(width: 6), valueText],
           ],
         );
       },
