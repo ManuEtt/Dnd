@@ -332,101 +332,134 @@ class _CharacterHeader extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-              child: Row(
-                children: [
-                  FantasyPortraitMedallion(
-                    size: 112,
-                    child:
-                        hero.portraitPreset >= 0 ||
-                            hero.portraitPhotoBase64.isNotEmpty
-                        ? FantasyCharacterPortrait(
-                            key: const ValueKey('sheet-hero-portrait'),
-                            preset: hero.portraitPreset,
-                            photoBase64: hero.portraitPhotoBase64,
-                            name: hero.name,
-                            size: 105,
-                          )
-                        : Container(
-                            key: const ValueKey('sheet-avatar-placeholder'),
-                            color: const Color(0xff243749),
-                            alignment: Alignment.center,
-                            child: Text(
-                              initials,
-                              style: const TextStyle(
-                                fontFamily: 'serif',
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                                color: _gold,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // Use the available full width rather than truncating the
+                  // hero identity beside the portrait at large system text.
+                  final stacked =
+                      MediaQuery.textScalerOf(context).scale(1) >= 1.8 &&
+                      constraints.maxWidth < 500;
+                  final portrait = KeyedSubtree(
+                    key: const ValueKey('sheet-header-portrait'),
+                    child: FantasyPortraitMedallion(
+                      size: 112,
+                      child:
+                          hero.portraitPreset >= 0 ||
+                              hero.portraitPhotoBase64.isNotEmpty
+                          ? FantasyCharacterPortrait(
+                              key: const ValueKey('sheet-hero-portrait'),
+                              preset: hero.portraitPreset,
+                              photoBase64: hero.portraitPhotoBase64,
+                              name: hero.name,
+                              size: 105,
+                            )
+                          : Container(
+                              key: const ValueKey('sheet-avatar-placeholder'),
+                              color: const Color(0xff243749),
+                              alignment: Alignment.center,
+                              child: Text(
+                                initials,
+                                style: const TextStyle(
+                                  fontFamily: 'serif',
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.bold,
+                                  color: _gold,
+                                ),
                               ),
                             ),
-                          ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
+                    ),
+                  );
+                  final identity = Column(
+                    key: const ValueKey('sheet-header-identity'),
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'WÜRFELRAUNEN',
+                        style: TextStyle(
+                          fontFamily: 'serif',
+                          fontSize: 12,
+                          letterSpacing: 1.2,
+                          fontWeight: FontWeight.bold,
+                          color: _gold,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        hero.name.isEmpty ? 'Unbenannter Held' : hero.name,
+                        key: const ValueKey('sheet-hero-name'),
+                        maxLines: stacked ? null : 2,
+                        overflow: stacked
+                            ? TextOverflow.visible
+                            : TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontFamily: 'serif',
+                          fontSize: 24,
+                          color: _ivory,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        '${hero.species}  •  ${hero.classSummary}  •  Stufe ${hero.level}',
+                        style: const TextStyle(color: _ivory, fontSize: 11),
+                        maxLines: stacked ? null : 2,
+                        overflow: stacked
+                            ? TextOverflow.visible
+                            : TextOverflow.ellipsis,
+                      ),
+                      if (hero.subclass.isNotEmpty ||
+                          hero.secondarySubclass.isNotEmpty) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          [
+                            if (hero.subclass.isNotEmpty) hero.subclass,
+                            if (hero.secondarySubclass.isNotEmpty)
+                              hero.secondarySubclass,
+                          ].join(' · '),
+                          maxLines: stacked ? null : 2,
+                          overflow: stacked
+                              ? TextOverflow.visible
+                              : TextOverflow.ellipsis,
+                          style: const TextStyle(color: _gold, fontSize: 11),
+                        ),
+                      ],
+                      const SizedBox(height: 7),
+                      Text(
+                        hero.background.isEmpty
+                            ? 'Dein Weg durch die Chroniken'
+                            : hero.background,
+                        maxLines: stacked ? null : 2,
+                        overflow: stacked
+                            ? TextOverflow.visible
+                            : TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: _muted,
+                          fontSize: 11,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
+                  );
+                  if (stacked) {
+                    return Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'WÜRFELRAUNEN',
-                          style: TextStyle(
-                            fontFamily: 'serif',
-                            fontSize: 12,
-                            letterSpacing: 1.2,
-                            fontWeight: FontWeight.bold,
-                            color: _gold,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          hero.name.isEmpty ? 'Unbenannter Held' : hero.name,
-                          key: const ValueKey('sheet-hero-name'),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontFamily: 'serif',
-                            fontSize: 24,
-                            color: _ivory,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          '${hero.species}  •  ${hero.classSummary}  •  Stufe ${hero.level}',
-                          style: const TextStyle(color: _ivory, fontSize: 11),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        if (hero.subclass.isNotEmpty ||
-                            hero.secondarySubclass.isNotEmpty) ...[
-                          const SizedBox(height: 4),
-                          Text(
-                            [
-                              if (hero.subclass.isNotEmpty) hero.subclass,
-                              if (hero.secondarySubclass.isNotEmpty)
-                                hero.secondarySubclass,
-                            ].join(' · '),
-                            maxLines: 2,
-                            style: const TextStyle(color: _gold, fontSize: 11),
-                          ),
-                        ],
-                        const SizedBox(height: 7),
-                        Text(
-                          hero.background.isEmpty
-                              ? 'Dein Weg durch die Chroniken'
-                              : hero.background,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: _muted,
-                            fontSize: 11,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
+                        portrait,
+                        const SizedBox(height: 12),
+                        identity,
                       ],
-                    ),
-                  ),
-                ],
+                    );
+                  }
+                  return Row(
+                    children: [
+                      portrait,
+                      const SizedBox(width: 12),
+                      Expanded(child: identity),
+                    ],
+                  );
+                },
               ),
             ),
           ],
