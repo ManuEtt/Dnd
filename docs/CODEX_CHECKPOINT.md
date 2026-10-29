@@ -1,5 +1,18 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat A – Mehrziel-Zuordnung Magic Missile, PR #375 (29.10.2026)
+
+**IMPLEMENTIERT im eigenen Draft-PR, nicht in main:** `SPELL-MISSILE-MULTITARGET`-Vorprüfung mit 3–11 Geschossen, eindeutiger Ziel-ID, bestätigter Kreatur/Sicht/120-Fuß-Reichweite/freier Zielverbindung. Zuordnung pro Geschoss unveränderlich; kein Würfel, kein Treffer, keine Slot-Buchung. SRD 5.2.1 S. 146, CC BY 4.0. Fachdateien `app/lib/domain/srd_magic_missile_multi_target_rules.dart` und `app/test/srd_magic_missile_multi_target_rules_test.dart`.
+
+**GETESTET:** Official-SRD-Text, Hauptbranch und tatsächlicher Katalogeintrag geprüft; acht neue Testfälle hinzugefügt, jedoch **noch nicht ausgeführt**. **NICHT GETESTET:** Flutter/Dart lokal und finaler PR-CI-/APK-Build. **BLOCKIERT:** lokal kein Dart/Flutter; neue CI-Ergebnisse fehlen. **NOCH NICHT IMPLEMENTIERT:** Ende-zu-Ende-Mehrziel-Schaden/Shield/Revision/Controller; Requirement bleibt `partial`.
+
+**GitHub:** [Draft-PR #375](https://github.com/ManuEtt/Dnd/pull/375), Branch `feat/chat-a/magic-missile-multitarget-plan-20261029`, Basis `1dc8d076786dbfb6a6792b6653bd1457bd7992d9`. Keine Migration; SQLite3/JSON1 unverändert. README/zentralen Checkpoint anderer PRs additiv durch Chat D konsolidieren. [Chat-A-Checkpoint](parallel/CHAT_A_CHECKPOINT.md).
+
+**Nächster einzelner Schritt:** Revisionsgesicherter Mehrziel-Kampfbefehl mit exakt einmaliger Slotbuchung, pro-Geschoss-Schaden, Shield-Abwehr und Rollback-Tests.
+
+---
+
+
 ## Abnahme 28.10.2026 – Charakter-Symbolwahl / Alpha 0.8.47+97
 
 **IMPLEMENTIERT:** Kleriker/Paladin wählen im Klassenpaket A ausdrücklich Amulett,
