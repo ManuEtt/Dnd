@@ -131,7 +131,7 @@ void main() {
     final skills = find.byKey(const ValueKey('sheet-preview-fertigkeiten'));
     final label = find.descendant(
       of: skills,
-      matching: find.text('Mit Tieren umgehen'),
+      matching: find.text('Einschüchtern'),
     );
     expect(label, findsOneWidget);
     expect(tester.widget<Text>(label).maxLines, isNull);
