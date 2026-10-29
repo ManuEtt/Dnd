@@ -1,3 +1,9 @@
+## 29.10.2026 – Chat A: Wall of Fire heiße Seite, PR #372
+
+**Ausgangs-main:** `1dc8d076786dbfb6a6792b6653bd1457bd7992d9`. Eigener Branch `feat/chat-a/wall-fire-heat-side-preflight-20261029`, [Draft-PR #372](https://github.com/ManuEtt/Dnd/pull/372), kein Merge. **IMPLEMENTIERT:** reine SRD-Regelvorprüfung für bestätigte heiße Wandseite und 10-Fuß-Ende-des-Zuges-Zone sowie ausdrücklich erstes Wandbetreten pro Zug. Gerade Wand und Ring werden getrennt auf plausible Seiten geprüft; unbekannte Fakten und Fremdzauber bleiben gesperrt. **GETESTET:** Tests geschrieben, noch kein vollständiger CI-Erfolg auf finalem Head. **NICHT GETESTET:** Flutter/Android/native/Alpha final, echtes Gerät. **NICHT IMPLEMENTIERT:** 3D-Deckung, Saves, Schaden, Konzentration und revisionsgebundene Ereignisbuchung. **KOMPATIBILITÄT:** SQLite3/JSON1, Version, App-Stories unverändert, keine Migration. SRD-ID `SPELL-ENTRY-WALL-OF-FIRE` bleibt `unverified`, Quelle Wizards of the Coast LLC, SRD 5.2.1, CC BY 4.0. Additive gemeinsame README-/Checkpoint-Inhalte vor Merge erhalten.
+
+---
+
 # Codex-Checkpoint – Würfelraunen
 
 ## Abnahme 28.10.2026 – Charakter-Symbolwahl / Alpha 0.8.47+97
