@@ -298,5 +298,71 @@ class StoryRulesBoundaryTests(unittest.TestCase):
             check_imports('app/lib/story/chapter.dart', source),
         )
 
+    def test_block_comment_before_directive_cannot_hide_forbidden_import(self):
+        source = "/* license */ import '../domain/rules_engine.dart';"
+        self.assertEqual(
+            ["app/lib/story/chapter.dart: story must not import "
+             "../domain/rules_engine.dart"],
+            check_imports("app/lib/story/chapter.dart", source),
+        )
+
+    def test_nested_comment_before_part_of_still_checks_boundary(self):
+        source = (
+            "/* notice /* nested */ extra */ part /* marker */ of "
+            "'../domain/models.dart';"
+        )
+        self.assertEqual(
+            ["app/lib/story/chapter.dart: story must not include "
+             "../domain/models.dart"],
+            check_imports("app/lib/story/chapter.dart", source),
+        )
+
+    def test_multiline_block_comment_does_not_invent_forbidden_import(self):
+        source = (
+            "/* documentation\n"
+            "import '../domain/rules_engine.dart';\n"
+            "/* nested export '../domain/models.dart'; */\n"
+            "*/\n"
+            "import 'story_rule_boundary.dart';"
+        )
+        self.assertEqual([], check_imports("app/lib/story/chapter.dart", source))
+
+    def test_multiline_string_and_raw_string_do_not_create_imports(self):
+        source = (
+            "final example = '''\n"
+            "import '../domain/rules_engine.dart';\n"
+            "''';\n"
+            "final rawExample = r\"\"\"\n"
+            "part '../domain/models.dart';\n"
+            "\"\"\";\n"
+            "import 'story_rule_boundary.dart';"
+        )
+        self.assertEqual([], check_imports("app/lib/story/chapter.dart", source))
+
+    def test_comment_markers_inside_quoted_uri_are_not_comment_openers(self):
+        source = (
+            "import 'package:third_party/with//slashes.dart';\n"
+            "/* header */ import 'story_rule_boundary.dart';"
+        )
+        messages = check_imports("app/lib/story/chapter.dart", source)
+        self.assertEqual(1, len(messages), messages)
+        self.assertIn("package:third_party/with//slashes.dart", messages[0])
+
+    def test_comment_preceded_conditional_import_is_inspected(self):
+        source = (
+            "/* header */ import 'models.dart' /* options */\n"
+            "if (dart.library.io) '../story/story_memory_engine.dart';"
+        )
+        messages = check_imports("app/lib/domain/rules.dart", source)
+        self.assertEqual(1, len(messages), messages)
+        self.assertIn("../story/story_memory_engine.dart", messages[0])
+
+    def test_legitimate_comment_prefixed_local_directives_remain_allowed(self):
+        source = (
+            "/* header */ import 'story_rule_boundary.dart';\n"
+            "/* other */ part 'chapter_generated.dart';"
+        )
+        self.assertEqual([], check_imports("app/lib/story/chapter.dart", source))
+
 if __name__ == "__main__":
     unittest.main()
