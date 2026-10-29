@@ -152,111 +152,112 @@ void main() {
     expect(find.byKey(const ValueKey('adventure-outbox-error')), findsNothing);
     expect(tester.takeException(), isNull);
   });
-  testWidgets('vollständige ausstehende Handlung anzeigen ohne Retry-Mutation', (
-    tester,
-  ) async {
-    final longText = List<String>.filled(
-      24,
-      'Ich untersuche erst das linke Tor und spreche dann mit Mira.',
-    ).join(' ');
-    final action = PendingPlayerAction(
-      campaignId: 'camp',
-      requestId: 'request-long',
-      text: longText,
-      selectedNpcId: 'mira-two',
-      selectedNpcRevision: 5,
-    );
-    final saved = Map<String, dynamic>.of(action.toJson());
-    var retries = 0;
-    var discards = 0;
-    await tester.pumpWidget(
-      _screen(
-        pending: action,
-        onRetry: () => retries++,
-        onDiscard: () => discards++,
-      ),
-    );
+  testWidgets(
+    'vollständige ausstehende Handlung anzeigen ohne Retry-Mutation',
+    (tester) async {
+      final longText = List<String>.filled(
+        24,
+        'Ich untersuche erst das linke Tor und spreche dann mit Mira.',
+      ).join(' ');
+      final action = PendingPlayerAction(
+        campaignId: 'camp',
+        requestId: 'request-long',
+        text: longText,
+        selectedNpcId: 'mira-two',
+        selectedNpcRevision: 5,
+      );
+      final saved = Map<String, dynamic>.of(action.toJson());
+      var retries = 0;
+      var discards = 0;
+      await tester.pumpWidget(
+        _screen(
+          pending: action,
+          onRetry: () => retries++,
+          onDiscard: () => discards++,
+        ),
+      );
 
-    final intent = find.byKey(const ValueKey('adventure-pending-action-text'));
-    expect(tester.widget<Text>(intent).maxLines, 2);
-    expect(tester.widget<Text>(intent).overflow, TextOverflow.ellipsis);
-    await tester.tap(
-      find.byKey(const ValueKey('adventure-pending-action-toggle')),
-    );
-    await tester.pumpAndSettle();
+      final intent = find.byKey(
+        const ValueKey('adventure-pending-action-text'),
+      );
+      expect(tester.widget<Text>(intent).maxLines, 2);
+      expect(tester.widget<Text>(intent).overflow, TextOverflow.ellipsis);
+      await tester.tap(
+        find.byKey(const ValueKey('adventure-pending-action-toggle')),
+      );
+      await tester.pumpAndSettle();
 
-    expect(tester.widget<Text>(intent).data, longText);
-    expect(tester.widget<Text>(intent).maxLines, isNull);
-    expect(tester.widget<Text>(intent).overflow, TextOverflow.visible);
-    expect(find.text('Weniger anzeigen'), findsOneWidget);
-    final scrollArea = find.byKey(
-      const ValueKey('adventure-pending-action-scroll'),
-    );
-    final scrollable = tester.state<ScrollableState>(
-      find.descendant(of: scrollArea, matching: find.byType(Scrollable)),
-    );
-    expect(scrollable.position.maxScrollExtent, greaterThan(0));
-    scrollable.position.jumpTo(scrollable.position.maxScrollExtent);
-    await tester.pump();
-    expect(
-      scrollable.position.pixels,
-      scrollable.position.maxScrollExtent,
-    );
-    expect(action.toJson(), saved);
-    expect(retries, 0);
-    expect(discards, 0);
+      expect(tester.widget<Text>(intent).data, longText);
+      expect(tester.widget<Text>(intent).maxLines, isNull);
+      expect(tester.widget<Text>(intent).overflow, TextOverflow.visible);
+      expect(find.text('Weniger anzeigen'), findsOneWidget);
+      final scrollArea = find.byKey(
+        const ValueKey('adventure-pending-action-scroll'),
+      );
+      final scrollable = tester.state<ScrollableState>(
+        find.descendant(of: scrollArea, matching: find.byType(Scrollable)),
+      );
+      expect(scrollable.position.maxScrollExtent, greaterThan(0));
+      scrollable.position.jumpTo(scrollable.position.maxScrollExtent);
+      await tester.pump();
+      expect(scrollable.position.pixels, scrollable.position.maxScrollExtent);
+      expect(action.toJson(), saved);
+      expect(retries, 0);
+      expect(discards, 0);
 
-    await tester.ensureVisible(
-      find.byKey(const ValueKey('adventure-retry-action')),
-    );
-    await tester.tap(find.byKey(const ValueKey('adventure-retry-action')));
-    expect(retries, 1);
-    expect(discards, 0);
-    expect(action.toJson(), saved);
-    await tester.ensureVisible(
-      find.byKey(const ValueKey('adventure-pending-action-toggle')),
-    );
-    await tester.tap(
-      find.byKey(const ValueKey('adventure-pending-action-toggle')),
-    );
-    await tester.pumpAndSettle();
-    expect(tester.widget<Text>(intent).maxLines, 2);
-    expect(tester.takeException(), isNull);
-  });
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('adventure-retry-action')),
+      );
+      await tester.tap(find.byKey(const ValueKey('adventure-retry-action')));
+      expect(retries, 1);
+      expect(discards, 0);
+      expect(action.toJson(), saved);
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('adventure-pending-action-toggle')),
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('adventure-pending-action-toggle')),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.widget<Text>(intent).maxLines, 2);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
-  testWidgets('wechselnder gespeicherter Auftrag setzt aufgeklappten Text zurück', (
-    tester,
-  ) async {
-    await tester.pumpWidget(_screen(pending: _npcAction));
-    await tester.tap(
-      find.byKey(const ValueKey('adventure-pending-action-toggle')),
-    );
-    await tester.pump();
-    expect(
-      tester
-          .widget<Text>(
-            find.byKey(const ValueKey('adventure-pending-action-text')),
-          )
-          .maxLines,
-      isNull,
-    );
-    await tester.pumpWidget(_screen(pending: _plainAction));
-    expect(find.text(_plainAction.text), findsOneWidget);
-    expect(find.text('Ganzen Text anzeigen'), findsOneWidget);
-    expect(
-      tester
-          .widget<Text>(
-            find.byKey(const ValueKey('adventure-pending-action-text')),
-          )
-          .maxLines,
-      2,
-    );
-    await tester.pumpWidget(_screen());
-    expect(
-      find.byKey(const ValueKey('adventure-pending-action-toggle')),
-      findsNothing,
-    );
-  });
+  testWidgets(
+    'wechselnder gespeicherter Auftrag setzt aufgeklappten Text zurück',
+    (tester) async {
+      await tester.pumpWidget(_screen(pending: _npcAction));
+      await tester.tap(
+        find.byKey(const ValueKey('adventure-pending-action-toggle')),
+      );
+      await tester.pump();
+      expect(
+        tester
+            .widget<Text>(
+              find.byKey(const ValueKey('adventure-pending-action-text')),
+            )
+            .maxLines,
+        isNull,
+      );
+      await tester.pumpWidget(_screen(pending: _plainAction));
+      expect(find.text(_plainAction.text), findsOneWidget);
+      expect(find.text('Ganzen Text anzeigen'), findsOneWidget);
+      expect(
+        tester
+            .widget<Text>(
+              find.byKey(const ValueKey('adventure-pending-action-text')),
+            )
+            .maxLines,
+        2,
+      );
+      await tester.pumpWidget(_screen());
+      expect(
+        find.byKey(const ValueKey('adventure-pending-action-toggle')),
+        findsNothing,
+      );
+    },
+  );
 
   for (final width in [320.0, 360.0]) {
     testWidgets('200 % Schrift bei $width dp: Auftrag trotz Sperre lesbar', (
