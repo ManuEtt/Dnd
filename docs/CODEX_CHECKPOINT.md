@@ -1,3 +1,10 @@
+## 29.10.2026 – Chat B: doppelte NPC-IDs im Story-Kontext
+
+- **Main-Basis:** `1dc8d076786dbfb6a6792b6653bd1457bd7992d9`; **Branch:** `feat/chat-b/npc-payload-duplicate-id-20261029`.
+- **IMPLEMENTIERT:** `NpcIdentityStoryPayload.prepare` schließt gespeicherte IDs aus, die in mehreren NPC-Zeilen vorkommen, auch wenn die Anzeigenamen einzigartig sind. Andere gültige NPCs bleiben selektierbar. Nur lesende Story-Projektion; keine Änderung an Regeln, Helden, SQLite/JSON.
+- **TESTS:** Drei neue Flutter-Regressionen (negative Doppel-ID, positive unabhängige NPC-ID, JSON-Roundtrip); CI auf finalem Commit noch ausstehend.
+- **ABGRENZUNG:** Kein Eingriff in `npc_continuity_reader.dart` (PR #364), `npc_narrator_memory.dart` (PR #362) oder `story_memory_engine.dart` (PR #356). README/zentralen Checkpoint additiv durch Chat D konsolidieren.
+
 # Codex-Checkpoint – Würfelraunen
 
 ## Abnahme 28.10.2026 – Charakter-Symbolwahl / Alpha 0.8.47+97

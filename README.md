@@ -1,5 +1,17 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## 29.10.2026 – Chat B: doppelte gespeicherte NPC-IDs beim Story-Kontext abweisen
+
+Die schreibgeschützte NPC-Story-Projektion akzeptiert keine Identität aus
+einem importierten Spielstand, wenn dieselbe NPC-ID mehrfach vorkommt –
+selbst bei verschiedenen eindeutigen Anzeigenamen. Andere eindeutig
+bestätigte NPCs bleiben verfügbar. Drei neue Flutter-Regressionen
+prüfen mehrdeutige IDs, unabhängige NPCs und JSON-Wiederherstellung.
+Kein Regel-/Heldenzustand oder Speicherformat wird geändert.
+Branch: `feat/chat-b/npc-payload-duplicate-id-20261029`.
+CI-Abnahme auf dem finalen PR-Commit steht noch aus.
+
+
 Deutschsprachige Fantasy-Solo-App für Android mit lokalen Charakteren,
 Kampagnen, ausgewählten D&D-SRD-5.2.1-Regeln und optionalem KI-Erzähler.
 **Alpha 0.8.47+97**; lokales Spielen benötigt keinen Account oder KI-Server.

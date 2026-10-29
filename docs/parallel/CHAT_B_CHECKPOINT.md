@@ -1,3 +1,15 @@
+# Chat B – NPC-Story-Payload: doppelte IDs abweisen (29.10.2026)
+
+- **Main-Basis:** `1dc8d076786dbfb6a6792b6653bd1457bd7992d9`; **Branch:** `feat/chat-b/npc-payload-duplicate-id-20261029`; **PR:** nach Erstellung im GitHub-Verlauf.
+- **Problem:** Zwei importierte NPCs können dieselbe gespeicherte ID bei verschiedenen Anzeigenamen besitzen. Einzigartiger Name allein genügt nicht für die bestätigte Story-Identität.
+- **IMPLEMENTIERT:** Zähle alle gespeicherten NPC-IDs vor der Story-Kontextauswahl; bei Duplikaten keine NPC-Identität aus diesem Eintrag übertragen. Unabhängige gültige NPCs weiterhin zulassen.
+- **DATEIEN:** `app/lib/story/npc_identity_story_payload.dart`; `app/test/npc_identity_story_duplicate_id_test.dart`; README und beide Checkpoints.
+- **TESTS:** Drei Flutter-Regressionen erstellt (Doppel-ID, unabhängige ID, JSON-Roundtrip), finaler CI-Nachweis ausstehend. Keine Regel-/Heldenmutation, keine Migration.
+- **KONFLIKTE:** Keine Story-Fachdatei der offenen Chat-B-PRs #356, #362, #364 berührt. Dokumentation bei Integration durch Chat D additiv konsolidieren.
+- **NÄCHSTER SCHRITT:** GitHub-CI vollständig prüfen, Fehler beheben und PR reviewbereit markieren.
+
+---
+
 # Chat B – Sitzungsidentität beim Ereignis-Replay (27.10.2026)
 
 - **main-Basis:** `96001353f2b90f293fbdade934e78b7b8281e965`; Branch `fix/chat-b/story-replay-session-identity-20261027`.
