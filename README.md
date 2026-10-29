@@ -1,5 +1,12 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – Android-Zugänglichkeit der Charakterübersicht (29.10.2026)
+
+[PR #392](https://github.com/ManuEtt/Dnd/pull/392) (Draft) zeigt bei mindestens 180 % Schrift und weniger als 500 dp Kartenbreite **vollständige Fertigkeits-, Zauber-, Zustands- und Inventarnamen** oberhalb des jeweiligen bestätigten Wertes an; normalgroße Darstellung behält die bisherigen kompakten Zeilen. Neue Flutter-Widgettests decken 320/360 dp bei 200 %, normalen Text, Konzentration/Inventarmenge sowie unbekannte historische Werte ab. **Die PR-#392-CI ist bis zum erfolgreichen Lauf auf dem finalen SHA offen**. Keine Änderungen an Regeln, Charakterdaten, Version, SQLite oder JSON.
+
+Die ältere Chat-C-Arbeit [PR #388](https://github.com/ManuEtt/Dnd/pull/388) (Charakterbogen-Header) besteht dagegen [36/36 CI-Schritte](https://github.com/ManuEtt/Dnd/actions/runs/40914859785) auf `97262ab3900f21f5951afd45bd35da197c3b57ae` und ist reviewbereit. PR #390 bearbeitet dieselbe Header-Fachdatei wie #388: vor Integration bewusst zusammenführen. PR #392 ist fachlich davon getrennt. Offen gebliebene gemeinsame README-/Checkpoint-Zweige der Chats A/D und Charaktererstellung müssen bei Integration bewahrt werden.
+
+
 ## Konsolidierter Arbeitsstand – Integrationskandidat vom 29.10.2026
 
 **Noch nicht in `main` integriert.** Die 24 offenen PRs von Chat A/B/C/D sind auf einem separaten technischen Integrationsbaum zusammengetragen; der gemeinsame Flutter-/Python-/Backend-/Android-CI-Lauf steht aus. Einzelne Pull Requests sind Entwürfe und bedürfen einer eigenen fachlichen Freigabe. Aktive Branches vor grüner gemeinsamer Abnahme und SHA-gesicherter Archivierung nicht löschen. [Herkunft, Originalbeschreibungen, HEADs und offene Risiken](docs/parallel/INTEGRATION_20261029.md).
