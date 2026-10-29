@@ -2,11 +2,7 @@ import 'enemy_force_defense.dart';
 
 /// Confirmed state of Shield for ONE creature, not inferred from narration.
 /// An available reaction is not the same as an already active Shield.
-enum SrdMissileShieldState {
-  unverified,
-  absentConfirmed,
-  activeConfirmed,
-}
+enum SrdMissileShieldState { unverified, absentConfirmed, activeConfirmed }
 
 /// A previously allocated dart. The d4 result is absent if Shield blocks
 /// that creature: no otherwise unnecessary random draw is authorized.
@@ -70,10 +66,7 @@ class SrdMagicMissileVolleyDamage {
   int get shieldBlockedCount =>
       darts.where((dart) => dart.blockedByShield).length;
   int get rawTotal => rawPerTarget.values.fold(0, (sum, n) => sum + n);
-  int get appliedTotal => appliedPerTarget.values.fold(
-    0,
-    (sum, n) => sum + n,
-  );
+  int get appliedTotal => appliedPerTarget.values.fold(0, (sum, n) => sum + n);
 }
 
 /// SRD 5.2.1 pp. 146, 161-162: simultaneous Magic Missile darts, Shield
@@ -130,9 +123,7 @@ class SrdMagicMissileVolleyDamageRules {
       defenses[target.targetId] = target;
     }
     if (defenses.isEmpty || defenses.length > count) {
-      throw const FormatException(
-        'Ungültige Anzahl bestätigter Kreaturen.',
-      );
+      throw const FormatException('Ungültige Anzahl bestätigter Kreaturen.');
     }
 
     // Validate the ENTIRE volley before computing any damage or totals.
@@ -177,10 +168,9 @@ class SrdMagicMissileVolleyDamageRules {
       final incoming = blocked ? 0 : dart.naturalD4! + 1;
       final damage = blocked
           ? 0
-          : EnemyForceDefenseRules.apply(
-              [incoming],
-              defense: target.forceDefense,
-            ).appliedTotal;
+          : EnemyForceDefenseRules.apply([
+              incoming,
+            ], defense: target.forceDefense).appliedTotal;
       resolved.add(
         SrdMissileDartDamage(
           targetId: dart.targetId,
