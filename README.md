@@ -15,6 +15,11 @@ Charaktererstellung und Regelengine sind noch nicht vollständig.
 
 ## Aktueller Stand und autonome Fortsetzung
 
+### Chat A – Magic-Missile-Mehrzielschaden (PR #385, 29.10.2026)
+
+Auf eigenem, noch **nicht integrierten** [PR #385](https://github.com/ManuEtt/Dnd/pull/385) ergänzt Chat A einen rein lesenden SRD-5.2.1-Schadensresolver für die getrennte Geschossverteilung auf bestätigte Kreaturen. Einzelgeschosse berücksichtigen pro Ziel bekannte Energieschaden-Resistenz/Verwundbarkeit/Immunität; bestätigter `Shield` verhindert ausschließlich den Schaden seines Trägers, ohne einen W4 zu benötigen. Elf deterministische Dart-Tests liegen bei. Kein bestehender Spielstand, keine KI-Autorität und keine Kampfroutine geändert. Der Resolver hängt **nicht** vom weiterhin offenen [Zielverteilungs-PR #375](https://github.com/ManuEtt/Dnd/pull/375) ab. Die finale CI-Abnahme steht beim Schreiben aus und wird im PR ergänzt; keine Geräteabnahme. SQLite 3 / JSON 1 unverändert. Der Multi-Target-Kampfbefehl bleibt separat offen.
+
+
 **IMPLEMENTIERT:** Kleriker/Paladin wählen im Klassenpaket A ausdrücklich Amulett,
 Emblem oder Reliquiar. Typisierte Gegenstände und Gold werden nach Bestätigung
 nur einmal übernommen. Neue Klassenbelege verwenden Version 2; historische

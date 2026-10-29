@@ -1,3 +1,19 @@
+# Chat A – Magic Missile Einzelgeschoss-Schaden (29.10.2026)
+
+- **Ausgangs-main:** `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`.
+- **Eigener Branch:** `feat/chat-a/magic-missile-volley-damage-20261029`; Codecommit `9274880371d164a05f65c69006d9a8fa30ea10d3`; Testcommit `a4bcf31d4d0f5d962807b601f0fc96b5802e5636`; [PR #385](https://github.com/ManuEtt/Dnd/pull/385) (anfänglich Draft).
+- **Ziel:** Für die noch offene Anforderung `SPELL-MISSILE-MULTITARGET` die getrennte SRD-5.2.1-Verteidigung je Kreatur vorbereiten, ohne das ungemergte Zielverteilungsmodul aus PR #375 zu kopieren.
+- **IMPLEMENTIERT:** Read-only `SrdMagicMissileVolleyDamageRules.resolve` für 3–11 Geschosse, tatsächlich bestätigte Ziel-IDs, Shieldstatus und Energieschaden-Abwehr. Shield verhindert nur seine Geschosse und fordert keinen W4. Alle anderen erfordern W4 1–4; bestehende `EnemyForceDefenseRules.apply` rundet Schäden pro Geschoss. Resultat enthält pro Ziel und Geschoss Rohauswirkung, Reduktion, Immunität/Schutz und Summen; keine HP-/Ressourcen-/Story-Mutation.
+- **Geänderte Dateien:** `app/lib/domain/srd_magic_missile_volley_damage_rules.dart`, `app/test/srd_magic_missile_volley_damage_rules_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_A_CHECKPOINT.md`.
+- **GETESTET:** Sichten der offiziellen SRD 5.2.1, pp. 17/146/161–162 und der bestehenden Force-/Shield-Implementierungen. Elf deterministische Tests erstellt; CI-Ergebnisse werden separat im PR nachgewiesen.
+- **NICHT GETESTET:** lokale Flutter-/Dart-Tests und APK; finaler CI-Lauf bei initialem Schreiben noch ausstehend; echtes Android-Gerät nicht geprüft.
+- **BLOCKIERT:** kein Flutter/Dart-SDK lokal, kein Testgerät; Multi-Target-Engineintegration benötigt nach Merge von #375 und #385 einen koordinierten PR für gemeinsame Modelle/Controller/Storage.
+- **NOCH NICHT IMPLEMENTIERT:** Mehrziel-Kampfzustand, Aktionen/Zauberplätze, Shield-Reaktionsverbrauch, Combat-UI, Persistenz. Die neuen Tests belegen nur die isolierte Schadensberechnung. SRD 5.2.1, Wizards of the Coast LLC, CC BY 4.0, https://www.dndbeyond.com/srd.
+- **Migration:** keine; SQLite 3 / JSON 1 unverändert. Weitere PRs #357/#361/#366/#367/#372/#375 besitzen unabhängige Fachdateien; gemeinsame Fortschrittstexte additiv durch Chat D konsolidieren.
+- **Nächster Schritt:** nach Integration beider Vorstufen eine atomare Mehrziel-Kampfaktion mit Retry-/Revisions-/Rollback-Tests.
+
+---
+
 # Chat A – Checkpoint (26.10.2026): Eldritch-Blast-Klassenprüfung
 
 - Ausgangs-Main: `42d14ad36cc947691f7e5a1e8647a43f5421b86e`; Branch: `fix/chat-a/eldritch-primary-class-validation-20261026`.

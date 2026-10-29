@@ -1,5 +1,18 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat A – Magic-Missile-Mehrzielschaden / PR #385 (29.10.2026, Europe/Berlin)
+
+**IMPLEMENTIERT (noch nicht in main):** Domänen-Resolver `app/lib/domain/srd_magic_missile_volley_damage_rules.dart` und elf Regressionstests `app/test/srd_magic_missile_volley_damage_rules_test.dart`. Exakt 3–11 bestätigte Geschosse pro Zaubergrad, individuelle Zielabwehr, Shield ohne W4, per-Geschoss-Rundung und unveränderliche Ergebnisse. Quellen: Wizards of the Coast LLC, SRD 5.2.1 S. 17, 146, 161–162, CC BY 4.0.
+
+**GETESTET:** amtliche Quelle, aktueller `main`-Stand und offene Fach-PRs gesichtet; elf Tests erstellt. **NICHT GETESTET:** neue Dart-/Flutter-Suite, Android und finale CI beim Dokumentationscommit noch nicht abgeschlossen. **BLOCKIERT:** keine lokale Flutter-/Dart-Toolchain, kein reales Gerät; GitHub-CI im PR auswerten. **NOCH NICHT IMPLEMENTIERT:** atomarer Mehrziel-Kampfbefehl, vorbereiteter Zauber/Slotbuchung/Revision, UI und SQLite-Zustandsänderungen. `SPELL-MISSILE-MULTITARGET` bleibt **partial**.
+
+Branch `feat/chat-a/magic-missile-volley-damage-20261029`, Ausgangs-main `a25b357372afe6a2ac3cce9c10bc56a7d9cc775c`, erster Codecommit `9274880371d164a05f65c69006d9a8fa30ea10d3`, Testcommit `a4bcf31d4d0f5d962807b601f0fc96b5802e5636`; [PR #385](https://github.com/ManuEtt/Dnd/pull/385). Keine Schema-/JSON-Migration; Daten kompatibel. Bei Integration README und zentralen Checkpoint zusammen mit parallelen PRs additiv konsolidieren.
+
+**Genau nächster Schritt:** Nach Merge von #375 und #385 den bereits bestätigten Verteiler und Resolver in einen atomar persistierenden Mehrziel-Kampfbefehl integrieren. Akzeptanz: genau ein Slot/eine Aktion, pro-Geschoss-Schaden, Shield-Reaktionsbeleg, Revisions-/Retry-Konflikte und Rollback mit deterministischen Tests.
+
+---
+
+
 ## Chat D – PR #358: Alpha-Release atomar pro Version sperren
 
 **IMPLEMENTIERT:** `scripts/prepare_alpha_release.py` reserviert vor Publikationsbeginn ein atomar erzeugtes Lock-Verzeichnis pro Release-Version. Zweitaufrufe können keine fremden Dateien löschen. Drei positive/negative Regressionen (gleichzeitiger Aufruf, Fehler-Retry, verwaiste Sperre). **GETESTET:** vollständige CI auf dem vorherigen Stand `1d7b1723` bestanden ([Actions 40730971955](https://github.com/ManuEtt/Dnd/actions/runs/40730971955)). **NOCH NICHT GETESTET:** neuer kombinierter Head einschließlich PR #363, parallele Runner-Prozesse und reales Gerät. **BLOCKIERT:** kombinierte CI-Abnahme. **Migration:** keine. **Nächster Schritt:** kombinierte CI prüfen, danach Review/Merge nur bei Erfolg.
