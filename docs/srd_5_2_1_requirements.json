@@ -6241,7 +6241,7 @@
       "area": "equipment",
       "kind": "legacy_rule_claim",
       "name": "Classes: Starting Equipment",
-      "source": "SRD 5.2.1, Core Cleric Traits p.36; Core Paladin Traits p.53; Equipment / Holy Symbol p.97",
+      "source": "SRD 5.2.1 pp.8–9,49,63,83,93–95",
       "source_url": "https://www.dndbeyond.com/srd",
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/SRD_5_2_1_REQUIREMENTS_MATRIX.md",
@@ -6251,16 +6251,23 @@
         "app/test/class_holy_symbol_choice_test.dart",
         "app/test/srd_class_holy_symbol_dialog_test.dart",
         "app/test/character_start_class_storage_test.dart",
-        "app/test/character_start_class_ui_test.dart"
+        "app/test/character_start_class_ui_test.dart",
+        "app/test/monk_tool_proficiency_rules_test.dart",
+        "app/test/monk_tool_storage_test.dart",
+        "app/test/srd_monk_tool_creation_dialog_test.dart",
+        "app/test/tool_proficiency_panel_test.dart"
       ],
       "code": [
         "app/lib/domain/starting_equipment_import.dart",
         "app/lib/domain/starting_class_choice.dart",
         "app/lib/ui/srd_class_selection_dialog.dart",
         "app/lib/ui/character_editor.dart",
-        "app/lib/domain/srd_character_creation_audit.dart"
+        "app/lib/domain/srd_character_creation_audit.dart",
+        "app/lib/domain/tool_proficiency_rules.dart",
+        "app/lib/domain/character_rule_engine.dart",
+        "app/lib/ui/tool_proficiency_panel.dart"
       ],
-      "note": "Explizite Klassenpaket-A-Symbolwahl für Kleriker/Paladin unter den drei amtlichen Varianten; neue Bestätigungen v2, historische v1 bleiben unverändert lesbar und im Audit ungeklärt. Goldalternative ohne Symbol. Domain/Widget/SQLite-Tests und vollständige lokale Suite (2265 Flutter/200 Python/72 Backend/12 native App-Tests), Analyse/Debug-APK bestanden auf7ac32b1c. Finale GitHub-Abnahme gesondert in PR369/checks. Keine vollständige Automatik aller Startentscheidungen oder Fokus-/Zauberwirkungen."
+      "note": "Mönch-Erstklassenwahl v3 und A-Paketbindung, typisierte historische Hintergrundquellen, PB einmal, ausdrücklich relevante trainierte Fertigkeit/Vorteil, Zustände/Erschöpfung und Schurke7-Tool-Mindestwurf als lesende Vorschau. Alte v1/v2 ungeklärt erhalten. Gezielte Tests lokal bestanden; volle aktuelle CI separat abzunehmen. Werkzeugaktionen/SG/Verfügbarkeit/Herstellung/Zeit/Material und volle Klassenstarts nicht automatisiert."
     },
     {
       "id": "CHAR-START-AUDIT",
@@ -8227,15 +8234,26 @@
       "area": "equipment",
       "kind": "cross_cutting_rule",
       "name": "Tools",
-      "source": "Equipment",
+      "source": "SRD 5.2.1 pp.8–9,49,63,83,93–95",
       "source_url": "https://www.dndbeyond.com/srd",
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Equipment",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/monk_tool_proficiency_rules_test.dart",
+        "app/test/monk_tool_storage_test.dart",
+        "app/test/srd_monk_tool_creation_dialog_test.dart",
+        "app/test/tool_proficiency_panel_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/tool_proficiency_rules.dart",
+        "app/lib/domain/starting_class_choice.dart",
+        "app/lib/domain/character_rule_engine.dart",
+        "app/lib/ui/srd_class_selection_dialog.dart",
+        "app/lib/ui/tool_proficiency_panel.dart"
+      ],
+      "note": "Mönch-Erstklassenwahl v3 und A-Paketbindung, typisierte historische Hintergrundquellen, PB einmal, ausdrücklich relevante trainierte Fertigkeit/Vorteil, Zustände/Erschöpfung und Schurke7-Tool-Mindestwurf als lesende Vorschau. Alte v1/v2 ungeklärt erhalten. Gezielte Tests lokal bestanden; volle aktuelle CI separat abzunehmen. Werkzeugaktionen/SG/Verfügbarkeit/Herstellung/Zeit/Material und volle Klassenstarts nicht automatisiert."
     },
     {
       "id": "RULE-EQUIPMENT-ADVENTURING-GEAR",

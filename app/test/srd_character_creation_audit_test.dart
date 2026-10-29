@@ -108,7 +108,12 @@ void main() {
         final h = hero(klass.name);
         final before = jsonEncode(h.toJson());
         final steps = SrdCharacterCreationAudit.inspect(h);
-        expect(steps.length, 11);
+        expect(steps.length, klass.name == 'Mönch' ? 12 : 11);
+        if (klass.name == 'Mönch') {
+          expect(step(h, 'class.tools').status, CreationStepStatus.missing);
+        } else {
+          expect(steps.any((entry) => entry.id == 'class.tools'), isFalse);
+        }
         for (final id in [
           'origin.species',
           'abilities.scores',

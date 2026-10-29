@@ -1,84 +1,106 @@
 # Würfelraunen – Der lebendige Spielleiter
 
-## Chat D – Parallele Quell-ZIP-Veröffentlichung absichern (PR #391, 29.10.2026)
+## Chat D – PR #391: Quell-ZIP-Exporte exklusiv veröffentlichen (29.10.2026)
 
-Die Quell-ZIP-/SHA256-Veröffentlichung wird pro Ausgabepfad mit einem atomar
-angelegten Sperrverzeichnis serialisiert. Ein zweiter Export auf dasselbe Ziel
-wird ohne Veränderung der bisherigen Archive abgewiesen; nach behandelbaren
-Fehlern oder `KeyboardInterrupt` räumt der eigene Lauf auf. Eine nach
-hartem Prozessabbruch verbleibende Sperre bleibt absichtlich bestehen,
-statt unsichere Wiederholungen zu erzwingen. Drei neue Regressionstests
-prüfen Exklusivität, Integrität und Retry; bisherige ZIP-/Symlink- und
-Rollback-Prüfungen bleiben aktiv. Keine Migration oder Änderung an
-SQLite, Kampagnen-JSON, Flutter, Backend oder App-Version.
-[PR #391](https://github.com/ManuEtt/Dnd/pull/391) bleibt bis zur
-vollständigen CI auf dem finalen Head und Integrationsprüfung im Draft.
+Der Quell-ZIP-Exporter veröffentlicht ZIP und SHA256 mit einer
+atomar angelegten, ausgabepfadspezifischen Sperre. Gleichzeitige
+Schreibvorgänge auf dasselbe Archiv werden abgewiesen, und
+unterbrochene Schreibvorgänge geben ihren eigenen Lock frei.
+Eine nach hartem Absturz verbleibende Sperre bleibt aus
+Integritätsgründen bestehen. Drei neue Regressionen ergänzen die
+bisherigen ZIP-/Symlink-/Rollback-Tests. Keine Änderung an App,
+Spielstand, SQLite, JSON oder Android-Version.
+Die vollständige [PR-CI #40918352502](https://github.com/ManuEtt/Dnd/actions/runs/40918352502)
+auf `5d5d615d9fc6b8c5152cc5fae1cb1725f1fc4758` hat 36/36
+Prüfschritte bestanden. Nach Aufnahme des neueren Main ist eine
+neue kombinierte CI abzunehmen; [PR #391](https://github.com/ManuEtt/Dnd/pull/391)
+ist reviewbereit, aber noch nicht gemergt.
 
-## Konsolidierter Arbeitsstand – Integrationskandidat vom 29.10.2026
+Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;
+vollständige Charaktererstellung und SRD-Regelengine bleiben in Entwicklung.
 
-**Noch nicht in `main` integriert.** Die 24 offenen PRs von Chat A/B/C/D sind auf einem separaten technischen Integrationsbaum zusammengetragen; der gemeinsame Flutter-/Python-/Backend-/Android-CI-Lauf steht aus. Einzelne Pull Requests sind Entwürfe und bedürfen einer eigenen fachlichen Freigabe. Aktive Branches vor grüner gemeinsamer Abnahme und SHA-gesicherter Archivierung nicht löschen. [Herkunft, Originalbeschreibungen, HEADs und offene Risiken](docs/parallel/INTEGRATION_20261029.md).
+## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
+Stand: 29.10.2026, UTC. [PR #390](https://github.com/ManuEtt/Dnd/pull/390)
+ist regulär integriert. Geprüfter Produkt-Main:
+`4193000fd28154eeb8b0be3497acc722f674c5ab`; getesteter Arbeitskopf
+`53e8e72a58dc07bda07cc50a984142465a8cef79`, Branch
+`feat/character-monk-tool-proficiency-20261029`, Basis `fde0ef6e`.
+Der PR-Checkout `2b211456` und Produkt-Main haben denselben vollständigen
+Git-Baum `1f976980975d5a29ac0277c44e1bc7b79d062ab3`.
 
-## Qualitätsabsicherung – Alpha-Release-Sperre (Chat D, PR #358)
+**IMPLEMENTIERT:** Neue Erstklassen-Mönche wählen ausdrücklich eine von 27
+Handwerkszeug-/Instrumentübungen. Paket A liefert dasselbe Werkzeug und 11 GM;
+B liefert 50 GM ohne Werkzeug, die Übung bleibt bestehen. Klassenbeleg v3
+prüft Quelle und Paketbindung; v1/v2 bleiben unverändert lesbar und ungeklärt.
+Keine automatische Nachvergabe, kein zweiter Gold-/Inventargewinn bei Wiederwahl.
+Historisch bestätigte Übungen überleben spätere Anzeigenamens-/Inventaränderungen;
+Mönch als neue Zweitklasse erteilt keine Erstklassen-Werkzeugübung.
 
-Parallele Alpha-Packaging-Läufe mit derselben App-Version werden vor der Dateiprüfung durch ein exklusives `_Release.lock`-Verzeichnis serialisiert. Bei einem Fehler werden fremde Releases nicht gelöscht; nach normalem Abschluss oder behandelter Ausnahme wird die Sperre freigegeben. Eine verwaiste Sperre blockiert sicherheitshalber die Veröffentlichung. Drei Regressionen; keine Änderung an SQLite, JSON oder Regeln. [Erfolgreiche Vor-Integrations-CI](https://github.com/ManuEtt/Dnd/actions/runs/40730971955); der kombinierte Stand mit PR #363 erhält eine eigene Prüfung.
+Der Charakterbogen zeigt belegte Übungen und eine explizite Attributs-/Fertigkeits-
+Probenvorschau. Einmaliger Übungsbonus, Vorteil bei passender trainierter Fertigkeit,
+Zustände/Erschöpfung, Rüstungsnachteil für Geschicklichkeit (Heimlichkeit) und
+Werkzeug-Verlässliches-Talent ab Schurke 7 sind berücksichtigt. Die Vorschau führt
+keinen Wurf oder Werkzeugvorgang aus. Audit prüft Pflichtwahl/Paketbindung separat.
+Die reproduzierte Sperre Mönch→Barbar→Mönch bei bereits übernommenem Paket ist
+behoben. SQLite **3** / äußeres JSON **1** unverändert; keine DB-Migration.
 
-## Qualitätsabsicherung – Checkpoint-Historie (Chat D, PR #363)
+**GETESTET:** Lokal `bash scripts/check.sh` auf `53e8e72a` vollständig bestanden:
+**2.450 Flutter-, 221 Python-, 72 Backend-Tests**, Format 535 Dateien unverändert,
+Analyzer/Backend-Typen/Build/Protokollsmoke erfolgreich. Zusätzlich ARM64-Debug-APK
+und zwölf native `:app:testDebugUnitTest`-Fälle ohne Fehler/Skip. Finale
+[PR-CI 40920118585](https://github.com/ManuEtt/Dnd/actions/runs/40920118585)
+**erfolgreich**: dieselben 2.450/221/72 sowie 20 gezielte UI-Fälle,
+Debug-APK/native Tests und alle drei optimierten ABI-APKs/Alpha-/Quellpakete.
+Die zusätzliche [Main-CI 40922492508](https://github.com/ManuEtt/Dnd/actions/runs/40922492508)
+ist ebenfalls vollständig **erfolgreich** auf `4193000f`; tatsächliche Logs
+bestätigen dieselben Zähler und sämtliche Build-/Paket-Schritte.
 
-Historische Dateien im Quell-Checkpoint werden vor Aufnahme in `SHA256SUMS.txt` auf sichere Namen und regulären Dateityp geprüft. Vorhandene Symlinks, Zeilenumbrüche oder ZIP-Verzeichnisse werden vor einer Veröffentlichung abgelehnt; drei neue negative Python-Regressionen sichern alte stabile Aliases. [Erfolgreicher CI-Stand auf dem vorigen Commit](https://github.com/ManuEtt/Dnd/actions/runs/40730867003); der jetzt kombinierte `main`-Stand wird separat geprüft. Keine Speicherformatmigration. Die Prüfung ist keine vollständige TOCTOU-Abwehr.
+Gezielte Gegenfälle: alle 27 Werkzeuge mit A/B, alle zwölf historischen Klassen
+mit v1/v2, ungültige Quellen/IDs/Paketkonflikte, Doppelübungen, Abbruch/Retry,
+JSON/SQLite-Neustart, stale Editor ohne Änderungen aller sechs Tabellen und
+320/360 dp bei 200 % Schrift mit Tastatur/Semantik. Der alte rote Vorlauf
+[40918212562](https://github.com/ManuEtt/Dnd/actions/runs/40918212562) scheiterte
+am erwarteten Audit-Zähler 11 statt jetzt 12 beim Mönch. Er ist repariert und
+durch die vollständige grüne Wiederholung ersetzt; kein Test deaktiviert.
+Ein früher bewusst beendeter Lauf gilt nicht als bestandene Vollsuite.
 
-Deutschsprachige Fantasy-Solo-App für Android mit lokalen Charakteren,
-Kampagnen, ausgewählten D&D-SRD-5.2.1-Regeln und optionalem KI-Erzähler.
-**Alpha 0.8.47+97**; lokales Spielen benötigt keinen Account oder KI-Server.
-Charaktererstellung und Regelengine sind noch nicht vollständig.
+Alle **1.286** heruntergeladenen Main- und PR-Quelldateien mit Hash/Modus, Alpha-Quellpaket,
+echte Binärpatch-Anwendung auf `fde0ef6e` und isoliertes Bundle/fsck sind geprüft.
+ARM64-APK: Version **0.8.48+98**, minSDK24/targetSDK36, v2-Debug-Testsignatur.
+[Source-ZIP/Patch/Manifest/History-Bundle](https://github.com/ManuEtt/Dnd/actions/runs/40922492508/artifacts/12918224840) ·
+[ARM64-Alpha](https://github.com/ManuEtt/Dnd/actions/runs/40922492508/artifacts/12918823598).
+Quell-ZIP-SHA256: `9070e1754b5d2838121f320a54c8d1fa5d93120b51f4f7bea6f47db51844116a`;
+APK-SHA256: `4fdf28d6581dd94d7cbcdc7f00f470b313c249cd52d45c3d1ae454b20ae69c79`.
 
-## Aktueller Stand und autonome Fortsetzung
+**NICHT GETESTET:** echtes Android-Gerät/TalkBack, installiertes Altversionsupgrade,
+produktive Release-Signatur. **BLOCKIERT:** kein angeschlossenes Testgerät;
+kein Code-/GitHub-Zugriffsblocker. **NOCH NICHT IMPLEMENTIERT:** vollständiger
+Charakter-Wizard und übrige Spezies-/Klassen-/Talent-/Zauberpflichtwahlen;
+ausgeführte Werkzeugaktionen samt Würfel-/Zeit-/Materialtransaktion.
+`RULE-EQUIPMENT-TOOLS` / `EQUIP-CHOICES` bleiben `partial`; 1.419 Prüfaufträge
+und neun Inventurlücken sind kein globaler SRD-Fertigstellungsprozentsatz.
 
-**IMPLEMENTIERT:** Kleriker/Paladin wählen im Klassenpaket A ausdrücklich Amulett,
-Emblem oder Reliquiar. Typisierte Gegenstände und Gold werden nach Bestätigung
-nur einmal übernommen. Neue Klassenbelege verwenden Version 2; historische
-Version 1 bleibt unverändert lesbar, ungeklärt und ohne Nachvergabe. Wiederwahl
-desselben Pakets erhält die Auswahl. Abbruch, Fremd-IDs und echte Paketwechsel
-sind geprüft. SQLite **3** / äußeres JSON **1** bleiben unverändert, keine Migration.
+Der eigene Produktbranch wurde nach grüner Main-CI durch
+[Cleanup 40924681196](https://github.com/ManuEtt/Dnd/actions/runs/40924681196)
+remote entfernt, exakt als
+`archive/merged-20261027/feat/character-monk-tool-proficiency-20261029-53e8e72a58dc`
+erhalten; fünf aktive fremde PR-Branches bleiben bestehen.
 
-**GETESTET:** [PR #369](https://github.com/ManuEtt/Dnd/pull/369) regulär integriert;
-Produkt-Main `49b98d8aef7ae0e521320628b053c149c849dea0`.
-[Finale PR-CI 40756846048](https://github.com/ManuEtt/Dnd/actions/runs/40756846048)
-und [Main-CI 40758951956](https://github.com/ManuEtt/Dnd/actions/runs/40758951956)
-sind vollständig **erfolgreich**: 2.265 Flutter-, 200 Python- und 72 Backend-Tests,
-zusätzlich gezielter 20-Fälle-UI-Lauf; 507 Dart-Dateien unverändert formatiert,
-Analyzer/Backend-/Debug-/native-/drei optimierte ABI-/Alpha-/Checkpoint-Schritte
-bestanden. Lokal zusätzlich zwölf native App-Tests und die vollständige Suite
-auf Produktcode `7ac32b1c` bestanden; finaler PR-Kopf `bfe4e5ab` ändert daran nur
-Dokumentation. Main, PR-Kopf und tatsächlicher PR-Checkout `9bf0c017` besitzen
-denselben vollständigen Git-Baum `f40b9dcf11093fef2e7331fdfd712537d391cd2b`.
+Amtliches SRD 5.2.1 S.8–9/49/63/83/93–95, CC BY 4.0;
+THIRD_PARTY_NOTICES.md erhalten. Regel-/Story-Grenze und KI-Autorität unverändert.
+Dieser anschließende Dokumentationsabschluss auf Branch
+`docs/monk-tool-abnahme-20261029` ändert keine App-, Backend-, Skript- oder
+Workflowdatei und erhöht keine Version. Seine statischen/Python-Prüfungen sind
+separat; keine neue APK/Produkt-CI für den reinen Dokumentationskopf behaupten.
 
-Alle 1.248 heruntergeladenen Quelldateien mit Hash/Modus, Alpha-Quellpaket,
-echte Binärpatch-Anwendung auf Basis `37a6142e`, isoliertes Git-Bundle/fsck und
-32 historische Köpfe sind unabhängig geprüft. APK-Version/ABI/v2-Testsignatur
-geprüft. [Source-ZIP/Patch/Manifest/History-Bundle](https://github.com/ManuEtt/Dnd/actions/runs/40758951956/artifacts/12847443480) ·
-[ARM64-Alpha](https://github.com/ManuEtt/Dnd/actions/runs/40758951956/artifacts/12846529536).
-
-**NICHT GETESTET:** echtes Android-Gerät/TalkBack, Upgrade einer installierten
-Altversion und produktive Signatur. Ein zusätzlicher freiwilliger Test aller
-Fremdplugin-Unterprojekte scheiterte an ByteBuddy/Jetifier (Klassenmajor 68);
-die im CI vorgeschriebenen `:app:testDebugUnitTest --no-daemon` bestehen.
-**BLOCKIERT:** kein angeschlossenes Android-Testgerät.
-**NOCH NICHT IMPLEMENTIERT:** vollständiger Wizard mit allen Spezies-, Klassen-,
-Talent- und Zauberpflichtwahlen; Symbolbesitz bestätigt keine komplette
-Fokus-/Zauberwirkung. `EQUIP-CHOICES` bleibt `partial`, SRD-Inventur 1.419/9 offen.
-
-Arbeitsbranch `feat/character-holy-symbol-choice-20261028` ist nach grüner
-Main-CI exakt als `archive/merged-20261027/feat/character-holy-symbol-choice-20261028-bfe4e5ab7fba`
-archiviert und remote gelöscht; [Cleanup 40761280014](https://github.com/ManuEtt/Dnd/actions/runs/40761280014)
-bestand. Elf neue aktive PR-Branches #356–#359/#361–#367 blieben erhalten;
-vor jeder Folgeänderung Main/PRs/CI erneut live prüfen.
-
-Dieser anschließende reine Dokumentationsabschluss auf Produkt-Main `49b98d8a`
-ändert **keine** App-, Backend-, Skript- oder Workflowdatei und erhöht keine
-Version. Seine statischen/Pythonprüfungen werden separat im Dokumentations-PR
-geführt. Eine weitere APK oder Produkt-CI für dessen Dokumentationskopf wird
-nicht behauptet. Ältere Berichte darunter sind historische Schreibstände.
+**Nächster Schritt:** drei Barden-Instrumentübungen und Paket-A-Instrumentbindung
+nach amtlicher SRD-Quellenprüfung ausdrücklich auswählen und persistent belegen.
+Neue Entscheidung kompatibel versionieren; v1/v2/v3 weder verschärfen noch mit
+vermuteten Übungen anreichern. DoD: gültige/ungültige Instrument-IDs, drei eindeutige
+Übungen, Paket A/B, Abbruch/Retry/stale Revision, Alt-JSON/SQLite-Neustart und
+320/360 dp bei 200 %/IME/Semantik, danach komplette Prüfkette und finale PR-CI.
+Keine automatische Fortsetzung nach Sitzungsende.
 
 ## Funktionen und Grenzen
 
@@ -93,57 +115,24 @@ Die SRD-Matrix zählt 1.419 Prüfaufträge und neun Inventurlücken; das ist kei
 vollständiger SRD-Nenner und kein Fertigstellungsprozentsatz.
 [Audit](docs/SRD_5_2_1_COVERAGE_AUDIT.md) · [Charakterstatus](docs/CHARACTER_CREATION_COMPLETE.md).
 
-## Genau nächster Schritt
+## Lokal prüfen
 
-Die im Mönch-Paket A ausdrücklich gewählte Werkzeug-/Instrumentausrüstung mit
-der erforderlichen Werkzeugübung koppeln. Zuerst amtliches SRD 5.2.1 S.49 prüfen;
-vorhandene Auswahl-/Persistenzfunktionen erweitern. Neue versionierte Entscheidung,
-bestehende Klassenbelege v1/v2 ohne Pflichtfeldverschärfung bewahren, keine
-Nachvergabe. Gültige/ungültige IDs, doppelte Übungen, Abbruch, Retry, stale Revision,
-SQLite-Neustart und JSON, 320/360 dp bei 200 %/IME/Semantik testen; anschließend
-`bash scripts/check.sh`, Debug/native und finale PR-CI. Kein Hintergrund-Codexjob.
-
-## Lokal starten und prüfen
-
-Toolchain: Flutter 3.35.7, Dart 3.9.2, Java 17, Node.js 22.14.0, Android SDK.
+Toolchain: Flutter 3.35.7, Dart 3.9.2, Java 17, Node.js 22.14.0 und Android SDK.
 
 ```bash
 python3 scripts/generate_fantasy_buttons.py
-cd app
-flutter pub get
-flutter run
-```
-
-```bash
 bash scripts/check.sh
 (cd app && flutter build apk --debug)
 (cd app/android && bash gradlew :app:testDebugUnitTest --no-daemon)
 ```
 
-SQLite-Tests benötigen die native SQLite-Bibliothek. Die Prüfkette enthält
-Projekt-/Importgrenzen-/SRD-/Pythonprüfungen, Backend-Typecheck/Tests/Build,
-Dart-Formatierung, Analyse und Fluttertests mit lokalem Backend-Protokolltest.
-Ein optionaler eigener HTTPS-Erzähler wird in
-[BACKEND_CONNECTION.md](docs/BACKEND_CONNECTION.md) erklärt. Externe KI benötigt
-eine ausdrückliche Sitzungseinrichtung; keine automatischen Kostenfreigaben.
+Zum Spielen `cd app`, `flutter pub get`, `flutter run`. SQLite-Tests benötigen
+libsqlite3. Optionale externe KI bleibt ausdrücklich einzurichten, keine
+automatischen Kostenfreigaben. Vor Alpha-Updates Spielstände exportieren;
+Testsignatur/APK-Build ersetzen keine echte Geräte- oder Upgradeabnahme.
 
-## Architektur, Sicherungen und Lizenz
-
-`app/lib/domain/` enthält Regeln/Modelle, `story/` Kampagne/Gedächtnis, `data/`
-SQLite, `services/` bestätigende Steuerung und `ui/` Flutter. `backend/` ist der
-optionale Fastify-/TypeScript-Erzähler. KI-Texte sind keine bestätigten Würfe,
-Charakterwerte oder Gegenstände; mechanische Änderungen prüft die Regelengine.
-
-Vor Alpha-Updates Spielstände exportieren; eine Testsignatur und ein APK-Build
-belegen kein Geräteupgrade. [Backups](docs/SAVE_BACKUPS.md) ·
-[Android-Artefakte](docs/ALPHA_RELEASES.md) · [Tests](TESTING.md).
-
-Regelquelle: [SRD 5.2.1](https://www.dndbeyond.com/srd), Wizards of the Coast LLC,
-CC BY 4.0; [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) erhält die Namensnennung.
-Nur lizenzierte Inhalte und eigene Texte verwenden.
-
-[Checkpoint](docs/CODEX_CHECKPOINT.md) · [Entwicklungsstatus](DEVELOPMENT_STATUS.md) ·
-[Architektur](ARCHITECTURE.md) · [Änderungen](CHANGELOG.md).
-Ältere README-/Checkpoint-Stände sind bytegenau unter
-[docs/history/character_symbol_abnahme_20261028/](docs/history/character_symbol_abnahme_20261028/MANIFEST.json)
-mit Git-Blob-/SHA256-Nachweisen erhalten.
+[Checkpoint](docs/CODEX_CHECKPOINT.md) · [Architektur](ARCHITECTURE.md) ·
+[Tests](TESTING.md) · [Änderungen](CHANGELOG.md) ·
+[CC-BY-4.0-Namensnennung](THIRD_PARTY_NOTICES.md).
+Frühere README-/Checkpoint-Stände bleiben bytegenau mit Git-Blob/SHA256 in
+[docs/history/monk_tool_start_20261029/MANIFEST.json](docs/history/monk_tool_start_20261029/MANIFEST.json).

@@ -114,7 +114,7 @@ void main() {
     });
 
     for (final symbol in _symbolNames.entries) {
-      testWidgets('$className bestätigt ${symbol.value} in einem V2-Beleg', (
+      testWidgets('$className bestätigt ${symbol.value} in einem V3-Beleg', (
         tester,
       ) async {
         SrdClassSetupResult? result;
@@ -130,7 +130,7 @@ void main() {
         expect(result!.selection.characterClass.name, className);
         expect(result!.selection.kitIndex, 0);
         expect(result!.equipmentChoices, {'Heiliges Symbol': symbol.key});
-        expect(result!.startingClassChoice!.toJson()['version'], 2);
+        expect(result!.startingClassChoice!.toJson()['version'], 3);
         expect(
           result!.startingClassChoice!.equipmentChoices,
           result!.equipmentChoices,
@@ -159,7 +159,7 @@ void main() {
       );
       expect(result!.equipmentChoices, isEmpty);
       expect(result!.startingClassChoice!.equipmentChoices, isEmpty);
-      expect(result!.startingClassChoice!.toJson()['version'], 2);
+      expect(result!.startingClassChoice!.toJson()['version'], 3);
       expect(tester.takeException(), isNull);
     });
   }

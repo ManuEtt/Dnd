@@ -4,15 +4,15 @@
   "source_url": "https://www.dndbeyond.com/srd",
   "source_section": "Character Creation, p. 21; Classes; Character Origins",
   "license": "CC-BY-4.0",
-  "as_of": "2026-10-28",
-  "baseline_main_sha": "37a6142ea791a607c78065b50aa66fda90acda5c",
-  "pr": 369,
+  "as_of": "2026-10-29",
+  "baseline_main_sha": "fde0ef6ed8b419d6a31c701a03aa05d61994c352",
+  "pr": 390,
   "coverage_complete": false,
   "all_required_choices_covered": false,
   "android_device_tested": false,
-  "ci_final_head_verified": false,
+  "ci_final_head_verified": true,
   "existing_requirement_registers_unchanged": false,
-  "status_note": "Symbolwahl lokal und final in PR-/Produkt-Main-CI bestanden. Gesamte Charaktererstellung bleibt unvollständig; Details im CODEX_CHECKPOINT. Nachfolgende Dokumentationsänderungen sind separat statisch geprüft und kein neuer APK-Produktstand.",
+  "status_note": "Begrenztes Mönch-Paket auf Code53e8e72a lokal vollständig sowie durch finale PR-CI40920118585 und Main-CI40922492508 erfolgreich geprüft; regulär über PR390 in Main4193000f integriert. Vollständige Charaktererstellung bleibt offen; globale Vollständigkeitsflags unverändert false.",
   "requirements": [
     {
       "id": "CHAR-ABILITY-STANDARD-ARRAY",
@@ -224,7 +224,7 @@
         "app/test/character_start_class_ui_test.dart",
         "app/test/character_start_class_storage_test.dart"
       ],
-      "note": "Kein Nachweis vollständiger Klassenmerkmale. Offene Kitvarianten explizit notAutomated; kein Grant beim Lesen. Mönch-PaketA bleibt ohne strukturierte Kopplung an dieselbe Werkzeugübung notAutomated."
+      "note": "Kein Nachweis vollständiger Klassenmerkmale. Offene Kitvarianten explizit notAutomated; kein Grant beim Lesen. Historische Mönch-v1/v2-Belege ohne strukturierte Kopplung bleiben notAutomated; neue v3-Belege prüfen ausdrückliche Werkzeugübung und identischen A-Paketgegenstand (CHAR-MONK-TOOL-PROFICIENCY)."
     },
     {
       "id": "CHAR-ABILITY-SOURCE-DISPLAY",
@@ -512,7 +512,7 @@
       "tests": [
         "app/test/character_editor_stale_save_test.dart"
       ],
-      "note": "Alte Bearbeitungen werden revisionsgebunden abgewiesen; eigenständige Charaktere durch transaktionalen Snapshot-CAS geschützt. Isolierte CI grün, zusammengeführte Main-Version erneut testen."
+      "note": "Alte Bearbeitungen werden revisionsgebunden abgewiesen; eigenständige Charaktere durch transaktionalen Snapshot-CAS geschützt. Der historische fachliche Teilstatus wird hier nicht pauschal hochgestuft. Aktuelle gemeinsame PR-CI40920118585 und lokale Suite bestanden; monk_tool_storage_test.dart bestätigt insbesondere stale Editor ohne Änderungen an allen sechs Tabellen."
     },
     {
       "id": "CHAR-ORIGIN-MAGIC-INITIATE-CHOICES",
@@ -561,6 +561,37 @@
       "note": "Version2 für neue Klassenbestätigungen; v1 unverändert und ohne Nachvergabe lesbar. Bestätigt Ausrüstungswahl/typisierte Gegenstände, nicht sämtliche Klassen-, Zauber- oder Fokusmechaniken.",
       "ci_run": 40758951956,
       "tested_product_commit": "49b98d8aef7ae0e521320628b053c149c849dea0"
+    },
+    {
+      "id": "CHAR-MONK-TOOL-PROFICIENCY",
+      "title": "Mönch-Erstklasse: ausdrückliche Werkzeugübung und identischer A-Paketgegenstand",
+      "status": "tested",
+      "source": "SRD 5.2.1 pp.49,8–9,63,83,93–95",
+      "register_requirement_id": "RULE-EQUIPMENT-TOOLS",
+      "code": [
+        "app/lib/domain/starting_class_choice.dart",
+        "app/lib/domain/tool_proficiency_rules.dart",
+        "app/lib/domain/character_rule_engine.dart",
+        "app/lib/domain/starting_equipment_import.dart",
+        "app/lib/domain/srd_character_creation_audit.dart"
+      ],
+      "ui": [
+        "app/lib/ui/srd_class_selection_dialog.dart",
+        "app/lib/ui/character_editor.dart",
+        "app/lib/ui/tool_proficiency_panel.dart",
+        "app/lib/ui/fantasy_character_sheet.dart"
+      ],
+      "tests": [
+        "app/test/monk_tool_proficiency_rules_test.dart",
+        "app/test/monk_tool_storage_test.dart",
+        "app/test/srd_monk_tool_creation_dialog_test.dart",
+        "app/test/tool_proficiency_panel_test.dart",
+        "app/test/character_start_class_ui_test.dart"
+      ],
+      "note": "Begrenzte Startentscheidung und gespeicherte Quellenprüfung mit Vorschau getestet: v3; v1/v2 kompatibel, alle 27 Werkzeuge mit A/B, keine Nachvergabe aus Besitz/Freitext, doppelte Quellen einmal, SQLite/JSON/Stale-Editor, 320/360dp bei 200% Schrift/IME/Semantik. Keine tatsächlichen Werkzeugaktionen, vollständigen Klassenmerkmale oder vollständiger Wizard behauptet. RULE-EQUIPMENT-TOOLS und EQUIP-CHOICES bleiben im Hauptregister partial.",
+      "ci_run": 40920118585,
+      "tested_product_commit": "53e8e72a58dc07bda07cc50a984142465a8cef79",
+      "merged_main_commit": "4193000fd28154eeb8b0be3497acc722f674c5ab"
     }
   ],
   "classes": [
@@ -604,7 +635,13 @@
       "status": "partial_or_unverified",
       "complete": false,
       "starting_choice_evidence": "versioned_partial",
-      "evidence_test": "app/test/starting_class_choice_test.dart"
+      "evidence_test": "app/test/starting_class_choice_test.dart",
+      "starting_tool_choice_evidence": "v3_tested; historical_v1_v2_not_automated",
+      "starting_tool_evidence_tests": [
+        "app/test/monk_tool_proficiency_rules_test.dart",
+        "app/test/monk_tool_storage_test.dart",
+        "app/test/srd_monk_tool_creation_dialog_test.dart"
+      ]
     },
     {
       "name": "Paladin",
@@ -727,53 +764,63 @@
       "complete": false
     }
   ],
-  "scope_note": "Talentnamen und Herkunftsübungen werden vermerkt; Auswirkungen der Talente und Magic-Initiate-Zauber sind nicht automatisiert.",
-  "next_task": "Vorhandenen Editor-CAS-Branch2173f57 prüfen und mit Regressionstests ergänzen; nicht doppelt implementieren.",
-  "branch": "feat/character-start-class-proof-20261027",
+  "scope_note": "Die Matrix unterscheidet bestätigte Teilentscheidungen von vollständiger Regelwirkung. Typisierte Herkunfts-/Klassenbelege und Magic-Initiate-Zauberwahl sind vorhanden; Freizauber, Slotwirken, Austausch und vollständige Talenteffekte werden dadurch nicht als automatisiert bestätigt. Historisch vorsichtige Statuswerte anderer Anforderungen werden in diesem Paket nicht pauschal hochgestuft.",
+  "next_task": "Barde: drei verschiedene Instrumentübungen ausdrücklich wählen, Paket-A-Instrument an eine davon binden; amtliche SRD-Quelle und offene PRs zuerst prüfen, vorhandene v1/v2/v3-Klassenbelege ohne rückwirkende Pflichtfelder erhalten.",
+  "branch": "feat/character-monk-tool-proficiency-20261029",
   "local_validation": {
-    "product_commit": "30bb33ec9eec5e6dbb75d8e30cd9268386120477",
-    "product_flutter": 1995,
-    "python": 164,
-    "backend": 72,
-    "native": 12,
-    "integrated_targeted": 57,
-    "new_tests": 35,
-    "full_integrated_ci": "pending_at_document_write",
-    "current_main": "bf5999e98335c1da94b1eafbf2fc8088b392b6ef",
-    "current_python": 168,
-    "current_targeted": 57,
-    "verified_019_ci": {
-      "run": 40631517151,
-      "flutter": 2007,
-      "python": 168,
-      "backend": 72
-    }
-  },
-  "work_branch": "feat/character-holy-symbol-choice-20261028",
-  "local_acceptance": {
-    "source_commit": "7ac32b1cb9e63ce35eb458d87e4b84d86526706a",
-    "flutter_tests": 2265,
-    "python_tests": 200,
+    "source_commit": "53e8e72a58dc07bda07cc50a984142465a8cef79",
+    "command": "bash scripts/check.sh",
+    "flutter_tests": 2450,
+    "python_tests": 221,
     "backend_tests": 72,
-    "native_app_tests": 12,
-    "dart_format_files": 507,
+    "dart_format_files_unchanged": 535,
     "analyze": "passed",
-    "debug_apk": "built",
-    "device_tested": false,
-    "ci_reference": "https://github.com/ManuEtt/Dnd/pull/369/checks"
+    "backend_typecheck_build_smoke": "passed",
+    "native_app_tests": 12,
+    "debug_apk": "built_arm64",
+    "device_tested": false
+  },
+  "work_branch": "feat/character-monk-tool-proficiency-20261029",
+  "local_acceptance": {
+    "source_commit": "53e8e72a58dc07bda07cc50a984142465a8cef79",
+    "command": "bash scripts/check.sh",
+    "flutter_tests": 2450,
+    "python_tests": 221,
+    "backend_tests": 72,
+    "dart_format_files_unchanged": 535,
+    "analyze": "passed",
+    "backend_typecheck_build_smoke": "passed",
+    "native_app_tests": 12,
+    "debug_apk": "built_arm64",
+    "device_tested": false
   },
   "verified_product_ci": {
-    "main_commit": "49b98d8aef7ae0e521320628b053c149c849dea0",
-    "run": 40758951956,
-    "conclusion": "success",
-    "pr": 369,
-    "pr_head": "bfe4e5ab7fba358c780b731251703d2e296bb13e",
-    "pr_run": 40756846048,
+    "main_commit": "4193000fd28154eeb8b0be3497acc722f674c5ab",
+    "main_run": 40922492508,
+    "main_conclusion": "success",
+    "pr": 390,
+    "pr_head": "53e8e72a58dc07bda07cc50a984142465a8cef79",
+    "pr_run": 40920118585,
     "pr_conclusion": "success",
-    "flutter_tests": 2265,
-    "python_tests": 200,
+    "pr_ci_checkout": "2b2114560a22f743128e6ca3c24db16f4f1556aa",
+    "identical_product_git_tree": "1f976980975d5a29ac0277c44e1bc7b79d062ab3",
+    "flutter_tests": 2450,
+    "python_tests": 221,
     "backend_tests": 72,
     "focused_ui_tests": 20,
-    "device_tested": false
-  }
+    "dart_format_files_unchanged": 535,
+    "analyze": "passed",
+    "debug_apk": "built",
+    "optimized_apks": [
+      "armeabi-v7a",
+      "arm64-v8a",
+      "x86_64"
+    ],
+    "native_tests": "passed",
+    "device_tested": false,
+    "main_source_artifact": 12918224840,
+    "main_arm64_artifact": 12918823598
+  },
+  "current_ci_scope": "ci_final_head_verified bezeichnet finalen Produkt-PR390 und identischen Git-Baum des Main-Merge4193000f; beide vollständigen CIs erfolgreich. Dieser reine Dokumentationsabschluss erhält keine behauptete neue APK-Abnahme.",
+  "historical_status_note": "Frühere aktuelle Metadaten mit PR369-/Editor-CAS-Zwischenständen sind bytegenau in docs/history/monk_tool_acceptance_20261029/ archiviert. Nicht erneut geprüfte fachliche Vollständigkeit anderer Anforderungsgruppen bleibt konservativ."
 }

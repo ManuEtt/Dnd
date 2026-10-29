@@ -8,6 +8,11 @@ import 'srd_equipment_catalog.dart';
 class StartingEquipmentImport {
   const StartingEquipmentImport._();
 
+  static const monkToolLabel = 'Handwerkszeug oder Musikinstrument (nach Wahl)';
+
+  static List<EquipmentEntry> get monkTools =>
+      optionsFor(const SrdStartingItem(monkToolLabel));
+
   static const Map<String, String> _aliases = {
     'Zweihänder': 'weapon-greatsword',
     'Kräuterkunde-Ausrüstung': 'item-herbalism-kit',
@@ -55,12 +60,13 @@ class StartingEquipmentImport {
 
   /// Explicit class-kit choices. Version 1 predates holy-symbol selection;
   /// keep its historical unresolved item readable without inventing a grant.
-  /// New confirmations always use version 2.
+  /// Version 2 resolves holy symbols; version 3 also binds Monk equipment
+  /// to its separately confirmed training in StartingClassChoice.
   static List<EquipmentEntry> optionsFor(
     SrdStartingItem item, {
     int choiceVersion = 2,
   }) {
-    if (choiceVersion != 1 && choiceVersion != 2) {
+    if (choiceVersion < 1 || choiceVersion > 3) {
       throw const FormatException('Unbekannte Startausrüstungsregelversion.');
     }
     // SRD 5.2.1, Equipment / Holy Symbol, p.97. Arcane and druidic
@@ -102,7 +108,7 @@ class StartingEquipmentImport {
     Map<String, String> selected, {
     int choiceVersion = 2,
   }) {
-    if (choiceVersion != 1 && choiceVersion != 2) {
+    if (choiceVersion < 1 || choiceVersion > 3) {
       throw const FormatException('Unbekannte Startausrüstungsregelversion.');
     }
     final expected = <String, List<EquipmentEntry>>{

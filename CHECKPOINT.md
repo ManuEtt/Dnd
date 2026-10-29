@@ -1,87 +1,109 @@
 # Codex-Checkpoint – Würfelraunen
 
-## Abnahme 28.10.2026 – Charakter-Symbolwahl / Alpha 0.8.47+97
+## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
-**IMPLEMENTIERT:** Kleriker/Paladin wählen im Klassenpaket A ausdrücklich Amulett,
-Emblem oder Reliquiar. Typisierte Gegenstände und Gold werden nach Bestätigung
-nur einmal übernommen. Neue Klassenbelege verwenden Version 2; historische
-Version 1 bleibt unverändert lesbar, ungeklärt und ohne Nachvergabe. Wiederwahl
-desselben Pakets erhält die Auswahl. Abbruch, Fremd-IDs und echte Paketwechsel
-sind geprüft. SQLite **3** / äußeres JSON **1** bleiben unverändert, keine Migration.
+Stand: 29.10.2026, UTC. [PR #390](https://github.com/ManuEtt/Dnd/pull/390)
+ist regulär integriert. Geprüfter Produkt-Main:
+`4193000fd28154eeb8b0be3497acc722f674c5ab`; getesteter Arbeitskopf
+`53e8e72a58dc07bda07cc50a984142465a8cef79`, Branch
+`feat/character-monk-tool-proficiency-20261029`, Basis `fde0ef6e`.
+Der PR-Checkout `2b211456` und Produkt-Main haben denselben vollständigen
+Git-Baum `1f976980975d5a29ac0277c44e1bc7b79d062ab3`.
 
-**GETESTET:** [PR #369](https://github.com/ManuEtt/Dnd/pull/369) regulär integriert;
-Produkt-Main `49b98d8aef7ae0e521320628b053c149c849dea0`.
-[Finale PR-CI 40756846048](https://github.com/ManuEtt/Dnd/actions/runs/40756846048)
-und [Main-CI 40758951956](https://github.com/ManuEtt/Dnd/actions/runs/40758951956)
-sind vollständig **erfolgreich**: 2.265 Flutter-, 200 Python- und 72 Backend-Tests,
-zusätzlich gezielter 20-Fälle-UI-Lauf; 507 Dart-Dateien unverändert formatiert,
-Analyzer/Backend-/Debug-/native-/drei optimierte ABI-/Alpha-/Checkpoint-Schritte
-bestanden. Lokal zusätzlich zwölf native App-Tests und die vollständige Suite
-auf Produktcode `7ac32b1c` bestanden; finaler PR-Kopf `bfe4e5ab` ändert daran nur
-Dokumentation. Main, PR-Kopf und tatsächlicher PR-Checkout `9bf0c017` besitzen
-denselben vollständigen Git-Baum `f40b9dcf11093fef2e7331fdfd712537d391cd2b`.
+**IMPLEMENTIERT:** Neue Erstklassen-Mönche wählen ausdrücklich eine von 27
+Handwerkszeug-/Instrumentübungen. Paket A liefert dasselbe Werkzeug und 11 GM;
+B liefert 50 GM ohne Werkzeug, die Übung bleibt bestehen. Klassenbeleg v3
+prüft Quelle und Paketbindung; v1/v2 bleiben unverändert lesbar und ungeklärt.
+Keine automatische Nachvergabe, kein zweiter Gold-/Inventargewinn bei Wiederwahl.
+Historisch bestätigte Übungen überleben spätere Anzeigenamens-/Inventaränderungen;
+Mönch als neue Zweitklasse erteilt keine Erstklassen-Werkzeugübung.
 
-Alle 1.248 heruntergeladenen Quelldateien mit Hash/Modus, Alpha-Quellpaket,
-echte Binärpatch-Anwendung auf Basis `37a6142e`, isoliertes Git-Bundle/fsck und
-32 historische Köpfe sind unabhängig geprüft. APK-Version/ABI/v2-Testsignatur
-geprüft. [Source-ZIP/Patch/Manifest/History-Bundle](https://github.com/ManuEtt/Dnd/actions/runs/40758951956/artifacts/12847443480) ·
-[ARM64-Alpha](https://github.com/ManuEtt/Dnd/actions/runs/40758951956/artifacts/12846529536).
+Der Charakterbogen zeigt belegte Übungen und eine explizite Attributs-/Fertigkeits-
+Probenvorschau. Einmaliger Übungsbonus, Vorteil bei passender trainierter Fertigkeit,
+Zustände/Erschöpfung, Rüstungsnachteil für Geschicklichkeit (Heimlichkeit) und
+Werkzeug-Verlässliches-Talent ab Schurke 7 sind berücksichtigt. Die Vorschau führt
+keinen Wurf oder Werkzeugvorgang aus. Audit prüft Pflichtwahl/Paketbindung separat.
+Die reproduzierte Sperre Mönch→Barbar→Mönch bei bereits übernommenem Paket ist
+behoben. SQLite **3** / äußeres JSON **1** unverändert; keine DB-Migration.
 
-**NICHT GETESTET:** echtes Android-Gerät/TalkBack, Upgrade einer installierten
-Altversion und produktive Signatur. Ein zusätzlicher freiwilliger Test aller
-Fremdplugin-Unterprojekte scheiterte an ByteBuddy/Jetifier (Klassenmajor 68);
-die im CI vorgeschriebenen `:app:testDebugUnitTest --no-daemon` bestehen.
-**BLOCKIERT:** kein angeschlossenes Android-Testgerät.
-**NOCH NICHT IMPLEMENTIERT:** vollständiger Wizard mit allen Spezies-, Klassen-,
-Talent- und Zauberpflichtwahlen; Symbolbesitz bestätigt keine komplette
-Fokus-/Zauberwirkung. `EQUIP-CHOICES` bleibt `partial`, SRD-Inventur 1.419/9 offen.
+**GETESTET:** Lokal `bash scripts/check.sh` auf `53e8e72a` vollständig bestanden:
+**2.450 Flutter-, 221 Python-, 72 Backend-Tests**, Format 535 Dateien unverändert,
+Analyzer/Backend-Typen/Build/Protokollsmoke erfolgreich. Zusätzlich ARM64-Debug-APK
+und zwölf native `:app:testDebugUnitTest`-Fälle ohne Fehler/Skip. Finale
+[PR-CI 40920118585](https://github.com/ManuEtt/Dnd/actions/runs/40920118585)
+**erfolgreich**: dieselben 2.450/221/72 sowie 20 gezielte UI-Fälle,
+Debug-APK/native Tests und alle drei optimierten ABI-APKs/Alpha-/Quellpakete.
+Die zusätzliche [Main-CI 40922492508](https://github.com/ManuEtt/Dnd/actions/runs/40922492508)
+ist ebenfalls vollständig **erfolgreich** auf `4193000f`; tatsächliche Logs
+bestätigen dieselben Zähler und sämtliche Build-/Paket-Schritte.
 
-Arbeitsbranch `feat/character-holy-symbol-choice-20261028` ist nach grüner
-Main-CI exakt als `archive/merged-20261027/feat/character-holy-symbol-choice-20261028-bfe4e5ab7fba`
-archiviert und remote gelöscht; [Cleanup 40761280014](https://github.com/ManuEtt/Dnd/actions/runs/40761280014)
-bestand. Elf neue aktive PR-Branches #356–#359/#361–#367 blieben erhalten;
-vor jeder Folgeänderung Main/PRs/CI erneut live prüfen.
+Gezielte Gegenfälle: alle 27 Werkzeuge mit A/B, alle zwölf historischen Klassen
+mit v1/v2, ungültige Quellen/IDs/Paketkonflikte, Doppelübungen, Abbruch/Retry,
+JSON/SQLite-Neustart, stale Editor ohne Änderungen aller sechs Tabellen und
+320/360 dp bei 200 % Schrift mit Tastatur/Semantik. Der alte rote Vorlauf
+[40918212562](https://github.com/ManuEtt/Dnd/actions/runs/40918212562) scheiterte
+am erwarteten Audit-Zähler 11 statt jetzt 12 beim Mönch. Er ist repariert und
+durch die vollständige grüne Wiederholung ersetzt; kein Test deaktiviert.
+Ein früher bewusst beendeter Lauf gilt nicht als bestandene Vollsuite.
 
-Dieser anschließende reine Dokumentationsabschluss auf Produkt-Main `49b98d8a`
-ändert **keine** App-, Backend-, Skript- oder Workflowdatei und erhöht keine
-Version. Seine statischen/Pythonprüfungen werden separat im Dokumentations-PR
-geführt. Eine weitere APK oder Produkt-CI für dessen Dokumentationskopf wird
-nicht behauptet. Ältere Berichte darunter sind historische Schreibstände.
+Alle **1.286** heruntergeladenen Main- und PR-Quelldateien mit Hash/Modus, Alpha-Quellpaket,
+echte Binärpatch-Anwendung auf `fde0ef6e` und isoliertes Bundle/fsck sind geprüft.
+ARM64-APK: Version **0.8.48+98**, minSDK24/targetSDK36, v2-Debug-Testsignatur.
+[Source-ZIP/Patch/Manifest/History-Bundle](https://github.com/ManuEtt/Dnd/actions/runs/40922492508/artifacts/12918224840) ·
+[ARM64-Alpha](https://github.com/ManuEtt/Dnd/actions/runs/40922492508/artifacts/12918823598).
+Quell-ZIP-SHA256: `9070e1754b5d2838121f320a54c8d1fa5d93120b51f4f7bea6f47db51844116a`;
+APK-SHA256: `4fdf28d6581dd94d7cbcdc7f00f470b313c249cd52d45c3d1ae454b20ae69c79`.
 
-## Quellen, Speicherung und Wiederherstellung
+**NICHT GETESTET:** echtes Android-Gerät/TalkBack, installiertes Altversionsupgrade,
+produktive Release-Signatur. **BLOCKIERT:** kein angeschlossenes Testgerät;
+kein Code-/GitHub-Zugriffsblocker. **NOCH NICHT IMPLEMENTIERT:** vollständiger
+Charakter-Wizard und übrige Spezies-/Klassen-/Talent-/Zauberpflichtwahlen;
+ausgeführte Werkzeugaktionen samt Würfel-/Zeit-/Materialtransaktion.
+`RULE-EQUIPMENT-TOOLS` / `EQUIP-CHOICES` bleiben `partial`; 1.419 Prüfaufträge
+und neun Inventurlücken sind kein globaler SRD-Fertigstellungsprozentsatz.
 
-Regelquelle: SRD 5.2.1 S.36/53/97, CC BY 4.0; THIRD_PARTY_NOTICES.md unverändert.
-Fachnachweis: [CHARACTER_HOLY_SYMBOL_CHOICE_20261028.md](docs/CHARACTER_HOLY_SYMBOL_CHOICE_20261028.md).
-Code: starting_equipment_import.dart, starting_class_choice.dart, lesender
-srd_character_creation_audit.dart, bestehender Klassen-/Charaktereditor.
-Keine Regel-/Story-Grenzänderung, keine KI-Kosten, keine Spielstand-Neuberechnung.
+Der eigene Produktbranch wurde nach grüner Main-CI durch
+[Cleanup 40924681196](https://github.com/ManuEtt/Dnd/actions/runs/40924681196)
+remote entfernt, exakt als
+`archive/merged-20261027/feat/character-monk-tool-proficiency-20261029-53e8e72a58dc`
+erhalten; fünf aktive fremde PR-Branches bleiben bestehen.
 
-| Main-Datei | SHA256 |
-| --- | --- |
-| Vollprojekt-ZIP | `5c8a2b6e66f156104231ce60d91a3faafa8f3665165dd9b2e3adbfe397fe28ab` |
-| Binärpatch | `1bd26a2a785257d8132e51449ed44ef17286309b1a2f2a4e8f163433efeaaa36` |
-| ARM64-APK | `63ebe346fd2ea6ed2f631eb63910efc27e78208ecd269dbb6575c8aa6974ae89` |
+Amtliches SRD 5.2.1 S.8–9/49/63/83/93–95, CC BY 4.0;
+THIRD_PARTY_NOTICES.md erhalten. Regel-/Story-Grenze und KI-Autorität unverändert.
+Dieser anschließende Dokumentationsabschluss auf Branch
+`docs/monk-tool-abnahme-20261029` ändert keine App-, Backend-, Skript- oder
+Workflowdatei und erhöht keine Version. Seine statischen/Python-Prüfungen sind
+separat; keine neue APK/Produkt-CI für den reinen Dokumentationskopf behaupten.
 
-Lokale Sicherungen: `/workspace/artifacts/character-holy-symbol-20261028/`,
-Index `ARTEFAKTE_UND_IMPORT.md`; Logs/Prüfberichte `/workspace/validation/20261028-*`.
-ZIP in leeren Ordner entpacken; Patch nur auf seine explizite Basis anwenden.
-Das Paket ist bereits in Main enthalten: keinen identischen Patch nochmals
-auf Main anwenden. Bundle für eine separate lokale Wiederherstellung verwenden;
-vor neuen GitHub-Änderungen aktuellen Main/PR-Zustand und Prüfungen beachten.
+**Nächster Schritt:** drei Barden-Instrumentübungen und Paket-A-Instrumentbindung
+nach amtlicher SRD-Quellenprüfung ausdrücklich auswählen und persistent belegen.
+Neue Entscheidung kompatibel versionieren; v1/v2/v3 weder verschärfen noch mit
+vermuteten Übungen anreichern. DoD: gültige/ungültige Instrument-IDs, drei eindeutige
+Übungen, Paket A/B, Abbruch/Retry/stale Revision, Alt-JSON/SQLite-Neustart und
+320/360 dp bei 200 %/IME/Semantik, danach komplette Prüfkette und finale PR-CI.
+Keine automatische Fortsetzung nach Sitzungsende.
 
-## Genau nächster Schritt
+## Wiederaufnahme und Sicherung
 
-Die im Mönch-Paket A ausdrücklich gewählte Werkzeug-/Instrumentausrüstung mit
-der erforderlichen Werkzeugübung koppeln. Zuerst amtliches SRD 5.2.1 S.49 prüfen;
-vorhandene Auswahl-/Persistenzfunktionen erweitern. Neue versionierte Entscheidung,
-bestehende Klassenbelege v1/v2 ohne Pflichtfeldverschärfung bewahren, keine
-Nachvergabe. Gültige/ungültige IDs, doppelte Übungen, Abbruch, Retry, stale Revision,
-SQLite-Neustart und JSON, 320/360 dp bei 200 %/IME/Semantik testen; anschließend
-`bash scripts/check.sh`, Debug/native und finale PR-CI. Kein Hintergrund-Codexjob.
+1. Main, offene PRs und CI erneut live prüfen. Beim Abschluss sind #387–#389
+   sowie #391/#392 fremde aktive Pakete; sie wurden nicht übernommen/gelöscht.
+   Vorhandene WIP-Worktrees einschließlich Dnd-items bleiben erhalten.
+2. AGENTS.md, Fortsetzungsprompt, diesen Checkpoint, README und amtliche Quellen
+   lesen; Mönch nicht neu implementieren. Bardenpaket gegen offene PRs abgleichen.
+3. `python3 scripts/generate_fantasy_buttons.py`, Projekt-/Grenz-/Coverageprüfer,
+   221 Pythonfälle; bei Codeänderung `bash scripts/check.sh`, Debug/native und CI.
+4. Alte Schreibstände bytegenau samt Git-Blob/SHA in
+   docs/history/monk_tool_acceptance_20261029/ und monk_tool_start_20261029/.
+5. Lokale Sicherungen außerhalb des Projekts:
+   `/workspace/artifacts/character-monk-tool-20261029/`; Endstand im Unterordner
+   `abschluss/`, Index `ARTEFAKTE_UND_IMPORT.md`. Source-ZIP enthält keine APK,
+   privaten Spielstände, SDKs oder Schlüssel. Öffentliche Downloadlinks oben.
+   Patchbasis ausdrücklich `fde0ef6ed8b419d6a31c701a03aa05d61994c352`; zuerst in
+   separatem Branch/Clone `git apply --check <patch>` ausführen, bestehendes Main
+   nicht mit ZIP-Dateien überschreiben. Auf integriertem Main keinen Patch erneut
+   anwenden. Git-Bundle ermöglicht vollständige Wiederherstellung mit Historie.
 
-## Dokumentationshistorie
-
-Vorige README und beide Checkpoints bleiben bytegenau mit Git-Blob/SHA256 in
-[history/character_symbol_abnahme_20261028/MANIFEST.json](docs/history/character_symbol_abnahme_20261028/MANIFEST.json).
-Die frühere Migration aller 28 Altbranches ist abgeschlossen; Bericht/Inventar
-[BRANCH_MIGRATION_20261028.md](docs/BRANCH_MIGRATION_20261028.md). Nicht wiederholen.
+Dokumentationsprüfung: 221 Pythonfälle, Projekt-/Grenz-/Registerprüfung erfolgreich.
+`git diff --check` außerhalb des bytegenauen historischen Archivs sauber. Die
+archivierte Original-CHANGELOG-Zeile 1061 enthält bereits im Quellstand ein
+Leerzeichen am Zeilenende; es bleibt für die nachprüfbare Originaltreue erhalten.

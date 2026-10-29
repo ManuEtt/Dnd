@@ -1,0 +1,20 @@
+{
+  "source_main_commit": "4193000fd28154eeb8b0be3497acc722f674c5ab",
+  "purpose": "Bytegenauer Schreibstand vor der Mönch-Abnahmedokumentation; frühere Statusfelder sind historische Momentaufnahmen.",
+  "files": [
+    {
+      "path": "docs/CHARACTER_CREATION_COVERAGE.json",
+      "archive_path": "docs/history/monk_tool_acceptance_20261029/docs/CHARACTER_CREATION_COVERAGE.json",
+      "git_blob": "90a571c834b77615e0a91d35ed501d51882e2924",
+      "sha256": "41f3d5fc48a558107b8773114622b2345ad8c1a74fc70dcfd670f1e0c0600b76",
+      "bytes": 31162
+    },
+    {
+      "path": "docs/CHARACTER_MONK_TOOL_PROFICIENCY_20261029.md",
+      "archive_path": "docs/history/monk_tool_acceptance_20261029/docs/CHARACTER_MONK_TOOL_PROFICIENCY_20261029.md",
+      "git_blob": "ebe4de7b8e308120e261e36f10242710cb27e297",
+      "sha256": "1952f379179a3ca44185c1c4346b9641000b88f83ba9ed735d8e37cc550dc2c4",
+      "bytes": 3008
+    }
+  ]
+}
