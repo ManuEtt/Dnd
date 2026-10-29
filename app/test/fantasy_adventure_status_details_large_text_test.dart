@@ -29,9 +29,7 @@ HeroCharacter _hero() => HeroCharacter(
 Widget _screen(HeroCharacter hero, {double scale = 1}) => MaterialApp(
   theme: buildFantasyTheme(),
   builder: (context, child) => MediaQuery(
-    data: MediaQuery.of(
-      context,
-    ).copyWith(textScaler: TextScaler.linear(scale)),
+    data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(scale)),
     child: child!,
   ),
   home: Scaffold(
