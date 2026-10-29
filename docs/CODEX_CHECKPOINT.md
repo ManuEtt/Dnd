@@ -1,5 +1,19 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat C – 29.10.2026 – Vollständige HUD-Zustände bei großer Schrift (PR #394)
+
+**Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`, Alpha `0.8.48+98`. Branch `feat/chat-c/adventure-status-details-large-text-20261029`, [Draft-PR #394](https://github.com/ManuEtt/Dnd/pull/394), Code-/Test-HEAD vor Dokumentation `fa4749049539f68decff5a6981d6c2f6ce0fcfd2`.
+
+- **IMPLEMENTIERT:** Die bestätigte HUD-Zeile mit temporären TP, Zuständen und Konzentration wird ab 180 % Android-Schrift ohne Ellipse/Zeilenlimit angezeigt; Standardansicht bleibt bei drei Zeilen. Keine DB-/JSON-/SRD-/Storyänderung; keine Migration.
+- **TESTS ERGÄNZT:** Vier neue Widgetfälle (320/360 dp bei 200 %, Normaltext, alter Statusleerstand), Prüfungen der lesbaren Anzeige und unveränderter Charakterdaten.
+- **GETESTET:** Vorhandene GitHub-PRs, reale UI-Implementierung und existierende Tests geprüft, Branch/PR angelegt; Vorgänger-PR #392 hat [vollständige grüne CI #40918977935](https://github.com/ManuEtt/Dnd/actions/runs/40918977935) mit 36/36 bestanden, **nicht** als PR-#394-Beweis werten.
+- **NICHT GETESTET:** Neuer finaler Head durch Flutter-/Backend-/Python-/Android-Gates, reale Gerätetest-/TalkBack-Prüfung.
+- **BLOCKIERT:** Lokales Flutter/Dart nicht verfügbar, daher GitHub-CI-Abnahme vor Review.
+- **NOCH NICHT IMPLEMENTIERT:** Reale TalkBack-Prüfung; keine Autonomie zur Zusammenführung fremder PRs.
+- **Koordination:** Keine Fachdateiüberschneidung mit #388, #392, #387, #389, #391; README und zentraler Checkpoint müssen additiv durch Chat D konsolidiert werden.
+- **Nächster konkreter Schritt:** Reale Android-/TalkBack-Abnahme der langen HUD-Zustände bei 320 dp/200 %, positive/negative Ansagen samt Nullstatus.
+
+
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
 Stand: 29.10.2026, UTC. [PR #390](https://github.com/ManuEtt/Dnd/pull/390)
