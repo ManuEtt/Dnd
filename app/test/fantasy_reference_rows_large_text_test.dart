@@ -4,7 +4,8 @@ import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_character_overview.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_ui.dart';
 
-const longSpell = 'Schutzformel der vier verborgenen Mondtore jenseits des Nebels';
+const longSpell =
+    'Schutzformel der vier verborgenen Mondtore jenseits des Nebels';
 const longItem = 'Streitkolben der vergessenen Stadt hinter den Nebelbergen';
 
 HeroCharacter _hero() => HeroCharacter(
@@ -28,9 +29,7 @@ Widget _screen(HeroCharacter hero, {double textScale = 1}) => MaterialApp(
     child: child!,
   ),
   home: Scaffold(
-    body: SingleChildScrollView(
-      child: FantasyCharacterOverview(hero: hero),
-    ),
+    body: SingleChildScrollView(child: FantasyCharacterOverview(hero: hero)),
   ),
 );
 
@@ -51,10 +50,7 @@ void main() {
 
       final spells = find.byKey(const ValueKey('sheet-preview-zauber'));
       final inventory = find.byKey(const ValueKey('sheet-preview-ausrüstung'));
-      final spell = find.descendant(
-        of: spells,
-        matching: find.text(longSpell),
-      );
+      final spell = find.descendant(of: spells, matching: find.text(longSpell));
       final concentration = find.descendant(
         of: spells,
         matching: find.text('Konz.'),
@@ -63,10 +59,7 @@ void main() {
         of: inventory,
         matching: find.text(longItem),
       );
-      final count = find.descendant(
-        of: inventory,
-        matching: find.text('×3'),
-      );
+      final count = find.descendant(of: inventory, matching: find.text('×3'));
 
       for (final name in [spell, item]) {
         expect(name, findsOneWidget);
@@ -136,10 +129,7 @@ void main() {
     expect(label, findsOneWidget);
     expect(tester.widget<Text>(label).maxLines, isNull);
     expect(tester.widget<Text>(label).overflow, TextOverflow.visible);
-    expect(
-      find.descendant(of: skills, matching: find.text('–')),
-      findsWidgets,
-    );
+    expect(find.descendant(of: skills, matching: find.text('–')), findsWidgets);
     expect(hero.toJson(), original);
     expect(tester.takeException(), isNull);
   });
