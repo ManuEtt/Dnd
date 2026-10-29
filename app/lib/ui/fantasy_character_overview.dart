@@ -760,29 +760,89 @@ class FantasyCharacterQuickNavigation extends StatelessWidget {
     top: false,
     child: DecoratedBox(
       key: const ValueKey('sheet-fixed-quick-navigation'),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [Color(0xff172a3a), Color(0xff081421)],
         ),
-        border: const Border(
+        border: Border(
           top: BorderSide(color: FantasyCharacterOverview.gold, width: 1.5),
         ),
-        boxShadow: const [BoxShadow(color: Color(0xaa000000), blurRadius: 12)],
+        boxShadow: [BoxShadow(color: Color(0xaa000000), blurRadius: 12)],
       ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(5, 6, 5, 6),
-        child: Row(
-          children: [
-            _action(
-              'Charakter',
-              Icons.person_outline,
-              onCharacter,
-              selected: true,
-            ),
-            _action('Inventar', Icons.backpack_outlined, onInventory),
-            Expanded(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            // Five narrow columns must not shrink Android's enlarged labels.
+            // Keep the fixed actions visible, but split them into two rows.
+            final largeText =
+                MediaQuery.textScalerOf(context).scale(1) >= 1.8 &&
+                constraints.maxWidth < 500;
+            if (largeText) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      _action(
+                        'Charakter',
+                        Icons.person_outline,
+                        onCharacter,
+                        selected: true,
+                        largeText: true,
+                      ),
+                      _action(
+                        'Inventar',
+                        Icons.backpack_outlined,
+                        onInventory,
+                        largeText: true,
+                      ),
+                      _rollAction(),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      _action(
+                        'Zauber',
+                        Icons.auto_awesome_outlined,
+                        onSpells,
+                        largeText: true,
+                      ),
+                      _action(
+                        'Mehr',
+                        Icons.more_horiz,
+                        onMore,
+                        largeText: true,
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            }
+            return Row(
+              children: [
+                _action(
+                  'Charakter',
+                  Icons.person_outline,
+                  onCharacter,
+                  selected: true,
+                ),
+                _action('Inventar', Icons.backpack_outlined, onInventory),
+                _rollAction(),
+                _action('Zauber', Icons.auto_awesome_outlined, onSpells),
+                _action('Mehr', Icons.more_horiz, onMore),
+              ],
+            );
+          },
+        ),
+      ),
+    ),
+  );
+
+  Widget _rollAction() =>
+    Expanded(
               flex: 2,
               child: Semantics(
                 label: 'W20 würfeln',
@@ -862,20 +922,14 @@ class FantasyCharacterQuickNavigation extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
-            _action('Zauber', Icons.auto_awesome_outlined, onSpells),
-            _action('Mehr', Icons.more_horiz, onMore),
-          ],
-        ),
-      ),
-    ),
-  );
+            );
 
   Widget _action(
     String label,
     IconData icon,
     VoidCallback tap, {
     bool selected = false,
+    bool largeText = false,
   }) => Expanded(
     child: Semantics(
       label: label,
@@ -913,6 +967,21 @@ class FantasyCharacterQuickNavigation extends StatelessWidget {
                           : FantasyCharacterOverview.dim,
                     ),
                     const SizedBox(height: 4),
+                    if (largeText)
+                      Text(
+                        label,
+                        maxLines: 2,
+                        softWrap: true,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: selected
+                              ? FantasyCharacterOverview.ivory
+                              : FantasyCharacterOverview.dim,
+                          fontFamily: 'serif',
+                          fontSize: 11,
+                        ),
+                      )
+                    else
                     FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(
