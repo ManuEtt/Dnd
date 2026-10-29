@@ -1,0 +1,27 @@
+name: Chat C reference formatter diagnostic (temporary)
+
+on:
+  push:
+    branches:
+      - feat/chat-c/reference-rows-large-text-20261029
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  show-format-diff:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Show exact Dart 3.9 formatter diffs
+        run: |
+          cp app/lib/ui/fantasy_character_overview.dart /tmp/fantasy_character_overview.before.dart
+          cp app/test/fantasy_reference_rows_large_text_test.dart /tmp/fantasy_reference_rows_large_text_test.before.dart
+          dart format app/lib/ui/fantasy_character_overview.dart app/test/fantasy_reference_rows_large_text_test.dart
+          diff -u /tmp/fantasy_character_overview.before.dart app/lib/ui/fantasy_character_overview.dart || true
+          diff -u /tmp/fantasy_reference_rows_large_text_test.before.dart app/test/fantasy_reference_rows_large_text_test.dart || true
