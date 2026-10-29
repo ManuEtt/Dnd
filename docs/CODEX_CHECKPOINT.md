@@ -1,5 +1,19 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat C – 29.10.2026 – Große Referenznamen ohne Ellipse (PR #392)
+
+**Basis-main:** `fde0ef6ed8b419d6a31c701a03aa05d61994c352` (Alpha `0.8.47+97`), Branch `feat/chat-c/reference-rows-large-text-20261029`, [Draft-PR #392](https://github.com/ManuEtt/Dnd/pull/392), erster Code-/Teststand `44d4d8232ba11575a730978c722ac8f4187fb759`, finaler Commit nach Dokumentation separat verifizieren.
+
+- **IMPLEMENTIERT:** Darstellung der Charakterübersicht bei 320/360 dp und 200 % Schrift: vollständige Fertigkeits-, Zauber-, Zustands- und Inventarnamen über Wert/Status statt einzeiliger Ellipse; Standardlayout unverändert.
+- **GETESTET:** Aktuellen Main-/PR-/Quellstand und Überschneidungen geprüft; GitHub-PR erstellt. Vorherige [Chat-C-CI 40914859785](https://github.com/ManuEtt/Dnd/actions/runs/40914859785) auf PR #388 vollständig grün, 36/36, **nicht** auf neuem PR #392.
+- **NICHT GETESTET:** Neue Widgettests für 200 %, Normaltext und unbekannte historische Werte sowie gesamte neue Python-/Backend-/Flutter-/Android-CI noch offen; Realgerät/TalkBack separat.
+- **BLOCKIERT:** Lokales Flutter-/Dart-SDK fehlt. CI des finalen PR-SHA erforderlich; PR bis dahin Draft.
+- **NOCH NICHT IMPLEMENTIERT:** Reale TalkBack-Ausgabe der vollständigen Referenzzeilen; keine unerwiesenen SRD-Regelwirkungen.
+- **Migration:** keine; SQLite/JSON, GameController, Regel-/Story-Zustand, Version und alte Spielstände unverändert.
+- **Konflikte:** PR #388 und #390 ändern beide `fantasy_character_sheet.dart`, *nicht* diese UI-Fachdatei; PR #387/#389/#390/#391 überschneiden gemeinsam `README.md` und diesen Checkpoint. Nur koordinierte additive Dokumentationsintegration.
+- **Genau nächster Schritt:** Reale Android-/TalkBack-Abnahme der vollständigen Referenzzeilen bei 320 dp/200 %, korrekte Status-/Bonusansage und unveränderte Datenwerte.
+
+
 ## Integration 29.10.2026 – Regression bei großer Schrift nachvollziehbar scrollen
 
 Im zusammengeführten Kandidaten wird die zuvor auf PR #379 nachweislich fehlgeschlagene Heldenkarten-Interaktion bei 200 % Schrift korrigiert: Die Tests scrollen ein tatsächlich über den Bildschirm hinausragendes `ListView` mit einer Nutzer-Geste und verlangen anschließend hit-testbare Buttons. Keine Beschriftung verkürzt, kein Test deaktiviert, kein Produkt-/Speicherverhalten geändert. Neue kombinierte CI auf dem Folge-Commit erforderlich.
