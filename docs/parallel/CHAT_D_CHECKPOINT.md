@@ -1,3 +1,40 @@
+# Chat D D-019 – Ressourcenbegrenzung in der Projektvorprüfung (29.10.2026)
+
+- **Main-SHA bei Beginn:** `fde0ef6ed8b419d6a31c701a03aa05d61994c352`.
+- **Eigener Branch:** `fix/chat-d/bounded-metadata-preflight-20261029`.
+- **Code-Commits:** `76ffccf718ffd0f807c0b8a90d0545b4f2308a50`,
+  `d32e318c6f00782ccbd4deed64a4999235ec02df`.
+- **Ausgangsproblem:** Metadaten-JSON, Gradle-Properties und `gradlew`
+  wurden im Vorabprüfer unabhängig von tatsächlicher Dateigröße ganz
+  eingelesen. Beschädigte, extrem große Uploads konnten Ressourcen
+  verschwenden, ehe Flutter/Android-Tests beginnen.
+- **IMPLEMENTIERT:** `_read_bounded_utf8` begrenzt den tatsächlichen
+  Leseumfang auf höchstens Limit+1 Byte für JSON (16 MiB) und Properties
+  (64 KiB); kein nur auf `stat` basierender Schutz. Das Launcher-Shebang
+  wird per `readline(4097)` mit LF- und CRLF-Prüfung geprüft.
+  Bestehende Datenformate und normale Projektdateien unverändert.
+- **Dateien:** `scripts/verify_project.py`,
+  `scripts/tests/test_verify_project.py`, `README.md`,
+  `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Akzeptanzkriterien:** beide übergroßen JSON-Dateien abweisen;
+  übergroße Properties abweisen; ein gültiges kurzes Launcher-Shebang
+  bei 64-MiB-Testdatei ohne `Path.read_bytes()` verarbeiten; zu langes
+  Shebang abweisen; ursprüngliche Positiv- und Negativtests bestehen.
+- **GETESTET:** vorherige Main-CI
+  [#40867945743](https://github.com/ManuEtt/Dnd/actions/runs/40867945743)
+  erfolgreich, **nicht** diese Änderungen. Zu Beginn keine offenen PRs.
+- **NICHT GETESTET:** neue vollständige CI, Backend, Flutter, Android,
+  natives APK-Packaging und Realgerät auf diesem Branch.
+- **BLOCKIERT:** vollständiger lokaler Checkout durch GitHub-DNS
+  nicht verfügbar; Flutter-/Dart-SDK nicht installiert.
+- **Grenze:** keine neue racefreie Verifikation gegen während der
+  Prüfung ausgetauschte Symlinks oder Dateien; nur Lesegrößen-Begrenzung.
+- **Kompatibilität:** keine SQLite-/JSON-/Schema-/Versionsmigration.
+- **Nächster Schritt:** CI auf finalem PR-Commit abnehmen; danach
+  aktuelle Main-/PR-Dateien vor Review und Integration erneut prüfen.
+
+---
+
 # Chat D – Integration von PR #358 nach Checkpoint-Fix #363 (29.10.2026)
 
 ## Integrationskandidat 29.10.2026 – Chat D

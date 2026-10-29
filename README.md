@@ -1,5 +1,23 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – Begrenzte Metadatenprüfung (29.10.2026)
+
+Die technische Projektvorprüfung liest `backend/package.json` und
+`backend/package-lock.json` nun mit einer festen Grenze von 16 MiB, die
+Gradle-Wrapper-Eigenschaften höchstens mit 64 KiB und nur die erste,
+maximal 4 KiB lange Gradle-Shebang-Zeile. Dadurch führt eine beschädigte
+oder übergroße Projektübertragung nicht mehr zu unbegrenztem Lesen dieser
+Dateien. Vier neue Python-Regressionen decken Ablehnung, begrenztes Lesen
+und gültige Kurzzeilen ab. Produkt-App, JSON-Speicherformat, SQLite,
+Android-Versionsnummer und Backend-Verhalten bleiben unverändert.
+Die technischen Prüfungen und Android-CI dieses PRs sind separat
+abzunehmen. Beim letzten geprüften Ausgangs-Main
+`fde0ef6ed8b419d6a31c701a03aa05d61994c352` waren alle 24
+Integrations-PRs bereits übernommen, keine PRs offen und der
+[Main-CI-Lauf](https://github.com/ManuEtt/Dnd/actions/runs/40867945743)
+erfolgreich. Ältere darunterstehende Integrationsstatus sind historische
+Momentaufnahmen.
+
 ## Konsolidierter Arbeitsstand – Integrationskandidat vom 29.10.2026
 
 **Noch nicht in `main` integriert.** Die 24 offenen PRs von Chat A/B/C/D sind auf einem separaten technischen Integrationsbaum zusammengetragen; der gemeinsame Flutter-/Python-/Backend-/Android-CI-Lauf steht aus. Einzelne Pull Requests sind Entwürfe und bedürfen einer eigenen fachlichen Freigabe. Aktive Branches vor grüner gemeinsamer Abnahme und SHA-gesicherter Archivierung nicht löschen. [Herkunft, Originalbeschreibungen, HEADs und offene Risiken](docs/parallel/INTEGRATION_20261029.md).

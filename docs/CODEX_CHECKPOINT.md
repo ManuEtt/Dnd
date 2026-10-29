@@ -1,5 +1,35 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat D – 29.10.2026: Begrenzter Upload-Preflight
+
+- **Ausgangs-Main:** `fde0ef6ed8b419d6a31c701a03aa05d61994c352`.
+- **Branch:** `fix/chat-d/bounded-metadata-preflight-20261029`.
+- **Code-Commits:** `76ffccf718ffd0f807c0b8a90d0545b4f2308a50`,
+  `d32e318c6f00782ccbd4deed64a4999235ec02df`.
+- **IMPLEMENTIERT:** `scripts/verify_project.py` begrenzt tatsächliche
+  UTF-8-Lesezugriffe auf Backend-Paketmetadaten (16 MiB) und die
+  Gradle-Properties-Datei (64 KiB). Der Gradle-Unix-Launcher wird für
+  seine erforderliche Shebang-Kontrolle nur bis zum ersten Zeilenende,
+  höchstens 4 KiB, gelesen. Fehlende, ungültige und übergroße Uploads
+  werden abgelehnt; das gültige Projekt bleibt akzeptiert.
+- **REGRESSIONEN:** vier neue Tests in
+  `scripts/tests/test_verify_project.py` (beide großen JSONs,
+  übergroße Properties, große Datei mit gültigem kurzem Shebang,
+  überlanger Shebang). Die beiden JSONs werden in einem parametrisierten
+  Test geprüft.
+- **GETESTET:** vorherige vollständige [Main-CI](https://github.com/ManuEtt/Dnd/actions/runs/40867945743)
+  erfolgreich – **kein** Nachweis für die neue Änderung.
+- **NICHT GETESTET:** Python-/Backend-/Flutter-/Android-CI auf dem neuen
+  Commit, Windows, Realgerät.
+- **BLOCKIERT:** Lokal kein GitHub-Checkout (DNS) und kein Flutter-SDK;
+  GitHub Actions nach PR-Erstellung abwarten. Für ZIP-/Release-Verfahren
+  keine zusätzlichen Produktänderungen.
+- **SPIELSTAND/MIGRATION:** SQLite, Kampagnen-JSON, Regeln, Story, UI,
+  Backend-Laufzeit, APK-Version und Signatur unverändert; keine Migration.
+- **NÄCHSTER SCHRITT:** vollständigen CI-Run am finalen PR-HEAD auswerten,
+  eventuelle Fehler in demselben Branch beheben und nach Prüfung der
+  dann aktuellen PRs zur Review freigeben.
+
 ## Integration 29.10.2026 – Regression bei großer Schrift nachvollziehbar scrollen
 
 Im zusammengeführten Kandidaten wird die zuvor auf PR #379 nachweislich fehlgeschlagene Heldenkarten-Interaktion bei 200 % Schrift korrigiert: Die Tests scrollen ein tatsächlich über den Bildschirm hinausragendes `ListView` mit einer Nutzer-Geste und verlangen anschließend hit-testbare Buttons. Keine Beschriftung verkürzt, kein Test deaktiviert, kein Produkt-/Speicherverhalten geändert. Neue kombinierte CI auf dem Folge-Commit erforderlich.
