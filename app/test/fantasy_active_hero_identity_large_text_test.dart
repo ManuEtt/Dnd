@@ -79,10 +79,17 @@ void main() {
       final continueButton = find.byKey(
         const ValueKey('fantasy-hero-continue'),
       );
+      // A long identity legitimately extends below the screen: scroll the
+      // surrounding list like a user instead of relying on ensureVisible for
+      // one oversized sliver child.
+      await tester.drag(find.byType(ListView), const Offset(0, -800));
+      await tester.pumpAndSettle();
       await tester.ensureVisible(continueButton);
+      expect(continueButton.hitTestable(), findsOneWidget);
       await tester.tap(continueButton);
       final archiveButton = find.byKey(const ValueKey('fantasy-hero-archive'));
       await tester.ensureVisible(archiveButton);
+      expect(archiveButton.hitTestable(), findsOneWidget);
       await tester.tap(archiveButton);
       expect(continued, 1);
       expect(archives, 1);

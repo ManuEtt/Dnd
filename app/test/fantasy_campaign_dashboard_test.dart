@@ -218,7 +218,12 @@ void main() {
       expect(find.bySemanticsLabel('Bewegung: 9 m'), findsOneWidget);
 
       final resume = find.byKey(const ValueKey('fantasy-hero-continue'));
+      // The card is intentionally taller than the viewport at 200% text.
+      // Exercise the user's scroll gesture before activating the button.
+      await tester.drag(find.byType(ListView), const Offset(0, -800));
+      await tester.pumpAndSettle();
       await tester.ensureVisible(resume);
+      expect(resume.hitTestable(), findsOneWidget);
       await tester.tap(resume);
       expect(continued, 1);
       expect(tester.takeException(), isNull);
