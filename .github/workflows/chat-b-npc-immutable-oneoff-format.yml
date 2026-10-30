@@ -1,0 +1,24 @@
+name: Chat B one-time immutable NPC formatter
+on:
+  push:
+    branches:
+      - feat/chat-b/npc-context-immutable-restart-20261030
+permissions:
+  contents: read
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Print exact Dart source formatting
+        run: |
+          echo 'CHAT_B_NPC_SOURCE_BEGIN'
+          dart format --output=show app/lib/story/npc_identity_memory.dart
+          echo 'CHAT_B_NPC_SOURCE_END'
+          echo 'CHAT_B_NPC_TEST_BEGIN'
+          dart format --output=show app/test/npc_identity_context_immutable_restart_test.dart
+          echo 'CHAT_B_NPC_TEST_END'
