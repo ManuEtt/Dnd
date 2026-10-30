@@ -1,5 +1,22 @@
 # Chat A – Checkpoint (26.10.2026): Eldritch-Blast-Klassenprüfung
 
+## 30.10.2026 – Konzentrations-Rettungswurfmodifikator (Chat A)
+
+- **Ausgangs-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `feat/chat-a/concentration-save-modifier-evidence-20261030`.
+- **IMPLEMENTIERT:** Isolierte `app/lib/domain/srd_concentration_save_modifier_rules.dart`, `SrdConcentrationSaveModifierRules.prepare` und unveränderliche `SrdConcentrationSaveModifierEvidence`: ausschließlich bestätigte Konstitution, profiziente Rettungen, Mönch-14-Übung, Erschöpfungsabzug, ausdrücklich geprüfte situative Modifikatoren und Vorteil/Nachteil. Alle vorhandenen Formeln werden aus `CharacterRuleEngine.savingThrow` wiederverwendet, keine zweite Profizienztabelle.
+- **SICHERHEIT:** Unbekannte Klassen, unmögliche Multiclass-Level, fehlende Konstitution, doppelte/ungültige Profizienzen, verlorene Konzentration, 0 TP/Tod/Handlungsunfähigkeit, unbestätigte Modifikatoren und veraltete Snapshot-Belege werden abgewiesen. Keine Würfel-, HP-, Zauberplatz- oder Konzentrationsmutation.
+- **TESTS NEU:** `app/test/srd_concentration_save_modifier_rules_test.dart`, acht deterministische Gruppen zu Klasse, Mönch 13/14 und Multiclass, Erschöpfung, bestätigtem Bonus, Vorteil/Nachteil, ungültigem Charakterzustand, JSON-Roundtrip und Stale-Snapshot.
+- **DOKUMENTIERT:** `docs/SRD_CONCENTRATION_SAVE_MODIFIER_EVIDENCE.md`, README und zentraler Checkpoint. Quelle: Wizards of the Coast SRD 5.2.1, Saving Throws, Concentration, Monk 14, Exhaustion (CC BY 4.0). Keine vollständig implementierte Konzentrationsengine behauptet.
+- **GETESTET:** Repository-/CI-/PR-Sichtung; Code und Tests geschrieben. **NICHT GETESTET:** finale Dart-Format-/Flutter-/Android-CI, echtes Android-Gerät. **BLOCKIERT:** lokale Flutter-/Dart-SDKs nicht verfügbar, Review und exakte CI-Abnahme fehlen.
+- **KEINE MIGRATION:** Modelle, Controller, GameEngine, SQLite-/JSON-Schema, Eventformat, Version, UI und Story unverändert.
+- **KOORDINATION:** Fachpfade getrennt von Chat-A-PRs #387/#400/#405/#408/#415/#416/#418 und Chat B/C/D. README/zentrale Checkpoints additiv durch Chat D zusammenführen.
+- **VORHERIG:** #418 vollständige [CI #41077695088](https://github.com/ManuEtt/Dnd/actions/runs/41077695088) erfolgreich, ebenso #415/#408/#405/#400. Alle PRs bleiben Drafts.
+- **NÄCHSTER SCHRITT:** Integration des Modifikatorbelegs in den bestätigten Konzentrations-SG-Entscheid von #418 und später atomare Controller-/SQLite-Buchung.
+
+---
+
+
 ## Integrationskandidat 29.10.2026 – Chat A
 
 Zusammengeführte Fachpakete: [#357](https://github.com/ManuEtt/Dnd/pull/357), [#361](https://github.com/ManuEtt/Dnd/pull/361), [#366](https://github.com/ManuEtt/Dnd/pull/366), [#367](https://github.com/ManuEtt/Dnd/pull/367), [#372](https://github.com/ManuEtt/Dnd/pull/372), [#375](https://github.com/ManuEtt/Dnd/pull/375), [#385](https://github.com/ManuEtt/Dnd/pull/385). Die ursprünglichen Branch-HEADs, PR-Beschreibungen, Tests, bekannte Grenzen und Statusmeldungen sind im [Integrationsjournal](INTEGRATION_20261029.md) mit Git-Historie dokumentiert. **Dieser Stand ist weder auf main integriert noch gemeinsam CI-abgenommen; Drafts sind nicht freigegeben.** Bisherige Checkpoint-Einträge bleiben erhalten.
