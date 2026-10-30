@@ -20,6 +20,9 @@ Future<NpcStorySelection?> showNpcStorySelectionDialog(
   return showDialog<NpcStorySelection>(
     context: context,
     builder: (dialogContext) => AlertDialog(
+      // Scroll lengthy identity descriptions on short Android viewports.
+      // The cancel action stays outside the scroll area.
+      scrollable: true,
       title: const Text('Gesprächspartner auswählen'),
       content: SizedBox(
         width: 420,
@@ -38,15 +41,15 @@ Future<NpcStorySelection?> showNpcStorySelectionDialog(
                     'die gespeicherte Kennung die Personen.',
                   ),
                   const SizedBox(height: 12),
-                  SizedBox(
-                    height: eligible.length * 72.0 > 320
-                        ? 320
-                        : eligible.length * 72.0,
-                    child: ListView.builder(
-                      itemCount: eligible.length,
-                      itemBuilder: (context, index) {
-                        final npc = eligible[index];
-                        return Semantics(
+                  // The AlertDialog is the only scrolling viewport. A
+                  // shrink-wrapped ListView here triggers intrinsic-height
+                  // assertions and leaves the nested list off-screen.
+                  Column(
+                    key: const ValueKey('npc-picker-list'),
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (final npc in eligible)
+                        Semantics(
                           label:
                               '${npc.name}, Beziehung: ${npc.relationship}, '
                               'Kennung ${npc.id}',
@@ -63,9 +66,8 @@ Future<NpcStorySelection?> showNpcStorySelectionDialog(
                               dialogContext,
                             ).pop(NpcStorySelection.choose(campaign, npc.id)),
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                    ],
                   ),
                 ],
               ),

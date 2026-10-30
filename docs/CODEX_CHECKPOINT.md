@@ -1,5 +1,54 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat C – TalkBack-Sperrgrund der Angriffs-Schnellaktion (30.10.2026)
+
+- Ausgangs-main: `55fe44475a113943c6310ec16a8ffb481185f4e9`,
+  Arbeitsbranch: `feat/chat-c/shortcut-disabled-hints-20261030`,
+  Code-Commit: `1a0355f276966f55eaa81018160471325692827c`,
+  [PR #399](https://github.com/ManuEtt/Dnd/pull/399) (Draft).
+- IMPLEMENTIERT: Gemeinsamer Sperrgrund im `FantasyPinnedActionBar` als
+  Tooltip und direkter Semantics-Hint für `FantasyShortcutTile`.
+  Der deaktivierte Angriff bleibt gesperrt; bei Busy gewinnt der
+  Verarbeitungsgrund, bei freigegebener Aktion entfällt der Hinweis.
+  Der Tooltip wird nicht zusätzlich an TalkBack ausgegeben.
+- TESTS ERGÄNZT: drei Widgettests für gesperrten Angriff samt Callback-Sperre,
+  Vorrang des Busy-Grunds und freigegebenen Angriff ohne alten Hint.
+- GETESTET: tatsächlicher GitHub-main/PR-/Dateistand und Quelltext
+  geprüft; isolierter Branch und PR erstellt. Neue Widgettests nicht ausgeführt.
+- NICHT GETESTET: Dart-Format, Flutter Analyze/Widgetsuite, Python,
+  Backend, Android-APK/native Tests sowie TalkBack auf Realgerät.
+  CI auf finalem Commit ist gesondert zu prüfen.
+- BLOCKIERT: In diesem Container fehlt das Flutter-/Dart-SDK und GitHub-DNS
+  für einen vollständigen lokalen Checkout.
+- Geänderte technische Dateien: `app/lib/ui/fantasy_art.dart`,
+  `app/test/fantasy_action_controls_test.dart`. Keine Migration, keine
+  Änderung von Regeln, Story, Datenmodell, SQLite oder JSON.
+- Koordination: Andere offene UI-PRs #388, #392 und #394 ändern andere
+  technische UI-Dateien. README und beide Checkpoints gemeinsam und
+  ausschließlich additiv durch Chat D integrieren.
+- Nächster Schritt: Unter 320 dp und 200 % Schrift prüfen, dass der
+  gesperrte Kampfbutton im TalkBack-Fokus den Sperrgrund einmal vorliest;
+  bei freigegebenem Angriff muss der Hinweis fehlen. Anschließend
+  vollständige Flutter-/Android-CI auf dem endgültigen Commit abnehmen.
+
+---
+
+## Chat C – NPC-Identitätsdialog bei großer Schrift (30.10.2026)
+
+**IMPLEMENTIERT:** [Draft-PR #422](https://github.com/ManuEtt/Dnd/pull/422), Branch `feat/chat-c/npc-picker-large-text-20261030`, Basis-main `55fe44475a113943c6310ec16a8ffb481185f4e9`, Code-/Test-Commit `d706b5a5d2d892fd3ed8c69f6e5d2346ad71fa2e`. Ein scrollbarerer `AlertDialog` und eine bei 320 px begrenzte, textskalierungsabhängige Liste ersetzen feste 72-px-Zeilen im bestätigten NPC-Identitätsdialog. Neue Widgettests für 320/360 dp, 200 % Schrift, zwölf gleichnamige NPCs und Abbrechen ohne bestätigte Beziehungen.
+
+**GETESTET:** Repository-, PR- und Modulüberschneidungsprüfung per GitHub; eigener Branch-Diff und PR-Anlage. **Keine lokal ausgeführten automatischen Tests.**
+
+**NICHT GETESTET:** Format/Flutter-Analyze/Flutter-Test, Android-Build und reale TalkBack-/Geräteabnahme. CI des finalen PR-HEAD ist separat zu kontrollieren.
+
+**BLOCKIERT:** Flutter/Dart-SDK im Container nicht verfügbar; Draft nicht ohne CI + Review mergen. README-/Checkpoint-Ergänzungen wegen paralleler Arbeiten nur additiv integrieren.
+
+**NOCH NICHT IMPLEMENTIERT:** Keine Migration, kein SQLite-/JSON-, Domain-, Controller-, Story- oder Regelumbau; App bleibt `0.8.48+98`.
+
+**NÄCHSTER SCHRITT:** Isolierte Layout-/Semantics-Tests der Kampfchronik bei 320 dp und 200 % Schrift, auch mit sehr langen bestätigten Ereignisdetails.
+
+---
+
 ## 30.10.2026 – Chat C: Todesrettungs-Entscheidungen bei 200 % Schrift
 
 - **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.

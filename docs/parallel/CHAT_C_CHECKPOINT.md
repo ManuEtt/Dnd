@@ -1,3 +1,51 @@
+## Chat C – TalkBack-Sperrgrund der Angriffs-Schnellaktion (30.10.2026)
+
+- Ausgangs-main: `55fe44475a113943c6310ec16a8ffb481185f4e9`,
+  Arbeitsbranch: `feat/chat-c/shortcut-disabled-hints-20261030`,
+  Code-Commit: `1a0355f276966f55eaa81018160471325692827c`,
+  [PR #399](https://github.com/ManuEtt/Dnd/pull/399) (Draft).
+- IMPLEMENTIERT: Gemeinsamer Sperrgrund im `FantasyPinnedActionBar` als
+  Tooltip und direkter Semantics-Hint für `FantasyShortcutTile`.
+  Der deaktivierte Angriff bleibt gesperrt; bei Busy gewinnt der
+  Verarbeitungsgrund, bei freigegebener Aktion entfällt der Hinweis.
+  Der Tooltip wird nicht zusätzlich an TalkBack ausgegeben.
+- TESTS ERGÄNZT: drei Widgettests für gesperrten Angriff samt Callback-Sperre,
+  Vorrang des Busy-Grunds und freigegebenen Angriff ohne alten Hint.
+- GETESTET: tatsächlicher GitHub-main/PR-/Dateistand und Quelltext
+  geprüft; isolierter Branch und PR erstellt. Neue Widgettests nicht ausgeführt.
+- NICHT GETESTET: Dart-Format, Flutter Analyze/Widgetsuite, Python,
+  Backend, Android-APK/native Tests sowie TalkBack auf Realgerät.
+  CI auf finalem Commit ist gesondert zu prüfen.
+- BLOCKIERT: In diesem Container fehlt das Flutter-/Dart-SDK und GitHub-DNS
+  für einen vollständigen lokalen Checkout.
+- Geänderte technische Dateien: `app/lib/ui/fantasy_art.dart`,
+  `app/test/fantasy_action_controls_test.dart`. Keine Migration, keine
+  Änderung von Regeln, Story, Datenmodell, SQLite oder JSON.
+- Koordination: Andere offene UI-PRs #388, #392 und #394 ändern andere
+  technische UI-Dateien. README und beide Checkpoints gemeinsam und
+  ausschließlich additiv durch Chat D integrieren.
+- Nächster Schritt: Unter 320 dp und 200 % Schrift prüfen, dass der
+  gesperrte Kampfbutton im TalkBack-Fokus den Sperrgrund einmal vorliest;
+  bei freigegebenem Angriff muss der Hinweis fehlen. Anschließend
+  vollständige Flutter-/Android-CI auf dem endgültigen Commit abnehmen.
+
+---
+
+## 30.10.2026 – Chat C: NPC-Auswahl bei 200 % Schrift (PR #422)
+
+- **Ausgangs-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`; App `0.8.48+98`.
+- **Eigener Branch:** `feat/chat-c/npc-picker-large-text-20261030`; **Pull Request:** [#422](https://github.com/ManuEtt/Dnd/pull/422) (Draft); letzter Code-/Test-Commit vor Dokumentationsupdates: `d706b5a5d2d892fd3ed8c69f6e5d2346ad71fa2e`. Finalen HEAD anhand des PRs ermitteln.
+- **Ausgangsproblem:** Die NPC-Liste schätzte jede Zeile auf 72 px. Lange eindeutige Namen und Beziehungen können bei 200 % Schrift mehr Höhe benötigen; auf kleinen Displays war der Dialog nicht als Ganzes scrollbar.
+- **IMPLEMENTIERT:** `app/lib/ui/npc_story_selection_dialog.dart` setzt `AlertDialog(scrollable: true)` und eine maximal 320 px hohe, `shrinkWrap`-gesteuerte NPC-Liste ohne feste Zeilenhöhe ein. Bestätigte NPC-IDs bleiben Grundlage der Auswahl; Abbrechen liegt außerhalb des Scrollbereichs.
+- **TESTS ERGÄNZT:** `app/test/npc_story_selection_small_screen_test.dart`: 320/360 dp bei 200 % Schrift, Scrollen zum zwölften gleichnamigen NPC, gespeicherte ID und Revision, unveränderte Kampagnen-JSON-Daten; negativer Fall mit fehlenden bestätigten Erinnerungen und Abbrechen.
+- **GETESTET:** GitHub-main, alle 32 vorher offenen PRs, die sieben Chat-C-PR-Dateilisten und eigenen Vergleich gegen main geprüft. Commit und Draft-PR erstellt. Für die neuen Widgettests liegt noch kein ausgeführtes Testergebnis vor.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse/-Tests, Android-APK, Python-/Backend-Gates und Realgerät/TalkBack, mangels Flutter-/Dart-SDK und GitHub-Checkout im lokalen Container. GitHub-Actions-Ergebnis des finalen Branch-HEAD separat überprüfen.
+- **BLOCKIERT:** Lokale SDK-Ausführung fehlt; bis zum vollständigen CI-Erfolg und Review keine Mergefreigabe. Globale README/Checkpoint-Abschnitte mit Chat D bei Integration additiv konsolidieren.
+- **NOCH NICHT IMPLEMENTIERT:** Keine Regel-, KI-, Story-, Speicher-, Schema- oder JSON-Änderung; keine Migration oder Versionsänderung.
+- **NÄCHSTER SCHRITT:** Unabhängige Bedienungsprüfung der Kampfchronik bei 320 dp / 200 % Schrift und langen Ereigniszusammenfassungen. Akzeptanz: kein Textüberlauf, alle Ereignisdetails erreichbar, nur zulässige Belegfelder in Semantics, positive und negative Widgettests.
+
+---
+
 ## 30.10.2026 – Chat C: Todesrettungs-Entscheidungen bei 200 % Schrift
 
 - **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.

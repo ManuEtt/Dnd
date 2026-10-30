@@ -1,5 +1,31 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – Screenreader-Hinweis für gesperrten Angriff (30.10.2026)
+
+[PR #399](https://github.com/ManuEtt/Dnd/pull/399) (Draft; Basis
+`55fe44475a113943c6310ec16a8ffb481185f4e9`): Die fixierte
+Angriffs-Schnellaktion erhält bei Sperre einen erklärenden TalkBack-Hinweis.
+Eine laufende Handlung hat Vorrang vor einem fehlenden Angriffsziel;
+die bestehende Tooltip-Anzeige und alle vier Aktionen bleiben unverändert.
+Drei Widget-Regressionen prüfen gesperrte, laufende und freigegebene
+Zustände. **Tests neu geschrieben, hier noch nicht ausgeführt**; vollständige
+GitHub-Actions-CI und echte TalkBack-Geräteabnahme offen. Keine Änderung von
+Regelzustand, SQLite, JSON, Appversion oder Spielständen; keine Migration.
+Gemeinsame Dokumentation vor Merge additiv konsolidieren.
+
+## Chat C – NPC-Auswahl bei großer Schrift (30.10.2026, Draft-PR #422)
+
+Der [Chat-C-PR #422](https://github.com/ManuEtt/Dnd/pull/422) verbessert den
+Dialog für explizite, gespeicherte NPC-Identitäten auf kleinen Android-Displays:
+Der Titel und der Inhalt sind scrollbar, die NPC-Liste begrenzt ihre maximale
+Höhe, nicht jedoch die einzelne Zeilenhöhe. Die Abbrechen-Aktion bleibt
+erreichbar. Neue Widgettests decken 320/360 dp mit 200 % Textskalierung,
+zwölf gleichnamige NPCs, die konkrete ID-Auswahl und das Fehlen bestätigter
+Beziehungen ab. Basis-main: `55fe4447`. Keine Datenmigration oder
+Regeländerung. **Noch nicht gemergt und nicht lokal durch Flutter-Tests
+abgenommen**; den finalen GitHub-Actions-Status des PR prüfen. Gemeinsame
+Dokumentationsänderungen bei der späteren Integration additiv konsolidieren.
+
 ## Chat C – Todesrettung bei 200 % Schrift (30.10.2026)
 
 Das Chat-C-Arbeitspaket `feat/chat-c/death-save-actions-large-text-20261030`
