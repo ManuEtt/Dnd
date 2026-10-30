@@ -1,5 +1,17 @@
 # Chat B – Sitzungsidentität beim Ereignis-Replay (27.10.2026)
 
+## Chat B – KI-Story-Formatzeichen (30.10.2026)
+
+- **Basis-main:** 55fe44475a113943c6310ec16a8ffb481185f4e9; **Branch:** feat/chat-b/story-provider-unicode-guard-20261030.
+- **Problem:** Generierte Szenen, NPC- und Handlungsnamen sowie dauerhafte Notizen konnten versteckte Steuerzeichen, Bidi-Anweisungen und Zero-Width-Space enthalten.
+- **IMPLEMENTIERT:** Parser von Flutter und Backend weisen solche unbestätigten Textwerte zurück; reguläre Zeilenumbrüche/Tabs sowie sichtbare Unicode-Buchstaben werden beibehalten.
+- **Tests ergänzt (nicht als bestanden behauptet):** app/test/ai_story_unicode_format_guard_test.dart und backend/test/story-unicode-format-guard.test.ts mit positiven, negativen und Unveränderlichkeitsfällen.
+- **Dateien:** app/lib/story/ai_story.dart, backend/src/story.ts, die zwei Tests sowie diese Chat-B-Datei, docs/CODEX_CHECKPOINT.md und README.md.
+- **Keine Migration:** Modelle, Schema, SQLite, Regelzustände und Controller unverändert. Bestehende ältere Speicherstände werden nicht stillschweigend bereinigt.
+- **NICHT GETESTET:** lokale Flutter-/Dart-/Android-Prüfungen mangels SDK; finale GitHub-CI und echtes Gerät noch abzunehmen.
+- **Nächster Schritt:** CI-Gates auf finalem PR-Commit prüfen und bei roten Prüfungen denselben Branch reparieren.
+
+
 ## Integrationskandidat 29.10.2026 – Chat B
 
 Zusammengeführte Fachpakete: [#356](https://github.com/ManuEtt/Dnd/pull/356), [#362](https://github.com/ManuEtt/Dnd/pull/362), [#364](https://github.com/ManuEtt/Dnd/pull/364), [#371](https://github.com/ManuEtt/Dnd/pull/371), [#373](https://github.com/ManuEtt/Dnd/pull/373), [#377](https://github.com/ManuEtt/Dnd/pull/377), [#383](https://github.com/ManuEtt/Dnd/pull/383). Die ursprünglichen Branch-HEADs, PR-Beschreibungen, Tests, bekannte Grenzen und Statusmeldungen sind im [Integrationsjournal](INTEGRATION_20261029.md) mit Git-Historie dokumentiert. **Dieser Stand ist weder auf main integriert noch gemeinsam CI-abgenommen; Drafts sind nicht freigegeben.** Bisherige Checkpoint-Einträge bleiben erhalten.

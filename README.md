@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat B – Unicode-Grenzen für neue KI-Geschichten (30.10.2026)
+
+Backend und Flutter prüfen neue unbestätigte Story-Texte jetzt auf unsichtbare Steuer- und Bidi-Zeichen; sichtbarer Unicode und normale Zeilenumbrüche bleiben erlaubt. Zwei neue Testdateien ergänzen positive/negative Fälle. Diese Änderungen betreffen keine vorhandenen Spielstände oder Regeln. Branch: feat/chat-b/story-provider-unicode-guard-20261030, Basis-main: 55fe44475a113943c6310ec16a8ffb481185f4e9. CI-Ergebnisse sind bis zum geprüften Lauf offen.
+
+
 Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;
 vollständige Charaktererstellung und SRD-Regelengine bleiben in Entwicklung.
 
