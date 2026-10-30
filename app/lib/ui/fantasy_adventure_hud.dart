@@ -182,8 +182,15 @@ class FantasyAdventureStatusHud extends StatelessWidget {
                 if (hero.concentratingOn.isNotEmpty)
                   'Konzentration: ${hero.concentratingOn}',
               ].join(' · '),
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
+              key: const ValueKey('adventure-status-details'),
+              // Never hide confirmed conditions or concentration at large
+              // Android font sizes: the surrounding adventure list scrolls.
+              maxLines: MediaQuery.textScalerOf(context).scale(1) >= 1.8
+                  ? null
+                  : 3,
+              overflow: MediaQuery.textScalerOf(context).scale(1) >= 1.8
+                  ? TextOverflow.visible
+                  : TextOverflow.ellipsis,
               style: const TextStyle(fontSize: 12, color: FantasyPalette.ivory),
             ),
           ],

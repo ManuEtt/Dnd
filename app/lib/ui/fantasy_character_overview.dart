@@ -687,37 +687,59 @@ class _ReferenceRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 4),
-    child: Row(
-      children: [
-        Icon(
-          selected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-          size: 14,
-          color: selected ? color : FantasyCharacterOverview.dim,
-        ),
-        const SizedBox(width: 7),
-        Icon(icon, size: 17, color: color),
-        const SizedBox(width: 9),
-        Expanded(
-          child: Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: FantasyCharacterOverview.ivory,
-              fontSize: 13,
-            ),
+    child: LayoutBuilder(
+      builder: (context, constraints) {
+        // At enlarged Android font sizes, a trailing number/status must not
+        // squeeze long spell, skill, condition or inventory names into an
+        // unreadable one-line ellipsis.
+        final stacked =
+            constraints.maxWidth < 500 &&
+            MediaQuery.textScalerOf(context).scale(1) >= 1.8;
+        final labelText = Text(
+          label,
+          maxLines: stacked ? null : 1,
+          overflow: stacked ? TextOverflow.visible : TextOverflow.ellipsis,
+          style: const TextStyle(
+            color: FantasyCharacterOverview.ivory,
+            fontSize: 13,
           ),
-        ),
-        const SizedBox(width: 6),
-        Text(
+        );
+        final valueText = Text(
           value,
           style: const TextStyle(
             color: FantasyCharacterOverview.ivory,
             fontWeight: FontWeight.bold,
             fontSize: 13,
           ),
-        ),
-      ],
+        );
+        return Row(
+          crossAxisAlignment: stacked
+              ? CrossAxisAlignment.start
+              : CrossAxisAlignment.center,
+          children: [
+            Icon(
+              selected
+                  ? Icons.radio_button_checked
+                  : Icons.radio_button_unchecked,
+              size: 14,
+              color: selected ? color : FantasyCharacterOverview.dim,
+            ),
+            const SizedBox(width: 7),
+            Icon(icon, size: 17, color: color),
+            const SizedBox(width: 9),
+            Expanded(
+              child: stacked
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [labelText, if (value.isNotEmpty) valueText],
+                    )
+                  : labelText,
+            ),
+            if (!stacked) ...[const SizedBox(width: 6), valueText],
+          ],
+        );
+      },
     ),
   );
 }

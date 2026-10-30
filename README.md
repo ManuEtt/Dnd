@@ -1,5 +1,17 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – Android-Zugänglichkeit der Charakterübersicht (29.10.2026)
+
+[PR #392](https://github.com/ManuEtt/Dnd/pull/392) (Draft) zeigt bei mindestens 180 % Schrift und weniger als 500 dp Kartenbreite **vollständige Fertigkeits-, Zauber-, Zustands- und Inventarnamen** oberhalb des jeweiligen bestätigten Wertes an; normalgroße Darstellung behält die bisherigen kompakten Zeilen. Neue Flutter-Widgettests decken 320/360 dp bei 200 %, normalen Text, Konzentration/Inventarmenge sowie unbekannte historische Werte ab. **Die PR-#392-CI ist bis zum erfolgreichen Lauf auf dem finalen SHA offen**. Keine Änderungen an Regeln, Charakterdaten, Version, SQLite oder JSON.
+
+Die ältere Chat-C-Arbeit [PR #388](https://github.com/ManuEtt/Dnd/pull/388) (Charakterbogen-Header) besteht dagegen [36/36 CI-Schritte](https://github.com/ManuEtt/Dnd/actions/runs/40914859785) auf `97262ab3900f21f5951afd45bd35da197c3b57ae` und ist reviewbereit. PR #390 bearbeitet dieselbe Header-Fachdatei wie #388: vor Integration bewusst zusammenführen. PR #392 ist fachlich davon getrennt. Offen gebliebene gemeinsame README-/Checkpoint-Zweige der Chats A/D und Charaktererstellung müssen bei Integration bewahrt werden.
+
+## Chat C – Abenteuer-HUD bei großer Android-Schrift (29.10.2026)
+
+[PR #394](https://github.com/ManuEtt/Dnd/pull/394) (Draft, Basis `55fe44475a113943c6310ec16a8ffb481185f4e9`) stellt bei mindestens 180 % Systemschrift bestätigte Zustände, temporäre Trefferpunkte und laufende Konzentration vollständig dar, ohne dass die bisherige Drei-Zeilen-Kürzung wichtige Informationen abschneidet. Normale Schrift bleibt kompakt. Neue UI-Regressionen für 320/360 dp bei 200 %, Standardtext und unbekannte Daten sind ergänzt. **Neue PR-CI und echte TalkBack-Geräteprüfung noch offen**. Keine Auswirkungen auf App-Version `0.8.48+98`, SQLite, JSON oder Spielregeln.
+
+Die unabhängigen Chat-C-PRs [#388](https://github.com/ManuEtt/Dnd/pull/388) und [#392](https://github.com/ManuEtt/Dnd/pull/392) besitzen jeweils erfolgreiche eigene CI-Läufe; ihre Integration mit dem neueren main ist separat zu prüfen. Dokumentationsüberschneidungen mit Chat A/D werden durch Chat D bei der Zusammenführung additiv aufgelöst.
+
 ## Chat C – Todesrettung bei 200 % Schrift (30.10.2026)
 
 Das Chat-C-Arbeitspaket `feat/chat-c/death-save-actions-large-text-20261030`

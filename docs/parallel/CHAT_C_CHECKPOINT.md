@@ -1,3 +1,34 @@
+## 29.10.2026 – Chat C: vollständige Namen in der Charakter-Referenzübersicht (PR #392)
+
+- **Ausgangs-Main:** `fde0ef6ed8b419d6a31c701a03aa05d61994c352`, App `0.8.47+97`. **Branch:** `feat/chat-c/reference-rows-large-text-20261029`. **Pull Request:** [#392](https://github.com/ManuEtt/Dnd/pull/392), Draft bis vollständiger CI. **Code-/Teststand vor Dokumentation:** `44d4d8232ba11575a730978c722ac8f4187fb759`; finaler SHA nach Dokumentationscommits separat im PR prüfen.
+- **Ausgangsproblem:** `_ReferenceRow` in `app/lib/ui/fantasy_character_overview.dart` kürzte alle Referenznamen auch bei 320/360 dp und 200 % Schrift auf eine Zeile. Neben Boni, Status und Inventarmengen war der volle Name nicht lesbar.
+- **IMPLEMENTIERT:** Ab Textskalierung 1,8 und unter 500 dp Breite stehen vollständige Zeilen ohne Ellipse über bestätigten Werten. Standardansicht bleibt kompakt, Icons und Daten unverändert.
+- **GETESTET:** Prüfpaket aus tatsächlichen GitHub-Dateien abgeleitet. Vorheriger Chat-C-PR [#388](https://github.com/ManuEtt/Dnd/pull/388) hat auf `97262ab3900f21f5951afd45bd35da197c3b57ae` die [vollständig erfolgreiche Android-Alpha-CI #40914859785](https://github.com/ManuEtt/Dnd/actions/runs/40914859785), 36/36 Schritte, wurde reviewbereit gemacht; **dies beweist nicht die Tests von PR #392**.
+- **TESTS ERGÄNZT, NOCH NICHT AUSGEFÜHRT:** `app/test/fantasy_reference_rows_large_text_test.dart` mit 320/360 dp, 200 %, langen Zauber-/Inventarnamen und darunter liegenden Konzentrations-/Mengenwerten, Standardansicht, unbekanntem Fertigkeitsbonus und unverändertem `toJson()`. Vollständige Flutter-/Python-/Backend-/Android-CI für finalen PR-Head prüfen; reales TalkBack und echtes Gerät offen.
+- **BLOCKIERT:** Flutter-/Dart-SDK im lokalen Toolcontainer nicht installiert; CI-Abnahme für dieses neue Paket notwendig.
+- **NOCH NICHT IMPLEMENTIERT:** Realgeräte- und Screenreader-Prüfung der Referenzübersicht.
+- **Geänderte Dateien:** `app/lib/ui/fantasy_character_overview.dart`, `app/test/fantasy_reference_rows_large_text_test.dart`, dieser Checkpoint, `docs/CODEX_CHECKPOINT.md`, `README.md`. Keine Schema-/JSON-/Regel-/Story-/Controlleränderung und keine Migration.
+- **Koordination:** PR #390 und #388 berühren die separate `fantasy_character_sheet.dart`; Chat-C-PR #392 berührt sie nicht. Offene PRs #387/#389/#390/#391 überschneiden sich in README und zentralem Checkpoint, die Chat D bei Integration additiv konsolidieren muss. Kein fremder Branch überschrieben.
+- **Nächster unabhängiger Schritt:** Sprach-/TalkBack-Semantik der Charakter-Referenzzeilen am echten Android-Gerät prüfen; Akzeptanz: voller Name und unveränderter Wert getrennt vorgelesen, bei 320 dp/200 % ohne abgeschnittene Zeichen, ohne Zustandsmutation.
+
+---
+
+## Chat C – 29.10.2026 – Abenteuer-HUD: lange bestätigte Zustände (PR #394)
+
+- **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9` (Alpha `0.8.48+98`); **Branch:** `feat/chat-c/adventure-status-details-large-text-20261029`; **Draft-PR:** [#394](https://github.com/ManuEtt/Dnd/pull/394); **Fachcode/Test-HEAD vor Dokumentation:** `fa4749049539f68decff5a6981d6c2f6ce0fcfd2` (finalen Head aus PR beziehen).
+- **Ausgangsproblem:** `FantasyAdventureStatusHud` zeigte bestätigte temporäre Trefferpunkte, Zustände und Konzentration mit festem 3-Zeilen-Limit und Ellipse. Bei 320/360 dp mit 200 % Systemschrift konnten gerade aktuelle Zustände unlesbar sein.
+- **IMPLEMENTIERT:** `app/lib/ui/fantasy_adventure_hud.dart`: ab Textskalierung 1,8 kein Zeilenlimit/keine Ellipse für die bestätigte Statuszeile, stabiler Widget-Key. Standardansicht bleibt bei drei Zeilen. Keine Änderungen an Regeln, Controller, SQLite 3, JSON 1, Appversion oder Story; keine Migration.
+- **TESTS HINZUGEFÜGT:** `app/test/fantasy_adventure_status_details_large_text_test.dart` – 320/360 dp bei 200 %, volle Bedingungen/Konzentration/temporäre TP, Standardmodus mit 3 Zeilen, Altcharakter ohne Status. Prüft unverändertes `HeroCharacter.toJson()` und Widget-Ausnahmen.
+- **GETESTET:** GitHub-Basis/main und offene PR-Dateien, bestehende HUD-Regressionen, tatsächlichen Code und Android-Layoutgrenzen geprüft; eigener Branch/PR erstellt. Vorherige Chat-C-PRs [#392](https://github.com/ManuEtt/Dnd/pull/392) und [#388](https://github.com/ManuEtt/Dnd/pull/388) haben jeweils vollständige grüne CI auf ihren eigenen Köpfen (u. a. [#40918977935](https://github.com/ManuEtt/Dnd/actions/runs/40918977935)); das beweist **nicht** PR #394.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse, neue Widgetsuite, Backend/Python und Android Debug/native/Alpha auf finalem PR #394 bis zur neuen CI. Echte Geräte- und TalkBack-Prüfung separat.
+- **BLOCKIERT:** Im lokalen Container kein Dart-/Flutter-SDK; PR bleibt Draft bis vollständiger erfolgreicher GitHub-CI auf dem finalen Commit.
+- **NOCH NICHT IMPLEMENTIERT:** Reale Screenreader-Abnahme und kombinierter Review-Merge durch Chat D.
+- **Geänderte Dateien:** HUD, neuer Widgettest, dieser Checkpoint, `docs/CODEX_CHECKPOINT.md`, `README.md`.
+- **Koordination:** #388/#392 bearbeiten andere UI-Module; #387/#389/#391 Fachregeln/Skripte. README und zentralen Checkpoint beim Merge **additiv** mit bestehenden Einträgen konsolidieren; Branches nicht eigenmächtig löschen.
+- **Nächster Schritt:** Nach CI auf 320 dp/200 % mit deutscher TalkBack-Stimme überprüfen, dass jeder bestätigte Zustand und die Konzentration vollständig vorgelesen werden, bei unbekannten historischen Werten keine Statusdaten entstehen.
+
+---
+
 ## 30.10.2026 – Chat C: Todesrettungs-Entscheidungen bei 200 % Schrift
 
 - **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
