@@ -154,10 +154,7 @@ void main() {
       onAccept: () => accepts++,
       onReroll: (_) => fail('Keine Wiederholung verfügbar'),
     );
-    expect(
-      find.byKey(const ValueKey('death-save-reroll-focus')),
-      findsNothing,
-    );
+    expect(find.byKey(const ValueKey('death-save-reroll-focus')), findsNothing);
     expect(
       find.byKey(const ValueKey('death-save-reroll-indomitable')),
       findsNothing,
