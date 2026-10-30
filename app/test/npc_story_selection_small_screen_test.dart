@@ -74,7 +74,10 @@ void main() {
       await tester.tap(find.text('NPC auswählen'));
       await tester.pumpAndSettle();
 
-      expect(tester.widget<AlertDialog>(find.byType(AlertDialog)).scrollable, isTrue);
+      expect(
+        tester.widget<AlertDialog>(find.byType(AlertDialog)).scrollable,
+        isTrue,
+      );
       final list = find.byKey(const ValueKey('npc-picker-list'));
       expect(list, findsOneWidget);
       expect(find.byKey(const ValueKey('npc-picker-cancel')), findsOneWidget);
