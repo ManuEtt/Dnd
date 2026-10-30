@@ -1,5 +1,22 @@
 # Chat A – Checkpoint (26.10.2026): Eldritch-Blast-Klassenprüfung
 
+## 30.10.2026 – V/S/M-Metadaten vor regeltechnischer Freigabe prüfen (PR #400)
+
+- **Ausgangs-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9` (Alpha 0.8.48+98).
+- **Branch:** `feat/chat-a/spell-component-metadata-guard-20261030`; Code-/Test-Commit `cc4acba4ec2ad5d7db331a753aa6086925541921`; [PR #400](https://github.com/ManuEtt/Dnd/pull/400), Entwurf.
+- **Ausgangsproblem:** Direkt über den öffentlichen Konstruktor erzeugte `SrdSpellDefinition` konnte widersprüchliche V/S/M-Flags enthalten. Die Materialprüfung hat dem Flag vertraut und erforderliche Bestätigungen umgehbar gemacht.
+- **IMPLEMENTIERT:** Gemeinsame, bisher beim JSON-Import verwendete V/S/M-Validierung als `SrdSpellDefinition.validateComponentMetadata`; Prüfung an der Material-/Preflight-Grenze vor Ressourcenbuchung.
+- **Dateien:** `app/lib/domain/srd_spell_catalog.dart`, `app/lib/domain/srd_spell_component_rules.dart`, `app/test/srd_spell_component_flag_guard_test.dart`, dieser Chat-Checkpoint, `README.md`, `docs/CODEX_CHECKPOINT.md`.
+- **Tests:** Fünf neue deterministische Testfälle für 339 Katalogeinträge, inkonsistente Material-/V-/S-Flags, ungültige Syntax, gültiges kostspieliges Material und unveränderten Held/Zauberplätze. Tests erstellt, **noch nicht als bestanden nachgewiesen**. Flutter-/Dart-SDK fehlt lokal; finale GitHub Actions und Geräteprüfung getrennt abnehmen.
+- **CI/Blocker:** Draft bis vollständige Android-CI inklusive Dart-Format, Analyse, Flutter-Tests, Python-/Backend-Prüfungen und APK auf finalem PR-Head erfolgreich ist. Bereits existierende CI anderer Commits ersetzt die Abnahme nicht.
+- **Kompatibilität/Migration:** Kein SQLite-/JSON-Schema, keine Version, keine bestehende Ressource, keine Migration. Nur ungültige, direkt konstruierte Regelmetadaten werden bei neuen Freigaben abgelehnt. SRD 5.2.1, *Spells / Components*, Wizards of the Coast LLC, CC BY 4.0; Coverage-Status bleibt unverändert.
+- **Koordination:** #387–#399 geprüft. Fachdateien ohne Überschneidung; README-/zentralen Checkpoint mit anderen Chat-PRs beim Merge additiv konsolidieren. Kein Merge anderer Arbeiten.
+- **NOCH NICHT IMPLEMENTIERT:** Vollständige offizielle SRD-Zauberinventur, individuelle Wirkungen und transaktionaler Materialverbrauch.
+- **NÄCHSTER SCHRITT:** Eigenständige Prüfung der Komponentenverfügbarkeit im bestätigten Materialinventar; positive/negative und Wiederholungs-/Neustarttests, keine unbestätigte automatische Abbuchung.
+
+---
+
+
 ## Integrationskandidat 29.10.2026 – Chat A
 
 Zusammengeführte Fachpakete: [#357](https://github.com/ManuEtt/Dnd/pull/357), [#361](https://github.com/ManuEtt/Dnd/pull/361), [#366](https://github.com/ManuEtt/Dnd/pull/366), [#367](https://github.com/ManuEtt/Dnd/pull/367), [#372](https://github.com/ManuEtt/Dnd/pull/372), [#375](https://github.com/ManuEtt/Dnd/pull/375), [#385](https://github.com/ManuEtt/Dnd/pull/385). Die ursprünglichen Branch-HEADs, PR-Beschreibungen, Tests, bekannte Grenzen und Statusmeldungen sind im [Integrationsjournal](INTEGRATION_20261029.md) mit Git-Historie dokumentiert. **Dieser Stand ist weder auf main integriert noch gemeinsam CI-abgenommen; Drafts sind nicht freigegeben.** Bisherige Checkpoint-Einträge bleiben erhalten.
