@@ -1,3 +1,18 @@
+## Chat A – offener Regel-PR: Todesrettungs-Klassenprüfung (30.10.2026)
+
+Basis-Main `55fe4447`, Arbeitsbranch `feat/chat-a/death-save-class-validation-20261030`,
+Laufzeit-/Testcommit `ee1e5a19e03b5db60fad838d0da36d1f360b84bc`. Unbekannte Haupt-/Zweitklassen können keinen
+Mönch-Todesrettungsbonus oder Klassen-Wiederholungswurf mehr freigeben; auch
+alte offene Proben werden vor einem neuen Wurf geprüft. Historische Profile und
+unversionierte Proben bleiben lesbar, keine DB-/JSON-Migration. **2.504 Flutter-, 221 Python- und 72 Backend-Tests bestanden**, darunter 93
+gezielte Domain-/Flow-/SQLite-/UI-Fälle. Formatprüfung 537 Dateien unverändert,
+Analyse/Backend-Typecheck/Build/Protokollsmoke sauber. ARM64-Debug-Build und zwölf native App-Tests ebenfalls bestanden.
+[PR #416](https://github.com/ManuEtt/Dnd/pull/416) · [CI des aktuellen PR-Kopfs](https://github.com/ManuEtt/Dnd/pull/416/checks).
+Kein Merge nach Main behauptet; Chat D konsolidiert diesen eigenen PR mit den
+parallelen Paketen. Version weiterhin Basis0.8.48+98. Geräteprüfung bleibt offen.
+[Chat-A-Checkpoint](docs/parallel/CHAT_A_CHECKPOINT.md) ·
+[Fachnachweis](docs/parallel/CHAT_A_DEATH_SAVE_CLASS_VALIDATION_20261030.md).
+
 # Codex-Checkpoint – Würfelraunen
 
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
