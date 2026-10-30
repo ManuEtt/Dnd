@@ -1,11 +1,71 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – Todesrettung bei 200 % Schrift (30.10.2026)
+
+Das Chat-C-Arbeitspaket `feat/chat-c/death-save-actions-large-text-20261030`
+(Implementierungscommit `bb3d1eaa9227cdaed84b845f6177f9d9de632fc2`,
+Basis-main `55fe44475a113943c6310ec16a8ffb481185f4e9`)
+stellt im Dialog des vorläufigen Todesrettungswurfs bei weniger als 500 dp
+Kartenbreite und mindestens 180 % Schrift die verfügbaren Entscheidungen
+untereinander über die volle Breite dar. Die kompakte Wrap-Ansicht bei
+normaler Schrift bleibt erhalten; Verfügbarkeit und Sperrung bei laufender
+Bestätigung bleiben aus den bestehenden Regeln abgeleitet.
+Fünf Widget-Testfälle betreffen 320/360 dp, 200 % Schrift, simulierte
+Tastatur, gesperrten Status, fehlende Klassenwiederholung und normales Layout.
+Keine Änderung an Regelengine, Speicherdaten, Ressourcen oder Appversion.
+**Vollständige CI und Gerätetest sind gesondert nachzuweisen.**
+
+
 Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;
 vollständige Charaktererstellung und SRD-Regelengine bleiben in Entwicklung.
 
+## Chat D – Sicheren Import originaler Fantasy-Grafiken absichern (30.10.2026, PR #409)
+
+[PR #409](https://github.com/ManuEtt/Dnd/pull/409) verhindert, dass der
+verifizierte Grafik-ZIP-Importer über vorhandene symbolische Links außerhalb
+des gewählten Projektziels schreibt. `scripts/import_complete_fantasy_assets.py`
+prüft nun die Zielwurzel und alle Pfadbestandteile vor dem ZIP-Import sowie
+erneut unmittelbar vor/nach dem Anlegen der Verzeichnisse. Neue Originalgrafiken
+werden exklusiv angelegt und nicht überschrieben. Die vorhandenen SHA256-,
+WebP-, CRC-, Abweichungs- und Reimport-Prüfungen bleiben unverändert.
+
+**Basis-`main`:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+**Branch:** `fix/chat-d/fantasy-import-symlink-20261030`.
+**Code-Commit:** `e2d28c1e35be405a8e09cd86a0e6f249259f2799`.
+Vier neue Regressionstests prüfen regulären Import/Reimport, Symlink als
+Assets-Verzeichnis, hängenden Symlink am Assetziel und Symlink als Projektziel.
+**GETESTET:** keine vollständige CI für diesen finalen Stand bestätigt;
+die [GitHub Actions von #409](https://github.com/ManuEtt/Dnd/pull/409/checks)
+sind maßgeblich. **NICHT GETESTET:** reale Geräteinstallation und
+vollständiger End-to-End-Build bis zum CI-Abschluss.
+**Migrationen:** keine; keine Änderung an Spielständen, SQLite-/JSON-Schemas,
+Flutter-UI oder SRD-Regeln. Fremde parallele PRs bleiben unverändert;
+README/Checkpoint bei Integration additiv konsolidieren.
+
+## Chat D – SRD-Qualitätsprüfung verarbeitet fehlerhafte JSON-Datensätze kontrolliert (30.10.2026, PR #410)
+
+[PR #410](https://github.com/ManuEtt/Dnd/pull/410) schützt die technische
+SRD-Inventurprüfung vor ungefangenen `TypeError`-/`KeyError`-Abbrüchen bei
+syntaktisch gültigen, aber falsch strukturierten JSON-Werten. Nicht-objektförmige
+Requirements, unhashbare `area`-/Status-/Entity-Felder, ungültige
+Katalogeinträge und Inventarlücken erzeugen nun geordnete
+`FEHLER:`-Diagnosen und Exitcode 1 statt Python-Tracebacks. Vier neue
+Regressionstests wurden ergänzt; die bestehenden Anforderungen und
+SRD-Abdeckungsregeln bleiben unverändert.
+
+**Ausgangs-`main`:** `55fe44475a113943c6310ec16a8ffb481185f4e9`;
+**Branch:** `fix/chat-d/srd-audit-malformed-records-20261030`;
+**Code-Commit:** `248500247eb98f1cbde46d29448a9ca3303878e3`.
+**Teststatus:** vollständige GitHub Actions auf dem finalen Branch-Commit
+noch ausstehend; bis dahin keine grüne CI behaupten.
+**Migration:** keine; SRD-Quelldaten, Regeln, JSON-/SQLite-Schemas,
+Spielstände und Appversion unverändert.
+Parallel-PR-Dateipfade wurden geprüft; gemeinsame README-/Checkpoint-Zeilen
+müssen bei der Integration verlustfrei abgeglichen werden.
+
 ## Qualität/Android-Sicherungen – Native Namen gegen Unicode-Steuerung absichern (CHAT D, 30.10.2026)
 
-[Draft-PR #421](https://github.com/ManuEtt/Dnd/pull/421) auf `fix/chat-d/backup-filename-format-20261030` (Basis-`main`: `55fe44475a113943c6310ec16a8ffb481185f4e9`): Die native `JsonBackupIo.isSafeName`-Prüfung lehnt unsichtbare Unicode-Formatzeichen (Bidi-Anweisungen, Zero-Width-Zeichen, ergänzende Unicode-Tags) und verwaiste UTF-16-Surrogate ab. Sichtbare Namen mit Umlauten, Emoji und kombinierenden Akzenten bleiben möglich. Native Regressionen für erlaubte/verbotene Namen wurden hinzugefügt; vollständige CI und Android-SAF-Gerätetest bei Erstellung noch ausstehend. Keine SQLite-/JSON-/Versionsmigration; kein Eingriff in Regeln, Story, Spielstände oder bestehende Benutzerberechtigungen. Vor Zusammenführung den finalen PR-HEAD samt nativen JUnit-, Flutter-, Backend- und APK-Prüfungen abnehmen und parallele Checkpointänderungen verlustfrei konsolidieren.
+[PR #421](https://github.com/ManuEtt/Dnd/pull/421) auf `fix/chat-d/backup-filename-format-20261030` (Basis-`main`: `55fe44475a113943c6310ec16a8ffb481185f4e9`): Die native `JsonBackupIo.isSafeName`-Prüfung lehnt unsichtbare Unicode-Formatzeichen (Bidi-Anweisungen, Zero-Width-Zeichen, ergänzende Unicode-Tags) und verwaiste UTF-16-Surrogate ab. Sichtbare Namen mit Umlauten, Emoji und kombinierenden Akzenten bleiben möglich. Native Regressionen für erlaubte/verbotene Namen wurden hinzugefügt; vollständige GitHub-CI [#41119725865](https://github.com/ManuEtt/Dnd/actions/runs/41119725865) auf dem finalen damaligen Commit `da12ce1` erfolgreich, echter Android-SAF-Gerätetest weiter offen. Keine SQLite-/JSON-/Versionsmigration; kein Eingriff in Regeln, Story, Spielstände oder bestehende Benutzerberechtigungen. Vor Zusammenführung den finalen PR-HEAD samt nativen JUnit-, Flutter-, Backend- und APK-Prüfungen abnehmen und parallele Checkpointänderungen verlustfrei konsolidieren.
 
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 

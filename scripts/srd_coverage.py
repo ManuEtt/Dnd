@@ -25,8 +25,15 @@ AREAS = {
 }
 
 
+def valid_choice(value: object, choices: set[str]) -> bool:
+    """Guard set membership against lists and dicts in malformed JSON."""
+    return isinstance(value, str) and value in choices
+
+
 def validate_matrix(matrix: dict, catalogue: dict) -> list[str]:
     errors: list[str] = []
+    if not isinstance(matrix, dict) or not isinstance(catalogue, dict):
+        return ["Anforderungsmatrix und Klassenkatalog müssen JSON-Objekte sein."]
     if matrix.get("schema_version") != 1 or matrix.get("srd_version") != "5.2.1":
         errors.append("Unerwartetes Matrixschema oder falsche SRD-Version.")
     rows = matrix.get("requirements")
@@ -45,36 +52,64 @@ def validate_matrix(matrix: dict, catalogue: dict) -> list[str]:
             errors.append(f"Doppelte Anforderungs-ID: {rid}")
         else:
             ids.add(rid)
-        if row.get("area") not in AREAS:
+        if not valid_choice(row.get("area"), AREAS):
             errors.append(f"{rid}: unbekannter Bereich.")
-        if row.get("rule_implemented") not in STATUSES:
+        if not valid_choice(row.get("rule_implemented"), STATUSES):
             errors.append(f"{rid}: ungültiger Umsetzungsstatus.")
         if not row.get("source_url") or not row.get("source"):
             errors.append(f"{rid}: fehlender SRD-Quellverweis.")
         if not isinstance(row.get("tests"), list) or not isinstance(row.get("code"), list):
             errors.append(f"{rid}: tests/code müssen Listen sein.")
+        if not isinstance(row.get("kind"), str):
+            errors.append(f"{rid}: ungültiger Anforderungstyp.")
         if row.get("kind") == "level_feature":
             if row.get("class_level") not in range(1, 21):
                 errors.append(f"{rid}: Klassenstufe muss 1–20 sein.")
             if row.get("rule_implemented") == "tested" and not row.get("tests"):
                 errors.append(f"{rid}: voll getestet ohne konkrete Testreferenz.")
-    reference_entries = catalogue.get("entries", [])
+    reference_entries = catalogue.get("entries")
+    if not isinstance(reference_entries, list):
+        errors.append("Klassenkatalog muss eine entries-Liste enthalten.")
+        reference_entries = []
     catalogued = [r for r in rows if isinstance(r, dict) and r.get("kind") == "level_feature"]
-    expected_ids = {"docs/class_feature_coverage_0_6_8.json#" + e["id"] for e in reference_entries}
-    actual_ids = {r.get("catalogue_reference") for r in catalogued}
+    expected_ids: set[str] = set()
+    for entry in reference_entries:
+        entry_id = entry.get("id") if isinstance(entry, dict) else None
+        if not isinstance(entry_id, str) or not entry_id:
+            errors.append("Katalogeintrag ohne gültige ID.")
+            continue
+        expected_ids.add("docs/class_feature_coverage_0_6_8.json#" + entry_id)
+    actual_ids: set[str] = set()
+    signatures: set[tuple[str | int | None, ...]] = set()
+    for row in catalogued:
+        reference = row.get("catalogue_reference")
+        if not isinstance(reference, str):
+            errors.append("Klassenfähigkeit ohne gültige Katalogreferenz.")
+        else:
+            actual_ids.add(reference)
+        signature = tuple(row.get(field) for field in (
+            "class_name", "subclass", "class_level", "name"
+        ))
+        if not all(value is None or isinstance(value, (str, int)) for value in signature):
+            errors.append("Klassenfähigkeit mit ungültigen Metadaten.")
+        elif signature in signatures:
+            # Same-name upgrades can repeat at different levels, but not at the same level.
+            errors.append("Doppelte Klassenfähigkeit auf gleicher Klassenstufe.")
+        else:
+            signatures.add(signature)
     if expected_ids != actual_ids or len(catalogued) != len(reference_entries):
         errors.append("Klassenanforderungen stimmen nicht exakt mit dem 282-Einträge-Referenzkatalog überein.")
-    if len({(r.get("class_name"), r.get("subclass"), r.get("class_level"),
-             r.get("name")) for r in catalogued}) != len(catalogued):
-        # Same-name upgrades can repeat at different levels, but never as a duplicate at the same level.
-        errors.append("Doppelte Klassenfähigkeit auf gleicher Klassenstufe.")
     gap_ids: set[str] = set()
     for gap in gaps:
-        gid = gap.get("id") if isinstance(gap, dict) else None
+        if not isinstance(gap, dict):
+            errors.append("Inventarlücke muss ein JSON-Objekt sein.")
+            continue
+        gid = gap.get("id")
         if not isinstance(gid, str) or not gid or gid in gap_ids:
             errors.append(f"Ungültige oder doppelte Inventarlücken-ID: {gid}")
-        gap_ids.add(gid)
-        if gap.get("area") not in AREAS or not gap.get("source") or not gap.get("detail"):
+        else:
+            gap_ids.add(gid)
+        if not valid_choice(gap.get("area"), AREAS) or not gap.get("source") or not gap.get("detail"):
             errors.append(f"{gid}: Lücke benötigt Bereich, Referenz und Arbeitsauftrag.")
     if matrix.get("global_percent_permitted") and (
         not matrix.get("scope_complete") or gaps
@@ -89,12 +124,20 @@ def validate_matrix(matrix: dict, catalogue: dict) -> list[str]:
 def validate_entities(entities: dict, matrix: dict) -> list[str]:
     """Check unique, traceable named entries without treating transcription as verified rules."""
     errors: list[str] = []
+    if not isinstance(entities, dict) or not isinstance(matrix, dict):
+        return ["Entity-Inventar und Anforderungsmatrix müssen JSON-Objekte sein."]
     if entities.get("schema_version") != 1:
         errors.append("Unbekanntes Entity-Inventarschema.")
     rows = entities.get("entries")
     if not isinstance(rows, list):
         return errors + ["Entity-Inventar muss entries-Liste enthalten."]
-    ids = {r["id"] for r in matrix.get("requirements", [])}
+    requirements = matrix.get("requirements")
+    if not isinstance(requirements, list):
+        return errors + ["Anforderungsmatrix muss eine requirements-Liste enthalten."]
+    ids = {
+        row["id"] for row in requirements
+        if isinstance(row, dict) and isinstance(row.get("id"), str)
+    }
     names_by_kind: set[tuple[str, str]] = set()
     kinds = {"spell_definition", "monster_statblock", "magic_item", "feat"}
     for row in rows:
@@ -108,14 +151,17 @@ def validate_entities(entities: dict, matrix: dict) -> list[str]:
         if rid in ids:
             errors.append(f"Doppelte Entity-/Requirement-ID: {rid}")
         ids.add(rid)
-        if row.get("kind") not in kinds or row.get("area") not in AREAS:
+        if not valid_choice(row.get("kind"), kinds) or not valid_choice(row.get("area"), AREAS):
             errors.append(f"{rid}: Kategorie oder Entitätstyp ungültig.")
         name = row.get("name")
-        key = (row.get("kind"), name)
-        if not isinstance(name, str) or not name.strip() or key in names_by_kind:
+        if not isinstance(name, str) or not name.strip():
             errors.append(f"{rid}: Name fehlt oder Entity mehrfach vorhanden.")
-        names_by_kind.add(key)
-        if row.get("rule_implemented") not in STATUSES:
+        else:
+            key = (row.get("kind") if isinstance(row.get("kind"), str) else "", name)
+            if key in names_by_kind:
+                errors.append(f"{rid}: Name fehlt oder Entity mehrfach vorhanden.")
+            names_by_kind.add(key)
+        if not valid_choice(row.get("rule_implemented"), STATUSES):
             errors.append(f"{rid}: kein gültiger Implementierungsstatus.")
         if not row.get("source_url") or not row.get("transcription_url"):
             errors.append(f"{rid}: Quellen- oder Provenienzverweis fehlt.")
@@ -154,6 +200,11 @@ def main(argv: list[str] | None = None) -> int:
     catalogue = json.loads(args.catalogue.read_text(encoding="utf-8"))
     entities = json.loads(args.entities.read_text(encoding="utf-8"))
     errors = validate_matrix(matrix, catalogue) + validate_entities(entities, matrix)
+    # Invalid record structure must not reach completeness checks or summary,
+    # where indexing an invalid record could raise TypeError or KeyError.
+    if errors:
+        print("\n".join("FEHLER: " + e for e in errors), file=sys.stderr)
+        return 1
     if args.require_complete_inventory and (not matrix.get("scope_complete") or matrix.get("inventory_gaps")):
         errors.append("SRD-Gesamtinventar ist noch nicht vollständig.")
     if args.require_fully_tested and (

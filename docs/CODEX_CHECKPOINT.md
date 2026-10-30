@@ -1,11 +1,90 @@
 # Codex-Checkpoint – Würfelraunen
 
+## 30.10.2026 – Chat C: Todesrettungs-Entscheidungen bei 200 % Schrift
+
+- **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `feat/chat-c/death-save-actions-large-text-20261030`.
+- **Implementierungscommit:** `bb3d1eaa9227cdaed84b845f6177f9d9de632fc2`.
+- **Problem:** Die drei möglichen Entscheidungen des vorläufigen Todesrettungswurfs
+  teilen sich bei 200 % Android-Schrift den verfügbaren `Wrap`-Platz.
+  Längere Buttontexte werden dabei schmal und möglicherweise gekürzt, insbesondere
+  bei 320/360 dp und offener Tastatur.
+- **IMPLEMENTIERT:** Im reinen Flutter-UI-Widget
+  `app/lib/ui/death_save_decision_panel.dart` stellt der `LayoutBuilder`
+  bei weniger als 500 dp und ab 180 % Schrift verfügbare Aktionen
+  untereinander in voller Breite dar. Der Standard-Wrap bleibt erhalten.
+  Status- und Regelverfügbarkeitsprüfung bleiben unverändert.
+- **TESTS HINZUGEFÜGT:** `app/test/death_save_actions_large_text_test.dart`
+  prüft zwei positive Touch-Fälle bei 320/360 dp und 200 %, gesperrte Aktionen
+  bei busy, fehlende Klassenwiederholung sowie Standardlayout (5 Fälle).
+- **GETESTET:** Vor Start aktuellen Main, alle offenen PR-Aufgabenbereiche
+  und geänderte Dateien der neuen PRs #405–#412 geprüft; andere PRs
+  verändern diese neuen technischen Dateien nicht. Testausführung und CI
+  müssen auf finalem PR-Head separat bestätigt werden.
+- **NICHT GETESTET:** Lokale Flutter-/Android-Toolchain nicht verfügbar;
+  Android-TalkBack, echte Gerätetastatur und Geräte-Upgrade nicht geprüft.
+- **BLOCKIERT:** Keine lokalen SDKs. Gemeinsame README- und Checkpoint-Änderungen
+  bei späterer Integration durch Chat D additiv konsolidieren.
+- **Migration/Kompatibilität:** Keine Modell-, JSON-, SQLite-, SRD- oder
+  Ressourcenänderung, keine Migration oder Versionsänderung.
+- **Nächster Schritt:** Echtes Android-TalkBack-Gerät bei 320 dp und 200 %
+  Schrift prüfen: alle verfügbaren Entscheidungen vollständig vorlesen,
+  mit IME fokussieren und auslösen können, gesperrte Entscheidung ohne Callback.
+
+---
+
+
+
+## Chat D – Sicheren Import originaler Fantasy-Grafiken absichern (30.10.2026, PR #409)
+
+[PR #409](https://github.com/ManuEtt/Dnd/pull/409) verhindert, dass der
+verifizierte Grafik-ZIP-Importer über vorhandene symbolische Links außerhalb
+des gewählten Projektziels schreibt. `scripts/import_complete_fantasy_assets.py`
+prüft nun die Zielwurzel und alle Pfadbestandteile vor dem ZIP-Import sowie
+erneut unmittelbar vor/nach dem Anlegen der Verzeichnisse. Neue Originalgrafiken
+werden exklusiv angelegt und nicht überschrieben. Die vorhandenen SHA256-,
+WebP-, CRC-, Abweichungs- und Reimport-Prüfungen bleiben unverändert.
+
+**Basis-`main`:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+**Branch:** `fix/chat-d/fantasy-import-symlink-20261030`.
+**Code-Commit:** `e2d28c1e35be405a8e09cd86a0e6f249259f2799`.
+Vier neue Regressionstests prüfen regulären Import/Reimport, Symlink als
+Assets-Verzeichnis, hängenden Symlink am Assetziel und Symlink als Projektziel.
+**GETESTET:** keine vollständige CI für diesen finalen Stand bestätigt;
+die [GitHub Actions von #409](https://github.com/ManuEtt/Dnd/pull/409/checks)
+sind maßgeblich. **NICHT GETESTET:** reale Geräteinstallation und
+vollständiger End-to-End-Build bis zum CI-Abschluss.
+**Migrationen:** keine; keine Änderung an Spielständen, SQLite-/JSON-Schemas,
+Flutter-UI oder SRD-Regeln. Fremde parallele PRs bleiben unverändert;
+README/Checkpoint bei Integration additiv konsolidieren.
+
+## Chat D – SRD-Qualitätsprüfung verarbeitet fehlerhafte JSON-Datensätze kontrolliert (30.10.2026, PR #410)
+
+[PR #410](https://github.com/ManuEtt/Dnd/pull/410) schützt die technische
+SRD-Inventurprüfung vor ungefangenen `TypeError`-/`KeyError`-Abbrüchen bei
+syntaktisch gültigen, aber falsch strukturierten JSON-Werten. Nicht-objektförmige
+Requirements, unhashbare `area`-/Status-/Entity-Felder, ungültige
+Katalogeinträge und Inventarlücken erzeugen nun geordnete
+`FEHLER:`-Diagnosen und Exitcode 1 statt Python-Tracebacks. Vier neue
+Regressionstests wurden ergänzt; die bestehenden Anforderungen und
+SRD-Abdeckungsregeln bleiben unverändert.
+
+**Ausgangs-`main`:** `55fe44475a113943c6310ec16a8ffb481185f4e9`;
+**Branch:** `fix/chat-d/srd-audit-malformed-records-20261030`;
+**Code-Commit:** `248500247eb98f1cbde46d29448a9ca3303878e3`.
+**Teststatus:** vollständige GitHub Actions auf dem finalen Branch-Commit
+noch ausstehend; bis dahin keine grüne CI behaupten.
+**Migration:** keine; SRD-Quelldaten, Regeln, JSON-/SQLite-Schemas,
+Spielstände und Appversion unverändert.
+Parallel-PR-Dateipfade wurden geprüft; gemeinsame README-/Checkpoint-Zeilen
+müssen bei der Integration verlustfrei abgeglichen werden.
+
 ## CHAT D – Native SAF-Backup-Dateinamen, PR #421 (30.10.2026)
 
-- **Ausgangs-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`, **Branch:** `fix/chat-d/backup-filename-format-20261030`, **PR:** [#421](https://github.com/ManuEtt/Dnd/pull/421) (Draft), **technische Commits:** `55477475` und `4f26cdd5`.
+- **Ausgangs-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`, **Branch:** `fix/chat-d/backup-filename-format-20261030`, **PR:** [#421](https://github.com/ManuEtt/Dnd/pull/421) (Review), **technische Commits:** `55477475` und `4f26cdd5`.
 - **IMPLEMENTIERT:** native Android-Dateinamen-Validierung in `JsonBackupIo.kt` verbietet sämtliche Unicode-FORMAT-Codepoints, einschließlich Bidi-Steuerung, Zero-Width-Joinern und ergänzenden Tags, sowie alleinstehende UTF-16-Surrogate. Bestehende Pfad- und Steuerzeichenprüfungen bleiben. Test in `JsonBackupIoTest.kt` ergänzt positive sichtbare Unicode-Namen und negative Umgehungsfälle.
-- **GETESTET:** zum Zeitpunkt dieses Checkpoints noch kein erfolgreicher finaler CI-Lauf bestätigt; neue JUnit-Tests vorhanden, Ausführung folgt mit GitHub Actions.
-- **NICHT GETESTET:** finale Python-/Backend-/Flutter-/native Gradle-/APK-Suite sowie echter Android-SAF-Dateidialog.
+- **GETESTET:** vollständige GitHub Actions [#41119725865](https://github.com/ManuEtt/Dnd/actions/runs/41119725865) auf `da12ce1` erfolgreich, einschließlich nativer Gradle-/JUnit-Tests, Python, Backend, Flutter und Android-Builds. Nach dieser Integration ist eine erneute vollständige CI auf dem neuen HEAD erforderlich.
+- **NICHT GETESTET:** echter Android-SAF-Gerätedialog und der neue Integrations-HEAD bis zum Abschluss des erneuten CI-Laufs.
 - **BLOCKIERT:** lokal kein Repository-Checkout über DNS und kein Flutter SDK; GitHub-CI als Abnahmeweg verfügbar.
 - **NOCH NICHT IMPLEMENTIERT:** keine allgemeinen Homoglyphenfilter (wäre eine separate Produktentscheidung). Vor Review/Integration vollständige finale CI prüfen.
 - **Kompatibilität:** keine Änderungen an Datenbank/Spielständen/JSON, Berechtigungen, App-Version, Story oder D&D-Regeln. Dokumentationskonflikte mit parallelen PRs additiv zusammenführen.
