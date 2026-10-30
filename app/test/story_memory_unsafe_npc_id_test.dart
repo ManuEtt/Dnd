@@ -65,7 +65,8 @@ void main() {
 
   test('spaces, punctuation and overlong ambiguous IDs are omitted', () {
     final tooLong = List.filled(65, 'x').join();
-    for (final unsafeId in ['two words', 'with.dot', 'bad\nid', 'trailing\n', tooLong]) {
+    final unsafeIds = ['two words', 'with.dot', 'bad\nid', 'trailing\n', tooLong];
+    for (final unsafeId in unsafeIds) {
       final campaign = _campaign([
         WorldNpc(id: unsafeId, name: 'Mira'),
         const WorldNpc(id: 'safe', name: 'MIRA'),
