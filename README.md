@@ -1,5 +1,30 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – separate Magieaktion und Bonusaktion für Zauber prüfen (30.10.2026)
+
+Neuer eigenständiger Regelbaustein auf
+`feat/chat-a/spell-action-economy-evidence-20261030`:
+`SrdSpellActionEconomyRules.inspect` ermittelt anhand der **exakten**
+Zauberwirkzeit, ob im bestätigten aktuellen Heldenzug die **normale
+Aktion** oder die **Bonusaktion** frei sein muss. Diese Ressourcen
+sind nicht austauschbar. Der gespeicherte Slotverbrauch pro Zug,
+Action-Surge-Reservierung, aktiver Kampfrausch und nicht bestätigte
+Kampfzustände werden gesondert abgewiesen; Zaubertricks benötigen
+keinen Slot. Acht neue Regressionstestgruppen decken Kampfrunden,
+Ressourcenverbrauch und die Wiederverwendung veralteter
+Helden-/Kampf-Snapshots ab.
+
+**Schnittstellengrenze:** Der Baustein gibt einen unveränderlichen,
+erneut prüfbaren Beleg zurück; er führt keine Zauberwirkung und
+keinen Spielstands-/Aktionscommit aus. Die Einbindung in bestehende
+Controller-/SQLite-/Preflightpfade ist noch offen, weshalb der bisherige
+Bool-Preflight dadurch **nicht bereits global abgesichert** ist.
+Kein Schema- oder Versionswechsel. Detaildokument:
+`docs/SRD_SPELL_ACTION_ECONOMY_EVIDENCE.md`.
+Neue finale CI bei Anlage noch offen.
+
+
+
 ## Chat C – Todesrettung bei 200 % Schrift (30.10.2026)
 
 Das Chat-C-Arbeitspaket `feat/chat-c/death-save-actions-large-text-20261030`
