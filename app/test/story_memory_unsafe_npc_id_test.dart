@@ -30,7 +30,7 @@ NpcRelationshipNote _note(String id, String npcId, String text) =>
     );
 
 void main() {
-  test('unsafe duplicate-name IDs and their notes never enter story context', () {
+  test('unsafe same-name IDs and notes cannot enter story context', () {
     final source = _campaign(
       const [
         WorldNpc(
@@ -117,7 +117,7 @@ void main() {
     expect(saved.events.single.type, 'memory.sessionRecapSaved');
   });
 
-  test('unique legacy NPC with unsafe ID retains its confirmed visible name', () {
+  test('unique legacy NPC with unsafe ID keeps its visible name', () {
     final legacy = _campaign(
       const [WorldNpc(id: 'legacy\nid', name: 'Liora')],
       notes: [_note('old', 'legacy\nid', 'Liora bewacht den Nordturm.')],
