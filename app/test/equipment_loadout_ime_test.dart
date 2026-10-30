@@ -90,12 +90,7 @@ void main() {
       final character = makeHero();
       final original = character.toJson();
       final results = <EquipmentRulePreview?>[];
-      await openDialog(
-        tester,
-        character,
-        width: width,
-        onResult: results.add,
-      );
+      await openDialog(tester, character, width: width, onResult: results.add);
       final confirm = find.byKey(const ValueKey('loadout-confirm'));
       expect(tester.widget<FantasyTextButton>(confirm).onPressed, isNull);
       final cancel = find.text('Abbrechen');
@@ -114,12 +109,7 @@ void main() {
     final character = makeHero(equipped: true);
     final original = character.toJson();
     final results = <EquipmentRulePreview?>[];
-    await openDialog(
-      tester,
-      character,
-      width: 320,
-      onResult: results.add,
-    );
+    await openDialog(tester, character, width: 320, onResult: results.add);
     final trained = find.byKey(const ValueKey('loadout-armor-trained'));
     expect(find.text('Rüstungsübung bestätigt'), findsOneWidget);
     await scrollTo(tester, trained);
