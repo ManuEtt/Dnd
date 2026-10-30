@@ -307,6 +307,11 @@ Keine automatische Fortsetzung nach Sitzungsende.
 [PR #392](https://github.com/ManuEtt/Dnd/pull/392) (Draft) zeigt bei mindestens 180 % Schrift und weniger als 500 dp Kartenbreite **vollständige Fertigkeits-, Zauber-, Zustands- und Inventarnamen** oberhalb des jeweiligen bestätigten Wertes an; normalgroße Darstellung behält die bisherigen kompakten Zeilen. Neue Flutter-Widgettests decken 320/360 dp bei 200 %, normalen Text, Konzentration/Inventarmenge sowie unbekannte historische Werte ab. **Die PR-#392-CI ist bis zum erfolgreichen Lauf auf dem finalen SHA offen**. Keine Änderungen an Regeln, Charakterdaten, Version, SQLite oder JSON.
 
 Die ältere Chat-C-Arbeit [PR #388](https://github.com/ManuEtt/Dnd/pull/388) (Charakterbogen-Header) besteht dagegen [36/36 CI-Schritte](https://github.com/ManuEtt/Dnd/actions/runs/40914859785) auf `97262ab3900f21f5951afd45bd35da197c3b57ae` und ist reviewbereit. PR #390 bearbeitet dieselbe Header-Fachdatei wie #388: vor Integration bewusst zusammenführen. PR #392 ist fachlich davon getrennt. Offen gebliebene gemeinsame README-/Checkpoint-Zweige der Chats A/D und Charaktererstellung müssen bei Integration bewahrt werden.
+## Aktualisierte Main-Basis und Chat-C-UI-Arbeit (29.10.2026)
+
+Die vorherigen 24 parallelen PR-Pakete wurden inzwischen in `main` integriert und ihre Branches bereinigt. Main `fde0ef6ed8b419d6a31c701a03aa05d61994c352` / Android-Alpha-CI [40867945743](https://github.com/ManuEtt/Dnd/actions/runs/40867945743) sind erfolgreich. Darunterstehende „Integrationskandidat“-Abschnitte beschreiben einen **historischen Vor-Merge-Zustand** und dürfen nicht als aktuelle offene PR-Liste gelesen werden.
+
+**Aktueller UI-Entwurf:** [Chat C PR #388](https://github.com/ManuEtt/Dnd/pull/388) erweitert den Charakterbogen-Header bei 180–200 % Android-Schrift und weniger als 500 dp Breite: Porträt über vollständigem Namen, Klasse/Stufe, Unterklassen und Hintergrund. Normale Schrift bleibt kompakt. Vier neue Widgettests (320/360 dp, Standardaktion, historisch leerer Name) sind hinzugefügt; **CI für diesen Feature-Head noch separat abnehmen**. Keine Änderung an Version, Regeln, Story, SQLite oder JSON.
 
 
 ## Konsolidierter Arbeitsstand – Integrationskandidat vom 29.10.2026
