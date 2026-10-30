@@ -3,7 +3,7 @@
 ## Chat A – Integrität der Zaubermaterial-Stapel-IDs (30.10.2026)
 
 **IMPLEMENTIERT:** Separater Chat-A-Branch
-`fix/chat-a/spell-material-id-integrity-20261030`, Basis-main
+`feat/chat-a/spell-material-id-integrity-20261030`, Basis-main
 `55fe44475a113943c6310ec16a8ffb481185f4e9`. Mit
 `app/lib/domain/srd_spell_inventory_id_rules.dart` neue reine
 SRD-Regelvalidierung für Inventarbeleg-IDs. `app/lib/domain/srd_spell_inventory_rules.dart`
