@@ -1,3 +1,23 @@
+# Chat D D-019 – Vollständig installiertes Android-NDK bei Retry bewahren (30.10.2026)
+
+- **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Arbeitsbranch:** `fix/chat-d/preserve-installed-ndk-20261030`.
+- **Code-Commit:** `0999d7a44d75233a6091b0808b9ab60c740e5412`.
+- **Pull Request:** [#402](https://github.com/ManuEtt/Dnd/pull/402), bis zur finalen CI im Draft.
+- **Problem:** Ein fehlgeschlagenes SDK-Installationskommando löschte vor jedem weiteren Versuch auch ein bereits installiertes `ndk;27.0.12077973`, obwohl der Fehler durch andere Pakete verursacht sein konnte.
+- **IMPLEMENTIERT:** Vor dem NDK-Cleanup auf `source.properties` prüfen; ohne Marker unvollständiges NDK entfernen, mit Marker Daten bewahren. Download-Staging und Android-Cache wie bisher bereinigen.
+- **Dateien:** `scripts/install_android_sdk_packages.sh`, `scripts/tests/test_install_android_sdk_packages.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Akzeptanz:** Zwei zusätzliche Fälle (vorinstalliertes NDK, transient/dauerhaft gescheiterter `sdkmanager`) müssen NDK bewahren; bestehende Fälle müssen unvollständiges NDK entfernen, Cache bereinigen, Retry/Fehlercodes erhalten.
+- **GETESTET:** Code und Tests in GitHub gesichert; kein lokaler Gesamttest bestätigt.
+- **NICHT GETESTET:** CI auf finalem Commit, vollständiges Backend/Flutter/Android, APK, natives Gradle und Realgerät.
+- **BLOCKIERT:** GitHub-DNS nicht im lokalen Container auflösbar; lokale Toolchain/Checkout fehlen.
+- **Migrationen:** keine; SQLite-/JSON-Version, Spielstände, Regel-/Storymodule und Appversion unverändert.
+- **Koordination:** bei Start alle offenen PRs #387–#401 geprüft, technische Dateipfade überschneidungsfrei; gemeinsam genutzte README-/Checkpoint-Dateien vor Integration verlustfrei konsolidieren.
+- **Vorgänger PR #401:** Code-/Doku-Commit `0544c238c39da11b4f18e77a70c1cb0af10b4bbd` vollständig erfolgreich in [Actions #41007222064](https://github.com/ManuEtt/Dnd/actions/runs/41007222064), zur Review bereit, nicht gemergt.
+- **Nächster Schritt:** finale CI von #402 auf exakt dem letzten Commit abnehmen und nur bei vollständigem Erfolg zur Review freigeben. Kein automatischer Merge fremder oder ungeprüfter PRs.
+
+---
+
 # Chat D – Integration von PR #358 nach Checkpoint-Fix #363 (29.10.2026)
 
 ## Integrationskandidat 29.10.2026 – Chat D

@@ -1,5 +1,31 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat D – Android-NDK vor ungezieltem Retry-Löschen schützen (30.10.2026, PR #402)
+
+**Ausgangs-Main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+**Branch:** `fix/chat-d/preserve-installed-ndk-20261030`,
+**Code-Commit:** `0999d7a44d75233a6091b0808b9ab60c740e5412`,
+[PR #402](https://github.com/ManuEtt/Dnd/pull/402) zunächst Draft.
+`scripts/install_android_sdk_packages.sh` löscht nach einem fehlgeschlagenen
+SDK-Installationsversuch das NDK-Verzeichnis nur noch, wenn
+`source.properties` als Installationsmetadaten fehlt. Das vorhandene,
+bereits installierte NDK bleibt bei Problemen anderer SDK-Pakete erhalten;
+temporärer Download-Cache und unvollständiges NDK werden weiterhin bereinigt.
+
+Zwei zusätzliche Python-Mock-Regressionen decken transiente und dauerhafte
+`sdkmanager`-Fehler mit vorhandenem NDK ab; bestehende Gegenfälle testen
+das Bereinigen unvollständiger Installationen. **GETESTET:** kein vollständiger
+lokaler Lauf (GitHub-DNS blockiert). **NICHT GETESTET:** finale CI auf dem
+Dokumentations-Commit, Flutter-/Android-Build und Gerätetests bis zu einem
+nachweislich abgeschlossenen Workflow. **Keine Migration:** SQLite, JSON,
+Spielstände, Appversion und Regeln bleiben unverändert.
+
+Der vorherige [Chat-D-PR #401](https://github.com/ManuEtt/Dnd/pull/401)
+ist separat auf finalem Commit `0544c238c39da11b4f18e77a70c1cb0af10b4bbd`
+mit [Actions #41007222064](https://github.com/ManuEtt/Dnd/actions/runs/41007222064)
+vollständig grün und zur Review freigegeben; kein automatischer Merge.
+Gemeinsame README-/Checkpoint-Dokumentation vor Integration additiv abgleichen.
+
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
 Stand: 29.10.2026, UTC. [PR #390](https://github.com/ManuEtt/Dnd/pull/390)
