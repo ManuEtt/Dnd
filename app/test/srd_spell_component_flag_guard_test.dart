@@ -109,10 +109,7 @@ void main() {
       ),
       throwsFormatException,
     );
-    expect(
-      () => _plan(hero, spell),
-      throwsFormatException,
-    );
+    expect(() => _plan(hero, spell), throwsFormatException);
     expect(jsonEncode(hero.toJson()), before);
     expect(hero.spentSpellSlots, isEmpty);
   });
