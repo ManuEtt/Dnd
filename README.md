@@ -2,7 +2,7 @@
 
 ## Chat A – bestätigte Zaubermaterial-IDs ohne Täuschungszeichen (30.10.2026)
 
-Neues isoliertes SRD-5.2.1-Teilpaket `fix/chat-a/spell-material-id-integrity-20261030`:
+Neues isoliertes SRD-5.2.1-Teilpaket `feat/chat-a/spell-material-id-integrity-20261030`:
 Inventar-Stapelbelege für verbrauchte und ausdrücklich behaltene kostspielige
 Materialien werden bei einem bestätigten Zaubervorgang auf unsichtbare
 Unicode-Schreibrichtungszeichen, Steuerzeichen und Zeilentrenner geprüft.
