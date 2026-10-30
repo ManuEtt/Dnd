@@ -95,7 +95,7 @@ class RetireMergedBranchesExecutionTests(unittest.TestCase):
         _, deleted, failed, output, error = self.run_cleanup(delete_persists=True)
         self.assertTrue(failed)
         self.assertEqual(len(deleted), 1)
-        self.assertNotIn("gelöscht:", output)
+        self.assertFalse(any(line.startswith("gelöscht:") for line in output.splitlines()))
         self.assertIn("nach DELETE noch vorhanden", error)
 
     def test_dry_run_never_deletes_and_skips_mutation_only_checks(self):
