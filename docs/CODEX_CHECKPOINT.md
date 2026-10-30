@@ -1,5 +1,53 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat A – SRD-Stückwert-Evidenz bei Mehrkomponenten-Zaubern (30.10.2026)
+
+**IMPLEMENTIERT:** Getrennter Branch
+`feat/chat-a/spell-material-value-evidence-20261030`, Basis-main
+`55fe44475a113943c6310ec16a8ffb481185f4e9`.
+Neues Domain-Modul `app/lib/domain/srd_spell_material_value_rules.dart`:
+externe, explizit bestätigte Materialidentität und Wert **je Einheit**
+in Kupferstücken; acht Mindestpreise in vier exakt auditierten SRD-5.2.1-Rezepten.
+Unvollständige, doppelte, falsch gebundene und zu billige Nachweise werden
+abgewiesen; bereits vorhandener Audit-Resolver prüft die reale Anzahl und
+Verbrauchbarkeit. Optionaler Inventarpreis wird auf Widerspruch geprüft,
+ersetzt aber nicht den unabhängigen Nachweis.
+`commitConfirmedCast` koppelt den streng bestätigten Beleg an den bereits
+bestehenden atomaren Slot-/Inventar-Commit, ohne ihn selbst in einen
+Controller oder eine Datenbank zu integrieren.
+
+**TESTS HINZUGEFÜGT:** `app/test/srd_spell_material_value_rules_test.dart`
+mit sieben Testgruppen über beide Materialien jeder Rezeptur, 1-CP-
+Grenzen, Täuschungs-/Doppelbestätigungen, optionale Metadaten,
+Astral-Zielanzahl, unbekannte Rezepte, wiederholte gültige `Secret Chest`
+mit frischen Preflights und JSON-Roundtrip, ungültige/altere Pläne sowie
+unveränderte Ressourcen bei unbestätigten Effekten oder Unterpreisen.
+**GETESTET:** Quellcode und Testfälle geschrieben, PR-Überschneidung
+kontrolliert. **NICHT GETESTET:** neue Flutter-Tests, finale CI und
+echtes Android-Gerät. **BLOCKIERT:** kein lokales Flutter-/Dart-SDK;
+CI-/Review-Abnahme und koordinierte spätere Integration.
+
+**KEINE MIGRATION:** historische SQL-/JSON-Spielstände, Version,
+Controller, UI, Story, Backend und Events unverändert. Die bestehende
+boolesche Legacy-API wird nicht rückwirkend verschärft. Offizielle Quelle:
+WotC SRD 5.2.1 `Spells / Components`, CC BY 4.0;
+`RULE-SPELLS-MATERIAL-COMPONENTS` weiterhin **partial**.
+Volle Detailtabelle und API-Grenzen:
+`docs/SRD_SPELL_MATERIAL_VALUE_EVIDENCE.md`.
+
+**GETRENNTE PR-ABNAHME:** #408 [GitHub-CI #41017785511](https://github.com/ManuEtt/Dnd/actions/runs/41017785511)
+auf `afccc063040a67d03ff0fdb4a417f21831e17c09` erfolgreich;
+#405 [CI #41011249059](https://github.com/ManuEtt/Dnd/actions/runs/41011249059)
+und #400 [CI #41007599214](https://github.com/ManuEtt/Dnd/actions/runs/41007599214)
+ebenfalls vollständig bestanden. Alle weiterhin Drafts. README und
+zentralen Checkpoint bei PR-Integration additiv mit Chat D koordinieren.
+
+**NÄCHSTER SCHRITT:** Revisionssichere Integration des streng bestätigten
+Einzelwertbelegs in einen koordinierten Controller-/Event-/SQLite-Pfad,
+ohne Legacy- und andere Chats gleichzeitig zu überschreiben.
+
+
+
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
 Stand: 29.10.2026, UTC. [PR #390](https://github.com/ManuEtt/Dnd/pull/390)
