@@ -112,8 +112,17 @@ class NpcNarratorMemory {
       .replaceAll('ü', 'ue')
       .replaceAll('ß', 'ss');
 
+  // Legacy imports can contain bidi overrides/isolates and invisible direction
+  // marks. They must neither spoof the identity check nor alter wire-memory
+  // presentation. Only the outbound, read-only projection is normalized.
   static String _oneLine(String text) => text
-      .replaceAll(RegExp(r'[\x00-\x1f\x7f-\x9f\u2028\u2029]'), ' ')
+      .replaceAll(
+        RegExp(
+          r'[\x00-\x1f\x7f-\x9f\u061c\u200e\u200f'
+          r'\u2028-\u202e\u2066-\u2069]',
+        ),
+        ' ',
+      )
       .replaceAll(RegExp(r'\s+'), ' ')
       .trim();
 
