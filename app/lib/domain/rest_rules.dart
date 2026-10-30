@@ -57,6 +57,12 @@ class RestRules {
     bool restoreSorceryPoints = false,
   }) {
     _ensureRestPossible(hero);
+    // Validate the original resource pools before a Hit Die is rolled or any
+    // recovery copy can reset an invalid counter. A rejected rest must not
+    // consume RNG, and Pact Magic must not silently repair forged spending.
+    ClassFeatureResources.validate(hero);
+    ClassResourceRules.validate(hero);
+    SpellcastingRules.availablePactSlots(hero);
     if (restoreSorceryPoints) {
       // Validate before consuming any Hit Dice or deterministic RNG.
       SrdSorcerousRestorationRules.restoreAfterCompletedShortRest(hero);
