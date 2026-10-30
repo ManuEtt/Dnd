@@ -128,6 +128,23 @@
 - **Koordination:** zum Start alle PRs bis #405 geprüft; keine betroffene technische Datei bereits durch fremde PRs in Arbeit. Gemeinsame README-/Checkpoint-Änderungen später verlustfrei konsolidieren. Keine automatischen Merges/Löschungen.
 - **Vorarbeiten:** #401 und #402 auf jeweiligem finalem Commit erfolgreich per GitHub Actions geprüft und zur Review freigegeben; weiterhin nicht in `main` integriert.
 - **Nächster Schritt:** komplette PR-CI #406 am finalen Head verifizieren, Fehler auf demselben Branch reparieren und bei Grün zur Review freigeben. Keine produktive Signatur oder echten Gerätetests behaupten.
+# Chat D D-023 – Remote-Backend PUBLIC_ORIGIN strikt prüfen (30.10.2026)
+
+- **Ausgangs-Main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `fix/chat-d/backend-public-origin-20261030`.
+- **Code-Commit:** `7ffa749d8be11ff9a518faaf8a65fc86f940dad1`.
+- **Pull Request:** [#411](https://github.com/ManuEtt/Dnd/pull/411), zunächst Draft.
+- **Problem:** `PUBLIC_ORIGIN` akzeptierte HTTPS-Adressen mit Pfad, Query oder Fragment, obwohl nur ein reiner Serverursprung vorgesehen ist.
+- **IMPLEMENTIERT:** HTTPS-/Credentials-Checks um `pathname === '/'`, leeren `search` und leeren `hash` erweitern. Bestehende erlaubte Ursprünge mit optionalem Port erhalten.
+- **Dateien:** `backend/src/config.ts`, `backend/test/backend.test.ts`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Regressionen:** gültige Ursprünge mit/ohne Schrägstrich und mit Port; ungültige Pfade, Query, Fragmente, Benutzerinformationen und HTTP.
+- **GETESTET:** Code, Regressionstests und Checkpoints auf PR-Branch gesichert; CI auf finalem Head noch nicht abgeschlossen.
+- **NICHT GETESTET:** finale Backend-/Flutter-/Android-Gesamtsuite und realer Reverse-Proxy-/Gerätetest.
+- **BLOCKIERT:** lokaler GitHub-Checkout wegen DNS nicht möglich; GitHub-Connector und Actions sind verfügbar.
+- **Migrationen:** keine; Spielstände und SQLite-/JSON-Dateien bleiben erhalten, kein SRD-/Appversionswechsel.
+- **Koordination:** alle offenen PR-Dateipfade geprüft und keine technischen Überschneidungen; README/zentralen Checkpoint vor Merge verlustfrei konsolidieren. Keine fremden Branches verändert.
+- **Vorgänger:** #401, #402, #406, #409 vollständig CI-grün und zur Review freigegeben. #410 beim letzten Abruf im Android-CI-Lauf, kein automatischer Merge.
+- **Nächster Schritt:** finale GitHub-Actions-Abnahme für #411; Fehler auf eigenem Branch korrigieren, danach zur Review freigeben, keine ungeprüfte Integration.
 
 ---
 

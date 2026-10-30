@@ -157,6 +157,25 @@ Die beiden vorherigen Pakete sind vollständig per GitHub Actions grün:
 und [PR #402](https://github.com/ManuEtt/Dnd/pull/402)
 ([CI 41010021662](https://github.com/ManuEtt/Dnd/actions/runs/41010021662));
 beide zur Review freigegeben, nicht gemergt.
+## Chat D – Reiner HTTPS-Ursprung für Remote-Backend (30.10.2026, PR #411)
+
+[PR #411](https://github.com/ManuEtt/Dnd/pull/411) validiert
+`PUBLIC_ORIGIN` als reinen HTTPS-Ursprung und lehnt nun URL-Pfade,
+Suchparameter und Fragmente zusätzlich zu bestehenden HTTP- und
+Zugangsdaten-Verboten ab. Valide Ursprünge mit optionalem Port und
+abschließendem Schrägstrich bleiben zulässig.
+Ein neuer Backend-Test deckt erlaubte und verbotene Varianten ab.
+
+**Ausgangs-`main`:** `55fe44475a113943c6310ec16a8ffb481185f4e9`;
+**Branch:** `fix/chat-d/backend-public-origin-20261030`;
+**Code-Commit:** `7ffa749d8be11ff9a518faaf8a65fc86f940dad1`.
+**GETESTET:** keine finale CI auf Dokumentations-Commit bestätigt;
+der vollständige [Workflow des PRs](https://github.com/ManuEtt/Dnd/pull/411/checks)
+muss noch erfolgreich abgeschlossen sein.
+**NICHT GETESTET:** reales Reverse-Proxy-Deployment und Android-Gerät.
+**Migration:** keine; Spielstände, JSON-/SQLite-Schema, Story, SRD-Regeln
+und Appversion unverändert. README-/Checkpoint-Änderungen vor Integration
+mit parallelen Arbeiten verlustfrei konsolidieren.
 
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
