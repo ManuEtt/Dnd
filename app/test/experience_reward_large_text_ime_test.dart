@@ -114,6 +114,20 @@ void main() {
           .first,
     );
     await tester.pumpAndSettle();
+    final scrollable = find
+        .descendant(
+          of: find.byType(ExperienceRewardDialog),
+          matching: find.byType(Scrollable),
+        )
+        .first;
+    final scrollPosition = tester.state<ScrollableState>(scrollable).position;
+    debugPrint(
+      'XP-IME viewport=${tester.getRect(scrollable)} '
+      'consent=${tester.getRect(consent)} '
+      'cancel=${tester.getRect(find.byKey(const ValueKey('xp-reward-cancel')))} '
+      'scroll=${scrollPosition.pixels}/${scrollPosition.maxScrollExtent} '
+      'inset=${MediaQuery.of(tester.element(consent)).viewInsets.bottom}',
+    );
     expect(consent.hitTestable(), findsOneWidget);
     await tester.tap(consent);
     await tester.pumpAndSettle();
@@ -163,7 +177,21 @@ void main() {
             .first,
       );
       await tester.pumpAndSettle();
-      expect(consent.hitTestable(), findsOneWidget);
+      final scrollable = find
+        .descendant(
+          of: find.byType(ExperienceRewardDialog),
+          matching: find.byType(Scrollable),
+        )
+        .first;
+    final scrollPosition = tester.state<ScrollableState>(scrollable).position;
+    debugPrint(
+      'XP-IME viewport=${tester.getRect(scrollable)} '
+      'consent=${tester.getRect(consent)} '
+      'cancel=${tester.getRect(find.byKey(const ValueKey('xp-reward-cancel')))} '
+      'scroll=${scrollPosition.pixels}/${scrollPosition.maxScrollExtent} '
+      'inset=${MediaQuery.of(tester.element(consent)).viewInsets.bottom}',
+    );
+    expect(consent.hitTestable(), findsOneWidget);
       await tester.tap(consent);
       await tester.pumpAndSettle();
       final confirm = find.byKey(const ValueKey('xp-reward-confirm'));
