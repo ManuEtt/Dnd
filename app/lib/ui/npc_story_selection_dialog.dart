@@ -20,6 +20,9 @@ Future<NpcStorySelection?> showNpcStorySelectionDialog(
   return showDialog<NpcStorySelection>(
     context: context,
     builder: (dialogContext) => AlertDialog(
+      // Scroll lengthy identity descriptions on short Android viewports.
+      // The cancel action stays outside the scroll area.
+      scrollable: true,
       title: const Text('Gesprächspartner auswählen'),
       content: SizedBox(
         width: 420,
@@ -38,11 +41,12 @@ Future<NpcStorySelection?> showNpcStorySelectionDialog(
                     'die gespeicherte Kennung die Personen.',
                   ),
                   const SizedBox(height: 12),
-                  SizedBox(
-                    height: eligible.length * 72.0 > 320
-                        ? 320
-                        : eligible.length * 72.0,
+                  ConstrainedBox(
+                    // Individual rows must grow with system text scaling.
+                    constraints: const BoxConstraints(maxHeight: 320),
                     child: ListView.builder(
+                      key: const ValueKey('npc-picker-list'),
+                      shrinkWrap: true,
                       itemCount: eligible.length,
                       itemBuilder: (context, index) {
                         final npc = eligible[index];
