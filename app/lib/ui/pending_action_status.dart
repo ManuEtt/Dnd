@@ -89,6 +89,36 @@ class _PendingActionStatusState extends State<PendingActionStatus> {
               )..layout(maxWidth: constraints.maxWidth);
               final needsExpansion = preview.didExceedMaxLines;
               preview.dispose();
+              final stackedControls =
+                  constraints.maxWidth < 500 &&
+                  MediaQuery.textScalerOf(context).scale(1) >= 1.8;
+              final toggleButton = TextButton(
+                key: const ValueKey('adventure-pending-action-toggle'),
+                onPressed: () =>
+                    setState(() => _showFullText = !_showFullText),
+                child: Text(
+                  _showFullText ? 'Weniger anzeigen' : 'Ganzen Text anzeigen',
+                  textAlign: TextAlign.center,
+                ),
+              );
+              final retryButton = FantasyTextButton(
+                key: const ValueKey('adventure-retry-action'),
+                label: 'Erneut bestätigen',
+                icon: Icons.refresh,
+                style: FantasyButtonStyle.woodGold,
+                onPressed: interactionBlocked || submitting
+                    ? null
+                    : widget.onRetry,
+              );
+              final discardButton = FantasyTextButton(
+                key: const ValueKey('adventure-discard-action'),
+                label: 'Verwerfen',
+                icon: Icons.close,
+                style: FantasyButtonStyle.iron,
+                onPressed: interactionBlocked || submitting
+                    ? null
+                    : widget.onDiscard,
+              );
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -131,44 +161,30 @@ class _PendingActionStatusState extends State<PendingActionStatus> {
                     ),
                   ],
                   const SizedBox(height: 6),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 4,
-                    children: [
-                      if (needsExpansion || _showFullText)
-                        TextButton(
-                          key: const ValueKey(
-                            'adventure-pending-action-toggle',
+                  if (stackedControls)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (needsExpansion || _showFullText)
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: toggleButton,
                           ),
-                          onPressed: () =>
-                              setState(() => _showFullText = !_showFullText),
-                          child: Text(
-                            _showFullText
-                                ? 'Weniger anzeigen'
-                                : 'Ganzen Text anzeigen',
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      FantasyTextButton(
-                        key: const ValueKey('adventure-retry-action'),
-                        label: 'Erneut bestätigen',
-                        icon: Icons.refresh,
-                        style: FantasyButtonStyle.woodGold,
-                        onPressed: interactionBlocked || submitting
-                            ? null
-                            : widget.onRetry,
-                      ),
-                      FantasyTextButton(
-                        key: const ValueKey('adventure-discard-action'),
-                        label: 'Verwerfen',
-                        icon: Icons.close,
-                        style: FantasyButtonStyle.iron,
-                        onPressed: interactionBlocked || submitting
-                            ? null
-                            : widget.onDiscard,
-                      ),
-                    ],
-                  ),
+                        retryButton,
+                        const SizedBox(height: 8),
+                        discardButton,
+                      ],
+                    )
+                  else
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      children: [
+                        if (needsExpansion || _showFullText) toggleButton,
+                        retryButton,
+                        discardButton,
+                      ],
+                    ),
                 ],
               );
             },
