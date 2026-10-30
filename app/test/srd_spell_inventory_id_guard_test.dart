@@ -230,21 +230,22 @@ void main() {
     expect(jsonEncode(wizard.toJson()), original);
   });
 
-  test('plain consumed material IDs reject invisible formatting', () {
+  test('safe single-material commit preserves nonconsumed inventory', () {
     final spell = catalog.find('Chromatic Orb')!;
     final wizard = _wizard();
-    final plan = _plan(wizard, spell);
+    final before = jsonEncode(
+      wizard.inventory.map((item) => item.toJson()).toList(),
+    );
+    final result = SrdSpellInventoryRules.commitConfirmedCast(
+      wizard,
+      _plan(wizard, spell),
+      spellEffectResolvedConfirmed: true,
+      materialIdentityAndQuantityConfirmed: false,
+    ).hero;
+    expect(result.spentSpellSlots, {'1': 1});
     expect(
-      () => SrdSpellInventoryRules.commitConfirmedCast(
-        wizard,
-        plan,
-        spellEffectResolvedConfirmed: true,
-        materialIdentityAndQuantityConfirmed: true,
-        consumedMaterials: const [
-          SrdConsumedMaterial(inventoryId: 'rope\u202e', quantity: 1),
-        ],
-      ),
-      throwsFormatException,
+      jsonEncode(result.inventory.map((item) => item.toJson()).toList()),
+      before,
     );
     expect(wizard.spentSpellSlots, isEmpty);
   });
