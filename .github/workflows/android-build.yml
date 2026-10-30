@@ -91,10 +91,7 @@ jobs:
         run: flutter pub get
       - name: Dart-Formatierung prüfen
         working-directory: app
-        run: |
-          dart format --output=write lib test
-          git diff -- lib/story/npc_narrator_memory.dart test/npc_narrator_bidi_wire_test.dart
-          exit 1
+        run: dart format --output=none --set-exit-if-changed lib test
       - name: Flutter-Code analysieren
         working-directory: app
         run: flutter analyze
