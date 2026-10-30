@@ -1,5 +1,21 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – Heldenaktionen mit großer Schrift und Tastatur (30.10.2026)
+
+Neues UI-Paket auf Basis von `main` `55fe44475a113943c6310ec16a8ffb481185f4e9`:
+Die Aktionen **Abenteuer fortsetzen** und **Helden verwalten** in
+`FantasyActiveHeroCard` stehen bei Kartenbreite unter 500 dp und
+mindestens 180 % Schrift untereinander. Bei normaler Schrift bleibt die
+bisherige kompakte Anordnung erhalten. Die Fokusreihenfolge ist explizit;
+deaktivierte Fortsetzung bleibt nicht auslösbar. Fünf Widgettestfälle prüfen
+320/360 dp mit simulierter Android-Tastatur und 200 % Schrift, Touch,
+Tab/Enter, deaktivierte Aktion und Standardlayout. Der ältere
+[Chat-C-PR #399](https://github.com/ManuEtt/Dnd/pull/399) bleibt separat
+und wird nicht überschrieben. Es gibt keine Änderungen an Regeln, SQLite,
+JSON oder der Appversion. **Finale CI/Android- und TalkBack-Gerätetests
+müssen anhand des finalen PR-Commits nachgewiesen werden.**
+
+
 Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;
 vollständige Charaktererstellung und SRD-Regelengine bleiben in Entwicklung.
 
