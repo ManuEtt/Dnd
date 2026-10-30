@@ -1,3 +1,14 @@
+## Geprüfter Integrationsstand vor erneuter Abnahme
+
+Main ist während dieses Pakets auf `69bfe78ec4eeb30042b26971978038a2ee9dac34`
+(PR413, barrierefreie Todesrettungsoberfläche) weitergelaufen. Dieser Stand wird
+regulär in den eigenen Branch übernommen; beide README-/Checkpoint-Berichte
+bleiben erhalten. Der frühere Vollversuch auf Basis55fe4447 wurde vor Abschluss
+bewusst beendet und gilt nicht als bestandene Vollsuite, auch wenn Flutter beim
+SIGTERM Exit0 liefert. Die kombinierte Vollsuite und finale CI werden neu geprüft.
+Der eigene Rast-Laufzeit-/Testcode19fe5e16 ist unverändert. Main wird durch diesen
+Branch-Merge nicht verändert; PR416 und andere fremde Pakete bleiben getrennt.
+
 ## Chat A – Kurzrast-Ressourcenprüfung (offener PR#428, 30.10.2026)
 
 [PR#428](https://github.com/ManuEtt/Dnd/pull/428) · [aktuelle Checks und Vollabnahme](https://github.com/ManuEtt/Dnd/pull/428/checks).

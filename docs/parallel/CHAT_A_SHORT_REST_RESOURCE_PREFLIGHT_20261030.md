@@ -1,5 +1,17 @@
 # Chat A – Kurzrast-Ressourcen vor Trefferwürfeln prüfen
 
+## Geprüfter Integrationsstand vor erneuter Abnahme
+
+Main ist während dieses Pakets auf `69bfe78ec4eeb30042b26971978038a2ee9dac34`
+(PR413, barrierefreie Todesrettungsoberfläche) weitergelaufen. Dieser Stand wird
+regulär in den eigenen Branch übernommen; beide README-/Checkpoint-Berichte
+bleiben erhalten. Der frühere Vollversuch auf Basis55fe4447 wurde vor Abschluss
+bewusst beendet und gilt nicht als bestandene Vollsuite, auch wenn Flutter beim
+SIGTERM Exit0 liefert. Die kombinierte Vollsuite und finale CI werden neu geprüft.
+Der eigene Rast-Laufzeit-/Testcode19fe5e16 ist unverändert. Main wird durch diesen
+Branch-Merge nicht verändert; PR416 und andere fremde Pakete bleiben getrennt.
+
+
 Stand30.10.2026 UTC, Basis-Main `55fe44475a113943c6310ec16a8ffb481185f4e9`.
 Branch `feat/chat-a/short-rest-resource-preflight-20261030`,
 Quellcode-/Testcommit `19fe5e16394fae096c082a86e7aa8886461fc883`. [PR #428](https://github.com/ManuEtt/Dnd/pull/428) ·

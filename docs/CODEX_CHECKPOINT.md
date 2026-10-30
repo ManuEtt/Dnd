@@ -1,5 +1,17 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Geprüfter Integrationsstand vor erneuter Abnahme
+
+Main ist während dieses Pakets auf `69bfe78ec4eeb30042b26971978038a2ee9dac34`
+(PR413, barrierefreie Todesrettungsoberfläche) weitergelaufen. Dieser Stand wird
+regulär in den eigenen Branch übernommen; beide README-/Checkpoint-Berichte
+bleiben erhalten. Der frühere Vollversuch auf Basis55fe4447 wurde vor Abschluss
+bewusst beendet und gilt nicht als bestandene Vollsuite, auch wenn Flutter beim
+SIGTERM Exit0 liefert. Die kombinierte Vollsuite und finale CI werden neu geprüft.
+Der eigene Rast-Laufzeit-/Testcode19fe5e16 ist unverändert. Main wird durch diesen
+Branch-Merge nicht verändert; PR416 und andere fremde Pakete bleiben getrennt.
+
+
 ## Chat A – Kurzrast-Ressourcenprüfung (offener PR#428, 30.10.2026)
 
 [PR#428](https://github.com/ManuEtt/Dnd/pull/428) · [aktuelle Checks und Vollabnahme](https://github.com/ManuEtt/Dnd/pull/428/checks).
@@ -13,6 +25,41 @@ Appbasis0.8.48+98, SQLite3/JSON1 unverändert. Voriger PR416 bleibt separat offe
 Integration/Dokumentationskonsolidierung durch Chat D, Main nicht verändert.
 [Chat-A-Checkpoint](parallel/CHAT_A_CHECKPOINT.md) ·
 [Fachnachweis](parallel/CHAT_A_SHORT_REST_RESOURCE_PREFLIGHT_20261030.md).
+
+## 30.10.2026 – Chat C: Todesrettungs-Entscheidungen bei 200 % Schrift
+
+- **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `feat/chat-c/death-save-actions-large-text-20261030`.
+- **Implementierungscommit:** `bb3d1eaa9227cdaed84b845f6177f9d9de632fc2`.
+- **Problem:** Die drei möglichen Entscheidungen des vorläufigen Todesrettungswurfs
+  teilen sich bei 200 % Android-Schrift den verfügbaren `Wrap`-Platz.
+  Längere Buttontexte werden dabei schmal und möglicherweise gekürzt, insbesondere
+  bei 320/360 dp und offener Tastatur.
+- **IMPLEMENTIERT:** Im reinen Flutter-UI-Widget
+  `app/lib/ui/death_save_decision_panel.dart` stellt der `LayoutBuilder`
+  bei weniger als 500 dp und ab 180 % Schrift verfügbare Aktionen
+  untereinander in voller Breite dar. Der Standard-Wrap bleibt erhalten.
+  Status- und Regelverfügbarkeitsprüfung bleiben unverändert.
+- **TESTS HINZUGEFÜGT:** `app/test/death_save_actions_large_text_test.dart`
+  prüft zwei positive Touch-Fälle bei 320/360 dp und 200 %, gesperrte Aktionen
+  bei busy, fehlende Klassenwiederholung sowie Standardlayout (5 Fälle).
+- **GETESTET:** Vor Start aktuellen Main, alle offenen PR-Aufgabenbereiche
+  und geänderte Dateien der neuen PRs #405–#412 geprüft; andere PRs
+  verändern diese neuen technischen Dateien nicht. Testausführung und CI
+  müssen auf finalem PR-Head separat bestätigt werden.
+- **NICHT GETESTET:** Lokale Flutter-/Android-Toolchain nicht verfügbar;
+  Android-TalkBack, echte Gerätetastatur und Geräte-Upgrade nicht geprüft.
+- **BLOCKIERT:** Keine lokalen SDKs. Gemeinsame README- und Checkpoint-Änderungen
+  bei späterer Integration durch Chat D additiv konsolidieren.
+- **Migration/Kompatibilität:** Keine Modell-, JSON-, SQLite-, SRD- oder
+  Ressourcenänderung, keine Migration oder Versionsänderung.
+- **Nächster Schritt:** Echtes Android-TalkBack-Gerät bei 320 dp und 200 %
+  Schrift prüfen: alle verfügbaren Entscheidungen vollständig vorlesen,
+  mit IME fokussieren und auslösen können, gesperrte Entscheidung ohne Callback.
+
+---
+
+
 
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
