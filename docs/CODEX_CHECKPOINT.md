@@ -45,6 +45,16 @@
 
 ---
 
+- **Testnachtrag 30.10.2026:** Der Zwischenstand `e5491f4` hatte wegen
+  einer fehlerhaften automatischen Testbearbeitung einen Dart-Syntaxfehler
+  in Zeile 26; keine reale XP-Regel-Regression. Die **vollständige Testdatei**
+  wurde in `746f4b4da9367b2a92ddddd53eb6739bb6dfc4d8` repariert.
+  [Gezielte CI #41122944623](https://github.com/ManuEtt/Dnd/actions/runs/41122944623)
+  erfolgreich: vier neue große-Schrift-/IME-Widgettests und sieben vorhandene
+  EP-Dialogtests, darunter SQLite-Quittung; Dart-Format zwei Dateien ohne Änderung.
+  Echte Geräteprüfung, Gesamtsuite und Android-Build auf finalem Merge-HEAD
+  getrennt prüfen. Diagnoseworkflow wird nicht im finalen PR belassen.
+
 
 ## 30.10.2026 – Chat C: Todesrettungs-Entscheidungen bei 200 % Schrift
 
@@ -80,6 +90,50 @@
 ---
 
 
+
+## Chat D – Sicheren Import originaler Fantasy-Grafiken absichern (30.10.2026, PR #409)
+
+[PR #409](https://github.com/ManuEtt/Dnd/pull/409) verhindert, dass der
+verifizierte Grafik-ZIP-Importer über vorhandene symbolische Links außerhalb
+des gewählten Projektziels schreibt. `scripts/import_complete_fantasy_assets.py`
+prüft nun die Zielwurzel und alle Pfadbestandteile vor dem ZIP-Import sowie
+erneut unmittelbar vor/nach dem Anlegen der Verzeichnisse. Neue Originalgrafiken
+werden exklusiv angelegt und nicht überschrieben. Die vorhandenen SHA256-,
+WebP-, CRC-, Abweichungs- und Reimport-Prüfungen bleiben unverändert.
+
+**Basis-`main`:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+**Branch:** `fix/chat-d/fantasy-import-symlink-20261030`.
+**Code-Commit:** `e2d28c1e35be405a8e09cd86a0e6f249259f2799`.
+Vier neue Regressionstests prüfen regulären Import/Reimport, Symlink als
+Assets-Verzeichnis, hängenden Symlink am Assetziel und Symlink als Projektziel.
+**GETESTET:** keine vollständige CI für diesen finalen Stand bestätigt;
+die [GitHub Actions von #409](https://github.com/ManuEtt/Dnd/pull/409/checks)
+sind maßgeblich. **NICHT GETESTET:** reale Geräteinstallation und
+vollständiger End-to-End-Build bis zum CI-Abschluss.
+**Migrationen:** keine; keine Änderung an Spielständen, SQLite-/JSON-Schemas,
+Flutter-UI oder SRD-Regeln. Fremde parallele PRs bleiben unverändert;
+README/Checkpoint bei Integration additiv konsolidieren.
+
+## Chat D – SRD-Qualitätsprüfung verarbeitet fehlerhafte JSON-Datensätze kontrolliert (30.10.2026, PR #410)
+
+[PR #410](https://github.com/ManuEtt/Dnd/pull/410) schützt die technische
+SRD-Inventurprüfung vor ungefangenen `TypeError`-/`KeyError`-Abbrüchen bei
+syntaktisch gültigen, aber falsch strukturierten JSON-Werten. Nicht-objektförmige
+Requirements, unhashbare `area`-/Status-/Entity-Felder, ungültige
+Katalogeinträge und Inventarlücken erzeugen nun geordnete
+`FEHLER:`-Diagnosen und Exitcode 1 statt Python-Tracebacks. Vier neue
+Regressionstests wurden ergänzt; die bestehenden Anforderungen und
+SRD-Abdeckungsregeln bleiben unverändert.
+
+**Ausgangs-`main`:** `55fe44475a113943c6310ec16a8ffb481185f4e9`;
+**Branch:** `fix/chat-d/srd-audit-malformed-records-20261030`;
+**Code-Commit:** `248500247eb98f1cbde46d29448a9ca3303878e3`.
+**Teststatus:** vollständige GitHub Actions auf dem finalen Branch-Commit
+noch ausstehend; bis dahin keine grüne CI behaupten.
+**Migration:** keine; SRD-Quelldaten, Regeln, JSON-/SQLite-Schemas,
+Spielstände und Appversion unverändert.
+Parallel-PR-Dateipfade wurden geprüft; gemeinsame README-/Checkpoint-Zeilen
+müssen bei der Integration verlustfrei abgeglichen werden.
 
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 

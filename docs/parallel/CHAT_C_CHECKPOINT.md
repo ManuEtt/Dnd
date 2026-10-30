@@ -43,6 +43,16 @@
 
 ---
 
+- **Testnachtrag 30.10.2026:** Der Zwischenstand `e5491f4` hatte wegen
+  einer fehlerhaften automatischen Testbearbeitung einen Dart-Syntaxfehler
+  in Zeile 26; keine reale XP-Regel-Regression. Die **vollständige Testdatei**
+  wurde in `746f4b4da9367b2a92ddddd53eb6739bb6dfc4d8` repariert.
+  [Gezielte CI #41122944623](https://github.com/ManuEtt/Dnd/actions/runs/41122944623)
+  erfolgreich: vier neue große-Schrift-/IME-Widgettests und sieben vorhandene
+  EP-Dialogtests, darunter SQLite-Quittung; Dart-Format zwei Dateien ohne Änderung.
+  Echte Geräteprüfung, Gesamtsuite und Android-Build auf finalem Merge-HEAD
+  getrennt prüfen. Diagnoseworkflow wird nicht im finalen PR belassen.
+
 ## 30.10.2026 – Chat C: Todesrettungs-Entscheidungen bei 200 % Schrift
 
 - **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
