@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/game_engine.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
-import 'package:lebendiger_spielleiter/story/story_memory_engine.dart';
+import 'package:lebendiger_spielleiter/story/story_memory_engine.dart' as story;
 
 Campaign _campaign(
   List<WorldNpc> npcs, {
@@ -45,12 +45,12 @@ void main() {
       jsonDecode(jsonEncode(source.toJson())) as Map<String, dynamic>,
     );
     final before = jsonEncode(restored.toJson());
-    final recalled = MemoryEngine.retrieve(
+    final recalled = story.MemoryEngine.retrieve(
       restored,
       'Was weißt du über Mira?',
       matchingOnly: true,
     ).join('\n');
-    final recap = MemoryEngine.buildSessionSummary(restored);
+    final recap = story.MemoryEngine.buildSessionSummary(restored);
 
     expect(recalled, contains('NPC-ID: safe-id'));
     expect(recalled, contains('Die bestätigte Hafenkarte.'));
@@ -77,12 +77,12 @@ void main() {
         WorldNpc(id: unsafeId, name: 'Mira'),
         const WorldNpc(id: 'safe', name: 'MIRA'),
       ]);
-      final recall = MemoryEngine.retrieve(
+      final recall = story.MemoryEngine.retrieve(
         campaign,
         'Mira',
         matchingOnly: true,
       ).join('\n');
-      final recap = MemoryEngine.buildSessionSummary(campaign);
+      final recap = story.MemoryEngine.buildSessionSummary(campaign);
 
       expect(recall, contains('NPC-ID: safe'), reason: unsafeId);
       expect(recall, isNot(contains('NPC-ID: $unsafeId')), reason: unsafeId);
@@ -98,7 +98,7 @@ void main() {
       WorldNpc(id: safeId, name: 'Mira'),
       const WorldNpc(id: 'other', name: 'MIRA'),
     ]);
-    final recall = MemoryEngine.retrieve(
+    final recall = story.MemoryEngine.retrieve(
       campaign,
       'Mira',
       matchingOnly: true,
@@ -123,12 +123,12 @@ void main() {
     ).toJson()..remove('sessionRecaps');
     final restored = Campaign.fromJson(legacy);
     final before = jsonEncode(restored.toJson());
-    final recalled = MemoryEngine.retrieve(
+    final recalled = story.MemoryEngine.retrieve(
       restored,
       'Liora',
       matchingOnly: true,
     ).join('\n');
-    final recap = MemoryEngine.buildSessionSummary(restored);
+    final recap = story.MemoryEngine.buildSessionSummary(restored);
 
     expect(recalled, contains('Beziehung zu Liora'));
     expect(recalled, contains('Nordturm'));
