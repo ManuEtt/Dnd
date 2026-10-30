@@ -162,10 +162,16 @@ class NpcIdentityStoryPayload {
   static bool _validId(String value) =>
       RegExp(r'^[a-zA-Z0-9_-]{1,64}$').hasMatch(value);
 
+  // Structured identity contexts are revision-bound and must mirror the
+  // confirmed snapshot exactly. Reject unsafe legacy text rather than
+  // rewriting a signed NPC identity or relationship note on the wire.
   static bool _validText(String text, int max) =>
       text.trim().isNotEmpty &&
       text.length <= max &&
-      !RegExp(r'[\x00-\x1f\x7f-\x9f\u2028\u2029]').hasMatch(text);
+      !RegExp(
+        r'[\x00-\x1f\x7f-\x9f\u061c\u200e\u200f'
+        r'\u2028-\u202e\u2066-\u2069]',
+      ).hasMatch(text);
 
   static bool _mentions(String action, String name) {
     final playerText = _fold(action);
@@ -175,7 +181,14 @@ class NpcIdentityStoryPayload {
     ).hasMatch(playerText);
   }
 
+  // Directional controls are invisible, not distinct NPC name characters.
+  // Strip them for uniqueness and mention checks even when the original name
+  // will be rejected for structured transport by _validText.
   static String _fold(String value) => value
+      .replaceAll(
+        RegExp(r'[\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]'),
+        '',
+      )
       .toLowerCase()
       .replaceAll('ä', 'ae')
       .replaceAll('ö', 'oe')
