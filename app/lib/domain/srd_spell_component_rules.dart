@@ -214,6 +214,14 @@ class SrdSpellComponentRules {
   );
 
   static SrdSpellMaterialRequirements requirements(SrdSpellDefinition spell) {
+    // Directly constructed definitions bypass fromJson validation: reject
+    // inconsistent V/S/M flags before component confirmations are assessed.
+    SrdSpellDefinition.validateComponentMetadata(
+      components: spell.components,
+      verbal: spell.verbal,
+      somatic: spell.somatic,
+      material: spell.material,
+    );
     if (!spell.material) {
       return const SrdSpellMaterialRequirements(
         hasMaterial: false,

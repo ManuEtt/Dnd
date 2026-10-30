@@ -189,6 +189,32 @@ Die beiden vorherigen Pakete sind vollständig per GitHub Actions grün:
 und [PR #402](https://github.com/ManuEtt/Dnd/pull/402)
 ([CI 41010021662](https://github.com/ManuEtt/Dnd/actions/runs/41010021662));
 beide zur Review freigegeben, nicht gemergt.
+## Chat A – V/S/M-Komponentenvalidierung (30.10.2026; PR #400)
+
+Isolierter Entwicklungskandidat für SRD 5.2.1, *Spells / Components*
+(Wizards of the Coast LLC, CC BY 4.0), kein fertiger Integrationsstand:
+`main`-Basis `55fe44475a113943c6310ec16a8ffb481185f4e9`,
+Branch `feat/chat-a/spell-component-metadata-guard-20261030`,
+Code-/Test-Commit `cc4acba4ec2ad5d7db331a753aa6086925541921`.
+[Pull Request #400](https://github.com/ManuEtt/Dnd/pull/400) (Draft).
+
+**IMPLEMENTIERT:** JSON-Katalog und Materialregelvalidierung teilen eine
+strikte V/S/M-Syntax- und Flagprüfung. Direkte, ungültige Definitionen können
+keine Komponentenbestätigungen übergehen. Änderungen an
+`app/lib/domain/srd_spell_catalog.dart`,
+`app/lib/domain/srd_spell_component_rules.dart` und
+`app/test/srd_spell_component_flag_guard_test.dart` (5 neue Testfälle).
+**GETESTET:** Statische Source-Inspektion/Änderungspfade geprüft, keine
+ausgeführten Dart- oder Flutter-Tests. **NICHT GETESTET:** finale GitHub Actions,
+lokaler Android-Build, Realgerät und Altgeräte-Upgrade. **BLOCKIERT:** kein
+lokales Flutter-/Dart-SDK oder GitHub-DNS im Container. **Migration:** keine.
+**NOCH NICHT IMPLEMENTIERT:** vollständige SRD-Inventur und echte
+transaktionale Materialabbuchung. **NÄCHSTER SCHRITT:** eigenständige
+Inventarbestätigung mit positiven/negativen und Wiederholungstests.
+README-/Checkpoint-Änderungen parallel zu fremden PRs vor Merge durch Chat D
+konsolidieren; andere Entwicklungsbranches nicht überschreiben.
+
+
 
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 

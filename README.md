@@ -31,6 +31,20 @@ auf `5d5d615d9fc6b8c5152cc5fae1cb1725f1fc4758` hat 36/36
 Prüfschritte bestanden. Nach Aufnahme des neueren Main ist eine
 neue kombinierte CI abzunehmen; [PR #391](https://github.com/ManuEtt/Dnd/pull/391)
 ist reviewbereit, aber noch nicht gemergt.
+## Chat A – sichere Zauberkomponenten (PR #400, Entwurf)
+
+Am 30.10.2026 wurde auf Branch
+`feat/chat-a/spell-component-metadata-guard-20261030` eine isolierte
+Regelkorrektur vorbereitet: Der öffentliche SRD-Zauberdefinitionskonstruktor
+kann widersprüchliche V/S/M-Flags liefern; die Materialregelprüfung verweigert
+diese jetzt vor einer Zauberbestätigung. Katalog-Import und Regelprüfung nutzen
+denselben Validator. Fünf neue Flutter-Regressionstests decken Katalog-,
+Manipulations-, Positiv- und Zustandsinvarianzfälle ab.
+[PR #400](https://github.com/ManuEtt/Dnd/pull/400) ist noch **nicht gemerged**;
+finale CI und Android-Geräteprüfung nicht als bestanden nachgewiesen.
+Bestehende Spielstände/SQLite-/JSON-Schemata werden nicht verändert.
+
+
 
 Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;
 vollständige Charaktererstellung und SRD-Regelengine bleiben in Entwicklung.
