@@ -8,8 +8,18 @@ Map<String, dynamic> _obj(Object? value) {
   return value;
 }
 
+// Provider-authored text is untrusted even when the JSON shape is valid.
+// Reject invisible controls and bidi spoofing, but retain line breaks
+// and tabs used in ordinary multi-paragraph fantasy narration.
+final _unsafeStoryFormatting = RegExp(
+  r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f\u061c\u200b\u200e\u200f\u2028-\u202e\u2060\u2066-\u2069\ufeff]',
+);
+
 String _text(Object? value, int limit) {
-  if (value is! String || value.trim().isEmpty || value.length > limit) {
+  if (value is! String ||
+      value.trim().isEmpty ||
+      value.length > limit ||
+      _unsafeStoryFormatting.hasMatch(value)) {
     throw const FormatException('Ungültiges oder zu langes KI-Feld.');
   }
   return value.trim();

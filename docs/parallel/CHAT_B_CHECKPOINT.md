@@ -83,6 +83,16 @@ auf demselben Branch korrigieren, danach Review ohne automatischen Merge.
 - **KOORDINATION:** Keine Fachdatei-Überschneidung mit offenen PRs #396/#398/#403/#407 oder den parallelen Chat-A/C/D-Arbeiten. Gemeinsame README- und zentrale Checkpoints bei Integration durch Chat D additiv konsolidieren. Kein Merge, kein Force-Push.
 - **NICHT GETESTET/BLOCKIERT:** Laufende CI-/Android-Abnahme für #414 noch nicht belegt; reale Android-Installation und produktive KI nicht getestet. Keine Migration erforderlich.
 - **NÄCHSTER SCHRITT:** Finale GitHub-Push- und PR-CI samt vollständiger Flutter-Suite und APK-Builds prüfen, rote Gates im eigenen Branch korrigieren und erfolgreichen PR zur Integration an Chat D übergeben.
+## Chat B – KI-Story-Formatzeichen (30.10.2026)
+
+- **Basis-main:** 55fe44475a113943c6310ec16a8ffb481185f4e9; **Merge-Basis:** 69bfe78ec4eeb30042b26971978038a2ee9dac34; **PR:** #424; **Implementierungs-Commit:** e754f58bdd9b43b801beeecebcc727177a80e8fb; **Branch:** feat/chat-b/story-provider-unicode-guard-20261030.
+- **Problem:** Generierte Szenen, NPC- und Handlungsnamen sowie dauerhafte Notizen konnten versteckte Steuerzeichen, Bidi-Anweisungen und Zero-Width-Space enthalten.
+- **IMPLEMENTIERT:** Parser von Flutter und Backend weisen solche unbestätigten Textwerte zurück; reguläre Zeilenumbrüche/Tabs sowie sichtbare Unicode-Buchstaben werden beibehalten.
+- **Tests ergänzt (nicht als bestanden behauptet):** app/test/ai_story_unicode_format_guard_test.dart und backend/test/story-unicode-format-guard.test.ts mit positiven, negativen und Unveränderlichkeitsfällen.
+- **Dateien:** app/lib/story/ai_story.dart, backend/src/story.ts, die zwei Tests sowie diese Chat-B-Datei, docs/CODEX_CHECKPOINT.md und README.md.
+- **Keine Migration:** Modelle, Schema, SQLite, Regelzustände und Controller unverändert. Bestehende ältere Speicherstände werden nicht stillschweigend bereinigt.
+- **NICHT GETESTET:** lokale Flutter-/Dart-/Android-Prüfungen mangels SDK; finale GitHub-CI und echtes Gerät noch abzunehmen.
+- **Nächster Schritt:** CI-Gates auf finalem PR-Commit prüfen und bei roten Prüfungen denselben Branch reparieren.
 
 
 ## Integrationskandidat 29.10.2026 – Chat B
