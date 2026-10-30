@@ -1,5 +1,28 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat D – Modulgrenzen bei fehlenden Verzeichnissen (30.10.2026; PR #401)
+
+Auf Branch `fix/chat-d/boundary-module-presence-20261030` (Basis-`main`
+`55fe44475a113943c6310ec16a8ffb481185f4e9`, Code-Commit
+`8a14e706deeceff2fc5709cfdc928e5e25c3115b`) prüft
+`scripts/check_domain_boundaries.py` beide Modulwurzeln
+`app/lib/story` und `app/lib/domain` vor der Importanalyse auf
+reguläre Verzeichnisse und verweigert symlink-basierte Modulwurzeln.
+Bisher konnte insbesondere ein fehlendes Domain-Verzeichnis ohne Beanstandung
+übersprungen werden. Drei zusätzliche Regressionstests und die angepasste
+Nested-Modul-Testfixture sichern positive und negative Fälle ab.
+
+**IMPLEMENTIERT:** fail-closed-Verzeichnisprüfung ohne Änderung der
+bestehenden Import-Whitelist. **GETESTET:** zunächst kein lokal ausgeführter
+vollständiger Projekttest; GitHub Actions auf dem finalen PR-HEAD auswerten.
+**NICHT GETESTET:** Python-Gesamtsuite, Backend, Flutter, Android und Realgerät
+bis zum bestätigten CI-Lauf. **BLOCKIERT:** kein lokaler GitHub-DNS-Checkout
+und kein Flutter-/Dart-SDK in dieser Sitzung.
+**NOCH NICHT IMPLEMENTIERT:** keine breitere Parser-/Regel-/Story-Umstellung.
+**Spielstände:** SQLite-/JSON-Format, Version und Migrationen unverändert.
+[PR #401](https://github.com/ManuEtt/Dnd/pull/401) bleibt bis zur
+CI-Abnahme und Konfliktprüfung im Draft.
+
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
 Stand: 29.10.2026, UTC. [PR #390](https://github.com/ManuEtt/Dnd/pull/390)

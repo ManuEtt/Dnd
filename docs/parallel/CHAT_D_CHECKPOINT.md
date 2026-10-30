@@ -1,3 +1,22 @@
+# Chat D D-018 – Modulwurzeln fail-closed prüfen (30.10.2026)
+
+- **Ausgangs-Main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `fix/chat-d/boundary-module-presence-20261030`.
+- **Code-Commit:** `8a14e706deeceff2fc5709cfdc928e5e25c3115b`.
+- **Pull Request:** [#401](https://github.com/ManuEtt/Dnd/pull/401), Draft.
+- **Problem:** `check_repository()` brach nur bei fehlendem Story-Ordner ab; ein fehlender Domain-Ordner, eine Datei statt Modulverzeichnis oder symlink-basierte Modulwurzel konnte den Importgrenzen-Prüfauftrag umgehen oder entwerten.
+- **IMPLEMENTIERT:** Beide Modulwurzeln müssen echte, nicht-symlinked Verzeichnisse sein; sonst Rückgabe von Fehlern und kein erfolgreiches `OK`. Danach unveränderte rekursive Import- und Whitelist-Prüfung.
+- **Geänderte Dateien:** `scripts/check_domain_boundaries.py`, `scripts/tests/test_domain_boundaries.py`, `scripts/tests/test_nested_domain_boundaries.py`, dazu additive Einträge in `README.md`, `docs/CODEX_CHECKPOINT.md` und diesem Checkpoint.
+- **Regressionen:** beide Modulwurzeln fehlen; nur Domain fehlt; reguläre Datei statt Story-Verzeichnis; Story-Modul als Symlink; gültige Modulverzeichnisse; gültige verschachtelte Story-Imports mit vollständiger Fixture.
+- **GETESTET:** zum Zeitpunkt dieses Checkpoints keine tatsächliche vollständige Testausführung. Der Workflow wurde über Skriptpfadänderungen ausgelöst; finale Ergebnisse gesondert prüfen.
+- **NICHT GETESTET:** vollständige Python-, Backend-, Flutter-, Android-CI/Debug-APK, native Tests und Realgerät; keine grünen Resultate unterstellen.
+- **BLOCKIERT:** GitHub-DNS-Checkout im lokalen Container fehlgeschlagen; Flutter und Dart lokal nicht verfügbar.
+- **Migrationen:** keine; unveränderte SQLite-/JSON-Spielstände und Appversion.
+- **Koordination:** offene PRs #387–#399 ändern nicht die drei technischen Dateien dieses Pakets; gemeinsame README-/Checkpoint-Zeilen vor späterer Integration additiv bewahren.
+- **Nächster konkreter Schritt:** finale GitHub-Actions-CI auf dem Dokumentations-HEAD verifizieren, dann bei grüner Gesamt-CI und konfliktfreier Abnahme Draft prüfen und gegebenenfalls zur Review freigeben. Keine fremden PRs automatisch mergen.
+
+---
+
 # Chat D – Integration von PR #358 nach Checkpoint-Fix #363 (29.10.2026)
 
 ## Integrationskandidat 29.10.2026 – Chat D
