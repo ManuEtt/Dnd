@@ -124,7 +124,7 @@ void main() {
       final campaign = _campaign(
         npcs: [
           const WorldNpc(id: 'mira', name: 'Mira'),
-          WorldNpc(id: 'other', name: 'Mi' + marker + 'ra'),
+          WorldNpc(id: 'other', name: 'Mi${marker}ra'),
         ],
         notes: [
           _note('a', 'mira', 'Nur Mira A kennt den Weg.'),
@@ -139,7 +139,7 @@ void main() {
       expect(
         NpcIdentityStoryPayload.prepare(
           campaign,
-          'Ich frage Mi' + marker + 'ra.',
+          'Ich frage Mi${marker}ra.',
         ),
         isNull,
       );
