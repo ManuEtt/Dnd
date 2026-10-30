@@ -50,6 +50,62 @@
 **NÄCHSTER SCHRITT:** Isolierte Layout-/Semantics-Tests der Kampfchronik bei 320 dp und 200 % Schrift, auch mit sehr langen bestätigten Ereignisdetails.
 
 ---
+## 30.10.2026 – Chat C: EP-Belohnungsdialog bei 200 % Schrift und IME
+
+- **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `feat/chat-c/xp-reward-dialog-ime-scroll-20261030`.
+- **PR:** [#426](https://github.com/ManuEtt/Dnd/pull/426) (Draft bis finaler CI).
+- **Implementierungscommits:** `3622b4bf494ded300367ee781998be4e8dd386a0`
+  (Scrollstruktur), `9f5012b98bd432c058c9a2ca39978b9ffdc42132`
+  (Format/Scrollversuch), `eb5bb61e4d84a6cfe8b249ea59187e14c8c5bcbe`
+  (tatsächlich antippbare kompakte Zustimmung/Touch-Scroll).
+- **Problem:** Unter Android bei 320/360 dp, 200 % Schrift und
+  geöffneter Tastatur waren Inhalte nicht zuverlässig scrollbar; die
+  ursprüngliche Zustimmungszeile war im Diagnoselauf 448 dp hoch gegenüber
+  einer 236 dp hohen Scrollfläche und konnte nicht in den Sichtbereich
+  vollständig hineinbewegt werden.
+- **IMPLEMENTIERT:** `app/lib/ui/experience_reward_dialog.dart` verwendet
+  `AlertDialog(scrollable: true)` ohne verschachteltes inneres Scrollen;
+  Abbruch und bestätigte Aktion bleiben getrennt außerhalb des Inhalts.
+  Bei großer Schrift lautet der kurze ausdrückliche Zustimmungstitel
+  „EP ausdrücklich bestätigen“; die volle bisherige Formulierung
+  bleibt bei normaler Schrift erhalten.
+- **TESTS ERGÄNZT:** `app/test/experience_reward_large_text_ime_test.dart`
+  mit vier Fällen: Abbruch bei 320/360 dp, positive explizite EP-Auswahl
+  (keine automatische Buchung) und negative ungültige EP bei 320 dp.
+  Test unterstützt echte Touch-Scrollgesten anstatt bloßer Finder-Sichtbarkeit.
+- **GETESTET:** Projektstatus, vollständiger Masterprompt/Projektanweisungen,
+  `main`, PR-Pfade und vorbestehende EP-/Widgettests über GitHub geprüft.
+  In [CI #41119777359](https://github.com/ManuEtt/Dnd/actions/runs/41119777359)
+  bestanden die zwei Abbruchtests, aber Zustimmung war nicht erreichbar;
+  [Diagnose #41120401425](https://github.com/ManuEtt/Dnd/actions/runs/41120401425)
+  lieferte die konkrete 448/236-dp-Ursache. Finale Tests nach dem neuen
+  UI-/Test-Fix sind beim Schreiben noch nicht als bestanden nachgewiesen.
+- **NICHT GETESTET:** Echte TalkBack-/IME-Gerätebedienung, Android-Upgrade und
+  produktive Release-Signierung. Lokal kein Flutter-/Dart-SDK;
+  finale GitHub-CI separat nachweisen.
+- **BLOCKIERT:** Keine lokale Flutter-Toolchain. GitHub-Actions-Queue ist
+  durch parallel laufende PRs belastet. Geteilte README-/Zentral-Checkpoint-
+  Ergänzungen bei Integration durch Chat D additiv konsolidieren.
+- **Migration/Kompatibilität:** Keine geänderten XP-Domainregeln, Event-IDs,
+  Spielstände, SQLite-Schema, JSON-Formate oder App-Version.
+- **Nächster Schritt:** Echter Android-Gerätetest bei 320 dp/200 %/IME:
+  Checkbox bis zur Antippbarkeit scrollen, Zustimmung setzen,
+  Buchungswahl und Abbrechen auslösen, TalkBack-Labels prüfen.
+
+---
+
+- **Testnachtrag 30.10.2026:** Der Zwischenstand `e5491f4` hatte wegen
+  einer fehlerhaften automatischen Testbearbeitung einen Dart-Syntaxfehler
+  in Zeile 26; keine reale XP-Regel-Regression. Die **vollständige Testdatei**
+  wurde in `746f4b4da9367b2a92ddddd53eb6739bb6dfc4d8` repariert.
+  [Gezielte CI #41122944623](https://github.com/ManuEtt/Dnd/actions/runs/41122944623)
+  erfolgreich: vier neue große-Schrift-/IME-Widgettests und sieben vorhandene
+  EP-Dialogtests, darunter SQLite-Quittung; Dart-Format zwei Dateien ohne Änderung.
+  Echte Geräteprüfung, Gesamtsuite und Android-Build auf finalem Merge-HEAD
+  getrennt prüfen. Diagnoseworkflow wird nicht im finalen PR belassen.
+
+
 ## 30.10.2026 – Chat C: Todesrettungs-Entscheidungen bei 200 % Schrift
 
 - **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
