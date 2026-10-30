@@ -162,8 +162,7 @@ class _ExperienceRewardDialogState extends State<ExperienceRewardDialog> {
               title: const Text(
                 'Ich bestätige diese EP-Belohnung ausdrücklich.',
               ),
-              onChanged: (value) =>
-                  setState(() => _approved = value ?? false),
+              onChanged: (value) => setState(() => _approved = value ?? false),
             ),
           ],
         ),

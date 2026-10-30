@@ -65,10 +65,7 @@ void main() {
       final cancel = find.byKey(const ValueKey('xp-reward-cancel'));
       final confirm = find.byKey(const ValueKey('xp-reward-confirm'));
       expect(find.byType(ExperienceRewardDialog), findsOneWidget);
-      expect(
-        tester.widget<FantasyTextButton>(confirm).onPressed,
-        isNull,
-      );
+      expect(tester.widget<FantasyTextButton>(confirm).onPressed, isNull);
       expect(cancel.hitTestable(), findsOneWidget);
       await tester.ensureVisible(find.byKey(const ValueKey('xp-reward-id')));
       await tester.enterText(
@@ -105,11 +102,20 @@ void main() {
       find.byKey(const ValueKey('xp-reward-amount')),
       '300',
     );
-    await tester.ensureVisible(
-      find.byKey(const ValueKey('xp-reward-consent')),
+    final consent = find.byKey(const ValueKey('xp-reward-consent'));
+    await tester.scrollUntilVisible(
+      consent,
+      160,
+      scrollable: find
+          .descendant(
+            of: find.byType(ExperienceRewardDialog),
+            matching: find.byType(Scrollable),
+          )
+          .first,
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('xp-reward-consent')));
+    expect(consent.hitTestable(), findsOneWidget);
+    await tester.tap(consent);
     await tester.pumpAndSettle();
     final confirm = find.byKey(const ValueKey('xp-reward-confirm'));
     expect(tester.widget<FantasyTextButton>(confirm).onPressed, isNotNull);
@@ -126,39 +132,51 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Ungültiger Betrag bleibt trotz scrollbarem IME-Dialog gesperrt', (
-    tester,
-  ) async {
-    final results = <ExperienceRewardChoice?>[];
-    final campaign = await showReward(
-      tester,
-      width: 320,
-      height: 680,
-      textScale: 2,
-      onResult: results.add,
-    );
-    await tester.enterText(
-      find.byKey(const ValueKey('xp-reward-id')),
-      'quest-invalid',
-    );
-    await tester.enterText(
-      find.byKey(const ValueKey('xp-reward-amount')),
-      '0',
-    );
-    await tester.ensureVisible(
-      find.byKey(const ValueKey('xp-reward-consent')),
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('xp-reward-consent')));
-    await tester.pumpAndSettle();
-    final confirm = find.byKey(const ValueKey('xp-reward-confirm'));
-    expect(tester.widget<FantasyTextButton>(confirm).onPressed, isNull);
-    expect(find.textContaining('1 bis 100000 EP'), findsOneWidget);
-    expect(find.byKey(const ValueKey('xp-reward-cancel')).hitTestable(),
-        findsOneWidget);
-    expect(results, isEmpty);
-    expect(campaign.hero.experience, 0);
-    expect(campaign.events, isEmpty);
-    expect(tester.takeException(), isNull);
-  });
+  testWidgets(
+    'Ungültiger Betrag bleibt trotz scrollbarem IME-Dialog gesperrt',
+    (tester) async {
+      final results = <ExperienceRewardChoice?>[];
+      final campaign = await showReward(
+        tester,
+        width: 320,
+        height: 680,
+        textScale: 2,
+        onResult: results.add,
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('xp-reward-id')),
+        'quest-invalid',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('xp-reward-amount')),
+        '0',
+      );
+      final consent = find.byKey(const ValueKey('xp-reward-consent'));
+      await tester.scrollUntilVisible(
+        consent,
+        160,
+        scrollable: find
+            .descendant(
+              of: find.byType(ExperienceRewardDialog),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
+      await tester.pumpAndSettle();
+      expect(consent.hitTestable(), findsOneWidget);
+      await tester.tap(consent);
+      await tester.pumpAndSettle();
+      final confirm = find.byKey(const ValueKey('xp-reward-confirm'));
+      expect(tester.widget<FantasyTextButton>(confirm).onPressed, isNull);
+      expect(find.textContaining('1 bis 100000 EP'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('xp-reward-cancel')).hitTestable(),
+        findsOneWidget,
+      );
+      expect(results, isEmpty);
+      expect(campaign.hero.experience, 0);
+      expect(campaign.events, isEmpty);
+      expect(tester.takeException(), isNull);
+    },
+  );
 }
