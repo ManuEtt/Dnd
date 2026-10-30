@@ -1,5 +1,20 @@
 # Chat A – Checkpoint (26.10.2026): Eldritch-Blast-Klassenprüfung
 
+## 30.10.2026 – Aktion und Bonusaktion bei Zauberpreflight unterscheiden
+
+- **Basis-main:** `69bfe78ec4eeb30042b26971978038a2ee9dac34`; **Branch:** `feat/chat-a/spell-action-economy-evidence-20261030`.
+- **IMPLEMENTIERT:** `app/lib/domain/srd_spell_action_economy_rules.dart` mit `SrdSpellActionEconomyRules.inspect` und `SrdSpellTurnActionEvidence.validateUnchanged`: eigener normaler Magieaktions- oder Bonusaktionsbeleg aus bestätigtem Kampf-Snapshot. Diese Zugressourcen sind nicht austauschbar; Slot-Turn-Limit gilt für Grad-1+-Zauber, Zaubertricks brauchen keinen Slot; Action Surge, Rage, fremder Zug und Handlungsunfähigkeit werden geprüft.
+- **SICHERHEIT:** Keine unscharfen Reaktions-/Bonus-Trigger/Langzeitfreigaben; nicht bestätigter Begegnungsstatus wird nicht als `out of combat` geraten. Der Snapshot verhindert Wiederverwendung nach Helden-/Kampf-/Zauberänderung. Es wird **keine Aktion reserviert**, kein Commit ausgeführt und kein KI-Text als Bestätigung akzeptiert.
+- **TESTS ERSTELLT:** Acht deterministische Gruppen in `app/test/srd_spell_action_economy_rules_test.dart` (Action vs. Bonus, Spells-Slot-per-turn, Action Surge, Rage/HP/active turn, fehlende Begegnungsbestätigung, Ritual/Trigger, Zeitfälschungen, stale Snapshot/JSON).
+- **DOKUMENTATION:** `docs/SRD_SPELL_ACTION_ECONOMY_EVIDENCE.md`, README, zentraler Checkpoint. Offizielle WotC SRD 5.2.1, CC BY 4.0. SRD-Requirement bleibt `partial`.
+- **GETESTET:** offener PR-/main-/Codezustand geprüft und Implementierung geschrieben. **NICHT GETESTET:** neue CI, Android-Realgerät. Flutter/Dart-SDK lokal nicht verfügbar.
+- **KEINE MIGRATION:** Models/Engine/Controller, JSON/SQLite/Events, UI/Story/Backend, Version unverändert. Keine Überschneidung mit anderen Chat-A-/B-/C-/D-Fachdateien. Additive README/Checkpoint-Konsolidierung bleibt für Review offen.
+- **BISHER:** #420 vollständige CI grün [#41091851917](https://github.com/ManuEtt/Dnd/actions/runs/41091851917); #429 Android-Alpha-Gate [#41121119046](https://github.com/ManuEtt/Dnd/actions/runs/41121119046) bei letzter Prüfung noch nicht final, alte #423 ausschließlich ohne Merge geschlossen.
+- **NÄCHSTER SCHRITT:** Einen typisierten, revisionsgeprüften Aktionsbeleg mit der echten Zauberpreflight- und GameEngine-Kampf-Transaktion verbinden, sobald dies nach Merge von #429 mit Chat D kollisionsfrei möglich ist.
+
+---
+
+
 ## Integrationskandidat 29.10.2026 – Chat A
 
 Zusammengeführte Fachpakete: [#357](https://github.com/ManuEtt/Dnd/pull/357), [#361](https://github.com/ManuEtt/Dnd/pull/361), [#366](https://github.com/ManuEtt/Dnd/pull/366), [#367](https://github.com/ManuEtt/Dnd/pull/367), [#372](https://github.com/ManuEtt/Dnd/pull/372), [#375](https://github.com/ManuEtt/Dnd/pull/375), [#385](https://github.com/ManuEtt/Dnd/pull/385). Die ursprünglichen Branch-HEADs, PR-Beschreibungen, Tests, bekannte Grenzen und Statusmeldungen sind im [Integrationsjournal](INTEGRATION_20261029.md) mit Git-Historie dokumentiert. **Dieser Stand ist weder auf main integriert noch gemeinsam CI-abgenommen; Drafts sind nicht freigegeben.** Bisherige Checkpoint-Einträge bleiben erhalten.
