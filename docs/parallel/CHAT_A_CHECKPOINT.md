@@ -90,6 +90,19 @@
 - **KEINE MIGRATION:** Kein JSON-/SQLite-/Event-/API-Schema, Controller/UI/Story/Backend/Versionswechsel; nur spezialisiertes Domainmodul und Preflight. Mit anderen Chat-A-/B-/C-/D-Fachdateien keine bekannte Überschneidung. README/zentralen Checkpoint beim Review durch Chat D additiv zusammenführen.
 - **VORHERIG:** PR #420 [CI #41091851917](https://github.com/ManuEtt/Dnd/actions/runs/41091851917) vollständig grün auf `a755e2e81e72f497fb1711601c24df76bc58263f`; #418/#415/#408/#405/#400 ebenfalls grün, weiterhin Draft.
 - **NÄCHSTER SCHRITT:** separates, autorisiertes Aktionsökonomie-Gate für Action vs. Bonus Action statt freier allgemeiner `actionAvailableConfirmed`-Bestätigung.
+## 30.10.2026 – Konzentration nach Schaden mit SG-Obergrenze 30 (Chat A)
+
+- **Ausgangs-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `feat/chat-a/concentration-damage-dc-cap-20261030`.
+- **IMPLEMENTIERT:** `app/lib/domain/srd_concentration_damage_rules.dart`: isolierte, unveränderliche Konzentrationsentscheidung für separat bestätigte Schadensquellen. SG `min(30, max(10, Schaden~/2))` mit korrekt abgerundetem halbem Schaden, maximal 30 nach SRD 5.2.1 (anders als SRD 5.1). Rettungswurf je Quelle; erster Misserfolg beendet Konzentration, 0 TP/Tod/Handlungsunfähigkeit ohne Wurf.
+- **BESTÄTIGUNGSPFLICHT:** bereits regelgeprüfter Heldenstatus nach Schaden, eindeutig lesbare Schadensquellen-IDs, Schaden, W20, vollständiger KO-Save-Modifikator und schon aufgelöster Vor-/Nachteil. Kein RNG und kein KI-Text als Beleg.
+- **Tests:** `app/test/srd_concentration_damage_rules_test.dart` (8 Gruppen: SG 10/30, Grenzen/Rundung, Erfolg/Misserfolg, natürliche 1/20, mehrere Quellen, ungültige spätere Quelle, Bidi-ID, Zustände, Snapshot, JSON-Roundtrip).
+- **Doku:** `docs/SRD_5_2_1_CONCENTRATION_DAMAGE_CHECKS.md`, README und zentraler Checkpoint ergänzt.
+- **GETESTET:** offener PR-/main-Stand und bestehende Regelpfade geprüft, SRD-5.2.1-Provenienz über offizielles SRD bestätigt. Tests geschrieben, bislang nicht ausgeführt. **NICHT GETESTET:** Format-/Flutter-/Android-CI auf finalem Head, reales Gerät. **BLOCKIERT:** lokales SDK fehlt; CI auf GitHub notwendig.
+- **KEINE MIGRATION:** bestehende Heldenspeicherung, JSON-/SQLite-Schema, Events, UI/Backend, GameEngine/Controller, Version unverändert. Kein automatischer Commit oder echte Schadenswirkung im Modul.
+- **KOORDINATION:** #416 betrifft Todesrettungs-/GameEngine-Regeln, dieses Paket nur neue separate Konzentrationsdateien; andere offene Chat-A-/B-/C-/D-PRs haben keine Fachpfadüberschneidung. README und zentralen Checkpoint beim späteren Review additiv mit Chat D konsolidieren.
+- **Vorgänger:** #415 finale [CI #41071482495](https://github.com/ManuEtt/Dnd/actions/runs/41071482495) erfolgreich, ebenfalls #408/#405/#400 erfolgreich. Alle getrennte Drafts.
+- **NÄCHSTER SCHRITT:** atomarer persistierter Konzentrationsstatus per bestätigtem Schadensereignis und erwarteter Revision; nicht ohne Koordination mit Chat D an Shared-Dateien arbeiten.
 
 ---
 
