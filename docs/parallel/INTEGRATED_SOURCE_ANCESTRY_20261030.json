@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "repository": "ManuEtt/Dnd",
+  "integration_pr": 435,
+  "integration_main_commit": "6465a4b2fc8d42ae7aab596ac26e85d61d2b8f49",
+  "purpose": "Preserve original, code-equivalent merged source PR HEADs in main ancestry without rewriting source branches or reverting main content. Safe cleanup only after verified main CI and source PR closure.",
+  "source_prs": [
+    {
+      "pr": 430,
+      "branch": "fix/chat-d/integrate-boundaries-ndk-20261030",
+      "sha": "6dac0109cdd7bc46d043bd81d12c651859e4bf2e"
+    },
+    {
+      "pr": 433,
+      "branch": "fix/chat-d/integrate-archive-apk-safety-20261030",
+      "sha": "325589daedf451299629d69d64392ec30275e405"
+    },
+    {
+      "pr": 401,
+      "branch": "fix/chat-d/boundary-module-presence-20261030",
+      "sha": "0544c238c39da11b4f18e77a70c1cb0af10b4bbd"
+    },
+    {
+      "pr": 402,
+      "branch": "fix/chat-d/preserve-installed-ndk-20261030",
+      "sha": "1f8a6c81e9b294bf16e897c994a6861636b246b7"
+    },
+    {
+      "pr": 391,
+      "branch": "fix/chat-d/source-archive-publish-lock-20261029",
+      "sha": "b807afe172ee9504909c308729639161494494d8"
+    },
+    {
+      "pr": 406,
+      "branch": "fix/chat-d/apk-entry-types-20261030",
+      "sha": "14470f238740c767e0b68dd16ffe277219d096c4"
+    }
+  ]
+}

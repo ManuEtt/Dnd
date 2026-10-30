@@ -275,3 +275,185 @@ Testsignatur/APK-Build ersetzen keine echte Geräte- oder Upgradeabnahme.
 [CC-BY-4.0-Namensnennung](THIRD_PARTY_NOTICES.md).
 Frühere README-/Checkpoint-Stände bleiben bytegenau mit Git-Blob/SHA256 in
 [docs/history/monk_tool_start_20261029/MANIFEST.json](docs/history/monk_tool_start_20261029/MANIFEST.json).
+
+### Dokumentationsnachträge aus Integrations-PR #437
+
+## Chat C – Ausrüstungsdialog bei großer Schrift und IME (30.10.2026)
+
+Der unabhängige Branch `feat/chat-c/equipment-loadout-large-text-ime-20261030`
+basiert auf `main` `718388dda5c020670ec306843058674a85f54ba0`
+und schützt den Ausrüstungsdialog gegen verdeckte Inhalte bei 320/360 dp,
+200 % Schrift und eingeblendeter Tastatur. `AlertDialog(scrollable: true)`
+ersetzt den doppelten inneren Scrollbereich, während **Abbrechen** und
+**Werte übernehmen** außerhalb der Scrollfläche verbleiben. Die
+Beschriftung der Rüstungsübung wird bei großer Schrift kompakt angezeigt.
+Drei neue Widgetfälle prüfen beide engen Breiten, gesperrte Bestätigung,
+erreichbare Rüstungsübung sowie unveränderte Helden- und Inventardaten.
+Die EP-/Kampfsystem-, Regel-, SQLite- und JSON-Schnittstellen bleiben
+unverändert. Volle GitHub-CI und echte Android-/TalkBack-Abnahme sind erst
+nach dem Lauf als bestanden zu werten.
+
+
+## Chat B – NPC-Kontext nach Neustart unveränderlich (30.10.2026)
+
+**PR:** [#431](https://github.com/ManuEtt/Dnd/pull/431). Read-only-NPC-Kontext ist jetzt einschließlich Notizliste und innerer Notizmaps gegen nachträgliche Änderungen gesichert. Ein neuer Flutter-/SQLite-Test deckt JSON-Roundtrip, echte Datenbank-Wiederaufnahme und Ablehnung veralteter Beziehungen ab. Branch `feat/chat-b/npc-context-immutable-restart-20261030`, Basis `69bfe78ec4eeb30042b26971978038a2ee9dac34`. Änderungen an Schema, Spielregeln und Bestands-Spielständen sind nicht erforderlich; CI-Abnahme steht zunächst aus.
+
+
+## Chat C – EP-Dialog bei großer Android-Schrift und IME (30.10.2026)
+
+Das unabhängige Chat-C-Arbeitspaket [PR #426](https://github.com/ManuEtt/Dnd/pull/426)
+(`feat/chat-c/xp-reward-dialog-ime-scroll-20261030`, Basis-main
+`55fe44475a113943c6310ec16a8ffb481185f4e9`) führt den
+EP-Belohnungsdialog in einen einzigen scrollbar begrenzten Titel-/Formularbereich
+über, während **Abbrechen** und **EP verbindlich buchen** außerhalb dieser
+Scrollfläche bleiben. Bei mindestens 180 % Schrift wird der ausdrückliche
+Zustimmungs-Checkbox-Titel kompakt „EP ausdrücklich bestätigen“ dargestellt,
+damit er auch im durch die Android-Tastatur verkleinerten Sichtfenster
+antippbar bleibt. Vier neue Flutter-Widgettestfälle prüfen 320/360 dp,
+200 % Schrift, simulierte IME, Scroll-/Touch-Bedienung, ausdrückliche
+Buchungswahl und gesperrte ungültige Beträge. Spielstände, SQLite/JSON,
+Regel-/EP-Transaktionen und Appversion bleiben unverändert.
+Der gezielte finale Testlauf und die vollständige CI müssen anhand des
+finalen PR-HEADs bestätigt werden; reale Geräteabnahme fehlt.
+
+
+Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;
+vollständige Charaktererstellung und SRD-Regelengine bleiben in Entwicklung.
+
+**Testabnahme-Nachtrag:** Nach Wiederherstellung der vollständigen Widgettestdatei
+liefen am finalen Code- und Teststand `746f4b4da9367b2a92ddddd53eb6739bb6dfc4d8`
+alle **vier neuen** IME-Fälle und **sieben bestehenden** EP-Dialogtests
+erfolgreich; [GitHub Actions #41122944623](https://github.com/ManuEtt/Dnd/actions/runs/41122944623).
+Dart-Format: zwei Dateien, null Änderungen. Finaler Android-Gesamttest
+nach Integration mit neuer `main`-Basis separat abzunehmen.
+
+
+## Chat B – Unicode-Grenzen für neue KI-Geschichten (30.10.2026)
+
+Backend und Flutter prüfen neue unbestätigte Story-Texte jetzt auf unsichtbare Steuer- und Bidi-Zeichen; sichtbarer Unicode und normale Zeilenumbrüche bleiben erlaubt. Zwei neue Testdateien ergänzen positive/negative Fälle. Diese Änderungen betreffen keine vorhandenen Spielstände oder Regeln. [PR #424](https://github.com/ManuEtt/Dnd/pull/424), Branch: feat/chat-b/story-provider-unicode-guard-20261030, ursprüngliche Basis-main: 55fe44475a113943c6310ec16a8ffb481185f4e9; aktualisierte Basis: 69bfe78ec4eeb30042b26971978038a2ee9dac34. CI-Ergebnisse sind bis zum geprüften Lauf offen.
+
+
+## Chat C – Ausstehende Handlungen bei großer Schrift (30.10.2026)
+
+Das isolierte [Chat-C-Paket #417](https://github.com/ManuEtt/Dnd/pull/417) `feat/chat-c/pending-action-controls-large-text-20261030`
+(basierend auf `main` `55fe44475a113943c6310ec16a8ffb481185f4e9`,
+Code-Commit `3a48e283da3749d5a49a0563730059fbd8bf1a94`)
+ordnet im `PendingActionStatus` die Aktionen **Erneut bestätigen** und
+**Verwerfen** bei Kartenbreiten unter 500 dp und mindestens 180 % Systemschrift
+untereinander in voller Breite an. Der vorhandene Volltextschalter, die
+Statussperren und die normale kompakte Anordnung bleiben erhalten.
+Die Tab-Navigation berücksichtigt einen möglichen zusätzlichen Fokus-Stopp des scrollbaren Bereichs; die zwei Entscheidungs-Buttons haben eine ausdrückliche Reihenfolge. Sieben neue Flutter-Widgettestfälle prüfen 320/360 dp mit simuliertem
+Tastatureinzug und 200 % Text, Tab/Enter, Sperrung, lange NPC-Aufträge,
+den Sendestatus sowie das normale Layout. Keine Änderung von Outbox,
+Spielzustand, Regeln, SQLite oder JSON. Finale CI und echter Android-
+TalkBack-Test müssen separat nachgewiesen werden.
+
+### Dokumentationsnachträge aus Integrations-PR #438
+
+### Übernommener Dokumentationsnachtrag aus PR #419
+
+## Chat D – Branch-Bereinigung vor veränderten Referenzen schützen (30.10.2026)
+
+[PR #419](https://github.com/ManuEtt/Dnd/pull/419) auf `fix/chat-d/retire-main-recheck-20261030`
+(Draft, Basis-main `55fe44475a113943c6310ec16a8ffb481185f4e9`).
+Das ausdrücklich allowlistgebundene historische Bereinigungsskript prüft vor
+jeder tatsächlichen Branchlöschung den unveränderten `main`-HEAD, den
+aktuellen Schutz-/Mergezustand des Branches und danach das Verschwinden
+der Referenz. Sechs neue Python-Regressionsfälle simulieren diese Abläufe
+ohne GitHub-Löschzugriff. **Testausführung und vollständige CI auf dem
+finalen PR-Commit noch nicht nachgewiesen**. Kein Cleanup gestartet, kein
+Branch gelöscht, keine Änderung von App, SQLite/JSON oder App-Version.
+Vor Integration mit anderen README-Änderungen additiv konsolidieren.
+
+
+
+
+### Übernommener Dokumentationsnachtrag aus PR #412
+
+## Chat D – PNG-Generierung gegen Symlinks und Teilwrites absichern (30.10.2026, PR #412)
+
+[PR #412](https://github.com/ManuEtt/Dnd/pull/412) stärkt den zu
+Beginn der Android-CI ausgeführten Generator für Fantasy-Buttons.
+`scripts/generate_fantasy_buttons.py` verweigert bekannte symbolische
+Links entlang der Ausgabeordner und an einzelnen PNG-Ausgabedateien.
+Die PNG-Bytes werden erst in einer temporären Datei vollständig geschrieben
+und danach atomar per `os.replace` veröffentlicht. Scheitert die
+Veröffentlichung, bleibt die vorige PNG unverändert; temporäre Dateien
+werden wieder entfernt. Die Bildgestaltung und deterministische
+Wiederholbarkeit ändern sich nicht.
+
+**Basis-`main`:** `55fe44475a113943c6310ec16a8ffb481185f4e9`;
+**Branch:** `fix/chat-d/fantasy-button-output-safety-20261030`;
+**Code-Commit:** `69d691a58fb12dfc850920d2c1e0f7960c4084de`.
+Fünf neue Regressionstests prüfen verlinkte Eltern-/Zielordner,
+symlink-basiertes PNG-Ziel, atomaren Schreibfehler und Sonderdateityp.
+**Abnahme:** vollständige CI auf dem finalen Dokumentations-Commit ist noch
+ausstehend; vorhandene Tests nicht vor ihrer Ausführung als bestanden zählen.
+**Migrationen:** keine. Spielstände, SRD-Regeln, Android-UI, SQLite-/JSON-Schema
+und Appversion unverändert. README-/Checkpoint-Ergänzungen bei Integration
+nur verlustfrei mit den parallelen PRs konsolidieren.
+
+
+### Übernommener Dokumentationsnachtrag aus PR #411
+
+## Chat D – Reiner HTTPS-Ursprung für Remote-Backend (30.10.2026, PR #411)
+
+[PR #411](https://github.com/ManuEtt/Dnd/pull/411) validiert
+`PUBLIC_ORIGIN` als reinen HTTPS-Ursprung und lehnt nun URL-Pfade,
+Suchparameter und Fragmente zusätzlich zu bestehenden HTTP- und
+Zugangsdaten-Verboten ab. Valide Ursprünge mit optionalem Port und
+abschließendem Schrägstrich bleiben zulässig.
+Ein neuer Backend-Test deckt erlaubte und verbotene Varianten ab.
+
+**Ausgangs-`main`:** `55fe44475a113943c6310ec16a8ffb481185f4e9`;
+**Branch:** `fix/chat-d/backend-public-origin-20261030`;
+**Code-Commit:** `7ffa749d8be11ff9a518faaf8a65fc86f940dad1`.
+**GETESTET:** keine finale CI auf Dokumentations-Commit bestätigt;
+der vollständige [Workflow des PRs](https://github.com/ManuEtt/Dnd/pull/411/checks)
+muss noch erfolgreich abgeschlossen sein.
+**NICHT GETESTET:** reales Reverse-Proxy-Deployment und Android-Gerät.
+**Migration:** keine; Spielstände, JSON-/SQLite-Schema, Story, SRD-Regeln
+und Appversion unverändert. README-/Checkpoint-Änderungen vor Integration
+mit parallelen Arbeiten verlustfrei konsolidieren.
+
+
+### Übernommener Dokumentationsnachtrag aus PR #395
+
+## Chat D – Parallele Voll-Checkpoints absichern (29.10.2026)
+
+Die Erstellung vollständiger Quell-Checkpoints serialisiert die
+Veröffentlichung der versionierten Archive, Patches, Dateimanifeste,
+Prüfsummen und stabilen `LATEST`-Aliase mit einer exklusiven
+`.checkpoint.lock`-Verzeichnissperre im Ausgabeordner.
+Ein zweiter Aufruf auf denselben Ausgabeordner wird ohne Veränderung
+der bisherigen Datensicherungen abgewiesen; nach behandelbaren
+Fehlern oder `KeyboardInterrupt` wird die eigene Sperre freigegeben.
+Nach hartem Prozessabbruch bleibt sie bewusst bestehen, statt
+unkontrolliert einen neuen Export zuzulassen. Drei neue Python-
+Regressionen. Keine Änderung an Flutter, SQLite, Spielstand-JSON,
+Backend oder App-Version. Die neue vollständige CI auf dem PR-Head
+ist noch abzunehmen.
+
+
+### Übernommener Dokumentationsnachtrag aus PR #397
+
+
+
+## Chat D – Validierung ausstehender SQLite-Handlungen (PR #397, Draft)
+
+Der öffentliche SQLite-Schreibpfad für nicht bestätigte Spielerhandlungen prüft nun auch direkte Aufrufer auf gültige Auftragskennung, Kampagnenkennung und begrenzten, nicht leeren Handlungstext. Dadurch können solche Aufrufe keinen Auftrag speichern, den die Outbox beim nächsten App-Start nicht mehr decodieren kann. Drei neue FFI-Regressionstests decken Ablehnung ohne Datenänderung, persistente Wiederherstellung/ACK und Duplikatkonflikte ab. **Noch keine finale CI-Abnahme** dieses PR-Standes; bestehende SQLite-3-/Kampagnen-JSON-1-Daten und Appversion unverändert.
+
+### NPC-Auswahl / PR #422
+
+## Chat C – NPC-Auswahl bei großer Schrift (30.10.2026, Draft-PR #422)
+
+Der [Chat-C-PR #422](https://github.com/ManuEtt/Dnd/pull/422) verbessert den
+Dialog für explizite, gespeicherte NPC-Identitäten auf kleinen Android-Displays:
+Der Titel und der Inhalt sind scrollbar, die NPC-Liste begrenzt ihre maximale
+Höhe, nicht jedoch die einzelne Zeilenhöhe. Die Abbrechen-Aktion bleibt
+erreichbar. Neue Widgettests decken 320/360 dp mit 200 % Textskalierung,
+zwölf gleichnamige NPCs, die konkrete ID-Auswahl und das Fehlen bestätigter
+Beziehungen ab. Basis-main: `55fe4447`. Keine Datenmigration oder
+Regeländerung. **Noch nicht gemergt und nicht lokal durch Flutter-Tests
+abgenommen**; den finalen GitHub-Actions-Status des PR prüfen. Gemeinsame
+Dokumentationsänderungen bei der späteren Integration additiv konsolidieren.

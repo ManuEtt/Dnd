@@ -1,9 +1,12 @@
 """Regression tests for reproducible, standalone fantasy PNG generation."""
 import importlib.util
+import os
 import struct
+import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 SCRIPT = Path(__file__).resolve().parents[1] / "generate_fantasy_buttons.py"
 spec = importlib.util.spec_from_file_location("fantasy_buttons_generator", SCRIPT)
@@ -43,6 +46,70 @@ class FantasyButtonArtTests(unittest.TestCase):
                 )
             finally:
                 generator.ROOT = original
+
+
+    @unittest.skipIf(sys.platform == "win32", "POSIX symlinks required")
+    def test_symlinked_destination_directory_is_rejected_without_external_writes(self):
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            outside = base / "external"
+            outside.mkdir()
+            link = base / "linked-buttons"
+            link.symlink_to(outside, target_is_directory=True)
+            with mock.patch.object(generator, "ROOT", link):
+                with self.assertRaisesRegex(ValueError, "symlink"):
+                    generator.main()
+            self.assertEqual(list(outside.iterdir()), [])
+
+    @unittest.skipIf(sys.platform == "win32", "POSIX symlinks required")
+    def test_symlinked_parent_is_rejected_before_creating_child_directory(self):
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            outside = base / "external"
+            outside.mkdir()
+            link = base / "art"
+            link.symlink_to(outside, target_is_directory=True)
+            with mock.patch.object(generator, "ROOT", link / "buttons"):
+                with self.assertRaisesRegex(ValueError, "symlink"):
+                    generator.main()
+            self.assertFalse((outside / "buttons").exists())
+
+    @unittest.skipIf(sys.platform == "win32", "POSIX symlinks required")
+    def test_symlinked_png_is_rejected_without_overwriting_external_file(self):
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            destination = base / "buttons"
+            destination.mkdir()
+            external = base / "external.png"
+            external.write_bytes(b"protected")
+            (destination / "btn_wood_gold_normal.png").symlink_to(external)
+            with (mock.patch.object(generator, "ROOT", destination),
+                  mock.patch.object(generator, "STYLES", {"wood_gold": generator.STYLES["wood_gold"]}),
+                  mock.patch.object(generator, "STATES", ("normal",))):
+                with self.assertRaisesRegex(ValueError, "symlink"):
+                    generator.main()
+            self.assertEqual(external.read_bytes(), b"protected")
+            self.assertTrue((destination / "btn_wood_gold_normal.png").is_symlink())
+
+    def test_failed_atomic_publish_preserves_previous_png_and_cleans_staging(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            target = root / "button.png"
+            target.write_bytes(b"previous-good-png")
+            with mock.patch.object(generator.os, "replace", side_effect=OSError("write failed")):
+                with self.assertRaisesRegex(OSError, "write failed"):
+                    generator._write_png(target, b"new-complete-png")
+            self.assertEqual(target.read_bytes(), b"previous-good-png")
+            self.assertEqual([p.name for p in root.iterdir()], ["button.png"])
+
+    def test_non_regular_png_output_does_not_get_replaced(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            target = root / "button.png"
+            target.mkdir()
+            with self.assertRaisesRegex(ValueError, "not a regular file"):
+                generator._write_png(target, b"content")
+            self.assertTrue(target.is_dir())
 
 
 if __name__ == "__main__":

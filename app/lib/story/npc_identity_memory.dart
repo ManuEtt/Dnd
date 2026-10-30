@@ -31,24 +31,27 @@ class NpcIdentityContext {
   ///
   /// This map must not be submitted to the current string-only backend API:
   /// adding an ID-aware API and validating it server-side is separate work.
-  Map<String, Object> toContextMap() => {
+  // The read-only context must remain immutable at *every* depth. A
+  // mutable nested note map or list could otherwise be changed after the
+  // confirmed snapshot was prepared, without updating the saved campaign.
+  Map<String, Object> toContextMap() => Map<String, Object>.unmodifiable({
     'campaignId': campaignId,
     'campaignRevision': revision,
     'npcId': npcId,
     'npcName': _oneLine(npcName),
     'alive': alive,
     'relationship': _oneLine(relationship),
-    'notes': [
+    'notes': List<Map<String, Object>>.unmodifiable([
       for (final note in notes)
-        {
+        Map<String, Object>.unmodifiable({
           'id': note.id,
           'npcId': note.npcId,
           'relationship': _oneLine(note.relationship),
           'note': _oneLine(note.note),
           'recordedAt': note.recordedAt.toUtc().toIso8601String(),
-        },
-    ],
-  };
+        }),
+    ]),
+  });
 }
 
 /// Reads and revalidates confirmed NPC identity without name-based guesses.

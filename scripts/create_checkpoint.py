@@ -217,6 +217,24 @@ def validate_patch(root: Path, base: str, patch: Path,
         raise ValueError('Applied patch does not reproduce the complete source manifest.')
 
 
+@contextlib.contextmanager
+def exclusive_checkpoint_output(output_dir: Path):
+    """Keep versioned artifacts and stable aliases under one writer.
+
+    mkdir is atomic across processes. A hard-crash lock intentionally remains
+    in place: never steal it and risk publishing over a running checkpoint.
+    """
+    lock = output_dir / '.checkpoint.lock'
+    try:
+        lock.mkdir()
+    except FileExistsError as error:
+        raise ValueError('Checkpoint publication already in progress.') from error
+    try:
+        yield
+    finally:
+        lock.rmdir()
+
+
 def create_checkpoint(root: Path, output_dir: Path, *, base: str, label: str,
                       now: datetime | None = None) -> dict:
     root, output_dir = root.resolve(), output_dir.resolve()
@@ -255,34 +273,35 @@ def create_checkpoint(root: Path, output_dir: Path, *, base: str, label: str,
         'file_count': len(expected), 'files': expected,
     }
     output_dir.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix='.checkpoint-', dir=output_dir) as temp:
-        staging = Path(temp)
-        archive, patch, manifest, sums = (staging / names[key]
-                                          for key in ('archive', 'patch', 'manifest', 'checksums'))
-        create_archive(root, archive, layout='root')
-        validate_archive(archive, expected)
-        create_patch(root, base_commit, patch, set(expected), staging)
-        validate_patch(root, base_commit, patch, expected, staging)
-        manifest.write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + '\n',
-                            encoding='utf-8')
-        # Include older versioned artifacts too, so the stable list remains useful.
-        historical_files = previous_checkpoint_files(output_dir)
-        checksum_files = {name: path for name, (path, _) in historical_files.items()}
-        checksum_files.update({path.name: path for path in (archive, patch, manifest)})
-        latest = staging / LATEST
-        shutil.copyfile(archive, latest)
-        checksum_files[LATEST] = latest
-        sums.write_text(''.join(
-            f'{sha256_previous_checkpoint(output_dir, name, historical_files[name][1]) if name in historical_files else sha256(path)}  {name}\n'
-            for name, path in sorted(checksum_files.items())
-        ), encoding='utf-8')
-        # All verification finishes before replacing either stable alias.
-        for key in ('archive', 'patch', 'manifest', 'checksums'):
-            os.replace(staging / names[key], output_dir / names[key])
-        os.replace(latest, output_dir / LATEST)
-        stable_sums = staging / 'SHA256SUMS.txt'
-        shutil.copyfile(output_dir / names['checksums'], stable_sums)
-        os.replace(stable_sums, output_dir / 'SHA256SUMS.txt')
+    with exclusive_checkpoint_output(output_dir):
+        with tempfile.TemporaryDirectory(prefix='.checkpoint-', dir=output_dir) as temp:
+            staging = Path(temp)
+            archive, patch, manifest, sums = (staging / names[key]
+                                              for key in ('archive', 'patch', 'manifest', 'checksums'))
+            create_archive(root, archive, layout='root')
+            validate_archive(archive, expected)
+            create_patch(root, base_commit, patch, set(expected), staging)
+            validate_patch(root, base_commit, patch, expected, staging)
+            manifest.write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + '\n',
+                                encoding='utf-8')
+            # Include older versioned artifacts too, so the stable list remains useful.
+            historical_files = previous_checkpoint_files(output_dir)
+            checksum_files = {name: path for name, (path, _) in historical_files.items()}
+            checksum_files.update({path.name: path for path in (archive, patch, manifest)})
+            latest = staging / LATEST
+            shutil.copyfile(archive, latest)
+            checksum_files[LATEST] = latest
+            sums.write_text(''.join(
+                f'{sha256_previous_checkpoint(output_dir, name, historical_files[name][1]) if name in historical_files else sha256(path)}  {name}\n'
+                for name, path in sorted(checksum_files.items())
+            ), encoding='utf-8')
+            # All verification finishes before replacing either stable alias.
+            for key in ('archive', 'patch', 'manifest', 'checksums'):
+                os.replace(staging / names[key], output_dir / names[key])
+            os.replace(latest, output_dir / LATEST)
+            stable_sums = staging / 'SHA256SUMS.txt'
+            shutil.copyfile(output_dir / names['checksums'], stable_sums)
+            os.replace(stable_sums, output_dir / 'SHA256SUMS.txt')
     return {**{key: str(output_dir / name) for key, name in names.items()},
             'latest_archive': str(output_dir / LATEST),
             'latest_checksums': str(output_dir / 'SHA256SUMS.txt'),

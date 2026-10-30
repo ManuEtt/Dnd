@@ -136,3 +136,146 @@ Akzeptanz:
 
 - `main` `5f9a01dd73f68ad4f9e226f859a8ca87803b8337` hat PR #185 integriert. Chat-C-PR #178 betrifft ausschließlich die unabhängige `campaign_memory_panel.dart`/Tests, keine Überschreibung von `fantasy_adventure_hud.dart`.
 - Früherer vollständiger CI-Beleg [#40219700324](https://github.com/ManuEtt/Dnd/actions/runs/40219700324); erneute kombinierte CI nach diesem Merge ausstehend. Keine JSON-/SQLite-Migration, keine reale Geräteprüfung.
+
+### Integrierter Nachtrag aus PR #437
+
+## 30.10.2026 – Chat C: Ausrüstungsdialog bei 200 % Schrift und IME
+
+- **Ausgangs-main:** `718388dda5c020670ec306843058674a85f54ba0`.
+- **Branch:** `feat/chat-c/equipment-loadout-large-text-ime-20261030`.
+- **Technische Commits:** `d0ca27d99429440f0b912e79913df06e7d63c004`,
+  `bc82f1c262844a825685507bdb30e8fe27dbdde0`.
+- **Problem:** Der Ausrüstungsdialog zeigte einen nicht-scrollenden Titel
+  über einem eigenen Scrollbereich; bei sehr großer Android-Schrift und
+  geöffneter IME waren Teile der Bedienung schwer erreichbar.
+- **IMPLEMENTIERT:** `app/lib/ui/equipment_loadout_dialog.dart` verwendet
+  `AlertDialog(scrollable: true)`; der bisher verschachtelte
+  `SingleChildScrollView` entfällt, Aktionsbuttons bleiben getrennt.
+  Ab 180 % Schrift wird die lange Checkbox-Beschriftung für Rüstungsübung
+  verkürzt. Keine Änderung am Vorschau- oder Bestätigungspfad.
+- **TESTS ERGÄNZT:** `app/test/equipment_loadout_ime_test.dart`:
+  zwei negative Abbruch-/Sperrungsfälle bei 320/360 dp und ein positiver
+  Touch-Scroll- und Bestätigungsfall bei 320 dp, jeweils 200 %/IME.
+  Original-`HeroCharacter` bleibt unverändert; die Dialogwahl liefert
+  ausschließlich eine Regelvorschau.
+- **GETESTET:** main, Masterprompt, andere PR-Dateiüberschneidungen,
+  Quellcode und bestehender Ausrüstungs-Widgettest geprüft. Code und
+  Tests auf eigenem Branch gesichert. **Flutter-/CI-Ergebnis offen.**
+- **NICHT GETESTET:** Flutter lokal (SDK fehlt), tatsächlicher Android-
+  TalkBack- und IME-Gerätetest, Upgrade, gesamter Android-Build.
+- **BLOCKIERT:** Bis zum erfolgreichen CI-Lauf Draft lassen. Geteilte
+  README- und Checkpoint-Einträge durch Chat D additiv konsolidieren.
+- **Migration:** Keine Domain-/Regel-/Inventar-, SQLite- oder
+  JSON-Schemaänderung, keine Migration oder Versionsänderung.
+- **Nächster Schritt:** Auf echtem Android-Gerät bei 320 dp, 200 %
+  Schrift und IME Dropdown- und Checkbox-Touch-Ziele sowie
+  Abbruch/Übernahme mit TalkBack prüfen.
+
+---
+
+## 30.10.2026 – Chat C: EP-Belohnungsdialog bei 200 % Schrift und IME
+
+- **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `feat/chat-c/xp-reward-dialog-ime-scroll-20261030`.
+- **PR:** [#426](https://github.com/ManuEtt/Dnd/pull/426) (Draft bis finaler CI).
+- **Implementierungscommits:** `3622b4bf494ded300367ee781998be4e8dd386a0`
+  (Scrollstruktur), `9f5012b98bd432c058c9a2ca39978b9ffdc42132`
+  (Format/Scrollversuch), `eb5bb61e4d84a6cfe8b249ea59187e14c8c5bcbe`
+  (tatsächlich antippbare kompakte Zustimmung/Touch-Scroll).
+- **Problem:** Unter Android bei 320/360 dp, 200 % Schrift und
+  geöffneter Tastatur waren Inhalte nicht zuverlässig scrollbar; die
+  ursprüngliche Zustimmungszeile war im Diagnoselauf 448 dp hoch gegenüber
+  einer 236 dp hohen Scrollfläche und konnte nicht in den Sichtbereich
+  vollständig hineinbewegt werden.
+- **IMPLEMENTIERT:** `app/lib/ui/experience_reward_dialog.dart` verwendet
+  `AlertDialog(scrollable: true)` ohne verschachteltes inneres Scrollen;
+  Abbruch und bestätigte Aktion bleiben getrennt außerhalb des Inhalts.
+  Bei großer Schrift lautet der kurze ausdrückliche Zustimmungstitel
+  „EP ausdrücklich bestätigen“; die volle bisherige Formulierung
+  bleibt bei normaler Schrift erhalten.
+- **TESTS ERGÄNZT:** `app/test/experience_reward_large_text_ime_test.dart`
+  mit vier Fällen: Abbruch bei 320/360 dp, positive explizite EP-Auswahl
+  (keine automatische Buchung) und negative ungültige EP bei 320 dp.
+  Test unterstützt echte Touch-Scrollgesten anstatt bloßer Finder-Sichtbarkeit.
+- **GETESTET:** Projektstatus, vollständiger Masterprompt/Projektanweisungen,
+  `main`, PR-Pfade und vorbestehende EP-/Widgettests über GitHub geprüft.
+  In [CI #41119777359](https://github.com/ManuEtt/Dnd/actions/runs/41119777359)
+  bestanden die zwei Abbruchtests, aber Zustimmung war nicht erreichbar;
+  [Diagnose #41120401425](https://github.com/ManuEtt/Dnd/actions/runs/41120401425)
+  lieferte die konkrete 448/236-dp-Ursache. Finale Tests nach dem neuen
+  UI-/Test-Fix sind beim Schreiben noch nicht als bestanden nachgewiesen.
+- **NICHT GETESTET:** Echte TalkBack-/IME-Gerätebedienung, Android-Upgrade und
+  produktive Release-Signierung. Lokal kein Flutter-/Dart-SDK;
+  finale GitHub-CI separat nachweisen.
+- **BLOCKIERT:** Keine lokale Flutter-Toolchain. GitHub-Actions-Queue ist
+  durch parallel laufende PRs belastet. Geteilte README-/Zentral-Checkpoint-
+  Ergänzungen bei Integration durch Chat D additiv konsolidieren.
+- **Migration/Kompatibilität:** Keine geänderten XP-Domainregeln, Event-IDs,
+  Spielstände, SQLite-Schema, JSON-Formate oder App-Version.
+- **Nächster Schritt:** Echter Android-Gerätetest bei 320 dp/200 %/IME:
+  Checkbox bis zur Antippbarkeit scrollen, Zustimmung setzen,
+  Buchungswahl und Abbrechen auslösen, TalkBack-Labels prüfen.
+
+---
+
+- **Testnachtrag 30.10.2026:** Der Zwischenstand `e5491f4` hatte wegen
+  einer fehlerhaften automatischen Testbearbeitung einen Dart-Syntaxfehler
+  in Zeile 26; keine reale XP-Regel-Regression. Die **vollständige Testdatei**
+  wurde in `746f4b4da9367b2a92ddddd53eb6739bb6dfc4d8` repariert.
+  [Gezielte CI #41122944623](https://github.com/ManuEtt/Dnd/actions/runs/41122944623)
+  erfolgreich: vier neue große-Schrift-/IME-Widgettests und sieben vorhandene
+  EP-Dialogtests, darunter SQLite-Quittung; Dart-Format zwei Dateien ohne Änderung.
+  Echte Geräteprüfung, Gesamtsuite und Android-Build auf finalem Merge-HEAD
+  getrennt prüfen. Diagnoseworkflow wird nicht im finalen PR belassen.
+
+## 30.10.2026 – Chat C: Ausstehende Handlungen bei großer Schrift/IME
+
+- **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `feat/chat-c/pending-action-controls-large-text-20261030`.
+- **Pull Request:** [#417](https://github.com/ManuEtt/Dnd/pull/417) (separat von anderen Chat-C-Paketen).
+- **Code-/Testcommit:** `3a48e283da3749d5a49a0563730059fbd8bf1a94`.
+- **Problem:** Im festen Abenteuer-Composer teilen sich die Buttons zur
+  Wiederbestätigung und zum Verwerfen bisher einen Wrap, der bei 320/360 dp
+  und 200 % Schrift die Beschriftung stark verengt. Bei geöffneter Tastatur
+  müssen beide Entscheidungen weiter getrennt erreichbar bleiben.
+- **IMPLEMENTIERT:** `app/lib/ui/pending_action_status.dart` stellt
+  ab 180 % Schrift und unter 500 dp die Retry-/Discard-Aktionen vollbreit
+  vertikal dar. Der vorhandene Volltextschalter bleibt separat; bei
+  normaler Schrift bleibt die Wrap-Anordnung bestehen. Bereits vorhandene
+  `interactionBlocked`-/`submitting`-Prüfungen sind unverändert.
+- **Fokus-Regressionsbefund:** Die scrollbare Flutter-Ansicht kann selbst einen Tab-Fokus-Stopp belegen; der Widgettest wartet maximal drei Tab-Tastendrücke pro Zielaktion, verlangt anschließend korrekte Reihenfolge und Enter-Auslösung. Die UI verwendet dafür eine explizite `OrderedTraversalPolicy` mit Fokuspositionen 0/1/2.
+- **TESTS ERGÄNZT:** `app/test/pending_action_controls_large_text_test.dart`
+  umfasst sieben Fälle: zwei schmale Displaybreiten mit 200 % und simulierter
+  IME, Tab/Enter, blockierte Aktionen, lange NPC-Textvorschau ohne Mutation,
+  vollständig ausgeblendete Aktionen während Submit und Standardlayout.
+- **GETESTET:** Live-main/PRs/CI und aktuelle UI-/Testdateien geprüft;
+  neue Implementierung und Tests auf eigenem Branch gesichert.
+  Vollständige CI erst nach Lauf als erfolgreich bezeichnen.
+- **NICHT GETESTET:** Flutter/Dart lokal (SDK fehlt); tatsächlicher
+  Android-TalkBack-, Bildschirmtastatur- und Upgrade-Test.
+- **BLOCKIERT:** Gemeinsame README-/Zentral-Checkpoint-Diffs bei
+  Integration durch Chat D additiv koordinieren. Kein autonomer Merge.
+- **Migration/Kompatibilität:** Keine Regel-, Outbox-, SQLite-, JSON-,
+  Klassenressourcen- oder Versionsänderung; keine Migration.
+- **Nächster Schritt:** Echte TalkBack-/IME-Geräteabnahme bei 320 dp/
+  200 %: beide Entscheidungen vollständig vorlesen, unabhängig fokussieren,
+  aktivieren und bei Sperre ohne Callback lassen.
+
+---
+
+### NPC-Auswahl aus PR #422
+
+## 30.10.2026 – Chat C: NPC-Auswahl bei 200 % Schrift (PR #422)
+
+- **Ausgangs-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`; App `0.8.48+98`.
+- **Eigener Branch:** `feat/chat-c/npc-picker-large-text-20261030`; **Pull Request:** [#422](https://github.com/ManuEtt/Dnd/pull/422) (Draft); letzter Code-/Test-Commit vor Dokumentationsupdates: `d706b5a5d2d892fd3ed8c69f6e5d2346ad71fa2e`. Finalen HEAD anhand des PRs ermitteln.
+- **Ausgangsproblem:** Die NPC-Liste schätzte jede Zeile auf 72 px. Lange eindeutige Namen und Beziehungen können bei 200 % Schrift mehr Höhe benötigen; auf kleinen Displays war der Dialog nicht als Ganzes scrollbar.
+- **IMPLEMENTIERT:** `app/lib/ui/npc_story_selection_dialog.dart` setzt `AlertDialog(scrollable: true)` und eine maximal 320 px hohe, `shrinkWrap`-gesteuerte NPC-Liste ohne feste Zeilenhöhe ein. Bestätigte NPC-IDs bleiben Grundlage der Auswahl; Abbrechen liegt außerhalb des Scrollbereichs.
+- **TESTS ERGÄNZT:** `app/test/npc_story_selection_small_screen_test.dart`: 320/360 dp bei 200 % Schrift, Scrollen zum zwölften gleichnamigen NPC, gespeicherte ID und Revision, unveränderte Kampagnen-JSON-Daten; negativer Fall mit fehlenden bestätigten Erinnerungen und Abbrechen.
+- **GETESTET:** GitHub-main, alle 32 vorher offenen PRs, die sieben Chat-C-PR-Dateilisten und eigenen Vergleich gegen main geprüft. Commit und Draft-PR erstellt. Für die neuen Widgettests liegt noch kein ausgeführtes Testergebnis vor.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse/-Tests, Android-APK, Python-/Backend-Gates und Realgerät/TalkBack, mangels Flutter-/Dart-SDK und GitHub-Checkout im lokalen Container. GitHub-Actions-Ergebnis des finalen Branch-HEAD separat überprüfen.
+- **BLOCKIERT:** Lokale SDK-Ausführung fehlt; bis zum vollständigen CI-Erfolg und Review keine Mergefreigabe. Globale README/Checkpoint-Abschnitte mit Chat D bei Integration additiv konsolidieren.
+- **NOCH NICHT IMPLEMENTIERT:** Keine Regel-, KI-, Story-, Speicher-, Schema- oder JSON-Änderung; keine Migration oder Versionsänderung.
+- **NÄCHSTER SCHRITT:** Unabhängige Bedienungsprüfung der Kampfchronik bei 320 dp / 200 % Schrift und langen Ereigniszusammenfassungen. Akzeptanz: kein Textüberlauf, alle Ereignisdetails erreichbar, nur zulässige Belegfelder in Semantics, positive und negative Widgettests.
+
+---
