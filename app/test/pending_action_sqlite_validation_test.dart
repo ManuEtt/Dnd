@@ -48,14 +48,14 @@ void main() {
     await reject(campaignId: '');
     await reject(campaignId: '   ');
     await reject(campaignId: 'bad\u0000id');
-    await reject(campaignId: 'c' * 129);
+    await reject(campaignId: List<String>.filled(129, 'c').join());
     await reject(requestId: '');
     await reject(requestId: 'invalid id');
     await reject(requestId: 'bad/slash');
-    await reject(requestId: 'r' * 129);
+    await reject(requestId: List<String>.filled(129, 'r').join());
     await reject(text: '');
     await reject(text: '   ');
-    await reject(text: 'x' * 4001);
+    await reject(text: List<String>.filled(4001, 'x').join());
 
     // A rejected direct store call must not leave a row that crashes restore.
     expect(await repository.pendingActionFor('camp'), isNull);
