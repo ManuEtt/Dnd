@@ -152,9 +152,8 @@ class MemoryEngine {
       final nameKey = _memoryNormalize(npc.name);
       if (nameKey.isEmpty) return null;
       if (npcNameCounts[nameKey] == 1) return npc.name;
-      // Unlike a unique visible name, an ambiguous identity requires its
-      // stored ID in narrative context. Reject line breaks, separators and
-      // overlong IDs rather than serializing an unsafe identity.
+      // Only a canonical, single-line stored ID can distinguish same-name
+      // NPCs in confirmed narrative context.
       if (!_safeNpcId.hasMatch(npc.id)) return null;
       return '${npc.name} (NPC-ID: ${npc.id})';
     }
@@ -395,144 +394,9 @@ String _canonicalJson(Object? value) {
   return jsonEncode(ordered(value));
 }
 
-// Only canonical, single-line stored IDs may disambiguate same-name NPCs in
-// summaries or recalled context. Unique names retain legacy compatibility.
-final RegExp _safeNpcId = RegExp(r'^[a-zA-Z0-9_-]{1,64}
-    .toLowerCase()
-    .replaceAll('ä', 'ae')
-    .replaceAll('ö', 'oe')
-    .replaceAll('ü', 'ue')
-    .replaceAll('ß', 'ss')
-    .replaceAll(RegExp(r'\s+'), ' ')
-    .trim();
-
-Set<String> _memoryTokens(String text) {
-  const stopWords = {
-    'ich',
-    'du',
-    'dich',
-    'an',
-    'erinnere',
-    'erinnerst',
-    'erinnern',
-    'erinnerung',
-    'erinnerungen',
-    'erzaehl',
-    'erzaehle',
-    'erzaehlen',
-    'erzaehlst',
-    'weisst',
-    'weiss',
-    'wissen',
-    'weissst',
-    'bisher',
-    'bisherige',
-    'bisherigen',
-    'bisheriges',
-    'geschichte',
-    'tagebuch',
-    'zusammenfassung',
-    'zusammenfassen',
-    'zusammen',
-    'fass',
-    'fasse',
-    'rueckblick',
-    'unsere',
-    'unser',
-    'unserer',
-    'passiert',
-    'geschehen',
-    'daran',
-    'dazu',
-    'darueber',
-    'der',
-    'die',
-    'das',
-    'ein',
-    'eine',
-    'einen',
-    'einem',
-    'einer',
-    'und',
-    'oder',
-    'mit',
-    'den',
-    'dem',
-    'des',
-    'ist',
-    'sind',
-    'war',
-    'waren',
-    'wird',
-    'werden',
-    'zum',
-    'zur',
-    'von',
-    'fuer',
-    'auf',
-    'aus',
-    'bei',
-    'ueber',
-    'unter',
-    'nach',
-    'vor',
-    'als',
-    'was',
-    'wie',
-    'wer',
-    'bitte',
-    'moechte',
-    'moechtest',
-    'will',
-    'kann',
-    'koennte',
-    'kannst',
-    'habe',
-    'hast',
-    'hat',
-    'mich',
-    'mir',
-    'mein',
-    'meine',
-    'meinen',
-    'seine',
-    'ihr',
-    'ihre',
-    'uns',
-    'euch',
-    'sich',
-    'noch',
-    'wieder',
-    'jetzt',
-    'dann',
-    'dort',
-    'hier',
-    'nun',
-    'auch',
-    'man',
-    'diese',
-    'dieser',
-    'dieses',
-    'gehe',
-    'tun',
-    'frage',
-    'fragen',
-  };
-  return RegExp(r'[a-z0-9]+')
-      .allMatches(_memoryNormalize(text))
-      .map((match) => match.group(0)!)
-      .where((token) => token.length > 2 && !stopWords.contains(token))
-      .toSet();
-}
-
-String _memoryTruncate(String text, int maximum) {
-  if (text.length <= maximum) return text;
-  var end = maximum - 1;
-  final last = text.codeUnitAt(end - 1);
-  if (last >= 0xD800 && last <= 0xDBFF) end--;
-  return '${text.substring(0, end).trimRight()}…';
-}
-);
+// Only canonical, single-line IDs can disambiguate names in narrator text.
+// Unique names keep their legacy rendering even with unusual stored IDs.
+final RegExp _safeNpcId = RegExp(r'^[a-zA-Z0-9_-]{1,64}$');
 
 String _memoryNormalize(String text) => text
     .toLowerCase()
