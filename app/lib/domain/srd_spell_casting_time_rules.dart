@@ -37,6 +37,7 @@ class SrdSpellCastingTimeAssessment {
 /// untrusted casting-time text. Classifying a triggered Reaction/Bonus Action
 /// here never approves its separately required trigger.
 class SrdSpellCastingTimeRules {
+  // Validate again at preflight; a direct constructor bypasses fromJson.
   const SrdSpellCastingTimeRules._();
 
   static final RegExp _invisible = RegExp(
