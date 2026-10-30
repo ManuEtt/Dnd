@@ -411,6 +411,7 @@ class FantasyShortcutTile extends StatefulWidget {
     this.approvedIconIndex,
     this.style = FantasyButtonStyle.woodGold,
     this.selected = false,
+    this.semanticHint,
   });
 
   final String label;
@@ -426,6 +427,9 @@ class FantasyShortcutTile extends StatefulWidget {
 
   /// For persistent states such as the actively listening microphone.
   final bool selected;
+
+  /// Explains an unavailable action to screen readers without changing labels.
+  final String? semanticHint;
 
   @override
   State<FantasyShortcutTile> createState() => _FantasyShortcutTileState();
@@ -461,6 +465,7 @@ class _FantasyShortcutTileState extends State<FantasyShortcutTile> {
         enabled: enabled,
         selected: widget.selected,
         label: widget.label,
+        hint: widget.semanticHint,
         child: AnimatedScale(
           scale: enabled && _pressed ? .965 : 1,
           duration: const Duration(milliseconds: 105),
@@ -590,6 +595,12 @@ class FantasyPinnedActionBar extends StatelessWidget {
         View.of(context).viewInsets.bottom > 0;
     // Keep the existing InkWell tree untouched while the action is enabled:
     // an always-on Tooltip would alter the pointer-down/pressed interaction.
+    final attackDisabledReason = busy
+        ? 'Eine Handlung wird bereits verarbeitet.'
+        : !attackEnabled
+        ? attackUnavailableReason ??
+              'Hier ist derzeit kein Angriff möglich.'
+        : null;
     final attackShortcut = FantasyShortcutTile(
       key: const ValueKey('adventure-shortcut-attack'),
       label: 'Angriff',
@@ -599,6 +610,7 @@ class FantasyPinnedActionBar extends StatelessWidget {
       color: FantasyPalette.danger,
       width: double.infinity,
       compact: true,
+      semanticHint: attackDisabledReason,
       onTap: busy || !attackEnabled ? null : onAttack,
     );
     return DecoratedBox(
@@ -676,12 +688,10 @@ class FantasyPinnedActionBar extends StatelessWidget {
                 ),
                 const SizedBox(width: 7),
                 Expanded(
-                  child: busy || !attackEnabled
+                  child: attackDisabledReason != null
                       ? Tooltip(
-                          message: busy
-                              ? 'Eine Handlung wird bereits verarbeitet.'
-                              : attackUnavailableReason ??
-                                    'Hier ist derzeit kein Angriff möglich.',
+                          message: attackDisabledReason,
+                          excludeFromSemantics: true,
                           child: attackShortcut,
                         )
                       : attackShortcut,
