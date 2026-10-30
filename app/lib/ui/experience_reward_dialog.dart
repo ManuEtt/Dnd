@@ -159,8 +159,12 @@ class _ExperienceRewardDialogState extends State<ExperienceRewardDialog> {
               contentPadding: EdgeInsets.zero,
               controlAffinity: ListTileControlAffinity.leading,
               value: _approved,
-              title: const Text(
-                'Ich bestätige diese EP-Belohnung ausdrücklich.',
+              // Large Android text otherwise makes this tile taller
+              // than the visible dialog above the on-screen keyboard.
+              title: Text(
+                MediaQuery.textScalerOf(context).scale(1) >= 1.8
+                    ? 'EP ausdrücklich bestätigen'
+                    : 'Ich bestätige diese EP-Belohnung ausdrücklich.',
               ),
               onChanged: (value) => setState(() => _approved = value ?? false),
             ),
