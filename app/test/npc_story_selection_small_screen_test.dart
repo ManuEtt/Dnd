@@ -16,8 +16,8 @@ Campaign _campaign({int count = 12, bool withNotes = true}) => Campaign(
     for (var i = 0; i < count; i++)
       WorldNpc(
         id: 'npc-$i',
-        name: 'Mira die Hüterin der vergessenen Geschichten',
-        relationship: 'Wächterin mit besonderer Verantwortung',
+        name: 'Mira die Wächterin',
+        relationship: 'freundlich und aufmerksam',
       ),
   ],
   npcRelationshipNotes: withNotes
