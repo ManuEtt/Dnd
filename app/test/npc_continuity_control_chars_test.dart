@@ -31,7 +31,8 @@ void main() {
           id: 'note-1',
           npcId: 'mira',
           relationship: 'vorsichtig\u2066',
-          note: 'Bestätigt\u0000\u001b\u007f\u0085\u2028\u202e\u2069 und gespeichert.',
+          note:
+              'Bestätigt\u0000\u001b\u007f\u0085\u2028\u202e\u2069 und gespeichert.',
           recordedAt: DateTime.utc(2026, 10, 30, 5),
         ),
       ],
