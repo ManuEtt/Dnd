@@ -1,5 +1,16 @@
 # Codex-Checkpoint – Würfelraunen
 
+## CHAT D – Native SAF-Backup-Dateinamen, PR #421 (30.10.2026)
+
+- **Ausgangs-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`, **Branch:** `fix/chat-d/backup-filename-format-20261030`, **PR:** [#421](https://github.com/ManuEtt/Dnd/pull/421) (Draft), **technische Commits:** `55477475` und `4f26cdd5`.
+- **IMPLEMENTIERT:** native Android-Dateinamen-Validierung in `JsonBackupIo.kt` verbietet sämtliche Unicode-FORMAT-Codepoints, einschließlich Bidi-Steuerung, Zero-Width-Joinern und ergänzenden Tags, sowie alleinstehende UTF-16-Surrogate. Bestehende Pfad- und Steuerzeichenprüfungen bleiben. Test in `JsonBackupIoTest.kt` ergänzt positive sichtbare Unicode-Namen und negative Umgehungsfälle.
+- **GETESTET:** zum Zeitpunkt dieses Checkpoints noch kein erfolgreicher finaler CI-Lauf bestätigt; neue JUnit-Tests vorhanden, Ausführung folgt mit GitHub Actions.
+- **NICHT GETESTET:** finale Python-/Backend-/Flutter-/native Gradle-/APK-Suite sowie echter Android-SAF-Dateidialog.
+- **BLOCKIERT:** lokal kein Repository-Checkout über DNS und kein Flutter SDK; GitHub-CI als Abnahmeweg verfügbar.
+- **NOCH NICHT IMPLEMENTIERT:** keine allgemeinen Homoglyphenfilter (wäre eine separate Produktentscheidung). Vor Review/Integration vollständige finale CI prüfen.
+- **Kompatibilität:** keine Änderungen an Datenbank/Spielständen/JSON, Berechtigungen, App-Version, Story oder D&D-Regeln. Dokumentationskonflikte mit parallelen PRs additiv zusammenführen.
+- **Nächster Schritt:** PR #421 auf seinem finalen HEAD einschließlich `:app:testDebugUnitTest` und Android-APK vollständig abnehmen; erst dann Review/Mergeentscheidung.
+
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
 Stand: 29.10.2026, UTC. [PR #390](https://github.com/ManuEtt/Dnd/pull/390)
