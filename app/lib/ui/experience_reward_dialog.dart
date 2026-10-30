@@ -73,98 +73,99 @@ class _ExperienceRewardDialogState extends State<ExperienceRewardDialog> {
     final currentXp = widget.campaign.hero.experience;
     return AlertDialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+      // Keep action buttons outside the scrollable content when the IME
+      // consumes most of a compact Android display.
+      scrollable: true,
       title: const Text('EP-Belohnung bestätigen'),
       content: SizedBox(
         width: 360,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text(
-                'Nur tatsächlich vereinbarte Belohnungen eintragen. '
-                'Eine KI-Erzählung vergibt niemals eigenständig EP.',
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              'Nur tatsächlich vereinbarte Belohnungen eintragen. '
+              'Eine KI-Erzählung vergibt niemals eigenständig EP.',
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              key: const ValueKey('xp-reward-id'),
+              controller: _rewardId,
+              maxLength: 100,
+              autocorrect: false,
+              textCapitalization: TextCapitalization.none,
+              decoration: const InputDecoration(
+                labelText: 'Eindeutige Belohnungskennung',
+                hintText: 'z. B. quest-kapitel-1',
+                helperText:
+                    'Für dieselbe Belohnung immer dieselbe Kennung nutzen.',
+                helperMaxLines: 2,
               ),
-              const SizedBox(height: 12),
-              TextField(
-                key: const ValueKey('xp-reward-id'),
-                controller: _rewardId,
-                maxLength: 100,
-                autocorrect: false,
-                textCapitalization: TextCapitalization.none,
-                decoration: const InputDecoration(
-                  labelText: 'Eindeutige Belohnungskennung',
-                  hintText: 'z. B. quest-kapitel-1',
-                  helperText:
-                      'Für dieselbe Belohnung immer dieselbe Kennung nutzen.',
-                  helperMaxLines: 2,
-                ),
-                onChanged: (_) => setState(() => _approved = false),
+              onChanged: (_) => setState(() => _approved = false),
+            ),
+            const SizedBox(height: 6),
+            TextField(
+              key: const ValueKey('xp-reward-amount'),
+              controller: _amount,
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              maxLength: 6,
+              decoration: const InputDecoration(
+                labelText: 'Erfahrungspunkte (EP)',
+                hintText: 'z. B. 300',
               ),
-              const SizedBox(height: 6),
-              TextField(
-                key: const ValueKey('xp-reward-amount'),
-                controller: _amount,
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                maxLength: 6,
-                decoration: const InputDecoration(
-                  labelText: 'Erfahrungspunkte (EP)',
-                  hintText: 'z. B. 300',
-                ),
-                onChanged: (_) => setState(() => _approved = false),
-              ),
-              const SizedBox(height: 8),
-              FantasyPanel(
-                padding: const EdgeInsets.all(12),
-                material: FantasyPanelMaterial.parchment,
-                child: Semantics(
-                  liveRegion: true,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Buchungsvorschau',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 6),
+              onChanged: (_) => setState(() => _approved = false),
+            ),
+            const SizedBox(height: 8),
+            FantasyPanel(
+              padding: const EdgeInsets.all(12),
+              material: FantasyPanelMaterial.parchment,
+              child: Semantics(
+                liveRegion: true,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Buchungsvorschau',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Bisher: ${currentXp?.toString() ?? 'nicht bestätigt'} EP',
+                    ),
+                    if (preview != null)
                       Text(
-                        'Bisher: ${currentXp?.toString() ?? 'nicht bestätigt'} EP',
+                        alreadyBooked
+                            ? 'Bereits gebucht: keine zusätzlichen EP. '
+                                  'Die vorhandene Quittung wird geprüft.'
+                            : 'Nach Bestätigung: ${preview.hero.experience} EP',
+                        key: const ValueKey('xp-reward-preview'),
                       ),
-                      if (preview != null)
-                        Text(
-                          alreadyBooked
-                              ? 'Bereits gebucht: keine zusätzlichen EP. '
-                                    'Die vorhandene Quittung wird geprüft.'
-                              : 'Nach Bestätigung: ${preview.hero.experience} EP',
-                          key: const ValueKey('xp-reward-preview'),
+                    if (error != null)
+                      Text(
+                        error,
+                        key: const ValueKey('xp-reward-validation'),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
                         ),
-                      if (error != null)
-                        Text(
-                          error,
-                          key: const ValueKey('xp-reward-validation'),
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
-                          ),
-                        ),
-                    ],
-                  ),
+                      ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 8),
-              CheckboxListTile(
-                key: const ValueKey('xp-reward-consent'),
-                contentPadding: EdgeInsets.zero,
-                controlAffinity: ListTileControlAffinity.leading,
-                value: _approved,
-                title: const Text(
-                  'Ich bestätige diese EP-Belohnung ausdrücklich.',
-                ),
-                onChanged: (value) =>
-                    setState(() => _approved = value ?? false),
+            ),
+            const SizedBox(height: 8),
+            CheckboxListTile(
+              key: const ValueKey('xp-reward-consent'),
+              contentPadding: EdgeInsets.zero,
+              controlAffinity: ListTileControlAffinity.leading,
+              value: _approved,
+              title: const Text(
+                'Ich bestätige diese EP-Belohnung ausdrücklich.',
               ),
-            ],
-          ),
+              onChanged: (value) =>
+                  setState(() => _approved = value ?? false),
+            ),
+          ],
         ),
       ),
       actionsOverflowDirection: VerticalDirection.down,
