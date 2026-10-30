@@ -94,8 +94,7 @@ class _PendingActionStatusState extends State<PendingActionStatus> {
                   MediaQuery.textScalerOf(context).scale(1) >= 1.8;
               final toggleButton = TextButton(
                 key: const ValueKey('adventure-pending-action-toggle'),
-                onPressed: () =>
-                    setState(() => _showFullText = !_showFullText),
+                onPressed: () => setState(() => _showFullText = !_showFullText),
                 child: Text(
                   _showFullText ? 'Weniger anzeigen' : 'Ganzen Text anzeigen',
                   textAlign: TextAlign.center,

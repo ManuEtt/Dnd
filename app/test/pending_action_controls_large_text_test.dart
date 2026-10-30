@@ -234,30 +234,21 @@ void main() {
   testWidgets('Beim Senden bleiben Wiederholen und Verwerfen unsichtbar', (
     tester,
   ) async {
-    await showStatus(
-      tester,
-      width: 320,
-      scale: 2,
-      submitting: true,
-    );
+    await showStatus(tester, width: 320, scale: 2, submitting: true);
     expect(
       find.byKey(const ValueKey('adventure-action-submitting')),
       findsOneWidget,
     );
     expect(find.byKey(const ValueKey('adventure-retry-action')), findsNothing);
-    expect(find.byKey(const ValueKey('adventure-discard-action')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('adventure-discard-action')),
+      findsNothing,
+    );
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Bei normaler Schrift bleibt der kompakte Wrap', (
-    tester,
-  ) async {
-    await showStatus(
-      tester,
-      width: 960,
-      scale: 1,
-      keyboard: false,
-    );
+  testWidgets('Bei normaler Schrift bleibt der kompakte Wrap', (tester) async {
+    await showStatus(tester, width: 960, scale: 1, keyboard: false);
     final retry = find.byKey(const ValueKey('adventure-retry-action'));
     final discard = find.byKey(const ValueKey('adventure-discard-action'));
     expect(
