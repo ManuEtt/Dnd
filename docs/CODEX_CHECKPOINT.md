@@ -1,5 +1,28 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat D – Sicheren Import originaler Fantasy-Grafiken absichern (30.10.2026, PR #409)
+
+[PR #409](https://github.com/ManuEtt/Dnd/pull/409) verhindert, dass der
+verifizierte Grafik-ZIP-Importer über vorhandene symbolische Links außerhalb
+des gewählten Projektziels schreibt. `scripts/import_complete_fantasy_assets.py`
+prüft nun die Zielwurzel und alle Pfadbestandteile vor dem ZIP-Import sowie
+erneut unmittelbar vor/nach dem Anlegen der Verzeichnisse. Neue Originalgrafiken
+werden exklusiv angelegt und nicht überschrieben. Die vorhandenen SHA256-,
+WebP-, CRC-, Abweichungs- und Reimport-Prüfungen bleiben unverändert.
+
+**Basis-`main`:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+**Branch:** `fix/chat-d/fantasy-import-symlink-20261030`.
+**Code-Commit:** `e2d28c1e35be405a8e09cd86a0e6f249259f2799`.
+Vier neue Regressionstests prüfen regulären Import/Reimport, Symlink als
+Assets-Verzeichnis, hängenden Symlink am Assetziel und Symlink als Projektziel.
+**GETESTET:** keine vollständige CI für diesen finalen Stand bestätigt;
+die [GitHub Actions von #409](https://github.com/ManuEtt/Dnd/pull/409/checks)
+sind maßgeblich. **NICHT GETESTET:** reale Geräteinstallation und
+vollständiger End-to-End-Build bis zum CI-Abschluss.
+**Migrationen:** keine; keine Änderung an Spielständen, SQLite-/JSON-Schemas,
+Flutter-UI oder SRD-Regeln. Fremde parallele PRs bleiben unverändert;
+README/Checkpoint bei Integration additiv konsolidieren.
+
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
 Stand: 29.10.2026, UTC. [PR #390](https://github.com/ManuEtt/Dnd/pull/390)
