@@ -1,6 +1,6 @@
 # Codex-Checkpoint – Würfelraunen
 
-## Chat A – SRD-Zauberwirkzeiten und Ritualkennzeichen (30.10.2026) – synchronisiert
+## Chat A – SRD-Zauberwirkzeiten und Ritualkennzeichen (30.10.2026) – PR #429
 
 **Ausgangs-main:** `69bfe78ec4eeb30042b26971978038a2ee9dac34`.
 **Branch:** `feat/chat-a/spell-casting-time-integrity-synced-20261030`.
