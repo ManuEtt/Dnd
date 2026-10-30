@@ -1,5 +1,18 @@
 ## 30.10.2026 – Chat C: Ausrüstungsdialog bei 200 % Schrift und IME
 
+## UI-Teilintegration des Gesamtmigrationslaufs – 30.10.2026
+
+Die neun Chat-C-UI-Pakete und der enthaltene NPC-Dialog-Reparaturbranch sind
+auf Basis `6465a4b2` regulär und mit vollständiger Historie verbunden.
+**55 Widgettests in elf Dateien**, Flutter-Analyse, Formatprüfung (544 Dateien,
+null Änderungen), Projektstruktur und Modulgrenzen sind lokal erfolgreich.
+Die ursprünglichen zehn Branchheads sind Vorfahren des Teilpakets; Main und
+Remote-Branches wurden dadurch noch nicht verändert. Gesamt-CI/Android und
+reale Geräteabnahme sind separat offen. Keine Speicher-/Regel-/Versionsänderung.
+Herkunft, Konfliktentscheidungen und nächste Integrationsprüfung:
+[UI-Teilintegrationsnachweis](CHAT_C_ALL_BRANCHES_INTEGRATION_20261030.md).
+Die früheren Vorabmeldungen darunter sind historische Einzelbranchberichte.
+
 - **Ausgangs-main:** `718388dda5c020670ec306843058674a85f54ba0`.
 - **Branch:** `feat/chat-c/equipment-loadout-large-text-ime-20261030`.
 - **Technische Commits:** `d0ca27d99429440f0b912e79913df06e7d63c004`,
