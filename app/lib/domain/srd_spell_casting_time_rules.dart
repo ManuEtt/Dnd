@@ -133,6 +133,7 @@ class SrdSpellCastingTimeRules {
     throw UnsupportedError('Ungeprüfte SRD-Zauberwirkzeit: $time');
   }
 
+  // A trigger is not an ordinary Bonus Action or Magic action approval.
   static SrdSpellCastingTimeAssessment requireSingleTurn(
     SrdSpellDefinition spell,
   ) {

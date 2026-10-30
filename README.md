@@ -3,6 +3,9 @@
 ## Chat A – Kanonische Zauberwirkzeiten und Ritualmetadaten (30.10.2026) – PR #423
 
 Neuer eigener Branch `feat/chat-a/spell-casting-time-integrity-20261030`
+## Chat A – Kanonische Zauberwirkzeiten und Ritualmetadaten (30.10.2026) – PR #429
+
+Neuer eigener Branch `feat/chat-a/spell-casting-time-integrity-synced-20261030`
 mit `SrdSpellCastingTimeRules` und Integration in die bestehende
 `SrdSpellPreflightRules.preflight`. Die Wirkzeit wird bei jedem
 Ressourcen-Preflight **strikt erneut geprüft**, auch wenn eine

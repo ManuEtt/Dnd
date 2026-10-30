@@ -79,6 +79,10 @@
 
 - **PR:** [#423](https://github.com/ManuEtt/Dnd/pull/423) (Draft). Formatter-Workflow [#41119780572](https://github.com/ManuEtt/Dnd/actions/runs/41119780572) erfolgreich, Hilfsworkflow vor finaler CI entfernt.
 - **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`, eigener Branch `feat/chat-a/spell-casting-time-integrity-20261030`.
+## 30.10.2026 – Zauberwirkzeit-/Ritualintegrität bei regulärem Preflight – PR #423
+
+- **PR:** [#429](https://github.com/ManuEtt/Dnd/pull/429) (Draft) (Draft). Formatter-Workflow [#41119780572](https://github.com/ManuEtt/Dnd/actions/runs/41119780572) erfolgreich, Hilfsworkflow vor finaler CI entfernt.
+- **Basis-main:** `69bfe78ec4eeb30042b26971978038a2ee9dac34`, eigener Branch `feat/chat-a/spell-casting-time-integrity-synced-20261030`.
 - **IMPLEMENTIERT:** `app/lib/domain/srd_spell_casting_time_rules.dart` klassifiziert alle 339 bekannten SRD-Arbeitskatalog-Wirkzeiten. `app/lib/domain/srd_spell_preflight_rules.dart` ruft `requireSingleTurn(spell)` auf, um mit dem öffentlichen Konstruktor injizierte falsche Ritualflags, nichtkanonische Zeitangaben und Steuerzeichen nicht zu übernehmen. Aktions- und Bonusaktionszauber bleiben gültig; Reaktion, getriggerte Bonusaktion, Langzeit-/Sonderzeiten bleiben gesperrt.
 - **TESTS ERSTELLT:** `app/test/srd_spell_casting_time_integrity_test.dart`: acht deterministische Gruppen mit Katalogkategorien 256/19/4/4/55/1, 29 Ritualflaggen, negative Metadatendaten, keine Slotveränderung durch Preflight, und getriggerte Zauber weiterhin getrennt.
 - **DOKUMENTIERT:** `docs/SRD_SPELL_CASTING_TIME_INTEGRITY.md`, README und globaler Checkpoint. Quelle: WotC SRD 5.2.1 Spells / Casting Time, CC BY 4.0. Status nur `partial`, keine eigene Wirkungsausführung.
