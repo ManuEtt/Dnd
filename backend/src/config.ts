@@ -29,8 +29,9 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env): Config {
   const publicOrigin = env.PUBLIC_ORIGIN?.trim() || undefined;
   if (publicOrigin) {
     const origin = new URL(publicOrigin);
-    if (origin.protocol !== 'https:' || origin.username || origin.password) {
-      throw new Error('PUBLIC_ORIGIN muss eine HTTPS-Adresse ohne Zugangsdaten sein.');
+    if (origin.protocol !== 'https:' || origin.username || origin.password ||
+        origin.pathname !== '/' || origin.search || origin.hash) {
+      throw new Error('PUBLIC_ORIGIN muss ein reiner HTTPS-Ursprung ohne Zugangsdaten, Pfad, Query oder Fragment sein.');
     }
   }
   if (!['127.0.0.1', '::1', 'localhost'].includes(host) && !publicOrigin) {

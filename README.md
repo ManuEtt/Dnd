@@ -275,3 +275,96 @@ Testsignatur/APK-Build ersetzen keine echte Geräte- oder Upgradeabnahme.
 [CC-BY-4.0-Namensnennung](THIRD_PARTY_NOTICES.md).
 Frühere README-/Checkpoint-Stände bleiben bytegenau mit Git-Blob/SHA256 in
 [docs/history/monk_tool_start_20261029/MANIFEST.json](docs/history/monk_tool_start_20261029/MANIFEST.json).
+
+### Übernommener Dokumentationsnachtrag aus PR #419
+
+## Chat D – Branch-Bereinigung vor veränderten Referenzen schützen (30.10.2026)
+
+[PR #419](https://github.com/ManuEtt/Dnd/pull/419) auf `fix/chat-d/retire-main-recheck-20261030`
+(Draft, Basis-main `55fe44475a113943c6310ec16a8ffb481185f4e9`).
+Das ausdrücklich allowlistgebundene historische Bereinigungsskript prüft vor
+jeder tatsächlichen Branchlöschung den unveränderten `main`-HEAD, den
+aktuellen Schutz-/Mergezustand des Branches und danach das Verschwinden
+der Referenz. Sechs neue Python-Regressionsfälle simulieren diese Abläufe
+ohne GitHub-Löschzugriff. **Testausführung und vollständige CI auf dem
+finalen PR-Commit noch nicht nachgewiesen**. Kein Cleanup gestartet, kein
+Branch gelöscht, keine Änderung von App, SQLite/JSON oder App-Version.
+Vor Integration mit anderen README-Änderungen additiv konsolidieren.
+
+
+
+
+### Übernommener Dokumentationsnachtrag aus PR #412
+
+## Chat D – PNG-Generierung gegen Symlinks und Teilwrites absichern (30.10.2026, PR #412)
+
+[PR #412](https://github.com/ManuEtt/Dnd/pull/412) stärkt den zu
+Beginn der Android-CI ausgeführten Generator für Fantasy-Buttons.
+`scripts/generate_fantasy_buttons.py` verweigert bekannte symbolische
+Links entlang der Ausgabeordner und an einzelnen PNG-Ausgabedateien.
+Die PNG-Bytes werden erst in einer temporären Datei vollständig geschrieben
+und danach atomar per `os.replace` veröffentlicht. Scheitert die
+Veröffentlichung, bleibt die vorige PNG unverändert; temporäre Dateien
+werden wieder entfernt. Die Bildgestaltung und deterministische
+Wiederholbarkeit ändern sich nicht.
+
+**Basis-`main`:** `55fe44475a113943c6310ec16a8ffb481185f4e9`;
+**Branch:** `fix/chat-d/fantasy-button-output-safety-20261030`;
+**Code-Commit:** `69d691a58fb12dfc850920d2c1e0f7960c4084de`.
+Fünf neue Regressionstests prüfen verlinkte Eltern-/Zielordner,
+symlink-basiertes PNG-Ziel, atomaren Schreibfehler und Sonderdateityp.
+**Abnahme:** vollständige CI auf dem finalen Dokumentations-Commit ist noch
+ausstehend; vorhandene Tests nicht vor ihrer Ausführung als bestanden zählen.
+**Migrationen:** keine. Spielstände, SRD-Regeln, Android-UI, SQLite-/JSON-Schema
+und Appversion unverändert. README-/Checkpoint-Ergänzungen bei Integration
+nur verlustfrei mit den parallelen PRs konsolidieren.
+
+
+### Übernommener Dokumentationsnachtrag aus PR #411
+
+## Chat D – Reiner HTTPS-Ursprung für Remote-Backend (30.10.2026, PR #411)
+
+[PR #411](https://github.com/ManuEtt/Dnd/pull/411) validiert
+`PUBLIC_ORIGIN` als reinen HTTPS-Ursprung und lehnt nun URL-Pfade,
+Suchparameter und Fragmente zusätzlich zu bestehenden HTTP- und
+Zugangsdaten-Verboten ab. Valide Ursprünge mit optionalem Port und
+abschließendem Schrägstrich bleiben zulässig.
+Ein neuer Backend-Test deckt erlaubte und verbotene Varianten ab.
+
+**Ausgangs-`main`:** `55fe44475a113943c6310ec16a8ffb481185f4e9`;
+**Branch:** `fix/chat-d/backend-public-origin-20261030`;
+**Code-Commit:** `7ffa749d8be11ff9a518faaf8a65fc86f940dad1`.
+**GETESTET:** keine finale CI auf Dokumentations-Commit bestätigt;
+der vollständige [Workflow des PRs](https://github.com/ManuEtt/Dnd/pull/411/checks)
+muss noch erfolgreich abgeschlossen sein.
+**NICHT GETESTET:** reales Reverse-Proxy-Deployment und Android-Gerät.
+**Migration:** keine; Spielstände, JSON-/SQLite-Schema, Story, SRD-Regeln
+und Appversion unverändert. README-/Checkpoint-Änderungen vor Integration
+mit parallelen Arbeiten verlustfrei konsolidieren.
+
+
+### Übernommener Dokumentationsnachtrag aus PR #395
+
+## Chat D – Parallele Voll-Checkpoints absichern (29.10.2026)
+
+Die Erstellung vollständiger Quell-Checkpoints serialisiert die
+Veröffentlichung der versionierten Archive, Patches, Dateimanifeste,
+Prüfsummen und stabilen `LATEST`-Aliase mit einer exklusiven
+`.checkpoint.lock`-Verzeichnissperre im Ausgabeordner.
+Ein zweiter Aufruf auf denselben Ausgabeordner wird ohne Veränderung
+der bisherigen Datensicherungen abgewiesen; nach behandelbaren
+Fehlern oder `KeyboardInterrupt` wird die eigene Sperre freigegeben.
+Nach hartem Prozessabbruch bleibt sie bewusst bestehen, statt
+unkontrolliert einen neuen Export zuzulassen. Drei neue Python-
+Regressionen. Keine Änderung an Flutter, SQLite, Spielstand-JSON,
+Backend oder App-Version. Die neue vollständige CI auf dem PR-Head
+ist noch abzunehmen.
+
+
+### Übernommener Dokumentationsnachtrag aus PR #397
+
+
+
+## Chat D – Validierung ausstehender SQLite-Handlungen (PR #397, Draft)
+
+Der öffentliche SQLite-Schreibpfad für nicht bestätigte Spielerhandlungen prüft nun auch direkte Aufrufer auf gültige Auftragskennung, Kampagnenkennung und begrenzten, nicht leeren Handlungstext. Dadurch können solche Aufrufe keinen Auftrag speichern, den die Outbox beim nächsten App-Start nicht mehr decodieren kann. Drei neue FFI-Regressionstests decken Ablehnung ohne Datenänderung, persistente Wiederherstellung/ACK und Duplikatkonflikte ab. **Noch keine finale CI-Abnahme** dieses PR-Standes; bestehende SQLite-3-/Kampagnen-JSON-1-Daten und Appversion unverändert.

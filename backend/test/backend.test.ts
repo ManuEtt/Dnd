@@ -335,6 +335,29 @@ test('configuration defaults to free local mock and rejects unsafe settings', ()
   assert.equal(paid.provider, 'openai');
 });
 
+test('PUBLIC_ORIGIN accepts only a pure HTTPS origin', () => {
+  const remoteHost = '0.0.0.0';
+  for (const url of [
+    'https://example.com/path',
+    'https://example.com/?secret=1',
+    'https://example.com/#fragment',
+    'https://example.com/path?q=1#fragment',
+    'https://user:password@example.com',
+    'http://example.com',
+  ]) {
+    assert.throws(() => readConfig({ HOST: remoteHost, PUBLIC_ORIGIN: url }), {
+      message: /PUBLIC_ORIGIN/,
+    }, url);
+  }
+  for (const url of [
+    'https://example.com',
+    'https://example.com/',
+    'https://example.com:8443/',
+  ]) {
+    assert.equal(readConfig({ HOST: remoteHost, PUBLIC_ORIGIN: url }).publicOrigin, url);
+  }
+});
+
 test('limiter fails closed on capacity rather than evicting live quotas', () => {
   const limiter = new WindowLimiter(2);
   assert.equal(limiter.take('one', now, 1000, 1), true);

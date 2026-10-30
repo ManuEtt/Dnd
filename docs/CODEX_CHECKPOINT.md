@@ -297,3 +297,123 @@ Dokumentationsprüfung: 221 Pythonfälle, Projekt-/Grenz-/Registerprüfung erfol
 `git diff --check` außerhalb des bytegenauen historischen Archivs sauber. Die
 archivierte Original-CHANGELOG-Zeile 1061 enthält bereits im Quellstand ein
 Leerzeichen am Zeilenende; es bleibt für die nachprüfbare Originaltreue erhalten.
+
+### Übernommener Dokumentationsnachtrag aus PR #419
+
+## Operativer Chat-D-Checkpoint – PR #419 (30.10.2026, 17:35 CET)
+
+- **Main zum Start:** `55fe44475a113943c6310ec16a8ffb481185f4e9`;
+  **Arbeitsbranch:** `fix/chat-d/retire-main-recheck-20261030`;
+  **Code-/Testcommit:** `b33ef1597630d2e6e896a97072a22da0b2101782`;
+  **Pull Request:** [#419](https://github.com/ManuEtt/Dnd/pull/419), Draft.
+- **Produkt:** Würfelraunen, laut aktuellem README Alpha 0.8.48+98.
+  Kein Versions-, Datenbank-, JSON-, Regel- oder Storywechsel.
+- **IMPLEMENTIERT:** In `scripts/retire_merged_branches.py` erneute Main-SHA-,
+  Schutzstatus- und Integrationsprüfung unmittelbar vor DELETE sowie
+  Nachweis der Entfernung per anschließendem GET.
+- **Geändert:** `scripts/retire_merged_branches.py`,
+  `scripts/tests/test_retire_merged_branches_execution.py`, diese
+  Dokumentation, `README.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **GETESTET:** Code und sechs Mock-basierte Tests im Branch gesichert;
+  noch kein erfolgreich ausgeführter Testlauf dieses Pakets belegt.
+- **NICHT GETESTET:** Python-Gesamtsuite, Projekt-/SRD-/Domain-Gates,
+  Backend Typecheck/Build/Tests, Dart-Format/Flutter-Analyze/Tests,
+  Android Debug/Native/ABI sowie echter Geräte- und Windows-Test.
+  CI-Status auf dem finalen HEAD separat nachprüfen.
+- **BLOCKIERT:** Lokales `git clone` ohne GitHub-DNS sowie fehlendes
+  Flutter-/Dart-SDK; GitHub Actions dient als ausführbare Abnahme.
+- **NOCH NICHT IMPLEMENTIERT:** Keine allgemeine Race-Freiheit der
+  GitHub-DELETE-REST-Operation (kein atomarer SHA-Lease beim Löschen).
+- **Nächster Schritt:** PR-#419-CI auf dem exakten finalen Kopf prüfen und
+  eventuelle Testfehler isoliert auf diesem Branch korrigieren. Kein
+  eigenmächtiger Main-Merge und keine Branchlöschung.
+
+
+
+
+### Übernommener Dokumentationsnachtrag aus PR #412
+
+## Chat D – PNG-Generierung gegen Symlinks und Teilwrites absichern (30.10.2026, PR #412)
+
+[PR #412](https://github.com/ManuEtt/Dnd/pull/412) stärkt den zu
+Beginn der Android-CI ausgeführten Generator für Fantasy-Buttons.
+`scripts/generate_fantasy_buttons.py` verweigert bekannte symbolische
+Links entlang der Ausgabeordner und an einzelnen PNG-Ausgabedateien.
+Die PNG-Bytes werden erst in einer temporären Datei vollständig geschrieben
+und danach atomar per `os.replace` veröffentlicht. Scheitert die
+Veröffentlichung, bleibt die vorige PNG unverändert; temporäre Dateien
+werden wieder entfernt. Die Bildgestaltung und deterministische
+Wiederholbarkeit ändern sich nicht.
+
+**Basis-`main`:** `55fe44475a113943c6310ec16a8ffb481185f4e9`;
+**Branch:** `fix/chat-d/fantasy-button-output-safety-20261030`;
+**Code-Commit:** `69d691a58fb12dfc850920d2c1e0f7960c4084de`.
+Fünf neue Regressionstests prüfen verlinkte Eltern-/Zielordner,
+symlink-basiertes PNG-Ziel, atomaren Schreibfehler und Sonderdateityp.
+**Abnahme:** vollständige CI auf dem finalen Dokumentations-Commit ist noch
+ausstehend; vorhandene Tests nicht vor ihrer Ausführung als bestanden zählen.
+**Migrationen:** keine. Spielstände, SRD-Regeln, Android-UI, SQLite-/JSON-Schema
+und Appversion unverändert. README-/Checkpoint-Ergänzungen bei Integration
+nur verlustfrei mit den parallelen PRs konsolidieren.
+
+
+### Übernommener Dokumentationsnachtrag aus PR #411
+
+## Chat D – Reiner HTTPS-Ursprung für Remote-Backend (30.10.2026, PR #411)
+
+[PR #411](https://github.com/ManuEtt/Dnd/pull/411) validiert
+`PUBLIC_ORIGIN` als reinen HTTPS-Ursprung und lehnt nun URL-Pfade,
+Suchparameter und Fragmente zusätzlich zu bestehenden HTTP- und
+Zugangsdaten-Verboten ab. Valide Ursprünge mit optionalem Port und
+abschließendem Schrägstrich bleiben zulässig.
+Ein neuer Backend-Test deckt erlaubte und verbotene Varianten ab.
+
+**Ausgangs-`main`:** `55fe44475a113943c6310ec16a8ffb481185f4e9`;
+**Branch:** `fix/chat-d/backend-public-origin-20261030`;
+**Code-Commit:** `7ffa749d8be11ff9a518faaf8a65fc86f940dad1`.
+**GETESTET:** keine finale CI auf Dokumentations-Commit bestätigt;
+der vollständige [Workflow des PRs](https://github.com/ManuEtt/Dnd/pull/411/checks)
+muss noch erfolgreich abgeschlossen sein.
+**NICHT GETESTET:** reales Reverse-Proxy-Deployment und Android-Gerät.
+**Migration:** keine; Spielstände, JSON-/SQLite-Schema, Story, SRD-Regeln
+und Appversion unverändert. README-/Checkpoint-Änderungen vor Integration
+mit parallelen Arbeiten verlustfrei konsolidieren.
+
+
+### Übernommener Dokumentationsnachtrag aus PR #395
+
+## Chat D – Voll-Checkpoint-Veröffentlichung serialisieren (29.10.2026)
+
+- **Basis:** `55fe44475a113943c6310ec16a8ffb481185f4e9`,
+  Branch `fix/chat-d/checkpoint-publish-lock-20261029`,
+  Code-Commit `cc2c557ea6f3eedb1e2aacf0fa761f70574528a2`.
+- **IMPLEMENTIERT:** `exclusive_checkpoint_output` in
+  `scripts/create_checkpoint.py` reserviert ein atomar erzeugtes
+  `.checkpoint.lock` im gemeinsamen Ausgabeverzeichnis. Die Sperre
+  umfasst versionierte Dateien, Historien-Hashing, `LATEST`- und
+  `SHA256SUMS.txt`-Veröffentlichung; fremde Sperren werden nicht
+  entfernt oder übernommen.
+- **REGRESSIONEN:** drei neue Tests in
+  `scripts/tests/test_create_checkpoint.py`: bestehende Sperre
+  belässt frühere Backups bytegleich, zweiter Aufruf während eines
+  laufenden Checkpoints scheitert, `KeyboardInterrupt` gibt die
+  eigene Sperre frei und lässt eine saubere Wiederholung zu.
+- **GETESTET:** Vorherige [Main-CI #40922492508](https://github.com/ManuEtt/Dnd/actions/runs/40922492508)
+  grün. Dies ist **kein Testnachweis für das neue Paket**.
+- **NICHT GETESTET:** finale Python-/Backend-/Flutter-/Android-CI
+  auf dem neuen PR-Head, Windows, reale Mehrprozess-Runner und
+  Android-Gerät.
+- **BLOCKIERT:** fehlender direkter lokaler GitHub-Checkout/Flutter-SDK;
+  neue CI erfolgt über GitHub Actions.
+- **DATENFORMAT:** keine SQLite-/JSON-/Schema-/Versionsmigration.
+- **NÄCHSTER SCHRITT:** finalen PR-Head durch CI prüfen,
+  Konfliktcheck aktualisieren und erst danach zur Review freigeben.
+
+
+### Übernommener Dokumentationsnachtrag aus PR #397
+
+
+
+## Chat D – SQLite-Outbox-Speichergrenze (30.10.2026, PR #397, Draft)
+
+Technischer Basisstand `main` `55fe44475a113943c6310ec16a8ffb481185f4e9`; Branch `fix/chat-d/pending-action-sqlite-validation-20261030`, Implementierung `099a115b77af967483e9375a3fad9bed0cd1dd2b`. Direkte SQLite-Ausstehendaktionen dürfen keine leeren/überlangen Kampagnenkennungen, ungültigen Request-IDs oder leeren/überlangen Handlungstexte mehr persistieren. Validierung vor der Transaktion; bestehende NPC-/Revision-/ACK-Verträge unverändert. Drei neue FFI-Tests für Fehlwerte, SQLite-Neustart und Unversehrtheit bestätigter Absichten. **Tests und finale CI noch nicht bestätigt**, kein Flutter-SDK/lokaler GitHub-DNS-Checkout. Keine Schema-, JSON- oder Versionsmigration. Dokumentation aus anderen offenen PRs additiv konsolidieren. Nächster Schritt: finale CI auf PR-Head kontrollieren.
