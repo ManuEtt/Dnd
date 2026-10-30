@@ -259,6 +259,89 @@ vermuteten Übungen anreichern. DoD: gültige/ungültige Instrument-IDs, drei ei
 Übungen, Paket A/B, Abbruch/Retry/stale Revision, Alt-JSON/SQLite-Neustart und
 320/360 dp bei 200 %/IME/Semantik, danach komplette Prüfkette und finale PR-CI.
 Keine automatische Fortsetzung nach Sitzungsende.
+## Chat D – Begrenzte Metadatenprüfung (29.10.2026)
+
+Die technische Projektvorprüfung liest `backend/package.json` und
+`backend/package-lock.json` nun mit einer festen Grenze von 16 MiB, die
+Gradle-Wrapper-Eigenschaften höchstens mit 64 KiB und nur die erste,
+maximal 4 KiB lange Gradle-Shebang-Zeile. Dadurch führt eine beschädigte
+oder übergroße Projektübertragung nicht mehr zu unbegrenztem Lesen dieser
+Dateien. Vier neue Python-Regressionen decken Ablehnung, begrenztes Lesen
+und gültige Kurzzeilen ab. Produkt-App, JSON-Speicherformat, SQLite,
+Android-Versionsnummer und Backend-Verhalten bleiben unverändert.
+Die technischen Prüfungen und Android-CI dieses PRs sind separat
+abzunehmen. Beim letzten geprüften Ausgangs-Main
+`fde0ef6ed8b419d6a31c701a03aa05d61994c352` waren alle 24
+Integrations-PRs bereits übernommen, keine PRs offen und der
+[Main-CI-Lauf](https://github.com/ManuEtt/Dnd/actions/runs/40867945743)
+erfolgreich. Ältere darunterstehende Integrationsstatus sind historische
+Momentaufnahmen.
+
+## Konsolidierter Arbeitsstand – Integrationskandidat vom 29.10.2026
+
+**Noch nicht in `main` integriert.** Die 24 offenen PRs von Chat A/B/C/D sind auf einem separaten technischen Integrationsbaum zusammengetragen; der gemeinsame Flutter-/Python-/Backend-/Android-CI-Lauf steht aus. Einzelne Pull Requests sind Entwürfe und bedürfen einer eigenen fachlichen Freigabe. Aktive Branches vor grüner gemeinsamer Abnahme und SHA-gesicherter Archivierung nicht löschen. [Herkunft, Originalbeschreibungen, HEADs und offene Risiken](docs/parallel/INTEGRATION_20261029.md).
+
+
+## Qualitätsabsicherung – Alpha-Release-Sperre (Chat D, PR #358)
+
+Parallele Alpha-Packaging-Läufe mit derselben App-Version werden vor der Dateiprüfung durch ein exklusives `_Release.lock`-Verzeichnis serialisiert. Bei einem Fehler werden fremde Releases nicht gelöscht; nach normalem Abschluss oder behandelter Ausnahme wird die Sperre freigegeben. Eine verwaiste Sperre blockiert sicherheitshalber die Veröffentlichung. Drei Regressionen; keine Änderung an SQLite, JSON oder Regeln. [Erfolgreiche Vor-Integrations-CI](https://github.com/ManuEtt/Dnd/actions/runs/40730971955); der kombinierte Stand mit PR #363 erhält eine eigene Prüfung.
+
+## Qualitätsabsicherung – Checkpoint-Historie (Chat D, PR #363)
+
+Historische Dateien im Quell-Checkpoint werden vor Aufnahme in `SHA256SUMS.txt` auf sichere Namen und regulären Dateityp geprüft. Vorhandene Symlinks, Zeilenumbrüche oder ZIP-Verzeichnisse werden vor einer Veröffentlichung abgelehnt; drei neue negative Python-Regressionen sichern alte stabile Aliases. [Erfolgreicher CI-Stand auf dem vorigen Commit](https://github.com/ManuEtt/Dnd/actions/runs/40730867003); der jetzt kombinierte `main`-Stand wird separat geprüft. Keine Speicherformatmigration. Die Prüfung ist keine vollständige TOCTOU-Abwehr.
+
+Deutschsprachige Fantasy-Solo-App für Android mit lokalen Charakteren,
+Kampagnen, ausgewählten D&D-SRD-5.2.1-Regeln und optionalem KI-Erzähler.
+**Alpha 0.8.47+97**; lokales Spielen benötigt keinen Account oder KI-Server.
+Charaktererstellung und Regelengine sind noch nicht vollständig.
+
+## Aktueller Stand und autonome Fortsetzung
+
+**IMPLEMENTIERT:** Kleriker/Paladin wählen im Klassenpaket A ausdrücklich Amulett,
+Emblem oder Reliquiar. Typisierte Gegenstände und Gold werden nach Bestätigung
+nur einmal übernommen. Neue Klassenbelege verwenden Version 2; historische
+Version 1 bleibt unverändert lesbar, ungeklärt und ohne Nachvergabe. Wiederwahl
+desselben Pakets erhält die Auswahl. Abbruch, Fremd-IDs und echte Paketwechsel
+sind geprüft. SQLite **3** / äußeres JSON **1** bleiben unverändert, keine Migration.
+
+**GETESTET:** [PR #369](https://github.com/ManuEtt/Dnd/pull/369) regulär integriert;
+Produkt-Main `49b98d8aef7ae0e521320628b053c149c849dea0`.
+[Finale PR-CI 40756846048](https://github.com/ManuEtt/Dnd/actions/runs/40756846048)
+und [Main-CI 40758951956](https://github.com/ManuEtt/Dnd/actions/runs/40758951956)
+sind vollständig **erfolgreich**: 2.265 Flutter-, 200 Python- und 72 Backend-Tests,
+zusätzlich gezielter 20-Fälle-UI-Lauf; 507 Dart-Dateien unverändert formatiert,
+Analyzer/Backend-/Debug-/native-/drei optimierte ABI-/Alpha-/Checkpoint-Schritte
+bestanden. Lokal zusätzlich zwölf native App-Tests und die vollständige Suite
+auf Produktcode `7ac32b1c` bestanden; finaler PR-Kopf `bfe4e5ab` ändert daran nur
+Dokumentation. Main, PR-Kopf und tatsächlicher PR-Checkout `9bf0c017` besitzen
+denselben vollständigen Git-Baum `f40b9dcf11093fef2e7331fdfd712537d391cd2b`.
+
+Alle 1.248 heruntergeladenen Quelldateien mit Hash/Modus, Alpha-Quellpaket,
+echte Binärpatch-Anwendung auf Basis `37a6142e`, isoliertes Git-Bundle/fsck und
+32 historische Köpfe sind unabhängig geprüft. APK-Version/ABI/v2-Testsignatur
+geprüft. [Source-ZIP/Patch/Manifest/History-Bundle](https://github.com/ManuEtt/Dnd/actions/runs/40758951956/artifacts/12847443480) ·
+[ARM64-Alpha](https://github.com/ManuEtt/Dnd/actions/runs/40758951956/artifacts/12846529536).
+
+**NICHT GETESTET:** echtes Android-Gerät/TalkBack, Upgrade einer installierten
+Altversion und produktive Signatur. Ein zusätzlicher freiwilliger Test aller
+Fremdplugin-Unterprojekte scheiterte an ByteBuddy/Jetifier (Klassenmajor 68);
+die im CI vorgeschriebenen `:app:testDebugUnitTest --no-daemon` bestehen.
+**BLOCKIERT:** kein angeschlossenes Android-Testgerät.
+**NOCH NICHT IMPLEMENTIERT:** vollständiger Wizard mit allen Spezies-, Klassen-,
+Talent- und Zauberpflichtwahlen; Symbolbesitz bestätigt keine komplette
+Fokus-/Zauberwirkung. `EQUIP-CHOICES` bleibt `partial`, SRD-Inventur 1.419/9 offen.
+
+Arbeitsbranch `feat/character-holy-symbol-choice-20261028` ist nach grüner
+Main-CI exakt als `archive/merged-20261027/feat/character-holy-symbol-choice-20261028-bfe4e5ab7fba`
+archiviert und remote gelöscht; [Cleanup 40761280014](https://github.com/ManuEtt/Dnd/actions/runs/40761280014)
+bestand. Elf neue aktive PR-Branches #356–#359/#361–#367 blieben erhalten;
+vor jeder Folgeänderung Main/PRs/CI erneut live prüfen.
+
+Dieser anschließende reine Dokumentationsabschluss auf Produkt-Main `49b98d8a`
+ändert **keine** App-, Backend-, Skript- oder Workflowdatei und erhöht keine
+Version. Seine statischen/Pythonprüfungen werden separat im Dokumentations-PR
+geführt. Eine weitere APK oder Produkt-CI für dessen Dokumentationskopf wird
+nicht behauptet. Ältere Berichte darunter sind historische Schreibstände.
 
 ## Funktionen und Grenzen
 
