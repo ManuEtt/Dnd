@@ -106,10 +106,32 @@ def main():
             failures.append(name + ": Branch-HEAD während Prüfung geändert")
             continue
         if "--execute" in sys.argv:
+            # The initial main check is not enough for a long-running cleanup:
+            # a changed main may invalidate the previous ancestor comparison.
+            latest_main = call("GET", "branches/main", token)
+            if not latest_main or latest_main.get("commit", {}).get("sha") != expected_main_sha:
+                raise SystemExit("main während der Branch-Prüfung verändert: Abbruch.")
+            # A branch can also become protected or diverge after the first
+            # comparison. Revalidate both immediately before the DELETE.
+            latest_compare = call("GET", "compare/main..." + path_name, token)
+            if not latest_compare or not eligible(
+                name,
+                actual_sha=current["commit"]["sha"],
+                ahead_by=latest_compare.get("ahead_by"),
+                protected=current.get("protected", True),
+                is_merged=latest_compare.get("status") in ("behind", "identical"),
+            ):
+                failures.append(name + ": kurz vor Löschung nicht mehr sicher integriert")
+                continue
             try:
                 call("DELETE", "git/refs/heads/" + quote(name, safe="/"), token)
             except HTTPError as exc:
                 failures.append(name + ": DELETE HTTP " + str(exc.code))
+                continue
+            # An HTTP 404 or a successful response alone is not proof of
+            # deletion. Verify the branch is actually gone.
+            if call("GET", "branches/" + path_name, token) is not None:
+                failures.append(name + ": Branch nach DELETE noch vorhanden")
                 continue
             result.append((name, "gelöscht"))
         else:
