@@ -1,5 +1,19 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – Screenreader-Hinweis für gesperrten Angriff (30.10.2026)
+
+[PR #399](https://github.com/ManuEtt/Dnd/pull/399) (Draft; Basis
+`55fe44475a113943c6310ec16a8ffb481185f4e9`): Die fixierte
+Angriffs-Schnellaktion erhält bei Sperre einen erklärenden TalkBack-Hinweis.
+Eine laufende Handlung hat Vorrang vor einem fehlenden Angriffsziel;
+die bestehende Tooltip-Anzeige und alle vier Aktionen bleiben unverändert.
+Drei Widget-Regressionen prüfen gesperrte, laufende und freigegebene
+Zustände. **Tests neu geschrieben, hier noch nicht ausgeführt**; vollständige
+GitHub-Actions-CI und echte TalkBack-Geräteabnahme offen. Keine Änderung von
+Regelzustand, SQLite, JSON, Appversion oder Spielständen; keine Migration.
+Gemeinsame Dokumentation vor Merge additiv konsolidieren.
+
+
 Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;
 vollständige Charaktererstellung und SRD-Regelengine bleiben in Entwicklung.
 

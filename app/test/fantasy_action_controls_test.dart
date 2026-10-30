@@ -241,7 +241,10 @@ void main() {
     );
     expect(semantics.properties.hint, isNull);
     expect(semantics.properties.enabled, isTrue);
-    expect(find.ancestor(of: attack, matching: find.byType(Tooltip)), findsNothing);
+    expect(
+      find.ancestor(of: attack, matching: find.byType(Tooltip)),
+      findsNothing,
+    );
     await tester.tap(attack);
     expect(attacks, 1);
     expect(tester.takeException(), isNull);
