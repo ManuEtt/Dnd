@@ -84,14 +84,18 @@ void main() {
       expect(tester.takeException(), isNull);
 
       final target = find.byKey(const ValueKey('npc-picker-npc-11'));
-      await tester.scrollUntilVisible(
-        target,
-        120,
-        scrollable: find.descendant(
-          of: list,
-          matching: find.byType(Scrollable),
-        ),
+      // Drag the dialog's *outer* viewport; nested scrollables cause
+      // layout failures when text scaling increases the row heights.
+      expect(
+        find.descendant(of: list, matching: find.byType(Scrollable)),
+        findsNothing,
       );
+      final dialogScroll = find.ancestor(
+        of: list,
+        matching: find.byType(Scrollable),
+      );
+      expect(dialogScroll, findsOneWidget);
+      await tester.scrollUntilVisible(target, 120, scrollable: dialogScroll);
       await tester.ensureVisible(target);
       await tester.pumpAndSettle();
       expect(target.hitTestable(), findsOneWidget);

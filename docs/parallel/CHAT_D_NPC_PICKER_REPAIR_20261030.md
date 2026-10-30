@@ -1,0 +1,11 @@
+# Chat D – gezielte Reparatur für PR #422 (30.10.2026)
+
+- **Ursprungsbranch:** `feat/chat-c/npc-picker-large-text-20261030`, Ausgangs-Head `89a49e0c2854c72ca1ae84f4a10c1d9c5a2f725b`.
+- **Reparaturbranch:** `fix/chat-d/npc-picker-scroll-layout-20261030`; separater PR gegen den ursprünglichen Chat-C-Branch, kein Überschreiben paralleler Arbeit.
+- **Ausgangsproblem:** [CI #41120105195](https://github.com/ManuEtt/Dnd/actions/runs/41120105195) ergab 2454 erfolgreiche und vier fehlgeschlagene Flutter-Tests: zwei neue 320-/360-dp-Tests bei 200 % Schrift sowie zwei bestehende Tests. GitHub-Log: `RenderShrinkWrappingViewport does not support returning intrinsic dimensions` im `AlertDialog`; äußere und innere Scrollables konkurrierten um Höhe/Sichtbarkeit.
+- **Implementiert:** Ein einziges Scrollviewport (`AlertDialog(scrollable: true)`) enthält jetzt eine gewöhnliche Liste von `ListTile`-Zeilen als `Column`, keine intrinsisch unzulässige verschachtelte `ListView.builder(shrinkWrap: true)`. Jede Zeile bleibt textskalierungsabhängig hoch und behält gespeicherte NPC-ID, Semantik und ausdrückliches Antippen. Die zwei großen-Schrift-Tests scrollen das äußere Dialog-Viewport statt eines unsichtbaren inneren Viewports.
+- **Geänderte technische Dateien:** `app/lib/ui/npc_story_selection_dialog.dart`, `app/test/npc_story_selection_small_screen_test.dart`.
+- **Akzeptanz:** Alle zwei neuen 200-%-Tests und die drei vorhandenen NPC-Dialogtests laufen ohne Layout-/Semantics-Assertion; Abbruch liefert keine automatisch gewählte NPC-ID; unveränderte Kampagnen-JSON-Daten; danach vollständige Flutter-/Android-CI auf finalem Head.
+- **Status:** Der Code und die Tests sind committet, **Testausführung und finale CI noch nicht nachgewiesen**. Kein lokales Flutter-SDK und kein realer Android-/TalkBack-Gerätetest.
+- **Kompatibilität:** keine Änderung an SQLite/JSON-Schema, Regelwerk, Controller, Spielständen oder App-Version. Bei sehr großen NPC-Listen folgt eine separate Virtualisierungsoptimierung, wenn sie nötig wird.
+- **Nächster Schritt:** Reparatur-PR und neue CI vollständig abnehmen, anschließend den eigenständigen Fix über die Chat-C-Branchbasis integrieren und dessen regulären PR #422 erst dann freigeben.
