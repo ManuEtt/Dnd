@@ -1,8 +1,8 @@
 # Chat A – Checkpoint (26.10.2026): Eldritch-Blast-Klassenprüfung
 
-## 30.10.2026 – Separater Stückwert-Nachweis für auditierte Zaubermaterialien (Chat A)
+## 30.10.2026 – Separater Stückwert-Nachweis für auditierte Zaubermaterialien (Chat A, PR #415)
 
-- **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`. **Branch:** `feat/chat-a/spell-material-value-evidence-20261030`. Neues Folgepaket **getrennt** von #387/#400/#405/#408.
+- **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`. **Branch:** `feat/chat-a/spell-material-value-evidence-20261030`. **Pull Request:** [#415](https://github.com/ManuEtt/Dnd/pull/415). Formatierter Code-/Teststand: `1f3e6d746688e87a266e6d076e0f494d0bbe4a30`. Neues Folgepaket **getrennt** von #387/#400/#405/#408.
 - **IMPLEMENTIERT:** Neues Domain-Modul `app/lib/domain/srd_spell_material_value_rules.dart` mit `SrdSpellMaterialValueEvidence`, `validatedConsumption` und `commitConfirmedCast`. Der strenge, ausdrücklich zu wählende Pfad prüft die konkrete Anforderungs-ID und Inventarstapel-ID, externe Identitäts-/Stückwertbestätigung, SRD-Mindestwert **pro Einheit** (Kupferstücke), optional widerspruchsfreien Inventarmetadatenpreis sowie die im Bestand vorhandene Menge. Acht Komponenten in vier exakt auditierten Zaubern: Astral Projection, Clone, Legend Lore und Secret Chest.
 - **GETESTET / TESTS NEU:** `app/test/srd_spell_material_value_rules_test.dart` mit sieben deterministischen Testgruppen: Grenzpreise jeder Position der vier Rezepte, fehlende/gefälschte/beidseitig unbestätigte Bindungen, optionaler Metadatenpreis, Astral-Zielanzahl, nicht unterstützte Rezepte, atomarer Slot-/Material-Commit samt JSON-Roundtrip, Ablehnungs-/Stale-Snapshot-Invarianz. **Status:** Tests implementiert, noch nicht ausgeführt; GitHub-CI auf finalem Commit steht aus.
 - **DOKUMENTIERT:** `docs/SRD_SPELL_MATERIAL_VALUE_EVIDENCE.md` mit vollständiger Preis-/Verbrauchstabelle und begrenzter Vertrauensannahme. Keine Namens-/Freitext-Preisinterpretation.
