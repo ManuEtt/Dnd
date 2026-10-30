@@ -313,12 +313,28 @@ void main() {
       expect(_canonicalJson(controller.currentCampaign!.toJson()), serialized);
       await unchanged(legacy, rows);
 
-      expect(() => engine.resolveRoll(legacy), throwsFormatException);
-      expect(random.calls, 0);
-      await controller.resolveRoll();
-      expect(controller.error, contains('SRD-Klassen'));
-      await unchanged(legacy, rows);
-      expect(random.calls, 0);
+      for (final input in [
+        (natural: null, total: null),
+        (natural: 4, total: null),
+        (natural: null, total: 1000),
+      ]) {
+        expect(
+          () => engine.resolveRoll(
+            legacy,
+            natural: input.natural,
+            total: input.total,
+          ),
+          throwsFormatException,
+        );
+        expect(random.calls, 0);
+        await controller.resolveRoll(
+          natural: input.natural,
+          total: input.total,
+        );
+        expect(controller.error, contains('SRD-Klassen'));
+        await unchanged(legacy, rows);
+        expect(random.calls, 0);
+      }
       await restart();
       await unchanged(legacy, rows);
     },

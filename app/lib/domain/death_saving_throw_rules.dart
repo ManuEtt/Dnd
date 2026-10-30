@@ -226,8 +226,7 @@ class DeathSavingThrowRules {
         hero.primaryClassLevel < 1 ||
         hero.secondaryClassLevel < 0 ||
         (hero.hasSecondClass
-            ? hero.secondaryClassLevel < 1 ||
-                  (primary != null && primary == secondary)
+            ? hero.secondaryClassLevel < 1 || primary == secondary
             : hero.secondaryClassLevel != 0)) {
       throw StateError('Die gespeicherten Klassenstufen sind ungültig.');
     }
