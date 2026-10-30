@@ -179,10 +179,19 @@ def check_imports(relative_path: str, content: str) -> list[str]:
 
 def check_repository(root: Path = ROOT) -> list[str]:
     result: list[str] = []
-    story = root / "app/lib/story"
-    if not story.exists():
-        return ["missing app/lib/story module"]
-    for module in (story, root / "app/lib/domain"):
+    modules = (root / "app/lib/story", root / "app/lib/domain")
+    # A removed or replaced module must not make the import check pass simply
+    # because there are no Dart files left to inspect. Symlinked module roots
+    # are also rejected: the scan must stay inside this repository.
+    for module in modules:
+        relative = module.relative_to(root).as_posix()
+        if not module.is_dir():
+            result.append(f"missing {relative} module")
+        elif module.is_symlink():
+            result.append(f"symlinked {relative} module")
+    if result:
+        return result
+    for module in modules:
         for file in sorted(module.rglob("*.dart")):
             relative = file.relative_to(root).as_posix()
             result.extend(check_imports(relative, file.read_text(encoding="utf-8")))

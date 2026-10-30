@@ -1,5 +1,6 @@
 import unittest
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from scripts.check_domain_boundaries import check_imports, check_repository
 
@@ -8,6 +9,47 @@ class StoryRulesBoundaryTests(unittest.TestCase):
     def test_repositories_are_separate(self):
         root = Path(__file__).resolve().parents[2]
         self.assertEqual([], check_repository(root))
+
+    def test_missing_module_directories_fail_closed(self):
+        with TemporaryDirectory() as temp:
+            root = Path(temp)
+            self.assertEqual(
+                ["missing app/lib/story module", "missing app/lib/domain module"],
+                check_repository(root),
+            )
+            (root / "app/lib/story").mkdir(parents=True)
+            self.assertEqual(
+                ["missing app/lib/domain module"], check_repository(root)
+            )
+            (root / "app/lib/domain").mkdir(parents=True)
+            self.assertEqual([], check_repository(root))
+
+    def test_regular_file_cannot_replace_module_directory(self):
+        with TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "app/lib").mkdir(parents=True)
+            (root / "app/lib/story").write_text("not a directory", encoding="utf-8")
+            (root / "app/lib/domain").mkdir()
+            self.assertEqual(
+                ["missing app/lib/story module"], check_repository(root)
+            )
+
+    def test_module_symlink_is_not_accepted_as_repository_source(self):
+        with TemporaryDirectory() as temp:
+            root = Path(temp)
+            external = root / "outside"
+            external.mkdir()
+            (root / "app/lib").mkdir(parents=True)
+            (root / "app/lib/domain").mkdir()
+            try:
+                (root / "app/lib/story").symlink_to(
+                    external, target_is_directory=True
+                )
+            except (OSError, NotImplementedError) as error:
+                self.skipTest(f"module symlinks unsupported: {error}")
+            self.assertEqual(
+                ["symlinked app/lib/story module"], check_repository(root)
+            )
 
     def test_story_rejects_rule_engine_dependency(self):
         self.assertEqual(
