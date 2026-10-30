@@ -1,3 +1,23 @@
+# Chat D D-020 – Unix-Typkontrolle für Alpha-APKs (30.10.2026)
+
+- **Ausgangs-Main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `fix/chat-d/apk-entry-types-20261030`.
+- **Code-Commit:** `df45e36d78f2fba2372df4fec462a6df6eb5f7a6`.
+- **Pull Request:** [#406](https://github.com/ManuEtt/Dnd/pull/406), Draft bis finaler CI.
+- **Ausgangsproblem:** CRC-valide ZIP-Einträge können Unix-FIFOs, Devices, Sockets oder eine Verzeichnisdatei mit Dateinamen wie `libapp.so` deklarieren. Die Alpha-APK-Prüfung sperrte bisher nur Symlinks und unsichere Namen.
+- **IMPLEMENTIERT:** Unix-ZIP-Modustypen nur als reguläre Datei, Verzeichnis oder ohne bekannten Typ akzeptieren; Typ-/Namens-Widersprüche abweisen. Bestehende Symlink-Prüfung unverändert.
+- **Geänderte Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Regressionen:** vier unzulässige Unix-Sonderdateitypen; Verzeichnis statt Pflichtbibliothek; gültige Unix-Regulärdatei plus Verzeichnis; bestehende APK-Symlink-/ZIP-/Archivtests.
+- **GETESTET:** Implementierung und Tests auf GitHub gesichert; vollständige CI noch nicht als erfolgreich bestätigt.
+- **NICHT GETESTET:** Python-/Backend-/Flutter-/Android-Gesamtsuite auf finalem Commit und Gerätetest.
+- **BLOCKIERT:** lokaler GitHub-Checkout wegen DNS nicht möglich. GitHub Actions verfügbar.
+- **Migrationen:** keine; alle vorhandenen Spielstände, SQLite- und JSON-Formate unverändert.
+- **Koordination:** zum Start alle PRs bis #405 geprüft; keine betroffene technische Datei bereits durch fremde PRs in Arbeit. Gemeinsame README-/Checkpoint-Änderungen später verlustfrei konsolidieren. Keine automatischen Merges/Löschungen.
+- **Vorarbeiten:** #401 und #402 auf jeweiligem finalem Commit erfolgreich per GitHub Actions geprüft und zur Review freigegeben; weiterhin nicht in `main` integriert.
+- **Nächster Schritt:** komplette PR-CI #406 am finalen Head verifizieren, Fehler auf demselben Branch reparieren und bei Grün zur Review freigeben. Keine produktive Signatur oder echten Gerätetests behaupten.
+
+---
+
 # Chat D – Integration von PR #358 nach Checkpoint-Fix #363 (29.10.2026)
 
 ## Integrationskandidat 29.10.2026 – Chat D
