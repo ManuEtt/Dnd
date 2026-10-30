@@ -194,7 +194,7 @@ void main() {
       [_damage('arrow\nextra', 5)],
       [_damage('arrow\u202eextra', 5)],
       [_damage('arrow\u200bextra', 5)],
-      [_damage('x' * 129, 5)],
+      [_damage(List.filled(129, 'x').join(), 5)],
       [_damage('arrow', 0)],
       [_damage('arrow', -2)],
     ];
