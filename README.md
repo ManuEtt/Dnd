@@ -1,6 +1,6 @@
 # Würfelraunen – Der lebendige Spielleiter
 
-## Chat A – Kanonische Zauberwirkzeiten und Ritualmetadaten (30.10.2026)
+## Chat A – Kanonische Zauberwirkzeiten und Ritualmetadaten (30.10.2026) – PR #423
 
 Neuer eigener Branch `feat/chat-a/spell-casting-time-integrity-20261030`
 mit `SrdSpellCastingTimeRules` und Integration in die bestehende
