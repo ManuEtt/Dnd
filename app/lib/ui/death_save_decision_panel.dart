@@ -59,43 +59,60 @@ class DeathSaveDecisionPanel extends StatelessWidget {
             ),
           ],
           const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              FantasyTextButton(
-                key: const ValueKey('death-save-accept'),
-                label: 'Wurf annehmen',
-                style: FantasyButtonStyle.woodGold,
-                onPressed: busy ? null : onAccept,
-              ),
-              if (DeathSavingThrowRules.available(
-                hero,
-                SavingThrowRerollFeature.disciplinedSurvivor,
-              ))
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final actions = <Widget>[
                 FantasyTextButton(
-                  key: const ValueKey('death-save-reroll-focus'),
-                  label: 'Wiederholen · 1 Fokus',
-                  style: FantasyButtonStyle.arcane,
-                  onPressed: busy
-                      ? null
-                      : () => onReroll(
-                          SavingThrowRerollFeature.disciplinedSurvivor,
-                        ),
+                  key: const ValueKey('death-save-accept'),
+                  label: 'Wurf annehmen',
+                  style: FantasyButtonStyle.woodGold,
+                  onPressed: busy ? null : onAccept,
                 ),
-              if (DeathSavingThrowRules.available(
-                hero,
-                SavingThrowRerollFeature.indomitable,
-              ))
-                FantasyTextButton(
-                  key: const ValueKey('death-save-reroll-indomitable'),
-                  label: 'Wiederholen · Unbeugsam',
-                  style: FantasyButtonStyle.arcane,
-                  onPressed: busy
-                      ? null
-                      : () => onReroll(SavingThrowRerollFeature.indomitable),
-                ),
-            ],
+                if (DeathSavingThrowRules.available(
+                  hero,
+                  SavingThrowRerollFeature.disciplinedSurvivor,
+                ))
+                  FantasyTextButton(
+                    key: const ValueKey('death-save-reroll-focus'),
+                    label: 'Wiederholen · 1 Fokus',
+                    style: FantasyButtonStyle.arcane,
+                    onPressed: busy
+                        ? null
+                        : () => onReroll(
+                            SavingThrowRerollFeature.disciplinedSurvivor,
+                          ),
+                  ),
+                if (DeathSavingThrowRules.available(
+                  hero,
+                  SavingThrowRerollFeature.indomitable,
+                ))
+                  FantasyTextButton(
+                    key: const ValueKey('death-save-reroll-indomitable'),
+                    label: 'Wiederholen · Unbeugsam',
+                    style: FantasyButtonStyle.arcane,
+                    onPressed: busy
+                        ? null
+                        : () => onReroll(SavingThrowRerollFeature.indomitable),
+                  ),
+              ];
+              // Preserve readable, full-width choices with Android's large
+              // font setting; normal text retains the compact action wrap.
+              final stacked =
+                  constraints.maxWidth < 500 &&
+                  MediaQuery.textScalerOf(context).scale(1) >= 1.8;
+              if (!stacked) {
+                return Wrap(spacing: 8, runSpacing: 8, children: actions);
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  for (var index = 0; index < actions.length; index++) ...[
+                    if (index > 0) const SizedBox(height: 8),
+                    actions[index],
+                  ],
+                ],
+              );
+            },
           ),
         ],
       ),
