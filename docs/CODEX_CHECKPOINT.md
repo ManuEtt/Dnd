@@ -44,6 +44,50 @@ zusammenführen.
 normaler Aktion vs. Bonusaktion in einem eigenständigen
 Aktionsökonomie-Vertrag absichern; Reaktionsauslöser und
 mehrzügige Zauber bleiben eigene Regeln.
+## Chat A – Zauber-Aktionsökonomie mit getrennter Aktion/Bonusaktion (30.10.2026)
+
+**Basis-main:** `69bfe78ec4eeb30042b26971978038a2ee9dac34`.
+**Eigener Branch:** `feat/chat-a/spell-action-economy-evidence-20261030`.
+**Implementiert:** Neues isoliertes Domainmodul
+`app/lib/domain/srd_spell_action_economy_rules.dart`.
+Der explizit bestätigte `Encounter` liefert `actionUsed` und
+`bonusActionUsed` als **unabhängige** Zugressourcen, außerdem
+`spellSlotExpendedThisTurn`, Action-Surge- und Rage-Beschränkungen.
+Nur exakte reguläre Wirkzeiten `Action`, `Action or Ritual` oder
+`Bonus Action` werden für den read-only Aktionsbeleg akzeptiert;
+keine freie Interpretation von Reaktionen, Triggern oder Langzeiten.
+Das Ergebnis `SrdSpellTurnActionEvidence` ist per
+`validateUnchanged` an Zauber-, Helden- und Kampf-Snapshots gebunden.
+Keine Würfel, keine Ressourcenbuchung, keine Zauberwirkung.
+
+**TESTS ERSTELLT:** Acht Gruppen in
+`app/test/srd_spell_action_economy_rules_test.dart`: Aktionsressourcen
+getrennt, Zaubertrick vs. Slot-Limit, Action Surge, aktiver Zug/Rage/
+Handlungsunfähigkeit, fehlender Kampfnachweis, Ritual-/Triggerzeiten,
+manipulierte Zeitangaben sowie stale Belege inklusive JSON.
+**GETESTET:** Source-/Main-/PR-Sichtung, acht neue Tests geschrieben.
+**NICHT GETESTET:** neue volle GitHub-CI und Android-Realgerät bei
+Dokumentation. **KEINE MIGRATION:** Modelle, Engine, Controller,
+SQLite/JSON, Eventformat, UI/Story/Backend/Version unverändert.
+**BEKANNTE GRENZE:** Bisherige `actionAvailableConfirmed`-Pfad bleibt
+unverändert; Modul ist eine optionale, *noch nicht eingebundene*
+Bestätigungsgrenze. Die Koordination mit Chat D und die Integration
+mit dem unabhängigen, noch offenen PR #429 müssen folgen.
+**Status:** `partial`. Quelle: WotC D&D SRD 5.2.1,
+Combat / Spells / Casting Time / Action Surge, CC BY 4.0.
+**Doku:** `docs/SRD_SPELL_ACTION_ECONOMY_EVIDENCE.md`.
+
+**Vorherige Abnahme:** #420 [CI #41091851917](https://github.com/ManuEtt/Dnd/actions/runs/41091851917)
+vollständig grün; #429 [CI #41121119046](https://github.com/ManuEtt/Dnd/actions/runs/41121119046)
+bei letzter Sichtung Android-Alpha-Erstellung noch aktiv;
+#418/#415/#408/#405/#400 erfolgreich, offen und ungemergt.
+README und zentrale Checkpoints im Review durch Chat D additiv
+übernehmen, keine alten Chat-C-Inhalte überschreiben.
+
+**NÄCHSTER SCHRITT:** Bestätigten Aktionsbeleg in die atomare
+Zauberplatz-/Kampf-Transaktion aufnehmen und mit #429 abstimmen,
+ohne die alte boolsche Bestätigung stillschweigend aufzuwerten.
+
 
 
 ## 30.10.2026 – Chat C: Todesrettungs-Entscheidungen bei 200 % Schrift
