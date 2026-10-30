@@ -59,6 +59,26 @@ Der separate [Chat-A-PR #400](https://github.com/ManuEtt/Dnd/pull/400)
 (V/S/M-Komponenten-Guard) hat auf seinem finalen Head die komplette
 [Android-CI #41007599214](https://github.com/ManuEtt/Dnd/actions/runs/41007599214)
 erfolgreich bestanden, ist aber weiterhin nicht integriert.
+## Chat A – bestätigte Zaubermaterial-IDs ohne Täuschungszeichen (30.10.2026)
+
+Neues isoliertes SRD-5.2.1-Teilpaket `feat/chat-a/spell-material-id-integrity-20261030`:
+Inventar-Stapelbelege für verbrauchte und ausdrücklich behaltene kostspielige
+Materialien werden bei einem bestätigten Zaubervorgang auf unsichtbare
+Unicode-Schreibrichtungszeichen, Steuerzeichen und Zeilentrenner geprüft.
+Der Regel-Commit verweigert einen ungültigen Inventarbeleg, statt daraus
+eine mehrdeutige Materialzuordnung zu bilden. Zulässige internationale Namen
+und IDs bleiben erlaubt. Regressionstests sichern unter anderem `Secret Chest`
+bei wiederholten, neu vorgeprüften Zaubern ohne Inventarverbrauch samt JSON-Roundtrip.
+Es gibt keine Datenbankmigration, UI-Änderung oder Versionserhöhung; echte
+Materialidentität und Geldwert müssen weiterhin separat bestätigt sein.
+Vollständige CI-Abnahme für dieses neue Paket zum Einchecken noch ausstehend.
+
+Die separaten Chat-A-PRs [#400](https://github.com/ManuEtt/Dnd/pull/400)
+(Komponenten) und [#405](https://github.com/ManuEtt/Dnd/pull/405)
+(Reichweiten) haben beide die vollständige Android-/Flutter-GitHub-CI erfolgreich
+bestanden ([#41007599214](https://github.com/ManuEtt/Dnd/actions/runs/41007599214),
+[#41011249059](https://github.com/ManuEtt/Dnd/actions/runs/41011249059)).
+Sie sind noch nicht nach `main` gemergt.
 
 
 

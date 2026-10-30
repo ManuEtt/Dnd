@@ -50,6 +50,20 @@
 - **BLOCKIERT:** Vollständige Endstand-CI/Review steht aus. Kein automatischer Merge.
 - **NOCH NICHT IMPLEMENTIERT:** Spezialreichweiten `Unlimited`/`Special` und vollständige Ziel-/Deckungsgeometrie.
 - **NÄCHSTER SCHRITT:** Nach CI und Integration getrennt prüfen, ob bestätigte nichtverbrauchte kostspielige Zaubermaterialien bei wiederholter Anwendung auf denselben, revisionsgesicherten Inventarstapel gebunden bleiben.
+## 30.10.2026 – SRD-Materialinventar-IDs und nicht verbrauchte Komponenten (neuer PR)
+
+- **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`. **Branch:** `feat/chat-a/spell-material-id-integrity-20261030`.
+- **IMPLEMENTIERT:** `SrdSpellInventoryIdRules.isSafe` schützt bestätigte Inventarstapel-IDs vor C0/C1-/ASCII-Steuerzeichen, Soft Hyphen, Null-/Zeilenzeichen, Unicode-Bidi-Overrides/Isolaten und ausgewählten unsichtbaren Trennern. Normale internationalisierte IDs und innere Leerzeichen bleiben zulässig.
+- **Verwendung:** `SrdSpellAuditedInventoryRules.consumedQuantities` validiert vor der Zuordnung alle Inventarstapel und Bindungs-IDs, auch für die ausdrücklich *nicht verbrauchten* teuren Komponenten von `Secret Chest`, `Clone` und `Legend Lore`. `SrdSpellInventoryRules.commitConfirmedCast` validiert außerdem bestätigte Verbrauchs-IDs und alle Stapel beim atomaren Ressourcenübergang.
+- **Tests:** `app/test/srd_spell_inventory_id_guard_test.dart` prüft internationale IDs, unsichtbare Unicode-/Steuerzeichen, mehrfaches `Secret Chest` mit frisch geprüfter Planrevision bei unverändertem Inventar, JSON-Roundtrip, Stale-Plan-Verbot, Verlust eines gebundenen Stapels, unbeteiligte manipulative Stapel und gültige Einzelkomponenten.
+- **Sicherheitsgrenze:** Diese Regeln erfinden weder Inventargegenstandswerte noch Materialidentitäten. Unabhängige Bestätigung von Identität/Wert/Menge bleibt Pflicht; es entstehen keine automatischen Spielwirkungen, keine generische erneute Zauberaktion ohne bestätigten frischen Preflight und kein Journalbeleg für behaltene Komponenten.
+- **KEINE MIGRATION:** Bestehende historische Spielstände lassen sich laden, aber ein künftig bestätigter Cast mit manipulativem Stapel-Identifier wird abgelehnt; SQLite-/JSON-Schema, Controller, UI, Eventprotokoll und Version unverändert.
+- **GETESTET:** Basis-main, verfügbare PRs und relevante Domain-Tests gesichtet; neue Tests geschrieben. **NICHT GETESTET:** Flutter-/Dart-Tests und vollständige GitHub-CI auf finalem Head, echte Android-Geräteprüfung.
+- **BLOCKIERT:** Das Flutter-SDK fehlt im lokalen Werkzeug; CI muss das Format-/Analyse-/Test-/Build-Gate auf dem tatsächlichen GitHub-Head übernehmen. Nicht ohne erfolgreiche Abnahme mergen.
+- **SRD-Provenienz:** SRD 5.2.1, `Spells / Casting Spells / Components`, Wizards of the Coast LLC, CC BY 4.0; `RULE-SPELLS-MATERIAL-COMPONENTS` bleibt `partial`.
+- **Koordination:** Fachdateien mit den offenen PRs #387/#400/#405 und den aktuellen Chat-B/C/D-PRs überschneidungsfrei. README und `docs/CODEX_CHECKPOINT.md` mit anderen parallelen Checkpoints vor späterem Merge additiv konsolidieren.
+- **Voriger PR #405:** vollständige GitHub-CI [#41011249059](https://github.com/ManuEtt/Dnd/actions/runs/41011249059) für Head `18bde90536921f324e2826cbc60ab731be40684c` **erfolgreich**, weiterhin nicht gemergter Draft. Voriger PR #400 ebenso grün auf [#41007599214](https://github.com/ManuEtt/Dnd/actions/runs/41007599214).
+- **NÄCHSTER SCHRITT:** Unabhängige tatsächliche Wert-/Identitätsvalidierung kostspieliger Komponenten und Transaktions-Journaleintrag für behaltene Materialbelege über koordinierten Integrationsvertrag, ohne Freitext-Preisannahmen.
 
 ---
 
