@@ -438,7 +438,8 @@ class StoryCampaignEngine {
       throw const FormatException('Handlungsstrang nicht gefunden.');
     }
     final thread = StoryThread(
-      id: threadId ??
+      id:
+          threadId ??
           _unusedStoryId(
             'thread',
             campaign.storyThreads.map((thread) => thread.id),
