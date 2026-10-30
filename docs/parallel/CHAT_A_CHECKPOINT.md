@@ -1,5 +1,20 @@
 # Chat A – Checkpoint (26.10.2026): Eldritch-Blast-Klassenprüfung
 
+## 30.10.2026 – Separater Stückwert-Nachweis für auditierte Zaubermaterialien (Chat A)
+
+- **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`. **Branch:** `feat/chat-a/spell-material-value-evidence-20261030`. Neues Folgepaket **getrennt** von #387/#400/#405/#408.
+- **IMPLEMENTIERT:** Neues Domain-Modul `app/lib/domain/srd_spell_material_value_rules.dart` mit `SrdSpellMaterialValueEvidence`, `validatedConsumption` und `commitConfirmedCast`. Der strenge, ausdrücklich zu wählende Pfad prüft die konkrete Anforderungs-ID und Inventarstapel-ID, externe Identitäts-/Stückwertbestätigung, SRD-Mindestwert **pro Einheit** (Kupferstücke), optional widerspruchsfreien Inventarmetadatenpreis sowie die im Bestand vorhandene Menge. Acht Komponenten in vier exakt auditierten Zaubern: Astral Projection, Clone, Legend Lore und Secret Chest.
+- **GETESTET / TESTS NEU:** `app/test/srd_spell_material_value_rules_test.dart` mit sieben deterministischen Testgruppen: Grenzpreise jeder Position der vier Rezepte, fehlende/gefälschte/beidseitig unbestätigte Bindungen, optionaler Metadatenpreis, Astral-Zielanzahl, nicht unterstützte Rezepte, atomarer Slot-/Material-Commit samt JSON-Roundtrip, Ablehnungs-/Stale-Snapshot-Invarianz. **Status:** Tests implementiert, noch nicht ausgeführt; GitHub-CI auf finalem Commit steht aus.
+- **DOKUMENTIERT:** `docs/SRD_SPELL_MATERIAL_VALUE_EVIDENCE.md` mit vollständiger Preis-/Verbrauchstabelle und begrenzter Vertrauensannahme. Keine Namens-/Freitext-Preisinterpretation.
+- **WICHTIGE GRENZE:** Der neue Pfad nimmt die **unabhängig ermittelten** Werte als Eingabe entgegen; er kann deren externe Herkunft nicht beweisen. Die bisherige boolesche Legacy-API bleibt unverändert. Controller/UI/Persistenz sind noch nicht an die neue strenge API gebunden. Keine echte Zauberwirkung wird aus diesen Informationen errechnet.
+- **KEINE MIGRATION:** SQLite, JSON, Journal, Story, UI, Backend und Version unverändert. Keine Datenbank- oder Controller-Datei geändert. Offizielle SRD-5.2.1-Quelle: WotC `Spells / Components`, CC BY 4.0. `RULE-SPELLS-MATERIAL-COMPONENTS` bleibt **partial**.
+- **BLOCKIERT:** Lokales Flutter-/Dart-SDK fehlt; volle GitHub-Actions-Format-/Analyse-/Test-/APK-Abnahme noch ausstehend. Reale Android-Geräteprüfung nicht durchgeführt. Vor Merge Code-Review und additive Dokumentationskonsolidierung durch Chat D.
+- **Vorgängerabnahmen:** #408 vollständige [CI #41017785511](https://github.com/ManuEtt/Dnd/actions/runs/41017785511) auf `afccc063040a67d03ff0fdb4a417f21831e17c09` erfolgreich; #405 [CI #41011249059](https://github.com/ManuEtt/Dnd/actions/runs/41011249059), #400 [CI #41007599214](https://github.com/ManuEtt/Dnd/actions/runs/41007599214) ebenfalls erfolgreich. Alle ungemergte Draft-PRs.
+- **NÄCHSTER SCHRITT:** Koordinierter Controller-/Repository-Integrationspfad, der prüfbare externe Einzelwert-Nachweise revisionssicher in einen journalisierten Zaubermaterial-Commit überführt, ohne boolesche Legacy-Bestätigungen zu überschreiben.
+
+---
+
+
 ## Integrationskandidat 29.10.2026 – Chat A
 
 Zusammengeführte Fachpakete: [#357](https://github.com/ManuEtt/Dnd/pull/357), [#361](https://github.com/ManuEtt/Dnd/pull/361), [#366](https://github.com/ManuEtt/Dnd/pull/366), [#367](https://github.com/ManuEtt/Dnd/pull/367), [#372](https://github.com/ManuEtt/Dnd/pull/372), [#375](https://github.com/ManuEtt/Dnd/pull/375), [#385](https://github.com/ManuEtt/Dnd/pull/385). Die ursprünglichen Branch-HEADs, PR-Beschreibungen, Tests, bekannte Grenzen und Statusmeldungen sind im [Integrationsjournal](INTEGRATION_20261029.md) mit Git-Historie dokumentiert. **Dieser Stand ist weder auf main integriert noch gemeinsam CI-abgenommen; Drafts sind nicht freigegeben.** Bisherige Checkpoint-Einträge bleiben erhalten.
