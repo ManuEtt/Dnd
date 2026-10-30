@@ -48,11 +48,7 @@ Map<String, dynamic> _plan() => {
       'title': 'Das Archiv',
       'description': 'Suche nach einem Weg hinein.',
     },
-    {
-      'id': 'kai',
-      'title': 'Der Kai',
-      'description': 'Erkunde den Hafen.',
-    },
+    {'id': 'kai', 'title': 'Der Kai', 'description': 'Erkunde den Hafen.'},
   ],
   'npcs': [
     {
@@ -140,13 +136,7 @@ void main() {
           relationship: 'vorsichtig\u200e',
         ),
       ],
-      [
-        _note(
-          'note',
-          'mira',
-          'Der\u2066 Schlüssel\u2069 liegt am Kai.\u0000',
-        ),
-      ],
+      [_note('note', 'mira', 'Der\u2066 Schlüssel\u2069 liegt am Kai.\u0000')],
     );
     final before = campaign.toJson();
     final memories = NpcNarratorMemory.merge(
@@ -158,7 +148,10 @@ void main() {
     );
 
     expect(memories, hasLength(2));
-    expect(memories.first, startsWith('Bestätigte NPC-Beziehungsnotiz zu Mira'));
+    expect(
+      memories.first,
+      startsWith('Bestätigte NPC-Beziehungsnotiz zu Mira'),
+    );
     expect(memories.first, contains('Schlüssel'));
     expect(memories.last, 'Fakt : Die Tür bleibt geschlossen.');
     expect(
@@ -175,17 +168,14 @@ void main() {
   });
 
   test('legacy saves without notes still pass bounded general context', () {
-    final old = _campaign(
-      const [WorldNpc(id: 'mira', name: 'Mira')],
-      const [],
-    ).toJson()..remove('npcRelationshipNotes');
+    final old = _campaign(const [
+      WorldNpc(id: 'mira', name: 'Mira'),
+    ], const []).toJson()..remove('npcRelationshipNotes');
     final restored = Campaign.fromJson(old);
     expect(
-      NpcNarratorMemory.merge(
-        restored,
-        'Ich frage Mira.',
-        ['Fakt\u202e: Gespeichertes Wissen.'],
-      ),
+      NpcNarratorMemory.merge(restored, 'Ich frage Mira.', [
+        'Fakt\u202e: Gespeichertes Wissen.',
+      ]),
       ['Fakt : Gespeichertes Wissen.'],
     );
   });
@@ -250,7 +240,10 @@ void main() {
       final memories = List<String>.from(request['memories'] as List);
       expect(memories, isNotEmpty);
       expect(memories.first, contains('Chronik liegt unter dem Kai'));
-      expect(memories.first, startsWith('Bestätigte NPC-Beziehungsnotiz zu Mira'));
+      expect(
+        memories.first,
+        startsWith('Bestätigte NPC-Beziehungsnotiz zu Mira'),
+      );
       expect(memories.every((entry) => entry.length <= 400), isTrue);
       expect(
         memories.every(
