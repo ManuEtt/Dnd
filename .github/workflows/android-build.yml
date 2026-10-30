@@ -91,7 +91,10 @@ jobs:
         run: flutter pub get
       - name: Dart-Formatierung prüfen
         working-directory: app
-        run: dart format --output=none --set-exit-if-changed lib test
+        run: |
+          dart format --output=write lib test
+          git diff -- lib/story/story_campaign_engine.dart test/story_confirmed_entry_id_collision_test.dart
+          exit 1
       - name: Flutter-Code analysieren
         working-directory: app
         run: flutter analyze
