@@ -1,5 +1,24 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – kanonische Zauberreichweiten (PR #405, Entwurf)
+
+Separates Folgepaket zur Regelengine vom 30.10.2026:
+`feat/chat-a/spell-range-canonical-metadata-20261030` weist bei der
+Bestätigung von Zauberursprüngen nachträglich eingeschleuste Rand-Leerzeichen
+oder Steuerzeichen ab. Numerische `feet`/`mile`-Metadaten dürfen nicht
+durch eine abweichende Großschreibung als bestätigte SRD-Reichweite gelten.
+Fünf neue deterministische Regressionstests decken bestehenden Zauberkatalog,
+Selbst-/Berührungs-/Sichtreichweite, Distanzgrenzen und abgelehnte Zauberplätze ab.
+Keine Migration oder Versionserhöhung. [PR #405](https://github.com/ManuEtt/Dnd/pull/405)
+ist nicht nach main gemergt; neue CI-Abnahme steht beim Anlegen aus.
+
+Der separate [Chat-A-PR #400](https://github.com/ManuEtt/Dnd/pull/400)
+(V/S/M-Komponenten-Guard) hat auf seinem finalen Head die komplette
+[Android-CI #41007599214](https://github.com/ManuEtt/Dnd/actions/runs/41007599214)
+erfolgreich bestanden, ist aber weiterhin nicht integriert.
+
+
+
 Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;
 vollständige Charaktererstellung und SRD-Regelengine bleiben in Entwicklung.
 
