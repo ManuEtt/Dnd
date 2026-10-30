@@ -58,7 +58,9 @@ class SrdSpellTargetRules {
     final match = RegExp(
       r'^([1-9][0-9]*) (foot|feet|mile|miles)$',
     ).firstMatch(range);
-    if (match == null) return null;
+    // Some regular expressions allow $ before a final newline.
+    // Require the entire metadata value, not merely a matching prefix.
+    if (match == null || match.group(0) != range) return null;
 
     final amount = int.tryParse(match.group(1)!);
     if (amount == null) return null;
