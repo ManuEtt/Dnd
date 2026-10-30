@@ -85,6 +85,16 @@ auf demselben Branch korrigieren, danach Review ohne automatischen Merge.
 ## Chat B – 30.10.2026: NPC-Rückblicke mit sicherer ID-Unterscheidung (Draft-PR #396)
 
 Bestätigtes Kampagnengedächtnis und Sitzungsrückblick geben bei gleichnamigen NPCs nur noch eindeutige einzeilige IDs aus `[A-Za-z0-9_-]{1,64}` aus. Unsichere mehrdeutige IDs und ihre spezifischen NPC-Notizen werden aus **erzählerischen Ausgaben** ausgelassen, nicht aus dem gespeicherten Spielstand. Eindeutige historische Namen und andere NPCs bleiben erhalten. Vier neue Flutter-Regressionstests ergänzen die bestehenden Recall-/Recap-Tests; **finale CI, APK und Gerätetest sind noch nicht bestätigt**. Keine Änderung an Regeln, SQLite/JSON, Backend oder Appversion. [PR #396](https://github.com/ManuEtt/Dnd/pull/396) · [Chat-B-Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md). Geteilte Dokumentation vor Integration mit anderen offenen PRs konsolidieren.
+## Chat B – Eindeutige IDs für bestätigte Story-Einträge (30.10.2026)
+
+- **Ausgangs-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`; **Branch:** `feat/chat-b/story-entry-id-collision-20261030`; **PR:** [#414](https://github.com/ManuEtt/Dnd/pull/414), Draft; erste Fachcommits `9001dac7` und `33088157` (finale SHA im PR verifizieren).
+- **Ausgangsproblem:** Nach App-Neustart oder Import kann der zeit- und sequenzbasierte ID-Generator alte IDs erneut erzeugen. Die Speicherung neuer NPC-Beziehungsnotizen, Sitzungsrückblicke und Handlungsstränge prüfte solche Kollisionen nicht.
+- **IMPLEMENTIERT:** `app/lib/story/story_campaign_engine.dart` prüft generierte Eintrags-IDs vor dem Story-Commit auf bereits vorhandene IDs desselben Typs und weist Doppelbelegungen mit `FormatException` ab. Bearbeitungen bestehender Threads behalten ihre ID. Kein Schema-, Modell-, Regel- oder SQLite-Wechsel.
+- **TESTS ERGÄNZT:** `app/test/story_confirmed_entry_id_collision_test.dart` mit sechs Regressionen: drei ID-Kollisionen, JSON-Neustart-Analogie, bestehende Thread-Bearbeitung, valide neue Journaleinträge und einen echten SQLite-Schließen/Neuöffnen/Weiterführen-Roundtrip mit Revisions- und Regelzustandsprüfung. Vor dem SQLite-Zusatz bestanden beide vollständigen GitHub-CI-Läufe auf `5c70fe20602d0c5f71a17f2b15bd2bcc9fe20e4f` (PR-CI `41071413126`, Push-CI `41071407643`); der neue finale Commit benötigt erneute Abnahme.
+- **DATEIEN:** `app/lib/story/story_campaign_engine.dart`, `app/test/story_confirmed_entry_id_collision_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **KOORDINATION:** Keine Fachdatei-Überschneidung mit offenen PRs #396/#398/#403/#407 oder den parallelen Chat-A/C/D-Arbeiten. Gemeinsame README- und zentrale Checkpoints bei Integration durch Chat D additiv konsolidieren. Kein Merge, kein Force-Push.
+- **NICHT GETESTET/BLOCKIERT:** Laufende CI-/Android-Abnahme für #414 noch nicht belegt; reale Android-Installation und produktive KI nicht getestet. Keine Migration erforderlich.
+- **NÄCHSTER SCHRITT:** Finale GitHub-Push- und PR-CI samt vollständiger Flutter-Suite und APK-Builds prüfen, rote Gates im eigenen Branch korrigieren und erfolgreichen PR zur Integration an Chat D übergeben.
 
 
 Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;
