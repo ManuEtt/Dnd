@@ -2,7 +2,7 @@
 
 ## Chat C – NPC-Identitätsdialog bei großer Schrift (30.10.2026)
 
-**IMPLEMENTIERT:** [Draft-PR #422](https://github.com/ManuEtt/Dnd/pull/422), Branch `feat/chat-c/npc-picker-large-text-20261030`, Basis-main `55fe44475a113943c6310ec16a8ffb481185f4e9`, Code-/Test-Commit `f26ed20e01fe43a74a72f2571da6709d254f44bb`. Ein scrollbarerer `AlertDialog` und eine bei 320 px begrenzte, textskalierungsabhängige Liste ersetzen feste 72-px-Zeilen im bestätigten NPC-Identitätsdialog. Neue Widgettests für 320/360 dp, 200 % Schrift, zwölf gleichnamige NPCs und Abbrechen ohne bestätigte Beziehungen.
+**IMPLEMENTIERT:** [Draft-PR #422](https://github.com/ManuEtt/Dnd/pull/422), Branch `feat/chat-c/npc-picker-large-text-20261030`, Basis-main `55fe44475a113943c6310ec16a8ffb481185f4e9`, Code-/Test-Commit `d706b5a5d2d892fd3ed8c69f6e5d2346ad71fa2e`. Ein scrollbarerer `AlertDialog` und eine bei 320 px begrenzte, textskalierungsabhängige Liste ersetzen feste 72-px-Zeilen im bestätigten NPC-Identitätsdialog. Neue Widgettests für 320/360 dp, 200 % Schrift, zwölf gleichnamige NPCs und Abbrechen ohne bestätigte Beziehungen.
 
 **GETESTET:** Repository-, PR- und Modulüberschneidungsprüfung per GitHub; eigener Branch-Diff und PR-Anlage. **Keine lokal ausgeführten automatischen Tests.**
 
