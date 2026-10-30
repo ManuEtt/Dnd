@@ -1,0 +1,19 @@
+name: Chat C pending actions format diagnosis (temporary)
+on:
+  push:
+    branches:
+      - feat/chat-c/pending-action-controls-large-text-20261030
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Print exact Dart formatter changes
+        run: |
+          cd app
+          dart format lib/ui/pending_action_status.dart test/pending_action_controls_large_text_test.dart
+          git diff -- lib/ui/pending_action_status.dart test/pending_action_controls_large_text_test.dart
