@@ -655,3 +655,18 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 
 - **Koordination am 28.10.2026:** Auf PR #337 `maintenance/cleanup-ancestor-branches-20261028` gestapelt; dessen geänderte Trigger und sichere Git-Ancestry-Gates bleiben erhalten. Die Prüfung in `test_safe_cleanup_protected_branch.py` wurde an `#337` angepasst, ohne dessen Testdatei zu überschreiben.
 
+
+## Chat D D-018 – SQLite-Outbox-Aufträge beim direkten Speichern validieren (30.10.2026)
+
+- **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9` (Alpha 0.8.48+98). **Branch:** `fix/chat-d/pending-action-sqlite-validation-20261030`. **Technischer Commit:** `099a115b77af967483e9375a3fad9bed0cd1dd2b`. **PR:** [#397](https://github.com/ManuEtt/Dnd/pull/397), Draft.
+- **Ausgangsproblem:** Direkte Aufrufe von `SqliteCampaignRepository.stagePendingAction` konnten leere, überlange oder ungültige Auftragsdaten dauerhaft speichern. Die spätere `PlayerActionOutbox.pendingFor`-Decodierung akzeptiert diese Daten nicht. Ein anschließender Neustart konnte damit an einem nicht wiederherstellbaren ausstehenden Auftrag hängen bleiben.
+- **IMPLEMENTIERT:** Vor jedem SQLite-Schreibzugriff dieselben Längen-/Request-ID-Schranken wie bei der Outbox: Kampagnen-ID nicht leer, bis 128 Zeichen, ohne Steuerzeichen; Request-ID 1–128 ASCII-Buchstaben, Ziffern, Unterstrich oder Bindestrich; Handlung nicht blank und höchstens 4000 Zeichen. NPC-Identität, Revisionsbindung und atomare Duplikatsperre bleiben unverändert.
+- **Neue Regressionen:** `app/test/pending_action_sqlite_validation_test.dart` prüft ungültige IDs, Steuerzeichen, Texte, Grenzwerte und den unveränderten Zustand bei Ablehnung; gültiges Staging, SQLite-Neustart, Outbox-Decodierung inklusive NPC-Auswahl sowie genaues Entfernen und Request-ID-Konflikt.
+- **Geänderte Dateien:** `app/lib/data/sqlite_campaign_repository.dart`, `app/test/pending_action_sqlite_validation_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **GETESTET:** Technischen Code-Diff gegen main erneut geprüft (13 zusätzliche Produktionszeilen, keine entfernten Zeilen); GitHub-Branch und Draft-PR existieren. **Die neuen Flutter-Tests sind zum Zeitpunkt dieser Dokumentation noch nicht als erfolgreich ausgeführt bestätigt.**
+- **NICHT GETESTET:** Vollständige finale GitHub Actions auf finalem Dokumentations-Commit, Dart-Format und Analyse, Flutter-Suite, Backend/Python, Android-Build/native Tests, reales Android-Gerät. Lokaler GitHub-Checkout scheitert an DNS; Flutter/Dart fehlen.
+- **BLOCKIERT:** Finaler CI-Nachweis und manueller Main-/PR-Abgleich vor Integration. Offene fachliche PRs #387, #388, #392, #394 sowie Chat-D-PRs #389, #391, #395 ändern keine der beiden technischen Dateien. Gemeinsame Dokumentation vor Merge additiv konsolidieren.
+- **Migration:** Keine. SQLite-Schema 3, Kampagnen-JSON 1, bestehende Spielstände, Appversion und fachliche Regeln unverändert. Historische ausstehende Aktionen werden nicht mutiert.
+- **Nächster Schritt:** Finale `flutter test test/pending_action_sqlite_validation_test.dart` und vollständige GitHub-Actions-Pipeline auf dem tatsächlichen PR-HEAD verifizieren; erst danach Review-/Integrationsfreigabe erwägen.
+
+---
