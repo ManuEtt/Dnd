@@ -26,6 +26,21 @@ haben jeweils die komplette GitHub-CI bestanden, wurden jedoch nicht
 ohne unabhängigen Review nach `main` übernommen.
 
 
+## Chat C – Todesrettung bei 200 % Schrift (30.10.2026)
+
+Das Chat-C-Arbeitspaket `feat/chat-c/death-save-actions-large-text-20261030`
+(Implementierungscommit `bb3d1eaa9227cdaed84b845f6177f9d9de632fc2`,
+Basis-main `55fe44475a113943c6310ec16a8ffb481185f4e9`)
+stellt im Dialog des vorläufigen Todesrettungswurfs bei weniger als 500 dp
+Kartenbreite und mindestens 180 % Schrift die verfügbaren Entscheidungen
+untereinander über die volle Breite dar. Die kompakte Wrap-Ansicht bei
+normaler Schrift bleibt erhalten; Verfügbarkeit und Sperrung bei laufender
+Bestätigung bleiben aus den bestehenden Regeln abgeleitet.
+Fünf Widget-Testfälle betreffen 320/360 dp, 200 % Schrift, simulierte
+Tastatur, gesperrten Status, fehlende Klassenwiederholung und normales Layout.
+Keine Änderung an Regelengine, Speicherdaten, Ressourcen oder Appversion.
+**Vollständige CI und Gerätetest sind gesondert nachzuweisen.**
+
 
 Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;
 vollständige Charaktererstellung und SRD-Regelengine bleiben in Entwicklung.
