@@ -3,6 +3,10 @@
 Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;
 vollständige Charaktererstellung und SRD-Regelengine bleiben in Entwicklung.
 
+## Qualität/Android-Sicherungen – Native Namen gegen Unicode-Steuerung absichern (CHAT D, 30.10.2026)
+
+[Draft-PR #421](https://github.com/ManuEtt/Dnd/pull/421) auf `fix/chat-d/backup-filename-format-20261030` (Basis-`main`: `55fe44475a113943c6310ec16a8ffb481185f4e9`): Die native `JsonBackupIo.isSafeName`-Prüfung lehnt unsichtbare Unicode-Formatzeichen (Bidi-Anweisungen, Zero-Width-Zeichen, ergänzende Unicode-Tags) und verwaiste UTF-16-Surrogate ab. Sichtbare Namen mit Umlauten, Emoji und kombinierenden Akzenten bleiben möglich. Native Regressionen für erlaubte/verbotene Namen wurden hinzugefügt; vollständige CI und Android-SAF-Gerätetest bei Erstellung noch ausstehend. Keine SQLite-/JSON-/Versionsmigration; kein Eingriff in Regeln, Story, Spielstände oder bestehende Benutzerberechtigungen. Vor Zusammenführung den finalen PR-HEAD samt nativen JUnit-, Flutter-, Backend- und APK-Prüfungen abnehmen und parallele Checkpointänderungen verlustfrei konsolidieren.
+
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
 Stand: 29.10.2026, UTC. [PR #390](https://github.com/ManuEtt/Dnd/pull/390)
