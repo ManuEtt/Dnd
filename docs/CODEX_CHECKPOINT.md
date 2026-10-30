@@ -1,5 +1,49 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat A – Konzentrations-Rettungswurf bei Schaden, SRD 5.2.1 (30.10.2026)
+
+**Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+**Neuer eigener Branch:** `feat/chat-a/concentration-damage-dc-cap-20261030`.
+**IMPLEMENTIERT:** Neues reines Domain-Modul
+`app/lib/domain/srd_concentration_damage_rules.dart`. Ein bestätigter
+Schadensquellen-Snapshot wird separat und deterministisch geprüft:
+`SG = min(30, max(10, Schaden~/2))` gemäß SRD 5.2.1,
+*Rules Glossary / Concentration* (Wizards of the Coast LLC, CC BY 4.0).
+Jede unabhängige Quelle erfordert einen eigenen Konstitutionsrettungswurf;
+ein misslungener Wurf beendet Konzentration, bei 0 TP, Tod oder
+Handlungsunfähigkeit entfällt der Wurf. Sämtliche Quellen müssen vor dem
+Übergang bestätigt und eindeutig sein. Die Funktion verbraucht keine
+Würfel und verändert nur die neue zurückgegebene Heldenkopie.
+
+**TESTS ERSTELLT:** `app/test/srd_concentration_damage_rules_test.dart`:
+8 deterministische Gruppen einschließlich SG-Grenzen 10/30,
+Abrundung, natürliche 1/20, zwei Schadensquellen, fehlende/duplizierte
+Bestätigungen und Bidi-IDs, Zustände/0 TP, alter Held unverändert
+und JSON-Roundtrip. **GETESTET:** Code und Tests angelegt,
+Fachdateikonflikte zu offenen #387/#400/#405/#408/#415/#416 sowie Chat
+B/C/D-PRs vermieden. **NICHT GETESTET:** neue Flutter-Tests,
+Dart-Formatierung, vollständige Android-GitHub-CI und Realgerät bis
+zum finalen Workflow-Run. **BLOCKIERT:** kein lokales Dart/Flutter-SDK.
+**KEINE MIGRATION:** SQLite-/JSON-Schema, UI, Story, GameEngine,
+Controller, Versionsnummer und Eventformat unverändert.
+**OFFEN:** Verbindung mit regelgeprüften Schadensereignissen und
+revisionssicherer Speicherung, automatisches Abbilden externer Save-Boni.
+
+**VORHERIGE CHAT-A-ABNAHMEN:** #415 [CI #41071482495](https://github.com/ManuEtt/Dnd/actions/runs/41071482495)
+vollständig grün auf `3dae4a6c51ad5ef2a51346a7f0a6577d75bcddbb`;
+#408 [CI #41017785511](https://github.com/ManuEtt/Dnd/actions/runs/41017785511),
+#405 [CI #41011249059](https://github.com/ManuEtt/Dnd/actions/runs/41011249059),
+#400 [CI #41007599214](https://github.com/ManuEtt/Dnd/actions/runs/41007599214)
+jeweils erfolgreich, aber ungemergte Drafts. Bei späterem Review
+README/zentrale Checkpoints mit Chat D additiv zusammenführen.
+
+**NÄCHSTER SCHRITT:** Bestätigte Einzel-Schadensinstanz und
+Konzentrationsentscheidung über koordinierten Controller-/Event-
+/SQLite-Vertrag atomar speichern; Wiederholungen/Revisionskonflikte
+ohne doppelte Saves ablehnen.
+
+
+
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
 Stand: 29.10.2026, UTC. [PR #390](https://github.com/ManuEtt/Dnd/pull/390)
