@@ -1,3 +1,42 @@
+# Chat D D-021 – Verifizierten Grafikimport gegen Symlink-Umleitung absichern (30.10.2026)
+
+- **Ausgangs-Main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `fix/chat-d/fantasy-import-symlink-20261030`.
+- **Code-Commit:** `e2d28c1e35be405a8e09cd86a0e6f249259f2799`.
+- **Pull Request:** [#409](https://github.com/ManuEtt/Dnd/pull/409), initial Draft.
+- **Ausgangsproblem:** `Path.exists()` liefert für einen hängenden Symlink `False`; `Path.write_bytes()` würde externe Zielpfade indirekt erzeugen. Auch symlink-basierte Assets-Verzeichnisse konnten den Import umleiten.
+- **IMPLEMENTIERT:** `ensure_safe_destination` prüft den Projektzielordner und jeden Pfadbestandteil auf Symlinks, während der ZIP-Analyse und vor/nach dem Erstellen von Verzeichnissen; neue Dateien mit `open("xb")` exklusiv erzeugen statt Links zu folgen oder bestehende Dateien zu überschreiben.
+- **Geänderte Dateien:** `scripts/import_complete_fantasy_assets.py`, `scripts/tests/test_import_complete_fantasy_assets.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Regressionen:** gültiger erstmaliger und idempotenter Import, symlink-basiertes Zielverzeichnis, dangling Symlink am Assetziel und Symlink als Projektziel; bisherige negative Daten-/Checksum-Tests bleiben.
+- **GETESTET:** Code und Tests auf PR-Branch gesichert; vollständige CI auf finalem Head noch nicht als Erfolg verifiziert.
+- **NICHT GETESTET:** vollständiger Python-/Backend-/Flutter-/Android-Durchlauf, APK-/Release-Paketierung und realer Gerätetest bis zur CI-Abnahme.
+- **BLOCKIERT:** GitHub-DNS für lokalen Checkout; GitHub-Connector sowie Actions funktionieren.
+- **Migrationen:** keine Änderungen an Spielständen, SQLite-/JSON-Dateiformaten oder App-/SRD-Version.
+- **Koordination:** Dateipfade aller zum Start offenen PRs #387–#408 geprüft; keine technischen Überschneidungen, gemeinsame README und Checkpoints vor Merge verlustfrei konsolidieren. Keine fremden Branches verändert oder gelöscht.
+- **Vorgänger:** PR #401 und #402 vollständig CI-grün und zur Review freigegeben. PR #406 zuletzt weiter im vollständigen Android-Build in Prüfung, kein automatischer Merge.
+- **Nächster Schritt:** finalen GitHub-Actions-Lauf von #409 abnehmen, etwaige Fehler auf diesem Branch korrigieren und bei vollständigem Erfolg zur Review freigeben.
+
+---
+
+# Chat D D-022 – Fehlertoleranter SRD-Qualitätscheck (30.10.2026)
+
+- **Ausgangs-Main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `fix/chat-d/srd-audit-malformed-records-20261030`.
+- **Code-Commit:** `248500247eb98f1cbde46d29448a9ca3303878e3`.
+- **Pull Request:** [#410](https://github.com/ManuEtt/Dnd/pull/410), initial Draft.
+- **Ausgangsproblem:** Fehldatentypen in ansonsten gültigen SRD-Inventur-JSONs konnten beim Audit `TypeError` oder `KeyError` auslösen; Fehlerdiagnosen gingen verloren.
+- **IMPLEMENTIERT:** sichere Enum-/Datentypprüfungen in `validate_matrix`/`validate_entities`, robustes Einlesen von Katalogreferenzen und Inventarlücken, Hash-/Duplikatchecks nur für gültige Metadaten; `main` bricht nach Validierungsfehlern vor der statistischen Auswertung mit Exitcode 1 ab.
+- **Dateien:** `scripts/srd_coverage.py`, `scripts/tests/test_srd_requirements_matrix.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Tests:** vier neue negative Testmethoden für unhashbare Requirement-Felder, kaputte Katalogeinträge, Entity-Datentypen und Nicht-Objekt-Wurzeltypen. Positive Bestandsinventur bleibt unverändert.
+- **GETESTET:** Implementierung und Regressionstests committed und in PR gesichert; vollständige CI noch nicht als grün belegt.
+- **NICHT GETESTET:** finale Python-/Backend-/Flutter-/Android-/APK-Suite und Realgerät bis zur erfolgreichen GitHub-CI.
+- **Migrationen:** keine; SRD-Quellen, Spielregeln, SQLite/JSON, Spielstände und Appversion unverändert.
+- **Koordination:** alle 21 beim Start offenen PRs geprüft; keine Änderungen an den zwei technischen Skript-/Testdateien in fremden PRs. README und zentralen Checkpoint nur verlustfrei gemeinsam integrieren.
+- **Vorarbeiten:** PRs #401, #402, #406 und #409 vollständig CI-erfolgreich und zur Review freigegeben; kein Merge in `main`.
+- **Nächster Schritt:** endgültigen Actions-Lauf für #410 auf letztem SHA prüfen, Fehler auf dem eigenen Branch beheben und erst bei vollständigem Grün zur Review freigeben.
+
+---
+
 # Chat D – Integration von PR #358 nach Checkpoint-Fix #363 (29.10.2026)
 
 ## Integrationskandidat 29.10.2026 – Chat D
