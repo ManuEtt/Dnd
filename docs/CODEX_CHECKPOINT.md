@@ -107,3 +107,8 @@ Dokumentationsprüfung: 221 Pythonfälle, Projekt-/Grenz-/Registerprüfung erfol
 `git diff --check` außerhalb des bytegenauen historischen Archivs sauber. Die
 archivierte Original-CHANGELOG-Zeile 1061 enthält bereits im Quellstand ein
 Leerzeichen am Zeilenende; es bleibt für die nachprüfbare Originaltreue erhalten.
+
+
+## Chat D – SQLite-Outbox-Speichergrenze (30.10.2026, PR #397, Draft)
+
+Technischer Basisstand `main` `55fe44475a113943c6310ec16a8ffb481185f4e9`; Branch `fix/chat-d/pending-action-sqlite-validation-20261030`, Implementierung `099a115b77af967483e9375a3fad9bed0cd1dd2b`. Direkte SQLite-Ausstehendaktionen dürfen keine leeren/überlangen Kampagnenkennungen, ungültigen Request-IDs oder leeren/überlangen Handlungstexte mehr persistieren. Validierung vor der Transaktion; bestehende NPC-/Revision-/ACK-Verträge unverändert. Drei neue FFI-Tests für Fehlwerte, SQLite-Neustart und Unversehrtheit bestätigter Absichten. **Tests und finale CI noch nicht bestätigt**, kein Flutter-SDK/lokaler GitHub-DNS-Checkout. Keine Schema-, JSON- oder Versionsmigration. Dokumentation aus anderen offenen PRs additiv konsolidieren. Nächster Schritt: finale CI auf PR-Head kontrollieren.
