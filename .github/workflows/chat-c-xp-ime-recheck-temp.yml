@@ -1,0 +1,26 @@
+name: Chat C XP IME recheck (temporary)
+on:
+  push:
+    branches:
+      - feat/chat-c/xp-reward-dialog-ime-scroll-20261030
+jobs:
+  targeted:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Get dependencies
+        run: cd app && flutter pub get
+      - name: Format and print changes
+        run: |
+          cd app
+          dart format lib/ui/experience_reward_dialog.dart test/experience_reward_large_text_ime_test.dart
+          git diff -- lib/ui/experience_reward_dialog.dart test/experience_reward_large_text_ime_test.dart
+      - name: XP widget regression
+        run: |
+          cd app
+          flutter test test/experience_reward_large_text_ime_test.dart --reporter expanded
+          flutter test test/experience_reward_dialog_test.dart --reporter expanded
