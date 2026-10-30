@@ -34,6 +34,22 @@
 - **Koordination:** #387–#399 geprüft. Fachdateien ohne Überschneidung; README-/zentralen Checkpoint mit anderen Chat-PRs beim Merge additiv konsolidieren. Kein Merge anderer Arbeiten.
 - **NOCH NICHT IMPLEMENTIERT:** Vollständige offizielle SRD-Zauberinventur, individuelle Wirkungen und transaktionaler Materialverbrauch.
 - **NÄCHSTER SCHRITT:** Eigenständige Prüfung der Komponentenverfügbarkeit im bestätigten Materialinventar; positive/negative und Wiederholungs-/Neustarttests, keine unbestätigte automatische Abbuchung.
+## 30.10.2026 – Reichweiten-Metadaten unverfälscht prüfen (PR #405)
+
+- **Ausgangs-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `feat/chat-a/spell-range-canonical-metadata-20261030`, Code-/Teststand `92184c85c2b67458a83b78bc2aebf6ea28367013`, [PR #405](https://github.com/ManuEtt/Dnd/pull/405) (Draft).
+- **Problem:** `SrdSpellTargetRules` normalisierte ungeprüfte direkte SRD-Metadaten mit `trim()` und erlaubte nicht-kanonische Schreibweisen per case-insensitive Regex.
+- **IMPLEMENTIERT:** `validateOrigin` lehnt Randzeichen ab, numerische Reichweiten müssen kanonisch klein geschrieben sein; bisherige bestätigte Reichweiten bleiben identisch.
+- **Geänderte Fachdateien:** `app/lib/domain/srd_spell_target_rules.dart`, `app/test/srd_spell_range_metadata_guard_test.dart`.
+- **Neue Tests:** fünf deterministische Fälle (339 Katalogeinträge; Self/Touch/Sight-Randzeichen; numerische Rand-/Steuerzeichen und Großschreibung; Singular/Plural/Distanzgrenzen; Zauber-Preflight ohne Ressourcenmutationen). Alte Reichweitentests bleiben aktiviert.
+- **GETESTET:** Quellen und offene PR-Dateipfade geprüft; neue Flutter-Tests bei Erstellung noch **nicht ausgeführt**. **NICHT GETESTET:** vollständige CI auf finalem Head, lokale Flutter-/Dart-/APK-Ausführung, Realgerät. Lokales SDK fehlt; GitHub Actions muss die Abnahme übernehmen.
+- **Kompatibilität:** Weder SQLite noch JSON-Schema, GameController, Story, UI oder Version geändert; keine Migration. Nur künftig geprüfte, verfälschte Metadaten werden abgelehnt.
+- **Quellen:** SRD 5.2.1 `Spells – Range/Targets`, Wizards of the Coast LLC (CC BY 4.0). `RULE-SPELLS-SPELL-RANGE` und `RULE-SPELLS-SPELL-TARGETS` bleiben `partial`.
+- **Koordination:** #387, #400 sowie alle anderen offenen PRs bis #404 fachlich überschneidungsfrei; gemeinsam betroffene Dokumentation beim Review additiv mit Chat D integrieren.
+- **PR #400:** Separate V/S/M-Komponentenprüfung, finale Android-CI #41007599214 auf `fb6076922cb6c62c74e657ac1b848e2b291c1f7b` **erfolgreich**; weiterhin ungemergter Draft.
+- **BLOCKIERT:** Vollständige Endstand-CI/Review steht aus. Kein automatischer Merge.
+- **NOCH NICHT IMPLEMENTIERT:** Spezialreichweiten `Unlimited`/`Special` und vollständige Ziel-/Deckungsgeometrie.
+- **NÄCHSTER SCHRITT:** Nach CI und Integration getrennt prüfen, ob bestätigte nichtverbrauchte kostspielige Zaubermaterialien bei wiederholter Anwendung auf denselben, revisionsgesicherten Inventarstapel gebunden bleiben.
 
 ---
 

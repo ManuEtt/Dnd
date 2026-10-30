@@ -213,6 +213,32 @@ transaktionale Materialabbuchung. **NÄCHSTER SCHRITT:** eigenständige
 Inventarbestätigung mit positiven/negativen und Wiederholungstests.
 README-/Checkpoint-Änderungen parallel zu fremden PRs vor Merge durch Chat D
 konsolidieren; andere Entwicklungsbranches nicht überschreiben.
+## Chat A – Range-Metadaten vor SRD-Zauberbestätigung prüfen (30.10.2026)
+
+Konfliktfreier [PR #405](https://github.com/ManuEtt/Dnd/pull/405)
+auf `feat/chat-a/spell-range-canonical-metadata-20261030`,
+Basis `main` `55fe44475a113943c6310ec16a8ffb481185f4e9`,
+implementierter Code-/Test-Commit `92184c85c2b67458a83b78bc2aebf6ea28367013`.
+
+**IMPLEMENTIERT:** `SrdSpellTargetRules` akzeptiert keine durch
+`trim()` geschönten `Self`-/`Touch`-/`Sight`-/Distanzangaben mehr;
+Fuß-/Meilen-Einheiten müssen exakt kanonisch klein geschrieben sein.
+Fünf neue Tests: `app/test/srd_spell_range_metadata_guard_test.dart`,
+Regellogik `app/lib/domain/srd_spell_target_rules.dart`.
+**GETESTET:** manueller Quell-/PR-Pfad-Abgleich; keine bereits ausgeführten
+neuen Flutter-Tests. **NICHT GETESTET:** finale PR-CI und reale Android-Geräte.
+**BLOCKIERT:** fehlendes Flutter-/Dart-SDK lokal; CI und Review ausstehend.
+**KEINE MIGRATION:** SQLite, JSON, UI, Story, Backend, Version unverändert.
+**NOCH OFFEN:** `Special`/`Unlimited` und echte Zielgeometrie.
+Quellen: WotC SRD 5.2.1, `Spells / Range` und `Targets`, CC BY 4.0;
+`RULE-SPELLS-SPELL-RANGE`/`RULE-SPELLS-SPELL-TARGETS` bleiben `partial`.
+Alle gemeinsam betroffenen README-/Checkpoint-Ergänzungen vor Integration mit
+Chat D abgleichen; keine fremden Fachdateien verändert.
+
+**Getrennte Chat-A-Arbeit #400:** vollständige GitHub-CI
+[#41007599214](https://github.com/ManuEtt/Dnd/actions/runs/41007599214)
+am Commit `fb6076922cb6c62c74e657ac1b848e2b291c1f7b` erfolgreich.
+Beide PRs bleiben getrennt; #400 ist noch nicht gemergt.
 
 
 
