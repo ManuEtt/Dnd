@@ -3,6 +3,27 @@
 Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;
 vollständige Charaktererstellung und SRD-Regelengine bleiben in Entwicklung.
 
+## Chat D – SRD-Qualitätsprüfung verarbeitet fehlerhafte JSON-Datensätze kontrolliert (30.10.2026, PR #410)
+
+[PR #410](https://github.com/ManuEtt/Dnd/pull/410) schützt die technische
+SRD-Inventurprüfung vor ungefangenen `TypeError`-/`KeyError`-Abbrüchen bei
+syntaktisch gültigen, aber falsch strukturierten JSON-Werten. Nicht-objektförmige
+Requirements, unhashbare `area`-/Status-/Entity-Felder, ungültige
+Katalogeinträge und Inventarlücken erzeugen nun geordnete
+`FEHLER:`-Diagnosen und Exitcode 1 statt Python-Tracebacks. Vier neue
+Regressionstests wurden ergänzt; die bestehenden Anforderungen und
+SRD-Abdeckungsregeln bleiben unverändert.
+
+**Ausgangs-`main`:** `55fe44475a113943c6310ec16a8ffb481185f4e9`;
+**Branch:** `fix/chat-d/srd-audit-malformed-records-20261030`;
+**Code-Commit:** `248500247eb98f1cbde46d29448a9ca3303878e3`.
+**Teststatus:** vollständige GitHub Actions auf dem finalen Branch-Commit
+noch ausstehend; bis dahin keine grüne CI behaupten.
+**Migration:** keine; SRD-Quelldaten, Regeln, JSON-/SQLite-Schemas,
+Spielstände und Appversion unverändert.
+Parallel-PR-Dateipfade wurden geprüft; gemeinsame README-/Checkpoint-Zeilen
+müssen bei der Integration verlustfrei abgeglichen werden.
+
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
 Stand: 29.10.2026, UTC. [PR #390](https://github.com/ManuEtt/Dnd/pull/390)
