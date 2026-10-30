@@ -41,16 +41,15 @@ Future<NpcStorySelection?> showNpcStorySelectionDialog(
                     'die gespeicherte Kennung die Personen.',
                   ),
                   const SizedBox(height: 12),
-                  ConstrainedBox(
-                    // Individual rows must grow with system text scaling.
-                    constraints: const BoxConstraints(maxHeight: 320),
-                    child: ListView.builder(
-                      key: const ValueKey('npc-picker-list'),
-                      shrinkWrap: true,
-                      itemCount: eligible.length,
-                      itemBuilder: (context, index) {
-                        final npc = eligible[index];
-                        return Semantics(
+                  // The AlertDialog is the only scrolling viewport. A
+                  // shrink-wrapped ListView here triggers intrinsic-height
+                  // assertions and leaves the nested list off-screen.
+                  Column(
+                    key: const ValueKey('npc-picker-list'),
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (final npc in eligible)
+                        Semantics(
                           label:
                               '${npc.name}, Beziehung: ${npc.relationship}, '
                               'Kennung ${npc.id}',
@@ -67,9 +66,8 @@ Future<NpcStorySelection?> showNpcStorySelectionDialog(
                               dialogContext,
                             ).pop(NpcStorySelection.choose(campaign, npc.id)),
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                    ],
                   ),
                 ],
               ),
