@@ -102,15 +102,27 @@ class NpcContinuityReader {
 // Keep ordinary Unicode letters and punctuation unchanged.
 String _singleLine(String value) => value
     .replaceAll(
-      RegExp(r'[\x00-\x1f\x7f-\x9f\u2028\u2029\u202a-\u202e\u2066-\u2069]'),
+      RegExp(
+        r'[\x00-\x1f\x7f-\x9f\u061c\u200e\u200f'
+        r'\u2028-\u202e\u2066-\u2069]',
+      ),
       ' ',
     )
     .replaceAll(RegExp(r'\s+'), ' ')
     .trim();
 
-String _npcNameKey(String value) => _singleLine(value)
-    .toLowerCase()
-    .replaceAll('ä', 'ae')
-    .replaceAll('ö', 'oe')
-    .replaceAll('ü', 'ue')
-    .replaceAll('ß', 'ss');
+// Invisible direction marks do not introduce a space into a displayed name.
+// Match the structured identity transport's ambiguity check, while retaining
+// real spaces as meaningful characters and sanitizing rendered context above.
+String _npcNameKey(String value) =>
+    _singleLine(
+          value.replaceAll(
+            RegExp(r'[\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]'),
+            '',
+          ),
+        )
+        .toLowerCase()
+        .replaceAll('ä', 'ae')
+        .replaceAll('ö', 'oe')
+        .replaceAll('ü', 'ue')
+        .replaceAll('ß', 'ss');
