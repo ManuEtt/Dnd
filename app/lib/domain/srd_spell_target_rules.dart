@@ -57,8 +57,7 @@ class SrdSpellTargetRules {
   static int? maxRangeFeet(String range) {
     final match = RegExp(
       r'^([1-9][0-9]*) (foot|feet|mile|miles)$',
-      caseSensitive: false,
-    ).firstMatch(range.trim());
+    ).firstMatch(range);
     if (match == null) return null;
 
     final amount = int.tryParse(match.group(1)!);
@@ -77,7 +76,12 @@ class SrdSpellTargetRules {
     SrdSpellDefinition spell,
     SrdSpellTargetFacts facts,
   ) {
-    final range = spell.range.trim();
+    final range = spell.range;
+    if (range != range.trim()) {
+      throw const FormatException(
+        'Zauberreichweite enthält nicht bestätigte Randzeichen.',
+      );
+    }
     final distance = facts.originDistanceFeet;
     if (distance != null && distance < 0) {
       throw const FormatException(
