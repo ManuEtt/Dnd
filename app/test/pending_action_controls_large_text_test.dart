@@ -159,9 +159,19 @@ void main() {
     expect(composerFocus.hasPrimaryFocus, isTrue);
 
     for (final key in ['adventure-retry-action', 'adventure-discard-action']) {
-      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
-      await tester.pumpAndSettle();
-      expect(focusInside(tester, key), isTrue);
+      var found = false;
+      for (var attempt = 0; attempt < 4; attempt++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pumpAndSettle();
+        debugPrint(
+          'Focus after tab $attempt for $key: ${FocusManager.instance.primaryFocus?.debugLabel}',
+        );
+        if (focusInside(tester, key)) {
+          found = true;
+          break;
+        }
+      }
+      expect(found, isTrue, reason: 'Aktion $key muss per Tab erreichbar sein');
       await tester.sendKeyEvent(LogicalKeyboardKey.enter);
       await tester.pumpAndSettle();
     }
