@@ -112,7 +112,10 @@ void main() {
       (catalog.find('Mirage Arcane')!, _sight),
     ];
     for (final (spell, facts) in cases) {
-      expect(SrdSpellTargetRules.validateOrigin(spell, facts).range, spell.range);
+      expect(
+        SrdSpellTargetRules.validateOrigin(spell, facts).range,
+        spell.range,
+      );
       for (final invalid in [
         ' ${spell.range}',
         '${spell.range} ',
@@ -179,7 +182,9 @@ void main() {
     expect(SrdSpellTargetRules.maxRangeFeet('0 feet'), isNull);
   });
 
-  test('invalid range is rejected by casting preflight without a slot spend', () {
+  test(
+    'invalid range is rejected by casting preflight without a slot spend',
+    () {
     final hero = _wizard();
     final before = jsonEncode(hero.toJson());
     final original = catalog.find('Magic Missile')!;
@@ -204,6 +209,7 @@ void main() {
       throwsFormatException,
     );
     expect(jsonEncode(hero.toJson()), before);
-    expect(hero.spentSpellSlots, isEmpty);
-  });
+      expect(hero.spentSpellSlots, isEmpty);
+    },
+  );
 }
