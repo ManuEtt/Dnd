@@ -1,6 +1,7 @@
 import 'models.dart';
 import 'srd_spell_audited_inventory_rules.dart';
 import 'srd_spell_component_rules.dart';
+import 'srd_spell_inventory_id_rules.dart';
 import 'spellcasting_rules.dart';
 import 'srd_spell_preflight_rules.dart';
 
@@ -79,8 +80,7 @@ class SrdSpellInventoryRules {
 
     final amounts = <String, int>{};
     for (final entry in actualConsumption) {
-      if (entry.inventoryId.isEmpty ||
-          entry.inventoryId.trim() != entry.inventoryId ||
+      if (!SrdSpellInventoryIdRules.isSafe(entry.inventoryId) ||
           entry.quantity < 1) {
         throw const FormatException('Ungültige Material-ID oder Stückzahl.');
       }
@@ -93,7 +93,8 @@ class SrdSpellInventoryRules {
     final usedIds = <String>{};
     final inventoryAfter = <InventoryItem>[];
     for (final item in hero.inventory) {
-      if (!usedIds.add(item.id)) {
+      if (!SrdSpellInventoryIdRules.isSafe(item.id) ||
+          !usedIds.add(item.id)) {
         throw const FormatException('Inventar-ID ist nicht eindeutig.');
       }
       final amount = amounts[item.id];
