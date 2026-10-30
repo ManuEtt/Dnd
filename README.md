@@ -1,5 +1,74 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## UI-Teilintegration des Gesamtmigrationslaufs – 30.10.2026
+
+Die neun Chat-C-UI-Pakete und der enthaltene NPC-Dialog-Reparaturbranch sind
+auf Basis `6465a4b2` regulär und mit vollständiger Historie verbunden.
+**55 Widgettests in elf Dateien**, Flutter-Analyse, Formatprüfung (544 Dateien,
+null Änderungen), Projektstruktur und Modulgrenzen sind lokal erfolgreich.
+Die ursprünglichen zehn Branchheads sind Vorfahren des Teilpakets; Main und
+Remote-Branches wurden dadurch noch nicht verändert. Gesamt-CI/Android und
+reale Geräteabnahme sind separat offen. Keine Speicher-/Regel-/Versionsänderung.
+Herkunft, Konfliktentscheidungen und nächste Integrationsprüfung:
+[UI-Teilintegrationsnachweis](docs/parallel/CHAT_C_ALL_BRANCHES_INTEGRATION_20261030.md).
+Die früheren Vorabmeldungen darunter sind historische Einzelbranchberichte.
+
+## Chat C – Ausrüstungsdialog bei großer Schrift und IME (30.10.2026)
+
+Der unabhängige Branch `feat/chat-c/equipment-loadout-large-text-ime-20261030`
+basiert auf `main` `718388dda5c020670ec306843058674a85f54ba0`
+und schützt den Ausrüstungsdialog gegen verdeckte Inhalte bei 320/360 dp,
+200 % Schrift und eingeblendeter Tastatur. `AlertDialog(scrollable: true)`
+ersetzt den doppelten inneren Scrollbereich, während **Abbrechen** und
+**Werte übernehmen** außerhalb der Scrollfläche verbleiben. Die
+Beschriftung der Rüstungsübung wird bei großer Schrift kompakt angezeigt.
+Drei neue Widgetfälle prüfen beide engen Breiten, gesperrte Bestätigung,
+erreichbare Rüstungsübung sowie unveränderte Helden- und Inventardaten.
+Die EP-/Kampfsystem-, Regel-, SQLite- und JSON-Schnittstellen bleiben
+unverändert. Volle GitHub-CI und echte Android-/TalkBack-Abnahme sind erst
+nach dem Lauf als bestanden zu werten.
+
+## Chat C – NPC-Auswahl bei großer Schrift (30.10.2026, Draft-PR #422)
+
+Der [Chat-C-PR #422](https://github.com/ManuEtt/Dnd/pull/422) verbessert den
+Dialog für explizite, gespeicherte NPC-Identitäten auf kleinen Android-Displays:
+Der Titel und der Inhalt sind scrollbar, die NPC-Liste begrenzt ihre maximale
+Höhe, nicht jedoch die einzelne Zeilenhöhe. Die Abbrechen-Aktion bleibt
+erreichbar. Neue Widgettests decken 320/360 dp mit 200 % Textskalierung,
+zwölf gleichnamige NPCs, die konkrete ID-Auswahl und das Fehlen bestätigter
+Beziehungen ab. Basis-main: `55fe4447`. Keine Datenmigration oder
+Regeländerung. **Noch nicht gemergt und nicht lokal durch Flutter-Tests
+abgenommen**; den finalen GitHub-Actions-Status des PR prüfen. Gemeinsame
+Dokumentationsänderungen bei der späteren Integration additiv konsolidieren.
+## Chat C – EP-Dialog bei großer Android-Schrift und IME (30.10.2026)
+
+Das unabhängige Chat-C-Arbeitspaket [PR #426](https://github.com/ManuEtt/Dnd/pull/426)
+(`feat/chat-c/xp-reward-dialog-ime-scroll-20261030`, Basis-main
+`55fe44475a113943c6310ec16a8ffb481185f4e9`) führt den
+EP-Belohnungsdialog in einen einzigen scrollbar begrenzten Titel-/Formularbereich
+über, während **Abbrechen** und **EP verbindlich buchen** außerhalb dieser
+Scrollfläche bleiben. Bei mindestens 180 % Schrift wird der ausdrückliche
+Zustimmungs-Checkbox-Titel kompakt „EP ausdrücklich bestätigen“ dargestellt,
+damit er auch im durch die Android-Tastatur verkleinerten Sichtfenster
+antippbar bleibt. Vier neue Flutter-Widgettestfälle prüfen 320/360 dp,
+200 % Schrift, simulierte IME, Scroll-/Touch-Bedienung, ausdrückliche
+Buchungswahl und gesperrte ungültige Beträge. Spielstände, SQLite/JSON,
+Regel-/EP-Transaktionen und Appversion bleiben unverändert.
+Der gezielte finale Testlauf und die vollständige CI müssen anhand des
+finalen PR-HEADs bestätigt werden; reale Geräteabnahme fehlt.
+
+
+Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;
+vollständige Charaktererstellung und SRD-Regelengine bleiben in Entwicklung.
+
+**Testabnahme-Nachtrag:** Nach Wiederherstellung der vollständigen Widgettestdatei
+liefen am finalen Code- und Teststand `746f4b4da9367b2a92ddddd53eb6739bb6dfc4d8`
+alle **vier neuen** IME-Fälle und **sieben bestehenden** EP-Dialogtests
+erfolgreich; [GitHub Actions #41122944623](https://github.com/ManuEtt/Dnd/actions/runs/41122944623).
+Dart-Format: zwei Dateien, null Änderungen. Finaler Android-Gesamttest
+nach Integration mit neuer `main`-Basis separat abzunehmen.
+
+
 ## Chat C – Todesrettung bei 200 % Schrift (30.10.2026)
 
 Das Chat-C-Arbeitspaket `feat/chat-c/death-save-actions-large-text-20261030`
@@ -58,6 +127,51 @@ finalen PR-Commit noch nicht nachgewiesen**. Kein Cleanup gestartet, kein
 Branch gelöscht, keine Änderung von App, SQLite/JSON oder App-Version.
 Vor Integration mit anderen README-Änderungen additiv konsolidieren.
 
+## Chat C – Abenteuer-HUD bei großer Android-Schrift (29.10.2026)
+
+[PR #394](https://github.com/ManuEtt/Dnd/pull/394) (Draft, Basis `55fe44475a113943c6310ec16a8ffb481185f4e9`) stellt bei mindestens 180 % Systemschrift bestätigte Zustände, temporäre Trefferpunkte und laufende Konzentration vollständig dar, ohne dass die bisherige Drei-Zeilen-Kürzung wichtige Informationen abschneidet. Normale Schrift bleibt kompakt. Neue UI-Regressionen für 320/360 dp bei 200 %, Standardtext und unbekannte Daten sind ergänzt. **Neue PR-CI und echte TalkBack-Geräteprüfung noch offen**. Keine Auswirkungen auf App-Version `0.8.48+98`, SQLite, JSON oder Spielregeln.
+
+Die unabhängigen Chat-C-PRs [#388](https://github.com/ManuEtt/Dnd/pull/388) und [#392](https://github.com/ManuEtt/Dnd/pull/392) besitzen jeweils erfolgreiche eigene CI-Läufe; ihre Integration mit dem neueren main ist separat zu prüfen. Dokumentationsüberschneidungen mit Chat A/D werden durch Chat D bei der Zusammenführung additiv aufgelöst.
+## Chat C – Heldenaktionen mit großer Schrift und Tastatur (30.10.2026)
+
+Neues UI-Paket auf Basis von `main` `55fe44475a113943c6310ec16a8ffb481185f4e9`:
+Die Aktionen **Abenteuer fortsetzen** und **Helden verwalten** in
+`FantasyActiveHeroCard` stehen bei Kartenbreite unter 500 dp und
+mindestens 180 % Schrift untereinander. Bei normaler Schrift bleibt die
+bisherige kompakte Anordnung erhalten. Die Fokusreihenfolge ist explizit;
+deaktivierte Fortsetzung bleibt nicht auslösbar. Fünf Widgettestfälle prüfen
+320/360 dp mit simulierter Android-Tastatur und 200 % Schrift, Touch,
+Tab/Enter, deaktivierte Aktion und Standardlayout. Der ältere
+[Chat-C-PR #399](https://github.com/ManuEtt/Dnd/pull/399) bleibt separat
+und wird nicht überschrieben. Es gibt keine Änderungen an Regeln, SQLite,
+JSON oder der Appversion. **Finale CI/Android- und TalkBack-Gerätetests
+müssen anhand des finalen PR-Commits nachgewiesen werden.**
+## Chat C – Ausstehende Handlungen bei großer Schrift (30.10.2026)
+
+Das isolierte [Chat-C-Paket #417](https://github.com/ManuEtt/Dnd/pull/417) `feat/chat-c/pending-action-controls-large-text-20261030`
+(basierend auf `main` `55fe44475a113943c6310ec16a8ffb481185f4e9`,
+Code-Commit `3a48e283da3749d5a49a0563730059fbd8bf1a94`)
+ordnet im `PendingActionStatus` die Aktionen **Erneut bestätigen** und
+**Verwerfen** bei Kartenbreiten unter 500 dp und mindestens 180 % Systemschrift
+untereinander in voller Breite an. Der vorhandene Volltextschalter, die
+Statussperren und die normale kompakte Anordnung bleiben erhalten.
+Die Tab-Navigation berücksichtigt einen möglichen zusätzlichen Fokus-Stopp des scrollbaren Bereichs; die zwei Entscheidungs-Buttons haben eine ausdrückliche Reihenfolge. Sieben neue Flutter-Widgettestfälle prüfen 320/360 dp mit simuliertem
+Tastatureinzug und 200 % Text, Tab/Enter, Sperrung, lange NPC-Aufträge,
+den Sendestatus sowie das normale Layout. Keine Änderung von Outbox,
+Spielzustand, Regeln, SQLite oder JSON. Finale CI und echter Android-
+TalkBack-Test müssen separat nachgewiesen werden.
+## Chat C – Screenreader-Hinweis für gesperrten Angriff (30.10.2026)
+
+[PR #399](https://github.com/ManuEtt/Dnd/pull/399) (Draft; Basis
+`55fe44475a113943c6310ec16a8ffb481185f4e9`): Die fixierte
+Angriffs-Schnellaktion erhält bei Sperre einen erklärenden TalkBack-Hinweis.
+Eine laufende Handlung hat Vorrang vor einem fehlenden Angriffsziel;
+die bestehende Tooltip-Anzeige und alle vier Aktionen bleiben unverändert.
+Drei Widget-Regressionen prüfen gesperrte, laufende und freigegebene
+Zustände. **Tests neu geschrieben, hier noch nicht ausgeführt**; vollständige
+GitHub-Actions-CI und echte TalkBack-Geräteabnahme offen. Keine Änderung von
+Regelzustand, SQLite, JSON, Appversion oder Spielständen; keine Migration.
+Gemeinsame Dokumentation vor Merge additiv konsolidieren.
 
 
 Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;
@@ -326,6 +440,17 @@ Integrations-PRs bereits übernommen, keine PRs offen und der
 [Main-CI-Lauf](https://github.com/ManuEtt/Dnd/actions/runs/40867945743)
 erfolgreich. Ältere darunterstehende Integrationsstatus sind historische
 Momentaufnahmen.
+## Chat C – Android-Zugänglichkeit der Charakterübersicht (29.10.2026)
+
+[PR #392](https://github.com/ManuEtt/Dnd/pull/392) (Draft) zeigt bei mindestens 180 % Schrift und weniger als 500 dp Kartenbreite **vollständige Fertigkeits-, Zauber-, Zustands- und Inventarnamen** oberhalb des jeweiligen bestätigten Wertes an; normalgroße Darstellung behält die bisherigen kompakten Zeilen. Neue Flutter-Widgettests decken 320/360 dp bei 200 %, normalen Text, Konzentration/Inventarmenge sowie unbekannte historische Werte ab. **Die PR-#392-CI ist bis zum erfolgreichen Lauf auf dem finalen SHA offen**. Keine Änderungen an Regeln, Charakterdaten, Version, SQLite oder JSON.
+
+Die ältere Chat-C-Arbeit [PR #388](https://github.com/ManuEtt/Dnd/pull/388) (Charakterbogen-Header) besteht dagegen [36/36 CI-Schritte](https://github.com/ManuEtt/Dnd/actions/runs/40914859785) auf `97262ab3900f21f5951afd45bd35da197c3b57ae` und ist reviewbereit. PR #390 bearbeitet dieselbe Header-Fachdatei wie #388: vor Integration bewusst zusammenführen. PR #392 ist fachlich davon getrennt. Offen gebliebene gemeinsame README-/Checkpoint-Zweige der Chats A/D und Charaktererstellung müssen bei Integration bewahrt werden.
+## Aktualisierte Main-Basis und Chat-C-UI-Arbeit (29.10.2026)
+
+Die vorherigen 24 parallelen PR-Pakete wurden inzwischen in `main` integriert und ihre Branches bereinigt. Main `fde0ef6ed8b419d6a31c701a03aa05d61994c352` / Android-Alpha-CI [40867945743](https://github.com/ManuEtt/Dnd/actions/runs/40867945743) sind erfolgreich. Darunterstehende „Integrationskandidat“-Abschnitte beschreiben einen **historischen Vor-Merge-Zustand** und dürfen nicht als aktuelle offene PR-Liste gelesen werden.
+
+**Aktueller UI-Entwurf:** [Chat C PR #388](https://github.com/ManuEtt/Dnd/pull/388) erweitert den Charakterbogen-Header bei 180–200 % Android-Schrift und weniger als 500 dp Breite: Porträt über vollständigem Namen, Klasse/Stufe, Unterklassen und Hintergrund. Normale Schrift bleibt kompakt. Vier neue Widgettests (320/360 dp, Standardaktion, historisch leerer Name) sind hinzugefügt; **CI für diesen Feature-Head noch separat abnehmen**. Keine Änderung an Version, Regeln, Story, SQLite oder JSON.
+
 
 ## Konsolidierter Arbeitsstand – Integrationskandidat vom 29.10.2026
 

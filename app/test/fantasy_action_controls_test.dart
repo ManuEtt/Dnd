@@ -158,4 +158,95 @@ void main() {
     expect(count, 0);
     expect(tester.takeException(), isNull);
   });
+  testWidgets('Gesperrter Angriff erklärt den Grund direkt für TalkBack', (
+    tester,
+  ) async {
+    var attacks = 0;
+    await mountActions(
+      tester,
+      attackEnabled: false,
+      attackUnavailableReason: 'Kein bestätigtes Ziel.',
+      attack: () => attacks++,
+    );
+    final attack = find.byKey(const ValueKey('adventure-shortcut-attack'));
+    final semantics = tester.widget<Semantics>(
+      find
+          .descendant(
+            of: attack,
+            matching: find.byWidgetPredicate(
+              (widget) =>
+                  widget is Semantics && widget.properties.button == true,
+            ),
+          )
+          .first,
+    );
+    expect(semantics.properties.label, 'Angriff');
+    expect(semantics.properties.enabled, isFalse);
+    expect(semantics.properties.hint, 'Kein bestätigtes Ziel.');
+    final tooltip = tester.widget<Tooltip>(
+      find.ancestor(of: attack, matching: find.byType(Tooltip)),
+    );
+    expect(tooltip.message, 'Kein bestätigtes Ziel.');
+    expect(tooltip.excludeFromSemantics, isTrue);
+    await tester.tap(attack);
+    expect(attacks, 0);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Laufende Handlung überstimmt den fehlenden Angriffskontext', (
+    tester,
+  ) async {
+    await mountActions(
+      tester,
+      busy: true,
+      attackEnabled: false,
+      attackUnavailableReason: 'Kein bestätigtes Ziel.',
+    );
+    final attack = find.byKey(const ValueKey('adventure-shortcut-attack'));
+    final semantics = tester.widget<Semantics>(
+      find
+          .descendant(
+            of: attack,
+            matching: find.byWidgetPredicate(
+              (widget) =>
+                  widget is Semantics && widget.properties.button == true,
+            ),
+          )
+          .first,
+    );
+    expect(
+      semantics.properties.hint,
+      'Eine Handlung wird bereits verarbeitet.',
+    );
+    expect(semantics.properties.enabled, isFalse);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Verfügbarer Angriff hat keinen veralteten Sperrhinweis', (
+    tester,
+  ) async {
+    var attacks = 0;
+    await mountActions(tester, attack: () => attacks++);
+    final attack = find.byKey(const ValueKey('adventure-shortcut-attack'));
+    final semantics = tester.widget<Semantics>(
+      find
+          .descendant(
+            of: attack,
+            matching: find.byWidgetPredicate(
+              (widget) =>
+                  widget is Semantics && widget.properties.button == true,
+            ),
+          )
+          .first,
+    );
+    expect(semantics.properties.hint, isNull);
+    expect(semantics.properties.enabled, isTrue);
+    expect(
+      find.ancestor(of: attack, matching: find.byType(Tooltip)),
+      findsNothing,
+    );
+    await tester.tap(attack);
+    expect(attacks, 1);
+    expect(tester.takeException(), isNull);
+  });
 }
