@@ -2,7 +2,7 @@
 
 ## 30.10.2026 – SRD-Materialinventar-IDs und nicht verbrauchte Komponenten (neuer PR)
 
-- **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`. **Branch:** `fix/chat-a/spell-material-id-integrity-20261030`.
+- **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`. **Branch:** `feat/chat-a/spell-material-id-integrity-20261030`.
 - **IMPLEMENTIERT:** `SrdSpellInventoryIdRules.isSafe` schützt bestätigte Inventarstapel-IDs vor C0/C1-/ASCII-Steuerzeichen, Soft Hyphen, Null-/Zeilenzeichen, Unicode-Bidi-Overrides/Isolaten und ausgewählten unsichtbaren Trennern. Normale internationalisierte IDs und innere Leerzeichen bleiben zulässig.
 - **Verwendung:** `SrdSpellAuditedInventoryRules.consumedQuantities` validiert vor der Zuordnung alle Inventarstapel und Bindungs-IDs, auch für die ausdrücklich *nicht verbrauchten* teuren Komponenten von `Secret Chest`, `Clone` und `Legend Lore`. `SrdSpellInventoryRules.commitConfirmedCast` validiert außerdem bestätigte Verbrauchs-IDs und alle Stapel beim atomaren Ressourcenübergang.
 - **Tests:** `app/test/srd_spell_inventory_id_guard_test.dart` prüft internationale IDs, unsichtbare Unicode-/Steuerzeichen, mehrfaches `Secret Chest` mit frisch geprüfter Planrevision bei unverändertem Inventar, JSON-Roundtrip, Stale-Plan-Verbot, Verlust eines gebundenen Stapels, unbeteiligte manipulative Stapel und gültige Einzelkomponenten.
