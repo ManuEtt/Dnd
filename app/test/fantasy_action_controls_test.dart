@@ -249,5 +249,4 @@ void main() {
     expect(attacks, 1);
     expect(tester.takeException(), isNull);
   });
-
 }

@@ -598,8 +598,7 @@ class FantasyPinnedActionBar extends StatelessWidget {
     final attackDisabledReason = busy
         ? 'Eine Handlung wird bereits verarbeitet.'
         : !attackEnabled
-        ? attackUnavailableReason ??
-              'Hier ist derzeit kein Angriff möglich.'
+        ? attackUnavailableReason ?? 'Hier ist derzeit kein Angriff möglich.'
         : null;
     final attackShortcut = FantasyShortcutTile(
       key: const ValueKey('adventure-shortcut-attack'),
