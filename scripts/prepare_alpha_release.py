@@ -77,8 +77,20 @@ def validate_arm64_apk(apk: Path) -> None:
                     or any(part in ('', '.', '..') for part in parts)
                     or any(ord(char) < 32 or ord(char) == 127 for char in name)):
                 raise ValueError('Die ARM64-APK enthält unsichere ZIP-Pfade.')
-            if stat.S_ISLNK(entry.external_attr >> 16):
+            mode = entry.external_attr >> 16
+            if stat.S_ISLNK(mode):
                 raise ValueError('Die ARM64-APK enthält symbolische ZIP-Links.')
+            # The Unix mode can describe a device, pipe, socket or a directory
+            # masquerading as a required APK file. ZIP CRC verification alone
+            # cannot detect these misleading member types. Mode zero is kept
+            # compatible with ZIP producers that omit Unix file-type bits.
+            if entry.create_system == 3:
+                kind = stat.S_IFMT(mode)
+                if kind not in (0, stat.S_IFREG, stat.S_IFDIR):
+                    raise ValueError('Die ARM64-APK enthält unzulässige ZIP-Dateitypen.')
+                if ((kind == stat.S_IFDIR and not name.endswith('/'))
+                        or (kind == stat.S_IFREG and name.endswith('/'))):
+                    raise ValueError('Die ARM64-APK enthält widersprüchliche ZIP-Dateitypen.')
         if archive.testzip() is not None:
             raise ValueError('Die ARM64-APK enthält beschädigte ZIP-Einträge.')
         present = set(archive.namelist())
