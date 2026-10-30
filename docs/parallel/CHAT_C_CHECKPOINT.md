@@ -1,3 +1,37 @@
+## 30.10.2026 – Chat C: Ausrüstungsdialog bei 200 % Schrift und IME
+
+- **Ausgangs-main:** `718388dda5c020670ec306843058674a85f54ba0`.
+- **Branch:** `feat/chat-c/equipment-loadout-large-text-ime-20261030`.
+- **Technische Commits:** `d0ca27d99429440f0b912e79913df06e7d63c004`,
+  `bc82f1c262844a825685507bdb30e8fe27dbdde0`.
+- **Problem:** Der Ausrüstungsdialog zeigte einen nicht-scrollenden Titel
+  über einem eigenen Scrollbereich; bei sehr großer Android-Schrift und
+  geöffneter IME waren Teile der Bedienung schwer erreichbar.
+- **IMPLEMENTIERT:** `app/lib/ui/equipment_loadout_dialog.dart` verwendet
+  `AlertDialog(scrollable: true)`; der bisher verschachtelte
+  `SingleChildScrollView` entfällt, Aktionsbuttons bleiben getrennt.
+  Ab 180 % Schrift wird die lange Checkbox-Beschriftung für Rüstungsübung
+  verkürzt. Keine Änderung am Vorschau- oder Bestätigungspfad.
+- **TESTS ERGÄNZT:** `app/test/equipment_loadout_ime_test.dart`:
+  zwei negative Abbruch-/Sperrungsfälle bei 320/360 dp und ein positiver
+  Touch-Scroll- und Bestätigungsfall bei 320 dp, jeweils 200 %/IME.
+  Original-`HeroCharacter` bleibt unverändert; die Dialogwahl liefert
+  ausschließlich eine Regelvorschau.
+- **GETESTET:** main, Masterprompt, andere PR-Dateiüberschneidungen,
+  Quellcode und bestehender Ausrüstungs-Widgettest geprüft. Code und
+  Tests auf eigenem Branch gesichert. **Flutter-/CI-Ergebnis offen.**
+- **NICHT GETESTET:** Flutter lokal (SDK fehlt), tatsächlicher Android-
+  TalkBack- und IME-Gerätetest, Upgrade, gesamter Android-Build.
+- **BLOCKIERT:** Bis zum erfolgreichen CI-Lauf Draft lassen. Geteilte
+  README- und Checkpoint-Einträge durch Chat D additiv konsolidieren.
+- **Migration:** Keine Domain-/Regel-/Inventar-, SQLite- oder
+  JSON-Schemaänderung, keine Migration oder Versionsänderung.
+- **Nächster Schritt:** Auf echtem Android-Gerät bei 320 dp, 200 %
+  Schrift und IME Dropdown- und Checkbox-Touch-Ziele sowie
+  Abbruch/Übernahme mit TalkBack prüfen.
+
+---
+
 ## 30.10.2026 – Chat C: Todesrettungs-Entscheidungen bei 200 % Schrift
 
 - **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
