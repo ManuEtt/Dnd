@@ -1,7 +1,7 @@
 ## 30.10.2026 – Chat C: NPC-Auswahl bei 200 % Schrift (PR #422)
 
 - **Ausgangs-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`; App `0.8.48+98`.
-- **Eigener Branch:** `feat/chat-c/npc-picker-large-text-20261030`; **Pull Request:** [#422](https://github.com/ManuEtt/Dnd/pull/422) (Draft); letzter Code-/Test-Commit vor Dokumentationsupdates: `f26ed20e01fe43a74a72f2571da6709d254f44bb`. Finalen HEAD anhand des PRs ermitteln.
+- **Eigener Branch:** `feat/chat-c/npc-picker-large-text-20261030`; **Pull Request:** [#422](https://github.com/ManuEtt/Dnd/pull/422) (Draft); letzter Code-/Test-Commit vor Dokumentationsupdates: `d706b5a5d2d892fd3ed8c69f6e5d2346ad71fa2e`. Finalen HEAD anhand des PRs ermitteln.
 - **Ausgangsproblem:** Die NPC-Liste schätzte jede Zeile auf 72 px. Lange eindeutige Namen und Beziehungen können bei 200 % Schrift mehr Höhe benötigen; auf kleinen Displays war der Dialog nicht als Ganzes scrollbar.
 - **IMPLEMENTIERT:** `app/lib/ui/npc_story_selection_dialog.dart` setzt `AlertDialog(scrollable: true)` und eine maximal 320 px hohe, `shrinkWrap`-gesteuerte NPC-Liste ohne feste Zeilenhöhe ein. Bestätigte NPC-IDs bleiben Grundlage der Auswahl; Abbrechen liegt außerhalb des Scrollbereichs.
 - **TESTS ERGÄNZT:** `app/test/npc_story_selection_small_screen_test.dart`: 320/360 dp bei 200 % Schrift, Scrollen zum zwölften gleichnamigen NPC, gespeicherte ID und Revision, unveränderte Kampagnen-JSON-Daten; negativer Fall mit fehlenden bestätigten Erinnerungen und Abbrechen.
