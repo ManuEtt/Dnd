@@ -3,6 +3,19 @@
 Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;
 vollständige Charaktererstellung und SRD-Regelengine bleiben in Entwicklung.
 
+## Chat C – NPC-Auswahl bei großer Schrift (30.10.2026, Draft-PR #422)
+
+Der [Chat-C-PR #422](https://github.com/ManuEtt/Dnd/pull/422) verbessert den
+Dialog für explizite, gespeicherte NPC-Identitäten auf kleinen Android-Displays:
+Der Titel und der Inhalt sind scrollbar, die NPC-Liste begrenzt ihre maximale
+Höhe, nicht jedoch die einzelne Zeilenhöhe. Die Abbrechen-Aktion bleibt
+erreichbar. Neue Widgettests decken 320/360 dp mit 200 % Textskalierung,
+zwölf gleichnamige NPCs, die konkrete ID-Auswahl und das Fehlen bestätigter
+Beziehungen ab. Basis-main: `55fe4447`. Keine Datenmigration oder
+Regeländerung. **Noch nicht gemergt und nicht lokal durch Flutter-Tests
+abgenommen**; den finalen GitHub-Actions-Status des PR prüfen. Gemeinsame
+Dokumentationsänderungen bei der späteren Integration additiv konsolidieren.
+
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
 Stand: 29.10.2026, UTC. [PR #390](https://github.com/ManuEtt/Dnd/pull/390)
