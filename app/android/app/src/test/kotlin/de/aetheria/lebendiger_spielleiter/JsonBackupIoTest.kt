@@ -33,6 +33,29 @@ class JsonBackupIoTest {
     }
 
     @Test
+    fun safeNamesRejectInvisibleUnicodeControlsAndUnpairedSurrogates() {
+        val malicious = listOf(
+            "save\u202Egpj.json", // right-to-left override
+            "save\u202A.json", // left-to-right embedding
+            "save\u2066.json", // left-to-right isolate
+            "save\u2069.json", // pop directional isolate
+            "save\u200F.json", // right-to-left mark
+            "save\u200D.json", // zero-width joiner
+            "save\u00AD.json", // soft hyphen
+            "save${String(Character.toChars(0xE0001))}.json", // supplementary format tag
+            "save\uD800.json", // isolated high surrogate
+            "save\uDC00.json", // isolated low surrogate
+        )
+        malicious.forEach {
+            assertFalse("unsafe filename: ${it.length} UTF-16 units", JsonBackupIo.isSafeName(it))
+        }
+
+        // Visible non-ASCII characters must remain valid.
+        assertTrue(JsonBackupIo.isSafeName("Ätheria 🐉.json"))
+        assertTrue(JsonBackupIo.isSafeName("E\u0301cho.json"))
+    }
+
+    @Test
     fun payloadSizeRequiresContentAndAcceptsTheExactBoundary() {
         assertFalse(JsonBackupIo.isValidPayload(byteArrayOf()))
         assertTrue(JsonBackupIo.isValidPayload(byteArrayOf(1)))
