@@ -56,9 +56,7 @@ class SrdSpellMaterialValueRules {
   }) {
     final requirements = SrdSpellComponentRules.auditedItems(spell);
     if (requirements.isEmpty ||
-        requirements.any(
-          (item) => !_minimumUnitValueCp.containsKey(item.id),
-        )) {
+        requirements.any((item) => !_minimumUnitValueCp.containsKey(item.id))) {
       throw UnsupportedError(
         'Für diesen Zauber gibt es keine überprüften Materialpreise.',
       );

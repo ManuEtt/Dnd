@@ -9,9 +9,7 @@ import 'package:lebendiger_spielleiter/domain/srd_spell_component_rules.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_material_value_rules.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_preflight_rules.dart';
 
-HeroCharacter _wizard({
-  List<InventoryItem>? inventory,
-}) => HeroCharacter(
+HeroCharacter _wizard({List<InventoryItem>? inventory}) => HeroCharacter(
   id: 'verified-value-caster',
   name: 'Wertprüfer',
   className: 'Magier',
@@ -182,14 +180,10 @@ void main() {
         values: values,
         confirmedTargetCount: recipe.count,
       );
-      expect(
-        consumed,
-        {
-          if (recipe.firstConsumed > 0) 'first': recipe.firstConsumed,
-          if (recipe.secondConsumed > 0) 'second': recipe.secondConsumed,
-        },
-        reason: recipe.name,
-      );
+      expect(consumed, {
+        if (recipe.firstConsumed > 0) 'first': recipe.firstConsumed,
+        if (recipe.secondConsumed > 0) 'second': recipe.secondConsumed,
+      }, reason: recipe.name);
       for (final invalid in [
         _values(
           recipe.first,
@@ -223,10 +217,7 @@ void main() {
   test('missing, duplicate, unverified and misbound prices fail closed', () {
     final spell = catalog.find('Secret Chest')!;
     final hero = _wizard();
-    final bindings = _bindings(
-      'secret-large-chest',
-      'secret-tiny-replica',
-    );
+    final bindings = _bindings('secret-large-chest', 'secret-tiny-replica');
     final values = _values(
       'secret-large-chest',
       'secret-tiny-replica',
@@ -297,10 +288,7 @@ void main() {
         InventoryItem(id: 'second', name: 'Replica'),
       ],
     );
-    final bindings = _bindings(
-      'secret-large-chest',
-      'secret-tiny-replica',
-    );
+    final bindings = _bindings('secret-large-chest', 'secret-tiny-replica');
     final values = _values(
       'secret-large-chest',
       'secret-tiny-replica',
@@ -402,10 +390,7 @@ void main() {
     final spell = catalog.find('Secret Chest')!;
     final firstHero = _wizard();
     final source = jsonEncode(firstHero.toJson());
-    final bindings = _bindings(
-      'secret-large-chest',
-      'secret-tiny-replica',
-    );
+    final bindings = _bindings('secret-large-chest', 'secret-tiny-replica');
     final values = _values(
       'secret-large-chest',
       'secret-tiny-replica',
