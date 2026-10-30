@@ -82,6 +82,11 @@ auf demselben Branch korrigieren, danach Review ohne automatischen Merge.
 - **KOORDINATION:** #396 (`story_memory_engine.dart`) und #398 (`npc_continuity_reader.dart`) betreffen andere Fachdateien. Gemeinsame README und zentrale Checkpoints müssen Chat D additiv konsolidieren; kein Merge fremder PRs.
 - **NÄCHSTER SCHRITT:** Finale vollständige CI von #403 auf dessen finalem HEAD abnehmen und bei Fehlern im eigenen Branch reparieren; keine Freigabe ohne grüne Builds.
 
+## Chat B – 30.10.2026: NPC-Rückblicke mit sicherer ID-Unterscheidung (Draft-PR #396)
+
+Bestätigtes Kampagnengedächtnis und Sitzungsrückblick geben bei gleichnamigen NPCs nur noch eindeutige einzeilige IDs aus `[A-Za-z0-9_-]{1,64}` aus. Unsichere mehrdeutige IDs und ihre spezifischen NPC-Notizen werden aus **erzählerischen Ausgaben** ausgelassen, nicht aus dem gespeicherten Spielstand. Eindeutige historische Namen und andere NPCs bleiben erhalten. Vier neue Flutter-Regressionstests ergänzen die bestehenden Recall-/Recap-Tests; **finale CI, APK und Gerätetest sind noch nicht bestätigt**. Keine Änderung an Regeln, SQLite/JSON, Backend oder Appversion. [PR #396](https://github.com/ManuEtt/Dnd/pull/396) · [Chat-B-Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md). Geteilte Dokumentation vor Integration mit anderen offenen PRs konsolidieren.
+
+
 Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;
 vollständige Charaktererstellung und SRD-Regelengine bleiben in Entwicklung.
 
