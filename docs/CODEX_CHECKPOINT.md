@@ -1,5 +1,47 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat A – Integrität der Zaubermaterial-Stapel-IDs (30.10.2026)
+
+**IMPLEMENTIERT:** Separater Chat-A-Branch
+`fix/chat-a/spell-material-id-integrity-20261030`, Basis-main
+`55fe44475a113943c6310ec16a8ffb481185f4e9`. Mit
+`app/lib/domain/srd_spell_inventory_id_rules.dart` neue reine
+SRD-Regelvalidierung für Inventarbeleg-IDs. `app/lib/domain/srd_spell_inventory_rules.dart`
+und `app/lib/domain/srd_spell_audited_inventory_rules.dart` lehnen
+C0/C1-Steuerzeichen, unsichtbare Bidi-Overrides/Isolates, weiche
+Trennzeichen und Zeilenformatierung ab, ehe bestätigte Verbrauchs- und
+behaltene kostspielige Materialien einem Stapel zugeordnet werden.
+Internationale sichtbare IDs bleiben kompatibel.
+
+**TESTS HINZUGEFÜGT:** `app/test/srd_spell_inventory_id_guard_test.dart`:
+Sechs deterministische Fälle zu erlaubten/unsichtbaren IDs, bestätigter
+Wiederverwendung nichtverbrauchter `Secret Chest`-Truhen/Repliken über
+frische Preflights und JSON-Roundtrip, stale Plan, veränderter Inventarzuordnung,
+geprüften unbekannten/unsichtbaren Stapeln und unverändertem
+Einzelmaterial-Commit. **NICHT GETESTET:** finale CI, Android-Gerät;
+`dart`/`flutter` im lokalen Runtime nicht verfügbar. Die vollständige
+GitHub-Actions-Kette muss vor Merge auf dem finalen PR-Head grün sein.
+
+**KEINE MIGRATION:** SQLite-/JSON-/Event-Schema, Story, UI, Backend,
+Version, vorhandene Spielstände unverändert. Lediglich neue bestätigte
+Aktionen mit nicht eindeutig darstellbaren Stapel-IDs werden abgewiesen.
+**GRENZE:** keine selbstständige Beurteilung des Geldwerts oder der
+Gegenstandsidentität; externe Bestätigungsregeln bleiben unverzichtbar.
+**SRD:** WotC SRD 5.2.1 `Spells / Components`, CC BY 4.0;
+`RULE-SPELLS-MATERIAL-COMPONENTS` weiter `partial`.
+**KOORDINATION:** keine Fachdatei-Überschneidung mit #387, #400, #405
+oder Chat B/C/D; gemeinsam berührte Docs additiv abgleichen.
+**BLOCKIERT:** CI/Review und manuelle Geräteprüfung noch ausstehend.
+**NÄCHSTER SCHRITT:** auditierbare Preis-/Identitätsbelege und persistierte
+nichtverbrauchte Materialbindung nur in koordiniertem Integrations-PR.
+
+**Voriger Chat-A-PR #405:** vollständige [CI #41011249059](https://github.com/ManuEtt/Dnd/actions/runs/41011249059)
+auf `18bde90536921f324e2826cbc60ab731be40684c` erfolgreich;
+[#400](https://github.com/ManuEtt/Dnd/pull/400) ebenfalls vollständig grün.
+Beide PRs bleiben ungemergt.
+
+
+
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
 Stand: 29.10.2026, UTC. [PR #390](https://github.com/ManuEtt/Dnd/pull/390)
