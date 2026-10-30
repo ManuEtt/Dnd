@@ -1,6 +1,6 @@
 # Codex-Checkpoint – Würfelraunen
 
-## Chat A – SRD-Stückwert-Evidenz bei Mehrkomponenten-Zaubern (30.10.2026)
+## Chat A – SRD-Stückwert-Evidenz bei Mehrkomponenten-Zaubern (PR #415, 30.10.2026)
 
 **IMPLEMENTIERT:** Getrennter Branch
 `feat/chat-a/spell-material-value-evidence-20261030`, Basis-main
