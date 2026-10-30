@@ -179,6 +179,38 @@
 - **Kompatibilität:** keine SQLite-/JSON-/Schema-/Versionsmigration.
 - **Nächster Schritt:** CI auf finalem PR-Commit abnehmen; danach
   aktuelle Main-/PR-Dateien vor Review und Integration erneut prüfen.
+# Chat D D-021 – Checkpoint-Veröffentlichung exklusiv sperren (29.10.2026)
+
+- **Basis-Main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `fix/chat-d/checkpoint-publish-lock-20261029`.
+- **Code-Commit:** `cc2c557ea6f3eedb1e2aacf0fa761f70574528a2`.
+- **Problem:** Parallele `create_checkpoint`-Aufrufe auf dasselbe
+  Verzeichnis konnten das versionierte Checkpoint-Set und seine stabilen
+  `Wuerfelraunen_LATEST_Vollprojekt.zip`- bzw. `SHA256SUMS.txt`-
+  Aliase gegenseitig überschreiben.
+- **IMPLEMENTIERT:** Mit `mkdir` atomar beanspruchtes
+  `.checkpoint.lock` über temporäre Erzeugung, Prüfung,
+  historische Dateihashes, veröffentlichte Versionen und beide Aliase.
+  Zweiter Lauf scheitert fail-closed, ohne fremde Sperren oder bereits
+  veröffentlichte Dateien anzufassen. Eigener Lock wird in `finally`
+  freigegeben; harte Crash-Sperren bleiben zur manuellen Prüfung.
+- **Technische Dateien:** `scripts/create_checkpoint.py`,
+  `scripts/tests/test_create_checkpoint.py`.
+- **Dokumentation:** `README.md`, `docs/CODEX_CHECKPOINT.md`,
+  `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Tests:** Drei neue Regressionen (vorhandenes Lock,
+  konkurrierender Aufruf vor ZIP-Veröffentlichung, `KeyboardInterrupt`
+  und sicherer Retry). Bestehende Manifest-/Git-Patch-/Symlink-/
+  Integritätstests bleiben aktiv.
+- **GETESTET:** vorherige Main-CI, **nicht** die neue Branch-CI.
+- **NICHT GETESTET:** neuer vollständiger CI-Run, Windows,
+  externe Mehrprozess-Rennen, Realgerät.
+- **KOMPATIBILITÄT:** keinerlei Änderung an Spielständen,
+  Regelsystem, Datenbank, JSON oder App-Version.
+- **KOORDINATION:** PRs #387, #388, #389, #391, #392 und #394
+  vor Paketstart überprüft; keine technischen Dateiüberschneidungen.
+  README und zentraler Checkpoint beim späteren Merge additiv bewahren.
+- **NÄCHSTER SCHRITT:** CI auswerten, neue PRs prüfen, Review-Freigabe.
 
 ---
 
