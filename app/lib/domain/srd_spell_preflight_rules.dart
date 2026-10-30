@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'healing_spell_rules.dart';
 import 'models.dart';
 import 'srd_spell_component_rules.dart';
+import 'srd_spell_casting_time_rules.dart';
 import 'spellcasting_rules.dart';
 import 'srd_character_classes.dart';
 import 'srd_spell_catalog.dart';
@@ -92,12 +93,7 @@ class SrdSpellPreflightRules {
         'Zauber ist für diese eigene Klasse und deren Stufe nicht bestätigt.',
       );
     }
-    if (!spell.supportsSingleTurnPreparation) {
-      throw UnsupportedError(
-        'Reaktionen, bedingte Bonusaktionen und längere Zauberzeiten '
-        'benötigen eine eigene Regelaktion.',
-      );
-    }
+    SrdSpellCastingTimeRules.requireSingleTurn(spell);
     if (!actionAvailableConfirmed || !targetRulesConfirmed) {
       throw const FormatException(
         'Aktion/Bonusaktion und Zielbedingungen müssen bestätigt sein.',

@@ -35,6 +35,45 @@ class SrdSpellDefinition {
   final bool concentration;
   final bool ritual;
 
+  /// Validate all three component flags against the exact spell notation.
+  /// Publicly constructed spell definitions must be checked at rule boundaries
+  /// as well as during JSON catalogue loading.
+  static void validateComponentMetadata({
+    required String components,
+    required bool verbal,
+    required bool somatic,
+    required bool material,
+  }) {
+    // Fail closed on duplicate, unknown or out-of-order component symbols.
+    // A material component requires one nonempty, unambiguous description.
+    // The published V/S/M flags are still verified individually below.
+    final componentMatch = RegExp(
+      r'^(V(?:,\s*S)?(?:,\s*M)?|S(?:,\s*M)?|M)(?:\s*\(([^()]*)\))?$',
+    ).firstMatch(components);
+    if (componentMatch == null ||
+        componentMatch.group(0) != components ||
+        (componentMatch.group(2) != null) != material ||
+        (material && componentMatch.group(2)!.trim().isEmpty)) {
+      throw const FormatException(
+        'SRD-Zauberkomponenten haben ein ungültiges Format.',
+      );
+    }
+    final componentTokens = componentMatch.group(1)!.split(',');
+    final symbols = componentTokens.map((symbol) => symbol.trim()).toSet();
+    for (final symbol in ['V', 'S', 'M']) {
+      final expected = switch (symbol) {
+        'V' => verbal,
+        'S' => somatic,
+        _ => material,
+      };
+      if (symbols.contains(symbol) != expected) {
+        throw const FormatException(
+          'SRD-Zauberkomponenten widersprechen sich.',
+        );
+      }
+    }
+  }
+
   factory SrdSpellDefinition.fromJson(Map<String, dynamic> json) {
     String requiredText(String key) {
       final value = json[key];
@@ -72,34 +111,12 @@ class SrdSpellDefinition {
     final verbal = requiredBool('verbal');
     final somatic = requiredBool('somatic');
     final material = requiredBool('material');
-    // Fail closed on duplicate, unknown or out-of-order component symbols.
-    // A material component requires one nonempty, unambiguous description.
-    // The published V/S/M flags are still verified individually below.
-    final componentMatch = RegExp(
-      r'^(V(?:,\s*S)?(?:,\s*M)?|S(?:,\s*M)?|M)(?:\s*\(([^()]*)\))?$',
-    ).firstMatch(components);
-    if (componentMatch == null ||
-        componentMatch.group(0) != components ||
-        (componentMatch.group(2) != null) != material ||
-        (material && componentMatch.group(2)!.trim().isEmpty)) {
-      throw const FormatException(
-        'SRD-Zauberkomponenten haben ein ungültiges Format.',
-      );
-    }
-    final componentTokens = componentMatch.group(1)!.split(',');
-    final symbols = componentTokens.map((symbol) => symbol.trim()).toSet();
-    for (final symbol in ['V', 'S', 'M']) {
-      final expected = switch (symbol) {
-        'V' => verbal,
-        'S' => somatic,
-        _ => material,
-      };
-      if (symbols.contains(symbol) != expected) {
-        throw const FormatException(
-          'SRD-Zauberkomponenten widersprechen sich.',
-        );
-      }
-    }
+    validateComponentMetadata(
+      components: components,
+      verbal: verbal,
+      somatic: somatic,
+      material: material,
+    );
     final concentration = requiredBool('concentration');
     final ritual = requiredBool('ritual');
     if (concentration != duration.startsWith('Concentration') ||

@@ -73,6 +73,66 @@ nach Integration mit neuer `main`-Basis separat abzunehmen.
 ## Chat B – Unicode-Grenzen für neue KI-Geschichten (30.10.2026)
 
 Backend und Flutter prüfen neue unbestätigte Story-Texte jetzt auf unsichtbare Steuer- und Bidi-Zeichen; sichtbarer Unicode und normale Zeilenumbrüche bleiben erlaubt. Zwei neue Testdateien ergänzen positive/negative Fälle. Diese Änderungen betreffen keine vorhandenen Spielstände oder Regeln. [PR #424](https://github.com/ManuEtt/Dnd/pull/424), Branch: feat/chat-b/story-provider-unicode-guard-20261030, ursprüngliche Basis-main: 55fe44475a113943c6310ec16a8ffb481185f4e9; aktualisierte Basis: 69bfe78ec4eeb30042b26971978038a2ee9dac34. CI-Ergebnisse sind bis zum geprüften Lauf offen.
+## Chat A – Kanonische Zauberwirkzeiten und Ritualmetadaten (30.10.2026) – PR #423
+
+Neuer eigener Branch `feat/chat-a/spell-casting-time-integrity-20261030`
+## Chat A – Kanonische Zauberwirkzeiten und Ritualmetadaten (30.10.2026) – PR #429
+
+Neuer eigener Branch `feat/chat-a/spell-casting-time-integrity-synced-20261030`
+mit `SrdSpellCastingTimeRules` und Integration in die bestehende
+`SrdSpellPreflightRules.preflight`. Die Wirkzeit wird bei jedem
+Ressourcen-Preflight **strikt erneut geprüft**, auch wenn eine
+`SrdSpellDefinition` direkt und ohne `fromJson` konstruiert wurde.
+Widersprüchliche Ritualflags, nichtkanonische/unsichtbar veränderte
+Zeitangaben und bisher unbekannte Formulierungen führen zum Abbruch.
+
+Die 339 Projekteinträge werden in sechs bestätigte Zeitkategorien
+eingeordnet (256 Aktionen, 19 unbedingte Bonusaktionen, 4 ausgelöste
+Bonusaktionen, 4 Reaktionen, 55 Langzeiten und 1 Sonderwirkzeit).
+Die bisherigen regulären Aktionszauber bleiben nutzbar; triggerbasierte
+und mehrzügige Zauber sind weiterhin ausschließlich in eigenen
+Regelaktionen erlaubt. Acht neue deterministische Testgruppen prüfen
+Katalogabdeckung, Fälschungen, Ritualangaben und Preflight.
+Keine Schema-, Version-, Story-, UI- oder Controlleränderung.
+Details: `docs/SRD_SPELL_CASTING_TIME_INTEGRITY.md`.
+Die vollständige GitHub-CI für dieses Paket muss noch abgenommen werden.
+
+Die vorherigen Chat-A-Drafts #400, #405, #408, #415, #418 und #420
+haben jeweils die komplette GitHub-CI bestanden, wurden jedoch nicht
+ohne unabhängigen Review nach `main` übernommen.
+## Chat A – separate Magieaktion und Bonusaktion für Zauber prüfen (30.10.2026)
+
+Neuer eigenständiger Regelbaustein auf
+`feat/chat-a/spell-action-economy-evidence-20261030`:
+`SrdSpellActionEconomyRules.inspect` ermittelt anhand der **exakten**
+Zauberwirkzeit, ob im bestätigten aktuellen Heldenzug die **normale
+Aktion** oder die **Bonusaktion** frei sein muss. Diese Ressourcen
+sind nicht austauschbar. Der gespeicherte Slotverbrauch pro Zug,
+Action-Surge-Reservierung, aktiver Kampfrausch und nicht bestätigte
+Kampfzustände werden gesondert abgewiesen; Zaubertricks benötigen
+keinen Slot. Acht neue Regressionstestgruppen decken Kampfrunden,
+Ressourcenverbrauch und die Wiederverwendung veralteter
+Helden-/Kampf-Snapshots ab.
+
+**Schnittstellengrenze:** Der Baustein gibt einen unveränderlichen,
+erneut prüfbaren Beleg zurück; er führt keine Zauberwirkung und
+keinen Spielstands-/Aktionscommit aus. Die Einbindung in bestehende
+Controller-/SQLite-/Preflightpfade ist noch offen, weshalb der bisherige
+Bool-Preflight dadurch **nicht bereits global abgesichert** ist.
+Kein Schema- oder Versionswechsel. Detaildokument:
+`docs/SRD_SPELL_ACTION_ECONOMY_EVIDENCE.md`.
+Neue finale CI bei Anlage noch offen.
+
+## Geprüfter Integrationsstand vor erneuter Abnahme
+
+Main ist während dieses Pakets auf `69bfe78ec4eeb30042b26971978038a2ee9dac34`
+(PR413, barrierefreie Todesrettungsoberfläche) weitergelaufen. Dieser Stand wird
+regulär in den eigenen Branch übernommen; beide README-/Checkpoint-Berichte
+bleiben erhalten. Der frühere Vollversuch auf Basis55fe4447 wurde vor Abschluss
+bewusst beendet und gilt nicht als bestandene Vollsuite, auch wenn Flutter beim
+SIGTERM Exit0 liefert. Die kombinierte Vollsuite und finale CI werden neu geprüft.
+Der eigene Rast-Laufzeit-/Testcode19fe5e16 ist unverändert. Main wird durch diesen
+Branch-Merge nicht verändert; PR416 und andere fremde Pakete bleiben getrennt.
 
 
 ## Chat C – Todesrettung bei 200 % Schrift (30.10.2026)
@@ -237,6 +297,124 @@ Bestätigtes Kampagnengedächtnis und Sitzungsrückblick geben bei gleichnamigen
 - **KOORDINATION:** Keine Fachdatei-Überschneidung mit offenen PRs #396/#398/#403/#407 oder den parallelen Chat-A/C/D-Arbeiten. Gemeinsame README- und zentrale Checkpoints bei Integration durch Chat D additiv konsolidieren. Kein Merge, kein Force-Push.
 - **NICHT GETESTET/BLOCKIERT:** Laufende CI-/Android-Abnahme für #414 noch nicht belegt; reale Android-Installation und produktive KI nicht getestet. Keine Migration erforderlich.
 - **NÄCHSTER SCHRITT:** Finale GitHub-Push- und PR-CI samt vollständiger Flutter-Suite und APK-Builds prüfen, rote Gates im eigenen Branch korrigieren und erfolgreichen PR zur Integration an Chat D übergeben.
+## Chat A – sichere Zauberkomponenten (PR #400, Entwurf)
+
+Am 30.10.2026 wurde auf Branch
+`feat/chat-a/spell-component-metadata-guard-20261030` eine isolierte
+Regelkorrektur vorbereitet: Der öffentliche SRD-Zauberdefinitionskonstruktor
+kann widersprüchliche V/S/M-Flags liefern; die Materialregelprüfung verweigert
+diese jetzt vor einer Zauberbestätigung. Katalog-Import und Regelprüfung nutzen
+denselben Validator. Fünf neue Flutter-Regressionstests decken Katalog-,
+Manipulations-, Positiv- und Zustandsinvarianzfälle ab.
+[PR #400](https://github.com/ManuEtt/Dnd/pull/400) ist noch **nicht gemerged**;
+finale CI und Android-Geräteprüfung nicht als bestanden nachgewiesen.
+Bestehende Spielstände/SQLite-/JSON-Schemata werden nicht verändert.
+## Chat A – kanonische Zauberreichweiten (PR #405, Entwurf)
+
+Separates Folgepaket zur Regelengine vom 30.10.2026:
+`feat/chat-a/spell-range-canonical-metadata-20261030` weist bei der
+Bestätigung von Zauberursprüngen nachträglich eingeschleuste Rand-Leerzeichen
+oder Steuerzeichen ab. Numerische `feet`/`mile`-Metadaten dürfen nicht
+durch eine abweichende Großschreibung als bestätigte SRD-Reichweite gelten.
+Fünf neue deterministische Regressionstests decken bestehenden Zauberkatalog,
+Selbst-/Berührungs-/Sichtreichweite, Distanzgrenzen und abgelehnte Zauberplätze ab.
+Keine Migration oder Versionserhöhung. [PR #405](https://github.com/ManuEtt/Dnd/pull/405)
+ist nicht nach main gemergt; neue CI-Abnahme steht beim Anlegen aus.
+
+Der separate [Chat-A-PR #400](https://github.com/ManuEtt/Dnd/pull/400)
+(V/S/M-Komponenten-Guard) hat auf seinem finalen Head die komplette
+[Android-CI #41007599214](https://github.com/ManuEtt/Dnd/actions/runs/41007599214)
+erfolgreich bestanden, ist aber weiterhin nicht integriert.
+## Chat A – bestätigte Zaubermaterial-IDs ohne Täuschungszeichen (30.10.2026)
+
+Neues isoliertes SRD-5.2.1-Teilpaket `feat/chat-a/spell-material-id-integrity-20261030`:
+Inventar-Stapelbelege für verbrauchte und ausdrücklich behaltene kostspielige
+Materialien werden bei einem bestätigten Zaubervorgang auf unsichtbare
+Unicode-Schreibrichtungszeichen, Steuerzeichen und Zeilentrenner geprüft.
+Der Regel-Commit verweigert einen ungültigen Inventarbeleg, statt daraus
+eine mehrdeutige Materialzuordnung zu bilden. Zulässige internationale Namen
+und IDs bleiben erlaubt. Regressionstests sichern unter anderem `Secret Chest`
+bei wiederholten, neu vorgeprüften Zaubern ohne Inventarverbrauch samt JSON-Roundtrip.
+Es gibt keine Datenbankmigration, UI-Änderung oder Versionserhöhung; echte
+Materialidentität und Geldwert müssen weiterhin separat bestätigt sein.
+Vollständige CI-Abnahme für dieses neue Paket zum Einchecken noch ausstehend.
+
+Die separaten Chat-A-PRs [#400](https://github.com/ManuEtt/Dnd/pull/400)
+(Komponenten) und [#405](https://github.com/ManuEtt/Dnd/pull/405)
+(Reichweiten) haben beide die vollständige Android-/Flutter-GitHub-CI erfolgreich
+bestanden ([#41007599214](https://github.com/ManuEtt/Dnd/actions/runs/41007599214),
+[#41011249059](https://github.com/ManuEtt/Dnd/actions/runs/41011249059)).
+Sie sind noch nicht nach `main` gemergt.
+## Chat A – strikt bestätigte Material-Stückwerte (PR #415, 30.10.2026)
+
+Neuer unabhängiger Entwicklungsbranch `feat/chat-a/spell-material-value-evidence-20261030`:
+`SrdSpellMaterialValueRules` prüft bei den vier ausdrücklich auditierten
+Mehrkomponenten-Zaubern die einzeln bestätigten Mindestpreise **pro Materialstück**
+statt nur einen pauschal bestätigten Kosten-Boolean. Jede Materialanforderung
+muss auf einen vorhandenen Inventarstapel, ausdrücklich bestätigte Identität
+und einen separat bestätigten Wert in Kupferstücken zurückgeführt werden.
+`validatedConsumption` ändert keine Ressourcen; `commitConfirmedCast`
+kombiniert die strenge Wertprüfung mit dem bereits vorhandenen atomaren
+Material-/Zauberplatz-Übergang. Acht SRD-Materialpositionen und positive wie
+negative Grenzfälle werden mit neuen Tests abgedeckt.
+
+**Grenzen:** Kein selbstständiger Beweis der externen Materialpreis-Provenienz,
+kein Ableiten von Preisen aus Namen, keine vollständige Zauberwirkungsautomatik
+und noch keine Controller-/SQLite-Verkabelung des strengeren Pfads. Alte
+Bestätigungs-APIs, Spielstandsformate, App-Version und bestehende Aufrufer
+bleiben unverändert. Vollständige CI für diesen neuen Branch bei Erstellung
+noch nicht durchgeführt. Dokumentation:
+`docs/SRD_SPELL_MATERIAL_VALUE_EVIDENCE.md`.
+
+Die separaten Chat-A-Drafts [#400](https://github.com/ManuEtt/Dnd/pull/400),
+[#405](https://github.com/ManuEtt/Dnd/pull/405) und
+[#408](https://github.com/ManuEtt/Dnd/pull/408) haben jeweils die vollständige
+Flutter-/Android-GitHub-CI erfolgreich durchlaufen, sind aber noch nicht integriert.
+## Chat A – SRD-5.2.1-Konzentration nach Schaden (30.10.2026)
+
+Neues isoliertes Regelpaket `feat/chat-a/concentration-damage-dc-cap-20261030`:
+`SrdConcentrationDamageRules` prüft nach einem bereits bestätigten
+Schadensereignis einzelne Konstitutionsrettungswürfe je Schadensquelle.
+Anders als nach SRD 5.1 gilt nach **SRD 5.2.1 eine SG-Obergrenze von 30**:
+`min(30, max(10, Schaden~/2))`. Verschiedene Quellen werden unabhängig
+ausgewertet; misslungene Rettung oder Handlungsunfähigkeit beendet den
+Konzentrationseintrag in einem **neuen, unveränderlichen Heldensnapshot**.
+Die neue Testdatei prüft Grenzwerte, getrennte Quellen, natürliche W20-Würfe,
+ungültige Bestätigungen, Zustände und JSON-Wiederherstellung.
+
+**Grenzen:** Würfel, Schadenshöhe und vollständiger Rettungswurfmodifikator
+müssen vorher **regelgeprüft** sein. Kein automatischer Kampf-/Controller-
+Aufruf, kein SQLite-/Event-Commit, keine Schema- oder Versionsänderung.
+Details: `docs/SRD_5_2_1_CONCENTRATION_DAMAGE_CHECKS.md`. Vollständige CI
+für dieses neue Paket beim Einchecken noch offen.
+
+Die getrennten Chat-A-PRs #400, #405, #408 und #415 haben alle die
+vollständige Flutter-/Android-GitHub-CI bestanden, bleiben jedoch bis zum
+individuellen Review als offene Entwürfe von `main` getrennt.
+## Chat A – prüfbarer Konzentrations-Rettungswurfmodifikator (30.10.2026)
+
+Neuer unabhängiger SRD-5.2.1-Regelbaustein `SrdConcentrationSaveModifierRules` auf
+`feat/chat-a/concentration-save-modifier-evidence-20261030`: Bevor
+ein Konstitutionsrettungswurf zur Konzentration durchgeführt werden darf,
+werden die vorhandenen Regelwerte aus `CharacterRuleEngine.savingThrow`
+übernommen: Konstitutionsattribut, Übung (einschließlich Mönch 14 ohne
+Doppelzählung) und 2024-Erschöpfung. Unbestätigte situative Boni und
+Wurfumstände werden abgewiesen; der bestätigte Modifikator ist an das
+konkrete unveränderte Helden-Snapshot gebunden. Acht neue Regressionstests
+decken Klassen-/Stufen-, Vorteil-/Nachteil- und JSON-Grenzfälle ab.
+
+Das Modul würfelt nicht und verändert keine Trefferpunkte, Ressourcen
+oder Konzentration. Es ist eine unabhängige Vorbereitung für den
+ebenfalls getrennten Konzentrations-SG-PR #418, nicht bereits dessen
+Controller-/SQLite-Anbindung. Bestehende APIs, Spielstände, Schema und
+Version bleiben unverändert. Dokumentation:
+`docs/SRD_CONCENTRATION_SAVE_MODIFIER_EVIDENCE.md`. Finale CI für
+dieses neue Paket noch nicht abgenommen.
+
+Die vorherigen Chat-A-PRs #400, #405, #408, #415 und #418 haben auf
+ihren jeweiligen Branch-Heads die vollständige Android-/Flutter-/Backend-
+GitHub-CI bestanden; sie bleiben offene, getrennte Draft-PRs bis zum Review.
+
 
 
 Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;
@@ -405,6 +583,35 @@ ausstehend; vorhandene Tests nicht vor ihrer Ausführung als bestanden zählen.
 **Migrationen:** keine. Spielstände, SRD-Regeln, Android-UI, SQLite-/JSON-Schema
 und Appversion unverändert. README-/Checkpoint-Ergänzungen bei Integration
 nur verlustfrei mit den parallelen PRs konsolidieren.
+## Chat A – offener Regel-PR: Todesrettungs-Klassenprüfung (30.10.2026)
+
+Basis-Main `55fe4447`, Arbeitsbranch `feat/chat-a/death-save-class-validation-20261030`,
+Laufzeit-/Testcommit `ee1e5a19e03b5db60fad838d0da36d1f360b84bc`. Unbekannte Haupt-/Zweitklassen können keinen
+Mönch-Todesrettungsbonus oder Klassen-Wiederholungswurf mehr freigeben; auch
+alte offene Proben werden vor einem neuen Wurf geprüft. Historische Profile und
+unversionierte Proben bleiben lesbar, keine DB-/JSON-Migration. **2.504 Flutter-, 221 Python- und 72 Backend-Tests bestanden**, darunter 93
+gezielte Domain-/Flow-/SQLite-/UI-Fälle. Formatprüfung 537 Dateien unverändert,
+Analyse/Backend-Typecheck/Build/Protokollsmoke sauber. ARM64-Debug-Build und zwölf native App-Tests ebenfalls bestanden.
+[PR #416](https://github.com/ManuEtt/Dnd/pull/416) · [CI des aktuellen PR-Kopfs](https://github.com/ManuEtt/Dnd/pull/416/checks).
+Kein Merge nach Main behauptet; Chat D konsolidiert diesen eigenen PR mit den
+parallelen Paketen. Version weiterhin Basis0.8.48+98. Geräteprüfung bleibt offen.
+[Chat-A-Checkpoint](docs/parallel/CHAT_A_CHECKPOINT.md) ·
+[Fachnachweis](docs/parallel/CHAT_A_DEATH_SAVE_CLASS_VALIDATION_20261030.md).
+## Chat A – Kurzrast-Ressourcenprüfung (offener PR#428, 30.10.2026)
+
+[PR#428](https://github.com/ManuEtt/Dnd/pull/428) · [aktuelle Checks und Vollabnahme](https://github.com/ManuEtt/Dnd/pull/428/checks).
+Basis-Main55fe4447, Branch `feat/chat-a/short-rest-resource-preflight-20261030`,
+Quellcode-/Testcommit `19fe5e16394fae096c082a86e7aa8886461fc883`. Ungültige Klassen-/Paktressourcen werden im
+Kurzrastpfad mit Trefferwürfeln vor RNG und Erholung geprüft. **2495 Flutter-/221 Python-/72 Backend-Tests auf kombiniertem Stand bestanden**,
+538 Formatdateien unverändert, Analyzer sauber. Zusätzlich ARM64-Debug und zwölf
+native App-Tests bestanden; darunter65 gezielte Domain-/Bestands- und sieben neue
+Flow-/SQLitefälle. Vollständige
+Test-/Buildzahlen und CI-/Artefaktnachweise stehen im aktuellen PR; keine
+Geräteabnahme behauptet. Langrast und Engine-Null-HD-Sonderpfade bleiben getrennt.
+Appbasis0.8.48+98, SQLite3/JSON1 unverändert. Voriger PR416 bleibt separat offen;
+Integration/Dokumentationskonsolidierung durch Chat D, Main nicht verändert.
+[Chat-A-Checkpoint](docs/parallel/CHAT_A_CHECKPOINT.md) ·
+[Fachnachweis](docs/parallel/CHAT_A_SHORT_REST_RESOURCE_PREFLIGHT_20261030.md).
 
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
@@ -516,6 +723,13 @@ Die vorherigen 24 parallelen PR-Pakete wurden inzwischen in `main` integriert un
 
 **Aktueller UI-Entwurf:** [Chat C PR #388](https://github.com/ManuEtt/Dnd/pull/388) erweitert den Charakterbogen-Header bei 180–200 % Android-Schrift und weniger als 500 dp Breite: Porträt über vollständigem Namen, Klasse/Stufe, Unterklassen und Hintergrund. Normale Schrift bleibt kompakt. Vier neue Widgettests (320/360 dp, Standardaktion, historisch leerer Name) sind hinzugefügt; **CI für diesen Feature-Head noch separat abnehmen**. Keine Änderung an Version, Regeln, Story, SQLite oder JSON.
 
+## Chat A – weitere Regelengine-Vorprüfung zu Magischem Geschoss (PR #387)
+
+Neben der Domänen-Cast-Regel bildet `SrdMagicMissileEncounterHpRules.preview` die durch getrennte Schild-/Resistenzentscheidungen geprüften Geschosse nun **lesend** auf reale, eindeutig gespeicherte Encounter- und Zusatzkreatur-IDs ab. Es vergleicht den erwarteten Revisionsstand, verweigert fremde/alte/tote Ziele und liefert pro Kreatur gekappte Trefferpunkte sowie eine Warnung, falls der Hauptgegner besiegt ist und weitere Gegner noch leben. **Noch kein ausführbarer, gespeicherter Mehrziel-Kampfzug:** Aktionen, Reaktionen, Ressourcen-/HP-/Event-Commit, Abschluss mehrerer Gegner und Controller-/UI-Anbindung benötigen einen koordinierten Folge-PR. Kein JSON-/SQLite-Schemawechsel und keine Änderung der bisherigen Einziel-Aktion. SRD 5.2.1 *Magic Missile* S. 146, CC BY 4.0. [Chat-A-PR #387](https://github.com/ManuEtt/Dnd/pull/387).
+
+## Neuer Regelengine-Baustein – Mehrziel-Magisches-Geschoss (Chat A, PR #387)
+
+Die integrierte Aufteilung von *Magisches Geschoss* auf mehrere bestätigte Kreaturen und die getrennte Geschoss-Schadensberechnung erhalten einen verbindenden, deterministisch testbaren **Domänen-Cast**: Magier-/Zauberer-Klasse, gelernter Zauber, V/S, freier regulärer oder Pakt-Zauberplatz und jeder individuelle Schild-/Energieschadenstatus werden vor dem Würfeln geprüft. Ein Platz wird in einer neuen Heldensnapshot verbraucht, Schild blockiert seine Geschosse ohne W4 und andere Geschosse erhalten getrennte Schadenswerte. [PR #387](https://github.com/ManuEtt/Dnd/pull/387) ist noch nicht automatisch integriert. **Wichtig:** Noch kein spielbarer Mehrziel-Kampfdialog, kein Kampagnen-HP-/Event-Commit oder persistente Exactly-once-Garantie; bestehende Einziel-Aktion unverändert. SRD 5.2.1 S. 146/161, CC BY 4.0; SQLite 3 und JSON 1 unverändert. Finale CI wird im PR nachgewiesen.
 
 ## Konsolidierter Arbeitsstand – Integrationskandidat vom 29.10.2026
 

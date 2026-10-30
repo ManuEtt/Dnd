@@ -4869,6 +4869,11 @@ class GameEngine {
         pending.sneakAttackAlly != null) {
       Campaign.fromJson(campaign.toJson());
     }
+    if (pending.type == 'death') {
+      // Legacy pending rolls remain readable, but their classes must also
+      // be validated before consuming a die for a new rule decision.
+      DeathSavingThrowRules.modifier(campaign.hero);
+    }
     final result = dice.check(
       modifier: pending.modifier,
       natural: natural,

@@ -6865,10 +6865,18 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Playing the Game",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/death_saving_throw_rules_test.dart",
+        "app/test/death_save_flow_test.dart",
+        "app/test/death_save_class_validation_test.dart",
+        "app/test/death_save_class_validation_flow_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/death_saving_throw_rules.dart",
+        "app/lib/domain/game_engine.dart"
+      ],
+      "note": "SRD 5.2.1 S.17–18/48/52: vorhandene Todesrettungswürfe mit Klassenbonus und gewählter Wiederholung. Chat A 30.10.2026 ergänzt bestätigte SRD-Haupt-/Zweitklassen vor RNG/Aktion, auch bei unversionierten Altproben; 93 gezielte Domain-/Flow-/SQLite-/UI-Fälle bestanden. Historische Profile bleiben lesbar, keine automatische Umdeutung. Vollsuite/CI separat im Chat-A-Checkpoint; Gesamtanforderung konservativ partial."
     },
     {
       "id": "RULE-CORE-RULES-TEMPORARY-HIT-POINTS",
@@ -7158,10 +7166,16 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Spells",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/short_rest_resource_preflight_test.dart",
+        "app/test/short_rest_resource_preflight_flow_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/rest_rules.dart",
+        "app/lib/domain/spellcasting_rules.dart"
+      ],
+      "note": "SRD5.2.1 S.71/187: bestätigter Paktverbrauch wird im Kurzrast-Trefferwürfelpfad vor Würfeln und Erholung validiert; unberechtigter Verbrauch darf nicht durch Reset verdeckt werden. Bestehende Kämpfer-/Klassenvalidatoren ebenfalls vorgezogen. 33 neue Unit-/7 Flow-/SQLite-Fälle gezielt bestanden; finale Vollsuite/CI im zugehörigen Chat-A-PR. Gesamt-Paktmagie, Null-HD-Sonderpfade, Langrast und normale Slotvalidierung damit nicht als vollständig behauptet."
     },
     {
       "id": "RULE-SPELLS-CASTING-TIME",
