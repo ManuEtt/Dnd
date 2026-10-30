@@ -1,5 +1,23 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – EP-Dialog bei großer Android-Schrift und IME (30.10.2026)
+
+Das unabhängige Chat-C-Arbeitspaket [PR #426](https://github.com/ManuEtt/Dnd/pull/426)
+(`feat/chat-c/xp-reward-dialog-ime-scroll-20261030`, Basis-main
+`55fe44475a113943c6310ec16a8ffb481185f4e9`) führt den
+EP-Belohnungsdialog in einen einzigen scrollbar begrenzten Titel-/Formularbereich
+über, während **Abbrechen** und **EP verbindlich buchen** außerhalb dieser
+Scrollfläche bleiben. Bei mindestens 180 % Schrift wird der ausdrückliche
+Zustimmungs-Checkbox-Titel kompakt „EP ausdrücklich bestätigen“ dargestellt,
+damit er auch im durch die Android-Tastatur verkleinerten Sichtfenster
+antippbar bleibt. Vier neue Flutter-Widgettestfälle prüfen 320/360 dp,
+200 % Schrift, simulierte IME, Scroll-/Touch-Bedienung, ausdrückliche
+Buchungswahl und gesperrte ungültige Beträge. Spielstände, SQLite/JSON,
+Regel-/EP-Transaktionen und Appversion bleiben unverändert.
+Der gezielte finale Testlauf und die vollständige CI müssen anhand des
+finalen PR-HEADs bestätigt werden; reale Geräteabnahme fehlt.
+
+
 Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;
 vollständige Charaktererstellung und SRD-Regelengine bleiben in Entwicklung.
 
