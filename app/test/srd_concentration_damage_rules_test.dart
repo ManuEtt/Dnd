@@ -110,31 +110,26 @@ void main() {
 
   test('saving throws do not treat natural 1 or 20 as automatic', () {
     final caster = _hero();
-    final naturalTwenty = _resolve(
-      caster,
-      [_damage('crushing-wave', 60, die: 20, modifier: -15)],
-    );
+    final naturalTwenty = _resolve(caster, [
+      _damage('crushing-wave', 60, die: 20, modifier: -15),
+    ]);
     expect(naturalTwenty.checks.single.total, 5);
     expect(naturalTwenty.checks.single.difficultyClass, 30);
     expect(naturalTwenty.maintained, isFalse);
 
-    final naturalOne = _resolve(
-      caster,
-      [_damage('scratch', 1, die: 1, modifier: 20)],
-    );
+    final naturalOne = _resolve(caster, [
+      _damage('scratch', 1, die: 1, modifier: 20),
+    ]);
     expect(naturalOne.checks.single.total, 21);
     expect(naturalOne.maintained, isTrue);
   });
 
   test('different damage sources each require a separate save', () {
     final hero = _hero();
-    final result = _resolve(
-      hero,
-      [
-        _damage('arrow', 19, die: 7),
-        _damage('breath', 60, die: 20, modifier: 10),
-      ],
-    );
+    final result = _resolve(hero, [
+      _damage('arrow', 19, die: 7),
+      _damage('breath', 60, die: 20, modifier: 10),
+    ]);
     expect(result.checks.map((check) => check.difficultyClass).toList(), [
       10,
       30,
@@ -142,14 +137,11 @@ void main() {
     expect(result.checks.every((check) => check.succeeded), isTrue);
     expect(result.maintained, isTrue);
 
-    final failedSecond = _resolve(
-      hero,
-      [
-        _damage('arrow', 19, die: 7),
-        _damage('breath', 60, die: 19, modifier: 10),
-        _damage('later', 1, die: 20),
-      ],
-    );
+    final failedSecond = _resolve(hero, [
+      _damage('arrow', 19, die: 7),
+      _damage('breath', 60, die: 19, modifier: 10),
+      _damage('later', 1, die: 20),
+    ]);
     expect(failedSecond.checks.map((check) => check.sourceId).toList(), [
       'arrow',
       'breath',
@@ -173,10 +165,7 @@ void main() {
       _damage('later', 5, modifier: -31),
     ]) {
       expect(
-        () => _resolve(
-          hero,
-          [_damage('first', 40, die: 1), invalid],
-        ),
+        () => _resolve(hero, [_damage('first', 40, die: 1), invalid]),
         throwsFormatException,
       );
     }
@@ -221,10 +210,9 @@ void main() {
       _hero(conditions: ['tot']),
     ]) {
       final before = jsonEncode(hero.toJson());
-      final result = _resolve(
-        hero,
-        [_damage('collapse', 20, die: null, modifier: null)],
-      );
+      final result = _resolve(hero, [
+        _damage('collapse', 20, die: null, modifier: null),
+      ]);
       expect(result.endedWithoutSave, isTrue);
       expect(result.checks, isEmpty);
       expect(result.maintained, isFalse);
@@ -235,24 +223,19 @@ void main() {
 
   test('unknown hit points and absent concentration fail closed', () {
     expect(
-      () => _resolve(
-        _hero(hitPoints: null),
-        [_damage('arrow', 10)],
-      ),
+      () => _resolve(_hero(hitPoints: null), [_damage('arrow', 10)]),
       throwsFormatException,
     );
     expect(
-      () => _resolve(
-        _hero().copyWith(concentratingOn: ''),
-        [_damage('arrow', 10)],
-      ),
+      () => _resolve(_hero().copyWith(concentratingOn: ''), [
+        _damage('arrow', 10),
+      ]),
       throwsFormatException,
     );
     expect(
-      () => _resolve(
-        _hero().copyWith(concentratingOn: ' Invisibility '),
-        [_damage('arrow', 10)],
-      ),
+      () => _resolve(_hero().copyWith(concentratingOn: ' Invisibility '), [
+        _damage('arrow', 10),
+      ]),
       throwsFormatException,
     );
   });
