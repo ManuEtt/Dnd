@@ -40,12 +40,11 @@ Campaign _campaign({
   hero: HeroCharacter(id: 'aria', name: 'Aria'),
   scene: 'Das Archiv',
   revision: revision,
-  npcs: npcs ?? const [
-    WorldNpc(id: 'mira', name: 'Mira', relationship: 'freundlich'),
-  ],
-  npcRelationshipNotes: notes ?? [
-    _note('note-mira', 'mira', 'Mira kennt den Weg zum Archiv.'),
-  ],
+  npcs:
+      npcs ??
+      const [WorldNpc(id: 'mira', name: 'Mira', relationship: 'freundlich')],
+  npcRelationshipNotes:
+      notes ?? [_note('note-mira', 'mira', 'Mira kennt den Weg zum Archiv.')],
 );
 
 Map<String, dynamic> _plan() => {
@@ -56,16 +55,8 @@ Map<String, dynamic> _plan() => {
   'secret': 'Der Schlüssel liegt hinter dem Brunnen.',
   'goal': 'Finde den Weg ins Archiv.',
   'threads': [
-    {
-      'id': 'archiv',
-      'title': 'Das Archiv',
-      'description': 'Suche den Zugang.',
-    },
-    {
-      'id': 'tor',
-      'title': 'Das Tor',
-      'description': 'Erkunde das Tor.',
-    },
+    {'id': 'archiv', 'title': 'Das Archiv', 'description': 'Suche den Zugang.'},
+    {'id': 'tor', 'title': 'Das Tor', 'description': 'Erkunde das Tor.'},
   ],
   'npcs': [
     {
@@ -76,11 +67,7 @@ Map<String, dynamic> _plan() => {
     },
   ],
   'places': [
-    {
-      'id': 'markt',
-      'name': 'Marktplatz',
-      'description': 'Ein alter Brunnen.',
-    },
+    {'id': 'markt', 'name': 'Marktplatz', 'description': 'Ein alter Brunnen.'},
   ],
 };
 
@@ -171,23 +158,27 @@ void main() {
 
   test('unsafe name, relationship and note fields omit structured context', () {
     final cases = [
-      _campaign(npcs: const [
-        WorldNpc(id: 'mira', name: 'Mira\u202e'),
-      ]),
-      _campaign(npcs: const [
-        WorldNpc(id: 'mira', name: 'Mira', relationship: 'freundlich\u200f'),
-      ]),
-      _campaign(notes: [
-        _note('unsafe', 'mira', 'Die\u2066 Karte\u2069 liegt am Kai.'),
-      ]),
-      _campaign(notes: [
-        _note(
-          'unsafe',
-          'mira',
-          'Die Karte liegt am Kai.',
-          relationship: 'neutral\u061c',
-        ),
-      ]),
+      _campaign(
+        npcs: const [WorldNpc(id: 'mira', name: 'Mira\u202e')],
+      ),
+      _campaign(
+        npcs: const [
+          WorldNpc(id: 'mira', name: 'Mira', relationship: 'freundlich\u200f'),
+        ],
+      ),
+      _campaign(
+        notes: [_note('unsafe', 'mira', 'Die\u2066 Karte\u2069 liegt am Kai.')],
+      ),
+      _campaign(
+        notes: [
+          _note(
+            'unsafe',
+            'mira',
+            'Die Karte liegt am Kai.',
+            relationship: 'neutral\u061c',
+          ),
+        ],
+      ),
     ];
     for (final campaign in cases) {
       final before = jsonEncode(campaign.toJson());
@@ -244,7 +235,9 @@ void main() {
     test(
       'SQLite restart negotiates safe identity contexts ($capability)',
       () async {
-        final directory = await Directory.systemTemp.createTemp('bidi-context-');
+        final directory = await Directory.systemTemp.createTemp(
+          'bidi-context-',
+        );
         final dbPath = paths.join(directory.path, 'campaign.sqlite');
         SqliteCampaignRepository? repository;
         GameController? controller;
@@ -261,7 +254,11 @@ void main() {
           final campaign = original.copyWith(
             npcs: const [
               WorldNpc(id: 'mira', name: 'Mira', relationship: 'freundlich'),
-              WorldNpc(id: 'other', name: 'Mi\u202era', relationship: 'neutral'),
+              WorldNpc(
+                id: 'other',
+                name: 'Mi\u202era',
+                relationship: 'neutral',
+              ),
               WorldNpc(id: 'tarek', name: 'Tarek', relationship: 'neutral'),
             ],
             npcRelationshipNotes: [
@@ -294,7 +291,9 @@ void main() {
           );
           expect(controller.error, isNull);
           expect(narrator.supportsNpcIdentityContexts, capability);
-          await controller.sendAction('Ich frage Mira und Tarek nach dem Archiv.');
+          await controller.sendAction(
+            'Ich frage Mira und Tarek nach dem Archiv.',
+          );
           expect(controller.error, isNull);
           expect(transport.sent, hasLength(1));
 
