@@ -1,0 +1,26 @@
+name: Chat B formatter diagnostic (temporary)
+
+on:
+  push:
+    branches:
+      - 'feat/chat-b/safe-npc-identity-recall-20261030'
+    paths:
+      - '.github/workflows/chat-b-format-diagnostic.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  dart-format-diff:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Print exact dart format difference
+        shell: bash
+        run: |
+          dart format app/test/story_memory_unsafe_npc_id_test.dart
+          git --no-pager diff -- app/test/story_memory_unsafe_npc_id_test.dart
