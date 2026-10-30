@@ -97,8 +97,16 @@ class NpcContinuityReader {
   }
 }
 
-String _singleLine(String value) =>
-    value.replaceAll(RegExp(r'\s+'), ' ').trim();
+// Stored notes may originate from legacy imports. Treat formatting controls as
+// untrusted presentation data: they must not rewrite or hide context labels.
+// Keep ordinary Unicode letters and punctuation unchanged.
+String _singleLine(String value) => value
+    .replaceAll(
+      RegExp(r'[\x00-\x1f\x7f-\x9f\u2028\u2029\u202a-\u202e\u2066-\u2069]'),
+      ' ',
+    )
+    .replaceAll(RegExp(r'\s+'), ' ')
+    .trim();
 
 String _npcNameKey(String value) => _singleLine(value)
     .toLowerCase()
