@@ -54,6 +54,83 @@
 
 ---
 
+# Chat D D-018 – Modulwurzeln fail-closed prüfen (30.10.2026)
+
+- **Ausgangs-Main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `fix/chat-d/boundary-module-presence-20261030`.
+- **Code-Commit:** `8a14e706deeceff2fc5709cfdc928e5e25c3115b`.
+- **Pull Request:** [#401](https://github.com/ManuEtt/Dnd/pull/401), Draft.
+- **Problem:** `check_repository()` brach nur bei fehlendem Story-Ordner ab; ein fehlender Domain-Ordner, eine Datei statt Modulverzeichnis oder symlink-basierte Modulwurzel konnte den Importgrenzen-Prüfauftrag umgehen oder entwerten.
+- **IMPLEMENTIERT:** Beide Modulwurzeln müssen echte, nicht-symlinked Verzeichnisse sein; sonst Rückgabe von Fehlern und kein erfolgreiches `OK`. Danach unveränderte rekursive Import- und Whitelist-Prüfung.
+- **Geänderte Dateien:** `scripts/check_domain_boundaries.py`, `scripts/tests/test_domain_boundaries.py`, `scripts/tests/test_nested_domain_boundaries.py`, dazu additive Einträge in `README.md`, `docs/CODEX_CHECKPOINT.md` und diesem Checkpoint.
+- **Regressionen:** beide Modulwurzeln fehlen; nur Domain fehlt; reguläre Datei statt Story-Verzeichnis; Story-Modul als Symlink; gültige Modulverzeichnisse; gültige verschachtelte Story-Imports mit vollständiger Fixture.
+- **GETESTET:** zum Zeitpunkt dieses Checkpoints keine tatsächliche vollständige Testausführung. Der Workflow wurde über Skriptpfadänderungen ausgelöst; finale Ergebnisse gesondert prüfen.
+- **NICHT GETESTET:** vollständige Python-, Backend-, Flutter-, Android-CI/Debug-APK, native Tests und Realgerät; keine grünen Resultate unterstellen.
+- **BLOCKIERT:** GitHub-DNS-Checkout im lokalen Container fehlgeschlagen; Flutter und Dart lokal nicht verfügbar.
+- **Migrationen:** keine; unveränderte SQLite-/JSON-Spielstände und Appversion.
+- **Koordination:** offene PRs #387–#399 ändern nicht die drei technischen Dateien dieses Pakets; gemeinsame README-/Checkpoint-Zeilen vor späterer Integration additiv bewahren.
+- **Nächster konkreter Schritt:** finale GitHub-Actions-CI auf dem Dokumentations-HEAD verifizieren, dann bei grüner Gesamt-CI und konfliktfreier Abnahme Draft prüfen und gegebenenfalls zur Review freigeben. Keine fremden PRs automatisch mergen.
+
+---
+
+# Chat D D-019 – Vollständig installiertes Android-NDK bei Retry bewahren (30.10.2026)
+
+- **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Arbeitsbranch:** `fix/chat-d/preserve-installed-ndk-20261030`.
+- **Code-Commit:** `0999d7a44d75233a6091b0808b9ab60c740e5412`.
+- **Pull Request:** [#402](https://github.com/ManuEtt/Dnd/pull/402), bis zur finalen CI im Draft.
+- **Problem:** Ein fehlgeschlagenes SDK-Installationskommando löschte vor jedem weiteren Versuch auch ein bereits installiertes `ndk;27.0.12077973`, obwohl der Fehler durch andere Pakete verursacht sein konnte.
+- **IMPLEMENTIERT:** Vor dem NDK-Cleanup auf `source.properties` prüfen; ohne Marker unvollständiges NDK entfernen, mit Marker Daten bewahren. Download-Staging und Android-Cache wie bisher bereinigen.
+- **Dateien:** `scripts/install_android_sdk_packages.sh`, `scripts/tests/test_install_android_sdk_packages.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Akzeptanz:** Zwei zusätzliche Fälle (vorinstalliertes NDK, transient/dauerhaft gescheiterter `sdkmanager`) müssen NDK bewahren; bestehende Fälle müssen unvollständiges NDK entfernen, Cache bereinigen, Retry/Fehlercodes erhalten.
+- **GETESTET:** Code und Tests in GitHub gesichert; kein lokaler Gesamttest bestätigt.
+- **NICHT GETESTET:** CI auf finalem Commit, vollständiges Backend/Flutter/Android, APK, natives Gradle und Realgerät.
+- **BLOCKIERT:** GitHub-DNS nicht im lokalen Container auflösbar; lokale Toolchain/Checkout fehlen.
+- **Migrationen:** keine; SQLite-/JSON-Version, Spielstände, Regel-/Storymodule und Appversion unverändert.
+- **Koordination:** bei Start alle offenen PRs #387–#401 geprüft, technische Dateipfade überschneidungsfrei; gemeinsam genutzte README-/Checkpoint-Dateien vor Integration verlustfrei konsolidieren.
+- **Vorgänger PR #401:** Code-/Doku-Commit `0544c238c39da11b4f18e77a70c1cb0af10b4bbd` vollständig erfolgreich in [Actions #41007222064](https://github.com/ManuEtt/Dnd/actions/runs/41007222064), zur Review bereit, nicht gemergt.
+- **Nächster Schritt:** finale CI von #402 auf exakt dem letzten Commit abnehmen und nur bei vollständigem Erfolg zur Review freigeben. Kein automatischer Merge fremder oder ungeprüfter PRs.
+
+---
+
+# Chat D D-020 – Quell-ZIP-Exklusivsperre auf aktuellen Main integriert (29.10.2026)
+
+- **Basis:** `55fe44475a113943c6310ec16a8ffb481185f4e9`,
+  bestehender PR-Head `5d5d615d9fc6b8c5152cc5fae1cb1725f1fc4758`.
+- **IMPLEMENTIERT:** exklusives Ausgabe-Lock umfasst ZIP- und
+  Prüfsummenveröffentlichung sowie Rollback; konkurrierende Ausgaben
+  blockieren fail-closed. Drei neue Regressionen.
+- **GETESTET:** ursprünglicher PR-Head in
+  [CI #40918352502](https://github.com/ManuEtt/Dnd/actions/runs/40918352502)
+  mit **36/36** Schritten erfolgreich.
+- **OFFEN:** kombinierte CI nach dokumentationstreuer Main-Aufnahme;
+  reale Mehrprozess-Runner, Windows, Android-Gerät.
+- **KOMPATIBILITÄT:** kein Produkt-/Speicher-/Schemawechsel.
+- **STATUS:** [PR #391](https://github.com/ManuEtt/Dnd/pull/391)
+  reviewbereit; kein automatischer Produkt-Merge.
+
+---
+
+# Chat D D-020 – Unix-Typkontrolle für Alpha-APKs (30.10.2026)
+
+- **Ausgangs-Main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `fix/chat-d/apk-entry-types-20261030`.
+- **Code-Commit:** `df45e36d78f2fba2372df4fec462a6df6eb5f7a6`.
+- **Pull Request:** [#406](https://github.com/ManuEtt/Dnd/pull/406), Draft bis finaler CI.
+- **Ausgangsproblem:** CRC-valide ZIP-Einträge können Unix-FIFOs, Devices, Sockets oder eine Verzeichnisdatei mit Dateinamen wie `libapp.so` deklarieren. Die Alpha-APK-Prüfung sperrte bisher nur Symlinks und unsichere Namen.
+- **IMPLEMENTIERT:** Unix-ZIP-Modustypen nur als reguläre Datei, Verzeichnis oder ohne bekannten Typ akzeptieren; Typ-/Namens-Widersprüche abweisen. Bestehende Symlink-Prüfung unverändert.
+- **Geänderte Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Regressionen:** vier unzulässige Unix-Sonderdateitypen; Verzeichnis statt Pflichtbibliothek; gültige Unix-Regulärdatei plus Verzeichnis; bestehende APK-Symlink-/ZIP-/Archivtests.
+- **GETESTET:** Implementierung und Tests auf GitHub gesichert; vollständige CI noch nicht als erfolgreich bestätigt.
+- **NICHT GETESTET:** Python-/Backend-/Flutter-/Android-Gesamtsuite auf finalem Commit und Gerätetest.
+- **BLOCKIERT:** lokaler GitHub-Checkout wegen DNS nicht möglich. GitHub Actions verfügbar.
+- **Migrationen:** keine; alle vorhandenen Spielstände, SQLite- und JSON-Formate unverändert.
+- **Koordination:** zum Start alle PRs bis #405 geprüft; keine betroffene technische Datei bereits durch fremde PRs in Arbeit. Gemeinsame README-/Checkpoint-Änderungen später verlustfrei konsolidieren. Keine automatischen Merges/Löschungen.
+- **Vorarbeiten:** #401 und #402 auf jeweiligem finalem Commit erfolgreich per GitHub Actions geprüft und zur Review freigegeben; weiterhin nicht in `main` integriert.
+- **Nächster Schritt:** komplette PR-CI #406 am finalen Head verifizieren, Fehler auf demselben Branch reparieren und bei Grün zur Review freigeben. Keine produktive Signatur oder echten Gerätetests behaupten.
+
+---
+
 # Chat D – Integration von PR #358 nach Checkpoint-Fix #363 (29.10.2026)
 
 ## Integrationskandidat 29.10.2026 – Chat D
