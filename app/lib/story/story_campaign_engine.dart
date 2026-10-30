@@ -29,6 +29,18 @@ class StoryCampaignEngine {
   final DateTime Function() _clock;
   final StoryCommit _commit;
 
+  // A restarted engine can generate the same time/sequence-based identifier
+  // as an existing entry. Never attach a second fact to that identity.
+  String _unusedStoryId(String prefix, Iterable<String> existingIds) {
+    final id = _id(prefix);
+    if (existingIds.contains(id)) {
+      throw const FormatException(
+        'Eine neue Story-Kennung ist bereits vergeben.',
+      );
+    }
+    return id;
+  }
+
   GameUpdate _commitStory(
     Campaign before,
     Campaign next,
@@ -331,7 +343,10 @@ class StoryCampaignEngine {
     }
     final summary = MemoryEngine.buildSessionSummary(campaign);
     final recap = SessionRecap(
-      id: _id('recap'),
+      id: _unusedStoryId(
+        'recap',
+        campaign.sessionRecaps.map((recap) => recap.id),
+      ),
       title: 'Rückblick ${campaign.sessionRecaps.length + 1}',
       summary: summary,
       createdAt: _clock(),
@@ -370,7 +385,10 @@ class StoryCampaignEngine {
       throw const FormatException('Maximal 300 NPC-Notizen möglich.');
     }
     final entry = NpcRelationshipNote(
-      id: _id('npc-note'),
+      id: _unusedStoryId(
+        'npc-note',
+        campaign.npcRelationshipNotes.map((note) => note.id),
+      ),
       npcId: npcId,
       relationship: normalized,
       note: description,
@@ -420,7 +438,11 @@ class StoryCampaignEngine {
       throw const FormatException('Handlungsstrang nicht gefunden.');
     }
     final thread = StoryThread(
-      id: threadId ?? _id('thread'),
+      id: threadId ??
+          _unusedStoryId(
+            'thread',
+            campaign.storyThreads.map((thread) => thread.id),
+          ),
       title: cleanTitle,
       description: cleanDescription,
       status: status,
