@@ -1,0 +1,40 @@
+name: Chat A - einmalige Konzentrations-Testformatierung
+on:
+  push:
+    branches:
+      - feat/chat-a/concentration-damage-dc-cap-20261030
+    paths:
+      - .github/workflows/chat-a-concentration-format-once.yml
+permissions:
+  contents: write
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Offiziellen Dart-3.9-Formatter für den neuen Test ausführen
+        working-directory: app
+        run: |
+          dart --version
+          dart format test/srd_concentration_damage_rules_test.dart
+          dart format --output=none --set-exit-if-changed test/srd_concentration_damage_rules_test.dart
+      - name: Nur offiziell formatierten Test committen
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          if ! git diff --quiet -- app/test/srd_concentration_damage_rules_test.dart; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -- app/test/srd_concentration_damage_rules_test.dart
+            git commit -m 'style(chat-a): format concentration damage regression with Dart 3.9'
+            git push origin HEAD:feat/chat-a/concentration-damage-dc-cap-20261030
+          fi
