@@ -137,10 +137,7 @@ void main() {
         isNull,
       );
       expect(
-        NpcIdentityStoryPayload.prepare(
-          campaign,
-          'Ich frage Mi${marker}ra.',
-        ),
+        NpcIdentityStoryPayload.prepare(campaign, 'Ich frage Mi${marker}ra.'),
         isNull,
       );
       final choice = NpcStorySelection.choose(campaign, 'mira');
