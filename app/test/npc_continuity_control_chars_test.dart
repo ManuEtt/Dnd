@@ -11,6 +11,7 @@ Campaign _campaign({
   world: 'Valdorn',
   sessionId: 'session-1',
   hero: HeroCharacter(id: 'hero-1', name: 'Aria'),
+  scene: 'Der Brunnen vor dem Dorf.',
   npcs: npcs,
   npcRelationshipNotes: notes,
 );
