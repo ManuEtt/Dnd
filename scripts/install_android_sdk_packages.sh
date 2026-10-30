@@ -38,7 +38,13 @@ for (( attempt = 1; attempt <= attempts; attempt++ )); do
 
   echo "::warning::SDK download/extraction failed; removing temporary SDK archives before retry."
   # A broken NDK ZIP is known to leave an incomplete directory and download cache.
-  rm -rf -- "$sdk_root/.temp" "$sdk_root/ndk/27.0.12077973"
+  rm -rf -- "$sdk_root/.temp"
+  # A failure while installing a different package must not destroy a
+  # previously installed NDK. Remove only an incomplete NDK directory;
+  # source.properties is the package's installation metadata marker.
+  if [[ ! -f "$sdk_root/ndk/27.0.12077973/source.properties" ]]; then
+    rm -rf -- "$sdk_root/ndk/27.0.12077973"
+  fi
   if [[ -n "${HOME:-}" ]]; then
     rm -rf -- "$HOME/.android/cache"
   fi

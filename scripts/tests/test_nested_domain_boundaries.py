@@ -71,6 +71,7 @@ class NestedDomainBoundaryTests(unittest.TestCase):
             root = Path(temp)
             story = root / "app/lib/story/chapters"
             story.mkdir(parents=True)
+            (root / "app/lib/domain").mkdir(parents=True)
             (story / "scene.dart").write_text(
                 "import '../../domain/models.dart';\nimport '../story_api.dart';",
                 encoding="utf-8",
