@@ -15,6 +15,18 @@ Die EP-/Kampfsystem-, Regel-, SQLite- und JSON-Schnittstellen bleiben
 unverändert. Volle GitHub-CI und echte Android-/TalkBack-Abnahme sind erst
 nach dem Lauf als bestanden zu werten.
 
+## Chat C – NPC-Auswahl bei großer Schrift (30.10.2026, Draft-PR #422)
+
+Der [Chat-C-PR #422](https://github.com/ManuEtt/Dnd/pull/422) verbessert den
+Dialog für explizite, gespeicherte NPC-Identitäten auf kleinen Android-Displays:
+Der Titel und der Inhalt sind scrollbar, die NPC-Liste begrenzt ihre maximale
+Höhe, nicht jedoch die einzelne Zeilenhöhe. Die Abbrechen-Aktion bleibt
+erreichbar. Neue Widgettests decken 320/360 dp mit 200 % Textskalierung,
+zwölf gleichnamige NPCs, die konkrete ID-Auswahl und das Fehlen bestätigter
+Beziehungen ab. Basis-main: `55fe4447`. Keine Datenmigration oder
+Regeländerung. **Noch nicht gemergt und nicht lokal durch Flutter-Tests
+abgenommen**; den finalen GitHub-Actions-Status des PR prüfen. Gemeinsame
+Dokumentationsänderungen bei der späteren Integration additiv konsolidieren.
 
 ## Chat C – Todesrettung bei 200 % Schrift (30.10.2026)
 
