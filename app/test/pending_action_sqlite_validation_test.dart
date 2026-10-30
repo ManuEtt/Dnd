@@ -28,7 +28,7 @@ void main() {
     await directory.delete(recursive: true);
   });
 
-  test('direct SQLite outbox rejects intents that cannot be restored', () async {
+  test('direct SQLite outbox validates pending inputs', () async {
     Future<void> reject({
       String campaignId = 'camp',
       String requestId = 'request-one',
@@ -61,7 +61,7 @@ void main() {
     expect(await repository.pendingActionFor('camp'), isNull);
   });
 
-  test('a valid direct intent survives restart and is decoded by the outbox', () async {
+  test('valid direct intent survives restart and outbox decode', () async {
     await repository.stagePendingAction(
       campaignId: 'camp',
       requestId: 'request_01',
