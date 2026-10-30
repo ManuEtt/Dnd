@@ -75,8 +75,7 @@ class SrdConcentrationSaveModifierRules {
         'Zusatzboni, Erschwernisse und Würfelumstände sind nicht bestätigt.',
       );
     }
-    if (confirmedAdditionalModifier < -30 ||
-        confirmedAdditionalModifier > 30) {
+    if (confirmedAdditionalModifier < -30 || confirmedAdditionalModifier > 30) {
       throw RangeError.range(
         confirmedAdditionalModifier,
         -30,

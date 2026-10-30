@@ -118,10 +118,7 @@ void main() {
 
   test('confirmed additional modifiers remain explicit and bounded', () {
     final hero = _hero();
-    expect(
-      () => _prepare(hero, otherReviewed: false),
-      throwsFormatException,
-    );
+    expect(() => _prepare(hero, otherReviewed: false), throwsFormatException);
     expect(() => _prepare(hero, rollReviewed: false), throwsFormatException);
     expect(() => _prepare(hero, extra: 2), throwsFormatException);
     expect(
@@ -147,11 +144,7 @@ void main() {
     expect(advantage.disadvantage, isFalse);
     expect(advantage.isNormalRoll, isFalse);
 
-    final opposed = _prepare(
-      hero,
-      advantage: true,
-      disadvantage: true,
-    );
+    final opposed = _prepare(hero, advantage: true, disadvantage: true);
     expect(opposed.advantage, isTrue);
     expect(opposed.disadvantage, isTrue);
     expect(opposed.isNormalRoll, isTrue);
@@ -176,7 +169,9 @@ void main() {
     for (final hero in bad) {
       expect(
         () => _prepare(hero),
-        throwsA(anyOf(isA<FormatException>(), isA<StateError>(), isA<RangeError>())),
+        throwsA(
+          anyOf(isA<FormatException>(), isA<StateError>(), isA<RangeError>()),
+        ),
         reason: hero.classSummary,
       );
     }
@@ -219,9 +214,7 @@ void main() {
       throwsFormatException,
     );
     expect(
-      () => evidence.validateUnchanged(
-        hero.copyWith(concentratingOn: 'Web'),
-      ),
+      () => evidence.validateUnchanged(hero.copyWith(concentratingOn: 'Web')),
       throwsFormatException,
     );
   });
