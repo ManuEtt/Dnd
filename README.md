@@ -79,6 +79,31 @@ Die separaten Chat-A-PRs [#400](https://github.com/ManuEtt/Dnd/pull/400)
 bestanden ([#41007599214](https://github.com/ManuEtt/Dnd/actions/runs/41007599214),
 [#41011249059](https://github.com/ManuEtt/Dnd/actions/runs/41011249059)).
 Sie sind noch nicht nach `main` gemergt.
+## Chat A – strikt bestätigte Material-Stückwerte (PR #415, 30.10.2026)
+
+Neuer unabhängiger Entwicklungsbranch `feat/chat-a/spell-material-value-evidence-20261030`:
+`SrdSpellMaterialValueRules` prüft bei den vier ausdrücklich auditierten
+Mehrkomponenten-Zaubern die einzeln bestätigten Mindestpreise **pro Materialstück**
+statt nur einen pauschal bestätigten Kosten-Boolean. Jede Materialanforderung
+muss auf einen vorhandenen Inventarstapel, ausdrücklich bestätigte Identität
+und einen separat bestätigten Wert in Kupferstücken zurückgeführt werden.
+`validatedConsumption` ändert keine Ressourcen; `commitConfirmedCast`
+kombiniert die strenge Wertprüfung mit dem bereits vorhandenen atomaren
+Material-/Zauberplatz-Übergang. Acht SRD-Materialpositionen und positive wie
+negative Grenzfälle werden mit neuen Tests abgedeckt.
+
+**Grenzen:** Kein selbstständiger Beweis der externen Materialpreis-Provenienz,
+kein Ableiten von Preisen aus Namen, keine vollständige Zauberwirkungsautomatik
+und noch keine Controller-/SQLite-Verkabelung des strengeren Pfads. Alte
+Bestätigungs-APIs, Spielstandsformate, App-Version und bestehende Aufrufer
+bleiben unverändert. Vollständige CI für diesen neuen Branch bei Erstellung
+noch nicht durchgeführt. Dokumentation:
+`docs/SRD_SPELL_MATERIAL_VALUE_EVIDENCE.md`.
+
+Die separaten Chat-A-Drafts [#400](https://github.com/ManuEtt/Dnd/pull/400),
+[#405](https://github.com/ManuEtt/Dnd/pull/405) und
+[#408](https://github.com/ManuEtt/Dnd/pull/408) haben jeweils die vollständige
+Flutter-/Android-GitHub-CI erfolgreich durchlaufen, sind aber noch nicht integriert.
 
 
 
