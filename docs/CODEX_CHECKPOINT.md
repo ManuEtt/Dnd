@@ -1,5 +1,19 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat A – Kurzrast-Ressourcenprüfung (offener PR#428, 30.10.2026)
+
+[PR#428](https://github.com/ManuEtt/Dnd/pull/428) · [aktuelle Checks und Vollabnahme](https://github.com/ManuEtt/Dnd/pull/428/checks).
+Basis-Main55fe4447, Branch `feat/chat-a/short-rest-resource-preflight-20261030`,
+Quellcode-/Testcommit `19fe5e16394fae096c082a86e7aa8886461fc883`. Ungültige Klassen-/Paktressourcen werden im
+Kurzrastpfad mit Trefferwürfeln vor RNG und Erholung geprüft. **65 gezielte
+Domain-/Bestands- und sieben neue Flow-/SQLitefälle bestanden**. Vollständige
+Test-/Buildzahlen und CI-/Artefaktnachweise stehen im aktuellen PR; keine
+Geräteabnahme behauptet. Langrast und Engine-Null-HD-Sonderpfade bleiben getrennt.
+Appbasis0.8.48+98, SQLite3/JSON1 unverändert. Voriger PR416 bleibt separat offen;
+Integration/Dokumentationskonsolidierung durch Chat D, Main nicht verändert.
+[Chat-A-Checkpoint](parallel/CHAT_A_CHECKPOINT.md) ·
+[Fachnachweis](parallel/CHAT_A_SHORT_REST_RESOURCE_PREFLIGHT_20261030.md).
+
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
 Stand: 29.10.2026, UTC. [PR #390](https://github.com/ManuEtt/Dnd/pull/390)
