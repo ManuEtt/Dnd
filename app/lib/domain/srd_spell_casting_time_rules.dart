@@ -43,9 +43,7 @@ class SrdSpellCastingTimeRules {
     r'[\x00-\x1f\x7f-\x9f\u00ad\u034f\u061c\u180e\u200b-\u200f\u2028-\u202e\u2060-\u2069\ufeff]',
   );
 
-  static SrdSpellCastingTimeAssessment inspect(
-    SrdSpellDefinition spell,
-  ) {
+  static SrdSpellCastingTimeAssessment inspect(SrdSpellDefinition spell) {
     final time = spell.castingTime;
     if (time.isEmpty || time != time.trim() || _invisible.hasMatch(time)) {
       throw const FormatException(

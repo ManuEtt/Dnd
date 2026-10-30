@@ -46,21 +46,19 @@ HeroCharacter _wizard() => HeroCharacter(
   maxHitPoints: 26,
 );
 
-SrdSpellCastPlan _plan(
-  HeroCharacter hero,
-  SrdSpellDefinition spell,
-) => SrdSpellPreflightRules.preflight(
-  hero,
-  spell: spell,
-  castingClass: 'Magier',
-  slotLevel: 1,
-  actionAvailableConfirmed: true,
-  targetRulesConfirmed: true,
-  verbalComponentConfirmed: true,
-  somaticComponentConfirmed: true,
-  materialComponentConfirmed: true,
-  slotTurnLimitConfirmed: true,
-);
+SrdSpellCastPlan _plan(HeroCharacter hero, SrdSpellDefinition spell) =>
+    SrdSpellPreflightRules.preflight(
+      hero,
+      spell: spell,
+      castingClass: 'Magier',
+      slotLevel: 1,
+      actionAvailableConfirmed: true,
+      targetRulesConfirmed: true,
+      verbalComponentConfirmed: true,
+      somaticComponentConfirmed: true,
+      materialComponentConfirmed: true,
+      slotTurnLimitConfirmed: true,
+    );
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -186,10 +184,7 @@ void main() {
         () => SrdSpellCastingTimeRules.inspect(forged),
         throwsFormatException,
       );
-      expect(
-        () => _plan(hero, forged),
-        throwsFormatException,
-      );
+      expect(() => _plan(hero, forged), throwsFormatException);
     }
     expect(hero.spentSpellSlots, isEmpty);
     expect(jsonEncode(hero.toJson()), before);
@@ -236,10 +231,7 @@ void main() {
       final forged = _alter(missile, time: text);
       final assessment = SrdSpellCastingTimeRules.inspect(forged);
       expect(assessment.permitsExistingSingleTurnPreflight, isFalse);
-      expect(
-        () => _plan(_wizard(), forged),
-        throwsUnsupportedError,
-      );
+      expect(() => _plan(_wizard(), forged), throwsUnsupportedError);
     }
   });
 
