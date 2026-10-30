@@ -40,6 +40,12 @@ Beziehungen ab. Basis-main: `55fe4447`. Keine Datenmigration oder
 Regeländerung. **Noch nicht gemergt und nicht lokal durch Flutter-Tests
 abgenommen**; den finalen GitHub-Actions-Status des PR prüfen. Gemeinsame
 Dokumentationsänderungen bei der späteren Integration additiv konsolidieren.
+
+## Chat B – NPC-Kontext nach Neustart unveränderlich (30.10.2026)
+
+**PR:** [#431](https://github.com/ManuEtt/Dnd/pull/431). Read-only-NPC-Kontext ist jetzt einschließlich Notizliste und innerer Notizmaps gegen nachträgliche Änderungen gesichert. Ein neuer Flutter-/SQLite-Test deckt JSON-Roundtrip, echte Datenbank-Wiederaufnahme und Ablehnung veralteter Beziehungen ab. Branch `feat/chat-b/npc-context-immutable-restart-20261030`, Basis `69bfe78ec4eeb30042b26971978038a2ee9dac34`. Änderungen an Schema, Spielregeln und Bestands-Spielständen sind nicht erforderlich; CI-Abnahme steht zunächst aus.
+
+
 ## Chat C – EP-Dialog bei großer Android-Schrift und IME (30.10.2026)
 
 Das unabhängige Chat-C-Arbeitspaket [PR #426](https://github.com/ManuEtt/Dnd/pull/426)
@@ -133,6 +139,27 @@ bewusst beendet und gilt nicht als bestandene Vollsuite, auch wenn Flutter beim
 SIGTERM Exit0 liefert. Die kombinierte Vollsuite und finale CI werden neu geprüft.
 Der eigene Rast-Laufzeit-/Testcode19fe5e16 ist unverändert. Main wird durch diesen
 Branch-Merge nicht verändert; PR416 und andere fremde Pakete bleiben getrennt.
+
+
+## Chat B – Unicode-Grenzen für neue KI-Geschichten (30.10.2026)
+
+Backend und Flutter prüfen neue unbestätigte Story-Texte jetzt auf unsichtbare Steuer- und Bidi-Zeichen; sichtbarer Unicode und normale Zeilenumbrüche bleiben erlaubt. Zwei neue Testdateien ergänzen positive/negative Fälle. Diese Änderungen betreffen keine vorhandenen Spielstände oder Regeln. [PR #424](https://github.com/ManuEtt/Dnd/pull/424), Branch: feat/chat-b/story-provider-unicode-guard-20261030, ursprüngliche Basis-main: 55fe44475a113943c6310ec16a8ffb481185f4e9; aktualisierte Basis: 69bfe78ec4eeb30042b26971978038a2ee9dac34. CI-Ergebnisse sind bis zum geprüften Lauf offen.
+
+
+## Chat C – Ausstehende Handlungen bei großer Schrift (30.10.2026)
+
+Das isolierte [Chat-C-Paket #417](https://github.com/ManuEtt/Dnd/pull/417) `feat/chat-c/pending-action-controls-large-text-20261030`
+(basierend auf `main` `55fe44475a113943c6310ec16a8ffb481185f4e9`,
+Code-Commit `3a48e283da3749d5a49a0563730059fbd8bf1a94`)
+ordnet im `PendingActionStatus` die Aktionen **Erneut bestätigen** und
+**Verwerfen** bei Kartenbreiten unter 500 dp und mindestens 180 % Systemschrift
+untereinander in voller Breite an. Der vorhandene Volltextschalter, die
+Statussperren und die normale kompakte Anordnung bleiben erhalten.
+Die Tab-Navigation berücksichtigt einen möglichen zusätzlichen Fokus-Stopp des scrollbaren Bereichs; die zwei Entscheidungs-Buttons haben eine ausdrückliche Reihenfolge. Sieben neue Flutter-Widgettestfälle prüfen 320/360 dp mit simuliertem
+Tastatureinzug und 200 % Text, Tab/Enter, Sperrung, lange NPC-Aufträge,
+den Sendestatus sowie das normale Layout. Keine Änderung von Outbox,
+Spielzustand, Regeln, SQLite oder JSON. Finale CI und echter Android-
+TalkBack-Test müssen separat nachgewiesen werden.
 
 
 ## Chat C – Todesrettung bei 200 % Schrift (30.10.2026)

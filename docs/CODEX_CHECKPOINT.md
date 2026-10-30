@@ -63,6 +63,11 @@ Die früheren Vorabmeldungen darunter sind historische Einzelbranchberichte.
 **NÄCHSTER SCHRITT:** Isolierte Layout-/Semantics-Tests der Kampfchronik bei 320 dp und 200 % Schrift, auch mit sehr langen bestätigten Ereignisdetails.
 
 ---
+## Chat B – NPC-Kontext nach Neustart unveränderlich (30.10.2026)
+
+**PR:** [#431](https://github.com/ManuEtt/Dnd/pull/431). Read-only-NPC-Kontext ist jetzt einschließlich Notizliste und innerer Notizmaps gegen nachträgliche Änderungen gesichert. Ein neuer Flutter-/SQLite-Test deckt JSON-Roundtrip, echte Datenbank-Wiederaufnahme und Ablehnung veralteter Beziehungen ab. Branch `feat/chat-b/npc-context-immutable-restart-20261030`, Basis `69bfe78ec4eeb30042b26971978038a2ee9dac34`. Änderungen an Schema, Spielregeln und Bestands-Spielständen sind nicht erforderlich; CI-Abnahme steht zunächst aus.
+
+
 ## 30.10.2026 – Chat C: EP-Belohnungsdialog bei 200 % Schrift und IME
 
 - **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
@@ -120,6 +125,8 @@ Die früheren Vorabmeldungen darunter sind historische Einzelbranchberichte.
 ## Chat B – NPC-Kontext nach Neustart unveränderlich (30.10.2026)
 
 **PR:** [#431](https://github.com/ManuEtt/Dnd/pull/431). Read-only-NPC-Kontext ist jetzt einschließlich Notizliste und innerer Notizmaps gegen nachträgliche Änderungen gesichert. Ein neuer Flutter-/SQLite-Test deckt JSON-Roundtrip, echte Datenbank-Wiederaufnahme und Ablehnung veralteter Beziehungen ab. Branch `feat/chat-b/npc-context-immutable-restart-20261030`, Basis `69bfe78ec4eeb30042b26971978038a2ee9dac34`. Änderungen an Schema, Spielregeln und Bestands-Spielständen sind nicht erforderlich; CI-Abnahme steht zunächst aus.
+
+
 ## Chat B – Unicode-Grenzen für neue KI-Geschichten (30.10.2026)
 
 Backend und Flutter prüfen neue unbestätigte Story-Texte jetzt auf unsichtbare Steuer- und Bidi-Zeichen; sichtbarer Unicode und normale Zeilenumbrüche bleiben erlaubt. Zwei neue Testdateien ergänzen positive/negative Fälle. Diese Änderungen betreffen keine vorhandenen Spielstände oder Regeln. [PR #424](https://github.com/ManuEtt/Dnd/pull/424), Branch: feat/chat-b/story-provider-unicode-guard-20261030, ursprüngliche Basis-main: 55fe44475a113943c6310ec16a8ffb481185f4e9; aktualisierte Basis: 69bfe78ec4eeb30042b26971978038a2ee9dac34. CI-Ergebnisse sind bis zum geprüften Lauf offen.
@@ -240,6 +247,43 @@ Appbasis0.8.48+98, SQLite3/JSON1 unverändert. Voriger PR416 bleibt separat offe
 Integration/Dokumentationskonsolidierung durch Chat D, Main nicht verändert.
 [Chat-A-Checkpoint](parallel/CHAT_A_CHECKPOINT.md) ·
 [Fachnachweis](parallel/CHAT_A_SHORT_REST_RESOURCE_PREFLIGHT_20261030.md).
+
+## 30.10.2026 – Chat C: Ausstehende Handlungen bei großer Schrift/IME
+
+- **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `feat/chat-c/pending-action-controls-large-text-20261030`.
+- **Pull Request:** [#417](https://github.com/ManuEtt/Dnd/pull/417) (separat von anderen Chat-C-Paketen).
+- **Code-/Testcommit:** `3a48e283da3749d5a49a0563730059fbd8bf1a94`.
+- **Problem:** Im festen Abenteuer-Composer teilen sich die Buttons zur
+  Wiederbestätigung und zum Verwerfen bisher einen Wrap, der bei 320/360 dp
+  und 200 % Schrift die Beschriftung stark verengt. Bei geöffneter Tastatur
+  müssen beide Entscheidungen weiter getrennt erreichbar bleiben.
+- **IMPLEMENTIERT:** `app/lib/ui/pending_action_status.dart` stellt
+  ab 180 % Schrift und unter 500 dp die Retry-/Discard-Aktionen vollbreit
+  vertikal dar. Der vorhandene Volltextschalter bleibt separat; bei
+  normaler Schrift bleibt die Wrap-Anordnung bestehen. Bereits vorhandene
+  `interactionBlocked`-/`submitting`-Prüfungen sind unverändert.
+- **Fokus-Regressionsbefund:** Die scrollbare Flutter-Ansicht kann selbst einen Tab-Fokus-Stopp belegen; der Widgettest wartet maximal drei Tab-Tastendrücke pro Zielaktion, verlangt anschließend korrekte Reihenfolge und Enter-Auslösung. Die UI verwendet dafür eine explizite `OrderedTraversalPolicy` mit Fokuspositionen 0/1/2.
+- **TESTS ERGÄNZT:** `app/test/pending_action_controls_large_text_test.dart`
+  umfasst sieben Fälle: zwei schmale Displaybreiten mit 200 % und simulierter
+  IME, Tab/Enter, blockierte Aktionen, lange NPC-Textvorschau ohne Mutation,
+  vollständig ausgeblendete Aktionen während Submit und Standardlayout.
+- **GETESTET:** Live-main/PRs/CI und aktuelle UI-/Testdateien geprüft;
+  neue Implementierung und Tests auf eigenem Branch gesichert.
+  Vollständige CI erst nach Lauf als erfolgreich bezeichnen.
+- **NICHT GETESTET:** Flutter/Dart lokal (SDK fehlt); tatsächlicher
+  Android-TalkBack-, Bildschirmtastatur- und Upgrade-Test.
+- **BLOCKIERT:** Gemeinsame README-/Zentral-Checkpoint-Diffs bei
+  Integration durch Chat D additiv koordinieren. Kein autonomer Merge.
+- **Migration/Kompatibilität:** Keine Regel-, Outbox-, SQLite-, JSON-,
+  Klassenressourcen- oder Versionsänderung; keine Migration.
+- **Nächster Schritt:** Echte TalkBack-/IME-Geräteabnahme bei 320 dp/
+  200 %: beide Entscheidungen vollständig vorlesen, unabhängig fokussieren,
+  aktivieren und bei Sperre ohne Callback lassen.
+
+---
+
+
 
 ## 30.10.2026 – Chat C: Todesrettungs-Entscheidungen bei 200 % Schrift
 

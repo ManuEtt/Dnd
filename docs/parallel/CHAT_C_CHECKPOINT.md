@@ -112,6 +112,41 @@ Die früheren Vorabmeldungen darunter sind historische Einzelbranchberichte.
   Echte Geräteprüfung, Gesamtsuite und Android-Build auf finalem Merge-HEAD
   getrennt prüfen. Diagnoseworkflow wird nicht im finalen PR belassen.
 
+## 30.10.2026 – Chat C: Ausstehende Handlungen bei großer Schrift/IME
+
+- **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `feat/chat-c/pending-action-controls-large-text-20261030`.
+- **Pull Request:** [#417](https://github.com/ManuEtt/Dnd/pull/417) (separat von anderen Chat-C-Paketen).
+- **Code-/Testcommit:** `3a48e283da3749d5a49a0563730059fbd8bf1a94`.
+- **Problem:** Im festen Abenteuer-Composer teilen sich die Buttons zur
+  Wiederbestätigung und zum Verwerfen bisher einen Wrap, der bei 320/360 dp
+  und 200 % Schrift die Beschriftung stark verengt. Bei geöffneter Tastatur
+  müssen beide Entscheidungen weiter getrennt erreichbar bleiben.
+- **IMPLEMENTIERT:** `app/lib/ui/pending_action_status.dart` stellt
+  ab 180 % Schrift und unter 500 dp die Retry-/Discard-Aktionen vollbreit
+  vertikal dar. Der vorhandene Volltextschalter bleibt separat; bei
+  normaler Schrift bleibt die Wrap-Anordnung bestehen. Bereits vorhandene
+  `interactionBlocked`-/`submitting`-Prüfungen sind unverändert.
+- **Fokus-Regressionsbefund:** Die scrollbare Flutter-Ansicht kann selbst einen Tab-Fokus-Stopp belegen; der Widgettest wartet maximal drei Tab-Tastendrücke pro Zielaktion, verlangt anschließend korrekte Reihenfolge und Enter-Auslösung. Die UI verwendet dafür eine explizite `OrderedTraversalPolicy` mit Fokuspositionen 0/1/2.
+- **TESTS ERGÄNZT:** `app/test/pending_action_controls_large_text_test.dart`
+  umfasst sieben Fälle: zwei schmale Displaybreiten mit 200 % und simulierter
+  IME, Tab/Enter, blockierte Aktionen, lange NPC-Textvorschau ohne Mutation,
+  vollständig ausgeblendete Aktionen während Submit und Standardlayout.
+- **GETESTET:** Live-main/PRs/CI und aktuelle UI-/Testdateien geprüft;
+  neue Implementierung und Tests auf eigenem Branch gesichert.
+  Vollständige CI erst nach Lauf als erfolgreich bezeichnen.
+- **NICHT GETESTET:** Flutter/Dart lokal (SDK fehlt); tatsächlicher
+  Android-TalkBack-, Bildschirmtastatur- und Upgrade-Test.
+- **BLOCKIERT:** Gemeinsame README-/Zentral-Checkpoint-Diffs bei
+  Integration durch Chat D additiv koordinieren. Kein autonomer Merge.
+- **Migration/Kompatibilität:** Keine Regel-, Outbox-, SQLite-, JSON-,
+  Klassenressourcen- oder Versionsänderung; keine Migration.
+- **Nächster Schritt:** Echte TalkBack-/IME-Geräteabnahme bei 320 dp/
+  200 %: beide Entscheidungen vollständig vorlesen, unabhängig fokussieren,
+  aktivieren und bei Sperre ohne Callback lassen.
+
+---
+
 ## 30.10.2026 – Chat C: Todesrettungs-Entscheidungen bei 200 % Schrift
 
 - **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
