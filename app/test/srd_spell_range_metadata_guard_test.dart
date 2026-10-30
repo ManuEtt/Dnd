@@ -182,9 +182,7 @@ void main() {
     expect(SrdSpellTargetRules.maxRangeFeet('0 feet'), isNull);
   });
 
-  test(
-    'invalid range is rejected by casting preflight without a slot spend',
-    () {
+  test('invalid range blocks preflight without a slot spend', () {
     final hero = _wizard();
     final before = jsonEncode(hero.toJson());
     final original = catalog.find('Magic Missile')!;
@@ -209,7 +207,6 @@ void main() {
       throwsFormatException,
     );
     expect(jsonEncode(hero.toJson()), before);
-      expect(hero.spentSpellSlots, isEmpty);
-    },
-  );
+    expect(hero.spentSpellSlots, isEmpty);
+  });
 }
