@@ -1,3 +1,20 @@
+# CHAT D – D-Backup-Dateinamen: Unicode-Formatzeichen sperren (30.10.2026)
+
+- **Ausgangs-main-SHA:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `fix/chat-d/backup-filename-format-20261030`.
+- **Implementierungs-Commits:** `554774752a0d7c63da21d014f57065fc4ba9793d`, `4f26cdd51ad0e0a40a609b9e70f7a7e05e2f4f4f`; aktueller dokumentierter Branch-HEAD ist im PR einzusehen.
+- **Pull Request:** [#421](https://github.com/ManuEtt/Dnd/pull/421) (Draft bis vollständiger Prüfung).
+- **Ausgangsproblem:** Native `JsonBackupIo.isSafeName` akzeptierte bislang unsichtbare Unicode-FORMAT-Codepoints und verwaiste UTF-16-Surrogate. Daraus konnten mehrdeutig angezeigte Backup-Dateinamen entstehen.
+- **IMPLEMENTIERT:** Native Dateinamenprüfung weist Formatzeichen (einschließlich Bidi-Overrides/-Isolates, Zero-Width-Zeichen, Unicode-Tags) und unpaarige Surrogate ab; sichtbares Unicode einschließlich Umlauten, Emoji und kombinierenden Zeichen bleibt zulässig.
+- **Betroffene Dateien:** `app/android/app/src/main/kotlin/de/aetheria/lebendiger_spielleiter/JsonBackupIo.kt`, `app/android/app/src/test/kotlin/de/aetheria/lebendiger_spielleiter/JsonBackupIoTest.kt`, `README.md`, `docs/CODEX_CHECKPOINT.md`, diese Checkpointdatei.
+- **Tests/CI bei Dokumentation:** native positive/negative JUnit-Regressionen implementiert, jedoch noch kein bestätigter erfolgreicher Lauf auf finalem HEAD. Python-/Backend-/Flutter-/Android-Buildchecks und echtes SAF-Gerät wurden innerhalb dieser Sitzung bisher **nicht** als bestanden verifiziert. CI-Status zu PR #421 gesondert prüfen.
+- **Akzeptanz:** Pfad-/Steuerzeichen bleiben verboten; beliebige FORMAT-Codepoints oder einzelne Surrogate werden abgelehnt; bekannte sichtbare Namen bleiben zulässig; die bestehende Gesamtsuite bleibt grün.
+- **Migration/Kompatibilität:** keine Änderung an SQLite, JSON, Spielstandsdateien, App-Version, Regeln, Story, Android-Berechtigungen oder Picker-Ablauf.
+- **Bekannte Grenzen:** Keine Garantien gegenüber UI-Spoofing durch andere Unicode-Buchstabenähnlichkeiten (Homoglyphen). Ein echter Android-SAF-Gerätetest bleibt notwendig. Parallele README-/Checkpoint-Einträge vor Integration verlustfrei konsolidieren.
+- **Nächster konkreter Schritt:** finale CI und die 12+ nativen `JsonBackupIoTest`-Fälle auf PR #421 vollständig prüfen, anschließend Abnahme/Integration nur bei nachgewiesen grünem HEAD und Review.
+
+---
+
 # Chat D – Integration von PR #358 nach Checkpoint-Fix #363 (29.10.2026)
 
 ## Integrationskandidat 29.10.2026 – Chat D
