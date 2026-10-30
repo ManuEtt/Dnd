@@ -6,8 +6,7 @@ import 'package:lebendiger_spielleiter/domain/models.dart';
 
 final _now = DateTime.utc(2026, 10, 30, 12);
 
-String _firstId(String prefix) =>
-    '$prefix-${_now.microsecondsSinceEpoch}-0';
+String _firstId(String prefix) => '$prefix-${_now.microsecondsSinceEpoch}-0';
 
 Campaign _campaign({
   List<SessionRecap> recaps = const [],
@@ -20,9 +19,7 @@ Campaign _campaign({
   sessionId: 'session-7',
   hero: HeroCharacter(id: 'aria', name: 'Aria', hitPoints: 13),
   scene: 'Vor dem alten Archiv.',
-  npcs: const [
-    WorldNpc(id: 'mira', name: 'Mira', relationship: 'freundlich'),
-  ],
+  npcs: const [WorldNpc(id: 'mira', name: 'Mira', relationship: 'freundlich')],
   sessionRecaps: recaps,
   npcRelationshipNotes: notes,
   storyThreads: threads,
@@ -76,10 +73,7 @@ void main() {
     );
     final before = jsonEncode(campaign.toJson());
 
-    expect(
-      () => _engine().saveSessionRecap(campaign),
-      throwsFormatException,
-    );
+    expect(() => _engine().saveSessionRecap(campaign), throwsFormatException);
     expect(jsonEncode(campaign.toJson()), before);
     expect(campaign.sessionRecaps.single.summary, 'Das Tor wurde untersucht.');
   });
@@ -184,15 +178,12 @@ void main() {
     expect(saved.storyThreads.map((item) => item.id).toSet(), hasLength(2));
     expect(saved.revision, initial.revision + 5);
     expect(jsonEncode(saved.hero.toJson()), initialHero);
-    expect(
-      saved.events.map((event) => event.type).toList(),
-      [
-        'memory.npcRelationshipRecorded',
-        'memory.npcRelationshipRecorded',
-        'memory.sessionRecapSaved',
-        'memory.storyThreadSaved',
-        'memory.storyThreadSaved',
-      ],
-    );
+    expect(saved.events.map((event) => event.type).toList(), [
+      'memory.npcRelationshipRecorded',
+      'memory.npcRelationshipRecorded',
+      'memory.sessionRecapSaved',
+      'memory.storyThreadSaved',
+      'memory.storyThreadSaved',
+    ]);
   });
 }
