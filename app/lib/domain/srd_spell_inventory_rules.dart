@@ -93,8 +93,7 @@ class SrdSpellInventoryRules {
     final usedIds = <String>{};
     final inventoryAfter = <InventoryItem>[];
     for (final item in hero.inventory) {
-      if (!SrdSpellInventoryIdRules.isSafe(item.id) ||
-          !usedIds.add(item.id)) {
+      if (!SrdSpellInventoryIdRules.isSafe(item.id) || !usedIds.add(item.id)) {
         throw const FormatException('Inventar-ID ist nicht eindeutig.');
       }
       final amount = amounts[item.id];
