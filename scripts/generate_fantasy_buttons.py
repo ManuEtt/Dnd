@@ -8,7 +8,10 @@ Each wide 192x64 PNG has a safe 24px left/right and 20px top/bottom
 from __future__ import annotations
 
 import math
+import os
+import stat
 import struct
+import tempfile
 import zlib
 from pathlib import Path
 
@@ -106,12 +109,50 @@ def draw(style: str, state: str) -> bytes:
     return _png(width, height, bytes(image))
 
 
+def _reject_symlink_path(path: Path) -> None:
+    """Do not generate through any pre-existing symlinked path component."""
+    for component in (path, *path.parents):
+        if component.is_symlink():
+            raise ValueError(f"Fantasy button output contains a symlink: {component}")
+
+
+def _write_png(path: Path, data: bytes) -> None:
+    """Stage complete PNG bytes before atomically replacing a regular output."""
+    _reject_symlink_path(path)
+    if path.exists() and not path.is_file():
+        raise ValueError(f"Fantasy button output is not a regular file: {path}")
+    staged = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="wb", prefix=f".{path.name}.", suffix=".tmp",
+            dir=path.parent, delete=False,
+        ) as stream:
+            staged = Path(stream.name)
+            stream.write(data)
+        # On failure, do not damage a previously generated PNG or leave
+        # a partial PNG behind. A late leaf symlink is rejected before rename.
+        _reject_symlink_path(path)
+        if path.exists() and not path.is_file():
+            raise ValueError(f"Fantasy button output is not a regular file: {path}")
+        previous_mode = stat.S_IMODE(path.stat().st_mode) if path.exists() else 0o644
+        staged.chmod(previous_mode)
+        os.replace(staged, path)
+    finally:
+        if staged is not None:
+            staged.unlink(missing_ok=True)
+
+
 def main() -> None:
+    # mkdir(parents=True) itself could otherwise create directories through a
+    # symlinked ancestor outside the selected asset tree.
+    _reject_symlink_path(ROOT)
     ROOT.mkdir(parents=True, exist_ok=True)
+    _reject_symlink_path(ROOT)
     for style in STYLES:
         for state in STATES:
             out = ROOT / f"btn_{style}_{state}.png"
-            out.write_bytes(draw(style, state))
+            _reject_symlink_path(out)
+            _write_png(out, draw(style, state))
             print(out.name)
     print(f"Generated {len(STYLES) * len(STATES)} transparent images.")
 
