@@ -1,6 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:path/path.dart' as paths;
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:lebendiger_spielleiter/data/sqlite_campaign_repository.dart';
 import 'package:lebendiger_spielleiter/domain/game_engine.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 
@@ -28,6 +32,125 @@ Campaign _campaign({
 GameEngine _engine() => GameEngine(clock: () => _now);
 
 void main() {
+  sqfliteFfiInit();
+
+  test('SQLite restart refuses duplicate journal IDs without rewriting history', () async {
+    final dir = await Directory.systemTemp.createTemp('story-entry-ids-');
+    final dbPath = paths.join(dir.path, 'campaign.sqlite');
+    var repository = await SqliteCampaignRepository.open(
+      factory: databaseFactoryFfi,
+      path: dbPath,
+    );
+    try {
+      final original = _campaign(
+        notes: [
+          NpcRelationshipNote(
+            id: _firstId('npc-note'),
+            npcId: 'mira',
+            relationship: 'freundlich',
+            note: 'Die alte Karte ist bestätigt.',
+            recordedAt: _now,
+          ),
+        ],
+        recaps: [
+          SessionRecap(
+            id: _firstId('recap'),
+            title: 'Rückblick 1',
+            summary: 'Der alte Brunnen.',
+            createdAt: _now,
+          ),
+        ],
+        threads: [
+          StoryThread(
+            id: _firstId('thread'),
+            title: 'Der Brunnen',
+            description: 'Ein bestätigter Hinweis.',
+          ),
+        ],
+      );
+      await repository.saveCampaign(original);
+      await repository.close();
+      repository = await SqliteCampaignRepository.open(
+        factory: databaseFactoryFfi,
+        path: dbPath,
+      );
+      final restored = (await repository.getCampaign(original.id))!;
+      final before = jsonEncode(restored.toJson());
+      final engine = _engine();
+
+      expect(
+        () => engine.recordNpcRelationship(
+          restored,
+          npcId: 'mira',
+          relationship: 'neutral',
+          note: 'Nicht neu bestätigen.',
+        ),
+        throwsFormatException,
+      );
+      expect(
+        () => engine.saveSessionRecap(restored),
+        throwsFormatException,
+      );
+      expect(
+        () => engine.saveStoryThread(
+          restored,
+          title: 'Das Tor',
+          description: 'Nicht neu bestätigen.',
+          status: 'open',
+        ),
+        throwsFormatException,
+      );
+      expect(jsonEncode(restored.toJson()), before);
+      expect(
+        jsonEncode((await repository.getCampaign(original.id))!.toJson()),
+        before,
+      );
+      expect(
+        jsonEncode((await repository.reconstructCampaign(original.id))!.toJson()),
+        before,
+      );
+
+      // A genuinely new ID remains saveable without mutating old entries.
+      final resumed = GameEngine(
+        clock: () => _now.add(const Duration(milliseconds: 1)),
+      ).recordNpcRelationship(
+        restored,
+        npcId: 'mira',
+        relationship: 'freundlich',
+        note: 'Mira hat eine weitere Karte bestätigt.',
+      );
+      await repository.saveCampaign(
+        resumed.campaign,
+        events: resumed.events,
+        expectedRevision: restored.revision,
+      );
+      await repository.close();
+      repository = await SqliteCampaignRepository.open(
+        factory: databaseFactoryFfi,
+        path: dbPath,
+      );
+      final persisted = (await repository.getCampaign(original.id))!;
+      expect(persisted.npcRelationshipNotes, hasLength(2));
+      expect(persisted.npcRelationshipNotes.first.id, _firstId('npc-note'));
+      expect(persisted.npcRelationshipNotes.first.note, 'Die alte Karte ist bestätigt.');
+      expect(
+        persisted.npcRelationshipNotes.map((note) => note.id).toSet(),
+        hasLength(2),
+      );
+      expect(persisted.revision, restored.revision + 1);
+      expect(persisted.hero.toJson(), original.hero.toJson());
+      expect(persisted.sessionRecaps.single.id, _firstId('recap'));
+      expect(persisted.storyThreads.single.id, _firstId('thread'));
+      expect(
+        (await repository.reconstructCampaign(original.id))!.toJson(),
+        persisted.toJson(),
+      );
+    } finally {
+      await repository.close();
+      await dir.delete(recursive: true);
+    }
+  });
+
   test('restarted engine refuses to reuse a confirmed NPC note ID', () {
     final original = _campaign(
       notes: [
