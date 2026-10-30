@@ -14,5 +14,9 @@ jobs:
           channel: stable
       - name: Resolve Flutter dependencies
         run: cd app && flutter pub get
-      - name: Trace pending-action keyboard traversal
-        run: cd app && flutter test test/pending_action_controls_large_text_test.dart --reporter expanded
+      - name: Verify formatting and test keyboard traversal
+        run: |
+          cd app
+          dart format lib/ui/pending_action_status.dart test/pending_action_controls_large_text_test.dart
+          git diff -- lib/ui/pending_action_status.dart test/pending_action_controls_large_text_test.dart
+          flutter test test/pending_action_controls_large_text_test.dart --reporter expanded
