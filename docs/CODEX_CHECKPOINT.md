@@ -79,6 +79,57 @@ Spielstände und Appversion unverändert.
 Parallel-PR-Dateipfade wurden geprüft; gemeinsame README-/Checkpoint-Zeilen
 müssen bei der Integration verlustfrei abgeglichen werden.
 
+## Chat D – 29.10.2026: Exklusives Quell-ZIP/SHA256-Paar (PR #391)
+
+- **IMPLEMENTIERT:** `exclusive_archive_output` in
+  `scripts/package_project.py` verwendet ein atomar erzeugtes
+  `.<zip>.lock`-Verzeichnis von der Quellprüfung bis einschließlich
+  Veröffentlichung/Rollback. Der Besitzer entfernt es per `finally`;
+  fremde oder durch Crash verwaiste Sperren werden nicht übergangen.
+- **REGRESSIONEN:** drei neue Tests in
+  `scripts/tests/test_package_project.py` für konkurrierende
+  Aufrufe, bestehendes Lock und Wiederholung nach `KeyboardInterrupt`.
+- **GETESTET:** finaler Vor-Integrations-Head
+  `5d5d615d9fc6b8c5152cc5fae1cb1725f1fc4758`,
+  [GitHub-CI #40918352502](https://github.com/ManuEtt/Dnd/actions/runs/40918352502)
+  **36/36 erfolgreich** (Python, Backend, Flutter, Android, Artefakte).
+- **NICHT GETESTET:** neue kombinierte CI mit Main
+  `55fe44475a113943c6310ec16a8ffb481185f4e9`;
+  externe Mehrprozess-Runner, Windows und reales Android-Gerät.
+- **KOMPATIBILITÄT:** keine Spielstands-, Datenbank-, Schema-,
+  Regel-, UI-, Backend-Laufzeit- oder Versionsmigration.
+- **KOORDINATION:** [PR #391](https://github.com/ManuEtt/Dnd/pull/391)
+  reviewbereit. Integrations-Commit übernimmt die aktuellen Main-
+  Dokumente und die getesteten Quell- und Regressionsdateien.
+- **NÄCHSTER SCHRITT:** kombinierte CI auf neuem Head abnehmen,
+  danach Merge gesondert entscheiden.
+
+## Chat D – Sichere Unix-Dateitypen in Alpha-APKs (30.10.2026, PR #406)
+
+[PR #406](https://github.com/ManuEtt/Dnd/pull/406) schützt
+`scripts/prepare_alpha_release.py` vor ZIP-Einträgen, die einen Unix-FIFO,
+Geräte-, Socket- oder widersprüchlichen Datei-/Verzeichnistyp deklarieren.
+Bisher wurden nur Symlinks ausdrücklich zurückgewiesen. Unbekannte
+Unix-Typbits von ZIP-Quellen ohne Typmetadaten bleiben kompatibel;
+reguläre Dateien und passend benannte Verzeichnisse bleiben erlaubt.
+Drei neue Python-Testmethoden prüfen Sonderdateien, eine als Verzeichnis
+deklarierte Pflicht-`libapp.so` sowie gültige reguläre Archiveinträge.
+
+**Basis-`main`:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+**Branch:** `fix/chat-d/apk-entry-types-20261030`;
+**Code-Commit:** `df45e36d78f2fba2372df4fec462a6df6eb5f7a6`.
+**GETESTET:** noch keine vollständige CI auf finalem Dokumentations-Commit
+abgeschlossen; Resultate im [PR](https://github.com/ManuEtt/Dnd/pull/406)
+abnehmen. **NICHT GETESTET:** finale Android-CI und Realgerät
+bis zur tatsächlich bestätigten Ausführung.
+**Spielstände:** keine Änderungen an SQLite/JSON, Regeln oder Appversion.
+Die beiden vorherigen Pakete sind vollständig per GitHub Actions grün:
+[PR #401](https://github.com/ManuEtt/Dnd/pull/401)
+([CI 41007222064](https://github.com/ManuEtt/Dnd/actions/runs/41007222064))
+und [PR #402](https://github.com/ManuEtt/Dnd/pull/402)
+([CI 41010021662](https://github.com/ManuEtt/Dnd/actions/runs/41010021662));
+beide zur Review freigegeben, nicht gemergt.
+
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
 Stand: 29.10.2026, UTC. [PR #390](https://github.com/ManuEtt/Dnd/pull/390)

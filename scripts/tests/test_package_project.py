@@ -461,6 +461,62 @@ class ProjectArchiveTests(unittest.TestCase):
         self.assertEqual(set(self.base.iterdir()),
                          {self.root, output, output.with_suffix('.zip.sha256')})
 
+    def test_existing_output_lock_rejects_second_writer_and_preserves_pair(self):
+        output = self.base / 'existing.zip'
+        packaging.create_archive(self.root, output, layout='root')
+        checksum = output.with_suffix('.zip.sha256')
+        original_pair = output.read_bytes(), checksum.read_bytes()
+        lock = self.base / '.existing.zip.lock'
+        lock.mkdir()
+        (self.root / 'app/lib/main.dart').write_text('changed source')
+        try:
+            with self.assertRaisesRegex(ValueError, 'already in progress'):
+                packaging.create_archive(self.root, output, layout='root')
+            self.assertEqual((output.read_bytes(), checksum.read_bytes()),
+                             original_pair)
+            self.assertTrue(lock.is_dir())
+        finally:
+            lock.rmdir()
+
+    def test_competing_export_cannot_publish_during_first_writer(self):
+        output = self.base / 'concurrent.zip'
+        read_source = packaging.read_verified_source
+        attempted = False
+
+        def try_second_writer(root, path):
+            nonlocal attempted
+            if not attempted:
+                attempted = True
+                with self.assertRaisesRegex(ValueError, 'already in progress'):
+                    packaging.create_archive(root, output, layout='root')
+            return read_source(root, path)
+
+        with mock.patch.object(packaging, 'read_verified_source',
+                               side_effect=try_second_writer):
+            count, digest = packaging.create_archive(
+                self.root, output, layout='root',
+            )
+        self.assertTrue(attempted)
+        self.assertEqual(count, len(packaging.REQUIRED_FILES))
+        self.assertFalse((self.base / '.concurrent.zip.lock').exists())
+        self.assertEqual(output.with_suffix('.zip.sha256').read_text(),
+                         f'{digest}  {output.name}\n')
+        with zipfile.ZipFile(output) as archive:
+            self.assertIsNone(archive.testzip())
+
+    def test_keyboard_interrupt_releases_own_lock_and_retry_succeeds(self):
+        output = self.base / 'interrupted.zip'
+        lock = self.base / '.interrupted.zip.lock'
+        with mock.patch.object(packaging.zipfile.ZipFile, 'writestr',
+                               side_effect=KeyboardInterrupt):
+            with self.assertRaises(KeyboardInterrupt):
+                packaging.create_archive(self.root, output, layout='root')
+        self.assertFalse(lock.exists())
+        self.assertFalse(output.exists())
+        count, _ = packaging.create_archive(self.root, output, layout='root')
+        self.assertEqual(count, len(packaging.REQUIRED_FILES))
+        self.assertFalse(lock.exists())
+
     def test_invalid_layout_cannot_create_an_ambiguous_archive(self):
         with self.assertRaisesRegex(ValueError, 'layout'):
             packaging.create_archive(self.root, self.base / 'bad.zip', layout='nested')

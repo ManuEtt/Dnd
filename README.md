@@ -16,6 +16,22 @@ Keine Änderung an Regelengine, Speicherdaten, Ressourcen oder Appversion.
 **Vollständige CI und Gerätetest sind gesondert nachzuweisen.**
 
 
+## Chat D – PR #391: Quell-ZIP-Exporte exklusiv veröffentlichen (29.10.2026)
+
+Der Quell-ZIP-Exporter veröffentlicht ZIP und SHA256 mit einer
+atomar angelegten, ausgabepfadspezifischen Sperre. Gleichzeitige
+Schreibvorgänge auf dasselbe Archiv werden abgewiesen, und
+unterbrochene Schreibvorgänge geben ihren eigenen Lock frei.
+Eine nach hartem Absturz verbleibende Sperre bleibt aus
+Integritätsgründen bestehen. Drei neue Regressionen ergänzen die
+bisherigen ZIP-/Symlink-/Rollback-Tests. Keine Änderung an App,
+Spielstand, SQLite, JSON oder Android-Version.
+Die vollständige [PR-CI #40918352502](https://github.com/ManuEtt/Dnd/actions/runs/40918352502)
+auf `5d5d615d9fc6b8c5152cc5fae1cb1725f1fc4758` hat 36/36
+Prüfschritte bestanden. Nach Aufnahme des neueren Main ist eine
+neue kombinierte CI abzunehmen; [PR #391](https://github.com/ManuEtt/Dnd/pull/391)
+ist reviewbereit, aber noch nicht gemergt.
+
 Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;
 vollständige Charaktererstellung und SRD-Regelengine bleiben in Entwicklung.
 
@@ -62,6 +78,32 @@ noch ausstehend; bis dahin keine grüne CI behaupten.
 Spielstände und Appversion unverändert.
 Parallel-PR-Dateipfade wurden geprüft; gemeinsame README-/Checkpoint-Zeilen
 müssen bei der Integration verlustfrei abgeglichen werden.
+
+## Chat D – Sichere Unix-Dateitypen in Alpha-APKs (30.10.2026, PR #406)
+
+[PR #406](https://github.com/ManuEtt/Dnd/pull/406) schützt
+`scripts/prepare_alpha_release.py` vor ZIP-Einträgen, die einen Unix-FIFO,
+Geräte-, Socket- oder widersprüchlichen Datei-/Verzeichnistyp deklarieren.
+Bisher wurden nur Symlinks ausdrücklich zurückgewiesen. Unbekannte
+Unix-Typbits von ZIP-Quellen ohne Typmetadaten bleiben kompatibel;
+reguläre Dateien und passend benannte Verzeichnisse bleiben erlaubt.
+Drei neue Python-Testmethoden prüfen Sonderdateien, eine als Verzeichnis
+deklarierte Pflicht-`libapp.so` sowie gültige reguläre Archiveinträge.
+
+**Basis-`main`:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+**Branch:** `fix/chat-d/apk-entry-types-20261030`;
+**Code-Commit:** `df45e36d78f2fba2372df4fec462a6df6eb5f7a6`.
+**GETESTET:** noch keine vollständige CI auf finalem Dokumentations-Commit
+abgeschlossen; Resultate im [PR](https://github.com/ManuEtt/Dnd/pull/406)
+abnehmen. **NICHT GETESTET:** finale Android-CI und Realgerät
+bis zur tatsächlich bestätigten Ausführung.
+**Spielstände:** keine Änderungen an SQLite/JSON, Regeln oder Appversion.
+Die beiden vorherigen Pakete sind vollständig per GitHub Actions grün:
+[PR #401](https://github.com/ManuEtt/Dnd/pull/401)
+([CI 41007222064](https://github.com/ManuEtt/Dnd/actions/runs/41007222064))
+und [PR #402](https://github.com/ManuEtt/Dnd/pull/402)
+([CI 41010021662](https://github.com/ManuEtt/Dnd/actions/runs/41010021662));
+beide zur Review freigegeben, nicht gemergt.
 
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
