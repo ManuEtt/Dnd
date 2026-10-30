@@ -1,5 +1,31 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – Kanonische Zauberwirkzeiten und Ritualmetadaten (30.10.2026) – PR #423
+
+Neuer eigener Branch `feat/chat-a/spell-casting-time-integrity-20261030`
+mit `SrdSpellCastingTimeRules` und Integration in die bestehende
+`SrdSpellPreflightRules.preflight`. Die Wirkzeit wird bei jedem
+Ressourcen-Preflight **strikt erneut geprüft**, auch wenn eine
+`SrdSpellDefinition` direkt und ohne `fromJson` konstruiert wurde.
+Widersprüchliche Ritualflags, nichtkanonische/unsichtbar veränderte
+Zeitangaben und bisher unbekannte Formulierungen führen zum Abbruch.
+
+Die 339 Projekteinträge werden in sechs bestätigte Zeitkategorien
+eingeordnet (256 Aktionen, 19 unbedingte Bonusaktionen, 4 ausgelöste
+Bonusaktionen, 4 Reaktionen, 55 Langzeiten und 1 Sonderwirkzeit).
+Die bisherigen regulären Aktionszauber bleiben nutzbar; triggerbasierte
+und mehrzügige Zauber sind weiterhin ausschließlich in eigenen
+Regelaktionen erlaubt. Acht neue deterministische Testgruppen prüfen
+Katalogabdeckung, Fälschungen, Ritualangaben und Preflight.
+Keine Schema-, Version-, Story-, UI- oder Controlleränderung.
+Details: `docs/SRD_SPELL_CASTING_TIME_INTEGRITY.md`.
+Die vollständige GitHub-CI für dieses Paket muss noch abgenommen werden.
+
+Die vorherigen Chat-A-Drafts #400, #405, #408, #415, #418 und #420
+haben jeweils die komplette GitHub-CI bestanden, wurden jedoch nicht
+ohne unabhängigen Review nach `main` übernommen.
+
+
 ## Chat C – Todesrettung bei 200 % Schrift (30.10.2026)
 
 Das Chat-C-Arbeitspaket `feat/chat-c/death-save-actions-large-text-20261030`

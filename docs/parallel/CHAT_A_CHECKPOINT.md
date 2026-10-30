@@ -75,6 +75,17 @@
 - **BLOCKIERT:** Lokales Flutter-/Dart-SDK fehlt; volle GitHub-Actions-Format-/Analyse-/Test-/APK-Abnahme noch ausstehend. Reale Android-Geräteprüfung nicht durchgeführt. Vor Merge Code-Review und additive Dokumentationskonsolidierung durch Chat D.
 - **Vorgängerabnahmen:** #408 vollständige [CI #41017785511](https://github.com/ManuEtt/Dnd/actions/runs/41017785511) auf `afccc063040a67d03ff0fdb4a417f21831e17c09` erfolgreich; #405 [CI #41011249059](https://github.com/ManuEtt/Dnd/actions/runs/41011249059), #400 [CI #41007599214](https://github.com/ManuEtt/Dnd/actions/runs/41007599214) ebenfalls erfolgreich. Alle ungemergte Draft-PRs.
 - **NÄCHSTER SCHRITT:** Koordinierter Controller-/Repository-Integrationspfad, der prüfbare externe Einzelwert-Nachweise revisionssicher in einen journalisierten Zaubermaterial-Commit überführt, ohne boolesche Legacy-Bestätigungen zu überschreiben.
+## 30.10.2026 – Zauberwirkzeit-/Ritualintegrität bei regulärem Preflight – PR #423
+
+- **PR:** [#423](https://github.com/ManuEtt/Dnd/pull/423) (Draft). Formatter-Workflow [#41119780572](https://github.com/ManuEtt/Dnd/actions/runs/41119780572) erfolgreich, Hilfsworkflow vor finaler CI entfernt.
+- **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`, eigener Branch `feat/chat-a/spell-casting-time-integrity-20261030`.
+- **IMPLEMENTIERT:** `app/lib/domain/srd_spell_casting_time_rules.dart` klassifiziert alle 339 bekannten SRD-Arbeitskatalog-Wirkzeiten. `app/lib/domain/srd_spell_preflight_rules.dart` ruft `requireSingleTurn(spell)` auf, um mit dem öffentlichen Konstruktor injizierte falsche Ritualflags, nichtkanonische Zeitangaben und Steuerzeichen nicht zu übernehmen. Aktions- und Bonusaktionszauber bleiben gültig; Reaktion, getriggerte Bonusaktion, Langzeit-/Sonderzeiten bleiben gesperrt.
+- **TESTS ERSTELLT:** `app/test/srd_spell_casting_time_integrity_test.dart`: acht deterministische Gruppen mit Katalogkategorien 256/19/4/4/55/1, 29 Ritualflaggen, negative Metadatendaten, keine Slotveränderung durch Preflight, und getriggerte Zauber weiterhin getrennt.
+- **DOKUMENTIERT:** `docs/SRD_SPELL_CASTING_TIME_INTEGRITY.md`, README und globaler Checkpoint. Quelle: WotC SRD 5.2.1 Spells / Casting Time, CC BY 4.0. Status nur `partial`, keine eigene Wirkungsausführung.
+- **GETESTET:** PR-/main-Sichtung und Quell-/Kataloganalyse. **NICHT GETESTET:** neue Flutter-/Dart-/Android-CI; echtes Android-Gerät. Lokales Flutter-/Dart-SDK fehlt.
+- **KEINE MIGRATION:** Kein JSON-/SQLite-/Event-/API-Schema, Controller/UI/Story/Backend/Versionswechsel; nur spezialisiertes Domainmodul und Preflight. Mit anderen Chat-A-/B-/C-/D-Fachdateien keine bekannte Überschneidung. README/zentralen Checkpoint beim Review durch Chat D additiv zusammenführen.
+- **VORHERIG:** PR #420 [CI #41091851917](https://github.com/ManuEtt/Dnd/actions/runs/41091851917) vollständig grün auf `a755e2e81e72f497fb1711601c24df76bc58263f`; #418/#415/#408/#405/#400 ebenfalls grün, weiterhin Draft.
+- **NÄCHSTER SCHRITT:** separates, autorisiertes Aktionsökonomie-Gate für Action vs. Bonus Action statt freier allgemeiner `actionAvailableConfirmed`-Bestätigung.
 
 ---
 
