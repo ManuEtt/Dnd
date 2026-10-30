@@ -74,6 +74,10 @@ class SrdConcentrationDamageResult {
 class SrdConcentrationDamageRules {
   const SrdConcentrationDamageRules._();
 
+  static final RegExp _ambiguousSourceId = RegExp(
+    r'[\x00-\x1f\x7f-\x9f\u00ad\u034f\u061c\u180e\u200b-\u200f\u2028-\u202e\u2060-\u2069\ufeff]',
+  );
+
   static int difficultyClass(int confirmedDamage) {
     if (confirmedDamage < 1) {
       throw RangeError.range(confirmedDamage, 1, null, 'confirmedDamage');
@@ -108,6 +112,7 @@ class SrdConcentrationDamageRules {
       if (source.sourceId.isEmpty ||
           source.sourceId != source.sourceId.trim() ||
           source.sourceId.length > 128 ||
+          _ambiguousSourceId.hasMatch(source.sourceId) ||
           !identifiers.add(source.sourceId) ||
           !source.damageConfirmed) {
         throw const FormatException(
