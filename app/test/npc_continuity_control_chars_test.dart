@@ -37,8 +37,10 @@ void main() {
       ],
     );
     final original = campaign.toJson();
-    final context =
-        NpcContinuityReader.read(campaign, npcId: 'mira').confirmedContext;
+    final context = NpcContinuityReader.read(
+      campaign,
+      npcId: 'mira',
+    ).confirmedContext;
 
     expect(context.split('\n'), hasLength(4));
     expect(context, startsWith('NPC: Mira\nStatus: lebendig\n'));
