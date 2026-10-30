@@ -233,6 +233,39 @@
 
 # Chat D – Integration von PR #358 nach Checkpoint-Fix #363 (29.10.2026)
 
+# Chat D D-018 – Main-/Referenzabgleich bei Branch-Bereinigung (30.10.2026)
+
+- **Ausgangs-main-SHA:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Eigener Branch:** `fix/chat-d/retire-main-recheck-20261030`.
+- **Code-/Testcommit:** `b33ef1597630d2e6e896a97072a22da0b2101782`;
+  **Pull Request:** [#419](https://github.com/ManuEtt/Dnd/pull/419), Draft.
+- **Ausgangsproblem:** Das historische, allowlistbasierte Cleanup prüfte den
+  `main`-SHA nur beim Start und behauptete nach DELETE ohne GET-Ergebnis
+  eine erfolgreiche Entfernung.
+- **IMPLEMENTIERT:** Erneute `main`-Konsistenz-, Branchschutz- und
+  Compare-Prüfung unmittelbar vor tatsächlichem DELETE; danach
+  branchspezifisches GET mit Fehler bei noch vorhandener Referenz.
+- **Betroffene Dateien:** `scripts/retire_merged_branches.py`,
+  `scripts/tests/test_retire_merged_branches_execution.py`,
+  `README.md`, `docs/CODEX_CHECKPOINT.md`,
+  `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Regressionen:** sechs neue vollständig gemockte Positive-/Negative-Tests
+  (Löschung, geänderter main, Protection, Divergenz, wirkungsloser DELETE,
+  Standard-Dry-Run). **Noch kein Test als erfolgreich ausgeführt belegt.**
+- **CI:** finale GitHub Actions noch auf PR-HEAD zu verifizieren.
+- **BLOCKIERT:** Lokaler Repository-Checkout per DNS und Flutter-/Dart-SDK.
+- **Migration:** keine; keine Flutter-/Backend-Produkt- oder
+  SQLite-/JSON-Spielstandsänderung. Keine echten Branchlöschungen.
+- **Grenze:** nur Vorab-Race-Reduktion, kein atomarer DELETE-Lease.
+- **Koordination:** 30 anfänglich offene PRs abgeglichen; beide
+  Python-Fachdateien waren unbelegt. README-/Checkpoint-Dokumentation
+  vor Integration mit den anderen Chats additiv zusammenführen.
+- **Nächster Schritt:** vollständigen Test-/Actions-Status des finalen
+  PR-Commits prüfen und bei Fehlschlag gezielt korrigieren.
+
+---
+
+
 ## Integrationskandidat 29.10.2026 – Chat D
 
 Zusammengeführte Fachpakete: [#378](https://github.com/ManuEtt/Dnd/pull/378), [#380](https://github.com/ManuEtt/Dnd/pull/380), [#381](https://github.com/ManuEtt/Dnd/pull/381), [#384](https://github.com/ManuEtt/Dnd/pull/384). Die ursprünglichen Branch-HEADs, PR-Beschreibungen, Tests, bekannte Grenzen und Statusmeldungen sind im [Integrationsjournal](INTEGRATION_20261029.md) mit Git-Historie dokumentiert. **Dieser Stand ist weder auf main integriert noch gemeinsam CI-abgenommen; Drafts sind nicht freigegeben.** Bisherige Checkpoint-Einträge bleiben erhalten.

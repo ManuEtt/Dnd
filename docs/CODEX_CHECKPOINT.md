@@ -256,6 +256,35 @@ ausstehend; vorhandene Tests nicht vor ihrer Ausführung als bestanden zählen.
 **Migrationen:** keine. Spielstände, SRD-Regeln, Android-UI, SQLite-/JSON-Schema
 und Appversion unverändert. README-/Checkpoint-Ergänzungen bei Integration
 nur verlustfrei mit den parallelen PRs konsolidieren.
+## Operativer Chat-D-Checkpoint – PR #419 (30.10.2026, 17:35 CET)
+
+- **Main zum Start:** `55fe44475a113943c6310ec16a8ffb481185f4e9`;
+  **Arbeitsbranch:** `fix/chat-d/retire-main-recheck-20261030`;
+  **Code-/Testcommit:** `b33ef1597630d2e6e896a97072a22da0b2101782`;
+  **Pull Request:** [#419](https://github.com/ManuEtt/Dnd/pull/419), Draft.
+- **Produkt:** Würfelraunen, laut aktuellem README Alpha 0.8.48+98.
+  Kein Versions-, Datenbank-, JSON-, Regel- oder Storywechsel.
+- **IMPLEMENTIERT:** In `scripts/retire_merged_branches.py` erneute Main-SHA-,
+  Schutzstatus- und Integrationsprüfung unmittelbar vor DELETE sowie
+  Nachweis der Entfernung per anschließendem GET.
+- **Geändert:** `scripts/retire_merged_branches.py`,
+  `scripts/tests/test_retire_merged_branches_execution.py`, diese
+  Dokumentation, `README.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **GETESTET:** Code und sechs Mock-basierte Tests im Branch gesichert;
+  noch kein erfolgreich ausgeführter Testlauf dieses Pakets belegt.
+- **NICHT GETESTET:** Python-Gesamtsuite, Projekt-/SRD-/Domain-Gates,
+  Backend Typecheck/Build/Tests, Dart-Format/Flutter-Analyze/Tests,
+  Android Debug/Native/ABI sowie echter Geräte- und Windows-Test.
+  CI-Status auf dem finalen HEAD separat nachprüfen.
+- **BLOCKIERT:** Lokales `git clone` ohne GitHub-DNS sowie fehlendes
+  Flutter-/Dart-SDK; GitHub Actions dient als ausführbare Abnahme.
+- **NOCH NICHT IMPLEMENTIERT:** Keine allgemeine Race-Freiheit der
+  GitHub-DELETE-REST-Operation (kein atomarer SHA-Lease beim Löschen).
+- **Nächster Schritt:** PR-#419-CI auf dem exakten finalen Kopf prüfen und
+  eventuelle Testfehler isoliert auf diesem Branch korrigieren. Kein
+  eigenmächtiger Main-Merge und keine Branchlöschung.
+
+
 
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
