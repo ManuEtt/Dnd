@@ -1,5 +1,48 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat A – SRD-Zauberwirkzeiten und Ritualkennzeichen (30.10.2026)
+
+**Ausgangs-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+**Branch:** `feat/chat-a/spell-casting-time-integrity-20261030`.
+**IMPLEMENTIERT:** Reiner Domain-Baustein
+`app/lib/domain/srd_spell_casting_time_rules.dart`;
+Einbindung in `app/lib/domain/srd_spell_preflight_rules.dart` statt
+`supportsSingleTurnPreparation` ohne Ritualgegenprüfung.
+Direkt konstruierte, widersprüchliche Ritual-/Action-Zeiten und
+unsichtbar/nichtkanonisch veränderte Metadaten werden fail-closed
+abgewiesen. Der transkribierte SRD-5.2.1-Arbeitskatalog mit 339
+Einträgen wird in 256 Aktion, 19 Bonusaktion, 4 ausgelöste Bonusaktion,
+4 Reaktion, 55 längere Zeit und 1 Sonderzeit eingeteilt. Unbestätigte
+Reaktions-/Bonusauslöser und Langzeiten bleiben außerhalb des
+generischen Ressourcencommits.
+
+**TESTS ERSTELLT:** `app/test/srd_spell_casting_time_integrity_test.dart`
+mit acht deterministischen Gruppen (339 Katalogeinträge, 29 Rituale,
+formale Zeitklassen, Konstruktor-Fälschungen, Bidi/Zero-width,
+weiterhin blockierte Reaktionen/Triggers und legitime Preflights).
+**GETESTET:** Repository-/PR-Kollisionen, Quellcode und Testfälle
+geschrieben. **NICHT GETESTET:** finale Dart/Flutter/Android-CI
+und Android-Realgerät bei Dokumentation. **BLOCKIERT:** lokales
+Dart/Flutter-SDK nicht verfügbar, GitHub-Actions und Review nötig.
+**KEINE MIGRATION:** Spielstands-JSON, SQLite, Eventjournal, Backend,
+Story, UI, Controller, App-Version und SRD-Katalog-Asset unverändert.
+Details und Quelle: `docs/SRD_SPELL_CASTING_TIME_INTEGRITY.md`,
+WotC SRD 5.2.1 `Spells / Casting Time`, CC BY 4.0. Status `partial`.
+
+**VORHERIGE CHAT-A-ABNAHME:** #420 [CI #41091851917](https://github.com/ManuEtt/Dnd/actions/runs/41091851917)
+auf `a755e2e81e72f497fb1711601c24df76bc58263f`
+vollständig grün; #418, #415, #408, #405 und #400 ebenfalls
+vollständig grün, aber weiterhin ungemergte Drafts. Gemeinsame
+README-/Checkpoint-Ergänzungen bei Review durch Chat D additiv
+zusammenführen.
+
+**NÄCHSTER SCHRITT:** Die ausdrücklich bestätigte Verfügbarkeit von
+normaler Aktion vs. Bonusaktion in einem eigenständigen
+Aktionsökonomie-Vertrag absichern; Reaktionsauslöser und
+mehrzügige Zauber bleiben eigene Regeln.
+
+
+
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
 Stand: 29.10.2026, UTC. [PR #390](https://github.com/ManuEtt/Dnd/pull/390)
