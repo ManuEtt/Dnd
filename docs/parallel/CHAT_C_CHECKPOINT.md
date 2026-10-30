@@ -175,6 +175,36 @@
 - **NOCH NICHT IMPLEMENTIERT:** Vollständige Geräte- und Screenreader-Abnahme.
 - **Dateien:** `app/lib/ui/fantasy_character_sheet.dart`, `app/test/fantasy_character_header_large_text_test.dart`, dieser Checkpoint, `docs/CODEX_CHECKPOINT.md`, `README.md`. Keine Schema-, JSON-, API-, Regel- oder Storyänderung; keine Migration.
 - **Nächster eigenständiger Schritt:** Passivwahrnehmungs- und Klassenmerkmalbereiche des Charakterbogens bei 320 dp / 200 % Text auf sichtbare Werte und Touch-Bedienbarkeit prüfen, mit positiver/negativer Widgetregression, ohne Regelmutation.
+## Chat C – TalkBack-Sperrgrund der Angriffs-Schnellaktion (30.10.2026)
+
+- Ausgangs-main: `55fe44475a113943c6310ec16a8ffb481185f4e9`,
+  Arbeitsbranch: `feat/chat-c/shortcut-disabled-hints-20261030`,
+  Code-Commit: `1a0355f276966f55eaa81018160471325692827c`,
+  [PR #399](https://github.com/ManuEtt/Dnd/pull/399) (Draft).
+- IMPLEMENTIERT: Gemeinsamer Sperrgrund im `FantasyPinnedActionBar` als
+  Tooltip und direkter Semantics-Hint für `FantasyShortcutTile`.
+  Der deaktivierte Angriff bleibt gesperrt; bei Busy gewinnt der
+  Verarbeitungsgrund, bei freigegebener Aktion entfällt der Hinweis.
+  Der Tooltip wird nicht zusätzlich an TalkBack ausgegeben.
+- TESTS ERGÄNZT: drei Widgettests für gesperrten Angriff samt Callback-Sperre,
+  Vorrang des Busy-Grunds und freigegebenen Angriff ohne alten Hint.
+- GETESTET: tatsächlicher GitHub-main/PR-/Dateistand und Quelltext
+  geprüft; isolierter Branch und PR erstellt. Neue Widgettests nicht ausgeführt.
+- NICHT GETESTET: Dart-Format, Flutter Analyze/Widgetsuite, Python,
+  Backend, Android-APK/native Tests sowie TalkBack auf Realgerät.
+  CI auf finalem Commit ist gesondert zu prüfen.
+- BLOCKIERT: In diesem Container fehlt das Flutter-/Dart-SDK und GitHub-DNS
+  für einen vollständigen lokalen Checkout.
+- Geänderte technische Dateien: `app/lib/ui/fantasy_art.dart`,
+  `app/test/fantasy_action_controls_test.dart`. Keine Migration, keine
+  Änderung von Regeln, Story, Datenmodell, SQLite oder JSON.
+- Koordination: Andere offene UI-PRs #388, #392 und #394 ändern andere
+  technische UI-Dateien. README und beide Checkpoints gemeinsam und
+  ausschließlich additiv durch Chat D integrieren.
+- Nächster Schritt: Unter 320 dp und 200 % Schrift prüfen, dass der
+  gesperrte Kampfbutton im TalkBack-Fokus den Sperrgrund einmal vorliest;
+  bei freigegebenem Angriff muss der Hinweis fehlen. Anschließend
+  vollständige Flutter-/Android-CI auf dem endgültigen Commit abnehmen.
 
 ---
 
