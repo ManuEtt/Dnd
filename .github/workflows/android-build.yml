@@ -91,10 +91,7 @@ jobs:
         run: flutter pub get
       - name: Dart-Formatierung prüfen
         working-directory: app
-        run: |
-          dart format --output=write lib test
-          git diff -- lib/story/npc_continuity_reader.dart test/npc_continuity_control_chars_test.dart
-          exit 1
+        run: dart format --output=none --set-exit-if-changed lib test
       - name: Flutter-Code analysieren
         working-directory: app
         run: flutter analyze
