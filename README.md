@@ -1,5 +1,20 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – Branch-Bereinigung vor veränderten Referenzen schützen (30.10.2026)
+
+[PR #419](https://github.com/ManuEtt/Dnd/pull/419) auf `fix/chat-d/retire-main-recheck-20261030`
+(Draft, Basis-main `55fe44475a113943c6310ec16a8ffb481185f4e9`).
+Das ausdrücklich allowlistgebundene historische Bereinigungsskript prüft vor
+jeder tatsächlichen Branchlöschung den unveränderten `main`-HEAD, den
+aktuellen Schutz-/Mergezustand des Branches und danach das Verschwinden
+der Referenz. Sechs neue Python-Regressionsfälle simulieren diese Abläufe
+ohne GitHub-Löschzugriff. **Testausführung und vollständige CI auf dem
+finalen PR-Commit noch nicht nachgewiesen**. Kein Cleanup gestartet, kein
+Branch gelöscht, keine Änderung von App, SQLite/JSON oder App-Version.
+Vor Integration mit anderen README-Änderungen additiv konsolidieren.
+
+
+
 Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;
 vollständige Charaktererstellung und SRD-Regelengine bleiben in Entwicklung.
 
