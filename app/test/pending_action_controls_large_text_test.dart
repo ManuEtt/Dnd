@@ -31,6 +31,7 @@ void main() {
     bool blocked = false,
     bool submitting = false,
     bool keyboard = true,
+    FocusNode? composerFocus,
     VoidCallback? retry,
     VoidCallback? discard,
   }) async {
@@ -53,7 +54,10 @@ void main() {
         home: Scaffold(
           body: Column(
             children: [
-              const TextField(key: ValueKey('pending-keyboard-field')),
+              TextField(
+                key: const ValueKey('pending-keyboard-field'),
+                focusNode: composerFocus,
+              ),
               Expanded(
                 child: SingleChildScrollView(
                   child: Padding(
@@ -140,24 +144,23 @@ void main() {
     tester,
   ) async {
     final selected = <String>[];
+    final composerFocus = FocusNode(debugLabel: 'pending-composer');
+    addTearDown(composerFocus.dispose);
     await showStatus(
       tester,
       width: 320,
       scale: 2,
+      composerFocus: composerFocus,
       retry: () => selected.add('retry'),
       discard: () => selected.add('discard'),
     );
-    final input = find.byKey(const ValueKey('pending-keyboard-field'));
-    await tester.tap(input);
+    composerFocus.requestFocus();
     await tester.pumpAndSettle();
-    debugPrint('Before Tab: ${FocusManager.instance.primaryFocus?.debugLabel}');
+    expect(composerFocus.hasPrimaryFocus, isTrue);
 
     for (final key in ['adventure-retry-action', 'adventure-discard-action']) {
       await tester.sendKeyEvent(LogicalKeyboardKey.tab);
       await tester.pumpAndSettle();
-      debugPrint(
-        'After Tab for $key: ${FocusManager.instance.primaryFocus?.debugLabel}',
-      );
       expect(focusInside(tester, key), isTrue);
       await tester.sendKeyEvent(LogicalKeyboardKey.enter);
       await tester.pumpAndSettle();
