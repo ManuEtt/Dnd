@@ -2,7 +2,23 @@
 
 ## Chat B – Unicode-Grenzen für neue KI-Geschichten (30.10.2026)
 
-Backend und Flutter prüfen neue unbestätigte Story-Texte jetzt auf unsichtbare Steuer- und Bidi-Zeichen; sichtbarer Unicode und normale Zeilenumbrüche bleiben erlaubt. Zwei neue Testdateien ergänzen positive/negative Fälle. Diese Änderungen betreffen keine vorhandenen Spielstände oder Regeln. Branch: feat/chat-b/story-provider-unicode-guard-20261030, Basis-main: 55fe44475a113943c6310ec16a8ffb481185f4e9. CI-Ergebnisse sind bis zum geprüften Lauf offen.
+Backend und Flutter prüfen neue unbestätigte Story-Texte jetzt auf unsichtbare Steuer- und Bidi-Zeichen; sichtbarer Unicode und normale Zeilenumbrüche bleiben erlaubt. Zwei neue Testdateien ergänzen positive/negative Fälle. Diese Änderungen betreffen keine vorhandenen Spielstände oder Regeln. [PR #424](https://github.com/ManuEtt/Dnd/pull/424), Branch: feat/chat-b/story-provider-unicode-guard-20261030, ursprüngliche Basis-main: 55fe44475a113943c6310ec16a8ffb481185f4e9; aktualisierte Basis: 69bfe78ec4eeb30042b26971978038a2ee9dac34. CI-Ergebnisse sind bis zum geprüften Lauf offen.
+
+
+## Chat C – Todesrettung bei 200 % Schrift (30.10.2026)
+
+Das Chat-C-Arbeitspaket `feat/chat-c/death-save-actions-large-text-20261030`
+(Implementierungscommit `bb3d1eaa9227cdaed84b845f6177f9d9de632fc2`,
+Basis-main `55fe44475a113943c6310ec16a8ffb481185f4e9`)
+stellt im Dialog des vorläufigen Todesrettungswurfs bei weniger als 500 dp
+Kartenbreite und mindestens 180 % Schrift die verfügbaren Entscheidungen
+untereinander über die volle Breite dar. Die kompakte Wrap-Ansicht bei
+normaler Schrift bleibt erhalten; Verfügbarkeit und Sperrung bei laufender
+Bestätigung bleiben aus den bestehenden Regeln abgeleitet.
+Fünf Widget-Testfälle betreffen 320/360 dp, 200 % Schrift, simulierte
+Tastatur, gesperrten Status, fehlende Klassenwiederholung und normales Layout.
+Keine Änderung an Regelengine, Speicherdaten, Ressourcen oder Appversion.
+**Vollständige CI und Gerätetest sind gesondert nachzuweisen.**
 
 
 Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;

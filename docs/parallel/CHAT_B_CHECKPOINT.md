@@ -2,7 +2,7 @@
 
 ## Chat B – KI-Story-Formatzeichen (30.10.2026)
 
-- **Basis-main:** 55fe44475a113943c6310ec16a8ffb481185f4e9; **Branch:** feat/chat-b/story-provider-unicode-guard-20261030.
+- **Basis-main:** 55fe44475a113943c6310ec16a8ffb481185f4e9; **Merge-Basis:** 69bfe78ec4eeb30042b26971978038a2ee9dac34; **PR:** #424; **Implementierungs-Commit:** e754f58bdd9b43b801beeecebcc727177a80e8fb; **Branch:** feat/chat-b/story-provider-unicode-guard-20261030.
 - **Problem:** Generierte Szenen, NPC- und Handlungsnamen sowie dauerhafte Notizen konnten versteckte Steuerzeichen, Bidi-Anweisungen und Zero-Width-Space enthalten.
 - **IMPLEMENTIERT:** Parser von Flutter und Backend weisen solche unbestätigten Textwerte zurück; reguläre Zeilenumbrüche/Tabs sowie sichtbare Unicode-Buchstaben werden beibehalten.
 - **Tests ergänzt (nicht als bestanden behauptet):** app/test/ai_story_unicode_format_guard_test.dart und backend/test/story-unicode-format-guard.test.ts mit positiven, negativen und Unveränderlichkeitsfällen.

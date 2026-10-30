@@ -1,3 +1,36 @@
+## 30.10.2026 – Chat C: Todesrettungs-Entscheidungen bei 200 % Schrift
+
+- **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `feat/chat-c/death-save-actions-large-text-20261030`.
+- **Implementierungscommit:** `bb3d1eaa9227cdaed84b845f6177f9d9de632fc2`.
+- **Problem:** Die drei möglichen Entscheidungen des vorläufigen Todesrettungswurfs
+  teilen sich bei 200 % Android-Schrift den verfügbaren `Wrap`-Platz.
+  Längere Buttontexte werden dabei schmal und möglicherweise gekürzt, insbesondere
+  bei 320/360 dp und offener Tastatur.
+- **IMPLEMENTIERT:** Im reinen Flutter-UI-Widget
+  `app/lib/ui/death_save_decision_panel.dart` stellt der `LayoutBuilder`
+  bei weniger als 500 dp und ab 180 % Schrift verfügbare Aktionen
+  untereinander in voller Breite dar. Der Standard-Wrap bleibt erhalten.
+  Status- und Regelverfügbarkeitsprüfung bleiben unverändert.
+- **TESTS HINZUGEFÜGT:** `app/test/death_save_actions_large_text_test.dart`
+  prüft zwei positive Touch-Fälle bei 320/360 dp und 200 %, gesperrte Aktionen
+  bei busy, fehlende Klassenwiederholung sowie Standardlayout (5 Fälle).
+- **GETESTET:** Vor Start aktuellen Main, alle offenen PR-Aufgabenbereiche
+  und geänderte Dateien der neuen PRs #405–#412 geprüft; andere PRs
+  verändern diese neuen technischen Dateien nicht. Testausführung und CI
+  müssen auf finalem PR-Head separat bestätigt werden.
+- **NICHT GETESTET:** Lokale Flutter-/Android-Toolchain nicht verfügbar;
+  Android-TalkBack, echte Gerätetastatur und Geräte-Upgrade nicht geprüft.
+- **BLOCKIERT:** Keine lokalen SDKs. Gemeinsame README- und Checkpoint-Änderungen
+  bei späterer Integration durch Chat D additiv konsolidieren.
+- **Migration/Kompatibilität:** Keine Modell-, JSON-, SQLite-, SRD- oder
+  Ressourcenänderung, keine Migration oder Versionsänderung.
+- **Nächster Schritt:** Echtes Android-TalkBack-Gerät bei 320 dp und 200 %
+  Schrift prüfen: alle verfügbaren Entscheidungen vollständig vorlesen,
+  mit IME fokussieren und auslösen können, gesperrte Entscheidung ohne Callback.
+
+---
+
 ## Integrationskandidat 29.10.2026 – Chat C
 
 Zusammengeführte Fachpakete: [#359](https://github.com/ManuEtt/Dnd/pull/359), [#365](https://github.com/ManuEtt/Dnd/pull/365), [#374](https://github.com/ManuEtt/Dnd/pull/374), [#376](https://github.com/ManuEtt/Dnd/pull/376), [#379](https://github.com/ManuEtt/Dnd/pull/379), [#382](https://github.com/ManuEtt/Dnd/pull/382). Die ursprünglichen Branch-HEADs, PR-Beschreibungen, Tests, bekannte Grenzen und Statusmeldungen sind im [Integrationsjournal](INTEGRATION_20261029.md) mit Git-Historie dokumentiert. **Dieser Stand ist weder auf main integriert noch gemeinsam CI-abgenommen; Drafts sind nicht freigegeben.** Bisherige Checkpoint-Einträge bleiben erhalten.
