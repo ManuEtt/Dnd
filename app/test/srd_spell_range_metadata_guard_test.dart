@@ -147,6 +147,8 @@ void main() {
       '120 feet ',
       '\n120 feet',
       '120 feet\t',
+      '120 feet\n',
+      '120 feet\r\n',
       '120 feet\u00a0',
     ]) {
       expect(SrdSpellTargetRules.maxRangeFeet(invalid), isNull);
