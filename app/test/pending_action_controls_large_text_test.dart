@@ -155,6 +155,9 @@ void main() {
     for (final key in ['adventure-retry-action', 'adventure-discard-action']) {
       await tester.sendKeyEvent(LogicalKeyboardKey.tab);
       await tester.pumpAndSettle();
+      debugPrint(
+        'Focus for $key: ${FocusManager.instance.primaryFocus?.debugLabel}',
+      );
       expect(focusInside(tester, key), isTrue);
       await tester.sendKeyEvent(LogicalKeyboardKey.enter);
       await tester.pumpAndSettle();
