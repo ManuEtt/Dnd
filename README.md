@@ -1,5 +1,29 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – SRD-5.2.1-Konzentration nach Schaden (30.10.2026)
+
+Neues isoliertes Regelpaket `feat/chat-a/concentration-damage-dc-cap-20261030`:
+`SrdConcentrationDamageRules` prüft nach einem bereits bestätigten
+Schadensereignis einzelne Konstitutionsrettungswürfe je Schadensquelle.
+Anders als nach SRD 5.1 gilt nach **SRD 5.2.1 eine SG-Obergrenze von 30**:
+`min(30, max(10, Schaden~/2))`. Verschiedene Quellen werden unabhängig
+ausgewertet; misslungene Rettung oder Handlungsunfähigkeit beendet den
+Konzentrationseintrag in einem **neuen, unveränderlichen Heldensnapshot**.
+Die neue Testdatei prüft Grenzwerte, getrennte Quellen, natürliche W20-Würfe,
+ungültige Bestätigungen, Zustände und JSON-Wiederherstellung.
+
+**Grenzen:** Würfel, Schadenshöhe und vollständiger Rettungswurfmodifikator
+müssen vorher **regelgeprüft** sein. Kein automatischer Kampf-/Controller-
+Aufruf, kein SQLite-/Event-Commit, keine Schema- oder Versionsänderung.
+Details: `docs/SRD_5_2_1_CONCENTRATION_DAMAGE_CHECKS.md`. Vollständige CI
+für dieses neue Paket beim Einchecken noch offen.
+
+Die getrennten Chat-A-PRs #400, #405, #408 und #415 haben alle die
+vollständige Flutter-/Android-GitHub-CI bestanden, bleiben jedoch bis zum
+individuellen Review als offene Entwürfe von `main` getrennt.
+
+
+
 Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;
 vollständige Charaktererstellung und SRD-Regelengine bleiben in Entwicklung.
 
