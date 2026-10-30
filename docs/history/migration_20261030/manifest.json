@@ -1,0 +1,31 @@
+{
+  "description": "Bytegenaue additive Dokumentationsvereinigung aller Ursprungsbranches vor kompaktem neuem Live-Status; historische Angaben sind keine aktuelle Abnahme.",
+  "sourceCommit": "8abf4ff8d3ac13244c1bdbcda11431e3557b975f",
+  "files": [
+    {
+      "originalPath": "README.md",
+      "sha256": "2fb625943704503f25bd07a309c5a432d3b134b3660df73d06a0e39f4aa14ecb",
+      "bytes": 67559
+    },
+    {
+      "originalPath": "docs/CODEX_CHECKPOINT.md",
+      "sha256": "da0263600fb63148e3a19200a3b54214d2fd64ac52a582410b5d1b3eac3551ae",
+      "bytes": 92808
+    },
+    {
+      "originalPath": "CHECKPOINT.md",
+      "sha256": "5e528ceefc2444e1ebcfb18f14768022314c336c3934a59da8645d8c6b92fbb4",
+      "bytes": 10383
+    },
+    {
+      "originalPath": "CHANGELOG.md",
+      "sha256": "7327151763ad3b6c90f8dc500b4fd6df83e6346b43a93b931ca98bb7f0f20a71",
+      "bytes": 170751
+    },
+    {
+      "originalPath": "DEVELOPMENT_STATUS.md",
+      "sha256": "01ab2c8e9b5de967d46008ad3ed41a248c9e765641ad0c734071a07278d4fd58",
+      "bytes": 204921
+    }
+  ]
+}

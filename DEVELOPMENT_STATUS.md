@@ -1,3 +1,17 @@
+## 30.10.2026 – Gesamtintegration, Alpha 0.8.49+99, Issue #425
+
+Alle 45 ursprünglichen Entwicklungsheads und der neue Integrationsbranch #437
+regulär mit Historie vereinigt. Drei reproduzierte Integrationsfehler behoben
+(Konzentrations-Gesamtgrenzen, Zweitklasse Stufe 0, NPC-Bidi-Namensvergleich).
+Keine SQLite-/JSON-Migration. Getrennte Fachprüfungen bestanden; kombinierte
+Vollsuite und Android-/PR-/Main-CI in Abnahme, Branchbereinigung erst nach
+nachgewiesenem Erfolg. Aktuelle Ergebnisse und Grenzen: [Checkpoint](docs/CODEX_CHECKPOINT.md)
+und [Gesamtbericht](docs/parallel/ALL_BRANCHES_MIGRATION_20261030.md).
+Alle folgenden älteren Angaben sind historische Momentaufnahmen, bytegenau
+zusätzlich unter `docs/history/migration_20261030/` erhalten.
+
+---
+
 ## Chat A – offener Regel-PR: Todesrettungs-Klassenprüfung (30.10.2026)
 
 Basis-Main `55fe4447`, Arbeitsbranch `feat/chat-a/death-save-class-validation-20261030`,
