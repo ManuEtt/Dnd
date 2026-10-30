@@ -36,8 +36,10 @@ vollständige Charaktererstellung und SRD-Regelengine bleiben in Entwicklung.
 [PR#428](https://github.com/ManuEtt/Dnd/pull/428) · [aktuelle Checks und Vollabnahme](https://github.com/ManuEtt/Dnd/pull/428/checks).
 Basis-Main55fe4447, Branch `feat/chat-a/short-rest-resource-preflight-20261030`,
 Quellcode-/Testcommit `19fe5e16394fae096c082a86e7aa8886461fc883`. Ungültige Klassen-/Paktressourcen werden im
-Kurzrastpfad mit Trefferwürfeln vor RNG und Erholung geprüft. **65 gezielte
-Domain-/Bestands- und sieben neue Flow-/SQLitefälle bestanden**. Vollständige
+Kurzrastpfad mit Trefferwürfeln vor RNG und Erholung geprüft. **2495 Flutter-/221 Python-/72 Backend-Tests auf kombiniertem Stand bestanden**,
+538 Formatdateien unverändert, Analyzer sauber. Zusätzlich ARM64-Debug und zwölf
+native App-Tests bestanden; darunter65 gezielte Domain-/Bestands- und sieben neue
+Flow-/SQLitefälle. Vollständige
 Test-/Buildzahlen und CI-/Artefaktnachweise stehen im aktuellen PR; keine
 Geräteabnahme behauptet. Langrast und Engine-Null-HD-Sonderpfade bleiben getrennt.
 Appbasis0.8.48+98, SQLite3/JSON1 unverändert. Voriger PR416 bleibt separat offen;

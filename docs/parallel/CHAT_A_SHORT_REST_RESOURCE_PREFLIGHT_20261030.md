@@ -94,7 +94,8 @@ Momentaufnahmen, kein aktueller Blocker.
 ZIP, Binärpatch, Manifest und Git-Bundle außerhalb des Projekts unter
 `/workspace/artifacts/chat-a-short-rest-preflight-20261030/`, Frühstand `frueh/`,
 Endstand `abschluss/`, tatsächliche Logs `pruefnachweise/`; Importanleitung
-`ARTEFAKTE_UND_IMPORT.md`. Patchbasis ausdrücklich Main55fe4447; keine privaten
+`ARTEFAKTE_UND_IMPORT.md`. Endgültige Patchbasis ausdrücklich Main69bfe78e (vollständig:
+`69bfe78ec4eeb30042b26971978038a2ee9dac34`), getrennt vom ursprünglichen Branchstart55fe4447; keine privaten
 Spielstände/Schlüssel aufnehmen. Bestehende Arbeitsstände nicht mit ZIP überschreiben.
 Vor neuen Änderungen Main/PRs/CI und Masterprompt erneut prüfen.
 
@@ -106,3 +107,13 @@ Caster-Aliase und Mehrklassen, Pact Magic getrennt, unbekannte Klassen nicht
 erraten, bisherige JSONs unverändert und Domain-/Persistenz-/CI-Nachweis.
 Nicht im Rastpaket verändert; vor Umsetzung Überschneidungen erneut prüfen.
 Keine automatische Entwicklung nach Sitzungsende.
+
+## Lokale kombinierte Vollabnahme
+
+Auf integriertem Quellstand86a91a2c vollständig bestanden: **2495 Flutter-,
+221 Python- und72 Backend-Tests**,538 Dartdateien unverändert formatiert,
+Analyzer sauber, Backend-Typecheck/Build/Protokollsmoke erfolgreich.
+ARM64-Debug und zwölf native App-Tests ebenfalls bestanden. Dieser nachfolgende
+Dokumentationsabschluss korrigiert nur die Importbasis und erfasst die Abnahme;
+Laufzeit-/Testdateien sind unverändert. Die finale CI gilt für den aktuellen
+PR-Kopf und wird mit tatsächlicher Lauf-ID/Artefakten im PR geführt.
