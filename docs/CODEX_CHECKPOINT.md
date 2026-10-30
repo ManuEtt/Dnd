@@ -1,5 +1,10 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat B – 30.10.2026: sichere NPC-Identitäten im Erzählergedächtnis (Draft #396)
+
+Auf Basis von main `55fe44475a113943c6310ec16a8ffb481185f4e9` wurde `feat/chat-b/safe-npc-identity-recall-20261030` ohne Überschneidung der Story-Fachdateien mit den zu Beginn offenen PRs angelegt. `app/lib/story/story_memory_engine.dart` zeigt bei gleichen NPC-Namen nur sichere eindeutige gespeicherte IDs mit `[A-Za-z0-9_-]{1,64}`; bei ungeeigneten IDs fehlen deren mehrdeutige NPC-Zeilen und Notizen im Rückblick/Recall, statt ungeprüfte Zeilentrenner zu publizieren. Eindeutige ältere Namen, andere bestätigte NPCs und ursprüngliche JSON-Spielstände bleiben unangetastet. Neuer Vier-Fälle-Test: `app/test/story_memory_unsafe_npc_id_test.dart`, inklusive Grenzwert und Roundtrip. **Nur Tests implementiert, noch keine erfolgreiche CI dieses PRs bestätigt.** Lokales Flutter/Dart nicht verfügbar, Git-Checkout durch DNS blockiert; Gerät/Provider nicht geprüft. Keine Schema- oder Regeländerung. [PR #396](https://github.com/ManuEtt/Dnd/pull/396), [Chat-B-Checkpoint](docs/parallel/CHAT_B_CHECKPOINT.md). README-/Checkpoint-Kollisionen vor Merge durch Chat D additiv konsolidieren.
+
+
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
 Stand: 29.10.2026, UTC. [PR #390](https://github.com/ManuEtt/Dnd/pull/390)
