@@ -1,5 +1,15 @@
 # Chat B – Sitzungsidentität beim Ereignis-Replay (27.10.2026)
 
+## Chat B – unveränderliche NPC-Erinnerung nach SQLite-Neustart (30.10.2026)
+
+- **Ausgangspunkt:** `main` `69bfe78ec4eeb30042b26971978038a2ee9dac34`, Chat-B-Branch `feat/chat-b/npc-context-immutable-restart-20261030`. Alle 38 zuvor offenen PRs auf Änderungen an den neuen Fach- und Testpfaden geprüft; keine Überschneidung. PR #424 ist mit GitHub Actions [#41120298615](https://github.com/ManuEtt/Dnd/actions/runs/41120298615) vollständig grün, aber weiterhin offen.
+- **Problem:** `NpcIdentityContext.toContextMap()` lieferte ein veränderbares äußeres Map, eine veränderbare Notizliste und veränderbare Notizmaps. Aufrufer konnten nach der Bestätigung erzählte NPC-Kontextwerte ohne Spielstandänderung manipulieren.
+- **Implementiert:** Das äußere Kontext-Map, die verschachtelte Liste und jede Notizmap sind jeweils unmodifiable. Identische Felder, Reihenfolge, JSON-Ausgabe und Story-/Backend-Protokoll bleiben erhalten; keine Regel- oder Speicher-Migration.
+- **Testpaket:** `app/test/npc_identity_context_immutable_restart_test.dart` prüft erlaubte JSON-Ausgabe, gesperrte Mutationen auf drei Ebenen, identische NPC-Namen mit unterschiedlichen IDs, explizite Auswahl, SQLite-Schließen/Neustart, gleichrevisionierte Änderungen und unveränderten persistierten Heldenzustand.
+- **Tests/CI zum Zeitpunkt der Anlage:** Testcode hinzugefügt, finale Flutter-/Android-CI auf dem Branch gesondert nachweisen, kein Gerätetest oder kostenpflichtiger KI-Dienst. Zentrale README-/Checkpoint-Ergänzungen additiv halten und mit Chat D koordinieren.
+- **Nächster Schritt:** Den fertigen PR-Commit durch alle Gates abnehmen und erst danach die Integration durch Chat D freigeben.
+
+
 ## Integrationskandidat 29.10.2026 – Chat B
 
 Zusammengeführte Fachpakete: [#356](https://github.com/ManuEtt/Dnd/pull/356), [#362](https://github.com/ManuEtt/Dnd/pull/362), [#364](https://github.com/ManuEtt/Dnd/pull/364), [#371](https://github.com/ManuEtt/Dnd/pull/371), [#373](https://github.com/ManuEtt/Dnd/pull/373), [#377](https://github.com/ManuEtt/Dnd/pull/377), [#383](https://github.com/ManuEtt/Dnd/pull/383). Die ursprünglichen Branch-HEADs, PR-Beschreibungen, Tests, bekannte Grenzen und Statusmeldungen sind im [Integrationsjournal](INTEGRATION_20261029.md) mit Git-Historie dokumentiert. **Dieser Stand ist weder auf main integriert noch gemeinsam CI-abgenommen; Drafts sind nicht freigegeben.** Bisherige Checkpoint-Einträge bleiben erhalten.

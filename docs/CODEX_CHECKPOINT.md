@@ -1,5 +1,10 @@
 # Codex-Checkpoint – Würfelraunen
 
+## Chat B – NPC-Kontext nach Neustart unveränderlich (30.10.2026)
+
+Read-only-NPC-Kontext ist jetzt einschließlich Notizliste und innerer Notizmaps gegen nachträgliche Änderungen gesichert. Ein neuer Flutter-/SQLite-Test deckt JSON-Roundtrip, echte Datenbank-Wiederaufnahme und Ablehnung veralteter Beziehungen ab. Branch `feat/chat-b/npc-context-immutable-restart-20261030`, Basis `69bfe78ec4eeb30042b26971978038a2ee9dac34`. Änderungen an Schema, Spielregeln und Bestands-Spielständen sind nicht erforderlich; CI-Abnahme steht zunächst aus.
+
+
 ## 30.10.2026 – Chat C: Todesrettungs-Entscheidungen bei 200 % Schrift
 
 - **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
