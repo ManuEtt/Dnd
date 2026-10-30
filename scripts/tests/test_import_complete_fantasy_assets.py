@@ -54,6 +54,65 @@ class FantasyImportTests(unittest.TestCase):
             MODULE.imported_assets(self.archive, self.root)
         self.assertEqual(destination.read_bytes(), b"do not overwrite")
 
+    def test_main_import_and_reimport_write_only_regular_assets(self):
+        payload = self._make_archive()
+        destination = self.root / "project"
+        self.assertEqual(
+            MODULE.main([str(self.archive), "--target", str(destination)]), 0
+        )
+        asset = destination / MODULE.PREFIX / MODULE.ASSETS[0]
+        self.assertEqual(asset.read_bytes(), payload)
+        self.assertFalse(asset.is_symlink())
+        self.assertEqual(
+            MODULE.main([str(self.archive), "--target", str(destination)]), 0
+        )
+
+    def test_symlinked_asset_directory_is_rejected_before_writing(self):
+        self._make_archive()
+        destination = self.root / "project"
+        outside = self.root / "elsewhere"
+        outside.mkdir()
+        fantasy = destination / MODULE.PREFIX.rstrip("/")
+        fantasy.parent.mkdir(parents=True)
+        fantasy.symlink_to(outside, target_is_directory=True)
+
+        with self.assertRaisesRegex(ValueError, "Symlink"):
+            MODULE.imported_assets(self.archive, destination)
+        self.assertEqual(
+            MODULE.main([str(self.archive), "--target", str(destination)]), 1
+        )
+        self.assertEqual(list(outside.iterdir()), [])
+
+    def test_dangling_symlinked_asset_is_rejected_before_writing(self):
+        self._make_archive()
+        destination = self.root / "project"
+        outside = self.root / "elsewhere"
+        outside.mkdir()
+        fantasy = destination / MODULE.PREFIX.rstrip("/")
+        fantasy.mkdir(parents=True)
+        escaped = outside / "escaped.webp"
+        (fantasy / MODULE.ASSETS[0]).symlink_to(escaped)
+
+        with self.assertRaisesRegex(ValueError, "Symlink"):
+            MODULE.imported_assets(self.archive, destination)
+        self.assertEqual(
+            MODULE.main([str(self.archive), "--target", str(destination)]), 1
+        )
+        self.assertFalse(escaped.exists())
+
+    def test_symlinked_target_root_is_rejected(self):
+        self._make_archive()
+        outside = self.root / "real-project"
+        outside.mkdir()
+        alias = self.root / "project-alias"
+        alias.symlink_to(outside, target_is_directory=True)
+        with self.assertRaisesRegex(ValueError, "Symlink"):
+            MODULE.imported_assets(self.archive, alias)
+        self.assertEqual(
+            MODULE.main([str(self.archive), "--target", str(alias)]), 1
+        )
+        self.assertFalse((outside / MODULE.PREFIX).exists())
+
     def test_corrupt_zip_asset_is_rejected(self):
         self._make_archive(corrupt=MODULE.ASSETS[4])
         with self.assertRaises(ValueError):

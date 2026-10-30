@@ -61,6 +61,49 @@ class SrdRequirementsMatrixTests(unittest.TestCase):
         feature["rule_implemented"] = "tested"
         self.assertTrue(any("voll getestet ohne konkrete Testreferenz" in e for e in validate_matrix(changed, self.catalogue)))
 
+    def test_malformed_matrix_records_report_errors_without_traceback(self):
+        broken = copy.deepcopy(self.matrix)
+        broken["requirements"][0]["area"] = ["combat"]
+        broken["requirements"][0]["rule_implemented"] = {"status": "tested"}
+        feature = next(r for r in broken["requirements"] if r["kind"] == "level_feature")
+        feature["catalogue_reference"] = ["not-a-string"]
+        feature["class_name"] = ["not-a-string"]
+        broken["inventory_gaps"].append(["not-an-object"])
+        errors = validate_matrix(broken, self.catalogue)
+        self.assertTrue(any("unbekannter Bereich" in e for e in errors))
+        self.assertTrue(any("ungültiger Umsetzungsstatus" in e for e in errors))
+        self.assertTrue(any("Katalogreferenz" in e for e in errors))
+        self.assertTrue(any("Metadaten" in e for e in errors))
+        self.assertTrue(any("Inventarlücke muss" in e for e in errors))
+
+    def test_invalid_reference_catalogue_entries_report_errors(self):
+        broken = copy.deepcopy(self.catalogue)
+        broken["entries"] = [None, {"id": ["not-a-string"]}]
+        errors = validate_matrix(self.matrix, broken)
+        self.assertTrue(any("Katalogeintrag ohne gültige ID" in e for e in errors))
+        broken["entries"] = {"unexpected": "object"}
+        self.assertTrue(any("entries-Liste" in e
+                            for e in validate_matrix(self.matrix, broken)))
+
+    def test_malformed_entities_and_requirement_rows_report_errors(self):
+        broken = copy.deepcopy(self.entities)
+        broken["entries"][0]["name"] = ["not-a-string"]
+        broken["entries"][0]["area"] = {"bogus": "area"}
+        broken["entries"][0]["kind"] = ["spell_definition"]
+        broken["entries"][0]["rule_implemented"] = ["tested"]
+        matrix = copy.deepcopy(self.matrix)
+        matrix["requirements"].append(None)
+        errors = validate_entities(broken, matrix)
+        self.assertTrue(any("Name fehlt" in e for e in errors))
+        self.assertTrue(any("Kategorie" in e for e in errors))
+        self.assertTrue(any("Implementierungsstatus" in e for e in errors))
+
+    def test_nonobject_inventory_roots_are_rejected(self):
+        self.assertTrue(validate_matrix([], self.catalogue))
+        self.assertTrue(validate_matrix(self.matrix, []))
+        self.assertTrue(validate_entities([], self.matrix))
+        self.assertTrue(validate_entities(self.entities, []))
+
     def test_false_complete_flag_is_rejected(self):
         changed = copy.deepcopy(self.matrix)
         changed["scope_complete"] = True
