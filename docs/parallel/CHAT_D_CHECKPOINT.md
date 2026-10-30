@@ -211,6 +211,23 @@
   vor Paketstart überprüft; keine technischen Dateiüberschneidungen.
   README und zentraler Checkpoint beim späteren Merge additiv bewahren.
 - **NÄCHSTER SCHRITT:** CI auswerten, neue PRs prüfen, Review-Freigabe.
+# Chat D D-024 – Fantasy-Button-Generierung sicher veröffentlichen (30.10.2026)
+
+- **Ausgangs-Main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `fix/chat-d/fantasy-button-output-safety-20261030`.
+- **Code-Commit:** `69d691a58fb12dfc850920d2c1e0f7960c4084de`.
+- **Pull Request:** [#412](https://github.com/ManuEtt/Dnd/pull/412), Draft bis abschließender CI.
+- **Ausgangsproblem:** `Path.write_bytes()` konnte eine vorhandene Button-PNG durch einen abgebrochenen Schreibvorgang beschädigen oder über vorhandene Symlinks in fremde Verzeichnisse schreiben; auch `mkdir(parents=True)` konnte über Symlink-Vorfahren umgeleitet werden.
+- **IMPLEMENTIERT:** bekannten Symlinks an allen vorhandenen Ausgabepfad-Komponenten, direkt vor/nach `mkdir` und vor der Veröffentlichung ausweichen; nur reguläre Ausgabedateien zulassen. Vollständig generierte PNGs temporär speichern und per `os.replace` atomar veröffentlichen, Staging stets aufräumen; Dateimodus bestehender PNGs erhalten.
+- **Geänderte Dateien:** `scripts/generate_fantasy_buttons.py`, `scripts/tests/test_generate_fantasy_buttons.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Akzeptanz/Regressionen:** bestehende 30-PNG-/Reproduzierbarkeitstests sowie fünf neue Tests gegen verlinktes Zielverzeichnis, verlinkten Vorfahr, PNG-Symlink, fehlgeschlagenen atomaren Publish und nicht-reguläre Ausgabedatei.
+- **GETESTET:** Branch-Commit und PR angelegt; vollständiger CI-Lauf auf finalem Commit noch nicht als Erfolg bestätigt.
+- **NICHT GETESTET:** finale Python-/Backend-/Flutter-/Android-/APK-/Release-Kette, Realgerät.
+- **BLOCKIERT:** GitHub-DNS für lokalen Checkout; CI über GitHub Actions verfügbar.
+- **Migrationen:** keine; kein Einfluss auf Spielstände, SQLite/JSON, SRD/Story oder Appversion.
+- **Koordination:** alle offenen PRs bis #411 überprüft, keine technischen Dateipfad-Überschneidungen. Gemeinsam verwendete README-/Checkpoint-Dateien erst bei Integration additiv abgleichen; keine fremden Branches verändert, kein Merge.
+- **Vorgänger:** #401, #402, #406, #409 und #410 vollständig CI-grün und zur Review freigegeben; #411 beim letzten Abruf noch im Android-Build.
+- **Nächster Schritt:** CI für finalen #412-Commit vollständig abnehmen; bei Fehlern auf eigenem Branch korrigieren, andernfalls PR zur Review freigeben.
 
 ---
 
