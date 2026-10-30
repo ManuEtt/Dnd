@@ -160,12 +160,9 @@ void main() {
 
     for (final key in ['adventure-retry-action', 'adventure-discard-action']) {
       var found = false;
-      for (var attempt = 0; attempt < 4; attempt++) {
+      for (var attempt = 0; attempt < 3; attempt++) {
         await tester.sendKeyEvent(LogicalKeyboardKey.tab);
         await tester.pumpAndSettle();
-        debugPrint(
-          'Focus after tab $attempt for $key: ${FocusManager.instance.primaryFocus?.debugLabel}',
-        );
         if (focusInside(tester, key)) {
           found = true;
           break;

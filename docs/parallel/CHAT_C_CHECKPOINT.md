@@ -2,6 +2,7 @@
 
 - **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
 - **Branch:** `feat/chat-c/pending-action-controls-large-text-20261030`.
+- **Pull Request:** [#417](https://github.com/ManuEtt/Dnd/pull/417) (separat von anderen Chat-C-Paketen).
 - **Code-/Testcommit:** `3a48e283da3749d5a49a0563730059fbd8bf1a94`.
 - **Problem:** Im festen Abenteuer-Composer teilen sich die Buttons zur
   Wiederbestätigung und zum Verwerfen bisher einen Wrap, der bei 320/360 dp
@@ -12,6 +13,7 @@
   vertikal dar. Der vorhandene Volltextschalter bleibt separat; bei
   normaler Schrift bleibt die Wrap-Anordnung bestehen. Bereits vorhandene
   `interactionBlocked`-/`submitting`-Prüfungen sind unverändert.
+- **Fokus-Regressionsbefund:** Die scrollbare Flutter-Ansicht kann selbst einen Tab-Fokus-Stopp belegen; der Widgettest wartet maximal drei Tab-Tastendrücke pro Zielaktion, verlangt anschließend korrekte Reihenfolge und Enter-Auslösung. Die UI verwendet dafür eine explizite `OrderedTraversalPolicy` mit Fokuspositionen 0/1/2.
 - **TESTS ERGÄNZT:** `app/test/pending_action_controls_large_text_test.dart`
   umfasst sieben Fälle: zwei schmale Displaybreiten mit 200 % und simulierter
   IME, Tab/Enter, blockierte Aktionen, lange NPC-Textvorschau ohne Mutation,

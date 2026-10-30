@@ -2,14 +2,14 @@
 
 ## Chat C – Ausstehende Handlungen bei großer Schrift (30.10.2026)
 
-Das isolierte Chat-C-Paket `feat/chat-c/pending-action-controls-large-text-20261030`
+Das isolierte [Chat-C-Paket #417](https://github.com/ManuEtt/Dnd/pull/417) `feat/chat-c/pending-action-controls-large-text-20261030`
 (basierend auf `main` `55fe44475a113943c6310ec16a8ffb481185f4e9`,
 Code-Commit `3a48e283da3749d5a49a0563730059fbd8bf1a94`)
 ordnet im `PendingActionStatus` die Aktionen **Erneut bestätigen** und
 **Verwerfen** bei Kartenbreiten unter 500 dp und mindestens 180 % Systemschrift
 untereinander in voller Breite an. Der vorhandene Volltextschalter, die
 Statussperren und die normale kompakte Anordnung bleiben erhalten.
-Sieben neue Flutter-Widgettestfälle prüfen 320/360 dp mit simuliertem
+Die Tab-Navigation berücksichtigt einen möglichen zusätzlichen Fokus-Stopp des scrollbaren Bereichs; die zwei Entscheidungs-Buttons haben eine ausdrückliche Reihenfolge. Sieben neue Flutter-Widgettestfälle prüfen 320/360 dp mit simuliertem
 Tastatureinzug und 200 % Text, Tab/Enter, Sperrung, lange NPC-Aufträge,
 den Sendestatus sowie das normale Layout. Keine Änderung von Outbox,
 Spielzustand, Regeln, SQLite oder JSON. Finale CI und echter Android-
