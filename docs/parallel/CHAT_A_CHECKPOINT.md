@@ -1,3 +1,15 @@
+## Integrationsnachtrag 30.10.2026 – Chat-A-Branches
+
+Alle 13 initialen Chat-A-Branchheads auf Main `6465a4b2` regulär konsolidiert.
+Fachliche Kombinationskorrektur: vollständiger bestätigter Konzentrationsmodifier
+zwischen Vorbereitung und Auflösung konsistent; namentliche Zweitklasse auf
+Stufe 0 abgewiesen. Drei neue Regressionen zunächst rot, danach 19 zugehörige
+Konzentrationstests grün; final alle 171 betroffenen Fach-/Flowtests grün,
+559 Dart-Dateien formatkonform und `flutter analyze` ohne Befund.
+Einzelne neue Regelhelfer bleiben ausdrücklich ohne vollständige Spielintegration.
+Details und Abnahmegrenzen: [Migrationsbericht](CHAT_A_MIGRATION_20261030.md).
+Gesamtintegration/Fullsuite/CI durch den koordinierenden Integrationsbranch offen.
+
 # Chat A – Todesrettung: bestätigte Klassen vor Regelwirkung
 
 Stand 30.10.2026 UTC, Basis-Main `55fe44475a113943c6310ec16a8ffb481185f4e9`,

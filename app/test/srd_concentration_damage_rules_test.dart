@@ -161,8 +161,8 @@ void main() {
       _damage('later', 5, rollConfirmed: false),
       _damage('later', 5, die: 21),
       _damage('later', 5, die: 0),
-      _damage('later', 5, modifier: 31),
-      _damage('later', 5, modifier: -31),
+      _damage('later', 5, modifier: 61),
+      _damage('later', 5, modifier: -61),
     ]) {
       expect(
         () => _resolve(hero, [_damage('first', 40, die: 1), invalid]),

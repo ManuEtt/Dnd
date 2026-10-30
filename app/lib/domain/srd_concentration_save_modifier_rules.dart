@@ -102,7 +102,10 @@ class SrdConcentrationSaveModifierRules {
         hero.level > 20 ||
         hero.secondaryClassLevel < 0 ||
         hero.secondaryClassLevel >= hero.level ||
-        (hero.hasSecondClass && (secondary == null || secondary == primary)) ||
+        (hero.hasSecondClass &&
+            (hero.secondaryClassLevel < 1 ||
+                secondary == null ||
+                secondary == primary)) ||
         (!hero.hasSecondClass && hero.secondaryClassLevel != 0)) {
       throw const FormatException(
         'Die bestätigten Klassen und Stufen sind nicht konsistent.',

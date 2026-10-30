@@ -148,8 +148,10 @@ class SrdConcentrationDamageRules {
           die < 1 ||
           die > 20 ||
           modifier == null ||
-          modifier < -30 ||
-          modifier > 30) {
+          // Match the complete total accepted by modifier preparation. This
+          // technical input bound does not grant any unconfirmed bonus.
+          modifier < -60 ||
+          modifier > 60) {
         throw const FormatException(
           'W20 und vollständiger Konstitutionsrettungswurf sind nicht bestätigt.',
         );
