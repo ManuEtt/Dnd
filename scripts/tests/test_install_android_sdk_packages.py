@@ -13,7 +13,9 @@ SCRIPT = Path(__file__).resolve().parents[1] / "install_android_sdk_packages.sh"
 
 
 class AndroidSdkPackageRetryTests(unittest.TestCase):
-    def _run_mock(self, *, failures: int) -> tuple[subprocess.CompletedProcess[str], int, str, bool]:
+    def _run_mock(
+        self, *, failures: int, existing_ndk: bool = False
+    ) -> tuple[subprocess.CompletedProcess[str], int, str, bool, bool]:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             bin_dir = root / "bin"
@@ -21,7 +23,15 @@ class AndroidSdkPackageRetryTests(unittest.TestCase):
             sdk_root = root / "sdk"
             partial_ndk = sdk_root / "ndk" / "27.0.12077973"
             partial_ndk.mkdir(parents=True)
-            (partial_ndk / "corrupt.zip").write_text("incomplete", encoding="utf-8")
+            if existing_ndk:
+                (partial_ndk / "source.properties").write_text(
+                    "Pkg.Revision = 27.0.12077973\n", encoding="utf-8"
+                )
+                (partial_ndk / "ndk-build").write_text("installed", encoding="utf-8")
+            else:
+                (partial_ndk / "corrupt.zip").write_text(
+                    "incomplete", encoding="utf-8"
+                )
             home = root / "home"
             cache = home / ".android" / "cache"
             cache.mkdir(parents=True)
@@ -66,24 +76,46 @@ class AndroidSdkPackageRetryTests(unittest.TestCase):
                 result,
                 int(counter.read_text(encoding="utf-8")),
                 args_log.read_text(encoding="utf-8"),
-                partial_ndk.exists() or cache.exists(),
+                partial_ndk.exists(),
+                cache.exists(),
             )
 
     def test_transient_failure_retries_same_packages_and_cleans_cache(self) -> None:
-        result, attempts, packages, cache_remains = self._run_mock(failures=1)
+        result, attempts, packages, ndk_remains, cache_remains = self._run_mock(failures=1)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(attempts, 2)
         self.assertEqual(packages.count("ndk;27.0.12077973"), 2)
         self.assertIn("platforms;android-35", packages)
+        self.assertFalse(ndk_remains)
         self.assertFalse(cache_remains)
 
     def test_persistent_failure_stops_after_three_attempts(self) -> None:
-        result, attempts, packages, cache_remains = self._run_mock(failures=5)
+        result, attempts, packages, ndk_remains, cache_remains = self._run_mock(failures=5)
         self.assertEqual(result.returncode, 1)
         self.assertEqual(attempts, 3)
         self.assertEqual(packages.count("cmake;3.22.1"), 3)
+        self.assertFalse(ndk_remains)
         self.assertFalse(cache_remains)
         self.assertIn("failed after 3 attempts", result.stderr)
+
+    def test_preinstalled_ndk_survives_transient_failure(self) -> None:
+        result, attempts, packages, ndk_remains, cache_remains = self._run_mock(
+            failures=1, existing_ndk=True
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(attempts, 2)
+        self.assertEqual(packages.count("ndk;27.0.12077973"), 2)
+        self.assertTrue(ndk_remains)
+        self.assertFalse(cache_remains)
+
+    def test_preinstalled_ndk_survives_persistent_failure(self) -> None:
+        result, attempts, _, ndk_remains, cache_remains = self._run_mock(
+            failures=5, existing_ndk=True
+        )
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(attempts, 3)
+        self.assertTrue(ndk_remains)
+        self.assertFalse(cache_remains)
 
     def test_missing_sdk_root_fails_closed(self) -> None:
         env = os.environ.copy()

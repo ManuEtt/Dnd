@@ -211,6 +211,25 @@ def copy_previous_archive(output: Path, backup: Path) -> None:
             shutil.copy2(output, backup)
 
 
+@contextlib.contextmanager
+def exclusive_archive_output(output: Path):
+    """One writer per ZIP+checksum pair, across threads and processes.
+
+    The adjacent directory is claimed atomically. A crash can leave a stale
+    lock: fail closed rather than risk corrupting a previously valid pair.
+    Never delete a lock that this invocation did not successfully create.
+    """
+    lock = output.with_name(f'.{output.name}.lock')
+    try:
+        lock.mkdir()
+    except FileExistsError as error:
+        raise ValueError('Source archive publication already in progress.') from error
+    try:
+        yield
+    finally:
+        lock.rmdir()
+
+
 def create_archive(root: Path, output: Path, *, layout: str = 'folder') -> tuple[int, str]:
     """A root layout can be copied straight into a GitHub repository."""
     if layout not in {'folder', 'root'}:
@@ -226,58 +245,58 @@ def create_archive(root: Path, output: Path, *, layout: str = 'folder') -> tuple
         raise ValueError('Write the archive outside the project directory.')
     if any(path.exists() and not path.is_file() for path in (output, checksum)):
         raise ValueError('Output archive and checksum must be regular files.')
-    paths = source_paths(root)
-    relative_names = {p.relative_to(root).as_posix() for p in paths}
-    missing = REQUIRED_FILES - relative_names
-    if missing:
-        raise ValueError(f'Missing required project files: {sorted(missing)}')
-    validate_portable_source_paths(root, paths)
     output.parent.mkdir(parents=True, exist_ok=True)
-    prefix = Path('Dnd') if layout == 'folder' else Path()
-    
-    # Build and validate outside the published archive. A partial write must
-    # never truncate a previously usable ZIP or its checksum.
-    with tempfile.TemporaryDirectory(prefix=f'.{output.name}.', dir=output.parent) as tmp:
-        temporary = Path(tmp)
-        staged_zip = temporary / output.name
-        staged_sha = temporary / checksum.name
-        with zipfile.ZipFile(staged_zip, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
-            for path in paths:
-                data, before = read_verified_source(root, path)
-                # writestr() does not inherit filesystem mode bits, unlike
-                # ZipFile.write(). Keep executable source scripts recoverable
-                # while retaining the verified same-file read above.
-                info = zipfile.ZipInfo((prefix / path.relative_to(root)).as_posix())
-                info.create_system = 3
-                info.external_attr = (
-                    stat.S_IFREG | stat.S_IMODE(before.st_mode)
-                ) << 16
-                info.compress_type = zipfile.ZIP_DEFLATED
-                archive.writestr(info, data)
-        with zipfile.ZipFile(staged_zip) as archive:
-            bad = archive.testzip()
-            if bad:
-                raise RuntimeError(f'Corrupt ZIP entry: {bad}')
-        digest = hashlib.sha256(staged_zip.read_bytes()).hexdigest()
-        staged_sha.write_text(f'{digest}  {output.name}\n', encoding='utf-8')
+    with exclusive_archive_output(output):
+        paths = source_paths(root)
+        relative_names = {p.relative_to(root).as_posix() for p in paths}
+        missing = REQUIRED_FILES - relative_names
+        if missing:
+            raise ValueError(f'Missing required project files: {sorted(missing)}')
+        validate_portable_source_paths(root, paths)
+        prefix = Path('Dnd') if layout == 'folder' else Path()
+        # Build and validate outside the published archive. A partial write must
+        # never truncate a previously usable ZIP or its checksum.
+        with tempfile.TemporaryDirectory(prefix=f'.{output.name}.', dir=output.parent) as tmp:
+            temporary = Path(tmp)
+            staged_zip = temporary / output.name
+            staged_sha = temporary / checksum.name
+            with zipfile.ZipFile(staged_zip, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
+                for path in paths:
+                    data, before = read_verified_source(root, path)
+                    # writestr() does not inherit filesystem mode bits, unlike
+                    # ZipFile.write(). Keep executable source scripts recoverable
+                    # while retaining the verified same-file read above.
+                    info = zipfile.ZipInfo((prefix / path.relative_to(root)).as_posix())
+                    info.create_system = 3
+                    info.external_attr = (
+                        stat.S_IFREG | stat.S_IMODE(before.st_mode)
+                    ) << 16
+                    info.compress_type = zipfile.ZIP_DEFLATED
+                    archive.writestr(info, data)
+            with zipfile.ZipFile(staged_zip) as archive:
+                bad = archive.testzip()
+                if bad:
+                    raise RuntimeError(f'Corrupt ZIP entry: {bad}')
+            digest = hashlib.sha256(staged_zip.read_bytes()).hexdigest()
+            staged_sha.write_text(f'{digest}  {output.name}\n', encoding='utf-8')
 
-        # Preserve both previous files until the staged pair is ready. If the
-        # second replacement fails, restore the previous ZIP as well.
-        previous_zip = temporary / 'previous.zip'
-        copy_previous_archive(output, previous_zip)
-        published_zip = False
-        try:
-            os.replace(staged_zip, output)
-            published_zip = True
-            os.replace(staged_sha, checksum)
-        except BaseException:
-            if published_zip:
-                if previous_zip.is_file():
-                    os.replace(previous_zip, output)
-                else:
-                    output.unlink(missing_ok=True)
-            raise
-    return len(paths), digest
+            # Preserve both previous files until the staged pair is ready. If the
+            # second replacement fails, restore the previous ZIP as well.
+            previous_zip = temporary / 'previous.zip'
+            copy_previous_archive(output, previous_zip)
+            published_zip = False
+            try:
+                os.replace(staged_zip, output)
+                published_zip = True
+                os.replace(staged_sha, checksum)
+            except BaseException:
+                if published_zip:
+                    if previous_zip.is_file():
+                        os.replace(previous_zip, output)
+                    else:
+                        output.unlink(missing_ok=True)
+                raise
+        return len(paths), digest
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)

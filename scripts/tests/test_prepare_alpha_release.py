@@ -152,6 +152,40 @@ class AlphaReleaseTests(unittest.TestCase):
             release.prepare_release(self.root, self.out)
         self.assertFalse(self.out.exists())
 
+    def test_unix_special_file_entries_are_rejected(self):
+        for kind in (stat.S_IFIFO, stat.S_IFCHR, stat.S_IFBLK, stat.S_IFSOCK):
+            with self.subTest(kind=kind):
+                self.create_apk()
+                special = zipfile.ZipInfo('assets/unsupported')
+                special.create_system = 3
+                special.external_attr = (kind | 0o644) << 16
+                with zipfile.ZipFile(self.apk, 'a') as archive:
+                    archive.writestr(special, b'not a regular asset')
+                with self.assertRaisesRegex(ValueError, 'unzulässige ZIP-Dateitypen'):
+                    release.validate_arm64_apk(self.apk)
+
+    def test_required_native_library_cannot_be_disguised_as_directory(self):
+        self.create_apk(omit={'lib/arm64-v8a/libapp.so'})
+        disguised = zipfile.ZipInfo('lib/arm64-v8a/libapp.so')
+        disguised.create_system = 3
+        disguised.external_attr = (stat.S_IFDIR | 0o755) << 16
+        with zipfile.ZipFile(self.apk, 'a') as archive:
+            archive.writestr(disguised, b'fake library')
+        with self.assertRaisesRegex(ValueError, 'widersprüchliche ZIP-Dateitypen'):
+            release.validate_arm64_apk(self.apk)
+
+    def test_unix_regular_file_and_directory_modes_are_allowed(self):
+        regular = zipfile.ZipInfo('assets/valid.dat')
+        regular.create_system = 3
+        regular.external_attr = (stat.S_IFREG | 0o644) << 16
+        directory = zipfile.ZipInfo('assets/new-dir/')
+        directory.create_system = 3
+        directory.external_attr = (stat.S_IFDIR | 0o755) << 16
+        with zipfile.ZipFile(self.apk, 'a') as archive:
+            archive.writestr(regular, b'normal asset')
+            archive.writestr(directory, b'')
+        release.validate_arm64_apk(self.apk)
+
     def test_normal_directory_entry_remains_accepted(self):
         with zipfile.ZipFile(self.apk, 'a') as archive:
             archive.writestr('assets/', b'')
