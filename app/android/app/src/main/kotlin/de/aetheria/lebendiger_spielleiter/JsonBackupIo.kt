@@ -12,12 +12,27 @@ internal object JsonBackupIo {
     private const val BUFFER_BYTES = 8192
     private val forbiddenNameCharacters = setOf('/', '\\', '<', '>', ':', '"', '|', '?', '*')
 
-    fun isSafeName(name: String): Boolean =
-        name.length in 6..128 &&
-            name == name.trim() &&
-            !name.startsWith('.') &&
-            name.endsWith(".json") &&
-            name.none { it in forbiddenNameCharacters || Character.isISOControl(it) }
+    fun isSafeName(name: String): Boolean {
+        if (name.length !in 6..128 ||
+            name != name.trim() ||
+            name.startsWith('.') ||
+            !name.endsWith(".json") ||
+            name.any { it in forbiddenNameCharacters || Character.isISOControl(it) }
+        ) return false
+
+        // A visually deceptive name can still contain bidi overrides, isolates,
+        // zero-width joiners or Unicode tags. Reject every FORMAT code point,
+        // including supplementary ones, and malformed standalone surrogates.
+        var offset = 0
+        while (offset < name.length) {
+            val codePoint = Character.codePointAt(name, offset)
+            if (codePoint in 0xD800..0xDFFF ||
+                Character.getType(codePoint) == Character.FORMAT.toInt()
+            ) return false
+            offset += Character.charCount(codePoint)
+        }
+        return true
+    }
 
     fun isValidPayload(bytes: ByteArray): Boolean = bytes.isNotEmpty() && bytes.size <= MAX_BYTES
 
