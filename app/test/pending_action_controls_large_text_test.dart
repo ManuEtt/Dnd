@@ -147,18 +147,17 @@ void main() {
       retry: () => selected.add('retry'),
       discard: () => selected.add('discard'),
     );
-    await tester.showKeyboard(
-      find.byKey(const ValueKey('pending-keyboard-field')),
-    );
+    final input = find.byKey(const ValueKey('pending-keyboard-field'));
+    await tester.tap(input);
     await tester.pumpAndSettle();
-    debugPrint(
-      'Before Tab: ${FocusManager.instance.primaryFocus?.debugLabel}',
-    );
+    debugPrint('Before Tab: ${FocusManager.instance.primaryFocus?.debugLabel}');
 
     for (final key in ['adventure-retry-action', 'adventure-discard-action']) {
       await tester.sendKeyEvent(LogicalKeyboardKey.tab);
       await tester.pumpAndSettle();
-      debugPrint('After Tab for $key: ${FocusManager.instance.primaryFocus?.debugLabel}');
+      debugPrint(
+        'After Tab for $key: ${FocusManager.instance.primaryFocus?.debugLabel}',
+      );
       expect(focusInside(tester, key), isTrue);
       await tester.sendKeyEvent(LogicalKeyboardKey.enter);
       await tester.pumpAndSettle();
