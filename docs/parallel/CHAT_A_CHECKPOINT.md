@@ -1,5 +1,22 @@
 # Chat A – Checkpoint (26.10.2026): Eldritch-Blast-Klassenprüfung
 
+## 30.10.2026 – Konzentration nach Schaden mit SG-Obergrenze 30 (Chat A)
+
+- **Ausgangs-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `feat/chat-a/concentration-damage-dc-cap-20261030`.
+- **IMPLEMENTIERT:** `app/lib/domain/srd_concentration_damage_rules.dart`: isolierte, unveränderliche Konzentrationsentscheidung für separat bestätigte Schadensquellen. SG `min(30, max(10, Schaden~/2))` mit korrekt abgerundetem halbem Schaden, maximal 30 nach SRD 5.2.1 (anders als SRD 5.1). Rettungswurf je Quelle; erster Misserfolg beendet Konzentration, 0 TP/Tod/Handlungsunfähigkeit ohne Wurf.
+- **BESTÄTIGUNGSPFLICHT:** bereits regelgeprüfter Heldenstatus nach Schaden, eindeutig lesbare Schadensquellen-IDs, Schaden, W20, vollständiger KO-Save-Modifikator und schon aufgelöster Vor-/Nachteil. Kein RNG und kein KI-Text als Beleg.
+- **Tests:** `app/test/srd_concentration_damage_rules_test.dart` (8 Gruppen: SG 10/30, Grenzen/Rundung, Erfolg/Misserfolg, natürliche 1/20, mehrere Quellen, ungültige spätere Quelle, Bidi-ID, Zustände, Snapshot, JSON-Roundtrip).
+- **Doku:** `docs/SRD_5_2_1_CONCENTRATION_DAMAGE_CHECKS.md`, README und zentraler Checkpoint ergänzt.
+- **GETESTET:** offener PR-/main-Stand und bestehende Regelpfade geprüft, SRD-5.2.1-Provenienz über offizielles SRD bestätigt. Tests geschrieben, bislang nicht ausgeführt. **NICHT GETESTET:** Format-/Flutter-/Android-CI auf finalem Head, reales Gerät. **BLOCKIERT:** lokales SDK fehlt; CI auf GitHub notwendig.
+- **KEINE MIGRATION:** bestehende Heldenspeicherung, JSON-/SQLite-Schema, Events, UI/Backend, GameEngine/Controller, Version unverändert. Kein automatischer Commit oder echte Schadenswirkung im Modul.
+- **KOORDINATION:** #416 betrifft Todesrettungs-/GameEngine-Regeln, dieses Paket nur neue separate Konzentrationsdateien; andere offene Chat-A-/B-/C-/D-PRs haben keine Fachpfadüberschneidung. README und zentralen Checkpoint beim späteren Review additiv mit Chat D konsolidieren.
+- **Vorgänger:** #415 finale [CI #41071482495](https://github.com/ManuEtt/Dnd/actions/runs/41071482495) erfolgreich, ebenfalls #408/#405/#400 erfolgreich. Alle getrennte Drafts.
+- **NÄCHSTER SCHRITT:** atomarer persistierter Konzentrationsstatus per bestätigtem Schadensereignis und erwarteter Revision; nicht ohne Koordination mit Chat D an Shared-Dateien arbeiten.
+
+---
+
+
 ## Integrationskandidat 29.10.2026 – Chat A
 
 Zusammengeführte Fachpakete: [#357](https://github.com/ManuEtt/Dnd/pull/357), [#361](https://github.com/ManuEtt/Dnd/pull/361), [#366](https://github.com/ManuEtt/Dnd/pull/366), [#367](https://github.com/ManuEtt/Dnd/pull/367), [#372](https://github.com/ManuEtt/Dnd/pull/372), [#375](https://github.com/ManuEtt/Dnd/pull/375), [#385](https://github.com/ManuEtt/Dnd/pull/385). Die ursprünglichen Branch-HEADs, PR-Beschreibungen, Tests, bekannte Grenzen und Statusmeldungen sind im [Integrationsjournal](INTEGRATION_20261029.md) mit Git-Historie dokumentiert. **Dieser Stand ist weder auf main integriert noch gemeinsam CI-abgenommen; Drafts sind nicht freigegeben.** Bisherige Checkpoint-Einträge bleiben erhalten.
