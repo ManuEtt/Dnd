@@ -120,3 +120,8 @@ Testsignatur/APK-Build ersetzen keine echte Geräte- oder Upgradeabnahme.
 [CC-BY-4.0-Namensnennung](THIRD_PARTY_NOTICES.md).
 Frühere README-/Checkpoint-Stände bleiben bytegenau mit Git-Blob/SHA256 in
 [docs/history/monk_tool_start_20261029/MANIFEST.json](docs/history/monk_tool_start_20261029/MANIFEST.json).
+
+
+## Chat D – Validierung ausstehender SQLite-Handlungen (PR #397, Draft)
+
+Der öffentliche SQLite-Schreibpfad für nicht bestätigte Spielerhandlungen prüft nun auch direkte Aufrufer auf gültige Auftragskennung, Kampagnenkennung und begrenzten, nicht leeren Handlungstext. Dadurch können solche Aufrufe keinen Auftrag speichern, den die Outbox beim nächsten App-Start nicht mehr decodieren kann. Drei neue FFI-Regressionstests decken Ablehnung ohne Datenänderung, persistente Wiederherstellung/ACK und Duplikatkonflikte ab. **Noch keine finale CI-Abnahme** dieses PR-Standes; bestehende SQLite-3-/Kampagnen-JSON-1-Daten und Appversion unverändert.
