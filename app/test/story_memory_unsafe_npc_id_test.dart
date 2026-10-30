@@ -33,11 +33,7 @@ void main() {
   test('unsafe same-name IDs and notes cannot enter story context', () {
     final source = _campaign(
       const [
-        WorldNpc(
-          id: 'bad\nid',
-          name: 'Mira',
-          relationship: 'misstrauisch',
-        ),
+        WorldNpc(id: 'bad\nid', name: 'Mira', relationship: 'misstrauisch'),
         WorldNpc(id: 'safe-id', name: 'MIRA', relationship: 'freundlich'),
       ],
       notes: [
@@ -69,7 +65,7 @@ void main() {
 
   test('spaces, punctuation and overlong ambiguous IDs are omitted', () {
     final tooLong = List.filled(65, 'x').join();
-    for (final unsafeId in ['two words', 'with.dot', 'bad\nid', tooLong]) {
+    for (final unsafeId in ['two words', 'with.dot', 'bad\nid', 'trailing\n', tooLong]) {
       final campaign = _campaign([
         WorldNpc(id: unsafeId, name: 'Mira'),
         const WorldNpc(id: 'safe', name: 'MIRA'),
@@ -106,13 +102,9 @@ void main() {
       clock: () => DateTime.utc(2026, 10, 30),
     ).saveSessionRecap(campaign);
     final restored = Campaign.fromJson(
-      jsonDecode(jsonEncode(saved.campaign.toJson()))
-          as Map<String, dynamic>,
+      jsonDecode(jsonEncode(saved.campaign.toJson())) as Map<String, dynamic>,
     );
-    expect(
-      restored.sessionRecaps.single.summary,
-      contains('NPC-ID: $safeId'),
-    );
+    expect(restored.sessionRecaps.single.summary, contains('NPC-ID: $safeId'));
     expect(restored.hero.toJson(), campaign.hero.toJson());
     expect(saved.events.single.type, 'memory.sessionRecapSaved');
   });
