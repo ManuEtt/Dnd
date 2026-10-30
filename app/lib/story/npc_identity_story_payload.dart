@@ -185,10 +185,7 @@ class NpcIdentityStoryPayload {
   // Strip them for uniqueness and mention checks even when the original name
   // will be rejected for structured transport by _validText.
   static String _fold(String value) => value
-      .replaceAll(
-        RegExp(r'[\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]'),
-        '',
-      )
+      .replaceAll(RegExp(r'[\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]'), '')
       .toLowerCase()
       .replaceAll('ä', 'ae')
       .replaceAll('ö', 'oe')
