@@ -89,7 +89,12 @@ void main() {
 
   test('all provider plan scalar fields reject invisible formatting', () {
     for (final field in [
-      'title', 'world', 'opening', 'premise', 'secret', 'goal',
+      'title',
+      'world',
+      'opening',
+      'premise',
+      'secret',
+      'goal',
     ]) {
       for (final control in ['\u202e', '\x00', '\u200b']) {
         final plan = _plan();
@@ -118,27 +123,40 @@ void main() {
   test('narration and stored story changes reject invisible controls', () {
     final campaign = _campaign();
     final before = jsonEncode(campaign.toJson());
-    expect(() => AiStoryStep.fromJson({
-      ..._step(), 'narration': 'Die Reise\u202e beginnt.',
-    }, campaign), throwsFormatException);
-    expect(() => AiStoryStep.fromJson({
-      ..._step(),
-      'threadUpdates': [
-        {'id': 'licht', 'status': 'open', 'description': 'Die Spur\u2069'},
-      ],
-    }, campaign), throwsFormatException);
-    expect(() => AiStoryStep.fromJson({
-      ..._step(),
-      'npcUpdates': [
-        {'id': 'mira', 'relationship': 'neutral', 'note': 'Hinweis\u200b'},
-      ],
-    }, campaign), throwsFormatException);
-    expect(() => AiStoryStep.fromJson({
-      ..._step(),
-      'newThreads': [
-        {'id': 'bruecke', 'title': 'Brücke\x1b', 'description': 'Ein Weg.'},
-      ],
-    }, campaign), throwsFormatException);
+    expect(
+      () => AiStoryStep.fromJson({
+        ..._step(),
+        'narration': 'Die Reise\u202e beginnt.',
+      }, campaign),
+      throwsFormatException,
+    );
+    expect(
+      () => AiStoryStep.fromJson({
+        ..._step(),
+        'threadUpdates': [
+          {'id': 'licht', 'status': 'open', 'description': 'Die Spur\u2069'},
+        ],
+      }, campaign),
+      throwsFormatException,
+    );
+    expect(
+      () => AiStoryStep.fromJson({
+        ..._step(),
+        'npcUpdates': [
+          {'id': 'mira', 'relationship': 'neutral', 'note': 'Hinweis\u200b'},
+        ],
+      }, campaign),
+      throwsFormatException,
+    );
+    expect(
+      () => AiStoryStep.fromJson({
+        ..._step(),
+        'newThreads': [
+          {'id': 'bruecke', 'title': 'Brücke\x1b', 'description': 'Ein Weg.'},
+        ],
+      }, campaign),
+      throwsFormatException,
+    );
     expect(jsonEncode(campaign.toJson()), before);
   });
 }
