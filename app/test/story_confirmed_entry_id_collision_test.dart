@@ -76,10 +76,9 @@ void main() {
       );
       final restored = (await repository.getCampaign(original.id))!;
       final before = jsonEncode(restored.toJson());
-      final engine = _engine();
-
+      // Each action represents a fresh engine after reopening the save.
       expect(
-        () => engine.recordNpcRelationship(
+        () => _engine().recordNpcRelationship(
           restored,
           npcId: 'mira',
           relationship: 'neutral',
@@ -88,11 +87,11 @@ void main() {
         throwsFormatException,
       );
       expect(
-        () => engine.saveSessionRecap(restored),
+        () => _engine().saveSessionRecap(restored),
         throwsFormatException,
       );
       expect(
-        () => engine.saveStoryThread(
+        () => _engine().saveStoryThread(
           restored,
           title: 'Das Tor',
           description: 'Nicht neu bestätigen.',
