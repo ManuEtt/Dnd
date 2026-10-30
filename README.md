@@ -154,6 +154,29 @@ für dieses neue Paket beim Einchecken noch offen.
 Die getrennten Chat-A-PRs #400, #405, #408 und #415 haben alle die
 vollständige Flutter-/Android-GitHub-CI bestanden, bleiben jedoch bis zum
 individuellen Review als offene Entwürfe von `main` getrennt.
+## Chat A – prüfbarer Konzentrations-Rettungswurfmodifikator (30.10.2026)
+
+Neuer unabhängiger SRD-5.2.1-Regelbaustein `SrdConcentrationSaveModifierRules` auf
+`feat/chat-a/concentration-save-modifier-evidence-20261030`: Bevor
+ein Konstitutionsrettungswurf zur Konzentration durchgeführt werden darf,
+werden die vorhandenen Regelwerte aus `CharacterRuleEngine.savingThrow`
+übernommen: Konstitutionsattribut, Übung (einschließlich Mönch 14 ohne
+Doppelzählung) und 2024-Erschöpfung. Unbestätigte situative Boni und
+Wurfumstände werden abgewiesen; der bestätigte Modifikator ist an das
+konkrete unveränderte Helden-Snapshot gebunden. Acht neue Regressionstests
+decken Klassen-/Stufen-, Vorteil-/Nachteil- und JSON-Grenzfälle ab.
+
+Das Modul würfelt nicht und verändert keine Trefferpunkte, Ressourcen
+oder Konzentration. Es ist eine unabhängige Vorbereitung für den
+ebenfalls getrennten Konzentrations-SG-PR #418, nicht bereits dessen
+Controller-/SQLite-Anbindung. Bestehende APIs, Spielstände, Schema und
+Version bleiben unverändert. Dokumentation:
+`docs/SRD_CONCENTRATION_SAVE_MODIFIER_EVIDENCE.md`. Finale CI für
+dieses neue Paket noch nicht abgenommen.
+
+Die vorherigen Chat-A-PRs #400, #405, #408, #415 und #418 haben auf
+ihren jeweiligen Branch-Heads die vollständige Android-/Flutter-/Backend-
+GitHub-CI bestanden; sie bleiben offene, getrennte Draft-PRs bis zum Review.
 
 
 

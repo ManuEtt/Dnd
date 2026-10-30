@@ -410,6 +410,42 @@ README/zentrale Checkpoints mit Chat D additiv zusammenführen.
 Konzentrationsentscheidung über koordinierten Controller-/Event-
 /SQLite-Vertrag atomar speichern; Wiederholungen/Revisionskonflikte
 ohne doppelte Saves ablehnen.
+## Chat A – Konzentrations-Modifierbeleg aus bestätigten Heldenwerten (30.10.2026)
+
+**Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`;
+**Branch:** `feat/chat-a/concentration-save-modifier-evidence-20261030`.
+**Implementiert:** Reines Domain-Modul
+`app/lib/domain/srd_concentration_save_modifier_rules.dart` und
+`app/test/srd_concentration_save_modifier_rules_test.dart` mit acht
+Testgruppen. `CharacterRuleEngine.savingThrow(hero, 'constitution')`
+bleibt die einzige Quelle für gespeichertes Attribut, Rettungswurf-Übung,
+Mönch-14-Merkmal und Erschöpfungsabzug. Überprüfte externe Zusätze und
+Wurfumstände werden getrennt bestätigt. Snapshotgebundene
+`SrdConcentrationSaveModifierEvidence.validateUnchanged` blockiert
+veraltete Bestätigungen. Explizit **keine** Würfel, Spielwirkungen,
+Stunden-/Rundenuhr oder Ressourcen-/Kampagnenänderungen.
+
+**Getestet:** Quell-/PR-/CI-Audit, Fachcode, Tests und Doku geschrieben.
+**Noch nicht getestet:** Dart/Flutter/Android-CI des neuen finalen Branches
+und echte Gerätetests; lokale SDKs nicht vorhanden. **Kein Merge.**
+**Keine Migration:** JSON-/SQLite-/Eventschema, Story/UI/Backend,
+GameEngine/Controller, App-Version unverändert. Keine Fachkollision
+mit #416 (u. a. gemeinsame `game_engine.dart`), #418 oder anderen
+Chat-B/C/D-PRs; README-/Checkpoint-Änderungen beim Review mit
+Chat D additiv integrieren.
+**SRD:** WotC D&D SRD 5.2.1 `Saving Throws / Concentration /
+Monk Disciplined Survivor / Exhaustion`, CC BY 4.0; Status
+`partial`. Details:
+`docs/SRD_CONCENTRATION_SAVE_MODIFIER_EVIDENCE.md`.
+
+**Vorgänger:** #418 [CI #41077695088](https://github.com/ManuEtt/Dnd/actions/runs/41077695088)
+erfolgreich auf `29b4ced3da31e8ce47a363c50b8191a980b0bb2b`,
+davor #415/#408/#405/#400 jeweils vollständige CI grün,
+ungeprüfte Integration in `main` unverändert offen.
+
+**Nächster Schritt:** Nach Review isolierte Modifikatorbestätigung
+mit dem Konzentrations-SG-/Quellenentscheid von #418 verbinden,
+anschließend Spielstands-/Event-Commit nur koordiniert mit Chat D.
 
 
 
