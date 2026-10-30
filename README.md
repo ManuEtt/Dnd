@@ -52,6 +52,20 @@ ist reviewbereit, aber noch nicht gemergt.
 [PR #394](https://github.com/ManuEtt/Dnd/pull/394) (Draft, Basis `55fe44475a113943c6310ec16a8ffb481185f4e9`) stellt bei mindestens 180 % Systemschrift bestätigte Zustände, temporäre Trefferpunkte und laufende Konzentration vollständig dar, ohne dass die bisherige Drei-Zeilen-Kürzung wichtige Informationen abschneidet. Normale Schrift bleibt kompakt. Neue UI-Regressionen für 320/360 dp bei 200 %, Standardtext und unbekannte Daten sind ergänzt. **Neue PR-CI und echte TalkBack-Geräteprüfung noch offen**. Keine Auswirkungen auf App-Version `0.8.48+98`, SQLite, JSON oder Spielregeln.
 
 Die unabhängigen Chat-C-PRs [#388](https://github.com/ManuEtt/Dnd/pull/388) und [#392](https://github.com/ManuEtt/Dnd/pull/392) besitzen jeweils erfolgreiche eigene CI-Läufe; ihre Integration mit dem neueren main ist separat zu prüfen. Dokumentationsüberschneidungen mit Chat A/D werden durch Chat D bei der Zusammenführung additiv aufgelöst.
+## Chat C – Heldenaktionen mit großer Schrift und Tastatur (30.10.2026)
+
+Neues UI-Paket auf Basis von `main` `55fe44475a113943c6310ec16a8ffb481185f4e9`:
+Die Aktionen **Abenteuer fortsetzen** und **Helden verwalten** in
+`FantasyActiveHeroCard` stehen bei Kartenbreite unter 500 dp und
+mindestens 180 % Schrift untereinander. Bei normaler Schrift bleibt die
+bisherige kompakte Anordnung erhalten. Die Fokusreihenfolge ist explizit;
+deaktivierte Fortsetzung bleibt nicht auslösbar. Fünf Widgettestfälle prüfen
+320/360 dp mit simulierter Android-Tastatur und 200 % Schrift, Touch,
+Tab/Enter, deaktivierte Aktion und Standardlayout. Der ältere
+[Chat-C-PR #399](https://github.com/ManuEtt/Dnd/pull/399) bleibt separat
+und wird nicht überschrieben. Es gibt keine Änderungen an Regeln, SQLite,
+JSON oder der Appversion. **Finale CI/Android- und TalkBack-Gerätetests
+müssen anhand des finalen PR-Commits nachgewiesen werden.**
 
 
 Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;

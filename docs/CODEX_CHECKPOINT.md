@@ -239,6 +239,42 @@ beide zur Review freigegeben, nicht gemergt.
 - **Nächster konkreter Schritt:** Reale Android-/TalkBack-Abnahme der langen HUD-Zustände bei 320 dp/200 %, positive/negative Ansagen samt Nullstatus.
 
 
+## 30.10.2026 – Chat C: Heldenaktionen mit großer Schrift und IME
+
+- **Ausgangs-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `feat/chat-c/hero-actions-large-text-ime-20261030`.
+- **Implementierungscommit:** `8dad702764b3d012bd2e92595ab9509378ea47c1`.
+- **Ausgangsproblem:** Auf schmalen Android-Karten drücken große Schrift und
+  geöffnete Tastatur die beiden Heldenaktionen in einen schmalen Wrap-Bereich;
+  Keyboard-Reihenfolge und unerreichbare deaktivierte Fortsetzung waren nicht
+  eigens durch Widgettests abgedeckt.
+- **Implementiert:** `FantasyActiveHeroCard` zeigt ab 180 % Schrift und unter
+  500 dp Breite die beiden unveränderten Buttons vollbreit vertikal,
+  mit expliziter Fokusreihenfolge (Fortsetzen, Helden verwalten);
+  bei normaler Schrift bleibt die vorhandene Wrap-Anordnung bestehen.
+- **Akzeptanz/Regressionen:** Zwei 320/360-dp-IME-Touchfälle bei 200 %,
+  Tab/Enter-Fokusreihenfolge, deaktivierte Fortsetzung und
+  unveränderte kompakte Standardansicht (fünf Widgetfälle).
+  Änderungen ausschließlich in `app/lib/ui/fantasy_campaign_dashboard.dart`,
+  `app/test/fantasy_hero_actions_ime_focus_test.dart` plus Dokumentation.
+- **GETESTET:** GitHub-main, PR-Änderungspfade und Quelldateien vor Paketstart
+  geprüft. Automatische Widget- und Gesamt-Tests erst nach tatsächlichem
+  GitHub-Actions-Lauf als bestanden markieren.
+- **NICHT GETESTET:** Lokale Dart-/Flutter-/Android-Kommandos (SDK fehlt in
+  dieser Umgebung); Android-Gerät, TalkBack, echte IME und Upgrade offen.
+- **BLOCKIERT:** Lokal kein Flutter/Dart. Gemeinsame README-/Checkpoint-Änderungen
+  bei Integration durch Chat D additiv mit den offenen PRs koordinieren.
+- **Migration/Kompatibilität:** Keine Zustandsmutation, kein SQLite-/JSON-/SRD-
+  oder Backend-Eingriff; keine Migration, kein Versionswechsel.
+- **Nächster Schritt:** Geräterealtest mit TalkBack bei 320 dp/200 %/IME;
+  beide Aktionen müssen vollständig angekündigt, nacheinander fokussierbar
+  und per Touch/Enter auslösbar sein, die deaktivierte Fortsetzung wird
+  übersprungen; Integration nur nach vollständiger CI und Review.
+
+---
+
+
+
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
 Stand: 29.10.2026, UTC. [PR #390](https://github.com/ManuEtt/Dnd/pull/390)
