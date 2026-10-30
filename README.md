@@ -1,5 +1,29 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat B – bestätigte NPC-Chronik ohne unsichtbare Steuerzeichen (30.10.2026)
+
+[Draft-PR #398](https://github.com/ManuEtt/Dnd/pull/398) auf
+`feat/chat-b/npc-context-control-sanitizing-20261030`, Ausgangs-`main`
+`55fe44475a113943c6310ec16a8ffb481185f4e9`.
+
+**IMPLEMENTIERT:** Der schreibgeschützte `NpcContinuityReader` entfernt
+ASCII-/C1-Steuerzeichen, Unicode-Zeilentrenner und Bidi-Formatierungszeichen
+vor der Darstellung bestätigter Namen, Beziehungen und NPC-Notizen.
+Visuell gleiche NPC-Namen werden so deterministisch als mehrdeutig erkannt;
+sichere gespeicherte IDs bleiben die einzige Unterscheidung.
+Vier neue positive und negative Flutter-Regressionen im
+`npc_continuity_control_chars_test.dart`; keine bestätigten Fakten verändert.
+
+**GETESTET:** GitHub-Quellstand, PR-Dateipfade und fremde offene PRs geprüft.
+**NICHT GETESTET:** neue Flutter-Regressionen und vollständige CI auf dem
+finalen Dokumentationscommit noch abzunehmen; lokal kein Dart/Flutter-SDK,
+kein GitHub-DNS-Checkout. Reales Android-Gerät/produktive KI nicht geprüft.
+**MIGRATION:** keine; SQLite/JSON, Regeln und App-Version unverändert.
+**KOORDINATION:** PR #396 ändert ein anderes Storymodul; gemeinsame README-
+und Checkpoint-Dokumentation vor einem Merge additiv durch Chat D konsolidieren.
+**NÄCHSTER SCHRITT:** Finales CI-Format/Tests des PR #398 prüfen; bei Fehlern
+auf demselben Branch korrigieren, danach Review ohne automatischen Merge.
+
 Deutschsprachige Fantasy-Solo-App für Android. Alpha **0.8.48+98**;
 vollständige Charaktererstellung und SRD-Regelengine bleiben in Entwicklung.
 
