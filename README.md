@@ -1,6 +1,6 @@
 # Würfelraunen – Der lebendige Spielleiter
 
-## Chat A – strikt bestätigte Material-Stückwerte (30.10.2026)
+## Chat A – strikt bestätigte Material-Stückwerte (PR #415, 30.10.2026)
 
 Neuer unabhängiger Entwicklungsbranch `feat/chat-a/spell-material-value-evidence-20261030`:
 `SrdSpellMaterialValueRules` prüft bei den vier ausdrücklich auditierten
