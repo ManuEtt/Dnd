@@ -1,5 +1,22 @@
 # Chat B – Sitzungsidentität beim Ereignis-Replay (27.10.2026)
 
+## Entwicklung 30.10.2026 – sichere NPC-ID im bestätigten Story-Gedächtnis (PR #396)
+
+- **Ausgangs-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`. **Branch:** `feat/chat-b/safe-npc-identity-recall-20261030`. **Fachcode-Commit:** `34b92d7ee6cc0415f8ca7d4ebcac977e70efda26`; **Test-Commit:** `d43d3246fdee2682c74e1cbc8f1607c38a1c3077`. [Draft-PR #396](https://github.com/ManuEtt/Dnd/pull/396); finalen Dokumentations-HEAD in GitHub nachsehen.
+- **Problem:** `MemoryEngine.retrieve` und `buildSessionSummary` schrieben untypische gespeicherte IDs gleichnamiger NPCs einschließlich Zeilenumbrüchen ungeprüft in bestätigte Erzählertexte, anders als die bereits gehärtete Identitätsabfrage.
+- **Lösung:** Eindeutig gespeicherte gleichnamige NPCs erscheinen nur noch mit kanonischer ID `[A-Za-z0-9_-]{1,64}`; sonst werden ihre mehrdeutigen NPC-spezifischen Zeilen/Notizen aus dem Recall und Recap ausgelassen. Andere NPCs und eindeutig benannte historische NPCs bleiben lesbar. Nichts wird im gespeicherten Spielstand umgeschrieben.
+- **Geänderte Fachdateien:** `app/lib/story/story_memory_engine.dart`; neuer Test `app/test/story_memory_unsafe_npc_id_test.dart`. Dokumentation additiv in README, zentralem und persönlichem Checkpoint.
+- **Akzeptanz / Regression:** Negativfälle für Zeilenumbruch, Leerzeichen, Punkt und 65 Zeichen; gültige 64-Zeichen-ID, SaveSessionRecap mit JSON-Roundtrip, eindeutiger Legacy-NPC mit untypischer ID. Unveränderte Heldenwerte und Spielstände. Bestehende Tests bleiben aktiv.
+- **GETESTET:** Code- und PR-Struktur sowie aktuelle fremde PR-Dateipfade über GitHub geprüft; **keine ausgeführte Dart/Flutter-Regressionssuite belegt**.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse/-Test, Python-, Backend-, Android-/native CI auf finalem Commit; echtes Android-Gerät und KI-Provider. Auf GitHub Actions warten und finalen Head gesondert zuordnen.
+- **BLOCKIERT:** Direkter Git-Checkout wegen DNS, lokal weder Flutter- noch Dart-SDK. GitHub-Connector stellt Branch-/PR-Schreiben bereit.
+- **Migrationen:** keine (SQLite/JSON unverändert). Regelengine, Controller, Domänen- und Speichermodelle nicht geändert.
+- **Koordination:** Bei Start offene PRs #387, #388, #389, #391, #392, #394, #395; keine Story-Fachdateien betroffen. Geteilte README/Checkpoint-Änderungen durch Chat D additiv zusammenführen; kein automatischer Merge.
+- **Nächster konkreter Schritt:** Die vier neuen Regressionen plus vollständige CI auf finalem PR-HEAD prüfen, Fehler im eigenen Branch korrigieren und erst danach Review/Freigabe beantragen.
+
+---
+
+
 ## Integrationskandidat 29.10.2026 – Chat B
 
 Zusammengeführte Fachpakete: [#356](https://github.com/ManuEtt/Dnd/pull/356), [#362](https://github.com/ManuEtt/Dnd/pull/362), [#364](https://github.com/ManuEtt/Dnd/pull/364), [#371](https://github.com/ManuEtt/Dnd/pull/371), [#373](https://github.com/ManuEtt/Dnd/pull/373), [#377](https://github.com/ManuEtt/Dnd/pull/377), [#383](https://github.com/ManuEtt/Dnd/pull/383). Die ursprünglichen Branch-HEADs, PR-Beschreibungen, Tests, bekannte Grenzen und Statusmeldungen sind im [Integrationsjournal](INTEGRATION_20261029.md) mit Git-Historie dokumentiert. **Dieser Stand ist weder auf main integriert noch gemeinsam CI-abgenommen; Drafts sind nicht freigegeben.** Bisherige Checkpoint-Einträge bleiben erhalten.
