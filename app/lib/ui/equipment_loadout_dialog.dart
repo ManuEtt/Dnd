@@ -88,11 +88,12 @@ class _EquipmentLoadoutDialogState extends State<EquipmentLoadoutDialog> {
       validation = error.toString();
     }
     return AlertDialog(
+      scrollable: true,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       title: const Text('Ausrüstung nach D&D prüfen'),
       content: SizedBox(
         width: 560,
-        child: SingleChildScrollView(
-          child: Column(
+        child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -109,7 +110,11 @@ class _EquipmentLoadoutDialogState extends State<EquipmentLoadoutDialog> {
                 CheckboxListTile(
                   key: const ValueKey('loadout-armor-trained'),
                   value: _armorTrained,
-                  title: const Text('Übung mit dieser Rüstungsart bestätigt'),
+                  title: Text(
+                    MediaQuery.textScalerOf(context).scale(1) >= 1.8
+                        ? 'Rüstungsübung bestätigt'
+                        : 'Übung mit dieser Rüstungsart bestätigt',
+                  ),
                   onChanged: (value) =>
                       setState(() => _armorTrained = value ?? false),
                 ),
@@ -207,7 +212,6 @@ class _EquipmentLoadoutDialogState extends State<EquipmentLoadoutDialog> {
                   style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
             ],
-          ),
         ),
       ),
       actions: [
