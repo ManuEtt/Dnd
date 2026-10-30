@@ -7,25 +7,23 @@ import 'package:lebendiger_spielleiter/domain/srd_spell_catalog.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_preflight_rules.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_target_rules.dart';
 
-SrdSpellDefinition _withRange(
-  SrdSpellDefinition source,
-  String range,
-) => SrdSpellDefinition(
-  id: source.id,
-  name: source.name,
-  level: source.level,
-  school: source.school,
-  classes: source.classes,
-  castingTime: source.castingTime,
-  range: range,
-  components: source.components,
-  duration: source.duration,
-  verbal: source.verbal,
-  somatic: source.somatic,
-  material: source.material,
-  concentration: source.concentration,
-  ritual: source.ritual,
-);
+SrdSpellDefinition _withRange(SrdSpellDefinition source, String range) =>
+    SrdSpellDefinition(
+      id: source.id,
+      name: source.name,
+      level: source.level,
+      school: source.school,
+      classes: source.classes,
+      castingTime: source.castingTime,
+      range: range,
+      components: source.components,
+      duration: source.duration,
+      verbal: source.verbal,
+      somatic: source.somatic,
+      material: source.material,
+      concentration: source.concentration,
+      ritual: source.ritual,
+    );
 
 const _self = SrdSpellTargetFacts(
   mode: SrdSpellOriginMode.caster,
@@ -137,8 +135,10 @@ void main() {
   test('numeric ranges reject whitespace and mixed-case metadata', () {
     final missile = catalog.find('Magic Missile')!;
     expect(
-      SrdSpellTargetRules.validateOrigin(missile, _distance)
-          .maxOriginDistanceFeet,
+      SrdSpellTargetRules.validateOrigin(
+        missile,
+        _distance,
+      ).maxOriginDistanceFeet,
       120,
     );
 
