@@ -1,0 +1,19 @@
+name: Chat C format diagnosis (temporary)
+on:
+  push:
+    branches:
+      - feat/chat-c/shortcut-disabled-hints-20261030
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Print exact Dart formatter changes
+        run: |
+          cd app
+          dart format lib/ui/fantasy_art.dart test/fantasy_action_controls_test.dart
+          git diff -- lib/ui/fantasy_art.dart test/fantasy_action_controls_test.dart
