@@ -1,5 +1,21 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – Ausrüstungsdialog bei großer Schrift und IME (30.10.2026)
+
+Der unabhängige Branch `feat/chat-c/equipment-loadout-large-text-ime-20261030`
+basiert auf `main` `718388dda5c020670ec306843058674a85f54ba0`
+und schützt den Ausrüstungsdialog gegen verdeckte Inhalte bei 320/360 dp,
+200 % Schrift und eingeblendeter Tastatur. `AlertDialog(scrollable: true)`
+ersetzt den doppelten inneren Scrollbereich, während **Abbrechen** und
+**Werte übernehmen** außerhalb der Scrollfläche verbleiben. Die
+Beschriftung der Rüstungsübung wird bei großer Schrift kompakt angezeigt.
+Drei neue Widgetfälle prüfen beide engen Breiten, gesperrte Bestätigung,
+erreichbare Rüstungsübung sowie unveränderte Helden- und Inventardaten.
+Die EP-/Kampfsystem-, Regel-, SQLite- und JSON-Schnittstellen bleiben
+unverändert. Volle GitHub-CI und echte Android-/TalkBack-Abnahme sind erst
+nach dem Lauf als bestanden zu werten.
+
+
 ## Chat C – Todesrettung bei 200 % Schrift (30.10.2026)
 
 Das Chat-C-Arbeitspaket `feat/chat-c/death-save-actions-large-text-20261030`
