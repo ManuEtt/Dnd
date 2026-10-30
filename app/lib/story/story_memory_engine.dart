@@ -154,7 +154,7 @@ class MemoryEngine {
       if (npcNameCounts[nameKey] == 1) return npc.name;
       // Only a canonical, single-line stored ID can distinguish same-name
       // NPCs in confirmed narrative context.
-      if (!_safeNpcId.hasMatch(npc.id)) return null;
+      if (_safeNpcId.stringMatch(npc.id) != npc.id) return null;
       return '${npc.name} (NPC-ID: ${npc.id})';
     }
 
@@ -255,7 +255,7 @@ class MemoryEngine {
         if (npc.id.trim().isNotEmpty &&
             npcIdCounts[npc.id] == 1 &&
             (npcNameCounts[_memoryNormalize(npc.name)] == 1 ||
-                _safeNpcId.hasMatch(npc.id)))
+                _safeNpcId.stringMatch(npc.id) == npc.id))
           '${npcNameCounts[_memoryNormalize(npc.name)] == 1 ? npc.name : '${npc.name} (NPC-ID: ${npc.id})'} '
               '(${npc.alive ? 'lebendig' : 'tot'}, ${npc.relationship})',
     ];
