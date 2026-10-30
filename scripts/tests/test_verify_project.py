@@ -12,7 +12,9 @@ import zipfile
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from verify_project import (
     MAX_WRAPPER_ENTRIES, MAX_WRAPPER_JAR_BYTES, MAX_WRAPPER_UNCOMPRESSED_BYTES,
-    REQUIRED_FILES, ROOT, WRAPPER_MAIN, verify_project,
+    MAX_METADATA_JSON_BYTES, MAX_GRADLE_PROPERTIES_BYTES,
+    MAX_GRADLE_SHEBANG_BYTES, REQUIRED_FILES, ROOT, WRAPPER_MAIN,
+    verify_project,
 )
 
 
@@ -112,6 +114,52 @@ class VerifyProjectTests(unittest.TestCase):
         errors = verify_project(self.root)
         self.assertTrue(any('Ungültige JSON-Datei' in error for error in errors))
         self.assertNotIn(marker, '\n'.join(errors))
+
+    def test_oversized_backend_json_is_rejected_without_loading_whole_file(self):
+        for name in ('backend/package.json', 'backend/package-lock.json'):
+            with self.subTest(path=name):
+                path = self.root / name
+                original = path.read_bytes()
+                try:
+                    with path.open('wb') as stream:
+                        stream.truncate(MAX_METADATA_JSON_BYTES + 1)
+                    errors = verify_project(self.root)
+                    self.assertTrue(any(
+                        'Ungültige JSON-Datei: ' + name in error for error in errors
+                    ))
+                finally:
+                    path.write_bytes(original)
+        self.assertEqual([], verify_project(self.root))
+
+    def test_oversized_gradle_properties_are_rejected_before_parsing(self):
+        path = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        with path.open('wb') as stream:
+            stream.truncate(MAX_GRADLE_PROPERTIES_BYTES + 1)
+        # Oversized input fails closed without parsing all its bytes.
+        errors = verify_project(self.root)
+        self.assertTrue(any('prüfsumme' in error for error in errors))
+        self.assertTrue(any('HTTPS-Distribution' in error for error in errors))
+
+    def test_gradle_launcher_reads_only_bounded_first_line(self):
+        launcher = self.root / 'app/android/gradlew'
+        with launcher.open('wb') as stream:
+            stream.write(b'#!/usr/bin/env sh\n')
+            stream.truncate(64 * 1024 * 1024)
+        # Old implementation read the whole script. This one reads only
+        # the first line, even when the remainder is a sparse huge file.
+        with mock.patch.object(
+            Path, 'read_bytes', side_effect=AssertionError('unbounded read'),
+        ):
+            self.assertEqual([], verify_project(self.root))
+
+    def test_excessive_gradle_launcher_shebang_is_rejected(self):
+        launcher = self.root / 'app/android/gradlew'
+        launcher.write_bytes(b'#!' + b'x' * MAX_GRADLE_SHEBANG_BYTES + b'\n')
+        errors = verify_project(self.root)
+        self.assertTrue(any(
+            'app/android/gradlew benötigt einen kurzen Unix-Shebang' in error
+            for error in errors
+        ))
 
     def test_missing_wrapper_is_reported(self):
         (self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar').unlink()

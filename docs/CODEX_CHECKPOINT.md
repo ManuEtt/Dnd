@@ -189,6 +189,102 @@ Die beiden vorherigen Pakete sind vollständig per GitHub Actions grün:
 und [PR #402](https://github.com/ManuEtt/Dnd/pull/402)
 ([CI 41010021662](https://github.com/ManuEtt/Dnd/actions/runs/41010021662));
 beide zur Review freigegeben, nicht gemergt.
+## Chat D – Reiner HTTPS-Ursprung für Remote-Backend (30.10.2026, PR #411)
+
+[PR #411](https://github.com/ManuEtt/Dnd/pull/411) validiert
+`PUBLIC_ORIGIN` als reinen HTTPS-Ursprung und lehnt nun URL-Pfade,
+Suchparameter und Fragmente zusätzlich zu bestehenden HTTP- und
+Zugangsdaten-Verboten ab. Valide Ursprünge mit optionalem Port und
+abschließendem Schrägstrich bleiben zulässig.
+Ein neuer Backend-Test deckt erlaubte und verbotene Varianten ab.
+
+**Ausgangs-`main`:** `55fe44475a113943c6310ec16a8ffb481185f4e9`;
+**Branch:** `fix/chat-d/backend-public-origin-20261030`;
+**Code-Commit:** `7ffa749d8be11ff9a518faaf8a65fc86f940dad1`.
+**GETESTET:** keine finale CI auf Dokumentations-Commit bestätigt;
+der vollständige [Workflow des PRs](https://github.com/ManuEtt/Dnd/pull/411/checks)
+muss noch erfolgreich abgeschlossen sein.
+**NICHT GETESTET:** reales Reverse-Proxy-Deployment und Android-Gerät.
+**Migration:** keine; Spielstände, JSON-/SQLite-Schema, Story, SRD-Regeln
+und Appversion unverändert. README-/Checkpoint-Änderungen vor Integration
+mit parallelen Arbeiten verlustfrei konsolidieren.
+## Chat D – Voll-Checkpoint-Veröffentlichung serialisieren (29.10.2026)
+
+- **Basis:** `55fe44475a113943c6310ec16a8ffb481185f4e9`,
+  Branch `fix/chat-d/checkpoint-publish-lock-20261029`,
+  Code-Commit `cc2c557ea6f3eedb1e2aacf0fa761f70574528a2`.
+- **IMPLEMENTIERT:** `exclusive_checkpoint_output` in
+  `scripts/create_checkpoint.py` reserviert ein atomar erzeugtes
+  `.checkpoint.lock` im gemeinsamen Ausgabeverzeichnis. Die Sperre
+  umfasst versionierte Dateien, Historien-Hashing, `LATEST`- und
+  `SHA256SUMS.txt`-Veröffentlichung; fremde Sperren werden nicht
+  entfernt oder übernommen.
+- **REGRESSIONEN:** drei neue Tests in
+  `scripts/tests/test_create_checkpoint.py`: bestehende Sperre
+  belässt frühere Backups bytegleich, zweiter Aufruf während eines
+  laufenden Checkpoints scheitert, `KeyboardInterrupt` gibt die
+  eigene Sperre frei und lässt eine saubere Wiederholung zu.
+- **GETESTET:** Vorherige [Main-CI #40922492508](https://github.com/ManuEtt/Dnd/actions/runs/40922492508)
+  grün. Dies ist **kein Testnachweis für das neue Paket**.
+- **NICHT GETESTET:** finale Python-/Backend-/Flutter-/Android-CI
+  auf dem neuen PR-Head, Windows, reale Mehrprozess-Runner und
+  Android-Gerät.
+- **BLOCKIERT:** fehlender direkter lokaler GitHub-Checkout/Flutter-SDK;
+  neue CI erfolgt über GitHub Actions.
+- **DATENFORMAT:** keine SQLite-/JSON-/Schema-/Versionsmigration.
+- **NÄCHSTER SCHRITT:** finalen PR-Head durch CI prüfen,
+  Konfliktcheck aktualisieren und erst danach zur Review freigeben.
+## Chat D – PNG-Generierung gegen Symlinks und Teilwrites absichern (30.10.2026, PR #412)
+
+[PR #412](https://github.com/ManuEtt/Dnd/pull/412) stärkt den zu
+Beginn der Android-CI ausgeführten Generator für Fantasy-Buttons.
+`scripts/generate_fantasy_buttons.py` verweigert bekannte symbolische
+Links entlang der Ausgabeordner und an einzelnen PNG-Ausgabedateien.
+Die PNG-Bytes werden erst in einer temporären Datei vollständig geschrieben
+und danach atomar per `os.replace` veröffentlicht. Scheitert die
+Veröffentlichung, bleibt die vorige PNG unverändert; temporäre Dateien
+werden wieder entfernt. Die Bildgestaltung und deterministische
+Wiederholbarkeit ändern sich nicht.
+
+**Basis-`main`:** `55fe44475a113943c6310ec16a8ffb481185f4e9`;
+**Branch:** `fix/chat-d/fantasy-button-output-safety-20261030`;
+**Code-Commit:** `69d691a58fb12dfc850920d2c1e0f7960c4084de`.
+Fünf neue Regressionstests prüfen verlinkte Eltern-/Zielordner,
+symlink-basiertes PNG-Ziel, atomaren Schreibfehler und Sonderdateityp.
+**Abnahme:** vollständige CI auf dem finalen Dokumentations-Commit ist noch
+ausstehend; vorhandene Tests nicht vor ihrer Ausführung als bestanden zählen.
+**Migrationen:** keine. Spielstände, SRD-Regeln, Android-UI, SQLite-/JSON-Schema
+und Appversion unverändert. README-/Checkpoint-Ergänzungen bei Integration
+nur verlustfrei mit den parallelen PRs konsolidieren.
+## Operativer Chat-D-Checkpoint – PR #419 (30.10.2026, 17:35 CET)
+
+- **Main zum Start:** `55fe44475a113943c6310ec16a8ffb481185f4e9`;
+  **Arbeitsbranch:** `fix/chat-d/retire-main-recheck-20261030`;
+  **Code-/Testcommit:** `b33ef1597630d2e6e896a97072a22da0b2101782`;
+  **Pull Request:** [#419](https://github.com/ManuEtt/Dnd/pull/419), Draft.
+- **Produkt:** Würfelraunen, laut aktuellem README Alpha 0.8.48+98.
+  Kein Versions-, Datenbank-, JSON-, Regel- oder Storywechsel.
+- **IMPLEMENTIERT:** In `scripts/retire_merged_branches.py` erneute Main-SHA-,
+  Schutzstatus- und Integrationsprüfung unmittelbar vor DELETE sowie
+  Nachweis der Entfernung per anschließendem GET.
+- **Geändert:** `scripts/retire_merged_branches.py`,
+  `scripts/tests/test_retire_merged_branches_execution.py`, diese
+  Dokumentation, `README.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **GETESTET:** Code und sechs Mock-basierte Tests im Branch gesichert;
+  noch kein erfolgreich ausgeführter Testlauf dieses Pakets belegt.
+- **NICHT GETESTET:** Python-Gesamtsuite, Projekt-/SRD-/Domain-Gates,
+  Backend Typecheck/Build/Tests, Dart-Format/Flutter-Analyze/Tests,
+  Android Debug/Native/ABI sowie echter Geräte- und Windows-Test.
+  CI-Status auf dem finalen HEAD separat nachprüfen.
+- **BLOCKIERT:** Lokales `git clone` ohne GitHub-DNS sowie fehlendes
+  Flutter-/Dart-SDK; GitHub Actions dient als ausführbare Abnahme.
+- **NOCH NICHT IMPLEMENTIERT:** Keine allgemeine Race-Freiheit der
+  GitHub-DELETE-REST-Operation (kein atomarer SHA-Lease beim Löschen).
+- **Nächster Schritt:** PR-#419-CI auf dem exakten finalen Kopf prüfen und
+  eventuelle Testfehler isoliert auf diesem Branch korrigieren. Kein
+  eigenmächtiger Main-Merge und keine Branchlöschung.
+
+
 
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98
 
@@ -297,3 +393,141 @@ Dokumentationsprüfung: 221 Pythonfälle, Projekt-/Grenz-/Registerprüfung erfol
 `git diff --check` außerhalb des bytegenauen historischen Archivs sauber. Die
 archivierte Original-CHANGELOG-Zeile 1061 enthält bereits im Quellstand ein
 Leerzeichen am Zeilenende; es bleibt für die nachprüfbare Originaltreue erhalten.
+## Chat D – 29.10.2026: Begrenzter Upload-Preflight
+
+- **Ausgangs-Main:** `fde0ef6ed8b419d6a31c701a03aa05d61994c352`.
+- **Branch:** `fix/chat-d/bounded-metadata-preflight-20261029`.
+- **Code-Commits:** `76ffccf718ffd0f807c0b8a90d0545b4f2308a50`,
+  `d32e318c6f00782ccbd4deed64a4999235ec02df`.
+- **IMPLEMENTIERT:** `scripts/verify_project.py` begrenzt tatsächliche
+  UTF-8-Lesezugriffe auf Backend-Paketmetadaten (16 MiB) und die
+  Gradle-Properties-Datei (64 KiB). Der Gradle-Unix-Launcher wird für
+  seine erforderliche Shebang-Kontrolle nur bis zum ersten Zeilenende,
+  höchstens 4 KiB, gelesen. Fehlende, ungültige und übergroße Uploads
+  werden abgelehnt; das gültige Projekt bleibt akzeptiert.
+- **REGRESSIONEN:** vier neue Tests in
+  `scripts/tests/test_verify_project.py` (beide großen JSONs,
+  übergroße Properties, große Datei mit gültigem kurzem Shebang,
+  überlanger Shebang). Die beiden JSONs werden in einem parametrisierten
+  Test geprüft.
+- **GETESTET:** vorherige vollständige [Main-CI](https://github.com/ManuEtt/Dnd/actions/runs/40867945743)
+  erfolgreich – **kein** Nachweis für die neue Änderung.
+- **NICHT GETESTET:** Python-/Backend-/Flutter-/Android-CI auf dem neuen
+  Commit, Windows, Realgerät.
+- **BLOCKIERT:** Lokal kein GitHub-Checkout (DNS) und kein Flutter-SDK;
+  GitHub Actions nach PR-Erstellung abwarten. Für ZIP-/Release-Verfahren
+  keine zusätzlichen Produktänderungen.
+- **SPIELSTAND/MIGRATION:** SQLite, Kampagnen-JSON, Regeln, Story, UI,
+  Backend-Laufzeit, APK-Version und Signatur unverändert; keine Migration.
+- **NÄCHSTER SCHRITT:** vollständigen CI-Run am finalen PR-HEAD auswerten,
+  eventuelle Fehler in demselben Branch beheben und nach Prüfung der
+  dann aktuellen PRs zur Review freigeben.
+
+## Integration 29.10.2026 – Regression bei großer Schrift nachvollziehbar scrollen
+
+Im zusammengeführten Kandidaten wird die zuvor auf PR #379 nachweislich fehlgeschlagene Heldenkarten-Interaktion bei 200 % Schrift korrigiert: Die Tests scrollen ein tatsächlich über den Bildschirm hinausragendes `ListView` mit einer Nutzer-Geste und verlangen anschließend hit-testbare Buttons. Keine Beschriftung verkürzt, kein Test deaktiviert, kein Produkt-/Speicherverhalten geändert. Neue kombinierte CI auf dem Folge-Commit erforderlich.
+
+
+## Konsolidierter Arbeitsstand – Integrationskandidat vom 29.10.2026
+
+**Noch nicht in `main` integriert.** Die 24 offenen PRs von Chat A/B/C/D sind auf einem separaten technischen Integrationsbaum zusammengetragen; der gemeinsame Flutter-/Python-/Backend-/Android-CI-Lauf steht aus. Einzelne Pull Requests sind Entwürfe und bedürfen einer eigenen fachlichen Freigabe. Aktive Branches vor grüner gemeinsamer Abnahme und SHA-gesicherter Archivierung nicht löschen. [Herkunft, Originalbeschreibungen, HEADs und offene Risiken](parallel/INTEGRATION_20261029.md).
+
+
+## Chat D – PR #358: Alpha-Release atomar pro Version sperren
+
+**IMPLEMENTIERT:** `scripts/prepare_alpha_release.py` reserviert vor Publikationsbeginn ein atomar erzeugtes Lock-Verzeichnis pro Release-Version. Zweitaufrufe können keine fremden Dateien löschen. Drei positive/negative Regressionen (gleichzeitiger Aufruf, Fehler-Retry, verwaiste Sperre). **GETESTET:** vollständige CI auf dem vorherigen Stand `1d7b1723` bestanden ([Actions 40730971955](https://github.com/ManuEtt/Dnd/actions/runs/40730971955)). **NOCH NICHT GETESTET:** neuer kombinierter Head einschließlich PR #363, parallele Runner-Prozesse und reales Gerät. **BLOCKIERT:** kombinierte CI-Abnahme. **Migration:** keine. **Nächster Schritt:** kombinierte CI prüfen, danach Review/Merge nur bei Erfolg.
+
+## Chat D – PR #363: Historische Checkpoint-Dateien nur aus sicheren Quellen
+
+**IMPLEMENTIERT:** `scripts/create_checkpoint.py` lehnt unsichere Namen, Symlinks und nichtreguläre historische Artefakte vor Erzeugung des Prüfsummenindex ab. Neue Regressionen für Symlink, Zeilenumbruch und falschen ZIP-Typ. Keine Schema-/Versionsmigration. **GETESTET:** vollständige Python-, Backend-, Flutter- und Android-CI auf Vor-Integrations-HEAD `a02e2b9f` vollständig erfolgreich ([GitHub Actions 40730867003](https://github.com/ManuEtt/Dnd/actions/runs/40730867003)). **NOCH NICHT GETESTET:** kombinierter HEAD mit `main` `1dc8d076786d`, Gerätetest; diese Abnahme erfolgt auf dem neuen PR-HEAD. **BEKANNTE GRENZE:** kein racefreier Dateideskriptor beim Hashing. **Nächster Schritt:** kombinierte CI abwarten, erst danach integrieren.
+
+## Abnahme 28.10.2026 – Charakter-Symbolwahl / Alpha 0.8.47+97
+
+**IMPLEMENTIERT:** Kleriker/Paladin wählen im Klassenpaket A ausdrücklich Amulett,
+Emblem oder Reliquiar. Typisierte Gegenstände und Gold werden nach Bestätigung
+nur einmal übernommen. Neue Klassenbelege verwenden Version 2; historische
+Version 1 bleibt unverändert lesbar, ungeklärt und ohne Nachvergabe. Wiederwahl
+desselben Pakets erhält die Auswahl. Abbruch, Fremd-IDs und echte Paketwechsel
+sind geprüft. SQLite **3** / äußeres JSON **1** bleiben unverändert, keine Migration.
+
+**GETESTET:** [PR #369](https://github.com/ManuEtt/Dnd/pull/369) regulär integriert;
+Produkt-Main `49b98d8aef7ae0e521320628b053c149c849dea0`.
+[Finale PR-CI 40756846048](https://github.com/ManuEtt/Dnd/actions/runs/40756846048)
+und [Main-CI 40758951956](https://github.com/ManuEtt/Dnd/actions/runs/40758951956)
+sind vollständig **erfolgreich**: 2.265 Flutter-, 200 Python- und 72 Backend-Tests,
+zusätzlich gezielter 20-Fälle-UI-Lauf; 507 Dart-Dateien unverändert formatiert,
+Analyzer/Backend-/Debug-/native-/drei optimierte ABI-/Alpha-/Checkpoint-Schritte
+bestanden. Lokal zusätzlich zwölf native App-Tests und die vollständige Suite
+auf Produktcode `7ac32b1c` bestanden; finaler PR-Kopf `bfe4e5ab` ändert daran nur
+Dokumentation. Main, PR-Kopf und tatsächlicher PR-Checkout `9bf0c017` besitzen
+denselben vollständigen Git-Baum `f40b9dcf11093fef2e7331fdfd712537d391cd2b`.
+
+Alle 1.248 heruntergeladenen Quelldateien mit Hash/Modus, Alpha-Quellpaket,
+echte Binärpatch-Anwendung auf Basis `37a6142e`, isoliertes Git-Bundle/fsck und
+32 historische Köpfe sind unabhängig geprüft. APK-Version/ABI/v2-Testsignatur
+geprüft. [Source-ZIP/Patch/Manifest/History-Bundle](https://github.com/ManuEtt/Dnd/actions/runs/40758951956/artifacts/12847443480) ·
+[ARM64-Alpha](https://github.com/ManuEtt/Dnd/actions/runs/40758951956/artifacts/12846529536).
+
+**NICHT GETESTET:** echtes Android-Gerät/TalkBack, Upgrade einer installierten
+Altversion und produktive Signatur. Ein zusätzlicher freiwilliger Test aller
+Fremdplugin-Unterprojekte scheiterte an ByteBuddy/Jetifier (Klassenmajor 68);
+die im CI vorgeschriebenen `:app:testDebugUnitTest --no-daemon` bestehen.
+**BLOCKIERT:** kein angeschlossenes Android-Testgerät.
+**NOCH NICHT IMPLEMENTIERT:** vollständiger Wizard mit allen Spezies-, Klassen-,
+Talent- und Zauberpflichtwahlen; Symbolbesitz bestätigt keine komplette
+Fokus-/Zauberwirkung. `EQUIP-CHOICES` bleibt `partial`, SRD-Inventur 1.419/9 offen.
+
+Arbeitsbranch `feat/character-holy-symbol-choice-20261028` ist nach grüner
+Main-CI exakt als `archive/merged-20261027/feat/character-holy-symbol-choice-20261028-bfe4e5ab7fba`
+archiviert und remote gelöscht; [Cleanup 40761280014](https://github.com/ManuEtt/Dnd/actions/runs/40761280014)
+bestand. Elf neue aktive PR-Branches #356–#359/#361–#367 blieben erhalten;
+vor jeder Folgeänderung Main/PRs/CI erneut live prüfen.
+
+Dieser anschließende reine Dokumentationsabschluss auf Produkt-Main `49b98d8a`
+ändert **keine** App-, Backend-, Skript- oder Workflowdatei und erhöht keine
+Version. Seine statischen/Pythonprüfungen werden separat im Dokumentations-PR
+geführt. Eine weitere APK oder Produkt-CI für dessen Dokumentationskopf wird
+nicht behauptet. Ältere Berichte darunter sind historische Schreibstände.
+
+## Quellen, Speicherung und Wiederherstellung
+
+Regelquelle: SRD 5.2.1 S.36/53/97, CC BY 4.0; THIRD_PARTY_NOTICES.md unverändert.
+Fachnachweis: [CHARACTER_HOLY_SYMBOL_CHOICE_20261028.md](CHARACTER_HOLY_SYMBOL_CHOICE_20261028.md).
+Code: starting_equipment_import.dart, starting_class_choice.dart, lesender
+srd_character_creation_audit.dart, bestehender Klassen-/Charaktereditor.
+Keine Regel-/Story-Grenzänderung, keine KI-Kosten, keine Spielstand-Neuberechnung.
+
+| Main-Datei | SHA256 |
+| --- | --- |
+| Vollprojekt-ZIP | `5c8a2b6e66f156104231ce60d91a3faafa8f3665165dd9b2e3adbfe397fe28ab` |
+| Binärpatch | `1bd26a2a785257d8132e51449ed44ef17286309b1a2f2a4e8f163433efeaaa36` |
+| ARM64-APK | `63ebe346fd2ea6ed2f631eb63910efc27e78208ecd269dbb6575c8aa6974ae89` |
+
+Lokale Sicherungen: `/workspace/artifacts/character-holy-symbol-20261028/`,
+Index `ARTEFAKTE_UND_IMPORT.md`; Logs/Prüfberichte `/workspace/validation/20261028-*`.
+ZIP in leeren Ordner entpacken; Patch nur auf seine explizite Basis anwenden.
+Das Paket ist bereits in Main enthalten: keinen identischen Patch nochmals
+auf Main anwenden. Bundle für eine separate lokale Wiederherstellung verwenden;
+vor neuen GitHub-Änderungen aktuellen Main/PR-Zustand und Prüfungen beachten.
+
+## Genau nächster Schritt
+
+Die im Mönch-Paket A ausdrücklich gewählte Werkzeug-/Instrumentausrüstung mit
+der erforderlichen Werkzeugübung koppeln. Zuerst amtliches SRD 5.2.1 S.49 prüfen;
+vorhandene Auswahl-/Persistenzfunktionen erweitern. Neue versionierte Entscheidung,
+bestehende Klassenbelege v1/v2 ohne Pflichtfeldverschärfung bewahren, keine
+Nachvergabe. Gültige/ungültige IDs, doppelte Übungen, Abbruch, Retry, stale Revision,
+SQLite-Neustart und JSON, 320/360 dp bei 200 %/IME/Semantik testen; anschließend
+`bash scripts/check.sh`, Debug/native und finale PR-CI. Kein Hintergrund-Codexjob.
+
+## Dokumentationshistorie
+
+Vorige README und beide Checkpoints bleiben bytegenau mit Git-Blob/SHA256 in
+[history/character_symbol_abnahme_20261028/MANIFEST.json](history/character_symbol_abnahme_20261028/MANIFEST.json).
+Die frühere Migration aller 28 Altbranches ist abgeschlossen; Bericht/Inventar
+[BRANCH_MIGRATION_20261028.md](BRANCH_MIGRATION_20261028.md). Nicht wiederholen.
+
+
+## Chat D – SQLite-Outbox-Speichergrenze (30.10.2026, PR #397, Draft)
+
+Technischer Basisstand `main` `55fe44475a113943c6310ec16a8ffb481185f4e9`; Branch `fix/chat-d/pending-action-sqlite-validation-20261030`, Implementierung `099a115b77af967483e9375a3fad9bed0cd1dd2b`. Direkte SQLite-Ausstehendaktionen dürfen keine leeren/überlangen Kampagnenkennungen, ungültigen Request-IDs oder leeren/überlangen Handlungstexte mehr persistieren. Validierung vor der Transaktion; bestehende NPC-/Revision-/ACK-Verträge unverändert. Drei neue FFI-Tests für Fehlwerte, SQLite-Neustart und Unversehrtheit bestätigter Absichten. **Tests und finale CI noch nicht bestätigt**, kein Flutter-SDK/lokaler GitHub-DNS-Checkout. Keine Schema-, JSON- oder Versionsmigration. Dokumentation aus anderen offenen PRs additiv konsolidieren. Nächster Schritt: finale CI auf PR-Head kontrollieren.

@@ -507,6 +507,19 @@ CREATE TABLE settings (
     String? selectedNpcId,
     int? selectedNpcRevision,
   }) async {
+    // This store is also callable without PlayerActionOutbox. Persist only
+    // intents that the outbox can restore after an app restart. Invalid data
+    // must be rejected before starting an SQLite write transaction.
+    if (campaignId.trim().isEmpty ||
+        campaignId.length > 128 ||
+        campaignId.codeUnits.any((unit) => unit < 32) ||
+        requestId.isEmpty ||
+        requestId.length > 128 ||
+        RegExp(r'[^A-Za-z0-9_-]').hasMatch(requestId) ||
+        text.trim().isEmpty ||
+        text.length > 4000) {
+      throw const FormatException('Ungültige ausstehende Handlung.');
+    }
     if ((selectedNpcId == null) != (selectedNpcRevision == null) ||
         (selectedNpcId != null &&
             (!RegExp(r'^[A-Za-z0-9_-]{1,64}$').hasMatch(selectedNpcId) ||
