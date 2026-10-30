@@ -107,32 +107,30 @@ void main() {
     );
 
     final usedAction = _fight(actionUsed: true);
-    expect(
-      () => _inspect(normal, encounter: usedAction),
-      throwsStateError,
-    );
+    expect(() => _inspect(normal, encounter: usedAction), throwsStateError);
     expect(
       _inspect(bonus, encounter: usedAction).action,
       SrdSpellTurnAction.bonusAction,
     );
 
     final usedBonus = _fight(bonusUsed: true);
-    expect(
-      () => _inspect(bonus, encounter: usedBonus),
-      throwsStateError,
-    );
+    expect(() => _inspect(bonus, encounter: usedBonus), throwsStateError);
     expect(
       _inspect(normal, encounter: usedBonus).action,
       SrdSpellTurnAction.magicAction,
     );
-    expect(() => _inspect(normal, encounter: _fight(
-      actionUsed: true,
-      bonusUsed: true,
-    )), throwsStateError);
-    expect(() => _inspect(bonus, encounter: _fight(
-      actionUsed: true,
-      bonusUsed: true,
-    )), throwsStateError);
+    expect(
+      () => _inspect(
+        normal,
+        encounter: _fight(actionUsed: true, bonusUsed: true),
+      ),
+      throwsStateError,
+    );
+    expect(
+      () =>
+          _inspect(bonus, encounter: _fight(actionUsed: true, bonusUsed: true)),
+      throwsStateError,
+    );
   });
 
   test('already spent spell slot rejects leveled spells, not cantrips', () {
@@ -140,14 +138,8 @@ void main() {
     final normal = catalog.find('Magic Missile')!;
     final bonus = catalog.find('Healing Word')!;
     final cantrip = catalog.find('Light')!;
-    expect(
-      () => _inspect(normal, encounter: spent),
-      throwsStateError,
-    );
-    expect(
-      () => _inspect(bonus, encounter: spent),
-      throwsStateError,
-    );
+    expect(() => _inspect(normal, encounter: spent), throwsStateError);
+    expect(() => _inspect(bonus, encounter: spent), throwsStateError);
     final permitted = _inspect(cantrip, encounter: spent);
     expect(permitted.expendSpellSlot, isFalse);
     expect(permitted.action, SrdSpellTurnAction.magicAction);
@@ -162,10 +154,7 @@ void main() {
       _fight(surgeReserved: true),
       _fight(surgeUsed: true),
     ]) {
-      expect(
-        () => _inspect(normal, encounter: encounter),
-        throwsStateError,
-      );
+      expect(() => _inspect(normal, encounter: encounter), throwsStateError);
       expect(
         _inspect(bonus, encounter: encounter).action,
         SrdSpellTurnAction.bonusAction,
@@ -202,32 +191,17 @@ void main() {
 
   test('unknown combat state cannot silently pretend to be outside combat', () {
     final spell = catalog.find('Magic Missile')!;
+    expect(() => _inspect(spell, encounter: null), throwsFormatException);
     expect(
-      () => _inspect(spell, encounter: null),
+      () => _inspect(spell, encounter: _fight(), currentConfirmed: false),
       throwsFormatException,
     );
     expect(
-      () => _inspect(
-        spell,
-        encounter: _fight(),
-        currentConfirmed: false,
-      ),
+      () => _inspect(spell, encounter: _fight(), outOfCombatConfirmed: true),
       throwsFormatException,
     );
     expect(
-      () => _inspect(
-        spell,
-        encounter: _fight(),
-        outOfCombatConfirmed: true,
-      ),
-      throwsFormatException,
-    );
-    expect(
-      () => _inspect(
-        spell,
-        encounter: null,
-        outOfCombatConfirmed: true,
-      ),
+      () => _inspect(spell, encounter: null, outOfCombatConfirmed: true),
       throwsFormatException,
     );
     final outside = _inspect(

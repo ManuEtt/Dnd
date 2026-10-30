@@ -150,8 +150,9 @@ class SrdSpellActionEconomyRules {
       action: action,
       spellSnapshot: _spellSnapshot(spell),
       heroSnapshot: jsonEncode(hero.toJson()),
-      encounterSnapshot:
-          encounter == null ? null : jsonEncode(encounter.toJson()),
+      encounterSnapshot: encounter == null
+          ? null
+          : jsonEncode(encounter.toJson()),
       inCombat: encounter != null,
       expendSpellSlot: spell.level > 0,
     );
