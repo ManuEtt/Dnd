@@ -91,7 +91,10 @@ jobs:
         run: flutter pub get
       - name: Dart-Formatierung prüfen
         working-directory: app
-        run: dart format --output=none --set-exit-if-changed lib test
+        run: |
+          dart format --output=show test/multiclass_spell_slot_alias_test.dart > /tmp/chat-a-formatted.dart
+          diff -u test/multiclass_spell_slot_alias_test.dart /tmp/chat-a-formatted.dart || true
+          dart format --output=none --set-exit-if-changed lib test
       - name: Flutter-Code analysieren
         working-directory: app
         run: flutter analyze
