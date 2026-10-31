@@ -1,3 +1,7 @@
+## 31.10.2026 – Chat C: Hintergrundpaket bei großer Schrift und Tastatur (PR #455, Draft)
+
+Dialog `app/lib/ui/srd_background_package_dialog.dart` nutzt `AlertDialog(scrollable: true)`, kompakte Außenränder und expandierte Auswahlfelder für Spielset und Heiliges Symbol. Neue Widgettests `app/test/srd_background_package_ime_test.dart` prüfen Soldat und Akolyth bei 320/360 dp/200 % Schrift mit simuliertem 220-dp-Tastatur-Inset, einschließlich gesperrter Bestätigung, Abbruch und gültiger expliziter Auswahl. Base-main `5a88834c98f5aca40395088c20c7e1dc5b587868`, [PR #455](https://github.com/ManuEtt/Dnd/pull/455) auf `feat/chat-c/background-package-large-text-ime-20261031`. **Bis zum finalen PR-CI-Lauf nicht als getestet oder APK-fertig darstellen.** Keine Regel-, Controller-, JSON-, SQLite- oder Versionsänderung; keine Migration. README/zentralen Checkpoint bei parallelen PRs additiv konsolidieren.
+
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
