@@ -1,3 +1,26 @@
+## 31.10.2026 – Migration abgenommen, Alpha 0.8.49+99
+
+Gesamtintegration #440 und Herkunftsnachtrag #444 sind regulär integriert.
+Produkt-Main: `47ab002872b7d46daeae03bb558258cf2ea73e4a`.
+[Main-CI 41183481979](https://github.com/ManuEtt/Dnd/actions/runs/41183481979)
+**erfolgreich**: 2.710 Flutter-, 262 Python-, 76 Backendtests, 20 zusätzliche
+UI-Fälle, 576 Dartdateien unverändert, Analyse/Typen/Build/Protokollsmoke,
+Android-Debug/native und drei optimierte ABI-APKs bestanden. Lokaler voller
+Flutter-Testlog ohne Abschluss bei 1.154 Fällen zählt nicht als Vollpass.
+
+[Cleanup 41184619156](https://github.com/ManuEtt/Dnd/actions/runs/41184619156)
+**erfolgreich**; alle 53 erfassten Altbranches frisch einzeln auf vollständige
+Main-Ancestry, tatsächliche Remote-Abwesenheit und exakten Archivtag-SHA geprüft.
+[SHA-Nachweis](docs/parallel/MIGRATION_ACCEPTANCE_20261031.json).
+Neu begonnene aktive PRs #446–#448 bleiben geschützt. Abschluss #445 verändert
+nur Dokumentation, keine Spielregeln, Tests, Schemas, Versionsnummern oder UI.
+SQLite3/äußeresJSON1 erhalten. Realgerät/TalkBack/Upgrade/Produktivsignierung
+weiter offen; sechs neue Regel-APIs noch ohne vollständige Spielanbindung.
+Nächster Schritt: bestätigte SRD-Caster-Aliase bei normalen Mehrklassen-Slots
+kanonisieren; Kriterien im [Checkpoint](docs/CODEX_CHECKPOINT.md).
+
+---
+
 ## 30.10.2026 – Gesamtintegration, Alpha 0.8.49+99, Issue #425
 
 Alle 45 ursprünglichen Entwicklungsheads und der neue Integrationsbranch #437

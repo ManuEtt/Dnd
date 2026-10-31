@@ -5,12 +5,14 @@ regelgeprüfte Aktionen und ein optionaler Fastify-/TypeScript-Erzähler.
 
 ## Aktueller Stand und autonome Fortsetzung
 
-**Alpha 0.8.49+99 – Branch-Integration vom 30.10.2026 (Issue #425).**
-Arbeitsbranch: `integrate/all-branches-issue425-20261030`, Basis-Main:
-`6465a4b2fc8d42ae7aab596ac26e85d61d2b8f49`.
-Der geprüfte kombinierte Fachstand ist `b0a4211c`.
-Main-Merge, finale Main-CI und Branchbereinigung sind bis zum beobachteten
-Abschluss getrennte Freigabeschritte; der Live-Nachweis steht im Integrations-PR.
+**Alpha 0.8.49+99 – Gesamtintegration vom 30./31.10.2026, Issue #425.**
+[PR #440](https://github.com/ManuEtt/Dnd/pull/440) ist regulär in Main
+`72ba9d2e06e7121f955832b4ad22223f64f7c343` integriert.
+[PR #444](https://github.com/ManuEtt/Dnd/pull/444) bewahrt anschließend die
+restlichen Ursprungshistorien mit vier zusätzlichen Manifest-/Testdateien:
+Main `47ab002872b7d46daeae03bb558258cf2ea73e4a`.
+Originale App-/Backend-Dateien bleiben dabei bytegleich.
+Der Abschlussnachtrag entsteht auf `docs/migration-issue425-acceptance-20261031`.
 
 **Implementiert und zusammengeführt:**
 
@@ -32,10 +34,21 @@ Abschluss getrennte Freigabeschritte; der Live-Nachweis steht im Integrations-PR
   Gesamtmodifikatoren, ungültige Zweitklasse auf Stufe 0 und abweichender
   NPC-Namensvergleich bei eingefügten Richtungszeichen.
 
-**Teststatus:** Die vier Teilpakete sind gezielt geprüft. Die kombinierte
-Vollsuite und Android-Abnahme laufen; vor ihrem Abschluss keine erfolgreiche
-Gesamt-CI oder installierte Geräteversion annehmen. Aktuelle belegte Ergebnisse
-werden im [Checkpoint](docs/CODEX_CHECKPOINT.md) und Integrations-PR fortgeschrieben.
+**Getestet und bereinigt:** vollständige [Main-CI 41183481979](https://github.com/ManuEtt/Dnd/actions/runs/41183481979)
+auf `47ab0028` **erfolgreich**: **2.710 Flutter-, 262 Python- und 76 Backend-Tests**,
+20 zusätzliche UI-Fälle, 576 unveränderte Dart-Dateien, saubere Analyse,
+Backend-Typecheck/Build/Protokollsmoke, Debug-APK/native Gradle-Tests und
+optimierte ARM64-/ARMv7-/x64-APKs. [Cleanup 41184619156](https://github.com/ManuEtt/Dnd/actions/runs/41184619156)
+ist ebenfalls erfolgreich: alle **53 erfassten Altbranches** sind vollständig
+in Main enthalten, remote entfernt und mit exakt passenden Archivtags erhalten.
+[Einzelnachweis mit vollständigen SHAs](docs/parallel/MIGRATION_ACCEPTANCE_20261031.json).
+Die danach neu begonnenen PRs [#446](https://github.com/ManuEtt/Dnd/pull/446),
+[#447](https://github.com/ManuEtt/Dnd/pull/447) und [#448](https://github.com/ManuEtt/Dnd/pull/448)
+bleiben als aktive Entwicklung geschützt. Abschluss-PR #445 ändert nur Dokumentation.
+
+Der lokale volle Flutter-Testlog endet bei 1.154 erfolgreichen Fällen ohne
+Abschluss; er gilt ausdrücklich **nicht** als Vollpass. Die obigen Endergebnisse
+stammen aus den tatsächlich abgeschlossenen GitHub-Läufen.
 
 **Grenzen:** Sechs übernommene SRD-Bausteine sind eigenständige, getestete
 Domänen-APIs: Mehrziel-Magisches-Geschoss, dessen TP-Vorschau, Zauber-Aktionsökonomie,
@@ -46,7 +59,7 @@ bleiben unvollständig; 1.419 Prüfaufträge und neun offene Inventurlücken sin
 kein globaler Fertigstellungsprozentsatz. SQLite 3 / äußeres JSON 1 bleiben
 unverändert; bestehende Spielstände werden nicht automatisch neu berechnet.
 
-**Nächster Schritt nach abgeschlossener Integration:** bestätigte SRD-Klassenaliasnamen
+**Nächster Entwicklungsschritt:** bestätigte SRD-Klassenaliasnamen
 bei normalen Mehrklassen-Zauberplätzen kanonisieren. `Wizard` und `Magier` müssen
 dieselben belegten Plätze ergeben; Paktmagie bleibt getrennt, unbekannte Klassen
 werden nicht geraten. Zuerst aktuelle PRs/Quellen prüfen; Domain-, SQLite-/Retry-
@@ -91,6 +104,13 @@ hängt von den installierten Gerätediensten ab; vollständiges Offline-STT ist
 nicht garantiert. [Backend](backend/README.md) · [Sprache](docs/SPEECH_TROUBLESHOOTING.md).
 
 ## Artefakte und Wiederherstellung
+
+Aus der erfolgreichen Produkt-Main-CI `47ab0028`:
+[Quell-ZIP, Patch, Manifest und vollständiges History-Bundle](https://github.com/ManuEtt/Dnd/actions/runs/41183481979/artifacts/13036032830) ·
+[ARM64-Alpha mit Quellen](https://github.com/ManuEtt/Dnd/actions/runs/41183481979/artifacts/13036442277).
+Der enthaltene CI-Patch verwendet die Basis `72ba9d2e06e7121f955832b4ad22223f64f7c343`;
+für eine vollständige Wiederherstellung das ZIP oder History-Bundle verwenden.
+Der Abschlussnachtrag #445 wird als reine Dokumentationsänderung separat geprüft.
 
 Unter GitHub **Actions → erfolgreicher Android-Lauf → Artifacts** liegen
 vollständiges Quell-ZIP, Binärpatch, SHA256-Manifest und History-Bundle sowie

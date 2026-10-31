@@ -1,5 +1,21 @@
 # Gesamtintegration aller Branches – 30.10.2026, Issue #425
 
+## Abnahme vom 31.10.2026
+
+Die Gesamtmigration #440 ist regulär integriert (`72ba9d2e`); #444 bewahrt die
+zwischenzeitlichen sechs weiteren Branch-Historien (`47ab0028`). Vollständige
+Main-CI **41183481979 erfolgreich**: 2.710 Flutter / 262 Python / 76 Backend,
+20 zusätzliche UI-Fälle, 576 Formatdateien unverändert, Analyse und alle
+Debug-/native-/drei ABI-/Paket-Schritte bestanden. Cleanup **41184619156 erfolgreich**.
+Frischer unabhängiger Nachweis **53/53**: Main-Vorfahren, Remote-Refs entfernt,
+Archivtags mit exakten vollen Heads. [Einzelregister](MIGRATION_ACCEPTANCE_20261031.json).
+Der lokale unvollständige Flutter-Log bei 1.154 Fällen ist kein Vollpass.
+Die anschließend neu begonnenen PRs #446–#448 bleiben aktive geschützte Arbeit;
+Abschluss-PR #445 aktualisiert ausschließlich diese Dokumentation.
+
+Die folgenden Abschnitte beschreiben das überprüfte Integrationsverfahren und
+seine damaligen Vorbedingungen; die obigen beobachteten Endergebnisse gelten.
+
 ## Auftrag und Umfang
 
 Die neue ausdrückliche Nutzerweisung umfasst die fachlich geprüfte Migration
