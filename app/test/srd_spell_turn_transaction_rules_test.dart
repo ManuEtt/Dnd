@@ -93,7 +93,11 @@ void main() {
     final fight = _fight();
     final originalHero = jsonEncode(hero.toJson());
     final originalFight = jsonEncode(fight.toJson());
-    final prepared = _prepare(hero, catalog.find('Magic Missile')!, encounter: fight);
+    final prepared = _prepare(
+      hero,
+      catalog.find('Magic Missile')!,
+      encounter: fight,
+    );
     final result = _stage(hero, fight, prepared);
 
     expect(result.action, SrdSpellTurnAction.magicAction);
@@ -113,7 +117,11 @@ void main() {
   test('Bonus Action spends only bonus action and a level-two slot', () {
     final hero = _hero();
     final fight = _fight(actionUsed: true);
-    final prepared = _prepare(hero, catalog.find('Misty Step')!, encounter: fight);
+    final prepared = _prepare(
+      hero,
+      catalog.find('Misty Step')!,
+      encounter: fight,
+    );
     final result = _stage(hero, fight, prepared);
 
     expect(result.action, SrdSpellTurnAction.bonusAction);
@@ -147,8 +155,11 @@ void main() {
       throwsStateError,
     );
     expect(
-      _prepare(hero, bonus, encounter: _fight(surgeReserved: true))
-          .actionEvidence.action,
+      _prepare(
+        hero,
+        bonus,
+        encounter: _fight(surgeReserved: true),
+      ).actionEvidence.action,
       SrdSpellTurnAction.bonusAction,
     );
   });
@@ -189,7 +200,11 @@ void main() {
   test('encounter and hero changes invalidate a prepared transaction', () {
     final hero = _hero();
     final fight = _fight();
-    final plan = _prepare(hero, catalog.find('Magic Missile')!, encounter: fight);
+    final plan = _prepare(
+      hero,
+      catalog.find('Magic Missile')!,
+      encounter: fight,
+    );
     for (final changed in [
       _fight(actionUsed: true),
       _fight(bonusUsed: true),
@@ -202,10 +217,7 @@ void main() {
       () => _stage(hero.copyWith(gold: 5), fight, plan),
       throwsFormatException,
     );
-    expect(
-      () => _stage(hero, null, plan),
-      throwsFormatException,
-    );
+    expect(() => _stage(hero, null, plan), throwsFormatException);
     final restoredHero = HeroCharacter.fromJson(hero.toJson());
     final restoredFight = Encounter.fromJson(fight.toJson());
     final valid = _stage(restoredHero, restoredFight, plan);
@@ -222,7 +234,8 @@ void main() {
       throwsFormatException,
     );
     final plan = _prepare(
-      hero, leveled,
+      hero,
+      leveled,
       inCombat: false,
       outOfCombatSlotConfirmed: true,
     );
@@ -249,13 +262,19 @@ void main() {
       throwsUnsupportedError,
     );
     expect(
-      () => _prepare(hero, catalog.find('Magic Missile')!,
-        encounter: _fight(active: 'enemy')),
+      () => _prepare(
+        hero,
+        catalog.find('Magic Missile')!,
+        encounter: _fight(active: 'enemy'),
+      ),
       throwsStateError,
     );
     expect(
-      () => _prepare(hero.copyWith(hitPoints: 0),
-        catalog.find('Magic Missile')!, encounter: fight),
+      () => _prepare(
+        hero.copyWith(hitPoints: 0),
+        catalog.find('Magic Missile')!,
+        encounter: fight,
+      ),
       throwsStateError,
     );
   });

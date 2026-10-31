@@ -142,8 +142,7 @@ class SrdSpellTurnTransactionRules {
     );
     if (encounter == null &&
         (!outsideEncounterStillConfirmed ||
-            (spell.level > 0 &&
-                !plan.noSlotSpentOutsideEncounterConfirmed))) {
+            (spell.level > 0 && !plan.noSlotSpentOutsideEncounterConfirmed))) {
       throw const FormatException(
         'Der kampffreie Zauberzug muss beim Abschluss erneut bestätigt werden.',
       );
@@ -173,14 +172,13 @@ class SrdSpellTurnTransactionRules {
     final nextEncounter = encounter == null
         ? null
         : encounter.copyWith(
-            actionUsed:
-                currentAction.action == SrdSpellTurnAction.magicAction
-                    ? true
-                    : encounter.actionUsed,
+            actionUsed: currentAction.action == SrdSpellTurnAction.magicAction
+                ? true
+                : encounter.actionUsed,
             bonusActionUsed:
                 currentAction.action == SrdSpellTurnAction.bonusAction
-                    ? true
-                    : encounter.bonusActionUsed,
+                ? true
+                : encounter.bonusActionUsed,
             spellSlotExpendedThisTurn:
                 encounter.spellSlotExpendedThisTurn ||
                 currentAction.expendSpellSlot,
