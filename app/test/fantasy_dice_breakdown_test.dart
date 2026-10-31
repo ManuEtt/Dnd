@@ -105,6 +105,66 @@ void main() {
     expect(find.textContaining('Schadenswürfel:'), findsNothing);
   });
 
+  for (final width in [320.0, 360.0]) {
+    testWidgets(
+      'Offene Schildwahl auf $width dp/200 % verschweigt spekulativen Schaden',
+      (tester) async {
+        tester.view.physicalSize = Size(width, 1400);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        final semantics = tester.ensureSemantics();
+        final unresolved = confirmed('pending-private', 'combat.turnCompleted', {
+          'attackRoll': {
+            'rolls': [20],
+            'natural': 20,
+            'modifier': 4,
+            'total': 24,
+          },
+          'pendingEnemyShieldHit': true,
+          'hit': true,
+          'critical': true,
+          'damage': 99,
+          'damageRoll': {'rolls': [9], 'modifier': 3},
+          'criticalExtraRoll': {'rolls': [8]},
+          'sneakAttackRoll': {'rolls': [7]},
+          'stateAfter': {'private': 'UNRELEASED_CHECKPOINT'},
+        });
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: buildFantasyTheme(),
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaler: const TextScaler.linear(2),
+              ),
+              child: child!,
+            ),
+            home: Scaffold(
+              body: ListView(children: [FantasyCombatChronicle(events: [unresolved])]),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Angriffswürfel: 20 · Bonus: +4'), findsOneWidget);
+        expect(find.text('Wurf: 24 · Schildentscheidung offen'), findsOneWidget);
+        expect(find.textContaining('Schaden: 99'), findsNothing);
+        expect(find.textContaining('Schadenswürfel:'), findsNothing);
+        expect(find.textContaining('Kritische Zusatzwürfel:'), findsNothing);
+        expect(find.textContaining('Hinterhältige Angriffswürfel:'), findsNothing);
+        expect(find.textContaining('KRITISCHER TREFFER'), findsNothing);
+        expect(find.bySemanticsLabel(RegExp(r'Schaden: 99|KRITISCHER TREFFER|Treffer,')), findsNothing);
+        expect(
+          find.bySemanticsLabel(RegExp(r'Kampfrunde abgeschlossen, .*Schildentscheidung offen')),
+          findsOneWidget,
+        );
+        expect(find.textContaining('UNRELEASED_CHECKPOINT'), findsNothing);
+        expect(tester.takeException(), isNull);
+        semantics.dispose();
+      },
+    );
+  }
+
   testWidgets('Manuelles Gesamtergebnis erfindet keine Einzelwürfel', (
     tester,
   ) async {
