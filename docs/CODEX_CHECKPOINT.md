@@ -1,6 +1,6 @@
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
-Stand: 30.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
+Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
 Alpha **0.8.49+99**. Dieser neue Live-Status ersetzt widersprüchliche historische
 Momentaufnahmen; die vollständige additive Vereinigung ist bytegenau unter
 `docs/history/migration_20261030/` archiviert, samt Manifest.
@@ -9,10 +9,13 @@ Momentaufnahmen; die vollständige additive Vereinigung ist bytegenau unter
   Integrationsfehler beheben, anschließend gesichert bereinigen und #425 lösen.
   Die ausdrückliche Nutzerweisung erweitert den bisherigen Chat-A-Bereich.
 - **Basis-main:** `6465a4b2fc8d42ae7aab596ac26e85d61d2b8f49`.
-- **Branch:** `integrate/all-branches-issue425-20261030`.
+- **Abschlussbranch:** `docs/migration-issue425-acceptance-20261031`.
+- **Produkt-Main:** `47ab002872b7d46daeae03bb558258cf2ea73e4a`,
+  regulärer Historiennachtrag #444 nach Gesamtmerge #440 (`72ba9d2e`).
+  Alle offenen Ursprungs-PRs dadurch automatisch als übernommen geschlossen.
 - **Kombinierter Fachstand:** `b0a4211c` (vollständig über Git auflösen).
-  Aktuelle PR-/Main-SHAs und finale CI im Integrations-PR prüfen, keine
-  erfolgreiche Main-Integration aus diesem Vorab-Checkpoint ableiten.
+  Gesamt-PR #440 ist mit finalem HEAD `ea4561f4` regulär integriert;
+  dessen vollständige Main-CI ist erfolgreich, Nachtrags-Main separat prüfen.
 - **Inventar:** anfangs 46 Remote-Referenzen mit Main / 41 offene PRs; zusätzlich
   während der Prüfung #437 mit eigener gesicherter Referenz aufgenommen.
   Alle 47 dokumentierten Heads sind Vorfahren des kombinierten Fachstands.
@@ -39,9 +42,18 @@ Regelregressionen; 89 Story-/Persistenztests, 55 UI-Tests, 11 Outbox-/SQLite-Tes
 258 Pythonfälle und je nach Teilgruppe 73/75 Backendfälle. Analyse/Format und
 Modulgrenzen bestanden. Dies sind Teilpaketnachweise, keine Gesamtabnahme.
 
-Kombinierte `bash scripts/check.sh`, Android-Debug-/native und GitHub-Prüfungen
-werden im laufenden Integrationszyklus ausgeführt. Erst beobachtete Endergebnisse
-hier bzw. im PR als erfolgreich fortschreiben.
+**Vollständige Main-CI [41180122526](https://github.com/ManuEtt/Dnd/actions/runs/41180122526)**
+auf `72ba9d2e06e7121f955832b4ad22223f64f7c343`: **completed/success**.
+Tatsächliche Logs: **2.710 Flutter / 258 Python / 76 Backend**, 20 zusätzliche
+gezielte UI-Fälle, Format 576 Dateien ohne Änderungen, Analyse ohne Befund,
+Backend-Typecheck/Build und lokaler Protokollsmoke, Debug-APK, native Gradle-Tests,
+drei optimierte ABI-APKs sowie Source-/Alpha-Pakete bestanden.
+Der lokale vollständige Flutter-Lauf endete durch Sitzungsunterbrechung bei
+1.154 erfolgreichen Fällen; kein Vollpass und keine Hintergrundfortsetzung.
+[Neue Main-CI 41183481979](https://github.com/ManuEtt/Dnd/actions/runs/41183481979)
+auf `47ab0028` und sechs verbleibende Branches sind vor Abschluss erneut zu prüfen.
+Lokale Projekt-/Importgrenzen-/SRD-Prüfung und Pythonfälle auf `47ab0028` erneut
+gegen den vollständigen Git-Verlauf ausgeführt; Endergebnis im Abschlussbericht.
 
 ## NICHT GETESTET
 

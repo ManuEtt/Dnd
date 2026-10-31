@@ -5,12 +5,14 @@ regelgeprüfte Aktionen und ein optionaler Fastify-/TypeScript-Erzähler.
 
 ## Aktueller Stand und autonome Fortsetzung
 
-**Alpha 0.8.49+99 – Branch-Integration vom 30.10.2026 (Issue #425).**
-Arbeitsbranch: `integrate/all-branches-issue425-20261030`, Basis-Main:
-`6465a4b2fc8d42ae7aab596ac26e85d61d2b8f49`.
-Der geprüfte kombinierte Fachstand ist `b0a4211c`.
-Main-Merge, finale Main-CI und Branchbereinigung sind bis zum beobachteten
-Abschluss getrennte Freigabeschritte; der Live-Nachweis steht im Integrations-PR.
+**Alpha 0.8.49+99 – Gesamtintegration vom 30./31.10.2026, Issue #425.**
+[PR #440](https://github.com/ManuEtt/Dnd/pull/440) ist regulär in Main
+`72ba9d2e06e7121f955832b4ad22223f64f7c343` integriert.
+[PR #444](https://github.com/ManuEtt/Dnd/pull/444) bewahrt anschließend die
+restlichen Ursprungshistorien mit vier zusätzlichen Manifest-/Testdateien:
+Main `47ab002872b7d46daeae03bb558258cf2ea73e4a`.
+Originale App-/Backend-Dateien bleiben dabei bytegleich.
+Der Abschlussnachtrag entsteht auf `docs/migration-issue425-acceptance-20261031`.
 
 **Implementiert und zusammengeführt:**
 
@@ -32,10 +34,15 @@ Abschluss getrennte Freigabeschritte; der Live-Nachweis steht im Integrations-PR
   Gesamtmodifikatoren, ungültige Zweitklasse auf Stufe 0 und abweichender
   NPC-Namensvergleich bei eingefügten Richtungszeichen.
 
-**Teststatus:** Die vier Teilpakete sind gezielt geprüft. Die kombinierte
-Vollsuite und Android-Abnahme laufen; vor ihrem Abschluss keine erfolgreiche
-Gesamt-CI oder installierte Geräteversion annehmen. Aktuelle belegte Ergebnisse
-werden im [Checkpoint](docs/CODEX_CHECKPOINT.md) und Integrations-PR fortgeschrieben.
+**Getestet:** Die vollständige [Main-CI 41180122526](https://github.com/ManuEtt/Dnd/actions/runs/41180122526)
+auf `72ba9d2e` hat **2.710 Flutter-, 258 Python- und 76 Backend-Tests** bestanden;
+zusätzlich 20 gezielte UI-Fälle, 576 unveränderte Dart-Dateien, saubere Analyse,
+Backend-Typecheck/Build/Protokollsmoke, Android-Debug-Build, native Gradle-Tests
+und optimierte ARM64-/ARMv7-/x64-Alpha-APKs. Die zusätzliche Main-CI auf `47ab0028`
+mit den vier Herkunftsregressionen wird vor Abschluss gesondert geprüft.
+Der lokale volle Flutter-Lauf wurde durch die Sitzungsunterbrechung bei
+1.154 erfolgreichen Fällen beendet; er gilt ausdrücklich **nicht** als Vollpass.
+Verbindlich sind die tatsächlich fertiggestellten GitHub-Läufe.
 
 **Grenzen:** Sechs übernommene SRD-Bausteine sind eigenständige, getestete
 Domänen-APIs: Mehrziel-Magisches-Geschoss, dessen TP-Vorschau, Zauber-Aktionsökonomie,
