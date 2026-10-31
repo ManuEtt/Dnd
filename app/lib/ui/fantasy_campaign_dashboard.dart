@@ -325,25 +325,51 @@ class FantasyActiveHeroCard extends StatelessWidget {
                   ),
                 ],
                 const SizedBox(height: 13),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    FantasyTextButton(
-                      key: const ValueKey('fantasy-hero-continue'),
-                      label: 'Abenteuer fortsetzen',
-                      icon: Icons.play_arrow,
-                      style: FantasyButtonStyle.woodGold,
-                      onPressed: onContinue,
-                    ),
-                    FantasyTextButton(
-                      key: const ValueKey('fantasy-hero-archive'),
-                      label: 'Helden verwalten',
-                      icon: Icons.people_outline,
-                      style: FantasyButtonStyle.iron,
-                      onPressed: onHeroes,
-                    ),
-                  ],
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    // Large Android text can make adjacent actions too narrow.
+                    // Stack them without truncating their accessible labels.
+                    final stacked =
+                        constraints.maxWidth < 500 &&
+                        MediaQuery.textScalerOf(context).scale(1) >= 1.8;
+                    final continueAction = FocusTraversalOrder(
+                      order: const NumericFocusOrder(1),
+                      child: FantasyTextButton(
+                        key: const ValueKey('fantasy-hero-continue'),
+                        label: 'Abenteuer fortsetzen',
+                        icon: Icons.play_arrow,
+                        style: FantasyButtonStyle.woodGold,
+                        onPressed: onContinue,
+                      ),
+                    );
+                    final heroesAction = FocusTraversalOrder(
+                      order: const NumericFocusOrder(2),
+                      child: FantasyTextButton(
+                        key: const ValueKey('fantasy-hero-archive'),
+                        label: 'Helden verwalten',
+                        icon: Icons.people_outline,
+                        style: FantasyButtonStyle.iron,
+                        onPressed: onHeroes,
+                      ),
+                    );
+                    return FocusTraversalGroup(
+                      policy: OrderedTraversalPolicy(),
+                      child: stacked
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                continueAction,
+                                const SizedBox(height: 8),
+                                heroesAction,
+                              ],
+                            )
+                          : Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: [continueAction, heroesAction],
+                            ),
+                    );
+                  },
                 ),
               ],
             ),

@@ -1,6 +1,7 @@
 import 'models.dart';
 import 'srd_spell_catalog.dart';
 import 'srd_spell_component_rules.dart';
+import 'srd_spell_inventory_id_rules.dart';
 
 /// One explicitly verified link between a catalogue material requirement
 /// and an existing inventory stack. No inventory name or prose is trusted.
@@ -55,8 +56,7 @@ class SrdSpellAuditedInventoryRules {
 
     final available = <String, InventoryItem>{};
     for (final item in hero.inventory) {
-      if (item.id.isEmpty ||
-          item.id.trim() != item.id ||
+      if (!SrdSpellInventoryIdRules.isSafe(item.id) ||
           available.containsKey(item.id) ||
           item.quantity < 1) {
         throw const FormatException(
@@ -71,8 +71,7 @@ class SrdSpellAuditedInventoryRules {
     for (final binding in bindings) {
       if (!recipe.any((item) => item.id == binding.materialId) ||
           declared.containsKey(binding.materialId) ||
-          binding.inventoryId.isEmpty ||
-          binding.inventoryId.trim() != binding.inventoryId ||
+          !SrdSpellInventoryIdRules.isSafe(binding.inventoryId) ||
           !assignedStacks.add(binding.inventoryId) ||
           !binding.identityAndValueConfirmed ||
           !binding.requiredQuantityConfirmed) {

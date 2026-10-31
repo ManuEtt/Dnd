@@ -1,4 +1,101 @@
+# Chat B – NPC-Kontext ohne Steuerzeichen (30.10.2026)
+
+## Chat B – bestätigte NPC-Chronik ohne unsichtbare Steuerzeichen (30.10.2026)
+
+[Draft-PR #398](https://github.com/ManuEtt/Dnd/pull/398) auf
+`feat/chat-b/npc-context-control-sanitizing-20261030`, Ausgangs-`main`
+`55fe44475a113943c6310ec16a8ffb481185f4e9`.
+
+**IMPLEMENTIERT:** Der schreibgeschützte `NpcContinuityReader` entfernt
+ASCII-/C1-Steuerzeichen, Unicode-Zeilentrenner und Bidi-Formatierungszeichen
+vor der Darstellung bestätigter Namen, Beziehungen und NPC-Notizen.
+Visuell gleiche NPC-Namen werden so deterministisch als mehrdeutig erkannt;
+sichere gespeicherte IDs bleiben die einzige Unterscheidung.
+Vier neue positive und negative Flutter-Regressionen im
+`npc_continuity_control_chars_test.dart`; keine bestätigten Fakten verändert.
+
+**GETESTET:** GitHub-Quellstand, PR-Dateipfade und fremde offene PRs geprüft.
+**NICHT GETESTET:** neue Flutter-Regressionen und vollständige CI auf dem
+finalen Dokumentationscommit noch abzunehmen; lokal kein Dart/Flutter-SDK,
+kein GitHub-DNS-Checkout. Reales Android-Gerät/produktive KI nicht geprüft.
+**MIGRATION:** keine; SQLite/JSON, Regeln und App-Version unverändert.
+**KOORDINATION:** PR #396 ändert ein anderes Storymodul; gemeinsame README-
+und Checkpoint-Dokumentation vor einem Merge additiv durch Chat D konsolidieren.
+**NÄCHSTER SCHRITT:** Finales CI-Format/Tests des PR #398 prüfen; bei Fehlern
+auf demselben Branch korrigieren, danach Review ohne automatischen Merge.
+# Chat B – NPC-Erinnerungs-Wire (30.10.2026)
+
+## Chat B – Bidi-sichere NPC-Erinnerungen im Erzählertransport (30.10.2026)
+
+- **Ausgangs-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`; **Branch:** `feat/chat-b/npc-narrator-wire-bidi-20261030`; **PR:** [#403](https://github.com/ManuEtt/Dnd/pull/403) (Draft).
+- **Ausgangsproblem:** Unauffällige Unicode-Bidi-Formatierungsmarkierungen konnten gespeicherte NPC-Notizen im `memories`-Transport täuschend darstellen. Gleich angezeigte Namen wie `Mira` und `Mira` mit Bidi-Override galten als zwei unabhängige Namen und erlaubten eine scheinbar eindeutige Namenszuordnung.
+- **IMPLEMENTIERT:** `app/lib/story/npc_narrator_memory.dart` normalisiert diese Formatierungszeichen nur für die ausgehende, schreibgeschützte Erinnerung und ihre Namenserkennung. Visuell identische NPCs erhalten ohne explizite Identitätsauswahl keine priorisierten NPC-Notizen. Vier neue Fälle in `app/test/npc_narrator_bidi_wire_test.dart` für Identitätsmehrdeutigkeit, sauberen Wire-Text, Legacy-JSON und SQLite-Neustart mit echtem GameController und kostenlosem Fake-Backend.
+- **GETESTET:** Quellstand, Main-SHA und alle offenen PR-Dateipfade auf Überschneidungen geprüft. **CI für PR #398:** [Push](https://github.com/ManuEtt/Dnd/actions/runs/41007610629) und [PR](https://github.com/ManuEtt/Dnd/actions/runs/41007615695) beide auf `92ddc263` erfolgreich; diese gehören zum **vorherigen** Paket, nicht zu #403.
+- **NICHT GETESTET:** neue Tests/Flutter-Analyse/Android-APK von #403 erst nach finaler GitHub-CI gültig; reales Gerät/TalkBack und produktiver KI-Anbieter offen. Kein lokales Dart-/Flutter-SDK.
+- **MIGRATIONEN:** keine, Regelzustand, SQLite/JSON und App-Version unverändert. Auch ältere gespeicherte Werte werden nicht umgeschrieben.
+- **KOORDINATION:** #396 (`story_memory_engine.dart`) und #398 (`npc_continuity_reader.dart`) betreffen andere Fachdateien. Gemeinsame README und zentrale Checkpoints müssen Chat D additiv konsolidieren; kein Merge fremder PRs.
+- **NÄCHSTER SCHRITT:** Finale vollständige CI von #403 auf dessen finalem HEAD abnehmen und bei Fehlern im eigenen Branch reparieren; keine Freigabe ohne grüne Builds.
+
+---
+
 # Chat B – Sitzungsidentität beim Ereignis-Replay (27.10.2026)
+
+## Chat B – unveränderliche NPC-Erinnerung nach SQLite-Neustart (30.10.2026)
+
+- **PR:** [#431](https://github.com/ManuEtt/Dnd/pull/431). **Ausgangspunkt:** `main` `69bfe78ec4eeb30042b26971978038a2ee9dac34`, Chat-B-Branch `feat/chat-b/npc-context-immutable-restart-20261030`. Alle 38 zuvor offenen PRs auf Änderungen an den neuen Fach- und Testpfaden geprüft; keine Überschneidung. PR #424 ist mit GitHub Actions [#41120298615](https://github.com/ManuEtt/Dnd/actions/runs/41120298615) vollständig grün, aber weiterhin offen.
+- **Problem:** `NpcIdentityContext.toContextMap()` lieferte ein veränderbares äußeres Map, eine veränderbare Notizliste und veränderbare Notizmaps. Aufrufer konnten nach der Bestätigung erzählte NPC-Kontextwerte ohne Spielstandänderung manipulieren.
+- **Implementiert:** Das äußere Kontext-Map, die verschachtelte Liste und jede Notizmap sind jeweils unmodifiable. Identische Felder, Reihenfolge, JSON-Ausgabe und Story-/Backend-Protokoll bleiben erhalten; keine Regel- oder Speicher-Migration.
+- **Testpaket:** `app/test/npc_identity_context_immutable_restart_test.dart` prüft erlaubte JSON-Ausgabe, gesperrte Mutationen auf drei Ebenen, identische NPC-Namen mit unterschiedlichen IDs, explizite Auswahl, SQLite-Schließen/Neustart, gleichrevisionierte Änderungen und unveränderten persistierten Heldenzustand.
+- **Tests/CI zum Zeitpunkt der Anlage:** Testcode hinzugefügt, finale Flutter-/Android-CI auf dem Branch gesondert nachweisen, kein Gerätetest oder kostenpflichtiger KI-Dienst. Zentrale README-/Checkpoint-Ergänzungen additiv halten und mit Chat D koordinieren.
+- **Nächster Schritt:** Den fertigen PR-Commit durch alle Gates abnehmen und erst danach die Integration durch Chat D freigeben.
+## Chat B – Strukturierte NPC-ID-Kontexte gegen Unicode-Bidi-Täuschung (30.10.2026)
+
+- **Ausgangs-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`; **Branch:** `feat/chat-b/npc-identity-bidi-context-20261030`; **PR:** [#407](https://github.com/ManuEtt/Dnd/pull/407), Draft; Fachcode-Commit `dfc3bf90c63f33335d4b7a4c2c420b91af4b4f61` (finalen HEAD im PR prüfen).
+- **Ausgangsproblem:** Optisch identische NPC-Namen mit Bidi-Richtungszeichen konnten für die freie NPC-Auswahl als unterschiedlich gelten; die strukturierte `npcContexts`-Projektion gestattete dieselben Zeichen in Namen, Beziehungen und bestätigten Notizen.
+- **IMPLEMENTIERT:** `app/lib/story/npc_identity_story_payload.dart` ignoriert unsichtbare Bidi-Formatierungszeichen bei der *Namenseindeutigkeit*, weist betroffene Originaltexte im strukturierten, revisionsgebundenen Transport aber zurück (fail-closed). Bestätigte SQLite-/JSON-Daten werden nicht umgeschrieben; explizite valide NPC-ID-Auswahl bleibt möglich.
+- **TESTS ERGÄNZT:** `app/test/npc_identity_bidi_story_wire_test.dart`: sechs Flutter-Testfälle, darunter mehrere Unicode-Markierungen, vier unsichere Felder, positiv deutsche Namen/Revisionsgrenzen, Legacy-Kampagne ohne Notizen, zweimal SQLite-Neustart mit kostenlosem Fake-Backend und `npc-identity-v1` an/aus. **Ergebnis:** vollständige GitHub-CI von PR #407 am endgültigen Commit auswerten, vor Abschluss keine grüne CI behaupten.
+- **DATEIEN:** `app/lib/story/npc_identity_story_payload.dart`, `app/test/npc_identity_bidi_story_wire_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_B_CHECKPOINT.md`. Keine fremden Fachdateien, keine Migration/Buildnummer/SRD-Regeländerung.
+- **KOORDINATION:** PRs #396, #398 und #403 ändern andere Storymodule. README-/Checkpoint-Einträge von Chat A/C/D bei Integration durch Chat D additiv konsolidieren; kein automatischer Merge. `memories`-Text-Wire ist gesonderte Arbeit in [#403](https://github.com/ManuEtt/Dnd/pull/403), keine doppelte Änderung hier.
+- **BLOCKIERT/NICHT GETESTET:** CI-/Android-Abnahme für PR #407 bis zum finalen Lauf offen; reales Android-Gerät, TalkBack und produktive KI nicht getestet.
+- **NÄCHSTER SCHRITT:** PR-CI und Push-CI bis zum Abschluss prüfen, bei Fehlern Ursache im eigenen Branch beheben, dann an Chat D zur konfliktfreien Integration übergeben.
+## Entwicklung 30.10.2026 – sichere NPC-ID im bestätigten Story-Gedächtnis (PR #396)
+
+- **Ausgangs-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`. **Branch:** `feat/chat-b/safe-npc-identity-recall-20261030`. **Fachcode-Commit:** `34b92d7ee6cc0415f8ca7d4ebcac977e70efda26`; **Test-Commit:** `d43d3246fdee2682c74e1cbc8f1607c38a1c3077`. [Draft-PR #396](https://github.com/ManuEtt/Dnd/pull/396); finalen Dokumentations-HEAD in GitHub nachsehen.
+- **Problem:** `MemoryEngine.retrieve` und `buildSessionSummary` schrieben untypische gespeicherte IDs gleichnamiger NPCs einschließlich Zeilenumbrüchen ungeprüft in bestätigte Erzählertexte, anders als die bereits gehärtete Identitätsabfrage.
+- **Lösung:** Eindeutig gespeicherte gleichnamige NPCs erscheinen nur noch mit kanonischer ID `[A-Za-z0-9_-]{1,64}`; sonst werden ihre mehrdeutigen NPC-spezifischen Zeilen/Notizen aus dem Recall und Recap ausgelassen. Andere NPCs und eindeutig benannte historische NPCs bleiben lesbar. Nichts wird im gespeicherten Spielstand umgeschrieben.
+- **Geänderte Fachdateien:** `app/lib/story/story_memory_engine.dart`; neuer Test `app/test/story_memory_unsafe_npc_id_test.dart`. Dokumentation additiv in README, zentralem und persönlichem Checkpoint.
+- **Akzeptanz / Regression:** Negativfälle für Zeilenumbruch, Leerzeichen, Punkt und 65 Zeichen; gültige 64-Zeichen-ID, SaveSessionRecap mit JSON-Roundtrip, eindeutiger Legacy-NPC mit untypischer ID. Unveränderte Heldenwerte und Spielstände. Bestehende Tests bleiben aktiv.
+- **GETESTET:** Code- und PR-Struktur sowie aktuelle fremde PR-Dateipfade über GitHub geprüft; **keine ausgeführte Dart/Flutter-Regressionssuite belegt**.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse/-Test, Python-, Backend-, Android-/native CI auf finalem Commit; echtes Android-Gerät und KI-Provider. Auf GitHub Actions warten und finalen Head gesondert zuordnen.
+- **BLOCKIERT:** Direkter Git-Checkout wegen DNS, lokal weder Flutter- noch Dart-SDK. GitHub-Connector stellt Branch-/PR-Schreiben bereit.
+- **Migrationen:** keine (SQLite/JSON unverändert). Regelengine, Controller, Domänen- und Speichermodelle nicht geändert.
+- **Koordination:** Bei Start offene PRs #387, #388, #389, #391, #392, #394, #395; keine Story-Fachdateien betroffen. Geteilte README/Checkpoint-Änderungen durch Chat D additiv zusammenführen; kein automatischer Merge.
+- **Nächster konkreter Schritt:** Die vier neuen Regressionen plus vollständige CI auf finalem PR-HEAD prüfen, Fehler im eigenen Branch korrigieren und erst danach Review/Freigabe beantragen.
+
+---
+## Chat B – Eindeutige IDs für bestätigte Story-Einträge (30.10.2026)
+
+- **Ausgangs-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`; **Branch:** `feat/chat-b/story-entry-id-collision-20261030`; **PR:** [#414](https://github.com/ManuEtt/Dnd/pull/414), Draft; erste Fachcommits `9001dac7` und `33088157` (finale SHA im PR verifizieren).
+- **Ausgangsproblem:** Nach App-Neustart oder Import kann der zeit- und sequenzbasierte ID-Generator alte IDs erneut erzeugen. Die Speicherung neuer NPC-Beziehungsnotizen, Sitzungsrückblicke und Handlungsstränge prüfte solche Kollisionen nicht.
+- **IMPLEMENTIERT:** `app/lib/story/story_campaign_engine.dart` prüft generierte Eintrags-IDs vor dem Story-Commit auf bereits vorhandene IDs desselben Typs und weist Doppelbelegungen mit `FormatException` ab. Bearbeitungen bestehender Threads behalten ihre ID. Kein Schema-, Modell-, Regel- oder SQLite-Wechsel.
+- **TESTS ERGÄNZT:** `app/test/story_confirmed_entry_id_collision_test.dart` mit sechs Regressionen: drei ID-Kollisionen, JSON-Neustart-Analogie, bestehende Thread-Bearbeitung, valide neue Journaleinträge und einen echten SQLite-Schließen/Neuöffnen/Weiterführen-Roundtrip mit Revisions- und Regelzustandsprüfung. Vor dem SQLite-Zusatz bestanden beide vollständigen GitHub-CI-Läufe auf `5c70fe20602d0c5f71a17f2b15bd2bcc9fe20e4f` (PR-CI `41071413126`, Push-CI `41071407643`); der neue finale Commit benötigt erneute Abnahme.
+- **DATEIEN:** `app/lib/story/story_campaign_engine.dart`, `app/test/story_confirmed_entry_id_collision_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **KOORDINATION:** Keine Fachdatei-Überschneidung mit offenen PRs #396/#398/#403/#407 oder den parallelen Chat-A/C/D-Arbeiten. Gemeinsame README- und zentrale Checkpoints bei Integration durch Chat D additiv konsolidieren. Kein Merge, kein Force-Push.
+- **NICHT GETESTET/BLOCKIERT:** Laufende CI-/Android-Abnahme für #414 noch nicht belegt; reale Android-Installation und produktive KI nicht getestet. Keine Migration erforderlich.
+- **NÄCHSTER SCHRITT:** Finale GitHub-Push- und PR-CI samt vollständiger Flutter-Suite und APK-Builds prüfen, rote Gates im eigenen Branch korrigieren und erfolgreichen PR zur Integration an Chat D übergeben.
+
+
+## Chat B – KI-Story-Formatzeichen (30.10.2026)
+
+- **Basis-main:** 55fe44475a113943c6310ec16a8ffb481185f4e9; **Merge-Basis:** 69bfe78ec4eeb30042b26971978038a2ee9dac34; **PR:** #424; **Implementierungs-Commit:** e754f58bdd9b43b801beeecebcc727177a80e8fb; **Branch:** feat/chat-b/story-provider-unicode-guard-20261030.
+- **Problem:** Generierte Szenen, NPC- und Handlungsnamen sowie dauerhafte Notizen konnten versteckte Steuerzeichen, Bidi-Anweisungen und Zero-Width-Space enthalten.
+- **IMPLEMENTIERT:** Parser von Flutter und Backend weisen solche unbestätigten Textwerte zurück; reguläre Zeilenumbrüche/Tabs sowie sichtbare Unicode-Buchstaben werden beibehalten.
+- **Tests ergänzt (nicht als bestanden behauptet):** app/test/ai_story_unicode_format_guard_test.dart und backend/test/story-unicode-format-guard.test.ts mit positiven, negativen und Unveränderlichkeitsfällen.
+- **Dateien:** app/lib/story/ai_story.dart, backend/src/story.ts, die zwei Tests sowie diese Chat-B-Datei, docs/CODEX_CHECKPOINT.md und README.md.
+- **Keine Migration:** Modelle, Schema, SQLite, Regelzustände und Controller unverändert. Bestehende ältere Speicherstände werden nicht stillschweigend bereinigt.
+- **NICHT GETESTET:** lokale Flutter-/Dart-/Android-Prüfungen mangels SDK; finale GitHub-CI und echtes Gerät noch abzunehmen.
+- **Nächster Schritt:** CI-Gates auf finalem PR-Commit prüfen und bei roten Prüfungen denselben Branch reparieren.
+
 
 ## Integrationskandidat 29.10.2026 – Chat B
 

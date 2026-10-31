@@ -1,3 +1,58 @@
+## 30.10.2026 – Gesamtintegration, Alpha 0.8.49+99, Issue #425
+
+Alle 45 ursprünglichen Entwicklungsheads und der neue Integrationsbranch #437
+regulär mit Historie vereinigt. Drei reproduzierte Integrationsfehler behoben
+(Konzentrations-Gesamtgrenzen, Zweitklasse Stufe 0, NPC-Bidi-Namensvergleich).
+Keine SQLite-/JSON-Migration. Getrennte Fachprüfungen bestanden; kombinierte
+Vollsuite und Android-/PR-/Main-CI in Abnahme, Branchbereinigung erst nach
+nachgewiesenem Erfolg. Aktuelle Ergebnisse und Grenzen: [Checkpoint](docs/CODEX_CHECKPOINT.md)
+und [Gesamtbericht](docs/parallel/ALL_BRANCHES_MIGRATION_20261030.md).
+Alle folgenden älteren Angaben sind historische Momentaufnahmen, bytegenau
+zusätzlich unter `docs/history/migration_20261030/` erhalten.
+
+---
+
+## Chat A – offener Regel-PR: Todesrettungs-Klassenprüfung (30.10.2026)
+
+Basis-Main `55fe4447`, Arbeitsbranch `feat/chat-a/death-save-class-validation-20261030`,
+Laufzeit-/Testcommit `ee1e5a19e03b5db60fad838d0da36d1f360b84bc`. Unbekannte Haupt-/Zweitklassen können keinen
+Mönch-Todesrettungsbonus oder Klassen-Wiederholungswurf mehr freigeben; auch
+alte offene Proben werden vor einem neuen Wurf geprüft. Historische Profile und
+unversionierte Proben bleiben lesbar, keine DB-/JSON-Migration. **2.504 Flutter-, 221 Python- und 72 Backend-Tests bestanden**, darunter 93
+gezielte Domain-/Flow-/SQLite-/UI-Fälle. Formatprüfung 537 Dateien unverändert,
+Analyse/Backend-Typecheck/Build/Protokollsmoke sauber. ARM64-Debug-Build und zwölf native App-Tests ebenfalls bestanden.
+[PR #416](https://github.com/ManuEtt/Dnd/pull/416) · [CI des aktuellen PR-Kopfs](https://github.com/ManuEtt/Dnd/pull/416/checks).
+Kein Merge nach Main behauptet; Chat D konsolidiert diesen eigenen PR mit den
+parallelen Paketen. Version weiterhin Basis0.8.48+98. Geräteprüfung bleibt offen.
+[Chat-A-Checkpoint](docs/parallel/CHAT_A_CHECKPOINT.md) ·
+[Fachnachweis](docs/parallel/CHAT_A_DEATH_SAVE_CLASS_VALIDATION_20261030.md).
+## Geprüfter Integrationsstand vor erneuter Abnahme
+
+Main ist während dieses Pakets auf `69bfe78ec4eeb30042b26971978038a2ee9dac34`
+(PR413, barrierefreie Todesrettungsoberfläche) weitergelaufen. Dieser Stand wird
+regulär in den eigenen Branch übernommen; beide README-/Checkpoint-Berichte
+bleiben erhalten. Der frühere Vollversuch auf Basis55fe4447 wurde vor Abschluss
+bewusst beendet und gilt nicht als bestandene Vollsuite, auch wenn Flutter beim
+SIGTERM Exit0 liefert. Die kombinierte Vollsuite und finale CI werden neu geprüft.
+Der eigene Rast-Laufzeit-/Testcode19fe5e16 ist unverändert. Main wird durch diesen
+Branch-Merge nicht verändert; PR416 und andere fremde Pakete bleiben getrennt.
+
+## Chat A – Kurzrast-Ressourcenprüfung (offener PR#428, 30.10.2026)
+
+[PR#428](https://github.com/ManuEtt/Dnd/pull/428) · [aktuelle Checks und Vollabnahme](https://github.com/ManuEtt/Dnd/pull/428/checks).
+Basis-Main55fe4447, Branch `feat/chat-a/short-rest-resource-preflight-20261030`,
+Quellcode-/Testcommit `19fe5e16394fae096c082a86e7aa8886461fc883`. Ungültige Klassen-/Paktressourcen werden im
+Kurzrastpfad mit Trefferwürfeln vor RNG und Erholung geprüft. **2495 Flutter-/221 Python-/72 Backend-Tests auf kombiniertem Stand bestanden**,
+538 Formatdateien unverändert, Analyzer sauber. Zusätzlich ARM64-Debug und zwölf
+native App-Tests bestanden; darunter65 gezielte Domain-/Bestands- und sieben neue
+Flow-/SQLitefälle. Vollständige
+Test-/Buildzahlen und CI-/Artefaktnachweise stehen im aktuellen PR; keine
+Geräteabnahme behauptet. Langrast und Engine-Null-HD-Sonderpfade bleiben getrennt.
+Appbasis0.8.48+98, SQLite3/JSON1 unverändert. Voriger PR416 bleibt separat offen;
+Integration/Dokumentationskonsolidierung durch Chat D, Main nicht verändert.
+[Chat-A-Checkpoint](docs/parallel/CHAT_A_CHECKPOINT.md) ·
+[Fachnachweis](docs/parallel/CHAT_A_SHORT_REST_RESOURCE_PREFLIGHT_20261030.md).
+
 # Codex-Checkpoint – Würfelraunen
 
 ## Abnahme – Mönch-Werkzeugwahl, Alpha 0.8.48+98

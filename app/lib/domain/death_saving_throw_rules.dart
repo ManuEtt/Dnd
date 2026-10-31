@@ -211,13 +211,22 @@ class DeathSavingThrowRules {
   static void _validateClassLevels(HeroCharacter hero) {
     final primary = findSrdClass(hero.className)?.name;
     final secondary = findSrdClass(hero.secondaryClassName)?.name;
+    // A numerically plausible split does not confirm either SRD class. In
+    // particular, an unknown class must not authorize a Monk 14 proficiency
+    // bonus or a Fighter/Monk reroll. Reject before resolving a save or RNG.
+    // Historical profiles remain readable; this validates the rule action.
+    if (primary == null || (hero.hasSecondClass && secondary == null)) {
+      throw const FormatException(
+        'Für den Todesrettungswurf müssen Haupt- und Zweitklasse '
+        'als SRD-Klassen bestätigt sein.',
+      );
+    }
     if (hero.level < 1 ||
         hero.level > 20 ||
         hero.primaryClassLevel < 1 ||
         hero.secondaryClassLevel < 0 ||
         (hero.hasSecondClass
-            ? hero.secondaryClassLevel < 1 ||
-                  (primary != null && primary == secondary)
+            ? hero.secondaryClassLevel < 1 || primary == secondary
             : hero.secondaryClassLevel != 0)) {
       throw StateError('Die gespeicherten Klassenstufen sind ungültig.');
     }

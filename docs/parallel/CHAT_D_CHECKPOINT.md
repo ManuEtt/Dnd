@@ -128,10 +128,143 @@
 - **Koordination:** zum Start alle PRs bis #405 geprüft; keine betroffene technische Datei bereits durch fremde PRs in Arbeit. Gemeinsame README-/Checkpoint-Änderungen später verlustfrei konsolidieren. Keine automatischen Merges/Löschungen.
 - **Vorarbeiten:** #401 und #402 auf jeweiligem finalem Commit erfolgreich per GitHub Actions geprüft und zur Review freigegeben; weiterhin nicht in `main` integriert.
 - **Nächster Schritt:** komplette PR-CI #406 am finalen Head verifizieren, Fehler auf demselben Branch reparieren und bei Grün zur Review freigeben. Keine produktive Signatur oder echten Gerätetests behaupten.
+# Chat D D-023 – Remote-Backend PUBLIC_ORIGIN strikt prüfen (30.10.2026)
+
+- **Ausgangs-Main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `fix/chat-d/backend-public-origin-20261030`.
+- **Code-Commit:** `7ffa749d8be11ff9a518faaf8a65fc86f940dad1`.
+- **Pull Request:** [#411](https://github.com/ManuEtt/Dnd/pull/411), zunächst Draft.
+- **Problem:** `PUBLIC_ORIGIN` akzeptierte HTTPS-Adressen mit Pfad, Query oder Fragment, obwohl nur ein reiner Serverursprung vorgesehen ist.
+- **IMPLEMENTIERT:** HTTPS-/Credentials-Checks um `pathname === '/'`, leeren `search` und leeren `hash` erweitern. Bestehende erlaubte Ursprünge mit optionalem Port erhalten.
+- **Dateien:** `backend/src/config.ts`, `backend/test/backend.test.ts`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Regressionen:** gültige Ursprünge mit/ohne Schrägstrich und mit Port; ungültige Pfade, Query, Fragmente, Benutzerinformationen und HTTP.
+- **GETESTET:** Code, Regressionstests und Checkpoints auf PR-Branch gesichert; CI auf finalem Head noch nicht abgeschlossen.
+- **NICHT GETESTET:** finale Backend-/Flutter-/Android-Gesamtsuite und realer Reverse-Proxy-/Gerätetest.
+- **BLOCKIERT:** lokaler GitHub-Checkout wegen DNS nicht möglich; GitHub-Connector und Actions sind verfügbar.
+- **Migrationen:** keine; Spielstände und SQLite-/JSON-Dateien bleiben erhalten, kein SRD-/Appversionswechsel.
+- **Koordination:** alle offenen PR-Dateipfade geprüft und keine technischen Überschneidungen; README/zentralen Checkpoint vor Merge verlustfrei konsolidieren. Keine fremden Branches verändert.
+- **Vorgänger:** #401, #402, #406, #409 vollständig CI-grün und zur Review freigegeben. #410 beim letzten Abruf im Android-CI-Lauf, kein automatischer Merge.
+- **Nächster Schritt:** finale GitHub-Actions-Abnahme für #411; Fehler auf eigenem Branch korrigieren, danach zur Review freigeben, keine ungeprüfte Integration.
+# Chat D D-019 – Ressourcenbegrenzung in der Projektvorprüfung (29.10.2026)
+
+- **Main-SHA bei Beginn:** `fde0ef6ed8b419d6a31c701a03aa05d61994c352`.
+- **Eigener Branch:** `fix/chat-d/bounded-metadata-preflight-20261029`.
+- **Code-Commits:** `76ffccf718ffd0f807c0b8a90d0545b4f2308a50`,
+  `d32e318c6f00782ccbd4deed64a4999235ec02df`.
+- **Ausgangsproblem:** Metadaten-JSON, Gradle-Properties und `gradlew`
+  wurden im Vorabprüfer unabhängig von tatsächlicher Dateigröße ganz
+  eingelesen. Beschädigte, extrem große Uploads konnten Ressourcen
+  verschwenden, ehe Flutter/Android-Tests beginnen.
+- **IMPLEMENTIERT:** `_read_bounded_utf8` begrenzt den tatsächlichen
+  Leseumfang auf höchstens Limit+1 Byte für JSON (16 MiB) und Properties
+  (64 KiB); kein nur auf `stat` basierender Schutz. Das Launcher-Shebang
+  wird per `readline(4097)` mit LF- und CRLF-Prüfung geprüft.
+  Bestehende Datenformate und normale Projektdateien unverändert.
+- **Dateien:** `scripts/verify_project.py`,
+  `scripts/tests/test_verify_project.py`, `README.md`,
+  `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Akzeptanzkriterien:** beide übergroßen JSON-Dateien abweisen;
+  übergroße Properties abweisen; ein gültiges kurzes Launcher-Shebang
+  bei 64-MiB-Testdatei ohne `Path.read_bytes()` verarbeiten; zu langes
+  Shebang abweisen; ursprüngliche Positiv- und Negativtests bestehen.
+- **GETESTET:** vorherige Main-CI
+  [#40867945743](https://github.com/ManuEtt/Dnd/actions/runs/40867945743)
+  erfolgreich, **nicht** diese Änderungen. Zu Beginn keine offenen PRs.
+- **NICHT GETESTET:** neue vollständige CI, Backend, Flutter, Android,
+  natives APK-Packaging und Realgerät auf diesem Branch.
+- **BLOCKIERT:** vollständiger lokaler Checkout durch GitHub-DNS
+  nicht verfügbar; Flutter-/Dart-SDK nicht installiert.
+- **Grenze:** keine neue racefreie Verifikation gegen während der
+  Prüfung ausgetauschte Symlinks oder Dateien; nur Lesegrößen-Begrenzung.
+- **Kompatibilität:** keine SQLite-/JSON-/Schema-/Versionsmigration.
+- **Nächster Schritt:** CI auf finalem PR-Commit abnehmen; danach
+  aktuelle Main-/PR-Dateien vor Review und Integration erneut prüfen.
+# Chat D D-021 – Checkpoint-Veröffentlichung exklusiv sperren (29.10.2026)
+
+- **Basis-Main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `fix/chat-d/checkpoint-publish-lock-20261029`.
+- **Code-Commit:** `cc2c557ea6f3eedb1e2aacf0fa761f70574528a2`.
+- **Problem:** Parallele `create_checkpoint`-Aufrufe auf dasselbe
+  Verzeichnis konnten das versionierte Checkpoint-Set und seine stabilen
+  `Wuerfelraunen_LATEST_Vollprojekt.zip`- bzw. `SHA256SUMS.txt`-
+  Aliase gegenseitig überschreiben.
+- **IMPLEMENTIERT:** Mit `mkdir` atomar beanspruchtes
+  `.checkpoint.lock` über temporäre Erzeugung, Prüfung,
+  historische Dateihashes, veröffentlichte Versionen und beide Aliase.
+  Zweiter Lauf scheitert fail-closed, ohne fremde Sperren oder bereits
+  veröffentlichte Dateien anzufassen. Eigener Lock wird in `finally`
+  freigegeben; harte Crash-Sperren bleiben zur manuellen Prüfung.
+- **Technische Dateien:** `scripts/create_checkpoint.py`,
+  `scripts/tests/test_create_checkpoint.py`.
+- **Dokumentation:** `README.md`, `docs/CODEX_CHECKPOINT.md`,
+  `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Tests:** Drei neue Regressionen (vorhandenes Lock,
+  konkurrierender Aufruf vor ZIP-Veröffentlichung, `KeyboardInterrupt`
+  und sicherer Retry). Bestehende Manifest-/Git-Patch-/Symlink-/
+  Integritätstests bleiben aktiv.
+- **GETESTET:** vorherige Main-CI, **nicht** die neue Branch-CI.
+- **NICHT GETESTET:** neuer vollständiger CI-Run, Windows,
+  externe Mehrprozess-Rennen, Realgerät.
+- **KOMPATIBILITÄT:** keinerlei Änderung an Spielständen,
+  Regelsystem, Datenbank, JSON oder App-Version.
+- **KOORDINATION:** PRs #387, #388, #389, #391, #392 und #394
+  vor Paketstart überprüft; keine technischen Dateiüberschneidungen.
+  README und zentraler Checkpoint beim späteren Merge additiv bewahren.
+- **NÄCHSTER SCHRITT:** CI auswerten, neue PRs prüfen, Review-Freigabe.
+# Chat D D-024 – Fantasy-Button-Generierung sicher veröffentlichen (30.10.2026)
+
+- **Ausgangs-Main:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Branch:** `fix/chat-d/fantasy-button-output-safety-20261030`.
+- **Code-Commit:** `69d691a58fb12dfc850920d2c1e0f7960c4084de`.
+- **Pull Request:** [#412](https://github.com/ManuEtt/Dnd/pull/412), Draft bis abschließender CI.
+- **Ausgangsproblem:** `Path.write_bytes()` konnte eine vorhandene Button-PNG durch einen abgebrochenen Schreibvorgang beschädigen oder über vorhandene Symlinks in fremde Verzeichnisse schreiben; auch `mkdir(parents=True)` konnte über Symlink-Vorfahren umgeleitet werden.
+- **IMPLEMENTIERT:** bekannten Symlinks an allen vorhandenen Ausgabepfad-Komponenten, direkt vor/nach `mkdir` und vor der Veröffentlichung ausweichen; nur reguläre Ausgabedateien zulassen. Vollständig generierte PNGs temporär speichern und per `os.replace` atomar veröffentlichen, Staging stets aufräumen; Dateimodus bestehender PNGs erhalten.
+- **Geänderte Dateien:** `scripts/generate_fantasy_buttons.py`, `scripts/tests/test_generate_fantasy_buttons.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Akzeptanz/Regressionen:** bestehende 30-PNG-/Reproduzierbarkeitstests sowie fünf neue Tests gegen verlinktes Zielverzeichnis, verlinkten Vorfahr, PNG-Symlink, fehlgeschlagenen atomaren Publish und nicht-reguläre Ausgabedatei.
+- **GETESTET:** Branch-Commit und PR angelegt; vollständiger CI-Lauf auf finalem Commit noch nicht als Erfolg bestätigt.
+- **NICHT GETESTET:** finale Python-/Backend-/Flutter-/Android-/APK-/Release-Kette, Realgerät.
+- **BLOCKIERT:** GitHub-DNS für lokalen Checkout; CI über GitHub Actions verfügbar.
+- **Migrationen:** keine; kein Einfluss auf Spielstände, SQLite/JSON, SRD/Story oder Appversion.
+- **Koordination:** alle offenen PRs bis #411 überprüft, keine technischen Dateipfad-Überschneidungen. Gemeinsam verwendete README-/Checkpoint-Dateien erst bei Integration additiv abgleichen; keine fremden Branches verändert, kein Merge.
+- **Vorgänger:** #401, #402, #406, #409 und #410 vollständig CI-grün und zur Review freigegeben; #411 beim letzten Abruf noch im Android-Build.
+- **Nächster Schritt:** CI für finalen #412-Commit vollständig abnehmen; bei Fehlern auf eigenem Branch korrigieren, andernfalls PR zur Review freigeben.
 
 ---
 
 # Chat D – Integration von PR #358 nach Checkpoint-Fix #363 (29.10.2026)
+
+# Chat D D-018 – Main-/Referenzabgleich bei Branch-Bereinigung (30.10.2026)
+
+- **Ausgangs-main-SHA:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
+- **Eigener Branch:** `fix/chat-d/retire-main-recheck-20261030`.
+- **Code-/Testcommit:** `b33ef1597630d2e6e896a97072a22da0b2101782`;
+  **Pull Request:** [#419](https://github.com/ManuEtt/Dnd/pull/419), Draft.
+- **Ausgangsproblem:** Das historische, allowlistbasierte Cleanup prüfte den
+  `main`-SHA nur beim Start und behauptete nach DELETE ohne GET-Ergebnis
+  eine erfolgreiche Entfernung.
+- **IMPLEMENTIERT:** Erneute `main`-Konsistenz-, Branchschutz- und
+  Compare-Prüfung unmittelbar vor tatsächlichem DELETE; danach
+  branchspezifisches GET mit Fehler bei noch vorhandener Referenz.
+- **Betroffene Dateien:** `scripts/retire_merged_branches.py`,
+  `scripts/tests/test_retire_merged_branches_execution.py`,
+  `README.md`, `docs/CODEX_CHECKPOINT.md`,
+  `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Regressionen:** sechs neue vollständig gemockte Positive-/Negative-Tests
+  (Löschung, geänderter main, Protection, Divergenz, wirkungsloser DELETE,
+  Standard-Dry-Run). **Noch kein Test als erfolgreich ausgeführt belegt.**
+- **CI:** finale GitHub Actions noch auf PR-HEAD zu verifizieren.
+- **BLOCKIERT:** Lokaler Repository-Checkout per DNS und Flutter-/Dart-SDK.
+- **Migration:** keine; keine Flutter-/Backend-Produkt- oder
+  SQLite-/JSON-Spielstandsänderung. Keine echten Branchlöschungen.
+- **Grenze:** nur Vorab-Race-Reduktion, kein atomarer DELETE-Lease.
+- **Koordination:** 30 anfänglich offene PRs abgeglichen; beide
+  Python-Fachdateien waren unbelegt. README-/Checkpoint-Dokumentation
+  vor Integration mit den anderen Chats additiv zusammenführen.
+- **Nächster Schritt:** vollständigen Test-/Actions-Status des finalen
+  PR-Commits prüfen und bei Fehlschlag gezielt korrigieren.
+
+---
+
 
 ## Integrationskandidat 29.10.2026 – Chat D
 
@@ -788,3 +921,18 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 
 - **Koordination am 28.10.2026:** Auf PR #337 `maintenance/cleanup-ancestor-branches-20261028` gestapelt; dessen geänderte Trigger und sichere Git-Ancestry-Gates bleiben erhalten. Die Prüfung in `test_safe_cleanup_protected_branch.py` wurde an `#337` angepasst, ohne dessen Testdatei zu überschreiben.
 
+
+## Chat D D-018 – SQLite-Outbox-Aufträge beim direkten Speichern validieren (30.10.2026)
+
+- **Basis-main:** `55fe44475a113943c6310ec16a8ffb481185f4e9` (Alpha 0.8.48+98). **Branch:** `fix/chat-d/pending-action-sqlite-validation-20261030`. **Technischer Commit:** `099a115b77af967483e9375a3fad9bed0cd1dd2b`. **PR:** [#397](https://github.com/ManuEtt/Dnd/pull/397), Draft.
+- **Ausgangsproblem:** Direkte Aufrufe von `SqliteCampaignRepository.stagePendingAction` konnten leere, überlange oder ungültige Auftragsdaten dauerhaft speichern. Die spätere `PlayerActionOutbox.pendingFor`-Decodierung akzeptiert diese Daten nicht. Ein anschließender Neustart konnte damit an einem nicht wiederherstellbaren ausstehenden Auftrag hängen bleiben.
+- **IMPLEMENTIERT:** Vor jedem SQLite-Schreibzugriff dieselben Längen-/Request-ID-Schranken wie bei der Outbox: Kampagnen-ID nicht leer, bis 128 Zeichen, ohne Steuerzeichen; Request-ID 1–128 ASCII-Buchstaben, Ziffern, Unterstrich oder Bindestrich; Handlung nicht blank und höchstens 4000 Zeichen. NPC-Identität, Revisionsbindung und atomare Duplikatsperre bleiben unverändert.
+- **Neue Regressionen:** `app/test/pending_action_sqlite_validation_test.dart` prüft ungültige IDs, Steuerzeichen, Texte, Grenzwerte und den unveränderten Zustand bei Ablehnung; gültiges Staging, SQLite-Neustart, Outbox-Decodierung inklusive NPC-Auswahl sowie genaues Entfernen und Request-ID-Konflikt.
+- **Geänderte Dateien:** `app/lib/data/sqlite_campaign_repository.dart`, `app/test/pending_action_sqlite_validation_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **GETESTET:** Technischen Code-Diff gegen main erneut geprüft (13 zusätzliche Produktionszeilen, keine entfernten Zeilen); GitHub-Branch und Draft-PR existieren. **Die neuen Flutter-Tests sind zum Zeitpunkt dieser Dokumentation noch nicht als erfolgreich ausgeführt bestätigt.**
+- **NICHT GETESTET:** Vollständige finale GitHub Actions auf finalem Dokumentations-Commit, Dart-Format und Analyse, Flutter-Suite, Backend/Python, Android-Build/native Tests, reales Android-Gerät. Lokaler GitHub-Checkout scheitert an DNS; Flutter/Dart fehlen.
+- **BLOCKIERT:** Finaler CI-Nachweis und manueller Main-/PR-Abgleich vor Integration. Offene fachliche PRs #387, #388, #392, #394 sowie Chat-D-PRs #389, #391, #395 ändern keine der beiden technischen Dateien. Gemeinsame Dokumentation vor Merge additiv konsolidieren.
+- **Migration:** Keine. SQLite-Schema 3, Kampagnen-JSON 1, bestehende Spielstände, Appversion und fachliche Regeln unverändert. Historische ausstehende Aktionen werden nicht mutiert.
+- **Nächster Schritt:** Finale `flutter test test/pending_action_sqlite_validation_test.dart` und vollständige GitHub-Actions-Pipeline auf dem tatsächlichen PR-HEAD verifizieren; erst danach Review-/Integrationsfreigabe erwägen.
+
+---

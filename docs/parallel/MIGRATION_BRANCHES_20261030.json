@@ -1,0 +1,422 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Git-Integration, kein Spielstandformat",
+  "baseMain": "6465a4b2fc8d42ae7aab596ac26e85d61d2b8f49",
+  "sourceHead": "b0a4211c3063d277a036cd30c235817cedcf4697",
+  "snapshotUtc": "2026-10-30T21:26:00Z",
+  "refs": [
+    {
+      "branch": "feat/chat-a/concentration-damage-dc-cap-20261030",
+      "head": "29b4ced3da31e8ce47a363c50b8191a980b0bb2b",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-a/concentration-damage-dc-cap-20261030-29b4ced3da31",
+      "originalPullRequests": [
+        418
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-a/concentration-save-modifier-evidence-20261030",
+      "head": "a755e2e81e72f497fb1711601c24df76bc58263f",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-a/concentration-save-modifier-evidence-20261030-a755e2e81e72",
+      "originalPullRequests": [
+        420
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-a/death-save-class-validation-20261030",
+      "head": "870d4e988f4cf52aac7882ae3ee75b861e5f2f5a",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-a/death-save-class-validation-20261030-870d4e988f4c",
+      "originalPullRequests": [
+        416
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-a/magic-missile-cast-resolution-20261029",
+      "head": "4f00f102cc8f27eaa090710004eecca79868d0c2",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-a/magic-missile-cast-resolution-20261029-4f00f102cc8f",
+      "originalPullRequests": [
+        387
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-a/short-rest-resource-preflight-20261030",
+      "head": "203afbad0f73d6b72bd43d89eb8bb7938368844a",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-a/short-rest-resource-preflight-20261030-203afbad0f73",
+      "originalPullRequests": [
+        428
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-a/spell-action-economy-evidence-20261030",
+      "head": "7bf3375343f33e7f8b5a3038dc7332a174999b89",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-a/spell-action-economy-evidence-20261030-7bf3375343f3",
+      "originalPullRequests": [
+        432
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-a/spell-casting-time-integrity-20261030",
+      "head": "8020eb635d3a1ac7d5ab78bedbbaabdb54f7518b",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-a/spell-casting-time-integrity-20261030-8020eb635d3a",
+      "originalPullRequests": [],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-a/spell-casting-time-integrity-synced-20261030",
+      "head": "1429f1317eac744e35be65930f05d0c8eb1a5498",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-a/spell-casting-time-integrity-synced-20261030-1429f1317eac",
+      "originalPullRequests": [
+        429
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-a/spell-component-metadata-guard-20261030",
+      "head": "fb6076922cb6c62c74e657ac1b848e2b291c1f7b",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-a/spell-component-metadata-guard-20261030-fb6076922cb6",
+      "originalPullRequests": [
+        400
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-a/spell-material-id-integrity-20261030",
+      "head": "afccc063040a67d03ff0fdb4a417f21831e17c09",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-a/spell-material-id-integrity-20261030-afccc063040a",
+      "originalPullRequests": [
+        408
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-a/spell-material-value-evidence-20261030",
+      "head": "3dae4a6c51ad5ef2a51346a7f0a6577d75bcddbb",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-a/spell-material-value-evidence-20261030-3dae4a6c51ad",
+      "originalPullRequests": [
+        415
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-a/spell-range-canonical-metadata-20261030",
+      "head": "18bde90536921f324e2826cbc60ab731be40684c",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-a/spell-range-canonical-metadata-20261030-18bde9053692",
+      "originalPullRequests": [
+        405
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-b/npc-context-control-sanitizing-20261030",
+      "head": "92ddc263cc1ff56c01d8d62395454cf3f39323f6",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-b/npc-context-control-sanitizing-20261030-92ddc263cc1f",
+      "originalPullRequests": [
+        398
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-b/npc-context-immutable-restart-20261030",
+      "head": "62485860893fe7717bdb46594f4d4bc803e33633",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-b/npc-context-immutable-restart-20261030-62485860893f",
+      "originalPullRequests": [
+        431
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-b/npc-identity-bidi-context-20261030",
+      "head": "8bf99dbef2fe92dd3419667dc9609aef44fe6d80",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-b/npc-identity-bidi-context-20261030-8bf99dbef2fe",
+      "originalPullRequests": [
+        407
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-b/npc-narrator-wire-bidi-20261030",
+      "head": "38672252bb413e27838e35c9b412888ff33194b8",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-b/npc-narrator-wire-bidi-20261030-38672252bb41",
+      "originalPullRequests": [
+        403
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-b/safe-npc-identity-recall-20261030",
+      "head": "755064d69e42f5d1080cd4a29ce270bf4fdd1d34",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-b/safe-npc-identity-recall-20261030-755064d69e42",
+      "originalPullRequests": [
+        396
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-b/story-entry-id-collision-20261030",
+      "head": "1c4e7c32b1a5afae683a3dfb7e0d4b597072195f",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-b/story-entry-id-collision-20261030-1c4e7c32b1a5",
+      "originalPullRequests": [
+        414
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-b/story-provider-unicode-guard-20261030",
+      "head": "8e8e469a2b3cf97117e7427ed86f9181f2c1509a",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-b/story-provider-unicode-guard-20261030-8e8e469a2b3c",
+      "originalPullRequests": [
+        424
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-c/adventure-status-details-large-text-20261029",
+      "head": "fdc393ff035ccc038e0cad70be1ad4fd084c7488",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-c/adventure-status-details-large-text-20261029-fdc393ff035c",
+      "originalPullRequests": [
+        394
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-c/equipment-loadout-large-text-ime-20261030",
+      "head": "c8bc256bd7a6e16d463a89df6dc02433c86b41a8",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-c/equipment-loadout-large-text-ime-20261030-c8bc256bd7a6",
+      "originalPullRequests": [
+        434
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-c/hero-actions-large-text-ime-20261030",
+      "head": "d4945144509f78b8598b7c1385e80ae3cb34cd67",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-c/hero-actions-large-text-ime-20261030-d4945144509f",
+      "originalPullRequests": [
+        404
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-c/npc-picker-large-text-20261030",
+      "head": "da25b5b873b54d580e538480b97d710d05c83476",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-c/npc-picker-large-text-20261030-da25b5b873b5",
+      "originalPullRequests": [
+        422
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-c/pending-action-controls-large-text-20261030",
+      "head": "ad3a30cf6954638c3aa6100eb9ef6ceff6750d66",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-c/pending-action-controls-large-text-20261030-ad3a30cf6954",
+      "originalPullRequests": [
+        417
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-c/reference-rows-large-text-20261029",
+      "head": "3e64a76981d81bb5ae52cbc46eec7c0a133414e8",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-c/reference-rows-large-text-20261029-3e64a76981d8",
+      "originalPullRequests": [
+        392
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-c/sheet-header-large-text-20261029",
+      "head": "97262ab3900f21f5951afd45bd35da197c3b57ae",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-c/sheet-header-large-text-20261029-97262ab3900f",
+      "originalPullRequests": [
+        388
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-c/shortcut-disabled-hints-20261030",
+      "head": "3a8d7531de9f088ac2c1c51598f9b093cf7dd2de",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-c/shortcut-disabled-hints-20261030-3a8d7531de9f",
+      "originalPullRequests": [
+        399
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "feat/chat-c/xp-reward-dialog-ime-scroll-20261030",
+      "head": "5788de891ae2025e8610e5d7af597f8bc0a0dfaa",
+      "archiveTag": "archive/pre-migration-20261030/feat/chat-c/xp-reward-dialog-ime-scroll-20261030-5788de891ae2",
+      "originalPullRequests": [
+        426
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "fix/chat-a/spell-material-id-integrity-20261030",
+      "head": "6e3c5550d5be975b57310088bd498b513798b096",
+      "archiveTag": "archive/pre-migration-20261030/fix/chat-a/spell-material-id-integrity-20261030-6e3c5550d5be",
+      "originalPullRequests": [],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "fix/chat-d/apk-entry-types-20261030",
+      "head": "14470f238740c767e0b68dd16ffe277219d096c4",
+      "archiveTag": "archive/pre-migration-20261030/fix/chat-d/apk-entry-types-20261030-14470f238740",
+      "originalPullRequests": [
+        406
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "fix/chat-d/backend-public-origin-20261030",
+      "head": "76fbca6ef27b85e4bbae3757b934b972b1f6b442",
+      "archiveTag": "archive/pre-migration-20261030/fix/chat-d/backend-public-origin-20261030-76fbca6ef27b",
+      "originalPullRequests": [
+        411
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "fix/chat-d/boundary-module-presence-20261030",
+      "head": "0544c238c39da11b4f18e77a70c1cb0af10b4bbd",
+      "archiveTag": "archive/pre-migration-20261030/fix/chat-d/boundary-module-presence-20261030-0544c238c39d",
+      "originalPullRequests": [
+        401
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "fix/chat-d/bounded-metadata-preflight-20261029",
+      "head": "0ede900ca86f67bf35a7b4632c45328494702e1e",
+      "archiveTag": "archive/pre-migration-20261030/fix/chat-d/bounded-metadata-preflight-20261029-0ede900ca86f",
+      "originalPullRequests": [
+        389
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "fix/chat-d/checkpoint-publish-lock-20261029",
+      "head": "974bc29aae832197c696520877333ad512668b80",
+      "archiveTag": "archive/pre-migration-20261030/fix/chat-d/checkpoint-publish-lock-20261029-974bc29aae83",
+      "originalPullRequests": [
+        395
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "fix/chat-d/fantasy-button-output-safety-20261030",
+      "head": "236e6666ab4c68cddf63487d081bafd598c3cb56",
+      "archiveTag": "archive/pre-migration-20261030/fix/chat-d/fantasy-button-output-safety-20261030-236e6666ab4c",
+      "originalPullRequests": [
+        412
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "fix/chat-d/fantasy-import-symlink-20261030",
+      "head": "ead299e3f149023082f33186294ddc28b064f10b",
+      "archiveTag": "archive/pre-migration-20261030/fix/chat-d/fantasy-import-symlink-20261030-ead299e3f149",
+      "originalPullRequests": [
+        409
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "fix/chat-d/integrate-archive-apk-safety-20261030",
+      "head": "325589daedf451299629d69d64392ec30275e405",
+      "archiveTag": "archive/pre-migration-20261030/fix/chat-d/integrate-archive-apk-safety-20261030-325589daedf4",
+      "originalPullRequests": [
+        433
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "fix/chat-d/integrate-boundaries-ndk-20261030",
+      "head": "6dac0109cdd7bc46d043bd81d12c651859e4bf2e",
+      "archiveTag": "archive/pre-migration-20261030/fix/chat-d/integrate-boundaries-ndk-20261030-6dac0109cdd7",
+      "originalPullRequests": [
+        430
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "fix/chat-d/integrate-ci-safety-20261030",
+      "head": "31b023e49c826dc4279b4848756dd421f877058c",
+      "archiveTag": "archive/pre-migration-20261030/fix/chat-d/integrate-ci-safety-20261030-31b023e49c82",
+      "originalPullRequests": [],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "fix/chat-d/integrate-ui-npc-safety-20261030",
+      "head": "c8512c3aa013657b5dae4f127b457bef34e64376",
+      "archiveTag": "archive/pre-migration-20261030/fix/chat-d/integrate-ui-npc-safety-20261030-c8512c3aa013",
+      "originalPullRequests": [
+        437
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "fix/chat-d/npc-picker-scroll-layout-20261030",
+      "head": "da2745ebba1c7c81c19aca63ee7ebf3a94c826a2",
+      "archiveTag": "archive/pre-migration-20261030/fix/chat-d/npc-picker-scroll-layout-20261030-da2745ebba1c",
+      "originalPullRequests": [],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "fix/chat-d/pending-action-sqlite-validation-20261030",
+      "head": "dd48f28203a04846beef78c96185580ef00c9f46",
+      "archiveTag": "archive/pre-migration-20261030/fix/chat-d/pending-action-sqlite-validation-20261030-dd48f28203a0",
+      "originalPullRequests": [
+        397
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "fix/chat-d/preserve-installed-ndk-20261030",
+      "head": "1f8a6c81e9b294bf16e897c994a6861636b246b7",
+      "archiveTag": "archive/pre-migration-20261030/fix/chat-d/preserve-installed-ndk-20261030-1f8a6c81e9b2",
+      "originalPullRequests": [
+        402
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "fix/chat-d/retire-main-recheck-20261030",
+      "head": "e9f9cc38fa1b379ce677b237bceb2d923b939be0",
+      "archiveTag": "archive/pre-migration-20261030/fix/chat-d/retire-main-recheck-20261030-e9f9cc38fa1b",
+      "originalPullRequests": [
+        419
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "fix/chat-d/source-archive-publish-lock-20261029",
+      "head": "b807afe172ee9504909c308729639161494494d8",
+      "archiveTag": "archive/pre-migration-20261030/fix/chat-d/source-archive-publish-lock-20261029-b807afe172ee",
+      "originalPullRequests": [
+        391
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "fix/chat-d/srd-audit-malformed-records-20261030",
+      "head": "86ace76e32e27162b0683e16cd3febf13f9a04ce",
+      "archiveTag": "archive/pre-migration-20261030/fix/chat-d/srd-audit-malformed-records-20261030-86ace76e32e2",
+      "originalPullRequests": [
+        410
+      ],
+      "includedByAncestry": true
+    },
+    {
+      "branch": "main",
+      "head": "6465a4b2fc8d42ae7aab596ac26e85d61d2b8f49",
+      "archiveTag": "archive/pre-migration-20261030/main-6465a4b2fc8d",
+      "originalPullRequests": [],
+      "includedByAncestry": true
+    }
+  ]
+}
