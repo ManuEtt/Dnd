@@ -242,11 +242,11 @@ void main() {
     final fight = _fight();
     expect(
       () => _prepare(hero, catalog.find('Shield')!, encounter: fight),
-      throwsFormatException,
+      throwsUnsupportedError,
     );
     expect(
       () => _prepare(hero, catalog.find('Find Familiar')!, encounter: fight),
-      throwsFormatException,
+      throwsUnsupportedError,
     );
     expect(
       () => _prepare(hero, catalog.find('Magic Missile')!,
