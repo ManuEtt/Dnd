@@ -56,6 +56,27 @@ class JsonBackupIoTest {
     }
 
     @Test
+    fun safeNamesRejectUnicodeLineBreaksButPreserveVisibleSpaces() {
+        // U+2028/U+2029 are Unicode separator categories, not ISO controls or
+        // Unicode FORMAT characters; they previously bypassed isSafeName.
+        listOf(
+            "save\u2028hidden.json", // Unicode line separator
+            "save\u2029hidden.json", // Unicode paragraph separator
+            "save\u0085hidden.json", // next-line: already an ISO control
+        ).forEach { name ->
+            assertFalse("line break must not reach SAF picker", JsonBackupIo.isSafeName(name))
+        }
+        listOf(
+            "Arescan - Silberhain.json", // ordinary spaces unchanged
+            "Grüße aus dem Norden.json",
+            "Ätheria 🐉.json",
+            "E\u0301cho.json", // decomposed accent remains valid
+        ).forEach { name ->
+            assertTrue("visible Unicode filename should remain allowed", JsonBackupIo.isSafeName(name))
+        }
+    }
+
+    @Test
     fun payloadSizeRequiresContentAndAcceptsTheExactBoundary() {
         assertFalse(JsonBackupIo.isValidPayload(byteArrayOf()))
         assertTrue(JsonBackupIo.isValidPayload(byteArrayOf(1)))
