@@ -211,7 +211,7 @@ class _EventSummary {
     } else if (payload['hit'] is bool) {
       result.add(payload['hit'] == true ? 'Treffer' : 'Verfehlt');
     }
-    if (payload['damage'] is num) {
+    if (payload['pendingEnemyShieldHit'] != true && payload['damage'] is num) {
       result.add('Schaden: ${payload['damage']}');
     }
     if (payload['hitPointsRestored'] is num) {
