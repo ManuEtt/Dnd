@@ -131,9 +131,7 @@ class _SrdBackgroundPackageDialogState
               Text('Startgeld aus Hintergrund: ${choice.startingGold} GM.'),
               if (!choice.takeGold)
                 for (final item in choice.kitItems)
-                  Text(
-                    '• ${item.quantity} × ${choice.itemDisplayName(item)}',
-                  ),
+                  Text('• ${item.quantity} × ${choice.itemDisplayName(item)}'),
             ],
           ],
         ),
