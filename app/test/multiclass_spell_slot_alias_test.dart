@@ -48,11 +48,11 @@ void main() {
           reason: alias,
         );
         expect(MulticlassRules.spellSlots(character), expected, reason: alias);
-        expect(
-          SpellcastingRules.availableSlots(character),
-          {1: 4, 2: 3, 3: 2},
-          reason: alias,
-        );
+        expect(SpellcastingRules.availableSlots(character), {
+          1: 4,
+          2: 3,
+          3: 2,
+        }, reason: alias);
       }
     }
   });
@@ -71,11 +71,10 @@ void main() {
         3,
         reason: name,
       );
-      expect(
-        SpellcastingRules.availableSlots(character),
-        {1: 4, 2: 2},
-        reason: name,
-      );
+      expect(SpellcastingRules.availableSlots(character), {
+        1: 4,
+        2: 2,
+      }, reason: name);
     }
   });
 
@@ -97,10 +96,7 @@ void main() {
       MulticlassRules.spellSlots(aliases),
       MulticlassRules.spellSlots(canonical),
     );
-    expect(
-      SpellcastingRules.availableSlots(aliases),
-      {1: 4, 2: 3, 3: 3, 4: 1},
-    );
+    expect(SpellcastingRules.availableSlots(aliases), {1: 4, 2: 3, 3: 3, 4: 1});
     expect(aliases.primaryClassLevel, 5);
     expect(aliases.secondaryClassLevel, 3);
   });
@@ -117,10 +113,7 @@ void main() {
     expect(SpellcastingRules.pactSlotCount(character), 2);
     expect(SpellcastingRules.pactSlotLevel(character), 2);
     expect(SpellcastingRules.availablePactSlots(character), 2);
-    expect(
-      SpellcastingRules.availableSlots(character),
-      {1: 4, 2: 3, 3: 2},
-    );
+    expect(SpellcastingRules.availableSlots(character), {1: 4, 2: 3, 3: 2});
     expect(
       MulticlassRules.spellSlots(_hero(first: 'Hexenmeister')),
       everyElement(0),
@@ -166,10 +159,7 @@ void main() {
     expect(old.className, 'Wizard');
     expect(old.secondaryClassName, 'Ranger');
     expect(old.spentSpellSlots, {'1': 2, '4': 1});
-    expect(
-      SpellcastingRules.availableSlots(old),
-      {1: 2, 2: 3, 3: 3, 4: 0},
-    );
+    expect(SpellcastingRules.availableSlots(old), {1: 2, 2: 3, 3: 3, 4: 0});
     expect(old.toJson(), serialized);
     expect(source.toJson(), serialized);
   });
@@ -198,10 +188,11 @@ void main() {
       );
       final reloaded = (await repository.getCampaign(campaign.id))!;
       expect(reloaded.hero.className, 'Wizard');
-      expect(
-        SpellcastingRules.availableSlots(reloaded.hero),
-        {1: 3, 2: 3, 3: 2},
-      );
+      expect(SpellcastingRules.availableSlots(reloaded.hero), {
+        1: 3,
+        2: 3,
+        3: 2,
+      });
 
       final cast = SpellcastingRules.cast(
         reloaded.hero,
@@ -230,10 +221,11 @@ void main() {
       expect(confirmed.revision, 1);
       expect(confirmed.hero.className, 'Wizard');
       expect(confirmed.hero.spentSpellSlots, {'1': 2});
-      expect(
-        SpellcastingRules.availableSlots(confirmed.hero),
-        {1: 2, 2: 3, 3: 2},
-      );
+      expect(SpellcastingRules.availableSlots(confirmed.hero), {
+        1: 2,
+        2: 3,
+        3: 2,
+      });
     } finally {
       await repository.close();
       await directory.delete(recursive: true);
