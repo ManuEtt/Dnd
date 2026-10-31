@@ -1,3 +1,7 @@
+## 31.10.2026 – Chat C: Magieinitiierter-Dialog (PR #457, Draft)
+
+Im Flutter-Dialog `app/lib/ui/srd_magic_initiate_dialog.dart` wird der verschachtelte Scrollbereich durch `AlertDialog(scrollable: true)` mit schmalem Außenabstand ersetzt. Vier neue Widgetfälle in `app/test/srd_magic_initiate_ime_test.dart` decken 320/360 dp, 200 % Schrift, simuliertes 220-dp-IME-Inset, Abbruch, nichtbestätigbare doppelte Zaubertricks und vier ausdrücklich bestätigte Pflichtwerte ab. Ausgangs-main `5a88834c98f5aca40395088c20c7e1dc5b587868`; Branch `feat/chat-c/magic-initiate-ime-scroll-20261031`, [PR #457](https://github.com/ManuEtt/Dnd/pull/457). **Neue Flutter-/Android-CI noch ausstehend; nicht als abgenommen ausgeben.** Keine Regel-, Datenmodell-, Controller-, Speicher-/Schema-, Versions- oder Lizenzänderung; keine Migration. Parallele Dokumentationsänderungen beim Merge additiv konsolidieren.
+
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
