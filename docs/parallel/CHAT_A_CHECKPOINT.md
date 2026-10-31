@@ -1,3 +1,73 @@
+# Chat A – kanonische Klassenaliase für Mehrklassen-Zauberplätze (31.10.2026)
+
+- **Basis-Main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`
+- **Eigener Branch:** `feat/chat-a/multiclass-slot-aliases-20261031`
+- **Produktivcode-Commit:** `edd8be956ca9228c8d14dbbbfcdbb37c27118bc4`
+- **Testkorrektur-Commit:** `c35a625b4b336f58c52ccab2c0ae8b8cb29eb48a`
+- **Pull Request:** wird nach Abschluss der Branchdokumentation erstellt; Main wird nicht verändert.
+
+## Ausgangsproblem / Akzeptanz
+
+`MulticlassRules.combinedSpellcasterLevel` verglich rohe Namen, während
+`findSrdClass` vorhandene deutsche, englische und feminine SRD-Klassenaliase
+kennt. Beispielsweise erhielt `Magier 5` drei Zauberplatzgrade, `Wizard 5`
+aber keine normalen Zauberplätze. Nachweis aus Main-Quellcode und SRD 5.2.1
+*Multiclassing*, gedruckte S. 25 (CC BY 4.0,
+https://www.dndbeyond.com/srd). Ziel: dieselbe Berechnung für bestätigte
+Aliase; Halbzauberer einzeln aufrunden; Paktmagie nicht hinzurechnen;
+unbekannte Namen nicht erraten; rohe gespeicherte Klassennamen erhalten.
+
+## IMPLEMENTIERT
+
+- `app/lib/domain/multiclass_rules.dart`: nur für die lesende
+  Zauberstufenberechnung die bereits bestehende
+  `findSrdClass(name)?.name`-Auflösung verwenden. Nicht-positive
+  Klassenstufen ergeben keine Beiträge; bestätigte Vollzauberer zählen
+  voll, Paladin/Waldläufer halb aufgerundet, Hexenmeister-Paktmagie
+  getrennt. Keine Änderung an der Klassenidentität im Spielstand.
+- `app/test/multiclass_spell_slot_alias_test.dart`: sieben neue
+  deterministische Testfälle für Vollzauberer, Halbzauberer,
+  Mehrklassenkombinationen, Paktmagie, Ablehnung unbekannter Klassen,
+  Alt-JSON sowie SQLite-Neustart/Retry/Revisionskonflikt.
+- Keine Änderung an `models.dart`, `game_engine.dart`,
+  `rules_api.dart`, Controller, Datenbankschema, Backend, UI,
+  SRD-Lizenzdateien oder Versionsnummer. SQLite **3** und JSON **1**
+  bleiben erhalten; kein Migrationslauf, keine rückwirkende
+  Spielstandänderung.
+
+## GETESTET
+
+Quellcode, vorhandener Klassenresolver, angrenzende Zauber- und
+Mehrklassenregressionen und der GitHub-Stand wurden eingesehen;
+der Fehlerpfad wurde auf Basis des tatsächlichen Codes identifiziert.
+**Noch kein ausgeführter neuer Dart-/Flutter- oder SQLite-Test.**
+Die tatsächlichen GitHub-Actions-Ergebnisse für den finalen PR-HEAD sind
+separat nachzuweisen; bestehende grüne Main-CI gilt nur für Main.
+
+## NICHT GETESTET / BLOCKIERT
+
+Lokale Ausführung von `flutter`, `dart` und APK-Build in dieser
+Umgebung nicht möglich, da Flutter-/Dart-SDK fehlt. GitHub-CI folgt.
+Ein echter Android-Geräte- und Altversionsupgrade-Test ist offen.
+
+## Koordination / nächster Schritt
+
+Vor Arbeitsbeginn waren nur PRs #446 (Story), #447 (UI), #448
+(Chat A: andere neue Domain-/Testdateien), #449 (Android-Backup)
+offen. Keine dieser PRs verändert die zwei Fachdateien dieses Pakets.
+README und zentraler Checkpoint sind als gemeinschaftliche Dokumente
+bei der Integration von Chat D additiv zu vereinigen.
+
+**Nächster unabhängiger Chat-A-Schritt:** Erst nach CI-/PR-Abnahme
+die SRD-Abweichungen zwischen Klassen-Freischaltungen und
+tatsächlich regelgeprüften vorbereiteten Zaubern anhand von
+`RULE-CHARACTER-CREATION-MULTICLASS-SPELLCASTING` untersuchen.
+Akzeptanz: pro Klasse und Stufe keine unbelegten vorbereiteten
+Zauber freigeben; dokumentierte positive/negative deterministische
+Tests und Alt-JSON-Verträglichkeit.
+
+---
+
 ## Integrationsnachtrag 30.10.2026 – Chat-A-Branches
 
 Alle 13 initialen Chat-A-Branchheads auf Main `6465a4b2` regulär konsolidiert.
