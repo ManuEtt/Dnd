@@ -338,3 +338,38 @@ Gezielten Abruf bestätigter NPC-Beziehungsnotizen auch bei mehreren aufeinander
 
 
 **GitHub-Nachtrag Chat B (26.10.2026):** [PR #237](https://github.com/ManuEtt/Dnd/pull/237) enthält das optionale `selectedNpcId`-Protokoll. Im nachgewiesenen Lauf [#40342521532](https://github.com/ManuEtt/Dnd/actions/runs/40342521532) haben Backend, Dart-Format, Flutter-Analyse und komplette Flutter-Tests bestanden; Android-Build bei Abruf noch offen. Abschlussstatus gilt nur für exakt getesteten PR-HEAD. Keine Übernahme nach `main`, keine Spielstandmigration.
+
+
+## Chat B – natürliche Kampagnenrückblicke (31.10.2026, PR #452)
+
+- **Ausgangsproblem:** Alltagssprache wie „Was haben wir bisher erlebt?“ und
+  „Was ist beim letzten Mal passiert?“ führte nicht in den bestätigten Rückblick;
+  die allgemeine Suche konnte ihre Füllverben irrtümlich als Themenfilter werten.
+- **Basis-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+  **Branch:** `feat/chat-b/natural-recap-requests-20261031`.
+  **Pull Request:** [#452](https://github.com/ManuEtt/Dnd/pull/452), Draft.
+  **Fachcode-Commit:** `4ef4aa4f38562f8174595df7749f4c97f0cb8753`.
+  **Test-Commit:** `5fac062ab8c30cfb1c036c20ce327780175cfb4c`.
+- **Implementiert:** Eng verankerte Rückblickfragen und umgangssprachliche
+  Zusammenfassungsbitten; leere allgemeine Themenanfrage liefert ausschließlich
+  bereits bestätigte Fakten. Keine stillen Freigaben freier NPC-/Spieleraktionen.
+- **Geänderte Dateien:** `app/lib/story/story_memory_engine.dart`,
+  `app/test/story_recall_intent_test.dart`, `README.md`,
+  `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **Akzeptanz/Regression:** positive und negative deutsche Frageformen;
+  bestätigter `memory.recalled`-Turn mit echter `GameEngine.act`-Verarbeitung;
+  NPC-Zitat bleibt normaler Spielzug; unveränderte Helden-/Regelzustände und
+  unveränderte ursprüngliche Kampagne.
+- **GETESTET:** GitHub-main-SHA, offene PRs und Dateiüberschneidungen geprüft.
+  **NICHT GETESTET:** Flutter-/Dart-Test, Format, Analyse, kompletter CI-Workflow
+  einschließlich APK auf finalem Branch-HEAD und reales Android-Gerät; lokale
+  SDKs fehlen. Vorläufer-Main-CI ist kein Testnachweis dieses PR.
+- **BLOCKIERT:** direkte lokale Flutter-/Dart-Ausführung; CI-Status nach
+  Veröffentlichung des Dokumentationscommits gesondert auswerten.
+- **Migration:** keine; SQLite/JSON, APIs, Rule-/Questzustand,
+  Modell-/Controller-Dateien, Version und externe Anbieter unverändert.
+- **Koordination:** #446 betrifft nur späte KI-Antworten und einen eigenen Test;
+  #447–#451 andere Fachcodepfade. README/zentralen Checkpoint bei späterer
+  Integration additiv durch Chat D konsolidieren, nicht blind überschreiben.
+- **Nächster Schritt:** finale grüne PR-CI für #452 belegen oder rote Tests auf
+  demselben Branch beheben; bis dahin Draft belassen.
