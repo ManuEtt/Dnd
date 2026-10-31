@@ -91,12 +91,7 @@ jobs:
         run: flutter pub get
       - name: Dart-Formatierung prüfen
         working-directory: app
-        run: |
-          # Temporary CHAT-C diagnostic: show exact SDK formatter diff.
-          dart format --output=write lib/ui/fantasy_combat_chronicle.dart test/fantasy_dice_breakdown_test.dart
-          git diff -- lib/ui/fantasy_combat_chronicle.dart test/fantasy_dice_breakdown_test.dart
-          exit 1 # intentional fast diagnostic: formatted diff logged
-          dart format --output=none --set-exit-if-changed lib test
+        run: dart format --output=none --set-exit-if-changed lib test
       - name: Flutter-Code analysieren
         working-directory: app
         run: flutter analyze
