@@ -32,9 +32,8 @@ Future<void> _open(
               onResult(
                 await showDialog<SrdMagicInitiateChoice>(
                   context: context,
-                  builder: (_) => SrdMagicInitiateDialog(
-                    background: background,
-                  ),
+                  builder: (_) =>
+                      SrdMagicInitiateDialog(background: background),
                 ),
               );
             },
@@ -93,7 +92,9 @@ void main() {
         find.ancestor(of: content, matching: find.byType(Scrollable)),
         findsOneWidget,
       );
-      final confirm = find.byKey(const ValueKey('confirm-magic-initiate-choice'));
+      final confirm = find.byKey(
+        const ValueKey('confirm-magic-initiate-choice'),
+      );
       expect(tester.widget<FilledButton>(confirm).onPressed, isNull);
       await tester.ensureVisible(content);
       await tester.pumpAndSettle();
