@@ -23,9 +23,26 @@ class MemoryEngine {
       RegExp(r'^(?:kannst|koenntest)\s+du\s+dich\b.*\berinnern\b'),
       RegExp(r'^(?:was\s+weisst\s+du|weisst\s+du\s+noch)\b'),
       RegExp(r'^was\s+(?:ist|war)\s+bisher\s+(?:passiert|geschehen)\b'),
+      // General recaps must be explicit; ordinary player actions and
+      // narrated/quoted questions never replace a free player turn.
+      RegExp(
+        r'^was\s+haben\s+wir\s+(?:bisher|zuletzt|beim\s+letzten\s+mal)\s+erlebt$',
+      ),
+      RegExp(
+        r'^was\s+ist\s+(?:bisher|zuletzt|beim\s+letzten\s+mal)\s+passiert$',
+      ),
+      RegExp(
+        r'^(?:kannst|koenntest)\s+du\s+mir\s+(?:bitte\s+)?(?:sagen|erzaehlen),?\s+was\s+(?:bisher|zuletzt)\s+passiert\s+ist$',
+      ),
+      RegExp(
+        r'^erzaehl(?:e)?\s+mir,?\s+was\s+(?:bisher|zuletzt)\s+passiert\s+ist$',
+      ),
+      RegExp(
+        r'^(?:kannst|koenntest)\s+du\s+(?:mir\s+)?(?:unser(?:e|es)?|die|das)\s+(?:geschichte|abenteuer|kampagne)\s+zusammenfassen$',
+      ),
       RegExp(r'^erzaehl\w*\s+(?:mir\s+)?(?:etwas\s+)?(?:ueber|von)\b'),
       RegExp(
-        r'^fass(?:e|t)\b.*\b(?:geschichte|abenteuer|kampagne|sitzung|erlebnisse)\b.*\bzusammen\b',
+        r'^fass(?:e|t)?\b.*\b(?:geschichte|abenteuer|kampagne|sitzung|erlebnisse)\b.*\bzusammen\b',
       ),
       RegExp(r'^(?:rueckblick|tagebuch|zusammenfassung|erinnerungen)\b'),
       RegExp(r'^(?:zeig(?:e)?|oeffne)\s+(?:mir\s+)?(?:das\s+)?tagebuch\b'),
@@ -427,6 +444,15 @@ Set<String> _memoryTokens(String text) {
     'wissen',
     'weissst',
     'bisher',
+    // Generic questions must not become topical lookups for filler verbs.
+    'beim',
+    'erlebt',
+    'fass',
+    'haben',
+    'letzten',
+    'mal',
+    'wir',
+    'zuletzt',
     'bisherige',
     'bisherigen',
     'bisheriges',
