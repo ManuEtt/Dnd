@@ -63,10 +63,11 @@ void main() {
       final dialog = tester.widget<AlertDialog>(find.byType(AlertDialog));
       expect(dialog.scrollable, isTrue);
       final gaming = find.byKey(const ValueKey('background-gaming-set'));
-      expect(
-        tester.widget<DropdownButtonFormField<String>>(gaming).isExpanded,
-        isTrue,
+      final dropdown = find.descendant(
+        of: gaming,
+        matching: find.byType(DropdownButton<String>),
       );
+      expect(tester.widget<DropdownButton<String>>(dropdown).isExpanded, isTrue);
       expect(
         find.ancestor(of: gaming, matching: find.byType(Scrollable)),
         findsOneWidget,
@@ -94,10 +95,11 @@ void main() {
       onResult: results.add,
     );
     final holySymbol = find.byKey(const ValueKey('background-holy-symbol'));
-    expect(
-      tester.widget<DropdownButtonFormField<String>>(holySymbol).isExpanded,
-      isTrue,
+    final dropdown = find.descendant(
+      of: holySymbol,
+      matching: find.byType(DropdownButton<String>),
     );
+    expect(tester.widget<DropdownButton<String>>(dropdown).isExpanded, isTrue);
     final confirm = find.byKey(const ValueKey('confirm-background-package'));
     expect(tester.widget<FilledButton>(confirm).onPressed, isNull);
 
