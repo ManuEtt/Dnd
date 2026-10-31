@@ -146,3 +146,7 @@ Regelgrundlage: ausschließlich rechtmäßig nutzbare Inhalte des **D&D SRD 5.2.
 unter **CC BY 4.0**. [Namensnennung und Lizenzen](THIRD_PARTY_NOTICES.md).
 Eine vollständige SRD-Umsetzung und ein öffentlicher Mehrspielerdienst sind
 weiterhin Entwicklungsziele.
+
+### Chat C: Schildreaktionsdialog bei großer Schrift und Tastatur (31.10.2026)
+
+Der Flutter-Dialog zur expliziten Schildreaktion nutzt auf kleinen Android-Displays einen durchgehend scrollbaren Dialog mit kompakterem Außenabstand und vollbreiten Klass-/Zauberplatz-Auswahlen. Neue Widgettests decken 320/360 dp mit 200 % Schrift, simulierte Tastatur, Abbruch, fehlende Komponentenbestätigung und fehlenden vorbereiteten Schildzauber ab. Umsetzung: [PR #450](https://github.com/ManuEtt/Dnd/pull/450), Branch `feat/chat-c/hero-shield-dialog-large-text-ime-20261031`. **Die neue Flutter-Widget-/Android-CI ist noch nicht bestätigt**; Geräte- und TalkBack-Abnahme steht aus. Keine Regel-, Speicher-, Schema-, Versions- oder API-Änderung.
