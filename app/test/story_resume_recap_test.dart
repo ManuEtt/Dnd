@@ -81,8 +81,14 @@ void main() {
     expect(leads, contains('Die Hafenkarte: Den sicheren Anlegeplatz'));
     expect(leads, contains('Die Archivarin: Mira nach dem'));
     expect(leads, contains('Die alte Mühle: Den verschlossenen Keller'));
-    expect(leads.indexOf('Die Hafenkarte'), lessThan(leads.indexOf('Die Archivarin')));
-    expect(leads.indexOf('Die Archivarin'), lessThan(leads.indexOf('Die alte Mühle')));
+    expect(
+      leads.indexOf('Die Hafenkarte'),
+      lessThan(leads.indexOf('Die Archivarin')),
+    );
+    expect(
+      leads.indexOf('Die Archivarin'),
+      lessThan(leads.indexOf('Die alte Mühle')),
+    );
     expect(leads, isNot(contains('Dieser Weg ist bereits abgeschlossen')));
     expect(leads, isNot(contains('Diesen Pfad nicht mehr verfolgen')));
     expect(summary, contains('Das Tor ist versiegelt.'));
@@ -90,8 +96,10 @@ void main() {
     expect(summary, isNot(contains('Der verborgene Schatz')));
     expect(result.events.single.type, 'memory.sessionRecapSaved');
     expect(result.campaign.hero.toJson(), campaign.hero.toJson());
-    expect(result.campaign.storyThreads.map((e) => e.toJson()).toList(),
-        campaign.storyThreads.map((e) => e.toJson()).toList());
+    expect(
+      result.campaign.storyThreads.map((e) => e.toJson()).toList(),
+      campaign.storyThreads.map((e) => e.toJson()).toList(),
+    );
     expect(jsonEncode(campaign.toJson()), original);
   });
 
@@ -139,7 +147,7 @@ void main() {
         .summary;
     final leads = summary.split('Offene Anknüpfungspunkte').last;
 
-    expect(leads, contains('Mira: Die Karte  liegt am Kai.'));
+    expect(leads, contains('Mira: Die Karte liegt am Kai.'));
     expect(leads, isNot(contains('\u202e')));
     expect(leads, isNot(contains('\u2066')));
     expect(leads.trimRight().endsWith('…'), isTrue);
@@ -171,8 +179,10 @@ void main() {
     expect(summary.length, lessThanOrEqualTo(2400));
     expect(summary, isNot(contains('Offene Anknüpfungspunkte')));
     expect(summary, contains('bestätigt_index_0'));
-    expect(Campaign.fromJson(update.campaign.toJson()).toJson(),
-        update.campaign.toJson());
+    expect(
+      Campaign.fromJson(update.campaign.toJson()).toJson(),
+      update.campaign.toJson(),
+    );
   });
 
   test('saved continuation survives SQLite restart and replay', () async {
