@@ -139,12 +139,8 @@ void main() {
       ],
     );
     final original = jsonEncode(campaign.toJson());
-    final summary = GameEngine(clock: () => _now)
-        .saveSessionRecap(campaign)
-        .campaign
-        .sessionRecaps
-        .single
-        .summary;
+    final update = GameEngine(clock: () => _now).saveSessionRecap(campaign);
+    final summary = update.campaign.sessionRecaps.single.summary;
     final leads = summary.split('Offene Anknüpfungspunkte').last;
 
     expect(leads, contains('Mira: Die Karte liegt am Kai.'));
