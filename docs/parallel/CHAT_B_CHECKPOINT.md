@@ -351,6 +351,12 @@ Gezielten Abruf bestätigter NPC-Beziehungsnotizen auch bei mehreren aufeinander
   **Fachcode-Commit:** `4ef4aa4f38562f8174595df7749f4c97f0cb8753`.
   **Test-Commit:** `5fac062ab8c30cfb1c036c20ce327780175cfb4c`.
   **Dart-Formatkorrektur:** `ac84ee15e8d3b2180bedd5fed44de6768d79f7db`.
+  **Analyzer-Korrektur:** `95c59dfeba0354759abe0001f428e01c3907fb12`
+  entfernt einen doppelten bereits vorhandenen Stopword-Eintrag `fass` aus
+  der Ergänzung. In Push-CI `41244551245` bestanden Dart-Format und die
+  vorausgehenden Python-/Backend-Gates; `flutter analyze` meldete exakt den
+  doppelten Set-Eintrag und stoppte vor Flutter-Tests/APK. Der neue Commit
+  benötigt erneut vollständige CI.
   Die vorläufige Push-CI `41244405913` war ausschließlich bei
   `dart format` für den neuen Test rot; vorangehende Python- und Backend-Prüfungen
   waren erfolgreich. Finale Flutter-/Android-Abnahme steht noch aus.
