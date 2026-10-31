@@ -1,5 +1,44 @@
 # Chat B – NPC-Kontext ohne Steuerzeichen (30.10.2026)
 
+## Chat B – offene Handlungsnotizen bei gespeicherter Wiederaufnahme (31.10.2026)
+
+- **Main-Basis:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+  **Branch:** `feat/chat-b/confirmed-resume-leads-20261031`.
+  **PR:** [#456](https://github.com/ManuEtt/Dnd/pull/456), Draft.
+  **Code-Commit:** `461e086e784bbafde6d19b3e285d71b65c035c6c`.
+  **Tests:** `15e5dd537a14042cc6d142692d1da922f7dcf471`,
+  korrigierter Teststand `acc80d50953251742978061eae670e4e55efe6ca`.
+- **Ausgangsproblem:** vorhandene Rückblicke führen Handlungsstränge nur
+  mit Titel und Status. Länger pausierende Spieler müssen selbst nachlesen,
+  welche ausdrücklich gespeicherten offenen Fragen als Nächstes relevant sind.
+- **Akzeptanz/Implementierung:** Bis zu drei letzte offene gespeicherte
+  Handlungsnotizen ergänzen den bereits vorhandenen bestätigten Sitzungsinhalt.
+  Keine abgeschlossenen/aufgegebenen/leeren Einträge, keine Erzählung als
+  bestätigte Fakten oder Regeltransaktion. Bestandsfakten priorisiert, sichere
+  Ein-Zeilen-/Unicode-Darstellung, 2.400-Zeichen- und 160-Zeichen-Notiz-Grenzen.
+- **Neue Tests:** `app/test/story_resume_recap_test.dart` für positive
+  Auswahl und Reihenfolge, negative Endzustände/unbestätigte Szene,
+  Unicode-Trunkierung, volle Recaps, echten SQLite-Neustart und Revisions-/
+  Journal-/Heldenkontinuität.
+- **Geändert:** `app/lib/story/story_campaign_engine.dart`, neuer Test,
+  `README.md`, `docs/CODEX_CHECKPOINT.md`, diese Datei.
+- **GETESTET:** Main-HEAD, offene PR-Dateipfade und vollständigen GitHub-
+  Schreibzugriff geprüft. **NICHT GETESTET:** neue Dart/Flutter/Android-CI
+  auf finalem Dokumentationscommit bis zum tatsächlichen Workflowabschluss.
+  Kein lokales Dart/Flutter-SDK; Gerät/Produktiv-KI nicht geprüft.
+- **BLOCKIERT:** lokale Tests mangels SDK; CI-Prüfung auf GitHub.
+  **Migration:** keine, SQLite 3 / äußeres JSON 1, Hero-/Quest-/Kampf-
+  mechanik und bestehende Rückblicke unverändert.
+- **Koordination:** #452 berührt nur das andere
+  `story_memory_engine.dart`; #446 ist ein separater KI-Verzögerungstest.
+  #454 führt mehrere andere PRs zusammen, ohne StoryCampaignEngine zu ändern.
+  Geteilte README-/zentrale Checkpoint-Ergänzungen additiv durch Chat D
+  integrieren; keine fremden Branches ändern.
+- **Nächster Schritt:** finale CI/Android-Prüfung von #456, etwaige roten
+  Prüfungen im eigenen Branch beheben und nach vollständigem Grün an Chat D
+  zur Integrationskoordination übergeben.
+
+
 ## Chat B – bestätigte NPC-Chronik ohne unsichtbare Steuerzeichen (30.10.2026)
 
 [Draft-PR #398](https://github.com/ManuEtt/Dnd/pull/398) auf
