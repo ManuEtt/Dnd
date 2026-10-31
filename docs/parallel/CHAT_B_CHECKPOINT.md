@@ -1,5 +1,16 @@
 # Chat B – NPC-Kontext ohne Steuerzeichen (30.10.2026)
 
+## Chat B – verspätete Story-Antwort nach SQLite-Neustart (31.10.2026)
+
+- **Basis-main:** `47ab002872b7d46daeae03bb558258cf2ea73e4a`. **Branch:** `feat/chat-b/delayed-story-response-restart-20261031`. **Pull Request:** wird nach dem Commit angelegt.
+- **Problem:** Ein KI-Anbieter kann nach einem anderen, bereits bestätigten lokalen Spielstand antworten und eine veraltete Handlung samt NPC-Notiz oder neuer Handlungsspur anbieten. Diese darf eine jüngere SQLite-Revision nicht überschreiben.
+- **Implementiert:** `app/test/ai_story_delayed_sqlite_restart_test.dart` mit zwei unabhängigen SQLite-Verbindungen und echter Wiederaufnahme nach Schließen/Wiederöffnen; kontrolliert verzögerter Fake-Story-Provider und reale `GameController.sendAction`-Integration. Positiv: genau ein narrativer Spielzug nach Neustart; negativ: während der Provider wartet, wird ein manueller Story-Faden abgeschlossen und bestätigt, danach werden verspätete neue Threads/NPC-Notizen ohne Zweitevent abgelehnt. Neustart, unveränderte Heldenwerte, Journal und rekonstruiertes SQLite-Snapshot werden geprüft.
+- **Dateien:** neuer Flutter-Storytest sowie additive README-/Checkpoint-Ergänzungen. **Keine** Änderungen an Regelengine, gemeinsamem Modell, SQLite-Schema, Controller oder Backend, kein kostenpflichtiger KI-Aufruf.
+- **GETESTET:** Der alte PR #431 ist bereits gemergt und dessen beide CI-Läufe grün (Vorläufer, nicht dieses Paket).
+- **NICHT GETESTET:** Flutter-/Dart-/Android-Gates dieses neuen Pakets sind bis zu einem bestätigten finalen CI-Lauf offen; lokales Flutter-SDK und GitHub-DNS-Checkout fehlen.
+- **Nächster Schritt:** CI inklusive des neuen Tests abnehmen, etwaige Formatierungs-/Testfehler im selben Branch korrigieren, dann Chat D zur Integration vorlegen.
+
+
 ## Chat B – bestätigte NPC-Chronik ohne unsichtbare Steuerzeichen (30.10.2026)
 
 [Draft-PR #398](https://github.com/ManuEtt/Dnd/pull/398) auf
