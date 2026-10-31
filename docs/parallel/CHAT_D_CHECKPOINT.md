@@ -936,3 +936,38 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Nächster Schritt:** Finale `flutter test test/pending_action_sqlite_validation_test.dart` und vollständige GitHub-Actions-Pipeline auf dem tatsächlichen PR-HEAD verifizieren; erst danach Review-/Integrationsfreigabe erwägen.
 
 ---
+
+---
+
+# Chat D – D-025: Unicode-sichere Quellcode-ZIP-Pfade (31.10.2026)
+
+- **Ausgangs-Main-SHA:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+- **Branch:** `fix/chat-d/archive-unicode-controls-20261031`.
+- **Code-/Test-Commit:** `59757423be3bbd47be9a39a1a187a1cb3baee71e`;
+  endgültigen Branch-HEAD und CI nach Dokumentationscommit im PR prüfen.
+- **PR:** https://github.com/ManuEtt/Dnd/pull/451 (Draft).
+- **Problem:** Source-ZIP-Path-Validator erlaubte C1-Steuerzeichen,
+  Zero-Width-/Bidi-Formatzeichen, Zl/Zp-Trennzeichen und isolierte Surrogate.
+  Dies kann irreführende oder nicht portable ZIP-Namen erzeugen.
+- **IMPLEMENTIERT:** `scripts/package_project.py` verwirft in
+  `validate_portable_source_paths` zusätzlich Kategorie Cc/Cf/Cs/Zl/Zp,
+  bewahrt gültige sichtbare Unicode-Zeichen einschließlich kombinierender
+  Akzente und Emoji, und lässt den bestehenden atomaren Export unberührt.
+- **Tests ergänzt:** `scripts/tests/test_package_project.py` enthält
+  vier Regressionen für Steuer-/Formatzeichen, Verzeichnisse/Surrogate,
+  gültige Unicode-Dateinamen und Erhalt früherer ZIP/SHA256-Ausgaben.
+- **Geänderte Dateien:** `scripts/package_project.py`,
+  `scripts/tests/test_package_project.py`, `README.md`,
+  `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **GETESTET:** neue Tests geschrieben, noch nicht als bestanden ausgewiesen.
+- **NICHT GETESTET:** Python-Gesamtsuite, Backend/Flutter/Android/APK und
+  finale Actions auf PR-HEAD; kein reales Android-Gerät.
+- **BLOCKIERT:** lokaler Checkout DNS `github.com` nicht auflösbar;
+  Flutter/Dart nicht vorhanden. GitHub-CI muss die Ausführung bestätigen.
+- **Migrationen:** keine. SQLite 3, äußeres JSON 1, Spielstände und API
+  bleiben unverändert.
+- **Koordination:** #449 betrifft native Kotlin-Dateinamen; dieses Paket
+  ausschließlich Quellarchiv-Python. #446–#448 betreffen andere Codepfade.
+  Dokumentationskonflikte in README/CODEX/CHAT_D nur additiv integrieren.
+- **Nächster konkreter Schritt:** finale PR-#451-CI prüfen; bei Fehlern
+  denselben Branch korrigieren, erst danach Review-/Merge-Freigabe erwägen.
