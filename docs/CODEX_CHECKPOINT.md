@@ -119,3 +119,25 @@ Mehrklassen-Zauberplätze für bestätigte SRD-Klassenaliasnamen kanonisieren.
 Akzeptanz: `Wizard`/`Magier` und andere erlaubte Caster-Aliase ergeben identische
 Slots; Pact Magic bleibt separat; unbekannte Namen werden nicht geraten;
 Domain-/Speicher-/Retry-Regression und finale CI. Zuvor neue Parallel-PRs abgleichen.
+
+## 31.10.2026 – Chat B: allgemeiner Rückblick auf bestätigte Kampagnenfakten
+
+**Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+**Branch:** `feat/chat-b/natural-recap-requests-20261031`.
+**PR:** [#452](https://github.com/ManuEtt/Dnd/pull/452) (Draft).
+**IMPLEMENTIERT:** Eng begrenzte Erkennung natürlicher Rückblickfragen und
+Trennung allgemeiner Rückblicke von thematischem Faktenabruf, ohne freie
+Spielzüge oder NPC-Dialoge umzudeuten. Story-Gedächtnis-Modul und
+`story_recall_intent_test.dart` geändert; positive/negative und
+GameEngine-Ende-zu-Ende-Fälle. **GETESTET:** Main-Baseline
+[41184883579](https://github.com/ManuEtt/Dnd/actions/runs/41184883579)
+war auf `5a88834c` erfolgreich, ist aber **kein Nachweis für #452**.
+**NICHT GETESTET:** Flutter/Android-CI des neuen endgültigen PR-Commits,
+Realgerät und produktiver KI-Anbieter; lokal kein Flutter/Dart-SDK.
+**BLOCKIERT:** lokale Dart-Ausführung ohne SDK; die PR-CI dient als Abnahme.
+**MIGRATION:** keine (SQLite 3, JSON 1, API, Regeln und Buildnummer unverändert).
+**KOORDINATION:** #446 testet separate verspätete SQLite-KI-Antworten;
+geteilte README-/Checkpoint-Ergänzungen vor Merge additiv vereinigen.
+**NÄCHSTER SCHRITT:** finale PR-CI und insbesondere die Story-Regressionen
+prüfen, rote Gates auf demselben Branch korrigieren und erst nach vollständigem
+Grün zur Integration an Chat D geben.
