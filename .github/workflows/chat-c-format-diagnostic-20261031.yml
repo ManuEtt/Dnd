@@ -1,0 +1,28 @@
+name: Chat C Dart-Formatdiagnose (temporär)
+on:
+  push:
+    branches:
+      - feat/chat-c/magic-initiate-ime-scroll-20261031
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Formatiervorschlag und exakter Diff
+        working-directory: app
+        shell: bash
+        run: |
+          set -euo pipefail
+          dart format test/srd_magic_initiate_ime_test.dart
+          git diff -- test/srd_magic_initiate_ime_test.dart
