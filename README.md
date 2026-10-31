@@ -146,3 +146,41 @@ Regelgrundlage: ausschließlich rechtmäßig nutzbare Inhalte des **D&D SRD 5.2.
 unter **CC BY 4.0**. [Namensnennung und Lizenzen](THIRD_PARTY_NOTICES.md).
 Eine vollständige SRD-Umsetzung und ein öffentlicher Mehrspielerdienst sind
 weiterhin Entwicklungsziele.
+
+## Chat B – verzögerte KI-Antwort nach SQLite-Neustart (31.10.2026)
+
+Ein neuer Flutter-Regressionstest schützt vor einer Story-Provider-Antwort, die erst nach einer parallelen, bereits bestätigten SQLite-Änderung ankommt. Der positive Gegenfall bestätigt genau einen narrativen Spielzug; der Konfliktfall bewahrt Journal, NPC-Notizen, Story-Fäden, Heldenzustand und rekonstruierte Kampagne. Branch `feat/chat-b/delayed-story-response-restart-20261031` von `47ab002872b7`; CI-Ausführung dieses Pakets steht bei Erstellung noch aus. Kein Schemawechsel, keine neuen API-Kosten.
+
+> **CHAT C – neu im separaten Draft-PR [#447](https://github.com/ManuEtt/Dnd/pull/447) (31.10.2026):**
+> Während einer noch offenen Schildreaktion zeigt die Kampfchronik nur
+> bestätigte Angriffswürfel, keinen vorzeitigen Schaden oder kritische
+> Zusatzwürfel. Widget-Regressionen für 320/360 dp, 200 % Schrift und
+> TalkBack-Semantics wurden ergänzt; erfolgreiche CI und echte
+> Geräteabnahme stehen noch aus. Diese Änderungen sind **nicht Teil von main**.
+
+## Chat A – Zauberaktion und Zauberplatz als gemeinsames Staging (31.10.2026)
+
+Der neue explizit verwendbare Domainbaustein
+`SrdSpellTurnTransactionRules` verbindet die vorhandenen
+`SrdSpellPreflightRules` (vorbereiteter Zauber, Klasse, Ziel, Komponenten
+und Slot) mit `SrdSpellActionEconomyRules` (bestätigter eigener Zug,
+Magic Action vs. Bonus Action und Slotlimit). Das Ergebnis besteht aus
+**zwei unveränderten Originalen und einem zusammengehörigen neuen
+Helden-/Encounter-Vorschlag**: Aktion oder Bonusaktion sowie ggf.
+Zauberplatz werden nur gemeinsam berechnet. Veraltete Helden-,
+Zauber- und Kampfsnapshots und unbestätigte Effekte werden abgewiesen.
+Neun neue Regressionstestgruppen inklusive Retry, Zustand nach dem
+Wurf, Zaubertricks, Slotlimit, Nicht-Kampf-Grenzen und JSON-Roundtrip
+in `app/test/srd_spell_turn_transaction_rules_test.dart`.
+
+**Grenze:** Dieses Regel-Staging schreibt noch nicht in SQLite und
+ist noch nicht an den vorhandenen `GameController` gekoppelt.
+Spielstandsrevision und Eventjournal müssen durch einen nachfolgenden
+koordinierten Integrations-PR atomar geschrieben werden. Keine
+vorhandene Legacy-Schnittstelle oder Speicher-/Versionsnummer geändert.
+Details: `docs/SRD_SPELL_TURN_TRANSACTION_STAGING.md`.
+Neue vollständige CI für diesen Branch noch abzunehmen.
+
+## Chat D – Unicode-Zeilentrenner in Android-Backupdateinamen (31.10.2026)
+
+[PR #449](https://github.com/ManuEtt/Dnd/pull/449) auf `fix/chat-d/backup-unicode-separators-20261031`, Basis-main `5a88834c98f5aca40395088c20c7e1dc5b587868`: Die native SAF-Dateinamenprüfung verbietet jetzt auch Unicode-Zeilen- und Absatztrenner (U+2028, U+2029). Diese werden von der bisherigen ISO-Steuerzeichen- und Unicode-FORMAT-Prüfung nicht erfasst. Negative und positive Kotlin-Regressionstests sichern die Sperre sowie gültige Namen mit Umlauten, Emojis, gewöhnlichen Leerzeichen und kombinierenden Zeichen ab. Vollständige GitHub-CI/Android-Geräteabnahme bei Erstellung noch offen. Keine Migration von SQLite, JSON-Spielständen oder Appversion; kein Eingriff in Regeln, UI oder Story. Parallel integrierte Dokumentation muss vor Review/Merge erhalten bleiben.

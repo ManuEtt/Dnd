@@ -1,3 +1,22 @@
+# CHAT D – Android-Backupdateinamen: Unicode-Zeilenumbruch sperren (31.10.2026)
+
+- **Ausgangs-main-SHA:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+- **Eigener Branch:** `fix/chat-d/backup-unicode-separators-20261031`.
+- **Codecommits:** `147b86ad80ed32b1bdcddd940dbc492312db7909` und `3a32be9c74d79a141602f4461db4714d38902a0c`.
+- **Pull Request:** [#449](https://github.com/ManuEtt/Dnd/pull/449), Draft bis vollständiger CI.
+- **Ausgangsproblem:** `JsonBackupIo.isSafeName` erlaubt U+2028/U+2029, weil Unicode `LINE_SEPARATOR` und `PARAGRAPH_SEPARATOR` weder ISO-Steuerzeichen noch `FORMAT` sind. Der native SAF-Picker soll keine optisch mehrzeiligen Dateinamen erhalten.
+- **IMPLEMENTIERT:** Die Codepoint-Schleife verbietet `Zl`/`Zp` explizit; bisheriger Unicode-FORMAT-/Surrogatschutz bleibt unverändert. Positive und negative Regressionstests schützen internationale, normal sichtbare Namen.
+- **Geänderte Dateien:** `app/android/app/src/main/kotlin/de/aetheria/lebendiger_spielleiter/JsonBackupIo.kt`, `app/android/app/src/test/kotlin/de/aetheria/lebendiger_spielleiter/JsonBackupIoTest.kt`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Akzeptanz:** U+2028/U+2029 sicher abgewiesen; U+0085 weiterhin abgewiesen; gewöhnliche Leerzeichen, Umlaute, Emoji und kombinierte Unicodezeichen weiterhin erlaubt. End-to-End-/native Tests auf dem finalen HEAD ohne Regression.
+- **GETESTET:** technische Änderung und Testfälle in GitHub gesichert; tatsächliche CI auf finalem Dokumentations-Commit zum Dokumentationszeitpunkt ausstehend.
+- **NICHT GETESTET:** finale Remote-Python-/Backend-/Flutter-/JVM-/Android-Builds und echter SAF-Dialog auf Gerät.
+- **Bekannte Grenzen:** Unicode-Homoglyphen und providerabhängige Umbenennungen werden durch diese kleine Änderung nicht allgemein gelöst.
+- **Kompatibilität:** keine Migration; unveränderte bestehende SQLite-/JSON-Spielstände, Version, Berechtigungen und übrige Komponenten.
+- **Koordination:** bei Beginn ausschließlich #446, #447 und #448 offen; keine Fachdateien in deren PRs betroffen. README/zentralen Checkpoint vor Zusammenführung additiv konsolidieren.
+- **Genau ein nächster Schritt:** vollständige CI auf dem finalen PR-HEAD prüfen; erst dann Review- und Mergeentscheidung.
+
+---
+
 # CHAT D – D-Backup-Dateinamen: Unicode-Formatzeichen sperren (30.10.2026)
 
 - **Ausgangs-main-SHA:** `55fe44475a113943c6310ec16a8ffb481185f4e9`.
