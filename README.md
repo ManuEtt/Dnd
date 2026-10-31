@@ -66,6 +66,26 @@ werden nicht geraten. Zuerst aktuelle PRs/Quellen prüfen; Domain-, SQLite-/Retr
 und bestehende Zauberregressionen verlangen. Keine automatische Fortsetzung
 außerhalb einer aktiven Sitzung.
 
+**Separater Chat-A-Regelfix (Branch, noch nicht in main):**
+`feat/chat-a/multiclass-slot-aliases-20261031` behebt die
+Namensabhängigkeit in `MulticlassRules.combinedSpellcasterLevel`.
+Die schon unterstützten SRD-Klassenaliase (`Wizard`/`Magier`,
+`Ranger`/`Waldläufer` usw.) ergeben damit identische
+Mehrklassen-Zauberplatzwerte. Hexenmeister-Paktmagie bleibt
+eigenständig, unbekannte Klassen werden nicht geraten.
+Sieben neue Domain-/SQLite-/Altspielstand-Testgruppen stehen
+in `app/test/multiclass_spell_slot_alias_test.dart`; tatsächlicher
+CI-Nachweis ist vom finalen PR-HEAD abhängig. Keine Migration,
+keine Änderungen an bestehenden Klassennamen und Spielständen.
+Der offene Chat-A-PR #448 bearbeitet einen anderen Regelbaustein;
+gemeinsame Dokumentation muss bei der Integration additiv
+konsolidiert werden. [Details](docs/parallel/CHAT_A_CHECKPOINT.md).
+
+**Nächster unabhängiger Chat-A-Schritt nach diesem Fix:**
+Regelgeprüfte Vorbereitung von Mehrklassen-Zaubern pro
+Klassenstufe und bestätigtem Katalogeintrag, mit
+Ablehnungs-, Alt-JSON- und SQLite-Retrytests.
+
 ## Starten und prüfen
 
 Toolchain wie CI: Flutter **3.35.7**, Dart **3.9.2**, Java **17**, Node **22.14.0**,
