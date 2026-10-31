@@ -1,5 +1,31 @@
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
+## Chat B – gespeicherte offene Handlungsnotizen im Sitzungsrückblick (31.10.2026)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+  **Branch:** `feat/chat-b/confirmed-resume-leads-20261031`.
+  **PR:** [#456](https://github.com/ManuEtt/Dnd/pull/456), Draft.
+- **IMPLEMENTIERT:** `StoryCampaignEngine.saveSessionRecap` ergänzt bis zu
+  drei bestätigte offene Handlungsnotizen, neuere zuerst. Abgeschlossene,
+  aufgegebene und leere Einträge ausgeschlossen, bestehende Fakten niemals
+  für Zusatztexte gekürzt. Nur lesende Storydaten, keine Erfindung aus
+  Szene/Dialog oder Regelwirkung.
+- **Dateien:** `app/lib/story/story_campaign_engine.dart`,
+  `app/test/story_resume_recap_test.dart`, README sowie persönlicher und
+  zentraler Checkpoint. SQLite/JSON (3/1), APIs, App-Version unverändert.
+- **GETESTET:** Live-Main, offene PR-Dateien und Ausgangs-CI nachgewiesen.
+  **NICHT GETESTET:** neue Dart-/Flutter-/Android-Gates auf finalem PR-HEAD
+  beim Erstellen, Realgerät, produktiver externer KI-Dienst.
+  **BLOCKIERT:** kein lokales Flutter-/Dart-SDK, CI-Abnahme über GitHub.
+- **NOCH NICHT IMPLEMENTIERT:** automatische Wiederaufnahme-UI beim
+  Öffnen einer Kampagne; dieses Paket verbessert den vorhandenen expliziten
+  dauerhaft gespeicherten Rückblick.
+- **NÄCHSTER SCHRITT:** finale CI von #456 inklusive SQLite-Neustart-/Format-
+  Regressionen abnehmen; bei Rot nur eigenen Branch korrigieren, anschließend
+  mit Chat D die additiven README-/Checkpoint-Konflikte abstimmen. Keine
+  automatische Zusammenführung.
+
+
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
 Alpha **0.8.49+99**. Dieser neue Live-Status ersetzt widersprüchliche historische
 Momentaufnahmen; die vollständige additive Vereinigung ist bytegenau unter
