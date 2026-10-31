@@ -1,5 +1,19 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat B – bestätigte offene Handlungsnotizen beim Fortsetzen (31.10.2026)
+
+[Draft-PR #456](https://github.com/ManuEtt/Dnd/pull/456) erweitert den
+bestehenden Befehl **„Rückblick dauerhaft speichern“**: Die Bestandsaufnahme
+enthält nun bis zu drei zuletzt gespeicherte offene Handlungsnotizen. Für
+abgeschlossene/aufgegebene Stränge werden keine neuen Anknüpfungspunkte
+vorgeschlagen. Bestätigte Fakten haben Vorrang vor Zusatznotizen;
+Szenenbehauptungen, nicht bestätigte Dialoge und die geheime Storyvorgabe
+bleiben ausgeschlossen. Unicode- und 2.400-Zeichen-Grenzen bleiben erhalten.
+Neue Flutter-/SQLite-Regressionen dokumentieren Neustart und Revisions-/
+Regelzustandskontinuität. **Die vollständige CI dieses PR ist hier noch
+nicht abgenommen.** SQLite 3 / JSON 1 und App-Version unverändert.
+
+
 Deutschsprachige Fantasy-Solo-App für Android: Flutter/Dart, lokale SQLite-Spielstände,
 regelgeprüfte Aktionen und ein optionaler Fastify-/TypeScript-Erzähler.
 
