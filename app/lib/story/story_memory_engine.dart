@@ -447,7 +447,6 @@ Set<String> _memoryTokens(String text) {
     // Generic questions must not become topical lookups for filler verbs.
     'beim',
     'erlebt',
-    'fass',
     'haben',
     'letzten',
     'mal',
