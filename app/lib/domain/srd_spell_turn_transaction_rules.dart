@@ -169,20 +169,20 @@ class SrdSpellTurnTransactionRules {
       materialConsumptionResolvedSeparatelyConfirmed:
           materialConsumptionResolvedSeparatelyConfirmed,
     );
-    final nextEncounter = encounter == null
-        ? null
-        : encounter.copyWith(
-            actionUsed: currentAction.action == SrdSpellTurnAction.magicAction
-                ? true
-                : encounter.actionUsed,
-            bonusActionUsed:
-                currentAction.action == SrdSpellTurnAction.bonusAction
-                ? true
-                : encounter.bonusActionUsed,
-            spellSlotExpendedThisTurn:
-                encounter.spellSlotExpendedThisTurn ||
-                currentAction.expendSpellSlot,
-          );
+    Encounter? nextEncounter;
+    if (encounter != null) {
+      nextEncounter = encounter.copyWith(
+        actionUsed: currentAction.action == SrdSpellTurnAction.magicAction
+            ? true
+            : encounter.actionUsed,
+        bonusActionUsed: currentAction.action == SrdSpellTurnAction.bonusAction
+            ? true
+            : encounter.bonusActionUsed,
+        spellSlotExpendedThisTurn:
+            encounter.spellSlotExpendedThisTurn ||
+            currentAction.expendSpellSlot,
+      );
+    }
 
     return SrdSpellTurnStagedResult(
       cast: cast,
