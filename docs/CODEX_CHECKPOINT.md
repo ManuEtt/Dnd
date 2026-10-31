@@ -119,3 +119,26 @@ Mehrklassen-Zauberplätze für bestätigte SRD-Klassenaliasnamen kanonisieren.
 Akzeptanz: `Wizard`/`Magier` und andere erlaubte Caster-Aliase ergeben identische
 Slots; Pact Magic bleibt separat; unbekannte Namen werden nicht geraten;
 Domain-/Speicher-/Retry-Regression und finale CI. Zuvor neue Parallel-PRs abgleichen.
+
+---
+
+## 31.10.2026 – Chat D: ZIP-Pfadschutz, PR #451
+
+- Ausgangs-main: `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+- Branch: `fix/chat-d/archive-unicode-controls-20261031`; technischer Commit:
+  `59757423be3bbd47be9a39a1a187a1cb3baee71e`.
+- PR: https://github.com/ManuEtt/Dnd/pull/451 (Draft, noch kein Merge).
+- IMPLEMENTIERT: Windows-portable Source-ZIP-Komponenten verweigern neben den
+  bisherigen ungültigen Zeichen nun Unicode-Kategorien Cc/Cf/Cs/Zl/Zp.
+  Vier neue Python-Testmethoden prüfen Negativ-/Positivfälle sowie
+  unveränderte Prüfsummen/ZIPs bei abgelehnter Veröffentlichung.
+- GETESTET: noch kein vollständiger Projekt- oder CI-Lauf auf finalem PR-HEAD
+  belegt; Testcode ist nicht gleich bestandenem Test.
+- NICHT GETESTET: Python-Gesamtsuite, Flutter/Android, Backend, APK, reales Gerät
+  (vorliegende CI-Läufe anderer Commits sind kein Freigabenachweis).
+- BLOCKIERT: lokale GitHub-Klonung durch DNS nicht möglich; Flutter/Dart fehlen.
+  Andere A/B/C/D-PRs #446–#449 bleiben unverändert. Gemeinsame Dokumentation
+  bei Integration verlustfrei zusammenführen.
+- Keine Spielstand-, Datenbankschema-, JSON-, Regel- oder UI-Migration.
+- Nächster Schritt: PR #451 auf finalem HEAD vollständig in GitHub Actions
+  prüfen und gegen die anderen offenen PRs auf Dateikonflikte nachkontrollieren.
