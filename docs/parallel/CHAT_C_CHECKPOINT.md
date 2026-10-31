@@ -1,3 +1,16 @@
+## 31.10.2026 – Chat C: Hintergrundpaket bei 200 % Schrift und IME (PR #455)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`; **Branch:** `feat/chat-c/background-package-large-text-ime-20261031`.
+- **Code- und Testcommit:** `3d2a1471338bf92fb31dd10b505fc9f3d7ca7eb1` (finalen Dokumentations-HEAD im PR prüfen); **Pull Request:** [#455](https://github.com/ManuEtt/Dnd/pull/455) (Draft).
+- **Problem:** Im Dialog für Hintergrundpakete liegt ein eigener Scrollbereich innerhalb eines nicht als scrollable deklarierten AlertDialog. Für sehr große Schrift und simulierte Android-Tastatur gab es keine spezifischen Widgettests; zwei Dropdowns waren nicht expandiert.
+- **IMPLEMENTIERT:** `app/lib/ui/srd_background_package_dialog.dart` nutzt nun einen einzigen `AlertDialog(scrollable: true)`, schmale Insets und beide Dropdowns mit `isExpanded: true`. Unveränderte explizite Bestätigung und Abbruch.
+- **TESTS HINZUGEFÜGT:** `app/test/srd_background_package_ime_test.dart` mit vier positiven/negativen Varianten: 320/360 dp und 200 % Schrift bei 220 dp IME; Soldat ohne Spielset gesperrt und abbrechbar; Akolyth wählt 50 Gold statt Symbol; Soldat wählt ein wirklich vorhandenes Spielset. Layoutfehler werden explizit geprüft.
+- **GETESTET:** GitHub-main, alle offenen PR-Bereiche, bestehender Quellcode und vorhandene Tests geprüft, Branch/Code/Test-PR angelegt. [PR #450 CI 41244483591](https://github.com/ManuEtt/Dnd/actions/runs/41244483591) ist auf eigenem Vor-Branch grün; **nicht** als Nachweis für #455 verwenden.
+- **NICHT GETESTET:** Neue Tests, Formatierung, `flutter analyze`, vollständige Flutter-Suite, Backend/Python, native Gradle-Tests und APK für den finalen PR-Head sind bis zur CI offen. Flutter-/Dart-SDK lokal nicht vorhanden; keine echte Geräte-IME- oder TalkBack-Abnahme.
+- **BLOCKIERT:** CI-Abnahme des neuen Pakets. Keine automatische Integration.
+- **GEÄNDERTE DATEIEN:** UI-Dialog, neuer Test, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_C_CHECKPOINT.md`. Andere UI-/Fachmodule und Spielstandformat bleiben unangetastet. **Migrationen:** keine.
+- **NÄCHSTER SCHRITT:** Den getrennten `SrdMagicInitiateDialog` bei 320 dp/200 %/IME auf durchgehende Scrollbarkeit prüfen. Akzeptanz: alle Zauberwahlen, Validierungsfehler und Abbruch/Bestätigung bleiben erreichbar; doppelte Zaubertricks dürfen keine Bestätigung erlauben.
+
 ## 30.10.2026 – Chat C: Ausrüstungsdialog bei 200 % Schrift und IME
 
 ## UI-Teilintegration des Gesamtmigrationslaufs – 30.10.2026
