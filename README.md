@@ -1,5 +1,30 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – Zauberaktion und Zauberplatz als gemeinsames Staging (31.10.2026)
+
+Der neue explizit verwendbare Domainbaustein
+`SrdSpellTurnTransactionRules` verbindet die vorhandenen
+`SrdSpellPreflightRules` (vorbereiteter Zauber, Klasse, Ziel, Komponenten
+und Slot) mit `SrdSpellActionEconomyRules` (bestätigter eigener Zug,
+Magic Action vs. Bonus Action und Slotlimit). Das Ergebnis besteht aus
+**zwei unveränderten Originalen und einem zusammengehörigen neuen
+Helden-/Encounter-Vorschlag**: Aktion oder Bonusaktion sowie ggf.
+Zauberplatz werden nur gemeinsam berechnet. Veraltete Helden-,
+Zauber- und Kampfsnapshots und unbestätigte Effekte werden abgewiesen.
+Neun neue Regressionstestgruppen inklusive Retry, Zustand nach dem
+Wurf, Zaubertricks, Slotlimit, Nicht-Kampf-Grenzen und JSON-Roundtrip
+in `app/test/srd_spell_turn_transaction_rules_test.dart`.
+
+**Grenze:** Dieses Regel-Staging schreibt noch nicht in SQLite und
+ist noch nicht an den vorhandenen `GameController` gekoppelt.
+Spielstandsrevision und Eventjournal müssen durch einen nachfolgenden
+koordinierten Integrations-PR atomar geschrieben werden. Keine
+vorhandene Legacy-Schnittstelle oder Speicher-/Versionsnummer geändert.
+Details: `docs/SRD_SPELL_TURN_TRANSACTION_STAGING.md`.
+Neue vollständige CI für diesen Branch noch abzunehmen.
+
+
+
 Deutschsprachige Fantasy-Solo-App für Android: Flutter/Dart, lokale SQLite-Spielstände,
 regelgeprüfte Aktionen und ein optionaler Fastify-/TypeScript-Erzähler.
 
