@@ -1,5 +1,13 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+> **CHAT C – neu im separaten Draft-PR [#447](https://github.com/ManuEtt/Dnd/pull/447) (31.10.2026):**
+> Während einer noch offenen Schildreaktion zeigt die Kampfchronik nur
+> bestätigte Angriffswürfel, keinen vorzeitigen Schaden oder kritische
+> Zusatzwürfel. Widget-Regressionen für 320/360 dp, 200 % Schrift und
+> TalkBack-Semantics wurden ergänzt; erfolgreiche CI und echte
+> Geräteabnahme stehen noch aus. Diese Änderungen sind **nicht Teil von main**.
+
+
 Deutschsprachige Fantasy-Solo-App für Android: Flutter/Dart, lokale SQLite-Spielstände,
 regelgeprüfte Aktionen und ein optionaler Fastify-/TypeScript-Erzähler.
 
