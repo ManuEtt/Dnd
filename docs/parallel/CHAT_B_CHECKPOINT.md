@@ -350,6 +350,10 @@ Gezielten Abruf bestätigter NPC-Beziehungsnotizen auch bei mehreren aufeinander
   **Pull Request:** [#452](https://github.com/ManuEtt/Dnd/pull/452), Draft.
   **Fachcode-Commit:** `4ef4aa4f38562f8174595df7749f4c97f0cb8753`.
   **Test-Commit:** `5fac062ab8c30cfb1c036c20ce327780175cfb4c`.
+  **Dart-Formatkorrektur:** `ac84ee15e8d3b2180bedd5fed44de6768d79f7db`.
+  Die vorläufige Push-CI `41244405913` war ausschließlich bei
+  `dart format` für den neuen Test rot; vorangehende Python- und Backend-Prüfungen
+  waren erfolgreich. Finale Flutter-/Android-Abnahme steht noch aus.
 - **Implementiert:** Eng verankerte Rückblickfragen und umgangssprachliche
   Zusammenfassungsbitten; leere allgemeine Themenanfrage liefert ausschließlich
   bereits bestätigte Fakten. Keine stillen Freigaben freier NPC-/Spieleraktionen.
