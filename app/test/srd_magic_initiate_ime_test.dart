@@ -48,11 +48,7 @@ Future<void> _open(
   await tester.pumpAndSettle();
 }
 
-Future<void> _choose(
-  WidgetTester tester,
-  String key,
-  String value,
-) async {
+Future<void> _choose(WidgetTester tester, String key, String value) async {
   final dropdown = find.byKey(ValueKey(key));
   await tester.ensureVisible(dropdown);
   await tester.pumpAndSettle();
@@ -97,9 +93,7 @@ void main() {
         find.ancestor(of: content, matching: find.byType(Scrollable)),
         findsOneWidget,
       );
-      final confirm = find.byKey(
-        const ValueKey('confirm-magic-initiate-choice'),
-      );
+      final confirm = find.byKey(const ValueKey('confirm-magic-initiate-choice'));
       expect(tester.widget<FilledButton>(confirm).onPressed, isNull);
       await tester.ensureVisible(content);
       await tester.pumpAndSettle();
