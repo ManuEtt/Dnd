@@ -1,5 +1,16 @@
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
+> **Paralleler CHAT-C-Entwicklungsbranch (31.10.2026):**
+> [Draft-PR #447](https://github.com/ManuEtt/Dnd/pull/447) schützt die
+> Flutter-Kampfchronik vor der Anzeige unbestätigter Treffer-/Schadensdetails
+> bei einer offenen Schildreaktion. Neue Widgettests für 320/360 dp,
+> 200 % und Semantics hinzugefügt, aber bis zur erfolgreichen GitHub-CI nicht
+> als bestanden melden. Code-HEAD `5f951e9b06b08956e9d86fa084b53699964f06c7`;
+> eigenes Detailprotokoll in `docs/parallel/CHAT_C_CHECKPOINT.md`.
+> PR #445 bearbeitet ebenfalls zentrale Dokumentation: vor Merge
+> konfliktfrei konsolidieren, bestehende Integrationseinträge erhalten.
+
+
 Stand: 30.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
 Alpha **0.8.49+99**. Dieser neue Live-Status ersetzt widersprüchliche historische
 Momentaufnahmen; die vollständige additive Vereinigung ist bytegenau unter
