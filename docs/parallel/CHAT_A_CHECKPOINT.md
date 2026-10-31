@@ -1,3 +1,18 @@
+## 31.10.2026 – SRD-Zauber- und Aktionsökonomie gemeinsam vorbereitet
+
+- **Ausgangs-main:** `47ab002872b7d46daeae03bb558258cf2ea73e4a`.
+- **Branch:** `feat/chat-a/spell-turn-atomic-staging-20261031`; **PR:** neuer Draft-PR in Anlage.
+- **IMPLEMENTIERT:** Reines Domain-Staging `app/lib/domain/srd_spell_turn_transaction_rules.dart` mit `SrdSpellTurnTransactionRules.prepare`, `stageConfirmed` und privatem, an Hero-/Zauber-/Encounter-Snapshots gebundenem `SrdSpellTurnPlan`. Bestehende Ziel-/Komponenten-/Slotprüfung und getrennte Aktionsökonomie bilden einen gemeinsamen Helden-/Encounter-Rückgabewert. Kein Effekt ohne separate Bestätigung und keine unbestätigte Spielzustandsänderung.
+- **TESTS ERSTELLT:** `app/test/srd_spell_turn_transaction_rules_test.dart`, neun deterministische Gruppen, darunter Magic-/Bonus-Action getrennt, Turn-Slot- und Cantrip-Regeln, stale Retry/Revision, Fehlerpfade und unveränderte Original-JSONs.
+- **DOKUMENTIERT:** `docs/SRD_SPELL_TURN_TRANSACTION_STAGING.md`, README, zentraler Checkpoint. SRD 5.2.1 *Playing the Game / Actions, Bonus Actions, Spells / Casting Time*, CC BY 4.0. Regelabdeckung nur `partial`.
+- **GETESTET:** Vorabprüfungen auf GitHub (Main/Issues/PRs/Code) und Test-/Sourceerstellung; **NICHT GETESTET:** neuer Flutter-/Android-CI-Gesamtlauf und echtes Gerät.
+- **KEINE MIGRATION:** Vorhandene Modelle, Controller, GameEngine, JSON-/SQLite-/Eventformat, Versionsnummer, UI, Backend und Story unverändert.
+- **BLOCKIERT:** Vollständige Persistenz-/Revisionsintegration benötigt nächsten kleinen koordinierten Integrationsschritt. Die bestehende boolsche Legacy-Preflight-API bleibt unverändert; die neue Route wird nur bei expliziter Nutzung aktiv.
+- **VORGÄNGER:** Der gemergte PR #432 hatte vollständige [CI #41123342877](https://github.com/ManuEtt/Dnd/actions/runs/41123342877) grün. Main-CI auf `47ab0028` war beim Start noch aktiv; Issue #425 weiterhin offen.
+- **NÄCHSTER SCHRITT:** Nach Fach-Review die atomare SQLite-/Event-Buchung für beide zurückgegebenen Objekte unter Kampagnenrevision testen.
+
+---
+
 ## Integrationsnachtrag 30.10.2026 – Chat-A-Branches
 
 Alle 13 initialen Chat-A-Branchheads auf Main `6465a4b2` regulär konsolidiert.
