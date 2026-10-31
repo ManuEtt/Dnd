@@ -146,3 +146,18 @@ Regelgrundlage: ausschließlich rechtmäßig nutzbare Inhalte des **D&D SRD 5.2.
 unter **CC BY 4.0**. [Namensnennung und Lizenzen](THIRD_PARTY_NOTICES.md).
 Eine vollständige SRD-Umsetzung und ein öffentlicher Mehrspielerdienst sind
 weiterhin Entwicklungsziele.
+
+---
+
+### Chat D – portable Quellcode-ZIP-Dateinamen (PR #451)
+
+Am 31.10.2026 wurde auf dem unabhängigen Branch `fix/chat-d/archive-unicode-controls-20261031` die Prüfung
+`scripts/package_project.py` gegen unsichtbare Unicode-Steuerzeichen,
+Formatzeichen, Surrogate und Zeilen-/Absatztrenner erweitert.
+`scripts/tests/test_package_project.py` enthält vier neue Regressionstests
+einschließlich unverändertem ZIP-/SHA256-Paar bei abgelehnten Pfaden.
+[PR #451](https://github.com/ManuEtt/Dnd/pull/451) ist ein Draft.
+Vollständige GitHub-CI ist am finalen Commit gesondert nachzuweisen;
+kein SQLite-/JSON-Migrationsbedarf, keine Änderung von Flutter oder Android.
+Vor Integration mit #446–#449 müssen gemeinsame README-/Checkpoint-Ergänzungen
+verlustfrei konsolidiert werden.
