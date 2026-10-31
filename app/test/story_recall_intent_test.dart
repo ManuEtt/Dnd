@@ -91,7 +91,8 @@ void main() {
     expect(update.narration, contains('Mira bewacht das Stadttor.'));
     expect(update.campaign.hero.toJson(), campaign.hero.toJson());
   });
-  test('general recap recalls confirmed memories without irrelevant keywords', () {
+
+  test('general recap returns only confirmed facts', () {
     final campaign = _campaign();
     final original = jsonEncode(campaign.toJson());
     final engine = GameEngine(clock: () => DateTime.utc(2026, 10, 25));
@@ -125,5 +126,4 @@ void main() {
     expect(update.events.single.type, isNot('memory.recalled'));
     expect(update.campaign.hero.toJson(), campaign.hero.toJson());
   });
-
 }
