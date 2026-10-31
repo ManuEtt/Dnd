@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "repository": "ManuEtt/Dnd",
+  "merged_pr": 440,
+  "main_before_link": "72ba9d2e06e7121f955832b4ad22223f64f7c343",
+  "purpose": "Preserve original Git ancestry of five post-merge integration PR heads after identical technical changes were included by PR #440. No replacement of current main code or game saves.",
+  "source_prs": [
+    {
+      "pr": 438,
+      "branch": "fix/chat-d/integrate-platform-safety-20261030",
+      "sha": "3080b9529544b395e199fb7f1bd3a1ad5b8df28e",
+      "via_parent_pr": 442
+    },
+    {
+      "pr": 439,
+      "branch": "chore/chat-d/record-source-ancestry-20261030",
+      "sha": "1635625f6b4db3a62b36754e8ffc769eee4914fb",
+      "via_parent_pr": 442
+    },
+    {
+      "pr": 441,
+      "branch": "fix/chat-d/integrate-reference-hud-20261030",
+      "sha": "28e011cc5b74b8eb2c96849a9d48cc4fce8e71a2",
+      "via_parent_pr": 441
+    },
+    {
+      "pr": 442,
+      "branch": "fix/chat-d/integrate-verified-batches-20261030",
+      "sha": "2d04ced405b45fd470726385dc15b2a1465b7439",
+      "via_parent_pr": 442
+    },
+    {
+      "pr": 443,
+      "branch": "fix/chat-d/integrate-shortcuts-npc-picker-20261030",
+      "sha": "ef5e008fc2c4f9243ca368d347f66d65e9d6f8ef",
+      "via_parent_pr": 443
+    }
+  ],
+  "direct_additional_parents": [
+    "2d04ced405b45fd470726385dc15b2a1465b7439",
+    "28e011cc5b74b8eb2c96849a9d48cc4fce8e71a2",
+    "ef5e008fc2c4f9243ca368d347f66d65e9d6f8ef"
+  ],
+  "provenance_files_from_439": [
+    "docs/parallel/INTEGRATED_SOURCE_ANCESTRY_20261030.json",
+    "scripts/tests/test_integrated_source_ancestry.py"
+  ],
+  "note": "Branch cleanup must run only after successful CI of the exact main merge SHA, closing superseded PRs, comparing unchanged branch heads and verifying archival tags."
+}
