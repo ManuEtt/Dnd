@@ -148,7 +148,10 @@ void main() {
     final results = <HeroShieldReactionPlan?>[];
     await _open(tester, hero, width: 320, onResult: results.add);
 
-    expect(find.text('Der Zauber Schild ist nicht vorbereitet.'), findsOneWidget);
+    expect(
+      find.text('Der Zauber Schild ist nicht vorbereitet.'),
+      findsOneWidget,
+    );
     final confirm = find.byKey(const ValueKey('hero-shield-confirm'));
     expect(tester.widget<FantasyTextButton>(confirm).onPressed, isNull);
     await tester.tap(find.text('Abbrechen'));
