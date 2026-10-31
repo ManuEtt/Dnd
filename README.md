@@ -146,3 +146,16 @@ Regelgrundlage: ausschließlich rechtmäßig nutzbare Inhalte des **D&D SRD 5.2.
 unter **CC BY 4.0**. [Namensnennung und Lizenzen](THIRD_PARTY_NOTICES.md).
 Eine vollständige SRD-Umsetzung und ein öffentlicher Mehrspielerdienst sind
 weiterhin Entwicklungsziele.
+
+## Chat B – Natürlich formulierte Kampagnenrückblicke (31.10.2026)
+
+[Draft-PR #452](https://github.com/ManuEtt/Dnd/pull/452) ergänzt ausschließlich die
+Story-Gedächtniserkennung: „Was haben wir bisher erlebt?“, „Was ist beim letzten
+Mal passiert?“ und vergleichbare ausdrückliche Rückblickbitten greifen auf
+**bestätigte** Erinnerungen zurück. Allgemeine Fragewörter werden nicht mehr
+als thematische Suchbegriffe fehlgedeutet. Dialoge mit NPCs und freie Aktionen
+bleiben Spielerzüge. Positive/negative Flutter- und GameEngine-Tests liegen in
+`app/test/story_recall_intent_test.dart`. Grundlage `main` `5a88834c`;
+**CI für diesen Branch bei Dokumentation noch ausstehend**. Keine Änderungen
+an SQLite/JSON, Regeln, Heldenwerten, externen KI-Kosten oder App-Version.
+Die parallele PR-Dokumentation wird bei Integration durch Chat D vereinigt.
