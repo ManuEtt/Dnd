@@ -128,9 +128,16 @@ void main() {
             'hit': true,
             'critical': true,
             'damage': 99,
-            'damageRoll': {'rolls': [9], 'modifier': 3},
-            'criticalExtraRoll': {'rolls': [8]},
-            'sneakAttackRoll': {'rolls': [7]},
+            'damageRoll': {
+              'rolls': [9],
+              'modifier': 3,
+            },
+            'criticalExtraRoll': {
+              'rolls': [8],
+            },
+            'sneakAttackRoll': {
+              'rolls': [7],
+            },
             'stateAfter': {'private': 'UNRELEASED_CHECKPOINT'},
           },
         );
@@ -138,14 +145,16 @@ void main() {
           MaterialApp(
             theme: buildFantasyTheme(),
             builder: (context, child) => MediaQuery(
-              data: MediaQuery.of(context).copyWith(
-                textScaler: const TextScaler.linear(2),
-              ),
+              data: MediaQuery.of(
+                context,
+              ).copyWith(textScaler: const TextScaler.linear(2)),
               child: child!,
             ),
             home: Scaffold(
               body: ListView(
-                children: [FantasyCombatChronicle(events: [unresolved])],
+                children: [
+                  FantasyCombatChronicle(events: [unresolved]),
+                ],
               ),
             ),
           ),
