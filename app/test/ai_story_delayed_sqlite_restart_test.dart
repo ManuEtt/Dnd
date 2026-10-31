@@ -44,11 +44,7 @@ Map<String, dynamic> _plan() => {
     },
   ],
   'places': [
-    {
-      'id': 'pier',
-      'name': 'Der Pier',
-      'description': 'Ein Steg im Nebel.',
-    },
+    {'id': 'pier', 'name': 'Der Pier', 'description': 'Ein Steg im Nebel.'},
   ],
 };
 
@@ -84,32 +80,34 @@ class _DelayedStoryTransport implements BackendTransport {
 
   void release() {
     if (reply.isCompleted) return;
-    reply.complete(const BackendResponse(
-      statusCode: 200,
-      body: {
-        'provider': 'mock',
-        'stateChanges': <Object>[],
-        'turn': {
-          'narration': 'Mira entdeckt eine neue Spur im Nebel.',
-          'threadUpdates': <Object>[],
-          'newThreads': [
-            {
-              'id': 'echo',
-              'title': 'Das neue Echo',
-              'description': 'Suche nach weiteren Hinweisen.',
-            },
-          ],
-          'npcUpdates': [
-            {
-              'id': 'mira',
-              'relationship': 'freundlich',
-              'note': 'Mira vertraut der Spielerin die Karte an.',
-            },
-          ],
-          'adventure': null,
+    reply.complete(
+      const BackendResponse(
+        statusCode: 200,
+        body: {
+          'provider': 'mock',
+          'stateChanges': <Object>[],
+          'turn': {
+            'narration': 'Mira entdeckt eine neue Spur im Nebel.',
+            'threadUpdates': <Object>[],
+            'newThreads': [
+              {
+                'id': 'echo',
+                'title': 'Das neue Echo',
+                'description': 'Suche nach weiteren Hinweisen.',
+              },
+            ],
+            'npcUpdates': [
+              {
+                'id': 'mira',
+                'relationship': 'freundlich',
+                'note': 'Mira vertraut der Spielerin die Karte an.',
+              },
+            ],
+            'adventure': null,
+          },
         },
-      },
-    ));
+      ),
+    );
   }
 }
 
@@ -193,7 +191,9 @@ void main() {
               events: changed.events,
               expectedRevision: latest.revision,
             );
-            final savedBeforeReply = (await concurrent.getCampaign(original.id))!;
+            final savedBeforeReply = (await concurrent.getCampaign(
+              original.id,
+            ))!;
             final confirmedJson = jsonEncode(savedBeforeReply.toJson());
             final savedEventCount = savedBeforeReply.events.length;
 
