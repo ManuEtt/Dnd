@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:lebendiger_spielleiter/data/campaign_repository.dart';
 import 'package:lebendiger_spielleiter/data/sqlite_campaign_repository.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/domain/multiclass_rules.dart';
@@ -92,7 +93,10 @@ void main() {
       secondLevel: 3,
     );
     expect(MulticlassRules.combinedSpellcasterLevel(aliases), 7);
-    expect(MulticlassRules.spellSlots(aliases), MulticlassRules.spellSlots(canonical));
+    expect(
+      MulticlassRules.spellSlots(aliases),
+      MulticlassRules.spellSlots(canonical),
+    );
     expect(
       SpellcastingRules.availableSlots(aliases),
       {1: 4, 2: 3, 3: 3, 4: 1},
@@ -113,7 +117,10 @@ void main() {
     expect(SpellcastingRules.pactSlotCount(character), 2);
     expect(SpellcastingRules.pactSlotLevel(character), 2);
     expect(SpellcastingRules.availablePactSlots(character), 2);
-    expect(SpellcastingRules.availableSlots(character), {1: 4, 2: 3, 3: 2});
+    expect(
+      SpellcastingRules.availableSlots(character),
+      {1: 4, 2: 3, 3: 2},
+    );
     expect(
       MulticlassRules.spellSlots(_hero(first: 'Hexenmeister')),
       everyElement(0),
@@ -159,12 +166,15 @@ void main() {
     expect(old.className, 'Wizard');
     expect(old.secondaryClassName, 'Ranger');
     expect(old.spentSpellSlots, {'1': 2, '4': 1});
-    expect(SpellcastingRules.availableSlots(old), {1: 2, 2: 3, 3: 3, 4: 0});
+    expect(
+      SpellcastingRules.availableSlots(old),
+      {1: 2, 2: 3, 3: 3, 4: 0},
+    );
     expect(old.toJson(), serialized);
     expect(source.toJson(), serialized);
   });
 
-  test('SQLite restart, idempotent retry and stale revision keep slot pool', () async {
+  test('SQLite restart, retry and stale revision preserve slots', () async {
     final directory = await Directory.systemTemp.createTemp('alias-slots-');
     final path = '${directory.path}/campaign.sqlite';
     var repository = await SqliteCampaignRepository.open(
@@ -188,7 +198,10 @@ void main() {
       );
       final reloaded = (await repository.getCampaign(campaign.id))!;
       expect(reloaded.hero.className, 'Wizard');
-      expect(SpellcastingRules.availableSlots(reloaded.hero), {1: 3, 2: 3, 3: 2});
+      expect(
+        SpellcastingRules.availableSlots(reloaded.hero),
+        {1: 3, 2: 3, 3: 2},
+      );
 
       final cast = SpellcastingRules.cast(
         reloaded.hero,
@@ -217,7 +230,10 @@ void main() {
       expect(confirmed.revision, 1);
       expect(confirmed.hero.className, 'Wizard');
       expect(confirmed.hero.spentSpellSlots, {'1': 2});
-      expect(SpellcastingRules.availableSlots(confirmed.hero), {1: 2, 2: 3, 3: 2});
+      expect(
+        SpellcastingRules.availableSlots(confirmed.hero),
+        {1: 2, 2: 3, 3: 2},
+      );
     } finally {
       await repository.close();
       await directory.delete(recursive: true);
