@@ -1,3 +1,42 @@
+# Branch-Ergänzung 31.10.2026 – Chat A: bestätigte Klassenaliase
+
+**Noch nicht in main integriert.** Basis-main
+`5a88834c98f5aca40395088c20c7e1dc5b587868`,
+Branch `feat/chat-a/multiclass-slot-aliases-20261031`.
+
+Die reine Leseberechnung der normalen Zauberplätze in
+`app/lib/domain/multiclass_rules.dart` löst jetzt bestätigte Klassen
+mit dem bestehenden `findSrdClass`-Resolver auf. Deutsch/Englisch/
+feminine Aliase ergeben dieselbe Zauberstufe; Paladin und Waldläufer
+zählen gemäß SRD 5.2.1 jeweils halb aufgerundet, Hexenmeister-Paktmagie
+bleibt getrennt und unbekannte Klassen erhalten keine erfundenen Slots.
+Die gespeicherten Klassenlabels ändern sich nicht.
+
+`app/test/multiclass_spell_slot_alias_test.dart` ergänzt sieben
+positive/negative Prüfgruppen einschließlich Alt-JSON, SQLite-Neustart,
+idempotentem Save-Retry und stale Revision. Keine Migration (SQLite 3,
+JSON 1), keine neue API, kein KI-/Story-/UI-Eingriff. Bei Start offene
+PRs #446–#449, davon #448 anderer Chat-A-Regelbaustein; keine
+Überschneidung der neuen Fachdateien. README und Checkpoints müssen
+bei parallelen PRs additiv integriert werden.
+
+**Teststatus zum Dokumentationscommit:** Quell-/Vertragsprüfung
+durchgeführt, neue Flutter-/Dart-/SQLite-Tests mangels lokalem SDK
+nicht ausgeführt; neue CI ist abzuwarten und nur auf dem finalen
+PR-HEAD zu beurteilen. Die zuvor erfolgreiche Main-CI
+[41184883579](https://github.com/ManuEtt/Dnd/actions/runs/41184883579)
+belegt nicht die neuen Änderungen. Reales Android-Gerät, Upgrade,
+TalkBack und produktive Signierung sind weiter offen.
+
+**Nächster unabhängiger Chat-A-Schritt:** vorbereitete Zauber pro
+Mehrklassen-Stufe vor Wirken anhand ausdrücklich bestätigter
+Regelmetadaten abgleichen; positive/negative Domain-, JSON- und
+SQLite-Retrytests, keine angenommene Zaubervorbereitung oder
+implizite Storyregeln. Detaillierter Fachstand:
+[Chat-A-Checkpoint](parallel/CHAT_A_CHECKPOINT.md).
+
+---
+
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
