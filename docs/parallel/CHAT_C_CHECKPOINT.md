@@ -1,3 +1,37 @@
+## 31.10.2026 – Chat C: Offene Schildreaktion in der Chronik (Draft-PR #447)
+
+- **Ausgangs-Main:** `47ab002872b7d46daeae03bb558258cf2ea73e4a`.
+- **Arbeitsbranch:** `feat/chat-c/pending-shield-chronicle-20261031`.
+- **Code-HEAD vor Dokumentation:** `5f951e9b06b08956e9d86fa084b53699964f06c7`.
+- **PR:** [#447](https://github.com/ManuEtt/Dnd/pull/447), zunächst Draft.
+- **Ausgangsproblem:** Bei `pendingEnemyShieldHit == true` konnte die
+  gespeicherte Kampfchronik aus Payloads vorzeitigen Schaden und kritische
+  bzw. Hinterhältige Zusatzwürfel präsentieren, obwohl Schild noch offen war.
+- **Implementiert:** Der bestätigte Angriffswurf und die offene Schildwahl
+  bleiben sichtbar, noch unbestätigte Schadenssumme und alle Zusatzwürfel
+  fehlen sowohl im visuellen Text als auch in TalkBack-Semantics.
+- **Änderungen:** `app/lib/ui/fantasy_combat_chronicle.dart`,
+  `app/lib/ui/fantasy_dice_breakdown.dart`,
+  `app/test/fantasy_dice_breakdown_test.dart`.
+- **Regression:** Zwei neue Widgettests bei 320/360 dp mit 200 % Schrift,
+  böswillig/spekulativ befüllten Payloads und Semantics. Bestehende Tests
+  für bereits bestätigten Schaden bleiben unverändert.
+- **GETESTET:** Quellcode-/Testpfade und offene PRs gegen GitHub-live geprüft;
+  neue Tests hinzugefügt, aber **noch kein grünes Ausführungsergebnis**.
+  Actions-Lauf auf Code-HEAD: [#41183849337](https://github.com/ManuEtt/Dnd/actions/runs/41183849337), beim Eintrag in progress.
+- **NICHT GETESTET:** Lokales Dart/Flutter (kein SDK in dieser Umgebung),
+  gesamte Flutter-/Android-Suite, echtes Android-TalkBack und IME.
+- **Parallele PRs:** #445 betrifft README/zentralen Checkpoint, nicht diese
+  UI-Code-/Testdateien. Gemeinsame Dokumentationshunks vor Merge mit Chat D
+  prüfen; kein automatischer Merge dieses Draft-PR.
+- **Migration:** Keine Änderung an Regeln, SQLite, JSON, Spielständen oder
+  externen Diensten.
+- **Nächster Schritt:** Nach grüner CI bei 320 dp/200 % auf Android mit
+  TalkBack sicherstellen, dass nur der bestätigte Angriffswurf plus offener
+  Schildstatus vorgelesen wird, nicht unbestätigter Schaden.
+
+---
+
 ## 30.10.2026 – Chat C: Ausrüstungsdialog bei 200 % Schrift und IME
 
 ## UI-Teilintegration des Gesamtmigrationslaufs – 30.10.2026
