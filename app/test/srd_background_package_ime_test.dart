@@ -67,7 +67,10 @@ void main() {
         of: gaming,
         matching: find.byType(DropdownButton<String>),
       );
-      expect(tester.widget<DropdownButton<String>>(dropdown).isExpanded, isTrue);
+      expect(
+        tester.widget<DropdownButton<String>>(dropdown).isExpanded,
+        isTrue,
+      );
       expect(
         find.ancestor(of: gaming, matching: find.byType(Scrollable)),
         findsOneWidget,
