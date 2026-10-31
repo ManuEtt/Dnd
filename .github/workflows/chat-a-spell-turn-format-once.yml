@@ -1,0 +1,40 @@
+name: Chat A - einmalige Spell-Turn-Dartformatierung
+on:
+  push:
+    branches:
+      - feat/chat-a/spell-turn-atomic-staging-20261031
+    paths:
+      - .github/workflows/chat-a-spell-turn-format-once.yml
+permissions:
+  contents: write
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Genau die zwei neuen Dateien formatieren und prüfen
+        working-directory: app
+        run: |
+          dart --version
+          dart format lib/domain/srd_spell_turn_transaction_rules.dart test/srd_spell_turn_transaction_rules_test.dart
+          dart format --output=none --set-exit-if-changed lib/domain/srd_spell_turn_transaction_rules.dart test/srd_spell_turn_transaction_rules_test.dart
+      - name: Nur offizielle Dart-Formatierung committen
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          if ! git diff --quiet -- app/lib/domain/srd_spell_turn_transaction_rules.dart app/test/srd_spell_turn_transaction_rules_test.dart; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -- app/lib/domain/srd_spell_turn_transaction_rules.dart app/test/srd_spell_turn_transaction_rules_test.dart
+            git commit -m 'style(chat-a): format staged spell turn rule and regression tests'
+            git push origin HEAD:feat/chat-a/spell-turn-atomic-staging-20261031
+          fi
