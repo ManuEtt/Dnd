@@ -114,7 +114,10 @@ void main() {
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
         final semantics = tester.ensureSemantics();
-        final unresolved = confirmed('pending-private', 'combat.turnCompleted', {
+        final unresolved = confirmed(
+          'pending-private',
+          'combat.turnCompleted',
+          {
           'attackRoll': {
             'rolls': [20],
             'natural': 20,
@@ -128,8 +131,9 @@ void main() {
           'damageRoll': {'rolls': [9], 'modifier': 3},
           'criticalExtraRoll': {'rolls': [8]},
           'sneakAttackRoll': {'rolls': [7]},
-          'stateAfter': {'private': 'UNRELEASED_CHECKPOINT'},
-        });
+            'stateAfter': {'private': 'UNRELEASED_CHECKPOINT'},
+          },
+        );
         await tester.pumpWidget(
           MaterialApp(
             theme: buildFantasyTheme(),
@@ -140,22 +144,37 @@ void main() {
               child: child!,
             ),
             home: Scaffold(
-              body: ListView(children: [FantasyCombatChronicle(events: [unresolved])]),
+              body: ListView(
+                children: [FantasyCombatChronicle(events: [unresolved])],
+              ),
             ),
           ),
         );
         await tester.pumpAndSettle();
 
         expect(find.text('Angriffswürfel: 20 · Bonus: +4'), findsOneWidget);
-        expect(find.text('Wurf: 24 · Schildentscheidung offen'), findsOneWidget);
+        expect(
+          find.text('Wurf: 24 · Schildentscheidung offen'),
+          findsOneWidget,
+        );
         expect(find.textContaining('Schaden: 99'), findsNothing);
         expect(find.textContaining('Schadenswürfel:'), findsNothing);
         expect(find.textContaining('Kritische Zusatzwürfel:'), findsNothing);
-        expect(find.textContaining('Hinterhältige Angriffswürfel:'), findsNothing);
-        expect(find.textContaining('KRITISCHER TREFFER'), findsNothing);
-        expect(find.bySemanticsLabel(RegExp(r'Schaden: 99|KRITISCHER TREFFER|Treffer,')), findsNothing);
         expect(
-          find.bySemanticsLabel(RegExp(r'Kampfrunde abgeschlossen, .*Schildentscheidung offen')),
+          find.textContaining('Hinterhältige Angriffswürfel:'),
+          findsNothing,
+        );
+        expect(find.textContaining('KRITISCHER TREFFER'), findsNothing);
+        expect(
+          find.bySemanticsLabel(
+            RegExp(r'Schaden: 99|KRITISCHER TREFFER|Treffer,'),
+          ),
+          findsNothing,
+        );
+        expect(
+          find.bySemanticsLabel(
+            RegExp(r'Kampfrunde abgeschlossen, .*Schildentscheidung offen'),
+          ),
           findsOneWidget,
         );
         expect(find.textContaining('UNRELEASED_CHECKPOINT'), findsNothing);
