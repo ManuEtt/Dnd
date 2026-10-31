@@ -118,7 +118,7 @@ void main() {
           'pending-private',
           'combat.turnCompleted',
           {
-              'attackRoll': {
+            'attackRoll': {
               'rolls': [20],
               'natural': 20,
               'modifier': 4,
