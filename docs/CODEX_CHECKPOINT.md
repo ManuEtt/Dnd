@@ -1,3 +1,7 @@
+## 31.10.2026 – Chat C: barrierearme Schildreaktion (PR #450, Draft)
+
+UI-only: `app/lib/ui/hero_shield_reaction_dialog.dart` nutzt jetzt `AlertDialog(scrollable: true)`, kleinere Insets und expandierte Auswahlfelder. Neue Regressionstests in `app/test/hero_shield_reaction_dialog_large_text_ime_test.dart` für 320/360 dp, 200 % Schrift, simulierte Tastatur, Abbruch, V/S-Freigabe und gesperrten Bestätigungspfad ohne vorbereiteten Zauber. Basierend auf main `5a88834c98f5aca40395088c20c7e1dc5b587868`; Branch `feat/chat-c/hero-shield-dialog-large-text-ime-20261031`, PR [#450](https://github.com/ManuEtt/Dnd/pull/450). **Kein Flutter/Dart lokal vorhanden; Tests noch nicht ausgeführt, GitHub-CI auf finalem PR-HEAD offen.** Unveränderte Regeln, Speicherformate und Version; kein Merge, keine Migration. Gemeinsame Dokumentation beim Merge mit parallel offenen PRs additiv konsolidieren.
+
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
