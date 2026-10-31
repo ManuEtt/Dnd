@@ -1,3 +1,16 @@
+## 31.10.2026 – Chat C: Magieinitiierter-Dialog bei großer Schrift und IME (PR #457)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+- **Branch:** `feat/chat-c/magic-initiate-ime-scroll-20261031`. **Fach-/Testcommit:** `2a87d116e1cccf2dcf4e9af9ffae43e55a31d706`; **PR:** [#457](https://github.com/ManuEtt/Dnd/pull/457) (Draft; finalen Head im PR prüfen).
+- **Problem:** Das SRD-Magieinitiierter-Formular nutzt einen isolierten Inhalts-Scrollview in einem nicht explizit scrollbaren AlertDialog; 320/360 dp bei 200 % Schrift und Android-IME bislang nicht gezielt abgesichert.
+- **IMPLEMENTIERT:** `app/lib/ui/srd_magic_initiate_dialog.dart` nutzt `AlertDialog(scrollable: true)`, schmale Insets und nur einen Scrollbereich für Titel/Inhalt; die vier validierten Dropdowns, Abbruch und Bestätigung behalten ihre bestehende fachliche Wirkung.
+- **TESTS HINZUGEFÜGT:** `app/test/srd_magic_initiate_ime_test.dart`: 320 und 360 dp mit 200 % Text/220 dp IME, scrollbare Formularfelder und Abbruch; bei doppelten Zaubertricks kein Confirm; bei vier gültigen Angaben wird nur das korrekte Wahl-DTO zurückgegeben. Vier Widgetfälle, keine externe KI.
+- **GETESTET:** Live-main, Masterprompt, Architektur/Arbeitsanweisungen, offene PR-Dateipfade und vorherige CI geprüft. PR #455 hat auf `aedc212faa3e64136f0713b1386e7141c4541381` zwei grüne CI-Läufe [41246044715](https://github.com/ManuEtt/Dnd/actions/runs/41246044715) / [41246040596](https://github.com/ManuEtt/Dnd/actions/runs/41246040596) und wurde auf Review gesetzt. Diese Läufe beweisen **nicht** #457.
+- **NICHT GETESTET:** Der neue Code ist zunächst ohne lokale Dart-/Flutter-Toolchain; vollständige CI (Format, Analyse, Fluttertests, native Android-/APK-/Backend-/Python-Gates) auf finalem PR-HEAD noch abzunehmen. Echtes Android-Gerät mit IME, TalkBack, Upgrade/Release-Signatur separat.
+- **BLOCKIERT:** Prüfung der vollständigen CI auf eigenem PR. Kein automatischer Merge.
+- **GEÄNDERTE DATEIEN:** `app/lib/ui/srd_magic_initiate_dialog.dart`, `app/test/srd_magic_initiate_ime_test.dart`, dieser Checkpoint, `docs/CODEX_CHECKPOINT.md`, `README.md`. Keine Spielregel-/Schema-/JSON-/Versionsänderung; **Migrationen:** keine.
+- **NÄCHSTER SCHRITT:** Tastatur-Tab/Enter-Fokusreihenfolge der vier Auswahlfelder bei 320 dp/200 %/IME gezielt abnehmen; gültige Auswahl und Abbruch vollständig per Hardwaretastatur erreichbar, nie unbeabsichtigt bestätigen.
+
 ## 30.10.2026 – Chat C: Ausrüstungsdialog bei 200 % Schrift und IME
 
 ## UI-Teilintegration des Gesamtmigrationslaufs – 30.10.2026
