@@ -79,7 +79,7 @@ void main() {
       expect(_control('error'), findsOneWidget);
       expect(
         find.byWidgetPredicate(
-          (widget) => widget is Semantics && widget.properties.liveRegion,
+          (widget) => widget is Semantics && (widget.properties.liveRegion ?? false),
         ),
         findsWidgets,
       );
