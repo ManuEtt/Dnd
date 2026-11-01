@@ -91,12 +91,7 @@ jobs:
         run: flutter pub get
       - name: Dart-Formatierung prüfen
         working-directory: app
-        run: |
-          for f in lib/domain/srd_spell_preparation_exchange_rules.dart test/srd_spell_preparation_exchange_rules_test.dart; do
-            dart format --output=show "$f" > /tmp/chat-a-exchange-formatted.dart
-            diff -u "$f" /tmp/chat-a-exchange-formatted.dart || true
-          done
-          dart format --output=none --set-exit-if-changed lib test
+        run: dart format --output=none --set-exit-if-changed lib test
       - name: Flutter-Code analysieren
         working-directory: app
         run: flutter analyze
