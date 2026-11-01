@@ -1,3 +1,43 @@
+# Chat-A-Branchnachtrag – mehrdeutige Mehrklassen-Zaubervorbereitung (01.11.2026)
+
+**Noch nicht in main** · Basis `5a88834c98f5aca40395088c20c7e1dc5b587868`,
+Branch `feat/chat-a/multiclass-prepared-source-20261101`.
+SRD 5.2.1, S. 25, *Multiclassing / Spells Prepared*, CC BY 4.0.
+
+`SrdSpellPreflightRules.preflight` verlangt jetzt eine ausdrückliche
+`preparedForCastingClassConfirmed`-Bestätigung, wenn beide eigenen
+Zauberklassen denselben Zauber jeweils nach ihrer individuellen
+Klassenstufe vorbereiten könnten. Die alte globale
+`HeroCharacter.spells`-Liste wird dabei **nicht** stillschweigend
+als klassenbezogener Nachweis interpretiert; nur eine eindeutige
+vorhandene Klasse bleibt ohne zusätzliche Bestätigung zulässig.
+Die bestehende getrennte Ressourcen-/Ziel-/Materialprüfung und
+Snapshot-Revalidierung bleiben erhalten.
+
+Neue Fachdateien bzw. Änderungen:
+`app/lib/domain/srd_spell_preflight_rules.dart`,
+`app/test/srd_multiclass_prepared_source_test.dart`,
+`docs/SRD_MULTICLASS_PREPARED_SOURCE_20261101.md` sowie
+die beiden Chat-/Zentral-Checkpoints und README.
+Keine Migration (SQLite 3, JSON 1), keine Klassen-/Zauber-
+Rekonstruktion aus KI-Antworten oder unbestätigten Altspielständen.
+Acht neue deterministische Testfälle einschließlich JSON/SQLite;
+**CI auf finalem PR-HEAD ist zunächst ausstehend**.
+Frühere erfolgreiche Prüfungen anderer Commits sind kein Nachweis.
+
+Koordination: Die offenen PRs #446–#458 wurden geprüft;
+keiner verändert diese Fach-/Testdateien. Chat D soll gemeinsame
+Dokumentation additiv konsolidieren. Keine Änderung an main,
+fremden Branches oder bestehender Spielstandmigration.
+
+**Genau nächster Schritt:** Einen ausdrücklich bestätigten,
+rückwärtskompatiblen per-Klasse-Vorbereitungsnachweis entwerfen
+und mit Alt-JSON-, Revisions-, Speicherkonflikt- und
+Stufengrenzentests absichern; globale Liste nicht umdeuten.
+Fachdetails im [Chat-A-Checkpoint](parallel/CHAT_A_CHECKPOINT.md).
+
+---
+
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
