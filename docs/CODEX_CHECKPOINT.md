@@ -15,8 +15,14 @@ lesbar, keine SQLite-/JSON-Migration. SG 10–30 war bereits zuvor umgesetzt.
 **GETESTET:** 68 neue Tests (58 Domain, 8 Engine/SQLite, 2 echte UI-Flows) und
 42 bestehende Regressionen: **110 gezielte Tests bestanden**, Analyzer sauber.
 Die neuen Domänentests auf unverändertem Main: 25 bestanden / 33 fehlgeschlagen;
-mit Fix alle 58 bestanden. Die vollständige lokale Prüfkette läuft noch;
-finale PR-/Android-/native CI bleibt separat nachzuweisen.
+mit Fix alle 58 bestanden. **Vollständig lokal bestanden:** 2.778 Flutter-,
+262 Python- und 76 Backend-Tests, 579 Dart-Dateien ohne Formatänderung,
+Analyse/Backend-Typecheck/Build/Protokollsmoke. Zusätzlich ARM64-Debug-APK und
+**13 native JUnit-Tests** ohne Fehler oder Skip. Zwei Android-Vorläufe scheiterten
+am vollen Datenträger; nach Bereinigung ausschließlich erzeugter Caches bestand
+die Wiederholung. Quellen, Spielstände und frühere Artefakte blieben erhalten.
+[PR #468](https://github.com/ManuEtt/Dnd/pull/468) ist gesichert; vollständige finale
+GitHub-CI auf seinem aktuellen Head separat abwarten. Kein Main-Merge behauptet.
 **NICHT GETESTET:** echtes Androidgerät/TalkBack, installiertes Upgrade,
 produktive Signierung. **NOCH NICHT IMPLEMENTIERT:** vollständige Konzentrations-
 automation und Klassenprüfung aller allgemeinen Wiederholungswürfe.

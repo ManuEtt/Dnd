@@ -10,7 +10,7 @@ import 'srd_concentration_save_modifier_rules.dart';
 
 /// Executable effects on one confirmed character, shared by encounters and
 /// explicitly entered external sources. No effect is inferred from narration.
-/// SRD 5.2.1 pp. 17–18, 187: damage, temporary HP and Concentration.
+/// SRD 5.2.1 pp. 17–18, 179: damage, temporary HP and Concentration.
 class CharacterEffectRules {
   const CharacterEffectRules._();
 
