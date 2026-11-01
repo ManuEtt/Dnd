@@ -146,3 +146,19 @@ Regelgrundlage: ausschließlich rechtmäßig nutzbare Inhalte des **D&D SRD 5.2.
 unter **CC BY 4.0**. [Namensnennung und Lizenzen](THIRD_PARTY_NOTICES.md).
 Eine vollständige SRD-Umsetzung und ein öffentlicher Mehrspielerdienst sind
 weiterhin Entwicklungsziele.
+
+---
+
+### Chat D – Gradle-Wrapper-JAR gegen Unicode-Kontrollzeichen absichern (PR #462)
+
+Der Projektübertragungsprüfer `scripts/verify_project.py` weist in den
+ZIP-Mitgliedsnamen der Gradle-Wrapper-JAR jetzt zusätzlich die Unicode-
+Kategorien `Cc/Cf/Cs/Zl/Zp` **vor CRC-Dekompression** zurück. Vier neue
+Regressionstestmethoden in `scripts/tests/test_verify_project.py` prüfen
+C1-Steuerzeichen, Bidi-/Zero-Width-Formatzeichen, Zeilen-/Absatztrenner,
+Surrogat-Metadaten sowie weiterhin gültige Umlaute, Akzente, Emoji und CJK.
+[PR #462](https://github.com/ManuEtt/Dnd/pull/462) wird bis zur
+vollständig erfolgreichen GitHub-CI auf finalem PR-HEAD als Draft geführt.
+Keine App-/Gradle-Artefakt-, SQLite-/JSON-/Spielstand- oder Versionsänderung.
+Bei Integration gemeinsame Dokumentation mit den anderen offenen PRs
+verlustfrei zusammenführen.
