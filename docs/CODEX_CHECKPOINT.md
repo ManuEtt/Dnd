@@ -1,3 +1,7 @@
+## 01.11.2026 – Chat C: Mehrklassen-Dialog bei 200 % Schrift/IME (PR #458)
+
+Der bisher verschachtelt scrollende `MulticlassSelectionDialog` wird mit `AlertDialog(scrollable: true)` und kompakteren Insets dargestellt. Erfahrung und Meilenstein sind auf kleinen Displays horizontal scrollbar. Vier neue Widgettests bei 320/360 dp, 200 % Schrift und simuliertem 220-dp-Tastatur-Inset prüfen EP-Sperrung, Abbruch, bestätigten Meilenstein und Fertigkeitsvoraussetzung einer Barden-Zweitklasse. Ausgangs-main `5a88834c98f5aca40395088c20c7e1dc5b587868`, Branch `feat/chat-c/multiclass-dialog-large-text-ime-20261101`, [PR #458](https://github.com/ManuEtt/Dnd/pull/458) (Draft bis zur finalen CI). **Neue Flutter-/Android-/Backend-CI noch nicht als bestanden behaupten.** Keine Domänen-, JSON-, SQLite-, Ressourcen-, Lizenz- oder Versionsänderung. Parallele README-/Checkpoint-Änderungen beim Merge additiv konsolidieren.
+
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
