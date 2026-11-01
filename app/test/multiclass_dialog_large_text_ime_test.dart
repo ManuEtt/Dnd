@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/domain/multiclass_rules.dart';
+import 'package:lebendiger_spielleiter/domain/srd_class_level_up.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 import 'package:lebendiger_spielleiter/ui/multiclass_selection_dialog.dart';
 
@@ -95,7 +96,7 @@ void main() {
         tester.widget<SingleChildScrollView>(methodScroll).scrollDirection,
         Axis.horizontal,
       );
-      expect(find.byType(SegmentedButton), findsOneWidget);
+      expect(find.byType(SegmentedButton<LevelUpMethod>), findsOneWidget);
       final confirm = find.byKey(const ValueKey('multiclass-accept'));
       expect(tester.widget<FantasyTextButton>(confirm).onPressed, isNull);
       expect(find.textContaining('mindestens 2700 EP'), findsOneWidget);
