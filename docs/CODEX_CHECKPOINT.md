@@ -1,3 +1,43 @@
+# Chat A – Auslöser und Anzahl des Zaubervorbereitungstauschs (01.11.2026, separater PR)
+
+**Basis-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+**Branch:** `feat/chat-a/prepared-spell-exchange-triggers-20261101`.
+**Quelle:** SRD 5.2.1, S.104, *Spell Preparation by Class*, CC BY 4.0.
+
+**IMPLEMENTIERT:** Eine neue isolierte lesende Regelprüfung
+`SrdSpellPreparationExchangeRules.preview` erlaubt
+bei bestätigter langer Rast je einen Austausch für
+Paladin/Waldläufer oder beliebig viele für
+Kleriker/Druide/Magier; beim Klassenstufenaufstieg genau
+einen für Barde/Zauberer/Hexenmeister. Eigene Klassenlevels
+werden getrennt von der Gesamtstufe geprüft. Keine
+unbestätigten Cantrips, Fremdklassen, Dubletten, Zaubergrade
+oder Zauberbuch-Einträge. Der reine Plan bindet
+Vorher-/Nachher-Charakter über JSON-Snapshots und schreibt
+keine Helden-/Rast-/Spielstandänderung.
+
+**Tests angelegt:** elf positive/negative Gruppen,
+einschließlich acht Klassen, Englisch/Deutsch-Aliase,
+erlaubter/gesperrter Anzahl, Mehrklassen-Stufenanstieg,
+Absage/Unveränderlichkeit, SQLite-Restart und stale
+Revision. CI-Status auf dem finalen PR-SHA nachmessen
+und gesondert dokumentieren, nicht vorab als grün behaupten.
+
+**Kompatibilität:** keine Modelle, Controller,
+Story, UI, Repository, Migration oder Engine geändert;
+SQLite3/JSON1/App-Version unverändert. PR #461 und
+#463 besitzen weiterhin ihre eigenständigen Preflight-
+und Persistenzimplementierungen. Keine unkontrollierte
+Dokumentationsüberschreibung bei Integration durch Chat D.
+
+**NÄCHSTER SCHRITT:** nach koordiniertem Integrationsreview
+die freigegebene Klasse und Wechselgrenzen atomar an
+bestätigte Rast-/Klassen-Aufstiegsaktionen anbinden,
+mit SQLite- und Rollback-Fällen.
+[Fachbeleg](SRD_SPELL_PREPARATION_EXCHANGE_20261101.md).
+
+---
+
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
