@@ -1,3 +1,54 @@
+# Chat A – Persistenter klassenbezogener Vorbereitungsnachweis (01.11.2026)
+
+**Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868` · **Branch:**
+`feat/chat-a/class-prepared-spell-record-20261101` · **PR:** folgt auf Branch-Sicherung.
+
+**Problem:** Die historische globale Zauberliste hat keine Klassenherkunft.
+Ein boolescher aktueller Nachweis aus dem offenen PR #461 wird nicht dauerhaft
+als eigene Auswahl im bestehenden JSON gespeichert. SRD 5.2.1
+*Multiclassing – Spells Prepared*, S.25, CC BY 4.0.
+
+**IMPLEMENTIERT:** `SrdPreparedSpellRecord` v1 speichert unveränderliche
+per-Klasse-Auswahl und deren Klassen-/Zauberlisten-Snapshot; `confirm`
+prüft ausdrückliche Bestätigung, eigene kanonische SRD-Klassen,
+Katalogklassen/individuelle Klassenstufen, Dubletten und vorhandene Zauber.
+`isPreparedForClass` ist read-only und revalidiert den SRD-Katalog.
+`HeroCharacter` speichert `preparedSpellRecord` optional im bisherigen
+Schema; alte JSONs bleiben identisch, `copyWith` verwirft Nachweise bei
+Klassen-/Stufen-/Zauberlistenänderung; Ressourcenänderungen behalten sie.
+Keine UI-/Controller-/Engineänderung, keine SQLite-Migration, keine
+automatische Ableitung aus KI/Legacytext.
+
+**Dateien:** `app/lib/domain/models.dart`,
+`app/lib/domain/srd_prepared_spell_record.dart`,
+`app/lib/domain/srd_class_prepared_spell_rules.dart`,
+`app/test/srd_class_prepared_spell_record_test.dart`,
+`docs/SRD_CLASS_PREPARED_SPELL_RECORD_20261101.md`,
+README, zentraler sowie persönlicher Checkpoint.
+
+**GETESTET:** neun neue deterministische Testgruppen geschrieben
+einschließlich negativem Import, JSON-Roundtrip, tatsächlichem
+SQLite-Neustart, idempotenter Revision und stale write. Ausführung
+und GitHub-Actions-Status auf finalem Commit nach Veröffentlichung
+verifizieren; keine vorweggenommene grüne CI.
+
+**NICHT GETESTET:** reales Android-Gerät, Upgrade/Store-Signierung.
+**BLOCKIERT:** vollständige Integration in den realen
+Zauberpreflight hängt von der koordinierten Review des
+offenen [PR #461](https://github.com/ManuEtt/Dnd/pull/461) ab;
+dessen Fachdatei bleibt unberührt. Gemeinsame
+Dokumentation bei späterem Merge durch Chat D erhalten.
+SQLite 3, äußeres JSON 1, App-Version unverändert.
+
+**NÄCHSTER SCHRITT:** nach Integration von PR #461
+vorhandene gespeicherte Klasse statt bloßes Bestätigungsflag
+als optionalen starken Nachweis in dessen Vorprüfung
+verwenden, einschließlich falscher Klasse/Alterung/Retry/
+SQLite und eigener Stufenlimits. Vollständige
+Vorbereitungsanzahl bleibt separat.
+
+---
+
 ## Integrationsnachtrag 30.10.2026 – Chat-A-Branches
 
 Alle 13 initialen Chat-A-Branchheads auf Main `6465a4b2` regulär konsolidiert.
