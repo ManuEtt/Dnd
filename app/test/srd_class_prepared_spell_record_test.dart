@@ -6,7 +6,7 @@ import 'package:lebendiger_spielleiter/data/sqlite_campaign_repository.dart';
 import 'package:lebendiger_spielleiter/data/srd_spell_catalog_loader.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/domain/srd_class_prepared_spell_rules.dart';
-import 'package:lebendiger_spielleiter/domain/srd_prepared_spell_record.dart';
+import 'package:lebendiger_spielleiter/domain/srd_spell_catalog.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 HeroCharacter _hero({
@@ -39,7 +39,7 @@ Map<String, List<String>> get _selections => {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   sqfliteFfiInit();
-  late dynamic catalog;
+  late SrdSpellCatalog catalog;
 
   setUpAll(() async {
     catalog = await SrdSpellCatalogLoader.load();
@@ -196,7 +196,7 @@ void main() {
       },
       preparationChoicesConfirmed: true,
     );
-    expect(selected.preparedSpellRecord!.spellsByClass.keys, {
+    expect(selected.preparedSpellRecord!.spellsByClass.keys.toSet(), {
       'Magier',
       'Kleriker',
     });
