@@ -1,5 +1,21 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat B – Kampagnenkontext zum Fortsetzen (01.11.2026)
+
+[Draft-PR #459](https://github.com/ManuEtt/Dnd/pull/459) stellt die
+schreibgeschützte Story-API `CampaignResumeReader.read(campaign)` bereit:
+letzte **erzählte** Szene (ausdrücklich kein bestätigter Regelzustand),
+letzter explizit gespeicherter Rückblick (historischer Speicherstand),
+aktuelle bestätigte Fakten und nur **aktuell offene** Handlungsstränge.
+Jede Quelle erhält eine eigene Kennzeichnung; die Projektion ist begrenzt,
+Unicode-/Bidi-bereinigt und unveränderlich. Verdeckte `storyBible`-Ziele,
+Quest-/Inventar-/HP-Änderungen und externe KI-Anfragen sind ausgeschlossen.
+Sechs neue Flutter-Regressionen einschließlich altem JSON und echtem
+SQLite-Neustart wurden hinzugefügt. Noch **keine** UI-/KI-Anbindung und
+**keine behauptete CI-Abnahme** für diesen PR; die GitHub-Gates sind zu prüfen.
+App-Version, SQLite-Schema 3 und äußeres JSON-Schema 1 unverändert.
+
+
 Deutschsprachige Fantasy-Solo-App für Android: Flutter/Dart, lokale SQLite-Spielstände,
 regelgeprüfte Aktionen und ein optionaler Fastify-/TypeScript-Erzähler.
 
