@@ -187,8 +187,7 @@ void main() {
       ],
     };
     for (final entry in cases.entries) {
-      final rest =
-          entry.key == 'Paladin' || entry.key == 'Waldläufer';
+      final rest = entry.key == 'Paladin' || entry.key == 'Waldläufer';
       final before = _hero(
         first: entry.key,
         spells: [...entry.value[0], ...entry.value[1]],
@@ -337,10 +336,7 @@ void main() {
       secondLevel: 3,
       spells: const ['Magic Missile', 'Shield'],
     );
-    final correctlyLeveled = before.copyWith(
-      level: 7,
-      secondaryClassLevel: 4,
-    );
+    final correctlyLeveled = before.copyWith(level: 7, secondaryClassLevel: 4);
     final plan = _preview(
       before: before,
       after: correctlyLeveled,
@@ -444,75 +440,78 @@ void main() {
     );
   });
 
-  test('SQLite restart and stale write do not implicitly commit a swap', () async {
-    final directory = await Directory.systemTemp.createTemp('spell-swap-');
-    final path = '${directory.path}/campaign.sqlite';
-    var repo = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: path,
-    );
-    try {
-      final initial = Campaign(
-        id: 'spell-swap',
-        name: 'Zauberaustausch',
-        world: 'Test',
-        sessionId: 'session',
-        scene: 'Anfang',
-        hero: _hero(),
-      );
-      await repo.saveCampaign(initial);
-      await repo.close();
-      repo = await SqliteCampaignRepository.open(
+  test(
+    'SQLite restart and stale write do not implicitly commit a swap',
+    () async {
+      final directory = await Directory.systemTemp.createTemp('spell-swap-');
+      final path = '${directory.path}/campaign.sqlite';
+      var repo = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: path,
       );
-      final loaded = (await repo.getCampaign(initial.id))!;
-      final plan = _preview(
-        before: loaded.hero,
-        after: loaded.hero,
-        catalog: catalog,
-        className: 'Magier',
-        oldSpells: const ['Magic Missile'],
-        newSpells: const ['Shield'],
-        event: SrdSpellPreparationTrigger.completedLongRest,
-      );
-      plan.verifyUnchanged(loaded.hero, loaded.hero);
-      // A read-only preview changes neither the persisted revision nor spells.
-      expect((await repo.getCampaign(initial.id))!.revision, 0);
-      expect((await repo.getCampaign(initial.id))!.hero.spells, [
-        'Magic Missile',
-        'Shield',
-      ]);
-      final next = loaded.copyWith(
-        revision: 1,
-        hero: loaded.hero.copyWith(hitPoints: 21),
-      );
-      await repo.saveCampaign(next, expectedRevision: 0);
-      await repo.saveCampaign(next, expectedRevision: 0);
-      final stale = loaded.copyWith(
-        revision: 1,
-        hero: loaded.hero.copyWith(hitPoints: 20),
-      );
-      await expectLater(
-        repo.saveCampaign(stale, expectedRevision: 0),
-        throwsA(isA<CampaignConflictException>()),
-      );
-      await repo.close();
-      repo = await SqliteCampaignRepository.open(
-        factory: databaseFactoryFfi,
-        path: path,
-      );
-      final reloaded = (await repo.getCampaign(initial.id))!;
-      expect(reloaded.revision, 1);
-      expect(reloaded.hero.hitPoints, 21);
-      expect(
-        () => plan.verifyUnchanged(loaded.hero, reloaded.hero),
-        throwsFormatException,
-      );
-      expect(reloaded.hero.spells, loaded.hero.spells);
-    } finally {
-      await repo.close();
-      await directory.delete(recursive: true);
-    }
-  });
+      try {
+        final initial = Campaign(
+          id: 'spell-swap',
+          name: 'Zauberaustausch',
+          world: 'Test',
+          sessionId: 'session',
+          scene: 'Anfang',
+          hero: _hero(),
+        );
+        await repo.saveCampaign(initial);
+        await repo.close();
+        repo = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: path,
+        );
+        final loaded = (await repo.getCampaign(initial.id))!;
+        final plan = _preview(
+          before: loaded.hero,
+          after: loaded.hero,
+          catalog: catalog,
+          className: 'Magier',
+          oldSpells: const ['Magic Missile'],
+          newSpells: const ['Shield'],
+          event: SrdSpellPreparationTrigger.completedLongRest,
+        );
+        plan.verifyUnchanged(loaded.hero, loaded.hero);
+        // A read-only preview changes neither the persisted revision nor spells.
+        expect((await repo.getCampaign(initial.id))!.revision, 0);
+        expect((await repo.getCampaign(initial.id))!.hero.spells, [
+          'Magic Missile',
+          'Shield',
+        ]);
+        final next = loaded.copyWith(
+          revision: 1,
+          hero: loaded.hero.copyWith(hitPoints: 21),
+        );
+        await repo.saveCampaign(next, expectedRevision: 0);
+        await repo.saveCampaign(next, expectedRevision: 0);
+        final stale = loaded.copyWith(
+          revision: 1,
+          hero: loaded.hero.copyWith(hitPoints: 20),
+        );
+        await expectLater(
+          repo.saveCampaign(stale, expectedRevision: 0),
+          throwsA(isA<CampaignConflictException>()),
+        );
+        await repo.close();
+        repo = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: path,
+        );
+        final reloaded = (await repo.getCampaign(initial.id))!;
+        expect(reloaded.revision, 1);
+        expect(reloaded.hero.hitPoints, 21);
+        expect(
+          () => plan.verifyUnchanged(loaded.hero, reloaded.hero),
+          throwsFormatException,
+        );
+        expect(reloaded.hero.spells, loaded.hero.spells);
+      } finally {
+        await repo.close();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
 }
