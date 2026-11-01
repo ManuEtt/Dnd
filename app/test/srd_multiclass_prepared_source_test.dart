@@ -206,12 +206,12 @@ void main() {
   });
 
   test('JSON restart keeps raw class labels and requires the choice again', () {
-    final source = _hero(first: 'Wizard', second: 'Sorcerer');
+    final source = _hero();
     final raw = source.toJson();
     final restored = HeroCharacter.fromJson(raw);
     expect(restored.toJson(), raw);
-    expect(restored.className, 'Wizard');
-    expect(restored.secondaryClassName, 'Sorcerer');
+    expect(restored.className, 'Magier');
+    expect(restored.secondaryClassName, 'Zauberer');
     expect(() => _prepare(restored, spell: _spell()), throwsFormatException);
     final plan = _prepare(
       restored,
