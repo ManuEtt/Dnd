@@ -1,5 +1,43 @@
 # Chat B – NPC-Kontext ohne Steuerzeichen (30.10.2026)
 
+## Chat B – Zero-Width-NPC-Identitäten sicher normalisieren (01.11.2026)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+  **Branch:** `fix/chat-b/npc-zero-width-name-ambiguity-20261101`.
+  **Draft-PR:** [#464](https://github.com/ManuEtt/Dnd/pull/464).
+  **Code-Commit:** `72f1de592cf4fd26d87437bdbbb9b8385f558dc7`.
+  **Test-Commit:** `b326b947b5b1e85b418fb722a73a1da1c5e919b4`.
+- **Ausgangsproblem:** `Mira` und `Mi\u200bra` wurden in der
+  erzählerseitigen NPC-Kontextauswahl als verschiedene Namen gezählt,
+  obwohl sie sichtbar identisch sind. Das erlaubte scheinbar eindeutig
+  zugeordnete bestätigte Notizen bei freier Spielerprosa.
+- **IMPLEMENTIERT:** `NpcNarratorMemory` faltet unsichtbare
+  Unicode-Zeichen (U+200B/U+200C/U+200D/U+2060/U+FEFF) ebenso wie
+  bisherige Bidi-Steuerzeichen vor der Eindeutigkeitsprüfung; die
+  ausgehende, schreibgeschützte Darstellung entfernt diese Zeichen aus
+  Namen und bereinigt Notizen als eine Zeile. Keine Regeln/Provider-
+  Berechtigungen/gespeicherten NPC-Daten verändert.
+- **Neue Regressionen:** fünf optisch identische Dubletten,
+  positive gültige alte Einzelidentität, Legacy-JSON ohne Notizen,
+  echte SQLite-Neuöffnung/Rekonstruktion mit Ambiguität, Tarek als
+  eindeutige Kontrollidentität und unverändertem Helden-/Revisionszustand.
+- **Dateien:** `app/lib/story/npc_narrator_memory.dart`,
+  `app/test/npc_zero_width_identity_memory_test.dart`, README,
+  `docs/CODEX_CHECKPOINT.md`, dieser Checkpoint.
+- **GETESTET:** aktuellen GitHub-HEAD, fremde PRs/Dateien, bestehende
+  Architektur und Tests geprüft. **NICHT GETESTET:** finale CI-Checks
+  auf Dokumentationscommit, reales Gerät, externer KI-Dienst.
+  **BLOCKIERT:** kein lokales Dart-/Flutter-SDK. **MIGRATION:** keine;
+  SQLite 3 / äußeres JSON 1, Version, Quest-/Heldendaten unverändert.
+- **Koordination:** #452 `story_memory_engine.dart`, #456
+  `story_campaign_engine.dart`, #459 `campaign_resume_context.dart`/
+  `story_api.dart` – keine Fachdateiüberschneidung. README und
+  Checkpoints nur additiv mit Chat D integrieren; kein Auto-Merge.
+- **Nächster Schritt:** finale Format-/Analyse-/Flutter-/Android-CI
+  von #464 abnehmen, bei Rot im eigenen Branch korrigieren und
+  nach vollständiger Abnahme an Chat D übergeben.
+
+
 ## Chat B – bestätigte NPC-Chronik ohne unsichtbare Steuerzeichen (30.10.2026)
 
 [Draft-PR #398](https://github.com/ManuEtt/Dnd/pull/398) auf
