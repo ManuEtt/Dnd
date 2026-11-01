@@ -34,11 +34,7 @@ class SrdSpellPreparationExchangeRules {
     'Magier',
   };
 
-  static const _multipleAtRest = <String>{
-    'Kleriker',
-    'Druide',
-    'Magier',
-  };
+  static const _multipleAtRest = <String>{'Kleriker', 'Druide', 'Magier'};
 
   /// Return only confirmed, distinct SRD class levels. Invalid homebrew or
   /// duplicate aliases do not silently grant a valid class's spell rules.
@@ -92,10 +88,7 @@ class SrdSpellPreparationExchangeRules {
           spell.level < 1 ||
           !spell.classes.contains(_englishClasses[castingClass]) ||
           spell.level >
-              HealingSpellRules.maximumPreparedSpellLevel(
-                hero,
-                castingClass,
-              )) {
+              HealingSpellRules.maximumPreparedSpellLevel(hero, castingClass)) {
         throw const FormatException(
           'Zauber ist nicht für diese Klasse vorbereitet und freigegeben.',
         );
@@ -131,9 +124,13 @@ class SrdSpellPreparationExchangeRules {
         !_englishClasses.containsKey(canonical) ||
         !originalLevels.containsKey(canonical) ||
         !subsequentLevels.containsKey(canonical) ||
-        originalLevels.keys.toSet().difference(subsequentLevels.keys.toSet())
+        originalLevels.keys
+            .toSet()
+            .difference(subsequentLevels.keys.toSet())
             .isNotEmpty ||
-        subsequentLevels.keys.toSet().difference(originalLevels.keys.toSet())
+        subsequentLevels.keys
+            .toSet()
+            .difference(originalLevels.keys.toSet())
             .isNotEmpty ||
         before.className != after.className ||
         before.secondaryClassName != after.secondaryClassName) {
