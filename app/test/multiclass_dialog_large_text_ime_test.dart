@@ -65,11 +65,7 @@ Future<void> _open(
   await tester.pumpAndSettle();
 }
 
-Future<void> _choose(
-  WidgetTester tester,
-  Finder dropdown,
-  String value,
-) async {
+Future<void> _choose(WidgetTester tester, Finder dropdown, String value) async {
   await tester.ensureVisible(dropdown);
   await tester.pumpAndSettle();
   await tester.tap(dropdown);
@@ -89,19 +85,16 @@ void main() {
       final hero = _hero();
       final before = hero.toJson();
       final results = <MulticlassProposal?>[];
-      await _open(
-        tester,
-        width: width,
-        hero: hero,
-        onResult: results.add,
-      );
+      await _open(tester, width: width, hero: hero, onResult: results.add);
       final dialog = tester.widget<AlertDialog>(find.byType(AlertDialog));
       expect(dialog.scrollable, isTrue);
       final methodScroll = find.byKey(
         const ValueKey('multiclass-method-scroll'),
       );
-      expect(tester.widget<SingleChildScrollView>(methodScroll).scrollDirection,
-          Axis.horizontal);
+      expect(
+        tester.widget<SingleChildScrollView>(methodScroll).scrollDirection,
+        Axis.horizontal,
+      );
       expect(find.byType(SegmentedButton), findsOneWidget);
       final confirm = find.byKey(const ValueKey('multiclass-accept'));
       expect(tester.widget<FantasyTextButton>(confirm).onPressed, isNull);
