@@ -1,5 +1,45 @@
 # Chat B – NPC-Kontext ohne Steuerzeichen (30.10.2026)
 
+## Chat B – getrennter Kampagnen-Wiederaufnahmekontext (01.11.2026, CET)
+
+- **main-Basis:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+  **Branch:** `feat/chat-b/read-only-resume-context-20261101`.
+  **Draft-PR:** [#459](https://github.com/ManuEtt/Dnd/pull/459).
+  **Code-Commit:** `6aa6a5814d81dbccf2cba7409370a2e76dfbbfb9`;
+  **öffentlicher Story-Export:** `9ba20a46f75060e8a080efc0ebfccd508586ee8f`;
+  **Test-Commit:** `f447223c40c48fbcf95fbadc8c36be0bc69e9ead`.
+- **Problem:** Bei Wiederaufnahme nach einer Spielpause wäre die Behandlung
+  einer frei erzählten letzten Szene als sicher bestätigter Regelzustand
+  gefährlich; Rückblick und aktuelle Fakten/Handlungszustände sind zudem
+  zeitlich unterschiedliche Quellen.
+- **IMPLEMENTIERT:** `CampaignResumeReader` und unveränderliche
+  `CampaignResumeSnapshot` mit vier klar ausgezeichneten Quellen.
+  Bis zu drei offene Storynotizen und vier Fakten, optionale validierte
+  Limits, Unicode-/Bidi-Schutz und UTF-16-sichere Kürzung. Kein
+  `storyBible`-/Quest-/XP-/HP-/Kampf-/Inventar- oder Ereignisschreibzugriff.
+- **Dateien:** neues `app/lib/story/campaign_resume_context.dart`,
+  `app/lib/story/story_api.dart`, neuer
+  `app/test/campaign_resume_context_test.dart`, README, zentraler und
+  dieser persönliche Checkpoint. **Keine Datenmigration** und kein
+  Versionsschritt (SQLite 3 / äußeres JSON 1).
+- **Neue Regressionen:** vertrauensgetrennte Szene vs. gespeicherte Fakten;
+  geschlossene/aufgegebene Stränge ausgeschlossen; älteres JSON ohne
+  Gedächtnisfelder; Unicode, Begrenzung, Unveränderlichkeit und echter
+  SQLite-Neustart-/Rekonstruktionsabgleich.
+- **GETESTET:** aktueller GitHub-HEAD, offene PRs und Dateipfade;
+  #456 hat grüne vollständige Push- und PR-CI.
+  **NICHT GETESTET:** neuer #459-Code auf finalem CI-HEAD (noch offen),
+  reales Gerät/Sprachausgabe/Produktiv-KI. Lokal kein Dart-/Flutter-SDK.
+  **BLOCKIERT:** lokale Flutter-Tools fehlen.
+- **Fremde PRs:** #452 berührt `story_memory_engine.dart`, #456 berührt
+  `story_campaign_engine.dart`; keine Überschneidung mit diesem
+  neuen Storymodul. Nur gemeinsame README-/Checkpoint-Texte erfordern
+  spätere additive Konsolidierung durch Chat D. Kein Merge.
+- **Nächster Schritt:** #459-CI auf finalem Dokumentationsstand abnehmen,
+  etwaige Format-/Testfehler auf demselben Branch beheben, danach
+  Review/Integration an Chat D übergeben.
+
+
 ## Chat B – bestätigte NPC-Chronik ohne unsichtbare Steuerzeichen (30.10.2026)
 
 [Draft-PR #398](https://github.com/ManuEtt/Dnd/pull/398) auf
