@@ -1,3 +1,16 @@
+## 01.11.2026 – Chat C: Mehrklassen-Stufenaufstieg auf 320/360 dp mit 200 % Schrift/IME (PR #458)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+- **Branch:** `feat/chat-c/multiclass-dialog-large-text-ime-20261101`; **Code-/Testcommit:** `9524b7c8006e0dd9a2fee38b08c6ff33c792e49e`; **Pull Request:** [#458](https://github.com/ManuEtt/Dnd/pull/458) (Draft bis zur finalen CI).
+- **Problem:** Der Dialog nutzte einen verschachtelten vertikalen Scrollview mit abgetrenntem Titel; die breite Erfahrung-/Meilenstein-Auswahl passte bei 320 dp/200 % möglicherweise nicht. Es gab keinen spezifischen IME-/Großschrift-Test.
+- **IMPLEMENTIERT:** `app/lib/ui/multiclass_selection_dialog.dart` verwendet `AlertDialog(scrollable: true)` und kompakte Insets. Der bestehende `SegmentedButton<LevelUpMethod>` ist horizontal scrollbar; alle Regelabfragen und Bestätigungsaktionen bleiben unverändert.
+- **TESTS ERGÄNZT:** `app/test/multiclass_dialog_large_text_ime_test.dart`: 320/360 dp bei 200 % Schrift/220 dp Tastatur-Inset, unbestätigter Aufstieg bei fehlenden EP gesperrt, Abbruch ohne Heldenänderung, expliziter Meilenstein auch ohne EP möglich, Barde nur nach zusätzlicher Fertigkeitswahl bestätigbar. Vier Fälle mit positiven und negativen Prüfungen.
+- **GETESTET:** Masterprompt, alle Pflichtdokumente, aktuelle Main-/PR-Änderungsdateien geprüft; der Vor-PR #457 hat auf Commit `24fd1bdd821817952fe216156656b84b403ca766` vollständige grüne CI [#41248140576](https://github.com/ManuEtt/Dnd/actions/runs/41248140576), **nicht** als Nachweis für #458 verwenden.
+- **NICHT GETESTET:** Neue Widgettests, Dart-Formatierung, `flutter analyze`, vollständiger Flutter-Lauf, Backend/Python, Gradle/native Tests, Debug-/Alpha-APKs des finalen #458-SHA bis zum GitHub-Actions-Ergebnis. Flutter-/Dart-SDK lokal nicht vorhanden. Reales Gerät, IME und TalkBack ausstehend.
+- **BLOCKIERT:** Vollständige CI-Prüfung und Review, kein ungeprüfter Merge.
+- **GEÄNDERTE DATEIEN:** UI-Dialog, neue Testdatei, `README.md`, `docs/CODEX_CHECKPOINT.md`, eigener Chat-C-Checkpoint. Kein Regel- oder Speichermodul, keine Version oder Schemaänderung; **Migrationen:** keine.
+- **NÄCHSTER SCHRITT:** Tastatur-/TalkBack-Fokusreihenfolge und bestätigte Interaktionen des Magieinitiierter-Dialogs nach Integration von #457 auf Main an einem eigenständigen, konfliktfreien Paket prüfen; alle vier Wahlfelder mit Fokus erreichbar, Enter aktiviert niemals ungültigen Confirm.
+
 ## 30.10.2026 – Chat C: Ausrüstungsdialog bei 200 % Schrift und IME
 
 ## UI-Teilintegration des Gesamtmigrationslaufs – 30.10.2026
