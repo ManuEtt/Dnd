@@ -1,3 +1,57 @@
+# Chat A – SRD-5.2.1-Zaubervorbereitungstausch nach Rast/Stufenaufstieg (01.11.2026)
+
+**Main-Ausgangs-SHA:** `5a88834c98f5aca40395088c20c7e1dc5b587868` ·
+**Branch:** `feat/chat-a/prepared-spell-exchange-triggers-20261101` ·
+**PR:** nach Veröffentlichung hier und in PR-Beschreibung.
+
+**Quelle:** Offizielle SRD 5.2.1, *Spells → Preparing Spells →
+Spell Preparation by Class*, S. 104, CC BY 4.0.
+
+**Problem:** Barde/Zauberer/Hexenmeister dürfen genau einen
+Zauber erst beim **eigenen Klassenaufstieg** tauschen;
+Paladin/Waldläufer einen bei abgeschlossener langer Rast;
+Kleriker/Druide/Magier bei langer Rast beliebig viele der
+bisherigen vorbereiteten Zauber. Ungeprüfte Trigger könnten
+zusätzliche oder höhergradige Zauber freigeben.
+
+**IMPLEMENTIERT:** Unabhängiges, rein lesendes
+`SrdSpellPreparationExchangeRules.preview` mit bestätigtem
+eigenem Klassennamen, vor/nach-Charakterzustand,
+Klassenzuordnung/Stufenvergleich, offiziellem Zauberkatalog,
+Grad-1+-Grenze, gleich großen Vorbereitungslisten und
+strenger Anzahl von Austauschvorgängen. Cantrips, unbekannte
+Klassen/Zauber, unerworbene Grade, freie Übersetzungen,
+unbestätigte Rast und falsche Klassen-Level-ups sind
+gesperrt. Magier benötigen getrennte Zauberbuchbestätigung.
+Unveränderlicher Vorschauplan mit Snapshot-Revalidierung,
+keine Ressourcen-/Rast-/Level-up-/SQLite-Mutation.
+
+**Geänderte Dateien:** neuer Fachcode unter
+`app/lib/domain/srd_spell_preparation_exchange_rules.dart`,
+elf neue deterministische Testgruppen unter
+`app/test/srd_spell_preparation_exchange_rules_test.dart`,
+Quellennotiz `docs/SRD_SPELL_PREPARATION_EXCHANGE_20261101.md`,
+README sowie additive Checkpoints.
+
+**GETESTET:** Quellen-/Repository-/PR-Inventur und
+Testimplementierung durchgeführt. Flutter-/Dart-/Android-CI
+bis zu tatsächlichem Laufabschluss **noch nicht** als
+erfolgreich melden; nach PR-Erstellung auf finaler SHA auswerten.
+
+**NICHT GETESTET / BLOCKIERT:** echtes Android-Gerät, Altupgrade,
+TalkBack und Store-Signierung. Fachintegration der getrennten
+PRs #461 (Preflight) und #463 (persistierter Klassenbeleg)
+bleibt ausdrücklich aus; diese PRs sind in ihren eigenen
+Dateien geschützt. SQLite 3, äußeres JSON 1 unverändert.
+Keine aus Narration erfundenen Auslöseereignisse.
+
+**NÄCHSTER SCHRITT:** Nach koordiniertem Merge der
+Preflight- und Nachweisbausteine die Klassenauswahl und
+den Tauschplan in den bestätigten Rast-/Level-up-Commit
+integrieren und Revisionskonflikt/Replay/Neustart prüfen.
+
+---
+
 ## Integrationsnachtrag 30.10.2026 – Chat-A-Branches
 
 Alle 13 initialen Chat-A-Branchheads auf Main `6465a4b2` regulär konsolidiert.
