@@ -1,3 +1,66 @@
+# Chat A – Mehrklassen-Zaubervorbereitung der gewählten Klasse bestätigen (01.11.2026)
+
+**Basis-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868` ·
+**Branch:** `feat/chat-a/multiclass-prepared-source-20261101` ·
+**Laufzeit-Commit:** `b72cdd4230c90eead9870dad8cd3b54cad5cea05` ·
+**Tests:** `dda176dfe80df5e5c50045994520ee33a3ea59f5` ·
+**PR:** wird nach Sicherung der Branchdokumentation eröffnet.
+
+## Ausgangsproblem / Akzeptanz
+Bei zwei eigenen qualifizierten Zauberklassen kann die bisherige globale
+`hero.spells`-Liste nicht nachweisen, welcher Klasse ein auf beiden
+Listen vorhandener Zauber zugeordnet wurde. SRD 5.2.1 *Multiclassing,
+Spells Prepared* (S. 25, CC BY 4.0) verlangt getrennte Vorbereitung.
+Ohne explizite Klassenbestätigung ist diese mehrdeutige Freigabe zu
+verweigern; einzelne nachweislich qualifizierte Klassen bleiben
+unverändert bedienbar; Zaubertricks ebenso geschützt.
+
+## IMPLEMENTIERT
+`app/lib/domain/srd_spell_preflight_rules.dart` ergänzt das optionale
+`preparedForCastingClassConfirmed` (Standard `false`). Nur wenn
+**beide** eigenen SRD-Klassen den gewählten Zauber auf ihrer Klassenliste
+haben und mit ihren **individuellen Stufen** vorbereiten könnten,
+verlangt die Vorprüfung den ausdrücklichen Nachweis für
+`castingClass`. Auch mit Bestätigung gelten weiterhin Klassengrad-,
+Liste-, Vorbereitungs-, Ressourcen-, Komponenten-, Ziel- und
+Snapshot-Schranken.
+
+Acht deterministische positive/negative Fallgruppen unter
+`app/test/srd_multiclass_prepared_source_test.dart`, einschließlich
+JSON-Neustart, echter SQLite-Rekonstruktion, unveränderter
+Ressourcen und verweigertem alten Snapshot. Fachnotiz:
+`docs/SRD_MULTICLASS_PREPARED_SOURCE_20261101.md`.
+
+**Kompatibilität:** keine neuen JSON-/DB-/Event-Felder, SQLite 3,
+JSON 1, App-Version unverändert; keine Migration, kein UI-/Controller-/
+Story-Eingriff. Eine bloße Bestätigung ist noch kein persistierter
+per-Klasse-Vorbereitungsnachweis. Die globale SRD-Coverage bleibt offen.
+
+## GETESTET / NICHT GETESTET
+Quellcode, verbindliche Projektdokumente und aktuelle PR-Dateien
+#446–#458 geprüft. Acht neue Testgruppen geschrieben.
+Flutter-/Dart-SDK steht lokal nicht bereit; die neuen Dart-/SQLite-Tests,
+vollständige CI, Debug-/Alpha-APKs und natives Gradle sind **noch
+nicht als ausgeführt oder erfolgreich bestätigt**. Die
+Ergebnisse werden auf dem finalen PR-HEAD anhand von Actions geprüft;
+ältere Main- oder fremde PR-Ergebnisse zählen nicht.
+
+## BLOCKIERT / NÄCHSTER SCHRITT
+Kein Schreibzugriffskonflikt an den Fachdateien. Parallel ändern andere
+PRs README und `docs/CODEX_CHECKPOINT.md`; Chat D muss
+Dokumentationsbeiträge bei der Integration erhalten. Ein reales
+Android-Gerät/Upgrade/TalkBack fehlt weiterhin.
+
+**Genau nächster unabhängiger Chat-A-Schritt:** Versionierte
+klassebezogene vorbereitete Zauberauswahl als ausdrücklich
+bestätigter und rückwärtskompatibler Nachweis aufbauen. Kriterien:
+historische globale Liste unverändert importierbar, unbekannte
+alte Zuordnung nicht raten, per-Klasse-Kapazität und Stufengrenzen
+quellengeprüft; positive/negative Domain-, SQLite-/Retry- und
+Abbruchtests. Gemeinsame Modelle erst nach Konfliktabgleich ändern.
+
+---
+
 ## Integrationsnachtrag 30.10.2026 – Chat-A-Branches
 
 Alle 13 initialen Chat-A-Branchheads auf Main `6465a4b2` regulär konsolidiert.
