@@ -1,5 +1,33 @@
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
+## Chat B – unsichtbare NPC-Namenszeichen sicher behandeln (01.11.2026)
+
+- **main-Basis:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+  **Branch:** `fix/chat-b/npc-zero-width-name-ambiguity-20261101`.
+  **PR:** [#464](https://github.com/ManuEtt/Dnd/pull/464), Draft.
+- **IMPLEMENTIERT:** `NpcNarratorMemory.merge` stuft durch Zero-Width-
+  Spaces/Joiner/Word-Joiner/BOM scheinbar unterscheidbare NPC-Namen als
+  mehrdeutig ein, wenn sie ohne unsichtbare Zeichen gleich aussehen.
+  Ausgehende NPC-Namen und Notiztexte werden sicher ausgegeben; keine
+  Regel-/Story-/Inventar-/HP-Mutation.
+- **Dateien:** `app/lib/story/npc_narrator_memory.dart`,
+  `app/test/npc_zero_width_identity_memory_test.dart`, README und
+  zentrale/persönliche Checkpoints.
+- **GETESTET:** tatsächlicher Main-SHA, vollständiger Masterprompt,
+  offener PR-Dateibestand, Modul-/Testquellen; alte CI nur zur
+  Ausgangsorientierung. **NEUE CI:** GitHub-Actions-Abnahme des finalen
+  PR-HEAD noch offen; keine Behauptung vollständiger Testerfolge.
+- **NICHT GETESTET:** komplette neue Dart-/Flutter-/Backend-/Android-CI
+  und physisches Gerät/TalkBack/Produktiv-KI.
+  **BLOCKIERT:** kein lokales Flutter/Dart-SDK; Testabnahme über GitHub.
+  **Migration:** keine, SQLite 3 / äußeres JSON 1 unverändert.
+- **NOCH NICHT IMPLEMENTIERT:** explizite UI-Auswahl mehrdeutiger Namen
+  im Wiederaufnahme-Kontext; das ist nicht Teil dieses Pakets.
+- **NÄCHSTER SCHRITT:** finale GitHub-CI für #464 vollständig abnehmen;
+  gegebenenfalls nur eigenen Branch korrigieren und alle Tests neu ausführen;
+  anschließend Review und additive Dokumentations-Konsolidierung durch Chat D.
+
+
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
 Alpha **0.8.49+99**. Dieser neue Live-Status ersetzt widersprüchliche historische
 Momentaufnahmen; die vollständige additive Vereinigung ist bytegenau unter
