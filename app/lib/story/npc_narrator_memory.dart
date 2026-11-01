@@ -62,7 +62,7 @@ class NpcNarratorMemory {
       final normalizedNote = _oneLine(note.note);
       final relationship = _oneLine(note.relationship);
       final prefix = 'Bestätigte NPC-Beziehungsnotiz zu ';
-      var heading = '$prefix${_oneLine(entry.npc.name)} ($relationship): ';
+      var heading = '$prefix${_oneLine(_stripNameFormat(entry.npc.name))} ($relationship): ';
       // Never truncate an identity inside a very long stored NPC name.
       // Use the uniquely saved ID only when it is safe for wire transport.
       if (heading.length + 2 > 400) {
@@ -105,16 +105,19 @@ class NpcNarratorMemory {
     ).hasMatch(playerText);
   }
 
-  // Strip invisible direction marks for identity comparison. Replacing a mark
-  // inside "Mira" with a space would wrongly make it a different stored name
-  // and authorize a prose-only choice that the structured transport rejects.
+  // An invisible name character does not distinguish two saved identities.
+  // Fold Unicode zero-width spaces/joiners, word joiners and BOM in the same
+  // way as direction marks. Never infer one of two visually equal NPC IDs
+  // from unstructured player prose.
+  static final RegExp _nameFormat = RegExp(
+    r'[\u061c\u200b-\u200f\u202a-\u202e\u2060-\u2069\ufeff]',
+  );
+
+  static String _stripNameFormat(String text) =>
+      text.replaceAll(_nameFormat, '');
+
   static String _normalize(String text) =>
-      _oneLine(
-            text.replaceAll(
-              RegExp(r'[\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]'),
-              '',
-            ),
-          )
+      _oneLine(_stripNameFormat(text))
           .toLowerCase()
           .replaceAll('ä', 'ae')
           .replaceAll('ö', 'oe')
@@ -127,8 +130,8 @@ class NpcNarratorMemory {
   static String _oneLine(String text) => text
       .replaceAll(
         RegExp(
-          r'[\x00-\x1f\x7f-\x9f\u061c\u200e\u200f'
-          r'\u2028-\u202e\u2066-\u2069]',
+          r'[\x00-\x1f\x7f-\x9f\u061c\u200b-\u200f'
+          r'\u2028-\u202e\u2060-\u2069\ufeff]',
         ),
         ' ',
       )
