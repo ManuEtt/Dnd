@@ -1,0 +1,22 @@
+name: Chat B temporary NPC zero-width formatter
+on:
+  push:
+    branches:
+      - fix/chat-b/npc-zero-width-name-ambiguity-20261101
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.9.2'
+      - name: Output official Dart formatting for Chat B
+        run: |
+          echo 'CHAT_B_ZERO_BEGIN_MODULE'
+          dart format --output=show app/lib/story/npc_narrator_memory.dart
+          echo 'CHAT_B_ZERO_END_MODULE'
+          echo 'CHAT_B_ZERO_BEGIN_TEST'
+          dart format --output=show app/test/npc_zero_width_identity_memory_test.dart
+          echo 'CHAT_B_ZERO_END_TEST'
