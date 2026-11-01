@@ -6,6 +6,7 @@ import json
 import re
 import stat
 import sys
+import unicodedata
 import zipfile
 import zlib
 
@@ -190,7 +191,8 @@ def verify_project(root: Path) -> list[str]:
                         > MAX_WRAPPER_UNCOMPRESSED_BYTES):
                     raise ValueError('wrapper JAR has excessive expanded size')
                 # A valid CRC does not make duplicate ZIP names or path
-                # traversal unambiguous. Reject these before reading the JAR.
+                # traversal or invisible Unicode controls unambiguous.
+                # Reject these before CRC verification or reading the JAR.
                 names = [member.filename for member in members]
                 if len(names) != len(set(names)):
                     raise ValueError('duplicate wrapper JAR entries')
@@ -200,7 +202,8 @@ def verify_project(root: Path) -> list[str]:
                     if (not name or name.startswith('/') or '\\' in name
                             or re.match(r'^[A-Za-z]:', name)
                             or any(segment in ('', '.', '..') for segment in segments)
-                            or any(ord(char) < 32 or ord(char) == 127 for char in name)
+                            or any(unicodedata.category(char) in {'Cc', 'Cf', 'Cs', 'Zl', 'Zp'}
+                                   for char in name)
                             or stat.S_ISLNK(member.external_attr >> 16)):
                         raise ValueError('unsafe wrapper JAR entry')
                 if (archive.testzip() is not None
