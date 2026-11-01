@@ -31,10 +31,8 @@ Future<void> _open(
               onResult(
                 await showDialog<ConditionEffectChoice>(
                   context: context,
-                  builder: (_) => ConditionEffectDialog(
-                    hero: hero,
-                    encounter: null,
-                  ),
+                  builder: (_) =>
+                      ConditionEffectDialog(hero: hero, encounter: null),
                 ),
               );
             },
