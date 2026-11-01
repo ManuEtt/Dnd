@@ -146,3 +146,7 @@ Regelgrundlage: ausschließlich rechtmäßig nutzbare Inhalte des **D&D SRD 5.2.
 unter **CC BY 4.0**. [Namensnennung und Lizenzen](THIRD_PARTY_NOTICES.md).
 Eine vollständige SRD-Umsetzung und ein öffentlicher Mehrspielerdienst sind
 weiterhin Entwicklungsziele.
+
+### Chat C: Zustandseffekt-Dialog bei großer Schrift und Tastatur (01.11.2026)
+
+[PR #465](https://github.com/ManuEtt/Dnd/pull/465): Der Dialog zur bestätigten Zustandsquelle bleibt bei 320/360 dp, 200 % Schrift und offener Android-Tastatur als Ganzes scrollbar. Lange Dropdown-Texte werden gekürzt dargestellt, Validierungsfehler als Live-Region markiert. Vier neue Flutter-Widgettests prüfen Fehler/Abbruch, neue Quelle und gezieltes Entfernen nur einer Quelle; Heldenstände bleiben unangetastet. **Finale Flutter-/Android-CI noch zu verifizieren.** Keine SRD-, Ressourcen-, Spielstand- oder Datenformatänderung.
