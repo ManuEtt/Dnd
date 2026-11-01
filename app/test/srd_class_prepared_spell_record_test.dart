@@ -14,11 +14,7 @@ HeroCharacter _hero({
   String second = 'Zauberer',
   int level = 6,
   int secondaryLevel = 3,
-  List<String> spells = const [
-    'Magisches Geschoss',
-    'Licht',
-    'Fireball',
-  ],
+  List<String> spells = const ['Magisches Geschoss', 'Licht', 'Fireball'],
 }) => HeroCharacter(
   id: 'record-caster',
   name: 'Arina',
@@ -117,10 +113,18 @@ void main() {
   test('unknown, duplicate and unowned class keys fail closed', () {
     final hero = _hero();
     for (final selections in <Map<String, List<String>>>[
-      {'Wizard': ['Magisches Geschoss']},
+      {
+        'Wizard': ['Magisches Geschoss'],
+      },
       {..._selections, 'Cleric': <String>[]},
-      {'Wizard': ['Licht'], 'Magier': ['Magisches Geschoss']},
-      {'Magier': ['Magisches Geschoss'], 'Unverified': <String>[]},
+      {
+        'Wizard': ['Licht'],
+        'Magier': ['Magisches Geschoss'],
+      },
+      {
+        'Magier': ['Magisches Geschoss'],
+        'Unverified': <String>[],
+      },
     ]) {
       expect(
         () => SrdClassPreparedSpellRules.confirm(
@@ -149,10 +153,7 @@ void main() {
         () => SrdClassPreparedSpellRules.confirm(
           candidate,
           catalog: catalog,
-          selectedByClass: {
-            'Magier': names,
-            'Zauberer': <String>[],
-          },
+          selectedByClass: {'Magier': names, 'Zauberer': <String>[]},
           preparationChoicesConfirmed: true,
         ),
         throwsFormatException,
@@ -213,13 +214,17 @@ void main() {
     expect(hero.copyWith(secondaryClassLevel: 2).preparedSpellRecord, isNull);
     expect(hero.copyWith(className: 'Wizard').preparedSpellRecord, isNull);
     expect(
-      hero.copyWith(spells: const ['Magisches Geschoss'])
-          .preparedSpellRecord,
+      hero.copyWith(spells: const ['Magisches Geschoss']).preparedSpellRecord,
       isNull,
     );
-    expect(hero.copyWith(spentSpellSlots: const {'1': 1})
-        .preparedSpellRecord, isNotNull);
-    expect(hero.copyWith(preparedSpellRecord: null).preparedSpellRecord, isNull);
+    expect(
+      hero.copyWith(spentSpellSlots: const {'1': 1}).preparedSpellRecord,
+      isNotNull,
+    );
+    expect(
+      hero.copyWith(preparedSpellRecord: null).preparedSpellRecord,
+      isNull,
+    );
   });
 
   test('versioned JSON roundtrip leaves older spell lists byte-equivalent', () {
@@ -256,15 +261,19 @@ void main() {
     final valid = recorded.toJson();
     for (final alter in <void Function(Map<String, dynamic>)>[
       (raw) =>
-          (raw['preparedSpellRecord'] as Map<String, dynamic>)['schemaVersion'] = 2,
+          (raw['preparedSpellRecord']
+                  as Map<String, dynamic>)['schemaVersion'] =
+              2,
       (raw) =>
           (raw['preparedSpellRecord'] as Map<String, dynamic>)['level'] = 7,
       (raw) =>
           (raw['preparedSpellRecord'] as Map<String, dynamic>)['sourceSpells'] =
               <String>['Fireball'],
       (raw) =>
-          (raw['preparedSpellRecord'] as Map<String, dynamic>)['spellsByClass'] =
-              <String, dynamic>{'Magier': ['Zauber ohne SRD']},
+          (raw['preparedSpellRecord']
+              as Map<String, dynamic>)['spellsByClass'] = <String, dynamic>{
+            'Magier': ['Zauber ohne SRD'],
+          },
       (raw) => raw['level'] = 7,
     ]) {
       final tampered = {
@@ -278,61 +287,66 @@ void main() {
     }
   });
 
-  test('SQLite restart, idempotent retry and stale revision keep proof', () async {
-    final directory = await Directory.systemTemp.createTemp('prepared-class-');
-    final path = '${directory.path}/campaign.sqlite';
-    var repository = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: path,
-    );
-    try {
-      final original = Campaign(
-        id: 'prepared-record-campaign',
-        name: 'Klassen-Zauber',
-        world: 'Test',
-        sessionId: 'session',
-        scene: 'Beginn',
-        hero: _hero(),
+  test(
+    'SQLite restart, idempotent retry and stale revision keep proof',
+    () async {
+      final directory = await Directory.systemTemp.createTemp(
+        'prepared-class-',
       );
-      await repository.saveCampaign(original);
-      final confirmed = SrdClassPreparedSpellRules.confirm(
-        original.hero,
-        catalog: catalog,
-        selectedByClass: _selections,
-        preparationChoicesConfirmed: true,
-      );
-      final commit = original.copyWith(hero: confirmed, revision: 1);
-      await repository.saveCampaign(commit, expectedRevision: 0);
-      await repository.saveCampaign(commit, expectedRevision: 0);
-      final stale = original.copyWith(
-        hero: original.hero.copyWith(spells: const ['Fireball']),
-        revision: 1,
-      );
-      await expectLater(
-        repository.saveCampaign(stale, expectedRevision: 0),
-        throwsA(isA<CampaignConflictException>()),
-      );
-      await repository.close();
-      repository = await SqliteCampaignRepository.open(
+      final path = '${directory.path}/campaign.sqlite';
+      var repository = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: path,
       );
-      final loaded = (await repository.getCampaign(original.id))!;
-      expect(loaded.revision, 1);
-      expect(loaded.hero.toJson(), confirmed.toJson());
-      expect(loaded.hero.spells, original.hero.spells);
-      expect(
-        SrdClassPreparedSpellRules.isPreparedForClass(
-          loaded.hero,
+      try {
+        final original = Campaign(
+          id: 'prepared-record-campaign',
+          name: 'Klassen-Zauber',
+          world: 'Test',
+          sessionId: 'session',
+          scene: 'Beginn',
+          hero: _hero(),
+        );
+        await repository.saveCampaign(original);
+        final confirmed = SrdClassPreparedSpellRules.confirm(
+          original.hero,
           catalog: catalog,
-          castingClass: 'Sorcerer',
-          spellName: 'Magisches Geschoss',
-        ),
-        isTrue,
-      );
-    } finally {
-      await repository.close();
-      await directory.delete(recursive: true);
-    }
-  });
+          selectedByClass: _selections,
+          preparationChoicesConfirmed: true,
+        );
+        final commit = original.copyWith(hero: confirmed, revision: 1);
+        await repository.saveCampaign(commit, expectedRevision: 0);
+        await repository.saveCampaign(commit, expectedRevision: 0);
+        final stale = original.copyWith(
+          hero: original.hero.copyWith(spells: const ['Fireball']),
+          revision: 1,
+        );
+        await expectLater(
+          repository.saveCampaign(stale, expectedRevision: 0),
+          throwsA(isA<CampaignConflictException>()),
+        );
+        await repository.close();
+        repository = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: path,
+        );
+        final loaded = (await repository.getCampaign(original.id))!;
+        expect(loaded.revision, 1);
+        expect(loaded.hero.toJson(), confirmed.toJson());
+        expect(loaded.hero.spells, original.hero.spells);
+        expect(
+          SrdClassPreparedSpellRules.isPreparedForClass(
+            loaded.hero,
+            catalog: catalog,
+            castingClass: 'Sorcerer',
+            spellName: 'Magisches Geschoss',
+          ),
+          isTrue,
+        );
+      } finally {
+        await repository.close();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
 }
