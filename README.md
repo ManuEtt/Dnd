@@ -146,3 +146,70 @@ Regelgrundlage: ausschließlich rechtmäßig nutzbare Inhalte des **D&D SRD 5.2.
 unter **CC BY 4.0**. [Namensnennung und Lizenzen](THIRD_PARTY_NOTICES.md).
 Eine vollständige SRD-Umsetzung und ein öffentlicher Mehrspielerdienst sind
 weiterhin Entwicklungsziele.
+
+---
+
+### Chat D – portable Quellcode-ZIP-Dateinamen (PR #451)
+
+Am 31.10.2026 wurde auf dem unabhängigen Branch `fix/chat-d/archive-unicode-controls-20261031` die Prüfung
+`scripts/package_project.py` gegen unsichtbare Unicode-Steuerzeichen,
+Formatzeichen, Surrogate und Zeilen-/Absatztrenner erweitert.
+`scripts/tests/test_package_project.py` enthält vier neue Regressionstests
+einschließlich unverändertem ZIP-/SHA256-Paar bei abgelehnten Pfaden.
+[PR #451](https://github.com/ManuEtt/Dnd/pull/451) ist ein Draft.
+Vollständige GitHub-CI ist am finalen Commit gesondert nachzuweisen;
+kein SQLite-/JSON-Migrationsbedarf, keine Änderung von Flutter oder Android.
+Vor Integration mit #446–#449 müssen gemeinsame README-/Checkpoint-Ergänzungen
+verlustfrei konsolidiert werden.
+
+
+---
+
+### Chat D – Unicode-sichere Alpha-APK-ZIP-Einträge (PR #460)
+
+Auf dem Branch `fix/chat-d/apk-unicode-entry-names-20261101` prüft der Release-Validator
+`scripts/prepare_alpha_release.py` zusätzlich die Unicode-Kategorien
+`Cc`, `Cf`, `Cs`, `Zl` und `Zp` in APK-ZIP-Mitgliedsnamen, bevor er CRC-Daten
+dekomprimiert oder Release-Artefakte veröffentlicht. Fünf Regressionstests
+(`scripts/tests/test_prepare_alpha_release.py`) decken unzulässige
+Steuer-/Richtungs-/Trennzeichen, Surrogate, weiterhin zulässige internationale
+Namen und den Erhalt früherer Releases ab.
+[PR #460](https://github.com/ManuEtt/Dnd/pull/460) bleibt Draft bis zur
+vollständigen CI auf finalem HEAD. Keine SQLite-/JSON-/Spielstandmigration und
+keine Änderung der App-Version. Gemeinsame README-/Checkpoint-Änderungen
+mit parallelen PRs bei Integration additiv erhalten.
+
+
+---
+
+### Chat D – Gradle-Wrapper-JAR gegen Unicode-Kontrollzeichen absichern (PR #462)
+
+Der Projektübertragungsprüfer `scripts/verify_project.py` weist in den
+ZIP-Mitgliedsnamen der Gradle-Wrapper-JAR jetzt zusätzlich die Unicode-
+Kategorien `Cc/Cf/Cs/Zl/Zp` **vor CRC-Dekompression** zurück. Vier neue
+Regressionstestmethoden in `scripts/tests/test_verify_project.py` prüfen
+C1-Steuerzeichen, Bidi-/Zero-Width-Formatzeichen, Zeilen-/Absatztrenner,
+Surrogat-Metadaten sowie weiterhin gültige Umlaute, Akzente, Emoji und CJK.
+[PR #462](https://github.com/ManuEtt/Dnd/pull/462) wird bis zur
+vollständig erfolgreichen GitHub-CI auf finalem PR-HEAD als Draft geführt.
+Keine App-/Gradle-Artefakt-, SQLite-/JSON-/Spielstand- oder Versionsänderung.
+Bei Integration gemeinsame Dokumentation mit den anderen offenen PRs
+verlustfrei zusammenführen.
+
+---
+
+### Chat D – Gemeinsame Unicode-ZIP-Schutzprüfungen (Integrationspaket, 01.11.2026)
+
+Die drei fachlich getrennten Korrekturen [#451](https://github.com/ManuEtt/Dnd/pull/451),
+[#460](https://github.com/ManuEtt/Dnd/pull/460) und
+[#462](https://github.com/ManuEtt/Dnd/pull/462) sind auf ihren **exakten finalen
+Einzel-Commits vollständig CI-grün**. Dieser unabhängige Integrationsbranch führt
+die sechs ursprünglichen Python-Code-/Test-Blobs unverändert zusammen; die
+zugehörigen README-, zentralen und Chat-D-Checkpoint-Nachträge werden additiv
+ohne Verlust historischer Statusangaben kombiniert. Für die gemeinsame
+Kombination ist eine **eigene vollständige CI** erforderlich. Alte Hinweise
+"Draft/CI ausstehend" in den historischen Einzel-Abschnitten beschreiben
+den damaligen Zustand, nicht die aktuelle Einzelabnahme.
+Die kombinierte Abnahme erfolgt ausschließlich im Integrations-PR;
+kein automatischer Merge, kein Branchlöschen, keine Änderungen an
+Spielstand-, SQLite- oder JSON-Schemata.

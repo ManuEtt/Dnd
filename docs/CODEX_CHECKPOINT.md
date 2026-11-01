@@ -119,3 +119,115 @@ Mehrklassen-Zauberplätze für bestätigte SRD-Klassenaliasnamen kanonisieren.
 Akzeptanz: `Wizard`/`Magier` und andere erlaubte Caster-Aliase ergeben identische
 Slots; Pact Magic bleibt separat; unbekannte Namen werden nicht geraten;
 Domain-/Speicher-/Retry-Regression und finale CI. Zuvor neue Parallel-PRs abgleichen.
+
+---
+
+## 31.10.2026 – Chat D: ZIP-Pfadschutz, PR #451
+
+- Ausgangs-main: `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+- Branch: `fix/chat-d/archive-unicode-controls-20261031`; technischer Commit:
+  `59757423be3bbd47be9a39a1a187a1cb3baee71e`.
+- PR: https://github.com/ManuEtt/Dnd/pull/451 (Draft, noch kein Merge).
+- IMPLEMENTIERT: Windows-portable Source-ZIP-Komponenten verweigern neben den
+  bisherigen ungültigen Zeichen nun Unicode-Kategorien Cc/Cf/Cs/Zl/Zp.
+  Vier neue Python-Testmethoden prüfen Negativ-/Positivfälle sowie
+  unveränderte Prüfsummen/ZIPs bei abgelehnter Veröffentlichung.
+- GETESTET: noch kein vollständiger Projekt- oder CI-Lauf auf finalem PR-HEAD
+  belegt; Testcode ist nicht gleich bestandenem Test.
+- NICHT GETESTET: Python-Gesamtsuite, Flutter/Android, Backend, APK, reales Gerät
+  (vorliegende CI-Läufe anderer Commits sind kein Freigabenachweis).
+- BLOCKIERT: lokale GitHub-Klonung durch DNS nicht möglich; Flutter/Dart fehlen.
+  Andere A/B/C/D-PRs #446–#449 bleiben unverändert. Gemeinsame Dokumentation
+  bei Integration verlustfrei zusammenführen.
+- Keine Spielstand-, Datenbankschema-, JSON-, Regel- oder UI-Migration.
+- Nächster Schritt: PR #451 auf finalem HEAD vollständig in GitHub Actions
+  prüfen und gegen die anderen offenen PRs auf Dateikonflikte nachkontrollieren.
+
+
+---
+
+## 01.11.2026 – Chat D: sichere APK-ZIP-Mitgliedsnamen (PR #460)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+- **Branch:** `fix/chat-d/apk-unicode-entry-names-20261101`.
+- **Technische Commits:** `1b5928ded1bd14fbe204b0bd82b725dc40b08a93`,
+  `14431b670ae4a6cd0c8b87d6d98d2d6be7d8ce88`.
+- **Implementiert:** `scripts/prepare_alpha_release.py` verwirft Unicode-
+  Steuer-, Format-, Surrogat- und Unicode-Zeilen-/Absatztrennzeichen in
+  APK-ZIP-Einträgen vor CRC-Validierung und Release-Publikation.
+- **Regressionstests geschrieben:** fünf positive/negative Methoden in
+  `scripts/tests/test_prepare_alpha_release.py`, einschließlich unversehrter
+  vorheriger Releases und sichtbarer Unicode-Dateinamen.
+- **GETESTET:** CI auf finalem PR-HEAD zum Zeitpunkt der Dokumentation
+  noch nicht bestätigt. In dieser Sitzung lokaler GitHub-Checkout wegen
+  DNS-Fehler nicht möglich; Flutter/Dart nicht vorhanden.
+- **NICHT GETESTET:** Python-Gesamtsuite, Backend/Flutter, native Android-
+  Prüfungen, APK-Erstellung und Realgerät auf **diesem** Commit.
+- **BLOCKIERT:** definitive GitHub-Actions-Abnahme und spätere additive
+  Dokumentationsintegration mit aktiven A/B/C/D-PRs.
+- **Migration:** keine. SQLite-/Spielstand-/Exportformate, SRD-Regeln,
+  Backend und Android-Berechtigungen bleiben unverändert.
+- **Nächster konkreter Schritt:** finale CI für PR #460 verifizieren,
+  bei Defekt im selben Branch korrigieren; kein ungeprüfter Merge.
+
+
+---
+
+## 01.11.2026 – Chat D: Unicode-sichere Gradle-Wrapper-JAR (PR #462)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+- **Arbeitsbranch:** `fix/chat-d/gradle-wrapper-unicode-entries-20261101`.
+- **Code-Commit:** `2616c50fff45e64f9d577b3d3bf93d0dab5ad9ca`.
+- **Test-Commit:** `5188d18ec791803ff79b21e91c00da230c344cc6`.
+- **PR:** https://github.com/ManuEtt/Dnd/pull/462 (Draft).
+- **IMPLEMENTIERT:** `scripts/verify_project.py` validiert zusätzliche Unicode-
+  Kategorien `Cc/Cf/Cs/Zl/Zp` in JAR-ZIP-Mitgliedsnamen vor CRC und
+  Gradle-Startklassenprüfung. Keine bestehende Schutzprüfung entfernt.
+- **REGRESSIONEN:** Vier Python-Testmethoden in
+  `scripts/tests/test_verify_project.py` einschließlich negativer
+  Metadatenfälle und gültiger internationaler Ressourcennamen.
+- **GETESTET:** PR-CI auf endgültigem Dokumentationscommit noch ausstehend.
+  Geschriebene Tests sind kein Beleg für ausgeführte Tests.
+- **NICHT GETESTET:** endgültige Python-/Backend-/Flutter-/Android-CI,
+  APK-Build und echtes Android-Gerät auf diesem HEAD.
+- **BLOCKIERT:** CI-Nachweis und koordinierte spätere Integration;
+  in dieser Laufzeit kein lokal nutzbarer GitHub-DNS-Zugriff, kein Flutter/Dart.
+- **Keine Migration:** unveränderte SQLite-/JSON-/Spielstand- und
+  Gradle-Buildversion; kein geändertes Android-Berechtigungsmodell.
+- **Parallelität:** Alle zum Branchstart offenen PRs #446–#461
+  fachdateibezogen abgeglichen, keine Überschneidung mit diesen beiden
+  Python-Dateien. README-/Checkpoint-Inhalte vor Merge additiv konsolidieren.
+- **Genau nächster Schritt:** CI auf finalem PR #462 überprüfen,
+  bei Defekt im eigenen Branch korrigieren und nicht ungeprüft mergen.
+
+---
+
+## 01.11.2026 – Chat D: koordinierte Integration der Unicode-ZIP-Schutzpakete
+
+- **Basis-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+- **Branch:** `chore/chat-d/integrate-unicode-zip-guards-20261101`.
+- **Quell-PRs/Final-HEADs:**
+  - #451 Source-ZIP `33463cc1c8719bbfb5aa0139497ca3a0a45c1cd0`;
+    GitHub Actions #41244456398 `completed/success`.
+  - #460 Alpha-APK `d9fe14ac21d6f1ad2944ab77c7b35a8ec2d0bfeb`;
+    GitHub Actions #41282041207 `completed/success`.
+  - #462 Gradle-Wrapper-JAR `afe9853e14eb49b7e997a2c6400608361f99c210`;
+    GitHub Actions #41312267140 `completed/success`.
+- **IMPLEMENTIERT:** Alle sechs Python-Code-/Test-Blobs aus den
+  Quellen unverändert in einem Git-Tree zusammengeführt. Die drei
+  Quell-README-, zentralen und Chat-D-Checkpoint-Anhänge vollständig
+  additiv an aktuellen Main-Inhalt angefügt; historische Statusmeldungen
+  unter ihren ursprünglichen Abschnittsüberschriften belassen.
+- **GETESTET:** Alle drei Einzelpakete auf jeweiligen finalen HEADs
+  vollständig mit Python, Backend, Flutter, nativen Android-Tests und
+  Alpha-Build geprüft.
+- **NICHT GETESTET:** die kombinierte Integration auf dem finalen
+  Integrations-HEAD; CI muss neu durchlaufen. Echte Geräte-/SAF-Abnahme
+  ebenfalls nicht durchgeführt.
+- **BLOCKIERT:** definitive CI-Freigabe der Kombination und Koordination
+  mit #454 (andere disjunkte Fachdateien, identische README/Checkpoints).
+- **Migration:** keine. Keine Änderung an SQLite-Schema, Save-/JSON-Format,
+  Android-Berechtigungen oder Versionsnummer.
+- **Nächster Schritt:** Kombinations-CI prüfen und vor jedem Merge
+  Main, offene PRs und verlustfreie Dokumentationsintegration neu prüfen.
+  Nicht ungeprüft mergen oder fremde Branches löschen.

@@ -142,6 +142,70 @@ class AlphaReleaseTests(unittest.TestCase):
                     release.prepare_release(self.root, self.out)
                 self.assertFalse(self.out.exists())
 
+    def test_invisible_unicode_apk_entry_names_are_rejected_before_crc(self):
+        # A ZIP can carry deceptive names even when its CRC is otherwise valid.
+        # Reject C1 controls, format/bidi marks and line/paragraph separators
+        # before decompression and before any release is published.
+        for character in ('\u0085', '\u200b', '\u202e', '\u2066',
+                          '\u2028', '\u2029'):
+            with self.subTest(codepoint=ord(character)):
+                self.create_apk()
+                with zipfile.ZipFile(self.apk, 'a') as archive:
+                    archive.writestr(f'assets/map{character}notes.txt', b'unsafe')
+                with mock.patch.object(
+                    zipfile.ZipFile, 'testzip',
+                    side_effect=AssertionError('CRC checked before path validation'),
+                ):
+                    with self.assertRaisesRegex(ValueError, 'unsichere ZIP-Pfade'):
+                        release.prepare_release(self.root, self.out)
+                self.assertFalse(self.out.exists())
+
+    def test_unicode_control_in_apk_directory_is_rejected(self):
+        with zipfile.ZipFile(self.apk, 'a') as archive:
+            archive.writestr('assets/map\u2028/scene.json', b'unsafe')
+        with self.assertRaisesRegex(ValueError, 'unsichere ZIP-Pfade'):
+            release.validate_arm64_apk(self.apk)
+
+    def test_surrogate_apk_name_is_rejected_before_crc(self):
+        # Python's ZIP writer cannot encode an isolated surrogate to UTF-8.
+        # Inject a malformed ZipInfo at the metadata boundary instead.
+        original_infolist = zipfile.ZipFile.infolist
+
+        def invalid_entry(archive):
+            return list(original_infolist(archive)) + [
+                zipfile.ZipInfo('assets/name\ud800.txt'),
+            ]
+
+        with mock.patch.object(zipfile.ZipFile, 'infolist', invalid_entry):
+            with mock.patch.object(
+                zipfile.ZipFile, 'testzip',
+                side_effect=AssertionError('CRC checked before path validation'),
+            ):
+                with self.assertRaisesRegex(ValueError, 'unsichere ZIP-Pfade'):
+                    release.validate_arm64_apk(self.apk)
+
+    def test_visible_unicode_apk_assets_remain_valid(self):
+        for name in ('assets/Würfel.txt', 'assets/cafe\u0301.txt',
+                     'assets/Karte🗺️.txt', 'assets/世界.txt'):
+            with zipfile.ZipFile(self.apk, 'a') as archive:
+                archive.writestr(name, b'valid')
+        release.validate_arm64_apk(self.apk)
+
+    def test_invalid_unicode_apk_does_not_damage_previous_release(self):
+        published = release.prepare_release(self.root, self.out)
+        originals = {file.name: file.read_bytes() for file in published}
+        with zipfile.ZipFile(self.apk, 'a') as archive:
+            archive.writestr('assets/scene\u2029notes.json', b'unsafe')
+        with self.assertRaisesRegex(ValueError, 'unsichere ZIP-Pfade'):
+            release.prepare_release(self.root, self.out)
+        self.assertEqual(
+            {file.name: file.read_bytes() for file in published},
+            originals,
+        )
+        self.assertEqual(
+            set(self.out.iterdir()), set(published),
+        )
+
     def test_apk_symlink_entry_is_rejected(self):
         link = zipfile.ZipInfo('assets/shortcut')
         link.create_system = 3
