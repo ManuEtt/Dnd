@@ -1,3 +1,7 @@
+## 01.11.2026 – Chat C: Zustandsquellen-Dialog mit IME/Großschrift (PR #465)
+
+Im Flutter-Dialog `app/lib/ui/condition_effect_dialog.dart` wird der verschachtelte Scrollbereich durch `AlertDialog(scrollable: true)` mit schmalen Insets ersetzt. Lange Dropdown-Beschriftungen werden mit Ellipsis begrenzt und Validierungsfehler als Screenreader-Live-Region angekündigt. Vier Widgettests in `app/test/condition_effect_dialog_ime_test.dart` prüfen 320/360 dp, 200 % Schrift, 220 dp simulierte Tastatur, Abbruch, explizite Bestätigung und Auswahl nur einer existierenden Zustandsquelle ohne Heldenmutation. Ausgangs-main `5a88834c98f5aca40395088c20c7e1dc5b587868`, Branch `feat/chat-c/condition-effect-dialog-ime-20261101`, [PR #465](https://github.com/ManuEtt/Dnd/pull/465) (Draft). **Neue CI bis finalem HEAD nicht als bestanden behaupten.** Keine Regel-/Controller-/Speicher-/Schema-/Versionsänderung. Additive Paralleldokumentation beim Merge konsolidieren.
+
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
