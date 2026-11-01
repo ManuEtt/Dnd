@@ -146,3 +146,19 @@ Regelgrundlage: ausschließlich rechtmäßig nutzbare Inhalte des **D&D SRD 5.2.
 unter **CC BY 4.0**. [Namensnennung und Lizenzen](THIRD_PARTY_NOTICES.md).
 Eine vollständige SRD-Umsetzung und ein öffentlicher Mehrspielerdienst sind
 weiterhin Entwicklungsziele.
+
+---
+
+### Chat D – Unicode-sichere Alpha-APK-ZIP-Einträge (PR #460)
+
+Auf dem Branch `fix/chat-d/apk-unicode-entry-names-20261101` prüft der Release-Validator
+`scripts/prepare_alpha_release.py` zusätzlich die Unicode-Kategorien
+`Cc`, `Cf`, `Cs`, `Zl` und `Zp` in APK-ZIP-Mitgliedsnamen, bevor er CRC-Daten
+dekomprimiert oder Release-Artefakte veröffentlicht. Fünf Regressionstests
+(`scripts/tests/test_prepare_alpha_release.py`) decken unzulässige
+Steuer-/Richtungs-/Trennzeichen, Surrogate, weiterhin zulässige internationale
+Namen und den Erhalt früherer Releases ab.
+[PR #460](https://github.com/ManuEtt/Dnd/pull/460) bleibt Draft bis zur
+vollständigen CI auf finalem HEAD. Keine SQLite-/JSON-/Spielstandmigration und
+keine Änderung der App-Version. Gemeinsame README-/Checkpoint-Änderungen
+mit parallelen PRs bei Integration additiv erhalten.
