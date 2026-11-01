@@ -1,3 +1,15 @@
+## 01.11.2026 – Chat C: Zustandsquellen-Dialog bei 200 % Schrift und IME (PR #465)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`; Branch `feat/chat-c/condition-effect-dialog-ime-20261101`; Pull Request [#465](https://github.com/ManuEtt/Dnd/pull/465) (Draft bis CI).
+- **Problem:** Der Zustandsquellen-Dialog enthielt einen separat scrollenden Inhalt unter einem feststehenden Titel; für 320/360 dp, 200 % Schrift und eingeblendete Tastatur fehlte gezielte UI-Abnahme.
+- **IMPLEMENTIERT:** `app/lib/ui/condition_effect_dialog.dart` nutzt `AlertDialog(scrollable: true)` mit kompakteren Insets. Lange Dropdown-Labels erhalten Ellipsis, Validierungsfehler erhalten `Semantics(liveRegion: true)`; sämtliche Domänenwerte und vorhandenen Kontrollpfade bleiben unverändert.
+- **TESTS HINZUGEFÜGT:** `app/test/condition_effect_dialog_ime_test.dart`, vier Widgettests zu 320/360 dp, 200 % Schrift und 220 dp IME: ungültige Quelle zeigt angekündigten Fehler und neutralen Abbruch; gültige Zustandsquelle wird bestätigt, aber verändert den Helden nicht; Entfernen einer explizit gewählten Quelle von zwei Quellen liefert nur deren ID und mutiert nicht das übergebene Heldenmodell.
+- **GETESTET:** Live-main, Masterprompt, Architektur, Checkpoints, alle offenen PR-Dateilisten, bestehende Zustandseffekt-Tests und Domänenregeln geprüft. Zwei Code-/Testdateien auf isoliertem Branch gesichert. PR #458 ist fertig grün/reviewbereit; dessen CI gilt nicht als Prüfung von #465.
+- **NICHT GETESTET:** Für #465: Flutter-/Dart-Format, Flutter-Analyse und -Tests, Android-Debug/Alpha, native Tests, Backend/Python bis zum finalen GitHub-Actions-Lauf. Lokale Flutter-/Dart-Toolchain fehlt; echtes Android-Gerät und TalkBack bleiben offen.
+- **BLOCKIERT:** Final-HEAD-CI bis `completed/success` prüfen, vorher kein Review-Merge.
+- **GEÄNDERTE DATEIEN:** `app/lib/ui/condition_effect_dialog.dart`, `app/test/condition_effect_dialog_ime_test.dart`, dieser Checkpoint, `docs/CODEX_CHECKPOINT.md`, `README.md`. Keine Domänen-/Regel-/SQLite-/JSON-/Versionsänderung; **Migrationen:** keine.
+- **NÄCHSTER SCHRITT:** Tastatur-/Screenreader-Fokusreihenfolge der Zustandsquelle auf echtem Android-Gerät, dabei Textfeld, Wechsel zwischen Hinzufügen und Entfernen und Fehleransage prüfen.
+
 ## 30.10.2026 – Chat C: Ausrüstungsdialog bei 200 % Schrift und IME
 
 ## UI-Teilintegration des Gesamtmigrationslaufs – 30.10.2026
