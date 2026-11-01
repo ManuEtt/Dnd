@@ -80,9 +80,7 @@ class SrdClassPreparedSpellRules {
       final seen = <String>{};
       final validated = <String>[];
       for (final raw in entry.value) {
-        if (raw.isEmpty ||
-            raw != raw.trim() ||
-            !hero.spells.contains(raw)) {
+        if (raw.isEmpty || raw != raw.trim() || !hero.spells.contains(raw)) {
           throw const FormatException(
             'Nur ausdrücklich bekannte Zauber dürfen zugeordnet werden.',
           );
