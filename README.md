@@ -66,6 +66,28 @@ werden nicht geraten. Zuerst aktuelle PRs/Quellen prüfen; Domain-, SQLite-/Retr
 und bestehende Zauberregressionen verlangen. Keine automatische Fortsetzung
 außerhalb einer aktiven Sitzung.
 
+**Separates Chat-A-Fachpaket (01.11.2026, noch nicht in main):**
+Der Branch `feat/chat-a/class-prepared-spell-record-20261101`
+speichert eine ausdrücklich bestätigte Zaubervorbereitung
+getrennt nach den beiden tatsächlich eigenen Klassen.
+Die optionale, versionierte Bestätigung bleibt im bestehenden
+Hero-JSON und dadurch beim SQLite-Neustart erhalten;
+historische globale Listen bleiben ohne Klassenannahme
+unverändert. Klassen-/Stufen-/Listenänderungen machen
+die frühere Bestätigung ungültig, reine Ressourcenänderungen
+nicht. Falsche Klassen, unbekannte SRD-Zauber, Dubletten
+und individuell zu hohe Zaubergrade werden abgelehnt.
+Neun Domain-/Alt-JSON-/SQLite-/Revisions-Testgruppen
+wurden angelegt; CI auf finalem PR-Kopf prüfen.
+Keine Migration (SQLite3/äußeresJSON1).
+**Noch keine** automatische Zauberpreflight-Integration:
+Der bestehende Preflight wird separat in offenem PR #461
+bearbeitet. [Regelbeleg und Grenzen](docs/SRD_CLASS_PREPARED_SPELL_RECORD_20261101.md).
+
+**Nächster Chat-A-Schritt:** den Nachweis nach Review des
+PR #461 in dessen Vorprüfung nutzen und dort
+Legacy-/Stale-/Revisionsfälle absichern.
+
 ## Starten und prüfen
 
 Toolchain wie CI: Flutter **3.35.7**, Dart **3.9.2**, Java **17**, Node **22.14.0**,
