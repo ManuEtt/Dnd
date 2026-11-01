@@ -33,24 +33,34 @@ class CampaignResumeSnapshot {
 
   /// Line-safe player-facing projection, with source/trust labels intact.
   String get playerOverview {
-    final sections = <String>[
-      if (latestScene != null)
-        'Zuletzt erzählte Szene (kein bestätigter Regelzustand):\n'
-            + latestScene!,
-      if (latestSavedRecap != null)
-        'Letzter gespeicherter Rückblick (Stand bei Speicherung):\n'
-            + latestSavedRecap!,
-      if (confirmedFacts.isNotEmpty)
-        'Aktuell bestätigte Fakten:\n'
-            + confirmedFacts.map((fact) => '• ' + fact).join('\n'),
-      if (openLeads.isNotEmpty)
-        'Aktuell offene Handlungsstränge:\n'
-            + openLeads.map((lead) => '• ' + lead).join('\n'),
-    ];
+    final sections = <String>[];
+    void addSection(String title, String? content) {
+      if (content != null && content.isNotEmpty) {
+        sections.add('$title\n$content');
+      }
+    }
+
+    addSection(
+      'Zuletzt erzählte Szene (kein bestätigter Regelzustand):',
+      latestScene,
+    );
+    addSection(
+      'Letzter gespeicherter Rückblick (Stand bei Speicherung):',
+      latestSavedRecap,
+    );
+    addSection(
+      'Aktuell bestätigte Fakten:',
+      confirmedFacts.map((fact) => '• $fact').join('\n'),
+    );
+    addSection(
+      'Aktuell offene Handlungsstränge:',
+      openLeads.map((lead) => '• $lead').join('\n'),
+    );
     return sections.isEmpty
         ? 'Noch kein Wiederaufnahmekontext gespeichert.'
         : sections.join('\n\n');
   }
+
 }
 
 /// Does not write events, checkpoints, campaign fields or provider messages.
