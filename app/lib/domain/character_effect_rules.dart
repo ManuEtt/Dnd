@@ -6,6 +6,7 @@ import 'dice_engine.dart';
 import 'models.dart';
 import 'rules_engine.dart';
 import 'spellcasting_rules.dart';
+import 'srd_concentration_save_modifier_rules.dart';
 
 /// Executable effects on one confirmed character, shared by encounters and
 /// explicitly entered external sources. No effect is inferred from narration.
@@ -102,6 +103,7 @@ class CharacterEffectRules {
       } else if (amount > 0) {
         // Damage absorbed by temporary HP still requires a save. The DC uses
         // actual damage after defenses, before the temporary-HP buffer.
+        SrdConcentrationSaveModifierRules.validateClassAndProficiencies(next);
         final rule = CharacterRuleEngine.savingThrow(next, 'constitution');
         save = dice.check(
           modifier: rule.modifier,

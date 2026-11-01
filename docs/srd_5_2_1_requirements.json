@@ -7363,10 +7363,20 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Spells",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/concentration_class_preflight_test.dart",
+        "app/test/concentration_class_preflight_flow_test.dart",
+        "app/test/concentration_class_preflight_ui_test.dart",
+        "app/test/character_effect_rules_test.dart",
+        "app/test/srd_concentration_save_modifier_rules_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/character_effect_rules.dart",
+        "app/lib/domain/spellcasting_rules.dart",
+        "app/lib/domain/srd_concentration_save_modifier_rules.dart"
+      ],
+      "note": "Teilnachweis 01.11.2026: SRD 5.2.1 S.179 Konzentrationsschaden und S.52 Disciplined Survivor. Derselbe vorhandene Klassen-/Stufen-/Rettungswurf-Übungsvalidator wird in vorbereiteter Evidenz sowie vor dem automatischen Konzentrationswurf und bei separatem natürlichem W20 verwendet. 68 neue Domain-/UI-/SQLite-Regressionen prüfen gültige Aliase und einmalige Boni, ungültige Klassen vor Konzentrations-RNG, Alt-JSON/Neustart, Tabellen-Rollback und explizite Korrektur. Kein vollständiger Konzentrationsabschluss: situative Zusatzquellen, vollständige Effektanbindung und weitere Kampfpfade bleiben separat zu prüfen. Bestehende Profile bleiben unverändert lesbar; keine Schemaänderung."
     },
     {
       "id": "RULE-SPELLS-RITUAL-CASTING",
