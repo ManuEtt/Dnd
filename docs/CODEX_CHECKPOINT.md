@@ -1,3 +1,37 @@
+# Chat A – Versionierte Zaubervorbereitung pro Klasse (01.11.2026, eigener PR-Branch)
+
+Basis-main `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+Branch `feat/chat-a/class-prepared-spell-record-20261101`.
+SRD 5.2.1 *Multiclassing / Spells Prepared*, S.25, CC BY 4.0.
+
+Neues optionales, unveränderliches `preparedSpellRecord` in
+`HeroCharacter` (interne Nachweisversion 1, unverändertes
+Charakter-/Kampagnen-Schema 1 und SQLite 3), mit explizit
+bestätigter Zuordnung je eigener Zauberklasse. Doppelte,
+unbekannte, nicht gelistete oder für die individuelle
+Klassenstufe zu hohe Zauber werden abgelehnt. Klassen-/
+Stufen-/Listenänderungen invalidieren den Nachweis,
+Ressourcenverbuchung behält ihn. Historische Daten ohne
+Nachweis werden **nicht umgedeutet**; alter JSON-Roundtrip
+bleibt identisch. Neue Domain-/JSON-/SQLite-/Revisions-
+Regressionen im eigenen PR-Branch, tatsächliche CI
+bei dessen Abnahme dokumentieren.
+
+Der bestehende Preflight aus dem offenen PR #461 wird
+**nicht** überschrieben; die direkte Verknüpfung ist ein
+separater Integrationsschritt. Vollständige Präparationsanzahl,
+Feat-/Subclass-Effekte und Android-Editor bleiben offen.
+Kein Merge nach Main, keine Migration; andere PRs/Branches
+unberührt. [Fachnachweis](SRD_CLASS_PREPARED_SPELL_RECORD_20261101.md).
+Gemeinsame Dokumentationszeilen bei Review additiv
+durch Chat D konsolidieren.
+
+**NÄCHSTER SCHRITT:** gespeicherten Klassennachweis nach
+PR-#461-Integration als optionalen preflight input prüfen,
+mit negativem Altspielstand-, SQLite-/Replay- und Stufentest.
+
+---
+
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
