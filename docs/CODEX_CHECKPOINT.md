@@ -1,5 +1,33 @@
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
+## Chat B – schreibgeschützter Wiederaufnahmekontext (01.11.2026, CET)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+  **Branch:** `feat/chat-b/read-only-resume-context-20261101`.
+  **PR:** [#459](https://github.com/ManuEtt/Dnd/pull/459) (Draft).
+- **IMPLEMENTIERT:** eigene `CampaignResumeReader`-Projektion mit ausdrücklich
+  getrennten Quellen: nicht bestätigte Szene, historischer gespeicherter
+  Rückblick, aktuelle Fakten, aktuell offene Handlungsnotizen.
+  Begrenzt und zeilensicher, nur Lesezugriff; niemals Regeln, Eventjournal,
+  Datenbank oder `storyBible.secret` verändern/übernehmen.
+- **Geändert:** `app/lib/story/campaign_resume_context.dart` (neu),
+  `app/lib/story/story_api.dart` (öffentlicher Export),
+  `app/test/campaign_resume_context_test.dart` (neu), README und
+  Chat-B-/zentraler Checkpoint.
+- **GETESTET:** aktueller main-SHA und PR-Dateipfade geprüft; voriges
+  Chat-B-Paket #456 hat vollständig grüne CI
+  [41246230660](https://github.com/ManuEtt/Dnd/actions/runs/41246230660).
+  Das ist **kein** Nachweis für die neue #459-Änderung.
+- **NICHT GETESTET:** neue Flutter-/Backend-/Python-/Android-GitHub-CI auf dem
+  finalen #459-HEAD, Realgerät/TalkBack, Produktion/KI.
+- **BLOCKIERT:** kein lokales Dart-/Flutter-SDK; Abnahme über GitHub Actions.
+  **NOCH NICHT IMPLEMENTIERT:** UI-Nutzung und KI-Übergabe dieser Projektion.
+  **Migration:** keine (SQLite 3 / äußeres JSON 1).
+- **Nächster konkreter Schritt:** #459-CI vollständig auswerten, rote
+  Prüfungen auf eigenem Branch korrigieren; nur nach Grün für Chat-D-Review
+  freigeben, README-/Checkpoint-Konflikte additiv vereinigen. Kein Auto-Merge.
+
+
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
 Alpha **0.8.49+99**. Dieser neue Live-Status ersetzt widersprüchliche historische
 Momentaufnahmen; die vollständige additive Vereinigung ist bytegenau unter
