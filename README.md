@@ -66,6 +66,28 @@ werden nicht geraten. Zuerst aktuelle PRs/Quellen prüfen; Domain-, SQLite-/Retr
 und bestehende Zauberregressionen verlangen. Keine automatische Fortsetzung
 außerhalb einer aktiven Sitzung.
 
+**Separates Chat-A-Regelpaket (01.11.2026, noch nicht in main):**
+Branch `feat/chat-a/prepared-spell-exchange-triggers-20261101`
+führt die offizielle SRD-5.2.1-Tabelle (S.104) zum
+**Austausch bereits vorbereiteter Zauber** als rein
+lesende Regelprüfung ein: Kleriker/Druide/Magier dürfen
+bei bestätigter langer Rast mehrere Zauber tauschen,
+Paladin/Waldläufer dort einen, Barde/Zauberer/Hexenmeister
+einen beim nachgewiesenen **Aufstieg ihrer eigenen Klasse**.
+Die Vorprüfung verweigert unbekannte/widerrechtliche Klassen,
+Zaubertricks, illegale Grade, unbestätigte Rast,
+unbestätigtes Magier-Zauberbuch und zu viele Wechsel.
+Elf deterministische Testgruppen einschließlich SQLite-
+Neustart und Revisionskonflikt sind angelegt.
+**Keine** Speicherung oder Zauberfreigabe aus dieser
+Vorprüfung allein; offene PRs #461 und #463 werden
+nicht überschrieben. SQLite3, JSON1, App-Version
+unverändert. [Fachdetails und Grenzen](docs/SRD_SPELL_PREPARATION_EXCHANGE_20261101.md).
+
+**Nächster Schritt:** nach Integration der isolierten
+Vorbereitungs-PRs diese Regeln atomar mit bestätigter
+Rast- und Klassen-Aufstiegsentscheidung verknüpfen.
+
 ## Starten und prüfen
 
 Toolchain wie CI: Flutter **3.35.7**, Dart **3.9.2**, Java **17**, Node **22.14.0**,
