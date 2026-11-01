@@ -52,7 +52,11 @@ void main() {
           WorldNpc(id: 'mira-hidden', name: 'Mi${marker}ra'),
         ],
         notes: [
-          _note('original', 'mira-original', 'Nur die erste Mira kennt das Tor.'),
+          _note(
+            'original',
+            'mira-original',
+            'Nur die erste Mira kennt das Tor.',
+          ),
           _note('hidden', 'mira-hidden', 'Nur die zweite Mira kennt den Turm.'),
         ],
       );
@@ -62,11 +66,9 @@ void main() {
         'Ich spreche mit Mira.',
         'Ich spreche mit Mi${marker}ra.',
       ]) {
-        final context = NpcNarratorMemory.merge(
-          campaign,
-          action,
-          ['Der Hafen ist bestätigt.'],
-        );
+        final context = NpcNarratorMemory.merge(campaign, action, [
+          'Der Hafen ist bestätigt.',
+        ]);
         expect(context, ['Der Hafen ist bestätigt.']);
       }
       expect(jsonEncode(campaign.toJson()), before);
@@ -78,11 +80,7 @@ void main() {
     final campaign = _campaign(
       npcs: const [WorldNpc(id: 'mira', name: 'Mi\u200bra')],
       notes: [
-        _note(
-          'mira-note',
-          'mira',
-          'Der\u2060 Schlüssel\u200b liegt im Turm.',
-        ),
+        _note('mira-note', 'mira', 'Der\u2060 Schlüssel\u200b liegt im Turm.'),
       ],
     );
     final before = jsonEncode(campaign.toJson());
@@ -104,74 +102,70 @@ void main() {
   test('legacy JSON with no confirmed notes invents no history', () {
     final oldJson = _campaign(
       npcs: const [WorldNpc(id: 'mira', name: 'Mi\u200dra')],
-    ).toJson()
-      ..remove('npcRelationshipNotes');
+    ).toJson()..remove('npcRelationshipNotes');
     final loaded = Campaign.fromJson(oldJson);
     final before = jsonEncode(loaded.toJson());
 
-    expect(
-      NpcNarratorMemory.merge(loaded, 'Ich frage Mira.', []),
-      isEmpty,
-    );
+    expect(NpcNarratorMemory.merge(loaded, 'Ich frage Mira.', []), isEmpty);
     expect(loaded.npcRelationshipNotes, isEmpty);
     expect(jsonEncode(loaded.toJson()), before);
   });
 
-  test('SQLite restart keeps zero-width identities distinct and read-only',
-      () async {
-    final folder = await Directory.systemTemp.createTemp('npc-name-fold-');
-    final path = paths.join(folder.path, 'campaign.sqlite');
-    var repository = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: path,
-    );
-    try {
-      final campaign = _campaign(
-        npcs: const [
-          WorldNpc(id: 'first', name: 'Mira'),
-          WorldNpc(id: 'second', name: 'Mi\u200bra'),
-          WorldNpc(id: 'tarek', name: 'Tarek'),
-        ],
-        notes: [
-          _note('a', 'first', 'Die erste Mira kennt die Karte.'),
-          _note('b', 'second', 'Die zweite Mira bewacht das Archiv.'),
-          _note('c', 'tarek', 'Tarek kennt den verborgenen Kai.'),
-        ],
-      );
-      await repository.saveCampaign(campaign);
-      await repository.close();
-      repository = await SqliteCampaignRepository.open(
+  test(
+    'SQLite restart keeps zero-width identities distinct and read-only',
+    () async {
+      final folder = await Directory.systemTemp.createTemp('npc-name-fold-');
+      final path = paths.join(folder.path, 'campaign.sqlite');
+      var repository = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: path,
       );
+      try {
+        final campaign = _campaign(
+          npcs: const [
+            WorldNpc(id: 'first', name: 'Mira'),
+            WorldNpc(id: 'second', name: 'Mi\u200bra'),
+            WorldNpc(id: 'tarek', name: 'Tarek'),
+          ],
+          notes: [
+            _note('a', 'first', 'Die erste Mira kennt die Karte.'),
+            _note('b', 'second', 'Die zweite Mira bewacht das Archiv.'),
+            _note('c', 'tarek', 'Tarek kennt den verborgenen Kai.'),
+          ],
+        );
+        await repository.saveCampaign(campaign);
+        await repository.close();
+        repository = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: path,
+        );
 
-      final restored = (await repository.getCampaign(campaign.id))!;
-      final before = jsonEncode(restored.toJson());
-      final ambiguous = NpcNarratorMemory.merge(
-        restored,
-        'Ich frage Mira.',
-        ['Bestätigter allgemeiner Fakt'],
-      );
-      final distinct = NpcNarratorMemory.merge(
-        restored,
-        'Ich frage Tarek.',
-        [],
-      );
+        final restored = (await repository.getCampaign(campaign.id))!;
+        final before = jsonEncode(restored.toJson());
+        final ambiguous = NpcNarratorMemory.merge(restored, 'Ich frage Mira.', [
+          'Bestätigter allgemeiner Fakt',
+        ]);
+        final distinct = NpcNarratorMemory.merge(
+          restored,
+          'Ich frage Tarek.',
+          [],
+        );
 
-      expect(ambiguous, ['Bestätigter allgemeiner Fakt']);
-      expect(distinct, hasLength(1));
-      expect(distinct.single, contains('verborgenen Kai'));
-      expect(distinct.single, isNot(contains('Archiv')));
-      expect(jsonEncode(restored.toJson()), before);
-      expect(restored.revision, 0);
-      expect(restored.hero.toJson(), campaign.hero.toJson());
-      expect(
-        (await repository.reconstructCampaign(campaign.id))!.toJson(),
-        restored.toJson(),
-      );
-    } finally {
-      await repository.close();
-      await folder.delete(recursive: true);
-    }
-  });
+        expect(ambiguous, ['Bestätigter allgemeiner Fakt']);
+        expect(distinct, hasLength(1));
+        expect(distinct.single, contains('verborgenen Kai'));
+        expect(distinct.single, isNot(contains('Archiv')));
+        expect(jsonEncode(restored.toJson()), before);
+        expect(restored.revision, 0);
+        expect(restored.hero.toJson(), campaign.hero.toJson());
+        expect(
+          (await repository.reconstructCampaign(campaign.id))!.toJson(),
+          restored.toJson(),
+        );
+      } finally {
+        await repository.close();
+        await folder.delete(recursive: true);
+      }
+    },
+  );
 }
