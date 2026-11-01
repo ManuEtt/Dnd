@@ -91,7 +91,9 @@ class SrdPreparedSpellRecord {
                 value.trim() != value ||
                 value.length > 200,
           )) {
-        throw const FormatException('Ungültiger Klasseneintrag im Zaubernachweis.');
+        throw const FormatException(
+          'Ungültiger Klasseneintrag im Zaubernachweis.',
+        );
       }
       final names = chosen.cast<String>();
       if (names.toSet().length != names.length ||
