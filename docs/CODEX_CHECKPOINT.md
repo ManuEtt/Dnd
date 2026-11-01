@@ -119,3 +119,32 @@ Mehrklassen-Zauberplätze für bestätigte SRD-Klassenaliasnamen kanonisieren.
 Akzeptanz: `Wizard`/`Magier` und andere erlaubte Caster-Aliase ergeben identische
 Slots; Pact Magic bleibt separat; unbekannte Namen werden nicht geraten;
 Domain-/Speicher-/Retry-Regression und finale CI. Zuvor neue Parallel-PRs abgleichen.
+
+---
+
+## 01.11.2026 – Chat D: Unicode-sichere Gradle-Wrapper-JAR (PR #462)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+- **Arbeitsbranch:** `fix/chat-d/gradle-wrapper-unicode-entries-20261101`.
+- **Code-Commit:** `2616c50fff45e64f9d577b3d3bf93d0dab5ad9ca`.
+- **Test-Commit:** `5188d18ec791803ff79b21e91c00da230c344cc6`.
+- **PR:** https://github.com/ManuEtt/Dnd/pull/462 (Draft).
+- **IMPLEMENTIERT:** `scripts/verify_project.py` validiert zusätzliche Unicode-
+  Kategorien `Cc/Cf/Cs/Zl/Zp` in JAR-ZIP-Mitgliedsnamen vor CRC und
+  Gradle-Startklassenprüfung. Keine bestehende Schutzprüfung entfernt.
+- **REGRESSIONEN:** Vier Python-Testmethoden in
+  `scripts/tests/test_verify_project.py` einschließlich negativer
+  Metadatenfälle und gültiger internationaler Ressourcennamen.
+- **GETESTET:** PR-CI auf endgültigem Dokumentationscommit noch ausstehend.
+  Geschriebene Tests sind kein Beleg für ausgeführte Tests.
+- **NICHT GETESTET:** endgültige Python-/Backend-/Flutter-/Android-CI,
+  APK-Build und echtes Android-Gerät auf diesem HEAD.
+- **BLOCKIERT:** CI-Nachweis und koordinierte spätere Integration;
+  in dieser Laufzeit kein lokal nutzbarer GitHub-DNS-Zugriff, kein Flutter/Dart.
+- **Keine Migration:** unveränderte SQLite-/JSON-/Spielstand- und
+  Gradle-Buildversion; kein geändertes Android-Berechtigungsmodell.
+- **Parallelität:** Alle zum Branchstart offenen PRs #446–#461
+  fachdateibezogen abgeglichen, keine Überschneidung mit diesen beiden
+  Python-Dateien. README-/Checkpoint-Inhalte vor Merge additiv konsolidieren.
+- **Genau nächster Schritt:** CI auf finalem PR #462 überprüfen,
+  bei Defekt im eigenen Branch korrigieren und nicht ungeprüft mergen.
