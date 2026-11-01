@@ -178,28 +178,46 @@ class _ConditionEffectDialogState extends State<ConditionEffectDialog> {
                 items: [
                   const DropdownMenuItem(
                     value: ConditionEffectDuration.untilRemoved,
-                    child: Text('Bis zur ausdrücklichen Entfernung', overflow: TextOverflow.ellipsis),
+                    child: Text(
+                      'Bis zur ausdrücklichen Entfernung',
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   if (_activeOwnTurn) ...const [
                     DropdownMenuItem(
                       value: ConditionEffectDuration.currentTurnEnd,
-                      child: Text('Ende des aktuellen eigenen Zugs', overflow: TextOverflow.ellipsis),
+                      child: Text(
+                        'Ende des aktuellen eigenen Zugs',
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     DropdownMenuItem(
                       value: ConditionEffectDuration.nextTurnEnd,
-                      child: Text('Ende des nächsten eigenen Zugs', overflow: TextOverflow.ellipsis),
+                      child: Text(
+                        'Ende des nächsten eigenen Zugs',
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     DropdownMenuItem(
                       value: ConditionEffectDuration.threeOwnTurnEnds,
-                      child: Text('Nach 3 eigenen Zugenden', overflow: TextOverflow.ellipsis),
+                      child: Text(
+                        'Nach 3 eigenen Zugenden',
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     DropdownMenuItem(
                       value: ConditionEffectDuration.fiveOwnTurnEnds,
-                      child: Text('Nach 5 eigenen Zugenden', overflow: TextOverflow.ellipsis),
+                      child: Text(
+                        'Nach 5 eigenen Zugenden',
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     DropdownMenuItem(
                       value: ConditionEffectDuration.tenOwnTurnEnds,
-                      child: Text('Nach 10 eigenen Zugenden', overflow: TextOverflow.ellipsis),
+                      child: Text(
+                        'Nach 10 eigenen Zugenden',
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ],
                 ],
