@@ -90,7 +90,7 @@ class CampaignResumeReader {
       final key = _excerpt(fact.key, 80);
       final value = _excerpt(fact.value, 180);
       if (key.isEmpty || value.isEmpty) continue;
-      facts.add(key + ': ' + value);
+      facts.add('$key: $value');
       if (facts.length == maxFacts) break;
     }
 
@@ -100,7 +100,7 @@ class CampaignResumeReader {
       final title = _excerpt(thread.title, 100);
       final note = _excerpt(thread.description, 180);
       if (title.isEmpty || note.isEmpty) continue;
-      leads.add(title + ': ' + note);
+      leads.add('$title: $note');
       if (leads.length == maxLeads) break;
     }
 
@@ -136,5 +136,5 @@ String _excerpt(String original, int maxUnits) {
     output.writeCharCode(rune);
     length += units;
   }
-  return output.toString().trimRight() + '…';
+  return '${output.toString().trimRight()}…';
 }
