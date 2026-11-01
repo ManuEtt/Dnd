@@ -66,6 +66,26 @@ werden nicht geraten. Zuerst aktuelle PRs/Quellen prüfen; Domain-, SQLite-/Retr
 und bestehende Zauberregressionen verlangen. Keine automatische Fortsetzung
 außerhalb einer aktiven Sitzung.
 
+**Separates Chat-A-Regelpaket (01.11.2026, noch nicht in main):**
+Branch `feat/chat-a/multiclass-prepared-source-20261101`
+verlangt eine ausdrückliche Zuordnung zum ausgewählten
+`castingClass`, falls ein Mehrklassenheld denselben Zauber
+auf **beiden** eigenen Klassenlisten und für **beide** individuellen
+Klassenstufen vorbereiten könnte. Die globale historische
+Zauberliste allein beweist die Klasse nicht. Eindeutige Zuordnungen,
+Einzelklassen und bestehende Ressourcen-/Material-/Ziel-/
+Snapshot-Prüfungen bleiben unverändert. Acht neue
+Domain-/JSON-/SQLite-Regressionen sind angelegt; maßgebliche
+GitHub-CI auf dem finalen PR-Commit prüfen. Keine
+Migration, SQLite 3 / JSON 1. Kein vollständiger
+klassenbezogener Vorbereitungseditor oder fertiges
+SRD-Regelwerk. [Fachnachweis und Grenzen](docs/SRD_MULTICLASS_PREPARED_SOURCE_20261101.md).
+
+**Nächster unabhängiger Chat-A-Schritt:** versionierte,
+ausdrücklich bestätigte per-Klasse-Zaubervorbereitung mit
+Altspielstand-/Revisions-/SQLite-Tests, ohne bestehende
+unbekannte Zuordnungen zu erraten.
+
 ## Starten und prüfen
 
 Toolchain wie CI: Flutter **3.35.7**, Dart **3.9.2**, Java **17**, Node **22.14.0**,
