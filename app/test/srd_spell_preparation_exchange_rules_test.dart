@@ -312,7 +312,7 @@ void main() {
     for (final replacement in <List<String>>[
       ['Bless'],
       ['Bless', 'Cure Wounds', 'Guiding Bolt'],
-      ['Bless', 'Guiding Bolt'],
+      ['Cure Wounds', 'Bless'],
     ]) {
       expect(
         () => _preview(
