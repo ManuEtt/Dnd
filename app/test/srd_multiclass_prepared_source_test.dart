@@ -68,20 +68,23 @@ SrdSpellCastPlan _prepare(
 void main() {
   setUpAll(sqfliteFfiInit);
 
-  test('shared spell on both eligible classes requires explicit class choice', () {
-    final hero = _hero();
-    final before = hero.toJson();
-    final spell = _spell();
-    for (final castingClass in ['Magier', 'Wizard', 'Zauberer', 'Sorcerer']) {
-      expect(
-        () => _prepare(hero, spell: spell, castingClass: castingClass),
-        throwsFormatException,
-        reason: castingClass,
-      );
-    }
-    expect(hero.toJson(), before);
-    expect(hero.spentSpellSlots, isEmpty);
-  });
+  test(
+    'shared spell on both eligible classes requires explicit class choice',
+    () {
+      final hero = _hero();
+      final before = hero.toJson();
+      final spell = _spell();
+      for (final castingClass in ['Magier', 'Wizard', 'Zauberer', 'Sorcerer']) {
+        expect(
+          () => _prepare(hero, spell: spell, castingClass: castingClass),
+          throwsFormatException,
+          reason: castingClass,
+        );
+      }
+      expect(hero.toJson(), before);
+      expect(hero.spentSpellSlots, isEmpty);
+    },
+  );
 
   test('confirmed source binds chosen class to original hero and spell', () {
     final hero = _hero();
@@ -120,48 +123,44 @@ void main() {
     );
   });
 
-  test('only one class at sufficient level needs no ambiguous confirmation', () {
-    final hero = _hero(
-      totalLevel: 6,
-      secondLevel: 5,
-      spells: const ['Fireball'],
-    );
-    final spell = _spell(name: 'Fireball', level: 3);
-    expect(
-      () => _prepare(
+  test(
+    'only one class at sufficient level needs no ambiguous confirmation',
+    () {
+      final hero = _hero(
+        totalLevel: 6,
+        secondLevel: 5,
+        spells: const ['Fireball'],
+      );
+      final spell = _spell(name: 'Fireball', level: 3);
+      expect(
+        () => _prepare(
+          hero,
+          spell: spell,
+          castingClass: 'Magier',
+          slotLevel: 3,
+          classConfirmed: true,
+        ),
+        throwsFormatException,
+      );
+      final legal = _prepare(
         hero,
         spell: spell,
-        castingClass: 'Magier',
+        castingClass: 'Zauberer',
         slotLevel: 3,
-        classConfirmed: true,
-      ),
-      throwsFormatException,
-    );
-    final legal = _prepare(
-      hero,
-      spell: spell,
-      castingClass: 'Zauberer',
-      slotLevel: 3,
-    );
-    expect(legal.castingClass, 'Zauberer');
-    expect(legal.slotLevel, 3);
-    expect(hero.spentSpellSlots, isEmpty);
-  });
+      );
+      expect(legal.castingClass, 'Zauberer');
+      expect(legal.slotLevel, 3);
+      expect(hero.spentSpellSlots, isEmpty);
+    },
+  );
 
   test('unique class-list membership is unambiguous for multiclass heroes', () {
-    final hero = _hero(
-      second: 'Kleriker',
-      spells: const ['Wunden heilen'],
-    );
+    final hero = _hero(second: 'Kleriker', spells: const ['Wunden heilen']);
     final spell = _spell(
       name: 'Cure Wounds',
       classes: const ['Bard', 'Cleric', 'Druid', 'Paladin', 'Ranger'],
     );
-    final plan = _prepare(
-      hero,
-      spell: spell,
-      castingClass: 'Kleriker',
-    );
+    final plan = _prepare(hero, spell: spell, castingClass: 'Kleriker');
     expect(plan.preparedName, 'Wunden heilen');
     expect(plan.castingClass, 'Kleriker');
     expect(
@@ -198,12 +197,15 @@ void main() {
     expect(hero.toJson(), result.hero.toJson());
   });
 
-  test('single-class characters preserve existing legacy spell preparation', () {
-    final hero = _hero(second: '', secondLevel: 0, totalLevel: 3);
-    final plan = _prepare(hero, spell: _spell());
-    expect(plan.castingClass, 'Magier');
-    expect(plan.preparedName, 'Magisches Geschoss');
-  });
+  test(
+    'single-class characters preserve existing legacy spell preparation',
+    () {
+      final hero = _hero(second: '', secondLevel: 0, totalLevel: 3);
+      final plan = _prepare(hero, spell: _spell());
+      expect(plan.castingClass, 'Magier');
+      expect(plan.preparedName, 'Magisches Geschoss');
+    },
+  );
 
   test('JSON restart keeps raw class labels and requires the choice again', () {
     final source = _hero();
@@ -213,11 +215,7 @@ void main() {
     expect(restored.className, 'Magier');
     expect(restored.secondaryClassName, 'Zauberer');
     expect(() => _prepare(restored, spell: _spell()), throwsFormatException);
-    final plan = _prepare(
-      restored,
-      spell: _spell(),
-      classConfirmed: true,
-    );
+    final plan = _prepare(restored, spell: _spell(), classConfirmed: true);
     expect(plan.castingClass, 'Magier');
     expect(restored.toJson(), raw);
   });
