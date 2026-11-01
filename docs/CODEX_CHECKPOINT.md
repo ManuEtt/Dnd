@@ -1,3 +1,53 @@
+# Aktiver Checkpoint – 01.11.2026, UTC, Chat A
+
+## 01.11.2026 – Chat A: Klassenprüfung vor Konzentrationswürfen
+
+Entwicklungsstand **0.8.50+100**, Branch
+`fix/chat-a/concentration-class-preflight-20261101`, Code/Test
+`37604994828745ac44e48d8e2f628024f2f355e2`, Basis-Main `5a88834c`.
+Die vorhandene Klassen-/Stufen-/Rettungswurf-Übungsprüfung wird jetzt auch vor
+dem tatsächlichen Konzentrationswurf und vor einer separaten W20-Auflösung
+verwendet. Unbekannte oder widersprüchliche Klassen gewähren keinen Mönchsbonus.
+Der deutsche Schadensdialog zeigt den Fehler ohne Teiländerung; nach expliziter
+Klassenkorrektur bleibt der normale Ablauf ausführbar. Alte Profile bleiben
+lesbar, keine SQLite-/JSON-Migration. SG 10–30 war bereits zuvor umgesetzt.
+
+**GETESTET:** 68 neue Tests (58 Domain, 8 Engine/SQLite, 2 echte UI-Flows) und
+42 bestehende Regressionen: **110 gezielte Tests bestanden**, Analyzer sauber.
+Die neuen Domänentests auf unverändertem Main: 25 bestanden / 33 fehlgeschlagen;
+mit Fix alle 58 bestanden. Die vollständige lokale Prüfkette läuft noch;
+finale PR-/Android-/native CI bleibt separat nachzuweisen.
+**NICHT GETESTET:** echtes Androidgerät/TalkBack, installiertes Upgrade,
+produktive Signierung. **NOCH NICHT IMPLEMENTIERT:** vollständige Konzentrations-
+automation und Klassenprüfung aller allgemeinen Wiederholungswürfe.
+[Fachbericht und Grenzen](parallel/CHAT_A_CONCENTRATION_CLASS_PREFLIGHT_20261101.md).
+
+Nächster Schritt nach Abnahme: allgemeine Klassen-Wiederholungen vor Würfel und
+Ressourcenverbrauch auf dieselbe konsistente Klassenherkunft prüfen. Vorher
+aktuelle PRs abgleichen; offene #453/#461/#463/#448 nicht erneut implementieren.
+Die nachfolgenden früheren Entwicklungsstände sind historische Momentaufnahmen.
+
+---
+
+**Letzte vollständige Main-Abnahme:**
+[41184883579](https://github.com/ManuEtt/Dnd/actions/runs/41184883579),
+`5a88834c98f5aca40395088c20c7e1dc5b587868`, erfolgreich: 2.710 Flutter,
+262 Python, 76 Backend, Debug/native/drei optimierte ABI-APKs und Quellpakete.
+Diese Baseline beweist nicht die finale CI des neuen Branches.
+
+**BLOCKIERT:** kein Code-/SDK-/GitHub-Blocker; Integration mit parallelen
+README-/Checkpoint-Änderungen durch Chat D. Kein angeschlossenes Testgerät.
+**Sicherung:** vorhandene `scripts/create_checkpoint.py` und History-Bundle
+mit exakter Patchbasis `5a88834c98f5aca40395088c20c7e1dc5b587868` verwenden.
+Lokaler Paketpfad `/workspace/artifacts/concentration-class-preflight-20261101/`.
+Beim Wiederaufnehmen tatsächlichen Main, PR-Head und CI erneut prüfen.
+
+Die Migration zu Issue #425 ist abgeschlossen: 54 abgeschlossene Branches
+archiviert/entfernt, Issue geschlossen. Nicht erneut als offene Migration starten.
+Aktuell laufen neue unabhängige Entwicklungs-PRs. Historischer Übergabestand folgt.
+
+---
+
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,

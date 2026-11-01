@@ -1,3 +1,32 @@
+## 01.11.2026 – Chat A: Klassenprüfung vor Konzentrationswürfen
+
+Entwicklungsstand **0.8.50+100**, Branch
+`fix/chat-a/concentration-class-preflight-20261101`, Code/Test
+`37604994828745ac44e48d8e2f628024f2f355e2`, Basis-Main `5a88834c`.
+Die vorhandene Klassen-/Stufen-/Rettungswurf-Übungsprüfung wird jetzt auch vor
+dem tatsächlichen Konzentrationswurf und vor einer separaten W20-Auflösung
+verwendet. Unbekannte oder widersprüchliche Klassen gewähren keinen Mönchsbonus.
+Der deutsche Schadensdialog zeigt den Fehler ohne Teiländerung; nach expliziter
+Klassenkorrektur bleibt der normale Ablauf ausführbar. Alte Profile bleiben
+lesbar, keine SQLite-/JSON-Migration. SG 10–30 war bereits zuvor umgesetzt.
+
+**GETESTET:** 68 neue Tests (58 Domain, 8 Engine/SQLite, 2 echte UI-Flows) und
+42 bestehende Regressionen: **110 gezielte Tests bestanden**, Analyzer sauber.
+Die neuen Domänentests auf unverändertem Main: 25 bestanden / 33 fehlgeschlagen;
+mit Fix alle 58 bestanden. Die vollständige lokale Prüfkette läuft noch;
+finale PR-/Android-/native CI bleibt separat nachzuweisen.
+**NICHT GETESTET:** echtes Androidgerät/TalkBack, installiertes Upgrade,
+produktive Signierung. **NOCH NICHT IMPLEMENTIERT:** vollständige Konzentrations-
+automation und Klassenprüfung aller allgemeinen Wiederholungswürfe.
+[Fachbericht und Grenzen](docs/parallel/CHAT_A_CONCENTRATION_CLASS_PREFLIGHT_20261101.md).
+
+Nächster Schritt nach Abnahme: allgemeine Klassen-Wiederholungen vor Würfel und
+Ressourcenverbrauch auf dieselbe konsistente Klassenherkunft prüfen. Vorher
+aktuelle PRs abgleichen; offene #453/#461/#463/#448 nicht erneut implementieren.
+Die nachfolgenden früheren Entwicklungsstände sind historische Momentaufnahmen.
+
+---
+
 ## 31.10.2026 – Migration abgenommen, Alpha 0.8.49+99
 
 Gesamtintegration #440 und Herkunftsnachtrag #444 sind regulär integriert.
