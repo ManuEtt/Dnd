@@ -119,3 +119,29 @@ Mehrklassen-Zauberplätze für bestätigte SRD-Klassenaliasnamen kanonisieren.
 Akzeptanz: `Wizard`/`Magier` und andere erlaubte Caster-Aliase ergeben identische
 Slots; Pact Magic bleibt separat; unbekannte Namen werden nicht geraten;
 Domain-/Speicher-/Retry-Regression und finale CI. Zuvor neue Parallel-PRs abgleichen.
+
+---
+
+## 01.11.2026 – Chat D: sichere APK-ZIP-Mitgliedsnamen (PR #460)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+- **Branch:** `fix/chat-d/apk-unicode-entry-names-20261101`.
+- **Technische Commits:** `1b5928ded1bd14fbe204b0bd82b725dc40b08a93`,
+  `14431b670ae4a6cd0c8b87d6d98d2d6be7d8ce88`.
+- **Implementiert:** `scripts/prepare_alpha_release.py` verwirft Unicode-
+  Steuer-, Format-, Surrogat- und Unicode-Zeilen-/Absatztrennzeichen in
+  APK-ZIP-Einträgen vor CRC-Validierung und Release-Publikation.
+- **Regressionstests geschrieben:** fünf positive/negative Methoden in
+  `scripts/tests/test_prepare_alpha_release.py`, einschließlich unversehrter
+  vorheriger Releases und sichtbarer Unicode-Dateinamen.
+- **GETESTET:** CI auf finalem PR-HEAD zum Zeitpunkt der Dokumentation
+  noch nicht bestätigt. In dieser Sitzung lokaler GitHub-Checkout wegen
+  DNS-Fehler nicht möglich; Flutter/Dart nicht vorhanden.
+- **NICHT GETESTET:** Python-Gesamtsuite, Backend/Flutter, native Android-
+  Prüfungen, APK-Erstellung und Realgerät auf **diesem** Commit.
+- **BLOCKIERT:** definitive GitHub-Actions-Abnahme und spätere additive
+  Dokumentationsintegration mit aktiven A/B/C/D-PRs.
+- **Migration:** keine. SQLite-/Spielstand-/Exportformate, SRD-Regeln,
+  Backend und Android-Berechtigungen bleiben unverändert.
+- **Nächster konkreter Schritt:** finale CI für PR #460 verifizieren,
+  bei Defekt im selben Branch korrigieren; kein ungeprüfter Merge.
