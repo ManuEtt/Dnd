@@ -1,5 +1,20 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat B – Zero-Width-Namensschutz für NPC-Erinnerungen (01.11.2026)
+
+[Draft-PR #464](https://github.com/ManuEtt/Dnd/pull/464) verhindert, dass
+Unicode-Zeichen ohne sichtbare Breite (U+200B–U+200D, U+2060, U+FEFF)
+zwei gleich dargestellte NPC-Namen bei freier Spielereingabe fälschlich als
+unterschiedliche Namen erscheinen lassen. Bestätigte NPC-Beziehungsnotizen
+werden bei unklarer Identität nicht geraten oder an den optionalen Erzähler
+weitergereicht. Für eindeutig gespeicherte NPCs bleiben bestätigte Notizen
+nutzbar; unsichtbare Markierungen werden ausschließlich beim Ausgeben
+bereinigt, nicht aus dem gespeicherten Spielstand entfernt. Neue Tests
+umfassen fünf Unicode-Varianten, die positive eindeutige Zuordnung,
+alte JSONs und einen echten SQLite-Neustart. Keine Migration/Versionsänderung.
+Die neue CI ist bei Anlage noch nicht abgenommen.
+
+
 Deutschsprachige Fantasy-Solo-App für Android: Flutter/Dart, lokale SQLite-Spielstände,
 regelgeprüfte Aktionen und ein optionaler Fastify-/TypeScript-Erzähler.
 
