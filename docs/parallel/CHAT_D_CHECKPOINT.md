@@ -936,3 +936,42 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Nächster Schritt:** Finale `flutter test test/pending_action_sqlite_validation_test.dart` und vollständige GitHub-Actions-Pipeline auf dem tatsächlichen PR-HEAD verifizieren; erst danach Review-/Integrationsfreigabe erwägen.
 
 ---
+
+---
+
+# CHAT D – D-027: Gradle-Wrapper-JAR Unicode-Kontrollzeichen (01.11.2026)
+
+- **Ausgangs-main-SHA:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+- **Branch:** `fix/chat-d/gradle-wrapper-unicode-entries-20261101`.
+- **Code-Commit:** `2616c50fff45e64f9d577b3d3bf93d0dab5ad9ca`.
+- **Test-Commit:** `5188d18ec791803ff79b21e91c00da230c344cc6`.
+- **Pull Request:** https://github.com/ManuEtt/Dnd/pull/462 (Draft).
+- **Ausgangsproblem:** Der Prüfpfad für
+  `app/android/gradle/wrapper/gradle-wrapper.jar` lehnte ASCII C0/DEL,
+  ZIP-Traversal, Duplikate, Symlinks und manipulierte CRCs bereits ab,
+  aber nicht alle unsichtbaren Unicode-Formate und Separatoren.
+- **IMPLEMENTIERT:** `scripts/verify_project.py` sperrt ZIP-Eintragsnamen
+  der Unicode-Kategorien `Cc/Cf/Cs/Zl/Zp`, vor CRC-Dekomprimierung.
+  Bestehende JAR-Binärdatei, Größenlimits und sichere ASCII-Pfade bleiben
+  unverändert.
+- **Geänderte Dateien:** `scripts/verify_project.py`,
+  `scripts/tests/test_verify_project.py`, `README.md`,
+  `docs/CODEX_CHECKPOINT.md` und diese Datei.
+- **Regressionen:** `test_wrapper_rejects_invisible_unicode_names_before_crc`,
+  `test_wrapper_rejects_unicode_separator_in_directory`,
+  `test_wrapper_rejects_surrogate_member_metadata_before_crc`,
+  `test_visible_unicode_wrapper_members_remain_allowed`.
+- **GETESTET:** noch keine vollständige CI auf finalem PR-HEAD; diese
+  Rubrik wird erst nach tatsächlich beobachtetem GitHub-Lauf aktualisiert.
+- **NICHT GETESTET:** Python-Gesamtsuite, Backend, Flutter-Analyse/Tests,
+  nativer Android-Test, APKs und reales Smartphone auf finalem Commit.
+- **BLOCKIERT:** CI-Abnahme vor Freigabe sowie konfliktfreie Dokumentations-
+  konsolidierung. GitHub-Checkout im Container durch DNS blockiert;
+  Flutter/Dart-SDK lokal nicht verfügbar.
+- **Migration:** keine. SQLite-Schema 3 / äußeres JSON 1 / vorhandene
+  Spielstände bleiben unverändert, keine Version-/Berechtigungsänderung.
+- **Parallele Koordination:** Vor Beginn alle offenen PRs #446–#461
+  auf die beiden Python-Zieldateien geprüft; keine Überschneidung.
+  Andere Branches, PRs und `main` nicht verändert.
+- **Nächster konkreter Schritt:** finale CI am PR-HEAD prüfen; danach
+  mit aktuellem Main und offenen PRs erneut Konflikte abgleichen.
