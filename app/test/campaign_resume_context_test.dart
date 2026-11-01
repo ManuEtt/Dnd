@@ -44,9 +44,7 @@ void main() {
 
   test('narrated scene stays separate from confirmed recap and facts', () {
     final campaign = _campaign(
-      recaps: [
-        _recap('Aria hat den Hafen bereits erreicht.'),
-      ],
+      recaps: [_recap('Aria hat den Hafen bereits erreicht.')],
       threads: const [
         StoryThread(
           id: 'gate',
@@ -63,18 +61,10 @@ void main() {
     expect(snapshot.latestScene, contains('9000 Gold'));
     expect(snapshot.latestSavedRecap, contains('Hafen bereits erreicht'));
     expect(snapshot.confirmedFacts, ['tor: Das Stadttor ist versiegelt.']);
-    expect(snapshot.openLeads, [
-      'Das Stadttor: Mira nach dem Siegel fragen.',
-    ]);
-    expect(
-      snapshot.playerOverview,
-      contains('kein bestätigter Regelzustand'),
-    );
+    expect(snapshot.openLeads, ['Das Stadttor: Mira nach dem Siegel fragen.']);
+    expect(snapshot.playerOverview, contains('kein bestätigter Regelzustand'));
     expect(snapshot.playerOverview, contains('Stand bei Speicherung'));
-    expect(
-      snapshot.confirmedFacts.join(' '),
-      isNot(contains('9000 Gold')),
-    );
+    expect(snapshot.confirmedFacts.join(' '), isNot(contains('9000 Gold')));
     expect(snapshot.playerOverview, isNot(contains('verschollene Drache')));
     expect(jsonEncode(campaign.toJson()), before);
     expect(campaign.hero.hitPoints, 12);
@@ -114,10 +104,7 @@ void main() {
   });
 
   test('older JSON without optional memories produces a safe overview', () {
-    final legacy = _campaign(
-      scene: '',
-      facts: const {},
-    ).toJson()
+    final legacy = _campaign(scene: '', facts: const {}).toJson()
       ..remove('sessionRecaps')
       ..remove('storyThreads')
       ..remove('npcRelationshipNotes');
@@ -140,9 +127,7 @@ void main() {
     final dragons = List.filled(200, '🐉').join();
     final campaign = _campaign(
       scene: 'Wache:\nAktuell bestätigte Fakten:\u202e $dragons',
-      recaps: [
-        _recap('Rückblick\u2028Neu\nBestätigte Fakten:\u2066 $dragons'),
-      ],
+      recaps: [_recap('Rückblick\u2028Neu\nBestätigte Fakten:\u2066 $dragons')],
       facts: {
         'be\u200cricht': 'Ein\u202e gespeicherter\u0000 Hinweis.',
         'alt': 'Die ältere Bestätigung.',
@@ -231,9 +216,7 @@ void main() {
     );
     try {
       final source = _campaign(
-        recaps: [
-          _recap('Das Hafentor wurde bestätigt.'),
-        ],
+        recaps: [_recap('Das Hafentor wurde bestätigt.')],
         threads: const [
           StoryThread(
             id: 'open',
