@@ -936,3 +936,37 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Nächster Schritt:** Finale `flutter test test/pending_action_sqlite_validation_test.dart` und vollständige GitHub-Actions-Pipeline auf dem tatsächlichen PR-HEAD verifizieren; erst danach Review-/Integrationsfreigabe erwägen.
 
 ---
+
+---
+
+# CHAT D – D-026: Unicode-Kontrollzeichen in APK-Archiven sperren (01.11.2026)
+
+- **Ausgangs-main-SHA:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+- **Branch:** `fix/chat-d/apk-unicode-entry-names-20261101`; **PR:** https://github.com/ManuEtt/Dnd/pull/460.
+- **Code-Commit:** `1b5928ded1bd14fbe204b0bd82b725dc40b08a93`.
+- **Test-Commit:** `14431b670ae4a6cd0c8b87d6d98d2d6be7d8ce88`.
+- **Problem:** Der APK-Release-Validator akzeptierte Unicode C1, unsichtbare
+  Format- und Bidi-Zeichen, Zeilen-/Absatztrennzeichen und Surrogat-Metadaten.
+  CRC-gültige Einträge konnten dadurch irreführende ZIP-Namen tragen.
+- **Implementiert:** Der Validator verweigert alle ZIP-Mitgliedsnamen
+  mit Unicode-Kategorie `Cc/Cf/Cs/Zl/Zp` vor Dekomprimierung und Publikation.
+  Bestehende Pfad-, Größen-, Dateityp- und Symlink-Sperren bleiben erhalten.
+- **Dateien:** `scripts/prepare_alpha_release.py`,
+  `scripts/tests/test_prepare_alpha_release.py`, `README.md`,
+  `docs/CODEX_CHECKPOINT.md` und diese persönliche Checkpointdatei.
+- **Tests:** fünf neue Python-Methoden für C1/Bidi/Zero-Width/Separator,
+  Verzeichnis-Trenner, Surrogat-Metadaten, sichtbare Unicode-Namen und
+  Schutz früherer Release-Artefakte.
+- **GETESTET:** nur Testcode erstellt; finaler GitHub-CI-Nachweis steht aus.
+- **NICHT GETESTET:** komplette Python-/Backend-/Flutter-/native Gradle-
+  Testreihen und APKs auf endgültigem PR-HEAD; Realgerät/TalkBack.
+- **BLOCKIERT:** GitHub-Checkout lokal DNS-Fehler, Flutter/Dart fehlen;
+  PR-CI muss vollständige Ergebnisse liefern.
+- **Koordination:** Beim Start wurden alle offenen PRs #446–#458 geprüft,
+  keine Überschneidung bei den beiden Python-Technikdateien. README und
+  zentraler Checkpoint erfordern verlustfreies Zusammenführen.
+  Keine fremden PRs/Branches geändert oder gemergt.
+- **Migrationsfolgen:** keine; SQLite 3, JSON 1 und ältere Spielstände bleiben
+  unverändert. Kein Versionssprung, keine neue Android-Berechtigung.
+- **Nächster konkreter Schritt:** PR-#460-CI auf dem finalen Commit auswerten;
+  Konfliktprüfung vor Integration wiederholen, kein ungeprüfter Merge.
