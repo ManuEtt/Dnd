@@ -62,7 +62,8 @@ class NpcNarratorMemory {
       final normalizedNote = _oneLine(note.note);
       final relationship = _oneLine(note.relationship);
       final prefix = 'Bestätigte NPC-Beziehungsnotiz zu ';
-      var heading = '$prefix${_oneLine(_stripNameFormat(entry.npc.name))} ($relationship): ';
+      var heading =
+          '$prefix${_oneLine(_stripNameFormat(entry.npc.name))} ($relationship): ';
       // Never truncate an identity inside a very long stored NPC name.
       // Use the uniquely saved ID only when it is safe for wire transport.
       if (heading.length + 2 > 400) {
@@ -116,13 +117,12 @@ class NpcNarratorMemory {
   static String _stripNameFormat(String text) =>
       text.replaceAll(_nameFormat, '');
 
-  static String _normalize(String text) =>
-      _oneLine(_stripNameFormat(text))
-          .toLowerCase()
-          .replaceAll('ä', 'ae')
-          .replaceAll('ö', 'oe')
-          .replaceAll('ü', 'ue')
-          .replaceAll('ß', 'ss');
+  static String _normalize(String text) => _oneLine(_stripNameFormat(text))
+      .toLowerCase()
+      .replaceAll('ä', 'ae')
+      .replaceAll('ö', 'oe')
+      .replaceAll('ü', 'ue')
+      .replaceAll('ß', 'ss');
 
   // Legacy imports can contain bidi overrides/isolates and invisible direction
   // marks. They must neither spoof the identity check nor alter wire-memory
