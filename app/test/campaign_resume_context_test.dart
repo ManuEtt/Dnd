@@ -13,12 +13,13 @@ Campaign _campaign({
   List<StoryThread> threads = const [],
   List<SessionRecap> recaps = const [],
   Map<String, String> facts = const {'tor': 'Das Stadttor ist versiegelt.'},
+  int revision = 7,
 }) => Campaign(
   id: 'resume-read-only',
   name: 'Das verschlossene Tor',
   world: 'Valdorn',
   sessionId: 'session-2',
-  revision: 7,
+  revision: revision,
   hero: HeroCharacter(
     id: 'aria',
     name: 'Aria',
@@ -216,6 +217,7 @@ void main() {
     );
     try {
       final source = _campaign(
+        revision: 0,
         recaps: [_recap('Das Hafentor wurde bestätigt.')],
         threads: const [
           StoryThread(
@@ -240,7 +242,7 @@ void main() {
       expect(after.playerOverview, originalSnapshot.playerOverview);
       expect(after.confirmedFacts, originalSnapshot.confirmedFacts);
       expect(after.openLeads, originalSnapshot.openLeads);
-      expect(after.revision, 7);
+      expect(after.revision, 0);
       expect(restored.hero.toJson(), source.hero.toJson());
       expect(jsonEncode(restored.toJson()), before);
       expect(
