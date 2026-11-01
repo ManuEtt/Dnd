@@ -188,9 +188,7 @@ class _MulticlassSelectionDialogState extends State<MulticlassSelectionDialog> {
                 padding: const EdgeInsets.only(top: 12),
                 child: Text(
                   _error!,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.error,
-                  ),
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
               ),
           ],
