@@ -60,7 +60,6 @@ class CampaignResumeSnapshot {
         ? 'Noch kein Wiederaufnahmekontext gespeichert.'
         : sections.join('\n\n');
   }
-
 }
 
 /// Does not write events, checkpoints, campaign fields or provider messages.
