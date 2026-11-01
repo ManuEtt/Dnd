@@ -78,9 +78,10 @@ void main() {
       await _tap(tester, _control('confirm'));
       expect(_control('error'), findsOneWidget);
       expect(
-        find.byWidgetPredicate(
-          (widget) => widget is Semantics && (widget.properties.liveRegion ?? false),
-        ),
+        find.byWidgetPredicate((widget) {
+          if (widget is! Semantics) return false;
+          return widget.properties.liveRegion ?? false;
+        }),
         findsWidgets,
       );
       expect(results, isEmpty);
