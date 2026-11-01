@@ -63,8 +63,13 @@ void main() {
     expect(snapshot.latestScene, contains('9000 Gold'));
     expect(snapshot.latestSavedRecap, contains('Hafen bereits erreicht'));
     expect(snapshot.confirmedFacts, ['tor: Das Stadttor ist versiegelt.']);
-    expect(snapshot.openLeads, ['Das Stadttor: Mira nach dem Siegel fragen.']);
-    expect(snapshot.playerOverview, contains('kein bestätigter Regelzustand'));
+    expect(snapshot.openLeads, [
+      'Das Stadttor: Mira nach dem Siegel fragen.',
+    ]);
+    expect(
+      snapshot.playerOverview,
+      contains('kein bestätigter Regelzustand'),
+    );
     expect(snapshot.playerOverview, contains('Stand bei Speicherung'));
     expect(
       snapshot.confirmedFacts.join(' '),
@@ -124,7 +129,10 @@ void main() {
     expect(snapshot.latestSavedRecap, isNull);
     expect(snapshot.confirmedFacts, isEmpty);
     expect(snapshot.openLeads, isEmpty);
-    expect(snapshot.playerOverview, contains('Noch kein Wiederaufnahmekontext'));
+    expect(
+      snapshot.playerOverview,
+      contains('Noch kein Wiederaufnahmekontext'),
+    );
     expect(jsonEncode(restored.toJson()), before);
   });
 
@@ -154,7 +162,10 @@ void main() {
     expect(snapshot.latestSavedRecap!.length, lessThanOrEqualTo(800));
     expect(snapshot.openLeads.single.length, lessThanOrEqualTo(285));
     expect(snapshot.confirmedFacts.first, 'alt: Die ältere Bestätigung.');
-    expect(snapshot.confirmedFacts.last, contains('Ein gespeicherter Hinweis.'));
+    expect(
+      snapshot.confirmedFacts.last,
+      contains('Ein gespeicherter Hinweis.'),
+    );
     for (final entry in [
       snapshot.latestScene!,
       snapshot.latestSavedRecap!,
@@ -165,8 +176,10 @@ void main() {
       expect(entry, isNot(contains('\u202e')));
       expect(entry, isNot(contains('\u2066')));
       expect(entry, isNot(contains('\u200c')));
-      expect(entry.runes.any((rune) => rune >= 0xd800 && rune <= 0xdfff),
-          isFalse);
+      final containsSurrogate = entry.runes.any(
+        (rune) => rune >= 0xd800 && rune <= 0xdfff,
+      );
+      expect(containsSurrogate, isFalse);
     }
     expect(snapshot.latestScene, endsWith('…'));
     expect(snapshot.openLeads.single, endsWith('…'));
@@ -209,7 +222,7 @@ void main() {
     expect(campaign.storyThreads, hasLength(7));
   });
 
-  test('SQLite restart reconstructs an identical read-only snapshot', () async {
+  test('SQLite restart retains read-only snapshot', () async {
     final folder = await Directory.systemTemp.createTemp('read-only-resume-');
     final path = paths.join(folder.path, 'game.sqlite');
     var repository = await SqliteCampaignRepository.open(
