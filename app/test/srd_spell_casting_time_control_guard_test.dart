@@ -23,6 +23,12 @@ SrdSpellDefinition _withCastingTime(
   ritual: source.ritual,
 );
 
+bool _hasTriggeredCastingTime(SrdSpellDefinition spell) {
+  final time = spell.castingTime;
+  return time.startsWith('Reaction, which you take ') ||
+      time.startsWith('Bonus Action, which you take ');
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   late SrdSpellCatalog catalog;
@@ -32,11 +38,7 @@ void main() {
   });
 
   test('legitimate triggered spell timings still classify exactly', () {
-    final triggered = catalog.spells.where(
-      (spell) =>
-          spell.castingTime.startsWith('Reaction, which you take ') ||
-          spell.castingTime.startsWith('Bonus Action, which you take '),
-    ).toList();
+    final triggered = catalog.spells.where(_hasTriggeredCastingTime).toList();
     expect(triggered.length, 8);
     for (final spell in triggered) {
       final assessment = SrdSpellCastingTimeRules.inspect(spell);
@@ -62,11 +64,7 @@ void main() {
   });
 
   test('hidden legacy bidi controls and annotations cannot forge triggers', () {
-    final triggered = catalog.spells.where(
-      (spell) =>
-          spell.castingTime.startsWith('Reaction, which you take ') ||
-          spell.castingTime.startsWith('Bonus Action, which you take '),
-    );
+    final triggered = catalog.spells.where(_hasTriggeredCastingTime);
     // Deprecated bidi formatting controls and interlinear annotations were
     // previously accepted in trigger suffixes; never normalize them away.
     for (final control in [
@@ -91,7 +89,7 @@ void main() {
         expect(
           () => SrdSpellCastingTimeRules.inspect(forged),
           throwsFormatException,
-          reason: '${spell.name} / U+${control.runes.single.toRadixString(16)}',
+          reason: spell.name,
         );
         expect(
           () => SrdSpellCastingTimeRules.requireSingleTurn(forged),
