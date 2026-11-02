@@ -1,3 +1,14 @@
+## 02.11.2026 – Chat C: bestätigte Zauberwirkungen bei 200 % Schrift/IME (PR #479)
+
+- **Ausgangs-main:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1` und Branch `feat/chat-c/confirmed-spell-effect-ime-20261102`; [PR #479](https://github.com/ManuEtt/Dnd/pull/479) ist Draft bis zum finalen CI-Ergebnis.
+- **Problem:** Separat vertikal scrollendes `ConfirmedSpellEffectDialog`-Formular unter feststehendem Dialogtitel, besonders bei 320/360 dp, 200 % Schrift, Tastatur-/IME-Inset 220 dp; fehlende gezielte Regression für Add-/Remove-Quellen.
+- **IMPLEMENTIERT:** `app/lib/ui/confirmed_spell_effect_dialog.dart`: `AlertDialog(scrollable:true)` mit schmalen Insets, kein verschachtelter vertikaler Scrollview; lange Endzeiten mit `TextOverflow.ellipsis` dargestellt, Fehler mit `Semantics(liveRegion:true)` angekündigt.
+- **VIER TESTS:** `app/test/confirmed_spell_effect_ime_test.dart`: 320/360 dp, 200 % Text und 220 dp IME; negative Quelle löst Fehler aus, Abbruch gibt null; valide Quelle liefert unverbindliches `ConfirmedSpellEffectChoice.add`; bei zwei bestätigten Quellen lässt sich die zweite gezielt als `remove` auswählen. Alle Wege müssen das Heldensnapshot unverändert lassen.
+- **GEPRÜFT:** aktuelle Main-/Masterprompt-/Repo-/Checkpoint-Dokumentation, bestehende `confirmed_spell_effect_widget_test.dart`, tatsächlicher Dialogcode und offene PR-Dateilisten; keinerlei Überschneidung der zwei neuen fachlichen Pfade.
+- **CI-AUSSTEHEND:** Dart-Format, Flutter-Analyse/gezielte/Volltests, Backend/Python, native Android-Tests, Debug-/ABI-Alpha-APK und Artefakte auf dem finalen #479-HEAD. Frühere #474-CI gilt **nicht** als Beweis für #479. Keine Echtgeräte-/TalkBack-/Hardwaretastatur-Abnahme.
+- **MIGRATION:** keine. Keine SRD-, Story-, Domain-, Slot-/Ressourcen-, SQLite-/JSON-/Versionsänderung. Dokumentation additiv, Integration durch Chat D; kein Merge.
+- **NÄCHSTES PAKET:** Sobald #474 gemergt ist, Fokusreihenfolge/TalkBack-Bedienbarkeit im Materialinventar einschließlich mehrfacher Checkboxbestätigungen prüfen, ohne aktiven PR zu überarbeiten.
+
 ## 31.10.2026 – Chat C: Offene Schildreaktion in der Chronik (Draft-PR #447)
 
 - **Ausgangs-Main:** `47ab002872b7d46daeae03bb558258cf2ea73e4a`.
