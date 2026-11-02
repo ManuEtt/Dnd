@@ -99,34 +99,37 @@ void main() {
     }
   });
 
-  test('touch approval cannot override a surveyed distance of 10 to 100 ft', () {
-    final map = _map();
-    for (final origin in [
-      const SrdGridCell(6, 4),
-      const SrdGridCell(4, 6),
-      const SrdGridCell(6, 6),
-      const SrdGridCell(9, 9),
-      const SrdGridCell(24, 4),
-    ]) {
-      final before = SrdSpellGridTargetRules.distanceFeet(_caster, origin);
-      expect(before, greaterThan(5));
-      expect(
-        () => SrdSpellGridTargetRules.factsFor(
-          heal,
-          _request(origin, map: map, touchConfirmed: true),
-        ),
-        throwsFormatException,
-        reason: 'Known distance $before feet must defeat a boolean approval',
-      );
-      expect(
-        () => SrdSpellGridTargetRules.validateOrigin(
-          heal,
-          _request(origin, map: map),
-        ),
-        throwsFormatException,
-      );
-    }
-  });
+  test(
+    'touch approval cannot override a surveyed distance of 10 to 100 ft',
+    () {
+      final map = _map();
+      for (final origin in [
+        const SrdGridCell(6, 4),
+        const SrdGridCell(4, 6),
+        const SrdGridCell(6, 6),
+        const SrdGridCell(9, 9),
+        const SrdGridCell(24, 4),
+      ]) {
+        final before = SrdSpellGridTargetRules.distanceFeet(_caster, origin);
+        expect(before, greaterThan(5));
+        expect(
+          () => SrdSpellGridTargetRules.factsFor(
+            heal,
+            _request(origin, map: map, touchConfirmed: true),
+          ),
+          throwsFormatException,
+          reason: 'Known distance $before feet must defeat a boolean approval',
+        );
+        expect(
+          () => SrdSpellGridTargetRules.validateOrigin(
+            heal,
+            _request(origin, map: map),
+          ),
+          throwsFormatException,
+        );
+      }
+    },
+  );
 
   test('adjacent touch without player approval and unsurveyed cover fail', () {
     for (final request in [
@@ -156,10 +159,7 @@ void main() {
       50,
     );
     expect(
-      SrdSpellGridTargetRules.validateOrigin(
-        cone,
-        _request(_caster),
-      ).mode,
+      SrdSpellGridTargetRules.validateOrigin(cone, _request(_caster)).mode,
       SrdSpellOriginMode.caster,
     );
     expect(
@@ -168,95 +168,101 @@ void main() {
     );
   });
 
-  test('confirmed spell preflight rejects distant Touch without slot spending', () {
-    final hero = _hero();
-    final before = hero.toJson();
-    for (final origin in [
-      const SrdGridCell(6, 4),
-      const SrdGridCell(4, 15),
-    ]) {
-      expect(
-        () => _preflight(hero, heal, _request(origin)),
-        throwsFormatException,
-      );
-    }
-    expect(hero.toJson(), before);
-    expect(hero.spentSpellSlots, isEmpty);
-    final nearby = _preflight(hero, heal, _request(const SrdGridCell(5, 5)));
-    expect(nearby.castingClass, 'Kleriker');
-    expect(nearby.targetAssessment!.range, 'Touch');
-    expect(hero.toJson(), before);
-  });
+  test(
+    'confirmed spell preflight rejects distant Touch without slot spending',
+    () {
+      final hero = _hero();
+      final before = hero.toJson();
+      for (final origin in [
+        const SrdGridCell(6, 4),
+        const SrdGridCell(4, 15),
+      ]) {
+        expect(
+          () => _preflight(hero, heal, _request(origin)),
+          throwsFormatException,
+        );
+      }
+      expect(hero.toJson(), before);
+      expect(hero.spentSpellSlots, isEmpty);
+      final nearby = _preflight(hero, heal, _request(const SrdGridCell(5, 5)));
+      expect(nearby.castingClass, 'Kleriker');
+      expect(nearby.targetAssessment!.range, 'Touch');
+      expect(hero.toJson(), before);
+    },
+  );
 
-  test('legacy JSON and SQLite restart retain a rejected distant target', () async {
-    final hero = _hero();
-    final sourceJson = hero.toJson();
-    expect(sourceJson.containsKey('preparedSpellRecord'), isFalse);
-    expect(HeroCharacter.fromJson(sourceJson).toJson(), sourceJson);
-    final directory = await Directory.systemTemp.createTemp('grid-touch-');
-    final path = '${directory.path}/save.sqlite';
-    var repository = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: path,
-    );
-    try {
-      final campaign = Campaign(
-        id: 'grid-touch-campaign',
-        name: 'Berührungsreichweite',
-        world: 'Test',
-        sessionId: 'touch-session',
-        scene: 'Start',
-        hero: hero,
-      );
-      await repository.saveCampaign(campaign);
-      await repository.close();
-      repository = await SqliteCampaignRepository.open(
+  test(
+    'legacy JSON and SQLite restart retain a rejected distant target',
+    () async {
+      final hero = _hero();
+      final sourceJson = hero.toJson();
+      expect(sourceJson.containsKey('preparedSpellRecord'), isFalse);
+      expect(HeroCharacter.fromJson(sourceJson).toJson(), sourceJson);
+      final directory = await Directory.systemTemp.createTemp('grid-touch-');
+      final path = '${directory.path}/save.sqlite';
+      var repository = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: path,
       );
-      final restored = (await repository.getCampaign(campaign.id))!;
-      final snapshot = restored.toJson();
-      expect(
-        () => _preflight(
-          restored.hero,
-          heal,
-          _request(const SrdGridCell(12, 12)),
-        ),
-        throwsFormatException,
-      );
-      expect((await repository.getCampaign(campaign.id))!.toJson(), snapshot);
-      // An unrelated confirmed state change follows normal optimistic
-      // concurrency; neither a retry nor a stale editor can book the failed
-      // spell through this read-only target check.
-      final committed = restored.copyWith(
-        revision: 1,
-        hero: restored.hero.copyWith(hitPoints: 17),
-      );
-      await repository.saveCampaign(committed, expectedRevision: 0);
-      await repository.saveCampaign(committed, expectedRevision: 0);
-      await expectLater(
-        repository.saveCampaign(
-          restored.copyWith(
-            revision: 1,
-            hero: restored.hero.copyWith(hitPoints: 16),
+      try {
+        final campaign = Campaign(
+          id: 'grid-touch-campaign',
+          name: 'Berührungsreichweite',
+          world: 'Test',
+          sessionId: 'touch-session',
+          scene: 'Start',
+          hero: hero,
+        );
+        await repository.saveCampaign(campaign);
+        await repository.close();
+        repository = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: path,
+        );
+        final restored = (await repository.getCampaign(campaign.id))!;
+        final snapshot = restored.toJson();
+        expect(
+          () => _preflight(
+            restored.hero,
+            heal,
+            _request(const SrdGridCell(12, 12)),
           ),
-          expectedRevision: 0,
-        ),
-        throwsA(isA<CampaignConflictException>()),
-      );
-      await repository.close();
-      repository = await SqliteCampaignRepository.open(
-        factory: databaseFactoryFfi,
-        path: path,
-      );
-      final finalSave = (await repository.getCampaign(campaign.id))!;
-      expect(finalSave.revision, 1);
-      expect(finalSave.hero.hitPoints, 17);
-      expect(finalSave.hero.spentSpellSlots, isEmpty);
-      expect(finalSave.hero.spells, ['Wunden heilen']);
-    } finally {
-      await repository.close();
-      await directory.delete(recursive: true);
-    }
-  });
+          throwsFormatException,
+        );
+        expect((await repository.getCampaign(campaign.id))!.toJson(), snapshot);
+        // An unrelated confirmed state change follows normal optimistic
+        // concurrency; neither a retry nor a stale editor can book the failed
+        // spell through this read-only target check.
+        final committed = restored.copyWith(
+          revision: 1,
+          hero: restored.hero.copyWith(hitPoints: 17),
+        );
+        await repository.saveCampaign(committed, expectedRevision: 0);
+        await repository.saveCampaign(committed, expectedRevision: 0);
+        await expectLater(
+          repository.saveCampaign(
+            restored.copyWith(
+              revision: 1,
+              hero: restored.hero.copyWith(hitPoints: 16),
+            ),
+            expectedRevision: 0,
+          ),
+          throwsA(isA<CampaignConflictException>()),
+        );
+        await repository.close();
+        repository = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: path,
+        );
+        final finalSave = (await repository.getCampaign(campaign.id))!;
+        expect(finalSave.revision, 1);
+        expect(finalSave.hero.hitPoints, 17);
+        expect(finalSave.hero.spentSpellSlots, isEmpty);
+        expect(finalSave.hero.spells, ['Wunden heilen']);
+      } finally {
+        await repository.close();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
 }
