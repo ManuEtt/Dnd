@@ -1,0 +1,23 @@
+# Temporary Chat-A source formatting diagnostic, removed before merging.
+name: Chat A temporary Dart format diagnostic
+on:
+  push:
+    branches:
+      - fix/chat-a/zero-hp-prone-movement-20261102
+    paths:
+      - '.github/workflows/chat-a-format-diagnostic-20261102.yml'
+permissions:
+  contents: read
+jobs:
+  show-diff:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Show formatter changes in tests
+        run: |
+          dart format app/test/prone_crawling_rules_test.dart app/test/prone_standing_rules_test.dart
+          git diff -- app/test/prone_crawling_rules_test.dart app/test/prone_standing_rules_test.dart
