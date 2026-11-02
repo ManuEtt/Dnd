@@ -71,6 +71,8 @@ Future<void> _open(
 }
 
 Future<void> _tap(WidgetTester tester, Finder target) async {
+  FocusManager.instance.primaryFocus?.unfocus();
+  await tester.pumpAndSettle();
   await tester.ensureVisible(target);
   await tester.pumpAndSettle();
   final scrollable = find
@@ -81,7 +83,12 @@ Future<void> _tap(WidgetTester tester, Finder target) async {
       .first;
   for (var attempt = 0; attempt < 14; attempt++) {
     if (target.hitTestable().evaluate().isNotEmpty) break;
-    await tester.drag(scrollable, const Offset(0, -140));
+    // An earlier text field can leave the target *above* the viewport.
+    // Drag toward the target instead of only scrolling farther down.
+    final targetCenter = tester.getCenter(target);
+    final viewportCenter = tester.getCenter(scrollable);
+    final direction = targetCenter.dy < viewportCenter.dy ? 140.0 : -140.0;
+    await tester.drag(scrollable, Offset(0, direction));
     await tester.pumpAndSettle();
   }
   expect(target.hitTestable(), findsOneWidget);
