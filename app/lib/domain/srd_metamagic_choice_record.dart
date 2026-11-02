@@ -59,7 +59,8 @@ class SrdMetamagicChoiceRecord {
     if (json.length != keys.length || !json.keys.toSet().containsAll(keys)) {
       throw const FormatException('Metamagie-Auswahl enthält unbekannte Felder.');
     }
-    if (json['schemaVersion'] != schemaVersion ||
+    if (json['schemaVersion'] is! int ||
+        json['schemaVersion'] != schemaVersion ||
         json['primaryClassLabel'] is! String ||
         json['secondaryClassLabel'] is! String ||
         json['sorcererClassLevel'] is! int ||
