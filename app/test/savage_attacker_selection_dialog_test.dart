@@ -411,4 +411,5 @@ void main() {
     );
     expect(campaign.toJson(), snapshot);
     expect(tester.takeException(), isNull);
-  });}
+  });
+}
