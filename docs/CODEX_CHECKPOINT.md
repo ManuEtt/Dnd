@@ -303,3 +303,37 @@ Ein neuer Flutter-Regressionstest schützt vor einer Story-Provider-Antwort, die
 - **Nächster konkreter Schritt:** vollständige GitHub-CI des neuen
   Integrations-HEAD abschließen, Konflikte nochmals prüfen; kein
   ungeprüfter Merge und keine ungeprüfte Altbranch-Bereinigung.
+
+---
+
+## 02.11.2026 – Chat D: Unix-ZIP-Dateitypen im Gradle-Wrapper-JAR
+
+- **Ausgangs-main:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`.
+- **Branch:** `fix/chat-d/wrapper-jar-member-types-20261102`.
+- **Code-Commit:** `778873d148e5170482b721a3f93b11ce93bcb41c`.
+- **Test-Commit:** `b150cbb701912a616c3db497c128981768dd5e51`.
+- **IMPLEMENTIERT:** `scripts/verify_project.py` prüft für Unix-ZIP-
+  Mitglieder `S_IFMT` vor Dekomprimierung. Nur nicht spezifizierte
+  Typen, reguläre Dateien und Verzeichnisse sind zulässig; Typ und
+  abschließendes `/` müssen zueinander passen. Bestehender
+  Symlink-/Unicode-/Pfad-/CRC-/Größenschutz unverändert.
+- **REGRESSIONEN:** Vier Tests in
+  `scripts/tests/test_verify_project.py`, davon drei negative
+  Metadatenfälle mit explizitem Verbot einer vorzeitigen CRC-
+  Dekomprimierung und ein positiver Unix-Datei-/Verzeichnisfall.
+- **GETESTET:** Die zuvor integrierte main-CI
+  https://github.com/ManuEtt/Dnd/actions/runs/41395163971
+  war auf dem Ausgangs-main vollständig erfolgreich.
+- **NICHT GETESTET:** neuer Branch/PR auf finalem HEAD bis zur
+  neuen GitHub-CI, reales Android-/SAF-/TalkBack-Gerät.
+- **BLOCKIERT:** volle PR-CI und finale Prüfung neuer PRs
+  auf Dateikonflikte; kein ungeprüfter Merge.
+- **Parallele Arbeit:** Alle 19 zum Paketbeginn offenen PRs
+  geprüft; keiner ändert die beiden Python-Zieldateien.
+  README/zentralen Checkpoint beim späteren Merge mit A/B/C
+  verlustfrei konsolidieren.
+- **Migrationen:** Keine, unveränderte Gradle-JAR-Binärdatei,
+  unveränderte SQLite-/JSON-/Saveformate, Android-Berechtigungen,
+  App-Version und regeltechnische Module.
+- **Nächster konkreter Schritt:** Vollständige PR-CI auf
+  finalem HEAD prüfen, dann konfliktfrei Review freigeben.
