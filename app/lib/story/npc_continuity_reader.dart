@@ -29,8 +29,8 @@ class NpcContinuitySnapshot {
   /// Free narration, session summaries and model output are not consulted.
   String get confirmedContext {
     final heading = disambiguateName
-        ? 'NPC: ${_singleLine(name)} (NPC-ID: $npcId)'
-        : 'NPC: ${_singleLine(name)}';
+        ? 'NPC: ${_visibleName(name)} (NPC-ID: $npcId)'
+        : 'NPC: ${_visibleName(name)}';
     final lines = <String>[
       heading,
       'Status: ${alive ? 'lebendig' : 'tot'}',
@@ -97,30 +97,34 @@ class NpcContinuityReader {
   }
 }
 
-// Stored notes may originate from legacy imports. Treat formatting controls as
-// untrusted presentation data: they must not rewrite or hide context labels.
-// Keep ordinary Unicode letters and punctuation unchanged.
+// Legacy imports may use zero-width spaces/joiners, word joiners, BOM or
+// direction markers to make distinct stored names look exactly the same.
+// Strip these characters for *identity comparison and name display only*.
+// They must never distinguish one NPC from a visually identical second NPC.
+final RegExp _invisibleNameMarks = RegExp(
+  r'[\u061c\u200b-\u200f\u202a-\u202e\u2060-\u2069\ufeff]',
+);
+
+String _visibleName(String value) =>
+    _singleLine(value.replaceAll(_invisibleNameMarks, ''));
+
+// Saved relationships/notes may also carry legacy formatting controls.
+// Render a bounded *read-only* one-line projection, never mutate saved text.
 String _singleLine(String value) => value
     .replaceAll(
       RegExp(
-        r'[\x00-\x1f\x7f-\x9f\u061c\u200e\u200f'
-        r'\u2028-\u202e\u2066-\u2069]',
+        r'[\x00-\x1f\x7f-\x9f\u061c\u200b-\u200f'
+        r'\u2028-\u202e\u2060-\u2069\ufeff]',
       ),
       ' ',
     )
     .replaceAll(RegExp(r'\s+'), ' ')
     .trim();
 
-// Invisible direction marks do not introduce a space into a displayed name.
-// Match the structured identity transport's ambiguity check, while retaining
-// real spaces as meaningful characters and sanitizing rendered context above.
+// Compare the same visible name that confirmedContext actually renders.
+// Ordinary letters, genuine spaces, punctuation and German umlauts remain.
 String _npcNameKey(String value) =>
-    _singleLine(
-          value.replaceAll(
-            RegExp(r'[\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]'),
-            '',
-          ),
-        )
+    _visibleName(value)
         .toLowerCase()
         .replaceAll('ä', 'ae')
         .replaceAll('ö', 'oe')
