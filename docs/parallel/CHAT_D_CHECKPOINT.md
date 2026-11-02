@@ -1147,3 +1147,41 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
   Gesamtintegrations-PRs auf finalem HEAD abnehmen und
   aktuellen PR-/Main-Stand erneut prüfen, bevor Merge/Altbranch-
   Bereinigung überhaupt erwogen wird.
+
+---
+
+# CHAT D – D-030: Casefold-/NFC-Kollisionen in Alpha-APKs (02.11.2026)
+
+- **Basis-Main-SHA:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`.
+- **Main-CI:** #41395163971 und #41396647217 erfolgreich.
+- **Branch:** `fix/chat-d/apk-unicode-path-collisions-20261102`.
+- **Code-Commit:** `dc2055bfb4cad572b822672dd4f6dadd6bc3b3b3`.
+- **Test-Commit:** `9de29379de5114cf6c1519e41123d60001853ab8`.
+- **Problem:** Die Alpha-APK-ZIP-Prüfung lehnte exakte Duplikate
+  und Unicode-Kontrollzeichen bereits ab, ließ aber zwei durch
+  Unicode-NFC oder Casefold gleichwertige Eintrags-/Pfadpräfixe
+  zu. Unterschiedliche ZIP-Schreibweisen könnten auf manchen
+  Dateisystemen dieselbe extrahierte Ressource bezeichnen.
+- **IMPLEMENTIERT:** `scripts/prepare_alpha_release.py`
+  führt eine `canonical_prefixes`-Prüfung vor `testzip()` aus
+  und weist Pfadkollisionen ohne Umbenennung ab.
+- **Geänderte Fachdateien:** `scripts/prepare_alpha_release.py`,
+  `scripts/tests/test_prepare_alpha_release.py`.
+- **Tests:** Casefold-Kollisionen einschließlich `straße/strasse`,
+  Unicode-NFC (`café/cafe + kombinierender Akzent`),
+  ungleich geschriebene implizite Verzeichnisse, gültige
+  internationale Namen sowie frühere Release-Dateien bei Fehler.
+- **GETESTET:** erfolgreiche Baseline-Main-CI auf Ausgangs-Commit.
+  Keine finale Branch-CI dieser Implementierung als bestanden behaupten.
+- **NICHT GETESTET:** Python-Gesamtsuite, Flutter, native Android-Tests,
+  APK-Build, realer SAF-/TalkBack-Gerätetest auf finalem Branch-SHA.
+- **BLOCKIERT:** vollständige PR-CI und noch ausstehender erneuter
+  PR-/Konfliktvergleich vor Integrationsfreigabe.
+- **Koordination:** 19 offene PRs #450–#474 vor Bearbeitung geprüft;
+  keine Änderung der technischen Python-Zieldateien. Gemeinsame
+  README/CODEX-Ergänzungen nur additiv mergen.
+- **Migration:** keine; unveränderte SQLite-/JSON-/Spielstände,
+  App-Version, Android-Berechtigungen, Regel- und Storymodule.
+- **Nächster konkreter Schritt:** finalen PR-HEAD und GitHub-Actions
+  kontrollieren; bei Defekt denselben Branch korrigieren und
+  vor Merge erneut Main-/PR-Stand abgleichen.
