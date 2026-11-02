@@ -500,3 +500,46 @@ Akzeptanz:
 ## 02.11.2026 – Chat-D-Integrationsvorbereitung
 
 Chat C – Initiative-Dialog mit 200 % Schrift/IME aus PR #488 vollständig übernommen. Die Quell-CI #41405839209 war auf dem finalen Source-HEAD erfolgreich; die gemeinsame Chat-D-Integrations-CI ist noch offen. Die überlappenden PRs #481/#483 bleiben separat.
+
+---
+
+## 02.11.2026 – Chat C: bestätigte Zauberwirkungen bei 200 % Schrift/IME (PR #479)
+
+- **Ausgangs-main:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1` und Branch `feat/chat-c/confirmed-spell-effect-ime-20261102`; [PR #479](https://github.com/ManuEtt/Dnd/pull/479) ist Draft bis zum finalen CI-Ergebnis.
+- **Problem:** Separat vertikal scrollendes `ConfirmedSpellEffectDialog`-Formular unter feststehendem Dialogtitel, besonders bei 320/360 dp, 200 % Schrift, Tastatur-/IME-Inset 220 dp; fehlende gezielte Regression für Add-/Remove-Quellen.
+- **IMPLEMENTIERT:** `app/lib/ui/confirmed_spell_effect_dialog.dart`: `AlertDialog(scrollable:true)` mit schmalen Insets, kein verschachtelter vertikaler Scrollview; lange Endzeiten mit `TextOverflow.ellipsis` dargestellt, Fehler mit `Semantics(liveRegion:true)` angekündigt.
+- **VIER TESTS:** `app/test/confirmed_spell_effect_ime_test.dart`: 320/360 dp, 200 % Text und 220 dp IME; negative Quelle löst Fehler aus, Abbruch gibt null; valide Quelle liefert unverbindliches `ConfirmedSpellEffectChoice.add`; bei zwei bestätigten Quellen lässt sich die zweite gezielt als `remove` auswählen. Alle Wege müssen das Heldensnapshot unverändert lassen.
+- **GEPRÜFT:** aktuelle Main-/Masterprompt-/Repo-/Checkpoint-Dokumentation, bestehende `confirmed_spell_effect_widget_test.dart`, tatsächlicher Dialogcode und offene PR-Dateilisten; keinerlei Überschneidung der zwei neuen fachlichen Pfade.
+- **CI-AUSSTEHEND:** Dart-Format, Flutter-Analyse/gezielte/Volltests, Backend/Python, native Android-Tests, Debug-/ABI-Alpha-APK und Artefakte auf dem finalen #479-HEAD. Frühere #474-CI gilt **nicht** als Beweis für #479. Keine Echtgeräte-/TalkBack-/Hardwaretastatur-Abnahme.
+- **MIGRATION:** keine. Keine SRD-, Story-, Domain-, Slot-/Ressourcen-, SQLite-/JSON-/Versionsänderung. Dokumentation additiv, Integration durch Chat D; kein Merge.
+- **NÄCHSTES PAKET:** Sobald #474 gemergt ist, Fokusreihenfolge/TalkBack-Bedienbarkeit im Materialinventar einschließlich mehrfacher Checkboxbestätigungen prüfen, ohne aktiven PR zu überarbeiten.
+
+---
+
+## 02.11.2026 – Chat C: Materialinventar-Dialog bei 200 % Schrift und IME (PR #474)
+
+- **Ausgangs-main:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1` (Main wechselte während des Arbeitsstarts; beide fachlichen Dateien wurden auf diesen neuesten Main-Stand konfliktfrei neu übernommen).
+- **Branch:** `feat/chat-c/material-inventory-ime-main-20261102`; [PR #474](https://github.com/ManuEtt/Dnd/pull/474) (Draft bis zur finalen CI).
+- **Problem:** `SrdMaterialInventoryDialog` nutzte einen separat vertikal scrollbaren Inhalt, dessen Titel und Bestätigung bei 320/360 dp, 200 % Textskalierung und 220 dp Android-IME nicht gesondert geprüft waren. Materialfehler waren keine Screenreader-Live-Region.
+- **IMPLEMENTIERT:** In `app/lib/ui/srd_material_inventory_dialog.dart` `AlertDialog(scrollable: true)` und kompakte `insetPadding`; der verschachtelte vertikale Scrollview entfällt. `Semantics(liveRegion:true)` um vorhandene `material-setup-error` und `material-validation-error` für Screenreader.
+- **FÜNF TESTS HINZUGEFÜGT:** `app/test/srd_material_inventory_ime_test.dart`, je 320/360 dp, 200 % Text und 220 dp IME. Unbekanntes Rezept blockiert Bestätigung und Abbruch bleibt neutral; ohne bestätigte Materialpositionen kein Ergebnis; gültige zwei Stapel geben nur read-only Bindings zurück, Held/Inventar/Zauberplätze bleiben unverändert; Astral-Projection-Zieleingabe ist erreichbar und neutral abbrechbar.
+- **GETESTET:** Masterprompt, Pflichtdokumente, tatsächlichen Code, bestehende Materialinventar-Widgettests und offene PR-Dateilisten geprüft. Auf den aktuellen Main-HEAD neu aufgesetzt. Frühere Chat-C-Pakete #465 und #469 waren in ihrer jeweils eigenen CI vollständig grün; dies ist **kein** CI-Nachweis für #474.
+- **NOCH NICHT GETESTET:** `dart format`, `flutter analyze`, neue und komplette Flutter-Tests, Python/Backend, native Android-Tests, Debug-/Alpha-APK und Artefakte bis zum finalen GitHub-Actions-Lauf auf #474. Echtes Android-Gerät, TalkBack, Hardwaretastatur und Produktionssignierung separat.
+- **BLOCKIERT:** Draft bis vollständigem `completed/success`-Nachweis. Kein automatischer Merge.
+- **GEÄNDERTE DATEIEN:** `app/lib/ui/srd_material_inventory_dialog.dart`, neue `app/test/srd_material_inventory_ime_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, dieser Chat-C-Checkpoint. **Migrationen:** keine. Keine Domain-, Zauber-/Slot- oder Speicherformat-/Versionsänderung.
+- **NÄCHSTES PAKET:** Nach Integration offener Chat-C-Dialog-PRs Fokus-/Tastaturnavigation der Materialbestätigungen und Screenreader-Ansagen am echten Gerät sowie konfliktfreie UI-Regressionen für unbestätigte Materialverbrauchsangaben.
+
+---
+
+## 02.11.2026 – Chat C: Flächenzauber-Kreaturen-Registrierung mit IME (PR #469)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`; eigener Branch `feat/chat-c/area-creature-ime-20261102`; [PR #469](https://github.com/ManuEtt/Dnd/pull/469) (Draft bis zur finalen CI).
+- **Vorheriges Paket:** [PR #465](https://github.com/ManuEtt/Dnd/pull/465) ist nach vollständig grüner CI auf unverändertem Kopf `3cd78d0881e3b0093eefb96342f7fb9b165292db` [#41323668152](https://github.com/ManuEtt/Dnd/actions/runs/41323668152) und [#41323664201](https://github.com/ManuEtt/Dnd/actions/runs/41323664201) jetzt **Ready for review, ungemergt**.
+- **Problem:** Im Kreaturen-Dialog war der Titel nicht gemeinsam mit dem Form-Inhalt scrollbar; bei sehr großer Schrift und eingeblendeter Android-Tastatur fehlten gezielte Interaktionstests für vier Textfelder, Checkbox, Bestätigung/Abbruch.
+- **IMPLEMENTIERT:** `app/lib/ui/area_creature_registration_dialog.dart` verwendet `AlertDialog(scrollable: true)` mit kompaktem Insets; der separate vertikale `SingleChildScrollView` entfällt. Fehlermeldungen sind per `Semantics(liveRegion: true)` angekündigt und besitzen `area-creature-error` als Test-Key. Keine Änderung am vorhandenen Domain-Validator `TrackedAreaCreature.fromJson` oder an der bestätigten Registrierungslogik.
+- **VIER TESTS:** `app/test/area_creature_dialog_ime_test.dart`: bei 320/360 dp, 200 % Text, 220 dp Fake-IME bleibt Dialog scrollbar; fehlende Profildaten erzeugen einen Fehler, Abbrechen gibt null; bei 320 dp können vollständige Eingaben erst nach Häkchen übernommen werden; bei 360 dp bleiben 0 TP unzulässig, Nachkorrektur auf 4/7 TP ergibt die richtige Rückgabe.
+- **GETESTET:** Masterprompt, Pflichtdokumente, aktuelle Main-/PR-Status und bestehenden Kreaturen-Widgettest sowie Domain-Validator geprüft; Code und Tests sind auf eigenem Branch und Draft-PR gespeichert. Ergebnisse aus #465 dürfen **nicht** als #469-CI ausgegeben werden.
+- **NICHT GETESTET:** Neue Tests und vollständige Flutter-/Android-/Backend-/Python-CI auf finalem #469-HEAD bis zum Abschluss des GitHub-Actions-Runs; echtes Gerät mit Hardwaretastatur, TalkBack und Upgrade; produktive Signierung.
+- **MIGRATION:** keine (keine Schema-/JSON-/Persistenz-/Versions-/Domainänderung).
+- **BLOCKIERT:** Bis zur vollständigen grünen GitHub-CI im Draft belassen; nicht automatisch nach Main mergen. Dokumentationskonflikte mit parallelen PRs additiv von Chat D konsolidieren.
+- **NÄCHSTES PAKET:** Nach Review/Integration der unabhängigen UI-Dialog-PRs Fokusreihenfolge/Screenreader-Interaktion und responsive Materialinventar-Auswahl prüfen, ohne laufende Fremdmodule zu ändern.

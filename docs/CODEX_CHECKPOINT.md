@@ -647,3 +647,80 @@ Ein neuer Flutter-Regressionstest schützt vor einer Story-Provider-Antwort, die
 - **NÄCHSTER SCHRITT:** finale GitHub-CI abnehmen, Fehler gegebenenfalls im eigenen Branch korrigieren. README/CODEX/CHAT_B bei Integration mit anderen laufenden PRs verlustfrei additiv zusammenführen.
 
 **Integrationsabnahme (02.11.2026):** Quell-PR #491 auf exaktem HEAD `db84bb72ac2a2f18498697b35406eee3110cc8e7` mit [vollständiger GitHub-CI #41426189797](https://github.com/ManuEtt/Dnd/actions/runs/41426189797) `completed/success`. Die kombinierte CI der erneuten konfliktfreien Main-Integration muss separat vor finalem Merge bestehen. Quellhistorie bleibt als zusätzlicher Git-Commit-Elternteil erhalten.
+
+---
+
+## 02.11.2026 – Chat C: Zauberwirkungsdialog bei 200 % Text und IME (PR #479)
+
+[PR #479](https://github.com/ManuEtt/Dnd/pull/479) auf `feat/chat-c/confirmed-spell-effect-ime-20261102` von `main` `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`: Der `ConfirmedSpellEffectDialog` verwendet `AlertDialog(scrollable:true)`, kompakte Insets und Screenreader-Live-Region für Validierungsfehler; lange Laufzeitoptionen besitzen Ellipsis. Vier neue Flutter-Widgettests bei 320/360 dp, 200 % Schrift und 220 dp simuliertem Tastatur-Inset prüfen Fehler/Abbruch, gültige Quellbestätigung und das gezielte Beenden nur einer von zwei Quellen, jeweils ohne Mutation des Helden. **Finaler CI-Nachweis für #479 steht aus (Draft).** Keine Regel-, Controller-, Domain-, Speicher-, Datenformat-, Versions- oder Migrationsänderung. Echte TalkBack-/Android-Gerätetests weiterhin offen.
+
+---
+
+# Chat A – Distant Spell Touch: 30 Fuß mit einem Zaubereipunkt (02.11.2026, eigener PR)
+
+Basis-main `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`;
+Branch `feat/chat-a/distant-touch-metamagic-20261102`.
+SRD 5.2.1, Sorcerer / Metamagic / Distant Spell, CC BY 4.0.
+
+**IMPLEMENTIERT:** Neues isoliertes
+`SrdDistantTouchMetamagicRules.preview`
+mit wirklichem 30-Fuß-Grenzwert
+für Touch-Zauber und Pflichtprüfung
+der bestätigten Sorcerer-Klassenstufe 2+,
+Metamagie-Freischaltung, einer verfügbaren
+Klassenressource `sorceryPoints`,
+eines tatsächlich vorbereiteten
+SRD-Zaubers der korrekten eigenen Klasse
+und der vollständig bestätigten
+blockerfreien Rastergeometrie.
+Ausdrückliche Spieler-/Options-/Zielwahl
+getrennt. Snapshotgebundene Vorschau,
+Punktkosten nur als Kopie vorgemerkt.
+
+**TESTS:** zehn neue positive/negative
+Regressionsgruppen für 0/30/35 Fuß,
+Metamagie-/Klassen-/Spell-Quellen,
+Mehrklassenlevel, Slot- und Punkte-
+Trennung, Status und Hindernisse,
+alternde Vorschauen, JSON,
+SQLite-Restart, Retry und stale Revision.
+CI/Analyse/Debug-/ABI-Builds nur nach
+tatsächlichem finalem Workflow-Abschluss
+als grün melden.
+
+**BLOCKIERT/GEPLANT:** Keine
+dauerhaft versionierte Metamagiewahl
+im Helden. Der aktuelle Boolwert ist
+kein manipulationssicherer Nachweis,
+keine Live-Casting-Engine-Integration
+und keine atomare Zauberplatz-/Effekt-/
+Punktausgabe. Deshalb **kein** impliziter
+automatischer Fern-Touch-Cast. Unberührt:
+PR #461/#463/#472, gemeinsam genutzte
+Domainmodelle, Controller, SQLite3,
+JSON1 und App-Version.
+
+**NÄCHSTER SCHRITT:** nach
+koordiniertem Merge Metamagiewahl als
+versionierten Quellbeleg speichern,
+mit dem Grid- und Spell-Preflight
+verbinden und vollständige
+Casting-Kosten in einem revisions-
+geschützten Persistenzschritt testen.
+[Technischer Fachbeleg](SRD_DISTANT_TOUCH_METAMAGIC_20261102.md).
+
+---
+
+---
+
+## 02.11.2026 – Chat C: Materialinventar bei großer Schrift/IME (PR #474)
+
+[PR #474](https://github.com/ManuEtt/Dnd/pull/474) auf Branch `feat/chat-c/material-inventory-ime-main-20261102` basiert auf aktualisiertem Main `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`. `SrdMaterialInventoryDialog` ist als Ganzes scrollbar (`AlertDialog(scrollable: true)`) mit kompakten Insets; Rezept- und Validierungsfehler sind Screenreader-Live-Regionen. Fünf Widgetfälle auf 320/360 dp, 200 % Schrift und 220 dp Fake-IME prüfen fehlendes Rezept, negative Bestätigung, read-only Auswahl zweier bestätigter Materialstapel ohne Inventar-/Zauberveränderung und die Astral-Projection-Zieleingabe. **Neuer PR-HEAD muss noch vollständig in GitHub Actions geprüft werden; Draft bis CI grün.** Kein Domain-, SQLite-, JSON-, Version- oder Regelwechsel; keine Migration. Main-Merge während Arbeitsbeginn erkannt und Code neu auf frischer Main-Basis erstellt; geteilte Doku additiv integrieren.
+
+---
+
+## 02.11.2026 – Chat C: Kreaturen-Erfassungsdialog bei 200 % Schrift/IME (PR #469)
+
+[PR #469](https://github.com/ManuEtt/Dnd/pull/469) auf Branch `feat/chat-c/area-creature-ime-20261102` gegen `main` `5a88834c98f5aca40395088c20c7e1dc5b587868` ersetzt den verschachtelten vertikalen Inhalt von `AreaCreatureRegistrationDialog` durch ein gesamthaft scrollbares `AlertDialog(scrollable: true)`. Fehler erhalten `Semantics(liveRegion:true)`. Vier neue Widgettests für 320/360 dp, 200 % Schrift, 220 dp IME prüfen fehlende Bestätigung, neutrale Abbruchaktion, gültige Registrierung sowie Null-TP und nachfolgende Korrektur. **Noch keine grüne finale PR-CI behaupten; Draft bis vollständiger CI-Abnahme.** Keine SRD-/Domain-, Speicher-, Datenformat- oder Versionsänderungen; echte Android-Gerätetests/TalkBack offen. Vorpaket [PR #465](https://github.com/ManuEtt/Dnd/pull/465) ist auf `3cd78d0881e3b0093eefb96342f7fb9b165292db` vollständig grün und bereit zur Review, nicht gemergt.
+
+**Integrationsprüfung Chat D (02.11.2026):** Die finalen Quell-PR-CIs [#479](https://github.com/ManuEtt/Dnd/actions/runs/41398989518), [#478](https://github.com/ManuEtt/Dnd/actions/runs/41398490052), [#474](https://github.com/ManuEtt/Dnd/actions/runs/41396373761) und [#469](https://github.com/ManuEtt/Dnd/actions/runs/41393278139) wurden als `completed/success` bestätigt; in älteren Quellnachträgen angegebene ausstehende CI war damit historischer Stand. Die neue kombinierte Integrations-CI ist separat abzunehmen.

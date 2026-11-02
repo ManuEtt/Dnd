@@ -479,3 +479,47 @@ Story- und Regelwerte sowie App-Versionen bleiben unverändert.
 Gemeinsame Dokumentationsnachträge bei Integration additiv erhalten.
 
 **Integrationsabnahme (02.11.2026):** Quell-PR #491 auf exaktem HEAD `db84bb72ac2a2f18498697b35406eee3110cc8e7` mit [vollständiger GitHub-CI #41426189797](https://github.com/ManuEtt/Dnd/actions/runs/41426189797) `completed/success`. Die kombinierte CI der erneuten konfliktfreien Main-Integration muss separat vor finalem Merge bestehen. Quellhistorie bleibt als zusätzlicher Git-Commit-Elternteil erhalten.
+
+---
+
+### Chat C: Bestätigte Zauberwirkungen bei großer Schrift und Tastatur (02.11.2026)
+
+[PR #479](https://github.com/ManuEtt/Dnd/pull/479) macht den Dialog zur ausdrücklich bestätigten Zauberwirkung bei 320/360 dp, 200 % Schrift und geöffneter Android-Tastatur insgesamt scrollbar, kürzt lange Laufzeittexte und kennzeichnet Validierungsfehler für Screenreader. Vier Widgettests prüfen Abbruch, Belegprüfung, Bestätigung und gezieltes Entfernen einer bestehenden Quelle. **CI auf finalem #479-HEAD noch zu prüfen.** Keine SRD-, Zauberwirkungs-, Ressourcen-/Spielstand-, Domain- oder Datenformatänderung.
+
+---
+
+**Chat-A-Fachpaket (02.11.2026, separater PR):** Für
+SRD-5.2.1-Metamagie **Distant Spell** prüft ein neuer
+isolierter Domainbaustein die 30-Fuß-Touch-Reichweite,
+Zaubererstufe 2+, offizielle eigene Klassen-/Zauber-
+Freigabe, tatsächliche Metamagiewahl, Hindernisse und
+einen verfügbaren Sorcery Point. Der Plan ist lesend
+und an einen unveränderten Figuren-Snapshot gebunden;
+Punktkosten können nur als neue Heldenkopie für die
+spätere atomare Transaktion vorgemerkt werden.
+Zehn Testgruppen einschließlich falscher
+Mehrklassenquelle, blockierter Strecke, altem JSON,
+SQLite-Neustart und Revisionskonflikt sind angelegt.
+**Keine** automatische Spell-Cast-Freigabe oder
+Metamagie-Auswahlpersistenz und **kein** Einbau in
+offene PR #461/#463/#472; Schema-/Versionsstand
+unverändert. [Regelbeleg und Grenzen](docs/SRD_DISTANT_TOUCH_METAMAGIC_20261102.md).
+
+**Nächster Chat-A-Schritt:** persistente
+Metamagiewahl und atomare Slot-/Punkt-/Effekt-
+Transaktion nach koordinierter Integration
+der bisherigen Vorbereitungs-/Raster-PRs.
+
+---
+
+### Chat C: Materialinventar-Dialog bei 200 % Text und Android-Tastatur (02.11.2026)
+
+[PR #474](https://github.com/ManuEtt/Dnd/pull/474) verbessert den Materialinventar-Dialog bei 320/360 dp, 200 % Text und 220 dp geöffneter Tastatur: gemeinsamer vertikaler Dialog-Scrollbereich, kompakte Insets, Screenreader-Live-Regionen für Rezept-/Validierungsfehler. Fünf neue Widgettests prüfen fehlendes Rezept, ungültige Materialbestätigung, bestätigte read-only Inventarstapel und die Astral-Projection-Zieleingabe. **CI auf dem finalen PR-HEAD noch ausstehend.** Keine SRD-/Inventar-/Spielstands-/Versions- oder Datenformatänderung.
+
+---
+
+### Chat C: Kreaturenerfassung bei 200 % Schrift und Android-Tastatur (02.11.2026)
+
+[PR #469](https://github.com/ManuEtt/Dnd/pull/469) macht die zusätzliche Kreaturenregistrierung mit vier Eingabefeldern und Bestätigungs-Checkbox bei 320/360 dp, 200 % Schrift und geöffneter IME vollständig scrollbar. Fehler werden über eine Screenreader-Live-Region angekündigt. Vier neue Widgettests prüfen ungültige Angaben, Abbruch, gültige bestätigte Registrierung und TP-Korrektur. **Finale CI des neuen PR steht aus**; SRD-Regeln, Speicher, Datenformate, App-Version und bestehende Verantwortlichkeitsgrenzen bleiben unverändert.
+
+**Integrationsprüfung Chat D (02.11.2026):** Die finalen Quell-PR-CIs [#479](https://github.com/ManuEtt/Dnd/actions/runs/41398989518), [#478](https://github.com/ManuEtt/Dnd/actions/runs/41398490052), [#474](https://github.com/ManuEtt/Dnd/actions/runs/41396373761) und [#469](https://github.com/ManuEtt/Dnd/actions/runs/41393278139) wurden als `completed/success` bestätigt; in älteren Quellnachträgen angegebene ausstehende CI war damit historischer Stand. Die neue kombinierte Integrations-CI ist separat abzunehmen.

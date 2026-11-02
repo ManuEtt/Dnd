@@ -1391,3 +1391,14 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Akzeptanz:** Vollständige kombinierte PR-CI auf dem neuen Integrationscommit sowie Main-CI nach Merge müssen neu grün sein. Keine Geräte-/Upgrade-Abnahme behauptet.
 - **Kompatibilität:** keine JSON-/SQLite-/Appversionsmigration. Ursprungscode anderer Bereiche unverändert.
 - **Nächster Schritt:** PR- und Main-CI prüfen, erst nach Erfolg integrieren und alte Zweige SHA-gesichert archivieren.
+
+---
+
+## 02.11.2026 – Chat D: vier weitere CI-geprüfte A/C-Pakete vorbereitet
+
+- **Quelle:** PRs #479 (Zauberwirkung-IME), #478 (Distant-Touch-Metamagie), #474 (Materialinventar-IME), #469 (Kreaturenaufnahme-IME).
+- **Voraussetzung:** auf Integrationscommit `5bcd26b9540355c3b3c7a8677ca06b5f44196e05` von PR #494 aufgesetzt; Main vor Stacking `01259cbc93810a159c9a0d79d6055572f0bde3f1`.
+- **TESTS:** Jeweils finaler Quell-HEAD mit abgeschlossener erfolgreicher Voll-CI: #479/41398989518, #478/41398490052, #474/41396373761, #469/41393278139. Gemeinsam noch nicht getestet; kombinierte neue CI verpflichtend.
+- **Fachcode:** exakt die Original-Blobs der vier Quellbranches in voneinander getrennten UI-/Domain-/Testdateien, ohne Ersetzen der gemeinsam genutzten Regel-/Speichermodelle.
+- **Dokumentation:** README, CODEX-, CHAT_A-, CHAT_C-Checkpoints ausschließlich additiv; keine vorhandenen Einträge verworfen. Git-Commit-Eltern bleiben zur sicheren historisierten Archivierung erhalten.
+- **NÄCHSTER SCHRITT:** Stacked PR aus diesem Branch gegen main nach #494 integrieren, erst nach erfolgreicher CI auf genau diesem kombinierten HEAD. Nach Main-CI Archivtags vor Branchlöschung und keine Löschung aktiver PR-Zweige.

@@ -555,3 +555,64 @@ Dokumentationseinfügungen sind hier erhalten, weder ersetzt noch
 gekürzt. Gesamt-Integrations-CI auf finalem Head noch ausstehend.
 Die parallelen Chat-A-PRs und insbesondere andere offene Regelmodule
 werden nicht überschrieben oder ohne separate Prüfung gemergt.
+
+---
+
+# Chat A – Metamagie Distant Spell für Touch (02.11.2026)
+
+**Basis-main:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`
+· **Branch:** `feat/chat-a/distant-touch-metamagic-20261102`
+· **PR/Commit:** siehe GitHub-PR-Head, Einzel-PR-CI danach.
+
+**Problem / Quelle:** SRD 5.2.1, *Sorcerer → Metamagic →
+Distant Spell* (CC BY 4.0). Für **1 Sorcery Point**
+darf eine ausdrücklich gewählte Metamagie die
+`Touch`-Reichweite auf **30 feet** erhöhen. Eine bloße
+Rasternahbereich-Checkbox darf keine größere
+Berührungsreichweite vortäuschen.
+
+**Implementiert:** Neues eigenständiges Fachmodul
+`app/lib/domain/srd_distant_touch_metamagic_rules.dart`:
+bestätigte Sorcerer-/Zaubererstufe 2 und
+Metamagie-Freischaltung, getrennte eigene
+Zauber-Klassenzuordnung mit individuellem
+Zaubergrad, offizielle Katalog- und Touch-Einträge,
+ausdrücklich bestätigte Auswahl/Ziel/
+Metamagie-Kombination, vorhandener
+Zaubereipunkt, bestätigte freie 5-Fuß-Karte
+und 0–30-Fuß-Grenze. Unveränderliche
+Snapshot-Vorschau ohne Zustandsänderung;
+Punktkosten nur als **neue Heldenkopie** zur
+späteren gemeinsamen Transaktion vormerkbar.
+
+**Tests angelegt:** zehn neue Gruppen in
+`app/test/srd_distant_touch_metamagic_rules_test.dart`,
+einschließlich positiver Grenzen, fehlender
+Wahl/Klasse/Ressource, Mehrklassen-Quelle,
+Zaubergrad, blockierter Karte,
+Snapshot-Manipulation, Alt-JSON,
+SQLite-Neustart, Retry und stale Revision.
+Dart-/Flutter-/Android-/Backend-CI erst
+auf finaler PR-SHA als bestanden melden.
+
+**Grenzen:** Keine endgültige Speicherung
+der Metamagiewahl in `models.dart`; ein
+Bestätigungsbool ist kein dauerhafter
+Quellnachweis. Die Fachvorschau darf
+**nicht** eigenständig Zauberplätze, TP,
+Zauberwirkung oder Sorcery Points
+persistieren; der vollständige Cast und
+ein atomarer Commit fehlen. Keine
+Änderung an Fachdateien der PRs #461,
+#463, #472; SQLite3 / JSON1 / Version
+unverändert. Gerät, Upgrade, TalkBack
+und Release-Signierung nicht geprüft.
+
+**Nächster Schritt:** nach Integration
+der Vorbereitungs-/Grid-Bausteine
+eine persistierte Metamagiewahl und den
+atomaren Cast mit Slot-/Punkt-/Effekt-
+Abrechnung inklusive Restart/Retry
+und Revisionskonflikt implementieren.
+
+---
