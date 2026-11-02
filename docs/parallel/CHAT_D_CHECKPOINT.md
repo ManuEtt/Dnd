@@ -1398,3 +1398,15 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Parallelität:** alle 23 zum Paketbeginn anderen offenen PRs auf die acht technischen Pfade geprüft, ohne Überschneidung. Die problematisch überlappenden #481/#483 im manuellen Zugfolgedialog bleiben ausdrücklich separat.
 - **Fachliche Grenzen:** Metamagie-Auswahlbeleg aus #485 ist weiterhin nicht im Helden-/SQLite-Modell gespeichert. Kein automatisches Cast-Recht ableiten; kein zusätzlicher Schema-, Versions-, Spielstands- oder Berechtigungswechsel durch diese Integration.
 - **Nächster Schritt:** neuen Integrationsbaum und Quell-Git-Blobs abgleichen; vollständige kombinierte CI starten und bis `completed/success` auf finalem Head abnehmen; erst danach Review/Merge.
+
+---
+
+## 02.11.2026 – Chat D: Materialinventar- und Kreaturendialog zusätzlich zu #495
+
+- **Stack-Basis:** `4641abccd579ab4cec2acfe7cacd4aefb7d339a8` aus [PR #495](https://github.com/ManuEtt/Dnd/pull/495) mit vier anderen geprüften A/B/C-Paketen.
+- **Quellen:** #474 (`10bcd7022e38dfcb737333b7da1c67fc839ff042`, CI 41396373761 erfolgreich), #469 (`87c7fe3b6597407fdb6489c1c29335a00a0ff321`, CI 41393278139 erfolgreich).
+- **Originalblobs:** `app/lib/ui/srd_material_inventory_dialog.dart` + Test sowie `app/lib/ui/area_creature_registration_dialog.dart` + Test exakt aus der Quelle.
+- **Doku:** README, CODEX und CHAT_C-Checkpoint ausschließlich additiv ergänzt; bestehende Inhalte aus #495 und #493 erhalten.
+- **Historie:** sichere Original-Commit-Vorfahren und die vorläufigen Integrationsvarianten #494/#496 werden als Eltern archivierungsfähig gemacht, ohne deren fachliche Änderungen doppelt zu übernehmen.
+- **Abnahme:** kombinierte CI dieses Heads, erfolgreicher Merge #495 und erfolgreiche folgende Main-CI erforderlich; keine migrations- oder versionsbezogenen Änderungen, kein Realgerät/TalkBack abgenommen.
+- **Nächster Schritt:** nach #495 in main diesen PR abschließend prüfen, mergen und erst nach erfolgreicher Main-CI sichere Branchbereinigung kontrollieren.

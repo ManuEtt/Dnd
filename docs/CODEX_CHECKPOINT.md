@@ -780,3 +780,17 @@ geschützten Persistenzschritt testen.
 - **NICHT GETESTET:** Neue Flutter-Tests, gesamte CI auf finalem PR-HEAD, echte Android-Geräte/produktiver KI-Dienst. Kein lokales Flutter/Dart, kein lokaler Checkout.
 - **MIGRATION:** keine. Kein SQLite-/JSON-/Regel-/Held-/Questwechsel. Keine Änderung an alten Spielständen.
 - **NÄCHSTER SCHRITT:** finale GitHub-CI abnehmen, Fehler gegebenenfalls im eigenen Branch korrigieren. README/CODEX/CHAT_B bei Integration mit anderen laufenden PRs verlustfrei additiv zusammenführen.
+
+---
+
+## 02.11.2026 – Chat C: Materialinventar bei großer Schrift/IME (PR #474)
+
+[PR #474](https://github.com/ManuEtt/Dnd/pull/474) auf Branch `feat/chat-c/material-inventory-ime-main-20261102` basiert auf aktualisiertem Main `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`. `SrdMaterialInventoryDialog` ist als Ganzes scrollbar (`AlertDialog(scrollable: true)`) mit kompakten Insets; Rezept- und Validierungsfehler sind Screenreader-Live-Regionen. Fünf Widgetfälle auf 320/360 dp, 200 % Schrift und 220 dp Fake-IME prüfen fehlendes Rezept, negative Bestätigung, read-only Auswahl zweier bestätigter Materialstapel ohne Inventar-/Zauberveränderung und die Astral-Projection-Zieleingabe. **Neuer PR-HEAD muss noch vollständig in GitHub Actions geprüft werden; Draft bis CI grün.** Kein Domain-, SQLite-, JSON-, Version- oder Regelwechsel; keine Migration. Main-Merge während Arbeitsbeginn erkannt und Code neu auf frischer Main-Basis erstellt; geteilte Doku additiv integrieren.
+
+---
+
+## 02.11.2026 – Chat C: Kreaturen-Erfassungsdialog bei 200 % Schrift/IME (PR #469)
+
+[PR #469](https://github.com/ManuEtt/Dnd/pull/469) auf Branch `feat/chat-c/area-creature-ime-20261102` gegen `main` `5a88834c98f5aca40395088c20c7e1dc5b587868` ersetzt den verschachtelten vertikalen Inhalt von `AreaCreatureRegistrationDialog` durch ein gesamthaft scrollbares `AlertDialog(scrollable: true)`. Fehler erhalten `Semantics(liveRegion:true)`. Vier neue Widgettests für 320/360 dp, 200 % Schrift, 220 dp IME prüfen fehlende Bestätigung, neutrale Abbruchaktion, gültige Registrierung sowie Null-TP und nachfolgende Korrektur. **Noch keine grüne finale PR-CI behaupten; Draft bis vollständiger CI-Abnahme.** Keine SRD-/Domain-, Speicher-, Datenformat- oder Versionsänderungen; echte Android-Gerätetests/TalkBack offen. Vorpaket [PR #465](https://github.com/ManuEtt/Dnd/pull/465) ist auf `3cd78d0881e3b0093eefb96342f7fb9b165292db` vollständig grün und bereit zur Review, nicht gemergt.
+
+**Nachweis Chat-D-Integration (02.11.2026):** Die zuvor als ausstehend beschriebenen vollständigen Einzel-CIs sind auf den finalen Heads abgeschlossen und erfolgreich: [#474 / 41396373761](https://github.com/ManuEtt/Dnd/actions/runs/41396373761) und [#469 / 41393278139](https://github.com/ManuEtt/Dnd/actions/runs/41393278139). Kombination mit #495 erfordert eine eigene CI.
