@@ -91,12 +91,7 @@ jobs:
         run: flutter pub get
       - name: Dart-Formatierung prüfen
         working-directory: app
-        run: |
-          for f in lib/domain/srd_spell_grid_target_rules.dart test/srd_spell_grid_touch_range_test.dart; do
-            dart format --output=show "$f" > /tmp/chat-a-grid-touch-formatted.dart
-            diff -u "$f" /tmp/chat-a-grid-touch-formatted.dart || true
-          done
-          dart format --output=none --set-exit-if-changed lib test
+        run: dart format --output=none --set-exit-if-changed lib test
       - name: Flutter-Code analysieren
         working-directory: app
         run: flutter analyze
