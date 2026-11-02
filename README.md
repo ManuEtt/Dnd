@@ -1,5 +1,22 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat B – bestätigte NPC-Kontinuität und unsichtbare Namen (02.11.2026)
+
+Der neue Chat-B-Branch `fix/chat-b/npc-continuity-zero-width-20261102`
+(Basis-main `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`) behebt eine
+separate Lücke im schreibgeschützten `NpcContinuityReader`. Unsichtbare
+Zero-Width- und Bidi-Marken in gespeicherten NPC-Namen dürfen die
+Mehrdeutigkeitsprüfung nicht umgehen: visuell gleiche Figuren bekommen
+im bestätigten Rückblick ihre **gespeicherte, sichere NPC-ID** angehängt,
+damit Notizen nicht einer falschen Figur zugeschrieben werden. Der Rückblick
+entfernt unsichtbare Steuerzeichen auch aus Beziehungen und Notizen,
+während ursprüngliches NPC-JSON und SQLite-Daten unverändert bleiben.
+Fünf neue Testgruppen einschließlich Legacy-JSON, unsicherer IDs und
+echtem SQLite-Neustart. Keine neue Provider-Anbindung, keine Mutation von
+Helden-/Quest-/Regelzustand, keine Schema-/Versionsänderung. Vollständige
+CI-Abnahme erst auf dem finalen PR-Commit nachweisen.
+
+
 Deutschsprachige Fantasy-Solo-App für Android: Flutter/Dart, lokale SQLite-Spielstände,
 regelgeprüfte Aktionen und ein optionaler Fastify-/TypeScript-Erzähler.
 
