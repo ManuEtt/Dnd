@@ -1,3 +1,16 @@
+## 02.11.2026 – Chat C: Materialinventar-Dialog bei 200 % Schrift und IME (PR #474)
+
+- **Ausgangs-main:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1` (Main wechselte während des Arbeitsstarts; beide fachlichen Dateien wurden auf diesen neuesten Main-Stand konfliktfrei neu übernommen).
+- **Branch:** `feat/chat-c/material-inventory-ime-main-20261102`; [PR #474](https://github.com/ManuEtt/Dnd/pull/474) (Draft bis zur finalen CI).
+- **Problem:** `SrdMaterialInventoryDialog` nutzte einen separat vertikal scrollbaren Inhalt, dessen Titel und Bestätigung bei 320/360 dp, 200 % Textskalierung und 220 dp Android-IME nicht gesondert geprüft waren. Materialfehler waren keine Screenreader-Live-Region.
+- **IMPLEMENTIERT:** In `app/lib/ui/srd_material_inventory_dialog.dart` `AlertDialog(scrollable: true)` und kompakte `insetPadding`; der verschachtelte vertikale Scrollview entfällt. `Semantics(liveRegion:true)` um vorhandene `material-setup-error` und `material-validation-error` für Screenreader.
+- **FÜNF TESTS HINZUGEFÜGT:** `app/test/srd_material_inventory_ime_test.dart`, je 320/360 dp, 200 % Text und 220 dp IME. Unbekanntes Rezept blockiert Bestätigung und Abbruch bleibt neutral; ohne bestätigte Materialpositionen kein Ergebnis; gültige zwei Stapel geben nur read-only Bindings zurück, Held/Inventar/Zauberplätze bleiben unverändert; Astral-Projection-Zieleingabe ist erreichbar und neutral abbrechbar.
+- **GETESTET:** Masterprompt, Pflichtdokumente, tatsächlichen Code, bestehende Materialinventar-Widgettests und offene PR-Dateilisten geprüft. Auf den aktuellen Main-HEAD neu aufgesetzt. Frühere Chat-C-Pakete #465 und #469 waren in ihrer jeweils eigenen CI vollständig grün; dies ist **kein** CI-Nachweis für #474.
+- **NOCH NICHT GETESTET:** `dart format`, `flutter analyze`, neue und komplette Flutter-Tests, Python/Backend, native Android-Tests, Debug-/Alpha-APK und Artefakte bis zum finalen GitHub-Actions-Lauf auf #474. Echtes Android-Gerät, TalkBack, Hardwaretastatur und Produktionssignierung separat.
+- **BLOCKIERT:** Draft bis vollständigem `completed/success`-Nachweis. Kein automatischer Merge.
+- **GEÄNDERTE DATEIEN:** `app/lib/ui/srd_material_inventory_dialog.dart`, neue `app/test/srd_material_inventory_ime_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, dieser Chat-C-Checkpoint. **Migrationen:** keine. Keine Domain-, Zauber-/Slot- oder Speicherformat-/Versionsänderung.
+- **NÄCHSTES PAKET:** Nach Integration offener Chat-C-Dialog-PRs Fokus-/Tastaturnavigation der Materialbestätigungen und Screenreader-Ansagen am echten Gerät sowie konfliktfreie UI-Regressionen für unbestätigte Materialverbrauchsangaben.
+
 ## 31.10.2026 – Chat C: Offene Schildreaktion in der Chronik (Draft-PR #447)
 
 - **Ausgangs-Main:** `47ab002872b7d46daeae03bb558258cf2ea73e4a`.
