@@ -1,3 +1,25 @@
+## Chat A – Zauberwirkzeit: unsichtbare Trigger-Steuerzeichen abweisen (02.11.2026)
+
+**Ausgangs-main:** `84437e4e92d735e179bb2585427b46a10451951d`. **Eigener Branch:** `feat/chat-a/casting-time-trigger-control-20261102`. **Implementierungs-Commit:** `2f8804aca425e55053a81facd2982e3e936b8bd8`. **Pull Request:** [#500](https://github.com/ManuEtt/Dnd/pull/500) (Draft, keine Integration). **App-Version:** `0.8.49+99` unverändert.
+
+**Problem:** Die ausgelösten Wirkzeit-Angaben für Reaktionen/Bonusaktionen akzeptierten nach dem festen Prefix auch die bislang ungefilterten Unicode-Steuerzeichen U+206A–U+206F (veraltete Bidi-Steuerzeichen) und U+FFF9–U+FFFB (Interlinear-Anmerkungen). So konnte der öffentliche `SrdSpellDefinition`-Konstruktor optisch irreführende Trigger klassifizieren lassen. Die vorhandene Ein-Zug-Regelfreigabe blockierte solche Trigger bereits; die Metadatenvalidierung selbst war unvollständig.
+
+**IMPLEMENTIERT:** `app/lib/domain/srd_spell_casting_time_rules.dart` erweitert die vorhandene strenge Zeichenprüfung um genau diese neun Formatcodes. Neue Datei `app/test/srd_spell_casting_time_control_guard_test.dart`: acht gültige Trigger aus dem tatsächlichen Katalog, reguläres `Magic Missile`, neun negative Steuerzeichen-Varianten pro Trigger einschließlich beider öffentlichen Prüfpfade. Keine Umdeutung eines Auslösers; keinerlei automatische Zauberwirkung.
+
+**GETESTET:** Die neue Testdatei und der Regex wurden überprüfbar in GitHub gesichert; **keine tatsächlich erfolgreich ausgeführten Dart-/Flutter-Tests** in dieser Sitzung. Die lokal verfügbare Umgebung besitzt kein Dart/Flutter-SDK.
+
+**NICHT GETESTET:** `dart format --output=none --set-exit-if-changed lib test`, `flutter analyze`, `flutter test`, `flutter build apk --debug`, vollständiger GitHub-Workflow auf finalem PR-HEAD, reales Android-Gerät. Python-/Backend-Tests ebenfalls lokal nicht ausführbar ohne Repository-Checkout (kein GitHub-DNS in der Containerumgebung). Aktuelle CI muss anhand von #500 geprüft werden; andere grüne Läufe zählen nicht als Abnahme.
+
+**BLOCKIERT:** Lokaler GitHub-Clone/Dart-SDK. Keine bestätigte CI- oder Gerätetestsperre; PR bleibt bis zum nachgewiesenen vollständigen Testlauf Draft.
+
+**NOCH NICHT IMPLEMENTIERT:** Einzelfallbasierte Prüfung, ob ein Triggertext zum amtlichen Zauber gehört, und die tatsächlich ausgelöste Reaktions-/Bonusaktionsbuchung. Die Metadatenklassifikation ist keine Autorisierung und erteilt keine Kosten-/Aktionsfreigabe.
+
+**Dateien/Kompatibilität:** Fachmodul, neuer Test, README, zentraler Checkpoint, Chat-A-Checkpoint und Fachnachweis. SQLite 3, bestehendes Kampagnen-JSON 1, Heldendaten und App-Version unverändert; **keine Migration**, kein bestehender Spielstand verändert. Quellregel SRD 5.2.1 „Spells / Casting Time / Reaction and Bonus Action Triggers“, Wizards of the Coast LLC, CC BY 4.0, https://www.dndbeyond.com/srd. Bestehende Lizenzhinweise unverändert.
+
+**NÄCHSTER SCHRITT (genau ein eigenständiges Paket):** Die **Dauer-Metadatenprüfung** in `srd_spell_duration_rules.dart` separat gegen unsichtbare Formatzeichen innerhalb bestätigter Zeitangaben prüfen; nur bei reproduzierbarem Befund minimale Abwehr und positive/negative Katalog-Regressionen, ansonsten keinen Code ändern. Zunächst #500 CI abnehmen und vor einem neuen Branch die offenen PRs neu vergleichen.
+
+---
+
 # Chat A – SRD Metamagie: versionierte Wahl und Ersatzregeln (02.11.2026)
 
 **Basis-main:** `885580202caeafc9787538b6dc1c833b3190a529`.
