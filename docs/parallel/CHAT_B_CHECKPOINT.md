@@ -1,5 +1,42 @@
 # Chat B – NPC-Kontext ohne Steuerzeichen (30.10.2026)
 
+## Chat B – strukturierte NPC-Identity gegen Zero-Width-Täuschung (02.11.2026)
+
+- **Basis-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`;
+  **Branch:** `fix/chat-b/structured-npc-zero-width-20261102`;
+  **Draft-PR:** [#470](https://github.com/ManuEtt/Dnd/pull/470).
+  **Fachcommit:** `09b7be36bd3049a201d4106c1cf74642441cad88`;
+  **Regressionen:** `2a360c627464c92e440cfaa60c01df013e290108`;
+  **offiziell formatiert:** `6829f86cb5b69003ddcf1664d44aca3fabc04462`.
+- **Ausgangsproblem:** Sichtbar gleiche NPC-Namen konnten mit Zero-Width-
+  Zeichen bei unstrukturierter Erwähnung als unabhängig gelten. Zusätzlich
+  ließ der strukturierte NPC-Payload unerkennbare Unicode-Marker in Namen,
+  Beziehungen und Notizen zu, die fälschliche Identität anzeigen könnten.
+- **IMPLEMENTIERT:** Vergleichsnamen ohne Zero-Width-Zeichen kanonisieren;
+  auf den geplanten ID-Wire nur explizit sichere originale Werte lassen,
+  keine stille Änderung gespeicherter bestätigter Notizen. Bewusst
+  gewählte eindeutige ID bleibt möglich, sofern Kontext valide.
+  Keine HP-/XP-/Quest-/Item-/Regelmutationen.
+- **Geänderte Dateien:** `app/lib/story/npc_identity_story_payload.dart`,
+  `app/test/npc_identity_story_zero_width_payload_test.dart`, README,
+  zentraler und Chat-B-Checkpoint. Diagnoseworkflow nur kurzzeitig zum
+  Formatieren erstellt und anschließend entfernt.
+- **Tests:** sechs unabhängige Gruppen mit positiven und negativen
+  Identitäts-, Unicode-, Legacy-/Revision- und SQLite-Roundtrips.
+  **GETESTET:** Main-/PR-Inventur und offizieller Dart-Formatter (3.9.2);
+  #464 mit eigener kompletter erfolgreicher GitHub-CI (fremder Commit).
+  **NICHT GETESTET:** vollständige #470-Final-CI noch offen; Gerät/TalkBack/
+  Produktiv-KI. **BLOCKIERT:** kein lokales Flutter-/Dart-SDK.
+- **Migration:** keine; SQLite 3, äußeres JSON 1, aktuelle Version
+  und gespeicherte Regeln unverändert.
+- **Koordination:** keine Fachdateiüberschneidung mit B-PRs #452/#456/
+  #459/#464; übrige A/C/D-PRs betreffen andere Module. Gemeinsame
+  README-/Checkpoint-Änderungen ausschließlich additiv durch Chat D
+  konsolidieren. Kein Auto-Merge.
+- **Nächster Schritt:** #470-Full-CI bis Abschluss abnehmen, Fehler
+  auf demselben Branch beheben und danach Chat-D-Review ermöglichen.
+
+
 ## Chat B – bestätigte NPC-Chronik ohne unsichtbare Steuerzeichen (30.10.2026)
 
 [Draft-PR #398](https://github.com/ManuEtt/Dnd/pull/398) auf
