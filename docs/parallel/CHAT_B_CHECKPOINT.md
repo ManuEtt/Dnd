@@ -470,3 +470,19 @@ Beide vollständigen Quellnachträge sind originalgetreu enthalten. Die neue Ges
 - **BLOCKIERT:** Vollständige grüne CI des finalen Dokumentationscommits; gemeinsame README- und zentrale Checkpoint-Nachträge bei späterer Integration additiv durch Chat D vereinen.
 - **MIGRATION:** keine; SQLite 3, äußeres JSON 1, API, Versionsnummern, bestätigte Spielstände und Rule-Engine unverändert.
 - **NÄCHSTER SCHRITT:** CI inklusive Flutter-Format und gezielten Providerparser-Regressionen auf finalem PR-HEAD kontrollieren und eventuelle Fehler auf demselben Branch beheben. Danach ein separates Paket für bestätigte, id-/revisionsgebundene Handlungsstrang-Auswahl erwägen, ohne PR #459 oder #489 zu duplizieren.
+
+---
+
+## Chat B – verdeckte NPC-Chronik bei Wiederaufnahme absichern (02.11.2026)
+
+- **Ausgangs-main:** `55d33945872e251ec53b6860addcb05152a80c3a`, danach konfliktfrei mit `84437e4e92d735e179bb2585427b46a10451951d` (neuer Main-Stand nach #497) vereint.
+- **Branch:** `feat/chat-b/npc-hidden-history-staleness-20261102`; **PR:** [#501](https://github.com/ManuEtt/Dnd/pull/501) (Draft); Code-/Testcommit `1f05dceea033c32094dad9b748898c203299b60c`.
+- **Ausgangsproblem:** Die schreibgeschützte Wiederaufnahme verglich bei `maxNotes` nur die sichtbaren neuesten Notizen. Ältere, ausgeblendete Notizen konnten unter derselben Revision geändert oder ergänzt werden, ohne den NPC-Kontext zu invalidieren.
+- **IMPLEMENTIERT:** `NpcIdentityMemory.read` hält einen privaten JSON-Quellabdruck aus dem ausgewählten NPC und sämtlichen für seine gespeicherte ID relevanten Notizen fest; `requireCurrent` gleicht ihn vor Benutzung erneut ab. Das öffentliche `toContextMap` und der Regeldatenstand bleiben gleich. Andere NPC-Chroniken bleiben unabhängig.
+- **Geänderte Fachdateien:** `app/lib/story/npc_identity_memory.dart`, `app/test/npc_identity_memory_test.dart`. Zwei neue deterministische positive/negative Regressionsfälle prüfen verdeckte Änderungs-/Anfügekonflikte, JSON-Roundtrip, fremde NPC-Notizen und unveränderte Heldenwerte.
+- **GETESTET:** GitHub-Dateipfade/offene PRs und Main-Diff wurden auf NPC-Fachkollision geprüft; keine Kollision beobachtet.
+- **NICHT GETESTET:** neue Flutter-Fälle, gesamte CI, Android-APK, reales Gerät und produktive KI; lokal fehlen Flutter/Dart und DNS für GitHub-Checkout. Aktuelle PR-CI ist separat auf dem finalen HEAD abzunehmen.
+- **BLOCKIERT:** lokale Laufzeit fehlt, keine fachliche Fremd-PR-Kollision. Gemeinsame README-/Checkpoint-Ergänzungen beim Merge durch Chat D additiv bewahren.
+- **NOCH NICHT IMPLEMENTIERT:** automatisch ausgeführte NPC-Gedächtnisaktionen; der neue Abdruck ist absichtlich weder Persistenzfeld noch Provider-Autorität.
+- **Migration:** keine. Kampagnen-JSON 1, SQLite 3, Regelzustand und App-Version 0.8.49+99 unverändert.
+- **Nächster unabhängiger Schritt:** Mehrdeutige Notiz-IDs in der rein lesenden NPC-Identitätsabfrage fail-closed prüfen, mit positiven/negativen Alt-JSON- und Neustartfällen und erfolgreicher vollständiger CI; erst nach dieser PR-Integration beginnen.

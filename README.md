@@ -701,3 +701,15 @@ unbekannte Zuordnungen zu erraten.
 Der Flutter-Dialog zur expliziten Schildreaktion nutzt auf kleinen Android-Displays einen durchgehend scrollbaren Dialog mit kompakterem Außenabstand und vollbreiten Klass-/Zauberplatz-Auswahlen. Neue Widgettests decken 320/360 dp mit 200 % Schrift, simulierte Tastatur, Abbruch, fehlende Komponentenbestätigung und fehlenden vorbereiteten Schildzauber ab. Umsetzung: [PR #450](https://github.com/ManuEtt/Dnd/pull/450), Branch `feat/chat-c/hero-shield-dialog-large-text-ime-20261031`. **Die neue Flutter-Widget-/Android-CI ist noch nicht bestätigt**; Geräte- und TalkBack-Abnahme steht aus. Keine Regel-, Speicher-, Schema-, Versions- oder API-Änderung.
 
 **Integrationsstatus Chat D (02.11.2026):** Erfolgreiche Einzel-PR-CIs auf finalen Quellheads: [#472](https://github.com/ManuEtt/Dnd/actions/runs/41393551106), [#467](https://github.com/ManuEtt/Dnd/actions/runs/41323611885), [#453](https://github.com/ManuEtt/Dnd/actions/runs/41244807154), [#461](https://github.com/ManuEtt/Dnd/actions/runs/41282290565) und [#450](https://github.com/ManuEtt/Dnd/actions/runs/41244483591). Neue kombinierte Integrations-CI ist noch auszuwerten; historische „CI ausstehend“-Texte sind keine aktuellen Messergebnisse.
+
+---
+
+## Chat A – Zauberwirkzeit: unsichtbare Trigger-Steuerzeichen abweisen (02.11.2026)
+
+Die strikt konservative Metadatenprüfung für ausgelöste Zauber-Reaktionen/-Bonusaktionen weist zusätzlich U+206A–U+206F und U+FFF9–U+FFFB ab. Die Änderung samt 8 gültigen Katalog-Triggern und negativen Regressionen liegt in [PR #500](https://github.com/ManuEtt/Dnd/pull/500) auf dem eigenen Chat-A-Branch; die finale CI ist **noch zu verifizieren**, es wurde keine APK und kein Gerätetest abgenommen. Keine Klassen-/Ressourcen-/Spielstand-/Schemaänderung. SRD 5.2.1 (CC BY 4.0).
+
+---
+
+## Chat B – NPC-Wiederaufnahme bleibt bei älteren Notizänderungen revisionssicher (02.11.2026)
+
+[Draft-PR #501](https://github.com/ManuEtt/Dnd/pull/501) bindet die schreibgeschützte NPC-Erinnerung an die **vollständige bestätigte Historie** des ausgewählten NPC, nicht nur die durch `maxNotes` sichtbaren neuesten Notizen. Gleichrevisionierte Änderungen an älteren Einträgen machen den Kontext ungültig; eine unveränderte JSON-Wiederherstellung oder die Änderung eines anderen NPC bleibt erlaubt. Zwei neue deterministische Regressionstests sind ergänzt; vollständige Flutter-/Android-CI auf dem finalen PR-HEAD ist noch abzunehmen. Keine Regel-/SQLite-/JSON-/Backend- oder App-Versionsänderung. Parallelzweige und gemeinsame Checkpoint-Ergänzungen bleiben Chat D zur konsolidierten Integration vorbehalten.

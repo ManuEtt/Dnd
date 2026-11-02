@@ -1013,3 +1013,41 @@ Fachdetails im [Chat-A-Checkpoint](parallel/CHAT_A_CHECKPOINT.md).
 UI-only: `app/lib/ui/hero_shield_reaction_dialog.dart` nutzt jetzt `AlertDialog(scrollable: true)`, kleinere Insets und expandierte Auswahlfelder. Neue Regressionstests in `app/test/hero_shield_reaction_dialog_large_text_ime_test.dart` für 320/360 dp, 200 % Schrift, simulierte Tastatur, Abbruch, V/S-Freigabe und gesperrten Bestätigungspfad ohne vorbereiteten Zauber. Basierend auf main `5a88834c98f5aca40395088c20c7e1dc5b587868`; Branch `feat/chat-c/hero-shield-dialog-large-text-ime-20261031`, PR [#450](https://github.com/ManuEtt/Dnd/pull/450). **Kein Flutter/Dart lokal vorhanden; Tests noch nicht ausgeführt, GitHub-CI auf finalem PR-HEAD offen.** Unveränderte Regeln, Speicherformate und Version; kein Merge, keine Migration. Gemeinsame Dokumentation beim Merge mit parallel offenen PRs additiv konsolidieren.
 
 **Integrationsstatus Chat D (02.11.2026):** Erfolgreiche Einzel-PR-CIs auf finalen Quellheads: [#472](https://github.com/ManuEtt/Dnd/actions/runs/41393551106), [#467](https://github.com/ManuEtt/Dnd/actions/runs/41323611885), [#453](https://github.com/ManuEtt/Dnd/actions/runs/41244807154), [#461](https://github.com/ManuEtt/Dnd/actions/runs/41282290565) und [#450](https://github.com/ManuEtt/Dnd/actions/runs/41244483591). Neue kombinierte Integrations-CI ist noch auszuwerten; historische „CI ausstehend“-Texte sind keine aktuellen Messergebnisse.
+
+---
+
+## Chat A – Zauberwirkzeit: unsichtbare Trigger-Steuerzeichen abweisen (02.11.2026)
+
+**Ausgangs-main:** `84437e4e92d735e179bb2585427b46a10451951d`. **Eigener Branch:** `feat/chat-a/casting-time-trigger-control-20261102`. **Implementierungs-Commit:** `2f8804aca425e55053a81facd2982e3e936b8bd8`. **Pull Request:** [#500](https://github.com/ManuEtt/Dnd/pull/500) (Draft, keine Integration). **App-Version:** `0.8.49+99` unverändert.
+
+**Problem:** Die ausgelösten Wirkzeit-Angaben für Reaktionen/Bonusaktionen akzeptierten nach dem festen Prefix auch die bislang ungefilterten Unicode-Steuerzeichen U+206A–U+206F (veraltete Bidi-Steuerzeichen) und U+FFF9–U+FFFB (Interlinear-Anmerkungen). So konnte der öffentliche `SrdSpellDefinition`-Konstruktor optisch irreführende Trigger klassifizieren lassen. Die vorhandene Ein-Zug-Regelfreigabe blockierte solche Trigger bereits; die Metadatenvalidierung selbst war unvollständig.
+
+**IMPLEMENTIERT:** `app/lib/domain/srd_spell_casting_time_rules.dart` erweitert die vorhandene strenge Zeichenprüfung um genau diese neun Formatcodes. Neue Datei `app/test/srd_spell_casting_time_control_guard_test.dart`: acht gültige Trigger aus dem tatsächlichen Katalog, reguläres `Magic Missile`, neun negative Steuerzeichen-Varianten pro Trigger einschließlich beider öffentlichen Prüfpfade. Keine Umdeutung eines Auslösers; keinerlei automatische Zauberwirkung.
+
+**GETESTET:** Die neue Testdatei und der Regex wurden überprüfbar in GitHub gesichert; **keine tatsächlich erfolgreich ausgeführten Dart-/Flutter-Tests** in dieser Sitzung. Die lokal verfügbare Umgebung besitzt kein Dart/Flutter-SDK.
+
+**NICHT GETESTET:** `dart format --output=none --set-exit-if-changed lib test`, `flutter analyze`, `flutter test`, `flutter build apk --debug`, vollständiger GitHub-Workflow auf finalem PR-HEAD, reales Android-Gerät. Python-/Backend-Tests ebenfalls lokal nicht ausführbar ohne Repository-Checkout (kein GitHub-DNS in der Containerumgebung). Aktuelle CI muss anhand von #500 geprüft werden; andere grüne Läufe zählen nicht als Abnahme.
+
+**BLOCKIERT:** Lokaler GitHub-Clone/Dart-SDK. Keine bestätigte CI- oder Gerätetestsperre; PR bleibt bis zum nachgewiesenen vollständigen Testlauf Draft.
+
+**NOCH NICHT IMPLEMENTIERT:** Einzelfallbasierte Prüfung, ob ein Triggertext zum amtlichen Zauber gehört, und die tatsächlich ausgelöste Reaktions-/Bonusaktionsbuchung. Die Metadatenklassifikation ist keine Autorisierung und erteilt keine Kosten-/Aktionsfreigabe.
+
+**Dateien/Kompatibilität:** Fachmodul, neuer Test, README, zentraler Checkpoint, Chat-A-Checkpoint und Fachnachweis. SQLite 3, bestehendes Kampagnen-JSON 1, Heldendaten und App-Version unverändert; **keine Migration**, kein bestehender Spielstand verändert. Quellregel SRD 5.2.1 „Spells / Casting Time / Reaction and Bonus Action Triggers“, Wizards of the Coast LLC, CC BY 4.0, https://www.dndbeyond.com/srd. Bestehende Lizenzhinweise unverändert.
+
+**NÄCHSTER SCHRITT (genau ein eigenständiges Paket):** Die **Dauer-Metadatenprüfung** in `srd_spell_duration_rules.dart` separat gegen unsichtbare Formatzeichen innerhalb bestätigter Zeitangaben prüfen; nur bei reproduzierbarem Befund minimale Abwehr und positive/negative Katalog-Regressionen, ansonsten keinen Code ändern. Zunächst #500 CI abnehmen und vor einem neuen Branch die offenen PRs neu vergleichen.
+
+---
+
+---
+
+# Chat B – NPC-Wiederaufnahme: verdeckte Historienänderung erkannt (02.11.2026)
+
+**Status:** Implementierung im [Draft-PR #501](https://github.com/ManuEtt/Dnd/pull/501), Branch `feat/chat-b/npc-hidden-history-staleness-20261102`, ursprüngliches Main `55d33945872e251ec53b6860addcb05152a80c3a`, konfliktfrei aktualisiert auf Main `84437e4e92d735e179bb2585427b46a10451951d`, Code-/Testcommit `1f05dceea033c32094dad9b748898c203299b60c`.
+
+**IMPLEMENTIERT:** Private vollständige NPC-Historien-Quellbindung in `NpcIdentityMemory` verhindert dieselbe-Revisions-Wiederverwendung eines Lesekontexts nach Änderungen an per `maxNotes` verdeckten Notizen. Unabhängige NPC-Verläufe und bestehendes öffentliches Story-Kontextformat bleiben erhalten.
+
+**GETESTET:** GitHub-PR/Datei-Konfliktprüfung; neues Testdesign in `app/test/npc_identity_memory_test.dart` (zwei deterministische Fälle). **NICHT GETESTET:** Dart/Flutter, vollständige CI, Android/APK und Realgerät auf dem finalen Branch-HEAD; keine SDKs für lokale Abnahme. **BLOCKIERT:** lokales Dart/Flutter/DNS; Gesamt-CI-Mergegate offen. **NOCH NICHT IMPLEMENTIERT:** weitere Identitätsvalidierung und Live-Provider-Abnahme. **Datenmigration:** keine, SQLite 3/JSON 1 unverändert; keine autoritative Regel-/Spielstandsänderung.
+
+**Nächster unabhängiger Schritt:** Kollisionen älterer bestätigter Notiz-IDs in der schreibgeschützten NPC-Abfrage behandeln, mit Altspielstand-/JSON-/SQLite-Regressionsnachweis und kompletter CI.
+
+---

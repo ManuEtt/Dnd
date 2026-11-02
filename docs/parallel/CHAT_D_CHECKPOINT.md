@@ -1469,3 +1469,17 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Historienschutz:** Original-Quell-HEADs zusätzliche Git-Commit-Eltern; keine doppelte Übernahme, keine Force-Pushes, kein direkter Main-Commit.
 - **Akzeptanz:** Vollständige kombinierte PR-CI vor jedem Merge, #495/#497/#498 vorher erfolgreich integrieren, Main-CI und danach SHA-gesicherte Branchbereinigung. Keine realen Android-/TalkBack-Tests, keine SQLite-/JSON-Schema-/Versionsmigration in diesem Paket.
 - **Nächster Schritt:** nach erfolgreicher kompletter CI auf finalem Head und aller Vorgänger Stacked PR prüfen und mergen; dann noch verbliebene kollidierende PRs getrennt prüfen.
+
+---
+
+## Chat D – sichere Integration Zaubertrigger und NPC-Historie (02.11.2026)
+
+- **Basis-main:** `516bc14e06cb02e7035a6adfb8e2d21e54253184`; **Integrationsbranch:** `chore/chat-d/integrate-trigger-npc-20261102`.
+- **Quellen:** [PR #500](https://github.com/ManuEtt/Dnd/pull/500) Head `709b9fa8fa60a908ab8dcc2acda6a7a840cfa155` (vollständige Quell-CI erfolgreich) und [PR #501](https://github.com/ManuEtt/Dnd/pull/501) Head `c203e4fde2e2bb5c24d04eeac5f8e1de77e832ad` (zwei vollständige Quell-CIs erfolgreich).
+- **Änderungen:** Unicode-Formatcodes in Zaubertriggern zurückweisen; revisionsgebundene NPC-Auswahl gegen Änderungen verdeckter eigener Notizen absichern. Beide Fachmodule lagen auf der Integrationsbasis auf den exakt gleichen Git-Blobs wie auf der geprüften Quelle `84437e4e`.
+- **Regressionen:** Original-Code- und Testblobs der beiden finalen Heads unverändert übernommen; keine neuen oder gelöschten Spielstands-/SQLite-/JSON-Schemadaten.
+- **Dokumentation:** Originale reine Hinzufügungen aus beiden PRs in README, zentralen CODEX- und individuellen A/B-Checkpoints additiv erhalten. Keine vorherige Main-Dokumentation entfernt.
+- **Git-Historie:** Quell-Heads sind zusätzliche Eltern des Integrationscommits; keine Fremdbranches überschrieben oder gelöscht.
+- **Freigabe:** Neue vollständige kombinierte GitHub-Actions-CI auf dem exakten Integrations-HEAD und neue Main-CI nach Merge noch erforderlich. Keine Realgerät-/TalkBack-/Altversions-Upgrade-Abnahme.
+
+**Nächster Schritt:** Nach vollständig grüner kombinierter CI und aktuellem Main-/PR-Konfliktabgleich regulären Merge durchführen; danach Main-CI abnehmen.

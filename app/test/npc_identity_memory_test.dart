@@ -291,4 +291,118 @@ void main() {
     expect(current.toContextMap().toString(), contains('Eine Zeile Ein'));
     NpcIdentityMemory.requireCurrent(refreshed, current);
   });
+
+  test('older hidden notes cannot change under the same campaign revision', () {
+    final original = _campaign(
+      notes: [
+        _note(
+          id: 'newest',
+          npcId: 'mira-a',
+          relationship: 'freundlich',
+          value: 'Die Karte liegt am Tor.',
+          at: DateTime.utc(2026, 11, 2),
+        ),
+        _note(
+          id: 'older',
+          npcId: 'mira-a',
+          relationship: 'neutral',
+          value: 'Die Karte lag zuvor im Turm.',
+          at: DateTime.utc(2026, 10, 20),
+        ),
+      ],
+    );
+    final saved = jsonEncode(original.toJson());
+    final selected = NpcIdentityMemory.read(
+      original,
+      npcId: 'mira-a',
+      expectedRevision: 7,
+      maxNotes: 1,
+    );
+    expect(selected.notes.single.id, 'newest');
+    NpcIdentityMemory.requireCurrent(original, selected);
+    final restored = Campaign.fromJson(
+      jsonDecode(saved) as Map<String, dynamic>,
+    );
+    NpcIdentityMemory.requireCurrent(restored, selected);
+
+    final edited = original.copyWith(
+      npcRelationshipNotes: [
+        original.npcRelationshipNotes.first,
+        _note(
+          id: 'older',
+          npcId: 'mira-a',
+          relationship: 'neutral',
+          value: 'Eine unbestätigte andere Geschichte.',
+          at: DateTime.utc(2026, 10, 20),
+        ),
+      ],
+    );
+    expect(edited.revision, selected.revision);
+    expect(
+      () => NpcIdentityMemory.requireCurrent(edited, selected),
+      throwsFormatException,
+    );
+
+    final added = original.copyWith(
+      npcRelationshipNotes: [
+        ...original.npcRelationshipNotes,
+        _note(
+          id: 'even-older',
+          npcId: 'mira-a',
+          relationship: 'neutral',
+          value: 'Ein zusätzlicher alter Hinweis.',
+          at: DateTime.utc(2026, 10, 1),
+        ),
+      ],
+    );
+    expect(
+      () => NpcIdentityMemory.requireCurrent(added, selected),
+      throwsFormatException,
+    );
+    expect(jsonEncode(original.toJson()), saved);
+    expect(original.hero.hitPoints, 13);
+  });
+
+  test('unrelated NPC history does not invalidate the selected snapshot', () {
+    final original = _campaign(
+      notes: [
+        _note(
+          id: 'mira-a-note',
+          npcId: 'mira-a',
+          relationship: 'freundlich',
+          value: 'Mira A kennt den Weg.',
+          at: DateTime.utc(2026, 11, 2),
+        ),
+        _note(
+          id: 'mira-b-note',
+          npcId: 'mira-b',
+          relationship: 'feindlich',
+          value: 'Mira B hält das Tor.',
+          at: DateTime.utc(2026, 11, 1),
+        ),
+      ],
+    );
+    final selected = NpcIdentityMemory.read(
+      original,
+      npcId: 'mira-a',
+      expectedRevision: 7,
+      maxNotes: 1,
+    );
+    final unrelated = original.copyWith(
+      npcRelationshipNotes: [
+        original.npcRelationshipNotes.first,
+        _note(
+          id: 'mira-b-note',
+          npcId: 'mira-b',
+          relationship: 'feindlich',
+          value: 'Mira B geht zum Stadttor.',
+          at: DateTime.utc(2026, 11, 1),
+        ),
+      ],
+    );
+    NpcIdentityMemory.requireCurrent(unrelated, selected);
+    expect(selected.toContextMap().toString(), contains('Mira A kennt'));
+    expect(selected.toContextMap().toString(), isNot(contains('Stadttor')));
+    expect(unrelated.hero.toJson(), original.hero.toJson());
+  });
 }
