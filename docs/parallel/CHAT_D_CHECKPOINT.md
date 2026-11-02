@@ -1,3 +1,40 @@
+# CHAT D – UTF-8-Byteobergrenze für JSON-Spielstandimport (02.11.2026)
+
+- **Ausgangs-main-SHA:** `84437e4e92d735e179bb2585427b46a10451951d`.
+- **Eigener Branch:** `fix/chat-d/utf8-import-size-limit-20261102`.
+- **Code-/Testcommit:** `f3359b826f65027979b6e9af09640ff304a1188f`.
+- **Pull Request:** [#502](https://github.com/ManuEtt/Dnd/pull/502).
+- **Ausgangsproblem:** Eine 10-MiB-Importgrenze wurde allein über
+  `String.length` (UTF-16-Codeeinheiten) geprüft. Mehrbyteige Unicodezeichen
+  können die tatsächlich importierte UTF-8-Datei größer machen.
+- **IMPLEMENTIERT:** tatsächliche UTF-8-Bytezählung mit einem vorgelagerten
+  billigen Zeichenlängenfilter; frühzeitige `InvalidSaveException` vor
+  JSON-Parsing/SQLite-Transaktion; bisherige Fehlermeldung bleibt bestehen.
+- **Geänderte Dateien:** `app/lib/data/sqlite_campaign_repository.dart`,
+  `app/test/storage_repository_test.dart`, `README.md`,
+  `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Akzeptanz:** 10-MiB-UTF-8-Grenze gilt auch für mehrbyteiges JSON,
+  bestehender Spielstand/Revision bleiben nach Ablehnung unverändert;
+  valide Unicodeimporte werden akzeptiert.
+- **Regressionen hinzugefügt:** zwei SQLite-FFI-Tests mit übergroßer
+  Unicode-Szene sowie legalen Umlauten/Emoji und persistiertem Roundtrip.
+- **GETESTET:** GitHub-Schreibzugriff, isolierter Branch und PR-Erstellung
+  tatsächlich erfolgreich. Kein Testlauf wurde lokal behauptet.
+- **NICHT GETESTET:** finale Python-/Backend-/Flutter-/Android-CI, realer
+  Android-Backup-Picker; Flutter-/Dart-SDK in dieser Sitzung nicht vorhanden.
+- **BLOCKIERT:** keine lokale Flutter-Toolchain, kein Netzwerk-Git-Clone;
+  GitHub Actions muss den vollständigen PR-HEAD prüfen.
+- **Migrationen:** keine. SQLite-Version 3, äußeres JSON-Schema 1,
+  vorhandene Spielstände, Version, Controller und Exportformat unverändert.
+- **Konfliktkoordination:** keine überschneidenden offenen Fachdateipfade;
+  zentrale Dokumente können beim Zusammenführen andere Statusnachträge
+  enthalten, daher ausschließlich additiv konsolidieren.
+- **Nächster konkreter Schritt:** PR #502-CI auf dem finalen Head prüfen;
+  bei Rot Formatierung/Ursache im selben Branch reparieren, bei Grün
+  unabhängigen Integrationsreview veranlassen.
+
+---
+
 # CHAT D – Android-Backupdateinamen: Unicode-Zeilenumbruch sperren (31.10.2026)
 
 - **Ausgangs-main-SHA:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.

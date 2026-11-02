@@ -1,5 +1,20 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – JSON-Spielstandimport auf 10 MiB UTF-8 begrenzen (02.11.2026)
+
+[PR #502](https://github.com/ManuEtt/Dnd/pull/502) prüft in der bestehenden
+SQLite-Importgrenze nun die tatsächlichen UTF-8-Bytes statt ausschließlich
+Darts UTF-16-`String.length`. Die billige Zeichenlängenprüfung bleibt vor
+der Bytezählung erhalten. Zwei SQLite-FFI-Regressionstests schützen die
+Ablehnung eines mehrbyteigen Übergrößenimports ohne Datenbankänderungen und
+den regulären Unicode-Roundtrip. SQLite 3, JSON-Format 1, App-Version,
+vorhandene Spielstände und Exportformat bleiben unverändert.
+Flutter-/Android-Build und CI auf dem finalen PR-HEAD müssen noch bestätigt
+werden; kein Realgerätetest behauptet.
+
+---
+
+
 ## Chat C – Mehrgegner-Initiative bei 200 % Schrift und IME (02.11.2026)
 
 [Draft-PR #488](https://github.com/ManuEtt/Dnd/pull/488) verbessert den
