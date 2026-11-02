@@ -66,6 +66,53 @@ class AlphaReleaseTests(unittest.TestCase):
         self.assertIn('Debug-Testschlüssel',
                       (self.out / 'Wuerfelraunen_v0.5.4_24_ReleaseNotes.md').read_text())
 
+    @unittest.skipIf(sys.platform == 'win32', 'POSIX symlinks required')
+    def test_symlinked_default_apk_is_rejected_before_release_publication(self):
+        original = self.base / 'original-valid.apk'
+        self.apk.rename(original)
+        self.apk.symlink_to(original)
+        with self.assertRaisesRegex(ValueError, 'symbolischen Pfadlinks'):
+            release.prepare_release(self.root, self.out)
+        self.assertFalse(self.out.exists())
+        self.assertTrue(self.apk.is_symlink())
+        self.assertTrue(original.is_file())
+
+    @unittest.skipIf(sys.platform == 'win32', 'POSIX symlinks required')
+    def test_explicit_apk_under_symlinked_parent_is_rejected(self):
+        link = self.base / 'linked-build-dir'
+        link.symlink_to(self.apk.parent, target_is_directory=True)
+        alias = link / self.apk.name
+        with self.assertRaisesRegex(ValueError, 'symbolischen Pfadlinks'):
+            release.validate_arm64_apk(alias)
+        with self.assertRaisesRegex(ValueError, 'symbolischen Pfadlinks'):
+            release.prepare_release(self.root, self.out, apk=alias)
+        self.assertFalse(self.out.exists())
+
+    @unittest.skipIf(sys.platform == 'win32', 'POSIX symlinks required')
+    def test_source_swapped_to_symlink_after_staging_cleans_own_release(self):
+        original_create = release.create_archive
+        outside = self.base / 'outside-valid.apk'
+        outside.write_bytes(self.apk.read_bytes())
+
+        def swap_after_archive(root, target, *, layout):
+            result = original_create(root, target, layout=layout)
+            self.apk.unlink()
+            self.apk.symlink_to(outside)
+            return result
+
+        with mock.patch.object(
+            release, 'create_archive', side_effect=swap_after_archive
+        ):
+            with self.assertRaisesRegex(ValueError, 'symbolischen Pfadlinks'):
+                release.prepare_release(self.root, self.out)
+        self.assertTrue(self.apk.is_symlink())
+        self.assertTrue(outside.is_file())
+        self.assertEqual(list(self.out.iterdir()), [])
+
+    def test_explicit_regular_apk_remains_accepted(self):
+        published = release.prepare_release(self.root, self.out, apk=self.apk)
+        self.assertTrue(all(path.is_file() for path in published))
+
     def test_missing_apk_does_not_publish_artifacts(self):
         self.apk.unlink()
         with self.assertRaisesRegex(ValueError, 'Keine gebaute ARM64-APK'):
