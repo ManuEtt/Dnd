@@ -62,57 +62,64 @@ class _AreaCreatureRegistrationDialogState
 
   @override
   Widget build(BuildContext context) => AlertDialog(
+    scrollable: true,
+    insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
     title: const Text('Kreatur mit TP erfassen'),
     content: SizedBox(
       width: 420,
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Zusätzliche Kreaturen können bei Flächenzaubern '
-              'Schaden erhalten. Angriffe, Initiative, Ausrüstung und '
-              'Bewegung werden für sie noch nicht simuliert.',
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            'Zusätzliche Kreaturen können bei Flächenzaubern '
+            'Schaden erhalten. Angriffe, Initiative, Ausrüstung und '
+            'Bewegung werden für sie noch nicht simuliert.',
+          ),
+          TextField(
+            key: const ValueKey('area-creature-id'),
+            controller: _id,
+            decoration: const InputDecoration(
+              labelText: 'Eindeutige ID, z. B. goblin-2',
             ),
-            TextField(
-              key: const ValueKey('area-creature-id'),
-              controller: _id,
-              decoration: const InputDecoration(
-                labelText: 'Eindeutige ID, z. B. goblin-2',
+          ),
+          TextField(
+            key: const ValueKey('area-creature-name'),
+            controller: _name,
+            decoration: const InputDecoration(labelText: 'Kreaturenname'),
+          ),
+          TextField(
+            key: const ValueKey('area-creature-hp'),
+            controller: _hitPoints,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'Aktuelle Trefferpunkte',
+            ),
+          ),
+          TextField(
+            key: const ValueKey('area-creature-maxhp'),
+            controller: _maximum,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'Maximale Trefferpunkte',
+            ),
+          ),
+          CheckboxListTile(
+            key: const ValueKey('area-creature-confirmed'),
+            contentPadding: EdgeInsets.zero,
+            value: _confirmed,
+            onChanged: (value) => setState(() => _confirmed = value ?? false),
+            title: const Text('Identität und Trefferpunkte geprüft.'),
+          ),
+          if (_error != null)
+            Semantics(
+              liveRegion: true,
+              child: Text(
+                _error!,
+                key: const ValueKey('area-creature-error'),
+                style: const TextStyle(color: Colors.redAccent),
               ),
             ),
-            TextField(
-              key: const ValueKey('area-creature-name'),
-              controller: _name,
-              decoration: const InputDecoration(labelText: 'Kreaturenname'),
-            ),
-            TextField(
-              key: const ValueKey('area-creature-hp'),
-              controller: _hitPoints,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Aktuelle Trefferpunkte',
-              ),
-            ),
-            TextField(
-              key: const ValueKey('area-creature-maxhp'),
-              controller: _maximum,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Maximale Trefferpunkte',
-              ),
-            ),
-            CheckboxListTile(
-              key: const ValueKey('area-creature-confirmed'),
-              contentPadding: EdgeInsets.zero,
-              value: _confirmed,
-              onChanged: (value) => setState(() => _confirmed = value ?? false),
-              title: const Text('Identität und Trefferpunkte geprüft.'),
-            ),
-            if (_error != null)
-              Text(_error!, style: const TextStyle(color: Colors.redAccent)),
-          ],
-        ),
+        ],
       ),
     ),
     actions: [

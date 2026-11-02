@@ -152,99 +152,108 @@ class _SrdMaterialInventoryDialogState
 
   @override
   Widget build(BuildContext context) => AlertDialog(
+    scrollable: true,
+    insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
     title: const Text('Zaubermaterialien bestätigen'),
     content: SizedBox(
       width: 470,
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(widget.spell.name),
-            const SizedBox(height: 8),
-            const Text(
-              'Inventarname und Anzahl beweisen keinen Gegenstandswert. '
-              'Jede Materialposition muss unabhängig geprüft werden. '
-              'Es wird noch nichts verbraucht oder gewirkt.',
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(widget.spell.name),
+          const SizedBox(height: 8),
+          const Text(
+            'Inventarname und Anzahl beweisen keinen Gegenstandswert. '
+            'Jede Materialposition muss unabhängig geprüft werden. '
+            'Es wird noch nichts verbraucht oder gewirkt.',
+          ),
+          if (_setupError != null)
+            Semantics(
+              liveRegion: true,
+              child: Text(
+                _setupError!,
+                key: const ValueKey('material-setup-error'),
+              ),
             ),
-            if (_setupError != null)
-              Text(_setupError!, key: const ValueKey('material-setup-error')),
-            for (final requirement in _requirements) ...[
-              const SizedBox(height: 12),
-              Text(requirement.label),
-              DropdownButtonFormField<String>(
-                key: ValueKey(
-                  'material-stack-'
-                  '${requirement.id}',
-                ),
-                isExpanded: true,
-                initialValue: _selectedStacks[requirement.id],
-                decoration: const InputDecoration(
-                  labelText: 'Bestätigter Inventarstapel',
-                ),
-                items: [
-                  for (final item in widget.hero.inventory)
-                    if (item.id.isNotEmpty && item.quantity > 0)
-                      DropdownMenuItem(
-                        value: item.id,
-                        child: Text(
-                          '${item.name} (${item.quantity}×) · ${item.id}',
-                          overflow: TextOverflow.ellipsis,
-                        ),
+          for (final requirement in _requirements) ...[
+            const SizedBox(height: 12),
+            Text(requirement.label),
+            DropdownButtonFormField<String>(
+              key: ValueKey(
+                'material-stack-'
+                '${requirement.id}',
+              ),
+              isExpanded: true,
+              initialValue: _selectedStacks[requirement.id],
+              decoration: const InputDecoration(
+                labelText: 'Bestätigter Inventarstapel',
+              ),
+              items: [
+                for (final item in widget.hero.inventory)
+                  if (item.id.isNotEmpty && item.quantity > 0)
+                    DropdownMenuItem(
+                      value: item.id,
+                      child: Text(
+                        '${item.name} (${item.quantity}×) · ${item.id}',
+                        overflow: TextOverflow.ellipsis,
                       ),
-                ],
-                onChanged: (value) => setState(() {
-                  if (value == null) {
-                    _selectedStacks.remove(requirement.id);
-                  } else {
-                    _selectedStacks[requirement.id] = value;
-                  }
-                  _error = null;
-                }),
-              ),
+                    ),
+              ],
+              onChanged: (value) => setState(() {
+                if (value == null) {
+                  _selectedStacks.remove(requirement.id);
+                } else {
+                  _selectedStacks[requirement.id] = value;
+                }
+                _error = null;
+              }),
+            ),
+            _check(
+              'identity',
+              'Identität und vorgeschriebener Wert sind geprüft.',
+              _identityConfirmed,
+              requirement.id,
+            ),
+            _check(
+              'quantity',
+              'Die vollständige benötigte Anzahl ist geprüft.',
+              _quantityConfirmed,
+              requirement.id,
+            ),
+            if (requirement.isConsumed)
               _check(
-                'identity',
-                'Identität und vorgeschriebener Wert sind geprüft.',
-                _identityConfirmed,
+                'reserved',
+                'Der Verbrauch dieser Position ist ausdrücklich bestätigt.',
+                _consumptionConfirmed,
                 requirement.id,
               ),
-              _check(
-                'quantity',
-                'Die vollständige benötigte Anzahl ist geprüft.',
-                _quantityConfirmed,
-                requirement.id,
+          ],
+          if (widget.spell.name == 'Astral Projection') ...[
+            const SizedBox(height: 12),
+            TextField(
+              key: const ValueKey('material-target-count'),
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              decoration: const InputDecoration(
+                labelText: 'Bestätigte Anzahl der Ziele',
               ),
-              if (requirement.isConsumed)
-                _check(
-                  'reserved',
-                  'Der Verbrauch dieser Position ist ausdrücklich bestätigt.',
-                  _consumptionConfirmed,
-                  requirement.id,
-                ),
-            ],
-            if (widget.spell.name == 'Astral Projection') ...[
-              const SizedBox(height: 12),
-              TextField(
-                key: const ValueKey('material-target-count'),
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                decoration: const InputDecoration(
-                  labelText: 'Bestätigte Anzahl der Ziele',
-                ),
-                onChanged: (value) => setState(() {
-                  _targetCountText = value;
-                  _error = null;
-                }),
-              ),
-            ],
-            if (_error != null)
-              Text(
+              onChanged: (value) => setState(() {
+                _targetCountText = value;
+                _error = null;
+              }),
+            ),
+          ],
+          if (_error != null)
+            Semantics(
+              liveRegion: true,
+              child: Text(
                 _error!,
                 key: const ValueKey('material-validation-error'),
                 style: const TextStyle(color: Colors.redAccent),
               ),
-          ],
-        ),
+            ),
+        ],
       ),
     ),
     actions: [
