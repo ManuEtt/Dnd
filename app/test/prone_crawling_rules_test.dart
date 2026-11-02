@@ -176,6 +176,4 @@ void main() {
     expect(result.campaign.encounter!.remainingMovementDecimeters, 60);
     expect(result.events.single.type, 'combat.crawled');
     expect(atZero.hero.hitPoints, 0);
-  });
-
-}
+  });}
