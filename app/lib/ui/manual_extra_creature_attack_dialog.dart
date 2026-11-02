@@ -55,7 +55,24 @@ class _ManualExtraCreatureAttackDialogState
     ValueChanged<bool> change,
   ) => CheckboxListTile(
     key: ValueKey('manual-attack-$suffix'),
-    title: Text(title),
+    title: Text(
+      MediaQuery.textScalerOf(context).scale(1) >= 1.8
+          ? switch (suffix) {
+              'opposite' => 'Deckung zwischen Figuren',
+              'reach' => 'Waffenreichweite bestätigt',
+              'actor' => 'Angreifer handlungsfähig',
+              'target-valid' => 'Ziel angreifbar',
+              'modifiers' => 'Angriffsmodifikatoren geprüft',
+              'defenses' => 'Schadensabwehr geprüft',
+              'reactions' => 'Keine offene Zielreaktion',
+              'no-effects' => 'Keine zusätzlichen Effekte',
+              'advantage' => 'Vorteil bestätigt',
+              'disadvantage' => 'Nachteil bestätigt',
+              _ => title,
+            }
+          : title,
+      semanticsLabel: title,
+    ),
     dense: true,
     contentPadding: EdgeInsets.zero,
     controlAffinity: ListTileControlAffinity.leading,
@@ -154,170 +171,177 @@ class _ManualExtraCreatureAttackDialogState
         attacker.single.initiativeController == 'gm' &&
         eligible.isNotEmpty;
     return AlertDialog(
+      scrollable: true,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       title: const Text('Zusätzlicher Kreaturenangriff'),
       content: SizedBox(
         width: 500,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text(
-                'Eine bestätigte einfache Waffen-Aktion der '
-                'aktuellen Zusatzkreatur gegen eine ANDERE erfasste '
-                'Zusatzkreatur. Held und Hauptgegner bleiben im '
-                'bisherigen Kampfsystem. Keine automatischen '
-                'Monsterwerte, Reaktionen oder Sonderfähigkeiten.',
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              'Eine bestätigte einfache Waffen-Aktion der '
+              'aktuellen Zusatzkreatur gegen eine ANDERE erfasste '
+              'Zusatzkreatur. Held und Hauptgegner bleiben im '
+              'bisherigen Kampfsystem. Keine automatischen '
+              'Monsterwerte, Reaktionen oder Sonderfähigkeiten.',
+            ),
+            if (queue != null)
+              Text(
+                'Angreifer-ID: ${queue.activeActorId}, '
+                'manuelle Runde ${queue.round}, '
+                'Aktion ${queue.actionUsed ? 'verbraucht' : 'frei'}.',
               ),
-              if (queue != null)
-                Text(
-                  'Angreifer-ID: ${queue.activeActorId}, '
-                  'manuelle Runde ${queue.round}, '
-                  'Aktion ${queue.actionUsed ? 'verbraucht' : 'frei'}.',
-                ),
-              DropdownButtonFormField<String>(
-                key: const ValueKey('manual-attack-target'),
-                initialValue: _targetId,
-                decoration: const InputDecoration(
-                  labelText: 'Lebendes Zusatzkreaturen-Ziel',
-                ),
-                items: [
-                  for (final creature in eligible)
-                    DropdownMenuItem(
-                      value: creature.id,
-                      child: Text(
-                        '${creature.name} '
-                        '(${creature.hitPoints} TP)',
-                      ),
+            DropdownButtonFormField<String>(
+              key: const ValueKey('manual-attack-target'),
+              isExpanded: true,
+              initialValue: _targetId,
+              decoration: const InputDecoration(
+                labelText: 'Lebendes Zusatzkreaturen-Ziel',
+              ),
+              items: [
+                for (final creature in eligible)
+                  DropdownMenuItem(
+                    value: creature.id,
+                    child: Text(
+                      '${creature.name} '
+                      '(${creature.hitPoints} TP)',
+                      overflow: TextOverflow.ellipsis,
                     ),
-                ],
-                onChanged: (v) => setState(() => _targetId = v),
+                  ),
+              ],
+              onChanged: (v) => setState(() => _targetId = v),
+            ),
+            TextField(
+              key: const ValueKey('manual-attack-bonus'),
+              controller: _bonus,
+              keyboardType: const TextInputType.numberWithOptions(signed: true),
+              decoration: const InputDecoration(
+                labelText: 'Vollständiger Angriffsbonus, z. B. +4',
               ),
-              TextField(
-                key: const ValueKey('manual-attack-bonus'),
-                controller: _bonus,
-                keyboardType: const TextInputType.numberWithOptions(
-                  signed: true,
+            ),
+            TextField(
+              key: const ValueKey('manual-attack-damage'),
+              controller: _damage,
+              decoration: const InputDecoration(
+                labelText: 'Bestätigter Waffenschaden, z. B. 1d6+2',
+              ),
+            ),
+            DropdownButtonFormField<DamageType>(
+              key: const ValueKey('manual-attack-damage-type'),
+              isExpanded: true,
+              initialValue: _damageType,
+              decoration: const InputDecoration(
+                labelText: 'Bestätigte Schadensart',
+              ),
+              items: [
+                for (final type in DamageType.values)
+                  DropdownMenuItem(value: type, child: Text(type.name)),
+              ],
+              onChanged: (v) => setState(() {
+                if (v != null) _damageType = v;
+              }),
+            ),
+            TextField(
+              key: const ValueKey('manual-attack-ac'),
+              controller: _ac,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Bestätigte Grund-RK des Ziels',
+              ),
+            ),
+            DropdownButtonFormField<CoverLevel>(
+              key: const ValueKey('manual-attack-cover'),
+              isExpanded: true,
+              initialValue: _cover,
+              decoration: const InputDecoration(labelText: 'Deckung des Ziels'),
+              items: [
+                for (final cover in CoverLevel.values)
+                  DropdownMenuItem(
+                    value: cover,
+                    child: Text(CoverRules.label(cover)),
+                  ),
+              ],
+              onChanged: (v) => setState(() => _cover = v),
+            ),
+            _check(
+              'opposite',
+              'Deckung ist zwischen Angreifer und Ziel.',
+              _opposite,
+              (v) => _opposite = v,
+            ),
+            _check(
+              'reach',
+              'Ziel ist innerhalb bestätigter Waffenreichweite.',
+              _reach,
+              (v) => _reach = v,
+            ),
+            _check(
+              'actor',
+              'Angreifer ist handlungsfähig; '
+                  'keine unbekannten Bewegungs-/Zustandseffekte.',
+              _actorCanAct,
+              (v) => _actorCanAct = v,
+            ),
+            _check(
+              'target-valid',
+              'Dieses Ziel darf aktuell '
+                  'angegriffen werden.',
+              _targetAvailable,
+              (v) => _targetAvailable = v,
+            ),
+            _check(
+              'modifiers',
+              'Alle Angriffs-Modifikatoren einschließlich '
+                  'Sonderfähigkeiten geprüft.',
+              _modifiers,
+              (v) => _modifiers = v,
+            ),
+            _check(
+              'defenses',
+              'Keine ungeklärte Schadensabwehr, '
+                  'Immunität, Anfälligkeit, Zustands- oder andere '
+                  'Schadensmodifikation.',
+              _defenses,
+              (v) => _defenses = v,
+            ),
+            _check(
+              'reactions',
+              'Keine anstehende Ziel-Reaktion '
+                  'wie Schild oder Abwehr.',
+              _reactions,
+              (v) => _reactions = v,
+            ),
+            _check(
+              'no-effects',
+              'Kein zusätzliches Angriffs-'
+                  'oder kritisches Treffereffekt-Merkmal.',
+              _noEffects,
+              (v) => _noEffects = v,
+            ),
+            _check(
+              'advantage',
+              'Bestätigter Vorteil auf Angriff.',
+              _advantage,
+              (v) => _advantage = v,
+            ),
+            _check(
+              'disadvantage',
+              'Bestätigter Nachteil auf Angriff.',
+              _disadvantage,
+              (v) => _disadvantage = v,
+            ),
+            if (_error != null)
+              Semantics(
+                liveRegion: true,
+                child: Text(
+                  _error!,
+                  key: const ValueKey('manual-attack-error'),
+                  style: const TextStyle(color: Colors.redAccent),
                 ),
-                decoration: const InputDecoration(
-                  labelText: 'Vollständiger Angriffsbonus, z. B. +4',
-                ),
               ),
-              TextField(
-                key: const ValueKey('manual-attack-damage'),
-                controller: _damage,
-                decoration: const InputDecoration(
-                  labelText: 'Bestätigter Waffenschaden, z. B. 1d6+2',
-                ),
-              ),
-              DropdownButtonFormField<DamageType>(
-                key: const ValueKey('manual-attack-damage-type'),
-                initialValue: _damageType,
-                decoration: const InputDecoration(
-                  labelText: 'Bestätigte Schadensart',
-                ),
-                items: [
-                  for (final type in DamageType.values)
-                    DropdownMenuItem(value: type, child: Text(type.name)),
-                ],
-                onChanged: (v) => setState(() {
-                  if (v != null) _damageType = v;
-                }),
-              ),
-              TextField(
-                key: const ValueKey('manual-attack-ac'),
-                controller: _ac,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Bestätigte Grund-RK des Ziels',
-                ),
-              ),
-              DropdownButtonFormField<CoverLevel>(
-                key: const ValueKey('manual-attack-cover'),
-                initialValue: _cover,
-                decoration: const InputDecoration(
-                  labelText: 'Deckung des Ziels',
-                ),
-                items: [
-                  for (final cover in CoverLevel.values)
-                    DropdownMenuItem(
-                      value: cover,
-                      child: Text(CoverRules.label(cover)),
-                    ),
-                ],
-                onChanged: (v) => setState(() => _cover = v),
-              ),
-              _check(
-                'opposite',
-                'Deckung ist zwischen Angreifer und Ziel.',
-                _opposite,
-                (v) => _opposite = v,
-              ),
-              _check(
-                'reach',
-                'Ziel ist innerhalb bestätigter Waffenreichweite.',
-                _reach,
-                (v) => _reach = v,
-              ),
-              _check(
-                'actor',
-                'Angreifer ist handlungsfähig; '
-                    'keine unbekannten Bewegungs-/Zustandseffekte.',
-                _actorCanAct,
-                (v) => _actorCanAct = v,
-              ),
-              _check(
-                'target-valid',
-                'Dieses Ziel darf aktuell '
-                    'angegriffen werden.',
-                _targetAvailable,
-                (v) => _targetAvailable = v,
-              ),
-              _check(
-                'modifiers',
-                'Alle Angriffs-Modifikatoren einschließlich '
-                    'Sonderfähigkeiten geprüft.',
-                _modifiers,
-                (v) => _modifiers = v,
-              ),
-              _check(
-                'defenses',
-                'Keine ungeklärte Schadensabwehr, '
-                    'Immunität, Anfälligkeit, Zustands- oder andere '
-                    'Schadensmodifikation.',
-                _defenses,
-                (v) => _defenses = v,
-              ),
-              _check(
-                'reactions',
-                'Keine anstehende Ziel-Reaktion '
-                    'wie Schild oder Abwehr.',
-                _reactions,
-                (v) => _reactions = v,
-              ),
-              _check(
-                'no-effects',
-                'Kein zusätzliches Angriffs-'
-                    'oder kritisches Treffereffekt-Merkmal.',
-                _noEffects,
-                (v) => _noEffects = v,
-              ),
-              _check(
-                'advantage',
-                'Bestätigter Vorteil auf Angriff.',
-                _advantage,
-                (v) => _advantage = v,
-              ),
-              _check(
-                'disadvantage',
-                'Bestätigter Nachteil auf Angriff.',
-                _disadvantage,
-                (v) => _disadvantage = v,
-              ),
-              if (_error != null)
-                Text(_error!, style: const TextStyle(color: Colors.redAccent)),
-            ],
-          ),
+          ],
         ),
       ),
       actions: [
