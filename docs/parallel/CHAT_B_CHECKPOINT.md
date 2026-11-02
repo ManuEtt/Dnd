@@ -349,3 +349,44 @@ Gezielten Abruf bestätigter NPC-Beziehungsnotizen auch bei mehreren aufeinander
 
 
 **GitHub-Nachtrag Chat B (26.10.2026):** [PR #237](https://github.com/ManuEtt/Dnd/pull/237) enthält das optionale `selectedNpcId`-Protokoll. Im nachgewiesenen Lauf [#40342521532](https://github.com/ManuEtt/Dnd/actions/runs/40342521532) haben Backend, Dart-Format, Flutter-Analyse und komplette Flutter-Tests bestanden; Android-Build bei Abruf noch offen. Abschlussstatus gilt nur für exakt getesteten PR-HEAD. Keine Übernahme nach `main`, keine Spielstandmigration.
+
+## Chat B – bestätigte NPC-Kurzfassung mit Länge-/Quellenschutz (02.11.2026)
+
+- **Basis-main:** `885580202caeafc9787538b6dc1c833b3190a529`.
+  **Branch:** `feat/chat-b/bounded-confirmed-npc-excerpt-v2-20261102`;
+  **Draft-PR:** [#486](https://github.com/ManuEtt/Dnd/pull/486).
+  **Fachübernahme-Commit:** `af99b5a1c082b7280a17af05537d9cb57248c8f3`;
+  **Regressionen-Commit:** `506f3a716b04896dff8c4fefda0b1445b0d7cb84`.
+  Der eigene Vorgänger-PR #484 auf älterer Main-Basis ist geschlossen,
+  ohne Merge oder Branchlöschung.
+- **Ausgangsproblem:** `NpcContinuityReader.confirmedContext` kann
+  extrem lange Legacy-Namen/Beziehungen/Notizen ausgeben. Dies ist
+  unpassend für einen kurzen sicheren bestätigten NPC-Rückblick.
+- **Implementiert:** separate neue schreibgeschützte
+  `ConfirmedNpcContinuityExcerpt.read`, gespeicherte sichere ASCII-ID
+  immer im Text, höchstens drei neueste bestätigte Notizen, pro Feld
+  definierte Grenzen und Gesamtlimit 1.800 UTF-16-Einheiten. Kürzung
+  erhält Emoji-Surrogatpaare; Unicode-Format- und Steuerzeichen bleiben
+  nicht als Zeilen- oder Identitätstäuschung in der Darstellung.
+  Keine Veränderung des gespeicherten Quellzustands.
+- **Geänderte Dateien:** `app/lib/story/confirmed_npc_continuity_excerpt.dart`,
+  `app/test/confirmed_npc_continuity_excerpt_test.dart`, README,
+  zentraler Checkpoint und dieser Checkpoint. Keine gemeinsam genutzten
+  Domain-/SQLite-/Controller-Dateien berührt.
+- **Tests:** sechs positive und negative Regressionen: aktuelle
+  NPC-Identität/Nachrichtentrennung, lange Emoji-/Legacy-Daten,
+  Mehrzeilen-/Bidi-Spoofing, ungültige/mehrdeutige IDs und Notizgrenzen,
+  alte JSON ohne bestätigte Notizen, echte SQLite-Neuöffnung und Replay.
+  **Getestet:** Live-Main, alle PR-Fachpfade, Modulgrenzen/Architektur,
+  offizieller Dart-Formatter. **Noch nicht getestet:** vollständige
+  CI auf dem letzten Dokumentations-Commit, Android-Echthardware und KI.
+  **Blockiert:** kein lokales Flutter-/Dart-SDK, CI verfügbar.
+  **Migrationen:** keine, SQLite 3 / äußeres JSON 1.
+- **Koordination:** PR #477 bearbeitet `npc_continuity_reader.dart`;
+  dieser PR importiert den Reader ausschließlich. Andere B-PRs
+  #452/#456/#459/#464/#470 überschreiben keine neue Fachdatei.
+  Gemeinsame README-/Checkpoint-Einträge später durch Chat D additiv
+  zusammenführen, kein Auto-Merge.
+- **Nächster Schritt:** finale GitHub-CI abnehmen, Fehler bei Bedarf
+  im eigenen PR beheben, danach Chat-D-Review für Integration.
+
