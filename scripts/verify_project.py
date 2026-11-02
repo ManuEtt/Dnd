@@ -199,13 +199,24 @@ def verify_project(root: Path) -> list[str]:
                 for member in members:
                     name = member.filename
                     segments = name.rstrip('/').split('/')
+                    mode = member.external_attr >> 16
                     if (not name or name.startswith('/') or '\\' in name
                             or re.match(r'^[A-Za-z]:', name)
                             or any(segment in ('', '.', '..') for segment in segments)
                             or any(unicodedata.category(char) in {'Cc', 'Cf', 'Cs', 'Zl', 'Zp'}
                                    for char in name)
-                            or stat.S_ISLNK(member.external_attr >> 16)):
+                            or stat.S_ISLNK(mode)):
                         raise ValueError('unsafe wrapper JAR entry')
+                    # A valid CRC and Java class signature cannot establish
+                    # that a member represents an ordinary file. Reject Unix
+                    # device, FIFO and socket types as well as file/dir
+                    # disagreements before decompressing any ZIP entry.
+                    if member.create_system == 3:
+                        kind = stat.S_IFMT(mode)
+                        if (kind not in (0, stat.S_IFREG, stat.S_IFDIR)
+                                or (kind == stat.S_IFDIR and not name.endswith('/'))
+                                or (kind == stat.S_IFREG and name.endswith('/'))):
+                            raise ValueError('unsafe wrapper JAR entry type')
                 if (archive.testzip() is not None
                         or not archive.read(WRAPPER_MAIN).startswith(b'\xca\xfe\xba\xbe')):
                     raise ValueError('invalid wrapper')

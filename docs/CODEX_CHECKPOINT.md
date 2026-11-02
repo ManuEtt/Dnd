@@ -303,3 +303,103 @@ Ein neuer Flutter-Regressionstest schützt vor einer Story-Provider-Antwort, die
 - **Nächster konkreter Schritt:** vollständige GitHub-CI des neuen
   Integrations-HEAD abschließen, Konflikte nochmals prüfen; kein
   ungeprüfter Merge und keine ungeprüfte Altbranch-Bereinigung.
+
+---
+
+## 02.11.2026 – Chat D: Unix-ZIP-Dateitypen im Gradle-Wrapper-JAR
+
+- **Ausgangs-main:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`.
+- **Branch:** `fix/chat-d/wrapper-jar-member-types-20261102`.
+- **Code-Commit:** `778873d148e5170482b721a3f93b11ce93bcb41c`.
+- **Test-Commit:** `b150cbb701912a616c3db497c128981768dd5e51`.
+- **IMPLEMENTIERT:** `scripts/verify_project.py` prüft für Unix-ZIP-
+  Mitglieder `S_IFMT` vor Dekomprimierung. Nur nicht spezifizierte
+  Typen, reguläre Dateien und Verzeichnisse sind zulässig; Typ und
+  abschließendes `/` müssen zueinander passen. Bestehender
+  Symlink-/Unicode-/Pfad-/CRC-/Größenschutz unverändert.
+- **REGRESSIONEN:** Vier Tests in
+  `scripts/tests/test_verify_project.py`, davon drei negative
+  Metadatenfälle mit explizitem Verbot einer vorzeitigen CRC-
+  Dekomprimierung und ein positiver Unix-Datei-/Verzeichnisfall.
+- **GETESTET:** Die zuvor integrierte main-CI
+  https://github.com/ManuEtt/Dnd/actions/runs/41395163971
+  war auf dem Ausgangs-main vollständig erfolgreich.
+- **NICHT GETESTET:** neuer Branch/PR auf finalem HEAD bis zur
+  neuen GitHub-CI, reales Android-/SAF-/TalkBack-Gerät.
+- **BLOCKIERT:** volle PR-CI und finale Prüfung neuer PRs
+  auf Dateikonflikte; kein ungeprüfter Merge.
+- **Parallele Arbeit:** Alle 19 zum Paketbeginn offenen PRs
+  geprüft; keiner ändert die beiden Python-Zieldateien.
+  README/zentralen Checkpoint beim späteren Merge mit A/B/C
+  verlustfrei konsolidieren.
+- **Migrationen:** Keine, unveränderte Gradle-JAR-Binärdatei,
+  unveränderte SQLite-/JSON-/Saveformate, Android-Berechtigungen,
+  App-Version und regeltechnische Module.
+- **Nächster konkreter Schritt:** Vollständige PR-CI auf
+  finalem HEAD prüfen, dann konfliktfrei Review freigeben.
+
+
+---
+
+## 02.11.2026 – Chat D: APK-ZIP-Pfadkollisionen vermeiden
+
+- **Ausgangs-main:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`.
+- **Bestätigte Main-CI:** #41395163971 und #41396647217,
+  beide `completed/success` auf obigem SHA.
+- **Branch:** `fix/chat-d/apk-unicode-path-collisions-20261102`.
+- **PR:** https://github.com/ManuEtt/Dnd/pull/476 (Draft bis vollständiger CI).
+- **Code-Commit:** `dc2055bfb4cad572b822672dd4f6dadd6bc3b3b3`.
+- **Test-Commit:** `9de29379de5114cf6c1519e41123d60001853ab8`.
+- **IMPLEMENTIERT:** APK-ZIP-Metadaten verweigern
+  kollidierende Pfade bei Casefold und kanonischer NFC-Unicode-Normalisierung
+  einschließlich indirekt betroffener Unterverzeichnisse,
+  vor CRC/Entpacken und Release-Veröffentlichung.
+- **Tests:** fünf neue Python-Regressionen für Casefold/NFC/
+  Verzeichniskollisionen, zulässige internationale Namen und
+  Bestandsschutz vorheriger Release-Artefakte.
+- **GETESTET:** erfolgreiche Baseline-Main-CI auf Ausgangs-Commit.
+  Neue PR-Python-/Flutter-/Android-Gesamt-CI noch offen.
+- **NICHT GETESTET:** finale CI auf diesem Branch sowie reale Android-Geräteabnahme.
+- **Parallelität:** alle bei Arbeitsbeginn 19 offenen PRs auf die
+  beiden Python-Zieldateien geprüft; keine technische Überschneidung.
+  README und CODEX_CHECKPOINT bleiben gemeinsame Dokumentations-Hotspots.
+- **Migration:** keine (SQLite, JSON, Save-Schema, Version,
+  Berechtigungen, Story- oder Regelwerk unverändert).
+- **BLOCKIERT:** Abschluss der CI auf finalem Branch-HEAD.
+- **Nächster Schritt:** eigenen vollständigen GitHub-Actions-Lauf
+  abnehmen; bei Fehlern den eigenen PR korrigieren und ohne
+  erfolgreiche Gesamtabnahme nicht mergen.
+
+---
+
+## 02.11.2026 – Chat D: gemeinsame APK-/Gradle-JAR-Archivprüfung
+
+- **Basis-main:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`;
+  Main-CI #41395163971 und #41396647217 erfolgreich.
+- **Neuer Integrationsbranch:** `chore/chat-d/integrate-apk-wrapper-guards-20261102`.
+- **Quell-PR #475:** `3c8bc937358c4a95e4fd75094c0e038b5638c379`;
+  `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`
+  schützen den Gradle-Wrapper vor inkonsistenten Unix-ZIP-Dateitypen.
+- **Quell-PR #476:** `cf12727bcaf493f5fb03775b67dbd423bd56618c`;
+  `scripts/prepare_alpha_release.py`,
+  `scripts/tests/test_prepare_alpha_release.py` schützen APKs vor
+  Unicode-NFC-/Casefold-Pfadpräfixkollisionen.
+- **IMPLEMENTIERT:** Die vier technischen Dateien werden mit
+  unveränderten Quell-Blob-SHAs übernommen. README, zentraler und
+  Chat-D-Checkpoint erhalten **beide vollständigen Anhänge**.
+- **GETESTET:** beide Quell-PRs haben bereits die Python-Paket-/
+  Strukturtests, Backend-Tests, Flutter-Analyse und gezielte Dialogtests
+  in GitHub Actions bestanden.
+- **NICHT GETESTET:** vollständige Einzel-CI der beiden finalen Heads
+  und neue kombinierte GitHub-CI auf finalem Integrations-HEAD;
+  reale Android-/SAF-/TalkBack-Geräteabnahme.
+- **BLOCKIERT:** erfolgreiche Einzel- und kombinierte Gesamttests,
+  dann erneute Main-/PR-Konfliktkontrolle vor jedem Merge.
+- **Parallelität:** Fachdateien aus #475 und #476 sind disjunkt;
+  andere offene PRs arbeiten an anderen Fachmodulen. README/CODEX
+  müssen bei späteren Integrationen weiterer Chats erhalten bleiben.
+- **Migration:** keine neuen SQLite-/JSON-/Spielstand- oder
+  Android-App-Versions-/Berechtigungsänderungen.
+- **Nächster Schritt:** Final-HEAD-CI auf beiden Quell-PRs und der
+  Integration kontrollieren, bei Fehlern gesondert korrigieren.
+  Keine automatische Main-Integration und kein Branchlöschen.

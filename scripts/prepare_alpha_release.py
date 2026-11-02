@@ -71,6 +71,11 @@ def validate_arm64_apk(apk: Path) -> None:
         names = [entry.filename for entry in entries]
         if len(names) != len(set(names)):
             raise ValueError('Die ARM64-APK enthält doppelte ZIP-Einträge.')
+        # Keep the spelling of every implicit/explicit directory prefix.
+        # Names that differ only by casing or NFC Unicode composition could
+        # overwrite each other on common extraction targets. Check metadata
+        # before ZIP CRC work, without rewriting any APK resource names.
+        canonical_prefixes: dict[str, str] = {}
         for entry in entries:
             name = entry.filename
             parts = name.rstrip('/').split('/')
@@ -80,6 +85,14 @@ def validate_arm64_apk(apk: Path) -> None:
                     or any(unicodedata.category(char) in {'Cc', 'Cf', 'Cs', 'Zl', 'Zp'}
                            for char in name)):
                 raise ValueError('Die ARM64-APK enthält unsichere ZIP-Pfade.')
+            canonical_parts: list[str] = []
+            for index, part in enumerate(parts):
+                canonical_parts.append(unicodedata.normalize('NFC', part).casefold())
+                canonical_path = '/'.join(canonical_parts)
+                original_path = '/'.join(parts[:index + 1])
+                previous = canonical_prefixes.setdefault(canonical_path, original_path)
+                if previous != original_path:
+                    raise ValueError('Die ARM64-APK enthält kollidierende ZIP-Pfade.')
             mode = entry.external_attr >> 16
             if stat.S_ISLNK(mode):
                 raise ValueError('Die ARM64-APK enthält symbolische ZIP-Links.')
