@@ -42,9 +42,8 @@ Future<void> _tapVisible(WidgetTester tester, Finder finder) async {
         matching: find.byType(Scrollable),
       )
       .first;
-  for (var attempt = 0;
-      attempt < 14 && finder.hitTestable().evaluate().isEmpty;
-      attempt++) {
+  for (var attempt = 0; attempt < 14; attempt++) {
+    if (finder.hitTestable().evaluate().isNotEmpty) break;
     await tester.drag(scrollable, const Offset(0, -140));
     await tester.pumpAndSettle();
   }
