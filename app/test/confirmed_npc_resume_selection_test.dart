@@ -54,8 +54,7 @@ Campaign _campaign({
 void main() {
   sqfliteFfiInit();
 
-  test('relevance is latest confirmed date, then saved order, never name',
-      () {
+  test('relevance is latest confirmed date, then saved order, never name', () {
     final date = DateTime.utc(2026, 11, 1);
     final campaign = _campaign(
       revision: 8,
@@ -70,12 +69,7 @@ void main() {
         _note('a-new', 'mira', 'Neuere Nachricht'),
         _note('b-new', 'tarek', 'Tarek neu', at: _time),
         _note('c-new', 'elin', 'Elin neu', at: _time),
-        _note(
-          'd-old',
-          'raja',
-          'Raja alt',
-          at: DateTime.utc(2026, 10, 30),
-        ),
+        _note('d-old', 'raja', 'Raja alt', at: DateTime.utc(2026, 10, 30)),
       ],
     );
     final before = jsonEncode(campaign.toJson());
@@ -101,15 +95,10 @@ void main() {
     expect(jsonEncode(campaign.toJson()), before);
   });
 
-  test('visually equal names remain separate by ID and safe one-line text',
-      () {
+  test('visually equal names remain separate by ID and safe one-line text', () {
     final campaign = _campaign(
       npcs: const [
-        WorldNpc(
-          id: 'mira-a',
-          name: 'Mira',
-          relationship: 'freundlich',
-        ),
+        WorldNpc(id: 'mira-a', name: 'Mira', relationship: 'freundlich'),
         WorldNpc(
           id: 'mira-b',
           name: 'Mi\u200bra',
@@ -130,10 +119,7 @@ void main() {
       expectedRevision: 0,
     );
 
-    expect(selected.entries.map((e) => e.npcId).toList(), [
-      'mira-b',
-      'mira-a',
-    ]);
+    expect(selected.entries.map((e) => e.npcId).toList(), ['mira-b', 'mira-a']);
     expect(selected.entries.first.name, 'Mira');
     expect(selected.playerOverview, contains('NPC-ID: mira-b'));
     expect(selected.playerOverview, contains('NPC-ID: mira-a'));
@@ -177,8 +163,7 @@ void main() {
     expect(selected.playerOverview, isNot(contains('Doppelter NPC')));
   });
 
-  test('bounded Unicode truncation, immutable entries and invalid limits',
-      () {
+  test('bounded Unicode truncation, immutable entries and invalid limits', () {
     final dragons = List.filled(240, '🐉').join();
     final notes = [
       for (var i = 0; i < 10; i++)
@@ -209,14 +194,8 @@ void main() {
     expect(selected.entries.single.recentNotes, hasLength(3));
     expect(selected.playerOverview, contains('…'));
     expect(selected.playerOverview.length, lessThanOrEqualTo(2400));
-    expect(
-      selected.playerOverview.runes,
-      isNot(contains(0xfffd)),
-    );
-    expect(
-      () => selected.entries.clear(),
-      throwsUnsupportedError,
-    );
+    expect(selected.playerOverview.runes, isNot(contains(0xfffd)));
+    expect(() => selected.entries.clear(), throwsUnsupportedError);
     expect(
       () => selected.entries.single.recentNotes.add('Gefälscht'),
       throwsUnsupportedError,
@@ -240,16 +219,12 @@ void main() {
       );
     }
     expect(
-      () => ConfirmedNpcResumeSelector.read(
-        campaign,
-        expectedRevision: 1,
-      ),
+      () => ConfirmedNpcResumeSelector.read(campaign, expectedRevision: 1),
       throwsFormatException,
     );
   });
 
-  test('same-revision edits beyond truncated text and stale sessions fail',
-      () {
+  test('same-revision edits beyond truncated text and stale sessions fail', () {
     final long = List.filled(180, 'W').join();
     final original = _campaign(
       notes: [_note('note-a', 'mira', 'Bestätigt: ${long}A')],
@@ -264,17 +239,17 @@ void main() {
     );
 
     selected.requireCurrent(original);
-    expect(
-      () => selected.requireCurrent(edited),
-      throwsFormatException,
-    );
+    expect(() => selected.requireCurrent(edited), throwsFormatException);
     expect(
       () => selected.requireCurrent(original.copyWith(revision: 1)),
       throwsFormatException,
     );
     expect(
       () => selected.requireCurrent(
-        _campaign(sessionId: 'new-session', notes: original.npcRelationshipNotes),
+        _campaign(
+          sessionId: 'new-session',
+          notes: original.npcRelationshipNotes,
+        ),
       ),
       throwsFormatException,
     );
@@ -306,59 +281,61 @@ void main() {
     expect(jsonEncode(restored.toJson()), before);
   });
 
-  test('SQLite restart preserves recency and raw history without mutation',
-      () async {
-    final folder = await Directory.systemTemp.createTemp('npc-resume-');
-    final path = paths.join(folder.path, 'campaign.sqlite');
-    var repository = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: path,
-    );
-    try {
-      final original = _campaign(
-        npcs: const [
-          WorldNpc(id: 'mira', name: 'Mira'),
-          WorldNpc(id: 'tarek', name: 'Tarek'),
-          WorldNpc(id: 'other', name: 'Mira'),
-        ],
-        notes: [
-          _note('a', 'mira', 'Mira kennt den Brunnen.'),
-          _note('b', 'tarek', 'Tarek kennt den Hafen.'),
-          _note('c', 'other', 'Die zweite Mira kennt die Karte.'),
-        ],
-      );
-      await repository.saveCampaign(original);
-      await repository.close();
-      repository = await SqliteCampaignRepository.open(
+  test(
+    'SQLite restart preserves recency and raw history without mutation',
+    () async {
+      final folder = await Directory.systemTemp.createTemp('npc-resume-');
+      final path = paths.join(folder.path, 'campaign.sqlite');
+      var repository = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: path,
       );
-      final restored = (await repository.getCampaign(original.id))!;
-      final before = jsonEncode(restored.toJson());
-      final selected = ConfirmedNpcResumeSelector.read(
-        restored,
-        expectedRevision: restored.revision,
-        maxNpcs: 2,
-      );
+      try {
+        final original = _campaign(
+          npcs: const [
+            WorldNpc(id: 'mira', name: 'Mira'),
+            WorldNpc(id: 'tarek', name: 'Tarek'),
+            WorldNpc(id: 'other', name: 'Mira'),
+          ],
+          notes: [
+            _note('a', 'mira', 'Mira kennt den Brunnen.'),
+            _note('b', 'tarek', 'Tarek kennt den Hafen.'),
+            _note('c', 'other', 'Die zweite Mira kennt die Karte.'),
+          ],
+        );
+        await repository.saveCampaign(original);
+        await repository.close();
+        repository = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: path,
+        );
+        final restored = (await repository.getCampaign(original.id))!;
+        final before = jsonEncode(restored.toJson());
+        final selected = ConfirmedNpcResumeSelector.read(
+          restored,
+          expectedRevision: restored.revision,
+          maxNpcs: 2,
+        );
 
-      expect(selected.entries.map((e) => e.npcId).toList(), [
-        'other',
-        'tarek',
-      ]);
-      expect(selected.entries.first.name, 'Mira');
-      expect(selected.playerOverview, contains('NPC-ID: other'));
-      expect(selected.playerOverview, isNot(contains('Brunnen')));
-      selected.requireCurrent(restored);
-      expect(restored.revision, 0);
-      expect(restored.hero.toJson(), original.hero.toJson());
-      expect(jsonEncode(restored.toJson()), before);
-      expect(
-        (await repository.reconstructCampaign(restored.id))!.toJson(),
-        restored.toJson(),
-      );
-    } finally {
-      await repository.close();
-      await folder.delete(recursive: true);
-    }
-  });
+        expect(selected.entries.map((e) => e.npcId).toList(), [
+          'other',
+          'tarek',
+        ]);
+        expect(selected.entries.first.name, 'Mira');
+        expect(selected.playerOverview, contains('NPC-ID: other'));
+        expect(selected.playerOverview, isNot(contains('Brunnen')));
+        selected.requireCurrent(restored);
+        expect(restored.revision, 0);
+        expect(restored.hero.toJson(), original.hero.toJson());
+        expect(jsonEncode(restored.toJson()), before);
+        expect(
+          (await repository.reconstructCampaign(restored.id))!.toJson(),
+          restored.toJson(),
+        );
+      } finally {
+        await repository.close();
+        await folder.delete(recursive: true);
+      }
+    },
+  );
 }
