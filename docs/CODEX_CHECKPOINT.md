@@ -1090,6 +1090,7 @@ UI-only: `app/lib/ui/hero_shield_reaction_dialog.dart` nutzt jetzt `AlertDialog(
 ## Chat B – KI-Erzähltext gegen ältere Unsichtbarzeichen absichern (02.11.2026)
 
 **Branch:** `fix/chat-b/story-provider-invisible-unicode-20261102`.
+**Pull Request:** [#513](https://github.com/ManuEtt/Dnd/pull/513) (Draft).
 **Ausgangs-main:** `a2f22eaceb344aaced12d0ad548b813aa44d544f`.
 **Problem:** Die vorhandene Provider-Validierung blockierte viele C0/C1-
 und Bidi-Zeichen, akzeptierte aber U+00AD, U+034F, U+180E und U+206A–U+206F.
