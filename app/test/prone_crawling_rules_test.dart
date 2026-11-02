@@ -146,11 +146,8 @@ void main() {
       throwsFormatException,
     );
     expect(
-      () => GameEngine().crawl(
-        legacy,
-        distanceFeet: 5,
-        difficultTerrain: false,
-      ),
+      () =>
+          GameEngine().crawl(legacy, distanceFeet: 5, difficultTerrain: false),
       throwsFormatException,
     );
     expect(legacy.toJson(), snapshot);
