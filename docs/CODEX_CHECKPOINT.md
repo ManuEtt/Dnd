@@ -1,6 +1,6 @@
 ## 02.11.2026 – Chat C: Sanfter Fall – erneute Zustimmung bei editiertem Schaden
 
-- **Main-Basis:** `516bc14e06cb02e7035a6adfb8e2d21e54253184`, **Branch:** `feat/chat-c/slow-fall-ime-consent-20261102`; PR folgt separat.
+- **Main-Basis:** `516bc14e06cb02e7035a6adfb8e2d21e54253184`, **Branch:** `feat/chat-c/slow-fall-ime-consent-20261102`; **PR:** [#509](https://github.com/ManuEtt/Dnd/pull/509) (Draft).
 - `MonkSlowFallDialog` nutzt `AlertDialog.scrollable` und schmale Insets für Android-200-%-Schrift/IME.
 - Editieren des Schadens widerruft die beiden vorherigen Checkbox-Zustimmungen. Der Dialog gibt weiterhin nur `ConfirmedSlowFallChoice` zurück, ohne selbst HP/Reaktion zu ändern.
 - Vier Widgettests ergänzt (320/360 dp, 200 %, 220 dp IME, Abbruch, Reaktionssperre, Neuprüfung, keine Heldenmutation).
