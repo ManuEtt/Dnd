@@ -329,3 +329,26 @@ PR-Commits erforderlich. Dieser Abschnitt dokumentiert den
 Integrationsvorbereitungsstand; er behauptet noch keine erfolgreiche
 Gesamt-CI. Keine neuen SQLite-/JSON-/Spielstands-/Appversionsänderungen,
 kein automatischer Merge oder Löschen von Branches.
+
+## Chat B – bestätigte NPC-Beziehungen für die Kampagnenwiederaufnahme (02.11.2026)
+
+[Draft-PR #489](https://github.com/ManuEtt/Dnd/pull/489) ergänzt einen
+revisionsgebundenen, schreibgeschützten `ConfirmedNpcResumeSelector`.
+Aus bestätigten lokalen `npcRelationshipNotes` werden höchstens drei NPCs
+nach neuestem Notizzeitpunkt, gespeicherter Reihenfolge und eindeutiger
+NPC-ID ausgewählt. Jede Beziehung behält ihre explizite sichere NPC-ID;
+unsichere oder doppelte NPC-/Notiz-IDs und unbestätigte KI-Szenen zählen
+nicht als Erinnerungsquelle. Je NPC sind maximal drei bestätigte Notizen
+zulässig, Unicode-Ausgaben werden auf Zeichenlimits und insgesamt 2.400
+UTF-16-Einheiten begrenzt. Der Snapshot ist unveränderlich und kann auch
+bei gleicher Revision gegen Änderungen der ursprünglichen NPC-Chronik
+revalidiert werden.
+
+Sieben neue Regressionen prüfen Reihenfolge, Namensdubletten, unsichere
+IDs, Unicode-/Emoji-Grenzen, veraltete Kontexte, ältere JSON ohne
+NPC-Notizen und den tatsächlichen SQLite-Neustart. Die Auswahl ist ein
+eigenständiger Storybaustein, noch nicht an UI oder Backend angeschlossen.
+Keine Änderungen an Regeln, Held, Inventar, Quests, SQLite 3,
+äußerem JSON 1 oder Version. Die vollständige CI auf dem finalen
+PR-Commit ist bei dieser Dokumentation noch offen.
+
