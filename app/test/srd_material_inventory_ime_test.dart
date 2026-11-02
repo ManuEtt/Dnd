@@ -113,7 +113,10 @@ void main() {
       final dialog = tester.widget<AlertDialog>(find.byType(AlertDialog));
       expect(dialog.scrollable, isTrue);
       expect(_key('setup-error'), findsOneWidget);
-      expect(tester.widget<FantasyTextButton>(_key('confirm')).onPressed, isNull);
+      expect(
+        tester.widget<FantasyTextButton>(_key('confirm')).onPressed,
+        isNull,
+      );
       expect(
         find.byWidgetPredicate((widget) {
           if (widget is! Semantics) return false;
