@@ -1,3 +1,7 @@
+## 02.11.2026 – Chat C: Kreaturen-Erfassungsdialog bei 200 % Schrift/IME (PR #469)
+
+[PR #469](https://github.com/ManuEtt/Dnd/pull/469) auf Branch `feat/chat-c/area-creature-ime-20261102` gegen `main` `5a88834c98f5aca40395088c20c7e1dc5b587868` ersetzt den verschachtelten vertikalen Inhalt von `AreaCreatureRegistrationDialog` durch ein gesamthaft scrollbares `AlertDialog(scrollable: true)`. Fehler erhalten `Semantics(liveRegion:true)`. Vier neue Widgettests für 320/360 dp, 200 % Schrift, 220 dp IME prüfen fehlende Bestätigung, neutrale Abbruchaktion, gültige Registrierung sowie Null-TP und nachfolgende Korrektur. **Noch keine grüne finale PR-CI behaupten; Draft bis vollständiger CI-Abnahme.** Keine SRD-/Domain-, Speicher-, Datenformat- oder Versionsänderungen; echte Android-Gerätetests/TalkBack offen. Vorpaket [PR #465](https://github.com/ManuEtt/Dnd/pull/465) ist auf `3cd78d0881e3b0093eefb96342f7fb9b165292db` vollständig grün und bereit zur Review, nicht gemergt.
+
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
