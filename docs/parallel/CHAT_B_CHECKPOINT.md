@@ -494,6 +494,7 @@ Beide vollständigen Quellnachträge sind originalgetreu enthalten. Die neue Ges
 
 - **Ausgangs-main:** `a2f22eaceb344aaced12d0ad548b813aa44d544f`.
 - **Branch:** `fix/chat-b/story-provider-invisible-unicode-20261102`.
+- **Pull Request:** [#513](https://github.com/ManuEtt/Dnd/pull/513) (Draft).
 - **Problem:** Weiches Trennzeichen U+00AD, Combining Grapheme Joiner U+034F, U+180E und veraltete bidi-Steuerzeichen U+206A–U+206F bestanden bislang Flutter- und Backend-Story-Validierung. Sie können in Bestätigungs-/Erzähltexten unsichtbare Bedeutungsunterschiede vortäuschen.
 - **Implementiert:** `app/lib/story/ai_story.dart` und `backend/src/story.ts` synchron auf exakt zusätzliche Unicode-Sperren erweitert, ohne legitime Mehrzeilen-Texte und Emoji-Varianten zu verbieten.
 - **Tests angelegt:** `app/test/ai_story_invisible_unicode_test.dart` und `backend/test/story-legacy-format-guard.test.ts`, jeweils positiven Unicode-/Emoji-Proben und Negativfällen für Geschichten, Threads, NPCs, Orte, Spielzüge und Abenteuerangebote.
