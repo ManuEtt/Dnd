@@ -1155,6 +1155,7 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Basis-Main-SHA:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`.
 - **Main-CI:** #41395163971 und #41396647217 erfolgreich.
 - **Branch:** `fix/chat-d/apk-unicode-path-collisions-20261102`.
+- **Pull Request:** https://github.com/ManuEtt/Dnd/pull/476 (Draft bis final-grüner CI).
 - **Code-Commit:** `dc2055bfb4cad572b822672dd4f6dadd6bc3b3b3`.
 - **Test-Commit:** `9de29379de5114cf6c1519e41123d60001853ab8`.
 - **Problem:** Die Alpha-APK-ZIP-Prüfung lehnte exakte Duplikate
