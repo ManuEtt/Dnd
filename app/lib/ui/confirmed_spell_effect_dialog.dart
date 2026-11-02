@@ -199,20 +199,32 @@ class _ConfirmedSpellEffectDialogState
                 items: [
                   const DropdownMenuItem<int?>(
                     value: null,
-                    child: Text('Nur ausdrückliche Beendigung', overflow: TextOverflow.ellipsis),
+                    child: Text(
+                      'Nur ausdrückliche Beendigung',
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   if (_ownTurn) ...const [
                     DropdownMenuItem<int?>(
                       value: 1,
-                      child: Text('Aktuelles eigenes Zugende', overflow: TextOverflow.ellipsis),
+                      child: Text(
+                        'Aktuelles eigenes Zugende',
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     DropdownMenuItem<int?>(
                       value: 3,
-                      child: Text('Nach 3 eigenen Zugenden', overflow: TextOverflow.ellipsis),
+                      child: Text(
+                        'Nach 3 eigenen Zugenden',
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     DropdownMenuItem<int?>(
                       value: 10,
-                      child: Text('Nach 10 eigenen Zugenden', overflow: TextOverflow.ellipsis),
+                      child: Text(
+                        'Nach 10 eigenen Zugenden',
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ],
                 ],
@@ -224,8 +236,7 @@ class _ConfirmedSpellEffectDialogState
                   contentPadding: EdgeInsets.zero,
                   title: const Text('An aktive Konzentration binden'),
                   value: _bound,
-                  onChanged: (value) =>
-                      setState(() => _bound = value ?? false),
+                  onChanged: (value) => setState(() => _bound = value ?? false),
                 ),
               const SizedBox(height: 8),
               const Text(
