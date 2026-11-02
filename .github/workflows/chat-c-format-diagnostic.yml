@@ -1,0 +1,21 @@
+name: Chat C Dart-Format Diagnose
+on:
+  push:
+    branches:
+      - feat/chat-c/sending-dialog-ime-20261102
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Offizielles Dart-Format und Korrekturdiff
+        run: |
+          cd app
+          dart format lib/ui/sending_attempt_dialog.dart test/sending_attempt_ime_test.dart
+          git diff -- lib/ui/sending_attempt_dialog.dart test/sending_attempt_ime_test.dart
