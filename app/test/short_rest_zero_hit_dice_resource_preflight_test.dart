@@ -33,9 +33,8 @@ void main() {
     final random = _CountingRandom();
     final engine = newEngine(random);
     final base = engine.createDemo();
-    final forged = base.copyWith(
-      hero: base.hero.copyWith(spentPactSlots: 1),
-    );
+    final forgedHero = base.hero.copyWith(spentPactSlots: 1);
+    final forged = base.copyWith(hero: forgedHero);
     final original = jsonEncode(forged.hero.toJson());
     final beforeRolls = random.calls;
 
@@ -74,11 +73,10 @@ void main() {
     final random = _CountingRandom();
     final engine = newEngine(random);
     final base = engine.createDemo();
-    final forged = base.copyWith(
-      hero: base.hero.copyWith(
-        spentClassResources: const {'rage': 1},
-      ),
+    final forgedHero = base.hero.copyWith(
+      spentClassResources: const {'rage': 1},
     );
+    final forged = base.copyWith(hero: forgedHero);
     final original = jsonEncode(forged.hero.toJson());
 
     final update = engine.act(forged, 'Ich mache eine kurze Rast.');
@@ -95,10 +93,8 @@ void main() {
     expect(RestRules.validateShortRestResources(hero), {'d10': 1});
     final before = jsonEncode(hero.toJson());
 
-    final update = engine.act(
-      base.copyWith(hero: hero),
-      'Ich mache eine kurze Rast.',
-    );
+    final campaign = base.copyWith(hero: hero);
+    final update = engine.act(campaign, 'Ich mache eine kurze Rast.');
     expect(update.events.single.type, 'character.shortRest');
     expect(update.events.single.payload['count'], 0);
     expect(update.events.single.payload['rolls'], isEmpty);
@@ -121,10 +117,8 @@ void main() {
     expect(RestRules.validateShortRestResources(hero), {'d8': 0});
     final before = jsonEncode(hero.toJson());
 
-    final update = engine.act(
-      base.copyWith(hero: hero),
-      'Ich mache eine kurze Rast.',
-    );
+    final campaign = base.copyWith(hero: hero);
+    final update = engine.act(campaign, 'Ich mache eine kurze Rast.');
     expect(update.events.single.type, 'character.shortRest');
     expect(update.events.single.payload['count'], 0);
     expect(update.events.single.payload['rolls'], isEmpty);
