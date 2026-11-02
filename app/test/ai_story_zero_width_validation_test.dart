@@ -52,9 +52,7 @@ Campaign _campaign() => Campaign(
       description: 'Untersuche die Anleger.',
     ),
   ],
-  npcs: const [
-    WorldNpc(id: 'tela', name: 'Tela', relationship: 'neutral'),
-  ],
+  npcs: const [WorldNpc(id: 'tela', name: 'Tela', relationship: 'neutral')],
 );
 
 Map<String, dynamic> _step() => {
