@@ -1,3 +1,31 @@
+## Chat D – UTF-8-Bytegrenze beim JSON-Import (02.11.2026)
+
+- **Basis-main:** `84437e4e92d735e179bb2585427b46a10451951d`.
+- **Branch:** `fix/chat-d/utf8-import-size-limit-20261102`.
+- **Code-/Test-HEAD vor Dokumentation:** `f3359b826f65027979b6e9af09640ff304a1188f`.
+- **Pull Request:** [#502](https://github.com/ManuEtt/Dnd/pull/502).
+- **Problem:** Importgrenze von 10 MiB prüfte UTF-16-Codeeinheiten statt
+  tatsächlicher UTF-8-Bytes; große Unicode-JSONs konnten durchrutschen.
+- **Änderung:** Begrenzung auf maximal 10 MiB UTF-8 vor JSON-Parsing;
+  schneller `String.length`-Vorfilter erhalten, identische Fehlermeldung.
+- **Regressionen:** `app/test/storage_repository_test.dart` schützt
+  oversized Unicode + erhaltene alte Kampagne/Revision sowie erlaubte
+  Unicode-Importe einschließlich Emoji.
+- **Betroffen:** `app/lib/data/sqlite_campaign_repository.dart`,
+  `app/test/storage_repository_test.dart` und diese drei Dokumentationen.
+- **GETESTET:** GitHub-Dateiupdates/PR-Erstellung bestätigt;
+  keine lokale Flutter-Ausführung, keine CI für den finalen Stand behauptet.
+- **NICHT GETESTET:** gezielte Flutter-SQLite-Tests, vollständige
+  Flutter-/Backend-/Python-/Android-CI und Realgerät.
+- **Kompatibilität:** SQLite 3, JSON 1, alte Spielstände, Exportformat und
+  Versionsnummer unverändert; keine Migration.
+- **Koordination:** weitere offene A/B/C/D-PRs ändern andere Fachdateien;
+  README-/Checkpoint-Änderungen beim Merge additiv konsolidieren.
+- **Nächster Schritt:** vollständige PR-CI auf finalem HEAD auswerten und
+  ausschließlich nach erfolgreichem Lauf den Integrationsreview beginnen.
+
+---
+
 # Chat A – SRD Metamagie: versionierte Wahl und Ersatzregeln (02.11.2026)
 
 **Basis-main:** `885580202caeafc9787538b6dc1c833b3190a529`.
