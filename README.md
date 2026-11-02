@@ -727,3 +727,21 @@ Die strikt konservative Metadatenprüfung für ausgelöste Zauber-Reaktionen/-Bo
 ### Chat C: Sending-Dialog mit großer Android-Schrift und Tastatur (02.11.2026)
 
 Ein eigenständiger Chat-C-Entwicklungsbranch `feat/chat-c/sending-dialog-ime-20261102` macht den Sending-Versuch als ganzen `AlertDialog` scrollbar. Bei mindestens 180 % Schrift bleiben die Bestätigungen visuell kurz und für TalkBack vollständig benannt. Neue Widgettests decken 320/360 dp, 200 % Schrift und ein simuliertes 220-dp-Tastatur-Inset ab, darunter Abbruch, bewusste Zustimmung, deren Widerruf nach Eingabeänderung und unveränderte Helden-JSON-Daten. Der Dialog bestätigt nur eine Vorschau; keine Spielregel-, Spielstands-, SQLite-, JSON- oder Versionsänderung. Ausführungsergebnisse und Integrationsstatus stehen im eigenen [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md); keine Freigabe ohne finale GitHub-CI und Review.
+
+ 
+---
+
+## Chat B – unsichtbare ältere Unicode-Formatzeichen in KI-Storys (02.11.2026)
+
+Eigenständiges Sicherheits-/Kompatibilitätspaket auf
+`fix/chat-b/story-provider-invisible-unicode-20261102`:
+Flutter-`AiStoryPlan`/`AiStoryStep` und Fastify-`parseStoryPlan`/
+`parseStoryTurn`/`parseAdventureDraft` verwerfen zusätzlich
+U+00AD (weiches Trennzeichen), U+034F (Combining Grapheme Joiner),
+U+180E und die veralteten bidi-Steuerzeichen U+206A–U+206F.
+Frühere Unicode-Sperren bleiben bestehen, echte mehrzeilige deutsche
+Erzählungen, Tabs, Emoji und Variation Selector U+FE0F bleiben zulässig.
+Neue Flutter- und Backend-Regressionstests schützen Plan-, NPC-, Orts-,
+Handlungs- und Abenteuerfelder. Keine Änderung an Regeln, bestätigten
+Spielständen, JSON-/SQLite-Schema oder App-Version. Vollständige CI und
+Gerätetest sind am finalen PR-HEAD gesondert nachzuweisen.
