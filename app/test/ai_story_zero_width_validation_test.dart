@@ -102,11 +102,11 @@ void main() {
         'goal',
       ]) {
         final plan = _plan();
-        plan[field] = 'Hafen' + marker + 'stadt';
+        plan[field] = 'Hafen${marker}stadt';
         expect(
           () => AiStoryPlan.fromJson(plan),
           throwsFormatException,
-          reason: 'Field ' + field + ' must reject invisible joiner',
+          reason: 'Field $field must reject invisible joiner',
         );
       }
     });
@@ -122,12 +122,12 @@ void main() {
           final plan = _plan();
           final items = plan[entry.key] as List;
           final changed = Map<String, dynamic>.from(items.first as Map);
-          changed[field] = 'Mira' + marker + 'Name';
+          changed[field] = 'Mira${marker}Name';
           plan[entry.key] = [changed, ...items.skip(1)];
           expect(
             () => AiStoryPlan.fromJson(plan),
             throwsFormatException,
-            reason: 'Field ' + entry.key + '.' + field + ' must be safe',
+            reason: 'Field ${entry.key}.$field must be safe',
           );
         }
       }
@@ -137,7 +137,7 @@ void main() {
       final campaign = _campaign();
       final before = campaign.toJson();
       final invalidNarration = _step();
-      invalidNarration['narration'] = 'Die' + marker + 'Fährte';
+      invalidNarration['narration'] = 'Die${marker}Fährte';
       expect(
         () => AiStoryStep.fromJson(invalidNarration, campaign),
         throwsFormatException,
@@ -153,12 +153,12 @@ void main() {
           final step = _step();
           final items = step[entry.key] as List;
           final changed = Map<String, dynamic>.from(items.first as Map);
-          changed[field] = 'Küste' + marker + 'Hafen';
+          changed[field] = 'Küste${marker}Hafen';
           step[entry.key] = [changed];
           expect(
             () => AiStoryStep.fromJson(step, campaign),
             throwsFormatException,
-            reason: 'Field ' + entry.key + '.' + field + ' must be safe',
+            reason: 'Field ${entry.key}.$field must be safe',
           );
         }
       }
