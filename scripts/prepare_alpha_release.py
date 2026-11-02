@@ -44,7 +44,26 @@ def read_version(root: Path) -> tuple[str, str]:
     return f'{major}.{minor}.{patch}', build
 
 
+
+def _has_symlink_component(path: Path) -> bool:
+    """Reject an APK reached through a linked file or parent directory.
+
+    Path.resolve() follows links and would erase that evidence before release
+    validation. Walk the supplied spelling without reading the target.
+    """
+    current = path.absolute()
+    while True:
+        if current.is_symlink():
+            return True
+        parent = current.parent
+        if parent == current:
+            return False
+        current = parent
+
+
 def validate_arm64_apk(apk: Path) -> None:
+    if _has_symlink_component(apk):
+        raise ValueError('Die ARM64-APK darf keine symbolischen Pfadlinks verwenden.')
     if not apk.is_file() or apk.stat().st_size == 0:
         raise ValueError('Keine gebaute ARM64-APK vorhanden: ' + str(apk))
     if apk.stat().st_size > MAX_ALPHA_APK_BYTES:
@@ -143,7 +162,9 @@ def prepare_release(root: Path, output: Path, *, commit: str = 'lokal',
     if output == root or output.is_relative_to(root):
         raise ValueError('Das Release-Verzeichnis muss außerhalb des Projektordners liegen.')
     app_version, build = read_version(root)
-    source_apk = (apk or root / 'app/build/alpha/app-arm64-v8a-alpha.apk').resolve()
+    # Preserve the caller-supplied path spelling so validation can identify
+    # symlinked APK files and any linked parent directories before reading.
+    source_apk = apk if apk is not None else root / 'app/build/alpha/app-arm64-v8a-alpha.apk'
     validate_arm64_apk(source_apk)
     stem = f'Wuerfelraunen_v{app_version}_{build}'
     source = output / f'{stem}_Source.zip'
@@ -170,6 +191,9 @@ def prepare_release(root: Path, output: Path, *, commit: str = 'lokal',
         raise ValueError('Es sind bereits Release-Dateien mit derselben Version vorhanden.')
     try:
         create_archive(root, source, layout='root')
+        # Recheck after potentially long source ZIP creation as well.
+        if _has_symlink_component(source_apk):
+            raise ValueError('Die ARM64-APK darf keine symbolischen Pfadlinks verwenden.')
         shutil.copy2(source_apk, target_apk)
         notes.write_text(
             f'# Würfelraunen {app_version}+{build} – Android-Alpha\n\n'
