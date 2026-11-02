@@ -329,3 +329,7 @@ PR-Commits erforderlich. Dieser Abschnitt dokumentiert den
 Integrationsvorbereitungsstand; er behauptet noch keine erfolgreiche
 Gesamt-CI. Keine neuen SQLite-/JSON-/Spielstands-/Appversionsänderungen,
 kein automatischer Merge oder Löschen von Branches.
+
+### Chat C: Manuelle Kampf-Zugfolge bei großer Schrift und Android-Tastatur (02.11.2026)
+
+[PR #481](https://github.com/ManuEtt/Dnd/pull/481) verbessert die responsive Bedienung der manuellen Initiative-Reihenfolge: durchgängig scrollbarer `AlertDialog` bei 320/360 dp, 200 % Schrift und geöffneter Android-Tastatur, kompakte Insets und Screenreader-Live-Region für Bestätigungsfehler. Fünf neue Widgettests schützen explizite Initiative-/Gleichstandbestätigungen, Umordnung bei Gleichstand, read-only Zugfolge/Marker und neutralen Abbruch. **CI auf dem finalen PR-HEAD steht noch aus.** Keine Änderungen an Initiative-Regeln, Kampagnenzustand, Speichern, Schema, Datenformat oder Version.
