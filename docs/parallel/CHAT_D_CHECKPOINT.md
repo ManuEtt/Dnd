@@ -1504,6 +1504,8 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 
 - **Ausgangs-main:** `a2f22eaceb344aaced12d0ad548b813aa44d544f` (nach der vollständigen Abnahme und Integration von #508).
 - **Branch:** `fix/chat-d/alpha-apk-source-symlink-20261102`.
+- **Pull Request:** [#514](https://github.com/ManuEtt/Dnd/pull/514), Draft bis finaler CI-Abnahme.
+- **Implementierungs- und Regressionstest-Commits:** `15c75c8e137e9bf86538463a89db735fcc399571`, `9085c3a2ad0a7eca90f821f5c965c23f56e7c146`, `a9b1c76c5a4701937e3c56d06785edf02de77e2b` (Schutz des externen APK-Byteinhalts in Regression bestätigt).
 - **Problem:** `prepare_release` rief `Path.resolve()` bereits vor der APK-Validierung auf und verdeckte dadurch einen verlinkten Eingabepfad. Eine gültige APK aus einem unerwarteten externen Dateipfad konnte so als Release-Quelle akzeptiert werden.
 - **Lösung:** Originalpfad für die Prüfung erhalten; direkte und geerbte Symlinks vor dem Lesen ablehnen, nach der Quell-ZIP-Erzeugung erneut prüfen, ehe ein Release-APK-Ziel kopiert wird. Kein Zugriff auf das Ziel eines erkannten Linkpfads.
 - **Geänderte Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
