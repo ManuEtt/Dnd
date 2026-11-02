@@ -2,13 +2,13 @@
 
 - **Ausgangs-main:** `55d33945872e251ec53b6860addcb05152a80c3a`.
 - **Branch:** `feat/chat-c/sending-dialog-ime-20261102`.
-- **PR:** wird nach Abschluss der Dokumentation angelegt; finalen SHA und CI separat prüfen.
+- **PR:** [#503](https://github.com/ManuEtt/Dnd/pull/503) (Draft).
 - **Problem:** Der umfangreiche Sending-Dialog benutzte einen eigenen Scrollbereich in einem nicht vollständig scrollbaren `AlertDialog`. Lange Zustimmungen und die Abschlussaktion waren bei 320/360 dp, 200 % Schrift und simuliertem 220-dp-IME-Inset nicht abgesichert.
 - **Implementiert:** `AlertDialog(scrollable: true)` mit nur einem Dialog-Scrollbereich. Bei mindestens 180 % Schrift sind drei Bestätigungstexte visuell kompakt; ihre vollständigen bestehenden Aussagen bleiben als `Text.semanticsLabel` erhalten. Die lange Abschlussaktion wird visuell verkürzt.
 - **Dateien:** `app/lib/ui/sending_attempt_dialog.dart`, `app/test/sending_attempt_ime_test.dart` sowie additive README-/Checkpoint-Einträge.
 - **Widgettests geschrieben:** 320/360 dp, 200 % Text und 220 dp Android-IME: Abbruch, deaktivierte unbestätigte Buchung, scrollbarer Inhalt, positive explizite Sending-Vorschau und Widerruf der Zustimmung nach Textänderung. Vorher-/Nachher-JSON des Helden wird verglichen.
-- **GETESTET:** GitHub-Quellstand, offene PRs, Fachdateiüberschneidungen und eigener Branch geprüft. Code und Tests auf GitHub committed.
-- **NICHT GETESTET:** Flutter-/Dart-Formatierung, Flutter-Analyse, neue Widgettests, komplette Flutter-/Android-/Backend-/Python-Suite und reale Android-/TalkBack-/IME-/Upgrade-Abnahme am finalen HEAD. CI-Status erst nach tatsächlicher Prüfung ergänzen.
+- **GETESTET:** GitHub-Quellstand, offene PRs, Fachdateiüberschneidungen, eigener Branch, Main-Merge ohne Dateikonflikte und offizielle Dartformatierung überprüft. Der erste kombinierte CI-Lauf [#41452067597](https://github.com/ManuEtt/Dnd/actions/runs/41452067597) auf `3bf9729d` hatte 2.789 erfolgreiche Fluttertests und einen neuen fehlgeschlagenen Touch-Widgettest: das nach einer Texteingabe oberhalb der Scrollposition liegende Dropdown war mit ausschließlich abwärts gerichtetem Test-Drag nicht erreichbar. Der Testhelfer wurde auf bidirektionales Scrollen korrigiert; neue vollständige CI am Folge-Commit noch zu prüfen.
+- **NICHT GETESTET:** Vollständige grüne Flutter-/Android-CI auf dem nach der Regression korrigierten finalen HEAD; reale Android-/TalkBack-/IME-/Upgrade-Abnahme. Die erste Gesamt-CI ist wegen des einen expliziten Widgettestfehlers **fehlgeschlagen**, keine Gesamtfreigabe.
 - **Keine Migration:** Regeln, Domain, Controller, Story, Datenbank, JSON-/SQLite-Schemas, App-Version und bestehende Spielstände unverändert. Keine automatische Zauberbuchung aus der UI.
 - **Nächster Schritt:** Finale GitHub Actions auf dem vollständig dokumentierten Commit überprüfen und konkrete Fehler im selben Branch korrigieren; erst nach grüner CI für Integration freigeben.
 
