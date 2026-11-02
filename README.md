@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – Wilder-Angreifer-Auswahl auf schmalem Android (02.11.2026)
+
+Im Branch `feat/chat-c/savage-attacker-ime-20261102` scrollt der gesamte Dialog für die Wahl zwischen zwei bestätigten Waffenwürfen (`AlertDialog.scrollable`). Der gewählte Wurf wird für Screenreader ausdrücklich als ausgewählt markiert. Vier neue Widgetfälle decken 320/360 dp, 200 % Schrift und simulierte 220 dp Tastatur, Abbruch, kritischen Treffer und ungültige Auswahl ab. Der Dialog gibt nur eine überprüfbare Wahl zurück und bucht keinen Schaden. Keine Änderungen an Regeln, Controller, SQLite/JSON oder App-Version. Zehn gezielte Widgettests waren in GitHub Actions #41478500514 erfolgreich; die vollständige CI und reale Android-/TalkBack-Prüfung bleiben separat nachzuweisen. Details im [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md).
+
+
 ## Chat D – JSON-Spielstandimport auf 10 MiB UTF-8 begrenzen (02.11.2026)
 
 [PR #502](https://github.com/ManuEtt/Dnd/pull/502) prüft in der bestehenden
