@@ -50,8 +50,10 @@ class _TrackedCreatureInitiativeDialogState
         !_confirmed) {
       setState(
         () => _error =
-            'Kreatur, vollständiges Initiativeergebnis, '
-            'SL-/Spieler-Kontrolle und Bestätigung sind erforderlich.',
+            MediaQuery.textScalerOf(context).scale(14) >= 25.2
+                ? 'Bitte Kreatur, Zahl, Kontrolle und Bestätigung prüfen.'
+                : 'Kreatur, vollständiges Initiativeergebnis, '
+                      'SL-/Spieler-Kontrolle und Bestätigung sind erforderlich.',
       );
       return;
     }
@@ -66,6 +68,7 @@ class _TrackedCreatureInitiativeDialogState
 
   @override
   Widget build(BuildContext context) {
+    final compact = MediaQuery.textScalerOf(context).scale(14) >= 25.2;
     final campaign = widget.campaign;
     final living = campaign.trackedAreaCreatures
         .where((creature) => creature.hitPoints > 0)
@@ -75,122 +78,144 @@ class _TrackedCreatureInitiativeDialogState
       baseInitiativeConfirmed: _baseConfirmed,
     );
     return AlertDialog(
+      scrollable: true,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       title: const Text('Mehrgegner-Initiative'),
       content: SizedBox(
         width: 500,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text(
-                'SRD 5.2.1: Absteigende Initiative. Bei Gleichstand '
-                'bestimmen Spieler bzw. SL die tatsächliche Reihenfolge. '
-                'Die Anzeige steuert noch KEINE zusätzlichen Kampfzüge.',
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              'SRD 5.2.1: Absteigende Initiative. Bei Gleichstand '
+              'bestimmen Spieler bzw. SL die tatsächliche Reihenfolge. '
+              'Die Anzeige steuert noch KEINE zusätzlichen Kampfzüge.',
+            ),
+            const SizedBox(height: 8),
+            CheckboxListTile(
+              key: const ValueKey('initiative-base-confirmed'),
+              contentPadding: EdgeInsets.zero,
+              value: _baseConfirmed,
+              title: Text(
+                compact
+                    ? 'Hauptinitiative bestätigt.'
+                    : 'Initiative des Helden und Hauptgegners '
+                          'aus dem Kampfstart bestätigt.',
+                semanticsLabel: 'Initiative des Helden und Hauptgegners '
+                    'aus dem Kampfstart bestätigt.',
               ),
-              const SizedBox(height: 8),
-              CheckboxListTile(
-                key: const ValueKey('initiative-base-confirmed'),
-                contentPadding: EdgeInsets.zero,
-                value: _baseConfirmed,
-                title: const Text(
-                  'Initiative des Helden und Hauptgegners '
-                  'aus dem Kampfstart bestätigt.',
-                ),
-                onChanged: (v) => setState(() => _baseConfirmed = v ?? false),
+              onChanged: (v) => setState(() => _baseConfirmed = v ?? false),
+            ),
+            for (final group in roster.groups) ...[
+              const Divider(),
+              Text(
+                'Initiative ${group.total}',
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              for (final group in roster.groups) ...[
-                const Divider(),
+              for (final entry in group.entries)
                 Text(
-                  'Initiative ${group.total}',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  '${entry.name} '
+                  '(${entry.controller == 'gm' ? 'SL' : 'Spieler'}, '
+                  '${entry.kind == 'additional' ? 'Zusatzkreatur' : 'Hauptakteur'})',
                 ),
-                for (final entry in group.entries)
-                  Text(
-                    '${entry.name} '
-                    '(${entry.controller == 'gm' ? 'SL' : 'Spieler'}, '
-                    '${entry.kind == 'additional' ? 'Zusatzkreatur' : 'Hauptakteur'})',
-                  ),
-                if (group.hasUnresolvedTie)
-                  const Text('Gleichstand – Reihenfolge ausdrücklich klären.'),
-              ],
-              if (roster.missing.isNotEmpty)
-                Text(
-                  'Ohne bestätigte Initiative: '
-                  '${roster.missing.map((creature) => creature.name).join(', ')}.',
-                ),
-              if (!roster.baseInitiativeConfirmed)
-                const Text('Hauptinitiative ist noch nicht bestätigt.'),
-              if (roster.readyForManualAdjudication)
-                const Text(
-                  'Initiativliste zur manuellen Reihenfolge bereit. '
-                  'Keine automatische Zugausführung.',
-                ),
-              const SizedBox(height: 14),
-              const Text('Zusatzkreatur-Initiative erfassen oder korrigieren'),
-              DropdownButtonFormField<String>(
-                key: const ValueKey('initiative-target'),
-                initialValue: _selectedId,
-                decoration: const InputDecoration(
-                  labelText: 'Lebende Zusatzkreatur',
-                ),
-                items: [
-                  for (final creature in living)
-                    DropdownMenuItem(
-                      value: creature.id,
-                      child: Text(creature.name),
-                    ),
-                ],
-                onChanged: (value) => setState(() => _selectedId = value),
-              ),
-              TextField(
-                key: const ValueKey('initiative-total'),
-                controller: _total,
-                keyboardType: const TextInputType.numberWithOptions(
-                  signed: true,
-                ),
-                decoration: const InputDecoration(
-                  labelText: 'Bestätigtes Initiative-Ergebnis',
-                  hintText: 'z. B. 14, einschließlich aller Modifikatoren',
-                ),
-                onChanged: (_) => setState(() => _error = null),
-              ),
-              DropdownButtonFormField<String>(
-                key: const ValueKey('initiative-controller'),
-                initialValue: _controller,
-                decoration: const InputDecoration(
-                  labelText: 'Wer entscheidet bei Initiative-Gleichstand?',
-                ),
-                items: const [
-                  DropdownMenuItem(
-                    value: 'gm',
-                    child: Text('Spielleitung (Monster/NSC)'),
-                  ),
-                  DropdownMenuItem(
-                    value: 'player',
-                    child: Text('Spieler (Spielercharakter)'),
-                  ),
-                ],
-                onChanged: (v) => setState(() => _controller = v),
-              ),
-              CheckboxListTile(
-                key: const ValueKey('initiative-entry-confirmed'),
-                contentPadding: EdgeInsets.zero,
-                value: _confirmed,
-                title: const Text(
-                  'Würfelergebnis und Kontrolle anhand des '
-                  'Kampfes ausdrücklich bestätigt.',
-                ),
-                onChanged: (v) => setState(() => _confirmed = v ?? false),
-              ),
-              if (_error != null)
-                Text(_error!, style: const TextStyle(color: Colors.redAccent)),
+              if (group.hasUnresolvedTie)
+                const Text('Gleichstand – Reihenfolge ausdrücklich klären.'),
             ],
-          ),
+            if (roster.missing.isNotEmpty)
+              Text(
+                'Ohne bestätigte Initiative: '
+                '${roster.missing.map((creature) => creature.name).join(', ')}.',
+              ),
+            if (!roster.baseInitiativeConfirmed)
+              const Text('Hauptinitiative ist noch nicht bestätigt.'),
+            if (roster.readyForManualAdjudication)
+              const Text(
+                'Initiativliste zur manuellen Reihenfolge bereit. '
+                'Keine automatische Zugausführung.',
+              ),
+            const SizedBox(height: 14),
+            const Text('Zusatzkreatur-Initiative erfassen oder korrigieren'),
+            DropdownButtonFormField<String>(
+              key: const ValueKey('initiative-target'),
+              isExpanded: true,
+              initialValue: _selectedId,
+              decoration: const InputDecoration(
+                labelText: 'Lebende Zusatzkreatur',
+              ),
+              items: [
+                for (final creature in living)
+                  DropdownMenuItem(
+                    value: creature.id,
+                    child: Text(
+                      creature.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+              ],
+              onChanged: (value) => setState(() => _selectedId = value),
+            ),
+            TextField(
+              key: const ValueKey('initiative-total'),
+              controller: _total,
+              keyboardType: const TextInputType.numberWithOptions(
+                signed: true,
+              ),
+              decoration: const InputDecoration(
+                labelText: 'Bestätigtes Initiative-Ergebnis',
+                hintText: 'z. B. 14, einschließlich aller Modifikatoren',
+              ),
+              onChanged: (_) => setState(() => _error = null),
+            ),
+            DropdownButtonFormField<String>(
+              key: const ValueKey('initiative-controller'),
+              isExpanded: true,
+              initialValue: _controller,
+              decoration: const InputDecoration(
+                labelText: 'Wer entscheidet bei Initiative-Gleichstand?',
+              ),
+              items: const [
+                DropdownMenuItem(
+                  value: 'gm',
+                  child: Text('Spielleitung (Monster/NSC)'),
+                ),
+                DropdownMenuItem(
+                  value: 'player',
+                  child: Text('Spieler (Spielercharakter)'),
+                ),
+              ],
+              onChanged: (v) => setState(() => _controller = v),
+            ),
+            CheckboxListTile(
+              key: const ValueKey('initiative-entry-confirmed'),
+              contentPadding: EdgeInsets.zero,
+              value: _confirmed,
+              title: Text(
+                compact
+                    ? 'Ergebnis und Kontrolle bestätigt.'
+                    : 'Würfelergebnis und Kontrolle anhand des '
+                          'Kampfes ausdrücklich bestätigt.',
+                semanticsLabel: 'Würfelergebnis und Kontrolle anhand des '
+                    'Kampfes ausdrücklich bestätigt.',
+              ),
+              onChanged: (v) => setState(() => _confirmed = v ?? false),
+            ),
+            if (_error != null)
+              Semantics(
+                liveRegion: true,
+                child: Text(
+                  _error!,
+                  key: const ValueKey('initiative-validation-error'),
+                  style: const TextStyle(color: Colors.redAccent),
+                ),
+              ),
+          ],
         ),
       ),
       actions: [
         FantasyTextButton(
+          key: const ValueKey('initiative-close'),
           label: 'Schließen',
           style: FantasyButtonStyle.iron,
           onPressed: () => Navigator.of(context).pop(),
