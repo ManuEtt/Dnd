@@ -200,6 +200,8 @@ def verify_project(root: Path) -> list[str]:
                 # equivalent names can overwrite each other. Check every
                 # explicit and implicit directory prefix before ZIP CRC reads.
                 canonical_prefixes: dict[str, str] = {}
+                file_paths: set[str] = set()
+                directory_paths: set[str] = set()
                 for member in members:
                     name = member.filename
                     segments = name.rstrip('/').split('/')
@@ -219,6 +221,12 @@ def verify_project(root: Path) -> list[str]:
                         previous = canonical_prefixes.setdefault(canonical_path, original_path)
                         if previous != original_path:
                             raise ValueError('colliding wrapper JAR paths')
+                        # An explicit regular file cannot also stand for an
+                        # implicit or explicit ZIP directory in this JAR.
+                        if index < len(segments) - 1 or name.endswith('/'):
+                            directory_paths.add(canonical_path)
+                        else:
+                            file_paths.add(canonical_path)
                     # A valid CRC and Java class signature cannot establish
                     # that a member represents an ordinary file. Reject Unix
                     # device, FIFO and socket types as well as file/dir
@@ -229,6 +237,8 @@ def verify_project(root: Path) -> list[str]:
                                 or (kind == stat.S_IFDIR and not name.endswith('/'))
                                 or (kind == stat.S_IFREG and name.endswith('/'))):
                             raise ValueError('unsafe wrapper JAR entry type')
+                if file_paths & directory_paths:
+                    raise ValueError('wrapper JAR has file/directory path conflicts')
                 if (archive.testzip() is not None
                         or not archive.read(WRAPPER_MAIN).startswith(b'\xca\xfe\xba\xbe')):
                     raise ValueError('invalid wrapper')
