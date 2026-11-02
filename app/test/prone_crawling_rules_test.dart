@@ -126,4 +126,56 @@ void main() {
       45,
     );
   });
+
+  test('Legacy-Held mit 0 TP kann weder kriechen noch Bewegung buchen', () {
+    final original = combat();
+    final legacy = Campaign.fromJson(
+      original.copyWith(
+        hero: original.hero.copyWith(hitPoints: 0),
+      ).toJson(),
+    );
+    // Older records can have Prone without a persisted Unconscious flag.
+    expect(legacy.hero.conditions, ['liegend']);
+    final snapshot = legacy.toJson();
+
+    expect(
+      () => CrawlingMovementRules.spend(
+        legacy.encounter!,
+        legacy.hero,
+        distanceFeet: 5,
+        difficultTerrain: false,
+      ),
+      throwsFormatException,
+    );
+    expect(
+      () => GameEngine().crawl(
+        legacy,
+        distanceFeet: 5,
+        difficultTerrain: false,
+      ),
+      throwsFormatException,
+    );
+    expect(legacy.toJson(), snapshot);
+    expect(legacy.encounter!.heroCover, CoverLevel.half);
+    expect(legacy.encounter!.remainingMovementDecimeters, 90);
+  });
+
+  test('Nach bestätigter Heilung darf derselbe Held wieder kriechen', () {
+    final before = combat();
+    final atZero = before.copyWith(
+      hero: before.hero.copyWith(hitPoints: 0),
+    );
+    final healed = atZero.copyWith(
+      hero: atZero.hero.copyWith(hitPoints: 1),
+    );
+    final result = GameEngine().crawl(
+      healed,
+      distanceFeet: 5,
+      difficultTerrain: false,
+    );
+    expect(result.campaign.encounter!.remainingMovementDecimeters, 60);
+    expect(result.events.single.type, 'combat.crawled');
+    expect(atZero.hero.hitPoints, 0);
+  });
+
 }
