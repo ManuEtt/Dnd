@@ -1,3 +1,7 @@
+## 02.11.2026 – Chat C: Manuelle Zugfolge bei 200 % Schrift/IME (PR #481)
+
+[PR #481](https://github.com/ManuEtt/Dnd/pull/481) auf Branch `feat/chat-c/manual-turn-queue-ime-rebased-20261102` von Main `885580202caeafc9787538b6dc1c833b3190a529`: `ManualTurnQueueDialog` verwendet `AlertDialog(scrollable:true)` und schmale Insets; Validierungsfehler erhalten `Semantics(liveRegion:true)`. Fünf neue Widgetfälle bei 320/360 dp, 200 % Schrift und simuliertem 220-dp-IME prüfen nicht bestätigte Initiative, neutralen Abbruch, gültige rein deklarative Zugfolgen, erneute explizite Gleichstandsbestätigung nach Sortierung und read-only Fortschrittswahl; Campagne/Initiative wird nicht mutiert. **Finale CI für #481 noch offen und Draft.** Keine Domain-, SRD-, SQLite-/JSON-, Schema-/Versions- oder Migrationsänderungen. Main wurde nach parallel laufender Integration auf `885580202caeafc9787538b6dc1c833b3190a529` als sauberer PR-Ausgangspunkt aktualisiert.
+
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
