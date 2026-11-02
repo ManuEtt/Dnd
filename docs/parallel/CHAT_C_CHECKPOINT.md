@@ -1,3 +1,47 @@
+## 02.11.2026 – Chat C: Mehrgegner-Initiative mit 200 % Schrift und IME
+
+- **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529`.
+- **Eigener Branch:** `feat/chat-c/tracked-initiative-ime-20261102`.
+- **Code-/Testcommit:** `4fc35cbb35f43142b98e700e52656b22f40fcd0c`.
+  Finalen Branch-HEAD nach Dokumentationscommits über GitHub prüfen.
+- **Pull Request:** [#488](https://github.com/ManuEtt/Dnd/pull/488), Draft.
+- **Ausgangsproblem:** Der Dialog für weitere Kreatureninitiativen
+  hatte einen eigenen Scrollbereich, während Titel/Aktionen nicht als
+  ganzer Dialog scrollten. Auf kleinen Bildschirmen bei 200 % Schrift
+  und Android-IME konnten Zustimmungen und Aktionen unerreichbar werden.
+- **IMPLEMENTIERT:** Scrollbarer `AlertDialog` ohne innere Scrollfläche,
+  kleinere Dialogränder, erweiterte Dropdowns, verkürzte visuelle
+  Zustimmungen mit unveränderten langen Screenreader-Labels und
+  Live-Region für ungültige Eingaben. Wahl statt Kampfbuchung.
+- **Geänderte Fachdateien:** `app/lib/ui/tracked_creature_initiative_dialog.dart`,
+  `app/test/tracked_creature_initiative_ime_test.dart`.
+  Zusatzdokumentation: `README.md`, `docs/CODEX_CHECKPOINT.md`,
+  `docs/parallel/CHAT_C_CHECKPOINT.md`.
+- **Tests hinzugefügt:** fünf positive/negative Widget-Regressionen bei
+  320/360 dp, 200 % Text und 220 dp Fake-IME. Sie prüfen
+  Abbruch bei noch offenem Formular, fehlende Bestätigung,
+  positive explizite Kreatureninitiative, unzulässige 101,
+  Feld-Erreichbarkeit und unveränderte Kampagnen-JSON-Daten.
+- **GETESTET:** GitHub-Main und alle offenen PRs/Fachdateien verglichen,
+  eigener Branch und PR angelegt, Änderungen remote gegen Main geprüft.
+  Diese Prüfungen sind kein Flutter-Test.
+- **NICHT GETESTET:** Lokaler Flutter-/Dart-Format-/Widget-/Android-Lauf
+  (SDK fehlt); vollständiger Workflow auf finalem HEAD noch offen;
+  reales Android-Gerät, TalkBack, echte IME und Altversions-Upgrade.
+- **BLOCKIERT:** Kein lokales Flutter-/Android-SDK und kein
+  Netzwerk-Checkout im Container; technische CI-Ergebnisse abwarten.
+  Gemeinsame README-/Checkpoint-Hunks bei Integration durch Chat D
+  additiv konsolidieren. Kein automatischer Merge.
+- **Bekannte Fehler:** Noch keine neue Regression nachgewiesen;
+  CI-Abnahme ausstehend, daher keine positive Testbehauptung.
+- **Migration:** Keine Regel-, Story-, Controller-, Inventar-, SQLite-,
+  JSON-, Berechtigungs-, Schema- oder Appversionsänderung.
+- **NÄCHSTER SCHRITT:** Schmale reale Android-Ansicht bei 200 %
+  Schrift und geöffneter Tastatur mit TalkBack bedienen, inklusive
+  Fehlermeldung und vollständiger Initiative-Bestätigung.
+
+---
+
 ## 31.10.2026 – Chat C: Offene Schildreaktion in der Chronik (Draft-PR #447)
 
 - **Ausgangs-Main:** `47ab002872b7d46daeae03bb558258cf2ea73e4a`.
