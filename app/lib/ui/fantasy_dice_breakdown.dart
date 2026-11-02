@@ -12,6 +12,7 @@ class FantasyDiceBreakdown extends StatelessWidget {
 
   static List<String> describe(GameEvent event) {
     final data = event.payload;
+    final pendingShieldDecision = data['pendingEnemyShieldHit'] == true;
     final lines = <String>[];
 
     void addRoll(String label, Object? source, {bool includeModifier = true}) {
@@ -58,17 +59,21 @@ class FantasyDiceBreakdown extends StatelessWidget {
     }
     // A natural twenty alone is not proof of a critical hit: the actual
     // rule resolver sets this flag, accounting for class features and blocks.
-    if (data['critical'] == true && data['hit'] == true) {
-      lines.add('KRITISCHER TREFFER bestätigt');
+    // During a pending Shield reaction only the attack roll is confirmed.
+    // Older/imported events may contain precomputed but unresolved damage.
+    if (!pendingShieldDecision) {
+      if (data['critical'] == true && data['hit'] == true) {
+        lines.add('KRITISCHER TREFFER bestätigt');
+      }
+      addRoll('Schadenswürfel', data['damageRoll']);
+      // Critical extra dice do not automatically repeat the weapon modifier.
+      addRoll(
+        'Kritische Zusatzwürfel',
+        data['criticalExtra'] ?? data['criticalExtraRoll'],
+        includeModifier: false,
+      );
+      addRoll('Hinterhältige Angriffswürfel', data['sneakAttackRoll']);
     }
-    addRoll('Schadenswürfel', data['damageRoll']);
-    // Critical extra dice do not automatically repeat the weapon modifier.
-    addRoll(
-      'Kritische Zusatzwürfel',
-      data['criticalExtra'] ?? data['criticalExtraRoll'],
-      includeModifier: false,
-    );
-    addRoll('Hinterhältige Angriffswürfel', data['sneakAttackRoll']);
     return List.unmodifiable(lines);
   }
 

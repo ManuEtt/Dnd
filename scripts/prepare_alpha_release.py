@@ -12,6 +12,7 @@ from pathlib import Path
 import re
 import shutil
 import stat
+import unicodedata
 import zipfile
 
 from package_project import create_archive
@@ -65,7 +66,8 @@ def validate_arm64_apk(apk: Path) -> None:
                 )):
             raise ValueError('Die ARM64-APK hat übergroße oder stark komprimierte ZIP-Inhalte.')
         # CRC-valid ZIPs can still contain ambiguous members, traversal paths
-        # or symbolic links. Reject these before checking required resources.
+        # symbolic links, or invisible Unicode controls. Reject these before
+        # checking required resources.
         names = [entry.filename for entry in entries]
         if len(names) != len(set(names)):
             raise ValueError('Die ARM64-APK enthält doppelte ZIP-Einträge.')
@@ -75,7 +77,8 @@ def validate_arm64_apk(apk: Path) -> None:
             if (not name or name.startswith('/') or '\\' in name
                     or re.match(r'^[A-Za-z]:', name)
                     or any(part in ('', '.', '..') for part in parts)
-                    or any(ord(char) < 32 or ord(char) == 127 for char in name)):
+                    or any(unicodedata.category(char) in {'Cc', 'Cf', 'Cs', 'Zl', 'Zp'}
+                           for char in name)):
                 raise ValueError('Die ARM64-APK enthält unsichere ZIP-Pfade.')
             mode = entry.external_attr >> 16
             if stat.S_ISLNK(mode):

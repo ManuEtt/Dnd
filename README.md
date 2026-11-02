@@ -146,3 +146,127 @@ Regelgrundlage: ausschließlich rechtmäßig nutzbare Inhalte des **D&D SRD 5.2.
 unter **CC BY 4.0**. [Namensnennung und Lizenzen](THIRD_PARTY_NOTICES.md).
 Eine vollständige SRD-Umsetzung und ein öffentlicher Mehrspielerdienst sind
 weiterhin Entwicklungsziele.
+
+## Chat B – verzögerte KI-Antwort nach SQLite-Neustart (31.10.2026)
+
+Ein neuer Flutter-Regressionstest schützt vor einer Story-Provider-Antwort, die erst nach einer parallelen, bereits bestätigten SQLite-Änderung ankommt. Der positive Gegenfall bestätigt genau einen narrativen Spielzug; der Konfliktfall bewahrt Journal, NPC-Notizen, Story-Fäden, Heldenzustand und rekonstruierte Kampagne. Branch `feat/chat-b/delayed-story-response-restart-20261031` von `47ab002872b7`; CI-Ausführung dieses Pakets steht bei Erstellung noch aus. Kein Schemawechsel, keine neuen API-Kosten.
+
+> **CHAT C – neu im separaten Draft-PR [#447](https://github.com/ManuEtt/Dnd/pull/447) (31.10.2026):**
+> Während einer noch offenen Schildreaktion zeigt die Kampfchronik nur
+> bestätigte Angriffswürfel, keinen vorzeitigen Schaden oder kritische
+> Zusatzwürfel. Widget-Regressionen für 320/360 dp, 200 % Schrift und
+> TalkBack-Semantics wurden ergänzt; erfolgreiche CI und echte
+> Geräteabnahme stehen noch aus. Diese Änderungen sind **nicht Teil von main**.
+
+## Chat A – Zauberaktion und Zauberplatz als gemeinsames Staging (31.10.2026)
+
+Der neue explizit verwendbare Domainbaustein
+`SrdSpellTurnTransactionRules` verbindet die vorhandenen
+`SrdSpellPreflightRules` (vorbereiteter Zauber, Klasse, Ziel, Komponenten
+und Slot) mit `SrdSpellActionEconomyRules` (bestätigter eigener Zug,
+Magic Action vs. Bonus Action und Slotlimit). Das Ergebnis besteht aus
+**zwei unveränderten Originalen und einem zusammengehörigen neuen
+Helden-/Encounter-Vorschlag**: Aktion oder Bonusaktion sowie ggf.
+Zauberplatz werden nur gemeinsam berechnet. Veraltete Helden-,
+Zauber- und Kampfsnapshots und unbestätigte Effekte werden abgewiesen.
+Neun neue Regressionstestgruppen inklusive Retry, Zustand nach dem
+Wurf, Zaubertricks, Slotlimit, Nicht-Kampf-Grenzen und JSON-Roundtrip
+in `app/test/srd_spell_turn_transaction_rules_test.dart`.
+
+**Grenze:** Dieses Regel-Staging schreibt noch nicht in SQLite und
+ist noch nicht an den vorhandenen `GameController` gekoppelt.
+Spielstandsrevision und Eventjournal müssen durch einen nachfolgenden
+koordinierten Integrations-PR atomar geschrieben werden. Keine
+vorhandene Legacy-Schnittstelle oder Speicher-/Versionsnummer geändert.
+Details: `docs/SRD_SPELL_TURN_TRANSACTION_STAGING.md`.
+Neue vollständige CI für diesen Branch noch abzunehmen.
+
+## Chat D – Unicode-Zeilentrenner in Android-Backupdateinamen (31.10.2026)
+
+[PR #449](https://github.com/ManuEtt/Dnd/pull/449) auf `fix/chat-d/backup-unicode-separators-20261031`, Basis-main `5a88834c98f5aca40395088c20c7e1dc5b587868`: Die native SAF-Dateinamenprüfung verbietet jetzt auch Unicode-Zeilen- und Absatztrenner (U+2028, U+2029). Diese werden von der bisherigen ISO-Steuerzeichen- und Unicode-FORMAT-Prüfung nicht erfasst. Negative und positive Kotlin-Regressionstests sichern die Sperre sowie gültige Namen mit Umlauten, Emojis, gewöhnlichen Leerzeichen und kombinierenden Zeichen ab. Vollständige GitHub-CI/Android-Geräteabnahme bei Erstellung noch offen. Keine Migration von SQLite, JSON-Spielständen oder Appversion; kein Eingriff in Regeln, UI oder Story. Parallel integrierte Dokumentation muss vor Review/Merge erhalten bleiben.
+
+---
+
+### Chat D – portable Quellcode-ZIP-Dateinamen (PR #451)
+
+Am 31.10.2026 wurde auf dem unabhängigen Branch `fix/chat-d/archive-unicode-controls-20261031` die Prüfung
+`scripts/package_project.py` gegen unsichtbare Unicode-Steuerzeichen,
+Formatzeichen, Surrogate und Zeilen-/Absatztrenner erweitert.
+`scripts/tests/test_package_project.py` enthält vier neue Regressionstests
+einschließlich unverändertem ZIP-/SHA256-Paar bei abgelehnten Pfaden.
+[PR #451](https://github.com/ManuEtt/Dnd/pull/451) ist ein Draft.
+Vollständige GitHub-CI ist am finalen Commit gesondert nachzuweisen;
+kein SQLite-/JSON-Migrationsbedarf, keine Änderung von Flutter oder Android.
+Vor Integration mit #446–#449 müssen gemeinsame README-/Checkpoint-Ergänzungen
+verlustfrei konsolidiert werden.
+
+
+---
+
+### Chat D – Unicode-sichere Alpha-APK-ZIP-Einträge (PR #460)
+
+Auf dem Branch `fix/chat-d/apk-unicode-entry-names-20261101` prüft der Release-Validator
+`scripts/prepare_alpha_release.py` zusätzlich die Unicode-Kategorien
+`Cc`, `Cf`, `Cs`, `Zl` und `Zp` in APK-ZIP-Mitgliedsnamen, bevor er CRC-Daten
+dekomprimiert oder Release-Artefakte veröffentlicht. Fünf Regressionstests
+(`scripts/tests/test_prepare_alpha_release.py`) decken unzulässige
+Steuer-/Richtungs-/Trennzeichen, Surrogate, weiterhin zulässige internationale
+Namen und den Erhalt früherer Releases ab.
+[PR #460](https://github.com/ManuEtt/Dnd/pull/460) bleibt Draft bis zur
+vollständigen CI auf finalem HEAD. Keine SQLite-/JSON-/Spielstandmigration und
+keine Änderung der App-Version. Gemeinsame README-/Checkpoint-Änderungen
+mit parallelen PRs bei Integration additiv erhalten.
+
+
+---
+
+### Chat D – Gradle-Wrapper-JAR gegen Unicode-Kontrollzeichen absichern (PR #462)
+
+Der Projektübertragungsprüfer `scripts/verify_project.py` weist in den
+ZIP-Mitgliedsnamen der Gradle-Wrapper-JAR jetzt zusätzlich die Unicode-
+Kategorien `Cc/Cf/Cs/Zl/Zp` **vor CRC-Dekompression** zurück. Vier neue
+Regressionstestmethoden in `scripts/tests/test_verify_project.py` prüfen
+C1-Steuerzeichen, Bidi-/Zero-Width-Formatzeichen, Zeilen-/Absatztrenner,
+Surrogat-Metadaten sowie weiterhin gültige Umlaute, Akzente, Emoji und CJK.
+[PR #462](https://github.com/ManuEtt/Dnd/pull/462) wird bis zur
+vollständig erfolgreichen GitHub-CI auf finalem PR-HEAD als Draft geführt.
+Keine App-/Gradle-Artefakt-, SQLite-/JSON-/Spielstand- oder Versionsänderung.
+Bei Integration gemeinsame Dokumentation mit den anderen offenen PRs
+verlustfrei zusammenführen.
+
+---
+
+### Chat D – Gemeinsame Unicode-ZIP-Schutzprüfungen (Integrationspaket, 01.11.2026)
+
+Die drei fachlich getrennten Korrekturen [#451](https://github.com/ManuEtt/Dnd/pull/451),
+[#460](https://github.com/ManuEtt/Dnd/pull/460) und
+[#462](https://github.com/ManuEtt/Dnd/pull/462) sind auf ihren **exakten finalen
+Einzel-Commits vollständig CI-grün**. Dieser unabhängige Integrationsbranch führt
+die sechs ursprünglichen Python-Code-/Test-Blobs unverändert zusammen; die
+zugehörigen README-, zentralen und Chat-D-Checkpoint-Nachträge werden additiv
+ohne Verlust historischer Statusangaben kombiniert. Für die gemeinsame
+Kombination ist eine **eigene vollständige CI** erforderlich. Alte Hinweise
+"Draft/CI ausstehend" in den historischen Einzel-Abschnitten beschreiben
+den damaligen Zustand, nicht die aktuelle Einzelabnahme.
+Die kombinierte Abnahme erfolgt ausschließlich im Integrations-PR;
+kein automatischer Merge, kein Branchlöschen, keine Änderungen an
+Spielstand-, SQLite- oder JSON-Schemata.
+
+---
+
+### 02.11.2026 – gemeinsame A–D-/ZIP-Sicherheitsintegration
+
+Die beiden unabhängig CI-geprüften Integrationspakete
+[#454](https://github.com/ManuEtt/Dnd/pull/454) (vier A–D-Pakete,
+[CI #41244568578](https://github.com/ManuEtt/Dnd/actions/runs/41244568578))
+und [#466](https://github.com/ManuEtt/Dnd/pull/466) (drei Chat-D-ZIP-Schutzpakete,
+[CI #41323233143](https://github.com/ManuEtt/Dnd/actions/runs/41323233143))
+werden auf `chore/chat-d/integrate-verified-ad-and-zip-guards-20261102`
+gemeinsam abgenommen. Die ursprünglichen Fach- und Testdateien bleiben
+**bytegenau unverändert**; die vollständigen vorherigen README- und
+Checkpoint-Beiträge beider Pakete werden **verlustfrei additiv** gesichert.
+Eine neu gestartete vollständige GitHub-CI auf dem finalen kombinierten
+Commit ist verpflichtend. Historische Aussagen „CI ausstehend“ in älteren
+Einzel-Notizen gelten nur für deren damaligen Bearbeitungsstand.
+Keine automatische Main-Integration, kein Altbranch-Löschen und
+keine SQLite-/JSON-/Spielstandschema-Migration.
