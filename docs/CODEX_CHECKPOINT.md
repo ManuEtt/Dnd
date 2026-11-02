@@ -1,3 +1,13 @@
+## Chat C – 02.11.2026: Sending-Dialog mit IME und großer Schrift
+
+- **Branch:** `feat/chat-c/sending-dialog-ime-20261102`, Basis-Main `55d33945872e251ec53b6860addcb05152a80c3a`.
+- **Implementiert:** Ein scrollbarer `AlertDialog` statt separatem Inhalts-Scrollbereich; kompakte visuelle Bestätigungen ab 180 % Schrift mit vollständigem TalkBack-Label und kurze Abschlussaktion.
+- **Widgettests ergänzt:** `app/test/sending_attempt_ime_test.dart`; 320/360 dp, 200 % Schrift, 220 dp IME, Abbruch/Bestätigung, Re-Consent nach Textänderung und unverändertes Helden-JSON.
+- **Grenzen:** Nur Flutter-UI und Widgettests, keine Regeln/Controller/SQLite/JSON/Version. CI am finalen SHA sowie reale Android-/TalkBack-Tests bis zur tatsächlichen Abnahme nicht als bestanden ausweisen.
+- **Parallelität:** Offene Chat-C-/Integrations-PRs bearbeiten andere UI-Module; gemeinsame README-/Checkpoint-Ergänzungen bei Integration verlustfrei durch Chat D konsolidieren.
+
+---
+
 # Chat A – SRD Metamagie: versionierte Wahl und Ersatzregeln (02.11.2026)
 
 **Basis-main:** `885580202caeafc9787538b6dc1c833b3190a529`.
