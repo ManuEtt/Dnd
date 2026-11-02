@@ -145,12 +145,7 @@ void main() {
     final campaign = _campaign();
     final snapshot = campaign.toJson();
     final results = <ManualTurnQueueChoice?>[];
-    await _open(
-      tester,
-      width: 320,
-      campaign: campaign,
-      onResult: results.add,
-    );
+    await _open(tester, width: 320, campaign: campaign, onResult: results.add);
     await _tap(tester, _key('base-confirmed'));
     await _tap(tester, _key('ties-confirmed'));
     expect(
@@ -177,12 +172,7 @@ void main() {
     final campaign = _campaign();
     final snapshot = campaign.toJson();
     final results = <ManualTurnQueueChoice?>[];
-    await _open(
-      tester,
-      width: 360,
-      campaign: campaign,
-      onResult: results.add,
-    );
+    await _open(tester, width: 360, campaign: campaign, onResult: results.add);
     await _tap(tester, _key('base-confirmed'));
     await _tap(tester, _key('ties-confirmed'));
     await _tap(tester, _key('down-hero'));
@@ -215,12 +205,7 @@ void main() {
         .campaign;
     final snapshot = campaign.toJson();
     final results = <ManualTurnQueueChoice?>[];
-    await _open(
-      tester,
-      width: 320,
-      campaign: campaign,
-      onResult: results.add,
-    );
+    await _open(tester, width: 320, campaign: campaign, onResult: results.add);
     expect(find.textContaining('Manuelle Runde:'), findsOneWidget);
     expect(_key('advance'), findsOneWidget);
     await _tap(tester, _key('advance'));
