@@ -632,3 +632,141 @@ Ein neuer Flutter-Regressionstest schützt vor einer Story-Provider-Antwort, die
   Andere offene Fach-PRs und Branches nicht überschreiben oder löschen.
 - **Migration:** keine durch die Zusammenführung selbst; alle Quell-PR-Semantiken
   und Warnungen zu noch nicht persistierten Metamagie-Auswahlbelegen bleiben bestehen.
+
+---
+
+## 02.11.2026 – Chat D: Vier weitere CI-grüne Fachpakete als Draft kombiniert
+
+- **Basis-main:** `01259cbc93810a159c9a0d79d6055572f0bde3f1` nach #493; Main-Postmerge-CI noch ausstehend.
+- **Integration:** `chore/chat-d/integrate-validated-story-rules-ui-20261102` mit den finalen Quellpaketen #478, #479, #486, #491.
+- **CI der Quell-PRs:** #478: #41398490052 / #41398483892, #479: #41398989518, #486: #41402073724, #491: #41426189797 / #41426180554; alle auf jeweiligen finalen Source-Heads erfolgreich.
+- **Technische Dateien:** 8 Fachcode-/Testdateien originalgetreu übernehmen; SRD-Distant-Touch-Fachdokument aus #478 unverändert.
+- **Dokumentation:** Sämtliche reinen Einfügungen der vier Quell-Diffs in README, CODEX und den Chat-A/B/C-Checkpoints unter Quell-PR-Nennung nachtragen; vorherige Main-Dokumentation unverändert erhalten.
+- **GETESTET:** Einzel-CIs. **NICHT GETESTET:** kombinierte CI am künftigen Integrations-HEAD sowie reale Android-Geräte-/SAF-/TalkBack-Abnahme.
+- **BLOCKIERT:** vollständige neue GitHub-CI, Main-CI und letzter PR-/Main-Konfliktabgleich. Der Metamagie-Beleg aus #485 bleibt aktuell ohne Helden-/SQLite-Persistenz; daraus keine automatische Cast-Autorisierung ableiten.
+- **Parallelität:** 23 andere offene PRs auf die 8 Fachpfade geprüft: keine Überschneidung. #481/#483 behalten ihren separaten manuellen Zugfolgedialog-Konflikt; keine fremden Branches löschen.
+
+---
+
+### Übernommener Originalnachtrag aus PR #478
+
+# Chat A – Distant Spell Touch: 30 Fuß mit einem Zaubereipunkt (02.11.2026, eigener PR)
+
+Basis-main `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`;
+Branch `feat/chat-a/distant-touch-metamagic-20261102`.
+SRD 5.2.1, Sorcerer / Metamagic / Distant Spell, CC BY 4.0.
+
+**IMPLEMENTIERT:** Neues isoliertes
+`SrdDistantTouchMetamagicRules.preview`
+mit wirklichem 30-Fuß-Grenzwert
+für Touch-Zauber und Pflichtprüfung
+der bestätigten Sorcerer-Klassenstufe 2+,
+Metamagie-Freischaltung, einer verfügbaren
+Klassenressource `sorceryPoints`,
+eines tatsächlich vorbereiteten
+SRD-Zaubers der korrekten eigenen Klasse
+und der vollständig bestätigten
+blockerfreien Rastergeometrie.
+Ausdrückliche Spieler-/Options-/Zielwahl
+getrennt. Snapshotgebundene Vorschau,
+Punktkosten nur als Kopie vorgemerkt.
+
+**TESTS:** zehn neue positive/negative
+Regressionsgruppen für 0/30/35 Fuß,
+Metamagie-/Klassen-/Spell-Quellen,
+Mehrklassenlevel, Slot- und Punkte-
+Trennung, Status und Hindernisse,
+alternde Vorschauen, JSON,
+SQLite-Restart, Retry und stale Revision.
+CI/Analyse/Debug-/ABI-Builds nur nach
+tatsächlichem finalem Workflow-Abschluss
+als grün melden.
+
+**BLOCKIERT/GEPLANT:** Keine
+dauerhaft versionierte Metamagiewahl
+im Helden. Der aktuelle Boolwert ist
+kein manipulationssicherer Nachweis,
+keine Live-Casting-Engine-Integration
+und keine atomare Zauberplatz-/Effekt-/
+Punktausgabe. Deshalb **kein** impliziter
+automatischer Fern-Touch-Cast. Unberührt:
+PR #461/#463/#472, gemeinsam genutzte
+Domainmodelle, Controller, SQLite3,
+JSON1 und App-Version.
+
+**NÄCHSTER SCHRITT:** nach
+koordiniertem Merge Metamagiewahl als
+versionierten Quellbeleg speichern,
+mit dem Grid- und Spell-Preflight
+verbinden und vollständige
+Casting-Kosten in einem revisions-
+geschützten Persistenzschritt testen.
+[Technischer Fachbeleg](SRD_DISTANT_TOUCH_METAMAGIC_20261102.md).
+
+---
+
+
+---
+
+### Übernommener Originalnachtrag aus PR #479
+
+## 02.11.2026 – Chat C: Zauberwirkungsdialog bei 200 % Text und IME (PR #479)
+
+[PR #479](https://github.com/ManuEtt/Dnd/pull/479) auf `feat/chat-c/confirmed-spell-effect-ime-20261102` von `main` `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`: Der `ConfirmedSpellEffectDialog` verwendet `AlertDialog(scrollable:true)`, kompakte Insets und Screenreader-Live-Region für Validierungsfehler; lange Laufzeitoptionen besitzen Ellipsis. Vier neue Flutter-Widgettests bei 320/360 dp, 200 % Schrift und 220 dp simuliertem Tastatur-Inset prüfen Fehler/Abbruch, gültige Quellbestätigung und das gezielte Beenden nur einer von zwei Quellen, jeweils ohne Mutation des Helden. **Finaler CI-Nachweis für #479 steht aus (Draft).** Keine Regel-, Controller-, Domain-, Speicher-, Datenformat-, Versions- oder Migrationsänderung. Echte TalkBack-/Android-Gerätetests weiterhin offen.
+
+
+---
+
+### Übernommener Originalnachtrag aus PR #486
+
+
+## Chat B – kurze, bestätigte NPC-Historie sicher begrenzen (02.11.2026)
+
+- **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529`;
+  **Branch:** `feat/chat-b/bounded-confirmed-npc-excerpt-v2-20261102`;
+  **Draft-PR:** [#486](https://github.com/ManuEtt/Dnd/pull/486).
+  Ein älterer, nicht gemergter eigener Draft #484 auf altem Main wurde
+  zugunsten dieser neuen Basis geschlossen; seine Branchdaten bleiben.
+- **Problem:** bestehende bestätigte NPC-Historie hat keine kontrollierte
+  Kürzung für kleine Rückblicke, besonders bei sehr langen Legacy-Feldern.
+- **Implementiert:** neues `app/lib/story/confirmed_npc_continuity_excerpt.dart`
+  mit maximal 1.800 UTF-16-Einheiten, höchstens drei bestätigt
+  gespeicherten Beziehungsnotizen, sicherer sichtbarer NPC-ID,
+  Unicode-/Bidi-Bereinigung und rune-sicherer Kürzung. Read-only:
+  keine Bestätigung aus freier KI-Prosa, keine Zustandsänderung.
+- **Testdatei:** `app/test/confirmed_npc_continuity_excerpt_test.dart`:
+  sechs positive/negative Gruppen (Faktenisolation, lange Emoji-Texte,
+  Zeilen-/Bidi-Injektion, ungültige IDs/Grenzen, Alt-JSON ohne Notizen,
+  echter SQLite-Neustart und unveränderter Held/Revision).
+- **Andere Dateien:** additive README, zentraler und Chat-B-Checkpoint;
+  `npc_continuity_reader.dart` aus PR #477 **nicht** geändert.
+- **Getestet:** aktuellen main, offene PR-Fachdateien und zugehörige
+  Architektur/Tests geprüft; offiziellen Dart-3.9.2-Formatter ausgeführt,
+  temporäre Workflowdatei vor PR entfernt.
+  **Nicht getestet:** finale volle PR-CI, Android-Echthardware/TalkBack,
+  echte KI-Provider-Anbindung. **Blockiert:** lokales Dart-/Flutter-SDK;
+  Actions als vollständige CI verfügbar.
+  **Migration:** keine; SQLite 3, äußeres JSON 1 und Version unverändert.
+  **Koordination:** README/Checkpoints mit Chat D additiv konsolidieren.
+- **Nächster Schritt:** vollständige CI auf finalem PR-HEAD abnehmen,
+  Fehler nur auf diesem Branch korrigieren, danach Integration/Review
+  ohne automatischen Merge.
+
+
+---
+
+### Übernommener Originalnachtrag aus PR #491
+
+
+---
+
+## 02.11.2026 – Chat B: U+200C/U+200D im unbestätigten KI-Storyparser sperren
+
+- **Ausgangs-main:** `c33448780dfe8b453f7f1db9d28c1396822901a7`.
+- **Branch:** `feat/chat-b/ai-provider-zero-width-guard-20261102`; **PR:** [#491](https://github.com/ManuEtt/Dnd/pull/491) (Draft).
+- **Commitnachweise:** Parser `bfcedd60ea018d0c5964afaf571cf9554736b365`, Regressionen `4295681ff0fb9b0660140640c23c50d0412c02dd`.
+- **IMPLEMENTIERT:** `app/lib/story/ai_story.dart` lehnt in neuen `AiStoryPlan`-/`AiStoryStep`-Textfeldern unsichtbare Joiner U+200C/U+200D zusammen mit den bisher gesperrten U+200B/U+200E/U+200F ab. Reguläre Erzählabsätze bleiben erlaubt. `app/test/ai_story_zero_width_validation_test.dart` prüft positive und negative Feldvarianten und unveränderten Kampagnenzustand.
+- **GETESTET:** GitHub-Quellvergleich, Main-SHA, sämtliche offenen PR-Dateipfade und eigenständige Fachpfade geprüft; Branch/Commits/PR angelegt.
+- **NICHT GETESTET:** Neue Flutter-Tests, gesamte CI auf finalem PR-HEAD, echte Android-Geräte/produktiver KI-Dienst. Kein lokales Flutter/Dart, kein lokaler Checkout.
+- **MIGRATION:** keine. Kein SQLite-/JSON-/Regel-/Held-/Questwechsel. Keine Änderung an alten Spielständen.
+- **NÄCHSTER SCHRITT:** finale GitHub-CI abnehmen, Fehler gegebenenfalls im eigenen Branch korrigieren. README/CODEX/CHAT_B bei Integration mit anderen laufenden PRs verlustfrei additiv zusammenführen.

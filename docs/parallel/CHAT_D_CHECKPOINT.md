@@ -1379,3 +1379,22 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Nächster Schritt:** technischen Baum und Docs auf finalen
   unveränderten Git-Blobs verifizieren, vollständige kombinierte CI
   starten und abnehmen; ohne deren Erfolg kein Merge/Branchlöschen.
+
+---
+
+# CHAT D – D-035: CI-grüne Regeln, UI und Story zusammenführen (02.11.2026)
+
+- **Basis-main:** `01259cbc93810a159c9a0d79d6055572f0bde3f1`, zuvor #493 vollständig CI-grün auf Quell- und Integrations-HEAD gemergt.
+- **Branch:** `chore/chat-d/integrate-validated-story-rules-ui-20261102`.
+- **Vier getrennte vollständig geprüfte Pakete:**
+  - #478 Distant-Touch-Metamagie, finaler Head `98b1931a97fc7f1411cf7899d8167f99d10df4d9`, CIs #41398490052 und #41398483892 grün.
+  - #479 barrierefreier Dialog bestätigter Zauberwirkungen, finaler Head `77c9d38857be71e04a9e62c201d5922805c87fc0`, CI #41398989518 grün.
+  - #486 kurze bestätigte NPC-Rückblicke, finaler Head `cb5c8dd25471ff7dc5046c04b6067b029180eca6`, CI #41402073724 grün.
+  - #491 Zero-Width-Schutz für unbestätigte KI-Geschichten, finaler Head `db84bb72ac2a2f18498697b35406eee3110cc8e7`, CIs #41426189797 und #41426180554 grün.
+- **Implementierung:** acht technische Dart-Code-/Test-Git-Blobs aus den vier geprüften Quellen ohne Inhaltsänderung übernommen und das separate Distant-Touch-Fachdokument aus #478 gesichert.
+- **Dokumentation:** Die vollständigen rein additiven Quell-Einfügungen in README, CODEX, CHAT_A/B/C bleiben erhalten, zusammen mit allen vorherigen Main- und Chat-D-Nachträgen. Einfügungen aus älteren Basen wurden unverändert in gekennzeichneten Quellenabschnitten nachgetragen.
+- **GETESTET:** vier eigenständige PR-CIs auf finalen Heads. **NICHT GETESTET:** kombinierte vollständige CI und reale Android-/TalkBack-/SAF-Abnahme.
+- **BLOCKIERT:** vollständiger PR- und Push-CI-Abschluss auf endgültigem Integrations-HEAD, Main-Postmerge-CI nach #493, finale Main-/PR-Konfliktprüfung vor Merge.
+- **Parallelität:** alle 23 zum Paketbeginn anderen offenen PRs auf die acht technischen Pfade geprüft, ohne Überschneidung. Die problematisch überlappenden #481/#483 im manuellen Zugfolgedialog bleiben ausdrücklich separat.
+- **Fachliche Grenzen:** Metamagie-Auswahlbeleg aus #485 ist weiterhin nicht im Helden-/SQLite-Modell gespeichert. Kein automatisches Cast-Recht ableiten; kein zusätzlicher Schema-, Versions-, Spielstands- oder Berechtigungswechsel durch diese Integration.
+- **Nächster Schritt:** neuen Integrationsbaum und Quell-Git-Blobs abgleichen; vollständige kombinierte CI starten und bis `completed/success` auf finalem Head abnehmen; erst danach Review/Merge.
