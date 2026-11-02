@@ -54,10 +54,8 @@ Future<void> _open(
               onResult(
                 await showDialog<ConfirmedSpellEffectChoice>(
                   context: context,
-                  builder: (_) => ConfirmedSpellEffectDialog(
-                    hero: hero,
-                    encounter: null,
-                  ),
+                  builder: (_) =>
+                      ConfirmedSpellEffectDialog(hero: hero, encounter: null),
                 ),
               );
             },
@@ -91,10 +89,7 @@ void main() {
       final dialog = tester.widget<AlertDialog>(find.byType(AlertDialog));
       expect(dialog.scrollable, isTrue);
       expect(
-        find.ancestor(
-          of: _field('source'),
-          matching: find.byType(Scrollable),
-        ),
+        find.ancestor(of: _field('source'), matching: find.byType(Scrollable)),
         findsOneWidget,
       );
       await _tap(tester, _field('confirm'));
