@@ -66,6 +66,40 @@ werden nicht geraten. Zuerst aktuelle PRs/Quellen prüfen; Domain-, SQLite-/Retr
 und bestehende Zauberregressionen verlangen. Keine automatische Fortsetzung
 außerhalb einer aktiven Sitzung.
 
+**Chat-A-Fachpaket (02.11.2026, separater PR):**
+Das SRD-5.2.1-Merkmal Metamagie erhält eine
+**streng bestätigte, extern versionierbare
+Auswahlliste** mit 2 Optionen ab eigener
+Zaubererstufe 2, 4 ab Stufe 10 und 6 ab 17.
+Bei einem verifizierten Aufstieg der
+Zaubererklasse darf höchstens **eine**
+Option ersetzt werden; ein anderer
+Mehrklassenaufstieg schenkt nichts.
+Unbekannte Metamagieoptionen,
+Doppelbelegungen, erfundene Klassen,
+manipulierte JSON-Felder und veraltete
+Sorcerer-Klassenstufen werden abgewiesen.
+Zwölf Domain-/JSON-/SQLite-/Revisionstests
+sind angelegt.
+
+**Wichtig:** Der neue
+`SrdMetamagicChoiceRecord` ist bislang ein
+**eigenständiges JSON-Artefakt** und **nicht**
+im bestehenden Helden- oder SQLite-Modell
+gespeichert; eine rohe JSON-Datei
+beweist keine autorisierte Wahl.
+Der parallel offene PR #463 wird
+nicht überschrieben. App-Version,
+SQLite3 und äußeres JSON1 unverändert.
+[Fachgrenzen](docs/SRD_METAMAGIC_CHOICE_RECORD_20261102.md).
+
+**Nächster Chat-A-Schritt:** nach
+koordiniertem Merge einen autorisierten
+Metamagie-Auswahlbeleg am Helden
+persistieren und Distant Spell nur
+bei nachweisbarer aktueller Wahl
+in die atomare Cast-Transaktion aufnehmen.
+
 ## Starten und prüfen
 
 Toolchain wie CI: Flutter **3.35.7**, Dart **3.9.2**, Java **17**, Node **22.14.0**,
