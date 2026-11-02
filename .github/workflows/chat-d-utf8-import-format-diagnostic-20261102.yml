@@ -1,0 +1,24 @@
+name: Temporary Chat D Dart formatter inspection
+on:
+  push:
+    branches:
+      - fix/chat-d/utf8-import-size-limit-20261102
+permissions:
+  contents: read
+jobs:
+  format-source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Print canonical Dart source for Chat D regression test
+        working-directory: app
+        run: |
+          echo '=== DART-FORMATTED-START ==='
+          dart format --output=show test/storage_repository_test.dart
+          echo '=== DART-FORMATTED-END ==='
