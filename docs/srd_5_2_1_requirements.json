@@ -2012,12 +2012,20 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#k-mpfer_9_base_indomitable_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/saving_throw_class_actions_test.dart",
+        "app/test/saving_throw_class_preflight_test.dart",
+        "app/test/saving_throw_class_preflight_flow_test.dart",
+        "app/test/saving_throw_class_preflight_ui_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/saving_throw_class_actions.dart",
+        "app/lib/domain/character_rule_engine.dart",
+        "app/lib/domain/class_resource_rules.dart"
+      ],
+      "note": "SRD 5.2.1 S.48 (Indomitable) / S.52 (Disciplined Survivor): vorhandene explizite Wiederholung nach bestätigtem Fehlschlag mit tatsächlicher Klassenstufe, Übungsbonus, Erschöpfung und Ressourcenbuchung. Klassenidentitäten, Stufensplit und eindeutige Rettungswurfübungen werden im Wiederholungsmodul vor Bonus, Spend und W20 geprüft; die lesende Verfügbarkeitsabfrage liefert bei ungültigen Profilen false. Bestehende GameEngine-/Controller-/SQLite-/UI-Kette getestet; Ablehnung protokolliert rules.blocked bei unveränderten Heldenwerten. Allgemeiner Erstwurf, weitere Rettungswurfquellen, situative Boni und reale Android-Abnahme nicht durch dieses Paket vollständig abgesichert; deshalb partial."
     },
     {
       "id": "CLASS-K-MPFER-9-BASE-TACTICAL-MASTER-1",
@@ -2772,12 +2780,20 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#m-nch_14_base_disciplined-survivor_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/saving_throw_class_actions_test.dart",
+        "app/test/saving_throw_class_preflight_test.dart",
+        "app/test/saving_throw_class_preflight_flow_test.dart",
+        "app/test/saving_throw_class_preflight_ui_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/saving_throw_class_actions.dart",
+        "app/lib/domain/character_rule_engine.dart",
+        "app/lib/domain/class_resource_rules.dart"
+      ],
+      "note": "SRD 5.2.1 S.48 (Indomitable) / S.52 (Disciplined Survivor): vorhandene explizite Wiederholung nach bestätigtem Fehlschlag mit tatsächlicher Klassenstufe, Übungsbonus, Erschöpfung und Ressourcenbuchung. Klassenidentitäten, Stufensplit und eindeutige Rettungswurfübungen werden im Wiederholungsmodul vor Bonus, Spend und W20 geprüft; die lesende Verfügbarkeitsabfrage liefert bei ungültigen Profilen false. Bestehende GameEngine-/Controller-/SQLite-/UI-Kette getestet; Ablehnung protokolliert rules.blocked bei unveränderten Heldenwerten. Allgemeiner Erstwurf, weitere Rettungswurfquellen, situative Boni und reale Android-Abnahme nicht durch dieses Paket vollständig abgesichert; deshalb partial."
     },
     {
       "id": "CLASS-M-NCH-15-BASE-PERFECT-FOCUS-0",
