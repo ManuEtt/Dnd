@@ -1,0 +1,25 @@
+name: Chat C Zugfolge-Formatdiagnose (temporär)
+on:
+  push:
+    branches:
+      - feat/chat-c/manual-turn-queue-ime-rebased-20261102
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Dart-Formatdiff ausgeben
+        working-directory: app
+        shell: bash
+        run: |
+          set -euo pipefail
+          dart format test/manual_turn_queue_dialog_ime_test.dart
+          git diff -- test/manual_turn_queue_dialog_ime_test.dart
