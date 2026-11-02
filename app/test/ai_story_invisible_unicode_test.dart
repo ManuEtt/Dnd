@@ -74,10 +74,7 @@ void main() {
   test('valid multiline Unicode narration and emoji remain supported', () {
     final story = _plan();
     story['opening'] = 'Äste rauschen.\n🐉 reist weiter\tund kehrt zurück ❤️';
-    expect(
-      AiStoryPlan.fromJson(story).opening,
-      contains('kehrt zurück'),
-    );
+    expect(AiStoryPlan.fromJson(story).opening, contains('kehrt zurück'));
 
     final parsed = AiStoryStep.fromJson({
       ..._turn(),
@@ -141,23 +138,32 @@ void main() {
       );
       for (final field in ['description']) {
         final turn = _turn();
-        final thread = (turn['threadUpdates'] as List).first
-            as Map<String, dynamic>;
+        final thread =
+            (turn['threadUpdates'] as List).first as Map<String, dynamic>;
         thread[field] = 'Vor' + mark + 'Nach';
-        expect(() => AiStoryStep.fromJson(turn, campaign), throwsFormatException);
+        expect(
+          () => AiStoryStep.fromJson(turn, campaign),
+          throwsFormatException,
+        );
       }
       for (final field in ['title', 'description']) {
         final turn = _turn();
-        final thread = (turn['newThreads'] as List).first
-            as Map<String, dynamic>;
+        final thread =
+            (turn['newThreads'] as List).first as Map<String, dynamic>;
         thread[field] = 'Vor' + mark + 'Nach';
-        expect(() => AiStoryStep.fromJson(turn, campaign), throwsFormatException);
+        expect(
+          () => AiStoryStep.fromJson(turn, campaign),
+          throwsFormatException,
+        );
       }
       for (final field in ['relationship', 'note']) {
         final turn = _turn();
         final npc = (turn['npcUpdates'] as List).first as Map<String, dynamic>;
         npc[field] = 'Vor' + mark + 'Nach';
-        expect(() => AiStoryStep.fromJson(turn, campaign), throwsFormatException);
+        expect(
+          () => AiStoryStep.fromJson(turn, campaign),
+          throwsFormatException,
+        );
       }
     }
     expect(jsonEncode(campaign.toJson()), saved);
