@@ -57,69 +57,69 @@ class _SrdMagicInitiateDialogState extends State<SrdMagicInitiateDialog> {
         ? 'Kleriker'
         : 'Magier';
     return AlertDialog(
+      scrollable: true,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       title: Text('Magieinitiierter ($source)'),
       content: SizedBox(
         width: 420,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Wähle zwei verschiedene Zaubertricks, einen Zauber des '
-                '1. Grades aus derselben SRD-Liste und das Zauberattribut.',
-              ),
-              const SizedBox(height: 14),
-              _spellDropdown(
-                keyName: 'magic-initiate-cantrip-one',
-                label: 'Zaubertrick 1',
-                value: _first,
-                options: cantrips,
-                onChanged: (value) => setState(() => _first = value),
-              ),
-              const SizedBox(height: 8),
-              _spellDropdown(
-                keyName: 'magic-initiate-cantrip-two',
-                label: 'Zaubertrick 2',
-                value: _second,
-                options: cantrips,
-                onChanged: (value) => setState(() => _second = value),
-              ),
-              const SizedBox(height: 8),
-              _spellDropdown(
-                keyName: 'magic-initiate-level-one',
-                label: 'Zauber des 1. Grades',
-                value: _levelOne,
-                options: levelOne,
-                onChanged: (value) => setState(() => _levelOne = value),
-              ),
-              const SizedBox(height: 8),
-              _spellDropdown(
-                keyName: 'magic-initiate-ability',
-                label: 'Zauberattribut',
-                value: _ability,
-                options: SrdMagicInitiateChoice.abilities,
-                onChanged: (value) => setState(() => _ability = value),
-              ),
-              if (_first != null && _first == _second)
-                const Padding(
-                  padding: EdgeInsets.only(top: 8),
-                  child: Text(
-                    'Bitte zwei unterschiedliche Zaubertricks auswählen.',
-                  ),
-                ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Wähle zwei verschiedene Zaubertricks, einen Zauber des '
+              '1. Grades aus derselben SRD-Liste und das Zauberattribut.',
+            ),
+            const SizedBox(height: 14),
+            _spellDropdown(
+              keyName: 'magic-initiate-cantrip-one',
+              label: 'Zaubertrick 1',
+              value: _first,
+              options: cantrips,
+              onChanged: (value) => setState(() => _first = value),
+            ),
+            const SizedBox(height: 8),
+            _spellDropdown(
+              keyName: 'magic-initiate-cantrip-two',
+              label: 'Zaubertrick 2',
+              value: _second,
+              options: cantrips,
+              onChanged: (value) => setState(() => _second = value),
+            ),
+            const SizedBox(height: 8),
+            _spellDropdown(
+              keyName: 'magic-initiate-level-one',
+              label: 'Zauber des 1. Grades',
+              value: _levelOne,
+              options: levelOne,
+              onChanged: (value) => setState(() => _levelOne = value),
+            ),
+            const SizedBox(height: 8),
+            _spellDropdown(
+              keyName: 'magic-initiate-ability',
+              label: 'Zauberattribut',
+              value: _ability,
+              options: SrdMagicInitiateChoice.abilities,
+              onChanged: (value) => setState(() => _ability = value),
+            ),
+            if (_first != null && _first == _second)
               const Padding(
-                padding: EdgeInsets.only(top: 14),
+                padding: EdgeInsets.only(top: 8),
                 child: Text(
-                  'Die Auswahl wird im Charakterbogen gespeichert. '
-                  'Einmaliges Wirken ohne Zauberplatz, Erholung nach '
-                  'langer Rast, erneutes Wirken mit Zauberplätzen '
-                  'und Zauberaustausch beim Stufenaufstieg sind '
-                  'noch nicht an die Spielmechanik angebunden.',
+                  'Bitte zwei unterschiedliche Zaubertricks auswählen.',
                 ),
               ),
-            ],
-          ),
+            const Padding(
+              padding: EdgeInsets.only(top: 14),
+              child: Text(
+                'Die Auswahl wird im Charakterbogen gespeichert. '
+                'Einmaliges Wirken ohne Zauberplatz, Erholung nach '
+                'langer Rast, erneutes Wirken mit Zauberplätzen '
+                'und Zauberaustausch beim Stufenaufstieg sind '
+                'noch nicht an die Spielmechanik angebunden.',
+              ),
+            ),
+          ],
         ),
       ),
       actions: [
