@@ -1,3 +1,58 @@
+# Chat A – Distant Spell Touch: 30 Fuß mit einem Zaubereipunkt (02.11.2026, eigener PR)
+
+Basis-main `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`;
+Branch `feat/chat-a/distant-touch-metamagic-20261102`.
+SRD 5.2.1, Sorcerer / Metamagic / Distant Spell, CC BY 4.0.
+
+**IMPLEMENTIERT:** Neues isoliertes
+`SrdDistantTouchMetamagicRules.preview`
+mit wirklichem 30-Fuß-Grenzwert
+für Touch-Zauber und Pflichtprüfung
+der bestätigten Sorcerer-Klassenstufe 2+,
+Metamagie-Freischaltung, einer verfügbaren
+Klassenressource `sorceryPoints`,
+eines tatsächlich vorbereiteten
+SRD-Zaubers der korrekten eigenen Klasse
+und der vollständig bestätigten
+blockerfreien Rastergeometrie.
+Ausdrückliche Spieler-/Options-/Zielwahl
+getrennt. Snapshotgebundene Vorschau,
+Punktkosten nur als Kopie vorgemerkt.
+
+**TESTS:** zehn neue positive/negative
+Regressionsgruppen für 0/30/35 Fuß,
+Metamagie-/Klassen-/Spell-Quellen,
+Mehrklassenlevel, Slot- und Punkte-
+Trennung, Status und Hindernisse,
+alternde Vorschauen, JSON,
+SQLite-Restart, Retry und stale Revision.
+CI/Analyse/Debug-/ABI-Builds nur nach
+tatsächlichem finalem Workflow-Abschluss
+als grün melden.
+
+**BLOCKIERT/GEPLANT:** Keine
+dauerhaft versionierte Metamagiewahl
+im Helden. Der aktuelle Boolwert ist
+kein manipulationssicherer Nachweis,
+keine Live-Casting-Engine-Integration
+und keine atomare Zauberplatz-/Effekt-/
+Punktausgabe. Deshalb **kein** impliziter
+automatischer Fern-Touch-Cast. Unberührt:
+PR #461/#463/#472, gemeinsam genutzte
+Domainmodelle, Controller, SQLite3,
+JSON1 und App-Version.
+
+**NÄCHSTER SCHRITT:** nach
+koordiniertem Merge Metamagiewahl als
+versionierten Quellbeleg speichern,
+mit dem Grid- und Spell-Preflight
+verbinden und vollständige
+Casting-Kosten in einem revisions-
+geschützten Persistenzschritt testen.
+[Technischer Fachbeleg](SRD_DISTANT_TOUCH_METAMAGIC_20261102.md).
+
+---
+
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
