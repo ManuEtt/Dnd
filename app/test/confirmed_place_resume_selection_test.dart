@@ -105,10 +105,7 @@ void main() {
       );
     }
     expect(
-      () => ConfirmedPlaceResumeSelector.read(
-        _campaign(),
-        expectedRevision: 4,
-      ),
+      () => ConfirmedPlaceResumeSelector.read(_campaign(), expectedRevision: 4),
       throwsFormatException,
     );
     expect(
