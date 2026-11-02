@@ -1,5 +1,21 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – Mehrgegner-Initiative bei 200 % Schrift und IME (02.11.2026)
+
+[Draft-PR #488](https://github.com/ManuEtt/Dnd/pull/488) verbessert den
+unabhängigen `TrackedCreatureInitiativeDialog`: Der gesamte Dialog scrollt
+ohne verschachtelte Scrollflächen, Bestätigungen bleiben auf schmalen
+Android-Displays bedienbar, die ursprünglichen ausführlichen
+Screenreader-Texte bleiben trotz kürzerer sichtbarer Labels erhalten.
+Fünf Widgettests prüfen 320/360 dp bei 200 % Schrift und 220 dp
+Tastatureinblendung einschließlich Abbruch, unvollständiger/ungültiger
+Initiative und rein unverbindlicher Auswahl. Keine Kampfregel-, 
+SQLite-/JSON-, Spielstands- oder Versionsänderungen. Vollständige CI
+auf dem finalen PR-HEAD und reale TalkBack-/IME-Geräteprüfung noch offen;
+keine automatische Mergefreigabe.
+
+---
+
 Deutschsprachige Fantasy-Solo-App für Android: Flutter/Dart, lokale SQLite-Spielstände,
 regelgeprüfte Aktionen und ein optionaler Fastify-/TypeScript-Erzähler.
 
