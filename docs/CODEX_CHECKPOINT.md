@@ -1,5 +1,38 @@
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
+## Chat B – bestätigte NPC-Rückblicke: Zero-Width-Namensschutz (02.11.2026)
+
+- **Ausgangs-main:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`;
+  **Branch:** `fix/chat-b/npc-continuity-zero-width-20261102`;
+  **Pull Request:** nach Fertigstellung als Draft gegen Main öffnen.
+- **Problem:** `NpcContinuityReader._npcNameKey` entfernte Bidi-Marken,
+  aber nicht U+200B–U+200D, U+2060 oder U+FEFF. Zwei sichtbar gleiche
+  NPC-Namen konnten ohne notwendige ID in bestätigten Rückblicken
+  erscheinen; Rückblicktext enthielt zusätzliche unsichtbare Zeichen.
+- **IMPLEMENTIERT:** `_visibleName` entfernt Formatzeichen nur in der
+  Darstellung/Vergleichsprojektion, die sichere gespeicherte NPC-ID
+  disambiguiert Dubletten. `_singleLine` bereinigt auch gespeicherte
+  Beziehungstexte und Notizen auf der Anzeigeoberfläche. Keine Änderung
+  an bestätigtem Kampagnen-/Regelzustand.
+- **Dateien:** `app/lib/story/npc_continuity_reader.dart`,
+  `app/test/npc_continuity_zero_width_test.dart`, README, zentraler
+  und eigener Chat-B-Checkpoint. Fünf positive/negative Testgruppen:
+  sechs Unicode-Marker, Einzel-NPC, unsichere/doppelte ID, Legacy-JSON,
+  SQLite-Neustart und Replay, unveränderte Heldenwerte und bestätigte
+  Notizen.
+- **GETESTET:** GitHub Main/alle offenen PR-Dateipfade/Fachquellen
+  geprüft. **NICHT GETESTET:** vollständige finale Actions-CI,
+  reales Android-Gerät/TalkBack, produktiver KI-Anbieter.
+  **BLOCKIERT:** kein lokales Flutter-/Dart-SDK, Actions verfügbar.
+  **Migrationen:** keine; SQLite 3, äußeres JSON 1 unverändert.
+- **Koordination:** #452/#456/#459/#464/#470 ändern getrennte
+  Storymodule. Gemeinsame README-/Checkpoint-Zusätze bei Integration
+  durch Chat D additiv zusammenführen. Keine direkten Main-Commits.
+- **NÄCHSTER SCHRITT:** vollständige finale CI inkl. neuer Regressionen
+  abnehmen und Fehler im eigenen Branch korrigieren; danach Review
+  durch Chat D, kein automatischer Merge.
+
+
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
 Alpha **0.8.49+99**. Dieser neue Live-Status ersetzt widersprüchliche historische
 Momentaufnahmen; die vollständige additive Vereinigung ist bytegenau unter
