@@ -113,14 +113,13 @@ Future<void> _showAtLargeText(
   await tester.pumpAndSettle();
 }
 
-Future<void> _scrollUntilTouchable(
-  WidgetTester tester,
-  Finder target,
-) async {
-  final scrollable = find.descendant(
-    of: find.byType(ManualExtraCreatureAttackDialog),
-    matching: find.byType(Scrollable),
-  ).first;
+Future<void> _scrollUntilTouchable(WidgetTester tester, Finder target) async {
+  final scrollable = find
+      .descendant(
+        of: find.byType(ManualExtraCreatureAttackDialog),
+        matching: find.byType(Scrollable),
+      )
+      .first;
   for (var i = 0; i < 40; i++) {
     if (target.hitTestable().evaluate().isNotEmpty) return;
     await tester.drag(scrollable, const Offset(0, -125));
@@ -148,8 +147,13 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('Angreifer handlungsfähig'), findsOneWidget);
-      expect(find.text('Alle Angriffs-Modifikatoren einschließlich '
-          'Sonderfähigkeiten geprüft.'), findsNothing);
+      expect(
+        find.text(
+          'Alle Angriffs-Modifikatoren einschließlich '
+          'Sonderfähigkeiten geprüft.',
+        ),
+        findsNothing,
+      );
       final cancel = find.text('Abbrechen');
       expect(cancel.hitTestable(), findsOneWidget);
       await tester.tap(cancel);
@@ -173,10 +177,7 @@ void main() {
     await tester.tap(confirm);
     await tester.pumpAndSettle();
 
-    expect(
-      find.byKey(const ValueKey('manual-attack-error')),
-      findsOneWidget,
-    );
+    expect(find.byKey(const ValueKey('manual-attack-error')), findsOneWidget);
     expect(find.byType(ManualExtraCreatureAttackDialog), findsOneWidget);
     expect(results, isEmpty);
     expect(campaign.toJson(), before);
