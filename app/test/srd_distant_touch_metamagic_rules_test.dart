@@ -147,8 +147,10 @@ void main() {
       );
     }
     // Freeform notes never replace the Sorcerer-2 level requirement.
-    final fake = _hero(first: 'Kleriker', level: 5);
-    fake.copyWith(features: const ['Distant Spell']);
+    final fake = _hero(
+      first: 'Kleriker',
+      level: 5,
+    ).copyWith(features: const ['Distant Spell']);
     expect(
       () => _preview(fake, catalog),
       throwsFormatException,
