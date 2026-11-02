@@ -1,5 +1,42 @@
 # Chat B – NPC-Kontext ohne Steuerzeichen (30.10.2026)
 
+## Chat B – begrenzte bestätigte NPC-Kontinuität (02.11.2026)
+
+- **Ausgangs-main:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`.
+  **Branch:** `feat/chat-b/bounded-confirmed-npc-excerpt-20261102`.
+  **Draft-PR:** gegen main, Nummer in PR-Beschreibung.
+  **Fachcommit:** `92c29ce9a111e765fb43754be196697be6681973`.
+  **Testcommit:** `0165d137534d6a7ceb7e0fb97d1566b461d5a703`.
+  **Dart-Testkorrektur:** `6345b6d5ec3cdea7bc9c93f9e1ec880c0433ee3c`.
+- **Ausgangsproblem:** bestätigte NPC-Kontinuität aus Legacy-Spielständen
+  kann sehr lange Namen/Beziehungen/Notizen enthalten. Die ungebundene
+  `confirmedContext`-Ausgabe ist nicht für kurze Rückblicke geeignet.
+- **IMPLEMENTIERT:** neue schreibgeschützte
+  `ConfirmedNpcContinuityExcerpt.read` auf dem bestehenden
+  `NpcContinuityReader`. Immer eindeutige, sichere NPC-ID,
+  maximal drei bestätigte Notizen, maximal 1.800 UTF-16-Einheiten,
+  rune-sicher, Unicode-/Bidi-Marken ohne Zeileninjektion dargestellt.
+  Nicht bestätigte KI-Prosa und fremde NPC-Notizen ausgeschlossen,
+  gespeicherte Regeln/Kampagnen unverändert.
+- **Dateien:** `app/lib/story/confirmed_npc_continuity_excerpt.dart`,
+  `app/test/confirmed_npc_continuity_excerpt_test.dart`, README
+  und beide Checkpoints.
+- **Tests:** sechs positive/negative Gruppen inklusive historischer
+  langer Emoji-Texte, Notizordnung/-anzahl, unsicherer/mehrdeutiger IDs,
+  JSON-Rückwärtskompatibilität, SQLite-Neustart und unveränderten
+  Helden-/Revisionswerten.
+  **GETESTET:** GitHub Main/PRs/Architektur/Module geprüft.
+  **NICHT GETESTET:** finale CI, Android-Echthardware/produktive KI.
+  **BLOCKIERT:** kein lokales Flutter-/Dart-SDK; Actions verfügbar.
+  **Migration:** keine, SQLite 3/äußeres JSON 1 unverändert.
+- **Koordination:** bestehender `npc_continuity_reader.dart` ist
+  Eigentum des offenen PR #477, wird hier nicht bearbeitet.
+  Auch #464 und #470 betreffen andere NPC-Fachmodule.
+  README und Checkpoints bei Integration nur additiv durch Chat D.
+- **Nächster Schritt:** Formatter/gesamte CI auf finalem Commit auswerten,
+  Fehler im eigenen Branch beheben, danach Review durch Chat D.
+
+
 ## Chat B – verspätete Story-Antwort nach SQLite-Neustart (31.10.2026)
 
 - **Basis-main:** `47ab002872b7d46daeae03bb558258cf2ea73e4a`. **Branch:** `feat/chat-b/delayed-story-response-restart-20261031`. **Pull Request:** [#446](https://github.com/ManuEtt/Dnd/pull/446).
