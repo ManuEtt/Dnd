@@ -1,5 +1,32 @@
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
+## Chat C – 02.11.2026: Mehrgegner-Initiative mit großer Schrift und IME
+
+- **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529`.
+- **Branch:** `feat/chat-c/tracked-initiative-ime-20261102`.
+- **Pull Request:** [#488](https://github.com/ManuEtt/Dnd/pull/488) (Draft).
+- **Code-/Testcommit:** `4fc35cbb35f43142b98e700e52656b22f40fcd0c`.
+- **Implementiert:** `TrackedCreatureInitiativeDialog` mit einem
+  AlertDialog-Scrollbereich, kompakten Insets, größeren Dropdowns,
+  visuellen Kurztexten bei 200 % ohne Verlust der TalkBack-Langtexte
+  und zugänglicher Validierungsfehlermeldung.
+- **Tests hinzugefügt:** fünf Widgetfälle in
+  `app/test/tracked_creature_initiative_ime_test.dart`
+  (320/360 dp, 200 %, 220 dp IME; Abbruch, Erfolg, Fehler und
+  unveränderte Kampagnen-JSON-Snapshots).
+- **Teststand:** Flutter/Dart lokal nicht installiert; CI am finalen
+  Commit zum Zeitpunkt der Eintragung noch nicht belegt. Echte
+  Android-/TalkBack-/IME-/Upgrade-Tests sind noch offen.
+- **Kompatibilität:** Keine Änderungen an Regeln, GameController,
+  Kampfzustand, SQLite, JSON, Version oder gespeicherten Spielständen.
+- **Parallelität:** PR-Pfadüberschneidungen ausgeschlossen, gemeinsame
+  README-/Checkpoint-Ergänzungen durch Chat D beim Merge konsolidieren.
+- **Nächster Schritt:** Echten Touch-/TalkBack-Test der
+  Mehrgegner-Initiative auf einem schmalen Android-Gerät mit Tastatur
+  und 200 % Schrift durchführen.
+
+---
+
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
 Alpha **0.8.49+99**. Dieser neue Live-Status ersetzt widersprüchliche historische
 Momentaufnahmen; die vollständige additive Vereinigung ist bytegenau unter
