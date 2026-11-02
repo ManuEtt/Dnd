@@ -83,9 +83,7 @@ class ConfirmedNpcResumeSelector {
   static final RegExp _formatMarks = RegExp(
     r'[\u061c\u200b-\u200f\u202a-\u202e\u2060-\u2069\ufeff]',
   );
-  static final RegExp _controls = RegExp(
-    r'[\x00-\x1f\x7f-\x9f\u2028\u2029]',
-  );
+  static final RegExp _controls = RegExp(r'[\x00-\x1f\x7f-\x9f\u2028\u2029]');
 
   static ConfirmedNpcResumeSelection read(
     Campaign campaign, {
@@ -122,21 +120,20 @@ class ConfirmedNpcResumeSelector {
           _oneLine(note.note, 140).isEmpty) {
         continue;
       }
-      grouped.putIfAbsent(note.npcId, () => []).add((
-        note: note,
-        order: i,
-      ));
+      grouped.putIfAbsent(note.npcId, () => []).add((note: note, order: i));
     }
 
     final ranked =
-        <({
-          WorldNpc npc,
-          String name,
-          String relationship,
-          DateTime latestAt,
-          int latestOrder,
-          List<String> notes,
-        })>[];
+        <
+          ({
+            WorldNpc npc,
+            String name,
+            String relationship,
+            DateTime latestAt,
+            int latestOrder,
+            List<String> notes,
+          })
+        >[];
     for (final npc in campaign.npcs) {
       if (!_safeId.hasMatch(npc.id) || npcIdCounts[npc.id] != 1) {
         continue;
