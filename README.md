@@ -329,3 +329,7 @@ PR-Commits erforderlich. Dieser Abschnitt dokumentiert den
 Integrationsvorbereitungsstand; er behauptet noch keine erfolgreiche
 Gesamt-CI. Keine neuen SQLite-/JSON-/Spielstands-/Appversionsänderungen,
 kein automatischer Merge oder Löschen von Branches.
+
+### Chat C: Manuelle Kampf-Zugfolge bei 200 % Schrift und Tastatur (02.11.2026)
+
+[PR #483](https://github.com/ManuEtt/Dnd/pull/483) hält die manuelle Zugfolgen-Verwaltung bei 320/360 dp, 200 % Schrift und geöffneter Android-Tastatur durch einen einheitlichen Dialog-Scrollbereich bedienbar. Akteurspezifische Gleichstands-Pfeile erhalten eindeutige Screenreader-Beschriftungen, Validierungsfehler sind Live-Regionen. Fünf neue Widgettests prüfen fehlende Bestätigungen, Initiative-Gleichstände, neutralen Abbruch, gespeicherten manuellen Marker und unveränderte Kampagnensnapshots. **Neue finale PR-CI noch offen.** Keine automatische Kampf-/Ressourcenbuchung, Regel-, Speicher- oder Versionsänderung.
