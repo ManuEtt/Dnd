@@ -1,0 +1,29 @@
+name: Chat C Savage Attacker targeted verification
+on:
+  push:
+    branches:
+      - feat/chat-c/savage-attacker-ime-20261102
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Resolve Flutter dependencies
+        run: |
+          cd app
+          flutter pub get
+      - name: Show exact official Dart formatter changes
+        run: |
+          cd app
+          dart format lib/ui/savage_attacker_selection_dialog.dart test/savage_attacker_selection_dialog_test.dart
+          git diff -- lib/ui/savage_attacker_selection_dialog.dart test/savage_attacker_selection_dialog_test.dart
+      - name: Run Savage Attacker widget tests
+        run: |
+          cd app
+          flutter test test/savage_attacker_selection_dialog_test.dart
