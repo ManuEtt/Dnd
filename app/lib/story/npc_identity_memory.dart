@@ -17,8 +17,9 @@ class NpcIdentityContext {
     required this.alive,
     required this.relationship,
     required List<NpcRelationshipNote> notes,
-    required this._sourceStamp,
-  }) : notes = List.unmodifiable(notes);
+    required String sourceStamp,
+  }) : notes = List.unmodifiable(notes),
+       _sourceStamp = sourceStamp;
 
   final String campaignId;
   // Local snapshot boundary only; the existing Story API map is unchanged.
@@ -108,7 +109,7 @@ class NpcIdentityMemory {
       alive: npc.alive,
       relationship: npc.relationship,
       notes: history.take(maxNotes).map((item) => item.note).toList(),
-      _sourceStamp: jsonEncode([
+      sourceStamp: jsonEncode([
         npc.toJson(),
         for (final note in campaign.npcRelationshipNotes)
           if (note.npcId == npcId) note.toJson(),
