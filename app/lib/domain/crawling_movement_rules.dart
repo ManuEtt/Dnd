@@ -23,6 +23,14 @@ class CrawlingMovementRules {
     required int distanceFeet,
     required bool difficultTerrain,
   }) {
+    // SRD 5.2.1, Damage and Healing (p. 17): 0 HP means Unconscious,
+    // even if an older imported save omitted the derived condition.
+    // Never mutate that save merely to reject an invalid move.
+    if (hero.hitPoints == null || hero.hitPoints! <= 0 || hero.isDead) {
+      throw const FormatException(
+        'Ohne bestätigte positive Trefferpunkte ist Kriechen nicht möglich.',
+      );
+    }
     if (!hero.conditions.contains('liegend')) {
       throw const FormatException('Nur liegende Figuren können hier kriechen.');
     }

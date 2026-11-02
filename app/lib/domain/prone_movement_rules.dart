@@ -12,6 +12,13 @@ class ProneMovementRules {
   const ProneMovementRules._();
 
   static int standingCostDecimeters(HeroCharacter hero) {
+    // SRD 5.2.1, Damage and Healing (p. 17): a hero at 0 HP is
+    // Unconscious even when a historical save lacks that condition.
+    if (hero.hitPoints == null || hero.hitPoints! <= 0 || hero.isDead) {
+      throw const FormatException(
+        'Ohne bestätigte positive Trefferpunkte ist Aufstehen nicht möglich.',
+      );
+    }
     if (!ConditionRules.canMove(hero)) {
       throw const FormatException(
         'Du kannst mit deinem aktuellen Zustand oder Tempo nicht aufstehen.',
