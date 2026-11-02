@@ -349,3 +349,20 @@ Gezielten Abruf bestätigter NPC-Beziehungsnotizen auch bei mehreren aufeinander
 
 
 **GitHub-Nachtrag Chat B (26.10.2026):** [PR #237](https://github.com/ManuEtt/Dnd/pull/237) enthält das optionale `selectedNpcId`-Protokoll. Im nachgewiesenen Lauf [#40342521532](https://github.com/ManuEtt/Dnd/actions/runs/40342521532) haben Backend, Dart-Format, Flutter-Analyse und komplette Flutter-Tests bestanden; Android-Build bei Abruf noch offen. Abschlussstatus gilt nur für exakt getesteten PR-HEAD. Keine Übernahme nach `main`, keine Spielstandmigration.
+
+---
+
+## 02.11.2026 – Chat B: unsichtbare Joiner in KI-Storyantworten ablehnen (PR #491)
+
+- **Ausgangs-main:** `c33448780dfe8b453f7f1db9d28c1396822901a7`.
+- **Branch:** `feat/chat-b/ai-provider-zero-width-guard-20261102`.
+- **Fachcommit:** `bfcedd60ea018d0c5964afaf571cf9554736b365`; **Testcommit:** `4295681ff0fb9b0660140640c23c50d0412c02dd`.
+- **Pull Request:** [#491](https://github.com/ManuEtt/Dnd/pull/491) (Draft).
+- **Ausgangsproblem:** Der KI-Textvalidator in `app/lib/story/ai_story.dart` wies bereits U+200B und Richtungsmarken ab, nicht aber U+200C (Zero-Width Non-Joiner) oder U+200D (Zero-Width Joiner). Eingehende unbestätigte Narration, NPC-/Ortsnamen und Story-/Beziehungsnotizen konnten optisch identische, technisch unterschiedliche Texte enthalten.
+- **IMPLEMENTIERT:** Die bestehende Sperre umfasst nun U+200B–U+200F. Es werden nur **neue unbestätigte Anbieterantworten** bei `AiStoryPlan.fromJson`/`AiStoryStep.fromJson` abgelehnt; gespeicherte historische Daten, Hero, Kampf, Quests und bestätigte Erinnerungen werden nicht umgeschrieben.
+- **TESTS ERGÄNZT:** `app/test/ai_story_zero_width_validation_test.dart` mit sicherem mehrsprachigem Positivfall (Tab/Zeilenumbruch, JSON-Roundtrip, unverändertes Heldenprofil) und je drei negativen Parameter-Testgruppen für beide Joiner über sämtliche `_text`-Felder von Plan und Step. Fehler müssen `FormatException` auslösen, der bestätigte Kampagnenzustand bleibt identisch.
+- **GETESTET:** Repository-Zustand, zuletzt erfolgreiche Main-CI und geänderte Dateipfade aller zu Beginn 30 offenen PRs geprüft; keine Fachdateikollision. GitHub-Branch, Fach-/Testcommits und PR wurden nachgewiesen.
+- **NICHT GETESTET:** Dart-Format, `flutter analyze`, `flutter test`, Python-/Backend-Gesamtgates, Android-Build und native Tests dieses **finalen PR-HEAD** bis zur tatsächlichen CI-Abnahme. Kein lokaler Flutter-/Dart-SDK oder GitHub-Checkout. Reales Gerät, produktive KI und alte Android-Versionen ebenfalls nicht geprüft.
+- **BLOCKIERT:** Vollständige grüne CI des finalen Dokumentationscommits; gemeinsame README- und zentrale Checkpoint-Nachträge bei späterer Integration additiv durch Chat D vereinen.
+- **MIGRATION:** keine; SQLite 3, äußeres JSON 1, API, Versionsnummern, bestätigte Spielstände und Rule-Engine unverändert.
+- **NÄCHSTER SCHRITT:** CI inklusive Flutter-Format und gezielten Providerparser-Regressionen auf finalem PR-HEAD kontrollieren und eventuelle Fehler auf demselben Branch beheben. Danach ein separates Paket für bestätigte, id-/revisionsgebundene Handlungsstrang-Auswahl erwägen, ohne PR #459 oder #489 zu duplizieren.
