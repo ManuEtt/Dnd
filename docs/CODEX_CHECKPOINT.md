@@ -1,5 +1,40 @@
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
+## Chat B – strukturierte NPC-Identität: Zero-Width-Schutz (02.11.2026)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+  **Branch:** `fix/chat-b/structured-npc-zero-width-20261102`.
+  **Draft-PR:** [#470](https://github.com/ManuEtt/Dnd/pull/470).
+- **Problem/IMPLEMENTIERT:** `NpcIdentityStoryPayload.prepare` fasste
+  optisch gleiche Namen bei U+200B–U+200D/U+2060/U+FEFF zuvor nicht
+  gleich; unstrukturierte Spielerprosa konnte daher eine falsche
+  Identitätszuordnung nahelegen. `_fold` beseitigt nur für den Vergleich
+  diese Zeichen, `_validText` verwirft sie dagegen im strukturierten
+  Kontext. Gespeicherte NPCs/Notizen werden nicht heimlich geändert.
+- **Dateien:** `app/lib/story/npc_identity_story_payload.dart`,
+  `app/test/npc_identity_story_zero_width_payload_test.dart`,
+  `README.md`, `docs/CODEX_CHECKPOINT.md`,
+  `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **Positive und negative Tests:** fünf Unicode-Marker, mehrdeutige Namen
+  vs. ausdrücklich gewählte sichere NPC-ID, schädliche Formatzeichen in
+  Namen, Beziehungen/Notizen, Legacy-JSON ohne Notizen, SQLite-Neustart und
+  Rekonstruktionsabgleich, Revisions- und Heldenschutz.
+- **GETESTET:** Quellen, aktueller Main-HEAD und alle offenen PR-Dateipfade
+  geprüft; Dart-3.9.2-Formatter separat auf beide Code-/Testdateien
+  angewandt, Diagnoseworkflow entfernt. **PR #464** (getrennte unstrukturierte
+  NPC-Erinnerungs-API) bereits grün:
+  [CI #41323322514](https://github.com/ManuEtt/Dnd/actions/runs/41323322514).
+  Dies ist **kein** Erfolgsgarant für #470.
+- **NICHT GETESTET:** finale vollständige CI von #470 (noch offen),
+  physisches Android-Gerät/TalkBack, produktive KI. **BLOCKIERT:** lokale
+  Flutter-/Dart-Tools fehlen; GitHub Actions verfügbar.
+- **Migration:** keine, SQLite 3/äußeres JSON 1 unverändert.
+  **Noch nicht implementiert:** produktiver ID-basierter Backend-Vertrag.
+- **Nächster Schritt:** #470-CI auf finalem HEAD auswerten, nötige
+  Korrekturen im eigenen Branch wiederholt testen, Chat D zur
+  kontrollierten additiven Integration übergeben. Kein Auto-Merge.
+
+
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
 Alpha **0.8.49+99**. Dieser neue Live-Status ersetzt widersprüchliche historische
 Momentaufnahmen; die vollständige additive Vereinigung ist bytegenau unter
