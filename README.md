@@ -365,3 +365,20 @@ Bestandsschutz bereits veröffentlichter Release-Artefakte ab.
 Branch: `fix/chat-d/zip-file-directory-conflicts-20261102`.
 Die finale GitHub-CI auf dem vollständigen PR-Commit ist vor Review oder Merge
 verbindlich. Kein SQLite-/JSON-/Save-Schema- oder Appversionswechsel.
+
+---
+
+### 02.11.2026 – Chat B: unsichtbare Zeichen in neuen KI-Geschichten
+
+[PR #491](https://github.com/ManuEtt/Dnd/pull/491) (Draft),
+Branch `feat/chat-b/ai-provider-zero-width-guard-20261102`,
+Basis-main `c33448780dfe8b453f7f1db9d28c1396822901a7`:
+Der Storyparser lehnt jetzt auch U+200C/U+200D (Zero-Width-Joiner)
+in neu eintreffender KI-Erzählung, NPC-/Ortsnamen und Notizen ab.
+Der neue `ai_story_zero_width_validation_test.dart` enthält positive
+mehrzeilige internationale Erzählungen und negative Providerfeldvarianten.
+Die Quell-/Testcommits sind `bfcedd60`/`4295681f`;
+die GitHub-CI für den finalen PR-HEAD ist vor einer Freigabe
+noch tatsächlich zu prüfen. Bestehende SQLite-/JSON-Spielstände,
+Story- und Regelwerte sowie App-Versionen bleiben unverändert.
+Gemeinsame Dokumentationsnachträge bei Integration additiv erhalten.
