@@ -312,6 +312,7 @@ Ein neuer Flutter-Regressionstest schützt vor einer Story-Provider-Antwort, die
 - **Bestätigte Main-CI:** #41395163971 und #41396647217,
   beide `completed/success` auf obigem SHA.
 - **Branch:** `fix/chat-d/apk-unicode-path-collisions-20261102`.
+- **PR:** https://github.com/ManuEtt/Dnd/pull/476 (Draft bis vollständiger CI).
 - **Code-Commit:** `dc2055bfb4cad572b822672dd4f6dadd6bc3b3b3`.
 - **Test-Commit:** `9de29379de5114cf6c1519e41123d60001853ab8`.
 - **IMPLEMENTIERT:** APK-ZIP-Metadaten verweigern
