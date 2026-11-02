@@ -254,4 +254,139 @@ void main() {
       isNotNull,
     );
   });
+  Future<void> showImeChoice(
+    WidgetTester tester, {
+    required double width,
+    Campaign? state,
+    ValueNotifier<SavageAttackerSelectionRequest?>? resultSink,
+    bool hit = true,
+    bool critical = false,
+  }) async {
+    tester.view.physicalSize = Size(width, 840);
+    tester.view.devicePixelRatio = 1;
+    tester.view.viewInsets = const FakeViewPadding(bottom: 220);
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetViewInsets);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await showChoice(
+      tester,
+      state: state,
+      resultSink: resultSink,
+      hit: hit,
+      critical: critical,
+      firstCrit: critical ? dice([6, 6]) : null,
+      secondCrit: critical ? dice([1, 1]) : null,
+    );
+  }
+
+  Future<void> tapVisible(WidgetTester tester, Finder target) async {
+    await tester.ensureVisible(target);
+    await tester.pumpAndSettle();
+    expect(target.hitTestable(), findsOneWidget);
+    await tester.tap(target);
+    await tester.pumpAndSettle();
+  }
+
+  for (final width in [320.0, 360.0]) {
+    testWidgets('Wilder Angreifer $width dp/200 %/IME: Auswahl und Abbruch', (
+      tester,
+    ) async {
+      final campaign = combat();
+      final snapshot = campaign.toJson();
+      final chosen = ValueNotifier<SavageAttackerSelectionRequest?>(null);
+      addTearDown(chosen.dispose);
+      await showImeChoice(
+        tester,
+        width: width,
+        state: campaign,
+        resultSink: chosen,
+      );
+      expect(tester.widget<AlertDialog>(find.byType(AlertDialog)).scrollable, isTrue);
+      final first = find.byKey(const ValueKey('savage-attacker-original'));
+      final second = find.byKey(const ValueKey('savage-attacker-alternative'));
+      expect(
+        find.ancestor(of: first, matching: find.byType(Scrollable)),
+        findsOneWidget,
+      );
+      final firstSemantics = find.byKey(
+        const ValueKey('savage-attacker-original-semantics'),
+      );
+      final secondSemantics = find.byKey(
+        const ValueKey('savage-attacker-alternative-semantics'),
+      );
+      expect(tester.widget<Semantics>(firstSemantics).properties.selected, isFalse);
+      expect(tester.widget<Semantics>(secondSemantics).properties.selected, isFalse);
+      await tapVisible(tester, first);
+      expect(tester.widget<Semantics>(firstSemantics).properties.selected, isTrue);
+      expect(tester.widget<Semantics>(secondSemantics).properties.selected, isFalse);
+      await tapVisible(tester, second);
+      expect(tester.widget<Semantics>(firstSemantics).properties.selected, isFalse);
+      expect(tester.widget<Semantics>(secondSemantics).properties.selected, isTrue);
+      await tapVisible(
+        tester,
+        find.byKey(const ValueKey('savage-attacker-cancel')),
+      );
+      expect(chosen.value, isNull);
+      expect(campaign.toJson(), snapshot);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets('320 dp/200 %/IME: kritischer Wurf bleibt unverbindlich', (
+    tester,
+  ) async {
+    final campaign = combat();
+    final snapshot = campaign.toJson();
+    final chosen = ValueNotifier<SavageAttackerSelectionRequest?>(null);
+    addTearDown(chosen.dispose);
+    await showImeChoice(
+      tester,
+      width: 320,
+      state: campaign,
+      resultSink: chosen,
+      critical: true,
+    );
+    final submit = find.byKey(const ValueKey('savage-attacker-confirm'));
+    expect(tester.widget<FantasyTextButton>(submit).onPressed, isNull);
+    expect(
+      find.byKey(const ValueKey('savage-attacker-critical-explanation')),
+      findsOneWidget,
+    );
+    await tapVisible(
+      tester,
+      find.byKey(const ValueKey('savage-attacker-original')),
+    );
+    expect(tester.widget<FantasyTextButton>(submit).onPressed, isNotNull);
+    await tapVisible(tester, submit);
+    expect(chosen.value?.chooseAlternative, isFalse);
+    expect(chosen.value?.expectedRevision, campaign.revision);
+    expect(campaign.toJson(), snapshot);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('320 dp/200 %/IME: ungültiger Angriff bleibt gesperrt', (
+    tester,
+  ) async {
+    final campaign = combat(spent: true);
+    final snapshot = campaign.toJson();
+    await showImeChoice(tester, width: 320, state: campaign);
+    expect(find.byKey(const ValueKey('savage-attacker-invalid')), findsOneWidget);
+    expect(
+      tester
+          .widget<FantasyTextButton>(
+            find.byKey(const ValueKey('savage-attacker-confirm')),
+          )
+          .onPressed,
+      isNull,
+    );
+    await tapVisible(
+      tester,
+      find.byKey(const ValueKey('savage-attacker-cancel')),
+    );
+    expect(campaign.toJson(), snapshot);
+    expect(tester.takeException(), isNull);
+  });
+
 }
