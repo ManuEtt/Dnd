@@ -257,6 +257,52 @@ void main() {
     },
   );
 
+  test('UTF-8 byte limit rejects oversized Unicode import without writes', () async {
+    final original = fixture();
+    await repository.saveCampaign(original);
+    // The JSON fits in 10 MiB of UTF-16 code units but not in 10 MiB of
+    // UTF-8 bytes. The old String.length check would accept this input.
+    final segment = List<String>.filled(1024, 'ä').join();
+    final oversizedScene = List<String>.filled(5120, segment).join();
+    final oversizedSource = jsonEncode({
+      'format': 'living-gm-campaign',
+      'schemaVersion': 1,
+      'campaign': {
+        ...fixture(id: 'oversized-unicode').toJson(),
+        'scene': oversizedScene,
+      },
+    });
+    expect(oversizedSource.length, lessThan(10 * 1024 * 1024));
+    await expectLater(
+      repository.importCampaign(oversizedSource),
+      throwsA(
+        isA<InvalidSaveException>().having(
+          (error) => error.toString(),
+          'reason',
+          contains('größer als 10 MB'),
+        ),
+      ),
+    );
+    expect((await repository.getCampaign(original.id))!.toJson(), original.toJson());
+    expect(await repository.getCampaign('oversized-unicode'), isNull);
+    expect(await repository.reconstructCampaign('oversized-unicode'), isNull);
+    expect(await repository.loadCampaigns(), hasLength(1));
+  });
+
+  test('valid Unicode JSON remains importable within the byte limit', () async {
+    final original = fixture(id: 'unicode-under-limit').copyWith(
+      scene: 'Grüße aus Ätheria – 🐉',
+    );
+    final source = jsonEncode({
+      'format': 'living-gm-campaign',
+      'schemaVersion': 1,
+      'campaign': original.toJson(),
+    });
+    final imported = await repository.importCampaign(source);
+    expect(imported.toJson(), original.toJson());
+    expect((await repository.getCampaign(original.id))!.toJson(), original.toJson());
+  });
+
   test(
     'export/import preserves an incomplete historical character without invented values',
     () async {
