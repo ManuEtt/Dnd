@@ -2,7 +2,7 @@
 
 ## Chat C – Mönch „Sanfter Fall“: zustimmungssicherer Android-Dialog (02.11.2026)
 
-Im Branch `feat/chat-c/slow-fall-ime-consent-20261102` ist der Dialog auch bei großer Schrift und simulierter Tastatur als Ganzes scrollbar. Nach einer Änderung des bestätigten Sturzschadens müssen Sturz und vollständig abgeschlossene andere Schadensanpassungen neu bestätigt werden. Die Vorschau und Bestätigung bleiben rein unverbindlich; Reaktion/Schaden verbucht nur der zuständige Controller. Vier zusätzliche Widgetfälle prüfen schmale 320-/360-dp-Ansichten mit 200 % Schrift und simuliertem Android-IME einschließlich Abbruch und bereits verbrauchter Reaktion. Keine Migration von Spielständen, SQLite oder JSON und keine Änderung der Spielregeln. CI-Abnahme und reales Android/TalkBack noch offen. Siehe [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md).
+In [Draft-PR #509](https://github.com/ManuEtt/Dnd/pull/509) auf Branch `feat/chat-c/slow-fall-ime-consent-20261102` ist der Dialog auch bei großer Schrift und simulierter Tastatur als Ganzes scrollbar. Nach einer Änderung des bestätigten Sturzschadens müssen Sturz und vollständig abgeschlossene andere Schadensanpassungen neu bestätigt werden. Die Vorschau und Bestätigung bleiben rein unverbindlich; Reaktion/Schaden verbucht nur der zuständige Controller. Vier zusätzliche Widgetfälle prüfen schmale 320-/360-dp-Ansichten mit 200 % Schrift und simuliertem Android-IME einschließlich Abbruch und bereits verbrauchter Reaktion. Keine Migration von Spielständen, SQLite oder JSON und keine Änderung der Spielregeln. CI-Abnahme und reales Android/TalkBack noch offen. Siehe [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md).
 
 
 ## Chat D – JSON-Spielstandimport auf 10 MiB UTF-8 begrenzen (02.11.2026)
