@@ -42,98 +42,98 @@ class _SrdBackgroundPackageDialogState
   Widget build(BuildContext context) {
     final choice = _choice;
     return AlertDialog(
+      scrollable: true,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       title: Text('Hintergrund: ${widget.background.label}'),
       content: SizedBox(
         width: 440,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.background == SrdBackground.criminal
-                    ? 'D&D SRD 5.2.1: Zwei feste Fertigkeiten, eine '
-                          'Werkzeugübung und das Herkunftstalent Wachsam. '
-                          'Der Übungsbonus auf Initiative wird automatisch '
-                          'berechnet; der Initiative-Tausch mit einem '
-                          'Verbündeten ist noch nicht umgesetzt.'
-                    : 'D&D SRD 5.2.1: Zwei feste Fertigkeiten, eine '
-                          'Werkzeugübung und ein Herkunftstalent. '
-                          'Das Talent wird zunächst nur vermerkt; '
-                          'seine Regelwirkung ist noch nicht automatisiert.',
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.background == SrdBackground.criminal
+                  ? 'D&D SRD 5.2.1: Zwei feste Fertigkeiten, eine '
+                        'Werkzeugübung und das Herkunftstalent Wachsam. '
+                        'Der Übungsbonus auf Initiative wird automatisch '
+                        'berechnet; der Initiative-Tausch mit einem '
+                        'Verbündeten ist noch nicht umgesetzt.'
+                  : 'D&D SRD 5.2.1: Zwei feste Fertigkeiten, eine '
+                        'Werkzeugübung und ein Herkunftstalent. '
+                        'Das Talent wird zunächst nur vermerkt; '
+                        'seine Regelwirkung ist noch nicht automatisiert.',
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Fertigkeiten: ${widget.background == SrdBackground.acolyte
+                  ? 'Motiv erkennen, Religion'
+                  : widget.background == SrdBackground.criminal
+                  ? 'Fingerfertigkeit, Heimlichkeit'
+                  : widget.background == SrdBackground.sage
+                  ? 'Arkane Kunde, Geschichte'
+                  : 'Athletik, Einschüchtern'}',
+            ),
+            const SizedBox(height: 12),
+            if (widget.background == SrdBackground.soldier)
+              DropdownButtonFormField<String>(
+                key: const ValueKey('background-gaming-set'),
+                initialValue: _gamingSetId,
+                isExpanded: true,
+                decoration: const InputDecoration(
+                  labelText: 'Spielset für Werkzeugübung auswählen',
+                ),
+                items: [
+                  for (final item in SrdBackgroundPackageChoice.gamingSets)
+                    DropdownMenuItem(value: item.id, child: Text(item.name)),
+                ],
+                onChanged: (id) => setState(() => _gamingSetId = id),
               ),
-              const SizedBox(height: 12),
-              Text(
-                'Fertigkeiten: ${widget.background == SrdBackground.acolyte
-                    ? 'Motiv erkennen, Religion'
-                    : widget.background == SrdBackground.criminal
-                    ? 'Fingerfertigkeit, Heimlichkeit'
-                    : widget.background == SrdBackground.sage
-                    ? 'Arkane Kunde, Geschichte'
-                    : 'Athletik, Einschüchtern'}',
-              ),
-              const SizedBox(height: 12),
-              if (widget.background == SrdBackground.soldier)
-                DropdownButtonFormField<String>(
-                  key: const ValueKey('background-gaming-set'),
-                  initialValue: _gamingSetId,
-                  decoration: const InputDecoration(
-                    labelText: 'Spielset für Werkzeugübung auswählen',
-                  ),
-                  items: [
-                    for (final item in SrdBackgroundPackageChoice.gamingSets)
-                      DropdownMenuItem(value: item.id, child: Text(item.name)),
-                  ],
-                  onChanged: (id) => setState(() => _gamingSetId = id),
+            if (widget.background == SrdBackground.acolyte && !_takeGold)
+              DropdownButtonFormField<String>(
+                key: const ValueKey('background-holy-symbol'),
+                initialValue: _holySymbolId,
+                isExpanded: true,
+                decoration: const InputDecoration(
+                  labelText: 'Heiliges Symbol auswählen',
                 ),
-              if (widget.background == SrdBackground.acolyte && !_takeGold)
-                DropdownButtonFormField<String>(
-                  key: const ValueKey('background-holy-symbol'),
-                  initialValue: _holySymbolId,
-                  decoration: const InputDecoration(
-                    labelText: 'Heiliges Symbol auswählen',
-                  ),
-                  items: [
-                    for (final symbol in SrdBackgroundPackageChoice.holySymbols)
-                      DropdownMenuItem(
-                        value: symbol.id,
-                        child: Text(symbol.name),
-                      ),
-                  ],
-                  onChanged: (id) => setState(() => _holySymbolId = id),
-                ),
-              SwitchListTile(
-                key: const ValueKey('background-gold-option'),
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Option B: 50 Gold statt Ausrüstung'),
-                value: _takeGold,
-                onChanged: (selected) => setState(() => _takeGold = selected),
-              ),
-              if (widget.background == SrdBackground.acolyte ||
-                  widget.background == SrdBackground.sage)
-                const Padding(
-                  padding: EdgeInsets.only(top: 10),
-                  child: Text(
-                    'Offen: Für Magieinitiierter müssen noch zwei '
-                    'Zaubertricks, ein Zauber des 1. Grades und '
-                    'das Zauberattribut gewählt werden.',
-                  ),
-                ),
-              if (choice != null) ...[
-                Text(
-                  'Werkzeugübung: ${choice.toolProficiency}. '
-                  'Herkunftstalent: ${choice.originFeat}.',
-                ),
-                const SizedBox(height: 8),
-                Text('Startgeld aus Hintergrund: ${choice.startingGold} GM.'),
-                if (!choice.takeGold)
-                  for (final item in choice.kitItems)
-                    Text(
-                      '• ${item.quantity} × ${choice.itemDisplayName(item)}',
+                items: [
+                  for (final symbol in SrdBackgroundPackageChoice.holySymbols)
+                    DropdownMenuItem(
+                      value: symbol.id,
+                      child: Text(symbol.name),
                     ),
-              ],
+                ],
+                onChanged: (id) => setState(() => _holySymbolId = id),
+              ),
+            SwitchListTile(
+              key: const ValueKey('background-gold-option'),
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Option B: 50 Gold statt Ausrüstung'),
+              value: _takeGold,
+              onChanged: (selected) => setState(() => _takeGold = selected),
+            ),
+            if (widget.background == SrdBackground.acolyte ||
+                widget.background == SrdBackground.sage)
+              const Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: Text(
+                  'Offen: Für Magieinitiierter müssen noch zwei '
+                  'Zaubertricks, ein Zauber des 1. Grades und '
+                  'das Zauberattribut gewählt werden.',
+                ),
+              ),
+            if (choice != null) ...[
+              Text(
+                'Werkzeugübung: ${choice.toolProficiency}. '
+                'Herkunftstalent: ${choice.originFeat}.',
+              ),
+              const SizedBox(height: 8),
+              Text('Startgeld aus Hintergrund: ${choice.startingGold} GM.'),
+              if (!choice.takeGold)
+                for (final item in choice.kitItems)
+                  Text('• ${item.quantity} × ${choice.itemDisplayName(item)}'),
             ],
-          ),
+          ],
         ),
       ),
       actions: [

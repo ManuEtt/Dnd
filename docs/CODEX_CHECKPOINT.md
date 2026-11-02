@@ -794,3 +794,29 @@ geschützten Persistenzschritt testen.
 [PR #469](https://github.com/ManuEtt/Dnd/pull/469) auf Branch `feat/chat-c/area-creature-ime-20261102` gegen `main` `5a88834c98f5aca40395088c20c7e1dc5b587868` ersetzt den verschachtelten vertikalen Inhalt von `AreaCreatureRegistrationDialog` durch ein gesamthaft scrollbares `AlertDialog(scrollable: true)`. Fehler erhalten `Semantics(liveRegion:true)`. Vier neue Widgettests für 320/360 dp, 200 % Schrift, 220 dp IME prüfen fehlende Bestätigung, neutrale Abbruchaktion, gültige Registrierung sowie Null-TP und nachfolgende Korrektur. **Noch keine grüne finale PR-CI behaupten; Draft bis vollständiger CI-Abnahme.** Keine SRD-/Domain-, Speicher-, Datenformat- oder Versionsänderungen; echte Android-Gerätetests/TalkBack offen. Vorpaket [PR #465](https://github.com/ManuEtt/Dnd/pull/465) ist auf `3cd78d0881e3b0093eefb96342f7fb9b165292db` vollständig grün und bereit zur Review, nicht gemergt.
 
 **Nachweis Chat-D-Integration (02.11.2026):** Die zuvor als ausstehend beschriebenen vollständigen Einzel-CIs sind auf den finalen Heads abgeschlossen und erfolgreich: [#474 / 41396373761](https://github.com/ManuEtt/Dnd/actions/runs/41396373761) und [#469 / 41393278139](https://github.com/ManuEtt/Dnd/actions/runs/41393278139). Kombination mit #495 erfordert eine eigene CI.
+
+---
+
+## 01.11.2026 – Chat C: Zustandsquellen-Dialog mit IME/Großschrift (PR #465)
+
+Im Flutter-Dialog `app/lib/ui/condition_effect_dialog.dart` wird der verschachtelte Scrollbereich durch `AlertDialog(scrollable: true)` mit schmalen Insets ersetzt. Lange Dropdown-Beschriftungen werden mit Ellipsis begrenzt und Validierungsfehler als Screenreader-Live-Region angekündigt. Vier Widgettests in `app/test/condition_effect_dialog_ime_test.dart` prüfen 320/360 dp, 200 % Schrift, 220 dp simulierte Tastatur, Abbruch, explizite Bestätigung und Auswahl nur einer existierenden Zustandsquelle ohne Heldenmutation. Ausgangs-main `5a88834c98f5aca40395088c20c7e1dc5b587868`, Branch `feat/chat-c/condition-effect-dialog-ime-20261101`, [PR #465](https://github.com/ManuEtt/Dnd/pull/465) (Draft). **Neue CI bis finalem HEAD nicht als bestanden behaupten.** Keine Regel-/Controller-/Speicher-/Schema-/Versionsänderung. Additive Paralleldokumentation beim Merge konsolidieren.
+
+---
+
+## 01.11.2026 – Chat C: Mehrklassen-Dialog bei 200 % Schrift/IME (PR #458)
+
+Der bisher verschachtelt scrollende `MulticlassSelectionDialog` wird mit `AlertDialog(scrollable: true)` und kompakteren Insets dargestellt. Erfahrung und Meilenstein sind auf kleinen Displays horizontal scrollbar. Vier neue Widgettests bei 320/360 dp, 200 % Schrift und simuliertem 220-dp-Tastatur-Inset prüfen EP-Sperrung, Abbruch, bestätigten Meilenstein und Fertigkeitsvoraussetzung einer Barden-Zweitklasse. Ausgangs-main `5a88834c98f5aca40395088c20c7e1dc5b587868`, Branch `feat/chat-c/multiclass-dialog-large-text-ime-20261101`, [PR #458](https://github.com/ManuEtt/Dnd/pull/458) (Draft bis zur finalen CI). **Neue Flutter-/Android-/Backend-CI noch nicht als bestanden behaupten.** Keine Domänen-, JSON-, SQLite-, Ressourcen-, Lizenz- oder Versionsänderung. Parallele README-/Checkpoint-Änderungen beim Merge additiv konsolidieren.
+
+---
+
+## 31.10.2026 – Chat C: Magieinitiierter-Dialog (PR #457, Draft)
+
+Im Flutter-Dialog `app/lib/ui/srd_magic_initiate_dialog.dart` wird der verschachtelte Scrollbereich durch `AlertDialog(scrollable: true)` mit schmalem Außenabstand ersetzt. Vier neue Widgetfälle in `app/test/srd_magic_initiate_ime_test.dart` decken 320/360 dp, 200 % Schrift, simuliertes 220-dp-IME-Inset, Abbruch, nichtbestätigbare doppelte Zaubertricks und vier ausdrücklich bestätigte Pflichtwerte ab. Ausgangs-main `5a88834c98f5aca40395088c20c7e1dc5b587868`; Branch `feat/chat-c/magic-initiate-ime-scroll-20261031`, [PR #457](https://github.com/ManuEtt/Dnd/pull/457). **Neue Flutter-/Android-CI noch ausstehend; nicht als abgenommen ausgeben.** Keine Regel-, Datenmodell-, Controller-, Speicher-/Schema-, Versions- oder Lizenzänderung; keine Migration. Parallele Dokumentationsänderungen beim Merge additiv konsolidieren.
+
+---
+
+## 31.10.2026 – Chat C: Hintergrundpaket bei großer Schrift und Tastatur (PR #455, Draft)
+
+Dialog `app/lib/ui/srd_background_package_dialog.dart` nutzt `AlertDialog(scrollable: true)`, kompakte Außenränder und expandierte Auswahlfelder für Spielset und Heiliges Symbol. Neue Widgettests `app/test/srd_background_package_ime_test.dart` prüfen Soldat und Akolyth bei 320/360 dp/200 % Schrift mit simuliertem 220-dp-Tastatur-Inset, einschließlich gesperrter Bestätigung, Abbruch und gültiger expliziter Auswahl. Base-main `5a88834c98f5aca40395088c20c7e1dc5b587868`, [PR #455](https://github.com/ManuEtt/Dnd/pull/455) auf `feat/chat-c/background-package-large-text-ime-20261031`. **Bis zum finalen PR-CI-Lauf nicht als getestet oder APK-fertig darstellen.** Keine Regel-, Controller-, JSON-, SQLite- oder Versionsänderung; keine Migration. README/zentralen Checkpoint bei parallelen PRs additiv konsolidieren.
+
+**Integrations-CI-Nachweis (02.11.2026):** Vollständige Quellprüfungen waren jeweils auf dem finalen Head erfolgreich: [#465](https://github.com/ManuEtt/Dnd/actions/runs/41323668152), [#458](https://github.com/ManuEtt/Dnd/actions/runs/41282153192), [#457](https://github.com/ManuEtt/Dnd/actions/runs/41248140576) und [#455](https://github.com/ManuEtt/Dnd/actions/runs/41246044715). Historische Angaben „CI ausstehend“ beziehen sich auf den damaligen Veröffentlichungszeitpunkt. Kombinierte neue CI bleibt verpflichtend.

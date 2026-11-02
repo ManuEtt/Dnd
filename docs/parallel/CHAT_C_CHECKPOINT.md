@@ -562,3 +562,62 @@ Der vollständige rein additive Chat-Fachnachtrag aus PR #479 ist nachfolgend er
 - **MIGRATION:** keine (keine Schema-/JSON-/Persistenz-/Versions-/Domainänderung).
 - **BLOCKIERT:** Bis zur vollständigen grünen GitHub-CI im Draft belassen; nicht automatisch nach Main mergen. Dokumentationskonflikte mit parallelen PRs additiv von Chat D konsolidieren.
 - **NÄCHSTES PAKET:** Nach Review/Integration der unabhängigen UI-Dialog-PRs Fokusreihenfolge/Screenreader-Interaktion und responsive Materialinventar-Auswahl prüfen, ohne laufende Fremdmodule zu ändern.
+
+---
+
+## 01.11.2026 – Chat C: Zustandsquellen-Dialog bei 200 % Schrift und IME (PR #465)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`; Branch `feat/chat-c/condition-effect-dialog-ime-20261101`; Pull Request [#465](https://github.com/ManuEtt/Dnd/pull/465) (Draft bis CI).
+- **Problem:** Der Zustandsquellen-Dialog enthielt einen separat scrollenden Inhalt unter einem feststehenden Titel; für 320/360 dp, 200 % Schrift und eingeblendete Tastatur fehlte gezielte UI-Abnahme.
+- **IMPLEMENTIERT:** `app/lib/ui/condition_effect_dialog.dart` nutzt `AlertDialog(scrollable: true)` mit kompakteren Insets. Lange Dropdown-Labels erhalten Ellipsis, Validierungsfehler erhalten `Semantics(liveRegion: true)`; sämtliche Domänenwerte und vorhandenen Kontrollpfade bleiben unverändert.
+- **TESTS HINZUGEFÜGT:** `app/test/condition_effect_dialog_ime_test.dart`, vier Widgettests zu 320/360 dp, 200 % Schrift und 220 dp IME: ungültige Quelle zeigt angekündigten Fehler und neutralen Abbruch; gültige Zustandsquelle wird bestätigt, aber verändert den Helden nicht; Entfernen einer explizit gewählten Quelle von zwei Quellen liefert nur deren ID und mutiert nicht das übergebene Heldenmodell.
+- **GETESTET:** Live-main, Masterprompt, Architektur, Checkpoints, alle offenen PR-Dateilisten, bestehende Zustandseffekt-Tests und Domänenregeln geprüft. Zwei Code-/Testdateien auf isoliertem Branch gesichert. PR #458 ist fertig grün/reviewbereit; dessen CI gilt nicht als Prüfung von #465.
+- **NICHT GETESTET:** Für #465: Flutter-/Dart-Format, Flutter-Analyse und -Tests, Android-Debug/Alpha, native Tests, Backend/Python bis zum finalen GitHub-Actions-Lauf. Lokale Flutter-/Dart-Toolchain fehlt; echtes Android-Gerät und TalkBack bleiben offen.
+- **BLOCKIERT:** Final-HEAD-CI bis `completed/success` prüfen, vorher kein Review-Merge.
+- **GEÄNDERTE DATEIEN:** `app/lib/ui/condition_effect_dialog.dart`, `app/test/condition_effect_dialog_ime_test.dart`, dieser Checkpoint, `docs/CODEX_CHECKPOINT.md`, `README.md`. Keine Domänen-/Regel-/SQLite-/JSON-/Versionsänderung; **Migrationen:** keine.
+- **NÄCHSTER SCHRITT:** Tastatur-/Screenreader-Fokusreihenfolge der Zustandsquelle auf echtem Android-Gerät, dabei Textfeld, Wechsel zwischen Hinzufügen und Entfernen und Fehleransage prüfen.
+
+---
+
+## 01.11.2026 – Chat C: Mehrklassen-Stufenaufstieg auf 320/360 dp mit 200 % Schrift/IME (PR #458)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+- **Branch:** `feat/chat-c/multiclass-dialog-large-text-ime-20261101`; **Code-/Testcommit:** `9524b7c8006e0dd9a2fee38b08c6ff33c792e49e`; **Pull Request:** [#458](https://github.com/ManuEtt/Dnd/pull/458) (Draft bis zur finalen CI).
+- **Problem:** Der Dialog nutzte einen verschachtelten vertikalen Scrollview mit abgetrenntem Titel; die breite Erfahrung-/Meilenstein-Auswahl passte bei 320 dp/200 % möglicherweise nicht. Es gab keinen spezifischen IME-/Großschrift-Test.
+- **IMPLEMENTIERT:** `app/lib/ui/multiclass_selection_dialog.dart` verwendet `AlertDialog(scrollable: true)` und kompakte Insets. Der bestehende `SegmentedButton<LevelUpMethod>` ist horizontal scrollbar; alle Regelabfragen und Bestätigungsaktionen bleiben unverändert.
+- **TESTS ERGÄNZT:** `app/test/multiclass_dialog_large_text_ime_test.dart`: 320/360 dp bei 200 % Schrift/220 dp Tastatur-Inset, unbestätigter Aufstieg bei fehlenden EP gesperrt, Abbruch ohne Heldenänderung, expliziter Meilenstein auch ohne EP möglich, Barde nur nach zusätzlicher Fertigkeitswahl bestätigbar. Vier Fälle mit positiven und negativen Prüfungen.
+- **GETESTET:** Masterprompt, alle Pflichtdokumente, aktuelle Main-/PR-Änderungsdateien geprüft; der Vor-PR #457 hat auf Commit `24fd1bdd821817952fe216156656b84b403ca766` vollständige grüne CI [#41248140576](https://github.com/ManuEtt/Dnd/actions/runs/41248140576), **nicht** als Nachweis für #458 verwenden.
+- **NICHT GETESTET:** Neue Widgettests, Dart-Formatierung, `flutter analyze`, vollständiger Flutter-Lauf, Backend/Python, Gradle/native Tests, Debug-/Alpha-APKs des finalen #458-SHA bis zum GitHub-Actions-Ergebnis. Flutter-/Dart-SDK lokal nicht vorhanden. Reales Gerät, IME und TalkBack ausstehend.
+- **BLOCKIERT:** Vollständige CI-Prüfung und Review, kein ungeprüfter Merge.
+- **GEÄNDERTE DATEIEN:** UI-Dialog, neue Testdatei, `README.md`, `docs/CODEX_CHECKPOINT.md`, eigener Chat-C-Checkpoint. Kein Regel- oder Speichermodul, keine Version oder Schemaänderung; **Migrationen:** keine.
+- **NÄCHSTER SCHRITT:** Tastatur-/TalkBack-Fokusreihenfolge und bestätigte Interaktionen des Magieinitiierter-Dialogs nach Integration von #457 auf Main an einem eigenständigen, konfliktfreien Paket prüfen; alle vier Wahlfelder mit Fokus erreichbar, Enter aktiviert niemals ungültigen Confirm.
+
+---
+
+## 31.10.2026 – Chat C: Magieinitiierter-Dialog bei großer Schrift und IME (PR #457)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+- **Branch:** `feat/chat-c/magic-initiate-ime-scroll-20261031`. **Fach-/Testcommit:** `2a87d116e1cccf2dcf4e9af9ffae43e55a31d706`; **PR:** [#457](https://github.com/ManuEtt/Dnd/pull/457) (Draft; finalen Head im PR prüfen).
+- **Problem:** Das SRD-Magieinitiierter-Formular nutzt einen isolierten Inhalts-Scrollview in einem nicht explizit scrollbaren AlertDialog; 320/360 dp bei 200 % Schrift und Android-IME bislang nicht gezielt abgesichert.
+- **IMPLEMENTIERT:** `app/lib/ui/srd_magic_initiate_dialog.dart` nutzt `AlertDialog(scrollable: true)`, schmale Insets und nur einen Scrollbereich für Titel/Inhalt; die vier validierten Dropdowns, Abbruch und Bestätigung behalten ihre bestehende fachliche Wirkung.
+- **TESTS HINZUGEFÜGT:** `app/test/srd_magic_initiate_ime_test.dart`: 320 und 360 dp mit 200 % Text/220 dp IME, scrollbare Formularfelder und Abbruch; bei doppelten Zaubertricks kein Confirm; bei vier gültigen Angaben wird nur das korrekte Wahl-DTO zurückgegeben. Vier Widgetfälle, keine externe KI.
+- **GETESTET:** Live-main, Masterprompt, Architektur/Arbeitsanweisungen, offene PR-Dateipfade und vorherige CI geprüft. PR #455 hat auf `aedc212faa3e64136f0713b1386e7141c4541381` zwei grüne CI-Läufe [41246044715](https://github.com/ManuEtt/Dnd/actions/runs/41246044715) / [41246040596](https://github.com/ManuEtt/Dnd/actions/runs/41246040596) und wurde auf Review gesetzt. Diese Läufe beweisen **nicht** #457.
+- **NICHT GETESTET:** Der neue Code ist zunächst ohne lokale Dart-/Flutter-Toolchain; vollständige CI (Format, Analyse, Fluttertests, native Android-/APK-/Backend-/Python-Gates) auf finalem PR-HEAD noch abzunehmen. Echtes Android-Gerät mit IME, TalkBack, Upgrade/Release-Signatur separat.
+- **BLOCKIERT:** Prüfung der vollständigen CI auf eigenem PR. Kein automatischer Merge.
+- **GEÄNDERTE DATEIEN:** `app/lib/ui/srd_magic_initiate_dialog.dart`, `app/test/srd_magic_initiate_ime_test.dart`, dieser Checkpoint, `docs/CODEX_CHECKPOINT.md`, `README.md`. Keine Spielregel-/Schema-/JSON-/Versionsänderung; **Migrationen:** keine.
+- **NÄCHSTER SCHRITT:** Tastatur-Tab/Enter-Fokusreihenfolge der vier Auswahlfelder bei 320 dp/200 %/IME gezielt abnehmen; gültige Auswahl und Abbruch vollständig per Hardwaretastatur erreichbar, nie unbeabsichtigt bestätigen.
+
+---
+
+## 31.10.2026 – Chat C: Hintergrundpaket bei 200 % Schrift und IME (PR #455)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`; **Branch:** `feat/chat-c/background-package-large-text-ime-20261031`.
+- **Code- und Testcommit:** `3d2a1471338bf92fb31dd10b505fc9f3d7ca7eb1` (finalen Dokumentations-HEAD im PR prüfen); **Pull Request:** [#455](https://github.com/ManuEtt/Dnd/pull/455) (Draft).
+- **Problem:** Im Dialog für Hintergrundpakete liegt ein eigener Scrollbereich innerhalb eines nicht als scrollable deklarierten AlertDialog. Für sehr große Schrift und simulierte Android-Tastatur gab es keine spezifischen Widgettests; zwei Dropdowns waren nicht expandiert.
+- **IMPLEMENTIERT:** `app/lib/ui/srd_background_package_dialog.dart` nutzt nun einen einzigen `AlertDialog(scrollable: true)`, schmale Insets und beide Dropdowns mit `isExpanded: true`. Unveränderte explizite Bestätigung und Abbruch.
+- **TESTS HINZUGEFÜGT:** `app/test/srd_background_package_ime_test.dart` mit vier positiven/negativen Varianten: 320/360 dp und 200 % Schrift bei 220 dp IME; Soldat ohne Spielset gesperrt und abbrechbar; Akolyth wählt 50 Gold statt Symbol; Soldat wählt ein wirklich vorhandenes Spielset. Layoutfehler werden explizit geprüft.
+- **GETESTET:** GitHub-main, alle offenen PR-Bereiche, bestehender Quellcode und vorhandene Tests geprüft, Branch/Code/Test-PR angelegt. [PR #450 CI 41244483591](https://github.com/ManuEtt/Dnd/actions/runs/41244483591) ist auf eigenem Vor-Branch grün; **nicht** als Nachweis für #455 verwenden.
+- **NICHT GETESTET:** Neue Tests, Formatierung, `flutter analyze`, vollständige Flutter-Suite, Backend/Python, native Gradle-Tests und APK für den finalen PR-Head sind bis zur CI offen. Flutter-/Dart-SDK lokal nicht vorhanden; keine echte Geräte-IME- oder TalkBack-Abnahme.
+- **BLOCKIERT:** CI-Abnahme des neuen Pakets. Keine automatische Integration.
+- **GEÄNDERTE DATEIEN:** UI-Dialog, neuer Test, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_C_CHECKPOINT.md`. Andere UI-/Fachmodule und Spielstandformat bleiben unangetastet. **Migrationen:** keine.
+- **NÄCHSTER SCHRITT:** Den getrennten `SrdMagicInitiateDialog` bei 320 dp/200 %/IME auf durchgehende Scrollbarkeit prüfen. Akzeptanz: alle Zauberwahlen, Validierungsfehler und Abbruch/Bestätigung bleiben erreichbar; doppelte Zaubertricks dürfen keine Bestätigung erlauben.
