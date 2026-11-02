@@ -92,6 +92,26 @@ void main() {
       '0',
     );
     await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<CheckboxListTile>(
+            find.byKey(const ValueKey('slow-fall-confirm-fall')),
+          )
+          .value,
+      isFalse,
+    );
+    expect(
+      tester
+          .widget<CheckboxListTile>(
+            find.byKey(const ValueKey('slow-fall-confirm-defenses')),
+          )
+          .value,
+      isFalse,
+    );
+    expect(tester.widget<FilledButton>(submit).onPressed, isNull);
+    await tester.tap(find.byKey(const ValueKey('slow-fall-confirm-fall')));
+    await tester.tap(find.byKey(const ValueKey('slow-fall-confirm-defenses')));
+    await tester.pumpAndSettle();
     expect(tester.widget<FilledButton>(submit).onPressed, isNotNull);
     expect(tester.takeException(), isNull);
   });
@@ -267,10 +287,7 @@ void main() {
           .onPressed,
       isNotNull,
     );
-    await tapReachable(
-      tester,
-      find.byKey(const ValueKey('slow-fall-cancel')),
-    );
+    await tapReachable(tester, find.byKey(const ValueKey('slow-fall-cancel')));
     expect(returned, isTrue);
     expect(result, isNull);
     expect(hero.toJson(), before);
@@ -307,10 +324,7 @@ void main() {
           .onPressed,
       isNull,
     );
-    await tapReachable(
-      tester,
-      find.byKey(const ValueKey('slow-fall-cancel')),
-    );
+    await tapReachable(tester, find.byKey(const ValueKey('slow-fall-cancel')));
     expect(result, isNull);
     expect(tester.takeException(), isNull);
   });
