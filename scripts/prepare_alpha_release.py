@@ -76,6 +76,8 @@ def validate_arm64_apk(apk: Path) -> None:
         # overwrite each other on common extraction targets. Check metadata
         # before ZIP CRC work, without rewriting any APK resource names.
         canonical_prefixes: dict[str, str] = {}
+        file_paths: set[str] = set()
+        directory_paths: set[str] = set()
         for entry in entries:
             name = entry.filename
             parts = name.rstrip('/').split('/')
@@ -93,6 +95,12 @@ def validate_arm64_apk(apk: Path) -> None:
                 previous = canonical_prefixes.setdefault(canonical_path, original_path)
                 if previous != original_path:
                     raise ValueError('Die ARM64-APK enthält kollidierende ZIP-Pfade.')
+                # A bare file must not also be a directory prefix or
+                # an explicitly named directory in the same archive.
+                if index < len(parts) - 1 or name.endswith('/'):
+                    directory_paths.add(canonical_path)
+                else:
+                    file_paths.add(canonical_path)
             mode = entry.external_attr >> 16
             if stat.S_ISLNK(mode):
                 raise ValueError('Die ARM64-APK enthält symbolische ZIP-Links.')
@@ -107,6 +115,8 @@ def validate_arm64_apk(apk: Path) -> None:
                 if ((kind == stat.S_IFDIR and not name.endswith('/'))
                         or (kind == stat.S_IFREG and name.endswith('/'))):
                     raise ValueError('Die ARM64-APK enthält widersprüchliche ZIP-Dateitypen.')
+        if file_paths & directory_paths:
+            raise ValueError('Die ARM64-APK enthält widersprüchliche Datei-/Verzeichnispfade.')
         if archive.testzip() is not None:
             raise ValueError('Die ARM64-APK enthält beschädigte ZIP-Einträge.')
         present = set(archive.namelist())
