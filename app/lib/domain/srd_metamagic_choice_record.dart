@@ -142,6 +142,7 @@ class SrdMetamagicChoiceRules {
         hero.level > 20 ||
         first == null ||
         hero.primaryClassLevel < 1 ||
+        (!hero.hasSecondClass && hero.secondaryClassLevel != 0) ||
         (hero.hasSecondClass &&
             (second == null ||
                 second == first ||
