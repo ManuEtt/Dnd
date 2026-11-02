@@ -196,6 +196,10 @@ def verify_project(root: Path) -> list[str]:
                 names = [member.filename for member in members]
                 if len(names) != len(set(names)):
                     raise ValueError('duplicate wrapper JAR entries')
+                # On common extraction targets case-insensitive or Unicode-
+                # equivalent names can overwrite each other. Check every
+                # explicit and implicit directory prefix before ZIP CRC reads.
+                canonical_prefixes: dict[str, str] = {}
                 for member in members:
                     name = member.filename
                     segments = name.rstrip('/').split('/')
@@ -207,6 +211,14 @@ def verify_project(root: Path) -> list[str]:
                                    for char in name)
                             or stat.S_ISLNK(mode)):
                         raise ValueError('unsafe wrapper JAR entry')
+                    folded_parts: list[str] = []
+                    for index, segment in enumerate(segments):
+                        folded_parts.append(unicodedata.normalize('NFC', segment).casefold())
+                        canonical_path = '/'.join(folded_parts)
+                        original_path = '/'.join(segments[:index + 1])
+                        previous = canonical_prefixes.setdefault(canonical_path, original_path)
+                        if previous != original_path:
+                            raise ValueError('colliding wrapper JAR paths')
                     # A valid CRC and Java class signature cannot establish
                     # that a member represents an ordinary file. Reject Unix
                     # device, FIFO and socket types as well as file/dir
