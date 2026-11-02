@@ -1,7 +1,7 @@
 ## 02.11.2026 – Chat C: Wilder Angreifer bei 200 % Schrift und IME
 
 - **Basis-main:** `516bc14e06cb02e7035a6adfb8e2d21e54253184`.
-- **Branch:** `feat/chat-c/savage-attacker-ime-20261102`.
+- **Branch:** `feat/chat-c/savage-attacker-ime-20261102`. **PR:** [#506](https://github.com/ManuEtt/Dnd/pull/506) (Draft bis finaler CI).
 - **Problem:** `SavageAttackerSelectionDialog` verwendete einen eigenen `SingleChildScrollView` im `AlertDialog`, ohne titel- und aktionsübergreifende Scrollabsicherung bei schmalen Android-Displays und eingeblendeter Tastatur. Der Auswahlstatus der beiden Würfe war für Screenreader nicht explizit.
 - **IMPLEMENTIERT:** `AlertDialog(scrollable: true)` statt verschachtelter vertikaler Scrollfläche; `Semantics(selected: ...)` für ersten und zweiten Wurf, nur nach ausdrücklicher Wahl ist `Wurf bestätigen` aktiv. Regeln, Würfel, Kämpfe und Speicherung unverändert.
 - **Geänderte technische Dateien:** `app/lib/ui/savage_attacker_selection_dialog.dart` und `app/test/savage_attacker_selection_dialog_test.dart`.
