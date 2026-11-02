@@ -66,6 +66,25 @@ werden nicht geraten. Zuerst aktuelle PRs/Quellen prüfen; Domain-, SQLite-/Retr
 und bestehende Zauberregressionen verlangen. Keine automatische Fortsetzung
 außerhalb einer aktiven Sitzung.
 
+**Separater Chat-A-Fix (02.11.2026, noch nicht in main):**
+Ein bestätigter Berührungszauber darf auf dem vorhandenen
+5-Fuß-Taktikraster nicht allein mit gesetztem
+`withinTouchReachConfirmed`-Flag ein beliebig weit
+entferntes Ziel erreichen. Im konservativen Standardpfad
+sind nur das eigene und angrenzende Felder mit zusätzlicher
+ausdrücklicher Berührungsbestätigung zulässig.
+Die SRD erlaubt Sonderfälle mit größerer *reach*,
+deren separate Verifikation hier weiterhin offen ist.
+Neue Domain-/Preflight-/JSON-/SQLite-/Revisionsregressionen
+testen die fehlende implizite Zauberbuchung.
+Keine DB-/JSON-Migration, kein UI-/Engineumbau,
+keine Änderungen an parallelen Preflight-PRs.
+[Fachnachweis](docs/SRD_GRID_TOUCH_REACH_20261102.md).
+
+**Nächster Chat-A-Schritt:** explizit
+bestätigte Spezialreichweiten für Touch
+regelquellengebunden gesondert überprüfen.
+
 ## Starten und prüfen
 
 Toolchain wie CI: Flutter **3.35.7**, Dart **3.9.2**, Java **17**, Node **22.14.0**,
