@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../domain/models.dart';
 
 /// Confirmed, locally derived NPC history tied to one campaign session
@@ -15,6 +17,7 @@ class NpcIdentityContext {
     required this.alive,
     required this.relationship,
     required List<NpcRelationshipNote> notes,
+    required this._sourceStamp,
   }) : notes = List.unmodifiable(notes);
 
   final String campaignId;
@@ -26,6 +29,9 @@ class NpcIdentityContext {
   final bool alive;
   final String relationship;
   final List<NpcRelationshipNote> notes;
+
+  /// Full selected-NPC history, including notes omitted from the preview.
+  final String _sourceStamp;
 
   /// Typed, bounded context for a future explicitly ID-based Story transport.
   ///
@@ -102,10 +108,16 @@ class NpcIdentityMemory {
       alive: npc.alive,
       relationship: npc.relationship,
       notes: history.take(maxNotes).map((item) => item.note).toList(),
+      _sourceStamp: jsonEncode([
+        npc.toJson(),
+        for (final note in campaign.npcRelationshipNotes)
+          if (note.npcId == npcId) note.toJson(),
+      ]),
     );
   }
 
   /// Rejects a revision/session change, another campaign, or amended values.
+  /// Even older notes omitted by maxNotes must remain unchanged.
   ///
   /// No implicit refresh: the caller must explicitly re-read current state.
   static void requireCurrent(Campaign campaign, NpcIdentityContext context) {
@@ -120,7 +132,8 @@ class NpcIdentityMemory {
       expectedRevision: context.revision,
       maxNotes: context.notes.isEmpty ? 1 : context.notes.length,
     );
-    if (actual.npcName != context.npcName ||
+    if (actual._sourceStamp != context._sourceStamp ||
+        actual.npcName != context.npcName ||
         actual.alive != context.alive ||
         actual.relationship != context.relationship ||
         actual.notes.length != context.notes.length) {
