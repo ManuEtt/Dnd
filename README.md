@@ -2,6 +2,8 @@
 
 ## Chat B – bestätigte NPC-Kontinuität und unsichtbare Namen (02.11.2026)
 
+[Draft-PR #477](https://github.com/ManuEtt/Dnd/pull/477).
+
 Der neue Chat-B-Branch `fix/chat-b/npc-continuity-zero-width-20261102`
 (Basis-main `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`) behebt eine
 separate Lücke im schreibgeschützten `NpcContinuityReader`. Unsichtbare
