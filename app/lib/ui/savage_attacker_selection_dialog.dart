@@ -115,7 +115,6 @@ class _SavageAttackerSelectionDialogState
       title: const Text('Wilder Angreifer: Schaden wählen'),
       content: SizedBox(
         width: 360,
-        child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
