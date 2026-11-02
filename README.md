@@ -5,6 +5,32 @@ regelgeprüfte Aktionen und ein optionaler Fastify-/TypeScript-Erzähler.
 
 ## Aktueller Stand und autonome Fortsetzung
 
+**Lokale Vollabnahme, Chat A – 02.11.2026, 0.8.51+101:** Klassenprüfung vor
+bestätigten Rettungswurf-Wiederholungen ist auf Code-/Testcommit
+`de8cef1bf9cd4cd67cfa7eb1916eec1b6b60f038` vollständig lokal geprüft.
+**2.782 Flutter-, 262 Python- und 76 Backend-Tests**, 579 unverändert formatierte
+Dartdateien, saubere Analyse, Backend-Typecheck/Build und lokaler Protokollsmoke
+bestanden. Außerdem ARM64-Debug-Build und **13 native JUnit-Tests** bestanden.
+72 neue Fälle, einschließlich zweier tatsächlicher App-UI-Flows, und 159 gezielte
+Regressionen sind abgedeckt. Historische Profile, SQLite3 und JSON1 bleiben erhalten.
+
+[PR #473](https://github.com/ManuEtt/Dnd/pull/473) ist ein eigener Draft; **[finale
+PR-Checks](https://github.com/ManuEtt/Dnd/pull/473/checks)** sind noch separat
+abzunehmen. Main unverändert. Der frühe Quellencheckpoint auf d5cf52f1 wurde mit
+1.369 Dateien, tatsächlicher Patchanwendung und isolierter Bundle-Wiederherstellung
+unabhängig geprüft; finaler Quellencheckpoint und optimierte Alpha folgen.
+Vor PR 27 fremde PRs geprüft, einschließlich der neuen #469–#472; Fachdateien
+konfliktfrei, gemeinsame Dokumentation/Requirements und Version101 bei Chat D
+additiv konsolidieren. Reale Geräte-/TalkBack-/Upgrade-/Signierungsabnahme offen.
+
+**Genau nächster Schritt:** allgemeine initiale manuelle Rettungswürfe vor
+automatisch abgeleiteten Klassenboni und RNG validieren, ohne lesende Charakterbogen-
+Vorschauen zu verändern. Zuerst neue PR-Dateilisten prüfen; gültige Aliase,
+Mehrklassen, Ablehnung vor RNG und UI-/SQLite-/Retry-Fälle testen. Die vollständige
+Charaktererstellung und das gesamte SRD bleiben offen.
+
+### Historischer Frühcheckpoint vor lokaler Vollabnahme
+
 **Chat A, 02.11.2026 – Alpha 0.8.51+101: Klassen vor Rettungswurf-Wiederholungen prüfen.**
 Eigener Arbeitsbranch `fix/chat-a/saving-throw-class-preflight-20261102`, Basis-Main
 `5a88834c98f5aca40395088c20c7e1dc5b587868`. Code-/Testcommit

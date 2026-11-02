@@ -1,3 +1,36 @@
+## 02.11.2026 – lokale Vollabnahme des Chat-A-Pakets bestanden
+
+**0.8.51+101**, Basis-Main `5a88834c98f5aca40395088c20c7e1dc5b587868`,
+Branch `fix/chat-a/saving-throw-class-preflight-20261102`. Laufzeit-/Testcommit
+`de8cef1bf9cd4cd67cfa7eb1916eec1b6b60f038`, früher Dokumentationscheckpoint
+`d5cf52f1c27ecdb0f01f0ce461788cde12449310`. Nur Dokumentation folgt danach;
+Laufzeit-/Testcode unverändert. [PR #473](https://github.com/ManuEtt/Dnd/pull/473)
+ist Draft; die **[Checks des finalen aktuellen PR-Heads](https://github.com/ManuEtt/Dnd/pull/473/checks)**
+sind separat abzunehmen. Kein Main-Merge und keine erfolgreiche neue CI behauptet.
+
+**GETESTET:** `bash scripts/check.sh` vollständig mit Exit 0 bestanden:
+**2.782 Flutter / 262 Python / 76 Backend**, 579 Dartdateien ohne Formatänderung,
+Analyse sauber, Backend-Typecheck/Build und tatsächlicher lokaler Protokollsmoke.
+Abschlussmarker `08:15 +2782: All tests passed!`; 72 neue Fälle und 159 gezielte
+Regressionen sind darin keine zusätzliche globale SRD-Abnahme. Lokaler ARM64-
+Debug-Build und **13 native JUnit-Tests** ohne Fehler, Error oder Skip bestanden.
+Der frühzeitige Quellencheckpoint auf d5cf52f1 ist unabhängig geprüft: **1.369
+Dateien**, CRC/Hashes/Größen/Modi, echte Patchanwendung auf Basis5a und isolierte
+Git-Bundle-Wiederherstellung/fsck bestanden. Endcheckpoint und finale CI folgen.
+
+**Koordination:** Vor PR erneut **27 fremde PRs** geprüft: ursprüngliche 23 Heads
+unverändert, neue #469–#472 ohne Überschneidung der Fachdateien; deren CI lief beim
+Audit noch. #468 teilt das Requirement-Register, bearbeitet andere IDs. Bei späterer
+Konsolidierung die neue Version101 gegenüber100 und alle geprüften Belege erhalten.
+
+**OFFEN:** aktuelle finale PR-CI, optimierte Alpha und reale Geräte-/TalkBack-/
+Upgrade-/Produktivsignierungsabnahme. Allgemeiner initialer manueller Rettungswurf
+bleibt das nächste gesonderte Paket; vorher frische PR-/Quellenprüfung. SQLite3/
+JSON1 ohne Migration; beide Klassen-Requirements bleiben partial. Weitere Details
+im Fachbericht `docs/parallel/CHAT_A_SAVING_THROW_CLASS_PREFLIGHT_20261102.md`.
+
+**Historischer Frühcheckpoint vor der vollständigen lokalen Abnahme:**
+
 ## 02.11.2026 – Chat A: Klassenprüfung vor Rettungswurf-Wiederholungen, 0.8.51+101
 
 **Vorläufiger Quellen-Checkpoint, keine vollständige Abnahme.** Basis-Main

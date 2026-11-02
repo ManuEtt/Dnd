@@ -1,3 +1,90 @@
+# Chat A – lokale Vollabnahme: Klassen vor Rettungswurf-Wiederholungen
+
+Stand: **02.11.2026, UTC**, **0.8.51+101**. Die unten bewahrte frühe Momentaufnahme
+wurde durch die nachfolgenden tatsächlichen lokalen Endergebnisse ergänzt.
+
+## Gesicherter Code, PR und noch getrennte CI-Abnahme
+
+Basis-Main `5a88834c98f5aca40395088c20c7e1dc5b587868`; eigener Branch
+`fix/chat-a/saving-throw-class-preflight-20261102`. Code-/Testcommit
+`de8cef1bf9cd4cd67cfa7eb1916eec1b6b60f038`; früher Docscommit
+`d5cf52f1c27ecdb0f01f0ce461788cde12449310`. Der abschließende Dokumentationsnachtrag
+ändert keine Laufzeit- oder Testdatei. Der SHA-256 der einzigen Laufzeitdatei bleibt
+`a637a0edd30f364564690ec5c36a42912499b3ed9ae3ca56db11c84ef98e5aa8`.
+
+[PR #473](https://github.com/ManuEtt/Dnd/pull/473) ist Draft. Seine **[Checks des
+aktuellen finalen Heads](https://github.com/ManuEtt/Dnd/pull/473/checks)** sind
+separat abzunehmen; noch keine erfolgreiche finale CI oder Main-Integration
+behauptet. Kein direkter Main-Commit und keine fremde Branchlöschung.
+
+## Tatsächliche lokale Endergebnisse
+
+`bash scripts/check.sh` vollständig mit **Exit 0** beendet. Im tatsächlichen
+Log steht `08:15 +2782: All tests passed!`:
+
+- **2.782 Fluttertests** bestanden, darunter die 72 neuen Fälle aus diesem Paket.
+- **262 Python- und 76 Backendtests** bestanden.
+- **579 Dartdateien** ohne Formatänderung, Flutter-Analyse ohne Befund.
+- Backend-Typecheck, Build und tatsächlicher lokaler Node-/Dart-Protokollsmoke
+  bestanden; keine kostenpflichtige KI nötig.
+- Zuvor **159 gezielte Domain-/Bestands-/Flow-/UI-Regressionen** bestanden:
+  62 neue Domainfälle, acht neue Speicherflows und zwei echte App-UI-Flows.
+- Lokaler **ARM64-Debug-Build** bestanden; **13 native JUnit-Tests**, null
+  Fehler, null Errors, null Skips. APK auf Code-/Testcommitde8cef1b, Version
+  0.8.51+101, tatsächlich vorhandene Datei
+  `/workspace/artifacts/saving-throw-class-preflight-20261102/local/Wuerfelraunen_0.8.51_101_ARM64_Debug.apk`,
+  76.268.275 Bytes, SHA-256
+  `38727b89128d7e6342d6aecc6353828f77d8a52c7d52201f52fb114c69bc68c8`.
+
+Diese Nachweise sind keine reale Android-Geräte-, TalkBack-, Upgrade- oder
+Produktivsignierungsabnahme. Optimierte Alpha und finale GitHub-CI bleiben offen.
+Ein altes grünes Fremd-PR-Ergebnis wird nicht als Abnahme dieses Pakets verwendet.
+
+## Frühe Sicherung und erneuter PR-Abgleich
+
+Der Quellencheckpoint auf d5cf52f1 liegt tatsächlich unter
+`/workspace/artifacts/saving-throw-class-preflight-20261102/frueh/`. Unabhängig
+geprüft: **1.369 Quelldateien** mit exaktem Dateisatz, ZIP-CRC, SHA-256, Größe und
+Modus; Patch tatsächlich auf Basis5a angewendet und sämtliche Dateien/Löschungen
+verglichen; Git-Bundle separat wiederhergestellt und `git fsck` bestanden.
+Alle drei Tips Basis5a, Codede8 und Frühdocsd5cf sind wiederherstellbar. Früh-ZIP:
+`a5b3902a3d67c3349122dbfd2e0515c01b6d5b8269626f3565522a55a777a073`.
+Die zwei historischen Patchdateien bleiben nach bestehender Paketkonvention im
+Git-Bundle erhalten. Ein finaler Quellencheckpoint auf dem nachfolgenden
+Dokumentationsstand wird gesondert erzeugt und geprüft; dieser frühere ZIP-Hash
+ist kein vorweggenommener End-ZIP-Hash. Quellen-ZIPs enthalten keine APK.
+
+Unmittelbar vor PR wurden **27 fremde PRs** auf aktuellem Main5a geprüft:
+ursprüngliche 23 Heads unverändert, neue #469/#470/#471/#472 ohne Überschneidung
+mit den Fachdateien dieses Pakets. Deren CI war zum Auditzeitpunkt noch laufend.
+#468 teilt das Requirement-Register, verändert andere IDs; seine drei
+Konzentrationsdateien bleiben hier unverändert. Bei Integration die unterschiedliche
+Versionsnummer101 gegenüber100 sowie gemeinsame Dokumentation/Requirement-Belege
+additiv durch Chat D konsolidieren. Einzelne grüne PRs beweisen keine gemeinsam
+geprüfte Integration aller Pakete.
+
+## Begrenzung und genau nächster Schritt
+
+Beide Klassen-Requirements bleiben **partial**. SQLite3 / äußeres JSON1 ohne
+Migration, historische Profile unverändert lesbar. `rules.blocked` mit neuer
+Revision ist im vorhandenen Textaktionspfad beabsichtigt; Held, Ressourcen und
+RNG bleiben beim ungültigen Klassenreroll unverändert. Ein legitimer W20 vor einem
+späten SQLite-Fehler wird nicht rückgängig gemacht. Allgemeine Erstwürfe sind
+hier unverändert; kein vollständiges Klassen-, Charaktererstellungs- oder SRD-
+Regelwerk behauptet. Die bereits abgeschlossene Migration/Issue425 nicht wiederholen.
+
+**Nächstes gesondertes Paket:** allgemeine initiale manuelle Rettungswürfe vor
+automatisch abgeleiteten Klassenboni und W20 validieren. Schreibfreie
+Charakterbogen-Vorschauen bewahren; zuerst frische Main-/PR-Dateilisten prüfen.
+Akzeptanz: bekannte valide Aliase und Multiclassprofile unverändert korrekt,
+ungültige Klassen-/Stufen-/Übungsdaten vor Bonus/RNG abweisen; Domain-, tatsächliche
+UI-, SQLite-/Retry-/Neustart-Regressionen. Keine automatische Fortsetzung nach
+Sitzungsende.
+
+---
+
+## Historischer Frühcheckpoint vor der lokalen Vollabnahme
+
 # Chat A – bestätigte Klassen vor Rettungswurf-Wiederholungen
 
 Stand: **02.11.2026, UTC**. App **0.8.51+101**. Vorläufiger Quellen-Checkpoint;
