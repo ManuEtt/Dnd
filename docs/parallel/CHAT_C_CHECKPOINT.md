@@ -1,3 +1,19 @@
+## 02.11.2026 – Chat C: Wilder Angreifer bei 200 % Schrift und IME
+
+- **Basis-main:** `516bc14e06cb02e7035a6adfb8e2d21e54253184`.
+- **Branch:** `feat/chat-c/savage-attacker-ime-20261102`.
+- **Problem:** `SavageAttackerSelectionDialog` verwendete einen eigenen `SingleChildScrollView` im `AlertDialog`, ohne titel- und aktionsübergreifende Scrollabsicherung bei schmalen Android-Displays und eingeblendeter Tastatur. Der Auswahlstatus der beiden Würfe war für Screenreader nicht explizit.
+- **IMPLEMENTIERT:** `AlertDialog(scrollable: true)` statt verschachtelter vertikaler Scrollfläche; `Semantics(selected: ...)` für ersten und zweiten Wurf, nur nach ausdrücklicher Wahl ist `Wurf bestätigen` aktiv. Regeln, Würfel, Kämpfe und Speicherung unverändert.
+- **Geänderte technische Dateien:** `app/lib/ui/savage_attacker_selection_dialog.dart` und `app/test/savage_attacker_selection_dialog_test.dart`.
+- **Testfälle ergänzt:** vier Widgetfälle zu 320/360 dp, 200 % Schrift, 220 dp simuliertem IME; Touch-/Semantics-Auswahl, negativer Abbruch, unverbindlicher kritischer Treffer, bereits verbrauchtes Talent und unveränderte Kampagnen-JSON-Snapshots.
+- **GETESTET:** GitHub-Main und offene PR-Dateien abgeglichen; keine fachliche Überschneidung. Gezielter GitHub-Actions-Lauf [#41478500514](https://github.com/ManuEtt/Dnd/actions/runs/41478500514) auf dem damaligen Codecommit `8137394521d686ee4c2b1940a0a1c778821e4883` vollständig **success**, alle **10 Widgettests** bestanden. Die offizielle Dart-Formatabweichung ausschließlich im Test wurde exakt übernommen; temporärer Testworkflow anschließend aus dem Branch gelöscht.
+- **NICHT GETESTET:** Vollständige Python-/Backend-/Flutter-/Android-Gesamt-CI auf finalem Head, reale Android-/TalkBack-/Hardware-IME-/Altversionsupgrade-Tests.
+- **BLOCKIERT:** Keine lokalen Flutter-/Dart-Werkzeuge; finalen GitHub-Actions-Lauf abnehmen. Bestehende README-/Checkpoint-Einträge beim parallelen Merge ausschließlich additiv erhalten (Chat D).
+- **Migration:** Keine Domain-/Regel-/Controller-/SQLite-/JSON-/Version-/Spielstandsänderung. Dialog liefert nur `SavageAttackerSelectionRequest`, keine selbstständige Anwendung von Schaden.
+- **NÄCHSTER SCHRITT:** Finale vollständige GitHub-CI und anschließend Touch-/TalkBack-Abnahme auf echtem schmalen Android-Gerät; bis dahin Draft.
+
+---
+
 ## 02.11.2026 – Chat C: Mehrgegner-Initiative mit 200 % Schrift und IME
 
 - **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529`.
