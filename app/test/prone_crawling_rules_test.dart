@@ -129,11 +129,9 @@ void main() {
 
   test('Legacy-Held mit 0 TP kann weder kriechen noch Bewegung buchen', () {
     final original = combat();
-    final legacy = Campaign.fromJson(
-      original.copyWith(
-        hero: original.hero.copyWith(hitPoints: 0),
-      ).toJson(),
-    );
+    final legacyHero = original.hero.copyWith(hitPoints: 0);
+    final legacyJson = original.copyWith(hero: legacyHero).toJson();
+    final legacy = Campaign.fromJson(legacyJson);
     // Older records can have Prone without a persisted Unconscious flag.
     expect(legacy.hero.conditions, ['liegend']);
     final snapshot = legacy.toJson();
@@ -162,12 +160,8 @@ void main() {
 
   test('Nach bestätigter Heilung darf derselbe Held wieder kriechen', () {
     final before = combat();
-    final atZero = before.copyWith(
-      hero: before.hero.copyWith(hitPoints: 0),
-    );
-    final healed = atZero.copyWith(
-      hero: atZero.hero.copyWith(hitPoints: 1),
-    );
+    final atZero = before.copyWith(hero: before.hero.copyWith(hitPoints: 0));
+    final healed = atZero.copyWith(hero: atZero.hero.copyWith(hitPoints: 1));
     final result = GameEngine().crawl(
       healed,
       distanceFeet: 5,
