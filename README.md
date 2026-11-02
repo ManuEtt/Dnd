@@ -460,3 +460,92 @@ Quell-Dokumentationseinfügungen einschließlich dieses README bleiben erhalten.
 Die gemeinsame CI auf dem finalen Integrationsstand ist **vor** einem Merge
 vollständig abzunehmen; laufende andere PRs bleiben unabhängig.
 Keine neuen Datenbankmigrationen oder Berechtigungsänderungen durch die Integration.
+
+---
+
+### Chat D – vorbereitete Integration der PRs #478, #479, #486, #491 (02.11.2026)
+
+Die folgenden Originaldokumentations-Ergänzungen stammen aus vier getrennten,
+vollständig CI-geprüften Quell-PRs; sie werden ohne Verlust der bisherigen
+Main-Historie an die aktuelle README angefügt. Der kombinierte Draft ist
+bis zur vollständigen eigenen CI nicht zur Integration freigegeben.
+
+---
+
+#### Dokumentationsübernahme aus PR #478
+
+**Chat-A-Fachpaket (02.11.2026, separater PR):** Für
+SRD-5.2.1-Metamagie **Distant Spell** prüft ein neuer
+isolierter Domainbaustein die 30-Fuß-Touch-Reichweite,
+Zaubererstufe 2+, offizielle eigene Klassen-/Zauber-
+Freigabe, tatsächliche Metamagiewahl, Hindernisse und
+einen verfügbaren Sorcery Point. Der Plan ist lesend
+und an einen unveränderten Figuren-Snapshot gebunden;
+Punktkosten können nur als neue Heldenkopie für die
+spätere atomare Transaktion vorgemerkt werden.
+Zehn Testgruppen einschließlich falscher
+Mehrklassenquelle, blockierter Strecke, altem JSON,
+SQLite-Neustart und Revisionskonflikt sind angelegt.
+**Keine** automatische Spell-Cast-Freigabe oder
+Metamagie-Auswahlpersistenz und **kein** Einbau in
+offene PR #461/#463/#472; Schema-/Versionsstand
+unverändert. [Regelbeleg und Grenzen](docs/SRD_DISTANT_TOUCH_METAMAGIC_20261102.md).
+
+**Nächster Chat-A-Schritt:** persistente
+Metamagiewahl und atomare Slot-/Punkt-/Effekt-
+Transaktion nach koordinierter Integration
+der bisherigen Vorbereitungs-/Raster-PRs.
+
+
+---
+
+#### Dokumentationsübernahme aus PR #479
+
+
+### Chat C: Bestätigte Zauberwirkungen bei großer Schrift und Tastatur (02.11.2026)
+
+[PR #479](https://github.com/ManuEtt/Dnd/pull/479) macht den Dialog zur ausdrücklich bestätigten Zauberwirkung bei 320/360 dp, 200 % Schrift und geöffneter Android-Tastatur insgesamt scrollbar, kürzt lange Laufzeittexte und kennzeichnet Validierungsfehler für Screenreader. Vier Widgettests prüfen Abbruch, Belegprüfung, Bestätigung und gezieltes Entfernen einer bestehenden Quelle. **CI auf finalem #479-HEAD noch zu prüfen.** Keine SRD-, Zauberwirkungs-, Ressourcen-/Spielstand-, Domain- oder Datenformatänderung.
+
+---
+
+#### Dokumentationsübernahme aus PR #486
+
+
+## Chat B – begrenzter bestätigter NPC-Rückblick (02.11.2026)
+
+[Draft-PR #486](https://github.com/ManuEtt/Dnd/pull/486) auf Basis-main
+`885580202caeafc9787538b6dc1c833b3190a529` ergänzt eine separate,
+schreibgeschützte `ConfirmedNpcContinuityExcerpt.read`-Projektion
+für bestätigte NPC-Erinnerungen. Die gespeicherte, sichere NPC-ID erscheint
+immer ausdrücklich, auch bei ähnlich angezeigten Figuren. Höchstens drei
+bestätigte Notizen und maximal 1.800 UTF-16-Einheiten (Unicode-/Emoji-sicher)
+gehen in die Kurzfassung; Alttexte werden ausschließlich für die Anzeige
+bereinigt und gekürzt. Sechs neue Regressionen prüfen Quellentrennung,
+Unicode, lange Legacy-Texte, ungültige/mehrdeutige NPC-IDs,
+Legacy-JSON und einen echten SQLite-Neustart.
+Kein Umbau des `npc_continuity_reader.dart` (offener PR #477),
+keine KI-/UI-Anbindung, kein Einfluss auf Regeln, Quest, Held, SQLite-/JSON-
+Schema oder Version. Finale CI-Abnahme bei Dokumentation noch offen.
+
+
+---
+
+#### Dokumentationsübernahme aus PR #491
+
+
+---
+
+### 02.11.2026 – Chat B: unsichtbare Zeichen in neuen KI-Geschichten
+
+[PR #491](https://github.com/ManuEtt/Dnd/pull/491) (Draft),
+Branch `feat/chat-b/ai-provider-zero-width-guard-20261102`,
+Basis-main `c33448780dfe8b453f7f1db9d28c1396822901a7`:
+Der Storyparser lehnt jetzt auch U+200C/U+200D (Zero-Width-Joiner)
+in neu eintreffender KI-Erzählung, NPC-/Ortsnamen und Notizen ab.
+Der neue `ai_story_zero_width_validation_test.dart` enthält positive
+mehrzeilige internationale Erzählungen und negative Providerfeldvarianten.
+Die Quell-/Testcommits sind `bfcedd60`/`4295681f`;
+die GitHub-CI für den finalen PR-HEAD ist vor einer Freigabe
+noch tatsächlich zu prüfen. Bestehende SQLite-/JSON-Spielstände,
+Story- und Regelwerte sowie App-Versionen bleiben unverändert.
+Gemeinsame Dokumentationsnachträge bei Integration additiv erhalten.
