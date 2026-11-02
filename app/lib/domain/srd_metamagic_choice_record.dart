@@ -57,7 +57,9 @@ class SrdMetamagicChoiceRecord {
       'options',
     };
     if (json.length != keys.length || !json.keys.toSet().containsAll(keys)) {
-      throw const FormatException('Metamagie-Auswahl enthält unbekannte Felder.');
+      throw const FormatException(
+        'Metamagie-Auswahl enthält unbekannte Felder.',
+      );
     }
     if (json['schemaVersion'] is! int ||
         json['schemaVersion'] != schemaVersion ||
@@ -74,11 +76,7 @@ class SrdMetamagicChoiceRecord {
     if (rawOptions.any((item) => item is! String)) {
       throw const FormatException('Metamagie-Optionen müssen Namen enthalten.');
     }
-    SrdMetamagicChoiceRules._validateSourceLabels(
-      primary,
-      secondary,
-      level,
-    );
+    SrdMetamagicChoiceRules._validateSourceLabels(primary, secondary, level);
     final names = List<String>.from(rawOptions);
     SrdMetamagicChoiceRules._validateOptions(level, names);
     return SrdMetamagicChoiceRecord._(
