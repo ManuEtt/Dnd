@@ -286,7 +286,7 @@ in `scripts/tests/test_prepare_alpha_release.py` prüfen
 ASCII-Groß-/Kleinschreibung, Unicode-NFC, implizite Verzeichnisse,
 gültige internationale Namen und Release-Bestandsschutz.
 Der Quellcode liegt auf
-`fix/chat-d/apk-unicode-path-collisions-20261102`.
+`fix/chat-d/apk-unicode-path-collisions-20261102` in [PR #476](https://github.com/ManuEtt/Dnd/pull/476).
 Vollständige kombinierte GitHub-CI auf dem finalen PR-HEAD
 ist vor einer Review- oder Merge-Freigabe erforderlich.
 Keine Änderung an SQLite, JSON, Spielständen, Android-App-Code,
