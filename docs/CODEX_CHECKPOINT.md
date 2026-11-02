@@ -1051,3 +1051,35 @@ UI-only: `app/lib/ui/hero_shield_reaction_dialog.dart` nutzt jetzt `AlertDialog(
 **Nächster unabhängiger Schritt:** Kollisionen älterer bestätigter Notiz-IDs in der schreibgeschützten NPC-Abfrage behandeln, mit Altspielstand-/JSON-/SQLite-Regressionsnachweis und kompletter CI.
 
 ---
+
+---
+
+
+## 02.11.2026 – Chat C: manueller Zusatzkreaturen-Angriff bei großer Schrift/IME (PR #492)
+
+- **Ausgangs-main:** `c33448780dfe8b453f7f1db9d28c1396822901a7`.
+- **Branch:** `feat/chat-c/manual-extra-attack-ime-20261102`; **PR:** [#492](https://github.com/ManuEtt/Dnd/pull/492) (Draft).
+- **Code-/Test-HEAD vor Dokumentation:** `88dfb25b21065f51baad4031a7340d919696126c`; finalen HEAD dem PR entnehmen.
+- **Ausgangsproblem:** Im umfangreichen Dialog für einen ausdrücklich bestätigten Zusatzkreaturen-Angriff erschwerten der innere Scrollbereich, lange Checkboxtexte und nicht expandierte Dropdowns die Bedienung auf 320/360 dp bei 200 % Schrift mit 220 dp IME.
+- **Implementiert:** `AlertDialog(scrollable: true)` und kompakte Insets statt innerem `SingleChildScrollView`; kompakte visuelle Checkboxbeschriftungen ab 180 % mit vollständigem `Text.semanticsLabel`; drei expandierte Dropdowns, ellipsierte lange Kreaturennamen, lebende Fehler-Semantik. Keine Regel-/Controller-/Persistenzänderung.
+- **Geänderte Fachdateien:** `app/lib/ui/manual_extra_creature_attack_dialog.dart`, neue `app/test/manual_extra_creature_attack_ime_test.dart`. Daneben additive README-/Checkpoint-Nachträge auf eigenem Branch.
+- **Neue Regressionen:** Abbruch auf 320/360 dp mit 200 %/IME ohne Mutation, unvollständige Angriffsbestätigung ohne Mutation und positiver bestätigter Angriffs-DTO-Weg mit sieben Pflichtbestätigungen. Bestehende `manual_extra_creature_attack_dialog_test.dart` bleibt unverändert.
+- **GETESTET:** Live-GitHub-main, 29 vor Start offene PRs inklusive geänderter Fachdateien und Quell-/Testfixtures geprüft; Branch/Commits und Draft-PR erstellt. Keine erfolgreichen ausführbaren Flutter-Tests behauptet.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse/Tests, Debug-APK, native Android-Tests, Python-/Backend-Gates auf finalem PR-HEAD, reales Android/TalkBack/IME und Altgeräteupgrade bis CI-/Geräteabnahme.
+- **BLOCKIERT:** Lokales Flutter/Dart-SDK nicht vorhanden; CI auf finalem Commit nach Dokumentation neu bewerten. README-/zentrale Checkpoint-Integration wegen paralleler PRs durch Chat D.
+- **Spielstandkompatibilität:** Keine Migration; unveränderte Domainregeln, JSON-/SQLite-Schemata, Ereignisse und App-Version.
+- **Nächster unabhängiger Schritt:** `app/lib/ui/srd_class_level_up_dialog.dart` separat auf 320 dp/200 % und schmale Auswahlfelder prüfen; nur bei nachweisbarer UI-Regression testen und korrigieren, nicht parallel zu künftig kollidierenden PRs.
+
+---
+
+---
+
+## Chat C – 02.11.2026: Sending-Dialog mit IME und großer Schrift
+
+- **Branch:** `feat/chat-c/sending-dialog-ime-20261102`, Basis-Main `55d33945872e251ec53b6860addcb05152a80c3a`.
+- **Implementiert:** Ein scrollbarer `AlertDialog` statt separatem Inhalts-Scrollbereich; kompakte visuelle Bestätigungen ab 180 % Schrift mit vollständigem TalkBack-Label und kurze Abschlussaktion.
+- **Widgettests ergänzt:** `app/test/sending_attempt_ime_test.dart`; 320/360 dp, 200 % Schrift, 220 dp IME, Abbruch/Bestätigung, Re-Consent nach Textänderung und unverändertes Helden-JSON. Beim ersten vollständigen CI-Lauf #41452067597 bestanden 2.789 Fluttertests; der positive neue Touchfall scheiterte am nur abwärts scrollenden Testhelfer, der anschließend in beide Scrollrichtungen korrigiert wurde. Finale Wiederholungs-CI noch offen.
+- **Grenzen:** Nur Flutter-UI und Widgettests, keine Regeln/Controller/SQLite/JSON/Version. CI am finalen SHA sowie reale Android-/TalkBack-Tests bis zur tatsächlichen Abnahme nicht als bestanden ausweisen.
+- **Parallelität:** Offene Chat-C-/Integrations-PRs bearbeiten andere UI-Module; gemeinsame README-/Checkpoint-Ergänzungen bei Integration verlustfrei durch Chat D konsolidieren.
+
+---

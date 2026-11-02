@@ -1483,3 +1483,16 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Freigabe:** Neue vollständige kombinierte GitHub-Actions-CI auf dem exakten Integrations-HEAD und neue Main-CI nach Merge noch erforderlich. Keine Realgerät-/TalkBack-/Altversions-Upgrade-Abnahme.
 
 **Nächster Schritt:** Nach vollständig grüner kombinierter CI und aktuellem Main-/PR-Konfliktabgleich regulären Merge durchführen; danach Main-CI abnehmen.
+
+---
+
+## Chat D – zwei CI-grüne Android-Dialogpakete ohne Fachkollision (02.11.2026)
+
+- **Stack-Basis:** PR #507, Commit `15dbf85f531b23102b4f055f116cb0832ba4ec0b`. Dies ist ein gestapelter Integrationsschritt, der erst nach #507 und grüner Main-CI gemergt werden darf.
+- **Quellen:** [#492](https://github.com/ManuEtt/Dnd/pull/492) Head `104ad73947c439f96d19bcd8f738813e23041763` (zwei finale vollständige CI-Läufe erfolgreich); [#503](https://github.com/ManuEtt/Dnd/pull/503) Head `8ded6d3afc74a1d5cd6914956c8ed022c58a5d24` (zwei finale vollständige CI-Läufe erfolgreich).
+- **Übernommen:** Zusatzkreaturenangriffs- und Sending-Dialog bei 200 % Schrift und geöffneter Android-Tastatur bedienen; Tests und produktive UI-Blobs exakt von den originalen finalen Heads übernommen.
+- **Konfliktprüfung:** Beide produktiven UI-Blobs der Stack-Basis entsprechen exakt den ursprünglichen Quell-Basisblobs; keine Überschneidung der Fach-/Testdateien mit #507 oder untereinander. Gemeinsame README-/CODEX-/CHAT_C-Checkpoint-Diffs waren ausschließlich Einfügungen und wurden additiv erhalten; alte Dokumentation nicht gelöscht.
+- **Historie:** Quell-HEADs als zusätzliche Git-Eltern des Integrationscommits bewahrt. Keine Domain-/Regel-/Spielstands-/SQLite-/JSON-/Versionsänderung. Kein Force-Push, keine Fremdbranchlöschung.
+- **Offen:** Vollständige neue kombinierte PR-CI auf dem exakt finalen Integrations-HEAD, Vorgänger- und Main-CI, danach aktueller Main-/PR-Abgleich und regulärer Merge. Echte TalkBack-/IME-/Altversions-Geräteprüfung separat offen.
+
+**Nächster Schritt:** Vollständige CI dieses Stacks abnehmen und erst nach Merge von #507 mit grüner Main-CI integrieren.
