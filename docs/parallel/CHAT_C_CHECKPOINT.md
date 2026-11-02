@@ -1,3 +1,17 @@
+## 02.11.2026 – Chat C: Mönch/Sanfter Fall bei Großschrift und IME
+
+- **Basis-main:** `516bc14e06cb02e7035a6adfb8e2d21e54253184`; **Branch:** `feat/chat-c/slow-fall-ime-consent-20261102`; **PR:** noch anzulegen.
+- **Problem:** `MonkSlowFallDialog` besaß nur einen eigenen `SingleChildScrollView` statt eines vollständigen scrollbar-Dialogs. Bei 200 % Schrift, schmalem Android-Bildschirm und virtueller Tastatur fehlten Akzeptanztests. Außerdem blieben zwei bereits erteilte Bestätigungen nach Bearbeitung des Sturzschadens gültig.
+- **IMPLEMENTIERT:** `AlertDialog(scrollable: true)`, schmale Insets und feste maximale Inhaltsbreite. Nach jeder Änderung des Schadenswerts werden Sturz- und Verteidigungsbestätigung widerrufen; erneutes explizites Ankreuzen für die neue Zahl erforderlich. Abbruch bekommt stabilen Widget-Key. Keine Auswertung oder Reaktionsbuchung im Dialog.
+- **Technische Dateien:** `app/lib/ui/monk_slow_fall_dialog.dart`, `app/test/monk_slow_fall_dialog_test.dart`.
+- **Tests ergänzt:** vier Widgetfälle für 320/360 dp, 200-%-Schrift und simuliertes 220-dp-IME: erneuter Konsens nach editiertem Schaden, erreichbares Abbrechen, bereits verbrauchte Reaktion bleibt gesperrt, unveränderter Helden-Snapshot bis zum Controller.
+- **GETESTET:** Code-/PR-Dateiüberschneidungen geprüft; gezielte Flutter-/Dart-GitHub-Abnahme noch abzuschließen.
+- **NICHT GETESTET:** vollständige CI am finalen PR-Head, echtes TalkBack-/Software-IME-/Geräte- und Upgradeverhalten.
+- **Migration:** Keine neuen Regeln, kein Controller-/Domain-/Speichermodell, kein SQLite-/JSON-/Versionswechsel.
+- **Nächster Schritt:** Den gezielten Test und die vollständige GitHub Actions CI inklusive Debug/Alpha-APKs erfolgreich abnehmen, danach PR-Review und echte Android-Touch-/TalkBack-Prüfung.
+
+---
+
 ## 02.11.2026 – Chat C: Mehrgegner-Initiative mit 200 % Schrift und IME
 
 - **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529`.
