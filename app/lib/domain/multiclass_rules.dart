@@ -187,21 +187,23 @@ class MulticlassRules {
     );
   }
 
-  // Per SRD 5.2.1 Multiclass Spellcaster, 2024 rules. Hexenmeister's Pact
-  // Magic slots are separate, and fighter/rogue subclass casters are not
-  // silently approximated. Informational only; no spell resources invented.
+  // SRD 5.2.1 (Multiclassing, p. 25): only confirmed class identities
+  // contribute to normal spell slots. The hero's stored spelling is unchanged;
+  // Pact Magic stays in its separate pool and subclass casters are not guessed.
   static int combinedSpellcasterLevel(HeroCharacter hero) {
     int contribution(String name, int levels) {
+      if (levels <= 0) return 0;
+      final canonical = findSrdClass(name)?.name;
       if (const [
         'Barde',
         'Kleriker',
         'Druide',
         'Magier',
         'Zauberer',
-      ].contains(name)) {
+      ].contains(canonical)) {
         return levels;
       }
-      if (const ['Paladin', 'Waldläufer'].contains(name)) {
+      if (const ['Paladin', 'Waldläufer'].contains(canonical)) {
         return (levels + 1) ~/ 2;
       }
       return 0;

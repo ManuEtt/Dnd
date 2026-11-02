@@ -620,3 +620,249 @@ und Revisionskonflikt implementieren.
 
 ---
 
+---
+
+# Chat A – Raster-Berührungsreichweite fail-closed (02.11.2026)
+
+**Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868` ·
+**Branch:** `fix/chat-a/grid-touch-range-20261102` ·
+**PR:** nach Veröffentlichung im GitHub-PR-Log.
+
+**Regelbeleg:** Offizielle SRD 5.2.1, *Casting Spells / Range / Touch*,
+CC BY 4.0. Berührungszauber verlangen ein Ziel in tatsächlicher
+Reichweite. Das existierende 5-Fuß-Raster akzeptierte bisher eine
+beliebig entfernte `Touch`-Zelle, sofern nur ein Boolwert
+`withinTouchReachConfirmed` gesetzt wurde.
+
+**Implementiert:** Konservativer Zielwächter in
+`app/lib/domain/srd_spell_grid_target_rules.dart`:
+eigene sowie angrenzende Rasterzellen (0/5 Fuß)
+mit bestätigter Berührung zulässig; ab zwei
+Rasterfeldern (10+ Fuß) wird auch bei manueller
+Berührungsbestätigung vor der Preflight-Buchung
+abgelehnt. Blockierte/ungeprüfte Karte bleibt
+abgelehnt; `Self` und Distanzzauber unverändert.
+Die offizielle Formulierung `within reach` erlaubt
+Sonderreichweiten, diese erhalten bewusst **keine**
+Freischaltung ohne separaten belegten Spezialmechanismus.
+
+**Tests:** neue Datei
+`app/test/srd_spell_grid_touch_range_test.dart`:
+eigene/acht Nachbarzellen, entfernte Ziele,
+fehlende Berührung/Kartenaufnahme/Hindernisse,
+Fern-/Selbstzauber, echte Kleriker-Zaubervorprüfung
+mit unveränderten Slots und TP, Legacy-JSON,
+SQLite-Neustart/Retry und stale Revision.
+Format-/Analyzer-/Flutter-/Python-/Backend-/APK-Ergebnisse
+erst nach finaler GitHub-CI als grün markieren.
+
+**Unverändert:** Datenmodelle, Controller,
+Engine, Story, UI, DB-/JSON-Schema und Version;
+keine fremden PRs, Branches oder Tests geändert.
+Parallele offene Chat-A-PRs #448, #453, #461,
+#463, #467 und #468 bleiben eigenständig.
+Gemeinsame README-/Checkpoint-Zeilen bei
+Integration durch Chat D additiv zusammenführen.
+
+**Nicht getestet:** echtes Android-Gerät,
+Altinstallations-Upgrade, TalkBack,
+Produktivsignierung. **Nächster Schritt:**
+belegte Spezialreichweiten für Touch in einem
+getrennten Domainbeleg mit negativen
+Manipulations-, SQLite- und Revisionsfällen
+einführen, ohne den einfachen Bool zu vertrauen.
+
+---
+
+---
+
+# Chat A – SRD-5.2.1-Zaubervorbereitungstausch nach Rast/Stufenaufstieg (01.11.2026)
+
+**Main-Ausgangs-SHA:** `5a88834c98f5aca40395088c20c7e1dc5b587868` ·
+**Branch:** `feat/chat-a/prepared-spell-exchange-triggers-20261101` ·
+**PR:** nach Veröffentlichung hier und in PR-Beschreibung.
+
+**Quelle:** Offizielle SRD 5.2.1, *Spells → Preparing Spells →
+Spell Preparation by Class*, S. 104, CC BY 4.0.
+
+**Problem:** Barde/Zauberer/Hexenmeister dürfen genau einen
+Zauber erst beim **eigenen Klassenaufstieg** tauschen;
+Paladin/Waldläufer einen bei abgeschlossener langer Rast;
+Kleriker/Druide/Magier bei langer Rast beliebig viele der
+bisherigen vorbereiteten Zauber. Ungeprüfte Trigger könnten
+zusätzliche oder höhergradige Zauber freigeben.
+
+**IMPLEMENTIERT:** Unabhängiges, rein lesendes
+`SrdSpellPreparationExchangeRules.preview` mit bestätigtem
+eigenem Klassennamen, vor/nach-Charakterzustand,
+Klassenzuordnung/Stufenvergleich, offiziellem Zauberkatalog,
+Grad-1+-Grenze, gleich großen Vorbereitungslisten und
+strenger Anzahl von Austauschvorgängen. Cantrips, unbekannte
+Klassen/Zauber, unerworbene Grade, freie Übersetzungen,
+unbestätigte Rast und falsche Klassen-Level-ups sind
+gesperrt. Magier benötigen getrennte Zauberbuchbestätigung.
+Unveränderlicher Vorschauplan mit Snapshot-Revalidierung,
+keine Ressourcen-/Rast-/Level-up-/SQLite-Mutation.
+
+**Geänderte Dateien:** neuer Fachcode unter
+`app/lib/domain/srd_spell_preparation_exchange_rules.dart`,
+elf neue deterministische Testgruppen unter
+`app/test/srd_spell_preparation_exchange_rules_test.dart`,
+Quellennotiz `docs/SRD_SPELL_PREPARATION_EXCHANGE_20261101.md`,
+README sowie additive Checkpoints.
+
+**GETESTET:** Quellen-/Repository-/PR-Inventur und
+Testimplementierung durchgeführt. Flutter-/Dart-/Android-CI
+bis zu tatsächlichem Laufabschluss **noch nicht** als
+erfolgreich melden; nach PR-Erstellung auf finaler SHA auswerten.
+
+**NICHT GETESTET / BLOCKIERT:** echtes Android-Gerät, Altupgrade,
+TalkBack und Store-Signierung. Fachintegration der getrennten
+PRs #461 (Preflight) und #463 (persistierter Klassenbeleg)
+bleibt ausdrücklich aus; diese PRs sind in ihren eigenen
+Dateien geschützt. SQLite 3, äußeres JSON 1 unverändert.
+Keine aus Narration erfundenen Auslöseereignisse.
+
+**NÄCHSTER SCHRITT:** Nach koordiniertem Merge der
+Preflight- und Nachweisbausteine die Klassenauswahl und
+den Tauschplan in den bestätigten Rast-/Level-up-Commit
+integrieren und Revisionskonflikt/Replay/Neustart prüfen.
+
+---
+
+---
+
+# Chat A – kanonische Klassenaliase für Mehrklassen-Zauberplätze (31.10.2026)
+
+- **Basis-Main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`
+- **Eigener Branch:** `feat/chat-a/multiclass-slot-aliases-20261031`
+- **Produktivcode-Commit:** `edd8be956ca9228c8d14dbbbfcdbb37c27118bc4`
+- **Testkorrektur-Commit:** `c35a625b4b336f58c52ccab2c0ae8b8cb29eb48a`
+- **Pull Request:** wird nach Abschluss der Branchdokumentation erstellt; Main wird nicht verändert.
+
+## Ausgangsproblem / Akzeptanz
+
+`MulticlassRules.combinedSpellcasterLevel` verglich rohe Namen, während
+`findSrdClass` vorhandene deutsche, englische und feminine SRD-Klassenaliase
+kennt. Beispielsweise erhielt `Magier 5` drei Zauberplatzgrade, `Wizard 5`
+aber keine normalen Zauberplätze. Nachweis aus Main-Quellcode und SRD 5.2.1
+*Multiclassing*, gedruckte S. 25 (CC BY 4.0,
+https://www.dndbeyond.com/srd). Ziel: dieselbe Berechnung für bestätigte
+Aliase; Halbzauberer einzeln aufrunden; Paktmagie nicht hinzurechnen;
+unbekannte Namen nicht erraten; rohe gespeicherte Klassennamen erhalten.
+
+## IMPLEMENTIERT
+
+- `app/lib/domain/multiclass_rules.dart`: nur für die lesende
+  Zauberstufenberechnung die bereits bestehende
+  `findSrdClass(name)?.name`-Auflösung verwenden. Nicht-positive
+  Klassenstufen ergeben keine Beiträge; bestätigte Vollzauberer zählen
+  voll, Paladin/Waldläufer halb aufgerundet, Hexenmeister-Paktmagie
+  getrennt. Keine Änderung an der Klassenidentität im Spielstand.
+- `app/test/multiclass_spell_slot_alias_test.dart`: sieben neue
+  deterministische Testfälle für Vollzauberer, Halbzauberer,
+  Mehrklassenkombinationen, Paktmagie, Ablehnung unbekannter Klassen,
+  Alt-JSON sowie SQLite-Neustart/Retry/Revisionskonflikt.
+- Keine Änderung an `models.dart`, `game_engine.dart`,
+  `rules_api.dart`, Controller, Datenbankschema, Backend, UI,
+  SRD-Lizenzdateien oder Versionsnummer. SQLite **3** und JSON **1**
+  bleiben erhalten; kein Migrationslauf, keine rückwirkende
+  Spielstandänderung.
+
+## GETESTET
+
+Quellcode, vorhandener Klassenresolver, angrenzende Zauber- und
+Mehrklassenregressionen und der GitHub-Stand wurden eingesehen;
+der Fehlerpfad wurde auf Basis des tatsächlichen Codes identifiziert.
+**Noch kein ausgeführter neuer Dart-/Flutter- oder SQLite-Test.**
+Die tatsächlichen GitHub-Actions-Ergebnisse für den finalen PR-HEAD sind
+separat nachzuweisen; bestehende grüne Main-CI gilt nur für Main.
+
+## NICHT GETESTET / BLOCKIERT
+
+Lokale Ausführung von `flutter`, `dart` und APK-Build in dieser
+Umgebung nicht möglich, da Flutter-/Dart-SDK fehlt. GitHub-CI folgt.
+Ein echter Android-Geräte- und Altversionsupgrade-Test ist offen.
+
+## Koordination / nächster Schritt
+
+Vor Arbeitsbeginn waren nur PRs #446 (Story), #447 (UI), #448
+(Chat A: andere neue Domain-/Testdateien), #449 (Android-Backup)
+offen. Keine dieser PRs verändert die zwei Fachdateien dieses Pakets.
+README und zentraler Checkpoint sind als gemeinschaftliche Dokumente
+bei der Integration von Chat D additiv zu vereinigen.
+
+**Nächster unabhängiger Chat-A-Schritt:** Erst nach CI-/PR-Abnahme
+die SRD-Abweichungen zwischen Klassen-Freischaltungen und
+tatsächlich regelgeprüften vorbereiteten Zaubern anhand von
+`RULE-CHARACTER-CREATION-MULTICLASS-SPELLCASTING` untersuchen.
+Akzeptanz: pro Klasse und Stufe keine unbelegten vorbereiteten
+Zauber freigeben; dokumentierte positive/negative deterministische
+Tests und Alt-JSON-Verträglichkeit.
+
+---
+
+---
+
+# Chat A – Mehrklassen-Zaubervorbereitung der gewählten Klasse bestätigen (01.11.2026)
+
+**Basis-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868` ·
+**Branch:** `feat/chat-a/multiclass-prepared-source-20261101` ·
+**Laufzeit-Commit:** `b72cdd4230c90eead9870dad8cd3b54cad5cea05` ·
+**Tests:** `dda176dfe80df5e5c50045994520ee33a3ea59f5` ·
+**PR:** wird nach Sicherung der Branchdokumentation eröffnet.
+
+## Ausgangsproblem / Akzeptanz
+Bei zwei eigenen qualifizierten Zauberklassen kann die bisherige globale
+`hero.spells`-Liste nicht nachweisen, welcher Klasse ein auf beiden
+Listen vorhandener Zauber zugeordnet wurde. SRD 5.2.1 *Multiclassing,
+Spells Prepared* (S. 25, CC BY 4.0) verlangt getrennte Vorbereitung.
+Ohne explizite Klassenbestätigung ist diese mehrdeutige Freigabe zu
+verweigern; einzelne nachweislich qualifizierte Klassen bleiben
+unverändert bedienbar; Zaubertricks ebenso geschützt.
+
+## IMPLEMENTIERT
+`app/lib/domain/srd_spell_preflight_rules.dart` ergänzt das optionale
+`preparedForCastingClassConfirmed` (Standard `false`). Nur wenn
+**beide** eigenen SRD-Klassen den gewählten Zauber auf ihrer Klassenliste
+haben und mit ihren **individuellen Stufen** vorbereiten könnten,
+verlangt die Vorprüfung den ausdrücklichen Nachweis für
+`castingClass`. Auch mit Bestätigung gelten weiterhin Klassengrad-,
+Liste-, Vorbereitungs-, Ressourcen-, Komponenten-, Ziel- und
+Snapshot-Schranken.
+
+Acht deterministische positive/negative Fallgruppen unter
+`app/test/srd_multiclass_prepared_source_test.dart`, einschließlich
+JSON-Neustart, echter SQLite-Rekonstruktion, unveränderter
+Ressourcen und verweigertem alten Snapshot. Fachnotiz:
+`docs/SRD_MULTICLASS_PREPARED_SOURCE_20261101.md`.
+
+**Kompatibilität:** keine neuen JSON-/DB-/Event-Felder, SQLite 3,
+JSON 1, App-Version unverändert; keine Migration, kein UI-/Controller-/
+Story-Eingriff. Eine bloße Bestätigung ist noch kein persistierter
+per-Klasse-Vorbereitungsnachweis. Die globale SRD-Coverage bleibt offen.
+
+## GETESTET / NICHT GETESTET
+Quellcode, verbindliche Projektdokumente und aktuelle PR-Dateien
+#446–#458 geprüft. Acht neue Testgruppen geschrieben.
+Flutter-/Dart-SDK steht lokal nicht bereit; die neuen Dart-/SQLite-Tests,
+vollständige CI, Debug-/Alpha-APKs und natives Gradle sind **noch
+nicht als ausgeführt oder erfolgreich bestätigt**. Die
+Ergebnisse werden auf dem finalen PR-HEAD anhand von Actions geprüft;
+ältere Main- oder fremde PR-Ergebnisse zählen nicht.
+
+## BLOCKIERT / NÄCHSTER SCHRITT
+Kein Schreibzugriffskonflikt an den Fachdateien. Parallel ändern andere
+PRs README und `docs/CODEX_CHECKPOINT.md`; Chat D muss
+Dokumentationsbeiträge bei der Integration erhalten. Ein reales
+Android-Gerät/Upgrade/TalkBack fehlt weiterhin.
+
+**Genau nächster unabhängiger Chat-A-Schritt:** Versionierte
+klassebezogene vorbereitete Zauberauswahl als ausdrücklich
+bestätigter und rückwärtskompatibler Nachweis aufbauen. Kriterien:
+historische globale Liste unverändert importierbar, unbekannte
+alte Zuordnung nicht raten, per-Klasse-Kapazität und Stufengrenzen
+quellengeprüft; positive/negative Domain-, SQLite-/Retry- und
+Abbruchtests. Gemeinsame Modelle erst nach Konfliktabgleich ändern.
+
+---

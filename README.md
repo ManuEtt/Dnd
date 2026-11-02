@@ -589,3 +589,100 @@ Gemeinsame Dokumentationsnachträge bei Integration additiv erhalten.
 [PR #455](https://github.com/ManuEtt/Dnd/pull/455) verbessert die Flutter-Hintergrundpaketwahl bei 320/360 dp und 200 % Schrift mit eingeblendeter Tastatur: ein einzelner scrollbarer Dialog, schmale Außenränder und expandierte Dropdowns. Neue Widgettests sichern Abbruch, gesperrte unvollständige Soldat-/Akolyth-Wahlen, Akolyth-Goldwahl und explizite Spielsetauswahl ab. **Flutter-/Android-CI des finalen PR-Commits und echte Geräteprüfung noch offen.** Keine Regel-, Speicher-, Schema- oder Versionsänderung.
 
 **Integrations-CI-Nachweis (02.11.2026):** Vollständige Quellprüfungen waren jeweils auf dem finalen Head erfolgreich: [#465](https://github.com/ManuEtt/Dnd/actions/runs/41323668152), [#458](https://github.com/ManuEtt/Dnd/actions/runs/41282153192), [#457](https://github.com/ManuEtt/Dnd/actions/runs/41248140576) und [#455](https://github.com/ManuEtt/Dnd/actions/runs/41246044715). Historische Angaben „CI ausstehend“ beziehen sich auf den damaligen Veröffentlichungszeitpunkt. Kombinierte neue CI bleibt verpflichtend.
+
+---
+
+**Separater Chat-A-Fix (02.11.2026, noch nicht in main):**
+Ein bestätigter Berührungszauber darf auf dem vorhandenen
+5-Fuß-Taktikraster nicht allein mit gesetztem
+`withinTouchReachConfirmed`-Flag ein beliebig weit
+entferntes Ziel erreichen. Im konservativen Standardpfad
+sind nur das eigene und angrenzende Felder mit zusätzlicher
+ausdrücklicher Berührungsbestätigung zulässig.
+Die SRD erlaubt Sonderfälle mit größerer *reach*,
+deren separate Verifikation hier weiterhin offen ist.
+Neue Domain-/Preflight-/JSON-/SQLite-/Revisionsregressionen
+testen die fehlende implizite Zauberbuchung.
+Keine DB-/JSON-Migration, kein UI-/Engineumbau,
+keine Änderungen an parallelen Preflight-PRs.
+[Fachnachweis](docs/SRD_GRID_TOUCH_REACH_20261102.md).
+
+**Nächster Chat-A-Schritt:** explizit
+bestätigte Spezialreichweiten für Touch
+regelquellengebunden gesondert überprüfen.
+
+---
+
+**Separates Chat-A-Regelpaket (01.11.2026, noch nicht in main):**
+Branch `feat/chat-a/prepared-spell-exchange-triggers-20261101`
+führt die offizielle SRD-5.2.1-Tabelle (S.104) zum
+**Austausch bereits vorbereiteter Zauber** als rein
+lesende Regelprüfung ein: Kleriker/Druide/Magier dürfen
+bei bestätigter langer Rast mehrere Zauber tauschen,
+Paladin/Waldläufer dort einen, Barde/Zauberer/Hexenmeister
+einen beim nachgewiesenen **Aufstieg ihrer eigenen Klasse**.
+Die Vorprüfung verweigert unbekannte/widerrechtliche Klassen,
+Zaubertricks, illegale Grade, unbestätigte Rast,
+unbestätigtes Magier-Zauberbuch und zu viele Wechsel.
+Elf deterministische Testgruppen einschließlich SQLite-
+Neustart und Revisionskonflikt sind angelegt.
+**Keine** Speicherung oder Zauberfreigabe aus dieser
+Vorprüfung allein; offene PRs #461 und #463 werden
+nicht überschrieben. SQLite3, JSON1, App-Version
+unverändert. [Fachdetails und Grenzen](docs/SRD_SPELL_PREPARATION_EXCHANGE_20261101.md).
+
+**Nächster Schritt:** nach Integration der isolierten
+Vorbereitungs-PRs diese Regeln atomar mit bestätigter
+Rast- und Klassen-Aufstiegsentscheidung verknüpfen.
+
+---
+
+**Separater Chat-A-Regelfix (Branch, noch nicht in main):**
+`feat/chat-a/multiclass-slot-aliases-20261031` behebt die
+Namensabhängigkeit in `MulticlassRules.combinedSpellcasterLevel`.
+Die schon unterstützten SRD-Klassenaliase (`Wizard`/`Magier`,
+`Ranger`/`Waldläufer` usw.) ergeben damit identische
+Mehrklassen-Zauberplatzwerte. Hexenmeister-Paktmagie bleibt
+eigenständig, unbekannte Klassen werden nicht geraten.
+Sieben neue Domain-/SQLite-/Altspielstand-Testgruppen stehen
+in `app/test/multiclass_spell_slot_alias_test.dart`; tatsächlicher
+CI-Nachweis ist vom finalen PR-HEAD abhängig. Keine Migration,
+keine Änderungen an bestehenden Klassennamen und Spielständen.
+Der offene Chat-A-PR #448 bearbeitet einen anderen Regelbaustein;
+gemeinsame Dokumentation muss bei der Integration additiv
+konsolidiert werden. [Details](docs/parallel/CHAT_A_CHECKPOINT.md).
+
+**Nächster unabhängiger Chat-A-Schritt nach diesem Fix:**
+Regelgeprüfte Vorbereitung von Mehrklassen-Zaubern pro
+Klassenstufe und bestätigtem Katalogeintrag, mit
+Ablehnungs-, Alt-JSON- und SQLite-Retrytests.
+
+---
+
+**Separates Chat-A-Regelpaket (01.11.2026, noch nicht in main):**
+Branch `feat/chat-a/multiclass-prepared-source-20261101`
+verlangt eine ausdrückliche Zuordnung zum ausgewählten
+`castingClass`, falls ein Mehrklassenheld denselben Zauber
+auf **beiden** eigenen Klassenlisten und für **beide** individuellen
+Klassenstufen vorbereiten könnte. Die globale historische
+Zauberliste allein beweist die Klasse nicht. Eindeutige Zuordnungen,
+Einzelklassen und bestehende Ressourcen-/Material-/Ziel-/
+Snapshot-Prüfungen bleiben unverändert. Acht neue
+Domain-/JSON-/SQLite-Regressionen sind angelegt; maßgebliche
+GitHub-CI auf dem finalen PR-Commit prüfen. Keine
+Migration, SQLite 3 / JSON 1. Kein vollständiger
+klassenbezogener Vorbereitungseditor oder fertiges
+SRD-Regelwerk. [Fachnachweis und Grenzen](docs/SRD_MULTICLASS_PREPARED_SOURCE_20261101.md).
+
+**Nächster unabhängiger Chat-A-Schritt:** versionierte,
+ausdrücklich bestätigte per-Klasse-Zaubervorbereitung mit
+Altspielstand-/Revisions-/SQLite-Tests, ohne bestehende
+unbekannte Zuordnungen zu erraten.
+
+---
+
+### Chat C: Schildreaktionsdialog bei großer Schrift und Tastatur (31.10.2026)
+
+Der Flutter-Dialog zur expliziten Schildreaktion nutzt auf kleinen Android-Displays einen durchgehend scrollbaren Dialog mit kompakterem Außenabstand und vollbreiten Klass-/Zauberplatz-Auswahlen. Neue Widgettests decken 320/360 dp mit 200 % Schrift, simulierte Tastatur, Abbruch, fehlende Komponentenbestätigung und fehlenden vorbereiteten Schildzauber ab. Umsetzung: [PR #450](https://github.com/ManuEtt/Dnd/pull/450), Branch `feat/chat-c/hero-shield-dialog-large-text-ime-20261031`. **Die neue Flutter-Widget-/Android-CI ist noch nicht bestätigt**; Geräte- und TalkBack-Abnahme steht aus. Keine Regel-, Speicher-, Schema-, Versions- oder API-Änderung.
+
+**Integrationsstatus Chat D (02.11.2026):** Erfolgreiche Einzel-PR-CIs auf finalen Quellheads: [#472](https://github.com/ManuEtt/Dnd/actions/runs/41393551106), [#467](https://github.com/ManuEtt/Dnd/actions/runs/41323611885), [#453](https://github.com/ManuEtt/Dnd/actions/runs/41244807154), [#461](https://github.com/ManuEtt/Dnd/actions/runs/41282290565) und [#450](https://github.com/ManuEtt/Dnd/actions/runs/41244483591). Neue kombinierte Integrations-CI ist noch auszuwerten; historische „CI ausstehend“-Texte sind keine aktuellen Messergebnisse.

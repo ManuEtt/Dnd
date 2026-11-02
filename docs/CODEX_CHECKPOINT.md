@@ -810,3 +810,178 @@ Im Flutter-Dialog `app/lib/ui/srd_magic_initiate_dialog.dart` wird der verschach
 Dialog `app/lib/ui/srd_background_package_dialog.dart` nutzt `AlertDialog(scrollable: true)`, kompakte Außenränder und expandierte Auswahlfelder für Spielset und Heiliges Symbol. Neue Widgettests `app/test/srd_background_package_ime_test.dart` prüfen Soldat und Akolyth bei 320/360 dp/200 % Schrift mit simuliertem 220-dp-Tastatur-Inset, einschließlich gesperrter Bestätigung, Abbruch und gültiger expliziter Auswahl. Base-main `5a88834c98f5aca40395088c20c7e1dc5b587868`, [PR #455](https://github.com/ManuEtt/Dnd/pull/455) auf `feat/chat-c/background-package-large-text-ime-20261031`. **Bis zum finalen PR-CI-Lauf nicht als getestet oder APK-fertig darstellen.** Keine Regel-, Controller-, JSON-, SQLite- oder Versionsänderung; keine Migration. README/zentralen Checkpoint bei parallelen PRs additiv konsolidieren.
 
 **Integrations-CI-Nachweis (02.11.2026):** Vollständige Quellprüfungen waren jeweils auf dem finalen Head erfolgreich: [#465](https://github.com/ManuEtt/Dnd/actions/runs/41323668152), [#458](https://github.com/ManuEtt/Dnd/actions/runs/41282153192), [#457](https://github.com/ManuEtt/Dnd/actions/runs/41248140576) und [#455](https://github.com/ManuEtt/Dnd/actions/runs/41246044715). Historische Angaben „CI ausstehend“ beziehen sich auf den damaligen Veröffentlichungszeitpunkt. Kombinierte neue CI bleibt verpflichtend.
+
+---
+
+# Chat A – 5-Fuß-Raster Berührungszauber begrenzen (02.11.2026, eigener PR)
+
+Ausgangs-main `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+Branch `fix/chat-a/grid-touch-range-20261102`.
+SRD 5.2.1, *Spells / Range / Touch*, CC BY 4.0.
+
+**Implementiert:** `SrdSpellGridTargetRules.factsFor`
+verweigert bei bekannten Rasterentfernungen von
+über 5 Fuß die `Touch`-Freigabe, selbst bei
+`withinTouchReachConfirmed=true`. Eigenes
+Feld und acht angrenzende Zellen erfordern
+weiterhin ausdrücklich bestätigte Berührung,
+überprüfte Karte und fehlende Hindernisse.
+Keine Auswirkungen auf Reichweite `Self`
+und Fernzauber. Für offiziell nicht auf
+5 Fuß festgelegte Spezialreichweiten
+muss später ein eigener belegter
+Mechanismus eingebaut werden; kein
+willkürliches Auto-Gewähren.
+
+**Neue Tests:** positive/negative
+5-Fuß-Grenzen, Klerikerzauber-Preflight
+ohne Ressourcenverlust, Legacy-JSON,
+SQLite-Neustart, idempotenter Retry und
+stale Revision. Vollständige CI und
+APK-Ergebnisse auf endgültiger Branch-SHA
+nach Veröffentlichung im PR nachweisen;
+keine ungeprüfte grüne CI behaupten.
+Keine Migration (SQLite3, äußeresJSON1).
+Andere offene PRs/Branches unberührt.
+
+**Nächster Schritt:** Spezialreichweiten
+für Berührungszauber mit nachgewiesener
+Spielregelquelle (statt nur Bool) begrenzen
+und als separaten, testbaren Eingabevertrag
+mit Persistenz-/Revisionsfällen modellieren.
+[Fachnachweis](SRD_GRID_TOUCH_REACH_20261102.md).
+
+---
+
+---
+
+# Chat A – Auslöser und Anzahl des Zaubervorbereitungstauschs (01.11.2026, separater PR)
+
+**Basis-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+**Branch:** `feat/chat-a/prepared-spell-exchange-triggers-20261101`.
+**Quelle:** SRD 5.2.1, S.104, *Spell Preparation by Class*, CC BY 4.0.
+
+**IMPLEMENTIERT:** Eine neue isolierte lesende Regelprüfung
+`SrdSpellPreparationExchangeRules.preview` erlaubt
+bei bestätigter langer Rast je einen Austausch für
+Paladin/Waldläufer oder beliebig viele für
+Kleriker/Druide/Magier; beim Klassenstufenaufstieg genau
+einen für Barde/Zauberer/Hexenmeister. Eigene Klassenlevels
+werden getrennt von der Gesamtstufe geprüft. Keine
+unbestätigten Cantrips, Fremdklassen, Dubletten, Zaubergrade
+oder Zauberbuch-Einträge. Der reine Plan bindet
+Vorher-/Nachher-Charakter über JSON-Snapshots und schreibt
+keine Helden-/Rast-/Spielstandänderung.
+
+**Tests angelegt:** elf positive/negative Gruppen,
+einschließlich acht Klassen, Englisch/Deutsch-Aliase,
+erlaubter/gesperrter Anzahl, Mehrklassen-Stufenanstieg,
+Absage/Unveränderlichkeit, SQLite-Restart und stale
+Revision. CI-Status auf dem finalen PR-SHA nachmessen
+und gesondert dokumentieren, nicht vorab als grün behaupten.
+
+**Kompatibilität:** keine Modelle, Controller,
+Story, UI, Repository, Migration oder Engine geändert;
+SQLite3/JSON1/App-Version unverändert. PR #461 und
+#463 besitzen weiterhin ihre eigenständigen Preflight-
+und Persistenzimplementierungen. Keine unkontrollierte
+Dokumentationsüberschreibung bei Integration durch Chat D.
+
+**NÄCHSTER SCHRITT:** nach koordiniertem Integrationsreview
+die freigegebene Klasse und Wechselgrenzen atomar an
+bestätigte Rast-/Klassen-Aufstiegsaktionen anbinden,
+mit SQLite- und Rollback-Fällen.
+[Fachbeleg](SRD_SPELL_PREPARATION_EXCHANGE_20261101.md).
+
+---
+
+---
+
+# Branch-Ergänzung 31.10.2026 – Chat A: bestätigte Klassenaliase
+
+**Noch nicht in main integriert.** Basis-main
+`5a88834c98f5aca40395088c20c7e1dc5b587868`,
+Branch `feat/chat-a/multiclass-slot-aliases-20261031`.
+
+Die reine Leseberechnung der normalen Zauberplätze in
+`app/lib/domain/multiclass_rules.dart` löst jetzt bestätigte Klassen
+mit dem bestehenden `findSrdClass`-Resolver auf. Deutsch/Englisch/
+feminine Aliase ergeben dieselbe Zauberstufe; Paladin und Waldläufer
+zählen gemäß SRD 5.2.1 jeweils halb aufgerundet, Hexenmeister-Paktmagie
+bleibt getrennt und unbekannte Klassen erhalten keine erfundenen Slots.
+Die gespeicherten Klassenlabels ändern sich nicht.
+
+`app/test/multiclass_spell_slot_alias_test.dart` ergänzt sieben
+positive/negative Prüfgruppen einschließlich Alt-JSON, SQLite-Neustart,
+idempotentem Save-Retry und stale Revision. Keine Migration (SQLite 3,
+JSON 1), keine neue API, kein KI-/Story-/UI-Eingriff. Bei Start offene
+PRs #446–#449, davon #448 anderer Chat-A-Regelbaustein; keine
+Überschneidung der neuen Fachdateien. README und Checkpoints müssen
+bei parallelen PRs additiv integriert werden.
+
+**Teststatus zum Dokumentationscommit:** Quell-/Vertragsprüfung
+durchgeführt, neue Flutter-/Dart-/SQLite-Tests mangels lokalem SDK
+nicht ausgeführt; neue CI ist abzuwarten und nur auf dem finalen
+PR-HEAD zu beurteilen. Die zuvor erfolgreiche Main-CI
+[41184883579](https://github.com/ManuEtt/Dnd/actions/runs/41184883579)
+belegt nicht die neuen Änderungen. Reales Android-Gerät, Upgrade,
+TalkBack und produktive Signierung sind weiter offen.
+
+**Nächster unabhängiger Chat-A-Schritt:** vorbereitete Zauber pro
+Mehrklassen-Stufe vor Wirken anhand ausdrücklich bestätigter
+Regelmetadaten abgleichen; positive/negative Domain-, JSON- und
+SQLite-Retrytests, keine angenommene Zaubervorbereitung oder
+implizite Storyregeln. Detaillierter Fachstand:
+[Chat-A-Checkpoint](parallel/CHAT_A_CHECKPOINT.md).
+
+---
+
+---
+
+# Chat-A-Branchnachtrag – mehrdeutige Mehrklassen-Zaubervorbereitung (01.11.2026)
+
+**Noch nicht in main** · Basis `5a88834c98f5aca40395088c20c7e1dc5b587868`,
+Branch `feat/chat-a/multiclass-prepared-source-20261101`.
+SRD 5.2.1, S. 25, *Multiclassing / Spells Prepared*, CC BY 4.0.
+
+`SrdSpellPreflightRules.preflight` verlangt jetzt eine ausdrückliche
+`preparedForCastingClassConfirmed`-Bestätigung, wenn beide eigenen
+Zauberklassen denselben Zauber jeweils nach ihrer individuellen
+Klassenstufe vorbereiten könnten. Die alte globale
+`HeroCharacter.spells`-Liste wird dabei **nicht** stillschweigend
+als klassenbezogener Nachweis interpretiert; nur eine eindeutige
+vorhandene Klasse bleibt ohne zusätzliche Bestätigung zulässig.
+Die bestehende getrennte Ressourcen-/Ziel-/Materialprüfung und
+Snapshot-Revalidierung bleiben erhalten.
+
+Neue Fachdateien bzw. Änderungen:
+`app/lib/domain/srd_spell_preflight_rules.dart`,
+`app/test/srd_multiclass_prepared_source_test.dart`,
+`docs/SRD_MULTICLASS_PREPARED_SOURCE_20261101.md` sowie
+die beiden Chat-/Zentral-Checkpoints und README.
+Keine Migration (SQLite 3, JSON 1), keine Klassen-/Zauber-
+Rekonstruktion aus KI-Antworten oder unbestätigten Altspielständen.
+Acht neue deterministische Testfälle einschließlich JSON/SQLite;
+**CI auf finalem PR-HEAD ist zunächst ausstehend**.
+Frühere erfolgreiche Prüfungen anderer Commits sind kein Nachweis.
+
+Koordination: Die offenen PRs #446–#458 wurden geprüft;
+keiner verändert diese Fach-/Testdateien. Chat D soll gemeinsame
+Dokumentation additiv konsolidieren. Keine Änderung an main,
+fremden Branches oder bestehender Spielstandmigration.
+
+**Genau nächster Schritt:** Einen ausdrücklich bestätigten,
+rückwärtskompatiblen per-Klasse-Vorbereitungsnachweis entwerfen
+und mit Alt-JSON-, Revisions-, Speicherkonflikt- und
+Stufengrenzentests absichern; globale Liste nicht umdeuten.
+Fachdetails im [Chat-A-Checkpoint](parallel/CHAT_A_CHECKPOINT.md).
+
+---
+
+---
+
+## 31.10.2026 – Chat C: barrierearme Schildreaktion (PR #450, Draft)
+
+UI-only: `app/lib/ui/hero_shield_reaction_dialog.dart` nutzt jetzt `AlertDialog(scrollable: true)`, kleinere Insets und expandierte Auswahlfelder. Neue Regressionstests in `app/test/hero_shield_reaction_dialog_large_text_ime_test.dart` für 320/360 dp, 200 % Schrift, simulierte Tastatur, Abbruch, V/S-Freigabe und gesperrten Bestätigungspfad ohne vorbereiteten Zauber. Basierend auf main `5a88834c98f5aca40395088c20c7e1dc5b587868`; Branch `feat/chat-c/hero-shield-dialog-large-text-ime-20261031`, PR [#450](https://github.com/ManuEtt/Dnd/pull/450). **Kein Flutter/Dart lokal vorhanden; Tests noch nicht ausgeführt, GitHub-CI auf finalem PR-HEAD offen.** Unveränderte Regeln, Speicherformate und Version; kein Merge, keine Migration. Gemeinsame Dokumentation beim Merge mit parallel offenen PRs additiv konsolidieren.
+
+**Integrationsstatus Chat D (02.11.2026):** Erfolgreiche Einzel-PR-CIs auf finalen Quellheads: [#472](https://github.com/ManuEtt/Dnd/actions/runs/41393551106), [#467](https://github.com/ManuEtt/Dnd/actions/runs/41323611885), [#453](https://github.com/ManuEtt/Dnd/actions/runs/41244807154), [#461](https://github.com/ManuEtt/Dnd/actions/runs/41282290565) und [#450](https://github.com/ManuEtt/Dnd/actions/runs/41244483591). Neue kombinierte Integrations-CI ist noch auszuwerten; historische „CI ausstehend“-Texte sind keine aktuellen Messergebnisse.
