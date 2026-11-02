@@ -197,6 +197,78 @@ class VerifyProjectTests(unittest.TestCase):
                     'Gradle-Wrapper-JAR' in msg for msg in verify_project(self.root)
                 ))
 
+    def test_wrapper_rejects_casefold_equivalent_files_before_crc(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        for first, second in (
+            ('META-INF/Map.txt', 'META-INF/map.txt'),
+            ('META-INF/straße.txt', 'META-INF/strasse.txt'),
+        ):
+            with self.subTest(names=(first, second)):
+                with zipfile.ZipFile(jar, 'w') as archive:
+                    archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+                    archive.writestr(first, b'first')
+                    archive.writestr(second, b'second')
+                with mock.patch.object(
+                    zipfile.ZipFile, 'testzip',
+                    side_effect=AssertionError('CRC reached before path collision guard'),
+                ):
+                    self.assertTrue(any(
+                        'Gradle-Wrapper-JAR' in error
+                        for error in verify_project(self.root)
+                    ))
+
+    def test_wrapper_rejects_nfc_equivalent_files_before_crc(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+            archive.writestr('META-INF/café.txt', b'first')
+            archive.writestr('META-INF/cafe\u0301.txt', b'second')
+        with mock.patch.object(
+            zipfile.ZipFile, 'testzip',
+            side_effect=AssertionError('CRC reached before NFC collision guard'),
+        ):
+            self.assertTrue(any(
+                'Gradle-Wrapper-JAR' in error for error in verify_project(self.root)
+            ))
+
+    def test_wrapper_rejects_casefold_equivalent_implicit_directories(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+            archive.writestr('Assets/first.json', b'first')
+            archive.writestr('assets/second.json', b'second')
+        with mock.patch.object(
+            zipfile.ZipFile, 'testzip',
+            side_effect=AssertionError('CRC reached before directory guard'),
+        ):
+            self.assertTrue(any(
+                'Gradle-Wrapper-JAR' in error for error in verify_project(self.root)
+            ))
+
+    def test_wrapper_rejects_nfc_equivalent_implicit_directories(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+            archive.writestr('Réseaux/first.json', b'first')
+            archive.writestr('Re\u0301seaux/second.json', b'second')
+        with mock.patch.object(
+            zipfile.ZipFile, 'testzip',
+            side_effect=AssertionError('CRC reached before directory guard'),
+        ):
+            self.assertTrue(any(
+                'Gradle-Wrapper-JAR' in error for error in verify_project(self.root)
+            ))
+
+    def test_wrapper_allows_distinct_international_names_and_prefixes(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+            for name in ('META-INF/Würfel.txt', 'META-INF/Wurfel.txt',
+                         'META-INF/cafe\u0301.txt', 'META-INF/Karte🗺️.txt',
+                         'Assets/first.json', 'Other/second.json'):
+                archive.writestr(name, b'valid')
+        self.assertEqual([], verify_project(self.root))
+
     def test_wrapper_rejects_invisible_unicode_names_before_crc(self):
         jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
         for codepoint in (0x85, 0x200b, 0x202e, 0x2066, 0x2028, 0x2029):
