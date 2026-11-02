@@ -1,3 +1,61 @@
+## 02.11.2026 – Chat A: Klassenprüfung vor Rettungswurf-Wiederholungen, 0.8.51+101
+
+**Vorläufiger Quellen-Checkpoint, keine vollständige Abnahme.** Basis-Main
+`5a88834c98f5aca40395088c20c7e1dc5b587868`, Branch
+`fix/chat-a/saving-throw-class-preflight-20261102`. Code-/Testcommit
+`de8cef1bf9cd4cd67cfa7eb1916eec1b6b60f038` ist gesichert. Pull Request und finale CI
+folgen nach den erforderlichen Prüfungen. Main bleibt
+unverändert; Issue #425 und alte Branchmigration sind abgeschlossen.
+
+**IMPLEMENTIERT:** Genau 51 zusätzliche Zeilen im bestehenden
+`app/lib/domain/saving_throw_class_actions.dart`: bekannte SRD-Klassen und
+kanonische Aliase, Gesamt-/eigene Klassenstufen, zulässiger Zweitklassensplit und
+eindeutige Rettungswurfübungen vor Klassenbonus, Ressourcenverbrauch und neuem
+W20 prüfen. Die lesende Verfügbarkeitsabfrage liefert für solche ungültigen
+Profile `false`. Berechnungen, Ressourcenregeln und übriger vorhandener Code
+bleiben unverändert. In der bestehenden Engine-Kette erzeugt ein abgewiesener
+Textversuch absichtlich `rules.blocked` und eine Revision; Helden-/Ressourcenwerte
+und RNG ändern sich nicht. Historische Profile werden beim Öffnen nicht repariert.
+
+**GETESTET:** 62 neue Domain-, acht Engine-/SQLite- und zwei tatsächliche App-UI-
+Tests bestanden, zusammen **72 neue Fälle**. **159 gezielte neue und bestehende
+Regressionen** bestanden (157 Domain-/Flowfälle plus zwei UI-Fälle). Lokaler
+ARM64-Debug-APK-Build bestanden. Positivfälle
+für alle zwölf Klassen, gültige Aliase, tatsächliche Kämpfer-Klassenstufe,
+Übung/Erschöpfung einmal sowie negative Klassen-/Stufen-/Übungsdaten. Speicherfälle
+prüfen Ablehnung, einmalige Ressourcenbuchung, Replay, stale Zweitcontroller,
+Neustart, Export/Import und späten SQLite-Rollback. Ein vorher legitimer W20 wird
+bei spätem SQL-Fehler nicht als rückrollbar behauptet.
+
+**NICHT ABGESCHLOSSEN / NICHT GETESTET:** Vollständiges `scripts/check.sh` und
+native Android-Tests laufen zum Frühcheckpoint noch; kein Vollpass behauptet.
+Optimierte Alpha und aktuelle GitHub-CI stehen aus. Geräte-/TalkBack-/Upgrade-
+und produktive Signierungsabnahme fehlen. Kein Legacy-Profil-Korrektur-UI-Flow
+wird behauptet.
+
+**BLOCKIERT:** Kein bekannter fachlicher oder GitHub-Zugriffsblocker; reparierte
+UI-Fixtures haben 2/2 bestanden, vollständige Abnahme läuft. Nur begrenzter
+lokaler Speicherplatz: frühes Quellen-ZIP, Patch und Bundle außerhalb des
+Projekts priorisieren. Keine Quellen, Spielstände, WIP oder alten Artefakte löschen.
+
+**NOCH NICHT IMPLEMENTIERT:** Allgemeiner initialer manueller Rettungswurf ist
+in diesem Paket unverändert. Weitere Rettungswurfquellen, situative Modifikatoren,
+kompletter Charakterassistent und Gesamt-SRD bleiben offen. SQLite **3** / äußeres
+JSON **1**, keine Migration. `CLASS-K-MPFER-9-BASE-INDOMITABLE-0` und
+`CLASS-M-NCH-14-BASE-DISCIPLINED-SURVIVOR-0` nur **partial**; keine globale Abschlussquote.
+
+Vor Beginn 23 offene PRs anhand ihrer Dateilisten geprüft. PR #468 bleibt getrennt
+und auf seinem eigenen Head CI-grün; seine Konzentrationsdateien werden nicht
+verändert. Andere Chat-A-/B-/C-/D-Pakete nicht erneut implementieren oder mergen.
+Gemeinsame README-/Checkpoint-Zusätze konsolidiert Chat D später additiv.
+
+**Genau nächstes unabhängiges Paket:** Allgemeinen initialen manuellen Rettungswurf vor automatisch abgeleiteten Klassenboni und W20 validieren; schreibfreie Charakterbogen-Vorschauen unverändert lassen. Zuerst frische Main-/PR-Dateilisten prüfen. Akzeptanz: unbekannte/inkonsistente Klassen vor Bonus/RNG ablehnen, gültige Aliase und Mehrklassen behalten dieselben Boni, Domain-, SQLite-/Retry- und tatsächliche UI-Regressionen bestehen.
+
+Fachnachweis: `docs/parallel/CHAT_A_SAVING_THROW_CLASS_PREFLIGHT_20261102.md`.
+Die darunter bewahrten Berichte gelten jeweils für ihren damaligen Stand.
+
+---
+
 ## 31.10.2026 – Migration abgenommen, Alpha 0.8.49+99
 
 Gesamtintegration #440 und Herkunftsnachtrag #444 sind regulär integriert.

@@ -5,6 +5,38 @@ regelgeprüfte Aktionen und ein optionaler Fastify-/TypeScript-Erzähler.
 
 ## Aktueller Stand und autonome Fortsetzung
 
+**Chat A, 02.11.2026 – Alpha 0.8.51+101: Klassen vor Rettungswurf-Wiederholungen prüfen.**
+Eigener Arbeitsbranch `fix/chat-a/saving-throw-class-preflight-20261102`, Basis-Main
+`5a88834c98f5aca40395088c20c7e1dc5b587868`. Code-/Testcommit
+`de8cef1bf9cd4cd67cfa7eb1916eec1b6b60f038` ist gesichert. Dies ist ein Frühcheckpoint vor
+vollständiger Abnahme; Pull Request und aktuelle CI stehen aus. Main wurde
+nicht verändert. Die frühere Migration und Issue #425 sind bereits abgeschlossen;
+die darunter bewahrten Migrationseinträge sind historische Momentaufnahmen.
+
+`SavingThrowClassActions` prüft vor einer ausdrücklich gewählten Mönch-14- oder
+Kämpfer-9-Wiederholung bekannte Klassen, zulässige eigene Klassenstufen und
+eindeutige Rettungswurfübungen. Ungültige Profile bieten keine Klassenwiederholung
+an und werden vor Bonus, Ressourcenverbrauch und W20 abgewiesen. Die vorhandenen
+Berechnungen und die deutsche UI-/Engine-/SQLite-Kette bleiben bestehen. Eine
+abgewiesene Texteingabe wird weiterhin absichtlich als `rules.blocked` mit neuer
+Revision protokolliert; Heldenwerte, Ressourcen und RNG bleiben dabei unverändert.
+
+**Bisher bestanden:** 62 neue Domänen-, acht Engine-/SQLite- und zwei echte
+App-UI-Tests, zusammen **72 neue Fälle**. **159 gezielte Regressionen** bestanden
+(157 Domain-/Flowfälle plus zwei UI-Fälle). Lokaler ARM64-Debug-APK-Build bestanden.
+Vollständiges `scripts/check.sh` und native Android-Tests laufen noch; ihre
+Abschlüsse, optimierte Alpha und finale PR-CI sind noch kein Erfolgsnachweis.
+SQLite **3** / äußeres JSON **1**, keine Migration oder stille Änderung alter
+Profile. Beide betroffenen Klassen-Requirements bleiben **partial**. Allgemeine
+Erstwürfe, vollständiger Charakterassistent und Gesamt-SRD sind nicht abgeschlossen.
+Reales Gerät/TalkBack/Upgrade und produktive Signierung bleiben separate Abnahmen.
+
+**Nächster konkreter Schritt nach Paketabnahme:** Allgemeinen initialen manuellen Rettungswurf vor automatisch abgeleiteten Klassenboni und W20 validieren; schreibfreie Charakterbogen-Vorschauen unverändert lassen. Zuerst frische Main-/PR-Dateilisten prüfen. Akzeptanz: unbekannte/inkonsistente Klassen vor Bonus/RNG ablehnen, gültige Aliase und Mehrklassen behalten dieselben Boni, Domain-, SQLite-/Retry- und tatsächliche UI-Regressionen bestehen.
+[Fachnachweis](docs/parallel/CHAT_A_SAVING_THROW_CLASS_PREFLIGHT_20261102.md) ·
+[aktueller Chat-A-Checkpoint](docs/parallel/CHAT_A_CHECKPOINT.md).
+
+### Historischer Main- und Migrationsstand
+
 **Alpha 0.8.49+99 – Gesamtintegration vom 30./31.10.2026, Issue #425.**
 [PR #440](https://github.com/ManuEtt/Dnd/pull/440) ist regulär in Main
 `72ba9d2e06e7121f955832b4ad22223f64f7c343` integriert.
