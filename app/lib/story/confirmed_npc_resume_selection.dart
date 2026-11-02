@@ -188,8 +188,10 @@ class ConfirmedNpcResumeSelector {
       ],
       sourceStamp: _npcSourceStamp(campaign),
     );
-    // Enforce the documented global budget even for maximal limits.
-    result.playerOverview;
+    // Fail closed if a future field expansion exhausts the global budget.
+    if (result.playerOverview.length > 2400) {
+      throw const FormatException('NPC-Rückblick überschreitet sein Limit.');
+    }
     return result;
   }
 
