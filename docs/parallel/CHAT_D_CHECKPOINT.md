@@ -1475,6 +1475,7 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 ## Chat D – Checkpoint-Checksumliste gegen unsichtbare Unicode-Dateinamen schützen (02.11.2026)
 
 - **Basis-main:** `516bc14e06cb02e7035a6adfb8e2d21e54253184`.
+- **Pull Request:** [#504](https://github.com/ManuEtt/Dnd/pull/504), Draft bis finaler CI-Abnahme.
 - **Branch:** `fix/chat-d/checkpoint-unicode-ledger-20261102`; Code-/Teststand: `2b1386e4a43a15efa352ea5c6ff3afe143872830`.
 - **Problem:** `scripts/create_checkpoint.py:safe_name` verbot bisher nur ASCII-Steuerzeichen. Historische Checkpoint-Artefakte mit C1-Steuerzeichen, Bidirectional-Formatzeichen oder Unicode-Zeilen-/Absatztrennern konnten in die Prüfsummenliste aufgenommen werden. Eine Zeile konnte dadurch visuell irreführend sein.
 - **Lösung:** Historische Artefakt- und Quellnamen verwerfen, wenn ein Zeichen einer Unicode-Kategorie `Cc`, `Cf`, `Cs`, `Zl` oder `Zp` angehört. Normale internationale Namen einschließlich Umlaut, Emoji und kombinierender Zeichen bleiben erlaubt.
