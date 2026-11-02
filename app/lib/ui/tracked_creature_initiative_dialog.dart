@@ -49,11 +49,10 @@ class _TrackedCreatureInitiativeDialogState
         _controller == null ||
         !_confirmed) {
       setState(
-        () => _error =
-            MediaQuery.textScalerOf(context).scale(14) >= 25.2
-                ? 'Bitte Kreatur, Zahl, Kontrolle und Bestätigung prüfen.'
-                : 'Kreatur, vollständiges Initiativeergebnis, '
-                      'SL-/Spieler-Kontrolle und Bestätigung sind erforderlich.',
+        () => _error = MediaQuery.textScalerOf(context).scale(14) >= 25.2
+            ? 'Bitte Kreatur, Zahl, Kontrolle und Bestätigung prüfen.'
+            : 'Kreatur, vollständiges Initiativeergebnis, '
+                  'SL-/Spieler-Kontrolle und Bestätigung sind erforderlich.',
       );
       return;
     }
@@ -102,7 +101,8 @@ class _TrackedCreatureInitiativeDialogState
                     ? 'Hauptinitiative bestätigt.'
                     : 'Initiative des Helden und Hauptgegners '
                           'aus dem Kampfstart bestätigt.',
-                semanticsLabel: 'Initiative des Helden und Hauptgegners '
+                semanticsLabel:
+                    'Initiative des Helden und Hauptgegners '
                     'aus dem Kampfstart bestätigt.',
               ),
               onChanged: (v) => setState(() => _baseConfirmed = v ?? false),
@@ -159,9 +159,7 @@ class _TrackedCreatureInitiativeDialogState
             TextField(
               key: const ValueKey('initiative-total'),
               controller: _total,
-              keyboardType: const TextInputType.numberWithOptions(
-                signed: true,
-              ),
+              keyboardType: const TextInputType.numberWithOptions(signed: true),
               decoration: const InputDecoration(
                 labelText: 'Bestätigtes Initiative-Ergebnis',
                 hintText: 'z. B. 14, einschließlich aller Modifikatoren',
@@ -196,7 +194,8 @@ class _TrackedCreatureInitiativeDialogState
                     ? 'Ergebnis und Kontrolle bestätigt.'
                     : 'Würfelergebnis und Kontrolle anhand des '
                           'Kampfes ausdrücklich bestätigt.',
-                semanticsLabel: 'Würfelergebnis und Kontrolle anhand des '
+                semanticsLabel:
+                    'Würfelergebnis und Kontrolle anhand des '
                     'Kampfes ausdrücklich bestätigt.',
               ),
               onChanged: (v) => setState(() => _confirmed = v ?? false),
