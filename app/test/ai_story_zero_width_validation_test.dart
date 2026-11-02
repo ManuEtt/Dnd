@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/story/ai_story.dart';
+
 Map<String, dynamic> _plan() => {
   'title': 'Die Sturminsel',
   'world': 'Valdorn',
@@ -32,6 +33,7 @@ Map<String, dynamic> _plan() => {
     },
   ],
 };
+
 Campaign _campaign() => Campaign(
   id: 'campaign-1',
   name: 'Die Sturminsel',
@@ -48,6 +50,7 @@ Campaign _campaign() => Campaign(
   ],
   npcs: const [WorldNpc(id: 'tela', name: 'Tela', relationship: 'neutral')],
 );
+
 Map<String, dynamic> _step() => {
   'narration': 'Tela erzählt vom Schiff.',
   'threadUpdates': [
@@ -68,24 +71,27 @@ Map<String, dynamic> _step() => {
     },
   ],
 };
+
 void main() {
   test('clean multilingual prose, tabs and line breaks remain accepted', () {
     final plan = _plan();
-    plan['opening'] = 'Über dem Hafen:\\n\\t„Willkommen, Eila!“';
+    plan['opening'] = 'Über dem Hafen:\n\t„Willkommen, Eila!“';
     final parsedPlan = AiStoryPlan.fromJson(plan);
     expect(parsedPlan.opening, plan['opening']);
     expect(parsedPlan.npcs.single.name, 'Tela');
+
     final campaign = _campaign();
     final before = campaign.toJson();
     final step = _step();
-    step['narration'] = 'Tela lächelt.\\n\\tWas tust du?';
+    step['narration'] = 'Tela lächelt.\n\tWas tust du?';
     final parsedStep = AiStoryStep.fromJson(step, campaign);
     expect(parsedStep.narration, step['narration']);
     expect(parsedStep.npcUpdates.single.id, 'tela');
     expect(campaign.toJson(), before);
     expect(Campaign.fromJson(before).toJson(), before);
   });
-  for (final marker in <String>['\\u200c', '\\u200d']) {
+
+  for (final marker in <String>['\u200c', '\u200d']) {
     test('AI plan rejects hidden joiner in every top-level field', () {
       for (final field in [
         'title',
@@ -104,6 +110,7 @@ void main() {
         );
       }
     });
+
     test('AI plan rejects hidden joiner in entity prose', () {
       const fields = <String, List<String>>{
         'threads': ['title', 'description'],
@@ -125,6 +132,7 @@ void main() {
         }
       }
     });
+
     test('AI step rejects hidden joiner in narration and updates', () {
       final campaign = _campaign();
       final before = campaign.toJson();
@@ -134,6 +142,7 @@ void main() {
         () => AiStoryStep.fromJson(invalidNarration, campaign),
         throwsFormatException,
       );
+
       const fields = <String, List<String>>{
         'threadUpdates': ['description'],
         'newThreads': ['title', 'description'],
