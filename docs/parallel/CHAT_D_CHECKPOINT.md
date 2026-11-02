@@ -1300,3 +1300,41 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Nächster Schritt:** finalen PR-Head und Actions-CI abnehmen,
   bei Fehlern auf diesem Branch korrigieren, ohne andere Branches
   zu überschreiben oder zu löschen.
+
+
+---
+
+# CHAT D – D-033: Datei-/Verzeichnis-Kollisionen in APK und Wrapper-JAR (02.11.2026)
+
+- **Basis-main:** `982cc1f548a309f8eb54cdb2ea37697267813389`, enthält
+  vollständig CI-geprüftes Paket #482. Die neue Main-CI
+  #41408485671 lief beim Start des Folgepakets noch.
+- **Eigener Branch:** `fix/chat-d/zip-file-directory-conflicts-20261102`.
+- **Problem:** ZIPs erlauben einen Eintrag wie `assets` (Datei) und
+  gleichzeitig `assets/map.json` oder `assets/` (Verzeichnis).
+  Bei Entpacken kann das zu Verzeichnis-/Dateikonflikten und
+  unterschiedlichen Resultaten je Dateisystem führen.
+- **IMPLEMENTIERT:** In `scripts/prepare_alpha_release.py`
+  und `scripts/verify_project.py` erfassen zwei Mengen die
+  kanonischen vollständigen Dateipfade und expliziten/impliziten
+  Verzeichnispräfixe. Bei Schnittmenge wird schon bei ZIP-Metadaten,
+  vor CRC-/Inhaltsprüfung, abgebrochen. Die vorhandene Casefold-/NFC-
+  Prüfung bleibt bestehen; die originalen ZIP-Einträge bleiben unverändert.
+- **Tests:** vier zusätzliche APK-Regressionen, darunter Reihenfolge,
+  explizite Verzeichnisse und unbeschädigtes Vorrelease;
+  drei zusätzliche Wrapper-JAR-Regressionen für Reihenfolge,
+  explizite Verzeichnisse und reguläre Unterdateien.
+  Negative Tests verbieten vorzeitiges `ZipFile.testzip()` per Mock.
+- **GETESTET:** Vorpaket #482 vollständig CI-grün vor Merge;
+  neues Paket selbst noch nicht final durch GitHub Actions abgenommen.
+- **NICHT GETESTET:** vollständige neue Python-/Backend-/Flutter-/Android-
+  Build- und Testfolge auf finalem PR-HEAD sowie reales Gerät.
+- **BLOCKIERT:** erfolgreiche neue CI und letzte Main-/PR-Dateiprüfung.
+- **Koordination:** 28 andere offene PRs ändern keine der vier
+  technischen Python-Zieldateien. README/zentralen Checkpoint
+  mit parallelen Entwicklungs-Chats verlustfrei additiv halten.
+- **Migration:** keine SQLite-, JSON-, Speicherstand-, Versions-,
+  Berechtigungs-, Story-, Regel- oder UI-Änderung.
+- **Nächster Schritt:** finalen PR veröffentlichen, gesamten GitHub-CI-
+  Lauf prüfen; nur erfolgreich abgenommene PRs integrieren,
+  Branches bis zur sicheren Bereinigung behalten.

@@ -347,3 +347,21 @@ Gradle-Wrapper, Android-App-Code, Spielstände und Version bleiben unverändert.
 Branch: `fix/chat-d/wrapper-jar-unicode-collisions-20261102`.
 Eine vollständige GitHub-CI auf dem finalen PR-HEAD ist für Review/Merge
 erforderlich; keine automatische Branchbereinigung.
+
+
+---
+
+### Chat D – Datei-/Verzeichnis-Kollisionen in ZIP-Archiven verhindern (02.11.2026)
+
+Die Import-/Release-Prüfungen `scripts/verify_project.py` (Gradle-Wrapper-JAR)
+und `scripts/prepare_alpha_release.py` (ARM64-APK) sperren nun zusätzlich
+ZIP-Namen, bei denen ein expliziter Dateieintrag gleichzeitig als
+Verzeichnispräfix anderer Einträge oder als explizites Verzeichnis
+auftaucht. Die Prüfung wertet ZIP-Metadaten vor CRC/Dekomprimierung aus
+und funktioniert unabhängig von der Reihenfolge der Einträge.
+Ein regulärer Verzeichnis-Eintrag mit untergeordneten Dateien bleibt erlaubt.
+Sieben Regressionstests sichern Ablehnung, positive Fälle und den
+Bestandsschutz bereits veröffentlichter Release-Artefakte ab.
+Branch: `fix/chat-d/zip-file-directory-conflicts-20261102`.
+Die finale GitHub-CI auf dem vollständigen PR-Commit ist vor Review oder Merge
+verbindlich. Kein SQLite-/JSON-/Save-Schema- oder Appversionswechsel.

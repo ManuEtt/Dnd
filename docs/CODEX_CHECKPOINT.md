@@ -437,3 +437,40 @@ Ein neuer Flutter-Regressionstest schützt vor einer Story-Provider-Antwort, die
 - **BLOCKIERT:** erfolgreiche volle CI, erneuter Main-/PR-Abgleich.
 - **Nächster Schritt:** finalen CI-HEAD vollständig prüfen, Fehler
   auf demselben Branch korrigieren und keinen ungeprüften Merge durchführen.
+
+
+---
+
+## 02.11.2026 – Chat D: ZIP-Dateien dürfen keine Verzeichnispräfixe sein
+
+- **Ausgangs-main:** `982cc1f548a309f8eb54cdb2ea37697267813389` (Integration #482 erfolgreich gemergt).
+- **Basis-Main-CI:** #41408485671 bei Implementierung noch in Arbeit,
+  deshalb noch nicht als erfolgreich bewertet; die vollständige PR-CI
+  von #482 war zuvor erfolgreich.
+- **Branch:** `fix/chat-d/zip-file-directory-conflicts-20261102`.
+- **IMPLEMENTIERT:** `scripts/prepare_alpha_release.py` und
+  `scripts/verify_project.py` registrieren kanonische Datei- und
+  Verzeichnispräfixe für APK-/Gradle-JAR-ZIP-Einträge. Bei Schnittmenge
+  (Datei wird zugleich als Ordner vorausgesetzt) wird das Archiv
+  **vor `testzip()` und Entpacken** verweigert.
+- **REGRESSIONEN:** vier APK- und drei Wrapper-JAR-Tests in
+  `scripts/tests/test_prepare_alpha_release.py` und
+  `scripts/tests/test_verify_project.py`: beide Eintragsreihenfolgen,
+  Datei gegen implizites Elternverzeichnis, Datei gegen expliziten
+  Verzeichniseintrag, erlaubte explizite Verzeichnisse/Unterdateien,
+  unveränderte früher veröffentlichte Releases bei Ablehnung.
+- **GETESTET:** vollständige ursprüngliche CI von #482 am finalen
+  Head `b42b71f5f8835ab200c0892c0b6c9653e91aba9f` grün.
+  Neue Tests und kombinierter Branch zu diesem Zeitpunkt noch nicht
+  durch GitHub Actions vollständig abgenommen.
+- **NICHT GETESTET:** finale Python-/Flutter-/Android-CI auf dem neuen
+  Branch-HEAD; echte Android-/SAF-/TalkBack-Geräteabnahme.
+- **Parallelität:** 28 andere offene PRs bei Beginn geprüft;
+  keine technischen Änderungen an den vier Python-Zieldateien.
+  README/CODEX/Chat-D-Checkpoint nur additiv ändern und später mergen.
+- **Migration:** keine; Gradle-JAR-Binärdatei, Android-App-Code,
+  App-Version, SQLite-/JSON-/Spielstände, Berechtigungen unverändert.
+- **BLOCKIERT:** vollständige GitHub-PR-CI und finale Revalidierung von
+  Main/PRs vor Review/Merge.
+- **Nächster Schritt:** eigenen PR anlegen, CI auf finalem Commit prüfen,
+  bei Fehlern auf eigenem Branch korrigieren; keinen fremden Branch löschen.
