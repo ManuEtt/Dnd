@@ -1,3 +1,13 @@
+## 02.11.2026 – Chat C: Wilder-Angreifer-Auswahl bei großer Schrift und IME
+
+- **Main-Basis:** `516bc14e06cb02e7035a6adfb8e2d21e54253184`. **Branch:** `feat/chat-c/savage-attacker-ime-20261102`.
+- **UI:** Ein vollständig scrollbarer `AlertDialog` statt eigener Inhalts-Scrollfläche; beide bereits geprüften Waffenwürfe zeigen expliziten `Semantics.selected`-Status. Keine direkte Schadens- oder Talentbuchung.
+- **Tests:** Vier zusätzliche Widgetfälle bei 320/360 dp, 200 % Schrift und 220 dp Android-IME. Abbruch/ungültige Quelle gesperrt, Wahl eines auch niedrigeren Wurfs, kritischer Treffer und unverändertes Kampagnen-JSON.
+- **Geprüft:** Zielgerichtete GitHub-Actions-Prüfung [#41478500514](https://github.com/ManuEtt/Dnd/actions/runs/41478500514) erfolgreich mit insgesamt 10 Widgettests. Offizielle Formatkorrekturen übernommen; temporärer Workflow entfernt.
+- **Noch offen:** Vollständige CI auf finalem PR-Head und reales Android/TalkBack/IME/Upgrade. Nur `app/lib/ui/savage_attacker_selection_dialog.dart` und `app/test/savage_attacker_selection_dialog_test.dart` sowie additive Dokumentation geändert; keine Modell-/Speichermigration. Chat D konsolidiert zentrale Docs beim Merge.
+
+---
+
 ## Chat D – UTF-8-Bytegrenze beim JSON-Import (02.11.2026)
 
 - **Basis-main:** `84437e4e92d735e179bb2585427b46a10451951d`.
