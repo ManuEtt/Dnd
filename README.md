@@ -1,5 +1,23 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat B – begrenzter bestätigter NPC-Rückblick (02.11.2026)
+
+Der unabhängige Chat-B-Branch `feat/chat-b/bounded-confirmed-npc-excerpt-20261102`
+auf Basis `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`
+stellt `ConfirmedNpcContinuityExcerpt.read` bereit. Die schreibgeschützte
+Story-Projektion bezieht ihren Inhalt ausschließlich aus dem bestätigten
+`NpcContinuityReader`: sichere gespeicherte NPC-ID als eindeutiger
+Anker, höchstens drei Beziehungsnotizen, gekürzte Legacy-Felder und eine
+Gesamtgrenze von 1.800 UTF-16-Zeichen einschließlich Überschriften.
+Unicode-/Bidi-Steuerzeichen werden nur für die Darstellung bereinigt;
+Emoji bleiben bei Kürzung intakt. Unbestätigte KI-Szenen sind niemals
+bestätigte Tatsachen. Sechs neue positive/negative Regressionen einschließlich
+realer SQLite-Neuöffnung und alter JSON-Speicherstände.
+Keine Veränderung am ursprünglichen NPC-Reader aus dem offenen PR #477,
+keine Backend-/UI-Anbindung, Schema-/Versionsänderung oder Datenmigration.
+CI auf dem finalen Commit ist vor Abnahme noch ausstehend.
+
+
 Deutschsprachige Fantasy-Solo-App für Android: Flutter/Dart, lokale SQLite-Spielstände,
 regelgeprüfte Aktionen und ein optionaler Fastify-/TypeScript-Erzähler.
 
