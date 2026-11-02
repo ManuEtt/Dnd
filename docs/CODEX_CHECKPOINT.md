@@ -1,6 +1,6 @@
 ## 02.11.2026 – Chat C: Wilder-Angreifer-Auswahl bei großer Schrift und IME
 
-- **Main-Basis:** `516bc14e06cb02e7035a6adfb8e2d21e54253184`. **Branch:** `feat/chat-c/savage-attacker-ime-20261102`.
+- **Main-Basis:** `516bc14e06cb02e7035a6adfb8e2d21e54253184`. **Branch:** `feat/chat-c/savage-attacker-ime-20261102`. **PR:** [#506](https://github.com/ManuEtt/Dnd/pull/506).
 - **UI:** Ein vollständig scrollbarer `AlertDialog` statt eigener Inhalts-Scrollfläche; beide bereits geprüften Waffenwürfe zeigen expliziten `Semantics.selected`-Status. Keine direkte Schadens- oder Talentbuchung.
 - **Tests:** Vier zusätzliche Widgetfälle bei 320/360 dp, 200 % Schrift und 220 dp Android-IME. Abbruch/ungültige Quelle gesperrt, Wahl eines auch niedrigeren Wurfs, kritischer Treffer und unverändertes Kampagnen-JSON.
 - **Geprüft:** Zielgerichtete GitHub-Actions-Prüfung [#41478500514](https://github.com/ManuEtt/Dnd/actions/runs/41478500514) erfolgreich mit insgesamt 10 Widgettests. Offizielle Formatkorrekturen übernommen; temporärer Workflow entfernt.
