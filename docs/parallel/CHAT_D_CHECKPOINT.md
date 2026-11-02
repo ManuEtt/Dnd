@@ -1496,3 +1496,33 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Offen:** Vollständige neue kombinierte PR-CI auf dem exakt finalen Integrations-HEAD, Vorgänger- und Main-CI, danach aktueller Main-/PR-Abgleich und regulärer Merge. Echte TalkBack-/IME-/Altversions-Geräteprüfung separat offen.
 
 **Nächster Schritt:** Vollständige CI dieses Stacks abnehmen und erst nach Merge von #507 mit grüner Main-CI integrieren.
+
+---
+
+---
+
+## Chat D – Checkpoint-Checksumliste gegen unsichtbare Unicode-Dateinamen schützen (02.11.2026)
+
+- **Basis-main:** `516bc14e06cb02e7035a6adfb8e2d21e54253184`.
+- **Pull Request:** [#504](https://github.com/ManuEtt/Dnd/pull/504), Draft bis finaler CI-Abnahme.
+- **Branch:** `fix/chat-d/checkpoint-unicode-ledger-20261102`; Code-/Teststand: `2b1386e4a43a15efa352ea5c6ff3afe143872830`.
+- **Problem:** `scripts/create_checkpoint.py:safe_name` verbot bisher nur ASCII-Steuerzeichen. Historische Checkpoint-Artefakte mit C1-Steuerzeichen, Bidirectional-Formatzeichen oder Unicode-Zeilen-/Absatztrennern konnten in die Prüfsummenliste aufgenommen werden. Eine Zeile konnte dadurch visuell irreführend sein.
+- **Lösung:** Historische Artefakt- und Quellnamen verwerfen, wenn ein Zeichen einer Unicode-Kategorie `Cc`, `Cf`, `Cs`, `Zl` oder `Zp` angehört. Normale internationale Namen einschließlich Umlaut, Emoji und kombinierender Zeichen bleiben erlaubt.
+- **Dateien:** `scripts/create_checkpoint.py`, `scripts/tests/test_create_checkpoint.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, diese Datei.
+- **Regressionen:** sechs nicht sichtbare Steuer-/Format-/Trennzeichen in historischen ZIP-Namen mit unveränderten `LATEST`-/`SHA256SUMS`-Aliases nach Ablehnung; sichtbares internationales historisches Archiv bleibt im Prüfsummenledger.
+- **GETESTET:** Code und zwei neue Regressionstests im Branch gespeichert. Vorläufige GitHub-Actions-Prüfung auf finalem Dokumentations-HEAD steht aus.
+- **NICHT GETESTET:** vollständige Python-/Backend-/Flutter-/Android-CI auf dem finalen PR-HEAD; echte Geräteabnahme (nicht relevant für Python-Archivnamen).
+- **Kompatibilität:** keine Spielstand-, SQLite-/JSON-, Android-/Dart-, API- oder Versionsänderung; frühere sichere Checkpointnamen bleiben lesbar.
+- **Abgrenzung:** keine fachliche Dateikollision mit den beim Start offenen PRs #452–#503; insbesondere #502 ändert `sqlite_campaign_repository.dart` und dessen Test, nicht diese zwei Python-Dateien. Gemeinsame README-/Checkpoint-Nachträge nur additiv integrieren; kein automatischer Merge.
+- **Nächster Schritt:** vollständige CI auf dem finalen PR-HEAD prüfen; erst nach erfolgreicher CI zur Review freigeben.
+
+---
+
+## Chat D – Integrationsstapel nach #508 (02.11.2026)
+
+- Ausgangs-Stack: `04a9c339c0cda07158f5adc66cd8e5031e71d86e` (#508); zuvor #507.
+- Quellen: #504 final `5b42483294e2f819ef680c2487348fa01e17b79a` und #505 final `7d7d7e101d56a0b78d9da984ac19814f9756d2ff`, jeweils zwei vollständig grüne Quell-CIs.
+- Checkpoint-Namenfilter, Python-Regressionen sowie revisionsgesicherter Ortsrückblick und Dart-/SQLite-Tests als unveränderte Quell-Git-Blobs übernommen.
+- Keine bestehende Fachdatei verändert, deren Stack-Basis von der geprüften Quellbasis abweicht; Dokumentationsnachträge aus beiden Quellen ausschließlich additiv erhalten.
+- Original-Quellhistorien als zusätzliche Commit-Eltern erhalten. Keine Spielstandmigration, kein Force-Push.
+- Offen: vollständige kombinierte CI, danach geregelter Merge nach #507 und #508 sowie Main-CI; Realgerät-/TalkBack-/Upgrade-Abnahme getrennt.

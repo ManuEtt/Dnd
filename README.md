@@ -727,3 +727,27 @@ Die strikt konservative Metadatenprüfung für ausgelöste Zauber-Reaktionen/-Bo
 ### Chat C: Sending-Dialog mit großer Android-Schrift und Tastatur (02.11.2026)
 
 Ein eigenständiger Chat-C-Entwicklungsbranch `feat/chat-c/sending-dialog-ime-20261102` macht den Sending-Versuch als ganzen `AlertDialog` scrollbar. Bei mindestens 180 % Schrift bleiben die Bestätigungen visuell kurz und für TalkBack vollständig benannt. Neue Widgettests decken 320/360 dp, 200 % Schrift und ein simuliertes 220-dp-Tastatur-Inset ab, darunter Abbruch, bewusste Zustimmung, deren Widerruf nach Eingabeänderung und unveränderte Helden-JSON-Daten. Der Dialog bestätigt nur eine Vorschau; keine Spielregel-, Spielstands-, SQLite-, JSON- oder Versionsänderung. Ausführungsergebnisse und Integrationsstatus stehen im eigenen [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md); keine Freigabe ohne finale GitHub-CI und Review.
+
+---
+
+### Chat D: Checkpoint-Checksumliste gegen unsichtbare Unicode-Namen (02.11.2026)
+
+Das Python-Checkpointwerkzeug verwirft nun auch Unicode-C1-/Formatsteuerzeichen sowie Zeilen- und Absatztrenner in historischen Archivdateinamen, bevor diese in die SHA-256-Prüfsummenliste gelangen. Zwei neue Regressionstests prüfen abgewiesene Namen ohne Änderung bestehender Sicherungs-Aliase und die unveränderte Unterstützung sichtbarer internationaler Namen. Branch `fix/chat-d/checkpoint-unicode-ledger-20261102`; CI auf finalem PR-HEAD noch ausstehend, keine Änderung von Spielständen, SQLite/JSON oder App-Version. Die gemeinsame Dokumentation ist beim Merge additiv zu übernehmen.
+
+---
+
+---
+
+## Chat B – gespeicherte Ortsdaten bei Wiederaufnahme (02.11.2026)
+
+[Draft-PR #505](https://github.com/ManuEtt/Dnd/pull/505) ergänzt den eigenständigen,
+nur lesenden `ConfirmedPlaceResumeSelector` in
+`app/lib/story/confirmed_place_resume_selection.dart`. Er liefert bis zu vier
+gespeicherte Orte mit eindeutiger ID, entschärfter und begrenzter Anzeige sowie
+Revisions-, Sitzungs- und Vollquellstandprüfung. Der Text sagt ausdrücklich
+**nicht**, dass der Held diese Orte besucht oder entdeckt hat. Sechs neue
+Flutter-Tests prüfen Mehrdeutigkeit, Unicode, ungültige Grenzen, veraltete
+Datensätze, Legacy-JSON und SQLite-Neustart. Keine Änderung an Regeln,
+Spielständen, Schema, `story_api.dart` (offener PR #459) oder App-Version.
+Lokale Flutter-/Android-Prüfungen stehen mangels SDK aus; vollständige CI
+auf finalem PR-HEAD und Geräteabnahme sind separat nachzuweisen.

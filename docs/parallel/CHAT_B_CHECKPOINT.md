@@ -486,3 +486,22 @@ Beide vollständigen Quellnachträge sind originalgetreu enthalten. Die neue Ges
 - **NOCH NICHT IMPLEMENTIERT:** automatisch ausgeführte NPC-Gedächtnisaktionen; der neue Abdruck ist absichtlich weder Persistenzfeld noch Provider-Autorität.
 - **Migration:** keine. Kampagnen-JSON 1, SQLite 3, Regelzustand und App-Version 0.8.49+99 unverändert.
 - **Nächster unabhängiger Schritt:** Mehrdeutige Notiz-IDs in der rein lesenden NPC-Identitätsabfrage fail-closed prüfen, mit positiven/negativen Alt-JSON- und Neustartfällen und erfolgreicher vollständiger CI; erst nach dieser PR-Integration beginnen.
+
+---
+
+---
+
+## 02.11.2026 – Gespeicherte Ortsdaten sicher wiederaufnehmen (PR #505)
+
+- **Ausgangs-main:** 516bc14e06cb02e7035a6adfb8e2d21e54253184.
+- **Eigener Branch:** feat/chat-b/confirmed-place-resume-20261102.
+- **Pull Request:** https://github.com/ManuEtt/Dnd/pull/505 (Draft).
+- **Problem:** Ortsauszüge dürfen gleichnamige/gefälschte IDs nicht vermischen, verdeckte Unicode-Zeichen nicht als Anweisungen ausgeben oder einen Besuch behaupten. Ein älterer Ortsauszug darf nach Änderung des gespeicherten Ortsstands trotz identischer Revision nicht weiterverwendet werden.
+- **Implementiert:** app/lib/story/confirmed_place_resume_selection.dart erstellt eine nur lesende Ortsauswahl mit unveränderlichen Einträgen, bis zu vier ID-gekennzeichneten Orten, maximal 1.800 UTF-16-Codeunits, Unicode-bereinigten Feldern und requireCurrent mit Kampagnen-/Sitzungs-/Revisions- und vollständiger Quellstandprüfung. Doppelte/unsichere IDs und leere Namen werden nicht verwendet. Keine erfundenen Besuchsbelege.
+- **Tests angelegt:** app/test/confirmed_place_resume_selection_test.dart: sechs Fälle zu Auswahl, ID-Mehrdeutigkeit, Unicode/Emoji, Längen und Grenzen, versteckten gleichen Revisionsänderungen, altem JSON und SQLite-Neustart.
+- **Code-/Testcommits:** 61a00036b3b2fc3d76a343176e778fc827469526, 91de191d96744c8140567b2af3c4ae19872e0d89.
+- **GETESTET:** Repository-Hauptbranch, offene Pull Requests und ihre geänderten Fachpfade geprüft. Keine Überschneidung an Code-/Testdateien mit den anderen offenen PRs.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse, Flutter-Tests, vollständige GitHub-CI und Android-Gerät auf finalem PR-HEAD noch nicht abgeschlossen beziehungsweise nicht nachgewiesen. Lokales Flutter-/Dart-SDK fehlt.
+- **BLOCKIERT:** Lokale Flutter-Ausführung; CI-Auswertung ist gesondert erforderlich.
+- **Migrationen:** keine. SQLite/JSON-Schema, Spielstände, Regeln, Provider und App-Version unverändert; story_api.dart bewusst unangetastet, da PR #459 dort arbeitet.
+- **Nächster Schritt:** Finale CI des Draft-PR prüfen und Fehler ggf. im selben Branch korrigieren. Danach eine API-/UI-Anbindung der Ortsübersicht erst konfliktfrei mit PR #459 abstimmen.

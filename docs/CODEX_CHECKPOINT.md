@@ -1083,3 +1083,15 @@ UI-only: `app/lib/ui/hero_shield_reaction_dialog.dart` nutzt jetzt `AlertDialog(
 - **Parallelität:** Offene Chat-C-/Integrations-PRs bearbeiten andere UI-Module; gemeinsame README-/Checkpoint-Ergänzungen bei Integration verlustfrei durch Chat D konsolidieren.
 
 ---
+
+---
+
+### Chat D: Checkpoint-Archivnamen ohne versteckte Unicode-Steuerzeichen (02.11.2026)
+
+Ausgangs-main `516bc14e06cb02e7035a6adfb8e2d21e54253184`, Branch `fix/chat-d/checkpoint-unicode-ledger-20261102`. `scripts/create_checkpoint.py:safe_name` verbietet jetzt Unicode-Kategorien `Cc/Cf/Cs/Zl/Zp`, damit archivierte Checkpointnamen keine visuell täuschenden Einträge in `SHA256SUMS.txt` bilden; sichtbare Umlaute, Emoji und kombinierende Unicodezeichen bleiben erlaubt. Zwei positive/negative Regressionstests in `scripts/tests/test_create_checkpoint.py` schützen den bisherigen SHA-256-Verlauf und die unveränderten `LATEST`-Aliases bei ungültigen Namen. Vollständige Remote-CI ist auf dem finalen PR-HEAD noch zu bestätigen, keine Spielstands-/Schema-/API-Migration. Gemeinsame Dokumentation nicht überschreiben.
+
+---
+
+## Chat B – Orts-Wiederaufnahme (02.11.2026)
+
+PR #505: bestätigte gespeicherte Ortsauswahl mit ID, Unicode-Schutz, Revision, sechs Tests; CI offen. Siehe docs/parallel/CHAT_B_CHECKPOINT.md.

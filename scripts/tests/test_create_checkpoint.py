@@ -440,5 +440,57 @@ class CheckpointTests(unittest.TestCase):
             checkpoint.validate_archive(archive, expected)
 
 
+    def test_safe_name_rejects_hidden_unicode_but_keeps_visible_international_names(self):
+        for character in ('\u0085', '\u200b', '\u202e', '\u2066',
+                          '\u2028', '\u2029'):
+            with self.subTest(codepoint=ord(character)):
+                self.assertFalse(checkpoint.safe_name(
+                    f'Wuerfelraunen_foo{character}_Vollprojekt.zip'
+                ))
+        self.assertTrue(checkpoint.safe_name(
+            'Wuerfelraunen_Grüße_🗺️_Vollprojekt.zip'
+        ))
+
+    def test_invisible_unicode_in_historical_artifact_fails_without_alias_changes(self):
+        first = self.create()
+        aliases = {
+            'latest': Path(first['latest_archive']).read_bytes(),
+            'checksums': Path(first['latest_checksums']).read_bytes(),
+        }
+        for marker in ('\u0085', '\u200b', '\u202e', '\u2066',
+                       '\u2028', '\u2029'):
+            # Existing checksum entries must never contain bidi controls or
+            # invisible separators that can spoof a second ledger entry.
+            name = f'Wuerfelraunen_old{marker}_Vollprojekt.zip'
+            unsafe = self.output / name
+            unsafe.write_bytes(b'old checkpoint data')
+            try:
+                with self.subTest(codepoint=ord(marker)):
+                    with self.assertRaisesRegex(
+                        ValueError, 'Unsafe previous checkpoint artifact'
+                    ):
+                        self.create(label='second')
+                    self.assertEqual(
+                        Path(first['latest_archive']).read_bytes(), aliases['latest']
+                    )
+                    self.assertEqual(
+                        Path(first['latest_checksums']).read_bytes(), aliases['checksums']
+                    )
+            finally:
+                unsafe.unlink()
+
+    def test_visible_international_historical_artifact_remains_in_checksum_ledger(self):
+        first = self.create()
+        historical_name = 'Wuerfelraunen_Grüße_🗺️_Vollprojekt.zip'
+        historical = self.output / historical_name
+        historical.write_bytes(b'earlier valid source archive')
+        second = self.create(label='second')
+        expected = hashlib.sha256(historical.read_bytes()).hexdigest()
+        self.assertIn(
+            f'{expected}  {historical_name}\n',
+            Path(second['latest_checksums']).read_text(encoding='utf-8')
+        )
+
+
 if __name__ == '__main__':
     unittest.main()
