@@ -91,7 +91,12 @@ jobs:
         run: flutter pub get
       - name: Dart-Formatierung prüfen
         working-directory: app
-        run: dart format --output=none --set-exit-if-changed lib test
+        run: |
+          for f in lib/domain/srd_distant_touch_metamagic_rules.dart test/srd_distant_touch_metamagic_rules_test.dart; do
+            dart format --output=show "$f" > /tmp/chat-a-distant-touch-formatted.dart
+            diff -u "$f" /tmp/chat-a-distant-touch-formatted.dart || true
+          done
+          dart format --output=none --set-exit-if-changed lib test
       - name: Flutter-Code analysieren
         working-directory: app
         run: flutter analyze
