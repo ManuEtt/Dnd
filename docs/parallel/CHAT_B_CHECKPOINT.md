@@ -1,5 +1,43 @@
 # Chat B – NPC-Kontext ohne Steuerzeichen (30.10.2026)
 
+## Chat B – NPC-Kontinuität bei Zero-Width-Identitäten (02.11.2026)
+
+- **Ausgangs-main:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`.
+  **Branch:** `fix/chat-b/npc-continuity-zero-width-20261102`.
+  **Pull Request:** Draft nach Dokumentationsabschluss.
+  **Fachcommit:** `f9fde6f4c19d45b291c4cc33e797f7893d07d01f`.
+  **Testcommit:** `337dab38771379345cceefe1c49e1a39acba5ea4`.
+- **Ausgangsproblem:** `NpcContinuityReader` behandelte U+200B–U+200D,
+  U+2060 und U+FEFF nicht wie bestehende Bidi-Marken. Dadurch konnten
+  zwei visuell gleiche NPCs ohne disambiguierende ID im bestätigten
+  Rückblick erscheinen. Beziehungen/Notizen konnten solche Markierungen
+  in der Anzeige enthalten.
+- **IMPLEMENTIERT:** Unsichtbare Namensformatierung vor dem Vergleich
+  und vor der Darstellung entfernen, sichere NPC-ID bei sichtbaren
+  Namensdubletten verlangen; `_singleLine` bereinigt die Textausgabe,
+  ohne gespeicherte Fakten/Notizen umzuschreiben.
+- **Geänderte Dateien:** `app/lib/story/npc_continuity_reader.dart`,
+  `app/test/npc_continuity_zero_width_test.dart`, README,
+  `docs/CODEX_CHECKPOINT.md`, dieser persönliche Checkpoint.
+- **Neue Tests:** sechs Unicode-Dubletten jeweils mit getrennten
+  bestätigten Notizen, saubere eindeutige NPC-Namen, unsichere/
+  doppelte Identität und Grenzwerte, Legacy-JSON ohne Notizen, echter
+  SQLite-Neustart und Wiederherstellung, unveränderter Held/Revision.
+- **GETESTET:** aktuelles main, offene PRs/Dateipfade, Architektur und
+  vorhandene Tests geprüft. **NICHT GETESTET:** finale vollständige
+  Flutter-/Backend-/Python-/Android-CI, echtes Gerät/Provider.
+  **BLOCKIERT:** Dart/Flutter nicht lokal installiert; CI verfügbar.
+  **Migrationen:** keine, SQLite 3/äußeres JSON 1, keine neue
+  Provider-Schnittstelle, kein Regel- oder Questzustandswechsel.
+- **Koordination:** Fachdateiüberschneidungen ausgeschlossen; #464
+  betrifft `npc_narrator_memory.dart`, #470
+  `npc_identity_story_payload.dart`. README/Checkpoints nur
+  durch Chat D kontrolliert kombinieren. Keine fremden Branches ändern.
+- **NÄCHSTER SCHRITT:** offiziellen Formatter und vollständige CI
+  auf finalem Commit abnehmen, Fehler im Branch beheben, PR zur
+  unabhängigen Integration übergeben.
+
+
 ## Chat B – verspätete Story-Antwort nach SQLite-Neustart (31.10.2026)
 
 - **Basis-main:** `47ab002872b7d46daeae03bb558258cf2ea73e4a`. **Branch:** `feat/chat-b/delayed-story-response-restart-20261031`. **Pull Request:** [#446](https://github.com/ManuEtt/Dnd/pull/446).
