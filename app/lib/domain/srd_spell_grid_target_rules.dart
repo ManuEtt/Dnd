@@ -125,6 +125,16 @@ class SrdSpellGridTargetRules {
       );
     }
     if (range == 'Touch') {
+      // A checked grid gives us an actual square-to-square distance. A manual
+      // "within reach" confirmation cannot overrule a known remote origin.
+      // Special extended-touch features need a separate audited rule, rather
+      // than silently turning Touch into an arbitrary ranged spell.
+      if (distanceFeet(request.caster, request.origin) > 5) {
+        throw const FormatException(
+          'Berührungszauber benötigen ein eigenes oder angrenzendes '
+          'bestätigtes 5-Fuß-Feld.',
+        );
+      }
       return SrdSpellTargetFacts(
         mode: SrdSpellOriginMode.touched,
         clearPathConfirmed: true,
