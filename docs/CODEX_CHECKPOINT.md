@@ -632,3 +632,18 @@ Ein neuer Flutter-Regressionstest schützt vor einer Story-Provider-Antwort, die
   Andere offene Fach-PRs und Branches nicht überschreiben oder löschen.
 - **Migration:** keine durch die Zusammenführung selbst; alle Quell-PR-Semantiken
   und Warnungen zu noch nicht persistierten Metamagie-Auswahlbelegen bleiben bestehen.
+
+---
+
+## 02.11.2026 – Chat B: U+200C/U+200D im unbestätigten KI-Storyparser sperren
+
+- **Ausgangs-main:** `c33448780dfe8b453f7f1db9d28c1396822901a7`.
+- **Branch:** `feat/chat-b/ai-provider-zero-width-guard-20261102`; **PR:** [#491](https://github.com/ManuEtt/Dnd/pull/491) (Draft).
+- **Commitnachweise:** Parser `bfcedd60ea018d0c5964afaf571cf9554736b365`, Regressionen `4295681ff0fb9b0660140640c23c50d0412c02dd`.
+- **IMPLEMENTIERT:** `app/lib/story/ai_story.dart` lehnt in neuen `AiStoryPlan`-/`AiStoryStep`-Textfeldern unsichtbare Joiner U+200C/U+200D zusammen mit den bisher gesperrten U+200B/U+200E/U+200F ab. Reguläre Erzählabsätze bleiben erlaubt. `app/test/ai_story_zero_width_validation_test.dart` prüft positive und negative Feldvarianten und unveränderten Kampagnenzustand.
+- **GETESTET:** GitHub-Quellvergleich, Main-SHA, sämtliche offenen PR-Dateipfade und eigenständige Fachpfade geprüft; Branch/Commits/PR angelegt.
+- **NICHT GETESTET:** Neue Flutter-Tests, gesamte CI auf finalem PR-HEAD, echte Android-Geräte/produktiver KI-Dienst. Kein lokales Flutter/Dart, kein lokaler Checkout.
+- **MIGRATION:** keine. Kein SQLite-/JSON-/Regel-/Held-/Questwechsel. Keine Änderung an alten Spielständen.
+- **NÄCHSTER SCHRITT:** finale GitHub-CI abnehmen, Fehler gegebenenfalls im eigenen Branch korrigieren. README/CODEX/CHAT_B bei Integration mit anderen laufenden PRs verlustfrei additiv zusammenführen.
+
+**Integrationsabnahme (02.11.2026):** Quell-PR #491 auf exaktem HEAD `db84bb72ac2a2f18498697b35406eee3110cc8e7` mit [vollständiger GitHub-CI #41426189797](https://github.com/ManuEtt/Dnd/actions/runs/41426189797) `completed/success`. Die kombinierte CI der erneuten konfliktfreien Main-Integration muss separat vor finalem Merge bestehen. Quellhistorie bleibt als zusätzlicher Git-Commit-Elternteil erhalten.

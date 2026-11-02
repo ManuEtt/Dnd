@@ -1379,3 +1379,15 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Nächster Schritt:** technischen Baum und Docs auf finalen
   unveränderten Git-Blobs verifizieren, vollständige kombinierte CI
   starten und abnehmen; ohne deren Erfolg kein Merge/Branchlöschen.
+
+---
+
+## 02.11.2026 – Chat D: konfliktfreie Aufnahme von Chat-B-PR #491 (in Prüfung)
+
+- **Basis-main:** `01259cbc93810a159c9a0d79d6055572f0bde3f1` nach #493.
+- **Quelle:** #491, HEAD `db84bb72ac2a2f18498697b35406eee3110cc8e7`; vollständige [Quell-CI #41426189797](https://github.com/ManuEtt/Dnd/actions/runs/41426189797) erfolgreich.
+- **Technik:** Originale Blob-SHAs für `app/lib/story/ai_story.dart` und den neuen `app/test/ai_story_zero_width_validation_test.dart`, zusätzliche Git-Elternschaft bewahrt Historie.
+- **Dokumentation:** README, zentraler CODEX-Checkpoint und CHAT_B-Checkpoint nur additiv mit den ursprünglichen #491-Nachträgen vereinigt. Keine Überschreibung der Änderungen aus #493.
+- **Akzeptanz:** Vollständige kombinierte PR-CI auf dem neuen Integrationscommit sowie Main-CI nach Merge müssen neu grün sein. Keine Geräte-/Upgrade-Abnahme behauptet.
+- **Kompatibilität:** keine JSON-/SQLite-/Appversionsmigration. Ursprungscode anderer Bereiche unverändert.
+- **Nächster Schritt:** PR- und Main-CI prüfen, erst nach Erfolg integrieren und alte Zweige SHA-gesichert archivieren.

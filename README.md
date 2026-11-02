@@ -460,3 +460,22 @@ Quell-Dokumentationseinfügungen einschließlich dieses README bleiben erhalten.
 Die gemeinsame CI auf dem finalen Integrationsstand ist **vor** einem Merge
 vollständig abzunehmen; laufende andere PRs bleiben unabhängig.
 Keine neuen Datenbankmigrationen oder Berechtigungsänderungen durch die Integration.
+
+---
+
+### 02.11.2026 – Chat B: unsichtbare Zeichen in neuen KI-Geschichten
+
+[PR #491](https://github.com/ManuEtt/Dnd/pull/491) (Draft),
+Branch `feat/chat-b/ai-provider-zero-width-guard-20261102`,
+Basis-main `c33448780dfe8b453f7f1db9d28c1396822901a7`:
+Der Storyparser lehnt jetzt auch U+200C/U+200D (Zero-Width-Joiner)
+in neu eintreffender KI-Erzählung, NPC-/Ortsnamen und Notizen ab.
+Der neue `ai_story_zero_width_validation_test.dart` enthält positive
+mehrzeilige internationale Erzählungen und negative Providerfeldvarianten.
+Die Quell-/Testcommits sind `bfcedd60`/`4295681f`;
+die GitHub-CI für den finalen PR-HEAD ist vor einer Freigabe
+noch tatsächlich zu prüfen. Bestehende SQLite-/JSON-Spielstände,
+Story- und Regelwerte sowie App-Versionen bleiben unverändert.
+Gemeinsame Dokumentationsnachträge bei Integration additiv erhalten.
+
+**Integrationsabnahme (02.11.2026):** Quell-PR #491 auf exaktem HEAD `db84bb72ac2a2f18498697b35406eee3110cc8e7` mit [vollständiger GitHub-CI #41426189797](https://github.com/ManuEtt/Dnd/actions/runs/41426189797) `completed/success`. Die kombinierte CI der erneuten konfliktfreien Main-Integration muss separat vor finalem Merge bestehen. Quellhistorie bleibt als zusätzlicher Git-Commit-Elternteil erhalten.
