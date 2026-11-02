@@ -152,12 +152,7 @@ void main() {
     final campaign = _game();
     final snapshot = campaign.toJson();
     final results = <ManualTurnQueueChoice?>[];
-    await _open(
-      tester,
-      width: 320,
-      campaign: campaign,
-      onResult: results.add,
-    );
+    await _open(tester, width: 320, campaign: campaign, onResult: results.add);
     await _tap(tester, _key('base-confirmed'));
     await _tap(tester, _key('ties-confirmed'));
     await _tap(tester, _key('establish'));
@@ -185,12 +180,7 @@ void main() {
         .campaign;
     final snapshot = started.toJson();
     final results = <ManualTurnQueueChoice?>[];
-    await _open(
-      tester,
-      width: 360,
-      campaign: started,
-      onResult: results.add,
-    );
+    await _open(tester, width: 360, campaign: started, onResult: results.add);
     expect(find.textContaining('Manuelle Runde:'), findsOneWidget);
     expect(find.textContaining('Aktueller Marker:'), findsOneWidget);
     await _tap(tester, _key('advance'));
@@ -215,12 +205,7 @@ void main() {
     );
     final snapshot = campaign.toJson();
     final results = <ManualTurnQueueChoice?>[];
-    await _open(
-      tester,
-      width: 320,
-      campaign: campaign,
-      onResult: results.add,
-    );
+    await _open(tester, width: 320, campaign: campaign, onResult: results.add);
     expect(find.textContaining('Initiative fehlt:'), findsOneWidget);
     expect(
       tester.widget<FantasyTextButton>(_key('establish')).onPressed,
