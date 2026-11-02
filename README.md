@@ -270,3 +270,62 @@ Commit ist verpflichtend. Historische Aussagen „CI ausstehend“ in älteren
 Einzel-Notizen gelten nur für deren damaligen Bearbeitungsstand.
 Keine automatische Main-Integration, kein Altbranch-Löschen und
 keine SQLite-/JSON-/Spielstandschema-Migration.
+
+---
+
+### 02.11.2026 – Chat D: Unix-Dateitypen im Gradle-Wrapper-JAR prüfen
+
+Die Upload-/Projektprüfung `scripts/verify_project.py` weist beim
+Gradle-Wrapper-JAR nun zusätzlich Unix-ZIP-Mitglieder zurück, die als
+Gerätedatei, Pipe oder Socket markiert sind, oder deren Dateityp dem
+Pfad widerspricht (Verzeichnis ohne abschließenden Schrägstrich bzw.
+reguläre Datei mit abschließendem Schrägstrich). Die Prüfung erfolgt
+**vor ZIP-CRC und Lesezugriff**. Vier Regressionstests in
+`scripts/tests/test_verify_project.py` prüfen abgewiesene Spezialtypen,
+eine als Verzeichnis getarnte `GradleWrapperMain.class`, einen
+als Verzeichnis benannten regulären Eintrag sowie weiterhin zulässige
+Unix-Datei-/Verzeichniseinträge. Die vorhandene JAR-Binärdatei bleibt
+unverändert; keine SQLite-/JSON-/Spielstandmigration.
+Branch `fix/chat-d/wrapper-jar-member-types-20261102`. Die CI-Abnahme ist auf dem finalen PR-HEAD
+separat zu verifizieren; kein automatischer Merge.
+
+
+---
+
+### Chat D – kollidierende APK-ZIP-Dateinamen abweisen (02.11.2026)
+
+Der ARM64-Alpha-Release-Prüfer `scripts/prepare_alpha_release.py`
+lehnt jetzt neben exakt doppelten ZIP-Einträgen auch gleichwertige
+ZIP-Pfade nach Unicode-NFC-Normalisierung und `casefold()` ab,
+einschließlich unterschiedlich geschriebener impliziter
+Verzeichnispfade. Die Ressourcennamen werden nicht umbenannt;
+Kollisionen werden vor dem ZIP-CRC-Test erkannt und eine bereits
+publizierte Alpha bleibt unangetastet. Fünf neue Regressionstests
+in `scripts/tests/test_prepare_alpha_release.py` prüfen
+ASCII-Groß-/Kleinschreibung, Unicode-NFC, implizite Verzeichnisse,
+gültige internationale Namen und Release-Bestandsschutz.
+Der Quellcode liegt auf
+`fix/chat-d/apk-unicode-path-collisions-20261102` in [PR #476](https://github.com/ManuEtt/Dnd/pull/476).
+Vollständige kombinierte GitHub-CI auf dem finalen PR-HEAD
+ist vor einer Review- oder Merge-Freigabe erforderlich.
+Keine Änderung an SQLite, JSON, Spielständen, Android-App-Code,
+App-Version oder Berechtigungen.
+
+---
+
+### Chat D – zusammen geprüfte Archivvalidierung (Integrations-PR, 02.11.2026)
+
+Die unabhängigen Arbeitsbereiche
+[#475](https://github.com/ManuEtt/Dnd/pull/475) (Unix-Spezialdateitypen
+in Gradle-Wrapper-JARs) und
+[#476](https://github.com/ManuEtt/Dnd/pull/476) (Unicode-NFC- und
+Casefold-Kollisionen in APK-ZIP-Einträgen) werden auf
+`chore/chat-d/integrate-apk-wrapper-guards-20261102` gemeinsam
+abgenommen. Beide ursprünglichen Python-Implementierungen und ihre
+Tests werden bytegenau übernommen, alle drei Dokumentationen nur
+additiv kombiniert. Vor einer Merge-Freigabe sind **jeweils vollständige
+Einzel-CI und neue vollständige Kombinations-CI** auf den finalen
+PR-Commits erforderlich. Dieser Abschnitt dokumentiert den
+Integrationsvorbereitungsstand; er behauptet noch keine erfolgreiche
+Gesamt-CI. Keine neuen SQLite-/JSON-/Spielstands-/Appversionsänderungen,
+kein automatischer Merge oder Löschen von Branches.

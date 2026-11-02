@@ -269,6 +269,71 @@ class VerifyProjectTests(unittest.TestCase):
             'Gradle-Wrapper-JAR' in msg for msg in verify_project(self.root)
         ))
 
+    def test_wrapper_rejects_unix_special_member_types_before_crc(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        for kind in (stat.S_IFIFO, stat.S_IFCHR, stat.S_IFBLK,
+                     stat.S_IFSOCK):
+            with self.subTest(kind=kind):
+                special = zipfile.ZipInfo('META-INF/unexpected.bin')
+                special.create_system = 3
+                special.external_attr = (kind | 0o644) << 16
+                with zipfile.ZipFile(jar, 'w') as archive:
+                    archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+                    archive.writestr(special, b'ordinary bytes')
+                # CRC validity is irrelevant to an invalid Unix entry type.
+                with mock.patch.object(
+                    zipfile.ZipFile, 'testzip',
+                    side_effect=AssertionError('decompressed unsafe member'),
+                ):
+                    self.assertTrue(any(
+                        'Gradle-Wrapper-JAR' in error
+                        for error in verify_project(self.root)
+                    ))
+
+    def test_wrapper_rejects_start_class_marked_as_unix_directory(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        fake_class = zipfile.ZipInfo(WRAPPER_MAIN)
+        fake_class.create_system = 3
+        fake_class.external_attr = (stat.S_IFDIR | 0o755) << 16
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr(fake_class, b'\xca\xfe\xba\xbevalid')
+        with mock.patch.object(
+            zipfile.ZipFile, 'testzip',
+            side_effect=AssertionError('decompressed unsafe start class'),
+        ):
+            self.assertTrue(any(
+                'Gradle-Wrapper-JAR' in error for error in verify_project(self.root)
+            ))
+
+    def test_wrapper_rejects_regular_file_with_directory_name(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        inconsistent = zipfile.ZipInfo('META-INF/')
+        inconsistent.create_system = 3
+        inconsistent.external_attr = (stat.S_IFREG | 0o644) << 16
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+            archive.writestr(inconsistent, b'')
+        with mock.patch.object(
+            zipfile.ZipFile, 'testzip',
+            side_effect=AssertionError('decompressed unsafe directory'),
+        ):
+            self.assertTrue(any(
+                'Gradle-Wrapper-JAR' in error for error in verify_project(self.root)
+            ))
+
+    def test_wrapper_allows_consistent_unix_file_and_directory_modes(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        directory = zipfile.ZipInfo('META-INF/')
+        directory.create_system = 3
+        directory.external_attr = (stat.S_IFDIR | 0o755) << 16
+        start_class = zipfile.ZipInfo(WRAPPER_MAIN)
+        start_class.create_system = 3
+        start_class.external_attr = (stat.S_IFREG | 0o644) << 16
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr(directory, b'')
+            archive.writestr(start_class, b'\xca\xfe\xba\xbevalid')
+        self.assertEqual([], verify_project(self.root))
+
     def test_normal_wrapper_jar_directory_is_allowed(self):
         jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
         with zipfile.ZipFile(jar, 'w') as archive:
