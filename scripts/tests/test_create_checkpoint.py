@@ -440,6 +440,17 @@ class CheckpointTests(unittest.TestCase):
             checkpoint.validate_archive(archive, expected)
 
 
+    def test_safe_name_rejects_hidden_unicode_but_keeps_visible_international_names(self):
+        for character in ('\u0085', '\u200b', '\u202e', '\u2066',
+                          '\u2028', '\u2029'):
+            with self.subTest(codepoint=ord(character)):
+                self.assertFalse(checkpoint.safe_name(
+                    f'Wuerfelraunen_foo{character}_Vollprojekt.zip'
+                ))
+        self.assertTrue(checkpoint.safe_name(
+            'Wuerfelraunen_Grüße_🗺️_Vollprojekt.zip'
+        ))
+
     def test_invisible_unicode_in_historical_artifact_fails_without_alias_changes(self):
         first = self.create()
         aliases = {
