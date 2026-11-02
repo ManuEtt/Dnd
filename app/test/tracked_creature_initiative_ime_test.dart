@@ -32,8 +32,22 @@ Campaign _campaign() => GameEngine().createDemo().copyWith(
 );
 
 Future<void> _tapVisible(WidgetTester tester, Finder finder) async {
+  // ensureVisible may stop with a tall checkbox partly behind the Android
+  // keyboard. Scroll with real touch gestures until its tap target is in view.
   await tester.ensureVisible(finder);
   await tester.pumpAndSettle();
+  final scrollable = find
+      .descendant(
+        of: find.byType(TrackedCreatureInitiativeDialog),
+        matching: find.byType(Scrollable),
+      )
+      .first;
+  for (var attempt = 0;
+      attempt < 14 && finder.hitTestable().evaluate().isEmpty;
+      attempt++) {
+    await tester.drag(scrollable, const Offset(0, -140));
+    await tester.pumpAndSettle();
+  }
   expect(finder.hitTestable(), findsOneWidget);
   await tester.tap(finder);
   await tester.pumpAndSettle();
