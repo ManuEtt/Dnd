@@ -147,7 +147,8 @@ class _ManualTurnQueueDialogState extends State<ManualTurnQueueDialog> {
                   ),
                   IconButton(
                     key: ValueKey('queue-down-${_actors[index].id}'),
-                    tooltip: '${_actors[index].name} bei Gleichstand nach unten',
+                    tooltip:
+                        '${_actors[index].name} bei Gleichstand nach unten',
                     onPressed:
                         index + 1 < _actors.length &&
                             _actors[index + 1].total == _actors[index].total
