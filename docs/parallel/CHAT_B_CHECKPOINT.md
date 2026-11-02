@@ -4,7 +4,7 @@
 
 - **Ausgangs-main:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`.
   **Branch:** `fix/chat-b/npc-continuity-zero-width-20261102`.
-  **Pull Request:** Draft nach Dokumentationsabschluss.
+  **Pull Request:** [#477](https://github.com/ManuEtt/Dnd/pull/477), Draft.
   **Fachcommit:** `f9fde6f4c19d45b291c4cc33e797f7893d07d01f`.
   **Testcommit:** `337dab38771379345cceefe1c49e1a39acba5ea4`.
 - **Ausgangsproblem:** `NpcContinuityReader` behandelte U+200B–U+200D,
