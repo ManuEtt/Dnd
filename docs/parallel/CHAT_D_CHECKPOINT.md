@@ -1260,3 +1260,43 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Nächster konkreter Schritt:** endgültige CI von #475/#476
   überprüfen, dann Integrations-CI auf finalem HEAD abschließen;
   erst danach Review-Freigabe und erneute Main-/PR-Statusprüfung.
+
+---
+
+# CHAT D – D-032: Gradle-Wrapper-JAR gegen Unicode-Pfadkollisionen absichern (02.11.2026)
+
+- **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529`.
+- **Integration #480:** Erfolgreich gemergt; ursprüngliche Quell- und
+  Integrations-CI vollständig grün. Neue Main-CI #41401319969 war
+  bei Beginn dieses Folgepakets noch in Arbeit.
+- **Branch:** `fix/chat-d/wrapper-jar-unicode-collisions-20261102`.
+- **Code-Commit:** `4b3a75daf3c6f2191f9776e98ffdbc2a880b0280`.
+- **Test-Commit:** `e86ce230f57d42ffa4c857dfb9842a5a5a5004b7`.
+- **Problem:** Die Gradle-Wrapper-JAR-Prüfung sperrte bereits Traversal,
+  Unicode-Steuerzeichen, Duplikate, Unix-Spezialtypen und manipulierte
+  Wrapper-Startklassen. ZIP-Namen, die nur nach Unicode-NFC/`casefold()`
+  kollidieren, konnten aber vor der Weitergabe noch bestehen.
+- **IMPLEMENTIERT:** `scripts/verify_project.py` erkennt gleichwertige
+  Dateinamen und implizite Verzeichnispräfixe vor `ZipFile.testzip()`.
+  Die Originalnamen werden nicht umgeschrieben und das Wrapper-JAR
+  weder umgepackt noch verändert.
+- **Fünf Regressionstests:** `scripts/tests/test_verify_project.py`
+  prüft ASCII-Casefold und ß/ss, NFC-Dateinamen, implizite
+  Casefold-/NFC-Verzeichnisse und zulässige voneinander
+  unterscheidbare internationale Pfade; in den vier Negativtests
+  ist ZIP-Dekomprimierung ausdrücklich verboten.
+- **GETESTET:** die vorherige Quell-/Kombinations-CI für #480
+  am damals finalen Head vollständig erfolgreich.
+- **NICHT GETESTET:** neue Python-Gesamtsuite, Flutter, Android/Gradle,
+  Alpha-APK auf endgültigem Arbeits-HEAD; reale Android-Geräteabnahme.
+- **BLOCKIERT:** neue vollständige CI auf dem finalen PR-HEAD und
+  abschließender konfliktfreier Merge-Abgleich.
+- **Parallelität:** alle bei Beginn 22 offenen PRs der anderen Chats
+  auf technische Dateikollisionen geprüft; keine gefunden. Später
+  neu entstandene PRs erneut prüfen. Gemeinsame README/CODEX-
+  Checkpoints nur verlustfrei additiv integrieren.
+- **Migration:** keine Datenbank-/JSON-/Save-/Versionsänderung;
+  keine Änderung an Spielregeln, Story, UI oder Berechtigungen.
+- **Nächster Schritt:** finalen PR-Head und Actions-CI abnehmen,
+  bei Fehlern auf diesem Branch korrigieren, ohne andere Branches
+  zu überschreiben oder zu löschen.

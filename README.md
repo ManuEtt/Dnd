@@ -329,3 +329,21 @@ PR-Commits erforderlich. Dieser Abschnitt dokumentiert den
 Integrationsvorbereitungsstand; er behauptet noch keine erfolgreiche
 Gesamt-CI. Keine neuen SQLite-/JSON-/Spielstands-/Appversionsänderungen,
 kein automatischer Merge oder Löschen von Branches.
+
+---
+
+### Chat D – Unicode-sichere Pfadkollisionen im Gradle-Wrapper-JAR (02.11.2026)
+
+Der Projekt-Upload-Prüfer `scripts/verify_project.py` verweigert im
+Gradle-Wrapper-JAR nun auch Dateinamen und implizite Verzeichnisse, die sich
+nur durch Groß-/Kleinschreibung oder kanonisch gleichwertige
+Unicode-Schreibweisen (NFC und `casefold()`) unterscheiden. Anders als
+gewöhnliche gültige Unicode-Namen werden diese Kollisionen bereits beim
+Lesen der ZIP-Metadaten **vor CRC/Dekomprimierung** erkannt.
+`scripts/tests/test_verify_project.py` ergänzt fünf Regressionstests
+für ASCII- und `ß`-Casefold, NFC-Namen und -Verzeichnispräfixe sowie
+zulässige unterschiedliche internationale Namen. Der tatsächliche
+Gradle-Wrapper, Android-App-Code, Spielstände und Version bleiben unverändert.
+Branch: `fix/chat-d/wrapper-jar-unicode-collisions-20261102`.
+Eine vollständige GitHub-CI auf dem finalen PR-HEAD ist für Review/Merge
+erforderlich; keine automatische Branchbereinigung.
