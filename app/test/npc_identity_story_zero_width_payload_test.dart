@@ -44,13 +44,7 @@ void main() {
   sqfliteFfiInit();
 
   test('invisible name duplicates never select a guessed NPC ID', () {
-    const markers = [
-      '\u200b',
-      '\u200c',
-      '\u200d',
-      '\u2060',
-      '\ufeff',
-    ];
+    const markers = ['\u200b', '\u200c', '\u200d', '\u2060', '\ufeff'];
     for (final marker in markers) {
       final campaign = _campaign(
         npcs: [
@@ -67,10 +61,7 @@ void main() {
         'Ich frage Mira nach dem Buch.',
         'Ich frage Mi${marker}ra nach dem Buch.',
       ]) {
-        expect(
-          NpcIdentityStoryPayload.prepare(campaign, action),
-          isNull,
-        );
+        expect(NpcIdentityStoryPayload.prepare(campaign, action), isNull);
       }
       expect(jsonEncode(campaign.toJson()), before);
     }
@@ -111,18 +102,10 @@ void main() {
   });
 
   test('unsafe zero-width name or relationship is not sent to Story API', () {
-    const markers = [
-      '\u200b',
-      '\u200c',
-      '\u200d',
-      '\u2060',
-      '\ufeff',
-    ];
+    const markers = ['\u200b', '\u200c', '\u200d', '\u2060', '\ufeff'];
     for (final marker in markers) {
       final name = _campaign(
-        npcs: [
-          WorldNpc(id: 'mira', name: 'Mi${marker}ra'),
-        ],
+        npcs: [WorldNpc(id: 'mira', name: 'Mi${marker}ra')],
       );
       final relationship = _campaign(
         npcs: [
@@ -134,10 +117,7 @@ void main() {
         ],
       );
 
-      expect(
-        NpcIdentityStoryPayload.prepare(name, 'Ich frage Mira.'),
-        isNull,
-      );
+      expect(NpcIdentityStoryPayload.prepare(name, 'Ich frage Mira.'), isNull);
       expect(
         NpcIdentityStoryPayload.prepare(relationship, 'Ich frage Mira.'),
         isNull,
@@ -146,13 +126,7 @@ void main() {
   });
 
   test('invisible markers in confirmed notes do not reach transport', () {
-    const markers = [
-      '\u200b',
-      '\u200c',
-      '\u200d',
-      '\u2060',
-      '\ufeff',
-    ];
+    const markers = ['\u200b', '\u200c', '\u200d', '\u2060', '\ufeff'];
     for (final marker in markers) {
       final note = _campaign(
         notes: [_note('hidden', 'mira', 'Die ${marker}e Karte ist echt.')],
@@ -167,10 +141,7 @@ void main() {
           ),
         ],
       );
-      expect(
-        NpcIdentityStoryPayload.prepare(note, 'Ich frage Mira.'),
-        isNull,
-      );
+      expect(NpcIdentityStoryPayload.prepare(note, 'Ich frage Mira.'), isNull);
       expect(
         NpcIdentityStoryPayload.prepare(relation, 'Ich frage Mira.'),
         isNull,
@@ -183,61 +154,67 @@ void main() {
     final restored = Campaign.fromJson(original);
     final before = jsonEncode(restored.toJson());
 
-    expect(NpcIdentityStoryPayload.prepare(restored, 'Ich frage Mira.'), isNull);
+    expect(
+      NpcIdentityStoryPayload.prepare(restored, 'Ich frage Mira.'),
+      isNull,
+    );
     expect(restored.npcRelationshipNotes, isEmpty);
     expect(jsonEncode(restored.toJson()), before);
   });
 
-  test('SQLite restart preserves rejection and safe selected context', () async {
-    final folder = await Directory.systemTemp.createTemp('npc-wire-zero-');
-    final path = paths.join(folder.path, 'campaign.sqlite');
-    var repository = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: path,
-    );
-    try {
-      final campaign = _campaign(
-        npcs: const [
-          WorldNpc(id: 'mira', name: 'Mira'),
-          WorldNpc(id: 'hidden', name: 'Mi\u2060ra'),
-          WorldNpc(id: 'tarek', name: 'Tarek'),
-        ],
-        notes: [
-          _note('one', 'mira', 'Mira kennt den Schlüssel.'),
-          _note('two', 'hidden', 'Andere Mira kennt die Truhe.'),
-          _note('three', 'tarek', 'Tarek öffnet die Tür.'),
-        ],
-      );
-      await repository.saveCampaign(campaign);
-      await repository.close();
-      repository = await SqliteCampaignRepository.open(
+  test(
+    'SQLite restart preserves rejection and safe selected context',
+    () async {
+      final folder = await Directory.systemTemp.createTemp('npc-wire-zero-');
+      final path = paths.join(folder.path, 'campaign.sqlite');
+      var repository = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: path,
       );
+      try {
+        final campaign = _campaign(
+          npcs: const [
+            WorldNpc(id: 'mira', name: 'Mira'),
+            WorldNpc(id: 'hidden', name: 'Mi\u2060ra'),
+            WorldNpc(id: 'tarek', name: 'Tarek'),
+          ],
+          notes: [
+            _note('one', 'mira', 'Mira kennt den Schlüssel.'),
+            _note('two', 'hidden', 'Andere Mira kennt die Truhe.'),
+            _note('three', 'tarek', 'Tarek öffnet die Tür.'),
+          ],
+        );
+        await repository.saveCampaign(campaign);
+        await repository.close();
+        repository = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: path,
+        );
 
-      final restored = (await repository.getCampaign(campaign.id))!;
-      final before = jsonEncode(restored.toJson());
-      expect(
-        NpcIdentityStoryPayload.prepare(restored, 'Ich frage Mira.'),
-        isNull,
-      );
-      final safe = NpcIdentityStoryPayload.prepare(
-        restored,
-        'Ich frage Tarek.',
-      );
-      expect(safe, isNotNull);
-      expect(safe!.npcContexts.single['npcId'], 'tarek');
-      safe.requireCurrent(restored);
-      expect(restored.hero.toJson(), campaign.hero.toJson());
-      expect(restored.revision, 0);
-      expect(jsonEncode(restored.toJson()), before);
-      expect(
-        (await repository.reconstructCampaign(restored.id))!.toJson(),
-        restored.toJson(),
-      );
-    } finally {
-      await repository.close();
-      await folder.delete(recursive: true);
-    }
-  });
+        final restored = (await repository.getCampaign(campaign.id))!;
+        final before = jsonEncode(restored.toJson());
+        expect(
+          NpcIdentityStoryPayload.prepare(restored, 'Ich frage Mira.'),
+          isNull,
+        );
+        final safe = NpcIdentityStoryPayload.prepare(
+          restored,
+          'Ich frage Tarek.',
+        );
+        expect(safe, isNotNull);
+        expect(safe!.npcContexts.single['npcId'], 'tarek');
+        safe.requireCurrent(restored);
+        expect(restored.hero.toJson(), campaign.hero.toJson());
+        expect(restored.revision, 0);
+        expect(jsonEncode(restored.toJson()), before);
+        expect(
+          (await repository.reconstructCampaign(restored.id))!.toJson(),
+          restored.toJson(),
+        );
+      } finally {
+        await repository.close();
+        await folder.delete(recursive: true);
+      }
+    },
+  );
 }
