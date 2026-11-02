@@ -446,8 +446,8 @@ class CheckpointTests(unittest.TestCase):
             'latest': Path(first['latest_archive']).read_bytes(),
             'checksums': Path(first['latest_checksums']).read_bytes(),
         }
-        for marker in ('\\u0085', '\\u200b', '\\u202e', '\\u2066',
-                       '\\u2028', '\\u2029'):
+        for marker in ('\u0085', '\u200b', '\u202e', '\u2066',
+                       '\u2028', '\u2029'):
             # Existing checksum entries must never contain bidi controls or
             # invisible separators that can spoof a second ledger entry.
             name = f'Wuerfelraunen_old{marker}_Vollprojekt.zip'
@@ -476,7 +476,7 @@ class CheckpointTests(unittest.TestCase):
         second = self.create(label='second')
         expected = hashlib.sha256(historical.read_bytes()).hexdigest()
         self.assertIn(
-            f'{expected}  {historical_name}\\n',
+            f'{expected}  {historical_name}\n',
             Path(second['latest_checksums']).read_text(encoding='utf-8')
         )
 
