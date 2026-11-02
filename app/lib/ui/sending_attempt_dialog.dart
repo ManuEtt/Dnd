@@ -172,270 +172,283 @@ class _SendingAttemptDialogState extends State<SendingAttemptDialog> {
       }
     }
     final canApprove = preview != null && _approved;
+    final compact = MediaQuery.textScalerOf(context).scale(1) >= 1.8;
     return AlertDialog(
+      scrollable: true,
       insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       title: const Text('Sending – Zauberversuch'),
       content: SizedBox(
         width: 360,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text(
-                'Dieser Dialog dokumentiert nur einen bestätigten '
-                'Zauberversuch und verbraucht einen Zauberplatz. '
-                'Er verschickt keine Nachricht und erzeugt keine Antwort.',
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              'Dieser Dialog dokumentiert nur einen bestätigten '
+              'Zauberversuch und verbraucht einen Zauberplatz. '
+              'Er verschickt keine Nachricht und erzeugt keine Antwort.',
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              key: const ValueKey('sending-recipient'),
+              controller: _recipient,
+              maxLength: 160,
+              autocorrect: false,
+              textCapitalization: TextCapitalization.none,
+              decoration: const InputDecoration(
+                labelText: 'Eindeutige Empfängerkennung',
+                helperText: 'Keine Leerzeichen, z. B. npc-tarek',
               ),
-              const SizedBox(height: 10),
-              TextField(
-                key: const ValueKey('sending-recipient'),
-                controller: _recipient,
-                maxLength: 160,
-                autocorrect: false,
-                textCapitalization: TextCapitalization.none,
-                decoration: const InputDecoration(
-                  labelText: 'Eindeutige Empfängerkennung',
-                  helperText: 'Keine Leerzeichen, z. B. npc-tarek',
+              onChanged: (_) => _change(() {}),
+            ),
+            DropdownButtonFormField<SendingRecipientKnowledge>(
+              key: const ValueKey('sending-knowledge'),
+              initialValue: _knowledge,
+              isExpanded: true,
+              decoration: const InputDecoration(
+                labelText: 'Woher kennst du die Kreatur?',
+              ),
+              items: const [
+                DropdownMenuItem(
+                  value: SendingRecipientKnowledge.unverified,
+                  child: Text('Nicht bestätigt'),
                 ),
-                onChanged: (_) => _change(() {}),
+                DropdownMenuItem(
+                  value: SendingRecipientKnowledge.personallyMet,
+                  child: Text('Persönlich getroffen'),
+                ),
+                DropdownMenuItem(
+                  value: SendingRecipientKnowledge.describedByEyewitness,
+                  child: Text('Von Augenzeugen beschrieben'),
+                ),
+              ],
+              onChanged: (value) => _change(
+                () => _knowledge =
+                    value ?? SendingRecipientKnowledge.unverified,
               ),
-              DropdownButtonFormField<SendingRecipientKnowledge>(
-                key: const ValueKey('sending-knowledge'),
-                initialValue: _knowledge,
+            ),
+            CheckboxListTile(
+              key: const ValueKey('sending-creature'),
+              dense: true,
+              contentPadding: EdgeInsets.zero,
+              controlAffinity: ListTileControlAffinity.leading,
+              title: const Text('Empfänger ist als Kreatur bestätigt'),
+              value: _creatureConfirmed,
+              onChanged: (value) =>
+                  _change(() => _creatureConfirmed = value ?? false),
+            ),
+            TextField(
+              key: const ValueKey('sending-message'),
+              controller: _message,
+              minLines: 2,
+              maxLines: 3,
+              maxLength: SrdSendingRules.maxMessageCodeUnits,
+              decoration: const InputDecoration(
+                labelText: 'Nachricht (höchstens 25 Wörter)',
+                alignLabelWithHint: true,
+              ),
+              onChanged: (_) => _change(() {}),
+            ),
+            DropdownButtonFormField<String>(
+              key: const ValueKey('sending-class'),
+              initialValue: _castingClass,
+              isExpanded: true,
+              decoration: const InputDecoration(labelText: 'Zauberklasse'),
+              items: [
+                for (final name in classes)
+                  DropdownMenuItem(value: name, child: Text(name)),
+              ],
+              onChanged: (value) => _change(() => _castingClass = value),
+            ),
+            if (grades.isNotEmpty)
+              DropdownButtonFormField<int>(
+                key: ValueKey('sending-slot-$_pactMagic'),
+                initialValue: _pactMagic ? null : _slotLevel,
                 isExpanded: true,
                 decoration: const InputDecoration(
-                  labelText: 'Woher kennst du die Kreatur?',
+                  labelText: 'Verbrauchter Zauberplatz',
                 ),
-                items: const [
-                  DropdownMenuItem(
-                    value: SendingRecipientKnowledge.unverified,
-                    child: Text('Nicht bestätigt'),
-                  ),
-                  DropdownMenuItem(
-                    value: SendingRecipientKnowledge.personallyMet,
-                    child: Text('Persönlich getroffen'),
-                  ),
-                  DropdownMenuItem(
-                    value: SendingRecipientKnowledge.describedByEyewitness,
-                    child: Text('Von Augenzeugen beschrieben'),
-                  ),
-                ],
-                onChanged: (value) => _change(
-                  () => _knowledge =
-                      value ?? SendingRecipientKnowledge.unverified,
-                ),
-              ),
-              CheckboxListTile(
-                key: const ValueKey('sending-creature'),
-                dense: true,
-                contentPadding: EdgeInsets.zero,
-                controlAffinity: ListTileControlAffinity.leading,
-                title: const Text('Empfänger ist als Kreatur bestätigt'),
-                value: _creatureConfirmed,
-                onChanged: (value) =>
-                    _change(() => _creatureConfirmed = value ?? false),
-              ),
-              TextField(
-                key: const ValueKey('sending-message'),
-                controller: _message,
-                minLines: 2,
-                maxLines: 3,
-                maxLength: SrdSendingRules.maxMessageCodeUnits,
-                decoration: const InputDecoration(
-                  labelText: 'Nachricht (höchstens 25 Wörter)',
-                  alignLabelWithHint: true,
-                ),
-                onChanged: (_) => _change(() {}),
-              ),
-              DropdownButtonFormField<String>(
-                key: const ValueKey('sending-class'),
-                initialValue: _castingClass,
-                isExpanded: true,
-                decoration: const InputDecoration(labelText: 'Zauberklasse'),
                 items: [
-                  for (final name in classes)
-                    DropdownMenuItem(value: name, child: Text(name)),
+                  for (final grade in grades)
+                    DropdownMenuItem(
+                      value: grade,
+                      child: Text('Grad $grade – ${_slots[grade]} frei'),
+                    ),
                 ],
-                onChanged: (value) => _change(() => _castingClass = value),
+                onChanged: _pactMagic
+                    ? null
+                    : (value) => _change(() => _slotLevel = value),
               ),
-              if (grades.isNotEmpty)
-                DropdownButtonFormField<int>(
-                  key: ValueKey('sending-slot-$_pactMagic'),
-                  initialValue: _pactMagic ? null : _slotLevel,
-                  isExpanded: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Verbrauchter Zauberplatz',
-                  ),
-                  items: [
-                    for (final grade in grades)
-                      DropdownMenuItem(
-                        value: grade,
-                        child: Text('Grad $grade – ${_slots[grade]} frei'),
+            if (pactAvailable)
+              SwitchListTile.adaptive(
+                key: const ValueKey('sending-pact'),
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Paktmagieplatz verwenden'),
+                subtitle: Text(
+                  'Grad ${SpellcastingRules.pactSlotLevel(widget.hero)} '
+                  '– ${SpellcastingRules.availablePactSlots(widget.hero)} frei',
+                ),
+                value: _pactMagic,
+                onChanged: (value) => _change(() => _pactMagic = value),
+              ),
+            DropdownButtonFormField<SendingBlockStatus>(
+              key: const ValueKey('sending-block'),
+              initialValue: _block,
+              isExpanded: true,
+              decoration: const InputDecoration(
+                labelText: 'Empfangsblockade (8 Stunden)',
+              ),
+              items: const [
+                DropdownMenuItem(
+                  value: SendingBlockStatus.unverified,
+                  child: Text('Unbekannt'),
+                ),
+                DropdownMenuItem(
+                  value: SendingBlockStatus.blockedConfirmed,
+                  child: Text('Blockiert – bestätigt'),
+                ),
+                DropdownMenuItem(
+                  value: SendingBlockStatus.notBlockedConfirmed,
+                  child: Text('Nicht blockiert – bestätigt'),
+                ),
+              ],
+              onChanged: (value) => _change(() {
+                _block = value ?? SendingBlockStatus.unverified;
+                // A new block assessment invalidates a previous plane roll.
+                _percentile.clear();
+              }),
+            ),
+            DropdownButtonFormField<SendingPlaneRelation>(
+              key: const ValueKey('sending-plane'),
+              initialValue: _plane,
+              isExpanded: true,
+              decoration: const InputDecoration(labelText: 'Ebene des Ziels'),
+              items: const [
+                DropdownMenuItem(
+                  value: SendingPlaneRelation.unverified,
+                  child: Text('Unbekannt'),
+                ),
+                DropdownMenuItem(
+                  value: SendingPlaneRelation.samePlaneConfirmed,
+                  child: Text('Gleiche Ebene – bestätigt'),
+                ),
+                DropdownMenuItem(
+                  value: SendingPlaneRelation.differentPlaneConfirmed,
+                  child: Text('Andere Ebene – bestätigt'),
+                ),
+              ],
+              onChanged: (value) => _change(() {
+                _plane = value ?? SendingPlaneRelation.unverified;
+                _percentile.clear();
+              }),
+            ),
+            if (_block == SendingBlockStatus.notBlockedConfirmed &&
+                _plane == SendingPlaneRelation.differentPlaneConfirmed)
+              TextField(
+                key: const ValueKey('sending-percentile'),
+                controller: _percentile,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                maxLength: 3,
+                decoration: const InputDecoration(
+                  labelText: 'Bestätigter W100 (1–100)',
+                ),
+                onChanged: (_) => _change(() {}),
+              ),
+            CheckboxListTile(
+              key: const ValueKey('sending-action'),
+              dense: true,
+              contentPadding: EdgeInsets.zero,
+              controlAffinity: ListTileControlAffinity.leading,
+              title: Text(
+                compact
+                    ? 'Aktion und Zauberplatz bestätigt'
+                    : 'Aktion verfügbar; höchstens ein Zauberplatz in diesem Zug',
+                semanticsLabel:
+                    'Aktion verfügbar; höchstens ein Zauberplatz in diesem Zug',
+              ),
+              value: _actionConfirmed,
+              onChanged: (value) =>
+                  _change(() => _actionConfirmed = value ?? false),
+            ),
+            CheckboxListTile(
+              key: const ValueKey('sending-components'),
+              dense: true,
+              contentPadding: EdgeInsets.zero,
+              controlAffinity: ListTileControlAffinity.leading,
+              title: Text(
+                compact
+                    ? 'Zauberkomponenten bestätigt'
+                    : 'Sprechen, Gesten und Kupferdraht sind bestätigt',
+                semanticsLabel:
+                    'Sprechen, Gesten und Kupferdraht sind bestätigt',
+              ),
+              value: _componentsConfirmed,
+              onChanged: (value) =>
+                  _change(() => _componentsConfirmed = value ?? false),
+            ),
+            const SizedBox(height: 8),
+            FantasyPanel(
+              padding: const EdgeInsets.all(10),
+              material: FantasyPanelMaterial.parchment,
+              child: Semantics(
+                liveRegion: true,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Verbindliche Kostenvorschau',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      hasSlot
+                          ? '1 ${_pactMagic ? 'Paktmagieplatz' : 'Zauberplatz'} '
+                                'Grad $selectedGrade'
+                          : 'Kein passender bestätigter Zauberplatz.',
+                    ),
+                    if (preview != null) ...[
+                      Text(
+                        'Danach: ${preview.remainingSlotsIfCommitted} '
+                        'Platz/Plätze verfügbar',
+                        key: const ValueKey('sending-cost-preview'),
+                      ),
+                      Text('Wörter: ${preview.recipient.wordCount} / 25'),
+                      Text(
+                        _outcome(preview.assessment.outcome),
+                        key: const ValueKey('sending-delivery-preview'),
+                      ),
+                    ],
+                    if (failure != null)
+                      Text(
+                        failure,
+                        key: const ValueKey('sending-validation'),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
                       ),
                   ],
-                  onChanged: _pactMagic
-                      ? null
-                      : (value) => _change(() => _slotLevel = value),
-                ),
-              if (pactAvailable)
-                SwitchListTile.adaptive(
-                  key: const ValueKey('sending-pact'),
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('Paktmagieplatz verwenden'),
-                  subtitle: Text(
-                    'Grad ${SpellcastingRules.pactSlotLevel(widget.hero)} '
-                    '– ${SpellcastingRules.availablePactSlots(widget.hero)} frei',
-                  ),
-                  value: _pactMagic,
-                  onChanged: (value) => _change(() => _pactMagic = value),
-                ),
-              DropdownButtonFormField<SendingBlockStatus>(
-                key: const ValueKey('sending-block'),
-                initialValue: _block,
-                isExpanded: true,
-                decoration: const InputDecoration(
-                  labelText: 'Empfangsblockade (8 Stunden)',
-                ),
-                items: const [
-                  DropdownMenuItem(
-                    value: SendingBlockStatus.unverified,
-                    child: Text('Unbekannt'),
-                  ),
-                  DropdownMenuItem(
-                    value: SendingBlockStatus.blockedConfirmed,
-                    child: Text('Blockiert – bestätigt'),
-                  ),
-                  DropdownMenuItem(
-                    value: SendingBlockStatus.notBlockedConfirmed,
-                    child: Text('Nicht blockiert – bestätigt'),
-                  ),
-                ],
-                onChanged: (value) => _change(() {
-                  _block = value ?? SendingBlockStatus.unverified;
-                  // A new block assessment invalidates a previous plane roll.
-                  _percentile.clear();
-                }),
-              ),
-              DropdownButtonFormField<SendingPlaneRelation>(
-                key: const ValueKey('sending-plane'),
-                initialValue: _plane,
-                isExpanded: true,
-                decoration: const InputDecoration(labelText: 'Ebene des Ziels'),
-                items: const [
-                  DropdownMenuItem(
-                    value: SendingPlaneRelation.unverified,
-                    child: Text('Unbekannt'),
-                  ),
-                  DropdownMenuItem(
-                    value: SendingPlaneRelation.samePlaneConfirmed,
-                    child: Text('Gleiche Ebene – bestätigt'),
-                  ),
-                  DropdownMenuItem(
-                    value: SendingPlaneRelation.differentPlaneConfirmed,
-                    child: Text('Andere Ebene – bestätigt'),
-                  ),
-                ],
-                onChanged: (value) => _change(() {
-                  _plane = value ?? SendingPlaneRelation.unverified;
-                  _percentile.clear();
-                }),
-              ),
-              if (_block == SendingBlockStatus.notBlockedConfirmed &&
-                  _plane == SendingPlaneRelation.differentPlaneConfirmed)
-                TextField(
-                  key: const ValueKey('sending-percentile'),
-                  controller: _percentile,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  maxLength: 3,
-                  decoration: const InputDecoration(
-                    labelText: 'Bestätigter W100 (1–100)',
-                  ),
-                  onChanged: (_) => _change(() {}),
-                ),
-              CheckboxListTile(
-                key: const ValueKey('sending-action'),
-                dense: true,
-                contentPadding: EdgeInsets.zero,
-                controlAffinity: ListTileControlAffinity.leading,
-                title: const Text(
-                  'Aktion verfügbar; höchstens ein Zauberplatz in diesem Zug',
-                ),
-                value: _actionConfirmed,
-                onChanged: (value) =>
-                    _change(() => _actionConfirmed = value ?? false),
-              ),
-              CheckboxListTile(
-                key: const ValueKey('sending-components'),
-                dense: true,
-                contentPadding: EdgeInsets.zero,
-                controlAffinity: ListTileControlAffinity.leading,
-                title: const Text(
-                  'Sprechen, Gesten und Kupferdraht sind bestätigt',
-                ),
-                value: _componentsConfirmed,
-                onChanged: (value) =>
-                    _change(() => _componentsConfirmed = value ?? false),
-              ),
-              const SizedBox(height: 8),
-              FantasyPanel(
-                padding: const EdgeInsets.all(10),
-                material: FantasyPanelMaterial.parchment,
-                child: Semantics(
-                  liveRegion: true,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Verbindliche Kostenvorschau',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        hasSlot
-                            ? '1 ${_pactMagic ? 'Paktmagieplatz' : 'Zauberplatz'} '
-                                  'Grad $selectedGrade'
-                            : 'Kein passender bestätigter Zauberplatz.',
-                      ),
-                      if (preview != null) ...[
-                        Text(
-                          'Danach: ${preview.remainingSlotsIfCommitted} '
-                          'Platz/Plätze verfügbar',
-                          key: const ValueKey('sending-cost-preview'),
-                        ),
-                        Text('Wörter: ${preview.recipient.wordCount} / 25'),
-                        Text(
-                          _outcome(preview.assessment.outcome),
-                          key: const ValueKey('sending-delivery-preview'),
-                        ),
-                      ],
-                      if (failure != null)
-                        Text(
-                          failure,
-                          key: const ValueKey('sending-validation'),
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
-                          ),
-                        ),
-                    ],
-                  ),
                 ),
               ),
-              CheckboxListTile(
-                key: const ValueKey('sending-consent'),
-                contentPadding: EdgeInsets.zero,
-                controlAffinity: ListTileControlAffinity.leading,
-                title: const Text(
-                  'Ich bestätige den unveränderten Text, '
-                  'den Empfänger und den Verbrauch ausdrücklich.',
-                ),
-                value: _approved,
-                onChanged: preview == null
-                    ? null
-                    : (value) => setState(() => _approved = value ?? false),
+            ),
+            CheckboxListTile(
+              key: const ValueKey('sending-consent'),
+              contentPadding: EdgeInsets.zero,
+              controlAffinity: ListTileControlAffinity.leading,
+              title: Text(
+                compact
+                    ? 'Text, Empfänger und Verbrauch bestätigt'
+                    : 'Ich bestätige den unveränderten Text, '
+                          'den Empfänger und den Verbrauch ausdrücklich.',
+                semanticsLabel:
+                    'Ich bestätige den unveränderten Text, '
+                    'den Empfänger und den Verbrauch ausdrücklich.',
               ),
-            ],
-          ),
+              value: _approved,
+              onChanged: preview == null
+                  ? null
+                  : (value) => setState(() => _approved = value ?? false),
+            ),
+          ],
         ),
       ),
       actionsOverflowDirection: VerticalDirection.down,
@@ -448,7 +461,7 @@ class _SendingAttemptDialogState extends State<SendingAttemptDialog> {
         ),
         FantasyTextButton(
           key: const ValueKey('sending-confirm'),
-          label: 'Versuch verbindlich buchen',
+          label: compact ? 'Versuch buchen' : 'Versuch verbindlich buchen',
           style: FantasyButtonStyle.arcane,
           onPressed: canApprove
               ? () => Navigator.of(context).pop(
