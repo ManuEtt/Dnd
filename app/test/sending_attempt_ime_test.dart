@@ -55,10 +55,8 @@ Future<void> _open(
               onResult(
                 await showDialog<SendingAttemptChoice>(
                   context: context,
-                  builder: (_) => SendingAttemptDialog(
-                    hero: hero,
-                    sending: sending,
-                  ),
+                  builder: (_) =>
+                      SendingAttemptDialog(hero: hero, sending: sending),
                 ),
               );
             },
@@ -113,12 +111,12 @@ void main() {
         sending: sending,
         onResult: results.add,
       );
-      expect(tester.widget<AlertDialog>(find.byType(AlertDialog)).scrollable, isTrue);
       expect(
-        find.ancestor(
-          of: _field('message'),
-          matching: find.byType(Scrollable),
-        ),
+        tester.widget<AlertDialog>(find.byType(AlertDialog)).scrollable,
+        isTrue,
+      );
+      expect(
+        find.ancestor(of: _field('message'), matching: find.byType(Scrollable)),
         findsOneWidget,
       );
       expect(
