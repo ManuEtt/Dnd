@@ -80,10 +80,7 @@ void main() {
       final dialog = tester.widget<AlertDialog>(find.byType(AlertDialog));
       expect(dialog.scrollable, isTrue);
       expect(
-        find.ancestor(
-          of: _field('maxhp'),
-          matching: find.byType(Scrollable),
-        ),
+        find.ancestor(of: _field('maxhp'), matching: find.byType(Scrollable)),
         findsOneWidget,
       );
       expect(_field('confirmed'), findsOneWidget);
@@ -103,18 +100,12 @@ void main() {
     final results = <TrackedAreaCreature?>[];
     await _open(tester, width: 320, onResult: results.add);
     await _fill(tester);
-    expect(
-      tester.widget<CheckboxListTile>(_field('confirmed')).value,
-      isFalse,
-    );
+    expect(tester.widget<CheckboxListTile>(_field('confirmed')).value, isFalse);
     await _tap(tester, _field('register'));
     expect(results, isEmpty);
     expect(find.textContaining('Bitte alle Werte'), findsOneWidget);
     await _tap(tester, _field('confirmed'));
-    expect(
-      tester.widget<CheckboxListTile>(_field('confirmed')).value,
-      isTrue,
-    );
+    expect(tester.widget<CheckboxListTile>(_field('confirmed')).value, isTrue);
     await _tap(tester, _field('register'));
     expect(results, hasLength(1));
     expect(results.single!.id, 'goblin-2');
