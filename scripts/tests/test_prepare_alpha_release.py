@@ -92,7 +92,8 @@ class AlphaReleaseTests(unittest.TestCase):
     def test_source_swapped_to_symlink_after_staging_cleans_own_release(self):
         original_create = release.create_archive
         outside = self.base / 'outside-valid.apk'
-        outside.write_bytes(self.apk.read_bytes())
+        original_bytes = self.apk.read_bytes()
+        outside.write_bytes(original_bytes)
 
         def swap_after_archive(root, target, *, layout):
             result = original_create(root, target, layout=layout)
@@ -106,7 +107,7 @@ class AlphaReleaseTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'symbolischen Pfadlinks'):
                 release.prepare_release(self.root, self.out)
         self.assertTrue(self.apk.is_symlink())
-        self.assertTrue(outside.is_file())
+        self.assertEqual(outside.read_bytes(), original_bytes)
         self.assertEqual(list(self.out.iterdir()), [])
 
     def test_explicit_regular_apk_remains_accepted(self):
