@@ -1083,3 +1083,8 @@ UI-only: `app/lib/ui/hero_shield_reaction_dialog.dart` nutzt jetzt `AlertDialog(
 - **Parallelität:** Offene Chat-C-/Integrations-PRs bearbeiten andere UI-Module; gemeinsame README-/Checkpoint-Ergänzungen bei Integration verlustfrei durch Chat D konsolidieren.
 
 ---
+
+
+### Chat D: APK-Quellpfad bei Alpha-Paketierung gegen Symlinks sperren (02.11.2026)
+
+Ausgangs-main `a2f22eaceb344aaced12d0ad548b813aa44d544f`; Branch `fix/chat-d/alpha-apk-source-symlink-20261102`. `scripts/prepare_alpha_release.py` verwirft symbolisch verlinkte Quelldateien und über verlinkte Eltern erreichbare APKs vor der ZIP-Validierung; erneute Kontrolle nach Quellarchiverzeugung und vor dem Kopieren verhindert die Freigabe eines zwischenzeitlich verlinkten Quellpfads. Neue `scripts/tests/test_prepare_alpha_release.py`-Regressionen für direkte/indirekte Symlinks, Austausch nach Staging und zulässige unverlinkte APK. Keine Änderungen an Android-/SQLite-/JSON-/Spielstandsformaten oder Versionsangaben. Vollständige GitHub-CI auf finalem Branch-HEAD ausstehend; reine lokale statische Prüfungen nicht als CI-Erfolg zählen.
