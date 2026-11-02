@@ -49,6 +49,17 @@ class RestRules {
     return Map.unmodifiable(pool);
   }
 
+  /// Verify original class, Pact Magic and Hit Dice pools before recovering
+  /// ANY resources. The no-Hit-Dice GameEngine path must use the same gate.
+  /// This check is pure: it never spends dice, changes a hero or repairs a save.
+  static Map<String, int> validateShortRestResources(HeroCharacter hero) {
+    _ensureRestPossible(hero);
+    ClassFeatureResources.validate(hero);
+    ClassResourceRules.validate(hero);
+    SpellcastingRules.availablePactSlots(hero);
+    return availableHitDice(hero);
+  }
+
   static ShortRestResult shortRest(
     HeroCharacter hero, {
     required DiceEngine dice,
@@ -56,13 +67,8 @@ class RestRules {
     int count = 1,
     bool restoreSorceryPoints = false,
   }) {
-    _ensureRestPossible(hero);
-    // Validate the original resource pools before a Hit Die is rolled or any
-    // recovery copy can reset an invalid counter. A rejected rest must not
-    // consume RNG, and Pact Magic must not silently repair forged spending.
-    ClassFeatureResources.validate(hero);
-    ClassResourceRules.validate(hero);
-    SpellcastingRules.availablePactSlots(hero);
+    // Check all source pools before recovery can hide invalid spent resources.
+    final available = validateShortRestResources(hero);
     if (restoreSorceryPoints) {
       // Validate before consuming any Hit Dice or deterministic RNG.
       SrdSorcerousRestorationRules.restoreAfterCompletedShortRest(hero);
@@ -70,7 +76,6 @@ class RestRules {
     if (count < 1 || count > 20) {
       throw RangeError.range(count, 1, 20, 'count');
     }
-    final available = availableHitDice(hero);
     final requested = dieSides == null
         ? (available.entries.where((entry) => entry.value >= count).isEmpty
               ? null
