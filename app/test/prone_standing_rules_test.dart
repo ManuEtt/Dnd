@@ -219,6 +219,4 @@ void main() {
     expect(result.campaign.encounter!.movementRemainingLabel, '4.5 m');
     expect(result.events.single.type, 'combat.stoodUp');
     expect(atZero.hero.hitPoints, 0);
-  });
-
-}
+  });}
