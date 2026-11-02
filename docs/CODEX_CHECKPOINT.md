@@ -1,3 +1,13 @@
+## 02.11.2026 – Chat C: Sanfter Fall – erneute Zustimmung bei editiertem Schaden
+
+- **Main-Basis:** `516bc14e06cb02e7035a6adfb8e2d21e54253184`, **Branch:** `feat/chat-c/slow-fall-ime-consent-20261102`; PR folgt separat.
+- `MonkSlowFallDialog` nutzt `AlertDialog.scrollable` und schmale Insets für Android-200-%-Schrift/IME.
+- Editieren des Schadens widerruft die beiden vorherigen Checkbox-Zustimmungen. Der Dialog gibt weiterhin nur `ConfirmedSlowFallChoice` zurück, ohne selbst HP/Reaktion zu ändern.
+- Vier Widgettests ergänzt (320/360 dp, 200 %, 220 dp IME, Abbruch, Reaktionssperre, Neuprüfung, keine Heldenmutation).
+- Zielgerichtete und vollständige GitHub-CI noch zu belegen; physisches Android/TalkBack/Upgrade nicht getestet. Keine Domain-, Datenbank-, Export- oder Versionsmigration. Gemeinsame Docs bei Chat-D-Integration additiv konsolidieren.
+
+---
+
 ## Chat D – UTF-8-Bytegrenze beim JSON-Import (02.11.2026)
 
 - **Basis-main:** `84437e4e92d735e179bb2585427b46a10451951d`.
