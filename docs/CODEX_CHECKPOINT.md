@@ -1,3 +1,7 @@
+## 02.11.2026 – Chat C: Zauberwirkungsdialog bei 200 % Text und IME (PR #479)
+
+[PR #479](https://github.com/ManuEtt/Dnd/pull/479) auf `feat/chat-c/confirmed-spell-effect-ime-20261102` von `main` `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`: Der `ConfirmedSpellEffectDialog` verwendet `AlertDialog(scrollable:true)`, kompakte Insets und Screenreader-Live-Region für Validierungsfehler; lange Laufzeitoptionen besitzen Ellipsis. Vier neue Flutter-Widgettests bei 320/360 dp, 200 % Schrift und 220 dp simuliertem Tastatur-Inset prüfen Fehler/Abbruch, gültige Quellbestätigung und das gezielte Beenden nur einer von zwei Quellen, jeweils ohne Mutation des Helden. **Finaler CI-Nachweis für #479 steht aus (Draft).** Keine Regel-, Controller-, Domain-, Speicher-, Datenformat-, Versions- oder Migrationsänderung. Echte TalkBack-/Android-Gerätetests weiterhin offen.
+
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
