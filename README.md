@@ -66,6 +66,28 @@ werden nicht geraten. Zuerst aktuelle PRs/Quellen prüfen; Domain-, SQLite-/Retr
 und bestehende Zauberregressionen verlangen. Keine automatische Fortsetzung
 außerhalb einer aktiven Sitzung.
 
+**Chat-A-Fachpaket (02.11.2026, separater PR):** Für
+SRD-5.2.1-Metamagie **Distant Spell** prüft ein neuer
+isolierter Domainbaustein die 30-Fuß-Touch-Reichweite,
+Zaubererstufe 2+, offizielle eigene Klassen-/Zauber-
+Freigabe, tatsächliche Metamagiewahl, Hindernisse und
+einen verfügbaren Sorcery Point. Der Plan ist lesend
+und an einen unveränderten Figuren-Snapshot gebunden;
+Punktkosten können nur als neue Heldenkopie für die
+spätere atomare Transaktion vorgemerkt werden.
+Zehn Testgruppen einschließlich falscher
+Mehrklassenquelle, blockierter Strecke, altem JSON,
+SQLite-Neustart und Revisionskonflikt sind angelegt.
+**Keine** automatische Spell-Cast-Freigabe oder
+Metamagie-Auswahlpersistenz und **kein** Einbau in
+offene PR #461/#463/#472; Schema-/Versionsstand
+unverändert. [Regelbeleg und Grenzen](docs/SRD_DISTANT_TOUCH_METAMAGIC_20261102.md).
+
+**Nächster Chat-A-Schritt:** persistente
+Metamagiewahl und atomare Slot-/Punkt-/Effekt-
+Transaktion nach koordinierter Integration
+der bisherigen Vorbereitungs-/Raster-PRs.
+
 ## Starten und prüfen
 
 Toolchain wie CI: Flutter **3.35.7**, Dart **3.9.2**, Java **17**, Node **22.14.0**,
