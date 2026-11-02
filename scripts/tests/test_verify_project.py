@@ -197,6 +197,66 @@ class VerifyProjectTests(unittest.TestCase):
                     'Gradle-Wrapper-JAR' in msg for msg in verify_project(self.root)
                 ))
 
+    def test_wrapper_rejects_invisible_unicode_names_before_crc(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        for codepoint in (0x85, 0x200b, 0x202e, 0x2066, 0x2028, 0x2029):
+            with self.subTest(codepoint=f'U+{codepoint:04X}'):
+                with zipfile.ZipFile(jar, 'w') as archive:
+                    archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+                    archive.writestr(
+                        f'META-INF/read{chr(codepoint)}me.txt', b'unsafe'
+                    )
+                # An unsafe name is a metadata failure, not a reason to
+                # decompress untrusted ZIP contents.
+                with mock.patch.object(
+                    zipfile.ZipFile, 'testzip',
+                    side_effect=AssertionError('CRC reached before name check'),
+                ):
+                    self.assertTrue(any(
+                        'Gradle-Wrapper-JAR' in error
+                        for error in verify_project(self.root)
+                    ))
+
+    def test_wrapper_rejects_unicode_separator_in_directory(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+            archive.writestr('META-INF/notes\u2028/entry.txt', b'bad')
+        self.assertTrue(any(
+            'Gradle-Wrapper-JAR' in error for error in verify_project(self.root)
+        ))
+
+    def test_wrapper_rejects_surrogate_member_metadata_before_crc(self):
+        # ZIP encoders refuse isolated surrogates. Simulate hostile metadata
+        # at the same infolist() trust boundary as the regular entries.
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        original_infolist = zipfile.ZipFile.infolist
+
+        def inject_invalid_member(archive):
+            return list(original_infolist(archive)) + [
+                zipfile.ZipInfo('META-INF/bad\ud800.txt')
+            ]
+
+        with mock.patch.object(zipfile.ZipFile, 'infolist',
+                               inject_invalid_member):
+            with mock.patch.object(
+                zipfile.ZipFile, 'testzip',
+                side_effect=AssertionError('CRC reached before name check'),
+            ):
+                self.assertTrue(any(
+                    'Gradle-Wrapper-JAR' in error
+                    for error in verify_project(self.root)
+                ))
+
+    def test_visible_unicode_wrapper_members_remain_allowed(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+            for name in ('META-INF/Würfel.txt', 'META-INF/cafe\u0301.txt',
+                         'META-INF/Karte🗺️.txt', 'META-INF/世界.txt'):
+                archive.writestr(name, b'ordinary asset')
+        self.assertEqual([], verify_project(self.root))
+
     def test_symlink_wrapper_member_is_rejected(self):
         jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
         link = zipfile.ZipInfo('META-INF/short-cut')
