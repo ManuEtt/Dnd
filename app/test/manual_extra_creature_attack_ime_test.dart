@@ -139,11 +139,8 @@ void main() {
 
       expect(find.byType(ManualExtraCreatureAttackDialog), findsOneWidget);
       expect(
-        find.descendant(
-          of: find.byType(ManualExtraCreatureAttackDialog),
-          matching: find.byType(Scrollable),
-        ),
-        findsOneWidget,
+        tester.widget<AlertDialog>(find.byType(AlertDialog)).scrollable,
+        isTrue,
       );
       expect(find.text('Angreifer handlungsfähig'), findsOneWidget);
       expect(
