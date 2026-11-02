@@ -1,3 +1,69 @@
+# Chat A – bestätigte Metamagie-Optionen versioniert prüfen (02.11.2026)
+
+**Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529` ·
+**Branch:** `feat/chat-a/metamagic-choice-proof-20261102` ·
+**PR:** nach Veröffentlichung im GitHub-PR, CI auf finaler HEAD-SHA gesondert.
+
+**Offizieller Fachbeleg:** D&D SRD 5.2.1,
+Sorcerer Level 2 / Metamagic Options, CC BY 4.0.
+Zwei Optionswahlen bei eigener Zaubererstufe 2,
+plus zwei auf 10 und 17, maximal ein Ersatz bei
+jedem *Zauberer*-Klassenaufstieg, nicht
+bei anderen Multiclass-Level-ups.
+
+**IMPLEMENTIERT:** eigenständiges Domainmodul
+`app/lib/domain/srd_metamagic_choice_record.dart`:
+`SrdMetamagicChoiceRules.confirm` benötigt
+ausdrückliche Wahl, gültige eigene Klassen
+und nachgewiesenes Metamagic-Feature,
+exakt 2/4/6 verschiedene amtliche Namen.
+`advanceSorcererLevel` sperrt ersetzte
+Mehrfachoptionen, erfundene Zusatzoptionen,
+stale Herkunft/Level, falsche Klasse.
+`SrdMetamagicChoiceRecord` ist unveränderlich
+und hat streng versionierte JSON-V1-
+Serialisierung und `matchesHero`, das
+Sorcererlevel und unveränderte Rohklassennamen
+prüft, aber Ressourcen und andere Klassenlevel
+bewusst nicht vermischt.
+
+**Tests:** `app/test/srd_metamagic_choice_record_test.dart`,
+zwölf Gruppen: Stufengrenzen, Optionenkatalog,
+ungültige/abgewiesene Auswahl, Multiclass-
+Klassenstufe/Aliase, immutable JSON,
+manipulierte Schemafelder, 10/17-Zusatzplätze,
+ein Wechsel/Stufenanstieg, fremde Level-ups,
+Legacy-Helden-JSON sowie echte SQLite-
+Neustarts/Retry/stale Revision.
+
+**NICHT IMPLEMENTIERT / BLOCKIERT:** Das
+versionierte Record-JSON bleibt bewusst
+ein **externes Artefakt**, es wird **nicht**
+in `HeroCharacter` oder SQLite automatisch
+gespeichert. Ein manuell gebildetes JSON ist
+kein autorisiertes Auswahlereignis.
+Vollständige Persistenz benötigt Koordination
+mit offenem PR #463; Distant Spell #478
+wird nicht verändert. Live-Casting,
+Metamagiekosten und UI bleiben unverändert.
+Keine Migration: SQLite3 / JSON1.
+
+**GETESTET:** Tests und Fachcode angelegt,
+CI erst auf finalem PR-Kopf als grün
+dokumentieren. Reale Android-Hardware,
+Altupgrade, TalkBack, Release-Signierung
+ausdrücklich noch nicht geprüft.
+
+**NÄCHSTER SCHRITT:** nach Integration
+der Metamagie-/Zauberbeleg-Bausteine
+ein bestätigtes Metamagie-Auswahlereignis
+persistent zum Heldenmodell hinzufügen
+und die Freigabe in der atomaren
+Cast-Transaktion mit Neustart-/Rollback-
+und Revisionsfällen verwenden.
+
+---
+
 ## 31.10.2026 – SRD-Zauber- und Aktionsökonomie gemeinsam vorbereitet
 
 - **Ausgangs-main:** `47ab002872b7d46daeae03bb558258cf2ea73e4a`.
@@ -463,3 +529,29 @@ ARM64-Debug und zwölf native App-Tests ebenfalls bestanden. Dieser nachfolgende
 Dokumentationsabschluss korrigiert nur die Importbasis und erfasst die Abnahme;
 Laufzeit-/Testdateien sind unverändert. Die finale CI gilt für den aktuellen
 PR-Kopf und wird mit tatsächlicher Lauf-ID/Artefakten im PR geführt.
+
+---
+
+## 02.11.2026 – 0-TP-Guard für Aufstehen/Kriechen (PR #487)
+
+- **Ausgangs-Main-SHA:** `885580202caeafc9787538b6dc1c833b3190a529`. **Eigener Branch:** `fix/chat-a/zero-hp-prone-movement-20261102`. **Pull Request:** https://github.com/ManuEtt/Dnd/pull/487 (Draft bis CI-/Integrationsabnahme).
+- **Regellücke:** Ein importierter Legacy-Held mit `hitPoints == 0`, aber ohne `bewusstlos`, bestand bisher die alleinige Konditionsprüfung von `ConditionRules.canMove`. Aufstehen und Kriechen konnten deshalb Bewegungsbudget/Revisions-Event verbrauchen. Regelquelle: Wizards of the Coast LLC, *SRD 5.2.1*, **Damage and Healing → Falling Unconscious**, S. 17, CC BY 4.0, https://www.dndbeyond.com/srd.
+- **Implementiert:** positive bestätigte TP, nicht toter Held als Vorbedingung in `app/lib/domain/crawling_movement_rules.dart` und `app/lib/domain/prone_movement_rules.dart`.
+- **Tests ergänzt:** `app/test/prone_crawling_rules_test.dart` und `app/test/prone_standing_rules_test.dart`: je eine reproduzierbare 0-TP-Ablehnung aus Legacy-JSON ohne Unconscious, ohne Änderung des ursprünglichen Snapshots; je ein positiver Heilungs-/Bewegungsfall. Vorhandene Controller-/SQLite-Revision-, Rollback- und Neustarttests bleiben unverändert.
+- **GETESTET:** Repo-/PR-Konfliktprüfung (27 offene PRs; keine der vier Fachdateien belegt), amtliche SRD-Quelle. Die Quelländerungen und Testdateien wurden auf dem eigenen Branch veröffentlicht. **Flutter-Tests sind noch nicht als bestanden belegt.**
+- **NICHT GETESTET:** lokaler Flutter-/Dart-Formatter, Analyzer, Fullsuite, Android-APK, Python und Backend wegen fehlenden SDKs/Netz-Zugriffs. CI-Abnahme auf dem letzten Commit muss separat erfolgen.
+- **BLOCKIERT:** kein lokales Flutter-SDK. **Keine Migration:** äußeres JSON, SQLite-Schema, bestehende Spielstände und Ereignisse bleiben unverändert; keine eigenmächtige rückwirkende Zustandskorrektur.
+- **NÄCHSTER SCHRITT:** Für PR #487 finale Android-CI einschließlich aller Flutter-Regressionen prüfen und Format-/Analyze-/Testfehler im selben Branch beheben; anschließend Integration durch Chat D koordinieren. Keine vollständige SRD-Implementierung beansprucht.
+
+
+---
+
+## 02.11.2026 – Chat-D-Vorbereitung zur gemeinsamen A/B/C-Integration
+
+Die vollständigen, einzeln CI-grünen Fachänderungen von #485 (Metamagie)
+und #487 (Bewegung bei 0 TP) werden ohne Änderungen ihrer technischen
+Blobs im gemeinsamen Integrations-Draft vorbereitet. Beide Chat-A-
+Dokumentationseinfügungen sind hier erhalten, weder ersetzt noch
+gekürzt. Gesamt-Integrations-CI auf finalem Head noch ausstehend.
+Die parallelen Chat-A-PRs und insbesondere andere offene Regelmodule
+werden nicht überschrieben oder ohne separate Prüfung gemergt.

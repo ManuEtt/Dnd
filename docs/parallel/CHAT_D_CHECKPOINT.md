@@ -1338,3 +1338,44 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Nächster Schritt:** finalen PR veröffentlichen, gesamten GitHub-CI-
   Lauf prüfen; nur erfolgreich abgenommene PRs integrieren,
   Branches bis zur sicheren Bereinigung behalten.
+
+---
+
+# CHAT D – D-034: Vier erfolgreich geprüfte A/B/C-Pakete integrieren (02.11.2026)
+
+- **Basis-main:** `c33448780dfe8b453f7f1db9d28c1396822901a7`.
+- **Arbeitsbranch:** `chore/chat-d/integrate-verified-abc-features-20261102`.
+- **Vier original CI-grüne Quell-PRs:**
+  - #485 Chat A Metamagie-Auswahlbeleg: `62e25c89eaa820f32f9b28cbf639245704850ae4`,
+    GitHub CI #41402170368 `completed/success`, 36 Schritte.
+  - #487 Chat A Null-TP-Kriechen/-Aufstehen: `964b0b07aab5b43bf5d90616dea483cbdc428d1a`,
+    CI #41405378184 `completed/success`, 36 Schritte.
+  - #488 Chat C Initiative-IME: `e89cc6250fd4e26467d411e68f8a05850ffb5df0`,
+    CI #41405839209 `completed/success`, 36 Schritte.
+  - #489 Chat B bestätigte NPC-Beziehungen: `b98ebb7d3310a5b5a3391e9b37266565ec29422b`,
+    CI #41404718886 `completed/success`, 36 Schritte.
+- **IMPLEMENTIERT:** Zehn fachliche Dart-Code-/Test-Blobs aus den Quell-PRs
+  ohne Inhaltsänderung in einen gemeinsamen Integrationsbaum übertragen;
+  außerdem neues SRD-Metamagie-Fachdokument.
+- **Dokumentationsschutz:** README, CODEX sowie CHAT_A/CHAT_B/CHAT_C
+  enthalten jede rein additive Einfügung der jeweiligen Quell-PRs, selbst
+  wenn die Quelle sie in der Dokumentmitte eingefügt hat. D-CHECKPOINT
+  erhält diesen zusätzlichen Fortschritt. Vorherige Main-Nachträge
+  bleiben erhalten.
+- **GETESTET:** vier Quell-PRs voll GitHub-CI-grün auf ihren genauen
+  Commit-SHAs, keine Assertion über kombinierten Endstand.
+- **NICHT GETESTET:** die neue vollständige Integrations-CI, reale
+  Android-IME-/TalkBack-/SAF-Gerätetests.
+- **BLOCKIERT:** Main-CI #41424171660 der vorgängigen #490-Integration
+  beim Start noch in Arbeit und zukünftige Gesamt-CI auf finalem Integrations-HEAD.
+- **Parallelität:** #481/#483 enthalten fachlich sich überschneidende
+  manuelle Zugfolgedialog-Änderungen; beide ausgeschlossen und kommentiert.
+  Andere offene A/B/C-PRs bleiben eigenständig; vor Merge erneut Main und
+  offene PR-Dateien prüfen.
+- **Migration:** keine durch die Integration, SQLite-/JSON-/Version/
+  Android-Berechtigungen unverändert. Die fachliche Begrenzung von #485
+  (Auswahlbeleg derzeit nicht im Helden-/SQLite-Modell persistiert) bleibt
+  ausdrücklich erhalten.
+- **Nächster Schritt:** technischen Baum und Docs auf finalen
+  unveränderten Git-Blobs verifizieren, vollständige kombinierte CI
+  starten und abnehmen; ohne deren Erfolg kein Merge/Branchlöschen.

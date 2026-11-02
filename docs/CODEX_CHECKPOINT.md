@@ -1,4 +1,84 @@
+# Chat A – SRD Metamagie: versionierte Wahl und Ersatzregeln (02.11.2026)
+
+**Basis-main:** `885580202caeafc9787538b6dc1c833b3190a529`.
+**Branch:** `feat/chat-a/metamagic-choice-proof-20261102`.
+**Offizielle Quelle:** SRD 5.2.1, Sorcerer /
+Metamagic Options, CC BY 4.0.
+
+**IMPLEMENTIERT:** standalone
+`SrdMetamagicChoiceRecord` JSON1 mit
+streng bestätigten Rohklassenetiketten,
+eigenem Sorcererklassenlevel, amtlicher
+Optionsliste und exakter SRD-Anzahl
+2/4/6 bei 2/10/17. Klassenlevelaufstieg
+erlaubt genau zwei neue Optionen an
+10/17 sowie optional höchstens eine
+Ersetzung. Andere Klassenaufstiege
+grantieren keine neue Metamagieoption.
+Falsche Klassen-/Level-, Options- und
+Schema-Behauptungen werden abgewiesen.
+
+**TESTS:** zwölf neue deterministische
+Domain-/JSON-/SQLite-/Revisionsgruppen
+in `app/test/srd_metamagic_choice_record_test.dart`,
+inclusive Alt-JSON, Level-Boundaries,
+duplizierte/fingierte Namen, Multiclass,
+stale Identität, Restart, Retry, Konflikt.
+CI- und Android-Ergebnis nur mit finalem
+Workflowbeleg ausweisen.
+
+**GRENZEN:** Keine Kopplung an das
+bestehende `HeroCharacter`-Modell,
+kein automatisch persistierter
+Metamagiebeleg, kein bestätigtes
+Ereignis und keine echte Casting-
+oder Sorcery-Point-Buchung.
+Das eigenständige JSON ist kein
+manipulationssicherer Besitzbeleg.
+PR #463 und #478 bleiben unberührt;
+Schema SQLite3/JSON1 unverändert.
+Gemeinsame Checkpoints und README
+bei Integration durch Chat D additiv
+zusammenführen.
+[SRD-Fachbeleg](SRD_METAMAGIC_CHOICE_RECORD_20261102.md).
+
+**NÄCHSTER SCHRITT:** bestätigte
+Metamagiewahl nach koordiniertem
+Merge in das persistente Heldenmodell
+integrieren und mit Distant Spell
+nur im revisionsgeschützten gemeinsamen
+Casting-Commit verwenden.
+
+---
+
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
+
+## Chat C – 02.11.2026: Mehrgegner-Initiative mit großer Schrift und IME
+
+- **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529`.
+- **Branch:** `feat/chat-c/tracked-initiative-ime-20261102`.
+- **Pull Request:** [#488](https://github.com/ManuEtt/Dnd/pull/488) (Draft).
+- **Code-/Testcommit:** `4fc35cbb35f43142b98e700e52656b22f40fcd0c`.
+- **Implementiert:** `TrackedCreatureInitiativeDialog` mit einem
+  AlertDialog-Scrollbereich, kompakten Insets, größeren Dropdowns,
+  visuellen Kurztexten bei 200 % ohne Verlust der TalkBack-Langtexte
+  und zugänglicher Validierungsfehlermeldung.
+- **Tests hinzugefügt:** fünf Widgetfälle in
+  `app/test/tracked_creature_initiative_ime_test.dart`
+  (320/360 dp, 200 %, 220 dp IME; Abbruch, Erfolg, Fehler und
+  unveränderte Kampagnen-JSON-Snapshots).
+- **Teststand:** Flutter/Dart lokal nicht installiert; CI am finalen
+  Commit zum Zeitpunkt der Eintragung noch nicht belegt. Echte
+  Android-/TalkBack-/IME-/Upgrade-Tests sind noch offen.
+- **Kompatibilität:** Keine Änderungen an Regeln, GameController,
+  Kampfzustand, SQLite, JSON, Version oder gespeicherten Spielständen.
+- **Parallelität:** PR-Pfadüberschneidungen ausgeschlossen, gemeinsame
+  README-/Checkpoint-Ergänzungen durch Chat D beim Merge konsolidieren.
+- **Nächster Schritt:** Echten Touch-/TalkBack-Test der
+  Mehrgegner-Initiative auf einem schmalen Android-Gerät mit Tastatur
+  und 200 % Schrift durchführen.
+
+---
 
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
 Alpha **0.8.49+99**. Dieser neue Live-Status ersetzt widersprüchliche historische
@@ -406,6 +486,60 @@ Ein neuer Flutter-Regressionstest schützt vor einer Story-Provider-Antwort, die
 
 ---
 
+## 02.11.2026 – Chat A: ungültige Bewegung bei 0 TP blockieren (PR #487)
+
+- **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529`; **Branch:** `fix/chat-a/zero-hp-prone-movement-20261102`; **PR:** https://github.com/ManuEtt/Dnd/pull/487.
+- **Problem:** Der historisch nicht immer gespeicherte Zustand `bewusstlos` konnte dazu führen, dass Helden mit 0 TP dennoch aufstehen oder kriechen, obwohl SRD 5.2.1 *Dropping to 0 Hit Points* (S. 17, CC BY 4.0) Bewusstlosigkeit vorgibt.
+- **Implementiert:** Fail-closed-Prüfung auf bekannte positive TP und nicht toten Helden in `app/lib/domain/prone_movement_rules.dart` und `app/lib/domain/crawling_movement_rules.dart`; ohne Zustands-, Modell-, Schema- oder Controlleränderung.
+- **Tests ergänzt:** Je ein negativer Legacy-0-TP-/JSON-/Unverändertheitsfall und positiver Heilungs-/Bewegungsfall in `app/test/prone_standing_rules_test.dart` bzw. `app/test/prone_crawling_rules_test.dart`.
+- **Getestet:** GitHub-Lesezugriff, Main-/PR-Dateilisten, offizielle SRD-Quelle; nicht als Flutter-Ausführung auszugeben.
+- **Nicht getestet:** lokale Dart-/Flutter-Suite, Python-/Backend-Volltests, APK und finales GitHub-Actions-Ergebnis (SDK und Repository-Netz-Zugriff lokal nicht verfügbar). Keine Migration, Auto-Merge oder Branchlöschung.
+- **Nächster Schritt:** CI auf finalem Branch-HEAD abnehmen und bei Fehlern denselben Branch korrigieren; danach fachlich geprüften PR durch Chat D integrieren.
+
+
+## Chat B – NPC-Beziehungsauswahl für bestätigte Wiederaufnahme (02.11.2026)
+
+- **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529`;
+  **Branch:** `feat/chat-b/confirmed-npc-resume-selection-20261102`;
+  **Draft-PR:** [#489](https://github.com/ManuEtt/Dnd/pull/489).
+- **Problem:** Bisherige Reader decken einzelne NPCs ab, aber keinen
+  sicher sortierten, begrenzten Kampagnen-Wiederaufnahmekontext über
+  bestätigte Beziehungen mehrerer NPCs.
+- **IMPLEMENTIERT:** `ConfirmedNpcResumeSelector.read` in neuer
+  `app/lib/story/confirmed_npc_resume_selection.dart`; sortiert
+  lokal bestätigte Notizen nach UTC-Zeit, gespeichertem Eintragsindex
+  und ID. Ignoriert unbestätigte Narration, ungültige/doppelte IDs,
+  verwaiste Notizen. Max. drei NPCs, drei Notizen/NPC und 2.400
+  UTF-16-Codeunits; Unicode-sichere Vorschau mit sichtbaren NPC-IDs,
+  unveränderliche Ergebnislisten, Revisions-/Sitzungs- und
+  volltextbasierte Same-Revision-Revalidierung.
+- **TESTS ERSTELLT:** `app/test/confirmed_npc_resume_selection_test.dart`:
+  sieben Gruppen für Sortierung, getrennte Identitäten, unsichere
+  Legacy-IDs, Unicode-/Emoji-Grenzen, stale Revision/gleichrevidierte
+  Änderungen, alten JSON und echten SQLite-Neustart samt
+  unveränderter Hero-/Revisionskontinuität.
+- **Fachdateien:** ausschließlich die zwei neuen Story-/Testdateien;
+  additiv auch `README.md`, `docs/CODEX_CHECKPOINT.md` und
+  `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **GETESTET:** Main-SHA, offener PR-Bestand und Fachdateilisten,
+  aktuelle Architektur und vorhandene Reader/Tests geprüft;
+  offizieller Dart-3.9.2-Formatter angewandt und temporären
+  Formatterworkflow wieder entfernt.
+- **NICHT GETESTET:** finale vollständige GitHub-CI von #489, reales
+  Android-Gerät/TalkBack/produktiver KI-Provider.
+  **BLOCKIERT:** keine GitHub-Codeblockade; lokale Flutter-/Dart-Tools
+  fehlen, Actions als Abnahmepfad. **Migration:** keine; SQLite 3,
+  äußeres JSON 1, Version unverändert.
+- **Koordination:** #452/#456/#459/#464/#470/#477/#486 betreffen
+  andere Storydateien; README/Checkpoints nur durch Chat D additiv
+  mit weiteren PRs konsolidieren. Kein Auto-Merge.
+- **NÄCHSTER SCHRITT:** vollständige CI des finalen PR-HEAD prüfen,
+  bei Fehlern nur eigenen Branch korrigieren; nach Grün
+  koordinierte Review-/Integration durch Chat D.
+
+
+---
+
 ## 02.11.2026 – Chat D: Gradle-JAR-Namenskollisionen vor Dekomprimierung abweisen
 
 - **Basis-main:** `885580202caeafc9787538b6dc1c833b3190a529`, zuvor
@@ -474,3 +608,27 @@ Ein neuer Flutter-Regressionstest schützt vor einer Story-Provider-Antwort, die
   Main/PRs vor Review/Merge.
 - **Nächster Schritt:** eigenen PR anlegen, CI auf finalem Commit prüfen,
   bei Fehlern auf eigenem Branch korrigieren; keinen fremden Branch löschen.
+
+---
+
+## 02.11.2026 – Chat D: Vorbereitete Integration von vier CI-grünen A/B/C-PRs
+
+- **Main-Basis:** `c33448780dfe8b453f7f1db9d28c1396822901a7` nach #490,
+  neue Main-CI #41424171660 bei Vorbereitungsbeginn noch laufend.
+- **Arbeitsbranch:** `chore/chat-d/integrate-verified-abc-features-20261102`.
+- **Quell-PR #485:** finaler Head `62e25c89eaa820f32f9b28cbf639245704850ae4`, vollständige CI #41402170368 grün.
+- **Quell-PR #487:** finaler Head `964b0b07aab5b43bf5d90616dea483cbdc428d1a`, vollständige CI #41405378184 grün.
+- **Quell-PR #488:** finaler Head `e89cc6250fd4e26467d411e68f8a05850ffb5df0`, vollständige CI #41405839209 grün.
+- **Quell-PR #489:** finaler Head `b98ebb7d3310a5b5a3391e9b37266565ec29422b`, vollständige CI #41404718886 grün.
+- **IMPLEMENTIERT:** zehn unabhängige technische App-Code-/Testdateien aus den Quellbranches
+  werden 1:1 übernommen; alle additiven Quelländerungen in README,
+  CODEX, CHAT_A, CHAT_B und CHAT_C sowie das neue Metamagie-Fachdokument erhalten.
+- **GETESTET:** sämtliche vier Quell-HEADs jeweils vollständige GitHub-CI `completed/success` (36 Schritte).
+- **NICHT GETESTET:** endgültige kombinierte CI, reale Android-/SAF-/TalkBack-Abnahme.
+- **BLOCKIERT:** Main-Postmerge-CI auf `c3344878` und vollständige neue
+  Integrations-CI auf finalem HEAD; vor Merge erneut alle offenen PR-Dateien kontrollieren.
+- **Parallele Arbeit:** #481 und #483 überschneiden sich in
+  `manual_turn_queue_dialog.dart`; beide bleiben außerhalb dieser Integration.
+  Andere offene Fach-PRs und Branches nicht überschreiben oder löschen.
+- **Migration:** keine durch die Zusammenführung selbst; alle Quell-PR-Semantiken
+  und Warnungen zu noch nicht persistierten Metamagie-Auswahlbelegen bleiben bestehen.

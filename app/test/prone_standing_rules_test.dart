@@ -184,4 +184,34 @@ void main() {
     expect(update.campaign.encounter!.movementRemaining, 9);
     expect(update.campaign.hero.conditions, contains('liegend'));
   });
+
+  test('Legacy-0-TP ohne Bewusstlos blockiert Aufstehen unverändert', () {
+    final engine = GameEngine();
+    final original = _combat(engine);
+    final legacyHero = original.hero.copyWith(hitPoints: 0);
+    final legacyJson = original.copyWith(hero: legacyHero).toJson();
+    final legacy = Campaign.fromJson(legacyJson);
+    expect(legacy.hero.conditions, ['liegend']);
+    final snapshot = legacy.toJson();
+
+    expect(
+      () => ProneMovementRules.standingCostDecimeters(legacy.hero),
+      throwsFormatException,
+    );
+    expect(() => engine.standUp(legacy), throwsFormatException);
+    expect(legacy.toJson(), snapshot);
+    expect(legacy.encounter!.remainingMovementDecimeters, 90);
+  });
+
+  test('Nach bestätigter Heilung darf derselbe Held aufstehen', () {
+    final engine = GameEngine();
+    final before = _combat(engine);
+    final atZero = before.copyWith(hero: before.hero.copyWith(hitPoints: 0));
+    final healed = atZero.copyWith(hero: atZero.hero.copyWith(hitPoints: 1));
+
+    final result = engine.standUp(healed);
+    expect(result.campaign.encounter!.movementRemainingLabel, '4.5 m');
+    expect(result.events.single.type, 'combat.stoodUp');
+    expect(atZero.hero.hitPoints, 0);
+  });
 }
