@@ -195,7 +195,7 @@ class _ManualExtraCreatureAttackDialogState
               ),
             DropdownButtonFormField<String>(
               key: const ValueKey('manual-attack-target'),
-            isExpanded: true,
+              isExpanded: true,
               initialValue: _targetId,
               decoration: const InputDecoration(
                 labelText: 'Lebendes Zusatzkreaturen-Ziel',
@@ -232,7 +232,7 @@ class _ManualExtraCreatureAttackDialogState
             ),
             DropdownButtonFormField<DamageType>(
               key: const ValueKey('manual-attack-damage-type'),
-            isExpanded: true,
+              isExpanded: true,
               initialValue: _damageType,
               decoration: const InputDecoration(
                 labelText: 'Bestätigte Schadensart',
@@ -255,7 +255,7 @@ class _ManualExtraCreatureAttackDialogState
             ),
             DropdownButtonFormField<CoverLevel>(
               key: const ValueKey('manual-attack-cover'),
-            isExpanded: true,
+              isExpanded: true,
               initialValue: _cover,
               decoration: const InputDecoration(
                 labelText: 'Deckung des Ziels',
@@ -337,14 +337,14 @@ class _ManualExtraCreatureAttackDialogState
               (v) => _disadvantage = v,
             ),
             if (_error != null)
-              Semantics(
-                liveRegion: true,
-                child: Text(
-                  _error!,
-                  key: const ValueKey('manual-attack-error'),
-                  style: const TextStyle(color: Colors.redAccent),
-                ),
+            Semantics(
+              liveRegion: true,
+              child: Text(
+                _error!,
+                key: const ValueKey('manual-attack-error'),
+                style: const TextStyle(color: Colors.redAccent),
               ),
+            ),
           ],
         ),
       ),
