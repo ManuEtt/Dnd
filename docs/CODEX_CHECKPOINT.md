@@ -1,3 +1,43 @@
+# Chat A – 5-Fuß-Raster Berührungszauber begrenzen (02.11.2026, eigener PR)
+
+Ausgangs-main `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+Branch `fix/chat-a/grid-touch-range-20261102`.
+SRD 5.2.1, *Spells / Range / Touch*, CC BY 4.0.
+
+**Implementiert:** `SrdSpellGridTargetRules.factsFor`
+verweigert bei bekannten Rasterentfernungen von
+über 5 Fuß die `Touch`-Freigabe, selbst bei
+`withinTouchReachConfirmed=true`. Eigenes
+Feld und acht angrenzende Zellen erfordern
+weiterhin ausdrücklich bestätigte Berührung,
+überprüfte Karte und fehlende Hindernisse.
+Keine Auswirkungen auf Reichweite `Self`
+und Fernzauber. Für offiziell nicht auf
+5 Fuß festgelegte Spezialreichweiten
+muss später ein eigener belegter
+Mechanismus eingebaut werden; kein
+willkürliches Auto-Gewähren.
+
+**Neue Tests:** positive/negative
+5-Fuß-Grenzen, Klerikerzauber-Preflight
+ohne Ressourcenverlust, Legacy-JSON,
+SQLite-Neustart, idempotenter Retry und
+stale Revision. Vollständige CI und
+APK-Ergebnisse auf endgültiger Branch-SHA
+nach Veröffentlichung im PR nachweisen;
+keine ungeprüfte grüne CI behaupten.
+Keine Migration (SQLite3, äußeresJSON1).
+Andere offene PRs/Branches unberührt.
+
+**Nächster Schritt:** Spezialreichweiten
+für Berührungszauber mit nachgewiesener
+Spielregelquelle (statt nur Bool) begrenzen
+und als separaten, testbaren Eingabevertrag
+mit Persistenz-/Revisionsfällen modellieren.
+[Fachnachweis](SRD_GRID_TOUCH_REACH_20261102.md).
+
+---
+
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
