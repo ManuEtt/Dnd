@@ -1,3 +1,31 @@
+## 02.11.2026 – Main2e9 integriert, kombinierte lokale Prüfungen bestanden
+
+Main `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1` aus #471 ist regulär
+in denselben Entwicklungsbranch integriert; ursprüngliche Basis war `5a88834c`.
+Der abschließende Mergecommit ist über [PR #473](https://github.com/ManuEtt/Dnd/pull/473)
+ermittelbar. Keine Quellkonflikte; einziger Markdown-Konflikt im Chat-A-Checkpoint
+additiv gelöst, alle Main-Beiträge erhalten. Die eigenen 51 Guardzeilen und ihr
+Dateihash bleiben unverändert. SQLite3/JSON1 unverändert, keine Migration.
+
+**GETESTET auf dem kombinierten Stand:** **182 gezielte Flutter-Regressionen**
+mit den eigenen UI-/SQLite-Fällen und den neuen Main-Paketen; **275 Pythonfälle**,
+Projekt-/Importgrenzen-/SRD-Prüfung, **582 Dartdateien ohne Formatänderung** und
+saubere Analyse. Neuer **ARM64-Debug-Build und 14 native JUnit-Tests** ohne
+Fehler, Error oder Skip bestanden. Die vollständige lokale frühere Suite
+**2.782 Flutter /262 Python /76 Backend** gehört ausdrücklich zum Vorgänger8dd
+auf Basis5a; sie ist kein behaupteter neuer kombinierter Vollpass.
+
+**OFFEN:** vollständige CI des aktuellen abschließenden Merge-Heads, optimierte
+Alpha und reale Geräte-/TalkBack-/Upgrade-/Produktivsignierungsabnahme.
+[PR-Checks](https://github.com/ManuEtt/Dnd/pull/473/checks) abwarten; PR bleibt
+bis zur tatsächlichen CI-/Artefaktabnahme Draft. Kein Code-/SDK-Blocker bekannt.
+Der aktuelle Quellencheckpoint/Patch wird gegen **Main2e9** erstellt; frühere
+8dd-/5a-Archive bleiben unverändert erhalten. Main nicht direkt verändert.
+Allgemeiner initialer manueller Rettungswurf bleibt das nächste getrennte Paket;
+beide Klassen-Requirements weiterhin partial, Gesamt-SRD/Charakterassistent offen.
+
+**Nachfolgend historische Prüf- und Checkpointstände vor Main2e9:**
+
 ## 02.11.2026 – lokale Vollabnahme des Chat-A-Pakets bestanden
 
 **0.8.51+101**, Basis-Main `5a88834c98f5aca40395088c20c7e1dc5b587868`,

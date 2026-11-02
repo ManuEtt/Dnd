@@ -191,6 +191,66 @@ class ProjectArchiveTests(unittest.TestCase):
                 self.assertFalse(output.exists())
                 path.unlink()
 
+    def test_invisible_unicode_controls_in_filenames_are_rejected(self):
+        # C1 controls, bidi/zero-width formatters and Unicode line/paragraph
+        # separators must not produce deceptive or platform-dependent ZIP paths.
+        for character in ('\u0085', '\u200b', '\u202e', '\u2066',
+                          '\u2028', '\u2029'):
+            with self.subTest(character=repr(character)):
+                path = self.root / 'app/assets' / f'map{character}note.txt'
+                path.write_text('not portable', encoding='utf-8')
+                output = self.base / 'unicode-control.zip'
+                with self.assertRaisesRegex(ValueError, 'non-portable'):
+                    packaging.create_archive(self.root, output, layout='root')
+                self.assertFalse(output.exists())
+                self.assertFalse(output.with_suffix('.zip.sha256').exists())
+                path.unlink()
+
+    def test_control_in_directory_and_unpaired_surrogate_are_rejected(self):
+        folder = self.root / 'app/assets' / 'map\u2028notes'
+        folder.mkdir()
+        (folder / 'scene.txt').write_text('not portable', encoding='utf-8')
+        output = self.base / 'unicode-directory.zip'
+        with self.assertRaisesRegex(ValueError, 'non-portable'):
+            packaging.create_archive(self.root, output)
+        self.assertFalse(output.exists())
+        (folder / 'scene.txt').unlink()
+        folder.rmdir()
+
+        # A lone surrogate cannot reliably be created on host filesystems.
+        # Validate the path component directly, before filesystem operations.
+        surrogate = self.root / 'app/assets' / 'scene\ud800.txt'
+        with self.assertRaisesRegex(ValueError, 'non-portable'):
+            packaging.validate_portable_source_paths(self.root, [surrogate])
+
+    def test_visible_unicode_names_remain_portable(self):
+        names = ('Würfel.txt', 'cafe\u0301.txt', 'Karte🗺️.txt', '世界.txt')
+        for name in names:
+            (self.root / 'app/assets' / name).write_text(
+                'valid unicode', encoding='utf-8'
+            )
+        output = self.base / 'visible-unicode.zip'
+        packaging.create_archive(self.root, output, layout='root')
+        with zipfile.ZipFile(output) as archive:
+            for name in names:
+                with self.subTest(name=name):
+                    self.assertEqual(
+                        archive.read('app/assets/' + name), b'valid unicode'
+                    )
+
+    def test_unicode_portability_failure_preserves_verified_zip_pair(self):
+        output = self.base / 'previous-unicode.zip'
+        packaging.create_archive(self.root, output, layout='root')
+        previous_zip = output.read_bytes()
+        previous_checksum = output.with_suffix('.zip.sha256').read_bytes()
+        (self.root / 'app/assets' / 'scene\u2029note.txt').write_text('bad')
+        with self.assertRaisesRegex(ValueError, 'non-portable'):
+            packaging.create_archive(self.root, output, layout='root')
+        self.assertEqual(output.read_bytes(), previous_zip)
+        self.assertEqual(
+            output.with_suffix('.zip.sha256').read_bytes(), previous_checksum
+        )
+
     def test_excluded_log_does_not_enter_archive_or_block_safe_export(self):
         log = self.root / 'app/assets/LPT1.log'
         log.write_text('excluded log data', encoding='utf-8')

@@ -89,7 +89,7 @@ WINDOWS_INVALID_CHARACTERS = frozenset('<>:"\\|?*')
 
 
 def validate_portable_source_paths(root: Path, paths: list[Path]) -> None:
-    """Reject archive names that can collide or fail on another filesystem."""
+    """Reject archive names that can collide, spoof, or fail on another filesystem."""
     prefixes: dict[str, str] = {}
     for path in paths:
         parts = path.relative_to(root).parts
@@ -97,7 +97,8 @@ def validate_portable_source_paths(root: Path, paths: list[Path]) -> None:
         for index, part in enumerate(parts):
             if (part in ('.', '..') or part.endswith((' ', '.'))
                     or any(char in WINDOWS_INVALID_CHARACTERS or
-                           ord(char) < 32 or ord(char) == 127 for char in part)
+                           unicodedata.category(char) in {'Cc', 'Cf', 'Cs', 'Zl', 'Zp'}
+                           for char in part)
                     or part.split('.', 1)[0].upper() in WINDOWS_RESERVED_STEMS):
                 raise ValueError('Source archive contains a non-portable filename.')
             canonical.append(unicodedata.normalize('NFC', part).casefold())

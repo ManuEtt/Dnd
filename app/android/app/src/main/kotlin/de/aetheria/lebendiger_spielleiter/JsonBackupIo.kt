@@ -20,14 +20,19 @@ internal object JsonBackupIo {
             name.any { it in forbiddenNameCharacters || Character.isISOControl(it) }
         ) return false
 
-        // A visually deceptive name can still contain bidi overrides, isolates,
-        // zero-width joiners or Unicode tags. Reject every FORMAT code point,
-        // including supplementary ones, and malformed standalone surrogates.
+        // A visually deceptive name can contain bidi overrides, Unicode tags,
+        // or Unicode line/paragraph separators (U+2028/U+2029), which are not
+        // ISO controls or FORMAT characters. Keep ordinary spaces and visible
+        // international letters, but reject every deceptive separator and
+        // malformed standalone surrogate, including supplementary code points.
         var offset = 0
         while (offset < name.length) {
             val codePoint = Character.codePointAt(name, offset)
+            val category = Character.getType(codePoint)
             if (codePoint in 0xD800..0xDFFF ||
-                Character.getType(codePoint) == Character.FORMAT.toInt()
+                category == Character.FORMAT.toInt() ||
+                category == Character.LINE_SEPARATOR.toInt() ||
+                category == Character.PARAGRAPH_SEPARATOR.toInt()
             ) return false
             offset += Character.charCount(codePoint)
         }

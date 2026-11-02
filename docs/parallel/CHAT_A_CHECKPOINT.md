@@ -1,3 +1,31 @@
+## 02.11.2026 – Main2e9 integriert, kombinierte lokale Prüfungen bestanden
+
+Main `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1` aus #471 ist regulär
+in denselben Entwicklungsbranch integriert; ursprüngliche Basis war `5a88834c`.
+Der abschließende Mergecommit ist über [PR #473](https://github.com/ManuEtt/Dnd/pull/473)
+ermittelbar. Keine Quellkonflikte; einziger Markdown-Konflikt im Chat-A-Checkpoint
+additiv gelöst, alle Main-Beiträge erhalten. Die eigenen 51 Guardzeilen und ihr
+Dateihash bleiben unverändert. SQLite3/JSON1 unverändert, keine Migration.
+
+**GETESTET auf dem kombinierten Stand:** **182 gezielte Flutter-Regressionen**
+mit den eigenen UI-/SQLite-Fällen und den neuen Main-Paketen; **275 Pythonfälle**,
+Projekt-/Importgrenzen-/SRD-Prüfung, **582 Dartdateien ohne Formatänderung** und
+saubere Analyse. Neuer **ARM64-Debug-Build und 14 native JUnit-Tests** ohne
+Fehler, Error oder Skip bestanden. Die vollständige lokale frühere Suite
+**2.782 Flutter /262 Python /76 Backend** gehört ausdrücklich zum Vorgänger8dd
+auf Basis5a; sie ist kein behaupteter neuer kombinierter Vollpass.
+
+**OFFEN:** vollständige CI des aktuellen abschließenden Merge-Heads, optimierte
+Alpha und reale Geräte-/TalkBack-/Upgrade-/Produktivsignierungsabnahme.
+[PR-Checks](https://github.com/ManuEtt/Dnd/pull/473/checks) abwarten; PR bleibt
+bis zur tatsächlichen CI-/Artefaktabnahme Draft. Kein Code-/SDK-Blocker bekannt.
+Der aktuelle Quellencheckpoint/Patch wird gegen **Main2e9** erstellt; frühere
+8dd-/5a-Archive bleiben unverändert erhalten. Main nicht direkt verändert.
+Allgemeiner initialer manueller Rettungswurf bleibt das nächste getrennte Paket;
+beide Klassen-Requirements weiterhin partial, Gesamt-SRD/Charakterassistent offen.
+
+**Nachfolgend historische Prüf- und Checkpointstände vor Main2e9:**
+
 ## 02.11.2026 – lokale Vollabnahme des Chat-A-Pakets bestanden
 
 **0.8.51+101**, Basis-Main `5a88834c98f5aca40395088c20c7e1dc5b587868`,
@@ -86,6 +114,21 @@ Gemeinsame README-/Checkpoint-Zusätze konsolidiert Chat D später additiv.
 
 Fachnachweis: `docs/parallel/CHAT_A_SAVING_THROW_CLASS_PREFLIGHT_20261102.md`.
 Die darunter bewahrten Berichte gelten jeweils für ihren damaligen Stand.
+
+---
+
+## 31.10.2026 – SRD-Zauber- und Aktionsökonomie gemeinsam vorbereitet
+
+- **Ausgangs-main:** `47ab002872b7d46daeae03bb558258cf2ea73e4a`.
+- **Branch:** `feat/chat-a/spell-turn-atomic-staging-20261031`; **PR:** neuer Draft-PR in Anlage.
+- **IMPLEMENTIERT:** Reines Domain-Staging `app/lib/domain/srd_spell_turn_transaction_rules.dart` mit `SrdSpellTurnTransactionRules.prepare`, `stageConfirmed` und privatem, an Hero-/Zauber-/Encounter-Snapshots gebundenem `SrdSpellTurnPlan`. Bestehende Ziel-/Komponenten-/Slotprüfung und getrennte Aktionsökonomie bilden einen gemeinsamen Helden-/Encounter-Rückgabewert. Kein Effekt ohne separate Bestätigung und keine unbestätigte Spielzustandsänderung.
+- **TESTS ERSTELLT:** `app/test/srd_spell_turn_transaction_rules_test.dart`, neun deterministische Gruppen, darunter Magic-/Bonus-Action getrennt, Turn-Slot- und Cantrip-Regeln, stale Retry/Revision, Fehlerpfade und unveränderte Original-JSONs.
+- **DOKUMENTIERT:** `docs/SRD_SPELL_TURN_TRANSACTION_STAGING.md`, README, zentraler Checkpoint. SRD 5.2.1 *Playing the Game / Actions, Bonus Actions, Spells / Casting Time*, CC BY 4.0. Regelabdeckung nur `partial`.
+- **GETESTET:** Vorabprüfungen auf GitHub (Main/Issues/PRs/Code) und Test-/Sourceerstellung; **NICHT GETESTET:** neuer Flutter-/Android-CI-Gesamtlauf und echtes Gerät.
+- **KEINE MIGRATION:** Vorhandene Modelle, Controller, GameEngine, JSON-/SQLite-/Eventformat, Versionsnummer, UI, Backend und Story unverändert.
+- **BLOCKIERT:** Vollständige Persistenz-/Revisionsintegration benötigt nächsten kleinen koordinierten Integrationsschritt. Die bestehende boolsche Legacy-Preflight-API bleibt unverändert; die neue Route wird nur bei expliziter Nutzung aktiv.
+- **VORGÄNGER:** Der gemergte PR #432 hatte vollständige [CI #41123342877](https://github.com/ManuEtt/Dnd/actions/runs/41123342877) grün. Main-CI auf `47ab0028` war beim Start noch aktiv; Issue #425 weiterhin offen.
+- **NÄCHSTER SCHRITT:** Nach Fach-Review die atomare SQLite-/Event-Buchung für beide zurückgegebenen Objekte unter Kampagnenrevision testen.
 
 ---
 
