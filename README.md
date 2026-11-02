@@ -365,3 +365,7 @@ Bestandsschutz bereits veröffentlichter Release-Artefakte ab.
 Branch: `fix/chat-d/zip-file-directory-conflicts-20261102`.
 Die finale GitHub-CI auf dem vollständigen PR-Commit ist vor Review oder Merge
 verbindlich. Kein SQLite-/JSON-/Save-Schema- oder Appversionswechsel.
+
+### Chat C – manuell bestätigter Zusatzkreaturen-Angriff bei großer Schrift (02.11.2026)
+
+[PR #492](https://github.com/ManuEtt/Dnd/pull/492) (Draft) macht das Angriffsformular auf 320/360 dp mit 200 % Schrift und Android-Tastatur als Gesamtdialog scrollbar. Kompakte Bestätigungstexte bewahren vollständige TalkBack-Beschriftungen; lange Zielnamen passen in das Dropdown. Neuer Widgettest: `app/test/manual_extra_creature_attack_ime_test.dart` (Abbruch, unvollständige und vollständige bestätigte Auswahl; keine automatische Zustandsänderung). **CI auf dem finalen PR-Commit noch offen**; keine APK-/Realgeräteabnahme und keine Änderung an Regel-, Speicher- oder JSON-Verträgen.
