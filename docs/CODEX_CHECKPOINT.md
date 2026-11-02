@@ -403,3 +403,44 @@ Ein neuer Flutter-Regressionstest schützt vor einer Story-Provider-Antwort, die
 - **Nächster Schritt:** Final-HEAD-CI auf beiden Quell-PRs und der
   Integration kontrollieren, bei Fehlern gesondert korrigieren.
   Keine automatische Main-Integration und kein Branchlöschen.
+
+## Chat B – NPC-Beziehungsauswahl für bestätigte Wiederaufnahme (02.11.2026)
+
+- **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529`;
+  **Branch:** `feat/chat-b/confirmed-npc-resume-selection-20261102`;
+  **Draft-PR:** [#489](https://github.com/ManuEtt/Dnd/pull/489).
+- **Problem:** Bisherige Reader decken einzelne NPCs ab, aber keinen
+  sicher sortierten, begrenzten Kampagnen-Wiederaufnahmekontext über
+  bestätigte Beziehungen mehrerer NPCs.
+- **IMPLEMENTIERT:** `ConfirmedNpcResumeSelector.read` in neuer
+  `app/lib/story/confirmed_npc_resume_selection.dart`; sortiert
+  lokal bestätigte Notizen nach UTC-Zeit, gespeichertem Eintragsindex
+  und ID. Ignoriert unbestätigte Narration, ungültige/doppelte IDs,
+  verwaiste Notizen. Max. drei NPCs, drei Notizen/NPC und 2.400
+  UTF-16-Codeunits; Unicode-sichere Vorschau mit sichtbaren NPC-IDs,
+  unveränderliche Ergebnislisten, Revisions-/Sitzungs- und
+  volltextbasierte Same-Revision-Revalidierung.
+- **TESTS ERSTELLT:** `app/test/confirmed_npc_resume_selection_test.dart`:
+  sieben Gruppen für Sortierung, getrennte Identitäten, unsichere
+  Legacy-IDs, Unicode-/Emoji-Grenzen, stale Revision/gleichrevidierte
+  Änderungen, alten JSON und echten SQLite-Neustart samt
+  unveränderter Hero-/Revisionskontinuität.
+- **Fachdateien:** ausschließlich die zwei neuen Story-/Testdateien;
+  additiv auch `README.md`, `docs/CODEX_CHECKPOINT.md` und
+  `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **GETESTET:** Main-SHA, offener PR-Bestand und Fachdateilisten,
+  aktuelle Architektur und vorhandene Reader/Tests geprüft;
+  offizieller Dart-3.9.2-Formatter angewandt und temporären
+  Formatterworkflow wieder entfernt.
+- **NICHT GETESTET:** finale vollständige GitHub-CI von #489, reales
+  Android-Gerät/TalkBack/produktiver KI-Provider.
+  **BLOCKIERT:** keine GitHub-Codeblockade; lokale Flutter-/Dart-Tools
+  fehlen, Actions als Abnahmepfad. **Migration:** keine; SQLite 3,
+  äußeres JSON 1, Version unverändert.
+- **Koordination:** #452/#456/#459/#464/#470/#477/#486 betreffen
+  andere Storydateien; README/Checkpoints nur durch Chat D additiv
+  mit weiteren PRs konsolidieren. Kein Auto-Merge.
+- **NÄCHSTER SCHRITT:** vollständige CI des finalen PR-HEAD prüfen,
+  bei Fehlern nur eigenen Branch korrigieren; nach Grün
+  koordinierte Review-/Integration durch Chat D.
+
