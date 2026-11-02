@@ -403,3 +403,16 @@ Ein neuer Flutter-Regressionstest schützt vor einer Story-Provider-Antwort, die
 - **Nächster Schritt:** Final-HEAD-CI auf beiden Quell-PRs und der
   Integration kontrollieren, bei Fehlern gesondert korrigieren.
   Keine automatische Main-Integration und kein Branchlöschen.
+
+---
+
+## 02.11.2026 – Chat A: ungültige Bewegung bei 0 TP blockieren (PR #487)
+
+- **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529`; **Branch:** `fix/chat-a/zero-hp-prone-movement-20261102`; **PR:** https://github.com/ManuEtt/Dnd/pull/487.
+- **Problem:** Der historisch nicht immer gespeicherte Zustand `bewusstlos` konnte dazu führen, dass Helden mit 0 TP dennoch aufstehen oder kriechen, obwohl SRD 5.2.1 *Dropping to 0 Hit Points* (S. 17, CC BY 4.0) Bewusstlosigkeit vorgibt.
+- **Implementiert:** Fail-closed-Prüfung auf bekannte positive TP und nicht toten Helden in `app/lib/domain/prone_movement_rules.dart` und `app/lib/domain/crawling_movement_rules.dart`; ohne Zustands-, Modell-, Schema- oder Controlleränderung.
+- **Tests ergänzt:** Je ein negativer Legacy-0-TP-/JSON-/Unverändertheitsfall und positiver Heilungs-/Bewegungsfall in `app/test/prone_standing_rules_test.dart` bzw. `app/test/prone_crawling_rules_test.dart`.
+- **Getestet:** GitHub-Lesezugriff, Main-/PR-Dateilisten, offizielle SRD-Quelle; nicht als Flutter-Ausführung auszugeben.
+- **Nicht getestet:** lokale Dart-/Flutter-Suite, Python-/Backend-Volltests, APK und finales GitHub-Actions-Ergebnis (SDK und Repository-Netz-Zugriff lokal nicht verfügbar). Keine Migration, Auto-Merge oder Branchlöschung.
+- **Nächster Schritt:** CI auf finalem Branch-HEAD abnehmen und bei Fehlern denselben Branch korrigieren; danach fachlich geprüften PR durch Chat D integrieren.
+
