@@ -151,34 +151,34 @@ void main() {
       first: 'Kleriker',
       level: 5,
     ).copyWith(features: const ['Distant Spell']);
-    expect(
-      () => _preview(fake, catalog),
-      throwsFormatException,
-    );
+    expect(() => _preview(fake, catalog), throwsFormatException);
   });
 
-  test('no Sorcerer 2, invalid class aliases or malformed levels fail closed', () {
-    final invalid = [
-      _hero(level: 1),
-      _hero(first: 'Wizard', level: 5),
-      _hero(first: 'Unknown', level: 5),
-      _hero(first: 'Zauberer', second: 'Sorcerer', level: 5, secondLevel: 2),
-      _hero(first: 'Zauberer', second: 'Unknown', level: 5, secondLevel: 2),
-      _hero(first: 'Zauberer', level: 21),
-      _hero(first: 'Zauberer', second: 'Kleriker', level: 3, secondLevel: 3),
-    ];
-    for (final hero in invalid) {
+  test(
+    'no Sorcerer 2, invalid class aliases or malformed levels fail closed',
+    () {
+      final invalid = [
+        _hero(level: 1),
+        _hero(first: 'Wizard', level: 5),
+        _hero(first: 'Unknown', level: 5),
+        _hero(first: 'Zauberer', second: 'Sorcerer', level: 5, secondLevel: 2),
+        _hero(first: 'Zauberer', second: 'Unknown', level: 5, secondLevel: 2),
+        _hero(first: 'Zauberer', level: 21),
+        _hero(first: 'Zauberer', second: 'Kleriker', level: 3, secondLevel: 3),
+      ];
+      for (final hero in invalid) {
+        expect(
+          () => _preview(hero, catalog),
+          throwsFormatException,
+          reason: hero.classSummary,
+        );
+      }
       expect(
-        () => _preview(hero, catalog),
-        throwsFormatException,
-        reason: hero.classSummary,
+        _preview(_hero(first: 'Sorcerer'), catalog).castingClass,
+        'Zauberer',
       );
-    }
-    expect(
-      _preview(_hero(first: 'Sorcerer'), catalog).castingClass,
-      'Zauberer',
-    );
-  });
+    },
+  );
 
   test('multiclass touch spell belongs to its actual casting class', () {
     final multiclass = _hero(
@@ -230,10 +230,7 @@ void main() {
       );
     }
     expect(
-      () => _preview(
-        _hero(spells: const []),
-        catalog,
-      ),
+      () => _preview(_hero(spells: const []), catalog),
       throwsFormatException,
     );
   });
@@ -254,22 +251,25 @@ void main() {
     );
   });
 
-  test('unsurveyed map, cover and invalid coordinates fail without spending', () {
-    final hero = _hero();
-    for (final request in [
-      _grid(6, surveyed: false),
-      _grid(6, blockers: const [SrdGridCell(4, 1)]),
-      _grid(6, blockers: const [SrdGridCell(7, 1)]),
-      _grid(6, blockers: const [SrdGridCell(1, 1)]),
-      _grid(29),
-    ]) {
-      expect(
-        () => _preview(hero, catalog, grid: request),
-        throwsFormatException,
-      );
-    }
-    expect(hero.spentClassResources, isEmpty);
-  });
+  test(
+    'unsurveyed map, cover and invalid coordinates fail without spending',
+    () {
+      final hero = _hero();
+      for (final request in [
+        _grid(6, surveyed: false),
+        _grid(6, blockers: const [SrdGridCell(4, 1)]),
+        _grid(6, blockers: const [SrdGridCell(7, 1)]),
+        _grid(6, blockers: const [SrdGridCell(1, 1)]),
+        _grid(29),
+      ]) {
+        expect(
+          () => _preview(hero, catalog, grid: request),
+          throwsFormatException,
+        );
+      }
+      expect(hero.spentClassResources, isEmpty);
+    },
+  );
 
   test('revalidated plans reject stale snapshot before any point staging', () {
     final hero = _hero();
@@ -286,64 +286,67 @@ void main() {
     expect(hero.toJson(), HeroCharacter.fromJson(hero.toJson()).toJson());
   });
 
-  test('SQLite restart stages once and stale revision cannot spend again', () async {
-    final directory = await Directory.systemTemp.createTemp('distant-touch-');
-    final path = '${directory.path}/campaign.sqlite';
-    var repository = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: path,
-    );
-    try {
-      final campaign = Campaign(
-        id: 'distant-touch-campaign',
-        name: 'Metamagie',
-        world: 'Test',
-        sessionId: 'session',
-        scene: 'Anfang',
-        hero: _hero(),
-      );
-      await repository.saveCampaign(campaign);
-      await repository.close();
-      repository = await SqliteCampaignRepository.open(
+  test(
+    'SQLite restart stages once and stale revision cannot spend again',
+    () async {
+      final directory = await Directory.systemTemp.createTemp('distant-touch-');
+      final path = '${directory.path}/campaign.sqlite';
+      var repository = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: path,
       );
-      final loaded = (await repository.getCampaign(campaign.id))!;
-      final source = loaded.toJson();
-      final plan = _preview(loaded.hero, catalog);
-      expect((await repository.getCampaign(campaign.id))!.toJson(), source);
-      final staged = plan.stageSorceryPointCost(
-        loaded.hero,
-        castingCostsAndEffectResolvedSeparatelyConfirmed: true,
-      );
-      final committed = loaded.copyWith(revision: 1, hero: staged);
-      await repository.saveCampaign(committed, expectedRevision: 0);
-      await repository.saveCampaign(committed, expectedRevision: 0);
-      await expectLater(
-        repository.saveCampaign(
-          loaded.copyWith(revision: 1, hero: loaded.hero),
-          expectedRevision: 0,
-        ),
-        throwsA(isA<CampaignConflictException>()),
-      );
-      await repository.close();
-      repository = await SqliteCampaignRepository.open(
-        factory: databaseFactoryFfi,
-        path: path,
-      );
-      final reloaded = (await repository.getCampaign(campaign.id))!;
-      expect(reloaded.revision, 1);
-      expect(reloaded.hero.spentClassResources['sorceryPoints'], 1);
-      expect(
-        () => plan.stageSorceryPointCost(
-          reloaded.hero,
+      try {
+        final campaign = Campaign(
+          id: 'distant-touch-campaign',
+          name: 'Metamagie',
+          world: 'Test',
+          sessionId: 'session',
+          scene: 'Anfang',
+          hero: _hero(),
+        );
+        await repository.saveCampaign(campaign);
+        await repository.close();
+        repository = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: path,
+        );
+        final loaded = (await repository.getCampaign(campaign.id))!;
+        final source = loaded.toJson();
+        final plan = _preview(loaded.hero, catalog);
+        expect((await repository.getCampaign(campaign.id))!.toJson(), source);
+        final staged = plan.stageSorceryPointCost(
+          loaded.hero,
           castingCostsAndEffectResolvedSeparatelyConfirmed: true,
-        ),
-        throwsFormatException,
-      );
-    } finally {
-      await repository.close();
-      await directory.delete(recursive: true);
-    }
-  });
+        );
+        final committed = loaded.copyWith(revision: 1, hero: staged);
+        await repository.saveCampaign(committed, expectedRevision: 0);
+        await repository.saveCampaign(committed, expectedRevision: 0);
+        await expectLater(
+          repository.saveCampaign(
+            loaded.copyWith(revision: 1, hero: loaded.hero),
+            expectedRevision: 0,
+          ),
+          throwsA(isA<CampaignConflictException>()),
+        );
+        await repository.close();
+        repository = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: path,
+        );
+        final reloaded = (await repository.getCampaign(campaign.id))!;
+        expect(reloaded.revision, 1);
+        expect(reloaded.hero.spentClassResources['sorceryPoints'], 1);
+        expect(
+          () => plan.stageSorceryPointCost(
+            reloaded.hero,
+            castingCostsAndEffectResolvedSeparatelyConfirmed: true,
+          ),
+          throwsFormatException,
+        );
+      } finally {
+        await repository.close();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
 }
