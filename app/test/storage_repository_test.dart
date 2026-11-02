@@ -290,18 +290,15 @@ void main() {
         original.toJson(),
       );
       expect(await repository.getCampaign('oversized-unicode'), isNull);
-      expect(
-        await repository.reconstructCampaign('oversized-unicode'),
-        isNull,
-      );
+      expect(await repository.reconstructCampaign('oversized-unicode'), isNull);
       expect(await repository.loadCampaigns(), hasLength(1));
     },
   );
 
   test('valid Unicode JSON import remains compatible', () async {
-    final original = fixture(id: 'unicode-under-limit').copyWith(
-      scene: 'Grüße aus Ätheria – 🐉',
-    );
+    final original = fixture(
+      id: 'unicode-under-limit',
+    ).copyWith(scene: 'Grüße aus Ätheria – 🐉');
     final source = jsonEncode({
       'format': 'living-gm-campaign',
       'schemaVersion': 1,
