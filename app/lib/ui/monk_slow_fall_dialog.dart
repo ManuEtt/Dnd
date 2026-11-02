@@ -68,8 +68,12 @@ class _MonkSlowFallDialogState extends State<MonkSlowFallDialog> {
     final plan = _preview;
     final canCommit = plan != null && _fallConfirmed && _defensesConfirmed;
     return AlertDialog(
+      key: const ValueKey('slow-fall-dialog'),
+      scrollable: true,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       title: const Text('Sanfter Fall – Reaktion'),
-      content: SingleChildScrollView(
+      content: SizedBox(
+        width: 360,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,7 +81,9 @@ class _MonkSlowFallDialogState extends State<MonkSlowFallDialog> {
             const Text(
               'Nur einen tatsächlich bestätigten Sturz auswerten. '
               'Schaden zuerst außerhalb dieses Dialogs würfeln und '
-              'alle anderen Schadensanpassungen klären.',
+              'alle anderen Schadensanpassungen klären. '
+              'Bei einer Änderung des Schadens müssen beide '
+              'Bestätigungen erneuert werden.',
             ),
             const SizedBox(height: 12),
             TextFormField(
@@ -86,7 +92,10 @@ class _MonkSlowFallDialogState extends State<MonkSlowFallDialog> {
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               maxLength: 6,
-              onChanged: (_) => setState(() {}),
+              onChanged: (_) => setState(() {
+                _fallConfirmed = false;
+                _defensesConfirmed = false;
+              }),
               decoration: const InputDecoration(
                 labelText: 'Bestätigter Sturzschaden (TP)',
                 helperText: 'Schaden nach anderen Abzügen; 0 bis 100.000',
@@ -131,6 +140,7 @@ class _MonkSlowFallDialogState extends State<MonkSlowFallDialog> {
       ),
       actions: [
         TextButton(
+          key: const ValueKey('slow-fall-cancel'),
           onPressed: () => Navigator.pop(context),
           child: const Text('Abbrechen'),
         ),
