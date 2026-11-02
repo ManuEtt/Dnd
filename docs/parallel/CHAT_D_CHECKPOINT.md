@@ -1410,3 +1410,14 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Historie:** sichere Original-Commit-Vorfahren und die vorläufigen Integrationsvarianten #494/#496 werden als Eltern archivierungsfähig gemacht, ohne deren fachliche Änderungen doppelt zu übernehmen.
 - **Abnahme:** kombinierte CI dieses Heads, erfolgreicher Merge #495 und erfolgreiche folgende Main-CI erforderlich; keine migrations- oder versionsbezogenen Änderungen, kein Realgerät/TalkBack abgenommen.
 - **Nächster Schritt:** nach #495 in main diesen PR abschließend prüfen, mergen und erst nach erfolgreicher Main-CI sichere Branchbereinigung kontrollieren.
+
+---
+
+## 02.11.2026 – Chat D: vier unabhängige, CI-grüne Barrierefreiheitsdialoge
+
+- **Stack-Basis:** `be1be6aac0cd8d2b53e0a1219f43fee2fcb35400`, nach #495 und #497.
+- **Quellen:** #465 Zustandsquellen-Dialog (CI 41323668152), #458 Mehrklassen-Dialog (CI 41282153192), #457 Magieinitiierten-Dialog (CI 41248140576) und #455 Hintergrundpaket-Dialog (CI 41246044715), jeweils `completed/success` auf Original-HEAD.
+- **Implementiert:** vier exakt geprüfte Flutter-UI-Git-Blobs und vier unveränderte Widgettest-Blobs ohne gemeinsame produktive Fachdateien. README, zentraler und CHAT_C-Checkpoint additiv konsolidiert.
+- **Regeln/Speicherung:** keine Domain-, Controller-, SQLite-, JSON-, Schema- oder Appversionsmigration; Dialoge bleiben unverbindlich, bis Anwender bestätigen.
+- **Noch offen:** neue kombinierte CI auf diesem Integrations-HEAD und Main-CI nach sequenziellen Merges, tatsächliche Android-Hardware-/TalkBack-Abnahme.
+- **Nächster Schritt:** nach Abnahme von #495 und #497 diesen Stack mit erneuter Konfliktprüfung mergen und nach erfolgreicher Main-CI Original-Branch-SHAs als Git-Tags archivieren, nicht vorher löschen.

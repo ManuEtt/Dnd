@@ -563,3 +563,29 @@ Gemeinsame Dokumentationsnachträge bei Integration additiv erhalten.
 [PR #469](https://github.com/ManuEtt/Dnd/pull/469) macht die zusätzliche Kreaturenregistrierung mit vier Eingabefeldern und Bestätigungs-Checkbox bei 320/360 dp, 200 % Schrift und geöffneter IME vollständig scrollbar. Fehler werden über eine Screenreader-Live-Region angekündigt. Vier neue Widgettests prüfen ungültige Angaben, Abbruch, gültige bestätigte Registrierung und TP-Korrektur. **Finale CI des neuen PR steht aus**; SRD-Regeln, Speicher, Datenformate, App-Version und bestehende Verantwortlichkeitsgrenzen bleiben unverändert.
 
 **Nachweis Chat-D-Integration (02.11.2026):** Die zuvor als ausstehend beschriebenen vollständigen Einzel-CIs sind auf den finalen Heads abgeschlossen und erfolgreich: [#474 / 41396373761](https://github.com/ManuEtt/Dnd/actions/runs/41396373761) und [#469 / 41393278139](https://github.com/ManuEtt/Dnd/actions/runs/41393278139). Kombination mit #495 erfordert eine eigene CI.
+
+---
+
+### Chat C: Zustandseffekt-Dialog bei großer Schrift und Tastatur (01.11.2026)
+
+[PR #465](https://github.com/ManuEtt/Dnd/pull/465): Der Dialog zur bestätigten Zustandsquelle bleibt bei 320/360 dp, 200 % Schrift und offener Android-Tastatur als Ganzes scrollbar. Lange Dropdown-Texte werden gekürzt dargestellt, Validierungsfehler als Live-Region markiert. Vier neue Flutter-Widgettests prüfen Fehler/Abbruch, neue Quelle und gezieltes Entfernen nur einer Quelle; Heldenstände bleiben unangetastet. **Finale Flutter-/Android-CI noch zu verifizieren.** Keine SRD-, Ressourcen-, Spielstand- oder Datenformatänderung.
+
+---
+
+### Chat C: Mehrklassen-Dialog bei 200 % Schrift und Android-Tastatur (01.11.2026)
+
+[PR #458](https://github.com/ManuEtt/Dnd/pull/458) macht den Mehrklassen-Stufenaufstieg auf 320/360 dp mit 200 % Schrift und eingeblendeter Tastatur durchgängig vertikal scrollbar; die Erfahrung-/Meilenstein-Auswahl erhält horizontales Scrolling. Vier neue Flutter-Widgetfälle prüfen Abbruch, EP-Sperrung, Meilenstein und Barden-Fertigkeitswahl. **CI auf dem finalen PR-Commit noch ausstehend.** Keine Änderung an SRD-Regeln, Heldendaten, Spielständen, Speicherformat oder Version.
+
+---
+
+### Chat C: Magieinitiierter-Dialog bei 200 % Schrift und geöffneter Tastatur (31.10.2026)
+
+[PR #457](https://github.com/ManuEtt/Dnd/pull/457): Die bestehende explizite Wahl von zwei Zaubertricks, Erstgradzauber und Zauberattribut bleibt nun auch bei 320/360 dp und simuliertem Android-IME in einem vollständig scrollbaren Dialog. Vier neue Flutter-Widgetfälle prüfen erreichbare Felder/Abbruch, gesperrte doppelte Tricks und den bestätigten Wahl-Datensatz. **Die neuen Flutter-/Android-CI-Tests müssen auf dem finalen PR-HEAD geprüft werden.** SRD-Regeln, Spielstände und Ressourcenbuchung bleiben unverändert.
+
+---
+
+### Chat C: Hintergrundpaket-Dialog bei großer Schrift und Tastatur (31.10.2026)
+
+[PR #455](https://github.com/ManuEtt/Dnd/pull/455) verbessert die Flutter-Hintergrundpaketwahl bei 320/360 dp und 200 % Schrift mit eingeblendeter Tastatur: ein einzelner scrollbarer Dialog, schmale Außenränder und expandierte Dropdowns. Neue Widgettests sichern Abbruch, gesperrte unvollständige Soldat-/Akolyth-Wahlen, Akolyth-Goldwahl und explizite Spielsetauswahl ab. **Flutter-/Android-CI des finalen PR-Commits und echte Geräteprüfung noch offen.** Keine Regel-, Speicher-, Schema- oder Versionsänderung.
+
+**Integrations-CI-Nachweis (02.11.2026):** Vollständige Quellprüfungen waren jeweils auf dem finalen Head erfolgreich: [#465](https://github.com/ManuEtt/Dnd/actions/runs/41323668152), [#458](https://github.com/ManuEtt/Dnd/actions/runs/41282153192), [#457](https://github.com/ManuEtt/Dnd/actions/runs/41248140576) und [#455](https://github.com/ManuEtt/Dnd/actions/runs/41246044715). Historische Angaben „CI ausstehend“ beziehen sich auf den damaligen Veröffentlichungszeitpunkt. Kombinierte neue CI bleibt verpflichtend.
