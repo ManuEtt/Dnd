@@ -95,16 +95,16 @@ void main() {
       npcs: [
         WorldNpc(
           id: 'mira',
-          name: 'Mira ${dragons}',
-          relationship: 'freundlich ${dragons}',
+          name: 'Mira $dragons',
+          relationship: 'freundlich $dragons',
         ),
       ],
       notes: [
         for (var i = 0; i < 12; i++)
           _note(
-            'note-${i}',
+            'note-$i',
             'mira',
-            'Ein bestätigter Hinweis ${dragons}',
+            'Ein bestätigter Hinweis $dragons',
             _time.subtract(Duration(days: i)),
           ),
       ],
@@ -160,7 +160,7 @@ void main() {
 
   test('ambiguous and unsafe IDs or invalid note limits fail closed', () {
     final wrong = _campaign();
-    for (final id in ['', 'mira\nX', 'bad id', 'ä', 'x' * 65]) {
+    for (final id in ['', 'mira\nX', 'bad id', 'ä', List.filled(65, 'x').join()]) {
       expect(
         () => ConfirmedNpcContinuityExcerpt.read(wrong, npcId: id),
         throwsFormatException,
