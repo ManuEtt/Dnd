@@ -403,3 +403,36 @@ Ein neuer Flutter-Regressionstest schützt vor einer Story-Provider-Antwort, die
 - **Nächster Schritt:** Final-HEAD-CI auf beiden Quell-PRs und der
   Integration kontrollieren, bei Fehlern gesondert korrigieren.
   Keine automatische Main-Integration und kein Branchlöschen.
+
+## Chat B – kurze, bestätigte NPC-Historie sicher begrenzen (02.11.2026)
+
+- **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529`;
+  **Branch:** `feat/chat-b/bounded-confirmed-npc-excerpt-v2-20261102`;
+  **Draft-PR:** [#486](https://github.com/ManuEtt/Dnd/pull/486).
+  Ein älterer, nicht gemergter eigener Draft #484 auf altem Main wurde
+  zugunsten dieser neuen Basis geschlossen; seine Branchdaten bleiben.
+- **Problem:** bestehende bestätigte NPC-Historie hat keine kontrollierte
+  Kürzung für kleine Rückblicke, besonders bei sehr langen Legacy-Feldern.
+- **Implementiert:** neues `app/lib/story/confirmed_npc_continuity_excerpt.dart`
+  mit maximal 1.800 UTF-16-Einheiten, höchstens drei bestätigt
+  gespeicherten Beziehungsnotizen, sicherer sichtbarer NPC-ID,
+  Unicode-/Bidi-Bereinigung und rune-sicherer Kürzung. Read-only:
+  keine Bestätigung aus freier KI-Prosa, keine Zustandsänderung.
+- **Testdatei:** `app/test/confirmed_npc_continuity_excerpt_test.dart`:
+  sechs positive/negative Gruppen (Faktenisolation, lange Emoji-Texte,
+  Zeilen-/Bidi-Injektion, ungültige IDs/Grenzen, Alt-JSON ohne Notizen,
+  echter SQLite-Neustart und unveränderter Held/Revision).
+- **Andere Dateien:** additive README, zentraler und Chat-B-Checkpoint;
+  `npc_continuity_reader.dart` aus PR #477 **nicht** geändert.
+- **Getestet:** aktuellen main, offene PR-Fachdateien und zugehörige
+  Architektur/Tests geprüft; offiziellen Dart-3.9.2-Formatter ausgeführt,
+  temporäre Workflowdatei vor PR entfernt.
+  **Nicht getestet:** finale volle PR-CI, Android-Echthardware/TalkBack,
+  echte KI-Provider-Anbindung. **Blockiert:** lokales Dart-/Flutter-SDK;
+  Actions als vollständige CI verfügbar.
+  **Migration:** keine; SQLite 3, äußeres JSON 1 und Version unverändert.
+  **Koordination:** README/Checkpoints mit Chat D additiv konsolidieren.
+- **Nächster Schritt:** vollständige CI auf finalem PR-HEAD abnehmen,
+  Fehler nur auf diesem Branch korrigieren, danach Integration/Review
+  ohne automatischen Merge.
+
