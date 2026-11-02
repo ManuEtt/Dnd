@@ -1496,3 +1496,20 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Offen:** Vollständige neue kombinierte PR-CI auf dem exakt finalen Integrations-HEAD, Vorgänger- und Main-CI, danach aktueller Main-/PR-Abgleich und regulärer Merge. Echte TalkBack-/IME-/Altversions-Geräteprüfung separat offen.
 
 **Nächster Schritt:** Vollständige CI dieses Stacks abnehmen und erst nach Merge von #507 mit grüner Main-CI integrieren.
+
+
+---
+
+## Chat D – Alpha-Release-APK-Quelle ohne symbolische Verknüpfung (02.11.2026)
+
+- **Ausgangs-main:** `a2f22eaceb344aaced12d0ad548b813aa44d544f` (nach der vollständigen Abnahme und Integration von #508).
+- **Branch:** `fix/chat-d/alpha-apk-source-symlink-20261102`.
+- **Problem:** `prepare_release` rief `Path.resolve()` bereits vor der APK-Validierung auf und verdeckte dadurch einen verlinkten Eingabepfad. Eine gültige APK aus einem unerwarteten externen Dateipfad konnte so als Release-Quelle akzeptiert werden.
+- **Lösung:** Originalpfad für die Prüfung erhalten; direkte und geerbte Symlinks vor dem Lesen ablehnen, nach der Quell-ZIP-Erzeugung erneut prüfen, ehe ein Release-APK-Ziel kopiert wird. Kein Zugriff auf das Ziel eines erkannten Linkpfads.
+- **Geänderte Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Tests:** vier neue Regressionen für gültige direkte APK-Quelle, verlinkte Quelldatei, verlinktes Elternverzeichnis, Quellpfad-Austausch nach Quellarchiv-Staging mit Rollback des Release-Verzeichnisses.
+- **GETESTET:** Änderung und Testfälle in GitHub auf eigenem Branch gespeichert. Vollständige GitHub-Actions-Abnahme auf finalem HEAD steht aus.
+- **NICHT GETESTET:** vollständige Python-/Backend-/Flutter-/Android-CI auf finalem HEAD und echter Geräte-Release-Installationspfad.
+- **Spielstände/Migration:** kein Schema-/Versionswechsel, kein Eingriff in Flutter, Story, SRD oder gespeicherte Kampagnen.
+- **Konfliktprüfung:** beim Beginn offene PRs #452–#512 ändern nicht die beiden Python-Fachdateien dieses Arbeitspakets. Gemeinsam genutzte Dokumentation vor Integration additiv bewahren. Keine fremden PRs oder Branches überschreiben.
+- **Nächster Schritt:** finale vollständige CI prüfen; bei erfolgreichen Checks Review-Freigabe und spätere konfliktgeprüfte Integration.
