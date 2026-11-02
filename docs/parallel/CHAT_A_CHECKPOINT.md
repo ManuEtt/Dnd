@@ -1,3 +1,69 @@
+# Chat A – bestätigte Metamagie-Optionen versioniert prüfen (02.11.2026)
+
+**Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529` ·
+**Branch:** `feat/chat-a/metamagic-choice-proof-20261102` ·
+**PR:** nach Veröffentlichung im GitHub-PR, CI auf finaler HEAD-SHA gesondert.
+
+**Offizieller Fachbeleg:** D&D SRD 5.2.1,
+Sorcerer Level 2 / Metamagic Options, CC BY 4.0.
+Zwei Optionswahlen bei eigener Zaubererstufe 2,
+plus zwei auf 10 und 17, maximal ein Ersatz bei
+jedem *Zauberer*-Klassenaufstieg, nicht
+bei anderen Multiclass-Level-ups.
+
+**IMPLEMENTIERT:** eigenständiges Domainmodul
+`app/lib/domain/srd_metamagic_choice_record.dart`:
+`SrdMetamagicChoiceRules.confirm` benötigt
+ausdrückliche Wahl, gültige eigene Klassen
+und nachgewiesenes Metamagic-Feature,
+exakt 2/4/6 verschiedene amtliche Namen.
+`advanceSorcererLevel` sperrt ersetzte
+Mehrfachoptionen, erfundene Zusatzoptionen,
+stale Herkunft/Level, falsche Klasse.
+`SrdMetamagicChoiceRecord` ist unveränderlich
+und hat streng versionierte JSON-V1-
+Serialisierung und `matchesHero`, das
+Sorcererlevel und unveränderte Rohklassennamen
+prüft, aber Ressourcen und andere Klassenlevel
+bewusst nicht vermischt.
+
+**Tests:** `app/test/srd_metamagic_choice_record_test.dart`,
+zwölf Gruppen: Stufengrenzen, Optionenkatalog,
+ungültige/abgewiesene Auswahl, Multiclass-
+Klassenstufe/Aliase, immutable JSON,
+manipulierte Schemafelder, 10/17-Zusatzplätze,
+ein Wechsel/Stufenanstieg, fremde Level-ups,
+Legacy-Helden-JSON sowie echte SQLite-
+Neustarts/Retry/stale Revision.
+
+**NICHT IMPLEMENTIERT / BLOCKIERT:** Das
+versionierte Record-JSON bleibt bewusst
+ein **externes Artefakt**, es wird **nicht**
+in `HeroCharacter` oder SQLite automatisch
+gespeichert. Ein manuell gebildetes JSON ist
+kein autorisiertes Auswahlereignis.
+Vollständige Persistenz benötigt Koordination
+mit offenem PR #463; Distant Spell #478
+wird nicht verändert. Live-Casting,
+Metamagiekosten und UI bleiben unverändert.
+Keine Migration: SQLite3 / JSON1.
+
+**GETESTET:** Tests und Fachcode angelegt,
+CI erst auf finalem PR-Kopf als grün
+dokumentieren. Reale Android-Hardware,
+Altupgrade, TalkBack, Release-Signierung
+ausdrücklich noch nicht geprüft.
+
+**NÄCHSTER SCHRITT:** nach Integration
+der Metamagie-/Zauberbeleg-Bausteine
+ein bestätigtes Metamagie-Auswahlereignis
+persistent zum Heldenmodell hinzufügen
+und die Freigabe in der atomaren
+Cast-Transaktion mit Neustart-/Rollback-
+und Revisionsfällen verwenden.
+
+---
+
 ## 31.10.2026 – SRD-Zauber- und Aktionsökonomie gemeinsam vorbereitet
 
 - **Ausgangs-main:** `47ab002872b7d46daeae03bb558258cf2ea73e4a`.
