@@ -727,3 +727,8 @@ Die strikt konservative Metadatenprüfung für ausgelöste Zauber-Reaktionen/-Bo
 ### Chat C: Sending-Dialog mit großer Android-Schrift und Tastatur (02.11.2026)
 
 Ein eigenständiger Chat-C-Entwicklungsbranch `feat/chat-c/sending-dialog-ime-20261102` macht den Sending-Versuch als ganzen `AlertDialog` scrollbar. Bei mindestens 180 % Schrift bleiben die Bestätigungen visuell kurz und für TalkBack vollständig benannt. Neue Widgettests decken 320/360 dp, 200 % Schrift und ein simuliertes 220-dp-Tastatur-Inset ab, darunter Abbruch, bewusste Zustimmung, deren Widerruf nach Eingabeänderung und unveränderte Helden-JSON-Daten. Der Dialog bestätigt nur eine Vorschau; keine Spielregel-, Spielstands-, SQLite-, JSON- oder Versionsänderung. Ausführungsergebnisse und Integrationsstatus stehen im eigenen [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md); keine Freigabe ohne finale GitHub-CI und Review.
+
+
+### Chat D: Alpha-Release akzeptiert keine symbolisch verlinkte APK-Quelle (02.11.2026)
+
+Die Python-Releasevorbereitung prüft vor dem Lesen und nochmals vor dem Kopieren der ARM64-APK, ob der angegebene APK-Pfad oder eines seiner Elternverzeichnisse ein symbolischer Link ist. Verknüpfte APKs werden abgewiesen, statt ihrem externen Ziel zu folgen. Positive und negative Regressionstests decken normale APKs, direkte und Eltern-Symlinks sowie einen Link-Austausch nach der Quell-ZIP-Stagingphase ab. Branch `fix/chat-d/alpha-apk-source-symlink-20261102`; finale CI auf dem PR-HEAD ist noch nicht bestätigt. Keine App-, SQLite-, Spielstands-, JSON- oder Versionsänderung.
