@@ -4,7 +4,7 @@
 
 - **Ausgangs-main:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`;
   **Branch:** `fix/chat-b/npc-continuity-zero-width-20261102`;
-  **Pull Request:** nach Fertigstellung als Draft gegen Main öffnen.
+  **Pull Request:** [#477](https://github.com/ManuEtt/Dnd/pull/477), Draft.
 - **Problem:** `NpcContinuityReader._npcNameKey` entfernte Bidi-Marken,
   aber nicht U+200B–U+200D, U+2060 oder U+FEFF. Zwei sichtbar gleiche
   NPC-Namen konnten ohne notwendige ID in bestätigten Rückblicken
