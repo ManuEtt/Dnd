@@ -1,5 +1,42 @@
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
+## Chat B – sicher begrenzte NPC-Kurzfassung (02.11.2026)
+
+- **Basis-main:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`.
+  **Branch:** `feat/chat-b/bounded-confirmed-npc-excerpt-20261102`.
+  **PR:** Draft gegen main (Nummer in PR-Beschreibung).
+- **Problem:** `NpcContinuityReader.confirmedContext` kann aus
+  importierten, beliebig langen NPC-Namen und Notizen sehr große Texte
+  erzeugen. Eine begrenzte Story-Kurzfassung fehlte.
+- **IMPLEMENTIERT:** neues reines Storymodul
+  `app/lib/story/confirmed_npc_continuity_excerpt.dart` mit
+  `ConfirmedNpcContinuityExcerpt.read`: genau gespeicherte NPC-ID
+  (ASCII 1–64) in der Überschrift, maximal drei neueste bestätigte
+  Notizen, Grenzen je Feld und insgesamt 1.800 UTF-16-Einheiten,
+  Steuerzeichen-Bereinigung, rune-sicheres Abschneiden von Emoji.
+  Keine KI-Antwort als Fakt und keine Schreiboperation.
+- **Regressionen:** `app/test/confirmed_npc_continuity_excerpt_test.dart`
+  mit sechs Gruppen: Quellen-/NPC-Trennung, Überlänge und Unicode,
+  Zeilen-/Bidi-Spoofing, doppelte/unsichere IDs und Grenzwerte,
+  alte JSON ohne Notizen und echte SQLite-Neuöffnung/Rekonstruktion.
+- **Geänderte Dateien:** beide neuen Fachdateien sowie additive
+  `README.md`, `docs/CODEX_CHECKPOINT.md` und
+  `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **GETESTET:** tatsächlicher Main-SHA, alle offenen PRs/Fachdateien
+  und verbindliche Architektur/Tests geprüft.
+  **NICHT GETESTET:** finale vollständige CI derzeit offen; reales
+  Android-Gerät, TalkBack, produktiver KI-Dienst.
+  **BLOCKIERT:** lokales Flutter-/Dart-SDK fehlt, GitHub Actions nutzbar.
+  **Migration:** keine, SQLite 3 / äußeres JSON 1 unverändert.
+  **Koordination:** #477 verändert bestehenden Reader, daher neue
+  separate Datei statt Paralleländerung; README/Checkpoints von Chat D
+  bei Integration additiv konsolidieren. Keine Branch-/Main-Änderungen
+  außerhalb dieser Arbeit.
+- **NÄCHSTER SCHRITT:** vollständige CI des eigenen finalen PR-HEAD
+  abnehmen und Fehler auf eigenem Branch korrigieren; danach Integration
+  durch Chat D prüfen, ohne automatischen Merge.
+
+
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
 Alpha **0.8.49+99**. Dieser neue Live-Status ersetzt widersprüchliche historische
 Momentaufnahmen; die vollständige additive Vereinigung ist bytegenau unter
