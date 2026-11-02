@@ -66,19 +66,11 @@ void main() {
     final stored = _campaign(
       notes: [
         _note('first', 'mira', 'Mira zeigte die Karte.', _time),
-        _note(
-          'other',
-          'tarek',
-          'Eine fremde bestätigte Notiz.',
-          _time,
-        ),
+        _note('other', 'tarek', 'Eine fremde bestätigte Notiz.', _time),
       ],
     );
     final before = jsonEncode(stored.toJson());
-    final excerpt = ConfirmedNpcContinuityExcerpt.read(
-      stored,
-      npcId: 'mira',
-    );
+    final excerpt = ConfirmedNpcContinuityExcerpt.read(stored, npcId: 'mira');
 
     expect(excerpt, startsWith('Bestätigter NPC (ID: mira): Mira\n'));
     expect(excerpt, contains('Status: lebendig'));
@@ -110,10 +102,7 @@ void main() {
       ],
     );
     final before = jsonEncode(stored.toJson());
-    final excerpt = ConfirmedNpcContinuityExcerpt.read(
-      stored,
-      npcId: 'mira',
-    );
+    final excerpt = ConfirmedNpcContinuityExcerpt.read(stored, npcId: 'mira');
 
     expect(excerpt.length, lessThanOrEqualTo(1800));
     expect(_validUtf16(excerpt), isTrue);
@@ -160,7 +149,13 @@ void main() {
 
   test('ambiguous and unsafe IDs or invalid note limits fail closed', () {
     final wrong = _campaign();
-    for (final id in ['', 'mira\nX', 'bad id', 'ä', List.filled(65, 'x').join()]) {
+    for (final id in [
+      '',
+      'mira\nX',
+      'bad id',
+      'ä',
+      List.filled(65, 'x').join(),
+    ]) {
       expect(
         () => ConfirmedNpcContinuityExcerpt.read(wrong, npcId: id),
         throwsFormatException,
@@ -206,10 +201,7 @@ void main() {
     final old = _campaign().toJson()..remove('npcRelationshipNotes');
     final restored = Campaign.fromJson(old);
     final before = jsonEncode(restored.toJson());
-    final excerpt = ConfirmedNpcContinuityExcerpt.read(
-      restored,
-      npcId: 'mira',
-    );
+    final excerpt = ConfirmedNpcContinuityExcerpt.read(restored, npcId: 'mira');
 
     expect(excerpt, contains('Keine bestätigten Beziehungsnotizen.'));
     expect(excerpt, isNot(contains('999 Gold')));
