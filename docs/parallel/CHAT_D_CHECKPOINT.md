@@ -1421,3 +1421,14 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Regeln/Speicherung:** keine Domain-, Controller-, SQLite-, JSON-, Schema- oder Appversionsmigration; Dialoge bleiben unverbindlich, bis Anwender bestätigen.
 - **Noch offen:** neue kombinierte CI auf diesem Integrations-HEAD und Main-CI nach sequenziellen Merges, tatsächliche Android-Hardware-/TalkBack-Abnahme.
 - **Nächster Schritt:** nach Abnahme von #495 und #497 diesen Stack mit erneuter Konfliktprüfung mergen und nach erfolgreicher Main-CI Original-Branch-SHAs als Git-Tags archivieren, nicht vorher löschen.
+
+---
+
+## 02.11.2026 – Chat D: fünf zusätzliche getestete Zauber- und UI-Arbeitspakete
+
+- **Stack-Basis:** `ad9d2e6ebf960dbbb643ec093396b4335afb4ebc`, nach #495, #497 und #498.
+- **Quellen:** #472 Raster-Berührungsreichweite (41393551106 erfolgreich), #467 Vorbereitungs-/Austauschregeln (41323611885), #453 Mehrklassen-Slotalias (41244807154), #461 Mehrklassen-Zauberquellen (41282290565), #450 Schildreaktion-Dialog (41244483591). Alle auf dem jeweiligen finalen Quell-HEAD erfolgreich.
+- **Fachdateien:** nur die Original-Git-Blobs in fünf getrennten Modulen sowie jeweils eigenständige Testdateien und quellgetreue SRD-Dokumente. Alle bestehenden Modulbasis-Dateien exakt unverändert zur Quellbasis geprüft; neue Dateien vor Integration nicht vorhanden. README/Checkpoints additiv.
+- **Historienschutz:** Original-Quell-HEADs zusätzliche Git-Commit-Eltern; keine doppelte Übernahme, keine Force-Pushes, kein direkter Main-Commit.
+- **Akzeptanz:** Vollständige kombinierte PR-CI vor jedem Merge, #495/#497/#498 vorher erfolgreich integrieren, Main-CI und danach SHA-gesicherte Branchbereinigung. Keine realen Android-/TalkBack-Tests, keine SQLite-/JSON-Schema-/Versionsmigration in diesem Paket.
+- **Nächster Schritt:** nach erfolgreicher kompletter CI auf finalem Head und aller Vorgänger Stacked PR prüfen und mergen; dann noch verbliebene kollidierende PRs getrennt prüfen.

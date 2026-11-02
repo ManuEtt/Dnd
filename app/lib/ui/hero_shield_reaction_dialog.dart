@@ -68,64 +68,66 @@ class _HeroShieldReactionDialogState extends State<HeroShieldReactionDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
+    scrollable: true,
+    insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
     title: const Text('Schildreaktion für Gegnerzug'),
-    content: SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text(
-            'Hiermit autorisierst du die Schild-Reaktion (Shield) '
-            'für den unmittelbar folgenden gegnerischen Angriff. '
-            'Ein Zauberplatz wird NUR verbraucht, wenn der Angriff trifft '
-            'und +5 RK den Treffer tatsächlich verhindert. '
-            'Kritische Treffer können dadurch nicht abgewehrt werden. '
-            'Andernfalls bleibt dein Zauberplatz erhalten.',
-          ),
-          if (_error != null)
-            Text(_error!, key: const ValueKey('hero-shield-error')),
-          if (HeroShieldReactionRules.preparedName(widget.hero) == null)
-            const Text('Der Zauber Schild ist nicht vorbereitet.'),
-          DropdownButtonFormField<String>(
-            key: const ValueKey('hero-shield-class'),
-            initialValue: _castingClass,
-            decoration: const InputDecoration(labelText: 'Zauberklasse'),
-            items: [
-              for (final name in _classes)
-                DropdownMenuItem(value: name, child: Text(name)),
-            ],
-            onChanged: (value) => setState(() => _castingClass = value),
-          ),
-          DropdownButtonFormField<String>(
-            key: const ValueKey('hero-shield-slot'),
-            initialValue: _slotKey,
-            decoration: const InputDecoration(labelText: 'Zauberplatz'),
-            items: [
-              for (final slot in _slots)
-                DropdownMenuItem(
-                  value: slot.key,
-                  child: Text(
-                    '${slot.pactMagic ? 'Pakt ' : ''}Grad ${slot.level} – ${slot.remaining} frei',
-                  ),
+    content: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text(
+          'Hiermit autorisierst du die Schild-Reaktion (Shield) '
+          'für den unmittelbar folgenden gegnerischen Angriff. '
+          'Ein Zauberplatz wird NUR verbraucht, wenn der Angriff trifft '
+          'und +5 RK den Treffer tatsächlich verhindert. '
+          'Kritische Treffer können dadurch nicht abgewehrt werden. '
+          'Andernfalls bleibt dein Zauberplatz erhalten.',
+        ),
+        if (_error != null)
+          Text(_error!, key: const ValueKey('hero-shield-error')),
+        if (HeroShieldReactionRules.preparedName(widget.hero) == null)
+          const Text('Der Zauber Schild ist nicht vorbereitet.'),
+        DropdownButtonFormField<String>(
+          key: const ValueKey('hero-shield-class'),
+          initialValue: _castingClass,
+          isExpanded: true,
+          decoration: const InputDecoration(labelText: 'Zauberklasse'),
+          items: [
+            for (final name in _classes)
+              DropdownMenuItem(value: name, child: Text(name)),
+          ],
+          onChanged: (value) => setState(() => _castingClass = value),
+        ),
+        DropdownButtonFormField<String>(
+          key: const ValueKey('hero-shield-slot'),
+          initialValue: _slotKey,
+          isExpanded: true,
+          decoration: const InputDecoration(labelText: 'Zauberplatz'),
+          items: [
+            for (final slot in _slots)
+              DropdownMenuItem(
+                value: slot.key,
+                child: Text(
+                  '${slot.pactMagic ? 'Pakt ' : ''}Grad ${slot.level} – ${slot.remaining} frei',
                 ),
-            ],
-            onChanged: (value) => setState(() => _slotKey = value),
-          ),
-          CheckboxListTile(
-            key: const ValueKey('hero-shield-verbal'),
-            value: _verbal,
-            onChanged: (v) => setState(() => _verbal = v ?? false),
-            title: const Text('Verbale Komponente ist möglich'),
-            controlAffinity: ListTileControlAffinity.leading,
-          ),
-          CheckboxListTile(
-            key: const ValueKey('hero-shield-somatic'),
-            value: _somatic,
-            onChanged: (v) => setState(() => _somatic = v ?? false),
-            title: const Text('Gestische Komponente ist möglich'),
-            controlAffinity: ListTileControlAffinity.leading,
-          ),
-        ],
-      ),
+              ),
+          ],
+          onChanged: (value) => setState(() => _slotKey = value),
+        ),
+        CheckboxListTile(
+          key: const ValueKey('hero-shield-verbal'),
+          value: _verbal,
+          onChanged: (v) => setState(() => _verbal = v ?? false),
+          title: const Text('Verbale Komponente ist möglich'),
+          controlAffinity: ListTileControlAffinity.leading,
+        ),
+        CheckboxListTile(
+          key: const ValueKey('hero-shield-somatic'),
+          value: _somatic,
+          onChanged: (v) => setState(() => _somatic = v ?? false),
+          title: const Text('Gestische Komponente ist möglich'),
+          controlAffinity: ListTileControlAffinity.leading,
+        ),
+      ],
     ),
     actions: [
       FantasyTextButton(

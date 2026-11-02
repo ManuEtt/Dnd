@@ -605,3 +605,19 @@ Der vollständige rein additive Chat-Fachnachtrag aus PR #479 ist nachfolgend er
 - **BLOCKIERT:** CI-Abnahme des neuen Pakets. Keine automatische Integration.
 - **GEÄNDERTE DATEIEN:** UI-Dialog, neuer Test, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_C_CHECKPOINT.md`. Andere UI-/Fachmodule und Spielstandformat bleiben unangetastet. **Migrationen:** keine.
 - **NÄCHSTER SCHRITT:** Den getrennten `SrdMagicInitiateDialog` bei 320 dp/200 %/IME auf durchgehende Scrollbarkeit prüfen. Akzeptanz: alle Zauberwahlen, Validierungsfehler und Abbruch/Bestätigung bleiben erreichbar; doppelte Zaubertricks dürfen keine Bestätigung erlauben.
+
+---
+
+## 31.10.2026 – CHAT C: Schildreaktionsdialog auf kleinen Displays (PR #450)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+- **Branch:** `feat/chat-c/hero-shield-dialog-large-text-ime-20261031`; **Code-/Testcommit:** `a4809858c402963015337f95b5a58cce0a54f3f2`; **PR:** [#450](https://github.com/ManuEtt/Dnd/pull/450) (Draft, finalen Head direkt beim PR prüfen).
+- **Problem:** Der Bestätigungsdialog für die vorausgewählte Schildreaktion nutzt einen eigenen Scrollbereich ohne `AlertDialog.scrollable`. Bei 320/360 dp, 200 % Text und offener Android-Tastatur fehlte eine explizite Widget-Absicherung von Scrollen, Abbruch und gültiger Bestätigung.
+- **IMPLEMENTIERT:** `app/lib/ui/hero_shield_reaction_dialog.dart` scrollt Titel und Eingabebereich im Dialog, nutzt kompakte Viewport-Ränder sowie expandierte Dropdowns; feste Abbruch-/Bestätigungsaktionen und ausdrückliche V/S-Bestätigung bleiben erhalten.
+- **TESTS ERGÄNZT:** `app/test/hero_shield_reaction_dialog_large_text_ime_test.dart`: zwei positive Scroll-/Abbruchfälle (320 und 360 dp bei 200 %/IME), ungültige Komponentenbestätigung vor der gültigen Auswahl sowie der negative Fall ohne vorbereiteten Schild. Keine Daten- oder Ressourcenmutation beim Abbruch.
+- **GETESTET:** GitHub main, vier offene PR-Aufgabenpakete und geänderte PR-Dateien geprüft; die Code-/Teständerungen sind auf dem eigenen Branch gesichert. Die letzte main-Android-CI [41184883579](https://github.com/ManuEtt/Dnd/actions/runs/41184883579) ist erfolgreich; dies ist **kein** Nachweis für PR #450.
+- **NICHT GETESTET:** Neue Widgettests, lokaler Dart-Formatter, Flutter-Analyse, gesamter Flutter-/Backend-/Python-/Android-Build und Android-TalkBack/IME auf einem realen Gerät – Flutter-/Dart-SDK lokal nicht vorhanden. CI auf finalem PR-HEAD abnehmen.
+- **BLOCKIERT:** Vollständige Validierung durch ausstehende GitHub-PR-CI / fehlende lokale Flutter-Toolchain. Kein automatischer Merge.
+- **NOCH NICHT IMPLEMENTIERT:** Reale TalkBack- und Touch-Abnahme bei 320 dp/200 %/IME.
+- **Geänderte Dateien:** Schilddialog, neuer Widgettest, `docs/parallel/CHAT_C_CHECKPOINT.md`, `docs/CODEX_CHECKPOINT.md`, `README.md`. Kein Schema, keine API, kein JSON, kein Spielstand, keine Migration.
+- **Nächster unabhängiger Schritt:** Die Tastaturfokus-Reihenfolge des Schilddialogs auf 320 dp/200 %/IME mit Tab/Enter absichern; Akzeptanz: beide Komponenten und Abbruch sind erreichbar und Fokus aktiviert nie eine unbestätigte Schildreaktion.
