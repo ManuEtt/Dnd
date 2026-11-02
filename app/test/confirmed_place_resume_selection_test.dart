@@ -51,7 +51,7 @@ void main() {
     expect(jsonEncode(campaign.toJson()), original);
   });
 
-  test('identical names stay distinct; malicious line breaks are flattened', () {
+  test('same-name places and injected lines stay distinct', () {
     final selected = ConfirmedPlaceResumeSelector.read(
       _campaign(
         places: const [
@@ -120,7 +120,7 @@ void main() {
     );
   });
 
-  test('bounded Unicode never cuts emoji and same-revision edits invalidate', () {
+  test('emoji-safe limits and stale same-revision edits', () {
     final dragons = List.filled(180, '🐉').join();
     final original = _campaign(
       places: [
