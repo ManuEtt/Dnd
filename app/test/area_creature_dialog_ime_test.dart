@@ -54,11 +54,7 @@ Future<void> _tap(WidgetTester tester, Finder finder) async {
   await tester.pumpAndSettle();
 }
 
-Future<void> _enter(
-  WidgetTester tester,
-  String name,
-  String value,
-) async {
+Future<void> _enter(WidgetTester tester, String name, String value) async {
   final finder = _field(name);
   await tester.ensureVisible(finder);
   await tester.pumpAndSettle();
