@@ -701,3 +701,20 @@ unbekannte Zuordnungen zu erraten.
 Der Flutter-Dialog zur expliziten Schildreaktion nutzt auf kleinen Android-Displays einen durchgehend scrollbaren Dialog mit kompakterem Außenabstand und vollbreiten Klass-/Zauberplatz-Auswahlen. Neue Widgettests decken 320/360 dp mit 200 % Schrift, simulierte Tastatur, Abbruch, fehlende Komponentenbestätigung und fehlenden vorbereiteten Schildzauber ab. Umsetzung: [PR #450](https://github.com/ManuEtt/Dnd/pull/450), Branch `feat/chat-c/hero-shield-dialog-large-text-ime-20261031`. **Die neue Flutter-Widget-/Android-CI ist noch nicht bestätigt**; Geräte- und TalkBack-Abnahme steht aus. Keine Regel-, Speicher-, Schema-, Versions- oder API-Änderung.
 
 **Integrationsstatus Chat D (02.11.2026):** Erfolgreiche Einzel-PR-CIs auf finalen Quellheads: [#472](https://github.com/ManuEtt/Dnd/actions/runs/41393551106), [#467](https://github.com/ManuEtt/Dnd/actions/runs/41323611885), [#453](https://github.com/ManuEtt/Dnd/actions/runs/41244807154), [#461](https://github.com/ManuEtt/Dnd/actions/runs/41282290565) und [#450](https://github.com/ManuEtt/Dnd/actions/runs/41244483591). Neue kombinierte Integrations-CI ist noch auszuwerten; historische „CI ausstehend“-Texte sind keine aktuellen Messergebnisse.
+
+
+---
+
+## Chat B – gespeicherte Ortsdaten bei Wiederaufnahme (02.11.2026)
+
+[Draft-PR #505](https://github.com/ManuEtt/Dnd/pull/505) ergänzt den eigenständigen,
+nur lesenden `ConfirmedPlaceResumeSelector` in
+`app/lib/story/confirmed_place_resume_selection.dart`. Er liefert bis zu vier
+gespeicherte Orte mit eindeutiger ID, entschärfter und begrenzter Anzeige sowie
+Revisions-, Sitzungs- und Vollquellstandprüfung. Der Text sagt ausdrücklich
+**nicht**, dass der Held diese Orte besucht oder entdeckt hat. Sechs neue
+Flutter-Tests prüfen Mehrdeutigkeit, Unicode, ungültige Grenzen, veraltete
+Datensätze, Legacy-JSON und SQLite-Neustart. Keine Änderung an Regeln,
+Spielständen, Schema, `story_api.dart` (offener PR #459) oder App-Version.
+Lokale Flutter-/Android-Prüfungen stehen mangels SDK aus; vollständige CI
+auf finalem PR-HEAD und Geräteabnahme sind separat nachzuweisen.
