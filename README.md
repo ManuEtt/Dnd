@@ -270,3 +270,21 @@ Commit ist verpflichtend. Historische Aussagen „CI ausstehend“ in älteren
 Einzel-Notizen gelten nur für deren damaligen Bearbeitungsstand.
 Keine automatische Main-Integration, kein Altbranch-Löschen und
 keine SQLite-/JSON-/Spielstandschema-Migration.
+
+---
+
+### 02.11.2026 – Chat D: Unix-Dateitypen im Gradle-Wrapper-JAR prüfen
+
+Die Upload-/Projektprüfung `scripts/verify_project.py` weist beim
+Gradle-Wrapper-JAR nun zusätzlich Unix-ZIP-Mitglieder zurück, die als
+Gerätedatei, Pipe oder Socket markiert sind, oder deren Dateityp dem
+Pfad widerspricht (Verzeichnis ohne abschließenden Schrägstrich bzw.
+reguläre Datei mit abschließendem Schrägstrich). Die Prüfung erfolgt
+**vor ZIP-CRC und Lesezugriff**. Vier Regressionstests in
+`scripts/tests/test_verify_project.py` prüfen abgewiesene Spezialtypen,
+eine als Verzeichnis getarnte `GradleWrapperMain.class`, einen
+als Verzeichnis benannten regulären Eintrag sowie weiterhin zulässige
+Unix-Datei-/Verzeichniseinträge. Die vorhandene JAR-Binärdatei bleibt
+unverändert; keine SQLite-/JSON-/Spielstandmigration.
+Branch `fix/chat-d/wrapper-jar-member-types-20261102`. Die CI-Abnahme ist auf dem finalen PR-HEAD
+separat zu verifizieren; kein automatischer Merge.
