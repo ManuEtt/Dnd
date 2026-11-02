@@ -218,7 +218,11 @@ void main() {
     await tester.pumpAndSettle();
     await tester.enterText(targetCount, '3');
     await tester.pumpAndSettle();
-    expect(tester.widget<TextField>(targetCount).controller?.text, '3');
+    final editable = find.descendant(
+      of: targetCount,
+      matching: find.byType(EditableText),
+    );
+    expect(tester.widget<EditableText>(editable).controller.text, '3');
     await _tap(tester, find.text('Abbrechen'));
     expect(results, [null]);
     expect(hero.toJson(), snapshot);
