@@ -463,3 +463,17 @@ ARM64-Debug und zwölf native App-Tests ebenfalls bestanden. Dieser nachfolgende
 Dokumentationsabschluss korrigiert nur die Importbasis und erfasst die Abnahme;
 Laufzeit-/Testdateien sind unverändert. Die finale CI gilt für den aktuellen
 PR-Kopf und wird mit tatsächlicher Lauf-ID/Artefakten im PR geführt.
+
+---
+
+## 02.11.2026 – 0-TP-Guard für Aufstehen/Kriechen (PR #487)
+
+- **Ausgangs-Main-SHA:** `885580202caeafc9787538b6dc1c833b3190a529`. **Eigener Branch:** `fix/chat-a/zero-hp-prone-movement-20261102`. **Pull Request:** https://github.com/ManuEtt/Dnd/pull/487 (Draft bis CI-/Integrationsabnahme).
+- **Regellücke:** Ein importierter Legacy-Held mit `hitPoints == 0`, aber ohne `bewusstlos`, bestand bisher die alleinige Konditionsprüfung von `ConditionRules.canMove`. Aufstehen und Kriechen konnten deshalb Bewegungsbudget/Revisions-Event verbrauchen. Regelquelle: Wizards of the Coast LLC, *SRD 5.2.1*, **Damage and Healing → Falling Unconscious**, S. 17, CC BY 4.0, https://www.dndbeyond.com/srd.
+- **Implementiert:** positive bestätigte TP, nicht toter Held als Vorbedingung in `app/lib/domain/crawling_movement_rules.dart` und `app/lib/domain/prone_movement_rules.dart`.
+- **Tests ergänzt:** `app/test/prone_crawling_rules_test.dart` und `app/test/prone_standing_rules_test.dart`: je eine reproduzierbare 0-TP-Ablehnung aus Legacy-JSON ohne Unconscious, ohne Änderung des ursprünglichen Snapshots; je ein positiver Heilungs-/Bewegungsfall. Vorhandene Controller-/SQLite-Revision-, Rollback- und Neustarttests bleiben unverändert.
+- **GETESTET:** Repo-/PR-Konfliktprüfung (27 offene PRs; keine der vier Fachdateien belegt), amtliche SRD-Quelle. Die Quelländerungen und Testdateien wurden auf dem eigenen Branch veröffentlicht. **Flutter-Tests sind noch nicht als bestanden belegt.**
+- **NICHT GETESTET:** lokaler Flutter-/Dart-Formatter, Analyzer, Fullsuite, Android-APK, Python und Backend wegen fehlenden SDKs/Netz-Zugriffs. CI-Abnahme auf dem letzten Commit muss separat erfolgen.
+- **BLOCKIERT:** kein lokales Flutter-SDK. **Keine Migration:** äußeres JSON, SQLite-Schema, bestehende Spielstände und Ereignisse bleiben unverändert; keine eigenmächtige rückwirkende Zustandskorrektur.
+- **NÄCHSTER SCHRITT:** Für PR #487 finale Android-CI einschließlich aller Flutter-Regressionen prüfen und Format-/Analyze-/Testfehler im selben Branch beheben; anschließend Integration durch Chat D koordinieren. Keine vollständige SRD-Implementierung beansprucht.
+
