@@ -290,12 +290,15 @@ void main() {
         original.toJson(),
       );
       expect(await repository.getCampaign('oversized-unicode'), isNull);
-      expect(await repository.reconstructCampaign('oversized-unicode'), isNull);
+      expect(
+        await repository.reconstructCampaign('oversized-unicode'),
+        isNull,
+      );
       expect(await repository.loadCampaigns(), hasLength(1));
     },
   );
 
-  test('valid Unicode JSON remains importable within the byte limit', () async {
+  test('valid Unicode JSON import remains compatible', () async {
     final original = fixture(id: 'unicode-under-limit').copyWith(
       scene: 'Grüße aus Ätheria – 🐉',
     );
