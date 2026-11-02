@@ -474,3 +474,20 @@ Ein neuer Flutter-Regressionstest schützt vor einer Story-Provider-Antwort, die
   Main/PRs vor Review/Merge.
 - **Nächster Schritt:** eigenen PR anlegen, CI auf finalem Commit prüfen,
   bei Fehlern auf eigenem Branch korrigieren; keinen fremden Branch löschen.
+
+## 02.11.2026 – Chat C: manueller Zusatzkreaturen-Angriff bei großer Schrift/IME (PR #492)
+
+- **Ausgangs-main:** `c33448780dfe8b453f7f1db9d28c1396822901a7`.
+- **Branch:** `feat/chat-c/manual-extra-attack-ime-20261102`; **PR:** [#492](https://github.com/ManuEtt/Dnd/pull/492) (Draft).
+- **Code-/Test-HEAD vor Dokumentation:** `88dfb25b21065f51baad4031a7340d919696126c`; finalen HEAD dem PR entnehmen.
+- **Ausgangsproblem:** Im umfangreichen Dialog für einen ausdrücklich bestätigten Zusatzkreaturen-Angriff erschwerten der innere Scrollbereich, lange Checkboxtexte und nicht expandierte Dropdowns die Bedienung auf 320/360 dp bei 200 % Schrift mit 220 dp IME.
+- **Implementiert:** `AlertDialog(scrollable: true)` und kompakte Insets statt innerem `SingleChildScrollView`; kompakte visuelle Checkboxbeschriftungen ab 180 % mit vollständigem `Text.semanticsLabel`; drei expandierte Dropdowns, ellipsierte lange Kreaturennamen, lebende Fehler-Semantik. Keine Regel-/Controller-/Persistenzänderung.
+- **Geänderte Fachdateien:** `app/lib/ui/manual_extra_creature_attack_dialog.dart`, neue `app/test/manual_extra_creature_attack_ime_test.dart`. Daneben additive README-/Checkpoint-Nachträge auf eigenem Branch.
+- **Neue Regressionen:** Abbruch auf 320/360 dp mit 200 %/IME ohne Mutation, unvollständige Angriffsbestätigung ohne Mutation und positiver bestätigter Angriffs-DTO-Weg mit sieben Pflichtbestätigungen. Bestehende `manual_extra_creature_attack_dialog_test.dart` bleibt unverändert.
+- **GETESTET:** Live-GitHub-main, 29 vor Start offene PRs inklusive geänderter Fachdateien und Quell-/Testfixtures geprüft; Branch/Commits und Draft-PR erstellt. Keine erfolgreichen ausführbaren Flutter-Tests behauptet.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse/Tests, Debug-APK, native Android-Tests, Python-/Backend-Gates auf finalem PR-HEAD, reales Android/TalkBack/IME und Altgeräteupgrade bis CI-/Geräteabnahme.
+- **BLOCKIERT:** Lokales Flutter/Dart-SDK nicht vorhanden; CI auf finalem Commit nach Dokumentation neu bewerten. README-/zentrale Checkpoint-Integration wegen paralleler PRs durch Chat D.
+- **Spielstandkompatibilität:** Keine Migration; unveränderte Domainregeln, JSON-/SQLite-Schemata, Ereignisse und App-Version.
+- **Nächster unabhängiger Schritt:** `app/lib/ui/srd_class_level_up_dialog.dart` separat auf 320 dp/200 % und schmale Auswahlfelder prüfen; nur bei nachweisbarer UI-Regression testen und korrigieren, nicht parallel zu künftig kollidierenden PRs.
+
+---
