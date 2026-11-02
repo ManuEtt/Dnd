@@ -1,3 +1,15 @@
+## 02.11.2026 – Chat C: manuelle Kampf-Zugfolge bei 200 % Text und IME (PR #483)
+
+- **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529`; **Branch:** `feat/chat-c/manual-turn-queue-ime-20261102`; [PR #483](https://github.com/ManuEtt/Dnd/pull/483), bis zur erfolgreichen vollständigen CI Draft.
+- **Problem:** Titel und Inhalt des Kampf-Zugfolge-Dialogs waren in zwei Scroll-/Layoutbereiche getrennt, sodass bei 320/360 dp, 200 % Text und 220 dp simuliertem Android-IME die Erreichbarkeit der Reihenfolge, Pfeile, Checkboxen, Fehler und Aktionen nicht nachgewiesen war. Gleichstands-Pfeile hatten nicht akteursspezifische Beschriftungen.
+- **IMPLEMENTIERT:** `app/lib/ui/manual_turn_queue_dialog.dart`: `AlertDialog(scrollable: true)` mit kompakten Insets; verschachtelter vertikaler `SingleChildScrollView` entfällt. Bestätigungsfehler über `Semantics(liveRegion:true)` und `queue-validation-error`. Pfeile besitzen eindeutige Tooltips mit Akteursnamen.
+- **FÜNF NEUE TESTS:** `app/test/manual_turn_queue_ime_test.dart`: negative Bestätigung/neutraler Abbruch bei 320 und 360 dp; positiver explizit bestätigter Gleichstand und Basis-Initiative bei 320 dp; bestehender, aktueller Marker liefert nur `ManualTurnQueueChoice.advance` bei 360 dp; fehlende Kreaturen-Initiative sperrt Bestätigung bei 320 dp. Immer 200 % Text und 220 dp Fake-IME, Scrollbarkeit und Kampagnen-Snapshot-Unveränderlichkeit.
+- **GETESTET:** Masterprompt, alle verbindlichen Projektdokumente, Main-HEAD, sämtliche 25 offenen PRs und deren Dateipfade sowie vorhandener `manual_turn_queue_dialog_test.dart` und Domain-Status geprüft. Kein Konflikt im UI-/Testpfad. Formatierungsdiagnose mit Dart 3.9.2/Flutter 3.35.7 auf GitHub Actions durchgeführt und Diff übernommen; temporärer Workflow entfernt.
+- **CI-AUSSTEHEND:** Standard-CI auf finalem #483-HEAD mit Struktur/Python/Backend, Dart-Format und Analyse, gezielten/allen Fluttertests, native Android-Tests, Debug-/ABI-Alpha-APKs und Artefakten; keine fremde/ältere CI als Nachweis für dieses Paket ausgeben.
+- **NICHT GETESTET:** echtes Android-Gerät, TalkBack, Hardwaretastatur, Upgrade, produktive Signierung.
+- **MIGRATION:** keine. Keine Regeln, persistierten Kampfzüge, Slotbuchungen, JSON-/SQLite-, Backend-/Versionsänderungen. Nur UI, Widgettests und additive Dokumentation.
+- **NÄCHSTER SCHRITT:** Finale #483-CI prüfen, bei Fehlern korrigieren und vollständige CI auf finalem SHA erneut ausführen; erst bei Grün Ready for review, Integration durch Chat D ohne automatischen Merge.
+
 ## 31.10.2026 – Chat C: Offene Schildreaktion in der Chronik (Draft-PR #447)
 
 - **Ausgangs-Main:** `47ab002872b7d46daeae03bb558258cf2ea73e4a`.
