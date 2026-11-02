@@ -5,6 +5,31 @@ regelgeprüfte Aktionen und ein optionaler Fastify-/TypeScript-Erzähler.
 
 ## Aktueller Stand und autonome Fortsetzung
 
+## 02.11.2026 – Chat A: initiale manuelle Rettungswürfe, Arbeitsbeginn
+
+Basis-Main `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`, eigener Branch `fix/chat-a/manual-save-class-preflight-20261102`.
+25 offene PRs mit Dateilisten/aktuellen Checks geprüft; kein anderer PR
+belegt `game_engine.dart` oder das neue manuelle Rettungswurfmodul.
+#468 und #473 bleiben eigenständig; ihre vorhandenen Vorprüfungen werden
+nicht überschrieben. Gemeinsame Modelle/Controller/SQLite bleiben unverändert.
+
+**Ist-Stand:** Noch keine neue Regeländerung in diesem frühen Checkpoint.
+Geplantes begrenztes Paket: vor einem tatsächlichen ersten manuellen W20
+bekannte SRD-Klassen, konsistente Stufen und eindeutige Übungen verlangen;
+automatische Fehlschläge ohne Klassenbonus/W20 und lesende Vorschauen erhalten.
+Spielablauf, deutsche Ablehnung, Speicherung und Regressionen mitprüfen.
+Parallelagenten wurden durch eine tatsächliche Kontingentgrenze unterbrochen;
+Root sichert zuerst diesen Ausgangsstand. Keine erfolgreiche neue CI/APK
+behauptet. Voriger vollständig geprüfter Regelstand: PR #473, Head77c172b3,
+CI41395941527 erfolgreich; das ist kein neuer Testnachweis dieses Branches.
+
+**Nächster Schritt:** Enges Domainmodul plus minimaler validierter Engineaufruf;
+deterministische positive/negative Tests und reale SQLite-/UI-Abläufe.
+Keine Datenmigration, SQLite3/JSON1 erhalten. Frühere Einträge folgen historisch.
+
+---
+
+
 **Alpha 0.8.49+99 – Gesamtintegration vom 30./31.10.2026, Issue #425.**
 [PR #440](https://github.com/ManuEtt/Dnd/pull/440) ist regulär in Main
 `72ba9d2e06e7121f955832b4ad22223f64f7c343` integriert.
