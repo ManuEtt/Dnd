@@ -403,3 +403,37 @@ Ein neuer Flutter-Regressionstest schützt vor einer Story-Provider-Antwort, die
 - **Nächster Schritt:** Final-HEAD-CI auf beiden Quell-PRs und der
   Integration kontrollieren, bei Fehlern gesondert korrigieren.
   Keine automatische Main-Integration und kein Branchlöschen.
+
+---
+
+## 02.11.2026 – Chat D: Gradle-JAR-Namenskollisionen vor Dekomprimierung abweisen
+
+- **Basis-main:** `885580202caeafc9787538b6dc1c833b3190a529`, zuvor
+  geprüfte Integration #480 von #475 und #476.
+- **Main-CI:** #41401319969 beim Beginn dieses Pakets noch in Arbeit;
+  nicht als grün ausgeben, solange `completed/success` fehlt.
+- **Branch:** `fix/chat-d/wrapper-jar-unicode-collisions-20261102`.
+- **Code-Commit:** `4b3a75daf3c6f2191f9776e98ffdbc2a880b0280`.
+- **Test-Commit:** `e86ce230f57d42ffa4c857dfb9842a5a5a5004b7`.
+- **IMPLEMENTIERT:** `verify_project.py` führt für jeden Wrapper-JAR-Eintrag
+  komponentenweise ein NFC-/Casefold-Register mit allen übergeordneten
+  Verzeichnispräfixen. Abweichende Schreibweisen mit gleichem
+  kanonischen Ziel sind unzulässig, vor CRC-Test/Startklassenlesung.
+- **REGRESSIONEN:** Fünf neue `test_verify_project.py`-Tests:
+  ASCII- und `ß`-Casefold, NFC-Dateien,
+  implizite Casefold-/NFC-Verzeichnisse sowie gültige Unicode-Pfade.
+  Alle Negativfälle sperren CRC mit einem Mock.
+- **GETESTET:** beide Quell-PRs #475/#476 und ihre Kombination #480 waren
+  vollständig CI-grün auf den exakt geprüften Heads.
+  Die neue Implementierung hat vor dem finalen Branch-CI noch keinen
+  nachgewiesenen Python-/Flutter-/Android-Vollpass.
+- **NICHT GETESTET:** abschließende CI auf finalem Branch-HEAD,
+  echte Android-/SAF-/TalkBack-Geräteabnahme.
+- **Parallelität:** 22 offene Fach-PRs A/B/C bei Paketbeginn geprüft;
+  keiner bearbeitete die zwei technischen Python-Zieldateien.
+  README/CODEX bleiben gemeinsame Dokumentations-Hotspots.
+- **Migration:** keine SQLite-, JSON-, Spielstands-, Appversions- oder
+  Berechtigungsänderung; das JAR selbst bleibt unverändert.
+- **BLOCKIERT:** erfolgreiche volle CI, erneuter Main-/PR-Abgleich.
+- **Nächster Schritt:** finalen CI-HEAD vollständig prüfen, Fehler
+  auf demselben Branch korrigieren und keinen ungeprüften Merge durchführen.
