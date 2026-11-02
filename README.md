@@ -270,3 +270,7 @@ Commit ist verpflichtend. Historische Aussagen „CI ausstehend“ in älteren
 Einzel-Notizen gelten nur für deren damaligen Bearbeitungsstand.
 Keine automatische Main-Integration, kein Altbranch-Löschen und
 keine SQLite-/JSON-/Spielstandschema-Migration.
+
+### Chat C: Materialinventar-Dialog bei 200 % Text und Android-Tastatur (02.11.2026)
+
+[PR #474](https://github.com/ManuEtt/Dnd/pull/474) verbessert den Materialinventar-Dialog bei 320/360 dp, 200 % Text und 220 dp geöffneter Tastatur: gemeinsamer vertikaler Dialog-Scrollbereich, kompakte Insets, Screenreader-Live-Regionen für Rezept-/Validierungsfehler. Fünf neue Widgettests prüfen fehlendes Rezept, ungültige Materialbestätigung, bestätigte read-only Inventarstapel und die Astral-Projection-Zieleingabe. **CI auf dem finalen PR-HEAD noch ausstehend.** Keine SRD-/Inventar-/Spielstands-/Versions- oder Datenformatänderung.
