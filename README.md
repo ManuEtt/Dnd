@@ -270,3 +270,24 @@ Commit ist verpflichtend. Historische Aussagen „CI ausstehend“ in älteren
 Einzel-Notizen gelten nur für deren damaligen Bearbeitungsstand.
 Keine automatische Main-Integration, kein Altbranch-Löschen und
 keine SQLite-/JSON-/Spielstandschema-Migration.
+
+---
+
+### Chat D – kollidierende APK-ZIP-Dateinamen abweisen (02.11.2026)
+
+Der ARM64-Alpha-Release-Prüfer `scripts/prepare_alpha_release.py`
+lehnt jetzt neben exakt doppelten ZIP-Einträgen auch gleichwertige
+ZIP-Pfade nach Unicode-NFC-Normalisierung und `casefold()` ab,
+einschließlich unterschiedlich geschriebener impliziter
+Verzeichnispfade. Die Ressourcennamen werden nicht umbenannt;
+Kollisionen werden vor dem ZIP-CRC-Test erkannt und eine bereits
+publizierte Alpha bleibt unangetastet. Fünf neue Regressionstests
+in `scripts/tests/test_prepare_alpha_release.py` prüfen
+ASCII-Groß-/Kleinschreibung, Unicode-NFC, implizite Verzeichnisse,
+gültige internationale Namen und Release-Bestandsschutz.
+Der Quellcode liegt auf
+`fix/chat-d/apk-unicode-path-collisions-20261102`.
+Vollständige kombinierte GitHub-CI auf dem finalen PR-HEAD
+ist vor einer Review- oder Merge-Freigabe erforderlich.
+Keine Änderung an SQLite, JSON, Spielständen, Android-App-Code,
+App-Version oder Berechtigungen.
