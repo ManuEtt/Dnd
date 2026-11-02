@@ -1,3 +1,7 @@
+## 02.11.2026 – Chat C: manuelle Kampf-Zugfolge bei IME/200 % Schrift (PR #483)
+
+[PR #483](https://github.com/ManuEtt/Dnd/pull/483) auf `feat/chat-c/manual-turn-queue-ime-20261102` basiert auf Main `885580202caeafc9787538b6dc1c833b3190a529`. `ManualTurnQueueDialog` verwendet `AlertDialog(scrollable:true)` mit kompakten Insets, eindeutige akteursspezifische Pfeil-Tooltips und `Semantics(liveRegion:true)` für Validierungsfehler. Fünf neue Widgettests bei 320/360 dp, 200 % Schrift und 220 dp Fake-IME prüfen negatives Bestätigen/Abbrechen, positive explizite Initiative/Gleichstandsbestätigung, nur unverbindliches Vorrücken eines gespeicherten Markers und deaktivierte Aktion bei fehlender Kreaturen-Initiative. Kampagnendaten müssen unverändert bleiben. **Finale CI noch ausstehend, Draft bis Grün.** Keine Domain-/JSON-/SQLite-/Versionsänderung, keine Migration, echtes Gerät/TalkBack/Release-Signatur offen.
+
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
