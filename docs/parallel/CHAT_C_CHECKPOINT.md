@@ -1,3 +1,16 @@
+## 02.11.2026 – Chat C: Flächenzauber-Kreaturen-Registrierung mit IME (PR #469)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`; eigener Branch `feat/chat-c/area-creature-ime-20261102`; [PR #469](https://github.com/ManuEtt/Dnd/pull/469) (Draft bis zur finalen CI).
+- **Vorheriges Paket:** [PR #465](https://github.com/ManuEtt/Dnd/pull/465) ist nach vollständig grüner CI auf unverändertem Kopf `3cd78d0881e3b0093eefb96342f7fb9b165292db` [#41323668152](https://github.com/ManuEtt/Dnd/actions/runs/41323668152) und [#41323664201](https://github.com/ManuEtt/Dnd/actions/runs/41323664201) jetzt **Ready for review, ungemergt**.
+- **Problem:** Im Kreaturen-Dialog war der Titel nicht gemeinsam mit dem Form-Inhalt scrollbar; bei sehr großer Schrift und eingeblendeter Android-Tastatur fehlten gezielte Interaktionstests für vier Textfelder, Checkbox, Bestätigung/Abbruch.
+- **IMPLEMENTIERT:** `app/lib/ui/area_creature_registration_dialog.dart` verwendet `AlertDialog(scrollable: true)` mit kompaktem Insets; der separate vertikale `SingleChildScrollView` entfällt. Fehlermeldungen sind per `Semantics(liveRegion: true)` angekündigt und besitzen `area-creature-error` als Test-Key. Keine Änderung am vorhandenen Domain-Validator `TrackedAreaCreature.fromJson` oder an der bestätigten Registrierungslogik.
+- **VIER TESTS:** `app/test/area_creature_dialog_ime_test.dart`: bei 320/360 dp, 200 % Text, 220 dp Fake-IME bleibt Dialog scrollbar; fehlende Profildaten erzeugen einen Fehler, Abbrechen gibt null; bei 320 dp können vollständige Eingaben erst nach Häkchen übernommen werden; bei 360 dp bleiben 0 TP unzulässig, Nachkorrektur auf 4/7 TP ergibt die richtige Rückgabe.
+- **GETESTET:** Masterprompt, Pflichtdokumente, aktuelle Main-/PR-Status und bestehenden Kreaturen-Widgettest sowie Domain-Validator geprüft; Code und Tests sind auf eigenem Branch und Draft-PR gespeichert. Ergebnisse aus #465 dürfen **nicht** als #469-CI ausgegeben werden.
+- **NICHT GETESTET:** Neue Tests und vollständige Flutter-/Android-/Backend-/Python-CI auf finalem #469-HEAD bis zum Abschluss des GitHub-Actions-Runs; echtes Gerät mit Hardwaretastatur, TalkBack und Upgrade; produktive Signierung.
+- **MIGRATION:** keine (keine Schema-/JSON-/Persistenz-/Versions-/Domainänderung).
+- **BLOCKIERT:** Bis zur vollständigen grünen GitHub-CI im Draft belassen; nicht automatisch nach Main mergen. Dokumentationskonflikte mit parallelen PRs additiv von Chat D konsolidieren.
+- **NÄCHSTES PAKET:** Nach Review/Integration der unabhängigen UI-Dialog-PRs Fokusreihenfolge/Screenreader-Interaktion und responsive Materialinventar-Auswahl prüfen, ohne laufende Fremdmodule zu ändern.
+
 ## 30.10.2026 – Chat C: Ausrüstungsdialog bei 200 % Schrift und IME
 
 ## UI-Teilintegration des Gesamtmigrationslaufs – 30.10.2026
