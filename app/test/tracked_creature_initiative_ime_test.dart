@@ -88,7 +88,10 @@ Future<void> _selectCreatureAndController(WidgetTester tester) async {
   await _tapVisible(tester, find.byKey(const ValueKey('initiative-target')));
   await tester.tap(find.text('Goblin').last);
   await tester.pumpAndSettle();
-  await _tapVisible(tester, find.byKey(const ValueKey('initiative-controller')));
+  await _tapVisible(
+    tester,
+    find.byKey(const ValueKey('initiative-controller')),
+  );
   await tester.tap(find.text('Spielleitung (Monster/NSC)').last);
   await tester.pumpAndSettle();
 }
@@ -102,7 +105,9 @@ void main() {
         final campaign = _campaign();
         final before = campaign.toJson();
         await _open(tester, campaign, result.add, width: width);
-        await tester.ensureVisible(find.byKey(const ValueKey('initiative-total')));
+        await tester.ensureVisible(
+          find.byKey(const ValueKey('initiative-total')),
+        );
         expect(
           find.byKey(const ValueKey('initiative-total')).hitTestable(),
           findsOneWidget,
