@@ -303,3 +303,33 @@ Ein neuer Flutter-Regressionstest schützt vor einer Story-Provider-Antwort, die
 - **Nächster konkreter Schritt:** vollständige GitHub-CI des neuen
   Integrations-HEAD abschließen, Konflikte nochmals prüfen; kein
   ungeprüfter Merge und keine ungeprüfte Altbranch-Bereinigung.
+
+---
+
+## 02.11.2026 – Chat D: APK-ZIP-Pfadkollisionen vermeiden
+
+- **Ausgangs-main:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`.
+- **Bestätigte Main-CI:** #41395163971 und #41396647217,
+  beide `completed/success` auf obigem SHA.
+- **Branch:** `fix/chat-d/apk-unicode-path-collisions-20261102`.
+- **Code-Commit:** `dc2055bfb4cad572b822672dd4f6dadd6bc3b3b3`.
+- **Test-Commit:** `9de29379de5114cf6c1519e41123d60001853ab8`.
+- **IMPLEMENTIERT:** APK-ZIP-Metadaten verweigern
+  kollidierende Pfade bei Casefold und kanonischer NFC-Unicode-Normalisierung
+  einschließlich indirekt betroffener Unterverzeichnisse,
+  vor CRC/Entpacken und Release-Veröffentlichung.
+- **Tests:** fünf neue Python-Regressionen für Casefold/NFC/
+  Verzeichniskollisionen, zulässige internationale Namen und
+  Bestandsschutz vorheriger Release-Artefakte.
+- **GETESTET:** erfolgreiche Baseline-Main-CI auf Ausgangs-Commit.
+  Neue PR-Python-/Flutter-/Android-Gesamt-CI noch offen.
+- **NICHT GETESTET:** finale CI auf diesem Branch sowie reale Android-Geräteabnahme.
+- **Parallelität:** alle bei Arbeitsbeginn 19 offenen PRs auf die
+  beiden Python-Zieldateien geprüft; keine technische Überschneidung.
+  README und CODEX_CHECKPOINT bleiben gemeinsame Dokumentations-Hotspots.
+- **Migration:** keine (SQLite, JSON, Save-Schema, Version,
+  Berechtigungen, Story- oder Regelwerk unverändert).
+- **BLOCKIERT:** Abschluss der CI auf finalem Branch-HEAD.
+- **Nächster Schritt:** eigenen vollständigen GitHub-Actions-Lauf
+  abnehmen; bei Fehlern den eigenen PR korrigieren und ohne
+  erfolgreiche Gesamtabnahme nicht mergen.
