@@ -1,5 +1,20 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat B – strukturierte NPC-Identitätsübertragung (02.11.2026)
+
+[Draft-PR #470](https://github.com/ManuEtt/Dnd/pull/470) schließt eine
+separate Zero-Width-Lücke in `NpcIdentityStoryPayload`. Visuell gleiche
+NPC-Namen mit U+200B/U+200C/U+200D/U+2060/U+FEFF gelten bei freien
+Spielereingaben als mehrdeutig; eine NPC-ID wird dann **nicht geraten**.
+Strukturierte NPC-Namen, Beziehungen und bestätigte Notizen mit solchen
+unsichtbaren Steuerzeichen gelangen nicht in den geplanten Identity-Wire.
+Eine explizit gewählte, sichere NPC-ID mit bestätigtem Kontext bleibt zulässig.
+Sechs Testgruppen einschließlich älterem JSON, Revisionskontrolle und echtem
+SQLite-Neustart ergänzen den Code. Keine neue API-Anbindung, keine Migration
+(SQLite 3/äußeres JSON 1) oder Änderung an Regelzuständen. Finale CI
+auf dem Dokumentationsstand ist bei Erstellung noch offen.
+
+
 Deutschsprachige Fantasy-Solo-App für Android: Flutter/Dart, lokale SQLite-Spielstände,
 regelgeprüfte Aktionen und ein optionaler Fastify-/TypeScript-Erzähler.
 
