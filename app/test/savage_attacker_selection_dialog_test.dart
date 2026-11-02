@@ -303,7 +303,10 @@ void main() {
         state: campaign,
         resultSink: chosen,
       );
-      expect(tester.widget<AlertDialog>(find.byType(AlertDialog)).scrollable, isTrue);
+      expect(
+        tester.widget<AlertDialog>(find.byType(AlertDialog)).scrollable,
+        isTrue,
+      );
       final first = find.byKey(const ValueKey('savage-attacker-original'));
       final second = find.byKey(const ValueKey('savage-attacker-alternative'));
       expect(
@@ -316,14 +319,32 @@ void main() {
       final secondSemantics = find.byKey(
         const ValueKey('savage-attacker-alternative-semantics'),
       );
-      expect(tester.widget<Semantics>(firstSemantics).properties.selected, isFalse);
-      expect(tester.widget<Semantics>(secondSemantics).properties.selected, isFalse);
+      expect(
+        tester.widget<Semantics>(firstSemantics).properties.selected,
+        isFalse,
+      );
+      expect(
+        tester.widget<Semantics>(secondSemantics).properties.selected,
+        isFalse,
+      );
       await tapVisible(tester, first);
-      expect(tester.widget<Semantics>(firstSemantics).properties.selected, isTrue);
-      expect(tester.widget<Semantics>(secondSemantics).properties.selected, isFalse);
+      expect(
+        tester.widget<Semantics>(firstSemantics).properties.selected,
+        isTrue,
+      );
+      expect(
+        tester.widget<Semantics>(secondSemantics).properties.selected,
+        isFalse,
+      );
       await tapVisible(tester, second);
-      expect(tester.widget<Semantics>(firstSemantics).properties.selected, isFalse);
-      expect(tester.widget<Semantics>(secondSemantics).properties.selected, isTrue);
+      expect(
+        tester.widget<Semantics>(firstSemantics).properties.selected,
+        isFalse,
+      );
+      expect(
+        tester.widget<Semantics>(secondSemantics).properties.selected,
+        isTrue,
+      );
       await tapVisible(
         tester,
         find.byKey(const ValueKey('savage-attacker-cancel')),
@@ -372,7 +393,10 @@ void main() {
     final campaign = combat(spent: true);
     final snapshot = campaign.toJson();
     await showImeChoice(tester, width: 320, state: campaign);
-    expect(find.byKey(const ValueKey('savage-attacker-invalid')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('savage-attacker-invalid')),
+      findsOneWidget,
+    );
     expect(
       tester
           .widget<FantasyTextButton>(
@@ -387,6 +411,4 @@ void main() {
     );
     expect(campaign.toJson(), snapshot);
     expect(tester.takeException(), isNull);
-  });
-
-}
+  });}
