@@ -223,8 +223,8 @@ class _SendingAttemptDialogState extends State<SendingAttemptDialog> {
                 ),
               ],
               onChanged: (value) => _change(
-                () => _knowledge =
-                    value ?? SendingRecipientKnowledge.unverified,
+                () =>
+                    _knowledge = value ?? SendingRecipientKnowledge.unverified,
               ),
             ),
             CheckboxListTile(
