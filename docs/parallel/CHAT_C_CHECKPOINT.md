@@ -1,6 +1,6 @@
 ## 02.11.2026 – Chat C: Mönch/Sanfter Fall bei Großschrift und IME
 
-- **Basis-main:** `516bc14e06cb02e7035a6adfb8e2d21e54253184`; **Branch:** `feat/chat-c/slow-fall-ime-consent-20261102`; **PR:** noch anzulegen.
+- **Basis-main:** `516bc14e06cb02e7035a6adfb8e2d21e54253184`; **Branch:** `feat/chat-c/slow-fall-ime-consent-20261102`; **PR:** [#509](https://github.com/ManuEtt/Dnd/pull/509) (Draft).
 - **Problem:** `MonkSlowFallDialog` besaß nur einen eigenen `SingleChildScrollView` statt eines vollständigen scrollbar-Dialogs. Bei 200 % Schrift, schmalem Android-Bildschirm und virtueller Tastatur fehlten Akzeptanztests. Außerdem blieben zwei bereits erteilte Bestätigungen nach Bearbeitung des Sturzschadens gültig.
 - **IMPLEMENTIERT:** `AlertDialog(scrollable: true)`, schmale Insets und feste maximale Inhaltsbreite. Nach jeder Änderung des Schadenswerts werden Sturz- und Verteidigungsbestätigung widerrufen; erneutes explizites Ankreuzen für die neue Zahl erforderlich. Abbruch bekommt stabilen Widget-Key. Keine Auswertung oder Reaktionsbuchung im Dialog.
 - **Technische Dateien:** `app/lib/ui/monk_slow_fall_dialog.dart`, `app/test/monk_slow_fall_dialog_test.dart`.
