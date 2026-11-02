@@ -197,6 +197,128 @@ class VerifyProjectTests(unittest.TestCase):
                     'Gradle-Wrapper-JAR' in msg for msg in verify_project(self.root)
                 ))
 
+    def test_wrapper_rejects_file_used_as_implicit_directory_before_crc(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        for reversed_order in (False, True):
+            with self.subTest(reversed_order=reversed_order):
+                members = [('META-INF', b'file'),
+                           ('META-INF/service.txt', b'child')]
+                if reversed_order:
+                    members.reverse()
+                with zipfile.ZipFile(jar, 'w') as archive:
+                    archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+                    for name, content in members:
+                        archive.writestr(name, content)
+                with mock.patch.object(
+                    zipfile.ZipFile, 'testzip',
+                    side_effect=AssertionError('CRC reached before path type guard'),
+                ):
+                    self.assertTrue(any(
+                        'Gradle-Wrapper-JAR' in error
+                        for error in verify_project(self.root)
+                    ))
+
+    def test_wrapper_rejects_file_and_explicit_directory_collision(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        for reversed_order in (False, True):
+            with self.subTest(reversed_order=reversed_order):
+                members = [('META-INF', b'file'), ('META-INF/', b'')]
+                if reversed_order:
+                    members.reverse()
+                with zipfile.ZipFile(jar, 'w') as archive:
+                    archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+                    for name, content in members:
+                        archive.writestr(name, content)
+                with mock.patch.object(
+                    zipfile.ZipFile, 'testzip',
+                    side_effect=AssertionError('CRC reached before collision guard'),
+                ):
+                    self.assertTrue(any(
+                        'Gradle-Wrapper-JAR' in error
+                        for error in verify_project(self.root)
+                    ))
+
+    def test_wrapper_allows_explicit_directories_and_descendants(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr('META-INF/', b'')
+            archive.writestr('META-INF/services/', b'')
+            archive.writestr('META-INF/services/info', b'valid')
+            archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+        self.assertEqual([], verify_project(self.root))
+
+    def test_wrapper_rejects_casefold_equivalent_files_before_crc(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        for first, second in (
+            ('META-INF/Map.txt', 'META-INF/map.txt'),
+            ('META-INF/straße.txt', 'META-INF/strasse.txt'),
+        ):
+            with self.subTest(names=(first, second)):
+                with zipfile.ZipFile(jar, 'w') as archive:
+                    archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+                    archive.writestr(first, b'first')
+                    archive.writestr(second, b'second')
+                with mock.patch.object(
+                    zipfile.ZipFile, 'testzip',
+                    side_effect=AssertionError('CRC reached before path collision guard'),
+                ):
+                    self.assertTrue(any(
+                        'Gradle-Wrapper-JAR' in error
+                        for error in verify_project(self.root)
+                    ))
+
+    def test_wrapper_rejects_nfc_equivalent_files_before_crc(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+            archive.writestr('META-INF/café.txt', b'first')
+            archive.writestr('META-INF/cafe\u0301.txt', b'second')
+        with mock.patch.object(
+            zipfile.ZipFile, 'testzip',
+            side_effect=AssertionError('CRC reached before NFC collision guard'),
+        ):
+            self.assertTrue(any(
+                'Gradle-Wrapper-JAR' in error for error in verify_project(self.root)
+            ))
+
+    def test_wrapper_rejects_casefold_equivalent_implicit_directories(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+            archive.writestr('Assets/first.json', b'first')
+            archive.writestr('assets/second.json', b'second')
+        with mock.patch.object(
+            zipfile.ZipFile, 'testzip',
+            side_effect=AssertionError('CRC reached before directory guard'),
+        ):
+            self.assertTrue(any(
+                'Gradle-Wrapper-JAR' in error for error in verify_project(self.root)
+            ))
+
+    def test_wrapper_rejects_nfc_equivalent_implicit_directories(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+            archive.writestr('Réseaux/first.json', b'first')
+            archive.writestr('Re\u0301seaux/second.json', b'second')
+        with mock.patch.object(
+            zipfile.ZipFile, 'testzip',
+            side_effect=AssertionError('CRC reached before directory guard'),
+        ):
+            self.assertTrue(any(
+                'Gradle-Wrapper-JAR' in error for error in verify_project(self.root)
+            ))
+
+    def test_wrapper_allows_distinct_international_names_and_prefixes(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+            for name in ('META-INF/Würfel.txt', 'META-INF/Wurfel.txt',
+                         'META-INF/cafe\u0301.txt', 'META-INF/Karte🗺️.txt',
+                         'Assets/first.json', 'Other/second.json'):
+                archive.writestr(name, b'valid')
+        self.assertEqual([], verify_project(self.root))
+
     def test_wrapper_rejects_invisible_unicode_names_before_crc(self):
         jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
         for codepoint in (0x85, 0x200b, 0x202e, 0x2066, 0x2028, 0x2029):
@@ -268,6 +390,71 @@ class VerifyProjectTests(unittest.TestCase):
         self.assertTrue(any(
             'Gradle-Wrapper-JAR' in msg for msg in verify_project(self.root)
         ))
+
+    def test_wrapper_rejects_unix_special_member_types_before_crc(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        for kind in (stat.S_IFIFO, stat.S_IFCHR, stat.S_IFBLK,
+                     stat.S_IFSOCK):
+            with self.subTest(kind=kind):
+                special = zipfile.ZipInfo('META-INF/unexpected.bin')
+                special.create_system = 3
+                special.external_attr = (kind | 0o644) << 16
+                with zipfile.ZipFile(jar, 'w') as archive:
+                    archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+                    archive.writestr(special, b'ordinary bytes')
+                # CRC validity is irrelevant to an invalid Unix entry type.
+                with mock.patch.object(
+                    zipfile.ZipFile, 'testzip',
+                    side_effect=AssertionError('decompressed unsafe member'),
+                ):
+                    self.assertTrue(any(
+                        'Gradle-Wrapper-JAR' in error
+                        for error in verify_project(self.root)
+                    ))
+
+    def test_wrapper_rejects_start_class_marked_as_unix_directory(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        fake_class = zipfile.ZipInfo(WRAPPER_MAIN)
+        fake_class.create_system = 3
+        fake_class.external_attr = (stat.S_IFDIR | 0o755) << 16
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr(fake_class, b'\xca\xfe\xba\xbevalid')
+        with mock.patch.object(
+            zipfile.ZipFile, 'testzip',
+            side_effect=AssertionError('decompressed unsafe start class'),
+        ):
+            self.assertTrue(any(
+                'Gradle-Wrapper-JAR' in error for error in verify_project(self.root)
+            ))
+
+    def test_wrapper_rejects_regular_file_with_directory_name(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        inconsistent = zipfile.ZipInfo('META-INF/')
+        inconsistent.create_system = 3
+        inconsistent.external_attr = (stat.S_IFREG | 0o644) << 16
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+            archive.writestr(inconsistent, b'')
+        with mock.patch.object(
+            zipfile.ZipFile, 'testzip',
+            side_effect=AssertionError('decompressed unsafe directory'),
+        ):
+            self.assertTrue(any(
+                'Gradle-Wrapper-JAR' in error for error in verify_project(self.root)
+            ))
+
+    def test_wrapper_allows_consistent_unix_file_and_directory_modes(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        directory = zipfile.ZipInfo('META-INF/')
+        directory.create_system = 3
+        directory.external_attr = (stat.S_IFDIR | 0o755) << 16
+        start_class = zipfile.ZipInfo(WRAPPER_MAIN)
+        start_class.create_system = 3
+        start_class.external_attr = (stat.S_IFREG | 0o644) << 16
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr(directory, b'')
+            archive.writestr(start_class, b'\xca\xfe\xba\xbevalid')
+        self.assertEqual([], verify_project(self.root))
 
     def test_normal_wrapper_jar_directory_is_allowed(self):
         jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'

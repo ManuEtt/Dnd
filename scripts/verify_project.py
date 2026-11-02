@@ -196,16 +196,49 @@ def verify_project(root: Path) -> list[str]:
                 names = [member.filename for member in members]
                 if len(names) != len(set(names)):
                     raise ValueError('duplicate wrapper JAR entries')
+                # On common extraction targets case-insensitive or Unicode-
+                # equivalent names can overwrite each other. Check every
+                # explicit and implicit directory prefix before ZIP CRC reads.
+                canonical_prefixes: dict[str, str] = {}
+                file_paths: set[str] = set()
+                directory_paths: set[str] = set()
                 for member in members:
                     name = member.filename
                     segments = name.rstrip('/').split('/')
+                    mode = member.external_attr >> 16
                     if (not name or name.startswith('/') or '\\' in name
                             or re.match(r'^[A-Za-z]:', name)
                             or any(segment in ('', '.', '..') for segment in segments)
                             or any(unicodedata.category(char) in {'Cc', 'Cf', 'Cs', 'Zl', 'Zp'}
                                    for char in name)
-                            or stat.S_ISLNK(member.external_attr >> 16)):
+                            or stat.S_ISLNK(mode)):
                         raise ValueError('unsafe wrapper JAR entry')
+                    folded_parts: list[str] = []
+                    for index, segment in enumerate(segments):
+                        folded_parts.append(unicodedata.normalize('NFC', segment).casefold())
+                        canonical_path = '/'.join(folded_parts)
+                        original_path = '/'.join(segments[:index + 1])
+                        previous = canonical_prefixes.setdefault(canonical_path, original_path)
+                        if previous != original_path:
+                            raise ValueError('colliding wrapper JAR paths')
+                        # An explicit regular file cannot also stand for an
+                        # implicit or explicit ZIP directory in this JAR.
+                        if index < len(segments) - 1 or name.endswith('/'):
+                            directory_paths.add(canonical_path)
+                        else:
+                            file_paths.add(canonical_path)
+                    # A valid CRC and Java class signature cannot establish
+                    # that a member represents an ordinary file. Reject Unix
+                    # device, FIFO and socket types as well as file/dir
+                    # disagreements before decompressing any ZIP entry.
+                    if member.create_system == 3:
+                        kind = stat.S_IFMT(mode)
+                        if (kind not in (0, stat.S_IFREG, stat.S_IFDIR)
+                                or (kind == stat.S_IFDIR and not name.endswith('/'))
+                                or (kind == stat.S_IFREG and name.endswith('/'))):
+                            raise ValueError('unsafe wrapper JAR entry type')
+                if file_paths & directory_paths:
+                    raise ValueError('wrapper JAR has file/directory path conflicts')
                 if (archive.testzip() is not None
                         or not archive.read(WRAPPER_MAIN).startswith(b'\xca\xfe\xba\xbe')):
                     raise ValueError('invalid wrapper')

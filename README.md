@@ -1,9 +1,35 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – Mehrgegner-Initiative bei 200 % Schrift und IME (02.11.2026)
+
+[Draft-PR #488](https://github.com/ManuEtt/Dnd/pull/488) verbessert den
+unabhängigen `TrackedCreatureInitiativeDialog`: Der gesamte Dialog scrollt
+ohne verschachtelte Scrollflächen, Bestätigungen bleiben auf schmalen
+Android-Displays bedienbar, die ursprünglichen ausführlichen
+Screenreader-Texte bleiben trotz kürzerer sichtbarer Labels erhalten.
+Fünf Widgettests prüfen 320/360 dp bei 200 % Schrift und 220 dp
+Tastatureinblendung einschließlich Abbruch, unvollständiger/ungültiger
+Initiative und rein unverbindlicher Auswahl. Keine Kampfregel-, 
+SQLite-/JSON-, Spielstands- oder Versionsänderungen. Vollständige CI
+auf dem finalen PR-HEAD und reale TalkBack-/IME-Geräteprüfung noch offen;
+keine automatische Mergefreigabe.
+
+---
+
 Deutschsprachige Fantasy-Solo-App für Android: Flutter/Dart, lokale SQLite-Spielstände,
 regelgeprüfte Aktionen und ein optionaler Fastify-/TypeScript-Erzähler.
 
 ## Aktueller Stand und autonome Fortsetzung
+
+## 02.11.2026 – aktualisierte Arbeitsbasis nach Wiederaufnahme
+
+Main ist inzwischen auf `84437e4e92d735e179bb2585427b46a10451951d`
+fortgeschritten und regulär in diesen Entwicklungsbranch übernommen. Die zwei
+Markdown-Konflikte wurden additiv gelöst; keine Laufzeitquellen verändert.
+Die vorherigen Basisangaben2e9 gehören zum frühen Ausgangscheckpoint. Frischer
+PR-Abgleich:27 offene PRs, keine Überschneidung mit dem manuellen Save-Aufruf
+in GameEngine oder den neuen Tests. Noch keine neue Regelwirkung behauptet.
+
 
 ## 02.11.2026 – Chat A: initiale manuelle Rettungswürfe, Arbeitsbeginn
 
@@ -90,6 +116,40 @@ dieselben belegten Plätze ergeben; Paktmagie bleibt getrennt, unbekannte Klasse
 werden nicht geraten. Zuerst aktuelle PRs/Quellen prüfen; Domain-, SQLite-/Retry-
 und bestehende Zauberregressionen verlangen. Keine automatische Fortsetzung
 außerhalb einer aktiven Sitzung.
+
+**Chat-A-Fachpaket (02.11.2026, separater PR):**
+Das SRD-5.2.1-Merkmal Metamagie erhält eine
+**streng bestätigte, extern versionierbare
+Auswahlliste** mit 2 Optionen ab eigener
+Zaubererstufe 2, 4 ab Stufe 10 und 6 ab 17.
+Bei einem verifizierten Aufstieg der
+Zaubererklasse darf höchstens **eine**
+Option ersetzt werden; ein anderer
+Mehrklassenaufstieg schenkt nichts.
+Unbekannte Metamagieoptionen,
+Doppelbelegungen, erfundene Klassen,
+manipulierte JSON-Felder und veraltete
+Sorcerer-Klassenstufen werden abgewiesen.
+Zwölf Domain-/JSON-/SQLite-/Revisionstests
+sind angelegt.
+
+**Wichtig:** Der neue
+`SrdMetamagicChoiceRecord` ist bislang ein
+**eigenständiges JSON-Artefakt** und **nicht**
+im bestehenden Helden- oder SQLite-Modell
+gespeichert; eine rohe JSON-Datei
+beweist keine autorisierte Wahl.
+Der parallel offene PR #463 wird
+nicht überschrieben. App-Version,
+SQLite3 und äußeres JSON1 unverändert.
+[Fachgrenzen](docs/SRD_METAMAGIC_CHOICE_RECORD_20261102.md).
+
+**Nächster Chat-A-Schritt:** nach
+koordiniertem Merge einen autorisierten
+Metamagie-Auswahlbeleg am Helden
+persistieren und Distant Spell nur
+bei nachweisbarer aktueller Wahl
+in die atomare Cast-Transaktion aufnehmen.
 
 ## Starten und prüfen
 
@@ -295,3 +355,246 @@ Commit ist verpflichtend. Historische Aussagen „CI ausstehend“ in älteren
 Einzel-Notizen gelten nur für deren damaligen Bearbeitungsstand.
 Keine automatische Main-Integration, kein Altbranch-Löschen und
 keine SQLite-/JSON-/Spielstandschema-Migration.
+
+---
+
+### 02.11.2026 – Chat D: Unix-Dateitypen im Gradle-Wrapper-JAR prüfen
+
+Die Upload-/Projektprüfung `scripts/verify_project.py` weist beim
+Gradle-Wrapper-JAR nun zusätzlich Unix-ZIP-Mitglieder zurück, die als
+Gerätedatei, Pipe oder Socket markiert sind, oder deren Dateityp dem
+Pfad widerspricht (Verzeichnis ohne abschließenden Schrägstrich bzw.
+reguläre Datei mit abschließendem Schrägstrich). Die Prüfung erfolgt
+**vor ZIP-CRC und Lesezugriff**. Vier Regressionstests in
+`scripts/tests/test_verify_project.py` prüfen abgewiesene Spezialtypen,
+eine als Verzeichnis getarnte `GradleWrapperMain.class`, einen
+als Verzeichnis benannten regulären Eintrag sowie weiterhin zulässige
+Unix-Datei-/Verzeichniseinträge. Die vorhandene JAR-Binärdatei bleibt
+unverändert; keine SQLite-/JSON-/Spielstandmigration.
+Branch `fix/chat-d/wrapper-jar-member-types-20261102`. Die CI-Abnahme ist auf dem finalen PR-HEAD
+separat zu verifizieren; kein automatischer Merge.
+
+
+---
+
+### Chat D – kollidierende APK-ZIP-Dateinamen abweisen (02.11.2026)
+
+Der ARM64-Alpha-Release-Prüfer `scripts/prepare_alpha_release.py`
+lehnt jetzt neben exakt doppelten ZIP-Einträgen auch gleichwertige
+ZIP-Pfade nach Unicode-NFC-Normalisierung und `casefold()` ab,
+einschließlich unterschiedlich geschriebener impliziter
+Verzeichnispfade. Die Ressourcennamen werden nicht umbenannt;
+Kollisionen werden vor dem ZIP-CRC-Test erkannt und eine bereits
+publizierte Alpha bleibt unangetastet. Fünf neue Regressionstests
+in `scripts/tests/test_prepare_alpha_release.py` prüfen
+ASCII-Groß-/Kleinschreibung, Unicode-NFC, implizite Verzeichnisse,
+gültige internationale Namen und Release-Bestandsschutz.
+Der Quellcode liegt auf
+`fix/chat-d/apk-unicode-path-collisions-20261102` in [PR #476](https://github.com/ManuEtt/Dnd/pull/476).
+Vollständige kombinierte GitHub-CI auf dem finalen PR-HEAD
+ist vor einer Review- oder Merge-Freigabe erforderlich.
+Keine Änderung an SQLite, JSON, Spielständen, Android-App-Code,
+App-Version oder Berechtigungen.
+
+---
+
+### Chat D – zusammen geprüfte Archivvalidierung (Integrations-PR, 02.11.2026)
+
+Die unabhängigen Arbeitsbereiche
+[#475](https://github.com/ManuEtt/Dnd/pull/475) (Unix-Spezialdateitypen
+in Gradle-Wrapper-JARs) und
+[#476](https://github.com/ManuEtt/Dnd/pull/476) (Unicode-NFC- und
+Casefold-Kollisionen in APK-ZIP-Einträgen) werden auf
+`chore/chat-d/integrate-apk-wrapper-guards-20261102` gemeinsam
+abgenommen. Beide ursprünglichen Python-Implementierungen und ihre
+Tests werden bytegenau übernommen, alle drei Dokumentationen nur
+additiv kombiniert. Vor einer Merge-Freigabe sind **jeweils vollständige
+Einzel-CI und neue vollständige Kombinations-CI** auf den finalen
+PR-Commits erforderlich. Dieser Abschnitt dokumentiert den
+Integrationsvorbereitungsstand; er behauptet noch keine erfolgreiche
+Gesamt-CI. Keine neuen SQLite-/JSON-/Spielstands-/Appversionsänderungen,
+kein automatischer Merge oder Löschen von Branches.
+
+---
+
+### Chat A – 0-TP-Sperre für Kriechen und Aufstehen (PR #487, 02.11.2026)
+
+Ein historischer Held mit 0 TP kann ohne gespeichertes `bewusstlos`-Flag nicht mehr durch `GameEngine.crawl` oder `GameEngine.standUp` bewegt werden. Beide spezialisierten Bewegungsregeln verlangen vor der Bestätigung bekannte positive TP und einen lebenden Helden. Legacy-JSON und SQLite-Daten werden beim Lesen nicht verändert; nach bestätigter Heilung bleibt der normale Ablauf möglich. Vier neue Flutter-Domänen-/Engine-Regressionen (positive und negative Fälle) sind ergänzt. **CI auf dem finalen PR-HEAD noch offen; kein lokal installiertes Flutter-/Dart-SDK.** Quelle: SRD 5.2.1, *Dropping to 0 Hit Points*, S. 17, CC BY 4.0. [Pull Request #487](https://github.com/ManuEtt/Dnd/pull/487); Regelabdeckung weiterhin teilweise.
+
+
+## Chat B – bestätigte NPC-Beziehungen für die Kampagnenwiederaufnahme (02.11.2026)
+
+[Draft-PR #489](https://github.com/ManuEtt/Dnd/pull/489) ergänzt einen
+revisionsgebundenen, schreibgeschützten `ConfirmedNpcResumeSelector`.
+Aus bestätigten lokalen `npcRelationshipNotes` werden höchstens drei NPCs
+nach neuestem Notizzeitpunkt, gespeicherter Reihenfolge und eindeutiger
+NPC-ID ausgewählt. Jede Beziehung behält ihre explizite sichere NPC-ID;
+unsichere oder doppelte NPC-/Notiz-IDs und unbestätigte KI-Szenen zählen
+nicht als Erinnerungsquelle. Je NPC sind maximal drei bestätigte Notizen
+zulässig, Unicode-Ausgaben werden auf Zeichenlimits und insgesamt 2.400
+UTF-16-Einheiten begrenzt. Der Snapshot ist unveränderlich und kann auch
+bei gleicher Revision gegen Änderungen der ursprünglichen NPC-Chronik
+revalidiert werden.
+
+Sieben neue Regressionen prüfen Reihenfolge, Namensdubletten, unsichere
+IDs, Unicode-/Emoji-Grenzen, veraltete Kontexte, ältere JSON ohne
+NPC-Notizen und den tatsächlichen SQLite-Neustart. Die Auswahl ist ein
+eigenständiger Storybaustein, noch nicht an UI oder Backend angeschlossen.
+Keine Änderungen an Regeln, Held, Inventar, Quests, SQLite 3,
+äußerem JSON 1 oder Version. Die vollständige CI auf dem finalen
+PR-Commit ist bei dieser Dokumentation noch offen.
+
+
+---
+
+### Chat D – Unicode-sichere Pfadkollisionen im Gradle-Wrapper-JAR (02.11.2026)
+
+Der Projekt-Upload-Prüfer `scripts/verify_project.py` verweigert im
+Gradle-Wrapper-JAR nun auch Dateinamen und implizite Verzeichnisse, die sich
+nur durch Groß-/Kleinschreibung oder kanonisch gleichwertige
+Unicode-Schreibweisen (NFC und `casefold()`) unterscheiden. Anders als
+gewöhnliche gültige Unicode-Namen werden diese Kollisionen bereits beim
+Lesen der ZIP-Metadaten **vor CRC/Dekomprimierung** erkannt.
+`scripts/tests/test_verify_project.py` ergänzt fünf Regressionstests
+für ASCII- und `ß`-Casefold, NFC-Namen und -Verzeichnispräfixe sowie
+zulässige unterschiedliche internationale Namen. Der tatsächliche
+Gradle-Wrapper, Android-App-Code, Spielstände und Version bleiben unverändert.
+Branch: `fix/chat-d/wrapper-jar-unicode-collisions-20261102`.
+Eine vollständige GitHub-CI auf dem finalen PR-HEAD ist für Review/Merge
+erforderlich; keine automatische Branchbereinigung.
+
+
+---
+
+### Chat D – Datei-/Verzeichnis-Kollisionen in ZIP-Archiven verhindern (02.11.2026)
+
+Die Import-/Release-Prüfungen `scripts/verify_project.py` (Gradle-Wrapper-JAR)
+und `scripts/prepare_alpha_release.py` (ARM64-APK) sperren nun zusätzlich
+ZIP-Namen, bei denen ein expliziter Dateieintrag gleichzeitig als
+Verzeichnispräfix anderer Einträge oder als explizites Verzeichnis
+auftaucht. Die Prüfung wertet ZIP-Metadaten vor CRC/Dekomprimierung aus
+und funktioniert unabhängig von der Reihenfolge der Einträge.
+Ein regulärer Verzeichnis-Eintrag mit untergeordneten Dateien bleibt erlaubt.
+Sieben Regressionstests sichern Ablehnung, positive Fälle und den
+Bestandsschutz bereits veröffentlichter Release-Artefakte ab.
+Branch: `fix/chat-d/zip-file-directory-conflicts-20261102`.
+Die finale GitHub-CI auf dem vollständigen PR-Commit ist vor Review oder Merge
+verbindlich. Kein SQLite-/JSON-/Save-Schema- oder Appversionswechsel.
+
+---
+
+### Chat D – vorbereitete Integration vollständig getesteter A/B/C-Pakete (02.11.2026)
+
+Der eigenständige Integrations-Draft verbindet die bereits einzeln CI-geprüften
+[#485](https://github.com/ManuEtt/Dnd/pull/485) (Metamagie-Auswahlbeleg),
+[#487](https://github.com/ManuEtt/Dnd/pull/487) (keine Bewegung bei 0 TP),
+[#488](https://github.com/ManuEtt/Dnd/pull/488) (Initiative-Dialog mit IME)
+und [#489](https://github.com/ManuEtt/Dnd/pull/489) (bestätigte NPC-Beziehungen).
+Die technischen Git-Blobs werden jeweils unverändert übernommen, alle
+Quell-Dokumentationseinfügungen einschließlich dieses README bleiben erhalten.
+Die gemeinsame CI auf dem finalen Integrationsstand ist **vor** einem Merge
+vollständig abzunehmen; laufende andere PRs bleiben unabhängig.
+Keine neuen Datenbankmigrationen oder Berechtigungsänderungen durch die Integration.
+
+---
+
+### Chat D – vorbereitete Integration der PRs #478, #479, #486, #491 (02.11.2026)
+
+Die folgenden Originaldokumentations-Ergänzungen stammen aus vier getrennten,
+vollständig CI-geprüften Quell-PRs; sie werden ohne Verlust der bisherigen
+Main-Historie an die aktuelle README angefügt. Der kombinierte Draft ist
+bis zur vollständigen eigenen CI nicht zur Integration freigegeben.
+
+---
+
+#### Dokumentationsübernahme aus PR #478
+
+**Chat-A-Fachpaket (02.11.2026, separater PR):** Für
+SRD-5.2.1-Metamagie **Distant Spell** prüft ein neuer
+isolierter Domainbaustein die 30-Fuß-Touch-Reichweite,
+Zaubererstufe 2+, offizielle eigene Klassen-/Zauber-
+Freigabe, tatsächliche Metamagiewahl, Hindernisse und
+einen verfügbaren Sorcery Point. Der Plan ist lesend
+und an einen unveränderten Figuren-Snapshot gebunden;
+Punktkosten können nur als neue Heldenkopie für die
+spätere atomare Transaktion vorgemerkt werden.
+Zehn Testgruppen einschließlich falscher
+Mehrklassenquelle, blockierter Strecke, altem JSON,
+SQLite-Neustart und Revisionskonflikt sind angelegt.
+**Keine** automatische Spell-Cast-Freigabe oder
+Metamagie-Auswahlpersistenz und **kein** Einbau in
+offene PR #461/#463/#472; Schema-/Versionsstand
+unverändert. [Regelbeleg und Grenzen](docs/SRD_DISTANT_TOUCH_METAMAGIC_20261102.md).
+
+**Nächster Chat-A-Schritt:** persistente
+Metamagiewahl und atomare Slot-/Punkt-/Effekt-
+Transaktion nach koordinierter Integration
+der bisherigen Vorbereitungs-/Raster-PRs.
+
+
+---
+
+#### Dokumentationsübernahme aus PR #479
+
+
+### Chat C: Bestätigte Zauberwirkungen bei großer Schrift und Tastatur (02.11.2026)
+
+[PR #479](https://github.com/ManuEtt/Dnd/pull/479) macht den Dialog zur ausdrücklich bestätigten Zauberwirkung bei 320/360 dp, 200 % Schrift und geöffneter Android-Tastatur insgesamt scrollbar, kürzt lange Laufzeittexte und kennzeichnet Validierungsfehler für Screenreader. Vier Widgettests prüfen Abbruch, Belegprüfung, Bestätigung und gezieltes Entfernen einer bestehenden Quelle. **CI auf finalem #479-HEAD noch zu prüfen.** Keine SRD-, Zauberwirkungs-, Ressourcen-/Spielstand-, Domain- oder Datenformatänderung.
+
+---
+
+#### Dokumentationsübernahme aus PR #486
+
+
+## Chat B – begrenzter bestätigter NPC-Rückblick (02.11.2026)
+
+[Draft-PR #486](https://github.com/ManuEtt/Dnd/pull/486) auf Basis-main
+`885580202caeafc9787538b6dc1c833b3190a529` ergänzt eine separate,
+schreibgeschützte `ConfirmedNpcContinuityExcerpt.read`-Projektion
+für bestätigte NPC-Erinnerungen. Die gespeicherte, sichere NPC-ID erscheint
+immer ausdrücklich, auch bei ähnlich angezeigten Figuren. Höchstens drei
+bestätigte Notizen und maximal 1.800 UTF-16-Einheiten (Unicode-/Emoji-sicher)
+gehen in die Kurzfassung; Alttexte werden ausschließlich für die Anzeige
+bereinigt und gekürzt. Sechs neue Regressionen prüfen Quellentrennung,
+Unicode, lange Legacy-Texte, ungültige/mehrdeutige NPC-IDs,
+Legacy-JSON und einen echten SQLite-Neustart.
+Kein Umbau des `npc_continuity_reader.dart` (offener PR #477),
+keine KI-/UI-Anbindung, kein Einfluss auf Regeln, Quest, Held, SQLite-/JSON-
+Schema oder Version. Finale CI-Abnahme bei Dokumentation noch offen.
+
+
+---
+
+#### Dokumentationsübernahme aus PR #491
+
+
+---
+
+### 02.11.2026 – Chat B: unsichtbare Zeichen in neuen KI-Geschichten
+
+[PR #491](https://github.com/ManuEtt/Dnd/pull/491) (Draft),
+Branch `feat/chat-b/ai-provider-zero-width-guard-20261102`,
+Basis-main `c33448780dfe8b453f7f1db9d28c1396822901a7`:
+Der Storyparser lehnt jetzt auch U+200C/U+200D (Zero-Width-Joiner)
+in neu eintreffender KI-Erzählung, NPC-/Ortsnamen und Notizen ab.
+Der neue `ai_story_zero_width_validation_test.dart` enthält positive
+mehrzeilige internationale Erzählungen und negative Providerfeldvarianten.
+Die Quell-/Testcommits sind `bfcedd60`/`4295681f`;
+die GitHub-CI für den finalen PR-HEAD ist vor einer Freigabe
+noch tatsächlich zu prüfen. Bestehende SQLite-/JSON-Spielstände,
+Story- und Regelwerte sowie App-Versionen bleiben unverändert.
+Gemeinsame Dokumentationsnachträge bei Integration additiv erhalten.
+
+---
+
+### Chat C: Materialinventar-Dialog bei 200 % Text und Android-Tastatur (02.11.2026)
+
+[PR #474](https://github.com/ManuEtt/Dnd/pull/474) verbessert den Materialinventar-Dialog bei 320/360 dp, 200 % Text und 220 dp geöffneter Tastatur: gemeinsamer vertikaler Dialog-Scrollbereich, kompakte Insets, Screenreader-Live-Regionen für Rezept-/Validierungsfehler. Fünf neue Widgettests prüfen fehlendes Rezept, ungültige Materialbestätigung, bestätigte read-only Inventarstapel und die Astral-Projection-Zieleingabe. **CI auf dem finalen PR-HEAD noch ausstehend.** Keine SRD-/Inventar-/Spielstands-/Versions- oder Datenformatänderung.
+
+---
+
+### Chat C: Kreaturenerfassung bei 200 % Schrift und Android-Tastatur (02.11.2026)
+
+[PR #469](https://github.com/ManuEtt/Dnd/pull/469) macht die zusätzliche Kreaturenregistrierung mit vier Eingabefeldern und Bestätigungs-Checkbox bei 320/360 dp, 200 % Schrift und geöffneter IME vollständig scrollbar. Fehler werden über eine Screenreader-Live-Region angekündigt. Vier neue Widgettests prüfen ungültige Angaben, Abbruch, gültige bestätigte Registrierung und TP-Korrektur. **Finale CI des neuen PR steht aus**; SRD-Regeln, Speicher, Datenformate, App-Version und bestehende Verantwortlichkeitsgrenzen bleiben unverändert.
+
+**Nachweis Chat-D-Integration (02.11.2026):** Die zuvor als ausstehend beschriebenen vollständigen Einzel-CIs sind auf den finalen Heads abgeschlossen und erfolgreich: [#474 / 41396373761](https://github.com/ManuEtt/Dnd/actions/runs/41396373761) und [#469 / 41393278139](https://github.com/ManuEtt/Dnd/actions/runs/41393278139). Kombination mit #495 erfordert eine eigene CI.

@@ -1,3 +1,12 @@
+## 02.11.2026 – aktualisierte Arbeitsbasis nach Wiederaufnahme
+
+Main ist inzwischen auf `84437e4e92d735e179bb2585427b46a10451951d`
+fortgeschritten und regulär in diesen Entwicklungsbranch übernommen. Die zwei
+Markdown-Konflikte wurden additiv gelöst; keine Laufzeitquellen verändert.
+Die vorherigen Basisangaben2e9 gehören zum frühen Ausgangscheckpoint. Frischer
+PR-Abgleich:27 offene PRs, keine Überschneidung mit dem manuellen Save-Aufruf
+in GameEngine oder den neuen Tests. Noch keine neue Regelwirkung behauptet.
+
 ## 02.11.2026 – Chat A: initiale manuelle Rettungswürfe, Arbeitsbeginn
 
 Basis-Main `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`, eigener Branch `fix/chat-a/manual-save-class-preflight-20261102`.

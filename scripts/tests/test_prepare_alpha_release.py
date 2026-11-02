@@ -142,6 +142,132 @@ class AlphaReleaseTests(unittest.TestCase):
                     release.prepare_release(self.root, self.out)
                 self.assertFalse(self.out.exists())
 
+    def test_apk_rejects_file_used_as_implicit_directory_before_crc(self):
+        for reversed_order in (False, True):
+            with self.subTest(reversed_order=reversed_order):
+                self.create_apk()
+                with zipfile.ZipFile(self.apk, 'a') as archive:
+                    members = [('assets', b'file'),
+                               ('assets/scene.json', b'child')]
+                    if reversed_order:
+                        members.reverse()
+                    for name, data in members:
+                        archive.writestr(name, data)
+                with mock.patch.object(
+                    zipfile.ZipFile, 'testzip',
+                    side_effect=AssertionError('CRC reached before path type guard'),
+                ):
+                    with self.assertRaisesRegex(
+                        ValueError, 'widersprüchliche Datei-/Verzeichnispfade'
+                    ):
+                        release.validate_arm64_apk(self.apk)
+
+    def test_apk_rejects_file_and_explicit_directory_collision(self):
+        for reversed_order in (False, True):
+            with self.subTest(reversed_order=reversed_order):
+                self.create_apk()
+                with zipfile.ZipFile(self.apk, 'a') as archive:
+                    members = [('assets', b'file'), ('assets/', b'')]
+                    if reversed_order:
+                        members.reverse()
+                    for name, data in members:
+                        archive.writestr(name, data)
+                with mock.patch.object(
+                    zipfile.ZipFile, 'testzip',
+                    side_effect=AssertionError('CRC reached before collision guard'),
+                ):
+                    with self.assertRaisesRegex(
+                        ValueError, 'widersprüchliche Datei-/Verzeichnispfade'
+                    ):
+                        release.validate_arm64_apk(self.apk)
+
+    def test_apk_allows_explicit_directories_and_descendants(self):
+        with zipfile.ZipFile(self.apk, 'a') as archive:
+            archive.writestr('assets/', b'')
+            archive.writestr('assets/maps/', b'')
+            archive.writestr('assets/maps/scene.json', b'valid')
+            archive.writestr('assets/readme.txt', b'valid')
+        release.validate_arm64_apk(self.apk)
+
+    def test_apk_file_directory_conflict_preserves_previous_release(self):
+        previous = release.prepare_release(self.root, self.out)
+        contents = {path.name: path.read_bytes() for path in previous}
+        with zipfile.ZipFile(self.apk, 'a') as archive:
+            archive.writestr('assets', b'file')
+            archive.writestr('assets/map.json', b'child')
+        with self.assertRaisesRegex(ValueError, 'widersprüchliche Datei-/Verzeichnispfade'):
+            release.prepare_release(self.root, self.out)
+        self.assertEqual(
+            {path.name: path.read_bytes() for path in previous}, contents
+        )
+        self.assertEqual(set(self.out.iterdir()), set(previous))
+
+    def test_casefold_apk_path_collisions_are_rejected_before_crc(self):
+        for first, second in (
+            ('assets/Map.png', 'assets/map.png'),
+            ('assets/straße.txt', 'assets/strasse.txt'),
+        ):
+            with self.subTest(first=first, second=second):
+                self.create_apk()
+                with zipfile.ZipFile(self.apk, 'a') as archive:
+                    archive.writestr(first, b'original')
+                    archive.writestr(second, b'different')
+                with mock.patch.object(
+                    zipfile.ZipFile, 'testzip',
+                    side_effect=AssertionError('CRC reached before collision guard'),
+                ):
+                    with self.assertRaisesRegex(ValueError, 'kollidierende ZIP-Pfade'):
+                        release.validate_arm64_apk(self.apk)
+
+    def test_unicode_equivalent_apk_names_are_rejected_before_crc(self):
+        for first, second in (
+            ('assets/café.txt', 'assets/cafe\u0301.txt'),
+            ('assets/Résumé/entry.json', 'assets/Re\u0301sume\u0301/other.json'),
+        ):
+            with self.subTest(first=first, second=second):
+                self.create_apk()
+                with zipfile.ZipFile(self.apk, 'a') as archive:
+                    archive.writestr(first, b'first')
+                    archive.writestr(second, b'second')
+                with mock.patch.object(
+                    zipfile.ZipFile, 'testzip',
+                    side_effect=AssertionError('CRC reached before collision guard'),
+                ):
+                    with self.assertRaisesRegex(ValueError, 'kollidierende ZIP-Pfade'):
+                        release.validate_arm64_apk(self.apk)
+
+    def test_casefold_collision_in_implicit_apk_directory_is_rejected(self):
+        with zipfile.ZipFile(self.apk, 'a') as archive:
+            archive.writestr('assets/Maps/first.json', b'first')
+            archive.writestr('assets/maps/second.json', b'second')
+        with mock.patch.object(
+            zipfile.ZipFile, 'testzip',
+            side_effect=AssertionError('CRC reached before directory guard'),
+        ):
+            with self.assertRaisesRegex(ValueError, 'kollidierende ZIP-Pfade'):
+                release.validate_arm64_apk(self.apk)
+
+    def test_distinct_international_apk_names_remain_valid(self):
+        with zipfile.ZipFile(self.apk, 'a') as archive:
+            for name in ('assets/Würfel.txt', 'assets/Wurfel.txt',
+                         'assets/cafe\u0301.txt', 'assets/地图.txt',
+                         'assets/Mapa/one.json', 'assets/Other/two.json'):
+                archive.writestr(name, b'valid')
+        release.validate_arm64_apk(self.apk)
+
+    def test_apk_path_collision_keeps_previously_published_release(self):
+        published = release.prepare_release(self.root, self.out)
+        original = {path.name: path.read_bytes() for path in published}
+        with zipfile.ZipFile(self.apk, 'a') as archive:
+            archive.writestr('assets/Café/scene.txt', b'first')
+            archive.writestr('assets/Cafe\u0301/other.txt', b'second')
+        with self.assertRaisesRegex(ValueError, 'kollidierende ZIP-Pfade'):
+            release.prepare_release(self.root, self.out)
+        self.assertEqual(
+            {path.name: path.read_bytes() for path in published}, original
+        )
+        self.assertEqual(set(self.out.iterdir()), set(published))
+
     def test_invisible_unicode_apk_entry_names_are_rejected_before_crc(self):
         # A ZIP can carry deceptive names even when its CRC is otherwise valid.
         # Reject C1 controls, format/bidi marks and line/paragraph separators

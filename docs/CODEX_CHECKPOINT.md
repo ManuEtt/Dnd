@@ -1,3 +1,12 @@
+## 02.11.2026 – aktualisierte Arbeitsbasis nach Wiederaufnahme
+
+Main ist inzwischen auf `84437e4e92d735e179bb2585427b46a10451951d`
+fortgeschritten und regulär in diesen Entwicklungsbranch übernommen. Die zwei
+Markdown-Konflikte wurden additiv gelöst; keine Laufzeitquellen verändert.
+Die vorherigen Basisangaben2e9 gehören zum frühen Ausgangscheckpoint. Frischer
+PR-Abgleich:27 offene PRs, keine Überschneidung mit dem manuellen Save-Aufruf
+in GameEngine oder den neuen Tests. Noch keine neue Regelwirkung behauptet.
+
 ## 02.11.2026 – Chat A: initiale manuelle Rettungswürfe, Arbeitsbeginn
 
 Basis-Main `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`, eigener Branch `fix/chat-a/manual-save-class-preflight-20261102`.
@@ -20,9 +29,87 @@ CI41395941527 erfolgreich; das ist kein neuer Testnachweis dieses Branches.
 deterministische positive/negative Tests und reale SQLite-/UI-Abläufe.
 Keine Datenmigration, SQLite3/JSON1 erhalten. Frühere Einträge folgen historisch.
 
+# Chat A – SRD Metamagie: versionierte Wahl und Ersatzregeln (02.11.2026)
+
+**Basis-main:** `885580202caeafc9787538b6dc1c833b3190a529`.
+**Branch:** `feat/chat-a/metamagic-choice-proof-20261102`.
+**Offizielle Quelle:** SRD 5.2.1, Sorcerer /
+Metamagic Options, CC BY 4.0.
+
+**IMPLEMENTIERT:** standalone
+`SrdMetamagicChoiceRecord` JSON1 mit
+streng bestätigten Rohklassenetiketten,
+eigenem Sorcererklassenlevel, amtlicher
+Optionsliste und exakter SRD-Anzahl
+2/4/6 bei 2/10/17. Klassenlevelaufstieg
+erlaubt genau zwei neue Optionen an
+10/17 sowie optional höchstens eine
+Ersetzung. Andere Klassenaufstiege
+grantieren keine neue Metamagieoption.
+Falsche Klassen-/Level-, Options- und
+Schema-Behauptungen werden abgewiesen.
+
+**TESTS:** zwölf neue deterministische
+Domain-/JSON-/SQLite-/Revisionsgruppen
+in `app/test/srd_metamagic_choice_record_test.dart`,
+inclusive Alt-JSON, Level-Boundaries,
+duplizierte/fingierte Namen, Multiclass,
+stale Identität, Restart, Retry, Konflikt.
+CI- und Android-Ergebnis nur mit finalem
+Workflowbeleg ausweisen.
+
+**GRENZEN:** Keine Kopplung an das
+bestehende `HeroCharacter`-Modell,
+kein automatisch persistierter
+Metamagiebeleg, kein bestätigtes
+Ereignis und keine echte Casting-
+oder Sorcery-Point-Buchung.
+Das eigenständige JSON ist kein
+manipulationssicherer Besitzbeleg.
+PR #463 und #478 bleiben unberührt;
+Schema SQLite3/JSON1 unverändert.
+Gemeinsame Checkpoints und README
+bei Integration durch Chat D additiv
+zusammenführen.
+[SRD-Fachbeleg](SRD_METAMAGIC_CHOICE_RECORD_20261102.md).
+
+**NÄCHSTER SCHRITT:** bestätigte
+Metamagiewahl nach koordiniertem
+Merge in das persistente Heldenmodell
+integrieren und mit Distant Spell
+nur im revisionsgeschützten gemeinsamen
+Casting-Commit verwenden.
+
 ---
 
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
+
+## Chat C – 02.11.2026: Mehrgegner-Initiative mit großer Schrift und IME
+
+- **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529`.
+- **Branch:** `feat/chat-c/tracked-initiative-ime-20261102`.
+- **Pull Request:** [#488](https://github.com/ManuEtt/Dnd/pull/488) (Draft).
+- **Code-/Testcommit:** `4fc35cbb35f43142b98e700e52656b22f40fcd0c`.
+- **Implementiert:** `TrackedCreatureInitiativeDialog` mit einem
+  AlertDialog-Scrollbereich, kompakten Insets, größeren Dropdowns,
+  visuellen Kurztexten bei 200 % ohne Verlust der TalkBack-Langtexte
+  und zugänglicher Validierungsfehlermeldung.
+- **Tests hinzugefügt:** fünf Widgetfälle in
+  `app/test/tracked_creature_initiative_ime_test.dart`
+  (320/360 dp, 200 %, 220 dp IME; Abbruch, Erfolg, Fehler und
+  unveränderte Kampagnen-JSON-Snapshots).
+- **Teststand:** Flutter/Dart lokal nicht installiert; CI am finalen
+  Commit zum Zeitpunkt der Eintragung noch nicht belegt. Echte
+  Android-/TalkBack-/IME-/Upgrade-Tests sind noch offen.
+- **Kompatibilität:** Keine Änderungen an Regeln, GameController,
+  Kampfzustand, SQLite, JSON, Version oder gespeicherten Spielständen.
+- **Parallelität:** PR-Pfadüberschneidungen ausgeschlossen, gemeinsame
+  README-/Checkpoint-Ergänzungen durch Chat D beim Merge konsolidieren.
+- **Nächster Schritt:** Echten Touch-/TalkBack-Test der
+  Mehrgegner-Initiative auf einem schmalen Android-Gerät mit Tastatur
+  und 200 % Schrift durchführen.
+
+---
 
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
 Alpha **0.8.49+99**. Dieser neue Live-Status ersetzt widersprüchliche historische
@@ -327,3 +414,404 @@ Ein neuer Flutter-Regressionstest schützt vor einer Story-Provider-Antwort, die
 - **Nächster konkreter Schritt:** vollständige GitHub-CI des neuen
   Integrations-HEAD abschließen, Konflikte nochmals prüfen; kein
   ungeprüfter Merge und keine ungeprüfte Altbranch-Bereinigung.
+
+---
+
+## 02.11.2026 – Chat D: Unix-ZIP-Dateitypen im Gradle-Wrapper-JAR
+
+- **Ausgangs-main:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`.
+- **Branch:** `fix/chat-d/wrapper-jar-member-types-20261102`.
+- **Code-Commit:** `778873d148e5170482b721a3f93b11ce93bcb41c`.
+- **Test-Commit:** `b150cbb701912a616c3db497c128981768dd5e51`.
+- **IMPLEMENTIERT:** `scripts/verify_project.py` prüft für Unix-ZIP-
+  Mitglieder `S_IFMT` vor Dekomprimierung. Nur nicht spezifizierte
+  Typen, reguläre Dateien und Verzeichnisse sind zulässig; Typ und
+  abschließendes `/` müssen zueinander passen. Bestehender
+  Symlink-/Unicode-/Pfad-/CRC-/Größenschutz unverändert.
+- **REGRESSIONEN:** Vier Tests in
+  `scripts/tests/test_verify_project.py`, davon drei negative
+  Metadatenfälle mit explizitem Verbot einer vorzeitigen CRC-
+  Dekomprimierung und ein positiver Unix-Datei-/Verzeichnisfall.
+- **GETESTET:** Die zuvor integrierte main-CI
+  https://github.com/ManuEtt/Dnd/actions/runs/41395163971
+  war auf dem Ausgangs-main vollständig erfolgreich.
+- **NICHT GETESTET:** neuer Branch/PR auf finalem HEAD bis zur
+  neuen GitHub-CI, reales Android-/SAF-/TalkBack-Gerät.
+- **BLOCKIERT:** volle PR-CI und finale Prüfung neuer PRs
+  auf Dateikonflikte; kein ungeprüfter Merge.
+- **Parallele Arbeit:** Alle 19 zum Paketbeginn offenen PRs
+  geprüft; keiner ändert die beiden Python-Zieldateien.
+  README/zentralen Checkpoint beim späteren Merge mit A/B/C
+  verlustfrei konsolidieren.
+- **Migrationen:** Keine, unveränderte Gradle-JAR-Binärdatei,
+  unveränderte SQLite-/JSON-/Saveformate, Android-Berechtigungen,
+  App-Version und regeltechnische Module.
+- **Nächster konkreter Schritt:** Vollständige PR-CI auf
+  finalem HEAD prüfen, dann konfliktfrei Review freigeben.
+
+
+---
+
+## 02.11.2026 – Chat D: APK-ZIP-Pfadkollisionen vermeiden
+
+- **Ausgangs-main:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`.
+- **Bestätigte Main-CI:** #41395163971 und #41396647217,
+  beide `completed/success` auf obigem SHA.
+- **Branch:** `fix/chat-d/apk-unicode-path-collisions-20261102`.
+- **PR:** https://github.com/ManuEtt/Dnd/pull/476 (Draft bis vollständiger CI).
+- **Code-Commit:** `dc2055bfb4cad572b822672dd4f6dadd6bc3b3b3`.
+- **Test-Commit:** `9de29379de5114cf6c1519e41123d60001853ab8`.
+- **IMPLEMENTIERT:** APK-ZIP-Metadaten verweigern
+  kollidierende Pfade bei Casefold und kanonischer NFC-Unicode-Normalisierung
+  einschließlich indirekt betroffener Unterverzeichnisse,
+  vor CRC/Entpacken und Release-Veröffentlichung.
+- **Tests:** fünf neue Python-Regressionen für Casefold/NFC/
+  Verzeichniskollisionen, zulässige internationale Namen und
+  Bestandsschutz vorheriger Release-Artefakte.
+- **GETESTET:** erfolgreiche Baseline-Main-CI auf Ausgangs-Commit.
+  Neue PR-Python-/Flutter-/Android-Gesamt-CI noch offen.
+- **NICHT GETESTET:** finale CI auf diesem Branch sowie reale Android-Geräteabnahme.
+- **Parallelität:** alle bei Arbeitsbeginn 19 offenen PRs auf die
+  beiden Python-Zieldateien geprüft; keine technische Überschneidung.
+  README und CODEX_CHECKPOINT bleiben gemeinsame Dokumentations-Hotspots.
+- **Migration:** keine (SQLite, JSON, Save-Schema, Version,
+  Berechtigungen, Story- oder Regelwerk unverändert).
+- **BLOCKIERT:** Abschluss der CI auf finalem Branch-HEAD.
+- **Nächster Schritt:** eigenen vollständigen GitHub-Actions-Lauf
+  abnehmen; bei Fehlern den eigenen PR korrigieren und ohne
+  erfolgreiche Gesamtabnahme nicht mergen.
+
+---
+
+## 02.11.2026 – Chat D: gemeinsame APK-/Gradle-JAR-Archivprüfung
+
+- **Basis-main:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`;
+  Main-CI #41395163971 und #41396647217 erfolgreich.
+- **Neuer Integrationsbranch:** `chore/chat-d/integrate-apk-wrapper-guards-20261102`.
+- **Quell-PR #475:** `3c8bc937358c4a95e4fd75094c0e038b5638c379`;
+  `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`
+  schützen den Gradle-Wrapper vor inkonsistenten Unix-ZIP-Dateitypen.
+- **Quell-PR #476:** `cf12727bcaf493f5fb03775b67dbd423bd56618c`;
+  `scripts/prepare_alpha_release.py`,
+  `scripts/tests/test_prepare_alpha_release.py` schützen APKs vor
+  Unicode-NFC-/Casefold-Pfadpräfixkollisionen.
+- **IMPLEMENTIERT:** Die vier technischen Dateien werden mit
+  unveränderten Quell-Blob-SHAs übernommen. README, zentraler und
+  Chat-D-Checkpoint erhalten **beide vollständigen Anhänge**.
+- **GETESTET:** beide Quell-PRs haben bereits die Python-Paket-/
+  Strukturtests, Backend-Tests, Flutter-Analyse und gezielte Dialogtests
+  in GitHub Actions bestanden.
+- **NICHT GETESTET:** vollständige Einzel-CI der beiden finalen Heads
+  und neue kombinierte GitHub-CI auf finalem Integrations-HEAD;
+  reale Android-/SAF-/TalkBack-Geräteabnahme.
+- **BLOCKIERT:** erfolgreiche Einzel- und kombinierte Gesamttests,
+  dann erneute Main-/PR-Konfliktkontrolle vor jedem Merge.
+- **Parallelität:** Fachdateien aus #475 und #476 sind disjunkt;
+  andere offene PRs arbeiten an anderen Fachmodulen. README/CODEX
+  müssen bei späteren Integrationen weiterer Chats erhalten bleiben.
+- **Migration:** keine neuen SQLite-/JSON-/Spielstand- oder
+  Android-App-Versions-/Berechtigungsänderungen.
+- **Nächster Schritt:** Final-HEAD-CI auf beiden Quell-PRs und der
+  Integration kontrollieren, bei Fehlern gesondert korrigieren.
+  Keine automatische Main-Integration und kein Branchlöschen.
+
+---
+
+## 02.11.2026 – Chat A: ungültige Bewegung bei 0 TP blockieren (PR #487)
+
+- **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529`; **Branch:** `fix/chat-a/zero-hp-prone-movement-20261102`; **PR:** https://github.com/ManuEtt/Dnd/pull/487.
+- **Problem:** Der historisch nicht immer gespeicherte Zustand `bewusstlos` konnte dazu führen, dass Helden mit 0 TP dennoch aufstehen oder kriechen, obwohl SRD 5.2.1 *Dropping to 0 Hit Points* (S. 17, CC BY 4.0) Bewusstlosigkeit vorgibt.
+- **Implementiert:** Fail-closed-Prüfung auf bekannte positive TP und nicht toten Helden in `app/lib/domain/prone_movement_rules.dart` und `app/lib/domain/crawling_movement_rules.dart`; ohne Zustands-, Modell-, Schema- oder Controlleränderung.
+- **Tests ergänzt:** Je ein negativer Legacy-0-TP-/JSON-/Unverändertheitsfall und positiver Heilungs-/Bewegungsfall in `app/test/prone_standing_rules_test.dart` bzw. `app/test/prone_crawling_rules_test.dart`.
+- **Getestet:** GitHub-Lesezugriff, Main-/PR-Dateilisten, offizielle SRD-Quelle; nicht als Flutter-Ausführung auszugeben.
+- **Nicht getestet:** lokale Dart-/Flutter-Suite, Python-/Backend-Volltests, APK und finales GitHub-Actions-Ergebnis (SDK und Repository-Netz-Zugriff lokal nicht verfügbar). Keine Migration, Auto-Merge oder Branchlöschung.
+- **Nächster Schritt:** CI auf finalem Branch-HEAD abnehmen und bei Fehlern denselben Branch korrigieren; danach fachlich geprüften PR durch Chat D integrieren.
+
+
+## Chat B – NPC-Beziehungsauswahl für bestätigte Wiederaufnahme (02.11.2026)
+
+- **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529`;
+  **Branch:** `feat/chat-b/confirmed-npc-resume-selection-20261102`;
+  **Draft-PR:** [#489](https://github.com/ManuEtt/Dnd/pull/489).
+- **Problem:** Bisherige Reader decken einzelne NPCs ab, aber keinen
+  sicher sortierten, begrenzten Kampagnen-Wiederaufnahmekontext über
+  bestätigte Beziehungen mehrerer NPCs.
+- **IMPLEMENTIERT:** `ConfirmedNpcResumeSelector.read` in neuer
+  `app/lib/story/confirmed_npc_resume_selection.dart`; sortiert
+  lokal bestätigte Notizen nach UTC-Zeit, gespeichertem Eintragsindex
+  und ID. Ignoriert unbestätigte Narration, ungültige/doppelte IDs,
+  verwaiste Notizen. Max. drei NPCs, drei Notizen/NPC und 2.400
+  UTF-16-Codeunits; Unicode-sichere Vorschau mit sichtbaren NPC-IDs,
+  unveränderliche Ergebnislisten, Revisions-/Sitzungs- und
+  volltextbasierte Same-Revision-Revalidierung.
+- **TESTS ERSTELLT:** `app/test/confirmed_npc_resume_selection_test.dart`:
+  sieben Gruppen für Sortierung, getrennte Identitäten, unsichere
+  Legacy-IDs, Unicode-/Emoji-Grenzen, stale Revision/gleichrevidierte
+  Änderungen, alten JSON und echten SQLite-Neustart samt
+  unveränderter Hero-/Revisionskontinuität.
+- **Fachdateien:** ausschließlich die zwei neuen Story-/Testdateien;
+  additiv auch `README.md`, `docs/CODEX_CHECKPOINT.md` und
+  `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **GETESTET:** Main-SHA, offener PR-Bestand und Fachdateilisten,
+  aktuelle Architektur und vorhandene Reader/Tests geprüft;
+  offizieller Dart-3.9.2-Formatter angewandt und temporären
+  Formatterworkflow wieder entfernt.
+- **NICHT GETESTET:** finale vollständige GitHub-CI von #489, reales
+  Android-Gerät/TalkBack/produktiver KI-Provider.
+  **BLOCKIERT:** keine GitHub-Codeblockade; lokale Flutter-/Dart-Tools
+  fehlen, Actions als Abnahmepfad. **Migration:** keine; SQLite 3,
+  äußeres JSON 1, Version unverändert.
+- **Koordination:** #452/#456/#459/#464/#470/#477/#486 betreffen
+  andere Storydateien; README/Checkpoints nur durch Chat D additiv
+  mit weiteren PRs konsolidieren. Kein Auto-Merge.
+- **NÄCHSTER SCHRITT:** vollständige CI des finalen PR-HEAD prüfen,
+  bei Fehlern nur eigenen Branch korrigieren; nach Grün
+  koordinierte Review-/Integration durch Chat D.
+
+
+---
+
+## 02.11.2026 – Chat D: Gradle-JAR-Namenskollisionen vor Dekomprimierung abweisen
+
+- **Basis-main:** `885580202caeafc9787538b6dc1c833b3190a529`, zuvor
+  geprüfte Integration #480 von #475 und #476.
+- **Main-CI:** #41401319969 beim Beginn dieses Pakets noch in Arbeit;
+  nicht als grün ausgeben, solange `completed/success` fehlt.
+- **Branch:** `fix/chat-d/wrapper-jar-unicode-collisions-20261102`.
+- **Code-Commit:** `4b3a75daf3c6f2191f9776e98ffdbc2a880b0280`.
+- **Test-Commit:** `e86ce230f57d42ffa4c857dfb9842a5a5a5004b7`.
+- **IMPLEMENTIERT:** `verify_project.py` führt für jeden Wrapper-JAR-Eintrag
+  komponentenweise ein NFC-/Casefold-Register mit allen übergeordneten
+  Verzeichnispräfixen. Abweichende Schreibweisen mit gleichem
+  kanonischen Ziel sind unzulässig, vor CRC-Test/Startklassenlesung.
+- **REGRESSIONEN:** Fünf neue `test_verify_project.py`-Tests:
+  ASCII- und `ß`-Casefold, NFC-Dateien,
+  implizite Casefold-/NFC-Verzeichnisse sowie gültige Unicode-Pfade.
+  Alle Negativfälle sperren CRC mit einem Mock.
+- **GETESTET:** beide Quell-PRs #475/#476 und ihre Kombination #480 waren
+  vollständig CI-grün auf den exakt geprüften Heads.
+  Die neue Implementierung hat vor dem finalen Branch-CI noch keinen
+  nachgewiesenen Python-/Flutter-/Android-Vollpass.
+- **NICHT GETESTET:** abschließende CI auf finalem Branch-HEAD,
+  echte Android-/SAF-/TalkBack-Geräteabnahme.
+- **Parallelität:** 22 offene Fach-PRs A/B/C bei Paketbeginn geprüft;
+  keiner bearbeitete die zwei technischen Python-Zieldateien.
+  README/CODEX bleiben gemeinsame Dokumentations-Hotspots.
+- **Migration:** keine SQLite-, JSON-, Spielstands-, Appversions- oder
+  Berechtigungsänderung; das JAR selbst bleibt unverändert.
+- **BLOCKIERT:** erfolgreiche volle CI, erneuter Main-/PR-Abgleich.
+- **Nächster Schritt:** finalen CI-HEAD vollständig prüfen, Fehler
+  auf demselben Branch korrigieren und keinen ungeprüften Merge durchführen.
+
+
+---
+
+## 02.11.2026 – Chat D: ZIP-Dateien dürfen keine Verzeichnispräfixe sein
+
+- **Ausgangs-main:** `982cc1f548a309f8eb54cdb2ea37697267813389` (Integration #482 erfolgreich gemergt).
+- **Basis-Main-CI:** #41408485671 bei Implementierung noch in Arbeit,
+  deshalb noch nicht als erfolgreich bewertet; die vollständige PR-CI
+  von #482 war zuvor erfolgreich.
+- **Branch:** `fix/chat-d/zip-file-directory-conflicts-20261102`.
+- **IMPLEMENTIERT:** `scripts/prepare_alpha_release.py` und
+  `scripts/verify_project.py` registrieren kanonische Datei- und
+  Verzeichnispräfixe für APK-/Gradle-JAR-ZIP-Einträge. Bei Schnittmenge
+  (Datei wird zugleich als Ordner vorausgesetzt) wird das Archiv
+  **vor `testzip()` und Entpacken** verweigert.
+- **REGRESSIONEN:** vier APK- und drei Wrapper-JAR-Tests in
+  `scripts/tests/test_prepare_alpha_release.py` und
+  `scripts/tests/test_verify_project.py`: beide Eintragsreihenfolgen,
+  Datei gegen implizites Elternverzeichnis, Datei gegen expliziten
+  Verzeichniseintrag, erlaubte explizite Verzeichnisse/Unterdateien,
+  unveränderte früher veröffentlichte Releases bei Ablehnung.
+- **GETESTET:** vollständige ursprüngliche CI von #482 am finalen
+  Head `b42b71f5f8835ab200c0892c0b6c9653e91aba9f` grün.
+  Neue Tests und kombinierter Branch zu diesem Zeitpunkt noch nicht
+  durch GitHub Actions vollständig abgenommen.
+- **NICHT GETESTET:** finale Python-/Flutter-/Android-CI auf dem neuen
+  Branch-HEAD; echte Android-/SAF-/TalkBack-Geräteabnahme.
+- **Parallelität:** 28 andere offene PRs bei Beginn geprüft;
+  keine technischen Änderungen an den vier Python-Zieldateien.
+  README/CODEX/Chat-D-Checkpoint nur additiv ändern und später mergen.
+- **Migration:** keine; Gradle-JAR-Binärdatei, Android-App-Code,
+  App-Version, SQLite-/JSON-/Spielstände, Berechtigungen unverändert.
+- **BLOCKIERT:** vollständige GitHub-PR-CI und finale Revalidierung von
+  Main/PRs vor Review/Merge.
+- **Nächster Schritt:** eigenen PR anlegen, CI auf finalem Commit prüfen,
+  bei Fehlern auf eigenem Branch korrigieren; keinen fremden Branch löschen.
+
+---
+
+## 02.11.2026 – Chat D: Vorbereitete Integration von vier CI-grünen A/B/C-PRs
+
+- **Main-Basis:** `c33448780dfe8b453f7f1db9d28c1396822901a7` nach #490,
+  neue Main-CI #41424171660 bei Vorbereitungsbeginn noch laufend.
+- **Arbeitsbranch:** `chore/chat-d/integrate-verified-abc-features-20261102`.
+- **Quell-PR #485:** finaler Head `62e25c89eaa820f32f9b28cbf639245704850ae4`, vollständige CI #41402170368 grün.
+- **Quell-PR #487:** finaler Head `964b0b07aab5b43bf5d90616dea483cbdc428d1a`, vollständige CI #41405378184 grün.
+- **Quell-PR #488:** finaler Head `e89cc6250fd4e26467d411e68f8a05850ffb5df0`, vollständige CI #41405839209 grün.
+- **Quell-PR #489:** finaler Head `b98ebb7d3310a5b5a3391e9b37266565ec29422b`, vollständige CI #41404718886 grün.
+- **IMPLEMENTIERT:** zehn unabhängige technische App-Code-/Testdateien aus den Quellbranches
+  werden 1:1 übernommen; alle additiven Quelländerungen in README,
+  CODEX, CHAT_A, CHAT_B und CHAT_C sowie das neue Metamagie-Fachdokument erhalten.
+- **GETESTET:** sämtliche vier Quell-HEADs jeweils vollständige GitHub-CI `completed/success` (36 Schritte).
+- **NICHT GETESTET:** endgültige kombinierte CI, reale Android-/SAF-/TalkBack-Abnahme.
+- **BLOCKIERT:** Main-Postmerge-CI auf `c3344878` und vollständige neue
+  Integrations-CI auf finalem HEAD; vor Merge erneut alle offenen PR-Dateien kontrollieren.
+- **Parallele Arbeit:** #481 und #483 überschneiden sich in
+  `manual_turn_queue_dialog.dart`; beide bleiben außerhalb dieser Integration.
+  Andere offene Fach-PRs und Branches nicht überschreiben oder löschen.
+- **Migration:** keine durch die Zusammenführung selbst; alle Quell-PR-Semantiken
+  und Warnungen zu noch nicht persistierten Metamagie-Auswahlbelegen bleiben bestehen.
+
+---
+
+## 02.11.2026 – Chat D: Vier weitere CI-grüne Fachpakete als Draft kombiniert
+
+- **Basis-main:** `01259cbc93810a159c9a0d79d6055572f0bde3f1` nach #493; Main-Postmerge-CI noch ausstehend.
+- **Integration:** `chore/chat-d/integrate-validated-story-rules-ui-20261102` mit den finalen Quellpaketen #478, #479, #486, #491.
+- **CI der Quell-PRs:** #478: #41398490052 / #41398483892, #479: #41398989518, #486: #41402073724, #491: #41426189797 / #41426180554; alle auf jeweiligen finalen Source-Heads erfolgreich.
+- **Technische Dateien:** 8 Fachcode-/Testdateien originalgetreu übernehmen; SRD-Distant-Touch-Fachdokument aus #478 unverändert.
+- **Dokumentation:** Sämtliche reinen Einfügungen der vier Quell-Diffs in README, CODEX und den Chat-A/B/C-Checkpoints unter Quell-PR-Nennung nachtragen; vorherige Main-Dokumentation unverändert erhalten.
+- **GETESTET:** Einzel-CIs. **NICHT GETESTET:** kombinierte CI am künftigen Integrations-HEAD sowie reale Android-Geräte-/SAF-/TalkBack-Abnahme.
+- **BLOCKIERT:** vollständige neue GitHub-CI, Main-CI und letzter PR-/Main-Konfliktabgleich. Der Metamagie-Beleg aus #485 bleibt aktuell ohne Helden-/SQLite-Persistenz; daraus keine automatische Cast-Autorisierung ableiten.
+- **Parallelität:** 23 andere offene PRs auf die 8 Fachpfade geprüft: keine Überschneidung. #481/#483 behalten ihren separaten manuellen Zugfolgedialog-Konflikt; keine fremden Branches löschen.
+
+---
+
+### Übernommener Originalnachtrag aus PR #478
+
+# Chat A – Distant Spell Touch: 30 Fuß mit einem Zaubereipunkt (02.11.2026, eigener PR)
+
+Basis-main `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`;
+Branch `feat/chat-a/distant-touch-metamagic-20261102`.
+SRD 5.2.1, Sorcerer / Metamagic / Distant Spell, CC BY 4.0.
+
+**IMPLEMENTIERT:** Neues isoliertes
+`SrdDistantTouchMetamagicRules.preview`
+mit wirklichem 30-Fuß-Grenzwert
+für Touch-Zauber und Pflichtprüfung
+der bestätigten Sorcerer-Klassenstufe 2+,
+Metamagie-Freischaltung, einer verfügbaren
+Klassenressource `sorceryPoints`,
+eines tatsächlich vorbereiteten
+SRD-Zaubers der korrekten eigenen Klasse
+und der vollständig bestätigten
+blockerfreien Rastergeometrie.
+Ausdrückliche Spieler-/Options-/Zielwahl
+getrennt. Snapshotgebundene Vorschau,
+Punktkosten nur als Kopie vorgemerkt.
+
+**TESTS:** zehn neue positive/negative
+Regressionsgruppen für 0/30/35 Fuß,
+Metamagie-/Klassen-/Spell-Quellen,
+Mehrklassenlevel, Slot- und Punkte-
+Trennung, Status und Hindernisse,
+alternde Vorschauen, JSON,
+SQLite-Restart, Retry und stale Revision.
+CI/Analyse/Debug-/ABI-Builds nur nach
+tatsächlichem finalem Workflow-Abschluss
+als grün melden.
+
+**BLOCKIERT/GEPLANT:** Keine
+dauerhaft versionierte Metamagiewahl
+im Helden. Der aktuelle Boolwert ist
+kein manipulationssicherer Nachweis,
+keine Live-Casting-Engine-Integration
+und keine atomare Zauberplatz-/Effekt-/
+Punktausgabe. Deshalb **kein** impliziter
+automatischer Fern-Touch-Cast. Unberührt:
+PR #461/#463/#472, gemeinsam genutzte
+Domainmodelle, Controller, SQLite3,
+JSON1 und App-Version.
+
+**NÄCHSTER SCHRITT:** nach
+koordiniertem Merge Metamagiewahl als
+versionierten Quellbeleg speichern,
+mit dem Grid- und Spell-Preflight
+verbinden und vollständige
+Casting-Kosten in einem revisions-
+geschützten Persistenzschritt testen.
+[Technischer Fachbeleg](SRD_DISTANT_TOUCH_METAMAGIC_20261102.md).
+
+---
+
+
+---
+
+### Übernommener Originalnachtrag aus PR #479
+
+## 02.11.2026 – Chat C: Zauberwirkungsdialog bei 200 % Text und IME (PR #479)
+
+[PR #479](https://github.com/ManuEtt/Dnd/pull/479) auf `feat/chat-c/confirmed-spell-effect-ime-20261102` von `main` `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`: Der `ConfirmedSpellEffectDialog` verwendet `AlertDialog(scrollable:true)`, kompakte Insets und Screenreader-Live-Region für Validierungsfehler; lange Laufzeitoptionen besitzen Ellipsis. Vier neue Flutter-Widgettests bei 320/360 dp, 200 % Schrift und 220 dp simuliertem Tastatur-Inset prüfen Fehler/Abbruch, gültige Quellbestätigung und das gezielte Beenden nur einer von zwei Quellen, jeweils ohne Mutation des Helden. **Finaler CI-Nachweis für #479 steht aus (Draft).** Keine Regel-, Controller-, Domain-, Speicher-, Datenformat-, Versions- oder Migrationsänderung. Echte TalkBack-/Android-Gerätetests weiterhin offen.
+
+
+---
+
+### Übernommener Originalnachtrag aus PR #486
+
+
+## Chat B – kurze, bestätigte NPC-Historie sicher begrenzen (02.11.2026)
+
+- **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529`;
+  **Branch:** `feat/chat-b/bounded-confirmed-npc-excerpt-v2-20261102`;
+  **Draft-PR:** [#486](https://github.com/ManuEtt/Dnd/pull/486).
+  Ein älterer, nicht gemergter eigener Draft #484 auf altem Main wurde
+  zugunsten dieser neuen Basis geschlossen; seine Branchdaten bleiben.
+- **Problem:** bestehende bestätigte NPC-Historie hat keine kontrollierte
+  Kürzung für kleine Rückblicke, besonders bei sehr langen Legacy-Feldern.
+- **Implementiert:** neues `app/lib/story/confirmed_npc_continuity_excerpt.dart`
+  mit maximal 1.800 UTF-16-Einheiten, höchstens drei bestätigt
+  gespeicherten Beziehungsnotizen, sicherer sichtbarer NPC-ID,
+  Unicode-/Bidi-Bereinigung und rune-sicherer Kürzung. Read-only:
+  keine Bestätigung aus freier KI-Prosa, keine Zustandsänderung.
+- **Testdatei:** `app/test/confirmed_npc_continuity_excerpt_test.dart`:
+  sechs positive/negative Gruppen (Faktenisolation, lange Emoji-Texte,
+  Zeilen-/Bidi-Injektion, ungültige IDs/Grenzen, Alt-JSON ohne Notizen,
+  echter SQLite-Neustart und unveränderter Held/Revision).
+- **Andere Dateien:** additive README, zentraler und Chat-B-Checkpoint;
+  `npc_continuity_reader.dart` aus PR #477 **nicht** geändert.
+- **Getestet:** aktuellen main, offene PR-Fachdateien und zugehörige
+  Architektur/Tests geprüft; offiziellen Dart-3.9.2-Formatter ausgeführt,
+  temporäre Workflowdatei vor PR entfernt.
+  **Nicht getestet:** finale volle PR-CI, Android-Echthardware/TalkBack,
+  echte KI-Provider-Anbindung. **Blockiert:** lokales Dart-/Flutter-SDK;
+  Actions als vollständige CI verfügbar.
+  **Migration:** keine; SQLite 3, äußeres JSON 1 und Version unverändert.
+  **Koordination:** README/Checkpoints mit Chat D additiv konsolidieren.
+- **Nächster Schritt:** vollständige CI auf finalem PR-HEAD abnehmen,
+  Fehler nur auf diesem Branch korrigieren, danach Integration/Review
+  ohne automatischen Merge.
+
+
+---
+
+### Übernommener Originalnachtrag aus PR #491
+
+
+---
+
+## 02.11.2026 – Chat B: U+200C/U+200D im unbestätigten KI-Storyparser sperren
+
+- **Ausgangs-main:** `c33448780dfe8b453f7f1db9d28c1396822901a7`.
+- **Branch:** `feat/chat-b/ai-provider-zero-width-guard-20261102`; **PR:** [#491](https://github.com/ManuEtt/Dnd/pull/491) (Draft).
+- **Commitnachweise:** Parser `bfcedd60ea018d0c5964afaf571cf9554736b365`, Regressionen `4295681ff0fb9b0660140640c23c50d0412c02dd`.
+- **IMPLEMENTIERT:** `app/lib/story/ai_story.dart` lehnt in neuen `AiStoryPlan`-/`AiStoryStep`-Textfeldern unsichtbare Joiner U+200C/U+200D zusammen mit den bisher gesperrten U+200B/U+200E/U+200F ab. Reguläre Erzählabsätze bleiben erlaubt. `app/test/ai_story_zero_width_validation_test.dart` prüft positive und negative Feldvarianten und unveränderten Kampagnenzustand.
+- **GETESTET:** GitHub-Quellvergleich, Main-SHA, sämtliche offenen PR-Dateipfade und eigenständige Fachpfade geprüft; Branch/Commits/PR angelegt.
+- **NICHT GETESTET:** Neue Flutter-Tests, gesamte CI auf finalem PR-HEAD, echte Android-Geräte/produktiver KI-Dienst. Kein lokales Flutter/Dart, kein lokaler Checkout.
+- **MIGRATION:** keine. Kein SQLite-/JSON-/Regel-/Held-/Questwechsel. Keine Änderung an alten Spielständen.
+- **NÄCHSTER SCHRITT:** finale GitHub-CI abnehmen, Fehler gegebenenfalls im eigenen Branch korrigieren. README/CODEX/CHAT_B bei Integration mit anderen laufenden PRs verlustfrei additiv zusammenführen.
+
+---
+
+## 02.11.2026 – Chat C: Materialinventar bei großer Schrift/IME (PR #474)
+
+[PR #474](https://github.com/ManuEtt/Dnd/pull/474) auf Branch `feat/chat-c/material-inventory-ime-main-20261102` basiert auf aktualisiertem Main `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`. `SrdMaterialInventoryDialog` ist als Ganzes scrollbar (`AlertDialog(scrollable: true)`) mit kompakten Insets; Rezept- und Validierungsfehler sind Screenreader-Live-Regionen. Fünf Widgetfälle auf 320/360 dp, 200 % Schrift und 220 dp Fake-IME prüfen fehlendes Rezept, negative Bestätigung, read-only Auswahl zweier bestätigter Materialstapel ohne Inventar-/Zauberveränderung und die Astral-Projection-Zieleingabe. **Neuer PR-HEAD muss noch vollständig in GitHub Actions geprüft werden; Draft bis CI grün.** Kein Domain-, SQLite-, JSON-, Version- oder Regelwechsel; keine Migration. Main-Merge während Arbeitsbeginn erkannt und Code neu auf frischer Main-Basis erstellt; geteilte Doku additiv integrieren.
+
+---
+
+## 02.11.2026 – Chat C: Kreaturen-Erfassungsdialog bei 200 % Schrift/IME (PR #469)
+
+[PR #469](https://github.com/ManuEtt/Dnd/pull/469) auf Branch `feat/chat-c/area-creature-ime-20261102` gegen `main` `5a88834c98f5aca40395088c20c7e1dc5b587868` ersetzt den verschachtelten vertikalen Inhalt von `AreaCreatureRegistrationDialog` durch ein gesamthaft scrollbares `AlertDialog(scrollable: true)`. Fehler erhalten `Semantics(liveRegion:true)`. Vier neue Widgettests für 320/360 dp, 200 % Schrift, 220 dp IME prüfen fehlende Bestätigung, neutrale Abbruchaktion, gültige Registrierung sowie Null-TP und nachfolgende Korrektur. **Noch keine grüne finale PR-CI behaupten; Draft bis vollständiger CI-Abnahme.** Keine SRD-/Domain-, Speicher-, Datenformat- oder Versionsänderungen; echte Android-Gerätetests/TalkBack offen. Vorpaket [PR #465](https://github.com/ManuEtt/Dnd/pull/465) ist auf `3cd78d0881e3b0093eefb96342f7fb9b165292db` vollständig grün und bereit zur Review, nicht gemergt.
+
+**Nachweis Chat-D-Integration (02.11.2026):** Die zuvor als ausstehend beschriebenen vollständigen Einzel-CIs sind auf den finalen Heads abgeschlossen und erfolgreich: [#474 / 41396373761](https://github.com/ManuEtt/Dnd/actions/runs/41396373761) und [#469 / 41393278139](https://github.com/ManuEtt/Dnd/actions/runs/41393278139). Kombination mit #495 erfordert eine eigene CI.

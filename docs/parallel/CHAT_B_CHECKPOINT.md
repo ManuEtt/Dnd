@@ -349,3 +349,124 @@ Gezielten Abruf bestätigter NPC-Beziehungsnotizen auch bei mehreren aufeinander
 
 
 **GitHub-Nachtrag Chat B (26.10.2026):** [PR #237](https://github.com/ManuEtt/Dnd/pull/237) enthält das optionale `selectedNpcId`-Protokoll. Im nachgewiesenen Lauf [#40342521532](https://github.com/ManuEtt/Dnd/actions/runs/40342521532) haben Backend, Dart-Format, Flutter-Analyse und komplette Flutter-Tests bestanden; Android-Build bei Abruf noch offen. Abschlussstatus gilt nur für exakt getesteten PR-HEAD. Keine Übernahme nach `main`, keine Spielstandmigration.
+
+## Chat B – bestätigte NPC-Beziehungsauswahl für die Wiederaufnahme (02.11.2026)
+
+- **Basis-main:** `885580202caeafc9787538b6dc1c833b3190a529`.
+  **Branch:** `feat/chat-b/confirmed-npc-resume-selection-20261102`.
+  **Draft-PR:** [#489](https://github.com/ManuEtt/Dnd/pull/489).
+  **Fachcommit:** `7d28e4f5934e0e5ef407fdfda402b63638f3e5a2`.
+  **Testcommit:** `f7408a6762d5e9ba776cc70a00b07cd1f08ca594`.
+- **Ausgangsproblem:** Ohne Ranking können beim Laden einer Kampagne
+  alte, wenig relevante NPC-Beziehungen vor aktuellen bestätigten
+  Erinnerungen erscheinen; Namen allein gewährleisten keine Identität.
+- **IMPLEMENTIERT:** eigenständiger schreibgeschützter
+  `ConfirmedNpcResumeSelector` mit eindeutigen lokalen NPC-IDs;
+  neueste bestätigte Notizzeit, gespeicherte Tie-Break-Reihenfolge
+  und stabiler NPC-ID, keine unbestätigte KI-Prosa als Quelle.
+  Ungültige/kollidierende IDs werden übersprungen; max. drei NPCs,
+  bis drei Notizen pro NPC, globale 2.400 UTF-16-Einheiten mit
+  rune-sicherer Kürzung und Unicode-/Bidi-Bereinigung.
+  `ConfirmedNpcResumeSelection.requireCurrent` prüft Campaign-/Session-/
+  Revision und die vollständigen ursprünglichen NPC-Quelldaten, auch
+  hinter abgeschnittenen Texten.
+- **Dateien:** `app/lib/story/confirmed_npc_resume_selection.dart`,
+  `app/test/confirmed_npc_resume_selection_test.dart`, README
+  und beide Checkpoints. Keine Domänen-/Regel-/Controller-/SQLite-
+  oder Provider-Schnittstelle geändert.
+- **GETESTET:** GitHub-Stand, offene PRs, Module/Tests geprüft;
+  offizielle Dart-Formatierung auf beiden neuen Dateien angewandt.
+  **NOCH NICHT GETESTET:** finale vollständige #489-CI,
+  reale Android-Geräte, TalkBack, produktive KI.
+  **BLOCKIERT:** fehlendes lokales Dart-/Flutter-SDK, GitHub CI verfügbar.
+  **Migration:** keine, SQLite 3 und äußeres JSON 1 bleiben kompatibel.
+- **Regressionen:** sieben Gruppen mit positiver/negativer Auswahl,
+  gleicher NPC-Anzeige für verschiedene IDs, Datums-/Positionsgleichstand,
+  Doppelte/Unsichere/Verwaiste Notizen, Emoji-/Ausgabegrenzen,
+  Revisionsschutz einschließlich gleicher Revision/anderer Rohdaten,
+  Legacy-JSON und echtem SQLite-Neustart/Rekonstruktion.
+- **Koordination:** Keine Fachdateiüberschneidung mit den anderen B-PRs.
+  Gemeinsam genutzte README/Checkpoints bei Chat D additiv zusammenführen.
+  Kein automatischer Merge, keine Änderungen fremder Branches.
+- **Nächster Schritt:** Abschluss-CI auf finalem PR-HEAD prüfen,
+  notwendige Fehler korrigieren, dann unabhängige Integration durch Chat D.
+
+---
+
+## 02.11.2026 – Chat-D-Integrationsvorbereitung
+
+Chat B – bestätigte NPC-Beziehungsauswahl aus PR #489 vollständig übernommen. Die Quell-CI #41404718886 war auf dem finalen Source-HEAD erfolgreich; die gemeinsame Chat-D-Integrations-CI ist noch offen.
+
+---
+
+## 02.11.2026 – Chat-D-Koordination: Chat-B-Quellnachträge aus #486 und #491
+
+Beide vollständigen Quellnachträge sind originalgetreu enthalten. Die neue Gesamt-CI auf dem gemeinsamen Integrations-HEAD steht noch aus, kein vorzeitiger Merge und keine Branchlöschung.
+
+---
+
+### Originaleinfügungen aus PR #486
+
+
+## Chat B – bestätigte NPC-Kurzfassung mit Länge-/Quellenschutz (02.11.2026)
+
+- **Basis-main:** `885580202caeafc9787538b6dc1c833b3190a529`.
+  **Branch:** `feat/chat-b/bounded-confirmed-npc-excerpt-v2-20261102`;
+  **Draft-PR:** [#486](https://github.com/ManuEtt/Dnd/pull/486).
+  **Fachübernahme-Commit:** `af99b5a1c082b7280a17af05537d9cb57248c8f3`;
+  **Regressionen-Commit:** `506f3a716b04896dff8c4fefda0b1445b0d7cb84`.
+  Der eigene Vorgänger-PR #484 auf älterer Main-Basis ist geschlossen,
+  ohne Merge oder Branchlöschung.
+- **Ausgangsproblem:** `NpcContinuityReader.confirmedContext` kann
+  extrem lange Legacy-Namen/Beziehungen/Notizen ausgeben. Dies ist
+  unpassend für einen kurzen sicheren bestätigten NPC-Rückblick.
+- **Implementiert:** separate neue schreibgeschützte
+  `ConfirmedNpcContinuityExcerpt.read`, gespeicherte sichere ASCII-ID
+  immer im Text, höchstens drei neueste bestätigte Notizen, pro Feld
+  definierte Grenzen und Gesamtlimit 1.800 UTF-16-Einheiten. Kürzung
+  erhält Emoji-Surrogatpaare; Unicode-Format- und Steuerzeichen bleiben
+  nicht als Zeilen- oder Identitätstäuschung in der Darstellung.
+  Keine Veränderung des gespeicherten Quellzustands.
+- **Geänderte Dateien:** `app/lib/story/confirmed_npc_continuity_excerpt.dart`,
+  `app/test/confirmed_npc_continuity_excerpt_test.dart`, README,
+  zentraler Checkpoint und dieser Checkpoint. Keine gemeinsam genutzten
+  Domain-/SQLite-/Controller-Dateien berührt.
+- **Tests:** sechs positive und negative Regressionen: aktuelle
+  NPC-Identität/Nachrichtentrennung, lange Emoji-/Legacy-Daten,
+  Mehrzeilen-/Bidi-Spoofing, ungültige/mehrdeutige IDs und Notizgrenzen,
+  alte JSON ohne bestätigte Notizen, echte SQLite-Neuöffnung und Replay.
+  **Getestet:** Live-Main, alle PR-Fachpfade, Modulgrenzen/Architektur,
+  offizieller Dart-Formatter. **Noch nicht getestet:** vollständige
+  CI auf dem letzten Dokumentations-Commit, Android-Echthardware und KI.
+  **Blockiert:** kein lokales Flutter-/Dart-SDK, CI verfügbar.
+  **Migrationen:** keine, SQLite 3 / äußeres JSON 1.
+- **Koordination:** PR #477 bearbeitet `npc_continuity_reader.dart`;
+  dieser PR importiert den Reader ausschließlich. Andere B-PRs
+  #452/#456/#459/#464/#470 überschreiben keine neue Fachdatei.
+  Gemeinsame README-/Checkpoint-Einträge später durch Chat D additiv
+  zusammenführen, kein Auto-Merge.
+- **Nächster Schritt:** finale GitHub-CI abnehmen, Fehler bei Bedarf
+  im eigenen PR beheben, danach Chat-D-Review für Integration.
+
+
+---
+
+### Originaleinfügungen aus PR #491
+
+
+---
+
+## 02.11.2026 – Chat B: unsichtbare Joiner in KI-Storyantworten ablehnen (PR #491)
+
+- **Ausgangs-main:** `c33448780dfe8b453f7f1db9d28c1396822901a7`.
+- **Branch:** `feat/chat-b/ai-provider-zero-width-guard-20261102`.
+- **Fachcommit:** `bfcedd60ea018d0c5964afaf571cf9554736b365`; **Testcommit:** `4295681ff0fb9b0660140640c23c50d0412c02dd`.
+- **Pull Request:** [#491](https://github.com/ManuEtt/Dnd/pull/491) (Draft).
+- **Ausgangsproblem:** Der KI-Textvalidator in `app/lib/story/ai_story.dart` wies bereits U+200B und Richtungsmarken ab, nicht aber U+200C (Zero-Width Non-Joiner) oder U+200D (Zero-Width Joiner). Eingehende unbestätigte Narration, NPC-/Ortsnamen und Story-/Beziehungsnotizen konnten optisch identische, technisch unterschiedliche Texte enthalten.
+- **IMPLEMENTIERT:** Die bestehende Sperre umfasst nun U+200B–U+200F. Es werden nur **neue unbestätigte Anbieterantworten** bei `AiStoryPlan.fromJson`/`AiStoryStep.fromJson` abgelehnt; gespeicherte historische Daten, Hero, Kampf, Quests und bestätigte Erinnerungen werden nicht umgeschrieben.
+- **TESTS ERGÄNZT:** `app/test/ai_story_zero_width_validation_test.dart` mit sicherem mehrsprachigem Positivfall (Tab/Zeilenumbruch, JSON-Roundtrip, unverändertes Heldenprofil) und je drei negativen Parameter-Testgruppen für beide Joiner über sämtliche `_text`-Felder von Plan und Step. Fehler müssen `FormatException` auslösen, der bestätigte Kampagnenzustand bleibt identisch.
+- **GETESTET:** Repository-Zustand, zuletzt erfolgreiche Main-CI und geänderte Dateipfade aller zu Beginn 30 offenen PRs geprüft; keine Fachdateikollision. GitHub-Branch, Fach-/Testcommits und PR wurden nachgewiesen.
+- **NICHT GETESTET:** Dart-Format, `flutter analyze`, `flutter test`, Python-/Backend-Gesamtgates, Android-Build und native Tests dieses **finalen PR-HEAD** bis zur tatsächlichen CI-Abnahme. Kein lokaler Flutter-/Dart-SDK oder GitHub-Checkout. Reales Gerät, produktive KI und alte Android-Versionen ebenfalls nicht geprüft.
+- **BLOCKIERT:** Vollständige grüne CI des finalen Dokumentationscommits; gemeinsame README- und zentrale Checkpoint-Nachträge bei späterer Integration additiv durch Chat D vereinen.
+- **MIGRATION:** keine; SQLite 3, äußeres JSON 1, API, Versionsnummern, bestätigte Spielstände und Rule-Engine unverändert.
+- **NÄCHSTER SCHRITT:** CI inklusive Flutter-Format und gezielten Providerparser-Regressionen auf finalem PR-HEAD kontrollieren und eventuelle Fehler auf demselben Branch beheben. Danach ein separates Paket für bestätigte, id-/revisionsgebundene Handlungsstrang-Auswahl erwägen, ohne PR #459 oder #489 zu duplizieren.

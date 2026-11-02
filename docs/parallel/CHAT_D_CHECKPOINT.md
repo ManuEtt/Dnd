@@ -1147,3 +1147,266 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
   Gesamtintegrations-PRs auf finalem HEAD abnehmen und
   aktuellen PR-/Main-Stand erneut prüfen, bevor Merge/Altbranch-
   Bereinigung überhaupt erwogen wird.
+
+---
+
+# CHAT D – D-030: Unix-Member-Typen im Gradle-Wrapper-JAR absichern (02.11.2026)
+
+- **Ausgangs-main-SHA:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`.
+- **Eigener Branch:** `fix/chat-d/wrapper-jar-member-types-20261102`.
+- **Code-Commit:** `778873d148e5170482b721a3f93b11ce93bcb41c`.
+- **Test-Commit:** `b150cbb701912a616c3db497c128981768dd5e51`.
+- **Problem:** Der Gradle-Wrapper-JAR-Prüfer vertraute
+  nach korrekten ZIP-Namen, Symlinkschutz und CRC auf
+  Eintragsinhalte; als Unix-FIFO/Gerät/Socket getarnte oder
+  widersprüchlich Datei-/Verzeichnis-getypte Einträge wurden
+  nicht vor dem Entpacken abgelehnt.
+- **IMPLEMENTIERT:** In `scripts/verify_project.py` werden Unix-
+  `S_IFMT`-Typen und Namens-/Typkonformität geprüft.
+  `stat.S_IFREG`, `stat.S_IFDIR` sowie untypisierte Einträge
+  bleiben erlaubt, Unix-Symlinks und Sondertypen nicht.
+  Bestehender Quellcode unverändert außerhalb der Python-Prüfung.
+- **DATEIEN:** `scripts/verify_project.py`,
+  `scripts/tests/test_verify_project.py`, `README.md`,
+  `docs/CODEX_CHECKPOINT.md` und dieser Checkpoint.
+- **REGRESSIONEN:** Vier neue Unit-Testmethoden prüfen vier
+  Unix-Spezialtypen, eine als Directory getarnte Startklasse,
+  einen regulären Eintrag mit Directory-Pfad und den
+  Positivfall mit regulären Unix-Klassendateien und Verzeichnissen.
+  Die negativen Fälle sperren `ZipFile.testzip()` per Mock.
+- **GETESTET:** nur bisheriges main@2e920f2 vollständig CI-grün.
+- **NICHT GETESTET:** neuer PR-/finaler Commit, reale Geräteabnahme.
+- **BLOCKIERT:** neue GitHub-CI und spätere Integration mit
+  aktueller README/CODEX-Dokumentation aller offenen PRs.
+- **Migrationen:** Keine. SQLite-/JSON-/Spielstände,
+  Appversion, native Android-Rechte und Gradle-Binärdatei unverändert.
+- **Koordination:** Bei Arbeitsbeginn alle 19 offenen PRs auf
+  die beiden betroffenen technischen Pfade geprüft;
+  keine Überschneidung. Andere Branches nicht verändert.
+- **Nächster Schritt:** PR veröffentlichen, finalen HEAD testen,
+  nach kompletter grüner CI zur Review freigeben.
+
+
+---
+
+# CHAT D – D-030: Casefold-/NFC-Kollisionen in Alpha-APKs (02.11.2026)
+
+- **Basis-Main-SHA:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`.
+- **Main-CI:** #41395163971 und #41396647217 erfolgreich.
+- **Branch:** `fix/chat-d/apk-unicode-path-collisions-20261102`.
+- **Pull Request:** https://github.com/ManuEtt/Dnd/pull/476 (Draft bis final-grüner CI).
+- **Code-Commit:** `dc2055bfb4cad572b822672dd4f6dadd6bc3b3b3`.
+- **Test-Commit:** `9de29379de5114cf6c1519e41123d60001853ab8`.
+- **Problem:** Die Alpha-APK-ZIP-Prüfung lehnte exakte Duplikate
+  und Unicode-Kontrollzeichen bereits ab, ließ aber zwei durch
+  Unicode-NFC oder Casefold gleichwertige Eintrags-/Pfadpräfixe
+  zu. Unterschiedliche ZIP-Schreibweisen könnten auf manchen
+  Dateisystemen dieselbe extrahierte Ressource bezeichnen.
+- **IMPLEMENTIERT:** `scripts/prepare_alpha_release.py`
+  führt eine `canonical_prefixes`-Prüfung vor `testzip()` aus
+  und weist Pfadkollisionen ohne Umbenennung ab.
+- **Geänderte Fachdateien:** `scripts/prepare_alpha_release.py`,
+  `scripts/tests/test_prepare_alpha_release.py`.
+- **Tests:** Casefold-Kollisionen einschließlich `straße/strasse`,
+  Unicode-NFC (`café/cafe + kombinierender Akzent`),
+  ungleich geschriebene implizite Verzeichnisse, gültige
+  internationale Namen sowie frühere Release-Dateien bei Fehler.
+- **GETESTET:** erfolgreiche Baseline-Main-CI auf Ausgangs-Commit.
+  Keine finale Branch-CI dieser Implementierung als bestanden behaupten.
+- **NICHT GETESTET:** Python-Gesamtsuite, Flutter, native Android-Tests,
+  APK-Build, realer SAF-/TalkBack-Gerätetest auf finalem Branch-SHA.
+- **BLOCKIERT:** vollständige PR-CI und noch ausstehender erneuter
+  PR-/Konfliktvergleich vor Integrationsfreigabe.
+- **Koordination:** 19 offene PRs #450–#474 vor Bearbeitung geprüft;
+  keine Änderung der technischen Python-Zieldateien. Gemeinsame
+  README/CODEX-Ergänzungen nur additiv mergen.
+- **Migration:** keine; unveränderte SQLite-/JSON-/Spielstände,
+  App-Version, Android-Berechtigungen, Regel- und Storymodule.
+- **Nächster konkreter Schritt:** finalen PR-HEAD und GitHub-Actions
+  kontrollieren; bei Defekt denselben Branch korrigieren und
+  vor Merge erneut Main-/PR-Stand abgleichen.
+
+---
+
+# CHAT D – D-031: gemeinsame Gradle-/APK-Sicherheitsintegration (02.11.2026)
+
+- **Ausgangs-main-SHA:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`,
+  CI #41395163971 und #41396647217 erfolgreich.
+- **Neuer Branch:** `chore/chat-d/integrate-apk-wrapper-guards-20261102`.
+- **Quell-PR #475:** Head `3c8bc937358c4a95e4fd75094c0e038b5638c379`;
+  Unix-Spezialdateitypen und Dateityp/Namen-Widersprüche im
+  Gradle-Wrapper-JAR frühzeitig abweisen, vier neue Python-Tests.
+- **Quell-PR #476:** Head `cf12727bcaf493f5fb03775b67dbd423bd56618c`;
+  Casefold-/NFC-Kollisionen bei APK-ZIP-Datei- und impliziten
+  Verzeichnisnamen frühzeitig abweisen, fünf neue Python-Tests.
+- **IMPLEMENTIERT:** genau vier fachliche Python-Code-/Test-Blobs
+  aus den Quell-PRs 1:1 und beide jeweiligen D-030-/README-/
+  CODEX-Nachträge vollständig und additiv übernommen. Die beiden
+  historischen D-030-Überschriften bleiben bewusst unverändert;
+  dieser neue Abschnitt ordnet sie unter D-031 ein.
+- **GETESTET:** bereits positive Python-Paket-/Strukturtests,
+  Backend-Tests, Flutter-Analyse und gezielte Flutter-Dialogtests
+  auf beiden Quell-Branches.
+- **NICHT GETESTET:** vollständige Einzel-CI auf den finalen
+  Quell-Commits und neu anzustoßende gemeinsame CI auf dem
+  Integrations-HEAD, reale Android-/SAF-/TalkBack-Abnahme.
+- **BLOCKIERT:** grüne Endabnahme aller drei finalen CI-Läufe
+  und abschließende Dateikonfliktprüfung unmittelbar vor Merge.
+- **Parallelität:** Vier Fachdateien ohne Überschneidung; offene
+  A/B/C-PRs ändern nur andere Fachmodule, aber teilweise gemeinsame
+  README-/CODEX-Checkpoints. Keine fremden PRs oder Branches geändert.
+- **Migration:** keine. SQLite-Schema, Kampagnen-JSON, Spielstände,
+  App-Version und Berechtigungen bleiben unverändert.
+- **Nächster konkreter Schritt:** endgültige CI von #475/#476
+  überprüfen, dann Integrations-CI auf finalem HEAD abschließen;
+  erst danach Review-Freigabe und erneute Main-/PR-Statusprüfung.
+
+---
+
+# CHAT D – D-032: Gradle-Wrapper-JAR gegen Unicode-Pfadkollisionen absichern (02.11.2026)
+
+- **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529`.
+- **Integration #480:** Erfolgreich gemergt; ursprüngliche Quell- und
+  Integrations-CI vollständig grün. Neue Main-CI #41401319969 war
+  bei Beginn dieses Folgepakets noch in Arbeit.
+- **Branch:** `fix/chat-d/wrapper-jar-unicode-collisions-20261102`.
+- **Code-Commit:** `4b3a75daf3c6f2191f9776e98ffdbc2a880b0280`.
+- **Test-Commit:** `e86ce230f57d42ffa4c857dfb9842a5a5a5004b7`.
+- **Problem:** Die Gradle-Wrapper-JAR-Prüfung sperrte bereits Traversal,
+  Unicode-Steuerzeichen, Duplikate, Unix-Spezialtypen und manipulierte
+  Wrapper-Startklassen. ZIP-Namen, die nur nach Unicode-NFC/`casefold()`
+  kollidieren, konnten aber vor der Weitergabe noch bestehen.
+- **IMPLEMENTIERT:** `scripts/verify_project.py` erkennt gleichwertige
+  Dateinamen und implizite Verzeichnispräfixe vor `ZipFile.testzip()`.
+  Die Originalnamen werden nicht umgeschrieben und das Wrapper-JAR
+  weder umgepackt noch verändert.
+- **Fünf Regressionstests:** `scripts/tests/test_verify_project.py`
+  prüft ASCII-Casefold und ß/ss, NFC-Dateinamen, implizite
+  Casefold-/NFC-Verzeichnisse und zulässige voneinander
+  unterscheidbare internationale Pfade; in den vier Negativtests
+  ist ZIP-Dekomprimierung ausdrücklich verboten.
+- **GETESTET:** die vorherige Quell-/Kombinations-CI für #480
+  am damals finalen Head vollständig erfolgreich.
+- **NICHT GETESTET:** neue Python-Gesamtsuite, Flutter, Android/Gradle,
+  Alpha-APK auf endgültigem Arbeits-HEAD; reale Android-Geräteabnahme.
+- **BLOCKIERT:** neue vollständige CI auf dem finalen PR-HEAD und
+  abschließender konfliktfreier Merge-Abgleich.
+- **Parallelität:** alle bei Beginn 22 offenen PRs der anderen Chats
+  auf technische Dateikollisionen geprüft; keine gefunden. Später
+  neu entstandene PRs erneut prüfen. Gemeinsame README/CODEX-
+  Checkpoints nur verlustfrei additiv integrieren.
+- **Migration:** keine Datenbank-/JSON-/Save-/Versionsänderung;
+  keine Änderung an Spielregeln, Story, UI oder Berechtigungen.
+- **Nächster Schritt:** finalen PR-Head und Actions-CI abnehmen,
+  bei Fehlern auf diesem Branch korrigieren, ohne andere Branches
+  zu überschreiben oder zu löschen.
+
+
+---
+
+# CHAT D – D-033: Datei-/Verzeichnis-Kollisionen in APK und Wrapper-JAR (02.11.2026)
+
+- **Basis-main:** `982cc1f548a309f8eb54cdb2ea37697267813389`, enthält
+  vollständig CI-geprüftes Paket #482. Die neue Main-CI
+  #41408485671 lief beim Start des Folgepakets noch.
+- **Eigener Branch:** `fix/chat-d/zip-file-directory-conflicts-20261102`.
+- **Problem:** ZIPs erlauben einen Eintrag wie `assets` (Datei) und
+  gleichzeitig `assets/map.json` oder `assets/` (Verzeichnis).
+  Bei Entpacken kann das zu Verzeichnis-/Dateikonflikten und
+  unterschiedlichen Resultaten je Dateisystem führen.
+- **IMPLEMENTIERT:** In `scripts/prepare_alpha_release.py`
+  und `scripts/verify_project.py` erfassen zwei Mengen die
+  kanonischen vollständigen Dateipfade und expliziten/impliziten
+  Verzeichnispräfixe. Bei Schnittmenge wird schon bei ZIP-Metadaten,
+  vor CRC-/Inhaltsprüfung, abgebrochen. Die vorhandene Casefold-/NFC-
+  Prüfung bleibt bestehen; die originalen ZIP-Einträge bleiben unverändert.
+- **Tests:** vier zusätzliche APK-Regressionen, darunter Reihenfolge,
+  explizite Verzeichnisse und unbeschädigtes Vorrelease;
+  drei zusätzliche Wrapper-JAR-Regressionen für Reihenfolge,
+  explizite Verzeichnisse und reguläre Unterdateien.
+  Negative Tests verbieten vorzeitiges `ZipFile.testzip()` per Mock.
+- **GETESTET:** Vorpaket #482 vollständig CI-grün vor Merge;
+  neues Paket selbst noch nicht final durch GitHub Actions abgenommen.
+- **NICHT GETESTET:** vollständige neue Python-/Backend-/Flutter-/Android-
+  Build- und Testfolge auf finalem PR-HEAD sowie reales Gerät.
+- **BLOCKIERT:** erfolgreiche neue CI und letzte Main-/PR-Dateiprüfung.
+- **Koordination:** 28 andere offene PRs ändern keine der vier
+  technischen Python-Zieldateien. README/zentralen Checkpoint
+  mit parallelen Entwicklungs-Chats verlustfrei additiv halten.
+- **Migration:** keine SQLite-, JSON-, Speicherstand-, Versions-,
+  Berechtigungs-, Story-, Regel- oder UI-Änderung.
+- **Nächster Schritt:** finalen PR veröffentlichen, gesamten GitHub-CI-
+  Lauf prüfen; nur erfolgreich abgenommene PRs integrieren,
+  Branches bis zur sicheren Bereinigung behalten.
+
+---
+
+# CHAT D – D-034: Vier erfolgreich geprüfte A/B/C-Pakete integrieren (02.11.2026)
+
+- **Basis-main:** `c33448780dfe8b453f7f1db9d28c1396822901a7`.
+- **Arbeitsbranch:** `chore/chat-d/integrate-verified-abc-features-20261102`.
+- **Vier original CI-grüne Quell-PRs:**
+  - #485 Chat A Metamagie-Auswahlbeleg: `62e25c89eaa820f32f9b28cbf639245704850ae4`,
+    GitHub CI #41402170368 `completed/success`, 36 Schritte.
+  - #487 Chat A Null-TP-Kriechen/-Aufstehen: `964b0b07aab5b43bf5d90616dea483cbdc428d1a`,
+    CI #41405378184 `completed/success`, 36 Schritte.
+  - #488 Chat C Initiative-IME: `e89cc6250fd4e26467d411e68f8a05850ffb5df0`,
+    CI #41405839209 `completed/success`, 36 Schritte.
+  - #489 Chat B bestätigte NPC-Beziehungen: `b98ebb7d3310a5b5a3391e9b37266565ec29422b`,
+    CI #41404718886 `completed/success`, 36 Schritte.
+- **IMPLEMENTIERT:** Zehn fachliche Dart-Code-/Test-Blobs aus den Quell-PRs
+  ohne Inhaltsänderung in einen gemeinsamen Integrationsbaum übertragen;
+  außerdem neues SRD-Metamagie-Fachdokument.
+- **Dokumentationsschutz:** README, CODEX sowie CHAT_A/CHAT_B/CHAT_C
+  enthalten jede rein additive Einfügung der jeweiligen Quell-PRs, selbst
+  wenn die Quelle sie in der Dokumentmitte eingefügt hat. D-CHECKPOINT
+  erhält diesen zusätzlichen Fortschritt. Vorherige Main-Nachträge
+  bleiben erhalten.
+- **GETESTET:** vier Quell-PRs voll GitHub-CI-grün auf ihren genauen
+  Commit-SHAs, keine Assertion über kombinierten Endstand.
+- **NICHT GETESTET:** die neue vollständige Integrations-CI, reale
+  Android-IME-/TalkBack-/SAF-Gerätetests.
+- **BLOCKIERT:** Main-CI #41424171660 der vorgängigen #490-Integration
+  beim Start noch in Arbeit und zukünftige Gesamt-CI auf finalem Integrations-HEAD.
+- **Parallelität:** #481/#483 enthalten fachlich sich überschneidende
+  manuelle Zugfolgedialog-Änderungen; beide ausgeschlossen und kommentiert.
+  Andere offene A/B/C-PRs bleiben eigenständig; vor Merge erneut Main und
+  offene PR-Dateien prüfen.
+- **Migration:** keine durch die Integration, SQLite-/JSON-/Version/
+  Android-Berechtigungen unverändert. Die fachliche Begrenzung von #485
+  (Auswahlbeleg derzeit nicht im Helden-/SQLite-Modell persistiert) bleibt
+  ausdrücklich erhalten.
+- **Nächster Schritt:** technischen Baum und Docs auf finalen
+  unveränderten Git-Blobs verifizieren, vollständige kombinierte CI
+  starten und abnehmen; ohne deren Erfolg kein Merge/Branchlöschen.
+
+---
+
+# CHAT D – D-035: CI-grüne Regeln, UI und Story zusammenführen (02.11.2026)
+
+- **Basis-main:** `01259cbc93810a159c9a0d79d6055572f0bde3f1`, zuvor #493 vollständig CI-grün auf Quell- und Integrations-HEAD gemergt.
+- **Branch:** `chore/chat-d/integrate-validated-story-rules-ui-20261102`.
+- **Vier getrennte vollständig geprüfte Pakete:**
+  - #478 Distant-Touch-Metamagie, finaler Head `98b1931a97fc7f1411cf7899d8167f99d10df4d9`, CIs #41398490052 und #41398483892 grün.
+  - #479 barrierefreier Dialog bestätigter Zauberwirkungen, finaler Head `77c9d38857be71e04a9e62c201d5922805c87fc0`, CI #41398989518 grün.
+  - #486 kurze bestätigte NPC-Rückblicke, finaler Head `cb5c8dd25471ff7dc5046c04b6067b029180eca6`, CI #41402073724 grün.
+  - #491 Zero-Width-Schutz für unbestätigte KI-Geschichten, finaler Head `db84bb72ac2a2f18498697b35406eee3110cc8e7`, CIs #41426189797 und #41426180554 grün.
+- **Implementierung:** acht technische Dart-Code-/Test-Git-Blobs aus den vier geprüften Quellen ohne Inhaltsänderung übernommen und das separate Distant-Touch-Fachdokument aus #478 gesichert.
+- **Dokumentation:** Die vollständigen rein additiven Quell-Einfügungen in README, CODEX, CHAT_A/B/C bleiben erhalten, zusammen mit allen vorherigen Main- und Chat-D-Nachträgen. Einfügungen aus älteren Basen wurden unverändert in gekennzeichneten Quellenabschnitten nachgetragen.
+- **GETESTET:** vier eigenständige PR-CIs auf finalen Heads. **NICHT GETESTET:** kombinierte vollständige CI und reale Android-/TalkBack-/SAF-Abnahme.
+- **BLOCKIERT:** vollständiger PR- und Push-CI-Abschluss auf endgültigem Integrations-HEAD, Main-Postmerge-CI nach #493, finale Main-/PR-Konfliktprüfung vor Merge.
+- **Parallelität:** alle 23 zum Paketbeginn anderen offenen PRs auf die acht technischen Pfade geprüft, ohne Überschneidung. Die problematisch überlappenden #481/#483 im manuellen Zugfolgedialog bleiben ausdrücklich separat.
+- **Fachliche Grenzen:** Metamagie-Auswahlbeleg aus #485 ist weiterhin nicht im Helden-/SQLite-Modell gespeichert. Kein automatisches Cast-Recht ableiten; kein zusätzlicher Schema-, Versions-, Spielstands- oder Berechtigungswechsel durch diese Integration.
+- **Nächster Schritt:** neuen Integrationsbaum und Quell-Git-Blobs abgleichen; vollständige kombinierte CI starten und bis `completed/success` auf finalem Head abnehmen; erst danach Review/Merge.
+
+---
+
+## 02.11.2026 – Chat D: Materialinventar- und Kreaturendialog zusätzlich zu #495
+
+- **Stack-Basis:** `4641abccd579ab4cec2acfe7cacd4aefb7d339a8` aus [PR #495](https://github.com/ManuEtt/Dnd/pull/495) mit vier anderen geprüften A/B/C-Paketen.
+- **Quellen:** #474 (`10bcd7022e38dfcb737333b7da1c67fc839ff042`, CI 41396373761 erfolgreich), #469 (`87c7fe3b6597407fdb6489c1c29335a00a0ff321`, CI 41393278139 erfolgreich).
+- **Originalblobs:** `app/lib/ui/srd_material_inventory_dialog.dart` + Test sowie `app/lib/ui/area_creature_registration_dialog.dart` + Test exakt aus der Quelle.
+- **Doku:** README, CODEX und CHAT_C-Checkpoint ausschließlich additiv ergänzt; bestehende Inhalte aus #495 und #493 erhalten.
+- **Historie:** sichere Original-Commit-Vorfahren und die vorläufigen Integrationsvarianten #494/#496 werden als Eltern archivierungsfähig gemacht, ohne deren fachliche Änderungen doppelt zu übernehmen.
+- **Abnahme:** kombinierte CI dieses Heads, erfolgreicher Merge #495 und erfolgreiche folgende Main-CI erforderlich; keine migrations- oder versionsbezogenen Änderungen, kein Realgerät/TalkBack abgenommen.
+- **Nächster Schritt:** nach #495 in main diesen PR abschließend prüfen, mergen und erst nach erfolgreicher Main-CI sichere Branchbereinigung kontrollieren.
