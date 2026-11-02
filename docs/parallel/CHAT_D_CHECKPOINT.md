@@ -1469,3 +1469,19 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Historienschutz:** Original-Quell-HEADs zusätzliche Git-Commit-Eltern; keine doppelte Übernahme, keine Force-Pushes, kein direkter Main-Commit.
 - **Akzeptanz:** Vollständige kombinierte PR-CI vor jedem Merge, #495/#497/#498 vorher erfolgreich integrieren, Main-CI und danach SHA-gesicherte Branchbereinigung. Keine realen Android-/TalkBack-Tests, keine SQLite-/JSON-Schema-/Versionsmigration in diesem Paket.
 - **Nächster Schritt:** nach erfolgreicher kompletter CI auf finalem Head und aller Vorgänger Stacked PR prüfen und mergen; dann noch verbliebene kollidierende PRs getrennt prüfen.
+
+---
+
+## Chat D – Checkpoint-Checksumliste gegen unsichtbare Unicode-Dateinamen schützen (02.11.2026)
+
+- **Basis-main:** `516bc14e06cb02e7035a6adfb8e2d21e54253184`.
+- **Branch:** `fix/chat-d/checkpoint-unicode-ledger-20261102`; Code-/Teststand: `2b1386e4a43a15efa352ea5c6ff3afe143872830`.
+- **Problem:** `scripts/create_checkpoint.py:safe_name` verbot bisher nur ASCII-Steuerzeichen. Historische Checkpoint-Artefakte mit C1-Steuerzeichen, Bidirectional-Formatzeichen oder Unicode-Zeilen-/Absatztrennern konnten in die Prüfsummenliste aufgenommen werden. Eine Zeile konnte dadurch visuell irreführend sein.
+- **Lösung:** Historische Artefakt- und Quellnamen verwerfen, wenn ein Zeichen einer Unicode-Kategorie `Cc`, `Cf`, `Cs`, `Zl` oder `Zp` angehört. Normale internationale Namen einschließlich Umlaut, Emoji und kombinierender Zeichen bleiben erlaubt.
+- **Dateien:** `scripts/create_checkpoint.py`, `scripts/tests/test_create_checkpoint.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, diese Datei.
+- **Regressionen:** sechs nicht sichtbare Steuer-/Format-/Trennzeichen in historischen ZIP-Namen mit unveränderten `LATEST`-/`SHA256SUMS`-Aliases nach Ablehnung; sichtbares internationales historisches Archiv bleibt im Prüfsummenledger.
+- **GETESTET:** Code und zwei neue Regressionstests im Branch gespeichert. Vorläufige GitHub-Actions-Prüfung auf finalem Dokumentations-HEAD steht aus.
+- **NICHT GETESTET:** vollständige Python-/Backend-/Flutter-/Android-CI auf dem finalen PR-HEAD; echte Geräteabnahme (nicht relevant für Python-Archivnamen).
+- **Kompatibilität:** keine Spielstand-, SQLite-/JSON-, Android-/Dart-, API- oder Versionsänderung; frühere sichere Checkpointnamen bleiben lesbar.
+- **Abgrenzung:** keine fachliche Dateikollision mit den beim Start offenen PRs #452–#503; insbesondere #502 ändert `sqlite_campaign_repository.dart` und dessen Test, nicht diese zwei Python-Dateien. Gemeinsame README-/Checkpoint-Nachträge nur additiv integrieren; kein automatischer Merge.
+- **Nächster Schritt:** vollständige CI auf dem finalen PR-HEAD prüfen; erst nach erfolgreicher CI zur Review freigeben.
