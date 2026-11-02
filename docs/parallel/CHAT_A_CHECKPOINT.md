@@ -1,3 +1,55 @@
+# Chat A – Raster-Berührungsreichweite fail-closed (02.11.2026)
+
+**Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868` ·
+**Branch:** `fix/chat-a/grid-touch-range-20261102` ·
+**PR:** nach Veröffentlichung im GitHub-PR-Log.
+
+**Regelbeleg:** Offizielle SRD 5.2.1, *Casting Spells / Range / Touch*,
+CC BY 4.0. Berührungszauber verlangen ein Ziel in tatsächlicher
+Reichweite. Das existierende 5-Fuß-Raster akzeptierte bisher eine
+beliebig entfernte `Touch`-Zelle, sofern nur ein Boolwert
+`withinTouchReachConfirmed` gesetzt wurde.
+
+**Implementiert:** Konservativer Zielwächter in
+`app/lib/domain/srd_spell_grid_target_rules.dart`:
+eigene sowie angrenzende Rasterzellen (0/5 Fuß)
+mit bestätigter Berührung zulässig; ab zwei
+Rasterfeldern (10+ Fuß) wird auch bei manueller
+Berührungsbestätigung vor der Preflight-Buchung
+abgelehnt. Blockierte/ungeprüfte Karte bleibt
+abgelehnt; `Self` und Distanzzauber unverändert.
+Die offizielle Formulierung `within reach` erlaubt
+Sonderreichweiten, diese erhalten bewusst **keine**
+Freischaltung ohne separaten belegten Spezialmechanismus.
+
+**Tests:** neue Datei
+`app/test/srd_spell_grid_touch_range_test.dart`:
+eigene/acht Nachbarzellen, entfernte Ziele,
+fehlende Berührung/Kartenaufnahme/Hindernisse,
+Fern-/Selbstzauber, echte Kleriker-Zaubervorprüfung
+mit unveränderten Slots und TP, Legacy-JSON,
+SQLite-Neustart/Retry und stale Revision.
+Format-/Analyzer-/Flutter-/Python-/Backend-/APK-Ergebnisse
+erst nach finaler GitHub-CI als grün markieren.
+
+**Unverändert:** Datenmodelle, Controller,
+Engine, Story, UI, DB-/JSON-Schema und Version;
+keine fremden PRs, Branches oder Tests geändert.
+Parallele offene Chat-A-PRs #448, #453, #461,
+#463, #467 und #468 bleiben eigenständig.
+Gemeinsame README-/Checkpoint-Zeilen bei
+Integration durch Chat D additiv zusammenführen.
+
+**Nicht getestet:** echtes Android-Gerät,
+Altinstallations-Upgrade, TalkBack,
+Produktivsignierung. **Nächster Schritt:**
+belegte Spezialreichweiten für Touch in einem
+getrennten Domainbeleg mit negativen
+Manipulations-, SQLite- und Revisionsfällen
+einführen, ohne den einfachen Bool zu vertrauen.
+
+---
+
 ## Integrationsnachtrag 30.10.2026 – Chat-A-Branches
 
 Alle 13 initialen Chat-A-Branchheads auf Main `6465a4b2` regulär konsolidiert.
