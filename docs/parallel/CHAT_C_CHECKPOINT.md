@@ -1,3 +1,15 @@
+## 02.11.2026 – Chat C: Manuelle Kampf-Zugfolge 200 % Schrift/IME (PR #481)
+
+- **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529` (nach erkanntem parallelem Main-Merge neu aufgesetzt); **Branch:** `feat/chat-c/manual-turn-queue-ime-rebased-20261102`; [PR #481](https://github.com/ManuEtt/Dnd/pull/481), Draft bis zur vollständigen CI-Abnahme.
+- **Problem:** `ManualTurnQueueDialog` scrollte bisher nur den Form-Inhalt, mit feststehendem Titel bei 320/360 dp, 200 % Schrift und 220 dp IME. Die Bestätigungen und Gleichstand-Sortierung waren nicht durch eigene responsiven Tests abgedeckt.
+- **IMPLEMENTIERT:** `app/lib/ui/manual_turn_queue_dialog.dart`: einheitliches `AlertDialog(scrollable:true)` und kompakte Insets statt verschachteltem vertikalem Scrollbereich; Validierungsfehler mit `Semantics(liveRegion:true)` und stabilem Key `queue-validation-error`.
+- **FÜNF TESTS:** `app/test/manual_turn_queue_dialog_ime_test.dart`: 320/360 dp bei 200 % Schrift, 220 dp Fake-IME: Fehler/neutraler Abbruch; bestätigte Initiative und Gleichstände liefern ausschließlich eine `ManualTurnQueueChoice`; Gleichstand-Umsortierung widerruft die zuvor erteilte Tie-Bestätigung und verlangt erneutes Häkchen; bereits gespeicherte Zugfolge gibt nur manuelles Advance-Signal zurück. Keine Mutation der `Campaign` auf irgendeinem Weg.
+- **GEPRÜFT:** Masterprompt, AGENTS, Architektur, Testing, Roadmap, Code, bestehender Widgettest, offene PR-Dateipfade und tatsächlicher Main-Stand. Keine fachliche Überschneidung mit parallelen PRs. Main-Merge vor PR-Erstellung erkannt; geänderten Code unverändert auf neue Main-SHA `885580202caeafc9787538b6dc1c833b3190a529` kopiert.
+- **CI AUSSTEHEND:** Dart-Formatierung, Analyse, gezielte/Vollsuite Flutter, Python-/Backend-, native Android-Tests, Debug-/Alpha-APK und Source-Checkpoint auf exaktem PR-HEAD; frühere PR-CI ist kein Beleg. Echtes Android-/TalkBack-/Hardwaretastatur-Verhalten, Altversions-Upgrade, produktive Signierung bleiben offen.
+- **MIGRATIONEN:** keine. Keine Domain-/Regel-/Controller-/Persistenz-/JSON-/Schema-/Versionsänderungen.
+- **BLOCKER:** Draft bis vollständig grüner CI, kein automatischer Merge. Geteilte Doku durch Chat D bei Integration additiv konsolidieren.
+- **NÄCHSTES PAKET:** Nach Integration der unabhängigen Dialog-PRs größere Fokus-/Screenreader-Tests und Eingabemethoden für responsive Fantasy-Kampfbildschirme ohne Änderungen an aktiven PR-Dateien.
+
 ## 31.10.2026 – Chat C: Offene Schildreaktion in der Chronik (Draft-PR #447)
 
 - **Ausgangs-Main:** `47ab002872b7d46daeae03bb558258cf2ea73e4a`.
