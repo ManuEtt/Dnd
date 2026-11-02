@@ -329,3 +329,20 @@ PR-Commits erforderlich. Dieser Abschnitt dokumentiert den
 Integrationsvorbereitungsstand; er behauptet noch keine erfolgreiche
 Gesamt-CI. Keine neuen SQLite-/JSON-/Spielstands-/Appversionsänderungen,
 kein automatischer Merge oder Löschen von Branches.
+
+## Chat B – begrenzter bestätigter NPC-Rückblick (02.11.2026)
+
+[Draft-PR #486](https://github.com/ManuEtt/Dnd/pull/486) auf Basis-main
+`885580202caeafc9787538b6dc1c833b3190a529` ergänzt eine separate,
+schreibgeschützte `ConfirmedNpcContinuityExcerpt.read`-Projektion
+für bestätigte NPC-Erinnerungen. Die gespeicherte, sichere NPC-ID erscheint
+immer ausdrücklich, auch bei ähnlich angezeigten Figuren. Höchstens drei
+bestätigte Notizen und maximal 1.800 UTF-16-Einheiten (Unicode-/Emoji-sicher)
+gehen in die Kurzfassung; Alttexte werden ausschließlich für die Anzeige
+bereinigt und gekürzt. Sechs neue Regressionen prüfen Quellentrennung,
+Unicode, lange Legacy-Texte, ungültige/mehrdeutige NPC-IDs,
+Legacy-JSON und einen echten SQLite-Neustart.
+Kein Umbau des `npc_continuity_reader.dart` (offener PR #477),
+keine KI-/UI-Anbindung, kein Einfluss auf Regeln, Quest, Held, SQLite-/JSON-
+Schema oder Version. Finale CI-Abnahme bei Dokumentation noch offen.
+
