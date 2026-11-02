@@ -349,3 +349,45 @@ Gezielten Abruf bestätigter NPC-Beziehungsnotizen auch bei mehreren aufeinander
 
 
 **GitHub-Nachtrag Chat B (26.10.2026):** [PR #237](https://github.com/ManuEtt/Dnd/pull/237) enthält das optionale `selectedNpcId`-Protokoll. Im nachgewiesenen Lauf [#40342521532](https://github.com/ManuEtt/Dnd/actions/runs/40342521532) haben Backend, Dart-Format, Flutter-Analyse und komplette Flutter-Tests bestanden; Android-Build bei Abruf noch offen. Abschlussstatus gilt nur für exakt getesteten PR-HEAD. Keine Übernahme nach `main`, keine Spielstandmigration.
+
+## Chat B – bestätigte NPC-Beziehungsauswahl für die Wiederaufnahme (02.11.2026)
+
+- **Basis-main:** `885580202caeafc9787538b6dc1c833b3190a529`.
+  **Branch:** `feat/chat-b/confirmed-npc-resume-selection-20261102`.
+  **Draft-PR:** [#489](https://github.com/ManuEtt/Dnd/pull/489).
+  **Fachcommit:** `7d28e4f5934e0e5ef407fdfda402b63638f3e5a2`.
+  **Testcommit:** `f7408a6762d5e9ba776cc70a00b07cd1f08ca594`.
+- **Ausgangsproblem:** Ohne Ranking können beim Laden einer Kampagne
+  alte, wenig relevante NPC-Beziehungen vor aktuellen bestätigten
+  Erinnerungen erscheinen; Namen allein gewährleisten keine Identität.
+- **IMPLEMENTIERT:** eigenständiger schreibgeschützter
+  `ConfirmedNpcResumeSelector` mit eindeutigen lokalen NPC-IDs;
+  neueste bestätigte Notizzeit, gespeicherte Tie-Break-Reihenfolge
+  und stabiler NPC-ID, keine unbestätigte KI-Prosa als Quelle.
+  Ungültige/kollidierende IDs werden übersprungen; max. drei NPCs,
+  bis drei Notizen pro NPC, globale 2.400 UTF-16-Einheiten mit
+  rune-sicherer Kürzung und Unicode-/Bidi-Bereinigung.
+  `ConfirmedNpcResumeSelection.requireCurrent` prüft Campaign-/Session-/
+  Revision und die vollständigen ursprünglichen NPC-Quelldaten, auch
+  hinter abgeschnittenen Texten.
+- **Dateien:** `app/lib/story/confirmed_npc_resume_selection.dart`,
+  `app/test/confirmed_npc_resume_selection_test.dart`, README
+  und beide Checkpoints. Keine Domänen-/Regel-/Controller-/SQLite-
+  oder Provider-Schnittstelle geändert.
+- **GETESTET:** GitHub-Stand, offene PRs, Module/Tests geprüft;
+  offizielle Dart-Formatierung auf beiden neuen Dateien angewandt.
+  **NOCH NICHT GETESTET:** finale vollständige #489-CI,
+  reale Android-Geräte, TalkBack, produktive KI.
+  **BLOCKIERT:** fehlendes lokales Dart-/Flutter-SDK, GitHub CI verfügbar.
+  **Migration:** keine, SQLite 3 und äußeres JSON 1 bleiben kompatibel.
+- **Regressionen:** sieben Gruppen mit positiver/negativer Auswahl,
+  gleicher NPC-Anzeige für verschiedene IDs, Datums-/Positionsgleichstand,
+  Doppelte/Unsichere/Verwaiste Notizen, Emoji-/Ausgabegrenzen,
+  Revisionsschutz einschließlich gleicher Revision/anderer Rohdaten,
+  Legacy-JSON und echtem SQLite-Neustart/Rekonstruktion.
+- **Koordination:** Keine Fachdateiüberschneidung mit den anderen B-PRs.
+  Gemeinsam genutzte README/Checkpoints bei Chat D additiv zusammenführen.
+  Kein automatischer Merge, keine Änderungen fremder Branches.
+- **Nächster Schritt:** Abschluss-CI auf finalem PR-HEAD prüfen,
+  notwendige Fehler korrigieren, dann unabhängige Integration durch Chat D.
+
