@@ -549,3 +549,8 @@ die GitHub-CI für den finalen PR-HEAD ist vor einer Freigabe
 noch tatsächlich zu prüfen. Bestehende SQLite-/JSON-Spielstände,
 Story- und Regelwerte sowie App-Versionen bleiben unverändert.
 Gemeinsame Dokumentationsnachträge bei Integration additiv erhalten.
+
+
+### Chat C: Sending-Dialog mit großer Android-Schrift und Tastatur (02.11.2026)
+
+Ein eigenständiger Chat-C-Entwicklungsbranch `feat/chat-c/sending-dialog-ime-20261102` macht den Sending-Versuch als ganzen `AlertDialog` scrollbar. Bei mindestens 180 % Schrift bleiben die Bestätigungen visuell kurz und für TalkBack vollständig benannt. Neue Widgettests decken 320/360 dp, 200 % Schrift und ein simuliertes 220-dp-Tastatur-Inset ab, darunter Abbruch, bewusste Zustimmung, deren Widerruf nach Eingabeänderung und unveränderte Helden-JSON-Daten. Der Dialog bestätigt nur eine Vorschau; keine Spielregel-, Spielstands-, SQLite-, JSON- oder Versionsänderung. Ausführungsergebnisse und Integrationsstatus stehen im eigenen [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md); keine Freigabe ohne finale GitHub-CI und Review.
