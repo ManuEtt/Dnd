@@ -1147,3 +1147,41 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
   Gesamtintegrations-PRs auf finalem HEAD abnehmen und
   aktuellen PR-/Main-Stand erneut prüfen, bevor Merge/Altbranch-
   Bereinigung überhaupt erwogen wird.
+
+---
+
+# CHAT D – D-030: Unix-Member-Typen im Gradle-Wrapper-JAR absichern (02.11.2026)
+
+- **Ausgangs-main-SHA:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`.
+- **Eigener Branch:** `fix/chat-d/wrapper-jar-member-types-20261102`.
+- **Code-Commit:** `778873d148e5170482b721a3f93b11ce93bcb41c`.
+- **Test-Commit:** `b150cbb701912a616c3db497c128981768dd5e51`.
+- **Problem:** Der Gradle-Wrapper-JAR-Prüfer vertraute
+  nach korrekten ZIP-Namen, Symlinkschutz und CRC auf
+  Eintragsinhalte; als Unix-FIFO/Gerät/Socket getarnte oder
+  widersprüchlich Datei-/Verzeichnis-getypte Einträge wurden
+  nicht vor dem Entpacken abgelehnt.
+- **IMPLEMENTIERT:** In `scripts/verify_project.py` werden Unix-
+  `S_IFMT`-Typen und Namens-/Typkonformität geprüft.
+  `stat.S_IFREG`, `stat.S_IFDIR` sowie untypisierte Einträge
+  bleiben erlaubt, Unix-Symlinks und Sondertypen nicht.
+  Bestehender Quellcode unverändert außerhalb der Python-Prüfung.
+- **DATEIEN:** `scripts/verify_project.py`,
+  `scripts/tests/test_verify_project.py`, `README.md`,
+  `docs/CODEX_CHECKPOINT.md` und dieser Checkpoint.
+- **REGRESSIONEN:** Vier neue Unit-Testmethoden prüfen vier
+  Unix-Spezialtypen, eine als Directory getarnte Startklasse,
+  einen regulären Eintrag mit Directory-Pfad und den
+  Positivfall mit regulären Unix-Klassendateien und Verzeichnissen.
+  Die negativen Fälle sperren `ZipFile.testzip()` per Mock.
+- **GETESTET:** nur bisheriges main@2e920f2 vollständig CI-grün.
+- **NICHT GETESTET:** neuer PR-/finaler Commit, reale Geräteabnahme.
+- **BLOCKIERT:** neue GitHub-CI und spätere Integration mit
+  aktueller README/CODEX-Dokumentation aller offenen PRs.
+- **Migrationen:** Keine. SQLite-/JSON-/Spielstände,
+  Appversion, native Android-Rechte und Gradle-Binärdatei unverändert.
+- **Koordination:** Bei Arbeitsbeginn alle 19 offenen PRs auf
+  die beiden betroffenen technischen Pfade geprüft;
+  keine Überschneidung. Andere Branches nicht verändert.
+- **Nächster Schritt:** PR veröffentlichen, finalen HEAD testen,
+  nach kompletter grüner CI zur Review freigeben.
