@@ -216,9 +216,7 @@ class _ManualExtraCreatureAttackDialogState
             TextField(
               key: const ValueKey('manual-attack-bonus'),
               controller: _bonus,
-              keyboardType: const TextInputType.numberWithOptions(
-                signed: true,
-              ),
+              keyboardType: const TextInputType.numberWithOptions(signed: true),
               decoration: const InputDecoration(
                 labelText: 'Vollständiger Angriffsbonus, z. B. +4',
               ),
@@ -257,9 +255,7 @@ class _ManualExtraCreatureAttackDialogState
               key: const ValueKey('manual-attack-cover'),
               isExpanded: true,
               initialValue: _cover,
-              decoration: const InputDecoration(
-                labelText: 'Deckung des Ziels',
-              ),
+              decoration: const InputDecoration(labelText: 'Deckung des Ziels'),
               items: [
                 for (final cover in CoverLevel.values)
                   DropdownMenuItem(
@@ -337,14 +333,14 @@ class _ManualExtraCreatureAttackDialogState
               (v) => _disadvantage = v,
             ),
             if (_error != null)
-            Semantics(
-              liveRegion: true,
-              child: Text(
-                _error!,
-                key: const ValueKey('manual-attack-error'),
-                style: const TextStyle(color: Colors.redAccent),
+              Semantics(
+                liveRegion: true,
+                child: Text(
+                  _error!,
+                  key: const ValueKey('manual-attack-error'),
+                  style: const TextStyle(color: Colors.redAccent),
+                ),
               ),
-            ),
           ],
         ),
       ),
