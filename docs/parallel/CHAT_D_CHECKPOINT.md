@@ -1537,3 +1537,13 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Dokumentation:** Originale reine Hinzufügungen von README, CODEX und CHAT_C additiv übernommen. Kein vorhandener Fortschritt entfernt.
 - **Historie:** Finale Quell-HEADs als zusätzliche Git-Eltern gespeichert. Kein Force-Push oder Löschen fremder Branches.
 - **Offen:** Neue vollständige kombinierte CI auf dem finalen Integrationscommit; anschließend geordneter Merge #507 → #508 → #510 → dieses Paket, jeweilige Main-CI und abschließender Merge-Abgleich. Keine reale TalkBack-/IME-/Upgrade-Geräteabnahme, keine Spielstands-/SQLite-/JSON-Änderung.
+
+---
+
+## Chat D – manuelle Zugfolge: parallele Varianten konsolidieren (02.11.2026)
+
+- **Stack-Basis:** `d879bff475ca5e64c19690fc142f2d24c0c5ff71` (#511, zuvor #510/#508/#507).
+- **Quellen:** PR #481 final `7f543aee1f54fe2c55c79eee3f951f4f695523db`, PR #483 final `db05d02f78ed4f030525c270a897d7bd7f37c735`, beide vollständige CI grün.
+- **Konflikt entschieden:** Produktive Dialogdateien unterscheiden sich ausschließlich in zwei Gleichstand-Tooltips (fünf Diffzeilen). #483 benennt den Figurennamen in beiden Tooltips; deshalb wird dessen Original-Codeblob übernommen und beide unterschiedlichen originalen Widget-Testdateien zusammen übernommen. UI-Ausgangsblob des Stacks entspricht exakt dem vorigen Quell-Main `88558020`.
+- **Historie und Dokumentation:** Beide Original-Quellheads als zusätzliche Commit-Eltern erhalten; sämtliche reinen README-/CODEX-/CHAT_C-Einfügungen additiv zusammengeführt, keine bestehenden Dateien überschrieben.
+- **Grenzen:** Keine Regel-/Speicher-/Versionsänderungen, keine eigenständige Kampfengine. Vollständige kombinierte CI dieser konkreten Testkombination vor jedem Merge erforderlich; danach geordnete Stack-/Main-Integration. Echte TalkBack-/Android-IME- und Altversionstests weiterhin offen.
