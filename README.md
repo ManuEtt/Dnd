@@ -270,3 +270,7 @@ Commit ist verpflichtend. Historische Aussagen „CI ausstehend“ in älteren
 Einzel-Notizen gelten nur für deren damaligen Bearbeitungsstand.
 Keine automatische Main-Integration, kein Altbranch-Löschen und
 keine SQLite-/JSON-/Spielstandschema-Migration.
+
+### Chat C: Bestätigte Zauberwirkungen bei großer Schrift und Tastatur (02.11.2026)
+
+[PR #479](https://github.com/ManuEtt/Dnd/pull/479) macht den Dialog zur ausdrücklich bestätigten Zauberwirkung bei 320/360 dp, 200 % Schrift und geöffneter Android-Tastatur insgesamt scrollbar, kürzt lange Laufzeittexte und kennzeichnet Validierungsfehler für Screenreader. Vier Widgettests prüfen Abbruch, Belegprüfung, Bestätigung und gezieltes Entfernen einer bestehenden Quelle. **CI auf finalem #479-HEAD noch zu prüfen.** Keine SRD-, Zauberwirkungs-, Ressourcen-/Spielstand-, Domain- oder Datenformatänderung.
