@@ -123,10 +123,9 @@ String _singleLine(String value) => value
 
 // Compare the same visible name that confirmedContext actually renders.
 // Ordinary letters, genuine spaces, punctuation and German umlauts remain.
-String _npcNameKey(String value) =>
-    _visibleName(value)
-        .toLowerCase()
-        .replaceAll('ä', 'ae')
-        .replaceAll('ö', 'oe')
-        .replaceAll('ü', 'ue')
-        .replaceAll('ß', 'ss');
+String _npcNameKey(String value) => _visibleName(value)
+    .toLowerCase()
+    .replaceAll('ä', 'ae')
+    .replaceAll('ö', 'oe')
+    .replaceAll('ü', 'ue')
+    .replaceAll('ß', 'ss');
