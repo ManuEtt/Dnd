@@ -1,3 +1,56 @@
+# Chat A – SRD Metamagie: versionierte Wahl und Ersatzregeln (02.11.2026)
+
+**Basis-main:** `885580202caeafc9787538b6dc1c833b3190a529`.
+**Branch:** `feat/chat-a/metamagic-choice-proof-20261102`.
+**Offizielle Quelle:** SRD 5.2.1, Sorcerer /
+Metamagic Options, CC BY 4.0.
+
+**IMPLEMENTIERT:** standalone
+`SrdMetamagicChoiceRecord` JSON1 mit
+streng bestätigten Rohklassenetiketten,
+eigenem Sorcererklassenlevel, amtlicher
+Optionsliste und exakter SRD-Anzahl
+2/4/6 bei 2/10/17. Klassenlevelaufstieg
+erlaubt genau zwei neue Optionen an
+10/17 sowie optional höchstens eine
+Ersetzung. Andere Klassenaufstiege
+grantieren keine neue Metamagieoption.
+Falsche Klassen-/Level-, Options- und
+Schema-Behauptungen werden abgewiesen.
+
+**TESTS:** zwölf neue deterministische
+Domain-/JSON-/SQLite-/Revisionsgruppen
+in `app/test/srd_metamagic_choice_record_test.dart`,
+inclusive Alt-JSON, Level-Boundaries,
+duplizierte/fingierte Namen, Multiclass,
+stale Identität, Restart, Retry, Konflikt.
+CI- und Android-Ergebnis nur mit finalem
+Workflowbeleg ausweisen.
+
+**GRENZEN:** Keine Kopplung an das
+bestehende `HeroCharacter`-Modell,
+kein automatisch persistierter
+Metamagiebeleg, kein bestätigtes
+Ereignis und keine echte Casting-
+oder Sorcery-Point-Buchung.
+Das eigenständige JSON ist kein
+manipulationssicherer Besitzbeleg.
+PR #463 und #478 bleiben unberührt;
+Schema SQLite3/JSON1 unverändert.
+Gemeinsame Checkpoints und README
+bei Integration durch Chat D additiv
+zusammenführen.
+[SRD-Fachbeleg](SRD_METAMAGIC_CHOICE_RECORD_20261102.md).
+
+**NÄCHSTER SCHRITT:** bestätigte
+Metamagiewahl nach koordiniertem
+Merge in das persistente Heldenmodell
+integrieren und mit Distant Spell
+nur im revisionsgeschützten gemeinsamen
+Casting-Commit verwenden.
+
+---
+
 # Codex-Checkpoint – Gesamtintegration zu Issue #425
 
 Stand: 31.10.2026, UTC. Produkt **Würfelraunen – Der lebendige Spielleiter**,
