@@ -67,7 +67,10 @@ void main() {
       expect(one.confirmedContext, contains('NPC: Mira (NPC-ID: mira-one)'));
       expect(two.confirmedContext, contains('NPC: Mira (NPC-ID: mira-two)'));
       expect(one.confirmedContext, contains('Nur Mira Eins kennt das Tor.'));
-      expect(two.confirmedContext, contains('Nur Mira Zwei kennt den Brunnen.'));
+      expect(
+        two.confirmedContext,
+        contains('Nur Mira Zwei kennt den Brunnen.'),
+      );
       expect(one.confirmedContext, isNot(contains('Brunnen.')));
       expect(two.confirmedContext, isNot(contains('Tor.')));
       expect(two.confirmedContext, isNot(contains(mark)));
@@ -84,7 +87,7 @@ void main() {
           relationship: 'freu\u2060ndlich',
         ),
       ],
-      notes: [_note('legacy', 'mira', 'Der\u200b Schlüssel\u2060 ist hier.\n') ],
+      notes: [_note('legacy', 'mira', 'Der\u200b Schlüssel\u2060 ist hier.\n')],
     );
     final before = jsonEncode(campaign.toJson());
     final snapshot = NpcContinuityReader.read(campaign, npcId: 'mira');
@@ -100,8 +103,10 @@ void main() {
       expect(context, isNot(contains(mark)));
     }
     expect(jsonEncode(campaign.toJson()), before);
-    expect(() => snapshot.recentNotes.add(_note('faked', 'mira', 'falsch')),
-        throwsUnsupportedError);
+    expect(
+      () => snapshot.recentNotes.add(_note('faked', 'mira', 'falsch')),
+      throwsUnsupportedError,
+    );
   });
 
   test('unsafe identity cannot be rendered when visible names collide', () {
@@ -138,8 +143,7 @@ void main() {
   test('legacy JSON without optional NPC notes remains readable', () {
     final oldJson = _campaign(
       npcs: const [WorldNpc(id: 'mira', name: 'Mi\u200dra')],
-    ).toJson()
-      ..remove('npcRelationshipNotes');
+    ).toJson()..remove('npcRelationshipNotes');
     final restored = Campaign.fromJson(
       jsonDecode(jsonEncode(oldJson)) as Map<String, dynamic>,
     );
@@ -154,55 +158,60 @@ void main() {
     expect(jsonEncode(restored.toJson()), original);
   });
 
-  test('SQLite restart and replay preserve identities and confirmed history',
-      () async {
-    final folder = await Directory.systemTemp.createTemp('npc-continuity-');
-    final path = paths.join(folder.path, 'campaign.sqlite');
-    var repository = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: path,
-    );
-    try {
-      final campaign = _campaign(
-        npcs: const [
-          WorldNpc(id: 'mira-one', name: 'Mira'),
-          WorldNpc(id: 'mira-two', name: 'Mi\u2060ra'),
-          WorldNpc(id: 'tarek', name: 'Tarek'),
-        ],
-        notes: [
-          _note('one', 'mira-one', 'Erste Mira kennt die Karte.'),
-          _note('two', 'mira-two', 'Zweite Mira kennt die Truhe.'),
-          _note('three', 'tarek', 'Tarek kennt den Hafen.'),
-        ],
-      );
-      await repository.saveCampaign(campaign);
-      await repository.close();
-      repository = await SqliteCampaignRepository.open(
+  test(
+    'SQLite restart and replay preserve identities and confirmed history',
+    () async {
+      final folder = await Directory.systemTemp.createTemp('npc-continuity-');
+      final path = paths.join(folder.path, 'campaign.sqlite');
+      var repository = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: path,
       );
-      final loaded = (await repository.getCampaign(campaign.id))!;
-      final before = jsonEncode(loaded.toJson());
-      final second = NpcContinuityReader.read(loaded, npcId: 'mira-two');
-      final third = NpcContinuityReader.read(loaded, npcId: 'tarek');
+      try {
+        final campaign = _campaign(
+          npcs: const [
+            WorldNpc(id: 'mira-one', name: 'Mira'),
+            WorldNpc(id: 'mira-two', name: 'Mi\u2060ra'),
+            WorldNpc(id: 'tarek', name: 'Tarek'),
+          ],
+          notes: [
+            _note('one', 'mira-one', 'Erste Mira kennt die Karte.'),
+            _note('two', 'mira-two', 'Zweite Mira kennt die Truhe.'),
+            _note('three', 'tarek', 'Tarek kennt den Hafen.'),
+          ],
+        );
+        await repository.saveCampaign(campaign);
+        await repository.close();
+        repository = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: path,
+        );
+        final loaded = (await repository.getCampaign(campaign.id))!;
+        final before = jsonEncode(loaded.toJson());
+        final second = NpcContinuityReader.read(loaded, npcId: 'mira-two');
+        final third = NpcContinuityReader.read(loaded, npcId: 'tarek');
 
-      expect(second.disambiguateName, isTrue);
-      expect(second.confirmedContext, contains('(NPC-ID: mira-two)'));
-      expect(second.confirmedContext, contains('Zweite Mira kennt die Truhe.'));
-      expect(second.confirmedContext, isNot(contains('Karte.')));
-      expect(third.disambiguateName, isFalse);
-      expect(third.confirmedContext, startsWith('NPC: Tarek\n'));
-      expect(third.confirmedContext, contains('Hafen.'));
-      expect(loaded.revision, 0);
-      expect(loaded.hero.toJson(), campaign.hero.toJson());
-      expect(jsonEncode(loaded.toJson()), before);
-      expect(
-        (await repository.reconstructCampaign(campaign.id))!.toJson(),
-        loaded.toJson(),
-      );
-    } finally {
-      await repository.close();
-      await folder.delete(recursive: true);
-    }
-  });
+        expect(second.disambiguateName, isTrue);
+        expect(second.confirmedContext, contains('(NPC-ID: mira-two)'));
+        expect(
+          second.confirmedContext,
+          contains('Zweite Mira kennt die Truhe.'),
+        );
+        expect(second.confirmedContext, isNot(contains('Karte.')));
+        expect(third.disambiguateName, isFalse);
+        expect(third.confirmedContext, startsWith('NPC: Tarek\n'));
+        expect(third.confirmedContext, contains('Hafen.'));
+        expect(loaded.revision, 0);
+        expect(loaded.hero.toJson(), campaign.hero.toJson());
+        expect(jsonEncode(loaded.toJson()), before);
+        expect(
+          (await repository.reconstructCampaign(campaign.id))!.toJson(),
+          loaded.toJson(),
+        );
+      } finally {
+        await repository.close();
+        await folder.delete(recursive: true);
+      }
+    },
+  );
 }
