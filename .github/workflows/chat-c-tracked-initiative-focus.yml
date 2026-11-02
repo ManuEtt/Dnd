@@ -1,0 +1,26 @@
+name: Chat C tracked initiative focused IME regression
+on:
+  push:
+    branches:
+      - feat/chat-c/tracked-initiative-ime-20261102
+permissions:
+  contents: read
+jobs:
+  focus:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Get dependencies and check Dart format
+        working-directory: app
+        run: |
+          flutter pub get
+          dart format --output=none --set-exit-if-changed lib/ui/tracked_creature_initiative_dialog.dart test/tracked_creature_initiative_ime_test.dart
+      - name: Run targeted initiative dialog tests
+        working-directory: app
+        run: flutter test --reporter expanded test/tracked_creature_initiative_ime_test.dart test/tracked_creature_initiative_dialog_test.dart
