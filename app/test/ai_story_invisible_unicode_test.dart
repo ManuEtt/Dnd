@@ -94,7 +94,7 @@ void main() {
         'secret',
         'goal',
       ]) {
-        final plan = _plan()..[field] = 'Vor' + mark + 'Nach';
+        final plan = _plan()..[field] = 'Vor${mark}Nach';
         expect(
           () => AiStoryPlan.fromJson(plan),
           throwsFormatException,
@@ -109,19 +109,19 @@ void main() {
       for (final field in ['title', 'description']) {
         final plan = _plan();
         final thread = (plan['threads'] as List).first as Map<String, dynamic>;
-        thread[field] = 'Vor' + mark + 'Nach';
+        thread[field] = 'Vor${mark}Nach';
         expect(() => AiStoryPlan.fromJson(plan), throwsFormatException);
       }
       for (final field in ['name', 'description', 'relationship']) {
         final plan = _plan();
         final npc = (plan['npcs'] as List).first as Map<String, dynamic>;
-        npc[field] = 'Vor' + mark + 'Nach';
+        npc[field] = 'Vor${mark}Nach';
         expect(() => AiStoryPlan.fromJson(plan), throwsFormatException);
       }
       for (final field in ['name', 'description']) {
         final plan = _plan();
         final place = (plan['places'] as List).first as Map<String, dynamic>;
-        place[field] = 'Vor' + mark + 'Nach';
+        place[field] = 'Vor${mark}Nach';
         expect(() => AiStoryPlan.fromJson(plan), throwsFormatException);
       }
     }
@@ -131,7 +131,7 @@ void main() {
     final campaign = _campaign();
     final saved = jsonEncode(campaign.toJson());
     for (final mark in _hiddenMarks) {
-      final narration = _turn()..['narration'] = 'Vor' + mark + 'Nach';
+      final narration = _turn()..['narration'] = 'Vor${mark}Nach';
       expect(
         () => AiStoryStep.fromJson(narration, campaign),
         throwsFormatException,
@@ -140,7 +140,7 @@ void main() {
         final turn = _turn();
         final thread =
             (turn['threadUpdates'] as List).first as Map<String, dynamic>;
-        thread[field] = 'Vor' + mark + 'Nach';
+        thread[field] = 'Vor${mark}Nach';
         expect(
           () => AiStoryStep.fromJson(turn, campaign),
           throwsFormatException,
@@ -150,7 +150,7 @@ void main() {
         final turn = _turn();
         final thread =
             (turn['newThreads'] as List).first as Map<String, dynamic>;
-        thread[field] = 'Vor' + mark + 'Nach';
+        thread[field] = 'Vor${mark}Nach';
         expect(
           () => AiStoryStep.fromJson(turn, campaign),
           throwsFormatException,
@@ -159,7 +159,7 @@ void main() {
       for (final field in ['relationship', 'note']) {
         final turn = _turn();
         final npc = (turn['npcUpdates'] as List).first as Map<String, dynamic>;
-        npc[field] = 'Vor' + mark + 'Nach';
+        npc[field] = 'Vor${mark}Nach';
         expect(
           () => AiStoryStep.fromJson(turn, campaign),
           throwsFormatException,
