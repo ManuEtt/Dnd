@@ -1083,3 +1083,25 @@ UI-only: `app/lib/ui/hero_shield_reaction_dialog.dart` nutzt jetzt `AlertDialog(
 - **Parallelität:** Offene Chat-C-/Integrations-PRs bearbeiten andere UI-Module; gemeinsame README-/Checkpoint-Ergänzungen bei Integration verlustfrei durch Chat D konsolidieren.
 
 ---
+
+
+---
+
+## Chat B – KI-Erzähltext gegen ältere Unsichtbarzeichen absichern (02.11.2026)
+
+**Branch:** `fix/chat-b/story-provider-invisible-unicode-20261102`.
+**Ausgangs-main:** `a2f22eaceb344aaced12d0ad548b813aa44d544f`.
+**Problem:** Die vorhandene Provider-Validierung blockierte viele C0/C1-
+und Bidi-Zeichen, akzeptierte aber U+00AD, U+034F, U+180E und U+206A–U+206F.
+**Implementiert:** Gleichartige zusätzliche Ablehnung in
+`app/lib/story/ai_story.dart` und `backend/src/story.ts`.
+**Tests neu:** `app/test/ai_story_invisible_unicode_test.dart`,
+`backend/test/story-legacy-format-guard.test.ts`; positive legitime
+Unicode-/Emoji-/Zeilenumbruchfälle und negative Plan-/Turn-/Angebotsfelder.
+**GETESTET:** Repository, PR-Dateipfade und vorhandene Quellcodeprüfung;
+zuvor wurde PR #505 auf exaktem Head erfolgreich vollständig CI-geprüft,
+dies ist aber kein Nachweis für das neue Paket.
+**NICHT GETESTET:** Endgültige GitHub-CI/Dart/Flutter/Android-Tests und Gerät
+bis zur gesonderten Prüfung. Keine Migration von SQLite/JSON oder App-Version.
+**Nächster Schritt:** neuen Draft-PR vollständig CI-prüfen und bei
+Fehlschlägen denselben Branch reparieren; kein automatischer Merge.
