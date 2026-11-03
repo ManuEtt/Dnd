@@ -942,3 +942,54 @@ bestätigte Inventare verändert. Vollständige CI am finalen PR-HEAD
 und reale Android-Abnahme bleiben separat nachzuweisen.
 
 ---
+
+
+---
+
+
+## Chat B – Natürlich formulierte Kampagnenrückblicke (31.10.2026)
+
+[Draft-PR #452](https://github.com/ManuEtt/Dnd/pull/452) ergänzt ausschließlich die
+Story-Gedächtniserkennung: „Was haben wir bisher erlebt?“, „Was ist beim letzten
+Mal passiert?“ und vergleichbare ausdrückliche Rückblickbitten greifen auf
+**bestätigte** Erinnerungen zurück. Allgemeine Fragewörter werden nicht mehr
+als thematische Suchbegriffe fehlgedeutet. Dialoge mit NPCs und freie Aktionen
+bleiben Spielerzüge. Positive/negative Flutter- und GameEngine-Tests liegen in
+`app/test/story_recall_intent_test.dart`. Grundlage `main` `5a88834c`;
+**CI für diesen Branch bei Dokumentation noch ausstehend**. Keine Änderungen
+an SQLite/JSON, Regeln, Heldenwerten, externen KI-Kosten oder App-Version.
+Die parallele PR-Dokumentation wird bei Integration durch Chat D vereinigt.
+
+
+---
+
+## Chat B – bestätigte offene Handlungsnotizen beim Fortsetzen (31.10.2026)
+
+[Draft-PR #456](https://github.com/ManuEtt/Dnd/pull/456) erweitert den
+bestehenden Befehl **„Rückblick dauerhaft speichern“**: Die Bestandsaufnahme
+enthält nun bis zu drei zuletzt gespeicherte offene Handlungsnotizen. Für
+abgeschlossene/aufgegebene Stränge werden keine neuen Anknüpfungspunkte
+vorgeschlagen. Bestätigte Fakten haben Vorrang vor Zusatznotizen;
+Szenenbehauptungen, nicht bestätigte Dialoge und die geheime Storyvorgabe
+bleiben ausgeschlossen. Unicode- und 2.400-Zeichen-Grenzen bleiben erhalten.
+Neue Flutter-/SQLite-Regressionen dokumentieren Neustart und Revisions-/
+Regelzustandskontinuität. **Die vollständige CI dieses PR ist hier noch
+nicht abgenommen.** SQLite 3 / JSON 1 und App-Version unverändert.
+
+
+---
+
+## Chat B – Kampagnenkontext zum Fortsetzen (01.11.2026)
+
+[Draft-PR #459](https://github.com/ManuEtt/Dnd/pull/459) stellt die
+schreibgeschützte Story-API `CampaignResumeReader.read(campaign)` bereit:
+letzte **erzählte** Szene (ausdrücklich kein bestätigter Regelzustand),
+letzter explizit gespeicherter Rückblick (historischer Speicherstand),
+aktuelle bestätigte Fakten und nur **aktuell offene** Handlungsstränge.
+Jede Quelle erhält eine eigene Kennzeichnung; die Projektion ist begrenzt,
+Unicode-/Bidi-bereinigt und unveränderlich. Verdeckte `storyBible`-Ziele,
+Quest-/Inventar-/HP-Änderungen und externe KI-Anfragen sind ausgeschlossen.
+Sechs neue Flutter-Regressionen einschließlich altem JSON und echtem
+SQLite-Neustart wurden hinzugefügt. Noch **keine** UI-/KI-Anbindung und
+**keine behauptete CI-Abnahme** für diesen PR; die GitHub-Gates sind zu prüfen.
+App-Version, SQLite-Schema 3 und äußeres JSON-Schema 1 unverändert.

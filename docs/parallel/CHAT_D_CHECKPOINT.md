@@ -1613,3 +1613,15 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Noch nicht abgenommen:** Neue vollständig grüne kombinierte CI auf dem exakten Folgeintegrations-HEAD, reguläre Vorgänger-Merges mit grüner Main-CI, aktuelle Konfliktprüfung und reale Android-/TalkBack-/Upgrade-Tests.
 - **Kompatibilität:** Keine beabsichtigte SQLite-/JSON-/Versionsmigration, keine automatische KI-/Regelzustandsänderung.
 - **Nächster Schritt:** Kombinierte CI des Folgeintegrations-PRs abnehmen; erst nach geordneter Vorgängerintegration und grünem Main erneut mergen.
+
+---
+
+## 03.11.2026 – Chat D: drei bestätigte Story-Fortsetzungs-PRs nach #524 vorbereitet
+
+- **Quell-PRs:** #452 (`23422a695ffeab2309b15dae4b973085226de40f`), #456 (`9ca638e3ee85fb7cba894a8c76ca5a90b2120b56`), #459 (`0a859b301dd4660bb19d0c21a8a9b46c2aecd574`).
+- **Stackbasis:** `a1bcf9dd31ed46ad6865641d989c43cd8fc90063` (#524, nach #522).
+- **Abgleich:** Die vier bestehenden Story-/Testdateien auf der Stackbasis sind Git-Blob-bytegleich mit den Ursprungsbasen der Quell-PRs; drei neue Test-/Fachdateien kommen hinzu. Alle sieben technischen Blobs der drei Quellheads werden ohne Umbau übernommen. Originalquell-HEADs bleiben zusätzliche Eltern.
+- **Quell-CIs:** vollständige Android-Alpha-Workflows [41244723884](https://github.com/ManuEtt/Dnd/actions/runs/41244723884), [41246230660](https://github.com/ManuEtt/Dnd/actions/runs/41246230660) und [41282536339](https://github.com/ManuEtt/Dnd/actions/runs/41282536339) jeweils `completed/success`.
+- **Dokumentation:** Drei PRs in README, CODEX-Checkpoint und Chat-B-Checkpoint ausschließlich additiv zusammengeführt.
+- **Noch offen:** Neue kombinierte CI auf finalem Integrationshead, geordnete Vorgängerintegration und erneute Main-/Datei-/CI-Abnahme. Reale Android-/Upgrade-/TalkBack-Prüfung separat.
+- **Kompatibilität:** Keine beabsichtigte SQLite-/JSON-Migration oder App-Versionsänderung. Aus Storytext folgen keine unbestätigten Regelzustandsänderungen.

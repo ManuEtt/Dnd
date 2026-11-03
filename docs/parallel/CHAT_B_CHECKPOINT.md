@@ -662,3 +662,135 @@ Beide vollständigen Quellnachträge sind originalgetreu enthalten. Die neue Ges
 - **Migrationen:** Keine. Persistierte JSON- und SQLite-Rohdaten, Schema, Spielregeln, Backendprotokoll, Controller und Version bleiben unverändert.
 - **Konflikte:** Geprüfte offene PRs ändern keine der beiden neuen Fach-/Testdateipfade. README und zentraler Checkpoint überschneiden sich dokumentarisch und müssen bei Integration durch Chat D additiv konsolidiert werden. PR #516 arbeitet getrennt in `npc_identity_memory.dart`.
 - **Nächster konkreter Schritt:** GitHub-CI des finalen PR-HEAD abnehmen; falls rot, denselben Branch reparieren. Anschließend die unabhängige Orts-/NPC-Wiederaufnahme gemeinsam mit Chat D erst nach bestehenden Drafts integrieren.
+
+
+---
+
+
+
+## Chat B – natürliche Kampagnenrückblicke (31.10.2026, PR #452)
+
+- **Ausgangsproblem:** Alltagssprache wie „Was haben wir bisher erlebt?“ und
+  „Was ist beim letzten Mal passiert?“ führte nicht in den bestätigten Rückblick;
+  die allgemeine Suche konnte ihre Füllverben irrtümlich als Themenfilter werten.
+- **Basis-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+  **Branch:** `feat/chat-b/natural-recap-requests-20261031`.
+  **Pull Request:** [#452](https://github.com/ManuEtt/Dnd/pull/452), Draft.
+  **Fachcode-Commit:** `4ef4aa4f38562f8174595df7749f4c97f0cb8753`.
+  **Test-Commit:** `5fac062ab8c30cfb1c036c20ce327780175cfb4c`.
+  **Dart-Formatkorrektur:** `ac84ee15e8d3b2180bedd5fed44de6768d79f7db`.
+  **Analyzer-Korrektur:** `95c59dfeba0354759abe0001f428e01c3907fb12`
+  entfernt einen doppelten bereits vorhandenen Stopword-Eintrag `fass` aus
+  der Ergänzung. In Push-CI `41244551245` bestanden Dart-Format und die
+  vorausgehenden Python-/Backend-Gates; `flutter analyze` meldete exakt den
+  doppelten Set-Eintrag und stoppte vor Flutter-Tests/APK. Der neue Commit
+  benötigt erneut vollständige CI.
+  Die vorläufige Push-CI `41244405913` war ausschließlich bei
+  `dart format` für den neuen Test rot; vorangehende Python- und Backend-Prüfungen
+  waren erfolgreich. Finale Flutter-/Android-Abnahme steht noch aus.
+- **Implementiert:** Eng verankerte Rückblickfragen und umgangssprachliche
+  Zusammenfassungsbitten; leere allgemeine Themenanfrage liefert ausschließlich
+  bereits bestätigte Fakten. Keine stillen Freigaben freier NPC-/Spieleraktionen.
+- **Geänderte Dateien:** `app/lib/story/story_memory_engine.dart`,
+  `app/test/story_recall_intent_test.dart`, `README.md`,
+  `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **Akzeptanz/Regression:** positive und negative deutsche Frageformen;
+  bestätigter `memory.recalled`-Turn mit echter `GameEngine.act`-Verarbeitung;
+  NPC-Zitat bleibt normaler Spielzug; unveränderte Helden-/Regelzustände und
+  unveränderte ursprüngliche Kampagne.
+- **GETESTET:** GitHub-main-SHA, offene PRs und Dateiüberschneidungen geprüft.
+  **NICHT GETESTET:** Flutter-/Dart-Test, Format, Analyse, kompletter CI-Workflow
+  einschließlich APK auf finalem Branch-HEAD und reales Android-Gerät; lokale
+  SDKs fehlen. Vorläufer-Main-CI ist kein Testnachweis dieses PR.
+- **BLOCKIERT:** direkte lokale Flutter-/Dart-Ausführung; CI-Status nach
+  Veröffentlichung des Dokumentationscommits gesondert auswerten.
+- **Migration:** keine; SQLite/JSON, APIs, Rule-/Questzustand,
+  Modell-/Controller-Dateien, Version und externe Anbieter unverändert.
+- **Koordination:** #446 betrifft nur späte KI-Antworten und einen eigenen Test;
+  #447–#451 andere Fachcodepfade. README/zentralen Checkpoint bei späterer
+  Integration additiv durch Chat D konsolidieren, nicht blind überschreiben.
+- **Nächster Schritt:** finale grüne PR-CI für #452 belegen oder rote Tests auf
+  demselben Branch beheben; bis dahin Draft belassen.
+
+
+---
+
+## Chat B – offene Handlungsnotizen bei gespeicherter Wiederaufnahme (31.10.2026)
+
+- **Main-Basis:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+  **Branch:** `feat/chat-b/confirmed-resume-leads-20261031`.
+  **PR:** [#456](https://github.com/ManuEtt/Dnd/pull/456), Draft.
+  **Code-Commit:** `461e086e784bbafde6d19b3e285d71b65c035c6c`.
+  **Tests:** `15e5dd537a14042cc6d142692d1da922f7dcf471`,
+  korrigierter Teststand `acc80d50953251742978061eae670e4e55efe6ca`.
+- **Ausgangsproblem:** vorhandene Rückblicke führen Handlungsstränge nur
+  mit Titel und Status. Länger pausierende Spieler müssen selbst nachlesen,
+  welche ausdrücklich gespeicherten offenen Fragen als Nächstes relevant sind.
+- **Akzeptanz/Implementierung:** Bis zu drei letzte offene gespeicherte
+  Handlungsnotizen ergänzen den bereits vorhandenen bestätigten Sitzungsinhalt.
+  Keine abgeschlossenen/aufgegebenen/leeren Einträge, keine Erzählung als
+  bestätigte Fakten oder Regeltransaktion. Bestandsfakten priorisiert, sichere
+  Ein-Zeilen-/Unicode-Darstellung, 2.400-Zeichen- und 160-Zeichen-Notiz-Grenzen.
+- **Neue Tests:** `app/test/story_resume_recap_test.dart` für positive
+  Auswahl und Reihenfolge, negative Endzustände/unbestätigte Szene,
+  Unicode-Trunkierung, volle Recaps, echten SQLite-Neustart und Revisions-/
+  Journal-/Heldenkontinuität.
+- **Geändert:** `app/lib/story/story_campaign_engine.dart`, neuer Test,
+  `README.md`, `docs/CODEX_CHECKPOINT.md`, diese Datei.
+- **GETESTET:** Main-HEAD, offene PR-Dateipfade und vollständigen GitHub-
+  Schreibzugriff geprüft. **NICHT GETESTET:** neue Dart/Flutter/Android-CI
+  auf finalem Dokumentationscommit bis zum tatsächlichen Workflowabschluss.
+  Kein lokales Dart/Flutter-SDK; Gerät/Produktiv-KI nicht geprüft.
+- **BLOCKIERT:** lokale Tests mangels SDK; CI-Prüfung auf GitHub.
+  **Migration:** keine, SQLite 3 / äußeres JSON 1, Hero-/Quest-/Kampf-
+  mechanik und bestehende Rückblicke unverändert.
+- **Koordination:** #452 berührt nur das andere
+  `story_memory_engine.dart`; #446 ist ein separater KI-Verzögerungstest.
+  #454 führt mehrere andere PRs zusammen, ohne StoryCampaignEngine zu ändern.
+  Geteilte README-/zentrale Checkpoint-Ergänzungen additiv durch Chat D
+  integrieren; keine fremden Branches ändern.
+- **Nächster Schritt:** finale CI/Android-Prüfung von #456, etwaige roten
+  Prüfungen im eigenen Branch beheben und nach vollständigem Grün an Chat D
+  zur Integrationskoordination übergeben.
+
+
+---
+
+## Chat B – getrennter Kampagnen-Wiederaufnahmekontext (01.11.2026, CET)
+
+- **main-Basis:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+  **Branch:** `feat/chat-b/read-only-resume-context-20261101`.
+  **Draft-PR:** [#459](https://github.com/ManuEtt/Dnd/pull/459).
+  **Code-Commit:** `6aa6a5814d81dbccf2cba7409370a2e76dfbbfb9`;
+  **öffentlicher Story-Export:** `9ba20a46f75060e8a080efc0ebfccd508586ee8f`;
+  **Test-Commit:** `f447223c40c48fbcf95fbadc8c36be0bc69e9ead`.
+- **Problem:** Bei Wiederaufnahme nach einer Spielpause wäre die Behandlung
+  einer frei erzählten letzten Szene als sicher bestätigter Regelzustand
+  gefährlich; Rückblick und aktuelle Fakten/Handlungszustände sind zudem
+  zeitlich unterschiedliche Quellen.
+- **IMPLEMENTIERT:** `CampaignResumeReader` und unveränderliche
+  `CampaignResumeSnapshot` mit vier klar ausgezeichneten Quellen.
+  Bis zu drei offene Storynotizen und vier Fakten, optionale validierte
+  Limits, Unicode-/Bidi-Schutz und UTF-16-sichere Kürzung. Kein
+  `storyBible`-/Quest-/XP-/HP-/Kampf-/Inventar- oder Ereignisschreibzugriff.
+- **Dateien:** neues `app/lib/story/campaign_resume_context.dart`,
+  `app/lib/story/story_api.dart`, neuer
+  `app/test/campaign_resume_context_test.dart`, README, zentraler und
+  dieser persönliche Checkpoint. **Keine Datenmigration** und kein
+  Versionsschritt (SQLite 3 / äußeres JSON 1).
+- **Neue Regressionen:** vertrauensgetrennte Szene vs. gespeicherte Fakten;
+  geschlossene/aufgegebene Stränge ausgeschlossen; älteres JSON ohne
+  Gedächtnisfelder; Unicode, Begrenzung, Unveränderlichkeit und echter
+  SQLite-Neustart-/Rekonstruktionsabgleich.
+- **GETESTET:** aktueller GitHub-HEAD, offene PRs und Dateipfade;
+  #456 hat grüne vollständige Push- und PR-CI.
+  **NICHT GETESTET:** neuer #459-Code auf finalem CI-HEAD (noch offen),
+  reales Gerät/Sprachausgabe/Produktiv-KI. Lokal kein Dart-/Flutter-SDK.
+  **BLOCKIERT:** lokale Flutter-Tools fehlen.
+- **Fremde PRs:** #452 berührt `story_memory_engine.dart`, #456 berührt
+  `story_campaign_engine.dart`; keine Überschneidung mit diesem
+  neuen Storymodul. Nur gemeinsame README-/Checkpoint-Texte erfordern
+  spätere additive Konsolidierung durch Chat D. Kein Merge.
+- **Nächster Schritt:** #459-CI auf finalem Dokumentationsstand abnehmen,
+  etwaige Format-/Testfehler auf demselben Branch beheben, danach
+  Review/Integration an Chat D übergeben.

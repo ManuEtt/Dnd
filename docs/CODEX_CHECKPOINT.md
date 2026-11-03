@@ -1404,3 +1404,87 @@ gemeinsamen Dokumentation durch Chat D.
   nach Integration von #463 auf aktuellem `main` prüfen.
 
 ---
+
+
+---
+
+
+## 31.10.2026 – Chat B: allgemeiner Rückblick auf bestätigte Kampagnenfakten
+
+**Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+**Branch:** `feat/chat-b/natural-recap-requests-20261031`.
+**PR:** [#452](https://github.com/ManuEtt/Dnd/pull/452) (Draft).
+**IMPLEMENTIERT:** Eng begrenzte Erkennung natürlicher Rückblickfragen und
+Trennung allgemeiner Rückblicke von thematischem Faktenabruf, ohne freie
+Spielzüge oder NPC-Dialoge umzudeuten. Story-Gedächtnis-Modul und
+`story_recall_intent_test.dart` geändert; positive/negative und
+GameEngine-Ende-zu-Ende-Fälle. **GETESTET:** Main-Baseline
+[41184883579](https://github.com/ManuEtt/Dnd/actions/runs/41184883579)
+war auf `5a88834c` erfolgreich, ist aber **kein Nachweis für #452**.
+**NICHT GETESTET:** Flutter/Android-CI des neuen endgültigen PR-Commits,
+Realgerät und produktiver KI-Anbieter; lokal kein Flutter/Dart-SDK.
+**BLOCKIERT:** lokale Dart-Ausführung ohne SDK; die PR-CI dient als Abnahme.
+**MIGRATION:** keine (SQLite 3, JSON 1, API, Regeln und Buildnummer unverändert).
+**KOORDINATION:** #446 testet separate verspätete SQLite-KI-Antworten;
+geteilte README-/Checkpoint-Ergänzungen vor Merge additiv vereinigen.
+**NÄCHSTER SCHRITT:** finale PR-CI und insbesondere die Story-Regressionen
+prüfen, rote Gates auf demselben Branch korrigieren und erst nach vollständigem
+Grün zur Integration an Chat D geben.
+
+
+---
+
+## Chat B – gespeicherte offene Handlungsnotizen im Sitzungsrückblick (31.10.2026)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+  **Branch:** `feat/chat-b/confirmed-resume-leads-20261031`.
+  **PR:** [#456](https://github.com/ManuEtt/Dnd/pull/456), Draft.
+- **IMPLEMENTIERT:** `StoryCampaignEngine.saveSessionRecap` ergänzt bis zu
+  drei bestätigte offene Handlungsnotizen, neuere zuerst. Abgeschlossene,
+  aufgegebene und leere Einträge ausgeschlossen, bestehende Fakten niemals
+  für Zusatztexte gekürzt. Nur lesende Storydaten, keine Erfindung aus
+  Szene/Dialog oder Regelwirkung.
+- **Dateien:** `app/lib/story/story_campaign_engine.dart`,
+  `app/test/story_resume_recap_test.dart`, README sowie persönlicher und
+  zentraler Checkpoint. SQLite/JSON (3/1), APIs, App-Version unverändert.
+- **GETESTET:** Live-Main, offene PR-Dateien und Ausgangs-CI nachgewiesen.
+  **NICHT GETESTET:** neue Dart-/Flutter-/Android-Gates auf finalem PR-HEAD
+  beim Erstellen, Realgerät, produktiver externer KI-Dienst.
+  **BLOCKIERT:** kein lokales Flutter-/Dart-SDK, CI-Abnahme über GitHub.
+- **NOCH NICHT IMPLEMENTIERT:** automatische Wiederaufnahme-UI beim
+  Öffnen einer Kampagne; dieses Paket verbessert den vorhandenen expliziten
+  dauerhaft gespeicherten Rückblick.
+- **NÄCHSTER SCHRITT:** finale CI von #456 inklusive SQLite-Neustart-/Format-
+  Regressionen abnehmen; bei Rot nur eigenen Branch korrigieren, anschließend
+  mit Chat D die additiven README-/Checkpoint-Konflikte abstimmen. Keine
+  automatische Zusammenführung.
+
+
+---
+
+## Chat B – schreibgeschützter Wiederaufnahmekontext (01.11.2026, CET)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+  **Branch:** `feat/chat-b/read-only-resume-context-20261101`.
+  **PR:** [#459](https://github.com/ManuEtt/Dnd/pull/459) (Draft).
+- **IMPLEMENTIERT:** eigene `CampaignResumeReader`-Projektion mit ausdrücklich
+  getrennten Quellen: nicht bestätigte Szene, historischer gespeicherter
+  Rückblick, aktuelle Fakten, aktuell offene Handlungsnotizen.
+  Begrenzt und zeilensicher, nur Lesezugriff; niemals Regeln, Eventjournal,
+  Datenbank oder `storyBible.secret` verändern/übernehmen.
+- **Geändert:** `app/lib/story/campaign_resume_context.dart` (neu),
+  `app/lib/story/story_api.dart` (öffentlicher Export),
+  `app/test/campaign_resume_context_test.dart` (neu), README und
+  Chat-B-/zentraler Checkpoint.
+- **GETESTET:** aktueller main-SHA und PR-Dateipfade geprüft; voriges
+  Chat-B-Paket #456 hat vollständig grüne CI
+  [41246230660](https://github.com/ManuEtt/Dnd/actions/runs/41246230660).
+  Das ist **kein** Nachweis für die neue #459-Änderung.
+- **NICHT GETESTET:** neue Flutter-/Backend-/Python-/Android-GitHub-CI auf dem
+  finalen #459-HEAD, Realgerät/TalkBack, Produktion/KI.
+- **BLOCKIERT:** kein lokales Dart-/Flutter-SDK; Abnahme über GitHub Actions.
+  **NOCH NICHT IMPLEMENTIERT:** UI-Nutzung und KI-Übergabe dieser Projektion.
+  **Migration:** keine (SQLite 3 / äußeres JSON 1).
+- **Nächster konkreter Schritt:** #459-CI vollständig auswerten, rote
+  Prüfungen auf eigenem Branch korrigieren; nur nach Grün für Chat-D-Review
+  freigeben, README-/Checkpoint-Konflikte additiv vereinigen. Kein Auto-Merge.
