@@ -523,3 +523,21 @@ Beide vollständigen Quellnachträge sind originalgetreu enthalten. Die neue Ges
 - **GETESTET:** Quellstand und betroffene PR-Fachdateien geprüft. GitHub-Gesamt-CI des vorangegangenen Orts-PR #505 vollständig grün, nicht dieses neue Paket.
 - **NICHT GETESTET:** Neue Dart-/Flutter-/Backend-/Android-CI auf finalem Commit und echte Android-Geräteprüfung stehen noch aus.
 - **Nächster Schritt:** neue PR-CI auf finalem Head abnehmen; bei Fehlern im eigenen Branch korrigieren; erst danach Integrationsreview durch Chat D.
+
+---
+
+## 03.11.2026 – Chat B: bestätigte NPC-Kurzchronik, Legacy-Formatmarken (#531)
+
+- **Basis-Main:** `7be2135f5046c4139a7340cc2bfa876a7d311c93`, Version `0.8.49+99`.
+- **Branch:** `feat/chat-b/npc-continuity-legacy-marks-20261103`.
+- **PR:** [#531](https://github.com/ManuEtt/Dnd/pull/531) (Draft). Fach-/Testcommits `86caf50c4f1bc5a98c5c914ad796cfd58667937b`, `d6842a309ab1a0ee54d2de102064250de0f3bbaa`, `ae548ef951ef2bbc48a1d35cd6044f1dd772f3fb`; finaler Commit nach Dokumentation und neuer CI zu prüfen.
+- **Ausgangsproblem:** Der bereits schreibgeschützte NPC-Kontinuitätsauszug filterte bekannte Bidi-Marken, aber nicht U+00AD, U+034F, U+180E und U+206A–U+206F. Legacy-Notizen konnten dadurch unsichtbare Unterschiede in bestätigtem Spielertext enthalten.
+- **IMPLEMENTIERT:** Erweiterung von `ConfirmedNpcContinuityExcerpt._format` auf die neun Zeichen; NPC-Namen bleiben als lesbare Bezeichnung zusammen, Notizen/Beziehungen verwenden Wortabstände; alle Rohdaten und IDs bleiben unverändert.
+- **Akzeptanz / Regression:** Drei neue Tests in `app/test/confirmed_npc_continuity_legacy_marks_test.dart`: neun Markierungszeichen als Negativfälle in vier Feldern, positiv lesbare deutsche/Akzent- und Emoji-Texte, klare NPC-ID und Ausschluss fremder/ungeprüfter Aussagen, JSON-Identität und SQLite-Neustart mit Heldenwerterhalt.
+- **Geändert:** `app/lib/story/confirmed_npc_continuity_excerpt.dart`, neue Testdatei, README, `docs/CODEX_CHECKPOINT.md`, dieser persönliche Checkpoint.
+- **GETESTET:** Aktuelle GitHub-/PR-Dateipfade und bereits vorhandene Story-Regressionsfälle geprüft; Code und Tests versioniert. Die beiden grünen CI-Läufe des Vorgängers [#519](https://github.com/ManuEtt/Dnd/pull/519) belegen **nicht** dieses neue Paket.
+- **NICHT GETESTET:** Neues vollständiges CI auf finalem HEAD, echtes Android-Gerät, KI-Provider und Upgrade-Test.
+- **BLOCKIERT:** Lokales Flutter/Dart nicht verfügbar. Der Gesamt-GitHub-CI-Status muss vor Freigabe ermittelt werden.
+- **Migration:** Keine; persistente SQLite- und JSON-Strukturen, Regeln, Quest-/HP-/XP-Zustände, Provider und App-Version unverändert.
+- **Konflikte:** Andere offene Chat-B-/D-PRs ändern teils andere Storymodule, jedoch nicht diese neue Fach-/Testdatei. README und zentraler Checkpoint sind gemeinsame Pfade: Additive Konsolidierung ausschließlich bei Chat-D-Integration. Kein Merge, Force-Push oder fremdes Branch-Löschen.
+- **Nächster Schritt:** CI/Android auf dem finalen PR-HEAD verifizieren; fehlschlagende Schritte gezielt auf eigenem Branch reparieren und danach von Chat D konfliktfrei integrieren lassen.

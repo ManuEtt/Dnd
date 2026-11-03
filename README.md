@@ -811,3 +811,17 @@ Die Python-Releasevorbereitung prüft vor dem Lesen und nochmals vor dem Kopiere
 ## Chat A – Kurzrast ohne Trefferwürfel: Ressourcen vor Recovery prüfen (02.11.2026)
 
 [PR #515](https://github.com/ManuEtt/Dnd/pull/515) ergänzt den zentralen, **nicht mutierenden Kurzrast-Ressourcencheck** für normale Rasten und beide Sonderpfade ohne Trefferwürfelverbrauch. Ein fingierter Paktplatzverbrauch (etwa bei einem Kämpfer ohne Hexenmeisterstufe) wird vor jeder Regeneration abgewiesen. Fünf neue deterministische Domain-/GameEngine-Regressionen decken gültige und ungültige Fälle, RNG-Freiheit, unverändertes Ursprungs-JSON und Wiederaufnahme ab. **CI auf finalem PR-HEAD ausstehend; keine APK-/Gerätefreigabe.** SQLite 3, JSON 1 und App-Version 0.8.49+99 unverändert; keine Migration. Grundlage: SRD 5.2.1, CC BY 4.0.
+
+---
+
+## Chat B – NPC-Kurzchronik gegen ältere unsichtbare Unicode-Zeichen (03.11.2026)
+
+[Draft-PR #531](https://github.com/ManuEtt/Dnd/pull/531) sichert die
+schreibgeschützte bestätigte NPC-Kontinuitätsansicht gegen U+00AD, U+034F,
+U+180E und U+206A–U+206F ab. Die Darstellung trennt oder vereinigt
+unsichtbare Formatzeichen nach Feldtyp, nennt die gespeicherte NPC-ID und
+übernimmt keine unbestätigte KI-Erzählung. Drei neue Flutter-Regressionstests
+prüfen alle Zeichen, normale Akzente/Emoji und das Wiederöffnen einer SQLite-
+Kampagne. Alte gespeicherte Originale, JSON/SQLite, Regelwerte, Backend,
+Version 0.8.49+99 und vorhandene NPC-Auswahl bleiben unverändert.
+Finale GitHub-CI und reale Geräteabnahme getrennt nachweisen; kein Auto-Merge.

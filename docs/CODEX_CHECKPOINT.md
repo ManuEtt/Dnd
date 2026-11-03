@@ -1193,3 +1193,18 @@ Ausgangs-main `a2f22eaceb344aaced12d0ad548b813aa44d544f`; Branch `fix/chat-d/alp
 **NÄCHSTER SCHRITT (genau ein unabhängiges Paket):** Den Kurzrast-Null-HD-Übergang über den vorhandenen Controller samt SQLite-Neustart und idempotentem Retry für einen *gültigen* Hexenmeister separat prüfen. Abnahme: ein gespeicherter bestätigter Rast-Event, keine zweite Paktregeneration bei Request-ID-Wiederholung, veraltete Revision wird abgewiesen, keinerlei Reparatur ungültiger Herkunftsdaten; vor Beginn offenen PR-Dateiabgleich wiederholen.
 
 ---
+
+---
+
+## Chat B – Bestätigte NPC-Kurzchronik gegen ältere Formatmarken (03.11.2026, Europe/Berlin)
+
+- **Ausgangs-main:** `7be2135f5046c4139a7340cc2bfa876a7d311c93`; **Branch:** `feat/chat-b/npc-continuity-legacy-marks-20261103`; **PR:** [#531](https://github.com/ManuEtt/Dnd/pull/531), Draft. Vor jedem Merge finalen HEAD und Main neu prüfen.
+- **Projekt:** Würfelraunen 0.8.49+99 (unverändert).
+- **IMPLEMENTIERT:** `app/lib/story/confirmed_npc_continuity_excerpt.dart` filtert neun zuvor übersehene, alte Unicode-Formatzeichen im rein lesenden NPC-Auszug. Die gespeicherte NPC-ID und die begrenzte, quellengebundene Ausgabe bleiben erhalten.
+- **Tests ergänzt:** `app/test/confirmed_npc_continuity_legacy_marks_test.dart` mit drei Flutter-Regressionen für alle neun Unicode-Zeichen in NPC-Anzeigenamen, aktueller Beziehung, Notizbeziehung/-text, positive de-DE- und Emoji-Variation-Texte sowie SQLite-Schließen/Neuöffnen und identisches JSON.
+- **Quell-/Testcommits:** `86caf50c4f1bc5a98c5c914ad796cfd58667937b`, `d6842a309ab1a0ee54d2de102064250de0f3bbaa`, `ae548ef951ef2bbc48a1d35cd6044f1dd772f3fb`; finalen Dokumentations-HEAD neu ermitteln.
+- **GETESTET:** Repository, PR-Dateipfade, bestehende Fachtests, Architektur- und Story-/Regelgrenzen über GitHub inspiziert; Code/Testcommits gesichert. Frühere [#519-CI](https://github.com/ManuEtt/Dnd/actions/runs/41594258320) erfolgreich, ausdrücklich **nicht** der Nachweis dieses neuen Pakets.
+- **NICHT GETESTET:** Neue vollständige Python-, Backend-, Dart-/Flutter- und Android-/APK-CI auf finalem Head zum Zeitpunkt dieses Eintrags noch offen; lokales Dart/Flutter nicht installiert. Realgerät, produktive KI, Upgrade und TalkBack nicht geprüft.
+- **BLOCKIERT:** Endgültige GitHub-CI/Review; Integration der gestapelten Chat-D-PRs vor dieser eigenen Freigabe.
+- **Dateien:** Excerpt-Storymodul, neuer Regressionstest, additiv README und beide Checkpoints. Keine JSON-/SQLite-Migration, Modell-, Controller-, Backend-, Rule- oder Versionänderung. Keine kostenpflichtigen KI-Aufrufe.
+- **Nächster Schritt:** Finalen GitHub-Workflow dieses PRs prüfen, Fehler auf demselben Branch korrigieren und nur bei grünen Tests konfliktfreie Übernahme durch Chat D vorbereiten.
