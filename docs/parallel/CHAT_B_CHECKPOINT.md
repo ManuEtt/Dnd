@@ -486,3 +486,20 @@ Beide vollständigen Quellnachträge sind originalgetreu enthalten. Die neue Ges
 - **NOCH NICHT IMPLEMENTIERT:** automatisch ausgeführte NPC-Gedächtnisaktionen; der neue Abdruck ist absichtlich weder Persistenzfeld noch Provider-Autorität.
 - **Migration:** keine. Kampagnen-JSON 1, SQLite 3, Regelzustand und App-Version 0.8.49+99 unverändert.
 - **Nächster unabhängiger Schritt:** Mehrdeutige Notiz-IDs in der rein lesenden NPC-Identitätsabfrage fail-closed prüfen, mit positiven/negativen Alt-JSON- und Neustartfällen und erfolgreicher vollständiger CI; erst nach dieser PR-Integration beginnen.
+
+
+---
+
+## 03.11.2026 – verdeckte doppelte NPC-Notizen bei Fortsetzung ablehnen
+
+- **Basis-main:** `a2f22eaceb344aaced12d0ad548b813aa44d544f`.
+- **Branch:** `feat/chat-b/confirmed-npc-note-id-integrity-20261103`.
+- **Pull Request:** [#516](https://github.com/ManuEtt/Dnd/pull/516) (Draft).
+- **Problem:** `NpcIdentityMemory.read` übernahm für einen ausdrücklich ID-gewählten NPC unter Umständen alte Notizen mit wiederholter oder unsicherer Kennung. Ein harmlos wirkender Auszug mit `maxNotes: 1` konnte die Mehrdeutigkeit ausblenden.
+- **Implementiert:** Alle gespeicherten Notizen des gewählten NPCs vor Kürzung auf gültige 1–64-Zeichen-IDs und Wiederholungen prüfen; unveränderte Revision kein Ersatz für diesen vollständigen Check. Keine pauschale Abweisung unbeteiligter NPC-Verläufe und kein Einfluss auf die Spielregelengine.
+- **Fach-/Testdateien:** `app/lib/story/npc_identity_memory.dart`, `app/test/npc_identity_note_id_integrity_test.dart` (6 positive/negative Tests).
+- **Geprüfte Parallelität:** Hauptbranch-HEAD, 21 offene PRs, deren relevante Fachpfade und bestehende Testfälle geprüft; keine Überschneidung auf den beiden Fachpfaden. Gemeinsame README-/Checkpoint-Nachträge bei späterer Integration additiv durch Chat D konsolidieren.
+- **Tests auf neuem HEAD:** Erst durch GitHub-CI nach diesen Dokumentationscommits nachzuweisen; lokales Flutter/Dart nicht vorhanden. Vorherige erfolgreiche PR #513 (zwei vollständige CIs) betrifft ein anderes Paket.
+- **Nicht getestet:** echter Android-Gerätebetrieb, TalkBack, vorherige App-Upgrade-Pfade, produktiver kostenpflichtiger KI-Provider.
+- **Kompatibilität:** keine JSON-/SQLite-Migration, Schema/Version/Erzählprovider-Vertrag unverändert. Altbestände bleiben geladen und gespeichert; nur die unsichere Lesesicht scheitert geschlossen.
+- **Nächster Schritt:** CI einschließlich FFI-Neustarttest prüfen, Fehler korrigieren, finalen HEAD und Abnahme in PR #516 dokumentieren.
