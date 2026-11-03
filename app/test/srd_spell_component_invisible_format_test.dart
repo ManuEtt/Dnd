@@ -155,9 +155,7 @@ void main() {
         reason: codePoint.toRadixString(16),
       );
       expect(
-        () => SrdSpellDefinition.fromJson(
-          _asCatalogueJson(original, tampered),
-        ),
+        () => SrdSpellDefinition.fromJson(_asCatalogueJson(original, tampered)),
         throwsFormatException,
         reason: codePoint.toRadixString(16),
       );
