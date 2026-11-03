@@ -1,5 +1,20 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – Sichtbar eindeutige Zaubermaterial-IDs (03.11.2026)
+
+[Draft-PR #520](https://github.com/ManuEtt/Dnd/pull/520) schließt in
+`SrdSpellInventoryIdRules` eine bisherige Lücke für die neun unsichtbaren
+Unicode-Zeichen U+206A–U+206F und U+FFF9–U+FFFB.
+Ein neuer deterministischer Flutter-Test prüft zulässige internationale
+Inventar-IDs, sämtliche neun Ablehnungen, auditiertes Zaubermaterial,
+ausbleibende Slot-/Inventaränderungen bei Fehlern und erfolgreiche gültige
+Materialbuchung. Ein bestehender Spielstand wird weder migriert noch
+umgeschrieben; SQLite-/JSON-Schema und App-Version bleiben unverändert.
+Die vollständige GitHub-CI auf finalem PR-HEAD sowie Android-Geräte-/
+Upgrade-Abnahme sind getrennt zu bestätigen. Keine automatische Mergefreigabe.
+
+---
+
 ## Chat D – JSON-Spielstandimport auf 10 MiB UTF-8 begrenzen (02.11.2026)
 
 [PR #502](https://github.com/ManuEtt/Dnd/pull/502) prüft in der bestehenden
