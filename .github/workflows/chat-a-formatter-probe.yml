@@ -1,0 +1,25 @@
+name: Chat A formatter probe (temporary)
+
+on:
+  push:
+    branches:
+      - fix/chat-a/spell-component-format-20261103
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.35.7'
+      - name: Show exact Dart formatter diff
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd app
+          dart format --output=write lib/domain/srd_spell_catalog.dart test/srd_spell_component_invisible_format_test.dart
+          git diff -- lib/domain/srd_spell_catalog.dart test/srd_spell_component_invisible_format_test.dart
