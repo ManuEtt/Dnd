@@ -5,9 +5,9 @@
 - **Code- und Testcommit:** `ab0a8c8827dbfc092d53ca048be24e13c1b23a64` (Dokumentations-HEAD in PR #528 prüfen).
 - **Pull Request:** [#528](https://github.com/ManuEtt/Dnd/pull/528), Draft.
 - **Problem:** Python-`str.splitlines()` trennt zusätzlich an U+0085, VT, U+2028/U+2029. Java Properties sieht dort keine physischen Zeilenenden. Ein Kommentar konnte nach dem Unicode-Zeichen einen scheinbar aktiven Wrapper-URL-/Checksum-Eintrag enthalten.
-- **IMPLEMENTIERT:** `scripts/verify_project.py` verwendet `re.split(r'\\r\\n|\\r|\\n', text)` für nur CR, LF und CRLF; übriges Java-Properties-Key-/Continuation-Verhalten unverändert.
+- **IMPLEMENTIERT:** `scripts/verify_project.py` verwendet `re.split(r'\r\n|\r|\n', text)` für nur CR, LF und CRLF; übriges Java-Properties-Key-/Continuation-Verhalten unverändert.
 - **Regressionen:** `scripts/tests/test_verify_project.py`: (1) falsche Pflichtwerte aus Kommentaren abweisen, (2) gültige kommentierte Unicode-Sequenzen ohne fälschliche Duplikate akzeptieren, (3) CR-/LF-/CRLF-Eingaben weiter akzeptieren.
-- **GETESTET:** 3-Codepoint-Minimalreproduktion mit lokaler Python-3-Shell bestätigte den ursprünglichen `splitlines()`-Unterschied; isolierter GitHub-Branch, Fach-/Testcommit und PR-Erstellung erfolgreich. *Noch kein Lauf der tatsächlichen Projekttests behauptet.*
+- **GETESTET:** 3-Codepoint-Minimalreproduktion sowie drei isolierte Python-3-Vertragstests für Unicode-Kommentare, CR/LF/CRLF und Fortsetzungszeilen bestanden; der echte Repository-Unittest-Lauf steht noch aus; isolierter GitHub-Branch, Fach-/Testcommit und PR-Erstellung erfolgreich. *Noch kein Lauf der tatsächlichen Projekttests behauptet.*
 - **NICHT GETESTET:** `python3 scripts/verify_project.py`, `python3 -m unittest discover -s scripts/tests -v`, Domain-/SRD-Skripte, Backend-/Flutter-/Android-Gesamtsuite, kompletter CI-Status auf finalem PR-HEAD, Realgerät.
 - **BLOCKIERT:** Kein GitHub-Clone per lokalem Netz-DNS; kein Flutter-/Dart-SDK in dieser Ausführungsumgebung. CI muss den finalen Commit prüfen.
 - **Auswirkungen:** Vorhandene SQLite-/JSON-Spielstände, Android-Backupformat, Rule-/Storymodule, App-Version und Migrationen unberührt.

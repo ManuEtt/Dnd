@@ -6,9 +6,9 @@
 - **PR:** [#528](https://github.com/ManuEtt/Dnd/pull/528) (Draft bis vollständiger, finaler CI)
 - **Ausgangsproblem:** `str.splitlines()` teilt auch an Unicode-Zeichen, die Java `Properties.load` als normale Zeichen innerhalb von Kommentaren/Werten behandelt. Ein scheinbar vorhandener `distributionUrl`-/SHA-Wert war damit nicht zwingend im tatsächlichen Gradle-Properties-Parser vorhanden.
 - **Erwartetes Verhalten:** Exakt CR/LF/CRLF bilden physische Zeilen; Unicode-Kommentare dürfen weder Pflichtwerte vortäuschen noch fälschliche Duplikate erzeugen. Normale Gradle-Konfigurationen bleiben akzeptiert.
-- **IMPLEMENTIERT:** `_gradle_logical_lines` nutzt `re.split(r'\\r\\n|\\r|\\n', text)` statt `splitlines()` ohne sonstige Parseränderungen.
+- **IMPLEMENTIERT:** `_gradle_logical_lines` nutzt `re.split(r'\r\n|\r|\n', text)` statt `splitlines()` ohne sonstige Parseränderungen.
 - **Tests ergänzt:** `scripts/tests/test_verify_project.py` mit vier Unicode-Separatortypen (NEL, VT, U+2028, U+2029), positivem Kommentarfall und drei gültigen physischen Zeilentrennungen.
-- **GETESTET:** Lokale Minimalreproduktion des Python-`splitlines()`-Verhaltens (3 Unicode-Codepoints), GitHub-Branch-/Commit-/PR-Erstellung.
+- **GETESTET:** Lokale Minimalreproduktion des Python-`splitlines()`-Verhaltens (3 Unicode-Codepoints), drei isolierte Python-3-Vertragstests (Unicode-Kommentare, CR/LF/CRLF, Continuation) bestanden; GitHub-Branch-/Commit-/PR-Erstellung. Die Projekt-Testdateien wurden lokal nicht ausgeführt.
 - **NICHT GETESTET:** Tatsächliche Projekttests `python3 scripts/verify_project.py`, gesamtes Python-Unittest-Discovery, Domain-/SRD-Prüfungen, Backend `npm`, Flutter Analyze/Test, Android Gradle/APK, vollständige Actions für finalen HEAD und Realgerät.
 - **BLOCKIERT:** DNS-Zugriff des lokalen Git-Containers verhindert Checkout; Flutter-/Dart-SDK fehlt.
 - **Geänderte Dateien:** `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
