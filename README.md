@@ -1,5 +1,20 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – Porträtauswahl für 200 % Schrift (03.11.2026)
+
+[Draft-PR #529](https://github.com/ManuEtt/Dnd/pull/529) korrigiert die
+untere Android-Aktionsleiste der Charakterporträt-Auswahl: Bei 200 %
+Schriftgröße oder extrem schmalen Ansichten stehen „Abbrechen“ und
+„Übernehmen“ jeweils über die volle Breite untereinander. Bei normaler
+Schrift bleiben sie nebeneinander. Vier neue Flutter-Widgettests prüfen
+320/360 dp mit simulierter IME, Touch-Erreichbarkeit, Auswahl-Semantik,
+Abbruch ohne Rückgabe, bewusste Übernahme und den normalen Layoutpfad.
+Regeln, Story, Spielstände, SQLite/JSON, Bilder, App-Version unverändert.
+Vollständige CI auf finalem PR-HEAD und reale Android-/TalkBack-Abnahme
+noch ausstehend; kein Auto-Merge.
+
+---
+
 ## Chat D – JSON-Spielstandimport auf 10 MiB UTF-8 begrenzen (02.11.2026)
 
 [PR #502](https://github.com/ManuEtt/Dnd/pull/502) prüft in der bestehenden
