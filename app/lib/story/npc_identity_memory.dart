@@ -99,71 +99,7 @@ class NpcIdentityMemory {
     // limited to maxNotes must not hide an identity collision in older notes.
     // Check the *entire selected NPC history*, not unrelated NPC histories.
     final noteIds = <String>{};
-    final safeNoteId = RegExp(r'^[a-zA-Z0-9_-]{1,64}
-      final dateOrder = b.note.recordedAt.compareTo(a.note.recordedAt);
-      return dateOrder != 0 ? dateOrder : b.order.compareTo(a.order);
-    });
-
-    return NpcIdentityContext._(
-      campaignId: campaign.id,
-      sessionId: campaign.sessionId,
-      revision: campaign.revision,
-      npcId: npc.id,
-      npcName: npc.name,
-      alive: npc.alive,
-      relationship: npc.relationship,
-      notes: history.take(maxNotes).map((item) => item.note).toList(),
-      sourceStamp: jsonEncode([
-        npc.toJson(),
-        for (final note in campaign.npcRelationshipNotes)
-          if (note.npcId == npcId) note.toJson(),
-      ]),
-    );
-  }
-
-  /// Rejects a revision/session change, another campaign, or amended values.
-  /// Even older notes omitted by maxNotes must remain unchanged.
-  ///
-  /// No implicit refresh: the caller must explicitly re-read current state.
-  static void requireCurrent(Campaign campaign, NpcIdentityContext context) {
-    if (campaign.id != context.campaignId ||
-        campaign.sessionId != context.sessionId ||
-        campaign.revision != context.revision) {
-      throw const FormatException('NPC-Kontext ist nicht mehr aktuell.');
-    }
-    final actual = read(
-      campaign,
-      npcId: context.npcId,
-      expectedRevision: context.revision,
-      maxNotes: context.notes.isEmpty ? 1 : context.notes.length,
-    );
-    if (actual._sourceStamp != context._sourceStamp ||
-        actual.npcName != context.npcName ||
-        actual.alive != context.alive ||
-        actual.relationship != context.relationship ||
-        actual.notes.length != context.notes.length) {
-      throw const FormatException(
-        'NPC-Kontext wurde zwischenzeitlich geändert.',
-      );
-    }
-    for (var i = 0; i < actual.notes.length; i++) {
-      final current = actual.notes[i];
-      final old = context.notes[i];
-      if (current.id != old.id ||
-          current.npcId != old.npcId ||
-          current.relationship != old.relationship ||
-          current.note != old.note ||
-          current.recordedAt != old.recordedAt) {
-        throw const FormatException(
-          'NPC-Kontext wurde zwischenzeitlich geändert.',
-        );
-      }
-    }
-  }
-}
-
-String _oneLine(String value) => value.replaceAll(RegExp(r'\s+'), ' ').trim();
-);
+    final safeNoteId = RegExp(r'^[a-zA-Z0-9_-]{1,64}$');
     for (final entry in history) {
       final id = entry.note.id;
       if (!safeNoteId.hasMatch(id) || !noteIds.add(id)) {
