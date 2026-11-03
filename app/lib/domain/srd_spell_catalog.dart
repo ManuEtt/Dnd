@@ -41,6 +41,7 @@ class SrdSpellDefinition {
   static final RegExp _unsafeComponentFormat = RegExp(
     r'[\x00-\x1f\x7f-\x9f\u00ad\u034f\u061c\u180e\u200b-\u200f\u2028-\u202e\u2060-\u206f\ufeff\ufff9-\ufffb]',
   );
+
   /// Validate all three component flags against the exact spell notation.
   /// Publicly constructed spell definitions must be checked at rule boundaries
   /// as well as during JSON catalogue loading.
