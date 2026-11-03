@@ -1,3 +1,9 @@
+## Chat D – Korrekte Java-Properties-Zeilentrennung bei Gradle-Uploadprüfung (03.11.2026)
+
+Die Python-Übertragungsprüfung `scripts/verify_project.py` wertet physische Zeilen der Gradle-Wrapper-Konfiguration nun wie Java Properties ausschließlich an CR/LF/CRLF aus. Unicode-Zeichen U+0085, vertikaler Tab und U+2028/U+2029 innerhalb eines Kommentars erzeugen keine vorgetäuschten gültigen `distributionUrl`- oder `distributionSha256Sum`-Einträge und keine fälschlichen Doppelbelegungen mehr. Drei Regressionstest-Gruppen in `scripts/tests/test_verify_project.py` decken fehlende Pflichtwerte, erlaubte Kommentarinhalte und echte Zeilenenden ab. Separater Draft-[PR #528](https://github.com/ManuEtt/Dnd/pull/528), Basis `7be2135`, Fachcommit `ab0a8c8`. Vollständige Python-/Backend-/Flutter-/Android-Tests und finale Actions-CI auf dem Dokumentations-HEAD sind noch **nicht** als bestanden nachgewiesen. Keine SQLite-/JSON-/Versionsmigration.
+
+---
+
 # Würfelraunen – Der lebendige Spielleiter
 
 ## Chat D – JSON-Spielstandimport auf 10 MiB UTF-8 begrenzen (02.11.2026)
