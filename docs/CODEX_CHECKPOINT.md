@@ -1095,3 +1095,18 @@ Ausgangs-main `516bc14e06cb02e7035a6adfb8e2d21e54253184`, Branch `fix/chat-d/che
 ## Chat B – Orts-Wiederaufnahme (02.11.2026)
 
 PR #505: bestätigte gespeicherte Ortsauswahl mit ID, Unicode-Schutz, Revision, sechs Tests; CI offen. Siehe docs/parallel/CHAT_B_CHECKPOINT.md.
+
+---
+
+## Chat B – NPC-Wiederaufnahmerückblick gegen ältere unsichtbare Unicode-Zeichen (03.11.2026)
+
+- **Basis-main:** `a786ad61c508da1a9ec1a24f85100a4a994182c8`.
+- **Branch:** `feat/chat-b/npc-resume-invisible-marks-20261103`.
+- **PR:** [#519](https://github.com/ManuEtt/Dnd/pull/519), Draft.
+- **Problem:** Soft Hyphen (U+00AD), Combining Grapheme Joiner (U+034F), Mongolian Vowel Separator (U+180E) sowie ältere Bidi-Formatzeichen (U+206A–U+206F) blieben in der bestätigten NPC-Rückblickansicht versteckt erhalten.
+- **Implementierung:** Nur `app/lib/story/confirmed_npc_resume_selection.dart` erweitert den vorhandenen `_formatMarks`-Filter; derselbe revisionsgebundene Auswahlvertrag, keine Änderung am gespeicherten Text.
+- **Regression:** Neue `app/test/confirmed_npc_resume_invisible_marks_test.dart` mit drei positiven/negativen Tests für sämtliche neun Zeichen, legitime Unicode-Textformen, Quellenbindung, 2.400-Zeichen-Grenze, unveränderten JSON-Roundtrip und gleichrevisionierte Rohdatendifferenz.
+- **Fach-/Testcommits:** `651d9f0f490a1beafe417a83371dd92b0b0f792c`, `1e6e8ba6bff323789821101e9fe7d5d08c0c1634`, Formatlabel `0ea9af27610aa92c244065448840fe32de37dd40`. Finalen PR-HEAD gesondert prüfen.
+- **Tests:** Nur Code-/Teststruktur statisch geprüft. Lokales Flutter/Dart fehlt, vollständige GitHub-CI und Android-Realgerät nicht als bestanden ausgewiesen.
+- **Abgrenzung:** Keine fremden Story-Fachdateien, keine Regel-, Modell-, Controller-, SQLite- oder Backendänderung; keine Migration, kein Provider-Aufruf, keine Versionsänderung. README/zentraler Checkpoint müssen beim Merge additiv koordiniert werden.
+- **Nächster Schritt:** Finalen CI-Run auf dem dokumentierten PR-HEAD vollständig prüfen und bei roten Schritten den eigenen Branch korrigieren.
