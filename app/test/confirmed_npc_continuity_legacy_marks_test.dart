@@ -109,7 +109,7 @@ void main() {
     expect(excerpt, isNot(contains('999 Gold')));
   });
 
-  test('SQLite restart sanitizes only output, not stored NPC history', () async {
+  test('SQLite resume keeps raw notes and sanitizes the excerpt', () async {
     final folder = await Directory.systemTemp.createTemp('npc-legacy-');
     final path = paths.join(folder.path, 'campaign.sqlite');
     final original = _campaign(
