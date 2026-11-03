@@ -1,3 +1,19 @@
+# CHAT D – Verschachtelte Quell-Symlinks in Story/Rules abweisen (03.11.2026)
+
+- **Ausgangs-main-SHA:** `fad366d778de1ab69984dfcae1c139d72f976e77`.
+- **Eigener Branch:** `fix/chat-d/domain-symlink-source-guard-20261103`.
+- **Pull Request:** wird für diesen Branch erstellt; finalen Commit im GitHub-PR ablesen.
+- **IMPLEMENTIERT:** Prüfer `scripts/check_domain_boundaries.py` scannt auch verschachtelte Einträge, lehnt symbolische Dateien/Ordner ab, liest keine Symlink-Dart-Ziele und belässt reguläre Dart-Grenzprüfung.
+- **TESTS ERGÄNZT:** `scripts/tests/test_nested_domain_boundaries.py` mit drei negativen Symlink-Fällen; bestehende positive Fälle unverändert.
+- **GETESTET:** Python-3.13-Minimalversuch zu `rglob`-Linkverhalten, GitHub-Schreibvorgang nach Bestätigung.
+- **NICHT GETESTET:** Projekt-Python-/Backend-/Flutter-/Android-Tests, finaler Actions-Lauf, reales Android-Gerät.
+- **BLOCKIERT:** keine lokale Repository-Kopie (GitHub-DNS im Container gesperrt); CI-Abnahme erforderlich.
+- **Geänderte Dateien:** `scripts/check_domain_boundaries.py`, `scripts/tests/test_nested_domain_boundaries.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Migrationen:** keine. Alte Spielstände, SQLite/JSON, App-Version und Regel-/Storyzustand unverändert.
+- **Nächster Schritt:** gesamte PR-CI auf finalem Commit prüfen und erst danach einen kontrollierten Main-Integrationsreview durchführen.
+
+---
+
 # CHAT D – UTF-8-Byteobergrenze für JSON-Spielstandimport (02.11.2026)
 
 - **Ausgangs-main-SHA:** `84437e4e92d735e179bb2585427b46a10451951d`.

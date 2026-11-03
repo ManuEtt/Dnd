@@ -1,3 +1,18 @@
+## Chat D – Verschachtelte Symlink-Quellverweise in Story/Regeln abweisen (03.11.2026)
+
+- **Basis-main:** `fad366d778de1ab69984dfcae1c139d72f976e77`.
+- **Branch:** `fix/chat-d/domain-symlink-source-guard-20261103`.
+- **Problem:** `check_repository` prüfte nur die zwei Modulwurzeln auf Symlinks; `rglob('*.dart')` kann symbolisch verlinkte Dart-Dateien außerhalb des Repositories lesen, während Unterordnerlinks still übergangen werden.
+- **IMPLEMENTIERT:** jeden Eintrag unter beiden Modulen rekursiv untersuchen, Links als Fehler melden und nie als Dart-Datei öffnen. Gewöhnliche Dateien werden wie zuvor auf unerlaubte Importe geprüft.
+- **Regressionen:** symbolischer Dart-Dateilink, symbolischer verschachtelter Ordner, Nicht-Dart-Link. Positive vorhandene Module bleiben zulässig.
+- **GETESTET:** lokaler Python-3.13-Pathlib-Minimalversuch zeigt die tatsächliche Symlink-Sichtbarkeit von `rglob`; GitHub-Commit/PR nach Erstellung.
+- **NICHT GETESTET:** gesamter Python-Unittest-Lauf, Backend/Flutter/Android und finaler GitHub-Actions-Head.
+- **Datenkompatibilität:** kein Datenbank-/JSON-/Spielstand-/App-Versionswechsel; keine Migration.
+- **Konfliktkontrolle:** offene Fach-PRs bearbeiten nicht `scripts/check_domain_boundaries.py` oder `scripts/tests/test_nested_domain_boundaries.py`. README-/Checkpoint-Ergänzungen beim Merge additiv erhalten.
+- **Nächster Schritt:** finale vollständige CI dieses Branches und anschließende konfliktfreie Integration abnehmen.
+
+---
+
 ## Chat D – UTF-8-Bytegrenze beim JSON-Import (02.11.2026)
 
 - **Basis-main:** `84437e4e92d735e179bb2585427b46a10451951d`.

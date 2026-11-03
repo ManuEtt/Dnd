@@ -1,5 +1,11 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – Story-/Regelmodule vor verschachtelten Symlinks schützen (03.11.2026)
+
+Die Python-Integritätsprüfung `scripts/check_domain_boundaries.py` weist jetzt auch symbolische Links innerhalb von `app/lib/story/` und `app/lib/domain/` zurück (Dateien und Unterordner), bevor externe Dart-Dateien gelesen werden. Drei ergänzende Python-Regressionen sichern verschachtelte Datei- und Verzeichnislinks sowie Nicht-Dart-Links ab. Die Änderung enthält keine Regel-/Story-/UI-Anpassung oder Speicherformatmigration. Separate Chat-D-Abnahme auf `fix/chat-d/domain-symlink-source-guard-20261103`; vollständige CI auf finalem Commit noch ausstehend.
+
+---
+
 ## Chat D – JSON-Spielstandimport auf 10 MiB UTF-8 begrenzen (02.11.2026)
 
 [PR #502](https://github.com/ManuEtt/Dnd/pull/502) prüft in der bestehenden
