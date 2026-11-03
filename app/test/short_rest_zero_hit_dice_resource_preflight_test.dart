@@ -42,9 +42,15 @@ void main() {
       () => RestRules.validateShortRestResources(forged.hero),
       throwsFormatException,
     );
-    final update = engine.act(forged, 'Ich mache eine kurze Rast.');
-    expect(update.events.single.type, 'rules.blocked');
-    expect(jsonEncode(update.campaign.hero.toJson()), original);
+    // Invalid persisted source data cannot produce a serialized blocked
+    // event. _commit validates every resulting campaign and rejects it.
+    // The caller must not treat the thrown FormatException as a saved turn.
+    expect(
+      () => engine.act(forged, 'Ich mache eine kurze Rast.'),
+      throwsFormatException,
+    );
+    expect(jsonEncode(forged.hero.toJson()), original);
+    expect(forged.events, isEmpty);
     expect(update.campaign.hero.spentPactSlots, 1);
     expect(random.calls, beforeRolls);
   });
@@ -63,9 +69,15 @@ void main() {
     final original = jsonEncode(forged.hero.toJson());
     final beforeRolls = random.calls;
 
-    final update = engine.act(forged, 'Ich mache eine kurze Rast.');
-    expect(update.events.single.type, 'rules.blocked');
-    expect(jsonEncode(update.campaign.hero.toJson()), original);
+    // Invalid persisted source data cannot produce a serialized blocked
+    // event. _commit validates every resulting campaign and rejects it.
+    // The caller must not treat the thrown FormatException as a saved turn.
+    expect(
+      () => engine.act(forged, 'Ich mache eine kurze Rast.'),
+      throwsFormatException,
+    );
+    expect(jsonEncode(forged.hero.toJson()), original);
+    expect(forged.events, isEmpty);
     expect(random.calls, beforeRolls);
   });
 
@@ -79,9 +91,15 @@ void main() {
     final forged = base.copyWith(hero: forgedHero);
     final original = jsonEncode(forged.hero.toJson());
 
-    final update = engine.act(forged, 'Ich mache eine kurze Rast.');
-    expect(update.events.single.type, 'rules.blocked');
-    expect(jsonEncode(update.campaign.hero.toJson()), original);
+    // Invalid persisted source data cannot produce a serialized blocked
+    // event. _commit validates every resulting campaign and rejects it.
+    // The caller must not treat the thrown FormatException as a saved turn.
+    expect(
+      () => engine.act(forged, 'Ich mache eine kurze Rast.'),
+      throwsFormatException,
+    );
+    expect(jsonEncode(forged.hero.toJson()), original);
+    expect(forged.events, isEmpty);
     expect(random.calls, 0);
   });
 
