@@ -26,6 +26,7 @@ import shutil
 import stat
 import subprocess
 import tempfile
+import unicodedata
 import zipfile
 
 from package_project import (REQUIRED_FILES, ROOT, create_archive, include,
@@ -54,7 +55,8 @@ def safe_name(name: str) -> bool:
     path = PurePosixPath(name)
     return (bool(name) and not path.is_absolute() and '\\' not in name
             and all(part not in {'', '.', '..'} for part in name.split('/'))
-            and not any(ord(char) < 32 or ord(char) == 127 for char in name)
+            and not any(unicodedata.category(char) in {'Cc', 'Cf', 'Cs', 'Zl', 'Zp'}
+                        for char in name)
             and not re.match(r'^[A-Za-z]:', name))
 
 
